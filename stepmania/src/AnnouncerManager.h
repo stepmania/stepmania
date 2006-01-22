@@ -6,20 +6,20 @@ class AnnouncerManager
 public:
 	AnnouncerManager();
 
-	void GetAnnouncerNames( vector<CString>& AddTo );
-	bool DoesAnnouncerExist( CString sAnnouncerName );
-	void SwitchAnnouncer( CString sNewAnnouncerName );
-	CString GetCurAnnouncerName() { return m_sCurAnnouncerName; };
+	void GetAnnouncerNames( vector<RString>& AddTo );
+	bool DoesAnnouncerExist( RString sAnnouncerName );
+	void SwitchAnnouncer( RString sNewAnnouncerName );
+	RString GetCurAnnouncerName() { return m_sCurAnnouncerName; };
 	void NextAnnouncer();
 
-	CString GetPathTo( CString sFolderName );
-	bool HasSoundsFor( CString sFolderName );
+	RString GetPathTo( RString sFolderName );
+	bool HasSoundsFor( RString sFolderName );
 
 protected:
-	static CString GetAnnouncerDirFromName( CString sAnnouncerName );
-	CString GetPathTo( CString AnnouncerPath, CString sFolderName );
+	static RString GetAnnouncerDirFromName( RString sAnnouncerName );
+	RString GetPathTo( RString AnnouncerPath, RString sFolderName );
 
-	CString m_sCurAnnouncerName;
+	RString m_sCurAnnouncerName;
 };
 
 

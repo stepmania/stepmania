@@ -14,34 +14,34 @@ class TimingData;
 class SMLoader: public NotesLoader
 {
 	static void LoadFromSMTokens( 
-		CString sStepsType, 
-		CString sDescription,
-		CString sDifficulty,
-		CString sMeter,
-		CString sRadarValues,
-		CString sNoteData,		
+		RString sStepsType, 
+		RString sDescription,
+		RString sDifficulty,
+		RString sMeter,
+		RString sRadarValues,
+		RString sNoteData,		
 		Steps &out);
 
 	bool FromCache;
 
 public:
 	SMLoader() { FromCache = false; }
-	bool LoadFromSMFile( CString sPath, Song &out );
-	bool LoadFromSMFile( CString sPath, Song &out, bool cache )
+	bool LoadFromSMFile( RString sPath, Song &out );
+	bool LoadFromSMFile( RString sPath, Song &out, bool cache )
 	{
 		FromCache=cache;
 		return LoadFromSMFile( sPath, out );
 	}
 
-	void GetApplicableFiles( CString sPath, vector<CString> &out );
-	bool LoadFromDir( CString sPath, Song &out );
+	void GetApplicableFiles( RString sPath, vector<RString> &out );
+	bool LoadFromDir( RString sPath, Song &out );
 	void TidyUpData( Song &song, bool cache );
-	static bool LoadTimingFromFile( const CString &fn, TimingData &out );
+	static bool LoadTimingFromFile( const RString &fn, TimingData &out );
 	static void LoadTimingFromSMFile( const MsdFile &msd, TimingData &out );
-	static bool LoadEdit( CString sEditFilePath, ProfileSlot slot );
-	static bool LoadEditFromBuffer( const CString &sBuffer, CString sEditFilePath, ProfileSlot slot );
+	static bool LoadEdit( RString sEditFilePath, ProfileSlot slot );
+	static bool LoadEditFromBuffer( const RString &sBuffer, RString sEditFilePath, ProfileSlot slot );
 private:
-	static bool LoadEditFromMsd( const MsdFile &msd, CString sEditFilePath, ProfileSlot slot );
+	static bool LoadEditFromMsd( const MsdFile &msd, RString sEditFilePath, ProfileSlot slot );
 };
 
 #endif

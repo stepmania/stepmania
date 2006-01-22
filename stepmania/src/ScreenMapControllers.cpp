@@ -32,7 +32,7 @@ void ScreenMapControllers::Init()
 	m_soundChange.Load( THEME->GetPathS(m_sName,"change"), true );
 	m_soundDelete.Load( THEME->GetPathS(m_sName,"delete"), true );
 
-	CString sButtons = BUTTONS_TO_MAP;
+	RString sButtons = BUTTONS_TO_MAP;
 	if( sButtons.empty() )
 	{
 		/* Map all buttons for this game. */
@@ -46,7 +46,7 @@ void ScreenMapControllers::Init()
 	else
 	{
 		/* Map the specified buttons. */
-		vector<CString> asBits;
+		vector<RString> asBits;
 		split( sButtons, ",", asBits );
 		for( unsigned i=0; i<asBits.size(); ++i )
 		{
@@ -63,7 +63,7 @@ void ScreenMapControllers::Init()
 		BitmapText *pName = new BitmapText;
 		pName->SetName( "Title" );
 		pName->LoadFromFont( THEME->GetPathF("Common","title") );
-		CString sText = GameButtonToLocalizedString( GAMESTATE->GetCurrentGame(), pKey->m_GameButton );
+		RString sText = GameButtonToLocalizedString( GAMESTATE->GetCurrentGame(), pKey->m_GameButton );
 		pName->SetText( sText );
 		ActorUtil::LoadAllCommands( *pName, m_sName );
 		m_Line[b].AddChild( pName );
@@ -408,7 +408,7 @@ void ScreenMapControllers::Refresh()
 				BitmapText *pText = pKey->m_textMappedTo[p][s];
 				GameInput cur_gi( p, pKey->m_GameButton );
 				DeviceInput di;
-				CString sText = "-----------";
+				RString sText = "-----------";
 				if( INPUTMAPPER->GameToDevice( cur_gi, s, di ) )
 					sText = INPUTMAN->GetDeviceSpecificInputString( di );
 				pText->SetText( sText );

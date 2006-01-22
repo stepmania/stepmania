@@ -161,7 +161,7 @@ public:
 	MovieDecoder_FFMpeg();
 	~MovieDecoder_FFMpeg();
 
-	CString Open( CString sFile );
+	RString Open( RString sFile );
 	void Close();
 
 	int GetFrame( RageSurface *pOut, float fTargetTime );
@@ -432,16 +432,16 @@ static avcodec::AVStream *FindVideoStream( avcodec::AVFormatContext *m_fctx )
 }
 
 
-static CString averr_ssprintf( int err, const char *fmt, ... )
+static RString averr_ssprintf( int err, const char *fmt, ... )
 {
 	ASSERT( err < 0 );
 
 	va_list     va;
 	va_start(va, fmt);
-	CString s = vssprintf( fmt, va );
+	RString s = vssprintf( fmt, va );
 	va_end(va); 
 
-	CString Error;
+	RString Error;
 	switch( err )
 	{
 	case AVERROR_IO:			Error = "I/O error"; break;
@@ -533,7 +533,7 @@ void MovieTexture_FFMpeg::RegisterProtocols()
 	avcodec::register_protocol( &RageProtocol );
 }
 
-CString MovieDecoder_FFMpeg::Open( CString sFile )
+RString MovieDecoder_FFMpeg::Open( RString sFile )
 {
 	MovieTexture_FFMpeg::RegisterProtocols();
 
@@ -565,7 +565,7 @@ CString MovieDecoder_FFMpeg::Open( CString sFile )
 	LOG->Trace( "Bitrate: %i", m_pStream->codec.bit_rate );
 	LOG->Trace( "Codec pixel format: %s", avcodec::avcodec_get_pix_fmt_name(m_pStream->codec.pix_fmt) );
 
-	return CString();
+	return RString();
 }
 
 void MovieDecoder_FFMpeg::Close()

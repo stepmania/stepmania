@@ -43,21 +43,21 @@ static inline T enum_add2( T val, int iAmt )
 #define FOREACH_ENUM2( e, var )	for( e var=(e)0; var<NUM_##e; enum_add<e>( var, +1 ) )
 
 
-static const CString EMPTY_STRING;
+static const RString EMPTY_STRING;
 
 // TypeName[] must be an array of const char *, not RString, to
 // avoid initialization order problems when calling XToString.
 // Use Check##X##ToStringParamType to enforce that.
 #define XToString(X, CNT)	\
 	static void Check##X##ToStringParamType( const char **p ) { } \
-	const CString& X##ToString( X x ) \
+	const RString& X##ToString( X x ) \
 	{	\
 		Check##X##ToStringParamType( X##Names ); \
-		static auto_ptr<CString> as_##X##Name[CNT]; \
+		static auto_ptr<RString> as_##X##Name[CNT]; \
 		if( as_##X##Name[0].get() == NULL ) { \
 			for( unsigned i = 0; i < CNT; ++i ) \
 			{ \
-				auto_ptr<CString> ap( new CString( X##Names[i] ) ); \
+				auto_ptr<RString> ap( new RString( X##Names[i] ) ); \
 				as_##X##Name[i] = ap; \
 			} \
 		} \
@@ -69,7 +69,7 @@ static const CString EMPTY_STRING;
 	}
 
 #define XToLocalizedString(X)      \
-	const CString &X##ToLocalizedString( X x ) \
+	const RString &X##ToLocalizedString( X x ) \
 	{       \
 		static auto_ptr<LocalizedString> g_##X##Name[NUM_##X]; \
 		if( g_##X##Name[0].get() == NULL ) { \
@@ -83,9 +83,9 @@ static const CString EMPTY_STRING;
 	}
 
 #define StringToX(X)	\
-	X StringTo##X( const CString& s ) \
+	X StringTo##X( const RString& s ) \
 	{	\
-		CString s2 = s;	\
+		RString s2 = s;	\
 		s2.MakeLower();	\
         unsigned i; \
 		for( i = 0; i < ARRAYSIZE(X##Names); ++i )	\
@@ -105,11 +105,11 @@ static void Lua##X(lua_State* L) \
 { \
 	FOREACH_ENUM( X, CNT, i ) \
 	{ \
-		CString s = X##Names[i]; \
+		RString s = X##Names[i]; \
 		s.MakeUpper(); \
 		LUA->SetGlobal( Prefix+s, i ); \
 	} \
-	CString sType = "NUM" #X "S" ; \
+	RString sType = "NUM" #X "S" ; \
 	if( bCapitalize ) \
 		sType.MakeUpper(); \
 	LUA->SetGlobal( sType, CNT ); \

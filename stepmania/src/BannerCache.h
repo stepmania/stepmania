@@ -13,17 +13,17 @@ class BannerCache
 {
 	IniFile BannerData;
 
-	static CString GetBannerCachePath( CString BannerPath );
+	static RString GetBannerCachePath( RString BannerPath );
 	void UnloadAllBanners();
-	void CacheBannerInternal( CString BannerPath );
+	void CacheBannerInternal( RString BannerPath );
 
 public:
 	BannerCache();
 	~BannerCache();
 
-	RageTextureID LoadCachedBanner( CString BannerPath );
-	void CacheBanner( CString BannerPath );
-	void LoadBanner( CString BannerPath );
+	RageTextureID LoadCachedBanner( RString BannerPath );
+	void CacheBanner( RString BannerPath );
+	void LoadBanner( RString BannerPath );
 
 	void Demand();
 	void Undemand();

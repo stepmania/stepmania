@@ -22,7 +22,7 @@ void ScreenOptionsMemoryCard::Init()
 	{
 		// TODO: Make these string themable
 
-		vector<CString> vs;
+		vector<RString> vs;
 		if( iter->sOsMountDir.empty() )
 			vs.push_back( "(no mount dir)" );
 		else
@@ -39,7 +39,7 @@ void ScreenOptionsMemoryCard::Init()
 		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
 
 		OptionRowDefinition &def = vHands.back()->m_Def;
-		CString sDescription = join(", ", vs);
+		RString sDescription = join(", ", vs);
 		def.m_sName = sDescription;
 		def.m_vsChoices.push_back( "" );
 		def.m_sExplanationName = "Memory Card";
@@ -81,7 +81,7 @@ void ScreenOptionsMemoryCard::HandleScreenMessage( const ScreenMessage SM )
 	ScreenOptions::HandleScreenMessage( SM );
 }
 
-void ScreenOptionsMemoryCard::HandleMessage( const CString& sMessage )
+void ScreenOptionsMemoryCard::HandleMessage( const RString& sMessage )
 {
 	if( sMessage == MessageToString(Message_StorageDevicesChanged) )
 	{
@@ -131,7 +131,7 @@ void ScreenOptionsMemoryCard::ProcessMenuStart( const InputEventPlus &input )
 		}
 		else
 		{
-			CString s = ssprintf(ERROR_MOUNTING_CARD.GetValue(), MEMCARDMAN->GetCardError(PLAYER_1).c_str() );
+			RString s = ssprintf(ERROR_MOUNTING_CARD.GetValue(), MEMCARDMAN->GetCardError(PLAYER_1).c_str() );
 			ScreenPrompt::Prompt( SM_None, s );
 		}
 	}

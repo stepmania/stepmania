@@ -80,7 +80,7 @@ void ScreenOptionsEditProfile::ExportOptions( int iRow, const vector<PlayerNumbe
 	ASSERT( pProfile );
 	OptionRow &row = *m_pRows[iRow];
 	int iIndex = row.GetOneSharedSelection( true );
-	CString sValue;
+	RString sValue;
 	if( iIndex >= 0 )
 		sValue = row.GetRowDef().m_vsChoices[ iIndex ];
 

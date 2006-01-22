@@ -46,7 +46,7 @@ NoteType NoteDataUtil::GetSmallestNoteTypeForMeasure( const NoteData &n, int iMe
 		return nt;
 }
 
-void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData )
+void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, RString sSMNoteData )
 {
 	//
 	// Load note data
@@ -68,20 +68,20 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData 
 			sSMNoteData.erase( iIndexCommentStart, iIndexCommentEnd-iIndexCommentStart );
 	}
 
-	vector<CString> asMeasures;
+	vector<RString> asMeasures;
 	split( sSMNoteData, ",", asMeasures, true );	// ignore empty is important
 	for( unsigned m=0; m<asMeasures.size(); m++ )	// foreach measure
 	{
-		CString &sMeasureString = asMeasures[m];
+		RString &sMeasureString = asMeasures[m];
 		TrimLeft(sMeasureString);
 		TrimRight(sMeasureString);
 
-		vector<CString> asMeasureLines;
+		vector<RString> asMeasureLines;
 		split( sMeasureString, "\n", asMeasureLines, true );	// ignore empty is important
 
 		for( unsigned l=0; l<asMeasureLines.size(); l++ )
 		{
-			CString &sMeasureLine = asMeasureLines[l];
+			RString &sMeasureLine = asMeasureLines[l];
 			TrimLeft(sMeasureLine);
 			TrimRight(sMeasureLine);
 
@@ -260,7 +260,7 @@ void NoteDataUtil::InsertHoldTails( NoteData &inout )
 	}
 }
 
-void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, CString &notes_out )
+void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, RString &notes_out )
 {
 	//
 	// Get note data
@@ -271,7 +271,7 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, CString &notes_out 
 	float fLastBeat = in.GetLastBeat();
 	int iLastMeasure = int( fLastBeat/BEATS_PER_MEASURE );
 
-	CString &sRet = notes_out;
+	RString &sRet = notes_out;
 
 	sRet = "";
 	

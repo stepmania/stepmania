@@ -51,9 +51,9 @@ XNode *BackgroundDef::CreateNode() const
 }
 
 
-CString BackgroundChange::GetTextDescription() const
+RString BackgroundChange::GetTextDescription() const
 {
-	vector<CString> vsParts;
+	vector<RString> vsParts;
 	if( !m_def.m_sFile1.empty() )	vsParts.push_back( m_def.m_sFile1 );
 	if( !m_def.m_sFile2.empty() )	vsParts.push_back( m_def.m_sFile2 );
 	if( m_fRate!=1.0f )				vsParts.push_back( ssprintf("%.2f%%",m_fRate*100) );
@@ -65,29 +65,29 @@ CString BackgroundChange::GetTextDescription() const
 	if( vsParts.empty() )
 		vsParts.push_back( "(empty)" );
 
-	CString s = join( "\n", vsParts );
+	RString s = join( "\n", vsParts );
 	return s;
 }
 
 
-const CString BACKGROUND_EFFECTS_DIR =		"BackgroundEffects/";
-const CString BACKGROUND_TRANSITIONS_DIR =	"BackgroundTransitions/";
-const CString BG_ANIMS_DIR			= "BGAnimations/";
-const CString VISUALIZATIONS_DIR	= "Visualizations/";
-const CString RANDOMMOVIES_DIR		= "RandomMovies/";
+const RString BACKGROUND_EFFECTS_DIR =		"BackgroundEffects/";
+const RString BACKGROUND_TRANSITIONS_DIR =	"BackgroundTransitions/";
+const RString BG_ANIMS_DIR			= "BGAnimations/";
+const RString VISUALIZATIONS_DIR	= "Visualizations/";
+const RString RANDOMMOVIES_DIR		= "RandomMovies/";
 
-const CString RANDOM_BACKGROUND_FILE    = "-random-";
-const CString NO_SONG_BG_FILE           = "-nosongbg-";
-const CString SONG_BACKGROUND_FILE      = "songbackground";
+const RString RANDOM_BACKGROUND_FILE    = "-random-";
+const RString NO_SONG_BG_FILE           = "-nosongbg-";
+const RString SONG_BACKGROUND_FILE      = "songbackground";
 
-const CString SBE_UpperLeft             = "UpperLeft";
-const CString SBE_Centered              = "Centered";
-const CString SBE_StretchNormal         = "StretchNormal";
-const CString SBE_StretchNoLoop         = "StretchNoLoop";
-const CString SBE_StretchRewind         = "StretchRewind";
-const CString SBT_CrossFade             = "CrossFade";
+const RString SBE_UpperLeft             = "UpperLeft";
+const RString SBE_Centered              = "Centered";
+const RString SBE_StretchNormal         = "StretchNormal";
+const RString SBE_StretchNoLoop         = "StretchNoLoop";
+const RString SBE_StretchRewind         = "StretchRewind";
+const RString SBT_CrossFade             = "CrossFade";
 
-static void StripCvs( vector<CString> &vsPathsToStrip, vector<CString> &vsNamesToStrip )
+static void StripCvs( vector<RString> &vsPathsToStrip, vector<RString> &vsNamesToStrip )
 {
 	ASSERT( vsPathsToStrip.size() == vsNamesToStrip.size() );
 	for( unsigned i=0; i<vsNamesToStrip.size(); i++ )
@@ -110,9 +110,9 @@ void BackgroundUtil::SortBackgroundChangesArray( vector<BackgroundChange> &vBack
 	sort( vBackgroundChanges.begin(), vBackgroundChanges.end(), CompareBackgroundChanges );
 }
 
-void BackgroundUtil::GetBackgroundEffects( const CString &_sName, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut )
+void BackgroundUtil::GetBackgroundEffects( const RString &_sName, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut )
 {
-	CString sName = _sName;
+	RString sName = _sName;
 	if( sName == "" )
 		sName = "*";
 
@@ -120,15 +120,15 @@ void BackgroundUtil::GetBackgroundEffects( const CString &_sName, vector<CString
 	GetDirListing( BACKGROUND_EFFECTS_DIR+sName+".xml", vsPathsOut, false, true );
 	
 	vsNamesOut.clear();
-	FOREACH_CONST( CString, vsPathsOut, s )
+	FOREACH_CONST( RString, vsPathsOut, s )
 		vsNamesOut.push_back( GetFileNameWithoutExtension(*s) );
 
 	StripCvs( vsPathsOut, vsNamesOut );
 }
 
-void BackgroundUtil::GetBackgroundTransitions( const CString &_sName, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut )
+void BackgroundUtil::GetBackgroundTransitions( const RString &_sName, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut )
 {
-	CString sName = _sName;
+	RString sName = _sName;
 	if( sName == "" )
 		sName = "*";
 
@@ -136,13 +136,13 @@ void BackgroundUtil::GetBackgroundTransitions( const CString &_sName, vector<CSt
 	GetDirListing( BACKGROUND_TRANSITIONS_DIR+sName+".xml", vsPathsOut, false, true );
 	
 	vsNamesOut.clear();
-	FOREACH_CONST( CString, vsPathsOut, s )
+	FOREACH_CONST( RString, vsPathsOut, s )
 		vsNamesOut.push_back( GetFileNameWithoutExtension(*s) );
 
 	StripCvs( vsPathsOut, vsNamesOut );
 }
 
-void BackgroundUtil::GetSongBGAnimations( const Song *pSong, const CString &sMatch, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut )
+void BackgroundUtil::GetSongBGAnimations( const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut )
 {
 	vsPathsOut.clear();
 	if( sMatch.empty() )
@@ -155,13 +155,13 @@ void BackgroundUtil::GetSongBGAnimations( const Song *pSong, const CString &sMat
 	}
 	
 	vsNamesOut.clear();
-	FOREACH_CONST( CString, vsPathsOut, s )
+	FOREACH_CONST( RString, vsPathsOut, s )
 		vsNamesOut.push_back( Basename(*s) );
 
 	StripCvs( vsPathsOut, vsNamesOut );
 }
 
-void BackgroundUtil::GetSongMovies( const Song *pSong, const CString &sMatch, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut )
+void BackgroundUtil::GetSongMovies( const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut )
 {
 	vsPathsOut.clear();
 	if( sMatch.empty() )
@@ -176,13 +176,13 @@ void BackgroundUtil::GetSongMovies( const Song *pSong, const CString &sMatch, ve
 	}
 
 	vsNamesOut.clear();
-	FOREACH_CONST( CString, vsPathsOut, s )
+	FOREACH_CONST( RString, vsPathsOut, s )
 		vsNamesOut.push_back( Basename(*s) );
 
 	StripCvs( vsPathsOut, vsNamesOut );
 }
 
-void BackgroundUtil::GetSongBitmaps( const Song *pSong, const CString &sMatch, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut )
+void BackgroundUtil::GetSongBitmaps( const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut )
 {
 	vsPathsOut.clear();
 	if( sMatch.empty() )
@@ -198,13 +198,13 @@ void BackgroundUtil::GetSongBitmaps( const Song *pSong, const CString &sMatch, v
 	}
 
 	vsNamesOut.clear();
-	FOREACH_CONST( CString, vsPathsOut, s )
+	FOREACH_CONST( RString, vsPathsOut, s )
 		vsNamesOut.push_back( Basename(*s) );
 
 	StripCvs( vsPathsOut, vsNamesOut );
 }
 
-static void GetFilterToFileNames( const CString sBaseDir, const Song *pSong, set<CString> &vsPossibleFileNamesOut )
+static void GetFilterToFileNames( const RString sBaseDir, const Song *pSong, set<RString> &vsPossibleFileNamesOut )
 {
 	vsPossibleFileNamesOut.clear();
 
@@ -213,10 +213,10 @@ static void GetFilterToFileNames( const CString sBaseDir, const Song *pSong, set
 
 	ASSERT( !pSong->m_sGroupName.empty() );
 	IniFile ini;
-	CString sPath = sBaseDir+pSong->m_sGroupName+"/"+"BackgroundMapping.ini";
+	RString sPath = sBaseDir+pSong->m_sGroupName+"/"+"BackgroundMapping.ini";
 	ini.ReadFile( sPath );
 	
-	CString sSection;
+	RString sSection;
 	bool bSuccess = ini.GetValue( "GenreToSection", pSong->m_sGenre, sSection );
 	if( !bSuccess )
 	{
@@ -235,13 +235,13 @@ static void GetFilterToFileNames( const CString sBaseDir, const Song *pSong, set
 		vsPossibleFileNamesOut.insert( p->first );
 }
 
-void BackgroundUtil::GetGlobalBGAnimations( const Song *pSong, const CString &sMatch, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut )
+void BackgroundUtil::GetGlobalBGAnimations( const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut )
 {
 	vsPathsOut.clear();
 	GetDirListing( BG_ANIMS_DIR+sMatch+"*", vsPathsOut, true, true );
 
 	vsNamesOut.clear();
-	FOREACH_CONST( CString, vsPathsOut, s )
+	FOREACH_CONST( RString, vsPathsOut, s )
 		vsNamesOut.push_back( Basename(*s) );
 
 	StripCvs( vsPathsOut, vsNamesOut );
@@ -249,9 +249,9 @@ void BackgroundUtil::GetGlobalBGAnimations( const Song *pSong, const CString &sM
 
 void BackgroundUtil::GetGlobalRandomMovies( 
 	const Song *pSong, 
-	const CString &sMatch, 
-	vector<CString> &vsPathsOut, 
-	vector<CString> &vsNamesOut,
+	const RString &sMatch, 
+	vector<RString> &vsPathsOut, 
+	vector<RString> &vsNamesOut,
 	bool bTryInsideOfSongGroupAndGenreFirst,
 	bool bTryInsideOfSongGroupFirst )
 {
@@ -273,11 +273,11 @@ void BackgroundUtil::GetGlobalRandomMovies(
 	// Search for the most appropriate background
 	//
 	{
-		set<CString> ssFileNameWhitelist;
+		set<RString> ssFileNameWhitelist;
 		if( bTryInsideOfSongGroupAndGenreFirst  &&  pSong  &&  !pSong->m_sGenre.empty() )
 			GetFilterToFileNames( RANDOMMOVIES_DIR, pSong, ssFileNameWhitelist );
 
-		vector<CString> vsDirsToTry;
+		vector<RString> vsDirsToTry;
 		if( bTryInsideOfSongGroupFirst && pSong )
 		{
 			ASSERT( !pSong->m_sGroupName.empty() );
@@ -285,7 +285,7 @@ void BackgroundUtil::GetGlobalRandomMovies(
 		}
 		vsDirsToTry.push_back( RANDOMMOVIES_DIR );
 
-		FOREACH_CONST( CString, vsDirsToTry, sDir )
+		FOREACH_CONST( RString, vsDirsToTry, sDir )
 		{
 			GetDirListing( *sDir+"*.avi", vsPathsOut, false, true );
 			GetDirListing( *sDir+"*.mpg", vsPathsOut, false, true );
@@ -295,7 +295,7 @@ void BackgroundUtil::GetGlobalRandomMovies(
 			{
 				for( unsigned i=0; i<vsPathsOut.size(); i++ )
 				{
-					CString sBasename = Basename( vsPathsOut[i] );
+					RString sBasename = Basename( vsPathsOut[i] );
 					bool bFound = ssFileNameWhitelist.find(sBasename) != ssFileNameWhitelist.end();
 					if( !bFound )
 					{
@@ -312,9 +312,9 @@ void BackgroundUtil::GetGlobalRandomMovies(
 
 found_files:
 
-	FOREACH_CONST( CString, vsPathsOut, s )
+	FOREACH_CONST( RString, vsPathsOut, s )
 	{
-		CString sName = s->Right( s->size() - RANDOMMOVIES_DIR.size() - 1 );
+		RString sName = s->Right( s->size() - RANDOMMOVIES_DIR.size() - 1 );
 		vsNamesOut.push_back( sName );
 	}
 	StripCvs( vsPathsOut, vsNamesOut );

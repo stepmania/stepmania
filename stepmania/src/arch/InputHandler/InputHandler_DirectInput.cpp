@@ -576,7 +576,7 @@ void InputHandler_DInput::InputThreadMain()
 	CloseHandle(Handle);
 }
 
-void InputHandler_DInput::GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut )
+void InputHandler_DInput::GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut )
 {
 	for( unsigned i=0; i < Devices.size(); ++i )
 	{

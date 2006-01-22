@@ -111,7 +111,7 @@ RageTexture* RageTextureManager::LoadTextureInternal( RageTextureID ID )
 	}
 
 	// The texture is not already loaded.  Load it.
-	CString sExt = GetExtension( ID.filename );
+	RString sExt = GetExtension( ID.filename );
 	sExt.MakeLower();
 
 	RageTexture* pTexture;
@@ -205,7 +205,7 @@ void RageTextureManager::GarbageCollect( GCType type )
 		std::map<RageTextureID, RageTexture*>::iterator j = i;
 		i++;
 
-		CString sPath = j->first.filename;
+		RString sPath = j->first.filename;
 		RageTexture* t = j->second;
 
 		if( t->m_iRefCount )
@@ -295,8 +295,8 @@ void RageTextureManager::DiagnosticOutput() const
 		const RageTextureID &ID = i->first;
 		const RageTexture *pTex = i->second;
 
-		CString sDiags = DISPLAY->GetTextureDiagnostics( pTex->GetTexHandle() );
-		CString sStr = ssprintf( "%3ix%3i (%2i)", pTex->GetTextureHeight(), pTex->GetTextureWidth(),
+		RString sDiags = DISPLAY->GetTextureDiagnostics( pTex->GetTexHandle() );
+		RString sStr = ssprintf( "%3ix%3i (%2i)", pTex->GetTextureHeight(), pTex->GetTextureWidth(),
 			pTex->m_iRefCount );
 
 		if( sDiags != "" )

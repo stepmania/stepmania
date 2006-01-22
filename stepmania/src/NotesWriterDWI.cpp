@@ -11,10 +11,10 @@
 #include "Steps.h"
 
 /* Output is an angle bracket expression without angle brackets, eg. "468". */
-CString NotesWriterDWI::NotesToDWIString( const TapNote tnCols[6] )
+RString NotesWriterDWI::NotesToDWIString( const TapNote tnCols[6] )
 {
 	const char dirs[] = { '4', 'C', '2', '8', 'D', '6' };
-	CString taps, holds, ret;
+	RString taps, holds, ret;
 	for( int col = 0; col < 6; ++col )
 	{
 		switch( tnCols[col].type )
@@ -33,7 +33,7 @@ CString NotesWriterDWI::NotesToDWIString( const TapNote tnCols[6] )
 	if( holds.size() + taps.size() == 0 )
 		return "0";
 
-//	CString combine = taps;
+//	RString combine = taps;
 //	for( unsigned i = 0; i < holds.size(); ++i )
 //		combine += ssprintf("%c!%c", holds[i], holds[i]);
 
@@ -83,7 +83,7 @@ CString NotesWriterDWI::NotesToDWIString( const TapNote tnCols[6] )
 	return '0';*/
 }
 
-CString NotesWriterDWI::NotesToDWIString( TapNote tnCol1, TapNote tnCol2, TapNote tnCol3, TapNote tnCol4, TapNote tnCol5, TapNote tnCol6 )
+RString NotesWriterDWI::NotesToDWIString( TapNote tnCol1, TapNote tnCol2, TapNote tnCol3, TapNote tnCol4, TapNote tnCol5, TapNote tnCol6 )
 {
 	TapNote tnCols[6];
 	tnCols[0] = tnCol1;
@@ -95,7 +95,7 @@ CString NotesWriterDWI::NotesToDWIString( TapNote tnCol1, TapNote tnCol2, TapNot
 	return NotesToDWIString( tnCols );
 }
 
-CString NotesWriterDWI::NotesToDWIString( TapNote tnCol1, TapNote tnCol2, TapNote tnCol3, TapNote tnCol4 )
+RString NotesWriterDWI::NotesToDWIString( TapNote tnCol1, TapNote tnCol2, TapNote tnCol3, TapNote tnCol4 )
 {
 	return NotesToDWIString( tnCol1, TAP_EMPTY, tnCol2, tnCol3, TAP_EMPTY, tnCol4 );
 }
@@ -135,7 +135,7 @@ char NotesWriterDWI::OptimizeDWIPair( char c1, char c2 )
 	return it->second;
 }
 
-CString NotesWriterDWI::OptimizeDWIString( CString holds, CString taps )
+RString NotesWriterDWI::OptimizeDWIString( RString holds, RString taps )
 {
 	/* First, sort the holds and taps in ASCII order.  This puts 2468 first.
 	 * This way 1379 combinations will always be found first, so we'll always
@@ -144,7 +144,7 @@ CString NotesWriterDWI::OptimizeDWIString( CString holds, CString taps )
 	sort( taps.begin(), taps.end() );
 
 	/* Combine characters as much as possible. */
-	CString comb_taps, comb_holds;
+	RString comb_taps, comb_holds;
 
 	/* 24 -> 1 */
 	while( taps.size() > 1 )
@@ -175,7 +175,7 @@ CString NotesWriterDWI::OptimizeDWIString( CString holds, CString taps )
 
 	/* Now we have at most one single tap and one hold remaining, and any
 	 * number of taps and holds in comb_taps and comb_holds. */
-	CString ret;
+	RString ret;
 	ret += taps;
 	ret += comb_taps;
 	if( holds.size() == 1 )
@@ -240,7 +240,7 @@ void NotesWriterDWI::WriteDWINotesField( RageFile &f, const Steps &out, int star
 		{
 			int row = BeatToNoteRow( (float)b );
 
-			CString str;
+			RString str;
 			switch( out.m_StepsType )
 			{
 			case STEPS_TYPE_DANCE_SINGLE:
@@ -343,7 +343,7 @@ bool NotesWriterDWI::WriteDWINotesTag( RageFile &f, const Steps &out )
 	return true;
 }
 
-bool NotesWriterDWI::Write( CString sPath, const Song &out )
+bool NotesWriterDWI::Write( RString sPath, const Song &out )
 {
 	RageFile f;
 	if( !f.Open( sPath, RageFile::WRITE ) )

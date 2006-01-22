@@ -26,27 +26,27 @@ static const char* g_szKeys[NUM_KEYBOARD_ROWS][KEYS_PER_ROW] =
 
 static Preference<bool> g_bAllowOldKeyboardInput( "AllowOldKeyboardInput",	true );
 
-CString ScreenTextEntry::s_sLastAnswer = "";
+RString ScreenTextEntry::s_sLastAnswer = "";
 
 /* Settings: */
 namespace
 {
-	CString g_sQuestion;
-	CString g_sInitialAnswer;
+	RString g_sQuestion;
+	RString g_sInitialAnswer;
 	int g_iMaxInputLength;
-	bool(*g_pValidate)(const CString &sAnswer,CString &sErrorOut);
-	void(*g_pOnOK)(const CString &sAnswer);
+	bool(*g_pValidate)(const RString &sAnswer,RString &sErrorOut);
+	void(*g_pOnOK)(const RString &sAnswer);
 	void(*g_pOnCancel)();
 	bool g_bPassword;
 };
 
 void ScreenTextEntry::TextEntry( 
 	ScreenMessage smSendOnPop, 
-	CString sQuestion, 
-	CString sInitialAnswer, 
+	RString sQuestion, 
+	RString sInitialAnswer, 
 	int iMaxInputLength,
-	bool(*Validate)(const CString &sAnswer,CString &sErrorOut), 
-	void(*OnOK)(const CString &sAnswer), 
+	bool(*Validate)(const RString &sAnswer,RString &sErrorOut), 
+	void(*OnOK)(const RString &sAnswer), 
 	void(*OnCancel)(),
 	bool bPassword
 	)
@@ -165,7 +165,7 @@ void ScreenTextEntry::UpdateKeyboardText()
 	{
 		for( int x=0; x<KEYS_PER_ROW; ++x )
 		{
-			CString s = g_szKeys[r][x];
+			RString s = g_szKeys[r][x];
 			if( !s.empty()  &&  r == KEYBOARD_ROW_SPECIAL )
 				s = THEME->GetString( "ScreenTextEntry", s );
 			BitmapText &bt = *m_ptextKeys[r][x];
@@ -176,7 +176,7 @@ void ScreenTextEntry::UpdateKeyboardText()
 
 void ScreenTextEntry::UpdateAnswerText()
 {
-	CString s;
+	RString s;
 	if( g_bPassword )
 		s = RString( m_sAnswer.size(), '*' );
 	else
@@ -279,7 +279,7 @@ void ScreenTextEntry::Input( const InputEventPlus &input )
 
 void ScreenTextEntry::MoveX( int iDir )
 {
-	CString sKey;
+	RString sKey;
 	do
 	{
 		m_iFocusX += iDir;
@@ -295,7 +295,7 @@ void ScreenTextEntry::MoveX( int iDir )
 
 void ScreenTextEntry::MoveY( int iDir )
 {
-	CString sKey;
+	RString sKey;
 	do
 	{
 		m_iFocusY = (KeyboardRow)(m_iFocusY + iDir);
@@ -325,7 +325,7 @@ void ScreenTextEntry::MoveY( int iDir )
 	PositionCursor();
 }
 
-void ScreenTextEntry::AppendToAnswer( CString s )
+void ScreenTextEntry::AppendToAnswer( RString s )
 {
 	wstring sNewAnswer = m_sAnswer+RStringToWstring(s);
 	if( (int)sNewAnswer.length() > g_iMaxInputLength )
@@ -392,8 +392,8 @@ void ScreenTextEntry::End( bool bCancelled )
 	}
 	else
 	{
-		CString sAnswer = WStringToRString(m_sAnswer);
-		CString sError;
+		RString sAnswer = WStringToRString(m_sAnswer);
+		RString sError;
 		if ( g_pValidate != NULL )
 		{
 			bool bValidAnswer = g_pValidate( sAnswer, sError );
@@ -406,7 +406,7 @@ void ScreenTextEntry::End( bool bCancelled )
 
 		if( g_pOnOK )
 		{
-			CString ret = WStringToRString(m_sAnswer);
+			RString ret = WStringToRString(m_sAnswer);
 			FontCharAliases::ReplaceMarkers(ret);
 			g_pOnOK( ret );
 		}
@@ -421,7 +421,7 @@ void ScreenTextEntry::End( bool bCancelled )
 	OFF_COMMAND( m_sprCursor );
 
 	s_bCancelledLast = bCancelled;
-	s_sLastAnswer = bCancelled ? CString("") : WStringToRString(m_sAnswer);
+	s_sLastAnswer = bCancelled ? RString("") : WStringToRString(m_sAnswer);
 }
 
 void ScreenTextEntry::MenuBack( PlayerNumber pn )

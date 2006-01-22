@@ -14,7 +14,7 @@ public:
 	virtual Actor *Copy() const;
 	
 	void Load();
-	void LoadFromNode( const CString& sDir, const XNode* pNode );
+	void LoadFromNode( const RString& sDir, const XNode* pNode );
 
 	void SetFromGameState();
 	void TweenInAfterChangedCourse();

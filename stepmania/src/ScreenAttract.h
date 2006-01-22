@@ -14,7 +14,7 @@ public:
 	virtual void Init();
 
 	static void AttractInput( const InputEventPlus &input, ScreenWithMenuElements *pScreen );
-	static void GoToStartScreen( CString sScreenName );
+	static void GoToStartScreen( RString sScreenName );
 	
 	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );

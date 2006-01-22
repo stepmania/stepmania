@@ -81,10 +81,10 @@ void ScreenSystemLayer::ReloadCreditsText()
 	this->SortByDrawOrder();
 }
 
-CString ScreenSystemLayer::GetCreditsMessage( PlayerNumber pn ) const
+RString ScreenSystemLayer::GetCreditsMessage( PlayerNumber pn ) const
 {
 	if( (bool)CREDITS_JOIN_ONLY && !GAMESTATE->PlayersCanJoin() )
-		return CString();
+		return RString();
 
 	bool bShowCreditsMessage;
 	if( SCREENMAN && SCREENMAN->GetTopScreen() && SCREENMAN->GetTopScreen()->GetScreenType() == system_menu )
@@ -112,7 +112,7 @@ CString ScreenSystemLayer::GetCreditsMessage( PlayerNumber pn ) const
 			else if( GAMESTATE->PlayersCanJoin() )
 				return CREDITS_INSERT_CARD.GetValue();
 			else
-				return CString();
+				return RString();
 
 		case MemoryCardState_Error: 		return THEME->GetMetric( m_sName, "CreditsCard" + MEMCARDMAN->GetCardError(pn) );
 		case MemoryCardState_TooLate:	return CREDITS_CARD_TOO_LATE.GetValue();
@@ -127,7 +127,7 @@ CString ScreenSystemLayer::GetCreditsMessage( PlayerNumber pn ) const
 				// If there is a local profile loaded, prefer it over the name of the memory card.
 				if( PROFILEMAN->IsPersistentProfile(pn) )
 				{
-					CString s = pProfile->GetDisplayNameOrHighScoreName();
+					RString s = pProfile->GetDisplayNameOrHighScoreName();
 					if( s.empty() )
 						s = CREDITS_CARD_NO_NAME.GetValue();
 					if( PROFILEMAN->LastLoadWasFromLastGood(pn) )
@@ -159,7 +159,7 @@ CString ScreenSystemLayer::GetCreditsMessage( PlayerNumber pn ) const
 		{
 			int Credits = GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit;
 			int Coins = GAMESTATE->m_iCoins % PREFSMAN->m_iCoinsPerCredit;
-			CString sCredits = CREDITS_CREDITS;
+			RString sCredits = CREDITS_CREDITS;
 			if( Credits > 0 || PREFSMAN->m_iCoinsPerCredit == 1 )
 				sCredits += ssprintf("  %d", Credits);
 			if( PREFSMAN->m_iCoinsPerCredit > 1 )
@@ -178,7 +178,7 @@ CString ScreenSystemLayer::GetCreditsMessage( PlayerNumber pn ) const
 	}
 }
 
-void ScreenSystemLayer::HandleMessage( const CString &sMessage )
+void ScreenSystemLayer::HandleMessage( const RString &sMessage )
 {
 	if( sMessage == "RefreshCreditText" )
 	{

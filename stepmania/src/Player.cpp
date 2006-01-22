@@ -44,8 +44,8 @@
 #include "GameCommand.h"
 #include "LocalizedString.h"
 
-CString COMBO_X_NAME( size_t p, size_t both_sides )			{ return "ComboXOffset" + (both_sides ? CString("BothSides") : ssprintf("OneSideP%d",int(p+1)) ); }
-CString ATTACK_DISPLAY_X_NAME( size_t p, size_t both_sides ){ return "AttackDisplayXOffset" + (both_sides ? CString("BothSides") : ssprintf("OneSideP%d",int(p+1)) ); }
+RString COMBO_X_NAME( size_t p, size_t both_sides )			{ return "ComboXOffset" + (both_sides ? RString("BothSides") : ssprintf("OneSideP%d",int(p+1)) ); }
+RString ATTACK_DISPLAY_X_NAME( size_t p, size_t both_sides ){ return "AttackDisplayXOffset" + (both_sides ? RString("BothSides") : ssprintf("OneSideP%d",int(p+1)) ); }
 
 /* Distance to search for a note in Step(), in seconds. */
 static const float StepSearchDistance = 1.0f;
@@ -134,7 +134,7 @@ Player::~Player()
 
 /* Init() does the expensive stuff: load sounds and note skins.  Load() just loads a NoteData. */
 void Player::Init(
-	const CString &sType,
+	const RString &sType,
 	PlayerState* pPlayerState, 
 	PlayerStageStats* pPlayerStageStats,
 	LifeMeter* pLM, 
@@ -431,14 +431,14 @@ void Player::Load( const NoteData& noteData )
 	// fade on the copy.
 	//
 	const Song* pSong = GAMESTATE->m_pCurSong;
-	CString sSongDir = pSong->GetSongDir();
+	RString sSongDir = pSong->GetSongDir();
 	m_vKeysounds.resize( pSong->m_vsKeysoundFile.size() );
 
 	RageSoundParams p;
 	GameSoundManager::SetPlayerBalance( pn, p );
 	for( unsigned i=0; i<m_vKeysounds.size(); i++ )
 	{
-		 CString sKeysoundFilePath = sSongDir + pSong->m_vsKeysoundFile[i];
+		 RString sKeysoundFilePath = sSongDir + pSong->m_vsKeysoundFile[i];
 		 RageSound& sound = m_vKeysounds[i];
 		 if( sound.GetLoadedFilePath() != sKeysoundFilePath )
 			sound.Load( sKeysoundFilePath, true );
@@ -1344,7 +1344,7 @@ void Player::HandleAutosync(float fNoteOffset)
 	const float mean = calc_mean( m_fOffset, m_fOffset+SAMPLE_COUNT );
 	const float stddev = calc_stddev( m_fOffset, m_fOffset+SAMPLE_COUNT );
 
-	CString sAutosyncType;
+	RString sAutosyncType;
 	switch( GAMESTATE->m_SongOptions.m_AutosyncType )
 	{
 	case SongOptions::AUTOSYNC_SONG:
@@ -1855,7 +1855,7 @@ bool Player::IsPlayingBeginner() const
 	return pSteps && pSteps->GetDifficulty() == DIFFICULTY_BEGINNER;
 }
 
-void Player::HandleMessage( const CString& sMessage )
+void Player::HandleMessage( const RString& sMessage )
 {
 	// Reset autosync samples when toggling
 	if( sMessage == MessageToString(Message_AutosyncChanged) )

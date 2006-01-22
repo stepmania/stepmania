@@ -126,7 +126,7 @@ works only if there are 5 banners in the scrolling list.
 void MusicBannerWheel::InsertNewBanner(int direction)
 {
 	Song* pSong = NULL;
-	CString sGraphicPath;
+	RString sGraphicPath;
 	int elementtoreplace=0;	
 
 	if(	direction == GOINGLEFT)
@@ -215,7 +215,7 @@ and once only.
 void MusicBannerWheel::LoadSongData()
 {
 	Song* pSong = NULL;
-	vector<CString> asGraphicPaths;
+	vector<RString> asGraphicPaths;
 
 	if(MAXSONGSINBUFFER >= arraySongs.size() && SingleLoad != 1)  // less than the MAXSONGSINBUFFER means we can get away with loading the lot in one go
 	{
@@ -308,7 +308,7 @@ void MusicBannerWheel::ScanToNextGroup()
 	int startingPos = localPos;
 	Song* pSong;
 	pSong = arraySongs[currentPos];
-	CString currentGroupName = pSong->m_sGroupName;
+	RString currentGroupName = pSong->m_sGroupName;
 	localPos++;
 	while(localPos != startingPos)
 	{

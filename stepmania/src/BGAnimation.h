@@ -13,11 +13,11 @@ public:
 	BGAnimation();
 	virtual ~BGAnimation();
 
-	void LoadFromAniDir( const CString &sAniDir );
-	void LoadFromNode( const CString& sDir, const XNode* pNode );
+	void LoadFromAniDir( const RString &sAniDir );
+	void LoadFromNode( const RString& sDir, const XNode* pNode );
 
 protected:
-	void AddLayersFromAniDir( const CString &_sAniDir, const XNode *pNode );
+	void AddLayersFromAniDir( const RString &_sAniDir, const XNode *pNode );
 };
 
 #endif

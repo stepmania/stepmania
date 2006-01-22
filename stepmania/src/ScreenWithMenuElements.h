@@ -63,7 +63,7 @@ protected:
 	ThemeMetric<float>			TIMER_SECONDS;
 
 private:
-	CString m_sPathToMusic;
+	RString m_sPathToMusic;
 };
 
 #endif

@@ -30,11 +30,11 @@ void GradeDisplay::Load( RageTextureID ID )
 	Sprite::StopAnimating();
 
 	bool bWarn = Sprite::GetNumStates() != 8 && Sprite::GetNumStates() != 16;
-	if( ID.filename.find("_blank") != CString::npos )
+	if( ID.filename.find("_blank") != RString::npos )
 		bWarn = false;
 	if( bWarn )
 	{
-		CString sError = ssprintf( "The grade graphic '%s' must have either 8 or 16 frames.", ID.filename.c_str() );
+		RString sError = ssprintf( "The grade graphic '%s' must have either 8 or 16 frames.", ID.filename.c_str() );
 		LOG->Warn( sError );
 		Dialog::OK( sError );
 	}

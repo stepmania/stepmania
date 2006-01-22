@@ -11,7 +11,7 @@ struct Attack
 	AttackLevel	level;
 	float fStartSecond; // -1 = now
 	float fSecsRemaining;
-	CString sModifiers;
+	RString sModifiers;
 	bool bOn; // set and used by GAMESTATE
 	bool bGlobal; // true for song-wide course mods
 	bool bShowInAttackList;
@@ -21,7 +21,7 @@ struct Attack
 		level = ATTACK_LEVEL_1;
 		fStartSecond = -1;
 		fSecsRemaining = 0;
-		sModifiers = CString();
+		sModifiers = RString();
 		bOn = false;
 		bGlobal = false;
 		bShowInAttackList = true;
@@ -31,7 +31,7 @@ struct Attack
 		AttackLevel	level_,
 		float fStartSecond_,
 		float fSecsRemaining_,
-		CString sModifiers_,
+		RString sModifiers_,
 		bool bOn_,
 		bool bGlobal_,
 		bool bShowInAttackList_ = true )
@@ -49,8 +49,8 @@ struct Attack
 	bool IsBlank() const { return sModifiers.empty(); }
 	bool operator== ( const Attack &rhs ) const;
 	bool ContainsTransformOrTurn() const;
-	static Attack FromGlobalCourseModifier( const CString &sModifiers );
-	CString GetTextDescription() const;
+	static Attack FromGlobalCourseModifier( const RString &sModifiers );
+	RString GetTextDescription() const;
 };
 
 struct AttackArray : public vector<Attack>

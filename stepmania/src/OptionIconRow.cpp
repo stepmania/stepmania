@@ -24,7 +24,7 @@ OptionIconRow::OptionIconRow()
 	}
 }
 
-void OptionIconRow::LoadFromNode( const CString& sDir, const XNode* pNode )
+void OptionIconRow::LoadFromNode( const RString& sDir, const XNode* pNode )
 {
 	Load();
 
@@ -74,7 +74,7 @@ static const OptionColumnEntry g_OptionColumnEntries[] =
 	{"Distant",		6},
 };
 
-int OptionToPreferredColumn( CString sOptionText )
+int OptionToPreferredColumn( RString sOptionText )
 {
 	/* Speedups always go in column 0. digit ... x */
 	if( sOptionText.size() > 1 &&
@@ -103,17 +103,17 @@ void OptionIconRow::SetFromGameState( PlayerNumber pn )
 {
 	// init
 
-	CString sOptions = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetString();
-	vector<CString> asOptions;
+	RString sOptions = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetString();
+	vector<RString> asOptions;
 	split( sOptions, ", ", asOptions, true );
 
 
-	CString asTabs[NUM_OPTION_COLS-1];	// fill these with what will be displayed on the tabs
+	RString asTabs[NUM_OPTION_COLS-1];	// fill these with what will be displayed on the tabs
 	
 	// for each option, look for the best column to place it in
 	for( unsigned i=0; i<asOptions.size(); i++ )
 	{
-		CString sOption = asOptions[i];
+		RString sOption = asOptions[i];
 		int iPerferredCol = OptionToPreferredColumn( sOption );
 
 		if( iPerferredCol == -1 )

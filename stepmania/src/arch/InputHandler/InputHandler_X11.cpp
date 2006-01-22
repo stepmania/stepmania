@@ -170,7 +170,7 @@ void InputHandler_X11::Update()
 }
 
 
-void InputHandler_X11::GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut )
+void InputHandler_X11::GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut )
 {
 	vDevicesOut.push_back( DEVICE_KEYBOARD );
 	vDescriptionsOut.push_back( "Keyboard" );

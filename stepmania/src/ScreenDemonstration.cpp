@@ -26,10 +26,10 @@ void ScreenDemonstration::Init()
 {
 	// Choose a Style
 	{
-		vector<CString> v;
+		vector<RString> v;
 		split( ALLOW_STYLE_TYPES, ",", v );
 		vector<StyleType> vStyleTypeAllow;
-		FOREACH_CONST( CString, v, s )
+		FOREACH_CONST( RString, v, s )
 		{
 			StyleType st = StringToStyleType( *s );
 			ASSERT( st != STYLE_TYPE_INVALID );

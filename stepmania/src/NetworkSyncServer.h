@@ -10,7 +10,7 @@
 class LanPlayer
 {
 public:
-	CString name;
+	RString name;
 	long score;
 	int health;
 	int feet;
@@ -23,17 +23,17 @@ public:
 	double offset;
 	int PlayerID;
 	int diff;
-	CString options;
+	RString options;
 	LanPlayer();
 };
 
 class GameInfo
 {
 public:
-	CString title;
-	CString subtitle;
-	CString artist;
-	CString course;
+	RString title;
+	RString subtitle;
+	RString artist;
+	RString course;
 };
 
 class GameClient
@@ -42,7 +42,7 @@ public:
 	bool GotStartRequest;
 	EzSockets clientSocket;
 	void UpdateStats(PacketFunctions &Packet);
-	void SetClientVersion(int ver, const CString& b);
+	void SetClientVersion(int ver, const RString& b);
 	void StartRequest(PacketFunctions &Packet);
 	int GetData(PacketFunctions &Packet);
 	GameClient();
@@ -82,8 +82,8 @@ public:
 	void ServerUpdate();
 	StepManiaLanServer();
 	~StepManiaLanServer();
-	CString servername;
-	CString lastError;
+	RString servername;
+	RString lastError;
 	int lastErrorCode;
 
 private:
@@ -100,7 +100,7 @@ private:
 	GameInfo CurrentSongInfo;
 	GameInfo LastSongInfo;
 	bool SecondSameSelect;
-	vector<CString> bannedIPs;
+	vector<RString> bannedIPs;
 
 	void Hello(PacketFunctions& Packet, const unsigned int clientNum);
 	void UpdateClients();
@@ -115,9 +115,9 @@ private:
 	void StatsNameColumn(PacketFunctions& data, vector<LanPlayer*> &playresPtr);
 	void SendNetPacket(const unsigned int clientNum, PacketFunctions &Packet);
 	int SortStats(vector<LanPlayer*> &playresPtr);
-	void RelayChat(CString &passedmessage, const unsigned int clientNum);
+	void RelayChat(RString &passedmessage, const unsigned int clientNum);
 	void SelectSong(PacketFunctions& Packet, const unsigned int clientNum);
-	void ServerChat(const CString& message);
+	void ServerChat(const RString& message);
 	void SendToAllClients(PacketFunctions& Packet);
 	bool CheckHasSongState();
 	void ClearHasSong();
@@ -126,10 +126,10 @@ private:
 	void GameOver(PacketFunctions& Packet, const unsigned int clientNum);
 	void ScreenNetMusicSelectStatus(PacketFunctions& Packet, const unsigned int clientNum);
 	void AnalizeChat(PacketFunctions &Packet, const unsigned int clientNum);
-	CString StepManiaLanServer::ListPlayers();
-	void Kick(CString &name);
-	void Ban(CString &name);
-	bool IsBanned(CString &ip);
+	RString StepManiaLanServer::ListPlayers();
+	void Kick(RString &name);
+	void Ban(RString &name);
+	bool IsBanned(RString &ip);
 	void ForceStart();
 	void CheckLowerJudge(const unsigned int clientNum);
 	bool CheckConnection(const unsigned int clientNum);

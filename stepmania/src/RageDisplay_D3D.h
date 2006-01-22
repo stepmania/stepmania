@@ -8,9 +8,9 @@ class RageDisplay_D3D: public RageDisplay
 public:
 	RageDisplay_D3D();
 	virtual ~RageDisplay_D3D();
-	CString Init( VideoModeParams p );
+	RString Init( VideoModeParams p );
 
-	virtual CString GetApiDescription() const { return "D3D"; }
+	virtual RString GetApiDescription() const { return "D3D"; }
 	virtual void GetDisplayResolutions( DisplayResolutions &out ) const;
 	void ResolutionChanged();
 	const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const;
@@ -78,7 +78,7 @@ protected:
 	void DrawTrianglesInternal( const RageSpriteVertex v[], int iNumVerts );
 	void DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int iMeshIndex );
 
-	CString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut );
+	RString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut );
 	RageSurface* CreateScreenshot();
 	RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 
 

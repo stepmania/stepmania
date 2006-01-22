@@ -56,7 +56,7 @@ void ActorScroller::Load2(
 	LUA->Release( L );
 }
 
-void ActorScroller::SetTransformFromExpression( const CString &sTransformFunction )
+void ActorScroller::SetTransformFromExpression( const RString &sTransformFunction )
 {
 	m_exprTransformFunction.SetFromExpression( sTransformFunction );
 }
@@ -96,20 +96,20 @@ float ActorScroller::GetSecondsForCompleteScrollThrough() const
 	return fTotalItems * (m_fSecondsPerItem + m_fSecondsPauseBetweenItems );
 }
 
-void ActorScroller::LoadFromNode( const CString &sDir, const XNode *pNode )
+void ActorScroller::LoadFromNode( const RString &sDir, const XNode *pNode )
 {
 	ActorFrame::LoadFromNode( sDir, pNode );
 
 #define GET_VALUE( szName, valueOut ) \
 	if( !pNode->GetAttrValue( szName, valueOut ) ) { \
-		CString sError = ssprintf("ActorScroller in '%s' is missing the value Scroller::%s", sDir.c_str(), szName); \
+		RString sError = ssprintf("ActorScroller in '%s' is missing the value Scroller::%s", sDir.c_str(), szName); \
 		LOG->Warn( sError ); \
 		Dialog::OK( sError ); \
 	}
 
 	float fSecondsPerItem = 0;
 	float fNumItemsToDraw = 0;
-	CString sTransformFunction;
+	RString sTransformFunction;
 	int iSubdivisions = 1;
 
 	GET_VALUE( "SecondsPerItem", fSecondsPerItem );

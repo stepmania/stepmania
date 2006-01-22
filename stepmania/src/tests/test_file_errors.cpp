@@ -9,8 +9,8 @@
 
 #include <errno.h>
 
-static CString g_TestFile;
-static CString g_TestFilename;
+static RString g_TestFile;
+static RString g_TestFilename;
 static int g_BytesUntilError = 6;
 
 /*
@@ -22,26 +22,26 @@ static int g_BytesUntilError = 6;
 class RageFileDriverTest: public RageFileDriver
 {
 public:
-	RageFileDriverTest( CString root );
+	RageFileDriverTest( RString root );
 
-	RageFileObj *Open( const CString &path, int mode, RageFile &p, int &err );
-	bool Remove( const CString &sPath ) { return false; }
+	RageFileObj *Open( const RString &path, int mode, RageFile &p, int &err );
+	bool Remove( const RString &sPath ) { return false; }
 	bool Ready() { return true; }
 
 private:
-	CString root;
+	RString root;
 };
 
 static struct FileDriverEntry_TEST: public FileDriverEntry
 {
 	FileDriverEntry_TEST(): FileDriverEntry( "TEST" ) { }
-	RageFileDriver *Create( CString Root ) const { return new RageFileDriverTest( Root ); }
+	RageFileDriver *Create( RString Root ) const { return new RageFileDriverTest( Root ); }
 } const g_RegisterDriver;
 
 class TestFilenameDB: public FilenameDB
 {
 protected:
-	virtual void PopulateFileSet( FileSet &fs, const CString &sPath )
+	virtual void PopulateFileSet( FileSet &fs, const RString &sPath )
 	{
 		if( sPath != "." )
 			return;
@@ -58,10 +58,10 @@ protected:
 		fs.files.insert(f);
 	}
 	
-	CString root;
+	RString root;
 
 public:
-	TestFilenameDB( CString root_ )
+	TestFilenameDB( RString root_ )
 	{
 		root = root_;
 		if( root == "./" )
@@ -73,7 +73,7 @@ public:
 class RageFileObjTest: public RageFileObj
 {
 public:
-	RageFileObjTest( const CString &path, RageFile &p );
+	RageFileObjTest( const RString &path, RageFile &p );
 	int Read(void *buffer, size_t bytes);
 	int Write(const void *buffer, size_t bytes);
 	int Flush();
@@ -84,16 +84,16 @@ public:
 		return pos;
 	}
 	RageFileObj *Copy( RageFile &p ) const;
-	CString GetDisplayPath() const { return path; }
+	RString GetDisplayPath() const { return path; }
 	int GetFileSize() { return g_TestFile.size(); }
 
 private:
-	CString path; /* for Copy */
+	RString path; /* for Copy */
 	int pos;
 };
 
 
-RageFileDriverTest::RageFileDriverTest( CString root_ ):
+RageFileDriverTest::RageFileDriverTest( RString root_ ):
 	RageFileDriver( new TestFilenameDB(root_) ),
 	root(root_)
 {
@@ -102,7 +102,7 @@ RageFileDriverTest::RageFileDriverTest( CString root_ ):
 }
 
 
-RageFileObj *RageFileDriverTest::Open( const CString &path, int mode, RageFile &p, int &err )
+RageFileObj *RageFileDriverTest::Open( const RString &path, int mode, RageFile &p, int &err )
 {
 	if( path != g_TestFilename )
 	{
@@ -123,7 +123,7 @@ RageFileObj *RageFileObjTest::Copy( RageFile &p ) const
 }
 
 static const unsigned int BUFSIZE = 1024*64;
-RageFileObjTest::RageFileObjTest( const CString &path_, RageFile &p ):
+RageFileObjTest::RageFileObjTest( const RString &path_, RageFile &p ):
 	RageFileObj( p )
 {
 	path = path_;
@@ -204,7 +204,7 @@ void SanityCheck()
 		if( !test.Open("test/file", RageFile::READ ) )
 			Fail( "Sanity check Open() failed: %s", test.GetError().c_str() );
 
-		CString str;
+		RString str;
 		int got = test.GetLine( str );
 		if( got <= 0 )
 			Fail( "Sanity check GetLine(): got %i", got );
@@ -223,7 +223,7 @@ void SanityCheck()
 		if( !test.Open("test/file", RageFile::READ ) )
 			Fail( "Sanity check 2 Open() failed: %s", test.GetError().c_str() );
 
-		CString str;
+		RString str;
 		int got = test.Read( str, 5 );
 		if( got != 5 )
 			Fail( "Sanity check 2 Read(): got %i", got );
@@ -278,7 +278,7 @@ void IniTest()
 		if( !test.ReadFile( "test/file" ) )
 			Fail( "INI: ReadFile failed: %s", test.GetError().c_str() );
 
-		CString sStr;
+		RString sStr;
 		if( !test.GetValue( "test", "abc", sStr ) )
 			Fail( "INI: GetValue failed" );
 		if( sStr != "def" )
@@ -334,7 +334,7 @@ void MsdTest()
 			Fail( "MSD: GetNumValues: expected 1, got %i", test.GetNumValues() );
 		if( test.GetNumParams(0) != 1 )
 			Fail( "MSD: GetNumParams(0): expected 1, got %i", test.GetNumParams(0) );
-		CString sStr = test.GetValue(0)[0];
+		RString sStr = test.GetValue(0)[0];
 		if( sStr != "FOO" )
 			Fail( "MSD: GetValue failed: expected \"FOO\", got \"%s\"", sStr.c_str() );
 	} while(false);

@@ -151,7 +151,7 @@ GraphDisplay::~GraphDisplay()
 	SAFE_DELETE( m_pGraphBody );
 }
 
-void GraphDisplay::LoadFromNode( const CString& sDir, const XNode* pNode )
+void GraphDisplay::LoadFromNode( const RString& sDir, const XNode* pNode )
 {
 	ActorFrame::LoadFromNode( sDir, pNode );
 

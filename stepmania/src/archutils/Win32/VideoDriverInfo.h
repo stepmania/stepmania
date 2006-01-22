@@ -5,16 +5,16 @@
 
 struct VideoDriverInfo
 {
-	CString sProvider;
-	CString sDescription;
-	CString sVersion;
-	CString sDate;
-	CString sDeviceID;
+	RString sProvider;
+	RString sDescription;
+	RString sVersion;
+	RString sDate;
+	RString sDeviceID;
 };
 
-CString GetPrimaryVideoName();
+RString GetPrimaryVideoName();
 bool GetVideoDriverInfo( int iCardno, VideoDriverInfo &info );
-CString GetPrimaryVideoDriverName();
+RString GetPrimaryVideoDriverName();
 
 #endif
 

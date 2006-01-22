@@ -43,7 +43,7 @@ class InputFilter
 {
 public:
 	void ButtonPressed( const DeviceInput &di, bool Down );
-	void SetButtonComment( const DeviceInput &di, const CString &sComment = "" );
+	void SetButtonComment( const DeviceInput &di, const RString &sComment = "" );
 	void ResetDevice( InputDevice dev );
 
 	InputFilter();
@@ -57,7 +57,7 @@ public:
 
 	bool IsBeingPressed( const DeviceInput &di );
 	float GetSecsHeld( const DeviceInput &di );
-	CString GetButtonComment( const DeviceInput &di ) const;
+	RString GetButtonComment( const DeviceInput &di ) const;
 	
 	void GetInputEvents( InputEventArray &array );
 	void GetPressedButtons( vector<DeviceInput> &array );

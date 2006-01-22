@@ -14,8 +14,8 @@ class OptionIcon : public ActorFrame
 public:
 	OptionIcon();
 	OptionIcon( const OptionIcon &cpy );
-	void Load( CString sType );
-	void Set( PlayerNumber pn, const CString &sText, bool bHeader = false );
+	void Load( RString sType );
+	void Set( PlayerNumber pn, const RString &sText, bool bHeader = false );
 
 protected:
 	BitmapText	m_text;

@@ -59,7 +59,7 @@ void KSFLoader::RemoveHoles( NoteData &out, const Song &song )
 }
 #endif
 
-bool KSFLoader::LoadFromKSFFile( const CString &sPath, Steps &out, const Song &song )
+bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song )
 {
 	LOG->Trace( "Steps::LoadFromKSFFile( '%s' )", sPath.c_str() );
 
@@ -68,12 +68,12 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Steps &out, const Song &s
 		RageException::Throw( "Error opening file '%s'.", sPath.c_str() );
 
 	int iTickCount = -1;	// this is the value we read for TICKCOUNT
-	vector<CString> asRows;
+	vector<RString> asRows;
 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		CString sValueName = sParams[0];
+		RString sValueName = sParams[0];
 
 		// handle the data
 		if( 0==stricmp(sValueName,"TICKCOUNT") )
@@ -81,7 +81,7 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Steps &out, const Song &s
 
 		else if( 0==stricmp(sValueName,"STEP") )
 		{
-			CString step = sParams[1];
+			RString step = sParams[1];
 			TrimLeft(step);
 			split( step, "\n", asRows, true );
 		}
@@ -98,7 +98,7 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Steps &out, const Song &s
 	NoteData notedata;	// read it into here
 
 	{
-		CString sDir, sFName, sExt;
+		RString sDir, sFName, sExt;
 		splitpath( sPath, sDir, sFName, sExt );
 		sFName.MakeLower();
 
@@ -152,7 +152,7 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Steps &out, const Song &s
 
 	for( unsigned r=0; r<asRows.size(); r++ )
 	{
-		CString& sRowString = asRows[r];
+		RString& sRowString = asRows[r];
 		StripCrnl( sRowString );
 		
 		if( sRowString == "" )
@@ -220,16 +220,16 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Steps &out, const Song &s
 	return true;
 }
 
-void KSFLoader::GetApplicableFiles( CString sPath, vector<CString> &out )
+void KSFLoader::GetApplicableFiles( RString sPath, vector<RString> &out )
 {
-	GetDirListing( sPath + CString("*.ksf"), out );
+	GetDirListing( sPath + RString("*.ksf"), out );
 }
 
-void KSFLoader::LoadTags( const CString &str, Song &out )
+void KSFLoader::LoadTags( const RString &str, Song &out )
 {
 	/* str is either a #TITLE or a directory component.  Fill in missing information.
 	 * str is either "title", "artist - title", or "artist - title - difficulty". */
-	vector<CString> asBits;
+	vector<RString> asBits;
 	split( str, " - ", asBits, false );
 	/* Ignore the difficulty, since we get that elsewhere. */
 	if( asBits.size() == 3 &&
@@ -242,7 +242,7 @@ void KSFLoader::LoadTags( const CString &str, Song &out )
 		asBits.erase(asBits.begin()+2, asBits.begin()+3);
 	}
 
-	CString title, artist;
+	RString title, artist;
 	if( asBits.size() == 2 )
 	{
 		artist = asBits[0];
@@ -265,7 +265,7 @@ void KSFLoader::LoadTags( const CString &str, Song &out )
 		out.m_sArtist = artist;
 }
 
-bool KSFLoader::LoadGlobalData( const CString &sPath, Song &out )
+bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 {
 	MsdFile msd;
 	if( !msd.ReadFile( sPath ) )
@@ -276,7 +276,7 @@ bool KSFLoader::LoadGlobalData( const CString &sPath, Song &out )
 	for( unsigned i=0; i < msd.GetNumValues(); i++ )
 	{
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		CString sValueName = sParams[0];
+		RString sValueName = sParams[0];
 
 		// handle the data
 		if( 0==stricmp(sValueName,"TITLE") )
@@ -323,7 +323,7 @@ bool KSFLoader::LoadGlobalData( const CString &sPath, Song &out )
 
 	/* Try to fill in missing bits of information from the pathname. */
 	{
-		vector<CString> asBits;
+		vector<RString> asBits;
 		split( sPath, "/", asBits, true);
 
 		ASSERT(asBits.size() > 1);
@@ -331,10 +331,10 @@ bool KSFLoader::LoadGlobalData( const CString &sPath, Song &out )
 	}
 
 	// search for music with song in the file name
-	vector<CString> arrayPossibleMusic;
-	GetDirListing( out.GetSongDir() + CString("song.mp3"), arrayPossibleMusic );
-	GetDirListing( out.GetSongDir() + CString("song.ogg"), arrayPossibleMusic );
-	GetDirListing( out.GetSongDir() + CString("song.wav"), arrayPossibleMusic );
+	vector<RString> arrayPossibleMusic;
+	GetDirListing( out.GetSongDir() + RString("song.mp3"), arrayPossibleMusic );
+	GetDirListing( out.GetSongDir() + RString("song.ogg"), arrayPossibleMusic );
+	GetDirListing( out.GetSongDir() + RString("song.wav"), arrayPossibleMusic );
 
 	if( !arrayPossibleMusic.empty() )		// we found a match
 		out.m_sMusicFile = arrayPossibleMusic[0];
@@ -342,12 +342,12 @@ bool KSFLoader::LoadGlobalData( const CString &sPath, Song &out )
 	return true;
 }
 
-bool KSFLoader::LoadFromDir( CString sDir, Song &out )
+bool KSFLoader::LoadFromDir( RString sDir, Song &out )
 {
 	LOG->Trace( "Song::LoadFromKSFDir(%s)", sDir.c_str() );
 
-	vector<CString> arrayKSFFileNames;
-	GetDirListing( sDir + CString("*.ksf"), arrayKSFFileNames );
+	vector<RString> arrayKSFFileNames;
+	GetDirListing( sDir + RString("*.ksf"), arrayKSFFileNames );
 
 	/* We shouldn't have been called to begin with if there were no KSFs. */
 	if( arrayKSFFileNames.empty() )

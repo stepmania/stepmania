@@ -29,8 +29,8 @@ enum PageType
 	NUM_PAGE_TYPES
 };
 #define FOREACH_PageType( pt ) FOREACH_ENUM( PageType, NUM_PAGE_TYPES, pt )
-const CString& PageTypeToString( PageType pt );
-PageType StringToPageType( const CString& s );
+const RString& PageTypeToString( PageType pt );
+PageType StringToPageType( const RString& s );
 
 class ScreenRanking : public ScreenAttract
 {
@@ -94,7 +94,7 @@ public:
 	void LoadSongs( bool bOnlyRecentScores, int iNumRecentScores );
 	void LoadCourses( CourseType ct, bool bOnlyRecentScores, int iNumRecentScores );
 	void Load(
-		CString sClassName,
+		RString sClassName,
 		const vector<Difficulty> &DifficultiesToShow,
 		float fItemHeight );
 	void SetStepsType( StepsType st, RageColor color );

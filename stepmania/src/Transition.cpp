@@ -17,7 +17,7 @@ Transition::Transition()
 	m_State = waiting;
 }
 
-void Transition::Load( CString sBGAniDir )
+void Transition::Load( RString sBGAniDir )
 {
 	this->RemoveAllChildren();
 
@@ -66,7 +66,7 @@ bool Transition::EarlyAbortDraw() const
 /* Our parent might send us OnCommand.  We do that ourself, because
  * we sometimes want to know GetLengthSeconds before StartTransitioning.
  * Make sure we don't process OnCommand twice. */
-void Transition::PlayCommand( const CString &sCommandName, Actor *pParent )
+void Transition::PlayCommand( const RString &sCommandName, Actor *pParent )
 {
 	if( sCommandName == "On" )
 		return;

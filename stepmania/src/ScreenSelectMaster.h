@@ -43,16 +43,16 @@ protected:
 	ThemeMetric<float>		LOCK_INPUT_SECONDS;
 	ThemeMetric<float>		PRE_SWITCH_PAGE_SECONDS;
 	ThemeMetric<float>		POST_SWITCH_PAGE_SECONDS;
-	ThemeMetric1D<CString>	OPTION_ORDER;
+	ThemeMetric1D<RString>	OPTION_ORDER;
 	ThemeMetric<bool>		WRAP_CURSOR;
 	ThemeMetric<bool>		WRAP_SCROLLER;
 	ThemeMetric<bool>		LOOP_SCROLLER;
 	ThemeMetric<bool>		ALLOW_REPEATING_INPUT;
 	ThemeMetric<float>		SCROLLER_SECONDS_PER_ITEM;
 	ThemeMetric<float>		SCROLLER_NUM_ITEMS_TO_DRAW;
-	ThemeMetric<CString>	SCROLLER_TRANSFORM;
+	ThemeMetric<RString>	SCROLLER_TRANSFORM;
 	ThemeMetric<int>		SCROLLER_SUBDIVISIONS;
-	ThemeMetric<CString>	DEFAULT_CHOICE;
+	ThemeMetric<RString>	DEFAULT_CHOICE;
 
 	map<int,int> m_mapCurrentChoiceToNextChoice[NUM_MENU_DIRS];
 

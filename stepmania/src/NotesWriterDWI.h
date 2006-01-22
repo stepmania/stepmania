@@ -10,16 +10,16 @@ class Song;
 class Steps;
 class NotesWriterDWI
 {
-	CString NotesToDWIString( TapNote cNoteCol1, TapNote cNoteCol2, TapNote cNoteCol3, TapNote cNoteCol4, TapNote cNoteCol5, TapNote cNoteCol6 );
-	CString NotesToDWIString( TapNote cNoteCol1, TapNote cNoteCol2, TapNote cNoteCol3, TapNote cNoteCol4 );
+	RString NotesToDWIString( TapNote cNoteCol1, TapNote cNoteCol2, TapNote cNoteCol3, TapNote cNoteCol4, TapNote cNoteCol5, TapNote cNoteCol6 );
+	RString NotesToDWIString( TapNote cNoteCol1, TapNote cNoteCol2, TapNote cNoteCol3, TapNote cNoteCol4 );
 	void WriteDWINotesField( RageFile &f, const Steps &out, int start );
 	bool WriteDWINotesTag( RageFile &f, const Steps &out );
-	CString NotesToDWIString( const TapNote cNoteCols[6] );
-	CString OptimizeDWIString( CString holds, CString taps );
+	RString NotesToDWIString( const TapNote cNoteCols[6] );
+	RString OptimizeDWIString( RString holds, RString taps );
 	char OptimizeDWIPair( char c1, char c2 );
 
 public:
-	bool Write( CString sPath, const Song &out );
+	bool Write( RString sPath, const Song &out );
 };
 
 #endif

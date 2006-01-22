@@ -11,37 +11,37 @@ struct lua_State;
 class IPreference
 {
 public:
-	IPreference( const CString& sName );
+	IPreference( const RString& sName );
 	virtual ~IPreference();
 	void ReadFrom( const XNode* pNode );
 	void WriteTo( XNode* pNode ) const;
 	void ReadDefaultFrom( const XNode* pNode );
 
 	virtual void LoadDefault() = 0;
-	virtual void SetDefaultFromString( const CString &s ) = 0;
+	virtual void SetDefaultFromString( const RString &s ) = 0;
 
-	virtual CString ToString() const = 0;
-	virtual void FromString( const CString &s ) = 0;
+	virtual RString ToString() const = 0;
+	virtual void FromString( const RString &s ) = 0;
 
 	virtual void SetFromStack( lua_State *L );
 	virtual void PushValue( lua_State *L ) const;
 
-	const CString &GetName() const { return m_sName; }
+	const RString &GetName() const { return m_sName; }
 
-	static IPreference *GetPreferenceByName( const CString &sName );
+	static IPreference *GetPreferenceByName( const RString &sName );
 	static void LoadAllDefaults();
 	static void ReadAllPrefsFromNode( const XNode* pNode );
 	static void SavePrefsToNode( XNode* pNode );
 	static void ReadAllDefaultsFromNode( const XNode* pNode );
 
 protected:
-	CString		m_sName;
+	RString		m_sName;
 };
 
-void BroadcastPreferenceChanged( const CString& sPreferenceName );
+void BroadcastPreferenceChanged( const RString& sPreferenceName );
 
-template <class BasicType> CString PrefToString( const BasicType &v );
-template <class BasicType> void PrefFromString( const CString &s, BasicType &v );
+template <class BasicType> RString PrefToString( const BasicType &v );
+template <class BasicType> void PrefFromString( const RString &s, BasicType &v );
 template <class BasicType> void PrefSetFromStack( lua_State *L, BasicType &v );
 template <class BasicType> void PrefPushValue( lua_State *L, const BasicType &v );
 
@@ -49,7 +49,7 @@ template <class T, class BasicType=T>
 class Preference : public IPreference
 {
 public:
-	Preference( const CString& sName, const T& defaultValue ):
+	Preference( const RString& sName, const T& defaultValue ):
 		IPreference( sName ),
 		m_currentValue( defaultValue ),
 		m_defaultValue( defaultValue )
@@ -57,8 +57,8 @@ public:
 		LoadDefault();
 	}
 
-	CString ToString() const { return PrefToString( (const BasicType &) m_currentValue ); }
-	void FromString( const CString &s ) { PrefFromString( s, (BasicType &)m_currentValue ); }
+	RString ToString() const { return PrefToString( (const BasicType &) m_currentValue ); }
+	void FromString( const RString &s ) { PrefFromString( s, (BasicType &)m_currentValue ); }
 	void SetFromStack( lua_State *L ) { PrefSetFromStack( L, (BasicType &)m_currentValue ); }
 	void PushValue( lua_State *L ) const { PrefPushValue( L, (BasicType &)m_currentValue ); }
 
@@ -66,7 +66,7 @@ public:
 	{
 		m_currentValue = m_defaultValue;
 	}
-	void SetDefaultFromString( const CString &s )
+	void SetDefaultFromString( const RString &s )
 	{
 		PrefFromString( s, (BasicType &)m_defaultValue  );
 	}
@@ -99,11 +99,11 @@ class Preference1D
 	vector<PreferenceT*> m_v;
 	
 public:
-	Preference1D( void pfn(size_t i, CString &sNameOut, T &defaultValueOut ), size_t N )
+	Preference1D( void pfn(size_t i, RString &sNameOut, T &defaultValueOut ), size_t N )
 	{
 		for( size_t i=0; i<N; ++i )
 		{
-			CString sName;
+			RString sName;
 			T defaultValue;
 			pfn( i, sName, defaultValue );
 			m_v.push_back( new Preference<T>(sName, defaultValue) );

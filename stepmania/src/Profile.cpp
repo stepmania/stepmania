@@ -26,15 +26,15 @@
 #include "CharacterManager.h"
 #include "Character.h"
 
-const CString STATS_XSL            = "Stats.xsl";
-const CString COMMON_XSL           = "Common.xsl";
-const CString STATS_XML            = "Stats.xml";
-const CString EDITABLE_INI         = "Editable.ini";
-const CString DONT_SHARE_SIG       = "DontShare.sig";
-const CString PUBLIC_KEY_FILE      = "public.key";
-const CString SCREENSHOTS_SUBDIR   = "Screenshots/";
-const CString EDIT_STEPS_SUBDIR    = "Edits/";
-const CString EDIT_COURSES_SUBDIR  = "EditCourses/";
+const RString STATS_XSL            = "Stats.xsl";
+const RString COMMON_XSL           = "Common.xsl";
+const RString STATS_XML            = "Stats.xml";
+const RString EDITABLE_INI         = "Editable.ini";
+const RString DONT_SHARE_SIG       = "DontShare.sig";
+const RString PUBLIC_KEY_FILE      = "public.key";
+const RString SCREENSHOTS_SUBDIR   = "Screenshots/";
+const RString EDIT_STEPS_SUBDIR    = "Edits/";
+const RString EDIT_COURSES_SUBDIR  = "EditCourses/";
 
 #define GUID_SIZE_BYTES 8
 
@@ -81,13 +81,13 @@ void Profile::InitEditableData()
 	m_iWeightPounds = 0;
 }
 
-CString Profile::MakeGuid()
+RString Profile::MakeGuid()
 {
 	// Does the RNG need to be inited and seeded every time?
 	random_init();
 	random_add_noise( "ai8049ujr3odusj" );
 	
-	CString s;
+	RString s;
 	for( unsigned i=0; i<GUID_SIZE_BYTES; i++ )
 		s += ssprintf( "%02x", random_byte() );
 	return s;
@@ -178,14 +178,14 @@ void Profile::InitRecentCourseScores()
 	m_vRecentCourseScores.clear();
 }
 
-CString Profile::GetDisplayNameOrHighScoreName() const
+RString Profile::GetDisplayNameOrHighScoreName() const
 {
 	if( !m_sDisplayName.empty() )
 		return m_sDisplayName;
 	else if( !m_sLastUsedHighScoreName.empty() )
 		return m_sLastUsedHighScoreName;
 	else
-		return CString();
+		return RString();
 }
 
 Character *Profile::GetCharacter() const
@@ -200,7 +200,7 @@ Character *Profile::GetCharacter() const
 	return CHARMAN->GetDefaultCharacter();
 }
 
-static CString FormatCalories( float fCals )
+static RString FormatCalories( float fCals )
 {
 	return Commify((int)fCals) + " Cal";
 }
@@ -213,12 +213,12 @@ int Profile::GetCalculatedWeightPounds() const
 		return m_iWeightPounds;
 }
 
-CString Profile::GetDisplayTotalCaloriesBurned() const
+RString Profile::GetDisplayTotalCaloriesBurned() const
 {
 	return FormatCalories( m_fTotalCaloriesBurned );
 }
 
-CString Profile::GetDisplayTotalCaloriesBurnedToday() const
+RString Profile::GetDisplayTotalCaloriesBurnedToday() const
 {
 	float fCals = GetCaloriesBurnedToday();
 	return FormatCalories( fCals );
@@ -514,9 +514,9 @@ int Profile::GetSongNumTimesPlayed( const SongID& songID ) const
  * In practice, we get the default modifiers from the theme the first time a game
  * is played, and from the profile every time thereafter.
  */
-bool Profile::GetDefaultModifiers( const Game* pGameType, CString &sModifiersOut ) const
+bool Profile::GetDefaultModifiers( const Game* pGameType, RString &sModifiersOut ) const
 {
-	map<CString,CString>::const_iterator it;
+	map<RString,RString>::const_iterator it;
 	it = m_sDefaultModifiers.find( pGameType->m_szName );
 	if( it == m_sDefaultModifiers.end() )
 		return false;
@@ -524,7 +524,7 @@ bool Profile::GetDefaultModifiers( const Game* pGameType, CString &sModifiersOut
 	return true;
 }
 
-void Profile::SetDefaultModifiers( const Game* pGameType, const CString &sModifiers )
+void Profile::SetDefaultModifiers( const Game* pGameType, const RString &sModifiers )
 {
 	if( sModifiers == "" )
 		m_sDefaultModifiers.erase( pGameType->m_szName );
@@ -805,7 +805,7 @@ void Profile::IncrementCategoryPlayCount( StepsType st, RankingCategory rc )
 	if( X==NULL ) LOG->Warn("Failed to read section " #X); \
 	else Load##X##FromNode(X); }
 
-ProfileLoadResult Profile::LoadAllFromDir( CString sDir, bool bRequireSignature )
+ProfileLoadResult Profile::LoadAllFromDir( RString sDir, bool bRequireSignature )
 {
 	CHECKPOINT;
 
@@ -819,7 +819,7 @@ ProfileLoadResult Profile::LoadAllFromDir( CString sDir, bool bRequireSignature 
 	LoadEditableDataFromDir( sDir );
 	
 	// Check for the existance of stats.xml
-	CString fn = sDir + STATS_XML;
+	RString fn = sDir + STATS_XML;
 	if( !IsAFile(fn) )
 		return ProfileLoadResult_FailedNoProfile;
 
@@ -838,8 +838,8 @@ ProfileLoadResult Profile::LoadAllFromDir( CString sDir, bool bRequireSignature 
 
 	if( bRequireSignature )
 	{ 
-		CString sStatsXmlSigFile = fn+SIGNATURE_APPEND;
-		CString sDontShareFile = sDir + DONT_SHARE_SIG;
+		RString sStatsXmlSigFile = fn+SIGNATURE_APPEND;
+		RString sDontShareFile = sDir + DONT_SHARE_SIG;
 
 		LOG->Trace( "Verifying don't share signature" );
 		// verify the stats.xml signature with the "don't share" file
@@ -884,9 +884,9 @@ ProfileLoadResult Profile::LoadStatsXmlFromNode( const XNode *xml, bool bIgnoreE
 
 	/* These are loaded from Editable, so we usually want to ignore them
 	 * here. */
-	CString sName = m_sDisplayName;
-	CString sCharacterID = m_sCharacterID;
-	CString sLastUsedHighScoreName = m_sLastUsedHighScoreName;
+	RString sName = m_sDisplayName;
+	RString sCharacterID = m_sCharacterID;
+	RString sLastUsedHighScoreName = m_sLastUsedHighScoreName;
 	int iWeightPounds = m_iWeightPounds;
 
 	LOAD_NODE( GeneralData );
@@ -909,7 +909,7 @@ ProfileLoadResult Profile::LoadStatsXmlFromNode( const XNode *xml, bool bIgnoreE
 	return ProfileLoadResult_Success;
 }
 
-bool Profile::SaveAllToDir( CString sDir, bool bSignData ) const
+bool Profile::SaveAllToDir( RString sDir, bool bSignData ) const
 {
 	m_sLastPlayedMachineGuid = PROFILEMAN->GetMachineProfile()->m_sGuid;
 	m_LastPlayedDate = DateTime::GetNowDate();
@@ -950,12 +950,12 @@ XNode *Profile::SaveStatsXmlCreateNode() const
 	return xml;
 }
 
-bool Profile::SaveStatsXmlToDir( CString sDir, bool bSignData ) const
+bool Profile::SaveStatsXmlToDir( RString sDir, bool bSignData ) const
 {
 	XNode *xml = SaveStatsXmlCreateNode();
 
 	// Save stats.xml
-	CString fn = sDir + STATS_XML;
+	RString fn = sDir + STATS_XML;
 
 	DISP_OPT opts;
 	opts.stylesheet = STATS_XSL;
@@ -969,21 +969,21 @@ bool Profile::SaveStatsXmlToDir( CString sDir, bool bSignData ) const
 	
 	if( bSaved && bSignData )
 	{
-		CString sStatsXmlSigFile = fn+SIGNATURE_APPEND;
+		RString sStatsXmlSigFile = fn+SIGNATURE_APPEND;
 		CryptManager::SignFileToFile(fn, sStatsXmlSigFile);
 
 		// Update file cache, or else IsAFile in CryptManager won't see sStatsXmlSigFile.
 		FILEMAN->FlushDirCache( sDir );
 
 		// Save the "don't share" file
-		CString sDontShareFile = sDir + DONT_SHARE_SIG;
+		RString sDontShareFile = sDir + DONT_SHARE_SIG;
 		CryptManager::SignFileToFile(sStatsXmlSigFile, sDontShareFile);
 	}
 
 	return bSaved;
 }
 
-void Profile::SaveEditableDataToDir( CString sDir ) const
+void Profile::SaveEditableDataToDir( RString sDir ) const
 {
 	IniFile ini;
 
@@ -1044,7 +1044,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 
 	{
 		XNode* pDefaultModifiers = pGeneralDataNode->AppendChild("DefaultModifiers");
-		FOREACHM_CONST( CString, CString, m_sDefaultModifiers, it )
+		FOREACHM_CONST( RString, RString, m_sDefaultModifiers, it )
 			pDefaultModifiers->AppendChild( it->first, it->second );
 	}
 
@@ -1125,9 +1125,9 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	return pGeneralDataNode;
 }
 
-ProfileLoadResult Profile::LoadEditableDataFromDir( CString sDir )
+ProfileLoadResult Profile::LoadEditableDataFromDir( RString sDir )
 {
-	CString fn = sDir + EDITABLE_INI;
+	RString fn = sDir + EDITABLE_INI;
 
 	//
 	// Don't load unreasonably large editable.xml files.
@@ -1166,7 +1166,7 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 {
 	ASSERT( pNode->m_sName == "GeneralData" );
 
-	CString s;
+	RString s;
 	const XNode* pTemp;
 
 	pNode->GetChildValue( "DisplayName",					m_sDisplayName );
@@ -1201,7 +1201,7 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	pNode->GetChildValue( "TotalHands",						m_iTotalHands );
 
 	{
-		CString sData;
+		RString sData;
 		if( pNode->GetChildValue( "Data", sData ) )
 		{
 			m_SavedLuaData.LoadFromString( sData );
@@ -1468,13 +1468,13 @@ void Profile::LoadCourseScoresFromNode( const XNode* pCourseScores )
 			Course *pC = courseID.ToCourse();
 			if( pC == NULL )
 			{
-				CString sDir, sFName, sExt;
+				RString sDir, sFName, sExt;
 				splitpath( courseID.sPath, sDir, sFName, sExt );
-				CString sFullFileName = sFName + sExt;
+				RString sFullFileName = sFName + sExt;
 
 				FOREACH_CONST( Course*, vpAllCourses, c )
 				{
-					CString sOther = (*c)->m_sPath.Right(sFullFileName.size());
+					RString sOther = (*c)->m_sPath.Right(sFullFileName.size());
 
 					if( sFullFileName.CompareNoCase(sOther) == 0 )
 					{
@@ -1555,7 +1555,7 @@ void Profile::LoadCategoryScoresFromNode( const XNode* pCategoryScores )
 		if( pStepsType->m_sName != "StepsType" )
 			continue;
 
-		CString str;
+		RString str;
 		if( !pStepsType->GetAttrValue( "Type", str ) )
 			WARN_AND_CONTINUE;
 		StepsType st = GameManager::StringToStepsType( str );
@@ -1583,7 +1583,7 @@ void Profile::LoadCategoryScoresFromNode( const XNode* pCategoryScores )
 	}
 }
 
-void Profile::SaveStatsWebPageToDir( CString sDir ) const
+void Profile::SaveStatsWebPageToDir( RString sDir ) const
 {
 	ASSERT( PROFILEMAN );
 
@@ -1593,7 +1593,7 @@ void Profile::SaveStatsWebPageToDir( CString sDir ) const
 	FileCopy( CATALOG_XML_FILE, sDir+CATALOG_XML );
 }
 
-void Profile::SaveMachinePublicKeyToDir( CString sDir ) const
+void Profile::SaveMachinePublicKeyToDir( RString sDir ) const
 {
 	if( PREFSMAN->m_bSignProfileData && IsAFile(CRYPTMAN->GetPublicKeyFileName()) )
 		FileCopy( CRYPTMAN->GetPublicKeyFileName(), sDir+PUBLIC_KEY_FILE );
@@ -1649,7 +1649,7 @@ void Profile::LoadCalorieDataFromNode( const XNode* pCalorieData )
 		if( pCaloriesBurned->m_sName != "CaloriesBurned" )
 			WARN_AND_CONTINUE_M( pCaloriesBurned->m_sName );
 
-		CString sDate;
+		RString sDate;
 		if( !pCaloriesBurned->GetAttrValue("Date",sDate) )
 			WARN_AND_CONTINUE;
 		DateTime date;
@@ -1924,7 +1924,7 @@ XNode* Profile::SaveCoinDataCreateNode() const
 	return pNode;
 }
 
-void Profile::MoveBackupToDir( CString sFromDir, CString sToDir )
+void Profile::MoveBackupToDir( RString sFromDir, RString sToDir )
 {
 	FILEMAN->Move( sFromDir+EDITABLE_INI,				sToDir+EDITABLE_INI );
 	FILEMAN->Move( sFromDir+STATS_XML,					sToDir+STATS_XML );

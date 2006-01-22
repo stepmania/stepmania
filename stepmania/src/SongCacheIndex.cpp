@@ -29,7 +29,7 @@
 
 SongCacheIndex *SONGINDEX;
 
-CString SongCacheIndex::GetCacheFilePath( const CString &sGroup, const CString &sPath )
+RString SongCacheIndex::GetCacheFilePath( const RString &sGroup, const RString &sPath )
 {
 	/* Use GetHashForString, not ForFile, since we don't want to spend time
 	 * checking the file size and date. */
@@ -46,11 +46,11 @@ SongCacheIndex::~SongCacheIndex()
 
 }
 
-static void EmptyDir( CString dir )
+static void EmptyDir( RString dir )
 {
 	ASSERT(dir[dir.size()-1] == '/');
 
-	vector<CString> asCacheFileNames;
+	vector<RString> asCacheFileNames;
 	GetDirListing( dir, asCacheFileNames );
 	for( unsigned i=0; i<asCacheFileNames.size(); i++ )
 	{
@@ -77,7 +77,7 @@ void SongCacheIndex::ReadCacheIndex()
 	CacheIndex.Clear();
 }
 
-void SongCacheIndex::AddCacheIndex(const CString &path, unsigned hash)
+void SongCacheIndex::AddCacheIndex(const RString &path, unsigned hash)
 {
 	if( hash == 0 )
 		++hash; /* no 0 hash values */
@@ -86,7 +86,7 @@ void SongCacheIndex::AddCacheIndex(const CString &path, unsigned hash)
 	CacheIndex.WriteFile( CACHE_INDEX );
 }
 
-unsigned SongCacheIndex::GetCacheHash( const CString &path ) const
+unsigned SongCacheIndex::GetCacheHash( const RString &path ) const
 {
 	unsigned iDirHash;
 	if( !CacheIndex.GetValue( "Cache", MangleName(path), iDirHash ) )
@@ -96,10 +96,10 @@ unsigned SongCacheIndex::GetCacheHash( const CString &path ) const
 	return iDirHash;
 }
 
-CString SongCacheIndex::MangleName( const CString &Name )
+RString SongCacheIndex::MangleName( const RString &Name )
 {
 	/* We store paths in an INI.  We can't store '='. */
-	CString ret = Name;
+	RString ret = Name;
 	ret.Replace( "=", "");
 	return ret;
 }

@@ -32,7 +32,7 @@ LightsDriver_LinuxParallel::~LightsDriver_LinuxParallel()
 void LightsDriver_LinuxParallel::Set( const LightsState *ls )
 {
 	// Set LightState to port
-	CString s;
+	RString s;
 
 	// Prepare Screen Output too for debugging
 	s += "LinuxParallel Lights Driver Debug\n";

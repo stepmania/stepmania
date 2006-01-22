@@ -143,7 +143,7 @@ void ScrollingList::StopBouncing()
 Allows us to create a graphic element
 in the scrolling list
 *************************************/
-void ScrollingList::Load( const vector<CString>& asGraphicPaths )
+void ScrollingList::Load( const vector<RString>& asGraphicPaths )
 {
 	Unload();
 	if(m_iSpriteType == SPRITE_TYPE_SPRITE)
@@ -384,7 +384,7 @@ void ScrollingList::Update( float fDeltaTime )
 	}
 }
 
-void ScrollingList::Replace(CString sGraphicPath, int ElementNumber)
+void ScrollingList::Replace(RString sGraphicPath, int ElementNumber)
 {
 	if(m_iSpriteType == SPRITE_TYPE_SPRITE)
 	{

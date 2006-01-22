@@ -6,16 +6,16 @@
 class SongCacheIndex
 {
 	IniFile CacheIndex;
-	static CString MangleName( const CString &Name );
+	static RString MangleName( const RString &Name );
 
 public:
 	SongCacheIndex();
 	~SongCacheIndex();
-	static CString GetCacheFilePath( const CString &sGroup, const CString &sPath );
+	static RString GetCacheFilePath( const RString &sGroup, const RString &sPath );
 
 	void ReadCacheIndex();
-	void AddCacheIndex( const CString &path, unsigned hash );
-	unsigned GetCacheHash( const CString &path ) const;
+	void AddCacheIndex( const RString &path, unsigned hash );
+	unsigned GetCacheHash( const RString &path ) const;
 };
 
 extern SongCacheIndex *SONGINDEX;	// global and accessable from anywhere in our program

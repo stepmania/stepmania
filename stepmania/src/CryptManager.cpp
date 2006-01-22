@@ -9,22 +9,22 @@
 
 CryptManager*	CRYPTMAN	= NULL;	// global and accessable from anywhere in our program
 
-static const CString PRIVATE_KEY_PATH = "Data/private.rsa";
-static const CString PUBLIC_KEY_PATH = "Data/public.rsa";
-static const CString ALTERNATE_PUBLIC_KEY_DIR = "Data/keys/";
+static const RString PRIVATE_KEY_PATH = "Data/private.rsa";
+static const RString PUBLIC_KEY_PATH = "Data/public.rsa";
+static const RString ALTERNATE_PUBLIC_KEY_DIR = "Data/keys/";
 
 #if !defined(HAVE_CRYPTOPP)
 CryptManager::CryptManager() { }
 CryptManager::~CryptManager() { }
-void CryptManager::GenerateRSAKey( unsigned int keyLength, CString privFilename, CString pubFilename, CString seed ) { }
-void CryptManager::SignFileToFile( CString sPath, CString sSignatureFile ) { }
-bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFile, CString sPublicKeyFile ) { return true; }
-bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFile )
+void CryptManager::GenerateRSAKey( unsigned int keyLength, RString privFilename, RString pubFilename, RString seed ) { }
+void CryptManager::SignFileToFile( RString sPath, RString sSignatureFile ) { }
+bool CryptManager::VerifyFileWithFile( RString sPath, RString sSignatureFile, RString sPublicKeyFile ) { return true; }
+bool CryptManager::VerifyFileWithFile( RString sPath, RString sSignatureFile )
 {
 	return true;
 }
 
-bool CryptManager::Verify( CString sPath, CString sSignature )
+bool CryptManager::Verify( RString sPath, RString sSignature )
 {
 	return true;
 }
@@ -58,7 +58,7 @@ CryptManager::~CryptManager()
 
 }
 
-static bool WriteFile( CString sFile, CString sBuf )
+static bool WriteFile( RString sFile, RString sBuf )
 {
 	RageFile output;
 	if( !output.Open(sFile, RageFile::WRITE) )
@@ -78,11 +78,11 @@ static bool WriteFile( CString sFile, CString sBuf )
 	return true;
 }
 
-void CryptManager::GenerateRSAKey( unsigned int keyLength, CString privFilename, CString pubFilename, CString seed )
+void CryptManager::GenerateRSAKey( unsigned int keyLength, RString privFilename, RString pubFilename, RString seed )
 {
 	ASSERT( PREFSMAN->m_bSignProfileData );
 
-	CString sPubKey, sPrivKey;
+	RString sPubKey, sPrivKey;
 
 	if( !CryptHelpers::GenerateRSAKey(keyLength, seed, sPubKey, sPrivKey) )
 		return;
@@ -97,16 +97,16 @@ void CryptManager::GenerateRSAKey( unsigned int keyLength, CString privFilename,
 	}
 }
 
-void CryptManager::SignFileToFile( CString sPath, CString sSignatureFile )
+void CryptManager::SignFileToFile( RString sPath, RString sSignatureFile )
 {
 	ASSERT( PREFSMAN->m_bSignProfileData );
 
-	CString sPrivFilename = PRIVATE_KEY_PATH;
-	CString sMessageFilename = sPath;
+	RString sPrivFilename = PRIVATE_KEY_PATH;
+	RString sMessageFilename = sPath;
 	if( sSignatureFile.empty() )
 		sSignatureFile = sPath + SIGNATURE_APPEND;
 
-	CString sPrivKey;
+	RString sPrivKey;
 	if( !GetFileContents(sPrivFilename, sPrivKey) )
 		return;
 
@@ -123,8 +123,8 @@ void CryptManager::SignFileToFile( CString sPath, CString sSignatureFile )
 		return;
 	}
 
-	CString sSignature;
-	CString sError;
+	RString sSignature;
+	RString sError;
 	if( !CryptHelpers::SignFile(file, sPrivKey, sSignature, sError) )
 	{
 		LOG->Warn( "SignFileToFile failed: %s", sError.c_str() );
@@ -134,18 +134,18 @@ void CryptManager::SignFileToFile( CString sPath, CString sSignatureFile )
 	WriteFile( sSignatureFile, sSignature );
 }
 
-bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFile )
+bool CryptManager::VerifyFileWithFile( RString sPath, RString sSignatureFile )
 {
 	ASSERT( PREFSMAN->m_bSignProfileData );
 
 	if( VerifyFileWithFile(sPath, sSignatureFile, PUBLIC_KEY_PATH) )
 		return true;
 
-	vector<CString> asKeys;
+	vector<RString> asKeys;
 	GetDirListing( ALTERNATE_PUBLIC_KEY_DIR, asKeys, false, true );
 	for( unsigned i = 0; i < asKeys.size(); ++i )
 	{
-		const CString &sKey = asKeys[i];
+		const RString &sKey = asKeys[i];
 		LOG->Trace( "Trying alternate key \"%s\" ...", sKey.c_str() );
 
 		if( VerifyFileWithFile(sPath, sSignatureFile, sKey) )
@@ -155,15 +155,15 @@ bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFile )
 	return false;
 }
 
-bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFile, CString sPublicKeyFile )
+bool CryptManager::VerifyFileWithFile( RString sPath, RString sSignatureFile, RString sPublicKeyFile )
 {
 	ASSERT( PREFSMAN->m_bSignProfileData );
 
-	CString sMessageFilename = sPath;
+	RString sMessageFilename = sPath;
 	if( sSignatureFile.empty() )
 		sSignatureFile = sPath + SIGNATURE_APPEND;
 
-	CString sPublicKey;
+	RString sPublicKey;
 	if( !GetFileContents(sPublicKeyFile, sPublicKey) )
 		return false;
 
@@ -171,7 +171,7 @@ bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFile, CS
 	if( iBytes > MAX_SIGNATURE_SIZE_BYTES )
 		return false;
 
-	CString sSignature;
+	RString sSignature;
 	if( !GetFileContents(sSignatureFile, sSignature) )
 		return false;
 
@@ -182,7 +182,7 @@ bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFile, CS
 		return false;
 	}
 
-	CString sError;
+	RString sError;
 	if( !CryptHelpers::VerifyFile(file, sSignature, sPublicKey, sError) )
 	{
 		LOG->Warn( "VerifyFile(%s) failed: %s", sPath.c_str(), sError.c_str() );
@@ -192,14 +192,14 @@ bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFile, CS
 	return true;
 }
 
-bool CryptManager::Verify( CString sPath, CString sSignature )
+bool CryptManager::Verify( RString sPath, RString sSignature )
 {
 	ASSERT( PREFSMAN->m_bSignProfileData );
 
-	CString sPublicKeyFile = PUBLIC_KEY_PATH;
-	CString sMessageFilename = sPath;
+	RString sPublicKeyFile = PUBLIC_KEY_PATH;
+	RString sMessageFilename = sPath;
 
-	CString sPublicKey;
+	RString sPublicKey;
 	if( !GetFileContents(sPublicKeyFile, sPublicKey) )
 		return false;
 
@@ -210,7 +210,7 @@ bool CryptManager::Verify( CString sPath, CString sSignature )
 		return false;
 	}
 
-	CString sError;
+	RString sError;
 	if( !CryptHelpers::VerifyFile(file, sSignature, sPublicKey, sError) )
 	{
 		LOG->Warn( "Verify(%s) failed: %s", sPath.c_str(), sError.c_str() );
@@ -221,9 +221,9 @@ bool CryptManager::Verify( CString sPath, CString sSignature )
 }
 #endif
 
-static CString BinaryToHex( const unsigned char *string, int iNumBytes )
+static RString BinaryToHex( const unsigned char *string, int iNumBytes )
 {
-	CString s;
+	RString s;
 	for( int i=0; i<iNumBytes; i++ )
 	{
 		unsigned val = string[i];
@@ -232,7 +232,7 @@ static CString BinaryToHex( const unsigned char *string, int iNumBytes )
 	return s;
 }
 
-CString CryptManager::GetMD5( CString fn )
+RString CryptManager::GetMD5( RString fn )
 {
        struct MD5Context md5c;
        unsigned char digest[16];
@@ -243,7 +243,7 @@ CString CryptManager::GetMD5( CString fn )
        if( !file.Open( fn, RageFile::READ ) )
        {
                LOG->Warn( "GetMD5: Failed to open file '%s'", fn.c_str() );
-               return CString();
+               return RString();
        }
 
        MD5Init(&md5c);
@@ -257,7 +257,7 @@ CString CryptManager::GetMD5( CString fn )
        return BinaryToHex( digest, sizeof(digest) );
 }
 
-CString CryptManager::GetPublicKeyFileName()
+RString CryptManager::GetPublicKeyFileName()
 {
 	ASSERT( PREFSMAN->m_bSignProfileData );
 

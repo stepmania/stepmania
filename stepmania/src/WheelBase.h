@@ -20,7 +20,7 @@ class WheelBase : public ActorFrame
 public:
 	WheelBase();
 	virtual ~WheelBase();
-	virtual void Load( CString sType );
+	virtual void Load( RString sType );
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
@@ -56,7 +56,7 @@ public:
 	WheelItemBaseData* LastSelected();
 
 protected:
-	void LoadFromMetrics( CString sType );
+	void LoadFromMetrics( RString sType );
 	void LoadVariables();
 	virtual void UpdateSwitch();
 	virtual void UpdateItems(float fDeltaTime);
@@ -76,7 +76,7 @@ protected:
 	
 	bool				m_isEmpty;
 	int					m_iSelection;		// index into m_CurWheelItemBaseData
-	CString				m_sExpandedSectionName;
+	RString				m_sExpandedSectionName;
 
 
 	int					m_iSwitchesLeftInSpinDown;		

@@ -94,13 +94,13 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 			{
 			case 0: //Room title Change
 				{
-					CString titleSub;
+					RString titleSub;
 					titleSub = NSMAN->m_SMOnlinePacket.ReadNT() + "\n";
 					titleSub += NSMAN->m_SMOnlinePacket.ReadNT();
 					m_textTitle.SetText( titleSub );
 					if ( NSMAN->m_SMOnlinePacket.Read1() != 0 )
 					{
-						CString SMOnlineSelectScreen;
+						RString SMOnlineSelectScreen;
 						THEME->GetMetric( m_sName, "MusicSelectScreen", SMOnlineSelectScreen );
 						SCREENMAN->SetNewScreen( SMOnlineSelectScreen );
 					}
@@ -278,7 +278,7 @@ void ScreenNetRoom::UpdateRoomsList()
 	m_RoomWheel.RebuildWheelItems();
 }
 
-void ScreenNetRoom::CreateNewRoom( const CString& rName,  const CString& rDesc ) {
+void ScreenNetRoom::CreateNewRoom( const RString& rName,  const RString& rDesc ) {
 	NSMAN->m_SMOnlinePacket.ClearPacket();
 	NSMAN->m_SMOnlinePacket.Write1((uint8_t)2); //Create room command
 	NSMAN->m_SMOnlinePacket.Write1(1);  //Type game room

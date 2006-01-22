@@ -6,27 +6,27 @@
 class Song;
 class XNode;
 
-extern const CString RANDOM_BACKGROUND_FILE;
-extern const CString NO_SONG_BG_FILE;
-extern const CString SONG_BACKGROUND_FILE;
+extern const RString RANDOM_BACKGROUND_FILE;
+extern const RString NO_SONG_BG_FILE;
+extern const RString SONG_BACKGROUND_FILE;
 
-extern const CString SBE_UpperLeft;
-extern const CString SBE_Centered;
-extern const CString SBE_StretchNormal;
-extern const CString SBE_StretchNoLoop;
-extern const CString SBE_StretchRewind;
-extern const CString SBT_CrossFade;
+extern const RString SBE_UpperLeft;
+extern const RString SBE_Centered;
+extern const RString SBE_StretchNormal;
+extern const RString SBE_StretchNoLoop;
+extern const RString SBE_StretchRewind;
+extern const RString SBT_CrossFade;
 
 struct BackgroundDef
 {
 	bool operator<( const BackgroundDef &other ) const;
 	bool operator==( const BackgroundDef &other ) const;
 	bool IsEmpty() const { return m_sFile1.empty() && m_sFile2.empty(); }
-	CString	m_sEffect;	// "" == automatically choose
-	CString m_sFile1;	// must not be ""
-	CString m_sFile2;	// may be ""
-	CString m_sColor1;	// "" == use default
-	CString m_sColor2;	// "" == use default
+	RString	m_sEffect;	// "" == automatically choose
+	RString m_sFile1;	// must not be ""
+	RString m_sFile2;	// may be ""
+	RString m_sColor1;	// "" == use default
+	RString m_sColor2;	// "" == use default
 
 	XNode *CreateNode() const;
 };
@@ -40,11 +40,11 @@ struct BackgroundChange
 	}
 	BackgroundChange( 
 		float s, 
-		CString f1,
-		CString f2=CString(),
+		RString f1,
+		RString f2=RString(),
 		float r=1.f, 
-		CString e=SBE_Centered,
-		CString t=CString()
+		RString e=SBE_Centered,
+		RString t=RString()
 		)
 	{
 		m_fStartBeat=s;
@@ -57,23 +57,23 @@ struct BackgroundChange
 	BackgroundDef m_def;
 	float m_fStartBeat;
 	float m_fRate;
-	CString m_sTransition;
+	RString m_sTransition;
 
-	CString GetTextDescription() const;
+	RString GetTextDescription() const;
 };
 
 namespace BackgroundUtil
 {
 	void SortBackgroundChangesArray( vector<BackgroundChange> &vBackgroundChanges );
 	
-	void GetBackgroundEffects(		const CString &sName, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut );
-	void GetBackgroundTransitions(	const CString &sName, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut );
+	void GetBackgroundEffects(		const RString &sName, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut );
+	void GetBackgroundTransitions(	const RString &sName, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut );
 
-	void GetSongBGAnimations(		const Song *pSong, const CString &sMatch, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut );
-	void GetSongMovies(				const Song *pSong, const CString &sMatch, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut );
-	void GetSongBitmaps(			const Song *pSong, const CString &sMatch, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut );
-	void GetGlobalBGAnimations(		const Song *pSong, const CString &sMatch, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut );
-	void GetGlobalRandomMovies(		const Song *pSong, const CString &sMatch, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut, bool bTryInsideOfSongGroupAndGenreFirst = true, bool bTryInsideOfSongGroupFirst = true );
+	void GetSongBGAnimations(		const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut );
+	void GetSongMovies(				const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut );
+	void GetSongBitmaps(			const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut );
+	void GetGlobalBGAnimations(		const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut );
+	void GetGlobalRandomMovies(		const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut, bool bTryInsideOfSongGroupAndGenreFirst = true, bool bTryInsideOfSongGroupFirst = true );
 
 	void BakeAllBackgroundChanges( Song *pSong );
 };

@@ -43,7 +43,7 @@ protected:
 	RageSound			m_soundModeChange;
 	RageSound			m_soundConfirm;
 	RageSound			m_soundStart;
-	vector<CString> arrayLocations;
+	vector<RString> arrayLocations;
 	ScrollingList m_ScrollingList;
 	Sprite m_ChoiceListFrame;
 	Sprite m_ChoiceListHighlight;

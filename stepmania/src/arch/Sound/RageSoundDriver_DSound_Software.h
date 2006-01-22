@@ -10,7 +10,7 @@ class RageSound_DSound_Software: public RageSound_Generic_Software
 public:
 	RageSound_DSound_Software();
 	virtual ~RageSound_DSound_Software();
-	CString Init();
+	RString Init();
 
 	int64_t GetPosition( const RageSoundBase *pSound ) const;
 	float GetPlayLatency() const;

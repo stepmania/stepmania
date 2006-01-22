@@ -26,10 +26,10 @@ static const char *LayoutTypeNames[] = {
 XToString( LayoutType, NUM_LAYOUT_TYPES );
 StringToX( LayoutType );
 
-const CString NEXT_ROW_NAME = "NextRow";
-const CString EXIT_NAME = "Exit";
+const RString NEXT_ROW_NAME = "NextRow";
+const RString EXIT_NAME = "Exit";
 
-void OptionRow::PrepareItemText( CString &s ) const
+void OptionRow::PrepareItemText( RString &s ) const
 {
 	if( s == "" )
 		return;
@@ -55,7 +55,7 @@ void OptionRow::PrepareItemText( CString &s ) const
 		s.MakeUpper(); 
 }
 
-CString OptionRow::OptionTitle( CString s ) const
+RString OptionRow::OptionTitle( RString s ) const
 {
 	bool bTheme = false;
 	
@@ -69,8 +69,8 @@ CString OptionRow::OptionTitle( CString s ) const
 	return bTheme ? THEME->GetString("OptionTitles",s) : s;
 }
 
-CString ITEMS_LONG_ROW_X_NAME( size_t p )		{ return ssprintf("ItemsLongRowP%dX",int(p+1)); }
-CString ICONS_X_NAME( size_t p )				{ return ssprintf("IconsP%dX",int(p+1)); }
+RString ITEMS_LONG_ROW_X_NAME( size_t p )		{ return ssprintf("ItemsLongRowP%dX",int(p+1)); }
+RString ICONS_X_NAME( size_t p )				{ return ssprintf("IconsP%dX",int(p+1)); }
 
 OptionRow::OptionRow( const OptionRowType *pSource )
 {
@@ -105,7 +105,7 @@ void OptionRow::Clear()
 
 	if( m_pHand != NULL )
 	{
-		FOREACH_CONST( CString, m_pHand->m_vsReloadRowMessages, m )
+		FOREACH_CONST( RString, m_pHand->m_vsReloadRowMessages, m )
 			MESSAGEMAN->Unsubscribe( this, *m );
 	}
 	SAFE_DELETE( m_pHand );
@@ -115,7 +115,7 @@ void OptionRow::Clear()
 	ZERO( m_iChoiceInRowWithFocus );
 }
 
-void OptionRowType::Load( const CString &sType )
+void OptionRowType::Load( const RString &sType )
 {
 	m_sType = sType;
 
@@ -159,7 +159,7 @@ void OptionRow::LoadNormal( OptionRowHandler *pHand, bool bFirstItemGoesDown )
 	m_pHand = pHand;
 	m_bFirstItemGoesDown = bFirstItemGoesDown;
 
-	FOREACH_CONST( CString, m_pHand->m_vsReloadRowMessages, m )
+	FOREACH_CONST( RString, m_pHand->m_vsReloadRowMessages, m )
 		MESSAGEMAN->Subscribe( this, *m );
 
 	ChoicesChanged();
@@ -211,10 +211,10 @@ void OptionRow::ChoicesChanged()
 	m_textTitle->SetText( GetRowTitle() );
 }
 
-CString OptionRow::GetRowTitle() const
+RString OptionRow::GetRowTitle() const
 {
-	CString sLineName = m_pHand->m_Def.m_sName;
-	CString sTitle = OptionTitle(sLineName);
+	RString sLineName = m_pHand->m_Def.m_sName;
+	RString sTitle = OptionTitle(sLineName);
 
 	// HACK: tack the BPM onto the name of the speed line
 	if( sLineName.CompareNoCase("speed")==0 )
@@ -308,7 +308,7 @@ void OptionRow::InitText()
 		
 		for( unsigned c=0; c<m_pHand->m_Def.m_vsChoices.size(); c++ )
 		{
-			CString sText = m_pHand->m_Def.m_vsChoices[c];
+			RString sText = m_pHand->m_Def.m_vsChoices[c];
 			PrepareItemText( sText );
 			bt.SetText( sText );
 			
@@ -373,7 +373,7 @@ void OptionRow::InitText()
 				// init text
 				BitmapText *bt = new BitmapText( m_pParentType->m_textItemParent );
 				m_textItems.push_back( bt );
-				CString sText = m_pHand->m_Def.m_vsChoices[c];
+				RString sText = m_pHand->m_Def.m_vsChoices[c];
 				PrepareItemText( sText );
 				bt->SetText( sText );
 				bt->RunCommands( m_pParentType->ITEMS_ON_COMMAND );
@@ -537,7 +537,7 @@ void OptionRow::UpdateText( PlayerNumber p )
 			if( iChoiceWithFocus == -1 )
 				break;
 
-			CString sText = m_pHand->m_Def.m_vsChoices[iChoiceWithFocus];
+			RString sText = m_pHand->m_Def.m_vsChoices[iChoiceWithFocus];
 			PrepareItemText( sText );
 
 			// If player_no is 2 and there is no player 1:
@@ -699,7 +699,7 @@ void OptionRow::UpdateEnabledDisabled()
 	}
 }
 
-void OptionRow::SetOptionIcon( PlayerNumber pn, const CString &sText, GameCommand &gc )
+void OptionRow::SetOptionIcon( PlayerNumber pn, const RString &sText, GameCommand &gc )
 {
 	// update bullet
 	Lua *L = LUA->Get();
@@ -782,7 +782,7 @@ void OptionRow::SetOneSharedSelection( int iChoice )
 		SetOneSelection( pn, iChoice );
 }
 
-void OptionRow::SetOneSharedSelectionIfPresent( const CString &sChoice )
+void OptionRow::SetOneSharedSelectionIfPresent( const RString &sChoice )
 {
 	for( unsigned i=0; i<m_pHand->m_Def.m_vsChoices.size(); i++ )
 	{
@@ -870,7 +870,7 @@ void OptionRow::SetSelected( PlayerNumber pn, int iChoice, bool b )
 	m_vbSelected[pn][iChoice] = b;
 }
 
-void OptionRow::SetExitText( CString sExitText )
+void OptionRow::SetExitText( RString sExitText )
 {
 	BitmapText *bt = m_textItems.back();
 	bt->SetText( sExitText );
@@ -909,7 +909,7 @@ void OptionRow::Reload()
 	UpdateEnabledDisabled();
 }
 
-void OptionRow::HandleMessage( const CString& sMessage )
+void OptionRow::HandleMessage( const RString& sMessage )
 {
 	Reload();
 }

@@ -136,7 +136,7 @@ void Alsa9Buf::ErrorHandler(const char *file, int line, const char *function, in
 {
 	va_list va;
 	va_start( va, fmt );
-	CString str = vssprintf(fmt, va);
+	RString str = vssprintf(fmt, va);
 	va_end( va );
 
 	if( err )
@@ -153,7 +153,7 @@ void Alsa9Buf::InitializeErrorHandler()
 	dsnd_lib_error_set_handler( ErrorHandler );
 }
 
-static CString DeviceName()
+static RString DeviceName()
 {
 	if( !PREFSMAN->m_iSoundDevice.Get().empty() )
 		return PREFSMAN->m_iSoundDevice;
@@ -169,7 +169,7 @@ void Alsa9Buf::GetSoundCardDebugInfo()
 
 	if( DoesFileExist("/rootfs/proc/asound/version") )
 	{
-		CString sVersion;
+		RString sVersion;
 		GetFileContents( "/rootfs/proc/asound/version", sVersion, true );
 		LOG->Info( "ALSA: %s", sVersion.c_str() );
 	}
@@ -179,7 +179,7 @@ void Alsa9Buf::GetSoundCardDebugInfo()
 	int card = -1;
 	while( dsnd_card_next( &card ) >= 0 && card >= 0 )
 	{
-		const CString id = ssprintf( "hw:%d", card );
+		const RString id = ssprintf( "hw:%d", card );
 		snd_ctl_t *handle;
 		int err;
 		err = dsnd_ctl_open( &handle, id, 0 );
@@ -243,7 +243,7 @@ Alsa9Buf::Alsa9Buf()
 	pcm = NULL;
 }
 
-CString Alsa9Buf::Init( hw hardware, int channels_ )
+RString Alsa9Buf::Init( hw hardware, int channels_ )
 {
 	channels = channels_;
 
@@ -442,7 +442,7 @@ void Alsa9Buf::SetSampleRate(int hz)
 	SetSWParams();
 }
 
-CString Alsa9Buf::GetHardwareID( CString name )
+RString Alsa9Buf::GetHardwareID( RString name )
 {
 	InitializeErrorHandler();
 
@@ -461,7 +461,7 @@ CString Alsa9Buf::GetHardwareID( CString name )
 	snd_ctl_card_info_t *info;
 	dsnd_ctl_card_info_alloca(&info);
 	err = dsnd_ctl_card_info( handle, info );
-	CString ret = dsnd_ctl_card_info_get_id( info );
+	RString ret = dsnd_ctl_card_info_get_id( info );
 	dsnd_ctl_close(handle);
 
 	return ret;

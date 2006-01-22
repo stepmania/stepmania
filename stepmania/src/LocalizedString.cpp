@@ -19,7 +19,7 @@ public:
 	const RString &GetLocalized() const { return m_sValue; }
 
 private:
-	CString m_sValue;
+	RString m_sValue;
 };
 
 static LocalizedString::MakeLocalizer g_pMakeLocalizedStringImpl = LocalizedStringImplDefault::Create;

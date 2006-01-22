@@ -9,15 +9,15 @@
 
 LuaFunction( GradeToString,			GradeToString((Grade)IArg(1)) )
 
-CString GradeToLocalizedString( Grade g )
+RString GradeToLocalizedString( Grade g )
 {
-	CString s = GradeToString(g);
+	RString s = GradeToString(g);
 	if( !THEME->HasMetric("Grade",s) )
 		return "???";
 	return THEME->GetString( "Grade",s );
 }
 
-CString GradeToOldString( Grade g )
+RString GradeToOldString( Grade g )
 {
 	// string is meant to be human readable
 	switch( g )
@@ -35,9 +35,9 @@ CString GradeToOldString( Grade g )
 	}
 };
 
-Grade StringToGrade( const CString &sGrade )
+Grade StringToGrade( const RString &sGrade )
 {
-	CString s = sGrade;
+	RString s = sGrade;
 	s.MakeUpper();
 
 	// new style
@@ -54,7 +54,7 @@ static void LuaGrade(lua_State* L)
 {
 	FOREACH_Grade( g )
 	{
-		CString s = GradeToString(g);
+		RString s = GradeToString(g);
 		LUA->SetGlobal( "Grade_"+s, g );
 	}
 	LUA->SetGlobal( "NUM_Grade", NUM_Grade );

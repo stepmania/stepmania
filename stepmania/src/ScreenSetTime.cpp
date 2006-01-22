@@ -93,7 +93,7 @@ void ScreenSetTime::Update( float fDelta )
 	int iPrettyHour = now.tm_hour%12;
 	if( iPrettyHour == 0 )
 		iPrettyHour = 12;
-	CString sPrettyHour = ssprintf( "%d %s", iPrettyHour, now.tm_hour>=12 ? "pm" : "am" );
+	RString sPrettyHour = ssprintf( "%d %s", iPrettyHour, now.tm_hour>=12 ? "pm" : "am" );
 
 	m_textValue[hour]	.SetText( sPrettyHour );
 	m_textValue[minute]	.SetText( ssprintf("%02d",now.tm_min) );

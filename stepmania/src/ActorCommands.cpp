@@ -7,7 +7,7 @@
 #include <sstream>
 #include "LuaBinding.h"
 
-ActorCommands::ActorCommands( const CString &sCommands )
+ActorCommands::ActorCommands( const RString &sCommands )
 {
 	if( sCommands.size() > 0 && sCommands[0] == '\033' )
 	{
@@ -34,7 +34,7 @@ ActorCommands::ActorCommands( const CString &sCommands )
 		FOREACH_CONST( Command, cmds.v, c )
 		{
 			const Command& cmd = (*c);
-			CString sName = cmd.GetName();
+			RString sName = cmd.GetName();
 			TrimLeft( sName );
 			TrimRight( sName );
 			s << "\tself:" << sName << "(";
@@ -52,7 +52,7 @@ ActorCommands::ActorCommands( const CString &sCommands )
 
 			for( unsigned i=1; i<cmd.m_vsArgs.size(); i++ )
 			{
-				CString sArg = cmd.m_vsArgs[i];
+				RString sArg = cmd.m_vsArgs[i];
 
 				// "+200" -> "200"
 				if( sArg[0] == '+' )
@@ -95,7 +95,7 @@ void ActorCommands::Register()
 {
 	Lua *L = LUA->Get();
 
-	CString sError;
+	RString sError;
 	if( !LuaHelpers::RunScript( L, m_sLuaFunction, "in", sError, 1 ) )
 	{
 		FAIL_M( ssprintf("Compiling \"%s\": %s", m_sLuaFunction.c_str(), sError.c_str()) );

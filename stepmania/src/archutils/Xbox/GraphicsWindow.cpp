@@ -4,7 +4,7 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 
-static const CString g_sClassName = CString(PRODUCT_NAME) + " LowLevelWindow_Win32";
+static const RString g_sClassName = RString(PRODUCT_NAME) + " LowLevelWindow_Win32";
 
 static VideoModeParams g_CurrentParams;
 static bool g_bResolutionChanged = false;
@@ -34,7 +34,7 @@ void GraphicsWindow::Update()
 
 void GraphicsWindow::Initialize( bool bD3D ) { }
 void GraphicsWindow::Shutdown() { }
-CString GraphicsWindow::SetScreenMode( const VideoModeParams &p ) { return ""; }
+RString GraphicsWindow::SetScreenMode( const VideoModeParams &p ) { return ""; }
 void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p ) { }
 void GraphicsWindow::RecreateGraphicsWindow( const VideoModeParams &p ) { }
 void GraphicsWindow::DestroyGraphicsWindow() { }

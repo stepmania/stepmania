@@ -14,7 +14,7 @@
 
 #include <set>
 
-static const CString g_sClassName = PRODUCT_NAME;
+static const RString g_sClassName = PRODUCT_NAME;
 
 static HWND g_hWndMain;
 static HDC g_HDC;
@@ -31,7 +31,7 @@ static bool g_bRecreatingVideoMode = false;
 
 static UINT g_iQueryCancelAutoPlayMessage = 0;
 
-static CString GetNewWindow()
+static RString GetNewWindow()
 {
 	HWND h = GetForegroundWindow();
 	if( h == NULL )
@@ -40,7 +40,7 @@ static CString GetNewWindow()
 	DWORD iProcessID;
 	GetWindowThreadProcessId( h, &iProcessID );
 
-	CString sName;
+	RString sName;
 	GetProcessFileName( iProcessID, sName );
 
 	sName = Basename(sName);
@@ -65,11 +65,11 @@ static LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wPar
 		LOG->Trace( "WM_ACTIVATE (%i, %i): %s", bInactive, bMinimized, g_bHasFocus? "has focus":"doesn't have focus" );
 		if( !g_bHasFocus )
 		{
-			CString sName = GetNewWindow();
-			static set<CString> sLostFocusTo;
+			RString sName = GetNewWindow();
+			static set<RString> sLostFocusTo;
 			sLostFocusTo.insert( sName );
-			CString sStr;
-			for( set<CString>::const_iterator it = sLostFocusTo.begin(); it != sLostFocusTo.end(); ++it )
+			RString sStr;
+			for( set<RString>::const_iterator it = sLostFocusTo.begin(); it != sLostFocusTo.end(); ++it )
 				sStr += (sStr.size()?", ":"") + *it;
 
 			LOG->MapLog( "LOST_FOCUS", "Lost focus to: %s", sStr.c_str() );
@@ -215,14 +215,14 @@ static void AdjustVideoModeParams( VideoModeParams &p )
 
 /* Set the display mode to the given size, bit depth and refresh.  The refresh
  * setting may be ignored. */
-CString GraphicsWindow::SetScreenMode( const VideoModeParams &p )
+RString GraphicsWindow::SetScreenMode( const VideoModeParams &p )
 {
 	if( p.windowed )
 	{
 		/* We're going windowed.  If we were previously fullscreen, reset. */
 		ChangeDisplaySettings( NULL, 0 );
 
-		return CString();
+		return RString();
 	}
 
 	DEVMODE DevMode;
@@ -252,7 +252,7 @@ CString GraphicsWindow::SetScreenMode( const VideoModeParams &p )
 		return "Couldn't set screen mode";
 
 	g_FullScreenDevMode = DevMode;
-	return CString();
+	return RString();
 }
 
 static int GetWindowStyle( bool bWindowed )

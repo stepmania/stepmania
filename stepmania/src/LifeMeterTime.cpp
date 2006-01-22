@@ -28,7 +28,7 @@ void LifeMeterTime::Load( const PlayerState *pPlayerState, PlayerStageStats *pPl
 {
 	LifeMeter::Load( pPlayerState, pPlayerStageStats );
 
-	const CString sType = "LifeMeterTime";
+	const RString sType = "LifeMeterTime";
 
 	m_sprBackground.Load( THEME->GetPathG(sType,"background") );
 	m_sprBackground->SetName( "Background" );
@@ -46,7 +46,7 @@ void LifeMeterTime::Load( const PlayerState *pPlayerState, PlayerStageStats *pPl
 
 	m_pStream = new StreamDisplay;
 	bool bExtra = GAMESTATE->IsExtraStage()||GAMESTATE->IsExtraStage2();
-	CString sExtra = bExtra ? "extra " : "";
+	RString sExtra = bExtra ? "extra " : "";
 	m_pStream->Load(
 		METER_WIDTH,
 		METER_HEIGHT,

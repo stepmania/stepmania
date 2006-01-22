@@ -24,7 +24,7 @@
 
 void MsdFile::AddParam( char *buf, int len )
 {
-	values.back().params.push_back(CString(buf, len));
+	values.back().params.push_back(RString(buf, len));
 }
 
 void MsdFile::AddValue() /* (no extra charge) */
@@ -121,7 +121,7 @@ void MsdFile::ReadBuf( char *buf, int len )
 }
 
 // returns true if successful, false otherwise
-bool MsdFile::ReadFile( CString sNewPath )
+bool MsdFile::ReadFile( RString sNewPath )
 {
 	error = "";
 
@@ -134,7 +134,7 @@ bool MsdFile::ReadFile( CString sNewPath )
 	}
 
 	// allocate a string to hold the file
-	CString FileString;
+	RString FileString;
 	FileString.reserve( f.GetFileSize() );
 
 	int iBytesRead = f.Read( FileString );
@@ -149,7 +149,7 @@ bool MsdFile::ReadFile( CString sNewPath )
 	return true;
 }
 
-void MsdFile::ReadFromString( const CString &sString )
+void MsdFile::ReadFromString( const RString &sString )
 {
 	/* Be careful.  ReadBuf modifies the buffer given to it. */
 	char *pCopy = new char[sString.size()];
@@ -158,10 +158,10 @@ void MsdFile::ReadFromString( const CString &sString )
 	delete [] pCopy;
 }
 
-CString MsdFile::GetParam(unsigned val, unsigned par) const
+RString MsdFile::GetParam(unsigned val, unsigned par) const
 {
-	if(val >= GetNumValues()) return CString();
-	if(par >= GetNumParams(val)) return CString();
+	if(val >= GetNumValues()) return RString();
+	if(par >= GetNumParams(val)) return RString();
 
 	return values[val].params[par];
 }

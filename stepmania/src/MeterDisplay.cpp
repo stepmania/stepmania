@@ -15,7 +15,7 @@ MeterDisplay::MeterDisplay()
 {
 }
 
-void MeterDisplay::Load( CString sStreamPath, float fStreamWidth, CString sTipPath )
+void MeterDisplay::Load( RString sStreamPath, float fStreamWidth, RString sTipPath )
 {
 	m_fStreamWidth = fStreamWidth;
 
@@ -29,17 +29,17 @@ void MeterDisplay::Load( CString sStreamPath, float fStreamWidth, CString sTipPa
 	SetPercent( 0.5f );
 }
 
-void MeterDisplay::LoadFromNode( const CString& sDir, const XNode* pNode )
+void MeterDisplay::LoadFromNode( const RString& sDir, const XNode* pNode )
 {
 	LOG->Trace( "MeterDisplay::LoadFromNode(%s,node)", sDir.c_str() );
 
-	CString sExpr;
+	RString sExpr;
 	if( !pNode->GetAttrValue( "StreamWidth", sExpr ) )
 		RageException::Throw( "MeterDisplay in " + sDir + " missing StreamWidth attribute" );
 	m_fStreamWidth = LuaHelpers::RunExpressionF( sExpr );
 
 	{
-		CString sStreamPath;
+		RString sStreamPath;
 		if( !pNode->GetAttrValue( "StreamPath", sStreamPath ) )
 			RageException::Throw( "MeterDisplay in " + sDir + " missing StreamPath attribute" );
 

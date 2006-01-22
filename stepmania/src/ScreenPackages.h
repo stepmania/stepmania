@@ -33,8 +33,8 @@ private:
 
 	void HTMLParse();
 
-	CString URLEncode( const CString &URL );			//Encode any string in URL-style
-	CString StripOutContainers( const CString & In );	//Strip off "'s and ''s
+	RString URLEncode( const RString &URL );			//Encode any string in URL-style
+	RString StripOutContainers( const RString & In );	//Strip off "'s and ''s
 
 	Sprite	m_sprExistingBG;
 	Sprite	m_sprWebBG;
@@ -44,10 +44,10 @@ private:
 	BitmapText	m_textPackages;
 	BitmapText	m_textWeb;
 
-	vector<CString>		m_Packages;
+	vector<RString>		m_Packages;
 
-	vector <CString>	m_Links;
-	vector <CString>	m_LinkTitles;
+	vector <RString>	m_Links;
+	vector <RString>	m_LinkTitles;
 	BitmapText	m_textURL;
 
 	int m_iPackagesPos;
@@ -58,11 +58,11 @@ private:
 
 	//HTTP portion
 	void CancelDownload( );
-	void EnterURL( const CString & sURL );
+	void EnterURL( const RString & sURL );
 	void HTTPUpdate( );
 
 	//True if proper string, false if improper
-	bool ParseHTTPAddress( const CString & URL, CString & Proto, CString & Server, int & Port, CString & Addy );
+	bool ParseHTTPAddress( const RString & URL, RString & Proto, RString & Server, int & Port, RString & Addy );
 
 	Sprite	m_sprDL;
 	Sprite	m_sprDLBG;
@@ -72,7 +72,7 @@ private:
 	float	m_fLastUpdate;
 	long	m_bytesLastUpdate;
 
-	CString	m_sStatus;
+	RString	m_sStatus;
 	BitmapText	m_textStatus;
 
 	EzSockets m_wSocket;
@@ -80,19 +80,19 @@ private:
 	bool	m_bGotHeader;
 
 	RageFile	m_fOutputFile;
-	CString	m_sEndName;
+	RString	m_sEndName;
 	bool	m_bIsPackage;
 
-	CString m_sBaseAddress;
+	RString m_sBaseAddress;
 	//HTTP Header information responce
 	long	m_iTotalBytes;
 	long	m_iDownloaded;
 
 	long	m_iResponseCode;
-	CString	m_sResponseName;
+	RString	m_sResponseName;
 
 	//Raw HTTP Buffer
-	CString m_sBUFFER;
+	RString m_sBUFFER;
 };
 
 #endif

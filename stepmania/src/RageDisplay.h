@@ -62,7 +62,7 @@ enum PixelFormat
 	NUM_PixelFormat,
 	PixelFormat_INVALID
 };
-const CString& PixelFormatToString( PixelFormat i );
+const RString& PixelFormatToString( PixelFormat i );
 
 class VideoModeParams
 {
@@ -80,8 +80,8 @@ public:
 		bool bSmoothLines_,
 		bool bTrilinearFiltering_,
 		bool bAnisotropicFiltering_,
-		CString sWindowTitle_,
-		CString sIconFile_,
+		RString sWindowTitle_,
+		RString sIconFile_,
 		bool PAL_,
 		float fDisplayAspectRatio_
 	)
@@ -115,8 +115,8 @@ public:
 	bool interlaced;
 	bool PAL;
 	float fDisplayAspectRatio;
-	CString sWindowTitle;
-	CString sIconFile;
+	RString sWindowTitle;
+	RString sIconFile;
 };
 
 class RageDisplay
@@ -135,13 +135,13 @@ public:
 	/* This is needed or the overridden classes' dtors will not be called. */
 	virtual ~RageDisplay() { }
 
-	virtual CString GetApiDescription() const = 0;
+	virtual RString GetApiDescription() const = 0;
 	virtual void GetDisplayResolutions( DisplayResolutions &out ) const = 0;
 
 	// Don't override this.  Override TryVideoMode() instead.
 	// This will set the video mode to be as close as possible to params.
 	// Return true if device was re-created and we need to reload textures.
-	CString SetVideoMode( VideoModeParams p, bool &bNeedReloadTextures );
+	RString SetVideoMode( VideoModeParams p, bool &bNeedReloadTextures );
 
 	/* Call this when the resolution has been changed externally: */
 	virtual void ResolutionChanged();
@@ -239,9 +239,9 @@ public:
 		SAVE_LOSSY_LOW_QUAL, // jpg
 		SAVE_LOSSY_HIGH_QUAL // jpg
 	};
-	bool SaveScreenshot( CString sPath, GraphicsFileFormat format );
+	bool SaveScreenshot( RString sPath, GraphicsFileFormat format );
 
-	virtual CString GetTextureDiagnostics( unsigned id ) const { return CString(); }
+	virtual RString GetTextureDiagnostics( unsigned id ) const { return RString(); }
 	virtual RageSurface* CreateScreenshot() = 0;	// allocates a surface.  Caller must delete it.
 
 protected:
@@ -254,10 +254,10 @@ protected:
 	virtual void DrawLineStripInternal( const RageSpriteVertex v[], int iNumVerts, float LineWidth );
 	virtual void DrawCircleInternal( const RageSpriteVertex &v, float radius );
 
-	// return CString() if mode change was successful, an error message otherwise.
+	// return RString() if mode change was successful, an error message otherwise.
 	// bNewDeviceOut is set true if a new device was created and textures
 	// need to be reloaded.
-	virtual CString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut ) = 0;
+	virtual RString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut ) = 0;
 
 	void DrawPolyLine( const RageSpriteVertex &p1, const RageSpriteVertex &p2, float LineWidth );
 
@@ -271,7 +271,7 @@ public:
 	int GetCumFPS() const; /* average FPS since last reset */
 	virtual void ResetStats();
 	virtual void ProcessStatsOnFlip();
-	virtual CString GetStats() const;
+	virtual RString GetStats() const;
 	void StatsAddVerts( int iNumVertsRendered );
 
 	/* World matrix stack functions. */

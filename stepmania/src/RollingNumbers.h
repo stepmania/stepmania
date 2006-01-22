@@ -10,7 +10,7 @@ class RollingNumbers : public BitmapText
 public:
 	RollingNumbers();
 
-	void LoadFromNode( const CString& sDir, const XNode* pNode );
+	void LoadFromNode( const RString& sDir, const XNode* pNode );
 	virtual Actor *Copy() const;
 
 	virtual void Update( float fDeltaTime );
@@ -30,7 +30,7 @@ private:
 	// Time between the call to SetTargetNumber and m_fCurrentNumber == 
 	// m_fTargetNumber.  Used to calculate m_fScoreVelocity.
 	float	m_fApproachSeconds;
-	CString m_sFormat;
+	RString m_sFormat;
 
 	//
 	// Calculated

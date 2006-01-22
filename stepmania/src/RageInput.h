@@ -17,10 +17,10 @@ public:
 	void LoadDrivers();
 	void Update();
 	bool DevicesChanged();
-	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vsDescriptionsOut );
+	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<RString>& vsDescriptionsOut );
 	void WindowReset();
 	void AddHandler( InputHandler *pHandler );
-	CString GetDeviceSpecificInputString( const DeviceInput &di );
+	RString GetDeviceSpecificInputString( const DeviceInput &di );
 	InputDeviceState GetInputDeviceState( InputDevice id );
 
 	// Lua
@@ -28,7 +28,7 @@ public:
 
 private:
 	vector<InputHandler *> m_pDevices;
-	CString m_sDriverList;
+	RString m_sDriverList;
 };
 
 extern RageInput*			INPUTMAN;	// global and accessable from anywhere in our program

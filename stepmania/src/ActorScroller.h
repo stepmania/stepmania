@@ -13,7 +13,7 @@ class ActorScroller : public ActorFrame
 public:
 	ActorScroller();
 
-	void SetTransformFromExpression( const CString &sTransformFunction );
+	void SetTransformFromExpression( const RString &sTransformFunction );
 	void SetTransformFromHeight( float fItemHeight );
 
 	void Load2(
@@ -28,7 +28,7 @@ public:
 
 	void PositionItems();
 
-	void LoadFromNode( const CString &sDir, const XNode *pNode );
+	void LoadFromNode( const RString &sDir, const XNode *pNode );
 	virtual Actor *Copy() const;
 	
 	void SetDestinationItem( float fItemIndex )				{ m_fDestinationItem = fItemIndex; }

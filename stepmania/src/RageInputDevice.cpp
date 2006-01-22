@@ -121,7 +121,7 @@ static void InitNames()
 		g_mapStringToNames[m->second] = m->first;
 }
 
-CString DeviceButtonToString( DeviceButton key )
+RString DeviceButtonToString( DeviceButton key )
 {
 	InitNames();
 
@@ -146,7 +146,7 @@ CString DeviceButtonToString( DeviceButton key )
 	return "unknown";
 }
 
-DeviceButton StringToDeviceButton( const CString& s )
+DeviceButton StringToDeviceButton( const RString& s )
 {
 	InitNames();
 
@@ -196,16 +196,16 @@ static const char *InputDeviceNames[] = {
 XToString( InputDevice, NUM_INPUT_DEVICES );
 StringToX( InputDevice );
 
-CString DeviceInput::ToString() const
+RString DeviceInput::ToString() const
 {
 	if( device == DEVICE_NONE )
-		return CString();
+		return RString();
 
-	CString s = InputDeviceToString(device) + "_" + DeviceButtonToString(button);
+	RString s = InputDeviceToString(device) + "_" + DeviceButtonToString(button);
 	return s;
 }
 
-bool DeviceInput::FromString( const CString &s )
+bool DeviceInput::FromString( const RString &s )
 {
 	char szDevice[32] = "";
 	char szButton[32] = "";

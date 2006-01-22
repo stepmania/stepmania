@@ -11,15 +11,15 @@ class LowLevelWindow
 public:
 	virtual ~LowLevelWindow() { }
 
-	virtual void *GetProcAddress( CString s ) = 0;
+	virtual void *GetProcAddress( RString s ) = 0;
 
 	// Return "" if mode change was successful, otherwise an error message.
 	// bNewDeviceOut is set true if a new device was created and textures
 	// need to be reloaded.
-	virtual CString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut ) = 0;
+	virtual RString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut ) = 0;
 	virtual void GetDisplayResolutions( DisplayResolutions &out ) const = 0;
 
-	virtual bool IsSoftwareRenderer( CString &sError ) { return false; }
+	virtual bool IsSoftwareRenderer( RString &sError ) { return false; }
 
 	virtual void SwapBuffers() = 0;
 	virtual void Update() { }

@@ -15,9 +15,9 @@ static const float LineHeight = 50;
 #define FONT( i )			THEME->GetMetric (m_sName,ssprintf("Font%i",i))
 #define TEXT( i )			THEME->GetMetric (m_sName,ssprintf("Text%i",i))
 
-static CString g_sCustomText;
+static RString g_sCustomText;
 
-static void ChangeText( const CString &sText )
+static void ChangeText( const RString &sText )
 {
 	g_sCustomText = sText;
 }
@@ -57,7 +57,7 @@ void ScreenTestFonts::Init()
 	SetText( "Foo" );
 }
 
-void ScreenTestFonts::SetText( CString sText )
+void ScreenTestFonts::SetText( RString sText )
 {
 	txt.SetShadowLength( 0 );
 	txt.SetText( "" ); /* force it */
@@ -65,7 +65,7 @@ void ScreenTestFonts::SetText( CString sText )
 	m_sCurText = sText;
 }
 
-void ScreenTestFonts::SetFont( CString sFont )
+void ScreenTestFonts::SetFont( RString sFont )
 {
 	m_sFont = sFont;
 

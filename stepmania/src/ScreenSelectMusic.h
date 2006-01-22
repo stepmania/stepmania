@@ -86,18 +86,18 @@ protected:
 	ThemeMetric<bool> SHOW_COURSE_CONTENTS;
 	ThemeMetric<bool> DO_ROULETTE_ON_MENU_TIMER;
 	ThemeMetric<bool> ALIGN_MUSIC_BEATS;
-	ThemeMetric<CString> CODES;
-	ThemeMetric<CString> MUSIC_WHEEL_TYPE;
+	ThemeMetric<RString> CODES;
+	ThemeMetric<RString> MUSIC_WHEEL_TYPE;
 	ThemeMetric<bool> OPTIONS_MENU_AVAILABLE;
 	DynamicThemeMetric<bool> SELECT_MENU_AVAILABLE;
 	DynamicThemeMetric<bool> MODE_MENU_AVAILABLE;
 
-	CString m_sSectionMusicPath;
-	CString m_sSortMusicPath;
-	CString m_sRouletteMusicPath;
-	CString m_sRandomMusicPath;
-	CString m_sCourseMusicPath;
-	CString m_sFallbackCDTitlePath;
+	RString m_sSectionMusicPath;
+	RString m_sSortMusicPath;
+	RString m_sRouletteMusicPath;
+	RString m_sRandomMusicPath;
+	RString m_sCourseMusicPath;
+	RString m_sFallbackCDTitlePath;
 
 	Sprite				m_sprBannerMask;
 	FadingBanner		m_Banner;
@@ -129,7 +129,7 @@ protected:
 
 	bool				m_bMadeChoice;
 	bool				m_bGoToOptions;
-	CString				m_sSampleMusicToPlay;
+	RString				m_sSampleMusicToPlay;
 	TimingData			*m_pSampleMusicTimingData;
 	float				m_fSampleStartSeconds, m_fSampleLengthSeconds;
 	bool				m_bAllowOptionsMenu, m_bAllowOptionsMenuRepeat;

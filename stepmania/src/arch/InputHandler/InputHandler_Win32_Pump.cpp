@@ -67,7 +67,7 @@ void InputHandler_Win32_Pump::HandleInput( int iDevice, int iEvent )
 	}
 }
 
-CString InputHandler_Win32_Pump::GetDeviceSpecificInputString( const DeviceInput &di )
+RString InputHandler_Win32_Pump::GetDeviceSpecificInputString( const DeviceInput &di )
 {
 	switch( di.button )
 	{
@@ -87,7 +87,7 @@ CString InputHandler_Win32_Pump::GetDeviceSpecificInputString( const DeviceInput
 	return InputHandler::GetDeviceSpecificInputString( di );
 }
 
-void InputHandler_Win32_Pump::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut)
+void InputHandler_Win32_Pump::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut)
 {
 	for(int i = 0; i < NUM_PUMPS; ++i)
 	{

@@ -17,8 +17,8 @@
 
 #include "arch/arch.h"
 
-const CString DEFAULT_LIGHTS_DRIVER = "Null";
-static Preference<CString> g_sLightsDriver( "LightsDriver", "" ); // "" == DEFAULT_LIGHTS_DRIVER
+const RString DEFAULT_LIGHTS_DRIVER = "Null";
+static Preference<RString> g_sLightsDriver( "LightsDriver", "" ); // "" == DEFAULT_LIGHTS_DRIVER
 Preference<float>	g_fLightsFalloffSeconds( "LightsFalloffSeconds", 0.1f );
 Preference<float>	g_fLightsAheadSeconds( "LightsAheadSeconds", 0.05f );
 
@@ -88,7 +88,7 @@ LightsManager::LightsManager()
 	ZERO( m_fSecsLeftInActorLightBlink );
 
 	m_LightsMode = LIGHTSMODE_JOINING;
-	CString sDriver = g_sLightsDriver.Get();
+	RString sDriver = g_sLightsDriver.Get();
 	if( sDriver.empty() )
 		sDriver = DEFAULT_LIGHTS_DRIVER;
 	MakeLightsDrivers( sDriver, m_vpDrivers );

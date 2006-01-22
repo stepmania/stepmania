@@ -15,8 +15,8 @@ public:
 	BGAnimationLayer();
 	~BGAnimationLayer();
 
-	void LoadFromAniLayerFile( const CString& sPath );
-	void LoadFromNode( const CString& sDir, const XNode* pNode );
+	void LoadFromAniLayerFile( const RString& sPath );
+	void LoadFromNode( const RString& sDir, const XNode* pNode );
 
 	void UpdateInternal( float fDeltaTime );
 	bool EarlyAbortDraw() const;
@@ -41,7 +41,7 @@ protected:
 	//
 	
 	// common stuff
-	CString m_sDrawCond;
+	RString m_sDrawCond;
 
 	// stretch stuff
 	float m_fTexCoordVelocityX;

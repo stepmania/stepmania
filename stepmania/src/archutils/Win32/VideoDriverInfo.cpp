@@ -6,7 +6,7 @@
 #include <windows.h>
 
 // this will not work on 95 and NT because of EnumDisplayDevices
-CString GetPrimaryVideoName()
+RString GetPrimaryVideoName()
 {
     typedef BOOL (WINAPI* pfnEnumDisplayDevices)(PVOID,DWORD,PDISPLAY_DEVICE,DWORD);
 	pfnEnumDisplayDevices EnumDisplayDevices;
@@ -14,17 +14,17 @@ CString GetPrimaryVideoName()
     
     hInstUser32 = LoadLibrary( "User32.DLL" );
     if( !hInstUser32 ) 
-		return CString();  
+		return RString();  
 
 	// VC6 don't have a stub to static link with, so link dynamically.
 	EnumDisplayDevices = (pfnEnumDisplayDevices)GetProcAddress(hInstUser32,"EnumDisplayDevicesA");
     if( EnumDisplayDevices == NULL )
 	{
         FreeLibrary(hInstUser32);
-        return CString();
+        return RString();
     }
 	
-	CString sPrimaryDeviceName;
+	RString sPrimaryDeviceName;
 	for( int i=0; true; ++i )
 	{
 		DISPLAY_DEVICE dd;
@@ -43,9 +43,9 @@ CString GetPrimaryVideoName()
 	return sPrimaryDeviceName;
 }
 
-CString GetPrimaryVideoDriverName()
+RString GetPrimaryVideoDriverName()
 {
-	const CString sPrimaryDeviceName = GetPrimaryVideoName();
+	const RString sPrimaryDeviceName = GetPrimaryVideoName();
 	if( sPrimaryDeviceName != "" )
 		return sPrimaryDeviceName;
 	
@@ -67,12 +67,12 @@ bool GetVideoDriverInfo( int iCardno, VideoDriverInfo &info )
 	const bool bIsWin9x = version.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS;
 
 	static bool bInitialized=false;
-	static vector<CString> lst;
+	static vector<RString> lst;
 	if( !bInitialized )
 	{
 		bInitialized = true;
 
-		const CString sTopKey = bIsWin9x?
+		const RString sTopKey = bIsWin9x?
 			"HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\Class\\Display":
 			"HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Class\\{4D36E968-E325-11CE-BFC1-08002BE10318}";
 
@@ -99,7 +99,7 @@ bool GetVideoDriverInfo( int iCardno, VideoDriverInfo &info )
 
 	while( iCardno < (int)lst.size() )
 	{
-		const CString sKey = lst[iCardno];
+		const RString sKey = lst[iCardno];
 
 		if( !RegistryAccess::GetRegValue( sKey, "DriverDesc", info.sDescription ) )
 		{

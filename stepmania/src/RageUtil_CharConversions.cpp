@@ -9,7 +9,7 @@
 #include "windows.h"
 
 /* Convert from the given codepage to UTF-8.  Return true if successful. */
-static bool CodePageConvert(CString &txt, int cp)
+static bool CodePageConvert(RString &txt, int cp)
 {
 	if( txt.size() == 0 )
 		return true;
@@ -31,15 +31,15 @@ static bool CodePageConvert(CString &txt, int cp)
 	return true;
 }
 
-static bool AttemptEnglishConversion( CString &txt ) { return CodePageConvert( txt, 1252 ); }
-static bool AttemptKoreanConversion( CString &txt ) { return CodePageConvert( txt, 949 ); }
-static bool AttemptJapaneseConversion( CString &txt ) { return CodePageConvert( txt, 932 ); }
+static bool AttemptEnglishConversion( RString &txt ) { return CodePageConvert( txt, 1252 ); }
+static bool AttemptKoreanConversion( RString &txt ) { return CodePageConvert( txt, 949 ); }
+static bool AttemptJapaneseConversion( RString &txt ) { return CodePageConvert( txt, 932 ); }
 
 #elif defined(HAVE_ICONV)
 #include <errno.h>
 #include <iconv.h>
 
-static bool ConvertFromCharset( CString &txt, const char *charset )
+static bool ConvertFromCharset( RString &txt, const char *charset )
 {
 	if ( txt.size() == 0 )
 		return true;
@@ -56,7 +56,7 @@ static bool ConvertFromCharset( CString &txt, const char *charset )
 	size_t inleft = txt.size();
 
 	/* Create a new string with enough room for the new conversion */
-	CString buf;
+	RString buf;
 	buf.resize( txt.size() * 5 );
 
 	char *txtout = const_cast<char*>( buf.data() );
@@ -86,22 +86,22 @@ static bool ConvertFromCharset( CString &txt, const char *charset )
 	return true;
 }
 
-static bool AttemptEnglishConversion( CString &txt ) { return ConvertFromCharset( txt, "CP1252" ); }
-static bool AttemptKoreanConversion( CString &txt ) { return ConvertFromCharset( txt, "CP949" ); }
-static bool AttemptJapaneseConversion( CString &txt ) { return ConvertFromCharset( txt, "CP932" ); }
+static bool AttemptEnglishConversion( RString &txt ) { return ConvertFromCharset( txt, "CP1252" ); }
+static bool AttemptKoreanConversion( RString &txt ) { return ConvertFromCharset( txt, "CP949" ); }
+static bool AttemptJapaneseConversion( RString &txt ) { return ConvertFromCharset( txt, "CP932" ); }
 
 #else
 
 /* No converters are available, so all fail--we only accept UTF-8. */
-static bool AttemptEnglishConversion( CString &txt ) { return false; }
-static bool AttemptKoreanConversion( CString &txt ) { return false; }
-static bool AttemptJapaneseConversion( CString &txt ) { return false; }
+static bool AttemptEnglishConversion( RString &txt ) { return false; }
+static bool AttemptKoreanConversion( RString &txt ) { return false; }
+static bool AttemptJapaneseConversion( RString &txt ) { return false; }
 
 #endif
 
-bool ConvertString(CString &str, const CString &encodings)
+bool ConvertString(RString &str, const RString &encodings)
 {
-	vector<CString> lst;
+	vector<RString> lst;
 	split(encodings, ",", lst);
 
 	for(unsigned i = 0; i < lst.size(); ++i)

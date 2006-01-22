@@ -9,12 +9,12 @@ class RageFile;
 class NotesWriterSM
 {
 	void WriteGlobalTags( RageFile &f, const Song &out );
-	static CString GetSMNotesTag( const Song &song, const Steps &in, bool bSavingCache );
+	static RString GetSMNotesTag( const Song &song, const Steps &in, bool bSavingCache );
 
 public:
-	bool Write( CString sPath, const Song &out, bool bSavingCache );
-	static void GetEditFileContents( const Song *pSong, const Steps *pSteps, CString &sOut );
-	CString GetEditFileName( const Song *pSong, const Steps *pSteps );
+	bool Write( RString sPath, const Song &out, bool bSavingCache );
+	static void GetEditFileContents( const Song *pSong, const Steps *pSteps, RString &sOut );
+	RString GetEditFileName( const Song *pSong, const Steps *pSteps );
 	bool WriteEditFileToMachine( const Song *pSong, Steps *pSteps );
 };
 

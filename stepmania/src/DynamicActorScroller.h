@@ -10,7 +10,7 @@ class DynamicActorScroller: public ActorScroller
 {
 public:
 	virtual Actor *Copy() const;
-	void LoadFromNode( const CString &sDir, const XNode *pNode );
+	void LoadFromNode( const RString &sDir, const XNode *pNode );
 
 protected:
 	virtual void ShiftSubActors( int iDist );

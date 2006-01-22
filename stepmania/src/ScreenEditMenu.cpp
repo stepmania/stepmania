@@ -129,9 +129,9 @@ void ScreenEditMenu::MenuRight( const InputEventPlus &input )
 	}
 }
 
-static CString GetCopyDescription( const Steps *pSourceSteps )
+static RString GetCopyDescription( const Steps *pSourceSteps )
 {
-	CString s;
+	RString s;
 	if( pSourceSteps->GetDifficulty() == DIFFICULTY_EDIT )
 		s = pSourceSteps->GetDescription();
 	else
@@ -141,7 +141,7 @@ static CString GetCopyDescription( const Steps *pSourceSteps )
 
 static LocalizedString YOU_MUST_SUPPLY_NAME	( "ScreenEditMenu", "You must supply a name for your new edit." );
 static LocalizedString EDIT_NAME_CONFLICTS	( "ScreenEditMenu", "The name you chose conflicts with another edit. Please use a different name." );
-static bool ValidateCurrentStepsDescription( const CString &s, CString &sErrorOut )
+static bool ValidateCurrentStepsDescription( const RString &s, RString &sErrorOut )
 {
 	ASSERT( GAMESTATE->m_pCurSteps[0]->GetDifficulty() == DIFFICULTY_EDIT );
 
@@ -160,7 +160,7 @@ static bool ValidateCurrentStepsDescription( const CString &s, CString &sErrorOu
 	return true;
 }
 	
-static void SetCurrentStepsDescription( const CString &s )
+static void SetCurrentStepsDescription( const RString &s )
 {
 	GAMESTATE->m_pCurSteps[0]->SetDescription( s );
 }
@@ -244,7 +244,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 				break;
 			}
 
-			CString sEditName;
+			RString sEditName;
 			if( pSourceSteps )
 			{
 				pSteps->CopyFrom( pSourceSteps, st, pSong->m_fMusicLengthSeconds );
@@ -327,7 +327,7 @@ void ScreenEditMenu::RefreshExplanationText()
 
 void ScreenEditMenu::RefreshNumStepsLoadedFromProfile()
 {
-	CString s = ssprintf( "edits used: %d", SONGMAN->GetNumStepsLoadedFromProfile() );
+	RString s = ssprintf( "edits used: %d", SONGMAN->GetNumStepsLoadedFromProfile() );
 	m_textNumStepsLoadedFromProfile.SetText( s );
 }
 

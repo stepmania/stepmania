@@ -4,7 +4,7 @@
 namespace FontCharmaps
 {
 	extern const wchar_t M_SKIP;
-	const wchar_t *get_char_map(CString name);
+	const wchar_t *get_char_map(RString name);
 };
 
 #endif

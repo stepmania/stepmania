@@ -18,7 +18,7 @@ public:
 	OptionIconRow();
 
 	void Load();
-	virtual void LoadFromNode( const CString& sDir, const XNode* pNode );
+	virtual void LoadFromNode( const RString& sDir, const XNode* pNode );
 	virtual Actor *Copy() const;
 	void SetFromGameState( PlayerNumber pn );
 

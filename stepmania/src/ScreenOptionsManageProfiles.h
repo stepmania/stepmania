@@ -24,9 +24,9 @@ protected:
 	virtual void ProcessMenuStart( const InputEventPlus &input );
 
 	int GetLocalProfileIndexWithFocus() const;
-	CString GetLocalProfileIDWithFocus() const;
+	RString GetLocalProfileIDWithFocus() const;
 
-	vector<CString> m_vsLocalProfileID;
+	vector<RString> m_vsLocalProfileID;
 
 	ScreenMiniMenu *m_pContextMenu;
 };

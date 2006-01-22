@@ -12,7 +12,7 @@
 //
 // Sorting stuff
 //
-map<const Steps*, CString> steps_sort_val;
+map<const Steps*, RString> steps_sort_val;
 
 bool CompareStepsPointersBySortValueAscending(const Steps *pSteps1, const Steps *pSteps2)
 {
@@ -233,7 +233,7 @@ void StepsID::LoadFromNode( const XNode* pNode )
 {
 	ASSERT( pNode->m_sName == "Steps" );
 
-	CString sTemp;
+	RString sTemp;
 
 	pNode->GetAttrValue("StepsType", sTemp);
 	st = GameManager::StringToStepsType( sTemp );
@@ -253,9 +253,9 @@ void StepsID::LoadFromNode( const XNode* pNode )
 	}
 }
 
-CString StepsID::ToString() const
+RString StepsID::ToString() const
 {
-	CString s = GameManager::StepsTypeToString(st);
+	RString s = GameManager::StepsTypeToString(st);
 	s += " " + DifficultyToString(dc);
 	if( dc == DIFFICULTY_EDIT )
 	{

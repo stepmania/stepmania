@@ -8,7 +8,7 @@
 
 ThemeMetric<float> METER_WIDTH		("CombinedLifeMeterTug","MeterWidth");
 
-static void TugMeterPercentChangeInit( size_t /*ScoreEvent*/ i, CString &sNameOut, float &defaultValueOut )
+static void TugMeterPercentChangeInit( size_t /*ScoreEvent*/ i, RString &sNameOut, float &defaultValueOut )
 {
 	sNameOut = "TugMeterPercentChange" + ScoreEventToString( (ScoreEvent)i );
 	switch( i )
@@ -32,8 +32,8 @@ CombinedLifeMeterTug::CombinedLifeMeterTug()
 {
 	FOREACH_PlayerNumber( p )
 	{
-		CString sStreamPath = THEME->GetPathG("CombinedLifeMeterTug",ssprintf("stream p%d",p+1));
-		CString sTipPath = THEME->GetPathG("CombinedLifeMeterTug",ssprintf("tip p%d",p+1));
+		RString sStreamPath = THEME->GetPathG("CombinedLifeMeterTug",ssprintf("stream p%d",p+1));
+		RString sTipPath = THEME->GetPathG("CombinedLifeMeterTug",ssprintf("tip p%d",p+1));
 		m_Stream[p].Load( sStreamPath, METER_WIDTH, sTipPath );
 		this->AddChild( &m_Stream[p] );
 	}

@@ -25,7 +25,7 @@ enum EditCourseEntryRow
 };
 #define FOREACH_EditCourseEntryRow( i ) FOREACH_ENUM( EditCourseEntryRow, NUM_EditCourseEntryRow, i )
 
-static void FillSongsAndChoices( const CString &sSongGroup, vector<Song*> &vpSongsOut, vector<CString> &vsChoicesOut )
+static void FillSongsAndChoices( const RString &sSongGroup, vector<Song*> &vpSongsOut, vector<RString> &vsChoicesOut )
 {
 	vpSongsOut.clear();
 	vsChoicesOut.clear();
@@ -51,7 +51,7 @@ class OptionRowHandlerSongChoices: public OptionRowHandler
 public:
 	// corresponds with m_vsChoices:
 	vector<Song*> m_vpDisplayedSongs;
-	CString m_sSongGroup;
+	RString m_sSongGroup;
 
 	OptionRowHandlerSongChoices() { Init(); }
 	void Init()
@@ -99,10 +99,10 @@ void ScreenOptionsEditCourseEntry::Init()
 	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 	pHand->m_Def.m_bExportOnChange = true;
 	pHand->m_Def.m_vsChoices.clear();
-	vector<CString> vsSongGroups;
+	vector<RString> vsSongGroups;
 	SONGMAN->GetSongGroupNames( vsSongGroups );
 	pHand->m_Def.m_vsChoices.push_back( "(any)" );
-	FOREACH_CONST( CString, vsSongGroups, song )
+	FOREACH_CONST( RString, vsSongGroups, song )
 		pHand->m_Def.m_vsChoices.push_back( *song );
 	vHands.push_back( pHand );
 
@@ -185,7 +185,7 @@ void ScreenOptionsEditCourseEntry::BeginScreen()
 
 	m_pSongHandler->m_sSongGroup = ce.sSongGroup;
 
-	CString s = ssprintf( "%d mod changes", ce.GetNumModChanges() );
+	RString s = ssprintf( "%d mod changes", ce.GetNumModChanges() );
 	m_pModChangesHandler->m_Def.m_vsChoices[0] = s;
 
 	ScreenOptions::BeginScreen();
@@ -289,7 +289,7 @@ void ScreenOptionsEditCourseEntry::ImportOptions( int iRow, const vector<PlayerN
 	switch( iRow )
 	{
 	case ROW_SONG_GROUP:
-		FOREACH_CONST( CString, row.GetRowDef().m_vsChoices, s )
+		FOREACH_CONST( RString, row.GetRowDef().m_vsChoices, s )
 		{
 			if( *s == ce.sSongGroup )
 			{

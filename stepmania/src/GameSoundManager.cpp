@@ -72,13 +72,13 @@ static MusicPlaying *g_Playing;
 
 static RageThread MusicThread;
 
-vector<CString> g_SoundsToPlayOnce;
-vector<CString> g_SoundsToPlayOnceFromDir;
-vector<CString> g_SoundsToPlayOnceFromAnnouncer;
+vector<RString> g_SoundsToPlayOnce;
+vector<RString> g_SoundsToPlayOnceFromDir;
+vector<RString> g_SoundsToPlayOnceFromAnnouncer;
 
 struct MusicToPlay
 {
-	CString file, timing_file;
+	RString file, timing_file;
 	bool HasTiming;
 	TimingData timing_data;
 	NoteData lights_data;
@@ -252,7 +252,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 	g_Playing = NewMusic;
 }
 
-static void DoPlayOnceFromDir( CString sPath )
+static void DoPlayOnceFromDir( RString sPath )
 {
 	if( sPath == "" )
 		return;
@@ -261,7 +261,7 @@ static void DoPlayOnceFromDir( CString sPath )
 	if( sPath.Right(1) != "/" )
 		sPath += "/";
 
-	vector<CString> arraySoundFiles;
+	vector<RString> arraySoundFiles;
 	GetDirListing( sPath + "*.mp3", arraySoundFiles );
 	GetDirListing( sPath + "*.wav", arraySoundFiles );
 	GetDirListing( sPath + "*.ogg", arraySoundFiles );
@@ -285,11 +285,11 @@ static bool SoundWaiting()
 static void StartQueuedSounds()
 {
 	g_Mutex->Lock();
-	vector<CString> aSoundsToPlayOnce = g_SoundsToPlayOnce;
+	vector<RString> aSoundsToPlayOnce = g_SoundsToPlayOnce;
 	g_SoundsToPlayOnce.clear();
-	vector<CString> aSoundsToPlayOnceFromDir = g_SoundsToPlayOnceFromDir;
+	vector<RString> aSoundsToPlayOnceFromDir = g_SoundsToPlayOnceFromDir;
 	g_SoundsToPlayOnceFromDir.clear();
-	vector<CString> aSoundsToPlayOnceFromAnnouncer = g_SoundsToPlayOnceFromAnnouncer;
+	vector<RString> aSoundsToPlayOnceFromAnnouncer = g_SoundsToPlayOnceFromAnnouncer;
 	g_SoundsToPlayOnceFromAnnouncer.clear();
 	vector<MusicToPlay> aMusicsToPlay = g_MusicsToPlay;
 	g_MusicsToPlay.clear();
@@ -304,7 +304,7 @@ static void StartQueuedSounds()
 
 	for( unsigned i = 0; i < aSoundsToPlayOnceFromAnnouncer.size(); ++i )
 	{
-		CString sPath = aSoundsToPlayOnceFromAnnouncer[i];
+		RString sPath = aSoundsToPlayOnceFromAnnouncer[i];
 		if( sPath != "" )
 		{
 			sPath = ANNOUNCER->GetPathTo( sPath );
@@ -512,8 +512,8 @@ void GameSoundManager::Update( float fDeltaTime )
 		const float fSoundTimePassed = fSeconds - GAMESTATE->m_fMusicSeconds;
 		const float fDiff = fExpectedTimePassed - fSoundTimePassed;
 
-		static CString sLastFile = "";
-		const CString ThisFile = g_Playing->m_Music->GetLoadedFilePath();
+		static RString sLastFile = "";
+		const RString ThisFile = g_Playing->m_Music->GetLoadedFilePath();
 
 		/* If fSoundTimePassed < 0, the sound has probably looped. */
 		if( sLastFile == ThisFile && fSoundTimePassed >= 0 && fabsf(fDiff) > 0.003f )
@@ -615,14 +615,14 @@ done_with_cabinet_light:
 }
 
 
-CString GameSoundManager::GetMusicPath() const
+RString GameSoundManager::GetMusicPath() const
 {
 	LockMut( *g_Mutex );
 	return g_Playing->m_Music->GetLoadedFilePath();
 }
 
 void GameSoundManager::PlayMusic( 
-	const CString &file, 
+	const RString &file, 
 	const TimingData *pTiming, 
 	bool force_loop, 
 	float start_sec, 
@@ -679,7 +679,7 @@ void GameSoundManager::HandleSongTimer( bool on )
 	g_UpdatingTimer = on;
 }
 
-void GameSoundManager::PlayOnce( CString sPath )
+void GameSoundManager::PlayOnce( RString sPath )
 {
 	/* Add the sound to the g_SoundsToPlayOnce queue. */
 	g_Mutex->Lock();
@@ -688,7 +688,7 @@ void GameSoundManager::PlayOnce( CString sPath )
 	g_Mutex->Unlock();
 }
 
-void GameSoundManager::PlayOnceFromDir( CString sPath )
+void GameSoundManager::PlayOnceFromDir( RString sPath )
 {
 	/* Add the path to the g_SoundsToPlayOnceFromDir queue. */
 	g_Mutex->Lock();
@@ -697,7 +697,7 @@ void GameSoundManager::PlayOnceFromDir( CString sPath )
 	g_Mutex->Unlock();
 }
 
-void GameSoundManager::PlayOnceFromAnnouncer( CString sPath )
+void GameSoundManager::PlayOnceFromAnnouncer( RString sPath )
 {
 	/* Add the path to the g_SoundsToPlayOnceFromDir queue. */
 	g_Mutex->Lock();
@@ -735,7 +735,7 @@ public:
 		p->DimMusic( fVolume, fDurationSeconds );
 		return 0;
 	}
-	static int PlayOnce( T* p, lua_State *L ) { CString sPath = SArg(1); p->PlayOnce( sPath ); return 0; }
+	static int PlayOnce( T* p, lua_State *L ) { RString sPath = SArg(1); p->PlayOnce( sPath ); return 0; }
 
 	static void Register(lua_State *L)
 	{

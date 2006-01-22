@@ -21,10 +21,10 @@ class DialogDriver;
 DialogDriver *MakeDialogDriver();
 
 class InputHandler;
-void MakeInputHandlers( const CString &drivers, vector<InputHandler *> &Add );
+void MakeInputHandlers( const RString &drivers, vector<InputHandler *> &Add );
 
 class LightsDriver;
-void MakeLightsDrivers( const CString &drivers, vector<LightsDriver *> &Add );
+void MakeLightsDrivers( const RString &drivers, vector<LightsDriver *> &Add );
 
 class LoadingWindow;
 LoadingWindow *MakeLoadingWindow();
@@ -41,7 +41,7 @@ class RageMovieTexture;
 RageMovieTexture *MakeRageMovieTexture( RageTextureID ID );
 
 class RageSoundDriver;
-RageSoundDriver *MakeRageSoundDriver( const CString &drivers );
+RageSoundDriver *MakeRageSoundDriver( const RString &drivers );
 
 #endif
 

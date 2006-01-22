@@ -11,7 +11,7 @@
 static HMIDIIN g_device;
 static void CALLBACK midiCallback(HMIDIIN g_device, UINT status, DWORD instancePtr, DWORD data, DWORD timestamp);
 
-static CString GetMidiError( MMRESULT result )
+static RString GetMidiError( MMRESULT result )
 {
 	char szError[256];
 	midiOutGetErrorText( result, szError, 256 );
@@ -65,7 +65,7 @@ InputHandler_Win32_MIDI::~InputHandler_Win32_MIDI()
 	}
 }
 
-void InputHandler_Win32_MIDI::GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut )
+void InputHandler_Win32_MIDI::GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut )
 {
 	if( m_bFoundDevice )
 	{

@@ -96,7 +96,7 @@ int64_t RageSound_OSS::GetPosition(const RageSoundBase *snd) const
 	return last_cursor_pos - (delay / bytes_per_frame);
 }
 
-CString RageSound_OSS::CheckOSSVersion( int fd )
+RString RageSound_OSS::CheckOSSVersion( int fd )
 {
 	int version = 0;
 
@@ -154,13 +154,13 @@ RageSound_OSS::RageSound_OSS()
 	last_cursor_pos = 0;
 }
 
-CString RageSound_OSS::Init()
+RString RageSound_OSS::Init()
 {
 	fd = open("/dev/dsp", O_WRONLY|O_NONBLOCK);
 	if( fd == -1 )
 		return ssprintf( "RageSound_OSS: Couldn't open /dev/dsp: %s", strerror(errno) );
 
-	CString sError = CheckOSSVersion( fd );
+	RString sError = CheckOSSVersion( fd );
 	if( sError != "" )
 		return sError;
 

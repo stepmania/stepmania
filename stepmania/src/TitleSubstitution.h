@@ -6,8 +6,8 @@
 struct TitleFields
 {
 	void SaveToStrings( 
-		CString &sTitle, CString &sSubtitle, CString &sArtist,
-		CString &sTitleTranslit, CString &sSubtitleTranslit, CString &sArtistTranslit ) const
+		RString &sTitle, RString &sSubtitle, RString &sArtist,
+		RString &sTitleTranslit, RString &sSubtitleTranslit, RString &sArtistTranslit ) const
 	{
 		sTitle = Title;
 		sSubtitle = Subtitle;
@@ -18,8 +18,8 @@ struct TitleFields
 	}
 
 	void LoadFromStrings( 
-		CString sTitle, CString sSubtitle, CString sArtist,
-		CString sTitleTranslit, CString sSubtitleTranslit, CString sArtistTranslit )
+		RString sTitle, RString sSubtitle, RString sArtist,
+		RString sTitleTranslit, RString sSubtitleTranslit, RString sArtistTranslit )
 	{
 		Title = sTitle;
 		Subtitle = sSubtitle;
@@ -28,8 +28,8 @@ struct TitleFields
 		SubtitleTranslit = sSubtitleTranslit;
 		ArtistTranslit = sArtistTranslit;
 	}
-	CString Title, Subtitle, Artist;
-	CString TitleTranslit, SubtitleTranslit, ArtistTranslit;
+	RString Title, Subtitle, Artist;
+	RString TitleTranslit, SubtitleTranslit, ArtistTranslit;
 };
 struct TitleTrans;
 
@@ -39,10 +39,10 @@ class TitleSubst
 
 	void AddTrans(const TitleTrans &tr);
 public:
-	TitleSubst(const CString &section);
+	TitleSubst(const RString &section);
 	~TitleSubst();
 
-	void Load(const CString &filename, const CString &section);
+	void Load(const RString &filename, const RString &section);
 
 	void Subst( TitleFields &tf );
 };

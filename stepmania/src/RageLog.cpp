@@ -52,7 +52,7 @@ RageLog* LOG;		// global and accessable from anywhere in the program
  *
  * The identifier is never displayed, so we can use a simple local object to
  * map/unmap, using any mechanism to generate unique IDs. */
-static map<CString, CString> LogMaps;
+static map<RString, RString> LogMaps;
 
 #define LOG_PATH	"log.txt"
 #define INFO_PATH	"info.txt"
@@ -94,8 +94,8 @@ RageLog::RageLog()
 RageLog::~RageLog()
 {
 	/* Add the mapped log data to info.txt. */
-	const CString AdditionalLog = GetAdditionalLog();
-	vector<CString> AdditionalLogLines;
+	const RString AdditionalLog = GetAdditionalLog();
+	vector<RString> AdditionalLogLines;
 	split( AdditionalLog, "\n", AdditionalLogLines );
 	for( unsigned i = 0; i < AdditionalLogLines.size(); ++i )
 	{
@@ -183,7 +183,7 @@ void RageLog::Trace( const char *fmt, ...)
 {
     va_list	va;
     va_start(va, fmt);
-    CString sBuff = vssprintf( fmt, va );
+    RString sBuff = vssprintf( fmt, va );
     va_end(va);
 
 	Write(0, sBuff);
@@ -195,7 +195,7 @@ void RageLog::Info( const char *fmt, ...)
 {
     va_list	va;
     va_start(va, fmt);
-    CString sBuff = vssprintf( fmt, va );
+    RString sBuff = vssprintf( fmt, va );
     va_end(va);
 
 	Write(WRITE_TO_INFO, sBuff);
@@ -205,31 +205,31 @@ void RageLog::Warn( const char *fmt, ...)
 {
     va_list	va;
     va_start(va, fmt);
-    CString sBuff = vssprintf( fmt, va );
+    RString sBuff = vssprintf( fmt, va );
     va_end(va);
 
 	Write( WRITE_TO_INFO | WRITE_LOUD, sBuff );
 }
 
-void RageLog::Write( int where, const CString &line )
+void RageLog::Write( int where, const RString &line )
 {
 	LockMut( *g_Mutex );
 
-	vector<CString> lines;
+	vector<RString> lines;
 	split( line, "\n", lines, false );
 	if( m_bLogToDisk && g_fileLog->IsOpen() && (where & WRITE_LOUD) )
 		g_fileLog->PutLine( "/////////////////////////////////////////" );
 	if( where & WRITE_LOUD )
 		printf( "/////////////////////////////////////////\n" );
 
-	CString sTimestamp = SecondsToMMSSMsMsMs(RageTimer::GetTimeSinceStart()) + ": ";
-	CString sWarning;
+	RString sTimestamp = SecondsToMMSSMsMsMs(RageTimer::GetTimeSinceStart()) + ": ";
+	RString sWarning;
 	if( where & WRITE_LOUD )
 		sWarning = "WARNING: ";
 
 	for( unsigned i = 0; i < lines.size(); ++i )
 	{
-		CString &str = lines[i];
+		RString &str = lines[i];
 
 		if( sWarning.size() )
 			str.insert( 0, sWarning );
@@ -283,7 +283,7 @@ void RageLog::Flush()
 
 static char staticlog[1024*32]="";
 static unsigned staticlog_size = 0;
-void RageLog::AddToInfo( const CString &str )
+void RageLog::AddToInfo( const RString &str )
 {
 	static bool limit_reached = false;
 	if( limit_reached )
@@ -292,7 +292,7 @@ void RageLog::AddToInfo( const CString &str )
 	unsigned len = str.size() + strlen(NEWLINE);
 	if( staticlog_size + len > sizeof(staticlog) )
 	{
-		const CString txt( NEWLINE "Staticlog limit reached" NEWLINE );
+		const RString txt( NEWLINE "Staticlog limit reached" NEWLINE );
 		
 		const unsigned pos = min( staticlog_size, sizeof(staticlog) - txt.size() );
 		memcpy( staticlog+pos, txt.data(), txt.size() );
@@ -315,7 +315,7 @@ const char *RageLog::GetInfo()
 static const int BACKLOG_LINES = 10;
 static char backlog[BACKLOG_LINES][1024];
 static int backlog_start=0, backlog_cnt=0;
-void RageLog::AddToRecentLogs( const CString &str )
+void RageLog::AddToRecentLogs( const RString &str )
 {
 	unsigned len = str.size();
 	if(len > sizeof(backlog[backlog_start])-1)
@@ -352,8 +352,8 @@ static int g_AdditionalLogSize = 0;
 
 void RageLog::UpdateMappedLog()
 {
-	CString str;
-	for(map<CString, CString>::const_iterator i = LogMaps.begin(); i != LogMaps.end(); ++i)
+	RString str;
+	for(map<RString, RString>::const_iterator i = LogMaps.begin(); i != LogMaps.end(); ++i)
 		str += ssprintf("%s" NEWLINE, i->second.c_str());
 
 	g_AdditionalLogSize = min( sizeof(g_AdditionalLogStr), str.size()+1 );
@@ -368,9 +368,9 @@ const char *RageLog::GetAdditionalLog()
 	return g_AdditionalLogStr;
 }
 
-void RageLog::MapLog(const CString &key, const char *fmt, ...)
+void RageLog::MapLog(const RString &key, const char *fmt, ...)
 {
-	CString s;
+	RString s;
 
 	va_list	va;
     va_start(va, fmt);
@@ -381,7 +381,7 @@ void RageLog::MapLog(const CString &key, const char *fmt, ...)
 	UpdateMappedLog();
 }
 
-void RageLog::UnmapLog(const CString &key)
+void RageLog::UnmapLog(const RString &key)
 {
 	LogMaps.erase(key);
 	UpdateMappedLog();

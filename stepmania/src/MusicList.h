@@ -12,7 +12,7 @@ class MusicList : public ActorFrame
 	BitmapText		m_textTitles[MAX_MLIST_COLUMNS];
 	
 	struct group {
-		CString ContentsText[MAX_MLIST_COLUMNS];
+		RString ContentsText[MAX_MLIST_COLUMNS];
 		int m_iNumSongsInGroup;
 	};
 

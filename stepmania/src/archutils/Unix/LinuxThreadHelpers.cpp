@@ -36,7 +36,7 @@ static _syscall0(pid_t,gettid)
 #endif
 
 
-CString ThreadsVersion()
+RString ThreadsVersion()
 {
 	char buf[1024] = "(error)";
 	int ret = confstr( _CS_GNU_LIBPTHREAD_VERSION, buf, sizeof(buf) );

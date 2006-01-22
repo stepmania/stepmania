@@ -11,17 +11,17 @@ class Song;
 class NotesLoader
 {
 protected:
-	virtual void GetApplicableFiles( CString sPath, vector<CString> &out )=0;
+	virtual void GetApplicableFiles( RString sPath, vector<RString> &out )=0;
 
 	set<istring> BlacklistedImages;
 
 public:
 	virtual ~NotesLoader() { }
 	const set<istring> &GetBlacklistedImages() const { return BlacklistedImages; }
-	static void GetMainAndSubTitlesFromFullTitle( const CString sFullTitle, CString &sMainTitleOut, CString &sSubTitleOut );
-	virtual bool LoadFromDir( CString sPath, Song &out ) = 0;
+	static void GetMainAndSubTitlesFromFullTitle( const RString sFullTitle, RString &sMainTitleOut, RString &sSubTitleOut );
+	virtual bool LoadFromDir( RString sPath, Song &out ) = 0;
 	virtual void TidyUpData( Song &song, bool cache ) { }
-	bool Loadable( CString sPath );
+	bool Loadable( RString sPath );
 };
 
 #endif

@@ -8,7 +8,7 @@
 #include "Preference.h"
 
 
-extern const CString MEM_CARD_MOUNT_POINT[NUM_PLAYERS];
+extern const RString MEM_CARD_MOUNT_POINT[NUM_PLAYERS];
 
 class MemoryCardManager
 {
@@ -19,7 +19,7 @@ public:
 	void Update( float fDelta );
 
 	MemoryCardState GetCardState( PlayerNumber pn ) const { return m_State[pn]; }
-	CString GetCardError( PlayerNumber pn ) const { return m_sError[pn]; }
+	RString GetCardError( PlayerNumber pn ) const { return m_sError[pn]; }
 	
 	void LockCards();	// prevent removing or changing of memory cards
 	void UnlockCards();
@@ -35,19 +35,19 @@ public:
 	
 	bool GetCardsLocked() const { return m_bCardsLocked; }
 
-	bool PathIsMemCard( CString sDir ) const;
+	bool PathIsMemCard( RString sDir ) const;
 
 	bool IsNameAvailable( PlayerNumber pn ) const;
-	CString GetName( PlayerNumber pn ) const;
+	RString GetName( PlayerNumber pn ) const;
 
 	const vector<UsbStorageDevice> &GetStorageDevices() { return m_vStorageDevices; }
 
-	static Preference1D<CString>	m_sMemoryCardOsMountPoint;
+	static Preference1D<RString>	m_sMemoryCardOsMountPoint;
 	static Preference1D<int>		m_iMemoryCardUsbBus;
 	static Preference1D<int>		m_iMemoryCardUsbPort;
 	static Preference1D<int>		m_iMemoryCardUsbLevel;
 
-	static Preference<CString>	m_sEditorMemoryCardOsMountPoint;	
+	static Preference<RString>	m_sEditorMemoryCardOsMountPoint;	
 
 protected:
 	void CheckStateChanges();
@@ -61,7 +61,7 @@ protected:
 	UsbStorageDevice m_FinalDevice[NUM_PLAYERS];	// device in the memory card slot when we finalized, blank if none
 
 	MemoryCardState m_State[NUM_PLAYERS];
-	CString m_sError[NUM_PLAYERS]; // if MemoryCardState_Error
+	RString m_sError[NUM_PLAYERS]; // if MemoryCardState_Error
 
 	RageSound m_soundReady;
 	RageSound m_soundError;

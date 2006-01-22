@@ -10,13 +10,13 @@
 #include "ThemeMetric.h"
 #include "ActorUtil.h"
 
-CString WARNING_COMMAND_NAME( size_t i ) { return ssprintf("WarningCommand%d",int(i)); }
+RString WARNING_COMMAND_NAME( size_t i ) { return ssprintf("WarningCommand%d",int(i)); }
 
 static const ThemeMetric<int>		WARNING_START		("MenuTimer","WarningStart");
 static const ThemeMetric<int>		WARNING_BEEP_START	("MenuTimer","WarningBeepStart");
 static const ThemeMetric<float>		MAX_STALL_SECONDS	("MenuTimer","MaxStallSeconds");
-static const ThemeMetric<CString>	TEXT1_FORMAT_FUNCTION ("MenuTimer","Text1FormatFunction");
-static const ThemeMetric<CString>	TEXT2_FORMAT_FUNCTION ("MenuTimer","Text2FormatFunction");
+static const ThemeMetric<RString>	TEXT1_FORMAT_FUNCTION ("MenuTimer","Text1FormatFunction");
+static const ThemeMetric<RString>	TEXT2_FORMAT_FUNCTION ("MenuTimer","Text2FormatFunction");
 
 static const float TIMER_PAUSE_SECONDS = 99.99f;
 
@@ -170,7 +170,7 @@ void MenuTimer::SetText( float fSeconds )
 		// call function with 1 argument and 1 result
 		lua_call(L, 1, 1); 
 
-		CString sText;
+		RString sText;
 		LuaHelpers::PopStack( sText, L );
 		
 		m_text[i].SetText( sText );

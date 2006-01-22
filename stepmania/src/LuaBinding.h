@@ -8,10 +8,10 @@ class LuaReference;
 
 namespace LuaBinding
 {
-	void CreateMethodsTable( lua_State *L, const CString &szName );
+	void CreateMethodsTable( lua_State *L, const RString &szName );
 	bool CheckLuaObjectType( lua_State *L, int narg, const char *szType, bool bOptional=false );
 	void *GetUserdataFromGlobalTable( Lua *L, const char *szType, int iArg );
-	void ApplyDerivedType( Lua *L, const CString &sClassname, void *pSelf );
+	void ApplyDerivedType( Lua *L, const RString &sClassname, void *pSelf );
 };
 
 template <typename Type>
@@ -222,7 +222,7 @@ protected:
 
 	void *m_pSelf;
 
-	CString m_sClassName;
+	RString m_sClassName;
 };
 
 /* Only a base class has to indicate that it's instanced (has a per-object

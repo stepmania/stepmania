@@ -9,7 +9,7 @@ DualScrollBar::DualScrollBar()
 	m_fBarTime = 1;
 }
 
-void DualScrollBar::Load( const CString &sType )
+void DualScrollBar::Load( const RString &sType )
 {
 	FOREACH_PlayerNumber( pn )
 	{

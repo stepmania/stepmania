@@ -56,7 +56,7 @@ void ScreenPlayerOptions::Init()
 	m_bAcceptedChoices = false;
 	m_bGoToOptions = ( PREFSMAN->m_ShowSongOptions == PrefsManager::YES );
 
-	CString sPath = THEME->GetPathS( m_sName,"cancel all", true );
+	RString sPath = THEME->GetPathS( m_sName,"cancel all", true );
 	if( sPath != "" )
 		m_CancelAll.Load( sPath, true );
 

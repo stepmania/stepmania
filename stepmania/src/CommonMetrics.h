@@ -13,31 +13,31 @@
 //
 // Types
 //
-class ThemeMetricDifficultiesToShow : public ThemeMetric<CString>
+class ThemeMetricDifficultiesToShow : public ThemeMetric<RString>
 {
 public:
 	ThemeMetricDifficultiesToShow() { }
-	ThemeMetricDifficultiesToShow( const CString& sGroup, const CString& sName );
+	ThemeMetricDifficultiesToShow( const RString& sGroup, const RString& sName );
 	void Read();
 	const vector<Difficulty> &GetValue();
 private:
 	vector<Difficulty> m_v;
 };
-class ThemeMetricCourseDifficultiesToShow : public ThemeMetric<CString>
+class ThemeMetricCourseDifficultiesToShow : public ThemeMetric<RString>
 {
 public:
 	ThemeMetricCourseDifficultiesToShow() { }
-	ThemeMetricCourseDifficultiesToShow( const CString& sGroup, const CString& sName );
+	ThemeMetricCourseDifficultiesToShow( const RString& sGroup, const RString& sName );
 	void Read();
 	const vector<CourseDifficulty> &GetValue();
 private:
 	vector<CourseDifficulty> m_v;
 };
-class ThemeMetricStepsTypesToShow : public ThemeMetric<CString>
+class ThemeMetricStepsTypesToShow : public ThemeMetric<RString>
 {
 public:
 	ThemeMetricStepsTypesToShow() { }
-	ThemeMetricStepsTypesToShow( const CString& sGroup, const CString& sName );
+	ThemeMetricStepsTypesToShow( const RString& sGroup, const RString& sName );
 	void Read();
 	const vector<StepsType> &GetValue();
 private:
@@ -50,10 +50,10 @@ private:
 //
 namespace CommonMetrics
 {
-	extern ThemeMetric<CString>					INITIAL_SCREEN;
-	extern ThemeMetric<CString>					FIRST_ATTRACT_SCREEN;
-	extern ThemeMetric<CString>					DEFAULT_MODIFIERS;
-	extern ThemeMetric<CString>					DEFAULT_CPU_MODIFIERS;
+	extern ThemeMetric<RString>					INITIAL_SCREEN;
+	extern ThemeMetric<RString>					FIRST_ATTRACT_SCREEN;
+	extern ThemeMetric<RString>					DEFAULT_MODIFIERS;
+	extern ThemeMetric<RString>					DEFAULT_CPU_MODIFIERS;
 	extern ThemeMetric1D<apActorCommands>		PLAYER_COLOR;
 	extern LocalizedString						WINDOW_TITLE;
 	extern ThemeMetric<int>						MAX_COURSE_ENTRIES_BEFORE_VARIOUS;
@@ -62,7 +62,7 @@ namespace CommonMetrics
 	extern ThemeMetricCourseDifficultiesToShow	COURSE_DIFFICULTIES_TO_SHOW;
 	extern ThemeMetricStepsTypesToShow			STEPS_TYPES_TO_SHOW;
 
-	CString ThemeOptionItem( CString s, bool bOptional );
+	RString ThemeOptionItem( RString s, bool bOptional );
 };
 
 #endif

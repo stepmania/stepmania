@@ -56,13 +56,13 @@ void ScreenTestInput::Update( float fDeltaTime )
 	//
 	{
 		vector<InputDevice> vDevices;
-		vector<CString> vDescriptions;
-		vector<CString> vs;
+		vector<RString> vDescriptions;
+		vector<RString> vs;
 		INPUTMAN->GetDevicesAndDescriptions( vDevices, vDescriptions );
 		ASSERT( vDevices.size() == vDescriptions.size() );
 		for( unsigned i=0; i<vDevices.size(); ++i )
 		{
-			const CString sDescription = vDescriptions[i];
+			const RString sDescription = vDescriptions[i];
 			InputDevice device = vDevices[i];
 			if( sDescription == "MonkeyKeyboard" )
 				continue;	// hide this
@@ -74,20 +74,20 @@ void ScreenTestInput::Update( float fDeltaTime )
 	//
 	// Update input texts
 	//
-	vector<CString> asInputs;
+	vector<RString> asInputs;
 
 	DeviceInput di;
 	vector<DeviceInput> DeviceInputs;
 	INPUTFILTER->GetPressedButtons( DeviceInputs );
 	FOREACH( DeviceInput, DeviceInputs, di )
 	{
-		CString sTemp;
+		RString sTemp;
 		sTemp += INPUTMAN->GetDeviceSpecificInputString(*di);
 		
 		GameInput gi;
 		if( INPUTMAPPER->DeviceToGame(*di,gi) )
 		{
-			CString sName = GameButtonToLocalizedString( GAMESTATE->GetCurrentGame(), gi.button );
+			RString sName = GameButtonToLocalizedString( GAMESTATE->GetCurrentGame(), gi.button );
 			sTemp += ssprintf(" - "+CONTROLLER.GetValue()+" %d %s", gi.controller+1, sName.c_str() );
 
 			if( !PREFSMAN->m_bOnlyDedicatedMenuButtons )
@@ -102,7 +102,7 @@ void ScreenTestInput::Update( float fDeltaTime )
 			sTemp += " - "+NOT_MAPPED.GetValue();
 		}
 
-		CString sComment = INPUTFILTER->GetButtonComment( *di );
+		RString sComment = INPUTFILTER->GetButtonComment( *di );
 		if( sComment != "" )
 			sTemp += " - " + sComment;
 
@@ -115,7 +115,7 @@ void ScreenTestInput::Update( float fDeltaTime )
 
 void ScreenTestInput::Input( const InputEventPlus &input )
 {
-	CString sMessage = input.DeviceI.ToString();
+	RString sMessage = input.DeviceI.ToString();
 	switch( input.type )
 	{
 	case IET_FIRST_PRESS:

@@ -292,7 +292,7 @@ void ScreenPackages::RefreshPackages()
 
 void ScreenPackages::UpdatePackagesList()
 {
-	CString TempText="";
+	RString TempText="";
 	int min = m_iPackagesPos-NUM_PACKAGES_SHOW;
 	int max = m_iPackagesPos+NUM_PACKAGES_SHOW;
 	for (int i=min; i<max; i++ )
@@ -307,7 +307,7 @@ void ScreenPackages::UpdatePackagesList()
 
 void ScreenPackages::UpdateLinksList()
 {
-	CString TempText="";
+	RString TempText="";
 	if( (unsigned) m_iLinksPos >= m_LinkTitles.size() )
 		m_iLinksPos = m_LinkTitles.size() - 1;
 	int min = m_iLinksPos-NUM_LINKS_SHOW;
@@ -365,11 +365,11 @@ void ScreenPackages::HTMLParse()
 			if ( j < l )
 				k = j;
 
-			CString TempLink = StripOutContainers( m_sBUFFER.substr(m+1,k-m-1) );
+			RString TempLink = StripOutContainers( m_sBUFFER.substr(m+1,k-m-1) );
 			if ( TempLink.substr(0,7).compare("http://") != 0 )
 				TempLink = m_sBaseAddress + TempLink;
 
-			CString TempTitle = m_sBUFFER.substr( k+1, l-k-1 );
+			RString TempTitle = m_sBUFFER.substr( k+1, l-k-1 );
 
 			m_Links.push_back( TempLink );
 			m_LinkTitles.push_back( TempTitle );
@@ -385,10 +385,10 @@ void ScreenPackages::HTMLParse()
 	UpdateLinksList();
 }
 
-CString ScreenPackages::URLEncode( const CString &URL )
+RString ScreenPackages::URLEncode( const RString &URL )
 {
-	CString Input = StripOutContainers( URL );
-	CString Output;
+	RString Input = StripOutContainers( URL );
+	RString Output;
 
 	for( unsigned k = 0; k < Input.size(); k++ )
 	{
@@ -403,10 +403,10 @@ CString ScreenPackages::URLEncode( const CString &URL )
 	return Output;
 }
 
-CString ScreenPackages::StripOutContainers( const CString & In )
+RString ScreenPackages::StripOutContainers( const RString & In )
 {
 	if( In.size() == 0 )
-		return CString();
+		return RString();
 
 	unsigned i = 0;
 	char t = In.at(i);
@@ -460,12 +460,12 @@ void ScreenPackages::CancelDownload( )
 	if( !FILEMAN->Remove( "Packages/" + m_sEndName ) )
 		SCREENMAN->SystemMessage( "Packages/" + m_sEndName );
 }
-void ScreenPackages::EnterURL( const CString & sURL )
+void ScreenPackages::EnterURL( const RString & sURL )
 {
-	CString Proto;
-	CString Server;
+	RString Proto;
+	RString Server;
 	int Port=80;
-	CString sAddress;
+	RString sAddress;
 
 	if( !ParseHTTPAddress( sURL, Proto, Server, Port, sAddress ) )
 	{
@@ -505,7 +505,7 @@ void ScreenPackages::EnterURL( const CString & sURL )
 	//if we are not talking about a file, let's not worry
 	if( m_sEndName != "" && m_bIsPackage )
 	{
-		vector<CString> AddTo;
+		vector<RString> AddTo;
 		GetDirListing( "Packages/"+m_sEndName, AddTo, false, false );
 		if ( AddTo.size() > 0 )
 		{
@@ -542,7 +542,7 @@ void ScreenPackages::EnterURL( const CString & sURL )
 	
 	//Produce HTTP header
 
-	CString Header="";
+	RString Header="";
 
 	Header = "GET "+sAddress+" HTTP/1.0\r\n";
 	Header+= "Host: " + Server + "\r\n";
@@ -558,7 +558,7 @@ void ScreenPackages::EnterURL( const CString & sURL )
 	return;
 }
 
-static size_t FindEndOfHeaders( const CString &buf )
+static size_t FindEndOfHeaders( const RString &buf )
 {
 	size_t iPos1 = buf.find( "\n\n" );
 	size_t iPos2 = buf.find( "\r\n\r\n" );
@@ -667,7 +667,7 @@ void ScreenPackages::HTTPUpdate()
 	}
 }
 
-bool ScreenPackages::ParseHTTPAddress( const CString &URL, CString &sProto, CString &sServer, int &iPort, CString &sAddress )
+bool ScreenPackages::ParseHTTPAddress( const RString &URL, RString &sProto, RString &sServer, int &iPort, RString &sAddress )
 {
 	// [PROTO://]SERVER[:PORT][/URL]
 
@@ -676,7 +676,7 @@ bool ScreenPackages::ParseHTTPAddress( const CString &URL, CString &sProto, CStr
 		"([^/:]+)"     // [1]: a.b.com
 		"(:([0-9]+))?" // [2], [3]: :1234 (optional, default 80)
 		"(/(.*))?$");    // [4], [5]: /foo.html (optional)
-	vector<CString> asMatches;
+	vector<RString> asMatches;
 	if( !re.Compare( URL, asMatches ) )
 		return false;
 	ASSERT( asMatches.size() == 6 );

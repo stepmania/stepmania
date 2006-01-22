@@ -10,7 +10,7 @@ public:
 	ArchHooks_Xbox();
 	~ArchHooks_Xbox();
 
-	void MountInitialFilesystems( const CString &sDirOfExecutable );
+	void MountInitialFilesystems( const RString &sDirOfExecutable );
 };
 
 // Read a 64 bit MSR register

@@ -8,9 +8,9 @@ class RageDisplay_OGL: public RageDisplay
 public:
 	RageDisplay_OGL();
 	virtual ~RageDisplay_OGL();
-	CString Init( VideoModeParams p, bool bAllowUnacceleratedRenderer );
+	RString Init( VideoModeParams p, bool bAllowUnacceleratedRenderer );
 
-	virtual CString GetApiDescription() const { return "OpenGL"; }
+	virtual RString GetApiDescription() const { return "OpenGL"; }
 	virtual void GetDisplayResolutions( DisplayResolutions &out ) const;
 	void ResolutionChanged();
 	const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const;
@@ -77,7 +77,7 @@ public:
 	virtual void SetPolygonMode( PolygonMode pm );
 	virtual void SetLineWidth( float fWidth );
 
-	CString GetTextureDiagnostics( unsigned id ) const;
+	RString GetTextureDiagnostics( unsigned id ) const;
 
 protected:
 	void DrawQuadsInternal( const RageSpriteVertex v[], int iNumVerts );
@@ -88,7 +88,7 @@ protected:
 	void DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int iMeshIndex );
 	void DrawLineStripInternal( const RageSpriteVertex v[], int iNumVerts, float LineWidth );
 
-	CString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut );
+	RString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut );
 	RageSurface* CreateScreenshot();
 	PixelFormat GetImgPixelFormat( RageSurface* &img, bool &FreeImg, int width, int height, bool bPalettedTexture );
 	bool SupportsSurfaceFormat( PixelFormat pixfmt );

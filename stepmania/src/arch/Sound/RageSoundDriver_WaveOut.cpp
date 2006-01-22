@@ -21,14 +21,14 @@ const int num_chunks = 8;
 const int chunksize_frames = buffersize_frames / num_chunks;
 const int chunksize = buffersize / num_chunks; /* in bytes */
 
-static CString wo_ssprintf( MMRESULT err, const char *szFmt, ...)
+static RString wo_ssprintf( MMRESULT err, const char *szFmt, ...)
 {
 	char szBuf[MAXERRORLENGTH];
 	waveOutGetErrorText( err, szBuf, MAXERRORLENGTH );
 
     va_list	va;
     va_start( va, szFmt );
-    CString s = vssprintf( szFmt, va );
+    RString s = vssprintf( szFmt, va );
     va_end( va );
 
 	return s += ssprintf( "(%s)", szBuf );
@@ -106,7 +106,7 @@ RageSound_WaveOut::RageSound_WaveOut()
 	m_hWaveOut = NULL;
 }
 
-CString RageSound_WaveOut::Init()
+RString RageSound_WaveOut::Init()
 {
 	WAVEFORMATEX fmt;
 	fmt.wFormatTag = WAVE_FORMAT_PCM;
@@ -143,7 +143,7 @@ CString RageSound_WaveOut::Init()
 	MixingThread.SetName( "Mixer thread" );
 	MixingThread.Create( MixerThread_start, this );
 
-	return CString();
+	return RString();
 }
 
 RageSound_WaveOut::~RageSound_WaveOut()

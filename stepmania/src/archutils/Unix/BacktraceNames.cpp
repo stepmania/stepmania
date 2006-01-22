@@ -71,19 +71,19 @@ void BacktraceNames::Demangle() { }
 #endif
 
 
-CString BacktraceNames::Format() const
+RString BacktraceNames::Format() const
 {
-	CString ShortenedPath = File;
+	RString ShortenedPath = File;
 	if( ShortenedPath != "" )
 	{
 		/* Abbreviate the module name. */
 		size_t slash = ShortenedPath.rfind('/');
 		if( slash != ShortenedPath.npos )
 			ShortenedPath = ShortenedPath.substr(slash+1);
-		ShortenedPath = CString("(") + ShortenedPath + ")";
+		ShortenedPath = RString("(") + ShortenedPath + ")";
 	}
 
-	CString ret = ssprintf( "%0*lx: ", int(sizeof(void*)*2), (long) Address );
+	RString ret = ssprintf( "%0*lx: ", int(sizeof(void*)*2), (long) Address );
 	if( Symbol != "" )
 		ret += Symbol + " ";
 	ret += ShortenedPath;
@@ -304,10 +304,10 @@ void BacktraceNames::FromAddr( const void *p )
 }
 
 /* "path(mangled name+offset) [address]" */
-void BacktraceNames::FromString( CString s )
+void BacktraceNames::FromString( RString s )
 {
     /* Hacky parser.  I don't want to use regexes in the crash handler. */
-    CString MangledAndOffset, sAddress;
+    RString MangledAndOffset, sAddress;
     unsigned pos = 0;
     while( pos < s.size() && s[pos] != '(' && s[pos] != '[' )
         File += s[pos++];
@@ -333,7 +333,7 @@ void BacktraceNames::FromString( CString s )
         else
         {
             Symbol = MangledAndOffset.substr(0, plus);
-            CString str = MangledAndOffset.substr(plus);
+            RString str = MangledAndOffset.substr(plus);
             if( sscanf(str, "%i", &Offset) != 1 )
                 Offset=0;
         }
@@ -397,7 +397,7 @@ void BacktraceNames::FromAddr( const void *p )
         fprintf(stderr, "FromAddr read() failed: %s\n", strerror(errno));
         return;
     }
-    vector<CString> mangledAndFile;
+    vector<RString> mangledAndFile;
 
     split(f, " ", mangledAndFile, true);
     if (mangledAndFile.size() == 0)

@@ -207,7 +207,7 @@ static RageSurface *RageSurface_Load_JPEG( RageFile *f, const char *fn, char err
 }
 
 
-RageSurfaceUtils::OpenResult RageSurface_Load_JPEG( const CString &sPath, RageSurface *&ret, bool bHeaderOnly, CString &error )
+RageSurfaceUtils::OpenResult RageSurface_Load_JPEG( const RString &sPath, RageSurface *&ret, bool bHeaderOnly, RString &error )
 {
 	RageFile f;
 	if( !f.Open( sPath ) )

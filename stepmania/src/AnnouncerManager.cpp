@@ -7,15 +7,15 @@
 AnnouncerManager*	ANNOUNCER = NULL;	// global object accessable from anywhere in the program
 
 
-const CString EMPTY_ANNOUNCER_NAME = "Empty";
-const CString ANNOUNCERS_DIR  = "Announcers/";
+const RString EMPTY_ANNOUNCER_NAME = "Empty";
+const RString ANNOUNCERS_DIR  = "Announcers/";
 
 AnnouncerManager::AnnouncerManager()
 {
 	LOG->Trace("AnnouncerManager::AnnouncerManager()");
 }
 
-void AnnouncerManager::GetAnnouncerNames( vector<CString>& AddTo )
+void AnnouncerManager::GetAnnouncerNames( vector<RString>& AddTo )
 {
 	GetDirListing( ANNOUNCERS_DIR+"*", AddTo, true );
 	
@@ -27,12 +27,12 @@ void AnnouncerManager::GetAnnouncerNames( vector<CString>& AddTo )
 			AddTo.erase(AddTo.begin()+i, AddTo.begin()+i+1 );
 }
 
-bool AnnouncerManager::DoesAnnouncerExist( CString sAnnouncerName )
+bool AnnouncerManager::DoesAnnouncerExist( RString sAnnouncerName )
 {
 	if( sAnnouncerName == "" )
 		return true;
 
-	vector<CString> asAnnouncerNames;
+	vector<RString> asAnnouncerNames;
 	GetAnnouncerNames( asAnnouncerNames );
 	for( unsigned i=0; i<asAnnouncerNames.size(); i++ )
 		if( 0==stricmp(sAnnouncerName, asAnnouncerNames[i]) )
@@ -40,12 +40,12 @@ bool AnnouncerManager::DoesAnnouncerExist( CString sAnnouncerName )
 	return false;
 }
 
-CString AnnouncerManager::GetAnnouncerDirFromName( CString sAnnouncerName )
+RString AnnouncerManager::GetAnnouncerDirFromName( RString sAnnouncerName )
 {
 	return ANNOUNCERS_DIR + sAnnouncerName + "/";
 }
 
-void AnnouncerManager::SwitchAnnouncer( CString sNewAnnouncerName )
+void AnnouncerManager::SwitchAnnouncer( RString sNewAnnouncerName )
 {
 	if( !DoesAnnouncerExist(sNewAnnouncerName) )
 		m_sCurAnnouncerName = "";
@@ -81,12 +81,12 @@ static const char *aliases[][2] = {
  * then all aliases above.  Ignore directories that are empty, since we might
  * have "select difficulty intro" with sounds and an empty "ScreenSelectDifficulty
  * intro". */
-CString AnnouncerManager::GetPathTo( CString sAnnouncerName, CString sFolderName )
+RString AnnouncerManager::GetPathTo( RString sAnnouncerName, RString sFolderName )
 {
 	if(sAnnouncerName == "")
 		return NULL; /* announcer disabled */
 
-	const CString AnnouncerPath = GetAnnouncerDirFromName(sAnnouncerName);
+	const RString AnnouncerPath = GetAnnouncerDirFromName(sAnnouncerName);
 
 	if( !DirectoryIsEmpty(AnnouncerPath+sFolderName+"/") )
 		return AnnouncerPath+sFolderName+"/";
@@ -115,19 +115,19 @@ CString AnnouncerManager::GetPathTo( CString sAnnouncerName, CString sFolderName
 	return NULL;
 }
 
-CString AnnouncerManager::GetPathTo( CString sFolderName )
+RString AnnouncerManager::GetPathTo( RString sFolderName )
 {
 	return GetPathTo(m_sCurAnnouncerName, sFolderName);
 }
 
-bool AnnouncerManager::HasSoundsFor( CString sFolderName )
+bool AnnouncerManager::HasSoundsFor( RString sFolderName )
 {
 	return !DirectoryIsEmpty( GetPathTo(sFolderName) );
 }
 
 void AnnouncerManager::NextAnnouncer()
 {
-	vector<CString> as;
+	vector<RString> as;
 	GetAnnouncerNames( as );
 	if( as.size()==0 )
 		return;

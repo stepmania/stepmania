@@ -247,7 +247,7 @@ void ScreenNetSelectBase::UpdateUsers()
 	}
 }
 
-void UtilSetQuadInit( Actor& actor, const CString &sClassName )
+void UtilSetQuadInit( Actor& actor, const RString &sClassName )
 {
 	ActorUtil::SetXYAndOnCommand( actor, sClassName );
 	actor.RunCommands( THEME->GetMetricA( sClassName, actor.GetName() + "Command" ) );

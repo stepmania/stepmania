@@ -35,7 +35,7 @@ static LuaFunctionList *g_LuaFunctions = NULL;
 
 struct ChunkReaderData
 {
-	const CString *buf;
+	const RString *buf;
 	bool done;
 	ChunkReaderData() { buf = NULL; done = false; }
 };
@@ -54,7 +54,7 @@ const char *ChunkReaderString( lua_State *L, void *ptr, size_t *size )
 	return ret;
 }
 
-void LuaManager::SetGlobal( const CString &sName, int val )
+void LuaManager::SetGlobal( const RString &sName, int val )
 {
 	Lua *L = LUA->Get();
 	LuaHelpers::PushStack( val, L );
@@ -62,7 +62,7 @@ void LuaManager::SetGlobal( const CString &sName, int val )
 	LUA->Release(L);
 }
 
-void LuaManager::SetGlobal( const CString &sName, float val )
+void LuaManager::SetGlobal( const RString &sName, float val )
 {
 	Lua *L = LUA->Get();
 	LuaHelpers::PushStack( val, L );
@@ -70,7 +70,7 @@ void LuaManager::SetGlobal( const CString &sName, float val )
 	LUA->Release(L);
 }
 
-void LuaManager::SetGlobal( const CString &sName, bool val )
+void LuaManager::SetGlobal( const RString &sName, bool val )
 {
 	Lua *L = LUA->Get();
 	LuaHelpers::PushStack( val, L );
@@ -78,7 +78,7 @@ void LuaManager::SetGlobal( const CString &sName, bool val )
 	LUA->Release(L);
 }
 
-void LuaManager::SetGlobal( const CString &sName, const CString &val )
+void LuaManager::SetGlobal( const RString &sName, const RString &val )
 {
 	Lua *L = LUA->Get();
 	LuaHelpers::PushStack( val, L );
@@ -86,7 +86,7 @@ void LuaManager::SetGlobal( const CString &sName, const CString &val )
 	LUA->Release(L);
 }
 
-void LuaManager::SetGlobalFromExpression( const CString &sName, const CString &expr )
+void LuaManager::SetGlobalFromExpression( const RString &sName, const RString &expr )
 {
 	Lua *L = LUA->Get();
 	if( !LuaHelpers::RunScript(L, "return " + expr, "", 1) )
@@ -100,7 +100,7 @@ void LuaManager::SetGlobalFromExpression( const CString &sName, const CString &e
 	LUA->Release(L);
 }
 
-void LuaManager::UnsetGlobal( const CString &sName )
+void LuaManager::UnsetGlobal( const RString &sName )
 {
 	Lua *L = LUA->Get();
 	lua_pushnil( L );
@@ -112,12 +112,12 @@ void LuaManager::UnsetGlobal( const CString &sName )
 void LuaHelpers::Push( const bool &Object, lua_State *L ) { lua_pushboolean( L, Object ); }
 void LuaHelpers::Push( const float &Object, lua_State *L ) { lua_pushnumber( L, Object ); }
 void LuaHelpers::Push( const int &Object, lua_State *L ) { lua_pushnumber( L, Object ); }
-void LuaHelpers::Push( const CString &Object, lua_State *L ) { lua_pushlstring( L, Object.data(), Object.size() ); }
+void LuaHelpers::Push( const RString &Object, lua_State *L ) { lua_pushlstring( L, Object.data(), Object.size() ); }
 
 bool LuaHelpers::FromStack( bool &Object, int iOffset, lua_State *L ) { Object = !!lua_toboolean( L, iOffset ); return true; }
 bool LuaHelpers::FromStack( float &Object, int iOffset, lua_State *L ) { Object = (float)lua_tonumber( L, iOffset ); return true; }
 bool LuaHelpers::FromStack( int &Object, int iOffset, lua_State *L ) { Object = (int) lua_tonumber( L, iOffset ); return true; }
-bool LuaHelpers::FromStack( CString &Object, int iOffset, lua_State *L )
+bool LuaHelpers::FromStack( RString &Object, int iOffset, lua_State *L )
 {
 	const char *pStr = lua_tostring( L, iOffset );
 	if( pStr != NULL )
@@ -152,7 +152,7 @@ void LuaHelpers::ReadArrayFromTableB( Lua *L, vector<bool> &aOut )
 
 static int LuaPanic( lua_State *L )
 {
-	CString sErr;
+	RString sErr;
 	LuaHelpers::PopStack( sErr, L );
 
 	RageException::Throw( "%s", sErr.c_str() );
@@ -264,7 +264,7 @@ void LuaManager::ResetState()
 	m_pLock->Unlock();
 }
 
-void LuaHelpers::PrepareExpression( CString &sInOut )
+void LuaHelpers::PrepareExpression( RString &sInOut )
 {
 	// HACK: Many metrics have "// foo" and "# foo" comments that Lua fails to parse.
 	// Replace them with Lua-style comments.
@@ -277,27 +277,27 @@ void LuaHelpers::PrepareExpression( CString &sInOut )
 		sInOut.erase( 0, 1 );
 }
 
-bool LuaHelpers::RunScriptFile( const CString &sFile )
+bool LuaHelpers::RunScriptFile( const RString &sFile )
 {
 	RageFile f;
 	if( !f.Open( sFile ) )
 	{
-		CString sError = ssprintf( "Couldn't open Lua script \"%s\": %s", sFile.c_str(), f.GetError().c_str() );
+		RString sError = ssprintf( "Couldn't open Lua script \"%s\": %s", sFile.c_str(), f.GetError().c_str() );
 		Dialog::OK( sError, "LUA_ERROR" );
 		return false;
 	}
 
-	CString sScript;
+	RString sScript;
 	if( f.Read( sScript ) == -1 )
 	{
-		CString sError = ssprintf( "Error reading Lua script \"%s\": %s", sFile.c_str(), f.GetError().c_str() );
+		RString sError = ssprintf( "Error reading Lua script \"%s\": %s", sFile.c_str(), f.GetError().c_str() );
 		Dialog::OK( sError, "LUA_ERROR" );
 		return false;
 	}
 
 	Lua *L = LUA->Get();
 
-	CString sError;
+	RString sError;
 	if( !LuaHelpers::RunScript( L, sScript, sFile, sError, 0 ) )
 	{
 		LUA->Release(L);
@@ -310,7 +310,7 @@ bool LuaHelpers::RunScriptFile( const CString &sFile )
 	return true;
 }
 
-bool LuaHelpers::RunScript( Lua *L, const CString &sScript, const CString &sName, CString &sError, int iReturnValues )
+bool LuaHelpers::RunScript( Lua *L, const RString &sScript, const RString &sName, RString &sError, int iReturnValues )
 {
 	// load string
 	{
@@ -339,10 +339,10 @@ bool LuaHelpers::RunScript( Lua *L, const CString &sScript, const CString &sName
 }
 
 
-bool LuaHelpers::RunScript( Lua *L, const CString &sExpression, const CString &sName, int iReturnValues )
+bool LuaHelpers::RunScript( Lua *L, const RString &sExpression, const RString &sName, int iReturnValues )
 {
-	CString sError;
-	if( !LuaHelpers::RunScript( L, sExpression, sName.size()? sName:CString("in"), sError, iReturnValues ) )
+	RString sError;
+	if( !LuaHelpers::RunScript( L, sExpression, sName.size()? sName:RString("in"), sError, iReturnValues ) )
 	{
 		sError = ssprintf( "Lua runtime error parsing \"%s\": %s", sName.size()? sName.c_str():sExpression.c_str(), sError.c_str() );
 		Dialog::OK( sError, "LUA_ERROR" );
@@ -352,7 +352,7 @@ bool LuaHelpers::RunScript( Lua *L, const CString &sExpression, const CString &s
 	return true;
 }
 
-bool LuaHelpers::RunExpressionB( const CString &str )
+bool LuaHelpers::RunExpressionB( const RString &str )
 {
 	Lua *L = LUA->Get();
 
@@ -373,7 +373,7 @@ bool LuaHelpers::RunExpressionB( const CString &str )
 	return result;
 }
 
-float LuaHelpers::RunExpressionF( const CString &str )
+float LuaHelpers::RunExpressionF( const RString &str )
 {
 	Lua *L = LUA->Get();
 	if( !LuaHelpers::RunScript(L, "return " + str, "", 1) )
@@ -393,12 +393,12 @@ float LuaHelpers::RunExpressionF( const CString &str )
 	return result;
 }
 
-int LuaHelpers::RunExpressionI( const CString &str )
+int LuaHelpers::RunExpressionI( const RString &str )
 {
 	return (int) LuaHelpers::RunExpressionF(str);
 }
 
-bool LuaHelpers::RunExpressionS( const CString &str, CString &sOut )
+bool LuaHelpers::RunExpressionS( const RString &str, RString &sOut )
 {
 	Lua *L = LUA->Get();
 	if( !LuaHelpers::RunScript(L, "return " + str, "", 1) )
@@ -418,7 +418,7 @@ bool LuaHelpers::RunExpressionS( const CString &str, CString &sOut )
 	return true;
 }
 
-bool LuaHelpers::RunAtExpressionS( CString &sStr )
+bool LuaHelpers::RunAtExpressionS( RString &sStr )
 {
 	if( sStr.size() == 0 || sStr[0] != '@' )
 		return false;
@@ -426,7 +426,7 @@ bool LuaHelpers::RunAtExpressionS( CString &sStr )
 	/* Erase "@". */
 	sStr.erase( 0, 1 );
 
-	CString sOut;
+	RString sOut;
 	LuaHelpers::RunExpressionS( sStr, sOut );
 	sStr = sOut;
 	return true;
@@ -434,7 +434,7 @@ bool LuaHelpers::RunAtExpressionS( CString &sStr )
 
 /* Like luaL_typerror, but without the special case for argument 1 being "self"
  * in method calls, so we give a correct error message after we remove self. */
-CString GetLuaBindingType( Lua *L, int iArgNo )
+RString GetLuaBindingType( Lua *L, int iArgNo )
 {
 	if( lua_isnil(L, iArgNo) )
 		return "nil";
@@ -449,7 +449,7 @@ CString GetLuaBindingType( Lua *L, int iArgNo )
 	int iMetatable = lua_gettop(L);
 	lua_pushstring( L, "type" );
 	lua_rawget( L, iMetatable );
-	CString sActualType = lua_tostring( L, -1 );
+	RString sActualType = lua_tostring( L, -1 );
 
 	lua_settop( L, iTop );
 	return sActualType;
@@ -459,7 +459,7 @@ CString GetLuaBindingType( Lua *L, int iArgNo )
  * in method calls, so we give a correct error message after we remove self. */
 int LuaHelpers::TypeError( Lua *L, int iArgNo, const char *szName )
 {
-	CString sType = GetLuaBindingType( L, iArgNo );
+	RString sType = GetLuaBindingType( L, iArgNo );
 
 	lua_Debug debug;
 	if( !lua_getstack( L, 0, &debug ) )
@@ -476,7 +476,7 @@ int LuaHelpers::TypeError( Lua *L, int iArgNo, const char *szName )
 }
 
 
-LuaFunctionList::LuaFunctionList( CString name_, lua_CFunction func_ )
+LuaFunctionList::LuaFunctionList( RString name_, lua_CFunction func_ )
 {
 	name = name_;
 	func = func_;
@@ -485,7 +485,7 @@ LuaFunctionList::LuaFunctionList( CString name_, lua_CFunction func_ )
 }
 
 
-static bool Trace( const CString &sString )
+static bool Trace( const RString &sString )
 {
 	LOG->Trace( "%s", sString.c_str() );
 	return true;
@@ -494,7 +494,7 @@ static bool Trace( const CString &sString )
 LuaFunction( Trace, Trace(SArg(1)) );
 
 #include "ProductInfo.h"
-LuaFunction( ProductVersion, (CString) PRODUCT_VER );
+LuaFunction( ProductVersion, (RString) PRODUCT_VER );
 
 static float scale( float x, float l1, float h1, float l2, float h2 )
 {
@@ -507,7 +507,7 @@ LuaFunction( clamp, clamp(FArg(1), FArg(2), FArg(3)) );
 #include "RageTypes.h"
 int LuaFunc_color( lua_State *L )
 {
-	CString sColor = SArg(1);
+	RString sColor = SArg(1);
 	RageColor c;
 	c.FromString( sColor );
 

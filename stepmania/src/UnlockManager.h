@@ -74,7 +74,7 @@ public:
 	bool SongIsRouletteOnly( const Song *song ) const;
 	bool StepsIsLocked( const Song *pSong, const Steps *pSteps ) const;
 	bool CourseIsLocked( const Course *course ) const;
-	bool ModifierIsLocked( const CString &sOneMod ) const;
+	bool ModifierIsLocked( const RString &sOneMod ) const;
 
 	// Gets number of unlocks for title screen
 	int GetNumUnlocks() const;
@@ -94,7 +94,7 @@ public:
 	void UnlockSong( const Song *song );
 
 	// Return the associated code.
-	int FindCode( const CString &sName ) const;
+	int FindCode( const RString &sName ) const;
 
 	// All locked songs are stored here
 	vector<UnlockEntry>	m_UnlockEntries;
@@ -116,7 +116,7 @@ private:
 	const UnlockEntry *FindSong( const Song *pSong ) const;
 	const UnlockEntry *FindSteps( const Song *pSong, const Steps *pSteps ) const;
 	const UnlockEntry *FindCourse( const Course *pCourse ) const;
-	const UnlockEntry *FindModifier( const CString &sOneMod ) const;
+	const UnlockEntry *FindModifier( const RString &sOneMod ) const;
 
 	set<int> m_RouletteCodes; // "codes" which are available in roulette and which unlock if rouletted
 };

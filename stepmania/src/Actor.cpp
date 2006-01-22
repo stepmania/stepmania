@@ -92,7 +92,7 @@ void Actor::InitDefaults()
 	UnsubcribeAndClearCommands();
 }
 
-static bool GetMessageNameFromCommandName( const CString &sCommandName, CString &sMessageNameOut )
+static bool GetMessageNameFromCommandName( const RString &sCommandName, RString &sMessageNameOut )
 {
 	if( sCommandName.Right(7) == "Message" )
 	{
@@ -107,7 +107,7 @@ static bool GetMessageNameFromCommandName( const CString &sCommandName, CString 
 
 void Actor::UnsubcribeAndClearCommands()
 {
-	FOREACH_CONST( CString, m_vsSubscribedTo, s )
+	FOREACH_CONST( RString, m_vsSubscribedTo, s )
 		MESSAGEMAN->Unsubscribe( this, *s );
 	m_vsSubscribedTo.clear();
 }
@@ -191,14 +191,14 @@ Actor::Actor( const Actor &cpy ):
  * initialization (eg. ActorFrame loading children).  However, it
  * also loads input variables, which should happen first.  The
  * former is more important. */
-void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
+void Actor::LoadFromNode( const RString& sDir, const XNode* pNode )
 {
 	FOREACH_CONST_Child( pNode, pChild )
 	{
 		if( pChild->m_sName == "Input" )
 		{
 			/* If parameters are specified here, save their values to the actor. */
-			CString sName;
+			RString sName;
 			if( !pChild->GetAttrValue( "Name", sName ) )
 				RageException::Throw( ssprintf("Input node in '%s' is missing the attribute 'Name'", sDir.c_str()) );
 
@@ -222,8 +222,8 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 	FOREACH_CONST_Attr( pNode, pAttr )
 	{
 		// Load Name, if any.
-		const CString &sKeyName = pAttr->first;
-		const CString &sValue = pAttr->second;
+		const RString &sKeyName = pAttr->first;
+		const RString &sValue = pAttr->second;
 		if( sKeyName == "Name" )
 		{
 			m_sName = sValue;
@@ -244,7 +244,7 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 		{
 			apActorCommands apac( new ActorCommands( sValue ) );
 
-			CString sCmdName = sKeyName.Left( sKeyName.size()-7 );
+			RString sCmdName = sKeyName.Left( sKeyName.size()-7 );
 			AddCommand( sCmdName, apac );
 		}
 	}
@@ -254,14 +254,14 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 	//
 	FOREACH_CONST_Child( pNode, c )
 	{
-		CString sKeyName = c->m_sName;
+		RString sKeyName = c->m_sName;
 
 		if( sKeyName != "Command" )
 			continue; /* not a command */
 
-		CString sName;
+		RString sName;
 		c->GetAttrValue( "Name", sName );
-		CString sValue;
+		RString sValue;
 		c->GetAttrValue( "Value", sValue );
 
 		LuaHelpers::RunAtExpressionS( sName );
@@ -277,7 +277,7 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 
 /* Like RTTI: return true if this actor is an sType (or derived from sType).
  * This uses the Lua binding check, so only works on bound types. */
-bool Actor::IsType( const CString &sType )
+bool Actor::IsType( const RString &sType )
 {
 	Lua *L = LUA->Get();
 	this->PushSelf( L );
@@ -744,7 +744,7 @@ void Actor::BeginTweening( float time, TweenType tt )
 	// recursing ActorCommand.
 	if( m_Tweens.size() > 50 )
 	{
-		CString sError = ssprintf( "Tween overflow: size = %u.  infinitely recursing ActorCommand?", unsigned(m_Tweens.size()) );
+		RString sError = ssprintf( "Tween overflow: size = %u.  infinitely recursing ActorCommand?", unsigned(m_Tweens.size()) );
 		LOG->Warn( sError );
 		Dialog::OK( sError );
 		FinishTweening();
@@ -837,7 +837,7 @@ void Actor::ScaleTo( const RectF &rect, StretchType st )
 	SetZoom( fNewZoom );
 }
 
-void Actor::SetHorizAlignString( const CString &s )
+void Actor::SetHorizAlignString( const RString &s )
 {
 	if     (s.CompareNoCase("left")==0)	this->SetHorizAlign( align_left ); /* call derived */
 	else if(s.CompareNoCase("center")==0)	this->SetHorizAlign( align_center );
@@ -845,7 +845,7 @@ void Actor::SetHorizAlignString( const CString &s )
 	else	ASSERT(0);
 }
 
-void Actor::SetVertAlignString( const CString &s )
+void Actor::SetVertAlignString( const RString &s )
 {
 	if     (s.CompareNoCase("top")==0)	this->SetVertAlign( align_top ); /* call derived */
 	else if(s.CompareNoCase("middle")==0)	this->SetVertAlign( align_middle );
@@ -853,7 +853,7 @@ void Actor::SetVertAlignString( const CString &s )
 	else	ASSERT(0);
 }
 
-void Actor::SetEffectClockString( const CString &s )
+void Actor::SetEffectClockString( const RString &s )
 {
 	if     (s.CompareNoCase("timer")==0)	this->SetEffectClock( CLOCK_TIMER );
 	else if(s.CompareNoCase("beat")==0)	this->SetEffectClock( CLOCK_BGM_BEAT );
@@ -917,7 +917,7 @@ void Actor::SetEffectTiming( float fRampUp, float fAtHalf, float fRampDown, floa
 
 // effect "macros"
 
-void Actor::SetEffectLua( const CString &sCommand )
+void Actor::SetEffectLua( const RString &sCommand )
 {
 	m_Effect = effect_lua;
 	m_sEffectCommand = sCommand;
@@ -1208,7 +1208,7 @@ void Actor::TweenState::MakeWeightedAverage( TweenState& average_out, const Twee
 	average_out.aux		= ts1.aux        + (ts2.aux		- ts1.aux	 )*fPercentBetween;
 }
 
-void Actor::SetBlendModeString( const CString &s )
+void Actor::SetBlendModeString( const RString &s )
 {
 	if     (s.CompareNoCase("normal")==0)	this->SetBlendMode( BLEND_NORMAL );
 	else if(s.CompareNoCase("add")==0)	this->SetBlendMode( BLEND_ADD );
@@ -1216,7 +1216,7 @@ void Actor::SetBlendModeString( const CString &s )
 	else	ASSERT(0);
 }
 
-void Actor::SetCullModeString( const CString &s )
+void Actor::SetCullModeString( const RString &s )
 {
 	if     (s.CompareNoCase("back")==0)	this->SetCullMode( CULL_BACK );
 	else if(s.CompareNoCase("front")==0)	this->SetCullMode( CULL_FRONT );
@@ -1224,7 +1224,7 @@ void Actor::SetCullModeString( const CString &s )
 	else	ASSERT(0);
 }
 
-void Actor::SetZTestModeString( const CString &s )
+void Actor::SetZTestModeString( const RString &s )
 {
 	// for metrics backward compatibility
 	if(s.CompareNoCase("off")==0)			this->SetZTestMode( ZTEST_OFF );
@@ -1239,14 +1239,14 @@ void Actor::Sleep( float time )
 	BeginTweening( 0, TWEEN_LINEAR ); 
 }
 
-void Actor::QueueCommand( const CString& sCommandName )
+void Actor::QueueCommand( const RString& sCommandName )
 {
 	BeginTweening( 0, TWEEN_LINEAR );
 	TweenInfo  &TI = m_Tweens.back()->info;
 	TI.m_sCommandName = sCommandName;
 }
 
-void Actor::QueueMessage( const CString& sMessageName )
+void Actor::QueueMessage( const RString& sMessageName )
 {
 	// Hack: use "!" as a marker to broadcast a command, instead of playing a
 	// command, so we don't have to add yet another element to every tween
@@ -1256,15 +1256,15 @@ void Actor::QueueMessage( const CString& sMessageName )
 	TI.m_sCommandName = "!" + sMessageName;
 }
 
-void Actor::AddCommand( const CString &sCmdName, apActorCommands apac )
+void Actor::AddCommand( const RString &sCmdName, apActorCommands apac )
 {
 	if( HasCommand(sCmdName) )
 	{
-		CString sWarning = m_sName+"'s command '"+sCmdName+"' defined twice";
+		RString sWarning = m_sName+"'s command '"+sCmdName+"' defined twice";
 		Dialog::OK( sWarning, "COMMAND_DEFINED_TWICE" );
 	}
 
-	CString sMessage;
+	RString sMessage;
 	if( GetMessageNameFromCommandName(sCmdName, sMessage) )
 	{
 		SubscribeToMessage( sMessage );
@@ -1276,22 +1276,22 @@ void Actor::AddCommand( const CString &sCmdName, apActorCommands apac )
 	}
 }
 
-bool Actor::HasCommand( const CString &sCmdName )
+bool Actor::HasCommand( const RString &sCmdName )
 {
-	map<CString, apActorCommands>::const_iterator it = m_mapNameToCommands.find( sCmdName );
+	map<RString, apActorCommands>::const_iterator it = m_mapNameToCommands.find( sCmdName );
 	return it != m_mapNameToCommands.end();
 }
 
-const apActorCommands& Actor::GetCommand( const CString &sCommandName ) const
+const apActorCommands& Actor::GetCommand( const RString &sCommandName ) const
 {
-	map<CString, apActorCommands>::const_iterator it = m_mapNameToCommands.find( sCommandName );
+	map<RString, apActorCommands>::const_iterator it = m_mapNameToCommands.find( sCommandName );
 	ASSERT( it != m_mapNameToCommands.end() );
 	return it->second;
 }
 
-void Actor::PlayCommand( const CString &sCommandName, Actor *pParent )
+void Actor::PlayCommand( const RString &sCommandName, Actor *pParent )
 {
-	map<CString, apActorCommands>::const_iterator it = m_mapNameToCommands.find( sCommandName );
+	map<RString, apActorCommands>::const_iterator it = m_mapNameToCommands.find( sCommandName );
 
 	if( it == m_mapNameToCommands.end() )
 		return;
@@ -1299,12 +1299,12 @@ void Actor::PlayCommand( const CString &sCommandName, Actor *pParent )
 	RunCommands( *it->second );
 }
 
-void Actor::HandleMessage( const CString& sMessage )
+void Actor::HandleMessage( const RString& sMessage )
 {
 	PlayCommand( sMessage );
 }
 
-void Actor::SubscribeToMessage( const CString &sMessageName )
+void Actor::SubscribeToMessage( const RString &sMessageName )
 {
 	MESSAGEMAN->Subscribe( this, sMessageName );
 	m_vsSubscribedTo.push_back( sMessageName );

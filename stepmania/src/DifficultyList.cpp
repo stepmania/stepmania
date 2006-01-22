@@ -25,7 +25,7 @@ DifficultyList::~DifficultyList()
 {
 }
 
-void DifficultyList::SetName( const CString &sName )
+void DifficultyList::SetName( const RString &sName )
 {
 	ActorFrame::SetName( sName );
 

@@ -3,13 +3,13 @@
 
 struct BacktraceNames
 {
-	CString Symbol, File;
+	RString Symbol, File;
 	intptr_t Address;
 	int Offset;
 	void FromAddr( const void *p );
-	void FromString( CString str );
+	void FromString( RString str );
 	void Demangle();
-	CString Format() const;
+	RString Format() const;
 	BacktraceNames(): Address(0), Offset(0) { }
 };
 

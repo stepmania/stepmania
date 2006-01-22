@@ -14,7 +14,7 @@
 		return NULL; \
 	}
 
-RageSurface *RageSurface_Load_XPM( char * const *xpm, CString &error )
+RageSurface *RageSurface_Load_XPM( char * const *xpm, RString &error )
 {
 	int line = 0;
 
@@ -35,24 +35,24 @@ RageSurface *RageSurface_Load_XPM( char * const *xpm, CString &error )
 
 	vector<RageSurfaceColor> colors;
 
-	map<CString,int> name_to_color;
+	map<RString,int> name_to_color;
 	for( int i = 0; i < num_colors; ++i )
 	{
 		CheckLine();
 
 		/* "id c #AABBCC"; id is color_length long.  id may contain spaces. */
-		CString color = xpm[line++];
+		RString color = xpm[line++];
 
 		if( color_length+4 > (int) color.size() )
 			continue;
 
-		CString name;
+		RString name;
 		name = color.substr( 0, color_length );
 
 		if( color.substr( color_length, 4 ) != " c #")
 			continue;
 
-		CString clr = color.substr( color_length+4 );
+		RString clr = color.substr( color_length+4 );
 		int r, g, b;
 		if( sscanf( clr, "%2x%2x%2x", &r, &g, &b ) != 3 )
 			continue;
@@ -80,7 +80,7 @@ RageSurface *RageSurface_Load_XPM( char * const *xpm, CString &error )
 	for( int y = 0; y < height; ++y )
 	{
 		CheckLine();
-		const CString row = xpm[line++];
+		const RString row = xpm[line++];
 		if( (int) row.size() != width*color_length )
 		{
 			error = ssprintf( "row %i is not expected length (%i != %i)", y, int(row.size()), width*color_length );
@@ -93,8 +93,8 @@ RageSurface *RageSurface_Load_XPM( char * const *xpm, CString &error )
 		int32_t *p32 = (int32_t *) p;
 		for( int x = 0; x < width; ++x )
 		{
-			CString color_name = row.substr( x*color_length, color_length );
-			map<CString,int>::const_iterator it;
+			RString color_name = row.substr( x*color_length, color_length );
+			map<RString,int>::const_iterator it;
 			it = name_to_color.find( color_name );
 			if( it == name_to_color.end() )
 			{

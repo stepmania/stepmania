@@ -38,7 +38,7 @@ RageSound_CA::RageSound_CA()
 	m_pNotificationThread = NULL;
 }
 
-CString RageSound_CA::Init()
+RString RageSound_CA::Init()
 {
 	try
 	{
@@ -302,7 +302,7 @@ OSStatus RageSound_CA::OverloadListener( AudioDeviceID inDevice,
 {
 	if( isInput )
 		return noErr;
-	CString Output;
+	RString Output;
 	for( int i = NUM_MIX_TIMES-1; i >= 0; --i )
 	{
 		int pos = (g_iLastMixTimePos+i) % NUM_MIX_TIMES;

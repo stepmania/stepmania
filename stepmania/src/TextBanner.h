@@ -13,19 +13,19 @@ class TextBanner : public ActorFrame
 public:
 	TextBanner();
 	TextBanner( const TextBanner &cpy );
-	void Load( CString sType );	// load metrics
+	void Load( RString sType );	// load metrics
 	void LoadFromSong( const Song* pSong );
 	void LoadFromString( 
-		const CString &sDisplayTitle, const CString &sTranslitTitle, 
-		const CString &sDisplaySubTitle, const CString &sTranslitSubTitle, 
-		const CString &sDisplayArtist, const CString &sTranslitArtist );
+		const RString &sDisplayTitle, const RString &sTranslitTitle, 
+		const RString &sDisplaySubTitle, const RString &sTranslitSubTitle, 
+		const RString &sDisplayArtist, const RString &sTranslitArtist );
 
 private:
 	bool m_bInitted;
 
 	BitmapText	m_textTitle, m_textSubTitle, m_textArtist;
 
-	ThemeMetric<CString>		ARTIST_PREPEND_STRING;
+	ThemeMetric<RString>		ARTIST_PREPEND_STRING;
 	ThemeMetric<apActorCommands> TWO_LINES_TITLE_COMMAND;
 	ThemeMetric<apActorCommands> TWO_LINES_SUBTITLE_COMMAND;
 	ThemeMetric<apActorCommands> TWO_LINES_ARTIST_COMMAND;

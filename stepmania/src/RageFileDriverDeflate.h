@@ -66,11 +66,11 @@ private:
 	int m_iDataStartOffset;
 };
 
-RageFileBasic *GunzipFile( RageFileBasic &file, CString &sError, uint32_t *iCRC32 );
+RageFileBasic *GunzipFile( RageFileBasic &file, RString &sError, uint32_t *iCRC32 );
 
 /* Quick helpers: */
-void GzipString( const CString &sIn, CString &sOut );
-bool GunzipString( const CString &sIn, CString &sOut ); // returns false on CRC, etc. error
+void GzipString( const RString &sIn, RString &sOut );
+bool GunzipString( const RString &sIn, RString &sOut ); // returns false on CRC, etc. error
 
 #endif
 

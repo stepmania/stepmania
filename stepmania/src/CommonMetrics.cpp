@@ -8,12 +8,12 @@
 #include "ProductInfo.h"
 
 
-static CString PLAYER_COLOR_NAME( size_t p ) { return ssprintf("ColorP%dCommand",int(p+1)); }
+static RString PLAYER_COLOR_NAME( size_t p ) { return ssprintf("ColorP%dCommand",int(p+1)); }
 
-ThemeMetric<CString>				CommonMetrics::INITIAL_SCREEN					("Common","InitialScreen", true); // always reevaluate metric
-ThemeMetric<CString>				CommonMetrics::FIRST_ATTRACT_SCREEN				("Common","FirstAttractScreen");
-ThemeMetric<CString>				CommonMetrics::DEFAULT_MODIFIERS				("Common","DefaultModifiers" );
-ThemeMetric<CString>				CommonMetrics::DEFAULT_CPU_MODIFIERS			("Common","DefaultCpuModifiers" );
+ThemeMetric<RString>				CommonMetrics::INITIAL_SCREEN					("Common","InitialScreen", true); // always reevaluate metric
+ThemeMetric<RString>				CommonMetrics::FIRST_ATTRACT_SCREEN				("Common","FirstAttractScreen");
+ThemeMetric<RString>				CommonMetrics::DEFAULT_MODIFIERS				("Common","DefaultModifiers" );
+ThemeMetric<RString>				CommonMetrics::DEFAULT_CPU_MODIFIERS			("Common","DefaultCpuModifiers" );
 ThemeMetric1D<apActorCommands>		CommonMetrics::PLAYER_COLOR						("Common",PLAYER_COLOR_NAME,NUM_PLAYERS);
 LocalizedString						CommonMetrics::WINDOW_TITLE						("Common","WindowTitle");
 ThemeMetric<int>					CommonMetrics::MAX_COURSE_ENTRIES_BEFORE_VARIOUS("Common","MaxCourseEntriesBeforeShowVarious");
@@ -23,8 +23,8 @@ ThemeMetricCourseDifficultiesToShow	CommonMetrics::COURSE_DIFFICULTIES_TO_SHOW		
 ThemeMetricStepsTypesToShow			CommonMetrics::STEPS_TYPES_TO_SHOW				("Common","StepsTypesToHide");
 
 
-ThemeMetricDifficultiesToShow::ThemeMetricDifficultiesToShow( const CString& sGroup, const CString& sName ) : 
-	ThemeMetric<CString>(sGroup,sName)
+ThemeMetricDifficultiesToShow::ThemeMetricDifficultiesToShow( const RString& sGroup, const RString& sName ) : 
+	ThemeMetric<RString>(sGroup,sName)
 {
 	// re-read because ThemeMetric::ThemeMetric calls ThemeMetric::Read, not the derived one
 	if( IsLoaded() )
@@ -34,15 +34,15 @@ void ThemeMetricDifficultiesToShow::Read()
 {
 	ASSERT( GetName().Right(6) == "ToShow" );
 
-	ThemeMetric<CString>::Read();
+	ThemeMetric<RString>::Read();
 
 	m_v.clear();
 
-	vector<CString> v;
-	split( ThemeMetric<CString>::GetValue(), ",", v );
+	vector<RString> v;
+	split( ThemeMetric<RString>::GetValue(), ",", v );
 	ASSERT( v.size() > 0 );
 
-	FOREACH_CONST( CString, v, i )
+	FOREACH_CONST( RString, v, i )
 	{
 		Difficulty d = StringToDifficulty( *i );
 		if( d == DIFFICULTY_INVALID )
@@ -53,8 +53,8 @@ void ThemeMetricDifficultiesToShow::Read()
 const vector<Difficulty>& ThemeMetricDifficultiesToShow::GetValue() { return m_v; }
 
 
-ThemeMetricCourseDifficultiesToShow::ThemeMetricCourseDifficultiesToShow( const CString& sGroup, const CString& sName ) : 
-	ThemeMetric<CString>(sGroup,sName)
+ThemeMetricCourseDifficultiesToShow::ThemeMetricCourseDifficultiesToShow( const RString& sGroup, const RString& sName ) : 
+	ThemeMetric<RString>(sGroup,sName)
 {
 	// re-read because ThemeMetric::ThemeMetric calls ThemeMetric::Read, not the derived one
 	if( IsLoaded() )
@@ -64,15 +64,15 @@ void ThemeMetricCourseDifficultiesToShow::Read()
 {
 	ASSERT( GetName().Right(6) == "ToShow" );
 
-	ThemeMetric<CString>::Read();
+	ThemeMetric<RString>::Read();
 
 	m_v.clear();
 
-	vector<CString> v;
-	split( ThemeMetric<CString>::GetValue(), ",", v );
+	vector<RString> v;
+	split( ThemeMetric<RString>::GetValue(), ",", v );
 	ASSERT( v.size() > 0 );
 
-	FOREACH_CONST( CString, v, i )
+	FOREACH_CONST( RString, v, i )
 	{
 		CourseDifficulty d = StringToCourseDifficulty( *i );
 		if( d == DIFFICULTY_INVALID )
@@ -83,14 +83,14 @@ void ThemeMetricCourseDifficultiesToShow::Read()
 const vector<CourseDifficulty>& ThemeMetricCourseDifficultiesToShow::GetValue() { return m_v; }
 
 
-static void RemoveStepsTypes( vector<StepsType>& inout, CString sStepsTypesToRemove )
+static void RemoveStepsTypes( vector<StepsType>& inout, RString sStepsTypesToRemove )
 {
-	vector<CString> v;
+	vector<RString> v;
 	split( sStepsTypesToRemove, ",", v );
 	ASSERT( v.size() > 0 );
 
 	// subtract StepsTypes
-	FOREACH_CONST( CString, v, i )
+	FOREACH_CONST( RString, v, i )
 	{
 		StepsType st = GameManager::StringToStepsType(*i);
 		if( st == STEPS_TYPE_INVALID )
@@ -101,8 +101,8 @@ static void RemoveStepsTypes( vector<StepsType>& inout, CString sStepsTypesToRem
 			inout.erase( iter );
 	}
 }
-ThemeMetricStepsTypesToShow::ThemeMetricStepsTypesToShow( const CString& sGroup, const CString& sName ) : 
-	ThemeMetric<CString>(sGroup,sName)
+ThemeMetricStepsTypesToShow::ThemeMetricStepsTypesToShow( const RString& sGroup, const RString& sName ) : 
+	ThemeMetric<RString>(sGroup,sName)
 {
 	// re-read because ThemeMetric::ThemeMetric calls ThemeMetric::Read, not the derived one
 	if( IsLoaded() )
@@ -112,17 +112,17 @@ void ThemeMetricStepsTypesToShow::Read()
 {
 	ASSERT( GetName().Right(6) == "ToHide" );
 
-	ThemeMetric<CString>::Read();
+	ThemeMetric<RString>::Read();
 
 	m_v.clear();
 	GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, m_v );
 
-	RemoveStepsTypes( m_v, ThemeMetric<CString>::GetValue() );
+	RemoveStepsTypes( m_v, ThemeMetric<RString>::GetValue() );
 }
 const vector<StepsType>& ThemeMetricStepsTypesToShow::GetValue() { return m_v; }
 
 
-CString CommonMetrics::ThemeOptionItem( CString s, bool bOptional )
+RString CommonMetrics::ThemeOptionItem( RString s, bool bOptional )
 {
 	if( bOptional && !THEME->HasMetric("OptionNames",s) )
 		return s;

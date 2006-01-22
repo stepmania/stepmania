@@ -64,33 +64,33 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	APP( fRandomSpeed );
 }
 
-static void AddPart( vector<CString> &AddTo, float level, CString name )
+static void AddPart( vector<RString> &AddTo, float level, RString name )
 {
 	if( level == 0 )
 		return;
 
-	const CString LevelStr = (level == 1)? CString(""): ssprintf( "%i%% ", (int) roundf(level*100) );
+	const RString LevelStr = (level == 1)? RString(""): ssprintf( "%i%% ", (int) roundf(level*100) );
 
 	AddTo.push_back( LevelStr + name );
 }
 
-CString PlayerOptions::GetString() const
+RString PlayerOptions::GetString() const
 {
-	vector<CString> v;
+	vector<RString> v;
 	GetMods( v );
 	return join( ", ", v );
 }
 
-void PlayerOptions::GetMods( vector<CString> &AddTo ) const
+void PlayerOptions::GetMods( vector<RString> &AddTo ) const
 {
-	CString sReturn;
+	RString sReturn;
 
 	if( !m_fTimeSpacing )
 	{
 		if( m_bSetScrollSpeed || m_fScrollSpeed != 1 )
 		{
 			/* -> 1.00 */
-			CString s = ssprintf( "%2.2f", m_fScrollSpeed );
+			RString s = ssprintf( "%2.2f", m_fScrollSpeed );
 			if( s[s.size()-1] == '0' )
 			{
 				/* -> 1.0 */
@@ -106,7 +106,7 @@ void PlayerOptions::GetMods( vector<CString> &AddTo ) const
 	}
 	else
 	{
-		CString s = ssprintf( "C%.0f", m_fScrollBPM );
+		RString s = ssprintf( "C%.0f", m_fScrollBPM );
 		AddTo.push_back( s );
 	}
 
@@ -194,7 +194,7 @@ void PlayerOptions::GetMods( vector<CString> &AddTo ) const
 
 	if( !m_sNoteSkin.empty()  &&  m_sNoteSkin.CompareNoCase("default")!=0 )
 	{
-		CString s = m_sNoteSkin;
+		RString s = m_sNoteSkin;
 		Capitalize( s );
 		AddTo.push_back( s );
 	}
@@ -202,17 +202,17 @@ void PlayerOptions::GetMods( vector<CString> &AddTo ) const
 
 /* Options are added to the current settings; call Init() beforehand if
  * you don't want this. */
-void PlayerOptions::FromString( CString sOptions, bool bWarnOnInvalid )
+void PlayerOptions::FromString( RString sOptions, bool bWarnOnInvalid )
 {
 	ASSERT( NOTESKIN );
 //	Init();
 	sOptions.MakeLower();
-	vector<CString> asBits;
+	vector<RString> asBits;
 	split( sOptions, ",", asBits, true );
 
-	FOREACH( CString, asBits, bit )
+	FOREACH( RString, asBits, bit )
 	{
-		CString& sBit = *bit;
+		RString& sBit = *bit;
 		TrimLeft(sBit);
 		TrimRight(sBit);
 
@@ -223,10 +223,10 @@ void PlayerOptions::FromString( CString sOptions, bool bWarnOnInvalid )
 
 		float level = 1;
 		float speed = 1;
-		vector<CString> asParts;
+		vector<RString> asParts;
 		split( sBit, " ", asParts, true );
 
-		FOREACH_CONST( CString, asParts, s )
+		FOREACH_CONST( RString, asParts, s )
 		{
 			if( *s == "no" )
 			{
@@ -254,7 +254,7 @@ void PlayerOptions::FromString( CString sOptions, bool bWarnOnInvalid )
 		const bool on = (level > 0.5f);
 
 		static Regex mult("^([0-9]+(\\.[0-9]+)?)x$");
-		vector<CString> matches;
+		vector<RString> matches;
 		if( mult.Compare(sBit, matches) )
 		{
 			char *p = NULL;
@@ -342,7 +342,7 @@ void PlayerOptions::FromString( CString sOptions, bool bWarnOnInvalid )
 		{
 			if( bWarnOnInvalid )
 			{
-				CString sWarning = ssprintf( "The options string '%s' contains an invalid mod name '%s'", sOptions.c_str(), sBit.c_str() );
+				RString sWarning = ssprintf( "The options string '%s' contains an invalid mod name '%s'", sOptions.c_str(), sBit.c_str() );
 				LOG->Warn( "%s", sWarning.c_str() );
 				Dialog::OK( sWarning, "INVALID_PLAYER_OPTION_WARNING" );
 			}
@@ -616,17 +616,17 @@ bool PlayerOptions::IsEasierForCourseAndTrail( Course* pCourse, Trail* pTrail )
 	return false;
 }
 
-void PlayerOptions::GetThemedMods( vector<CString> &AddTo ) const
+void PlayerOptions::GetThemedMods( vector<RString> &AddTo ) const
 {
-	vector<CString> vMods;
+	vector<RString> vMods;
 	GetMods( vMods );
-	FOREACH_CONST( CString, vMods, s )
+	FOREACH_CONST( RString, vMods, s )
 	{
-		const CString& sOneMod = *s;
+		const RString& sOneMod = *s;
 
 		ASSERT( !sOneMod.empty() );
 
-		vector<CString> asTokens;
+		vector<RString> asTokens;
 		split( sOneMod, " ", asTokens );
 
 		if( asTokens.empty() )
@@ -643,7 +643,7 @@ void PlayerOptions::GetThemedMods( vector<CString> &AddTo ) const
 		 * characters might use modifiers that don't exist in the theme. */
 		asTokens.back() = CommonMetrics::ThemeOptionItem( asTokens.back(), true );
 
-		CString sThemedMod = join( " ", asTokens );
+		RString sThemedMod = join( " ", asTokens );
 
 		AddTo.push_back( sThemedMod );
 	}
@@ -664,7 +664,7 @@ bool PlayerOptions::ContainsTransformOrTurn() const
 	return false;
 }
 
-CString PlayerOptions::GetSavedPrefsString() const
+RString PlayerOptions::GetSavedPrefsString() const
 {
 	PlayerOptions po_prefs;
 #define SAVE(x) po_prefs.x = this->x;

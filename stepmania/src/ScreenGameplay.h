@@ -53,7 +53,7 @@ public:
 	PlayerNumber GetStepsAndTrailIndex()		{ return m_pn == PLAYER_INVALID ? PLAYER_1 : m_pn; }
 	bool IsEnabled();
 	bool IsMultiPlayer() const { return m_mp != MultiPlayer_INVALID; }
-	CString GetName() const
+	RString GetName() const
 	{
 		if( m_bIsDummy )
 			return "Dummy";
@@ -117,7 +117,7 @@ public:
 	Song *GetNextCourseSong() const;
 
 protected:
-	ThemeMetric<CString> PLAYER_TYPE;
+	ThemeMetric<RString> PLAYER_TYPE;
 	LocalizedString GIVE_UP_TEXT;
 	LocalizedString GIVE_UP_ABORTED_TEXT;
 	ThemeMetric<float> MUSIC_FADE_OUT_SECONDS;
@@ -127,7 +127,7 @@ protected:
 	ThemeMetric<bool> GIVING_UP_GOES_TO_NEXT_SCREEN;
 	ThemeMetric<bool> FAIL_AFTER_30_MISSES;
 	ThemeMetric<bool> USE_FORCED_MODIFIERS_IN_BEGINNER;
-	ThemeMetric<CString> FORCED_MODIFIERS_IN_BEGINNER;
+	ThemeMetric<RString> FORCED_MODIFIERS_IN_BEGINNER;
 
 	void TweenOnScreen();
 	void TweenOffScreen();
@@ -140,7 +140,7 @@ protected:
 	float StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic);
 	void LoadLights();
 	void PauseGame( bool bPause, GameController gc = GAME_CONTROLLER_INVALID );
-	void PlayAnnouncer( CString type, float fSeconds );
+	void PlayAnnouncer( RString type, float fSeconds );
 	void UpdateLights();
 	void SendCrossedMessages();
 	void BeginBackingOutFromGameplay();

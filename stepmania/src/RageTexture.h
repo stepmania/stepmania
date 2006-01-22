@@ -57,7 +57,7 @@ public:
 	/* The ID that we were asked to load: */
 	const RageTextureID &GetID() const { return m_ID; }
 
-	static void GetFrameDimensionsFromFileName( CString sPath, int* puFramesWide, int* puFramesHigh );
+	static void GetFrameDimensionsFromFileName( RString sPath, int* puFramesWide, int* puFramesHigh );
 
 private:
 	/* We might change settings when loading (due to hints, hardware

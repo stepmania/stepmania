@@ -67,7 +67,7 @@ ActorFrame::ActorFrame( const ActorFrame &cpy ):
 	}
 }
 
-void ActorFrame::LoadFromNode( const CString& sDir, const XNode* pNode )
+void ActorFrame::LoadFromNode( const RString& sDir, const XNode* pNode )
 {
 	if( AutoLoadChildren() )
 		LoadChildrenFromNode( sDir, pNode );
@@ -77,7 +77,7 @@ void ActorFrame::LoadFromNode( const CString& sDir, const XNode* pNode )
 	pNode->GetAttrValue( "UpdateRate", m_fUpdateRate );
 	pNode->GetAttrValue( "FOV", m_fFOV );
 	
-	CString s;
+	RString s;
 	if( pNode->GetAttrValue( "VanishX", s ) )
 		m_fVanishX = LuaHelpers::RunExpressionF( s );
 	if( pNode->GetAttrValue( "VanishY", s ) )
@@ -85,7 +85,7 @@ void ActorFrame::LoadFromNode( const CString& sDir, const XNode* pNode )
 	m_bOverrideLighting = pNode->GetAttrValue( "Lighting", m_bLighting );
 }
 
-void ActorFrame::LoadChildrenFromNode( const CString& sDir, const XNode* pNode )
+void ActorFrame::LoadChildrenFromNode( const RString& sDir, const XNode* pNode )
 {
 	// Shouldn't be calling this unless we're going to delete our children.
 	ASSERT( m_bDeleteChildren );
@@ -127,7 +127,7 @@ void ActorFrame::RemoveChild( Actor* pActor )
 		m_SubActors.erase( iter );
 }
 
-Actor* ActorFrame::GetChild( const CString &sName )
+Actor* ActorFrame::GetChild( const RString &sName )
 {
 	FOREACH( Actor*, m_SubActors, a )
 	{
@@ -340,7 +340,7 @@ void ActorFrame::SetPropagateCommands( bool b )
 	m_bPropagateCommands = b;
 }
 
-void ActorFrame::PlayCommand( const CString &sCommandName, Actor* pParent )
+void ActorFrame::PlayCommand( const RString &sCommandName, Actor* pParent )
 {
 	Actor::PlayCommand( sCommandName, pParent );
 

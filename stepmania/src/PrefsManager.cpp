@@ -10,11 +10,11 @@
 #include "RageLog.h"
 
 
-const CString DEFAULTS_INI_PATH		= "Data/Defaults.ini";		// these can be overridden
+const RString DEFAULTS_INI_PATH		= "Data/Defaults.ini";		// these can be overridden
 //PREFERENCES_INI_PATH	// overlay on Defaults.ini, contains the user's choices
 #include "SpecialFiles.h"
-const CString STATIC_INI_PATH		= "Data/Static.ini";		// overlay on the 2 above, can't be overridden
-const CString TYPE_TXT_FILE			= "Data/Type.txt";
+const RString STATIC_INI_PATH		= "Data/Static.ini";		// overlay on the 2 above, can't be overridden
+const RString TYPE_TXT_FILE			= "Data/Type.txt";
 
 PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -53,7 +53,7 @@ bool g_bAutoRestart = false;
 # define TRUE_IF_DEBUG false
 #endif
 
-void TimingWindowSecondsInit( size_t /*TimingWindow*/ i, CString &sNameOut, float &defaultValueOut )
+void TimingWindowSecondsInit( size_t /*TimingWindow*/ i, RString &sNameOut, float &defaultValueOut )
 {
 	sNameOut = "TimingWindowSeconds" + TimingWindowToString( (TimingWindow)i );
 	switch( i )
@@ -71,7 +71,7 @@ void TimingWindowSecondsInit( size_t /*TimingWindow*/ i, CString &sNameOut, floa
 	}
 }
 
-void PercentScoreWeightInit( size_t /*ScoreEvent*/ i, CString &sNameOut, int &defaultValueOut )
+void PercentScoreWeightInit( size_t /*ScoreEvent*/ i, RString &sNameOut, int &defaultValueOut )
 {
 	sNameOut = "PercentScoreWeight" + ScoreEventToString( (ScoreEvent)i );
 	switch( i )
@@ -89,7 +89,7 @@ void PercentScoreWeightInit( size_t /*ScoreEvent*/ i, CString &sNameOut, int &de
 	}
 }
 
-void GradeWeightInit( size_t /*ScoreEvent*/ i, CString &sNameOut, int &defaultValueOut )
+void GradeWeightInit( size_t /*ScoreEvent*/ i, RString &sNameOut, int &defaultValueOut )
 {
 	sNameOut = "GradeWeight" + ScoreEventToString( (ScoreEvent)i );
 	switch( i )
@@ -107,7 +107,7 @@ void GradeWeightInit( size_t /*ScoreEvent*/ i, CString &sNameOut, int &defaultVa
 	}
 }
 
-void SuperMeterPercentChangeInit( size_t /*ScoreEvent*/ i, CString &sNameOut, float &defaultValueOut )
+void SuperMeterPercentChangeInit( size_t /*ScoreEvent*/ i, RString &sNameOut, float &defaultValueOut )
 {
 	sNameOut = "SuperMeterPercentChange" + ScoreEventToString( (ScoreEvent)i );
 	switch( i )
@@ -125,7 +125,7 @@ void SuperMeterPercentChangeInit( size_t /*ScoreEvent*/ i, CString &sNameOut, fl
 	}
 }
 
-void TimeMeterSecondsChangeInit( size_t /*ScoreEvent*/ i, CString &sNameOut, float &defaultValueOut )
+void TimeMeterSecondsChangeInit( size_t /*ScoreEvent*/ i, RString &sNameOut, float &defaultValueOut )
 {
 	sNameOut = "TimeMeterSecondsChange" + ScoreEventToString( (ScoreEvent)i );
 	switch( i )
@@ -334,7 +334,7 @@ PrefsManager::~PrefsManager()
 {
 }
 
-void PrefsManager::SetCurrentGame( const CString &sGame )
+void PrefsManager::SetCurrentGame( const RString &sGame )
 {
 	if( m_sCurrentGame.Get() == sGame )
 		return;	// redundant
@@ -364,7 +364,7 @@ void PrefsManager::RestoreGamePrefs()
 
 	// load prefs
 	GamePrefs gp;
-	map<CString, GamePrefs>::const_iterator iter = m_mapGameNameToGamePrefs.find( m_sCurrentGame );
+	map<RString, GamePrefs>::const_iterator iter = m_mapGameNameToGamePrefs.find( m_sCurrentGame );
 	if( iter != m_mapGameNameToGamePrefs.end() )
 		gp = iter->second;
 
@@ -399,7 +399,7 @@ void PrefsManager::ResetToFactoryDefaults()
 	SavePrefsToDisk();
 }
 
-void PrefsManager::ReadPrefsFromFile( const CString &sIni, const CString &sSection )
+void PrefsManager::ReadPrefsFromFile( const RString &sIni, const RString &sSection )
 {
 	IniFile ini;
 	if( !ini.ReadFile(sIni) )
@@ -408,13 +408,13 @@ void PrefsManager::ReadPrefsFromFile( const CString &sIni, const CString &sSecti
 	ReadPrefsFromIni( ini, sSection );
 }
 
-static const CString GAME_SECTION_PREFIX = "Game-";
+static const RString GAME_SECTION_PREFIX = "Game-";
 
-void PrefsManager::ReadPrefsFromIni( const IniFile &ini, const CString &sSection )
+void PrefsManager::ReadPrefsFromIni( const IniFile &ini, const RString &sSection )
 {
 	// Apply our fallback recursively (if any) before applying ourself.
 	// TODO: detect circular?
-	CString sFallback;
+	RString sFallback;
 	if( ini.GetValue(sSection,"Fallback",sFallback) )
 	{
 		ReadPrefsFromIni( ini, sFallback );
@@ -435,7 +435,7 @@ void PrefsManager::ReadPrefsFromIni( const IniFile &ini, const CString &sSection
 	m_RandomBackgroundMode.Set( (RandomBackgroundMode)clamp((int)m_RandomBackgroundMode.Get(),0,(int)NUM_RandomBackgroundMode-1) );
 }
 
-void PrefsManager::ReadGamePrefsFromIni( const CString &sIni )
+void PrefsManager::ReadGamePrefsFromIni( const RString &sIni )
 {
 	IniFile ini;
 	if( !ini.ReadFile(sIni) )
@@ -446,7 +446,7 @@ void PrefsManager::ReadGamePrefsFromIni( const CString &sIni )
 		if( !BeginsWith(section->m_sName, GAME_SECTION_PREFIX) )
 			continue;
 
-		CString sGame = section->m_sName.Right( section->m_sName.length() - GAME_SECTION_PREFIX.length() );
+		RString sGame = section->m_sName.Right( section->m_sName.length() - GAME_SECTION_PREFIX.length() );
 		GamePrefs &gp = m_mapGameNameToGamePrefs[ sGame ];
 
 		ini.GetValue( section->m_sName, "Announcer",		gp.m_sAnnouncer );
@@ -455,7 +455,7 @@ void PrefsManager::ReadGamePrefsFromIni( const CString &sIni )
 	}
 }
 
-void PrefsManager::ReadDefaultsFromFile( const CString &sIni, const CString &sSection )
+void PrefsManager::ReadDefaultsFromFile( const RString &sIni, const RString &sSection )
 {
 	IniFile ini;
 	if( !ini.ReadFile(sIni) )
@@ -464,11 +464,11 @@ void PrefsManager::ReadDefaultsFromFile( const CString &sIni, const CString &sSe
 	ReadDefaultsFromIni( ini, sSection );
 }
 
-void PrefsManager::ReadDefaultsFromIni( const IniFile &ini, const CString &sSection )
+void PrefsManager::ReadDefaultsFromIni( const IniFile &ini, const RString &sSection )
 {
 	// Apply our fallback recursively (if any) before applying ourself.
 	// TODO: detect circular?
-	CString sFallback;
+	RString sFallback;
 	if( ini.GetValue(sSection,"Fallback",sFallback) )
 		ReadDefaultsFromIni( ini, sFallback );
 
@@ -492,9 +492,9 @@ void PrefsManager::SavePrefsToIni( IniFile &ini )
 		pNode = ini.AppendChild( "Options" );
 	IPreference::SavePrefsToNode( pNode );
 
-	FOREACHM_CONST( CString, GamePrefs, m_mapGameNameToGamePrefs, iter )
+	FOREACHM_CONST( RString, GamePrefs, m_mapGameNameToGamePrefs, iter )
 	{
-		CString sSection = "Game-" + CString( iter->first );
+		RString sSection = "Game-" + RString( iter->first );
 
 		ini.SetValue( sSection, "Announcer",		iter->second.m_sAnnouncer );
 		ini.SetValue( sSection, "Theme",			iter->second.m_sTheme );
@@ -503,9 +503,9 @@ void PrefsManager::SavePrefsToIni( IniFile &ini )
 }
 
 
-CString PrefsManager::GetPreferencesSection() const
+RString PrefsManager::GetPreferencesSection() const
 {
-	CString sSection = "Preferences";
+	RString sSection = "Preferences";
 
 	// OK if this fails
 	GetFileContents( TYPE_TXT_FILE, sSection, true );
@@ -534,7 +534,7 @@ public:
 
 	static int GetPreference( T* p, lua_State *L )
 	{
-		CString sName = SArg(1);
+		RString sName = SArg(1);
 		IPreference *pPref = IPreference::GetPreferenceByName( sName );
 		if( pPref == NULL )
 		{
@@ -548,7 +548,7 @@ public:
 	}
 	static int SetPreference( T* p, lua_State *L )
 	{
-		CString sName = SArg(1);
+		RString sName = SArg(1);
 
 		IPreference *pPref = IPreference::GetPreferenceByName( sName );
 		if( pPref == NULL )
@@ -563,7 +563,7 @@ public:
 	}
 	static int SetPreferenceToDefault( T* p, lua_State *L )
 	{
-		CString sName = SArg(1);
+		RString sName = SArg(1);
 
 		IPreference *pPref = IPreference::GetPreferenceByName( sName );
 		if( pPref == NULL )

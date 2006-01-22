@@ -12,7 +12,7 @@
 #include "PlayerState.h"
 #include "LuaBinding.h"
 
-const CString& NoteNotePartToString( NotePart i );
+const RString& NoteNotePartToString( NotePart i );
 #define FOREACH_NotePart( i ) FOREACH_ENUM( NotePart, NUM_NotePart, i )
 
 static const char *NotePartNames[] = {
@@ -49,15 +49,15 @@ struct NoteMetricCache_t
 	bool m_bHoldTailUseLighting;
 	bool m_bFlipHeadAndTailWhenReverse;
 
-	void Load( const CString &sButton );
+	void Load( const RString &sButton );
 } *NoteMetricCache;
 
-void NoteMetricCache_t::Load( const CString &sButton )
+void NoteMetricCache_t::Load( const RString &sButton )
 {
 	m_bDrawHoldHeadForTapsOnSameRow = NOTESKIN->GetMetricB(sButton,"DrawHoldHeadForTapsOnSameRow");
 	FOREACH_NotePart( p )
 	{
-		const CString s = NotePartToString(p);
+		const RString s = NotePartToString(p);
 		m_fAnimationLengthInBeats[p] = NOTESKIN->GetMetricF(sButton,s+"AnimationLengthInBeats");
 		m_bAnimationIsVivid[p] = NOTESKIN->GetMetricB(sButton,s+"AnimationIsVivid");
 		m_fNoteColorTextureCoordSpacing[p].x = NOTESKIN->GetMetricF(sButton,s+"NoteColorTextureCoordSpacingX");
@@ -79,9 +79,9 @@ void NoteMetricCache_t::Load( const CString &sButton )
 
 struct NoteSkinAndPath
 {
-	NoteSkinAndPath( const CString sNoteSkin_, const CString sPath_ ) { sNoteSkin = sNoteSkin_; sPath = sPath_; }
-	CString sNoteSkin;
-	CString sPath;
+	NoteSkinAndPath( const RString sNoteSkin_, const RString sPath_ ) { sNoteSkin = sNoteSkin_; sPath = sPath_; }
+	RString sNoteSkin;
+	RString sPath;
 	bool operator<( const NoteSkinAndPath &other ) const
 	{
 		int cmp = strcmp(sNoteSkin, other.sNoteSkin);
@@ -114,9 +114,9 @@ struct NoteResource
 
 static map<NoteSkinAndPath, NoteResource *> g_NoteResource;
 
-static NoteResource *MakeNoteResource( const CString &sButton, const CString &sElement, bool bSpriteOnly )
+static NoteResource *MakeNoteResource( const RString &sButton, const RString &sElement, bool bSpriteOnly )
 {
-	CString sElementAndType = sElement;
+	RString sElementAndType = sElement;
 	NoteSkinAndPath nsap( NOTESKIN->GetCurrentNoteSkin(), NOTESKIN->GetPath(sButton, sElementAndType) );
 
 	map<NoteSkinAndPath, NoteResource *>::iterator it = g_NoteResource.find( nsap );
@@ -176,13 +176,13 @@ static void DeleteNoteResource( const Actor *pActor )
 	delete pRes;
 }
 
-Actor *MakeRefcountedActor( const CString &sButton, const CString &sElement )
+Actor *MakeRefcountedActor( const RString &sButton, const RString &sElement )
 {
 	NoteResource *pRes = MakeNoteResource( sButton, sElement, false );
 	return pRes->m_pActor;
 }
 
-Sprite *MakeRefcountedSprite( const CString &sButton, const CString &sElement )
+Sprite *MakeRefcountedSprite( const RString &sButton, const RString &sElement )
 {
 	NoteResource *pRes = MakeNoteResource( sButton, sElement, true );
 	return (Sprite *) pRes->m_pActor; /* XXX ick */
@@ -199,7 +199,7 @@ NoteColorActor::~NoteColorActor()
 		DeleteNoteResource( m_p );
 }
 
-void NoteColorActor::Load( const CString &sButton, const CString &sElement )
+void NoteColorActor::Load( const RString &sButton, const RString &sElement )
 {
 	m_p = MakeRefcountedActor( sButton, sElement );
 }
@@ -216,7 +216,7 @@ NoteColorSprite::~NoteColorSprite()
 		DeleteNoteResource( m_p );
 }
 
-void NoteColorSprite::Load( const CString &sButton, const CString &sElement )
+void NoteColorSprite::Load( const RString &sButton, const RString &sElement )
 {
 	m_p = MakeRefcountedSprite( sButton, sElement );
 }
@@ -251,7 +251,7 @@ void NoteDisplay::Load( int iColNum, const PlayerState* pPlayerState, float fYRe
 	m_pPlayerState = pPlayerState;
 	m_fYReverseOffsetPixels = fYReverseOffsetPixels;
 
-	const CString &sButton = GAMESTATE->GetCurrentGame()->ColToButtonName( iColNum );
+	const RString &sButton = GAMESTATE->GetCurrentGame()->ColToButtonName( iColNum );
 
 	cache->Load( sButton );
 

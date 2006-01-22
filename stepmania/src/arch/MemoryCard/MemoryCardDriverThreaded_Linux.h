@@ -14,7 +14,7 @@ protected:
 	bool USBStorageDevicesChanged();
 	bool TestWrite( UsbStorageDevice* pDevice );
 
-	CString m_sLastDevices;
+	RString m_sLastDevices;
 };
 
 #ifdef ARCH_MEMORY_CARD_DRIVER

@@ -14,7 +14,7 @@ public:
 	GraphDisplay();
 	~GraphDisplay();
 	virtual Actor *Copy() const;
-	virtual void LoadFromNode( const CString& sDir, const XNode* pNode );
+	virtual void LoadFromNode( const RString& sDir, const XNode* pNode );
 
 	void LoadFromStageStats( const StageStats &ss, const PlayerStageStats &s );
 

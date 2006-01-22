@@ -25,7 +25,7 @@ struct Item
 {
 	AttackLevel level;
 	int iCombo;
-	CString sModifier;
+	RString sModifier;
 };
 static vector<Item>	g_Items;
 

@@ -210,7 +210,7 @@ void StepManiaLanServer::ParseData(PacketFunctions& Packet, const unsigned int c
 void StepManiaLanServer::Hello(PacketFunctions& Packet, const unsigned int clientNum)
 {
 	int ClientVersion = Packet.Read1();
-	CString build = Packet.ReadNT();
+	RString build = Packet.ReadNT();
 
 	Client[clientNum]->SetClientVersion(ClientVersion, build);
 
@@ -238,7 +238,7 @@ void GameClient::StyleUpdate(PacketFunctions& Packet)
 	}
 }
 
-void GameClient::SetClientVersion(int ver, const CString& b)
+void GameClient::SetClientVersion(int ver, const RString& b)
 {
 	version = ver;
 	build = b;
@@ -602,10 +602,10 @@ void StepManiaLanServer::SendValue(uint8_t value, const unsigned int clientNum)
 
 void StepManiaLanServer::AnalizeChat(PacketFunctions &Packet, const unsigned int clientNum)
 {
-	CString message = Packet.ReadNT();
+	RString message = Packet.ReadNT();
 	if (message.at(0) == '/')
 	{
-		CString command = message.substr(1, message.find(" ")-1);
+		RString command = message.substr(1, message.find(" ")-1);
 		if ((command.compare("list") == 0)||(command.compare("have") == 0))
 		{
 			if (command.compare("list") == 0)
@@ -635,12 +635,12 @@ void StepManiaLanServer::AnalizeChat(PacketFunctions &Packet, const unsigned int
 					ForceStart();
 				if (command.compare("kick") == 0)
 				{
-					CString name = message.substr(message.find(" ")+1);
+					RString name = message.substr(message.find(" ")+1);
 					Kick(name);
 				}
 				if (command.compare("ban") == 0)
 				{
-					CString name = message.substr(message.find(" ")+1);
+					RString name = message.substr(message.find(" ")+1);
 					Ban(name);
 				}
 			}
@@ -657,10 +657,10 @@ void StepManiaLanServer::AnalizeChat(PacketFunctions &Packet, const unsigned int
 		RelayChat(message, clientNum);
 }
 
-void StepManiaLanServer::RelayChat(CString &passedmessage, const unsigned int clientNum)
+void StepManiaLanServer::RelayChat(RString &passedmessage, const unsigned int clientNum)
 {
 	Reply.ClearPacket();
-	CString message = "";
+	RString message = "";
 
 	message += Client[clientNum]->Player[0].name;
 
@@ -680,7 +680,7 @@ void StepManiaLanServer::RelayChat(CString &passedmessage, const unsigned int cl
 void StepManiaLanServer::SelectSong(PacketFunctions& Packet, unsigned int clientNum)
 {
 	int use = Packet.Read1();
-	CString message;
+	RString message;
 
 	if (use == 2)
 	{
@@ -807,9 +807,9 @@ void StepManiaLanServer::SendToAllClients(PacketFunctions& Packet)
 		SendNetPacket(x, Packet);
 
 }
-void StepManiaLanServer::ServerChat(const CString& message)
+void StepManiaLanServer::ServerChat(const RString& message)
 {
-	CString x = servername + ": " + message;
+	RString x = servername + ": " + message;
 	Reply.ClearPacket();
 	Reply.Write1(NSCCM + NSServerOffset);
 	Reply.WriteNT(x);
@@ -853,7 +853,7 @@ void StepManiaLanServer::SendUserList()
 
 void StepManiaLanServer::ScreenNetMusicSelectStatus(PacketFunctions& Packet, unsigned int clientNum)
 {
-	CString message = "";
+	RString message = "";
 	int EntExitCode = Packet.Read1();
 
 	message += Client[clientNum]->Player[0].name;
@@ -897,9 +897,9 @@ void StepManiaLanServer::ScreenNetMusicSelectStatus(PacketFunctions& Packet, uns
 	SendUserList ();
 }
 
-CString StepManiaLanServer::ListPlayers()
+RString StepManiaLanServer::ListPlayers()
 {
-	CString list= "Player List:\n";
+	RString list= "Player List:\n";
 	for (unsigned int x = 0; x < Client.size(); ++x)
 		if (Client[x]->inNetMusicSelect)
 			for (int y = 0; y < 2; ++y)
@@ -908,7 +908,7 @@ CString StepManiaLanServer::ListPlayers()
 	return list;
 }
 
-void StepManiaLanServer::Kick(CString &name)
+void StepManiaLanServer::Kick(RString &name)
 {
 	bool kicked = false;
 	for (unsigned int x = 0; x < Client.size(); ++x)
@@ -921,7 +921,7 @@ void StepManiaLanServer::Kick(CString &name)
 			}
 }
 
-void StepManiaLanServer::Ban(CString &name)
+void StepManiaLanServer::Ban(RString &name)
 {
 	bool kicked = false;
 	for (unsigned int x = 0; x < Client.size(); ++x)
@@ -935,7 +935,7 @@ void StepManiaLanServer::Ban(CString &name)
 			}
 }
 
-bool StepManiaLanServer::IsBanned(CString &ip)
+bool StepManiaLanServer::IsBanned(RString &ip)
 {
 	for (unsigned int x = 0; x < bannedIPs.size(); ++x)
 		if (ip == bannedIPs[x])

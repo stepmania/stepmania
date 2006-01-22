@@ -179,7 +179,7 @@ void InputHandler_Linux_Joystick::InputThread()
 	InputHandler::UpdateTimer();
 }
 
-void InputHandler_Linux_Joystick::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut)
+void InputHandler_Linux_Joystick::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut)
 {
 	for(int i = 0; i < NUM_JOYSTICKS; ++i)
 	{

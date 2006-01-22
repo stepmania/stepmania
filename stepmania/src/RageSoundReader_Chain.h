@@ -21,7 +21,7 @@ public:
 
 	/* Add the given sound to play after fOffsetSecs seconds.  Takes ownership
 	 * of pSound. */
-	bool AddSound( CString sPath, float fOffsetSecs, float fPan );
+	bool AddSound( RString sPath, float fOffsetSecs, float fPan );
 
 	/* Finish adding sounds. */
 	void Finish();
@@ -45,11 +45,11 @@ private:
 	int m_iActualSampleRate;
 	unsigned m_iChannels;
 
-	map<CString, SoundReader *> m_apLoadedSounds;
+	map<RString, SoundReader *> m_apLoadedSounds;
 
 	struct sound
 	{
-		CString sPath;
+		RString sPath;
 		int iOffsetMS;
 		float fPan;
 		int GetOffsetFrame( int iSampleRate ) const { return int( int64_t(iOffsetMS) * iSampleRate / 1000 ); }

@@ -56,7 +56,7 @@ PaneDisplay::PaneDisplay()
 	m_CurPane = PANE_INVALID;
 }
 
-void PaneDisplay::Load( const CString &sMetricsGroup, PlayerNumber pn )
+void PaneDisplay::Load( const RString &sMetricsGroup, PlayerNumber pn )
 {
 	m_PlayerNumber = pn;
 
@@ -79,7 +79,7 @@ void PaneDisplay::Load( const CString &sMetricsGroup, PlayerNumber pn )
 		ActorUtil::SetXYAndOnCommand( m_textContents[p], sMetricsGroup, this );
 		m_ContentsFrame.AddChild( &m_textContents[p] );
 
-		m_Labels[p].Load( THEME->GetPathG(sMetricsGroup,CString(g_Contents[p].name)+" label") );
+		m_Labels[p].Load( THEME->GetPathG(sMetricsGroup,RString(g_Contents[p].name)+" label") );
 		m_Labels[p]->SetName( ssprintf("%sLabel", g_Contents[p].name) );
 		ActorUtil::SetXYAndOnCommand( m_Labels[p], sMetricsGroup, this );
 		m_ContentsFrame.AddChild( m_Labels[p] );
@@ -101,17 +101,17 @@ void PaneDisplay::Load( const CString &sMetricsGroup, PlayerNumber pn )
 	m_CurPane = PANE_INVALID;
 }
 
-void PaneDisplay::LoadFromNode( const CString &sDir, const XNode *pNode )
+void PaneDisplay::LoadFromNode( const RString &sDir, const XNode *pNode )
 {
 	ActorFrame::LoadFromNode( sDir, pNode );
 
 	bool b;
 
-	CString sMetricsGroup;
+	RString sMetricsGroup;
 	b = pNode->GetAttrValue( "MetricsGroup", sMetricsGroup );
 	ASSERT( b );
 
-	CString sPlayerNumber;
+	RString sPlayerNumber;
 	b = pNode->GetAttrValue( "PlayerNumber", sPlayerNumber );
 	ASSERT( b );
 	PlayerNumber pn = (PlayerNumber) LuaHelpers::RunExpressionI(sPlayerNumber);
@@ -121,7 +121,7 @@ void PaneDisplay::LoadFromNode( const CString &sDir, const XNode *pNode )
 
 void PaneDisplay::SetContent( PaneContents c )
 {
-	CString str = "?";	// fill this in
+	RString str = "?";	// fill this in
 	float val = 0;	// fill this in
 
 	const Song *pSong = GAMESTATE->m_pCurSong;

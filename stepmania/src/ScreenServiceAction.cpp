@@ -16,7 +16,7 @@
 #include "LocalizedString.h"
 
 static LocalizedString BOOKKEEPING_DATA_CLEARED( "ScreenServiceAction", "Bookkeeping data cleared." );
-static CString ClearBookkeepingData()
+static RString ClearBookkeepingData()
 {
 	BOOKKEEPER->ClearAll();
 	BOOKKEEPER->WriteToDisk();
@@ -24,11 +24,11 @@ static CString ClearBookkeepingData()
 }
 
 static LocalizedString MACHINE_STATS_CLEARED( "ScreenServiceAction", "Machine stats cleared." );
-static CString ClearMachineStats()
+static RString ClearMachineStats()
 {
 	Profile* pProfile = PROFILEMAN->GetMachineProfile();
 	// don't reset the Guid
-	CString sGuid = pProfile->m_sGuid;
+	RString sGuid = pProfile->m_sGuid;
 	pProfile->InitAll();
 	pProfile->m_sGuid = sGuid;
 	PROFILEMAN->SaveMachineProfile();
@@ -36,15 +36,15 @@ static CString ClearMachineStats()
 }
 
 static LocalizedString MACHINE_EDITS_CLEARED( "ScreenServiceAction", "%d edits cleared, %d errors." );
-static CString ClearMachineEdits()
+static RString ClearMachineEdits()
 {
 	int iNumAttempted = 0;
 	int iNumSuccessful = 0;
 	
-	vector<CString> vsEditFiles;
+	vector<RString> vsEditFiles;
 	GetDirListing( PROFILEMAN->GetProfileDir(ProfileSlot_Machine)+EDIT_STEPS_SUBDIR+"*.edit", vsEditFiles, false, true );
 	GetDirListing( PROFILEMAN->GetProfileDir(ProfileSlot_Machine)+EDIT_COURSES_SUBDIR+"*.crs", vsEditFiles, false, true );
-	FOREACH_CONST( CString, vsEditFiles, i )
+	FOREACH_CONST( RString, vsEditFiles, i )
 	{
 		iNumAttempted++;
 		bool bSuccess = FILEMAN->Remove( *i );
@@ -77,7 +77,7 @@ static PlayerNumber GetFirstReadyMemoryCard()
 
 static LocalizedString MEMORY_CARD_EDITS_NOT_CLEARED( "ScreenServiceAction", "Edits not cleared - No memory cards ready." );
 static LocalizedString EDITS_CLEARED				( "ScreenServiceAction", "%d edits cleared, %d errors." );
-static CString ClearMemoryCardEdits()
+static RString ClearMemoryCardEdits()
 {
 	PlayerNumber pn = GetFirstReadyMemoryCard();
 	if( pn == PLAYER_INVALID )
@@ -89,11 +89,11 @@ static CString ClearMemoryCardEdits()
 	if( !MEMCARDMAN->IsMounted(pn) )
 		MEMCARDMAN->MountCard(pn);
 
-	CString sDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/";
-	vector<CString> vsEditFiles;
+	RString sDir = MEM_CARD_MOUNT_POINT[pn] + (RString)PREFSMAN->m_sMemoryCardProfileSubdir + "/";
+	vector<RString> vsEditFiles;
 	GetDirListing( sDir+EDIT_STEPS_SUBDIR+"*.edit", vsEditFiles, false, true );
 	GetDirListing( sDir+EDIT_COURSES_SUBDIR+"*.crs", vsEditFiles, false, true );
-	FOREACH_CONST( CString, vsEditFiles, i )
+	FOREACH_CONST( RString, vsEditFiles, i )
 	{
 		iNumAttempted++;
 		bool bSuccess = FILEMAN->Remove( *i );
@@ -110,7 +110,7 @@ static CString ClearMemoryCardEdits()
 static LocalizedString STATS_NOT_SAVED				( "ScreenServiceAction", "Stats not saved - No memory cards ready." );
 static LocalizedString MACHINE_STATS_SAVED			( "ScreenServiceAction", "Machine stats saved to P%d card." );
 static LocalizedString ERROR_SAVING_MACHINE_STATS	( "ScreenServiceAction", "Error saving machine stats to P%d card." );
-static CString TransferStatsMachineToMemoryCard()
+static RString TransferStatsMachineToMemoryCard()
 {
 	PlayerNumber pn = GetFirstReadyMemoryCard();
 	if( pn == PLAYER_INVALID )
@@ -119,7 +119,7 @@ static CString TransferStatsMachineToMemoryCard()
 	if( !MEMCARDMAN->IsMounted(pn) )
 		MEMCARDMAN->MountCard(pn);
 
-	CString sDir = MEM_CARD_MOUNT_POINT[pn];
+	RString sDir = MEM_CARD_MOUNT_POINT[pn];
 	sDir += "MachineProfile/";
 
 	bool bSaved = PROFILEMAN->GetMachineProfile()->SaveAllToDir( sDir, PREFSMAN->m_bSignProfileData );
@@ -136,7 +136,7 @@ static LocalizedString STATS_NOT_LOADED		( "ScreenServiceAction", "Stats not loa
 static LocalizedString MACHINE_STATS_LOADED	( "ScreenServiceAction", "Machine stats loaded from P%d card." );
 static LocalizedString THERE_IS_NO_PROFILE	( "ScreenServiceAction", "There is no machine profile on P%d card." );
 static LocalizedString PROFILE_CORRUPT		( "ScreenServiceAction", "The profile on P%d card contains corrupt or tampered data." );
-static CString TransferStatsMemoryCardToMachine()
+static RString TransferStatsMemoryCardToMachine()
 {
 	PlayerNumber pn = GetFirstReadyMemoryCard();
 	if( pn == PLAYER_INVALID )
@@ -145,13 +145,13 @@ static CString TransferStatsMemoryCardToMachine()
 	if( !MEMCARDMAN->IsMounted(pn) )
 		MEMCARDMAN->MountCard(pn);
 
-	CString sDir = MEM_CARD_MOUNT_POINT[pn];
+	RString sDir = MEM_CARD_MOUNT_POINT[pn];
 	sDir += "MachineProfile/";
 
 	Profile backup = *PROFILEMAN->GetMachineProfile();
 
 	ProfileLoadResult lr = PROFILEMAN->GetMachineProfile()->LoadAllFromDir( sDir, PREFSMAN->m_bSignProfileData );
-	CString s;
+	RString s;
 	switch( lr )
 	{
 	case ProfileLoadResult_Success:
@@ -174,19 +174,19 @@ static CString TransferStatsMemoryCardToMachine()
 	return s;
 }
 
-static void CopyEdits( const CString &sFrom, const CString &sTo, int &iNumAttempted, int &iNumSuccessful, int &iNumOverwritten )
+static void CopyEdits( const RString &sFrom, const RString &sTo, int &iNumAttempted, int &iNumSuccessful, int &iNumOverwritten )
 {
 	iNumAttempted = 0;
 	iNumSuccessful = 0;
 	iNumOverwritten = 0;
 
 	{
-		CString sFromDir = sFrom + EDIT_STEPS_SUBDIR;
-		CString sToDir = sTo + EDIT_STEPS_SUBDIR;
+		RString sFromDir = sFrom + EDIT_STEPS_SUBDIR;
+		RString sToDir = sTo + EDIT_STEPS_SUBDIR;
 
-		vector<CString> vsFiles;
+		vector<RString> vsFiles;
 		GetDirListing( sFromDir+"*.edit", vsFiles, false, false );
-		FOREACH_CONST( CString, vsFiles, i )
+		FOREACH_CONST( RString, vsFiles, i )
 		{
 			iNumAttempted++;
 			if( DoesFileExist(sToDir+*i) )
@@ -198,12 +198,12 @@ static void CopyEdits( const CString &sFrom, const CString &sTo, int &iNumAttemp
 	}
 
 	{
-		CString sFromDir = sFrom + EDIT_COURSES_SUBDIR;
-		CString sToDir = sTo + EDIT_COURSES_SUBDIR;
+		RString sFromDir = sFrom + EDIT_COURSES_SUBDIR;
+		RString sToDir = sTo + EDIT_COURSES_SUBDIR;
 
-		vector<CString> vsFiles;
+		vector<RString> vsFiles;
 		GetDirListing( sFromDir+"*.crs", vsFiles, false, false );
-		FOREACH_CONST( CString, vsFiles, i )
+		FOREACH_CONST( RString, vsFiles, i )
 		{
 			iNumAttempted++;
 			if( DoesFileExist(sToDir+*i) )
@@ -215,20 +215,20 @@ static void CopyEdits( const CString &sFrom, const CString &sTo, int &iNumAttemp
 	}
 }
 
-static void SyncFiles( const CString &sFromDir, const CString &sToDir, const CString &sMask, int &iNumAdded, int &iNumDeleted, int &iNumOverwritten, int &iNumFailed )
+static void SyncFiles( const RString &sFromDir, const RString &sToDir, const RString &sMask, int &iNumAdded, int &iNumDeleted, int &iNumOverwritten, int &iNumFailed )
 {
-	vector<CString> vsFilesSource;
+	vector<RString> vsFilesSource;
 	GetDirListing( sFromDir+sMask, vsFilesSource, false, false );
 
-	vector<CString> vsFilesDest;
+	vector<RString> vsFilesDest;
 	GetDirListing( sToDir+sMask, vsFilesDest, false, false );
 
-	vector<CString> vsToDelete;
+	vector<RString> vsToDelete;
 	GetAsNotInBs( vsFilesDest, vsFilesSource, vsToDelete );
 
 	for( unsigned i = 0; i < vsToDelete.size(); ++i )
 	{
-		CString sFile = sToDir + vsToDelete[i];
+		RString sFile = sToDir + vsToDelete[i];
 		LOG->Trace( "Delete \"%s\"", sFile.c_str() );
 
 		if( FILEMAN->Remove(sFile) )
@@ -239,8 +239,8 @@ static void SyncFiles( const CString &sFromDir, const CString &sToDir, const CSt
 
 	for( unsigned i = 0; i < vsFilesSource.size(); ++i )
 	{
-		CString sFileFrom = sFromDir + vsFilesSource[i];
-		CString sFileTo = sToDir + vsFilesSource[i];
+		RString sFileFrom = sFromDir + vsFilesSource[i];
+		RString sFileTo = sToDir + vsFilesSource[i];
 		LOG->Trace( "Copy \"%s\"", sFileFrom.c_str() );
 		bool bOverwrite = DoesFileExist( sFileTo );
 		bool bSuccess = FileCopy( sFileFrom, sFileTo );
@@ -256,7 +256,7 @@ static void SyncFiles( const CString &sFromDir, const CString &sToDir, const CSt
 	}
 }
 
-static void SyncEdits( const CString &sFromDir, const CString &sToDir, int &iNumAdded, int &iNumDeleted, int &iNumOverwritten, int &iNumFailed )
+static void SyncEdits( const RString &sFromDir, const RString &sToDir, int &iNumAdded, int &iNumDeleted, int &iNumOverwritten, int &iNumFailed )
 {
 	iNumAdded = 0;
 	iNumDeleted = 0;
@@ -273,7 +273,7 @@ static LocalizedString COPIED_AND_OVERWRITTEN( "ScreenServiceAction", "%d copied
 static LocalizedString ADDED_AND_OVERWRITTEN( "ScreenServiceAction", "%d added, %d overwritten" );
 static LocalizedString FAILED( "ScreenServiceAction", "%d failed" );
 static LocalizedString DELETED( "ScreenServiceAction", "%d deleted" );
-static CString CopyEditsMachineToMemoryCard()
+static RString CopyEditsMachineToMemoryCard()
 {
 	PlayerNumber pn = GetFirstReadyMemoryCard();
 	if( pn == PLAYER_INVALID )
@@ -285,21 +285,21 @@ static CString CopyEditsMachineToMemoryCard()
 	int iNumAttempted = 0;
 	int iNumSuccessful = 0;
 	int iNumOverwritten = 0;
-	CString sFromDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine);
-	CString sToDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/";
+	RString sFromDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine);
+	RString sToDir = MEM_CARD_MOUNT_POINT[pn] + (RString)PREFSMAN->m_sMemoryCardProfileSubdir + "/";
 
 	CopyEdits( sFromDir, sToDir, iNumAttempted, iNumSuccessful, iNumOverwritten );
 	
 	MEMCARDMAN->UnmountCard(pn);
 
-	CString sRet = ssprintf( COPIED_TO_CARD.GetValue(), pn+1 ) + " ";
+	RString sRet = ssprintf( COPIED_TO_CARD.GetValue(), pn+1 ) + " ";
 	sRet += ssprintf( COPIED_AND_OVERWRITTEN.GetValue(), iNumSuccessful, iNumOverwritten );
 	if( iNumSuccessful < iNumAttempted )
-		sRet += CString("; ") + ssprintf( FAILED.GetValue(), iNumAttempted-iNumSuccessful );
+		sRet += RString("; ") + ssprintf( FAILED.GetValue(), iNumAttempted-iNumSuccessful );
 	return sRet;
 }
 
-static CString SyncEditsMachineToMemoryCard()
+static RString SyncEditsMachineToMemoryCard()
 {
 	PlayerNumber pn = GetFirstReadyMemoryCard();
 	if( pn == PLAYER_INVALID )
@@ -313,23 +313,23 @@ static CString SyncEditsMachineToMemoryCard()
 	int iNumOverwritten = 0;
 	int iNumFailed = 0;
 
-	CString sFromDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine);
-	CString sToDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/";
+	RString sFromDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine);
+	RString sToDir = MEM_CARD_MOUNT_POINT[pn] + (RString)PREFSMAN->m_sMemoryCardProfileSubdir + "/";
 	SyncEdits( sFromDir, sToDir, iNumAdded, iNumDeleted, iNumOverwritten, iNumFailed );
 	
 	MEMCARDMAN->UnmountCard(pn);
 
-	CString sRet = ssprintf( COPIED_TO_CARD.GetValue(), pn+1 ) + " ";
+	RString sRet = ssprintf( COPIED_TO_CARD.GetValue(), pn+1 ) + " ";
 	sRet += ssprintf( ADDED_AND_OVERWRITTEN.GetValue(), iNumAdded, iNumOverwritten );
 	if( iNumDeleted )
-		sRet += CString(" ") + ssprintf( DELETED.GetValue(), iNumDeleted );
+		sRet += RString(" ") + ssprintf( DELETED.GetValue(), iNumDeleted );
 	if( iNumFailed )
-		sRet += CString("; ") + ssprintf( FAILED.GetValue(), iNumFailed );
+		sRet += RString("; ") + ssprintf( FAILED.GetValue(), iNumFailed );
 	return sRet;
 }
 
 static LocalizedString COPIED_FROM_CARD( "ScreenServiceAction", "Copied from P%d card:" );
-static CString CopyEditsMemoryCardToMachine()
+static RString CopyEditsMemoryCardToMachine()
 {
 	PlayerNumber pn = GetFirstReadyMemoryCard();
 	if( pn == PLAYER_INVALID )
@@ -341,8 +341,8 @@ static CString CopyEditsMemoryCardToMachine()
 	int iNumAttempted = 0;
 	int iNumSuccessful = 0;
 	int iNumOverwritten = 0;
-	CString sFromDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/";
-	CString sToDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine);
+	RString sFromDir = MEM_CARD_MOUNT_POINT[pn] + (RString)PREFSMAN->m_sMemoryCardProfileSubdir + "/";
+	RString sToDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine);
 	
 	CopyEdits( sFromDir, sToDir, iNumAttempted, iNumSuccessful, iNumOverwritten );
 	
@@ -352,15 +352,15 @@ static CString CopyEditsMemoryCardToMachine()
 	PROFILEMAN->SaveMachineProfile();
 	PROFILEMAN->LoadMachineProfile();
 
-	CString sRet = ssprintf( COPIED_FROM_CARD.GetValue(), pn+1 ) + " ";
+	RString sRet = ssprintf( COPIED_FROM_CARD.GetValue(), pn+1 ) + " ";
 	sRet += ssprintf( COPIED_AND_OVERWRITTEN.GetValue(), iNumSuccessful, iNumOverwritten );
 	if( iNumSuccessful < iNumAttempted )
-		sRet += CString("; ") + ssprintf( FAILED.GetValue(), iNumAttempted-iNumSuccessful );
+		sRet += RString("; ") + ssprintf( FAILED.GetValue(), iNumAttempted-iNumSuccessful );
 	return sRet;
 }
 
 static LocalizedString PREFERENCES_RESET( "ScreenServiceAction", "Preferences reset." );
-static CString ResetPreferences()
+static RString ResetPreferences()
 {
 	PREFSMAN->ResetToFactoryDefaults();
 	return PREFERENCES_RESET.GetValue();
@@ -373,9 +373,9 @@ void ScreenServiceAction::Init()
 {
 	ScreenPrompt::Init();
 
-	CString sAction = THEME->GetMetric(m_sName,"Action");
+	RString sAction = THEME->GetMetric(m_sName,"Action");
 
-	CString (*pfn)() = NULL;
+	RString (*pfn)() = NULL;
 
 	if(	 sAction == "ClearBookkeepingData" )		pfn = ClearBookkeepingData;
 	else if( sAction == "ClearMachineStats" )			pfn = ClearMachineStats;
@@ -390,7 +390,7 @@ void ScreenServiceAction::Init()
 	
 	ASSERT_M( pfn, sAction );
 	
-	CString s = pfn();
+	RString s = pfn();
 
 	ScreenPrompt::SetPromptSettings( s, PROMPT_OK );
 }

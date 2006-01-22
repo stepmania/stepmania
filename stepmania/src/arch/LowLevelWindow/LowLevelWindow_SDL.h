@@ -9,8 +9,8 @@ class LowLevelWindow_SDL: public LowLevelWindow
 public:
 	LowLevelWindow_SDL();
 	~LowLevelWindow_SDL();
-	void *GetProcAddress(CString s);
-	CString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut );
+	void *GetProcAddress(RString s);
+	RString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut );
 	virtual void GetDisplayResolutions( DisplayResolutions &out ) const;
 
 	void SwapBuffers();

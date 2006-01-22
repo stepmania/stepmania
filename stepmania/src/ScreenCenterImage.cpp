@@ -22,8 +22,8 @@ void ScreenCenterImage::Init()
 	ScreenWithMenuElements::Init();
 
 #if defined(XBOX)
-	vector<CString> strArray;
-	CString text("Use the left analog stick to translate the screen and right right analog stick to scale");
+	vector<RString> strArray;
+	RString text("Use the left analog stick to translate the screen and right right analog stick to scale");
 	strArray.push_back(text);
 	m_textHelp->SetTips(strArray);
 #endif
@@ -173,7 +173,7 @@ void ScreenCenterImage::Move( Axis axis, float fDelta )
 		PREFSMAN->m_fCenterImageAddWidth,
 		PREFSMAN->m_fCenterImageAddHeight );
 
-	CString sMessage = 
+	RString sMessage = 
 		ssprintf( CENTERING.GetValue(),
 		PREFSMAN->m_iCenterImageTranslateX.Get(), 
 		PREFSMAN->m_iCenterImageTranslateY.Get(),

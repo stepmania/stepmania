@@ -19,40 +19,40 @@ public:
 	~NoteSkinManager();
 
 	void RefreshNoteSkinData( const Game* game );
-	void GetNoteSkinNames( const Game* game, vector<CString> &AddTo, bool bFilterDefault=true );
-	void GetNoteSkinNames( vector<CString> &AddTo );	// looks up current const Game* in GAMESTATE
-	bool DoesNoteSkinExist( const CString &sNoteSkin );	// looks up current const Game* in GAMESTATE
+	void GetNoteSkinNames( const Game* game, vector<RString> &AddTo, bool bFilterDefault=true );
+	void GetNoteSkinNames( vector<RString> &AddTo );	// looks up current const Game* in GAMESTATE
+	bool DoesNoteSkinExist( const RString &sNoteSkin );	// looks up current const Game* in GAMESTATE
 
-	void SetCurrentNoteSkin( const CString &sNoteSkin ) { m_sCurrentNoteSkin = sNoteSkin; }
-	const CString &GetCurrentNoteSkin() { return m_sCurrentNoteSkin; }
+	void SetCurrentNoteSkin( const RString &sNoteSkin ) { m_sCurrentNoteSkin = sNoteSkin; }
+	const RString &GetCurrentNoteSkin() { return m_sCurrentNoteSkin; }
 
-	CString GetPath( const CString &sButtonName, const CString &sElement );
+	RString GetPath( const RString &sButtonName, const RString &sElement );
 
-	CString		GetMetric( const CString &sButtonName, const CString &sValue );
-	int			GetMetricI( const CString &sButtonName, const CString &sValueName );
-	float		GetMetricF( const CString &sButtonName, const CString &sValueName );
-	bool		GetMetricB( const CString &sButtonName, const CString &sValueName );
-	apActorCommands   GetMetricA( const CString &sButtonName, const CString &sValueName );
+	RString		GetMetric( const RString &sButtonName, const RString &sValue );
+	int			GetMetricI( const RString &sButtonName, const RString &sValueName );
+	float		GetMetricF( const RString &sButtonName, const RString &sValueName );
+	bool		GetMetricB( const RString &sButtonName, const RString &sValueName );
+	apActorCommands   GetMetricA( const RString &sButtonName, const RString &sValueName );
 
 	// Lua
 	void PushSelf( lua_State *L );
 
 protected:
-	CString GetNoteSkinDir( const CString &sSkinName );
-	CString GetPathFromDirAndFile( const CString &sDir, const CString &sFileName );
+	RString GetNoteSkinDir( const RString &sSkinName );
+	RString GetPathFromDirAndFile( const RString &sDir, const RString &sFileName );
 
 	struct NoteSkinData
 	{
-		CString sName;	
+		RString sName;	
 		IniFile metrics;
 
 		// When looking for an element, search these dirs from head to tail.
-		deque<CString> vsDirSearchOrder;
+		deque<RString> vsDirSearchOrder;
 	};
-	void LoadNoteSkinData( const CString &sNoteSkinName, NoteSkinData& data_out );
-	void LoadNoteSkinDataRecursive( const CString &sNoteSkinName, NoteSkinData& data_out );
-	CString m_sCurrentNoteSkin;
-	map<CString,NoteSkinData> m_mapNameToData;
+	void LoadNoteSkinData( const RString &sNoteSkinName, NoteSkinData& data_out );
+	void LoadNoteSkinDataRecursive( const RString &sNoteSkinName, NoteSkinData& data_out );
+	RString m_sCurrentNoteSkin;
+	map<RString,NoteSkinData> m_mapNameToData;
 	const Game* m_pCurGame;
 };
 
@@ -63,8 +63,8 @@ extern NoteSkinManager*	NOTESKIN;	// global and accessable from anywhere in our 
 class LockNoteSkin
 {
 public:
-	LockNoteSkin( const CString &sNoteSkin ) { ASSERT( NOTESKIN->GetCurrentNoteSkin().empty() ); NOTESKIN->SetCurrentNoteSkin( sNoteSkin ); }
-	~LockNoteSkin() { NOTESKIN->SetCurrentNoteSkin( CString() ); }
+	LockNoteSkin( const RString &sNoteSkin ) { ASSERT( NOTESKIN->GetCurrentNoteSkin().empty() ); NOTESKIN->SetCurrentNoteSkin( sNoteSkin ); }
+	~LockNoteSkin() { NOTESKIN->SetCurrentNoteSkin( RString() ); }
 };
 
 

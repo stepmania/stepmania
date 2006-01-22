@@ -63,11 +63,11 @@
  * in player options menus, but it should in the options menu.
  */
 
-static CString EXPLANATION_X_NAME( size_t p )			{ return ssprintf("ExplanationP%dX",int(p+1)); }
-static CString EXPLANATION_Y_NAME( size_t p )			{ return ssprintf("ExplanationP%dY",int(p+1)); }
-static CString EXPLANATION_ON_COMMAND_NAME( size_t p )	{ return ssprintf("ExplanationP%dOnCommand",int(p+1)); }
+static RString EXPLANATION_X_NAME( size_t p )			{ return ssprintf("ExplanationP%dX",int(p+1)); }
+static RString EXPLANATION_Y_NAME( size_t p )			{ return ssprintf("ExplanationP%dY",int(p+1)); }
+static RString EXPLANATION_ON_COMMAND_NAME( size_t p )	{ return ssprintf("ExplanationP%dOnCommand",int(p+1)); }
 
-static CString OPTION_EXPLANATION( CString s )
+static RString OPTION_EXPLANATION( RString s )
 {
 	return THEME->GetString("OptionExplanations",s);
 }
@@ -353,16 +353,16 @@ ScreenOptions::~ScreenOptions()
 		SAFE_DELETE( m_pRows[i] );
 }
 
-CString ScreenOptions::GetExplanationText( int iRow ) const
+RString ScreenOptions::GetExplanationText( int iRow ) const
 {
 	const OptionRow &row = *m_pRows[iRow];
 
 	bool bAllowExplanation = row.GetRowDef().m_bAllowExplanation;
 	bool bShowExplanations = bAllowExplanation && SHOW_EXPLANATIONS.GetValue();
 	if( !bShowExplanations )
-		return CString();
+		return RString();
 
-	CString sExplanationName = row.GetRowDef().m_sExplanationName;
+	RString sExplanationName = row.GetRowDef().m_sExplanationName;
 	if( sExplanationName.empty() )
 		sExplanationName = row.GetRowDef().m_sName;
 	ASSERT( !sExplanationName.empty() );
@@ -393,7 +393,7 @@ void ScreenOptions::RefreshIcons( int iRow, PlayerNumber pn )
 	int iFirstSelection = row.GetOneSelection( pn, true );
 
 	// set icon name and bullet
-	CString sIcon;
+	RString sIcon;
 	GameCommand gc;
 
 	if( iFirstSelection == -1 )
@@ -555,7 +555,7 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 			return; /* already transitioning */
 
 		/* If the selected option sets a screen, honor it. */
-		CString sThisScreen = GetNextScreenForSelection( GAMESTATE->m_MasterPlayerNumber );
+		RString sThisScreen = GetNextScreenForSelection( GAMESTATE->m_MasterPlayerNumber );
 		if( sThisScreen != "" )
 			m_sNextScreen = sThisScreen;
 
@@ -750,7 +750,7 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 		}
 	}
 
-	const CString text = GetExplanationText( iCurRow );
+	const RString text = GetExplanationText( iCurRow );
 
 	BitmapText *pText = NULL;
 	switch( m_InputMode )
@@ -841,7 +841,7 @@ void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
 	{
 		/* In NAV_THREE_KEY_MENU mode, if a row doesn't set a screen, it does
 		 * something.  Apply it now, and don't go to the next screen. */
-		CString sScreen = GetNextScreenForSelection( input.MenuI.player );
+		RString sScreen = GetNextScreenForSelection( input.MenuI.player );
 		if( sScreen.empty() )
 		{
 			vector<PlayerNumber> vpns;
@@ -963,7 +963,7 @@ void ScreenOptions::StoreFocus( PlayerNumber pn )
 		m_iCurrentRow[pn], row.GetChoiceInRowWithFocus(pn), m_iFocusX[pn]);
 }
 
-CString ScreenOptions::GetNextScreenForSelection( PlayerNumber pn ) const
+RString ScreenOptions::GetNextScreenForSelection( PlayerNumber pn ) const
 {
 	int iCurRow = this->GetCurrentRow( pn );
 	ASSERT( iCurRow >= 0 && iCurRow < (int)m_pRows.size() );

@@ -330,9 +330,9 @@ void ScreenEvaluation::Init()
 				m_textPlayerOptions[p].LoadFromFont( THEME->GetPathF(m_sName,"PlayerOptions") );
 				m_textPlayerOptions[p].SetName( ssprintf("PlayerOptionsP%d",p+1) );
 				SET_XY_AND_ON_COMMAND( m_textPlayerOptions[p] );
-				vector<CString> v;
+				vector<RString> v;
 				GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetThemedMods( v );
-				CString sPO = join( PLAYER_OPTIONS_SEPARATOR, v );
+				RString sPO = join( PLAYER_OPTIONS_SEPARATOR, v );
 				m_textPlayerOptions[p].SetText( sPO );
 				this->AddChild( &m_textPlayerOptions[p] );
 			}
@@ -862,10 +862,10 @@ void ScreenEvaluation::Input( const InputEventPlus &input )
 					MEMCARDMAN->MountCard( pn );
 			
 				Profile* pProfile = PROFILEMAN->GetProfile(pn);
-				CString sDir = PROFILEMAN->GetProfileDir((ProfileSlot)pn) + "Screenshots/";
+				RString sDir = PROFILEMAN->GetProfileDir((ProfileSlot)pn) + "Screenshots/";
 				int iScreenshotIndex = pProfile->GetNextScreenshotIndex();
-				CString sFileName = StepMania::SaveScreenshot( sDir, true, true, iScreenshotIndex );
-				CString sPath = sDir+sFileName;
+				RString sFileName = StepMania::SaveScreenshot( sDir, true, true, iScreenshotIndex );
+				RString sPath = sDir+sFileName;
 				
 				if( !sFileName.empty() )
 				{

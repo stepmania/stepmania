@@ -61,9 +61,9 @@ RageSound_DSound_Software::RageSound_DSound_Software()
 	m_pPCM = NULL;
 }
 
-CString RageSound_DSound_Software::Init()
+RString RageSound_DSound_Software::Init()
 {
-	CString sError = ds.Init();
+	RString sError = ds.Init();
 	if( sError != "" )
 		return sError;
 
@@ -103,7 +103,7 @@ CString RageSound_DSound_Software::Init()
 	m_MixingThread.SetName("Mixer thread");
 	m_MixingThread.Create( MixerThread_start, this );
 
-	return CString();
+	return RString();
 }
 
 RageSound_DSound_Software::~RageSound_DSound_Software()

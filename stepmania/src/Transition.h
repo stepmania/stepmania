@@ -13,10 +13,10 @@ class Transition : public ActorFrame
 public:
 	Transition();
 
-	void Load( CString sBGAniDir );
+	void Load( RString sBGAniDir );
 
 	virtual void UpdateInternal( float fDeltaTime );
-	virtual void PlayCommand( const CString &sCommandName, Actor *pParent = NULL );
+	virtual void PlayCommand( const RString &sCommandName, Actor *pParent = NULL );
 
 	virtual void StartTransitioning( ScreenMessage send_when_done = SM_None );
 	virtual bool EarlyAbortDraw() const;

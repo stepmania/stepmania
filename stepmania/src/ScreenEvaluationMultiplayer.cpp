@@ -93,7 +93,7 @@ public:
 			case MultiplayerJudgeLine_Held:		iVal = pPlayerStageStats->iHoldNoteScores[HNS_Held];break;
 			}
 			
-			CString s = ssprintf( "%3d", iVal );
+			RString s = ssprintf( "%3d", iVal );
 			text.SetText( s );
 
 			PositionItem( expr, &text, i, NUM_MultiplayerJudgeLine );

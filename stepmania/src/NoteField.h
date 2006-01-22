@@ -31,7 +31,7 @@ public:
 	int	m_iBeginMarker, m_iEndMarker;	// only used with MODE_EDIT
 
 	void FadeToFail();
-	void CacheNoteSkin( const CString &sNoteSkin );
+	void CacheNoteSkin( const RString &sNoteSkin );
 
 	void Step( int iCol, TapNoteScore score );
 	void SetPressed( int iCol );
@@ -51,7 +51,7 @@ protected:
 	void DrawBPMText( const float fBeat, const float fBPM );
 	void DrawFreezeText( const float fBeat, const float fBPM );
 	void DrawAttackText( const float fBeat, const Attack &attack );
-	void DrawBGChangeText( const float fBeat, const CString sNewBGName );
+	void DrawBGChangeText( const float fBeat, const RString sNewBGName );
 	float GetWidth();
 
 	const NoteData *m_pNoteData;
@@ -74,7 +74,7 @@ protected:
 	};
 
 	/* All loaded note displays, mapped by their name. */
-	map<CString, NoteDisplayCols *> m_NoteDisplays;
+	map<RString, NoteDisplayCols *> m_NoteDisplays;
 	NoteDisplayCols *m_pCurDisplay;
 
 	// used in MODE_EDIT

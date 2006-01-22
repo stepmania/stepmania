@@ -8,7 +8,7 @@
 
 Actor *DynamicActorScroller::Copy() const { return new DynamicActorScroller(*this); }
 
-void DynamicActorScroller::LoadFromNode( const CString &sDir, const XNode *pNode )
+void DynamicActorScroller::LoadFromNode( const RString &sDir, const XNode *pNode )
 {
 	ActorScroller::LoadFromNode( sDir, pNode );
 
@@ -30,7 +30,7 @@ void DynamicActorScroller::LoadFromNode( const CString &sDir, const XNode *pNode
 		this->AddChild( pCopy );
 	}
 
-	CString sLoadFunction;
+	RString sLoadFunction;
 	pNode->GetAttrValue( "LoadFunction", sLoadFunction );
 	m_LoadFunction.SetFromExpression( sLoadFunction );
 

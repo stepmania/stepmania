@@ -161,7 +161,7 @@ void InputHandler_Xbox::Update()
 	InputHandler::UpdateTimer();
 }
 
-void InputHandler_Xbox::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut)
+void InputHandler_Xbox::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut)
 {
 	for( int i=0; i<NUM_JOYSTICKS; i++ )
 	{

@@ -18,7 +18,7 @@ DifficultyIcon::DifficultyIcon()
 	m_bBlank = false;
 }
 
-bool DifficultyIcon::Load( CString sPath )
+bool DifficultyIcon::Load( RString sPath )
 {
 	Sprite::Load( sPath );
 	int iStates = GetNumStates();
@@ -27,7 +27,7 @@ bool DifficultyIcon::Load( CString sPath )
 		bWarn = false;
 	if( bWarn )
 	{
-		CString sError = ssprintf(
+		RString sError = ssprintf(
 			"The difficulty icon graphic '%s' must have %d or %d frames.  It has %d states.", 
 			sPath.c_str(), 
 			NUM_Difficulty,
@@ -39,9 +39,9 @@ bool DifficultyIcon::Load( CString sPath )
 	return true;
 }
 
-void DifficultyIcon::LoadFromNode( const CString& sDir, const XNode* pNode )
+void DifficultyIcon::LoadFromNode( const RString& sDir, const XNode* pNode )
 {
-	CString sFile;
+	RString sFile;
 	if( !pNode->GetAttrValue( "File", sFile ) )
 		RageException::Throw( "MeterDisplay in " + sDir + " missing File attribute" );
 

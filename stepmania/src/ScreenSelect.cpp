@@ -42,12 +42,12 @@ void ScreenSelect::Init()
 		// element in the list is a choice name.  This level of indirection 
 		// makes it easier to add or remove items without having to change a bunch
 		// of indices.
-		vector<CString> asChoiceNames;
+		vector<RString> asChoiceNames;
 		split( CHOICE_NAMES, ",", asChoiceNames, true );
 
 		for( unsigned c=0; c<asChoiceNames.size(); c++ )
 		{
-			CString sChoiceName = asChoiceNames[c];
+			RString sChoiceName = asChoiceNames[c];
 
 			GameCommand mc;
 			mc.ApplyCommitsScreens( false );
@@ -61,12 +61,12 @@ void ScreenSelect::Init()
 	// Load codes
 	//
 	{
-		vector<CString> vsCodeNames;
+		vector<RString> vsCodeNames;
 		split( CODE_NAMES, ",", vsCodeNames, true );
 
 		for( unsigned c=0; c<vsCodeNames.size(); c++ )
 		{
-			CString sCodeName = vsCodeNames[c];
+			RString sCodeName = vsCodeNames[c];
 
 			CodeItem code;
 			if( !code.Load( CODE(sCodeName) ) )
@@ -248,7 +248,7 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 	Screen::HandleScreenMessage( SM );
 }
 
-void ScreenSelect::HandleMessage( const CString &sMessage )
+void ScreenSelect::HandleMessage( const RString &sMessage )
 {
 	this->UpdateSelectableChoices();
 

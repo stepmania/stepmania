@@ -35,13 +35,13 @@ enum BackgroundLayer
 struct LyricSegment
 {
 	float	m_fStartTime;
-	CString m_sLyric;
+	RString m_sLyric;
 	RageColor m_Color;
 };
 
 class Song
 {
-	CString m_sSongDir;
+	RString m_sSongDir;
 
 public:
 	/* Set when this song should be displayed in the music wheel: */
@@ -57,64 +57,64 @@ public:
 	void Reset();
 	void DetachSteps();
 
-	NotesLoader *MakeLoader( CString sDir ) const;
+	NotesLoader *MakeLoader( RString sDir ) const;
 
-	bool LoadFromSongDir( CString sDir );
+	bool LoadFromSongDir( RString sDir );
 
 	void TidyUpData();	// call after loading to clean up invalid data
 	void ReCalculateRadarValuesAndLastBeat();	// called by TidyUpData, and after saving
 	void TranslateTitles();	// called by TidyUpData
 
-	void SaveToSMFile( CString sPath, bool bSavingCache );
+	void SaveToSMFile( RString sPath, bool bSavingCache );
 	void Save();	// saves SM and DWI
 	void SaveToCacheFile();
 	void SaveToDWIFile();
 
-	const CString &GetSongFilePath() const;
-	CString GetCacheFilePath() const;
+	const RString &GetSongFilePath() const;
+	RString GetCacheFilePath() const;
 
 	void AddAutoGenNotes();
 	void AutoGen( StepsType ntTo, StepsType ntFrom );	// create Steps of type ntTo from Steps of type ntFrom
 	void RemoveAutoGenNotes();
 
 	/* Directory this song data came from: */
-	const CString &GetSongDir() const { return m_sSongDir; }
+	const RString &GetSongDir() const { return m_sSongDir; }
 
 	/* Filename associated with this file.  This will always have
 	 * an .SM extension.  If we loaded an .SM, this will point to 
 	 * it, but if we loaded any other type, this will point to a
 	 * generated .SM filename. */
-	CString m_sSongFileName;
+	RString m_sSongFileName;
 
-	CString m_sGroupName;
+	RString m_sGroupName;
 
 	ProfileSlot	m_LoadedFromProfile;	// ProfileSlot_INVALID if wasn't loaded from a profile
 	bool	m_bIsSymLink;
 
-	CString	m_sMainTitle, m_sSubTitle, m_sArtist;
-	CString m_sMainTitleTranslit, m_sSubTitleTranslit, m_sArtistTranslit;
+	RString	m_sMainTitle, m_sSubTitle, m_sArtist;
+	RString m_sMainTitleTranslit, m_sSubTitleTranslit, m_sArtistTranslit;
 
 	/* If PREFSMAN->m_bShowNative is off, these are the same as GetTranslit* below.
 	 * Otherwise, they return the main titles. */
-	CString GetDisplayMainTitle() const;
-	CString GetDisplaySubTitle() const;
-	CString GetDisplayArtist() const;
+	RString GetDisplayMainTitle() const;
+	RString GetDisplaySubTitle() const;
+	RString GetDisplayArtist() const;
 
 	/* Returns the transliterated titles, if any; otherwise returns the main titles. */
-	CString GetTranslitMainTitle() const { return m_sMainTitleTranslit.size()? m_sMainTitleTranslit: m_sMainTitle; }
-	CString GetTranslitSubTitle() const { return m_sSubTitleTranslit.size()? m_sSubTitleTranslit: m_sSubTitle; }
-	CString GetTranslitArtist() const { return m_sArtistTranslit.size()? m_sArtistTranslit:m_sArtist; }
+	RString GetTranslitMainTitle() const { return m_sMainTitleTranslit.size()? m_sMainTitleTranslit: m_sMainTitle; }
+	RString GetTranslitSubTitle() const { return m_sSubTitleTranslit.size()? m_sSubTitleTranslit: m_sSubTitle; }
+	RString GetTranslitArtist() const { return m_sArtistTranslit.size()? m_sArtistTranslit:m_sArtist; }
 
 	/* "title subtitle" */
-	CString GetDisplayFullTitle() const;
-	CString GetTranslitFullTitle() const;
+	RString GetDisplayFullTitle() const;
+	RString GetTranslitFullTitle() const;
 
-	CString m_sGenre;
+	RString m_sGenre;
 
 	/* This is read and saved, but never actually used. */
-	CString	m_sCredit;
+	RString	m_sCredit;
 
-	CString	m_sMusicFile;
+	RString	m_sMusicFile;
 	float	m_fMusicLengthSeconds;
 	float	m_fFirstBeat;	// beat of first note
 	float	m_fLastBeat;	// beat of last note
@@ -124,16 +124,16 @@ public:
 	float		m_fSpecifiedBPMMin;
 	float		m_fSpecifiedBPMMax;	// if a range, then Min != Max
 
-	CString	m_sBannerFile;
-	CString m_sLyricsFile;
-	CString	m_sBackgroundFile;
-	CString	m_sCDTitleFile;
+	RString	m_sBannerFile;
+	RString m_sLyricsFile;
+	RString	m_sBackgroundFile;
+	RString	m_sCDTitleFile;
 
-	CString GetMusicPath() const;
-	CString GetBannerPath() const;
-	CString	GetLyricsPath() const;
-	CString GetBackgroundPath() const;
-	CString GetCDTitlePath() const;
+	RString GetMusicPath() const;
+	RString GetBannerPath() const;
+	RString	GetLyricsPath() const;
+	RString GetBackgroundPath() const;
+	RString GetCDTitlePath() const;
 
 	/* For loading only: */
 	bool m_bHasMusic, m_bHasBanner;
@@ -146,7 +146,7 @@ public:
 	bool HasBGChanges() const;
 	bool HasLyrics() const;
 
-	bool Matches(CString sGroup, CString sSong) const;
+	bool Matches(RString sGroup, RString sSong) const;
 
 	TimingData					m_Timing;
 
@@ -192,7 +192,7 @@ public:
 		Difficulty dc = DIFFICULTY_INVALID, 
 		int iMeterLow = -1, 
 		int iMeterHigh = -1, 
-		const CString &sDescription = "", 
+		const RString &sDescription = "", 
 		bool bIncludeAutoGen = true, 
 		unsigned uHash = 0,
 		int iMaxToGet = -1 
@@ -202,13 +202,13 @@ public:
 		Difficulty dc = DIFFICULTY_INVALID, 
 		int iMeterLow = -1, 
 		int iMeterHigh = -1, 
-		const CString &sDescription = "", 
+		const RString &sDescription = "", 
 		unsigned uHash = 0,
 		bool bIncludeAutoGen = true
 		) const;
 	Steps* GetStepsByDifficulty( StepsType st, Difficulty dc, bool bIncludeAutoGen = true ) const;
 	Steps* GetStepsByMeter( StepsType st, int iMeterLow, int iMeterHigh ) const;
-	Steps* GetStepsByDescription( StepsType st, CString sDescription ) const;
+	Steps* GetStepsByDescription( StepsType st, RString sDescription ) const;
 	Steps* GetClosestNotes( StepsType st, Difficulty dc, bool bIgnoreLocked=false ) const;
 	bool IsEasy( StepsType st ) const;
 	bool IsTutorial() const;
@@ -228,15 +228,15 @@ public:
 	int GetNumStepsLoadedFromProfile( ProfileSlot slot ) const;
 	bool IsEditAlreadyLoaded( Steps* pSteps ) const;
 
-	bool IsEditDescriptionUnique( StepsType st, CString sPreferredDescription, const Steps *pExclude ) const;
-	void MakeUniqueEditDescription( StepsType st, CString &sPreferredDescriptionInOut ) const;
+	bool IsEditDescriptionUnique( StepsType st, RString sPreferredDescription, const Steps *pExclude ) const;
+	void MakeUniqueEditDescription( StepsType st, RString &sPreferredDescriptionInOut ) const;
 
 	// An array of keysound file names (e.g. "beep.wav").
 	// The index in this array corresponds to the index in TapNote.  If you 
 	// change the index in here, you must change all NoteData too.
 	// Any note that doesn't have a value in the range of this array
 	// means "this note doens't have a keysound".
-	vector<CString> m_vsKeysoundFile;
+	vector<RString> m_vsKeysoundFile;
 
 	// Lua
 	void PushSelf( lua_State *L );

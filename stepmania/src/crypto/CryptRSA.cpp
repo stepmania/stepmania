@@ -229,7 +229,7 @@ static Bignum rsa_privkey_op(Bignum input, const RSAKey *key)
 	return ret;
 }
 
-bool RSAKey::Encrypt( CString &buf ) const
+bool RSAKey::Encrypt( RString &buf ) const
 {
 	Bignum bn = bignum_from_bytes( (unsigned char *) buf.data(), buf.size() );
 	Bignum encrypted_bn = Encrypt( bn );
@@ -237,13 +237,13 @@ bool RSAKey::Encrypt( CString &buf ) const
 
 	int len;
 	unsigned char *bytes = bignum_to_buffer( encrypted_bn, &len );
-	buf = CString( (const char *) bytes, len );
+	buf = RString( (const char *) bytes, len );
 	delete [] encrypted_bn;
 
 	return true;
 }
 
-bool RSAKey::Decrypt( CString &buf ) const
+bool RSAKey::Decrypt( RString &buf ) const
 {
 	Bignum bn = bignum_from_buffer( (unsigned char *) buf.data(), buf.size() );
 	if( bn == NULL )
@@ -254,7 +254,7 @@ bool RSAKey::Decrypt( CString &buf ) const
 
 	int len;
 	unsigned char *bytes = bignum_to_bytes( decrypted_bn, &len );
-	buf = CString( (const char *) bytes, len );
+	buf = RString( (const char *) bytes, len );
 	delete [] decrypted_bn;
 
 	return true;
@@ -428,7 +428,7 @@ static Bignum getmp(const char **data, int *datalen)
 	return b;
 }
 
-bool RSAKey::LoadFromPublicBlob( const CString &str )
+bool RSAKey::LoadFromPublicBlob( const RString &str )
 {
 	int len = str.size();
 	const char *data = str.data();
@@ -456,7 +456,7 @@ char *RSAKey::FmtKey() const
 	return p;
 }
 
-void RSAKey::PublicBlob( CString &out ) const
+void RSAKey::PublicBlob( RString &out ) const
 {
 	int elen, mlen, bloblen;
 	int i;
@@ -486,10 +486,10 @@ void RSAKey::PublicBlob( CString &out ) const
 		*p++ = bignum_byte(this->modulus, i);
 	ASSERT(p == blob + bloblen);
 
-	out = CString( (const char *) blob, bloblen );
+	out = RString( (const char *) blob, bloblen );
 }
 
-void RSAKey::PrivateBlob( CString &out ) const
+void RSAKey::PrivateBlob( RString &out ) const
 {
 	int i;
 	unsigned char *blob, *p;
@@ -535,10 +535,10 @@ void RSAKey::PrivateBlob( CString &out ) const
 		*p++ = bignum_byte(this->iqmp, i);
 	ASSERT(p == blob + bloblen);
 
-	out = CString( (const char *) blob, bloblen );
+	out = RString( (const char *) blob, bloblen );
 }
 
-bool RSAKey::LoadFromPrivateBlob( const CString &str )
+bool RSAKey::LoadFromPrivateBlob( const RString &str )
 {
 	int len = str.size();
 	const char *data = str.data();
@@ -606,7 +606,7 @@ static int rsa2_openssh_fmtkey( struct RSAKey *rsa, unsigned char *blob, int len
 	return bloblen;
 }
 */
-int rsa2_pubkey_bits( const CString &blob )
+int rsa2_pubkey_bits( const RString &blob )
 {
 	RSAKey rsa;
 	if( !rsa.LoadFromPublicBlob( blob ) )
@@ -649,7 +649,7 @@ char *rsa2_fingerprint( struct RSAKey *rsa )
 	return ret;
 }
 
-bool RSAKey::Verify( const CString &data, const CString &sig ) const
+bool RSAKey::Verify( const RString &data, const RString &sig ) const
 {
 	Bignum in, out;
 	int bytes, i, j;
@@ -691,7 +691,7 @@ bool RSAKey::Verify( const CString &data, const CString &sig ) const
 	return ret;
 }
 
-void RSAKey::Sign( const CString &data, CString &out ) const
+void RSAKey::Sign( const RString &data, RString &out ) const
 {
 	Bignum in;
 	{
@@ -716,7 +716,7 @@ void RSAKey::Sign( const CString &data, CString &out ) const
 	unsigned char *bytes = bignum_to_bytes( outnum, &siglen );
 	delete [] outnum;
 
-	out = CString( (const char *) bytes, siglen );
+	out = RString( (const char *) bytes, siglen );
 	delete [] bytes;
 }
 

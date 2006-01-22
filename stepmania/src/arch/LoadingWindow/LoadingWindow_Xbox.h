@@ -14,10 +14,10 @@ public:
 	~LoadingWindow_Xbox();
 
 	void Paint();
-	void SetText(CString str);
+	void SetText(RString str);
 
 protected:
-	CString text ;
+	RString text ;
 	XFONT* font;
 	bool useImage;
 };

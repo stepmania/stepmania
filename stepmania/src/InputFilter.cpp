@@ -13,7 +13,7 @@ struct ButtonState
 	ButtonState();
 	bool m_BeingHeld; // actual current state
 	bool m_bLastReportedHeld; // last state reported by Update()
-	CString m_sComment;
+	RString m_sComment;
 	float m_fSecsHeld;
 	float m_Level, m_LastLevel;
 
@@ -136,7 +136,7 @@ void InputFilter::ButtonPressed( const DeviceInput &di, bool Down )
 	}
 }
 
-void InputFilter::SetButtonComment( const DeviceInput &di, const CString &sComment )
+void InputFilter::SetButtonComment( const DeviceInput &di, const RString &sComment )
 {
 	LockMut(*queuemutex);
 	ButtonState &bs = GetButtonState( di.device, di.button );
@@ -277,7 +277,7 @@ float InputFilter::GetSecsHeld( const DeviceInput &di )
 	return GetButtonState(di.device, di.button).m_fSecsHeld;
 }
 
-CString InputFilter::GetButtonComment( const DeviceInput &di ) const
+RString InputFilter::GetButtonComment( const DeviceInput &di ) const
 {
 	LockMut(*queuemutex);
 	return GetButtonState(di.device, di.button).m_sComment;

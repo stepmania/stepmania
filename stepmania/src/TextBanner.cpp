@@ -10,7 +10,7 @@
 #include "Command.h"
 
 
-void TextBanner::Load( CString sType )
+void TextBanner::Load( RString sType )
 {
 	m_bInitted = true;
 
@@ -64,9 +64,9 @@ TextBanner::TextBanner( const TextBanner &cpy ):
 }
 
 void TextBanner::LoadFromString( 
-	const CString &sDisplayTitle, const CString &sTranslitTitle, 
-	const CString &sDisplaySubTitle, const CString &sTranslitSubTitle, 
-	const CString &sDisplayArtist, const CString &sTranslitArtist )
+	const RString &sDisplayTitle, const RString &sTranslitTitle, 
+	const RString &sDisplaySubTitle, const RString &sTranslitSubTitle, 
+	const RString &sDisplayArtist, const RString &sTranslitArtist )
 {
 	ASSERT( m_bInitted );
 
@@ -94,12 +94,12 @@ void TextBanner::LoadFromSong( const Song* pSong )
 {
 	ASSERT( m_bInitted );
 
-	CString sDisplayTitle		= pSong ? pSong->GetDisplayMainTitle() : CString("");
-	CString sTranslitTitle		= pSong ? pSong->GetTranslitMainTitle() : CString("");
-	CString sDisplaySubTitle	= pSong ? pSong->GetDisplaySubTitle() : CString("");
-	CString sTranslitSubTitle	= pSong ? pSong->GetTranslitSubTitle() : CString("");
-	CString sDisplayArtist		= pSong ? (CString)ARTIST_PREPEND_STRING + pSong->GetDisplayArtist() : CString("");
-	CString sTranslitArtist		= pSong ? (CString)ARTIST_PREPEND_STRING + pSong->GetTranslitArtist() : CString("");
+	RString sDisplayTitle		= pSong ? pSong->GetDisplayMainTitle() : RString("");
+	RString sTranslitTitle		= pSong ? pSong->GetTranslitMainTitle() : RString("");
+	RString sDisplaySubTitle	= pSong ? pSong->GetDisplaySubTitle() : RString("");
+	RString sTranslitSubTitle	= pSong ? pSong->GetTranslitSubTitle() : RString("");
+	RString sDisplayArtist		= pSong ? (RString)ARTIST_PREPEND_STRING + pSong->GetDisplayArtist() : RString("");
+	RString sTranslitArtist		= pSong ? (RString)ARTIST_PREPEND_STRING + pSong->GetTranslitArtist() : RString("");
 
 	LoadFromString( 
 		sDisplayTitle, sTranslitTitle, 

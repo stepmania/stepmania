@@ -14,17 +14,17 @@ XToString( GameController, MAX_GAME_CONTROLLERS );
 StringToX( GameController );
 
 
-CString GameButtonToString( const Game* pGame, GameButton i )
+RString GameButtonToString( const Game* pGame, GameButton i )
 {
 	return pGame->m_szButtonNames[i];
 }
 
-CString GameButtonToLocalizedString( const Game* pGame, GameButton i )
+RString GameButtonToLocalizedString( const Game* pGame, GameButton i )
 {
 	return THEME->GetString( "GameButton", GameButtonToString(pGame,i) );
 }
 
-GameButton StringToGameButton( const Game* pGame, const CString& s )
+GameButton StringToGameButton( const Game* pGame, const RString& s )
 {
 	for( int i=0; i<pGame->m_iButtonsPerController; i++ )
 	{
@@ -35,12 +35,12 @@ GameButton StringToGameButton( const Game* pGame, const CString& s )
 }
 
 
-CString GameInput::toString( const Game* pGame ) 
+RString GameInput::toString( const Game* pGame ) 
 {
-	return GameControllerToString(controller) + CString("_") + GameButtonToString(pGame,button);
+	return GameControllerToString(controller) + RString("_") + GameButtonToString(pGame,button);
 }
 
-bool GameInput::fromString( const Game* pGame, CString s )
+bool GameInput::fromString( const Game* pGame, RString s )
 { 
 	char szController[32] = "";
 	char szButton[32] = "";

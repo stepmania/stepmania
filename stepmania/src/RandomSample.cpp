@@ -17,7 +17,7 @@ RandomSample::~RandomSample()
 	UnloadAll();
 }
 
-bool RandomSample::Load( CString sFilePath, int iMaxToLoad )
+bool RandomSample::Load( RString sFilePath, int iMaxToLoad )
 {
 	if( GetExtension(sFilePath) == "" )
 		return LoadSoundDir( sFilePath, iMaxToLoad );
@@ -32,7 +32,7 @@ void RandomSample::UnloadAll()
 	m_pSamples.clear();
 }
 
-bool RandomSample::LoadSoundDir( CString sDir, int iMaxToLoad )
+bool RandomSample::LoadSoundDir( RString sDir, int iMaxToLoad )
 {
 	if( sDir == "" )
 		return true;
@@ -51,7 +51,7 @@ bool RandomSample::LoadSoundDir( CString sDir, int iMaxToLoad )
 		sDir += "/";
 #endif
 
-	vector<CString> arraySoundFiles;
+	vector<RString> arraySoundFiles;
 	GetDirListing( sDir + "*.mp3", arraySoundFiles );
 	GetDirListing( sDir + "*.ogg", arraySoundFiles );
 	GetDirListing( sDir + "*.wav", arraySoundFiles );
@@ -65,7 +65,7 @@ bool RandomSample::LoadSoundDir( CString sDir, int iMaxToLoad )
 	return true;
 }
 	
-bool RandomSample::LoadSound( CString sSoundFilePath )
+bool RandomSample::LoadSound( RString sSoundFilePath )
 {
 	LOG->Trace( "RandomSample::LoadSound( %s )", sSoundFilePath.c_str() );
 

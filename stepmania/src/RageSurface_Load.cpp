@@ -10,7 +10,7 @@
 #include <set>
 
 
-static RageSurface *TryOpenFile( CString sPath, bool bHeaderOnly, CString &error, CString format, bool &bKeepTrying )
+static RageSurface *TryOpenFile( RString sPath, bool bHeaderOnly, RString &error, RString format, bool &bKeepTrying )
 {
 	RageSurface *ret = NULL;
 	RageSurfaceUtils::OpenResult result;
@@ -72,7 +72,7 @@ static RageSurface *TryOpenFile( CString sPath, bool bHeaderOnly, CString &error
 	return NULL;
 }
 
-RageSurface *RageSurfaceUtils::LoadFile( const CString &sPath, CString &error, bool bHeaderOnly )
+RageSurface *RageSurfaceUtils::LoadFile( const RString &sPath, RString &error, bool bHeaderOnly )
 {
 	{
 		RageFile TestOpen;
@@ -83,13 +83,13 @@ RageSurface *RageSurfaceUtils::LoadFile( const CString &sPath, CString &error, b
 		}
 	}
 
-	set<CString> FileTypes;
+	set<RString> FileTypes;
 	FileTypes.insert("png");
 	FileTypes.insert("jpg");
 	FileTypes.insert("gif");
 	FileTypes.insert("bmp");
 
-	CString format = GetExtension(sPath);
+	RString format = GetExtension(sPath);
 	format.MakeLower();
 
 	bool bKeepTrying = true;
@@ -103,7 +103,7 @@ RageSurface *RageSurfaceUtils::LoadFile( const CString &sPath, CString &error, b
 		FileTypes.erase( format );
 	}
 
-	for( set<CString>::iterator it = FileTypes.begin(); bKeepTrying && it != FileTypes.end(); ++it )
+	for( set<RString>::iterator it = FileTypes.begin(); bKeepTrying && it != FileTypes.end(); ++it )
 	{
 	    RageSurface *ret = TryOpenFile( sPath, bHeaderOnly, error, *it, bKeepTrying );
 		if( ret )

@@ -60,22 +60,22 @@ void RadarValues::LoadFromNode( const XNode* pNode )
 
 /* iMaxValues is only used for writing compatibility fields in non-cache
  * SM files; they're never actually read. */
-CString RadarValues::ToString( int iMaxValues ) const
+RString RadarValues::ToString( int iMaxValues ) const
 {
 	if( iMaxValues == -1 )
 		iMaxValues = NUM_RadarCategory;
 	iMaxValues = min( iMaxValues, (int)NUM_RadarCategory );
 
-	vector<CString> asRadarValues;
+	vector<RString> asRadarValues;
 	for( int r=0; r < iMaxValues; r++ )
 		asRadarValues.push_back( ssprintf("%.3f", m_Values.f[r]) );
 
 	return join( ",",asRadarValues );
 }
 
-void RadarValues::FromString( CString sRadarValues )
+void RadarValues::FromString( RString sRadarValues )
 {
-	vector<CString> saValues;
+	vector<RString> saValues;
 	split( sRadarValues, ",", saValues, true );
 
 	if( saValues.size() != NUM_RadarCategory )

@@ -312,7 +312,7 @@ int RageFileObjDeflate::FlushInternal()
  * Parse a .gz file, check the header CRC16 if present, and return the data
  * CRC32 and a decompressor.
  */
-RageFileBasic *GunzipFile( RageFileBasic &file, CString &sError, uint32_t *iCRC32 )
+RageFileBasic *GunzipFile( RageFileBasic &file, RString &sError, uint32_t *iCRC32 )
 {
 	sError = "";
 
@@ -511,7 +511,7 @@ int RageFileObjGzip::Finish()
 
 #include "RageFileDriverMemory.h"
 
-void GzipString( const CString &sIn, CString &sOut )
+void GzipString( const RString &sIn, RString &sOut )
 {
 	/* Gzip it. */
 	RageFileObjMem mem;
@@ -523,12 +523,12 @@ void GzipString( const CString &sIn, CString &sOut )
 	sOut = mem.GetString();
 }
 
-bool GunzipString( const CString &sIn, CString &sOut )
+bool GunzipString( const RString &sIn, RString &sOut )
 {
 	RageFileObjMem mem;
 	mem.PutString( sIn );
 
-	CString sError;
+	RString sError;
 	uint32_t iCRC32;
 	RageFileBasic *pFile = GunzipFile( mem, sError, &iCRC32 );
 	if( pFile == NULL )

@@ -127,15 +127,15 @@ void ScoreKeeperRave::LaunchAttack( AttackLevel al )
 {
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
-	CString* asAttacks = GAMESTATE->m_pCurCharacters[pn]->m_sAttacks[al];	// [NUM_ATTACKS_PER_LEVEL]
-	CString sAttackToGive;
+	RString* asAttacks = GAMESTATE->m_pCurCharacters[pn]->m_sAttacks[al];	// [NUM_ATTACKS_PER_LEVEL]
+	RString sAttackToGive;
 
 	if (GAMESTATE->m_pCurCharacters[pn] != NULL)		
 		sAttackToGive = asAttacks[ rand()%NUM_ATTACKS_PER_LEVEL ];
 	else
 	{
 		/* If you add any note skins here, you need to make sure they're cached, too. */
-		CString DefaultAttacks[8] = { "1.5x", "2.0x", "0.5x", "reverse", "sudden", "boost", "brake", "wave" };
+		RString DefaultAttacks[8] = { "1.5x", "2.0x", "0.5x", "reverse", "sudden", "boost", "brake", "wave" };
 		sAttackToGive = DefaultAttacks[ rand()%8 ];
 	}
 

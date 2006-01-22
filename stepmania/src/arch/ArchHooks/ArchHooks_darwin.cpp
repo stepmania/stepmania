@@ -122,7 +122,7 @@ ArchHooks_darwin::~ArchHooks_darwin()
 
 void ArchHooks_darwin::DumpDebugInfo()
 {
-	CString systemVersion;
+	RString systemVersion;
 	OSErr err;
 	long code;
 	
@@ -162,7 +162,7 @@ void ArchHooks_darwin::DumpDebugInfo()
 	}
 	
 	/* Get processor information */
-	CString processor;
+	RString processor;
 	int numProcessors;	
 	struct host_basic_info info;
 	mach_port_t host = mach_host_self();
@@ -218,7 +218,7 @@ extern "C"
 RString ArchHooks::GetPreferredLanguage()
 {
 	char *lang = ::GetPreferredLanguage();
-	CString ret = lang;
+	RString ret = lang;
 	
 	free(lang);
 	return ret.ToUpper();
@@ -290,7 +290,7 @@ int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 
 #include "RageFileManager.h"
 
-void ArchHooks::MountInitialFilesystems( const CString &sDirOfExecutable )
+void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 {
 	CFBundleRef bundle = CFBundleGetMainBundle();
 	CFURLRef bundleURL = CFBundleCopyBundleURL( bundle );

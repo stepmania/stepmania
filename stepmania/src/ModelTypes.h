@@ -16,7 +16,7 @@ struct msMesh
 	msMesh();
 	~msMesh();
 
-    CString		sName;
+    RString		sName;
     char		nMaterialIndex;
 
 	vector<RageModelVertex>   Vertices;
@@ -38,7 +38,7 @@ public:
 	AnimatedTexture();
 	~AnimatedTexture();
 	
-	void Load( CString sTexOrIniFile );
+	void Load( RString sTexOrIniFile );
 	void Unload();
 	void Update( float fDelta );
 	
@@ -85,7 +85,7 @@ private:
 struct msMaterial
 {
     int         nFlags;
-    CString     sName;
+    RString     sName;
     RageColor   Ambient;
     RageColor   Diffuse;
     RageColor   Specular;
@@ -115,8 +115,8 @@ struct msRotationKey
 struct msBone
 {
     int			nFlags;
-    CString		sName;
-    CString		sParentName;
+    RString		sName;
+    RString		sParentName;
     RageVector3	Position;
     RageVector3	Rotation;
 
@@ -131,7 +131,7 @@ struct msAnimation
 {
     vector<msBone>     Bones;
 
-	int FindBoneByName( const CString &sName ) const
+	int FindBoneByName( const RString &sName ) const
 	{
 		for( unsigned i=0; i<Bones.size(); i++ )
 			if( Bones[i].sName == sName )
@@ -139,7 +139,7 @@ struct msAnimation
 		return -1;
 	}
 
-	bool LoadMilkshapeAsciiBones( CString sAniName, CString sPath );
+	bool LoadMilkshapeAsciiBones( RString sAniName, RString sPath );
 
     int		nTotalFrames;
 

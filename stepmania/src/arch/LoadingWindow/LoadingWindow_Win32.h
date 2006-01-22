@@ -13,14 +13,14 @@ public:
 	LoadingWindow_Win32();
 	~LoadingWindow_Win32();
 
-	void SetText( CString sText );
+	void SetText( RString sText );
 	void Paint();
 	void SetIcon( const RageSurface *pIcon );
 
 private:
 	AppInstance handle;
 	HWND hwnd;
-	CString text[3];
+	RString text[3];
 	HICON m_hIcon;
 
 	static BOOL CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );

@@ -52,10 +52,10 @@ public:
 	GameButton	m_SecondaryMenuButton[NUM_MenuButton];
 	DeviceButton m_iDefaultKeyboardKey[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS];	// default keyboard keys only have an effect the current game is this game
 
-	GameButton ButtonNameToIndex( const CString &sButtonName ) const;
+	GameButton ButtonNameToIndex( const RString &sButtonName ) const;
 	MenuInput GameInputToMenuInput( GameInput GameI ) const;	// looks up current style in GAMESTATE.  Yuck.
 	void MenuInputToGameInput( MenuInput MenuI, GameInput GameIout[4] ) const;	// looks up current style in GAMESTATE.  Yuck.
-	CString ColToButtonName( int col ) const;	// looks up current style.  Yuck.
+	RString ColToButtonName( int col ) const;	// looks up current style.  Yuck.
 
 	TapNoteScore MapTapNoteScore( TapNoteScore tns ) const;
 	TapNoteScore m_mapW1To;

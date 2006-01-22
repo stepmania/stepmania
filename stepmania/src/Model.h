@@ -20,16 +20,16 @@ public:
 	virtual Actor *Copy() const;
 
 	void	Clear();
-	void	Load( CString sFile );
+	void	Load( RString sFile );
 
-	void	LoadPieces( CString sMeshesPath, CString sMaterialsPath, CString sBomesPath );
-	void	LoadMilkshapeAscii( CString sFile );
-	void 	LoadMaterialsFromMilkshapeAscii( CString sPath );
-	bool	LoadMilkshapeAsciiBones( CString sAniName, CString sPath );
+	void	LoadPieces( RString sMeshesPath, RString sMaterialsPath, RString sBomesPath );
+	void	LoadMilkshapeAscii( RString sFile );
+	void 	LoadMaterialsFromMilkshapeAscii( RString sPath );
+	bool	LoadMilkshapeAsciiBones( RString sAniName, RString sPath );
 
-	void LoadFromNode( const CString& sDir, const XNode* pNode );
+	void LoadFromNode( const RString& sDir, const XNode* pNode );
 
-	void	PlayAnimation( CString sAniName, float fPlayRate = 1 );
+	void	PlayAnimation( RString sAniName, float fPlayRate = 1 );
 
 	virtual void	Update( float fDelta );
 	virtual bool	EarlyAbortDraw() const;
@@ -42,8 +42,8 @@ public:
 	virtual float GetAnimationLengthSeconds() const;
 	virtual void SetSecondsIntoAnimation( float fSeconds );
 
-	CString		GetDefaultAnimation() const { return m_sDefaultAnimation; };
-	void		SetDefaultAnimation( CString sAnimation, float fPlayRate = 1 );
+	RString		GetDefaultAnimation() const { return m_sDefaultAnimation; };
+	void		SetDefaultAnimation( RString sAnimation, float fPlayRate = 1 );
 	bool		m_bRevertToDefaultAnimation;
 
 	bool	MaterialsNeedNormals() const;
@@ -57,7 +57,7 @@ private:
     RageModelGeometry	*m_pGeometry;
 
     vector<msMaterial>			m_Materials;
-	map<CString,msAnimation>	m_mapNameToAnimation;
+	map<RString,msAnimation>	m_mapNameToAnimation;
 	const msAnimation*				m_pCurAnimation;
 
 	static void SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone_t> &vpBones );
@@ -77,7 +77,7 @@ private:
 	void AdvanceFrame( float fDeltaTime );
 
 	float		m_fCurFrame;
-	CString		m_sDefaultAnimation;
+	RString		m_sDefaultAnimation;
 	float		m_fDefaultAnimationRate;
 	float		m_fCurAnimationRate;
 

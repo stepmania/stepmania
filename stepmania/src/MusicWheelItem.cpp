@@ -15,8 +15,8 @@
 #include "ThemeMetric.h"
 #include "HighScore.h"
 
-static CString GRADE_X_NAME( size_t p ) { return ssprintf("GradeP%dX",int(p+1)); }
-static CString GRADE_Y_NAME( size_t p ) { return ssprintf("GradeP%dY",int(p+1)); }
+static RString GRADE_X_NAME( size_t p ) { return ssprintf("GradeP%dX",int(p+1)); }
+static RString GRADE_Y_NAME( size_t p ) { return ssprintf("GradeP%dY",int(p+1)); }
 
 static ThemeMetric<float>				ICON_X				("MusicWheelItem","IconX");
 static ThemeMetric<float>				ICON_Y				("MusicWheelItem","IconY");
@@ -34,7 +34,7 @@ static ThemeMetric1D<float>				GRADE_X				("MusicWheelItem",GRADE_X_NAME,NUM_PLA
 static ThemeMetric1D<float>				GRADE_Y				("MusicWheelItem",GRADE_Y_NAME,NUM_PLAYERS);
 
 
-WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, CString sSectionName, Course* pCourse, RageColor color ):
+WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, RString sSectionName, Course* pCourse, RageColor color ):
 	WheelItemBaseData(wit, sSectionName, color)
 {
 	m_pSong = pSong;
@@ -42,7 +42,7 @@ WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, CString sSectionNa
 }
 
 
-MusicWheelItem::MusicWheelItem( CString sType ):
+MusicWheelItem::MusicWheelItem( RString sType ):
 	WheelItemBase( sType )
 {
 	data = NULL;
@@ -175,7 +175,7 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID, bool bExpanded 
 	case TYPE_COURSE:
 	case TYPE_SORT:
 		{
-			CString sDisplayName, sTranslitName;
+			RString sDisplayName, sTranslitName;
 			BitmapText *bt = NULL;
 			switch( pWID->m_Type )
 			{

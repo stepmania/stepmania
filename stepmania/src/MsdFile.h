@@ -9,23 +9,23 @@ public:
 	/* #param:param:param:param; <- one whole value */
 	struct value_t
 	{
-		vector<CString> params;
+		vector<RString> params;
 
-		CString operator[](unsigned i) const { if(i >= params.size()) return CString(); return params[i]; }
+		RString operator[](unsigned i) const { if(i >= params.size()) return RString(); return params[i]; }
 	};
 
 	virtual ~MsdFile() { }
 
 	// Returns true if successful, false otherwise.
-	bool ReadFile( CString sFilePath );
-	void ReadFromString( const CString &sString );
+	bool ReadFile( RString sFilePath );
+	void ReadFromString( const RString &sString );
 
-	CString GetError() const { return error; }
+	RString GetError() const { return error; }
 
 	unsigned GetNumValues() const { return values.size(); }
 	unsigned GetNumParams(unsigned val) const { if(val >= GetNumValues()) return 0; return values[val].params.size(); }
 	const value_t &GetValue(unsigned val) const { ASSERT(val < GetNumValues()); return values[val]; }
-	CString GetParam(unsigned val, unsigned par) const;
+	RString GetParam(unsigned val, unsigned par) const;
 
 
 private:
@@ -34,7 +34,7 @@ private:
 	void AddValue();
 
 	vector<value_t> values;
-	CString error;
+	RString error;
 };
 
 #endif

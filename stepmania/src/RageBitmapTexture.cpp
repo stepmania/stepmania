@@ -12,7 +12,7 @@
 #include "RageSurface_Load.h"
 #include "arch/Dialog/Dialog.h"
 
-static void GetResolutionFromFileName( CString sPath, int &iWidth, int &iHeight )
+static void GetResolutionFromFileName( RString sPath, int &iWidth, int &iHeight )
 {
 	/* Match:
 	 *  Foo (res 512x128).png
@@ -22,7 +22,7 @@ static void GetResolutionFromFileName( CString sPath, int &iWidth, int &iHeight 
 	 * Be careful that this doesn't get mixed up with frame dimensions. */
 	static Regex re( "\\([^\\)]*res ([0-9]+)x([0-9]+).*\\)" );
 
-	vector<CString> asMatches;
+	vector<RString> asMatches;
 	if( !re.Compare(sPath, asMatches) )
 		return;
 
@@ -64,13 +64,13 @@ void RageBitmapTexture::Create()
 	ASSERT( actualID.filename != "" );
 
 	/* Load the image into a RageSurface. */
-	CString error;
+	RString error;
 	RageSurface *pImg = RageSurfaceUtils::LoadFile( actualID.filename, error );
 
 	/* Tolerate corrupt/unknown images. */
 	if( pImg == NULL )
 	{
-		CString sWarning = ssprintf( "RageBitmapTexture: Couldn't load %s: %s", actualID.filename.c_str(), error.c_str() );
+		RString sWarning = ssprintf( "RageBitmapTexture: Couldn't load %s: %s", actualID.filename.c_str(), error.c_str() );
 		Dialog::OK( sWarning );
 		pImg = RageSurfaceUtils::MakeDummySurface( 64, 64 );
 		ASSERT( pImg != NULL );
@@ -90,7 +90,7 @@ void RageBitmapTexture::Create()
 	}
 
 	// look in the file name for a format hints
-	CString sHintString = GetID().filename + actualID.AdditionalTextureHints;
+	RString sHintString = GetID().filename + actualID.AdditionalTextureHints;
 	sHintString.MakeLower();
 
 	if( sHintString.find("32bpp") != string::npos )			actualID.iColorDepth = 32;
@@ -263,7 +263,7 @@ void RageBitmapTexture::Create()
 		float fBetterSourceHeight = this->GetFramesHigh() * fBetterFrameHeight;
 		if( fFrameWidth!=fBetterFrameWidth || fFrameHeight!=fBetterFrameHeight )
 		{
-			CString sWarning = ssprintf(
+			RString sWarning = ssprintf(
 				"The graphic '%s' has frame dimensions that aren't even numbers.\n\n"
 				"The entire image is %dx%d and frame size is %.1fx%.1f.\n\n"
 				"Image quality will be much improved if you resize the graphic to %.0fx%.0f, which is a frame size of %.0fx%.0f.", 
@@ -285,7 +285,7 @@ void RageBitmapTexture::Create()
 	GetResolutionFromFileName( actualID.filename, m_iSourceWidth, m_iSourceHeight );
 
 
-	CString sProperties;
+	RString sProperties;
 	sProperties += PixelFormatToString( pixfmt ) + " ";
 	if( actualID.iAlphaBits == 0 ) sProperties += "opaque ";
 	if( actualID.iAlphaBits == 1 ) sProperties += "matte ";

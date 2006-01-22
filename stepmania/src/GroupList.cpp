@@ -44,7 +44,7 @@ bool GroupList::ItemIsOnScreen( int n ) const
 	return offset >= 0 && offset < MAX_GROUPS_ONSCREEN;
 }
 
-void GroupList::Load( const vector<CString>& asGroupNames )
+void GroupList::Load( const vector<RString>& asGroupNames )
 {
 	m_asLabels = asGroupNames;
 

@@ -12,7 +12,7 @@ class XNode;
 
 namespace SongUtil
 {
-	CString MakeSortString( CString s );
+	RString MakeSortString( RString s );
 	void SortSongPointerArrayByTitle( vector<Song*> &vpSongsInOut );
 	void SortSongPointerArrayByBPM( vector<Song*> &vpSongsInOut );
 	void SortSongPointerArrayByGrades( vector<Song*> &vpSongsInOut, bool bDescending );
@@ -23,7 +23,7 @@ namespace SongUtil
 	void SortSongPointerArrayByNumPlays( vector<Song*> &vpSongsInOut, ProfileSlot slot, bool bDescending );
 	void SortSongPointerArrayByNumPlays( vector<Song*> &vpSongsInOut, const Profile* pProfile, bool bDescending );
 	void SortSongPointerArrayByMeter( vector<Song*> &vpSongsInOut, Difficulty dc );
-	CString GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so );
+	RString GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so );
 	void SortSongPointerArrayBySectionName( vector<Song*> &vpSongsInOut, SortOrder so );
 	void SortByMostRecentlyPlayedForMachine( vector<Song*> &vpSongsInOut );
 
@@ -32,7 +32,7 @@ namespace SongUtil
 
 class SongID
 {
-	CString sDir;
+	RString sDir;
 
 public:
 	SongID() { Unset(); }
@@ -46,8 +46,8 @@ public:
 
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
-	void LoadFromDir( CString _sDir ) { sDir = _sDir; }
-	CString ToString() const;
+	void LoadFromDir( RString _sDir ) { sDir = _sDir; }
+	RString ToString() const;
 	bool IsValid() const;
 };
 

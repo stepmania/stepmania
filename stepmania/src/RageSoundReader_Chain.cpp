@@ -31,7 +31,7 @@ RageSoundReader_Chain::~RageSoundReader_Chain()
 	while( !m_apActiveSounds.empty() )
 		ReleaseSound( 0 );
 
-	map<CString, SoundReader *>::iterator it;
+	map<RString, SoundReader *>::iterator it;
 	for( it = m_apLoadedSounds.begin(); it != m_apLoadedSounds.end(); ++it )
 		delete it->second;
 }
@@ -45,15 +45,15 @@ SoundReader *RageSoundReader_Chain::Copy() const
 /* The same sound may be used several times, and by several different chains.  Avoid
  * loading the same sound multiple times.  We need to make a Copy() if we need to
  * read it more than once at a time. */
-bool RageSoundReader_Chain::AddSound( CString sPath, float fOffsetSecs, float fPan )
+bool RageSoundReader_Chain::AddSound( RString sPath, float fOffsetSecs, float fPan )
 {
 	sPath.ToLower();
 
-	map<CString, SoundReader *>::const_iterator it;
+	map<RString, SoundReader *>::const_iterator it;
 	it = m_apLoadedSounds.find( sPath );
 	if( it == m_apLoadedSounds.end() )
 	{
-		CString error;
+		RString error;
 		SoundReader *pReader = SoundReader_FileReader::OpenFile( sPath, error );
 		if( pReader == NULL )
 		{
@@ -80,7 +80,7 @@ int RageSoundReader_Chain::GetSampleRateInternal() const
 	if( m_apLoadedSounds.empty() )
 		return m_iPreferredSampleRate;
 
-	map<CString, SoundReader *>::const_iterator it;
+	map<RString, SoundReader *>::const_iterator it;
 	int iRate = -1;
 	for( it = m_apLoadedSounds.begin(); it != m_apLoadedSounds.end(); ++it )
 	{
@@ -99,7 +99,7 @@ void RageSoundReader_Chain::Finish()
 	{
 		sound &sound = m_Sounds[i];
 
-		map<CString, SoundReader *>::iterator it = m_apLoadedSounds.find( sound.sPath );
+		map<RString, SoundReader *>::iterator it = m_apLoadedSounds.find( sound.sPath );
 		if( it == m_apLoadedSounds.end() )
 		{
 			m_Sounds.erase( m_Sounds.begin()+i );
@@ -111,7 +111,7 @@ void RageSoundReader_Chain::Finish()
 
 	/* Figure out how many channels we have. */
 	m_iChannels = 1;
-	map<CString, SoundReader *>::iterator it;
+	map<RString, SoundReader *>::iterator it;
 	for( it = m_apLoadedSounds.begin(); it != m_apLoadedSounds.end(); ++it )
 		m_iChannels = max( m_iChannels, it->second->GetNumChannels() );
 
@@ -219,7 +219,7 @@ void RageSoundReader_Chain::ReleaseSound( unsigned n )
 
 bool RageSoundReader_Chain::IsStreamingFromDisk() const
 {
-	map<CString, SoundReader *>::const_iterator it;
+	map<RString, SoundReader *>::const_iterator it;
 	for( it = m_apLoadedSounds.begin(); it != m_apLoadedSounds.end(); ++it )
 		if( it->second->IsStreamingFromDisk() )
 			return true;

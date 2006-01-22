@@ -19,7 +19,7 @@ void ReceptorArrow::Load( const PlayerState* pPlayerState, int iColNo )
 	m_pPlayerState = pPlayerState;
 	m_iColNo = iColNo;
 
-	CString sButton = GAMESTATE->GetCurrentGame()->ColToButtonName( iColNo );
+	RString sButton = GAMESTATE->GetCurrentGame()->ColToButtonName( iColNo );
 	m_pReceptor.Load( NOTESKIN->GetPath(sButton,"receptor") );
 	this->AddChild( m_pReceptor );
 
@@ -57,7 +57,7 @@ void ReceptorArrow::Step( TapNoteScore score )
 {
 	m_bIsPressed = true;
 
-	CString sJudge = TapNoteScoreToString( score );
+	RString sJudge = TapNoteScoreToString( score );
 	m_pReceptor->PlayCommand( Capitalize(sJudge) );
 
 	m_pReceptor->PlayCommand( "Press" );

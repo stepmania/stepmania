@@ -18,7 +18,7 @@ bool ScreenPrompt::s_bCancelledLast = false;
 /* Settings: */
 namespace
 {
-	CString g_sText;
+	RString g_sText;
 	PromptType g_PromptType;
 	PromptAnswer g_defaultAnswer;
 	void(*g_pOnYes)(void*);
@@ -26,7 +26,7 @@ namespace
 	void *g_pCallbackData;
 };
 
-void ScreenPrompt::SetPromptSettings( const CString &sText, PromptType type, PromptAnswer defaultAnswer, void(*OnYes)(void*), void(*OnNo)(void*), void* pCallbackData )
+void ScreenPrompt::SetPromptSettings( const RString &sText, PromptType type, PromptAnswer defaultAnswer, void(*OnYes)(void*), void(*OnNo)(void*), void* pCallbackData )
 {
 	g_sText = sText;
 	g_PromptType = type;
@@ -36,7 +36,7 @@ void ScreenPrompt::SetPromptSettings( const CString &sText, PromptType type, Pro
 	g_pCallbackData = pCallbackData;
 }
 
-void ScreenPrompt::Prompt( ScreenMessage smSendOnPop, const CString &sText, PromptType type, PromptAnswer defaultAnswer, void(*OnYes)(void*), void(*OnNo)(void*), void* pCallbackData )
+void ScreenPrompt::Prompt( ScreenMessage smSendOnPop, const RString &sText, PromptType type, PromptAnswer defaultAnswer, void(*OnYes)(void*), void(*OnNo)(void*), void* pCallbackData )
 {
 	SetPromptSettings( sText, type, defaultAnswer, OnYes, OnNo, pCallbackData );
 	
@@ -82,7 +82,7 @@ void ScreenPrompt::BeginScreen()
 
 	for( int i=0; i<=g_PromptType; i++ )
 	{
-		CString sElem = ssprintf("Answer%dOf%d", i+1, g_PromptType+1);
+		RString sElem = ssprintf("Answer%dOf%d", i+1, g_PromptType+1);
 		m_textAnswer[i].SetName( sElem );
 		m_textAnswer[i].SetText( ANSWER_TEXT(sElem) );
 		SET_XY_AND_ON_COMMAND( m_textAnswer[i] );

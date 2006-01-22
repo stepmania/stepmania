@@ -3,7 +3,7 @@
 #include "EnumHelper.h"
 #include "ThemeManager.h"
 
-CString GetThemedString( const CString &sClass, const CString &sValue )
+RString GetThemedString( const RString &sClass, const RString &sValue )
 {
 	return THEME->GetString( sClass, sValue );
 }

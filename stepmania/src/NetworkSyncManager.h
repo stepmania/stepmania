@@ -40,7 +40,7 @@ struct EndOfGame_PlayerData
 	int grade;
 	Difficulty difficulty;
 	int tapScores[NETNUMTAPSCORES];	//This will be a const soon enough
-	CString playerOptions;
+	RString playerOptions;
 };
 
 enum NSScoreBoardColumn
@@ -54,8 +54,8 @@ enum NSScoreBoardColumn
 
 struct NetServerInfo
 {
-	CString Name;
-	CString Address;
+	RString Name;
+	RString Address;
 };
 
 class EzSockets;
@@ -73,12 +73,12 @@ public:
 	uint8_t Read1();
 	uint16_t Read2();
 	uint32_t Read4();
-	CString ReadNT();
+	RString ReadNT();
 
 	void Write1(uint8_t Data);
 	void Write2(uint16_t Data);
 	void Write4(uint32_t Data);
-	void WriteNT(const CString& Data);
+	void WriteNT(const RString& Data);
 
 	void ClearPacket();
 };
@@ -96,14 +96,14 @@ public:
 	void ReportStyle();		//Report to server the style, players, and names
 	void ReportNSSOnOff(int i);	//Report song selection screen on/off
 	void StartRequest(short position);	//Request a start.  Block until granted.
-	CString GetServerName();
+	RString GetServerName();
 	
 	//SMOnline stuff
 	void SendSMOnline( );
 
-	bool Connect(const CString& addy, unsigned short port); // Connect to SM Server
+	bool Connect(const RString& addy, unsigned short port); // Connect to SM Server
 
-	void PostStartUp(const CString& ServerIP);
+	void PostStartUp(const RString& ServerIP);
 
 	void CloseConnection();
 
@@ -120,30 +120,30 @@ public:
 	vector <int> m_PlayerStatus;
 	int m_ActivePlayers;
 	vector <int> m_ActivePlayer;
-	vector <CString> m_PlayerNames;
+	vector <RString> m_PlayerNames;
 
 	//Used for ScreenNetEvaluation
 	vector<EndOfGame_PlayerData> m_EvalPlayerData;
 
 	//Used togeather for 
 	bool ChangedScoreboard(int Column);	//If scoreboard changed since this function last called, then true.
-	CString m_Scoreboard[NUM_NSSB_CATEGORIES];
+	RString m_Scoreboard[NUM_NSSB_CATEGORIES];
 
 	//Used for chatting
-	void SendChat(const CString& message);
-	CString m_WaitingChat;
+	void SendChat(const RString& message);
+	RString m_WaitingChat;
 
 	//Used for options
 	void ReportPlayerOptions();
 
 	//Used for song checking/changing
-	CString m_sMainTitle;
-	CString m_sArtist;
-	CString m_sSubTitle;
+	RString m_sMainTitle;
+	RString m_sArtist;
+	RString m_sSubTitle;
 	int m_iSelectMode;
 	void SelectUserSong();
 
-	CString			m_sChatText;
+	RString			m_sChatText;
 
 	PacketFunctions	m_SMOnlinePacket;
 
@@ -152,7 +152,7 @@ public:
 
 	int GetSMOnlineSalt();
 
-	CString MD5Hex( const CString &sInput );
+	RString MD5Hex( const RString &sInput );
 
 	void GetListOfLANServers( vector< NetServerInfo > & AllServers );
 private:
@@ -175,7 +175,7 @@ private:
 
 	bool m_scoreboardchange[NUM_NSSB_CATEGORIES];
 
-	CString m_ServerName;
+	RString m_ServerName;
  
     EzSockets *NetPlayerClient;
 	EzSockets *BroadcastReception;

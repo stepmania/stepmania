@@ -19,7 +19,7 @@ ComboGraph::ComboGraph()
 	m_pMaxComboText = NULL;
 }
 
-void ComboGraph::LoadFromNode( const CString& sDir, const XNode* pNode )
+void ComboGraph::LoadFromNode( const RString& sDir, const XNode* pNode )
 {
 	ActorFrame::LoadFromNode( sDir, pNode );
 

@@ -53,7 +53,7 @@ void UnexpectedExceptionHandler()
 	int iStatus = -1;
 	char *pDem = abi::__cxa_demangle( pName, 0, 0, &iStatus );
 
-	const CString error = ssprintf("Unhandled exception: %s", iStatus? pName:pDem);
+	const RString error = ssprintf("Unhandled exception: %s", iStatus? pName:pDem);
 #if defined(CRASH_HANDLER)
 	sm_crash( error );
 #else

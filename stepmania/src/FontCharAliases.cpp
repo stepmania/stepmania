@@ -7,9 +7,9 @@
 #include <map>
 
 /* Map from "&foo;" to a UTF-8 string. */
-typedef map<CString, wchar_t, StdString::StdStringLessNoCase> aliasmap;
+typedef map<RString, wchar_t, StdString::StdStringLessNoCase> aliasmap;
 static aliasmap CharAliases;
-static map<CString,CString> CharAliasRepl;
+static map<RString,RString> CharAliasRepl;
 
 /* Editing this file in VC6 will be rather ugly, since it contains a lot of UTF-8.
  * Just don't change anything you can't read. :) */
@@ -322,15 +322,15 @@ static void InitCharAliases()
 
 	for(aliasmap::const_iterator i = CharAliases.begin(); i != CharAliases.end(); ++i)
 	{
-		CString from = i->first;
-		CString to = WcharToUTF8(i->second);
+		RString from = i->first;
+		RString to = WcharToUTF8(i->second);
 		from.MakeLower();
 		CharAliasRepl[from] = to;
 	}
 }
 
 /* Replace all &markers; and &#NNNN;s with UTF-8. */
-void FontCharAliases::ReplaceMarkers( CString &sText )
+void FontCharAliases::ReplaceMarkers( RString &sText )
 {
 	InitCharAliases();
 	ReplaceEntityText( sText, CharAliasRepl );
@@ -338,7 +338,7 @@ void FontCharAliases::ReplaceMarkers( CString &sText )
 }
 
 /* Replace all &markers; and &#NNNN;s with UTF-8. */
-bool FontCharAliases::GetChar( CString &codepoint, wchar_t &ch )
+bool FontCharAliases::GetChar( RString &codepoint, wchar_t &ch )
 {
 	InitCharAliases();
 	aliasmap::const_iterator i = CharAliases.find(codepoint);

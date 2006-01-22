@@ -22,7 +22,7 @@ void MusicSortDisplay::Set( SortOrder so )
 		Load( THEME->GetPathG("MusicSortDisplay",SortOrderToString(so)) );
 }
 
-void MusicSortDisplay::HandleMessage( const CString& sMessage )
+void MusicSortDisplay::HandleMessage( const RString& sMessage )
 {
 	if( sMessage == "SortOrderChanged" )
 		Set( GAMESTATE->m_SortOrder );

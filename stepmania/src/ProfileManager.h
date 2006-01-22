@@ -30,28 +30,28 @@ public:
 	// local profiles
 	void UnloadAllLocalProfiles();
 	void RefreshLocalProfilesFromDisk();
-	const Profile *GetLocalProfile( const CString &sProfileID ) const;
-	Profile *GetLocalProfile( const CString &sProfileID ) { return (Profile*) ((const ProfileManager *) this)->GetLocalProfile(sProfileID); }
+	const Profile *GetLocalProfile( const RString &sProfileID ) const;
+	Profile *GetLocalProfile( const RString &sProfileID ) { return (Profile*) ((const ProfileManager *) this)->GetLocalProfile(sProfileID); }
 	Profile *GetLocalProfileFromIndex( int iIndex );
-	CString GetLocalProfileIDFromIndex( int iIndex );
+	RString GetLocalProfileIDFromIndex( int iIndex );
 	
-	bool CreateLocalProfile( CString sName, CString &sProfileIDOut );
-	void AddLocalProfileByID( Profile *pProfile, CString sProfileID ); // transfers ownership of pProfile
-	bool RenameLocalProfile( CString sProfileID, CString sNewName );
-	bool DeleteLocalProfile( CString sProfileID );
-	void GetLocalProfileIDs( vector<CString> &vsProfileIDsOut ) const;
-	void GetLocalProfileDisplayNames( vector<CString> &vsProfileDisplayNamesOut ) const;
-	int GetLocalProfileIndexFromID( CString sProfileID ) const;
+	bool CreateLocalProfile( RString sName, RString &sProfileIDOut );
+	void AddLocalProfileByID( Profile *pProfile, RString sProfileID ); // transfers ownership of pProfile
+	bool RenameLocalProfile( RString sProfileID, RString sNewName );
+	bool DeleteLocalProfile( RString sProfileID );
+	void GetLocalProfileIDs( vector<RString> &vsProfileIDsOut ) const;
+	void GetLocalProfileDisplayNames( vector<RString> &vsProfileDisplayNamesOut ) const;
+	int GetLocalProfileIndexFromID( RString sProfileID ) const;
 	int GetNumLocalProfiles() const;
 
 
 	bool LoadFirstAvailableProfile( PlayerNumber pn );	// memory card or local profile
 	bool LoadLocalProfileFromMachine( PlayerNumber pn );
 	bool LoadProfileFromMemoryCard( PlayerNumber pn );
-	bool FastLoadProfileNameFromMemoryCard( CString sRootDir, CString &sName ) const;
+	bool FastLoadProfileNameFromMemoryCard( RString sRootDir, RString &sName ) const;
 	void SaveAllProfiles() const;
 	bool SaveProfile( PlayerNumber pn ) const;
-	bool SaveLocalProfile( CString sProfileID );
+	bool SaveLocalProfile( RString sProfileID );
 	void UnloadProfile( PlayerNumber pn );
 	
 	//
@@ -76,12 +76,12 @@ public:
 	const Profile* GetProfile( ProfileSlot slot ) const;
 	Profile* GetProfile( ProfileSlot slot ) { return (Profile*) ((const ProfileManager *) this)->GetProfile(slot); }
 	
-	CString GetProfileDir( ProfileSlot slot ) const;
-	CString GetProfileDirImportedFrom( ProfileSlot slot ) const;
+	RString GetProfileDir( ProfileSlot slot ) const;
+	RString GetProfileDirImportedFrom( ProfileSlot slot ) const;
 
 	Profile* GetMachineProfile() { return m_pMachineProfile; }
 
-	CString GetPlayerName( PlayerNumber pn ) const;
+	RString GetPlayerName( PlayerNumber pn ) const;
 	bool ProfileWasLoadedFromMemoryCard( PlayerNumber pn ) const;
 	bool LastLoadWasTamperedOrCorrupt( PlayerNumber pn ) const;
 	bool LastLoadWasFromLastGood( PlayerNumber pn ) const;
@@ -112,18 +112,18 @@ public:
 	// Lua
 	void PushSelf( lua_State *L );
 
-	static Preference1D<CString> m_sDefaultLocalProfileID;
+	static Preference1D<RString> m_sDefaultLocalProfileID;
 
 private:
-	ProfileLoadResult LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsMemCard );
-	void GetMemoryCardProfileDirectoriesToTry( vector<CString> &asDirsToTry ) const;
+	ProfileLoadResult LoadProfile( PlayerNumber pn, RString sProfileDir, bool bIsMemCard );
+	void GetMemoryCardProfileDirectoriesToTry( vector<RString> &asDirsToTry ) const;
 
 	// Directory that contains the profile.  Either on local machine or
 	// on a memory card.
-	CString m_sProfileDir[NUM_PLAYERS];
+	RString m_sProfileDir[NUM_PLAYERS];
 
 	// MemoryCardProfileImportSubdirs name, if the profile was imported.
-	CString m_sProfileDirImportedFrom[NUM_PLAYERS];
+	RString m_sProfileDirImportedFrom[NUM_PLAYERS];
 
 	bool m_bWasLoadedFromMemoryCard[NUM_PLAYERS];
 	bool m_bLastLoadWasTamperedOrCorrupt[NUM_PLAYERS];	// true if Stats.xml was present, but failed to load (probably because of a signature failure)

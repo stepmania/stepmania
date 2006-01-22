@@ -16,10 +16,10 @@
 
 AutoScreenMessage( SM_PlayPostSwitchPage )
 
-CString CURSOR_OFFSET_X_FROM_ICON_NAME( size_t p ) { return ssprintf("CursorP%dOffsetXFromIcon",int(p+1)); }
-CString CURSOR_OFFSET_Y_FROM_ICON_NAME( size_t p ) { return ssprintf("CursorP%dOffsetYFromIcon",int(p+1)); }
+RString CURSOR_OFFSET_X_FROM_ICON_NAME( size_t p ) { return ssprintf("CursorP%dOffsetXFromIcon",int(p+1)); }
+RString CURSOR_OFFSET_Y_FROM_ICON_NAME( size_t p ) { return ssprintf("CursorP%dOffsetYFromIcon",int(p+1)); }
 /* e.g. "OptionOrderLeft=0:1,1:2,2:3,3:4" */
-CString OPTION_ORDER_NAME( size_t dir )							{ return "OptionOrder"+MenuDirToString((MenuDir)dir); }
+RString OPTION_ORDER_NAME( size_t dir )							{ return "OptionOrder"+MenuDirToString((MenuDir)dir); }
 
 REGISTER_SCREEN_CLASS( ScreenSelectMaster );
 
@@ -62,15 +62,15 @@ void ScreenSelectMaster::Init()
 			vpns.push_back( p );
 	}
 
-#define PLAYER_APPEND_WITH_SPACE(p)	(SHARED_SELECTION ? CString() : ssprintf(" P%d",(p)+1))
-#define PLAYER_APPEND_NO_SPACE(p)	(SHARED_SELECTION ? CString() : ssprintf("P%d",(p)+1))
+#define PLAYER_APPEND_WITH_SPACE(p)	(SHARED_SELECTION ? RString() : ssprintf(" P%d",(p)+1))
+#define PLAYER_APPEND_NO_SPACE(p)	(SHARED_SELECTION ? RString() : ssprintf("P%d",(p)+1))
 	
 	// init cursor
 	if( SHOW_CURSOR )
 	{
 		FOREACH( PlayerNumber, vpns, p )
 		{
-			CString sElement = "Cursor" + PLAYER_APPEND_WITH_SPACE(*p);
+			RString sElement = "Cursor" + PLAYER_APPEND_WITH_SPACE(*p);
 			m_sprCursor[*p].Load( THEME->GetPathG(m_sName,sElement) );
 			sElement.Replace( " ", "" );
 			m_sprCursor[*p]->SetName( sElement );
@@ -96,7 +96,7 @@ void ScreenSelectMaster::Init()
 		// init icon
 		if( SHOW_ICON )
 		{
-			CString sElement = ssprintf( "Icon Choice%s", mc.m_sName.c_str() );
+			RString sElement = ssprintf( "Icon Choice%s", mc.m_sName.c_str() );
 			m_vsprIcon[c].Load( THEME->GetPathG(m_sName,sElement) );
 			sElement.Replace( " ", "" );
 			m_vsprIcon[c]->SetName( sElement );
@@ -108,7 +108,7 @@ void ScreenSelectMaster::Init()
 		{
 			FOREACH( PlayerNumber, vpns, p )
 			{
-				CString sElement = ssprintf( "Scroll Choice%s", mc.m_sName.c_str() ) + PLAYER_APPEND_WITH_SPACE(*p);
+				RString sElement = ssprintf( "Scroll Choice%s", mc.m_sName.c_str() ) + PLAYER_APPEND_WITH_SPACE(*p);
 				m_vsprScroll[*p][c].Load( THEME->GetPathG(m_sName,sElement) );
 				sElement.Replace( " ", "" );
 				m_vsprScroll[*p][c]->SetName( sElement );
@@ -157,8 +157,8 @@ void ScreenSelectMaster::Init()
 	// init m_Next order info
 	FOREACH_MenuDir( dir )
 	{
-		const CString order = OPTION_ORDER.GetValue( dir );
-		vector<CString> parts;
+		const RString order = OPTION_ORDER.GetValue( dir );
+		vector<RString> parts;
 		split( order, ",", parts, true );
 
 		for( unsigned part = 0; part < parts.size(); ++part )
@@ -211,7 +211,7 @@ void ScreenSelectMaster::BeginScreen()
 	for( unsigned c=0; c<m_aGameCommands.size(); c++ )
 	{
 		const GameCommand& mc = m_aGameCommands[c];
-		if( mc.m_sName == (CString) DEFAULT_CHOICE )
+		if( mc.m_sName == (RString) DEFAULT_CHOICE )
 		{
 			iDefaultChoice = c;
 			break;
@@ -484,7 +484,7 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 				COMMAND( m_sprCursor[*p], "PreSwitchPage" );
 	}
 
-	const CString sIconAndExplanationCommand = ssprintf( "SwitchToPage%d", newPage+1 );
+	const RString sIconAndExplanationCommand = ssprintf( "SwitchToPage%d", newPage+1 );
 
 	if( SHOW_ICON )
 	{

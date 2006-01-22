@@ -39,11 +39,11 @@ public:
 	void RegenerateNonFixedCourses();
 	void SetPreferences();
 
-	void LoadAllFromProfileDir( const CString &sProfileDir, ProfileSlot slot );
+	void LoadAllFromProfileDir( const RString &sProfileDir, ProfileSlot slot );
 	int GetNumStepsLoadedFromProfile();
 	void FreeAllLoadedFromProfile( ProfileSlot slot = ProfileSlot_INVALID );
 
-	void LoadGroupSymLinks( CString sDir, CString sGroupFolder );
+	void LoadGroupSymLinks( RString sDir, RString sGroupFolder );
 
 	void InitCoursesFromDisk( LoadingWindow *ld );
 	void InitAutogenCourses();
@@ -56,32 +56,32 @@ public:
 	void Reload( LoadingWindow *ld=NULL );	// songs, courses, groups - everything.
 	void PreloadSongImages();
 
-	CString GetSongGroupBannerPath( CString sSongGroup );
-	void GetSongGroupNames( vector<CString> &AddTo );
-	bool DoesSongGroupExist( CString sSongGroup );
-	RageColor GetSongGroupColor( const CString &sSongGroupName );
+	RString GetSongGroupBannerPath( RString sSongGroup );
+	void GetSongGroupNames( vector<RString> &AddTo );
+	bool DoesSongGroupExist( RString sSongGroup );
+	RageColor GetSongGroupColor( const RString &sSongGroupName );
 	RageColor GetSongColor( const Song* pSong );
 
-	CString GetCourseGroupBannerPath( const CString &sCourseGroup );
-	void GetCourseGroupNames( vector<CString> &AddTo );
-	bool DoesCourseGroupExist( const CString &sCourseGroup );
-	RageColor GetCourseGroupColor( const CString &sCourseGroupName );
+	RString GetCourseGroupBannerPath( const RString &sCourseGroup );
+	void GetCourseGroupNames( vector<RString> &AddTo );
+	bool DoesCourseGroupExist( const RString &sCourseGroup );
+	RageColor GetCourseGroupColor( const RString &sCourseGroupName );
 	RageColor GetCourseColor( const Course* pCourse );
 	
-	static CString ShortenGroupName( CString sLongGroupName );
+	static RString ShortenGroupName( RString sLongGroupName );
 	static int     GetNumStagesForSong( const Song* pSong );	// LongVer songs take 2 stages, MarathonVer take 3
 
 
 	// Lookup
 	const vector<Song*> &GetAllSongs() const { return m_pSongs; }
-	void GetBestSongs( vector<Song*> &AddTo, CString sGroupName, int iMaxStages = INT_MAX, ProfileSlot slot=ProfileSlot_Machine ) const;
+	void GetBestSongs( vector<Song*> &AddTo, RString sGroupName, int iMaxStages = INT_MAX, ProfileSlot slot=ProfileSlot_Machine ) const;
 	const vector<Song*> &GetBestSongs( ProfileSlot slot=ProfileSlot_Machine ) const { return m_pBestSongs[slot]; }
 	const vector<Course*> &GetBestCourses( CourseType ct, ProfileSlot slot=ProfileSlot_Machine ) const { return m_pBestCourses[slot][ct]; }
-	void GetSongs( vector<Song*> &AddTo, CString sGroupName, int iMaxStages = INT_MAX ) const;
+	void GetSongs( vector<Song*> &AddTo, RString sGroupName, int iMaxStages = INT_MAX ) const;
 	void GetSongs( vector<Song*> &AddTo, int iMaxStages ) const { GetSongs(AddTo,GROUP_ALL,iMaxStages); }
 	void GetSongs( vector<Song*> &AddTo ) const { GetSongs(AddTo,GROUP_ALL,INT_MAX); }
-	Song *FindSong( CString sPath );
-	Course *FindCourse( CString sName );
+	Song *FindSong( RString sPath );
+	Course *FindCourse( RString sName );
 	int GetNumSongs() const;
 	int GetNumSongGroups() const;
 	int GetNumCourses() const;
@@ -96,13 +96,13 @@ public:
 
 	void GetAllCourses( vector<Course*> &AddTo, bool bIncludeAutogen );
 	void GetCourses( CourseType ct, vector<Course*> &AddTo, bool bIncludeAutogen );
-	void GetCoursesInGroup( vector<Course*> &AddTo, const CString &sCourseGroup, bool bIncludeAutogen );
+	void GetCoursesInGroup( vector<Course*> &AddTo, const RString &sCourseGroup, bool bIncludeAutogen );
 
 	void GetExtraStageInfo( bool bExtra2, const Style *s, 
 		Song*& pSongOut, Steps*& pStepsOut, PlayerOptions *pPlayerOptionsOut, SongOptions *pSongOptionsOut );
-	Song* GetSongFromDir( CString sDir );
-	Course* GetCourseFromPath( CString sPath );	// path to .crs file, or path to song group dir
-	Course* GetCourseFromName( CString sName );
+	Song* GetSongFromDir( RString sDir );
+	Course* GetCourseFromPath( RString sPath );	// path to .crs file, or path to song group dir
+	Course* GetCourseFromName( RString sName );
 
 
 	void UpdateBest();				// update Players Best
@@ -116,30 +116,30 @@ public:
 	void PushSelf( lua_State *L );
 
 protected:
-	void LoadStepManiaSongDir( CString sDir, LoadingWindow *ld );
-	void LoadDWISongDir( CString sDir );
-	bool GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredGroup,
+	void LoadStepManiaSongDir( RString sDir, LoadingWindow *ld );
+	void LoadDWISongDir( RString sDir );
+	bool GetExtraStageInfoFromCourse( bool bExtra2, RString sPreferredGroup,
 					   Song*& pSongOut, Steps*& pStepsOut, PlayerOptions *pPlayerOptionsOut, SongOptions *pSongOptionsOut );
-	void SanityCheckGroupDir( CString sDir ) const;
-	void AddGroup( CString sDir, CString sGroupDirName );
+	void SanityCheckGroupDir( RString sDir ) const;
+	void AddGroup( RString sDir, RString sGroupDirName );
 	int GetNumEditsLoadedFromProfile( ProfileSlot slot ) const;
 
-	Song *FindSong( CString sGroup, CString sSong );
+	Song *FindSong( RString sGroup, RString sSong );
 
 	vector<Song*>		m_pSongs;	// all songs that can be played
 	vector<Song*>		m_pBestSongs[NUM_ProfileSlot];
 	vector<Song*>		m_pShuffledSongs;	// used by GetRandomSong
-	vector<CString>		m_sSongGroupNames;
-	vector<CString>		m_sSongGroupBannerPaths; // each song group may have a banner associated with it
+	vector<RString>		m_sSongGroupNames;
+	vector<RString>		m_sSongGroupBannerPaths; // each song group may have a banner associated with it
 
 	vector<Course*>		m_pCourses;
 	vector<Course*>		m_pBestCourses[NUM_ProfileSlot][NUM_CourseType];
 	vector<Course*>		m_pShuffledCourses;	// used by GetRandomCourse
 	struct CourseGroupInfo
 	{
-		CString m_sBannerPath;
+		RString m_sBannerPath;
 	};
-	map<CString,CourseGroupInfo> m_mapCourseGroupToInfo;
+	map<RString,CourseGroupInfo> m_mapCourseGroupToInfo;
 
 	RageTexturePreloader m_TexturePreload;
 

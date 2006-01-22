@@ -19,7 +19,7 @@ public:
 	LoadingWindow_Cocoa()
 	{
 		RageFile f;
-		CString data;
+		RString data;
 		
 		if( f.Open("Data/splash.png") )
 			f.Read( data );
@@ -28,7 +28,7 @@ public:
 	~LoadingWindow_Cocoa() { DisposeOfCocoaWindow(); }
 
 	void Paint() { } /* Not needed but pure virtual*/
-	void SetText( CString str ) { SetCocoaWindowText( str ); }
+	void SetText( RString str ) { SetCocoaWindowText( str ); }
 };
 #define USE_LOADING_WINDOW_COCOA
 

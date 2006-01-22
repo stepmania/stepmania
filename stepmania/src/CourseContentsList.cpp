@@ -44,7 +44,7 @@ void CourseContentsList::Load()
 	}
 }
 
-void CourseContentsList::LoadFromNode( const CString& sDir, const XNode* pNode )
+void CourseContentsList::LoadFromNode( const RString& sDir, const XNode* pNode )
 {
 	ActorScroller::LoadFromNode( sDir, pNode );
 

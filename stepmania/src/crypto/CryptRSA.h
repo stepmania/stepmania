@@ -15,15 +15,15 @@ struct RSAKey
 	Bignum p;
 	Bignum q;
 	Bignum iqmp;
-	CString comment;
+	RString comment;
 
 	int Generate( int bits );
 	void Fingerprint( char *str, int len ) const;
-	void Sign( const CString &data, CString &out ) const;
-	bool Verify( const CString &data, const CString &sig ) const;
+	void Sign( const RString &data, RString &out ) const;
+	bool Verify( const RString &data, const RString &sig ) const;
 
-	bool Encrypt( CString &buf ) const;
-	bool Decrypt( CString &buf ) const;
+	bool Encrypt( RString &buf ) const;
+	bool Decrypt( RString &buf ) const;
 	Bignum Encrypt( const Bignum input ) const;
 	Bignum Decrypt( const Bignum input ) const;
 
@@ -32,10 +32,10 @@ struct RSAKey
 	void StrFmt( char *str ) const;
 	char *FmtKey() const;
 
-	void PublicBlob( CString &out ) const;
-	void PrivateBlob( CString &out ) const;
-	bool LoadFromPublicBlob( const CString &PublicBlob );
-	bool LoadFromPrivateBlob( const CString &PrivateBlob );
+	void PublicBlob( RString &out ) const;
+	void PrivateBlob( RString &out ) const;
+	bool LoadFromPublicBlob( const RString &PublicBlob );
+	bool LoadFromPrivateBlob( const RString &PrivateBlob );
 };
 
 #endif

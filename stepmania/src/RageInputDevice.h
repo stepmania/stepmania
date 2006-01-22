@@ -34,8 +34,8 @@ enum InputDevice
 	DEVICE_NONE			// means this is NULL
 };
 #define FOREACH_InputDevice( i ) FOREACH_ENUM( InputDevice, NUM_INPUT_DEVICES, i )
-const CString& InputDeviceToString( InputDevice i );
-InputDevice StringToInputDevice( const CString& s );
+const RString& InputDeviceToString( InputDevice i );
+InputDevice StringToInputDevice( const RString& s );
 
 
 enum InputDeviceState
@@ -255,8 +255,8 @@ enum DeviceButton
 	DeviceButton_Invalid
 };
 
-CString DeviceButtonToString( DeviceButton i );
-DeviceButton StringToDeviceButton( const CString& s );
+RString DeviceButtonToString( DeviceButton i );
+DeviceButton StringToDeviceButton( const RString& s );
 
 struct DeviceInput
 {
@@ -294,8 +294,8 @@ public:
 		return button < other.button;
 	};
 	
-	CString ToString() const;
-	bool FromString( const CString &s );
+	RString ToString() const;
+	bool FromString( const RString &s );
 
 	bool IsValid() const { return device != DEVICE_NONE; };
 	void MakeInvalid() { device = DEVICE_NONE; };

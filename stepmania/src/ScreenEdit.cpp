@@ -84,7 +84,7 @@ static const char *EditStateNames[] = {
 };
 XToString( EditState, NUM_EDIT_STATES );
 
-const CString INPUT_TIPS_TEXT = 
+const RString INPUT_TIPS_TEXT = 
 #if defined(XBOX)
 	"Up/Down:\n     change beat\n"
 	"Left/Right:\n     change snap\n"
@@ -571,10 +571,10 @@ static bool EnabledIfSet2GlobalMovie()			{ return ScreenMiniMenu::s_viLastAnswer
 static bool EnabledIfSet2GlobalMovieSongGroup()		{ return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file2_type] == global_movie_song_group		&& !g_BackgroundChange.rows[ScreenEdit::file2_global_movie_song_group].choices.empty(); }
 static bool EnabledIfSet2GlobalMovieSongGroupAndGenre() { return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file2_type] == global_movie_song_group_and_genre	&& !g_BackgroundChange.rows[ScreenEdit::file2_global_movie_song_group_and_genre].choices.empty(); }
 
-static CString GetOneBakedRandomFile( Song *pSong, bool bTryGenre = true )
+static RString GetOneBakedRandomFile( Song *pSong, bool bTryGenre = true )
 {
-	vector<CString> vsPathsOut; 
-	vector<CString> vsNamesOut;
+	vector<RString> vsPathsOut; 
+	vector<RString> vsNamesOut;
 	BackgroundUtil::GetGlobalRandomMovies(
 		pSong,
 		"",
@@ -584,7 +584,7 @@ static CString GetOneBakedRandomFile( Song *pSong, bool bTryGenre = true )
 	if( !vsNamesOut.empty() )
 		return vsNamesOut[rand()%vsNamesOut.size()];
 	else
-		return CString();
+		return RString();
 }
 
 static MenuDef g_InsertTapAttack(
@@ -966,9 +966,9 @@ void ScreenEdit::UpdateTextInfo()
 
 	m_bTextInfoNeedsUpdate = false;
 
-	CString sNoteType = NoteTypeToString(m_SnapDisplay.GetNoteType()) + " notes";
+	RString sNoteType = NoteTypeToString(m_SnapDisplay.GetNoteType()) + " notes";
 
-	CString sText;
+	RString sText;
 	sText += ssprintf( "Current beat:\n  %.3f\n",		GAMESTATE->m_fSongBeat );
 	sText += ssprintf( "Current sec:\n  %.3f\n",		m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) );
 	switch( EDIT_MODE.GetValue() )
@@ -1370,7 +1370,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			m_pSteps = pSteps;
 			pSteps->GetNoteData( m_NoteDataEdit );
 
-			CString s = ssprintf(
+			RString s = ssprintf(
 				SWITCHED_TO.GetValue() + " %s %s '%s' (%d of %d)",
 				GAMEMAN->StepsTypeToString( pSteps->m_StepsType ).c_str(),
 				DifficultyToString( pSteps->GetDifficulty() ).c_str(),
@@ -1521,7 +1521,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			//
 			// Fill in option names
 			//
-			vector<CString> vThrowAway;
+			vector<RString> vThrowAway;
 
 			g_BackgroundChange.rows[layer].choices[0] = ssprintf("%d",g_CurrentBGChangeLayer);
 			BackgroundUtil::GetBackgroundTransitions(	"", vThrowAway, g_BackgroundChange.rows[transition].choices );
@@ -1665,7 +1665,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 	case EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP_AND_GENRE:
 		{
 			bool bTryGenre = EditB == EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP_AND_GENRE;
-			CString sName = GetOneBakedRandomFile(m_pSong, bTryGenre);
+			RString sName = GetOneBakedRandomFile(m_pSong, bTryGenre);
 			if( sName.empty() )
 			{
 				SCREENMAN->PlayInvalidSound();
@@ -2247,7 +2247,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		GAMESTATE->m_pCurCourse.Set( NULL );
 		if( num != 0 )
 		{
-			const CString name = g_CourseMode.rows[0].choices[num];
+			const RString name = g_CourseMode.rows[0].choices[num];
 			Course *pCourse = SONGMAN->FindCourse( name );
 			GAMESTATE->m_pCurCourse.Set( pCourse );
 			ASSERT( GAMESTATE->m_pCurCourse );
@@ -2270,7 +2270,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM == SM_BackFromInsertTapAttackPlayerOptions )
 	{
 		PlayerOptions poChosen = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
-		CString sMods = poChosen.GetString();
+		RString sMods = poChosen.GetString();
 		const int row = BeatToNoteRow( GAMESTATE->m_fSongBeat );
 		
 		TapNote tn(
@@ -2312,7 +2312,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM == SM_BackFromInsertCourseAttackPlayerOptions )
 	{
 		PlayerOptions poChosen = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
-		CString sMods = poChosen.GetString();
+		RString sMods = poChosen.GetString();
 
 		Course *pCourse = GAMESTATE->m_pCurCourse;
 		CourseEntry &ce = pCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
@@ -2433,7 +2433,7 @@ void ScreenEdit::OnSnapModeChange()
 // Begin helper functions for InputEdit
 
 
-static void ChangeDescription( const CString &sNew )
+static void ChangeDescription( const RString &sNew )
 {
 	Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 
@@ -2444,7 +2444,7 @@ static void ChangeDescription( const CString &sNew )
 	pSteps->SetDescription(sNew);
 }
 
-static bool ValidateDescription( const CString &sAnswer, CString &sErrorOut )
+static bool ValidateDescription( const RString &sAnswer, RString &sErrorOut )
 {
 	if( sAnswer.empty() )
 		return true;
@@ -2474,43 +2474,43 @@ static bool ValidateDescription( const CString &sAnswer, CString &sErrorOut )
 	return false;
 }
 
-static void ChangeMainTitle( const CString &sNew )
+static void ChangeMainTitle( const RString &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pSong->m_sMainTitle = sNew;
 }
 
-static void ChangeSubTitle( const CString &sNew )
+static void ChangeSubTitle( const RString &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pSong->m_sSubTitle = sNew;
 }
 
-static void ChangeArtist( const CString &sNew )
+static void ChangeArtist( const RString &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pSong->m_sArtist = sNew;
 }
 
-static void ChangeCredit( const CString &sNew )
+static void ChangeCredit( const RString &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pSong->m_sCredit = sNew;
 }
 
-static void ChangeMainTitleTranslit( const CString &sNew )
+static void ChangeMainTitleTranslit( const RString &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pSong->m_sMainTitleTranslit = sNew;
 }
 
-static void ChangeSubTitleTranslit( const CString &sNew )
+static void ChangeSubTitleTranslit( const RString &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pSong->m_sSubTitleTranslit = sNew;
 }
 
-static void ChangeArtistTranslit( const CString &sNew )
+static void ChangeArtistTranslit( const RString &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pSong->m_sArtistTranslit = sNew;
@@ -2611,7 +2611,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 						HandleScreenMessage( SM_SaveSuccessful );
 
 						/* FIXME
-						CString s;
+						RString s;
 						switch( c )
 						{
 						case save:			s = "ScreenMemcardSaveEditsAfterSave";	break;
@@ -2925,7 +2925,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				HandleAreaMenuChoice( paste_at_begin_marker );
 
 				const vector<Steps*> sIter = m_pSong->GetAllSteps();
-				CString sTempStyle, sTempDiff;
+				RString sTempStyle, sTempDiff;
 				for( unsigned i = 0; i < sIter.size(); i++ )
 				{
 					if( sIter[i]->IsAutogen() )
@@ -3207,7 +3207,7 @@ void ScreenEdit::RevertFromDisk()
 	if( GAMESTATE->m_pCurSteps[PLAYER_1] )
 		id.FromSteps( GAMESTATE->m_pCurSteps[PLAYER_1] );
 
-	CString sSongDir = GAMESTATE->m_pCurSong->GetSongDir();
+	RString sSongDir = GAMESTATE->m_pCurSong->GetSongDir();
 	GAMESTATE->m_pCurSong->LoadFromSongDir( sSongDir );
 
 	if( id.IsValid() )
@@ -3265,7 +3265,7 @@ void ScreenEdit::CheckNumberOfNotesAndUndo()
 		{
 			Undo();
 			m_bHasUndo = false;
-			CString sError = ssprintf( CREATES_MORE_THAN_NOTES.GetValue() + "\n\n" + MORE_THAN_NOTES.GetValue(), MAX_NOTES_PER_MEASURE, MAX_NOTES_PER_MEASURE );
+			RString sError = ssprintf( CREATES_MORE_THAN_NOTES.GetValue() + "\n\n" + MORE_THAN_NOTES.GetValue(), MAX_NOTES_PER_MEASURE, MAX_NOTES_PER_MEASURE );
 			ScreenPrompt::Prompt( SM_None, sError );
 			return;
 		}
@@ -3283,7 +3283,7 @@ void ScreenEdit::CheckNumberOfNotesAndUndo()
 		{
 			Undo();
 			m_bHasUndo = false;
-			CString sError = CREATES_NOTES_PAST_END.GetValue() + "\n\n" + CHANGE_REVERTED.GetValue();
+			RString sError = CREATES_NOTES_PAST_END.GetValue() + "\n\n" + CHANGE_REVERTED.GetValue();
 			ScreenPrompt::Prompt( SM_None, sError );
 			return;
 		}

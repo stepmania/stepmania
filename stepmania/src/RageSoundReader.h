@@ -20,10 +20,10 @@ public:
 	string GetError() const { return m_sError; }
 
 protected:
-	void SetError( CString sError ) const { m_sError = sError; }
+	void SetError( RString sError ) const { m_sError = sError; }
 
 private:
-	mutable CString m_sError;
+	mutable RString m_sError;
 };
 
 #endif

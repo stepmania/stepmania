@@ -2,7 +2,7 @@
 #define RAGE_SURFACE_LOAD_XPM_H
 
 struct RageSurface;
-RageSurface *RageSurface_Load_XPM( char * const *xpm, CString &error );
+RageSurface *RageSurface_Load_XPM( char * const *xpm, RString &error );
 
 #endif
 

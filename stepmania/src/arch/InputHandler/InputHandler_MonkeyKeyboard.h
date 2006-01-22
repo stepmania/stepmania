@@ -11,7 +11,7 @@ public:
 	void Update();
 	InputHandler_MonkeyKeyboard();
 	~InputHandler_MonkeyKeyboard();
-	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut );
+	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut );
 
 private:
 	RageTimer m_timerPressButton;

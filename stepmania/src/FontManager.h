@@ -12,7 +12,7 @@ public:
 	FontManager();
 	~FontManager();
 
-	Font* LoadFont( const CString &sFontOrTextureFilePath, CString sChars = "" );
+	Font* LoadFont( const RString &sFontOrTextureFilePath, RString sChars = "" );
 	Font *CopyFont( Font *pFont );
 	void UnloadFont( Font *fp );
 

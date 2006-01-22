@@ -32,7 +32,7 @@ AutoScreenMessage( SM_SongChanged )
 AutoScreenMessage( SM_UsersUpdate )
 AutoScreenMessage( SM_BackFromPlayerOptions )
 
-const CString AllGroups			= "[ALL MUSIC]";
+const RString AllGroups			= "[ALL MUSIC]";
 
 #define DIFFBG_WIDTH				THEME->GetMetricF(m_sName,"DiffBGWidth")
 #define DIFFBG_HEIGHT				THEME->GetMetricF(m_sName,"DiffBGHeight")
@@ -287,12 +287,12 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			{
 			case 0: //Room title Change
 				{
-					CString titleSub;
+					RString titleSub;
 					titleSub = NSMAN->m_SMOnlinePacket.ReadNT() + "\n";
 					titleSub += NSMAN->m_SMOnlinePacket.ReadNT();
 					if ( NSMAN->m_SMOnlinePacket.Read1() != 1 )
 					{
-						CString SMOnlineSelectScreen;
+						RString SMOnlineSelectScreen;
 						THEME->GetMetric( m_sName, "RoomSelectScreen", SMOnlineSelectScreen );
 						SCREENMAN->SetNewScreen( SMOnlineSelectScreen );
 					}

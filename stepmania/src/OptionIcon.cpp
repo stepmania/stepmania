@@ -27,7 +27,7 @@ OptionIcon::OptionIcon( const OptionIcon &cpy ):
 	this->AddChild( &m_text );
 }
 
-void OptionIcon::Load( CString sType )
+void OptionIcon::Load( RString sType )
 {
 	m_spr.Load( THEME->GetPathG(sType,"icon 3x2") );
 	m_spr.StopAnimating();
@@ -42,11 +42,11 @@ void OptionIcon::Load( CString sType )
 	this->AddChild( &m_text );
 }
 
-void OptionIcon::Set( PlayerNumber pn, const CString &_sText, bool bHeader )
+void OptionIcon::Set( PlayerNumber pn, const RString &_sText, bool bHeader )
 {
-	CString sText = _sText;
+	RString sText = _sText;
 
-	static const CString sStopWords[] = 
+	static const RString sStopWords[] = 
 	{
 		"1X",
 		"DEFAULT",
@@ -67,7 +67,7 @@ void OptionIcon::Set( PlayerNumber pn, const CString &_sText, bool bHeader )
 	int iState = pn*3 + (bHeader?0:(bVacant?1:2));
 	m_spr.SetState( iState );
 
-	m_text.SetText( bHeader ? CString("") : sText );
+	m_text.SetText( bHeader ? RString("") : sText );
 	m_text.SetZoom( TEXT_ZOOM );
 	m_text.CropToWidth( TEXT_WIDTH );
 }

@@ -19,7 +19,7 @@ bool MemoryCardDriverThreaded_Linux::TestWrite( UsbStorageDevice* pDevice )
 	return true;
 }
 
-static bool ExecuteCommand( const CString &sCommand )
+static bool ExecuteCommand( const RString &sCommand )
 {
 	LOG->Trace( "executing '%s'", sCommand.c_str() );
 	int ret = system(sCommand);
@@ -29,7 +29,7 @@ static bool ExecuteCommand( const CString &sCommand )
 	return ret == 0;
 }
 
-static bool ReadFile( const CString &sPath, CString &sBuf )
+static bool ReadFile( const RString &sPath, RString &sBuf )
 {
 	sBuf.clear();
 
@@ -60,7 +60,7 @@ static bool ReadFile( const CString &sPath, CString &sBuf )
 	return true;
 }
 
-static void GetFileList( const CString &sPath, vector<CString> &out )
+static void GetFileList( const RString &sPath, vector<RString> &out )
 {
 	out.clear();
 
@@ -76,13 +76,13 @@ static void GetFileList( const CString &sPath, vector<CString> &out )
 
 bool MemoryCardDriverThreaded_Linux::USBStorageDevicesChanged()
 {
-	CString sThisDevices;
+	RString sThisDevices;
 
 	/* If a device is removed and reinserted, the inode of the /sys/block entry
 	 * will change. */
-	CString sDevicePath = "/sys/block/";
+	RString sDevicePath = "/sys/block/";
 	
-	vector<CString> asDevices;
+	vector<RString> asDevices;
 	GetFileList( sDevicePath, asDevices );
 
 	for( unsigned i = 0; i < asDevices.size(); ++i )
@@ -108,23 +108,23 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 	vDevicesOut.clear();
 
 	{
-		vector<CString> asDevices;
-		CString sBlockDevicePath = "/sys/block/";
+		vector<RString> asDevices;
+		RString sBlockDevicePath = "/sys/block/";
 		GetFileList( sBlockDevicePath, asDevices );
 
 		for( unsigned i = 0; i < asDevices.size(); ++i )
 		{
-			const CString &sDevice = asDevices[i];
+			const RString &sDevice = asDevices[i];
 			if( sDevice == "." || sDevice == ".." )
 				continue;
 
 			UsbStorageDevice usbd;
 
-			CString sPath = sBlockDevicePath + sDevice + "/";
+			RString sPath = sBlockDevicePath + sDevice + "/";
 			usbd.sSysPath = sPath;
 
 			/* Ignore non-removable devices. */
-			CString sBuf;
+			RString sBuf;
 			if( !ReadFile( sPath + "removable", sBuf ) )
 				continue; // already warned
 			if( atoi(sBuf) != 1 )
@@ -165,12 +165,12 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 				 * the number of hops.
 				 */
 				szLink[iRet] = 0;
-				vector<CString> asBits;
+				vector<RString> asBits;
 				split( szLink, "/", asBits );
 
 				if( strstr( szLink, "usb" ) != NULL )
 				{
-					CString sHostPort = asBits[asBits.size()-2];
+					RString sHostPort = asBits[asBits.size()-2];
 					sHostPort.Replace( "-", "." );
 					asBits.clear();
 					split( sHostPort, ".", asBits );
@@ -216,7 +216,7 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 		// /dev/sdb1               /mnt/flash2             auto    noauto,owner 0 0
 		// /dev/sdc1               /mnt/flash3             auto    noauto,owner 0 0
 		
-		CString fn = "/rootfs/etc/fstab";
+		RString fn = "/rootfs/etc/fstab";
 		RageFile f;
 		if( !f.Open(fn) )
 		{
@@ -224,7 +224,7 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 			return;
 		}
 		
-		CString sLine;
+		RString sLine;
 		while( !f.AtEOF() )
 		{
 			switch( f.GetLine(sLine) )
@@ -242,7 +242,7 @@ void MemoryCardDriverThreaded_Linux::GetUSBStorageDevices( vector<UsbStorageDevi
 				continue;	// don't process this line
 			
 			
-			CString sMountPoint = szMountPoint;
+			RString sMountPoint = szMountPoint;
 			TrimLeft( sMountPoint );
 			TrimRight( sMountPoint );
 			
@@ -288,7 +288,7 @@ bool MemoryCardDriverThreaded_Linux::Mount( UsbStorageDevice* pDevice )
 {
 	ASSERT( !pDevice->sDevice.empty() );
 	
-        CString sCommand = "mount " + pDevice->sDevice;
+        RString sCommand = "mount " + pDevice->sDevice;
         bool bMountedSuccessfully = ExecuteCommand( sCommand );
 
 	return bMountedSuccessfully;
@@ -304,7 +304,7 @@ void MemoryCardDriverThreaded_Linux::Unmount( UsbStorageDevice* pDevice )
 	 * by new devices until those are closed.  Without this, if something
 	 * causes the device to not unmount here, we'll never unmount it; that
 	 * causes a device name leak, eventually running us out of mountpoints. */
-	CString sCommand = "sync; umount -l \"" + pDevice->sDevice + "\"";
+	RString sCommand = "sync; umount -l \"" + pDevice->sDevice + "\"";
 	ExecuteCommand( sCommand );
 }
 

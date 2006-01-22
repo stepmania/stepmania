@@ -56,12 +56,12 @@ void ScreenSMOnlineLogin::ImportOptions( int iRow, const vector<PlayerNumber> &v
 	{
 	case 0:
 		{
-			vector<CString> vsProfiles;
+			vector<RString> vsProfiles;
 			PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
 			FOREACH_PlayerNumber( pn )
 			{
-				vector<CString>::iterator iter = find(vsProfiles.begin(), vsProfiles.end(), ProfileManager::m_sDefaultLocalProfileID[pn].Get() );
+				vector<RString>::iterator iter = find(vsProfiles.begin(), vsProfiles.end(), ProfileManager::m_sDefaultLocalProfileID[pn].Get() );
 				if( iter != vsProfiles.end() )
 					m_pRows[0]->SetOneSelection((PlayerNumber) pn, iter - vsProfiles.begin());
 			}
@@ -76,7 +76,7 @@ void ScreenSMOnlineLogin::ExportOptions( int iRow, const vector<PlayerNumber> &v
 	{
 	case 0:
 		{
-			vector<CString> vsProfiles;
+			vector<RString> vsProfiles;
 			PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
 			FOREACH_EnabledPlayer( pn )
@@ -92,7 +92,7 @@ static LocalizedString ENTER_YOUR_PASSWORD	( "ScreenSMOnlineLogin", "Enter your 
 
 void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 {
-	CString sLoginQuestion;
+	RString sLoginQuestion;
 	if( GAMESTATE->IsPlayerEnabled((PlayerNumber) m_iPlayer) )
 		sLoginQuestion = YOU_ARE_LOGGING_ON_AS.GetValue() + "\n" + GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer) + "\n" + ENTER_YOUR_PASSWORD.GetValue();
 
@@ -124,7 +124,7 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 			}
 			else
 			{
-				CString Responce = NSMAN->m_SMOnlinePacket.ReadNT();
+				RString Responce = NSMAN->m_SMOnlinePacket.ReadNT();
 				ScreenTextEntry::Password( SM_PasswordDone, Responce + "\n\n"+sLoginQuestion, NULL );
 			}
 		}
@@ -166,23 +166,23 @@ void ScreenSMOnlineLogin::MenuStart( const InputEventPlus &input )
 	ScreenOptions::MenuStart( input );
 }
 
-CString ScreenSMOnlineLogin::GetSelectedProfileID()
+RString ScreenSMOnlineLogin::GetSelectedProfileID()
 {
-	vector<CString> vsProfiles;
+	vector<RString> vsProfiles;
 	PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
 	const OptionRow &row = *m_pRows[GetCurrentRow()];
 	const int Selection = row.GetOneSharedSelection();
 	if( !Selection )
-		return CString();
+		return RString();
 	return vsProfiles[ Selection-1 ];
 }
 
-void ScreenSMOnlineLogin::SendLogin(CString sPassword)
+void ScreenSMOnlineLogin::SendLogin(RString sPassword)
 {
-	CString PlayerName = GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer);
+	RString PlayerName = GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer);
 
-	CString HashedName = NSMAN->MD5Hex( sPassword );
+	RString HashedName = NSMAN->MD5Hex( sPassword );
 
 	int authMethod = 0;
 	if ( NSMAN->GetSMOnlineSalt() != 0 )

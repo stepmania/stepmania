@@ -137,9 +137,6 @@ void ShowWarning( const char *file, int line, const char *message ); // don't pu
 /* Use CStdString: */
 #include "StdString.h"
 typedef StdString::CStdString RString;
-#if !defined(CO_EXIST_WITH_MFC)
-typedef StdString::CStdString CString;
-#endif
 
 #include "RageException.h"
 

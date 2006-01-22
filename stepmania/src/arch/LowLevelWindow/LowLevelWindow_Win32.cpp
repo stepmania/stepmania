@@ -31,7 +31,7 @@ static void DestroyGraphicsWindowAndOpenGLContext()
 	GraphicsWindow::DestroyGraphicsWindow();
 }
 
-void *LowLevelWindow_Win32::GetProcAddress( CString s )
+void *LowLevelWindow_Win32::GetProcAddress( RString s )
 {
 	void *pRet = wglGetProcAddress( s );
 	if( pRet != NULL )
@@ -77,7 +77,7 @@ int ChooseWindowPixelFormat( const VideoModeParams &p, PIXELFORMATDESCRIPTOR *Pi
 
 void DumpPixelFormat( const PIXELFORMATDESCRIPTOR &pfd )
 {
-	CString str = ssprintf( "Mode: " );
+	RString str = ssprintf( "Mode: " );
 	bool bInvalidFormat = false;
 
 	if( pfd.dwFlags & PFD_GENERIC_FORMAT )
@@ -110,7 +110,7 @@ void DumpPixelFormat( const PIXELFORMATDESCRIPTOR &pfd )
 /* This function does not reset the video mode if it fails, because we might be trying
  * yet another video mode, so we'd just thrash the display.  On fatal error,
  * LowLevelWindow_Win32::~LowLevelWindow_Win32 will call GraphicsWindow::Shutdown(). */
-CString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut )
+RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut )
 {
 	//LOG->Warn( "LowLevelWindow_Win32::TryVideoMode" );
 	
@@ -138,7 +138,7 @@ CString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 
 	/* Set the display mode: switch to a fullscreen mode or revert to windowed mode. */
 	LOG->Trace("SetScreenMode ...");
-	CString sErr = GraphicsWindow::SetScreenMode( p );
+	RString sErr = GraphicsWindow::SetScreenMode( p );
 	if( !sErr.empty() )
 		return sErr;
 
@@ -237,7 +237,7 @@ CString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 			return hr_ssprintf( GetLastError(), "wglCreateContext" );
 		}
 	}
-	return CString();	// we set the video mode successfully
+	return RString();	// we set the video mode successfully
 }
 
 bool LowLevelWindow_Win32::SupportsThreadedRendering()
@@ -259,7 +259,7 @@ void LowLevelWindow_Win32::EndConcurrentRendering()
 	wglMakeCurrent( NULL, NULL );
 }
 
-bool LowLevelWindow_Win32::IsSoftwareRenderer( CString &sError )
+bool LowLevelWindow_Win32::IsSoftwareRenderer( RString &sError )
 {
 	if( strcmp((const char*)glGetString(GL_VENDOR),"Microsoft Corporation") &&
 		strcmp((const char*)glGetString(GL_RENDERER),"GDI Generic") )

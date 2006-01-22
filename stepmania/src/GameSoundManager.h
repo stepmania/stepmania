@@ -18,7 +18,7 @@ public:
 	void Update( float fDeltaTime );
 
 	void PlayMusic( 
-		const CString &file, 
+		const RString &file, 
 		const TimingData *pTiming = NULL, 
 		bool force_loop = false, 
 		float start_sec = 0, 
@@ -27,12 +27,12 @@ public:
 		bool align_beat = true );
 	void StopMusic() { PlayMusic(""); }
 	void DimMusic( float fVolume, float fDurationSeconds );
-	CString GetMusicPath() const;
+	RString GetMusicPath() const;
 	void Flush();
 
-	void PlayOnce( CString sPath );
-	void PlayOnceFromDir( CString sDir );
-	void PlayOnceFromAnnouncer( CString sFolderName );
+	void PlayOnce( RString sPath );
+	void PlayOnceFromDir( RString sDir );
+	void PlayOnceFromAnnouncer( RString sFolderName );
 
 	float GetPlayLatency() const;
 	void HandleSongTimer( bool on=true );

@@ -36,7 +36,7 @@ enum
 AutoScreenMessage( SM_DoneConnecting )
 AutoScreenMessage( SM_ServerNameEnter )
 
-Preference<CString> g_sLastServer( "LastConnectedServer",	"" );
+Preference<RString> g_sLastServer( "LastConnectedServer",	"" );
 
 REGISTER_SCREEN_CLASS( ScreenNetworkOptions );
 
@@ -98,7 +98,7 @@ void ScreenNetworkOptions::HandleScreenMessage( const ScreenMessage SM )
 	{
 		if( !ScreenTextEntry::s_bCancelledLast )
 		{
-			CString sNewName = ScreenTextEntry::s_sLastAnswer;
+			RString sNewName = ScreenTextEntry::s_sLastAnswer;
 			NSMAN->PostStartUp(sNewName);
 			NSMAN->DisplayStartupStatus();
 			UpdateConnectStatus( );

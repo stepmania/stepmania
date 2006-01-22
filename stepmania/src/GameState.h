@@ -38,7 +38,7 @@ public:
 	~GameState();
 	void Reset();
 	void ApplyCmdline(); // called by Reset
-	void ApplyGameCommand( const CString &sCommand, PlayerNumber pn=PLAYER_INVALID );
+	void ApplyGameCommand( const RString &sCommand, PlayerNumber pn=PLAYER_INVALID );
 	void BeginGame();	// called when first player joins
 	void JoinPlayer( PlayerNumber pn );
 	void PlayersFinalized();	// called after a style is chosen, which means the number of players is finalized
@@ -102,9 +102,9 @@ public:
 
 	bool ShowW1() const;
 
-	CString			m_sLoadingMessage;	// used in loading screen
-	BroadcastOnChange<CString>	m_sPreferredSongGroup;	// GROUP_ALL denotes no preferred group
-	BroadcastOnChange<CString>	m_sPreferredCourseGroup;	// GROUP_ALL denotes no preferred group
+	RString			m_sLoadingMessage;	// used in loading screen
+	BroadcastOnChange<RString>	m_sPreferredSongGroup;	// GROUP_ALL denotes no preferred group
+	BroadcastOnChange<RString>	m_sPreferredCourseGroup;	// GROUP_ALL denotes no preferred group
 	bool			m_bChangedFailTypeOnScreenSongOptions;	// true if FailType was changed in the song options screen
 	BroadcastOnChange1D<Difficulty,NUM_PLAYERS>	m_PreferredDifficulty;
 	BroadcastOnChange1D<CourseDifficulty,NUM_PLAYERS>	m_PreferredCourseDifficulty;// used in nonstop
@@ -129,7 +129,7 @@ public:
 	Stage			GetCurrentStage() const;
 	bool			IsStagePossible( Stage s ) const;
 	int				GetCourseSongIndex() const;
-	CString			GetPlayerDisplayName( PlayerNumber pn ) const;
+	RString			GetPlayerDisplayName( PlayerNumber pn ) const;
 
 
 	//
@@ -163,7 +163,7 @@ public:
 	RageTimer	m_LastBeatUpdate; // time of last m_fSongBeat, etc. update
 	BroadcastOnChange<bool> m_bGameplayLeadIn;
 
-	void GetAllUsedNoteSkins( vector<CString> &out ) const;
+	void GetAllUsedNoteSkins( vector<RString> &out ) const;
 
 	static const float MUSIC_SECONDS_INVALID;
 
@@ -207,14 +207,14 @@ public:
 
 	void GetDefaultPlayerOptions( PlayerOptions &po );
 	void GetDefaultSongOptions( SongOptions &so );
-	void ApplyModifiers( PlayerNumber pn, CString sModifiers );
+	void ApplyModifiers( PlayerNumber pn, RString sModifiers );
 	void StoreSelectedOptions();
 	void RestoreSelectedOptions();
 	void RestoreStageOptions();
 	void ResetCurrentOptions();
 
 	bool IsDisqualified( PlayerNumber pn );
-	bool PlayerIsUsingModifier( PlayerNumber pn, const CString &sModifier );
+	bool PlayerIsUsingModifier( PlayerNumber pn, const RString &sModifier );
 
 	SongOptions::FailType GetPlayerFailType( const PlayerState *pPlayerState ) const;
 
@@ -237,15 +237,15 @@ public:
 		Grade grade;
 		int iScore;
 		float fPercentDP;
-		CString Banner;
-		CString Feat;
-		CString *pStringToFill;
+		RString Banner;
+		RString Feat;
+		RString *pStringToFill;
 	};
 
 	void GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &vFeatsOut ) const;
 	bool AnyPlayerHasRankingFeats() const;
-	void StoreRankingName( PlayerNumber pn, CString name );	// Called by name entry screens
-	vector<CString*> m_vpsNamesThatWereFilled;	// filled on StoreRankingName, 
+	void StoreRankingName( PlayerNumber pn, RString name );	// Called by name entry screens
+	vector<RString*> m_vpsNamesThatWereFilled;	// filled on StoreRankingName, 
 
 
 	//
@@ -261,7 +261,7 @@ public:
 	//
 	int m_iNumTimesThroughAttract;	// negative means play regardless of m_iAttractSoundFrequency setting
 	bool IsTimeToPlayAttractSounds() const;
-	void VisitAttractScreen( const CString sScreenName );
+	void VisitAttractScreen( const RString sScreenName );
 
 	//
 	// PlayerState
@@ -286,7 +286,7 @@ public:
 	BroadcastOnChangePtr<Steps> m_pEditSourceSteps;
 	BroadcastOnChange<StepsType> m_stEditSource;
 	BroadcastOnChange<int> m_iEditCourseEntryIndex;
-	BroadcastOnChange<CString> m_sEditLocalProfileID;
+	BroadcastOnChange<RString> m_sEditLocalProfileID;
 	Profile* GetEditLocalProfile();
 
 	// Workout stuff

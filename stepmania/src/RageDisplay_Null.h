@@ -8,7 +8,7 @@ class RageDisplay_Null: public RageDisplay
 public:
 	RageDisplay_Null( VideoModeParams p );
 
-	virtual CString GetApiDescription() const { return "Null"; }
+	virtual RString GetApiDescription() const { return "Null"; }
 	virtual void GetDisplayResolutions( DisplayResolutions &out ) const;
 	const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const;
 
@@ -76,7 +76,7 @@ protected:
 	void DrawLineStripInternal( const RageSpriteVertex v[], int iNumVerts, float LineWidth ) { }
 
 	VideoModeParams m_Params;
-	CString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut ) { m_Params = p; return CString(); }
+	RString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut ) { m_Params = p; return RString(); }
 	RageSurface* CreateScreenshot();
 	RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 
 	bool SupportsSurfaceFormat( PixelFormat pixfmt ) { return true; }

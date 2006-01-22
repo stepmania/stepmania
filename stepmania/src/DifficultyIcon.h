@@ -17,8 +17,8 @@ public:
 	DifficultyIcon();
 	virtual bool EarlyAbortDraw() const { return m_bBlank || Sprite::EarlyAbortDraw(); }
 
-	bool Load( CString sFilePath );
-	virtual void LoadFromNode( const CString& sDir, const XNode* pNode );
+	bool Load( RString sFilePath );
+	virtual void LoadFromNode( const RString& sDir, const XNode* pNode );
 	virtual Actor *Copy() const;
 
 	void SetFromSteps( PlayerNumber pn, const Steps* pSteps );

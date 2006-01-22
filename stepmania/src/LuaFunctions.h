@@ -6,8 +6,8 @@
 /* Linked list of functions we make available to Lua. */
 struct LuaFunctionList
 {
-	LuaFunctionList( CString name, lua_CFunction func );
-	CString name;
+	LuaFunctionList( RString name, lua_CFunction func );
+	RString name;
 	lua_CFunction func;
 	LuaFunctionList *next;
 };

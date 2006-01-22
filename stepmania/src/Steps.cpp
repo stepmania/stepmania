@@ -73,7 +73,7 @@ void Steps::GetNoteData( NoteData& noteDataOut ) const
 	}
 }
 
-void Steps::SetSMNoteData( const CString &notes_comp_ )
+void Steps::SetSMNoteData( const RString &notes_comp_ )
 {
 	m_pNoteData->Init();
 	m_bNoteDataIsFilled = false;
@@ -83,7 +83,7 @@ void Steps::SetSMNoteData( const CString &notes_comp_ )
 }
 
 /* XXX: this function should pull data from m_sFilename, like Decompress() */
-void Steps::GetSMNoteData( CString &notes_comp_out ) const
+void Steps::GetSMNoteData( RString &notes_comp_out ) const
 {
 	if( m_sNoteDataCompressed.empty() )
 	{
@@ -233,7 +233,7 @@ void Steps::Compress() const
 	/* Always leave lights data uncompressed. */
 	if( this->m_StepsType == STEPS_TYPE_LIGHTS_CABINET && m_bNoteDataIsFilled )
 	{
-		m_sNoteDataCompressed = CString("");
+		m_sNoteDataCompressed = RString("");
 		return;
 	}
 
@@ -245,7 +245,7 @@ void Steps::Compress() const
 
 		/* Be careful; 'x = ""', m_sNoteDataCompressed.clear() and m_sNoteDataCompressed.reserve(0)
 		 * don't always free the alocated memory. */
-		m_sNoteDataCompressed = CString("");
+		m_sNoteDataCompressed = RString("");
 		return;
 	}
 
@@ -320,7 +320,7 @@ bool Steps::IsAutogen() const
 	return parent != NULL;
 }
 
-void Steps::SetDifficultyAndDescription( Difficulty dc, CString sDescription )
+void Steps::SetDifficultyAndDescription( Difficulty dc, RString sDescription )
 {
 	DeAutogen();
 	m_Difficulty = dc;
@@ -329,7 +329,7 @@ void Steps::SetDifficultyAndDescription( Difficulty dc, CString sDescription )
 		MakeValidEditDescription( m_sDescription );
 }
 
-bool Steps::MakeValidEditDescription( CString &sPreferredDescription )
+bool Steps::MakeValidEditDescription( RString &sPreferredDescription )
 {
 	if( int(sPreferredDescription.size()) > MAX_EDIT_STEPS_DESCRIPTION_LENGTH )
 	{

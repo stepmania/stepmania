@@ -50,17 +50,17 @@ void ScreenSelectGroup::Init()
 	}
 
 	// Add all group names to a map.
-	map<CString, CString> mapGroupNames;
+	map<RString, RString> mapGroupNames;
 	for( unsigned i=0; i<aAllSongs.size(); i++ )
 	{
-		const CString& sGroupName = aAllSongs[i]->m_sGroupName;
+		const RString& sGroupName = aAllSongs[i]->m_sGroupName;
 		mapGroupNames[ sGroupName ] = "";	// group name maps to nothing
 	}
 
 	// copy group names into a vector
-	vector<CString> asGroupNames;
+	vector<RString> asGroupNames;
 	asGroupNames.push_back( ALL_MUSIC_STRING );	// special group
-	for( map<CString, CString>::const_iterator iter = mapGroupNames.begin(); iter != mapGroupNames.end(); ++iter )
+	for( map<RString, RString>::const_iterator iter = mapGroupNames.begin(); iter != mapGroupNames.end(); ++iter )
 		asGroupNames.push_back( iter->first );
 
 	// Add songs to the MusicList.
@@ -152,7 +152,7 @@ void ScreenSelectGroup::AfterChange()
 	int sel = m_GroupList.GetSelection();
 	m_MusicList.SetGroupNo(sel);
 
-	CString sSelectedGroupName = m_GroupList.GetSelectionName();
+	RString sSelectedGroupName = m_GroupList.GetSelectionName();
 	if( sSelectedGroupName == ALL_MUSIC_STRING.GetValue() )
 		m_Banner.LoadAllMusic();
 	else 

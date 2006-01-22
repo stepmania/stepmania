@@ -15,7 +15,7 @@ private:
 	void ImportOptions( int iRow, const vector<PlayerNumber> &vpns );
 	void ExportOptions( int iRow, const vector<PlayerNumber> &vpns );
 
-	void HandleMessage( const CString& sMessage );
+	void HandleMessage( const RString& sMessage );
 
 	void ProcessMenuStart( const InputEventPlus &input );
 };

@@ -17,7 +17,7 @@
 REGISTER_ACTOR_CLASS( Model )
 
 static const float FRAMES_PER_SECOND = 30;
-static const CString DEFAULT_ANIMATION_NAME = "default";
+static const RString DEFAULT_ANIMATION_NAME = "default";
 
 Model::Model()
 {
@@ -53,11 +53,11 @@ void Model::Clear()
 		DISPLAY->DeleteCompiledGeometry( m_pTempGeometry );
 }
 
-void Model::Load( CString sFile )
+void Model::Load( RString sFile )
 {
 	if( sFile == "" ) return;
 
-	CString sExt = GetExtension(sFile);
+	RString sExt = GetExtension(sFile);
 	sExt.MakeLower();
 	if( sExt=="txt" )
 		LoadMilkshapeAscii( sFile );
@@ -65,12 +65,12 @@ void Model::Load( CString sFile )
 
 #define THROW RageException::Throw( "Parse error in \"%s\" at line %d: '%s'", sPath.c_str(), iLineNum, sLine.c_str() )
 
-void Model::LoadMilkshapeAscii( CString sPath )
+void Model::LoadMilkshapeAscii( RString sPath )
 {
 	LoadPieces( sPath, sPath, sPath );
 }
 
-void Model::LoadPieces( CString sMeshesPath, CString sMaterialsPath, CString sBonesPath )
+void Model::LoadPieces( RString sMeshesPath, RString sMaterialsPath, RString sBonesPath )
 {
 	Clear();
 
@@ -106,11 +106,11 @@ void Model::LoadPieces( CString sMeshesPath, CString sMaterialsPath, CString sBo
 	}
 }
 
-void Model::LoadFromNode( const CString& sDir, const XNode* pNode )
+void Model::LoadFromNode( const RString& sDir, const XNode* pNode )
 {
 	Actor::LoadFromNode( sDir, pNode );
 
-	CString s1, s2, s3;
+	RString s1, s2, s3;
 	pNode->GetAttrValue( "Meshes", s1 );
 	pNode->GetAttrValue( "Materials", s2 );
 	pNode->GetAttrValue( "Bones", s3 );
@@ -134,16 +134,16 @@ void Model::LoadFromNode( const CString& sDir, const XNode* pNode )
 }
 
 
-void Model::LoadMaterialsFromMilkshapeAscii( CString sPath )
+void Model::LoadMaterialsFromMilkshapeAscii( RString sPath )
 {
 	FixSlashesInPlace(sPath);
-	const CString sDir = Dirname( sPath );
+	const RString sDir = Dirname( sPath );
 
 	RageFile f;
 	if( !f.Open( sPath ) )
 		RageException::Throw( "Model::LoadMilkshapeAscii Could not open \"%s\": %s", sPath.c_str(), f.GetError().c_str() );
 
-	CString sLine;
+	RString sLine;
 	int iLineNum = 0;
 
     while( f.GetLine( sLine ) > 0 )
@@ -241,18 +241,18 @@ void Model::LoadMaterialsFromMilkshapeAscii( CString sPath )
 					THROW;
                 strcpy( szName, "" );
                 sscanf( sLine, "\"%[^\"]\"", szName );
-                CString sDiffuseTexture = szName;
+                RString sDiffuseTexture = szName;
 
 				if( sDiffuseTexture != "" )
 				{
-					CString sTexturePath = sDir + sDiffuseTexture;
+					RString sTexturePath = sDir + sDiffuseTexture;
 					FixSlashesInPlace( sTexturePath );
 					CollapsePath( sTexturePath );
 					if( IsAFile(sTexturePath) )
 						Material.diffuse.Load( sTexturePath );
 					else
 					{
-						CString sError = ssprintf( "'%s' references a texture '%s' that does not exist", sPath.c_str(), sTexturePath.c_str() );
+						RString sError = ssprintf( "'%s' references a texture '%s' that does not exist", sPath.c_str(), sTexturePath.c_str() );
 						RageException::Throw( sError );
 					}
 				}
@@ -262,18 +262,18 @@ void Model::LoadMaterialsFromMilkshapeAscii( CString sPath )
 					THROW;
                 strcpy( szName, "" );
                 sscanf( sLine, "\"%[^\"]\"", szName );
-				CString sAlphaTexture = szName;
+				RString sAlphaTexture = szName;
 
 				if( sAlphaTexture != "" )
 				{
-					CString sTexturePath = sDir + sAlphaTexture;
+					RString sTexturePath = sDir + sAlphaTexture;
 					FixSlashesInPlace( sTexturePath );
 					CollapsePath( sTexturePath );
 					if( IsAFile(sTexturePath) )
 						Material.alpha.Load( sTexturePath );
 					else
 					{
-						CString sError = ssprintf( "'%s' references a texture '%s' that does not exist", sPath.c_str(), sTexturePath.c_str() );
+						RString sError = ssprintf( "'%s' references a texture '%s' that does not exist", sPath.c_str(), sTexturePath.c_str() );
 						RageException::Throw( sError );
 					}
 				}
@@ -284,7 +284,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( CString sPath )
 	f.Close();
 }
 
-bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
+bool Model::LoadMilkshapeAsciiBones( RString sAniName, RString sPath )
 {
 	m_mapNameToAnimation[sAniName] = msAnimation();
 	msAnimation &Animation = m_mapNameToAnimation[sAniName];
@@ -497,13 +497,13 @@ void Model::DrawMesh( int i ) const
 		DISPLAY->PopMatrix();
 }
 
-void Model::SetDefaultAnimation( CString sAnimation, float fPlayRate )
+void Model::SetDefaultAnimation( RString sAnimation, float fPlayRate )
 {
 	m_sDefaultAnimation = sAnimation;
 	m_fDefaultAnimationRate = fPlayRate;
 }
 
-void Model::PlayAnimation( CString sAniName, float fPlayRate )
+void Model::PlayAnimation( RString sAniName, float fPlayRate )
 {
 	if( m_mapNameToAnimation.find(sAniName) == m_mapNameToAnimation.end() )
 		return;
@@ -788,7 +788,7 @@ void Model::HandleCommand( const Command &command )
 {
 	BeginHandleArgs;
 
-	const CString& sName = command.GetName();
+	const RString& sName = command.GetName();
 	if( sName=="play" )
 	{
 		PlayAnimation( sArg(1),fArg(2) );

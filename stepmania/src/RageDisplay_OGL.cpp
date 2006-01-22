@@ -143,7 +143,7 @@ static RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PixelFormat] = {
 	}
 };
 
-static map<GLenum, CString> g_Strings;
+static map<GLenum, RString> g_Strings;
 static void InitStringMap()
 {
 	static bool Initialized = false;
@@ -159,7 +159,7 @@ static void InitStringMap()
 	X(GL_STACK_OVERFLOW); X(GL_STACK_UNDERFLOW); X(GL_OUT_OF_MEMORY);
 }
 
-static CString GLToString( GLenum e )
+static RString GLToString( GLenum e )
 {
 	if( g_Strings.find(e) != g_Strings.end() )
 		return g_Strings[e];
@@ -295,21 +295,21 @@ RageDisplay_OGL::RageDisplay_OGL()
 	g_bTextureMatrixShader = 0;
 }
 
-CString GetInfoLog( GLhandleARB h )
+RString GetInfoLog( GLhandleARB h )
 {
 	GLint iLength;
 	GLExt.glGetObjectParameterivARB( h, GL_OBJECT_INFO_LOG_LENGTH_ARB, &iLength );
 	if( !iLength )
-		return CString();
+		return RString();
 
 	GLcharARB *pInfoLog = new GLcharARB[iLength];
 	GLExt.glGetInfoLogARB( h, iLength, &iLength, pInfoLog );
-	CString sRet = pInfoLog;
+	RString sRet = pInfoLog;
 	delete [] pInfoLog;
 	return sRet;
 }
 
-GLhandleARB CompileShader( GLenum ShaderType, CString sBuffer )
+GLhandleARB CompileShader( GLenum ShaderType, RString sBuffer )
 {
 	GLhandleARB VertexShader = GLExt.glCreateShaderObjectARB( GL_VERTEX_SHADER_ARB );
 	const GLcharARB *pData = sBuffer.data();
@@ -387,12 +387,12 @@ void InitScalingScript()
 	GLExt.glVertexAttrib2fARB( ATTRIB_TEXTURE_MATRIX_SCALE, 1, 1 );
 }
 
-CString RageDisplay_OGL::Init( VideoModeParams p, bool bAllowUnacceleratedRenderer )
+RString RageDisplay_OGL::Init( VideoModeParams p, bool bAllowUnacceleratedRenderer )
 {
 	g_pWind = MakeLowLevelWindow();
 
 	bool bIgnore = false;
-	CString sError = SetVideoMode( p, bIgnore );
+	RString sError = SetVideoMode( p, bIgnore );
 	if( sError != "" )
 		return sError;
 
@@ -428,7 +428,7 @@ CString RageDisplay_OGL::Init( VideoModeParams p, bool bAllowUnacceleratedRender
 
 	InitScalingScript();
 
-	return CString();
+	return RString();
 }
 
 RageDisplay_OGL::~RageDisplay_OGL()
@@ -444,7 +444,7 @@ void RageDisplay_OGL::GetDisplayResolutions( DisplayResolutions &out ) const
 
 static void CheckPalettedTextures()
 {
-	CString sError;
+	RString sError;
 	do
 	{
 		if( !GLExt.HasExtension("GL_EXT_paletted_texture") )
@@ -613,11 +613,11 @@ void RageDisplay_OGL::ResolutionChanged()
 // Return true if mode change was successful.
 // bNewDeviceOut is set true if a new device was created and textures
 // need to be reloaded.
-CString RageDisplay_OGL::TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut )
+RString RageDisplay_OGL::TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut )
 {
 	//LOG->Warn( "RageDisplay_OGL::TryVideoMode( %d, %d, %d, %d, %d, %d )", p.windowed, p.width, p.height, p.bpp, p.rate, p.vsync );
 
-	CString err;
+	RString err;
 	err = g_pWind->TryVideoMode( p, bNewDeviceOut );
 	if( err != "" )
 		return err;	// failed to set video mode
@@ -648,7 +648,7 @@ CString RageDisplay_OGL::TryVideoMode( const VideoModeParams &p, bool &bNewDevic
 	
 	ResolutionChanged();
 
-	return CString();	// successfully set mode
+	return RString();	// successfully set mode
 }
 
 int RageDisplay_OGL::GetMaxTextureSize() const
@@ -844,7 +844,7 @@ public:
 			/*
 			for( int i=0; i<4; i++ )
 			{
-				CString s;
+				RString s;
 				for( int j=0; j<4; j++ )
 					s += ssprintf( "%f ", mat.m[i][j] );
 				LOG->Trace( s );
@@ -1168,7 +1168,7 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 			/*
 			for( int i=0; i<4; i++ )
 			{
-				CString s;
+				RString s;
 				for( int j=0; j<4; j++ )
 					s += ssprintf( "%f ", mat.m[i][j] );
 				LOG->Trace( s );
@@ -1906,9 +1906,9 @@ void RageDisplay_OGL::SetLineWidth( float fWidth )
 	glLineWidth( fWidth );
 }
 
-CString RageDisplay_OGL::GetTextureDiagnostics( unsigned id ) const
+RString RageDisplay_OGL::GetTextureDiagnostics( unsigned id ) const
 {
-	return CString();
+	return RString();
 }
 
 void RageDisplay_OGL::SetAlphaTest( bool b )

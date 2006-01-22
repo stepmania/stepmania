@@ -12,7 +12,7 @@ MemoryCardDriverThreaded_Windows::~MemoryCardDriverThreaded_Windows()
 {
 }
 
-static bool TestReady( const CString &sDrive, CString &sVolumeLabelOut )
+static bool TestReady( const RString &sDrive, RString &sVolumeLabelOut )
 {
 	TCHAR szVolumeNameBuffer[MAX_PATH];
 	DWORD dwVolumeSerialNumber;
@@ -64,7 +64,7 @@ bool MemoryCardDriverThreaded_Windows::TestWrite( UsbStorageDevice* pDevice )
 	return false;
 }
 
-static bool IsFloppyDrive( const CString &sDrive )
+static bool IsFloppyDrive( const RString &sDrive )
 {
 	char szBuf[1024];
 
@@ -102,14 +102,14 @@ void MemoryCardDriverThreaded_Windows::GetUSBStorageDevices( vector<UsbStorageDe
 		if( !(m_dwLastLogicalDrives & mask) )
 			continue; // drive letter is invalid
 
-		CString sDrive = ssprintf( "%c:", 'a'+i%26 );
+		RString sDrive = ssprintf( "%c:", 'a'+i%26 );
 		if( IsFloppyDrive(sDrive) )
 			continue;
 
 		if( GetDriveType(sDrive + "\\") != DRIVE_REMOVABLE )	// is a removable drive
 			continue;
 
-		CString sVolumeLabel;
+		RString sVolumeLabel;
 		if( !TestReady(sDrive + "\\", sVolumeLabel) )
 			continue;
 

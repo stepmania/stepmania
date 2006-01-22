@@ -32,7 +32,7 @@ public:
 	ModelManager();
 	~ModelManager();
 
-	RageModelGeometry* LoadMilkshapeAscii( const CString& sFile, bool bNeedNormals );
+	RageModelGeometry* LoadMilkshapeAscii( const RString& sFile, bool bNeedNormals );
 	void UnloadModel( RageModelGeometry *m );
 //	void ReloadAll();
 
@@ -41,7 +41,7 @@ public:
 
 protected:
 
-	std::map<CString, RageModelGeometry*> m_mapFileToGeometry;
+	std::map<RString, RageModelGeometry*> m_mapFileToGeometry;
 
 	ModelManagerPrefs m_Prefs;
 };

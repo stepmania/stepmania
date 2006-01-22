@@ -205,9 +205,9 @@ RageSound_DSound::RageSound_DSound():
 	shutdown = false;
 }
 
-CString RageSound_DSound::Init()
+RString RageSound_DSound::Init()
 {
-	CString sError = ds.Init();
+	RString sError = ds.Init();
 	if( sError != "" )
 		return sError;
 
@@ -220,7 +220,7 @@ CString RageSound_DSound::Init()
 	for( int i = 0; i < 32; ++i )
 	{
 		DSoundBuf *newbuf = new DSoundBuf;
-		CString sError = newbuf->Init( ds, DSoundBuf::HW_HARDWARE,
+		RString sError = newbuf->Init( ds, DSoundBuf::HW_HARDWARE,
 			channels, DSoundBuf::DYNAMIC_SAMPLERATE, 16, buffersize );
 		if( sError != "" )
 		{
@@ -251,7 +251,7 @@ CString RageSound_DSound::Init()
 	MixingThread.SetName("Mixer thread");
 	MixingThread.Create( MixerThread_start, this );
 
-	return CString();
+	return RString();
 }
 
 RageSound_DSound::~RageSound_DSound()

@@ -22,13 +22,13 @@ public:
 		OPEN_UNKNOWN_FILE_FORMAT=1,
 		OPEN_FATAL_ERROR=2,
 	};
-	virtual OpenResult Open(CString filename) = 0;
+	virtual OpenResult Open(RString filename) = 0;
 	virtual bool IsStreamingFromDisk() const { return true; }
 
-	static SoundReader *OpenFile( CString filename, CString &error );
+	static SoundReader *OpenFile( RString filename, RString &error );
 
 private:
-	static SoundReader_FileReader *TryOpenFile( CString filename, CString &error, CString format, bool &bKeepTrying );
+	static SoundReader_FileReader *TryOpenFile( RString filename, RString &error, RString format, bool &bKeepTrying );
 };
 
 #endif

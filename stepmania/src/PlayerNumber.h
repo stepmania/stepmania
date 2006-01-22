@@ -17,8 +17,8 @@ enum PlayerNumber
 	PLAYER_INVALID
 };
 const int NUM_PLAYERS = NUM_PlayerNumber;
-const CString& PlayerNumberToString( PlayerNumber pn );
-const CString& PlayerNumberToLocalizedString( PlayerNumber pn );
+const RString& PlayerNumberToString( PlayerNumber pn );
+const RString& PlayerNumberToLocalizedString( PlayerNumber pn );
 
 #define FOREACH_PlayerNumber( pn ) FOREACH_ENUM( PlayerNumber, NUM_PLAYERS, pn )
 #define FOREACH_HumanPlayer( pn ) for( PlayerNumber pn=GetNextHumanPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID; pn=GetNextHumanPlayer(pn) )
@@ -47,8 +47,8 @@ enum MultiPlayer
 	NUM_MultiPlayer,	// leave this at the end
 	MultiPlayer_INVALID
 };
-const CString& MultiPlayerToString( MultiPlayer mp );
-const CString& MultiPlayerToLocalizedString( MultiPlayer mp );
+const RString& MultiPlayerToString( MultiPlayer mp );
+const RString& MultiPlayerToLocalizedString( MultiPlayer mp );
 
 #define FOREACH_MultiPlayer( pn ) FOREACH_ENUM( MultiPlayer, NUM_MultiPlayer, pn )
 

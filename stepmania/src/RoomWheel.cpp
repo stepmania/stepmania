@@ -8,7 +8,7 @@
 
 AutoScreenMessage( SM_BackFromRoomName )
 
-void RoomWheel::Load( CString sType ) 
+void RoomWheel::Load( RString sType ) 
 {
 	SetName( sType );
 	m_offset = 0;
@@ -35,20 +35,20 @@ void RoomWheel::Load( CString sType )
 	RebuildWheelItems();
 }
 
-RoomWheelData::RoomWheelData( WheelItemType wit, CString sTitle, CString sDesc, RageColor color ):
+RoomWheelData::RoomWheelData( WheelItemType wit, RString sTitle, RString sDesc, RageColor color ):
 	WheelItemBaseData( wit, sTitle, color )
 {
 	m_sDesc = sDesc;
 }
 
-RoomWheelItem::RoomWheelItem( CString sType ):
+RoomWheelItem::RoomWheelItem( RString sType ):
 	WheelItemBase(sType)
 {
 	SetName( sType );
 	Load( sType );
 }
 
-void RoomWheelItem::Load(CString sType)
+void RoomWheelItem::Load(RString sType)
 {
 	DESC_X				.Load(sType,"DescX");
 	DESC_Y				.Load(sType,"DescY");
@@ -163,7 +163,7 @@ void RoomInfoDisplay::RetractInfoBox()
 	m_state = LOCKED;
 }
 
-void RoomInfoDisplay::Load( CString sType )
+void RoomInfoDisplay::Load( RString sType )
 {
 	SetName(sType);
 	DEPLOY_DELAY.Load(sType, "DeployDelay");
@@ -253,7 +253,7 @@ void RoomInfoDisplay::Update( float fDeltaTime )
 	ActorFrame::Update(fDeltaTime);
 }
 
-void RoomInfoDisplay::RequestRoomInfo(const CString& name)
+void RoomInfoDisplay::RequestRoomInfo(const RString& name)
 {
 	NSMAN->m_SMOnlinePacket.ClearPacket();
 	NSMAN->m_SMOnlinePacket.Write1((uint8_t)3); //Request Room Info

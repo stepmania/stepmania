@@ -17,7 +17,7 @@ public:
 	virtual void Update( float fDeltaTime );
 
 protected:
-	void LoadFromAniDir( CString sAniDir );
+	void LoadFromAniDir( RString sAniDir );
 	struct LoadedBGA
 	{
 		Actor			*m_bga;

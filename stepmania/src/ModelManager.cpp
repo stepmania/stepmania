@@ -15,7 +15,7 @@ ModelManager::ModelManager()
 
 ModelManager::~ModelManager()
 {
-	for( std::map<CString, RageModelGeometry*>::iterator i = m_mapFileToGeometry.begin();
+	for( std::map<RString, RageModelGeometry*>::iterator i = m_mapFileToGeometry.begin();
 		i != m_mapFileToGeometry.end(); 
 		++i )
 	{
@@ -26,9 +26,9 @@ ModelManager::~ModelManager()
 	}
 }
 
-RageModelGeometry* ModelManager::LoadMilkshapeAscii( const CString& sFile, bool bNeedNormals )
+RageModelGeometry* ModelManager::LoadMilkshapeAscii( const RString& sFile, bool bNeedNormals )
 {
-	std::map<CString, RageModelGeometry*>::iterator p = m_mapFileToGeometry.find( sFile );
+	std::map<RString, RageModelGeometry*>::iterator p = m_mapFileToGeometry.find( sFile );
 	if( p != m_mapFileToGeometry.end() )
 	{
 		/* Found the geometry.  Just increase the refcount and return it. */
@@ -52,7 +52,7 @@ void ModelManager::UnloadModel( RageModelGeometry *m )
 	if( m->m_iRefCount )
 		return; /* Can't unload models that are still referenced. */
 
-	for( std::map<CString, RageModelGeometry*>::iterator i = m_mapFileToGeometry.begin();
+	for( std::map<RString, RageModelGeometry*>::iterator i = m_mapFileToGeometry.begin();
 		i != m_mapFileToGeometry.end(); 
 		++i )
 	{

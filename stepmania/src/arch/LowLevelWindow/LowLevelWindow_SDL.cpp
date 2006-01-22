@@ -29,12 +29,12 @@ LowLevelWindow_SDL::~LowLevelWindow_SDL()
 	mySDL_EventState( SDL_QUIT, SDL_IGNORE );
 }
 
-void *LowLevelWindow_SDL::GetProcAddress(CString s)
+void *LowLevelWindow_SDL::GetProcAddress(RString s)
 {
 	return SDL_GL_GetProcAddress(s);
 }
 
-CString LowLevelWindow_SDL::TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut )
+RString LowLevelWindow_SDL::TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut )
 {
 	bool wasWindowed = CurrentParams.windowed;
 	
@@ -70,7 +70,7 @@ CString LowLevelWindow_SDL::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 
 	if( SDL_InitSubSystem(SDL_INIT_VIDEO) == -1 )
 	{
-		const CString err = mySDL_GetError();
+		const RString err = mySDL_GetError();
 
 		/* Check for a confusing SDL error message. */
 		if( !err.CompareNoCase( "X11 driver not configured with OpenGL" ) )

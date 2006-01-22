@@ -13,7 +13,7 @@
 #include "SpecialFiles.h"
 #include "LocalizedString.h"
 
-static Preference<CString> g_sLastSeenInputDevices( "LastSeenInputDevices", "" );
+static Preference<RString> g_sLastSeenInputDevices( "LastSeenInputDevices", "" );
 static Preference<bool> g_bAutoMapOnJoyChange( "AutoMapOnJoyChange", true );
 
 namespace
@@ -408,7 +408,7 @@ void InputMapper::ApplyMapping( const Mapping *maps, GameController gc, InputDev
 void InputMapper::AutoMapJoysticksForCurrentGame()
 {
 	vector<InputDevice> vDevices;
-	vector<CString> vDescriptions;
+	vector<RString> vDescriptions;
 	INPUTMAN->GetDevicesAndDescriptions(vDevices,vDescriptions);
 
 	int iNumJoysticksMapped = 0;
@@ -418,7 +418,7 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 	for( unsigned i=0; i<vDevices.size(); i++ )
 	{
 		InputDevice device = vDevices[i];
-		CString sDescription = vDescriptions[i];
+		RString sDescription = vDescriptions[i];
 		for( unsigned j=0; j<ARRAYSIZE(g_AutoJoyMappings); j++ )
 		{
 			const AutoJoyMapping& mapping = g_AutoJoyMappings[j];
@@ -426,7 +426,7 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 			if( pGame != GAMEMAN->StringToGameType(mapping.szGame) )
 				continue;	// games don't match
 
-			CString sDriverRegex = mapping.szDriverRegex;
+			RString sDriverRegex = mapping.szDriverRegex;
 			Regex regex( sDriverRegex );
 			if( !regex.Compare(sDescription) )
 				continue;	// driver names don't match
@@ -448,7 +448,7 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 	}
 }
 
-static const CString DEVICE_INPUT_SEPARATOR = ":";	// this isn't used in any key names
+static const RString DEVICE_INPUT_SEPARATOR = ":";	// this isn't used in any key names
 
 void InputMapper::ReadMappingsFromDisk()
 {
@@ -469,13 +469,13 @@ void InputMapper::ReadMappingsFromDisk()
 	{
 		FOREACH_CONST_Attr( Key, i )
 		{
-			const CString &name = i->first;
-			const CString &value = i->second;
+			const RString &name = i->first;
+			const RString &value = i->second;
 
 			GameInput GameI;
 			GameI.fromString( pGame, name );
 
-			vector<CString> sDeviceInputStrings;
+			vector<RString> sDeviceInputStrings;
 			split( value, DEVICE_INPUT_SEPARATOR, sDeviceInputStrings, false );
 
 			for( unsigned i=0; i<sDeviceInputStrings.size() && i<unsigned(NUM_GAME_TO_DEVICE_SLOTS); i++ )
@@ -507,16 +507,16 @@ void InputMapper::SaveMappingsToDisk()
 		for( int j=0; j<pGame->m_iButtonsPerController; j++ )
 		{
 			GameInput GameI( i, (GameButton)j );
-			CString sNameString = GameI.toString( pGame );
+			RString sNameString = GameI.toString( pGame );
 			
-			vector<CString> asValues;
+			vector<RString> asValues;
 			for( int slot = 0; slot < NUM_GAME_TO_DEVICE_SLOTS; ++slot )
 				asValues.push_back( m_GItoDI[i][j][slot].ToString() );
 		
 			while( asValues.size() && asValues.back() == "" )
 				asValues.erase( asValues.begin()+asValues.size()-1 );
 			
-			CString sValueString = join( DEVICE_INPUT_SEPARATOR, asValues );
+			RString sValueString = join( DEVICE_INPUT_SEPARATOR, asValues );
 
 			ini.SetValue( pGame->m_szName, sNameString, sValueString );
 		}
@@ -528,26 +528,26 @@ void InputMapper::SaveMappingsToDisk()
 static LocalizedString CONNECTED				( "InputMapper", "Connected" );
 static LocalizedString DISCONNECTED				( "InputMapper", "Disconnected" );
 static LocalizedString REMAPPING_ALL_JOYSTICKS	( "InputMapper", "Remapping all joysticks." );
-bool InputMapper::CheckForChangedInputDevicesAndRemap( CString &sMessage )
+bool InputMapper::CheckForChangedInputDevicesAndRemap( RString &sMessage )
 {
 	//
 	// update last seen joysticks
 	//
 	vector<InputDevice> vDevices;
-	vector<CString> vsDescriptions;
+	vector<RString> vsDescriptions;
 	INPUTMAN->GetDevicesAndDescriptions( vDevices, vsDescriptions );
-	CString sInputDevices = join( ",", vsDescriptions );
+	RString sInputDevices = join( ",", vsDescriptions );
 
 	if( g_sLastSeenInputDevices.Get() == sInputDevices )
 		return false;
 
-	vector<CString> vsLastSeen;
+	vector<RString> vsLastSeen;
 	split( g_sLastSeenInputDevices, ",", vsLastSeen );
 
-	vector<CString> vsConnects, vsDisconnects;
+	vector<RString> vsConnects, vsDisconnects;
 	GetConnectsDisconnects( vsLastSeen, vsDescriptions, vsDisconnects, vsConnects );
 
-	sMessage = CString();
+	sMessage = RString();
 	if( !vsConnects.empty() )
 		sMessage += CONNECTED.GetValue()+": " + join( "\n", vsConnects ) + "\n";
 	if( !vsDisconnects.empty() )

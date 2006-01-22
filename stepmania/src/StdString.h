@@ -7,7 +7,7 @@
 //		This header file declares the CStdStr template.  This template derives
 //		the Standard C++ Library basic_string<> template and add to it the
 //		the following conveniences:
-//			- The full MFC CString set of functions (including implicit cast)
+//			- The full MFC RString set of functions (including implicit cast)
 //			- writing to/reading from COM IStream interfaces
 //			- Functional objects for use in STL algorithms
 //
@@ -29,7 +29,7 @@
 //		this class.  OK, this is a long list but in my own defense, this code
 //		has undergone two major rewrites.  Many of the improvements became
 //		necessary after I rewrote the code as a template.  Others helped me
-//		improve the CString facade.
+//		improve the RString facade.
 //
 //		Anyway, these people are (in chronological order):
 //
@@ -304,11 +304,11 @@ inline void	ssadd(std::string& sDst, PCSTR pA)
 //		template<typename CT> class CStdStr : public std::basic_string<CT>
 //
 // REMARKS:
-//		This template derives from basic_string<CT> and adds some MFC CString-
+//		This template derives from basic_string<CT> and adds some MFC RString-
 //		like functionality
 //
 //		Basically, this is my attempt to make Standard C++ library strings as
-//		easy to use as the MFC CString class.
+//		easy to use as the MFC RString class.
 //
 //		Note that although this is a template, it makes the assumption that the
 //		template argument (CT, the character type) is either char or wchar_t.  
@@ -652,7 +652,7 @@ public:
 	//           
 	// DESCRIPTION:
 	//		This function does sprintf/wsprintf style formatting on CStdStringA
-	//		objects.  It looks a lot like MFC's CString::Format.  Some people
+	//		objects.  It looks a lot like MFC's RString::Format.  Some people
 	//		might even call this identical.  Fortunately, these people are now
 	//		dead.
 	//
@@ -777,10 +777,10 @@ public:
 	
 
 	// -------------------------------------------------------------------------
-	// CString Facade Functions:
+	// RString Facade Functions:
 	//
 	// The following methods are intended to allow you to use this class as a
-	// drop-in replacement for CString.
+	// drop-in replacement for RString.
 	// -------------------------------------------------------------------------
 	int CompareNoCase(PCMYSTR szThat)	const
 	{

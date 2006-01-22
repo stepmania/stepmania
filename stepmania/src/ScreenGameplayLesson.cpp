@@ -29,11 +29,11 @@ void ScreenGameplayLesson::Init()
 
 	// Load pages
 	Song *pSong = GAMESTATE->m_pCurSong;
-	CString sDir = pSong->GetSongDir();
-	vector<CString> vs;
+	RString sDir = pSong->GetSongDir();
+	vector<RString> vs;
 	GetDirListing( sDir+"Page*", vs, true, true );
 	m_vPages.resize( vs.size() );
-	FOREACH( CString, vs, s )
+	FOREACH( RString, vs, s )
 	{
 		int i = s - vs.begin();
 		AutoActor &aa = m_vPages[i];

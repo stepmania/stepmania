@@ -10,7 +10,7 @@
 FontManager*	FONT	= NULL;	// global and accessable from anywhere in our program
 
 // map from file name to a texture holder
-typedef pair<CString,CString> FontName;
+typedef pair<RString,RString> FontName;
 static map<FontName, Font*> g_mapPathToFont;
 
 FontManager::FontManager()
@@ -38,7 +38,7 @@ void FontManager::ReloadFonts()
 	}
 }
 
-Font* FontManager::LoadFont( const CString &sFontOrTextureFilePath, CString sChars )
+Font* FontManager::LoadFont( const RString &sFontOrTextureFilePath, RString sChars )
 {
 	// Convert the path to lowercase so that we don't load duplicates.
 	// Really, this does not solve the duplicate problem.  We could have two copies

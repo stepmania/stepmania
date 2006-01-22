@@ -82,7 +82,7 @@ static void GetAllCoursesToShow( vector<Course*> &vpOut, CourseType ct, bool bSh
 }
 
 
-static CString STEPS_TYPE_COLOR_NAME( size_t i ) { return ssprintf("StepsTypeColor%d",int(i+1)); }
+static RString STEPS_TYPE_COLOR_NAME( size_t i ) { return ssprintf("StepsTypeColor%d",int(i+1)); }
 
 REGISTER_SCREEN_CLASS( ScreenRanking );
 REGISTER_SCREEN_CLASS( ScreenRankingScroller );
@@ -327,7 +327,7 @@ void ScoreScroller::LoadCourses( CourseType ct, bool bOnlyRecentScores, int iNum
 }
 
 void ScoreScroller::Load(
-	CString sClassName,
+	RString sClassName,
 	const vector<Difficulty> &DifficultiesToShow,
 	float fItemHeight )
 {
@@ -441,7 +441,7 @@ void ScoreScroller::SetScoreFromHighScoreList( BitmapText *pTextStepsScore, cons
 	if( !hsl.vHighScores.empty() )
 	{
 		hs = hsl.GetTopScore();
-		const CString *psName = hsl.GetTopScore().GetNameMutable();
+		const RString *psName = hsl.GetTopScore().GetNameMutable();
 		bRecentHighScore = find( GAMESTATE->m_vpsNamesThatWereFilled.begin(), GAMESTATE->m_vpsNamesThatWereFilled.end(), psName ) != GAMESTATE->m_vpsNamesThatWereFilled.end();
 	}
 	else
@@ -449,7 +449,7 @@ void ScoreScroller::SetScoreFromHighScoreList( BitmapText *pTextStepsScore, cons
 		hs.SetName( NO_SCORE_NAME );
 	}
 
-	CString s = hs.GetDisplayName() + "\n" + PercentageDisplay::FormatPercentScore( hs.GetPercentDP() );
+	RString s = hs.GetDisplayName() + "\n" + PercentageDisplay::FormatPercentScore( hs.GetPercentDP() );
 	if( SHOW_SURVIVAL_TIME )
 		s += "   " + SecondsToMSSMsMs(hs.GetSurvivalSeconds());
 	pTextStepsScore->SetText( s );
@@ -527,7 +527,7 @@ void ScreenRankingLines::Init()
 		m_textCourseTitle.SetShadowLength( 0 );
 		this->AddChild( &m_textCourseTitle );
 
-		vector<CString> asCoursePaths;
+		vector<RString> asCoursePaths;
 		split( COURSES_TO_SHOW, ",", asCoursePaths, true );
 		for( unsigned i=0; i<STEPS_TYPES_TO_SHOW.GetValue().size(); i++ )
 		{
@@ -634,7 +634,7 @@ float ScreenRankingLines::SetPage( const PageToShow &pts )
 				if( l < (int)hsl.vHighScores.size() )
 				{
 					hs = hsl.vHighScores[l];
-					CString *psName = hsl.vHighScores[l].GetNameMutable();
+					RString *psName = hsl.vHighScores[l].GetNameMutable();
 					bRecentHighScore = find( GAMESTATE->m_vpsNamesThatWereFilled.begin(), GAMESTATE->m_vpsNamesThatWereFilled.end(), psName ) != GAMESTATE->m_vpsNamesThatWereFilled.end();
 				}
 				else
@@ -674,7 +674,7 @@ float ScreenRankingLines::SetPage( const PageToShow &pts )
 				if( l < (int)hsl.vHighScores.size() )
 				{
 					hs = hsl.vHighScores[l];
-					const CString *psName = hsl.vHighScores[l].GetNameMutable();
+					const RString *psName = hsl.vHighScores[l].GetNameMutable();
 					bRecentHighScore = find( GAMESTATE->m_vpsNamesThatWereFilled.begin(), GAMESTATE->m_vpsNamesThatWereFilled.end(), psName ) != GAMESTATE->m_vpsNamesThatWereFilled.end();
 				}
 				else

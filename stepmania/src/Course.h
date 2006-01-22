@@ -30,8 +30,8 @@ enum CourseType
 	NUM_CourseType
 };
 #define FOREACH_CourseType( i ) FOREACH_ENUM( CourseType, NUM_CourseType, i )
-const CString& CourseTypeToString( CourseType i );
-const CString& CourseTypeToLocalizedString( CourseType i );
+const RString& CourseTypeToString( CourseType i );
+const RString& CourseTypeToLocalizedString( CourseType i );
 
 inline PlayMode CourseTypeToPlayMode( CourseType ct ) { return (PlayMode)(PLAY_MODE_NONSTOP+ct); }
 inline CourseType PlayModeToCourseType( PlayMode pm ) { return (CourseType)(pm-PLAY_MODE_NONSTOP); }
@@ -47,8 +47,8 @@ enum SongSort
 	NUM_SongSort,
 };
 #define FOREACH_SongSort( i ) FOREACH_ENUM( SongSort, NUM_SongSort, i )
-const CString& SongSortToString( SongSort ss );
-const CString& SongSortToLocalizedString( SongSort ss );
+const RString& SongSortToString( SongSort ss );
+const RString& SongSortToLocalizedString( SongSort ss );
 
 class CourseEntry
 {
@@ -58,7 +58,7 @@ public:
 	// filter criteria, applied from top to bottom
 	// TODO: change this to be a SongID
 	Song* pSong;			// don't filter if NULL
-	CString sSongGroup;		// don't filter if empty
+	RString sSongGroup;		// don't filter if empty
 	Difficulty baseDifficulty;	// don't filter if DIFFICULTY_INVALID
 	bool bNoDifficult;			// if true, CourseDifficulty doesn't affect this entry
 	int iLowMeter;			// don't filter if -1
@@ -67,7 +67,7 @@ public:
 	SongSort songSort;	// sort by this after filtering
 	int iChooseIndex;	// 
 
-	CString sModifiers;		// set player and song options using these
+	RString sModifiers;		// set player and song options using these
 	AttackArray attacks;	// timed sModifiers
 	float fGainSeconds;		// time gained back at the beginning of the song.  LifeMeterTime only.
 
@@ -96,7 +96,7 @@ public:
 			pSong == NULL;
 	}
 
-	CString GetTextDescription() const;
+	RString GetTextDescription() const;
 	int GetNumModChanges() const;
 
 	// Lua
@@ -111,16 +111,16 @@ public:
 	Course();
 
 	bool		m_bIsAutogen;		// was this created by AutoGen?
-	CString		m_sPath;
+	RString		m_sPath;
 
-	CString		m_sMainTitle, m_sMainTitleTranslit;
-	CString		m_sSubTitle, m_sSubTitleTranslit;
+	RString		m_sMainTitle, m_sMainTitleTranslit;
+	RString		m_sSubTitle, m_sSubTitleTranslit;
 
 	bool HasBanner() const;
 
-	CString		m_sBannerPath;
-	CString		m_sCDTitlePath;
-	CString		m_sGroupName;
+	RString		m_sBannerPath;
+	RString		m_sCDTitlePath;
+	RString		m_sGroupName;
 
 	bool		m_bRepeat;	// repeat after last song?  "Endless"
 	bool		m_bShuffle;	// play the songs in a random order
@@ -132,16 +132,16 @@ public:
 
 	/* If PREFSMAN->m_bShowNative is off, these are the same as GetTranslit* below.
 	 * Otherwise, they return the main titles. */
-	CString GetDisplayMainTitle() const;
-	CString GetDisplaySubTitle() const;
+	RString GetDisplayMainTitle() const;
+	RString GetDisplaySubTitle() const;
 
 	/* Returns the transliterated titles, if any; otherwise returns the main titles. */
-	CString GetTranslitMainTitle() const { return m_sMainTitleTranslit.size()? m_sMainTitleTranslit: m_sMainTitle; }
-	CString GetTranslitSubTitle() const { return m_sSubTitleTranslit.size()? m_sSubTitleTranslit: m_sSubTitle; }
+	RString GetTranslitMainTitle() const { return m_sMainTitleTranslit.size()? m_sMainTitleTranslit: m_sMainTitle; }
+	RString GetTranslitSubTitle() const { return m_sSubTitleTranslit.size()? m_sSubTitleTranslit: m_sSubTitle; }
 
 	/* "title subtitle" */
-	CString GetDisplayFullTitle() const;
-	CString GetTranslitFullTitle() const;
+	RString GetDisplayFullTitle() const;
+	RString GetTranslitFullTitle() const;
 
 	// Dereferences course_entries and returns only the playable Songs and Steps
 	Trail* GetTrail( StepsType st, CourseDifficulty cd=DIFFICULTY_MEDIUM ) const;
@@ -186,7 +186,7 @@ public:
 	void Invalidate( Song *pStaleSong );
 
 	void GetAllCachedTrails( vector<Trail *> &out );
-	CString GetCacheFilePath() const;
+	RString GetCacheFilePath() const;
 
 	const CourseEntry *FindFixedSong( const Song *pSong ) const;
 

@@ -11,7 +11,7 @@ class RageFileBasic;
 class RageSoundReader_Vorbisfile: public SoundReader_FileReader
 {
 public:
-	OpenResult Open(CString filename);
+	OpenResult Open(RString filename);
 	OpenResult Open( RageFileBasic *f );
 
 	int GetLength() const;
@@ -30,7 +30,7 @@ private:
 	bool eof;
 	int SetPosition( int ms, bool accurate );
 	bool FillBuf();
-	CString filename;
+	RString filename;
 	int read_offset;
 	unsigned channels;
 };

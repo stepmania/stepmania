@@ -33,10 +33,10 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void ProcessMessages( float fDeltaTime );
 	virtual void DrawPrimitives();
-	virtual void HandleMessage( const CString& sMessage );
+	virtual void HandleMessage( const RString& sMessage );
 
 	void Init( 
-		const CString &sType,
+		const RString &sType,
 		PlayerState* pPlayerState, 
 		PlayerStageStats* pPlayerStageStats,
 		LifeMeter* pLM, 
@@ -119,7 +119,7 @@ protected:
 
 	vector<RageSound> m_vKeysounds;
 
-	CString m_sMessageToSendOnStep;
+	RString m_sMessageToSendOnStep;
 
 	ThemeMetric<float>		GRAY_ARROWS_Y_STANDARD;
 	ThemeMetric<float>		GRAY_ARROWS_Y_REVERSE;

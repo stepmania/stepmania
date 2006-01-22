@@ -16,7 +16,7 @@
 #include "Steps.h"
 
 
-static void LifePercentChangeInit( size_t /*ScoreEvent*/ i, CString &sNameOut, float &defaultValueOut )
+static void LifePercentChangeInit( size_t /*ScoreEvent*/ i, RString &sNameOut, float &defaultValueOut )
 {
 	sNameOut = "LifePercentChange" + ScoreEventToString( (ScoreEvent)i );
 	switch( i )
@@ -61,7 +61,7 @@ LifeMeterBar::LifeMeterBar()
 	default:	ASSERT(0);
 	}
 
-	const CString sType = "LifeMeterBar";
+	const RString sType = "LifeMeterBar";
 
 	m_fPassingAlpha = 0;
 	m_fHotAlpha = 0;
@@ -93,7 +93,7 @@ LifeMeterBar::LifeMeterBar()
 
 	m_pStream = new StreamDisplay;
 	bool bExtra = GAMESTATE->IsExtraStage()||GAMESTATE->IsExtraStage2();
-	CString sExtra = bExtra ? "extra " : "";
+	RString sExtra = bExtra ? "extra " : "";
 	m_pStream->Load(
 		METER_WIDTH,
 		METER_HEIGHT,

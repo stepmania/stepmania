@@ -225,7 +225,7 @@ void ScreenNameEntry::Init()
 		m_textCategory[p].SetX( fPlayerX );
 		m_textCategory[p].SetY( CATEGORY_Y );
 		m_textCategory[p].SetZoom( CATEGORY_ZOOM );
-		CString joined;
+		RString joined;
 		for( unsigned j = 0; j < aFeats[p].size(); ++j )
 		{
 			if( j )

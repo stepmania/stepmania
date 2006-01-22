@@ -708,7 +708,7 @@ RString GetFileNameWithoutExtension( const RString &sPath )
 	return sFName;
 }
 
-void MakeValidFilename( CString &sName )
+void MakeValidFilename( RString &sName )
 {
 	wstring wsName = RStringToWstring( sName );
 	wstring wsInvalid = L"/\\:*?\"<>|";

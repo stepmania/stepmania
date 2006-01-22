@@ -28,7 +28,7 @@ public:
 	MovieDecoder_Theora();
 	~MovieDecoder_Theora();
 
-	CString Open( CString sFile );
+	RString Open( RString sFile );
 	void Close();
 
 	int GetFrame( RageSurface *pOut, float fTargetTime );
@@ -43,8 +43,8 @@ public:
 
 private:
 	void Init();
-	CString ProcessHeaders();
-	int ReadPage( ogg_page *pOggPage, CString &sError, bool bInitializing );
+	RString ProcessHeaders();
+	int ReadPage( ogg_page *pOggPage, RString &sError, bool bInitializing );
 	void ConvertToSurface( RageSurface *pSurface ) const;
 
 	RageFile m_File;
@@ -83,7 +83,7 @@ void MovieDecoder_Theora::Init()
 	ogg_sync_init( &m_OggSync );
 }
 
-int MovieDecoder_Theora::ReadPage( ogg_page *pOggPage, CString &sError, bool bInitializing )
+int MovieDecoder_Theora::ReadPage( ogg_page *pOggPage, RString &sError, bool bInitializing )
 {
 	while(1)
 	{
@@ -119,13 +119,13 @@ int MovieDecoder_Theora::ReadPage( ogg_page *pOggPage, CString &sError, bool bIn
 	}
 }
 
-CString MovieDecoder_Theora::ProcessHeaders()
+RString MovieDecoder_Theora::ProcessHeaders()
 {
 	int iTheoraPacketsProcessed = 0;
 	while(1)
 	{
 		ogg_page OggPage;
-		CString sError;
+		RString sError;
 		int ret = ReadPage( &OggPage, sError, true );
 		if( ret == 0 )
 			return ssprintf( "error opening %s: EOF while searching for codec headers", m_File.GetPath().c_str() );
@@ -172,7 +172,7 @@ CString MovieDecoder_Theora::ProcessHeaders()
 				 * headers.  We must have at least three header packets. */
 				if( iTheoraPacketsProcessed < 3 )
 					return ssprintf( "error opening %s: error parsing Theora stream headers", m_File.GetPath().c_str() );
-				return CString();
+				return RString();
 			}
 
 			ret = theora_decode_header( &m_TheoraInfo, &m_TheoraComment, &op);
@@ -185,20 +185,20 @@ CString MovieDecoder_Theora::ProcessHeaders()
 	}
 }
 
-CString MovieDecoder_Theora::Open( CString sFile )
+RString MovieDecoder_Theora::Open( RString sFile )
 {
 	if( !m_File.Open(sFile) )
 		return ssprintf( "error opening %s: %s", sFile.c_str(), m_File.GetError().c_str() );
 
 	Init();
 
-	CString sError = ProcessHeaders();
+	RString sError = ProcessHeaders();
 	if( !sError.empty() )
 		return sError;
 
 	theora_decode_init( &m_TheoraState, &m_TheoraInfo );
 
-	CString sOutput = ssprintf( "MovieDecoder_Theora: Opened \"%s\".  Serial: 0x%08lx, FPS: %.02f",
+	RString sOutput = ssprintf( "MovieDecoder_Theora: Opened \"%s\".  Serial: 0x%08lx, FPS: %.02f",
 		m_File.GetPath().c_str(), m_OggStream.serialno, 1/GetFrameDuration() );
 
 #if 1
@@ -224,7 +224,7 @@ CString MovieDecoder_Theora::Open( CString sFile )
 #endif
 	LOG->Trace( "%s", sOutput.c_str() );
 
-	return CString();
+	return RString();
 }
 
 int MovieDecoder_Theora::GetFrame( RageSurface *pOut, float fTargetTime )
@@ -251,7 +251,7 @@ int MovieDecoder_Theora::GetFrame( RageSurface *pOut, float fTargetTime )
 
 		/* Read more data. */
 		ogg_page OggPage;
-		CString sError;
+		RString sError;
 		int ret = ReadPage( &OggPage, sError, false );
 		if( ret == 0 )
 			return 0;
@@ -343,7 +343,7 @@ public:
 	MovieDecoder_Theora();
 	~MovieDecoder_Theora();
 
-	CString Open( CString sFile );
+	RString Open( RString sFile );
 	void Close();
 
 	int GetFrame( RageSurface *pOut, float fTargetTime );
@@ -358,8 +358,8 @@ public:
 
 private:
 	void Init();
-	CString ProcessHeaders( theora_setup_info **pTheoraSetupInfo );
-	int ReadPage( ogg_page *pOggPage, CString &sError, bool bInitializing );
+	RString ProcessHeaders( theora_setup_info **pTheoraSetupInfo );
+	int ReadPage( ogg_page *pOggPage, RString &sError, bool bInitializing );
 	static void DecodeStripeStub( void *pCtx, theora_ycbcr_buffer yuv, int yfrag0, int yfrag_end );
 	void DecodeStripe( theora_ycbcr_buffer yuv, int yfrag0, int yfrag_end );
 
@@ -402,7 +402,7 @@ void MovieDecoder_Theora::Init()
 	ogg_sync_init( &m_OggSync );
 }
 
-int MovieDecoder_Theora::ReadPage( ogg_page *pOggPage, CString &sError, bool bInitializing )
+int MovieDecoder_Theora::ReadPage( ogg_page *pOggPage, RString &sError, bool bInitializing )
 {
 	while(1)
 	{
@@ -438,13 +438,13 @@ int MovieDecoder_Theora::ReadPage( ogg_page *pOggPage, CString &sError, bool bIn
 	}
 }
 
-CString MovieDecoder_Theora::ProcessHeaders( theora_setup_info **pTheoraSetupInfo )
+RString MovieDecoder_Theora::ProcessHeaders( theora_setup_info **pTheoraSetupInfo )
 {
 	int iTheoraPacketsProcessed = 0;
 	while(1)
 	{
 		ogg_page OggPage;
-		CString sError;
+		RString sError;
 		int ret = ReadPage( &OggPage, sError, true );
 		if( ret == 0 )
 			return ssprintf( "error opening %s: EOF while searching for codec headers", m_File.GetPath().c_str() );
@@ -491,7 +491,7 @@ CString MovieDecoder_Theora::ProcessHeaders( theora_setup_info **pTheoraSetupInf
 				 * headers.  We must have at least three header packets. */
 				if( iTheoraPacketsProcessed < 3 )
 					return ssprintf( "error opening %s: error parsing Theora stream headers", m_File.GetPath().c_str() );
-				return CString();
+				return RString();
 			}
 
 			ret = theora_decode_headerin( &m_TheoraInfo, &m_TheoraComment, pTheoraSetupInfo, &op );
@@ -504,7 +504,7 @@ CString MovieDecoder_Theora::ProcessHeaders( theora_setup_info **pTheoraSetupInf
 	}
 }
 
-CString MovieDecoder_Theora::Open( CString sFile )
+RString MovieDecoder_Theora::Open( RString sFile )
 {
 	if( !m_File.Open(sFile) )
 		return ssprintf( "error opening %s: %s", sFile.c_str(), m_File.GetError().c_str() );
@@ -512,7 +512,7 @@ CString MovieDecoder_Theora::Open( CString sFile )
 	Init();
 
 	theora_setup_info *pTheoraSetupInfo = NULL;
-	CString sError = ProcessHeaders( &pTheoraSetupInfo );
+	RString sError = ProcessHeaders( &pTheoraSetupInfo );
 	if( !sError.empty() )
 	{
 		theora_setup_free( pTheoraSetupInfo );
@@ -522,7 +522,7 @@ CString MovieDecoder_Theora::Open( CString sFile )
 	m_TheoraState = theora_decode_alloc( &m_TheoraInfo, pTheoraSetupInfo );
 	theora_setup_free( pTheoraSetupInfo );
 
-	CString sOutput = ssprintf( "MovieDecoder_Theora: Opened \"%s\".  Serial: 0x%08lx, FPS: %.02f",
+	RString sOutput = ssprintf( "MovieDecoder_Theora: Opened \"%s\".  Serial: 0x%08lx, FPS: %.02f",
 		m_File.GetPath().c_str(), m_OggStream.serialno, 1/GetFrameDuration() );
 
 #if 1
@@ -555,7 +555,7 @@ CString MovieDecoder_Theora::Open( CString sFile )
 		theora_decode_ctl( m_TheoraState, OC_DECCTL_SET_STRIPE_CB, &cb, sizeof(cb) );
 	}
 
-	return CString();
+	return RString();
 }
 
 int MovieDecoder_Theora::GetFrame( RageSurface *pOut, float fTargetTime )
@@ -588,7 +588,7 @@ int MovieDecoder_Theora::GetFrame( RageSurface *pOut, float fTargetTime )
 
 		/* Read more data. */
 		ogg_page OggPage;
-		CString sError;
+		RString sError;
 		int ret = ReadPage( &OggPage, sError, false );
 		if( ret == 0 )
 			return 0;

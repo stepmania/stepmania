@@ -6,7 +6,7 @@
 struct RageSurface;
 
 HICON IconFromSurface( const RageSurface *pImg );
-HICON IconFromFile( const CString &sIconFile );
+HICON IconFromFile( const RString &sIconFile );
 
 #endif
 

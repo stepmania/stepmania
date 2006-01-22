@@ -89,12 +89,12 @@ bool CodeItem::EnteredCode( GameController controller ) const
 	}
 }
 
-bool CodeItem::Load( CString sButtonsNames )
+bool CodeItem::Load( RString sButtonsNames )
 {
 	buttons.clear();
 
 	const Game* pGame = GAMESTATE->GetCurrentGame();
-	vector<CString> asButtonNames;
+	vector<RString> asButtonNames;
 
 	bool bHasAPlus = sButtonsNames.find( '+' ) != string::npos;
 	bool bHasADash = sButtonsNames.find( '-' ) != string::npos;
@@ -124,7 +124,7 @@ bool CodeItem::Load( CString sButtonsNames )
 
 	for( unsigned i=0; i<asButtonNames.size(); i++ )	// for each button in this code
 	{
-		const CString sButtonName = asButtonNames[i];
+		const RString sButtonName = asButtonNames[i];
 
 		// Search for the corresponding GameButton
 		const GameButton gb = pGame->ButtonNameToIndex( sButtonName );
@@ -166,15 +166,15 @@ bool CodeDetector::EnteredCode( GameController controller, Code code )
 }
 
 
-void CodeDetector::RefreshCacheItems( CString sClass )
+void CodeDetector::RefreshCacheItems( RString sClass )
 {
 	if( sClass == "" )
 		sClass = "CodeDetector";
 	FOREACH_Code( c )
 	{
 		CodeItem& item = g_CodeItems[c];
-		const CString sCodeName = CodeToString(c);
-		const CString sButtonsNames = THEME->GetMetric(sClass,sCodeName);
+		const RString sCodeName = CodeToString(c);
+		const RString sButtonsNames = THEME->GetMetric(sClass,sCodeName);
 
 		item.Load( sButtonsNames );
 	}

@@ -142,7 +142,7 @@ bool RageSound::IsLoaded() const
 	return m_pSource != NULL;
 }
 
-void RageSound::Fail( CString sReason )
+void RageSound::Fail( RString sReason )
 {
 	LOG->Warn( "Decoding %s failed: %s", GetLoadedFilePath().c_str(), sReason.c_str() );
 
@@ -163,14 +163,14 @@ public:
 };
 
 
-bool RageSound::Load( CString sSoundFilePath )
+bool RageSound::Load( RString sSoundFilePath )
 {
 	/* Automatically determine whether to precache */
 	/* TODO: Hook this up to a pref? */
 	return Load( sSoundFilePath, false );
 }
 
-bool RageSound::Load( CString sSoundFilePath, bool bPrecache )
+bool RageSound::Load( RString sSoundFilePath, bool bPrecache )
 {
 	LOG->Trace( "RageSound::LoadSound( '%s', %d )", sSoundFilePath.c_str(), bPrecache );
 
@@ -179,7 +179,7 @@ bool RageSound::Load( CString sSoundFilePath, bool bPrecache )
 	SoundReader *pSound = SOUNDMAN->GetLoadedSound( sSoundFilePath );
 	if( pSound == NULL )
 	{
-		CString error;
+		RString error;
 		pSound = SoundReader_FileReader::OpenFile( sSoundFilePath, error );
 		if( pSound == NULL )
 		{

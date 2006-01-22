@@ -76,9 +76,9 @@ void DateTime::StripTime()
 //
 // Common SQL/XML format: "YYYY-MM-DD HH:MM:SS"
 //
-CString DateTime::GetString() const
+RString DateTime::GetString() const
 {
-	CString s = ssprintf( "%d-%02d-%02d",
+	RString s = ssprintf( "%d-%02d-%02d",
 		tm_year+1900,
 		tm_mon+1,
 		tm_mday );
@@ -96,7 +96,7 @@ CString DateTime::GetString() const
 	return s;
 }
 
-bool DateTime::FromString( const CString sDateTime )
+bool DateTime::FromString( const RString sDateTime )
 {
 	Init();
 
@@ -129,12 +129,12 @@ success:
 
 
 
-CString DayInYearToString( int iDayInYear )
+RString DayInYearToString( int iDayInYear )
 {
 	return ssprintf("DayInYear%03d",iDayInYear);
 }
 
-int StringToDayInYear( CString sDayInYear )
+int StringToDayInYear( RString sDayInYear )
 {
 	int iDayInYear;
 	if( sscanf( sDayInYear, "DayInYear%d", &iDayInYear ) != 1 )
@@ -142,7 +142,7 @@ int StringToDayInYear( CString sDayInYear )
 	return iDayInYear;
 }
 
-static const CString LAST_DAYS_NAME[NUM_LAST_DAYS] =
+static const RString LAST_DAYS_NAME[NUM_LAST_DAYS] =
 {
 	"Today",
 	"Yesterday",
@@ -153,7 +153,7 @@ static const CString LAST_DAYS_NAME[NUM_LAST_DAYS] =
 	"Day6Ago",
 };
 
-CString LastDayToString( int iLastDayIndex )
+RString LastDayToString( int iLastDayIndex )
 {
 	return LAST_DAYS_NAME[iLastDayIndex];
 }
@@ -169,12 +169,12 @@ static const char *DAY_OF_WEEK_TO_NAME[DAYS_IN_WEEK] =
 	"Saturday",
 };
 
-CString DayOfWeekToString( int iDayOfWeekIndex )
+RString DayOfWeekToString( int iDayOfWeekIndex )
 {
 	return DAY_OF_WEEK_TO_NAME[iDayOfWeekIndex];
 }
 
-CString HourInDayToString( int iHourInDayIndex )
+RString HourInDayToString( int iHourInDayIndex )
 {
 	return ssprintf("Hour%02d", iHourInDayIndex);
 }
@@ -197,7 +197,7 @@ static const char *MonthNames[] =
 XToString( Month, NUM_Month );
 XToLocalizedString( Month );
 
-CString LastWeekToString( int iLastWeekIndex )
+RString LastWeekToString( int iLastWeekIndex )
 {
 	switch( iLastWeekIndex )
 	{
@@ -207,23 +207,23 @@ CString LastWeekToString( int iLastWeekIndex )
 	}
 }
 
-CString LastDayToLocalizedString( int iLastDayIndex )
+RString LastDayToLocalizedString( int iLastDayIndex )
 {
-	CString s = LastDayToString( iLastDayIndex );
+	RString s = LastDayToString( iLastDayIndex );
 	s.Replace( "Day", "" );
 	s.Replace( "Ago", " Ago" );
 	return s;
 }
 
-CString LastWeekToLocalizedString( int iLastWeekIndex )
+RString LastWeekToLocalizedString( int iLastWeekIndex )
 {
-	CString s = LastWeekToString( iLastWeekIndex );
+	RString s = LastWeekToString( iLastWeekIndex );
 	s.Replace( "Week", "" );
 	s.Replace( "Ago", " Ago" );
 	return s;
 }
 
-CString HourInDayToLocalizedString( int iHourIndex )
+RString HourInDayToLocalizedString( int iHourIndex )
 {
 	int iBeginHour = iHourIndex;
 	iBeginHour--;

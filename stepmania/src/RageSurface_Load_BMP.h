@@ -4,7 +4,7 @@
 #define RAGE_SURFACE_LOAD_BMP_H
 
 #include "RageSurface_Load.h"
-RageSurfaceUtils::OpenResult RageSurface_Load_BMP( const CString &sPath, RageSurface *&ret, bool bHeaderOnly, CString &error );
+RageSurfaceUtils::OpenResult RageSurface_Load_BMP( const RString &sPath, RageSurface *&ret, bool bHeaderOnly, RString &error );
 
 #endif
 

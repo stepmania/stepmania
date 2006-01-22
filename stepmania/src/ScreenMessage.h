@@ -50,11 +50,11 @@ enum ScreenMessage {
 class ASMHClass
 {
 public:
-	ScreenMessage ToMessageNumber( const CString & Name );
-	CString	NumberToString( ScreenMessage SM );
+	ScreenMessage ToMessageNumber( const RString & Name );
+	RString	NumberToString( ScreenMessage SM );
 	void LogMessageNumbers();
 private:
-	map < CString, ScreenMessage > *m_pScreenMessages;
+	map < RString, ScreenMessage > *m_pScreenMessages;
 	ScreenMessage m_iCurScreenMessage;
 };
 

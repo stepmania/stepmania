@@ -38,7 +38,7 @@ static MenuDef g_TempMenu(
 );
 
 
-static bool ValidateEditStepsDescription( const CString &sAnswer, CString &sErrorOut )
+static bool ValidateEditStepsDescription( const RString &sAnswer, RString &sErrorOut )
 {
 	if( sAnswer.empty() )
 	{
@@ -100,7 +100,7 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 		def.m_bAllowThemeTitle = false;	// not themable
 		def.m_sExplanationName = "Edit Steps";
 		def.m_vsChoices.clear();
-		CString sType = GAMEMAN->StepsTypeToLocalizedString( (*s)->m_StepsType );
+		RString sType = GAMEMAN->StepsTypeToLocalizedString( (*s)->m_StepsType );
 		def.m_vsChoices.push_back( sType );
 		def.m_bAllowThemeItems = false;	// already themed
 		iIndex++;
@@ -245,7 +245,7 @@ void ScreenOptionsManageEditSteps::ProcessMenuStart( const InputEventPlus &input
 		SONGMAN->GetStepsLoadedFromProfile( v, ProfileSlot_Machine );
 		if( v.size() >= size_t(MAX_EDIT_STEPS_PER_PROFILE) )
 		{
-			CString s = ssprintf( YOU_HAVE_MAX_STEP_EDITS.GetValue()+"\n\n"+YOU_MUST_DELETE.GetValue(), MAX_EDIT_STEPS_PER_PROFILE );
+			RString s = ssprintf( YOU_HAVE_MAX_STEP_EDITS.GetValue()+"\n\n"+YOU_MUST_DELETE.GetValue(), MAX_EDIT_STEPS_PER_PROFILE );
 			ScreenPrompt::Prompt( SM_None, s );
 			return;
 		}

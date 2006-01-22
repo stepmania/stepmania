@@ -9,7 +9,7 @@
 
 static SubscriptionManager<IPreference> m_Subscribers;
 
-IPreference::IPreference( const CString& sName ):
+IPreference::IPreference( const RString& sName ):
 	m_sName( sName )
 {
 	m_Subscribers.Subscribe( this );
@@ -20,7 +20,7 @@ IPreference::~IPreference()
 	m_Subscribers.Unsubscribe( this );
 }
 
-IPreference *IPreference::GetPreferenceByName( const CString &sName )
+IPreference *IPreference::GetPreferenceByName( const RString &sName )
 {
 	FOREACHS( IPreference*, *m_Subscribers.m_pSubscribers, p )
 	{
@@ -75,11 +75,11 @@ void IPreference::SetFromStack( lua_State *L )
 	lua_pop( L, 1 );
 }
 #define READFROM_AND_WRITETO( type ) \
-	template<> CString PrefToString( const type &v ) \
+	template<> RString PrefToString( const type &v ) \
 	{ \
 		return ::ToString( v ); \
 	} \
-	template<> void PrefFromString( const CString &s, type &v ) \
+	template<> void PrefFromString( const RString &s, type &v ) \
 	{ \
 		::FromString( s, v ); \
 	} \
@@ -95,11 +95,11 @@ void IPreference::SetFromStack( lua_State *L )
 READFROM_AND_WRITETO( int )
 READFROM_AND_WRITETO( float )
 READFROM_AND_WRITETO( bool )
-READFROM_AND_WRITETO( CString )
+READFROM_AND_WRITETO( RString )
 
 void IPreference::ReadFrom( const XNode* pNode )
 {
-	CString sVal;
+	RString sVal;
 	if( pNode->GetAttrValue(m_sName, sVal) )
 		FromString( sVal );
 }
@@ -112,13 +112,13 @@ void IPreference::WriteTo( XNode* pNode ) const
 /* Load our value from the node, and make it the new default. */
 void IPreference::ReadDefaultFrom( const XNode* pNode )
 {
-	CString sVal;
+	RString sVal;
 	if( !pNode->GetAttrValue(m_sName, sVal) )
 		return;
 	SetDefaultFromString( sVal );
 }
 
-void BroadcastPreferenceChanged( const CString& sPreferenceName )
+void BroadcastPreferenceChanged( const RString& sPreferenceName )
 {
 	if( MESSAGEMAN )
 		MESSAGEMAN->Broadcast( sPreferenceName+"Changed" );

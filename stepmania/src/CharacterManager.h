@@ -15,7 +15,7 @@ public:
 	void GetCharacters( vector<Character*> &vpCharactersOut );
 	Character* GetRandomCharacter();
 	Character* GetDefaultCharacter();
-	Character* GetCharacterFromID( CString sCharacterID );
+	Character* GetCharacterFromID( RString sCharacterID );
 
 	void DemandGraphics();
 	void UndemandGraphics();

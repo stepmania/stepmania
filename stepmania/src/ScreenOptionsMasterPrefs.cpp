@@ -25,7 +25,7 @@ static void GetPrefsDefaultModifiers( PlayerOptions &po, SongOptions &so )
 
 static void SetPrefsDefaultModifiers( const PlayerOptions &po, const SongOptions &so )
 {
-	vector<CString> as;
+	vector<RString> as;
 	if( po.GetString() != "" )
 		as.push_back( po.GetString() );
 	if( so.GetString() != "" )
@@ -81,14 +81,14 @@ static void MoveMap( int &sel, IPreference &opt, bool ToSel, const T *mapping, u
 {
 	if( ToSel )
 	{
-		CString sOpt = opt.ToString();
+		RString sOpt = opt.ToString();
 		/* This should really be T, but we can't FromString an enum. */
 		float val;
 		FromString( sOpt, val );
 		sel = FindClosestEntry( val, mapping, cnt );
 	} else {
 		/* sel -> opt */
-		CString sOpt = ToString( mapping[sel] );
+		RString sOpt = ToString( mapping[sel] );
 		opt.FromString( sOpt );
 	}
 }
@@ -110,35 +110,35 @@ static void MovePref( int &iSel, bool bToSel, const ConfOption *pConfOption )
 
 	if( bToSel )
 	{
-		CString sOpt = pPref->ToString();
+		RString sOpt = pPref->ToString();
 		FromString( sOpt, iSel );
 	}
 	else
 	{
-		CString sOpt = ToString( iSel );
+		RString sOpt = ToString( iSel );
 		pPref->FromString( sOpt );
 	}
 }
 
-static void GameChoices( vector<CString> &out )
+static void GameChoices( vector<RString> &out )
 {
 	vector<const Game*> aGames;
 	GAMEMAN->GetEnabledGames( aGames );
 	FOREACH( const Game*, aGames, g )
 	{
-		CString sGameName = (*g)->m_szName;
+		RString sGameName = (*g)->m_szName;
 		out.push_back( sGameName );
 	}
 }
 
 static void GameSel( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	vector<CString> choices;
+	vector<RString> choices;
 	pConfOption->MakeOptionsList( choices );
 
 	if( ToSel )
 	{
-		const CString sCurGameName = GAMESTATE->m_pCurGame->m_szName;
+		const RString sCurGameName = GAMESTATE->m_pCurGame->m_szName;
 
 		sel = 0;
 		for(unsigned i = 0; i < choices.size(); ++i)
@@ -151,14 +151,14 @@ static void GameSel( int &sel, bool ToSel, const ConfOption *pConfOption )
 	}
 }
 
-static void LanguageChoices( vector<CString> &out )
+static void LanguageChoices( vector<RString> &out )
 {
 	THEME->GetLanguages( out );
 }
 
 static void Language( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	vector<CString> choices;
+	vector<RString> choices;
 	pConfOption->MakeOptionsList( choices );
 
 	if( ToSel )
@@ -168,33 +168,33 @@ static void Language( int &sel, bool ToSel, const ConfOption *pConfOption )
 			if( !stricmp(choices[i], THEME->GetCurLanguage()) )
 				sel = i;
 	} else {
-		const CString sNewLanguage = choices[sel];
+		const RString sNewLanguage = choices[sel];
 		
 		if( THEME->GetCurLanguage() != sNewLanguage )
 			THEME->SwitchThemeAndLanguage( THEME->GetCurThemeName(), sNewLanguage, PREFSMAN->m_bPseudoLocalize );
 	}
 }
 
-static void ThemeChoices( vector<CString> &out )
+static void ThemeChoices( vector<RString> &out )
 {
 	THEME->GetThemeNames( out );
 }
 
-static void DisplayResolutionChoices( vector<CString> &out )
+static void DisplayResolutionChoices( vector<RString> &out )
 {
 	DisplayResolutions d;
 	DISPLAY->GetDisplayResolutions( d );
 	
 	FOREACHS_CONST( DisplayResolution, d.s, iter )
 	{
-		CString s = ssprintf("%dx%d", iter->iWidth, iter->iHeight);
+		RString s = ssprintf("%dx%d", iter->iWidth, iter->iHeight);
 		out.push_back( s );
 	}
 }
 
 static void Theme( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	vector<CString> choices;
+	vector<RString> choices;
 	pConfOption->MakeOptionsList( choices );
 
 	if( ToSel )
@@ -204,14 +204,14 @@ static void Theme( int &sel, bool ToSel, const ConfOption *pConfOption )
 			if( !stricmp(choices[i], THEME->GetCurThemeName()) )
 				sel = i;
 	} else {
-		const CString sNewTheme = choices[sel];
+		const RString sNewTheme = choices[sel];
 		if( THEME->GetCurThemeName() != sNewTheme )
 			THEME->SwitchThemeAndLanguage( sNewTheme, THEME->GetCurLanguage(), PREFSMAN->m_bPseudoLocalize );
 	}
 }
 
 static LocalizedString OFF ("ScreenOptionsMasterPrefs","Off");
-static void AnnouncerChoices( vector<CString> &out )
+static void AnnouncerChoices( vector<RString> &out )
 {
 	ANNOUNCER->GetAnnouncerNames( out );
 	out.insert( out.begin(), OFF );
@@ -219,7 +219,7 @@ static void AnnouncerChoices( vector<CString> &out )
 
 static void Announcer( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	vector<CString> choices;
+	vector<RString> choices;
 	pConfOption->MakeOptionsList( choices );
 
 	if( ToSel )
@@ -229,19 +229,19 @@ static void Announcer( int &sel, bool ToSel, const ConfOption *pConfOption )
 			if( !stricmp(choices[i], ANNOUNCER->GetCurAnnouncerName()) )
 				sel = i;
 	} else {
-		const CString sNewAnnouncer = sel? choices[sel]:CString("");
+		const RString sNewAnnouncer = sel? choices[sel]:RString("");
 		ANNOUNCER->SwitchAnnouncer( sNewAnnouncer );
 	}
 }
 
-static void DefaultNoteSkinChoices( vector<CString> &out )
+static void DefaultNoteSkinChoices( vector<RString> &out )
 {
 	NOTESKIN->GetNoteSkinNames( out );
 }
 
 static void DefaultNoteSkin( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	vector<CString> choices;
+	vector<RString> choices;
 	pConfOption->MakeOptionsList( choices );
 
 	if( ToSel )
@@ -645,13 +645,13 @@ int ConfOption::GetEffects() const
 	return m_iEffects | OPT_SAVE_PREFERENCES;
 }
 
-ConfOption *ConfOption::Find( CString name )
+ConfOption *ConfOption::Find( RString name )
 {
 	InitializeConfOptions();
 	for( unsigned i = 0; i < g_ConfOptions.size(); ++i )
 	{
 		ConfOption *opt = &g_ConfOptions[i];
-		CString match(opt->name);
+		RString match(opt->name);
 		if( match.CompareNoCase(name) )
 			continue;
 		return opt;
@@ -669,7 +669,7 @@ void ConfOption::UpdateAvailableOptions()
 	}
 }
 
-void ConfOption::MakeOptionsList( vector<CString> &out ) const
+void ConfOption::MakeOptionsList( vector<RString> &out ) const
 {
 	out = names;
 }

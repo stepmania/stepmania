@@ -24,15 +24,15 @@ class Character;
 //
 // Current file versions
 //
-extern const CString STATS_XML;
+extern const RString STATS_XML;
 
-extern const CString EDITABLE_INI;
+extern const RString EDITABLE_INI;
 
 // Editable data is an INI because the default INI file association on Windows 
 // systems will open the ini file in an editor.  The default association for 
 // XML will open in IE.  Users have a much better chance of discovering how to 
 // edit this data if they don't have to fight against the file associations.
-extern const CString DONT_SHARE_SIG;
+extern const RString DONT_SHARE_SIG;
 
 // The "don't share" file is something that the user should always keep private.
 // They can safely share STATS_XML with STATS_XML's signature so that others
@@ -41,11 +41,11 @@ extern const CString DONT_SHARE_SIG;
 // share" file.  DontShare contains a piece of information that we can 
 // construct using STATS_XML but the user can't construct using STATS_XML.
 // The file contains a signature of the STATS_XML's signature.
-extern const CString PUBLIC_KEY_FILE;
-extern const CString SCREENSHOTS_SUBDIR;
-extern const CString EDIT_STEPS_SUBDIR;
-extern const CString EDIT_COURSES_SUBDIR;
-extern const CString LASTGOOD_SUBDIR;
+extern const RString PUBLIC_KEY_FILE;
+extern const RString SCREENSHOTS_SUBDIR;
+extern const RString EDIT_STEPS_SUBDIR;
+extern const RString EDIT_COURSES_SUBDIR;
+extern const RString LASTGOOD_SUBDIR;
 
 const unsigned int PROFILE_MAX_DISPLAY_NAME_LENGTH	= 12;
 
@@ -68,10 +68,10 @@ public:
 	//
 	// smart accessors
 	//
-	CString GetDisplayNameOrHighScoreName() const;
+	RString GetDisplayNameOrHighScoreName() const;
 	Character *GetCharacter() const;
-	CString GetDisplayTotalCaloriesBurned() const;		// remove me and use Lua instead
-	CString GetDisplayTotalCaloriesBurnedToday() const;	// remove me and use Lua instead
+	RString GetDisplayTotalCaloriesBurned() const;		// remove me and use Lua instead
+	RString GetDisplayTotalCaloriesBurnedToday() const;	// remove me and use Lua instead
 	int GetCalculatedWeightPounds() const;	// returns a default value if m_iWeightPounds isn't set
 	float GetCaloriesBurnedToday() const;
 	int GetTotalNumSongsPassed() const;
@@ -84,8 +84,8 @@ public:
 	float GetSongsPercentComplete( StepsType st, Difficulty dc ) const;
 	float GetCoursesPercentComplete( StepsType st, CourseDifficulty cd ) const;
 	float GetSongsAndCoursesPercentCompleteAllDifficulties( StepsType st ) const;
-	bool GetDefaultModifiers( const Game* pGameType, CString &sModifiersOut ) const;
-	void SetDefaultModifiers( const Game* pGameType, const CString &sModifiers );
+	bool GetDefaultModifiers( const Game* pGameType, RString &sModifiersOut ) const;
+	void SetDefaultModifiers( const Game* pGameType, const RString &sModifiers );
 	bool IsCodeUnlocked( int iCode ) const;
 	Song *GetMostPopularSong() const;
 	Course *GetMostPopularCourse() const;
@@ -97,18 +97,18 @@ public:
 	//
 	// Editable data
 	//
-	CString m_sDisplayName;
-	CString m_sCharacterID;
-	CString m_sLastUsedHighScoreName;	// this doesn't really belong in "editable", but we need it in the smaller editable file so that it can be ready quickly.
+	RString m_sDisplayName;
+	RString m_sCharacterID;
+	RString m_sLastUsedHighScoreName;	// this doesn't really belong in "editable", but we need it in the smaller editable file so that it can be ready quickly.
 	int m_iWeightPounds;	// 0 == not set
 
 	//
 	// General data
 	//
-	static CString MakeGuid();
+	static RString MakeGuid();
 
-	CString m_sGuid;
-	map<CString,CString> m_sDefaultModifiers;
+	RString m_sGuid;
+	map<RString,RString> m_sDefaultModifiers;
 	SortOrder m_SortOrder;
 	Difficulty m_LastDifficulty;
 	CourseDifficulty m_LastCourseDifficulty;
@@ -133,7 +133,7 @@ public:
 	int m_iTotalMines;
 	int m_iTotalHands;
 	set<int> m_UnlockedSongs;
-	mutable CString m_sLastPlayedMachineGuid;	// mutable because we overwrite this on save, and I don't want to remove const from the whole save chain. -Chris
+	mutable RString m_sLastPlayedMachineGuid;	// mutable because we overwrite this on save, and I don't want to remove const from the whole save chain. -Chris
 	mutable DateTime m_LastPlayedDate;
 	/* These stats count twice in the machine profile if two players are playing;
 	 * that's the only approach that makes sense for ByDifficulty and ByMeter. */
@@ -301,10 +301,10 @@ public:
 	//
 	// Loading and saving
 	//
-	ProfileLoadResult LoadAllFromDir( CString sDir, bool bRequireSignature );
-	bool SaveAllToDir( CString sDir, bool bSignData ) const;
+	ProfileLoadResult LoadAllFromDir( RString sDir, bool bRequireSignature );
+	bool SaveAllToDir( RString sDir, bool bSignData ) const;
 
-	ProfileLoadResult LoadEditableDataFromDir( CString sDir );
+	ProfileLoadResult LoadEditableDataFromDir( RString sDir );
 	ProfileLoadResult LoadStatsXmlFromNode( const XNode* pNode, bool bIgnoreEditable = true );
 	void LoadGeneralDataFromNode( const XNode* pNode );
 	void LoadSongScoresFromNode( const XNode* pNode );
@@ -315,8 +315,8 @@ public:
 	void LoadRecentSongScoresFromNode( const XNode* pNode );
 	void LoadRecentCourseScoresFromNode( const XNode* pNode );
 
-	void SaveEditableDataToDir( CString sDir ) const;
-	bool SaveStatsXmlToDir( CString sDir, bool bSignData ) const;
+	void SaveEditableDataToDir( RString sDir ) const;
+	bool SaveStatsXmlToDir( RString sDir, bool bSignData ) const;
 	XNode* SaveStatsXmlCreateNode() const;
 	XNode* SaveGeneralDataCreateNode() const;
 	XNode* SaveSongScoresCreateNode() const;
@@ -329,10 +329,10 @@ public:
 
 	XNode* SaveCoinDataCreateNode() const;
 
-	void SaveStatsWebPageToDir( CString sDir ) const;
-	void SaveMachinePublicKeyToDir( CString sDir ) const;
+	void SaveStatsWebPageToDir( RString sDir ) const;
+	void SaveMachinePublicKeyToDir( RString sDir ) const;
 
-	static void MoveBackupToDir( CString sFromDir, CString sToDir );
+	static void MoveBackupToDir( RString sFromDir, RString sToDir );
 
 	// Lua
 	void PushSelf( lua_State *L );

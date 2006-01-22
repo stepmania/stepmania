@@ -31,9 +31,9 @@
 #define FOOTER_TEXT						THEME->GetMetric ("CatalogXml","FooterText")
 #define FOOTER_LINK						THEME->GetMetric ("CatalogXml","FooterLink")
 
-const CString CATALOG_XML       = "Catalog.xml";
-const CString CATALOG_XSL       = "Catalog.xsl";
-const CString CATALOG_XML_FILE  = "Save/" + CATALOG_XML;
+const RString CATALOG_XML       = "Catalog.xml";
+const RString CATALOG_XSL       = "Catalog.xsl";
+const RString CATALOG_XML_FILE  = "Save/" + CATALOG_XML;
 
 static LocalizedString SAVING_CATALOG_XML( "CatalogXml", "Saving %s ..." );
 void SaveCatalogXml( LoadingWindow *loading_window )
@@ -44,7 +44,7 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 	if( loading_window )
 		loading_window->SetText( ssprintf(SAVING_CATALOG_XML.GetValue(),CATALOG_XML.c_str()) );
 
-	CString fn = CATALOG_XML_FILE;
+	RString fn = CATALOG_XML_FILE;
 
 	LOG->Trace( "Writing %s ...", fn.c_str() );
 
@@ -60,9 +60,9 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 
 		int iTotalSongs = 0;
 		int iTotalSteps = 0;
-		vector<CString> vsGroups;
+		vector<RString> vsGroups;
 		SONGMAN->GetSongGroupNames( vsGroups );
-		FOREACH_CONST( CString, vsGroups, sGroup )
+		FOREACH_CONST( RString, vsGroups, sGroup )
 		{
 			XNode* p1 = pNumSongsByGroup->AppendChild( "Group" );
 			p1->AppendAttr( "Name", *sGroup );
@@ -347,14 +347,14 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 
 		{
 			XNode* pNode2 = pNode->AppendChild( "Modifier" );
-			vector<CString> modifiers;
+			vector<RString> modifiers;
 			THEME->GetModifierNames( modifiers );
-			FOREACH_CONST( CString, modifiers, iter )
+			FOREACH_CONST( RString, modifiers, iter )
 			{
 				PlayerOptions po;
-				CString s = *iter;
+				RString s = *iter;
 				po.FromString( s, false );
-				vector<CString> v;
+				vector<RString> v;
 				po.GetThemedMods( v );
 				if( v.empty() )
 					continue;

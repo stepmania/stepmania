@@ -115,7 +115,7 @@ bool CsvFile::WriteFile( RageFileBasic &f ) const
 {
 	FOREACH_CONST( StringVector, m_vvs, line ) 
 	{
-		CString sLine;
+		RString sLine;
 		FOREACH_CONST( RString, *line, value ) 
 		{
 			RString sVal = *value;

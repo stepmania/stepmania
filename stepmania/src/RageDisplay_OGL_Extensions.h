@@ -52,7 +52,7 @@ struct GLExt_t
 
 	void Load( LowLevelWindow *pWind );
 
-	bool HasExtension( const CString &sExt ) const;
+	bool HasExtension( const RString &sExt ) const;
 };
 
 extern GLExt_t GLExt;

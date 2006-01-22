@@ -37,12 +37,12 @@ XToString( EditMenuAction, NUM_EditMenuAction );
 XToLocalizedString( EditMenuAction );
 StringToX( EditMenuAction );
 
-static CString ARROWS_X_NAME( size_t i )	{ return ssprintf("Arrows%dX",int(i+1)); }
-static CString ROW_VALUE_X_NAME( size_t i )	{ return ssprintf("RowValue%dX",int(i+1)); }
-static CString ROW_Y_NAME( size_t i )		{ return ssprintf("Row%dY",int(i+1)); }
+static RString ARROWS_X_NAME( size_t i )	{ return ssprintf("Arrows%dX",int(i+1)); }
+static RString ROW_VALUE_X_NAME( size_t i )	{ return ssprintf("RowValue%dX",int(i+1)); }
+static RString ROW_Y_NAME( size_t i )		{ return ssprintf("Row%dY",int(i+1)); }
 
 
-void EditMenu::GetSongsToShowForGroup( const CString &sGroup, vector<Song*> &vpSongsOut )
+void EditMenu::GetSongsToShowForGroup( const RString &sGroup, vector<Song*> &vpSongsOut )
 {
 	vpSongsOut.clear();
 	if( !SHOW_GROUPS.GetValue() )
@@ -68,7 +68,7 @@ void EditMenu::GetSongsToShowForGroup( const CString &sGroup, vector<Song*> &vpS
 	SongUtil::SortSongPointerArrayByTitle( vpSongsOut );
 }
 
-void EditMenu::GetGroupsToShow( vector<CString> &vsGroupsOut )
+void EditMenu::GetGroupsToShow( vector<RString> &vsGroupsOut )
 {
 	vsGroupsOut.clear();
 	if( !SHOW_GROUPS.GetValue() )
@@ -77,7 +77,7 @@ void EditMenu::GetGroupsToShow( vector<CString> &vsGroupsOut )
 	SONGMAN->GetSongGroupNames( vsGroupsOut );
 	for( int i = vsGroupsOut.size()-1; i>=0; i-- )
 	{
-		const CString &sGroup = vsGroupsOut[i];
+		const RString &sGroup = vsGroupsOut[i];
 		vector<Song*> vpSongs;
 		GetSongsToShowForGroup( sGroup, vpSongs );
 		// strip groups that have no unlocked songs
@@ -95,7 +95,7 @@ EditMenu::~EditMenu()
 	BANNERCACHE->Undemand();
 }
 
-void EditMenu::Load( const CString &sType )
+void EditMenu::Load( const RString &sType )
 {
 	LOG->Trace( "EditMenu::Load" );
 
@@ -430,7 +430,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 		// fall through
 	case ROW_STEPS:
 		{
-			CString s;
+			RString s;
 			Steps *pSteps = GetSelectedSteps();
 			if( pSteps  &&  GetSelectedDifficulty() == DIFFICULTY_EDIT )
 			{
@@ -497,7 +497,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			m_textLabel[ROW_SOURCE_STEPS].SetHidden( GetSelectedSteps() ? true : false );
 			m_textValue[ROW_SOURCE_STEPS].SetHidden( GetSelectedSteps() ? true : false );
 			{
-				CString s;
+				RString s;
 				Steps *pSourceSteps = GetSelectedSourceSteps();
 				if( GetSelectedSourceDifficulty() == DIFFICULTY_INVALID )
 					s = BLANK;

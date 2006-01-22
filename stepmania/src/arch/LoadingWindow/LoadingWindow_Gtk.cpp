@@ -16,7 +16,7 @@ LoadingWindow_Gtk::LoadingWindow_Gtk()
 {
 }
 
-CString LoadingWindow_Gtk::Init()
+RString LoadingWindow_Gtk::Init()
 {
 	ASSERT( Handle == NULL );
 	
@@ -51,7 +51,7 @@ LoadingWindow_Gtk::~LoadingWindow_Gtk()
 	Handle = NULL;
 }
 
-void LoadingWindow_Gtk::SetText( CString s )
+void LoadingWindow_Gtk::SetText( RString s )
 {
 	Module_SetText( s );
 }

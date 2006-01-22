@@ -21,9 +21,9 @@ uint8_t mySDL_EventState(uint8_t type, int state);
 void mySDL_GetAllEvents(vector<SDL_Event> &events);
 void mySDL_PushEvents(vector<SDL_Event> &events);
 
-CString mySDL_GetError();
+RString mySDL_GetError();
 
-void mySDL_WM_SetIcon( CString sIconFile );
+void mySDL_WM_SetIcon( RString sIconFile );
 SDL_Surface *SDLSurfaceFromRageSurface( RageSurface *surf );
 RageSurface *RageSurfaceFromSDLSurface( SDL_Surface *surf );
 

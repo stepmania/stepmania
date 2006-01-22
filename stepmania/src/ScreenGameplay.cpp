@@ -1002,7 +1002,7 @@ void ScreenGameplay::LoadCourseSongNumber( int iSongNumber )
 {
 	if( !GAMESTATE->IsCourseMode() )
 		return;
-	const CString path = THEME->GetPathG( m_sName, ssprintf("course song %i",iSongNumber+1), true );
+	const RString path = THEME->GetPathG( m_sName, ssprintf("course song %i",iSongNumber+1), true );
 	if( path != "" )
 		m_sprCourseSongNumber.Load( path );
 	else
@@ -1285,8 +1285,8 @@ void ScreenGameplay::LoadLights()
 	//
 	// No explicit lights.  Create autogen lights.
 	//
-	CString sDifficulty = PREFSMAN->m_sLightsStepsDifficulty;
-	vector<CString> asDifficulties;
+	RString sDifficulty = PREFSMAN->m_sLightsStepsDifficulty;
+	vector<RString> asDifficulties;
 	split( sDifficulty, ",", asDifficulties );
 
 	Difficulty d1 = DIFFICULTY_INVALID;
@@ -1424,7 +1424,7 @@ void ScreenGameplay::PlayTicks()
 }
 
 /* Play announcer "type" if it's been at least fSeconds since the last announcer. */
-void ScreenGameplay::PlayAnnouncer( CString type, float fSeconds )
+void ScreenGameplay::PlayAnnouncer( RString type, float fSeconds )
 {
 	if( GAMESTATE->m_fOpponentHealthPercent == 0 )
 		return; // Shut the announcer up
@@ -2013,8 +2013,8 @@ void ScreenGameplay::SendCrossedMessages()
 					{
 						StyleInput si( pn, t );
 						const Game* pGame = GAMESTATE->GetCurrentGame();
-						CString sButton = pGame->ColToButtonName( t );
-						CString sMessageName = "NoteCrossed" + sButton;
+						RString sButton = pGame->ColToButtonName( t );
+						RString sMessageName = "NoteCrossed" + sButton;
 						MESSAGEMAN->Broadcast( sMessageName );
 					}
 				}
@@ -2023,7 +2023,7 @@ void ScreenGameplay::SendCrossedMessages()
 					MESSAGEMAN->Broadcast( (Message)(Message_NoteCrossed + i) );
 				if( i == 0  &&  iNumTracksWithTapOrHoldHead >= 2 )
 				{
-					CString sMessageName = "NoteCrossedJump";
+					RString sMessageName = "NoteCrossedJump";
 					MESSAGEMAN->Broadcast( sMessageName );
 				}
 			}
@@ -2649,7 +2649,7 @@ void ScreenGameplay::SaveRecordedResults()
 			//
 			FlushDirCache();
 
-			vector<CString> files;
+			vector<RString> files;
 			GetDirListing( "Save/recording*", files, false, false );
 			sort( files.begin(), files.end() );
 
@@ -2659,7 +2659,7 @@ void ScreenGameplay::SaveRecordedResults()
 			for( int i = files.size()-1; i >= 0; --i )
 			{
 				static Regex re( "^recording([0-9]{5})\\....$" );
-				vector<CString> matches;
+				vector<RString> matches;
 				if( !re.Compare( files[i], matches ) )
 					continue;
 
@@ -2668,7 +2668,7 @@ void ScreenGameplay::SaveRecordedResults()
 				break;
 			}
 
-			CString sFileName = ssprintf( "recording%05d.xml", iIndex );
+			RString sFileName = ssprintf( "recording%05d.xml", iIndex );
 
 			p->SaveToFile( "Save/"+sFileName, opt );
 			SAFE_DELETE( p );

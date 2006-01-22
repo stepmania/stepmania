@@ -27,7 +27,7 @@ class MusicWheel : public WheelBase
 public:
 	MusicWheel();
 	~MusicWheel();
-	virtual void Load( CString sType );
+	virtual void Load( RString sType );
 
 	virtual void DrawItem( int index );
 
@@ -43,7 +43,7 @@ public:
 	WheelItemType	GetSelectedType()	{ return m_CurWheelItemData[m_iSelection]->m_Type; }
 	Song*			GetSelectedSong();
 	Course*			GetSelectedCourse()	{ return m_CurWheelItemData[m_iSelection]->m_pCourse; }
-	CString			GetSelectedSection(){ return m_CurWheelItemData[m_iSelection]->m_sText; }
+	RString			GetSelectedSection(){ return m_CurWheelItemData[m_iSelection]->m_sText; }
 
 	void RebuildAllMusicWheelItems();
 	void RebuildMusicWheelItems( int dist );
@@ -51,16 +51,16 @@ public:
 	Song *GetPreferredSelectionForRandomOrPortal();
 
 	bool SelectSong( Song *p );
-	bool SelectSection( const CString & SectionName );
-	void SetOpenGroup(CString group, SortOrder so = SORT_INVALID);
+	bool SelectSection( const RString & SectionName );
+	void SetOpenGroup(RString group, SortOrder so = SORT_INVALID);
 	SortOrder GetSortOrder() const { return m_SortOrder; }
 	virtual void ChangeMusic(int dist); /* +1 or -1 */ //CHECK THIS
 	void FinishChangingSorts();
 
 protected:
-	virtual void LoadFromMetrics( CString sType );
+	virtual void LoadFromMetrics( RString sType );
 	virtual bool MoveSpecific(int n);
-	void GetSongList(vector<Song*> &arraySongs, SortOrder so, CString sPreferredGroup );
+	void GetSongList(vector<Song*> &arraySongs, SortOrder so, RString sPreferredGroup );
 	void BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItems, SortOrder so );
 	bool SelectSongOrCourse();
 	bool SelectCourse( Course *p );
@@ -77,7 +77,7 @@ protected:
 	vector<WheelItemData *> m_CurWheelItemData;
 	vector<MusicWheelItem *> m_MusicWheelItems;
 	
-	CString				m_sLastModeMenuItem;
+	RString				m_sLastModeMenuItem;
 	SortOrder m_SortOrder;
 
 	RageSound m_soundChangeSort;
@@ -94,8 +94,8 @@ protected:
 	ThemeMetric<bool> SHOW_PORTAL;
 	ThemeMetric<bool> RANDOM_PICKS_LOCKED_SONGS;
 	ThemeMetric<int> MOST_PLAYED_SONGS_TO_SHOW;
-	ThemeMetric<CString> MODE_MENU_CHOICE_NAMES;
-	ThemeMetricMap<CString> CHOICE;
+	ThemeMetric<RString> MODE_MENU_CHOICE_NAMES;
+	ThemeMetricMap<RString> CHOICE;
 	ThemeMetric1D<RageColor> SECTION_COLORS;
 };
 

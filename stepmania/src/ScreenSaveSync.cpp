@@ -15,9 +15,9 @@ static LocalizedString CHANGED_STOP				("ScreenSaveSync","The stop segment #%d c
 static LocalizedString CHANGED_TIMING_OF		("ScreenSaveSync","You have changed the timing of");
 static LocalizedString WOULD_YOU_LIKE_TO_SAVE	("ScreenSaveSync","Would you like to save these changes?");
 static LocalizedString CHOOSING_NO_WILL_DISCARD	("ScreenSaveSync","Choosing NO will discard your changes.");
-static CString GetPromptText()
+static RString GetPromptText()
 {
-	CString s;
+	RString s;
 
 	{
 		float fOld = GAMESTATE->m_fGlobalOffsetSecondsOriginal;
@@ -35,7 +35,7 @@ static CString GetPromptText()
 		}
 	}
 
-	vector<CString> vsSongChanges;
+	vector<RString> vsSongChanges;
 
 	{
 		float fOld = GAMESTATE->m_pTimingDataOriginal->m_fBeat0OffsetInSeconds;

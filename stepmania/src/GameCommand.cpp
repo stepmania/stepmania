@@ -143,16 +143,16 @@ void GameCommand::Load( int iIndex, const Commands& cmds )
 
 void GameCommand::LoadOne( const Command& cmd )
 {
-	CString sName = cmd.GetName();
+	RString sName = cmd.GetName();
 	if( sName.empty() )
 		return;
 	
-	CString sValue;
+	RString sValue;
 	for( unsigned i = 1; i < cmd.m_vsArgs.size(); ++i )
 	{
 		if( i > 1 )
 			sValue += ",";
-		sValue += (CString) cmd.GetArg(i);
+		sValue += (RString) cmd.GetArg(i);
 	}
 
 	if( sName == "game" )
@@ -236,7 +236,7 @@ void GameCommand::LoadOne( const Command& cmd )
 
 	else if( sName == "steps" )
 	{
-		CString sSteps = sValue;
+		RString sSteps = sValue;
 
 		/* This must be processed after "song" and "style" commands. */
 		if( !m_bInvalid )
@@ -271,7 +271,7 @@ void GameCommand::LoadOne( const Command& cmd )
 	
 	else if( sName == "trail" )
 	{
-		CString sTrail = sValue;
+		RString sTrail = sValue;
 
 		/* This must be processed after "course" and "style" commands. */
 		if( !m_bInvalid )
@@ -366,7 +366,7 @@ void GameCommand::LoadOne( const Command& cmd )
 
 	else
 	{
-		CString sWarning = ssprintf( "Command '%s' is not valid.", cmd.GetOriginalCommandString().c_str() );
+		RString sWarning = ssprintf( "Command '%s' is not valid.", cmd.GetOriginalCommandString().c_str() );
 		LOG->Warn( sWarning );
 		Dialog::OK( sWarning, "INVALID_GAME_COMMAND" );
 	}
@@ -416,7 +416,7 @@ static bool AreStyleAndPlayModeCompatible( const Style *style, PlayMode pm )
 		// This is correct for dance (ie, no rave for solo and doubles),
 		// and should be okay for pump .. not sure about other game types.
 		// Techno Motion scales down versus arrows, though, so allow this.
-		if( style->m_iColsPerPlayer >= 6 && CString(GAMESTATE->m_pCurGame->m_szName) != "techno" )
+		if( style->m_iColsPerPlayer >= 6 && RString(GAMESTATE->m_pCurGame->m_szName) != "techno" )
 			return false;
 		
 		/* Don't allow battle modes if the style takes both sides. */
@@ -427,7 +427,7 @@ static bool AreStyleAndPlayModeCompatible( const Style *style, PlayMode pm )
 	return true;
 }
 
-bool GameCommand::IsPlayable( CString *why ) const
+bool GameCommand::IsPlayable( RString *why ) const
 {
 	if( m_bInvalid )
 	{
@@ -673,7 +673,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	if( m_pCharacter )
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 			GAMESTATE->m_pCurCharacters[*pn] = m_pCharacter;
-	for( map<CString,CString>::const_iterator i = m_SetEnv.begin(); i != m_SetEnv.end(); i++ )
+	for( map<RString,RString>::const_iterator i = m_SetEnv.begin(); i != m_SetEnv.end(); i++ )
 	{
 		Lua *L = LUA->Get();
 		GAMESTATE->m_Environment->PushSelf(L);
@@ -709,7 +709,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	if( m_bStopMusic )
 		SOUND->StopMusic();
 
-	FOREACH_CONST( CString, m_vsScreensToPrepare, s )
+	FOREACH_CONST( RString, m_vsScreensToPrepare, s )
 		SCREENMAN->PrepareScreen( *s );
 
 	if( m_bInsertCredit )

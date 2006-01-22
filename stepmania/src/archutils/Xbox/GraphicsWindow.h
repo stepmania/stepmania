@@ -11,7 +11,7 @@ namespace GraphicsWindow
 	void Initialize( bool bD3D );
 	void Shutdown();
 	void SetVideoModeParams( const VideoModeParams &p );
-	CString SetScreenMode( const VideoModeParams &p );
+	RString SetScreenMode( const VideoModeParams &p );
 	void CreateGraphicsWindow( const VideoModeParams &p );
 	void RecreateGraphicsWindow( const VideoModeParams &p );
 	void DestroyGraphicsWindow();

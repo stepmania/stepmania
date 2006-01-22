@@ -14,17 +14,17 @@
 
 #include "InputHandler/Selector_InputHandler.h"
 static LocalizedString INPUT_HANDLERS_EMPTY( "Arch", "Input Handlers cannot be empty." );
-void MakeInputHandlers( const CString &drivers, vector<InputHandler *> &Add )
+void MakeInputHandlers( const RString &drivers, vector<InputHandler *> &Add )
 {
-	vector<CString> DriversToTry;
+	vector<RString> DriversToTry;
 	split( drivers, ",", DriversToTry, true );
 
 	if( DriversToTry.empty() )
 		RageException::Throw( INPUT_HANDLERS_EMPTY.GetValue() );
 
-	CString Driver;
+	RString Driver;
 
-	FOREACH_CONST( CString, DriversToTry, s )
+	FOREACH_CONST( RString, DriversToTry, s )
 	{
 		InputHandler *ret = NULL;
 
@@ -71,7 +71,7 @@ void MakeInputHandlers( const CString &drivers, vector<InputHandler *> &Add )
 }
 
 #include "Lights/Selector_LightsDriver.h"
-void MakeLightsDrivers( const CString &driver, vector<LightsDriver *> &Add )
+void MakeLightsDrivers( const RString &driver, vector<LightsDriver *> &Add )
 {
 	LOG->Trace( "Initializing lights driver: %s", driver.c_str() );
 
@@ -102,13 +102,13 @@ LoadingWindow *MakeLoadingWindow()
 		return new LoadingWindow_Null;
 
 	/* Don't load NULL by default. */
-	const CString drivers = "xbox,win32,cocoa,gtk";
-	vector<CString> DriversToTry;
+	const RString drivers = "xbox,win32,cocoa,gtk";
+	vector<RString> DriversToTry;
 	split( drivers, ",", DriversToTry, true );
 
 	ASSERT( DriversToTry.size() != 0 );
 
-	CString Driver;
+	RString Driver;
 	LoadingWindow *ret = NULL;
 
 	for( unsigned i = 0; ret == NULL && i < DriversToTry.size(); ++i )
@@ -135,7 +135,7 @@ LoadingWindow *MakeLoadingWindow()
 		if( ret == NULL )
 			continue;
 
-		CString sError = ret->Init();
+		RString sError = ret->Init();
 		if( sError != "" )
 		{
 			LOG->Info( "Couldn't load driver %s: %s", DriversToTry[i].c_str(), sError.c_str() );
@@ -176,9 +176,9 @@ MemoryCardDriver *MakeMemoryCardDriver()
 	return ret;
 }
 
-static Preference<CString> g_sMovieDrivers( "MovieDrivers", "" ); // "" == default
+static Preference<RString> g_sMovieDrivers( "MovieDrivers", "" ); // "" == default
 #include "MovieTexture/Selector_MovieTexture.h"
-static void DumpAVIDebugInfo( const CString& fn );
+static void DumpAVIDebugInfo( const RString& fn );
 /* Try drivers in order of preference until we find one that works. */
 static LocalizedString MOVIE_DRIVERS_EMPTY		( "Arch", "Movie Drivers cannot be empty." );
 static LocalizedString COULDNT_CREATE_MOVIE_DRIVER	( "Arch", "Couldn't create a movie driver." );
@@ -190,13 +190,13 @@ RageMovieTexture *MakeRageMovieTexture( RageTextureID ID )
 	if( sDrivers.empty() )
 		sDrivers = DEFAULT_MOVIE_DRIVER_LIST;
 
-	vector<CString> DriversToTry;
+	vector<RString> DriversToTry;
 	split( sDrivers, ",", DriversToTry, true );
 	
 	if( DriversToTry.empty() )
 		RageException::Throw( MOVIE_DRIVERS_EMPTY.GetValue() );
 
-	CString Driver;
+	RString Driver;
 	RageMovieTexture *ret = NULL;
 
 	for( unsigned i=0; ret==NULL && i<DriversToTry.size(); ++i )
@@ -221,7 +221,7 @@ RageMovieTexture *MakeRageMovieTexture( RageTextureID ID )
 			continue;
 		}
 
-		CString sError = ret->Init();
+		RString sError = ret->Init();
 		if( sError != "" )
 		{
 			LOG->Info( "Couldn't load driver %s: %s", Driver.c_str(), sError.c_str() );
@@ -238,15 +238,15 @@ RageMovieTexture *MakeRageMovieTexture( RageTextureID ID )
 
 #include "Sound/Selector_RageSoundDriver.h"
 static LocalizedString SOUND_DRIVERS_CANNOT_EMPTY( "Arch", "Sound Drivers cannot be empty." );
-RageSoundDriver *MakeRageSoundDriver( const CString &drivers )
+RageSoundDriver *MakeRageSoundDriver( const RString &drivers )
 {
-	vector<CString> DriversToTry;
+	vector<RString> DriversToTry;
 	split( drivers, ",", DriversToTry, true );
 
 	if( DriversToTry.empty() )
 		RageException::Throw( SOUND_DRIVERS_CANNOT_EMPTY.GetValue() );
 
-	CString Driver;
+	RString Driver;
 	RageSoundDriver *ret = NULL;
 
 	for( unsigned i = 0; ret == NULL && i < DriversToTry.size(); ++i )
@@ -285,7 +285,7 @@ RageSoundDriver *MakeRageSoundDriver( const CString &drivers )
 			continue;
 		}
 
-		CString sError = ret->Init();
+		RString sError = ret->Init();
 		if( sError != "" )
 		{
 			LOG->Info( "Couldn't load driver %s: %s", DriversToTry[i].c_str(), sError.c_str() );
@@ -300,9 +300,9 @@ RageSoundDriver *MakeRageSoundDriver( const CString &drivers )
 }
 
 // Helper for MakeRageMovieTexture()
-static void DumpAVIDebugInfo( const CString& fn )
+static void DumpAVIDebugInfo( const RString& fn )
 {
-	CString type, handler;
+	RString type, handler;
 	if( !RageMovieTexture::GetFourCC( fn, handler, type ) )
 		return;
 

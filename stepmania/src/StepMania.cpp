@@ -127,8 +127,8 @@ static void StoreActualGraphicOptions( bool initial )
 	PREFSMAN->m_iRefreshRate		.Set( params.rate );
 	PREFSMAN->m_bVsync			.Set( params.vsync );
 
-	CString sFormat = "%s %s %dx%d %d "+COLOR.GetValue()+" %d "+TEXTURE.GetValue()+" %dHz %s %s";
-	CString log = ssprintf( sFormat,
+	RString sFormat = "%s %s %dx%d %d "+COLOR.GetValue()+" %d "+TEXTURE.GetValue()+" %dHz %s %s";
+	RString log = ssprintf( sFormat,
 		DISPLAY->GetApiDescription().c_str(),
 		(PREFSMAN->m_bWindowed ? WINDOWED : FULLSCREEN).GetValue().c_str(),
 		(int)PREFSMAN->m_iDisplayWidth, 
@@ -186,7 +186,7 @@ void StepMania::ApplyGraphicOptions()
 
 	VideoModeParams params;
 	GetPreferredVideoModeParams( params );
-	CString sError = DISPLAY->SetVideoMode( params, bNeedReload );
+	RString sError = DISPLAY->SetVideoMode( params, bNeedReload );
 	if( sError != "" )
 		RageException::Throw( sError );
 
@@ -289,7 +289,7 @@ void StepMania::ResetGame()
 	
 	if( !THEME->DoesThemeExist( THEME->GetCurThemeName() ) )
 	{
-		CString sGameName = GAMESTATE->GetCurrentGame()->m_szName;
+		RString sGameName = GAMESTATE->GetCurrentGame()->m_szName;
 		if( !THEME->DoesThemeExist(sGameName) )
 			sGameName = "default";
 		THEME->SwitchThemeAndLanguage( sGameName, THEME->GetCurLanguage(), PREFSMAN->m_bPseudoLocalize );
@@ -356,8 +356,8 @@ static void CheckSettings()
 
 struct VideoCardDefaults
 {
-	CString sDriverRegex;
-	CString sVideoRenderers;
+	RString sDriverRegex;
+	RString sVideoRenderers;
 	int iWidth;
 	int iHeight;
 	int iDisplayColor;
@@ -368,8 +368,8 @@ struct VideoCardDefaults
 
 	VideoCardDefaults() {}
 	VideoCardDefaults(
-		CString sDriverRegex_,
-		CString sVideoRenderers_,
+		RString sDriverRegex_,
+		RString sVideoRenderers_,
 		int iWidth_,
 		int iHeight_,
 		int iDisplayColor_,
@@ -568,7 +568,7 @@ struct VideoCardDefaults
 };
 
 
-static CString GetVideoDriverName()
+static RString GetVideoDriverName()
 {
 #if defined(_WINDOWS)
 	return GetPrimaryVideoDriverName();
@@ -582,7 +582,7 @@ static CString GetVideoDriverName()
 static void CheckVideoDefaultSettings()
 {
 	// Video card changed since last run
-	CString sVideoDriver = GetVideoDriverName();
+	RString sVideoDriver = GetVideoDriverName();
 	
 	LOG->Trace( "Last seen video driver: " + PREFSMAN->m_sLastSeenVideoDriver.Get() );
 
@@ -592,7 +592,7 @@ static void CheckVideoDefaultSettings()
 	{
 		defaults = g_VideoCardDefaults[i];
 
-		CString sDriverRegex = defaults.sDriverRegex;
+		RString sDriverRegex = defaults.sDriverRegex;
 		Regex regex( sDriverRegex );
 		if( regex.Compare(sVideoDriver) )
 		{
@@ -677,12 +677,12 @@ RageDisplay *CreateDisplay()
 	VideoModeParams params;
 	StepMania::GetPreferredVideoModeParams( params );
 
-	CString error = ERROR_INITIALIZING_CARD.GetValue()+"\n\n"+ 
+	RString error = ERROR_INITIALIZING_CARD.GetValue()+"\n\n"+ 
 		ERROR_DONT_FILE_BUG.GetValue()+"\n\n"
 		VIDEO_TROUBLESHOOTING_URL "\n\n"+
 		ssprintf(ERROR_VIDEO_DRIVER.GetValue(), GetVideoDriverName().c_str())+"\n\n";
 
-	vector<CString> asRenderers;
+	vector<RString> asRenderers;
 	split( PREFSMAN->m_sVideoRenderers, ",", asRenderers, true );
 
 	if( asRenderers.empty() )
@@ -690,13 +690,13 @@ RageDisplay *CreateDisplay()
 
 	for( unsigned i=0; i<asRenderers.size(); i++ )
 	{
-		CString sRenderer = asRenderers[i];
+		RString sRenderer = asRenderers[i];
 
 		if( sRenderer.CompareNoCase("opengl")==0 )
 		{
 #if defined(SUPPORT_OPENGL)
 			RageDisplay_OGL *pRet = new RageDisplay_OGL;
-			CString sError = pRet->Init( params, PREFSMAN->m_bAllowUnacceleratedRenderer );
+			RString sError = pRet->Init( params, PREFSMAN->m_bAllowUnacceleratedRenderer );
 			if( sError == "" )
 				return pRet;
 			error += ssprintf(ERROR_INITIALIZING.GetValue(),"OpenGL")+"\n" + sError;
@@ -707,7 +707,7 @@ RageDisplay *CreateDisplay()
 		{
 #if defined(SUPPORT_D3D)
 			RageDisplay_D3D *pRet = new RageDisplay_D3D;
-			CString sError = pRet->Init( params );
+			RString sError = pRet->Init( params );
 			if( sError == "" )
 				return pRet;
 			error += ssprintf(ERROR_INITIALIZING.GetValue(),"Direct3D")+"\n" + sError;
@@ -729,7 +729,7 @@ RageDisplay *CreateDisplay()
 	RageException::Throw( error );
 }
 
-extern const CString STATIC_INI_PATH;
+extern const RString STATIC_INI_PATH;
 
 void StepMania::ChangeCurrentGame( const Game* g )
 {
@@ -754,7 +754,7 @@ void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame )
 	if( bSwitchToLastPlayedGame )
 	{
 		ASSERT( GAMEMAN != NULL );
-		CString sGame = PREFSMAN->GetCurrentGame();
+		RString sGame = PREFSMAN->GetCurrentGame();
 		if( !sGame.empty() )
 		{
 			const Game *pGame = GAMEMAN->StringToGameType(sGame);
@@ -782,9 +782,9 @@ void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame )
 	if( !GAMEMAN->IsGameEnabled( GAMESTATE->m_pCurGame ) )
 		RageException::Throw( "Default NoteSkin for \"%s\" missing", GAMESTATE->m_pCurGame->m_szName );
 
-	CString sGameName = GAMESTATE->GetCurrentGame()->m_szName;
-	CString sAnnouncer = sGameName;
-	CString sTheme = sGameName;
+	RString sGameName = GAMESTATE->GetCurrentGame()->m_szName;
+	RString sAnnouncer = sGameName;
+	RString sTheme = sGameName;
 
 	// if these calls fail, the three strings will keep the initial values set above.
 	if( !PREFSMAN->m_sAnnouncer.Get().empty() )
@@ -798,14 +798,14 @@ void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame )
 }
 
 
-static void MountTreeOfZips( const CString &dir )
+static void MountTreeOfZips( const RString &dir )
 {
-	vector<CString> dirs;
+	vector<RString> dirs;
 	dirs.push_back( dir );
 
 	while( dirs.size() )
 	{
-		CString path = dirs.back();
+		RString path = dirs.back();
 		dirs.pop_back();
 
 #if !defined(XBOX)
@@ -814,7 +814,7 @@ static void MountTreeOfZips( const CString &dir )
 			continue;
 #endif
 
-		vector<CString> zips;
+		vector<RString> zips;
 		GetDirListing( path + "/*.zip", zips, false, true );
 		GetDirListing( path + "/*.smzip", zips, false, true );
 
@@ -855,7 +855,7 @@ static void WriteLogHeader()
 
 	if( g_argc > 1 )
 	{
-		CString args;
+		RString args;
 		for( int i = 1; i < g_argc; ++i )
 		{
 			if( i>1 )
@@ -938,14 +938,14 @@ int main(int argc, char* argv[])
 	/* Set up alternative filesystem trees. */
 	if( PREFSMAN->m_sAdditionalFolders.Get() != "" )
 	{
-		vector<CString> dirs;
+		vector<RString> dirs;
 		split( PREFSMAN->m_sAdditionalFolders, ",", dirs, true );
 		for( unsigned i=0; i < dirs.size(); i++)
 			FILEMAN->Mount( "dir", dirs[i], "/" );
 	}
 	if( PREFSMAN->m_sAdditionalSongFolders.Get() != "" )
 	{
-		vector<CString> dirs;
+		vector<RString> dirs;
 		split( PREFSMAN->m_sAdditionalSongFolders, ",", dirs, true );
 		for( unsigned i=0; i < dirs.size(); i++)
 			FILEMAN->Mount( "dir", dirs[i], "/Songs" );
@@ -1001,7 +1001,7 @@ int main(int argc, char* argv[])
 	{
 		/* Now that THEME is loaded, load the icon for the current theme into the
 		 * loading window. */
-		CString sError;
+		RString sError;
 		RageSurface *pIcon = RageSurfaceUtils::LoadFile( THEME->GetPathG( "Common", "window icon" ), sError );
 		if( pIcon )
 			loading_window->SetIcon( pIcon );
@@ -1071,7 +1071,7 @@ int main(int argc, char* argv[])
 	SCREENMAN->SetNewScreen( CommonMetrics::INITIAL_SCREEN );
 
 	// Do this after ThemeChanged so that we can show a system message
-	CString sMessage;
+	RString sMessage;
 	if( INPUTMAPPER->CheckForChangedInputDevicesAndRemap(sMessage) )
 		SCREENMAN->SystemMessage( sMessage );
 
@@ -1105,14 +1105,14 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
-CString StepMania::SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature, int iIndex )
+RString StepMania::SaveScreenshot( RString sDir, bool bSaveCompressed, bool bMakeSignature, int iIndex )
 {
 	//
 	// Find a file name for the screenshot
 	//
 	FlushDirCache();
 
-	vector<CString> files;
+	vector<RString> files;
 	GetDirListing( sDir + "screen*", files, false, false );
 	sort( files.begin(), files.end() );
 
@@ -1128,7 +1128,7 @@ CString StepMania::SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMak
 		for( int i = files.size()-1; i >= 0; --i )
 		{
 			static Regex re( "^screen([0-9]{5})\\....$" );
-			vector<CString> matches;
+			vector<RString> matches;
 			if( !re.Compare( files[i], matches ) )
 				continue;
 
@@ -1150,13 +1150,13 @@ CString StepMania::SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMak
 	else
 		fmt = RageDisplay::SAVE_LOSSLESS;
 
-	CString sFileName = ssprintf( "screen%05d.%s",iIndex,bSaveCompressed ? "jpg" : "bmp" );
-	CString sPath = sDir+sFileName;
+	RString sFileName = ssprintf( "screen%05d.%s",iIndex,bSaveCompressed ? "jpg" : "bmp" );
+	RString sPath = sDir+sFileName;
 	bool bResult = DISPLAY->SaveScreenshot( sPath, fmt );
 	if( !bResult )
 	{
 		SCREENMAN->PlayInvalidSound();
-		return CString();
+		return RString();
 	}
 
 	SCREENMAN->PlayScreenshotSound();

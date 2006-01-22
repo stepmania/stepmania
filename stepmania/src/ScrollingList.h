@@ -13,13 +13,13 @@ public:
 	ScrollingList();
 	~ScrollingList();
 
-	void Load( const vector<CString>& asGraphicPaths );
+	void Load( const vector<RString>& asGraphicPaths );
 	void Unload();	// delete all items.  Called automatically on Load()
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
-	void Replace(CString sGraphicPath, int ElementNumber);
+	void Replace(RString sGraphicPath, int ElementNumber);
 
 	void SetSelection( int iIndex );	
 	int GetSelection();

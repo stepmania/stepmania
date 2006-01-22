@@ -8,7 +8,7 @@
 // types (eg. "Actor.x(GAMESTATE, 10)"), which will crash or cause corruption.
 // #define FAST_LUA
 
-void LuaBinding::CreateMethodsTable( lua_State *L, const CString &sName )
+void LuaBinding::CreateMethodsTable( lua_State *L, const RString &sName )
 {
 	lua_pushlstring( L, sName.data(), sName.size() );
 	lua_rawget( L, LUA_GLOBALSINDEX );
@@ -99,7 +99,7 @@ static bool GetGlobalTable( Lua *L, bool bCreate )
 /* The object is on the stack.  It's either a table or a userdata.
  * If needed, associate the metatable; if a table, also add it to
  * the userdata table. */
-void LuaBinding::ApplyDerivedType( Lua *L, const CString &sClassName, void *pSelf )
+void LuaBinding::ApplyDerivedType( Lua *L, const RString &sClassName, void *pSelf )
 {
 	int iTable = lua_gettop( L );
 
@@ -261,7 +261,7 @@ void LuaClass::Register()
 		LUA->Release( L );
 
 		/* To conserve memory, clear the class name.  We only need it while restoring. */
-		m_sClassName = CString();
+		m_sClassName = RString();
 		m_pSelf = NULL;
 	}
 }

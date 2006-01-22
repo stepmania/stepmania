@@ -5,7 +5,7 @@
 
 RString SpecialDirs::GetMyDocumentsDir()
 {
-	CString sMyDocumentsDir;
+	RString sMyDocumentsDir;
 	bool bSuccess = RegistryAccess::GetRegValue( "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders", "Personal", sMyDocumentsDir );
 	ASSERT( bSuccess );
 	sMyDocumentsDir.Replace( '\\', '/' );
@@ -15,7 +15,7 @@ RString SpecialDirs::GetMyDocumentsDir()
 
 RString SpecialDirs::GetApplicationDataDir()
 {
-	CString sDir;
+	RString sDir;
 	TCHAR szDir[MAX_PATH] = "";
 	BOOL bResult = SHGetSpecialFolderPath( NULL, szDir, CSIDL_APPDATA, FALSE );
 	ASSERT( bResult );
@@ -26,7 +26,7 @@ RString SpecialDirs::GetApplicationDataDir()
 
 RString SpecialDirs::GetDesktopDir()
 {
-	CString sDir;
+	RString sDir;
 	TCHAR szDir[MAX_PATH] = "";
 	BOOL bResult = SHGetSpecialFolderPath( NULL, szDir, CSIDL_DESKTOP, FALSE );
 	ASSERT( bResult );

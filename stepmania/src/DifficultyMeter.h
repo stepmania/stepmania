@@ -20,9 +20,9 @@ class DifficultyMeter: public ActorFrame
 public:
 	DifficultyMeter();
 
-	void Load( const CString &sType );
+	void Load( const RString &sType );
 
-	void LoadFromNode( const CString& sDir, const XNode* pNode );
+	void LoadFromNode( const RString& sDir, const XNode* pNode );
 	virtual Actor *Copy() const;
 
 	void SetFromGameState( PlayerNumber pn );
@@ -36,10 +36,10 @@ public:
 	void PushSelf( lua_State *L );
 
 private:
-	void SetInternal( int iMeter, Difficulty dc, const CString &sDifficultyCommand, const CString &sDescription );
+	void SetInternal( int iMeter, Difficulty dc, const RString &sDifficultyCommand, const RString &sDescription );
 
 	BitmapText		m_textFeet;		// bar
-	CString			m_sCurDifficultyCommand;
+	RString			m_sCurDifficultyCommand;
 	AutoActor		m_Difficulty;	/* "easy", "hard" */
 	BitmapText		m_textMeter;	/* 3, 9 */
 	BitmapText		m_textEditDescription;
@@ -51,7 +51,7 @@ private:
 	ThemeMetric<bool>	m_bShowMeter;
 	ThemeMetric<bool>	m_bShowEditDescription;
 	ThemeMetric<bool>	m_bAutoColorFeet;
-	ThemeMetric<CString> m_sZeroMeterString;
+	ThemeMetric<RString> m_sZeroMeterString;
 };
 
 #endif

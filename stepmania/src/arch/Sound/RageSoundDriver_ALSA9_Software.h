@@ -12,7 +12,7 @@ class RageSound_ALSA9_Software: public RageSound_Generic_Software
 public:
 	RageSound_ALSA9_Software();
 	~RageSound_ALSA9_Software();
-	CString Init();
+	RString Init();
 
 	/* virtuals: */
 	int64_t GetPosition( const RageSoundBase *pSound ) const;

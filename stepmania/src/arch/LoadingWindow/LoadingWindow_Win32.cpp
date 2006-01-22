@@ -43,9 +43,9 @@ static HBITMAP LoadWin32Surface( RageSurface *&s )
 	return bitmap;
 }
 
-static HBITMAP LoadWin32Surface( CString sFile, HWND hWnd )
+static HBITMAP LoadWin32Surface( RString sFile, HWND hWnd )
 {
-	CString error;
+	RString error;
 	RageSurface *pSurface = RageSurfaceUtils::LoadFile( sFile, error );
 	if( pSurface == NULL )
 		return NULL;
@@ -135,9 +135,9 @@ void LoadingWindow_Win32::Paint()
 	}
 }
 
-void LoadingWindow_Win32::SetText( CString sText )
+void LoadingWindow_Win32::SetText( RString sText )
 {
-	vector<CString> asMessageLines;
+	vector<RString> asMessageLines;
 	split( sText, "\n", asMessageLines, false );
 	while( asMessageLines.size() < 3 )
 		asMessageLines.push_back( "" );

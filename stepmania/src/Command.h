@@ -8,25 +8,25 @@
 class Command
 {
 public:
-	void Load( const CString &sCommand );
+	void Load( const RString &sCommand );
 
-	CString GetOriginalCommandString() const;	// used when reporting an error in number of args
+	RString GetOriginalCommandString() const;	// used when reporting an error in number of args
 
-	CString		GetName() const;	// the command name is the first argument in all-lowercase 
+	RString		GetName() const;	// the command name is the first argument in all-lowercase 
 
 	void Clear() { m_vsArgs.clear(); }
 
 	struct Arg
 	{
-		CString s;
-		operator CString () const;
+		RString s;
+		operator RString () const;
 		operator float () const;
 		operator int () const;
 		operator bool () const;
 	};
 	Arg GetArg( unsigned index ) const;
 
-	vector<CString> m_vsArgs;
+	vector<RString> m_vsArgs;
 };
 
 class Commands
@@ -34,7 +34,7 @@ class Commands
 public:
 	vector<Command> v;
 
-	CString GetOriginalCommandString() const;	// used when reporting an error in number of args
+	RString GetOriginalCommandString() const;	// used when reporting an error in number of args
 };
 
 // Take a command list string and return pointers to each of the tokens in the 
@@ -42,13 +42,13 @@ public:
 // TODO: This is expensive to do during the game.  Eventually, 
 // move all calls to ParseCommands to happen during load, then execute
 // from the parsed Command structures.
-void ParseCommands( const CString &sCmds, Commands &vCmdsOut );
-Commands ParseCommands( const CString &sCmds );
+void ParseCommands( const RString &sCmds, Commands &vCmdsOut );
+Commands ParseCommands( const RString &sCmds );
 
 
 #define BeginHandleArgs int iMaxIndexAccessed = 0;
 #define GET_ARG(type,i) iMaxIndexAccessed = max( i, iMaxIndexAccessed ); command.GetArg##type( i );
-#define sArg(i) GetArg<CString>(command,i,iMaxIndexAccessed)
+#define sArg(i) GetArg<RString>(command,i,iMaxIndexAccessed)
 #define fArg(i) GetArg<float>(command,i,iMaxIndexAccessed)
 #define iArg(i) GetArg<int>(command,i,iMaxIndexAccessed)
 #define bArg(i) GetArg<bool>(command,i,iMaxIndexAccessed)

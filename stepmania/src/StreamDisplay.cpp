@@ -22,9 +22,9 @@ void StreamDisplay::Load(
 	float fMeterHeight,
 	int iNumStrips,
 	int iNumChambers, 
-	const CString &sNormalPath, 
-	const CString &sHotPath, 
-	const CString &sPassingPath,
+	const RString &sNormalPath, 
+	const RString &sHotPath, 
+	const RString &sPassingPath,
 	const apActorCommands &acNormalOnCommand,
 	const apActorCommands &acHotOnCommand,
 	const apActorCommands &acPassingOnCommand
@@ -40,7 +40,7 @@ void StreamDisplay::Load(
 	m_quadMask.SetBlendMode( BLEND_NO_EFFECT );
 	m_quadMask.SetUseZBuffer( true );
 
-	CString sGraphicPath;
+	RString sGraphicPath;
 	RageTextureID ID;
 	ID.bStretch = true;
 

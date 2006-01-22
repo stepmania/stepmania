@@ -48,16 +48,16 @@ NoteField::~NoteField()
 
 void NoteField::Unload()
 {
-	for( map<CString, NoteDisplayCols *>::iterator it = m_NoteDisplays.begin();
+	for( map<RString, NoteDisplayCols *>::iterator it = m_NoteDisplays.begin();
 		it != m_NoteDisplays.end(); ++it )
 		delete it->second;
 	m_NoteDisplays.clear();
 	m_pCurDisplay = NULL;
 }
 
-void NoteField::CacheNoteSkin( const CString &sNoteSkin_ )
+void NoteField::CacheNoteSkin( const RString &sNoteSkin_ )
 {
-	CString sNoteSkin = sNoteSkin_;
+	RString sNoteSkin = sNoteSkin_;
 	sNoteSkin.ToLower();
 
 	if( m_NoteDisplays.find(sNoteSkin) != m_NoteDisplays.end() )
@@ -79,11 +79,11 @@ void NoteField::CacheAllUsedNoteSkins()
 {
 	/* Cache all note skins that we might need for the whole song, course or battle
 	 * play, so we don't have to load them later (such as between course songs). */
-	vector<CString> skins;
+	vector<RString> skins;
 	GAMESTATE->GetAllUsedNoteSkins( skins );
 	for( unsigned i=0; i < skins.size(); ++i )
 		CacheNoteSkin( skins[i] );
-	CString sNoteSkin = m_pPlayerState->m_PlayerOptions.m_sNoteSkin;
+	RString sNoteSkin = m_pPlayerState->m_PlayerOptions.m_sNoteSkin;
 	CacheNoteSkin( sNoteSkin );
 }
 
@@ -112,7 +112,7 @@ void NoteField::Load(
 		ssprintf("%d = %d",m_pNoteData->GetNumTracks(), GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer) );
 
 	// The note skin may have changed at the beginning of a new course song.
-	map<CString, NoteDisplayCols *>::iterator it = m_NoteDisplays.find( m_pPlayerState->m_PlayerOptions.m_sNoteSkin );
+	map<RString, NoteDisplayCols *>::iterator it = m_NoteDisplays.find( m_pPlayerState->m_PlayerOptions.m_sNoteSkin );
 	ASSERT_M( it != m_NoteDisplays.end(), m_pPlayerState->m_PlayerOptions.m_sNoteSkin );
 	m_pCurDisplay = it->second;
 }
@@ -293,7 +293,7 @@ void NoteField::DrawAttackText( const float fBeat, const Attack &attack )
 	m_textMeasureNumber.Draw();
 }
 
-void NoteField::DrawBGChangeText( const float fBeat, const CString sNewBGName )
+void NoteField::DrawBGChangeText( const float fBeat, const RString sNewBGName )
 {
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
 	const float fYPos		= ArrowEffects::GetYPos(	m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
@@ -550,12 +550,12 @@ void NoteField::DrawPrimitives()
 
 					if( IS_ON_SCREEN(fLowestBeat) )
 					{
-						vector<CString> vsBGChanges;
+						vector<RString> vsBGChanges;
 						FOREACH_CONST( BackgroundLayer, viLowestIndex, i )
 						{
 							ASSERT( iter[*i] != GAMESTATE->m_pCurSong->GetBackgroundChanges(*i).end() );
 							const BackgroundChange& change = *iter[*i];
-							CString s = change.GetTextDescription();
+							RString s = change.GetTextDescription();
 							if( *i!=0 )
 								s = ssprintf("%d: ",*i) + s;
 							vsBGChanges.push_back( s );

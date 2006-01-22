@@ -16,39 +16,39 @@ struct HighScore
 {
 	HighScore();
 
-	CString	GetName() const;
+	RString	GetName() const;
 	Grade GetGrade() const;
 	int GetScore() const;
 	float GetPercentDP() const;
 	float GetSurviveSeconds() const;
 	float GetSurvivalSeconds() const;
-	CString GetModifiers() const;
+	RString GetModifiers() const;
 	DateTime GetDateTime() const;
-	CString GetPlayerGuid() const;
-	CString GetMachineGuid() const;
+	RString GetPlayerGuid() const;
+	RString GetMachineGuid() const;
 	int GetProductID() const;
 	int GetTapNoteScore( TapNoteScore tns ) const;
 	int GetHoldNoteScore( HoldNoteScore tns ) const;
 	const RadarValues &GetRadarValues() const;
 	float GetLifeRemainingSeconds() const;
 
-	void SetName( const CString &sName );
+	void SetName( const RString &sName );
 	void SetGrade( Grade g );
 	void SetScore( int iScore );
 	void SetPercentDP( float f );
 	void SetSurviveSeconds( float f );
-	void SetModifiers( CString s );
+	void SetModifiers( RString s );
 	void SetDateTime( DateTime d );
-	void SetPlayerGuid( CString s );
-	void SetMachineGuid( CString s );
+	void SetPlayerGuid( RString s );
+	void SetMachineGuid( RString s );
 	void SetProductID( int i );
 	void SetTapNoteScore( TapNoteScore tns, int i );
 	void SetHoldNoteScore( HoldNoteScore tns, int i );
 	void SetRadarValues( const RadarValues &rv );
 	void SetLifeRemainingSeconds( float f );
 
-	CString *GetNameMutable();
-	const CString *GetNameMutable() const { return const_cast<CString *> (const_cast<HighScore *>(this)->GetNameMutable()); }
+	RString *GetNameMutable();
+	const RString *GetNameMutable() const { return const_cast<RString *> (const_cast<HighScore *>(this)->GetNameMutable()); }
 
 	void Unset();
 
@@ -58,7 +58,7 @@ struct HighScore
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
 
-	CString GetDisplayName() const;
+	RString GetDisplayName() const;
 private:
 	HiddenPtr<HighScoreImpl> m_Impl;
 };
@@ -100,8 +100,8 @@ private:
 
 struct Screenshot
 {
-	CString sFileName;	// no directory part - just the file name
-	CString sMD5;		// MD5 hash of the screenshot file
+	RString sFileName;	// no directory part - just the file name
+	RString sMD5;		// MD5 hash of the screenshot file
 	HighScore highScore;
 
 	XNode* CreateNode() const;

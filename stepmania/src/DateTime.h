@@ -10,17 +10,17 @@ const int HOURS_IN_DAY = 24;
 const int DAYS_IN_WEEK = 7;
 enum Month { NUM_Month = 12 };
 
-CString DayInYearToString( int iDayInYearIndex );
-CString LastDayToString( int iLastDayIndex );
-CString LastDayToLocalizedString( int iLastDayIndex );
-CString DayOfWeekToString( int iDayOfWeekIndex );
-CString DayOfWeekToLocalizedString( int iDayOfWeekIndex );
-CString HourInDayToString( int iHourIndex );
-CString HourInDayToLocalizedString( int iHourIndex );
-const CString &MonthToString( Month month );
-const CString &MonthToLocalizedString( Month month );
-CString LastWeekToString( int iLastWeekIndex );
-CString LastWeekToLocalizedString( int iLastWeekIndex );
+RString DayInYearToString( int iDayInYearIndex );
+RString LastDayToString( int iLastDayIndex );
+RString LastDayToLocalizedString( int iLastDayIndex );
+RString DayOfWeekToString( int iDayOfWeekIndex );
+RString DayOfWeekToLocalizedString( int iDayOfWeekIndex );
+RString HourInDayToString( int iHourIndex );
+RString HourInDayToLocalizedString( int iHourIndex );
+const RString &MonthToString( Month month );
+const RString &MonthToLocalizedString( Month month );
+RString LastWeekToString( int iLastWeekIndex );
+RString LastWeekToLocalizedString( int iLastWeekIndex );
 
 tm AddDays( tm start, int iDaysToMove );
 tm GetYesterday( tm start );
@@ -51,8 +51,8 @@ struct DateTime
 	
 	void StripTime();
 
-	CString GetString() const;
-	bool FromString( const CString sDateTime );
+	RString GetString() const;
+	bool FromString( const RString sDateTime );
 };
 
 

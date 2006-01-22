@@ -36,19 +36,19 @@ public:
 	bool WasLoadedFromProfile() const { return m_LoadedFromProfile != ProfileSlot_INVALID; }
 	ProfileSlot GetLoadedFromProfileSlot() const { return m_LoadedFromProfile; }
 	unsigned GetHash() const { return Real()->m_uHash; }
-	CString GetDescription() const { return Real()->m_sDescription; }
+	RString GetDescription() const { return Real()->m_sDescription; }
 	Difficulty GetDifficulty() const { return Real()->m_Difficulty; }
 	int GetMeter() const { return Real()->m_iMeter; }
 	const RadarValues& GetRadarValues() const { return Real()->m_CachedRadarValues; }
 
-	void SetFilename( CString fn ) { m_sFilename = fn; }
-	CString GetFilename() const { return m_sFilename; }
+	void SetFilename( RString fn ) { m_sFilename = fn; }
+	RString GetFilename() const { return m_sFilename; }
 	void SetSavedToDisk( bool b ) { m_bSavedToDisk = b; }
 	bool GetSavedToDisk() const { return m_bSavedToDisk; }
-	void SetDifficultyAndDescription( Difficulty dc, CString sDescription );
+	void SetDifficultyAndDescription( Difficulty dc, RString sDescription );
 	void SetDifficulty( Difficulty dc ) { SetDifficultyAndDescription( dc, this->GetDescription() ); }
-	void SetDescription( CString sDescription ) { SetDifficultyAndDescription( this->GetDifficulty(), sDescription ); }
-	static bool MakeValidEditDescription( CString &sPreferredDescription );	// return true if was modified
+	void SetDescription( RString sDescription ) { SetDifficultyAndDescription( this->GetDifficulty(), sDescription ); }
+	static bool MakeValidEditDescription( RString &sPreferredDescription );	// return true if was modified
 
 	void SetLoadedFromProfile( ProfileSlot slot ) { m_LoadedFromProfile = slot; }
 	void SetMeter(int meter);
@@ -60,8 +60,8 @@ public:
 
 	void		GetNoteData( NoteData& noteDataOut ) const;
 	void		SetNoteData( const NoteData& noteDataNew );
-	void		SetSMNoteData( const CString &notes_comp );
-	void		GetSMNoteData( CString &notes_comp_out ) const;
+	void		SetSMNoteData( const RString &notes_comp );
+	void		GetSMNoteData( RString &notes_comp_out ) const;
 
 	void TidyUpData();
 	void CalculateRadarValues( float fMusicLengthSeconds );
@@ -79,17 +79,17 @@ protected:
 	 * these is transparent. */
 	mutable HiddenPtr<NoteData> m_pNoteData;
 	mutable bool m_bNoteDataIsFilled;
-	mutable CString m_sNoteDataCompressed;
+	mutable RString m_sNoteDataCompressed;
 
 	const Steps *Real() const;
 
-	CString			m_sFilename;
+	RString			m_sFilename;
 	bool			m_bSavedToDisk;	// true if this was loaded from disk or has been saved to disk.
 
 	/* These values are pulled from the autogen source first, if there is one. */
 	ProfileSlot		m_LoadedFromProfile;	// ProfileSlot_INVALID if wasn't loaded from a profile
 	unsigned		m_uHash;			// only used if m_Difficulty == DIFFICULTY_EDIT
-	CString			m_sDescription;		// Step author, edit name, or something meaningful
+	RString			m_sDescription;		// Step author, edit name, or something meaningful
 	Difficulty		m_Difficulty;		// difficulty classification
 	int				m_iMeter;			// difficulty rating from MIN_METER to MAX_METER
 	RadarValues		m_CachedRadarValues;

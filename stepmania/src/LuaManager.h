@@ -31,12 +31,12 @@ public:
 	/* Reset the environment, freeing any globals left over by previously executed scripts. */
 	void ResetState();
 
-	void SetGlobal( const CString &sName, int val );
-	void SetGlobal( const CString &sName, float val );
-	void SetGlobal( const CString &sName, bool val );
-	void SetGlobal( const CString &sName, const CString &val );
-	void SetGlobalFromExpression( const CString &sName, const CString &expr );
-	void UnsetGlobal( const CString &sName );
+	void SetGlobal( const RString &sName, int val );
+	void SetGlobal( const RString &sName, float val );
+	void SetGlobal( const RString &sName, bool val );
+	void SetGlobal( const RString &sName, const RString &val );
+	void SetGlobalFromExpression( const RString &sName, const RString &expr );
+	void UnsetGlobal( const RString &sName );
 
 private:
 	lua_State *L;
@@ -52,16 +52,16 @@ namespace LuaHelpers
 {
 	/* Run a script with the given name.  Return values are left on the Lua stack.
 	 * Returns false on error, with sError set. */
-	bool RunScript( Lua *L, const CString &sScript, const CString &sName, CString &sError, int iReturnValues = 0 );
+	bool RunScript( Lua *L, const RString &sScript, const RString &sName, RString &sError, int iReturnValues = 0 );
 
 	/* Convenience: run a script with one return value, displaying an error on failure.
 	 * The return value is left on the Lua stack. */
-	bool RunScript( Lua *L, const CString &sExpression, const CString &sName = "", int iReturnValues = 0 );
+	bool RunScript( Lua *L, const RString &sExpression, const RString &sName = "", int iReturnValues = 0 );
 
-	bool RunScriptFile( const CString &sFile );
+	bool RunScriptFile( const RString &sFile );
 
 	/* Strip "//" comments and "+". */
-	void PrepareExpression( CString &sInOut );
+	void PrepareExpression( RString &sInOut );
 
 	/* Create a Lua array (a table with indices starting at 1) of the given vector,
 	 * and push it on the stack. */
@@ -71,13 +71,13 @@ namespace LuaHelpers
 	void ReadArrayFromTableB( Lua *L, vector<bool> &aOut );
 
 	/* Run an expression in the global environment, returning the given type. */
-	bool RunExpressionB( const CString &str );
-	float RunExpressionF( const CString &str );
-	int RunExpressionI( const CString &str );
-	bool RunExpressionS( const CString &str, CString &sOut );
+	bool RunExpressionB( const RString &str );
+	float RunExpressionF( const RString &str );
+	int RunExpressionI( const RString &str );
+	bool RunExpressionS( const RString &str, RString &sOut );
 
 	/* If sStr begins with @, evaluate the rest as an expression and store the result over sStr. */
-	bool RunAtExpressionS( CString &sStr );
+	bool RunAtExpressionS( RString &sStr );
 
 	template<class T>
 	void Push( T *pObject, Lua *L );
@@ -85,12 +85,12 @@ namespace LuaHelpers
 	void Push( const bool &Object, Lua *L );
 	void Push( const float &Object, Lua *L );
 	void Push( const int &Object, Lua *L );
-	void Push( const CString &Object, Lua *L );
+	void Push( const RString &Object, Lua *L );
 
 	bool FromStack( bool &Object, int iOffset, Lua *L );
 	bool FromStack( float &Object, int iOffset, Lua *L );
 	bool FromStack( int &Object, int iOffset, Lua *L );
-	bool FromStack( CString &Object, int iOffset, Lua *L );
+	bool FromStack( RString &Object, int iOffset, Lua *L );
 
 	template<class T>
 	void PushStack( const T &val, Lua *L );

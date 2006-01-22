@@ -14,7 +14,7 @@ extern "C" {
 #include "archutils/Win32/ddk/hidsdi.h"
 }
 
-static CString GetUSBDevicePath( int iNum )
+static RString GetUSBDevicePath( int iNum )
 {
     GUID guid;
     HidD_GetHidGuid( &guid );
@@ -28,7 +28,7 @@ static CString GetUSBDevicePath( int iNum )
                NULL, &guid, iNum, &DeviceInterface) )
 	{
 	    SetupDiDestroyDeviceInfoList( DeviceInfo );
-	    return CString();
+	    return RString();
 	}
 
     unsigned long iSize;
@@ -37,7 +37,7 @@ static CString GetUSBDevicePath( int iNum )
     PSP_INTERFACE_DEVICE_DETAIL_DATA DeviceDetail = (PSP_INTERFACE_DEVICE_DETAIL_DATA) malloc( iSize );
     DeviceDetail->cbSize = sizeof(SP_INTERFACE_DEVICE_DETAIL_DATA);
 
-    CString sRet;
+    RString sRet;
     if( SetupDiGetDeviceInterfaceDetail(DeviceInfo, &DeviceInterface,
 		DeviceDetail, iSize, &iSize, NULL) ) 
         sRet = DeviceDetail->DevicePath;
@@ -51,7 +51,7 @@ bool USBDevice::Open( int iVID, int iPID, int iBlockSize, int iNum, void (*pfnIn
 {
     DWORD iIndex = 0;
 
-    CString path;
+    RString path;
     while( (path = GetUSBDevicePath(iIndex++)) != "" )
     {
 		HANDLE h = CreateFile( path, GENERIC_READ,
@@ -124,7 +124,7 @@ WindowsFileIO::~WindowsFileIO()
 	delete[] m_pBuffer;
 }
 
-bool WindowsFileIO::Open( CString path, int iBlockSize )
+bool WindowsFileIO::Open( RString path, int iBlockSize )
 {
 	LOG->Trace( "WindowsFileIO::open(%s)", path.c_str() );
 	m_iBlockSize = iBlockSize;

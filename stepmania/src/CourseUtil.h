@@ -28,16 +28,16 @@ namespace CourseUtil
 
 	void MakeDefaultEditCourseEntry( CourseEntry &out );
 
-	void AutogenEndlessFromGroup( const CString &sGroupName, Difficulty dc, Course &out );
-	void AutogenNonstopFromGroup( const CString &sGroupName, Difficulty dc, Course &out );
-	void AutogenOniFromArtist( const CString &sArtistName, CString sArtistNameTranslit, vector<Song*> aSongs, Difficulty dc, Course &out );
+	void AutogenEndlessFromGroup( const RString &sGroupName, Difficulty dc, Course &out );
+	void AutogenNonstopFromGroup( const RString &sGroupName, Difficulty dc, Course &out );
+	void AutogenOniFromArtist( const RString &sArtistName, RString sArtistNameTranslit, vector<Song*> aSongs, Difficulty dc, Course &out );
 };
 
 class CourseID
 {
 public:
-	CString sPath;
-	CString sFullTitle;
+	RString sPath;
+	RString sFullTitle;
 
 public:
 	CourseID() { Unset(); }
@@ -51,7 +51,7 @@ public:
 
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
-	CString ToString() const;
+	RString ToString() const;
 	bool IsValid() const;
 };
 

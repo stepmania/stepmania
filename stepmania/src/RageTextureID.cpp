@@ -52,7 +52,7 @@ bool RageTextureID::operator==(const RageTextureID &rhs) const
 		// EQUAL(Policy); // don't do this
 }
 
-void RageTextureID::SetFilename( const CString &fn )
+void RageTextureID::SetFilename( const RString &fn )
 {
 	filename = fn;
 	CollapsePath( filename );

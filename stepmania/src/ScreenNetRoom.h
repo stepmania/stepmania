@@ -10,15 +10,15 @@
 
 class RoomData {
 public:
-	void SetName( const CString& name ) { m_name = name; }
-	void SetDescription( const CString& desc ) { m_description = desc; }
+	void SetName( const RString& name ) { m_name = name; }
+	void SetDescription( const RString& desc ) { m_description = desc; }
 	void SetState(unsigned int state) { m_state = state; }
-	inline CString Name() { return m_name; }
-	inline CString Description() { return m_description; }
+	inline RString Name() { return m_name; }
+	inline RString Description() { return m_description; }
 	inline unsigned int State() { return m_state; }
 private:
-	CString m_name;
-	CString m_description;
+	RString m_name;
+	RString m_description;
 	unsigned int m_state;
 };
 
@@ -42,7 +42,7 @@ private:
 	void UpdateRoomsList();
 	void MenuLeft( const InputEventPlus &input );
 	void MenuRight( const InputEventPlus &input );
-	void CreateNewRoom( const CString& rName,  const CString& rDesc );
+	void CreateNewRoom( const RString& rName,  const RString& rDesc );
 		
 	RageSound m_soundChangeSel;
 	
@@ -53,7 +53,7 @@ private:
 	vector < RoomData > m_Rooms;
 	int m_iRoomPlace;
 
-	CString m_newRoomName, m_newRoomDesc;
+	RString m_newRoomName, m_newRoomDesc;
 
 	RoomWheel m_RoomWheel;
 };

@@ -10,8 +10,8 @@ class CourseWriterCRS
 {
 public:
 	static bool Write( const Course &course, RageFileBasic &f, bool bSavingCache );
-	static bool Write( const Course &course, const CString &sPath, bool bSavingCache );
-	static void GetEditFileContents( const Course *pCourse, CString &sOut );
+	static bool Write( const Course &course, const RString &sPath, bool bSavingCache );
+	static void GetEditFileContents( const Course *pCourse, RString &sOut );
 	static void WriteEditFileToMachine( const Course *pCourse );
 };
 

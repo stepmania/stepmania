@@ -28,7 +28,7 @@
 #pragma comment(lib, "vfw32.lib")
 #endif
 
-static CString FourCCToString( int fcc )
+static RString FourCCToString( int fcc )
 {
 	char c[4];
 	c[0] = char((fcc >> 0) & 0xFF);
@@ -36,14 +36,14 @@ static CString FourCCToString( int fcc )
 	c[2] = char((fcc >> 16) & 0xFF);
 	c[3] = char((fcc >> 24) & 0xFF);
 
-	CString s;
+	RString s;
 	for( int i = 0; i < 4; ++i )
 		s += clamp( c[i], '\x20', '\x7e' );
 
 	return s;
 }
 
-static void CheckCodecVersion( CString codec, CString desc )
+static void CheckCodecVersion( RString codec, RString desc )
 {
 	if( !codec.CompareNoCase("DIVX") )
 	{
@@ -141,9 +141,9 @@ MovieTexture_DShow::MovieTexture_DShow( RageTextureID ID ) :
 	buffer = NULL;
 }
 
-CString MovieTexture_DShow::Init()
+RString MovieTexture_DShow::Init()
 {
-	CString sError = Create();
+	RString sError = Create();
 	if( sError != "" )
 		return sError;
 
@@ -152,7 +152,7 @@ CString MovieTexture_DShow::Init()
 	// flip all frame rects because movies are upside down
 	for( unsigned i=0; i<m_TextureCoordRects.size(); i++ )
 		swap(m_TextureCoordRects[i].top, m_TextureCoordRects[i].bottom);
-	return CString();
+	return RString();
 }
 
 /* Hold buffer_lock.  If it's held, then the decoding thread is waiting
@@ -278,12 +278,12 @@ void MovieTexture_DShow::Update(float fDeltaTime)
 	CheckFrame();
 }
 
-CString PrintCodecError( HRESULT hr, CString s )
+RString PrintCodecError( HRESULT hr, RString s )
 {
 	/* Actually, we might need XviD; we might want to look
 	 * at the file and try to figure out if it's something
 	 * common: DIV3, DIV4, DIV5, XVID, or maybe even MPEG2. */
-	CString err = hr_ssprintf(hr, "%s", s.c_str());
+	RString err = hr_ssprintf(hr, "%s", s.c_str());
 	return 
 		ssprintf(
 		"There was an error initializing a movie: %s.\n"
@@ -294,9 +294,9 @@ CString PrintCodecError( HRESULT hr, CString s )
 		err.c_str() );
 }
 
-CString MovieTexture_DShow::GetActiveFilterList()
+RString MovieTexture_DShow::GetActiveFilterList()
 {
-	CString ret;
+	RString ret;
 	
 	IEnumFilters *pEnum = NULL;
 	HRESULT hr = m_pGB->EnumFilters(&pEnum);
@@ -321,7 +321,7 @@ CString MovieTexture_DShow::GetActiveFilterList()
 	return ret;
 }
 
-CString MovieTexture_DShow::Create()
+RString MovieTexture_DShow::Create()
 {
 	RageTextureID actualID = GetID();
 
@@ -408,7 +408,7 @@ CString MovieTexture_DShow::Create()
 	// Start the graph running
     Play();
 
-	return CString();
+	return RString();
 }
 
 

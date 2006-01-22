@@ -15,7 +15,7 @@ class OptionRowHandler
 public:
 	Commands m_cmds;
 	OptionRowDefinition m_Def;
-	vector<CString> m_vsReloadRowMessages;	// refresh this row on on these messages
+	vector<RString> m_vsReloadRowMessages;	// refresh this row on on these messages
 	
 	OptionRowHandler::OptionRowHandler() { Init(); }
 	virtual ~OptionRowHandler() { }
@@ -48,7 +48,7 @@ public:
 	virtual void ImportOption( const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const = 0;
 	/* Returns an OPT mask. */
 	virtual int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const = 0;
-	virtual void GetIconTextAndGameCommand( int iFirstSelection, CString &sIconTextOut, GameCommand &gcOut ) const;
+	virtual void GetIconTextAndGameCommand( int iFirstSelection, RString &sIconTextOut, GameCommand &gcOut ) const;
 	virtual RString GetScreen( int iChoice ) const { return RString(); }
 };
 
@@ -62,7 +62,7 @@ namespace OptionRowHandlerUtil
 	int GetOneSelection( const vector<bool> &vbSelected );
 }
 
-inline void VerifySelected( SelectType st, const vector<bool> &vbSelected, const CString &sName )
+inline void VerifySelected( SelectType st, const vector<bool> &vbSelected, const RString &sName )
 {
 	int iNumSelected = 0;
 	if( st == SELECT_ONE )

@@ -17,8 +17,8 @@
 //
 static bool CompareCoursePointersByName( const Course* pCourse1, const Course* pCourse2 )
 {
-	CString sName1 = pCourse1->GetDisplayFullTitle();
-	CString sName2 = pCourse2->GetDisplayFullTitle();
+	RString sName1 = pCourse1->GetDisplayFullTitle();
+	RString sName2 = pCourse2->GetDisplayFullTitle();
 	return sName1.CompareNoCase( sName2 ) < 0;
 }
 
@@ -119,7 +119,7 @@ void CourseUtil::MoveRandomToEnd( vector<Course*> &vpCoursesInOut )
 	stable_sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareRandom );
 }
 
-static map<const Course*, CString> course_sort_val;
+static map<const Course*, RString> course_sort_val;
 
 bool CompareCoursePointersBySortValueAscending( const Course *pSong1, const Course *pSong2 )
 {
@@ -181,7 +181,7 @@ void CourseUtil::SortByMostRecentlyPlayedForMachine( vector<Course*> &vpCoursesI
 	FOREACH_CONST( Course*, vpCoursesInOut, c )
 	{
 		int iNumTimesPlayed = pProfile->GetCourseNumTimesPlayed( *c );
-		CString val = iNumTimesPlayed ? pProfile->GetCourseLastPlayedDateTime(*c).GetString() : "9999999999999";
+		RString val = iNumTimesPlayed ? pProfile->GetCourseLastPlayedDateTime(*c).GetString() : "9999999999999";
 		course_sort_val[*c] = val;
 	}
 
@@ -199,7 +199,7 @@ void CourseUtil::MakeDefaultEditCourseEntry( CourseEntry& out )
 // Autogen
 //////////////////////////////////
 
-void CourseUtil::AutogenEndlessFromGroup( const CString &sGroupName, Difficulty diff, Course &out )
+void CourseUtil::AutogenEndlessFromGroup( const RString &sGroupName, Difficulty diff, Course &out )
 {
 	out.m_bIsAutogen = true;
 	out.m_bRepeat = true;
@@ -233,7 +233,7 @@ void CourseUtil::AutogenEndlessFromGroup( const CString &sGroupName, Difficulty 
 		out.m_vEntries.push_back( e );
 }
 
-void CourseUtil::AutogenNonstopFromGroup( const CString &sGroupName, Difficulty diff, Course &out )
+void CourseUtil::AutogenNonstopFromGroup( const RString &sGroupName, Difficulty diff, Course &out )
 {
 	AutogenEndlessFromGroup( sGroupName, diff, out );
 
@@ -248,7 +248,7 @@ void CourseUtil::AutogenNonstopFromGroup( const CString &sGroupName, Difficulty 
 		out.m_vEntries.pop_back();
 }
 
-void CourseUtil::AutogenOniFromArtist( const CString &sArtistName, CString sArtistNameTranslit, vector<Song*> aSongs, Difficulty dc, Course &out )
+void CourseUtil::AutogenOniFromArtist( const RString &sArtistName, RString sArtistNameTranslit, vector<Song*> aSongs, Difficulty dc, Course &out )
 {
 	out.m_bIsAutogen = true;
 	out.m_bRepeat = false;
@@ -329,7 +329,7 @@ Course *CourseID::ToCourse() const
 {
 	// HACK for backwards compatibility:
 	// Re-add the leading "/".  2005/05/21 file layer changes added a leading slash.
-	CString sPath2 = sPath;
+	RString sPath2 = sPath;
 	if( sPath2.Left(1) != "/" )
 		sPath2 = "/" + sPath2;
 
@@ -370,13 +370,13 @@ void CourseID::LoadFromNode( const XNode* pNode )
 	pNode->GetAttrValue("FullTitle", sFullTitle);
 }
 
-CString CourseID::ToString() const
+RString CourseID::ToString() const
 {
 	if( !sPath.empty() )
 		return sPath;
 	if( !sFullTitle.empty() )
 		return sFullTitle;
-	return CString();
+	return RString();
 }
 
 bool CourseID::IsValid() const

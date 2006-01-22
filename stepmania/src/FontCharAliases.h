@@ -3,8 +3,8 @@
 
 namespace FontCharAliases
 {
-	void ReplaceMarkers( CString &sText );
-	bool GetChar( CString &codepoint, wchar_t &ch );
+	void ReplaceMarkers( RString &sText );
+	bool GetChar( RString &codepoint, wchar_t &ch );
 };
 
 #endif

@@ -8,7 +8,7 @@
 #include "RageFileDriverMemory.h"
 
 
-bool CourseWriterCRS::Write( const Course &course, const CString &sPath, bool bSavingCache )
+bool CourseWriterCRS::Write( const Course &course, const RString &sPath, bool bSavingCache )
 {
 	RageFile f;
 	if( !f.Open( sPath, RageFile::WRITE ) )
@@ -20,7 +20,7 @@ bool CourseWriterCRS::Write( const Course &course, const CString &sPath, bool bS
 	return CourseWriterCRS::Write( course, f, bSavingCache );
 }
 
-void CourseWriterCRS::GetEditFileContents( const Course *pCourse, CString &sOut )
+void CourseWriterCRS::GetEditFileContents( const Course *pCourse, RString &sOut )
 {
 	RageFileObjMem mem;
 	CourseWriterCRS::Write( *pCourse, mem, true );
@@ -58,11 +58,11 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 			StepsType st = entry.first;
 			CourseDifficulty cd = entry.second;
 
-			vector<CString> asRadarValues;
+			vector<RString> asRadarValues;
 			const RadarValues &rv = it->second;
 			for( int r=0; r < NUM_RadarCategory; r++ )
 				asRadarValues.push_back( ssprintf("%.3f", rv[r]) );
-			CString sLine = ssprintf( "#RADAR:%i:%i:", st, cd );
+			RString sLine = ssprintf( "#RADAR:%i:%i:", st, cd );
 			sLine += join( ",", asRadarValues ) + ";";
 			f.PutLine( sLine );
 		}
@@ -103,12 +103,12 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 		else if( entry.pSong )
 		{
 			// strip off everything but the group name and song dir
-			vector<CString> as;
+			vector<RString> as;
 			ASSERT( entry.pSong != NULL );
 			split( entry.pSong->GetSongDir(), "/", as );
 			ASSERT( as.size() >= 2 );
-			CString sGroup = as[ as.size()-2 ];
-			CString sSong = as[ as.size()-1 ];
+			RString sGroup = as[ as.size()-2 ];
+			RString sSong = as[ as.size()-1 ];
 			f.Write( "#SONG:" + sGroup + '/' + sSong );
 		}
 		else if( !entry.sSongGroup.empty() )
@@ -127,7 +127,7 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 			f.Write( ssprintf( "%d..%d", entry.iLowMeter, entry.iHighMeter ) );
 		f.Write( ":" );
 
-		CString sModifiers = entry.sModifiers;
+		RString sModifiers = entry.sModifiers;
 		bool bDefaultSecret = entry.IsRandomSong();
 		if( bDefaultSecret != entry.bSecret )
 		{

@@ -42,10 +42,10 @@ AutoScreenMessage( SM_SongChanged )
 AutoScreenMessage( SM_SortOrderChanging )
 AutoScreenMessage( SM_SortOrderChanged )
 
-static CString g_sCDTitlePath;
+static RString g_sCDTitlePath;
 static bool g_bWantFallbackCdTitle;
 static bool g_bCDTitleWaiting = false;
-static CString g_sBannerPath;
+static RString g_sBannerPath;
 static bool g_bBannerWaiting = false;
 static bool g_bSampleMusicWaiting = false;
 static RageTimer g_StartedLoadingAt(RageZeroTimer);
@@ -568,15 +568,15 @@ void ScreenSelectMusic::CheckBackgroundRequests()
 	if( g_bCDTitleWaiting )
 	{
 		/* The CDTitle is normally very small, so we don't bother waiting to display it. */
-		CString sPath;
+		RString sPath;
 		if( m_BackgroundLoader.IsCacheFileFinished(g_sCDTitlePath, sPath) )
 		{
 			g_bCDTitleWaiting = false;
 
-			CString sCDTitlePath = sPath;
+			RString sCDTitlePath = sPath;
 
 			if( sCDTitlePath.empty() || !IsAFile(sCDTitlePath) )
-				sCDTitlePath = g_bWantFallbackCdTitle? m_sFallbackCDTitlePath:CString("");
+				sCDTitlePath = g_bWantFallbackCdTitle? m_sFallbackCDTitlePath:RString("");
 
 			if( !sCDTitlePath.empty() )
 			{
@@ -605,7 +605,7 @@ void ScreenSelectMusic::CheckBackgroundRequests()
 		if( m_Banner.GetTweenTimeLeft() > 0 )
 			return;
 
-		CString sPath;
+		RString sPath;
 		bool bFreeCache = false;
 		if( TEXTUREMAN->IsTextureRegistered( Sprite::SongBannerTexture(g_sBannerPath) ) )
 		{
@@ -1429,8 +1429,8 @@ void ScreenSelectMusic::AfterMusicChange()
 
 	m_Banner.SetMovingFast( !!m_MusicWheel.IsMoving() );
 
-	CString SampleMusicToPlay, SampleMusicTimingData;
-	vector<CString> m_Artists, m_AltArtists;
+	RString SampleMusicToPlay, SampleMusicTimingData;
+	vector<RString> m_Artists, m_AltArtists;
 
 	m_MachineRank.SetText( "" );
 
@@ -1453,7 +1453,7 @@ void ScreenSelectMusic::AfterMusicChange()
 	case TYPE_SECTION:
 	case TYPE_SORT:
 		{	
-			CString sGroup = m_MusicWheel.GetSelectedSection();
+			RString sGroup = m_MusicWheel.GetSelectedSection();
 			FOREACH_PlayerNumber( p )
 				m_iSelection[p] = -1;
 

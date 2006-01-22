@@ -27,11 +27,11 @@ AnimatedTexture::~AnimatedTexture()
 	Unload();
 }
 
-void AnimatedTexture::Load( CString sTexOrIniPath )
+void AnimatedTexture::Load( RString sTexOrIniPath )
 {
 	ASSERT( vFrames.empty() );	// don't load more than once
 
-	m_bSphereMapped = sTexOrIniPath.find("sphere") != CString::npos;
+	m_bSphereMapped = sTexOrIniPath.find("sphere") != RString::npos;
 	if( sTexOrIniPath.find("add") != string::npos )
 		m_BlendMode = BLEND_ADD;
 	else
@@ -54,16 +54,16 @@ void AnimatedTexture::Load( CString sTexOrIniPath )
 		
 		for( int i=0; i<1000; i++ )
 		{
-			CString sFileKey = ssprintf( "Frame%04d", i );
-			CString sDelayKey = ssprintf( "Delay%04d", i );
+			RString sFileKey = ssprintf( "Frame%04d", i );
+			RString sDelayKey = ssprintf( "Delay%04d", i );
 
-			CString sFileName;
+			RString sFileName;
 			float fDelay = 0;
 			if( pAnimatedTexture->GetAttrValue( sFileKey, sFileName ) &&
 				pAnimatedTexture->GetAttrValue( sDelayKey, fDelay ) ) 
 			{
-				CString sTranslateXKey = ssprintf( "TranslateX%04d", i );
-				CString sTranslateYKey = ssprintf( "TranslateY%04d", i );
+				RString sTranslateXKey = ssprintf( "TranslateX%04d", i );
+				RString sTranslateYKey = ssprintf( "TranslateY%04d", i );
 
 				RageVector2 vOffset(0,0);
 				pAnimatedTexture->GetAttrValue( sTranslateXKey, vOffset.x );
@@ -214,16 +214,16 @@ msMesh::~msMesh()
 
 #define THROW RageException::Throw( "Parse error in \"%s\" at line %d: '%s'", sPath.c_str(), iLineNum, sLine.c_str() )
 
-bool msAnimation::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
+bool msAnimation::LoadMilkshapeAsciiBones( RString sAniName, RString sPath )
 {
 	FixSlashesInPlace(sPath);
-	const CString sDir = Dirname( sPath );
+	const RString sDir = Dirname( sPath );
 
 	RageFile f;
 	if ( !f.Open(sPath) )
 		RageException::Throw( "Model:: Could not open \"%s\": %s", sPath.c_str(), f.GetError().c_str() );
 
-	CString sLine;
+	RString sLine;
 	int iLineNum = 0;
 
 	msAnimation &Animation = *this;

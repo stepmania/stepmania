@@ -3,7 +3,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 
-RageWorkerThread::RageWorkerThread( const CString &sName ):
+RageWorkerThread::RageWorkerThread( const RString &sName ):
 	m_WorkerEvent( "\"" + sName + "\" worker event" ),
 	m_HeartbeatEvent( "\"" + sName + "\" heartbeat event" )
 {

@@ -115,7 +115,7 @@ static bool AreEntriesFull()
 
 	if( pCourse->m_vEntries.size() >= size_t(MAX_ENTRIES_PER_COURSE) )
 	{
-		CString sError = ssprintf(MAXIMUM_COURSE_ENTRIES.GetValue(), MAX_ENTRIES_PER_COURSE, pCourse->m_vEntries.size() );
+		RString sError = ssprintf(MAXIMUM_COURSE_ENTRIES.GetValue(), MAX_ENTRIES_PER_COURSE, pCourse->m_vEntries.size() );
 		ScreenPrompt::Prompt( SM_None, sError );
 		return true;
 	}

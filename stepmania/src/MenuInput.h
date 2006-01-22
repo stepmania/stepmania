@@ -21,8 +21,8 @@ enum MenuButton
 };
 #define FOREACH_MenuButton( m ) FOREACH_ENUM( MenuButton, NUM_MenuButton, m )
 
-const CString &MenuButtonToString( MenuButton mb );
-const CString &MenuButtonToLocalizedString( MenuButton mb );
+const RString &MenuButtonToString( MenuButton mb );
+const RString &MenuButtonToLocalizedString( MenuButton mb );
 
 struct MenuInput
 {

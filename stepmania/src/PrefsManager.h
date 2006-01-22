@@ -18,26 +18,26 @@ public:
 
 	void Init();
 
-	void SetCurrentGame( const CString &sGame );
-	CString	GetCurrentGame() { return m_sCurrentGame; }
+	void SetCurrentGame( const RString &sGame );
+	RString	GetCurrentGame() { return m_sCurrentGame; }
 protected:
-	Preference<CString>	m_sCurrentGame;
+	Preference<RString>	m_sCurrentGame;
 
 public:
 	// Game-specific prefs.  Copy these off and save them every time the game changes
-	Preference<CString>	m_sAnnouncer;
-	Preference<CString>	m_sTheme;
-	Preference<CString>	m_sDefaultModifiers;
+	Preference<RString>	m_sAnnouncer;
+	Preference<RString>	m_sTheme;
+	Preference<RString>	m_sDefaultModifiers;
 protected:
 	void StoreGamePrefs();
 	void RestoreGamePrefs();
 	struct GamePrefs
 	{
-		CString	m_sAnnouncer;
-		CString m_sTheme;
-		CString	m_sDefaultModifiers;
+		RString	m_sAnnouncer;
+		RString m_sTheme;
+		RString	m_sDefaultModifiers;
 	};
-	map<CString, GamePrefs> m_mapGameNameToGamePrefs;
+	map<RString, GamePrefs> m_mapGameNameToGamePrefs;
 
 public:
 	Preference<bool>	m_bWindowed;
@@ -158,8 +158,8 @@ public:
 	Preference<int>		m_iProgressiveNonstopLifebar;
 	Preference<bool>	m_bShowBeginnerHelper;
 	Preference<bool>	m_bDisableScreenSaver;
-	Preference<CString>	m_sLanguage;
-	Preference<CString>	m_sMemoryCardProfileSubdir;	// the directory on a memory card to look in for a profile
+	Preference<RString>	m_sLanguage;
+	Preference<RString>	m_sMemoryCardProfileSubdir;	// the directory on a memory card to look in for a profile
 	Preference<int>		m_iProductID;		// Saved in HighScore to track what software version a score came from.
 	Preference<bool>	m_bMemoryCards;
 	Preference<int>		m_iCenterImageTranslateX;
@@ -206,17 +206,17 @@ public:
 	enum ScoringType { SCORING_NEW, SCORING_OLD };
 	Preference<ScoringType,int>	m_ScoringType;
 
-	Preference<CString>	m_sAdditionalSongFolders;
-	Preference<CString>	m_sAdditionalFolders;
+	Preference<RString>	m_sAdditionalSongFolders;
+	Preference<RString>	m_sAdditionalFolders;
 
-	Preference<CString>	m_sLastSeenVideoDriver;
-	Preference<CString>	m_sVideoRenderers;		// StepMania.cpp sets these on first run based on the card
+	Preference<RString>	m_sLastSeenVideoDriver;
+	Preference<RString>	m_sVideoRenderers;		// StepMania.cpp sets these on first run based on the card
 	Preference<bool>	m_bSmoothLines;
 	Preference<float>	m_fSoundVolume;
 	Preference<int>		m_iSoundWriteAhead;
-	Preference<CString>	m_iSoundDevice;	
+	Preference<RString>	m_iSoundDevice;	
 	Preference<int>		m_iSoundPreferredSampleRate;
-	Preference<CString>	m_sLightsStepsDifficulty;
+	Preference<RString>	m_sLightsStepsDifficulty;
 	Preference<bool>	m_bBlinkGameplayButtonLightsOnNote;
 	Preference<bool>	m_bAllowUnacceleratedRenderer;
 	Preference<bool>	m_bThreadedInput;
@@ -224,8 +224,8 @@ public:
 	Preference<bool>	m_bScreenTestMode;
 	Preference<bool>	m_bDebugLights;
 	Preference<bool>	m_bMonkeyInput;
-	Preference<CString>	m_sMachineName;
-	Preference<CString>	m_sCoursesToShowRanking;
+	Preference<RString>	m_sMachineName;
+	Preference<RString>	m_sCoursesToShowRanking;
 
 	/* Debug: */
 	Preference<bool>	m_bLogToDisk;
@@ -245,9 +245,9 @@ public:
 	float GetSoundVolume();
 
 
-	void ReadPrefsFromIni( const IniFile &ini, const CString &sSection );
-	void ReadGamePrefsFromIni( const CString &sIni );
-	void ReadDefaultsFromIni( const IniFile &ini, const CString &sSection );
+	void ReadPrefsFromIni( const IniFile &ini, const RString &sSection );
+	void ReadGamePrefsFromIni( const RString &sIni );
+	void ReadDefaultsFromIni( const IniFile &ini, const RString &sSection );
 	void SavePrefsToIni( IniFile &ini );
 
 	void ReadPrefsFromDisk();
@@ -255,14 +255,14 @@ public:
 
 	void ResetToFactoryDefaults();
 
-	CString GetPreferencesSection() const;
+	RString GetPreferencesSection() const;
 
 	// Lua
 	void PushSelf( lua_State *L );
 
 protected:
-	void ReadPrefsFromFile( const CString &sIni, const CString &sSection );
-	void ReadDefaultsFromFile( const CString &sIni, const CString &sSection );
+	void ReadPrefsFromFile( const RString &sIni, const RString &sSection );
+	void ReadDefaultsFromFile( const RString &sIni, const RString &sSection );
 };
 
 

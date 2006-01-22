@@ -5,7 +5,7 @@
 
 const wchar_t FontCharmaps::M_SKIP = 0xFEFF;
 
-static map<CString,const wchar_t*> charmaps;
+static map<RString,const wchar_t*> charmaps;
 
 using namespace FontCharmaps;
 
@@ -159,13 +159,13 @@ static void Init()
 	charmaps["numbers"] = map_numbers;
 }
 
-const wchar_t *FontCharmaps::get_char_map(CString name)
+const wchar_t *FontCharmaps::get_char_map(RString name)
 {
 	Init();
 
 	name.MakeLower();
 
-	map<CString,const wchar_t*>::const_iterator i = charmaps.find(name);
+	map<RString,const wchar_t*>::const_iterator i = charmaps.find(name);
 	if(i == charmaps.end())
 		return NULL;
 

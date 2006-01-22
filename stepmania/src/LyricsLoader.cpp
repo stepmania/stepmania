@@ -16,7 +16,7 @@ static int CompareLyricSegments(const LyricSegment &seg1, const LyricSegment &se
    return seg1.m_fStartTime < seg2.m_fStartTime;
 }
 
-bool LyricsLoader::LoadFromLRCFile(const CString& sPath, Song& out)
+bool LyricsLoader::LoadFromLRCFile(const RString& sPath, Song& out)
 {
 	LOG->Trace( "LyricsLoader::LoadFromLRCFile(%s)", sPath.c_str() );
 	
@@ -33,7 +33,7 @@ bool LyricsLoader::LoadFromLRCFile(const CString& sPath, Song& out)
 	
 	while( 1 )
 	{
-		CString line;
+		RString line;
 		int ret = input.GetLine( line );
 		if( ret == 0 )
 			break;
@@ -51,13 +51,13 @@ bool LyricsLoader::LoadFromLRCFile(const CString& sPath, Song& out)
 		/* "[data1] data2".  Ignore whitespace at the beginning of the line. */
 		static Regex x("^ *\\[([^]]+)\\] *(.*)$");
 		
-		vector<CString> matches;
+		vector<RString> matches;
 		if(!x.Compare(line, matches))
 			continue;
 		ASSERT( matches.size() == 2 );
 		
-		CString &sValueName = matches[0];
-		CString &sValueData = matches[1];
+		RString &sValueName = matches[0];
+		RString &sValueData = matches[1];
 		StripCrnl(sValueData);
 		
 		// handle the data

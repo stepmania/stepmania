@@ -50,25 +50,25 @@ XToString( PixelFormat, NUM_PixelFormat );
 /* bNeedReloadTextures is set to true if the device was re-created and we need
  * to reload textures.  On failure, an error message is returned. 
  * XXX: the renderer itself should probably be the one to try fallback modes */
-CString RageDisplay::SetVideoMode( VideoModeParams p, bool &bNeedReloadTextures )
+RString RageDisplay::SetVideoMode( VideoModeParams p, bool &bNeedReloadTextures )
 {
-	CString err;
+	RString err;
 	err = this->TryVideoMode(p,bNeedReloadTextures);
 	if( err == "" )
-		return CString();
+		return RString();
 	LOG->Trace( "TryVideoMode failed: %s", err.c_str() );
 	
 	// fall back
 	p.windowed = true;
 	if( this->TryVideoMode(p,bNeedReloadTextures) == "" )
-		return CString();
+		return RString();
 	p.bpp = 16;
 	if( this->TryVideoMode(p,bNeedReloadTextures) == "" )
-		return CString();
+		return RString();
 	p.width = 640;
 	p.height = 480;
 	if( this->TryVideoMode(p,bNeedReloadTextures) == "" )
-		return CString();
+		return RString();
 
 	return ssprintf( "SetVideoMode failed: %s", err.c_str() );
 }
@@ -88,7 +88,7 @@ void RageDisplay::ProcessStatsOnFlip()
 		g_iFramesRenderedSinceLastCheck = g_iVertsRenderedSinceLastCheck = 0;
 		if( LOG_FPS )
 		{
-			CString sStats = GetStats();
+			RString sStats = GetStats();
 			sStats.Replace( "\n", ", " );
 			LOG->Trace( "%s", sStats.c_str() );
 		}
@@ -104,9 +104,9 @@ void RageDisplay::ResetStats()
 	g_LastCheckTimer.GetDeltaTime();
 }
 
-CString RageDisplay::GetStats() const
+RString RageDisplay::GetStats() const
 {
-	CString s;
+	RString s;
 	/* If FPS == 0, we don't have stats yet. */
 	if( !GetFPS() )
 		s = "-- FPS\n-- av FPS\n-- VPF";
@@ -637,7 +637,7 @@ void RageDisplay::UpdateCentering()
 	RageMatrixMultiply( &m_Centering, &m1, &m2 );
 }
 
-bool RageDisplay::SaveScreenshot( CString sPath, GraphicsFileFormat format )
+bool RageDisplay::SaveScreenshot( RString sPath, GraphicsFileFormat format )
 {
 	RageSurface* surface = this->CreateScreenshot();
 

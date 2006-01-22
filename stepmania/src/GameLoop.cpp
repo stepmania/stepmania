@@ -72,13 +72,13 @@ static bool ChangeAppPri()
 	if( g_BoostAppPriority == BOOST_AUTO )
 	{
 		vector<InputDevice> vDevices;
-		vector<CString> vDescriptions;
+		vector<RString> vDescriptions;
 
 		// This can get called before INPUTMAN is constructed.
 		if( INPUTMAN )
 		{
 			INPUTMAN->GetDevicesAndDescriptions(vDevices,vDescriptions);
-			CString sInputDevices = join( ",", vDescriptions );
+			RString sInputDevices = join( ",", vDescriptions );
 			if( sInputDevices.find("NTPAD") != string::npos )
 			{
 				LOG->Trace( "Using NTPAD.  Don't boost priority." );
@@ -171,7 +171,7 @@ void GameLoop()
 		{
 			INPUTFILTER->Reset();	// fix "buttons stuck" if button held while unplugged
 			INPUTMAN->LoadDrivers();
-			CString sMessage;
+			RString sMessage;
 			if( INPUTMAPPER->CheckForChangedInputDevicesAndRemap(sMessage) )
 				SCREENMAN->SystemMessage( sMessage );
 		}

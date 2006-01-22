@@ -9,7 +9,7 @@ Character::Character()
 	m_iPreloadRefcount = 0;
 }
 
-bool Character::Load( CString sCharDir )
+bool Character::Load( RString sCharDir )
 {
 	// Save character directory
 	if( sCharDir.Right(1) != "/" )
@@ -19,13 +19,13 @@ bool Character::Load( CString sCharDir )
 
 	// save ID
 	{
-		vector<CString> as;
+		vector<RString> as;
 		split( sCharDir, "/", as );
 		m_sCharacterID = as.back();
 	}
 
 	{
-		vector<CString> as;
+		vector<RString> as;
 		GetDirListing( m_sCharDir+"card.png", as, false, true );
 		GetDirListing( m_sCharDir+"card.jpg", as, false, true );
 		GetDirListing( m_sCharDir+"card.gif", as, false, true );
@@ -37,7 +37,7 @@ bool Character::Load( CString sCharDir )
 	}
 
 	{
-		vector<CString> as;
+		vector<RString> as;
 		GetDirListing( m_sCharDir+"icon.png", as, false, true );
 		GetDirListing( m_sCharDir+"icon.jpg", as, false, true );
 		GetDirListing( m_sCharDir+"icon.gif", as, false, true );
@@ -65,45 +65,45 @@ bool Character::Load( CString sCharDir )
 }
 
 
-CString GetRandomFileInDir( CString sDir )
+RString GetRandomFileInDir( RString sDir )
 {
-	vector<CString> asFiles;
+	vector<RString> asFiles;
 	GetDirListing( sDir, asFiles, false, true );
 	if( asFiles.empty() )
-		return CString();
+		return RString();
 	else
 		return asFiles[rand()%asFiles.size()];
 }
 
 
-CString Character::GetModelPath() const
+RString Character::GetModelPath() const
 {
-	CString s = m_sCharDir + "model.txt";
+	RString s = m_sCharDir + "model.txt";
 	if( DoesFileExist(s) )
 		return s; 
 	else 
-		return CString();
+		return RString();
 }
 
-CString Character::GetRestAnimationPath() const	{ return DerefRedir(GetRandomFileInDir(m_sCharDir + "Rest/")); }
-CString Character::GetWarmUpAnimationPath() const { return DerefRedir(GetRandomFileInDir(m_sCharDir + "WarmUp/")); }
-CString Character::GetDanceAnimationPath() const { return DerefRedir(GetRandomFileInDir(m_sCharDir + "Dance/")); }
-CString Character::GetTakingABreakPath() const
+RString Character::GetRestAnimationPath() const	{ return DerefRedir(GetRandomFileInDir(m_sCharDir + "Rest/")); }
+RString Character::GetWarmUpAnimationPath() const { return DerefRedir(GetRandomFileInDir(m_sCharDir + "WarmUp/")); }
+RString Character::GetDanceAnimationPath() const { return DerefRedir(GetRandomFileInDir(m_sCharDir + "Dance/")); }
+RString Character::GetTakingABreakPath() const
 {
-	vector<CString> as;
+	vector<RString> as;
 	GetDirListing( m_sCharDir+"break.png", as, false, true );
 	GetDirListing( m_sCharDir+"break.jpg", as, false, true );
 	GetDirListing( m_sCharDir+"break.gif", as, false, true );
 	GetDirListing( m_sCharDir+"break.bmp", as, false, true );
 	if( as.empty() )
-		return CString();
+		return RString();
 	else
 		return as[0];
 }
 
-CString Character::GetSongSelectIconPath() const
+RString Character::GetSongSelectIconPath() const
 {
-	vector<CString> as;
+	vector<RString> as;
 	// first try and find an icon specific to the select music screen
 	// so you can have different icons for music select / char select
 	GetDirListing( m_sCharDir+"selectmusicicon.png", as, false, true );
@@ -119,7 +119,7 @@ CString Character::GetSongSelectIconPath() const
 		GetDirListing( m_sCharDir+"icon.gif", as, false, true );
 		GetDirListing( m_sCharDir+"icon.bmp", as, false, true );
 		if( as.empty() )
-			return CString();
+			return RString();
 		else
 			return as[0];
 	}
@@ -127,9 +127,9 @@ CString Character::GetSongSelectIconPath() const
 		return as[0];
 }
 
-CString Character::GetStageIconPath() const
+RString Character::GetStageIconPath() const
 {
-	vector<CString> as;
+	vector<RString> as;
 	// first try and find an icon specific to the select music screen
 	// so you can have different icons for music select / char select
 	GetDirListing( m_sCharDir+"stageicon.png", as, false, true );
@@ -145,7 +145,7 @@ CString Character::GetStageIconPath() const
 		GetDirListing( m_sCharDir+"card.gif", as, false, true );
 		GetDirListing( m_sCharDir+"card.bmp", as, false, true );
 		if( as.empty() )
-			return CString();
+			return RString();
 		else
 			return as[0];
 	}
@@ -179,7 +179,7 @@ void Character::DemandGraphics()
 	++m_iPreloadRefcount;
 	if( m_iPreloadRefcount == 1 )
 	{
-		CString s = GetIconPath();
+		RString s = GetIconPath();
 		if( !s.empty() )
 			m_Preload.Load( s );
 	}
@@ -205,8 +205,8 @@ public:
 	static int GetSongSelectIconPath( T* p, lua_State *L )	{ lua_pushstring(L, p->GetSongSelectIconPath() ); return 1; }
 	static int GetStageIconPath( T* p, lua_State *L )		{ lua_pushstring(L, p->GetStageIconPath() ); return 1; }
 
-	CString GetCardPath() const;
-	CString GetIconPath() const;
+	RString GetCardPath() const;
+	RString GetIconPath() const;
 	
 	static void Register( Lua *L )
 	{

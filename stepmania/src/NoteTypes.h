@@ -95,7 +95,7 @@ struct TapNote
 	} source;
 
 	// Only valid if type == attack.
-	CString sAttackModifiers;
+	RString sAttackModifiers;
 	float fAttackDurationSeconds;
 
 	bool bKeysound;	// true if this note plays a keysound when hit
@@ -122,7 +122,7 @@ struct TapNote
 		Type type_,
 		SubType subType_,
 		Source source_, 
-		CString sAttackModifiers_,
+		RString sAttackModifiers_,
 		float fAttackDurationSeconds_,
 		bool bKeysound_,
 		int iKeysoundIndex_ )
@@ -196,7 +196,7 @@ enum NoteType
 	NUM_NOTE_TYPES,
 	NOTE_TYPE_INVALID
 };
-const CString& NoteTypeToString( NoteType nt );
+const RString& NoteTypeToString( NoteType nt );
 float NoteTypeToBeat( NoteType nt );
 NoteType GetNoteType( int row );
 NoteType BeatToNoteType( float fBeat );

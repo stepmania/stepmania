@@ -1,7 +1,7 @@
 #include "global.h"
 #include "WheelItemBase.h"
 
-WheelItemBaseData::WheelItemBaseData( WheelItemType wit, CString sText, RageColor color )
+WheelItemBaseData::WheelItemBaseData( WheelItemType wit, RString sText, RageColor color )
 {
 	m_Type = wit;
 	m_sText = sText;
@@ -26,14 +26,14 @@ WheelItemBase::WheelItemBase( const WheelItemBase &cpy ):
 	}
 }
 
-WheelItemBase::WheelItemBase(CString sType)
+WheelItemBase::WheelItemBase(RString sType)
 {
 	SetName( sType );
 	m_pBar = NULL;
 	Load(sType);
 }
 
-void WheelItemBase::Load( CString sType )
+void WheelItemBase::Load( RString sType )
 {
 	TEXT_X			.Load(sType,"TextX");
 	TEXT_Y			.Load(sType,"TextY");

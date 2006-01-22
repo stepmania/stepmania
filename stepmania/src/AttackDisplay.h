@@ -14,7 +14,7 @@ public:
 	AttackDisplay();
 
 	void Init( const PlayerState* pPlayerState );
-	void SetAttack( const CString &mod );
+	void SetAttack( const RString &mod );
 
 	virtual void Update( float fDelta );
 

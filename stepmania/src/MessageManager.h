@@ -7,17 +7,17 @@ class IMessageSubscriber
 {
 public:
 	virtual ~IMessageSubscriber() { }
-	virtual void HandleMessage( const CString& sMessage ) = 0;
+	virtual void HandleMessage( const RString& sMessage ) = 0;
 	virtual void ProcessMessages( float fDeltaTime );
-	void ClearMessages( const CString sMessage = "" );
+	void ClearMessages( const RString sMessage = "" );
 
 private:
 	struct QueuedMessage
 	{
-		CString sMessage;
+		RString sMessage;
 		float fDelayRemaining;
 	};
-	void HandleMessageInternal( const CString& sMessage );
+	void HandleMessageInternal( const RString& sMessage );
 	vector<QueuedMessage> m_aMessages;
 
 	friend class MessageManager;
@@ -83,7 +83,7 @@ enum Message
 	NUM_Message,	// leave this at the end
 	Message_Invalud
 };
-const CString& MessageToString( Message m );
+const RString& MessageToString( Message m );
 
 class MessageManager
 {
@@ -91,11 +91,11 @@ public:
 	MessageManager();
 	~MessageManager();
 
-	void Subscribe( IMessageSubscriber* pSubscriber, const CString& sMessage );
+	void Subscribe( IMessageSubscriber* pSubscriber, const RString& sMessage );
 	void Subscribe( IMessageSubscriber* pSubscriber, Message m );
-	void Unsubscribe( IMessageSubscriber* pSubscriber, const CString& sMessage );
+	void Unsubscribe( IMessageSubscriber* pSubscriber, const RString& sMessage );
 	void Unsubscribe( IMessageSubscriber* pSubscriber, Message m );
-	void Broadcast( const CString& sMessage ) const;
+	void Broadcast( const RString& sMessage ) const;
 	void Broadcast( Message m ) const;
 
 	// Lua

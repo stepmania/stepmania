@@ -16,10 +16,10 @@
 NoteSkinManager*	NOTESKIN = NULL;	// global object accessable from anywhere in the program
 
 
-const CString NOTESKINS_DIR = "NoteSkins/";
-const CString GAME_BASE_NOTESKIN_NAME = "default";
-const CString GLOBAL_BASE_NOTESKIN_DIR = NOTESKINS_DIR + "common/default/";
-static map<CString,CString> g_PathCache;
+const RString NOTESKINS_DIR = "NoteSkins/";
+const RString GAME_BASE_NOTESKIN_NAME = "default";
+const RString GLOBAL_BASE_NOTESKIN_DIR = NOTESKINS_DIR + "common/default/";
+static map<RString,RString> g_PathCache;
 
 NoteSkinManager::NoteSkinManager()
 {
@@ -39,8 +39,8 @@ void NoteSkinManager::RefreshNoteSkinData( const Game* pGame )
 	// clear path cache
 	g_PathCache.clear();
 
-	CString sBaseSkinFolder = NOTESKINS_DIR + pGame->m_szName + "/";
-	vector<CString> asNoteSkinNames;
+	RString sBaseSkinFolder = NOTESKINS_DIR + pGame->m_szName + "/";
+	vector<RString> asNoteSkinNames;
 	GetDirListing( sBaseSkinFolder + "*", asNoteSkinNames, true );
 
 	StripCvs( asNoteSkinNames );
@@ -48,14 +48,14 @@ void NoteSkinManager::RefreshNoteSkinData( const Game* pGame )
 	m_mapNameToData.clear();
 	for( unsigned j=0; j<asNoteSkinNames.size(); j++ )
 	{
-		CString sName = asNoteSkinNames[j];
+		RString sName = asNoteSkinNames[j];
 		sName.MakeLower();
 		m_mapNameToData[sName] = NoteSkinData();
 		LoadNoteSkinData( sName, m_mapNameToData[sName] );
 	}
 }
 
-void NoteSkinManager::LoadNoteSkinData( const CString &sNoteSkinName, NoteSkinData& data_out )
+void NoteSkinManager::LoadNoteSkinData( const RString &sNoteSkinName, NoteSkinData& data_out )
 {
 	data_out.sName = sNoteSkinName;
 	data_out.metrics.Clear();
@@ -73,16 +73,16 @@ void NoteSkinManager::LoadNoteSkinData( const CString &sNoteSkinName, NoteSkinDa
 	LoadNoteSkinDataRecursive( sNoteSkinName, data_out );
 }
 
-void NoteSkinManager::LoadNoteSkinDataRecursive( const CString &sNoteSkinName, NoteSkinData& data_out )
+void NoteSkinManager::LoadNoteSkinDataRecursive( const RString &sNoteSkinName, NoteSkinData& data_out )
 {
 	static int depth = 0;
 	depth++;
 	ASSERT_M( depth < 20, "Circular NoteSkin fallback references detected." );
 
-	CString sDir = GetNoteSkinDir(sNoteSkinName);
+	RString sDir = GetNoteSkinDir(sNoteSkinName);
 
 	// read global fallback the current NoteSkin (if any)
-	CString sFallback;
+	RString sFallback;
 	IniFile ini;
 	ini.ReadFile( sDir+"metrics.ini" );
 
@@ -96,17 +96,17 @@ void NoteSkinManager::LoadNoteSkinDataRecursive( const CString &sNoteSkinName, N
 }
 
 
-void NoteSkinManager::GetNoteSkinNames( vector<CString> &AddTo )
+void NoteSkinManager::GetNoteSkinNames( vector<RString> &AddTo )
 {
 	GetNoteSkinNames( GAMESTATE->m_pCurGame, AddTo );
 }
 
-void NoteSkinManager::GetNoteSkinNames( const Game* pGame, vector<CString> &AddTo, bool bFilterDefault )
+void NoteSkinManager::GetNoteSkinNames( const Game* pGame, vector<RString> &AddTo, bool bFilterDefault )
 {
 	if( pGame == m_pCurGame )
 	{
 		/* Faster: */
-		for( map<CString,NoteSkinData>::const_iterator iter = m_mapNameToData.begin();
+		for( map<RString,NoteSkinData>::const_iterator iter = m_mapNameToData.begin();
 				iter != m_mapNameToData.end(); ++iter )
 		{
 			AddTo.push_back( iter->second.sName );
@@ -114,14 +114,14 @@ void NoteSkinManager::GetNoteSkinNames( const Game* pGame, vector<CString> &AddT
 	}
 	else
 	{
-		CString sBaseSkinFolder = NOTESKINS_DIR + pGame->m_szName + "/";
+		RString sBaseSkinFolder = NOTESKINS_DIR + pGame->m_szName + "/";
 		GetDirListing( sBaseSkinFolder + "*", AddTo, true );
 		StripCvs( AddTo );
 	}
 
 	/* Move "default" to the front if it exists. */
 	{
-		vector<CString>::iterator iter = find( AddTo.begin(), AddTo.end(), "default" );
+		vector<RString>::iterator iter = find( AddTo.begin(), AddTo.end(), "default" );
 		if( iter != AddTo.end() )
 		{
 			AddTo.erase( iter );
@@ -132,9 +132,9 @@ void NoteSkinManager::GetNoteSkinNames( const Game* pGame, vector<CString> &AddT
 }
 
 
-bool NoteSkinManager::DoesNoteSkinExist( const CString &sSkinName )
+bool NoteSkinManager::DoesNoteSkinExist( const RString &sSkinName )
 {
-	vector<CString> asSkinNames;	
+	vector<RString> asSkinNames;	
 	GetNoteSkinNames( asSkinNames );
 	for( unsigned i=0; i<asSkinNames.size(); i++ )
 		if( 0==stricmp(sSkinName, asSkinNames[i]) )
@@ -142,28 +142,28 @@ bool NoteSkinManager::DoesNoteSkinExist( const CString &sSkinName )
 	return false;
 }
 
-CString NoteSkinManager::GetNoteSkinDir( const CString &sSkinName )
+RString NoteSkinManager::GetNoteSkinDir( const RString &sSkinName )
 {
-	CString sGame = m_pCurGame->m_szName;
+	RString sGame = m_pCurGame->m_szName;
 
 	return NOTESKINS_DIR + sGame + "/" + sSkinName + "/";
 }
 
-CString NoteSkinManager::GetMetric( const CString &sButtonName, const CString &sValue )
+RString NoteSkinManager::GetMetric( const RString &sButtonName, const RString &sValue )
 {
 	ASSERT( !m_sCurrentNoteSkin.empty() );
-	CString sNoteSkinName = m_sCurrentNoteSkin;
+	RString sNoteSkinName = m_sCurrentNoteSkin;
 	sNoteSkinName.MakeLower();
-	map<CString,NoteSkinData>::const_iterator it = m_mapNameToData.find(sNoteSkinName);
+	map<RString,NoteSkinData>::const_iterator it = m_mapNameToData.find(sNoteSkinName);
 	ASSERT_M( it != m_mapNameToData.end(), sNoteSkinName );	// this NoteSkin doesn't exist!
 	const NoteSkinData& data = it->second;
 
-	CString sReturn;
+	RString sReturn;
 	if( data.metrics.GetValue( sButtonName, sValue, sReturn ) )
 		return sReturn;
 	if( !data.metrics.GetValue( "NoteDisplay", sValue, sReturn ) )
 	{
-		CString sError = ssprintf(
+		RString sError = ssprintf(
 			"Could not read metric '[%s] %s' or '[NoteDisplay] %s' in '%s'",
 			sButtonName.c_str(), sValue.c_str(), sValue.c_str(), sNoteSkinName.c_str() );
 		RageException::Throw( sError );
@@ -171,40 +171,40 @@ CString NoteSkinManager::GetMetric( const CString &sButtonName, const CString &s
 	return sReturn;
 }
 
-int NoteSkinManager::GetMetricI( const CString &sButtonName, const CString &sValueName )
+int NoteSkinManager::GetMetricI( const RString &sButtonName, const RString &sValueName )
 {
 	return atoi( GetMetric(sButtonName,sValueName) );
 }
 
-float NoteSkinManager::GetMetricF( const CString &sButtonName, const CString &sValueName )
+float NoteSkinManager::GetMetricF( const RString &sButtonName, const RString &sValueName )
 {
 	return strtof( GetMetric(sButtonName,sValueName), NULL );
 }
 
-bool NoteSkinManager::GetMetricB( const CString &sButtonName, const CString &sValueName )
+bool NoteSkinManager::GetMetricB( const RString &sButtonName, const RString &sValueName )
 {
 	return atoi( GetMetric(sButtonName,sValueName) ) != 0;
 }
 
-apActorCommands NoteSkinManager::GetMetricA( const CString &sButtonName, const CString &sValueName )
+apActorCommands NoteSkinManager::GetMetricA( const RString &sButtonName, const RString &sValueName )
 {
 	return apActorCommands( new ActorCommands( GetMetric(sButtonName,sValueName) ) );
 }
 
-CString NoteSkinManager::GetPath( const CString &sButtonName, const CString &sElement )
+RString NoteSkinManager::GetPath( const RString &sButtonName, const RString &sElement )
 {
 try_again:
-	const CString CacheString = m_sCurrentNoteSkin + "/" + sButtonName + "/" + sElement;
-	map<CString,CString>::iterator it = g_PathCache.find( CacheString );
+	const RString CacheString = m_sCurrentNoteSkin + "/" + sButtonName + "/" + sElement;
+	map<RString,RString>::iterator it = g_PathCache.find( CacheString );
 	if( it != g_PathCache.end() )
 		return it->second;
 
-	map<CString,NoteSkinData>::const_iterator iter = m_mapNameToData.find( m_sCurrentNoteSkin );
+	map<RString,NoteSkinData>::const_iterator iter = m_mapNameToData.find( m_sCurrentNoteSkin );
 	ASSERT( iter != m_mapNameToData.end() );
 	const NoteSkinData &data = iter->second;
 
-	CString sPath;	// fill this in below
-	FOREACHD_CONST( CString, data.vsDirSearchOrder, iter )
+	RString sPath;	// fill this in below
+	FOREACHD_CONST( RString, data.vsDirSearchOrder, iter )
 	{
 		if( sButtonName.empty() )
 			sPath = GetPathFromDirAndFile( *iter, sElement );
@@ -218,7 +218,7 @@ try_again:
 
 	if( sPath.empty() )
 	{
-		CString message = ssprintf(
+		RString message = ssprintf(
 			"The NoteSkin element '%s %s' could not be found in '%s', '%s', or '%s'.", 
 			sButtonName.c_str(), sElement.c_str(), 
 			GetNoteSkinDir(m_sCurrentNoteSkin).c_str(),
@@ -241,11 +241,11 @@ try_again:
 		iLevel++;
 		ASSERT_M( iLevel < 100, ssprintf("Infinite recursion while looking up %s - %s", sButtonName.c_str(), sElement.c_str()) );
 			
-		CString sNewFileName;
+		RString sNewFileName;
 		GetFileContents( sPath, sNewFileName, true );
-		CString sRealPath;
+		RString sRealPath;
 
-		FOREACHD_CONST( CString, data.vsDirSearchOrder, iter )
+		FOREACHD_CONST( RString, data.vsDirSearchOrder, iter )
 		{
 			 sRealPath = GetPathFromDirAndFile( *iter, sNewFileName );
 			 if( !sRealPath.empty() )
@@ -254,7 +254,7 @@ try_again:
 
 		if( sRealPath == "" )
 		{
-			CString message = ssprintf(
+			RString message = ssprintf(
 					"NoteSkinManager:  The redirect '%s' points to the file '%s', which does not exist. "
 					"Verify that this redirect is correct.",
 					sPath.c_str(), sNewFileName.c_str());
@@ -276,18 +276,18 @@ try_again:
 	return sPath;
 }
 
-CString NoteSkinManager::GetPathFromDirAndFile( const CString &sDir, const CString &sFileName )
+RString NoteSkinManager::GetPathFromDirAndFile( const RString &sDir, const RString &sFileName )
 {
-	vector<CString> matches;		// fill this with the possible files
+	vector<RString> matches;		// fill this with the possible files
 
 	GetDirListing( sDir+sFileName+"*",		matches, false, true );
 
 	if( matches.empty() )
-		return CString();
+		return RString();
 
 	if( matches.size() > 1 )
 	{
-		CString sError = "Multiple files match '"+sDir+sFileName+"'.  Please remove all but one of these files.";
+		RString sError = "Multiple files match '"+sDir+sFileName+"'.  Please remove all but one of these files.";
 		Dialog::OK( sError );
 	}
 	

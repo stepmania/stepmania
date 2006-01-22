@@ -11,7 +11,7 @@ class GroupList: public ActorFrame
 	vector<Sprite *>	 m_sprButtons;
 	vector<BitmapText *> m_textLabels;
 	vector<ActorFrame *> m_ButtonFrames;
-	vector<CString>		 m_asLabels;
+	vector<RString>		 m_asLabels;
 
 	vector<bool>		 m_bHidden;
 
@@ -31,10 +31,10 @@ public:
 
 	void SetSelection(unsigned sel);
 	int GetSelection() const { return m_iSelection; }
-	CString GetSelectionName() const { return m_asLabels[m_iSelection]; }
+	RString GetSelectionName() const { return m_asLabels[m_iSelection]; }
 	void Up();
 	void Down();
-	void Load( const vector<CString>& asGroupNames );
+	void Load( const vector<RString>& asGroupNames );
 	void TweenOffScreen();
 	void TweenOnScreen();
 };

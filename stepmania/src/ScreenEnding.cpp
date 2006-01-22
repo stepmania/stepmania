@@ -21,7 +21,7 @@
 #include "InputEventPlus.h"
 
 
-CString GetStatsLineTitle( PlayerNumber pn, EndingStatsLine line )
+RString GetStatsLineTitle( PlayerNumber pn, EndingStatsLine line )
 {
 	switch( line )
 	{
@@ -30,8 +30,8 @@ CString GetStatsLineTitle( PlayerNumber pn, EndingStatsLine line )
 	case PERCENT_COMPLETE:
 		{
 			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
-			CString sStepsType = GAMEMAN->StepsTypeToLocalizedString(st);
-			CString sType = GAMESTATE->IsCourseMode() ? "Courses" : "Songs";
+			RString sStepsType = GAMEMAN->StepsTypeToLocalizedString(st);
+			RString sType = GAMESTATE->IsCourseMode() ? "Courses" : "Songs";
 			return ssprintf( "%s %s %%", sStepsType.c_str(), sType.c_str() );
 		}
 	case PERCENT_COMPLETE_EASY:
@@ -44,7 +44,7 @@ CString GetStatsLineTitle( PlayerNumber pn, EndingStatsLine line )
 				CourseDifficulty cd = (CourseDifficulty)(DIFFICULTY_EASY+line-PERCENT_COMPLETE_EASY);
 				ASSERT( cd >= 0 && cd < NUM_CourseDifficulty );
 				if( !GAMESTATE->IsCourseDifficultyShown(cd) )
-					return CString();
+					return RString();
 				return CourseDifficultyToLocalizedString(cd);
 			}
 			else
@@ -54,11 +54,11 @@ CString GetStatsLineTitle( PlayerNumber pn, EndingStatsLine line )
 				return DifficultyToLocalizedString(dc);
 			}
 		}
-	default:	ASSERT(0);	return CString();
+	default:	ASSERT(0);	return RString();
 	}
 }
 
-CString GetStatsLineValue( PlayerNumber pn, EndingStatsLine line )
+RString GetStatsLineValue( PlayerNumber pn, EndingStatsLine line )
 {
 	CHECKPOINT_M( ssprintf("GetStatsLineValue(%d,%d)",pn,line) );
 
@@ -101,27 +101,27 @@ CString GetStatsLineValue( PlayerNumber pn, EndingStatsLine line )
 	case PERCENT_COMPLETE_CHALLENGE:
 		// Ugly...
 		{
-			CString sStepsType = GAMEMAN->StepsTypeToLocalizedString(st);
+			RString sStepsType = GAMEMAN->StepsTypeToLocalizedString(st);
 			float fPercent = 0;
 			if( GAMESTATE->IsCourseMode() )
 			{
 				CourseDifficulty cd = (CourseDifficulty)(DIFFICULTY_EASY+line-PERCENT_COMPLETE_EASY);
 				ASSERT( cd >= 0 && cd < NUM_CourseDifficulty );
 				if( !GAMESTATE->IsCourseDifficultyShown(cd) )
-					return CString();
-				CString sDifficulty = CourseDifficultyToLocalizedString(cd);
+					return RString();
+				RString sDifficulty = CourseDifficultyToLocalizedString(cd);
 				fPercent = pProfile->GetCoursesPercentComplete(st,cd);
 			}
 			else
 			{
 				Difficulty dc = (Difficulty)(DIFFICULTY_EASY+line-PERCENT_COMPLETE_EASY);
 				ASSERT( dc >= 0 && dc < NUM_Difficulty );
-				CString sDifficulty = DifficultyToLocalizedString(dc);
+				RString sDifficulty = DifficultyToLocalizedString(dc);
 				fPercent = pProfile->GetSongsPercentComplete(st,dc);
 			}
 			return ssprintf( "%05.2f%%", fPercent*100 );
 		}
-	default:	ASSERT(0);	return CString();
+	default:	ASSERT(0);	return RString();
 	}
 }
 

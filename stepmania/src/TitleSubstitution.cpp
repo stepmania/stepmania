@@ -9,8 +9,8 @@
 #include "XmlFile.h"
 #include "XmlFileUtil.h"
 
-static const CString TRANSLATIONS_PATH = "Data/Translations.xml";
-static const CString ERASE_MARKER = "-erase-";
+static const RString TRANSLATIONS_PATH = "Data/Translations.xml";
+static const RString ERASE_MARKER = "-erase-";
 
 struct TitleTrans
 {
@@ -49,8 +49,8 @@ void TitleTrans::LoadFromNode( const XNode* pNode )
 	{
 		/* Surround each regex with ^(...)$, to force all comparisons to default
 		 * to being a full-line match.  (Add ".*" manually if this isn't wanted.) */
-		const CString &sKeyName = attr->first;
-		const CString &sValue = attr->second;
+		const RString &sKeyName = attr->first;
+		const RString &sValue = attr->second;
 		if(		 sKeyName == "DontTransliterate" )	translit = false;
 		else if( sKeyName == "TitleFrom" )			TitleFrom					= "^(" + sValue + ")$";
 		else if( sKeyName == "ArtistFrom" )			ArtistFrom					= "^(" + sValue + ")$";
@@ -87,21 +87,21 @@ void TitleSubst::Subst( TitleFields &tf )
 		{
 			if( tt->translit )
 				tf.TitleTranslit = tf.Title;
-			tf.Title = (tt->Replacement.Title != ERASE_MARKER)? to.Title : CString();
+			tf.Title = (tt->Replacement.Title != ERASE_MARKER)? to.Title : RString();
 			FontCharAliases::ReplaceMarkers( tf.Title );
 		}
 		if( !tt->Replacement.Subtitle.empty() && tf.Subtitle != tt->Replacement.Subtitle )
 		{
 			if( tt->translit )
 				tf.SubtitleTranslit = tf.Subtitle;
-			tf.Subtitle = (tt->Replacement.Subtitle != ERASE_MARKER)? to.Subtitle : CString();
+			tf.Subtitle = (tt->Replacement.Subtitle != ERASE_MARKER)? to.Subtitle : RString();
 			FontCharAliases::ReplaceMarkers( tf.Subtitle );
 		}
 		if( !tt->Replacement.Artist.empty() && tf.Artist != tt->Replacement.Artist )
 		{
 			if( tt->translit )
 				tf.ArtistTranslit = tf.Artist;
-			tf.Artist = (tt->Replacement.Artist != ERASE_MARKER)? to.Artist : CString();
+			tf.Artist = (tt->Replacement.Artist != ERASE_MARKER)? to.Artist : RString();
 			FontCharAliases::ReplaceMarkers( tf.Artist );
 		}
 
@@ -109,17 +109,17 @@ void TitleSubst::Subst( TitleFields &tf )
 		 * correct data.  Should be used sparingly. */
 		if( !tt->Replacement.TitleTranslit.empty() )
 		{
-			tf.TitleTranslit = (tt->Replacement.TitleTranslit != ERASE_MARKER)? tt->Replacement.TitleTranslit : CString();
+			tf.TitleTranslit = (tt->Replacement.TitleTranslit != ERASE_MARKER)? tt->Replacement.TitleTranslit : RString();
 			FontCharAliases::ReplaceMarkers( tf.TitleTranslit );
 		}
 		if( !tt->Replacement.SubtitleTranslit.empty() )
 		{
-			tf.SubtitleTranslit = (tt->Replacement.SubtitleTranslit != ERASE_MARKER)? tt->Replacement.SubtitleTranslit : CString();
+			tf.SubtitleTranslit = (tt->Replacement.SubtitleTranslit != ERASE_MARKER)? tt->Replacement.SubtitleTranslit : RString();
 			FontCharAliases::ReplaceMarkers( tf.SubtitleTranslit );
 		}
 		if( !tt->Replacement.ArtistTranslit.empty() )
 		{
-			tf.ArtistTranslit = (tt->Replacement.ArtistTranslit != ERASE_MARKER)? tt->Replacement.ArtistTranslit : CString();
+			tf.ArtistTranslit = (tt->Replacement.ArtistTranslit != ERASE_MARKER)? tt->Replacement.ArtistTranslit : RString();
 			FontCharAliases::ReplaceMarkers( tf.ArtistTranslit );
 		}
 
@@ -128,12 +128,12 @@ void TitleSubst::Subst( TitleFields &tf )
 }
 
 
-TitleSubst::TitleSubst(const CString &section)
+TitleSubst::TitleSubst(const RString &section)
 {
 	Load( TRANSLATIONS_PATH, section);
 }
 
-void TitleSubst::Load(const CString &filename, const CString &section)
+void TitleSubst::Load(const RString &filename, const RString &section)
 {
 	XNode xml;
 	if( !XmlFileUtil::LoadFromFileShowErrors(xml,filename) )

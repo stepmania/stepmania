@@ -104,7 +104,7 @@ static MenuDef g_TempMenu(
 
 
 static LocalizedString EDIT_NAME_CONFLICTS	( "ScreenOptionsManageCourses", "The name you chose conflicts with another edit. Please use a different name." );
-static bool ValidateEditCourseName( const CString &sAnswer, CString &sErrorOut )
+static bool ValidateEditCourseName( const RString &sAnswer, RString &sErrorOut )
 {
 	if( sAnswer.empty() )
 		return false;
@@ -256,7 +256,7 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 		{
 			ASSERT( ScreenTextEntry::s_sLastAnswer != "" );	// validate should have assured this
 		
-			CString sNewName = ScreenTextEntry::s_sLastAnswer;
+			RString sNewName = ScreenTextEntry::s_sLastAnswer;
 
 			// create
 			Course *pCourse = new Course;
@@ -349,15 +349,15 @@ void ScreenOptionsManageCourses::ProcessMenuStart( const InputEventPlus &input )
 	{
 		if( SONGMAN->GetNumEditCourses(ProfileSlot_Machine) >= MAX_EDIT_COURSES_PER_PROFILE )
 		{
-			CString s = ssprintf( 
+			RString s = ssprintf( 
 				YOU_HAVE_MAXIMUM_EDITS_ALLOWED.GetValue() + "\n\n" + YOU_MUST_DELETE.GetValue(),
 				MAX_EDIT_COURSES_PER_PROFILE );
 			ScreenPrompt::Prompt( SM_None, s );
 			return;
 		}
 
-		CString sDefaultName;
-		CString sThrowAway;
+		RString sDefaultName;
+		RString sThrowAway;
 		for( int i=1; i<=9999; i++ )
 		{
 			sDefaultName = ssprintf( "NewCourse%04d", i );

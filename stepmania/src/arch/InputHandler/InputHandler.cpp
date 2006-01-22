@@ -38,7 +38,7 @@ void InputHandler::ButtonPressed( DeviceInput di, bool Down )
 	}
 }
 
-CString InputHandler::GetDeviceSpecificInputString( const DeviceInput &di )
+RString InputHandler::GetDeviceSpecificInputString( const DeviceInput &di )
 {
 	if( di.device == DEVICE_KEYBOARD )
 	{

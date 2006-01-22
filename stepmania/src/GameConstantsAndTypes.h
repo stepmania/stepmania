@@ -32,8 +32,8 @@ enum RadarCategory
 	NUM_RadarCategory	// leave this at the end
 };
 #define FOREACH_RadarCategory( rc ) FOREACH_ENUM( RadarCategory, NUM_RadarCategory, rc )
-const CString& RadarCategoryToString( RadarCategory cat );
-const CString& RadarCategoryToLocalizedString( RadarCategory cat );
+const RString& RadarCategoryToString( RadarCategory cat );
+const RString& RadarCategoryToLocalizedString( RadarCategory cat );
 
 
 enum StepsType
@@ -86,9 +86,9 @@ enum PlayMode
 	PLAY_MODE_INVALID
 };
 #define FOREACH_PlayMode( pm ) FOREACH_ENUM( PlayMode, NUM_PlayMode, pm )
-const CString& PlayModeToString( PlayMode pm );
-const CString& PlayModeToLocalizedString( PlayMode pm );
-PlayMode StringToPlayMode( const CString& s );
+const RString& PlayModeToString( PlayMode pm );
+const RString& PlayModeToLocalizedString( PlayMode pm );
+PlayMode StringToPlayMode( const RString& s );
 
 
 
@@ -118,8 +118,8 @@ enum SortOrder
 };
 const SortOrder MAX_SELECTABLE_SORT = (SortOrder)(SORT_ROULETTE-1);
 #define FOREACH_SortOrder( so ) FOREACH_ENUM( SortOrder, NUM_SORT_ORDERS, so )
-const CString& SortOrderToString( SortOrder so );
-SortOrder StringToSortOrder( const CString& str );
+const RString& SortOrderToString( SortOrder so );
+SortOrder StringToSortOrder( const RString& str );
 
 inline bool IsSongSort( SortOrder so ) { return so >= SORT_PREFERRED && so <= SORT_CHALLENGE_METER; }
 
@@ -141,9 +141,9 @@ enum TapNoteScore {
 	TNS_INVALID,
 };
 #define FOREACH_TapNoteScore( tns ) FOREACH_ENUM( TapNoteScore, NUM_TapNoteScore, tns )
-const CString& TapNoteScoreToString( TapNoteScore tns );
-const CString& TapNoteScoreToLocalizedString( TapNoteScore tns );
-TapNoteScore StringToTapNoteScore( const CString& str );
+const RString& TapNoteScoreToString( TapNoteScore tns );
+const RString& TapNoteScoreToLocalizedString( TapNoteScore tns );
+TapNoteScore StringToTapNoteScore( const RString& str );
 
 
 enum HoldNoteScore 
@@ -155,9 +155,9 @@ enum HoldNoteScore
 	HNS_INVALID,
 };
 #define FOREACH_HoldNoteScore( hns ) FOREACH_ENUM( HoldNoteScore, NUM_HoldNoteScore, hns )
-const CString& HoldNoteScoreToString( HoldNoteScore hns );
-const CString& HoldNoteScoreToLocalizedString( HoldNoteScore hns );
-HoldNoteScore StringToHoldNoteScore( const CString& str );
+const RString& HoldNoteScoreToString( HoldNoteScore hns );
+const RString& HoldNoteScoreToLocalizedString( HoldNoteScore hns );
+HoldNoteScore StringToHoldNoteScore( const RString& str );
 
 
 enum TimingWindow
@@ -173,7 +173,7 @@ enum TimingWindow
 	TW_Roll,
 	NUM_TimingWindow
 };
-const CString& TimingWindowToString( TimingWindow tw );
+const RString& TimingWindowToString( TimingWindow tw );
 
 
 enum ScoreEvent
@@ -189,7 +189,7 @@ enum ScoreEvent
 	SE_LetGo,
 	NUM_ScoreEvent
 };
-const CString& ScoreEventToString( ScoreEvent se );
+const RString& ScoreEventToString( ScoreEvent se );
 
 
 //
@@ -218,7 +218,7 @@ enum MemoryCardState
 	MemoryCardState_INVALID,
 };
 
-const CString& MemoryCardStateToString( MemoryCardState mcs );
+const RString& MemoryCardStateToString( MemoryCardState mcs );
 
 
 //
@@ -234,18 +234,18 @@ enum RankingCategory
 	RANKING_INVALID
 };
 #define FOREACH_RankingCategory( rc ) FOREACH_ENUM( RankingCategory, NUM_RANKING_CATEGORIES, rc )
-const CString& RankingCategoryToString( RankingCategory rc );
-RankingCategory StringToRankingCategory( const CString& rc );
+const RString& RankingCategoryToString( RankingCategory rc );
+RankingCategory StringToRankingCategory( const RString& rc );
 
-extern const CString RANKING_TO_FILL_IN_MARKER[NUM_PLAYERS];
-inline bool IsRankingToFillIn( const CString& sName ) { return !sName.empty() && sName[0]=='#'; }
+extern const RString RANKING_TO_FILL_IN_MARKER[NUM_PLAYERS];
+inline bool IsRankingToFillIn( const RString& sName ) { return !sName.empty() && sName[0]=='#'; }
 
 RankingCategory AverageMeterToRankingCategory( int iAverageMeter );
 
 //
 // Group stuff
 //
-extern const CString GROUP_ALL;
+extern const RString GROUP_ALL;
 
 
 //
@@ -258,7 +258,7 @@ enum PlayerController
 	PC_CPU,
 	NUM_PlayerController
 };
-const CString& PlayerControllerToString( PlayerController pc );
+const RString& PlayerControllerToString( PlayerController pc );
 
 const int MIN_SKILL = 0;
 const int MAX_SKILL = 10;
@@ -300,7 +300,7 @@ enum CoinMode
 	NUM_COIN_MODES 
 };
 #define FOREACH_CoinMode( i ) FOREACH_ENUM( CoinMode, NUM_COIN_MODES, i )
-const CString& CoinModeToString( CoinMode cm );
+const RString& CoinModeToString( CoinMode cm );
 
 
 //
@@ -314,7 +314,7 @@ enum Premium
 	NUM_PREMIUMS
 };
 #define FOREACH_Premium( i ) FOREACH_ENUM( Premium, NUM_PREMIUMS, i )
-const CString& PremiumToString( Premium p );
+const RString& PremiumToString( Premium p );
 
 
 //
@@ -337,9 +337,9 @@ enum PerDifficultyAward
 	PER_DIFFICULTY_AWARD_INVALID,
 };
 #define FOREACH_PerDifficultyAward( pma ) FOREACH_ENUM( PerDifficultyAward, NUM_PerDifficultyAward, pma )
-const CString& PerDifficultyAwardToString( PerDifficultyAward pma );
-const CString& PerDifficultyAwardToLocalizedString( PerDifficultyAward pma );
-PerDifficultyAward StringToPerDifficultyAward( const CString& pma );
+const RString& PerDifficultyAwardToString( PerDifficultyAward pma );
+const RString& PerDifficultyAwardToLocalizedString( PerDifficultyAward pma );
+PerDifficultyAward StringToPerDifficultyAward( const RString& pma );
 
 
 enum PeakComboAward 
@@ -358,9 +358,9 @@ enum PeakComboAward
 	PEAK_COMBO_AWARD_INVALID,
 };
 #define FOREACH_PeakComboAward( pca ) FOREACH_ENUM( PeakComboAward, NUM_PeakComboAward, pca )
-const CString& PeakComboAwardToString( PeakComboAward pma );
-const CString& PeakComboAwardToLocalizedString( PeakComboAward pma );
-PeakComboAward StringToPeakComboAward( const CString& pma );
+const RString& PeakComboAwardToString( PeakComboAward pma );
+const RString& PeakComboAwardToLocalizedString( PeakComboAward pma );
+PeakComboAward StringToPeakComboAward( const RString& pma );
 
 
 struct DisplayBpms
@@ -381,8 +381,8 @@ enum StyleType
 	NUM_STYLE_TYPES,
 	STYLE_TYPE_INVALID
 };
-const CString& StyleTypeToString( StyleType s );
-StyleType StringToStyleType( const CString& s );
+const RString& StyleTypeToString( StyleType s );
+StyleType StringToStyleType( const RString& s );
 
 
 enum MenuDir
@@ -395,7 +395,7 @@ enum MenuDir
 	NUM_MENU_DIRS
 };
 #define FOREACH_MenuDir( md ) FOREACH_ENUM( MenuDir, NUM_MENU_DIRS, md )
-const CString& MenuDirToString( MenuDir md );
+const RString& MenuDirToString( MenuDir md );
 
 
 enum GoalType 
@@ -407,8 +407,8 @@ enum GoalType
 	GOAL_INVALID,
 };
 #define FOREACH_GoalType( md ) FOREACH_ENUM( GoalType, NUM_GOAL_TYPES, gt )
-const CString& GoalTypeToString( GoalType gt );
-GoalType StringToGoalType( const CString& s );
+const RString& GoalTypeToString( GoalType gt );
+GoalType StringToGoalType( const RString& s );
 
 
 enum EditMode
@@ -441,7 +441,7 @@ enum Stage
 	STAGE_INVALID,
 };
 #define FOREACH_Stage( s ) FOREACH_ENUM( Stage, NUM_STAGES, s )
-const CString& StageToString( Stage s );
+const RString& StageToString( Stage s );
 
 
 enum ProfileLoadResult

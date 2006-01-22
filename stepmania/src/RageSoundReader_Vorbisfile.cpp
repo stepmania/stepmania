@@ -44,14 +44,14 @@ static long OggRageFile_tell_func( void *datasource )
 	return f->Tell();
 }
 
-static CString ov_ssprintf( int err, const char *fmt, ...)
+static RString ov_ssprintf( int err, const char *fmt, ...)
 {
     va_list	va;
     va_start(va, fmt);
-    CString s = vssprintf( fmt, va );
+    RString s = vssprintf( fmt, va );
     va_end(va);
 
-	CString errstr;
+	RString errstr;
 	switch( err )
 	{
 	/* XXX: In the case of OV_EREAD, can we snoop at errno? */
@@ -72,7 +72,7 @@ static CString ov_ssprintf( int err, const char *fmt, ...)
 	return s + ssprintf( " (%s)", errstr.c_str() );
 }
 
-SoundReader_FileReader::OpenResult RageSoundReader_Vorbisfile::Open(CString filename_)
+SoundReader_FileReader::OpenResult RageSoundReader_Vorbisfile::Open(RString filename_)
 {
 	filename=filename_;
 

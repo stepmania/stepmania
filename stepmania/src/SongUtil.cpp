@@ -23,7 +23,7 @@ static LocalizedString SORT_OTHER        ( "Sort", "Other" );
 
 /* Just calculating GetNumTimesPlayed within the sort is pretty slow, so let's precompute
  * it.  (This could be generalized with a template.) */
-static map<const Song*, CString> g_mapSongSortVal;
+static map<const Song*, RString> g_mapSongSortVal;
 
 static bool CompareSongPointersBySortValueAscending( const Song *pSong1, const Song *pSong2 )
 {
@@ -36,7 +36,7 @@ static bool CompareSongPointersBySortValueDescending( const Song *pSong1, const 
 }
 
 
-CString SongUtil::MakeSortString( CString s )
+RString SongUtil::MakeSortString( RString s )
 {
 	s.MakeUpper();
 
@@ -55,8 +55,8 @@ CString SongUtil::MakeSortString( CString s )
 static bool CompareSongPointersByTitle( const Song *pSong1, const Song *pSong2 )
 {
 	// Prefer transliterations to full titles
-	CString s1 = pSong1->GetTranslitMainTitle();
-	CString s2 = pSong2->GetTranslitMainTitle();
+	RString s1 = pSong1->GetTranslitMainTitle();
+	RString s2 = pSong2->GetTranslitMainTitle();
 	if( s1 == s2 )
 	{
 		s1 = pSong1->GetTranslitSubTitle();
@@ -99,7 +99,7 @@ void SongUtil::SortSongPointerArrayByBPM( vector<Song*> &vpSongsInOut )
 	sort( vpSongsInOut.begin(), vpSongsInOut.end(), CompareSongPointersByBPM );
 }
 
-void AppendOctal( int n, int digits, CString &out )
+void AppendOctal( int n, int digits, RString &out )
 {
 	for( int p = digits-1; p >= 0; --p )
 	{
@@ -109,11 +109,11 @@ void AppendOctal( int n, int digits, CString &out )
 	}
 }
 
-static bool CompDescending( const pair<Song *, CString> &a, const pair<Song *, CString> &b )
+static bool CompDescending( const pair<Song *, RString> &a, const pair<Song *, RString> &b )
 {
 	return a.second > b.second;
 }
-static bool CompAscending( const pair<Song *, CString> &a, const pair<Song *, CString> &b )
+static bool CompAscending( const pair<Song *, RString> &a, const pair<Song *, RString> &b )
 {
 	return a.second < b.second;
 }
@@ -122,7 +122,7 @@ void SongUtil::SortSongPointerArrayByGrades( vector<Song*> &vpSongsInOut, bool b
 {
 	/* Optimize by pre-writing a string to compare, since doing GetNumNotesWithGrade
 	 * inside the sort is too slow. */
-	typedef pair< Song *, CString > val;
+	typedef pair< Song *, RString > val;
 	vector<val> vals;
 	vals.reserve( vpSongsInOut.size() );
 
@@ -136,7 +136,7 @@ void SongUtil::SortSongPointerArrayByGrades( vector<Song*> &vpSongsInOut, bool b
 		StepsType st = pStyle->m_StepsType;
 		pProfile->GetGrades( pSong, st, iCounts );
 
-		CString foo;
+		RString foo;
 		foo.reserve(256);
 		for( int g=Grade_Tier01; g<=Grade_NoData; ++g )
 			AppendOctal( iCounts[g], 3, foo );
@@ -183,8 +183,8 @@ int SongUtil::CompareSongPointersByGroup(const Song *pSong1, const Song *pSong2)
 
 static int CompareSongPointersByGroupAndTitle( const Song *pSong1, const Song *pSong2 )
 {
-	const CString &sGroup1 = pSong1->m_sGroupName;
-	const CString &sGroup2 = pSong2->m_sGroupName;
+	const RString &sGroup1 = pSong1->m_sGroupName;
+	const RString &sGroup2 = pSong2->m_sGroupName;
 
 	if( sGroup1 < sGroup2 )
 		return true;
@@ -217,22 +217,22 @@ void SongUtil::SortSongPointerArrayByNumPlays( vector<Song*> &vpSongsInOut, cons
 	g_mapSongSortVal.clear();
 }
 
-CString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so )
+RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so )
 {
 	if( pSong == NULL )
-		return CString();
+		return RString();
 
 	switch( so )
 	{
 	case SORT_PREFERRED:
-		return CString();
+		return RString();
 	case SORT_GROUP:
 		// guaranteed not empty	
 		return pSong->m_sGroupName;
 	case SORT_TITLE:
 	case SORT_ARTIST:	
 		{
-			CString s;
+			RString s;
 			switch( so )
 			{
 			case SORT_TITLE:	s = pSong->GetTranslitMainTitle();	break;
@@ -242,7 +242,7 @@ CString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 			s = MakeSortString(s);	// resulting string will be uppercase
 			
 			if( s.empty() )
-				return CString();
+				return RString();
 			else if( s[0] >= '0' && s[0] <= '9' )
 				return "0-9";
 			else if( s[0] < 'A' || s[0] > 'Z')
@@ -264,7 +264,7 @@ CString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 			return ssprintf("%03d-%03d",iMaxBPM-(iBPMGroupSize-1), iMaxBPM);
 		}
 	case SORT_POPULARITY:
-		return CString();
+		return RString();
 	case SORT_TOP_GRADES:
 		{
 			int iCounts[NUM_Grade];
@@ -307,23 +307,23 @@ CString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 			return SORT_NOT_AVAILABLE.GetValue();
 		}
 	case SORT_MODE_MENU:
-		return CString();
+		return RString();
 	case SORT_ALL_COURSES:
 	case SORT_NONSTOP_COURSES:
 	case SORT_ONI_COURSES:
 	case SORT_ENDLESS_COURSES:
 	default:
 		ASSERT(0);
-		return CString();
+		return RString();
 	}
 }
 
 void SongUtil::SortSongPointerArrayBySectionName( vector<Song*> &vpSongsInOut, SortOrder so )
 {
-	CString sOther = SORT_OTHER.GetValue();
+	RString sOther = SORT_OTHER.GetValue();
 	for(unsigned i = 0; i < vpSongsInOut.size(); ++i)
 	{
-		CString val = GetSectionNameFromSongAndSort( vpSongsInOut[i], so );
+		RString val = GetSectionNameFromSongAndSort( vpSongsInOut[i], so );
 
 		/* Make sure 0-9 comes first and OTHER comes last. */
 		if( val == "0-9" )			val = "0";
@@ -344,7 +344,7 @@ void SongUtil::SortSongPointerArrayByMeter( vector<Song*> &vpSongsInOut, Difficu
 	{
 		/* Ignore locked steps. */
 		const Steps* pSteps = vpSongsInOut[i]->GetClosestNotes( GAMESTATE->GetCurrentStyle()->m_StepsType, dc, true );
-		CString &s = g_mapSongSortVal[vpSongsInOut[i]];
+		RString &s = g_mapSongSortVal[vpSongsInOut[i]];
 		s = ssprintf("%03d", pSteps ? pSteps->GetMeter() : 0);
 
 		/* Hack: always put tutorial songs first. */
@@ -375,7 +375,7 @@ void SongUtil::SortByMostRecentlyPlayedForMachine( vector<Song*> &vpSongsInOut )
 	FOREACH_CONST( Song*, vpSongsInOut, s )
 	{
 		int iNumTimesPlayed = pProfile->GetSongNumTimesPlayed( *s );
-		CString val = iNumTimesPlayed ? pProfile->GetSongLastPlayedDateTime(*s).GetString() : "0";
+		RString val = iNumTimesPlayed ? pProfile->GetSongLastPlayedDateTime(*s).GetString() : "0";
 		g_mapSongSortVal[*s] = val;
 	}
 
@@ -404,7 +404,7 @@ Song *SongID::ToSong() const
 {
 	// HACK for backwards compatibility:
 	// Re-add the leading "/".  2005/05/21 file layer changes added a leading slash.
-	CString sDir2 = sDir;
+	RString sDir2 = sDir;
 	if( sDir2.Left(1) != "/" )
 		sDir2 = "/" + sDir2;
 
@@ -427,7 +427,7 @@ void SongID::LoadFromNode( const XNode* pNode )
 	pNode->GetAttrValue("Dir", sDir);
 }
 
-CString SongID::ToString() const
+RString SongID::ToString() const
 {
 	return sDir;
 }

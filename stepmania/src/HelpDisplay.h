@@ -13,17 +13,17 @@ class HelpDisplay : public BitmapText
 {
 public:
 	HelpDisplay();
-	void Load( const CString &sType );
+	void Load( const RString &sType );
 
-	void LoadFromNode( const CString& sDir, const XNode* pNode );
+	void LoadFromNode( const RString& sDir, const XNode* pNode );
 	virtual Actor *Copy() const;
 
-	void SetTips( const vector<CString> &arrayTips ) { SetTips( arrayTips, arrayTips ); }
-	void SetTips( const vector<CString> &arrayTips, const vector<CString> &arrayTipsAlt );
-	void GetTips( vector<CString> &arrayTipsOut, vector<CString> &arrayTipsAltOut ) const { arrayTipsOut = m_arrayTips; arrayTipsAltOut = m_arrayTipsAlt; }
+	void SetTips( const vector<RString> &arrayTips ) { SetTips( arrayTips, arrayTips ); }
+	void SetTips( const vector<RString> &arrayTips, const vector<RString> &arrayTipsAlt );
+	void GetTips( vector<RString> &arrayTipsOut, vector<RString> &arrayTipsAltOut ) const { arrayTipsOut = m_arrayTips; arrayTipsAltOut = m_arrayTipsAlt; }
 
 	virtual void Update( float fDeltaTime );
-	virtual void SetName( const CString &sName );
+	virtual void SetName( const RString &sName );
 
 	// Lua
 	virtual void PushSelf( lua_State *L );
@@ -31,7 +31,7 @@ public:
 protected:
 	ThemeMetric<float> TIP_SHOW_TIME;
 
-	vector<CString> m_arrayTips, m_arrayTipsAlt;
+	vector<RString> m_arrayTips, m_arrayTipsAlt;
 	int m_iCurTipIndex;
 	
 	float m_fSecsUntilSwitch;
@@ -42,7 +42,7 @@ class GenreDisplay : public HelpDisplay
 public:
 	GenreDisplay();
 	~GenreDisplay();
-	void PlayCommand( const CString &sCommandName, Actor* pParent );
+	void PlayCommand( const RString &sCommandName, Actor* pParent );
 	virtual Actor *Copy() const;
 };
 

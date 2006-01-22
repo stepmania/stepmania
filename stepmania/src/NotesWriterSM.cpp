@@ -15,9 +15,9 @@
 #include "ProfileManager.h"
 #include "Profile.h"
 
-static CString BackgroundChangeToString( const BackgroundChange &bgc )
+static RString BackgroundChangeToString( const BackgroundChange &bgc )
 {
-	CString s = ssprintf( 
+	RString s = ssprintf( 
 		"%.3f=%s=%.3f=%d=%d=%d=%s=%s=%s=%s=%s", 
 		bgc.m_fStartBeat, 
 		bgc.m_def.m_sFile1.c_str(), 
@@ -143,7 +143,7 @@ void NotesWriterSM::WriteGlobalTags( RageFile &f, const Song &out )
 	f.PutLine( ";" );
 }
 
-static CString JoinLineList( vector<CString> &lines )
+static RString JoinLineList( vector<RString> &lines )
 {
 	for( unsigned i = 0; i < lines.size(); ++i )
 		TrimRight( lines[i] );
@@ -156,9 +156,9 @@ static CString JoinLineList( vector<CString> &lines )
 	return join( "\r\n", lines.begin()+j, lines.end() );
 }
 
-CString NotesWriterSM::GetSMNotesTag( const Song &song, const Steps &in, bool bSavingCache )
+RString NotesWriterSM::GetSMNotesTag( const Song &song, const Steps &in, bool bSavingCache )
 {
-	vector<CString> lines;
+	vector<RString> lines;
 
 	lines.push_back( "" );
 	lines.push_back( ssprintf("//---------------%s - %s----------------",
@@ -170,7 +170,7 @@ CString NotesWriterSM::GetSMNotesTag( const Song &song, const Steps &in, bool bS
 	lines.push_back( ssprintf( "     %d:", in.GetMeter() ) );
 	
 	int MaxRadar = bSavingCache? NUM_RadarCategory:5;
-	vector<CString> asRadarValues;
+	vector<RString> asRadarValues;
 	for( int r=0; r < MaxRadar; r++ )
 		asRadarValues.push_back( ssprintf("%.3f", in.GetRadarValues()[r]) );
 	/* Don't append a newline here; it's added in NoteDataUtil::GetSMNoteDataString.
@@ -178,7 +178,7 @@ CString NotesWriterSM::GetSMNotesTag( const Song &song, const Steps &in, bool bS
 	 * newline and they'll accumulate. */
 	lines.push_back( ssprintf( "     %s:", join(",",asRadarValues).c_str() ) );
 
-	CString sNoteData;
+	RString sNoteData;
 	in.GetSMNoteData( sNoteData );
 
 	split( sNoteData, "\n", lines, true );
@@ -187,7 +187,7 @@ CString NotesWriterSM::GetSMNotesTag( const Song &song, const Steps &in, bool bS
 	return JoinLineList( lines );
 }
 
-bool NotesWriterSM::Write(CString sPath, const Song &out, bool bSavingCache)
+bool NotesWriterSM::Write(RString sPath, const Song &out, bool bSavingCache)
 {
 	/* Flush dir cache when writing steps, so the old size isn't cached. */
 	FILEMAN->FlushDirCache( Dirname(sPath) );
@@ -234,20 +234,20 @@ bool NotesWriterSM::Write(CString sPath, const Song &out, bool bSavingCache)
 		if( pSteps->WasLoadedFromProfile() )
 			continue;
 
-		CString sTag = GetSMNotesTag( out, *pSteps, bSavingCache );
+		RString sTag = GetSMNotesTag( out, *pSteps, bSavingCache );
 		f.PutLine( sTag );
 	}
 
 	return true;
 }
 
-void NotesWriterSM::GetEditFileContents( const Song *pSong, const Steps *pSteps, CString &sOut )
+void NotesWriterSM::GetEditFileContents( const Song *pSong, const Steps *pSteps, RString &sOut )
 {
 	sOut = "";
-	CString sDir = pSong->GetSongDir();
+	RString sDir = pSong->GetSongDir();
 	
 	/* "Songs/foo/bar"; strip off "Songs/". */
-	vector<CString> asParts;
+	vector<RString> asParts;
 	split( sDir, "/", asParts );
 	if( asParts.size() )
 		sDir = join( "/", asParts.begin()+1, asParts.end() );
@@ -255,12 +255,12 @@ void NotesWriterSM::GetEditFileContents( const Song *pSong, const Steps *pSteps,
 	sOut += GetSMNotesTag( *pSong, *pSteps, false );
 }
 
-CString NotesWriterSM::GetEditFileName( const Song *pSong, const Steps *pSteps )
+RString NotesWriterSM::GetEditFileName( const Song *pSong, const Steps *pSteps )
 {
 	/* Try to make a unique name.  This isn't guaranteed.  Edit descriptions are
 	 * case-sensitive, filenames on disk are usually not, and we decimate certain
 	 * characters for FAT filesystems. */
-	CString sFile = pSong->GetTranslitFullTitle() + " - " + pSteps->GetDescription();
+	RString sFile = pSong->GetTranslitFullTitle() + " - " + pSteps->GetDescription();
 
 	// HACK:
 	if( pSteps->m_StepsType == STEPS_TYPE_DANCE_DOUBLE )
@@ -274,9 +274,9 @@ CString NotesWriterSM::GetEditFileName( const Song *pSong, const Steps *pSteps )
 
 bool NotesWriterSM::WriteEditFileToMachine( const Song *pSong, Steps *pSteps )
 {
-	CString sDir = PROFILEMAN->GetProfileDir( ProfileSlot_Machine ) + EDIT_STEPS_SUBDIR;
+	RString sDir = PROFILEMAN->GetProfileDir( ProfileSlot_Machine ) + EDIT_STEPS_SUBDIR;
 
-	CString sPath = sDir + GetEditFileName(pSong,pSteps);
+	RString sPath = sDir + GetEditFileName(pSong,pSteps);
 
 	/* Flush dir cache when writing steps, so the old size isn't cached. */
 	FILEMAN->FlushDirCache( Dirname(sPath) );
@@ -290,7 +290,7 @@ bool NotesWriterSM::WriteEditFileToMachine( const Song *pSong, Steps *pSteps )
 		return false;
 	}
 
-	CString sTag;
+	RString sTag;
 	GetEditFileContents( pSong, pSteps, sTag );
 	if( f.PutLine(sTag) == -1 || f.Flush() == -1 )
 	{

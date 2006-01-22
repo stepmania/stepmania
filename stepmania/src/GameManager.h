@@ -30,12 +30,12 @@ public:
 	const Game* GetGameFromIndex( int index ) const;
 
 	static int StepsTypeToNumTracks( StepsType st );
-	static StepsType StringToStepsType( CString sStepsType );
-	static CString StepsTypeToString( StepsType st );
-	static CString StepsTypeToLocalizedString( StepsType st );
-	static const Game* StringToGameType( CString sGameType );
-	const Style* GameAndStringToStyle( const Game* pGame, CString sStyle );
-	static CString StyleToLocalizedString( const Style* s );
+	static StepsType StringToStepsType( RString sStepsType );
+	static RString StepsTypeToString( StepsType st );
+	static RString StepsTypeToLocalizedString( StepsType st );
+	static const Game* StringToGameType( RString sGameType );
+	const Style* GameAndStringToStyle( const Game* pGame, RString sStyle );
+	static RString StyleToLocalizedString( const Style* s );
 	MenuButton GetMenuButtonSecondaryFunction( const Game *pGame, GameButton gb ) const;
 
 	// Lua

@@ -23,7 +23,7 @@ public:
 	InputHandler_Carbon();
 	~InputHandler_Carbon();
 
-	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut );
+	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut );
 
 	static void QueueCallBack( void *target, int result, void *refcon, void *sender );
 };

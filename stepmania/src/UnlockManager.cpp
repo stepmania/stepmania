@@ -50,7 +50,7 @@ void UnlockManager::UnlockSong( const Song *song )
 	UnlockCode( p->m_iCode );
 }
 
-int UnlockManager::FindCode( const CString &sName ) const
+int UnlockManager::FindCode( const RString &sName ) const
 {
 	const UnlockEntry *pEntry = NULL;
 	
@@ -127,7 +127,7 @@ bool UnlockManager::StepsIsLocked( const Song *pSong, const Steps *pSteps ) cons
 	return p->IsLocked();
 }
 
-bool UnlockManager::ModifierIsLocked( const CString &sOneMod ) const
+bool UnlockManager::ModifierIsLocked( const RString &sOneMod ) const
 {
 	if( !PREFSMAN->m_bUseUnlockSystem )
 		return false;
@@ -164,7 +164,7 @@ const UnlockEntry *UnlockManager::FindCourse( const Course *pCourse ) const
 	return NULL;
 }
 
-const UnlockEntry *UnlockManager::FindModifier( const CString &sOneMod ) const
+const UnlockEntry *UnlockManager::FindModifier( const RString &sOneMod ) const
 {
 	FOREACH_CONST( UnlockEntry, m_UnlockEntries, e )
 		if( e->m_cmd.GetArg(1).s.CompareNoCase(sOneMod) == 0 )
@@ -295,15 +295,15 @@ void UnlockManager::Load()
 {
 	LOG->Trace( "UnlockManager::Load()" );
 
-	vector<CString> asUnlockNames;
+	vector<RString> asUnlockNames;
 	split( UNLOCK_NAMES, ",", asUnlockNames );
 	if( asUnlockNames.empty() )
 		return;
 
 	for( unsigned i = 0; i < asUnlockNames.size(); ++i )
 	{
-		const CString &sUnlockName = asUnlockNames[i];
-		CString sUnlock = UNLOCK(sUnlockName);
+		const RString &sUnlockName = asUnlockNames[i];
+		RString sUnlock = UNLOCK(sUnlockName);
 
 		Commands vCommands;
 		ParseCommands( sUnlock, vCommands );
@@ -314,7 +314,7 @@ void UnlockManager::Load()
 		for( unsigned j = 0; j < vCommands.v.size(); ++j )
 		{
 			const Command &cmd = vCommands.v[j];
-			CString sName = cmd.GetName();
+			RString sName = cmd.GetName();
 
 			if( sName == "song" )
 			{
@@ -341,7 +341,7 @@ void UnlockManager::Load()
 				// Hack: Lua only has a floating point type, and codes may be big enough
 				// that converting them from string to float to int introduces rounding
 				// error.  Convert directly to int.
-				current.m_iCode = atoi( (CString) cmd.GetArg(1) );
+				current.m_iCode = atoi( (RString) cmd.GetArg(1) );
 			}
 			else if( sName == "roulette" )
 			{
@@ -365,7 +365,7 @@ void UnlockManager::Load()
 
 	FOREACH_CONST( UnlockEntry, m_UnlockEntries, e )
 	{
-		CString str = ssprintf( "Unlock: %s; ", join("\n",e->m_cmd.m_vsArgs).c_str() );
+		RString str = ssprintf( "Unlock: %s; ", join("\n",e->m_cmd.m_vsArgs).c_str() );
 		FOREACH_UnlockType(j)
 			if( e->m_fRequired[j] )
 				str += ssprintf( "%s = %f; ", UnlockTypeToString(j).c_str(), e->m_fRequired[j] );
@@ -510,7 +510,7 @@ class LunaUnlockManager: public Luna<UnlockManager>
 public:
 	LunaUnlockManager() { LUA->Register( Register ); }
 
-	static int FindCode( T* p, lua_State *L )			{ CString sName = SArg(1); int i = p->FindCode(sName); if( i == -1 ) lua_pushnil(L); else lua_pushnumber(L, i); return 1; }
+	static int FindCode( T* p, lua_State *L )			{ RString sName = SArg(1); int i = p->FindCode(sName); if( i == -1 ) lua_pushnil(L); else lua_pushnumber(L, i); return 1; }
 	static int UnlockCode( T* p, lua_State *L )			{ int iCode = IArg(1); p->UnlockCode(iCode); return 0; }
 	static int PreferUnlockCode( T* p, lua_State *L )	{ int iCode = IArg(1); p->PreferUnlockCode(iCode); return 0; }
 	static int GetNumUnlocks( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumUnlocks() ); return 1; }

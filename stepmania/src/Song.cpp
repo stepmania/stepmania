@@ -151,20 +151,20 @@ const BackgroundChange &Song::GetBackgroundAtBeat( BackgroundLayer iLayer, float
 }
 
 
-CString Song::GetCacheFilePath() const
+RString Song::GetCacheFilePath() const
 {
 	return SongCacheIndex::GetCacheFilePath( "Songs", m_sSongDir );
 }
 
 /* Get a path to the SM containing data for this song.  It might
  * be a cache file. */
-const CString &Song::GetSongFilePath() const
+const RString &Song::GetSongFilePath() const
 {
 	ASSERT( !m_sSongFileName.empty() );
 	return m_sSongFileName;
 }
 
-NotesLoader *Song::MakeLoader( CString sDir ) const
+NotesLoader *Song::MakeLoader( RString sDir ) const
 {
 	NotesLoader *ret;
 
@@ -201,7 +201,7 @@ static set<istring> BlacklistedImages;
  *
  * If true, check the directory hash and reload the song from scratch if it's changed.
  */
-bool Song::LoadFromSongDir( CString sDir )
+bool Song::LoadFromSongDir( RString sDir )
 {
 //	LOG->Trace( "Song::LoadFromSongDir(%s)", sDir.c_str() );
 	ASSERT( sDir != "" );
@@ -214,7 +214,7 @@ bool Song::LoadFromSongDir( CString sDir )
 	m_sSongDir = sDir;
 
 	// save group name
-	vector<CString> sDirectoryParts;
+	vector<RString> sDirectoryParts;
 	split( m_sSongDir, "/", sDirectoryParts, false );
 	ASSERT( sDirectoryParts.size() >= 4 ); /* e.g. "/Songs/Slow/Taps/" */
 	m_sGroupName = sDirectoryParts[sDirectoryParts.size()-3];	// second from last item
@@ -265,7 +265,7 @@ bool Song::LoadFromSongDir( CString sDir )
 		{
 			LOG->Warn( "Couldn't find any SM, DWI, BMS, or KSF files in '%s'.", sDir.c_str() );
 
-			vector<CString> vs;
+			vector<RString> vs;
 			GetDirListing( sDir + "*.mp3", vs, false, false ); 
 			GetDirListing( sDir + "*.ogg", vs, false, false ); 
 			bool bHasMusic = !vs.empty();
@@ -311,7 +311,7 @@ bool Song::LoadFromSongDir( CString sDir )
 	return true;	// do load this song
 }
 
-static void GetImageDirListing( CString sPath, vector<CString> &AddTo, bool bReturnPathToo=false )
+static void GetImageDirListing( RString sPath, vector<RString> &AddTo, bool bReturnPathToo=false )
 {
 	GetDirListing( sPath + ".png", AddTo, false, bReturnPathToo ); 
 	GetDirListing( sPath + ".jpg", AddTo, false, bReturnPathToo ); 
@@ -319,7 +319,7 @@ static void GetImageDirListing( CString sPath, vector<CString> &AddTo, bool bRet
 	GetDirListing( sPath + ".gif", AddTo, false, bReturnPathToo ); 
 }
 
-static CString RemoveInitialWhitespace( CString s )
+static RString RemoveInitialWhitespace( RString s )
 {
 	size_t i = s.find_first_not_of(" \t\r\n");
 	if( i != s.npos )
@@ -348,9 +348,9 @@ void Song::DeleteDuplicateSteps( vector<Steps*> &vSteps )
 			if( s1->GetMeter() != s2->GetMeter() )
 				continue;
 			/* Compare, ignoring whitespace. */
-			CString sSMNoteData1;
+			RString sSMNoteData1;
 			s1->GetSMNoteData( sSMNoteData1 );
-			CString sSMNoteData2;
+			RString sSMNoteData2;
 			s2->GetSMNoteData( sSMNoteData2 );
 			if( RemoveInitialWhitespace(sSMNoteData1) != RemoveInitialWhitespace(sSMNoteData2) )
 				continue;
@@ -416,7 +416,7 @@ void Song::AdjustDuplicateSteps()
 				if( vSteps[k]->GetDescription() == "" )
 				{
 					/* "Hard Edit" */
-					CString EditName = Capitalize( DifficultyToString(dc) ) + " Edit";
+					RString EditName = Capitalize( DifficultyToString(dc) ) + " Edit";
 					vSteps[k]->SetDescription( EditName );
 				}
 			}
@@ -430,7 +430,7 @@ void Song::AdjustDuplicateSteps()
 /* Fix up song paths.  If there's a leading "./", be sure to keep it: it's
  * a signal that the path is from the root directory, not the song directory.
  * Other than a leading "./", song paths must never contain "." or "..". */
-void FixupPath( CString &path, const CString &sSongPath )
+void FixupPath( RString &path, const RString &sSongPath )
 {
 	/* Replace backslashes with slashes in all paths. */	
 	FixSlashesInPlace( path );
@@ -456,10 +456,10 @@ void Song::TidyUpData()
 
 	if( !HasMusic() )
 	{
-		vector<CString> arrayPossibleMusic;
-		GetDirListing( m_sSongDir + CString("*.mp3"), arrayPossibleMusic );
-		GetDirListing( m_sSongDir + CString("*.ogg"), arrayPossibleMusic );
-		GetDirListing( m_sSongDir + CString("*.wav"), arrayPossibleMusic );
+		vector<RString> arrayPossibleMusic;
+		GetDirListing( m_sSongDir + RString("*.mp3"), arrayPossibleMusic );
+		GetDirListing( m_sSongDir + RString("*.ogg"), arrayPossibleMusic );
+		GetDirListing( m_sSongDir + RString("*.wav"), arrayPossibleMusic );
 
 		if( !arrayPossibleMusic.empty() )
 		{
@@ -478,7 +478,7 @@ void Song::TidyUpData()
 	/* This must be done before radar calculation. */
 	if( HasMusic() )
 	{
-		CString error;
+		RString error;
 		SoundReader *Sample = SoundReader_FileReader::OpenFile( GetMusicPath(), error );
 		/* XXX: Checking if the music file exists eliminates a warning originating from BMS files
 		 * (which have no music file, per se) but it's something of a hack. */
@@ -588,7 +588,7 @@ void Song::TidyUpData()
 //		m_sBannerFile = "";
 
 		// find an image with "banner" in the file name
-		vector<CString> arrayPossibleBanners;
+		vector<RString> arrayPossibleBanners;
 		GetImageDirListing( m_sSongDir + "*banner*", arrayPossibleBanners );
 
 		/* Some people do things differently for the sake of being different.  Don't
@@ -604,7 +604,7 @@ void Song::TidyUpData()
 //		m_sBackgroundFile = "";
 
 		// find an image with "bg" or "background" in the file name
-		vector<CString> arrayPossibleBGs;
+		vector<RString> arrayPossibleBGs;
 		GetImageDirListing( m_sSongDir + "*bg*", arrayPossibleBGs );
 		GetImageDirListing( m_sSongDir + "*background*", arrayPossibleBGs );
 		if( !arrayPossibleBGs.empty() )
@@ -614,7 +614,7 @@ void Song::TidyUpData()
 	if( !HasCDTitle() )
 	{
 		// find an image with "cdtitle" in the file name
-		vector<CString> arrayPossibleCDTitles;
+		vector<RString> arrayPossibleCDTitles;
 		GetImageDirListing( m_sSongDir + "*cdtitle*", arrayPossibleCDTitles );
 		if( !arrayPossibleCDTitles.empty() )
 			m_sCDTitleFile = arrayPossibleCDTitles[0];
@@ -623,8 +623,8 @@ void Song::TidyUpData()
 	if( !HasLyrics() )
 	{
 		// Check if there is a lyric file in here
-		vector<CString> arrayLyricFiles;
-		GetDirListing(m_sSongDir + CString("*.lrc"), arrayLyricFiles );
+		vector<RString> arrayLyricFiles;
+		GetDirListing(m_sSongDir + RString("*.lrc"), arrayLyricFiles );
 		if(	!arrayLyricFiles.empty() )
 			m_sLyricsFile = arrayLyricFiles[0];
 	}
@@ -632,7 +632,7 @@ void Song::TidyUpData()
 	//
 	// Now, For the images we still haven't found, look at the image dimensions of the remaining unclassified images.
 	//
-	vector<CString> arrayImages;
+	vector<RString> arrayImages;
 	GetImageDirListing( m_sSongDir + "*", arrayImages );
 
 	for( unsigned i=0; i<arrayImages.size(); i++ )	// foreach image
@@ -655,10 +655,10 @@ void Song::TidyUpData()
 		if( HasCDTitle()  &&  stricmp(m_sCDTitleFile, arrayImages[i])==0 )
 			continue;	// skip
 
-		CString sPath = m_sSongDir + arrayImages[i];
+		RString sPath = m_sSongDir + arrayImages[i];
 
 		/* We only care about the dimensions. */
-		CString error;
+		RString error;
 		RageSurface *img = RageSurfaceUtils::LoadFile( sPath, error, true );
 		if( !img )
 		{
@@ -723,10 +723,10 @@ void Song::TidyUpData()
 	// they are DWI style where the movie begins at beat 0.
 	if( !HasBGChanges() )
 	{
-		vector<CString> arrayPossibleMovies;
-		GetDirListing( m_sSongDir + CString("*.avi"), arrayPossibleMovies );
-		GetDirListing( m_sSongDir + CString("*.mpg"), arrayPossibleMovies );
-		GetDirListing( m_sSongDir + CString("*.mpeg"), arrayPossibleMovies );
+		vector<RString> arrayPossibleMovies;
+		GetDirListing( m_sSongDir + RString("*.avi"), arrayPossibleMovies );
+		GetDirListing( m_sSongDir + RString("*.mpg"), arrayPossibleMovies );
+		GetDirListing( m_sSongDir + RString("*.mpeg"), arrayPossibleMovies );
 		/* Use this->GetBeatFromElapsedTime(0) instead of 0 to start when the
 		 * music starts. */
 		if( arrayPossibleMovies.size() == 1 )
@@ -762,7 +762,7 @@ void Song::TidyUpData()
 		 *    filename, and should always be the title of the song (unlike KSFs).
 		 */
 		m_sSongFileName = m_sSongDir;
-		vector<CString> asFileNames;
+		vector<RString> asFileNames;
 		GetDirListing( m_sSongDir+"*.sm", asFileNames );
 		if( !asFileNames.empty() )
 			m_sSongFileName += asFileNames[0];
@@ -839,7 +839,7 @@ void Song::GetSteps(
 	Difficulty dc, 
 	int iMeterLow, 
 	int iMeterHigh, 
-	const CString &sDescription, 
+	const RString &sDescription, 
 	bool bIncludeAutoGen, 
 	unsigned uHash,
 	int iMaxToGet 
@@ -882,7 +882,7 @@ Steps* Song::GetOneSteps(
 	Difficulty dc, 
 	int iMeterLow, 
 	int iMeterHigh, 
-	const CString &sDescription, 
+	const RString &sDescription, 
 	unsigned uHash,
 	bool bIncludeAutoGen
 	) const
@@ -931,7 +931,7 @@ Steps* Song::GetStepsByMeter( StepsType st, int iMeterLow, int iMeterHigh ) cons
 	return NULL;
 }
 
-Steps* Song::GetStepsByDescription( StepsType st, CString sDescription ) const
+Steps* Song::GetStepsByDescription( StepsType st, RString sDescription ) const
 {
 	vector<Steps*> vNotes;
 	GetSteps( vNotes, st, DIFFICULTY_INVALID, -1, -1, sDescription );
@@ -999,14 +999,14 @@ void Song::Save()
 
 	/* We've safely written our files and created backups.  Rename non-SM and non-DWI
 	 * files to avoid confusion. */
-	vector<CString> arrayOldFileNames;
+	vector<RString> arrayOldFileNames;
 	GetDirListing( m_sSongDir + "*.bms", arrayOldFileNames );
 	GetDirListing( m_sSongDir + "*.ksf", arrayOldFileNames );
 	
 	for( unsigned i=0; i<arrayOldFileNames.size(); i++ )
 	{
-		const CString sOldPath = m_sSongDir + arrayOldFileNames[i];
-		const CString sNewPath = sOldPath + ".old";
+		const RString sOldPath = m_sSongDir + arrayOldFileNames[i];
+		const RString sNewPath = sOldPath + ".old";
 
 		if( !FileCopy( sOldPath, sNewPath ) )
 		{
@@ -1018,7 +1018,7 @@ void Song::Save()
 }
 
 
-void Song::SaveToSMFile( CString sPath, bool bSavingCache )
+void Song::SaveToSMFile( RString sPath, bool bSavingCache )
 {
 	LOG->Trace( "Song::SaveToSMFile('%s')", sPath.c_str() );
 
@@ -1038,7 +1038,7 @@ void Song::SaveToCacheFile()
 
 void Song::SaveToDWIFile()
 {
-	const CString sPath = SetExtension( GetSongFilePath(), "dwi" );
+	const RString sPath = SetExtension( GetSongFilePath(), "dwi" );
 	LOG->Trace( "Song::SaveToDWIFile(%s)", sPath.c_str() );
 
 	/* If the file exists, make a backup. */
@@ -1248,10 +1248,10 @@ vector<BackgroundChange> &Song::GetForegroundChanges()
 }
 
 
-CString GetSongAssetPath( CString sPath, const CString &sSongPath )
+RString GetSongAssetPath( RString sPath, const RString &sSongPath )
 {
 	if( sPath == "" )
-		return CString();
+		return RString();
 
 	/* If there's no path in the file, the file is in the same directory
 	 * as the song.  (This is the preferred configuration.) */
@@ -1270,7 +1270,7 @@ CString GetSongAssetPath( CString sPath, const CString &sSongPath )
 	/* If the path still begins with "../", then there were an unreasonable number
 	 * of them at the beginning of the path.  Ignore the path entirely. */
 	if( sPath.Left(3) == "../" )
-		return CString();
+		return RString();
 
 	return sPath;
 }
@@ -1278,63 +1278,63 @@ CString GetSongAssetPath( CString sPath, const CString &sSongPath )
 
 /* Note that supplying a path relative to the top-level directory is only for compatibility
  * with DWI.  We prefer paths relative to the song directory. */
-CString Song::GetMusicPath() const
+RString Song::GetMusicPath() const
 {
 	return GetSongAssetPath( m_sMusicFile, m_sSongDir );
 }
 
-CString Song::GetBannerPath() const
+RString Song::GetBannerPath() const
 {
 	return GetSongAssetPath( m_sBannerFile, m_sSongDir );
 }
 
-CString Song::GetLyricsPath() const
+RString Song::GetLyricsPath() const
 {
 	return GetSongAssetPath( m_sLyricsFile, m_sSongDir );
 }
 
-CString Song::GetCDTitlePath() const
+RString Song::GetCDTitlePath() const
 {
 	return GetSongAssetPath( m_sCDTitleFile, m_sSongDir );
 }
 
-CString Song::GetBackgroundPath() const
+RString Song::GetBackgroundPath() const
 {
 	return GetSongAssetPath( m_sBackgroundFile, m_sSongDir );
 }
 
-CString Song::GetDisplayMainTitle() const
+RString Song::GetDisplayMainTitle() const
 {
 	if(!PREFSMAN->m_bShowNativeLanguage) return GetTranslitMainTitle();
 	return m_sMainTitle;
 }
 
-CString Song::GetDisplaySubTitle() const
+RString Song::GetDisplaySubTitle() const
 {
 	if(!PREFSMAN->m_bShowNativeLanguage) return GetTranslitSubTitle();
 	return m_sSubTitle;
 }
 
-CString Song::GetDisplayArtist() const
+RString Song::GetDisplayArtist() const
 {
 	if(!PREFSMAN->m_bShowNativeLanguage) return GetTranslitArtist();
 	return m_sArtist;
 }
 
 
-CString Song::GetDisplayFullTitle() const
+RString Song::GetDisplayFullTitle() const
 {
-	CString Title = GetDisplayMainTitle();
-	CString SubTitle = GetDisplaySubTitle();
+	RString Title = GetDisplayMainTitle();
+	RString SubTitle = GetDisplaySubTitle();
 
 	if(!SubTitle.empty()) Title += " " + SubTitle;
 	return Title;
 }
 
-CString Song::GetTranslitFullTitle() const
+RString Song::GetTranslitFullTitle() const
 {
-	CString Title = GetTranslitMainTitle();
-	CString SubTitle = GetTranslitSubTitle();
+	RString Title = GetTranslitMainTitle();
+	RString SubTitle = GetTranslitSubTitle();
 
 	if(!SubTitle.empty()) Title += " " + SubTitle;
 	return Title;
@@ -1379,17 +1379,17 @@ void Song::DeleteSteps( const Steps* pSteps )
 	AddAutoGenNotes();
 }
 
-bool Song::Matches(CString sGroup, CString sSong) const
+bool Song::Matches(RString sGroup, RString sSong) const
 {
 	if( sGroup.size() && sGroup.CompareNoCase(this->m_sGroupName) != 0)
 		return false;
 
-	CString sDir = this->GetSongDir();
+	RString sDir = this->GetSongDir();
 	sDir.Replace("\\","/");
-	vector<CString> bits;
+	vector<RString> bits;
 	split( sDir, "/", bits );
 	ASSERT(bits.size() >= 2); /* should always have at least two parts */
-	const CString &sLastBit = bits[bits.size()-1];
+	const RString &sLastBit = bits[bits.size()-1];
 
 	// match on song dir or title (ala DWI)
 	if( !sSong.CompareNoCase(sLastBit) )
@@ -1483,7 +1483,7 @@ float Song::GetStepsSeconds() const
 	return GetElapsedTimeFromBeat( m_fLastBeat ) - GetElapsedTimeFromBeat( m_fFirstBeat );
 }
 
-bool Song::IsEditDescriptionUnique( StepsType st, CString sPreferredDescription, const Steps *pExclude ) const
+bool Song::IsEditDescriptionUnique( StepsType st, RString sPreferredDescription, const Steps *pExclude ) const
 {
 	FOREACH_CONST( Steps*, m_vpSteps, s )
 	{
@@ -1501,17 +1501,17 @@ bool Song::IsEditDescriptionUnique( StepsType st, CString sPreferredDescription,
 	return true;
 }
 
-void Song::MakeUniqueEditDescription( StepsType st, CString &sPreferredDescriptionInOut ) const
+void Song::MakeUniqueEditDescription( StepsType st, RString &sPreferredDescriptionInOut ) const
 {
 	if( IsEditDescriptionUnique( st, sPreferredDescriptionInOut, NULL ) )
 		return;
 
-	CString sTemp;
+	RString sTemp;
 
 	for( int i=0; i<1000; i++ )
 	{
 		// make name "My Edit" -> "My Edit2"
-		CString sNum = ssprintf("%d", i+1);
+		RString sNum = ssprintf("%d", i+1);
 		sTemp = sPreferredDescriptionInOut.Left( MAX_EDIT_STEPS_DESCRIPTION_LENGTH - sNum.size() ) + sNum;
 
 		if( IsEditDescriptionUnique(st, sTemp, NULL) )

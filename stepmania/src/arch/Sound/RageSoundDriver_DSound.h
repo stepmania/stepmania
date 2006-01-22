@@ -14,7 +14,7 @@ class RageSound_DSound: public RageSoundDriver
 public:
 	RageSound_DSound();
 	~RageSound_DSound();
-	CString Init();
+	RString Init();
 
 private:
 	/* The only place that takes sounds out of INACTIVE is StartMixing; this mutex

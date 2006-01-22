@@ -17,10 +17,10 @@ public:
 	void HandleScreenMessage( const ScreenMessage SM );
 
 private:
-	void SetText( CString sText );
-	void SetFont( CString sFont );
+	void SetText( RString sText );
+	void SetFont( RString sFont );
 
-	CString m_sCurText, m_sFont;
+	RString m_sCurText, m_sFont;
 	BitmapText txt, font;
 	Quad Vline, Hline;
 };

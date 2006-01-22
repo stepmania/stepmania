@@ -50,7 +50,7 @@ static MenuDef g_TempMenu(
 
 static LocalizedString PROFILE_NAME_BLANK		( "ScreenEditMenu", "Profile name cannot be blank." );
 static LocalizedString PROFILE_NAME_CONFLICTS	( "ScreenEditMenu", "The name you chose conflicts with another profile. Please use a different name." );
-static bool ValidateLocalProfileName( const CString &sAnswer, CString &sErrorOut )
+static bool ValidateLocalProfileName( const RString &sAnswer, RString &sErrorOut )
 {
 	if( sAnswer == "" )
 	{
@@ -62,7 +62,7 @@ static bool ValidateLocalProfileName( const CString &sAnswer, CString &sErrorOut
 	if( pProfile != NULL && sAnswer == pProfile->m_sDisplayName )
 		return true; // unchanged
 
-	vector<CString> vsProfileNames;
+	vector<RString> vsProfileNames;
 	PROFILEMAN->GetLocalProfileDisplayNames( vsProfileNames );
 	bool bAlreadyAProfileWithThisName = find( vsProfileNames.begin(), vsProfileNames.end(), sAnswer ) != vsProfileNames.end();
 	if( bAlreadyAProfileWithThisName )
@@ -113,12 +113,12 @@ void ScreenOptionsManageProfiles::BeginScreen()
 
 	PROFILEMAN->GetLocalProfileIDs( m_vsLocalProfileID );
 
-	FOREACH_CONST( CString, m_vsLocalProfileID, s )
+	FOREACH_CONST( RString, m_vsLocalProfileID, s )
 	{
 		Profile *pProfile = PROFILEMAN->GetLocalProfile( *s );
 		ASSERT( pProfile );
 
-		CString sCommand = ssprintf( "gamecommand;screen,ScreenOptionsEditProfile;profileid,%s;name,%s", s->c_str(), pProfile->m_sDisplayName.c_str() );
+		RString sCommand = ssprintf( "gamecommand;screen,ScreenOptionsEditProfile;profileid,%s;name,%s", s->c_str(), pProfile->m_sDisplayName.c_str() );
 		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( ParseCommands(sCommand) );
 		pHand->m_Def.m_layoutType = LAYOUT_SHOW_ALL_IN_ROW;
 		pHand->m_Def.m_bAllowThemeTitle = false;
@@ -137,7 +137,7 @@ void ScreenOptionsManageProfiles::BeginScreen()
 	// select the last chosen profile
 	if( !GAMESTATE->m_sEditLocalProfileID.Get().empty() )
 	{
-		vector<CString>::const_iterator iter = find( m_vsLocalProfileID.begin(), m_vsLocalProfileID.end(), GAMESTATE->m_sEditLocalProfileID.Get() );
+		vector<RString>::const_iterator iter = find( m_vsLocalProfileID.begin(), m_vsLocalProfileID.end(), GAMESTATE->m_sEditLocalProfileID.Get() );
 		if( iter != m_vsLocalProfileID.end() )
 		{
 			int iIndex = iter - m_vsLocalProfileID.begin();
@@ -174,11 +174,11 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 		{
 			ASSERT( ScreenTextEntry::s_sLastAnswer != "" );	// validate should have assured this
 		
-			CString sNewName = ScreenTextEntry::s_sLastAnswer;
+			RString sNewName = ScreenTextEntry::s_sLastAnswer;
 			ASSERT( GAMESTATE->m_sEditLocalProfileID.Get().empty() );
 
 			// create
-			CString sProfileID;
+			RString sProfileID;
 			PROFILEMAN->CreateLocalProfile( ScreenTextEntry::s_sLastAnswer, sProfileID );
 			GAMESTATE->m_sEditLocalProfileID.Set( sProfileID );
 
@@ -191,7 +191,7 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 		{
 			ASSERT( ScreenTextEntry::s_sLastAnswer != "" );	// validate should have assured this
 		
-			CString sNewName = ScreenTextEntry::s_sLastAnswer;
+			RString sNewName = ScreenTextEntry::s_sLastAnswer;
 			PROFILEMAN->RenameLocalProfile( GAMESTATE->m_sEditLocalProfileID, sNewName );
 
 			SCREENMAN->SetNewScreen( this->m_sName ); // reload
@@ -203,7 +203,7 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 		{
 			// Select the profile nearest to the one that was just deleted.
 			int iIndex = -1;
-			vector<CString>::const_iterator iter = find( m_vsLocalProfileID.begin(), m_vsLocalProfileID.end(), GAMESTATE->m_sEditLocalProfileID.Get() );
+			vector<RString>::const_iterator iter = find( m_vsLocalProfileID.begin(), m_vsLocalProfileID.end(), GAMESTATE->m_sEditLocalProfileID.Get() );
 			if( iter != m_vsLocalProfileID.end() )
 				iIndex = iter - m_vsLocalProfileID.begin();
 			CLAMP( iIndex, 0, m_vsLocalProfileID.size()-1 );
@@ -269,15 +269,15 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 				break;
 			case ProfileAction_Delete:
 				{
-					CString sTitle = pProfile->m_sDisplayName;
-					CString sMessage = ssprintf( CONFIRM_DELETE_PROFILE.GetValue(), sTitle.c_str() );
+					RString sTitle = pProfile->m_sDisplayName;
+					RString sMessage = ssprintf( CONFIRM_DELETE_PROFILE.GetValue(), sTitle.c_str() );
 					ScreenPrompt::Prompt( SM_BackFromDeleteConfirm, sMessage, PROMPT_YES_NO );
 				}
 				break;
 			case ProfileAction_Clear:
 				{
-					CString sTitle = pProfile->m_sDisplayName;
-					CString sMessage = ssprintf( CONFIRM_CLEAR_PROFILE.GetValue(), sTitle.c_str() );
+					RString sTitle = pProfile->m_sDisplayName;
+					RString sMessage = ssprintf( CONFIRM_CLEAR_PROFILE.GetValue(), sTitle.c_str() );
 					ScreenPrompt::Prompt( SM_BackFromClearConfirm, sMessage, PROMPT_YES_NO );
 				}
 				break;
@@ -302,10 +302,10 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( const InputEventPlus &input 
 	
 	if( SHOW_CREATE_NEW && iCurRow == 0 )	// "create new"
 	{
-		vector<CString> vsUsedNames;
+		vector<RString> vsUsedNames;
 		PROFILEMAN->GetLocalProfileDisplayNames( vsUsedNames );
 
-		CString sPotentialName;
+		RString sPotentialName;
 		for( int i=1; i<1000; i++ )
 		{
 			sPotentialName = ssprintf( "%s%04d", NEW_PROFILE_DEFAULT_NAME.GetValue().c_str(), i );
@@ -381,7 +381,7 @@ int ScreenOptionsManageProfiles::GetLocalProfileIndexWithFocus() const
 	return iIndex;
 }
 
-CString ScreenOptionsManageProfiles::GetLocalProfileIDWithFocus() const
+RString ScreenOptionsManageProfiles::GetLocalProfileIDWithFocus() const
 {
 	int iIndex = GetLocalProfileIndexWithFocus();
 	if( iIndex == -1 )

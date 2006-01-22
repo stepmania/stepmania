@@ -11,14 +11,14 @@ class NoteData;
 
 class KSFLoader: public NotesLoader
 {
-	bool LoadFromKSFFile( const CString &sPath, Steps &out, const Song &song );
-	bool LoadGlobalData( const CString &sPath, Song &out );
+	bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song );
+	bool LoadGlobalData( const RString &sPath, Song &out );
 	void RemoveHoles( NoteData &out, const Song &song );
-	void LoadTags( const CString &str, Song &out );
+	void LoadTags( const RString &str, Song &out );
 
 public:
-	void GetApplicableFiles( CString sPath, vector<CString> &out );
-	bool LoadFromDir( CString sDir, Song &out );
+	void GetApplicableFiles( RString sPath, vector<RString> &out );
+	bool LoadFromDir( RString sDir, Song &out );
 
 };
 

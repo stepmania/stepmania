@@ -71,7 +71,7 @@ private:
 	IOHIDDeviceInterface **mInterface;
 	IOHIDQueueInterface **mQueue;
 	bool mRunning;
-	CString mDescription;
+	RString mDescription;
 	
 	static void AddLogicalDevice( const void *value, void *context );
 	static void AddElement( const void *value, void *context );
@@ -91,7 +91,7 @@ public:
 	
 	bool Open( io_object_t device );
 	void StartQueue( CFRunLoopRef loopRef, IOHIDCallbackFunction callback, void *target, int refCon );
-	inline const CString& GetDescription() const { return mDescription; }
+	inline const RString& GetDescription() const { return mDescription; }
 };
 
 Device::Device() : mInterface( NULL ), mQueue( NULL ), mRunning( false )
@@ -840,7 +840,7 @@ InputHandler_Carbon::InputHandler_Carbon() : mSem( "Input thread started" )
 	}
 }
 
-void InputHandler_Carbon::GetDevicesAndDescriptions( vector<InputDevice>& dev, vector<CString>& desc )
+void InputHandler_Carbon::GetDevicesAndDescriptions( vector<InputDevice>& dev, vector<RString>& desc )
 {
 	dev.push_back( DEVICE_KEYBOARD );
 	desc.push_back( "Keyboard" );

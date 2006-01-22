@@ -15,7 +15,7 @@ public:
 	Sprite( const Sprite &cpy );
 	virtual ~Sprite();
 
-	void LoadFromNode( const CString& sDir, const XNode* pNode );
+	void LoadFromNode( const RString& sDir, const XNode* pNode );
 	virtual Actor *Copy() const;
 
 	virtual bool EarlyAbortDraw() const;
@@ -45,7 +45,7 @@ public:
 	virtual float GetAnimationLengthSeconds() const;
 	virtual void SetSecondsIntoAnimation( float fSeconds );
 	
-	CString	GetTexturePath() const;
+	RString	GetTexturePath() const;
 
 	void SetCustomTextureRect( const RectF &new_texcoord_frect );
 	void SetCustomTextureCoords( float fTexCoords[8] );
@@ -77,7 +77,7 @@ protected:
 
 	void DrawTexture( const TweenState *state );
 
-	CString	m_sSpritePath;
+	RString	m_sSpritePath;
 	RageTexture* m_pTexture;
 	bool	m_bDrawIfTextureNull;
 

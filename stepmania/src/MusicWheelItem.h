@@ -20,7 +20,7 @@ struct WheelItemData;
 class MusicWheelItem : public WheelItemBase
 {
 public:
-	MusicWheelItem(CString sType = "MusicWheelItem");
+	MusicWheelItem(RString sType = "MusicWheelItem");
 	MusicWheelItem( const MusicWheelItem &cpy );
 	virtual ~MusicWheelItem();
 
@@ -47,13 +47,13 @@ private:
 struct WheelItemData : public WheelItemBaseData
 {
 	WheelItemData() {}
-	WheelItemData( WheelItemType wit, Song* pSong, CString sSectionName, Course* pCourse, RageColor color );
+	WheelItemData( WheelItemType wit, Song* pSong, RString sSectionName, Course* pCourse, RageColor color );
 
 	Course*			m_pCourse;
 	Song*			m_pSong;
 
 	// for TYPE_SORT
-	CString			m_sLabel;
+	RString			m_sLabel;
 	GameCommand		m_Action;
 };
 

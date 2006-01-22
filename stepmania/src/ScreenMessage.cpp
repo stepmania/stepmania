@@ -4,12 +4,12 @@
 
 ASMHClass AutoScreenMessageHandler;
 
-ScreenMessage ASMHClass::ToMessageNumber( const CString &Name )
+ScreenMessage ASMHClass::ToMessageNumber( const RString &Name )
 {
 	//If uninitilized, initilize the map.  We KNOW it will be NULL
 	if ( m_pScreenMessages == NULL )
 	{
-		m_pScreenMessages = new map < CString, ScreenMessage >;
+		m_pScreenMessages = new map < RString, ScreenMessage >;
 		m_iCurScreenMessage = SM_User;
 	}
 
@@ -25,7 +25,7 @@ ScreenMessage ASMHClass::ToMessageNumber( const CString &Name )
 
 void ASMHClass::LogMessageNumbers( )
 {
-	map < CString, ScreenMessage >::iterator iter;
+	map < RString, ScreenMessage >::iterator iter;
 
 	//Log all ScreenMessages currently in the map
 
@@ -34,9 +34,9 @@ void ASMHClass::LogMessageNumbers( )
 		LOG->Trace( "ScreenMessage: %3d: %s", iter->second, (*iter).first.c_str() );
 }
 
-CString	ASMHClass::NumberToString( ScreenMessage SM )
+RString	ASMHClass::NumberToString( ScreenMessage SM )
 {
-	map < CString, ScreenMessage >::iterator iter;
+	map < RString, ScreenMessage >::iterator iter;
 
 	//Log all ScreenMessages currently in the map
 
@@ -45,7 +45,7 @@ CString	ASMHClass::NumberToString( ScreenMessage SM )
 		if ( SM == iter->second )
 			return (*iter).first;
 
-	return CString();
+	return RString();
 }
 
 /*

@@ -16,12 +16,12 @@ class PercentageDisplay: public ActorFrame
 public:
 	PercentageDisplay();
 	void Load( const PlayerState *pPlayerState, const PlayerStageStats *pPlayerStageStats );
-	void Load( const PlayerState *pPlayerState, const PlayerStageStats *pPlayerStageStats, const CString &sMetricsGroup, bool bAutoRefresh );
+	void Load( const PlayerState *pPlayerState, const PlayerStageStats *pPlayerStageStats, const RString &sMetricsGroup, bool bAutoRefresh );
 	void Update( float fDeltaTime );
-	virtual void LoadFromNode( const CString& sDir, const XNode* pNode );
+	virtual void LoadFromNode( const RString& sDir, const XNode* pNode );
 	virtual Actor *Copy() const;
 
-	static CString FormatPercentScore( float fPercentDancePoints );
+	static RString FormatPercentScore( float fPercentDancePoints );
 
 	//
 	// Lua

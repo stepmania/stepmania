@@ -16,9 +16,9 @@ public:
 		float fMeterHeight,
 		int iNumStrips,
 		int iNumChambers, 
-		const CString &sNormalPath, 
-		const CString &sHotPath, 
-		const CString &sPassingPath,
+		const RString &sNormalPath, 
+		const RString &sHotPath, 
+		const RString &sPassingPath,
 		const apActorCommands &acNormalOnCommand,
 		const apActorCommands &acHotOnCommand,
 		const apActorCommands &acPassingOnCommand

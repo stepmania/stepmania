@@ -21,8 +21,8 @@ enum SelectType
 	NUM_SELECT_TYPES,
 	SELECT_INVALID
 };
-const CString& SelectTypeToString( SelectType pm );
-SelectType StringToSelectType( const CString& s );
+const RString& SelectTypeToString( SelectType pm );
+SelectType StringToSelectType( const RString& s );
 
 enum LayoutType
 {
@@ -31,17 +31,17 @@ enum LayoutType
 	NUM_LAYOUT_TYPES,
 	LAYOUT_INVALID
 };
-const CString& LayoutTypeToString( LayoutType pm );
-LayoutType StringToLayoutType( const CString& s );
+const RString& LayoutTypeToString( LayoutType pm );
+LayoutType StringToLayoutType( const RString& s );
 
 struct OptionRowDefinition
 {
-	CString m_sName;
-	CString m_sExplanationName;
+	RString m_sName;
+	RString m_sExplanationName;
 	bool m_bOneChoiceForAllPlayers;
 	SelectType m_selectType;
 	LayoutType m_layoutType;
-	vector<CString> m_vsChoices;
+	vector<RString> m_vsChoices;
 	set<PlayerNumber> m_vEnabledForPlayers;	// only players in this set may change focus to this row
 	bool	m_bExportOnChange;
 	bool	m_bAllowThemeItems;	// Should be true for dynamic strings.
@@ -87,10 +87,10 @@ struct OptionRowDefinition
 class OptionRowType
 {
 public:
-	void Load( const CString &sType );
+	void Load( const RString &sType );
 
 private:
-	CString				m_sType;
+	RString				m_sType;
 
 	BitmapText			m_textItemParent;
 	OptionsCursor			m_UnderlineParent;
@@ -137,7 +137,7 @@ public:
 	void LoadNormal( OptionRowHandler *pHand, bool bFirstItemGoesDown );
 	void LoadExit();
 
-	void SetOptionIcon( PlayerNumber pn, const CString &sText, GameCommand &gc );
+	void SetOptionIcon( PlayerNumber pn, const RString &sText, GameCommand &gc );
 
 	void ImportOptions( const vector<PlayerNumber> &vpns );
 	int ExportOptions( const vector<PlayerNumber> &vpns, bool bRowHasFocus[NUM_PLAYERS] );
@@ -156,7 +156,7 @@ public:
 	int GetOneSharedSelection( bool bAllowFail=false ) const;
 	void SetOneSelection( PlayerNumber pn, int iChoice );
 	void SetOneSharedSelection( int iChoice );
-	void SetOneSharedSelectionIfPresent( const CString &sChoice );
+	void SetOneSharedSelectionIfPresent( const RString &sChoice );
 
 	int GetChoiceInRowWithFocus( PlayerNumber pn ) const;
 	int GetChoiceInRowWithFocusShared() const;
@@ -186,20 +186,20 @@ public:
 	unsigned GetTextItemsSize() const { return m_textItems.size(); }
 	bool GetFirstItemGoesDown() const { return m_bFirstItemGoesDown; }
 
-	void PrepareItemText( CString &s ) const;
-	CString OptionTitle( CString s ) const;
+	void PrepareItemText( RString &s ) const;
+	RString OptionTitle( RString s ) const;
 
-	void SetExitText( CString sExitText );
+	void SetExitText( RString sExitText );
 
 	void Reload();
 
 	//
 	// Messages
 	//
-	virtual void HandleMessage( const CString& sMessage );
+	virtual void HandleMessage( const RString& sMessage );
 
 protected:
-	CString GetRowTitle() const;
+	RString GetRowTitle() const;
 
 	const OptionRowType		*m_pParentType;
 	RowType				m_RowType;

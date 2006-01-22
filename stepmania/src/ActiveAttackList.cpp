@@ -34,7 +34,7 @@ void ActiveAttackList::Refresh()
 {
 	const AttackArray& attacks = m_pPlayerState->m_ActiveAttacks;
 
-	vector<CString> vsThemedMods;
+	vector<RString> vsThemedMods;
 	for( unsigned i=0; i<attacks.size(); i++ )
 	{
 		const Attack& attack = attacks[i];
@@ -49,7 +49,7 @@ void ActiveAttackList::Refresh()
 		po.GetThemedMods( vsThemedMods );
 	}
 
-	CString s = join( "\n", vsThemedMods );
+	RString s = join( "\n", vsThemedMods );
 
 	this->SetText( s );	// BitmapText will not rebuild vertices if these strings are the same.
 }

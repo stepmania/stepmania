@@ -37,7 +37,7 @@
 #include <list>
 
 
-CString GetErrorString( HRESULT hr )
+RString GetErrorString( HRESULT hr )
 {
 	char szError[1024] = "";
 	D3DXGetErrorString( hr, szError, sizeof(szError) );
@@ -207,7 +207,7 @@ RageDisplay_D3D::RageDisplay_D3D()
 	"DirectX 8.1 or greater is not installed.  You can download it from:\n" \
 	"http://www.microsoft.com/downloads/details.aspx?FamilyID=a19bed22-0b25-4e5d-a584-6389d8a3dad0&displaylang=en"
 
-CString RageDisplay_D3D::Init( VideoModeParams p )
+RString RageDisplay_D3D::Init( VideoModeParams p )
 {
 	GraphicsWindow::Initialize( true );
 
@@ -370,7 +370,7 @@ D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP)
 	return D3DFMT_UNKNOWN;
 }
 
-CString SetD3DParams( bool &bNewDeviceOut )
+RString SetD3DParams( bool &bNewDeviceOut )
 {
 	if( g_pd3dDevice == NULL )		// device is not yet created.  We need to create it
 	{
@@ -410,7 +410,7 @@ CString SetD3DParams( bool &bNewDeviceOut )
 	/* Palettes were lost by Reset(), so mark them unloaded. */
 	g_TexResourceToPaletteIndex.clear();
 
-	return CString();
+	return RString();
 }
 
 /* If the given parameters have failed, try to lower them. */
@@ -549,7 +549,7 @@ static void SetPresentParametersFromVideoModeParams( const VideoModeParams &p, D
 }
 
 /* Set the video mode. */
-CString RageDisplay_D3D::TryVideoMode( const VideoModeParams &_p, bool &bNewDeviceOut )
+RString RageDisplay_D3D::TryVideoMode( const VideoModeParams &_p, bool &bNewDeviceOut )
 {
 	VideoModeParams p = _p;
 
@@ -579,7 +579,7 @@ CString RageDisplay_D3D::TryVideoMode( const VideoModeParams &_p, bool &bNewDevi
 	while( 1 )
 	{
 		/* Try the video mode. */
-		CString sErr = SetD3DParams( bNewDeviceOut );
+		RString sErr = SetD3DParams( bNewDeviceOut );
 		if( sErr.empty() )
 			break;
 
@@ -607,7 +607,7 @@ CString RageDisplay_D3D::TryVideoMode( const VideoModeParams &_p, bool &bNewDevi
 
 	this->SetDefaultRenderStates();
 	
-	return CString();	// mode change successful
+	return RString();	// mode change successful
 }
 
 void RageDisplay_D3D::ResolutionChanged()
@@ -641,7 +641,7 @@ bool RageDisplay_D3D::BeginFrame()
 	case D3DERR_DEVICENOTRESET:
 		{
 			bool bIgnore = false;
-			CString sError = SetD3DParams( bIgnore );
+			RString sError = SetD3DParams( bIgnore );
 			if( sError != "" )
 				RageException::Throw( sError );
 

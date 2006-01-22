@@ -48,7 +48,7 @@ void Screen::Init()
 
 	this->PlayCommand( "Init" );
 
-	vector<CString> asList;
+	vector<RString> asList;
 	split( PREPARE_SCREENS, ",", asList );
 	for( unsigned i = 0; i < asList.size(); ++i )
 	{
@@ -229,14 +229,14 @@ void Screen::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-CString Screen::GetNextScreen() const
+RString Screen::GetNextScreen() const
 {
 	if( !m_sNextScreen.empty() )
 		return m_sNextScreen;
 	return NEXT_SCREEN;
 }
 
-CString Screen::GetPrevScreen() const
+RString Screen::GetPrevScreen() const
 {
 	if( !m_sPrevScreen.empty() )
 		return m_sPrevScreen;

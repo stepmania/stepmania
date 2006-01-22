@@ -52,7 +52,7 @@ LoadingWindow_Xbox::LoadingWindow_Xbox()
 	if(!useImage)
 		LOG->Trace("Error loading splash.png - %i", result);
 	
-	SetText(CString("Loading songs"));
+	SetText(RString("Loading songs"));
 }
 
 LoadingWindow_Xbox::~LoadingWindow_Xbox()
@@ -90,7 +90,7 @@ void LoadingWindow_Xbox::Paint()
 	{
 		// Lo-fi version: print the product name and version at the top of the screen
 		font->SetTextColor(D3DCOLOR_XRGB(255, 0, 0));
-		CString title = "Version ";
+		RString title = "Version ";
 		title = title + PRODUCT_VER;
 		WCHAR wc_title[200] = {0};
 		swprintf(wc_title, L"%S", title.c_str());
@@ -105,7 +105,7 @@ void LoadingWindow_Xbox::Paint()
 	basic_string <char>::size_type newLineIndex = text.find("\n", 0);
 	int y = 240;
 
-	if(newLineIndex == CString.npos)
+	if(newLineIndex == RString.npos)
 	{
 		WCHAR wc_text[200] = {0};
 		swprintf(wc_text, L"%S", text.c_str());
@@ -116,10 +116,10 @@ void LoadingWindow_Xbox::Paint()
 	{
 		int start = 0;
 
-		while(start != CString.npos)
+		while(start != RString.npos)
 		{
-			CString toPrint;
-			if(newLineIndex != CString.npos)
+			RString toPrint;
+			if(newLineIndex != RString.npos)
 				toPrint = text.substr(start, newLineIndex - start);
 			else
 				toPrint = text.substr(start);
@@ -133,10 +133,10 @@ void LoadingWindow_Xbox::Paint()
 			}
 			y = y + font->GetTextHeight() + 10;
 
-			if(newLineIndex != CString.npos)
+			if(newLineIndex != RString.npos)
 				start = newLineIndex + 1;
 			else
-				start = CString.npos;
+				start = RString.npos;
 
 			newLineIndex = text.find("\n", start);
 		}
@@ -148,7 +148,7 @@ void LoadingWindow_Xbox::Paint()
 	g_pD3DDevice->Present(NULL, NULL, NULL, NULL);
 }
 
-void LoadingWindow_Xbox::SetText(CString str)
+void LoadingWindow_Xbox::SetText(RString str)
 {
 	text = str ;
 }

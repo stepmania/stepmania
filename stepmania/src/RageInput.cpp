@@ -10,7 +10,7 @@
 
 RageInput*		INPUTMAN	= NULL;		// globally accessable input device
 
-static Preference<CString> g_sInputDrivers( "InputDrivers", "" ); // "" == DEFAULT_INPUT_DRIVER_LIST
+static Preference<RString> g_sInputDrivers( "InputDrivers", "" ); // "" == DEFAULT_INPUT_DRIVER_LIST
 
 RageInput::RageInput()
 {
@@ -62,7 +62,7 @@ bool RageInput::DevicesChanged()
 	return false;
 }
 
-void RageInput::GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut )
+void RageInput::GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut )
 {
 	for( unsigned i = 0; i < m_pDevices.size(); ++i )
 		m_pDevices[i]->GetDevicesAndDescriptions( vDevicesOut, vDescriptionsOut );	
@@ -80,12 +80,12 @@ void RageInput::AddHandler( InputHandler *pHandler )
 	m_pDevices.push_back( pHandler );
 }
 
-CString RageInput::GetDeviceSpecificInputString( const DeviceInput &di )
+RString RageInput::GetDeviceSpecificInputString( const DeviceInput &di )
 {
 	FOREACH( InputHandler*, m_pDevices, i )
 	{
 		vector<InputDevice> vDevices;
-		vector<CString> vDescriptions;
+		vector<RString> vDescriptions;
 		(*i)->GetDevicesAndDescriptions( vDevices, vDescriptions );
 
 		bool bMatch = find(vDevices.begin(), vDevices.end(), di.device) != vDevices.end();
@@ -101,7 +101,7 @@ InputDeviceState RageInput::GetInputDeviceState( InputDevice id )
 	FOREACH( InputHandler*, m_pDevices, i )
 	{
 		vector<InputDevice> vDevices;
-		vector<CString> vDescriptions;
+		vector<RString> vDescriptions;
 		(*i)->GetDevicesAndDescriptions( vDevices, vDescriptions );
 
 		bool bMatch = find(vDevices.begin(), vDevices.end(), id) != vDevices.end();
@@ -124,7 +124,7 @@ public:
 	static int GetDescriptions( T* p, lua_State *L )
 	{
 		vector<InputDevice> vDevices;
-		vector<CString> vsDescriptions;
+		vector<RString> vsDescriptions;
 		p->GetDevicesAndDescriptions( vDevices, vsDescriptions );
 		LuaHelpers::CreateTableFromArray( vsDescriptions, L );
 		return 1;

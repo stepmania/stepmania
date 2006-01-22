@@ -18,14 +18,14 @@ public:
 	~BackgroundLoader();
 
 	/* Read the file in a background thread.  Files will be read in the order requested. */
-	void CacheFile( const CString &file );
+	void CacheFile( const RString &file );
 
 	/* Return true if the requested CacheFile request has finished.  If true is returned,
 	 * the cached file can be read using the path returned in sActualPath. */
-	bool IsCacheFileFinished( const CString &sFile, CString &sActualPath );
+	bool IsCacheFileFinished( const RString &sFile, RString &sActualPath );
 
 	/* Call this when finished with a cached file, to release any resources. */
-	void FinishedWithCachedFile( CString sFile );
+	void FinishedWithCachedFile( RString sFile );
 
 	/* Abort all loads. */
 	void Abort();
@@ -36,10 +36,10 @@ private:
 	void LoadThread();
 	static int LoadThread_Start( void *p ) { ((BackgroundLoader *) p)->LoadThread(); return 0; }
 
-	CString GetRequest();
+	RString GetRequest();
 
-	CString GetCachePath( CString sPath ) const;
-	CString m_sCachePathPrefix;
+	RString GetCachePath( RString sPath ) const;
+	RString m_sCachePathPrefix;
 
 	RageSemaphore m_StartSem;
 
@@ -47,10 +47,10 @@ private:
 	 * while doing expensive operations, like reading files. */
 	RageMutex m_Mutex;
 
-	vector<CString> m_CacheRequests;
+	vector<RString> m_CacheRequests;
 
 	/* Filename to number of completed requests */
-	map<CString,int> m_FinishedRequests;
+	map<RString,int> m_FinishedRequests;
 
 	bool m_sThreadIsActive;
 	bool m_sThreadShouldAbort;

@@ -7,7 +7,7 @@
 
 #include "Selector_MemoryCardDriver.h"
 
-static const CString TEMP_MOUNT_POINT = "/@mctemptimeout/";
+static const RString TEMP_MOUNT_POINT = "/@mctemptimeout/";
 
 bool UsbStorageDevice::operator==(const UsbStorageDevice& other) const
 {
@@ -23,7 +23,7 @@ bool UsbStorageDevice::operator==(const UsbStorageDevice& other) const
 #undef COMPARE
 }
 
-void UsbStorageDevice::SetOsMountDir( const CString &s )
+void UsbStorageDevice::SetOsMountDir( const RString &s )
 {
 	sOsMountDir = s;
 }

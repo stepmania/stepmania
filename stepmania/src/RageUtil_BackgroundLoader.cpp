@@ -31,9 +31,9 @@ BackgroundLoader::BackgroundLoader():
 	m_LoadThread.Create( LoadThread_Start, this );
 }
 
-static void DeleteEmptyDirectories( CString sDir )
+static void DeleteEmptyDirectories( RString sDir )
 {
-	vector<CString> asNewDirs;
+	vector<RString> asNewDirs;
 	GetDirListing( sDir + "/*", asNewDirs, false, true );
 	for( unsigned i = 0; i < asNewDirs.size(); ++i )
 	{
@@ -56,7 +56,7 @@ BackgroundLoader::~BackgroundLoader()
 	m_LoadThread.Wait();
 
 	/* Delete all leftover cached files. */
-	map<CString,int>::iterator it;
+	map<RString,int>::iterator it;
 	for( it = m_FinishedRequests.begin(); it != m_FinishedRequests.end(); ++it )
 		FILEMAN->Remove( GetCachePath( it->first ) );
 
@@ -66,22 +66,22 @@ BackgroundLoader::~BackgroundLoader()
 }
 
 /* Pull a request out of m_CacheRequests. */
-CString BackgroundLoader::GetRequest()
+RString BackgroundLoader::GetRequest()
 {
 	if( !g_bEnableBackgroundLoading )
-		return CString();
+		return RString();
 
 	LockMut( m_Mutex );
 	if( !m_CacheRequests.size() )
-		return CString();
+		return RString();
 
-	CString ret;
+	RString ret;
 	ret = m_CacheRequests.front();
 	m_CacheRequests.erase( m_CacheRequests.begin(), m_CacheRequests.begin()+1 );
 	return ret;
 }
 
-CString BackgroundLoader::GetCachePath( CString sPath ) const
+RString BackgroundLoader::GetCachePath( RString sPath ) const
 {
 	return m_sCachePathPrefix + sPath;
 }
@@ -94,14 +94,14 @@ void BackgroundLoader::LoadThread()
 		 * fail on timeout. */
 		m_StartSem.Wait( false );
 
-		CString sFile = GetRequest();
+		RString sFile = GetRequest();
 		if( sFile.empty() )
 			continue;
 
 		{
 			/* If the file already exists, short circuit. */
 			LockMut( m_Mutex );
-			map<CString,int>::iterator it;
+			map<RString,int>::iterator it;
 			it = m_FinishedRequests.find( sFile );
 			if( it != m_FinishedRequests.end() )
 			{
@@ -115,7 +115,7 @@ void BackgroundLoader::LoadThread()
 
 		LOG->Trace("XXX: reading %s", sFile.c_str());
 
-		CString sCachePath = GetCachePath( sFile );
+		RString sCachePath = GetCachePath( sFile );
 
 		/* Open the file and read it. */
 		RageFile src;
@@ -161,7 +161,7 @@ void BackgroundLoader::LoadThread()
 	}
 }
 
-void BackgroundLoader::CacheFile( const CString &sFile )
+void BackgroundLoader::CacheFile( const RString &sFile )
 {
 	if( !g_bEnableBackgroundLoading )
 		return;
@@ -174,7 +174,7 @@ void BackgroundLoader::CacheFile( const CString &sFile )
 	m_StartSem.Post();
 }
 
-bool BackgroundLoader::IsCacheFileFinished( const CString &sFile, CString &sActualPath )
+bool BackgroundLoader::IsCacheFileFinished( const RString &sFile, RString &sActualPath )
 {
 	if( !g_bEnableBackgroundLoading )
 	{
@@ -190,7 +190,7 @@ bool BackgroundLoader::IsCacheFileFinished( const CString &sFile, CString &sActu
 		return true;
 	}
 
-	map<CString,int>::iterator it;
+	map<RString,int>::iterator it;
 	it = m_FinishedRequests.find( sFile );
 	if( it == m_FinishedRequests.end() )
 		return false;
@@ -204,7 +204,7 @@ bool BackgroundLoader::IsCacheFileFinished( const CString &sFile, CString &sActu
 	return true;
 }
 
-void BackgroundLoader::FinishedWithCachedFile( CString sFile )
+void BackgroundLoader::FinishedWithCachedFile( RString sFile )
 {
 	if( !g_bEnableBackgroundLoading )
 		return;
@@ -212,7 +212,7 @@ void BackgroundLoader::FinishedWithCachedFile( CString sFile )
 	if( sFile == "" )
 		return;
 
-	map<CString,int>::iterator it;
+	map<RString,int>::iterator it;
 	it = m_FinishedRequests.find( sFile );
 	ASSERT_M( it != m_FinishedRequests.end(), sFile );
 

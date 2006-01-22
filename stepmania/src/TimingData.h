@@ -89,7 +89,7 @@ public:
 	void InsertRows( int iStartRow, int iRowsToAdd );
 	void DeleteRows( int iStartRow, int iRowsToDelete );
 
-	CString						m_sFile;		// informational only
+	RString						m_sFile;		// informational only
 	vector<BPMSegment>			m_BPMSegments;	// this must be sorted before gameplay
 	vector<StopSegment>			m_StopSegments;	// this must be sorted before gameplay
 	float	m_fBeat0OffsetInSeconds;

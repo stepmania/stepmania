@@ -16,8 +16,8 @@ static void *Handle = NULL;
 #include "ALSA9Functions.h"
 #undef FUNC
 
-static const CString lib = "libasound.so.2";
-CString LoadALSA()
+static const RString lib = "libasound.so.2";
+RString LoadALSA()
 {
 	/* If /proc/asound/ doesn't exist, chances are we're on an OSS system.  We shouldn't
 	 * touch ALSA at all, since many OSS systems have old, broken versions of ALSA lying
@@ -37,7 +37,7 @@ CString LoadALSA()
 	if( Handle == NULL )
 		return ssprintf("dlopen(%s): %s", lib.c_str(), dlerror());
 
-	CString error;
+	RString error;
 	/* Eww.  The "new" HW and SW API functions are really prefixed by __,
 	 * eg. __snd_pcm_hw_params_set_rate_near. */
 #define FUNC(ret, name, proto) \

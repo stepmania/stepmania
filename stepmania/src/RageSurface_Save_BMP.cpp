@@ -5,7 +5,7 @@
 #include "RageUtil.h"
 #include "RageFile.h"
 
-static void WriteBytes( RageFile &f, CString &sError, const void *buf, int size )
+static void WriteBytes( RageFile &f, RString &sError, const void *buf, int size )
 {
 	if( sError.size() != 0 )
 		return;
@@ -15,13 +15,13 @@ static void WriteBytes( RageFile &f, CString &sError, const void *buf, int size 
 		sError = f.GetError();
 }
 
-static void write_le16( RageFile &f, CString &sError, uint16_t val )
+static void write_le16( RageFile &f, RString &sError, uint16_t val )
 {
 	val = Swap16LE( val );
 	WriteBytes( f, sError, &val, sizeof(uint16_t) );
 }
 
-static void write_le32( RageFile &f, CString &sError, uint32_t val )
+static void write_le32( RageFile &f, RString &sError, uint32_t val )
 {
 	val = Swap32LE( val );
 	WriteBytes( f, sError, &val, sizeof(uint32_t) );
@@ -35,7 +35,7 @@ bool RageSurfaceUtils::SaveBMP( RageSurface *surface, RageFile &f )
 		Swap24LE( 0xFF0000 ), Swap24LE( 0x00FF00 ), Swap24LE( 0x0000FF ), 0 );
 	RageSurfaceUtils::CopySurface( surface, converted_surface );
 
-	CString sError;
+	RString sError;
 
 	int iFilePitch = converted_surface->pitch;
 	iFilePitch = (iFilePitch+3) & ~3; // round up a multiple of 4

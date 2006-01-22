@@ -9,10 +9,10 @@ class LoadingWindow_Gtk: public LoadingWindow
 {
 public:
 	LoadingWindow_Gtk();
-	CString Init();
+	RString Init();
 	~LoadingWindow_Gtk();
 
-	void SetText(CString str);
+	void SetText(RString str);
 	void Paint() { }
 };
 #define USE_LOADING_WINDOW_GTK

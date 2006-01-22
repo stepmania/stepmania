@@ -113,7 +113,7 @@ static void random_stir(void)
 	pool.poolpos = sizeof(pool.incoming);
 }
 
-void random_add_noise( const CString &noise )
+void random_add_noise( const RString &noise )
 {
 	unsigned char *p = (unsigned char *) noise.data();
 	int i;

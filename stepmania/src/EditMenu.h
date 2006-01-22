@@ -26,8 +26,8 @@ enum EditMenuRow
 	NUM_EditMenuRow 
 };
 #define FOREACH_EditMenuRow( r ) FOREACH_ENUM( EditMenuRow, NUM_EditMenuRow, r )
-const CString& EditMenuRowToString( EditMenuRow r );
-const CString& EditMenuRowToLocalizedString( EditMenuRow r );
+const RString& EditMenuRowToString( EditMenuRow r );
+const RString& EditMenuRowToLocalizedString( EditMenuRow r );
 
 enum EditMenuAction
 {
@@ -38,8 +38,8 @@ enum EditMenuAction
 	NUM_EditMenuAction
 };
 #define FOREACH_EditMenuAction( ema ) FOREACH_ENUM( EditMenuAction, NUM_EditMenuAction, ema )
-const CString& EditMenuActionToString( EditMenuAction ema );
-const CString& EditMenuActionToLocalizedString( EditMenuAction ema );
+const RString& EditMenuActionToString( EditMenuAction ema );
+const RString& EditMenuActionToLocalizedString( EditMenuAction ema );
 
 const int NUM_ARROWS = 2;
 
@@ -48,7 +48,7 @@ class EditMenu: public ActorFrame
 public:
 	EditMenu();
 	~EditMenu();
-	void Load( const CString &sType );
+	void Load( const RString &sType );
 
 	bool CanGoUp();
 	bool CanGoDown();
@@ -62,7 +62,7 @@ public:
 
 	void RefreshAll();
 
-	CString			GetSelectedGroup() const			{ if( !SHOW_GROUPS.GetValue() ) return GROUP_ALL; ASSERT(m_iSelection[ROW_GROUP]			< (int)m_sGroups.size());		return m_sGroups[m_iSelection[ROW_GROUP]]; }
+	RString			GetSelectedGroup() const			{ if( !SHOW_GROUPS.GetValue() ) return GROUP_ALL; ASSERT(m_iSelection[ROW_GROUP]			< (int)m_sGroups.size());		return m_sGroups[m_iSelection[ROW_GROUP]]; }
 	Song*			GetSelectedSong() const				{ ASSERT(m_iSelection[ROW_SONG]				< (int)m_pSongs.size());		return m_pSongs[m_iSelection[ROW_SONG]]; }
 	StepsType		GetSelectedStepsType() const		{ ASSERT(m_iSelection[ROW_STEPS_TYPE]		< (int)m_StepsTypes.size());	return m_StepsTypes[m_iSelection[ROW_STEPS_TYPE]]; }
 	Steps*			GetSelectedSteps() const			{ ASSERT(m_iSelection[ROW_STEPS]			< (int)m_vpSteps.size());		return m_vpSteps[m_iSelection[ROW_STEPS]].pSteps; }
@@ -75,8 +75,8 @@ public:
 	EditMenuRow GetSelectedRow() const { return m_SelectedRow; }
 
 private:
-	void GetSongsToShowForGroup( const CString &sGroup, vector<Song*> &vpSongsOut );
-	void GetGroupsToShow( vector<CString> &vsGroupsOut );
+	void GetSongsToShowForGroup( const RString &sGroup, vector<Song*> &vpSongsOut );
+	void GetGroupsToShow( vector<RString> &vsGroupsOut );
 
 	void UpdateArrows();
 	Sprite	m_sprArrows[NUM_ARROWS];
@@ -102,7 +102,7 @@ private:
 		Difficulty dc;
 	};
 
-	vector<CString>				m_sGroups;
+	vector<RString>				m_sGroups;
 	vector<Song*>				m_pSongs;
 	vector<StepsType>			m_StepsTypes;
 	vector<StepsAndDifficulty>	m_vpSteps;

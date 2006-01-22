@@ -9,17 +9,17 @@
 
 void IncorrectNumberArgsWarning( const Command &command, int iMaxIndexAccessed )
 {
-	const CString sError = ssprintf( "Actor::HandleCommand: Wrong number of arguments in command '%s'.  Expected %d but there are %u.",
+	const RString sError = ssprintf( "Actor::HandleCommand: Wrong number of arguments in command '%s'.  Expected %d but there are %u.",
 		command.GetOriginalCommandString().c_str(), iMaxIndexAccessed+1, unsigned(command.m_vsArgs.size()) );
 	LOG->Warn( sError );
 	Dialog::OK( sError );
 }
 
-CString Command::GetName() const 
+RString Command::GetName() const 
 {
 	if( m_vsArgs.empty() )
-		return CString();
-	CString s = m_vsArgs[0];
+		return RString();
+	RString s = m_vsArgs[0];
 	s.MakeLower();
 	return s;
 }
@@ -32,46 +32,46 @@ Command::Arg Command::GetArg( unsigned index ) const
 	return a;
 }
 
-Command::Arg::operator CString () const
+Command::Arg::operator RString () const
 {
-	CString sValue = s;
+	RString sValue = s;
 	LuaHelpers::RunAtExpressionS( sValue );
 	return sValue;
 }
 
 Command::Arg::operator float () const
 {
-	CString sValue = s;
+	RString sValue = s;
 	LuaHelpers::PrepareExpression( sValue );	// strip invalid chars
 	return LuaHelpers::RunExpressionF( sValue );
 }
 
 Command::Arg::operator int () const
 {
-	CString sValue = s;
+	RString sValue = s;
 	LuaHelpers::PrepareExpression( sValue );	// strip invalid chars
 	return (int) LuaHelpers::RunExpressionF( sValue );
 }
 
 Command::Arg::operator bool () const
 {
-	CString sValue = s;
+	RString sValue = s;
 	LuaHelpers::PrepareExpression( sValue );	// strip invalid chars
 	return LuaHelpers::RunExpressionF( sValue ) != 0.0f;
 }
 
-void Command::Load( const CString &sCommand )
+void Command::Load( const RString &sCommand )
 {
 	m_vsArgs.clear();
 	split( sCommand, ",", m_vsArgs, false );	// don't ignore empty
 }
 
-CString Command::GetOriginalCommandString() const
+RString Command::GetOriginalCommandString() const
 {
 	return join( ",", m_vsArgs );
 }
 
-static void SplitWithQuotes( const CString sSource, const char Delimitor, vector<CString> &asOut, const bool bIgnoreEmpty )
+static void SplitWithQuotes( const RString sSource, const char Delimitor, vector<RString> &asOut, const bool bIgnoreEmpty )
 {
 	/* Short-circuit if the source is empty; we want to return an empty vector if
 	 * the string is empty, even if bIgnoreEmpty is true. */
@@ -107,7 +107,7 @@ static void SplitWithQuotes( const CString sSource, const char Delimitor, vector
 				asOut.push_back( sSource );
 			else
 			{
-				const CString AddCString = sSource.substr( startpos, pos-startpos );
+				const RString AddCString = sSource.substr( startpos, pos-startpos );
 				asOut.push_back( AddCString );
 			}
 		}
@@ -116,17 +116,17 @@ static void SplitWithQuotes( const CString sSource, const char Delimitor, vector
 	} while( startpos <= sSource.size() );
 }
 
-CString Commands::GetOriginalCommandString() const
+RString Commands::GetOriginalCommandString() const
 {
-	CString s;
+	RString s;
 	FOREACH_CONST( Command, v, c )
 		s += c->GetOriginalCommandString();
 	return s;
 }
 
-void ParseCommands( const CString &sCommands, Commands &vCommandsOut )
+void ParseCommands( const RString &sCommands, Commands &vCommandsOut )
 {
-	vector<CString> vsCommands;
+	vector<RString> vsCommands;
 	SplitWithQuotes( sCommands, ';', vsCommands, true );	// do ignore empty
 	vCommandsOut.v.resize( vsCommands.size() );
 
@@ -137,7 +137,7 @@ void ParseCommands( const CString &sCommands, Commands &vCommandsOut )
 	}
 }
 
-Commands ParseCommands( const CString &sCommands )
+Commands ParseCommands( const RString &sCommands )
 {
 	Commands vCommands;
 	ParseCommands( sCommands, vCommands );

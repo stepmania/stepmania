@@ -19,7 +19,7 @@ public:
 	virtual Actor *Copy() const;
 
 	void Load();
-	void LoadFromNode( const CString& sDir, const XNode* pNode );
+	void LoadFromNode( const RString& sDir, const XNode* pNode );
 
 	void SetFromGameState( int iCourseEntryIndex );
 
@@ -27,7 +27,7 @@ public:
 	void PushSelf( lua_State *L );
 
 private:
-	void SetDifficulty( PlayerNumber pn, const CString &text, Difficulty dc );
+	void SetDifficulty( PlayerNumber pn, const RString &text, Difficulty dc );
 
 	Sprite		m_sprFrame;
 	BitmapText	m_textNumber;
@@ -37,7 +37,7 @@ private:
 	BitmapText	m_textModifiers;
 
 	ThemeMetric<bool>		SEPARATE_COURSE_METERS;
-	ThemeMetric<CString>	TEXT_BANNER_TYPE;
+	ThemeMetric<RString>	TEXT_BANNER_TYPE;
 };
 
 #endif

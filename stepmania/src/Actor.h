@@ -30,8 +30,8 @@ public:
 	virtual ~Actor();
 	virtual Actor *Copy() const;
 	void UnsubcribeAndClearCommands();
-	virtual void LoadFromNode( const CString& sDir, const XNode* pNode );
-	bool IsType( const CString &sType );
+	virtual void LoadFromNode( const RString& sDir, const XNode* pNode );
+	bool IsType( const RString &sType );
 
 	static void SetBGMTime( float fTime, float fBeat );
 	static void SetBGMLight( int iLightNumber, float fCabinetLights );
@@ -98,8 +98,8 @@ public:
 	virtual void UpdateInternal( float fDeltaTime );	// override this
 	void UpdateTweening( float fDeltaTime );
 
-	const CString &GetName() const			{ return m_sName; }
-	virtual void SetName( const CString &sName )	{ m_sName = sName; }
+	const RString &GetName() const			{ return m_sName; }
+	virtual void SetName( const RString &sName )	{ m_sName = sName; }
 
 	float GetX() const				{ return m_current.pos.x; };
 	float GetY() const				{ return m_current.pos.y; };
@@ -202,8 +202,8 @@ public:
 	void BeginTweening( float time, TweenType tt = TWEEN_LINEAR );
 	void StopTweening();
 	void Sleep( float time );
-	void QueueCommand( const CString& sCommandName );
-	void QueueMessage( const CString& sMessageName );
+	void QueueCommand( const RString& sCommandName );
+	void QueueMessage( const RString& sMessageName );
 	virtual void FinishTweening();
 	virtual void HurryTweening( float factor );
 	// Let ActorFrame and BGAnimation override
@@ -234,11 +234,11 @@ public:
 	//
 	enum HorizAlign { align_left, align_center, align_right };
 	virtual void SetHorizAlign( HorizAlign ha ) { m_HorizAlign = ha; }
-	virtual void SetHorizAlignString( const CString &s );	// convenience
+	virtual void SetHorizAlignString( const RString &s );	// convenience
 
 	enum VertAlign { align_top, align_middle, align_bottom };
 	virtual void SetVertAlign( VertAlign va ) { m_VertAlign = va; }
-	virtual void SetVertAlignString( const CString &s );	// convenience
+	virtual void SetVertAlignString( const RString &s );	// convenience
 
 
 	//
@@ -256,12 +256,12 @@ public:
 	void SetEffectTiming( float fRampUp, float fAtHalf, float fRampDown, float fAtZero );
 	void SetEffectOffset( float fTime )		{ m_fEffectOffset = fTime; }
 	void SetEffectClock( EffectClock c )		{ m_EffectClock = c; }
-	void SetEffectClockString( const CString &s );	// convenience
+	void SetEffectClockString( const RString &s );	// convenience
 
 	void SetEffectMagnitude( RageVector3 vec )	{ m_vEffectMagnitude = vec; }
 	RageVector3 GetEffectMagnitude() const		{ return m_vEffectMagnitude; }
 
-	void SetEffectLua( const CString &sCommand );
+	void SetEffectLua( const RString &sCommand );
 	void SetEffectDiffuseBlink( 
 		float fEffectPeriodSeconds = 1.0f,
 		RageColor c1 = RageColor(0.5f,0.5f,0.5f,1), 
@@ -320,16 +320,16 @@ public:
 	// render states
 	//
 	void SetBlendMode( BlendMode mode )		{ m_BlendMode = mode; } 
-	void SetBlendModeString( const CString &s );	// convenience
+	void SetBlendModeString( const RString &s );	// convenience
 	void SetTextureWrapping( bool b ) 		{ m_bTextureWrapping = b; } 
 	void SetClearZBuffer( bool b ) 			{ m_bClearZBuffer = b; } 
 	void SetUseZBuffer( bool b ) 			{ SetZTestMode(b?ZTEST_WRITE_ON_PASS:ZTEST_OFF); SetZWrite(b); } 
 	virtual void SetZTestMode( ZTestMode mode )	{ m_ZTestMode = mode; } 
-	void SetZTestModeString( const CString &s );	// convenience
+	void SetZTestModeString( const RString &s );	// convenience
 	virtual void SetZWrite( bool b ) 		{ m_bZWrite = b; } 
 	void SetZBias( float f )			{ m_fZBias = f; }
 	virtual void SetCullMode( CullMode mode ) 	{ m_CullMode = mode; } 
-	void SetCullModeString( const CString &s );	// convenience
+	void SetCullModeString( const RString &s );	// convenience
 
 	//
 	// Lua
@@ -339,10 +339,10 @@ public:
 	//
 	// Commands
 	//
-	void AddCommand( const CString &sCmdName, apActorCommands apac );
-	bool HasCommand( const CString &sCmdName );
-	const apActorCommands& GetCommand( const CString &sCommandName ) const;
-	virtual void PlayCommand( const CString &sCommandName, Actor *pParent = NULL );
+	void AddCommand( const RString &sCmdName, apActorCommands apac );
+	bool HasCommand( const RString &sCmdName );
+	const apActorCommands& GetCommand( const RString &sCommandName ) const;
+	virtual void PlayCommand( const RString &sCommandName, Actor *pParent = NULL );
 	virtual void RunCommands( const LuaReference& cmds, Actor *pParent = NULL );
 	void RunCommands( const apActorCommands& cmds, Actor *pParent = NULL ) { this->RunCommands( *cmds, pParent ); }	// convenience
 	// If we're a leaf, then execute this command.
@@ -355,8 +355,8 @@ public:
 	// Messages
 	//
 	void SubscribeToMessage( Message message ); // will automatically unsubscribe
-	void SubscribeToMessage( const CString &sMessageName ); // will automatically unsubscribe
-	virtual void HandleMessage( const CString& sMessage );
+	void SubscribeToMessage( const RString &sMessageName ); // will automatically unsubscribe
+	virtual void HandleMessage( const RString& sMessage );
 
 
 	//
@@ -371,7 +371,7 @@ public:
 	HiddenPtr<LuaClass> m_pLuaInstance;
 
 protected:
-	CString m_sName;
+	RString m_sName;
 
 	struct TweenInfo
 	{
@@ -379,7 +379,7 @@ protected:
 		TweenType	m_TweenType;
 		float		m_fTimeLeftInTween;	// how far into the tween are we?
 		float		m_fTweenTime;		// seconds between Start and End positions/zooms
-		CString		m_sCommandName;		// command to execute when this TweenState goes into effect
+		RString		m_sCommandName;		// command to execute when this TweenState goes into effect
 	};
 
 
@@ -416,7 +416,7 @@ protected:
 	// Stuff for effects
 	//
 	Effect m_Effect;
-	CString m_sEffectCommand; // effect_lua
+	RString m_sEffectCommand; // effect_lua
 	float m_fSecsIntoEffect, m_fEffectDelta;
 	
 	// units depend on m_EffectClock
@@ -467,8 +467,8 @@ private:
 	//
 	// commands
 	//
-	map<CString, apActorCommands> m_mapNameToCommands;
-	vector<CString> m_vsSubscribedTo;
+	map<RString, apActorCommands> m_mapNameToCommands;
+	vector<RString> m_vsSubscribedTo;
 };
 
 #endif

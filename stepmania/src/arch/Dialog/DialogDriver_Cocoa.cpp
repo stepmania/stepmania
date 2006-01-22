@@ -5,7 +5,7 @@
 #include "ProductInfo.h"
 #include <Carbon/Carbon.h>
 
-static CFOptionFlags ShowAlert( CFOptionFlags flags, const CString& sMessage, CFStringRef OK,
+static CFOptionFlags ShowAlert( CFOptionFlags flags, const RString& sMessage, CFStringRef OK,
 								CFStringRef alt = NULL, CFStringRef other = NULL)
 {
 	CFOptionFlags result;
@@ -17,7 +17,7 @@ static CFOptionFlags ShowAlert( CFOptionFlags flags, const CString& sMessage, CF
 	return result;
 }
 
-void DialogDriver_Cocoa::OK( CString sMessage, CString sID )
+void DialogDriver_Cocoa::OK( RString sMessage, RString sID )
 {
 	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage,
 									  CFSTR("OK"), CFSTR("Don't show again") );
@@ -26,12 +26,12 @@ void DialogDriver_Cocoa::OK( CString sMessage, CString sID )
 		Dialog::IgnoreMessage( sID );
 }
 
-void DialogDriver_Cocoa::Error( CString sError, CString sID )
+void DialogDriver_Cocoa::Error( RString sError, RString sID )
 {
 	ShowAlert( kCFUserNotificationStopAlertLevel, sError, CFSTR("OK") );
 }
 
-Dialog::Result DialogDriver_Cocoa::AbortRetryIgnore( CString sMessage, CString sID )
+Dialog::Result DialogDriver_Cocoa::AbortRetryIgnore( RString sMessage, RString sID )
 {
 	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage, CFSTR("Ignore"),
 									  CFSTR("Retry"), CFSTR("Abort") );
@@ -50,7 +50,7 @@ Dialog::Result DialogDriver_Cocoa::AbortRetryIgnore( CString sMessage, CString s
 	}
 }
 
-Dialog::Result DialogDriver_Cocoa::AbortRetry( CString sMessage, CString sID )
+Dialog::Result DialogDriver_Cocoa::AbortRetry( RString sMessage, RString sID )
 {
 	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage,
 									  CFSTR("Abort"), CFSTR("Retry") );

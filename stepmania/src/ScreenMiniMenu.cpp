@@ -76,7 +76,7 @@ void ScreenMiniMenu::LoadMenu( const MenuDef* pDef )
 		
 		pHand->m_Def.m_bAllowThemeItems = mr.bThemeItems;
 
-		FOREACH( CString, pHand->m_Def.m_vsChoices, c )
+		FOREACH( RString, pHand->m_Def.m_vsChoices, c )
 			FontCharAliases::ReplaceMarkers( *c );	// Allow special characters
 
 		vHands.push_back( pHand );

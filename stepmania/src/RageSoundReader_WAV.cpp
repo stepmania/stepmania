@@ -46,12 +46,12 @@ struct WavReader
 	virtual int GetLength() const = 0;
 	virtual bool Init() = 0;
 	virtual int SetPosition( int iMS ) = 0;
-	CString GetError() const { return m_sError; }
+	RString GetError() const { return m_sError; }
 
 protected:
 	RageFile &m_File;
 	const RageSoundReader_WAV::WavData &m_WavData;
-	CString m_sError;
+	RString m_sError;
 };
 
 struct WavReaderPCM: public WavReader
@@ -354,12 +354,12 @@ public:
 	}
 };
 
-CString ReadString( RageFile &f, int iSize, CString &sError )
+RString ReadString( RageFile &f, int iSize, RString &sError )
 {
 	if( sError.size() != 0 )
-		return CString();
+		return RString();
 
-	CString sBuf;
+	RString sBuf;
 	char *pBuf = sBuf.GetBuffer( iSize );
 	FileReading::ReadBytes( f, pBuf, iSize, sError );
 	sBuf.ReleaseBuffer( iSize );
@@ -373,11 +373,11 @@ CString ReadString( RageFile &f, int iSize, CString &sError )
 	return OPEN_FATAL_ERROR; \
 }
 
-SoundReader_FileReader::OpenResult RageSoundReader_WAV::Open( CString filename_ )
+SoundReader_FileReader::OpenResult RageSoundReader_WAV::Open( RString filename_ )
 {
 	m_sFilename = filename_;
 
-	CString sError;
+	RString sError;
 
 	if( !m_File.Open( m_sFilename ) )
 		FATAL_ERROR( ssprintf("wav: opening \"%s\" failed: %s", m_sFilename.c_str(), m_File.GetError().c_str()) );
@@ -401,7 +401,7 @@ SoundReader_FileReader::OpenResult RageSoundReader_WAV::Open( CString filename_ 
 	bool bGotFormatChunk = false, bGotDataChunk = false;
 	while( !bGotFormatChunk || !bGotDataChunk )
 	{
-		CString ChunkID = ReadString( m_File, 4, sError );
+		RString ChunkID = ReadString( m_File, 4, sError );
 		int32_t iChunkSize = FileReading::read_32_le( m_File, sError );
 
 		if( sError.size() != 0 )

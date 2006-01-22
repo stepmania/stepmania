@@ -958,7 +958,7 @@ static void NORETURN debug_crash()
 
 /* Get a stack trace of the current thread and the specified thread.  If
  * iID == GetInvalidThreadId(), then output a stack trace for every thread. */
-void CrashHandler::ForceDeadlock( CString reason, uint64_t iID )
+void CrashHandler::ForceDeadlock( RString reason, uint64_t iID )
 {
 	strncpy( g_CrashInfo.m_CrashReason, reason, sizeof(g_CrashInfo.m_CrashReason) );
 	g_CrashInfo.m_CrashReason[ sizeof(g_CrashInfo.m_CrashReason)-1 ] = 0;

@@ -107,7 +107,7 @@ void HighScoreWheel::Load( const HighScoreList& hsl, int iIndexToFocus )
 	if( m_iIndexToFocus >= 0  &&  m_iIndexToFocus < int(hsl.vHighScores.size()) )
 		m_Items[m_iIndexToFocus].ShowFocus();
 
-	CString sTransformFunction = 
+	RString sTransformFunction = 
 		"function(self,offset,itemIndex,numItems) "
 		"	local degrees=18*offset; "
 		"	local radians=degrees*math.pi/180; "
@@ -230,7 +230,7 @@ void ScreenNameEntryTraditional::Init()
 			this->AddChild( &m_Keyboard[p] );
 
 			/* Add letters to m_Keyboard. */
-			const CString fontpath = THEME->GetPathF(m_sName,"letters");
+			const RString fontpath = THEME->GetPathF(m_sName,"letters");
 			const wstring Chars = RStringToWstring(KEYBOARD_LETTERS);
 			for( unsigned ch = 0; ch < Chars.size(); ++ch )
 			{
@@ -250,7 +250,7 @@ void ScreenNameEntryTraditional::Init()
 				BitmapText *Letter = new BitmapText;
 				Letter->SetName( ssprintf("LetterP%i",p+1) );
 				Letter->LoadFromFont( fontpath );
-				CString text = "&leftarrow;";
+				RString text = "&leftarrow;";
 				FontCharAliases::ReplaceMarkers( text );
 				Letter->SetText( text );
 				m_textAlphabet[p].push_back( Letter );
@@ -265,7 +265,7 @@ void ScreenNameEntryTraditional::Init()
 				BitmapText *Letter = new BitmapText;
 				Letter->SetName( ssprintf("LetterP%i",p+1) );
 				Letter->LoadFromFont( fontpath );
-				CString text = "&ok;";
+				RString text = "&ok;";
 				FontCharAliases::ReplaceMarkers( text );
 				Letter->SetText( text );
 				m_textAlphabet[p].push_back( Letter );
@@ -369,7 +369,7 @@ void ScreenNameEntryTraditional::Init()
 			SET_ON( display.m_Wheel );
 			this->AddChild( &display.m_Wheel );
 
-			CString sBanner;
+			RString sBanner;
 			if( GAMESTATE->IsCourseMode() )
 				sBanner = pCourse->m_sBannerPath;
 			else
@@ -576,7 +576,7 @@ void ScreenNameEntryTraditional::Finish( PlayerNumber pn )
 
 	UpdateSelectionText( pn ); /* hide NAME_ cursor */
 
-	CString selection = WStringToRString( m_sSelection[pn] );
+	RString selection = WStringToRString( m_sSelection[pn] );
 
 	// save last used ranking name
 	Profile* pProfile = PROFILEMAN->GetProfile(pn);

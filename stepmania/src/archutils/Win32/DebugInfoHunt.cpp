@@ -27,7 +27,7 @@ static void GetMemoryDebugInfo()
 
 static void GetDisplayDriverDebugInfo()
 {
-	CString sPrimaryDeviceName = GetPrimaryVideoName();
+	RString sPrimaryDeviceName = GetPrimaryVideoName();
 	
 	if( sPrimaryDeviceName == "" )
 		LOG->Info( "Primary display driver could not be determined." );
@@ -67,14 +67,14 @@ static void GetDisplayDriverDebugInfo()
 	}
 }
 
-static CString wo_ssprintf( MMRESULT err, const char *fmt, ...)
+static RString wo_ssprintf( MMRESULT err, const char *fmt, ...)
 {
 	char buf[MAXERRORLENGTH];
 	waveOutGetErrorText(err, buf, MAXERRORLENGTH);
 
     va_list	va;
     va_start(va, fmt);
-    CString s = vssprintf( fmt, va );
+    RString s = vssprintf( fmt, va );
     va_end(va);
 
 	return s += ssprintf( "(%s)", buf );
@@ -90,19 +90,19 @@ static void GetDriveDebugInfo9x()
 	 *    DMACurrentlyUsed  0 or 1
 	 *    DeviceDesc        "GENERIC IDE  DISK TYPE01"
 	 */
-	vector<CString> Drives;
+	vector<RString> Drives;
 	if( !RegistryAccess::GetRegSubKeys( "HKEY_LOCAL_MACHINE\\Enum\\ESDI", Drives ) )
 		return;
 
 	for( unsigned drive = 0; drive < Drives.size(); ++drive )
 	{
-		vector<CString> IDs;
+		vector<RString> IDs;
 		if( !RegistryAccess::GetRegSubKeys( Drives[drive], IDs ) )
 			continue;
 
 		for( unsigned id = 0; id < IDs.size(); ++id )
 		{
-			CString DeviceDesc;
+			RString DeviceDesc;
 
 			RegistryAccess::GetRegValue( IDs[id], "DeviceDesc", DeviceDesc );
 			TrimRight( DeviceDesc );
@@ -129,7 +129,7 @@ static void GetDriveDebugInfoNT()
 	 *		     Identifier  "WDC WD1200JB-75CRA0"
 	 *			 Type        "DiskPeripheral"
 	 */
-	vector<CString> Ports;
+	vector<RString> Ports;
 	if( !RegistryAccess::GetRegSubKeys( "HKEY_LOCAL_MACHINE\\HARDWARE\\DEVICEMAP\\Scsi", Ports ) )
 		return;
 
@@ -138,28 +138,28 @@ static void GetDriveDebugInfoNT()
 		int DMAEnabled = -1;
 		RegistryAccess::GetRegValue( Ports[i], "DMAEnabled", DMAEnabled );
 
-		CString Driver;
+		RString Driver;
 		RegistryAccess::GetRegValue( Ports[i], "Driver", Driver );
 
-		vector<CString> Busses;
+		vector<RString> Busses;
 		if( !RegistryAccess::GetRegSubKeys( Ports[i], Busses, "Scsi Bus .*" ) )
 			continue;
 
 		for( unsigned bus = 0; bus < Busses.size(); ++bus )
 		{
-			vector<CString> TargetIDs;
+			vector<RString> TargetIDs;
 			if( !RegistryAccess::GetRegSubKeys( Busses[bus], TargetIDs, "Target Id .*" ) )
 				continue;
 
 			for( unsigned tid = 0; tid < TargetIDs.size(); ++tid )
 			{
-				vector<CString> LUIDs;
+				vector<RString> LUIDs;
 				if( !RegistryAccess::GetRegSubKeys( TargetIDs[tid], LUIDs, "Logical Unit Id .*" ) )
 					continue;
 
 				for( unsigned luid = 0; luid < LUIDs.size(); ++luid )
 				{
-					CString Identifier;
+					RString Identifier;
 					RegistryAccess::GetRegValue( LUIDs[luid], "Identifier", Identifier );
 					TrimRight( Identifier );
 					LOG->Info( "Drive: \"%s\" Driver: %s DMA: %s",
@@ -200,7 +200,7 @@ static void GetWindowsVersionDebugInfo()
 		return;
 	}
 
-	CString Ver = ssprintf("Windows %i.%i (", ovi.dwMajorVersion, ovi.dwMinorVersion);
+	RString Ver = ssprintf("Windows %i.%i (", ovi.dwMajorVersion, ovi.dwMinorVersion);
 	if(ovi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)
 	{
 		if(ovi.dwMinorVersion == 0)

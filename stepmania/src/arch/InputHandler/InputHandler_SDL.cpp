@@ -248,7 +248,7 @@ void InputHandler_SDL::Update()
 }
 
 
-void InputHandler_SDL::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut)
+void InputHandler_SDL::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut)
 {
 	vDevicesOut.push_back( DEVICE_KEYBOARD );
 	vDescriptionsOut.push_back( "Keyboard" );

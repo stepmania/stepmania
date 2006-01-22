@@ -58,9 +58,9 @@ const int MAX_BOTTOM_RANGE = 10;
 #define SORT_LEVEL5_COLOR		THEME->GetMetricC("Course","SortLevel5Color")
 
 
-CString CourseEntry::GetTextDescription() const
+RString CourseEntry::GetTextDescription() const
 {
-	vector<CString> vsEntryDescription;
+	vector<RString> vsEntryDescription;
 	if( pSong )
 		vsEntryDescription.push_back( pSong->GetTranslitFullTitle() ); 
 	else
@@ -83,7 +83,7 @@ CString CourseEntry::GetTextDescription() const
 	if( fGainSeconds != 0 )
 		vsEntryDescription.push_back( ssprintf("Low meter: %.0f", fGainSeconds) );
 
-	CString s = join( ",", vsEntryDescription );
+	RString s = join( ",", vsEntryDescription );
 	return s;
 }
 
@@ -191,7 +191,7 @@ void Course::RevertFromDisk()
 	CourseLoaderCRS::LoadFromCRSFile( m_sPath, *this );
 }
 
-CString Course::GetCacheFilePath() const
+RString Course::GetCacheFilePath() const
 {
 	return SongCacheIndex::GetCacheFilePath( "Courses", m_sPath );
 }
@@ -232,33 +232,33 @@ struct SortTrailEntry
 	bool operator< ( const SortTrailEntry &rhs ) const { return SortMeter < rhs.SortMeter; }
 };
 
-CString Course::GetDisplayMainTitle() const
+RString Course::GetDisplayMainTitle() const
 {
 	if( !PREFSMAN->m_bShowNativeLanguage )
 		return GetTranslitMainTitle();
 	return m_sMainTitle;
 }
 
-CString Course::GetDisplaySubTitle() const
+RString Course::GetDisplaySubTitle() const
 {
 	if( !PREFSMAN->m_bShowNativeLanguage )
 		return GetTranslitSubTitle();
 	return m_sSubTitle;
 }
 
-CString Course::GetDisplayFullTitle() const
+RString Course::GetDisplayFullTitle() const
 {
-	CString Title = GetDisplayMainTitle();
-	CString SubTitle = GetDisplaySubTitle();
+	RString Title = GetDisplayMainTitle();
+	RString SubTitle = GetDisplaySubTitle();
 
 	if(!SubTitle.empty()) Title += " " + SubTitle;
 	return Title;
 }
 
-CString Course::GetTranslitFullTitle() const
+RString Course::GetTranslitFullTitle() const
 {
-	CString Title = GetTranslitMainTitle();
-	CString SubTitle = GetTranslitSubTitle();
+	RString Title = GetTranslitMainTitle();
+	RString SubTitle = GetTranslitSubTitle();
 
 	if(!SubTitle.empty()) Title += " " + SubTitle;
 	return Title;
@@ -843,7 +843,7 @@ void Course::UpdateCourseStats( StepsType st )
 
 bool Course::IsRanking() const
 {
-	vector<CString> rankingsongs;
+	vector<RString> rankingsongs;
 	
 	split(THEME->GetMetric("ScreenRanking", "CoursesToShow"), ",", rankingsongs);
 

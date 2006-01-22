@@ -6,16 +6,16 @@
 #include "PrefsManager.h"
 #include "RageFile.h"
 
-void ForceToAscii( CString &str )
+void ForceToAscii( RString &str )
 {
 	for( unsigned i=0; i<str.size(); ++i )
 		if( str[i] < 0x20 || str[i] > 0x7E )
 			str[i] = '?';
 }
 
-bool RageMovieTexture::GetFourCC( CString fn, CString &handler, CString &type )
+bool RageMovieTexture::GetFourCC( RString fn, RString &handler, RString &type )
 {
-	CString ignore, ext;
+	RString ignore, ext;
 	splitpath( fn, ignore, ignore, ext);
 	if( !ext.CompareNoCase(".mpg") ||
 		!ext.CompareNoCase(".mpeg") ||

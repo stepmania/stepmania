@@ -30,24 +30,24 @@ public:
 	void Input( const InputEventPlus &input );
 
 	// Main screen stack management
-	void SetNewScreen( const CString &sName );
-	void AddNewScreenToTop( const CString &sName, ScreenMessage SendOnPop=SM_None );
-	void PrepareScreen( const CString &sScreenName );	// creates and caches screen so that the next call to SetNewScreen for the prep'd screen will be very quick.
-	void GroupScreen( const CString &sScreenName );
-	void PersistantScreen( const CString &sScreenName );
-	bool ConcurrentlyPrepareScreen( const CString &sScreenName, ScreenMessage send_when_done = SM_None );
+	void SetNewScreen( const RString &sName );
+	void AddNewScreenToTop( const RString &sName, ScreenMessage SendOnPop=SM_None );
+	void PrepareScreen( const RString &sScreenName );	// creates and caches screen so that the next call to SetNewScreen for the prep'd screen will be very quick.
+	void GroupScreen( const RString &sScreenName );
+	void PersistantScreen( const RString &sScreenName );
+	bool ConcurrentlyPrepareScreen( const RString &sScreenName, ScreenMessage send_when_done = SM_None );
 	bool IsConcurrentlyLoading() const;
 	void PushScreen( Screen *pNewScreen, bool bDeleteWhenDone=false, ScreenMessage SendOnPop=SM_None );
 	void PopTopScreen( ScreenMessage SM );
 	void PopAllScreens();
-	Screen* MakeNewScreen( const CString &sName );
+	Screen* MakeNewScreen( const RString &sName );
 	Screen *GetTopScreen();
 
 	// System messages
-	void SystemMessage( const CString &sMessage );
-	void SystemMessageNoAnimate( const CString &sMessage );
+	void SystemMessage( const RString &sMessage );
+	void SystemMessageNoAnimate( const RString &sMessage );
 	void HideSystemMessage();
-	CString GetCurrentSystemMessage() const { return m_sSystemMessage; }
+	RString GetCurrentSystemMessage() const { return m_sSystemMessage; }
 
 	// Screen messages
 	void PostMessageToTopScreen( ScreenMessage SM, float fDelay );
@@ -70,11 +70,11 @@ public:
 private:
 	Screen				*m_pInputFocus; // NULL = top of m_ScreenStack
 
-	CString				m_sSystemMessage;
+	RString				m_sSystemMessage;
 	
 	// Screen loads, removals, and concurrent prepares are delayed until the next update.
-	CString				m_sDelayedScreen;
-	CString				m_sDelayedConcurrentPrepare;
+	RString				m_sDelayedScreen;
+	RString				m_sDelayedConcurrentPrepare;
 	ScreenMessage		m_OnDonePreparingScreen;
 	ScreenMessage		m_PopTopScreen;
 

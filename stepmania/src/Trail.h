@@ -26,7 +26,7 @@ struct TrailEntry
 
 	Song*		pSong;
 	Steps*		pSteps;
-	CString		Modifiers;
+	RString		Modifiers;
 	AttackArray	Attacks;
 	bool		bSecret;	// show "???"
 

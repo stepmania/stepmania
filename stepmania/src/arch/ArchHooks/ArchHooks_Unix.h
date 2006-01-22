@@ -11,7 +11,7 @@ public:
 	void SetTime( tm newtime );
 	int64_t GetMicrosecondsSinceStart();
 
-	void MountInitialFilesystems( const CString &sDirOfExecutable );
+	void MountInitialFilesystems( const RString &sDirOfExecutable );
 };
 
 #ifdef ARCH_HOOKS

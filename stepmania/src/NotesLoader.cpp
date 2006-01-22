@@ -3,16 +3,16 @@
 #include "NoteTypes.h"
 #include "GameManager.h"
 
-bool NotesLoader::Loadable( CString sPath )
+bool NotesLoader::Loadable( RString sPath )
 {
-	vector<CString> list;
+	vector<RString> list;
 	GetApplicableFiles( sPath, list );
 	return !list.empty();
 }
 
-void NotesLoader::GetMainAndSubTitlesFromFullTitle( const CString sFullTitle, CString &sMainTitleOut, CString &sSubTitleOut )
+void NotesLoader::GetMainAndSubTitlesFromFullTitle( const RString sFullTitle, RString &sMainTitleOut, RString &sSubTitleOut )
 {
-	const CString sLeftSeps[]  = { " -", " ~", " (", " [", "\t" };
+	const RString sLeftSeps[]  = { " -", " ~", " (", " [", "\t" };
 
 	for( unsigned i=0; i<ARRAYSIZE(sLeftSeps); i++ )
 	{

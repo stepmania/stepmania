@@ -8,7 +8,7 @@ class RageMovieTexture : public RageTexture
 public:
 	RageMovieTexture( RageTextureID ID ): RageTexture(ID) { }
 	virtual ~RageMovieTexture() { }
-	virtual CString Init() { return CString(); }
+	virtual RString Init() { return RString(); }
 	virtual void Update(float fDeltaTime) { }
 
 	virtual void Reload() = 0;
@@ -19,7 +19,7 @@ public:
 
 	bool IsAMovie() const { return true; }
 
-	static bool GetFourCC( CString fn, CString &handler, CString &type );
+	static bool GetFourCC( RString fn, RString &handler, RString &type );
 };
 
 #endif

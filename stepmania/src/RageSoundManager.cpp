@@ -35,7 +35,7 @@
  */
 
 static RageMutex g_SoundManMutex("SoundMan");
-static Preference<CString> g_sSoundDrivers( "SoundDrivers", "" ); // "" == DEFAULT_SOUND_DRIVER_LIST
+static Preference<RString> g_sSoundDrivers( "SoundDrivers", "" ); // "" == DEFAULT_SOUND_DRIVER_LIST
 
 RageSoundManager *SOUNDMAN = NULL;
 
@@ -49,7 +49,7 @@ RageSoundManager::RageSoundManager()
 static LocalizedString COULDNT_FIND_SOUND_DRIVER( "RageSoundManager", "Couldn't find a sound driver that works" );
 void RageSoundManager::Init()
 {
-	CString sDrivers = g_sSoundDrivers;
+	RString sDrivers = g_sSoundDrivers;
 	if( sDrivers.empty() )
 		sDrivers = DEFAULT_SOUND_DRIVER_LIST;
 
@@ -119,7 +119,7 @@ void RageSoundManager::Update( float fDeltaTime )
 	/* Scan m_mapPreloadedSounds for sounds that are no longer loaded, and delete them. */
 	g_SoundManMutex.Lock(); /* lock for access to m_mapPreloadedSounds, owned_sounds */
 	{
-		map<CString, RageSoundReader_Preload *>::iterator it, next;
+		map<RString, RageSoundReader_Preload *>::iterator it, next;
 		it = m_mapPreloadedSounds.begin();
 		
 		while( it != m_mapPreloadedSounds.end() )
@@ -296,13 +296,13 @@ void RageSoundManager::DeleteSoundWhenFinished( RageSound *pSound )
 
 /* If the given path is loaded, return a copy; otherwise return NULL.
  * It's the caller's responsibility to delete the result. */
-SoundReader *RageSoundManager::GetLoadedSound( const CString &sPath_ )
+SoundReader *RageSoundManager::GetLoadedSound( const RString &sPath_ )
 {
 	LockMut(g_SoundManMutex); /* lock for access to m_mapPreloadedSounds */
 
-	CString sPath(sPath_);
+	RString sPath(sPath_);
 	sPath.MakeLower();
-	map<CString, RageSoundReader_Preload *>::const_iterator it;
+	map<RString, RageSoundReader_Preload *>::const_iterator it;
 	it = m_mapPreloadedSounds.find( sPath );
 	if( it == m_mapPreloadedSounds.end() )
 		return NULL;
@@ -313,15 +313,15 @@ SoundReader *RageSoundManager::GetLoadedSound( const CString &sPath_ )
 /* Add the sound to the set of loaded sounds that can be copied for reuse.
  * The sound will be kept in memory as long as there are any other references
  * to it; once we hold the last one, we'll release it. */
-void RageSoundManager::AddLoadedSound( const CString &sPath_, RageSoundReader_Preload *pSound )
+void RageSoundManager::AddLoadedSound( const RString &sPath_, RageSoundReader_Preload *pSound )
 {
 	LockMut(g_SoundManMutex); /* lock for access to m_mapPreloadedSounds */
 
 	/* Don't AddLoadedSound a sound that's already registered.  It should have been
 	 * used in GetLoadedSound. */
-	CString sPath(sPath_);
+	RString sPath(sPath_);
 	sPath.MakeLower();
-	map<CString, RageSoundReader_Preload *>::const_iterator it;
+	map<RString, RageSoundReader_Preload *>::const_iterator it;
 	it = m_mapPreloadedSounds.find( sPath );
 	ASSERT_M( it == m_mapPreloadedSounds.end(), sPath );
 	
@@ -331,7 +331,7 @@ void RageSoundManager::AddLoadedSound( const CString &sPath_, RageSoundReader_Pr
 
 /* Don't hold the lock when we don't have to.  We call this function from other
  * threads, to avoid stalling the gameplay thread. */
-void RageSoundManager::PlayOnce( CString sPath )
+void RageSoundManager::PlayOnce( RString sPath )
 {
 	/* We want this to start quickly, so don't try to prebuffer it. */
 	RageSound *pSound = new RageSound;

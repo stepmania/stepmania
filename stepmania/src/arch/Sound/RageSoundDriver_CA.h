@@ -14,7 +14,7 @@ class RageSound_CA : public RageSound_Generic_Software
 {
 public:
 	RageSound_CA();
-	CString Init();
+	RString Init();
 	~RageSound_CA();
 	float GetPlayLatency() const { return m_fLatency; }
 	int GetSampleRate( int rate ) const { return m_iSampleRate; }

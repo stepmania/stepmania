@@ -13,7 +13,7 @@ namespace RageSurfaceUtils
 
 	/* If bHeaderOnly is true, the loader is only required to return a surface
 	 * with the width and height set (but may return a complete surface). */
-	RageSurface *LoadFile( const CString &sPath, CString &error, bool bHeaderOnly=false );
+	RageSurface *LoadFile( const RString &sPath, RString &error, bool bHeaderOnly=false );
 }
 
 #endif

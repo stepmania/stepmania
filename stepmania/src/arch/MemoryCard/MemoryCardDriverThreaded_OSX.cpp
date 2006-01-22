@@ -83,20 +83,20 @@ static int GetIntProperty( io_registry_entry_t entry, CFStringRef key )
 	return num;
 }
 
-static CString GetStringProperty( io_registry_entry_t entry, CFStringRef key )
+static RString GetStringProperty( io_registry_entry_t entry, CFStringRef key )
 {
 	CFTypeRef t = IORegistryEntryCreateCFProperty( entry, key, NULL, 0 );
 	
 	if( !t )
-		return CString();
+		return RString();
 	if( CFGetTypeID( t ) != CFStringGetTypeID() )
 	{
 		CFRelease( t );
-		return CString();
+		return RString();
 	}
 	
 	CFStringRef s = CFStringRef( t );
-	CString ret;
+	RString ret;
 	const size_t len = CFStringGetMaximumSizeForEncoding( CFStringGetLength(s), kCFStringEncodingUTF8 );
 	char *buf = new char[len + 1];
 		
@@ -125,8 +125,8 @@ void MemoryCardDriverThreaded_OSX::GetUSBStorageDevices( vector<UsbStorageDevice
 		if( strncmp(fs[i].f_mntfromname, _PATH_DEV, strlen(_PATH_DEV)) )
 			continue;
 		
-		const CString& sDevicePath = fs[i].f_mntfromname;
-		const CString& sDisk = Basename( sDevicePath ); // disk#[[s#] ...]
+		const RString& sDevicePath = fs[i].f_mntfromname;
+		const RString& sDisk = Basename( sDevicePath ); // disk#[[s#] ...]
 		
 		// Now that we have the disk name, look up the IOServices associated with it.
 		CFMutableDictionaryRef dict;
@@ -165,14 +165,14 @@ void MemoryCardDriverThreaded_OSX::GetUSBStorageDevices( vector<UsbStorageDevice
 						   fs[i].f_mntfromname, fs[i].f_mntonname );
 				continue;
 			}
-			const CString& sRegistryPath = path;
-			CString::size_type pos = sRegistryPath.rfind( "/IOUSBMassStorageClass" );
+			const RString& sRegistryPath = path;
+			RString::size_type pos = sRegistryPath.rfind( "/IOUSBMassStorageClass" );
 			
-			if( pos == CString::npos )
+			if( pos == RString::npos )
 				continue; // Probably not a USB device.
 			// The path does not start with / so pos - 1 >= 0.
 			pos = sRegistryPath.rfind( '/', pos - 1 );
-			if( pos == CString::npos )
+			if( pos == RString::npos )
 				continue; // Something is horribly wrong at this point.
 			path[pos] = '\0';
 			
@@ -196,7 +196,7 @@ void MemoryCardDriverThreaded_OSX::GetUSBStorageDevices( vector<UsbStorageDevice
 			// Find volume reference number for flushing.
 			XVolumeParam param;
 			Str255 name; // A pascal string.
-			const CString& base = Basename( fs[i].f_mntonname );
+			const RString& base = Basename( fs[i].f_mntonname );
 			
 			memset( &param, 0, sizeof(param) );
 			name[0] = min( base.length(), size_t(255) );

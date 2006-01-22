@@ -3,7 +3,7 @@
 
 class RageFileBasic;
 
-const CString SIGNATURE_APPEND = ".sig";
+const RString SIGNATURE_APPEND = ".sig";
 
 class CryptManager
 {
@@ -11,17 +11,17 @@ public:
 	CryptManager();
 	~CryptManager();
 
-	static void GenerateRSAKey( unsigned int keyLength, CString privFilename, CString pubFilename, CString seed );
-	static void SignFileToFile( CString sPath, CString sSignatureFile = "" );
-	static bool VerifyFileWithFile( CString sPath, CString sSignatureFile = "" );
-	static bool VerifyFileWithFile( CString sPath, CString sSignatureFile, CString sPublicKeyFile );
+	static void GenerateRSAKey( unsigned int keyLength, RString privFilename, RString pubFilename, RString seed );
+	static void SignFileToFile( RString sPath, RString sSignatureFile = "" );
+	static bool VerifyFileWithFile( RString sPath, RString sSignatureFile = "" );
+	static bool VerifyFileWithFile( RString sPath, RString sSignatureFile, RString sPublicKeyFile );
 
-	static CString Sign( CString sPath );
-	static bool Verify( CString sPath, CString sSignature );
+	static RString Sign( RString sPath );
+	static bool Verify( RString sPath, RString sSignature );
 
-	static CString GetMD5( CString fn );	// in Hex
+	static RString GetMD5( RString fn );	// in Hex
 
-	static CString GetPublicKeyFileName();
+	static RString GetPublicKeyFileName();
 };
 
 extern CryptManager*	CRYPTMAN;	// global and accessable from anywhere in our program

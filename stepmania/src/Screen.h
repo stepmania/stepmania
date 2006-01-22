@@ -12,12 +12,12 @@
 class InputEventPlus;
 struct MenuInput;
 class Screen;
-typedef Screen* (*CreateScreenFn)(const CString& sClassName);
-void RegisterScreenClass( const CString& sClassName, CreateScreenFn pfn );
+typedef Screen* (*CreateScreenFn)(const RString& sClassName);
+void RegisterScreenClass( const RString& sClassName, CreateScreenFn pfn );
 
 // Each Screen class should have a REGISTER_SCREEN_CLASS in its CPP file.
 #define REGISTER_SCREEN_CLASS( className ) \
-	static Screen* Create##className( const CString &sName ) { Screen *pRet = new className; pRet->SetName( sName ); Screen::InitScreen( pRet ); return pRet; } \
+	static Screen* Create##className( const RString &sName ) { Screen *pRet = new className; pRet->SetName( sName ); Screen::InitScreen( pRet ); return pRet; } \
 	struct Register##className { \
 		Register##className() { RegisterScreenClass( #className,Create##className); } \
 	}; \
@@ -75,11 +75,11 @@ protected:
 
 	ThemeMetric<bool>	ALLOW_OPERATOR_MENU_BUTTON;
 
-	CString GetNextScreen() const;
-	CString GetPrevScreen() const;
+	RString GetNextScreen() const;
+	RString GetPrevScreen() const;
 
 	// If these are left blank, the NextScreen and PrevScreen metrics will be used.
-	CString m_sNextScreen, m_sPrevScreen;
+	RString m_sNextScreen, m_sPrevScreen;
 	ScreenMessage m_smSendOnPop;
 
 public:

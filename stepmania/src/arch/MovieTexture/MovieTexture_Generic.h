@@ -12,7 +12,7 @@ class MovieDecoder
 public:
 	virtual ~MovieDecoder() { }
 
-	virtual CString Open( CString sFile ) = 0;
+	virtual RString Open( RString sFile ) = 0;
 	virtual void Close() = 0;
 
 	/*
@@ -60,7 +60,7 @@ class MovieTexture_Generic: public RageMovieTexture
 public:
 	MovieTexture_Generic( RageTextureID ID, MovieDecoder *pDecoder );
 	virtual ~MovieTexture_Generic();
-	CString Init();
+	RString Init();
 
 	/* only called by RageTextureManager::InvalidateTextures */
 	void Invalidate() { m_uTexHandle = 0; }

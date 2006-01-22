@@ -71,7 +71,7 @@ XToString( Message, NUM_Message );
 static RageMutex g_Mutex( "MessageManager" );
 
 typedef set<IMessageSubscriber*> SubscribersSet;
-static map<CString,SubscribersSet> g_MessageToSubscribers;
+static map<RString,SubscribersSet> g_MessageToSubscribers;
 
 MessageManager::MessageManager()
 {
@@ -81,7 +81,7 @@ MessageManager::~MessageManager()
 {
 }
 
-void MessageManager::Subscribe( IMessageSubscriber* pSubscriber, const CString& sMessage )
+void MessageManager::Subscribe( IMessageSubscriber* pSubscriber, const RString& sMessage )
 {
 	LockMut(g_Mutex);
 
@@ -98,7 +98,7 @@ void MessageManager::Subscribe( IMessageSubscriber* pSubscriber, Message m )
 	Subscribe( pSubscriber, MessageToString(m) );
 }
 
-void MessageManager::Unsubscribe( IMessageSubscriber* pSubscriber, const CString& sMessage )
+void MessageManager::Unsubscribe( IMessageSubscriber* pSubscriber, const RString& sMessage )
 {
 	LockMut(g_Mutex);
 
@@ -113,13 +113,13 @@ void MessageManager::Unsubscribe( IMessageSubscriber* pSubscriber, Message m )
 	Unsubscribe( pSubscriber, MessageToString(m) );
 }
 
-void MessageManager::Broadcast( const CString& sMessage ) const
+void MessageManager::Broadcast( const RString& sMessage ) const
 {
 	ASSERT( !sMessage.empty() );
 
 	LockMut(g_Mutex);
 
-	map<CString,SubscribersSet>::const_iterator iter = g_MessageToSubscribers.find( sMessage );
+	map<RString,SubscribersSet>::const_iterator iter = g_MessageToSubscribers.find( sMessage );
 	if( iter == g_MessageToSubscribers.end() )
 		return;
 
@@ -135,7 +135,7 @@ void MessageManager::Broadcast( Message m ) const
 	Broadcast( MessageToString(m) );
 }
 
-void IMessageSubscriber::ClearMessages( const CString sMessage )
+void IMessageSubscriber::ClearMessages( const RString sMessage )
 {
 	LockMut(g_Mutex);
 
@@ -150,7 +150,7 @@ void IMessageSubscriber::ClearMessages( const CString sMessage )
 			m_aMessages.erase( m_aMessages.begin()+i ); 
 }
 
-void IMessageSubscriber::HandleMessageInternal( const CString& sMessage )
+void IMessageSubscriber::HandleMessageInternal( const RString& sMessage )
 {
 	QueuedMessage QM;
 	QM.sMessage = sMessage;
@@ -175,7 +175,7 @@ void IMessageSubscriber::ProcessMessages( float fDeltaTime )
 	for( unsigned i = 0; i < m_aMessages.size(); ++i )
 	{
 		/* Remove the message from the list. */
-		const CString sMessage = m_aMessages[i].sMessage;
+		const RString sMessage = m_aMessages[i].sMessage;
 		m_aMessages.erase( m_aMessages.begin()+i );
 		--i;
 

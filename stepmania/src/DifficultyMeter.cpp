@@ -19,9 +19,9 @@ DifficultyMeter::DifficultyMeter()
 {
 }
 
-static CString GetDifficultyCommandName( Difficulty d ) { return "Set"+DifficultyToString(d); }
-static CString GetCourseDifficultyCommandName( CourseDifficulty d ) { return "Set"+CourseDifficultyToString(d)+"Course"; }
-static const CString DIFFICULTY_COMMAND_NAME_NONE = "SetNone";
+static RString GetDifficultyCommandName( Difficulty d ) { return "Set"+DifficultyToString(d); }
+static RString GetCourseDifficultyCommandName( CourseDifficulty d ) { return "Set"+CourseDifficultyToString(d)+"Course"; }
+static const RString DIFFICULTY_COMMAND_NAME_NONE = "SetNone";
 
 /* sID experiment:
  *
@@ -45,9 +45,9 @@ static const CString DIFFICULTY_COMMAND_NAME_NONE = "SetNone";
  * so I'm trying it first in only this object.
  */
 
-void DifficultyMeter::Load( const CString &sType )
+void DifficultyMeter::Load( const RString &sType )
 {
-	/* We can't use global ThemeMetric<CString>s, because we can have multiple
+	/* We can't use global ThemeMetric<RString>s, because we can have multiple
 	 * DifficultyMeters on screen at once, with different names. */
 	m_iNumFeetInMeter.Load(sType,"NumFeetInMeter");
 	m_iMaxFeetInMeter.Load(sType,"MaxFeetInMeter");
@@ -61,7 +61,7 @@ void DifficultyMeter::Load( const CString &sType )
 	if( m_bShowFeet )
 	{
 		m_textFeet.SetName( "Feet" );
-		CString Feet;
+		RString Feet;
 		if( !m_bAutoColorFeet )
 		{
 			for( unsigned i = 0; i < NUM_Difficulty; ++i )
@@ -118,11 +118,11 @@ void DifficultyMeter::Load( const CString &sType )
 	Unset();
 }
 
-void DifficultyMeter::LoadFromNode( const CString& sDir, const XNode* pNode )
+void DifficultyMeter::LoadFromNode( const RString& sDir, const XNode* pNode )
 {
 	ActorFrame::LoadFromNode( sDir, pNode );
 
-	CString s;
+	RString s;
 	pNode->GetAttrValue( "Type", s );
 	ASSERT( s.size() );
 	Load( s );
@@ -157,7 +157,7 @@ void DifficultyMeter::SetFromSteps( const Steps* pSteps )
 	}
 
 	Difficulty dc = pSteps->GetDifficulty();
-	SetInternal( pSteps->GetMeter(), dc, GetDifficultyCommandName(dc), dc == DIFFICULTY_EDIT ? pSteps->GetDescription() : CString() );
+	SetInternal( pSteps->GetMeter(), dc, GetDifficultyCommandName(dc), dc == DIFFICULTY_EDIT ? pSteps->GetDescription() : RString() );
 }
 
 void DifficultyMeter::SetFromTrail( const Trail* pTrail )
@@ -169,25 +169,25 @@ void DifficultyMeter::SetFromTrail( const Trail* pTrail )
 	}
 
 	CourseDifficulty cd = pTrail->m_CourseDifficulty;
-	SetInternal( pTrail->GetMeter(), cd, GetCourseDifficultyCommandName( cd ), CString() );
+	SetInternal( pTrail->GetMeter(), cd, GetCourseDifficultyCommandName( cd ), RString() );
 }
 
 void DifficultyMeter::Unset()
 {
-	SetInternal( 0, DIFFICULTY_EDIT, DIFFICULTY_COMMAND_NAME_NONE, CString() );
+	SetInternal( 0, DIFFICULTY_EDIT, DIFFICULTY_COMMAND_NAME_NONE, RString() );
 }
 
 void DifficultyMeter::SetFromMeterAndDifficulty( int iMeter, Difficulty dc )
 {
-	SetInternal( 0, dc, GetDifficultyCommandName(dc), CString() );
+	SetInternal( 0, dc, GetDifficultyCommandName(dc), RString() );
 }
 
 void DifficultyMeter::SetFromMeterAndCourseDifficulty( int iMeter, CourseDifficulty cd )
 {
-	SetInternal( 0, cd, GetCourseDifficultyCommandName(cd), CString() );
+	SetInternal( 0, cd, GetCourseDifficultyCommandName(cd), RString() );
 }
 
-void DifficultyMeter::SetInternal( int iMeter, Difficulty dc, const CString &sDifficultyCommand, const CString &sDescription )
+void DifficultyMeter::SetInternal( int iMeter, Difficulty dc, const RString &sDifficultyCommand, const RString &sDescription )
 {
 	if( m_bShowFeet )
 	{
@@ -196,7 +196,7 @@ void DifficultyMeter::SetInternal( int iMeter, Difficulty dc, const CString &sDi
 		if( !m_bAutoColorFeet )
 			on = char(dc + '0');
 
-		CString sNewText;
+		RString sNewText;
 		int iNumOn = min( (int)m_iMaxFeetInMeter, iMeter );
 		sNewText.insert( sNewText.end(), iNumOn, on );
 		int iNumOff = max( 0, m_iNumFeetInMeter-iNumOn );
@@ -221,7 +221,7 @@ void DifficultyMeter::SetInternal( int iMeter, Difficulty dc, const CString &sDi
 		}
 		else
 		{
-			const CString sMeter = ssprintf( "%i", iMeter );
+			const RString sMeter = ssprintf( "%i", iMeter );
 			m_textMeter.SetText( sMeter );
 		}
 

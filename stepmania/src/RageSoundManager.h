@@ -50,10 +50,10 @@ public:
 	void DeleteSound( RageSound *pSound );
 	void DeleteSoundWhenFinished( RageSound *pSound );
 
-	SoundReader *GetLoadedSound( const CString &sPath );
-	void AddLoadedSound( const CString &sPath, RageSoundReader_Preload *pSound );
+	SoundReader *GetLoadedSound( const RString &sPath );
+	void AddLoadedSound( const RString &sPath, RageSoundReader_Preload *pSound );
 
-	void PlayOnce( CString sPath );
+	void PlayOnce( RString sPath );
 
 	RageSound *PlaySound( RageSound &snd, const RageSoundParams *params = NULL );
 	RageSound *PlayCopyOfSound( RageSound &snd, const RageSoundParams *params = NULL );
@@ -66,7 +66,7 @@ private:
 	/* A list of all sounds that currently exist, by ID. */
 	map<int,RageSound *> all_sounds;
 
-	map<CString, RageSoundReader_Preload *> m_mapPreloadedSounds;
+	map<RString, RageSoundReader_Preload *> m_mapPreloadedSounds;
 
 	RageSoundDriver *m_pDriver;
 

@@ -14,7 +14,7 @@ class ScreenSystemLayer : public Screen
 {
 public:
 	virtual void Init();
-	void HandleMessage( const CString &sCommandName );
+	void HandleMessage( const RString &sCommandName );
 
 	void ReloadCreditsText();
 	void Update( float fDeltaTime );
@@ -25,7 +25,7 @@ private:
 	BitmapText m_textCredits[NUM_PLAYERS];
 	Quad m_quadBrightnessAdd;
 
-	CString GetCreditsMessage( PlayerNumber pn ) const;
+	RString GetCreditsMessage( PlayerNumber pn ) const;
 
 	LocalizedString CREDITS_PRESS_START;
 	LocalizedString CREDITS_INSERT_CARD;

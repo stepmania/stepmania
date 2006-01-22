@@ -59,7 +59,7 @@ LowLevelWindow_X11::~LowLevelWindow_X11()
 	X11Helper::Stop();	// Xlib cleans up the window for us
 }
 
-void *LowLevelWindow_X11::GetProcAddress( CString s )
+void *LowLevelWindow_X11::GetProcAddress( RString s )
 {
 	// XXX: We should check whether glXGetProcAddress or
 	// glXGetProcAddressARB is available, and go by that, instead of
@@ -67,7 +67,7 @@ void *LowLevelWindow_X11::GetProcAddress( CString s )
 	return (void*) glXGetProcAddressARB( (const GLubyte*) s.c_str() );
 }
 
-CString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut )
+RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut )
 {
 #if defined(LINUX)
 	/*
@@ -237,7 +237,7 @@ CString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 	return ""; // Success
 }
 
-bool LowLevelWindow_X11::IsSoftwareRenderer( CString &sError )
+bool LowLevelWindow_X11::IsSoftwareRenderer( RString &sError )
 {
 	if( glXIsDirect( X11Helper::Dpy, glXGetCurrentContext() ) )
 		return false;

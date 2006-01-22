@@ -189,7 +189,7 @@ void InputHandler_Linux_tty::Update()
 	InputHandler::UpdateTimer();
 }
 
-void InputHandler_Linux_tty::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut)
+void InputHandler_Linux_tty::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut)
 {
 	vDevicesOut.push_back( InputDevice(DEVICE_KEYBOARD) );
 	vDescriptionsOut.push_back( "Keyboard" );

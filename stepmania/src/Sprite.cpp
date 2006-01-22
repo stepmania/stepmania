@@ -114,12 +114,12 @@ void Sprite::Load( RageTextureID ID )
 		LoadFromTexture( ID );
 };
 
-void Sprite::LoadFromNode( const CString& sDir, const XNode* pNode )
+void Sprite::LoadFromNode( const RString& sDir, const XNode* pNode )
 {
 retry:
 
-	CString sTextureFile;
-	CString sPath;
+	RString sTextureFile;
+	RString sPath;
 	if( pNode->GetAttrValue( "Texture", sTextureFile ) )
 	{
 		sPath = sDir + sTextureFile;
@@ -133,11 +133,11 @@ retry:
 
 	if( !sPath.empty() )
 	{
-		vector<CString> asElementPaths;
+		vector<RString> asElementPaths;
 		GetDirListing( sPath + "*", asElementPaths, false, true );
 		if( asElementPaths.size() == 0 )
 		{
-			CString sMessage = ssprintf( "A xml Sprite in '%s' points to a texture '%s' which doesn't exist.", sDir.c_str(), sPath.c_str() );
+			RString sMessage = ssprintf( "A xml Sprite in '%s' points to a texture '%s' which doesn't exist.", sDir.c_str(), sPath.c_str() );
 			switch( Dialog::AbortRetryIgnore(sMessage) )
 			{
 			case Dialog::abort:	
@@ -152,7 +152,7 @@ retry:
 		}
 		if( asElementPaths.size() > 1 )
 		{
-			CString message = ssprintf( 
+			RString message = ssprintf( 
 				"There is more than one file that matches "
 				"'%s'.  Please remove all but one of these matches.",
 				sPath.c_str() );
@@ -171,8 +171,8 @@ retry:
 		// frames and delays created during LoadFromTexture().
 		for( int i=0; true; i++ )
 		{
-			CString sFrameKey = ssprintf( "Frame%04d", i );
-			CString sDelayKey = ssprintf( "Delay%04d", i );
+			RString sFrameKey = ssprintf( "Frame%04d", i );
+			RString sDelayKey = ssprintf( "Delay%04d", i );
 			State newState;
 
 			if( !pNode->GetAttrValue(sFrameKey, newState.iFrameIndex) )
@@ -688,7 +688,7 @@ void Sprite::SetState( int iNewState )
 		// Don't warn about number of states in "_blank".
 		if( !m_pTexture || m_pTexture->GetID().filename.find("_blank") == string::npos )
 		{
-			CString sError;
+			RString sError;
 			if( m_pTexture )
 				sError = ssprintf("A Sprite '%s' (\"%s\") tried to set state index %d, but it has only %u states.",
 					m_pTexture->GetID().filename.c_str(), this->m_sName.c_str(), iNewState, unsigned(m_States.size()));
@@ -719,10 +719,10 @@ void Sprite::SetSecondsIntoAnimation( float fSeconds )
 	UpdateAnimationState();
 }
 
-CString	Sprite::GetTexturePath() const
+RString	Sprite::GetTexturePath() const
 {
 	if( m_pTexture==NULL )
-		return CString();
+		return RString();
 
 	return m_pTexture->GetID().filename;
 }

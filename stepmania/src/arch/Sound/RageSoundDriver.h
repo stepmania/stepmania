@@ -8,7 +8,7 @@ public:
 	friend class RageSoundManager;
 
 	/* Initialize.  On failure, an error message is returned. */
-	virtual CString Init() { return CString(); }
+	virtual RString Init() { return RString(); }
 
 	/* A RageSound calls this to request to be played.
 	 * XXX: define what we should do when it can't be played (eg. out of

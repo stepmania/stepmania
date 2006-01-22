@@ -19,7 +19,7 @@ void LightsDriver_SystemMessage::Set( const LightsState *ls )
 	if( !PREFSMAN->m_bDebugLights )
 		return;
 
-	CString s;
+	RString s;
 	
 	s += LightsModeToString(LIGHTSMAN->GetLightsMode()) + "\n";
 

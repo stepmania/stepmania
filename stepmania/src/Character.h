@@ -15,18 +15,18 @@ public:
 	Character();
 	~Character() { }
 
-	bool Load( CString sCharDir );	// return true if success
+	bool Load( RString sCharDir );	// return true if success
 
-	CString GetTakingABreakPath() const;
-	CString GetCardPath() const { return m_sCardPath; }
-	CString GetIconPath() const { return m_sIconPath; }
+	RString GetTakingABreakPath() const;
+	RString GetCardPath() const { return m_sCardPath; }
+	RString GetIconPath() const { return m_sIconPath; }
 
-	CString GetModelPath() const;
-	CString GetRestAnimationPath() const;
-	CString GetWarmUpAnimationPath() const;
-	CString GetDanceAnimationPath() const;
-	CString GetSongSelectIconPath() const;
-	CString GetStageIconPath() const;
+	RString GetModelPath() const;
+	RString GetRestAnimationPath() const;
+	RString GetWarmUpAnimationPath() const;
+	RString GetDanceAnimationPath() const;
+	RString GetSongSelectIconPath() const;
+	RString GetStageIconPath() const;
 	bool Has2DElems();
 
 	bool IsDefaultCharacter() const
@@ -43,21 +43,21 @@ public:
 	void PushSelf( Lua *L );
 
 	// smart accessor
-	const CString &GetDisplayName() { return !m_sDisplayName.empty() ? m_sDisplayName : m_sCharacterID; }
+	const RString &GetDisplayName() { return !m_sDisplayName.empty() ? m_sDisplayName : m_sCharacterID; }
 
-	CString m_sCharDir;
-	CString m_sCharacterID;
+	RString m_sCharDir;
+	RString m_sCharacterID;
 private:
-	CString m_sDisplayName;
-	CString m_sCardPath;
-	CString m_sIconPath;
+	RString m_sDisplayName;
+	RString m_sCardPath;
+	RString m_sIconPath;
 
 public:
 
 	// All the stuff below will be filled in if this character is playable in Rave mode
 	bool	m_bUsableInRave;	
 
-	CString	m_sAttacks[NUM_ATTACK_LEVELS][NUM_ATTACKS_PER_LEVEL];
+	RString	m_sAttacks[NUM_ATTACK_LEVELS][NUM_ATTACKS_PER_LEVEL];
 	RageTexturePreloader m_Preload;
 	int m_iPreloadRefcount;
 };

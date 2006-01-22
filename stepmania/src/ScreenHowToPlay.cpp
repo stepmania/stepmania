@@ -20,7 +20,7 @@
 #include "CharacterManager.h"
 #include "StatsManager.h"
 
-static const ThemeMetric<CString>	STEPFILE		("ScreenHowToPlay","Stepfile");
+static const ThemeMetric<RString>	STEPFILE		("ScreenHowToPlay","Stepfile");
 static const ThemeMetric<int>		NUM_W2S			("ScreenHowToPlay","NumW2s");
 static const ThemeMetric<int>		NUM_MISSES		("ScreenHowToPlay","NumMisses");
 static const ThemeMetric<bool>		USELIFEBAR		("ScreenHowToPlay","UseLifeMeterBar");
@@ -40,7 +40,7 @@ enum Animation
 	NUM_ANIMATIONS
 };
 
-static const CString anims[NUM_ANIMATIONS] =
+static const RString anims[NUM_ANIMATIONS] =
 {
 	"DancePad.txt",
 	"DancePads.txt",
@@ -52,9 +52,9 @@ static const CString anims[NUM_ANIMATIONS] =
 };
 
 
-static CString GetAnimPath( Animation a )
+static RString GetAnimPath( Animation a )
 {
-	return CString("Characters/") + anims[a];
+	return RString("Characters/") + anims[a];
 }
 
 static bool HaveAllCharAnimations()
@@ -98,7 +98,7 @@ void ScreenHowToPlay::Init()
 	{
 		Character* rndchar = CHARMAN->GetRandomCharacter();
 
-		CString sModelPath = rndchar->GetModelPath();
+		RString sModelPath = rndchar->GetModelPath();
 		if( sModelPath != "" )
 		{
 			m_pmCharacter = new Model;
@@ -109,7 +109,7 @@ void ScreenHowToPlay::Init()
 			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-UP", GetAnimPath( ANIM_UP ) );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-RIGHT", GetAnimPath( ANIM_RIGHT ) );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-JUMPLR", GetAnimPath( ANIM_JUMPLR ) );
-			CString sRestFile = rndchar->GetRestAnimationPath();
+			RString sRestFile = rndchar->GetRestAnimationPath();
 			ASSERT( !sRestFile.empty() );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "rest",rndchar->GetRestAnimationPath() );
 			m_pmCharacter->SetDefaultAnimation( "rest" );

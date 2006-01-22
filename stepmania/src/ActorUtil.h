@@ -8,11 +8,11 @@
 
 class XNode;
 
-typedef Actor* (*CreateActorFn)(const CString& sDir, const XNode* pNode);
+typedef Actor* (*CreateActorFn)(const RString& sDir, const XNode* pNode);
 
 // Each Actor class should have a REGISTER_ACTOR_CLASS in its CPP file.
 #define REGISTER_ACTOR_CLASS_WITH_NAME( className, externalClassName ) \
-	Actor* Create##className(const CString& sDir, const XNode* pNode) { \
+	Actor* Create##className(const RString& sDir, const XNode* pNode) { \
 		className *pRet = new className; \
 		pRet->LoadFromNode(sDir, pNode); \
 		return pRet; } \
@@ -35,57 +35,57 @@ enum FileType
 	NUM_FileType, 
 	FT_Invalid 
 };
-const CString& FileTypeToString( FileType ft );
+const RString& FileTypeToString( FileType ft );
 
 namespace ActorUtil
 {
 	// Every screen should register its class at program initialization.
-	void Register( const CString& sClassName, CreateActorFn pfn );
-	Actor* Create( const CString& sClassName, const CString& sDir, const XNode* pNode );
+	void Register( const RString& sClassName, CreateActorFn pfn );
+	Actor* Create( const RString& sClassName, const RString& sDir, const XNode* pNode );
 
 
-	void SetXY( Actor& actor, const CString &sType );
-	void LoadCommand( Actor& actor, const CString &sType, const CString &sCommandName );
-	void LoadCommandFromName( Actor& actor, const CString &sType, const CString &sCommandName, const CString &sName );
-	void LoadAndPlayCommand( Actor& actor, const CString &sType, const CString &sCommandName, Actor* pParent = NULL );
-	void LoadAllCommands( Actor& actor, const CString &sType );
-	void LoadAllCommandsFromName( Actor& actor, const CString &sType, const CString &sName );
-	inline void OnCommand( Actor& actor, const CString &sType, Actor* pParent = NULL ) { LoadAndPlayCommand( actor, sType, "On", pParent ); }
-	inline void OffCommand( Actor& actor, const CString &sType ) { LoadAndPlayCommand( actor, sType, "Off" ); }
-	inline void SetXYAndOnCommand( Actor& actor, const CString &sType, Actor* pParent = NULL )
+	void SetXY( Actor& actor, const RString &sType );
+	void LoadCommand( Actor& actor, const RString &sType, const RString &sCommandName );
+	void LoadCommandFromName( Actor& actor, const RString &sType, const RString &sCommandName, const RString &sName );
+	void LoadAndPlayCommand( Actor& actor, const RString &sType, const RString &sCommandName, Actor* pParent = NULL );
+	void LoadAllCommands( Actor& actor, const RString &sType );
+	void LoadAllCommandsFromName( Actor& actor, const RString &sType, const RString &sName );
+	inline void OnCommand( Actor& actor, const RString &sType, Actor* pParent = NULL ) { LoadAndPlayCommand( actor, sType, "On", pParent ); }
+	inline void OffCommand( Actor& actor, const RString &sType ) { LoadAndPlayCommand( actor, sType, "Off" ); }
+	inline void SetXYAndOnCommand( Actor& actor, const RString &sType, Actor* pParent = NULL )
 	{
 		SetXY( actor, sType );
 		OnCommand( actor, sType, pParent );
 	}
 
 	/* convenience */
-	inline void SetXY( Actor* pActor, const CString &sType ) { SetXY( *pActor, sType ); }
-	inline void LoadAndPlayCommand( Actor* pActor, const CString &sType, const CString &sCommandName, Actor* pParent = NULL ) { if(pActor) LoadAndPlayCommand( *pActor, sType, sCommandName, pParent ); }
-	inline void OnCommand( Actor* pActor, const CString &sType, Actor* pParent = NULL ) { if(pActor) OnCommand( *pActor, sType, pParent ); }
-	inline void OffCommand( Actor* pActor, const CString &sType ) { if(pActor) OffCommand( *pActor, sType ); }
-	inline void SetXYAndOnCommand( Actor* pActor, const CString &sType, Actor* pParent = NULL ) { if(pActor) SetXYAndOnCommand( *pActor, sType, pParent ); }
+	inline void SetXY( Actor* pActor, const RString &sType ) { SetXY( *pActor, sType ); }
+	inline void LoadAndPlayCommand( Actor* pActor, const RString &sType, const RString &sCommandName, Actor* pParent = NULL ) { if(pActor) LoadAndPlayCommand( *pActor, sType, sCommandName, pParent ); }
+	inline void OnCommand( Actor* pActor, const RString &sType, Actor* pParent = NULL ) { if(pActor) OnCommand( *pActor, sType, pParent ); }
+	inline void OffCommand( Actor* pActor, const RString &sType ) { if(pActor) OffCommand( *pActor, sType ); }
+	inline void SetXYAndOnCommand( Actor* pActor, const RString &sType, Actor* pParent = NULL ) { if(pActor) SetXYAndOnCommand( *pActor, sType, pParent ); }
 
 	// Return a Sprite, BitmapText, or Model depending on the file type
-	Actor* LoadFromNode( const CString& sAniDir, const XNode* pNode );
-	Actor* MakeActor( const CString &sPath, const XNode *pParent = NULL );
+	Actor* LoadFromNode( const RString& sAniDir, const XNode* pNode );
+	Actor* MakeActor( const RString &sPath, const XNode *pParent = NULL );
 
-	void ResolvePath( CString &sPath, const CString &sName );
+	void ResolvePath( RString &sPath, const RString &sName );
 
 	void SortByZPosition( vector<Actor*> &vActors );
 
-	FileType GetFileType( const CString &sPath );
+	FileType GetFileType( const RString &sPath );
 
-	void SetParamFromStack( Lua *L, CString sName, LuaReference *pOld=NULL );
-	void GetParam( Lua *L, const CString &sName );
+	void SetParamFromStack( Lua *L, RString sName, LuaReference *pOld=NULL );
+	void GetParam( Lua *L, const RString &sName );
 
 	struct ActorParam
 	{
-		ActorParam( CString sName, CString sValue );
+		ActorParam( RString sName, RString sValue );
 		~ActorParam();
 		void Release();
 
 	private:
-		CString m_sName;
+		RString m_sName;
 		LuaReference *m_pOld;
 	};
 };

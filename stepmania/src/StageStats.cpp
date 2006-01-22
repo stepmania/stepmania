@@ -174,7 +174,7 @@ void StageStats::CommitScores( bool bSummary )
 		hs.SetSurviveSeconds( m_player[p].fAliveSeconds );
 		hs.SetModifiers( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetString() );
 		hs.SetDateTime( DateTime::GetNowDateTime() );
-		hs.SetPlayerGuid( PROFILEMAN->IsPersistentProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : CString("") );
+		hs.SetPlayerGuid( PROFILEMAN->IsPersistentProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : RString("") );
 		hs.SetMachineGuid( PROFILEMAN->GetMachineProfile()->m_sGuid );
 		hs.SetProductID( PREFSMAN->m_iProductID );
 		FOREACH_TapNoteScore( tns )

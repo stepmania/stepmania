@@ -294,10 +294,10 @@ int RageSound_ALSA9::GetSampleRate( int rate ) const
 	return str->pcm->FindSampleRate( rate );
 }
 	
-static CString CheckMixingBlacklist()
+static RString CheckMixingBlacklist()
 {
-	CString sID = Alsa9Buf::GetHardwareID();
-	const CString blacklist[] = {
+	RString sID = Alsa9Buf::GetHardwareID();
+	const RString blacklist[] = {
 		/* ALSA Driver: 0: Aureal Vortex au8830 [au8830], device 0: AU88x0 ADB [adb], 32/32 subdevices avail
 		 * ALSA segfaults after creating about ten subdevices. */
 		"au8830",
@@ -315,9 +315,9 @@ RageSound_ALSA9::RageSound_ALSA9():
 	shutdown = false;
 }
 
-CString RageSound_ALSA9::Init()
+RString RageSound_ALSA9::Init()
 {
-	CString sError = LoadALSA();
+	RString sError = LoadALSA();
 	if( sError != "" )
 		return ssprintf( "Driver unusable: %s", sError.c_str() );
 

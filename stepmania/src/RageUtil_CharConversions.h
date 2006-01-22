@@ -7,6 +7,6 @@
  * separated list of encodings.  The only valid strings are "japanese" and "korean". 
  * Return true if the conversion was successful (or a no-op).  Return false and
  * leave the string unchanged if the conversion was unsuccessful. */
-bool ConvertString(CString &str, const CString &encodings);
+bool ConvertString(RString &str, const RString &encodings);
 
 #endif

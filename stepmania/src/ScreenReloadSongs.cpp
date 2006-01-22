@@ -22,7 +22,7 @@ public:
 	{
 	}
 
-	void SetText( CString str )
+	void SetText( RString str )
 	{
 		m_BitmapText.SetText( str );
 		Paint();

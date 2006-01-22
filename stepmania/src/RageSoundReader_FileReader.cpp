@@ -16,7 +16,7 @@
 #include "RageSoundReader_Vorbisfile.h"
 #endif
 
-SoundReader_FileReader *SoundReader_FileReader::TryOpenFile( CString filename, CString &error, CString format, bool &bKeepTrying )
+SoundReader_FileReader *SoundReader_FileReader::TryOpenFile( RString filename, RString &error, RString format, bool &bKeepTrying )
 {
 	SoundReader_FileReader *Sample = NULL;
 
@@ -41,7 +41,7 @@ SoundReader_FileReader *SoundReader_FileReader::TryOpenFile( CString filename, C
 	if( ret == OPEN_OK )
 		return Sample;
 
-	CString err = Sample->GetError();
+	RString err = Sample->GetError();
 	delete Sample;
 
 	LOG->Trace( "Format %s failed: %s", format.c_str(), err.c_str() );
@@ -82,7 +82,7 @@ SoundReader_FileReader *SoundReader_FileReader::TryOpenFile( CString filename, C
 	return NULL;
 }
 
-SoundReader *SoundReader_FileReader::OpenFile( CString filename, CString &error )
+SoundReader *SoundReader_FileReader::OpenFile( RString filename, RString &error )
 {
 	{
 		RageFile TestOpen;
@@ -93,12 +93,12 @@ SoundReader *SoundReader_FileReader::OpenFile( CString filename, CString &error 
 		}
 	}
 
-	set<CString> FileTypes;
+	set<RString> FileTypes;
 	FileTypes.insert("ogg");
 	FileTypes.insert("mp3");
 	FileTypes.insert("wav");
 
-	CString format = GetExtension(filename);
+	RString format = GetExtension(filename);
 	format.MakeLower();
 
 	error = "";
@@ -114,7 +114,7 @@ SoundReader *SoundReader_FileReader::OpenFile( CString filename, CString &error 
 		FileTypes.erase( format );
 	}
 
-	for( set<CString>::iterator it = FileTypes.begin(); bKeepTrying && it != FileTypes.end(); ++it )
+	for( set<RString>::iterator it = FileTypes.begin(); bKeepTrying && it != FileTypes.end(); ++it )
 	{
 	    SoundReader_FileReader *NewSample = TryOpenFile( filename, error, *it, bKeepTrying );
 		if( NewSample )

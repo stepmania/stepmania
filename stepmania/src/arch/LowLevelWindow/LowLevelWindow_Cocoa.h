@@ -18,8 +18,8 @@ class LowLevelWindow_Cocoa : public LowLevelWindow
 public:
 	LowLevelWindow_Cocoa();
 	~LowLevelWindow_Cocoa();
-	void *GetProcAddress( CString s );
-	CString TryVideoMode( const VideoModeParams& p, bool& newDeviceOut );	
+	void *GetProcAddress( RString s );
+	RString TryVideoMode( const VideoModeParams& p, bool& newDeviceOut );	
 	void GetDisplayResolutions( DisplayResolutions &dr ) const;
 	void SwapBuffers();
 	void Update();

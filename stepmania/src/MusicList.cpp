@@ -45,7 +45,7 @@ void MusicList::AddSongsToGroup(const vector<Song*> &Songs)
 
 	for( int c=0; c<NUM_COLUMNS; c++ )	// foreach col
 	{
-		CString sText;
+		RString sText;
 		for( int r=0; r<NUM_ROWS; r++ )	// foreach row
 		{
 			unsigned iIndex = c*NUM_ROWS + r;
@@ -58,12 +58,12 @@ void MusicList::AddSongsToGroup(const vector<Song*> &Songs)
 				continue;
 			}
 
-			CString sTitle = Songs[iIndex]->GetDisplayFullTitle();
+			RString sTitle = Songs[iIndex]->GetDisplayFullTitle();
 			// TODO:  Move this crop threshold into a theme metric or make automatic based on column width
 			if( sTitle.size() > 40 )
 				sTitle = sTitle.Left( 37 ) + "...";
 
-			CString sTrTitle = Songs[iIndex]->GetTranslitFullTitle();
+			RString sTrTitle = Songs[iIndex]->GetTranslitFullTitle();
 			if( sTrTitle.size() > 40 )
 				sTrTitle = sTrTitle.Left( 37 ) + "...";
 

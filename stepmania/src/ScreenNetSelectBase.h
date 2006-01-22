@@ -25,8 +25,8 @@ private:
 	ColorBitmapText	m_textChatOutput;
 	Sprite			m_sprChatInputBox;
 	Sprite			m_sprChatOutputBox;
-	CString			m_sTextInput;
-	CString			m_actualText;
+	RString			m_sTextInput;
+	RString			m_actualText;
 
 	//Users Rect
 	Quad			m_rectUsersBG;
@@ -35,7 +35,7 @@ private:
 
 //Eventually we won't be using quads in this method.
 #define SET_QUAD_INIT( actor )	UtilSetQuadInit( actor, m_sName );
-void UtilSetQuadInit( Actor& actor, const CString &sClassName );
+void UtilSetQuadInit( Actor& actor, const RString &sClassName );
 
 #endif
 

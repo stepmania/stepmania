@@ -12,12 +12,12 @@ public:
 	ActorFrame( const ActorFrame &cpy );
 	virtual ~ActorFrame();
 
-	void LoadFromNode( const CString& sDir, const XNode* pNode );
+	void LoadFromNode( const RString& sDir, const XNode* pNode );
 	virtual Actor *Copy() const;
 
 	virtual void AddChild( Actor* pActor );
 	virtual void RemoveChild( Actor* pActor );
-	Actor* GetChild( const CString &sName );
+	Actor* GetChild( const RString &sName );
 	int GetNumChildren() const { return m_SubActors.size(); }
 
 	void RemoveAllChildren();
@@ -60,12 +60,12 @@ public:
 	/* Amount of time until all tweens (and all children's tweens) have stopped: */
 	virtual float GetTweenTimeLeft() const;
 
-	virtual void PlayCommand( const CString &sCommandName, Actor* pParent = NULL );
+	virtual void PlayCommand( const RString &sCommandName, Actor* pParent = NULL );
 	virtual void RunCommands( const LuaReference& cmds, Actor* pParent = NULL );
 	void RunCommands( const apActorCommands& cmds, Actor *pParent = NULL ) { this->RunCommands( *cmds, pParent ); }	// convenience
 
 protected:
-	void LoadChildrenFromNode( const CString& sDir, const XNode* pNode );
+	void LoadChildrenFromNode( const RString& sDir, const XNode* pNode );
 
 	vector<Actor*>	m_SubActors;
 	bool m_bPropagateCommands;

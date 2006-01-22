@@ -11,16 +11,16 @@ typedef bool (*MenuRowUpdateEnabled)();
 struct MenuRowDef
 {
 	int			iRowCode;
-	CString			sName;
+	RString			sName;
 	bool			bEnabled;
 	MenuRowUpdateEnabled	pfnEnabled;	// if ! NULL, used to fill bEnabled
 	EditMode		emShowIn;
 	int			iDefaultChoice;
-	vector<CString>		choices;
+	vector<RString>		choices;
 	bool			bThemeItems;
 
 	MenuRowDef() {}
-	MenuRowDef( int r, CString n, MenuRowUpdateEnabled pe, EditMode s, bool b, int d, const char *c0=NULL, const char *c1=NULL, const char *c2=NULL, const char *c3=NULL, const char *c4=NULL, const char *c5=NULL, const char *c6=NULL, const char *c7=NULL, const char *c8=NULL, const char *c9=NULL, const char *c10=NULL, const char *c11=NULL, const char *c12=NULL, const char *c13=NULL, const char *c14=NULL, const char *c15=NULL, const char *c16=NULL, const char *c17=NULL, const char *c18=NULL, const char *c19=NULL )
+	MenuRowDef( int r, RString n, MenuRowUpdateEnabled pe, EditMode s, bool b, int d, const char *c0=NULL, const char *c1=NULL, const char *c2=NULL, const char *c3=NULL, const char *c4=NULL, const char *c5=NULL, const char *c6=NULL, const char *c7=NULL, const char *c8=NULL, const char *c9=NULL, const char *c10=NULL, const char *c11=NULL, const char *c12=NULL, const char *c13=NULL, const char *c14=NULL, const char *c15=NULL, const char *c16=NULL, const char *c17=NULL, const char *c18=NULL, const char *c19=NULL )
 	{
 		iRowCode = r; 
 		sName = n; 
@@ -33,7 +33,7 @@ struct MenuRowDef
 		PUSH(c0);PUSH(c1);PUSH(c2);PUSH(c3);PUSH(c4);PUSH(c5);PUSH(c6);PUSH(c7);PUSH(c8);PUSH(c9);PUSH(c10);PUSH(c11);PUSH(c12);PUSH(c13);PUSH(c14);PUSH(c15);PUSH(c16);PUSH(c17);PUSH(c18);PUSH(c19);
 #undef PUSH
 	}
-	MenuRowDef( int r, CString n, bool e, EditMode s, bool b, int d, const char *c0=NULL, const char *c1=NULL, const char *c2=NULL, const char *c3=NULL, const char *c4=NULL, const char *c5=NULL, const char *c6=NULL, const char *c7=NULL, const char *c8=NULL, const char *c9=NULL, const char *c10=NULL, const char *c11=NULL, const char *c12=NULL, const char *c13=NULL, const char *c14=NULL, const char *c15=NULL, const char *c16=NULL, const char *c17=NULL, const char *c18=NULL, const char *c19=NULL )
+	MenuRowDef( int r, RString n, bool e, EditMode s, bool b, int d, const char *c0=NULL, const char *c1=NULL, const char *c2=NULL, const char *c3=NULL, const char *c4=NULL, const char *c5=NULL, const char *c6=NULL, const char *c7=NULL, const char *c8=NULL, const char *c9=NULL, const char *c10=NULL, const char *c11=NULL, const char *c12=NULL, const char *c13=NULL, const char *c14=NULL, const char *c15=NULL, const char *c16=NULL, const char *c17=NULL, const char *c18=NULL, const char *c19=NULL )
 	{
 		iRowCode = r; 
 		sName = n; 
@@ -47,16 +47,16 @@ struct MenuRowDef
 #undef PUSH
 	}
 
-	void SetOneUnthemedChoice( const CString &sChoice )
+	void SetOneUnthemedChoice( const RString &sChoice )
 	{
 		choices.resize(1);
 		choices[0] = "|" + sChoice;
 	}
 
-	bool SetDefaultChoiceIfPresent( CString sChoice )
+	bool SetDefaultChoiceIfPresent( RString sChoice )
 	{
 		iDefaultChoice = 0;
-		FOREACH_CONST( CString, choices, s )
+		FOREACH_CONST( RString, choices, s )
 		{
 			if( sChoice == *s )
 			{
@@ -70,10 +70,10 @@ struct MenuRowDef
 
 struct MenuDef
 {
-	CString sClassName;
+	RString sClassName;
 	vector<MenuRowDef> rows;
 
-	MenuDef( CString c, MenuRowDef r0=MenuRowDef(), MenuRowDef r1=MenuRowDef(), MenuRowDef r2=MenuRowDef(), MenuRowDef r3=MenuRowDef(), MenuRowDef r4=MenuRowDef(), MenuRowDef r5=MenuRowDef(), MenuRowDef r6=MenuRowDef(), MenuRowDef r7=MenuRowDef(), MenuRowDef r8=MenuRowDef(), MenuRowDef r9=MenuRowDef(), MenuRowDef r10=MenuRowDef(), MenuRowDef r11=MenuRowDef(), MenuRowDef r12=MenuRowDef(), MenuRowDef r13=MenuRowDef(), MenuRowDef r14=MenuRowDef(), MenuRowDef r15=MenuRowDef(), MenuRowDef r16=MenuRowDef(), MenuRowDef r17=MenuRowDef(), MenuRowDef r18=MenuRowDef(), MenuRowDef r19=MenuRowDef(), MenuRowDef r20=MenuRowDef(), MenuRowDef r21=MenuRowDef(), MenuRowDef r22=MenuRowDef(), MenuRowDef r23=MenuRowDef(), MenuRowDef r24=MenuRowDef(), MenuRowDef r25=MenuRowDef(), MenuRowDef r26=MenuRowDef(), MenuRowDef r27=MenuRowDef(), MenuRowDef r28=MenuRowDef(), MenuRowDef r29=MenuRowDef() )
+	MenuDef( RString c, MenuRowDef r0=MenuRowDef(), MenuRowDef r1=MenuRowDef(), MenuRowDef r2=MenuRowDef(), MenuRowDef r3=MenuRowDef(), MenuRowDef r4=MenuRowDef(), MenuRowDef r5=MenuRowDef(), MenuRowDef r6=MenuRowDef(), MenuRowDef r7=MenuRowDef(), MenuRowDef r8=MenuRowDef(), MenuRowDef r9=MenuRowDef(), MenuRowDef r10=MenuRowDef(), MenuRowDef r11=MenuRowDef(), MenuRowDef r12=MenuRowDef(), MenuRowDef r13=MenuRowDef(), MenuRowDef r14=MenuRowDef(), MenuRowDef r15=MenuRowDef(), MenuRowDef r16=MenuRowDef(), MenuRowDef r17=MenuRowDef(), MenuRowDef r18=MenuRowDef(), MenuRowDef r19=MenuRowDef(), MenuRowDef r20=MenuRowDef(), MenuRowDef r21=MenuRowDef(), MenuRowDef r22=MenuRowDef(), MenuRowDef r23=MenuRowDef(), MenuRowDef r24=MenuRowDef(), MenuRowDef r25=MenuRowDef(), MenuRowDef r26=MenuRowDef(), MenuRowDef r27=MenuRowDef(), MenuRowDef r28=MenuRowDef(), MenuRowDef r29=MenuRowDef() )
 	{
 		sClassName = c;
 #define PUSH( r )	if(!r.sName.empty()) rows.push_back(r);

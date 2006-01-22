@@ -19,7 +19,7 @@ public:
 	virtual void DrawPrimitives();
 	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
-	virtual void HandleMessage( const CString &sMessage );
+	virtual void HandleMessage( const RString &sMessage );
 	
 	virtual void MenuBack( PlayerNumber pn );
 
@@ -31,7 +31,7 @@ protected:
 
 	vector<CodeItem>	m_aCodes;
 	vector<GameCommand>	m_aCodeChoices;
-	vector<CString>		m_asSubscribedMessages;
+	vector<RString>		m_asSubscribedMessages;
 
 	RageTimer		m_timerIdleComment;	// count up to time between idle comment announcer sounds
 	RageTimer		m_timerIdleTimeout;	// count up to go to the timeout screen

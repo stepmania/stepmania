@@ -25,7 +25,7 @@ PercentageDisplay::PercentageDisplay()
 	m_LastMax = -1;
 }
 
-void PercentageDisplay::LoadFromNode( const CString& sDir, const XNode* pNode )
+void PercentageDisplay::LoadFromNode( const RString& sDir, const XNode* pNode )
 {
 	ActorFrame::LoadFromNode( sDir, pNode );
 
@@ -58,7 +58,7 @@ void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStage
 	Refresh();
 }
 
-void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStageStats *pPlayerStageStats, const CString &sMetricsGroup, bool bAutoRefresh )
+void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStageStats *pPlayerStageStats, const RString &sMetricsGroup, bool bAutoRefresh )
 {
 	m_pPlayerState = pPlayerState;
 	m_pPlayerStageStats = pPlayerStageStats;
@@ -111,7 +111,7 @@ void PercentageDisplay::Refresh()
 	m_Last = iActualDancePoints;
 	m_LastMax = iCurPossibleDancePoints;
 
-	CString sNumToDisplay;
+	RString sNumToDisplay;
 
 	if( PREFSMAN->m_bDancePointsForOni )
 	{
@@ -163,7 +163,7 @@ void PercentageDisplay::Refresh()
 	m_textPercent.SetText( sNumToDisplay );
 }
 
-CString PercentageDisplay::FormatPercentScore( float fPercentDancePoints )
+RString PercentageDisplay::FormatPercentScore( float fPercentDancePoints )
 {
 	// TRICKY: printf will round, but we want to truncate.  Otherwise, we may display a percent
 	// score that's too high and doesn't match up with the calculated grade.
@@ -175,7 +175,7 @@ CString PercentageDisplay::FormatPercentScore( float fPercentDancePoints )
 
 	fPercentDancePoints = ftruncf( fPercentDancePoints, fTruncInterval );
 	
-	CString s = ssprintf( "%*.*f%%", (int)PERCENT_TOTAL_SIZE, (int)PERCENT_DECIMAL_PLACES, fPercentDancePoints*100 );
+	RString s = ssprintf( "%*.*f%%", (int)PERCENT_TOTAL_SIZE, (int)PERCENT_DECIMAL_PLACES, fPercentDancePoints*100 );
 	return s;
 }
 

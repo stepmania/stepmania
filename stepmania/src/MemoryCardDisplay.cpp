@@ -21,14 +21,14 @@ void MemoryCardDisplay::Load( PlayerNumber pn )
 	for( int i=0; i<NUM_MemoryCardState; i++ )
 	{
 		MemoryCardState mcs = (MemoryCardState)i;
-		CString sState = MemoryCardStateToString(mcs);
+		RString sState = MemoryCardStateToString(mcs);
 		m_spr[i].Load( THEME->GetPathG("MemoryCardDisplay",ssprintf("%s p%d",sState.c_str(),pn+1)) );
 		m_spr[i].SetHidden( true );
 		this->AddChild( &m_spr[i] );
 	}
 }
 
-void MemoryCardDisplay::LoadFromNode( const CString& sDir, const XNode* pNode )
+void MemoryCardDisplay::LoadFromNode( const RString& sDir, const XNode* pNode )
 {
 	PlayerNumber pn;
 	pNode->GetAttrValue("PlayerNumber", (int&) pn );

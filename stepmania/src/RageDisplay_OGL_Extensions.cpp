@@ -29,7 +29,7 @@ GLExt_t GLExt;
 /* Available extensions: */
 static set<string> g_glExts;
 
-bool GLExt_t::HasExtension( const CString &sExt ) const
+bool GLExt_t::HasExtension( const RString &sExt ) const
 {
 	return g_glExts.find(sExt) != g_glExts.end();
 }
@@ -69,7 +69,7 @@ static void GetGLExtensions( set<string> &ext )
 {
     const char *szBuf = (const char *) glGetString( GL_EXTENSIONS );
 
-	vector<CString> asList;
+	vector<RString> asList;
 	split( szBuf, " ", asList );
 
 	for( unsigned i = 0; i < asList.size(); ++i )

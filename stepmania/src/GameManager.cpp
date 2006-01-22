@@ -2712,7 +2712,7 @@ const Game* GameManager::GetGameFromIndex( int index ) const
 
 bool GameManager::IsGameEnabled( const Game *pGame ) const
 {
-	vector<CString> asNoteSkins;
+	vector<RString> asNoteSkins;
 	NOTESKIN->GetNoteSkinNames( pGame, asNoteSkins, false ); /* don't omit default */
 	return asNoteSkins.size() > 0;
 }
@@ -2723,7 +2723,7 @@ int GameManager::StepsTypeToNumTracks( StepsType st )
 	return StepsTypes[st].NumTracks;
 }
 
-StepsType GameManager::StringToStepsType( CString sStepsType )
+StepsType GameManager::StringToStepsType( RString sStepsType )
 {
 	sStepsType.MakeLower();
 
@@ -2744,24 +2744,24 @@ StepsType GameManager::StringToStepsType( CString sStepsType )
 	return STEPS_TYPE_DANCE_SINGLE;
 }
 
-CString GameManager::StepsTypeToString( StepsType st )
+RString GameManager::StepsTypeToString( StepsType st )
 {
 	ASSERT_M( st < NUM_STEPS_TYPES, ssprintf("%i", st) );
 	return StepsTypes[st].name;
 }
 
-CString GameManager::StepsTypeToLocalizedString( StepsType st )
+RString GameManager::StepsTypeToLocalizedString( StepsType st )
 {
-	CString s = StepsTypeToString( st );
+	RString s = StepsTypeToString( st );
 	if( THEME->HasMetric( "StepsType", s ) )
 		return THEME->GetString( "StepsType", s );
 	else
 		return s;
 }
 
-CString GameManager::StyleToLocalizedString( const Style* style )
+RString GameManager::StyleToLocalizedString( const Style* style )
 {
-	CString s = style->m_szName;
+	RString s = style->m_szName;
 	s = Capitalize( s );
 	if( THEME->HasMetric( "Style", s ) )
 		return THEME->GetString( "Style", s );
@@ -2769,7 +2769,7 @@ CString GameManager::StyleToLocalizedString( const Style* style )
 		return s;
 }
 
-const Game* GameManager::StringToGameType( CString sGameType )
+const Game* GameManager::StringToGameType( RString sGameType )
 {
 	for( int i=0; i<NUM_GAMES; i++ )
 		if( !sGameType.CompareNoCase(g_Games[i].m_szName) )
@@ -2779,7 +2779,7 @@ const Game* GameManager::StringToGameType( CString sGameType )
 }
 
 
-const Style* GameManager::GameAndStringToStyle( const Game *game, CString sStyle )
+const Style* GameManager::GameAndStringToStyle( const Game *game, RString sStyle )
 {
 	for( unsigned s=0; s<NUM_STYLES; s++ ) 
 	{
@@ -2801,7 +2801,7 @@ MenuButton GameManager::GetMenuButtonSecondaryFunction( const Game *pGame, GameB
 	 * it) and/or map to a menu button (if m_DedicatedMenuButton or m_SecondaryMenuButton
 	 * map to it).
 	 *
-	 * If a button is only used in gameplay or is only used in menus, return CString(); the 
+	 * If a button is only used in gameplay or is only used in menus, return RString(); the 
 	 * primary description is sufficient.
 	 *
 	 * If a button is used in both gameplay and menus, return szSecondaryNames[] for

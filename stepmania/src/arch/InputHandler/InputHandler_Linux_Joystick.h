@@ -11,14 +11,14 @@ public:
 	enum { NUM_JOYSTICKS = 4 };
 	InputHandler_Linux_Joystick();
 	~InputHandler_Linux_Joystick();
-	void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut);
+	void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut);
 
 private:
 	static int InputThread_Start( void *p );
 	void InputThread();
 
 	int fds[NUM_JOYSTICKS];
-	CString m_sDescription[NUM_JOYSTICKS];
+	RString m_sDescription[NUM_JOYSTICKS];
 	RageThread m_InputThread;
 	bool m_bShutdown;
 };

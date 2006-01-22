@@ -11,7 +11,7 @@ class RageSound_WaveOut: public RageSound_Generic_Software
 public:
 	RageSound_WaveOut();
 	~RageSound_WaveOut();
-	CString Init();
+	RString Init();
 
 	int64_t GetPosition( const RageSoundBase *pSound ) const;
 	float GetPlayLatency() const;

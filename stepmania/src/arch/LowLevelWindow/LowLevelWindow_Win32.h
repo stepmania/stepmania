@@ -8,10 +8,10 @@ class LowLevelWindow_Win32: public LowLevelWindow
 public:
 	LowLevelWindow_Win32();
 	~LowLevelWindow_Win32();
-	void *GetProcAddress( CString s );
-	CString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut );
+	void *GetProcAddress( RString s );
+	RString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut );
 	void GetDisplayResolutions( DisplayResolutions &out ) const;
-	bool IsSoftwareRenderer( CString &sError );
+	bool IsSoftwareRenderer( RString &sError );
 	void SwapBuffers();
 	void Update();
 	bool SupportsThreadedRendering();

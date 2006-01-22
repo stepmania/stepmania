@@ -32,9 +32,9 @@ MovieTexture_Generic::MovieTexture_Generic( RageTextureID ID, MovieDecoder *pDec
 	m_bThreaded = PREFSMAN->m_bThreadedMovieDecode.Get();
 }
 
-CString MovieTexture_Generic::Init()
+RString MovieTexture_Generic::Init()
 {
-	CString sError = m_pDecoder->Open( GetID().filename );
+	RString sError = m_pDecoder->Open( GetID().filename );
 	if( sError != "" )
 		return sError;
 
@@ -63,7 +63,7 @@ CString MovieTexture_Generic::Init()
 
 	StartThread();
 
-	return CString();
+	return RString();
 }
 
 MovieTexture_Generic::~MovieTexture_Generic()
@@ -187,7 +187,7 @@ bool MovieTexture_Generic::DecodeFrame()
 
 			/* Restart. */
 			m_pDecoder->Close();
-			CString sError = m_pDecoder->Open( GetID().filename );
+			RString sError = m_pDecoder->Open( GetID().filename );
 			if( sError != "" )
 				RageException::Throw( "Error rewinding stream %s: %s", GetID().filename.c_str(), sError.c_str() );
 

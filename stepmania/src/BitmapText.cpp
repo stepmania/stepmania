@@ -93,17 +93,17 @@ BitmapText &BitmapText::operator =( const BitmapText &cpy )
 	return *this;
 }
 
-void BitmapText::LoadFromNode( const CString& sDir, const XNode* pNode )
+void BitmapText::LoadFromNode( const RString& sDir, const XNode* pNode )
 {
-	CString sText;
+	RString sText;
 	pNode->GetAttrValue( "Text", sText );
-	CString sAltText;
+	RString sAltText;
 	pNode->GetAttrValue( "AltText", sAltText );
 
 	ThemeManager::EvaluateString( sText );
 	ThemeManager::EvaluateString( sAltText );
 
-	CString sFont;
+	RString sFont;
 	pNode->GetAttrValue( "Font", sFont );
 	if( sFont.empty() )
 		pNode->GetAttrValue("File", sFont );	// accept "File" for backward compatibility
@@ -120,7 +120,7 @@ void BitmapText::LoadFromNode( const CString& sDir, const XNode* pNode )
 }
 
 
-bool BitmapText::LoadFromFont( const CString& sFontFilePath )
+bool BitmapText::LoadFromFont( const RString& sFontFilePath )
 {
 	CHECKPOINT_M( ssprintf("BitmapText::LoadFromFont(%s)", sFontFilePath.c_str()) );
 
@@ -138,7 +138,7 @@ bool BitmapText::LoadFromFont( const CString& sFontFilePath )
 }
 
 
-bool BitmapText::LoadFromTextureAndChars( const CString& sTexturePath, const CString& sChars )
+bool BitmapText::LoadFromTextureAndChars( const RString& sTexturePath, const RString& sChars )
 {
 	CHECKPOINT_M( ssprintf("BitmapText::LoadFromTextureAndChars(\"%s\",\"%s\")", sTexturePath.c_str(), sChars.c_str()) );
 
@@ -339,11 +339,11 @@ void BitmapText::DrawChars()
 /* sText is UTF-8.  If not all of the characters in sText are available in the
  * font, sAlternateText will be used instead.  If there are unavailable characters
  * in sAlternateText, too, just use sText. */
-void BitmapText::SetText( const CString& _sText, const CString& _sAlternateText, int iWrapWidthPixels )
+void BitmapText::SetText( const RString& _sText, const RString& _sAlternateText, int iWrapWidthPixels )
 {
 	ASSERT( m_pFont );
 
-	CString sNewText = StringWillUseAlternate(_sText,_sAlternateText) ? _sAlternateText : _sText;
+	RString sNewText = StringWillUseAlternate(_sText,_sAlternateText) ? _sAlternateText : _sText;
 
 	if( iWrapWidthPixels == -1 )	// wrap not specified
 		iWrapWidthPixels = m_iWrapWidthPixels;
@@ -372,20 +372,20 @@ void BitmapText::SetText( const CString& _sText, const CString& _sAlternateText,
 		/* It doesn't.  I can add Japanese wrapping, at least.  We could handle hyphens
 		 * and soft hyphens and pretty easily, too. -glenn */
 		// TODO: Move this wrapping logic into Font
-		vector<CString> asLines;
+		vector<RString> asLines;
 		split( m_sText, "\n", asLines, false );
 
 		for( unsigned line = 0; line < asLines.size(); ++line )
 		{
-			vector<CString> asWords;
+			vector<RString> asWords;
 			split( asLines[line], " ", asWords );
 
-			CString sCurLine;
+			RString sCurLine;
 			int iCurLineWidth = 0;
 
 			for( unsigned i=0; i<asWords.size(); i++ )
 			{
-				const CString &sWord = asWords[i];
+				const RString &sWord = asWords[i];
 				int iWidthWord = m_pFont->GetLineWidthInSourcePixels( RStringToWstring(sWord) );
 
 				if( sCurLine.empty() )
@@ -395,7 +395,7 @@ void BitmapText::SetText( const CString& _sText, const CString& _sAlternateText,
 					continue;
 				}
 
-				CString sToAdd = " " + sWord;
+				RString sToAdd = " " + sWord;
 				int iWidthToAdd = m_pFont->GetLineWidthInSourcePixels(L" ") + iWidthWord;
 				if( iCurLineWidth + iWidthToAdd <= iWrapWidthPixels )	// will fit on current line
 				{
@@ -462,7 +462,7 @@ void BitmapText::UpdateBaseZoom()
 	}
 }
 
-bool BitmapText::StringWillUseAlternate( const CString& sText, const CString& sAlternateText ) const
+bool BitmapText::StringWillUseAlternate( const RString& sText, const RString& sAlternateText ) const
 {
 	ASSERT( m_pFont );
 
@@ -598,11 +598,11 @@ ColorBitmapText::ColorBitmapText( ) : BitmapText()
 	m_vColors.clear();
 }
 
-void ColorBitmapText::SetText( const CString& _sText, const CString& _sAlternateText, int iWrapWidthPixels )
+void ColorBitmapText::SetText( const RString& _sText, const RString& _sAlternateText, int iWrapWidthPixels )
 {
 	ASSERT( m_pFont );
 
-	CString sNewText = StringWillUseAlternate(_sText,_sAlternateText) ? _sAlternateText : _sText;
+	RString sNewText = StringWillUseAlternate(_sText,_sAlternateText) ? _sAlternateText : _sText;
 
 	if( iWrapWidthPixels == -1 )	// wrap not specified
 		iWrapWidthPixels = m_iWrapWidthPixels;
@@ -621,10 +621,10 @@ void ColorBitmapText::SetText( const CString& _sText, const CString& _sAlternate
 
 	m_wTextLines.clear();
 
-	CString sCurrentLine = "";
+	RString sCurrentLine = "";
 	int		iLineWidth = 0;
 
-	CString sCurrentWord = "";
+	RString sCurrentWord = "";
 	int		iWordWidth = 0;
 	int		iGlyphsSoFar = 0;
 
@@ -634,7 +634,7 @@ void ColorBitmapText::SetText( const CString& _sText, const CString& _sAlternate
 
 		// First: Check for the special (color) case.
 
-		CString FirstThree = m_sText.substr( i, 3 );
+		RString FirstThree = m_sText.substr( i, 3 );
 		if( FirstThree.CompareNoCase("|c0") == 0 && iCharsLeft > 8 )
 		{
 			ColorChange change;
@@ -652,7 +652,7 @@ void ColorBitmapText::SetText( const CString& _sText, const CString& _sAlternate
 			continue;
 		}
 
-		CString curCStr = m_sText.substr( i, 1 );
+		RString curCStr = m_sText.substr( i, 1 );
 		char curChar = curCStr.c_str()[0];
 		int iCharLen = m_pFont->GetLineWidthInSourcePixels( RStringToWstring( curCStr ) );
 
@@ -723,7 +723,7 @@ void ColorBitmapText::SetText( const CString& _sText, const CString& _sAlternate
 	UpdateBaseZoom();
 }
 
-void ColorBitmapText::SimpleAddLine( const CString &sAddition, const int iWidthPixels) 
+void ColorBitmapText::SimpleAddLine( const RString &sAddition, const int iWidthPixels) 
 {
 	m_wTextLines.push_back( RStringToWstring( sAddition ) );
 	m_iLineWidths.push_back( iWidthPixels );
@@ -851,7 +851,7 @@ public:
 	static int maxheight( T* p, lua_State *L )			{ p->SetMaxHeight( FArg(1) ); return 0; }
 	static int settext( T* p, lua_State *L )
 	{
-		CString s = SArg(1);
+		RString s = SArg(1);
 		// XXX: Lua strings should simply use "\n" natively.  However, some
 		// settext calls may be made from GetMetric() calls to other strings,
 		// and it's confusing for :: to work in some strings and not others.

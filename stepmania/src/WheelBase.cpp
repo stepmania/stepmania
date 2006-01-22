@@ -36,7 +36,7 @@ WheelBase::~WheelBase()
 	m_LastSelection = NULL;
 }
 
-void WheelBase::Load( CString sType ) 
+void WheelBase::Load( RString sType ) 
 {
 	LOG->Trace( "WheelBase::Load('%s')", sType.c_str() );
 
@@ -57,7 +57,7 @@ void WheelBase::Load( CString sType )
 	RebuildWheelItems();
 }
 
-void WheelBase::LoadFromMetrics( CString sType )
+void WheelBase::LoadFromMetrics( RString sType )
 {
 	SWITCH_SECONDS				.Load(sType,"SwitchSeconds");
 	LOCKED_INITIAL_VELOCITY		.Load(sType,"LockedInitialVelocity");
@@ -373,7 +373,7 @@ bool WheelBase::Select()	// return true if this selection ends the screen
 			return false;
 		case TYPE_SECTION:
 			{
-				CString sThisItemSectionName = m_WheelBaseItemsData[m_iSelection]->m_sText;
+				RString sThisItemSectionName = m_WheelBaseItemsData[m_iSelection]->m_sText;
 				if( m_sExpandedSectionName == sThisItemSectionName )	// already expanded
 					m_sExpandedSectionName = "";		// collapse it
 				else				// already collapsed

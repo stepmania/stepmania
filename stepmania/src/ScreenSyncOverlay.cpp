@@ -82,7 +82,7 @@ static LocalizedString SONG_OFFSET_FROM		( "ScreenSyncOverlay", "Song offset fro
 static LocalizedString TEMPO_SEGMENT_FROM	( "ScreenSyncOverlay", "%s tempo segment from %+.3f BPM to %+.3f BPM." );
 void ScreenSyncOverlay::UpdateText()
 {
-	vector<CString> vs;
+	vector<RString> vs;
 
 	switch( PREFSMAN->m_AutoPlay )
 	{

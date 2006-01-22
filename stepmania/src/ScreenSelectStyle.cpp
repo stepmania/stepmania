@@ -36,7 +36,7 @@ void ScreenSelectStyle::Init()
 		//
 		// Load icon
 		//
-		CString sIconPath = THEME->GetPathG(m_sName,ssprintf("icon%d",i+1));
+		RString sIconPath = THEME->GetPathG(m_sName,ssprintf("icon%d",i+1));
 
 		m_textIcon[i].SetName( ssprintf("Icon%d",i+1) );
 		m_sprIcon[i].SetName( ssprintf("Icon%d",i+1) );
@@ -58,7 +58,7 @@ void ScreenSelectStyle::Init()
 		//
 		// Load Picture
 		//
-		CString sPicturePath = THEME->GetPathG(m_sName, ssprintf("picture%d",i+1));
+		RString sPicturePath = THEME->GetPathG(m_sName, ssprintf("picture%d",i+1));
 		if( sPicturePath != "" )
 		{
 			m_sprPicture[i].SetName( "Picture" );
@@ -71,7 +71,7 @@ void ScreenSelectStyle::Init()
 		//
 		// Load info
 		//
-		CString sInfoPath = THEME->GetPathG(m_sName,ssprintf("info%d",i+1));
+		RString sInfoPath = THEME->GetPathG(m_sName,ssprintf("info%d",i+1));
 		if( sInfoPath != "" )
 		{
 			m_sprInfo[i].SetName( "Info" );

@@ -10,7 +10,7 @@ struct WavReader;
 class RageSoundReader_WAV: public SoundReader_FileReader
 {
 public:
-	OpenResult Open( CString m_sFilename );
+	OpenResult Open( RString m_sFilename );
 	void Close();
 	int GetLength() const;
 	int GetLength_Fast() const { return GetLength(); }
@@ -32,7 +32,7 @@ public:
 
 private:
 	RageFile m_File;
-	CString m_sFilename;
+	RString m_sFilename;
 	WavData m_WavData;
 
 	WavReader *m_pImpl;

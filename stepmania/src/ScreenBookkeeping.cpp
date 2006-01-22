@@ -111,7 +111,7 @@ void ScreenBookkeeping::ChangeView( View newView )
 
 
 	{
-		CString s;
+		RString s;
 		s += ALL_TIME.GetValue();
 		s += ssprintf( " %i\n", BOOKKEEPER->GetCoinsTotal() );
 		m_textAllTime.SetText( s );
@@ -127,7 +127,7 @@ void ScreenBookkeeping::ChangeView( View newView )
 			BOOKKEEPER->GetCoinsLastDays( coins );
 			int iTotalLast = 0;
 			
-			CString sTitle, sData;
+			RString sTitle, sData;
 			for( int i=0; i<NUM_LAST_DAYS; i++ )
 			{
 				sTitle += LastDayToLocalizedString(i) + "\n";
@@ -153,10 +153,10 @@ void ScreenBookkeeping::ChangeView( View newView )
 			int coins[NUM_LAST_WEEKS];
 			BOOKKEEPER->GetCoinsLastWeeks( coins );
 
-			CString sTitle, sData;
+			RString sTitle, sData;
 			for( int col=0; col<4; col++ )
 			{
-				CString sTemp;
+				RString sTemp;
 				for( int row=0; row<52/4; row++ )
 				{
 					int week = row*4+col;
@@ -175,7 +175,7 @@ void ScreenBookkeeping::ChangeView( View newView )
 			int coins[DAYS_IN_WEEK];
 			BOOKKEEPER->GetCoinsByDayOfWeek( coins );
 
-			CString sTitle, sData;
+			RString sTitle, sData;
 			for( int i=0; i<DAYS_IN_WEEK; i++ )
 			{
 				sTitle += DayOfWeekToString(i) + "\n";
@@ -197,14 +197,14 @@ void ScreenBookkeeping::ChangeView( View newView )
 			int coins[HOURS_IN_DAY];
 			BOOKKEEPER->GetCoinsByHour( coins );
 
-			CString sTitle1, sData1;
+			RString sTitle1, sData1;
 			for( int i=0; i<HOURS_IN_DAY/2; i++ )
 			{
 				sTitle1 += HourInDayToLocalizedString(i) + "\n";
 				sData1 += ssprintf("%d",coins[i]) + "\n";
 			}
 			
-			CString sTitle2, sData2;
+			RString sTitle2, sData2;
 			for( int i=(HOURS_IN_DAY/2); i<HOURS_IN_DAY; i++ )
 			{
 				sTitle2 += HourInDayToLocalizedString(i) + "\n";

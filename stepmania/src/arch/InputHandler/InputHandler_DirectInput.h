@@ -10,7 +10,7 @@ class InputHandler_DInput: public InputHandler
 public:
 	InputHandler_DInput();
 	~InputHandler_DInput();
-	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut );
+	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut );
 	void Update();
 	bool DevicesChanged();
 	void WindowReset();

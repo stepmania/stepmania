@@ -23,7 +23,7 @@ enum InputMode
 	NUM_InputMode,
 	InputMode_Invalid
 };
-InputMode StringToInputMode( const CString& str );
+InputMode StringToInputMode( const RString& str );
 
 #define FOREACH_OptionsPlayer( pn ) \
 	for( PlayerNumber pn=GetNextHumanPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID && (m_InputMode==INPUTMODE_INDIVIDUAL || pn==0); pn=GetNextHumanPlayer(pn) )
@@ -48,7 +48,7 @@ protected:
 	virtual void ExportOptions( int iRow, const vector<PlayerNumber> &vpns ) = 0;
 
 	void GetWidthXY( PlayerNumber pn, int iRow, int iChoiceOnRow, int &iWidthOut, int &iXOut, int &iYOut ) const;
-	CString GetExplanationText( int iRow ) const;
+	RString GetExplanationText( int iRow ) const;
 	void PositionIcons();
 	void RefreshIcons( int iRow, PlayerNumber pn );
 	void RefreshAllIcons();
@@ -60,7 +60,7 @@ protected:
 	void StoreFocus( PlayerNumber pn );
 
 	void BeginFadingOut();
-	CString GetNextScreenForSelection( PlayerNumber pn ) const;
+	RString GetNextScreenForSelection( PlayerNumber pn ) const;
 
 	void ChangeValueInRowRelative( int iRow, PlayerNumber pn, int iDelta, bool bRepeat );
 	void ChangeValueInRowAbsolute( int iRow, PlayerNumber pn, int iChoiceIndex, bool bRepeat );

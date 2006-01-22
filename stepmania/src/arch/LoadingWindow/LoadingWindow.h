@@ -7,11 +7,11 @@ struct RageSurface;
 class LoadingWindow
 {
 public:
-	virtual CString Init() { return CString(); }
+	virtual RString Init() { return RString(); }
 	virtual ~LoadingWindow() { }
 
 	virtual void Paint() = 0;
-	virtual void SetText(CString str) { }
+	virtual void SetText(RString str) { }
 	virtual void SetIcon( const RageSurface *pIcon ) { }
 };
 

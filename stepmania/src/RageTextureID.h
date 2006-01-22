@@ -9,7 +9,7 @@
  * of these. */
 struct RageTextureID
 {
-	CString filename;
+	RString filename;
 	
 	/* Maximum size of the texture, per dimension. */
 	int iMaxSize;
@@ -46,7 +46,7 @@ struct RageTextureID
 	bool bHotPinkColorKey; /* #FF00FF */
 	
 	/* These hints will be used in addition to any in the filename. */
-	CString AdditionalTextureHints;
+	RString AdditionalTextureHints;
 
 	bool operator< (const RageTextureID &rhs) const;
 	bool operator== (const RageTextureID &rhs) const;
@@ -60,8 +60,8 @@ struct RageTextureID
 	void Init();
 
 	RageTextureID() { Init(); }
-	RageTextureID( const CString &fn ) { Init(); SetFilename(fn); }
-	void SetFilename( const CString &fn );
+	RageTextureID( const RString &fn ) { Init(); SetFilename(fn); }
+	void SetFilename( const RString &fn );
 };
 
 #endif

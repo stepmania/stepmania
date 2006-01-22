@@ -12,9 +12,9 @@ public:
 	virtual ~ActorSound() { }
 	virtual Actor *Copy() const;
 
-	void Load( const CString &sPath );
+	void Load( const RString &sPath );
 	void Play();
-	void LoadFromNode( const CString& sDir, const XNode* pNode );
+	void LoadFromNode( const RString& sDir, const XNode* pNode );
 
 	//
 	// Lua

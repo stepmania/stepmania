@@ -128,7 +128,7 @@ public:
 	bool operator == ( const RageColor& other ) const	{ return r==other.r && g==other.g && b==other.b && a==other.a; }
 	bool operator != ( const RageColor& other ) const	{ return !operator==(other); }
 	
-	bool FromString( const CString &str )
+	bool FromString( const RString &str )
 	{
 		int result = sscanf( str, "%f,%f,%f,%f", &r, &g, &b, &a );
 		if( result == 3 )

@@ -46,12 +46,12 @@ GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our progr
 
 ThemeMetric<bool> USE_NAME_BLACKLIST("GameState","UseNameBlacklist");
 
-ThemeMetric<CString> DEFAULT_SORT	("GameState","DefaultSort");
+ThemeMetric<RString> DEFAULT_SORT	("GameState","DefaultSort");
 SortOrder GetDefaultSort()
 {
 	return StringToSortOrder( DEFAULT_SORT );
 }
-ThemeMetric<CString> DEFAULT_SONG	("GameState","DefaultSong");
+ThemeMetric<RString> DEFAULT_SONG	("GameState","DefaultSong");
 Song* GameState::GetDefaultSong() const
 {
 	SongID sid;
@@ -127,12 +127,12 @@ GameState::~GameState()
 	SAFE_DELETE( m_pTimingDataOriginal );
 }
 
-void GameState::ApplyGameCommand( const CString &sCommand, PlayerNumber pn )
+void GameState::ApplyGameCommand( const RString &sCommand, PlayerNumber pn )
 {
 	GameCommand m;
 	m.Load( 0, ParseCommands(sCommand) );
 
-	CString sWhy;
+	RString sWhy;
 	if( !m.IsPlayable(&sWhy) )
 		RageException::Throw( "Can't apply mode \"%s\": %s", sCommand.c_str(), sWhy.c_str() );
 
@@ -145,7 +145,7 @@ void GameState::ApplyGameCommand( const CString &sCommand, PlayerNumber pn )
 void GameState::ApplyCmdline()
 {
 	/* We need to join players before we can set the style. */
-	CString sPlayer;
+	RString sPlayer;
 	for( int i = 0; GetCommandlineArgument( "player", &sPlayer, i ); ++i )
 	{
 		int pn = atoi( sPlayer )-1;
@@ -155,7 +155,7 @@ void GameState::ApplyCmdline()
 		this->JoinPlayer( (PlayerNumber) pn );
 	}
 
-	CString sMode;
+	RString sMode;
 	for( int i = 0; GetCommandlineArgument( "mode", &sMode, i ); ++i )
 	{
 		ApplyGameCommand( sMode );
@@ -357,7 +357,7 @@ void GameState::PlayersFinalized()
 
 		Profile* pProfile = PROFILEMAN->GetProfile(pn);
 
-		CString sModifiers;
+		RString sModifiers;
 		if( pProfile->GetDefaultModifiers( this->m_pCurGame, sModifiers ) )
 		{
 			/* We don't save negative preferences (eg. "no reverse").  If the theme
@@ -578,7 +578,7 @@ void GameState::Update( float fDelta )
 void GameState::SetCurGame( const Game *pGame )
 {
 	m_pCurGame.Set( pGame );
-	CString sGame = pGame ? CString(pGame->m_szName) : CString();
+	RString sGame = pGame ? RString(pGame->m_szName) : RString();
 	PREFSMAN->SetCurrentGame( sGame );
 }
 
@@ -764,7 +764,7 @@ int GameState::GetCourseSongIndex() const
 static LocalizedString PLAYER1	("GameState","Player 1");
 static LocalizedString PLAYER2	("GameState","Player 2");
 static LocalizedString CPU		("GameState","CPU");
-CString GameState::GetPlayerDisplayName( PlayerNumber pn ) const
+RString GameState::GetPlayerDisplayName( PlayerNumber pn ) const
 {
 	ASSERT( IsPlayerEnabled(pn) );
 	const LocalizedString *pDefaultNames[] = { &PLAYER1, &PLAYER2 };
@@ -1030,7 +1030,7 @@ void GameState::GetDefaultSongOptions( SongOptions &so )
 	so.FromString( CommonMetrics::DEFAULT_MODIFIERS );
 }
 
-void GameState::ApplyModifiers( PlayerNumber pn, CString sModifiers )
+void GameState::ApplyModifiers( PlayerNumber pn, RString sModifiers )
 {
 	m_pPlayerState[pn]->m_PlayerOptions.FromString( sModifiers );
 	m_SongOptions.FromString( sModifiers );
@@ -1095,7 +1095,7 @@ bool GameState::IsDisqualified( PlayerNumber pn )
 	}
 }
 
-void GameState::GetAllUsedNoteSkins( vector<CString> &out ) const
+void GameState::GetAllUsedNoteSkins( vector<RString> &out ) const
 {
 	FOREACH_EnabledPlayer( pn )
 	{
@@ -1453,7 +1453,7 @@ bool GameState::AnyPlayerHasRankingFeats() const
 	return false;
 }
 
-void GameState::StoreRankingName( PlayerNumber pn, CString sName )
+void GameState::StoreRankingName( PlayerNumber pn, RString sName )
 {
 	sName.MakeUpper();
 
@@ -1462,7 +1462,7 @@ void GameState::StoreRankingName( PlayerNumber pn, CString sName )
 		RageFile file;
 		if( file.Open(NAME_BLACKLIST_FILE) )
 		{
-			CString sLine;
+			RString sLine;
 			
 			while( !file.AtEOF() )
 			{
@@ -1575,7 +1575,7 @@ bool GameState::IsTimeToPlayAttractSounds() const
 	return false;
 }
 
-void GameState::VisitAttractScreen( const CString sScreenName )
+void GameState::VisitAttractScreen( const RString sScreenName )
 {
 	if( sScreenName == CommonMetrics::FIRST_ATTRACT_SCREEN.GetValue() )
 		m_iNumTimesThroughAttract++;
@@ -1743,7 +1743,7 @@ float GameState::GetGoalPercentComplete( PlayerNumber pn )
 		return fActual / fGoal;
 }
 
-bool GameState::PlayerIsUsingModifier( PlayerNumber pn, const CString &sModifier )
+bool GameState::PlayerIsUsingModifier( PlayerNumber pn, const RString &sModifier )
 {
 	PlayerOptions po = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions;
 	SongOptions so = GAMESTATE->m_SongOptions;
@@ -1985,7 +1985,7 @@ public:
 		for( unsigned i=0; i<vpStepsToShow.size(); i++ )
 		{
 			const Steps* pSteps = vpStepsToShow[i];
-			CString sDifficulty = DifficultyToLocalizedString( pSteps->GetDifficulty() );
+			RString sDifficulty = DifficultyToLocalizedString( pSteps->GetDifficulty() );
 			
 			// HACK: reset capitalization
 			sDifficulty.MakeLower();
@@ -2090,14 +2090,14 @@ LuaFunction_NoArgs( IsFinalStage,			GAMESTATE->IsFinalStage() )
 LuaFunction_NoArgs( IsExtraStage,			GAMESTATE->IsExtraStage() )
 LuaFunction_NoArgs( IsExtraStage2,			GAMESTATE->IsExtraStage2() )
 LuaFunction_NoArgs( CourseSongIndex,		GAMESTATE->GetCourseSongIndex() )
-LuaFunction_NoArgs( CurStyleName,			CString( GAMESTATE->m_pCurStyle == NULL ? "none": GAMESTATE->GetCurrentStyle()->m_szName ) )
+LuaFunction_NoArgs( CurStyleName,			RString( GAMESTATE->m_pCurStyle == NULL ? "none": GAMESTATE->GetCurrentStyle()->m_szName ) )
 LuaFunction_NoArgs( GetNumPlayersEnabled,	GAMESTATE->GetNumPlayersEnabled() )
 LuaFunction_NoArgs( GetEasiestNotesDifficulty, GAMESTATE->GetEasiestStepsDifficulty() )
 
-CString GetStageText()
+RString GetStageText()
 {
 	// all lowercase or compatibility with scripts
-	CString s = StageToString( GAMESTATE->GetCurrentStage() );
+	RString s = StageToString( GAMESTATE->GetCurrentStage() );
 	s.MakeLower();
 	return s;
 }

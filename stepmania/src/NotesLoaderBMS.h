@@ -13,13 +13,13 @@ class BMSLoader: public NotesLoader
 {
 	void SlideDuplicateDifficulties( Song &p );
 
-	typedef multimap<CString, CString> NameToData_t;
-	bool ReadBMSFile( const CString &sPath, BMSLoader::NameToData_t &mapNameToData );
-	bool LoadFromBMSFile( const CString &sPath, const NameToData_t &mapNameToData, Steps &out1 );
+	typedef multimap<RString, RString> NameToData_t;
+	bool ReadBMSFile( const RString &sPath, BMSLoader::NameToData_t &mapNameToData );
+	bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameToData, Steps &out1 );
 	void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out );
-	static bool GetTagFromMap( const BMSLoader::NameToData_t &mapNameToData, const CString &sName, CString &sOut );
-	static bool GetCommonTagFromMapList( const vector<NameToData_t> &aBMSData, const CString &sName, CString &out );
-	void SearchForDifficulty( CString sTag, Steps *pOut );
+	static bool GetTagFromMap( const BMSLoader::NameToData_t &mapNameToData, const RString &sName, RString &sOut );
+	static bool GetCommonTagFromMapList( const vector<NameToData_t> &aBMSData, const RString &sName, RString &out );
+	void SearchForDifficulty( RString sTag, Steps *pOut );
 
 	typedef map<int, float> MeasureToTimeSig_t;
 	void ReadTimeSigs( const NameToData_t &mapNameToData, MeasureToTimeSig_t &out );
@@ -28,12 +28,12 @@ class BMSLoader: public NotesLoader
 	void SetTimeSigAdjustments( const MeasureToTimeSig_t &sigs, Song *pOut );
 	MeasureToTimeSig_t m_TimeSigAdjustments;
 
-	CString m_sDir;
-	map<CString,int> m_mapWavIdToKeysoundIndex;
+	RString m_sDir;
+	map<RString,int> m_mapWavIdToKeysoundIndex;
 
 public:
-	void GetApplicableFiles( CString sPath, vector<CString> &out );
-	bool LoadFromDir( CString sDir, Song &out );
+	void GetApplicableFiles( RString sPath, vector<RString> &out );
+	bool LoadFromDir( RString sDir, Song &out );
 };
 
 #endif

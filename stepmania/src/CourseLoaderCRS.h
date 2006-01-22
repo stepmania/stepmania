@@ -10,11 +10,11 @@ class MsdFile;
 class CourseLoaderCRS
 {
 public:
-	static bool LoadFromCRSFile( const CString &sPath, Course &out );
-	static bool LoadFromMsd( const CString &sPath, const MsdFile &msd, Course &out, bool bFromCache );
-	static bool LoadFromBuffer( const CString &sPath, const CString &sBuffer, Course &out );
-	static bool LoadEdit( const CString &sEditFilePath, ProfileSlot slot );
-	static bool LoadEditFromBuffer( const CString &sBuffer, const CString &sPath, ProfileSlot slot );
+	static bool LoadFromCRSFile( const RString &sPath, Course &out );
+	static bool LoadFromMsd( const RString &sPath, const MsdFile &msd, Course &out, bool bFromCache );
+	static bool LoadFromBuffer( const RString &sPath, const RString &sBuffer, Course &out );
+	static bool LoadEdit( const RString &sEditFilePath, ProfileSlot slot );
+	static bool LoadEditFromBuffer( const RString &sBuffer, const RString &sPath, ProfileSlot slot );
 };
 
 #endif

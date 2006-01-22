@@ -16,7 +16,7 @@ public:
 	void Update();
 	InputHandler_Xbox();
 	~InputHandler_Xbox();
-	void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut);
+	void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut);
 
 private:
 	void getHandles();

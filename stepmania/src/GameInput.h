@@ -17,9 +17,9 @@ enum GameController
 #define FOREACH_GameController( gc ) FOREACH_ENUM( GameController, MAX_GAME_CONTROLLERS, gc )
 
 typedef int GameButton;
-CString GameButtonToString( const Game* pGame, GameButton i );
-CString GameButtonToLocalizedString( const Game* pGame, GameButton i );
-GameButton StringToGameButton( const Game* pGame, const CString& s );
+RString GameButtonToString( const Game* pGame, GameButton i );
+RString GameButtonToLocalizedString( const Game* pGame, GameButton i );
+GameButton StringToGameButton( const Game* pGame, const RString& s );
 
 const GameButton MAX_GAME_BUTTONS = 20;
 const GameButton GAME_BUTTON_INVALID = MAX_GAME_BUTTONS+1;
@@ -265,8 +265,8 @@ struct GameInput
 	inline bool IsValid() const { return controller != GAME_CONTROLLER_INVALID; };
 	inline void MakeInvalid() { controller = GAME_CONTROLLER_INVALID; button = GAME_BUTTON_INVALID; };
 
-	CString toString( const Game* pGame );
-	bool fromString( const Game* pGame, CString s );
+	RString toString( const Game* pGame );
+	bool fromString( const Game* pGame, RString s );
 };
 
 #endif

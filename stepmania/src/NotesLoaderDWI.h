@@ -15,20 +15,20 @@ class DWILoader: public NotesLoader
 	void DWIcharToNoteCol( char c, GameController i, int &col1Out, int &col2Out );
 
 	bool LoadFromDWITokens( 
-		CString sMode, CString sDescription, CString sNumFeet, CString sStepData1, 
-		CString sStepData2,
+		RString sMode, RString sDescription, RString sNumFeet, RString sStepData1, 
+		RString sStepData2,
 		Steps &out );
 
-	bool LoadFromDWIFile( CString sPath, Song &out );
+	bool LoadFromDWIFile( RString sPath, Song &out );
 
-	static float ParseBrokenDWITimestamp(const CString &arg1, const CString &arg2, const CString &arg3);
-	static bool Is192( const CString &str, size_t pos );
-	CString m_sLoadingFile;
+	static float ParseBrokenDWITimestamp(const RString &arg1, const RString &arg2, const RString &arg3);
+	static bool Is192( const RString &str, size_t pos );
+	RString m_sLoadingFile;
 
 public:
-	void GetApplicableFiles( CString sPath, vector<CString> &out );
-	bool Loadable( CString sPath );
-	bool LoadFromDir( CString sPath, Song &out );
+	void GetApplicableFiles( RString sPath, vector<RString> &out );
+	bool Loadable( RString sPath );
+	bool LoadFromDir( RString sPath, Song &out );
 };
 
 #endif

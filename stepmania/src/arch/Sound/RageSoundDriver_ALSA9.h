@@ -20,7 +20,7 @@ public:
 	void Update(float delta);
 
 	RageSound_ALSA9();
-	CString Init();
+	RString Init();
 	~RageSound_ALSA9();
 
 private:

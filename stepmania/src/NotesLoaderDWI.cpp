@@ -100,7 +100,7 @@ void DWILoader::DWIcharToNoteCol( char c, GameController i, int &col1Out, int &c
  * 1/192nds.  So, we have to do a check to figure out what it really
  * means.  If it contains 0s, it's most likely 192nds; otherwise,
  * it's most likely a jump.  Search for a 0 before the next >: */
-bool DWILoader::Is192( const CString &sStepData, size_t pos )
+bool DWILoader::Is192( const RString &sStepData, size_t pos )
 {
 	while( pos < sStepData.size() )
 	{
@@ -115,11 +115,11 @@ bool DWILoader::Is192( const CString &sStepData, size_t pos )
 }
 
 bool DWILoader::LoadFromDWITokens( 
-	CString sMode, 
-	CString sDescription,
-	CString sNumFeet,
-	CString sStepData1, 
-	CString sStepData2,
+	RString sMode, 
+	RString sDescription,
+	RString sNumFeet,
+	RString sStepData1, 
+	RString sStepData2,
 	Steps &out)
 {
 	CHECKPOINT_M( "DWILoader::LoadFromDWITokens()" );
@@ -179,7 +179,7 @@ bool DWILoader::LoadFromDWITokens(
 
 	for( int pad=0; pad<2; pad++ )		// foreach pad
 	{
-		CString sStepData;
+		RString sStepData;
 		switch( pad )
 		{
 		case 0:
@@ -337,7 +337,7 @@ bool DWILoader::LoadFromDWITokens(
 
 /* This value can be in either "HH:MM:SS.sssss", "MM:SS.sssss", "SSS.sssss"
  * or milliseconds. */
-float DWILoader::ParseBrokenDWITimestamp(const CString &arg1, const CString &arg2, const CString &arg3)
+float DWILoader::ParseBrokenDWITimestamp(const RString &arg1, const RString &arg2, const RString &arg3)
 {
 	if(arg1.empty()) return 0;
 
@@ -359,7 +359,7 @@ float DWILoader::ParseBrokenDWITimestamp(const CString &arg1, const CString &arg
 	return HHMMSSToSeconds( arg1+":"+arg2+":"+arg3 );
 }
 
-bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
+bool DWILoader::LoadFromDWIFile( RString sPath, Song &out )
 {
 	LOG->Trace( "Song::LoadFromDWIFile(%s)", sPath.c_str() );
 	m_sLoadingFile = sPath;
@@ -372,7 +372,7 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		CString sValueName = sParams[0];
+		RString sValueName = sParams[0];
 
 		if(iNumParams < 1)
 		{
@@ -442,12 +442,12 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 
 		else if( 0==stricmp(sValueName,"FREEZE") )
 		{
-			vector<CString> arrayFreezeExpressions;
+			vector<RString> arrayFreezeExpressions;
 			split( sParams[1], ",", arrayFreezeExpressions );
 
 			for( unsigned f=0; f<arrayFreezeExpressions.size(); f++ )
 			{
-				vector<CString> arrayFreezeValues;
+				vector<RString> arrayFreezeValues;
 				split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
 				if( arrayFreezeValues.size() != 2 )
 				{
@@ -464,12 +464,12 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 
 		else if( 0==stricmp(sValueName,"CHANGEBPM")  || 0==stricmp(sValueName,"BPMCHANGE") )
 		{
-			vector<CString> arrayBPMChangeExpressions;
+			vector<RString> arrayBPMChangeExpressions;
 			split( sParams[1], ",", arrayBPMChangeExpressions );
 
 			for( unsigned b=0; b<arrayBPMChangeExpressions.size(); b++ )
 			{
-				vector<CString> arrayBPMChangeValues;
+				vector<RString> arrayBPMChangeValues;
 				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
 				if( arrayBPMChangeValues.size() != 2 )
 				{
@@ -495,7 +495,7 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 				sParams[1], 
 				sParams[2], 
 				sParams[3], 
-				(iNumParams==5) ? sParams[4] : CString(""),
+				(iNumParams==5) ? sParams[4] : RString(""),
 				*pNewNotes
 				);
 			if(pNewNotes->m_StepsType != STEPS_TYPE_INVALID)
@@ -508,20 +508,20 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 		{
 			/* We don't want to support these tags.  However, we don't want
 			 * to pick up images used here as song images (eg. banners). */
-			CString param = sParams[1];
+			RString param = sParams[1];
 			/* "{foo} ... {foo2}" */
 			size_t pos = 0;
-			while( pos < CString::npos )
+			while( pos < RString::npos )
 			{
 
 				size_t startpos = param.find('{', pos);
-				if( startpos == CString::npos )
+				if( startpos == RString::npos )
 					break;
 				size_t endpos = param.find('}', startpos);
-				if( endpos == CString::npos )
+				if( endpos == RString::npos )
 					break;
 
-				CString sub = param.substr( startpos+1, endpos-startpos-1 );
+				RString sub = param.substr( startpos+1, endpos-startpos-1 );
 
 				pos = endpos + 1;
 
@@ -536,14 +536,14 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 	return true;
 }
 
-void DWILoader::GetApplicableFiles( CString sPath, vector<CString> &out )
+void DWILoader::GetApplicableFiles( RString sPath, vector<RString> &out )
 {
-	GetDirListing( sPath + CString("*.dwi"), out );
+	GetDirListing( sPath + RString("*.dwi"), out );
 }
 
-bool DWILoader::LoadFromDir( CString sPath, Song &out )
+bool DWILoader::LoadFromDir( RString sPath, Song &out )
 {
-	vector<CString> aFileNames;
+	vector<RString> aFileNames;
 	GetApplicableFiles( sPath, aFileNames );
 
 	if( aFileNames.size() > 1 )

@@ -11,7 +11,7 @@
 #include "ActorUtil.h"
 #include "Course.h"
 
-static const CString GAIN_LIFE_COMMAND_NAME = "GainLife";
+static const RString GAIN_LIFE_COMMAND_NAME = "GainLife";
 
 ScoreDisplayLifeTime::ScoreDisplayLifeTime()
 {
@@ -22,7 +22,7 @@ void ScoreDisplayLifeTime::Init( const PlayerState* pPlayerState, const PlayerSt
 {
 	ScoreDisplay::Init( pPlayerState, pPlayerStageStats );
 
-	const CString sType = "ScoreDisplayLifeTime";
+	const RString sType = "ScoreDisplayLifeTime";
 
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = pPlayerState->m_PlayerNumber;
@@ -45,13 +45,13 @@ void ScoreDisplayLifeTime::Init( const PlayerState* pPlayerState, const PlayerSt
 
 	FOREACH_TapNoteScore( tns )
 	{
-		const CString &sCommand = TapNoteScoreToString(tns);
+		const RString &sCommand = TapNoteScoreToString(tns);
 		if( !m_textDeltaSeconds.HasCommand( sCommand ) )
 			ActorUtil::LoadCommand( m_textDeltaSeconds, sType, sCommand );
 	}
 	FOREACH_HoldNoteScore( hns )
 	{
-		const CString &sCommand = HoldNoteScoreToString(hns);
+		const RString &sCommand = HoldNoteScoreToString(hns);
 		if( !m_textDeltaSeconds.HasCommand( sCommand ) )
 			ActorUtil::LoadCommand( m_textDeltaSeconds, sType, sCommand );
 	}
@@ -67,7 +67,7 @@ void ScoreDisplayLifeTime::Update( float fDelta )
 
 	float fSecs = m_pPlayerStageStats->fLifeRemainingSeconds;
 
-	CString s = SecondsToMSSMsMs(fSecs);
+	RString s = SecondsToMSSMsMs(fSecs);
 	m_textTimeRemaining.SetText( s );
 }
 
@@ -124,9 +124,9 @@ void ScoreDisplayLifeTime::OnJudgment( HoldNoteScore hns, TapNoteScore tns )
 	PlayGainLoss( HoldNoteScoreToString(hns), fMeterChange );
 }
 
-void ScoreDisplayLifeTime::PlayGainLoss( const CString &sCommand, float fDeltaLifeSecs )
+void ScoreDisplayLifeTime::PlayGainLoss( const RString &sCommand, float fDeltaLifeSecs )
 {
-	CString s;
+	RString s;
 	if( fDeltaLifeSecs != 0 )
 		s = ssprintf( "%+1.1fs", fDeltaLifeSecs);
 	m_textDeltaSeconds.SetText( s );

@@ -127,7 +127,7 @@ public:
 
 	int lastCode;	//Used for debugging purposes
 
-	CString address;
+	RString address;
 
 private:
 

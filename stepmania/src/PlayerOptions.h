@@ -16,12 +16,12 @@ public:
 	PlayerOptions() { Init(); };
 	void Init();
 	void Approach( const PlayerOptions& other, float fDeltaSeconds );
-	CString GetString() const;
-	CString GetSavedPrefsString() const;	// only the basic options that players would want for every song
+	RString GetString() const;
+	RString GetSavedPrefsString() const;	// only the basic options that players would want for every song
 	void ResetSavedPrefs();
-	void GetMods( vector<CString> &AddTo ) const;
-	void GetThemedMods( vector<CString> &AddTo ) const;
-	void FromString( CString sOptions, bool bWarnOnInvalid = false );
+	void GetMods( vector<RString> &AddTo ) const;
+	void GetThemedMods( vector<RString> &AddTo ) const;
+	void FromString( RString sOptions, bool bWarnOnInvalid = false );
 	void ChooseRandomModifiers();
 	bool ContainsTransformOrTurn() const;
 
@@ -134,7 +134,7 @@ public:
 	bool		m_bTransforms[NUM_TRANSFORMS];
 	ScoreDisplay m_ScoreDisplay;
 
-	CString		m_sNoteSkin;
+	RString		m_sNoteSkin;
 
 	void NextAccel();
 	void NextEffect();

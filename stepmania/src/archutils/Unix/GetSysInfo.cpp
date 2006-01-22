@@ -4,7 +4,7 @@
 
 #include <sys/utsname.h>
 
-void GetKernel( CString &sys, int &vers )
+void GetKernel( RString &sys, int &vers )
 {
 	utsname uts;
 	uname( &uts );
@@ -15,7 +15,7 @@ void GetKernel( CString &sys, int &vers )
 	if( sys == "Linux" )
 	{
 		static Regex ver( "([0-9]+)\\.([0-9]+)\\.([0-9]+)" );
-		vector<CString> matches;
+		vector<RString> matches;
 		if( ver.Compare(uts.release, matches) )
 		{
 			ASSERT( matches.size() >= 2 );

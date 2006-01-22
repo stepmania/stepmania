@@ -27,13 +27,13 @@ private:
 public:
 	static void InitializeErrorHandler();
 	static void GetSoundCardDebugInfo();
-	static CString GetHardwareID( CString name="" );
+	static RString GetHardwareID( RString name="" );
 		
 	enum hw { HW_HARDWARE, HW_SOFTWARE, HW_DONT_CARE };
 
 	/* Call SetSampleRate before you use the sample. */
 	Alsa9Buf();
-	CString Init( hw hardware, int channels );
+	RString Init( hw hardware, int channels );
 	~Alsa9Buf();
 	
 	int GetNumFramesToFill();

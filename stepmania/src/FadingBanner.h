@@ -21,7 +21,7 @@ public:
 	void LoadFromSong( const Song* pSong );		// NULL means no song
 	void LoadAllMusic();
 	void LoadMode();
-	void LoadFromSongGroup( CString sSongGroup );
+	void LoadFromSongGroup( RString sSongGroup );
 	void LoadFromCourse( const Course* pCourse );
 	void LoadIconFromCharacter( Character* pCharacter );
 	void LoadRoulette();
@@ -29,7 +29,7 @@ public:
 	void LoadFallback();
 	void LoadCourseFallback();
 
-	bool LoadFromCachedBanner( const CString &path );
+	bool LoadFromCachedBanner( const RString &path );
 
 	void SetMovingFast( bool fast ) { m_bMovingFast=fast; }
 	virtual void Update( float fDeltaTime );

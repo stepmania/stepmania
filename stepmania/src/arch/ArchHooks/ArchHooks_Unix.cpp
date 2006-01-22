@@ -176,7 +176,7 @@ ArchHooks_Unix::ArchHooks_Unix()
 #define _CS_GNU_LIBC_VERSION 2
 #endif
 
-static CString LibcVersion()
+static RString LibcVersion()
 {	
 	char buf[1024] = "(error)";
 	int ret = confstr( _CS_GNU_LIBC_VERSION, buf, sizeof(buf) );
@@ -188,7 +188,7 @@ static CString LibcVersion()
 
 void ArchHooks_Unix::DumpDebugInfo()
 {
-	CString sys;
+	RString sys;
 	int vers;
 	GetKernel( sys, vers );
 	LOG->Info( "OS: %s ver %06i", sys.c_str(), vers );
@@ -207,7 +207,7 @@ void ArchHooks_Unix::DumpDebugInfo()
 
 void ArchHooks_Unix::SetTime( tm newtime )
 {
-	CString sCommand = ssprintf( "date %02d%02d%02d%02d%04d.%02d",
+	RString sCommand = ssprintf( "date %02d%02d%02d%02d%04d.%02d",
 		newtime.tm_mon+1,
 		newtime.tm_mday,
 		newtime.tm_hour,
@@ -225,7 +225,7 @@ void ArchHooks_Unix::SetTime( tm newtime )
 #include <sys/stat.h>
 
 static LocalizedString COULDNT_FIND_SONGS( "ArchHooks_Unix", "Couldn't find 'Songs'" );
-void ArchHooks::MountInitialFilesystems( const CString &sDirOfExecutable )
+void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 {
 #if defined(LINUX)
 	/* Mount the root filesystem, so we can read files in /proc, /etc, and so on.
@@ -240,7 +240,7 @@ void ArchHooks::MountInitialFilesystems( const CString &sDirOfExecutable )
 	 * scores.  It would need to handle permissions properly. */
 /*	RageFileManager::Mount( "dir", "/var/lib/games/stepmania", "/Save/Profiles" ); */
 	
-	// CString Home = getenv( "HOME" ) + "/" + PRODUCT_NAME;
+	// RString Home = getenv( "HOME" ) + "/" + PRODUCT_NAME;
 
 	/*
 	 * Next: path to write general mutable user data.  If the above path fails (eg.
@@ -258,7 +258,7 @@ void ArchHooks::MountInitialFilesystems( const CString &sDirOfExecutable )
 	/* Search for a directory with "Songs" in it.  Be careful: the CWD is likely to
 	 * be ~, and it's possible that some users will have a ~/Songs/ directory that
 	 * has nothing to do with us, so check the initial directory last. */
-	CString Root = "";
+	RString Root = "";
 	struct stat st;
 	if( Root == "" && !stat( sDirOfExecutable + "/Songs", &st ) && st.st_mode&S_IFDIR )
 		Root = sDirOfExecutable;

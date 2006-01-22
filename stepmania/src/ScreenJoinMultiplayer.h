@@ -14,7 +14,7 @@ enum MultiPlayerStatus
 	NUM_MultiPlayerStatus,
 	MultiPlayerStatus_INVALID
 };
-const CString& MultiPlayerStatusToString( MultiPlayerStatus i );
+const RString& MultiPlayerStatusToString( MultiPlayerStatus i );
 
 
 class ScreenJoinMultiplayer : public ScreenWithMenuElements

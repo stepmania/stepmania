@@ -25,7 +25,7 @@ ScoreDisplayBattle::ScoreDisplayBattle()
 		this->AddChild( &m_ItemIcon[i] );
 	}
 
-	vector<CString> asIconPaths;
+	vector<RString> asIconPaths;
 	GetDirListing( THEME->GetCurThemeDir()+"Graphic/ScoreDisplayBattle icon*", asIconPaths );
 	for( unsigned j=0; j<asIconPaths.size(); j++ )
 		m_TexturePreload.Load( asIconPaths[j] );
@@ -43,7 +43,7 @@ void ScoreDisplayBattle::Update( float fDelta )
 	for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
 	{
 		const Attack& attack = m_pPlayerState->m_Inventory[s];
-		CString sNewModifier = attack.sModifiers;
+		RString sNewModifier = attack.sModifiers;
 
 		if( sNewModifier != m_iLastSeenInventory[s] )
 		{

@@ -16,12 +16,12 @@ public:
 	BitmapText &operator =( const BitmapText &cpy );
 	virtual ~BitmapText();
 
-	virtual void LoadFromNode( const CString& sDir, const XNode* pNode );
+	virtual void LoadFromNode( const RString& sDir, const XNode* pNode );
 	virtual Actor *Copy() const;
 
-	bool LoadFromFont( const CString& sFontName );
-	bool LoadFromTextureAndChars( const CString& sTexturePath, const CString& sChars );
-	void SetText( const CString& sText, const CString& sAlternateText = "", int iWrapWidthPixels = -1 );
+	bool LoadFromFont( const RString& sFontName );
+	bool LoadFromTextureAndChars( const RString& sTexturePath, const RString& sChars );
+	void SetText( const RString& sText, const RString& sAlternateText = "", int iWrapWidthPixels = -1 );
 	void SetMaxWidth( float fMaxWidth );
 	void SetMaxHeight( float fMaxHeight );
 	void SetWrapWidthPixels( int iWrapWidthPixels );
@@ -38,9 +38,9 @@ public:
 
 	void GetLines( vector<wstring> &wTextLines ) { wTextLines = m_wTextLines; }
 
-	CString GetText() const { return m_sText; }
+	RString GetText() const { return m_sText; }
 	/* Return true if the string 's' will use an alternate string, if available. */
-	bool StringWillUseAlternate( const CString& sText, const CString& sAlternateText ) const;
+	bool StringWillUseAlternate( const RString& sText, const RString& sAlternateText ) const;
 
 	//
 	// Commands
@@ -53,7 +53,7 @@ public:
 protected:
 	
 	// recalculate the items in SetText()
-	CString			m_sText;
+	RString			m_sText;
 	vector<wstring>	m_wTextLines;
 	vector<int>		m_iLineWidths;			// in source pixels
 	int				m_iWrapWidthPixels;	// -1 = no wrap
@@ -74,10 +74,10 @@ class ColorBitmapText : public BitmapText
 {
 public:
 	ColorBitmapText();
-	void SetText( const CString &sText, const CString &sAlternateText = "", int iWrapWidthPixels = -1 );
+	void SetText( const RString &sText, const RString &sAlternateText = "", int iWrapWidthPixels = -1 );
 	void DrawPrimitives();
 	void SetMaxLines( int iLines, bool bCutBottom = true );	//if bCutBottom = false then, it will crop the top
-	void SimpleAddLine( const CString &sAddition, int iWidthPixels );
+	void SimpleAddLine( const RString &sAddition, int iWidthPixels );
 	void SetMaxLines( int iNumLines, int iDirection );
 protected:
 	struct ColorChange

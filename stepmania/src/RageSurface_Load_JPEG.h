@@ -2,7 +2,7 @@
 #define RAGE_SURFACE_LOAD_JPEG_H
 
 #include "RageSurface_Load.h"
-RageSurfaceUtils::OpenResult RageSurface_Load_JPEG( const CString &sPath, RageSurface *&ret, bool bHeaderOnly, CString &error );
+RageSurfaceUtils::OpenResult RageSurface_Load_JPEG( const RString &sPath, RageSurface *&ret, bool bHeaderOnly, RString &error );
 
 #endif
 

@@ -8,7 +8,7 @@ public:
 	LoadingWindow_Null() { }
 	~LoadingWindow_Null() { }
 
-	void SetText(CString str) { }
+	void SetText(RString str) { }
 	void Paint() { }
 };
 #define USE_LOADING_WINDOW_NULL

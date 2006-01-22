@@ -28,7 +28,7 @@ class StepsID
 {
 	StepsType st;
 	Difficulty dc;
-	CString sDescription;
+	RString sDescription;
 	unsigned uHash;
 
 public:
@@ -41,7 +41,7 @@ public:
 
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
-	CString ToString() const;
+	RString ToString() const;
 	bool IsValid() const;
 	static void ClearCache();
 	

@@ -27,7 +27,7 @@ REGISTER_SCREEN_CLASS( ScreenOptionsMaster );
 
 void ScreenOptionsMaster::Init()
 {
-	vector<CString> asLineNames;
+	vector<RString> asLineNames;
 	split( LINE_NAMES, ",", asLineNames );
 	if( asLineNames.empty() )
 		RageException::Throw( "%s::LineNames is empty.", m_sName.c_str() );
@@ -52,8 +52,8 @@ void ScreenOptionsMaster::Init()
 	vector<OptionRowHandler*> OptionRowHandlers;
 	for( unsigned i = 0; i < asLineNames.size(); ++i )
 	{
-		CString sLineName = asLineNames[i];
-		CString sRowCommands = LINE(sLineName);
+		RString sLineName = asLineNames[i];
+		RString sRowCommands = LINE(sLineName);
 		
 		Commands cmds;
 		ParseCommands( sRowCommands, cmds );

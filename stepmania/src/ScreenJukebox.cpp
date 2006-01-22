@@ -126,7 +126,7 @@ void ScreenJukebox::SetSong()
 						aAttacks.push_back( Attack::FromGlobalCourseModifier( pEntry->sModifiers ) );
 					FOREACH_CONST( Attack, aAttacks, a )
 					{
-						CString s = a->sModifiers;
+						RString s = a->sModifiers;
 						s.MakeLower();
 						if( s.find("dark") != string::npos ||
 							s.find("stealth") != string::npos )

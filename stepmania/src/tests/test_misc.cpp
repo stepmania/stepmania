@@ -7,9 +7,9 @@
 #include "arch/arch.h"
 #include "arch/ArchHooks/ArchHooks.h"
 
-CString g_Driver = "dir", g_Root = ".";
+RString g_Driver = "dir", g_Root = ".";
 
-CString argv0;
+RString argv0;
 
 void test_handle_args( int argc, char *argv[] )
 {

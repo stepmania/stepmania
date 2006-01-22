@@ -8,7 +8,7 @@ class Song;
 class LyricsLoader
 {
 public:
-	bool LoadFromLRCFile( const CString& sPath, Song &out );
+	bool LoadFromLRCFile( const RString& sPath, Song &out );
 };
 
 #endif

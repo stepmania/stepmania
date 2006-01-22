@@ -22,9 +22,9 @@ LuaFunction( DifficultyToLocalizedString, DifficultyToLocalizedString((Difficult
 
 /* We prefer the above names; recognize a number of others, too.  (They'l
  * get normalized when written to SMs, etc.) */
-Difficulty StringToDifficulty( const CString& sDC )
+Difficulty StringToDifficulty( const RString& sDC )
 {
-	CString s2 = sDC;
+	RString s2 = sDC;
 	s2.MakeLower();
 	if( s2 == "beginner" )		return DIFFICULTY_BEGINNER;
 	else if( s2 == "easy" )		return DIFFICULTY_EASY;
@@ -51,7 +51,7 @@ static void LuaDifficulty(lua_State* L)
 {
 	FOREACH_Difficulty( d )
 	{
-		CString s = DifficultyToString(d);
+		RString s = DifficultyToString(d);
 		s.MakeUpper();
 		LUA->SetGlobal( "DIFFICULTY_"+s, d );
 	}
@@ -90,7 +90,7 @@ static void LuaCourseDifficulty(lua_State* L)
 {
 	FOREACH_CourseDifficulty( d )
 	{
-		CString s = CourseDifficultyToString(d);
+		RString s = CourseDifficultyToString(d);
 		s.MakeUpper();
 		LUA->SetGlobal( "COURSE_DIFFICULTY_"+s, d );
 	}

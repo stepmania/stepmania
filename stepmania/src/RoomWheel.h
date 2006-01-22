@@ -11,18 +11,18 @@
 struct RoomWheelData : public WheelItemBaseData
 {
 	RoomWheelData() { WheelItemBaseData::WheelItemBaseData(); }
-	RoomWheelData( WheelItemType wit, CString title, CString SubTitle, RageColor color );
+	RoomWheelData( WheelItemType wit, RString title, RString SubTitle, RageColor color );
 
-	CString			m_sDesc;
+	RString			m_sDesc;
 	WheelNotifyIcon::Flags  m_Flags;
 };
 
 class RoomWheelItem : public WheelItemBase
 {
 public:
-	RoomWheelItem(CString sType = "RoomWheelItem");
+	RoomWheelItem(RString sType = "RoomWheelItem");
 	RoomWheelData* data;
-	void Load( CString sType );
+	void Load( RString sType );
 	virtual void LoadFromWheelItemBaseData(WheelItemBaseData* pWID);
 
 	BitmapText m_Desc;
@@ -36,26 +36,26 @@ private:
 
 struct RoomInfo
 {
-	CString songTitle;
-	CString songSubTitle;
-	CString songArtist;
+	RString songTitle;
+	RString songSubTitle;
+	RString songArtist;
 	int numPlayers;
 	int maxPlayers;
-	vector<CString> players;
+	vector<RString> players;
 };
 
 class RoomInfoDisplay : public ActorFrame
 {
 public:
 	~RoomInfoDisplay();
-	virtual void Load( CString sType );
+	virtual void Load( RString sType );
 	virtual void Update( float fDeltaTime );
 	void SetRoom( const RoomWheelData* roomData );
 	void SetRoomInfo( const RoomInfo& info);
 	void DeployInfoBox();
 	void RetractInfoBox();
 private:
-	void RequestRoomInfo(const CString& name);
+	void RequestRoomInfo(const RString& name);
 	enum RoomInfoDisplayState
 	{
 		OPEN = 0,
@@ -90,7 +90,7 @@ private:
 
 class RoomWheel : public WheelBase {
 public:
-	virtual void Load( CString sType );
+	virtual void Load( RString sType );
 	virtual void BuildWheelItemsData( vector<WheelItemBaseData*> &arrayWheelItemDatas );
 	virtual unsigned int GetNumItems() const;
 	virtual void RemoveItem( int index );

@@ -53,10 +53,10 @@ public:
 	PaneDisplay();
 	virtual Actor *Copy() const;
 
-	void Load( const CString &sMetricsGroup, PlayerNumber pn );
+	void Load( const RString &sMetricsGroup, PlayerNumber pn );
 	void SetFromGameState( SortOrder so );
 
-	void LoadFromNode( const CString &sDir, const XNode *pNode );
+	void LoadFromNode( const RString &sDir, const XNode *pNode );
 
 	// Lua
 	void PushSelf( lua_State *L );

@@ -63,7 +63,7 @@ void ScreenSelectMode::Init()
 		//
 		// Load Sprite
 		//
-		CString sElementPath = THEME->GetPathG("ScreenSelectMode",mc.m_sName);
+		RString sElementPath = THEME->GetPathG("ScreenSelectMode",mc.m_sName);
 
 		arrayLocations.push_back( sElementPath );
 		
@@ -90,13 +90,13 @@ void ScreenSelectMode::Init()
 				m_bCharsAvailable = true;
 				if(vpCharacters[i]->Has2DElems())
 				{
-					CString mpath = vpCharacters[i]->GetSongSelectIconPath();
+					RString mpath = vpCharacters[i]->GetSongSelectIconPath();
 					LOG->Trace("Char: %d, %s, 2D: true",i,mpath.c_str());						
 					m_b2DAvailable = true;
 				}
 				else
 				{
-					CString mpath = vpCharacters[i]->GetSongSelectIconPath();
+					RString mpath = vpCharacters[i]->GetSongSelectIconPath();
 					LOG->Trace("Char: %d, %s, 2D: false",i,mpath.c_str());						
 				}
 			}
@@ -184,14 +184,14 @@ void ScreenSelectMode::MenuRight( PlayerNumber pn )
 
 void ScreenSelectMode::UpdateSelectableChoices()
 {
-	vector<CString> GraphicPaths;
+	vector<RString> GraphicPaths;
 	m_iNumChoices = 0;
 	unsigned i=0;
 	unsigned j=0;
 	for( i=0; i<m_aGameCommands.size(); i++ )
 	{
 		const GameCommand& mc = m_aGameCommands[i];
-		CString modename = mc.m_sName;
+		RString modename = mc.m_sName;
 		modename.MakeUpper();
 
 

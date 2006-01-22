@@ -10,7 +10,7 @@ LuaExpressionTransform::LuaExpressionTransform()
 	m_iNumSubdivisions = 1;
 }
 
-void LuaExpressionTransform::SetFromExpression( const CString &sExpression )
+void LuaExpressionTransform::SetFromExpression( const RString &sExpression )
 {
 	m_pexprTransformFunction->SetFromExpression( sExpression );
 }

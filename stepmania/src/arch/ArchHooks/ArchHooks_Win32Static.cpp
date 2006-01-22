@@ -61,7 +61,7 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 	FILEMAN->Mount( "dir", sDesktopDir, "/Desktop" );
 }
 
-static CString LangIdToString( LANGID l )
+static RString LangIdToString( LANGID l )
 {
 	switch( PRIMARYLANGID(l) )
 	{

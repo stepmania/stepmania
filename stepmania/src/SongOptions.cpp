@@ -15,9 +15,9 @@ void SongOptions::Init()
 	m_bSaveScore = true;
 }
 
-CString SongOptions::GetString() const
+RString SongOptions::GetString() const
 {
-	CString sReturn;
+	RString sReturn;
 
 	switch( m_LifeType )
 	{
@@ -49,7 +49,7 @@ CString SongOptions::GetString() const
 
 	if( m_fMusicRate != 1 )
 	{
-		CString s = ssprintf( "%2.2f", m_fMusicRate );
+		RString s = ssprintf( "%2.2f", m_fMusicRate );
 		if( s[s.size()-1] == '0' )
 			s.erase( s.size()-1 );
 		sReturn += s + "xMusic, ";
@@ -70,21 +70,21 @@ CString SongOptions::GetString() const
 
 /* Options are added to the current settings; call Init() beforehand if
  * you don't want this. */
-void SongOptions::FromString( CString sOptions )
+void SongOptions::FromString( RString sOptions )
 {
 //	Init();
 	sOptions.MakeLower();
-	vector<CString> asBits;
+	vector<RString> asBits;
 	split( sOptions, ",", asBits, true );
 
 	for( unsigned i=0; i<asBits.size(); i++ )
 	{
-		CString& sBit = asBits[i];
+		RString& sBit = asBits[i];
 		TrimLeft(sBit);
 		TrimRight(sBit);
 		
 		Regex mult("^([0-9]+(\\.[0-9]+)?)xmusic$");
-		vector<CString> matches;
+		vector<RString> matches;
 		if( mult.Compare(sBit, matches) )
 		{
 			char *p = NULL;
@@ -100,7 +100,7 @@ void SongOptions::FromString( CString sOptions )
 			ASSERT( ret == 1 );
 		}
 
-		vector<CString> asParts;
+		vector<RString> asParts;
 		split( sBit, " ", asParts, true );
 		bool on = true;
 		if( asParts.size() > 1 )

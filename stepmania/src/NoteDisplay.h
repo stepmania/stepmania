@@ -28,7 +28,7 @@ struct NoteColorActor
 {
 	NoteColorActor();
 	~NoteColorActor();
-	void Load( const CString &sButton, const CString &sElement );
+	void Load( const RString &sButton, const RString &sElement );
 	Actor* Get() { return m_p; }
 private:
 	Actor* m_p;
@@ -38,7 +38,7 @@ struct NoteColorSprite
 {
 	NoteColorSprite();
 	~NoteColorSprite();
-	void Load( const CString &sButton, const CString &sElement );
+	void Load( const RString &sButton, const RString &sElement );
 	Sprite* Get() { return m_p; }
 private:
 	Sprite*	m_p;
@@ -51,7 +51,7 @@ enum HoldType
 	NUM_HOLD_TYPES 
 };
 #define FOREACH_HoldType( i ) FOREACH_ENUM( HoldType, NUM_HOLD_TYPES, i )
-const CString &HoldTypeToString( HoldType ht );
+const RString &HoldTypeToString( HoldType ht );
 
 enum ActiveType
 {
@@ -60,7 +60,7 @@ enum ActiveType
 	NUM_ACTIVE_TYPES
 };
 #define FOREACH_ActiveType( i ) FOREACH_ENUM( ActiveType, NUM_ACTIVE_TYPES, i )
-const CString &ActiveTypeToString( ActiveType at );
+const RString &ActiveTypeToString( ActiveType at );
 
 
 class NoteDisplay

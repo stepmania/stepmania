@@ -84,7 +84,7 @@ void ScreenTitleMenu::Input( const InputEventPlus &input )
 			CodeDetector::EnteredCode(input.GameI.controller,CODE_NEXT_ANNOUNCER2) )
 		{
 			ANNOUNCER->NextAnnouncer();
-			CString sName = ANNOUNCER->GetCurAnnouncerName();
+			RString sName = ANNOUNCER->GetCurAnnouncerName();
 			if( sName=="" ) sName = "(none)";
 			SCREENMAN->SystemMessage( ANNOUNCER_.GetValue()+": "+sName );
 			SCREENMAN->SetNewScreen( m_sName );
@@ -94,7 +94,7 @@ void ScreenTitleMenu::Input( const InputEventPlus &input )
 	ScreenSelectMaster::Input( input );
 }
 
-void ScreenTitleMenu::HandleMessage( const CString& sMessage )
+void ScreenTitleMenu::HandleMessage( const RString& sMessage )
 {
 	if( sMessage == PREFSMAN->m_CoinMode.GetName()+"Changed" )
 	{

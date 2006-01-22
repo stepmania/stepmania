@@ -34,7 +34,7 @@ class MovieTexture_DShow : public RageMovieTexture
 public:
 	MovieTexture_DShow( RageTextureID ID );
 	virtual ~MovieTexture_DShow();
-	CString Init();
+	RString Init();
 
 	/* only called by RageTextureManager::InvalidateTextures */
 	void Invalidate() { m_uTexHandle = 0; }
@@ -55,13 +55,13 @@ private:
 	const char *buffer;
 	RageSemaphore buffer_lock, buffer_finished;
 
-	CString Create();
+	RString Create();
 
 	void CreateTexture();
 	void SkipUpdates();
 	void StopSkippingUpdates();
 	void CheckFrame();
-	CString GetActiveFilterList();
+	RString GetActiveFilterList();
 
 	unsigned GetTexHandle() const { return m_uTexHandle; }
 	unsigned m_uTexHandle;

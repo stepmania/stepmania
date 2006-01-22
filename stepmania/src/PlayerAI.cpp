@@ -38,7 +38,7 @@ void PlayerAI::InitFromDisk()
 
 	for( int i=0; i<NUM_SKILL_LEVELS; i++ )
 	{
-		CString sKey = ssprintf("Skill%d", i);
+		RString sKey = ssprintf("Skill%d", i);
 		XNode* pNode = ini.GetChild(sKey);
 		if( pNode == NULL )
 			RageException::Throw( "AI.ini: '%s' doesn't exist.", sKey.c_str() );

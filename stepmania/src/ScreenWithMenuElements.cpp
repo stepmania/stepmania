@@ -49,7 +49,7 @@ void ScreenWithMenuElements::Init()
 	if( STYLE_ICON && GAMESTATE->m_pCurStyle )
 	{
 		m_sprStyleIcon.SetName( "StyleIcon" );
-		m_sprStyleIcon.Load( THEME->GetPathG("MenuElements",CString("icon ")+GAMESTATE->GetCurrentStyle()->m_szName) );
+		m_sprStyleIcon.Load( THEME->GetPathG("MenuElements",RString("icon ")+GAMESTATE->GetCurrentStyle()->m_szName) );
 		m_sprStyleIcon.StopAnimating();
 		m_sprStyleIcon.SetState( GAMESTATE->m_MasterPlayerNumber );
 		SET_XY( m_sprStyleIcon );
@@ -193,8 +193,8 @@ ScreenWithMenuElements::~ScreenWithMenuElements()
 
 void ScreenWithMenuElements::LoadHelpText()
 {
-	vector<CString> vs;
-	CString s = THEME->GetString(m_sName,"HelpText");
+	vector<RString> vs;
+	RString s = THEME->GetString(m_sName,"HelpText");
 	split( s, "::", vs );
 
 	m_textHelp->SetTips( vs );

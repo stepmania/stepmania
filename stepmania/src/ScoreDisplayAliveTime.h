@@ -16,10 +16,10 @@ public:
 
 	virtual void Update( float fDelta );
 
-	void LoadFromNode( const CString& sDir, const XNode* pNode );
+	void LoadFromNode( const RString& sDir, const XNode* pNode );
 	virtual Actor *Copy() const;
 
-	void PlayCommand( const CString &sCommandName, Actor* pParent );
+	void PlayCommand( const RString &sCommandName, Actor* pParent );
 
 	void UpdateNumber();
 

@@ -9,7 +9,7 @@ class InputHandler_Win32_Para: public InputHandler
 {
 public:
 	InputHandler_Win32_Para();
-	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut );
+	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut );
 };
 #define USE_INPUT_HANDLER_WIN32_PARA
 

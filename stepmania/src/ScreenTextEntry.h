@@ -25,17 +25,17 @@ class ScreenTextEntry : public ScreenWithMenuElements
 public:
 	static void TextEntry( 
 		ScreenMessage smSendOnPop, 
-		CString sQuestion, 
-		CString sInitialAnswer, 
+		RString sQuestion, 
+		RString sInitialAnswer, 
 		int iMaxInputLength, 
-		bool(*Validate)(const CString &sAnswer,CString &sErrorOut) = NULL, 
-		void(*OnOK)(const CString &sAnswer) = NULL, 
+		bool(*Validate)(const RString &sAnswer,RString &sErrorOut) = NULL, 
+		void(*OnOK)(const RString &sAnswer) = NULL, 
 		void(*OnCanel)() = NULL,
 		bool bPassword = false );
 	static void Password( 
 		ScreenMessage smSendOnPop, 
-		const CString &sQuestion, 
-		void(*OnOK)(const CString &sPassword) = NULL, 
+		const RString &sQuestion, 
+		void(*OnOK)(const RString &sPassword) = NULL, 
 		void(*OnCanel)() = NULL )
 	{
 		TextEntry( smSendOnPop, sQuestion, "", 255, NULL, OnOK, OnCanel, true );
@@ -48,14 +48,14 @@ public:
 	virtual void Update( float fDelta );
 	virtual void Input( const InputEventPlus &input );
 
-	static CString s_sLastAnswer;
+	static RString s_sLastAnswer;
 	static bool s_bCancelledLast;
 
 protected:
 	void MoveX( int iDir );
 	void MoveY( int iDir );
 	
-	void AppendToAnswer( CString s );
+	void AppendToAnswer( RString s );
 	void BackspaceInAnswer();
 
 	void End( bool bCancelled );

@@ -99,7 +99,7 @@ void Combo::SetCombo( int iCombo, int iMisses )
 	m_sprMissesLabel->SetHidden( !bComboOfMisses );
 	m_textNumber.SetHidden( false );
 
-	CString txt = ssprintf("%d", iNum);
+	RString txt = ssprintf("%d", iNum);
 	
 	// Do pulse even if the number isn't changing.
 
