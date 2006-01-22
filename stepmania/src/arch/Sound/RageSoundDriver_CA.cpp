@@ -59,7 +59,7 @@ RString RageSound_CA::Init()
 		
 		CAAudioHardwareSystem::GetPropertyData( kAudioHardwarePropertyRunLoop, size, &runLoopRef );
 		observerRef = CFRunLoopObserverCreate( kCFAllocatorDefault, kCFRunLoopEntry,
-											   false, 0, NameHALThread, &context );
+						       false, 0, NameHALThread, &context );
 		CFRunLoopAddObserver( runLoopRef, observerRef, kCFRunLoopDefaultMode );
 	}
 	catch( CAException& e )
@@ -81,7 +81,7 @@ RString RageSound_CA::Init()
 	CFRelease( ref );
 	
 	m_iSampleRate = PREFSMAN->m_iSoundPreferredSampleRate;
-	Float64 nominalSampleRate =  m_iSampleRate;
+	Float64 nominalSampleRate = m_iSampleRate;
     
 	try
 	{
@@ -103,9 +103,9 @@ RString RageSound_CA::Init()
 
 	// The canonical format
 	Desc IOProcFormat( nominalSampleRate, kAudioFormatLinearPCM, 8, 1, 8, 2, 32,
-					   kAudioFormatFlagsNativeFloatPacked);
+			   kAudioFormatFlagsNativeFloatPacked);
 	const Desc SMFormat( nominalSampleRate, kAudioFormatLinearPCM, kBytesPerPacket, kFramesPerPacket,
-						 kBytesPerFrame, kChannelsPerFrame, kBitsPerChannel, kFormatFlags );
+			     kBytesPerFrame, kChannelsPerFrame, kBitsPerChannel, kFormatFlags );
 	
 	try
 	{
@@ -152,7 +152,7 @@ RString RageSound_CA::Init()
 		frames += bufferSize;
 		m_fLatency = frames / nominalSampleRate;
 		LOG->Info( "Frames of latency:        %lu\n"
-				   "Seconds of latency:       %f", frames, m_fLatency );
+			   "Seconds of latency:       %f", frames, m_fLatency );
 	}
 	catch( const CAException& e )
 	{
@@ -186,7 +186,7 @@ RageSound_CA::~RageSound_CA()
 			
 			CATry;
 			m_pOutputDevice->RemovePropertyListener( kAudioPropertyWildcardChannel, kAudioDeviceSectionOutput,
-													 p.first, p.second );
+								 p.first, p.second );
 			CACatch;
 			m_vPropertyListeners.pop_back();
 		}
@@ -206,9 +206,9 @@ void RageSound_CA::AddListener( AudioDevicePropertyID propertyID, AudioDevicePro
 	try
 	{
 		m_pOutputDevice->AddPropertyListener( kAudioPropertyWildcardChannel, kAudioDeviceSectionOutput,
-											  propertyID, handler, this );
+						      propertyID, handler, this );
 		m_vPropertyListeners.push_back( pair<AudioDevicePropertyID,
-										AudioDevicePropertyListenerProc>(propertyID, handler) );
+						AudioDevicePropertyListenerProc>(propertyID, handler) );
 	}
 	catch( const CAException& e )
 	{
@@ -225,7 +225,8 @@ int64_t RageSound_CA::GetPosition( const RageSoundBase *sound ) const
 	{
 		m_pOutputDevice->GetCurrentTime( time );
 		if( bStopped )
-			FAIL_M( ssprintf("old time %lld, new time %lld", g_iLastSampleTime, int64_t(time.mSampleTime)) );
+			FAIL_M( ssprintf("old time %lld, new time %lld",
+					 g_iLastSampleTime, int64_t(time.mSampleTime)) );
 		g_iLastSampleTime = int64_t( time.mSampleTime );
 		return g_iLastSampleTime;
 	}
@@ -257,12 +258,12 @@ void RageSound_CA::NameHALThread( CFRunLoopObserverRef observer, CFRunLoopActivi
 }
 
 OSStatus RageSound_CA::GetData( AudioDeviceID inDevice,
-								const AudioTimeStamp *inNow,
-								const AudioBufferList *inInputData,
-								const AudioTimeStamp *inInputTime,
-								AudioBufferList *outOutputData,
-								const AudioTimeStamp *inOutputTime,
-								void *inClientData )
+				const AudioTimeStamp *inNow,
+				const AudioBufferList *inInputData,
+				const AudioTimeStamp *inInputTime,
+				AudioBufferList *outOutputData,
+				const AudioTimeStamp *inOutputTime,
+				void *inClientData )
 {
 	RageTimer tm;
 	RageSound_CA *This = (RageSound_CA *)inClientData;
@@ -285,7 +286,7 @@ OSStatus RageSound_CA::GetData( AudioDeviceID inDevice,
 	wrap( g_iLastMixTimePos, NUM_MIX_TIMES );
 	
 	AudioConverterConvertBuffer( This->m_Converter, dataPackets * kBytesPerPacket,
-								 buffer, &buf.mDataByteSize, buf.mData );
+				     buffer, &buf.mDataByteSize, buf.mData );
 		
 	g_fLastIOProcTime = tm.GetDeltaTime();
 	++g_iNumIOProcCalls;
@@ -295,10 +296,10 @@ OSStatus RageSound_CA::GetData( AudioDeviceID inDevice,
 		
 
 OSStatus RageSound_CA::OverloadListener( AudioDeviceID inDevice,
-										 UInt32 inChannel,
-										 Boolean isInput,
-										 AudioDevicePropertyID inPropertyID,
-										 void *inData )
+					 UInt32 inChannel,
+					 Boolean isInput,
+					 AudioDevicePropertyID inPropertyID,
+					 void *inData )
 {
 	if( isInput )
 		return noErr;
@@ -316,7 +317,7 @@ OSStatus RageSound_CA::OverloadListener( AudioDeviceID inDevice,
 }
 
 OSStatus RageSound_CA::DeviceChanged( AudioDeviceID inDevice, UInt32 inChannel, Boolean isInput,
-									  AudioDevicePropertyID inPropertyID, void *inData )
+				      AudioDevicePropertyID inPropertyID, void *inData )
 {
 	if( isInput )
 		return noErr;
@@ -324,7 +325,7 @@ OSStatus RageSound_CA::DeviceChanged( AudioDeviceID inDevice, UInt32 inChannel, 
 }
 
 OSStatus RageSound_CA::JackChanged( AudioDeviceID inDevice, UInt32 inChannel, Boolean isInput,
-									AudioDevicePropertyID inPropertyID, void *inData )
+				    AudioDevicePropertyID inPropertyID, void *inData )
 {
 	if( isInput )
 		return noErr;
@@ -333,7 +334,7 @@ OSStatus RageSound_CA::JackChanged( AudioDeviceID inDevice, UInt32 inChannel, Bo
 	UInt32 size = sizeof( result );
 	This->m_pOutputDevice->GetPropertyData( inChannel, 0, inPropertyID, size, &result );
 	LOG->Trace( "Channel %u's has %s plugged into its jack.", unsigned(inChannel),
-				result ? "something" : "nothing" );
+		    result ? "something" : "nothing" );
 	return noErr;
 }
 							   
@@ -345,7 +346,7 @@ void RageSound_CA::SetupDecodingThread()
 }
 
 /*
- * (c) 2004, 2005 Steve Checkoway
+ * (c) 2004, 2006 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

@@ -30,22 +30,22 @@ private:
 	RageThreadRegister *m_pIOThread, *m_pNotificationThread;
 	
 	void AddListener( AudioDevicePropertyID propertyID,
-					  AudioDevicePropertyListenerProc handler, const char *name );
+			  AudioDevicePropertyListenerProc handler, const char *name );
 	static OSStatus GetData( AudioDeviceID inDevice,
-							 const AudioTimeStamp *inNow,
-							 const AudioBufferList *inInputData,
-							 const AudioTimeStamp *inInputTime,
-							 AudioBufferList *outOutputData,
-							 const AudioTimeStamp *inOutputTime,
-							 void *inClientData );
-    
+				 const AudioTimeStamp *inNow,
+				 const AudioBufferList *inInputData,
+				 const AudioTimeStamp *inInputTime,
+				 AudioBufferList *outOutputData,
+				 const AudioTimeStamp *inOutputTime,
+				 void *inClientData );
+	
 	static void NameHALThread( CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info );
-    static OSStatus OverloadListener( AudioDeviceID inDevice, UInt32 inChannel, Boolean isInput,
-									  AudioDevicePropertyID inPropertyID, void *inData );
+	static OSStatus OverloadListener( AudioDeviceID inDevice, UInt32 inChannel, Boolean isInput,
+					  AudioDevicePropertyID inPropertyID, void *inData );
 	static OSStatus DeviceChanged( AudioDeviceID inDevice, UInt32 inChannel, Boolean isInput,
-								   AudioDevicePropertyID inPropertyID, void *inData );
+				       AudioDevicePropertyID inPropertyID, void *inData );
 	static OSStatus JackChanged( AudioDeviceID inDevice, UInt32 inChannel, Boolean isInput,
-								 AudioDevicePropertyID inPropertyID, void *inData );
+				     AudioDevicePropertyID inPropertyID, void *inData );
 };
 #define USE_RAGE_SOUND_CA
 
