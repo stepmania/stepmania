@@ -14,7 +14,7 @@
 
 #include "InputHandler/Selector_InputHandler.h"
 static LocalizedString INPUT_HANDLERS_EMPTY( "Arch", "Input Handlers cannot be empty." );
-void MakeInputHandlers( CString drivers, vector<InputHandler *> &Add )
+void MakeInputHandlers( const CString &drivers, vector<InputHandler *> &Add )
 {
 	vector<CString> DriversToTry;
 	split( drivers, ",", DriversToTry, true );
@@ -71,7 +71,7 @@ void MakeInputHandlers( CString drivers, vector<InputHandler *> &Add )
 }
 
 #include "Lights/Selector_LightsDriver.h"
-void MakeLightsDrivers( CString driver, vector<LightsDriver *> &Add )
+void MakeLightsDrivers( const CString &driver, vector<LightsDriver *> &Add )
 {
 	LOG->Trace( "Initializing lights driver: %s", driver.c_str() );
 
@@ -228,7 +228,7 @@ RageMovieTexture *MakeRageMovieTexture( RageTextureID ID )
 			SAFE_DELETE( ret );
 		}
 	}
-	if (!ret)
+	if ( !ret )
 		RageException::Throw( COULDNT_CREATE_MOVIE_DRIVER.GetValue() );
 
 	LOG->Trace( "Created movie texture \"%s\" with driver \"%s\"",
@@ -238,7 +238,7 @@ RageMovieTexture *MakeRageMovieTexture( RageTextureID ID )
 
 #include "Sound/Selector_RageSoundDriver.h"
 static LocalizedString SOUND_DRIVERS_CANNOT_EMPTY( "Arch", "Sound Drivers cannot be empty." );
-RageSoundDriver *MakeRageSoundDriver( CString drivers )
+RageSoundDriver *MakeRageSoundDriver( const CString &drivers )
 {
 	vector<CString> DriversToTry;
 	split( drivers, ",", DriversToTry, true );
@@ -293,7 +293,7 @@ RageSoundDriver *MakeRageSoundDriver( CString drivers )
 		}
 	}
 	
-	if(ret)
+	if( ret )
 		LOG->Info( "Sound driver: %s", Driver.c_str() );
 	
 	return ret;
