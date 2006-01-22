@@ -577,7 +577,6 @@
 		AA42F5E9067068D30013509E /* ScreenNetworkOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = AA42F5E7067068D30013509E /* ScreenNetworkOptions.h */; };
 		AA4B4738057396D3005FB5DB /* ffmpeg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA4B4737057396D3005FB5DB /* ffmpeg.framework */; };
 		AA4B47B405739711005FB5DB /* ffmpeg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = AA4B4737057396D3005FB5DB /* ffmpeg.framework */; };
-		AA4B59EF0573AA5B005FB5DB /* SMMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = AA4B59EE0573AA5B005FB5DB /* SMMain.mm */; };
 		AA50201F05D6D7B200ACEFD0 /* Profile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA50201D05D6D7B200ACEFD0 /* Profile.cpp */; };
 		AA50202005D6D7B200ACEFD0 /* Profile.h in Headers */ = {isa = PBXBuildFile; fileRef = AA50201E05D6D7B200ACEFD0 /* Profile.h */; };
 		AA54709206F559DF008EB9B2 /* Preference.h in Headers */ = {isa = PBXBuildFile; fileRef = AA54709106F559DF008EB9B2 /* Preference.h */; };
@@ -750,6 +749,7 @@
 		AABBF67D0659E78D00738526 /* RageSurface_Load_XPM.h in Headers */ = {isa = PBXBuildFile; fileRef = AABBF6730659E78D00738526 /* RageSurface_Load_XPM.h */; };
 		AABBF67E0659E78D00738526 /* RageSurface_Load.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AABBF6740659E78D00738526 /* RageSurface_Load.cpp */; };
 		AABBF67F0659E78D00738526 /* RageSurface_Load.h in Headers */ = {isa = PBXBuildFile; fileRef = AABBF6750659E78D00738526 /* RageSurface_Load.h */; };
+		AABBFCD309838C3A00F077E2 /* SMMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = AABBFCD209838C3A00F077E2 /* SMMain.mm */; };
 		AABD0B3A05DF3F22004F7929 /* CryptManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AABD0B3605DF3F22004F7929 /* CryptManager.cpp */; settings = {COMPILER_FLAGS = "-O0 -Wno-uninitialized"; }; };
 		AABD0B3B05DF3F22004F7929 /* CryptManager.h in Headers */ = {isa = PBXBuildFile; fileRef = AABD0B3705DF3F22004F7929 /* CryptManager.h */; };
 		AABE321C05ACD8ED001A0E84 /* ScreenEnding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AABE321A05ACD8ED001A0E84 /* ScreenEnding.cpp */; };
@@ -1092,7 +1092,6 @@
 		AA42F5E6067068D30013509E /* ScreenNetworkOptions.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenNetworkOptions.cpp; path = ../src/ScreenNetworkOptions.cpp; sourceTree = "<group>"; };
 		AA42F5E7067068D30013509E /* ScreenNetworkOptions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenNetworkOptions.h; path = ../src/ScreenNetworkOptions.h; sourceTree = "<group>"; };
 		AA4B4737057396D3005FB5DB /* ffmpeg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ffmpeg.framework; path = Frameworks/ffmpeg.framework; sourceTree = SOURCE_ROOT; };
-		AA4B59EE0573AA5B005FB5DB /* SMMain.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = SMMain.mm; sourceTree = SOURCE_ROOT; };
 		AA4B5CC40573AD81005FB5DB /* wchar.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = wchar.cpp; sourceTree = "<group>"; };
 		AA4F38C004E2D0B700D02EE9 /* NoteDataUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = NoteDataUtil.cpp; path = ../src/NoteDataUtil.cpp; sourceTree = "<group>"; };
 		AA4F38C104E2D0B700D02EE9 /* NoteDataUtil.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = NoteDataUtil.h; path = ../src/NoteDataUtil.h; sourceTree = "<group>"; };
@@ -1650,6 +1649,7 @@
 		AABBF6730659E78D00738526 /* RageSurface_Load_XPM.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageSurface_Load_XPM.h; path = ../src/RageSurface_Load_XPM.h; sourceTree = "<group>"; };
 		AABBF6740659E78D00738526 /* RageSurface_Load.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageSurface_Load.cpp; path = ../src/RageSurface_Load.cpp; sourceTree = "<group>"; };
 		AABBF6750659E78D00738526 /* RageSurface_Load.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageSurface_Load.h; path = ../src/RageSurface_Load.h; sourceTree = "<group>"; };
+		AABBFCD209838C3A00F077E2 /* SMMain.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SMMain.mm; sourceTree = "<group>"; };
 		AABD0B3405DF3F22004F7929 /* CryptHelpers.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; name = CryptHelpers.cpp; path = ../src/CryptHelpers.cpp; sourceTree = "<group>"; usesTabs = 1; };
 		AABD0B3505DF3F22004F7929 /* CryptHelpers.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; name = CryptHelpers.h; path = ../src/CryptHelpers.h; sourceTree = "<group>"; usesTabs = 1; };
 		AABD0B3605DF3F22004F7929 /* CryptManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = CryptManager.cpp; path = ../src/CryptManager.cpp; sourceTree = "<group>"; };
@@ -2722,7 +2722,6 @@
 				AAA71EA005EE154E00D2E8FF /* global.cpp */,
 				AA6EFE6004770CF7005F316C /* global.h */,
 				AAADA4AE04E5F3DE00D02EE9 /* ProductInfo.h */,
-				AA4B59EE0573AA5B005FB5DB /* SMMain.mm */,
 				AAFBEECF094D7FCB000029DE /* SpecialFiles.cpp */,
 				AAFBEED0094D7FCB000029DE /* SpecialFiles.h */,
 				AA6EFE6204770CF7005F316C /* StdString.h */,
@@ -3060,17 +3059,18 @@
 		AADB4E8E04D5263200D02EE9 /* Darwin */ = {
 			isa = PBXGroup;
 			children = (
-				AACA591707B5DB1700763545 /* Crash.m */,
 				AADB4E8F04D5263200D02EE9 /* arch_setup.h */,
 				AADB4F5904D9220700D02EE9 /* Crash.h */,
+				AACA591707B5DB1700763545 /* Crash.m */,
 				AA8A3E6306EDCD11002F25AB /* DarwinThreadHelpers.cpp */,
 				AA8A3EC806EDDAE4002F25AB /* DarwinThreadHelpers.h */,
-				AAF744A306116B0500B19AD1 /* PublicUtility */,
-				AAD64AA10603FE7300EF8CDE /* StepMania.pch */,
-				AA4B5CC40573AD81005FB5DB /* wchar.cpp */,
 				AA2FB62909120FC5000FD574 /* PreferredLanguage.m */,
+				AAF744A306116B0500B19AD1 /* PublicUtility */,
+				AABBFCD209838C3A00F077E2 /* SMMain.mm */,
 				AAABB2D90979DB5B006C9F25 /* SMMainThread.h */,
 				AAABB2DA0979DB5B006C9F25 /* SMMainThread.m */,
+				AAD64AA10603FE7300EF8CDE /* StepMania.pch */,
+				AA4B5CC40573AD81005FB5DB /* wchar.cpp */,
 			);
 			path = Darwin;
 			sourceTree = "<group>";
@@ -3947,7 +3947,6 @@
 				AAC6DDE00569C71000B5D56F /* PaneDisplay.cpp in Sources */,
 				AAC6DDE80569C80900B5D56F /* DifficultyList.cpp in Sources */,
 				AAB691F405704FA50078BED4 /* LightsDriver_SystemMessage.cpp in Sources */,
-				AA4B59EF0573AA5B005FB5DB /* SMMain.mm in Sources */,
 				AAB005F20579B8CB000BBA58 /* AttackDisplay.cpp in Sources */,
 				AAB00861057F4F7A000BBA58 /* RageFileDriver.cpp in Sources */,
 				AAB00863057F4F7A000BBA58 /* RageFileDriverDirect.cpp in Sources */,
@@ -4134,6 +4133,7 @@
 				AA8E4BC709787C9400765149 /* ControllerStateDisplay.cpp in Sources */,
 				AA8E4BC909787C9500765149 /* MenuInput.cpp in Sources */,
 				AAABB2DC0979DB5B006C9F25 /* SMMainThread.m in Sources */,
+				AABBFCD309838C3A00F077E2 /* SMMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
