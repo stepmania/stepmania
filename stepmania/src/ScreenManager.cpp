@@ -588,7 +588,9 @@ void ScreenManager::RunConcurrentlyPrepareScreen()
 
 		if( g_setGroupedScreens.find(sScreenName) == g_setGroupedScreens.end() )
 			DeletePreparedScreens();
+		
 		PrepareScreen( sScreenName );
+		
 		FinishConcurrentRendering();
 		g_bIsConcurrentlyLoading = false;
 
