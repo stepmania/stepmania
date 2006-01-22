@@ -559,6 +559,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenOptionsManageCourses.h">
 			</File>
 			<File
+				RelativePath=".\ScreenOptionsManageEditSteps.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenOptionsManageEditSteps.h">
+			</File>
+			<File
 				RelativePath="ScreenOptionsManageProfiles.cpp">
 			</File>
 			<File
@@ -577,6 +583,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenOptionsMasterPrefs.h">
 			</File>
 			<File
+				RelativePath=".\ScreenOptionsMemoryCard.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenOptionsMemoryCard.h">
+			</File>
+			<File
 				RelativePath="ScreenPackages.cpp">
 			</File>
 			<File
@@ -587,12 +599,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScreenPlayerOptions.h">
-			</File>
-			<File
-				RelativePath="ScreenProfileOptions.cpp">
-			</File>
-			<File
-				RelativePath="ScreenProfileOptions.h">
 			</File>
 			<File
 				RelativePath="ScreenPrompt.cpp">
@@ -671,6 +677,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScreenSelectStyle.h">
+			</File>
+			<File
+				RelativePath=".\ScreenServiceAction.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenServiceAction.h">
 			</File>
 			<File
 				RelativePath="ScreenSetTime.cpp">
@@ -942,6 +954,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="Inventory.h">
+			</File>
+			<File
+				RelativePath=".\LocalizedString.cpp">
+			</File>
+			<File
+				RelativePath=".\LocalizedString.h">
 			</File>
 			<File
 				RelativePath="LuaBinding.cpp">
@@ -1235,6 +1253,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<File
 				RelativePath="XmlFile.h">
 			</File>
+			<File
+				RelativePath=".\XmlFileUtil.cpp">
+			</File>
+			<File
+				RelativePath=".\XmlFileUtil.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="StepMania"
@@ -1247,6 +1271,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ProductInfo.h">
+			</File>
+			<File
+				RelativePath=".\SpecialFiles.cpp">
+			</File>
+			<File
+				RelativePath=".\SpecialFiles.h">
 			</File>
 			<File
 				RelativePath="StdString.h">
@@ -1454,10 +1484,10 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					RelativePath="archutils\Win32\arch_setup.cpp">
 				</File>
 				<File
-					RelativePath=".\archutils\Xbox\arch_setup.h">
+					RelativePath="archutils\Win32\arch_setup.h">
 				</File>
 				<File
-					RelativePath="archutils\Win32\arch_setup.h">
+					RelativePath=".\archutils\Xbox\arch_setup.h">
 				</File>
 				<File
 					RelativePath="archutils\Xbox\custom_launch_params.cpp">
