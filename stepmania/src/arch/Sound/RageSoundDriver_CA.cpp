@@ -337,13 +337,11 @@ OSStatus RageSound_CA::JackChanged( AudioDeviceID inDevice, UInt32 inChannel, Bo
 	AudioTimeStamp time;
 
 	This->m_pOutputDevice->GetPropertyData( inChannel, 0, inPropertyID, size, &result );
-	LOG->Trace( "Channel %u's has %s plugged into its jack.", unsigned(inChannel),
-		    result ? "something" : "nothing" );
+	CHECKPOINT_M( ssprintf("Channel %u's has %s plugged into its jack.", unsigned(inChannel),
+			       result ? "something" : "nothing") );
 
-	LOG->Trace( "Old offset: %lld.", This->m_iOffset );
 	This->m_pOutputDevice->GetCurrentTime( time );
 	This->m_iOffset = This->m_iLastSampleTime - int64_t( time.mSampleTime );
-	LOG->Trace( "New offset: %lld.", This->m_iOffset );
 	return noErr;
 }
 							   
