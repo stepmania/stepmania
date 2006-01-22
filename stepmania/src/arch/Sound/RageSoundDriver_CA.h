@@ -26,6 +26,8 @@ private:
 	CAAudioHardwareDevice *m_pOutputDevice;
 	AudioConverterRef m_Converter;
 	int m_iSampleRate;
+	mutable int64_t m_iLastSampleTime;
+	int64_t m_iOffset;
 	vector<pair<AudioDevicePropertyID, AudioDevicePropertyListenerProc> > m_vPropertyListeners;
 	RageThreadRegister *m_pIOThread, *m_pNotificationThread;
 	
@@ -52,7 +54,7 @@ private:
 #endif
 
 /*
- * (c) 2004, 2005 Steve Checkoway
+ * (c) 2004-2006 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

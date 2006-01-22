@@ -19,8 +19,6 @@ static const UInt32 kBytesPerPacket = kChannelsPerFrame * kBitsPerChannel / 8;
 static const UInt32 kBytesPerFrame = kBytesPerPacket;
 static const UInt32 kFormatFlags = kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsSignedInteger;
 
-static int64_t g_iLastSampleTime = 0;
-
 typedef CAStreamBasicDescription Desc;
 
 /* temporary hack: */
@@ -30,7 +28,7 @@ static float g_fLastMixTimes[NUM_MIX_TIMES];
 static int g_iLastMixTimePos = 0;
 static int g_iNumIOProcCalls = 0;
 
-RageSound_CA::RageSound_CA()
+RageSound_CA::RageSound_CA() : m_iSampleRate(0), m_iOffset(0)
 {
 	m_pOutputDevice = NULL;
 	m_Converter = NULL;
@@ -170,7 +168,7 @@ RString RageSound_CA::Init()
 	{
 		return "Couldn't start the IOProc.";
 	}
-	return "";
+	return RString();
 }
 
 RageSound_CA::~RageSound_CA()
@@ -201,7 +199,7 @@ RageSound_CA::~RageSound_CA()
 }
 
 void RageSound_CA::AddListener( AudioDevicePropertyID propertyID, AudioDevicePropertyListenerProc handler,
-								const char *name )
+				const char *name )
 {
 	try
 	{
@@ -225,17 +223,20 @@ int64_t RageSound_CA::GetPosition( const RageSoundBase *sound ) const
 	{
 		m_pOutputDevice->GetCurrentTime( time );
 		if( bStopped )
-			FAIL_M( ssprintf("old time %lld, new time %lld",
-					 g_iLastSampleTime, int64_t(time.mSampleTime)) );
-		g_iLastSampleTime = int64_t( time.mSampleTime );
-		return g_iLastSampleTime;
+		{
+			LOG->Trace( "old time %lld, new time %lld",
+				    m_iLastSampleTime, int64_t(time.mSampleTime) );
+			bStopped = false;
+		}
+		m_iLastSampleTime = int64_t( time.mSampleTime ) + m_iOffset;
+		return m_iLastSampleTime;
 	}
 	catch( const CAException& e )
 	{
-		if( e.GetError() == 'stop' )
+		if( e.GetError() == kAudioHardwareNotRunningError )
 		{
 			bStopped = true;
-			return g_iLastSampleTime;
+			return m_iLastSampleTime;
 		}
 		
 		char error[5];
@@ -273,10 +274,10 @@ OSStatus RageSound_CA::GetData( AudioDeviceID inDevice,
 	
 	AudioBuffer& buf = outOutputData->mBuffers[0];
 	UInt32 dataPackets = buf.mDataByteSize >> 3; // 8 byes per packet
-	int64_t decodePos = int64_t( inOutputTime->mSampleTime );
-	int64_t now = int64_t( inNow->mSampleTime );
+	int64_t decodePos = int64_t( inOutputTime->mSampleTime ) + This->m_iOffset;
+	int64_t now = int64_t( inNow->mSampleTime ) + This->m_iOffset;
 	
-	g_iLastSampleTime = now;
+	This->m_iLastSampleTime = now;
 	RageTimer tm2;
 	int16_t buffer[dataPackets * (kBytesPerPacket >> 1)];
 	
@@ -321,7 +322,8 @@ OSStatus RageSound_CA::DeviceChanged( AudioDeviceID inDevice, UInt32 inChannel, 
 {
 	if( isInput )
 		return noErr;
-	FAIL_M( "Device configuration changed. XXX" );
+	LOG->Trace( "Device configuration changed." );
+	return noErr;
 }
 
 OSStatus RageSound_CA::JackChanged( AudioDeviceID inDevice, UInt32 inChannel, Boolean isInput,
@@ -332,9 +334,16 @@ OSStatus RageSound_CA::JackChanged( AudioDeviceID inDevice, UInt32 inChannel, Bo
 	RageSound_CA *This = (RageSound_CA *)inData;
 	UInt32 result;
 	UInt32 size = sizeof( result );
+	AudioTimeStamp time;
+
 	This->m_pOutputDevice->GetPropertyData( inChannel, 0, inPropertyID, size, &result );
 	LOG->Trace( "Channel %u's has %s plugged into its jack.", unsigned(inChannel),
 		    result ? "something" : "nothing" );
+
+	LOG->Trace( "Old offset: %lld.", This->m_iOffset );
+	This->m_pOutputDevice->GetCurrentTime( time );
+	This->m_iOffset = This->m_iLastSampleTime - int64_t( time.mSampleTime );
+	LOG->Trace( "New offset: %lld.", This->m_iOffset );
 	return noErr;
 }
 							   
@@ -346,7 +355,7 @@ void RageSound_CA::SetupDecodingThread()
 }
 
 /*
- * (c) 2004, 2006 Steve Checkoway
+ * (c) 2004-2006 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
