@@ -219,6 +219,8 @@ RString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 			newDeviceOut = !bShared;
 			m_CurrentParams.bpp = p.bpp;
 			[m_BGContext release];
+			m_BGContext = nil;
+#if 0
 			m_BGContext = CreateOGLContext( p.bpp, true, m_Context, bShared );
 			
 			if( m_BGContext && !bShared )
@@ -226,6 +228,7 @@ RString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 				[m_BGContext release];
 				m_BGContext = nil;
 			}
+#endif
 		}
 		SMMainThread *mt = [[SMMainThread alloc] init];
 		
