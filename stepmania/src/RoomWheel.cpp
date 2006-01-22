@@ -138,7 +138,7 @@ void RoomWheel::RemoveItem( int index )
 
 RoomInfoDisplay::~RoomInfoDisplay()
 {
-	for (int i = 0; i < m_playerList.size(); i++)
+	for (size_t i = 0; i < m_playerList.size(); i++)
 	{
 		this->RemoveChild(m_playerList[i]);
 		SAFE_DELETE(m_playerList[i]);
@@ -270,7 +270,7 @@ void RoomInfoDisplay::SetRoomInfo( const RoomInfo& info)
 
 	if (m_playerList.size() > info.players.size())
 	{
-		for (int i = info.players.size(); i < m_playerList.size(); i++)
+		for (size_t i = info.players.size(); i < m_playerList.size(); i++)
 		{
 			//if our old list is larger remove some elements
 			this->RemoveChild(m_playerList[i]);
@@ -283,7 +283,7 @@ void RoomInfoDisplay::SetRoomInfo( const RoomInfo& info)
 		//add elements if our old list is smaller
 		int oldsize = m_playerList.size();
 		m_playerList.resize(info.players.size());
-		for (int i = oldsize; i < m_playerList.size(); i++)
+		for (size_t i = oldsize; i < m_playerList.size(); i++)
 		{
 			m_playerList[i] = new BitmapText;
 			m_playerList[i]->LoadFromFont( THEME->GetPathF(GetName(),"text") );
@@ -298,7 +298,7 @@ void RoomInfoDisplay::SetRoomInfo( const RoomInfo& info)
 
 	}
 
-	for (int i = 0; i < m_playerList.size(); i++)
+	for (size_t i = 0; i < m_playerList.size(); i++)
 		m_playerList[i]->SetText(info.players[i]);
 
 	m_state = CLOSED;
