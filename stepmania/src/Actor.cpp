@@ -1186,26 +1186,26 @@ bool Actor::TweenState::operator==( const TweenState &other ) const
 
 void Actor::TweenState::MakeWeightedAverage( TweenState& average_out, const TweenState& ts1, const TweenState& ts2, float fPercentBetween )
 {
-	average_out.pos		= ts1.pos	 + (ts2.pos		- ts1.pos	 )*fPercentBetween;
-	average_out.scale	= ts1.scale	 + (ts2.scale		- ts1.scale	 )*fPercentBetween;
-	average_out.rotation	= ts1.rotation   + (ts2.rotation	- ts1.rotation	 )*fPercentBetween;
-	RageQuatSlerp(&average_out.quat, ts1.quat, ts2.quat, fPercentBetween);
-	average_out.fSkewX	= ts1.fSkewX     + (ts2.fSkewX	- ts1.fSkewX)*fPercentBetween;
+	average_out.pos		= lerp( fPercentBetween, ts1.pos,         ts2.pos );
+	average_out.scale	= lerp( fPercentBetween, ts1.scale,       ts2.scale );
+	average_out.rotation	= lerp( fPercentBetween, ts1.rotation,    ts2.rotation );
+	RageQuatSlerp( &average_out.quat, ts1.quat, ts2.quat, fPercentBetween );
+	average_out.fSkewX	= lerp( fPercentBetween, ts1.fSkewX,      ts2.fSkewX );
 	
-	average_out.crop.left	= ts1.crop.left  + (ts2.crop.left	- ts1.crop.left  )*fPercentBetween;
-	average_out.crop.top	= ts1.crop.top   + (ts2.crop.top	- ts1.crop.top   )*fPercentBetween;
-	average_out.crop.right	= ts1.crop.right + (ts2.crop.right	- ts1.crop.right )*fPercentBetween;
-	average_out.crop.bottom	= ts1.crop.bottom+ (ts2.crop.bottom	- ts1.crop.bottom)*fPercentBetween;
+	average_out.crop.left	= lerp( fPercentBetween, ts1.crop.left,   ts2.crop.left	);
+	average_out.crop.top	= lerp( fPercentBetween, ts1.crop.top,    ts2.crop.top );
+	average_out.crop.right	= lerp( fPercentBetween, ts1.crop.right,  ts2.crop.right );
+	average_out.crop.bottom	= lerp( fPercentBetween, ts1.crop.bottom, ts2.crop.bottom );
 
-	average_out.fade.left	= ts1.fade.left  + (ts2.fade.left	- ts1.fade.left  )*fPercentBetween;
-	average_out.fade.top	= ts1.fade.top   + (ts2.fade.top	- ts1.fade.top   )*fPercentBetween;
-	average_out.fade.right	= ts1.fade.right + (ts2.fade.right	- ts1.fade.right )*fPercentBetween;
-	average_out.fade.bottom	= ts1.fade.bottom+ (ts2.fade.bottom	- ts1.fade.bottom)*fPercentBetween;
+	average_out.fade.left	= lerp( fPercentBetween, ts1.fade.left,   ts2.fade.left );
+	average_out.fade.top	= lerp( fPercentBetween, ts1.fade.top,    ts2.fade.top );
+	average_out.fade.right	= lerp( fPercentBetween, ts1.fade.right,  ts2.fade.right );
+	average_out.fade.bottom	= lerp( fPercentBetween, ts1.fade.bottom, ts2.fade.bottom );
 
-	for(int i=0; i<4; i++) 
-		average_out.diffuse[i] = ts1.diffuse[i]+ (ts2.diffuse[i] - ts1.diffuse[i])*fPercentBetween;
-	average_out.glow	= ts1.glow       + (ts2.glow		- ts1.glow	 )*fPercentBetween;
-	average_out.aux		= ts1.aux        + (ts2.aux		- ts1.aux	 )*fPercentBetween;
+	for( int i=0; i<4; ++i )
+		average_out.diffuse[i] = lerp( fPercentBetween, ts1.diffuse[i], ts2.diffuse[i] );
+	average_out.glow	= lerp( fPercentBetween, ts1.glow,        ts2.glow );
+	average_out.aux		= lerp( fPercentBetween, ts1.aux,         ts2.aux );
 }
 
 void Actor::SetBlendModeString( const RString &s )
