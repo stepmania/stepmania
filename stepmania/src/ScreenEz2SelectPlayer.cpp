@@ -204,12 +204,12 @@ void ScreenEz2SelectPlayer::TweenOnScreen()
 		
 		fOriginalX = m_sprJoinMessage[p].GetX();
 		m_sprJoinMessage[p].SetX( m_sprJoinMessage[p].GetX()+fOffScreenOffset );
-		m_sprJoinMessage[p].BeginTweening( 0.5f, TWEEN_BOUNCE_END );
+		m_sprJoinMessage[p].BeginTweening( 0.5f, TWEEN_ACCELERATE );
 		m_sprJoinMessage[p].SetX( fOriginalX );
 
 		fOriginalX = m_sprJoinFrame[p].GetX();
 		m_sprJoinFrame[p].SetX( m_sprJoinMessage[p].GetX()+fOffScreenOffset );
-		m_sprJoinFrame[p].BeginTweening( 0.5f, TWEEN_BOUNCE_END );
+		m_sprJoinFrame[p].BeginTweening( 0.5f, TWEEN_ACCELERATE );
 		m_sprJoinFrame[p].SetX( fOriginalX );
 	}
 

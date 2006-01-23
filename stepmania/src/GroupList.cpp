@@ -194,11 +194,11 @@ void GroupList::TweenOnScreen()
 		m_sprButtons[i]->SetX( 400 );
 		m_textLabels[i]->SetX( 400 );
 
-		m_sprButtons[i]->BeginTweening( 0.1f*offset, TWEEN_BOUNCE_END );
-		m_textLabels[i]->BeginTweening( 0.1f*offset, TWEEN_BOUNCE_END );
+		m_sprButtons[i]->BeginTweening( 0.1f*offset, TWEEN_ACCELERATE );
+		m_textLabels[i]->BeginTweening( 0.1f*offset, TWEEN_ACCELERATE );
 		
-		m_sprButtons[i]->BeginTweening( 0.2f, TWEEN_BOUNCE_END );
-		m_textLabels[i]->BeginTweening( 0.2f, TWEEN_BOUNCE_END );
+		m_sprButtons[i]->BeginTweening( 0.2f, TWEEN_ACCELERATE );
+		m_textLabels[i]->BeginTweening( 0.2f, TWEEN_ACCELERATE );
 		
 		m_sprButtons[i]->SetX( 0 );
 		m_textLabels[i]->SetX( 0 );
@@ -222,17 +222,17 @@ void GroupList::TweenOffScreen()
 		const int offset = max(0, i-m_iTop);
 		if( i == m_iSelection )
 		{
-			m_sprButtons[i]->BeginTweening( 1.0f, TWEEN_BOUNCE_BEGIN );
-			m_textLabels[i]->BeginTweening( 1.0f, TWEEN_BOUNCE_BEGIN );
+			m_sprButtons[i]->BeginTweening( 1.0f, TWEEN_DECELERATE );
+			m_textLabels[i]->BeginTweening( 1.0f, TWEEN_DECELERATE );
 		}
 		else
 		{
-			m_sprButtons[i]->BeginTweening( 0.1f*offset, TWEEN_BOUNCE_BEGIN );
-			m_textLabels[i]->BeginTweening( 0.1f*offset, TWEEN_BOUNCE_BEGIN );
+			m_sprButtons[i]->BeginTweening( 0.1f*offset, TWEEN_DECELERATE );
+			m_textLabels[i]->BeginTweening( 0.1f*offset, TWEEN_DECELERATE );
 		}
 
-		m_sprButtons[i]->BeginTweening( 0.2f, TWEEN_BOUNCE_BEGIN );
-		m_textLabels[i]->BeginTweening( 0.2f, TWEEN_BOUNCE_BEGIN );
+		m_sprButtons[i]->BeginTweening( 0.2f, TWEEN_DECELERATE );
+		m_textLabels[i]->BeginTweening( 0.2f, TWEEN_DECELERATE );
 
 		m_sprButtons[i]->SetX( 400 );
 		m_textLabels[i]->SetX( 400 );
