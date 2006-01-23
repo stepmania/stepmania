@@ -767,6 +767,8 @@
 		AABE787A0591287100E8BF50 /* MemoryCardDriver_Null.h in Headers */ = {isa = PBXBuildFile; fileRef = AABE78760591287100E8BF50 /* MemoryCardDriver_Null.h */; };
 		AABE788D05912B0600E8BF50 /* DualScrollBar.h in Headers */ = {isa = PBXBuildFile; fileRef = AABE788B05912B0600E8BF50 /* DualScrollBar.h */; };
 		AABE788E05912B0600E8BF50 /* DualScrollBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AABE788C05912B0600E8BF50 /* DualScrollBar.cpp */; };
+		AAC0C8C20984AE3B0075FC53 /* Tween.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC0C8C00984AE3B0075FC53 /* Tween.cpp */; };
+		AAC0C8C30984AE3B0075FC53 /* Tween.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC0C8C10984AE3B0075FC53 /* Tween.h */; };
 		AAC6889C05D7F3C800964E6D /* XmlFile.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC6889A05D7F3C800964E6D /* XmlFile.h */; };
 		AAC6DCE50567660A00B5D56F /* LightsManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC6DCE30567660A00B5D56F /* LightsManager.cpp */; };
 		AAC6DCE60567660A00B5D56F /* LightsManager.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC6DCE40567660A00B5D56F /* LightsManager.h */; };
@@ -1683,6 +1685,8 @@
 		AABE78760591287100E8BF50 /* MemoryCardDriver_Null.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = MemoryCardDriver_Null.h; sourceTree = "<group>"; };
 		AABE788B05912B0600E8BF50 /* DualScrollBar.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = DualScrollBar.h; path = ../src/DualScrollBar.h; sourceTree = "<group>"; };
 		AABE788C05912B0600E8BF50 /* DualScrollBar.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = DualScrollBar.cpp; path = ../src/DualScrollBar.cpp; sourceTree = "<group>"; };
+		AAC0C8C00984AE3B0075FC53 /* Tween.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Tween.cpp; path = ../src/Tween.cpp; sourceTree = "<group>"; };
+		AAC0C8C10984AE3B0075FC53 /* Tween.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Tween.h; path = ../src/Tween.h; sourceTree = "<group>"; };
 		AAC23F7C0485E68D005F316C /* RageDisplay_OGL.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageDisplay_OGL.cpp; path = ../src/RageDisplay_OGL.cpp; sourceTree = "<group>"; };
 		AAC23F7D0485E68D005F316C /* RageDisplay_OGL.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageDisplay_OGL.h; path = ../src/RageDisplay_OGL.h; sourceTree = "<group>"; };
 		AAC23F7E0485E68D005F316C /* RageUtil_CharConversions.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageUtil_CharConversions.cpp; path = ../src/RageUtil_CharConversions.cpp; sourceTree = "<group>"; };
@@ -2946,6 +2950,8 @@
 				AA6EFFC104770FFD005F316C /* Quad.h */,
 				AA6EFFC204770FFD005F316C /* Sprite.cpp */,
 				AA6EFFC304770FFD005F316C /* Sprite.h */,
+				AAC0C8C00984AE3B0075FC53 /* Tween.cpp */,
+				AAC0C8C10984AE3B0075FC53 /* Tween.h */,
 			);
 			name = Actors;
 			sourceTree = "<group>";
@@ -3593,6 +3599,7 @@
 				AA44705409846B0800983E82 /* HIDDevice.h in Headers */,
 				AA44708E0984720900983E82 /* JoystickDevice.h in Headers */,
 				AA4470BC098476F600983E82 /* KeyboardDevice.h in Headers */,
+				AAC0C8C30984AE3B0075FC53 /* Tween.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4158,6 +4165,7 @@
 				AA44705509846B0800983E82 /* HIDDevice.cpp in Sources */,
 				AA44708F0984720900983E82 /* JoystickDevice.cpp in Sources */,
 				AA4470BD098476F600983E82 /* KeyboardDevice.cpp in Sources */,
+				AAC0C8C20984AE3B0075FC53 /* Tween.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
