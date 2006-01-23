@@ -59,7 +59,9 @@ RString RageDisplay::SetVideoMode( VideoModeParams p, bool &bNeedReloadTextures 
 	LOG->Trace( "TryVideoMode failed: %s", err.c_str() );
 	
 	// fall back
+#if !defined(_XBOX)
 	p.windowed = true;
+#endif
 	if( this->TryVideoMode(p,bNeedReloadTextures) == "" )
 		return RString();
 	p.bpp = 16;
