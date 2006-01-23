@@ -12,6 +12,7 @@ struct lua_State;
 class LuaReference;
 class LuaClass;
 #include "MessageManager.h"
+#include "Tween.h"
 
 
 #define DRAW_ORDER_BEFORE_EVERYTHING		-200
@@ -20,7 +21,6 @@ class LuaClass;
 #define DRAW_ORDER_OVERLAY			+100
 #define DRAW_ORDER_TRANSITIONS			+110
 #define DRAW_ORDER_AFTER_EVERYTHING		+200
-
 
 class Actor : public IMessageSubscriber
 {
@@ -36,15 +36,6 @@ public:
 	static void SetBGMTime( float fTime, float fBeat );
 	static void SetBGMLight( int iLightNumber, float fCabinetLights );
 
-	enum TweenType { 
-		TWEEN_LINEAR, 
-		TWEEN_ACCELERATE, 
-		TWEEN_DECELERATE, 
-		TWEEN_SMOOTH, 
-		TWEEN_BOUNCE_BEGIN, 
-		TWEEN_BOUNCE_END,
-		TWEEN_SPRING,
-	};
 	enum Effect { no_effect, effect_lua,
 			diffuse_blink, diffuse_shift, diffuse_ramp,
 			glow_blink, glow_shift,
@@ -199,6 +190,7 @@ public:
 	void SetAux( float f )				{ DestTweenState().aux = f; }
 	float GetAux() const				{ return m_current.aux; }
 
+	void BeginTweening( float time, ITween *pInterp );
 	void BeginTweening( float time, TweenType tt = TWEEN_LINEAR );
 	void StopTweening();
 	void Sleep( float time );
@@ -376,7 +368,12 @@ protected:
 	struct TweenInfo
 	{
 		// counters for tweening
-		TweenType	m_TweenType;
+		TweenInfo();
+		~TweenInfo();
+		TweenInfo( const TweenInfo &cpy );
+		TweenInfo &operator=( const TweenInfo &rhs );
+
+		ITween		*m_pTween;
 		float		m_fTimeLeftInTween;	// how far into the tween are we?
 		float		m_fTweenTime;		// seconds between Start and End positions/zooms
 		RString		m_sCommandName;		// command to execute when this TweenState goes into effect

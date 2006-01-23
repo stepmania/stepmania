@@ -51,10 +51,41 @@ void RageMatrixTranspose( RageMatrix* pOut, const RageMatrix* pIn );
 float RageFastSin( float x ) CONST_FUNCTION;
 float RageFastCos( float x ) CONST_FUNCTION;
 
+class RageQuadradtic
+{
+public:
+	void SetFromBezier( float fC1, float fC2, float fC3, float fC4 );
+	void GetBezier( float &fC1, float &fC2, float &fC3, float &fC4 ) const;
+
+	float Evaluate( float fT ) const;
+	float GetSlope( float fT ) const;
+
+	/* Equivalent to Evaluate(0.0f) and Evaluate(1.0f), but faster: */
+	float GetBezierStart() const { return m_fD; }
+	float GetBezierEnd() const { return m_fA + m_fB + m_fC + m_fD; }
+
+private:
+	float m_fA, m_fB, m_fC, m_fD;
+};
+
+class RageBezier2D
+{
+public:
+	void SetFromBezier( float fC1X, float fC2X, float fC3X, float fC4X,
+			    float fC1Y, float fC2Y, float fC3Y, float fC4Y );
+
+	void Evaluate( float fT, float *pX, float *pY ) const;
+	float EvaluateYFromX( float fX ) const;
+
+private:
+	RageQuadradtic m_X;
+	RageQuadradtic m_Y;
+};
+
 #endif
 
 /*
- * Copyright (c) 2001-2003 Chris Danford
+ * Copyright (c) 2001-2006 Chris Danford, Glenn Maynard
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
