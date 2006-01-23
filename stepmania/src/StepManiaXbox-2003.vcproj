@@ -67,12 +67,12 @@
 				Name="VCPostBuildEventTool"
 				CommandLine="disasm\mapconv &quot;$(IntDir)\$(TargetName).map&quot; &quot;$(TargetDir)\StepMania.vdi&quot;"/>
 			<Tool
-				Name="VCPreBuildEventTool"
-				CommandLine="disasm\verinc
-cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
-"/>
+				Name="VCPreBuildEventTool"/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCPreLinkEventTool"
+				CommandLine="disasm\verinc
+cl                                                                                                                                                                                    /Zl                                                                                                                                                                                    /nologo                                                                                                                                                                                    /c                                                                                                                                                                                    verstub.cpp                                                                                                                                                                                    /Fo$(IntDir)\
+"/>
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG"
@@ -133,10 +133,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				Name="VCPreBuildEventTool"/>
 			<Tool
 				Name="VCPreLinkEventTool"
-				CommandLine="disasm\verinc
-cl                                                                                                                                                                                    /Zl                                                                                                                                                                                    /nologo                                                                                                                                                                                    /c                                                                                                                                                                                    verstub.cpp                                                                                                                                                                                    /Fo$(IntDir)\
-"
-				ExcludedFromBuild="TRUE"/>
+				CommandLine="archutils\win32\verinc
+cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
+"/>
 			<Tool
 				Name="XboxDeploymentTool"
 				ExcludedFromBuild="FALSE"
@@ -282,14 +281,15 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
-				Name="VCPreBuildEventTool"
-				CommandLine="cl /Zl /nologo /c verstub.cpp /Fo&quot;..\ReleaseXbox\\&quot;"
-				ExcludedFromBuild="TRUE"/>
+				Name="VCPreBuildEventTool"/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCPreLinkEventTool"
+				CommandLine="archutils\win32\verinc
+cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
+"/>
 			<Tool
 				Name="XboxDeploymentTool"
-				ExcludedFromBuild="FALSE"
+				ExcludedFromBuild="TRUE"
 				RemotePath="xe:\StepmaniaXbox\default-rls.xbe"
 				Progress="TRUE"
 				ForceCopy="FALSE"/>
@@ -989,6 +989,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="LyricsLoader.h">
 			</File>
 			<File
+				RelativePath=".\MenuInput.cpp">
+			</File>
+			<File
 				RelativePath="MenuInput.h">
 			</File>
 			<File
@@ -1231,6 +1234,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<File
 				RelativePath="TrailUtil.h">
 			</File>
+			<File
+				RelativePath=".\Tween.cpp">
+			</File>
+			<File
+				RelativePath=".\Tween.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="File Types"
@@ -1373,6 +1382,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					<File
 						RelativePath="arch\ArchHooks\ArchHooks_Xbox.h">
 					</File>
+					<File
+						RelativePath=".\arch\ArchHooks\ArchHooksUtil.cpp">
+					</File>
 				</Filter>
 				<Filter
 					Name="InputHandler"
@@ -1481,10 +1493,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				Name="system"
 				Filter="">
 				<File
-					RelativePath="archutils\Win32\arch_setup.cpp">
-				</File>
-				<File
-					RelativePath="archutils\Win32\arch_setup.h">
+					RelativePath=".\archutils\Xbox\arch_setup.cpp">
 				</File>
 				<File
 					RelativePath=".\archutils\Xbox\arch_setup.h">
@@ -1513,6 +1522,43 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				<File
 					RelativePath=".\archutils\Xbox\VirtualMemory.h">
 				</File>
+				<Filter
+					Name="Win32-Shared"
+					Filter="">
+					<File
+						RelativePath=".\archutils\Win32\arch_setup.cpp">
+						<FileConfiguration
+							Name="Debug|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug|Xbox">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Xbox">
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="archutils\Win32\arch_setup.h">
+					</File>
+					<File
+						RelativePath=".\archutils\Win32\arch_time.cpp">
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter
@@ -1575,6 +1621,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ComboGraph.h">
+			</File>
+			<File
+				RelativePath=".\ControllerStateDisplay.cpp">
+			</File>
+			<File
+				RelativePath=".\ControllerStateDisplay.h">
 			</File>
 			<File
 				RelativePath="CourseContentsList.cpp">
