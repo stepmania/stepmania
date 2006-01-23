@@ -6,12 +6,12 @@
 #include "InputHandler.h"
 #include "RageThreads.h"
 
-class Device;
+class HIDDevice;
 
 class InputHandler_Carbon : public InputHandler
 {
 private:
-	std::vector<Device *> m_vDevices;
+	std::vector<HIDDevice *> m_vDevices;
 	RageThread m_InputThread;
 	RageSemaphore m_Sem;
 	CFRunLoopRef m_LoopRef;

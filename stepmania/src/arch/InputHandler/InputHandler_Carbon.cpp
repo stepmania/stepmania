@@ -65,7 +65,7 @@ Joystick::Joystick() : id( DEVICE_NONE ),
 {
 }
 
-class Device
+class HIDDevice
 {
 private:
 	IOHIDDeviceInterface **mInterface;
@@ -86,19 +86,19 @@ protected:
 		CALL( mQueue, addElement, IOHIDElementCookie(cookie), 0 );
 	}
 public:
-	Device();
-	virtual ~Device();
+	HIDDevice();
+	virtual ~HIDDevice();
 	
 	bool Open( io_object_t device );
 	void StartQueue( CFRunLoopRef loopRef, IOHIDCallbackFunction callback, void *target, int refCon );
 	inline const RString& GetDescription() const { return mDescription; }
 };
 
-Device::Device() : mInterface( NULL ), mQueue( NULL ), mRunning( false )
+HIDDevice::HIDDevice() : mInterface( NULL ), mQueue( NULL ), mRunning( false )
 {
 }
 
-Device::~Device()
+HIDDevice::~HIDDevice()
 {
 	if( mQueue )
 	{
@@ -123,7 +123,7 @@ Device::~Device()
 	}
 }
 
-bool Device::Open( io_object_t device )
+bool HIDDevice::Open( io_object_t device )
 {
 	IOReturn ret;
 	CFMutableDictionaryRef properties;
@@ -164,7 +164,7 @@ bool Device::Open( io_object_t device )
 	}
 	CFRange r = { 0, CFArrayGetCount(logicalDevices) };
 	
-	CFArrayApplyFunction( logicalDevices, r, Device::AddLogicalDevice, this );
+	CFArrayApplyFunction( logicalDevices, r, HIDDevice::AddLogicalDevice, this );
 	
 	CFRelease( properties );
 	
@@ -224,7 +224,7 @@ bool Device::Open( io_object_t device )
 	return true;
 }
 
-void Device::StartQueue( CFRunLoopRef loopRef, IOHIDCallbackFunction callback, void *target, int refCon )
+void HIDDevice::StartQueue( CFRunLoopRef loopRef, IOHIDCallbackFunction callback, void *target, int refCon )
 {
 	CFRunLoopSourceRef runLoopSource;
 	// This creates a run loop source and a mach port. They are released in the dtor.
@@ -258,13 +258,13 @@ void Device::StartQueue( CFRunLoopRef loopRef, IOHIDCallbackFunction callback, v
 	mRunning = true;
 }
 
-void Device::AddLogicalDevice( const void *value, void *context )
+void HIDDevice::AddLogicalDevice( const void *value, void *context )
 {
 	if( CFGetTypeID(CFTypeRef(value)) != CFDictionaryGetTypeID() )
 		return;
 	
 	CFDictionaryRef dict = CFDictionaryRef( value );
-	Device *This = (Device *)context;
+	HIDDevice *This = (HIDDevice *)context;
 	CFArrayRef elements;
 	CFTypeRef object;
 	int usage, usagePage;
@@ -288,16 +288,16 @@ void Device::AddLogicalDevice( const void *value, void *context )
 	
 	CFRange r = { 0, CFArrayGetCount(elements) };
 		
-	CFArrayApplyFunction( elements, r, Device::AddElement, This );
+	CFArrayApplyFunction( elements, r, HIDDevice::AddElement, This );
 }
 
-void Device::AddElement( const void *value, void *context )
+void HIDDevice::AddElement( const void *value, void *context )
 {
 	if( CFGetTypeID(CFTypeRef(value)) != CFDictionaryGetTypeID() )
 		return;
 	
 	CFDictionaryRef dict = CFDictionaryRef( value );
-	Device *This = (Device *)context;
+	HIDDevice *This = (HIDDevice *)context;
 	CFTypeRef object;
 	CFTypeID numID = CFNumberGetTypeID();
 	int cookie, usage, usagePage;
@@ -329,7 +329,7 @@ void Device::AddElement( const void *value, void *context )
 	This->AddElement( usagePage, usage, cookie, dict );
 }
 
-class JoystickDevice : public Device
+class JoystickDevice : public HIDDevice
 {
 private:
 	vector<Joystick> m_vSticks;
@@ -451,7 +451,7 @@ int JoystickDevice::AssignJoystickIDs( int startID )
 	return m_vSticks.size();
 }
 
-class KeyboardDevice : public Device
+class KeyboardDevice : public HIDDevice
 {
 private:
 	hash_map<int,DeviceButton> m_Mapping;
@@ -626,7 +626,7 @@ void InputHandler_Carbon::QueueCallBack( void *target, int result, void *refcon,
 	IOHIDQueueInterface **queue = (IOHIDQueueInterface **)sender;
 	IOHIDEventStruct event;
 	AbsoluteTime zeroTime = { 0, 0 };
-	Device *dev = This->m_vDevices[int( refcon )];
+	HIDDevice *dev = This->m_vDevices[int( refcon )];
 	KeyboardDevice *kd = dynamic_cast<KeyboardDevice *>(dev);
 	JoystickDevice *jd = dynamic_cast<JoystickDevice *>(dev);
 	
@@ -724,13 +724,13 @@ void InputHandler_Carbon::StartDevices()
 	int n = 0;
 	
 	ASSERT( m_LoopRef );
-	FOREACH( Device *, m_vDevices, i )
+	FOREACH( HIDDevice *, m_vDevices, i )
 		(*i)->StartQueue( m_LoopRef, InputHandler_Carbon::QueueCallBack, this, n++ );
 }
 
 InputHandler_Carbon::~InputHandler_Carbon()
 {
-	FOREACH( Device *, m_vDevices, i )
+	FOREACH( HIDDevice *, m_vDevices, i )
 		delete *i;
 	if( PREFSMAN->m_bThreadedInput )
 	{
@@ -790,7 +790,7 @@ InputHandler_Carbon::InputHandler_Carbon() : m_Sem( "Input thread started" )
 		{
 			JoystickDevice *jd = new JoystickDevice;
 			
-			if( static_cast<Device *>(jd)->Open(device) )
+			if( static_cast<HIDDevice *>(jd)->Open(device) )
 			{
 				id += jd->AssignJoystickIDs( id );
 				m_vDevices.push_back( jd );
@@ -814,7 +814,7 @@ InputHandler_Carbon::InputHandler_Carbon() : m_Sem( "Input thread started" )
 		
 		while( (device = IOIteratorNext(iter)) )
 		{
-			Device *kd = new KeyboardDevice;
+			HIDDevice *kd = new KeyboardDevice;
 			
 			if( kd->Open(device) )
 				m_vDevices.push_back( kd );
@@ -845,7 +845,7 @@ void InputHandler_Carbon::GetDevicesAndDescriptions( vector<InputDevice>& dev, v
 	dev.push_back( DEVICE_KEYBOARD );
 	desc.push_back( "Keyboard" );
 
-	FOREACH_CONST( Device *, m_vDevices, i )
+	FOREACH_CONST( HIDDevice *, m_vDevices, i )
 	{
 		const JoystickDevice *jd = dynamic_cast<const JoystickDevice *>(*i);
 		
