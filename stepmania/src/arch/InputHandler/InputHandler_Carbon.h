@@ -11,10 +11,10 @@ class Device;
 class InputHandler_Carbon : public InputHandler
 {
 private:
-	std::vector<Device *> mDevices;
-	RageThread mInputThread;
-	RageSemaphore mSem;
-	CFRunLoopRef mLoopRef;
+	std::vector<Device *> m_vDevices;
+	RageThread m_InputThread;
+	RageSemaphore m_Sem;
+	CFRunLoopRef m_LoopRef;
 	
 	static int Run( void *data );
 	void StartDevices();

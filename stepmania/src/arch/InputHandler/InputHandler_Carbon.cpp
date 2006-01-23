@@ -174,7 +174,7 @@ bool Device::Open( io_object_t device )
 	SInt32 score;
 	
 	ret = IOCreatePlugInInterfaceForService( device, kIOHIDDeviceUserClientTypeID,
-											 kIOCFPlugInInterfaceID, &plugInInterface, &score );
+						 kIOCFPlugInInterfaceID, &plugInInterface, &score );
 	if( ret != kIOReturnSuccess )
 	{
 		PrintIOErr( ret, "Failed to create plugin interface." );
@@ -332,7 +332,7 @@ void Device::AddElement( const void *value, void *context )
 class JoystickDevice : public Device
 {
 private:
-	vector<Joystick> mSticks;
+	vector<Joystick> m_vSticks;
 	
 protected:
 	bool AddLogicalDevice( int usagePage, int usage );
@@ -342,15 +342,15 @@ protected:
 public:
 	// returns the number of IDs assigned starting from startID
 	int AssignJoystickIDs( int startID );
-	inline int NumberOfSticks() const { return mSticks.size(); }
-	inline const Joystick& GetStick( int index ) const { return mSticks[index]; }
+	inline int NumberOfSticks() const { return m_vSticks.size(); }
+	inline const Joystick& GetStick( int index ) const { return m_vSticks[index]; }
 };
 
 bool JoystickDevice::AddLogicalDevice( int usagePage, int usage )
 {
 	if( usagePage != kHIDPage_GenericDesktop || usage != kHIDUsage_GD_Joystick )
 		return false;
-	mSticks.push_back( Joystick() );
+	m_vSticks.push_back( Joystick() );
 	return true;
 }
 
@@ -359,7 +359,7 @@ void JoystickDevice::AddElement( int usagePage, int usage, int cookie, const CFD
 	CFTypeRef object;
 	CFTypeID numID = CFNumberGetTypeID();
 	
-	Joystick& js = mSticks.back();
+	Joystick& js = m_vSticks.back();
 	
 	switch( usagePage )
 	{
@@ -428,7 +428,7 @@ void JoystickDevice::AddElement( int usagePage, int usage, int cookie, const CFD
 void JoystickDevice::Open()
 {
 	// Add elements to the queue for each Joystick
-	FOREACH_CONST( Joystick, mSticks, i )
+	FOREACH_CONST( Joystick, m_vSticks, i )
 	{
 		const Joystick& js = *i;
 
@@ -446,22 +446,22 @@ void JoystickDevice::Open()
 
 int JoystickDevice::AssignJoystickIDs( int startID )
 {
-	for( vector<Joystick>::iterator i = mSticks.begin(); i != mSticks.end(); ++i )
+	for( vector<Joystick>::iterator i = m_vSticks.begin(); i != m_vSticks.end(); ++i )
 		i->id = InputDevice( startID++ );
-	return mSticks.size();
+	return m_vSticks.size();
 }
 
 class KeyboardDevice : public Device
 {
 private:
-	hash_map<int,DeviceButton> mMapping;
+	hash_map<int,DeviceButton> m_Mapping;
 	
 protected:
 	bool AddLogicalDevice( int usagePage, int usage );
 	void AddElement( int usagePage, int usage, int cookie, const CFDictionaryRef dict );
 	void Open();
 	
-	friend void InputHandler_Carbon::QueueCallBack(void *, int, void *, void *);
+	friend void InputHandler_Carbon::QueueCallBack( void *, int, void *, void * );
 };
 
 bool KeyboardDevice::AddLogicalDevice( int usagePage, int usage )
@@ -479,33 +479,33 @@ void KeyboardDevice::AddElement( int usagePage, int usage, int cookie, const CFD
 
 	if( usage <= kHIDUsage_KeyboardZ )
 	{
-		mMapping[cookie] = enum_add2( KEY_Ca, usage - kHIDUsage_KeyboardA );
+		m_Mapping[cookie] = enum_add2( KEY_Ca, usage - kHIDUsage_KeyboardA );
 		return;
 	}
 	
 	// KEY_C0 = KEY_C1 - 1, kHIDUsage_Keyboard0 = kHIDUsage_Keyboard9 + 1
 	if( usage <= kHIDUsage_Keyboard9 )
 	{
-		mMapping[cookie] = enum_add2( KEY_C1, usage - kHIDUsage_Keyboard1 );
+		m_Mapping[cookie] = enum_add2( KEY_C1, usage - kHIDUsage_Keyboard1 );
 		return;
 	}
 	
 	if( usage >= kHIDUsage_KeyboardF1 && usage <= kHIDUsage_KeyboardF12 )
 	{
-		mMapping[cookie] = enum_add2( KEY_F1, usage - kHIDUsage_KeyboardF1 );
+		m_Mapping[cookie] = enum_add2( KEY_F1, usage - kHIDUsage_KeyboardF1 );
 		return;
 	}
 	
 	if( usage >= kHIDUsage_KeyboardF13 && usage <= kHIDUsage_KeyboardF16 )
 	{
-		mMapping[cookie] = enum_add2( KEY_F13, usage - kHIDUsage_KeyboardF13 );
+		m_Mapping[cookie] = enum_add2( KEY_F13, usage - kHIDUsage_KeyboardF13 );
 		return;
 	}
 	
 	// keypad 0 is again backward
 	if( usage >= kHIDUsage_Keypad1 && usage <= kHIDUsage_Keypad9 )
 	{
-		mMapping[cookie] = enum_add2( KEY_KP_C1, usage - kHIDUsage_Keypad1 );
+		m_Mapping[cookie] = enum_add2( KEY_KP_C1, usage - kHIDUsage_Keypad1 );
 		return;
 	}
 	
@@ -514,21 +514,21 @@ void KeyboardDevice::AddElement( int usagePage, int usage, int cookie, const CFD
 	// [0, 8]
 	if( usage >= kHIDUsage_KeyboardF17 && usage <= kHIDUsage_KeyboardExecute )
 	{
-		mMapping[cookie] = OTHER( 0 + usage - kHIDUsage_KeyboardF17 );
+		m_Mapping[cookie] = OTHER( 0 + usage - kHIDUsage_KeyboardF17 );
 		return;
 	}
 	
 	// [9, 19]
 	if( usage >= kHIDUsage_KeyboardSelect && usage <= kHIDUsage_KeyboardVolumeDown )
 	{
-		mMapping[cookie] = OTHER( 9 + usage - kHIDUsage_KeyboardSelect );
+		m_Mapping[cookie] = OTHER( 9 + usage - kHIDUsage_KeyboardSelect );
 		return;
 	}
 	
 	// [20, 31]
 	if( usage >= kHIDUsage_KeypadEqualSignAS400 && usage <= kHIDUsage_KeyboardCancel )
 	{
-		mMapping[cookie] = OTHER( 20 + usage - kHIDUsage_KeypadEqualSignAS400 );
+		m_Mapping[cookie] = OTHER( 20 + usage - kHIDUsage_KeypadEqualSignAS400 );
 		return;
 	}
 
@@ -536,11 +536,11 @@ void KeyboardDevice::AddElement( int usagePage, int usage, int cookie, const CFD
 	// XXX kHIDUsage_KeyboardClearOrAgain
 	if( usage >= kHIDUsage_KeyboardSeparator && usage <= kHIDUsage_KeyboardExSel )
 	{
-		mMapping[cookie] = OTHER( 32 + usage - kHIDUsage_KeyboardSeparator );
+		m_Mapping[cookie] = OTHER( 32 + usage - kHIDUsage_KeyboardSeparator );
 		return;
 	}
 	
-#define X(x,y) case x: mMapping[cookie] = y; return
+#define X(x,y) case x: m_Mapping[cookie] = y; return
 	
 	// Time for the special cases
 	switch( usage )
@@ -612,7 +612,7 @@ void KeyboardDevice::AddElement( int usagePage, int usage, int cookie, const CFD
 
 void KeyboardDevice::Open()
 {
-	for (hash_map<int,DeviceButton>::const_iterator i = mMapping.begin(); i != mMapping.end(); ++i)
+	for (hash_map<int,DeviceButton>::const_iterator i = m_Mapping.begin(); i != m_Mapping.end(); ++i)
 		AddElementToQueue( i->first );
 }
 
@@ -626,7 +626,7 @@ void InputHandler_Carbon::QueueCallBack( void *target, int result, void *refcon,
 	IOHIDQueueInterface **queue = (IOHIDQueueInterface **)sender;
 	IOHIDEventStruct event;
 	AbsoluteTime zeroTime = { 0, 0 };
-	Device *dev = This->mDevices[int( refcon )];
+	Device *dev = This->m_vDevices[int( refcon )];
 	KeyboardDevice *kd = dynamic_cast<KeyboardDevice *>(dev);
 	JoystickDevice *jd = dynamic_cast<JoystickDevice *>(dev);
 	
@@ -639,9 +639,9 @@ void InputHandler_Carbon::QueueCallBack( void *target, int result, void *refcon,
 		
 		if( kd )
 		{
-			hash_map<int,DeviceButton>::const_iterator iter = kd->mMapping.find( cookie );
+			hash_map<int,DeviceButton>::const_iterator iter = kd->m_Mapping.find( cookie );
 			
-			if( iter != kd->mMapping.end() )
+			if( iter != kd->m_Mapping.end() )
 				This->ButtonPressed( DeviceInput(DEVICE_KEYBOARD, iter->second, value, now), value );
 			continue;
 		}
@@ -701,42 +701,42 @@ int InputHandler_Carbon::Run( void *data )
 {
 	InputHandler_Carbon *This = (InputHandler_Carbon *)data;
 	
-	This->mLoopRef = CFRunLoopGetCurrent();
-	CFRetain( This->mLoopRef );
+	This->m_LoopRef = CFRunLoopGetCurrent();
+	CFRetain( This->m_LoopRef );
 	
 	This->StartDevices();
 	SetThreadPrecedence( 1.0f );
 
 	/* The function copies the information out of the structure, so the memory pointed
 	 * to by context does not need to persist beyond the function call. */
-	CFRunLoopObserverContext context = { 0, &This->mSem, NULL, NULL, NULL };
+	CFRunLoopObserverContext context = { 0, &This->m_Sem, NULL, NULL, NULL };
 	CFRunLoopObserverRef o = CFRunLoopObserverCreate( kCFAllocatorDefault, kCFRunLoopEntry,
 							  false, 0, RunLoopStarted, &context);
-	CFRunLoopAddObserver( This->mLoopRef, o, kCFRunLoopDefaultMode );
+	CFRunLoopAddObserver( This->m_LoopRef, o, kCFRunLoopDefaultMode );
 	CFRunLoopRun();
 	LOG->Trace( "Shutting down input handler thread..." );
 	return 0;
 }
 
-// mLoopRef needs to be set before this is called
+// m_LoopRef needs to be set before this is called
 void InputHandler_Carbon::StartDevices()
 {
 	int n = 0;
 	
-	ASSERT( mLoopRef );
-	FOREACH( Device *, mDevices, i )
-		(*i)->StartQueue( mLoopRef, InputHandler_Carbon::QueueCallBack, this, n++ );
+	ASSERT( m_LoopRef );
+	FOREACH( Device *, m_vDevices, i )
+		(*i)->StartQueue( m_LoopRef, InputHandler_Carbon::QueueCallBack, this, n++ );
 }
 
 InputHandler_Carbon::~InputHandler_Carbon()
 {
-	FOREACH( Device *, mDevices, i )
+	FOREACH( Device *, m_vDevices, i )
 		delete *i;
 	if( PREFSMAN->m_bThreadedInput )
 	{
-		CFRunLoopStop( mLoopRef );
-		CFRelease( mLoopRef );
-		mInputThread.Wait();
+		CFRunLoopStop( m_LoopRef );
+		CFRelease( m_LoopRef );
+		m_InputThread.Wait();
 		LOG->Trace( "Input handler thread shut down." );
 	}
 }
@@ -775,7 +775,7 @@ static io_iterator_t GetDeviceIterator( int usagePage, int usage )
 	return iter;
 }
 
-InputHandler_Carbon::InputHandler_Carbon() : mSem( "Input thread started" )
+InputHandler_Carbon::InputHandler_Carbon() : m_Sem( "Input thread started" )
 {
 	// Find the joysticks
 	io_iterator_t iter = GetDeviceIterator( kHIDPage_GenericDesktop, kHIDUsage_GD_Joystick );
@@ -793,7 +793,7 @@ InputHandler_Carbon::InputHandler_Carbon() : mSem( "Input thread started" )
 			if( static_cast<Device *>(jd)->Open(device) )
 			{
 				id += jd->AssignJoystickIDs( id );
-				mDevices.push_back( jd );
+				m_vDevices.push_back( jd );
 			}
 			else
 			{
@@ -817,7 +817,7 @@ InputHandler_Carbon::InputHandler_Carbon() : mSem( "Input thread started" )
 			Device *kd = new KeyboardDevice;
 			
 			if( kd->Open(device) )
-				mDevices.push_back( kd );
+				m_vDevices.push_back( kd );
 			else
 				delete kd;
 			
@@ -828,14 +828,14 @@ InputHandler_Carbon::InputHandler_Carbon() : mSem( "Input thread started" )
 		
 	if( PREFSMAN->m_bThreadedInput )
 	{
-		mInputThread.SetName( "Input thread" );
-		mInputThread.Create( InputHandler_Carbon::Run, this );
+		m_InputThread.SetName( "Input thread" );
+		m_InputThread.Create( InputHandler_Carbon::Run, this );
 		// Wait for the run loop to start before returning.
-		mSem.Wait();
+		m_Sem.Wait();
 	}
 	else
 	{
-		mLoopRef = CFRunLoopRef( GetCFRunLoopFromEventLoop(GetMainEventLoop()) );
+		m_LoopRef = CFRunLoopRef( GetCFRunLoopFromEventLoop(GetMainEventLoop()) );
 		StartDevices();
 	}
 }
@@ -845,13 +845,13 @@ void InputHandler_Carbon::GetDevicesAndDescriptions( vector<InputDevice>& dev, v
 	dev.push_back( DEVICE_KEYBOARD );
 	desc.push_back( "Keyboard" );
 
-	FOREACH_CONST( Device *, mDevices, i )
+	FOREACH_CONST( Device *, m_vDevices, i )
 	{
 		const JoystickDevice *jd = dynamic_cast<const JoystickDevice *>(*i);
 		
 		/* This could be break since right now KeyboardDevices follow
 		 * the JoystickDevices, but that is brittle. */
-		if (!jd)
+		if( !jd )
 			continue;
 		
 		for( int j = 0; j < jd->NumberOfSticks(); ++j )
