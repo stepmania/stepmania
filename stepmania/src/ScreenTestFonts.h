@@ -3,6 +3,10 @@
 #ifndef SCREEN_TEST_FONTS_H
 #define SCREEN_TEST_FONTS_H
 
+#if defined(_XBOX)
+#undef TEXT
+#endif
+
 #include "Screen.h"
 #include "BitmapText.h"
 #include "Quad.h"
