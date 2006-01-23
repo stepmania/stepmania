@@ -575,6 +575,12 @@
 		AA3D793406A279530064B980 /* DateTime.h in Headers */ = {isa = PBXBuildFile; fileRef = AA3D793206A279530064B980 /* DateTime.h */; };
 		AA42F5E8067068D30013509E /* ScreenNetworkOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA42F5E6067068D30013509E /* ScreenNetworkOptions.cpp */; };
 		AA42F5E9067068D30013509E /* ScreenNetworkOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = AA42F5E7067068D30013509E /* ScreenNetworkOptions.h */; };
+		AA44705409846B0800983E82 /* HIDDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = AA44705209846B0800983E82 /* HIDDevice.h */; };
+		AA44705509846B0800983E82 /* HIDDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA44705309846B0800983E82 /* HIDDevice.cpp */; };
+		AA44708E0984720900983E82 /* JoystickDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = AA44708C0984720900983E82 /* JoystickDevice.h */; };
+		AA44708F0984720900983E82 /* JoystickDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA44708D0984720900983E82 /* JoystickDevice.cpp */; };
+		AA4470BC098476F600983E82 /* KeyboardDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = AA4470BA098476F600983E82 /* KeyboardDevice.h */; };
+		AA4470BD098476F600983E82 /* KeyboardDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA4470BB098476F600983E82 /* KeyboardDevice.cpp */; };
 		AA4B4738057396D3005FB5DB /* ffmpeg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA4B4737057396D3005FB5DB /* ffmpeg.framework */; };
 		AA4B47B405739711005FB5DB /* ffmpeg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = AA4B4737057396D3005FB5DB /* ffmpeg.framework */; };
 		AA50201F05D6D7B200ACEFD0 /* Profile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA50201D05D6D7B200ACEFD0 /* Profile.cpp */; };
@@ -1091,6 +1097,12 @@
 		AA3F283B04BE6DDC00D02EE9 /* ArchHooks.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ArchHooks.cpp; path = ArchHooks/ArchHooks.cpp; sourceTree = "<group>"; };
 		AA42F5E6067068D30013509E /* ScreenNetworkOptions.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenNetworkOptions.cpp; path = ../src/ScreenNetworkOptions.cpp; sourceTree = "<group>"; };
 		AA42F5E7067068D30013509E /* ScreenNetworkOptions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenNetworkOptions.h; path = ../src/ScreenNetworkOptions.h; sourceTree = "<group>"; };
+		AA44705209846B0800983E82 /* HIDDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HIDDevice.h; sourceTree = "<group>"; };
+		AA44705309846B0800983E82 /* HIDDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HIDDevice.cpp; sourceTree = "<group>"; };
+		AA44708C0984720900983E82 /* JoystickDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JoystickDevice.h; sourceTree = "<group>"; };
+		AA44708D0984720900983E82 /* JoystickDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JoystickDevice.cpp; sourceTree = "<group>"; };
+		AA4470BA098476F600983E82 /* KeyboardDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyboardDevice.h; sourceTree = "<group>"; };
+		AA4470BB098476F600983E82 /* KeyboardDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyboardDevice.cpp; sourceTree = "<group>"; };
 		AA4B4737057396D3005FB5DB /* ffmpeg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ffmpeg.framework; path = Frameworks/ffmpeg.framework; sourceTree = SOURCE_ROOT; };
 		AA4B5CC40573AD81005FB5DB /* wchar.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = wchar.cpp; sourceTree = "<group>"; };
 		AA4F38C004E2D0B700D02EE9 /* NoteDataUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = NoteDataUtil.cpp; path = ../src/NoteDataUtil.cpp; sourceTree = "<group>"; };
@@ -3064,6 +3076,12 @@
 				AACA591707B5DB1700763545 /* Crash.m */,
 				AA8A3E6306EDCD11002F25AB /* DarwinThreadHelpers.cpp */,
 				AA8A3EC806EDDAE4002F25AB /* DarwinThreadHelpers.h */,
+				AA44705309846B0800983E82 /* HIDDevice.cpp */,
+				AA44705209846B0800983E82 /* HIDDevice.h */,
+				AA44708D0984720900983E82 /* JoystickDevice.cpp */,
+				AA44708C0984720900983E82 /* JoystickDevice.h */,
+				AA4470BB098476F600983E82 /* KeyboardDevice.cpp */,
+				AA4470BA098476F600983E82 /* KeyboardDevice.h */,
 				AA2FB62909120FC5000FD574 /* PreferredLanguage.m */,
 				AAF744A306116B0500B19AD1 /* PublicUtility */,
 				AABBFCD209838C3A00F077E2 /* SMMain.mm */,
@@ -3572,6 +3590,9 @@
 				AA32F97E096A255500F45B24 /* LowLevelWindow_Cocoa.h in Headers */,
 				AA8E4BC809787C9500765149 /* ControllerStateDisplay.h in Headers */,
 				AAABB2DB0979DB5B006C9F25 /* SMMainThread.h in Headers */,
+				AA44705409846B0800983E82 /* HIDDevice.h in Headers */,
+				AA44708E0984720900983E82 /* JoystickDevice.h in Headers */,
+				AA4470BC098476F600983E82 /* KeyboardDevice.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4134,6 +4155,9 @@
 				AA8E4BC909787C9500765149 /* MenuInput.cpp in Sources */,
 				AAABB2DC0979DB5B006C9F25 /* SMMainThread.m in Sources */,
 				AABBFCD309838C3A00F077E2 /* SMMain.mm in Sources */,
+				AA44705509846B0800983E82 /* HIDDevice.cpp in Sources */,
+				AA44708F0984720900983E82 /* JoystickDevice.cpp in Sources */,
+				AA4470BD098476F600983E82 /* KeyboardDevice.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
