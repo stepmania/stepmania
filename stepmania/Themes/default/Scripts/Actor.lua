@@ -50,6 +50,14 @@ function Actor:bounceend(t)
 	self:tween( t, TweenBezier, BounceEndBezier );
 end
 
+local SmoothBezier =
+{
+	0, 0, 1, 1
+}
+function Actor:smooth(t)
+	self:tween( t, TweenBezier, SmoothBezier );
+end
+
 -- Hide if b is true, but don't unhide if b is false.
 function Actor:hide_if(b)
 	if b then
