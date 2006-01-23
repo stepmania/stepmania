@@ -3,6 +3,7 @@
 #include "ProductInfo.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "RageDisplay.h"
 
 static const RString g_sClassName = RString(PRODUCT_NAME) + " LowLevelWindow_Win32";
 
