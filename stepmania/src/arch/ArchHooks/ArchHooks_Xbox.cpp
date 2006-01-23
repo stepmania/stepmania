@@ -157,7 +157,7 @@ ArchHooks_Xbox::~ArchHooks_Xbox()
 
 #include "RageFileManager.h"
 
-void ArchHooks_Xbox::MountInitialFilesystems( const RString &sDirOfExecutable )
+void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 {
 	FILEMAN->Mount( "dir", "D:\\", "/" );
 }
