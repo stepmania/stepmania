@@ -1328,7 +1328,6 @@ public:
 	static int linear( T* p, lua_State *L )			{ p->BeginTweening(FArg(1),TWEEN_LINEAR); return 0; }
 	static int accelerate( T* p, lua_State *L )		{ p->BeginTweening(FArg(1),TWEEN_ACCELERATE); return 0; }
 	static int decelerate( T* p, lua_State *L )		{ p->BeginTweening(FArg(1),TWEEN_DECELERATE); return 0; }
-	static int smooth( T* p, lua_State *L )			{ p->BeginTweening(FArg(1),TWEEN_SMOOTH); return 0; }
 	static int spring( T* p, lua_State *L )			{ p->BeginTweening(FArg(1),TWEEN_SPRING); return 0; }
 	static int tween( T* p, lua_State *L )
 	{
@@ -1469,7 +1468,6 @@ public:
 		ADD_METHOD( linear );
 		ADD_METHOD( accelerate );
 		ADD_METHOD( decelerate );
-		ADD_METHOD( smooth );
 		ADD_METHOD( spring );
 		ADD_METHOD( tween );
 		ADD_METHOD( stoptweening );

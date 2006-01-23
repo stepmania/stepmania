@@ -9,7 +9,6 @@ static const char *TweenTypeNames[] = {
 	"Linear",
 	"Accelerate",
 	"Decelerate",
-	"Smooth",
 	"Spring",
 	"Bezier"
 };
@@ -41,33 +40,6 @@ struct TweenDecelerate: public ITween
 	float Tween( float f ) const { return 1 - (1-f) * (1-f); }
 	ITween *Copy() const { return new TweenDecelerate(*this); }
 };
-struct TweenSmooth: public ITween
-{
-	float Tween( float f ) const
-	{
-		/* Accelerate, reaching full speed at fShift, then decelerate the rest of
-		 * the way.  fShift = 1 degrades to TWEEN_ACCELERATE.  fShift = 0 degrades
-		 * to TWEEN_DECELERATE.  (This is a rough approximation of a sigmoid.) */
-		const float fShift = 0.5f;
-		if( f < fShift )
-		{
-			f = SCALE( f, 0.0f, fShift, 0.0f, 1.0f );
-			f = f * f;
-			f = SCALE( f, 0.0f, 1.0f, 0.0f, fShift );
-		}
-		else
-		{
-			f = SCALE( f, fShift, 1.0f, 0.0f, 1.0f );
-			f = 1 - (1-f) * (1-f);
-			f = SCALE( f, 0.0f, 1.0f, fShift, 1.0f );
-		}
-
-		return f;
-	}
-
-	ITween *Copy() const { return new TweenSmooth(*this); }
-};
-
 struct TweenSpring: public ITween
 {
 	float Tween( float f ) const { return 1 - RageFastCos( f*PI*2.5f )/(1+f*3); }
@@ -120,7 +92,6 @@ ITween *ITween::CreateFromType( TweenType tt )
 	case TWEEN_LINEAR: return new TweenLinear;
 	case TWEEN_ACCELERATE: return new TweenAccelerate;
 	case TWEEN_DECELERATE: return new TweenDecelerate;
-	case TWEEN_SMOOTH: return new TweenSmooth;
 
 	/*
 	 * These may actually be faster than InterpolateBounceBegin/InterpolateBounceEnd, since
