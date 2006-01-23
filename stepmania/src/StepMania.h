@@ -5,11 +5,7 @@ class Game;
 class RageTimer;
 class VideoModeParams;
 
-#ifdef _XBOX
-void __cdecl main();
-#else
 int main( int argc, char* argv[] );
-#endif
 
 namespace StepMania
 {
