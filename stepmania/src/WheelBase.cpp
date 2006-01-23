@@ -428,7 +428,7 @@ void WheelBase::TweenOnScreen( bool bChangingSort )
 		m_ScrollBar.BeginTweening( 0.2f );	// sleep
 	else
 		m_ScrollBar.BeginTweening( 0.7f );	// sleep
-	m_ScrollBar.BeginTweening( 0.2f , Actor::TWEEN_ACCELERATE );
+	m_ScrollBar.BeginTweening( 0.2f , TWEEN_ACCELERATE );
 	m_ScrollBar.AddX( -30 );
 
 	TweenOnScreenUpdateItems( bChangingSort );
@@ -477,7 +477,7 @@ void WheelBase::TweenOffScreen( bool bChangingSort )
 	}
 
 	m_ScrollBar.BeginTweening( 0 );
-	m_ScrollBar.BeginTweening( 0.2f, Actor::TWEEN_ACCELERATE );
+	m_ScrollBar.BeginTweening( 0.2f, TWEEN_ACCELERATE );
 	m_ScrollBar.SetX( SCROLL_BAR_X+30 );	
 
 	TweenOffScreenUpdateItems( bChangingSort );

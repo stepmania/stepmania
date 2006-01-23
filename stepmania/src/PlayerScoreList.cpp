@@ -124,7 +124,7 @@ void PlayerScoreList::Refresh()
 		int i = iter - v.begin();
 		PlayerScoreItem &psi = m_vScoreItem[iter->iEnabledPlayerIndex];
 		psi.SetDrawOrder( -i );
-		psi.BeginTweening( 0.5f, Actor::TWEEN_DECELERATE );
+		psi.BeginTweening( 0.5f, TWEEN_DECELERATE );
 		psi.DestTweenState() = m_vtsPositions[i];
 	}
 

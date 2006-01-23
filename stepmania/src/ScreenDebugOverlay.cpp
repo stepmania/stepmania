@@ -291,7 +291,7 @@ bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
 			txt1.FinishTweening();
 			float fZoom = txt1.GetZoom();
 			txt1.SetZoom( fZoom * 1.2f );
-			txt1.BeginTweening( 0.2f, Actor::TWEEN_LINEAR );
+			txt1.BeginTweening( 0.2f, TWEEN_LINEAR );
 			txt1.SetZoom( fZoom );
 
 			RString sMessage;

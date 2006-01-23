@@ -262,19 +262,19 @@ bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
 void ScreenSyncOverlay::ShowHelp()
 {
 	m_quad.StopTweening();
-	m_quad.BeginTweening( 0.3f, Actor::TWEEN_LINEAR );
+	m_quad.BeginTweening( 0.3f, TWEEN_LINEAR );
 	m_quad.SetDiffuseAlpha( 0.5f );
 
 	m_textHelp.StopTweening();
-	m_textHelp.BeginTweening( 0.3f, Actor::TWEEN_LINEAR );
+	m_textHelp.BeginTweening( 0.3f, TWEEN_LINEAR );
 	m_textHelp.SetDiffuseAlpha( 1 );
 
 	m_quad.Sleep( 4 );
-	m_quad.BeginTweening( 0.3f, Actor::TWEEN_LINEAR );
+	m_quad.BeginTweening( 0.3f, TWEEN_LINEAR );
 	m_quad.SetDiffuseAlpha( 0 );
 
 	m_textHelp.Sleep( 4 );
-	m_textHelp.BeginTweening( 0.3f, Actor::TWEEN_LINEAR );
+	m_textHelp.BeginTweening( 0.3f, TWEEN_LINEAR );
 	m_textHelp.SetDiffuseAlpha( 0 );
 }
 
