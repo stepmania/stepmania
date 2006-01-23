@@ -3,6 +3,11 @@
 #ifndef ScreenServiceAction_H
 #define ScreenServiceAction_H
 
+//There's a FAILED macro somewhere in winerror.h, which gets included with Xbox.
+#if defined(_XBOX)
+#undef FAILED
+#endif
+
 #include "ScreenPrompt.h"
 
 class ScreenServiceAction : public ScreenPrompt
