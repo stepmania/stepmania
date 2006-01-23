@@ -127,6 +127,28 @@ ArchHooks_Xbox::ArchHooks_Xbox()
 	EnableExtraRAM();
 }
 
+static RString XLangID( DWORD Lang )
+{
+	switch(Lang)
+	{
+	case XC_LANGUAGE_JAPANESE:return "JA";
+	case XC_LANGUAGE_GERMAN:return "DE";
+	case XC_LANGUAGE_FRENCH:return "FR";
+	case XC_LANGUAGE_SPANISH:return "ES";
+	case XC_LANGUAGE_ITALIAN:return "IT";
+	case XC_LANGUAGE_KOREAN:return "KO";
+	case XC_LANGUAGE_TCHINESE:return "ZH";
+	case XC_LANGUAGE_PORTUGUESE:return "PT";
+	default:
+	case XC_LANGUAGE_ENGLISH: return "EN";
+	}
+}
+
+RString ArchHooks::GetPreferredLanguage()
+{
+	return XLangID( XGetLanguage() );
+}
+
 ArchHooks_Xbox::~ArchHooks_Xbox()
 {
 	// We only want to reboot the Xbox in a software manner.
