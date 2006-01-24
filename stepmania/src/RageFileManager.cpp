@@ -857,34 +857,42 @@ void GetDirListing( const RString &sPath, vector<RString> &AddTo, bool bOnlyDirs
 void GetDirListingRecursive( const RString &sDir, const RString &sMatch, vector<RString> &AddTo )
 {
 	ASSERT( sDir.Right(1) == "/" );
-	GetDirListing( sDir+sMatch, AddTo, false, true );
-	GetDirListing( sDir+"*",	AddTo, true,  true );
-	for( unsigned i=0; i<AddTo.size(); i++ )
+	vector<RString> vsFiles;
+	GetDirListing( sDir+sMatch, vsFiles, false, true );
+	vector<RString> vsDirs;
+	GetDirListing( sDir+"*", vsDirs, true, true );
+	for( int i=0; i<(int)vsDirs.size(); i++ )
 	{
-		if( IsADirectory( AddTo[i] ) )
-		{
-			GetDirListing( AddTo[i]+"/"+sMatch, AddTo, false, true );
-			GetDirListing( AddTo[i]+"/*",		AddTo, true,  true );
-			AddTo.erase( AddTo.begin()+i );
-			i--;
-		}
+		GetDirListing( vsDirs[i]+"/"+sMatch, vsFiles, false, true );
+		GetDirListing( vsDirs[i]+"/*", vsDirs, true, true );
+		vsDirs.erase( vsDirs.begin()+i );
+		i--;
+	}
+	for( int i=vsFiles.size()-1; i>=0; i-- )
+	{
+		if( !IsADirectory(vsFiles[i]) )
+			AddTo.push_back( vsFiles[i] );
 	}
 }
 
 void GetDirListingRecursive( RageFileDriver *prfd, const RString &sDir, const RString &sMatch, vector<RString> &AddTo )
 {
 	ASSERT( sDir.Right(1) == "/" );
-	prfd->GetDirListing( sDir+sMatch, AddTo, false, true );
-	prfd->GetDirListing( sDir+"*",	AddTo, true,  true );
-	for( unsigned i=0; i<AddTo.size(); i++ )
+	vector<RString> vsFiles;
+	prfd->GetDirListing( sDir+sMatch, vsFiles, false, true );
+	vector<RString> vsDirs;
+	prfd->GetDirListing( sDir+"*",	vsDirs, true, true );
+	for( int i=0; i<(int)vsDirs.size(); i++ )
 	{
-		if( prfd->GetFileType(AddTo[i]) == RageFileManager::TYPE_DIR )
-		{
-			prfd->GetDirListing( AddTo[i]+"/"+sMatch, AddTo, false, true );
-			prfd->GetDirListing( AddTo[i]+"/*",		AddTo, true,  true );
-			AddTo.erase( AddTo.begin()+i );
-			i--;
-		}
+		prfd->GetDirListing( vsDirs[i]+"/"+sMatch, vsFiles, false, true );
+		prfd->GetDirListing( vsDirs[i]+"/*", vsDirs, true, true );
+		vsDirs.erase( vsDirs.begin()+i );
+		i--;
+	}
+	for( int i=vsFiles.size()-1; i>=0; i-- )
+	{
+		if( prfd->GetFileType(vsFiles[i]) != RageFileManager::TYPE_DIR )
+			AddTo.push_back( vsFiles[i] );
 	}
 }
 
