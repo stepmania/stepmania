@@ -552,15 +552,15 @@ static void SetPresentParametersFromVideoModeParams( const VideoModeParams &p, D
 RString RageDisplay_D3D::TryVideoMode( const VideoModeParams &_p, bool &bNewDeviceOut )
 {
 	VideoModeParams p = _p;
-
-	//LOG->Warn( "RageDisplay_D3D::TryVideoMode( %d, %d, %d, %d, %d, %d )", p.windowed, p.width, p.height, p.bpp, p.rate, p.vsync );
+#if defined(XBOX)
+	p.windowed = false;
+#endif
+	LOG->Warn( "RageDisplay_D3D::TryVideoMode( %d, %d, %d, %d, %d, %d )", p.windowed, p.width, p.height, p.bpp, p.rate, p.vsync );
 
 	if( FindBackBufferType( p.windowed, p.bpp ) == D3DFMT_UNKNOWN )	// no possible back buffer formats
 		return ssprintf( "FindBackBufferType(%i,%i) failed", p.windowed, p.bpp );	// failed to set mode
 
-#if defined(XBOX)
-	p.windowed = false;
-#endif
+
 
 	/* Set up and display the window before setting up D3D.  If we don't do this,
 	 * then setting up a fullscreen window (when we're not coming from windowed)
