@@ -118,7 +118,7 @@ static void CheckFocus()
 	}
 }
 
-void GameLoop()
+void GameLoop::GameLoop()
 {
 	/* People may want to do something else while songs are loading, so do
 	 * this after loading songs. */
@@ -257,13 +257,13 @@ int ConcurrentRenderer::StartRenderThread( void *p )
 	return 0;
 }
 
-void StartConcurrentRendering()
+void GameLoop::StartConcurrentRendering()
 {
 	ASSERT( g_pConcurrentRenderer == NULL );
 	g_pConcurrentRenderer = new ConcurrentRenderer;
 }
 
-void FinishConcurrentRendering()
+void GameLoop::FinishConcurrentRendering()
 {
 	SAFE_DELETE( g_pConcurrentRenderer );
 }

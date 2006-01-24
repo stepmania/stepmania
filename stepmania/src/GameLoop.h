@@ -3,9 +3,12 @@
 #ifndef GAME_LOOP_H
 #define GAME_LOOP_H
 
-void GameLoop();
-void StartConcurrentRendering();
-void FinishConcurrentRendering();
+namespace GameLoop
+{
+	void GameLoop();
+	void StartConcurrentRendering();
+	void FinishConcurrentRendering();
+};
 
 #endif
 

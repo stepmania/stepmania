@@ -584,14 +584,14 @@ void ScreenManager::RunConcurrentlyPrepareScreen()
 	if( !ScreenIsPrepped(sScreenName) )
 	{
 		g_bIsConcurrentlyLoading = true;
-		StartConcurrentRendering();
+		GameLoop::StartConcurrentRendering();
 
 		if( g_setGroupedScreens.find(sScreenName) == g_setGroupedScreens.end() )
 			DeletePreparedScreens();
 		
 		PrepareScreen( sScreenName );
 		
-		FinishConcurrentRendering();
+		GameLoop::FinishConcurrentRendering();
 		g_bIsConcurrentlyLoading = false;
 
 		LOG->Trace( "Concurrent prepare of %s finished", sScreenName.c_str() );

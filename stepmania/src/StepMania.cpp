@@ -1084,7 +1084,7 @@ int main(int argc, char* argv[])
 		NSMAN->DisplayStartupStatus();	// If we're using networking show what happened
 
 	/* Run the main loop. */
-	GameLoop();
+	GameLoop::GameLoop();
 
 	/* If we ended mid-game, finish up. */
 	GAMESTATE->EndGame();
