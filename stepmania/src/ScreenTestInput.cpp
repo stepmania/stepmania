@@ -38,12 +38,6 @@ void ScreenTestInput::Init()
 }
 
 
-
-ScreenTestInput::~ScreenTestInput()
-{
-	LOG->Trace( "ScreenTestInput::~ScreenTestInput()" );
-}
-
 static LocalizedString CONTROLLER	( "ScreenTestInput", "Controller" );
 static LocalizedString SECONDARY	( "ScreenTestInput", "secondary" );
 static LocalizedString NOT_MAPPED	( "ScreenTestInput", "not mapped" );
@@ -120,14 +114,12 @@ void ScreenTestInput::Input( const InputEventPlus &input )
 	{
 	case IET_FIRST_PRESS:
 	case IET_RELEASE:
+		switch( input.type )
 		{
-			switch( input.type )
-			{
-			case IET_FIRST_PRESS:	sMessage += "Pressed";	break;
-			case IET_RELEASE:		sMessage += "Released";	break;
-			}
-			MESSAGEMAN->Broadcast( sMessage );
+		case IET_FIRST_PRESS:	sMessage += "Pressed";	break;
+		case IET_RELEASE:		sMessage += "Released";	break;
 		}
+		MESSAGEMAN->Broadcast( sMessage );
 	}
 
 	if( input.type != IET_FIRST_PRESS && input.type != IET_SLOW_REPEAT )
@@ -143,7 +135,7 @@ void ScreenTestInput::MenuStart( PlayerNumber pn )
 
 void ScreenTestInput::MenuBack( PlayerNumber pn )
 {
-	if(!IsTransitioning())
+	if( !IsTransitioning() )
 	{
 		SCREENMAN->PlayStartSound();
 		StartTransitioningScreen( SM_GoToPrevScreen );		

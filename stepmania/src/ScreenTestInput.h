@@ -11,7 +11,6 @@ class ScreenTestInput : public ScreenWithMenuElements
 {
 public:
 	virtual void Init();
-	virtual ~ScreenTestInput();
 
 	virtual void Update( float fDelta );
 	virtual void Input( const InputEventPlus &input );

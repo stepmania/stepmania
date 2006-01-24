@@ -222,17 +222,17 @@ void BitmapText::BuildChars()
 				iX -= g.m_iHadvance;
 
 			/* set vertex positions */
-			v[0].p = RageVector3( iX+g.m_fHshift,				iY+g.m_pPage->m_fVshift,		  0 );	// top left
-			v[1].p = RageVector3( iX+g.m_fHshift,				iY+g.m_pPage->m_fVshift+g.m_fHeight, 0 );	// bottom left
-			v[2].p = RageVector3( iX+g.m_fHshift+g.m_fWidth,	iY+g.m_pPage->m_fVshift+g.m_fHeight, 0 );	// bottom right
-			v[3].p = RageVector3( iX+g.m_fHshift+g.m_fWidth,	iY+g.m_pPage->m_fVshift,		  0 );	// top right
+			v[0].p = RageVector3( iX+g.m_fHshift,			iY+g.m_pPage->m_fVshift,		0 );	// top left
+			v[1].p = RageVector3( iX+g.m_fHshift,			iY+g.m_pPage->m_fVshift+g.m_fHeight,	0 );	// bottom left
+			v[2].p = RageVector3( iX+g.m_fHshift+g.m_fWidth,	iY+g.m_pPage->m_fVshift+g.m_fHeight,	0 );	// bottom right
+			v[3].p = RageVector3( iX+g.m_fHshift+g.m_fWidth,	iY+g.m_pPage->m_fVshift,		0 );	// top right
 
 			/* Advance the cursor. */
 			iX += g.m_iHadvance;
 
 			/* set texture coordinates */
-			v[0].t = RageVector2( g.m_TexRect.left,	g.m_TexRect.top );
-			v[1].t = RageVector2( g.m_TexRect.left,	g.m_TexRect.bottom );
+			v[0].t = RageVector2( g.m_TexRect.left,		g.m_TexRect.top );
+			v[1].t = RageVector2( g.m_TexRect.left,		g.m_TexRect.bottom );
 			v[2].t = RageVector2( g.m_TexRect.right,	g.m_TexRect.bottom );
 			v[3].t = RageVector2( g.m_TexRect.right,	g.m_TexRect.top );
 
