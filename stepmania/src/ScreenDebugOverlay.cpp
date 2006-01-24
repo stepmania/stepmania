@@ -48,6 +48,7 @@ public:
 		g_pvpSubscribers->push_back( this );
 	}
 	virtual ~IDebugLine() { }
+	virtual bool GameplayOnly() const { return false; }
 	virtual RString GetDescription() = 0;
 	virtual RString GetValue() = 0;
 	virtual bool IsEnabled() = 0;
@@ -59,6 +60,8 @@ public:
 			s1 += " - ";
 		sMessageOut = s1 + s2;
 	};
+
+	DeviceInput m_Button;
 };
 
 
@@ -108,14 +111,12 @@ static MapDebugToDI g_Mappings;
 
 static LocalizedString IN_GAMEPLAY( "ScreenDebugOverlay", "%s in gameplay" );
 static LocalizedString OR( "ScreenDebugOverlay", "or" );
-static RString GetDebugButtonName( int i )
+static RString GetDebugButtonName( const IDebugLine *pLine )
 {
-	vector<RString> v;
-	if( g_Mappings.debugButton[i].IsValid() )
-		v.push_back( INPUTMAN->GetDeviceSpecificInputString(g_Mappings.debugButton[i]) );
-	if( g_Mappings.gameplayButton[i].IsValid() )
-		v.push_back( ssprintf(IN_GAMEPLAY.GetValue(),INPUTMAN->GetDeviceSpecificInputString(g_Mappings.gameplayButton[i]).c_str()) );
-	return join( " "+OR.GetValue()+" ", v );
+	if( pLine->GameplayOnly() )
+		return ssprintf( IN_GAMEPLAY.GetValue(), INPUTMAN->GetDeviceSpecificInputString(pLine->m_Button).c_str() );
+	else
+		return INPUTMAN->GetDeviceSpecificInputString(pLine->m_Button);
 }
 
 void ScreenDebugOverlay::Init()
@@ -137,6 +138,7 @@ void ScreenDebugOverlay::Init()
 		g_Mappings.gameplayButton[i++]	= DeviceInput(DEVICE_KEYBOARD, KEY_F8);
 		g_Mappings.gameplayButton[i++]	= DeviceInput(DEVICE_KEYBOARD, KEY_F7);
 		g_Mappings.gameplayButton[i++]	= DeviceInput(DEVICE_KEYBOARD, KEY_F6);
+		i=0;
 		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_C1);
 		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_C2);
 		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_C3);
@@ -161,6 +163,16 @@ void ScreenDebugOverlay::Init()
 
 	}
 
+
+	int iNextGameplayButton = 0;
+	int iNextDebugButton = 0;
+	FOREACH( IDebugLine*, *g_pvpSubscribers, p )
+	{
+		if( (*p)->GameplayOnly() )
+			(*p)->m_Button = g_Mappings.gameplayButton[iNextGameplayButton++];
+		else
+			(*p)->m_Button = g_Mappings.debugButton[iNextDebugButton++];
+	}
 
 	m_Quad.StretchTo( RectF( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT ) );
 	m_Quad.SetDiffuse( RageColor(0, 0, 0, 0.5f) );
@@ -272,7 +284,7 @@ void ScreenDebugOverlay::UpdateText()
 		txt1.SetDiffuse( bOn ? on:off );
 		txt2.SetDiffuse( bOn ? on:off );
 
-		RString sButton = GetDebugButtonName(i);
+		RString sButton = GetDebugButtonName( *p );
 		if( !sButton.empty() )
 			sButton += ": ";
 		txt1.SetText( sButton );
@@ -312,8 +324,13 @@ bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
 	{
 		int i = p-g_pvpSubscribers->begin();
 
-		if( (g_bIsDisplayed && input.DeviceI == g_Mappings.debugButton[i]) ||
-			(IsGameplay() && input.DeviceI == g_Mappings.gameplayButton[i]) )
+		// Gameplay buttons are available only in gameplay.  Non-gameplay buttons are
+		// only available when the screen is displayed.
+		if( (*p)->GameplayOnly() && !IsGameplay() )
+			continue;
+		if( !(*p)->GameplayOnly() && !g_bIsDisplayed )
+			continue;
+		if( input.DeviceI == (*p)->m_Button )
 		{
 			if( input.type != IET_FIRST_PRESS )
 				return true; /* eat the input but do nothing */
@@ -409,6 +426,7 @@ class DebugLineAutoplay : public IDebugLine
 		default:	ASSERT(0);	return RString();
 		}
 	}
+	virtual bool GameplayOnly() const { return true; }
 	virtual bool IsEnabled() { return PREFSMAN->m_AutoPlay.Get() != PC_HUMAN; }
 	virtual void Do( RString &sMessageOut )
 	{
@@ -427,6 +445,7 @@ class DebugLineAssistTick : public IDebugLine
 {
 	virtual RString GetDescription() { return ASSIST_TICK.GetValue(); }
 	virtual RString GetValue() { return IsEnabled() ? ON.GetValue():OFF.GetValue(); }
+	virtual bool GameplayOnly() const { return true; }
 	virtual bool IsEnabled() { return GAMESTATE->m_SongOptions.m_bAssistTick; }
 	virtual void Do( RString &sMessageOut )
 	{
@@ -451,6 +470,7 @@ class DebugLineAutosync : public IDebugLine
 		default:	ASSERT(0);
 		}
 	}
+	virtual bool GameplayOnly() const { return true; }
 	virtual bool IsEnabled() { return GAMESTATE->m_SongOptions.m_AutosyncType!=SongOptions::AUTOSYNC_OFF; }
 	virtual void Do( RString &sMessageOut )
 	{
