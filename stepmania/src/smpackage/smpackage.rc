@@ -93,7 +93,7 @@ BEGIN
                     WS_TABSTOP
     COMBOBOX        IDC_COMBO_DIR,22,195,204,105,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Edit Installations",IDC_BUTTON_EDIT,233,194,59,14
+    PUSHBUTTON      "Edit Installations",IDC_BUTTON_EDIT,233,194,85,14
     CONTROL         "",IDC_PROGRESS1,"msctls_progress32",NOT WS_VISIBLE | 
                     WS_BORDER,7,60,318,14
     LTEXT           "Install a package",IDC_STATIC_HEADER_TEXT,5,5,280,24
