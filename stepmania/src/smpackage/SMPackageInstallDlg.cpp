@@ -17,6 +17,7 @@
 #include "RageFileDriverZip.h"	
 #include "archutils/Win32/DialogUtil.h"
 #include "LocalizedString.h"
+#include "RageLog.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -91,14 +92,14 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 	if( !file.Open(m_sPackagePath) )
 	{
 		MessageBox( ssprintf(COULD_NOT_OPEN_FILE.GetValue(),m_sPackagePath.c_str()) );
-		return FALSE;
+		exit(1);	// better way to abort?
 	}
 
 	RageFileDriverZip zip;
-	if( zip.Load(&file) );
+	if( !zip.Load(&file) )
 	{
 		MessageBox( ssprintf(IS_NOT_A_VALID_ZIP.GetValue(),m_sPackagePath.c_str()) );
-		return FALSE;
+		exit(1);	// better way to abort?
 	}
 
 	//
@@ -110,7 +111,7 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 		"\t%s\r\n"
 		"\r\n" +
 		THIS_PACKAGE_CONTAINS.GetValue()+"\r\n",
-		m_sPackagePath
+		m_sPackagePath.c_str()
 	);
 	CEdit* pEdit1 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE1);
 	pEdit1->SetWindowText( sMessage1 );
@@ -121,7 +122,7 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 	//
 	{
 		vector<RString> vs;
-		GetDirListingRecursive( &zip, "", "*", vs );
+		GetDirListingRecursive( &zip, "/", "*", vs );
 		CEdit* pEdit2 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE2);
 		RString sText = "\t" + join( "\r\n\t", vs );
 		pEdit2->SetWindowText( sText );
@@ -242,10 +243,12 @@ static bool CheckPackages( RageFileDriverZip &fileDriver )
 	return true;
 }
 
-static LocalizedString NO_INSTALLATIONS		("CSMPackageInstallDlg", "No Installations found.  Exiting.");
-static LocalizedString INSTALLING_PLEASE_WAIT	("CSMPackageInstallDlg", "Installing '%s'.  Please wait...");
-static LocalizedString ERROR_COPYING_FILE	("CSMPackageInstallDlg", "Error copying file '%s'");
-static LocalizedString PACKAGE_INSTALLED_SUCCESSFULLY ("CSMPackageInstallDlg","Package installed successfully!");
+static LocalizedString NO_INSTALLATIONS			("CSMPackageInstallDlg", "No Installations found.  Exiting.");
+static LocalizedString INSTALLING_PLEASE_WAIT		("CSMPackageInstallDlg", "Installing '%s'.  Please wait...");
+static LocalizedString ERROR_OPENING_SOURCE_FILE	("CSMPackageInstallDlg", "Error opening source file '%s': %s");
+static LocalizedString ERROR_OPENING_DESTINATION_FILE	("CSMPackageInstallDlg", "Error opening destination file '%s': %s");
+static LocalizedString ERROR_COPYING_FILE		("CSMPackageInstallDlg", "Error copying file '%s': %s");
+static LocalizedString PACKAGE_INSTALLED_SUCCESSFULLY	("CSMPackageInstallDlg","Package installed successfully!");
 void CSMPackageInstallDlg::OnOK() 
 {
 	// TODO: Add extra validation here
@@ -274,18 +277,23 @@ void CSMPackageInstallDlg::OnOK()
 
 
 	// mount the zip
-	RageFileDriverZip fileDriver;
-	int iErr;
-	if( !fileDriver.Open(m_sPackagePath, RageFile::READ, iErr) )
+	RageFileOsAbsolute file;
+	if( !file.Open(m_sPackagePath) )
 	{
-		AfxMessageBox( ssprintf(IS_NOT_A_VALID_ZIP.GetValue(), m_sPackagePath), MB_ICONSTOP );
-		exit( 1 );
+		MessageBox( ssprintf(COULD_NOT_OPEN_FILE.GetValue(),m_sPackagePath.c_str()) );
+		exit(1);	// better way to abort?
 	}
 
+	RageFileDriverZip zip;
+	if( !zip.Load(&file) )
+	{
+		MessageBox( ssprintf(IS_NOT_A_VALID_ZIP.GetValue(),m_sPackagePath.c_str()) );
+		exit(1);	// better way to abort?
+	}
 
 	// Show comment (if any)
 	{
-		RString sComment = fileDriver.GetGlobalComment();
+		RString sComment = zip.GetGlobalComment();
 		bool DontShowComment;
 		if( sComment != "" && (!SMPackageUtil::GetPref("DontShowComment", DontShowComment) || !DontShowComment) )
 		{
@@ -300,18 +308,18 @@ void CSMPackageInstallDlg::OnOK()
 	}
 
 	/* Check for installed packages that should be deleted before installing. */
-	if( !CheckPackages(fileDriver) )
+	if( !CheckPackages(zip) )
 		return;	// cancelled
 
 
 	// Unzip the SMzip package into the installation folder
 	vector<RString> vs;
-	GetDirListingRecursive( &fileDriver, "/", "*", vs );
+	GetDirListingRecursive( &zip, "/", "*", vs );
 	for( unsigned i=0; i<vs.size(); i++ )
 	{
 		// Throw some text up so the user has something to look at during the long pause.
 		CEdit* pEdit1 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE1);
-		pEdit1->SetWindowText( ssprintf(INSTALLING_PLEASE_WAIT.GetValue(), m_sPackagePath) );
+		pEdit1->SetWindowText( ssprintf(INSTALLING_PLEASE_WAIT.GetValue(), m_sPackagePath.c_str()) );
 		CEdit* pEdit2 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE2);
 		pEdit2->SetWindowText( "" );
 		CEdit* pEdit3 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE3);
@@ -337,48 +345,54 @@ retry_unzip:
 
 		// Extract the files
 		const RString sFile = vs[i];
+		LOG->Trace( "Extracting: "+sFile );
+
 		// skip extracting "thumbs.db" files
 		if( Basename(sFile).CompareNoCase("thumbs.db") == 0 )
 			continue;
 
-		bool bSuccess = true;
 		RString sError;
-
-		int iErr;
-		RageFileBasic *pFileFrom = fileDriver.Open( sFile, RageFile::READ, iErr );
-		if( pFileFrom == NULL )
 		{
-			bSuccess = false;
-		}
-
-		RageFile fileTo;		
-		if( !fileTo.Open(sFile, RageFile::WRITE) )
-		{
-			bSuccess = false;
-			sError = fileTo.GetError();
-		}
-
-		if( bSuccess )
-		{
-			bSuccess = FileCopy(*pFileFrom, fileTo, sError);
-		}
-
-		if( !bSuccess )
-		{
-			RString sError = ssprintf( ERROR_COPYING_FILE.GetValue(), sFile.c_str() );
-			switch( MessageBox( sError, NULL, MB_ABORTRETRYIGNORE|MB_ICONEXCLAMATION ) )
+			int iErr;
+			RageFileBasic *pFileFrom = zip.Open( sFile, RageFile::READ, iErr );
+			if( pFileFrom == NULL )
 			{
-			case IDABORT:
-				exit(1);
-				break;
-			case IDRETRY:
-				goto retry_unzip;
-				break;
-			case IDIGNORE:
-				// do nothing
-				break;
+				sError = ssprintf( ERROR_OPENING_SOURCE_FILE.GetValue(), sFile.c_str(), ssprintf("%d",iErr).c_str() );
+				goto show_error;
+			}
+
+			RageFile fileTo;		
+			if( !fileTo.Open(sFile, RageFile::WRITE) )
+			{
+				sError = ssprintf( ERROR_OPENING_DESTINATION_FILE.GetValue(), sFile.c_str(), fileTo.GetError().c_str() );
+				goto show_error;
+			}
+
+			RString sErr;
+			if( !FileCopy(*pFileFrom, fileTo, sErr) )
+			{
+				sError = ssprintf( ERROR_COPYING_FILE.GetValue(), sFile.c_str(), sErr.c_str() );
+				goto show_error;
 			}
 		}
+
+		goto done_with_file;
+
+show_error:
+		switch( MessageBox( sError, NULL, MB_ABORTRETRYIGNORE|MB_ICONEXCLAMATION ) )
+		{
+		case IDABORT:
+			exit(1);	// better way to exit?
+			break;
+		case IDRETRY:
+			goto retry_unzip;
+			break;
+		case IDIGNORE:
+			// do nothing
+			break;
+		}
+
+done_with_file:
 
 		pProgress1->StepIt(); //increase the progress bar of 1 step
 	}

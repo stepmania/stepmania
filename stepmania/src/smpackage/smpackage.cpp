@@ -73,13 +73,19 @@ BOOL CSmpackageApp::InitInstance()
 	IniFile ini;
 	RString sLanguage;
 	bool bPseudoLocalize = false;
+	bool bShowLogOutput = false;
+	bool bLogToDisk = false;
 	if( ini.ReadFile(SpecialFiles::PREFERENCES_INI_PATH) )
 	{
-		ini.GetValue( "Preferences", "Language", sLanguage );
-		ini.GetValue( "PseudoLocalize", "Language", bPseudoLocalize );
+			ini.GetValue( "Options", "Language", sLanguage );
+		ini.GetValue( "Options", "PseudoLocalize", bPseudoLocalize );
+		ini.GetValue( "Options", "ShowLogOutput", bShowLogOutput );
+		ini.GetValue( "Options", "LogToDisk", bLogToDisk );
 	}
 	THEME->SwitchThemeAndLanguage( SpecialFiles::BASE_THEME_NAME, sLanguage, bPseudoLocalize );
-
+	LOG->SetShowLogOutput( bShowLogOutput );
+	LOG->SetLogToDisk( bLogToDisk );
+	LOG->SetInfoToDisk( true );
 
 
 	// check for --machine-profile-stats and launch Stats.xml
@@ -92,7 +98,7 @@ BOOL CSmpackageApp::InitInstance()
 			RString sFile = sPersonalDir + PRODUCT_ID +"/Save/MachineProfile/Stats.xml";
 			if( NULL == ::ShellExecute( NULL, "open", sFile, "", "", SW_SHOWNORMAL ) )
 				AfxMessageBox( ssprintf(FAILED_TO_OPEN.GetValue(),sFile.c_str(),GetLastErrorString().c_str()) );
-			goto command_line_handled;
+			exit(1);	// better way to quit?
 		}
 	}
 	
@@ -106,30 +112,13 @@ BOOL CSmpackageApp::InitInstance()
 		sPathLower.MakeLower();
 
 		// test to see if this is a smzip file
-		if( sPathLower.Right(3) == "zip" )
+		if( sPathLower.Right(3).CompareNoCase("zip")==0 )
 		{
-			if( !SMPackageUtil::DoesOsAbsoluteFileExist(sPath) )
-			{
-				AfxMessageBox( ssprintf(THE_FILE_DOES_NOT_EXIST.GetValue(),sPath.c_str()), MB_ICONERROR );
-				goto command_line_handled;
-			}
-
 			// We found a zip package.  Prompt the user to install it!
 			CSMPackageInstallDlg dlg( sPath );
 			int nResponse = dlg.DoModal();
-			if( nResponse == IDOK )
-			{
-				CSmpackageExportDlg dlg;
-				int nResponse = dlg.DoModal();
-				// Since the dialog has been closed, return FALSE so that we exit the
-				//  application, rather than start the application's message pump.
-				goto command_line_handled;
-			}
-			else if (nResponse == IDCANCEL)
-			{
-				// the user cancelled.  Don't fall through to the Manager.
-				goto command_line_handled;
-			}
+			if( nResponse == IDCANCEL )
+				exit(1);	// better way to exit?
 		}
 	}
 
@@ -137,7 +126,6 @@ BOOL CSmpackageApp::InitInstance()
 		MainMenuDlg dlg;
 		int nResponse = dlg.DoModal();
 	}
-command_line_handled:
 
 	SAFE_DELETE( THEME );
 	SAFE_DELETE( LUA );
