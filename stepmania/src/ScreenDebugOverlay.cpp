@@ -87,12 +87,16 @@ struct MapDebugToDI
 {
 	DeviceInput holdForDebug1;
 	DeviceInput holdForDebug2;
+	DeviceInput holdForSlow;
+	DeviceInput holdForFast;
 	DeviceInput debugButton[MAX_DEBUG_LINES];
 	DeviceInput gameplayButton[MAX_DEBUG_LINES];
 	void Clear()
 	{
 		holdForDebug1.MakeInvalid();
 		holdForDebug2.MakeInvalid();
+		holdForSlow.MakeInvalid();
+		holdForFast.MakeInvalid();
 		for( int i=0; i<MAX_DEBUG_LINES; i++ )
 		{
 			debugButton[i].MakeInvalid();
@@ -125,6 +129,9 @@ void ScreenDebugOverlay::Init()
 
 		g_Mappings.holdForDebug1 = DeviceInput(DEVICE_KEYBOARD, KEY_F3);
 		g_Mappings.holdForDebug2.MakeInvalid();
+		g_Mappings.holdForSlow = DeviceInput(DEVICE_KEYBOARD, KEY_ACCENT);
+		g_Mappings.holdForFast = DeviceInput(DEVICE_KEYBOARD, KEY_TAB);
+
 
 		int i=0;
 		g_Mappings.gameplayButton[i++]	= DeviceInput(DEVICE_KEYBOARD, KEY_F8);
@@ -196,14 +203,14 @@ void ScreenDebugOverlay::Update( float fDeltaTime )
 {
 	{
 		float fRate = 1;
-		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_TAB) ) )
+		if( INPUTFILTER->IsBeingPressed(g_Mappings.holdForFast) )
 		{
-			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_ACCENT) ) )
+			if( INPUTFILTER->IsBeingPressed(g_Mappings.holdForSlow) )
 				fRate = 0; /* both; stop time */
 			else
 				fRate *= 4;
 		}
-		else if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_ACCENT) ) )
+		else if( INPUTFILTER->IsBeingPressed(g_Mappings.holdForSlow) )
 		{
 			fRate /= 4;
 		}
