@@ -32,6 +32,7 @@ void ScreenTestInput::Init()
 	m_textInputs.SetDiffuse( RageColor(1,1,1,1) );
 	m_textInputs.SetZoom( 0.7f );
 	m_textInputs.SetHorizAlign( Actor::align_left );
+	m_textInputs.SetVertSpacing( +8 );
 	this->AddChild( &m_textInputs );
 
 	this->SortByDrawOrder();
