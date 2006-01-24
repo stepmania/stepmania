@@ -65,3 +65,8 @@ function Actor:hide_if(b)
 	end
 end
 
+function ActorFrame:propagatecommand( cmd )
+	self:propagate(1);
+	self:playcommand(cmd);
+	self:propagate(0);
+end
