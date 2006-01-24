@@ -543,7 +543,7 @@ ActorUtil::ActorParam::~ActorParam()
 
 void ActorUtil::ActorParam::Release()
 {
-	if( m_pOld->IsSet() )
+	if( !m_pOld->IsSet() )
 		return;
 	/* Restore the old value. */
 	Lua *L = LUA->Get();
