@@ -459,7 +459,7 @@ static MenuDef g_MainMenu(
 	MenuRowDef( ScreenEdit::edit_bpm,			"Edit BPM Change",		true, EditMode_Full, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::edit_stop,			"Edit Stop",			true, EditMode_Full, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::play_preview_music,		"Play Preview Music",		true, EditMode_Full, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::exit,				"Exit",				true, EditMode_Practice, true, 0, NULL )
+	MenuRowDef( ScreenEdit::exit,				"Exit Editor",			true, EditMode_Practice, true, 0, NULL )
 );
 
 static MenuDef g_AreaMenu(
