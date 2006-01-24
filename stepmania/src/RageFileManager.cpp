@@ -881,7 +881,7 @@ void GetDirListingRecursive( RageFileDriver *prfd, const RString &sDir, const RS
 	vector<RString> vsFiles;
 	prfd->GetDirListing( sDir+sMatch, vsFiles, false, true );
 	vector<RString> vsDirs;
-	prfd->GetDirListing( sDir+"*",	vsDirs, true, true );
+	prfd->GetDirListing( sDir+"*", vsDirs, true, true );
 	for( int i=0; i<(int)vsDirs.size(); i++ )
 	{
 		prfd->GetDirListing( vsDirs[i]+"/"+sMatch, vsFiles, false, true );
