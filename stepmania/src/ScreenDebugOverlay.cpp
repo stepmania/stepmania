@@ -269,8 +269,8 @@ void ScreenDebugOverlay::UpdateText()
 		txt2.SetText( s1 + s2 );
 	}
 	
-    if( g_bIsHalt )
-    {
+	if( g_bIsHalt )
+	{
 		/* More than once I've paused the game accidentally and wasted time
 		 * figuring out why, so warn. */
 		if( g_HaltTimer.Ago() >= 5.0f )
@@ -278,7 +278,7 @@ void ScreenDebugOverlay::UpdateText()
 			g_HaltTimer.Touch();
 			LOG->Warn( "Game halted" );
 		}
-    }
+	}
 }
 
 bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
@@ -332,23 +332,23 @@ bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
 //
 static void SetSpeed()
 {
-    if( g_bIsHalt )
-    {
+	if( g_bIsHalt )
+	{
 		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_KEYBOARD, KEY_TAB), true );
 		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_KEYBOARD, KEY_ACCENT), true );
-    }
-    else if( g_bIsSlow )
-    {
+	}
+	else if( g_bIsSlow )
+	{
 		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_KEYBOARD, KEY_TAB), false );
 		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_KEYBOARD, KEY_ACCENT), true );
-    }
-    else
-    {
+	}
+	else
+	{
 		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_KEYBOARD, KEY_TAB), false );
 		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_KEYBOARD, KEY_ACCENT), false );
-    }
+	}
 	
-    // PauseMusic( g_bIsHalt );
+	// PauseMusic( g_bIsHalt );
 }
 
 void ChangeVolume( float fDelta )
