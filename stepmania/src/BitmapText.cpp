@@ -178,10 +178,9 @@ void BitmapText::BuildChars()
 		return;
 
 	m_size.y = float(m_pFont->GetHeight() * m_wTextLines.size());
-	int iMinSpacing = 0;
 
 	/* The height (from the origin to the baseline): */
-	int iPadding = max(m_pFont->GetLineSpacing(), iMinSpacing) - m_pFont->GetHeight();
+	int iPadding = m_pFont->GetLineSpacing() - m_pFont->GetHeight();
 
 	/* There's padding between every line: */
 	m_size.y += iPadding * (m_wTextLines.size()-1);
