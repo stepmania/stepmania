@@ -100,7 +100,7 @@ BOOL ChangeGameSettings::OnInitDialog()
 
 
 	bValue = false;
-	ini.GetValue( "Options", "ShowLogWindow", bValue );
+	ini.GetValue( "Options", "ShowLogOutput", bValue );
 	CheckDlgButton( IDC_CHECK_SHOW_LOG_WINDOW, bValue ? BST_CHECKED : BST_UNCHECKED );
 
 	
@@ -137,7 +137,7 @@ void ChangeGameSettings::OnOK()
 
 
 	ini.SetValue( "Options", "LogToDisk",		BST_CHECKED == IsDlgButtonChecked(IDC_CHECK_LOG_TO_DISK) );
-	ini.SetValue( "Options", "ShowLogWindow",	BST_CHECKED == IsDlgButtonChecked(IDC_CHECK_SHOW_LOG_WINDOW) );
+	ini.SetValue( "Options", "ShowLogOutput",	BST_CHECKED == IsDlgButtonChecked(IDC_CHECK_SHOW_LOG_WINDOW) );
 	
 
 	if( !ini.WriteFile(SpecialFiles::PREFERENCES_INI_PATH) )
