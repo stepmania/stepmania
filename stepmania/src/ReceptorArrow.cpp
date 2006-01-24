@@ -43,9 +43,9 @@ void ReceptorArrow::Update( float fDeltaTime )
 void ReceptorArrow::DrawPrimitives()
 {
 	if( m_bWasPressed  &&  !m_bIsPressed )
-	{
 		m_pReceptor->PlayCommand( "Lift" );
-	}
+	else if( !m_bWasPressed  &&  m_bIsPressed )
+		m_pReceptor->PlayCommand( "Press" );
 
 	m_bWasPressed = m_bIsPressed;
 	m_bIsPressed = false;	// it may get turned back on next update
@@ -59,8 +59,6 @@ void ReceptorArrow::Step( TapNoteScore score )
 
 	RString sJudge = TapNoteScoreToString( score );
 	m_pReceptor->PlayCommand( Capitalize(sJudge) );
-
-	m_pReceptor->PlayCommand( "Press" );
 }
 
 /*
