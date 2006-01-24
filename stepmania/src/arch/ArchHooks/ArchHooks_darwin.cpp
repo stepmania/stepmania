@@ -13,6 +13,7 @@
 #include <mach/thread_act.h>
 #include <mach/mach.h>
 #include <mach/host_info.h>
+#include <mach/mach_time.h>
 #include <sys/types.h>
 #include <sys/time.h>
 
@@ -271,21 +272,19 @@ void ArchHooks_darwin::ExitTimeCriticalSection()
 #endif
 }
 
-static int64_t GetMicrosecondsSinceEpoch()
-{
-	struct timeval tv;
-	gettimeofday( &tv, NULL );
-
-	return int64_t(tv.tv_sec) * 1000000 + int64_t(tv.tv_usec);
-}
-
 int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 {
-	static int64_t iStartTime = GetMicrosecondsSinceEpoch();
-	int64_t ret = GetMicrosecondsSinceEpoch() - iStartTime;
-	if( bAccurate )
-		ret = FixupTimeIfBackwards( ret );
-	return ret;
+	static uint64_t iStartTime = mach_absolute_time();
+	static double factor = 0.0;
+	
+	if( unlikely(factor == 0.0) )
+	{
+		mach_timebase_info_data_t timeBase;
+		
+		mach_timebase_info( &timeBase );
+		factor = timeBase.numer / ( 1000.0 * timeBase.denom );
+	}
+	return int64_t( (mach_absolute_time() - iStartTime) * factor );
 }
 
 #include "RageFileManager.h"
