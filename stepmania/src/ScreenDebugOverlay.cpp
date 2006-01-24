@@ -208,6 +208,11 @@ void ScreenDebugOverlay::Update( float fDeltaTime )
 			fRate /= 4;
 		}
 
+		if( g_bIsHalt )
+			fRate = 0;
+		else if( g_bIsSlow )
+			fRate /= 4;
+
 		GameLoop::SetUpdateRate( fRate );
 	}
 
@@ -332,22 +337,6 @@ bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
 //
 static void SetSpeed()
 {
-	if( g_bIsHalt )
-	{
-		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_KEYBOARD, KEY_TAB), true );
-		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_KEYBOARD, KEY_ACCENT), true );
-	}
-	else if( g_bIsSlow )
-	{
-		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_KEYBOARD, KEY_TAB), false );
-		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_KEYBOARD, KEY_ACCENT), true );
-	}
-	else
-	{
-		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_KEYBOARD, KEY_TAB), false );
-		INPUTFILTER->ButtonPressed( DeviceInput(DEVICE_KEYBOARD, KEY_ACCENT), false );
-	}
-	
 	// PauseMusic( g_bIsHalt );
 }
 
