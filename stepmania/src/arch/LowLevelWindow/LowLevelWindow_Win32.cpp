@@ -172,7 +172,7 @@ RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 		 * not allowed to do so, destroy the window and make a new one.
 		 *
 		 * For some reason, if we destroy the old window before creating the new one,
-		 * the "fullscreen apps go under the taskbar" glitch will happen when we quit.
+		 * the "maximized apps go under the taskbar" glitch will happen when we quit.
 		 * We have to create the new window first.
 		 */
 		LOG->Trace( "Mode requires new pixel format, and we've already set one; resetting OpenGL context" );
