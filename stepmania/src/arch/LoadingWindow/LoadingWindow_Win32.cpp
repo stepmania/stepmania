@@ -9,6 +9,7 @@
 #include "RageSurface_Load.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
+#include "RageLog.h"
 #include "ProductInfo.h"
 #include "LocalizedString.h"
 
@@ -19,10 +20,13 @@ static HBITMAP g_hBitmap = NULL;
 static HBITMAP LoadWin32Surface( RageSurface *&s )
 {
 	RageSurfaceUtils::ConvertSurface( s, s->w, s->h, 32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0 );
-	HBITMAP bitmap = CreateCompatibleBitmap( GetDC(NULL), s->w, s->h );
+
+	HDC hScreen = GetDC(NULL);
+
+	HBITMAP bitmap = CreateCompatibleBitmap( hScreen, s->w, s->h );
 	ASSERT( bitmap );
 
-	HDC BitmapDC = CreateCompatibleDC( GetDC(NULL) );
+	HDC BitmapDC = CreateCompatibleDC( hScreen );
 	SelectObject( BitmapDC, bitmap );
 
 	/* This is silly, but simple.  We only do this once, on a small image. */
@@ -39,6 +43,8 @@ static HBITMAP LoadWin32Surface( RageSurface *&s )
 
 	SelectObject( BitmapDC, NULL );
 	DeleteObject( BitmapDC );
+
+	ReleaseDC( NULL, hScreen );
 
 	return bitmap;
 }
