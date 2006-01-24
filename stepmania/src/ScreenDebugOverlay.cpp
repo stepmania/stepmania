@@ -361,32 +361,32 @@ static LocalizedString AUTO_PLAY		( "ScreenDebugOverlay", "AutoPlay" );
 static LocalizedString ASSIST_TICK		( "ScreenDebugOverlay", "AssistTick" );
 static LocalizedString AUTOSYNC			( "ScreenDebugOverlay", "Autosync" );
 static LocalizedString COIN_MODE		( "ScreenDebugOverlay", "CoinMode" );
-static LocalizedString HALT				( "ScreenDebugOverlay", "Halt" );
+static LocalizedString HALT			( "ScreenDebugOverlay", "Halt" );
 static LocalizedString LIGHTS_DEBUG		( "ScreenDebugOverlay", "Lights Debug" );
 static LocalizedString MONKEY_INPUT		( "ScreenDebugOverlay", "Monkey Input" );
-static LocalizedString RENDERING_STATS	( "ScreenDebugOverlay", "Rendering Stats" );
+static LocalizedString RENDERING_STATS		( "ScreenDebugOverlay", "Rendering Stats" );
 static LocalizedString VSYNC			( "ScreenDebugOverlay", "Vsync" );
 static LocalizedString MULTITEXTURE		( "ScreenDebugOverlay", "Multitexture" );
-static LocalizedString SCREEN_TEST_MODE	( "ScreenDebugOverlay", "Screen Test Mode" );
+static LocalizedString SCREEN_TEST_MODE		( "ScreenDebugOverlay", "Screen Test Mode" );
 static LocalizedString CLEAR_MACHINE_STATS	( "ScreenDebugOverlay", "Clear Machine Stats" );
 static LocalizedString FILL_MACHINE_STATS	( "ScreenDebugOverlay", "Fill Machine Stats" );
 static LocalizedString SEND_NOTES_ENDED		( "ScreenDebugOverlay", "Send Notes Ended" );
-static LocalizedString RELOAD				( "ScreenDebugOverlay", "Reload" );
-static LocalizedString RELOAD_THEME_AND_TEXTURES	( "ScreenDebugOverlay", "Reload Theme and Textures" );
+static LocalizedString RELOAD			( "ScreenDebugOverlay", "Reload" );
+static LocalizedString RELOAD_THEME_AND_TEXTURES( "ScreenDebugOverlay", "Reload Theme and Textures" );
 static LocalizedString WRITE_PROFILES		( "ScreenDebugOverlay", "Write Profiles" );
 static LocalizedString WRITE_PREFERENCES	( "ScreenDebugOverlay", "Write Preferences" );
-static LocalizedString MENU_TIMER			( "ScreenDebugOverlay", "Menu Timer" );
-static LocalizedString FLUSH_LOG			( "ScreenDebugOverlay", "Flush Log" );
+static LocalizedString MENU_TIMER		( "ScreenDebugOverlay", "Menu Timer" );
+static LocalizedString FLUSH_LOG		( "ScreenDebugOverlay", "Flush Log" );
 static LocalizedString PULL_BACK_CAMERA		( "ScreenDebugOverlay", "Pull Back Camera" );
-static LocalizedString VOLUME_UP			( "ScreenDebugOverlay", "Volume Up" );
-static LocalizedString VOLUME_DOWN			( "ScreenDebugOverlay", "Volume Down" );
-static LocalizedString UPTIME				( "ScreenDebugOverlay", "Uptime" );
-static LocalizedString SLOW		( "ScreenDebugOverlay", "Slow" );
-static LocalizedString ON		( "ScreenDebugOverlay", "on" );
-static LocalizedString OFF		( "ScreenDebugOverlay", "off" );
-static LocalizedString CPU		( "ScreenDebugOverlay", "CPU" );
-static LocalizedString SONG		( "ScreenDebugOverlay", "Song" );
-static LocalizedString MACHINE	( "ScreenDebugOverlay", "Machine" );
+static LocalizedString VOLUME_UP		( "ScreenDebugOverlay", "Volume Up" );
+static LocalizedString VOLUME_DOWN		( "ScreenDebugOverlay", "Volume Down" );
+static LocalizedString UPTIME			( "ScreenDebugOverlay", "Uptime" );
+static LocalizedString SLOW			( "ScreenDebugOverlay", "Slow" );
+static LocalizedString ON			( "ScreenDebugOverlay", "on" );
+static LocalizedString OFF			( "ScreenDebugOverlay", "off" );
+static LocalizedString CPU			( "ScreenDebugOverlay", "CPU" );
+static LocalizedString SONG			( "ScreenDebugOverlay", "Song" );
+static LocalizedString MACHINE			( "ScreenDebugOverlay", "Machine" );
 
 
 class DebugLineAutoplay : public IDebugLine
@@ -707,8 +707,8 @@ class DebugLineReloadTheme : public IDebugLine
 		TEXTUREMAN->ReloadAll();
 		NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_pCurGame );
 		CodeDetector::RefreshCacheItems();
-		// HACK: Don't update text below.  Return immediately because this screen.
-		// was just destroyed as part of the them reload.
+		// HACK: Don't update text below.  Return immediately because this screen
+		// was just destroyed as part of the theme reload.
 		IDebugLine::Do( sMessageOut );
 	}
 };
