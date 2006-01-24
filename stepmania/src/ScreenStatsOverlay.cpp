@@ -121,7 +121,7 @@ void ScreenStatsOverlay::UpdateSkips()
 
 	if( skip )
 	{
-		RString time(SecondsToMMSSMsMs(RageTimer::GetTimeSinceStartFast()));
+		RString sTime( SecondsToMMSSMsMs(RageTimer::GetTimeSinceStartFast()) );
 
 		static const RageColor colors[] =
 		{
@@ -131,7 +131,7 @@ void ScreenStatsOverlay::UpdateSkips()
 			RageColor(1.0f,0.4f,0.4f,1)		/* light red */
 		};
 
-		AddTimestampLine( ssprintf("%s: %.0fms (%.0f)", time.c_str(), 1000*UpdateTime, UpdateTime/ExpectedUpdate), colors[skip] );
+		AddTimestampLine( ssprintf("%s: %.0fms (%.0f)", sTime.c_str(), 1000*UpdateTime, UpdateTime/ExpectedUpdate), colors[skip] );
 
 		if( PREFSMAN->m_bLogSkips )
 			LOG->Trace( "Frame skip: %.0fms (%.0f)", 1000*UpdateTime, UpdateTime/ExpectedUpdate );
