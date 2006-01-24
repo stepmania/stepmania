@@ -24,6 +24,7 @@
 #include "Profile.h"
 #include "SongManager.h"
 #include "SubscriptionManager.h"
+#include "GameLoop.h"
 
 static bool g_bIsDisplayed = false;
 static bool g_bIsSlow = false;
@@ -194,6 +195,23 @@ void ScreenDebugOverlay::Init()
 
 void ScreenDebugOverlay::Update( float fDeltaTime )
 {
+	{
+		float fRate = 1;
+		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_TAB) ) )
+		{
+			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_ACCENT) ) )
+				fRate = 0; /* both; stop time */
+			else
+				fRate *= 4;
+		}
+		else if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_ACCENT) ) )
+		{
+			fRate /= 4;
+		}
+
+		GameLoop::SetUpdateRate( fRate );
+	}
+
 	bool bCenteringNeedsUpdate = g_fImageScaleCurrent != g_fImageScaleDestination;
 	fapproach( g_fImageScaleCurrent, g_fImageScaleDestination, fDeltaTime );
 	if( bCenteringNeedsUpdate )

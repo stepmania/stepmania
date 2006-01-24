@@ -39,6 +39,12 @@ static bool UserQuit()
 
 void HandleInputEvents( float fDeltaTime );
 
+static float g_fUpdateRate = 1;
+void GameLoop::SetUpdateRate( float fUpdateRate )
+{
+	g_fUpdateRate = fUpdateRate;
+}
+
 static void CheckGameLoopTimerSkips( float fDeltaTime )
 {
 	if( !PREFSMAN->m_bLogSkips )
@@ -137,17 +143,7 @@ void GameLoop::GameLoop()
 		
 		CheckGameLoopTimerSkips( fDeltaTime );
 
-		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_TAB) ) )
-		{
-			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_ACCENT) ) )
-				fDeltaTime = 0; /* both; stop time */
-			else
-				fDeltaTime *= 4;
-		}
-		else if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_ACCENT) ) )
-		{
-			fDeltaTime /= 4;
-		}
+		fDeltaTime *= g_fUpdateRate;
 
 		CheckFocus();
 
