@@ -1209,7 +1209,7 @@ void StepMania::InsertCredit()
 
 /* Returns true if the key has been handled and should be discarded, false if
  * the key should be sent on to screens. */
-static LocalizedString SERVICE_SWITCH_PRESED ( "StepMania", "Service switch pressed" );
+static LocalizedString SERVICE_SWITCH_PRESSED ( "StepMania", "Service switch pressed" );
 bool HandleGlobalInputs( const InputEventPlus &input )
 {
 	/* None of the globals keys act on types other than FIRST_PRESS */
@@ -1225,7 +1225,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 		 * (to prevent quitting without storing changes). */
 		if( SCREENMAN->GetTopScreen()->GetScreenType() != system_menu )
 		{
-			SCREENMAN->SystemMessage( SERVICE_SWITCH_PRESED );
+			SCREENMAN->SystemMessage( SERVICE_SWITCH_PRESSED );
 			GAMESTATE->Reset();
 			SCREENMAN->PopAllScreens();
 			SCREENMAN->SetNewScreen( "ScreenOptionsService" );
