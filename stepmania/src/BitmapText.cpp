@@ -51,6 +51,7 @@ BitmapText::BitmapText()
 	m_iWrapWidthPixels = -1;
 	m_fMaxWidth = 0;
 	m_fMaxHeight = 0;
+	m_iVertSpacing = 0;
 
 	SetShadowLength( 4 );
 }
@@ -181,6 +182,7 @@ void BitmapText::BuildChars()
 
 	/* The height (from the origin to the baseline): */
 	int iPadding = m_pFont->GetLineSpacing() - m_pFont->GetHeight();
+	iPadding += m_iVertSpacing;
 
 	/* There's padding between every line: */
 	m_size.y += iPadding * (m_wTextLines.size()-1);
@@ -414,6 +416,12 @@ void BitmapText::SetText( const RString& _sText, const RString& _sAlternateText,
 
 	BuildChars();
 	UpdateBaseZoom();
+}
+
+void BitmapText::SetVertSpacing( int iSpacing )
+{
+	m_iVertSpacing = iSpacing;
+	BuildChars();
 }
 
 void BitmapText::SetMaxWidth( float fMaxWidth )
@@ -848,6 +856,7 @@ public:
 	static int wrapwidthpixels( T* p, lua_State *L )	{ p->SetWrapWidthPixels( IArg(1) ); return 0; }
 	static int maxwidth( T* p, lua_State *L )			{ p->SetMaxWidth( FArg(1) ); return 0; }
 	static int maxheight( T* p, lua_State *L )			{ p->SetMaxHeight( FArg(1) ); return 0; }
+	static int vertspacing( T* p, lua_State *L )			{ p->SetVertSpacing( IArg(1) ); return 0; }
 	static int settext( T* p, lua_State *L )
 	{
 		RString s = SArg(1);
@@ -868,6 +877,7 @@ public:
 		ADD_METHOD( wrapwidthpixels );
 		ADD_METHOD( maxwidth );
 		ADD_METHOD( maxheight );
+		ADD_METHOD( vertspacing );
 		ADD_METHOD( settext );
 		ADD_METHOD( GetText );
 		Luna<T>::Register( L );

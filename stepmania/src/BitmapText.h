@@ -22,6 +22,7 @@ public:
 	bool LoadFromFont( const RString& sFontName );
 	bool LoadFromTextureAndChars( const RString& sTexturePath, const RString& sChars );
 	void SetText( const RString& sText, const RString& sAlternateText = "", int iWrapWidthPixels = -1 );
+	void SetVertSpacing( int iSpacing );
 	void SetMaxWidth( float fMaxWidth );
 	void SetMaxHeight( float fMaxHeight );
 	void SetWrapWidthPixels( int iWrapWidthPixels );
@@ -58,6 +59,7 @@ protected:
 	float				m_fMaxWidth;
 	float				m_fMaxHeight;
 	bool				m_bRainbow;
+	int				m_iVertSpacing;
 
 	vector<RageSpriteVertex>	m_aVertices;
 	vector<RageTexture *>		m_pTextures;
