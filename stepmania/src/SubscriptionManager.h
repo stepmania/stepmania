@@ -20,6 +20,15 @@ public:
 	// m_pSubscribers == NULL (before any static constructors are called).
 	set<T*>* m_pSubscribers;
 
+	// Use this to access m_pSubscribers, so you don't have to worry about
+	// it being NULL.
+	set<T*> &Get()
+	{
+		if( m_pSubscribers == NULL )
+			m_pSubscribers = new set<T*>;
+		return *m_pSubscribers;
+	}
+
 	void Subscribe( T* p )
 	{
 		if( m_pSubscribers == NULL )
