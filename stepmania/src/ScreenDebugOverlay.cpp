@@ -23,6 +23,7 @@
 #include "LocalizedString.h"
 #include "Profile.h"
 #include "SongManager.h"
+#include "SubscriptionManager.h"
 
 static bool g_bIsDisplayed = false;
 static bool g_bIsSlow = false;
@@ -35,17 +36,18 @@ static float g_fImageScaleDestination = 1;
 // self-registering debug lines
 //
 class IDebugLine;
-static vector<IDebugLine*> *g_pvpSubscribers = NULL;
+static SubscriptionManager<IDebugLine> g_Subscribers;
 class IDebugLine
 {
 public:
 	IDebugLine()
 	{ 
-		if( g_pvpSubscribers == NULL )
-			g_pvpSubscribers = new vector<IDebugLine*>;
-		g_pvpSubscribers->push_back( this );
+		g_Subscribers.Subscribe( this );
 	}
-	virtual ~IDebugLine() { }
+	virtual ~IDebugLine()
+	{
+		g_Subscribers.Unsubscribe( this );
+	}
 	virtual RString GetDescription() = 0;
 	virtual RString GetValue() = 0;
 	virtual bool IsEnabled() = 0;
@@ -165,7 +167,7 @@ void ScreenDebugOverlay::Init()
 	m_textHeader.SetText( "Debug Menu" );
 	this->AddChild( &m_textHeader );
 
-	FOREACH_CONST( IDebugLine*, *g_pvpSubscribers, p )
+	FOREACHS_CONST( IDebugLine*, g_Subscribers.Get(), p )
 	{
 		{
 			BitmapText *pT1 = new BitmapText;
@@ -218,11 +220,10 @@ void ScreenDebugOverlay::UpdateText()
 	const RageColor off(0.6f, 0.6f, 0.6f, 1.0f);
 	const RageColor on(1, 1, 1, 1);
 	
-	const unsigned NUM_DEBUG_LINES = g_pvpSubscribers->size();
-	FOREACH_CONST( IDebugLine*, *g_pvpSubscribers, p )
+	const unsigned NUM_DEBUG_LINES = g_Subscribers.Get().size();
+	int i = 0;
+	FOREACHS_CONST( IDebugLine*, g_Subscribers.Get(), p )
 	{
-		int i = p-g_pvpSubscribers->begin();
-
 		BitmapText &txt1 = *m_vptextButton[i];
 		txt1.SetX( SCREEN_CENTER_X-50 );
 		txt1.SetY( SCALE(i, 0, NUM_DEBUG_LINES-1, SCREEN_TOP+60, SCREEN_BOTTOM-40) );
@@ -248,6 +249,8 @@ void ScreenDebugOverlay::UpdateText()
 		if( !s2.empty() )
 			s1 += " - ";
 		txt2.SetText( s1 + s2 );
+
+		++i;
 	}
 	
     if( g_bIsHalt )
@@ -277,10 +280,9 @@ bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
 			g_bIsDisplayed = false;
 	}
 
-	FOREACH_CONST( IDebugLine*, *g_pvpSubscribers, p )
+	int i = 0;
+	FOREACHS_CONST( IDebugLine*, g_Subscribers.Get(), p )
 	{
-		int i = p-g_pvpSubscribers->begin();
-
 		if( (g_bIsDisplayed && input.DeviceI == g_Mappings.debugButton[i]) ||
 			(IsGameplay() && input.DeviceI == g_Mappings.gameplayButton[i]) )
 		{
@@ -302,6 +304,7 @@ bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
 			UpdateText();
 			return true;
 		}
+		++i;
 	}
 
 	return false;
