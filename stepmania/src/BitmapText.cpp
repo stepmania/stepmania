@@ -178,21 +178,21 @@ void BitmapText::BuildChars()
 		return;
 
 	m_size.y = float(m_pFont->GetHeight() * m_wTextLines.size());
-	int MinSpacing = 0;
+	int iMinSpacing = 0;
 
 	/* The height (from the origin to the baseline): */
-	int Padding = max(m_pFont->GetLineSpacing(), MinSpacing) - m_pFont->GetHeight();
+	int iPadding = max(m_pFont->GetLineSpacing(), iMinSpacing) - m_pFont->GetHeight();
 
 	/* There's padding between every line: */
-	m_size.y += Padding * (m_wTextLines.size()-1);
+	m_size.y += iPadding * (m_wTextLines.size()-1);
 
 	int iY;	//	 the top position of the first row of characters
 	switch( m_VertAlign )
 	{
 	case align_top:		iY = 0;					break;
 	case align_middle:	iY = -(int)roundf(m_size.y/2.0f);	break;
-	case align_bottom:	iY = -(int)m_size.y;	break;
-	default:			ASSERT( false );		return;
+	case align_bottom:	iY = -(int)m_size.y;			break;
+	default:		ASSERT( false );
 	}
 
 	for( unsigned i=0; i<m_wTextLines.size(); i++ )		// foreach line
@@ -207,10 +207,10 @@ void BitmapText::BuildChars()
 		int iX;
 		switch( m_HorizAlign )
 		{
-		case align_left:	iX = 0;				break;
+		case align_left:	iX = 0;					break;
 		case align_center:	iX = -(int)roundf(iLineWidth/2.0f);	break;
-		case align_right:	iX = -iLineWidth;	break;
-		default:			ASSERT( false );	return;
+		case align_right:	iX = -iLineWidth;			break;
+		default:		ASSERT( false );
 		}
 
 		for( unsigned i = 0; i < sLine.size(); ++i )
@@ -241,7 +241,7 @@ void BitmapText::BuildChars()
 		}
 
 		/* The amount of padding a line needs: */
-		iY += Padding;
+		iY += iPadding;
 	}
 }
 

@@ -51,20 +51,18 @@ public:
 	Font* m_pFont;
 
 protected:
+	RString				m_sText;
+	vector<wstring>			m_wTextLines;
+	vector<int>			m_iLineWidths;		// in source pixels
+	int				m_iWrapWidthPixels;	// -1 = no wrap
+	float				m_fMaxWidth;
+	float				m_fMaxHeight;
+	bool				m_bRainbow;
+
+	vector<RageSpriteVertex>	m_aVertices;
+	vector<RageTexture *>		m_pTextures;
 	
 	// recalculate the items in SetText()
-	RString			m_sText;
-	vector<wstring>	m_wTextLines;
-	vector<int>		m_iLineWidths;			// in source pixels
-	int				m_iWrapWidthPixels;	// -1 = no wrap
-	float			m_fMaxWidth;
-	float			m_fMaxHeight;
-
-	bool m_bRainbow;
-
-	vector<RageSpriteVertex> m_aVertices;
-	vector<RageTexture *> m_pTextures;
-	
 	void BuildChars();
 	void DrawChars();
 	void UpdateBaseZoom();
