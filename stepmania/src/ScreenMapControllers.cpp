@@ -60,23 +60,27 @@ void ScreenMapControllers::Init()
 	{
 		KeyToMap *pKey = &m_KeysToMap[b];
 
-		BitmapText *pName = new BitmapText;
-		pName->SetName( "Title" );
-		pName->LoadFromFont( THEME->GetPathF("Common","title") );
-		RString sText = GameButtonToLocalizedString( GAMESTATE->GetCurrentGame(), pKey->m_GameButton );
-		pName->SetText( sText );
-		ActorUtil::LoadAllCommands( *pName, m_sName );
-		m_Line[b].AddChild( pName );
-
-		BitmapText *pSecondary = new BitmapText;
-		pSecondary->SetName( "Secondary" );
-		pSecondary->LoadFromFont( THEME->GetPathF("Common","title") );
-		MenuButton mb = GAMEMAN->GetMenuButtonSecondaryFunction( GAMESTATE->GetCurrentGame(), pKey->m_GameButton );
-		if( mb != MenuButton_INVALID )
-			sText = MenuButtonToLocalizedString( mb );
-		ActorUtil::LoadAllCommands( *pSecondary, m_sName );
-		pSecondary->SetText( sText );
-		m_Line[b].AddChild( pSecondary );
+		{
+			BitmapText *pName = new BitmapText;
+			pName->SetName( "Title" );
+			pName->LoadFromFont( THEME->GetPathF("Common","title") );
+			RString sText = GameButtonToLocalizedString( GAMESTATE->GetCurrentGame(), pKey->m_GameButton );
+			pName->SetText( sText );
+			ActorUtil::LoadAllCommands( *pName, m_sName );
+			m_Line[b].AddChild( pName );
+		}
+		{
+			BitmapText *pSecondary = new BitmapText;
+			pSecondary->SetName( "Secondary" );
+			pSecondary->LoadFromFont( THEME->GetPathF("Common","title") );
+			MenuButton mb = GAMEMAN->GetMenuButtonSecondaryFunction( GAMESTATE->GetCurrentGame(), pKey->m_GameButton );
+			RString sText;
+			if( mb != MenuButton_INVALID )
+				sText = MenuButtonToLocalizedString( mb );
+			ActorUtil::LoadAllCommands( *pSecondary, m_sName );
+			pSecondary->SetText( sText );
+			m_Line[b].AddChild( pSecondary );
+		}
 
 		for( int p=0; p<MAX_GAME_CONTROLLERS; p++ ) 
 		{			
