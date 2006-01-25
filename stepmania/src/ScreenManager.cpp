@@ -686,9 +686,8 @@ void ScreenManager::LoadDelayedScreen()
 	 * it doesn't get deleted by cleanup. */
 	Screen *pScreen = ActivatePreparedScreenAndBackground( sScreenName );
 
-	bool bTimeToDeleteScreens = (g_setGroupedScreens.find(sScreenName) == g_setGroupedScreens.end());
 	vector<Actor*> apActorsToDelete;
-	if( bTimeToDeleteScreens )
+	if( g_setGroupedScreens.find(sScreenName) == g_setGroupedScreens.end() )
 	{
 		/* It's time to delete all old prepared screens.  Depending on DelayedScreenLoad,
 		 * we can either delete the screens before or after we load the new screen.  Either
