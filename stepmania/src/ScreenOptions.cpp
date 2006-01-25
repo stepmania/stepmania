@@ -837,7 +837,7 @@ void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
 	int iCurRow = m_iCurrentRow[pn];
 	OptionRow &row = *m_pRows[iCurRow];
 
-	if( m_OptionsNavigation == NAV_THREE_KEY_MENU )
+	if( m_OptionsNavigation == NAV_THREE_KEY_MENU && row.GetRowType() != OptionRow::RowType_Exit )
 	{
 		/* In NAV_THREE_KEY_MENU mode, if a row doesn't set a screen, it does
 		 * something.  Apply it now, and don't go to the next screen. */
