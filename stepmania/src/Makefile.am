@@ -127,7 +127,8 @@ StepsUtil.cpp StepsUtil.h Style.cpp Style.h StyleUtil.cpp StyleUtil.h \
 SubscriptionManager.h \
 StyleInput.h TimingData.cpp TimingData.h \
 ThemeMetric.h \
-Trail.cpp Trail.h TrailUtil.cpp TrailUtil.h TitleSubstitution.cpp TitleSubstitution.h
+Trail.cpp Trail.h TrailUtil.cpp TrailUtil.h TitleSubstitution.cpp TitleSubstitution.h \
+Tween.cpp Tween.h
 
 FileTypes = IniFile.cpp IniFile.h \
 		MsdFile.cpp MsdFile.h \
