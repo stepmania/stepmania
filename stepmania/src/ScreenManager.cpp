@@ -682,10 +682,13 @@ void ScreenManager::LoadDelayedScreen()
 	// Pop the top screen, if any.
 	ScreenMessage SM = PopTopScreenInternal();
 
-	/* We have a screen to display.  Delete the current screens and load it. */
+	/* If the screen is already prepared, activate it before performing any cleanup, so
+	 * it doesn't get deleted by cleanup. */
+	Screen *pScreen = ActivatePreparedScreenAndBackground( sScreenName );
+
 	bool bTimeToDeleteScreens = (g_setGroupedScreens.find(sScreenName) == g_setGroupedScreens.end());
 	vector<Actor*> apActorsToDelete;
-	if( bTimeToDeleteScreens && !ScreenIsPrepped(sScreenName) )
+	if( bTimeToDeleteScreens )
 	{
 		/* It's time to delete all old prepared screens.  Depending on DelayedScreenLoad,
 		 * we can either delete the screens before or after we load the new screen.  Either
@@ -699,11 +702,13 @@ void ScreenManager::LoadDelayedScreen()
 			GrabPreparedActors( apActorsToDelete );
 	}
 
-	// Load the screen, if it's not already prepared.
-	PrepareScreen( sScreenName );
-
-	Screen *pScreen = ActivatePreparedScreenAndBackground( sScreenName );
-	ASSERT( pScreen != NULL );
+	/* If the screen wasn't already prepared, load it. */
+	if( pScreen == NULL )
+	{
+		PrepareScreen( sScreenName );
+		pScreen = ActivatePreparedScreenAndBackground( sScreenName );
+		ASSERT( pScreen != NULL );
+	}
 
 	bool bIsOnSystemMenu = pScreen->GetScreenType() == system_menu;
 	
