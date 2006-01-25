@@ -703,6 +703,9 @@ void ScreenManager::LoadDelayedScreen()
 		g_pSharedBGA->PlayCommand( "On" );
 	}
 
+	LOG->Trace("... PushScreen");
+	PushLoadedScreen( ls );
+
 	bool bIsOnSystemMenu = ls.m_pScreen->GetScreenType() == system_menu;
 	
 	// If we're exiting a system menu, persist settings in case we don't exit normally
@@ -716,9 +719,6 @@ void ScreenManager::LoadDelayedScreen()
 			SAFE_DELETE( *a );
 		AfterDeleteScreen();
 	}
-
-	LOG->Trace("... PushScreen");
-	PushLoadedScreen( ls );
 
 	SendMessageToTopScreen( SM );
 }
