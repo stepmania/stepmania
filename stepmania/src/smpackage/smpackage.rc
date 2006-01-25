@@ -239,13 +239,13 @@ BEGIN
     CTEXT           "Delete old packages?",IDC_STATIC,55,119,166,12
 END
 
-IDD_CHANGE_GAME_SETTINGS DIALOGEX 0, 0, 162, 287
+IDD_CHANGE_GAME_SETTINGS DIALOGEX 0, 0, 162, 298
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Change Game Settings"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,49,265,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,104,265,50,14
+    DEFPUSHBUTTON   "OK",IDOK,49,276,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,104,276,50,14
     GROUPBOX        "Graphics API",IDC_STATIC,7,7,147,66
     CONTROL         "Default (recommended)",IDC_RADIO_DEFAULT,"Button",
                     BS_AUTORADIOBUTTON | WS_GROUP,21,22,129,12
@@ -266,13 +266,15 @@ BEGIN
                     BS_AUTORADIOBUTTON,21,140,129,12
     CONTROL         "Null (no sound)",IDC_RADIO_SOUND_NULL,"Button",
                     BS_AUTORADIOBUTTON,21,156,129,12
-    GROUPBOX        "Logging",IDC_STATIC,7,181,147,50
+    GROUPBOX        "Other",IDC_STATIC,7,181,147,62
     CONTROL         "Log to Disk",IDC_CHECK_LOG_TO_DISK,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,21,197,129,10
+                    BS_AUTOCHECKBOX | WS_TABSTOP,21,210,129,10
     CONTROL         "Show Log Window",IDC_CHECK_SHOW_LOG_WINDOW,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,21,213,129,10
+                    BS_AUTOCHECKBOX | WS_TABSTOP,21,225,129,10
     LTEXT           "Tip: Change these only if you experience problems when using the default settings.",
-                    IDC_STATIC,7,234,147,26
+                    IDC_STATIC,7,247,147,26
+    CONTROL         "Force 60Hz Refresh",IDC_CHECK_FORCE_60HZ,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,21,195,129,10
 END
 
 IDD_LANGUAGES DIALOGEX 0, 0, 337, 189
@@ -434,7 +436,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 154
         TOPMARGIN, 7
-        BOTTOMMARGIN, 279
+        BOTTOMMARGIN, 290
     END
 
     IDD_LANGUAGES, DIALOG

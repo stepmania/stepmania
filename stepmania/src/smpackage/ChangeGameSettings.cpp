@@ -90,19 +90,21 @@ BOOL ChangeGameSettings::OnInitDialog()
 	else
 		CheckDlgButton( IDC_RADIO_SOUND_DEFAULT, BST_CHECKED );
 
-
-	bool bValue;
-
-
-	bValue = false;
-	ini.GetValue( "Options", "LogToDisk", bValue );
-	CheckDlgButton( IDC_CHECK_LOG_TO_DISK, bValue ? BST_CHECKED : BST_UNCHECKED );
-
-
-	bValue = false;
-	ini.GetValue( "Options", "ShowLogOutput", bValue );
-	CheckDlgButton( IDC_CHECK_SHOW_LOG_WINDOW, bValue ? BST_CHECKED : BST_UNCHECKED );
-
+	{
+		int iValue = 0;
+		ini.GetValue( "Options", "RefreshRate", iValue );
+		CheckDlgButton( IDC_CHECK_FORCE_60HZ, iValue == 60 ? BST_CHECKED : BST_UNCHECKED );
+	}
+	{
+		bool bValue = false;
+		ini.GetValue( "Options", "LogToDisk", bValue );
+		CheckDlgButton( IDC_CHECK_LOG_TO_DISK, bValue ? BST_CHECKED : BST_UNCHECKED );
+	}
+	{
+		bool bValue = false;
+		ini.GetValue( "Options", "ShowLogOutput", bValue );
+		CheckDlgButton( IDC_CHECK_SHOW_LOG_WINDOW, bValue ? BST_CHECKED : BST_UNCHECKED );
+	}
 	
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
@@ -136,6 +138,17 @@ void ChangeGameSettings::OnOK()
 		ini.SetValue( "Options", "SoundDrivers", RString() );
 
 
+	if( BST_CHECKED == IsDlgButtonChecked(IDC_CHECK_FORCE_60HZ) )
+	{
+		ini.SetValue( "Options", "RefreshRate", 60 );
+	}
+	else
+	{
+		int iRefresh = 0;
+		ini.GetValue( "Options", "RefreshRate", iRefresh );
+		if( iRefresh == 60 )
+			ini.SetValue( "Options", "RefreshRate", 0 );
+	}
 	ini.SetValue( "Options", "LogToDisk",		BST_CHECKED == IsDlgButtonChecked(IDC_CHECK_LOG_TO_DISK) );
 	ini.SetValue( "Options", "ShowLogOutput",	BST_CHECKED == IsDlgButtonChecked(IDC_CHECK_SHOW_LOG_WINDOW) );
 	

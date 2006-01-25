@@ -17,7 +17,6 @@
 #define IDD_LANGUAGES                   150
 #define IDD_CREATE_LANGUAGE             151
 #define IDB_BITMAP1                     153
-#define IDB_BITMAP2                     154
 #define IDC_LIST_SONGS                  1000
 #define IDC_LIST                        1000
 #define IDC_BUTTON_PLAY                 1001
@@ -83,6 +82,8 @@
 #define IDC_RADIO_SOUND_WAVEOUT         1057
 #define IDC_BUTTON_CREATE               1057
 #define IDC_LIST_LANGUAGES              1058
+#define IDC_CHECK_SHOW_LOG_WINDOW2      1058
+#define IDC_CHECK_FORCE_60HZ            1058
 #define IDC_STATIC_TOTAL_STRINGS        1060
 #define IDC_STATIC_NEED_TRANSLATION     1061
 #define IDC_COMBO_LANGUAGES             1065
