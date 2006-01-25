@@ -18,6 +18,7 @@ enum TweenType
 class ITween
 {
 public:
+	virtual ~ITween() { }
 	virtual float Tween( float f ) const = 0;
 	virtual ITween *Copy() const = 0;
 
