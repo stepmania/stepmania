@@ -899,12 +899,14 @@ public:
 		return 1;
 	}
 	static int SystemMessage( T* p, lua_State *L )		{ p->SystemMessage( SArg(1) ); return 0; }
+	static int ConcurrentlyPrepareScreen( T* p, lua_State *L )	{ p->ConcurrentlyPrepareScreen( SArg(1) ); return 0; }
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( SetNewScreen );
 		ADD_METHOD( GetTopScreen );
 		ADD_METHOD( SystemMessage );
+		ADD_METHOD( ConcurrentlyPrepareScreen );
 
 		Luna<T>::Register( L );
 
