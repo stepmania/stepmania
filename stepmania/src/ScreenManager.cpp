@@ -667,19 +667,9 @@ void ScreenManager::LoadDelayedScreen()
 	bool b = GetPreppedScreen( sScreenName, ls );
 	ASSERT( b );
 
-	if( m_sDelayedScreen != "" )
-	{
-		// While constructing this Screen, its constructor called
-		// SetNewScreen again!  That SetNewScreen Command should
-		// override this older one.
+	// Screens may not call SetNewScreen from the ctor or Init().
+	ASSERT_M( m_sDelayedScreen.empty(), m_sDelayedScreen );
 
-		// This is no longer allowed.  Instead, figure out which screen
-		// you really wanted in the first place with Lua, and don't waste
-		// time constructing an extra screen.
-
-		FAIL_M( ssprintf("%s, %s", sScreenName.c_str(), m_sDelayedScreen.c_str()) );
-	}
-	
 	// Find the prepared shared background (if any), and activate it.
 	RString sNewBGA;
 	if( ls.m_pScreen->UsesBackground() )
