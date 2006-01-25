@@ -79,6 +79,7 @@ BitmapText &BitmapText::operator =( const BitmapText &cpy )
 	CPY( m_fMaxWidth );
 	CPY( m_fMaxHeight );
 	CPY( m_bRainbow );
+	CPY( m_iVertSpacing );
 	CPY( m_aVertices );
 	CPY( m_pTextures );
 #undef CPY
