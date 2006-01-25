@@ -6,13 +6,13 @@
 #include <Carbon/Carbon.h>
 
 static CFOptionFlags ShowAlert( CFOptionFlags flags, const RString& sMessage, CFStringRef OK,
-								CFStringRef alt = NULL, CFStringRef other = NULL)
+				CFStringRef alt = NULL, CFStringRef other = NULL)
 {
 	CFOptionFlags result;
 	CFStringRef text = CFStringCreateWithCString( NULL, sMessage, kCFStringEncodingUTF8 );
 	
 	CFUserNotificationDisplayAlert( 0.0, flags, NULL, NULL, NULL, CFSTR(PRODUCT_NAME),
-									text, OK, alt, other, &result );
+					text, OK, alt, other, &result );
 	CFRelease( text );
 	return result;
 }
@@ -20,7 +20,7 @@ static CFOptionFlags ShowAlert( CFOptionFlags flags, const RString& sMessage, CF
 void DialogDriver_Cocoa::OK( RString sMessage, RString sID )
 {
 	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage,
-									  CFSTR("OK"), CFSTR("Don't show again") );
+					  CFSTR("OK"), CFSTR("Don't show again") );
 
 	if( result == kCFUserNotificationAlternateResponse )
 		Dialog::IgnoreMessage( sID );
@@ -34,7 +34,7 @@ void DialogDriver_Cocoa::Error( RString sError, RString sID )
 Dialog::Result DialogDriver_Cocoa::AbortRetryIgnore( RString sMessage, RString sID )
 {
 	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage, CFSTR("Ignore"),
-									  CFSTR("Retry"), CFSTR("Abort") );
+					  CFSTR("Retry"), CFSTR("Abort") );
 
 	switch( result )
 	{
@@ -53,7 +53,7 @@ Dialog::Result DialogDriver_Cocoa::AbortRetryIgnore( RString sMessage, RString s
 Dialog::Result DialogDriver_Cocoa::AbortRetry( RString sMessage, RString sID )
 {
 	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage,
-									  CFSTR("Abort"), CFSTR("Retry") );
+					  CFSTR("Abort"), CFSTR("Retry") );
 	
 	switch( result )
 	{
