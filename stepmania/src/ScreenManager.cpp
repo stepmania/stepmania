@@ -682,19 +682,17 @@ void ScreenManager::LoadDelayedScreen()
 	// Pop the top screen, if any.
 	ScreenMessage SM = PopTopScreenInternal();
 
-	/* We have a screen to display.  Delete the current screens and load it.
-	 * If DelayedScreenLoad is true and the screen isn't already loaded, delete
-	 * old screens first; this lowers memory requirements, but results in
-	 * redundant loads as we unload common data.  (If the screen is already
-	 * loaded, then do this cleanup later; otherwise we'll delete the prepared
-	 * screen.) */
+	/* We have a screen to display.  Delete the current screens and load it. */
 	bool bTimeToDeleteScreens = (g_setGroupedScreens.find(sScreenName) == g_setGroupedScreens.end());
 	vector<Actor*> apActorsToDelete;
 	if( bTimeToDeleteScreens && !ScreenIsPrepped(sScreenName) )
 	{
 		/* It's time to delete all old prepared screens.  Depending on DelayedScreenLoad,
 		 * we can either delete the screens before or after we load the new screen.  Either
-		 * way, we must remove them from the prepared list before we prepare new screens. */
+		 * way, we must remove them from the prepared list before we prepare new screens.
+		 *
+		 * If DelayedScreenLoad is true, delete them now; this lowers memory requirements,
+		 * but results in redundant loads as we unload common data. */
 		if( PREFSMAN->m_bDelayedScreenLoad )
 			DeletePreparedScreens();
 		else
