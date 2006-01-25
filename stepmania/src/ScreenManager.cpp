@@ -621,51 +621,14 @@ void ScreenManager::SetNewScreen( const RString &sScreenName )
 	m_sDelayedScreen = sScreenName;
 }
 
-void ScreenManager::LoadDelayedScreen()
+Screen *ScreenManager::ActivatePreparedScreenAndBackground( const RString &sScreenName )
 {
-	const bool bWasOnSystemMenu = !g_ScreenStack.empty() && g_ScreenStack.back().m_pScreen->GetScreenType() == system_menu;
-
-	RString sScreenName = m_sDelayedScreen;
-	m_sDelayedScreen = "";
-
-	// Pop the top screen, if any.
-	ScreenMessage SM = PopTopScreenInternal();
-
-	/* We have a screen to display.  Delete the current screens and load it.
-	 * If DelayedScreenLoad is true and the screen isn't already loaded, delete
-	 * old screens first; this lowers memory requirements, but results in
-	 * redundant loads as we unload common data.  (If the screen is already
-	 * loaded, then do this cleanup later; otherwise we'll delete the prepared
-	 * screen.) */
-	bool bTimeToDeleteScreens = (g_setGroupedScreens.find(sScreenName) == g_setGroupedScreens.end());
-	vector<Actor*> apActorsToDelete;
-	if( bTimeToDeleteScreens && !ScreenIsPrepped(sScreenName) )
-	{
-		if( PREFSMAN->m_bDelayedScreenLoad )
-		{
-			DeletePreparedScreens();
-		}
-		else
-		{
-			/* Since DelayedScreenLoad is false, we want to keep the
-			 * old screens in memory until we finish loading the new
-			 * ones, in order to prevent unloading assets and then
-			 * immediately reloading them.  However, since the
-			 * screen isn't in the current group, we must remove
-			 * it from the pool before loading the new screen. */
-			GrabPreparedActors( apActorsToDelete );
-		}
-	}
-
-	// Load the screen, if it's not already prepared.
-	PrepareScreen( sScreenName );
-
 	//
 	// Find the prepped screen.
 	//
 	LoadedScreen ls;
-	bool b = GetPreppedScreen( sScreenName, ls );
-	ASSERT( b );
+	if( !GetPreppedScreen(sScreenName, ls) )
+		return NULL;
 
 	// Screens may not call SetNewScreen from the ctor or Init().
 	ASSERT_M( m_sDelayedScreen.empty(), m_sDelayedScreen );
@@ -705,6 +668,51 @@ void ScreenManager::LoadDelayedScreen()
 
 	LOG->Trace("... PushScreen");
 	PushLoadedScreen( ls );
+
+	return ls.m_pScreen;
+}
+
+void ScreenManager::LoadDelayedScreen()
+{
+	const bool bWasOnSystemMenu = !g_ScreenStack.empty() && g_ScreenStack.back().m_pScreen->GetScreenType() == system_menu;
+
+	RString sScreenName = m_sDelayedScreen;
+	m_sDelayedScreen = "";
+
+	// Pop the top screen, if any.
+	ScreenMessage SM = PopTopScreenInternal();
+
+	/* We have a screen to display.  Delete the current screens and load it.
+	 * If DelayedScreenLoad is true and the screen isn't already loaded, delete
+	 * old screens first; this lowers memory requirements, but results in
+	 * redundant loads as we unload common data.  (If the screen is already
+	 * loaded, then do this cleanup later; otherwise we'll delete the prepared
+	 * screen.) */
+	bool bTimeToDeleteScreens = (g_setGroupedScreens.find(sScreenName) == g_setGroupedScreens.end());
+	vector<Actor*> apActorsToDelete;
+	if( bTimeToDeleteScreens && !ScreenIsPrepped(sScreenName) )
+	{
+		if( PREFSMAN->m_bDelayedScreenLoad )
+		{
+			DeletePreparedScreens();
+		}
+		else
+		{
+			/* Since DelayedScreenLoad is false, we want to keep the
+			 * old screens in memory until we finish loading the new
+			 * ones, in order to prevent unloading assets and then
+			 * immediately reloading them.  However, since the
+			 * screen isn't in the current group, we must remove
+			 * it from the pool before loading the new screen. */
+			GrabPreparedActors( apActorsToDelete );
+		}
+	}
+
+	// Load the screen, if it's not already prepared.
+	PrepareScreen( sScreenName );
+
+	Screen *pScreen = ActivatePreparedScreenAndBackground( sScreenName );
+	ASSERT( pScreen != NULL );
 
 	bool bIsOnSystemMenu = ls.m_pScreen->GetScreenType() == system_menu;
 	
