@@ -25,6 +25,7 @@ static const int NUM_CHANGABLE_SLOTS = NUM_SHOWN_GAME_TO_DEVICE_SLOTS-1;
 
 REGISTER_SCREEN_CLASS( ScreenMapControllers );
 
+static LocalizedString PLAYER_SLOTS( "ScreenMapControllers", "%s slots" );
 void ScreenMapControllers::Init()
 {
 	ScreenWithMenuElements::Init();
@@ -56,18 +57,39 @@ void ScreenMapControllers::Init()
 		}
 	}
 
+	int iRow = 0;
+
+	// header row
+	{
+		for( int c=0; c<MAX_GAME_CONTROLLERS; c++ ) 
+		{			
+			BitmapText &text = m_textLabel[c];
+			text.LoadFromFont( THEME->GetPathF("Common","title") );
+			PlayerNumber pn = (PlayerNumber)c;
+			text.SetName( "Label"+PlayerNumberToString(pn) );
+			RString sText = ssprintf(PLAYER_SLOTS.GetValue(), PlayerNumberToLocalizedString(pn).c_str());
+			text.SetText( sText );
+			ActorUtil::LoadAllCommands( text, m_sName );
+			m_Line[iRow].AddChild( &m_textLabel[c] );
+		}
+		m_LineScroller.AddChild( &m_Line[iRow] );
+
+		iRow++;
+	}
+
+	// normal rows
 	for( unsigned b=0; b<m_KeysToMap.size(); b++ )
 	{
 		KeyToMap *pKey = &m_KeysToMap[b];
 
 		{
 			BitmapText *pName = new BitmapText;
-			pName->SetName( "Title" );
+			pName->SetName( "Primary" );
 			pName->LoadFromFont( THEME->GetPathF("Common","title") );
 			RString sText = GameButtonToLocalizedString( GAMESTATE->GetCurrentGame(), pKey->m_GameButton );
 			pName->SetText( sText );
 			ActorUtil::LoadAllCommands( *pName, m_sName );
-			m_Line[b].AddChild( pName );
+			m_Line[iRow].AddChild( pName );
 		}
 		{
 			BitmapText *pSecondary = new BitmapText;
@@ -79,35 +101,39 @@ void ScreenMapControllers::Init()
 				sText = MenuButtonToLocalizedString( mb );
 			ActorUtil::LoadAllCommands( *pSecondary, m_sName );
 			pSecondary->SetText( sText );
-			m_Line[b].AddChild( pSecondary );
+			m_Line[iRow].AddChild( pSecondary );
 		}
 
-		for( int p=0; p<MAX_GAME_CONTROLLERS; p++ ) 
+		for( int c=0; c<MAX_GAME_CONTROLLERS; c++ ) 
 		{			
 			for( int s=0; s<NUM_SHOWN_GAME_TO_DEVICE_SLOTS; s++ ) 
 			{
-				pKey->m_textMappedTo[p][s] = new BitmapText;
-				pKey->m_textMappedTo[p][s]->SetName( "MappedTo" );
-				pKey->m_textMappedTo[p][s]->LoadFromFont( THEME->GetPathF(m_sName,"entry") );
-				pKey->m_textMappedTo[p][s]->RunCommands( MAPPED_TO_COMMAND(p,s) );
-				ActorUtil::LoadAllCommands( *pKey->m_textMappedTo[p][s], m_sName );
-				m_Line[b].AddChild( pKey->m_textMappedTo[p][s] );
+				pKey->m_textMappedTo[c][s] = new BitmapText;
+				pKey->m_textMappedTo[c][s]->SetName( "MappedTo" );
+				pKey->m_textMappedTo[c][s]->LoadFromFont( THEME->GetPathF(m_sName,"entry") );
+				pKey->m_textMappedTo[c][s]->RunCommands( MAPPED_TO_COMMAND(c,s) );
+				ActorUtil::LoadAllCommands( *pKey->m_textMappedTo[c][s], m_sName );
+				m_Line[iRow].AddChild( pKey->m_textMappedTo[c][s] );
 			}
 		}
-		m_Line[b].DeleteChildrenWhenDone();
-		m_Line[b].SetName( "Line" );
-		ActorUtil::LoadAllCommands( m_Line[b], m_sName );
-		m_LineScroller.AddChild( &m_Line[b] );
+		m_Line[iRow].DeleteChildrenWhenDone();
+		m_Line[iRow].SetName( "Line" );
+		ActorUtil::LoadAllCommands( m_Line[iRow], m_sName );
+		m_LineScroller.AddChild( &m_Line[iRow] );
+
+		iRow++;
 	}	
 
+	// exit row
 	{
 		m_pExit = ActorUtil::MakeActor( THEME->GetPathG(m_sName,"exit") );
 		m_pExit->SetName( "Exit" );
 		ActorUtil::LoadAllCommands( *m_pExit, m_sName );
 
-		unsigned b = m_KeysToMap.size();
-		m_Line[b].AddChild( m_pExit );
-		m_LineScroller.AddChild( &m_Line[b] );
+		m_Line[iRow].AddChild( m_pExit );
+		m_LineScroller.AddChild( &m_Line[iRow] );
+
+		iRow++;
 	}
 
 	m_LineScroller.SetName( "LineScroller" );

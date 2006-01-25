@@ -44,10 +44,13 @@ private:
 		BitmapText	*m_textMappedTo[MAX_GAME_CONTROLLERS][NUM_SHOWN_GAME_TO_DEVICE_SLOTS];
 	};
 	vector<KeyToMap> m_KeysToMap;
+
+	BitmapText m_textLabel[MAX_GAME_CONTROLLERS];
+
 	// owned by m_Line
 	Actor *m_pExit;
 
-	ActorFrame	m_Line[MAX_GAME_BUTTONS+1]; // XXX
+	ActorFrame	m_Line[MAX_GAME_BUTTONS+2]; // label, normal lines, exit
 	ActorScroller m_LineScroller;
 
 	RageSound m_soundChange;
