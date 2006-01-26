@@ -38,6 +38,14 @@ void ScreenMapControllers::Init()
 	m_soundChange.Load( THEME->GetPathS(m_sName,"change"), true );
 	m_soundDelete.Load( THEME->GetPathS(m_sName,"delete"), true );
 
+
+	m_textDevices.LoadFromFont( THEME->GetPathF("Common","normal") );
+	m_textDevices.SetXY( SCREEN_CENTER_X, SCREEN_TOP+30 );
+	m_textDevices.SetDiffuse( RageColor(1,1,1,1) );
+	m_textDevices.SetZoom( 0.6f );
+	this->AddChild( &m_textDevices );
+
+
 	RString sButtons = BUTTONS_TO_MAP;
 	if( sButtons.empty() )
 	{
@@ -167,6 +175,12 @@ void ScreenMapControllers::Update( float fDeltaTime )
 	ScreenWithMenuElements::Update( fDeltaTime );
 
 	
+	//
+	// Update devices text
+	//
+	m_textDevices.SetText( INPUTMAN->GetDisplayDevicesString() );
+
+
 	if( !m_WaitingForPress.IsZero() && m_DeviceIToMap.IsValid() ) // we're going to map an input
 	{	
 		if( m_WaitingForPress.PeekDeltaTime() < g_fSecondsToWaitForInput )

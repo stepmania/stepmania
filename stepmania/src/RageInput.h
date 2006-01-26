@@ -17,11 +17,12 @@ public:
 	void LoadDrivers();
 	void Update();
 	bool DevicesChanged();
-	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<RString>& vsDescriptionsOut );
+	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<RString>& vsDescriptionsOut ) const;
 	void WindowReset();
 	void AddHandler( InputHandler *pHandler );
 	RString GetDeviceSpecificInputString( const DeviceInput &di );
 	InputDeviceState GetInputDeviceState( InputDevice id );
+	RString GetDisplayDevicesString() const;
 
 	// Lua
 	void PushSelf( lua_State *L );

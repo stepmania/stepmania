@@ -49,22 +49,7 @@ void ScreenTestInput::Update( float fDeltaTime )
 	//
 	// Update devices text
 	//
-	{
-		vector<InputDevice> vDevices;
-		vector<RString> vDescriptions;
-		vector<RString> vs;
-		INPUTMAN->GetDevicesAndDescriptions( vDevices, vDescriptions );
-		ASSERT( vDevices.size() == vDescriptions.size() );
-		for( unsigned i=0; i<vDevices.size(); ++i )
-		{
-			const RString sDescription = vDescriptions[i];
-			InputDevice device = vDevices[i];
-			if( sDescription == "MonkeyKeyboard" )
-				continue;	// hide this
-			vs.push_back( ssprintf("%s (%s)", sDescription.c_str(), InputDeviceToString(device).c_str()) );
-		}
-		m_textDevices.SetText( join("\n",vs) );
-	}
+	m_textDevices.SetText( INPUTMAN->GetDisplayDevicesString() );
 
 	//
 	// Update input texts

@@ -9,8 +9,6 @@
 #include "ActorScroller.h"
 #include "RageSound.h"
 
-enum { NUM_SHOWN_GAME_TO_DEVICE_SLOTS = 3 };
-
 class ScreenMapControllers : public ScreenWithMenuElements
 {
 public:
@@ -47,6 +45,8 @@ private:
 		BitmapText	*m_textMappedTo[MAX_GAME_CONTROLLERS][NUM_SHOWN_GAME_TO_DEVICE_SLOTS];
 	};
 	vector<KeyToMap> m_KeysToMap;
+
+	BitmapText m_textDevices;
 
 	BitmapText m_textLabel[MAX_GAME_CONTROLLERS];
 

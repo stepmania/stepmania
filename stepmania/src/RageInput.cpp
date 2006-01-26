@@ -62,7 +62,7 @@ bool RageInput::DevicesChanged()
 	return false;
 }
 
-void RageInput::GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut )
+void RageInput::GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut ) const
 {
 	for( unsigned i = 0; i < m_pDevices.size(); ++i )
 		m_pDevices[i]->GetDevicesAndDescriptions( vDevicesOut, vDescriptionsOut );	
@@ -112,6 +112,23 @@ InputDeviceState RageInput::GetInputDeviceState( InputDevice id )
 	return InputDeviceState_INVALID;
 }
 
+RString RageInput::GetDisplayDevicesString() const
+{
+	vector<InputDevice> vDevices;
+	vector<RString> vDescriptions;
+	vector<RString> vs;
+	GetDevicesAndDescriptions( vDevices, vDescriptions );
+	ASSERT( vDevices.size() == vDescriptions.size() );
+	for( unsigned i=0; i<vDevices.size(); ++i )
+	{
+		const RString sDescription = vDescriptions[i];
+		InputDevice device = vDevices[i];
+		if( sDescription == "MonkeyKeyboard" )
+			continue;	// hide this
+		vs.push_back( ssprintf("%s (%s)", sDescription.c_str(), InputDeviceToString(device).c_str()) );
+	}
+	return join("\n",vs);
+}
 
 // lua start
 #include "LuaBinding.h"
