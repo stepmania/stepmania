@@ -183,16 +183,12 @@ bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
 	case KEY_F11:	bIncrease = false; /* fall through */
 	case KEY_F12:
 		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT)) ||
-			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT)) )
-		{
+		    INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT)) )
 			a = ChangeGlobalOffset;
-		}
 		else
-		{
 			a = ChangeSongOffset;
-		}
-
 		break;
+
 	default:
 		return false;
 	}
