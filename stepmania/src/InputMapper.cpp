@@ -328,6 +328,22 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		}
 	},
 	{
+		"dance",
+		"RedOctane USB Pad",
+		"RedOctane USB Pad",
+		{
+			{ 0, JOY_BUTTON_1,	/* dpad L */	DANCE_BUTTON_LEFT,		false },
+			{ 0, JOY_BUTTON_4,	/* dpad R */	DANCE_BUTTON_RIGHT,		false },
+			{ 0, JOY_BUTTON_3,	/* dpad U */	DANCE_BUTTON_UP,		false },
+			{ 0, JOY_BUTTON_2,	/* dpad D */	DANCE_BUTTON_DOWN,		false },
+			{ 0, JOY_BUTTON_8,	/* O */		DANCE_BUTTON_START,		false },
+			//{ 1, JOY_BUTTON_7,	/* X */		DANCE_BUTTON_START,		false },
+			{ 1, JOY_BUTTON_9,	/* Start */	DANCE_BUTTON_START,		false },
+			{ 0, JOY_BUTTON_5,	/* Select */	DANCE_BUTTON_BACK,	false },
+			END_MARKER
+		}
+	},
+	{
 		"pump",
 		"Pump USB",
 		"Pump USB pad",
