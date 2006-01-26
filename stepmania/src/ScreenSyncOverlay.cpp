@@ -71,12 +71,12 @@ void ScreenSyncOverlay::Update( float fDeltaTime )
 	UpdateText();
 }
 
-static LocalizedString AUTO_PLAY			( "ScreenSyncOverlay", "AutoPlay" );
+static LocalizedString AUTO_PLAY		( "ScreenSyncOverlay", "AutoPlay" );
 static LocalizedString AUTO_PLAY_CPU		( "ScreenSyncOverlay", "AutoPlayCPU" );
 static LocalizedString AUTO_SYNC_SONG		( "ScreenSyncOverlay", "AutoSync Song" );
 static LocalizedString AUTO_SYNC_MACHINE	( "ScreenSyncOverlay", "AutoSync Machine" );
-static LocalizedString EARLIER				( "ScreenSyncOverlay", "earlier" );
-static LocalizedString LATER				( "ScreenSyncOverlay", "later" );
+static LocalizedString EARLIER			( "ScreenSyncOverlay", "earlier" );
+static LocalizedString LATER			( "ScreenSyncOverlay", "later" );
 static LocalizedString GLOBAL_OFFSET_FROM	( "ScreenSyncOverlay", "Global Offset from %+.3f to %+.3f (notes %s)" );
 static LocalizedString SONG_OFFSET_FROM		( "ScreenSyncOverlay", "Song offset from %+.3f to %+.3f (notes %s)" );
 static LocalizedString TEMPO_SEGMENT_FROM	( "ScreenSyncOverlay", "%s tempo segment from %+.3f BPM to %+.3f BPM." );
@@ -86,15 +86,15 @@ void ScreenSyncOverlay::UpdateText()
 
 	switch( PREFSMAN->m_AutoPlay )
 	{
-	case PC_HUMAN:										break;
-	case PC_AUTOPLAY:	vs.push_back(AUTO_PLAY);		break;
+	case PC_HUMAN:						break;
+	case PC_AUTOPLAY:	vs.push_back(AUTO_PLAY);	break;
 	case PC_CPU:		vs.push_back(AUTO_PLAY_CPU);	break;
 	default:	ASSERT(0);
 	}
 
 	switch( GAMESTATE->m_SongOptions.m_AutosyncType )
 	{
-	case SongOptions::AUTOSYNC_OFF:											break;
+	case SongOptions::AUTOSYNC_OFF:							break;
 	case SongOptions::AUTOSYNC_SONG:	vs.push_back(AUTO_SYNC_SONG);		break;
 	case SongOptions::AUTOSYNC_MACHINE:	vs.push_back(AUTO_SYNC_MACHINE);	break;
 	default:	ASSERT(0);
@@ -156,7 +156,7 @@ void ScreenSyncOverlay::UpdateText()
 }
 
 static LocalizedString CANT_SYNC_WHILE_PLAYING_A_COURSE	("ScreenSyncOverlay","Can't sync while playing a course.");
-static LocalizedString SYNC_CHANGES_REVERTED			("ScreenSyncOverlay","Sync changes reverted.");
+static LocalizedString SYNC_CHANGES_REVERTED		("ScreenSyncOverlay","Sync changes reverted.");
 bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
 {
 	if( !IsGameplay() )
@@ -194,8 +194,8 @@ bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
 			float fDelta;
 			switch( input.DeviceI.button )
 			{
-			case KEY_F9:	fDelta = -0.02f;		break;
-			case KEY_F10:	fDelta = +0.02f;		break;
+			case KEY_F9:	fDelta = -0.02f;	break;
+			case KEY_F10:	fDelta = +0.02f;	break;
 			default:	ASSERT(0);
 			}
 			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RALT)) ||
@@ -205,7 +205,7 @@ bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
 			}
 			switch( input.type )
 			{
-			case IET_RELEASE:		fDelta *= 0;	break;
+			case IET_RELEASE:	fDelta *= 0;	break;
 			case IET_SLOW_REPEAT:	fDelta *= 0;	break;
 			case IET_FAST_REPEAT:	fDelta *= 10;	break;
 			}
