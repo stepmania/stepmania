@@ -126,11 +126,11 @@ void ScreenMapControllers::Init()
 
 	// exit row
 	{
-		m_pExit = ActorUtil::MakeActor( THEME->GetPathG(m_sName,"exit") );
-		m_pExit->SetName( "Exit" );
-		ActorUtil::LoadAllCommands( *m_pExit, m_sName );
+		m_sprExit.Load( THEME->GetPathG(m_sName,"exit") );
+		m_sprExit->SetName( "Exit" );
+		ActorUtil::LoadAllCommands( *m_sprExit, m_sName );
 
-		m_Line[iRow].AddChild( m_pExit );
+		m_Line[iRow].AddChild( m_sprExit );
 		m_LineScroller.AddChild( &m_Line[iRow] );
 
 		iRow++;
@@ -408,7 +408,7 @@ void ScreenMapControllers::TweenOffScreen()
 Actor *ScreenMapControllers::GetActorWithFocus()
 {
 	if( m_iCurButton == (int) m_KeysToMap.size() )
-		return m_pExit;
+		return m_sprExit;
 
 	const KeyToMap *pKey = &m_KeysToMap[m_iCurButton];
 	return pKey->m_textMappedTo[m_iCurController][m_iCurSlot];

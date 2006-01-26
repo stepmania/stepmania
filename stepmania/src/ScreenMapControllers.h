@@ -47,8 +47,7 @@ private:
 
 	BitmapText m_textLabel[MAX_GAME_CONTROLLERS];
 
-	// owned by m_Line
-	Actor *m_pExit;
+	AutoActor m_sprExit;
 
 	ActorFrame	m_Line[MAX_GAME_BUTTONS+2]; // label, normal lines, exit
 	ActorScroller m_LineScroller;
