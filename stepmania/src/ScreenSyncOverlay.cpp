@@ -164,39 +164,54 @@ bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
 	if( input.DeviceI.device != DEVICE_KEYBOARD )
 		return false;
 
+	enum Action
+	{
+		RevertSyncChanges,
+		ChangeSongBPM,
+		ChangeGlobalOffset,
+		ChangeSongOffset,
+		Action_Invalid
+	};
+	Action a = Action_Invalid;
+
+	bool bIncrease = true;
 	switch( input.DeviceI.button )
 	{
-	case KEY_F4:
-	case KEY_F9:
-	case KEY_F10:
-	case KEY_F11:
+	case KEY_F4:	a = RevertSyncChanges; break;
+	case KEY_F9:	bIncrease = false; /* fall through */
+	case KEY_F10:	a = ChangeSongBPM; break;
+	case KEY_F11:	bIncrease = false; /* fall through */
 	case KEY_F12:
-		if( GAMESTATE->IsCourseMode() )
+		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT)) ||
+			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT)) )
 		{
-			SCREENMAN->SystemMessage( CANT_SYNC_WHILE_PLAYING_A_COURSE );
-			return true;
+			a = ChangeGlobalOffset;
 		}
+		else
+		{
+			a = ChangeSongOffset;
+		}
+
 		break;
 	default:
 		return false;
 	}
 
-	switch( input.DeviceI.button )
+	if( GAMESTATE->IsCourseMode() && a != ChangeGlobalOffset )
 	{
-	case KEY_F4:
+		SCREENMAN->SystemMessage( CANT_SYNC_WHILE_PLAYING_A_COURSE );
+		return true;
+	}
+
+	switch( a )
+	{
+	case RevertSyncChanges:
 		SCREENMAN->SystemMessage( SYNC_CHANGES_REVERTED );
 		GAMESTATE->RevertSyncChanges();
 		break;
-	case KEY_F9:
-	case KEY_F10:
+	case ChangeSongBPM:
 		{
-			float fDelta;
-			switch( input.DeviceI.button )
-			{
-			case KEY_F9:	fDelta = -0.02f;	break;
-			case KEY_F10:	fDelta = +0.02f;	break;
-			default:	ASSERT(0);
-			}
+			float fDelta = bIncrease? +0.02f:-0.02f;
 			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RALT)) ||
 				INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LALT)) )
 			{
@@ -215,16 +230,10 @@ bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
 			}
 		}
 		break;
-	case KEY_F11:
-	case KEY_F12:
+	case ChangeGlobalOffset:
+	case ChangeSongOffset:
 		{
-			float fDelta;
-			switch( input.DeviceI.button )
-			{
-			case KEY_F11:	fDelta = +0.02f;	break;	// notes earlier
-			case KEY_F12:	fDelta = -0.02f;	break;	// notes earlier
-			default:	ASSERT(0);
-			}
+			float fDelta = bIncrease? +0.02f:-0.02f;
 			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RALT)) ||
 				INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LALT)) )
 			{
@@ -237,15 +246,16 @@ bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
 			case IET_FAST_REPEAT:	fDelta *= 10;	break;
 			}
 
-			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT)) ||
-				INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT)) )
+			switch( a )
 			{
+			case ChangeGlobalOffset:
 				PREFSMAN->m_fGlobalOffsetSeconds.Set( PREFSMAN->m_fGlobalOffsetSeconds + fDelta );
-			}
-			else
-			{
+				break;
+
+			case ChangeSongOffset:
 				if( GAMESTATE->m_pCurSong != NULL )
 					GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds += fDelta;
+				break;
 			}
 		}
 		break;
