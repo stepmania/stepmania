@@ -839,6 +839,7 @@ class DebugLineVolumeDown : public IDebugLine
 	{
 		ChangeVolume( -0.1f );
 		IDebugLine::Do( sMessageOut );
+		sMessageOut += " - " + ssprintf("%.0f%%",PREFSMAN->m_fSoundVolume.Get()*100);
 	}
 };
 
