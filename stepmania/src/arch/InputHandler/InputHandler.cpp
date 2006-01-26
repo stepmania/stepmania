@@ -44,7 +44,12 @@ RString InputHandler::GetDeviceSpecificInputString( const DeviceInput &di )
 	{
 		char c = di.ToChar();
 		if( c )
-			return ssprintf( "Key %c", c );
+		{
+			if( c == ' ' )
+				return "space";	// Don't show "Key  " for space.
+			else
+				return ssprintf( "Key %c", c );
+		}
 		return DeviceButtonToString( di.button );
 	}
 
