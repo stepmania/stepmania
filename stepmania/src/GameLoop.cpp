@@ -124,7 +124,7 @@ static void CheckFocus()
 	}
 }
 
-void GameLoop::GameLoop()
+void GameLoop::RunGameLoop()
 {
 	/* People may want to do something else while songs are loading, so do
 	 * this after loading songs. */

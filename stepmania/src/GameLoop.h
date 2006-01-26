@@ -5,7 +5,7 @@
 
 namespace GameLoop
 {
-	void GameLoop();
+	void RunGameLoop();
 	void SetUpdateRate( float fUpdateRate );
 	void StartConcurrentRendering();
 	void FinishConcurrentRendering();
