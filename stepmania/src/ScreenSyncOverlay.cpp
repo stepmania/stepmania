@@ -100,9 +100,8 @@ void ScreenSyncOverlay::UpdateText()
 	default:	ASSERT(0);
 	}
 
-	if( GAMESTATE->m_pCurSong != NULL  &&  !GAMESTATE->IsCourseMode() )	// sync controls not available
+	if( GAMESTATE->m_pCurSong != NULL  &&  !GAMESTATE->IsCourseMode() )	// sync controls available
 	{
-	
 		{
 			float fOld = GAMESTATE->m_fGlobalOffsetSecondsOriginal;
 			float fNew = PREFSMAN->m_fGlobalOffsetSeconds;
