@@ -14,9 +14,9 @@
 #include "InputEventPlus.h"
 #include "LocalizedString.h"
 
-#define BUTTONS_TO_MAP					THEME->GetMetric ( m_sName, "ButtonsToMap" )
+#define BUTTONS_TO_MAP			THEME->GetMetric ( m_sName, "ButtonsToMap" )
 static LocalizedString INVALID_BUTTON   ( "ScreenMapControllers", "InvalidButton" );
-#define MAPPED_TO_COMMAND(gc,slot)		THEME->GetMetricA( m_sName, ssprintf("MappedToP%iS%iCommand", gc+1, slot+1) )
+#define MAPPED_TO_COMMAND(gc,slot)	THEME->GetMetricA( m_sName, ssprintf("MappedToP%iS%iCommand", gc+1, slot+1) )
 
 static const float g_fSecondsToWaitForInput = 0.05f;
 

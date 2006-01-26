@@ -526,7 +526,7 @@ void InputMapper::SaveMappingsToDisk()
 			RString sNameString = GameI.toString( pGame );
 			
 			vector<RString> asValues;
-			for( int slot = 0; slot < NUM_GAME_TO_DEVICE_SLOTS; ++slot )
+			for( int slot = 0; slot < NUM_USER_GAME_TO_DEVICE_SLOTS; ++slot )	// don't save data from the last (keyboard automap) slot
 				asValues.push_back( m_GItoDI[i][j][slot].ToString() );
 		
 			while( asValues.size() && asValues.back() == "" )
