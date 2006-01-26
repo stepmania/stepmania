@@ -558,6 +558,7 @@ bool InputMapper::CheckForChangedInputDevicesAndRemap( RString &sMessage )
 		sMessage += REMAPPING_ALL_JOYSTICKS.GetValue();
 		AutoMapJoysticksForCurrentGame();
 		SaveMappingsToDisk();
+		MESSAGEMAN->Broadcast( Message_AutoJoyMappingApplied );
 	}
 
 	LOG->Info( sMessage );

@@ -14,6 +14,7 @@ enum { NUM_SHOWN_GAME_TO_DEVICE_SLOTS = 3 };
 class ScreenMapControllers : public ScreenWithMenuElements
 {
 public:
+	ScreenMapControllers();
 	virtual void Init();
 	virtual void BeginScreen();
 
@@ -23,6 +24,8 @@ public:
 	virtual void TweenOffScreen();
 
 private:
+	virtual void HandleMessage( const RString& sMessage );
+
 	Actor *GetActorWithFocus();
 	void BeforeChangeFocus();
 	void AfterChangeFocus();

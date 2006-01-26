@@ -80,6 +80,7 @@ enum Message
 	Message_LessonCleared,
 	Message_LessonFailed,
 	Message_StorageDevicesChanged,
+	Message_AutoJoyMappingApplied,
 	NUM_Message,	// leave this at the end
 	Message_Invalud
 };

@@ -25,6 +25,11 @@ static const int NUM_CHANGABLE_SLOTS = NUM_SHOWN_GAME_TO_DEVICE_SLOTS-1;
 
 REGISTER_SCREEN_CLASS( ScreenMapControllers );
 
+ScreenMapControllers::ScreenMapControllers()
+{
+	this->SubscribeToMessage( Message_AutoJoyMappingApplied );
+}
+
 static LocalizedString PLAYER_SLOTS( "ScreenMapControllers", "%s slots" );
 void ScreenMapControllers::Init()
 {
@@ -448,6 +453,17 @@ void ScreenMapControllers::Refresh()
 
 	m_LineScroller.SetDestinationItem( (float) m_iCurButton );
 }
+
+void ScreenMapControllers::HandleMessage( const RString& sMessage )
+{
+	if( sMessage == MessageToString(Message_AutoJoyMappingApplied) )
+	{
+		Refresh();
+	}
+
+	ScreenWithMenuElements::HandleMessage( sMessage );
+}
+
 
 /*
  * (c) 2001-2005 Chris Danford, Glenn Maynard
