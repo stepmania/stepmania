@@ -16,6 +16,8 @@ public:
 	const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const;
 
 	bool SupportsThreadedRendering();
+	void BeginConcurrentRenderingMainThread();
+	void EndConcurrentRenderingMainThread();
 	void BeginConcurrentRendering();
 	void EndConcurrentRendering();
 

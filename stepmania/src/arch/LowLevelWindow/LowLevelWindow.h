@@ -27,6 +27,8 @@ public:
 	virtual const VideoModeParams &GetActualVideoModeParams() const = 0;
 
 	virtual bool SupportsThreadedRendering() { return false; }
+	virtual void BeginConcurrentRenderingMainThread() { }
+	virtual void EndConcurrentRenderingMainThread() { }
 	virtual void BeginConcurrentRendering() { }
 	virtual void EndConcurrentRendering() { }
 };

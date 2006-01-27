@@ -1615,6 +1615,16 @@ bool RageDisplay_OGL::SupportsThreadedRendering()
 	return g_pWind->SupportsThreadedRendering();
 }
 
+void RageDisplay_OGL::BeginConcurrentRenderingMainThread()
+{
+	g_pWind->BeginConcurrentRenderingMainThread();
+}
+
+void RageDisplay_OGL::EndConcurrentRenderingMainThread()
+{
+	g_pWind->EndConcurrentRenderingMainThread();
+}
+
 void RageDisplay_OGL::BeginConcurrentRendering()
 {
 	g_pWind->BeginConcurrentRendering();

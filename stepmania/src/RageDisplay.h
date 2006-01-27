@@ -159,6 +159,8 @@ public:
 
 	// If threaded rendering is supported, these will be called from the rendering
 	// thread before and after rendering.
+	virtual void BeginConcurrentRenderingMainThread() { }
+	virtual void EndConcurrentRenderingMainThread() { }
 	virtual void BeginConcurrentRendering() { }
 	virtual void EndConcurrentRendering() { }
 
