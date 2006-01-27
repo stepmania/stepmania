@@ -339,7 +339,7 @@ static const LanguageInfo g_langs[] =
 	{"FI", "Finnish", "Suomi"},
 	{"FJ", "Fiji", ""},
 	{"FO", "Faeroese", ""},
-	{"FR", "French", "français"},
+	{"FR", "French", "Français"},
 	{"FY", "Frisian", ""},
 	{"GA", "Irish", "Gaeilge"},
 	{"GD", "Gaelic", ""},
@@ -358,7 +358,7 @@ static const LanguageInfo g_langs[] =
 	{"IK", "Inupiak", ""},
 	{"IN", "Indonesian", "Bahasa indonesia"}, // compatibility
 	{"IS", "Icelandic", "Íslenska"},
-	{"IT", "Italian", "italiano"},
+	{"IT", "Italian", "Italiano"},
 	{"IW", "Hebrew", "עברית"}, // compatibility
 	{"JA", "Japanese", "日本語"},
 	{"JI", "Yiddish", ""}, // compatibility
