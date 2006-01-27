@@ -326,6 +326,9 @@ Section "Main Section" SecMain
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME} Documentation.lnk" "$INSTDIR\README-FIRST.html"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Uninstall ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\uninstall.exe"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Go to the ${PRODUCT_NAME} web site.lnk" "${PRODUCT_URL}"
+!ifdef MAKE_UPDATES_SHORTCUT
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Check for Updates.lnk" "${UPDATES_URL}"
+!endif
 
 	CreateShortCut "$INSTDIR\${PRODUCT_NAME}.lnk" "$INSTDIR\Program\${PRODUCT_NAME}.exe"
 
