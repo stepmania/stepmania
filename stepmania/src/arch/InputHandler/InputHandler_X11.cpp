@@ -41,6 +41,10 @@ static DeviceButton XSymToDeviceButton( int key )
 		KEY_RBRACE    , KEY_INV     , KEY_DEL                                     /* 125 - 127 */
 	};
 
+	/* 0...31: */
+	if( key >= 0xFF00 && key < 0xFF20 )
+		return ASCIIKeySyms[key & 0xFF];
+
 	/* 32...127: */
 	if( key < int(ARRAYSIZE(ASCIIKeySyms)))
 		return ASCIIKeySyms[key];
@@ -114,10 +118,6 @@ static DeviceButton XSymToDeviceButton( int key )
 	case XK_Menu:		return KEY_MENU;
 	}
 
-	/* 0...31: */
-	if( key - 0xFF00 < 0x20 )
-		return ASCIIKeySyms[key - 0xFF00];
-
 	return DeviceButton_Invalid;
 }
 
@@ -149,20 +149,20 @@ void InputHandler_X11::Update()
 	{
 		while( XCheckTypedWindowEvent(X11Helper::Dpy, X11Helper::Win, KeyPress, &event) )
 		{
-			LOG->Trace( "key: sym %i, key %i, state true",
-				XLookupKeysym(&event.xkey,0), XSymToDeviceButton(XLookupKeysym(&event.xkey,0)) );
-
-			DeviceInput di( DEVICE_KEYBOARD, XSymToDeviceButton(XLookupKeysym(&event.xkey,0)) );
-			ButtonPressed( di, true );
+			int iKeysym = XLookupKeysym( &event.xkey, 0 );
+			DeviceButton b = XSymToDeviceButton( iKeysym );
+			LOG->Trace( "key: sym %i, key %i, state true", iKeysym, b );
+			if( b != DeviceButton_Invalid )
+				ButtonPressed( DeviceInput(DEVICE_KEYBOARD, b), true );
 		}
 
 		while( XCheckTypedWindowEvent(X11Helper::Dpy, X11Helper::Win, KeyRelease, &event) )
 		{
-			LOG->Trace( "key: sym %i, key %i, state false",
-				XLookupKeysym(&event.xkey,0), XSymToDeviceButton(XLookupKeysym(&event.xkey,0)) );
-
-			DeviceInput di( DEVICE_KEYBOARD, XSymToDeviceButton(XLookupKeysym(&event.xkey,0)) );
-			ButtonPressed( di, false );
+			int iKeysym = XLookupKeysym( &event.xkey, 0 );
+			DeviceButton b = XSymToDeviceButton( iKeysym );
+			LOG->Trace( "key: sym %i, key %i, state false", iKeysym, b );
+			if( b != DeviceButton_Invalid )
+				ButtonPressed( DeviceInput(DEVICE_KEYBOARD, b), false );
 		}
 	}
 
