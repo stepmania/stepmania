@@ -233,7 +233,7 @@ PrefsManager::PrefsManager() :
 	m_fLongVerSongSeconds			( "LongVerSongSeconds",			60*2.5f ),	// Dynamite Rave is 2:55
 	m_fMarathonVerSongSeconds		( "MarathonVerSongSeconds",		60*5.f ),
 	m_ShowSongOptions				( "ShowSongOptions",			YES ),
-	m_bSoloSingle					( "SoloSingle",					false ),
+	m_bCenteredSingle					( "CenteredSingle",					false ),
 	m_bDancePointsForOni			( "DancePointsForOni",			false ),
 	m_bPercentageScoring			( "PercentageScoring",			false ),
 	m_fMinPercentageForMachineSongHighScore		( "MinPercentageForMachineSongHighScore",	0.5f ),
