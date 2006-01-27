@@ -33,7 +33,7 @@ public:
 #endif
 
 /*
- * (c) 2005 Steve Checkoway
+ * (c) 2005-2006 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
