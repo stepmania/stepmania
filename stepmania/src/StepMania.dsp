@@ -62,7 +62,7 @@ IntDir=.\../Debug6
 TargetDir=\cvs\stepmania\Program
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc                                                                                                                                                                                                                                        	cl                                                                                                /Zl                                                                                                /nologo                                                                                                /c                                                                                                verstub.cpp                                                                                                /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -99,7 +99,7 @@ IntDir=.\../Release6
 TargetDir=\cvs\stepmania\Program
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc                                                  	cl                                                   /Zl                                                   /nologo                                                   /c                                                   verstub.cpp                                                   /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -1842,6 +1842,10 @@ SOURCE=.\global.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ProductInfo.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\SpecialFiles.cpp
 # End Source File
 # Begin Source File
@@ -3240,11 +3244,11 @@ SOURCE=.\ScreenTitleMenu.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ScreenUnlock.cpp
+SOURCE=.\ScreenUnlockStatus.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\ScreenUnlock.h
+SOURCE=.\ScreenUnlockStatus.h
 # End Source File
 # Begin Source File
 

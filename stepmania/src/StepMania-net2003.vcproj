@@ -710,10 +710,10 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenTitleMenu.h">
 			</File>
 			<File
-				RelativePath="ScreenUnlock.cpp">
+				RelativePath=".\ScreenUnlockStatus.cpp">
 			</File>
 			<File
-				RelativePath="ScreenUnlock.h">
+				RelativePath=".\ScreenUnlockStatus.h">
 			</File>
 			<File
 				RelativePath="ScreenWithMenuElements.cpp">

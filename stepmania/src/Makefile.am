@@ -75,7 +75,9 @@ ScreenSplash.cpp ScreenSplash.h \
 ScreenStage.cpp ScreenStage.h \
 ScreenTest.cpp ScreenTest.h ScreenTestFonts.cpp ScreenTestFonts.h ScreenTestInput.cpp ScreenTestInput.h \
 ScreenTestLights.cpp ScreenTestLights.h ScreenTestSound.cpp ScreenTestSound.h ScreenTextEntry.cpp ScreenTextEntry.h \
-ScreenTitleMenu.cpp ScreenTitleMenu.h ScreenUnlock.cpp ScreenUnlock.h ScreenWithMenuElements.cpp ScreenWithMenuElements.h
+ScreenTitleMenu.cpp ScreenTitleMenu.h \
+ScreenUnlockStatus.cpp ScreenUnlockStatus.h \
+ScreenWithMenuElements.cpp ScreenWithMenuElements.h
 
 if !WITHOUT_NETWORKING
 Screens += ScreenSMOnlineLogin.cpp ScreenSMOnlineLogin.h
