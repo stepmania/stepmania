@@ -202,7 +202,7 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 				continue;
 			}
 			
-            m_pSongs.push_back( pNewSong );
+			m_pSongs.push_back( pNewSong );
 			loaded++;
 		}
 
