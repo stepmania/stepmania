@@ -7,7 +7,6 @@
 using namespace std;
 using __gnu_cxx::hash_map;
 
-
 Joystick::Joystick() :	id( DEVICE_NONE ),
 			x_axis( DeviceButton_Invalid ),
 			y_axis( DeviceButton_Invalid ),
@@ -31,39 +30,40 @@ void JoystickDevice::AddElement( int usagePage, int usage, int cookie, const CFD
 	CFTypeRef object;
 	CFTypeID numID = CFNumberGetTypeID();
 	
+	ASSERT( m_vSticks.size() );
 	Joystick& js = m_vSticks.back();
 	
 	switch( usagePage )
 	{
 	case kHIDPage_GenericDesktop:
 	{
-		int min = 0;
-		int max = 0;
+		int iMin = 0;
+		int iMax = 0;
 		
 		object = CFDictionaryGetValue( dict, CFSTR(kIOHIDElementMinKey) );
 		if( object && CFGetTypeID(object) == numID )
-			IntValue( object, &min );
+			IntValue( object, iMin );
 		
 		object = CFDictionaryGetValue( dict, CFSTR(kIOHIDElementMaxKey) );
 		if( object && CFGetTypeID(object) == numID )
-			IntValue( object, &max );
+			IntValue( object, iMax );
 		
 		switch( usage )
 		{
 		case kHIDUsage_GD_X:
 			js.x_axis = cookie;
-			js.x_min = min;
-			js.x_max = max;
+			js.x_min = iMin;
+			js.x_max = iMax;
 			break;
 		case kHIDUsage_GD_Y:
 			js.y_axis = cookie;
-			js.y_min = min;
-			js.y_max = max;
+			js.y_min = iMin;
+			js.y_max = iMax;
 			break;
 		case kHIDUsage_GD_Z:
 			js.z_axis = cookie;
-			js.z_min = min;
-			js.z_max = max;
+			js.z_min = iMin;
+			js.z_max = iMax;
 			break;
 		case kHIDUsage_GD_DPadUp:
 			js.mapping[cookie] = JOY_UP;
@@ -178,7 +178,13 @@ void JoystickDevice::GetDevicesAndDescriptions( vector<InputDevice>& dev, vector
 	FOREACH_CONST( Joystick, m_vSticks, i )
 	{
 		dev.push_back( i->id );
-		desc.push_back( GetDescription() );
+		const RString& description = GetDescription();
+		
+		// XXX hack around remapping problem.
+		if( description == "0b43:0003" )
+			desc.push_back( "EMS USB2" );
+		else
+			desc.push_back( description );
 	}
 }
 
