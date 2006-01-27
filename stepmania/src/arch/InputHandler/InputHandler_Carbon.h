@@ -15,6 +15,7 @@ private:
 	RageThread m_InputThread;
 	RageSemaphore m_Sem;
 	CFRunLoopRef m_LoopRef;
+	CFRunLoopSourceRef m_SourceRef;
 	
 	static int Run( void *data );
 	void StartDevices();

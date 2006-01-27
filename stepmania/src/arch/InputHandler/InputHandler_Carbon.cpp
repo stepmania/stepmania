@@ -47,12 +47,32 @@ int InputHandler_Carbon::Run( void *data )
 	This->StartDevices();
 	SetThreadPrecedence( 1.0f );
 
-	/* The function copies the information out of the structure, so the memory pointed
-	 * to by context does not need to persist beyond the function call. */
-	CFRunLoopObserverContext context = { 0, &This->m_Sem, NULL, NULL, NULL };
-	CFRunLoopObserverRef o = CFRunLoopObserverCreate( kCFAllocatorDefault, kCFRunLoopEntry,
-							  false, 0, RunLoopStarted, &context);
-	CFRunLoopAddObserver( This->m_LoopRef, o, kCFRunLoopDefaultMode );
+	// Add an observer for the start of the run loop
+	{
+		/* The function copies the information out of the structure, so the memory pointed
+		 * to by context does not need to persist beyond the function call. */
+		CFRunLoopObserverContext context = { 0, &This->m_Sem, NULL, NULL, NULL };
+		CFRunLoopObserverRef o = CFRunLoopObserverCreate( kCFAllocatorDefault, kCFRunLoopEntry,
+								  false, 0, RunLoopStarted, &context);
+		CFRunLoopAddObserver( This->m_LoopRef, o, kCFRunLoopDefaultMode );
+	}
+	
+	/* Add a source for ending the run loop. This serves two purposes:
+	 * 1. it provides a way to terminate the run loop when IH_Carbon exists, and
+	 * 2. it ensures that CFRunLoopRun() doesn't return immediately if there are no other sources. */
+	{
+		/* Being a little tricky here, the perform callback takes a void* and returns nothing.
+		 * CFRunLoopStop takes a CFRunLoopRef (a pointer) so cast the function and pass the loop ref. */
+		void *info = This->m_LoopRef;
+		void (*perform)(void *) = (void (*)(void *))CFRunLoopStop;
+		// { version, info, retain, release, copyDescription, equal, hash, schedule, cancel, perform }
+		CFRunLoopSourceContext context = { 0, info, NULL, NULL, NULL, NULL, NULL, NULL, NULL, perform };
+		
+		// Pass 1 so that it is called after all inputs have been handled (they will have order = 0)
+		This->m_SourceRef = CFRunLoopSourceCreate( kCFAllocatorDefault, 1, &context );
+		
+		CFRunLoopAddSource( This->m_LoopRef, This->m_SourceRef, kCFRunLoopDefaultMode );
+	}
 	CFRunLoopRun();
 	LOG->Trace( "Shutting down input handler thread..." );
 	return 0;
@@ -74,9 +94,11 @@ InputHandler_Carbon::~InputHandler_Carbon()
 		delete *i;
 	if( PREFSMAN->m_bThreadedInput )
 	{
-		CFRunLoopStop( m_LoopRef );
-		CFRelease( m_LoopRef );
+		CFRunLoopSourceSignal( m_SourceRef );
+		CFRunLoopWakeUp( m_LoopRef );
 		m_InputThread.Wait();
+		CFRelease( m_SourceRef );
+		// Don't release the loop ref.
 		LOG->Trace( "Input handler thread shut down." );
 	}
 }
