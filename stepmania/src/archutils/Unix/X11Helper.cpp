@@ -71,7 +71,7 @@ bool X11Helper::CloseMask( long mask )
 
 static bool pApplyMasks()
 {
-	if( X11Helper::Dpy == NULL | !g_bHaveWin )
+	if( X11Helper::Dpy == NULL || !g_bHaveWin )
 		return true;
 
 	LOG->Trace("X11Helper: Reapplying event masks.");
