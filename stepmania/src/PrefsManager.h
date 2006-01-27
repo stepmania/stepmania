@@ -138,7 +138,7 @@ public:
 	Preference<float>	m_fMarathonVerSongSeconds;
 	enum Maybe { ASK = -1, NO = 0, YES = 1 };
 	Preference<Maybe,int>		m_ShowSongOptions;
-	Preference<bool>	m_bCenteredSingle;
+	Preference<bool>	m_bCenter1Player;
 	Preference<bool>	m_bDancePointsForOni;
 	Preference<bool>	m_bPercentageScoring;
 	Preference<float>	m_fMinPercentageForMachineSongHighScore;

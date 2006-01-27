@@ -569,7 +569,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "MusicWheelSwitchSpeed",	MusicWheelSwitchSpeed,	"Slow","Normal","Fast","Really Fast" ) );
 
 	/* Gameplay options */
-	ADD( ConfOption( "CenteredSingle",		MovePref,		"Off","On" ) );
+	ADD( ConfOption( "Center1Player",		MovePref,		"Off","On" ) );
 	ADD( ConfOption( "HiddenSongs",			MovePref,		"Off","On" ) );
 	ADD( ConfOption( "EasterEggs",			MovePref,		"Off","On" ) );
 	ADD( ConfOption( "AllowW1",			AllowW1,		"Never","Courses Only","Always" ) );

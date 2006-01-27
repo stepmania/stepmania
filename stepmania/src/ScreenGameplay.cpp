@@ -458,9 +458,9 @@ void ScreenGameplay::Init()
 
 		/* Perhaps this should be handled better by defining a new
 		 * StyleType for ONE_PLAYER_ONE_CREDIT_AND_ONE_COMPUTER,
-		 * but for now just ignore CenteredSingle when it's Battle or Rave
+		 * but for now just ignore Center1Player when it's Battle or Rave
 		 * Mode.  This doesn't begin to address two-player solo (6 arrows) */
-		if( PREFSMAN->m_bCenteredSingle && 
+		if( PREFSMAN->m_bCenter1Player && 
 			GAMESTATE->m_PlayMode != PLAY_MODE_BATTLE &&
 			GAMESTATE->m_PlayMode != PLAY_MODE_RAVE &&
 			GAMESTATE->GetCurrentStyle()->m_StyleType == ONE_PLAYER_ONE_SIDE )
