@@ -30,6 +30,8 @@ namespace X11Helper
 	bool MakeWindow(int screenNum, int depth, Visual *visual,
 					int width=32, int height=32, bool overrideRedirect=false);
 
+	Window CreateWindow( int screenNum, int depth, Visual *visual, int width, int height, bool overrideRedirect );
+
 	// Unmask one X event type mask thingy (XSelectInput() arg 3) on the
 	// current window. Masked/unmasked events will carry between windows.
 	bool OpenMask(long mask);

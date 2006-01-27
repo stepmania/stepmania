@@ -88,8 +88,6 @@ static bool pApplyMasks()
 
 bool X11Helper::MakeWindow( int screenNum, int depth, Visual *visual, int width, int height, bool overrideRedirect )
 {
-	vector<long>::iterator i;
-	
 	if( g_iRefCount == 0 )
 		return false;
 
@@ -101,6 +99,17 @@ bool X11Helper::MakeWindow( int screenNum, int depth, Visual *visual, int width,
 		// pHaveWin will stay false if an error occurs once I do error
 		// checking here...
 
+	Window Win = CreateWindow( screenNum, depth, visual, width, height, overrideRedirect );
+
+	g_bHaveWin = true;
+
+	return true;
+}
+
+Window X11Helper::CreateWindow( int screenNum, int depth, Visual *visual, int width, int height, bool overrideRedirect )
+{
+	vector<long>::iterator i;
+	
 	XSetWindowAttributes winAttribs;
 
 	winAttribs.border_pixel = 0;
@@ -116,6 +125,7 @@ bool X11Helper::MakeWindow( int screenNum, int depth, Visual *visual, int width,
 
 	winAttribs.colormap = XCreateColormap( Dpy, RootWindow(Dpy, screenNum), visual, AllocNone );
 
+	Window Win;
 	if( overrideRedirect )
 	{
 		winAttribs.override_redirect = True;
@@ -129,9 +139,6 @@ bool X11Helper::MakeWindow( int screenNum, int depth, Visual *visual, int width,
 			height, 0, depth, InputOutput, visual,
 			CWBorderPixel | CWColormap | CWEventMask, &winAttribs );
 	}
-			
-
-	g_bHaveWin = true;
 
 	/* Hide the mouse cursor. */
 	{
@@ -146,7 +153,7 @@ bool X11Helper::MakeWindow( int screenNum, int depth, Visual *visual, int width,
 		XFreeCursor( Dpy, pBlankPointer );
 	}
 
-	return true;
+	return Win;
 }
 
 int protoErrorCallback( Display *d, XErrorEvent *err )
