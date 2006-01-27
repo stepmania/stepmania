@@ -75,6 +75,11 @@ REGISTER_SCREEN_CLASS( ScreenTextEntry );
 
 void ScreenTextEntry::Init()
 {
+	ROW_START_X.Load( m_sName, "RowStartX" );
+	ROW_START_Y.Load( m_sName, "RowStartY" );
+	ROW_END_X.Load( m_sName, "RowEndX" );
+	ROW_END_Y.Load( m_sName, "RowEndY" );
+
 	ScreenWithMenuElements::Init();
 
 	m_textQuestion.LoadFromFont( THEME->GetPathF(m_sName,"question") );
@@ -148,8 +153,8 @@ void ScreenTextEntry::BeginScreen()
 		for( int x=0; x<KEYS_PER_ROW; ++x )
 		{
 			BitmapText &bt = *m_ptextKeys[r][x];
-			float fX = roundf( SCALE( x, 0, KEYS_PER_ROW-1, SCREEN_LEFT+100, SCREEN_RIGHT-100 ) );
-			float fY = roundf( SCALE( r, 0, NUM_KEYBOARD_ROWS-1, SCREEN_CENTER_Y-30, SCREEN_BOTTOM-80 ) );
+			float fX = roundf( SCALE( x, 0, KEYS_PER_ROW-1, ROW_START_X, ROW_END_X ) );
+			float fY = roundf( SCALE( r, 0, NUM_KEYBOARD_ROWS-1, ROW_START_Y, ROW_END_Y ) );
 			bt.SetXY( fX, fY );
 		}
 	}

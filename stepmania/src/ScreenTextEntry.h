@@ -6,6 +6,7 @@
 #include "ScreenWithMenuElements.h"
 #include "BitmapText.h"
 #include "RageSound.h"
+#include "ThemeMetric.h"
 
 enum KeyboardRow
 {
@@ -84,6 +85,10 @@ protected:
 	void PositionCursor();
 
 	BitmapText		*m_ptextKeys[NUM_KEYBOARD_ROWS][KEYS_PER_ROW];
+	ThemeMetric<float>	ROW_START_X;
+	ThemeMetric<float>	ROW_START_Y;
+	ThemeMetric<float>	ROW_END_X;
+	ThemeMetric<float>	ROW_END_Y;
 
 	RageSound	m_sndType;
 	RageSound	m_sndBackspace;
