@@ -28,9 +28,9 @@ static inline void PrintIOErr( IOReturn err, const char *s )
 	LOG->Warn( "%s - %s(%x,%d)", s, mach_error_string(err), err, err & 0xFFFFFF );
 }
 
-static inline Boolean IntValue( const void *o, int *n )
+static inline Boolean IntValue( const void *o, int &n )
 {
-	return CFNumberGetValue( CFNumberRef(o), kCFNumberIntType, n );
+	return CFNumberGetValue( CFNumberRef(o), kCFNumberIntType, &n );
 }
 
 /*

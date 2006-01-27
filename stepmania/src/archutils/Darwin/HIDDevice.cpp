@@ -13,9 +13,9 @@ HIDDevice::~HIDDevice()
 		CFRunLoopSourceRef runLoopSource;
 		
 		if( m_bRunning )
-			CALL( m_Queue, stop );
-		if( (runLoopSource = CALL(m_Queue, getAsyncEventSource)) )
 		{
+			CALL( m_Queue, stop );
+			runLoopSource = CALL( m_Queue, getAsyncEventSource );
 			mach_port_deallocate( mach_task_self(), CALL(m_Queue, getAsyncPort) );
 			CFRunLoopSourceInvalidate( runLoopSource );
 			CFRelease( runLoopSource );
@@ -47,18 +47,16 @@ bool HIDDevice::Open( io_object_t device )
 	CFStringRef productRef = (CFStringRef)CFDictionaryGetValue( properties, CFSTR(kIOHIDProductKey) );
 	
 	if( productRef )
-	{
 		m_sDescription = CFStringGetCStringPtr( productRef, CFStringGetSystemEncoding() );
-	}
-	else
+	if( m_sDescription == "" )
 	{
 		CFTypeRef vidRef = (CFTypeRef)CFDictionaryGetValue( properties, CFSTR(kIOHIDVendorIDKey) );
 		CFTypeRef pidRef = (CFTypeRef)CFDictionaryGetValue( properties, CFSTR(kIOHIDProductIDKey) );
 		int vid, pid;
 		
-		if( vidRef && !IntValue(vidRef, &vid) )
+		if( vidRef && !IntValue(vidRef, vid) )
 			vid = 0;
-		if( pidRef && !IntValue(pidRef, &pid) )
+		if( pidRef && !IntValue(pidRef, pid) )
 			pid = 0;
 		m_sDescription = ssprintf( "%04x:%04x", vid, pid );
 	}
@@ -125,6 +123,8 @@ bool HIDDevice::Open( io_object_t device )
 		PrintIOErr( ret, "Failed to create the queue." );
 		CALL( m_Queue, Release );
 		m_Queue = NULL;
+		CALL( m_Interface, Release );
+		m_Interface = NULL;
 		return false;
 	}
 	
@@ -147,7 +147,7 @@ void HIDDevice::StartQueue( CFRunLoopRef loopRef, IOHIDCallbackFunction callback
 	if( !CFRunLoopContainsSource(loopRef, runLoopSource, kCFRunLoopDefaultMode) )
 		CFRunLoopAddSource( loopRef, runLoopSource, kCFRunLoopDefaultMode );
 	
-	CALL( m_Queue, setEventCallout, callback, target, (void *)refCon );
+	ret = CALL( m_Queue, setEventCallout, callback, target, (void *)refCon );
 	
 	if( ret != kIOReturnSuccess )
 	{
@@ -160,6 +160,10 @@ void HIDDevice::StartQueue( CFRunLoopRef loopRef, IOHIDCallbackFunction callback
 	
 	if( ret != kIOReturnSuccess )
 	{
+		mach_port_deallocate( mach_task_self(), CALL(m_Queue, getAsyncPort) );
+		CFRunLoopSourceInvalidate( runLoopSource );
+		CFRelease( runLoopSource );
+		
 		PrintIOErr( ret, "Failed to start the queue." );
 		return;
 	}
@@ -180,12 +184,12 @@ void HIDDevice::AddLogicalDevice( const void *value, void *context )
 	
 	// Get usage page
 	object = CFDictionaryGetValue( dict, CFSTR(kIOHIDElementUsagePageKey) );
-	if( !object || CFGetTypeID(object) != numID || !IntValue(object, &usagePage) )
+	if( !object || CFGetTypeID(object) != numID || !IntValue(object, usagePage) )
 		return;
 	
 	// Get usage
 	object = CFDictionaryGetValue( dict, CFSTR(kIOHIDElementUsageKey) );
-	if( !object || CFGetTypeID(object) != numID || !IntValue(object, &usage) )
+	if( !object || CFGetTypeID(object) != numID || !IntValue(object, usage) )
 		return;
 	
 	if( !(elements = (CFArrayRef)CFDictionaryGetValue( dict, CFSTR(kIOHIDElementKey))) )
@@ -221,18 +225,18 @@ void HIDDevice::AddElement( const void *value, void *context )
 	
 	// Get usage page
 	object = CFDictionaryGetValue( dict, CFSTR(kIOHIDElementUsagePageKey) );
-	if( !object || CFGetTypeID(object) != numID || !IntValue(object, &usagePage) )
+	if( !object || CFGetTypeID(object) != numID || !IntValue(object, usagePage) )
 		return;
 	
 	// Get usage
 	object = CFDictionaryGetValue( dict, CFSTR(kIOHIDElementUsageKey) );
-	if( !object || CFGetTypeID(object) != numID || !IntValue(object, &usage) )
+	if( !object || CFGetTypeID(object) != numID || !IntValue(object, usage) )
 		return;
 	
 	
 	// Get cookie
 	object = CFDictionaryGetValue( dict, CFSTR(kIOHIDElementCookieKey) );
-	if( !object || CFGetTypeID(object) != numID || !IntValue(object, &cookie) )
+	if( !object || CFGetTypeID(object) != numID || !IntValue(object, cookie) )
 		return;
 	This->AddElement( usagePage, usage, cookie, dict );
 }
