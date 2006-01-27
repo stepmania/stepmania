@@ -451,7 +451,7 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 			// We have a mapping for this joystick
 			//
 			GameController gc = (GameController)iNumJoysticksMapped;
-			if( gc >= GAME_CONTROLLER_INVALID )
+			if( gc >= MAX_GAME_CONTROLLERS )
 				break;	// stop mapping.  We already mapped one device for each game controller.
 
 			LOG->Info( "Applying default joystick mapping #%d for device '%s' (%s)",
