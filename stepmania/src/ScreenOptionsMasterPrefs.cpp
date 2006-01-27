@@ -153,22 +153,34 @@ static void GameSel( int &sel, bool ToSel, const ConfOption *pConfOption )
 
 static void LanguageChoices( vector<RString> &out )
 {
-	THEME->GetLanguages( out );
+	vector<RString> vs;
+	THEME->GetLanguages( vs );
+	SortRStringArray( vs, true );
+
+	FOREACH_CONST( RString, vs, s )
+	{
+		const LanguageInfo *pLI = GetLanguageInfo( *s );
+		if( pLI )
+			out.push_back( pLI->szNativeName );
+		else
+			out.push_back( *s );
+	}
 }
 
 static void Language( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	vector<RString> choices;
-	pConfOption->MakeOptionsList( choices );
+	vector<RString> vs;
+	THEME->GetLanguages( vs );
+	SortRStringArray( vs, true );
 
 	if( ToSel )
 	{
 		sel = 0;
-		for( unsigned i=1; i<choices.size(); i++ )
-			if( !stricmp(choices[i], THEME->GetCurLanguage()) )
+		for( unsigned i=1; i<vs.size(); i++ )
+			if( !stricmp(vs[i], THEME->GetCurLanguage()) )
 				sel = i;
 	} else {
-		const RString sNewLanguage = choices[sel];
+		const RString &sNewLanguage = vs[sel];
 		
 		if( THEME->GetCurLanguage() != sNewLanguage )
 			THEME->SwitchThemeAndLanguage( THEME->GetCurThemeName(), sNewLanguage, PREFSMAN->m_bPseudoLocalize );
