@@ -108,7 +108,7 @@ void ScreenTextEntry::Init()
 			for( int x=0; x<KEYS_PER_ROW; ++x )
 			{
 				BitmapText *&pbt = m_ptextKeys[r][x];
-				pbt = static_cast<BitmapText *>( text.Copy() );
+				pbt = static_cast<BitmapText *>( text.Copy() ); // XXX: Copy() should be covariant
 				this->AddChild( pbt );
 			}
 		}
