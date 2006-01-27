@@ -138,8 +138,8 @@ void RageBitmapTexture::Create()
 		m_iTextureHeight = max( 8, m_iTextureHeight );
 	}
 
-	ASSERT( m_iTextureWidth <= actualID.iMaxSize );
-	ASSERT( m_iTextureHeight <= actualID.iMaxSize );
+	ASSERT_M( m_iTextureWidth <= actualID.iMaxSize, ssprintf("w %i, %i", m_iTextureWidth, actualID.iMaxSize) );
+	ASSERT_M( m_iTextureHeight <= actualID.iMaxSize, ssprintf("h %i, %i", m_iTextureHeight, actualID.iMaxSize) );
 
 	if( actualID.bStretch )
 	{
