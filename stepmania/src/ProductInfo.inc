@@ -11,6 +11,7 @@
 !define PRODUCT_ID "StepMania CVS"
 
 !define PRODUCT_URL "http://www.stepmania.com"
+!define UPDATES_URL "http://www.stepmania.com/wiki/Downloads"
 
 ;!define INSTALL_TYPE_EXTERNAL_PCKS
 ;!define INSTALL_TYPE_INTERNAL_PCKS
@@ -19,3 +20,4 @@
 ;!define SHOW_AUTORUN
 !define MAKE_OPEN_PROGRAM_FOLDER_SHORTCUT
 ;!define DIRECTX_81_REDIST_PRESENT
+;!define MAKE_UPDATES_SHORTCUT
