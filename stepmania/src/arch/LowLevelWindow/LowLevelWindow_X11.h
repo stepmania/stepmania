@@ -21,6 +21,12 @@ public:
 	
 	void GetDisplayResolutions( DisplayResolutions &out ) const;
 
+	bool SupportsThreadedRendering();
+	void BeginConcurrentRenderingMainThread();
+	void EndConcurrentRenderingMainThread();
+	void BeginConcurrentRendering();
+	void EndConcurrentRendering();
+
 private:
 	bool m_bWindowIsOpen;
 	bool m_bWasWindowed;

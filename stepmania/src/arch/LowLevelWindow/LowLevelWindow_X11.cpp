@@ -20,6 +20,10 @@
 #include <X11/extensions/XTest.h>
 #endif
 
+static GLXContext g_pContext = NULL;
+static GLXContext g_pBackgroundContext = NULL;
+static Window g_AltWindow = 0;
+
 static LocalizedString FAILED_CONNECTION_XSERVER( "LowLevelWindow_X11", "Failed to establish a connection with the X server'" );
 LowLevelWindow_X11::LowLevelWindow_X11()
 {
@@ -130,6 +134,9 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		// So, let's recreate the window when changing that state.
 		if( !X11Helper::MakeWindow(xvi->screen, xvi->depth, xvi->visual, p.width, p.height, !p.windowed) )
 			return "Failed to create the window.";
+		
+		g_AltWindow = X11Helper::CreateWindow(xvi->screen, xvi->depth, xvi->visual, p.width, p.height, !p.windowed);
+		ASSERT( g_AltWindow );
 
 		m_bWindowIsOpen = true;
 
@@ -137,9 +144,10 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		XChangeProperty( X11Helper::Dpy, X11Helper::Win, XA_WM_NAME, XA_STRING, 8, PropModeReplace,
 				reinterpret_cast<unsigned char*>(szWindowTitle), strlen(szWindowTitle) );
 
-		GLXContext ctxt = glXCreateContext( X11Helper::Dpy, xvi, NULL, True );
+		g_pContext = glXCreateContext( X11Helper::Dpy, xvi, NULL, True );
+		g_pBackgroundContext = glXCreateContext( X11Helper::Dpy, xvi, g_pContext, True );
 
-		glXMakeCurrent( X11Helper::Dpy, X11Helper::Win, ctxt );
+		glXMakeCurrent( X11Helper::Dpy, X11Helper::Win, g_pContext );
 
 		XMapWindow( X11Helper::Dpy, X11Helper::Win );
 
@@ -294,6 +302,38 @@ void LowLevelWindow_X11::GetDisplayResolutions( DisplayResolutions &out ) const
 		DisplayResolution res = { pSizesX[i].width, pSizesX[i].height };
 		out.s.insert( res );
 	}
+}
+
+bool LowLevelWindow_X11::SupportsThreadedRendering()
+{
+	return g_pBackgroundContext != NULL;
+}
+
+void LowLevelWindow_X11::BeginConcurrentRenderingMainThread()
+{
+	/* Move the main thread, which is going to be loading textures, etc. but
+	 * not rendering, to an undisplayed window.  This results in smoother
+	 * rendering. */
+	bool b = glXMakeCurrent( X11Helper::Dpy, g_AltWindow, g_pContext );
+	ASSERT(b);
+}
+
+void LowLevelWindow_X11::EndConcurrentRenderingMainThread()
+{
+	bool b = glXMakeCurrent( X11Helper::Dpy, X11Helper::Win, g_pContext );
+	ASSERT(b);
+}
+
+void LowLevelWindow_X11::BeginConcurrentRendering()
+{
+	bool b = glXMakeCurrent( X11Helper::Dpy, X11Helper::Win, g_pBackgroundContext );
+	ASSERT(b);
+}
+
+void LowLevelWindow_X11::EndConcurrentRendering()
+{
+	bool b = glXMakeCurrent( X11Helper::Dpy, None, NULL );
+	ASSERT(b);
 }
 
 /*
