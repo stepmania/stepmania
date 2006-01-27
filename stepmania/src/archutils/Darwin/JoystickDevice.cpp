@@ -178,13 +178,7 @@ void JoystickDevice::GetDevicesAndDescriptions( vector<InputDevice>& dev, vector
 	FOREACH_CONST( Joystick, m_vSticks, i )
 	{
 		dev.push_back( i->id );
-		const RString& description = GetDescription();
-		
-		// XXX hack around remapping problem.
-		if( description == "0b43:0003" )
-			desc.push_back( "EMS USB2" );
-		else
-			desc.push_back( description );
+		desc.push_back( GetDescription() );
 	}
 }
 
