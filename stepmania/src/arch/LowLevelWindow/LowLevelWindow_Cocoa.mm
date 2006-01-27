@@ -111,6 +111,8 @@ LowLevelWindow_Cocoa::~LowLevelWindow_Cocoa()
 	
 	[m_Context clearDrawable];
 	[m_Context release];
+	[m_BGContext clearDrawable];
+	[m_BGContext release];
 	[mt performOnMainThread];
 	[delegate release];
 	[mt release];
@@ -220,7 +222,6 @@ RString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 			m_CurrentParams.bpp = p.bpp;
 			[m_BGContext release];
 			m_BGContext = nil;
-#if 0
 			m_BGContext = CreateOGLContext( p.bpp, true, m_Context, bShared );
 			
 			if( m_BGContext && !bShared )
@@ -228,7 +229,6 @@ RString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 				[m_BGContext release];
 				m_BGContext = nil;
 			}
-#endif
 		}
 		SMMainThread *mt = [[SMMainThread alloc] init];
 		
@@ -311,6 +311,7 @@ void LowLevelWindow_Cocoa::ShutDownFullScreen()
 	
 	[NSOpenGLContext clearCurrentContext];
 	[m_Context clearDrawable];
+	[m_BGContext clearDrawable];
 	
 	CGDisplayErr err = CGDisplaySwitchToMode( kCGDirectMainDisplay, m_CurrentDisplayMode );
 	
@@ -437,10 +438,4 @@ void LowLevelWindow_Cocoa::BeginConcurrentRendering()
 	else
 		[m_BGContext setFullScreen];
 	[m_BGContext makeCurrentContext];
-}
-
-void LowLevelWindow_Cocoa::EndConcurrentRendering()
-{
-	[NSOpenGLContext clearCurrentContext];
-	[m_BGContext clearDrawable];
 }
