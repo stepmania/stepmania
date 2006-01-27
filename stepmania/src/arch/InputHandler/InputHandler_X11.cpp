@@ -153,7 +153,7 @@ void InputHandler_X11::Update()
 				XLookupKeysym(&event.xkey,0), XSymToDeviceButton(XLookupKeysym(&event.xkey,0)) );
 
 			DeviceInput di( DEVICE_KEYBOARD, XSymToDeviceButton(XLookupKeysym(&event.xkey,0)) );
-			ButtonPressed(di, true);
+			ButtonPressed( di, true );
 		}
 
 		while( XCheckTypedWindowEvent(X11Helper::Dpy, X11Helper::Win, KeyRelease, &event) )
