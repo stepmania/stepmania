@@ -411,7 +411,7 @@ void InputMapper::ApplyMapping( const Mapping *maps, GameController gc, InputDev
 			/* If that pushed it over, then it's a second controller for a joystick
 			 * that's already a second controller, so we'll just ignore it.  (This
 			 * can happen if eg. two primary Pump pads are connected.) */
-			if( map_gc >= GAME_CONTROLLER_INVALID )
+			if( map_gc >= MAX_GAME_CONTROLLERS )
 				continue;
 		}
 
@@ -590,7 +590,13 @@ void InputMapper::SetInputMap( const DeviceInput &DeviceI, const GameInput &Game
 	// remove the old input
 	ClearFromInputMap( DeviceI );
 	ClearFromInputMap( GameI, iSlotIndex );
-
+	
+	ASSERT_M( GameI.controller < MAX_GAME_CONTROLLERS,
+		  ssprintf("controller: %u >= %u", GameI.controller, MAX_GAME_CONTROLLERS) );
+	ASSERT_M( GameI.button < MAX_GAME_BUTTONS,
+		  ssprintf("button: %u >= %u", GameI.button, MAX_GAME_BUTTONS) );
+	ASSERT_M( iSlotIndex < NUM_GAME_TO_DEVICE_SLOTS,
+		  ssprintf("slot: %u >= %u", iSlotIndex, NUM_GAME_TO_DEVICE_SLOTS) );
 	m_GItoDI[GameI.controller][GameI.button][iSlotIndex] = DeviceI;
 
 
