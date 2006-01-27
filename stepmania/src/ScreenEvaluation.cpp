@@ -13,7 +13,6 @@
 #include "ThemeManager.h"
 #include "GameSoundManager.h"
 #include "ActorUtil.h"
-#include "UnlockManager.h"
 #include "Course.h"
 #include "LightsManager.h"
 #include "ProfileManager.h"
@@ -33,12 +32,12 @@
 #include "ScoreKeeperNormal.h"
 #include "InputEventPlus.h"
 
-const int NUM_SCORE_DIGITS	=	9;
+const int NUM_SCORE_DIGITS = 9;
 
 
 // metrics that are common to all ScreenEvaluation classes
-#define BANNER_WIDTH						THEME->GetMetricF(m_sName,"BannerWidth")
-#define BANNER_HEIGHT						THEME->GetMetricF(m_sName,"BannerHeight")
+#define BANNER_WIDTH			THEME->GetMetricF(m_sName,"BannerWidth")
+#define BANNER_HEIGHT			THEME->GetMetricF(m_sName,"BannerHeight")
 static const char *JudgeLineNames[] =
 {
 	"W1", "W2", "W3", "W4", "W5", "Miss", "Held", "MaxCombo", "TotalError"
@@ -53,27 +52,27 @@ static const char *StatLineNames[NUM_StatLine] =
 XToString( StatLine, NUM_StatLine );
 #define FOREACH_StatLine( rc ) FOREACH_ENUM( StatLine, NUM_StatLine, rc )
 
-#define CHEER_DELAY_SECONDS					THEME->GetMetricF(m_sName,"CheerDelaySeconds")
-#define BAR_ACTUAL_MAX_COMMAND				THEME->GetMetricA(m_sName,"BarActualMaxCommand")
+#define CHEER_DELAY_SECONDS		THEME->GetMetricF(m_sName,"CheerDelaySeconds")
+#define BAR_ACTUAL_MAX_COMMAND		THEME->GetMetricA(m_sName,"BarActualMaxCommand")
 
 // metrics that are specific to classes derived from ScreenEvaluation
-#define SHOW_BANNER_AREA					THEME->GetMetricB(m_sName,"ShowBannerArea")
-#define SHOW_GRADE_AREA						THEME->GetMetricB(m_sName,"ShowGradeArea")
-#define SHOW_POINTS_AREA					THEME->GetMetricB(m_sName,"ShowPointsArea")
-#define SHOW_BONUS_AREA						THEME->GetMetricB(m_sName,"ShowBonusArea")
-#define SHOW_SURVIVED_AREA					THEME->GetMetricB(m_sName,"ShowSurvivedArea")
-#define SHOW_WIN_AREA						THEME->GetMetricB(m_sName,"ShowWinArea")
-#define SHOW_JUDGMENT_LABELS				THEME->GetMetricB(m_sName,"ShowJudgmentLabels")
-#define SHOW_JUDGMENT( l )					THEME->GetMetricB(m_sName,"Show"+JudgeLineToString(l))
-#define SHOW_STATS_LABELS					THEME->GetMetricB(m_sName,"ShowStatsLabels")
+#define SHOW_BANNER_AREA		THEME->GetMetricB(m_sName,"ShowBannerArea")
+#define SHOW_GRADE_AREA			THEME->GetMetricB(m_sName,"ShowGradeArea")
+#define SHOW_POINTS_AREA		THEME->GetMetricB(m_sName,"ShowPointsArea")
+#define SHOW_BONUS_AREA			THEME->GetMetricB(m_sName,"ShowBonusArea")
+#define SHOW_SURVIVED_AREA		THEME->GetMetricB(m_sName,"ShowSurvivedArea")
+#define SHOW_WIN_AREA			THEME->GetMetricB(m_sName,"ShowWinArea")
+#define SHOW_JUDGMENT_LABELS		THEME->GetMetricB(m_sName,"ShowJudgmentLabels")
+#define SHOW_JUDGMENT( l )		THEME->GetMetricB(m_sName,"Show"+JudgeLineToString(l))
+#define SHOW_STATS_LABELS		THEME->GetMetricB(m_sName,"ShowStatsLabels")
 
-#define SHOW_STAT( s )						THEME->GetMetricB(m_sName,"Show"+StatLineToString(l))
-#define SHOW_SCORE_AREA						THEME->GetMetricB(m_sName,"ShowScoreArea")
-#define SHOW_TOTAL_SCORE_AREA				THEME->GetMetricB(m_sName,"ShowTotalScoreArea")
-#define SHOW_TIME_AREA						THEME->GetMetricB(m_sName,"ShowTimeArea")
-#define SHOW_RECORDS_AREA					THEME->GetMetricB(m_sName,"ShowRecordsArea")
-#define MAX_COMBO_NUM_DIGITS				THEME->GetMetricI(m_sName,"MaxComboNumDigits")
-#define PLAYER_OPTIONS_SEPARATOR			THEME->GetMetric (m_sName,"PlayerOptionsSeparator")
+#define SHOW_STAT( s )			THEME->GetMetricB(m_sName,"Show"+StatLineToString(l))
+#define SHOW_SCORE_AREA			THEME->GetMetricB(m_sName,"ShowScoreArea")
+#define SHOW_TOTAL_SCORE_AREA		THEME->GetMetricB(m_sName,"ShowTotalScoreArea")
+#define SHOW_TIME_AREA			THEME->GetMetricB(m_sName,"ShowTimeArea")
+#define SHOW_RECORDS_AREA		THEME->GetMetricB(m_sName,"ShowRecordsArea")
+#define MAX_COMBO_NUM_DIGITS		THEME->GetMetricI(m_sName,"MaxComboNumDigits")
+#define PLAYER_OPTIONS_SEPARATOR	THEME->GetMetric (m_sName,"PlayerOptionsSeparator")
 
 
 static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
