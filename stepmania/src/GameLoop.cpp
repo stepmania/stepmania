@@ -201,17 +201,26 @@ public:
 	ConcurrentRenderer();
 	~ConcurrentRenderer();
 
+	void Start();
+	void Stop();
+
 private:
 	RageThread m_Thread;
+	RageEvent m_Event;
 	bool m_bShutdown;
 	void RenderThread();
 	static int StartRenderThread( void *p );
+
+	enum State { RENDERING_IDLE, RENDERING_START, RENDERING_ACTIVE, RENDERING_END };
+	State m_State;
 };
 static ConcurrentRenderer *g_pConcurrentRenderer = NULL;
 
-ConcurrentRenderer::ConcurrentRenderer()
+ConcurrentRenderer::ConcurrentRenderer():
+	m_Event("ConcurrentRenderer")
 {
 	m_bShutdown = false;
+	m_State = RENDERING_IDLE;
 
 	m_Thread.SetName( "ConcurrentRenderer" );
 	m_Thread.Create( StartRenderThread, this );
@@ -219,32 +228,86 @@ ConcurrentRenderer::ConcurrentRenderer()
 
 ConcurrentRenderer::~ConcurrentRenderer()
 {
+	ASSERT( m_State == RENDERING_IDLE );
 	m_bShutdown = true;
 	m_Thread.Wait();
+}
+
+void ConcurrentRenderer::Start()
+{
+	DISPLAY->BeginConcurrentRenderingMainThread();
+
+	m_Event.Lock();
+	ASSERT( m_State == RENDERING_IDLE );
+	m_State = RENDERING_START;
+	m_Event.Signal();
+	while( m_State != RENDERING_ACTIVE )
+		m_Event.Wait();
+	m_Event.Unlock();
+}
+
+void ConcurrentRenderer::Stop()
+{
+	m_Event.Lock();
+	ASSERT( m_State == RENDERING_ACTIVE );
+	m_State = RENDERING_END;
+	m_Event.Signal();
+	while( m_State != RENDERING_IDLE )
+		m_Event.Wait();
+	m_Event.Unlock();
+
+	DISPLAY->EndConcurrentRenderingMainThread();
 }
 
 void ConcurrentRenderer::RenderThread()
 {
 	ASSERT( SCREENMAN != NULL );
 
-	DISPLAY->BeginConcurrentRendering();
-	HOOKS->SetupConcurrentRenderingThread();
-
-	LOG->Trace( "ConcurrentRenderer::RenderThread start" );
-
-	/* This is called during Update().  The next thing the game loop
-	 * will do is Draw, so shift operations around to put Draw at the
-	 * top.  This makes sure updates are seamless. */
 	while( !m_bShutdown )
 	{
-		SCREENMAN->Draw();
+		m_Event.Lock();
+		while( m_State == RENDERING_IDLE && !m_bShutdown )
+			m_Event.Wait();
+		m_Event.Unlock();
 
-		float fDeltaTime = g_GameplayTimer.GetDeltaTime();
-		SCREENMAN->Update( fDeltaTime );
+		if( m_State == RENDERING_START )
+		{
+			/* We're starting to render.  Set up, and then kick the event to wake
+			 * up the calling thread. */
+			DISPLAY->BeginConcurrentRendering();
+			HOOKS->SetupConcurrentRenderingThread();
+
+			LOG->Trace( "ConcurrentRenderer::RenderThread start" );
+
+			m_Event.Lock();
+			m_State = RENDERING_ACTIVE;
+			m_Event.Signal();
+			m_Event.Unlock();
+		}
+
+		/* This is started during Update().  The next thing the game loop
+		 * will do is Draw, so shift operations around to put Draw at the
+		 * top.  This makes sure updates are seamless. */
+		if( m_State == RENDERING_ACTIVE )
+		{
+			SCREENMAN->Draw();
+
+			float fDeltaTime = g_GameplayTimer.GetDeltaTime();
+			SCREENMAN->Update( fDeltaTime );
+		}
+
+		if( m_State == RENDERING_END )
+		{
+			LOG->Trace( "ConcurrentRenderer::RenderThread done" );
+
+			DISPLAY->EndConcurrentRendering();
+
+			m_Event.Lock();
+			m_State = RENDERING_IDLE;
+			m_Event.Signal();
+			m_Event.Unlock();
+		}
 	}
-	DISPLAY->EndConcurrentRendering();
-
-	LOG->Trace( "ConcurrentRenderer::RenderThread done" );
 }
 
 int ConcurrentRenderer::StartRenderThread( void *p )
@@ -255,13 +318,14 @@ int ConcurrentRenderer::StartRenderThread( void *p )
 
 void GameLoop::StartConcurrentRendering()
 {
-	ASSERT( g_pConcurrentRenderer == NULL );
-	g_pConcurrentRenderer = new ConcurrentRenderer;
+	if( g_pConcurrentRenderer == NULL )
+		g_pConcurrentRenderer = new ConcurrentRenderer;
+	g_pConcurrentRenderer->Start();
 }
 
 void GameLoop::FinishConcurrentRendering()
 {
-	SAFE_DELETE( g_pConcurrentRenderer );
+	g_pConcurrentRenderer->Stop();
 }
 
 /*
