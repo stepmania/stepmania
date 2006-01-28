@@ -11,7 +11,6 @@
 #include "TitleSubstitution.h"
 #include "BannerCache.h"
 #include "RageFileManager.h"
-#include "Profile.h"
 #include "CourseWriterCRS.h"
 
 const int MAX_EDIT_COURSE_SIZE_BYTES	= 30*1024;	// 30KB
