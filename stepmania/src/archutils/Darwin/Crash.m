@@ -2,6 +2,7 @@
 
 void InformUserOfCrash( const char *sPath )
 {
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	NSString *s = @PRODUCT_NAME " has crashed. Debugging information has been output to\n\n%s\n\n"
 	@"Please file a bug report at\n\n" REPORT_BUG_URL;
 	
@@ -13,6 +14,7 @@ void InformUserOfCrash( const char *sPath )
 		
 		[ws openFile:[NSString stringWithUTF8String:sPath]];
 	}
+	[pool release];
 }
 
 /*
