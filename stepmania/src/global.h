@@ -1,5 +1,3 @@
-#if !defined(SM_PCH) || SM_PCH == FALSE
-
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
@@ -194,8 +192,6 @@ inline float strtof( const char *s, char **se ) { return (float) strtod( s, se )
 /* Don't include our own headers here, since they tend to change often. */
 
 #endif
-
-#endif /* SM_PCH */
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
