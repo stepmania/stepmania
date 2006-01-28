@@ -1,10 +1,10 @@
 #include "global.h"
+#include "UnlockManager.h"
 #include "PrefsManager.h"
 #include "RageLog.h"
 #include "song.h"
 #include "Course.h"
 #include "RageUtil.h"
-#include "UnlockManager.h"
 #include "SongManager.h"
 #include "GameState.h"
 #include "ProfileManager.h"
@@ -16,10 +16,10 @@
 
 UnlockManager*	UNLOCKMAN = NULL;	// global and accessable from anywhere in our program
 
-#define UNLOCK_NAMES					THEME->GetMetric ("Unlocks","UnlockNames")
-#define UNLOCK(sLineName)				THEME->GetMetric ("Unlocks",ssprintf("Unlock%s",sLineName.c_str()))
+#define UNLOCK_NAMES		THEME->GetMetric ("Unlocks","UnlockNames")
+#define UNLOCK(sLineName)	THEME->GetMetric ("Unlocks",ssprintf("Unlock%s",sLineName.c_str()))
 
-static const char *UnlockTypeNames[] =
+static const char *UnlockTriggerNames[] =
 {
 	"ArcadePoints",
 	"DancePoints",
@@ -29,8 +29,8 @@ static const char *UnlockTypeNames[] =
 	"Toasties",
 	"StagesCleared"
 };
-XToString( UnlockType, NUM_UNLOCK_TYPES );
-StringToX( UnlockType );
+XToString( UnlockTrigger, NUM_UnlockTrigger );
+StringToX( UnlockTrigger );
 
 UnlockManager::UnlockManager()
 {
@@ -245,12 +245,12 @@ static float GetSongPoints( const Profile *pProfile )
 	return fSP;
 }
 
-void UnlockManager::GetPoints( const Profile *pProfile, float fScores[NUM_UNLOCK_TYPES] ) const
+void UnlockManager::GetPoints( const Profile *pProfile, float fScores[NUM_UnlockTrigger] ) const
 {
-	fScores[UNLOCK_ARCADE_POINTS] = GetArcadePoints( pProfile );
-	fScores[UNLOCK_SONG_POINTS] = GetSongPoints( pProfile );
-	fScores[UNLOCK_DANCE_POINTS] = (float) pProfile->m_iTotalDancePoints;
-	fScores[UNLOCK_CLEARED] = (float) pProfile->GetTotalNumSongsPassed();
+	fScores[UnlockTrigger_ArcadePoints] = GetArcadePoints( pProfile );
+	fScores[UnlockTrigger_SongPoints] = GetSongPoints( pProfile );
+	fScores[UnlockTrigger_DancePoints] = (float) pProfile->m_iTotalDancePoints;
+	fScores[UnlockTrigger_StagesCleared] = (float) pProfile->GetTotalNumSongsPassed();
 }
 
 /* Return true if all songs and/or courses referenced by an unlock are available. */
@@ -278,10 +278,10 @@ bool UnlockEntry::IsValid() const
 
 bool UnlockEntry::IsLocked() const
 {
-	float fScores[NUM_UNLOCK_TYPES];
+	float fScores[NUM_UnlockTrigger];
 	UNLOCKMAN->GetPoints( PROFILEMAN->GetMachineProfile(), fScores );
 
-	for( int i = 0; i < NUM_UNLOCK_TYPES; ++i )
+	for( int i = 0; i < NUM_UnlockTrigger; ++i )
 		if( m_fRequired[i] && fScores[i] >= m_fRequired[i] )
 			return false;
 
@@ -349,8 +349,8 @@ void UnlockManager::Load()
 			}
 			else
 			{
-				const UnlockType ut = StringToUnlockType( cmd.GetName() );
-				if( ut != UNLOCK_INVALID )
+				const UnlockTrigger ut = StringToUnlockTrigger( cmd.GetName() );
+				if( ut != UnlockTrigger_INVALID )
 					current.m_fRequired[ut] = cmd.GetArg(1);
 			}
 		}
@@ -366,9 +366,9 @@ void UnlockManager::Load()
 	FOREACH_CONST( UnlockEntry, m_UnlockEntries, e )
 	{
 		RString str = ssprintf( "Unlock: %s; ", join("\n",e->m_cmd.m_vsArgs).c_str() );
-		FOREACH_UnlockType(j)
+		FOREACH_ENUM2( UnlockTrigger, j )
 			if( e->m_fRequired[j] )
-				str += ssprintf( "%s = %f; ", UnlockTypeToString(j).c_str(), e->m_fRequired[j] );
+				str += ssprintf( "%s = %f; ", UnlockTriggerToString(j).c_str(), e->m_fRequired[j] );
 
 		str += ssprintf( "code = %i ", e->m_iCode );
 		str += e->IsLocked()? "locked":"unlocked";
@@ -382,9 +382,9 @@ void UnlockManager::Load()
 	return;
 }
 
-float UnlockManager::PointsUntilNextUnlock( UnlockType t ) const
+float UnlockManager::PointsUntilNextUnlock( UnlockTrigger t ) const
 {
-	float fScores[NUM_UNLOCK_TYPES];
+	float fScores[NUM_UnlockTrigger];
 	UNLOCKMAN->GetPoints( PROFILEMAN->GetMachineProfile(), fScores );
 
 	float fSmallestPoints = FLT_MAX;   // or an arbitrarily large value
@@ -510,8 +510,8 @@ class LunaUnlockManager: public Luna<UnlockManager>
 public:
 	LunaUnlockManager() { LUA->Register( Register ); }
 
-	static int FindCode( T* p, lua_State *L )			{ RString sName = SArg(1); int i = p->FindCode(sName); if( i == -1 ) lua_pushnil(L); else lua_pushnumber(L, i); return 1; }
-	static int UnlockCode( T* p, lua_State *L )			{ int iCode = IArg(1); p->UnlockCode(iCode); return 0; }
+	static int FindCode( T* p, lua_State *L )		{ RString sName = SArg(1); int i = p->FindCode(sName); if( i == -1 ) lua_pushnil(L); else lua_pushnumber(L, i); return 1; }
+	static int UnlockCode( T* p, lua_State *L )		{ int iCode = IArg(1); p->UnlockCode(iCode); return 0; }
 	static int PreferUnlockCode( T* p, lua_State *L )	{ int iCode = IArg(1); p->PreferUnlockCode(iCode); return 0; }
 	static int GetNumUnlocks( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumUnlocks() ); return 1; }
 	static int GetSongsUnlockedByCode( T* p, lua_State *L )

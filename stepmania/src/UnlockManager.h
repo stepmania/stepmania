@@ -6,24 +6,27 @@
 #include "Grade.h"
 #include "Command.h"
 #include <set>
+#include "Difficulty.h"
 
 class Song;
+class Course;
+class Steps;
 class Profile;
 struct lua_State;
 
-enum UnlockType
+enum UnlockTrigger
 {
-	UNLOCK_ARCADE_POINTS,
-	UNLOCK_DANCE_POINTS,
-	UNLOCK_SONG_POINTS,
-	UNLOCK_EXTRA_CLEARED,
-	UNLOCK_EXTRA_FAILED,
-	UNLOCK_TOASTY,
-	UNLOCK_CLEARED,
-	NUM_UNLOCK_TYPES,
-	UNLOCK_INVALID,
+	UnlockTrigger_ArcadePoints,
+	UnlockTrigger_DancePoints,
+	UnlockTrigger_SongPoints,
+	UnlockTrigger_ExtraCleared,
+	UnlockTrigger_ExtraFailed,
+	UnlockTrigger_Toasties,
+	UnlockTrigger_StagesCleared,
+	NUM_UnlockTrigger,
+	UnlockTrigger_INVALID,
 };
-#define FOREACH_UnlockType( u ) FOREACH_ENUM( UnlockType, NUM_UNLOCK_TYPES, u )
+
 
 struct UnlockEntry
 {
@@ -39,7 +42,14 @@ struct UnlockEntry
 		m_iCode = -1;
 	}
 
-	enum Type { TYPE_SONG, TYPE_STEPS, TYPE_COURSE, TYPE_MODIFIER, NUM_TYPES, TYPE_INVALID };
+	enum Type {
+		TYPE_SONG, 
+		TYPE_STEPS, 
+		TYPE_COURSE, 
+		TYPE_MODIFIER, 
+		NUM_TYPES, 
+		TYPE_INVALID
+	};
 	Type m_Type;
 	Command m_cmd;
 
@@ -49,8 +59,8 @@ struct UnlockEntry
 	Difficulty m_dc;
 	Course	*m_pCourse;
 
-	float	m_fRequired[NUM_UNLOCK_TYPES];
-	int		m_iCode;
+	float	m_fRequired[NUM_UnlockTrigger];
+	int	m_iCode;
 
 	bool	IsValid() const;
 	bool	IsLocked() const;
@@ -64,10 +74,10 @@ public:
 	UnlockManager();
 
 	// returns # of points till next unlock - used for ScreenUnlock
-	float PointsUntilNextUnlock( UnlockType t ) const;
-	float ArcadePointsUntilNextUnlock() const { return PointsUntilNextUnlock(UNLOCK_ARCADE_POINTS); }
-	float DancePointsUntilNextUnlock() const { return PointsUntilNextUnlock(UNLOCK_DANCE_POINTS); }
-	float SongPointsUntilNextUnlock() const { return PointsUntilNextUnlock(UNLOCK_SONG_POINTS); }
+	float PointsUntilNextUnlock( UnlockTrigger t ) const;
+	float ArcadePointsUntilNextUnlock() const { return PointsUntilNextUnlock(UnlockTrigger_ArcadePoints); }
+	float DancePointsUntilNextUnlock() const { return PointsUntilNextUnlock(UnlockTrigger_DancePoints); }
+	float SongPointsUntilNextUnlock() const { return PointsUntilNextUnlock(UnlockTrigger_SongPoints); }
 
 	// Used on select screens:
 	bool SongIsLocked( const Song *song ) const;
@@ -79,7 +89,7 @@ public:
 	// Gets number of unlocks for title screen
 	int GetNumUnlocks() const;
 
-	void GetPoints( const Profile *pProfile, float fScores[NUM_UNLOCK_TYPES] ) const;
+	void GetPoints( const Profile *pProfile, float fScores[NUM_UnlockTrigger] ) const;
 
 	// Unlock an entry by code.
 	void UnlockCode( int num );
