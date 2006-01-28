@@ -6,19 +6,23 @@ void InformUserOfCrash( const char *sPath )
 	NSString *s = @PRODUCT_NAME " has crashed. Debugging information has been output to\n\n%s\n\n"
 	@"Please file a bug report at\n\n" REPORT_BUG_URL;
 	
-	int ret = NSRunAlertPanel( @PRODUCT_NAME " has crashed", s, @"Open crashinfo.txt", @"Quit", nil, sPath );
+	int ret = NSRunCriticalAlertPanel( @PRODUCT_NAME " has crashed", s, @"File Bug Report",
+					   @"Quit", @"Open crashinfo.txt", sPath );
 	
-	if( ret == NSAlertDefaultReturn )
+	NSWorkspace *ws = [NSWorkspace sharedWorkspace];
+	
+	switch( ret )
 	{
-		NSWorkspace *ws = [NSWorkspace sharedWorkspace];
-		
+	case NSAlertDefaultReturn:
+		[ws openURL:[NSURL URLWithString:@REPORT_BUG_URL]]; // fall through
+	case NSAlertOtherReturn:
 		[ws openFile:[NSString stringWithUTF8String:sPath]];
 	}
 	[pool release];
 }
 
 /*
- * (c) 2003-2005 Steve Checkoway
+ * (c) 2003-2006 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
