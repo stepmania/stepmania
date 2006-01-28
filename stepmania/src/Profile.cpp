@@ -114,7 +114,7 @@ void Profile::InitGeneralData()
 	m_iNumExtraStagesPassed = 0;
 	m_iNumExtraStagesFailed = 0;
 	m_iNumToasties = 0;
-	m_UnlockedSongs.clear();
+	m_UnlockedEntryIDs.clear();
 	m_sLastPlayedMachineGuid = "";
 	m_LastPlayedDate.Init();
 	m_iTotalTapsAndHolds = 0;
@@ -534,7 +534,7 @@ void Profile::SetDefaultModifiers( const Game* pGameType, const RString &sModifi
 
 bool Profile::IsCodeUnlocked( int iCode ) const
 {
-	return m_UnlockedSongs.find( iCode ) != m_UnlockedSongs.end();
+	return m_UnlockedEntryIDs.find( iCode ) != m_UnlockedEntryIDs.end();
 }
 
 
@@ -1050,7 +1050,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 
 	{
 		XNode* pUnlockedSongs = pGeneralDataNode->AppendChild("UnlockedSongs");
-		FOREACHS_CONST( int, m_UnlockedSongs, it )
+		FOREACHS_CONST( int, m_UnlockedEntryIDs, it )
 			pUnlockedSongs->AppendChild( ssprintf("Unlock%i", *it) );
 	}
 
@@ -1235,7 +1235,7 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 			{
 				int iUnlock;
 				if( sscanf(song->m_sName.c_str(),"Unlock%d",&iUnlock) == 1 )
-					m_UnlockedSongs.insert( iUnlock );
+					m_UnlockedEntryIDs.insert( iUnlock );
 			}
 		}
 	}

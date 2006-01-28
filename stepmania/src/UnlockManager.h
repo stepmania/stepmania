@@ -39,7 +39,7 @@ struct UnlockEntry
 		m_pCourse = NULL;
 
 		ZERO( m_fRequired );
-		m_iCode = -1;
+		m_iEntryID = -1;
 	}
 
 	enum Type {
@@ -60,7 +60,7 @@ struct UnlockEntry
 	Course	*m_pCourse;
 
 	float	m_fRequired[NUM_UnlockTrigger];
-	int	m_iCode;
+	int	m_iEntryID;
 
 	bool	IsValid() const;
 	bool	IsLocked() const;
@@ -92,19 +92,19 @@ public:
 	void GetPoints( const Profile *pProfile, float fScores[NUM_UnlockTrigger] ) const;
 
 	// Unlock an entry by code.
-	void UnlockCode( int num );
+	void UnlockEntryID( int iEntryID );
 
 	/*
 	 * If a code is associated with at least one song or course, set the preferred song
 	 * and/or course in GAMESTATE to them.
 	 */
-	void PreferUnlockCode( int iCode );
+	void PreferUnlockEntryID( int iEntryID );
 
 	// Unlocks a song.
 	void UnlockSong( const Song *song );
 
-	// Return the associated code.
-	int FindCode( const RString &sName ) const;
+	// Return the associated EntryID.
+	int FindEntryID( const RString &sName ) const;
 
 	// All locked songs are stored here
 	vector<UnlockEntry>	m_UnlockEntries;
@@ -113,8 +113,8 @@ public:
 	void UpdateCachedPointers();
 
 	void GetUnlocksByType( UnlockEntry::Type t, vector<UnlockEntry *> &apEntries );
-	void GetSongsUnlockedByCode( vector<Song *> &apSongsOut, int iCode );
-	void GetStepsUnlockedByCode( vector<Song *> &apSongsOut, vector<Difficulty> &apStepsOut, int iCode );
+	void GetSongsUnlockedByEntryID( vector<Song *> &apSongsOut, int iEntryID );
+	void GetStepsUnlockedByEntryID( vector<Song *> &apSongsOut, vector<Difficulty> &apStepsOut, int iEntryID );
 
 	// Lua
 	void PushSelf( lua_State *L );
