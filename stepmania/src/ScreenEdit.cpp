@@ -1375,7 +1375,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				GAMEMAN->StepsTypeToString( pSteps->m_StepsType ).c_str(),
 				DifficultyToString( pSteps->GetDifficulty() ).c_str(),
 				pSteps->GetDescription().c_str(),
-				it - vSteps.begin(),
+				it - vSteps.begin() + 1,
 				int(vSteps.size()) );
 			SCREENMAN->SystemMessage( s );
 			m_soundSwitch.Play();
