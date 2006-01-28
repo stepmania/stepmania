@@ -114,7 +114,6 @@
 		AA29CC300558741A00961A51 /* RageSoundReader_Preload.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFD8104770A7C005F316C /* RageSoundReader_Preload.h */; };
 		AA29CC310558741A00961A51 /* RageSoundReader_Resample.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFD8304770A7C005F316C /* RageSoundReader_Resample.h */; };
 		AA29CC320558741A00961A51 /* RageSoundReader.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFD8604770A7C005F316C /* RageSoundReader.h */; };
-		AA29CC330558741A00961A51 /* RageSoundResampler.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFD8804770A7C005F316C /* RageSoundResampler.h */; };
 		AA29CC340558741A00961A51 /* RageTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFD8A04770A7C005F316C /* RageTexture.h */; };
 		AA29CC350558741A00961A51 /* RageTextureManager.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFD8C04770A7C005F316C /* RageTextureManager.h */; };
 		AA29CC360558741A00961A51 /* RageThreads.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFD8E04770A7C005F316C /* RageThreads.h */; };
@@ -253,7 +252,6 @@
 		AA29CCD40558741A00961A51 /* ScreenTestSound.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E007C047711F3005F316C /* ScreenTestSound.h */; };
 		AA29CCD50558741A00961A51 /* ScreenTextEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E007E047711F3005F316C /* ScreenTextEntry.h */; };
 		AA29CCD60558741A00961A51 /* ScreenTitleMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0080047711F3005F316C /* ScreenTitleMenu.h */; };
-		AA29CCD70558741A00961A51 /* ScreenUnlock.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E0082047711F3005F316C /* ScreenUnlock.h */; };
 		AA29CCD80558741A00961A51 /* AnnouncerManager.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E01000477128A005F316C /* AnnouncerManager.h */; };
 		AA29CCD90558741A00961A51 /* GameManager.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E01020477128A005F316C /* GameManager.h */; };
 		AA29CCDA0558741A00961A51 /* GameState.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E01040477128A005F316C /* GameState.h */; };
@@ -340,7 +338,6 @@
 		AA29CD4A0558741A00961A51 /* RageSoundManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFD7E04770A7C005F316C /* RageSoundManager.cpp */; };
 		AA29CD4B0558741A00961A51 /* RageSoundReader_Preload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFD8004770A7C005F316C /* RageSoundReader_Preload.cpp */; };
 		AA29CD4C0558741A00961A51 /* RageSoundReader_Resample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFD8204770A7C005F316C /* RageSoundReader_Resample.cpp */; };
-		AA29CD4D0558741A00961A51 /* RageSoundResampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFD8704770A7C005F316C /* RageSoundResampler.cpp */; };
 		AA29CD4E0558741A00961A51 /* RageTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFD8904770A7C005F316C /* RageTexture.cpp */; };
 		AA29CD4F0558741A00961A51 /* RageTextureManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFD8B04770A7C005F316C /* RageTextureManager.cpp */; };
 		AA29CD500558741A00961A51 /* RageThreads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFD8D04770A7C005F316C /* RageThreads.cpp */; };
@@ -469,7 +466,6 @@
 		AA29CDE20558741A00961A51 /* ScreenTestSound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E007B047711F3005F316C /* ScreenTestSound.cpp */; };
 		AA29CDE30558741A00961A51 /* ScreenTextEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E007D047711F3005F316C /* ScreenTextEntry.cpp */; };
 		AA29CDE40558741A00961A51 /* ScreenTitleMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E007F047711F3005F316C /* ScreenTitleMenu.cpp */; };
-		AA29CDE50558741A00961A51 /* ScreenUnlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0081047711F3005F316C /* ScreenUnlock.cpp */; };
 		AA29CDE60558741A00961A51 /* AnnouncerManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E00FF0477128A005F316C /* AnnouncerManager.cpp */; };
 		AA29CDE70558741A00961A51 /* GameManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E01010477128A005F316C /* GameManager.cpp */; };
 		AA29CDE80558741A00961A51 /* GameState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E01030477128A005F316C /* GameState.cpp */; };
@@ -598,6 +594,8 @@
 		AA61665F097CB1770007E532 /* mad.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = AABAAE95097A82C1009D1ED3 /* mad.framework */; };
 		AA64218806EC606F00C21584 /* RageFileDriverMemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA64218606EC606F00C21584 /* RageFileDriverMemory.cpp */; };
 		AA64218906EC606F00C21584 /* RageFileDriverMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = AA64218706EC606F00C21584 /* RageFileDriverMemory.h */; };
+		AA65877B098C322800CE55CC /* ScreenUnlockStatus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA658779098C322800CE55CC /* ScreenUnlockStatus.cpp */; };
+		AA65877C098C322800CE55CC /* ScreenUnlockStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = AA65877A098C322800CE55CC /* ScreenUnlockStatus.h */; };
 		AA6E6E0A07F518E800C3EBB4 /* Quad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E6E0907F518E800C3EBB4 /* Quad.cpp */; };
 		AA70E3690663112800DAE1FD /* Foreach.h in Headers */ = {isa = PBXBuildFile; fileRef = AA70E3640663112800DAE1FD /* Foreach.h */; };
 		AA70E36A0663112800DAE1FD /* Trail.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA70E3650663112800DAE1FD /* Trail.cpp */; };
@@ -1132,6 +1130,8 @@
 		AA60E0C0067992D7008ADC41 /* Threads_Win32.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = Threads_Win32.h; sourceTree = "<group>"; };
 		AA64218606EC606F00C21584 /* RageFileDriverMemory.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageFileDriverMemory.cpp; path = ../src/RageFileDriverMemory.cpp; sourceTree = "<group>"; };
 		AA64218706EC606F00C21584 /* RageFileDriverMemory.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageFileDriverMemory.h; path = ../src/RageFileDriverMemory.h; sourceTree = "<group>"; };
+		AA658779098C322800CE55CC /* ScreenUnlockStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenUnlockStatus.cpp; path = ../src/ScreenUnlockStatus.cpp; sourceTree = "<group>"; };
+		AA65877A098C322800CE55CC /* ScreenUnlockStatus.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ScreenUnlockStatus.h; path = ../src/ScreenUnlockStatus.h; sourceTree = "<group>"; };
 		AA69675006840991007802A5 /* InputHandler_Carbon.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = InputHandler_Carbon.h; sourceTree = "<group>"; };
 		AA69675106840991007802A5 /* InputHandler_Carbon.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = InputHandler_Carbon.cpp; sourceTree = "<group>"; };
 		AA6DAF0805300B3D00D02EE9 /* ScoreDisplayPercentage.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScoreDisplayPercentage.cpp; path = ../src/ScoreDisplayPercentage.cpp; sourceTree = "<group>"; };
@@ -1211,8 +1211,6 @@
 		AA6E007E047711F3005F316C /* ScreenTextEntry.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenTextEntry.h; path = ../src/ScreenTextEntry.h; sourceTree = "<group>"; };
 		AA6E007F047711F3005F316C /* ScreenTitleMenu.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenTitleMenu.cpp; path = ../src/ScreenTitleMenu.cpp; sourceTree = "<group>"; };
 		AA6E0080047711F3005F316C /* ScreenTitleMenu.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenTitleMenu.h; path = ../src/ScreenTitleMenu.h; sourceTree = "<group>"; };
-		AA6E0081047711F3005F316C /* ScreenUnlock.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenUnlock.cpp; path = ../src/ScreenUnlock.cpp; sourceTree = "<group>"; };
-		AA6E0082047711F3005F316C /* ScreenUnlock.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenUnlock.h; path = ../src/ScreenUnlock.h; sourceTree = "<group>"; };
 		AA6E00FF0477128A005F316C /* AnnouncerManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = AnnouncerManager.cpp; path = ../src/AnnouncerManager.cpp; sourceTree = "<group>"; };
 		AA6E01000477128A005F316C /* AnnouncerManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = AnnouncerManager.h; path = ../src/AnnouncerManager.h; sourceTree = "<group>"; };
 		AA6E01010477128A005F316C /* GameManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = GameManager.cpp; path = ../src/GameManager.cpp; sourceTree = "<group>"; };
@@ -1272,8 +1270,6 @@
 		AA6EFD8204770A7C005F316C /* RageSoundReader_Resample.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageSoundReader_Resample.cpp; path = ../src/RageSoundReader_Resample.cpp; sourceTree = "<group>"; };
 		AA6EFD8304770A7C005F316C /* RageSoundReader_Resample.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageSoundReader_Resample.h; path = ../src/RageSoundReader_Resample.h; sourceTree = "<group>"; };
 		AA6EFD8604770A7C005F316C /* RageSoundReader.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageSoundReader.h; path = ../src/RageSoundReader.h; sourceTree = "<group>"; };
-		AA6EFD8704770A7C005F316C /* RageSoundResampler.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageSoundResampler.cpp; path = ../src/RageSoundResampler.cpp; sourceTree = "<group>"; };
-		AA6EFD8804770A7C005F316C /* RageSoundResampler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageSoundResampler.h; path = ../src/RageSoundResampler.h; sourceTree = "<group>"; };
 		AA6EFD8904770A7C005F316C /* RageTexture.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageTexture.cpp; path = ../src/RageTexture.cpp; sourceTree = "<group>"; };
 		AA6EFD8A04770A7C005F316C /* RageTexture.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageTexture.h; path = ../src/RageTexture.h; sourceTree = "<group>"; };
 		AA6EFD8B04770A7C005F316C /* RageTextureManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageTextureManager.cpp; path = ../src/RageTextureManager.cpp; sourceTree = "<group>"; };
@@ -2234,8 +2230,8 @@
 				AA6E007E047711F3005F316C /* ScreenTextEntry.h */,
 				AA6E007F047711F3005F316C /* ScreenTitleMenu.cpp */,
 				AA6E0080047711F3005F316C /* ScreenTitleMenu.h */,
-				AA6E0081047711F3005F316C /* ScreenUnlock.cpp */,
-				AA6E0082047711F3005F316C /* ScreenUnlock.h */,
+				AA658779098C322800CE55CC /* ScreenUnlockStatus.cpp */,
+				AA65877A098C322800CE55CC /* ScreenUnlockStatus.h */,
 				AAA6BFEA0644AB3700AFBBC8 /* ScreenWithMenuElements.cpp */,
 				AAA6BFEB0644AB3700AFBBC8 /* ScreenWithMenuElements.h */,
 			);
@@ -2498,8 +2494,6 @@
 				AA1C65A5050FD21F0073A143 /* RageSoundReader_Vorbisfile.h */,
 				AA1C65A6050FD21F0073A143 /* RageSoundReader_WAV.cpp */,
 				AA1C65A7050FD21F0073A143 /* RageSoundReader_WAV.h */,
-				AA6EFD8704770A7C005F316C /* RageSoundResampler.cpp */,
-				AA6EFD8804770A7C005F316C /* RageSoundResampler.h */,
 				AA7ADC25072CAB7F00C50A7F /* RageSoundUtil.cpp */,
 				AA7ADC26072CAB7F00C50A7F /* RageSoundUtil.h */,
 				AA915879067D2C2C00078E36 /* RageSurface.cpp */,
@@ -3161,7 +3155,6 @@
 				AA29CC300558741A00961A51 /* RageSoundReader_Preload.h in Headers */,
 				AA29CC310558741A00961A51 /* RageSoundReader_Resample.h in Headers */,
 				AA29CC320558741A00961A51 /* RageSoundReader.h in Headers */,
-				AA29CC330558741A00961A51 /* RageSoundResampler.h in Headers */,
 				AA29CC340558741A00961A51 /* RageTexture.h in Headers */,
 				AA29CC350558741A00961A51 /* RageTextureManager.h in Headers */,
 				AA29CC360558741A00961A51 /* RageThreads.h in Headers */,
@@ -3300,7 +3293,6 @@
 				AA29CCD40558741A00961A51 /* ScreenTestSound.h in Headers */,
 				AA29CCD50558741A00961A51 /* ScreenTextEntry.h in Headers */,
 				AA29CCD60558741A00961A51 /* ScreenTitleMenu.h in Headers */,
-				AA29CCD70558741A00961A51 /* ScreenUnlock.h in Headers */,
 				AA29CCD80558741A00961A51 /* AnnouncerManager.h in Headers */,
 				AA29CCD90558741A00961A51 /* GameManager.h in Headers */,
 				AA29CCDA0558741A00961A51 /* GameState.h in Headers */,
@@ -3600,6 +3592,7 @@
 				AA44708E0984720900983E82 /* JoystickDevice.h in Headers */,
 				AA4470BC098476F600983E82 /* KeyboardDevice.h in Headers */,
 				AAC0C8C30984AE3B0075FC53 /* Tween.h in Headers */,
+				AA65877C098C322800CE55CC /* ScreenUnlockStatus.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3774,7 +3767,6 @@
 				AA29CD4A0558741A00961A51 /* RageSoundManager.cpp in Sources */,
 				AA29CD4B0558741A00961A51 /* RageSoundReader_Preload.cpp in Sources */,
 				AA29CD4C0558741A00961A51 /* RageSoundReader_Resample.cpp in Sources */,
-				AA29CD4D0558741A00961A51 /* RageSoundResampler.cpp in Sources */,
 				AA29CD4E0558741A00961A51 /* RageTexture.cpp in Sources */,
 				AA29CD4F0558741A00961A51 /* RageTextureManager.cpp in Sources */,
 				AA29CD500558741A00961A51 /* RageThreads.cpp in Sources */,
@@ -3902,7 +3894,6 @@
 				AA29CDE20558741A00961A51 /* ScreenTestSound.cpp in Sources */,
 				AA29CDE30558741A00961A51 /* ScreenTextEntry.cpp in Sources */,
 				AA29CDE40558741A00961A51 /* ScreenTitleMenu.cpp in Sources */,
-				AA29CDE50558741A00961A51 /* ScreenUnlock.cpp in Sources */,
 				AA29CDE60558741A00961A51 /* AnnouncerManager.cpp in Sources */,
 				AA29CDE70558741A00961A51 /* GameManager.cpp in Sources */,
 				AA29CDE80558741A00961A51 /* GameState.cpp in Sources */,
@@ -4166,6 +4157,7 @@
 				AA44708F0984720900983E82 /* JoystickDevice.cpp in Sources */,
 				AA4470BD098476F600983E82 /* KeyboardDevice.cpp in Sources */,
 				AAC0C8C20984AE3B0075FC53 /* Tween.cpp in Sources */,
+				AA65877B098C322800CE55CC /* ScreenUnlockStatus.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
