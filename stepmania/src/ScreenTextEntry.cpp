@@ -230,10 +230,9 @@ void ScreenTextEntry::Input( const InputEventPlus &input )
 			bool bIsHoldingShift = 
 					INPUTFILTER->IsBeingPressed( DeviceInput(input.DeviceI.device, KEY_RSHIFT)) ||
 					INPUTFILTER->IsBeingPressed( DeviceInput(input.DeviceI.device, KEY_LSHIFT));
+			char c = (char)toupper( input.DeviceI.ToChar() );
 			if( bIsHoldingShift )
 			{
-				char c = (char)toupper( input.DeviceI.ToChar() );
-
 				switch( c )
 				{
 				case '`':	c='~';	break;
@@ -258,13 +257,9 @@ void ScreenTextEntry::Input( const InputEventPlus &input )
 				case '.':	c='>';	break;
 				case '/':	c='?';	break;
 				}
+			}
 
-				AppendToAnswer( ssprintf( "%c", c ) );
-			}
-			else
-			{
-				AppendToAnswer( ssprintf( "%c", input.DeviceI.ToChar() ) );
-			}
+			AppendToAnswer( ssprintf( "%c", c ) );
 
 			// If the user wishes to select text in traditional way, start should finish text entry
 			m_iFocusY = KEYBOARD_ROW_SPECIAL;
