@@ -5,7 +5,6 @@
 
 #include "RageSoundReader.h"
 #include "RageSoundReader_Resample.h"
-#include "RageSoundResampler.h"
 
 /* This class changes the sampling rate of a sound. */
 class RageSoundReader_Resample_Fast: public RageSoundReader_Resample
@@ -25,18 +24,29 @@ public:
 	/* Change the actual sample rate of a sound. */
 	void SetSampleRate( int hz );
 
-	int GetSampleRate() const { return m_iOutputSampleRate; }
+	int GetSampleRate() const { return m_iOutputRate; }
 	unsigned GetNumChannels() const { return m_pSource->GetNumChannels(); }
 	bool IsStreamingFromDisk() const { return m_pSource->IsStreamingFromDisk(); }
 
 private:
+	void Reset();
 	bool FillBuf();
 
-	int m_iOutputSampleRate;
+	/* Write data to be converted. */
+	void WriteSamples( const void *data, int bytes );
 
 	SoundReader *m_pSource;
 
-	mutable RageSoundResampler m_Resamp;
+	int m_iInputRate;
+	int m_iOutputRate;
+	int m_iChannels;
+
+	enum { MAX_CHANNELS = 15 };
+	int16_t m_iPrevSample[MAX_CHANNELS];
+
+	vector<int16_t> m_OutBuf;
+	bool m_bAtEof;
+	int m_iPos;
 };
 
 #endif
