@@ -322,7 +322,6 @@ RageSoundReader_Preload.cpp RageSoundReader_Preload.h RageSoundReader_Resample.c
 RageSoundReader_Resample_Fast.cpp RageSoundReader_Resample_Fast.h \
 RageSoundReader_Resample_Good.cpp RageSoundReader_Resample_Good.h \
 RageSoundReader_Chain.cpp RageSoundReader_Chain.h \
-RageSoundResampler.cpp RageSoundResampler.h \
 RageSurface.cpp RageSurface.h RageSurfaceUtils.cpp RageSurfaceUtils.h \
 RageSurfaceUtils_Dither.cpp RageSurfaceUtils_Dither.h \
 RageSurface_Save_JPEG.cpp RageSurface_Save_JPEG.h \
@@ -465,8 +464,7 @@ test_audio_readers_SOURCES = \
 		RageSoundReader_Resample.cpp  RageSoundReader_Resample.h \
 		RageSoundReader_Resample_Fast.cpp RageSoundReader_Resample_Fast.h \
 		RageSoundReader_Resample_Good.cpp RageSoundReader_Resample_Good.h \
-		RageSoundReader_Chain.cpp RageSoundReader_Chain.h \
-		RageSoundResampler.cpp RageSoundResampler.h
+		RageSoundReader_Chain.cpp RageSoundReader_Chain.h
 
 test_audio_readers_LDADD = \
 		$(AUDIO_LIBS) \
