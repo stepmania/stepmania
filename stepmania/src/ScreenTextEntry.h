@@ -79,7 +79,7 @@ protected:
 	
 	AutoActor		m_sprCursor;
 
-	int				m_iFocusX;
+	int			m_iFocusX;
 	KeyboardRow		m_iFocusY;
 	
 	void PositionCursor();
@@ -90,11 +90,11 @@ protected:
 	ThemeMetric<float>	ROW_END_X;
 	ThemeMetric<float>	ROW_END_Y;
 
-	RageSound	m_sndType;
-	RageSound	m_sndBackspace;
-	RageSound	m_sndChange;
+	RageSound		m_sndType;
+	RageSound		m_sndBackspace;
+	RageSound		m_sndChange;
 	
-	RageTimer	m_timerToggleCursor;
+	RageTimer		m_timerToggleCursor;
 };
 
 
