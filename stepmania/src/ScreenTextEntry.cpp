@@ -221,7 +221,7 @@ void ScreenTextEntry::Input( const InputEventPlus &input )
 
 	if( input.type == IET_FIRST_PRESS )
 	{
-		if( input.DeviceI.button == KEY_BACK )
+		if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_BACK) )
 		{
 			BackspaceInAnswer();
 		}
@@ -230,9 +230,8 @@ void ScreenTextEntry::Input( const InputEventPlus &input )
 			bool bIsHoldingShift = 
 					INPUTFILTER->IsBeingPressed( DeviceInput(input.DeviceI.device, KEY_RSHIFT)) ||
 					INPUTFILTER->IsBeingPressed( DeviceInput(input.DeviceI.device, KEY_LSHIFT));
-			if ( bIsHoldingShift )
+			if( bIsHoldingShift )
 			{
-
 				char c = (char)toupper( input.DeviceI.ToChar() );
 
 				switch( c )
