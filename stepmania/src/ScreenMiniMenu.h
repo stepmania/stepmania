@@ -86,7 +86,7 @@ struct MenuDef
 class ScreenMiniMenu : public ScreenOptions
 {
 public:
-	static void MiniMenu( MenuDef* pDef, ScreenMessage smSendOnOK, ScreenMessage smSendOnCancel = SM_None, float fX = 0, float fY = 0 );
+	static void MiniMenu( const MenuDef* pDef, ScreenMessage smSendOnOK, ScreenMessage smSendOnCancel = SM_None, float fX = 0, float fY = 0 );
 
 	void BeginScreen();
 	void LoadMenu( const MenuDef* pDef );

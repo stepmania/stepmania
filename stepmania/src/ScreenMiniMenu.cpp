@@ -16,7 +16,7 @@ bool ScreenMiniMenu::s_bCancelled = false;
 int	ScreenMiniMenu::s_iLastRowCode = -1;
 vector<int>	ScreenMiniMenu::s_viLastAnswers;
 
-void ScreenMiniMenu::MiniMenu( MenuDef* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel, float fX, float fY )
+void ScreenMiniMenu::MiniMenu( const MenuDef* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel, float fX, float fY )
 {
 	ScreenMiniMenu *pNewScreen = new ScreenMiniMenu;
 	pNewScreen->SetName( pDef->sClassName );
