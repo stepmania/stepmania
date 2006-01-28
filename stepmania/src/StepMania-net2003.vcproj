@@ -2355,12 +2355,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="RageSoundReader_WAV.h">
 			</File>
 			<File
-				RelativePath="RageSoundResampler.cpp">
-			</File>
-			<File
-				RelativePath="RageSoundResampler.h">
-			</File>
-			<File
 				RelativePath="RageSoundUtil.cpp">
 			</File>
 			<File
