@@ -75,7 +75,7 @@ int RageSoundReader_Resample_Fast::Read( char *pBuf, unsigned iSize )
 				break;
 
 			/* Fill as much as we have. */
-			int iGot = min( m_OutBuf.size()*sizeof(int16_t), iSize );
+			int iGot = min( m_OutBuf.size()*sizeof(int16_t), size_t(iSize) );
 			memcpy( pBuf, &m_OutBuf[0], iGot );
 			m_OutBuf.erase( m_OutBuf.begin(), m_OutBuf.begin() + iGot/sizeof(int16_t) );
 
