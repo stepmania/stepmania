@@ -1,6 +1,5 @@
 /* Override the -DSM_PCH=TRUE temporarily. */
-#undef SM_PCH
-#define SM_PCH FALSE
+#define PBBUILD
 
 // Only do this for c++ files.
 #ifdef __cplusplus
