@@ -377,6 +377,16 @@ void ScreenTextEntry::MenuStart( PlayerNumber pn )
 	}
 }
 
+void ScreenTextEntry::TweenOffScreen()
+{
+	ScreenWithMenuElements::TweenOffScreen();
+
+	OFF_COMMAND( m_textQuestion );
+	OFF_COMMAND( m_sprAnswerBox );
+	OFF_COMMAND( m_textAnswer );
+	OFF_COMMAND( m_sprCursor );
+}
+
 void ScreenTextEntry::End( bool bCancelled )
 {
 	if( bCancelled )
@@ -384,7 +394,8 @@ void ScreenTextEntry::End( bool bCancelled )
 		if( g_pOnCancel ) 
 			g_pOnCancel();
 		
-		m_Cancel.StartTransitioning( SM_GoToNextScreen );
+		Cancel( SM_GoToNextScreen );
+		TweenOffScreen();
 	}
 	else
 	{
@@ -407,14 +418,9 @@ void ScreenTextEntry::End( bool bCancelled )
 			g_pOnOK( ret );
 		}
 
-		m_Out.StartTransitioning( SM_GoToNextScreen );
+		StartTransitioningScreen( SM_GoToNextScreen );
 		SCREENMAN->PlayStartSound();
 	}
-
-	OFF_COMMAND( m_textQuestion );
-	OFF_COMMAND( m_sprAnswerBox );
-	OFF_COMMAND( m_textAnswer );
-	OFF_COMMAND( m_sprCursor );
 
 	s_bCancelledLast = bCancelled;
 	s_sLastAnswer = bCancelled ? RString("") : WStringToRString(m_sAnswer);
