@@ -10,6 +10,7 @@
 #include "archutils/Darwin/DarwinThreadHelpers.h"
 #include "archutils/Darwin/KeyboardDevice.h"
 #include "archutils/Darwin/JoystickDevice.h"
+#include <IOKit/IOMessage.h>
 
 void InputHandler_Carbon::QueueCallBack( void *target, int result, void *refcon, void *sender )
 {
@@ -78,6 +79,25 @@ int InputHandler_Carbon::Run( void *data )
 	return 0;
 }
 
+void InputHandler_Carbon::DeviceAdded( void *refCon, io_iterator_t )
+{
+	InputHandler_Carbon *This = (InputHandler_Carbon *)refCon;
+	
+	LockMut( This->m_ChangeLock );
+	This->m_bChanged = true;
+}
+
+void InputHandler_Carbon::DeviceChanged( void *refCon, io_service_t service, natural_t messageType, void *arg )
+{
+	if( messageType == kIOMessageServiceIsTerminated )
+	{
+		InputHandler_Carbon *This = (InputHandler_Carbon *)refCon;
+		
+		LockMut( This->m_ChangeLock );
+		This->m_bChanged = true;
+	}
+}
+
 // m_LoopRef needs to be set before this is called
 void InputHandler_Carbon::StartDevices()
 {
@@ -86,6 +106,10 @@ void InputHandler_Carbon::StartDevices()
 	ASSERT( m_LoopRef );
 	FOREACH( HIDDevice *, m_vDevices, i )
 		(*i)->StartQueue( m_LoopRef, InputHandler_Carbon::QueueCallBack, this, n++ );
+	
+	CFRunLoopSourceRef runLoopSource = IONotificationPortGetRunLoopSource( m_NotifyPort );
+	
+	CFRunLoopAddSource( m_LoopRef, runLoopSource, kCFRunLoopDefaultMode );
 }
 
 InputHandler_Carbon::~InputHandler_Carbon()
@@ -101,18 +125,19 @@ InputHandler_Carbon::~InputHandler_Carbon()
 		// Don't release the loop ref.
 		LOG->Trace( "Input handler thread shut down." );
 	}
+	
+	FOREACH( io_iterator_t, m_vIters, i )
+		IOObjectRelease( *i );
+	IONotificationPortDestroy( m_NotifyPort );
 }
 
-static io_iterator_t GetDeviceIterator( int usagePage, int usage )
+static CFDictionaryRef GetMatchingDictionary( int usagePage, int usage )
 {
 	// Build the matching dictionary.
 	CFMutableDictionaryRef dict;
 	
 	if( (dict = IOServiceMatching(kIOHIDDeviceKey)) == NULL )
-	{
-		LOG->Warn( "Couldn't create a matching dictionary." );
-		return NULL;
-	}
+		FAIL_M( "Couldn't create a matching dictionary." );
 	// Refine the search by only looking for joysticks
 	CFNumberRef usagePageRef = CFInt( usagePage );
 	CFNumberRef usageRef = CFInt( usage );
@@ -124,48 +149,59 @@ static io_iterator_t GetDeviceIterator( int usagePage, int usage )
 	CFRelease( usagePageRef );
 	CFRelease( usageRef );
 	
-	// Find the HID devices.
-	io_iterator_t iter;
-	
-	/* Get an iterator to the matching devies. This consumes a reference to the dictionary
-	 * so we do not have to release it later. */
-	if( IOServiceGetMatchingServices(kIOMasterPortDefault, dict, &iter) != kIOReturnSuccess )
-	{
-		LOG->Warn( "Couldn't get matching services" );
-		return NULL;
-	}
-	return iter;
+	return dict;
 }
 
-InputHandler_Carbon::InputHandler_Carbon() : m_Sem( "Input thread started" )
+InputHandler_Carbon::InputHandler_Carbon() : m_Sem( "Input thread started" ), m_ChangeLock( "Input handler change lock" )
 {
-	// Find the keyboards.
-	io_iterator_t iter = GetDeviceIterator( kHIDPage_GenericDesktop, kHIDUsage_GD_Keyboard );
+	// Set up the notify ports
+	m_NotifyPort = IONotificationPortCreate( kIOMasterPortDefault );
 	
-	if( iter )
+	// Find the keyboards.
+	io_iterator_t iter;
+	CFDictionaryRef dict = GetMatchingDictionary( kHIDPage_GenericDesktop, kHIDUsage_GD_Keyboard );
+	kern_return_t ret = IOServiceAddMatchingNotification( m_NotifyPort, kIOFirstMatchNotification, dict,
+							      InputHandler_Carbon::DeviceAdded, this, &iter );
+	
+	if( ret == KERN_SUCCESS )
 	{
+		m_vIters.push_back( iter );
+		// Iterate over the keyboards and add them.
 		io_object_t device;
 		
 		while( (device = IOIteratorNext(iter)) )
 		{
 			HIDDevice *kd = new KeyboardDevice;
 			
-			if( kd->Open(device) )
-				m_vDevices.push_back( kd );
-			else
+			if( !kd->Open(device) )
+			{
 				delete kd;
+				IOObjectRelease( device );
+				continue;
+			}
+			
+			m_vDevices.push_back( kd );
+			
+			io_iterator_t i;
+			ret = IOServiceAddInterestNotification( m_NotifyPort, device, kIOGeneralInterest,
+								InputHandler_Carbon::DeviceChanged, this, &i );
+			
+			if( ret == KERN_SUCCESS )
+				m_vIters.push_back( i );
 			
 			IOObjectRelease( device );
 		}
-		IOObjectRelease( iter );
 	}
 	
 	// Find the joysticks.
-	iter = GetDeviceIterator( kHIDPage_GenericDesktop, kHIDUsage_GD_Joystick );
+	dict = GetMatchingDictionary( kHIDPage_GenericDesktop, kHIDUsage_GD_Joystick );
+	ret = IOServiceAddMatchingNotification( m_NotifyPort, kIOFirstMatchNotification, dict,
+						InputHandler_Carbon::DeviceAdded, this, &iter );
 	
-	if( iter )
+	if( ret == KERN_SUCCESS )
 	{
-		// Iterate over the devices and add them
+		m_vIters.push_back( iter );
+		// Iterate over the joysticks and add them.
 		io_object_t device;
 		InputDevice id = DEVICE_JOY1;
 		
@@ -173,24 +209,29 @@ InputHandler_Carbon::InputHandler_Carbon() : m_Sem( "Input thread started" )
 		{
 			HIDDevice *jd = new JoystickDevice;
 			
-			if( jd->Open(device) )
-			{
-				int num = jd->AssignIDs( id );
-				
-				enum_add( id, num );
-				m_vDevices.push_back( jd );
-			}
-			else
+			if( !jd->Open(device) )
 			{
 				delete jd;
+				IOObjectRelease( device );
+				continue;
 			}
+	
+			int num = jd->AssignIDs( id );
 			
+			enum_add( id, num );
+			m_vDevices.push_back( jd );
+			
+			io_iterator_t i;
+			ret = IOServiceAddInterestNotification( m_NotifyPort, device, kIOGeneralInterest,
+								InputHandler_Carbon::DeviceChanged, this, &i );
+
+			if( ret == KERN_SUCCESS )
+				m_vIters.push_back( i );
 			IOObjectRelease( device );
-			
 		}
-		IOObjectRelease( iter );
 	}
-		
+	
+	m_bChanged = false;
 	if( PREFSMAN->m_bThreadedInput )
 	{
 		m_InputThread.SetName( "Input thread" );

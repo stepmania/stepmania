@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <CoreFoundation/CoreFoundation.h>
+#include <IOKit/IOKitLib.h>
 #include "InputHandler.h"
 #include "RageThreads.h"
 
@@ -16,14 +17,21 @@ private:
 	RageSemaphore m_Sem;
 	CFRunLoopRef m_LoopRef;
 	CFRunLoopSourceRef m_SourceRef;
+	std::vector<io_iterator_t> m_vIters; // We don't really care about these but they need to stick around
+	IONotificationPortRef m_NotifyPort;
+	RageMutex m_ChangeLock;
+	bool m_bChanged;
 	
 	static int Run( void *data );
+	static void DeviceAdded( void *refCon, io_iterator_t iter );
+	static void DeviceChanged( void *refCon, io_service_t service, natural_t messageType, void *arg );
 	void StartDevices();
 
 public:
 	InputHandler_Carbon();
 	~InputHandler_Carbon();
 
+	bool DevicesChanged() { LockMut( m_ChangeLock ); return m_bChanged; }
 	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut );
 
 	static void QueueCallBack( void *target, int result, void *refcon, void *sender );
