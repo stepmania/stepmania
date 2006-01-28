@@ -24,8 +24,6 @@ static const char* g_szKeys[NUM_KEYBOARD_ROWS][KEYS_PER_ROW] =
 	{"","","Space","","","Backspace","","","Cancel","","","Done",""},
 };
 
-static Preference<bool> g_bAllowOldKeyboardInput( "AllowOldKeyboardInput",	true );
-
 RString ScreenTextEntry::s_sLastAnswer = "";
 
 /* Settings: */
@@ -221,8 +219,7 @@ void ScreenTextEntry::Input( const InputEventPlus &input )
 	if( m_In.IsTransitioning() || m_Out.IsTransitioning() || m_Cancel.IsTransitioning() )
 		return;
 
-	//The user wants to input text traditionally
-	if( g_bAllowOldKeyboardInput.Get() && ( input.type == IET_FIRST_PRESS ) )
+	if( input.type == IET_FIRST_PRESS )
 	{
 		if( input.DeviceI.button == KEY_BACK )
 		{
@@ -270,7 +267,7 @@ void ScreenTextEntry::Input( const InputEventPlus &input )
 				AppendToAnswer( ssprintf( "%c", input.DeviceI.ToChar() ) );
 			}
 
-			//If the user wishes to select text in traditional way, start should finish text entry
+			// If the user wishes to select text in traditional way, start should finish text entry
 			m_iFocusY = KEYBOARD_ROW_SPECIAL;
 			m_iFocusX = DONE;
 
