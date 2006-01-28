@@ -1338,9 +1338,9 @@ public:
 	static int stoptweening( T* p, lua_State *L )		{ p->StopTweening(); p->BeginTweening( 0.0001f, TWEEN_LINEAR ); return 0; }
 	static int finishtweening( T* p, lua_State *L )		{ p->FinishTweening(); return 0; }
 	static int hurrytweening( T* p, lua_State *L )		{ p->HurryTweening(FArg(1)); return 0; }
-	static int x( T* p, lua_State *L )				{ p->SetX(FArg(1)); return 0; }
-	static int y( T* p, lua_State *L )				{ p->SetY(FArg(1)); return 0; }
-	static int z( T* p, lua_State *L )				{ p->SetZ(FArg(1)); return 0; }
+	static int x( T* p, lua_State *L )			{ p->SetX(FArg(1)); return 0; }
+	static int y( T* p, lua_State *L )			{ p->SetY(FArg(1)); return 0; }
+	static int z( T* p, lua_State *L )			{ p->SetZ(FArg(1)); return 0; }
 	static int addx( T* p, lua_State *L )			{ p->AddX(FArg(1)); return 0; }
 	static int addy( T* p, lua_State *L )			{ p->AddY(FArg(1)); return 0; }
 	static int addz( T* p, lua_State *L )			{ p->AddZ(FArg(1)); return 0; }
