@@ -2,8 +2,8 @@
 #import "ProductInfo.h"
 #import "archutils/Darwin/SMMainThread.h"
 
-static NSWindow *window;
-static NSTextView *text;
+static NSWindow *g_window;
+static NSTextView *g_text;
 
 void MakeNewCocoaWindow( const void *data, unsigned length )
 {
@@ -22,44 +22,51 @@ void MakeNewCocoaWindow( const void *data, unsigned length )
 	
 	NSView *view;
 	NSSize size = [image size];
-	NSRect textRect, viewRect, windowRect;
-	float height = size.height;
-	
-	textRect = NSMakeRect(0, 0, size.width, height);
-	text = [[[NSTextView alloc] initWithFrame:textRect] autorelease];
-	[text setEditable:NO];
-	[text setSelectable:NO];
-	[text setDrawsBackground:YES];
-	[text setBackgroundColor:[NSColor lightGrayColor]];
-	[text setAlignment:NSCenterTextAlignment];
-	[text setFont:[NSFont systemFontOfSize:12]];
-	[text setString:@"Initializing Hardware..."];
+	NSRect viewRect, windowRect;
+	float height = 0.0f;
 
-	viewRect = NSMakeRect(0, height, size.width, height);
+	NSFont *font = [NSFont systemFontOfSize:0.0f];
+	NSRect textRect;
+	// Just give it a size until it is created.
+	textRect = NSMakeRect( 0, 0, size.width, size.height );
+	g_text = [[[NSTextView alloc] initWithFrame:textRect] autorelease];
+	[g_text setFont:font];
+	height = [[g_text layoutManager] defaultLineHeightForFont:font]*3 + 4;
+	textRect = NSMakeRect( 0, 0, size.width, height );
+	
+	[g_text setFrame:textRect];
+	[g_text setEditable:NO];
+	[g_text setSelectable:NO];
+	[g_text setDrawsBackground:YES];
+	[g_text setBackgroundColor:[NSColor lightGrayColor]];
+	[g_text setAlignment:NSCenterTextAlignment];
+	[g_text setString:@"Initializing Hardware..."];
+
+	viewRect = NSMakeRect(0, height, size.width, size.height);
 	NSImageView *iView = [[[NSImageView alloc] initWithFrame:viewRect] autorelease];
 	[iView setImage:image];
 	[iView setImageFrameStyle:NSImageFrameNone];
 
-	windowRect = NSMakeRect(0, 0, size.width, height + height);
-	window = [[NSWindow alloc] initWithContentRect:windowRect
+	windowRect = NSMakeRect( 0, 0, size.width, size.height + height );
+	g_window = [[NSWindow alloc] initWithContentRect:windowRect
 					     styleMask:NSTitledWindowMask
 					       backing:NSBackingStoreBuffered
 						 defer:YES];
 	
 	SMMainThread *mt = [[SMMainThread alloc] init];
-	view = [window contentView];
+	view = [g_window contentView];
 
 	// Set some properties.
-	ADD_ACTIONb( mt, window, setOneShot:, YES );
-	ADD_ACTIONb( mt, window, setExcludedFromWindowsMenu:, YES );
-	ADD_ACTIONb( mt, window, useOptimizedDrawing:, YES );
-	ADD_ACTION1( mt, window, setTitle:, [NSString stringWithUTF8String:PRODUCT_NAME] );
-	ADD_ACTION0( mt, window, center );
+	ADD_ACTIONb( mt, g_window, setOneShot:, YES );
+	ADD_ACTIONb( mt, g_window, setExcludedFromWindowsMenu:, YES );
+	ADD_ACTIONb( mt, g_window, useOptimizedDrawing:, YES );
+	ADD_ACTION1( mt, g_window, setTitle:, @PRODUCT_NAME );
+	ADD_ACTION0( mt, g_window, center );
 	// Set subviews.
-	ADD_ACTION1( mt, view, addSubview:, text );
+	ADD_ACTION1( mt, view, addSubview:, g_text );
 	ADD_ACTION1( mt, view, addSubview:, iView );
 	// Make key and order front.
-	ADD_ACTION1( mt, window, makeKeyAndOrderFront:, nil );
+	ADD_ACTION1( mt, g_window, makeKeyAndOrderFront:, nil );
 	
 	// Perform all of the actions in order on the main thread.
 	[mt performOnMainThread];
@@ -74,7 +81,7 @@ void DisposeOfCocoaWindow()
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	
 	 // Released when closed as controlled by setReleasedWhenClosed.
-	[window performSelectorOnMainThread:@selector(close) withObject:nil waitUntilDone:NO];
+	[g_window performSelectorOnMainThread:@selector(close) withObject:nil waitUntilDone:NO];
 	[pool release];
 }
 
@@ -82,7 +89,7 @@ void SetCocoaWindowText(const char *s)
 {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	NSString *str = [NSString stringWithUTF8String:s];
-	[text performSelectorOnMainThread:@selector(setString:) withObject:(str ? str : @"") waitUntilDone:NO];
+	[g_text performSelectorOnMainThread:@selector(setString:) withObject:(str ? str : @"") waitUntilDone:NO];
 	[pool release];
 }
 
