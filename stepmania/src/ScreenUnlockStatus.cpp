@@ -102,7 +102,7 @@ void ScreenUnlockStatus::Init()
 
 			switch( entry.m_Type )
 			{
-			case UnlockEntry::TYPE_SONG:
+			case UnlockRewardType_Song:
 				{
 					const Song *pSong = entry.m_pSong;
 					ASSERT( pSong );
@@ -115,7 +115,7 @@ void ScreenUnlockStatus::Init()
 					text->SetText( title );
 				}
 				break;
-			case UnlockEntry::TYPE_COURSE:
+			case UnlockRewardType_Course:
 				{
 					const Course *pCourse = entry.m_pCourse;
 					ASSERT( pCourse );

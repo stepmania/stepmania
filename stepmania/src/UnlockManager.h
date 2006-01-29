@@ -14,43 +14,48 @@ class Steps;
 class Profile;
 struct lua_State;
 
-enum UnlockTrigger
+enum UnlockRequirement
 {
-	UnlockTrigger_ArcadePoints,
-	UnlockTrigger_DancePoints,
-	UnlockTrigger_SongPoints,
-	UnlockTrigger_ExtraCleared,
-	UnlockTrigger_ExtraFailed,
-	UnlockTrigger_Toasties,
-	UnlockTrigger_StagesCleared,
-	NUM_UnlockTrigger,
-	UnlockTrigger_INVALID,
+	UnlockRequirement_ArcadePoints,
+	UnlockRequirement_DancePoints,
+	UnlockRequirement_SongPoints,
+	UnlockRequirement_ExtraCleared,
+	UnlockRequirement_ExtraFailed,
+	UnlockRequirement_Toasties,
+	UnlockRequirement_StagesCleared,
+	NUM_UnlockRequirement,
+	UnlockRequirement_INVALID,
 };
 
 
-struct UnlockEntry
+enum UnlockRewardType {
+	UnlockRewardType_Song, 
+	UnlockRewardType_Steps, 
+	UnlockRewardType_Course, 
+	UnlockRewardType_Modifier, 
+	NUM_UnlockRewardType, 
+	UnlockRewardType_INVALID
+};
+const RString& UnlockRewardTypeToString( UnlockRewardType i );
+const RString& UnlockRewardTypeToLocalizedString( UnlockRewardType i );
+
+
+class UnlockEntry
 {
+public:
 	UnlockEntry()
 	{
-		m_Type = TYPE_INVALID;
+		m_Type = UnlockRewardType_INVALID;
 
 		m_pSong = NULL;
 		m_dc = DIFFICULTY_INVALID;
 		m_pCourse = NULL;
 
-		ZERO( m_fRequired );
+		ZERO( m_fRequirement );
 		m_iEntryID = -1;
 	}
 
-	enum Type {
-		TYPE_SONG, 
-		TYPE_STEPS, 
-		TYPE_COURSE, 
-		TYPE_MODIFIER, 
-		NUM_TYPES, 
-		TYPE_INVALID
-	};
-	Type m_Type;
+	UnlockRewardType m_Type;
 	Command m_cmd;
 
 	/* A cached pointer to the song or course this entry refers to.  Only one of
@@ -59,25 +64,32 @@ struct UnlockEntry
 	Difficulty m_dc;
 	Course	*m_pCourse;
 
-	float	m_fRequired[NUM_UnlockTrigger];
+	float	m_fRequirement[NUM_UnlockRequirement];
 	int	m_iEntryID;
 
 	bool	IsValid() const;
 	bool	IsLocked() const;
+	RString	GetModifier() const { return m_cmd.GetArg(1).s; }
+	RString	GetDescription() const;
+	RString	GetBannerFile() const;
+	RString	GetBackgroundFile() const;
+
+	// Lua
+	void PushSelf( lua_State *L );
 };
 
 class UnlockManager
 {
-	friend struct UnlockEntry;
+	friend class UnlockEntry;
 
 public:
 	UnlockManager();
 
 	// returns # of points till next unlock - used for ScreenUnlock
-	float PointsUntilNextUnlock( UnlockTrigger t ) const;
-	float ArcadePointsUntilNextUnlock() const { return PointsUntilNextUnlock(UnlockTrigger_ArcadePoints); }
-	float DancePointsUntilNextUnlock() const { return PointsUntilNextUnlock(UnlockTrigger_DancePoints); }
-	float SongPointsUntilNextUnlock() const { return PointsUntilNextUnlock(UnlockTrigger_SongPoints); }
+	float PointsUntilNextUnlock( UnlockRequirement t ) const;
+	float ArcadePointsUntilNextUnlock() const { return PointsUntilNextUnlock(UnlockRequirement_ArcadePoints); }
+	float DancePointsUntilNextUnlock() const { return PointsUntilNextUnlock(UnlockRequirement_DancePoints); }
+	float SongPointsUntilNextUnlock() const { return PointsUntilNextUnlock(UnlockRequirement_SongPoints); }
 
 	// Used on select screens:
 	bool SongIsLocked( const Song *song ) const;
@@ -89,7 +101,7 @@ public:
 	// Gets number of unlocks for title screen
 	int GetNumUnlocks() const;
 
-	void GetPoints( const Profile *pProfile, float fScores[NUM_UnlockTrigger] ) const;
+	void GetPoints( const Profile *pProfile, float fScores[NUM_UnlockRequirement] ) const;
 
 	// Unlock an entry by code.
 	void UnlockEntryID( int iEntryID );
@@ -112,7 +124,7 @@ public:
 	// If global song or course points change, call to update
 	void UpdateCachedPointers();
 
-	void GetUnlocksByType( UnlockEntry::Type t, vector<UnlockEntry *> &apEntries );
+	void GetUnlocksByType( UnlockRewardType t, vector<UnlockEntry *> &apEntries );
 	void GetSongsUnlockedByEntryID( vector<Song *> &apSongsOut, int iEntryID );
 	void GetStepsUnlockedByEntryID( vector<Song *> &apSongsOut, vector<Difficulty> &apStepsOut, int iEntryID );
 

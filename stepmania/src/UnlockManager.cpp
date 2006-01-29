@@ -13,13 +13,15 @@
 #include "Foreach.h"
 #include "Steps.h"
 #include <float.h>
+#include "CommonMetrics.h"
+#include "LuaFunctions.h"
 
 UnlockManager*	UNLOCKMAN = NULL;	// global and accessable from anywhere in our program
 
 #define UNLOCK_NAMES		THEME->GetMetric ("Unlocks","UnlockNames")
 #define UNLOCK(sLineName)	THEME->GetMetric ("Unlocks",ssprintf("Unlock%s",sLineName.c_str()))
 
-static const char *UnlockTriggerNames[] =
+static const char *UnlockRequirementNames[] =
 {
 	"ArcadePoints",
 	"DancePoints",
@@ -29,8 +31,20 @@ static const char *UnlockTriggerNames[] =
 	"Toasties",
 	"StagesCleared"
 };
-XToString( UnlockTrigger, NUM_UnlockTrigger );
-StringToX( UnlockTrigger );
+XToString( UnlockRequirement, NUM_UnlockRequirement );
+StringToX( UnlockRequirement );
+LuaXType( UnlockRequirement, NUM_UnlockRequirement, "UnlockRequirement_", false )
+
+static const char *UnlockRewardTypeNames[] =
+{
+	"Song",
+	"Steps",
+	"Course",
+	"Modifier",
+};
+XToString( UnlockRewardType, NUM_UnlockRewardType );
+XToLocalizedString( UnlockRewardType );
+LuaFunction( UnlockRewardTypeToLocalizedString, UnlockRewardTypeToLocalizedString((UnlockRewardType) IArg(1)) );
 
 UnlockManager::UnlockManager()
 {
@@ -167,7 +181,7 @@ const UnlockEntry *UnlockManager::FindCourse( const Course *pCourse ) const
 const UnlockEntry *UnlockManager::FindModifier( const RString &sOneMod ) const
 {
 	FOREACH_CONST( UnlockEntry, m_UnlockEntries, e )
-		if( e->m_cmd.GetArg(1).s.CompareNoCase(sOneMod) == 0 )
+		if( e->GetModifier() == 0 )
 			return &(*e);
 	return NULL;
 }
@@ -245,12 +259,12 @@ static float GetSongPoints( const Profile *pProfile )
 	return fSP;
 }
 
-void UnlockManager::GetPoints( const Profile *pProfile, float fScores[NUM_UnlockTrigger] ) const
+void UnlockManager::GetPoints( const Profile *pProfile, float fScores[NUM_UnlockRequirement] ) const
 {
-	fScores[UnlockTrigger_ArcadePoints] = GetArcadePoints( pProfile );
-	fScores[UnlockTrigger_SongPoints] = GetSongPoints( pProfile );
-	fScores[UnlockTrigger_DancePoints] = (float) pProfile->m_iTotalDancePoints;
-	fScores[UnlockTrigger_StagesCleared] = (float) pProfile->GetTotalNumSongsPassed();
+	fScores[UnlockRequirement_ArcadePoints] = GetArcadePoints( pProfile );
+	fScores[UnlockRequirement_SongPoints] = GetSongPoints( pProfile );
+	fScores[UnlockRequirement_DancePoints] = (float) pProfile->m_iTotalDancePoints;
+	fScores[UnlockRequirement_StagesCleared] = (float) pProfile->GetTotalNumSongsPassed();
 }
 
 /* Return true if all songs and/or courses referenced by an unlock are available. */
@@ -258,16 +272,16 @@ bool UnlockEntry::IsValid() const
 {
 	switch( m_Type )
 	{
-	case TYPE_SONG:
+	case UnlockRewardType_Song:
 		return m_pSong != NULL;
 
-	case TYPE_STEPS:
+	case UnlockRewardType_Steps:
 		return m_pSong != NULL && m_dc != DIFFICULTY_INVALID;
 
-	case TYPE_COURSE:
+	case UnlockRewardType_Course:
 		return m_pCourse != NULL;
 
-	case TYPE_MODIFIER:
+	case UnlockRewardType_Modifier:
 		return true;
 
 	default:
@@ -278,11 +292,11 @@ bool UnlockEntry::IsValid() const
 
 bool UnlockEntry::IsLocked() const
 {
-	float fScores[NUM_UnlockTrigger];
+	float fScores[NUM_UnlockRequirement];
 	UNLOCKMAN->GetPoints( PROFILEMAN->GetMachineProfile(), fScores );
 
-	for( int i = 0; i < NUM_UnlockTrigger; ++i )
-		if( m_fRequired[i] && fScores[i] >= m_fRequired[i] )
+	for( int i = 0; i < NUM_UnlockRequirement; ++i )
+		if( m_fRequirement[i] && fScores[i] >= m_fRequirement[i] )
 			return false;
 
 	if( m_iEntryID != -1 && PROFILEMAN->GetMachineProfile()->m_UnlockedEntryIDs.find(m_iEntryID) != PROFILEMAN->GetMachineProfile()->m_UnlockedEntryIDs.end() )
@@ -290,6 +304,61 @@ bool UnlockEntry::IsLocked() const
 
 	return true;
 }
+
+RString UnlockEntry::GetDescription() const
+{
+	switch( m_Type )
+	{
+	default:
+		ASSERT(0);
+		return "";
+	case UnlockRewardType_Song:
+		return m_pSong ? m_pSong->GetDisplayFullTitle() : "";
+	case UnlockRewardType_Steps:
+		return DifficultyToLocalizedString( m_dc );
+	case UnlockRewardType_Course:
+		return m_pCourse ? m_pCourse->GetDisplayFullTitle() : "";
+	case UnlockRewardType_Modifier:
+		return CommonMetrics::LocalizeOptionItem( GetModifier(), false );
+	}	
+}
+
+RString	UnlockEntry::GetBannerFile() const
+{
+	switch( m_Type )
+	{
+	default:
+		ASSERT(0);
+		return "";
+	case UnlockRewardType_Song:
+		return m_pSong ? m_pSong->GetBannerPath() : "";
+	case UnlockRewardType_Steps:
+		return "";
+	case UnlockRewardType_Course:
+		return m_pCourse ? m_pCourse->m_sBannerPath : "";
+	case UnlockRewardType_Modifier:
+		return "";
+	}	
+}
+
+RString	UnlockEntry::GetBackgroundFile() const
+{
+	switch( m_Type )
+	{
+	default:
+		ASSERT(0);
+		return "";
+	case UnlockRewardType_Song:
+	case UnlockRewardType_Steps:
+		return m_pSong ? m_pSong->GetBackgroundPath() : "";
+	case UnlockRewardType_Course:
+		return "";
+	case UnlockRewardType_Modifier:
+		return "";
+	}	
+}
+
+/////////////////////////////////////////////////////////
 
 void UnlockManager::Load()
 {
@@ -318,22 +387,22 @@ void UnlockManager::Load()
 
 			if( sName == "song" )
 			{
-				current.m_Type = UnlockEntry::TYPE_SONG;
+				current.m_Type = UnlockRewardType_Song;
 				current.m_cmd = cmd;
 			}
 			if( sName == "steps" )
 			{
-				current.m_Type = UnlockEntry::TYPE_STEPS;
+				current.m_Type = UnlockRewardType_Steps;
 				current.m_cmd = cmd;
 			}
 			if( sName == "course" )
 			{
-				current.m_Type = UnlockEntry::TYPE_COURSE;
+				current.m_Type = UnlockRewardType_Course;
 				current.m_cmd = cmd;
 			}
 			if( sName == "mod" )
 			{
-				current.m_Type = UnlockEntry::TYPE_MODIFIER;
+				current.m_Type = UnlockRewardType_Modifier;
 				current.m_cmd = cmd;
 			}
 			else if( sName == "code" )
@@ -349,9 +418,9 @@ void UnlockManager::Load()
 			}
 			else
 			{
-				const UnlockTrigger ut = StringToUnlockTrigger( cmd.GetName() );
-				if( ut != UnlockTrigger_INVALID )
-					current.m_fRequired[ut] = cmd.GetArg(1);
+				const UnlockRequirement ut = StringToUnlockRequirement( cmd.GetName() );
+				if( ut != UnlockRequirement_INVALID )
+					current.m_fRequirement[ut] = cmd.GetArg(1);
 			}
 		}
 
@@ -366,9 +435,9 @@ void UnlockManager::Load()
 	FOREACH_CONST( UnlockEntry, m_UnlockEntries, e )
 	{
 		RString str = ssprintf( "Unlock: %s; ", join("\n",e->m_cmd.m_vsArgs).c_str() );
-		FOREACH_ENUM2( UnlockTrigger, j )
-			if( e->m_fRequired[j] )
-				str += ssprintf( "%s = %f; ", UnlockTriggerToString(j).c_str(), e->m_fRequired[j] );
+		FOREACH_ENUM2( UnlockRequirement, j )
+			if( e->m_fRequirement[j] )
+				str += ssprintf( "%s = %f; ", UnlockRequirementToString(j).c_str(), e->m_fRequirement[j] );
 
 		str += ssprintf( "entryID = %i ", e->m_iEntryID );
 		str += e->IsLocked()? "locked":"unlocked";
@@ -382,15 +451,15 @@ void UnlockManager::Load()
 	return;
 }
 
-float UnlockManager::PointsUntilNextUnlock( UnlockTrigger t ) const
+float UnlockManager::PointsUntilNextUnlock( UnlockRequirement t ) const
 {
-	float fScores[NUM_UnlockTrigger];
+	float fScores[NUM_UnlockRequirement];
 	UNLOCKMAN->GetPoints( PROFILEMAN->GetMachineProfile(), fScores );
 
 	float fSmallestPoints = FLT_MAX;   // or an arbitrarily large value
 	for( unsigned a=0; a<m_UnlockEntries.size(); a++ )
-		if( m_UnlockEntries[a].m_fRequired[t] > fScores[t] )
-			fSmallestPoints = min( fSmallestPoints, m_UnlockEntries[a].m_fRequired[t] );
+		if( m_UnlockEntries[a].m_fRequirement[t] > fScores[t] )
+			fSmallestPoints = min( fSmallestPoints, m_UnlockEntries[a].m_fRequirement[t] );
 	
 	if( fSmallestPoints == FLT_MAX )
 		return 0;  // no match found
@@ -405,12 +474,12 @@ void UnlockManager::UpdateCachedPointers()
 	{
 		switch( e->m_Type )
 		{
-		case UnlockEntry::TYPE_SONG:
+		case UnlockRewardType_Song:
 			e->m_pSong = SONGMAN->FindSong( e->m_cmd.GetArg(1) );
 			if( e->m_pSong == NULL )
 				LOG->Warn( "Unlock: Cannot find song matching \"%s\"", e->m_cmd.GetArg(1).s.c_str() );
 			break;
-		case UnlockEntry::TYPE_STEPS:
+		case UnlockRewardType_Steps:
 			e->m_pSong = SONGMAN->FindSong( e->m_cmd.GetArg(1) );
 			if( e->m_pSong == NULL )
 			{
@@ -426,12 +495,12 @@ void UnlockManager::UpdateCachedPointers()
 			}
 
 			break;
-		case UnlockEntry::TYPE_COURSE:
+		case UnlockRewardType_Course:
 			e->m_pCourse = SONGMAN->FindCourse( e->m_cmd.GetArg(1) );
 			if( e->m_pCourse == NULL )
 				LOG->Warn( "Unlock: Cannot find course matching \"%s\"", e->m_cmd.GetArg(1).s.c_str() );
 			break;
-		case UnlockEntry::TYPE_MODIFIER:
+		case UnlockRewardType_Modifier:
 			// nothing to cache
 			break;
 		default:
@@ -471,7 +540,7 @@ int UnlockManager::GetNumUnlocks() const
 	return m_UnlockEntries.size();
 }
 
-void UnlockManager::GetUnlocksByType( UnlockEntry::Type t, vector<UnlockEntry *> &apEntries )
+void UnlockManager::GetUnlocksByType( UnlockRewardType t, vector<UnlockEntry *> &apEntries )
 {
 	for( unsigned i = 0; i < m_UnlockEntries.size(); ++i )
 		if( m_UnlockEntries[i].IsValid() && m_UnlockEntries[i].m_Type == t )
@@ -481,7 +550,7 @@ void UnlockManager::GetUnlocksByType( UnlockEntry::Type t, vector<UnlockEntry *>
 void UnlockManager::GetSongsUnlockedByEntryID( vector<Song *> &apSongsOut, int iUnlockEntryID )
 {
 	vector<UnlockEntry *> apEntries;
-	GetUnlocksByType( UnlockEntry::TYPE_SONG, apEntries );
+	GetUnlocksByType( UnlockRewardType_Song, apEntries );
 
 	for( unsigned i = 0; i < apEntries.size(); ++i )
 		if( apEntries[i]->m_iEntryID == iUnlockEntryID )
@@ -491,7 +560,7 @@ void UnlockManager::GetSongsUnlockedByEntryID( vector<Song *> &apSongsOut, int i
 void UnlockManager::GetStepsUnlockedByEntryID( vector<Song *> &apSongsOut, vector<Difficulty> &apDifficultyOut, int iUnlockEntryID )
 {
 	vector<UnlockEntry *> apEntries;
-	GetUnlocksByType( UnlockEntry::TYPE_STEPS, apEntries );
+	GetUnlocksByType( UnlockRewardType_Steps, apEntries );
 
 	for( unsigned i = 0; i < apEntries.size(); ++i )
 	{
@@ -503,7 +572,32 @@ void UnlockManager::GetStepsUnlockedByEntryID( vector<Song *> &apSongsOut, vecto
 	}
 }
 
+
+// lua start
 #include "LuaBinding.h"
+
+class LunaUnlockEntry: public Luna<UnlockEntry>
+{
+public:
+	LunaUnlockEntry() { LUA->Register( Register ); }
+
+	static int IsLocked( T* p, lua_State *L )		{ lua_pushboolean(L, p->IsLocked() ); return 1; }
+	static int GetDescription( T* p, lua_State *L )		{ lua_pushstring(L, p->GetDescription() ); return 1; }
+	static int GetUnlockRewardType( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_Type ); return 1; }
+	static int GetRequirement( T* p, lua_State *L )		{ UnlockRequirement i = (UnlockRequirement)IArg(1); lua_pushnumber(L, p->m_fRequirement[i] ); return 1; }
+
+	static void Register(lua_State *L)
+	{
+		ADD_METHOD( IsLocked );
+		ADD_METHOD( GetDescription );
+		ADD_METHOD( GetUnlockRewardType );
+		ADD_METHOD( GetRequirement );
+
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_CLASS( UnlockEntry )
 
 class LunaUnlockManager: public Luna<UnlockManager>
 {
@@ -514,6 +608,7 @@ public:
 	static int UnlockEntryID( T* p, lua_State *L )		{ int iUnlockEntryID = IArg(1); p->UnlockEntryID(iUnlockEntryID); return 0; }
 	static int PreferUnlockEntryID( T* p, lua_State *L )	{ int iUnlockEntryID = IArg(1); p->PreferUnlockEntryID(iUnlockEntryID); return 0; }
 	static int GetNumUnlocks( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumUnlocks() ); return 1; }
+	static int GetUnlockEntry( T* p, lua_State *L )		{ int iIndex = IArg(1); p->m_UnlockEntries[iIndex].PushSelf(L); return 1; }
 	static int GetSongsUnlockedByEntryID( T* p, lua_State *L )
 	{
 		vector<Song *> apSongs;
@@ -539,6 +634,7 @@ public:
 		ADD_METHOD( UnlockEntryID );
 		ADD_METHOD( PreferUnlockEntryID );
 		ADD_METHOD( GetNumUnlocks );
+		ADD_METHOD( GetUnlockEntry );
 		ADD_METHOD( GetSongsUnlockedByEntryID );
 		ADD_METHOD( GetStepsUnlockedByEntryID );
 
@@ -557,6 +653,7 @@ public:
 };
 
 LUA_REGISTER_CLASS( UnlockManager )
+// lua end
 
 /*
  * (c) 2001-2004 Kevin Slaughter, Andrew Wong, Glenn Maynard
