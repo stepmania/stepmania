@@ -11,13 +11,13 @@
 #include "Command.h"
 #include "InputEventPlus.h"
 
-#define CHOICE_NAMES			THEME->GetMetric (m_sName,"ChoiceNames")
-#define CHOICE( s )				THEME->GetMetricM(m_sName,ssprintf("Choice%s",s.c_str()))
-#define CODE_NAMES				THEME->GetMetric (m_sName,"CodeNames")
-#define CODE( s )				THEME->GetMetric (m_sName,ssprintf("Code%s",s.c_str()))
-#define CODE_ACTION( s )		THEME->GetMetricM(m_sName,ssprintf("Code%sAction",s.c_str()))
-#define IDLE_TIMEOUT_SCREEN		THEME->GetMetric (m_sName,"IdleTimeoutScreen")
-#define UPDATE_ON_MESSAGE		THEME->GetMetric (m_sName,"UpdateOnMessage")
+#define CHOICE_NAMES		THEME->GetMetric (m_sName,"ChoiceNames")
+#define CHOICE( s )		THEME->GetMetricM(m_sName,ssprintf("Choice%s",s.c_str()))
+#define CODE_NAMES		THEME->GetMetric (m_sName,"CodeNames")
+#define CODE( s )		THEME->GetMetric (m_sName,ssprintf("Code%s",s.c_str()))
+#define CODE_ACTION( s )	THEME->GetMetricM(m_sName,ssprintf("Code%sAction",s.c_str()))
+#define IDLE_TIMEOUT_SCREEN	THEME->GetMetric (m_sName,"IdleTimeoutScreen")
+#define UPDATE_ON_MESSAGE	THEME->GetMetric (m_sName,"UpdateOnMessage")
 
 void ScreenSelect::Init()
 {
