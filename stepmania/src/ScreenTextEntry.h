@@ -69,7 +69,6 @@ protected:
 	virtual void MenuStart( PlayerNumber pn );
 	virtual void MenuBack( PlayerNumber pn );
 
-	void UpdateKeyboardText();
 	void UpdateAnswerText();
 
 	BitmapText		m_textQuestion;

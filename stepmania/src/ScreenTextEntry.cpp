@@ -113,6 +113,11 @@ void ScreenTextEntry::Init()
 				BitmapText *&pbt = m_ptextKeys[r][x];
 				pbt = static_cast<BitmapText *>( text.Copy() ); // XXX: Copy() should be covariant
 				this->AddChild( pbt );
+
+				RString s = g_szKeys[r][x];
+				if( !s.empty()  &&  r == KEYBOARD_ROW_SPECIAL )
+					s = THEME->GetString( m_sName, s );
+				pbt->SetText( s );
 			}
 		}
 	}
@@ -157,24 +162,7 @@ void ScreenTextEntry::BeginScreen()
 		}
 	}
 
-	UpdateKeyboardText();
-
 	PositionCursor();
-}
-
-void ScreenTextEntry::UpdateKeyboardText()
-{
-	FOREACH_KeyboardRow( r )
-	{
-		for( int x=0; x<KEYS_PER_ROW; ++x )
-		{
-			RString s = g_szKeys[r][x];
-			if( !s.empty()  &&  r == KEYBOARD_ROW_SPECIAL )
-				s = THEME->GetString( "ScreenTextEntry", s );
-			BitmapText &bt = *m_ptextKeys[r][x];
-			bt.SetText( s );
-		}
-	}
 }
 
 void ScreenTextEntry::UpdateAnswerText()
