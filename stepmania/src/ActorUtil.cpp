@@ -474,9 +474,10 @@ void ActorUtil::LoadAllCommandsFromName( Actor& actor, const RString &sType, con
 	FOREACHS_CONST( RString, vsValueNames, v )
 	{
 		const RString &sv = *v;
-		if( sv.Right(7) == "Command" )
+		static RString sEnding = "Command"; 
+		if( EndsWith(sv,sEnding) )
 		{
-			RString sCommandName( sv.begin()+sName.size(), sv.end()-7 );
+			RString sCommandName( sv.begin()+sName.size(), sv.end()-sEnding.size() );
 			LoadCommandFromName( actor, sType, sCommandName, sName );
 		}
 	}
