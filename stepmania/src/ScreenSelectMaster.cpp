@@ -40,6 +40,7 @@ void ScreenSelectMaster::Init()
 	WRAP_CURSOR.Load( m_sName, "WrapCursor" );
 	WRAP_SCROLLER.Load( m_sName, "WrapScroller" );
 	LOOP_SCROLLER.Load( m_sName, "LoopScroller" );
+	PER_CHOICE_SCROLL_ELEMENT.Load( m_sName, "PerChoiceScrollElement" );
 	ALLOW_REPEATING_INPUT.Load( m_sName, "AllowRepeatingInput" );
 	SCROLLER_SECONDS_PER_ITEM.Load( m_sName, "ScrollerSecondsPerItem" );
 	SCROLLER_NUM_ITEMS_TO_DRAW.Load( m_sName, "ScrollerNumItemsToDraw" );
@@ -62,7 +63,6 @@ void ScreenSelectMaster::Init()
 			vpns.push_back( p );
 	}
 
-#define PLAYER_APPEND_WITH_SPACE(p)	(SHARED_SELECTION ? RString() : ssprintf(" P%d",(p)+1))
 #define PLAYER_APPEND_NO_SPACE(p)	(SHARED_SELECTION ? RString() : ssprintf("P%d",(p)+1))
 	
 	// init cursor
@@ -70,7 +70,7 @@ void ScreenSelectMaster::Init()
 	{
 		FOREACH( PlayerNumber, vpns, p )
 		{
-			RString sElement = "Cursor" + PLAYER_APPEND_WITH_SPACE(*p);
+			RString sElement = "Cursor " + PLAYER_APPEND_NO_SPACE(*p);
 			m_sprCursor[*p].Load( THEME->GetPathG(m_sName,sElement) );
 			sElement.Replace( " ", "" );
 			m_sprCursor[*p]->SetName( sElement );
@@ -108,7 +108,13 @@ void ScreenSelectMaster::Init()
 		{
 			FOREACH( PlayerNumber, vpns, p )
 			{
-				RString sElement = ssprintf( "Scroll Choice%s", mc.m_sName.c_str() ) + PLAYER_APPEND_WITH_SPACE(*p);
+				vector<RString> vs;
+				vs.push_back( "scroll" );
+				if( PER_CHOICE_SCROLL_ELEMENT )
+					vs.push_back( "choice" + mc.m_sName );
+				if( !SHARED_SELECTION )
+					vs.push_back( PLAYER_APPEND_NO_SPACE(*p) );
+				RString sElement = join( " ", vs );
 				m_vsprScroll[*p][c].Load( THEME->GetPathG(m_sName,sElement) );
 				sElement.Replace( " ", "" );
 				m_vsprScroll[*p][c]->SetName( sElement );
