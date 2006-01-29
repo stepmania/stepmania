@@ -32,6 +32,7 @@ void ScreenSelectMaster::Init()
 	NUM_CHOICES_ON_PAGE_1.Load( m_sName, "NumChoicesOnPage1" );
 	CURSOR_OFFSET_X_FROM_ICON.Load( m_sName, CURSOR_OFFSET_X_FROM_ICON_NAME, NUM_PLAYERS );
 	CURSOR_OFFSET_Y_FROM_ICON.Load( m_sName, CURSOR_OFFSET_Y_FROM_ICON_NAME, NUM_PLAYERS );
+	PER_CHOICE_ICON_ELEMENT.Load( m_sName, "PerChoiceIconElement" );
 	OVERRIDE_LOCK_INPUT_SECONDS.Load( m_sName, "OverrideLockInputSeconds" );
 	LOCK_INPUT_SECONDS.Load( m_sName, "LockInputSeconds" );
 	PRE_SWITCH_PAGE_SECONDS.Load( m_sName, "PreSwitchPageSeconds" );
@@ -96,7 +97,11 @@ void ScreenSelectMaster::Init()
 		// init icon
 		if( SHOW_ICON )
 		{
-			RString sElement = ssprintf( "Icon Choice%s", mc.m_sName.c_str() );
+			vector<RString> vs;
+			vs.push_back( "Icon" );
+			if( PER_CHOICE_ICON_ELEMENT )
+				vs.push_back( "Choice" + mc.m_sName );
+			RString sElement = join( " ", vs );
 			m_vsprIcon[c].Load( THEME->GetPathG(m_sName,sElement) );
 			sElement.Replace( " ", "" );
 			m_vsprIcon[c]->SetName( sElement );

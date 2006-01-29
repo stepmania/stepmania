@@ -39,6 +39,7 @@ protected:
 	ThemeMetric<int>	NUM_CHOICES_ON_PAGE_1;
 	ThemeMetric1D<float>	CURSOR_OFFSET_X_FROM_ICON;
 	ThemeMetric1D<float>	CURSOR_OFFSET_Y_FROM_ICON;
+	ThemeMetric<bool>	PER_CHOICE_ICON_ELEMENT;
 	ThemeMetric<bool>	OVERRIDE_LOCK_INPUT_SECONDS;
 	ThemeMetric<float>	LOCK_INPUT_SECONDS;
 	ThemeMetric<float>	PRE_SWITCH_PAGE_SECONDS;
