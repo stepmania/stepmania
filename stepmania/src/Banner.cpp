@@ -9,6 +9,7 @@
 #include "ThemeMetric.h"
 #include "CharacterManager.h"
 #include "ActorUtil.h"
+#include "UnlockManager.h"
 
 REGISTER_ACTOR_CLASS( Banner )
 
@@ -139,6 +140,28 @@ void Banner::LoadTABreakFromCharacter( Character* pCharacter )
 	}
 }
 
+void Banner::LoadBannerFromUnlockEntry( UnlockEntry* pUE )
+{
+	if( pUE == NULL )					LoadFallback();
+	else 
+	{
+		RString sFile = pUE->GetBannerFile();
+		Load( sFile );
+		m_bScrolling = false;
+	}
+}
+
+void Banner::LoadBackgroundFromUnlockEntry( UnlockEntry* pUE )
+{
+	if( pUE == NULL )					LoadFallback();
+	else 
+	{
+		RString sFile = pUE->GetBackgroundFile();
+		Load( sFile );
+		m_bScrolling = false;
+	}
+}
+
 void Banner::LoadFallback()
 {
 	Load( THEME->GetPathG("Common","fallback banner") );
@@ -204,6 +227,18 @@ public:
 		else { Character *pC = Luna<Character>::check(L,1); p->LoadIconFromCharacter( pC ); }
 		return 0;
 	}
+	static int LoadBannerFromUnlockEntry( T* p, lua_State *L )
+	{ 
+		if( lua_isnil(L,1) ) { p->LoadBannerFromUnlockEntry( NULL ); }
+		else { UnlockEntry *pUE = Luna<UnlockEntry>::check(L,1); p->LoadBannerFromUnlockEntry( pUE ); }
+		return 0;
+	}
+	static int LoadBackgroundFromUnlockEntry( T* p, lua_State *L )
+	{ 
+		if( lua_isnil(L,1) ) { p->LoadBackgroundFromUnlockEntry( NULL ); }
+		else { UnlockEntry *pUE = Luna<UnlockEntry>::check(L,1); p->LoadBackgroundFromUnlockEntry( pUE ); }
+		return 0;
+	}
 
 	static void Register(lua_State *L) 
 	{
@@ -213,6 +248,8 @@ public:
 		ADD_METHOD( LoadFromCourse );
 		ADD_METHOD( LoadIconFromCharacter );
 		ADD_METHOD( LoadCardFromCharacter );
+		ADD_METHOD( LoadBannerFromUnlockEntry );
+		ADD_METHOD( LoadBackgroundFromUnlockEntry );
 
 		Luna<T>::Register( L );
 	}

@@ -8,6 +8,7 @@
 class Song;
 class Course;
 class Character;
+class UnlockEntry;
 
 class Banner : public Sprite
 {
@@ -28,6 +29,8 @@ public:
 	void LoadCardFromCharacter( Character* pCharacter );
 	void LoadIconFromCharacter( Character* pCharacter );
 	void LoadTABreakFromCharacter( Character* pCharacter );
+	void LoadBannerFromUnlockEntry( UnlockEntry* pUE );
+	void LoadBackgroundFromUnlockEntry( UnlockEntry* pUE );
 	void LoadRoulette();
 	void LoadRandom();
 	void LoadFallback();
