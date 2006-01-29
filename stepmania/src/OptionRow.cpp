@@ -50,7 +50,7 @@ void OptionRow::PrepareItemText( RString &s ) const
 	}
 
 	if( bTheme ) 
-		s = CommonMetrics::ThemeOptionItem( s, false ); 
+		s = CommonMetrics::LocalizeOptionItem( s, false ); 
 	if( m_pParentType->CAPITALIZE_ALL_OPTION_NAMES )
 		s.MakeUpper(); 
 }

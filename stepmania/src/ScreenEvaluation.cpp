@@ -330,7 +330,7 @@ void ScreenEvaluation::Init()
 				m_textPlayerOptions[p].SetName( ssprintf("PlayerOptionsP%d",p+1) );
 				SET_XY_AND_ON_COMMAND( m_textPlayerOptions[p] );
 				vector<RString> v;
-				GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetThemedMods( v );
+				GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetLocalizedMods( v );
 				RString sPO = join( PLAYER_OPTIONS_SEPARATOR, v );
 				m_textPlayerOptions[p].SetText( sPO );
 				this->AddChild( &m_textPlayerOptions[p] );

@@ -616,7 +616,7 @@ bool PlayerOptions::IsEasierForCourseAndTrail( Course* pCourse, Trail* pTrail )
 	return false;
 }
 
-void PlayerOptions::GetThemedMods( vector<RString> &AddTo ) const
+void PlayerOptions::GetLocalizedMods( vector<RString> &AddTo ) const
 {
 	vector<RString> vMods;
 	GetMods( vMods );
@@ -641,11 +641,10 @@ void PlayerOptions::GetThemedMods( vector<RString> &AddTo ) const
 
 		/* Theme the mod name (the last string).  Allow this to not exist, since
 		 * characters might use modifiers that don't exist in the theme. */
-		asTokens.back() = CommonMetrics::ThemeOptionItem( asTokens.back(), true );
+		asTokens.back() = CommonMetrics::LocalizeOptionItem( asTokens.back(), true );
 
-		RString sThemedMod = join( " ", asTokens );
-
-		AddTo.push_back( sThemedMod );
+		RString sLocalizedMod = join( " ", asTokens );
+		AddTo.push_back( sLocalizedMod );
 	}
 }
 
