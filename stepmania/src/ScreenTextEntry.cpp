@@ -265,7 +265,6 @@ void ScreenTextEntry::Input( const InputEventPlus &input )
 			m_iFocusY = KEYBOARD_ROW_SPECIAL;
 			m_iFocusX = DONE;
 
-			UpdateKeyboardText();
 			PositionCursor();
 		}
 	}
@@ -333,8 +332,6 @@ void ScreenTextEntry::AppendToAnswer( RString s )
 	m_sAnswer = sNewAnswer;
 	m_sndType.Play();
 	UpdateAnswerText();
-
-	UpdateKeyboardText();
 }
 
 void ScreenTextEntry::BackspaceInAnswer()
