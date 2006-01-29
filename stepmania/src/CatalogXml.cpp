@@ -131,15 +131,15 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 				continue;
 			switch( e->m_Type )
 			{
-			case UnlockEntry::TYPE_SONG:	iNumUnlockedSongs++;	break;
-			case UnlockEntry::TYPE_STEPS:	iNumUnlockedSteps++;	break;
-			case UnlockEntry::TYPE_COURSE:	iNumUnlockedCourses++;	break;
+			case UnlockRewardType_Song:	iNumUnlockedSongs++;	break;
+			case UnlockRewardType_Steps:	iNumUnlockedSteps++;	break;
+			case UnlockRewardType_Course:	iNumUnlockedCourses++;	break;
 			}
 		}
 
-		pNode->AppendChild( "TotalSongs",			iTotalSongs );
-		pNode->AppendChild( "TotalSteps",			iTotalSteps );
-		pNode->AppendChild( "TotalCourses",			iTotalCourses );
+		pNode->AppendChild( "TotalSongs",		iTotalSongs );
+		pNode->AppendChild( "TotalSteps",		iTotalSteps );
+		pNode->AppendChild( "TotalCourses",		iTotalCourses );
 		pNode->AppendChild( "NumUnlockedSongs",		iNumUnlockedSongs );
 		pNode->AppendChild( "NumUnlockedSteps",		iNumUnlockedSteps );
 		pNode->AppendChild( "NumUnlockedCourses",	iNumUnlockedCourses );
@@ -355,7 +355,7 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 				RString s = *iter;
 				po.FromString( s, false );
 				vector<RString> v;
-				po.GetThemedMods( v );
+				po.GetLocalizedMods( v );
 				if( v.empty() )
 					continue;
 				XNode* pNode3 = pNode2->AppendChild( "Modifier", *iter );

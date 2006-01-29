@@ -62,7 +62,7 @@ namespace CommonMetrics
 	extern ThemeMetricCourseDifficultiesToShow	COURSE_DIFFICULTIES_TO_SHOW;
 	extern ThemeMetricStepsTypesToShow			STEPS_TYPES_TO_SHOW;
 
-	RString ThemeOptionItem( RString s, bool bOptional );
+	RString LocalizeOptionItem( const RString &s, bool bOptional );
 };
 
 #endif
