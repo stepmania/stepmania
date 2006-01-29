@@ -42,7 +42,6 @@ public:
 		TextEntry( smSendOnPop, sQuestion, "", 255, NULL, OnOK, OnCanel, true );
 	}
 
-	~ScreenTextEntry();
 	virtual void Init();
 	virtual void BeginScreen();
 
@@ -54,49 +53,66 @@ public:
 	static bool s_bCancelledLast;
 
 protected:
-	void MoveX( int iDir );
-	void MoveY( int iDir );
-	
 	void AppendToAnswer( RString s );
 	void BackspaceInAnswer();
+	virtual void TextEnteredDirectly() { }
 
 	void End( bool bCancelled );
 
-	virtual void MenuLeft( PlayerNumber pn )	{ MoveX(-1); }
-	virtual void MenuRight( PlayerNumber pn )	{ MoveX(+1); }
-	virtual void MenuUp( PlayerNumber pn )		{ MoveY(-1); }
-	virtual void MenuDown( PlayerNumber pn )	{ MoveY(+1); }
+private:
 	virtual void MenuStart( PlayerNumber pn );
 	virtual void MenuBack( PlayerNumber pn );
 
 	void UpdateAnswerText();
 
+	wstring			m_sAnswer;
+	bool			m_bShowAnswerCaret;
+
 	BitmapText		m_textQuestion;
 	AutoActor		m_sprAnswerBox;
-	wstring			m_sAnswer;
 	BitmapText		m_textAnswer;
-	bool			m_bShowAnswerCaret;
 	
-	AutoActor		m_sprCursor;
-
-	int			m_iFocusX;
-	KeyboardRow		m_iFocusY;
-	
-	void PositionCursor();
-
-	BitmapText		*m_ptextKeys[NUM_KEYBOARD_ROWS][KEYS_PER_ROW];
-	ThemeMetric<float>	ROW_START_X;
-	ThemeMetric<float>	ROW_START_Y;
-	ThemeMetric<float>	ROW_END_X;
-	ThemeMetric<float>	ROW_END_Y;
-
 	RageSound		m_sndType;
 	RageSound		m_sndBackspace;
-	RageSound		m_sndChange;
 	
 	RageTimer		m_timerToggleCursor;
 };
 
+class ScreenTextEntryVisual: public ScreenTextEntry
+{
+public:
+	~ScreenTextEntryVisual();
+	void Init();
+	void BeginScreen();
+	virtual void TweenOffScreen();
+
+protected:
+	void MoveX( int iDir );
+	void MoveY( int iDir );
+	void PositionCursor();
+
+	virtual void TextEnteredDirectly();
+	
+	virtual void MenuLeft( PlayerNumber pn )	{ MoveX(-1); }
+	virtual void MenuRight( PlayerNumber pn )	{ MoveX(+1); }
+	virtual void MenuUp( PlayerNumber pn )		{ MoveY(-1); }
+	virtual void MenuDown( PlayerNumber pn )	{ MoveY(+1); }
+
+	virtual void MenuStart( PlayerNumber pn );
+
+	int			m_iFocusX;
+	KeyboardRow		m_iFocusY;
+	
+	AutoActor		m_sprCursor;
+	BitmapText		*m_ptextKeys[NUM_KEYBOARD_ROWS][KEYS_PER_ROW];
+
+	RageSound		m_sndChange;
+
+	ThemeMetric<float>	ROW_START_X;
+	ThemeMetric<float>	ROW_START_Y;
+	ThemeMetric<float>	ROW_END_X;
+	ThemeMetric<float>	ROW_END_Y;
+};
 
 #endif
 

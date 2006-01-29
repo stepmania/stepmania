@@ -70,14 +70,10 @@ bool ScreenTextEntry::s_bCancelledLast = false;
  * subject to change and shouldn't be written to disk.
  */
 REGISTER_SCREEN_CLASS( ScreenTextEntry );
+REGISTER_SCREEN_CLASS( ScreenTextEntryVisual );
 
 void ScreenTextEntry::Init()
 {
-	ROW_START_X.Load( m_sName, "RowStartX" );
-	ROW_START_Y.Load( m_sName, "RowStartY" );
-	ROW_END_X.Load( m_sName, "RowEndX" );
-	ROW_END_Y.Load( m_sName, "RowEndY" );
-
 	ScreenWithMenuElements::Init();
 
 	m_textQuestion.LoadFromFont( THEME->GetPathF(m_sName,"question") );
@@ -94,44 +90,8 @@ void ScreenTextEntry::Init()
 
 	m_bShowAnswerCaret = false;
 
-	m_sprCursor.Load( THEME->GetPathG(m_sName,"cursor") );
-	m_sprCursor->SetName( "Cursor" );
-	this->AddChild( m_sprCursor );
-
-	// Init keyboard
-	{
-		BitmapText text;
-		text.LoadFromFont( THEME->GetPathF(m_sName,"keyboard") );
-		text.SetName( "Keys" );
-		ActorUtil::LoadAllCommands( text, m_sName );
-		text.PlayCommand( "Init" );
-
-		FOREACH_KeyboardRow( r )
-		{
-			for( int x=0; x<KEYS_PER_ROW; ++x )
-			{
-				BitmapText *&pbt = m_ptextKeys[r][x];
-				pbt = static_cast<BitmapText *>( text.Copy() ); // XXX: Copy() should be covariant
-				this->AddChild( pbt );
-
-				RString s = g_szKeys[r][x];
-				if( !s.empty()  &&  r == KEYBOARD_ROW_SPECIAL )
-					s = THEME->GetString( m_sName, s );
-				pbt->SetText( s );
-			}
-		}
-	}
-
 	m_sndType.Load( THEME->GetPathS(m_sName,"type"), true );
 	m_sndBackspace.Load( THEME->GetPathS(m_sName,"backspace"), true );
-	m_sndChange.Load( THEME->GetPathS(m_sName,"change"), true );
-}
-
-ScreenTextEntry::~ScreenTextEntry()
-{
-	FOREACH_KeyboardRow( r )
-		for( int x=0; x<KEYS_PER_ROW; ++x )
-			SAFE_DELETE( m_ptextKeys[r][x] );
 }
 
 void ScreenTextEntry::BeginScreen()
@@ -146,23 +106,6 @@ void ScreenTextEntry::BeginScreen()
 	SET_XY_AND_ON_COMMAND( m_textAnswer );
 
 	UpdateAnswerText();
-
-	ON_COMMAND( m_sprCursor );
-	m_iFocusX = 0;
-	m_iFocusY = (KeyboardRow)0;
-
-	FOREACH_KeyboardRow( r )
-	{
-		for( int x=0; x<KEYS_PER_ROW; ++x )
-		{
-			BitmapText &bt = *m_ptextKeys[r][x];
-			float fX = roundf( SCALE( x, 0, KEYS_PER_ROW-1, ROW_START_X, ROW_END_X ) );
-			float fY = roundf( SCALE( r, 0, NUM_KEYBOARD_ROWS-1, ROW_START_Y, ROW_END_Y ) );
-			bt.SetXY( fX, fY );
-		}
-	}
-
-	PositionCursor();
 }
 
 void ScreenTextEntry::UpdateAnswerText()
@@ -181,13 +124,6 @@ void ScreenTextEntry::UpdateAnswerText()
 
 	FontCharAliases::ReplaceMarkers( s );
 	m_textAnswer.SetText( s );
-}
-
-void ScreenTextEntry::PositionCursor()
-{
-	BitmapText &bt = *m_ptextKeys[m_iFocusY][m_iFocusX];
-	m_sprCursor->SetXY( bt.GetX(), bt.GetY() );
-	m_sprCursor->PlayCommand( m_iFocusY == KEYBOARD_ROW_SPECIAL ? "SpecialKey" : "RegularKey" );
 }
 
 void ScreenTextEntry::Update( float fDelta )
@@ -249,63 +185,11 @@ void ScreenTextEntry::Input( const InputEventPlus &input )
 
 			AppendToAnswer( ssprintf( "%c", c ) );
 
-			// If the user wishes to select text in traditional way, start should finish text entry
-			m_iFocusY = KEYBOARD_ROW_SPECIAL;
-			m_iFocusX = DONE;
-
-			PositionCursor();
+			TextEnteredDirectly();
 		}
 	}
 
 	ScreenWithMenuElements::Input( input );
-}
-
-void ScreenTextEntry::MoveX( int iDir )
-{
-	RString sKey;
-	do
-	{
-		m_iFocusX += iDir;
-		wrap( m_iFocusX, KEYS_PER_ROW );
-
-		sKey = g_szKeys[m_iFocusY][m_iFocusX]; 
-	}
-	while( sKey == "" );
-
-	m_sndChange.Play();
-	PositionCursor();
-}
-
-void ScreenTextEntry::MoveY( int iDir )
-{
-	RString sKey;
-	do
-	{
-		m_iFocusY = (KeyboardRow)(m_iFocusY + iDir);
-		wrap( (int&)m_iFocusY, NUM_KEYBOARD_ROWS );
-
-		// HACK: Round to nearest option so that we always stop 
-		// on KEYBOARD_ROW_SPECIAL.
-		if( m_iFocusY == KEYBOARD_ROW_SPECIAL )
-		{
-			for( int i=0; true; i++ )
-			{
-				sKey = g_szKeys[m_iFocusY][m_iFocusX]; 
-				if( sKey != "" )
-					break;
-
-				// UGLY: Probe one space to the left before looking to the right
-				m_iFocusX += (i==0) ? -1 : +1;
-				wrap( m_iFocusX, KEYS_PER_ROW );
-			}
-		}
-
-		sKey = g_szKeys[m_iFocusY][m_iFocusX]; 
-	}
-	while( sKey == "" );
-
-	m_sndChange.Play();
-	PositionCursor();
 }
 
 void ScreenTextEntry::AppendToAnswer( RString s )
@@ -336,30 +220,7 @@ void ScreenTextEntry::BackspaceInAnswer()
 
 void ScreenTextEntry::MenuStart( PlayerNumber pn )
 {
-	if( m_iFocusY == KEYBOARD_ROW_SPECIAL )
-	{
-		switch( m_iFocusX )
-		{
-		case SPACEBAR:
-			AppendToAnswer( " " );
-			break;
-		case BACKSPACE:
-			BackspaceInAnswer();
-			break;
-		case CANCEL:
-			End( true );
-			break;
-		case DONE:
-			End( false );
-			break;
-		default:
-			break;
-		}
-	}
-	else
-	{
-		AppendToAnswer( g_szKeys[m_iFocusY][m_iFocusX] );
-	}
+	End( false );
 }
 
 void ScreenTextEntry::TweenOffScreen()
@@ -369,7 +230,6 @@ void ScreenTextEntry::TweenOffScreen()
 	OFF_COMMAND( m_textQuestion );
 	OFF_COMMAND( m_sprAnswerBox );
 	OFF_COMMAND( m_textAnswer );
-	OFF_COMMAND( m_sprCursor );
 }
 
 void ScreenTextEntry::End( bool bCancelled )
@@ -414,6 +274,174 @@ void ScreenTextEntry::End( bool bCancelled )
 void ScreenTextEntry::MenuBack( PlayerNumber pn )
 {
 	End( true );
+}
+
+void ScreenTextEntryVisual::Init()
+{
+	ROW_START_X.Load( m_sName, "RowStartX" );
+	ROW_START_Y.Load( m_sName, "RowStartY" );
+	ROW_END_X.Load( m_sName, "RowEndX" );
+	ROW_END_Y.Load( m_sName, "RowEndY" );
+
+	ScreenTextEntry::Init();
+
+	m_sprCursor.Load( THEME->GetPathG(m_sName,"cursor") );
+	m_sprCursor->SetName( "Cursor" );
+	this->AddChild( m_sprCursor );
+
+	// Init keyboard
+	{
+		BitmapText text;
+		text.LoadFromFont( THEME->GetPathF(m_sName,"keyboard") );
+		text.SetName( "Keys" );
+		ActorUtil::LoadAllCommands( text, m_sName );
+		text.PlayCommand( "Init" );
+
+		FOREACH_KeyboardRow( r )
+		{
+			for( int x=0; x<KEYS_PER_ROW; ++x )
+			{
+				BitmapText *&pbt = m_ptextKeys[r][x];
+				pbt = static_cast<BitmapText *>( text.Copy() ); // XXX: Copy() should be covariant
+				this->AddChild( pbt );
+
+				RString s = g_szKeys[r][x];
+				if( !s.empty()  &&  r == KEYBOARD_ROW_SPECIAL )
+					s = THEME->GetString( m_sName, s );
+				pbt->SetText( s );
+			}
+		}
+	}
+
+	m_sndChange.Load( THEME->GetPathS(m_sName,"change"), true );
+}
+
+ScreenTextEntryVisual::~ScreenTextEntryVisual()
+{
+	FOREACH_KeyboardRow( r )
+		for( int x=0; x<KEYS_PER_ROW; ++x )
+			SAFE_DELETE( m_ptextKeys[r][x] );
+}
+
+void ScreenTextEntryVisual::BeginScreen()
+{
+	ScreenTextEntry::BeginScreen();
+
+	ON_COMMAND( m_sprCursor );
+	m_iFocusX = 0;
+	m_iFocusY = (KeyboardRow)0;
+
+	FOREACH_KeyboardRow( r )
+	{
+		for( int x=0; x<KEYS_PER_ROW; ++x )
+		{
+			BitmapText &bt = *m_ptextKeys[r][x];
+			float fX = roundf( SCALE( x, 0, KEYS_PER_ROW-1, ROW_START_X, ROW_END_X ) );
+			float fY = roundf( SCALE( r, 0, NUM_KEYBOARD_ROWS-1, ROW_START_Y, ROW_END_Y ) );
+			bt.SetXY( fX, fY );
+		}
+	}
+
+	PositionCursor();
+}
+
+void ScreenTextEntryVisual::PositionCursor()
+{
+	BitmapText &bt = *m_ptextKeys[m_iFocusY][m_iFocusX];
+	m_sprCursor->SetXY( bt.GetX(), bt.GetY() );
+	m_sprCursor->PlayCommand( m_iFocusY == KEYBOARD_ROW_SPECIAL ? "SpecialKey" : "RegularKey" );
+}
+
+void ScreenTextEntryVisual::TextEnteredDirectly()
+{
+	// If the user enters text with a keyboard, jump to DONE, so enter ends the screen.
+	m_iFocusY = KEYBOARD_ROW_SPECIAL;
+	m_iFocusX = DONE;
+
+	PositionCursor();
+}
+
+void ScreenTextEntryVisual::MoveX( int iDir )
+{
+	RString sKey;
+	do
+	{
+		m_iFocusX += iDir;
+		wrap( m_iFocusX, KEYS_PER_ROW );
+
+		sKey = g_szKeys[m_iFocusY][m_iFocusX]; 
+	}
+	while( sKey == "" );
+
+	m_sndChange.Play();
+	PositionCursor();
+}
+
+void ScreenTextEntryVisual::MoveY( int iDir )
+{
+	RString sKey;
+	do
+	{
+		m_iFocusY = enum_add2( m_iFocusY,  +iDir );
+		wrap( (int&)m_iFocusY, NUM_KEYBOARD_ROWS );
+
+		// HACK: Round to nearest option so that we always stop 
+		// on KEYBOARD_ROW_SPECIAL.
+		if( m_iFocusY == KEYBOARD_ROW_SPECIAL )
+		{
+			for( int i=0; true; i++ )
+			{
+				sKey = g_szKeys[m_iFocusY][m_iFocusX]; 
+				if( sKey != "" )
+					break;
+
+				// UGLY: Probe one space to the left before looking to the right
+				m_iFocusX += (i==0) ? -1 : +1;
+				wrap( m_iFocusX, KEYS_PER_ROW );
+			}
+		}
+
+		sKey = g_szKeys[m_iFocusY][m_iFocusX]; 
+	}
+	while( sKey == "" );
+
+	m_sndChange.Play();
+	PositionCursor();
+}
+
+void ScreenTextEntryVisual::MenuStart( PlayerNumber pn )
+{
+	if( m_iFocusY == KEYBOARD_ROW_SPECIAL )
+	{
+		switch( m_iFocusX )
+		{
+		case SPACEBAR:
+			AppendToAnswer( " " );
+			break;
+		case BACKSPACE:
+			BackspaceInAnswer();
+			break;
+		case CANCEL:
+			End( true );
+			break;
+		case DONE:
+			End( false );
+			break;
+		default:
+			break;
+		}
+	}
+	else
+	{
+		AppendToAnswer( g_szKeys[m_iFocusY][m_iFocusX] );
+	}
+}
+
+void ScreenTextEntryVisual::TweenOffScreen()
+{
+	ScreenTextEntry::TweenOffScreen();
+
+	OFF_COMMAND( m_sprCursor );
 }
 
 /*
