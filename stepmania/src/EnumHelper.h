@@ -106,7 +106,8 @@ static void Lua##X(lua_State* L) \
 	FOREACH_ENUM( X, CNT, i ) \
 	{ \
 		RString s = X##Names[i]; \
-		s.MakeUpper(); \
+		if( bCapitalize ) \
+			s.MakeUpper(); \
 		LUA->SetGlobal( Prefix+s, i ); \
 	} \
 	RString sType = "NUM" #X "S" ; \
