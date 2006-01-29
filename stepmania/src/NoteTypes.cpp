@@ -5,15 +5,15 @@
 #include "LuaFunctions.h"
 #include "XmlFile.h"
 
-TapNote TAP_EMPTY					( TapNote::empty,		TapNote::SubType_invalid,	TapNote::original, "", 0, false, 0 );
-TapNote TAP_ORIGINAL_TAP			( TapNote::tap,			TapNote::SubType_invalid,	TapNote::original, "", 0, false, 0 );
+TapNote TAP_EMPTY			( TapNote::empty,	TapNote::SubType_invalid,	TapNote::original, "", 0, false, 0 );
+TapNote TAP_ORIGINAL_TAP		( TapNote::tap,		TapNote::SubType_invalid,	TapNote::original, "", 0, false, 0 );
 TapNote TAP_ORIGINAL_HOLD_HEAD		( TapNote::hold_head,	TapNote::hold_head_hold,	TapNote::original, "", 0, false, 0 );
 TapNote TAP_ORIGINAL_ROLL_HEAD		( TapNote::hold_head,	TapNote::hold_head_roll,	TapNote::original, "", 0, false, 0 );
-TapNote TAP_ORIGINAL_MINE			( TapNote::mine,		TapNote::SubType_invalid,	TapNote::original, "", 0, false, 0 );
-TapNote TAP_ORIGINAL_ATTACK			( TapNote::attack,		TapNote::SubType_invalid,	TapNote::original, "", 0, false, 0 );
+TapNote TAP_ORIGINAL_MINE		( TapNote::mine,	TapNote::SubType_invalid,	TapNote::original, "", 0, false, 0 );
+TapNote TAP_ORIGINAL_ATTACK		( TapNote::attack,	TapNote::SubType_invalid,	TapNote::original, "", 0, false, 0 );
 TapNote TAP_ORIGINAL_AUTO_KEYSOUND	( TapNote::autoKeysound,TapNote::SubType_invalid,	TapNote::original, "", 0, false, 0 );
-TapNote TAP_ADDITION_TAP			( TapNote::tap,			TapNote::SubType_invalid,	TapNote::addition, "", 0, false, 0 );
-TapNote TAP_ADDITION_MINE			( TapNote::mine,		TapNote::SubType_invalid,	TapNote::addition, "", 0, false, 0 );
+TapNote TAP_ADDITION_TAP		( TapNote::tap,		TapNote::SubType_invalid,	TapNote::addition, "", 0, false, 0 );
+TapNote TAP_ADDITION_MINE		( TapNote::mine,	TapNote::SubType_invalid,	TapNote::addition, "", 0, false, 0 );
 
 static const char *NoteTypeNames[] = {
 	"4th",
@@ -34,8 +34,8 @@ float NoteTypeToBeat( NoteType nt )
 {
 	switch( nt )
 	{
-	case NOTE_TYPE_4TH:		return 1.0f;	// quarter notes
-	case NOTE_TYPE_8TH:		return 1.0f/2;	// eighth notes
+	case NOTE_TYPE_4TH:	return 1.0f;	// quarter notes
+	case NOTE_TYPE_8TH:	return 1.0f/2;	// eighth notes
 	case NOTE_TYPE_12TH:	return 1.0f/3;	// triplets
 	case NOTE_TYPE_16TH:	return 1.0f/4;	// sixteenth notes
 	case NOTE_TYPE_24TH:	return 1.0f/6;	// twenty-forth notes
