@@ -1,18 +1,26 @@
 REQUIREMENTS
-Mac OS X 10.3 or higher is required. The Mac OS X 10.2.8 SDK needs to be
+Mac OS X 10.4 or higher is required. The Mac OS X 10.2.8 SDK needs to be
 installed.
-XCode is required to build. Even though the stepmania project appears to
-be a ProjectBuilder project, it has been updated by XCode and no longer
-works with ProjectBuilder.
+
+XCode 2.2.1 is required to build. Even though the stepmania project
+appears to be a ProjectBuilder project, it has been updated by XCode and
+no longer works with ProjectBuilder.
 
 BUILD
 The build process has been revised yet again.
 1. Download StepMania from sourceforge.
 2. Cd to the PBProject directory enter: $ touch ver.cpp
-3. Cd to Frameworks and unpack Frameworks.tgz by: $ tar zxf Frameworks.tgz
-4. Build StepMania by running `xcodebuild -target stepmania' in the PBProject 
-directory.
-
+3. Cd to Frameworks and unpack Frameworks.tar.bz2 by:
+$ tar jxf Frameworks.tar.bz2
+4. Build StepMania by running:
+$ xcodebuild -target stepmania -configuration .
+in the PBProject directory. (Note the period there.)
+To build a universal binary instead, use "-configuration Universal"
+instead of "-configuration ." (Note that this will place StepMania.app
+in the Universal directory and it will need to be moved to be used.)
+5. (Optional) Run:
+$ strip -x StepMania.app/Contents/MacOS/StepMania
+to reduce the size of the binary.
 INSTALL
 From the PBProject directory, run:
 $ scripts/mkrelease.pl .. <version>
