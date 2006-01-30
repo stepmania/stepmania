@@ -433,18 +433,8 @@ public:
 
 	void MakeFilteredMenuDef( const MenuDef* pDef, MenuDef &menu );
 	ScreenMiniMenu *LoadEditMiniMenu( const MenuDef* pDef );
-	void EditMiniMenu( ScreenMiniMenu *pScreen, ScreenMessage SM_SendOnOK = SM_None, ScreenMessage SM_SendOnCancel = SM_None, const MenuDef* pDef = NULL );
+	void EditMiniMenu( const MenuDef* pDef, ScreenMessage SM_SendOnOK = SM_None, ScreenMessage SM_SendOnCancel = SM_None );
 
-	ScreenMiniMenu *m_pHelpMenu;
-	ScreenMiniMenu *m_pMiniMenu;
-	ScreenMiniMenu *m_pMainMenu;
-	ScreenMiniMenu *m_pAreaMenu;
-	ScreenMiniMenu *m_pStepsInformation;
-	ScreenMiniMenu *m_pSongInformation;
-	ScreenMiniMenu *m_pBackgroundChangeMenu;
-	ScreenMiniMenu *m_pInsertTapAttackMenu;
-	ScreenMiniMenu *m_pInsertCourseAttackMenu;
-	ScreenMiniMenu *m_pCourseModeMenu;
 	Screen *m_pScreenOptions;
 };
 

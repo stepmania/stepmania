@@ -726,18 +726,6 @@ void ScreenEdit::Init()
 	m_soundSwitch.Load(	THEME->GetPathS("ScreenEdit","switch") );
 	m_soundSave.Load(	THEME->GetPathS("ScreenEdit","save") );
 
-	if( EDIT_MODE.GetValue() == EditMode_Practice )
-		m_pHelpMenu = LoadEditMiniMenu( &g_PracticeHelp );
-	else
-		m_pHelpMenu = LoadEditMiniMenu( &g_EditHelp );
-	m_pMainMenu = LoadEditMiniMenu( &g_MainMenu );
-	m_pAreaMenu = LoadEditMiniMenu( &g_AreaMenu );
-	m_pStepsInformation = LoadEditMiniMenu( &g_StepsInformation );
-	m_pSongInformation = LoadEditMiniMenu( &g_SongInformation );
-	m_pBackgroundChangeMenu = LoadEditMiniMenu( &g_BackgroundChange );
-	m_pInsertTapAttackMenu = LoadEditMiniMenu( &g_InsertTapAttack );
-	m_pInsertCourseAttackMenu = LoadEditMiniMenu( &g_InsertCourseAttack );
-	m_pCourseModeMenu = LoadEditMiniMenu( &g_CourseMode );
 	m_pScreenOptions = SCREENMAN->MakeNewScreen( "ScreenEditOptions" );
 
 	m_soundMusic.Load( m_pSong->GetMusicPath() );
@@ -756,15 +744,6 @@ ScreenEdit::~ScreenEdit()
 	LOG->Trace( "ScreenEdit::~ScreenEdit()" );
 	m_soundMusic.StopPlaying();
 
-	SAFE_DELETE( m_pHelpMenu );
-	SAFE_DELETE( m_pMainMenu );
-	SAFE_DELETE( m_pAreaMenu );
-	SAFE_DELETE( m_pStepsInformation );
-	SAFE_DELETE( m_pSongInformation );
-	SAFE_DELETE( m_pBackgroundChangeMenu );
-	SAFE_DELETE( m_pInsertTapAttackMenu );
-	SAFE_DELETE( m_pInsertCourseAttackMenu );
-	SAFE_DELETE( m_pCourseModeMenu );
 	SAFE_DELETE( m_pScreenOptions );
 }
 
@@ -845,19 +824,12 @@ ScreenMiniMenu *ScreenEdit::LoadEditMiniMenu( const MenuDef* pDef )
 	return pScreen;
 }
 
-void ScreenEdit::EditMiniMenu( ScreenMiniMenu *pScreen, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel, const MenuDef* pDef )
+void ScreenEdit::EditMiniMenu( const MenuDef* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel )
 {
-	if( pDef != NULL )
-	{
-		/* Reload options. */
-		MenuDef menu("");
-		MakeFilteredMenuDef( pDef, menu );
-		pScreen->LoadMenu( &menu );
-	}
-
-	pScreen->SetOKMessage( SM_SendOnOK );
-	pScreen->SetCancelMessage( SM_SendOnCancel );
-	SCREENMAN->PushScreen( pScreen );
+	/* Reload options. */
+	MenuDef menu("");
+	MakeFilteredMenuDef( pDef, menu );
+	ScreenMiniMenu::MiniMenu( &menu, SM_SendOnOK, SM_SendOnCancel );
 }
 
 void ScreenEdit::Update( float fDeltaTime )
@@ -1158,7 +1130,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			else if( EditIsBeingPressed(EDIT_BUTTON_LAY_TAP_ATTACK) )
 			{
 				g_iLastInsertTapAttackTrack = iCol;
-				EditMiniMenu( m_pInsertTapAttackMenu, SM_BackFromInsertTapAttack );
+				EditMiniMenu( &g_InsertTapAttack, SM_BackFromInsertTapAttack );
 			}
 			else
 			{
@@ -1313,14 +1285,17 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			g_AreaMenu.rows[record].bEnabled = bAreaSelected;
 			g_AreaMenu.rows[convert_to_pause].bEnabled = bAreaSelected;
 			g_AreaMenu.rows[undo].bEnabled = m_bHasUndo;
-			EditMiniMenu( m_pAreaMenu, SM_BackFromAreaMenu, SM_None, &g_AreaMenu );
+			EditMiniMenu( &g_AreaMenu, SM_BackFromAreaMenu );
 		}
 		break;
 	case EDIT_BUTTON_OPEN_EDIT_MENU:
-		EditMiniMenu( m_pMainMenu, SM_BackFromMainMenu );
+		EditMiniMenu( &g_MainMenu, SM_BackFromMainMenu );
 		break;
 	case EDIT_BUTTON_OPEN_INPUT_HELP:
-		EditMiniMenu( m_pHelpMenu );
+		if( EDIT_MODE.GetValue() == EditMode_Practice )
+			EditMiniMenu( &g_PracticeHelp );
+		else
+			EditMiniMenu( &g_EditHelp );
 		break;
 	case EDIT_BUTTON_TOGGLE_ASSIST_TICK:
 		GAMESTATE->m_SongOptions.m_bAssistTick ^= 1;
@@ -1613,7 +1588,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			menu.rows[color1].					SetDefaultChoiceIfPresent( bgChange.m_def.m_sColor1 );
 			menu.rows[color2].					SetDefaultChoiceIfPresent( bgChange.m_def.m_sColor2 );
 
-			EditMiniMenu( m_pBackgroundChangeMenu, SM_BackFromBGChange, SM_None, &g_BackgroundChange );
+			EditMiniMenu( &g_BackgroundChange, SM_BackFromBGChange );
 		}
 		break;
 
@@ -1645,7 +1620,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				}
 			}
 
-			EditMiniMenu( m_pCourseModeMenu, SM_BackFromCourseModeMenu, SM_None, &g_CourseMode );
+			EditMiniMenu( &g_CourseMode, SM_BackFromCourseModeMenu );
 		}
 		break;
 	case EDIT_BUTTON_OPEN_COURSE_ATTACK_MENU:
@@ -1664,7 +1639,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			
 			g_InsertCourseAttack.rows[remove].bEnabled = bAnyAttackAtThisBeat;
 
-			EditMiniMenu( m_pInsertCourseAttackMenu, SM_BackFromInsertCourseAttack, SM_None, &g_InsertCourseAttack );
+			EditMiniMenu( &g_InsertCourseAttack, SM_BackFromInsertCourseAttack );
 		}
 		break;
 	case EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP:
@@ -2038,6 +2013,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 		/* Reset the note skin, in case preferences have changed. */
 		// XXX
 		// GAMESTATE->ResetNoteSkins();
+		//GAMESTATE->res
 
 		break;
 	}
@@ -2562,7 +2538,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_StepsInformation.rows[air].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetAirRadarValue(m_NoteDataEdit,fMusicSeconds)) );
 				g_StepsInformation.rows[freeze].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetFreezeRadarValue(m_NoteDataEdit,fMusicSeconds)) );
 				g_StepsInformation.rows[chaos].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetChaosRadarValue(m_NoteDataEdit,fMusicSeconds)) );
-				EditMiniMenu( m_pStepsInformation, SM_BackFromStepsInformation, SM_None, &g_StepsInformation );
+				EditMiniMenu( &g_StepsInformation, SM_BackFromStepsInformation, SM_None );
 			}
 			break;
 		case play_whole_song:
@@ -2665,7 +2641,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_SongInformation.rows[sub_title_transliteration].SetOneUnthemedChoice( pSong->m_sSubTitleTranslit );
 				g_SongInformation.rows[artist_transliteration].SetOneUnthemedChoice( pSong->m_sArtistTranslit );
 
-				EditMiniMenu( m_pSongInformation, SM_BackFromSongInformation, SM_None, &g_SongInformation );
+				EditMiniMenu( &g_SongInformation, SM_BackFromSongInformation );
 			}
 			break;
 		case edit_bpm:

@@ -37,6 +37,19 @@ function JudgmentTransformCommand( self, pn, mp, iEnabledPlayerIndex, iNumEnable
 	end
 end
 
+function GetEditModeSubScreens()
+	return
+		"ScreenMiniMenuEditHelp," ..
+		"ScreenMiniMenuMainMenu," ..
+		"ScreenMiniMenuAreaMenu," ..
+		"ScreenMiniMenuStepsInformation," ..
+		"ScreenMiniMenuSongInformation," ..
+		"ScreenMiniMenuBackgroundChange," ..
+		"ScreenMiniMenuInsertTapAttack," ..
+		"ScreenMiniMenuInsertCourseAttack," ..
+		"ScreenMiniMenuCourseDisplay";
+end
+
 function GetCoursesToShowRanking()
 	local CoursesToShowRanking = PREFSMAN:GetPreference("CoursesToShowRanking")
 	if CoursesToShowRanking ~= "" then return CoursesToShowRanking end
