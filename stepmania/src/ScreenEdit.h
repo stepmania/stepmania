@@ -203,22 +203,22 @@ protected:
 	BitmapText		m_textPlayRecordHelp;
 
 	// keep track of where we are and what we're doing
-	float				m_fTrailingBeat;	// this approaches GAMESTATE->m_fSongBeat, which is the actual beat
+	float			m_fTrailingBeat;	// this approaches GAMESTATE->m_fSongBeat, which is the actual beat
 	/* The location we were at when shift was pressed, or
 	 * -1 when shift isn't pressed: */
 	int m_iShiftAnchor;
 
-	NoteData			m_Clipboard;
-	bool				m_bHasUndo;
-	NoteData			m_Undo;
+	NoteData		m_Clipboard;
+	bool			m_bHasUndo;
+	NoteData		m_Undo;
 
-	RageSound			m_soundAddNote;
-	RageSound			m_soundRemoveNote;
-	RageSound			m_soundChangeLine;
-	RageSound			m_soundChangeSnap;
-	RageSound			m_soundMarker;
-	RageSound			m_soundSwitch;
-	RageSound			m_soundSave;
+	RageSound		m_soundAddNote;
+	RageSound		m_soundRemoveNote;
+	RageSound		m_soundChangeLine;
+	RageSound		m_soundChangeSnap;
+	RageSound		m_soundMarker;
+	RageSound		m_soundSwitch;
+	RageSound		m_soundSave;
 
 	// used for reverting
 	void CopyToLastSave();
@@ -244,7 +244,7 @@ protected:
 	bool			m_bReturnToRecordMenuAfterPlay;
 
 // for MODE_RECORD and MODE_PLAY
-	int				m_iStartPlayingAt, m_iStopPlayingAt;
+	int			m_iStartPlayingAt, m_iStopPlayingAt;
 	float			m_fBeatToReturnTo;
 
 	RageSound		m_soundMusic;
