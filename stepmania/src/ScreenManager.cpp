@@ -602,19 +602,6 @@ void ScreenManager::RunConcurrentlyPrepareScreen()
 	SendMessageToTopScreen( SM );
 }
 
-void ScreenManager::PushScreen( Screen *pNewScreen, bool bDeleteWhenDone, ScreenMessage SendOnPop )
-{
-	if( g_ScreenStack.size() )
-		g_ScreenStack.back().m_pScreen->HandleScreenMessage( SM_LoseFocus );
-
-	LoadedScreen ls;
-	ls.m_pScreen = pNewScreen;
-	ls.m_bDeleteWhenDone = bDeleteWhenDone;
-	ls.m_SendOnPop = SendOnPop;
-
-	PushLoadedScreen( ls );
-}
-
 void ScreenManager::SetNewScreen( const RString &sScreenName )
 {
 	ASSERT( sScreenName != "" );

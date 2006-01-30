@@ -37,10 +37,8 @@ public:
 	void PersistantScreen( const RString &sScreenName );
 	bool ConcurrentlyPrepareScreen( const RString &sScreenName, ScreenMessage send_when_done = SM_None );
 	bool IsConcurrentlyLoading() const;
-	void PushScreen( Screen *pNewScreen, bool bDeleteWhenDone=false, ScreenMessage SendOnPop=SM_None );
 	void PopTopScreen( ScreenMessage SM );
 	void PopAllScreens();
-	Screen* MakeNewScreen( const RString &sName );
 	Screen *GetTopScreen();
 
 	// System messages
@@ -82,6 +80,7 @@ private:
 	// operations take a long time, and will cause a skip on the next update.
 	bool				m_bZeroNextUpdate;
 
+	Screen *MakeNewScreen( const RString &sName );
 	void LoadDelayedScreen();
 	Screen *ActivatePreparedScreenAndBackground( const RString &sScreenName );
 	ScreenMessage PopTopScreenInternal( bool bSendLoseFocus = true );
