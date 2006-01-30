@@ -571,7 +571,8 @@ void OptionRow::UpdateEnabledDisabled()
 	if( m_Frame.DestTweenState() != m_tsDestination )
 	{
 		m_Frame.StopTweening();
-		m_Frame.BeginTweening( m_pParentType->TWEEN_SECONDS );
+		if( m_pParentType->TWEEN_SECONDS != 0 )
+			m_Frame.BeginTweening( m_pParentType->TWEEN_SECONDS );
 		m_Frame.DestTweenState() = m_tsDestination;
 	}
 
