@@ -29,6 +29,7 @@ void ScreenSelectMaster::Init()
 	SHOW_SCROLLER.Load( m_sName, "ShowScroller" );
 	SHOW_CURSOR.Load( m_sName, "ShowCursor" );
 	SHARED_SELECTION.Load( m_sName, "SharedSelection" );
+	USE_ICON_METRICS.Load( m_sName, "UseIconMetrics" );
 	NUM_CHOICES_ON_PAGE_1.Load( m_sName, "NumChoicesOnPage1" );
 	CURSOR_OFFSET_X_FROM_ICON.Load( m_sName, CURSOR_OFFSET_X_FROM_ICON_NAME, NUM_PLAYERS );
 	CURSOR_OFFSET_Y_FROM_ICON.Load( m_sName, CURSOR_OFFSET_Y_FROM_ICON_NAME, NUM_PLAYERS );
@@ -103,8 +104,8 @@ void ScreenSelectMaster::Init()
 				vs.push_back( "Choice" + mc.m_sName );
 			RString sElement = join( " ", vs );
 			m_vsprIcon[c].Load( THEME->GetPathG(m_sName,sElement) );
-			sElement.Replace( " ", "" );
-			m_vsprIcon[c]->SetName( sElement );
+			RString sName = "Icon" "Choice" + mc.m_sName;
+			m_vsprIcon[c]->SetName( sName );
 			this->AddChild( m_vsprIcon[c] );
 		}
 
@@ -114,15 +115,17 @@ void ScreenSelectMaster::Init()
 			FOREACH( PlayerNumber, vpns, p )
 			{
 				vector<RString> vs;
-				vs.push_back( "scroll" );
+				vs.push_back( "Scroll" );
 				if( PER_CHOICE_SCROLL_ELEMENT )
-					vs.push_back( "choice" + mc.m_sName );
+					vs.push_back( "Choice" + mc.m_sName );
 				if( !SHARED_SELECTION )
 					vs.push_back( PLAYER_APPEND_NO_SPACE(*p) );
 				RString sElement = join( " ", vs );
 				m_vsprScroll[*p][c].Load( THEME->GetPathG(m_sName,sElement) );
-				sElement.Replace( " ", "" );
-				m_vsprScroll[*p][c]->SetName( sElement );
+				RString sName = "Scroll" "Choice" + mc.m_sName;
+				if( !SHARED_SELECTION )
+					sName += PLAYER_APPEND_NO_SPACE(*p);
+				m_vsprScroll[*p][c]->SetName( sName );
 				m_Scroller[*p].AddChild( m_vsprScroll[*p][c] );
 			}
 
@@ -776,7 +779,10 @@ void ScreenSelectMaster::TweenOnScreen()
 		{
 			m_vsprIcon[c]->PlayCommand( (int(c) == m_iChoice[0])? "GainFocus":"LoseFocus" );
 			m_vsprIcon[c]->FinishTweening();
-			SET_XY_AND_ON_COMMAND( m_vsprIcon[c] );
+			if( USE_ICON_METRICS )
+				SET_XY_AND_ON_COMMAND( m_vsprIcon[c] );
+			else
+				m_vsprIcon[c]->PlayCommand( "On" );
 		}
 	}
 
@@ -849,23 +855,27 @@ void ScreenSelectMaster::TweenOffScreen()
 		if( GetPage(c) != GetCurrentPage() )
 			continue;	// skip
 
-		bool SelectedByEitherPlayer = false;
+		bool bSelectedByEitherPlayer = false;
 		FOREACH( PlayerNumber, vpns, p )
 		{
 			if( m_iChoice[*p] == (int)c )
-				SelectedByEitherPlayer = true;
+				bSelectedByEitherPlayer = true;
 		}
 
 		if( SHOW_ICON )
 		{
-			OFF_COMMAND( m_vsprIcon[c] );
-			m_vsprIcon[c]->PlayCommand( SelectedByEitherPlayer? "OffFocused":"OffUnfocused" );
+			if( USE_ICON_METRICS )
+				OFF_COMMAND( m_vsprIcon[c] );
+			else
+				m_vsprIcon[c]->PlayCommand( "Off" );
+
+			m_vsprIcon[c]->PlayCommand( bSelectedByEitherPlayer? "OffFocused":"OffUnfocused" );
 		}
 
 		if( SHOW_SCROLLER )
 		{
 			FOREACH( PlayerNumber, vpns, p )
-				COMMAND( m_vsprScroll[*p][c], SelectedByEitherPlayer? "OffFocused":"OffUnfocused" );
+				m_vsprScroll[*p][c]->PlayCommand( bSelectedByEitherPlayer? "OffFocused":"OffUnfocused" );
 		}
 	}
 
