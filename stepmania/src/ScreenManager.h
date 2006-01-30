@@ -66,19 +66,19 @@ public:
 	void	PlaySharedBackgroundOffCommand();
 	void    ZeroNextUpdate();
 private:
-	Screen				*m_pInputFocus; // NULL = top of m_ScreenStack
+	Screen		*m_pInputFocus; // NULL = top of m_ScreenStack
 
-	RString				m_sSystemMessage;
+	RString		m_sSystemMessage;
 	
 	// Screen loads, removals, and concurrent prepares are delayed until the next update.
-	RString				m_sDelayedScreen;
-	RString				m_sDelayedConcurrentPrepare;
-	ScreenMessage		m_OnDonePreparingScreen;
-	ScreenMessage		m_PopTopScreen;
+	RString		m_sDelayedScreen;
+	RString		m_sDelayedConcurrentPrepare;
+	ScreenMessage	m_OnDonePreparingScreen;
+	ScreenMessage	m_PopTopScreen;
 
 	// Set this to true anywhere we create of delete objects.  These 
 	// operations take a long time, and will cause a skip on the next update.
-	bool				m_bZeroNextUpdate;
+	bool		m_bZeroNextUpdate;
 
 	Screen *MakeNewScreen( const RString &sName );
 	void LoadDelayedScreen();
