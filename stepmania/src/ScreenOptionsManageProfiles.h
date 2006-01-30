@@ -9,8 +9,6 @@ class Course;
 class ScreenOptionsManageProfiles : public ScreenOptions
 {
 public:
-	~ScreenOptionsManageProfiles();
-
 	void Init();
 	virtual void BeginScreen();
 
@@ -27,8 +25,6 @@ protected:
 	RString GetLocalProfileIDWithFocus() const;
 
 	vector<RString> m_vsLocalProfileID;
-
-	ScreenMiniMenu *m_pContextMenu;
 };
 
 #endif

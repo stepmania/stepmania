@@ -76,22 +76,12 @@ static bool ValidateLocalProfileName( const RString &sAnswer, RString &sErrorOut
 
 REGISTER_SCREEN_CLASS( ScreenOptionsManageProfiles );
 
-ScreenOptionsManageProfiles::~ScreenOptionsManageProfiles()
-{
-	SAFE_DELETE( m_pContextMenu );
-}
-
 void ScreenOptionsManageProfiles::Init()
 {
 	ScreenOptions::Init();
 
 	SetNavigation( NAV_THREE_KEY_MENU );
 	SetInputMode( INPUTMODE_SHARE_CURSOR );
-
-	m_pContextMenu = new ScreenMiniMenu;
-	m_pContextMenu->SetName( g_TempMenu.sClassName );
-	m_pContextMenu->Init();
-	m_pContextMenu->LoadMenu( &g_TempMenu );
 }
 
 void ScreenOptionsManageProfiles::BeginScreen()
@@ -349,11 +339,7 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( const InputEventPlus &input 
 		int iWidth, iX, iY;
 		this->GetWidthXY( PLAYER_1, iCurRow, 0, iWidth, iX, iY );
 
-		m_pContextMenu->LoadMenu( &g_TempMenu );
-		m_pContextMenu->SetOKMessage( SM_BackFromContextMenu );
-		m_pContextMenu->SetCancelMessage( SM_BackFromContextMenu );
-		m_pContextMenu->SetXY( (float)iX, (float)iY );
-		SCREENMAN->PushScreen( m_pContextMenu );
+		ScreenMiniMenu::MiniMenu( &g_TempMenu, SM_BackFromContextMenu, SM_BackFromContextMenu, (float)iX, (float)iY );
 	}
 }
 
