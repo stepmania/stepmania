@@ -1,0 +1,644 @@
+# XXX: SCons spews bizarre errors if this isn't done before the main configure
+# context is created.
+gtkenv = Environment()
+
+endian_test_C = """
+#include <endian.h>
+
+int main(int argc, char** argv)
+{
+	if(__BYTE_ORDER == __BIG_ENDIAN)
+		return 0;
+	else
+		return 1;
+}
+"""
+
+def EndianTestPosix(context):
+	context.Message("Checking system endianness...")
+	if context.TryLink(endian_test_C, ".c"):
+		if context.TryRun(endian_test_C, ".c")[0]:
+			context.Result(2)
+			return 2
+		else:
+			context.Result(1)
+			return 1
+	context.Result(0)
+	return 0
+
+
+Have_GTK = False
+
+if gtkenv['PLATFORM'] == 'posix':
+	gtkenv.ParseConfig('pkg-config --cflags --libs gtk+-2.0')
+	gtkconf = Configure(gtkenv, custom_tests = {'EndianTestPosix' : EndianTestPosix } )
+	if gtkconf.CheckLib('', 'gtk_main_iteration_do'):
+		Have_GTK = True
+	endian = gtkconf.EndianTestPosix()
+	if endian == 2:
+		gtkenv.Append(CPPFLAGS="-DENDIAN_BIG")
+	elif endian == 1:
+		gtkenv.Append(CPPFLAGS="-DENDIAN_LITTLE")
+	else:
+		print "Endian test failed to compile/link! Bailing!"
+		Exit(1)
+
+gtkconf.Finish()
+if Have_GTK:
+	gtkenv.Append(CPPPATH=["."])
+	gtkenv.SharedLibrary('GtkModule', [ 'arch/LoadingWindow/LoadingWindow_GtkModule.cpp' ])
+	gtkenv.Command('GtkModule.so', 'libGtkModule.so', 'cp $SOURCE $TARGET')
+
+env = Environment()
+
+# NOPORT HACK: Does this cause problems on systems that don't need it? I don't know what to check for...
+# XXX: Compilation is broken without -DCRASH_HANDLER
+Our_Cflags = "-DNEED_CSTDLIB_WORKAROUND -DCRASH_HANDLER"
+# XXX We should check for these.
+Our_Libs = ["lua", "lualib", "jpeg", "png", "gif", "rt"]
+
+arch_test_C = """
+#include <stdio.h>
+
+int main(int argc, char** argv)
+{
+	#if defined(__i386__)
+	printf("x86");
+	#elif defined(__ppc__)
+	printf("ppc");
+	#else
+	return 1;
+	#endif
+	return 0;
+}
+"""
+
+def ArchTest(context):
+	context.Message("Determining CPU arch...")
+	ct = context.TryRun(arch_test_C, '.c')
+	if ct[0] == 0:
+		context.Result(0)
+		return 0
+	if ct[1] == "x86":
+		context.Result(1)
+		return 1
+	elif ct[1] == "ppc":
+		context.Result(2)
+		return 2;
+
+conf = Configure(env, custom_tests = {'EndianTestPosix' : EndianTestPosix, 'ArchTest' : ArchTest });
+
+if env['PLATFORM'] == 'posix':
+	endian = conf.EndianTestPosix()
+	if endian == 2:
+		Our_Cflags += " -DENDIAN_BIG"
+	elif endian == 1:
+		Our_Cflags += " -DENDIAN_LITTLE"
+	else:
+		print "Endian test failed to compile/link! Bailing!"
+		Exit(1)
+
+cpuTypeI = conf.ArchTest()
+if cpuTypeI == 1:
+	Our_Cflags += " -DCPU_X86"
+	if env['PLATFORM'] == 'posix':
+		# NOPORT: Again, assuming Linux
+		Our_Cflags += " -DBACKTRACE_METHOD_X86_LINUX"
+elif cpuTypeI == 2:
+	Our_Cflags += " -DCPU_PPC"
+else:
+	print "Couldn't determine CPU type! Bailing!"
+	Exit(1)
+
+Screens = [
+	"Screen.cpp",
+	"ScreenAttract.cpp",
+	"ScreenBookkeeping.cpp",
+	"ScreenCenterImage.cpp",
+	"ScreenCredits.cpp",
+	"ScreenDebugOverlay.cpp",
+	"ScreenDemonstration.cpp",
+	"ScreenEdit.cpp",
+	"ScreenEditCourseMods.cpp",
+	"ScreenEditMenu.cpp",
+	"ScreenEnding.cpp",
+	"ScreenEvaluation.cpp",
+	"ScreenEvaluationMultiplayer.cpp",
+	"ScreenExit.cpp",
+	"ScreenNetEvaluation.cpp",
+	"ScreenNetSelectMusic.cpp",
+	"ScreenNetSelectBase.cpp",
+	"ScreenNetRoom.cpp",
+	"ScreenEz2SelectMusic.cpp",
+	"ScreenEz2SelectPlayer.cpp",
+	"ScreenGameplay.cpp",
+	"ScreenGameplayLesson.cpp",
+	"ScreenGameplayMultiplayer.cpp",
+	"ScreenGameplayNormal.cpp",
+	"ScreenHowToPlay.cpp",
+	"ScreenInstructions.cpp",
+	"ScreenJoinMultiplayer.cpp",
+	"ScreenJukebox.cpp",
+	"ScreenMapControllers.cpp",
+	"ScreenMessage.cpp",
+	"ScreenMiniMenu.cpp",
+	"ScreenMusicScroll.cpp",
+	"ScreenNameEntry.cpp",
+	"ScreenNameEntryTraditional.cpp",
+	"ScreenOptions.cpp",
+	"ScreenOptionsEditCourse.cpp",
+	"ScreenOptionsEditCourseEntry.cpp",
+	"ScreenOptionsEditProfile.cpp",
+	"ScreenOptionsManageCourses.cpp",
+	"ScreenOptionsManageEditSteps.cpp",
+	"ScreenOptionsManageProfiles.cpp",
+	"ScreenOptionsMaster.cpp",
+	"ScreenOptionsMasterPrefs.cpp",
+	"ScreenPackages.cpp",
+	"ScreenPlayerOptions.cpp",
+	"ScreenNetworkOptions.cpp",
+	"ScreenPrompt.cpp",
+	"ScreenRanking.cpp",
+	"ScreenReloadSongs.cpp",
+	"ScreenSandbox.cpp",
+	"ScreenSaveSync.cpp",
+	"ScreenServiceAction.cpp",
+	"ScreenStatsOverlay.cpp",
+	"ScreenSelect.cpp",
+	"ScreenSelectCharacter.cpp",
+	"ScreenSelectDifficulty.cpp",
+	"ScreenSelectGroup.cpp",
+	"ScreenSelectMaster.cpp",
+	"ScreenSelectMode.cpp",
+	"ScreenSelectMusic.cpp",
+	"ScreenSelectStyle.cpp",
+	"ScreenSyncOverlay.cpp",
+	"ScreenSystemLayer.cpp",
+	"ScreenSetTime.cpp",
+	"ScreenSongOptions.cpp",
+	"ScreenSplash.cpp",
+	"ScreenStage.cpp",
+	"ScreenTest.cpp",
+	"ScreenTestFonts.cpp",
+	"ScreenTestInput.cpp",
+	"ScreenTestLights.cpp",
+	"ScreenTestSound.cpp",
+	"ScreenTextEntry.cpp",
+	"ScreenTitleMenu.cpp",
+	"ScreenUnlockStatus.cpp",
+	"ScreenWithMenuElements.cpp",
+]
+
+DataStructures = [
+	"ActorCommands.cpp",
+	"Attack.cpp",
+	"AutoKeysounds.cpp",
+	"BackgroundUtil.cpp",
+	"BannerCache.cpp",
+	"CatalogXml.cpp",
+	"Character.cpp",
+	"CodeDetector.cpp",
+	"Command.cpp",
+	"CommonMetrics.cpp",
+	"Course.cpp",
+	"CourseLoaderCRS.cpp",
+	"CourseUtil.cpp",
+	"CourseWriterCRS.cpp",
+	"DateTime.cpp",
+	"Difficulty.cpp",
+	"EnumHelper.cpp",
+	"Font.cpp",
+	"FontCharAliases.cpp",
+	"FontCharmaps.cpp",
+	"Game.cpp",
+	"GameCommand.cpp",
+	"GameConstantsAndTypes.cpp",
+	"GameInput.cpp",
+	"Grade.cpp", 
+	"HighScore.cpp",
+	"Inventory.cpp",
+	"LocalizedString.cpp",
+	"LuaReference.cpp",
+	"LuaExpressionTransform.cpp",
+	"LyricsLoader.cpp",
+	"MenuInput.cpp",
+	"NoteData.cpp",
+	"NoteDataUtil.cpp",
+	"NoteDataWithScoring.cpp",
+	"NoteFieldPositioning.cpp",
+	"NoteTypes.cpp",
+	"NotesLoader.cpp",
+	"NotesLoaderBMS.cpp",
+	"NotesLoaderDWI.cpp",
+	"NotesLoaderKSF.cpp",
+	"NotesLoaderSM.cpp",
+	"NotesWriterDWI.cpp",
+	"NotesWriterSM.cpp",
+	"OptionRowHandler.cpp",
+	"PlayerAI.cpp",
+	"PlayerNumber.cpp",
+	"PlayerOptions.cpp",
+	"PlayerStageStats.cpp",
+	"PlayerState.cpp",
+	"Preference.cpp",
+	"Profile.cpp",
+	"RandomSample.cpp",
+	"RadarValues.cpp",
+	"RoomWheel.cpp",
+	"ScreenDimensions.cpp",
+	"ScoreKeeperNormal.cpp",
+	"ScoreKeeperRave.cpp",
+	"Song.cpp",
+	"SongCacheIndex.cpp",
+	"SongOptions.cpp",
+	"SongUtil.cpp",
+	"StageStats.cpp",
+	"Steps.cpp",
+	"StepsUtil.cpp",
+	"Style.cpp",
+	"StyleUtil.cpp",
+	"TimingData.cpp",
+	"Trail.cpp",
+	"TrailUtil.cpp",
+	"TitleSubstitution.cpp",
+	"Tween.cpp",
+]
+
+FileTypes = [
+	"IniFile.cpp",
+	"MsdFile.cpp",
+	"XmlFile.cpp",
+	"XmlFileUtil.cpp",
+]
+
+StepMania = [
+	"StepMania.cpp",
+	"GameLoop.cpp",
+	"global.cpp",
+	"SpecialFiles.cpp",
+]
+
+Sound = [
+	"arch/Sound/RageSoundDriver_Null.cpp",
+	"arch/Sound/RageSoundDriver_Generic_Software.cpp",
+]
+
+Lights = [
+	"arch/Lights/LightsDriver_SystemMessage.cpp",
+]
+
+MemoryCard = [
+	"arch/MemoryCard/MemoryCardDriver.cpp",
+]
+
+Dialog = [
+	"arch/Dialog/Dialog.cpp",
+]
+
+RageSoundFileReaders = [
+	"RageSoundReader_WAV.cpp",
+]
+
+ArchHooks = [
+	'arch/ArchHooks/ArchHooks.cpp',
+	'arch/ArchHooks/ArchHooksUtil.cpp',
+]
+
+MovieTexture = [
+	"arch/MovieTexture/MovieTexture.cpp",
+	"arch/MovieTexture/MovieTexture_Null.cpp",
+]
+
+InputHandler = [
+	"arch/InputHandler/InputHandler.cpp",
+	"arch/InputHandler/InputHandler_MonkeyKeyboard.cpp",
+]
+
+LowLevelWindow = []
+Threads = []
+LoadingWindow = []
+ArchUtils = []
+
+# # # Detection stuff here, it's easiest
+
+if conf.CheckLib('vorbisfile', 'ov_info'):
+	Our_Libs += [ 'vorbisfile' ]
+	RageSoundFileReaders += [ "RageSoundReader_Vorbisfile.cpp" ]
+else:
+	Our_Cflags += " -DNO_VORBIS_SUPPORT"
+
+if conf.CheckLib('mad', 'mad_stream_buffer'):
+	Our_Libs += [ 'mad' ]
+	RageSoundFileReaders += [ "RageSoundReader_MP3.cpp" ]
+else:
+	Our_Cflags += " -DNO_MP3_SUPPORT"
+
+if not conf.CheckLib('GL', 'glGetError'):
+	print "Can't find suitable OpenGL library."
+	Exit(1)
+
+if not conf.CheckLib('GLU', 'gluErrorString'):
+	print "Can't find suitable GLU library."
+	Exit(1)
+
+Our_Libs += [ "GL", "GLU" ]
+
+if env['PLATFORM'] == 'posix':
+	if not conf.CheckLib('pthread', 'pthread_join'):
+		print "Pthread not present! Your system is insane! Bailing!"
+		Exit(1)
+	Our_Libs += [ 'pthread' ]
+	# NOPORT: This assumes Linux. I don't know how to check for say, FreeBSD or even OS X vs. Linux.
+	Our_Cflags += " -DUNIX -DLINUX"
+	Our_Cflags += " -DBACKTRACE_METHOD_TEXT=\"\\\"FIXME\\\"\"" # Only #define I can find in the whole codebase
+				#XXX ^ Why is the builder supposed to define this?
+	Our_Cflags += " -DBACKTRACE_LOOKUP_METHOD_TEXT=\"\\\"FIXME\\\"\""
+				#XXX ^ and again!
+	Our_Cflags
+	ArchUtils += [ 
+		"archutils/Unix/LinuxThreadHelpers.cpp",
+		"archutils/Unix/RunningUnderValgrind.cpp",
+		"archutils/Unix/EmergencyShutdown.cpp",
+		"archutils/Unix/GetSysInfo.cpp",
+		"archutils/Unix/AssertionHandler.cpp",
+		"archutils/Unix/SignalHandler.cpp",
+		"archutils/Unix/CrashHandler.cpp",
+		"archutils/Unix/CrashHandlerChild.cpp",
+		"archutils/Unix/Backtrace.cpp",
+		"archutils/Unix/BacktraceNames.cpp",
+	]
+	if not conf.CheckLib('rt', 'clock_gettime'):
+		print "librt is missing?"
+		Exit(1)
+	ArchHooks += [ "arch/ArchHooks/ArchHooks_Unix.cpp" ]
+	Threads += [ "arch/Threads/Threads_Pthreads.cpp" ]
+	Lights += [ "arch/Lights/LightsDriver_LinuxWeedTech.cpp", "arch/Lights/LightsDriver_LinuxParallel.cpp" ]
+	MemoryCard += [ "arch/MemoryCard/MemoryCardDriverThreaded_Linux.cpp" ]
+	InputHandler += [ "arch/InputHandler/InputHandler_Linux_Joystick.cpp" ]
+
+if Have_GTK:
+	Our_Cflags += " -DHAVE_GTK"
+	LoadingWindow += [ "arch/LoadingWindow/LoadingWindow_Gtk.cpp" ]
+
+# REMEMBER, only ONE LowLevelWindow!
+if conf.CheckLib('X11', 'XMapWindow') and conf.CheckLib('Xrandr', 'XRRSizes'):
+	Our_Cflags += " -DHAVE_X11"
+	Our_Libs += [ "X11", "Xrandr" ]
+	ArchUtils += [ "archutils/Unix/X11Helper.cpp" ]
+	LowLevelWindow += [ "arch/LowLevelWindow/LowLevelWindow_X11.cpp" ]
+	InputHandler += [ "arch/InputHandler/InputHandler_X11.cpp" ]
+
+Arch = LoadingWindow + Sound + ArchHooks + InputHandler + MovieTexture +\
+		Lights + MemoryCard + LowLevelWindow + ArchUtils + Dialog +\
+		Threads + [
+	"arch/arch.cpp",
+]
+
+ActorsInGameplayAndMenus = [
+	"BGAnimation.cpp",
+	"BGAnimationLayer.cpp",
+	"Banner.cpp",
+	"DifficultyIcon.cpp",
+	"MeterDisplay.cpp",
+	"StreamDisplay.cpp",
+	"Transition.cpp",
+]
+
+ActorsInMenus = [
+	"ActiveAttackList.cpp",
+	"BPMDisplay.cpp",
+	"ComboGraph.cpp",
+	"ControllerStateDisplay.cpp",
+	"CourseContentsList.cpp",
+	"CourseEntryDisplay.cpp",
+	"DifficultyDisplay.cpp",
+	"DifficultyList.cpp",
+	"DifficultyMeter.cpp",
+	"DifficultyRating.cpp",
+	"DualScrollBar.cpp",
+	"EditMenu.cpp",
+	"FadingBanner.cpp",
+	"GradeDisplay.cpp",
+	"GraphDisplay.cpp",
+	"GrooveRadar.cpp",
+	"GroupList.cpp",
+	"HelpDisplay.cpp",
+	"MemoryCardDisplay.cpp",
+	"MenuTimer.cpp",
+	"ModeSwitcher.cpp",
+	"MusicBannerWheel.cpp",
+	"MusicList.cpp",
+	"MusicSortDisplay.cpp",
+	"MusicWheel.cpp",
+	"MusicWheelItem.cpp",
+	"OptionIcon.cpp",
+	"OptionIconRow.cpp",
+	"OptionRow.cpp",
+	"OptionsCursor.cpp",
+	"PaneDisplay.cpp",
+	"ScrollBar.cpp",
+	"ScrollingList.cpp",
+	"SnapDisplay.cpp",
+	"TextBanner.cpp",
+	"WheelBase.cpp",
+	"WheelItemBase.cpp",
+	"WheelNotifyIcon.cpp",
+]
+
+ActorsInGameplay = [
+	"ArrowEffects.cpp",
+	"AttackDisplay.cpp",
+	"Background.cpp",
+	"BeginnerHelper.cpp",
+	"CombinedLifeMeterTug.cpp",
+	"Combo.cpp",
+	"DancingCharacters.cpp",
+	"Foreground.cpp",
+	"GhostArrowRow.cpp",
+	"HoldJudgment.cpp",
+	"Judgment.cpp",
+	"LifeMeter.cpp",
+	"LifeMeterBar.cpp",
+	"LifeMeterBattery.cpp",
+	"LifeMeterTime.cpp",
+	"LyricDisplay.cpp",
+	"NoteDisplay.cpp",
+	"NoteField.cpp",
+	"PercentageDisplay.cpp",
+	"Player.cpp",
+	"PlayerScoreList.cpp",
+	"ReceptorArrow.cpp",
+	"ReceptorArrowRow.cpp",
+	"ScoreDisplay.cpp",
+	"ScoreDisplayBattle.cpp",
+	"ScoreDisplayCalories.cpp",
+	"ScoreDisplayLifeTime.cpp",
+	"ScoreDisplayNormal.cpp",
+	"ScoreDisplayOni.cpp",
+	"ScoreDisplayPercentage.cpp",
+	"ScoreDisplayRave.cpp",
+]
+
+PCRE = [
+	"pcre/chartables.c",
+	"pcre/get.c",
+	"pcre/maketables.c",
+	"pcre/pcre.c",
+	"pcre/study.c",
+]
+
+RageFile = [
+	"RageFileBasic.cpp",
+	"RageFile.cpp",
+	"RageFileDriver.cpp",
+	"RageFileManager.cpp",
+	"RageFileDriverDirect.cpp",
+	"RageFileDriverDirectHelpers.cpp",
+	"RageFileDriverMemory.cpp",
+	"RageFileDriverZip.cpp",
+	"RageFileDriverDeflate.cpp",
+	"RageFileDriverSlice.cpp",
+	"RageFileDriverTimeout.cpp",
+]
+
+Rage = PCRE + RageFile + RageSoundFileReaders + [
+	"RageBitmapTexture.cpp",
+	"RageDisplay.cpp",
+	"RageDisplay_OGL.cpp", # XXX: Should we require GL on Windows?
+	"RageDisplay_OGL_Extensions.cpp",
+	"RageDisplay_Null.cpp",
+	"RageException.cpp",
+	"RageInput.cpp",
+	"RageInputDevice.cpp",
+	"RageLog.cpp",
+	"RageMath.cpp",
+	"RageModelGeometry.cpp",
+	"RageSound.cpp",
+	"RageSoundManager.cpp",
+	"RageSoundUtil.cpp",
+	"RageSoundMixBuffer.cpp",
+	"RageSoundPosMap.cpp",
+	"RageSoundReader_FileReader.cpp",
+	"RageSoundReader_Preload.cpp",
+	"RageSoundReader_Resample.cpp",
+	"RageSoundReader_Resample_Fast.cpp",
+	"RageSoundReader_Resample_Good.cpp",
+	"RageSoundReader_Chain.cpp",
+	"RageSurface.cpp",
+	"RageSurfaceUtils.cpp",
+	"RageSurfaceUtils_Dither.cpp",
+	"RageSurface_Save_JPEG.cpp",
+	"RageSurfaceUtils_Palettize.cpp",
+	"RageSurfaceUtils_Zoom.cpp",
+	"RageSurface_Load.cpp",
+	"RageSurface_Load_PNG.cpp", # XXX: Do we have libraries for all these image formats in the tree or something?
+	"RageSurface_Load_JPEG.cpp",
+	"RageSurface_Load_GIF.cpp",
+	"RageSurface_Load_BMP.cpp",
+	"RageSurface_Load_XPM.cpp",
+	"RageTexture.cpp",
+	"RageTexturePreloader.cpp",
+	"RageSurface_Save_BMP.cpp",
+	"RageTextureID.cpp",
+	"RageTextureManager.cpp",
+	"RageThreads.cpp",
+	"RageTimer.cpp",
+	"RageUtil.cpp",
+	"RageUtil_CharConversions.cpp",
+	"RageUtil_BackgroundLoader.cpp",
+	"RageUtil_FileDB.cpp",
+	"RageUtil_WorkerThread.cpp",
+]
+
+Actors = [
+	"Actor.cpp",
+	"ActorFrame.cpp",
+	"ActorScroller.cpp",
+	"ActorUtil.cpp",
+	"ActorSound.cpp",
+	"AutoActor.cpp",
+	"BitmapText.cpp",
+	"Model.cpp",
+	"DynamicActorScroller.cpp",
+	"ModelManager.cpp",
+	"ModelTypes.cpp",
+	"Quad.cpp",
+	"RollingNumbers.cpp",
+	"Sprite.cpp",
+]
+
+GlobalSingletons = [
+	"AnnouncerManager.cpp",
+	"Bookkeeper.cpp",
+	"CharacterManager.cpp",
+	"CryptManager.cpp",
+	"FontManager.cpp",
+	"GameSoundManager.cpp",
+	"GameManager.cpp",
+	"GameState.cpp",
+	"InputFilter.cpp",
+	"InputMapper.cpp",
+	"InputQueue.cpp",
+	"LuaBinding.cpp",
+	"LuaManager.cpp",
+	"LightsManager.cpp",
+	"MemoryCardManager.cpp",
+	"MessageManager.cpp",
+	"NetworkSyncManager.cpp",
+	"NetworkSyncServer.cpp",
+	"NoteSkinManager.cpp",
+	"PrefsManager.cpp",
+	"ProfileManager.cpp",
+	"ScreenManager.cpp",
+	"SongManager.cpp",
+	"StatsManager.cpp",
+	"ThemeManager.cpp",
+	"UnlockManager.cpp",
+]
+
+# XXX: This wouldn't be included if WITHOUT_NETWORKING, but I don't have that setting implemented (yet)
+Screens += [ "ScreenSMOnlineLogin.cpp" ]
+GlobalSingletons += [ "ezsockets.cpp" ]
+
+crypto = [
+	"crypto/CryptBn.cpp",
+	"crypto/CryptMD5.cpp",
+	"crypto/CryptNoise.cpp",
+	"crypto/CryptPrime.cpp",
+	"crypto/CryptRSA.cpp",
+	"crypto/CryptRand.cpp",
+	"crypto/CryptSH512.cpp",
+	"crypto/CryptSHA.cpp",
+]
+
+cryptopp = [
+	"crypto51/algebra.cpp",
+	"crypto51/algparam.cpp",
+	"crypto51/asn.cpp",
+	"crypto51/cryptlib.cpp",
+	"crypto51/files.cpp",
+	"crypto51/filters.cpp",
+	"crypto51/integer.cpp",
+	"crypto51/iterhash.cpp",
+	"crypto51/misc.cpp",
+	"crypto51/mqueue.cpp",
+	"crypto51/nbtheory.cpp",
+	"crypto51/osrng.cpp",
+	"crypto51/pkcspad.cpp",
+	"crypto51/pubkey.cpp",
+	"crypto51/queue.cpp",
+	"crypto51/rsa.cpp",
+	"crypto51/sha.cpp",
+	"CryptHelpers.cpp",
+]
+
+env = conf.Finish()
+
+env.Command("libresample/libresample.a", "", "cd src/libresample && ./configure && make")
+env.Program('stepmania',
+	Screens + DataStructures + FileTypes + StepMania + Arch +\
+	ActorsInGameplayAndMenus + ActorsInMenus + ActorsInGameplay + Rage +\
+	Actors + GlobalSingletons + crypto + cryptopp + [ "libresample/libresample.a" ],
+	CXXFLAGS=Our_Cflags, CPPPATH=["."], LIBS=Our_Libs
+)
+
