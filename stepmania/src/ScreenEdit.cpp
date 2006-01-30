@@ -808,18 +808,6 @@ void ScreenEdit::MakeFilteredMenuDef( const MenuDef* pDef, MenuDef &menu )
 	}
 }
 
-ScreenMiniMenu *ScreenEdit::LoadEditMiniMenu( const MenuDef* pDef )
-{
-	MenuDef menu("");
-	MakeFilteredMenuDef( pDef, menu );
-
-	ScreenMiniMenu *pScreen = new ScreenMiniMenu;
-	pScreen->SetName( pDef->sClassName );
-	Screen::InitScreen( pScreen );
-	pScreen->LoadMenu( &menu );
-	return pScreen;
-}
-
 void ScreenEdit::EditMiniMenu( const MenuDef* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel )
 {
 	/* Reload options. */
