@@ -220,9 +220,10 @@ protected:
 	int				m_iChoiceInRowWithFocus[NUM_PLAYERS];	// this choice has input focus
 	// Only one will true at a time if m_pHand->m_Def.bMultiSelect
 	vector<bool>			m_vbSelected[NUM_PLAYERS];	// size = m_pHand->m_Def.choices.size()
+	Actor::TweenState m_tsDestination;	// this should approach m_tsDestination.
 
 public:
-	Actor::TweenState m_tsDestination;	// this should approach m_tsDestination.
+	void SetDestination( Actor::TweenState &ts );
 protected:
 	bool m_bHidden; // currently off screen
 };

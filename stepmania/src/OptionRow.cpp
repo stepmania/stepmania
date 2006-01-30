@@ -556,6 +556,17 @@ void OptionRow::SetRowHasFocus( PlayerNumber pn, bool bRowHasFocus )
 	m_bRowHasFocus[pn] = bRowHasFocus;
 }
 
+void OptionRow::SetDestination( Actor::TweenState &ts )
+{
+	if( m_Frame.DestTweenState() != ts )
+	{
+		m_Frame.StopTweening();
+		if( m_pParentType->TWEEN_SECONDS != 0 )
+			m_Frame.BeginTweening( m_pParentType->TWEEN_SECONDS );
+		m_Frame.DestTweenState() = ts;
+	}
+}
+
 void OptionRow::UpdateEnabledDisabled()
 {
 	bool bThisRowHasFocusByAny = false;
@@ -568,14 +579,6 @@ void OptionRow::UpdateEnabledDisabled()
 	
 	bool bRowEnabled = !m_pHand->m_Def.m_vEnabledForPlayers.empty();
 	
-	if( m_Frame.DestTweenState() != m_tsDestination )
-	{
-		m_Frame.StopTweening();
-		if( m_pParentType->TWEEN_SECONDS != 0 )
-			m_Frame.BeginTweening( m_pParentType->TWEEN_SECONDS );
-		m_Frame.DestTweenState() = m_tsDestination;
-	}
-
 	if( bThisRowHasFocusByAny )
 		m_textTitle->RunCommands( m_pParentType->TITLE_GAIN_FOCUS_COMMAND );
 	else
