@@ -86,7 +86,7 @@ protected:
 
 	bool			m_bPaused;
 	float			m_fOffset[SAMPLE_COUNT]; // for AutoSync
-	int				m_iOffsetSample;
+	int			m_iOffsetSample;
 
 	NoteField		*m_pNoteField;
 
@@ -95,54 +95,54 @@ protected:
 	Judgment		*m_pJudgment;
 	AutoActor		m_sprJudgmentFrame;
 	
-	ControllerStateDisplay		*m_pControllerStateDisplay;
+	ControllerStateDisplay	*m_pControllerStateDisplay;
 	
 	Combo			*m_pCombo;
 
-	AttackDisplay	*m_pAttackDisplay;
+	AttackDisplay		*m_pAttackDisplay;
 
 	TapNoteScore		m_LastTapNoteScore;
-	LifeMeter*			m_pLifeMeter;
+	LifeMeter*		m_pLifeMeter;
 	CombinedLifeMeter*	m_pCombinedLifeMeter;
 	ScoreDisplay*		m_pScoreDisplay;
 	ScoreDisplay*		m_pSecondaryScoreDisplay;
 	ScoreKeeper*		m_pPrimaryScoreKeeper;
 	ScoreKeeper*		m_pSecondaryScoreKeeper;
-	Inventory*			m_pInventory;
+	Inventory*		m_pInventory;
 
 	int			m_iRowLastCrossed;
 	int			m_iMineRowLastCrossed;
 
-	RageSound	m_soundMine;
-	RageSound	m_soundAttackLaunch;
-	RageSound	m_soundAttackEnding;
+	RageSound		m_soundMine;
+	RageSound		m_soundAttackLaunch;
+	RageSound		m_soundAttackEnding;
 
-	vector<RageSound> m_vKeysounds;
+	vector<RageSound>	m_vKeysounds;
 
-	RString m_sMessageToSendOnStep;
+	RString			m_sMessageToSendOnStep;
 
-	ThemeMetric<float>		GRAY_ARROWS_Y_STANDARD;
-	ThemeMetric<float>		GRAY_ARROWS_Y_REVERSE;
+	ThemeMetric<float>	GRAY_ARROWS_Y_STANDARD;
+	ThemeMetric<float>	GRAY_ARROWS_Y_REVERSE;
 	ThemeMetric2D<float>	COMBO_X;
-	ThemeMetric<float>		COMBO_Y;
-	ThemeMetric<float>		COMBO_Y_REVERSE;
-	ThemeMetric<float>		COMBO_CENTERED_ADDY;
-	ThemeMetric<float>		COMBO_CENTERED_ADDY_REVERSE;
+	ThemeMetric<float>	COMBO_Y;
+	ThemeMetric<float>	COMBO_Y_REVERSE;
+	ThemeMetric<float>	COMBO_CENTERED_ADDY;
+	ThemeMetric<float>	COMBO_CENTERED_ADDY_REVERSE;
 	ThemeMetric2D<float>	ATTACK_DISPLAY_X;
-	ThemeMetric<float>		ATTACK_DISPLAY_Y;
-	ThemeMetric<float>		ATTACK_DISPLAY_Y_REVERSE;
-	ThemeMetric<float>		HOLD_JUDGMENT_Y_STANDARD;
-	ThemeMetric<float>		HOLD_JUDGMENT_Y_REVERSE;
-	ThemeMetric<int>		BRIGHT_GHOST_COMBO_THRESHOLD;
-	ThemeMetric<bool>		TAP_JUDGMENTS_UNDER_FIELD;
-	ThemeMetric<bool>		HOLD_JUDGMENTS_UNDER_FIELD;
-	ThemeMetric<int>		START_DRAWING_AT_PIXELS;
-	ThemeMetric<int>		STOP_DRAWING_AT_PIXELS;
-	ThemeMetric<int>		MAX_PRO_TIMING_ERROR;
+	ThemeMetric<float>	ATTACK_DISPLAY_Y;
+	ThemeMetric<float>	ATTACK_DISPLAY_Y_REVERSE;
+	ThemeMetric<float>	HOLD_JUDGMENT_Y_STANDARD;
+	ThemeMetric<float>	HOLD_JUDGMENT_Y_REVERSE;
+	ThemeMetric<int>	BRIGHT_GHOST_COMBO_THRESHOLD;
+	ThemeMetric<bool>	TAP_JUDGMENTS_UNDER_FIELD;
+	ThemeMetric<bool>	HOLD_JUDGMENTS_UNDER_FIELD;
+	ThemeMetric<int>	START_DRAWING_AT_PIXELS;
+	ThemeMetric<int>	STOP_DRAWING_AT_PIXELS;
+	ThemeMetric<int>	MAX_PRO_TIMING_ERROR;
 	
 #define NUM_REVERSE 2
 #define NUM_CENTERED 2
-	TweenState				m_tsJudgment[NUM_REVERSE][NUM_CENTERED];
+	TweenState		m_tsJudgment[NUM_REVERSE][NUM_CENTERED];
 };
 
 #endif

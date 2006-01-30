@@ -16,10 +16,10 @@ public:
 	virtual void OnSongEnded() {};
 	/* Change life after receiving a tap note grade.  This *is* called for
 	 * the head of hold notes. */
-	virtual void ChangeLife( PlayerNumber pn, TapNoteScore score ) = 0;
+	virtual void ChangeLife( PlayerNumber pn, TapNoteScore tns ) = 0;
 	/* Change life after receiving a hold note grade.  tscore is the score
 	 * received for the initial tap note. */
-	virtual void ChangeLife( PlayerNumber pn, HoldNoteScore score, TapNoteScore tscore ) = 0;
+	virtual void ChangeLife( PlayerNumber pn, HoldNoteScore hns, TapNoteScore tns ) = 0;
 	virtual void OnDancePointsChange( PlayerNumber pn ) = 0;	// look in GAMESTATE and update the display
 	virtual bool IsInDanger( PlayerNumber pn ) = 0;
 	virtual bool IsHot( PlayerNumber pn ) = 0;
