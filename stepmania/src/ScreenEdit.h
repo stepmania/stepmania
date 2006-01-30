@@ -434,8 +434,6 @@ public:
 	void MakeFilteredMenuDef( const MenuDef* pDef, MenuDef &menu );
 	ScreenMiniMenu *LoadEditMiniMenu( const MenuDef* pDef );
 	void EditMiniMenu( const MenuDef* pDef, ScreenMessage SM_SendOnOK = SM_None, ScreenMessage SM_SendOnCancel = SM_None );
-
-	Screen *m_pScreenOptions;
 };
 
 #endif

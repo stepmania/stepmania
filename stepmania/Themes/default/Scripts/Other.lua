@@ -47,7 +47,8 @@ function GetEditModeSubScreens()
 		"ScreenMiniMenuBackgroundChange," ..
 		"ScreenMiniMenuInsertTapAttack," ..
 		"ScreenMiniMenuInsertCourseAttack," ..
-		"ScreenMiniMenuCourseDisplay";
+		"ScreenMiniMenuCourseDisplay," ..
+		"ScreenEditOptions";
 end
 
 function GetCoursesToShowRanking()

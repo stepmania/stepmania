@@ -726,8 +726,6 @@ void ScreenEdit::Init()
 	m_soundSwitch.Load(	THEME->GetPathS("ScreenEdit","switch") );
 	m_soundSave.Load(	THEME->GetPathS("ScreenEdit","save") );
 
-	m_pScreenOptions = SCREENMAN->MakeNewScreen( "ScreenEditOptions" );
-
 	m_soundMusic.Load( m_pSong->GetMusicPath() );
 
 	m_soundAssistTick.Load( THEME->GetPathS("ScreenEdit","assist tick"), true );
@@ -743,8 +741,6 @@ ScreenEdit::~ScreenEdit()
 
 	LOG->Trace( "ScreenEdit::~ScreenEdit()" );
 	m_soundMusic.StopPlaying();
-
-	SAFE_DELETE( m_pScreenOptions );
 }
 
 // play assist ticks
@@ -2628,7 +2624,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 			ScreenPrompt::Prompt( SM_DoRevertFromDisk, REVERT_FROM_DISK.GetValue() + "\n\n" + DESTROY_ALL_UNSAVED_CHANGES.GetValue(), PROMPT_YES_NO, ANSWER_NO );
 			break;
 		case options:
-			SCREENMAN->PushScreen( m_pScreenOptions, false, SM_BackFromOptions );
+			SCREENMAN->AddNewScreenToTop( "ScreenEditOptions", SM_BackFromOptions );
 			break;
 		case edit_song_info:
 			{
