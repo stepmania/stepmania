@@ -158,7 +158,7 @@ void NoteField::ProcessMessages( float fDeltaTime )
 	}
 }
 
-float NoteField::GetWidth()
+float NoteField::GetWidth() const
 {
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 	float fMinX, fMaxX;
@@ -376,7 +376,7 @@ float FindLastDisplayedBeat( const PlayerState* pPlayerState, int iLastPixelToDr
 	return fLastBeatToDraw;
 }
 
-bool NoteField::IsOnScreen( float fBeat, int iFirstPixelToDraw, int iLastPixelToDraw )
+bool NoteField::IsOnScreen( float fBeat, int iFirstPixelToDraw, int iLastPixelToDraw ) const
 {
 	// TRICKY: If boomerang is on, then ones in the range 
 	// [iFirstIndexToDraw,iLastIndexToDraw] aren't necessarily visible.
@@ -456,7 +456,7 @@ void NoteField::DrawPrimitives()
 		//
 		// BPM text
 		//
-		vector<BPMSegment> &aBPMSegments = GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments;
+		const vector<BPMSegment> &aBPMSegments = GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments;
 		for( unsigned i=0; i<aBPMSegments.size(); i++ )
 		{
 			if( aBPMSegments[i].m_iStartIndex >= iFirstIndexToDraw &&
@@ -471,7 +471,7 @@ void NoteField::DrawPrimitives()
 		//
 		// Freeze text
 		//
-		vector<StopSegment> &aStopSegments = GAMESTATE->m_pCurSong->m_Timing.m_StopSegments;
+		const vector<StopSegment> &aStopSegments = GAMESTATE->m_pCurSong->m_Timing.m_StopSegments;
 		for( unsigned i=0; i<aStopSegments.size(); i++ )
 		{
 			if( aStopSegments[i].m_iStartRow >= iFirstIndexToDraw &&
@@ -486,7 +486,7 @@ void NoteField::DrawPrimitives()
 		//
 		// Course mods text
 		//
-		Course *pCourse = GAMESTATE->m_pCurCourse;
+		const Course *pCourse = GAMESTATE->m_pCurCourse;
 		if( pCourse )
 		{
 			const CourseEntry &ce = pCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];

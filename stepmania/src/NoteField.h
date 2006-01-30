@@ -43,7 +43,7 @@ public:
 protected:
 	void CacheAllUsedNoteSkins();
 
-	bool IsOnScreen( float fBeat, int iFirstPixelToDraw, int iLastPixelToDraw );
+	bool IsOnScreen( float fBeat, int iFirstPixelToDraw, int iLastPixelToDraw ) const;
 
 	void DrawBeatBar( const float fBeat );
 	void DrawMarkerBar( int fBeat );
@@ -52,7 +52,7 @@ protected:
 	void DrawFreezeText( const float fBeat, const float fBPM );
 	void DrawAttackText( const float fBeat, const Attack &attack );
 	void DrawBGChangeText( const float fBeat, const RString sNewBGName );
-	float GetWidth();
+	float GetWidth() const;
 
 	const NoteData *m_pNoteData;
 
