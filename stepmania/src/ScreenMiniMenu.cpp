@@ -16,23 +16,39 @@ bool ScreenMiniMenu::s_bCancelled = false;
 int	ScreenMiniMenu::s_iLastRowCode = -1;
 vector<int>	ScreenMiniMenu::s_viLastAnswers;
 
+/* Settings: */
+namespace
+{
+	bool g_bLoaded = false;
+	const MenuDef* g_pMenuDef;
+	ScreenMessage g_SendOnOK;
+	ScreenMessage g_SendOnCancel;
+};
+
 void ScreenMiniMenu::MiniMenu( const MenuDef* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel, float fX, float fY )
 {
-	ScreenMiniMenu *pNewScreen = new ScreenMiniMenu;
-	pNewScreen->SetName( pDef->sClassName );
-	pNewScreen->Init();
-	pNewScreen->LoadMenu( pDef );
-	pNewScreen->SetOKMessage( SM_SendOnOK );
-	pNewScreen->SetCancelMessage( SM_SendOnCancel );
+	g_pMenuDef = pDef;
+	g_SendOnOK = SM_SendOnOK;
+	g_SendOnCancel = SM_SendOnCancel;
+	g_bLoaded = true;
+
+	SCREENMAN->AddNewScreenToTop( pDef->sClassName );
+	Screen *pNewScreen = SCREENMAN->GetTopScreen();
 	pNewScreen->SetXY( fX, fY );
-	SCREENMAN->ZeroNextUpdate();
-	SCREENMAN->PushScreen( pNewScreen, true );
 }
 
-//REGISTER_SCREEN_CLASS( ScreenMiniMenu );
+REGISTER_SCREEN_CLASS( ScreenMiniMenu );
 
 void ScreenMiniMenu::BeginScreen()
 {
+	if( g_bLoaded )
+	{
+		g_bLoaded = false;
+		LoadMenu( g_pMenuDef );
+		SetOKMessage( g_SendOnOK );
+		SetCancelMessage( g_SendOnCancel );
+	}
+
 	ScreenOptions::BeginScreen();
 
 	/* HACK: An OptionRow exits if a screen is set.  ScreenMiniMenu is always pushed, so we
