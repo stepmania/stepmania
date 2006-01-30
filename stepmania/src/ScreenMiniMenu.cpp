@@ -19,8 +19,7 @@ vector<int>	ScreenMiniMenu::s_viLastAnswers;
 /* Settings: */
 namespace
 {
-	bool g_bLoaded = false;
-	const MenuDef* g_pMenuDef;
+	const MenuDef* g_pMenuDef = NULL;
 	ScreenMessage g_SendOnOK;
 	ScreenMessage g_SendOnCancel;
 };
@@ -30,7 +29,6 @@ void ScreenMiniMenu::MiniMenu( const MenuDef* pDef, ScreenMessage SM_SendOnOK, S
 	g_pMenuDef = pDef;
 	g_SendOnOK = SM_SendOnOK;
 	g_SendOnCancel = SM_SendOnCancel;
-	g_bLoaded = true;
 
 	SCREENMAN->AddNewScreenToTop( pDef->sClassName );
 	Screen *pNewScreen = SCREENMAN->GetTopScreen();
@@ -41,12 +39,12 @@ REGISTER_SCREEN_CLASS( ScreenMiniMenu );
 
 void ScreenMiniMenu::BeginScreen()
 {
-	if( g_bLoaded )
+	if( g_pMenuDef != NULL )
 	{
-		g_bLoaded = false;
 		LoadMenu( g_pMenuDef );
 		SetOKMessage( g_SendOnOK );
 		SetCancelMessage( g_SendOnCancel );
+		g_pMenuDef = NULL;
 	}
 
 	ScreenOptions::BeginScreen();
