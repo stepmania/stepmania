@@ -747,12 +747,7 @@ void OptionRow::GetWidthXY( PlayerNumber pn, int iChoiceOnRow, int &iWidthOut, i
 
 	iWidthOut = int(roundf( text.GetZoomedWidth() ));
 	iXOut = int(roundf( text.GetDestX() ));
-	/* We update m_FrameDestination, change colors and tween items, and then tween rows to
-	 * their final positions.  (This is so we don't tween colors, too.)  m_FrameDestination
-	 * is the actual destination position, even though we may not have set up the
-	 * tween yet. */
-	float fY = m_tsDestination.pos.y;
-	iYOut = int(roundf(fY));
+	iYOut = int( roundf(m_Frame.GetDestY()) );
 }
 
 
