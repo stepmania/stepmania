@@ -39,13 +39,12 @@ REGISTER_SCREEN_CLASS( ScreenMiniMenu );
 
 void ScreenMiniMenu::BeginScreen()
 {
-	if( g_pMenuDef != NULL )
-	{
-		LoadMenu( g_pMenuDef );
-		SetOKMessage( g_SendOnOK );
-		SetCancelMessage( g_SendOnCancel );
-		g_pMenuDef = NULL;
-	}
+	ASSERT( g_pMenuDef != NULL );
+
+	LoadMenu( g_pMenuDef );
+	SetOKMessage( g_SendOnOK );
+	SetCancelMessage( g_SendOnCancel );
+	g_pMenuDef = NULL;
 
 	ScreenOptions::BeginScreen();
 

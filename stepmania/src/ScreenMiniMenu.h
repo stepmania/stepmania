@@ -89,7 +89,6 @@ public:
 	static void MiniMenu( const MenuDef* pDef, ScreenMessage smSendOnOK, ScreenMessage smSendOnCancel = SM_None, float fX = 0, float fY = 0 );
 
 	void BeginScreen();
-	void LoadMenu( const MenuDef* pDef );
 	void HandleScreenMessage( const ScreenMessage SM );
 
 	void SetOKMessage( ScreenMessage SM_SendOnOK ) { m_SMSendOnOK = SM_SendOnOK; }
@@ -99,6 +98,8 @@ protected:
 	virtual void AfterChangeValueOrRow( PlayerNumber pn );
 	virtual void ImportOptions( int iRow, const vector<PlayerNumber> &vpns );
 	virtual void ExportOptions( int iRow, const vector<PlayerNumber> &vpns );
+
+	void LoadMenu( const MenuDef* pDef );
 	
 	ScreenMessage		m_SMSendOnOK;
 	ScreenMessage		m_SMSendOnCancel;
