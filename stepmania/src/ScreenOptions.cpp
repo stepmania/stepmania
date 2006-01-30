@@ -567,8 +567,6 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 		}
 
 		StartTransitioningScreen( SM_ExportOptions );
-
-		SCREENMAN->PlayStartSound();
 	}
 	else if( SM == SM_ExportOptions )
 	{
@@ -877,6 +875,7 @@ void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
 		
 		if( bEndThisScreen )
 		{
+			SCREENMAN->PlayStartSound();
 			this->BeginFadingOut();
 			return;
 		}

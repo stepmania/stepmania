@@ -127,6 +127,7 @@ void ScreenOptionsMemoryCard::ProcessMenuStart( const InputEventPlus &input )
 		bool bSuccess = MEMCARDMAN->MountCard( PLAYER_1, dev );
 		if( bSuccess )
 		{
+			SCREENMAN->PlayStartSound();
 			this->BeginFadingOut();
 		}
 		else

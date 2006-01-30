@@ -373,6 +373,7 @@ void ScreenOptionsManageCourses::ProcessMenuStart( const InputEventPlus &input )
 	}
 	else if( iCurRow == (int)m_pRows.size()-1 )	// "done"
 	{
+		SCREENMAN->PlayStartSound();
 		this->BeginFadingOut();
 	}
 	else	// a course

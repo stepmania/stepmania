@@ -322,6 +322,7 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( const InputEventPlus &input 
 	}
 	else if( row.GetRowType() == OptionRow::RowType_Exit )
 	{
+		SCREENMAN->PlayStartSound();
 		this->BeginFadingOut();
 	}
 	else	// a profile

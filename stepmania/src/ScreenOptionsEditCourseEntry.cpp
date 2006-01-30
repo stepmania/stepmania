@@ -456,6 +456,7 @@ void ScreenOptionsEditCourseEntry::ProcessMenuStart( const InputEventPlus &input
 		break;
 	case ROW_SET_MODS:
 	case ROW_DONE:
+		SCREENMAN->PlayStartSound();
 		ScreenOptions::BeginFadingOut();
 		break;
 	}

@@ -249,10 +249,12 @@ void ScreenOptionsManageEditSteps::ProcessMenuStart( const InputEventPlus &input
 			ScreenPrompt::Prompt( SM_None, s );
 			return;
 		}
+		SCREENMAN->PlayStartSound();
 		this->BeginFadingOut();
 	}
 	else if( m_pRows[iCurRow]->GetRowType() == OptionRow::RowType_Exit )
 	{
+		SCREENMAN->PlayStartSound();
 		this->BeginFadingOut();
 	}
 	else	// a Steps
