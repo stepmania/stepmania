@@ -668,12 +668,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenSystemLayer.h">
 			</File>
 			<File
-				RelativePath="ScreenTest.cpp">
-			</File>
-			<File
-				RelativePath="ScreenTest.h">
-			</File>
-			<File
 				RelativePath="ScreenTestFonts.cpp">
 			</File>
 			<File
