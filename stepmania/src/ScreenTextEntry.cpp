@@ -247,7 +247,7 @@ void ScreenTextEntry::End( bool bCancelled )
 	{
 		RString sAnswer = WStringToRString(m_sAnswer);
 		RString sError;
-		if ( g_pValidate != NULL )
+		if( g_pValidate != NULL )
 		{
 			bool bValidAnswer = g_pValidate( sAnswer, sError );
 			if( !bValidAnswer )
