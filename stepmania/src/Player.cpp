@@ -243,7 +243,6 @@ void Player::Init(
 	}
 
 	// Load CSD
-	// TODO: Don't reload every song
 	if( GAMESTATE->m_bMultiplayer  &&  m_pControllerStateDisplay  &&  !m_pControllerStateDisplay->IsLoaded() )	// only load the first time
 	{
 		m_pControllerStateDisplay->Load( pPlayerState->m_mp );
