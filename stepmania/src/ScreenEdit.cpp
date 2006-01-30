@@ -718,9 +718,9 @@ void ScreenEdit::Init()
 	m_soundRemoveNote.Load(	THEME->GetPathS("ScreenEdit","RemoveNote"), true );
 	m_soundChangeLine.Load( THEME->GetPathS("ScreenEdit","line"), true );
 	m_soundChangeSnap.Load( THEME->GetPathS("ScreenEdit","snap"), true );
-	m_soundMarker.Load(		THEME->GetPathS("ScreenEdit","marker"), true );
-	m_soundSwitch.Load(		THEME->GetPathS("ScreenEdit","switch") );
-	m_soundSave.Load(		THEME->GetPathS("ScreenEdit","save") );
+	m_soundMarker.Load(	THEME->GetPathS("ScreenEdit","marker"), true );
+	m_soundSwitch.Load(	THEME->GetPathS("ScreenEdit","switch") );
+	m_soundSave.Load(	THEME->GetPathS("ScreenEdit","save") );
 
 	if( EDIT_MODE.GetValue() == EditMode_Practice )
 		m_pHelpMenu = LoadEditMiniMenu( &g_PracticeHelp );
