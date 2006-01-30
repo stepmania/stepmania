@@ -154,9 +154,10 @@ void ScreenTextEntry::Input( const InputEventPlus &input )
 			bool bIsHoldingShift = 
 					INPUTFILTER->IsBeingPressed( DeviceInput(input.DeviceI.device, KEY_RSHIFT)) ||
 					INPUTFILTER->IsBeingPressed( DeviceInput(input.DeviceI.device, KEY_LSHIFT));
-			char c = (char)toupper( input.DeviceI.ToChar() );
+			char c = input.DeviceI.ToChar();
 			if( bIsHoldingShift )
 			{
+				c = (char)toupper( input.DeviceI.ToChar() );
 				switch( c )
 				{
 				case '`':	c='~';	break;
