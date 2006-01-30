@@ -42,8 +42,8 @@ void ScreenMiniMenu::BeginScreen()
 	ASSERT( g_pMenuDef != NULL );
 
 	LoadMenu( g_pMenuDef );
-	SetOKMessage( g_SendOnOK );
-	SetCancelMessage( g_SendOnCancel );
+	m_SMSendOnOK = g_SendOnOK;
+	m_SMSendOnCancel = g_SendOnCancel;
 	g_pMenuDef = NULL;
 
 	ScreenOptions::BeginScreen();

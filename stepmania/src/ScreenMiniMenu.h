@@ -91,9 +91,6 @@ public:
 	void BeginScreen();
 	void HandleScreenMessage( const ScreenMessage SM );
 
-	void SetOKMessage( ScreenMessage SM_SendOnOK ) { m_SMSendOnOK = SM_SendOnOK; }
-	void SetCancelMessage( ScreenMessage SM_SendOnCancel ) { m_SMSendOnCancel = SM_SendOnCancel; }
-
 protected:
 	virtual void AfterChangeValueOrRow( PlayerNumber pn );
 	virtual void ImportOptions( int iRow, const vector<PlayerNumber> &vpns );
