@@ -360,7 +360,7 @@ void Player::Load( const NoteData& noteData )
 //		m_pScore->Init( pn );
 
 	/* Apply transforms. */
-	NoteDataUtil::TransformNoteData( m_NoteData, GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, GAMESTATE->GetCurrentStyle()->m_StepsType );
+	NoteDataUtil::TransformNoteData( m_NoteData, m_pPlayerState->m_PlayerOptions, GAMESTATE->GetCurrentStyle()->m_StepsType );
 	
 	switch( GAMESTATE->m_PlayMode )
 	{
@@ -368,7 +368,7 @@ void Player::Load( const NoteData& noteData )
 	case PLAY_MODE_BATTLE:
 		{
 			// ugly, ugly, ugly.  Works only w/ dance.
-			NoteDataUtil::TransformNoteData( m_NoteData, GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, GAMESTATE->GetCurrentStyle()->m_StepsType );
+			NoteDataUtil::TransformNoteData( m_NoteData, m_pPlayerState->m_PlayerOptions, GAMESTATE->GetCurrentStyle()->m_StepsType );
 			
 			// shuffle either p1 or p2
 			static int count = 0;
@@ -402,7 +402,7 @@ void Player::Load( const NoteData& noteData )
 		m_pNoteField->Load( &m_NoteData, iStartDrawingAtPixels, iStopDrawingAtPixels );
 	}
 
-	const bool bReverse = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetReversePercentForColumn(0) == 1;
+	const bool bReverse = m_pPlayerState->m_PlayerOptions.GetReversePercentForColumn(0) == 1;
 	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->m_StyleType==ONE_PLAYER_TWO_SIDES;
 	if( m_pCombo )
 	{
