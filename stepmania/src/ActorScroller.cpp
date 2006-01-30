@@ -29,7 +29,8 @@ ActorScroller::ActorScroller()
 	m_iFirstSubActorIndex = 0;
 	m_bLoop = false;
 	m_bFastCatchup = false;
-	m_bUseItemNumber = false;
+	m_bFunctionDependsOnPositionOffset = true;
+	m_bFunctionDependsOnItemIndex = true;
 	m_fPauseCountdownSeconds = 0;
 	m_fQuantizePixels = 0;
 
@@ -59,6 +60,12 @@ void ActorScroller::Load2(
 void ActorScroller::SetTransformFromExpression( const RString &sTransformFunction )
 {
 	m_exprTransformFunction.SetFromExpression( sTransformFunction );
+	
+	// Probe to find which of the parameters are used.
+#define GP(a,b)	m_exprTransformFunction.GetPosition( a, b, 2 )
+	m_bFunctionDependsOnPositionOffset = (GP(0,0) != GP(1,0)) && (GP(0,1) != GP(1,1));
+	m_bFunctionDependsOnItemIndex = (GP(0,0) != GP(0,1)) && (GP(1,0) != GP(1,1));
+	m_exprTransformFunction.ClearCache();
 }
 
 void ActorScroller::SetTransformFromHeight( float fItemHeight )
@@ -132,11 +139,6 @@ void ActorScroller::LoadFromNode( const RString &sDir, const XNode *pNode )
 		EnableMask( 10, 10 ); // XXX
 
 	pNode->GetAttrValue( "QuantizePixels", m_fQuantizePixels );
-
-	/* By default, don't use item numbers.  On scrollers with lots of items,
-	 * especially with Subdivisions > 1, m_exprTransformFunction uses too
-	 * much memory, and very few scrollers use this. */
-	pNode->GetAttrValue( "UseItemNumber", m_bUseItemNumber );
 }
 
 void ActorScroller::UpdateInternal( float fDeltaTime )
@@ -260,7 +262,12 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bDrawPrimitives )
 		else if( iIndex < 0 || iIndex >= (int)m_SubActors.size() )
 			continue;
 
-		if( !m_bUseItemNumber )
+		// Optimization: Zero out unused parameters so that they don't create new, unnecessary 
+		// entries in the position cache.  On scrollers with lots of items,
+		// especially with Subdivisions > 1, m_exprTransformFunction uses too much memory.
+		if( !m_bFunctionDependsOnPositionOffset )
+			fPosition = 0;
+		if( !m_bFunctionDependsOnItemIndex )
 			iItem = 0;
 
 		m_exprTransformFunction.PositionItem( m_SubActors[iIndex], fPosition, iItem, m_iNumItems );

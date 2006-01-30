@@ -17,6 +17,7 @@ public:
 
 	void PositionItem( Actor *pActor, float fPositionOffsetFromCenter, int iItemIndex, int iNumItems );
 	const Actor::TweenState &GetPosition( float fPositionOffsetFromCenter, int iItemIndex, int iNumItems ) const;
+	void ClearCache() { m_mapPositionToTweenStateCache.clear(); }
 
 protected:
 
