@@ -153,6 +153,46 @@ void ScreenEdit::InitEditMappings()
 		return;
 	}
 
+	switch( EDIT_MODE.GetValue() )
+	{
+	case EditMode_Full:
+		/* Don't allow F5/F6 in home mode.  It breaks the "delay creation until first save" logic. */
+		m_EditMappings.button[EDIT_BUTTON_OPEN_PREV_STEPS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F5);
+		m_EditMappings.button[EDIT_BUTTON_OPEN_NEXT_STEPS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F6);
+		m_EditMappings.button[EDIT_BUTTON_BPM_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F7);
+		m_EditMappings.button[EDIT_BUTTON_BPM_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F8);
+		m_EditMappings.button[EDIT_BUTTON_STOP_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F9);
+		m_EditMappings.button[EDIT_BUTTON_STOP_UP][0]  = DeviceInput(DEVICE_KEYBOARD, KEY_F10);
+		m_EditMappings.button[EDIT_BUTTON_OFFSET_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F11);
+		m_EditMappings.button[EDIT_BUTTON_OFFSET_UP][0]  = DeviceInput(DEVICE_KEYBOARD, KEY_F12);
+
+		m_EditMappings.button[EDIT_BUTTON_SAMPLE_START_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RBRACKET);
+		m_EditMappings.button[EDIT_BUTTON_SAMPLE_START_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LBRACKET);
+		m_EditMappings.button[EDIT_BUTTON_SAMPLE_LENGTH_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RBRACKET);
+		m_EditMappings.hold[EDIT_BUTTON_SAMPLE_LENGTH_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
+		m_EditMappings.hold[EDIT_BUTTON_SAMPLE_LENGTH_UP][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
+		m_EditMappings.button[EDIT_BUTTON_SAMPLE_LENGTH_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LBRACKET);
+		m_EditMappings.hold[EDIT_BUTTON_SAMPLE_LENGTH_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
+		m_EditMappings.hold[EDIT_BUTTON_SAMPLE_LENGTH_DOWN][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
+
+		m_EditMappings.button[EDIT_BUTTON_PLAY_SAMPLE_MUSIC][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cm);
+
+		m_EditMappings.button[EDIT_BUTTON_OPEN_BGCHANGE_LAYER1_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cb);
+		m_EditMappings.button[EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cb);
+		m_EditMappings.hold[EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
+		m_EditMappings.hold[EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
+		m_EditMappings.button[EDIT_BUTTON_OPEN_COURSE_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cc);
+		m_EditMappings.button[EDIT_BUTTON_OPEN_COURSE_ATTACK_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cv);
+
+		m_EditMappings.button[EDIT_BUTTON_INSERT_SHIFT_PAUSES][0] = DeviceInput(DEVICE_KEYBOARD, KEY_INSERT);
+		m_EditMappings.hold[EDIT_BUTTON_INSERT_SHIFT_PAUSES][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
+		m_EditMappings.hold[EDIT_BUTTON_INSERT_SHIFT_PAUSES][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+		m_EditMappings.button[EDIT_BUTTON_DELETE_SHIFT_PAUSES][0] = DeviceInput(DEVICE_KEYBOARD, KEY_DEL);
+		m_EditMappings.hold[EDIT_BUTTON_DELETE_SHIFT_PAUSES][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
+		m_EditMappings.hold[EDIT_BUTTON_DELETE_SHIFT_PAUSES][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+		break;
+	}
+
 	m_EditMappings.button[EDIT_BUTTON_COLUMN_0][0] = DeviceInput(DEVICE_KEYBOARD, KEY_C1);
 	m_EditMappings.button[EDIT_BUTTON_COLUMN_1][0] = DeviceInput(DEVICE_KEYBOARD, KEY_C2);
 	m_EditMappings.button[EDIT_BUTTON_COLUMN_2][0] = DeviceInput(DEVICE_KEYBOARD, KEY_C3);
@@ -187,12 +227,6 @@ void ScreenEdit::InitEditMappings()
 
 	m_EditMappings.button[EDIT_BUTTON_OPEN_EDIT_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
 	m_EditMappings.button[EDIT_BUTTON_OPEN_AREA_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ENTER);
-	m_EditMappings.button[EDIT_BUTTON_OPEN_BGCHANGE_LAYER1_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cb);
-	m_EditMappings.button[EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cb);
-	m_EditMappings.hold[EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
-	m_EditMappings.hold[EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
-	m_EditMappings.button[EDIT_BUTTON_OPEN_COURSE_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cc);
-	m_EditMappings.button[EDIT_BUTTON_OPEN_COURSE_ATTACK_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cv);
 	m_EditMappings.button[EDIT_BUTTON_OPEN_INPUT_HELP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F1);
 	
 	m_EditMappings.button[EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cb);
@@ -217,34 +251,8 @@ void ScreenEdit::InitEditMappings()
 	m_EditMappings.button[EDIT_BUTTON_INSERT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_BACKSLASH);
 	m_EditMappings.button[EDIT_BUTTON_DELETE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_DEL);
 
-	m_EditMappings.button[EDIT_BUTTON_INSERT_SHIFT_PAUSES][0] = DeviceInput(DEVICE_KEYBOARD, KEY_INSERT);
-	m_EditMappings.hold[EDIT_BUTTON_INSERT_SHIFT_PAUSES][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
-	m_EditMappings.hold[EDIT_BUTTON_INSERT_SHIFT_PAUSES][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
-	m_EditMappings.button[EDIT_BUTTON_DELETE_SHIFT_PAUSES][0] = DeviceInput(DEVICE_KEYBOARD, KEY_DEL);
-	m_EditMappings.hold[EDIT_BUTTON_DELETE_SHIFT_PAUSES][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
-	m_EditMappings.hold[EDIT_BUTTON_DELETE_SHIFT_PAUSES][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
-
 	m_EditMappings.button[EDIT_BUTTON_TOGGLE_ASSIST_TICK][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F4);
-	m_EditMappings.button[EDIT_BUTTON_PLAY_SAMPLE_MUSIC][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cm);
 	
-	m_EditMappings.button[EDIT_BUTTON_OPEN_NEXT_STEPS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F6);
-	m_EditMappings.button[EDIT_BUTTON_OPEN_PREV_STEPS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F5);
-
-	m_EditMappings.button[EDIT_BUTTON_BPM_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F8);
-	m_EditMappings.button[EDIT_BUTTON_BPM_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F7);
-	m_EditMappings.button[EDIT_BUTTON_STOP_UP][0]  = DeviceInput(DEVICE_KEYBOARD, KEY_F10);
-	m_EditMappings.button[EDIT_BUTTON_STOP_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F9);
-	m_EditMappings.button[EDIT_BUTTON_OFFSET_UP][0]  = DeviceInput(DEVICE_KEYBOARD, KEY_F12);
-	m_EditMappings.button[EDIT_BUTTON_OFFSET_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F11);
-	m_EditMappings.button[EDIT_BUTTON_SAMPLE_START_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RBRACKET);
-	m_EditMappings.button[EDIT_BUTTON_SAMPLE_START_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LBRACKET);
-	m_EditMappings.button[EDIT_BUTTON_SAMPLE_LENGTH_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RBRACKET);
-	m_EditMappings.hold[EDIT_BUTTON_SAMPLE_LENGTH_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
-	m_EditMappings.hold[EDIT_BUTTON_SAMPLE_LENGTH_UP][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
-	m_EditMappings.button[EDIT_BUTTON_SAMPLE_LENGTH_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LBRACKET);
-	m_EditMappings.hold[EDIT_BUTTON_SAMPLE_LENGTH_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
-	m_EditMappings.hold[EDIT_BUTTON_SAMPLE_LENGTH_DOWN][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
-
 	m_EditMappings.button[EDIT_BUTTON_ADJUST_FINE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RALT);
 	m_EditMappings.button[EDIT_BUTTON_ADJUST_FINE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_LALT);
 	
@@ -253,8 +261,6 @@ void ScreenEdit::InitEditMappings()
 	m_PlayMappings.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
 	m_PlayMappings.button[EDIT_BUTTON_TOGGLE_ASSIST_TICK][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F4);
 	m_PlayMappings.button[EDIT_BUTTON_TOGGLE_AUTOPLAY][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F8);
-	m_PlayMappings.button[EDIT_BUTTON_OFFSET_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F12);
-	m_PlayMappings.button[EDIT_BUTTON_OFFSET_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F11);
 
 	m_RecordMappings.button[EDIT_BUTTON_LAY_MINE_OR_ROLL][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
 	m_RecordMappings.button[EDIT_BUTTON_LAY_MINE_OR_ROLL][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
@@ -413,23 +419,23 @@ static MenuDef g_EditHelp(
 	MenuRowDef( -1, "Shift + P: Play current beat to end",			false, EditMode_Practice, true, 0, NULL ),
 	MenuRowDef( -1, "Ctrl + R: Record",					false, EditMode_Practice, true, 0, NULL ),
 	MenuRowDef( -1, "F4: Toggle assist tick",				false, EditMode_Practice, true, 0, NULL ),
-	MenuRowDef( -1, "F5/F6: Next/prev steps of same StepsType",		false, EditMode_Practice, true, 0, NULL ),
-	MenuRowDef( -1, "F7/F8: Decrease/increase BPM at cur beat",		false, EditMode_Practice, true, 0, NULL ),
-	MenuRowDef( -1, "F9/F10: Decrease/increase stop at cur beat",		false, EditMode_Practice, true, 0, NULL ),
-	MenuRowDef( -1, "F11/F12: Decrease/increase music offset",		false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "F5/F6: Next/prev steps of same StepsType",		false, EditMode_Full,     true, 0, NULL ),
+	MenuRowDef( -1, "F7/F8: Decrease/increase BPM at cur beat",		false, EditMode_Full,     true, 0, NULL ),
+	MenuRowDef( -1, "F9/F10: Decrease/increase stop at cur beat",		false, EditMode_Full,     true, 0, NULL ),
+	MenuRowDef( -1, "F11/F12: Decrease/increase music offset",		false, EditMode_Full,     true, 0, NULL ),
 			/* XXX: This would be better as a single submenu, to let people tweak
 			* and play the sample several times (without having to re-enter the
 			* menu each time), so it doesn't use a whole bunch of hotkeys. */
-	MenuRowDef( -1, "[ and ]: Decrease/increase sample music start",	false, EditMode_Practice, true, 0, NULL ),
-	MenuRowDef( -1, "{ and }: Decrease/increase sample music length",	false, EditMode_Practice, true, 0, NULL ),
-	MenuRowDef( -1, "M: Play sample music",					false, EditMode_Practice, true, 0, NULL ),
-	MenuRowDef( -1, "B: Add/Edit Background Change",			false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "[ and ]: Decrease/increase sample music start",	false, EditMode_Full,     true, 0, NULL ),
+	MenuRowDef( -1, "{ and }: Decrease/increase sample music length",	false, EditMode_Full,     true, 0, NULL ),
+	MenuRowDef( -1, "M: Play sample music",					false, EditMode_Full,     true, 0, NULL ),
+	MenuRowDef( -1, "B: Add/Edit Background Change",			false, EditMode_Full,     true, 0, NULL ),
 	MenuRowDef( -1, "Insert: Insert beat and shift down",			false, EditMode_Practice, true, 0, NULL ),
 	MenuRowDef( -1, "Ctrl + Insert: Shift BPM changes and stops down one beat",
-										false, EditMode_Practice, true, 0, NULL ),
+										false, EditMode_Full,     true, 0, NULL ),
 	MenuRowDef( -1, "Delete: Delete beat and shift up",			false, EditMode_Practice, true, 0, NULL ),
 	MenuRowDef( -1, "Ctrl + Delete: Shift BPM changes and stops up one beat",
-										false, EditMode_Practice, true, 0, NULL ),
+										false, EditMode_Full,     true, 0, NULL ),
 	MenuRowDef( -1, "Shift + number: Lay mine",				false, EditMode_Practice, true, 0, NULL ),
 	MenuRowDef( -1, "Alt + number: Add to/remove from right half",		false, EditMode_Practice, true, 0, NULL )
 #endif
