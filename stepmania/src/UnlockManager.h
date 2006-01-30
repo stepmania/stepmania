@@ -53,6 +53,7 @@ public:
 
 		ZERO( m_fRequirement );
 		m_iEntryID = -1;
+		m_bCelebrated = false;
 	}
 
 	UnlockRewardType m_Type;
@@ -66,6 +67,7 @@ public:
 
 	float	m_fRequirement[NUM_UnlockRequirement];
 	int	m_iEntryID;
+	bool	m_bCelebrated;
 
 	bool	IsValid() const;
 	bool	IsLocked() const;
@@ -100,6 +102,9 @@ public:
 
 	// Gets number of unlocks for title screen
 	int GetNumUnlocks() const;
+	bool AllAreLocked() const;
+	int GetUnlockIndexToCelebrate() const;
+	bool AnyUnlocksToCelebrate() const;
 
 	void GetPoints( const Profile *pProfile, float fScores[NUM_UnlockRequirement] ) const;
 

@@ -62,7 +62,7 @@ IntDir=.\../Debug6
 TargetDir=\cvs\stepmania\Program
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc   cl   /Zl   /nologo   /c   verstub.cpp   /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -99,7 +99,7 @@ IntDir=.\../Release6
 TargetDir=\cvs\stepmania\Program
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc   cl   /Zl   /nologo   /c   verstub.cpp   /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -445,14 +445,6 @@ SOURCE=.\RageSoundReader_WAV.cpp
 # Begin Source File
 
 SOURCE=.\RageSoundReader_WAV.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\RageSoundResampler.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\RageSoundResampler.h
 # End Source File
 # Begin Source File
 
@@ -3241,6 +3233,22 @@ SOURCE=.\ScreenTitleMenu.cpp
 # Begin Source File
 
 SOURCE=.\ScreenTitleMenu.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenUnlockBrowse.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenUnlockBrowse.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenUnlockCelebrate.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenUnlockCelebrate.h
 # End Source File
 # Begin Source File
 

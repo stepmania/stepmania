@@ -427,6 +427,10 @@ void UnlockManager::Load()
 		if( bRoulette )
 			m_RouletteCodes.insert( current.m_iEntryID );
 
+		// TODO: Persist celebrated info?
+		if( !current.IsLocked() )
+			current.m_bCelebrated = false;
+
 		m_UnlockEntries.push_back( current );
 	}
 
@@ -540,6 +544,31 @@ int UnlockManager::GetNumUnlocks() const
 	return m_UnlockEntries.size();
 }
 
+bool UnlockManager::AllAreLocked() const
+{
+	FOREACH_CONST( UnlockEntry, m_UnlockEntries, ue )
+	{
+		if( !ue->IsLocked() )
+			return false;
+	}
+	return true;
+}
+
+int UnlockManager::GetUnlockIndexToCelebrate() const
+{
+	FOREACH_CONST( UnlockEntry, m_UnlockEntries, ue )
+	{
+		if( !ue->IsLocked() && !ue->m_bCelebrated )
+			return ue - m_UnlockEntries.begin();
+	}
+	return -1;
+}
+
+bool UnlockManager::AnyUnlocksToCelebrate() const
+{
+	return GetUnlockIndexToCelebrate() != -1;
+}
+
 void UnlockManager::GetUnlocksByType( UnlockRewardType t, vector<UnlockEntry *> &apEntries )
 {
 	for( unsigned i = 0; i < m_UnlockEntries.size(); ++i )
@@ -604,11 +633,14 @@ class LunaUnlockManager: public Luna<UnlockManager>
 public:
 	LunaUnlockManager() { LUA->Register( Register ); }
 
-	static int FindEntryID( T* p, lua_State *L )		{ RString sName = SArg(1); int i = p->FindEntryID(sName); if( i == -1 ) lua_pushnil(L); else lua_pushnumber(L, i); return 1; }
-	static int UnlockEntryID( T* p, lua_State *L )		{ int iUnlockEntryID = IArg(1); p->UnlockEntryID(iUnlockEntryID); return 0; }
-	static int PreferUnlockEntryID( T* p, lua_State *L )	{ int iUnlockEntryID = IArg(1); p->PreferUnlockEntryID(iUnlockEntryID); return 0; }
-	static int GetNumUnlocks( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumUnlocks() ); return 1; }
-	static int GetUnlockEntry( T* p, lua_State *L )		{ int iIndex = IArg(1); p->m_UnlockEntries[iIndex].PushSelf(L); return 1; }
+	static int FindEntryID( T* p, lua_State *L )			{ RString sName = SArg(1); int i = p->FindEntryID(sName); if( i == -1 ) lua_pushnil(L); else lua_pushnumber(L, i); return 1; }
+	static int UnlockEntryID( T* p, lua_State *L )			{ int iUnlockEntryID = IArg(1); p->UnlockEntryID(iUnlockEntryID); return 0; }
+	static int PreferUnlockEntryID( T* p, lua_State *L )		{ int iUnlockEntryID = IArg(1); p->PreferUnlockEntryID(iUnlockEntryID); return 0; }
+	static int GetNumUnlocks( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetNumUnlocks() ); return 1; }
+	static int AllAreLocked( T* p, lua_State *L )			{ lua_pushboolean( L, p->AllAreLocked() ); return 1; }
+	static int GetUnlockIndexToCelebrate( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetUnlockIndexToCelebrate() ); return 1; }
+	static int AnyUnlocksToCelebrate( T* p, lua_State *L )		{ lua_pushboolean( L, p->AnyUnlocksToCelebrate() ); return 1; }
+	static int GetUnlockEntry( T* p, lua_State *L )			{ int iIndex = IArg(1); p->m_UnlockEntries[iIndex].PushSelf(L); return 1; }
 	static int GetSongsUnlockedByEntryID( T* p, lua_State *L )
 	{
 		vector<Song *> apSongs;
@@ -634,6 +666,9 @@ public:
 		ADD_METHOD( UnlockEntryID );
 		ADD_METHOD( PreferUnlockEntryID );
 		ADD_METHOD( GetNumUnlocks );
+		ADD_METHOD( AllAreLocked );
+		ADD_METHOD( GetUnlockIndexToCelebrate );
+		ADD_METHOD( AnyUnlocksToCelebrate );
 		ADD_METHOD( GetUnlockEntry );
 		ADD_METHOD( GetSongsUnlockedByEntryID );
 		ADD_METHOD( GetStepsUnlockedByEntryID );

@@ -76,6 +76,8 @@ ScreenStage.cpp ScreenStage.h \
 ScreenTest.cpp ScreenTest.h ScreenTestFonts.cpp ScreenTestFonts.h ScreenTestInput.cpp ScreenTestInput.h \
 ScreenTestLights.cpp ScreenTestLights.h ScreenTestSound.cpp ScreenTestSound.h ScreenTextEntry.cpp ScreenTextEntry.h \
 ScreenTitleMenu.cpp ScreenTitleMenu.h \
+ScreenUnlockBrowse.cpp ScreenUnlockBrowse.h \
+ScreenUnlockCelebrate.cpp ScreenUnlockCelebrate.h \
 ScreenUnlockStatus.cpp ScreenUnlockStatus.h \
 ScreenWithMenuElements.cpp ScreenWithMenuElements.h
 
