@@ -63,17 +63,17 @@ void NoteMetricCache_t::Load( const RString &sButton )
 		m_fNoteColorTextureCoordSpacing[p].x = NOTESKIN->GetMetricF(sButton,s+"NoteColorTextureCoordSpacingX");
 		m_fNoteColorTextureCoordSpacing[p].y = NOTESKIN->GetMetricF(sButton,s+"NoteColorTextureCoordSpacingY");
 	}
-	m_bHoldHeadIsAboveWavyParts =			NOTESKIN->GetMetricB(sButton,"HoldHeadIsAboveWavyParts");
-	m_bHoldTailIsAboveWavyParts =			NOTESKIN->GetMetricB(sButton,"HoldTailIsAboveWavyParts");
+	m_bHoldHeadIsAboveWavyParts =		NOTESKIN->GetMetricB(sButton,"HoldHeadIsAboveWavyParts");
+	m_bHoldTailIsAboveWavyParts =		NOTESKIN->GetMetricB(sButton,"HoldTailIsAboveWavyParts");
 	m_iStartDrawingHoldBodyOffsetFromHead =	NOTESKIN->GetMetricI(sButton,"StartDrawingHoldBodyOffsetFromHead");
 	m_iStopDrawingHoldBodyOffsetFromTail =	NOTESKIN->GetMetricI(sButton,"StopDrawingHoldBodyOffsetFromTail");
-	m_fHoldLetGoGrayPercent =				NOTESKIN->GetMetricF(sButton,"HoldLetGoGrayPercent");
-	m_bTapNoteUseLighting =					NOTESKIN->GetMetricB(sButton,"TapNoteUseLighting");
-	m_bTapAdditionUseLighting =				NOTESKIN->GetMetricB(sButton,"TapAdditionUseLighting");
-	m_bTapMineUseLighting =					NOTESKIN->GetMetricB(sButton,"TapMineUseLighting");
-	m_bHoldHeadUseLighting =				NOTESKIN->GetMetricB(sButton,"HoldHeadUseLighting");
-	m_bHoldTailUseLighting =				NOTESKIN->GetMetricB(sButton,"HoldTailUseLighting");
-	m_bFlipHeadAndTailWhenReverse =			NOTESKIN->GetMetricB(sButton,"FlipHeadAndTailWhenReverse");
+	m_fHoldLetGoGrayPercent =		NOTESKIN->GetMetricF(sButton,"HoldLetGoGrayPercent");
+	m_bTapNoteUseLighting =			NOTESKIN->GetMetricB(sButton,"TapNoteUseLighting");
+	m_bTapAdditionUseLighting =		NOTESKIN->GetMetricB(sButton,"TapAdditionUseLighting");
+	m_bTapMineUseLighting =			NOTESKIN->GetMetricB(sButton,"TapMineUseLighting");
+	m_bHoldHeadUseLighting =		NOTESKIN->GetMetricB(sButton,"HoldHeadUseLighting");
+	m_bHoldTailUseLighting =		NOTESKIN->GetMetricB(sButton,"HoldTailUseLighting");
+	m_bFlipHeadAndTailWhenReverse =		NOTESKIN->GetMetricB(sButton,"FlipHeadAndTailWhenReverse");
 }
 
 
@@ -263,11 +263,11 @@ void NoteDisplay::Load( int iColNum, const PlayerState* pPlayerState, float fYRe
 	{
 		FOREACH_ActiveType( at )
 		{
-			m_HoldHead[ht][at].Load(		sButton, HoldTypeToString(ht)+" head "+ActiveTypeToString(at) );
-			m_HoldTopCap[ht][at].Load(		sButton, HoldTypeToString(ht)+" topcap "+ActiveTypeToString(at) );
-			m_HoldBody[ht][at].Load(		sButton, HoldTypeToString(ht)+" body "+ActiveTypeToString(at) );
+			m_HoldHead[ht][at].Load(	sButton, HoldTypeToString(ht)+" head "+ActiveTypeToString(at) );
+			m_HoldTopCap[ht][at].Load(	sButton, HoldTypeToString(ht)+" topcap "+ActiveTypeToString(at) );
+			m_HoldBody[ht][at].Load(	sButton, HoldTypeToString(ht)+" body "+ActiveTypeToString(at) );
 			m_HoldBottomCap[ht][at].Load(	sButton, HoldTypeToString(ht)+" bottomcap "+ActiveTypeToString(at) );
-			m_HoldTail[ht][at].Load(		sButton, HoldTypeToString(ht)+" tail "+ActiveTypeToString(at) );
+			m_HoldTail[ht][at].Load(	sButton, HoldTypeToString(ht)+" tail "+ActiveTypeToString(at) );
 		}
 	}
 }
@@ -515,17 +515,17 @@ void NoteDisplay::DrawHoldTopCap( const TapNote& tn, int iCol, int iRow, bool bI
 			bLast = true;
 		}
 
-		const float fYOffset				= ArrowEffects::GetYOffsetFromYPos( m_pPlayerState, iCol, fY, m_fYReverseOffsetPixels );
-		const float fZ						= ArrowEffects::GetZPos( m_pPlayerState, iCol, fYOffset );
-		const float fX						= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset );
-		const float fXLeft					= fX - fFrameWidth/2;
-		const float fXRight					= fX + fFrameWidth/2;
-		const float fTopDistFromHeadTop		= fY - fYCapTop;
-		const float fTexCoordTop			= SCALE( fTopDistFromHeadTop,    0, fFrameHeight, pRect->top, pRect->bottom );
-		const float fTexCoordLeft			= pRect->left;
-		const float fTexCoordRight			= pRect->right;
-		const float	fAlpha					= ArrowGetAlphaOrGlow( bGlow, m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
-		const RageColor color				= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
+		const float fYOffset		= ArrowEffects::GetYOffsetFromYPos( m_pPlayerState, iCol, fY, m_fYReverseOffsetPixels );
+		const float fZ			= ArrowEffects::GetZPos( m_pPlayerState, iCol, fYOffset );
+		const float fX			= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset );
+		const float fXLeft		= fX - fFrameWidth/2;
+		const float fXRight		= fX + fFrameWidth/2;
+		const float fTopDistFromHeadTop	= fY - fYCapTop;
+		const float fTexCoordTop	= SCALE( fTopDistFromHeadTop,    0, fFrameHeight, pRect->top, pRect->bottom );
+		const float fTexCoordLeft	= pRect->left;
+		const float fTexCoordRight	= pRect->right;
+		const float fAlpha		= ArrowGetAlphaOrGlow( bGlow, m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
+		const RageColor color		= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 
 		if( fAlpha > 0 )
 			bAllAreTransparent = false;
@@ -608,11 +608,11 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, int iRow, bool bIsB
 			bLast = true;
 		}
 
-		const float fYOffset			= ArrowEffects::GetYOffsetFromYPos( m_pPlayerState, iCol, fY, m_fYReverseOffsetPixels );
-		const float fZ					= ArrowEffects::GetZPos( m_pPlayerState, iCol, fYOffset );
-		const float fX					= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset );
-		const float fXLeft				= fX - fFrameWidth/2;
-		const float fXRight				= fX + fFrameWidth/2;
+		const float fYOffset		= ArrowEffects::GetYOffsetFromYPos( m_pPlayerState, iCol, fY, m_fYReverseOffsetPixels );
+		const float fZ			= ArrowEffects::GetZPos( m_pPlayerState, iCol, fYOffset );
+		const float fX			= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset );
+		const float fXLeft		= fX - fFrameWidth/2;
+		const float fXRight		= fX + fFrameWidth/2;
 		const float fDistFromBodyBottom	= fYBodyBottom - fY;
 		const float fDistFromBodyTop	= fY - fYBodyTop;
 		float fTexCoordTop		= SCALE( bAnchorToBottom ? fDistFromBodyTop : fDistFromBodyBottom,    0, fFrameHeight, pRect->bottom, pRect->top );
@@ -621,10 +621,10 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, int iRow, bool bIsB
 		if( fY == fDrawYBodyTop ) // first
 				fVertTexCoordOffset = floorf( fTexCoordTop );
 		fTexCoordTop -= fVertTexCoordOffset;
-		const float fTexCoordLeft		= pRect->left;
-		const float fTexCoordRight		= pRect->right;
-		const float	fAlpha				= ArrowGetAlphaOrGlow( bGlow, m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
-		const RageColor color			= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
+		const float fTexCoordLeft	= pRect->left;
+		const float fTexCoordRight	= pRect->right;
+		const float	fAlpha		= ArrowGetAlphaOrGlow( bGlow, m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
+		const RageColor color		= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 
 		if( fAlpha > 0 )
 			bAllAreTransparent = false;
@@ -699,17 +699,17 @@ void NoteDisplay::DrawHoldBottomCap( const TapNote& tn, int iCol, int iRow, bool
 			bLast = true;
 		}
 
-		const float fYOffset				= ArrowEffects::GetYOffsetFromYPos( m_pPlayerState, iCol, fY, m_fYReverseOffsetPixels );
-		const float fZ						= ArrowEffects::GetZPos( m_pPlayerState, iCol, fYOffset );
-		const float fX						= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset );
-		const float fXLeft					= fX - fFrameWidth/2;
-		const float fXRight					= fX + fFrameWidth/2;
-		const float fTopDistFromTail		= fY - fYCapTop;
-		const float fTexCoordTop			= SCALE( fTopDistFromTail,    0, fFrameHeight, pRect->top, pRect->bottom );
-		const float fTexCoordLeft			= pRect->left;
-		const float fTexCoordRight			= pRect->right;
-		const float	fAlpha					= ArrowGetAlphaOrGlow( bGlow, m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
-		const RageColor color				= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
+		const float fYOffset		= ArrowEffects::GetYOffsetFromYPos( m_pPlayerState, iCol, fY, m_fYReverseOffsetPixels );
+		const float fZ			= ArrowEffects::GetZPos( m_pPlayerState, iCol, fYOffset );
+		const float fX			= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset );
+		const float fXLeft		= fX - fFrameWidth/2;
+		const float fXRight		= fX + fFrameWidth/2;
+		const float fTopDistFromTail	= fY - fYCapTop;
+		const float fTexCoordTop	= SCALE( fTopDistFromTail,    0, fFrameHeight, pRect->top, pRect->bottom );
+		const float fTexCoordLeft	= pRect->left;
+		const float fTexCoordRight	= pRect->right;
+		const float	fAlpha		= ArrowGetAlphaOrGlow( bGlow, m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
+		const RageColor color		= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 
 		if( fAlpha > 0 )
 			bAllAreTransparent = false;
@@ -742,13 +742,13 @@ void NoteDisplay::DrawHoldTail( const TapNote& tn, int iCol, int iRow, bool bIsB
 	pSprTail->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 
 	const float fY				= fYTail;
-	const float fYOffset		= ArrowEffects::GetYOffsetFromYPos( m_pPlayerState, iCol, fY, m_fYReverseOffsetPixels );
+	const float fYOffset			= ArrowEffects::GetYOffsetFromYPos( m_pPlayerState, iCol, fY, m_fYReverseOffsetPixels );
 	if( fYOffset < fYStartOffset || fYOffset > fYEndOffset )
 			return;
 	const float fX				= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset );
 	const float fZ				= ArrowEffects::GetZPos( m_pPlayerState, iCol, fYOffset );
-	const float	fAlpha			= ArrowEffects::GetAlpha( m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
-	const float	fGlow			= ArrowEffects::GetGlow( m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
+	const float fAlpha			= ArrowEffects::GetAlpha( m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
+	const float fGlow			= ArrowEffects::GetGlow( m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
 	const RageColor colorDiffuse= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 	const RageColor colorGlow	= RageColor(1,1,1,fGlow);
 
@@ -943,14 +943,14 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeing
 
 void NoteDisplay::DrawActor( Actor* pActor, int iCol, float fBeat, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels, bool bUseLighting, NotePart part )
 {
-	const float fYOffset		= ArrowEffects::GetYOffset(	m_pPlayerState, iCol, fBeat );
+	const float fYOffset			= ArrowEffects::GetYOffset(	m_pPlayerState, iCol, fBeat );
 	const float fYPos			= ArrowEffects::GetYPos(	m_pPlayerState, iCol, fYOffset, fReverseOffsetPixels );
-	const float fRotation		= ArrowEffects::GetRotation(	m_pPlayerState, fBeat );
+	const float fRotation			= ArrowEffects::GetRotation(	m_pPlayerState, fBeat );
 	const float fXPos			= ArrowEffects::GetXPos(		m_pPlayerState, iCol, fYOffset );
 	const float fZPos			= ArrowEffects::GetZPos(	   m_pPlayerState, iCol, fYOffset );
 	const float fAlpha			= ArrowEffects::GetAlpha(	m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
 	const float fGlow			= ArrowEffects::GetGlow(		m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
-	const float fColorScale		= ArrowEffects::GetBrightness( m_pPlayerState, fBeat ) * SCALE(fLife,0,1,0.2f,1);
+	const float fColorScale			= ArrowEffects::GetBrightness( m_pPlayerState, fBeat ) * SCALE(fLife,0,1,0.2f,1);
 	const float fZoom			= ArrowEffects::GetZoom( m_pPlayerState );
 	RageColor diffuse = RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 	RageColor glow = RageColor(1,1,1,fGlow);
