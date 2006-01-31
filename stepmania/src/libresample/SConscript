@@ -1,2 +1,1 @@
-# This is not binary, damnit! Stupid Eclipse.
 Library('resample', ['src/hackedresamplesubs.c', 'src/filterkit.c', 'src/resample.c', 'src/resamplesubs.c'], CPPFLAGS="-DNO_AUTOCONF")
