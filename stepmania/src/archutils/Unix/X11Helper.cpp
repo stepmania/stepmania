@@ -99,7 +99,7 @@ bool X11Helper::MakeWindow( int screenNum, int depth, Visual *visual, int width,
 		// pHaveWin will stay false if an error occurs once I do error
 		// checking here...
 
-	Window Win = CreateWindow( screenNum, depth, visual, width, height, overrideRedirect );
+	Win = CreateWindow( screenNum, depth, visual, width, height, overrideRedirect );
 
 	g_bHaveWin = true;
 
