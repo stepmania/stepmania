@@ -300,12 +300,11 @@ void NoteDisplay::SetActiveFrame( float fNoteBeat, Actor &actorToSet, float fAni
 
 	if( bVivid )
 	{
-		// changed to deal with the minor complaint that the color cycling is
-		// one tick off in general
-		const float fNoteBeatFraction = fmodf( fNoteBeat, 1.0f );
-		const float fFraction = fNoteBeatFraction - 0.25f/fAnimationLengthInBeats;
+		float fNoteBeatFraction = fmodf( fNoteBeat, 1.0f );
+		fNoteBeatFraction -= 1/(fAnimationLengthInBeats*4);
+
 		const float fInterval = 1.f / fAnimationLengthInBeats;
-		fPercentIntoAnimation += Quantize(fFraction,fInterval);
+		fPercentIntoAnimation += Quantize( fNoteBeatFraction, fInterval );
 
 		// just in case somehow we're majorly negative with the subtraction
 		wrap( fPercentIntoAnimation, 1.f );
