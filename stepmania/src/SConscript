@@ -26,7 +26,6 @@ def EndianTestPosix(context):
 	context.Result(0)
 	return 0
 
-
 Have_GTK = False
 
 if gtkenv['PLATFORM'] == 'posix':
@@ -86,7 +85,47 @@ def ArchTest(context):
 		context.Result(2)
 		return 2;
 
-conf = Configure(env, custom_tests = {'EndianTestPosix' : EndianTestPosix, 'ArchTest' : ArchTest });
+backtrace_symbols_C = """
+#include <execinfo.h>
+int main()
+{
+	void *BacktracePointer=main;
+	return backtrace_symbols (&BacktracePointer, 1) == 0? 1:0;
+}
+"""
+
+def BacktraceSymbolsTest(context):
+	context.Message("Checking for working backtrace_symbols()")
+	res = context.TryRun(backtrace_symbols_C, '.c')[0]
+	context.Result(res)
+	return res
+
+cxa_demangle_C = """
+#include <cxxabi.h>
+#include <stdlib.h>
+#include <typeinfo>
+
+int main()
+{
+	struct foo { } fum;
+	int status;
+	char *realname = abi::__cxa_demangle(typeid(fum).name(), 0, 0, &status);
+	free( realname );
+	return 0;
+}
+"""
+
+def CxaDemangleTest(context):
+	context.Message("Checking for working cxa_demangle")
+	res = context.TryRun(cxa_demangle_C, '.c')[0]
+	context.Result(res)
+	return res
+
+conf = Configure(env, custom_tests = {
+	'EndianTestPosix' : EndianTestPosix,
+	'ArchTest' : ArchTest,
+	'BacktraceSymbolsTest' : BacktraceSymbolsTest,
+	'CxaDemangleTest' : CxaDemangleTest });
 
 if env['PLATFORM'] == 'posix':
 	endian = conf.EndianTestPosix()
@@ -374,6 +413,24 @@ if env['PLATFORM'] == 'posix':
 	Lights += [ "arch/Lights/LightsDriver_LinuxWeedTech.cpp", "arch/Lights/LightsDriver_LinuxParallel.cpp" ]
 	MemoryCard += [ "arch/MemoryCard/MemoryCardDriverThreaded_Linux.cpp" ]
 	InputHandler += [ "arch/InputHandler/InputHandler_Linux_Joystick.cpp" ]
+	# Backtrace stuff
+	if conf.CheckLib('dl', 'dladdr'):
+		Our_Cflags += ' -DBACKTRACE_LOOKUP_METHOD_DLADDR'
+		env.Append(LINKFLAGS="-rdynamic")
+	elif conf.BacktraceSymbolsTest():
+		Our_Cflags += " -DBACKTRACE_LOOKUP_METHOD_BACKTRACE_SYMBOLS"
+		env.Append(LINKFLAGS='-rdynamic')
+	else:
+		print "*** Couldn't find suitable symbol lookup method."
+		print "*** Generated crash logs will be worthless."
+	if conf.CheckHeader('libiberty.h') and conf.CheckLib('iberty', 'cplus_demangle'):
+		Our_Cflags += ' -DHAVE_LIBIBERTY'
+		Our_Libs += ['iberty']
+	else:
+		print "*** Backtrace support has been detected, but libiberty is not installed."
+		print "*** Libiberty will make crash reports for developers much easier to read,"
+		print "*** and is strongly recommended."
+		
 
 if Have_GTK:
 	Our_Cflags += " -DHAVE_GTK"
