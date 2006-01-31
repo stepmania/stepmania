@@ -172,7 +172,6 @@ PrefsManager::PrefsManager() :
 	m_bInterlaced			( "Interlaced",				false ),
 	m_bPAL					( "PAL",					false ),
 	m_bDelayedTextureDelete	( "DelayedTextureDelete",	true ),
-	m_bDelayedScreenLoad	( "DelayedScreenLoad",		false ),
 	m_bDelayedModelDelete	( "DelayedModelDelete",		false ),
 	m_BannerCache			( "BannerCache",			BNCACHE_LOW_RES_PRELOAD ),
 	m_bPalettedBannerCache	( "PalettedBannerCache",	false ),

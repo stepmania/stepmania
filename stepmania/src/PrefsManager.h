@@ -62,7 +62,6 @@ public:
 	Preference<bool>	m_bInterlaced;
 	Preference<bool>	m_bPAL;
 	Preference<bool>	m_bDelayedTextureDelete;
-	Preference<bool>	m_bDelayedScreenLoad;
 	Preference<bool>	m_bDelayedModelDelete;
 	enum BannerCache {
 		BNCACHE_OFF,

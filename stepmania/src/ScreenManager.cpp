@@ -78,7 +78,8 @@
 
 ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our program
 
-static Preference<bool> g_bConcurrentLoading( "ConcurrentLoading",	false );
+static Preference<bool> g_bConcurrentLoading( "ConcurrentLoading", false );
+static Preference<bool> g_bDelayedScreenLoad( "DelayedScreenLoad", false );
 
 // Screen registration
 static map<RString,CreateScreenFn>	*g_pmapRegistrees = NULL;
@@ -682,7 +683,7 @@ void ScreenManager::LoadDelayedScreen()
 		 *
 		 * If DelayedScreenLoad is true, delete them now; this lowers memory requirements,
 		 * but results in redundant loads as we unload common data. */
-		if( PREFSMAN->m_bDelayedScreenLoad )
+		if( g_bDelayedScreenLoad )
 			DeletePreparedScreens();
 		else
 			GrabPreparedActors( apActorsToDelete );
