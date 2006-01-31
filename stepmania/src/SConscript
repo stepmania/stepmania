@@ -178,7 +178,6 @@ Screens = [
 	"ScreenSongOptions.cpp",
 	"ScreenSplash.cpp",
 	"ScreenStage.cpp",
-	"ScreenTest.cpp",
 	"ScreenTestFonts.cpp",
 	"ScreenTestInput.cpp",
 	"ScreenTestLights.cpp",
@@ -634,7 +633,8 @@ cryptopp = [
 
 env = conf.Finish()
 
-env.Command("libresample/libresample.a", "", "cd src/libresample && ./configure && make")
+env.Append(CPPFLAGS='-g2')
+SConscript('libresample/SConscript')
 env.Program('stepmania',
 	Screens + DataStructures + FileTypes + StepMania + Arch +\
 	ActorsInGameplayAndMenus + ActorsInMenus + ActorsInGameplay + Rage +\
