@@ -52,7 +52,7 @@ env = Environment()
 
 # NOPORT HACK: Does this cause problems on systems that don't need it? I don't know what to check for...
 # XXX: Compilation is broken without -DCRASH_HANDLER
-Our_Cflags = "-DNEED_CSTDLIB_WORKAROUND -DCRASH_HANDLER"
+Our_Cflags = "-O0 -g2 -Wall -W -Wno-unused -Wno-switch -DDEBUG -DNEED_CSTDLIB_WORKAROUND -DCRASH_HANDLER"
 # XXX We should check for these.
 Our_Libs = ["lua", "lualib", "jpeg", "png", "gif", "rt"]
 
@@ -121,11 +121,48 @@ def CxaDemangleTest(context):
 	context.Result(res)
 	return res
 
+alsa_test_C = """
+#include <alsa/asoundlib.h>
+/* ensure backward compatibility */
+#if !defined(SND_LIB_MAJOR) && defined(SOUNDLIB_VERSION_MAJOR)
+#define SND_LIB_MAJOR SOUNDLIB_VERSION_MAJOR
+#endif
+#if !defined(SND_LIB_MINOR) && defined(SOUNDLIB_VERSION_MINOR)
+#define SND_LIB_MINOR SOUNDLIB_VERSION_MINOR
+#endif
+#if !defined(SND_LIB_SUBMINOR) && defined(SOUNDLIB_VERSION_SUBMINOR)
+#define SND_LIB_SUBMINOR SOUNDLIB_VERSION_SUBMINOR
+#endif
+
+#  if(SND_LIB_MAJOR > 0)
+#  else
+#    if(SND_LIB_MAJOR < 0)
+#       error not present
+#    endif
+#   if(SND_LIB_MINOR > 9)
+#   else
+#     if(SND_LIB_MINOR < 9)
+#          error not present
+#      endif
+#      if(SND_LIB_SUBMINOR < 0)
+#        error not present
+#      endif
+#    endif
+#  endif
+"""
+
+def AlsaVersionTest(context):
+	context.Message("Checking for ALSA >= 0.9.0")
+	res = context.TryCompile(alsa_test_C, '.c')
+	context.Result(res)
+	return res
+
 conf = Configure(env, custom_tests = {
 	'EndianTestPosix' : EndianTestPosix,
 	'ArchTest' : ArchTest,
 	'BacktraceSymbolsTest' : BacktraceSymbolsTest,
-	'CxaDemangleTest' : CxaDemangleTest });
+	'CxaDemangleTest' : CxaDemangleTest,
+	'AlsaVersionTest' : AlsaVersionTest });
 
 if env['PLATFORM'] == 'posix':
 	endian = conf.EndianTestPosix()
@@ -430,7 +467,13 @@ if env['PLATFORM'] == 'posix':
 		print "*** Backtrace support has been detected, but libiberty is not installed."
 		print "*** Libiberty will make crash reports for developers much easier to read,"
 		print "*** and is strongly recommended."
-		
+	# ALSA is Linux-exclusive
+	if conf.AlsaVersionTest() and conf.CheckLib('asound', 'snd_ctl_open'):
+		Our_Cflags += " -DHAVE_ALSA"
+		Sound += [	"arch/Sound/ALSA9Dynamic.cpp",
+					"arch/Sound/ALSA9Helpers.cpp",
+					"arch/Sound/RageSoundDriver_ALSA9_Software.cpp",
+					"arch/Sound/RageSoundDriver_ALSA9.cpp" ]
 
 if Have_GTK:
 	Our_Cflags += " -DHAVE_GTK"
@@ -443,6 +486,9 @@ if conf.CheckLib('X11', 'XMapWindow') and conf.CheckLib('Xrandr', 'XRRSizes'):
 	ArchUtils += [ "archutils/Unix/X11Helper.cpp" ]
 	LowLevelWindow += [ "arch/LowLevelWindow/LowLevelWindow_X11.cpp" ]
 	InputHandler += [ "arch/InputHandler/InputHandler_X11.cpp" ]
+	if conf.CheckLib('Xtst', 'XTestQueryExtension'):
+		Our_Cflags += " -DHAVE_LIBXTST"
+		Our_Libs += [ 'Xtst' ]
 
 Arch = LoadingWindow + Sound + ArchHooks + InputHandler + MovieTexture +\
 		Lights + MemoryCard + LowLevelWindow + ArchUtils + Dialog +\
