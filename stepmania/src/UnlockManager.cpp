@@ -431,6 +431,11 @@ void UnlockManager::Load()
 		if( !current.IsLocked() )
 			current.m_bCelebrated = false;
 
+		// Make sure that we don't have duplicate unlock IDs.  This can cause problems 
+		// with UnlockCelebrate and with codes.
+		FOREACH_CONST( UnlockEntry, m_UnlockEntries, ue )
+			ASSERT( ue->m_iEntryID != current.m_iEntryID );
+
 		m_UnlockEntries.push_back( current );
 	}
 
