@@ -28,8 +28,6 @@ public:
 		int iEndDrawingPixel );
 	virtual void Unload();
 
-	int	m_iBeginMarker, m_iEndMarker;	// only used with MODE_EDIT
-
 	void FadeToFail();
 	void CacheNoteSkin( const RString &sNoteSkin );
 
@@ -39,6 +37,8 @@ public:
 	void DidHoldNote( int iCol, HoldNoteScore score, bool bBright );
 
 	const PlayerState *GetPlayerState() const { return m_pPlayerState; }
+
+	int				m_iBeginMarker, m_iEndMarker;	// only used with MODE_EDIT
 
 protected:
 	void CacheAllUsedNoteSkins();
@@ -56,32 +56,32 @@ protected:
 
 	const NoteData *m_pNoteData;
 
-	float	m_fPercentFadeToFail;	// -1 of not fading to fail
+	float				m_fPercentFadeToFail;	// -1 if not fading to fail
 
-	const PlayerState*	m_pPlayerState;
+	const PlayerState*		m_pPlayerState;
 	int				m_iStartDrawingPixel;	// this should be a negative number
 	int				m_iEndDrawingPixel;	// this should be a positive number
-	float			m_fYReverseOffsetPixels;
+	float				m_fYReverseOffsetPixels;
 
 	// color arrows
 	struct NoteDisplayCols
 	{
 		NoteDisplay		*display;
 		ReceptorArrowRow	m_ReceptorArrowRow;
-		GhostArrowRow	m_GhostArrowRow;
+		GhostArrowRow		m_GhostArrowRow;
 		NoteDisplayCols( int iNumCols ) { display = new NoteDisplay[iNumCols]; }
 		~NoteDisplayCols() { delete [] display; }
 	};
 
 	/* All loaded note displays, mapped by their name. */
 	map<RString, NoteDisplayCols *> m_NoteDisplays;
-	NoteDisplayCols *m_pCurDisplay;
+	NoteDisplayCols			*m_pCurDisplay;
 
 	// used in MODE_EDIT
-	Sprite			m_sprBars;	// 4 frames: Measure, 4th, 8th, 16th
-	BitmapText		m_textMeasureNumber;
-	Quad			m_rectMarkerBar;
-	Quad			m_rectAreaHighlight;
+	Sprite				m_sprBars;	// 4 frames: Measure, 4th, 8th, 16th
+	BitmapText			m_textMeasureNumber;
+	Quad				m_rectMarkerBar;
+	Quad				m_rectAreaHighlight;
 };
 
 #endif
