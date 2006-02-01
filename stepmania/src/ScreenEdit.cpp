@@ -1991,7 +1991,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 		/* Snap to current options. */
 		GAMESTATE->m_pPlayerState[PLAYER_1]->m_CurrentPlayerOptions = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
 
-		/* Give a 1 secord lead-in.  If we're loading Player, this must be done first. */
+		/* Give a 1 second lead-in.  If we're loading Player, this must be done first. */
 		float fSeconds = m_pSong->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_iStartPlayingAt) ) - 1;
 		GAMESTATE->UpdateSongPosition( fSeconds, m_pSong->m_Timing );
 
