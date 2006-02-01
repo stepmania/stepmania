@@ -75,8 +75,8 @@ static PlayerNumber GetFirstReadyMemoryCard()
 	return PLAYER_INVALID;
 }
 
-static LocalizedString MEMORY_CARD_EDITS_NOT_CLEARED( "ScreenServiceAction", "Edits not cleared - No memory cards ready." );
-static LocalizedString EDITS_CLEARED				( "ScreenServiceAction", "%d edits cleared, %d errors." );
+static LocalizedString MEMORY_CARD_EDITS_NOT_CLEARED	( "ScreenServiceAction", "Edits not cleared - No memory cards ready." );
+static LocalizedString EDITS_CLEARED			( "ScreenServiceAction", "%d edits cleared, %d errors." );
 static RString ClearMemoryCardEdits()
 {
 	PlayerNumber pn = GetFirstReadyMemoryCard();
@@ -107,8 +107,8 @@ static RString ClearMemoryCardEdits()
 }
 
 
-static LocalizedString STATS_NOT_SAVED				( "ScreenServiceAction", "Stats not saved - No memory cards ready." );
-static LocalizedString MACHINE_STATS_SAVED			( "ScreenServiceAction", "Machine stats saved to P%d card." );
+static LocalizedString STATS_NOT_SAVED			( "ScreenServiceAction", "Stats not saved - No memory cards ready." );
+static LocalizedString MACHINE_STATS_SAVED		( "ScreenServiceAction", "Machine stats saved to P%d card." );
 static LocalizedString ERROR_SAVING_MACHINE_STATS	( "ScreenServiceAction", "Error saving machine stats to P%d card." );
 static RString TransferStatsMachineToMemoryCard()
 {
@@ -377,7 +377,7 @@ void ScreenServiceAction::Init()
 
 	RString (*pfn)() = NULL;
 
-	if(	 sAction == "ClearBookkeepingData" )		pfn = ClearBookkeepingData;
+	if(	 sAction == "ClearBookkeepingData" )			pfn = ClearBookkeepingData;
 	else if( sAction == "ClearMachineStats" )			pfn = ClearMachineStats;
 	else if( sAction == "ClearMachineEdits" )			pfn = ClearMachineEdits;
 	else if( sAction == "ClearMemoryCardEdits" )			pfn = ClearMemoryCardEdits;
