@@ -165,7 +165,8 @@ float NoteField::GetWidth() const
 	// TODO: Remove use of PlayerNumber.
 	pStyle->GetMinAndMaxColX( m_pPlayerState->m_PlayerNumber, fMinX, fMaxX );
 
-	return fMaxX - fMinX + ARROW_SIZE;
+	const float fYZoom	= ArrowEffects::GetZoom( m_pPlayerState );
+	return (fMaxX - fMinX + ARROW_SIZE) * fYZoom;
 }
 
 void NoteField::DrawBeatBar( const float fBeat )
@@ -258,12 +259,14 @@ void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 {
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
 	const float fYPos	= ArrowEffects::GetYPos(	m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
+	const float fZoom	= ArrowEffects::GetZoom( m_pPlayerState );
 
+	m_textMeasureNumber.SetZoom( fZoom );
 	m_textMeasureNumber.SetHorizAlign( Actor::align_right );
 	m_textMeasureNumber.SetDiffuse( RageColor(1,0,0,1) );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%.3f", fBPM) );
-	m_textMeasureNumber.SetXY( -GetWidth()/2.f - 60, fYPos );
+	m_textMeasureNumber.SetXY( -GetWidth()/2 - 60*fZoom, fYPos );
 	m_textMeasureNumber.Draw();
 }
 
@@ -271,12 +274,14 @@ void NoteField::DrawFreezeText( const float fBeat, const float fSecs )
 {
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
  	const float fYPos	= ArrowEffects::GetYPos(	m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
+	const float fZoom	= ArrowEffects::GetZoom( m_pPlayerState );
 
+	m_textMeasureNumber.SetZoom( fZoom );
 	m_textMeasureNumber.SetHorizAlign( Actor::align_right );
 	m_textMeasureNumber.SetDiffuse( RageColor(0.8f,0.8f,0,1) );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%.3f", fSecs) );
-	m_textMeasureNumber.SetXY( -GetWidth()/2.f - 10, fYPos );
+	m_textMeasureNumber.SetXY( -GetWidth()/2.f - 10*fZoom, fYPos );
 	m_textMeasureNumber.Draw();
 }
 
@@ -284,12 +289,14 @@ void NoteField::DrawAttackText( const float fBeat, const Attack &attack )
 {
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
  	const float fYPos		= ArrowEffects::GetYPos(	m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
+	const float fZoom	= ArrowEffects::GetZoom( m_pPlayerState );
 
+	m_textMeasureNumber.SetZoom( fZoom );
 	m_textMeasureNumber.SetHorizAlign( Actor::align_left );
 	m_textMeasureNumber.SetDiffuse( RageColor(0,0.8f,0.8f,1) );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( attack.GetTextDescription() );
-	m_textMeasureNumber.SetXY( +GetWidth()/2.f + 10, fYPos );
+	m_textMeasureNumber.SetXY( +GetWidth()/2.f + 10*fZoom, fYPos );
 	m_textMeasureNumber.Draw();
 }
 
@@ -297,7 +304,9 @@ void NoteField::DrawBGChangeText( const float fBeat, const RString sNewBGName )
 {
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
 	const float fYPos		= ArrowEffects::GetYPos(	m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
+	const float fZoom	= ArrowEffects::GetZoom( m_pPlayerState );
 
+	m_textMeasureNumber.SetZoom( fZoom );
 	m_textMeasureNumber.SetHorizAlign( Actor::align_left );
 	m_textMeasureNumber.SetDiffuse( RageColor(0,1,0,1) );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
