@@ -45,7 +45,7 @@ struct Attack
 		bShowInAttackList = bShowInAttackList_;
 	}
 
-	void GetAttackBeats( const Song *pSong, const PlayerState* pPlayerState, float &fStartBeat, float &fEndBeat ) const;
+	void GetAttackBeats( const Song *pSong, float &fStartBeat, float &fEndBeat ) const;
 	void GetRealtimeAttackBeats( const Song *pSong, const PlayerState* pPlayerState, float &fStartBeat, float &fEndBeat ) const;
 	bool IsBlank() const { return sModifiers.empty(); }
 	bool operator== ( const Attack &rhs ) const;

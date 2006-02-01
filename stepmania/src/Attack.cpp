@@ -5,8 +5,9 @@
 #include "song.h"
 #include "Foreach.h"
 #include "PlayerOptions.h"
+#include "PlayerState.h"
 
-void Attack::GetAttackBeats( const Song *pSong, const PlayerState* pPlayerState, float &fStartBeat, float &fEndBeat ) const
+void Attack::GetAttackBeats( const Song *pSong, float &fStartBeat, float &fEndBeat ) const
 {
 	ASSERT( pSong );
 	ASSERT_M( fStartSecond >= 0, ssprintf("%f",fStartSecond) );
@@ -22,7 +23,7 @@ void Attack::GetRealtimeAttackBeats( const Song *pSong, const PlayerState* pPlay
 {
 	if( fStartSecond >= 0 )
 	{
-		GetAttackBeats( pSong, pPlayerState, fStartBeat, fEndBeat );
+		GetAttackBeats( pSong, fStartBeat, fEndBeat );
 		return;
 	}
 
