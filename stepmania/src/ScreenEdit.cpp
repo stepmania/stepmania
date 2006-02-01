@@ -1957,6 +1957,27 @@ void ScreenEdit::TransitionEditState( EditState em )
 		break;
 	}
 
+	// Set up player options for this mode.  (EDITING uses m_PlayerStateEdit, which we
+	// don't need to change.)
+	if( em != STATE_EDITING )
+	{
+		// Stop displaying course attacks, if any.
+		GAMESTATE->m_pPlayerState[PLAYER_1]->RemoveActiveAttacks();
+		// Load the player's default PlayerOptions.
+		GAMESTATE->m_pPlayerState[PLAYER_1]->RebuildPlayerOptionsFromActiveAttacks();
+
+		switch( em )
+		{
+		case STATE_RECORDING:
+		case STATE_RECORDING_PAUSED:
+			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_fScrolls[PlayerOptions::SCROLL_CENTERED] = 1.0f;
+			break;
+		}
+
+		/* Snap to current options. */
+		GAMESTATE->m_pPlayerState[PLAYER_1]->m_CurrentPlayerOptions = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
+	}
+
 	switch( em )
 	{
 	case STATE_EDITING:
@@ -1980,16 +2001,6 @@ void ScreenEdit::TransitionEditState( EditState em )
 	case STATE_RECORDING:
 	{
 		GAMESTATE->ResetOriginalSyncData();
-
-		/* Stop displaying course attacks, if any, and return to the player's defaults. */
-		GAMESTATE->m_pPlayerState[PLAYER_1]->RemoveActiveAttacks();
-		GAMESTATE->m_pPlayerState[PLAYER_1]->RebuildPlayerOptionsFromActiveAttacks();
-
-		if( em == STATE_RECORDING )
-			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_fScrolls[PlayerOptions::SCROLL_CENTERED] = 1.0f;
-
-		/* Snap to current options. */
-		GAMESTATE->m_pPlayerState[PLAYER_1]->m_CurrentPlayerOptions = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
 
 		/* Give a 1 second lead-in.  If we're loading Player, this must be done first. */
 		float fSeconds = m_pSong->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_iStartPlayingAt) ) - 1;
