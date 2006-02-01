@@ -765,7 +765,7 @@ void Player::ApplyWaitingTransforms()
 		po.FromString( mod.sModifiers );
 
 		float fStartBeat, fEndBeat;
-		mod.GetAttackBeats( GAMESTATE->m_pCurSong, m_pPlayerState, fStartBeat, fEndBeat );
+		mod.GetRealtimeAttackBeats( GAMESTATE->m_pCurSong, m_pPlayerState, fStartBeat, fEndBeat );
 		fEndBeat = min( fEndBeat, m_NoteData.GetLastBeat() );
 
 		LOG->Trace( "Applying transform '%s' from %f to %f to '%s'", mod.sModifiers.c_str(), fStartBeat, fEndBeat,
