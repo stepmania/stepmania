@@ -655,9 +655,6 @@ void ScreenEdit::Init()
 	m_iStartPlayingAt = -1;
 	m_iStopPlayingAt = -1;
 
-	m_EditState = STATE_INVALID;
-	TransitionEditState( STATE_EDITING );
-	
 	this->AddChild( &m_Background );
 
 	m_SnapDisplay.SetXY( EDIT_X, PLAYER_Y_STANDARD );
@@ -679,10 +676,13 @@ void ScreenEdit::Init()
 
 	m_NoteDataRecord.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
 	m_NoteFieldRecord.SetXY( RECORD_X, RECORD_Y );
-	m_NoteFieldRecord.Init( GAMESTATE->m_pPlayerState[PLAYER_1], 10 );
+	m_NoteFieldRecord.Init( GAMESTATE->m_pPlayerState[PLAYER_1], PLAYER_HEIGHT );
 	m_NoteFieldRecord.Load( &m_NoteDataRecord, -(int)SCREEN_HEIGHT/2, (int)SCREEN_HEIGHT/2 );
 	this->AddChild( &m_NoteFieldRecord );
 
+	m_EditState = STATE_INVALID;
+	TransitionEditState( STATE_EDITING );
+	
 	m_bRemoveNoteButtonDown = false;
 
 	m_Clipboard.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
@@ -1984,6 +1984,9 @@ void ScreenEdit::TransitionEditState( EditState em )
 		/* Stop displaying course attacks, if any, and return to the player's defaults. */
 		GAMESTATE->m_pPlayerState[PLAYER_1]->RemoveActiveAttacks();
 		GAMESTATE->m_pPlayerState[PLAYER_1]->RebuildPlayerOptionsFromActiveAttacks();
+
+		if( em == STATE_RECORDING )
+			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_fScrolls[PlayerOptions::SCROLL_CENTERED] = 1.0f;
 
 		/* Snap to current options. */
 		GAMESTATE->m_pPlayerState[PLAYER_1]->m_CurrentPlayerOptions = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
