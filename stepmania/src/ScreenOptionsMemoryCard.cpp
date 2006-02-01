@@ -16,6 +16,11 @@ void ScreenOptionsMemoryCard::Init()
 {
 	ScreenOptions::Init();
 
+	this->SubscribeToMessage( Message_StorageDevicesChanged );
+}
+
+void ScreenOptionsMemoryCard::BeginScreen()
+{
 	vector<OptionRowHandler*> vHands;
 
 	FOREACH_CONST( UsbStorageDevice, MEMCARDMAN->GetStorageDevices(), iter )
@@ -53,10 +58,7 @@ void ScreenOptionsMemoryCard::Init()
 	}
 	
 	InitMenu( vHands );
-}
 
-void ScreenOptionsMemoryCard::BeginScreen()
-{
 	ScreenOptions::BeginScreen();
 
 	// select the last chosen memory card (if present)
@@ -72,8 +74,6 @@ void ScreenOptionsMemoryCard::BeginScreen()
 			}
 		}
 	}
-
-	this->SubscribeToMessage( Message_StorageDevicesChanged );
 }
 
 void ScreenOptionsMemoryCard::HandleScreenMessage( const ScreenMessage SM )
