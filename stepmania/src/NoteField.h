@@ -28,6 +28,9 @@ public:
 		int iEndDrawingPixel );
 	virtual void Unload();
 
+	// This is done automatically by Init(), but can be re-called explicitly if the
+	// note skin changes.
+	void CacheAllUsedNoteSkins();
 	void FadeToFail();
 
 	void Step( int iCol, TapNoteScore score );
@@ -40,7 +43,6 @@ public:
 	int				m_iBeginMarker, m_iEndMarker;	// only used with MODE_EDIT
 
 protected:
-	void CacheAllUsedNoteSkins();
 	void CacheNoteSkin( const RString &sNoteSkin );
 
 	bool IsOnScreen( float fBeat, int iFirstPixelToDraw, int iLastPixelToDraw ) const;
