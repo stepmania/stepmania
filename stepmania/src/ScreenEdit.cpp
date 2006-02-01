@@ -2240,6 +2240,10 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		// Store the new options, so they stick when we RebuildPlayerOptionsFromActiveAttacks.
 		GAMESTATE->StoreSelectedOptions();
 
+		// The options may have changed the note skin.
+		m_NoteFieldRecord.CacheAllUsedNoteSkins();
+		m_Player.CacheAllUsedNoteSkins();
+
 		// stop any music that screen may have been playing
 		SOUND->StopMusic();
 	}
