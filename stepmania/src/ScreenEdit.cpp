@@ -1957,8 +1957,10 @@ void ScreenEdit::TransitionEditState( EditState em )
 		break;
 	}
 
+	//
 	// Set up player options for this mode.  (EDITING uses m_PlayerStateEdit, which we
 	// don't need to change.)
+	//
 	if( em != STATE_EDITING )
 	{
 		// Stop displaying course attacks, if any.
@@ -2235,7 +2237,8 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_BackFromOptions )
 	{
-		GAMESTATE->StoreSelectedOptions();	// so that the options stick when we reset Course attacks
+		// Store the new options, so they stick when we RebuildPlayerOptionsFromActiveAttacks.
+		GAMESTATE->StoreSelectedOptions();
 
 		// stop any music that screen may have been playing
 		SOUND->StopMusic();
