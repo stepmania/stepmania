@@ -160,7 +160,7 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
-	virtual ScreenType GetScreenType() const { return m_EditState==STATE_PLAYING ? gameplay : system_menu; }
+	virtual ScreenType GetScreenType() const { return m_EditState==STATE_PLAYING ? gameplay : ScreenWithMenuElements::GetScreenType(); }
 
 	void TransitionEditState( EditState em );
 	void ScrollTo( float fDestinationBeat );

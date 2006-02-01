@@ -1223,7 +1223,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 		/* Global operator key, to get quick access to the options menu. Don't
 		 * do this if we're on a "system menu", which includes the editor
 		 * (to prevent quitting without storing changes). */
-		if( SCREENMAN->GetTopScreen()->GetScreenType() != system_menu )
+		if( SCREENMAN->AllowOperatorMenuButton() )
 		{
 			SCREENMAN->SystemMessage( SERVICE_SWITCH_PRESSED );
 			GAMESTATE->Reset();

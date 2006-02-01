@@ -40,6 +40,7 @@ public:
 	void PopTopScreen( ScreenMessage SM );
 	void PopAllScreens();
 	Screen *GetTopScreen();
+	bool AllowOperatorMenuButton() const;
 
 	// System messages
 	void SystemMessage( const RString &sMessage );

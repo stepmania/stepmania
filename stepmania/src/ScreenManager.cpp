@@ -283,6 +283,17 @@ Screen *ScreenManager::GetTopScreen()
 	return g_ScreenStack[g_ScreenStack.size()-1].m_pScreen;
 }
 
+bool ScreenManager::AllowOperatorMenuButton() const
+{
+	FOREACH( LoadedScreen, g_ScreenStack, s )
+	{
+		if( !s->m_pScreen->AllowOperatorMenuButton() )
+			return false;
+	}
+
+	return true;
+}
+
 bool ScreenManager::IsStackedScreen( const Screen *pScreen ) const
 {
 	/* True if the screen is in the screen stack, but not the first. */
