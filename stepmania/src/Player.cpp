@@ -1837,6 +1837,12 @@ void Player::FadeToFail()
 		m_pCombo->SetCombo( 0, 0 );
 }
 
+void Player::CacheAllUsedNoteSkins()
+{
+	if( m_pNoteField )
+		m_pNoteField->CacheAllUsedNoteSkins();
+}
+
 bool Player::IsPlayingBeginner() const
 {
 	if( m_pPlayerStageStats != NULL && !m_pPlayerStageStats->vpPossibleSteps.empty() )

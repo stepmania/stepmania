@@ -52,6 +52,7 @@ public:
 	void Step( int col, const RageTimer &tm, bool bHeld = false );
 	void RandomizeNotes( int iNoteRow );
 	void FadeToFail();
+	void CacheAllUsedNoteSkins();
 	TapNoteScore GetLastTapNoteScore() const { return m_LastTapNoteScore; }
 	void ApplyWaitingTransforms();
 	void SetPaused( bool bPaused ) { m_bPaused = bPaused; }
