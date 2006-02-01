@@ -133,6 +133,7 @@ static bool ExportPackage( const RString &sPackageName, const RString &sSourceIn
 			if( sDir.Right(1) != "/" )
 				sDir += "/";
 			GetDirListingRecursive( &fileDriver, sDir, "*", asFilePaths );
+			SMPackageUtil::StripIgnoredSmzipFiles( asFilePaths );
 		}
 	}
 
@@ -177,12 +178,6 @@ static bool ExportPackage( const RString &sPackageName, const RString &sSourceIn
 	{
 		RString sFilePath = asFilePaths[j];
 		
-		// don't export "thumbs.db" files or "CVS" folders
-		if( sFilePath.find("CVS") != string::npos )
-			continue;	// skip
-		if( sFilePath.find("Thumbs.db") != string::npos )
-			continue;	// skip
-
 		RString sExt = GetExtension( sFilePath );
 		bool bUseCompression = true;
 		if( sExt.CompareNoCase("avi")==0 ||

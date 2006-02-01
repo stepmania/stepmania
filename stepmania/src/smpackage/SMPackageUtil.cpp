@@ -215,6 +215,23 @@ RString SMPackageUtil::GetLanguageCodeFromDisplayString( const RString &sDisplay
 	return s;
 }
 
+void SMPackageUtil::StripIgnoredSmzipFiles( vector<RString> &vsFilesInOut )
+{
+	for( int i=vsFilesInOut.size()-1; i>=0; i-- )
+	{
+		const RString &sFile = vsFilesInOut[i];
+
+		bool bEraseThis = false;
+		bEraseThis |= EndsWith( sFile, "smzip.ctl" );
+		bEraseThis |= EndsWith( sFile, ".old" );
+		bEraseThis |= EndsWith( sFile, "Thumbs.db" );
+		bEraseThis |= (sFile.find("CVS") != string::npos);
+
+		if( bEraseThis )
+			vsFilesInOut.erase( vsFilesInOut.begin()+i );
+	}
+}
+
 bool SMPackageUtil::DoesOsAbsoluteFileExist( const RString &sOsAbsoluteFile )
 {
 #if defined(WIN32)

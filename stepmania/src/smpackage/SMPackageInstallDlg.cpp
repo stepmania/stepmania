@@ -69,6 +69,13 @@ static bool CompareStringNoCase( const RString &s1, const RString &s2 )
 	return s1.CompareNoCase( s2 ) < 0;
 }
 
+void GetSmzipFilesToExtract( RageFileDriver &zip, vector<RString> &vsOut )
+{
+	GetDirListingRecursive( &zip, "/", "*", vsOut );
+	SMPackageUtil::StripIgnoredSmzipFiles( vsOut );	
+}
+
+
 static LocalizedString COULD_NOT_OPEN_FILE		( "CSMPackageInstallDlg", "Could not open file '%s'." );
 static LocalizedString IS_NOT_A_VALID_ZIP		( "CSMPackageInstallDlg", "'%s' is not a valid zip archive." );
 static LocalizedString YOU_HAVE_CHOSEN_TO_INSTALL	( "CSMPackageInstallDlg", "You have chosen to install the package:" );
@@ -122,7 +129,7 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 	//
 	{
 		vector<RString> vs;
-		GetDirListingRecursive( &zip, "/", "*", vs );
+		GetSmzipFilesToExtract( zip, vs );
 		CEdit* pEdit2 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE2);
 		RString sText = "\t" + join( "\r\n\t", vs );
 		pEdit2->SetWindowText( sText );
@@ -314,7 +321,7 @@ void CSMPackageInstallDlg::OnOK()
 
 	// Unzip the SMzip package into the installation folder
 	vector<RString> vs;
-	GetDirListingRecursive( &zip, "/", "*", vs );
+	GetSmzipFilesToExtract( zip, vs );
 	for( unsigned i=0; i<vs.size(); i++ )
 	{
 		// Throw some text up so the user has something to look at during the long pause.
@@ -346,10 +353,6 @@ retry_unzip:
 		// Extract the files
 		const RString sFile = vs[i];
 		LOG->Trace( "Extracting: "+sFile );
-
-		// skip extracting "thumbs.db" files
-		if( Basename(sFile).CompareNoCase("thumbs.db") == 0 )
-			continue;
 
 		RString sError;
 		{

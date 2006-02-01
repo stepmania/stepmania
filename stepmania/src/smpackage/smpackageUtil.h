@@ -23,6 +23,8 @@ namespace SMPackageUtil
 	RString GetLanguageDisplayString( const RString &sIsoCode );
 	RString GetLanguageCodeFromDisplayString( const RString &sDisplayString );
 
+	void StripIgnoredSmzipFiles( vector<RString> &vsFilesInOut );
+
 	bool GetFileContentsOsAbsolute( const RString &sAbsoluteOsFile, RString &sOut );
 
 	bool DoesOsAbsoluteFileExist( const RString &sOsAbsoluteFile ); 
