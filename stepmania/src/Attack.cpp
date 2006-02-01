@@ -6,15 +6,15 @@
 #include "Foreach.h"
 #include "PlayerOptions.h"
 
-void Attack::GetAttackBeats( const Song *song, const PlayerState* pPlayerState, float &fStartBeat, float &fEndBeat ) const
+void Attack::GetAttackBeats( const Song *pSong, const PlayerState* pPlayerState, float &fStartBeat, float &fEndBeat ) const
 {
-	ASSERT( song );
+	ASSERT( pSong );
 
 	if( fStartSecond >= 0 )
 	{
 		CHECKPOINT;
-		fStartBeat = song->GetBeatFromElapsedTime( fStartSecond );
-		fEndBeat = song->GetBeatFromElapsedTime( fStartSecond+fSecsRemaining );
+		fStartBeat = pSong->GetBeatFromElapsedTime( fStartSecond );
+		fEndBeat = pSong->GetBeatFromElapsedTime( fStartSecond+fSecsRemaining );
 	}
 	else
 	{
