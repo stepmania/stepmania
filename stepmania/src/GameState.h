@@ -187,7 +187,6 @@ public:
 	// used in workout
 	bool	m_bGoalComplete[NUM_PLAYERS];
 	
-	void GetUndisplayedBeats( const PlayerState* pPlayerState, float TotalSeconds, float &StartBeat, float &EndBeat ) const; // only meaningful when a NoteField is in use
 	void RemoveAllActiveAttacks();	// called on end of song
 	PlayerNumber GetBestPlayer() const;
 	StageResult GetStageResult( PlayerNumber pn ) const;

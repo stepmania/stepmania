@@ -1121,21 +1121,6 @@ void GameState::GetAllUsedNoteSkins( vector<RString> &out ) const
 	out.erase( unique( out.begin(), out.end() ), out.end() );
 }
 
-/* From NoteField: */
-
-void GameState::GetUndisplayedBeats( const PlayerState* pPlayerState, float TotalSeconds, float &StartBeat, float &EndBeat ) const
-{
-	/* If reasonable, push the attack forward so notes on screen don't change suddenly. */
-	StartBeat = min( m_fSongBeat+BEATS_PER_MEASURE*2, pPlayerState->m_fLastDrawnBeat );
-	StartBeat = truncf(StartBeat)+1;
-
-	const float StartSecond = this->m_pCurSong->GetElapsedTimeFromBeat( StartBeat );
-	const float EndSecond = StartSecond + TotalSeconds;
-	EndBeat = this->m_pCurSong->GetBeatFromElapsedTime( EndSecond );
-	EndBeat = truncf(EndBeat)+1;
-}
-
-
 void GameState::RemoveAllActiveAttacks()	// called on end of song
 {
 	FOREACH_PlayerNumber( p )
