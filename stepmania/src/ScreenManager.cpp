@@ -62,7 +62,7 @@
 
 #include "global.h"
 #include "ScreenManager.h"
-#include "PrefsManager.h"
+#include "Preference.h"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "GameSoundManager.h"
@@ -662,8 +662,6 @@ Screen *ScreenManager::ActivatePreparedScreenAndBackground( const RString &sScre
 
 void ScreenManager::LoadDelayedScreen()
 {
-	const bool bWasOnSystemMenu = !g_ScreenStack.empty() && g_ScreenStack.back().m_pScreen->GetScreenType() == system_menu;
-
 	RString sScreenName = m_sDelayedScreen;
 	m_sDelayedScreen = "";
 
@@ -696,12 +694,6 @@ void ScreenManager::LoadDelayedScreen()
 		pScreen = ActivatePreparedScreenAndBackground( sScreenName );
 		ASSERT( pScreen != NULL );
 	}
-
-	bool bIsOnSystemMenu = pScreen->GetScreenType() == system_menu;
-	
-	// If we're exiting a system menu, persist settings in case we don't exit normally
-	if( bWasOnSystemMenu && !bIsOnSystemMenu )
-		PREFSMAN->SavePrefsToDisk();
 
 	if( !apActorsToDelete.empty() )
 	{
