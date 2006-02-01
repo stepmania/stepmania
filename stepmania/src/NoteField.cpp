@@ -75,6 +75,17 @@ void NoteField::CacheNoteSkin( const RString &sNoteSkin_ )
 	m_NoteDisplays[ sNoteSkin ] = nd;
 }
 
+void NoteField::UncacheNoteSkin( const RString &sNoteSkin_ )
+{
+	RString sNoteSkin( sNoteSkin_ );
+	sNoteSkin.ToLower();
+
+	LOG->Trace("NoteField::CacheNoteSkin: release %s", sNoteSkin.c_str() );
+	ASSERT_M( m_NoteDisplays.find(sNoteSkin) != m_NoteDisplays.end(), sNoteSkin );
+	delete m_NoteDisplays[sNoteSkin];
+	m_NoteDisplays.erase( sNoteSkin );
+}
+
 void NoteField::CacheAllUsedNoteSkins()
 {
 	/* Cache all note skins that we might need for the whole song, course or battle
@@ -85,6 +96,17 @@ void NoteField::CacheAllUsedNoteSkins()
 
 	for( unsigned i=0; i < asSkins.size(); ++i )
 		CacheNoteSkin( asSkins[i] );
+
+	/* If we're changing note skins in the editor, we can have old note skins lying
+	 * around.  Remove them so they don't accumulate. */
+	set<RString> setNoteSkinsToUnload;
+	FOREACHM( RString, NoteDisplayCols *, m_NoteDisplays, d )
+	{
+		if( find(asSkins.begin(), asSkins.end(), d->first) == asSkins.end() )
+			setNoteSkinsToUnload.insert( d->first );
+	}
+	FOREACHS( RString, setNoteSkinsToUnload, s )
+		UncacheNoteSkin( *s );
 }
 
 void NoteField::Init( const PlayerState* pPlayerState, float fYReverseOffsetPixels )

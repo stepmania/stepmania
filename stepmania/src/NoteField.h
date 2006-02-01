@@ -44,6 +44,7 @@ public:
 
 protected:
 	void CacheNoteSkin( const RString &sNoteSkin );
+	void UncacheNoteSkin( const RString &sNoteSkin );
 
 	bool IsOnScreen( float fBeat, int iFirstPixelToDraw, int iLastPixelToDraw ) const;
 
