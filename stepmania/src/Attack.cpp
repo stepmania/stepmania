@@ -36,6 +36,33 @@ void Attack::GetAttackBeats( const Song *pSong, const PlayerState* pPlayerState,
 	ASSERT_M( fEndBeat >= fStartBeat, ssprintf("%f >= %f", fEndBeat, fStartBeat) );
 }
 
+/* Get the range for an attack that's being applied in realtime, eg. during battle
+ * mode.  We need a PlayerState for this, so we can push the region off-screen to
+ * prevent popping when the attack has note modifers. */
+void Attack::GetRealtimeAttackBeats( const Song *pSong, const PlayerState* pPlayerState, float &fStartBeat, float &fEndBeat ) const
+{
+	if( fStartSecond >= 0 )
+	{
+		GetAttackBeats( pSong, pPlayerState, fStartBeat, fEndBeat );
+		return;
+	}
+
+	ASSERT( pPlayerState );
+	ASSERT( pSong );
+
+	/* If reasonable, push the attack forward so notes on screen don't change suddenly. */
+	fStartBeat = min( GAMESTATE->m_fSongBeat+BEATS_PER_MEASURE*2, pPlayerState->m_fLastDrawnBeat );
+	fStartBeat = truncf(fStartBeat)+1;
+
+	const float fStartSecond = pSong->GetElapsedTimeFromBeat( fStartBeat );
+	const float fEndSecond = fStartSecond + fSecsRemaining;
+	fEndBeat = pSong->GetBeatFromElapsedTime( fEndSecond );
+	fEndBeat = truncf(fEndBeat)+1;
+
+	// loading the course should have caught this.
+	ASSERT_M( fEndBeat >= fStartBeat, ssprintf("%f >= %f", fEndBeat, fStartBeat) );
+}
+
 bool Attack::operator== ( const Attack &rhs ) const
 {
 #define EQUAL(a) (a==rhs.a)
