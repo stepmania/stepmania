@@ -107,6 +107,10 @@ void NoteField::CacheAllUsedNoteSkins()
 	}
 	FOREACHS( RString, setNoteSkinsToUnload, s )
 		UncacheNoteSkin( *s );
+
+	map<RString, NoteDisplayCols *>::iterator it = m_NoteDisplays.find( m_pPlayerState->m_PlayerOptions.m_sNoteSkin );
+	ASSERT_M( it != m_NoteDisplays.end(), m_pPlayerState->m_PlayerOptions.m_sNoteSkin );
+	m_pCurDisplay = it->second;
 }
 
 void NoteField::Init( const PlayerState* pPlayerState, float fYReverseOffsetPixels )
