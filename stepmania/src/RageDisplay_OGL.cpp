@@ -644,7 +644,7 @@ RString RageDisplay_OGL::TryVideoMode( const VideoModeParams &p, bool &bNewDevic
 	/* Set vsync the Windows way, if we can.  (What other extensions are there
 	 * to do this, for other archs?) */
 	if( GLExt.wglSwapIntervalEXT )
-	    GLExt.wglSwapIntervalEXT(p.vsync);
+		GLExt.wglSwapIntervalEXT(p.vsync);
 	
 	ResolutionChanged();
 
@@ -704,7 +704,7 @@ RageSurface* RageDisplay_OGL::CreateScreenshot()
 	AssertNoGLError();
 	
 	glReadPixels( 0, 0, g_pWind->GetActualVideoModeParams().width, g_pWind->GetActualVideoModeParams().height, GL_RGBA,
-	             GL_UNSIGNED_BYTE, image->pixels );
+			GL_UNSIGNED_BYTE, image->pixels );
 	AssertNoGLError();
 
 	RageSurfaceUtils::FlipVertically( image );
@@ -1481,7 +1481,7 @@ void RageDisplay_OGL::ClearZBuffer()
 {
 	bool write = IsZWriteEnabled();
 	SetZWrite( true );
-    glClear( GL_DEPTH_BUFFER_BIT );
+	glClear( GL_DEPTH_BUFFER_BIT );
 	SetZWrite( write );
 }
 
@@ -1503,7 +1503,7 @@ void RageDisplay_OGL::SetZTestMode( ZTestMode mode )
 	glEnable( GL_DEPTH_TEST );
 	switch( mode )
 	{
-	case ZTEST_OFF:				glDepthFunc( GL_ALWAYS );	break;
+	case ZTEST_OFF:			glDepthFunc( GL_ALWAYS );	break;
 	case ZTEST_WRITE_ON_PASS:	glDepthFunc( GL_LEQUAL );	break;
 	case ZTEST_WRITE_ON_FAIL:	glDepthFunc( GL_GREATER );	break;
 	default:	ASSERT( 0 );
@@ -1597,7 +1597,7 @@ void RageDisplay_OGL::SetCullMode( CullMode mode )
 		glCullFace( GL_FRONT );
 		break;
 	case CULL_NONE:
-        glDisable( GL_CULL_FACE );
+		glDisable( GL_CULL_FACE );
 		break;
 	default:
 		ASSERT(0);
@@ -1906,7 +1906,7 @@ void RageDisplay_OGL::SetPolygonMode( PolygonMode pm )
 	{
 	case POLYGON_FILL:	m = GL_FILL; break;
 	case POLYGON_LINE:	m = GL_LINE; break;
-	default:	ASSERT(0);	return;
+	default:		ASSERT(0);	return;
 	}
 	glPolygonMode( GL_FRONT_AND_BACK, m );
 }
