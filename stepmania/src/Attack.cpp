@@ -9,31 +9,10 @@
 void Attack::GetAttackBeats( const Song *pSong, const PlayerState* pPlayerState, float &fStartBeat, float &fEndBeat ) const
 {
 	ASSERT( pSong );
+	ASSERT_M( fStartSecond >= 0, ssprintf("%f",fStartSecond) );
 
-	if( fStartSecond >= 0 )
-	{
-		CHECKPOINT;
-		fStartBeat = pSong->GetBeatFromElapsedTime( fStartSecond );
-		fEndBeat = pSong->GetBeatFromElapsedTime( fStartSecond+fSecsRemaining );
-	}
-	else
-	{
-		CHECKPOINT;
-		/* If fStartSecond < 0, then the attack starts right off the screen; this requires
-		 * that a song actually be playing.  Pre-queued course attacks must always have 
-		 * fStartSecond >= 0. */
-		ASSERT( GAMESTATE->m_pCurSong );
-		
-		ASSERT( pPlayerState );
-
-		/* We're setting this effect on the fly.  If it's an arrow-changing effect
-		 * (transform or note skin), apply it in the future, after what's currently on
-		 * screen, so new arrows will scroll on screen with this effect. */
-		GAMESTATE->GetUndisplayedBeats( pPlayerState, fSecsRemaining, fStartBeat, fEndBeat );
-	}
-
-	// loading the course should have caught this.
-	ASSERT_M( fEndBeat >= fStartBeat, ssprintf("%f >= %f", fEndBeat, fStartBeat) );
+	fStartBeat = pSong->GetBeatFromElapsedTime( fStartSecond );
+	fEndBeat = pSong->GetBeatFromElapsedTime( fStartSecond+fSecsRemaining );
 }
 
 /* Get the range for an attack that's being applied in realtime, eg. during battle
