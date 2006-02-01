@@ -30,7 +30,7 @@ public:
 	//
 	// Used in Gameplay
 	//
-	mutable float	m_fLastDrawnBeat; // Set by NoteField.  Used to push NoteSkin-changing modifers back so that the NoteSkin doesn't pop.
+	mutable float	m_fLastDrawnBeat; // Set by NoteField.  Used to push note-changing modifers back so that notes doesn't pop.
 
 	enum HealthState { HOT, ALIVE, DANGER, DEAD };
 	HealthState	m_HealthState;
