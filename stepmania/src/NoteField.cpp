@@ -81,10 +81,10 @@ void NoteField::CacheAllUsedNoteSkins()
 	 * play, so we don't have to load them later (such as between course songs). */
 	vector<RString> asSkins;
 	GAMESTATE->GetAllUsedNoteSkins( asSkins );
+	asSkins.push_back( m_pPlayerState->m_PlayerOptions.m_sNoteSkin );
+
 	for( unsigned i=0; i < asSkins.size(); ++i )
 		CacheNoteSkin( asSkins[i] );
-	RString sNoteSkin = m_pPlayerState->m_PlayerOptions.m_sNoteSkin;
-	CacheNoteSkin( sNoteSkin );
 }
 
 void NoteField::Init( const PlayerState* pPlayerState, float fYReverseOffsetPixels )
