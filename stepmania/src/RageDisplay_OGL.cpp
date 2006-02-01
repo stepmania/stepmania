@@ -1722,14 +1722,14 @@ unsigned RageDisplay_OGL::CreateTexture(
 	ASSERT( pImg->w == power_of_two(pImg->w) && pImg->h == power_of_two(pImg->h) );
 
 
-	/* Find the pixel format of the image we've been given. */
+	/* Find the pixel format of the surface we've been given. */
 	bool bFreeImg;
-	PixelFormat imgpixfmt = GetImgPixelFormat( pImg, bFreeImg, pImg->w, pImg->h, pixfmt == PixelFormat_PAL );
-	ASSERT( imgpixfmt != PixelFormat_INVALID );
+	PixelFormat SurfacePixFmt = GetImgPixelFormat( pImg, bFreeImg, pImg->w, pImg->h, pixfmt == PixelFormat_PAL );
+	ASSERT( SurfacePixFmt != PixelFormat_INVALID );
 
 	GLenum glTexFormat = g_GLPixFmtInfo[pixfmt].internalfmt;
-	GLenum glImageFormat = g_GLPixFmtInfo[imgpixfmt].format;
-	GLenum glImageType = g_GLPixFmtInfo[imgpixfmt].type;
+	GLenum glImageFormat = g_GLPixFmtInfo[SurfacePixFmt].format;
+	GLenum glImageType = g_GLPixFmtInfo[SurfacePixFmt].type;
 
 	/* If the image is paletted, but we're not sending it to a paletted image,
 	 * set up glPixelMap. */
@@ -1824,7 +1824,7 @@ unsigned RageDisplay_OGL::CreateTexture(
 				", format " << GLToString(glImageFormat) <<
 				", type " << GLToString(glImageType) <<
 				", pixfmt " << pixfmt <<
-				", imgpixfmt " << imgpixfmt <<
+				", imgpixfmt " << SurfacePixFmt <<
 				")";
 		LOG->Trace( "%s", s.str().c_str() );
 	}
@@ -1878,13 +1878,13 @@ void RageDisplay_OGL::UpdateTexture(
 	glBindTexture( GL_TEXTURE_2D, uTexHandle );
 
 	bool bFreeImg;
-	PixelFormat pixfmt = GetImgPixelFormat( pImg, bFreeImg, iWidth, iHeight, false );
+	PixelFormat SurfacePixFmt = GetImgPixelFormat( pImg, bFreeImg, iWidth, iHeight, false );
 
 	glPixelStorei( GL_UNPACK_ROW_LENGTH, pImg->pitch / pImg->format->BytesPerPixel );
 
 //	GLenum glTexFormat = g_GLPixFmtInfo[pixfmt].internalfmt;
-	GLenum glImageFormat = g_GLPixFmtInfo[pixfmt].format;
-	GLenum glImageType = g_GLPixFmtInfo[pixfmt].type;
+	GLenum glImageFormat = g_GLPixFmtInfo[SurfacePixFmt].format;
+	GLenum glImageType = g_GLPixFmtInfo[SurfacePixFmt].type;
 
 	glTexSubImage2D( GL_TEXTURE_2D, 0,
 		iXOffset, iYOffset,
