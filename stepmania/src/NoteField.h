@@ -29,7 +29,6 @@ public:
 	virtual void Unload();
 
 	void FadeToFail();
-	void CacheNoteSkin( const RString &sNoteSkin );
 
 	void Step( int iCol, TapNoteScore score );
 	void SetPressed( int iCol );
@@ -42,6 +41,7 @@ public:
 
 protected:
 	void CacheAllUsedNoteSkins();
+	void CacheNoteSkin( const RString &sNoteSkin );
 
 	bool IsOnScreen( float fBeat, int iFirstPixelToDraw, int iLastPixelToDraw ) const;
 
