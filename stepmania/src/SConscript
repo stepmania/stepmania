@@ -209,6 +209,7 @@ if cpuTypeI == 1:
 	if env['PLATFORM'] == 'posix':
 		# NOPORT: Again, assuming Linux
 		env.Append(CPPFLAGS=" -DBACKTRACE_METHOD_X86_LINUX")
+		Lights += [ "arch/Lights/LightsDriver_LinuxWeedTech.cpp", "arch/Lights/LightsDriver_LinuxParallel.cpp" ]
 elif cpuTypeI == 2:
 	env.Append(CPPFLAGS=" -DCPU_PPC")
 	# XXX: Backtrace components for this arch?
@@ -494,7 +495,6 @@ if env['PLATFORM'] == 'posix':
 		Exit(1)
 	ArchHooks += [ "arch/ArchHooks/ArchHooks_Unix.cpp" ]
 	Threads += [ "arch/Threads/Threads_Pthreads.cpp" ]
-	Lights += [ "arch/Lights/LightsDriver_LinuxWeedTech.cpp", "arch/Lights/LightsDriver_LinuxParallel.cpp" ]
 	MemoryCard += [ "arch/MemoryCard/MemoryCardDriverThreaded_Linux.cpp" ]
 	InputHandler += [ "arch/InputHandler/InputHandler_Linux_Joystick.cpp" ]
 	# Backtrace stuff
