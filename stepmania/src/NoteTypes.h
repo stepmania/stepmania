@@ -193,7 +193,7 @@ enum NoteType
 	NOTE_TYPE_48TH, // forty-eighth note
 	NOTE_TYPE_64TH,	// sixty-fourth note
 	NOTE_TYPE_192ND,
-	NUM_NOTE_TYPES,
+	NUM_NoteType,
 	NOTE_TYPE_INVALID
 };
 const RString& NoteTypeToString( NoteType nt );

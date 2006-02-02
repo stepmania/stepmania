@@ -26,9 +26,9 @@ static const char *NoteTypeNames[] = {
 	"64th",
 	"192nd",
 };
-XToString( NoteType, NUM_NOTE_TYPES );
+XToString( NoteType, NUM_NoteType );
 LuaXToString( NoteType )
-LuaXType( NoteType, NUM_NOTE_TYPES , "NOTE_TYPE_", true )
+LuaXType( NoteType, NUM_NoteType, "NOTE_TYPE_", true )
 
 float NoteTypeToBeat( NoteType nt )
 {

@@ -15,7 +15,7 @@ NoteType NoteDataUtil::GetSmallestNoteTypeForMeasure( const NoteData &n, int iMe
 
 	// probe to find the smallest note type
 	NoteType nt;
-	for( nt=(NoteType)0; nt<NUM_NOTE_TYPES; nt=NoteType(nt+1) )		// for each NoteType, largest to largest
+	for( nt=(NoteType)0; nt<NUM_NoteType; nt=NoteType(nt+1) )		// for each NoteType, largest to largest
 	{
 		float fBeatSpacing = NoteTypeToBeat( nt );
 		int iRowSpacing = int(roundf( fBeatSpacing * ROWS_PER_BEAT ));
@@ -40,7 +40,7 @@ NoteType NoteDataUtil::GetSmallestNoteTypeForMeasure( const NoteData &n, int iMe
 			break;	// stop searching.  We found the smallest NoteType
 	}
 
-	if( nt == NUM_NOTE_TYPES )	// we didn't find one
+	if( nt == NUM_NoteType )	// we didn't find one
 		return NOTE_TYPE_INVALID;	// well-formed notes created in the editor should never get here
 	else
 		return nt;
