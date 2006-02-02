@@ -1484,9 +1484,9 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			switch( EditB )
 			{
 			case EDIT_BUTTON_SAMPLE_START_DOWN:		fDelta = -0.02f;	break;
-			case EDIT_BUTTON_SAMPLE_START_UP:			fDelta = +0.02f;	break;
+			case EDIT_BUTTON_SAMPLE_START_UP:		fDelta = +0.02f;	break;
 			case EDIT_BUTTON_SAMPLE_LENGTH_DOWN:		fDelta = -0.02f;	break;
-			case EDIT_BUTTON_SAMPLE_LENGTH_UP:			fDelta = +0.02f;	break;
+			case EDIT_BUTTON_SAMPLE_LENGTH_UP:		fDelta = +0.02f;	break;
 			default:	ASSERT(0);						return;
 			}
 			switch( input.type )
