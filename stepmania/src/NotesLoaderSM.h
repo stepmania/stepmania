@@ -1,7 +1,7 @@
 /* SMLoader - Reads a Song from an .SM file. */
 
-#ifndef NOTES_LOADER_SM_H
-#define NOTES_LOADER_SM_H
+#ifndef NotesLoaderSM_H
+#define NotesLoaderSM_H
 
 #include "NotesLoader.h"
 #include "GameConstantsAndTypes.h"
@@ -26,22 +26,22 @@ class SMLoader: public NotesLoader
 
 public:
 	SMLoader() { FromCache = false; }
-	bool LoadFromSMFile( RString sPath, Song &out );
-	bool LoadFromSMFile( RString sPath, Song &out, bool cache )
+	bool LoadFromSMFile( const RString &sPath, Song &out );
+	bool LoadFromSMFile( const RString &sPath, Song &out, bool cache )
 	{
 		FromCache=cache;
 		return LoadFromSMFile( sPath, out );
 	}
 
-	void GetApplicableFiles( RString sPath, vector<RString> &out );
-	bool LoadFromDir( RString sPath, Song &out );
+	void GetApplicableFiles( const RString &sPath, vector<RString> &out );
+	bool LoadFromDir( const RString &sPath, Song &out );
 	void TidyUpData( Song &song, bool cache );
 	static bool LoadTimingFromFile( const RString &fn, TimingData &out );
 	static void LoadTimingFromSMFile( const MsdFile &msd, TimingData &out );
 	static bool LoadEdit( RString sEditFilePath, ProfileSlot slot );
-	static bool LoadEditFromBuffer( const RString &sBuffer, RString sEditFilePath, ProfileSlot slot );
+	static bool LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot );
 private:
-	static bool LoadEditFromMsd( const MsdFile &msd, RString sEditFilePath, ProfileSlot slot );
+	static bool LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot );
 };
 
 #endif

@@ -220,7 +220,7 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 	return true;
 }
 
-void KSFLoader::GetApplicableFiles( RString sPath, vector<RString> &out )
+void KSFLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
 {
 	GetDirListing( sPath + RString("*.ksf"), out );
 }
@@ -342,7 +342,7 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 	return true;
 }
 
-bool KSFLoader::LoadFromDir( RString sDir, Song &out )
+bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
 {
 	LOG->Trace( "Song::LoadFromKSFDir(%s)", sDir.c_str() );
 

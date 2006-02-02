@@ -3,14 +3,14 @@
 #include "NoteTypes.h"
 #include "GameManager.h"
 
-bool NotesLoader::Loadable( RString sPath )
+bool NotesLoader::Loadable( const RString &sPath )
 {
 	vector<RString> list;
 	GetApplicableFiles( sPath, list );
 	return !list.empty();
 }
 
-void NotesLoader::GetMainAndSubTitlesFromFullTitle( const RString sFullTitle, RString &sMainTitleOut, RString &sSubTitleOut )
+void NotesLoader::GetMainAndSubTitlesFromFullTitle( const RString &sFullTitle, RString &sMainTitleOut, RString &sSubTitleOut )
 {
 	const RString sLeftSeps[]  = { " -", " ~", " (", " [", "\t" };
 

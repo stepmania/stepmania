@@ -32,8 +32,8 @@ class BMSLoader: public NotesLoader
 	map<RString,int> m_mapWavIdToKeysoundIndex;
 
 public:
-	void GetApplicableFiles( RString sPath, vector<RString> &out );
-	bool LoadFromDir( RString sDir, Song &out );
+	void GetApplicableFiles( const RString &sPath, vector<RString> &out );
+	bool LoadFromDir( const RString &sDir, Song &out );
 };
 
 #endif

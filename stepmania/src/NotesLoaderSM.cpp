@@ -62,7 +62,7 @@ void SMLoader::LoadFromSMTokens(
 	out.TidyUpData();
 }
 
-void SMLoader::GetApplicableFiles( RString sPath, vector<RString> &out )
+void SMLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
 {
 	GetDirListing( sPath + RString("*.sm"), out );
 }
@@ -225,7 +225,7 @@ bool LoadFromBGChangesString( BackgroundChange &change, const RString &sBGChange
 	return aBGChangeValues.size() >= 2;
 }
 
-bool SMLoader::LoadFromSMFile( RString sPath, Song &out )
+bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out )
 {
 	LOG->Trace( "Song::LoadFromSMFile(%s)", sPath.c_str() );
 
@@ -444,7 +444,7 @@ bool SMLoader::LoadFromSMFile( RString sPath, Song &out )
 }
 
 
-bool SMLoader::LoadFromDir( RString sPath, Song &out )
+bool SMLoader::LoadFromDir( const RString &sPath, Song &out )
 {
 	vector<RString> aFileNames;
 	GetApplicableFiles( sPath, aFileNames );
@@ -483,14 +483,14 @@ bool SMLoader::LoadEdit( RString sEditFilePath, ProfileSlot slot )
 	return LoadEditFromMsd( msd, sEditFilePath, slot );
 }
 
-bool SMLoader::LoadEditFromBuffer( const RString &sBuffer, RString sEditFilePath, ProfileSlot slot )
+bool SMLoader::LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot )
 {
 	MsdFile msd;
 	msd.ReadFromString( sBuffer );
 	return LoadEditFromMsd( msd, sEditFilePath, slot );
 }
 
-bool SMLoader::LoadEditFromMsd( const MsdFile &msd, RString sEditFilePath, ProfileSlot slot )
+bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot )
 {
 	Song* pSong = NULL;
 

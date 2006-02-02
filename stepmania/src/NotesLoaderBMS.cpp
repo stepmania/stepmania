@@ -512,7 +512,7 @@ bool BMSLoader::LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNa
 	return true;
 }
 
-void BMSLoader::GetApplicableFiles( RString sPath, vector<RString> &out )
+void BMSLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
 {
 	GetDirListing( sPath + RString("*.bms"), out );
 	GetDirListing( sPath + RString("*.bme"), out );
@@ -845,7 +845,7 @@ void BMSLoader::SetTimeSigAdjustments( const MeasureToTimeSig_t &sigs, Song *pOu
 	}
 }
 
-bool BMSLoader::LoadFromDir( RString sDir, Song &out )
+bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 {
 	LOG->Trace( "Song::LoadFromBMSDir(%s)", sDir.c_str() );
 

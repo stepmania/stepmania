@@ -359,7 +359,7 @@ float DWILoader::ParseBrokenDWITimestamp(const RString &arg1, const RString &arg
 	return HHMMSSToSeconds( arg1+":"+arg2+":"+arg3 );
 }
 
-bool DWILoader::LoadFromDWIFile( RString sPath, Song &out )
+bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 {
 	LOG->Trace( "Song::LoadFromDWIFile(%s)", sPath.c_str() );
 	m_sLoadingFile = sPath;
@@ -536,12 +536,12 @@ bool DWILoader::LoadFromDWIFile( RString sPath, Song &out )
 	return true;
 }
 
-void DWILoader::GetApplicableFiles( RString sPath, vector<RString> &out )
+void DWILoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
 {
 	GetDirListing( sPath + RString("*.dwi"), out );
 }
 
-bool DWILoader::LoadFromDir( RString sPath, Song &out )
+bool DWILoader::LoadFromDir( const RString &sPath, Song &out )
 {
 	vector<RString> aFileNames;
 	GetApplicableFiles( sPath, aFileNames );

@@ -19,16 +19,16 @@ class DWILoader: public NotesLoader
 		RString sStepData2,
 		Steps &out );
 
-	bool LoadFromDWIFile( RString sPath, Song &out );
+	bool LoadFromDWIFile( const RString &sPath, Song &out );
 
 	static float ParseBrokenDWITimestamp(const RString &arg1, const RString &arg2, const RString &arg3);
 	static bool Is192( const RString &str, size_t pos );
 	RString m_sLoadingFile;
 
 public:
-	void GetApplicableFiles( RString sPath, vector<RString> &out );
-	bool Loadable( RString sPath );
-	bool LoadFromDir( RString sPath, Song &out );
+	void GetApplicableFiles( const RString &sPath, vector<RString> &out );
+	bool Loadable( const RString &sPath );
+	bool LoadFromDir( const RString &sPath, Song &out );
 };
 
 #endif
