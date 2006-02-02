@@ -67,7 +67,7 @@ int main(int argc, char** argv)
 {
 	#if defined(__i386__)
 	printf("x86");
-	#elif defined(__ppc__)
+	#elif defined(__PPC__)
 	printf("ppc");
 	#else
 	return 1;
