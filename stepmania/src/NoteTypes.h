@@ -197,6 +197,7 @@ enum NoteType
 	NOTE_TYPE_INVALID
 };
 const RString& NoteTypeToString( NoteType nt );
+const RString& NoteTypeToLocalizedString( NoteType nt );
 float NoteTypeToBeat( NoteType nt );
 NoteType GetNoteType( int row );
 NoteType BeatToNoteType( float fBeat );

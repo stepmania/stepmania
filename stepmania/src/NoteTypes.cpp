@@ -4,6 +4,7 @@
 #include "LuaManager.h"
 #include "LuaFunctions.h"
 #include "XmlFile.h"
+#include "LocalizedString.h"
 
 TapNote TAP_EMPTY			( TapNote::empty,	TapNote::SubType_invalid,	TapNote::original, "", 0, false, 0 );
 TapNote TAP_ORIGINAL_TAP		( TapNote::tap,		TapNote::SubType_invalid,	TapNote::original, "", 0, false, 0 );
@@ -29,6 +30,7 @@ static const char *NoteTypeNames[] = {
 XToString( NoteType, NUM_NoteType );
 LuaXToString( NoteType )
 LuaXType( NoteType, NUM_NoteType, "NOTE_TYPE_", true )
+XToLocalizedString( NoteType );
 
 float NoteTypeToBeat( NoteType nt )
 {
