@@ -1912,6 +1912,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 	if( old == STATE_RECORDING_PAUSED && em == STATE_PLAYING )
 		m_bReturnToRecordMenuAfterPlay = true;
 
+#if 0
 	//
 	// If switching out of record, open the menu.
 	//
@@ -1926,6 +1927,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 		if( bGoToRecordMenu )
 			em = STATE_RECORDING_PAUSED;
 	}
+#endif
 
 	/* If we're playing music, sample music or assist ticks when changing modes, stop. */
 	SOUND->StopMusic();
