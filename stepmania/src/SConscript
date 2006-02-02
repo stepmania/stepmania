@@ -69,6 +69,8 @@ int main(int argc, char** argv)
 	printf("x86");
 	#elif defined(__PPC__)
 	printf("ppc");
+	#elif defined(__amd64__)
+	printf("x86_64")
 	#else
 	return 1;
 	#endif
@@ -88,6 +90,9 @@ def ArchTest(context):
 	elif ct[1] == "ppc":
 		context.Result(2)
 		return 2;
+	elif ct[1] == "x86_64":
+		context.Result(3)
+		return 3;
 
 backtrace_symbols_C = """
 #include <execinfo.h>
@@ -190,6 +195,10 @@ if cpuTypeI == 1:
 		env.Append(CPPFLAGS=" -DBACKTRACE_METHOD_X86_LINUX")
 elif cpuTypeI == 2:
 	env.Append(CPPFLAGS=" -DCPU_PPC")
+	# XXX: Backtrace components for this arch?
+elif cpuTypeI == 3:
+	env.Append(CPPFLAGS=" -DCPU_X86_64")
+	# XXX: Backtrace components for this arch? Can I use x86 components?
 else:
 	print "Couldn't determine CPU type! Bailing!"
 	Exit(1)
