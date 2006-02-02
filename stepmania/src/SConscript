@@ -649,12 +649,10 @@ Rage = PCRE + RageFile + RageSoundFileReaders + [
 	"RageSurface.cpp",
 	"RageSurfaceUtils.cpp",
 	"RageSurfaceUtils_Dither.cpp",
-	"RageSurface_Save_JPEG.cpp",
 	"RageSurfaceUtils_Palettize.cpp",
 	"RageSurfaceUtils_Zoom.cpp",
 	"RageSurface_Load.cpp",
 	"RageSurface_Load_PNG.cpp", # XXX: Do we have libraries for all these image formats in the tree or something?
-	"RageSurface_Load_JPEG.cpp",
 	"RageSurface_Load_GIF.cpp",
 	"RageSurface_Load_BMP.cpp",
 	"RageSurface_Load_XPM.cpp",
