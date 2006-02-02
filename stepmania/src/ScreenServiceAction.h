@@ -13,7 +13,7 @@
 class ScreenServiceAction : public ScreenPrompt
 {
 public:
-	virtual void Init();
+	virtual void BeginScreen();
 };
 
 

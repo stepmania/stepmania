@@ -369,10 +369,8 @@ static RString ResetPreferences()
 
 
 REGISTER_SCREEN_CLASS( ScreenServiceAction );
-void ScreenServiceAction::Init()
+void ScreenServiceAction::BeginScreen()
 {
-	ScreenPrompt::Init();
-
 	RString sAction = THEME->GetMetric(m_sName,"Action");
 
 	RString (*pfn)() = NULL;
@@ -393,6 +391,8 @@ void ScreenServiceAction::Init()
 	RString s = pfn();
 
 	ScreenPrompt::SetPromptSettings( s, PROMPT_OK );
+
+	ScreenPrompt::BeginScreen();
 }
 
 /*
