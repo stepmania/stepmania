@@ -1,12 +1,5 @@
 #include "global.h"
-
 #include "EnumHelper.h"
-#include "ThemeManager.h"
-
-RString GetThemedString( const RString &sClass, const RString &sValue )
-{
-	return THEME->GetString( sClass, sValue );
-}
 
 /*
  * (c) 2004 Chris Danford
