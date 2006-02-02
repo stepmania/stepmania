@@ -28,7 +28,7 @@
 // Defines specific to ScreenNameEntryTraditional
 //
 static const ThemeMetric<apActorCommands>	ALPHABET_INIT_COMMMAND	("ScreenNameEntryTraditional","AlphabetInitCommand");	// TODO: remove hard coded name
-static const ThemeMetric<apActorCommands>	OK_INIT_COMMMAND		("ScreenNameEntryTraditional","OKInitCommand");	// TODO: remove hard coded name
+static const ThemeMetric<apActorCommands>	OK_INIT_COMMMAND	("ScreenNameEntryTraditional","OKInitCommand");	// TODO: remove hard coded name
 
 #define COMMAND_OPTIONAL( actor, command_name ) \
 	if( !(actor).GetName().empty() ) \
