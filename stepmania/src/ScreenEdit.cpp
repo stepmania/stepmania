@@ -1479,6 +1479,8 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		break;
 	case EDIT_BUTTON_SAMPLE_START_UP:
 	case EDIT_BUTTON_SAMPLE_START_DOWN:
+	case EDIT_BUTTON_SAMPLE_LENGTH_DOWN:
+	case EDIT_BUTTON_SAMPLE_LENGTH_UP:
 		{
 			float fDelta;
 			switch( EditB )
