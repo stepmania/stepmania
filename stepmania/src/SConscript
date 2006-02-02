@@ -70,7 +70,7 @@ int main(int argc, char** argv)
 	#elif defined(__PPC__)
 	printf("ppc");
 	#elif defined(__amd64__)
-	printf("x86_64")
+	printf("x86_64");
 	#else
 	return 1;
 	#endif
