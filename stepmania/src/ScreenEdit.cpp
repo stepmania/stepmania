@@ -912,6 +912,25 @@ void ScreenEdit::Update( float fDeltaTime )
 	PlayTicks();
 }
 
+static LocalizedString CURRENT_BEAT("ScreenEdit", "Current beat");
+static LocalizedString CURRENT_SECOND("ScreenEdit", "Current second");
+static LocalizedString SNAP_TO("ScreenEdit", "Snap to");
+static LocalizedString SELECTION_BEAT("ScreenEdit", "Selection beat");
+
+static LocalizedString DIFFICULTY("ScreenEdit", "Difficulty");
+static LocalizedString DESCRIPTION("ScreenEdit", "Description");
+static LocalizedString MAIN_TITLE("ScreenEdit", "Main title");
+static LocalizedString SUBTITLE("ScreenEdit", "Subtitle");
+static LocalizedString TAP_STEPS("ScreenEdit", "Tap Steps");
+static LocalizedString JUMPS("ScreenEdit", "Jumps");
+static LocalizedString HANDS("ScreenEdit", "Hands");
+static LocalizedString HOLDS("ScreenEdit", "Holds");
+static LocalizedString MINES("ScreenEdit", "Mines");
+static LocalizedString ROLLS("ScreenEdit", "Rolls");
+static LocalizedString BEAT_0_OFFSET("ScreenEdit", "Beat 0 offset");
+static LocalizedString PREVIEW_START("ScreenEdit", "Preview Start");
+static LocalizedString PREVIEW_LENGTH("ScreenEdit", "Preview Length");
+
 void ScreenEdit::UpdateTextInfo()
 {
 	if( m_pSteps == NULL )
@@ -929,48 +948,65 @@ void ScreenEdit::UpdateTextInfo()
 	RString sNoteType = NoteTypeToString(m_SnapDisplay.GetNoteType()) + " notes";
 
 	RString sText;
-	sText += ssprintf( "Current beat:\n  %.3f\n",		GAMESTATE->m_fSongBeat );
-	sText += ssprintf( "Current sec:\n  %.3f\n",		m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) );
+	sText += ssprintf( "%s:\n  %.3f\n",	CURRENT_BEAT.GetValue().c_str(), GAMESTATE->m_fSongBeat );
+	sText += ssprintf( "%s:\n  %.3f\n",	CURRENT_SECOND.GetValue().c_str(), m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) );
 	switch( EDIT_MODE.GetValue() )
 	{
 	case EditMode_Practice:
 		break;
 	case EditMode_Home:
 	case EditMode_Full:
-		sText += ssprintf( "Snap to:\n  %s\n",				sNoteType.c_str() );
+		sText += ssprintf( "%s:\n  %s\n", SNAP_TO.GetValue().c_str(), sNoteType.c_str() );
 		break;
 	default:
 		ASSERT(0);
 	}
-	sText += ssprintf( "Selection beat:\n  %s\n  %s\n",	m_NoteFieldEdit.m_iBeginMarker==-1 ? "----" : ssprintf("%.3f",NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker)).c_str(), m_NoteFieldEdit.m_iEndMarker==-1 ? "----" : ssprintf("%.3f",NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker)).c_str() );
+
+	if( m_NoteFieldEdit.m_iBeginMarker != -1 )
+	{
+		sText += ssprintf( "%s:\n  %.3f", SELECTION_BEAT.GetValue().c_str(), NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
+
+		if( m_NoteFieldEdit.m_iEndMarker != -1 )
+			sText += ssprintf( "-%.3f\n", NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) );
+		else
+			sText += " ...\n";
+	}
+
 	switch( EDIT_MODE.GetValue() )
 	{
 	case EditMode_Practice:
 	case EditMode_Home:
 		break;
 	case EditMode_Full:
-		sText += ssprintf( "Difficulty:\n  %s\n",		DifficultyToString( m_pSteps->GetDifficulty() ).c_str() );
-		sText += ssprintf( "Description:\n  %s\n",		m_pSteps->GetDescription().c_str() );
-		sText += ssprintf( "Main title:\n  %s\n", m_pSong->m_sMainTitle.c_str() );
-		sText += ssprintf( "Sub title:\n  %s\n", m_pSong->m_sSubTitle.c_str() );
+		sText += ssprintf( "%s:\n  %s\n",	DIFFICULTY.GetValue().c_str(), DifficultyToString( m_pSteps->GetDifficulty() ).c_str() );
+		sText += ssprintf( "%s:\n  %s\n",	DESCRIPTION.GetValue().c_str(), m_pSteps->GetDescription().c_str() );
+		sText += ssprintf( "%s:\n  %s\n",	MAIN_TITLE.GetValue().c_str(), m_pSong->m_sMainTitle.c_str() );
+		if( m_pSong->m_sSubTitle.size() )
+			sText += ssprintf( "%s:\n  %s\n",	SUBTITLE.GetValue().c_str(), m_pSong->m_sSubTitle.c_str() );
 		break;
 	default:
 		ASSERT(0);
 	}
-	sText += ssprintf( "Tap steps:\n  %d\n", m_NoteDataEdit.GetNumTapNotes() );
-	sText += ssprintf( "Jumps:\n  %d\n", m_NoteDataEdit.GetNumJumps() );
-	sText += ssprintf( "Hands:\n  %d\n", m_NoteDataEdit.GetNumHands() );
-	sText += ssprintf( "Holds:\n  %d\n", m_NoteDataEdit.GetNumHoldNotes() );
-	sText += ssprintf( "Mines:\n  %d\n", m_NoteDataEdit.GetNumMines() );
+	sText += ssprintf( "%s:\n  %d\n", TAP_STEPS.GetValue().c_str(), m_NoteDataEdit.GetNumTapNotes() );
+	if( m_NoteDataEdit.GetNumJumps() )
+		sText += ssprintf( "%s:  %d\n", JUMPS.GetValue().c_str(), m_NoteDataEdit.GetNumJumps() );
+	if( m_NoteDataEdit.GetNumHands() )
+		sText += ssprintf( "%s:  %d\n", HANDS.GetValue().c_str(), m_NoteDataEdit.GetNumHands() );
+	if( m_NoteDataEdit.GetNumHoldNotes() )
+		sText += ssprintf( "%s:  %d\n", HOLDS.GetValue().c_str(), m_NoteDataEdit.GetNumHoldNotes() );
+	if( m_NoteDataEdit.GetNumMines() )
+		sText += ssprintf( "%s:  %d\n", MINES.GetValue().c_str(), m_NoteDataEdit.GetNumMines() );
+	if( m_NoteDataEdit.GetNumRolls() )
+		sText += ssprintf( "%s:  %d\n", ROLLS.GetValue().c_str(), m_NoteDataEdit.GetNumRolls() );
 	switch( EDIT_MODE.GetValue() )
 	{
 	case EditMode_Practice:
 	case EditMode_Home:
 		break;
 	case EditMode_Full:
-		sText += ssprintf( "Beat 0 Offset:\n  %.3f secs\n",	m_pSong->m_Timing.m_fBeat0OffsetInSeconds );
-		sText += ssprintf( "Preview Start:\n  %.3f secs\n",	m_pSong->m_fMusicSampleStartSeconds );
-		sText += ssprintf( "Preview Length:\n  %.3f secs\n",m_pSong->m_fMusicSampleLengthSeconds );
+		sText += ssprintf( "%s:\n  %.3f secs\n", BEAT_0_OFFSET.GetValue().c_str(), m_pSong->m_Timing.m_fBeat0OffsetInSeconds );
+		sText += ssprintf( "%s:\n  %.3f secs\n", PREVIEW_START.GetValue().c_str(), m_pSong->m_fMusicSampleStartSeconds );
+		sText += ssprintf( "%s:\n  %.3f secs\n", PREVIEW_LENGTH.GetValue().c_str(), m_pSong->m_fMusicSampleLengthSeconds );
 		break;
 	default:
 		ASSERT(0);
