@@ -945,7 +945,7 @@ void ScreenEdit::UpdateTextInfo()
 
 	m_bTextInfoNeedsUpdate = false;
 
-	RString sNoteType = NoteTypeToString(m_SnapDisplay.GetNoteType()) + " notes";
+	RString sNoteType = NoteTypeToLocalizedString(m_SnapDisplay.GetNoteType()) + " notes";
 
 	RString sText;
 	sText += ssprintf( "%s:\n  %.3f\n",	CURRENT_BEAT.GetValue().c_str(), GAMESTATE->m_fSongBeat );
