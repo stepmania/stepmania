@@ -164,7 +164,8 @@ AC_CHECK_HEADERS([inttypes.h endian.h])
 AC_MSG_CHECKING(if cstdlib breaks llabs)
 AC_LANG_PUSH(C++)
 AC_TRY_COMPILE(	[#include <stdlib.h>
-		 #include <cstdlib> ],
+		 #include <cstdlib> 
+		 using namespace std;],
 		[llabs(1)],
 		[AC_MSG_RESULT(no)],
 		[AC_MSG_RESULT(yes)
