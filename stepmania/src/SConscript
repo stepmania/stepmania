@@ -56,7 +56,7 @@ if Have_GTK:
 #              a working check for it...
 # FIXME: Compilation is broken without -DCRASH_HANDLER
 # TODO: Add command-line switches to turn debug on/off among other things
-env.Append(CPPFLAGS=" -DDEBUG -DNEED_CSTDLIB_WORKAROUND -DCRASH_HANDLER")
+env.Append(CPPFLAGS=" -DDEBUG -DCRASH_HANDLER")
 # XXX We should check for these.
 env.Append(LIBS=["lua", "lualib", "png", "gif", "rt"])
 
@@ -179,13 +179,29 @@ def OSSGetVersionTest(context):
 	context.Result(res)
 	return res
 
+cstdlib_llabs_test_CPP = """
+#include <stdlib.h>
+#include <cstdlib>
+
+using namespace std;
+
+int foo() { return llabs(1); }
+"""
+
+def CstdlibLlabsTest(context):
+	context.Message("Checking if cstdlib breaks llabs...")
+	res = not context.TryCompile(cstdlib_llabs_test_CPP, '.cpp')
+	context.Result(res)
+	return res
+
 conf = Configure(env, custom_tests = {
 	'EndianTestPosix' : EndianTestPosix,
 	'ArchTest' : ArchTest,
 	'BacktraceSymbolsTest' : BacktraceSymbolsTest,
 	'CxaDemangleTest' : CxaDemangleTest,
 	'AlsaVersionTest' : AlsaVersionTest,
-	'OSSGetVersionTest' : OSSGetVersionTest })
+	'OSSGetVersionTest' : OSSGetVersionTest,
+	'CstdlibLlabsTest' : CstdlibLlabsTest })
 
 cpuTypeI = conf.ArchTest()
 if cpuTypeI == 1:
@@ -412,6 +428,9 @@ LoadingWindow = []
 ArchUtils = []
 
 # # # Detection stuff here, it's easiest
+
+if conf.CstdlibLlabsTest():
+	env.Append(CPPFLAGS=" -DNEED_CSTDLIB_WORKAROUND")
 
 if not conf.CheckLib('png', 'png_create_read_struct'):
 	print "*** libpng is required to build StepMania; please make sure that"
