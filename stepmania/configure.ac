@@ -162,14 +162,15 @@ AC_CHECK_HEADER(stdint.h, , [AC_DEFINE(MISSING_STDINT_H, 1, [stdint.h is missing
 AC_CHECK_HEADERS([inttypes.h endian.h])
 
 AC_MSG_CHECKING(if cstdlib breaks llabs)
+AC_LANG_PUSH(C++)
 AC_TRY_COMPILE(	[#include <stdlib.h>
 		 #include <cstdlib> ],
-		[int foo() { return llabs(1); }],
+		[llabs(1)],
 		[AC_MSG_RESULT(no)],
 		[AC_MSG_RESULT(yes)
 		 AC_DEFINE([NEED_CSTDLIB_WORKAROUND], 1, [cstdlib breaks llabs])]
 	      )
-
+AC_LANG_POP(C++)
 AC_CHECK_LIB( pthread, pthread_create, AC_DEFINE([HAVE_LIBPTHREAD],1,[libpthread is available]) )
 AC_CHECK_LIB( pthread, pthread_mutex_timedlock, AC_DEFINE([HAVE_PTHREAD_MUTEX_TIMEDLOCK],1,[pthreads has pthread_mutex_timedlock()]) )
 AC_CHECK_LIB( pthread, pthread_cond_timedwait, AC_DEFINE([HAVE_PTHREAD_COND_TIMEDWAIT],1,[pthreads has pthread_cond_timedwait()]) )
