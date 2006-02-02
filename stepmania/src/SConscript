@@ -1,6 +1,7 @@
 # XXX: SCons spews bizarre errors if this isn't done before the main configure
 # context is created.
 gtkenv = Environment()
+env = Environment()
 
 endian_test_C = """
 #include <endian.h>
@@ -28,6 +29,7 @@ def EndianTestPosix(context):
 
 Have_GTK = False
 
+# XXX: are gtkenv['PLATFORM'] and env['PLATFORM'] guaranteed to be the same? I'd assume so...
 if gtkenv['PLATFORM'] == 'posix':
 	gtkenv.ParseConfig('pkg-config --cflags --libs gtk+-2.0')
 	gtkconf = Configure(gtkenv, custom_tests = {'EndianTestPosix' : EndianTestPosix } )
@@ -36,8 +38,10 @@ if gtkenv['PLATFORM'] == 'posix':
 	endian = gtkconf.EndianTestPosix()
 	if endian == 2:
 		gtkenv.Append(CPPFLAGS="-DENDIAN_BIG")
+		env.Append(CPPFLAGS="-DENDIAN_BIG")
 	elif endian == 1:
 		gtkenv.Append(CPPFLAGS="-DENDIAN_LITTLE")
+		env.Append(CPPFLAGS="-DENDIAN_LITTLE")
 	else:
 		print "Endian test failed to compile/link! Bailing!"
 		Exit(1)
@@ -48,13 +52,13 @@ if Have_GTK:
 	gtkenv.SharedLibrary('GtkModule', [ 'arch/LoadingWindow/LoadingWindow_GtkModule.cpp' ])
 	gtkenv.Command('GtkModule.so', 'libGtkModule.so', 'cp $SOURCE $TARGET')
 
-env = Environment()
-
-# NOPORT HACK: Does this cause problems on systems that don't need it? I don't know what to check for...
-# XXX: Compilation is broken without -DCRASH_HANDLER
-Our_Cflags = "-O0 -g2 -Wall -W -Wno-unused -Wno-switch -DDEBUG -DNEED_CSTDLIB_WORKAROUND -DCRASH_HANDLER"
+# NOPORT HACK: Does NEED_CSTDLIB_WORKAROUND cause problems on systems that don't need it? We don't have 
+#              a working check for it...
+# FIXME: Compilation is broken without -DCRASH_HANDLER
+# TODO: Add command-line switches to turn debug on/off among other things
+env.Append(CPPFLAGS=" -DDEBUG -DNEED_CSTDLIB_WORKAROUND -DCRASH_HANDLER")
 # XXX We should check for these.
-Our_Libs = ["lua", "lualib", "jpeg", "png", "gif", "rt"]
+env.Append(LIBS=["lua", "lualib", "png", "gif", "rt"])
 
 arch_test_C = """
 #include <stdio.h>
@@ -152,8 +156,21 @@ alsa_test_C = """
 """
 
 def AlsaVersionTest(context):
-	context.Message("Checking for ALSA >= 0.9.0")
+	context.Message("Checking for ALSA >= 0.9.0...")
 	res = context.TryCompile(alsa_test_C, '.c')
+	context.Result(res)
+	return res
+
+oss_getversion_test_C = """
+#include <sys/soundcard.h>
+int main() {
+	return OSS_GETVERSION & 0xFF;
+}
+"""
+
+def OSSGetVersionTest(context):
+	context.Message("Checking for OSS_GETVERSION...")
+	res = context.TryCompile(oss_getversion_test_C, '.c')
 	context.Result(res)
 	return res
 
@@ -162,26 +179,17 @@ conf = Configure(env, custom_tests = {
 	'ArchTest' : ArchTest,
 	'BacktraceSymbolsTest' : BacktraceSymbolsTest,
 	'CxaDemangleTest' : CxaDemangleTest,
-	'AlsaVersionTest' : AlsaVersionTest });
-
-if env['PLATFORM'] == 'posix':
-	endian = conf.EndianTestPosix()
-	if endian == 2:
-		Our_Cflags += " -DENDIAN_BIG"
-	elif endian == 1:
-		Our_Cflags += " -DENDIAN_LITTLE"
-	else:
-		print "Endian test failed to compile/link! Bailing!"
-		Exit(1)
+	'AlsaVersionTest' : AlsaVersionTest,
+	'OSSGetVersionTest' : OSSGetVersionTest })
 
 cpuTypeI = conf.ArchTest()
 if cpuTypeI == 1:
-	Our_Cflags += " -DCPU_X86"
+	env.Append(CPPFLAGS=" -DCPU_X86")
 	if env['PLATFORM'] == 'posix':
 		# NOPORT: Again, assuming Linux
-		Our_Cflags += " -DBACKTRACE_METHOD_X86_LINUX"
+		env.Append(CPPFLAGS=" -DBACKTRACE_METHOD_X86_LINUX")
 elif cpuTypeI == 2:
-	Our_Cflags += " -DCPU_PPC"
+	env.Append(CPPFLAGS=" -DCPU_PPC")
 else:
 	print "Couldn't determine CPU type! Bailing!"
 	Exit(1)
@@ -396,17 +404,32 @@ ArchUtils = []
 
 # # # Detection stuff here, it's easiest
 
+if not conf.CheckLib('png', 'png_create_read_struct'):
+	print "*** libpng is required to build StepMania; please make sure that"
+	print "*** it is installed to continue the build process."
+	Exit(1)
+
+# DANGER: There's something funky with the header check. Fails on this system where
+#			autoconf's doesn't. Haven't tested it on others.
+if conf.CheckLib('jpeg', 'jpeg_read_scanlines'):# and conf.CheckHeader('jpeglib.h')
+	FileTypes += [ "RageSurface_Save_JPEG.cpp", "RageSurface_Load_JPEG.cpp" ]
+	env.Append(LIBS=['jpeg'])
+else:
+	# XXX: Bail but allow forcing
+	print "*** WARNING: libjpeg not found. You will not be able to read JPEG files."
+	env.Append(CPPFLAGS=" -DNO_JPEG_SUPPORT")
+
 if conf.CheckLib('vorbisfile', 'ov_info'):
-	Our_Libs += [ 'vorbisfile' ]
+	env.Append(LIBS=['vorbisfile'])
 	RageSoundFileReaders += [ "RageSoundReader_Vorbisfile.cpp" ]
 else:
-	Our_Cflags += " -DNO_VORBIS_SUPPORT"
+	env.Append(CPPFLAGS=" -DNO_VORBIS_SUPPORT")
 
 if conf.CheckLib('mad', 'mad_stream_buffer'):
-	Our_Libs += [ 'mad' ]
+	env.Append(LIBS=['mad'])
 	RageSoundFileReaders += [ "RageSoundReader_MP3.cpp" ]
 else:
-	Our_Cflags += " -DNO_MP3_SUPPORT"
+	env.Append(LIBS="-DNO_MP3_SUPPORT")
 
 if not conf.CheckLib('GL', 'glGetError'):
 	print "Can't find suitable OpenGL library."
@@ -416,20 +439,16 @@ if not conf.CheckLib('GLU', 'gluErrorString'):
 	print "Can't find suitable GLU library."
 	Exit(1)
 
-Our_Libs += [ "GL", "GLU" ]
+env.Append(LIBS=[ "GL", "GLU" ])
 
 if env['PLATFORM'] == 'posix':
 	if not conf.CheckLib('pthread', 'pthread_join'):
 		print "Pthread not present! Your system is insane! Bailing!"
 		Exit(1)
-	Our_Libs += [ 'pthread' ]
+	env.Append(LIBS=['pthread'])
 	# NOPORT: This assumes Linux. I don't know how to check for say, FreeBSD or even OS X vs. Linux.
-	Our_Cflags += " -DUNIX -DLINUX"
-	Our_Cflags += " -DBACKTRACE_METHOD_TEXT=\"\\\"FIXME\\\"\"" # Only #define I can find in the whole codebase
-				#XXX ^ Why is the builder supposed to define this?
-	Our_Cflags += " -DBACKTRACE_LOOKUP_METHOD_TEXT=\"\\\"FIXME\\\"\""
-				#XXX ^ and again!
-	Our_Cflags
+	env.Append(CPPFLAGS=" -DUNIX -DLINUX -DBACKTRACE_METHOD_TEXT=\"\\\"FIXME\\\"\" -DBACKTRACE_LOOKUP_METHOD_TEXT=\"\\\"FIXME\\\"\"")
+				#XXX ^ Why is the builder supposed to define BACKTRACE_*_TEXT?
 	ArchUtils += [ 
 		"archutils/Unix/LinuxThreadHelpers.cpp",
 		"archutils/Unix/RunningUnderValgrind.cpp",
@@ -452,43 +471,44 @@ if env['PLATFORM'] == 'posix':
 	InputHandler += [ "arch/InputHandler/InputHandler_Linux_Joystick.cpp" ]
 	# Backtrace stuff
 	if conf.CheckLib('dl', 'dladdr'):
-		Our_Cflags += ' -DBACKTRACE_LOOKUP_METHOD_DLADDR'
-		env.Append(LINKFLAGS="-rdynamic")
+		env.Append(CPPFLAGS=' -DBACKTRACE_LOOKUP_METHOD_DLADDR', LINKFLAGS="-rdynamic")
 	elif conf.BacktraceSymbolsTest():
-		Our_Cflags += " -DBACKTRACE_LOOKUP_METHOD_BACKTRACE_SYMBOLS"
-		env.Append(LINKFLAGS='-rdynamic')
+		env.Append(CPPFLAGS=" -DBACKTRACE_LOOKUP_METHOD_BACKTRACE_SYMBOLS", LINKFLAGS='-rdynamic')
 	else:
 		print "*** Couldn't find suitable symbol lookup method."
 		print "*** Generated crash logs will be worthless."
 	if conf.CheckHeader('libiberty.h') and conf.CheckLib('iberty', 'cplus_demangle'):
-		Our_Cflags += ' -DHAVE_LIBIBERTY'
-		Our_Libs += ['iberty']
+		env.Append(CPPFLAGS=' -DHAVE_LIBIBERTY', LIBS=['iberty'])
 	else:
 		print "*** Backtrace support has been detected, but libiberty is not installed."
 		print "*** Libiberty will make crash reports for developers much easier to read,"
 		print "*** and is strongly recommended."
 	# ALSA is Linux-exclusive
 	if conf.AlsaVersionTest() and conf.CheckLib('asound', 'snd_ctl_open'):
-		Our_Cflags += " -DHAVE_ALSA"
+		env.Append(CPPFLAGS=" -DHAVE_ALSA")
 		Sound += [	"arch/Sound/ALSA9Dynamic.cpp",
 					"arch/Sound/ALSA9Helpers.cpp",
 					"arch/Sound/RageSoundDriver_ALSA9_Software.cpp",
 					"arch/Sound/RageSoundDriver_ALSA9.cpp" ]
+	# OSS is available on OSes besides Linux
+	if conf.CheckHeader('sys/soundcard.h'):
+		env.Append(CPPFLAGS=" -DHAVE_OSS")
+		Sound += [ 'arch/Sound/RageSoundDriver_OSS.cpp' ]
+		if conf.OSSGetVersionTest():
+			env.Append(CPPFLAGS=" -DHAVE_OSS_GETVERSION")
 
 if Have_GTK:
-	Our_Cflags += " -DHAVE_GTK"
+	env.Append(CPPFLAGS=" -DHAVE_GTK")
 	LoadingWindow += [ "arch/LoadingWindow/LoadingWindow_Gtk.cpp" ]
 
 # REMEMBER, only ONE LowLevelWindow!
 if conf.CheckLib('X11', 'XMapWindow') and conf.CheckLib('Xrandr', 'XRRSizes'):
-	Our_Cflags += " -DHAVE_X11"
-	Our_Libs += [ "X11", "Xrandr" ]
+	env.Append(CPPFLAGS=" -DHAVE_X11", LIBS=["X11", "Xrandr"])
 	ArchUtils += [ "archutils/Unix/X11Helper.cpp" ]
 	LowLevelWindow += [ "arch/LowLevelWindow/LowLevelWindow_X11.cpp" ]
 	InputHandler += [ "arch/InputHandler/InputHandler_X11.cpp" ]
 	if conf.CheckLib('Xtst', 'XTestQueryExtension'):
-		Our_Cflags += " -DHAVE_LIBXTST"
-		Our_Libs += [ 'Xtst' ]
+		env.Append(CPPFLAGS=" -DHAVE_LIBXTST", LIBS=['Xtst'])
 
 Arch = LoadingWindow + Sound + ArchHooks + InputHandler + MovieTexture +\
 		Lights + MemoryCard + LowLevelWindow + ArchUtils + Dialog +\
@@ -736,12 +756,10 @@ cryptopp = [
 
 env = conf.Finish()
 
-env.Append(CPPFLAGS='-g2')
 SConscript('libresample/SConscript')
+env.Append(CPPFLAGS=' -g2', CPPPATH=['.'])
 env.Program('stepmania',
 	Screens + DataStructures + FileTypes + StepMania + Arch +\
 	ActorsInGameplayAndMenus + ActorsInMenus + ActorsInGameplay + Rage +\
-	Actors + GlobalSingletons + crypto + cryptopp + [ "libresample/libresample.a" ],
-	CXXFLAGS=Our_Cflags, CPPPATH=["."], LIBS=Our_Libs
-)
+	Actors + GlobalSingletons + crypto + cryptopp + [ "libresample/libresample.a" ] )
 
