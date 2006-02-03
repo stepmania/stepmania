@@ -1184,28 +1184,31 @@ void ScreenOptions::AfterChangeRow( PlayerNumber pn )
 	//
 	// In FIVE_KEY, keep the selection in the row near the focus.
 	//
-	OptionRow &row = *m_pRows[r];
-	switch( m_OptionsNavigation )
+	const int iRow = m_iCurrentRow[pn];
+	if( iRow != -1 )
 	{
-	case NAV_TOGGLE_FIVE_KEY:
-		if( row.GetRowDef().m_layoutType != LAYOUT_SHOW_ONE_IN_ROW )
+		OptionRow &row = *m_pRows[iRow];
+		switch( m_OptionsNavigation )
 		{
-			int iSelectionDist = -1;
-			for( unsigned i = 0; i < row.GetTextItemsSize(); ++i )
+		case NAV_TOGGLE_FIVE_KEY:
+			if( row.GetRowDef().m_layoutType != LAYOUT_SHOW_ONE_IN_ROW )
 			{
-				int iWidth, iX, iY;
-				GetWidthXY( pn, m_iCurrentRow[pn], i, iWidth, iX, iY );
-				const int iDist = abs( iX-m_iFocusX[pn] );
-				if( iSelectionDist == -1 || iDist < iSelectionDist )
+				int iSelectionDist = -1;
+				for( unsigned i = 0; i < row.GetTextItemsSize(); ++i )
 				{
-					iSelectionDist = iDist;
-					row.SetChoiceInRowWithFocus( pn, i );
+					int iWidth, iX, iY;
+					GetWidthXY( pn, m_iCurrentRow[pn], i, iWidth, iX, iY );
+					const int iDist = abs( iX-m_iFocusX[pn] );
+					if( iSelectionDist == -1 || iDist < iSelectionDist )
+					{
+						iSelectionDist = iDist;
+						row.SetChoiceInRowWithFocus( pn, i );
+					}
 				}
 			}
+			break;
 		}
-		break;
 	}
-
 
 	AfterChangeValueOrRow( pn );
 }
