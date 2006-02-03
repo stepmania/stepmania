@@ -723,7 +723,7 @@ void ScreenEdit::Init()
 	m_soundChangeLine.Load( THEME->GetPathS("ScreenEdit","line"), true );
 	m_soundChangeSnap.Load( THEME->GetPathS("ScreenEdit","snap"), true );
 	m_soundMarker.Load(	THEME->GetPathS("ScreenEdit","marker"), true );
-	m_soundSwitch.Load(	THEME->GetPathS("ScreenEdit","switch") );
+	m_soundSwitchSteps.Load(	THEME->GetPathS("ScreenEdit","switch steps") );
 	m_soundSave.Load(	THEME->GetPathS("ScreenEdit","save") );
 
 	m_soundMusic.Load( m_pSong->GetMusicPath() );
@@ -1377,7 +1377,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				it - vSteps.begin() + 1,
 				int(vSteps.size()) );
 			SCREENMAN->SystemMessage( s );
-			m_soundSwitch.Play();
+			m_soundSwitchSteps.Play();
 		}
 		break;
 	case EDIT_BUTTON_BPM_UP:
