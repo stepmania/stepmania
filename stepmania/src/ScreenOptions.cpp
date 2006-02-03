@@ -294,9 +294,11 @@ void ScreenOptions::RestartOptions()
 
 	PositionRows();
 	FOREACH_HumanPlayer( pn )
+	{
 		for( unsigned r=0; r<m_pRows.size(); ++r )
 			this->RefreshIcons( r, pn );
-	PositionCursors();
+		PositionCursor( pn );
+	}
 	UpdateEnabledDisabled();
 
 	FOREACH_PlayerNumber( p )
@@ -418,32 +420,29 @@ void ScreenOptions::RefreshIcons( int iRow, PlayerNumber pn )
 	m_pRows[iRow]->SetOptionIcon( pn, sIcon, gc );
 }
 
-void ScreenOptions::PositionCursors()
+void ScreenOptions::PositionCursor( PlayerNumber pn )
 {
 	// Set the position of the cursor showing the current option the user is changing.
-	FOREACH_HumanPlayer( pn )
-	{
-		const int iRow = m_iCurrentRow[pn];
-		if( iRow == -1 )
-			continue;
+	const int iRow = m_iCurrentRow[pn];
+	if( iRow == -1 )
+		return;
 
-		ASSERT_M( iRow >= 0 && iRow < (int)m_pRows.size(), ssprintf("%i < %i", iRow, (int)m_pRows.size() ) );
-		const OptionRow &row = *m_pRows[iRow];
+	ASSERT_M( iRow >= 0 && iRow < (int)m_pRows.size(), ssprintf("%i < %i", iRow, (int)m_pRows.size() ) );
+	const OptionRow &row = *m_pRows[iRow];
 
-		const int iChoiceWithFocus = row.GetChoiceInRowWithFocus(pn);
-		if( iChoiceWithFocus == -1 )
-			continue;	// skip
+	const int iChoiceWithFocus = row.GetChoiceInRowWithFocus(pn);
+	if( iChoiceWithFocus == -1 )
+		return;
 
-		int iWidth, iX, iY;
-		GetWidthXY( pn, iRow, iChoiceWithFocus, iWidth, iX, iY );
+	int iWidth, iX, iY;
+	GetWidthXY( pn, iRow, iChoiceWithFocus, iWidth, iX, iY );
 
-		OptionsCursorPlus &cursor = m_Cursor[pn];
-		cursor.SetBarWidth( iWidth );
-		cursor.SetXY( (float)iX, (float)iY );
-		bool bCanGoLeft = iChoiceWithFocus > 0;
-		bool bCanGoRight = iChoiceWithFocus >= 0 && iChoiceWithFocus < (int) row.GetRowDef().m_vsChoices.size()-1;
-		cursor.SetCanGo( bCanGoLeft, bCanGoRight );
-	}
+	OptionsCursorPlus &cursor = m_Cursor[pn];
+	cursor.SetBarWidth( iWidth );
+	cursor.SetXY( (float)iX, (float)iY );
+	bool bCanGoLeft = iChoiceWithFocus > 0;
+	bool bCanGoRight = iChoiceWithFocus >= 0 && iChoiceWithFocus < (int) row.GetRowDef().m_vsChoices.size()-1;
+	cursor.SetCanGo( bCanGoLeft, bCanGoRight );
 }
 
 void ScreenOptions::TweenCursor( PlayerNumber pn )
