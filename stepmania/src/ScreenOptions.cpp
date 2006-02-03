@@ -291,7 +291,7 @@ void ScreenOptions::RestartOptions()
 	FOREACH_HumanPlayer( pn )
 	{
 		// Hide the highlight if no rows are enabled.
-		m_sprLineHighlight[pn]->SetHidden( m_iCurrentRow[p] == -1 );
+		m_sprLineHighlight[pn]->SetHidden( m_iCurrentRow[pn] == -1 );
 
 		for( unsigned r=0; r<m_pRows.size(); ++r )
 			this->RefreshIcons( r, pn );
