@@ -293,7 +293,6 @@ void ScreenOptions::RestartOptions()
 	CHECKPOINT;
 
 	PositionRows();
-	PositionIcons();
 	RefreshAllIcons();
 	PositionCursors();
 	UpdateEnabledDisabled();
