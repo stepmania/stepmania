@@ -22,6 +22,7 @@ private:
 
 	void SelectRowWithMemoryCard( const RString &sOsMountPoint );
 
+	bool UpdateCurrentUsbStorageDevices();
 	vector<UsbStorageDevice> m_CurrentUsbStorageDevices;
 };
 

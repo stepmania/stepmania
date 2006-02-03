@@ -19,11 +19,29 @@ void ScreenOptionsMemoryCard::Init()
 	this->SubscribeToMessage( Message_StorageDevicesChanged );
 }
 
+bool ScreenOptionsMemoryCard::UpdateCurrentUsbStorageDevices()
+{
+	vector<UsbStorageDevice> aOldDevices = m_CurrentUsbStorageDevices;
+
+	const vector<UsbStorageDevice> &aNewDevices = MEMCARDMAN->GetStorageDevices();
+
+	m_CurrentUsbStorageDevices.clear();
+	for( size_t i = 0; i < aNewDevices.size(); ++i )
+	{
+		const UsbStorageDevice &dev = aNewDevices[i];
+		if( dev.m_State == UsbStorageDevice::STATE_CHECKING )
+			continue;
+		m_CurrentUsbStorageDevices.push_back( dev );
+	}
+
+	return aOldDevices != m_CurrentUsbStorageDevices;
+}
+
 void ScreenOptionsMemoryCard::BeginScreen()
 {
 	vector<OptionRowHandler*> vHands;
 	
-	m_CurrentUsbStorageDevices = MEMCARDMAN->GetStorageDevices();
+	UpdateCurrentUsbStorageDevices();
 
 	FOREACH_CONST( UsbStorageDevice, m_CurrentUsbStorageDevices, iter )
 	{
