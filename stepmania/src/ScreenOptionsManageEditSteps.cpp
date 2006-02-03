@@ -131,7 +131,7 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_GoToNextScreen )
 	{
-		int iCurRow = m_iCurrentRow[PLAYER_1];
+		int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
 
 		if( iCurRow == 0 )	// "create new"
 		{

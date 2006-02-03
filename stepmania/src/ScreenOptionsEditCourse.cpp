@@ -250,7 +250,7 @@ void ScreenOptionsEditCourse::ExportOptions( int iRow, const vector<PlayerNumber
 
 void ScreenOptionsEditCourse::ProcessMenuStart( const InputEventPlus &input )
 {
-	int iCurRow = m_iCurrentRow[PLAYER_1];
+	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
 	Course *pCourse = GAMESTATE->m_pCurCourse;
 
 	if( iCurRow < NUM_EditCourseRow )
