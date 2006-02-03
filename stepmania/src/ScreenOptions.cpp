@@ -482,10 +482,6 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 void ScreenOptions::UpdateEnabledDisabled( int r )
 {
 	OptionRow &row = *m_pRows[r];
-
-	FOREACH_PlayerNumber( pn )
-		row.SetRowHasFocus( pn, GAMESTATE->IsHumanPlayer(pn) && m_iCurrentRow[pn] == (int)r );
-
 	row.UpdateEnabledDisabled();
 }
 
@@ -714,7 +710,10 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 			m_pRows[r]->PositionUnderlines( p );
 	RefreshIcons( iCurRow, pn );
 	for( unsigned i=0; i<m_pRows.size(); i++ )	// foreach options line
+	{
 		m_pRows[i]->PositionIcons( pn );
+		m_pRows[i]->SetRowHasFocus( pn, GAMESTATE->IsHumanPlayer(pn) && m_iCurrentRow[pn] == (int)i );
+	}
 	UpdateEnabledDisabled();
 
 	if( SHOW_SCROLL_BAR )
