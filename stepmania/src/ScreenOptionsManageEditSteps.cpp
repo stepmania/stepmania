@@ -117,7 +117,7 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 		if( iter != m_vpSteps.end() )
 		{
 			int iIndex = iter - m_vpSteps.begin();
-			this->MoveRowAbsolute( PLAYER_1, 1 + iIndex, false );
+			this->MoveRowAbsolute( PLAYER_1, 1 + iIndex );
 		}
 	}
 

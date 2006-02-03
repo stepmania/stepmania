@@ -218,7 +218,7 @@ void ScreenOptionsManageCourses::BeginScreen()
 		if( iter != m_vpCourses.end() )
 		{
 			int iIndex = iter - m_vpCourses.begin();
-			this->MoveRowAbsolute( PLAYER_1, 1 + iIndex, false );
+			this->MoveRowAbsolute( PLAYER_1, 1 + iIndex );
 		}
 	}
 

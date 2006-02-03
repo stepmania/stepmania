@@ -156,7 +156,7 @@ void ScreenOptionsMemoryCard::SelectRowWithMemoryCard( const RString &sOsMountPo
 	{
 		if( v[i].sOsMountDir == sOsMountPoint )
 		{
-			this->MoveRowAbsolute( PLAYER_1, i, false );
+			this->MoveRowAbsolute( PLAYER_1, i );
 			return;
 		}
 	}

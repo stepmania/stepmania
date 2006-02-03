@@ -104,7 +104,7 @@ void ScreenOptionsEditCourse::BeginScreen()
 	ScreenOptions::BeginScreen();
 
 	if( GAMESTATE->m_iEditCourseEntryIndex > -1 )
-		this->MoveRowAbsolute( PLAYER_1, NUM_EditCourseRow + GAMESTATE->m_iEditCourseEntryIndex, false );
+		this->MoveRowAbsolute( PLAYER_1, NUM_EditCourseRow + GAMESTATE->m_iEditCourseEntryIndex );
 	AfterChangeRow( GAMESTATE->m_MasterPlayerNumber );
 }
 

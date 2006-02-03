@@ -131,13 +131,13 @@ void ScreenOptionsManageProfiles::BeginScreen()
 		if( iter != m_vsLocalProfileID.end() )
 		{
 			int iIndex = iter - m_vsLocalProfileID.begin();
-			this->MoveRowAbsolute( PLAYER_1, 1 + iIndex, false );
+			this->MoveRowAbsolute( PLAYER_1, 1 + iIndex );
 		}
 	}
 	else if( !m_vsLocalProfileID.empty() )
 	{
 		// select the first item below "create new"
-		this->MoveRowAbsolute( PLAYER_1, 1, false );
+		this->MoveRowAbsolute( PLAYER_1, 1 );
 	}
 
 	AfterChangeRow( PLAYER_1 );
