@@ -381,13 +381,6 @@ void ScreenOptions::GetWidthXY( PlayerNumber pn, int iRow, int iChoiceOnRow, int
 	row.GetWidthXY( pn, iChoiceOnRow, iWidthOut, iXOut, iYOut );
 }
 
-void ScreenOptions::PositionIcons()
-{
-	FOREACH_HumanPlayer( pn )	// foreach player
-		for( unsigned i=0; i<m_pRows.size(); i++ )	// foreach options line
-			m_pRows[i]->PositionIcons( pn );
-}
-
 void ScreenOptions::RefreshIcons( int iRow, PlayerNumber pn )
 {
 	OptionRow &row = *m_pRows[iRow];
