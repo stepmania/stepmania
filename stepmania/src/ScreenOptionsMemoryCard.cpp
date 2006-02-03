@@ -64,18 +64,7 @@ void ScreenOptionsMemoryCard::BeginScreen()
 	ScreenOptions::BeginScreen();
 
 	// select the last chosen memory card (if present)
-	if( !MEMCARDMAN->m_sEditorMemoryCardOsMountPoint.Get().empty() )
-	{
-		const vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
-		for( unsigned i=0; i<v.size(); i++ )	
-		{
-			if( v[i].sOsMountDir == MEMCARDMAN->m_sEditorMemoryCardOsMountPoint.Get() )
-			{
-				this->MoveRowAbsolute( PLAYER_1, i, false );
-				break;
-			}
-		}
-	}
+	SelectRowWithMemoryCard( MEMCARDMAN->m_sEditorMemoryCardOsMountPoint.Get() );
 }
 
 void ScreenOptionsMemoryCard::HandleScreenMessage( const ScreenMessage SM )
@@ -111,6 +100,22 @@ void ScreenOptionsMemoryCard::ExportOptions( int iRow, const vector<PlayerNumber
 		{
 			const UsbStorageDevice &dev = v[iRow];
 			MEMCARDMAN->m_sEditorMemoryCardOsMountPoint.Set( dev.sOsMountDir );
+		}
+	}
+}
+
+void ScreenOptionsMemoryCard::SelectRowWithMemoryCard( const RString &sOsMountPoint )
+{
+	if( sOsMountPoint.empty() )
+		return;
+
+	const vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
+	for( unsigned i=0; i<v.size(); i++ )
+	{
+		if( v[i].sOsMountDir == sOsMountPoint )
+		{
+			this->MoveRowAbsolute( PLAYER_1, i, false );
+			return;
 		}
 	}
 }

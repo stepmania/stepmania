@@ -20,6 +20,8 @@ private:
 
 	void ProcessMenuStart( const InputEventPlus &input );
 
+	void SelectRowWithMemoryCard( const RString &sOsMountPoint );
+
 	vector<UsbStorageDevice> m_CurrentUsbStorageDevices;
 };
 
