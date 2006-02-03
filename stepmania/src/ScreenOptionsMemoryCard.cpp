@@ -22,8 +22,10 @@ void ScreenOptionsMemoryCard::Init()
 void ScreenOptionsMemoryCard::BeginScreen()
 {
 	vector<OptionRowHandler*> vHands;
+	
+	m_CurrentUsbStorageDevices = MEMCARDMAN->GetStorageDevices();
 
-	FOREACH_CONST( UsbStorageDevice, MEMCARDMAN->GetStorageDevices(), iter )
+	FOREACH_CONST( UsbStorageDevice, m_CurrentUsbStorageDevices, iter )
 	{
 		// TODO: Make these string themable
 
@@ -52,7 +54,7 @@ void ScreenOptionsMemoryCard::BeginScreen()
 		def.m_bOneChoiceForAllPlayers = true;
 	}
 
-	if( MEMCARDMAN->GetStorageDevices().empty() )
+	if( m_CurrentUsbStorageDevices.empty() )
 	{
 		OptionRowDefinition def( "No memory cards detected", true, "" );
 	}
@@ -64,7 +66,7 @@ void ScreenOptionsMemoryCard::BeginScreen()
 	// select the last chosen memory card (if present)
 	if( !MEMCARDMAN->m_sEditorMemoryCardOsMountPoint.Get().empty() )
 	{
-		const vector<UsbStorageDevice> &v = MEMCARDMAN->GetStorageDevices();
+		const vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
 		for( unsigned i=0; i<v.size(); i++ )	
 		{
 			if( v[i].sOsMountDir == MEMCARDMAN->m_sEditorMemoryCardOsMountPoint.Get() )
@@ -104,7 +106,7 @@ void ScreenOptionsMemoryCard::ExportOptions( int iRow, const vector<PlayerNumber
 	PlayerNumber pn = GAMESTATE->m_MasterPlayerNumber;
 	if( m_iCurrentRow[pn] == iRow )
 	{
-		const vector<UsbStorageDevice> &v = MEMCARDMAN->GetStorageDevices();
+		const vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
 		if( iRow < int(v.size()) )
 		{
 			const UsbStorageDevice &dev = v[iRow];
@@ -118,10 +120,10 @@ void ScreenOptionsMemoryCard::ProcessMenuStart( const InputEventPlus &input )
 {
 	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
 
-	const vector<UsbStorageDevice> &v = MEMCARDMAN->GetStorageDevices();
+	const vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
 	if( iCurRow < int(v.size()) )	// a card
 	{
-		const vector<UsbStorageDevice> v = MEMCARDMAN->GetStorageDevices();
+		const vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
 		const UsbStorageDevice &dev = v[iCurRow];
 		MEMCARDMAN->m_sEditorMemoryCardOsMountPoint.Set( dev.sOsMountDir );
 		bool bSuccess = MEMCARDMAN->MountCard( PLAYER_1, dev );

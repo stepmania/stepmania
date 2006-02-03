@@ -18,6 +18,8 @@ private:
 	void HandleMessage( const RString& sMessage );
 
 	void ProcessMenuStart( const InputEventPlus &input );
+
+	vector<UsbStorageDevice> m_CurrentUsbStorageDevices;
 };
 
 #endif
