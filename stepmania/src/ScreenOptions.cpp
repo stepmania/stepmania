@@ -825,7 +825,8 @@ void ScreenOptions::MenuStart( const InputEventPlus &input )
 				INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_LEFT) );
 			if( bHoldingLeftAndRight )
 			{
-				MoveRowRelative( pn, -1, input.type != IET_FIRST_PRESS );		
+				if( MoveRowRelative(pn, -1, input.type != IET_FIRST_PRESS) )
+					m_SoundPrevRow.Play();
 				return;
 			}
 		}
@@ -947,7 +948,9 @@ void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
 		case NAV_FIVE_KEY:
 			/* Jump to the exit row.  (If everyone's already on the exit row, then
 			 * we'll have already gone to the next screen above.) */
-			MoveRowRelative( pn, m_pRows.size()-m_iCurrentRow[pn]-1, input.type != IET_FIRST_PRESS );
+			if( MoveRowRelative(pn, m_pRows.size()-m_iCurrentRow[pn]-1, input.type != IET_FIRST_PRESS) )
+				m_SoundNextRow.Play();
+
 			break;
 		}
 	}
@@ -1025,7 +1028,13 @@ void ScreenOptions::ChangeValueInRowRelative( int iRow, PlayerNumber pn, int iDe
 		 *
 		 * XXX: Only allow repeats if the opposite key isn't pressed; otherwise, holding both
 		 * directions will repeat in place continuously, which is weird. */
-		MoveRowRelative( pn, iDelta, bRepeat );
+		if( MoveRowRelative(pn, iDelta, bRepeat) )
+		{
+			if( iDelta < 0 )
+				m_SoundPrevRow.Play();
+			else
+				m_SoundNextRow.Play();
+		}
 		return;
 	}
 
@@ -1181,14 +1190,6 @@ bool ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool Repeat )
 		bChanged = true;
 	}
 
-	if( bChanged )
-	{
-		if( iDir < 0 )
-			m_SoundPrevRow.Play();
-		else
-			m_SoundNextRow.Play();
-	}
-
 	return bChanged;
 }
 
@@ -1261,7 +1262,13 @@ void ScreenOptions::MenuUpDown( const InputEventPlus &input, int iDir )
 
 		if( row.GetRowDef().IsEnabledForPlayer(pn) )
 		{
-			MoveRowRelative( pn, iDelta, bRepeat );
+			if( MoveRowRelative(pn, iDelta, bRepeat) )
+			{
+				if( iDir < 0 )
+					m_SoundPrevRow.Play();
+				else
+					m_SoundNextRow.Play();
+			}
 			return;
 		}
 	}
