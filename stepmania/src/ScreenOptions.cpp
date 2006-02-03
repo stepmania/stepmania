@@ -285,16 +285,14 @@ void ScreenOptions::RestartOptions()
 	}
 
 
-	// Hide highlight if no rows are enabled.
-	FOREACH_HumanPlayer( p )
-		m_sprLineHighlight[p]->SetHidden( m_iCurrentRow[p] == -1 );
-
-
 	CHECKPOINT;
 
 	PositionRows();
 	FOREACH_HumanPlayer( pn )
 	{
+		// Hide the highlight if no rows are enabled.
+		m_sprLineHighlight[pn]->SetHidden( m_iCurrentRow[p] == -1 );
+
 		for( unsigned r=0; r<m_pRows.size(); ++r )
 			this->RefreshIcons( r, pn );
 		PositionCursor( pn );
