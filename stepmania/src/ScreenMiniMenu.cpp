@@ -118,8 +118,8 @@ void ScreenMiniMenu::AfterChangeValueOrRow( PlayerNumber pn )
 			if( mr.pfnEnabled() )
 				optrow.GetRowDef().m_vEnabledForPlayers.insert( GAMESTATE->m_MasterPlayerNumber );
 		}
+		m_pRows[i]->UpdateEnabledDisabled();
 	}
-	UpdateEnabledDisabled();
 }
 
 void ScreenMiniMenu::ImportOptions( int r, const vector<PlayerNumber> &vpns )

@@ -707,8 +707,8 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 	{
 		m_pRows[r]->PositionIcons( pn );
 		m_pRows[r]->SetRowHasFocus( pn, GAMESTATE->IsHumanPlayer(pn) && m_iCurrentRow[pn] == (int)r );
+		m_pRows[r]->UpdateEnabledDisabled();
 	}
-	UpdateEnabledDisabled();
 
 	if( SHOW_SCROLL_BAR )
 	{
