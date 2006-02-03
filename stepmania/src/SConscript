@@ -37,11 +37,11 @@ if gtkenv['PLATFORM'] == 'posix':
 		Have_GTK = True
 	endian = gtkconf.EndianTestPosix()
 	if endian == 2:
-		gtkenv.Append(CPPFLAGS="-DENDIAN_BIG")
-		env.Append(CPPFLAGS="-DENDIAN_BIG")
+		gtkenv.Append(CPPDEFINES=["ENDIAN_BIG"])
+		env.Append(CPPDEFINES=["ENDIAN_BIG"])
 	elif endian == 1:
-		gtkenv.Append(CPPFLAGS="-DENDIAN_LITTLE")
-		env.Append(CPPFLAGS="-DENDIAN_LITTLE")
+		gtkenv.Append(CPPDEFINES=["ENDIAN_LITTLE"])
+		env.Append(CPPDEFINES=["ENDIAN_LITTLE"])
 	else:
 		print "Endian test failed to compile/link! Bailing!"
 		Exit(1)
@@ -52,11 +52,9 @@ if Have_GTK:
 	gtkenv.SharedLibrary('GtkModule', [ 'arch/LoadingWindow/LoadingWindow_GtkModule.cpp' ])
 	gtkenv.Command('GtkModule.so', 'libGtkModule.so', 'cp $SOURCE $TARGET')
 
-# NOPORT HACK: Does NEED_CSTDLIB_WORKAROUND cause problems on systems that don't need it? We don't have 
-#              a working check for it...
 # FIXME: Compilation is broken without -DCRASH_HANDLER
 # TODO: Add command-line switches to turn debug on/off among other things
-env.Append(CPPFLAGS=" -DDEBUG -DCRASH_HANDLER")
+env.Append(CPPDEFINES=["DEBUG", "CRASH_HANDLER"])
 # XXX We should check for these.
 env.Append(LIBS=["lua", "lualib", "png", "gif", "rt"])
 
@@ -203,18 +201,22 @@ conf = Configure(env, custom_tests = {
 	'OSSGetVersionTest' : OSSGetVersionTest,
 	'CstdlibLlabsTest' : CstdlibLlabsTest })
 
+Lights = [
+	"arch/Lights/LightsDriver_SystemMessage.cpp",
+]
+
 cpuTypeI = conf.ArchTest()
 if cpuTypeI == 1:
-	env.Append(CPPFLAGS=" -DCPU_X86")
+	env.Append(CPPDEFINES=["CPU_X86"])
 	if env['PLATFORM'] == 'posix':
 		# NOPORT: Again, assuming Linux
-		env.Append(CPPFLAGS=" -DBACKTRACE_METHOD_X86_LINUX")
+		env.Append(CPPDEFINES=["BACKTRACE_METHOD_X86_LINUX"])
 		Lights += [ "arch/Lights/LightsDriver_LinuxWeedTech.cpp", "arch/Lights/LightsDriver_LinuxParallel.cpp" ]
 elif cpuTypeI == 2:
-	env.Append(CPPFLAGS=" -DCPU_PPC")
+	env.Append(CPPDEFINES=["CPU_PPC"])
 	# XXX: Backtrace components for this arch?
 elif cpuTypeI == 3:
-	env.Append(CPPFLAGS=" -DCPU_X86_64")
+	env.Append(CPPDEFINES=["CPU_X86_64"])
 	# XXX: Backtrace components for this arch? Can I use x86 components?
 else:
 	print "Couldn't determine CPU type! Bailing!"
@@ -392,10 +394,6 @@ Sound = [
 	"arch/Sound/RageSoundDriver_Generic_Software.cpp",
 ]
 
-Lights = [
-	"arch/Lights/LightsDriver_SystemMessage.cpp",
-]
-
 MemoryCard = [
 	"arch/MemoryCard/MemoryCardDriver.cpp",
 ]
@@ -431,7 +429,7 @@ ArchUtils = []
 # # # Detection stuff here, it's easiest
 
 if conf.CstdlibLlabsTest():
-	env.Append(CPPFLAGS=" -DNEED_CSTDLIB_WORKAROUND")
+	env.Append(CPPDEFINES=["NEED_CSTDLIB_WORKAROUND"])
 
 if not conf.CheckLib('png', 'png_create_read_struct'):
 	print "*** libpng is required to build StepMania; please make sure that"
@@ -446,19 +444,19 @@ if conf.CheckLib('jpeg', 'jpeg_read_scanlines'):# and conf.CheckHeader('jpeglib.
 else:
 	# XXX: Bail but allow forcing
 	print "*** WARNING: libjpeg not found. You will not be able to read JPEG files."
-	env.Append(CPPFLAGS=" -DNO_JPEG_SUPPORT")
+	env.Append(CPPDEFINES=["NO_JPEG_SUPPORT"])
 
 if conf.CheckLib('vorbisfile', 'ov_info'):
 	env.Append(LIBS=['vorbisfile'])
 	RageSoundFileReaders += [ "RageSoundReader_Vorbisfile.cpp" ]
 else:
-	env.Append(CPPFLAGS=" -DNO_VORBIS_SUPPORT")
+	env.Append(CPPDEFINES=["NO_VORBIS_SUPPORT"])
 
 if conf.CheckLib('mad', 'mad_stream_buffer'):
 	env.Append(LIBS=['mad'])
 	RageSoundFileReaders += [ "RageSoundReader_MP3.cpp" ]
 else:
-	env.Append(LIBS="-DNO_MP3_SUPPORT")
+	env.Append(CPPDEFINES=["NO_MP3_SUPPORT"])
 
 if not conf.CheckLib('GL', 'glGetError'):
 	print "Can't find suitable OpenGL library."
@@ -476,7 +474,8 @@ if env['PLATFORM'] == 'posix':
 		Exit(1)
 	env.Append(LIBS=['pthread'])
 	# NOPORT: This assumes Linux. I don't know how to check for say, FreeBSD or even OS X vs. Linux.
-	env.Append(CPPFLAGS=" -DUNIX -DLINUX -DBACKTRACE_METHOD_TEXT=\"\\\"FIXME\\\"\" -DBACKTRACE_LOOKUP_METHOD_TEXT=\"\\\"FIXME\\\"\"")
+	env.Append(CPPDEFINES=["UNIX", "LINUX", ("BACKTRACE_METHOD_TEXT", "\"\\\"FIXME\\\"\""),
+				("BACKTRACE_LOOKUP_METHOD_TEXT", "\"\\\"FIXME\\\"\"")])
 				#XXX ^ Why is the builder supposed to define BACKTRACE_*_TEXT?
 	ArchUtils += [ 
 		"archutils/Unix/LinuxThreadHelpers.cpp",
@@ -499,44 +498,44 @@ if env['PLATFORM'] == 'posix':
 	InputHandler += [ "arch/InputHandler/InputHandler_Linux_Joystick.cpp" ]
 	# Backtrace stuff
 	if conf.CheckLib('dl', 'dladdr'):
-		env.Append(CPPFLAGS=' -DBACKTRACE_LOOKUP_METHOD_DLADDR', LINKFLAGS="-rdynamic")
+		env.Append(CPPDEFINES=['BACKTRACE_LOOKUP_METHOD_DLADDR'], LINKFLAGS="-rdynamic")
 	elif conf.BacktraceSymbolsTest():
-		env.Append(CPPFLAGS=" -DBACKTRACE_LOOKUP_METHOD_BACKTRACE_SYMBOLS", LINKFLAGS='-rdynamic')
+		env.Append(CPPDEFINES=["BACKTRACE_LOOKUP_METHOD_BACKTRACE_SYMBOLS"], LINKFLAGS='-rdynamic')
 	else:
 		print "*** Couldn't find suitable symbol lookup method."
 		print "*** Generated crash logs will be worthless."
 	if conf.CheckHeader('libiberty.h') and conf.CheckLib('iberty', 'cplus_demangle'):
-		env.Append(CPPFLAGS=' -DHAVE_LIBIBERTY', LIBS=['iberty'])
+		env.Append(CPPDEFINES=['HAVE_LIBIBERTY'], LIBS=['iberty'])
 	else:
 		print "*** Backtrace support has been detected, but libiberty is not installed."
 		print "*** Libiberty will make crash reports for developers much easier to read,"
 		print "*** and is strongly recommended."
 	# ALSA is Linux-exclusive
 	if conf.AlsaVersionTest() and conf.CheckLib('asound', 'snd_ctl_open'):
-		env.Append(CPPFLAGS=" -DHAVE_ALSA")
+		env.Append(CPPDEFINES=["HAVE_ALSA"])
 		Sound += [	"arch/Sound/ALSA9Dynamic.cpp",
 					"arch/Sound/ALSA9Helpers.cpp",
 					"arch/Sound/RageSoundDriver_ALSA9_Software.cpp",
 					"arch/Sound/RageSoundDriver_ALSA9.cpp" ]
-	# OSS is available on OSes besides Linux
+	# OSS is available on POSIX OSes besides Linux
 	if conf.CheckHeader('sys/soundcard.h'):
-		env.Append(CPPFLAGS=" -DHAVE_OSS")
+		env.Append(CPPDEFINES=["HAVE_OSS"])
 		Sound += [ 'arch/Sound/RageSoundDriver_OSS.cpp' ]
 		if conf.OSSGetVersionTest():
-			env.Append(CPPFLAGS=" -DHAVE_OSS_GETVERSION")
+			env.Append(CPPDEFINES=["HAVE_OSS_GETVERSION"])
 
 if Have_GTK:
-	env.Append(CPPFLAGS=" -DHAVE_GTK")
+	env.Append(CPPDEFINES=["HAVE_GTK"])
 	LoadingWindow += [ "arch/LoadingWindow/LoadingWindow_Gtk.cpp" ]
 
 # REMEMBER, only ONE LowLevelWindow!
 if conf.CheckLib('X11', 'XMapWindow') and conf.CheckLib('Xrandr', 'XRRSizes'):
-	env.Append(CPPFLAGS=" -DHAVE_X11", LIBS=["X11", "Xrandr"])
+	env.Append(CPPDEFINES=["HAVE_X11"], LIBS=["X11", "Xrandr"])
 	ArchUtils += [ "archutils/Unix/X11Helper.cpp" ]
 	LowLevelWindow += [ "arch/LowLevelWindow/LowLevelWindow_X11.cpp" ]
 	InputHandler += [ "arch/InputHandler/InputHandler_X11.cpp" ]
 	if conf.CheckLib('Xtst', 'XTestQueryExtension'):
-		env.Append(CPPFLAGS=" -DHAVE_LIBXTST", LIBS=['Xtst'])
+		env.Append(CPPDEFINES=["HAVE_LIBXTST"], LIBS=['Xtst'])
 
 Arch = LoadingWindow + Sound + ArchHooks + InputHandler + MovieTexture +\
 		Lights + MemoryCard + LowLevelWindow + ArchUtils + Dialog +\
@@ -783,7 +782,7 @@ cryptopp = [
 env = conf.Finish()
 
 SConscript('libresample/SConscript')
-env.Append(CPPFLAGS=' -g2', CPPPATH=['.'])
+env.Append(CPPFLAGS=' -g2', CPPPATH=['.']) # NOPORT debug symbols?
 env.Program('stepmania',
 	Screens + DataStructures + FileTypes + StepMania + Arch +\
 	ActorsInGameplayAndMenus + ActorsInMenus + ActorsInGameplay + Rage +\
