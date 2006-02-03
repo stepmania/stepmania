@@ -510,19 +510,16 @@ void OptionRow::PositionUnderlines( PlayerNumber pn )
 	}
 }
 
-void OptionRow::PositionIcons()
+void OptionRow::PositionIcons( PlayerNumber pn )
 {
-	FOREACH_HumanPlayer( p )	// foreach player
-	{
-		OptionIcon *pIcon = m_OptionIcons[p];
-		if( pIcon == NULL )
-			continue;
+	OptionIcon *pIcon = m_OptionIcons[pn];
+	if( pIcon == NULL )
+		return;
 
-		pIcon->SetX( m_pParentType->ICONS_X.GetValue(p) );
+	pIcon->SetX( m_pParentType->ICONS_X.GetValue(pn) );
 
-		/* XXX: this doesn't work since icon is an ActorFrame */
-		pIcon->SetDiffuse( RageColor(1,1,1, m_bHidden? 0.0f:1.0f) );
-	}
+	/* XXX: this doesn't work since icon is an ActorFrame */
+	pIcon->SetDiffuse( RageColor(1,1,1, m_bHidden? 0.0f:1.0f) );
 }
 
 /* This is called when the focus changes, to update "long row" text. */

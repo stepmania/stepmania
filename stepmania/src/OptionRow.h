@@ -147,7 +147,7 @@ public:
 
 	void ChoicesChanged();
 	void PositionUnderlines( PlayerNumber pn );
-	void PositionIcons();
+	void PositionIcons( PlayerNumber pn );
 	void UpdateText( PlayerNumber pn );
 	void SetRowHasFocus( PlayerNumber pn, bool bRowHasFocus );
 	void UpdateEnabledDisabled();
