@@ -1137,8 +1137,6 @@ void ScreenOptions::AfterChangeValueInRow( int iRow, PlayerNumber pn )
 /* Move up/down.  Returns true if we actually moved. */
 bool ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool bRepeat ) 
 {
-	const int iCurrentRow = m_iCurrentRow[pn];
-
 	LOG->Trace("move pn %i, dir %i, rep %i", pn, iDir, bRepeat);
 	bool bChanged = false;
 	FOREACH_PlayerNumber( p )
