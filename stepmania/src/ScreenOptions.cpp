@@ -730,7 +730,8 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 		FOREACH_HumanPlayer( p )
 			m_pRows[r]->PositionUnderlines( p );
 	RefreshIcons( iCurRow, pn );
-	PositionIcons();
+	for( unsigned i=0; i<m_pRows.size(); i++ )	// foreach options line
+		m_pRows[i]->PositionIcons( pn );
 	UpdateEnabledDisabled();
 
 	if( SHOW_SCROLL_BAR )
