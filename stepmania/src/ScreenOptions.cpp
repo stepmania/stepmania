@@ -273,11 +273,8 @@ void ScreenOptions::RestartOptions( bool bTweenIn )
 		m_iCurrentRow[p] = -1;
 		m_iFocusX[p] = -1;
 		m_bWasOnExit[p] = false;
-	}
 
-	// put focus on the first enabled row
-	FOREACH_PlayerNumber( p )
-	{
+		// put focus on the first enabled row
 		for( unsigned r=0; r<m_pRows.size(); r++ )
 		{
 			const OptionRow &row = *m_pRows[r];
