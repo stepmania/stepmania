@@ -162,10 +162,8 @@ void ScreenOptions::Init()
 	switch( m_InputMode )
 	{
 	case INPUTMODE_INDIVIDUAL:
-		{
-			FOREACH_PlayerNumber( p )
-				m_textExplanation[p].SetXY( EXPLANATION_X.GetValue(p), EXPLANATION_Y.GetValue(p) );
-		}
+		FOREACH_PlayerNumber( p )
+			m_textExplanation[p].SetXY( EXPLANATION_X.GetValue(p), EXPLANATION_Y.GetValue(p) );
 		break;
 	case INPUTMODE_SHARE_CURSOR:
 		m_textExplanation[0].SetXY( EXPLANATION_TOGETHER_X, EXPLANATION_TOGETHER_Y );
@@ -435,7 +433,6 @@ void ScreenOptions::RefreshAllIcons()
 void ScreenOptions::PositionCursors()
 {
 	// Set the position of the cursor showing the current option the user is changing.
-	// Set the position of the underlines showing the current choice for each option line.
 	FOREACH_HumanPlayer( pn )
 	{
 		const int iRow = m_iCurrentRow[pn];
@@ -444,7 +441,6 @@ void ScreenOptions::PositionCursors()
 
 		ASSERT_M( iRow >= 0 && iRow < (int)m_pRows.size(), ssprintf("%i < %i", iRow, (int)m_pRows.size() ) );
 		const OptionRow &row = *m_pRows[iRow];
-		OptionsCursorPlus &cursor = m_Cursor[pn];
 
 		const int iChoiceWithFocus = row.GetChoiceInRowWithFocus(pn);
 		if( iChoiceWithFocus == -1 )
@@ -452,6 +448,8 @@ void ScreenOptions::PositionCursors()
 
 		int iWidth, iX, iY;
 		GetWidthXY( pn, iRow, iChoiceWithFocus, iWidth, iX, iY );
+
+		OptionsCursorPlus &cursor = m_Cursor[pn];
 		cursor.SetBarWidth( iWidth );
 		cursor.SetXY( (float)iX, (float)iY );
 		bool bCanGoLeft = iChoiceWithFocus > 0;
