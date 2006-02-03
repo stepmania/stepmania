@@ -1138,7 +1138,7 @@ void ScreenOptions::AfterChangeValueInRow( int iRow, PlayerNumber pn )
 }
 
 /* Move up/down.  Returns true if we actually moved. */
-bool ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool Repeat ) 
+bool ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool bRepeat ) 
 {
 	const int iCurrentRow = m_iCurrentRow[pn];
 	OptionRow &row = *m_pRows[iCurrentRow];
@@ -1150,7 +1150,7 @@ bool ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool Repeat )
 		row.SetChoiceInRowWithFocus( pn, 0 );
 	}
 
-	LOG->Trace("move pn %i, dir %i, rep %i", pn, iDir, Repeat);
+	LOG->Trace("move pn %i, dir %i, rep %i", pn, iDir, bRepeat);
 	bool bChanged = false;
 	FOREACH_PlayerNumber( p )
 	{
@@ -1161,7 +1161,7 @@ bool ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool Repeat )
 		// Update m_iCurrentRow.
 		//
 		int r = m_iCurrentRow[p] + iDir;
-		if( Repeat && ( r == -1 || r == (int) m_pRows.size() ) )
+		if( bRepeat && ( r == -1 || r == (int) m_pRows.size() ) )
 			continue; // don't wrap while repeating
 
 		wrap( r, m_pRows.size() );
