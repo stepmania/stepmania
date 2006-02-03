@@ -247,7 +247,7 @@ bool MemoryCardDriverThreaded_OSX::TestWrite( UsbStorageDevice *pDevice )
 {
 	if( access(pDevice->sOsMountDir, W_OK) )
 	{
-		pDevice->SetError( "Write test failed." );
+		pDevice->SetError( "TestFailed" );
 		return false;
 	}
 	return true;
