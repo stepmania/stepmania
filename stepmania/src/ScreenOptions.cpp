@@ -955,7 +955,7 @@ void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
 		case NAV_FIVE_KEY:
 			/* Jump to the exit row.  (If everyone's already on the exit row, then
 			 * we'll have already gone to the next screen above.) */
-			if( MoveRowRelative(pn, m_pRows.size()-m_iCurrentRow[pn]-1, input.type != IET_FIRST_PRESS) )
+			if( MoveRowAbsolute(pn, m_pRows.size()-1, input.type != IET_FIRST_PRESS) )
 				m_SoundNextRow.Play();
 
 			break;
@@ -1139,32 +1139,33 @@ bool ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool bRepeat )
 {
 	LOG->Trace( "MoveRowRelative(pn %i, dir %i, rep %i)", pn, iDir, bRepeat );
 
-	bool bChanged = false;
-	FOREACH_PlayerNumber( p )
+	int iDest = -1;
+	ASSERT( m_pRows.size() );
+	for( int r=1; r<(int)m_pRows.size(); r++ )
 	{
-		if( m_InputMode == INPUTMODE_INDIVIDUAL && p != pn )
-			continue;	// skip
+		int iDelta = r*iDir;
+		iDest = m_iCurrentRow[pn] + iDelta;
+		wrap( iDest, m_pRows.size() );
 
-		//
-		// Update m_iCurrentRow.
-		//
-		int iRow = m_iCurrentRow[p] + iDir;
-		if( bRepeat && ( iRow == -1 || iRow == (int) m_pRows.size() ) )
-			continue; // don't wrap while repeating
+		OptionRow &row = *m_pRows[iDest];
+		if( row.GetRowDef().IsEnabledForPlayer(pn) )
+			break;
 
-		wrap( iRow, m_pRows.size() );
-
-		if( m_iCurrentRow[p] == iRow )
-			continue;
-
-		m_iCurrentRow[p] = iRow;
-		ASSERT( iRow >= 0 && iRow < (int)m_pRows.size() );
-
-		AfterChangeRow( p );
-		bChanged = true;
+		iDest = -1;
 	}
 
-	return bChanged;
+	if( iDest == -1 )
+		return false;
+	if( bRepeat )
+	{
+		// Don't wrap on repeating inputs.
+		if( iDir > 0 && iDest < m_iCurrentRow[pn] )
+			return false;
+		if( iDir < 0 && iDest > m_iCurrentRow[pn] )
+			return false;
+	}
+
+	return MoveRowAbsolute( pn, iDest, bRepeat );
 }
 
 void ScreenOptions::AfterChangeRow( PlayerNumber pn ) 
@@ -1203,7 +1204,6 @@ void ScreenOptions::AfterChangeRow( PlayerNumber pn )
 			// the first choice.
 			row.SetChoiceInRowWithFocus( pn, 0 );
 		}
-
 	}
 
 	AfterChangeValueOrRow( pn );
@@ -1211,8 +1211,22 @@ void ScreenOptions::AfterChangeRow( PlayerNumber pn )
 
 bool ScreenOptions::MoveRowAbsolute( PlayerNumber pn, int iRow, bool bRepeat ) 
 {
-	int iDir = iRow - m_iCurrentRow[pn];
-	return MoveRowRelative( pn, iDir, bRepeat );
+	bool bChanged = false;
+	FOREACH_PlayerNumber( p )
+	{
+		if( m_InputMode == INPUTMODE_INDIVIDUAL && p != pn )
+			continue;	// skip
+
+		if( m_iCurrentRow[p] == iRow )
+			continue;
+
+		m_iCurrentRow[p] = iRow;
+
+		AfterChangeRow( p );
+		bChanged = true;
+	}
+
+	return bChanged;
 }
 
 void ScreenOptions::MenuUp( const InputEventPlus &input )
@@ -1253,35 +1267,12 @@ void ScreenOptions::MenuUpDown( const InputEventPlus &input, int iDir )
 		}
 	}
 
-	bool bRepeat = input.type != IET_FIRST_PRESS;
-
-	int iDest = -1;
-	for( int r=1; r<(int)m_pRows.size(); r++ )
+	if( MoveRowRelative(pn, iDir, input.type != IET_FIRST_PRESS) )
 	{
-		int iDelta = r*iDir;
-		iDest = m_iCurrentRow[pn] + iDelta;
-		int iOldDest = iDest;
-		ASSERT( m_pRows.size() );
-		wrap( iDest, m_pRows.size() );
-
-		// Don't wrap on repeating inputs.
-		bool bWrapped = iOldDest != iDest;
-		if( bRepeat && bWrapped )
-			return;
-
-		OptionRow &row = *m_pRows[iDest];
-
-		if( row.GetRowDef().IsEnabledForPlayer(pn) )
-		{
-			if( MoveRowRelative(pn, iDelta, bRepeat) )
-			{
-				if( iDir < 0 )
-					m_SoundPrevRow.Play();
-				else
-					m_SoundNextRow.Play();
-			}
-			return;
-		}
+		if( iDir < 0 )
+			m_SoundPrevRow.Play();
+		else
+			m_SoundNextRow.Play();
 	}
 }
 
