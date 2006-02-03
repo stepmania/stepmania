@@ -272,7 +272,9 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const RString &path )
 				LOG->Warn( "Got file '%s' in '%s' from list, but can't stat? (%s)",
 					pEnt->d_name, sPath.c_str(), strerror(errno) );
 			continue;
-		} else {
+		}
+		else
+		{
 			f.dir = (st.st_mode & S_IFDIR);
 			f.size = st.st_size;
 			f.hash = st.st_mtime;
@@ -298,7 +300,7 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const RString &path )
 	vector<RString> vsFilesToRemove;
 	for( set<File>::iterator iter = fs.files.lower_bound(IGNORE_MARKER_BEGINNING); 
 		 iter != fs.files.end(); 
-		 iter++ )
+		 ++iter )
 	{
 		if( !BeginsWith( iter->lname, IGNORE_MARKER_BEGINNING ) )
 			break;
