@@ -13,7 +13,7 @@ static const float LineWidth = 400;
 static const float LineHeight = 50;
 
 #define FONT( i )			THEME->GetMetric (m_sName,ssprintf("Font%i",i))
-#define TEXT( i )			THEME->GetMetric (m_sName,ssprintf("Text%i",i))
+#define TEXT( i )			THEME->GetString (m_sName,ssprintf("Text%i",i))
 
 static RString g_sCustomText;
 
