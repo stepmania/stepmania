@@ -479,16 +479,10 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 	}
 }
 
-void ScreenOptions::UpdateEnabledDisabled( int r )
-{
-	OptionRow &row = *m_pRows[r];
-	row.UpdateEnabledDisabled();
-}
-
 void ScreenOptions::UpdateEnabledDisabled()
 {
 	for( unsigned r=0; r<m_pRows.size(); r++ )
-		UpdateEnabledDisabled( r );
+		m_pRows[r]->UpdateEnabledDisabled();
 }
 
 void ScreenOptions::Update( float fDeltaTime )
