@@ -1160,17 +1160,17 @@ bool ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool bRepeat )
 		//
 		// Update m_iCurrentRow.
 		//
-		int r = m_iCurrentRow[p] + iDir;
-		if( bRepeat && ( r == -1 || r == (int) m_pRows.size() ) )
+		int iRow = m_iCurrentRow[p] + iDir;
+		if( bRepeat && ( iRow == -1 || iRow == (int) m_pRows.size() ) )
 			continue; // don't wrap while repeating
 
-		wrap( r, m_pRows.size() );
+		wrap( iRow, m_pRows.size() );
 
-		if( m_iCurrentRow[p] == r )
+		if( m_iCurrentRow[p] == iRow )
 			continue;
 
-		m_iCurrentRow[p] = r;
-		ASSERT( r >= 0 && r < (int)m_pRows.size() );
+		m_iCurrentRow[p] = iRow;
+		ASSERT( iRow >= 0 && iRow < (int)m_pRows.size() );
 
 		AfterChangeRow( p );
 		bChanged = true;
