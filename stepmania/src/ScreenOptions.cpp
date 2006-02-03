@@ -1140,13 +1140,6 @@ bool ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool bRepeat )
 	const int iCurrentRow = m_iCurrentRow[pn];
 	OptionRow &row = *m_pRows[iCurrentRow];
 
-	if( row.GetFirstItemGoesDown() )
-	{
-		// If moving from a bFirstChoiceGoesDown row, put focus back on 
-		// the first choice before moving.
-		row.SetChoiceInRowWithFocus( pn, 0 );
-	}
-
 	LOG->Trace("move pn %i, dir %i, rep %i", pn, iDir, bRepeat);
 	bool bChanged = false;
 	FOREACH_PlayerNumber( p )
@@ -1178,12 +1171,12 @@ bool ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool bRepeat )
 
 void ScreenOptions::AfterChangeRow( PlayerNumber pn ) 
 {
-	//
-	// In FIVE_KEY, keep the selection in the row near the focus.
-	//
 	const int iRow = m_iCurrentRow[pn];
 	if( iRow != -1 )
 	{
+		//
+		// In FIVE_KEY, keep the selection in the row near the focus.
+		//
 		OptionRow &row = *m_pRows[iRow];
 		switch( m_OptionsNavigation )
 		{
@@ -1205,6 +1198,14 @@ void ScreenOptions::AfterChangeRow( PlayerNumber pn )
 			}
 			break;
 		}
+
+		if( row.GetFirstItemGoesDown() )
+		{
+			// If moving to a bFirstChoiceGoesDown row, put focus back on 
+			// the first choice.
+			row.SetChoiceInRowWithFocus( pn, 0 );
+		}
+
 	}
 
 	AfterChangeValueOrRow( pn );
