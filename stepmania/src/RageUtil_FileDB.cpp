@@ -487,14 +487,11 @@ void FilenameDB::DelFile( const RString &sPath )
 
 void FilenameDB::FlushDirCache()
 {
-	while(1)
+	m_Mutex.Lock();
+	while( true )
 	{
-		m_Mutex.Lock();
 		if( dirs.empty() )
-		{
-			m_Mutex.Unlock();
 			break;
-		}
 
 		/* Grab the first entry.  Take it out of the list while we hold the
 		 * lock, to guarantee that we own it. */
@@ -506,11 +503,9 @@ void FilenameDB::FlushDirCache()
 		 * filled, so wait. */
 		while( !pFileSet->m_bFilled )
 			m_Mutex.Wait();
-
-		m_Mutex.Unlock();
-
 		delete pFileSet;
 	}
+	m_Mutex.Unlock();
 }
 
 const File *FilenameDB::GetFile( const RString &sPath )
