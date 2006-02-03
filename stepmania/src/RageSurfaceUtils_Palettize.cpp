@@ -22,15 +22,15 @@ typedef uint8_t apixel[4];
 
 struct acolorhist_item
 {
-    apixel acolor;
-    int value;
+	apixel acolor;
+	int value;
 };
 
 typedef struct acolorhist_list_item *acolorhist_list;
 struct acolorhist_list_item
 {
-    struct acolorhist_item ch;
-    acolorhist_list next;
+	struct acolorhist_item ch;
+	acolorhist_list next;
 };
 
 static const unsigned int HASH_SIZE = 20023u;
@@ -103,50 +103,50 @@ void RageSurfaceUtils::Palettize( RageSurface *&pImg, int iColors, bool bDither 
 {
 	ASSERT( iColors != 0 );
 
-    acolorhist_item *acolormap=NULL;
-    int newcolors = 0;
+	acolorhist_item *acolormap=NULL;
+	int newcolors = 0;
 
 	/* "apixel", etc. make assumptions about byte order. */
 	RageSurfaceUtils::ConvertSurface( pImg, pImg->w, pImg->h, 32,
 		Swap32BE(0xFF000000), Swap32BE(0x00FF0000), Swap32BE(0x0000FF00), Swap32BE(0x000000FF));
 
-    pixval maxval = 255;
+	pixval maxval = 255;
 
 	{
-        /*
-         * Attempt to make a histogram of the colors, unclustered.
-         * If at first we don't succeed, lower maxval to increase color
-         * coherence and try again.  This will eventually terminate, with
-         * maxval at worst 15, since 32^3 is approximately MAXCOLORS.
-         *        [GRR POSSIBLE BUG:  what about 32^4 ?]
-         */
+		/*
+		 * Attempt to make a histogram of the colors, unclustered.
+		 * If at first we don't succeed, lower maxval to increase color
+		 * coherence and try again.  This will eventually terminate, with
+		 * maxval at worst 15, since 32^3 is approximately MAXCOLORS.
+		 *        [GRR POSSIBLE BUG:  what about 32^4 ?]
+		 */
 		acolorhist_item *achv;
-	    int colors;
-        while(1)
+		int colors;
+		while(1)
 		{
-            achv = pam_computeacolorhist( pImg, MAXCOLORS, &colors );
-            if( achv != NULL )
-                break;
-            pixval newmaxval = maxval / 2;
+			achv = pam_computeacolorhist( pImg, MAXCOLORS, &colors );
+			if( achv != NULL )
+				break;
+			pixval newmaxval = maxval / 2;
 
 			int table[256];
 			for( int c = 0; c <= maxval; ++c )
 				table[c] = ( (uint8_t) c * newmaxval + maxval/2 ) / maxval;
 
-            for( int row = 0; row < pImg->h; ++row )
+			for( int row = 0; row < pImg->h; ++row )
 			{
 				apixel *pP = (apixel *) (pImg->pixels+row*pImg->pitch);
-                for( int col = 0; col < pImg->w; ++col, ++pP )
-                    PAM_DEPTH( *pP );
+				for( int col = 0; col < pImg->w; ++col, ++pP )
+					PAM_DEPTH( *pP );
 			}
-            maxval = newmaxval;
-        }
-        newcolors = min( colors, iColors );
+			maxval = newmaxval;
+		}
+		newcolors = min( colors, iColors );
 
-        /* Apply median-cut to histogram, making the new acolormap. */
-        acolormap = mediancut( achv, colors, pImg->h * pImg->w, maxval, newcolors );
-        pam_freeacolorhist( achv );
-    }
+		/* Apply median-cut to histogram, making the new acolormap. */
+		acolormap = mediancut( achv, colors, pImg->h * pImg->w, maxval, newcolors );
+		pam_freeacolorhist( achv );
+	}
 
 	RageSurface *pRet = CreateSurface( pImg->w, pImg->h, 8, 0, 0, 0, 0 );
 	pRet->format->palette->ncolors = newcolors;
@@ -278,20 +278,20 @@ void RageSurfaceUtils::Palettize( RageSurface *&pImg, int iColors, bool bDither 
 				}
 			}
 
-            *pOut = (uint8_t) ind;
+			*pOut = (uint8_t) ind;
 
-            if( !fs_direction )
+			if( !fs_direction )
 			{
-                ++col;
-                pIn += 4;
-                ++pOut;
-            } else {
-                --col;
-                pIn -= 4;
-                --pOut;
-            }
-        }
-        while( col != limitcol );
+				++col;
+				pIn += 4;
+				++pOut;
+			} else {
+				--col;
+				pIn -= 4;
+				--pOut;
+			}
+		}
+		while( col != limitcol );
 
 		if( bDither )
 		{
@@ -318,9 +318,9 @@ void RageSurfaceUtils::Palettize( RageSurface *&pImg, int iColors, bool bDither 
 typedef struct box *box_vector;
 struct box
 {
-    int ind;
-    int colors;
-    int sum;
+	int ind;
+	int colors;
+	int sum;
 };
 
 static bool CompareBySumDescending( const box &b1, const box &b2 )
@@ -363,9 +363,9 @@ static acolorhist_item *mediancut( acolorhist_item *achv, int colors, int sum, i
 				break;
 		if( bi == boxes )
 			break;        /* ran out of colors! */
-        indx = bv[bi].ind;
-        clrs = bv[bi].colors;
-        sm = bv[bi].sum;
+		indx = bv[bi].ind;
+		clrs = bv[bi].colors;
+		sm = bv[bi].sum;
 
 		/*
 		 * Go through the box finding the minimum and maximum of each

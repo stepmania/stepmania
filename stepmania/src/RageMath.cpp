@@ -675,8 +675,8 @@ float RageQuadradtic::GetSlope( float fT ) const
 
 void RageBezier2D::Evaluate( float fT, float *pX, float *pY ) const
 {
-        *pX = m_X.Evaluate( fT );
-        *pY = m_Y.Evaluate( fT );
+	*pX = m_X.Evaluate( fT );
+	*pY = m_Y.Evaluate( fT );
 }
 
 float RageBezier2D::EvaluateYFromX( float fX ) const
