@@ -11,11 +11,11 @@
 #include "ActorUtil.h"
 #include "InputEventPlus.h"
 
-#define NEXT_SCREEN					THEME->GetMetric (m_sName,"NextScreen")
-#define PREV_SCREEN					THEME->GetMetric (m_sName,"PrevScreen")
-#define PREPARE_SCREENS				THEME->GetMetric (m_sName,"PrepareScreens")
-#define PERSIST_SCREENS				THEME->GetMetric (m_sName,"PersistScreens")
-#define GROUPED_SCREENS				THEME->GetMetric (m_sName,"GroupedScreens")
+#define NEXT_SCREEN		THEME->GetMetric (m_sName,"NextScreen")
+#define PREV_SCREEN		THEME->GetMetric (m_sName,"PrevScreen")
+#define PREPARE_SCREENS		THEME->GetMetric (m_sName,"PrepareScreens")
+#define PERSIST_SCREENS		THEME->GetMetric (m_sName,"PersistScreens")
+#define GROUPED_SCREENS		THEME->GetMetric (m_sName,"GroupedScreens")
 
 void Screen::InitScreen( Screen *pScreen )
 {

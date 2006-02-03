@@ -1036,13 +1036,13 @@ void BrightnessOverlay::FadeToActualBrightness()
 
 
 
-Background::Background()	{ m_pImpl = new BackgroundImpl; this->AddChild(m_pImpl); }
-Background::~Background()	{ SAFE_DELETE( m_pImpl ); }
-void Background::Init()		{ m_pImpl->Init(); }
-void Background::LoadFromSong( const Song *pSong )		{ m_pImpl->LoadFromSong(pSong); }
-void Background::Unload()								{ m_pImpl->Unload(); }
-void Background::FadeToActualBrightness()				{ m_pImpl->FadeToActualBrightness(); }
-void Background::SetBrightness( float fBrightness )		{ m_pImpl->SetBrightness(fBrightness); }
+Background::Background()				{ m_pImpl = new BackgroundImpl; this->AddChild(m_pImpl); }
+Background::~Background()				{ SAFE_DELETE( m_pImpl ); }
+void Background::Init()					{ m_pImpl->Init(); }
+void Background::LoadFromSong( const Song *pSong )	{ m_pImpl->LoadFromSong(pSong); }
+void Background::Unload()				{ m_pImpl->Unload(); }
+void Background::FadeToActualBrightness()		{ m_pImpl->FadeToActualBrightness(); }
+void Background::SetBrightness( float fBrightness )	{ m_pImpl->SetBrightness(fBrightness); }
 DancingCharacters* Background::GetDancingCharacters()	{ return m_pImpl->GetDancingCharacters(); }
 void Background::GetLoadedBackgroundChanges( vector<BackgroundChange> *pBackgroundChangesOut[NUM_BackgroundLayer] ) { m_pImpl->GetLoadedBackgroundChanges(pBackgroundChangesOut); }
 
