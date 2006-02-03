@@ -10,7 +10,7 @@
 #include "cryptlib.h"
 #include "filters.h"
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 //! Exception class for Operating-System Random Number Generator.
 class OS_RNG_Err : public Exception
@@ -55,6 +55,6 @@ protected:
 #endif
 };
 
-NAMESPACE_END
+}
 
 #endif

@@ -4,7 +4,7 @@
 #include "misc.h"
 #include "words.h"
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 byte OAEP_P_DEFAULT[1];
 
@@ -80,4 +80,4 @@ unsigned long Crop(unsigned long value, unsigned int size)
 		return value;
 }
 
-NAMESPACE_END
+}

@@ -3,7 +3,7 @@
 
 #include "misc.h"
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 inline unsigned int CountWords(const word *X, unsigned int N)
 {
@@ -98,6 +98,6 @@ inline void ShiftWordsRightByWords(word *r, unsigned int n, unsigned int shiftWo
 	}
 }
 
-NAMESPACE_END
+}
 
 #endif

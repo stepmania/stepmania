@@ -4,7 +4,7 @@
 #include "cryptlib.h"
 #include "pubkey.h"
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 //! <a href="http://www.weidai.com/scan-mirror/ca.html#cem_PKCS1-1.5">EME-PKCS1-v1_5</a>
 
@@ -46,6 +46,6 @@ struct PKCS1v15 : public SignatureStandard
 
 class SHA;
 
-NAMESPACE_END
+}
 
 #endif

@@ -9,7 +9,7 @@
 #include "cryptlib.h"
 #include "misc.h"
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 template <class BASE, class ALGORITHM_INFO = BASE>
 class AlgorithmImpl : public BASE
@@ -185,6 +185,6 @@ public:
 		{return 0;}
 };
 
-NAMESPACE_END
+}
 
 #endif

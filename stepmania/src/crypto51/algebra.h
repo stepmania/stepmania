@@ -3,7 +3,7 @@
 
 #include "config.h"
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 class Integer;
 
@@ -270,6 +270,6 @@ protected:
 	Element m_modulus;
 };
 
-NAMESPACE_END
+}
 
 #endif

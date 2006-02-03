@@ -4,7 +4,7 @@
 #include "pkcspad.h"
 #include <assert.h>
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 template<> const byte PKCS_DigestDecoration<SHA>::decoration[] = {0x30,0x21,0x30,0x09,0x06,0x05,0x2B,0x0E,0x03,0x02,0x1A,0x05,0x00,0x04,0x14};
 template<> const unsigned int PKCS_DigestDecoration<SHA>::length = sizeof(PKCS_DigestDecoration<SHA>::decoration);
@@ -41,4 +41,4 @@ void PKCS1v15_SignatureMessageEncodingMethod::ComputeMessageRepresentative(Rando
 	hash.Final(pDigest);
 }
 
-NAMESPACE_END
+}

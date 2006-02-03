@@ -5,7 +5,7 @@
 #include "queue.h"
 #include <vector>
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 // these tags and flags are not complete
 enum ASNTag

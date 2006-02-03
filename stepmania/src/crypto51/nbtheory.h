@@ -6,7 +6,7 @@
 #include "integer.h"
 #include "algparam.h"
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 // export a table of small primes
 extern const unsigned int maxPrimeTableSize;
@@ -104,6 +104,6 @@ bool SolveModularQuadraticEquation(Integer &r1, Integer &r2, const Integer &a, c
 unsigned int DiscreteLogWorkFactor(unsigned int bitlength);
 unsigned int FactoringWorkFactor(unsigned int bitlength);
 
-NAMESPACE_END
+}
 
 #endif

@@ -3,8 +3,8 @@
 #include "pch.h"
 #include "algparam.h"
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 bool (*AssignIntToInteger)(const std::type_info &valueType, void *pInteger, const void *pInt) = NULL;
 
-NAMESPACE_END
+}

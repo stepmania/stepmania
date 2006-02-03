@@ -7,7 +7,7 @@
 #include "argnames.h"
 #include <functional>
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 Filter::Filter(BufferedTransformation *attachment)
 	: m_attachment(attachment), m_continueAt(0)
@@ -605,4 +605,4 @@ unsigned int StringStore::CopyRangeTo2(BufferedTransformation &target, unsigned 
 	return blockedBytes;
 }
 
-NAMESPACE_END
+}

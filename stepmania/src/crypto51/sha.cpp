@@ -7,7 +7,7 @@
 #include "sha.h"
 #include "misc.h"
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 void SHA::Init()
 {
@@ -80,4 +80,4 @@ void SHA::Transform(word32 *state, const word32 *data)
 
 // *************************************************************
 
-NAMESPACE_END
+}

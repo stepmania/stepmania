@@ -8,7 +8,7 @@
 #include <string.h>		// CodeWarrior doesn't have memory.h
 #include <assert.h>
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 // ************** secure memory allocation ***************
 
@@ -365,7 +365,7 @@ inline bool operator==(const CryptoPP::AllocatorWithCleanup<T>&, const CryptoPP:
 template<class T, class U>
 inline bool operator!=(const CryptoPP::AllocatorWithCleanup<T>&, const CryptoPP::AllocatorWithCleanup<U>&) {return (false);}
 
-NAMESPACE_END
+}
 
 NAMESPACE_BEGIN(std)
 template <class T, class A>
@@ -383,6 +383,6 @@ __stl_alloc_rebind(CryptoPP::AllocatorWithCleanup<_Tp1>& __a, const _Tp2*)
 }
 #endif
 
-NAMESPACE_END
+}
 
 #endif

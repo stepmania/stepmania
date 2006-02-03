@@ -8,7 +8,7 @@
 #include "queue.h"
 #include "algparam.h"
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 /// provides an implementation of BufferedTransformation's attachment interface
 class Filter : public BufferedTransformation, public NotCopyable
@@ -532,6 +532,6 @@ public:
 		: SourceTemplate<StringStore>(attachment) {SourceInitialize(pumpAll, MakeParameters("InputBuffer", ConstByteArrayParameter(string)));}
 };
 
-NAMESPACE_END
+}
 
 #endif

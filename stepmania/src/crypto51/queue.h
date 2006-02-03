@@ -6,7 +6,7 @@
 #include "simple.h"
 //#include <algorithm>
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 /** The queue is implemented as a linked list of byte arrays, but you don't need to
     know about that.  So just ignore this next line. :) */
@@ -116,13 +116,13 @@ private:
 	ByteQueue &m_bq;
 };
 
-NAMESPACE_END
+}
 
 NAMESPACE_BEGIN(std)
 template<> inline void swap(CryptoPP::ByteQueue &a, CryptoPP::ByteQueue &b)
 {
 	a.swap(b);
 }
-NAMESPACE_END
+}
 
 #endif

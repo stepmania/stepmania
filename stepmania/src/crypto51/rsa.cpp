@@ -10,7 +10,7 @@
 #include "algparam.h"
 
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
  
 OID RSAFunction::GetAlgorithmID() const
@@ -232,4 +232,4 @@ void InvertibleRSAFunction::AssignFrom(const NameValuePairs &source)
 		;
 }
 
-NAMESPACE_END
+}

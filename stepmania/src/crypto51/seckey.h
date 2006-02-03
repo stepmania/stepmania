@@ -9,7 +9,7 @@
 #include "misc.h"
 #include "simple.h"
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 //! .
 template <unsigned int N>
@@ -105,6 +105,6 @@ struct SymmetricCipherDocumentation
 	typedef SymmetricCipher Decryption;
 };
 
-NAMESPACE_END
+}
 
 #endif

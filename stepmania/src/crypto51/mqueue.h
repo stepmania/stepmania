@@ -5,7 +5,7 @@
 #include "filters.h"
 #include <deque>
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 //! Message Queue
 class MessageQueue : public AutoSignaling<BufferedTransformation>
@@ -61,13 +61,13 @@ private:
 };
 
 
-NAMESPACE_END
+}
 
 NAMESPACE_BEGIN(std)
 template<> inline void swap(CryptoPP::MessageQueue &a, CryptoPP::MessageQueue &b)
 {
 	a.swap(b);
 }
-NAMESPACE_END
+}
 
 #endif

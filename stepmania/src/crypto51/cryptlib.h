@@ -62,7 +62,7 @@ and getting me started with this manual.
 #include <typeinfo>
 #include <assert.h>
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 // forward declarations
 class Integer;

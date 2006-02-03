@@ -10,7 +10,7 @@
 #include "integer.h"
 #include "asn.h"
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 //! .
 class RSAFunction : public TrapdoorFunction, public X509PublicKey
@@ -118,6 +118,6 @@ struct RSASS : public TF_SS<STANDARD, H, RSA>
 typedef RSASS<PKCS1v15, SHA>::Signer RSASSA_PKCS1v15_SHA_Signer;
 typedef RSASS<PKCS1v15, SHA>::Verifier RSASSA_PKCS1v15_SHA_Verifier;
 
-NAMESPACE_END
+}
 
 #endif

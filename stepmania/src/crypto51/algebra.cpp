@@ -6,7 +6,7 @@
 
 #include <vector>
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 template <class T> const T& AbstractGroup<T>::Double(const Element &a) const
 {
@@ -337,4 +337,4 @@ void AbstractRing<T>::SimultaneousExponentiate(T *results, const T &base, const 
 	MultiplicativeGroup().AbstractGroup<T>::SimultaneousMultiply(results, base, exponents, expCount);
 }
 
-NAMESPACE_END
+}

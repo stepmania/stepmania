@@ -4,7 +4,7 @@
 #include "iterhash.h"
 #include "misc.h"
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 template <class T, class BASE>
 IteratedHashBase<T, BASE>::IteratedHashBase(unsigned int blockSize,
@@ -120,4 +120,4 @@ template class IteratedHashBase<word64, MessageAuthenticationCode>;
 template class IteratedHashBase<word32, HashTransformation>;
 template class IteratedHashBase<word32, MessageAuthenticationCode>;
 
-NAMESPACE_END
+}

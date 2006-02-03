@@ -42,7 +42,7 @@
 // VC60 workaround: this macro is defined in shlobj.h and conflicts with a template parameter used in this file
 #undef INTERFACE
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 Integer NR_EncodeDigest(unsigned int modulusBits, const byte *digest, unsigned int digestLen);
 Integer DSA_EncodeDigest(unsigned int modulusBits, const byte *digest, unsigned int digestLen);
@@ -597,6 +597,6 @@ public:
 	typedef PK_FinalTemplate<TF_VerifierImpl<SchemeOptions> > Verifier;
 };
 
-NAMESPACE_END
+}
 
 #endif

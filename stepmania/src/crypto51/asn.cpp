@@ -6,7 +6,7 @@
 #include <iomanip>
 #include <time.h>
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 USING_NAMESPACE(std)
 
 /// DER Length
@@ -553,4 +553,4 @@ void PKCS8PrivateKey::DEREncode(BufferedTransformation &bt) const
 	privateKeyInfo.MessageEnd();
 }
 
-NAMESPACE_END
+}

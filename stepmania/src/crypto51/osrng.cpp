@@ -21,7 +21,7 @@
 #include <unistd.h>
 #endif
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 #if defined(NONBLOCKING_RNG_AVAILABLE) || defined(BLOCKING_RNG_AVAILABLE)
 OS_RNG_Err::OS_RNG_Err(const std::string &operation)
@@ -99,6 +99,6 @@ void NonblockingRng::GenerateBlock(byte *output, unsigned int size)
 #endif
 }
 
-NAMESPACE_END
+}
 
 #endif

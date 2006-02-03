@@ -21,7 +21,7 @@
 #	endif
 #endif
 */
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 #ifdef SSE2_INTRINSICS_AVAILABLE
 	template <class T>
@@ -412,13 +412,13 @@ inline CryptoPP::Integer operator/(const CryptoPP::Integer &a, CryptoPP::word b)
 //!
 inline CryptoPP::word    operator%(const CryptoPP::Integer &a, CryptoPP::word b) {return a.Modulo(b);}
 
-NAMESPACE_END
+}
 
 NAMESPACE_BEGIN(std)
 template<> inline void swap(CryptoPP::Integer &a, CryptoPP::Integer &b)
 {
 	a.swap(b);
 }
-NAMESPACE_END
+}
 
 #endif

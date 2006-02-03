@@ -20,7 +20,7 @@
 
 #include "algebra.cpp"
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 bool FunctionAssignIntToInteger(const std::type_info &valueType, void *pInteger, const void *pInt)
 {
@@ -3914,4 +3914,4 @@ const Integer& MontgomeryRepresentation::MultiplicativeInverse(const Integer &a)
 
 template class AbstractRing<Integer>;    
 
-NAMESPACE_END
+}

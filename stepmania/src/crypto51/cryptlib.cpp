@@ -9,7 +9,7 @@
 
 #include <memory>
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 //CRYPTOPP_COMPILE_ASSERT(sizeof(byte) == 1);
 //CRYPTOPP_COMPILE_ASSERT(sizeof(word32) == 4);
@@ -648,4 +648,4 @@ DecodingResult PK_Verifier::RecoverMessage(byte *recoveredMessage,
 	return RecoverAndRestart(recoveredMessage, *m);
 }
 
-NAMESPACE_END
+}

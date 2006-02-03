@@ -7,7 +7,7 @@
 #include <iostream>
 #include <fstream>
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 //! .
 class FileStore : public Store, private FilterPutSpaceHelper
@@ -90,6 +90,6 @@ private:
 	std::ostream *m_stream;
 };
 
-NAMESPACE_END
+}
 
 #endif

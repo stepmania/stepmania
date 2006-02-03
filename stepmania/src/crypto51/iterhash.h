@@ -5,7 +5,7 @@
 #include "secblock.h"
 #include "misc.h"
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 template <class T, class BASE>
 class IteratedHashBase : public BASE
@@ -116,6 +116,6 @@ template <class T, class B, class BASE> void IteratedHashBase2<T, B, BASE>::Hash
 	}
 }
 
-NAMESPACE_END
+}
 
 #endif

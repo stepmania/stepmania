@@ -3,7 +3,7 @@
 
 #include "cryptlib.h"
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 DOCUMENTED_NAMESPACE_BEGIN(Name)
 
@@ -49,6 +49,6 @@ CRYPTOPP_DEFINE_NAME_STRING(XMACC_Counter)		//!< word32
 
 DOCUMENTED_NAMESPACE_END
 
-NAMESPACE_END
+}
 
 #endif

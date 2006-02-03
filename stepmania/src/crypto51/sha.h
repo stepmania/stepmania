@@ -3,7 +3,7 @@
 
 #include "iterhash.h"
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 /// <a href="http://www.weidai.com/scan-mirror/md.html#SHA-1">SHA-1</a>
 class SHA : public IteratedHashWithStaticTransform<word32, BigEndian, 64, SHA>
@@ -20,6 +20,6 @@ protected:
 
 typedef SHA SHA1;
 
-NAMESPACE_END
+}
 
 #endif

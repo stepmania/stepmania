@@ -3,7 +3,7 @@
 #include "pch.h"
 #include "files.h"
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 using namespace std;
 
@@ -184,4 +184,4 @@ unsigned int FileSink::Put2(const byte *inString, unsigned int length, int messa
 	return 0;
 }
 
-NAMESPACE_END
+}

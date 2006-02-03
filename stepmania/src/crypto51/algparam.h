@@ -5,7 +5,7 @@
 #include "smartptr.h"
 #include "secblock.h"
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 //! used to pass byte array input as part of a NameValuePairs object
 /*! the deepCopy option is used when the NameValuePairs object can't
@@ -320,6 +320,6 @@ AlgorithmParameters<NullNameValuePairs,T> MakeParameters(const char *name, const
 #define CRYPTOPP_SET_FUNCTION_ENTRY(name)		(Name::name(), &ThisClass::Set##name)
 #define CRYPTOPP_SET_FUNCTION_ENTRY2(name1, name2)	(Name::name1(), Name::name2(), &ThisClass::Set##name1##And##name2)
 
-NAMESPACE_END
+}
 
 #endif

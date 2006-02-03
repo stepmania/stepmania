@@ -8,7 +8,7 @@
 #include <math.h>
 #include <vector>
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 const unsigned int maxPrimeTableSize = 3511;	// last prime 32719
 const word lastSmallPrime = 32719;
@@ -730,4 +730,4 @@ unsigned int DiscreteLogWorkFactor(unsigned int n)
 }
 
 
-NAMESPACE_END
+}

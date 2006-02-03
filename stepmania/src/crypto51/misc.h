@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #endif
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 // ************** compile-time assertion ***************
 
@@ -520,6 +520,6 @@ inline T SafeLeftShift(T value)
 	return SafeShifter<(bits>=(8*sizeof(T)))>::LeftShift(value, bits);
 }
 
-NAMESPACE_END
+}
 
 #endif // MISC_H

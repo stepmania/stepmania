@@ -8,7 +8,7 @@
 #include "integer.h"
 #include "algebra.h"
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 //! .
 class ModularArithmetic : public AbstractRing<Integer>
@@ -145,6 +145,6 @@ private:
 	mutable SecAlignedWordBlock workspace;
 };
 
-NAMESPACE_END
+}
 
 #endif

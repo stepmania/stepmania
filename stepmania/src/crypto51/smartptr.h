@@ -3,7 +3,7 @@
 
 #include "config.h"
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 template<class T> class member_ptr
 {
@@ -40,6 +40,6 @@ protected:
 template <class T> member_ptr<T>::~member_ptr() {delete m_p;}
 template <class T> void member_ptr<T>::reset(T *p) {delete m_p; m_p = p;}
 
-NAMESPACE_END
+}
 
 #endif

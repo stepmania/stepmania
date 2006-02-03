@@ -3,7 +3,7 @@
 #include "pch.h"
 #include "mqueue.h"
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 MessageQueue::MessageQueue(unsigned int nodeSize)
 	: m_queue(nodeSize), m_lengths(1, 0U), m_messageCounts(1, 0U)
@@ -68,4 +68,4 @@ const byte * MessageQueue::Spy(unsigned int &contiguousSize) const
 
 // *************************************************************
 
-NAMESPACE_END
+}

@@ -4,7 +4,7 @@
 #include "queue.h"
 #include "filters.h"
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 // this class for use by ByteQueue only
 class ByteQueueNode
@@ -515,4 +515,4 @@ unsigned int ByteQueue::Walker::CopyRangeTo2(BufferedTransformation &target, uns
 	return blockedBytes;
 }
 
-NAMESPACE_END
+}

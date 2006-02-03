@@ -5,7 +5,7 @@
 
 #include "asn.h"
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 NAMESPACE_BEGIN(ASN1)
 
@@ -105,8 +105,8 @@ DEFINE_OID(2, joint_iso_ccitt)
 								DEFINE_OID(nist_hashalgs()+2, id_sha384)
 								DEFINE_OID(nist_hashalgs()+3, id_sha512)
 
-NAMESPACE_END
+}
 
-NAMESPACE_END
+}
 
 #endif

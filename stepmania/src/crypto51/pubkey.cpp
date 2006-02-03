@@ -3,7 +3,7 @@
 #include "pch.h"
 #include "pubkey.h"
 
-NAMESPACE_BEGIN(CryptoPP)
+namespace CryptoPP {
 
 void P1363_MGF1KDF2_Common(HashTransformation &hash, byte *output, unsigned int outputLength, const byte *input, unsigned int inputLength, bool mask, unsigned int counterStart)
 {
@@ -99,4 +99,4 @@ DecodingResult TF_VerifierBase::RecoverAndRestart(byte *recoveredMessage, PK_Mes
 	return result;
 }
 
-NAMESPACE_END
+}
