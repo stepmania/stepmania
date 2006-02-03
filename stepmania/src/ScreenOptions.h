@@ -61,7 +61,6 @@ protected:
 	void PositionCursor( PlayerNumber pn );
 	void PositionRows();
 	void TweenCursor( PlayerNumber pn );
-	void UpdateEnabledDisabled();
 	void StoreFocus( PlayerNumber pn );
 
 	void BeginFadingOut();

@@ -479,12 +479,6 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 	}
 }
 
-void ScreenOptions::UpdateEnabledDisabled()
-{
-	for( unsigned r=0; r<m_pRows.size(); r++ )
-		m_pRows[r]->UpdateEnabledDisabled();
-}
-
 void ScreenOptions::Update( float fDeltaTime )
 {
 	//LOG->Trace( "ScreenOptions::Update(%f)", fDeltaTime );
