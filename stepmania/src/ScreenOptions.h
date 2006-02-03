@@ -40,10 +40,17 @@ public:
 	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-protected:
 	virtual void TweenOnScreen();
 	virtual void TweenOffScreen();
 
+	//
+	// Lua
+	//
+	virtual void PushSelf( lua_State *L );
+	friend class LunaScreenOptions;
+
+
+protected:
 	virtual void ImportOptions( int iRow, const vector<PlayerNumber> &vpns ) = 0;
 	virtual void ExportOptions( int iRow, const vector<PlayerNumber> &vpns ) = 0;
 
@@ -83,13 +90,6 @@ protected:
 	/* Returns -1 if on a row with no OptionRowDefinition (eg. EXIT). */
 	int GetCurrentRow(PlayerNumber pn = PLAYER_1) const;
 	bool AllAreOnLastRow() const;
-
-public:
-	//
-	// Lua
-	//
-	virtual void PushSelf( lua_State *L );
-	friend class LunaScreenOptions;
 
 protected:	// derived classes need access to these
 	enum Navigation { NAV_THREE_KEY, NAV_THREE_KEY_MENU, NAV_FIVE_KEY, NAV_TOGGLE_THREE_KEY, NAV_TOGGLE_FIVE_KEY };
