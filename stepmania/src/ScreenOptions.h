@@ -58,7 +58,6 @@ protected:
 	void GetWidthXY( PlayerNumber pn, int iRow, int iChoiceOnRow, int &iWidthOut, int &iXOut, int &iYOut ) const;
 	RString GetExplanationText( int iRow ) const;
 	void RefreshIcons( int iRow, PlayerNumber pn );
-	void RefreshAllIcons();
 	void PositionCursors();
 	void PositionRows();
 	void TweenCursor( PlayerNumber pn );

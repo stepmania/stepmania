@@ -293,7 +293,9 @@ void ScreenOptions::RestartOptions()
 	CHECKPOINT;
 
 	PositionRows();
-	RefreshAllIcons();
+	FOREACH_HumanPlayer( pn )
+		for( unsigned r=0; r<m_pRows.size(); ++r )
+			this->RefreshIcons( r, pn );
 	PositionCursors();
 	UpdateEnabledDisabled();
 
@@ -414,13 +416,6 @@ void ScreenOptions::RefreshIcons( int iRow, PlayerNumber pn )
 		sIcon = "";
 
 	m_pRows[iRow]->SetOptionIcon( pn, sIcon, gc );
-}
-
-void ScreenOptions::RefreshAllIcons()
-{
-	FOREACH_HumanPlayer( p )
-		for( unsigned r=0; r<m_pRows.size(); ++r )
-			this->RefreshIcons( r, p );
 }
 
 void ScreenOptions::PositionCursors()
