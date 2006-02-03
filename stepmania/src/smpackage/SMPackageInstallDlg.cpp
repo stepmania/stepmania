@@ -18,6 +18,7 @@
 #include "archutils/Win32/DialogUtil.h"
 #include "LocalizedString.h"
 #include "RageLog.h"
+#include "arch/Dialog/Dialog.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -276,7 +277,7 @@ void CSMPackageInstallDlg::OnOK()
 	int iSelectedInstallDirIndex = m_comboDir.GetCurSel();
 	if( iSelectedInstallDirIndex == -1 )
 	{
-		Dialog::OK( NO_INSTALLATIONS.GetValue(), NULL, MB_OK|MB_ICONEXCLAMATION );
+		Dialog::OK( NO_INSTALLATIONS.GetValue() );
 		return;
 	}
 

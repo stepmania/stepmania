@@ -21,6 +21,7 @@
 #include "archutils/Win32/DialogUtil.h"
 #include "LocalizedString.h"
 #include "RageFileManager.h"
+#include "arch/Dialog/Dialog.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

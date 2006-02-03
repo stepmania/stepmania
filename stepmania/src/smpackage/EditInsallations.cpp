@@ -11,6 +11,7 @@
 #include ".\editinsallations.h"
 #include "LocalizedString.h"
 #include "RageUtil.h"
+#include "arch/Dialog/Dialog.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

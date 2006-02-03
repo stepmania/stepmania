@@ -14,6 +14,7 @@
 #include "SpecialFiles.h"
 #include "IniFile.h"
 #include "LocalizedString.h"
+#include "arch/Dialog/Dialog.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

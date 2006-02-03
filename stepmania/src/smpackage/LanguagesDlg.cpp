@@ -19,6 +19,7 @@
 #include "CsvFile.h"
 #include "archutils/Win32/DialogUtil.h"
 #include "LocalizedString.h"
+#include "arch/Dialog/Dialog.h"
 
 // LanguagesDlg dialog
 
@@ -357,7 +358,7 @@ void LanguagesDlg::OnBnClickedButtonImport()
 	RString sLanguageFile = GetLanguageFile( sTheme, sLanguage );
 
 	{
-		Dialog::Result ret = Dialog::RetryCancel( ssprintf(IMPORTING_THESE_STRINGS_WILL_OVERRIDE.GetValue(),sLanguageFile.c_str()), NULL, MB_OKCANCEL );
+		Dialog::Result ret = Dialog::AbortRetry( ssprintf(IMPORTING_THESE_STRINGS_WILL_OVERRIDE.GetValue(),sLanguageFile.c_str()) );
 		if( ret != Dialog::retry )
 			return;
 	}

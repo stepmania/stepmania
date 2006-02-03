@@ -8,6 +8,7 @@
 #include "RageFileManager.h"	
 #include "resource.h"	
 #include "LocalizedString.h"
+#include "arch/Dialog/Dialog.h"
 
 static const RString SMPACKAGE_KEY = "HKEY_LOCAL_MACHINE\\Software\\StepMania\\smpackage";
 static const RString INSTALLATIONS_KEY = "HKEY_LOCAL_MACHINE\\Software\\StepMania\\smpackage\\Installations";

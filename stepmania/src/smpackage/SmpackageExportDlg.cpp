@@ -18,6 +18,7 @@
 #include "archutils/Win32/DialogUtil.h"
 #include "LocalizedString.h"
 #include "RageFileDriverDirect.h"
+#include "arch/Dialog/Dialog.h"
 
 #include <vector>
 #include <algorithm>
