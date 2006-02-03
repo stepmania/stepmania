@@ -96,7 +96,6 @@ protected:	// derived classes need access to these
 	void SetNavigation( Navigation nav ) { m_OptionsNavigation = nav; }
 	void SetInputMode( InputMode im ) { m_InputMode = im; }
 
-protected:
 	/* Map menu lines to m_OptionRow entries. */
 	vector<OptionRow*>	m_pRows;
 	int			m_iCurrentRow[NUM_PLAYERS];
@@ -115,6 +114,7 @@ protected:
 	// Start repeat events until we've seen one first pressed event.
 	bool			m_bGotAtLeastOneStartPressed[NUM_PLAYERS];
 
+	// actors
 	ActorFrame		m_framePage;
 	AutoActor		m_sprPage;
 
