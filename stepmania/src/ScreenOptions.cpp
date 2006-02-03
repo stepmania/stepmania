@@ -1138,6 +1138,9 @@ void ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool Repeat )
 		if( m_InputMode == INPUTMODE_INDIVIDUAL && p != pn )
 			continue;	// skip
 
+		//
+		// Update m_iCurrentRow.
+		//
 		int r = m_iCurrentRow[p] + iDir;
 		if( Repeat && ( r == -1 || r == (int) m_pRows.size() ) )
 			continue; // don't wrap while repeating
@@ -1150,8 +1153,10 @@ void ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool Repeat )
 		m_iCurrentRow[p] = r;
 		ASSERT( r >= 0 && r < (int)m_pRows.size() );
 
+		//
+		// We've moved vertically.  In FIVE_KEY, keep the selection in the row near the focus.
+		//
 		OptionRow &row = *m_pRows[r];
-
 		switch( m_OptionsNavigation )
 		{
 		case NAV_TOGGLE_FIVE_KEY:
