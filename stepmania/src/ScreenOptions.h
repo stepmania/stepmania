@@ -74,7 +74,7 @@ protected:
 	void ChangeValueInRowAbsolute( int iRow, PlayerNumber pn, int iChoiceIndex, bool bRepeat );
 	virtual void AfterChangeValueInRow( int iRow, PlayerNumber pn );	// override this to detect when the value in a row has changed
 	bool MoveRowRelative( PlayerNumber pn, int iDir, bool bRepeat );
-	bool MoveRowAbsolute( PlayerNumber pn, int iRow, bool bRepeat=false );
+	bool MoveRowAbsolute( PlayerNumber pn, int iRow );
 	virtual void AfterChangeRow( PlayerNumber pn );	// override this to detect when the row has changed
 	virtual void AfterChangeValueOrRow( PlayerNumber pn );
 

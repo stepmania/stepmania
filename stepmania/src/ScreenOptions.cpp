@@ -955,7 +955,7 @@ void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
 		case NAV_FIVE_KEY:
 			/* Jump to the exit row.  (If everyone's already on the exit row, then
 			 * we'll have already gone to the next screen above.) */
-			if( MoveRowAbsolute(pn, m_pRows.size()-1, input.type != IET_FIRST_PRESS) )
+			if( MoveRowAbsolute(pn, m_pRows.size()-1) )
 				m_SoundNextRow.Play();
 
 			break;
@@ -1165,7 +1165,7 @@ bool ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool bRepeat )
 			return false;
 	}
 
-	return MoveRowAbsolute( pn, iDest, bRepeat );
+	return MoveRowAbsolute( pn, iDest );
 }
 
 void ScreenOptions::AfterChangeRow( PlayerNumber pn ) 
@@ -1209,7 +1209,7 @@ void ScreenOptions::AfterChangeRow( PlayerNumber pn )
 	AfterChangeValueOrRow( pn );
 }
 
-bool ScreenOptions::MoveRowAbsolute( PlayerNumber pn, int iRow, bool bRepeat ) 
+bool ScreenOptions::MoveRowAbsolute( PlayerNumber pn, int iRow ) 
 {
 	bool bChanged = false;
 	FOREACH_PlayerNumber( p )
