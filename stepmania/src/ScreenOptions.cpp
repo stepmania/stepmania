@@ -1184,6 +1184,7 @@ bool ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool Repeat )
 					}
 				}
 			}
+			break;
 		}
 
 		AfterChangeRow( p );
