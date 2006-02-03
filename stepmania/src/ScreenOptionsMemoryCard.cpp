@@ -37,12 +37,10 @@ bool ScreenOptionsMemoryCard::UpdateCurrentUsbStorageDevices()
 	return aOldDevices != m_CurrentUsbStorageDevices;
 }
 
-void ScreenOptionsMemoryCard::BeginScreen()
+void ScreenOptionsMemoryCard::CreateMenu()
 {
 	vector<OptionRowHandler*> vHands;
 	
-	UpdateCurrentUsbStorageDevices();
-
 	FOREACH_CONST( UsbStorageDevice, m_CurrentUsbStorageDevices, iter )
 	{
 		// TODO: Make these string themable
@@ -78,6 +76,12 @@ void ScreenOptionsMemoryCard::BeginScreen()
 	}
 	
 	InitMenu( vHands );
+}
+
+void ScreenOptionsMemoryCard::BeginScreen()
+{
+	UpdateCurrentUsbStorageDevices();
+	CreateMenu();
 
 	ScreenOptions::BeginScreen();
 

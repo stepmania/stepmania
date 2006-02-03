@@ -20,6 +20,7 @@ private:
 
 	void ProcessMenuStart( const InputEventPlus &input );
 
+	void CreateMenu();
 	void SelectRowWithMemoryCard( const RString &sOsMountPoint );
 
 	bool UpdateCurrentUsbStorageDevices();
