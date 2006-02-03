@@ -79,9 +79,6 @@ void GetSmzipFilesToExtract( RageFileDriver &zip, vector<RString> &vsOut )
 
 static LocalizedString COULD_NOT_OPEN_FILE		( "CSMPackageInstallDlg", "Could not open file '%s'." );
 static LocalizedString IS_NOT_A_VALID_ZIP		( "CSMPackageInstallDlg", "'%s' is not a valid zip archive." );
-static LocalizedString YOU_HAVE_CHOSEN_TO_INSTALL	( "CSMPackageInstallDlg", "You have chosen to install the package:" );
-static LocalizedString THIS_PACKAGE_CONTAINS		( "CSMPackageInstallDlg", "This package contains the following files:" );
-static LocalizedString THE_PACKAGE_WILL_BE_INSTALLED	( "CSMPackageInstallDlg", "The package will be installed in the following program folder:" );
 BOOL CSMPackageInstallDlg::OnInitDialog() 
 {
 	CDialog::OnInitDialog();
@@ -113,14 +110,7 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 	//
 	// Set the text of the first Edit box
 	//
-	RString sMessage1 = ssprintf(
-		YOU_HAVE_CHOSEN_TO_INSTALL.GetValue()+"\r\n"
-		"\r\n"
-		"\t%s\r\n"
-		"\r\n" +
-		THIS_PACKAGE_CONTAINS.GetValue()+"\r\n",
-		m_sPackagePath.c_str()
-	);
+	RString sMessage1 = "\t" + m_sPackagePath;
 	CEdit* pEdit1 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE1);
 	pEdit1->SetWindowText( sMessage1 );
 
@@ -135,16 +125,6 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 		RString sText = "\t" + join( "\r\n\t", vs );
 		pEdit2->SetWindowText( sText );
 	}
-
-
-	//
-	// Set the text of the third Edit box
-	//
-	RString sMessage3 = THE_PACKAGE_WILL_BE_INSTALLED.GetValue()+"\r\n";
-
-	// Set the message
-	CEdit* pEdit3 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE3);
-	pEdit3->SetWindowText( sMessage3 );
 
 
 	RefreshInstallationList();
@@ -252,7 +232,7 @@ static bool CheckPackages( RageFileDriverZip &fileDriver )
 }
 
 static LocalizedString NO_INSTALLATIONS			("CSMPackageInstallDlg", "No Installations found.  Exiting.");
-static LocalizedString INSTALLING_PLEASE_WAIT		("CSMPackageInstallDlg", "Installing '%s'.  Please wait...");
+static LocalizedString INSTALLING_PLEASE_WAIT		("CSMPackageInstallDlg", "Installing.  Please wait...");
 static LocalizedString ERROR_OPENING_SOURCE_FILE	("CSMPackageInstallDlg", "Error opening source file '%s': %s");
 static LocalizedString ERROR_OPENING_DESTINATION_FILE	("CSMPackageInstallDlg", "Error opening destination file '%s': %s");
 static LocalizedString ERROR_COPYING_FILE		("CSMPackageInstallDlg", "Error copying file '%s': %s");
@@ -326,12 +306,11 @@ void CSMPackageInstallDlg::OnOK()
 	for( unsigned i=0; i<vs.size(); i++ )
 	{
 		// Throw some text up so the user has something to look at during the long pause.
-		CEdit* pEdit1 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE1);
+		CEdit* pEdit1 = (CEdit*)GetDlgItem(IDC_STATIC_MESSAGE1);
 		pEdit1->SetWindowText( ssprintf(INSTALLING_PLEASE_WAIT.GetValue(), m_sPackagePath.c_str()) );
 		CEdit* pEdit2 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE2);
 		pEdit2->SetWindowText( "" );
-		CEdit* pEdit3 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE3);
-		pEdit3->SetWindowText( "" );
+		GetDlgItem(IDC_STATIC_MESSAGE2)->ShowWindow( SW_HIDE );
 		CProgressCtrl* pProgress1 = (CProgressCtrl*)GetDlgItem(IDC_PROGRESS1);
 		//Show the hided progress bar
 		if(!pProgress1->IsWindowVisible())

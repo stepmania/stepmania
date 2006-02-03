@@ -75,19 +75,16 @@ IDR_MAINFRAME           ICON                    "smpackage.ICO"
 
 IDD_INSTALL DIALOGEX 0, 0, 332, 234
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION
-CAPTION "StepMania Tools"
+CAPTION "Install a package"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    EDITTEXT        IDC_EDIT_MESSAGE1,7,42,320,45,ES_MULTILINE | 
+    EDITTEXT        IDC_EDIT_MESSAGE1,7,57,320,14,ES_MULTILINE | 
                     ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER | NOT 
                     WS_TABSTOP
     DEFPUSHBUTTON   "Finish >",IDOK,200,215,55,15
     PUSHBUTTON      "Cancel",IDCANCEL,275,215,50,15
     PUSHBUTTON      "< Back",IDC_BUTTON_BACK,145,215,55,15,WS_DISABLED
     CONTROL         1045,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
-    EDITTEXT        IDC_EDIT_MESSAGE3,5,180,320,13,ES_MULTILINE | 
-                    ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER | NOT 
-                    WS_TABSTOP
     EDITTEXT        IDC_EDIT_MESSAGE2,5,90,320,87,ES_MULTILINE | 
                     ES_AUTOHSCROLL | ES_READONLY | WS_VSCROLL | NOT 
                     WS_TABSTOP
@@ -95,8 +92,14 @@ BEGIN
                     WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "Edit Installations",IDC_BUTTON_EDIT,233,194,85,14
     CONTROL         "",IDC_PROGRESS1,"msctls_progress32",NOT WS_VISIBLE | 
-                    WS_BORDER,7,60,318,14
+                    WS_BORDER,7,72,318,14
     LTEXT           "Install a package",IDC_STATIC_HEADER_TEXT,5,5,280,24
+    LTEXT           "You have chosen to install the package:",
+                    IDC_STATIC_MESSAGE1,7,41,318,10
+    LTEXT           "This package contains the following files:",
+                    IDC_STATIC_MESSAGE2,7,76,318,10
+    LTEXT           "The package will be installed in the following program folder:",
+                    IDC_STATIC,7,181,318,10
 END
 
 IDD_EXPORTER DIALOGEX 0, 0, 349, 222

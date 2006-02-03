@@ -82,13 +82,15 @@
 #define IDC_RADIO_SOUND_WAVEOUT         1057
 #define IDC_BUTTON_CREATE               1057
 #define IDC_LIST_LANGUAGES              1058
-#define IDC_CHECK_SHOW_LOG_WINDOW2      1058
 #define IDC_CHECK_FORCE_60HZ            1058
 #define IDC_STATIC_TOTAL_STRINGS        1060
 #define IDC_STATIC_NEED_TRANSLATION     1061
 #define IDC_COMBO_LANGUAGES             1065
 #define IDC_CHECK_EXPORT_ALREADY_TRANSLATED 1066
 #define IDC_STATIC_HEADER_TEXT          1067
+#define IDC_STATIC_CONTENTS             1068
+#define IDC_STATIC_MESSAGE2             1068
+#define IDC_STATIC_MESSAGE1             1069
 
 // Next default values for new objects
 // 
@@ -96,7 +98,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        155
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1068
+#define _APS_NEXT_CONTROL_VALUE         1070
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif
