@@ -99,12 +99,13 @@ protected:	// derived classes need access to these
 protected:
 	/* Map menu lines to m_OptionRow entries. */
 	vector<OptionRow*>	m_pRows;
+	int			m_iCurrentRow[NUM_PLAYERS];
+
 	OptionRowType		m_OptionRowType;
 
 	Navigation		m_OptionsNavigation;
 	InputMode		m_InputMode;
 
-	int			m_iCurrentRow[NUM_PLAYERS];
 	int			m_iFocusX[NUM_PLAYERS];
 	bool			m_bWasOnExit[NUM_PLAYERS];
 	float			m_fLockInputSecs;
