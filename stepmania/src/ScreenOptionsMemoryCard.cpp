@@ -99,7 +99,27 @@ void ScreenOptionsMemoryCard::HandleMessage( const RString& sMessage )
 	if( sMessage == MessageToString(Message_StorageDevicesChanged) )
 	{
 		if( !m_Out.IsTransitioning() )
-			SCREENMAN->SetNewScreen( this->m_sName );	// reload
+		{
+			/* Remember the old mountpoint. */
+			const vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
+			int iRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
+			RString sOldMountPoint;
+			if( iRow < int(v.size()) )
+			{
+				const UsbStorageDevice &dev = v[iRow];
+				sOldMountPoint = dev.sOsMountDir;
+			}
+
+			/* If the devices that we'd actually show havn't changed, don't recreate the menu. */
+			if( !UpdateCurrentUsbStorageDevices() )
+				return;
+
+			CreateMenu();
+			RestartOptions();
+
+			/* If the memory card that was selected previously is still there, select it. */
+			SelectRowWithMemoryCard( sOldMountPoint );
+		}
 	}
 }
 
