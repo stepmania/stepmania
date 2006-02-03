@@ -703,10 +703,10 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 		FOREACH_HumanPlayer( p )
 			m_pRows[r]->PositionUnderlines( p );
 	RefreshIcons( iCurRow, pn );
-	for( unsigned i=0; i<m_pRows.size(); i++ )	// foreach options line
+	for( unsigned r=0; r<m_pRows.size(); r++ )	// foreach options line
 	{
-		m_pRows[i]->PositionIcons( pn );
-		m_pRows[i]->SetRowHasFocus( pn, GAMESTATE->IsHumanPlayer(pn) && m_iCurrentRow[pn] == (int)i );
+		m_pRows[r]->PositionIcons( pn );
+		m_pRows[r]->SetRowHasFocus( pn, GAMESTATE->IsHumanPlayer(pn) && m_iCurrentRow[pn] == (int)r );
 	}
 	UpdateEnabledDisabled();
 
