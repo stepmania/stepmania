@@ -2,6 +2,7 @@
 #define ScreenOptionsMemoryCard_H
 
 #include "ScreenOptions.h"
+#include "arch/MemoryCard/MemoryCardDriver.h"
 
 class ScreenOptionsMemoryCard : public ScreenOptions
 {
