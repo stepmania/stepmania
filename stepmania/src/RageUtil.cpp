@@ -294,7 +294,7 @@ RString ConvertWstringToACP( wstring s )
 	return ret;
 }
 
-RString ConvertUTF8ToACP( RString s )
+RString ConvertUTF8ToACP( const RString &s )
 {
 	return ConvertWstringToACP( RStringToWstring(s) );
 }

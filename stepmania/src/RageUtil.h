@@ -249,7 +249,7 @@ RString vssprintf( const char *fmt, va_list argList );
 RString hr_ssprintf( int hr, const char *fmt, ...);
 RString werr_ssprintf( int err, const char *fmt, ...);
 RString ConvertWstringToACP( wstring s );
-RString ConvertUTF8ToACP( RString s );
+RString ConvertUTF8ToACP( const RString &s );
 #endif
 
 /*
