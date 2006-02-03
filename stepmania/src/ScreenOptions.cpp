@@ -1172,31 +1172,6 @@ bool ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool Repeat )
 		m_iCurrentRow[p] = r;
 		ASSERT( r >= 0 && r < (int)m_pRows.size() );
 
-		//
-		// We've moved vertically.  In FIVE_KEY, keep the selection in the row near the focus.
-		//
-		OptionRow &row = *m_pRows[r];
-		switch( m_OptionsNavigation )
-		{
-		case NAV_TOGGLE_FIVE_KEY:
-			if( row.GetRowDef().m_layoutType != LAYOUT_SHOW_ONE_IN_ROW )
-			{
-				int iSelectionDist = -1;
-				for( unsigned i = 0; i < row.GetTextItemsSize(); ++i )
-				{
-					int iWidth, iX, iY;
-					GetWidthXY( p, m_iCurrentRow[p], i, iWidth, iX, iY );
-					const int iDist = abs( iX-m_iFocusX[p] );
-					if( iSelectionDist == -1 || iDist < iSelectionDist )
-					{
-						iSelectionDist = iDist;
-						row.SetChoiceInRowWithFocus( p, i );
-					}
-				}
-			}
-			break;
-		}
-
 		AfterChangeRow( p );
 		bChanged = true;
 	}
@@ -1206,6 +1181,32 @@ bool ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool Repeat )
 
 void ScreenOptions::AfterChangeRow( PlayerNumber pn ) 
 {
+	//
+	// In FIVE_KEY, keep the selection in the row near the focus.
+	//
+	OptionRow &row = *m_pRows[r];
+	switch( m_OptionsNavigation )
+	{
+	case NAV_TOGGLE_FIVE_KEY:
+		if( row.GetRowDef().m_layoutType != LAYOUT_SHOW_ONE_IN_ROW )
+		{
+			int iSelectionDist = -1;
+			for( unsigned i = 0; i < row.GetTextItemsSize(); ++i )
+			{
+				int iWidth, iX, iY;
+				GetWidthXY( pn, m_iCurrentRow[pn], i, iWidth, iX, iY );
+				const int iDist = abs( iX-m_iFocusX[pn] );
+				if( iSelectionDist == -1 || iDist < iSelectionDist )
+				{
+					iSelectionDist = iDist;
+					row.SetChoiceInRowWithFocus( pn, i );
+				}
+			}
+		}
+		break;
+	}
+
+
 	AfterChangeValueOrRow( pn );
 }
 
