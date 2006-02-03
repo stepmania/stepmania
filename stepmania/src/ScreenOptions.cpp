@@ -1118,8 +1118,8 @@ void ScreenOptions::AfterChangeValueInRow( int iRow, PlayerNumber pn )
 	AfterChangeValueOrRow( pn );
 }
 
-/* Up/down */
-void ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool Repeat ) 
+/* Move up/down.  Returns true if we actually moved. */
+bool ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool Repeat ) 
 {
 	const int iCurrentRow = m_iCurrentRow[pn];
 	OptionRow &row = *m_pRows[iCurrentRow];
@@ -1132,7 +1132,7 @@ void ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool Repeat )
 	}
 
 	LOG->Trace("move pn %i, dir %i, rep %i", pn, iDir, Repeat);
-	bool changed = false;
+	bool bChanged = false;
 	FOREACH_PlayerNumber( p )
 	{
 		if( m_InputMode == INPUTMODE_INDIVIDUAL && p != pn )
@@ -1178,15 +1178,18 @@ void ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool Repeat )
 		}
 
 		AfterChangeRow( p );
-		changed = true;
+		bChanged = true;
 	}
-	if( changed )
+
+	if( bChanged )
 	{
 		if( iDir < 0 )
 			m_SoundPrevRow.Play();
 		else
 			m_SoundNextRow.Play();
 	}
+
+	return bChanged;
 }
 
 void ScreenOptions::AfterChangeRow( PlayerNumber pn ) 
@@ -1194,10 +1197,10 @@ void ScreenOptions::AfterChangeRow( PlayerNumber pn )
 	AfterChangeValueOrRow( pn );
 }
 
-void ScreenOptions::MoveRowAbsolute( PlayerNumber pn, int iRow, bool bRepeat ) 
+bool ScreenOptions::MoveRowAbsolute( PlayerNumber pn, int iRow, bool bRepeat ) 
 {
 	int iDir = iRow - m_iCurrentRow[pn];
-	MoveRowRelative( pn, iDir, bRepeat );
+	return MoveRowRelative( pn, iDir, bRepeat );
 }
 
 void ScreenOptions::MenuUp( const InputEventPlus &input )
