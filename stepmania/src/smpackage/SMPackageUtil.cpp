@@ -179,7 +179,7 @@ bool SMPackageUtil::LaunchGame()
 		if( !DoesFileExist(sFile) )
 		{
 			RString sError = ssprintf( COULD_NOT_FIND.GetValue(), sExe.c_str() );
-			::MessageBox( NULL, sError, NULL, MB_OK|MB_ICONEXCLAMATION );
+			Dialog::OK( sError );
 			return false;
 		}
 	}
@@ -225,6 +225,7 @@ void SMPackageUtil::StripIgnoredSmzipFiles( vector<RString> &vsFilesInOut )
 		bEraseThis |= EndsWith( sFile, "smzip.ctl" );
 		bEraseThis |= EndsWith( sFile, ".old" );
 		bEraseThis |= EndsWith( sFile, "Thumbs.db" );
+		bEraseThis |= EndsWith( sFile, ".DS_Store" );
 		bEraseThis |= (sFile.find("CVS") != string::npos);
 
 		if( bEraseThis )

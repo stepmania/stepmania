@@ -231,8 +231,9 @@ void LanguagesDlg::OnBnClickedButtonDelete()
 
 	RString sLanguageFile = GetLanguageFile( sTheme, sLanguage );
 
-	int iRet = MessageBox( ssprintf(THIS_WILL_PERMANENTLY_DELETE.GetValue(),sLanguageFile.c_str()), NULL, MB_OKCANCEL );
-	if( iRet != IDOK )
+	RString sMessage = ssprintf(THIS_WILL_PERMANENTLY_DELETE.GetValue(),sLanguageFile.c_str());
+	Dialog::Result ret = Dialog::AbortRetry( sMessage );
+	if( ret != Dialog::retry )
 		return;
 
 	FILEMAN->Remove( sLanguageFile );
@@ -303,14 +304,14 @@ void LanguagesDlg::OnBnClickedButtonExport()
 	RString sFullFile = "Desktop/"+sFile;
 	if( iNumExpored == 0 )
 	{
-		MessageBox( THERE_ARE_NO_STRINGS_TO_EXPORT.GetValue() );	
+		Dialog::OK( THERE_ARE_NO_STRINGS_TO_EXPORT.GetValue() );	
 		return;
 	}
 
 	if( csv.WriteFile(sFullFile) )
-		MessageBox( ssprintf(EXPORTED_TO_YOUR_DESKTOP.GetValue(),sFile.c_str()) );
+		Dialog::OK( ssprintf(EXPORTED_TO_YOUR_DESKTOP.GetValue(),sFile.c_str()) );
 	else
-		MessageBox( ssprintf(FAILED_TO_SAVE.GetValue(),sFullFile.c_str()) );
+		Dialog::OK( ssprintf(FAILED_TO_SAVE.GetValue(),sFullFile.c_str()) );
 }
 
 static LocalizedString ERROR_READING_FILE					( "LanguagesDlg", "Error reading file '%s'." );
@@ -343,28 +344,28 @@ void LanguagesDlg::OnBnClickedButtonImport()
 	RageFileOsAbsolute cvsFile;
 	if( !cvsFile.Open(sCsvFile) )
 	{
-		MessageBox( ssprintf(ERROR_READING_FILE.GetValue(),sCsvFile.c_str()) );
+		Dialog::OK( ssprintf(ERROR_READING_FILE.GetValue(),sCsvFile.c_str()) );
 		return;
 	}
 	CsvFile csv;
 	if( !csv.ReadFile(cvsFile) )
 	{
-		MessageBox( ssprintf(ERROR_PARSING_FILE.GetValue(),sCsvFile.c_str()) );
+		Dialog::OK( ssprintf(ERROR_PARSING_FILE.GetValue(),sCsvFile.c_str()) );
 		return;
 	}
 
 	RString sLanguageFile = GetLanguageFile( sTheme, sLanguage );
 
 	{
-		int iRet = MessageBox( ssprintf(IMPORTING_THESE_STRINGS_WILL_OVERRIDE.GetValue(),sLanguageFile.c_str()), NULL, MB_OKCANCEL );
-		if( iRet != IDOK )
+		Dialog::Result ret = Dialog::RetryCancel( ssprintf(IMPORTING_THESE_STRINGS_WILL_OVERRIDE.GetValue(),sLanguageFile.c_str()), NULL, MB_OKCANCEL );
+		if( ret != Dialog::retry )
 			return;
 	}
 
 	IniFile ini;
 	if( !ini.ReadFile(sLanguageFile) )
 	{
-		MessageBox( ssprintf(ERROR_READING.GetValue(),sLanguageFile.c_str()) );
+		Dialog::OK( ssprintf(ERROR_READING.GetValue(),sLanguageFile.c_str()) );
 		return;
 	}
 
@@ -380,7 +381,7 @@ void LanguagesDlg::OnBnClickedButtonImport()
 		int iNumValues = line->size();
 		if( iNumValues != 3 && iNumValues != 4 )
 		{
-			MessageBox( ssprintf(ERROR_READING_EACH_LINE_MUST_HAVE.GetValue(),sCsvFile.c_str(),iNumValues) );
+			Dialog::OK( ssprintf(ERROR_READING_EACH_LINE_MUST_HAVE.GetValue(),sCsvFile.c_str(),iNumValues) );
 			return;
 		}
 		tl.sSection = (*line)[0];
@@ -400,9 +401,9 @@ void LanguagesDlg::OnBnClickedButtonImport()
 	}
 
 	if( ini.WriteFile(sLanguageFile) )
-		MessageBox( ssprintf(IMPORTED_STRINGS_INTO.GetValue(),iNumImported,sLanguageFile.c_str(),iNumIgnored) );
+		Dialog::OK( ssprintf(IMPORTED_STRINGS_INTO.GetValue(),iNumImported,sLanguageFile.c_str(),iNumIgnored) );
 	else
-		MessageBox( ssprintf(FAILED_TO_SAVE.GetValue(),sLanguageFile.c_str()) );
+		Dialog::OK( ssprintf(FAILED_TO_SAVE.GetValue(),sLanguageFile.c_str()) );
 
 	OnSelchangeListThemes();
 }

@@ -156,7 +156,7 @@ void ChangeGameSettings::OnOK()
 	if( !ini.WriteFile(SpecialFiles::PREFERENCES_INI_PATH) )
 	{
 		RString sError = ssprintf( ERROR_WRITING_FILE.GetValue(), SpecialFiles::PREFERENCES_INI_PATH.c_str(), ini.GetError().c_str() );
-		AfxMessageBox( sError );
+		Dialog::OK( sError );
 	}
 	
 	CDialog::OnOK();

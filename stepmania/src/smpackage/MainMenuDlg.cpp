@@ -135,7 +135,7 @@ void MainMenuDlg::OnCreateSong()
 
 	if( DoesFileExist(sSongDirectory) )
 	{
-		MessageBox( ssprintf(THE_SONG_DIRECTORY_ALREADY_EXISTS.GetValue(),sSongDirectory.c_str()) );
+		Dialog::OK( ssprintf(THE_SONG_DIRECTORY_ALREADY_EXISTS.GetValue(),sSongDirectory.c_str()) );
 		return;
 	}
 
@@ -147,7 +147,7 @@ void MainMenuDlg::OnCreateSong()
 	bool bSuccess = FileCopy( fileIn, fileOut, sError );
 	if( !bSuccess )
 	{
-		MessageBox( ssprintf(FAILED_TO_COPY_MUSIC_FILE.GetValue(),sMusicFile.c_str(),sNewMusicFile.c_str(),sError.c_str()) );
+		Dialog::OK( ssprintf(FAILED_TO_COPY_MUSIC_FILE.GetValue(),sMusicFile.c_str(),sNewMusicFile.c_str(),sError.c_str()) );
 		return;
 	}
 
@@ -157,12 +157,12 @@ void MainMenuDlg::OnCreateSong()
 	RageFile file;
 	if( file.Open(sNewSongFile, RageFile::WRITE) )
 	{
-		MessageBox( ssprintf(FAILED_TO_CREATE_THE_SONG_FILE.GetValue(),sNewSongFile.c_str()) );
+		Dialog::OK( ssprintf(FAILED_TO_CREATE_THE_SONG_FILE.GetValue(),sNewSongFile.c_str()) );
 		return;
 	}
 	file.Close();
 
-	MessageBox( ssprintf(SUCCESS_CREATED_THE_SONG.GetValue(),sSongDirectory.c_str()) );
+	Dialog::OK( ssprintf(SUCCESS_CREATED_THE_SONG.GetValue(),sSongDirectory.c_str()) );
 }
 
 BOOL MainMenuDlg::OnInitDialog() 
@@ -192,14 +192,14 @@ void MainMenuDlg::OnBnClickedClearKeymaps()
 	
 	if( !DoesFileExist( SpecialFiles::KEYMAPS_PATH ) )
 	{
-		MessageBox( ssprintf(IS_ALREADY_CLEARED.GetValue(),SpecialFiles::KEYMAPS_PATH.c_str()) );
+		Dialog::OK( ssprintf(IS_ALREADY_CLEARED.GetValue(),SpecialFiles::KEYMAPS_PATH.c_str()) );
 		return;
 	}
 
 	if( !FILEMAN->Remove(SpecialFiles::KEYMAPS_PATH) )
-		MessageBox( ssprintf(FAILED_TO_DELETE_FILE.GetValue(), SpecialFiles::KEYMAPS_PATH.c_str()) );
+		Dialog::OK( ssprintf(FAILED_TO_DELETE_FILE.GetValue(), SpecialFiles::KEYMAPS_PATH.c_str()) );
 
-	MessageBox( ssprintf(CLEARED.GetValue(),SpecialFiles::PREFERENCES_INI_PATH.c_str()) );
+	Dialog::OK( ssprintf(CLEARED.GetValue(),SpecialFiles::PREFERENCES_INI_PATH.c_str()) );
 }
 
 void MainMenuDlg::OnBnClickedChangePreferences()
@@ -216,12 +216,12 @@ void MainMenuDlg::OnBnClickedOpenPreferences()
 	// TODO: Add your control notification handler code here
 	if( !DoesFileExist( SpecialFiles::PREFERENCES_INI_PATH ) )
 	{
-		MessageBox( ssprintf(DOESNT_EXIST_IT_WILL_BE_CREATED.GetValue(),SpecialFiles::PREFERENCES_INI_PATH.c_str()) );
+		Dialog::OK( ssprintf(DOESNT_EXIST_IT_WILL_BE_CREATED.GetValue(),SpecialFiles::PREFERENCES_INI_PATH.c_str()) );
 	}
 	else
 	{
 		if( NULL == ::ShellExecute( this->m_hWnd, "open", SpecialFiles::PREFERENCES_INI_PATH, "", "", SW_SHOWNORMAL ) )
-			MessageBox( ssprintf(FAILED_TO_OPEN.GetValue(),SpecialFiles::PREFERENCES_INI_PATH.c_str(),GetLastErrorString().c_str()) );
+			Dialog::OK( ssprintf(FAILED_TO_OPEN.GetValue(),SpecialFiles::PREFERENCES_INI_PATH.c_str(),GetLastErrorString().c_str()) );
 	}
 }
 
@@ -230,17 +230,17 @@ void MainMenuDlg::OnBnClickedClearPreferences()
 	// TODO: Add your control notification handler code here
 	if( !DoesFileExist(SpecialFiles::PREFERENCES_INI_PATH) )
 	{
-		MessageBox( ssprintf(IS_ALREADY_CLEARED.GetValue(),SpecialFiles::PREFERENCES_INI_PATH.c_str()) );
+		Dialog::OK( ssprintf(IS_ALREADY_CLEARED.GetValue(),SpecialFiles::PREFERENCES_INI_PATH.c_str()) );
 		return;
 	}
 
 	if( !FILEMAN->Remove(SpecialFiles::PREFERENCES_INI_PATH) )
 	{
-		MessageBox( ssprintf(FAILED_TO_DELETE_FILE.GetValue(),SpecialFiles::PREFERENCES_INI_PATH.c_str()) );
+		Dialog::OK( ssprintf(FAILED_TO_DELETE_FILE.GetValue(),SpecialFiles::PREFERENCES_INI_PATH.c_str()) );
 		return;
 	}
 
-	MessageBox( ssprintf(CLEARED.GetValue(),SpecialFiles::PREFERENCES_INI_PATH.c_str()) );
+	Dialog::OK( ssprintf(CLEARED.GetValue(),SpecialFiles::PREFERENCES_INI_PATH.c_str()) );
 }
 
 void MainMenuDlg::OnBnClickedButtonLaunchGame()

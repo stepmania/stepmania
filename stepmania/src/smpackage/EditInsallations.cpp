@@ -103,7 +103,7 @@ void EditInsallations::OnButtonAdd()
 	
 	if( sNewDir == "" )
 	{
-		AfxMessageBox( YOU_MUST_TYPE_IN.GetValue() );
+		Dialog::OK( YOU_MUST_TYPE_IN.GetValue() );
 		return;
 	}
 
@@ -118,7 +118,7 @@ void EditInsallations::OnButtonAdd()
 
 	if( !SMPackageUtil::IsValidInstallDir(sNewDir) )
 	{
-		AfxMessageBox( ssprintf(NOT_A_VALID_INSTALLATION_DIR.GetValue(),sNewDir.c_str()) );
+		Dialog::OK( ssprintf(NOT_A_VALID_INSTALLATION_DIR.GetValue(),sNewDir.c_str()) );
 		return;
 	}
 

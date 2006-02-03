@@ -97,7 +97,7 @@ BOOL CSmpackageApp::InitInstance()
 			RString sPersonalDir = SpecialDirs::GetMyDocumentsDir();
 			RString sFile = sPersonalDir + PRODUCT_ID +"/Save/MachineProfile/Stats.xml";
 			if( NULL == ::ShellExecute( NULL, "open", sFile, "", "", SW_SHOWNORMAL ) )
-				AfxMessageBox( ssprintf(FAILED_TO_OPEN.GetValue(),sFile.c_str(),GetLastErrorString().c_str()) );
+				Dialog::OK( ssprintf(FAILED_TO_OPEN.GetValue(),sFile.c_str(),GetLastErrorString().c_str()) );
 			exit(1);	// better way to quit?
 		}
 	}

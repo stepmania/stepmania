@@ -196,7 +196,7 @@ static bool ExportPackage( const RString &sPackageName, const RString &sSourceIn
 		}
 		catch (CException* e)
 		{
-			AfxMessageBox( ssprintf(ERROR_ADDING_FILE.GetValue(), sFilePath.c_str()) );
+			Dialog::OK( ssprintf(ERROR_ADDING_FILE.GetValue(), sFilePath.c_str()) );
 			zip.Close();
 			e->Delete();
 			return false;
@@ -237,7 +237,7 @@ void CSmpackageExportDlg::OnButtonExportAsOne()
 
 	if( asPaths.size() == 0 )
 	{
-		AfxMessageBox( NO_ITEMS_ARE_CHECKED.GetValue() );
+		Dialog::OK( NO_ITEMS_ARE_CHECKED.GetValue() );
 		return;
 	}
 	else if( asPaths.size() == 1 )
@@ -261,7 +261,7 @@ void CSmpackageExportDlg::OnButtonExportAsOne()
 		return;		// cancelled
 
 	if( ExportPackage( sPackageName, GetCurrentInstallDir(), asPaths, sComment ) )
-		AfxMessageBox( ssprintf(SUCCESSFULLY_EXPORTED.GetValue(),sPackageName.c_str()) );
+		Dialog::OK( ssprintf(SUCCESSFULLY_EXPORTED.GetValue(),sPackageName.c_str()) );
 }
 
 static LocalizedString THE_FOLLOWING_PACKAGES_WERE_EXPORTED ("CSmpackageExportDlg","The following packages were exported to your Desktop:");
@@ -273,7 +273,7 @@ void CSmpackageExportDlg::OnButtonExportAsIndividual()
 
 	if( asPaths.size() == 0 )
 	{
-		AfxMessageBox( NO_ITEMS_ARE_CHECKED.GetValue() );
+		Dialog::OK( NO_ITEMS_ARE_CHECKED.GetValue() );
 		return;
 	}
 	
@@ -314,7 +314,7 @@ void CSmpackageExportDlg::OnButtonExportAsIndividual()
 			sMessage += "\n\n";
 		sMessage += THE_FOLLOWING_PACKAGES_FAILED.GetValue()+"\n\n"+join( "\n", asFailedPackages );
 	}
-	AfxMessageBox( sMessage );
+	Dialog::OK( sMessage );
 }
 
 void CSmpackageExportDlg::OnButtonPlay() 

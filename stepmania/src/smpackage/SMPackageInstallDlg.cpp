@@ -98,14 +98,14 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 	RageFileOsAbsolute file;
 	if( !file.Open(m_sPackagePath) )
 	{
-		MessageBox( ssprintf(COULD_NOT_OPEN_FILE.GetValue(),m_sPackagePath.c_str()) );
+		Dialog::OK( ssprintf(COULD_NOT_OPEN_FILE.GetValue(),m_sPackagePath.c_str()) );
 		exit(1);	// better way to abort?
 	}
 
 	RageFileDriverZip zip;
 	if( !zip.Load(&file) )
 	{
-		MessageBox( ssprintf(IS_NOT_A_VALID_ZIP.GetValue(),m_sPackagePath.c_str()) );
+		Dialog::OK( ssprintf(IS_NOT_A_VALID_ZIP.GetValue(),m_sPackagePath.c_str()) );
 		exit(1);	// better way to abort?
 	}
 
@@ -276,7 +276,7 @@ void CSMPackageInstallDlg::OnOK()
 	int iSelectedInstallDirIndex = m_comboDir.GetCurSel();
 	if( iSelectedInstallDirIndex == -1 )
 	{
-		MessageBox( NO_INSTALLATIONS.GetValue(), NULL, MB_OK|MB_ICONEXCLAMATION );
+		Dialog::OK( NO_INSTALLATIONS.GetValue(), NULL, MB_OK|MB_ICONEXCLAMATION );
 		return;
 	}
 
@@ -287,14 +287,14 @@ void CSMPackageInstallDlg::OnOK()
 	RageFileOsAbsolute file;
 	if( !file.Open(m_sPackagePath) )
 	{
-		MessageBox( ssprintf(COULD_NOT_OPEN_FILE.GetValue(),m_sPackagePath.c_str()) );
+		Dialog::OK( ssprintf(COULD_NOT_OPEN_FILE.GetValue(),m_sPackagePath.c_str()) );
 		exit(1);	// better way to abort?
 	}
 
 	RageFileDriverZip zip;
 	if( !zip.Load(&file) )
 	{
-		MessageBox( ssprintf(IS_NOT_A_VALID_ZIP.GetValue(),m_sPackagePath.c_str()) );
+		Dialog::OK( ssprintf(IS_NOT_A_VALID_ZIP.GetValue(),m_sPackagePath.c_str()) );
 		exit(1);	// better way to abort?
 	}
 
@@ -382,15 +382,15 @@ retry_unzip:
 		goto done_with_file;
 
 show_error:
-		switch( MessageBox( sError, NULL, MB_ABORTRETRYIGNORE|MB_ICONEXCLAMATION ) )
+		switch( Dialog::AbortRetryIgnore(sError) )
 		{
-		case IDABORT:
+		case Dialog::abort:
 			exit(1);	// better way to exit?
 			break;
-		case IDRETRY:
+		case Dialog::retry:
 			goto retry_unzip;
 			break;
-		case IDIGNORE:
+		case Dialog::ignore:
 			// do nothing
 			break;
 		}
@@ -400,7 +400,7 @@ done_with_file:
 		pProgress1->StepIt(); //increase the progress bar of 1 step
 	}
 
-	AfxMessageBox( PACKAGE_INSTALLED_SUCCESSFULLY.GetValue() );
+	Dialog::OK( PACKAGE_INSTALLED_SUCCESSFULLY.GetValue() );
 
 	// close the dialog
 	CDialog::OnOK();
