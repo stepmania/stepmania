@@ -99,7 +99,7 @@ void DialogDriver_Win32::OK( RString sMessage, RString sID )
 #if !defined(SMPACKAGE)
 	DialogBox( handle.Get(), MAKEINTRESOURCE(IDD_OK), ::GetHwnd(), OKWndProc );
 #else
-	::MessageBox( NULL, sMessage, GetWindowTitle(), MB_OK );
+	::MessageBox( ::GetHwnd(), ConvertUTF8ToACP(sMessage).c_str(), ConvertUTF8ToACP(::GetWindowTitle()).c_str(), MB_OK );
 #endif
 	if( g_bAllowHush && g_bHush )
 		Dialog::IgnoreMessage( sID );
