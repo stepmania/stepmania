@@ -250,7 +250,7 @@ void ScreenOptions::InitMenu( const vector<OptionRowHandler*> &vHands )
 }
 
 /* Call when option rows have been re-initialized. */
-void ScreenOptions::RestartOptions( bool bTweenIn )
+void ScreenOptions::RestartOptions()
 {
 	for( unsigned r=0; r<m_pRows.size(); r++ )		// foreach row
 	{
@@ -310,7 +310,7 @@ void ScreenOptions::BeginScreen()
 {
 	ScreenWithMenuElements::BeginScreen();
 
-	RestartOptions( true );
+	RestartOptions();
 
 	FOREACH_PlayerNumber( p )
 		m_bGotAtLeastOneStartPressed[p] = false;
