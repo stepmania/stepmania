@@ -1138,7 +1138,6 @@ void ScreenOptions::AfterChangeValueInRow( int iRow, PlayerNumber pn )
 bool ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool bRepeat ) 
 {
 	const int iCurrentRow = m_iCurrentRow[pn];
-	OptionRow &row = *m_pRows[iCurrentRow];
 
 	LOG->Trace("move pn %i, dir %i, rep %i", pn, iDir, bRepeat);
 	bool bChanged = false;
