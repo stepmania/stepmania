@@ -249,10 +249,9 @@ void ScreenOptions::InitMenu( const vector<OptionRowHandler*> &vHands )
 	}
 }
 
-void ScreenOptions::BeginScreen()
+/* Call when option rows have been re-initialized. */
+void ScreenOptions::RestartOptions( bool bTweenIn )
 {
-	ScreenWithMenuElements::BeginScreen();
-
 	for( unsigned r=0; r<m_pRows.size(); r++ )		// foreach row
 	{
 		OptionRow *pRow = m_pRows[r];
@@ -268,14 +267,12 @@ void ScreenOptions::BeginScreen()
 			pRow->AfterImportOptions( p );
 	}
 
-	ON_COMMAND( m_framePage );
 
 	FOREACH_PlayerNumber( p )
 	{
 		m_iCurrentRow[p] = -1;
 		m_iFocusX[p] = -1;
 		m_bWasOnExit[p] = false;
-		m_bGotAtLeastOneStartPressed[p] = false;
 	}
 
 	// put focus on the first enabled row
@@ -292,11 +289,6 @@ void ScreenOptions::BeginScreen()
 		}
 	}
 
-	FOREACH_PlayerNumber( p )
-	{
-		m_sprLineHighlight[p]->SetHidden( !GAMESTATE->IsHumanPlayer(p) );
-		m_Cursor[p].SetHidden( !GAMESTATE->IsHumanPlayer(p) );
-	}
 
 	// Hide highlight if no rows are enabled.
 	FOREACH_HumanPlayer( p )
@@ -315,6 +307,24 @@ void ScreenOptions::BeginScreen()
 		AfterChangeValueOrRow( p );
 
 	CHECKPOINT;
+}
+
+void ScreenOptions::BeginScreen()
+{
+	ScreenWithMenuElements::BeginScreen();
+
+	RestartOptions( true );
+
+	FOREACH_PlayerNumber( p )
+		m_bGotAtLeastOneStartPressed[p] = false;
+
+	ON_COMMAND( m_framePage );
+
+	FOREACH_PlayerNumber( p )
+	{
+		m_sprLineHighlight[p]->SetHidden( !GAMESTATE->IsHumanPlayer(p) );
+		m_Cursor[p].SetHidden( !GAMESTATE->IsHumanPlayer(p) );
+	}
 }
 
 void ScreenOptions::TweenOnScreen()
