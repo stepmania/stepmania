@@ -1276,13 +1276,6 @@ void ScreenOptions::MenuUpDown( const InputEventPlus &input, int iDir )
 	}
 }
 
-
-int ScreenOptions::GetCurrentRow( PlayerNumber pn ) const
-{
-	const int r = m_iCurrentRow[pn];
-	return r;
-}
-
 // lua start
 #include "LuaBinding.h"
 

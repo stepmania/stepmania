@@ -88,8 +88,7 @@ protected:
 	virtual void MenuSelect( const InputEventPlus &input );
 	virtual void MenuUpDown( const InputEventPlus &input, int iDir );	// iDir == -1 or iDir == +1
 
-	/* Returns -1 if on a row with no OptionRowDefinition (eg. EXIT). */
-	int GetCurrentRow(PlayerNumber pn = PLAYER_1) const;
+	int GetCurrentRow( PlayerNumber pn = PLAYER_1 ) const { return m_iCurrentRow[pn]; }
 	bool AllAreOnLastRow() const;
 
 protected:	// derived classes need access to these
