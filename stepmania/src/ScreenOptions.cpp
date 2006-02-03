@@ -297,7 +297,6 @@ void ScreenOptions::RestartOptions()
 			this->RefreshIcons( r, pn );
 		PositionCursor( pn );
 	}
-	UpdateEnabledDisabled();
 
 	FOREACH_PlayerNumber( p )
 		AfterChangeValueOrRow( p );
