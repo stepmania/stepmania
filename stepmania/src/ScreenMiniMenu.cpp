@@ -16,6 +16,10 @@ bool ScreenMiniMenu::s_bCancelled = false;
 int	ScreenMiniMenu::s_iLastRowCode = -1;
 vector<int>	ScreenMiniMenu::s_viLastAnswers;
 
+// Hooks for profiling
+void PrepareToLoadScreen( const RString &sScreenName ) {}
+void FinishedLoadingScreen() {}
+
 /* Settings: */
 namespace
 {
@@ -26,6 +30,8 @@ namespace
 
 void ScreenMiniMenu::MiniMenu( const MenuDef* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel, float fX, float fY )
 {
+	PrepareToLoadScreen( pDef->sClassName );
+	
 	g_pMenuDef = pDef;
 	g_SendOnOK = SM_SendOnOK;
 	g_SendOnCancel = SM_SendOnCancel;
@@ -33,6 +39,8 @@ void ScreenMiniMenu::MiniMenu( const MenuDef* pDef, ScreenMessage SM_SendOnOK, S
 	SCREENMAN->AddNewScreenToTop( pDef->sClassName );
 	Screen *pNewScreen = SCREENMAN->GetTopScreen();
 	pNewScreen->SetXY( fX, fY );
+
+	FinishedLoadingScreen();
 }
 
 REGISTER_SCREEN_CLASS( ScreenMiniMenu );
