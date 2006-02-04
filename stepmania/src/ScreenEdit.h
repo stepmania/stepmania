@@ -217,6 +217,8 @@ protected:
 	RageSound		m_soundChangeLine;
 	RageSound		m_soundChangeSnap;
 	RageSound		m_soundMarker;
+	RageSound		m_soundValueIncrease;
+	RageSound		m_soundValueDecrease;
 	RageSound		m_soundSwitchSteps;
 	RageSound		m_soundSave;
 

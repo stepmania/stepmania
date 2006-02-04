@@ -718,13 +718,15 @@ void ScreenEdit::Init()
 	this->SortByDrawOrder();
 
 
-	m_soundAddNote.Load(	THEME->GetPathS("ScreenEdit","AddNote"), true );
-	m_soundRemoveNote.Load(	THEME->GetPathS("ScreenEdit","RemoveNote"), true );
-	m_soundChangeLine.Load( THEME->GetPathS("ScreenEdit","line"), true );
-	m_soundChangeSnap.Load( THEME->GetPathS("ScreenEdit","snap"), true );
-	m_soundMarker.Load(	THEME->GetPathS("ScreenEdit","marker"), true );
+	m_soundAddNote.Load(		THEME->GetPathS("ScreenEdit","AddNote"), true );
+	m_soundRemoveNote.Load(		THEME->GetPathS("ScreenEdit","RemoveNote"), true );
+	m_soundChangeLine.Load(		THEME->GetPathS("ScreenEdit","line"), true );
+	m_soundChangeSnap.Load(		THEME->GetPathS("ScreenEdit","snap"), true );
+	m_soundMarker.Load(		THEME->GetPathS("ScreenEdit","marker"), true );
+	m_soundValueIncrease.Load(	THEME->GetPathS("ScreenEdit","value increase"), true );
+	m_soundValueDecrease.Load(	THEME->GetPathS("ScreenEdit","value decrease"), true );
 	m_soundSwitchSteps.Load(	THEME->GetPathS("ScreenEdit","switch steps") );
-	m_soundSave.Load(	THEME->GetPathS("ScreenEdit","save") );
+	m_soundSave.Load(		THEME->GetPathS("ScreenEdit","save") );
 
 	m_soundMusic.Load( m_pSong->GetMusicPath() );
 
@@ -1384,50 +1386,51 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 	case EDIT_BUTTON_BPM_DOWN:
 		{
 			float fBPM = m_pSong->GetBPMAtBeat( GAMESTATE->m_fSongBeat );
-			float fDeltaBPM;
+			float fDelta;
 			switch( EditB )
 			{
-			case EDIT_BUTTON_BPM_UP:		fDeltaBPM = +0.020f;		break;
-			case EDIT_BUTTON_BPM_DOWN:		fDeltaBPM = -0.020f;		break;
-			default:	ASSERT(0);						return;
+			case EDIT_BUTTON_BPM_UP:	fDelta = +0.020f;	break;
+			case EDIT_BUTTON_BPM_DOWN:	fDelta = -0.020f;	break;
+			default:	ASSERT(0);				return;
 			}
 			if( EditIsBeingPressed( EDIT_BUTTON_ADJUST_FINE ) )
 			{
-				fDeltaBPM /= 20;	// .001 bpm
+				fDelta /= 20;	// .001 bpm
 			}
 			else 
 			{
 				switch( input.type )
 				{
-				case IET_SLOW_REPEAT:	fDeltaBPM *= 10;	break;
-				case IET_FAST_REPEAT:	fDeltaBPM *= 40;	break;
+				case IET_SLOW_REPEAT:	fDelta *= 10;	break;
+				case IET_FAST_REPEAT:	fDelta *= 40;	break;
 				}
 			}
 			
-			float fNewBPM = fBPM + fDeltaBPM;
+			float fNewBPM = fBPM + fDelta;
 			m_pSong->SetBPMAtBeat( GAMESTATE->m_fSongBeat, fNewBPM );
+			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
 		}
 		break;
 	case EDIT_BUTTON_STOP_UP:
 	case EDIT_BUTTON_STOP_DOWN:
 		{
-			float fStopDelta;
+			float fDelta;
 			switch( EditB )
 			{
-			case EDIT_BUTTON_STOP_UP:		fStopDelta = +0.020f;		break;
-			case EDIT_BUTTON_STOP_DOWN:		fStopDelta = -0.020f;		break;
-			default:	ASSERT(0);						return;
+			case EDIT_BUTTON_STOP_UP:	fDelta = +0.020f;	break;
+			case EDIT_BUTTON_STOP_DOWN:	fDelta = -0.020f;	break;
+			default:	ASSERT(0);				return;
 			}
 			if( EditIsBeingPressed( EDIT_BUTTON_ADJUST_FINE ) )
 			{
-				fStopDelta /= 20; /* 1ms */
+				fDelta /= 20; /* 1ms */
 			}
 			else 
 			{
 				switch( input.type )
 				{
-				case IET_SLOW_REPEAT:	fStopDelta *= 10;	break;
-				case IET_FAST_REPEAT:	fStopDelta *= 40;	break;
+				case IET_SLOW_REPEAT:	fDelta *= 10;	break;
+				case IET_FAST_REPEAT:	fDelta *= 40;	break;
 				}
 			}
 			unsigned i;
@@ -1440,41 +1443,43 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			if( i == m_pSong->m_Timing.m_StopSegments.size() )	// there is no BPMSegment at the current beat
 			{
 				// create a new StopSegment
-				if( fStopDelta > 0 )
-					m_pSong->AddStopSegment( StopSegment(BeatToNoteRow(GAMESTATE->m_fSongBeat), fStopDelta) );
+				if( fDelta > 0 )
+					m_pSong->AddStopSegment( StopSegment(BeatToNoteRow(GAMESTATE->m_fSongBeat), fDelta) );
 			}
 			else	// StopSegment being modified is m_Timing.m_StopSegments[i]
 			{
-				m_pSong->m_Timing.m_StopSegments[i].m_fStopSeconds += fStopDelta;
+				m_pSong->m_Timing.m_StopSegments[i].m_fStopSeconds += fDelta;
 				if( m_pSong->m_Timing.m_StopSegments[i].m_fStopSeconds <= 0 )
 					m_pSong->m_Timing.m_StopSegments.erase( m_pSong->m_Timing.m_StopSegments.begin()+i,
 													  m_pSong->m_Timing.m_StopSegments.begin()+i+1);
 			}
+			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
 		}
 		break;
 	case EDIT_BUTTON_OFFSET_UP:
 	case EDIT_BUTTON_OFFSET_DOWN:
 		{
-			float fOffsetDelta;
+			float fDelta;
 			switch( EditB )
 			{
-			case EDIT_BUTTON_OFFSET_DOWN:	fOffsetDelta = -0.02f;		break;
-			case EDIT_BUTTON_OFFSET_UP:		fOffsetDelta = +0.02f;		break;
-			default:	ASSERT(0);						return;
+			case EDIT_BUTTON_OFFSET_DOWN:	fDelta = -0.02f;	break;
+			case EDIT_BUTTON_OFFSET_UP:	fDelta = +0.02f;	break;
+			default:	ASSERT(0);				return;
 			}
 			if( EditIsBeingPressed( EDIT_BUTTON_ADJUST_FINE ) )
 			{
-				fOffsetDelta /= 20; /* 1ms */
+				fDelta /= 20; /* 1ms */
 			}
 			else 
 			{
 				switch( input.type )
 				{
-				case IET_SLOW_REPEAT:	fOffsetDelta *= 10;	break;
-				case IET_FAST_REPEAT:	fOffsetDelta *= 40;	break;
+				case IET_SLOW_REPEAT:	fDelta *= 10;	break;
+				case IET_FAST_REPEAT:	fDelta *= 40;	break;
 				}
 			}
-			m_pSong->m_Timing.m_fBeat0OffsetInSeconds += fOffsetDelta;
+			m_pSong->m_Timing.m_fBeat0OffsetInSeconds += fDelta;
+			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
 		}
 		break;
 	case EDIT_BUTTON_SAMPLE_START_UP:
@@ -1505,6 +1510,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				m_pSong->m_fMusicSampleStartSeconds += fDelta;
 				m_pSong->m_fMusicSampleStartSeconds = max(m_pSong->m_fMusicSampleStartSeconds,0);
 			}
+			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
 		}
 		break;
 	case EDIT_BUTTON_PLAY_SAMPLE_MUSIC:
