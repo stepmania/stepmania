@@ -8,8 +8,6 @@
 #include "Transition.h"
 #include "BitmapText.h"
 #include "RageSound.h"
-#include "Background.h"
-#include "Foreground.h"
 #include "BPMDisplay.h"
 #include "BeginnerHelper.h"
 #include "LyricDisplay.h"
@@ -32,6 +30,8 @@ class DifficultyMeter;
 class Inventory;
 class ScoreKeeper;
 class PlayerScoreList;
+class Background;
+class Foreground;
 
 AutoScreenMessage( SM_NotesEnded )
 AutoScreenMessage( SM_BeginFailed )
@@ -98,7 +98,7 @@ class ScreenGameplay : public ScreenWithMenuElements
 {
 public:
 	ScreenGameplay();
-	virtual void Init();
+	virtual void Init( bool bUseSongBackgroundAndForeground = true );
 	virtual ~ScreenGameplay();
 	virtual void BeginScreen();
 
@@ -169,8 +169,8 @@ protected:
 
 	LyricDisplay		m_LyricDisplay;
 
-	Background		m_SongBackground;
-	Foreground		m_SongForeground;
+	Background		*m_pSongBackground;
+	Foreground		*m_pSongForeground;
 
 	Transition		m_NextSong;	// shows between songs in a course
 	Transition		m_SongFinished;	// shows after each song, course or not

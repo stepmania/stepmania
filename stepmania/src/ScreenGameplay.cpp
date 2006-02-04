@@ -50,6 +50,8 @@
 #include "PlayerScoreList.h"
 #include "InputEventPlus.h"
 #include "XmlFile.h"
+#include "Background.h"
+#include "Foreground.h"
 
 //
 // Defines
@@ -334,10 +336,12 @@ GetNextVisiblePlayerInfo( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> 
 
 ScreenGameplay::ScreenGameplay()
 {
+	m_pSongBackground = NULL;
+	m_pSongForeground = NULL;
 	m_pPlayerScoreList = NULL;
 }
 
-void ScreenGameplay::Init()
+void ScreenGameplay::Init( bool bUseSongBackgroundAndForeground )
 {
 	PLAYER_TYPE.Load( m_sName, "PlayerType" );
 	GIVE_UP_TEXT.Load( m_sName, "GiveUpText" );
@@ -350,6 +354,12 @@ void ScreenGameplay::Init()
 	FAIL_AFTER_30_MISSES.Load( m_sName, "FailAfter30Misses" );
 	USE_FORCED_MODIFIERS_IN_BEGINNER.Load( m_sName, "UseForcedModifiersInBeginner" );
 	FORCED_MODIFIERS_IN_BEGINNER.Load( m_sName, "ForcedModifiersInBeginner" );
+	
+	if( bUseSongBackgroundAndForeground )
+	{
+		m_pSongBackground = new Background;
+		m_pSongForeground = new Foreground;
+	}
 
 	this->FillPlayerInfo( m_vPlayerInfo );
 	ASSERT_M( !m_vPlayerInfo.empty(), "m_vPlayerInfo must be filled by FillPlayerInfo" );
@@ -425,15 +435,21 @@ void ScreenGameplay::Init()
 	m_bZeroDeltaOnNextUpdate = false;
 
 
-	m_SongBackground.SetName( "SongBackground" );
-	m_SongBackground.SetDrawOrder( DRAW_ORDER_BEFORE_EVERYTHING );
-	ON_COMMAND( m_SongBackground );
-	this->AddChild( &m_SongBackground );
+	if( m_pSongBackground )
+	{
+		m_pSongBackground->SetName( "SongBackground" );
+		m_pSongBackground->SetDrawOrder( DRAW_ORDER_BEFORE_EVERYTHING );
+		ON_COMMAND( m_pSongBackground );
+		this->AddChild( m_pSongBackground );
+	}
 
-	m_SongForeground.SetName( "SongForeground" );
-	m_SongForeground.SetDrawOrder( DRAW_ORDER_OVERLAY+1 );	// on top of the overlay, but under transitions
-	ON_COMMAND( m_SongForeground );
-	this->AddChild( &m_SongForeground );
+	if( m_pSongForeground )
+	{
+		m_pSongForeground->SetName( "SongForeground" );
+		m_pSongForeground->SetDrawOrder( DRAW_ORDER_OVERLAY+1 );	// on top of the overlay, but under transitions
+		ON_COMMAND( m_pSongForeground );
+		this->AddChild( m_pSongForeground );
+	}
 
 	if( PREFSMAN->m_bShowBeginnerHelper )
 	{
@@ -768,7 +784,8 @@ void ScreenGameplay::Init()
 		}
 	}
 
-	m_SongBackground.Init();
+	if( m_pSongBackground )
+		m_pSongBackground->Init();
 
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
@@ -1200,14 +1217,16 @@ void ScreenGameplay::LoadNextSong()
 		}
 	}
 
-	m_SongBackground.Unload();
+	if( m_pSongBackground )
+		m_pSongBackground->Unload();
 
 	if( !PREFSMAN->m_bShowBeginnerHelper || !m_BeginnerHelper.Initialize(2) )
 	{
 		m_BeginnerHelper.SetHidden( true );
 
 		/* BeginnerHelper disabled, or failed to load. */
-		m_SongBackground.LoadFromSong( GAMESTATE->m_pCurSong );
+		if( m_pSongBackground )
+			m_pSongBackground->LoadFromSong( GAMESTATE->m_pCurSong );
 
 		if( !GAMESTATE->m_bDemonstrationOrJukebox )
 		{
@@ -1216,8 +1235,11 @@ void ScreenGameplay::LoadNextSong()
 			 * black), or it might be 1, if the stage screen has the song BG and we're
 			 * coming from it (like Pump).  This used to be done in SM_PlayReady, but
 			 * that means it's impossible to snap to the new brightness immediately. */
-			m_SongBackground.SetBrightness( INITIAL_BACKGROUND_BRIGHTNESS );
-			m_SongBackground.FadeToActualBrightness();
+			if( m_pSongBackground )
+			{
+				m_pSongBackground->SetBrightness( INITIAL_BACKGROUND_BRIGHTNESS );
+				m_pSongBackground->FadeToActualBrightness();
+			}
 		}
 	}
 	else
@@ -1242,12 +1264,13 @@ void ScreenGameplay::LoadNextSong()
 		m_pCombinedLifeMeter->OnLoadSong();	
 
 
-	m_SongForeground.LoadFromSong( GAMESTATE->m_pCurSong );
+	if( m_pSongBackground )
+		m_pSongForeground->LoadFromSong( GAMESTATE->m_pCurSong );
 
 	m_fTimeSinceLastDancingComment = 0;
 
 
-	/* m_soundMusic and m_SongBackground take a very long time to load,
+	/* m_soundMusic and m_pSongBackground take a very long time to load,
 	 * so cap fDelta at 0 so m_NextSong will show up on screen.
 	 * -Chris */
 	m_bZeroDeltaOnNextUpdate = true;
@@ -1703,7 +1726,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 		//
 		FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
 		{
-			DancingCharacters *pCharacter = m_SongBackground.GetDancingCharacters();
+			DancingCharacters *pCharacter = NULL;
+			if( m_pSongBackground )
+				pCharacter = m_pSongBackground->GetDancingCharacters();
 			if( pCharacter != NULL )
 			{
 				TapNoteScore tns = pi->m_pPlayer->GetLastTapNoteScore();
@@ -2333,7 +2358,9 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM == SM_LeaveGameplay )
 	{
 		// update dancing characters for win / lose
-		DancingCharacters *pDancers = m_SongBackground.GetDancingCharacters();
+		DancingCharacters *pDancers = NULL;
+		if( m_pSongBackground )
+			pDancers = m_pSongBackground->GetDancingCharacters();
 		if( pDancers )
 		{
 			FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )

@@ -18,7 +18,7 @@ void ScreenGameplayLesson::Init()
 	ASSERT( GAMESTATE->m_pCurSong );
 
 	/* Now that we've set up, init the base class. */
-	ScreenGameplay::Init();
+	ScreenGameplayNormal::Init();
 
 	ClearMessageQueue();	// remove all of the messages set in ScreenGameplay that animate "ready", "here we go", etc.
 
