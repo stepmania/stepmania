@@ -486,9 +486,6 @@ void GameState::BeginStage()
 void GameState::CancelStage()
 {
 	m_iNumStagesOfThisSong = 0;
-
-	// If they back out of gameplay, revert any sync changes.
-	RevertSyncChanges();
 }
 
 void GameState::CommitStageStats()
@@ -1772,8 +1769,10 @@ void GameState::SaveSyncChanges()
 {
 	if( IsCourseMode() )
 		return;
-	GAMESTATE->m_pCurSong->Save();
-	PREFSMAN->SavePrefsToDisk();
+	if( m_pCurSong  &&  *m_pTimingDataOriginal != m_pCurSong->m_Timing )
+		GAMESTATE->m_pCurSong->Save();
+	if( m_fGlobalOffsetSecondsOriginal != PREFSMAN->m_fGlobalOffsetSeconds )
+		PREFSMAN->SavePrefsToDisk();
 	ResetOriginalSyncData();
 }
 
@@ -1923,7 +1922,6 @@ public:
 	static int GetCoinMode( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetCoinMode() ); return 1; }
 	static int GetPremium( T* p, lua_State *L )				{ lua_pushnumber(L, p->GetPremium() ); return 1; }
 	static int GetSongOptionsString( T* p, lua_State *L )	{ lua_pushstring(L, p->m_SongOptions.GetString() ); return 1; }
-	static int IsSyncDataChanged( T* p, lua_State *L )		{ lua_pushboolean(L, p->IsSyncDataChanged() ); return 1; }
 	static int IsWinner( T* p, lua_State *L )
 	{
 		PlayerNumber pn = (PlayerNumber)IArg(1);
@@ -2038,7 +2036,6 @@ public:
 		ADD_METHOD( GetCoinMode );
 		ADD_METHOD( GetPremium );
 		ADD_METHOD( GetSongOptionsString );
-		ADD_METHOD( IsSyncDataChanged );
 		ADD_METHOD( IsWinner );
 		ADD_METHOD( IsDraw );
 		ADD_METHOD( IsDisqualified );

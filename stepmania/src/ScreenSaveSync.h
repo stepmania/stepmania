@@ -10,7 +10,7 @@ class ScreenSaveSync : public ScreenPrompt
 public:
 	virtual void Init();
 
-	static void PromptSaveSync();
+	static void PromptSaveSync( ScreenMessage sm = SM_None );
 };
 
 

@@ -52,16 +52,17 @@
 #include "XmlFile.h"
 #include "Background.h"
 #include "Foreground.h"
+#include "ScreenSaveSync.h"
 
 //
 // Defines
 //
 #define SHOW_LIFE_METER_FOR_DISABLED_PLAYERS	THEME->GetMetricB(m_sName,"ShowLifeMeterForDisabledPlayers")
-#define EVAL_ON_FAIL							THEME->GetMetricB(m_sName,"ShowEvaluationOnFail")
-#define SHOW_SCORE_IN_RAVE						THEME->GetMetricB(m_sName,"ShowScoreInRave")
-#define SONG_POSITION_METER_WIDTH				THEME->GetMetricF(m_sName,"SongPositionMeterWidth")
-#define PLAYER_X( sName, styleType )				THEME->GetMetricF(m_sName,ssprintf("Player%s%sX",sName.c_str(),StyleTypeToString(styleType).c_str()))
-#define STOP_COURSE_EARLY						THEME->GetMetricB(m_sName,"StopCourseEarly")	// evaluate this every time it's used
+#define EVAL_ON_FAIL				THEME->GetMetricB(m_sName,"ShowEvaluationOnFail")
+#define SHOW_SCORE_IN_RAVE			THEME->GetMetricB(m_sName,"ShowScoreInRave")
+#define SONG_POSITION_METER_WIDTH		THEME->GetMetricF(m_sName,"SongPositionMeterWidth")
+#define PLAYER_X( sName, styleType )		THEME->GetMetricF(m_sName,ssprintf("Player%s%sX",sName.c_str(),StyleTypeToString(styleType).c_str()))
+#define STOP_COURSE_EARLY			THEME->GetMetricB(m_sName,"StopCourseEarly")	// evaluate this every time it's used
 
 static ThemeMetric<float> INITIAL_BACKGROUND_BRIGHTNESS	("ScreenGameplay","InitialBackgroundBrightness");
 static ThemeMetric<float> SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
@@ -72,15 +73,15 @@ AutoScreenMessage( SM_PlayGo )
 AutoScreenMessage( SM_LoadNextSong )
 AutoScreenMessage( SM_StartLoadingNextSong )
 
-
 // received while STATE_OUTRO
-AutoScreenMessage( SM_GoToScreenAfterBack )
+AutoScreenMessage( SM_DoPrevScreen )
+AutoScreenMessage( SM_DoNextScreen )
 
 // received while STATE_INTRO
 AutoScreenMessage( SM_StartHereWeGo )
 AutoScreenMessage( SM_StopHereWeGo )
 
-static Preference<float> g_fNetStartOffset( "NetworkStartOffset",	-3.0 );
+static Preference<float> g_fNetStartOffset( "NetworkStartOffset", -3.0 );
 
 
 PlayerInfo::PlayerInfo()
@@ -2075,7 +2076,7 @@ void ScreenGameplay::BeginBackingOutFromGameplay()
 	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 		SCREENMAN->PostMessageToTopScreen( SM_BeginFailed, 0 );
 	else
-		m_Cancel.StartTransitioning( SM_GoToScreenAfterBack );
+		m_Cancel.StartTransitioning( SM_DoPrevScreen );
 }
 
 void ScreenGameplay::AbortGiveUp( bool bShowText )
@@ -2400,7 +2401,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 		TweenOffScreen();
 
-		m_Out.StartTransitioning( SM_GoToNextScreen );
+		m_Out.StartTransitioning( SM_DoNextScreen );
 
 		// do they deserve an extra stage?
 		if( GAMESTATE->HasEarnedExtraStage() )
@@ -2491,20 +2492,28 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		int iDamageLevel = SM-SM_BattleDamageLevel1+1;
 		PlayAnnouncer( ssprintf("gameplay battle damage level%d",iDamageLevel), 3 );
 	}
-	else if( SM == SM_GoToScreenAfterBack )
+	else if( SM == SM_DoPrevScreen )
 	{
 		SongFinished();
 		StageFinished( true );
 
 		GAMESTATE->CancelStage();
 
-		HandleScreenMessage( SM_GoToPrevScreen );
+		if( GAMESTATE->IsSyncDataChanged() )
+			ScreenSaveSync::PromptSaveSync( SM_GoToPrevScreen );
+		else
+			HandleScreenMessage( SM_GoToPrevScreen );
 	}
-	else if( SM == SM_GoToNextScreen )
+	else if( SM == SM_DoNextScreen )
 	{
 		SongFinished();
 		StageFinished( false );
 		//SaveRecordedResults();
+
+		if( GAMESTATE->IsSyncDataChanged() )
+			ScreenSaveSync::PromptSaveSync( SM_GoToNextScreen );
+		else
+			HandleScreenMessage( SM_GoToNextScreen );
 	}
 	else if( SM == SM_GainFocus )
 	{
@@ -2523,7 +2532,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		m_pSoundMusic->StopPlaying();
 		m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
 		TweenOffScreen();
-		m_Failed.StartTransitioning( SM_GoToNextScreen );
+		m_Failed.StartTransitioning( SM_DoNextScreen );
 
 		// show the survive time if extra stage
 		if( GAMESTATE->IsExtraStage()  ||  GAMESTATE->IsExtraStage2() )

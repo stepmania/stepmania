@@ -142,10 +142,6 @@ function GetGameplayNextScreen()
 	Trace( " IsExtraStage2 = "..tostring(IsExtraStage2()) )
 	Trace( " Event mode = "..tostring(IsEventMode()) )
 	
-	if GAMESTATE:IsSyncDataChanged() then 
-		return "ScreenSaveSync"
-	end
-
 	if Passed or GAMESTATE:IsCourseMode() or
 		IsExtraStage() or IsExtraStage2()
 	then
@@ -205,14 +201,6 @@ function ModeMenuAvailable()
 		return false
 	end
 	return true
-end
-
-function ScreenGameplaySyncMachineNext()
-	if GAMESTATE:IsSyncDataChanged() then
-		return 'ScreenSaveSync'
-	else
-		return 'ScreenOptionsService'
-	end
 end
 
 -- (c) 2005 Glenn Maynard, Chris Danford

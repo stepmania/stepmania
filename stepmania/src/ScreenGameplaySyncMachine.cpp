@@ -11,7 +11,8 @@ void ScreenGameplaySyncMachine::Init()
 {
 	GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 	GAMESTATE->m_pCurStyle.Set( GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame) );
-
+	GAMESTATE->ResetOriginalSyncData();
+	
 	SMLoader ld;
 	RString sFile = THEME->GetPathO("ScreenGameplaySyncMachine","music.sm");
 	ld.LoadFromSMFile( sFile, m_Song );
@@ -42,7 +43,10 @@ void ScreenGameplaySyncMachine::HandleScreenMessage( const ScreenMessage SM )
 		ResetAndRestartCurrentSong();
 		return;	// handled
 	}
-	else if( SM == SM_GoToPrevScreen )
+	
+	ScreenGameplayNormal::HandleScreenMessage( SM );
+
+	if( SM == SM_GoToPrevScreen )
 	{
 		GAMESTATE->m_pCurSong.Set( NULL );
 	}
@@ -50,8 +54,6 @@ void ScreenGameplaySyncMachine::HandleScreenMessage( const ScreenMessage SM )
 	{
 		GAMESTATE->m_pCurSong.Set( NULL );
 	}
-
-	ScreenGameplayNormal::HandleScreenMessage( SM );
 }
 
 void ScreenGameplaySyncMachine::ResetAndRestartCurrentSong()
