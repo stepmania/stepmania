@@ -575,7 +575,7 @@ static RString GetVideoDriverName()
 #elif defined(_XBOX)
 	return "Xbox";
 #else
-    return "OpenGL";
+	return "OpenGL";
 #endif
 }
 
@@ -968,7 +968,7 @@ int main(int argc, char* argv[])
 	// Create game objects
 	//
 
-	LUA			= new LuaManager;
+	LUA		= new LuaManager;
 	GAMESTATE	= new GameState;
 
 	/* This requires PREFSMAN, for PREFSMAN->m_bShowLoadingWindow. */
@@ -1021,12 +1021,12 @@ int main(int argc, char* argv[])
 	INPUTMAPPER	= new InputMapper;
 	INPUTQUEUE	= new InputQueue;
 	SONGINDEX	= new SongCacheIndex;
-	BANNERCACHE = new BannerCache;
+	BANNERCACHE	= new BannerCache;
 	
 	/* depends on SONGINDEX: */
 	SONGMAN		= new SongManager();
 	SONGMAN->InitAll( loading_window );		// this takes a long time
-	CRYPTMAN	= new CryptManager;	// need to do this before ProfileMan
+	CRYPTMAN	= new CryptManager;		// need to do this before ProfileMan
 	MEMCARDMAN	= new MemoryCardManager;
 	CHARMAN		= new CharacterManager;
 	PROFILEMAN	= new ProfileManager;
@@ -1042,7 +1042,7 @@ int main(int argc, char* argv[])
 	STATSMAN	= new StatsManager;
 
 	SAFE_DELETE( loading_window );		// destroy this before init'ing Display
-    
+
 	StartDisplay();
 
 	StoreActualGraphicOptions( true );
