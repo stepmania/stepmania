@@ -1,0 +1,70 @@
+﻿#TITLE:syncbeat;
+#SUBTITLE:;
+#ARTIST:Unknown artist;
+#TITLETRANSLIT:;
+#SUBTITLETRANSLIT:;
+#ARTISTTRANSLIT:;
+#GENRE:;
+#CREDIT:;
+#BANNER:;
+#BACKGROUND:;
+#LYRICSPATH:;
+#CDTITLE:;
+#MUSIC:ScreenGameplaySyncMachine music.ogg;
+#OFFSET:-0.020;
+#SAMPLESTART:0.000;
+#SAMPLELENGTH:12.000;
+#SELECTABLE:YES;
+#BPMS:0.000=132.000;
+#STOPS:;
+#BGCHANGES:;
+#KEYSOUNDS:;
+
+//---------------dance-single - Blàáñk----------------
+#NOTES:
+     dance-single:
+     Blàáñk:
+     Beginner:
+     1:
+     0.302,0.205,0.000,0.000,0.000:
+  // measure 1
+1000
+0001
+1000
+0001
+,  // measure 2
+1000
+0001
+1000
+0001
+,  // measure 3
+1000
+0001
+1000
+0001
+,  // measure 4
+1000
+0001
+1000
+0001
+,  // measure 5
+1000
+0001
+1000
+0001
+,  // measure 6
+1000
+0001
+1000
+0001
+,  // measure 7
+1000
+0001
+1000
+0001
+,  // measure 8
+1000
+0001
+1000
+0001
+;

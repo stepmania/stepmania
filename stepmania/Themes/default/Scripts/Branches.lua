@@ -207,6 +207,14 @@ function ModeMenuAvailable()
 	return true
 end
 
+function ScreenGameplaySyncMachineNext()
+	if GAMESTATE:IsSyncDataChanged() then
+		return 'ScreenSaveSync'
+	else
+		return 'ScreenOptionsService'
+	end
+end
+
 -- (c) 2005 Glenn Maynard, Chris Danford
 -- All rights reserved.
 -- 
