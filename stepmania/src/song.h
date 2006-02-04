@@ -19,7 +19,7 @@ struct lua_State;
 struct BackgroundChange;
 
 const int MAX_EDITS_PER_SONG_PER_PROFILE	= 5;
-const int MAX_EDITS_PER_SONG				= 5*NUM_ProfileSlot;
+const int MAX_EDITS_PER_SONG			= 5*NUM_ProfileSlot;
 
 extern const int FILE_CACHE_VERSION;
 
@@ -42,8 +42,9 @@ struct LyricSegment
 class Song
 {
 	RString m_sSongDir;
-
 public:
+	void SetSongDir( const RString sDir ) { m_sSongDir = sDir; }
+
 	/* Set when this song should be displayed in the music wheel: */
 	enum SelectionDisplay
 	{ 

@@ -23,7 +23,6 @@
 #include "SpecialFiles.h"
 #include "EnumHelper.h"
 
-
 ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the program
 
 static const char *ElementCategoryNames[] = {

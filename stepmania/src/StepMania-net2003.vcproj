@@ -374,6 +374,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\ScreenGameplayNormal.h">
 			</File>
 			<File
+				RelativePath=".\ScreenGameplaySyncMachine.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenGameplaySyncMachine.h">
+			</File>
+			<File
 				RelativePath="ScreenHowToPlay.cpp">
 			</File>
 			<File

@@ -39,6 +39,7 @@ ScreenGameplay.cpp ScreenGameplay.h \
 ScreenGameplayLesson.cpp ScreenGameplayLesson.h \
 ScreenGameplayMultiplayer.cpp ScreenGameplayMultiplayer.h \
 ScreenGameplayNormal.cpp ScreenGameplayNormal.h \
+ScreenGameplaySyncMachine.cpp ScreenGameplaySyncMachine.h \
 ScreenHowToPlay.cpp ScreenHowToPlay.h \
 ScreenInstructions.cpp ScreenInstructions.h \
 ScreenJoinMultiplayer.cpp ScreenJoinMultiplayer.h \

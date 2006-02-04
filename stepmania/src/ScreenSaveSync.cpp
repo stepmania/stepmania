@@ -37,56 +37,58 @@ static RString GetPromptText()
 
 	vector<RString> vsSongChanges;
 
+	if( GAMESTATE->m_pCurSong.Get() )
 	{
-		float fOld = GAMESTATE->m_pTimingDataOriginal->m_fBeat0OffsetInSeconds;
-		float fNew = GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds;
-		float fDelta = fNew - fOld;
-
-		if( fabs(fDelta) > 0.00001 )
 		{
-			vsSongChanges.push_back( ssprintf( 
-				CHANGED_SONG_OFFSET.GetValue()+"\n\n",
-				fOld, 
-				fNew,
-				fDelta,
-				(fDelta > 0 ? EARLIER:LATER).GetValue().c_str() ) );
+			float fOld = GAMESTATE->m_pTimingDataOriginal->m_fBeat0OffsetInSeconds;
+			float fNew = GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds;
+			float fDelta = fNew - fOld;
+
+			if( fabs(fDelta) > 0.00001 )
+			{
+				vsSongChanges.push_back( ssprintf( 
+					CHANGED_SONG_OFFSET.GetValue()+"\n\n",
+					fOld, 
+					fNew,
+					fDelta,
+					(fDelta > 0 ? EARLIER:LATER).GetValue().c_str() ) );
+			}
+		}
+
+		for( unsigned i=0; i<GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments.size(); i++ )
+		{
+			float fOld = GAMESTATE->m_pTimingDataOriginal->m_BPMSegments[i].m_fBPS;
+			float fNew = GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments[i].m_fBPS;
+			float fDelta = fNew - fOld;
+
+			if( fabs(fDelta) > 0.00001 )
+			{
+				vsSongChanges.push_back( ssprintf( 
+					CHANGED_BPM.GetValue()+"\n\n",
+					i+1,
+					fOld, 
+					fNew,
+					fDelta ) );
+			}
+		}
+
+		for( unsigned i=0; i<GAMESTATE->m_pCurSong->m_Timing.m_StopSegments.size(); i++ )
+		{
+			float fOld = GAMESTATE->m_pTimingDataOriginal->m_StopSegments[i].m_fStopSeconds;
+			float fNew = GAMESTATE->m_pCurSong->m_Timing.m_StopSegments[i].m_fStopSeconds;
+			float fDelta = fNew - fOld;
+
+			if( fabs(fDelta) > 0.00001 )
+			{
+				vsSongChanges.push_back( ssprintf( 
+					CHANGED_STOP.GetValue()+"\n\n",
+					i+1,
+					fOld, 
+					fNew,
+					fDelta ) );
+			}
 		}
 	}
-
-	for( unsigned i=0; i<GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments.size(); i++ )
-	{
-		float fOld = GAMESTATE->m_pTimingDataOriginal->m_BPMSegments[i].m_fBPS;
-		float fNew = GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments[i].m_fBPS;
-		float fDelta = fNew - fOld;
-
-		if( fabs(fDelta) > 0.00001 )
-		{
-			vsSongChanges.push_back( ssprintf( 
-				CHANGED_BPM.GetValue()+"\n\n",
-				i+1,
-				fOld, 
-				fNew,
-				fDelta ) );
-		}
-	}
-
-	for( unsigned i=0; i<GAMESTATE->m_pCurSong->m_Timing.m_StopSegments.size(); i++ )
-	{
-		float fOld = GAMESTATE->m_pTimingDataOriginal->m_StopSegments[i].m_fStopSeconds;
-		float fNew = GAMESTATE->m_pCurSong->m_Timing.m_StopSegments[i].m_fStopSeconds;
-		float fDelta = fNew - fOld;
-
-		if( fabs(fDelta) > 0.00001 )
-		{
-			vsSongChanges.push_back( ssprintf( 
-				CHANGED_STOP.GetValue()+"\n\n",
-				i+1,
-				fOld, 
-				fNew,
-				fDelta ) );
-		}
-	}
-
 
 	if( !vsSongChanges.empty() )
 	{

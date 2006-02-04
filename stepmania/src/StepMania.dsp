@@ -2788,6 +2788,14 @@ SOURCE=.\ScreenGameplayNormal.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ScreenGameplaySyncMachine.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenGameplaySyncMachine.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScreenHowToPlay.cpp
 # End Source File
 # Begin Source File
