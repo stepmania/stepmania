@@ -301,10 +301,11 @@ bool SemaImpl_Pthreads::Wait()
 bool SemaImpl_Pthreads::TryWait()
 {
 	int ret = sem_trywait( &sem );
-	if( ret == EBUSY )
+	if( ret == -1 && errno == EAGAIN )
 		return false;
-	if( ret )
-		RageException::Throw( "TryWait: sem_trywait failed: %s", strerror(errno) );
+	
+	ASSERT_M( ret == 0, ssprintf("TryWait: sem_trywait failed: %s", strerror(errno)) );
+
 	return true;
 }
 #else
