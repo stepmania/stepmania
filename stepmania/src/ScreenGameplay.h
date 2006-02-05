@@ -98,7 +98,8 @@ class ScreenGameplay : public ScreenWithMenuElements
 {
 public:
 	ScreenGameplay();
-	virtual void Init( bool bUseSongBackgroundAndForeground = true );
+	virtual void Init();
+	void Init( bool bUseSongBackgroundAndForeground );
 	virtual ~ScreenGameplay();
 	virtual void BeginScreen();
 

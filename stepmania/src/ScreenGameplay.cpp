@@ -342,6 +342,11 @@ ScreenGameplay::ScreenGameplay()
 	m_pPlayerScoreList = NULL;
 }
 
+void ScreenGameplay::Init()
+{
+	Init( true );
+}
+
 void ScreenGameplay::Init( bool bUseSongBackgroundAndForeground )
 {
 	PLAYER_TYPE.Load( m_sName, "PlayerType" );
