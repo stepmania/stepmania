@@ -526,9 +526,7 @@ void ScreenManager::PrepareScreen( const RString &sScreenName )
 	/* Don't delete previously prepared versions of the screen's background,
 	 * and only prepare it if it's different than the current background
 	 * and not already loaded. */
-	RString sNewBGA;
-	if( pNewScreen->UsesBackground() )
-		sNewBGA = THEME->GetPathB(sScreenName,"background");
+	RString sNewBGA = THEME->GetPathB(sScreenName,"background");
 
 	if( !sNewBGA.empty() && sNewBGA != g_pSharedBGA->GetName() )
 	{
@@ -633,9 +631,7 @@ Screen *ScreenManager::ActivatePreparedScreenAndBackground( const RString &sScre
 	ASSERT_M( m_sDelayedScreen.empty(), m_sDelayedScreen );
 
 	// Find the prepared shared background (if any), and activate it.
-	RString sNewBGA;
-	if( ls.m_pScreen->UsesBackground() )
-		sNewBGA = THEME->GetPathB(sScreenName,"background");
+	RString sNewBGA = THEME->GetPathB(sScreenName,"background");
 	if( sNewBGA != g_pSharedBGA->GetName() )
 	{
 		Actor *pNewBGA = NULL;

@@ -108,7 +108,6 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	virtual void Cancel( ScreenMessage smSendWhenDone );
 
-	virtual bool UsesBackground() const { return false; }
 	virtual ScreenType GetScreenType() const { return gameplay; }
 
 	//
