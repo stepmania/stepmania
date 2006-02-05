@@ -1,4 +1,3 @@
-/* Override the -DSM_PCH=TRUE temporarily. */
 #define PBBUILD
 
 // Only do this for c++ files.
