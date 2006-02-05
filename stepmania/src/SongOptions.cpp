@@ -2,6 +2,7 @@
 #include "SongOptions.h"
 #include "RageUtil.h"
 #include "GameState.h"
+#include "CommonMetrics.h"
 
 void SongOptions::Init() 
 {
@@ -15,25 +16,23 @@ void SongOptions::Init()
 	m_bSaveScore = true;
 }
 
-RString SongOptions::GetString() const
+void SongOptions::GetMods( vector<RString> &AddTo ) const
 {
-	RString sReturn;
-
 	switch( m_LifeType )
 	{
 	case LIFE_BAR:		
 		switch( m_DrainType )
 		{
-		case DRAIN_NORMAL:										break;
-		case DRAIN_NO_RECOVER:		sReturn	+= "NoRecover, ";	break;
-		case DRAIN_SUDDEN_DEATH:	sReturn	+= "SuddenDeath, ";	break;
+		case DRAIN_NORMAL:						break;
+		case DRAIN_NO_RECOVER:		AddTo.push_back("NoRecover");	break;
+		case DRAIN_SUDDEN_DEATH:	AddTo.push_back("SuddenDeath");	break;
 		}
 		break;
 	case LIFE_BATTERY:
-		sReturn	+= ssprintf( "%dLives, ", m_iBatteryLives );
+		AddTo.push_back( ssprintf( "%dLives", m_iBatteryLives ) );
 		break;
 	case LIFE_TIME:
-		sReturn	+= "LifeTime, ";
+		AddTo.push_back( "LifeTime" );
 		break;
 	default:	ASSERT(0);
 	}
@@ -41,9 +40,9 @@ RString SongOptions::GetString() const
 
 	switch( m_FailType )
 	{
-	case FAIL_IMMEDIATE:											break;
-	case FAIL_END_OF_SONG:			sReturn	+= "FailEndOfSong, ";	break;
-	case FAIL_OFF:					sReturn	+= "FailOff, ";			break;
+	case FAIL_IMMEDIATE:						break;
+	case FAIL_END_OF_SONG:	AddTo.push_back("FailEndOfSong");	break;
+	case FAIL_OFF:		AddTo.push_back("FailOff");		break;
 	default:	ASSERT(0);
 	}
 
@@ -52,30 +51,52 @@ RString SongOptions::GetString() const
 		RString s = ssprintf( "%2.2f", m_fMusicRate );
 		if( s[s.size()-1] == '0' )
 			s.erase( s.size()-1 );
-		sReturn += s + "xMusic, ";
+		AddTo.push_back( s + "xMusic" );
 	}
 
 	switch( m_AutosyncType )
 	{
-	case AUTOSYNC_OFF:										break;
-	case AUTOSYNC_SONG:		sReturn += "AutosyncSong, ";	break;
-	case AUTOSYNC_MACHINE:	sReturn += "AutosyncMachine, ";	break;
+	case AUTOSYNC_OFF:					break;
+	case AUTOSYNC_SONG:	AddTo.push_back("AutosyncSong");	break;
+	case AUTOSYNC_MACHINE:	AddTo.push_back("AutosyncMachine");	break;
 	default:	ASSERT(0);
 	}
-
-	if( sReturn.size() > 2 )
-		sReturn.erase( sReturn.size()-2 );	// delete the trailing ", "
-	return sReturn;
 }
+
+void SongOptions::GetLocalizedMods( vector<RString> &AddTo ) const
+{
+	vector<RString> vMods;
+	GetMods( vMods );
+	FOREACH( RString, vMods, s )
+	{
+		*s = CommonMetrics::LocalizeOptionItem( *s, true );
+	}
+}
+
+RString SongOptions::GetString() const
+{
+	vector<RString> v;
+	GetMods( v );
+	return join( ", ", v );
+}
+
+RString SongOptions::GetLocalizedString() const
+{
+	vector<RString> v;
+	GetLocalizedMods( v );
+	return join( ", ", v );
+}
+
 
 /* Options are added to the current settings; call Init() beforehand if
  * you don't want this. */
-void SongOptions::FromString( RString sOptions )
+void SongOptions::FromString( const RString &sOptions )
 {
 //	Init();
-	sOptions.MakeLower();
+	RString sTemp = sOptions;
+	sTemp.MakeLower();
 	vector<RString> asBits;
-	split( sOptions, ",", asBits, true );
+	split( sTemp, ",", asBits, true );
 
 	for( unsigned i=0; i<asBits.size(); i++ )
 	{

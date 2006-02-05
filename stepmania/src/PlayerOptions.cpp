@@ -202,13 +202,14 @@ void PlayerOptions::GetMods( vector<RString> &AddTo ) const
 
 /* Options are added to the current settings; call Init() beforehand if
  * you don't want this. */
-void PlayerOptions::FromString( RString sOptions, bool bWarnOnInvalid )
+void PlayerOptions::FromString( const RString &sOptions, bool bWarnOnInvalid )
 {
 	ASSERT( NOTESKIN );
 //	Init();
-	sOptions.MakeLower();
+	RString sTemp = sOptions;
+	sTemp.MakeLower();
 	vector<RString> asBits;
-	split( sOptions, ",", asBits, true );
+	split( sTemp, ",", asBits, true );
 
 	FOREACH( RString, asBits, bit )
 	{

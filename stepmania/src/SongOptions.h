@@ -40,8 +40,11 @@ public:
 
 	SongOptions() { Init(); };
 	void Init();
+	void GetMods( vector<RString> &AddTo ) const;
+	void GetLocalizedMods( vector<RString> &AddTo ) const;
 	RString GetString() const;
-	void FromString( RString sOptions );
+	RString GetLocalizedString() const;
+	void FromString( const RString &sOptions );
 
 	bool operator==( const SongOptions &other ) const;
 	bool operator!=( const SongOptions &other ) const { return !operator==(other); }

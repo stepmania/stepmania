@@ -21,7 +21,7 @@ public:
 	void ResetSavedPrefs();
 	void GetMods( vector<RString> &AddTo ) const;
 	void GetLocalizedMods( vector<RString> &AddTo ) const;
-	void FromString( RString sOptions, bool bWarnOnInvalid = false );
+	void FromString( const RString &sOptions, bool bWarnOnInvalid = false );
 	void ChooseRandomModifiers();
 	bool ContainsTransformOrTurn() const;
 

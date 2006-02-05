@@ -722,7 +722,7 @@ void ScreenGameplay::Init( bool bUseSongBackgroundAndForeground )
 	m_textSongOptions.SetShadowLength( 0 );
 	m_textSongOptions.SetName( "SongOptions" );
 	SET_XY( m_textSongOptions );
-	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetString() );
+	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetLocalizedString() );
 	this->AddChild( &m_textSongOptions );
 
 	FOREACH_VisiblePlayerInfo( m_vPlayerInfo, pi )
