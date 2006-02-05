@@ -109,7 +109,7 @@ MutexImpl_Pthreads::~MutexImpl_Pthreads()
 }
 
 
-#if defined(HAVE_PTHREAD_MUTEX_TIMEDLOCK) || defined(HAVE_PTHREAD_COND_TIMEDWAIT)
+#if defined(HAVE_PTHREAD_MUTEX_TIMEDLOCK)
 static bool UseTimedlock()
 {
 #if defined(LINUX)
@@ -261,7 +261,6 @@ EventImpl *MakeEvent( MutexImpl *pMutex )
 	return new EventImpl_Pthreads( pPthreadsMutex );
 }
 
-#if 0
 SemaImpl_Pthreads::SemaImpl_Pthreads( int iInitialValue )
 {
 	sem_init( &sem, 0, iInitialValue );
@@ -307,113 +306,6 @@ bool SemaImpl_Pthreads::TryWait()
 		RageException::Throw( "TryWait: sem_trywait failed: %s", strerror(errno) );
 	return true;
 }
-#else
-/* Use conditions, to work around OSX "forgetting" to implement semaphores. */
-SemaImpl_Pthreads::SemaImpl_Pthreads( int iInitialValue )
-{
-	int ret = pthread_cond_init( &m_Cond, NULL );
-	ASSERT_M( ret == 0, ssprintf( "SemaImpl_Pthreads: pthread_cond_init: %s", strerror(errno)) );
-	ret = pthread_mutex_init( &m_Mutex, NULL );
-	ASSERT_M( ret == 0, ssprintf( "SemaImpl_Pthreads: pthread_mutex_init: %s", strerror(errno)) );
-		
-	m_iValue = iInitialValue;
-}
-
-SemaImpl_Pthreads::~SemaImpl_Pthreads()
-{
-	pthread_cond_destroy( &m_Cond );
-	pthread_mutex_destroy( &m_Mutex );
-}
-
-void SemaImpl_Pthreads::Post()
-{
-	pthread_mutex_lock( &m_Mutex );
-	++m_iValue;
-	if( m_iValue == 1 )
-		pthread_cond_signal( &m_Cond );
-	pthread_mutex_unlock( &m_Mutex );
-}
-
-bool SemaImpl_Pthreads::Wait()
-{
-#if defined(HAVE_PTHREAD_COND_TIMEDWAIT)
-	if( UseTimedlock() )
-	{
-		timeval tv;
-		gettimeofday( &tv, NULL );
-
-		/* Wait for ten seconds.  If it takes longer than that, we're probably deadlocked. */
-		timespec ts;
-		ts.tv_sec = tv.tv_sec + 10;
-		ts.tv_nsec = tv.tv_usec * 1000;
-
-		pthread_mutex_lock( &m_Mutex );
-
-		int tries = 2;
-		while( !m_iValue && tries )
-		{
-			int ret = pthread_cond_timedwait( &m_Cond, &m_Mutex, &ts );
-
-			switch( ret )
-			{
-			case 0:
-			case EINTR:
-				break;
-
-			case ETIMEDOUT:
-				/* Timed out.  Probably deadlocked.  Try again one more time, with a smaller
-				 * timeout, just in case we're debugging and happened to stop while waiting
-				 * on the mutex. */
-				++ts.tv_sec;
-				tries--;
-				break;
-
-			default:
-				FAIL_M( ssprintf("pthread_mutex_timedlock: %s", strerror(errno)) );
-			}
-		}
-
-		if( !m_iValue )
-		{
-			/* Timed out. */
-			pthread_mutex_unlock( &m_Mutex );
-			return false;
-		}
-		else
-		{
-			--m_iValue;
-			pthread_mutex_unlock( &m_Mutex );
-			return true;
-		}
-	}
-#endif
-
-	pthread_mutex_lock( &m_Mutex );
-	while( !m_iValue )
-		pthread_cond_wait( &m_Cond, &m_Mutex );
-
-	--m_iValue;
-	pthread_mutex_unlock( &m_Mutex);
-
-	return true;
-}
-
-bool SemaImpl_Pthreads::TryWait()
-{
-	pthread_mutex_lock( &m_Mutex );
-	if( !m_iValue )
-	{
-		pthread_mutex_unlock( &m_Mutex);
-		return false;
-	}
-	
-	--m_iValue;
-	pthread_mutex_unlock( &m_Mutex);
-
-	return true;
-}
-
-#endif
 
 SemaImpl *MakeSemaphore( int iInitialValue )
 {

@@ -61,7 +61,6 @@ private:
 	pthread_cond_t m_Cond;
 };
 
-#if 0
 class SemaImpl_Pthreads: public SemaImpl
 {
 public:
@@ -75,24 +74,6 @@ public:
 private:
 	sem_t sem;
 };
-#else
-class SemaImpl_Pthreads: public SemaImpl
-{
-public:
-	SemaImpl_Pthreads( int iInitialValue );
-	~SemaImpl_Pthreads();
-	int GetValue() const { return m_iValue; }
-	void Post();
-	bool Wait();
-	bool TryWait();
-
-private:
-	pthread_cond_t m_Cond;
-	pthread_mutex_t m_Mutex;
-	unsigned m_iValue;
-};
-
-#endif
 
 #endif
 
