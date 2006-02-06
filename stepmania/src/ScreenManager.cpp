@@ -273,6 +273,10 @@ void ScreenManager::ThemeChanged()
 		g_OverlayScreens.push_back( pScreen );
 	}
 	
+	// force recreate of new BGA
+	SAFE_DELETE( g_pSharedBGA );
+	g_pSharedBGA = new Actor;
+
 	this->RefreshCreditsMessages();
 }
 
