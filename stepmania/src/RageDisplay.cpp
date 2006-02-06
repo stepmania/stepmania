@@ -10,13 +10,14 @@
 #include "RageSurfaceUtils_Zoom.h"
 #include "RageSurface.h"
 #include "Preference.h"
+#include "LocalizedString.h"
 
 //
 // Statistics stuff
 //
-RageTimer			g_LastCheckTimer;
-int					g_iNumVerts;
-int					g_iFPS, g_iVPF, g_iCFPS;
+RageTimer	g_LastCheckTimer;
+int		g_iNumVerts;
+int		g_iFPS, g_iVPF, g_iCFPS;
 
 int RageDisplay::GetFPS() const { return g_iFPS; }
 int RageDisplay::GetVPF() const { return g_iVPF; }
@@ -50,6 +51,7 @@ XToString( PixelFormat, NUM_PixelFormat );
 /* bNeedReloadTextures is set to true if the device was re-created and we need
  * to reload textures.  On failure, an error message is returned. 
  * XXX: the renderer itself should probably be the one to try fallback modes */
+static LocalizedString SETVIDEOMODE_FAILED ( "RageDisplay", "SetVideoMode failed:" );
 RString RageDisplay::SetVideoMode( VideoModeParams p, bool &bNeedReloadTextures )
 {
 	RString err;
@@ -69,7 +71,7 @@ RString RageDisplay::SetVideoMode( VideoModeParams p, bool &bNeedReloadTextures 
 	if( this->TryVideoMode(p,bNeedReloadTextures) == "" )
 		return RString();
 
-	return ssprintf( "SetVideoMode failed: %s", err.c_str() );
+	return SETVIDEOMODE_FAILED.GetValue() + " " + err;
 }
 
 void RageDisplay::ProcessStatsOnFlip()
