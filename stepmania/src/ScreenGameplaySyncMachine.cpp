@@ -5,6 +5,7 @@
 #include "GameManager.h"
 #include "PrefsManager.h"
 #include "AdjustSync.h"
+#include "ScreenDimensions.h"
 
 REGISTER_SCREEN_CLASS( ScreenGameplaySyncMachine );
 
@@ -35,6 +36,22 @@ void ScreenGameplaySyncMachine::Init()
 	GAMESTATE->m_bGameplayLeadIn.Set( false );
 
 	m_DancingState = STATE_DANCING;
+
+	m_textSyncInfo.LoadFromFont( THEME->GetPathF("Common","normal") );
+	m_textSyncInfo.SetXY( SCREEN_CENTER_X+160, SCREEN_CENTER_Y );
+	m_textSyncInfo.SetDiffuse( RageColor(1,1,1,1) );
+	m_textSyncInfo.SetZoom( 0.6f );
+	this->AddChild( &m_textSyncInfo );
+
+	this->SubscribeToMessage( Message_AutosyncChanged );
+
+	RefreshText();
+}
+
+void ScreenGameplaySyncMachine::Update( float fDelta )
+{
+	ScreenGameplayNormal::Update( fDelta );
+	RefreshText();
 }
 
 void ScreenGameplaySyncMachine::HandleScreenMessage( const ScreenMessage SM )
@@ -63,6 +80,19 @@ void ScreenGameplaySyncMachine::ResetAndRestartCurrentSong()
 	ReloadCurrentSong();
 	StartPlayingSong( 4, 0 );
 }
+
+void ScreenGameplaySyncMachine::RefreshText()
+{
+	float fNew = PREFSMAN->m_fGlobalOffsetSeconds;
+	float fOld = AdjustSync::s_fGlobalOffsetSecondsOriginal;
+	RString s;
+	s += ssprintf( "Old offset: %0.3f\n", fOld );
+	s += ssprintf( "New offset: %0.3f\n", fNew );
+	s += ssprintf( "Collecting sample: %d / %d", AdjustSync::s_iAutosyncOffsetSample+1, SAMPLE_COUNT );
+
+	m_textSyncInfo.SetText( s );
+}
+
 
 /*
  * (c) 2001-2004 Chris Danford

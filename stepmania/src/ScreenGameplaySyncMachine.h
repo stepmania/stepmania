@@ -10,11 +10,19 @@ class ScreenGameplaySyncMachine : public ScreenGameplayNormal
 public:
 	virtual void Init();
 
+	virtual void Update( float fDelta );
+
+	virtual ScreenType GetScreenType() const { return system_menu; }
+
 	void HandleScreenMessage( const ScreenMessage SM );
 	void ResetAndRestartCurrentSong();
 protected:
+	void RefreshText();
+
 	Song		m_Song;
 	const Steps	*m_pSteps;
+
+	BitmapText	m_textSyncInfo;
 };
 
 #endif

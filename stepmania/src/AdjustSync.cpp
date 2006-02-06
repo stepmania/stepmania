@@ -89,7 +89,7 @@ void AdjustSync::HandleAutosync( float fNoteOffBySeconds )
 		ASSERT(0);
 	}
 
-	if( stddev < .03 && stddev < fabsf(mean) )  // If they stepped with less than .03 error
+	if( stddev < .03 )  // If they stepped with less than .03 error
 	{
 		switch( GAMESTATE->m_SongOptions.m_AutosyncType )
 		{
