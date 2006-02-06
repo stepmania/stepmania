@@ -8,7 +8,7 @@ class RageDisplay_OGL: public RageDisplay
 public:
 	RageDisplay_OGL();
 	virtual ~RageDisplay_OGL();
-	RString Init( VideoModeParams p, bool bAllowUnacceleratedRenderer );
+	virtual RString Init( const VideoModeParams &p, bool bAllowUnacceleratedRenderer );
 
 	virtual RString GetApiDescription() const { return "OpenGL"; }
 	virtual void GetDisplayResolutions( DisplayResolutions &out ) const;

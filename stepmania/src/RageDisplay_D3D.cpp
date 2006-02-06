@@ -207,7 +207,7 @@ RageDisplay_D3D::RageDisplay_D3D()
 	"DirectX 8.1 or greater is not installed.  You can download it from:\n" \
 	"http://www.microsoft.com/downloads/details.aspx?FamilyID=a19bed22-0b25-4e5d-a584-6389d8a3dad0&displaylang=en"
 
-RString RageDisplay_D3D::Init( VideoModeParams p )
+RString RageDisplay_D3D::Init( const VideoModeParams &p, bool bAllowUnacceleratedRenderer )
 {
 	GraphicsWindow::Initialize( true );
 

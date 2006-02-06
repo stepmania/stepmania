@@ -8,7 +8,7 @@ class RageDisplay_D3D: public RageDisplay
 public:
 	RageDisplay_D3D();
 	virtual ~RageDisplay_D3D();
-	RString Init( VideoModeParams p );
+	virtual RString Init( const VideoModeParams &p, bool bAllowUnacceleratedRenderer );
 
 	virtual RString GetApiDescription() const { return "D3D"; }
 	virtual void GetDisplayResolutions( DisplayResolutions &out ) const;

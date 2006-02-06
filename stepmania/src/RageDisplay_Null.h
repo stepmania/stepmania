@@ -6,7 +6,8 @@
 class RageDisplay_Null: public RageDisplay
 {
 public:
-	RageDisplay_Null( VideoModeParams p );
+	RageDisplay_Null();
+	virtual RString Init( const VideoModeParams &p, bool bAllowUnacceleratedRenderer );
 
 	virtual RString GetApiDescription() const { return "Null"; }
 	virtual void GetDisplayResolutions( DisplayResolutions &out ) const;

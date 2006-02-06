@@ -387,7 +387,7 @@ void InitScalingScript()
 	GLExt.glVertexAttrib2fARB( ATTRIB_TEXTURE_MATRIX_SCALE, 1, 1 );
 }
 
-RString RageDisplay_OGL::Init( VideoModeParams p, bool bAllowUnacceleratedRenderer )
+RString RageDisplay_OGL::Init( const VideoModeParams &p, bool bAllowUnacceleratedRenderer )
 {
 	g_pWind = MakeLowLevelWindow();
 

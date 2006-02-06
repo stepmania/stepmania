@@ -71,11 +71,16 @@ static RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PixelFormat] = {
 };
 
 
-RageDisplay_Null::RageDisplay_Null( VideoModeParams p )
+RageDisplay_Null::RageDisplay_Null()
 {
 	LOG->MapLog("renderer", "Current renderer: null");
+}
+
+RString RageDisplay_Null::Init( const VideoModeParams &p, bool bAllowUnacceleratedRenderer )
+{
 	bool bIgnore = false;
 	SetVideoMode( p, bIgnore );
+	return RString();
 }
 
 void RageDisplay_Null::GetDisplayResolutions( DisplayResolutions &out ) const

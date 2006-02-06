@@ -102,30 +102,30 @@ void StepMania::GetPreferredVideoModeParams( VideoModeParams &paramsOut )
 			CommonMetrics::WINDOW_TITLE,
 			THEME->GetPathG("Common","window icon"),
 			PREFSMAN->m_bPAL,
-			ScreenDimensions::GetScreenAspectRatio()
+			PREFSMAN->m_fDisplayAspectRatio
 	);
 }
 
-static LocalizedString COLOR			("StepMania","color");
-static LocalizedString TEXTURE			("StepMania","texture");
-static LocalizedString WINDOWED			("StepMania","Windowed");
-static LocalizedString FULLSCREEN		("StepMania","Fullscreen");
-static LocalizedString ANNOUNCER_		("StepMania","Announcer");
-static LocalizedString VSYNC			("StepMania","Vsync");
-static LocalizedString NO_VSYNC			("StepMania","NoVsync");
-static LocalizedString SMOOTH_LINES		("StepMania","SmoothLines");
+static LocalizedString COLOR		("StepMania","color");
+static LocalizedString TEXTURE		("StepMania","texture");
+static LocalizedString WINDOWED		("StepMania","Windowed");
+static LocalizedString FULLSCREEN	("StepMania","Fullscreen");
+static LocalizedString ANNOUNCER_	("StepMania","Announcer");
+static LocalizedString VSYNC		("StepMania","Vsync");
+static LocalizedString NO_VSYNC		("StepMania","NoVsync");
+static LocalizedString SMOOTH_LINES	("StepMania","SmoothLines");
 static LocalizedString NO_SMOOTH_LINES	("StepMania","NoSmoothLines");
 
 static void StoreActualGraphicOptions( bool initial )
 {
 	// find out what we actually have
 	const VideoModeParams &params = DISPLAY->GetActualVideoModeParams();
-	PREFSMAN->m_bWindowed			.Set( params.windowed );
-	PREFSMAN->m_iDisplayWidth		.Set( params.width );
-	PREFSMAN->m_iDisplayHeight		.Set( params.height );
-	PREFSMAN->m_iDisplayColorDepth		.Set( params.bpp );
-	PREFSMAN->m_iRefreshRate		.Set( params.rate );
-	PREFSMAN->m_bVsync			.Set( params.vsync );
+	PREFSMAN->m_bWindowed		.Set( params.windowed );
+	PREFSMAN->m_iDisplayWidth	.Set( params.width );
+	PREFSMAN->m_iDisplayHeight	.Set( params.height );
+	PREFSMAN->m_iDisplayColorDepth	.Set( params.bpp );
+	PREFSMAN->m_iRefreshRate	.Set( params.rate );
+	PREFSMAN->m_bVsync		.Set( params.vsync );
 
 	RString sFormat = "%s %s %dx%d %d "+COLOR.GetValue()+" %d "+TEXTURE.GetValue()+" %dHz %s %s";
 	RString log = ssprintf( sFormat,
@@ -154,6 +154,7 @@ static void StartDisplay()
 		return; // already started
 
 	DISPLAY = CreateDisplay();
+
 
 	DISPLAY->ChangeCentering(
 		PREFSMAN->m_iCenterImageTranslateX, 
@@ -579,7 +580,7 @@ static RString GetVideoDriverName()
 #endif
 }
 
-static void CheckVideoDefaultSettings()
+static bool CheckVideoDefaultSettings()
 {
 	// Video card changed since last run
 	RString sVideoDriver = GetVideoDriverName();
@@ -604,19 +605,19 @@ static void CheckVideoDefaultSettings()
 
 found_defaults:
 
-	bool SetDefaultVideoParams=false;
+	bool bSetDefaultVideoParams = false;
 	if( PREFSMAN->m_sVideoRenderers.Get() == "" )
 	{
-		SetDefaultVideoParams = true;
+		bSetDefaultVideoParams = true;
 		LOG->Trace( "Applying defaults for %s.", sVideoDriver.c_str() );
 	}
 	else if( PREFSMAN->m_sLastSeenVideoDriver.Get() != sVideoDriver ) 
 	{
-		SetDefaultVideoParams = true;
+		bSetDefaultVideoParams = true;
 		LOG->Trace( "Video card has changed from %s to %s.  Applying new defaults.", PREFSMAN->m_sLastSeenVideoDriver.Get().c_str(), sVideoDriver.c_str() );
 	}
 		
-	if( SetDefaultVideoParams )
+	if( bSetDefaultVideoParams )
 	{
 		PREFSMAN->m_sVideoRenderers.Set( defaults.sVideoRenderers );
 		PREFSMAN->m_iDisplayWidth.Set( defaults.iWidth );
@@ -634,10 +635,10 @@ found_defaults:
 	{
 		LOG->Warn("Video renderer list has been changed from '%s' to '%s'",
 				defaults.sVideoRenderers.c_str(), PREFSMAN->m_sVideoRenderers.Get().c_str() );
-		return;
 	}
 
 	LOG->Info( "Video renderers: '%s'", PREFSMAN->m_sVideoRenderers.Get().c_str() );
+	return bSetDefaultVideoParams;
 }
 
 static LocalizedString ERROR_INITIALIZING_CARD		( "StepMania", "There was an error while initializing your video card." );
@@ -672,7 +673,7 @@ RageDisplay *CreateDisplay()
 	 * Actually, right now we're falling back.  I'm not sure which behavior is better.
 	 */
 
-	CheckVideoDefaultSettings();
+	bool bAppliedDefaults = CheckVideoDefaultSettings();
 
 	VideoModeParams params;
 	StepMania::GetPreferredVideoModeParams( params );
@@ -688,6 +689,7 @@ RageDisplay *CreateDisplay()
 	if( asRenderers.empty() )
 		RageException::Throw( ERROR_NO_VIDEO_RENDERERS.GetValue() );
 
+	RageDisplay *pRet = NULL;
 	for( unsigned i=0; i<asRenderers.size(); i++ )
 	{
 		RString sRenderer = asRenderers[i];
@@ -695,38 +697,44 @@ RageDisplay *CreateDisplay()
 		if( sRenderer.CompareNoCase("opengl")==0 )
 		{
 #if defined(SUPPORT_OPENGL)
-			RageDisplay_OGL *pRet = new RageDisplay_OGL;
-			RString sError = pRet->Init( params, PREFSMAN->m_bAllowUnacceleratedRenderer );
-			if( sError == "" )
-				return pRet;
-			error += ssprintf(ERROR_INITIALIZING.GetValue(),"OpenGL")+"\n" + sError;
-			delete pRet;
+			pRet = new RageDisplay_OGL;
 #endif
 		}
 		else if( sRenderer.CompareNoCase("d3d")==0 )
 		{
 #if defined(SUPPORT_D3D)
 			RageDisplay_D3D *pRet = new RageDisplay_D3D;
-			RString sError = pRet->Init( params );
-			if( sError == "" )
-				return pRet;
-			error += ssprintf(ERROR_INITIALIZING.GetValue(),"Direct3D")+"\n" + sError;
-			delete pRet;
 #endif
 		}
 		else if( sRenderer.CompareNoCase("null")==0 )
 		{
-			return new RageDisplay_Null( params );
+			return new RageDisplay_Null();
 		}
 		else
 		{
 			RageException::Throw( ERROR_UNKNOWN_VIDEO_RENDERER.GetValue(), sRenderer.c_str() );
 		}
 
-		error += "\n\n\n";
+		if( pRet == NULL )
+			continue;
+
+		RString sError = pRet->Init( params, PREFSMAN->m_bAllowUnacceleratedRenderer );
+		if( sError.empty() )
+		{
+			break;	// we have a display, don't try any more
+		}
+		else
+		{
+			error += ssprintf(ERROR_INITIALIZING.GetValue(),sRenderer)+"\n" + sError;
+			SAFE_DELETE( pRet );
+			error += "\n\n\n";
+		}
 	}
 
-	RageException::Throw( error );
+	if( pRet == NULL)
+		RageException::Throw( error );
+
+	return pRet;
 }
 
 extern const RString STATIC_INI_PATH;

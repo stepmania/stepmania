@@ -135,6 +135,8 @@ public:
 	/* This is needed or the overridden classes' dtors will not be called. */
 	virtual ~RageDisplay() { }
 
+	virtual RString Init( const VideoModeParams &p, bool bAllowUnacceleratedRenderer ) = 0;
+
 	virtual RString GetApiDescription() const = 0;
 	virtual void GetDisplayResolutions( DisplayResolutions &out ) const = 0;
 
