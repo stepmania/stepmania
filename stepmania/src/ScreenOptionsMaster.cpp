@@ -122,7 +122,9 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 		if( (m_iChangeMask & OPT_APPLY_THEME) || 
 			(m_iChangeMask & OPT_APPLY_GRAPHICS) ||
 			(m_iChangeMask & OPT_APPLY_ASPECT_RATIO) )
+		{
 			StepMania::ApplyGraphicOptions();
+		}
 
 		if( m_iChangeMask & OPT_SAVE_PREFERENCES )
 		{

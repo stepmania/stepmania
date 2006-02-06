@@ -393,7 +393,7 @@ struct VideoCardDefaults
 {
 	VideoCardDefaults(
 		"Xbox",
-		"d3d,opengl",
+		"d3d",
 		600,400,
 		32,32,32,
 		2048,
@@ -641,10 +641,10 @@ found_defaults:
 }
 
 static LocalizedString ERROR_INITIALIZING_CARD		( "StepMania", "There was an error while initializing your video card." );
-static LocalizedString ERROR_DONT_FILE_BUG			( "StepMania", "Please do not file this error as a bug!  Use the web page below to troubleshoot this problem." );
-static LocalizedString ERROR_VIDEO_DRIVER			( "StepMania", "Video Driver: %s" );
+static LocalizedString ERROR_DONT_FILE_BUG		( "StepMania", "Please do not file this error as a bug!  Use the web page below to troubleshoot this problem." );
+static LocalizedString ERROR_VIDEO_DRIVER		( "StepMania", "Video Driver: %s" );
 static LocalizedString ERROR_NO_VIDEO_RENDERERS		( "StepMania", "No video renderers attempted." );
-static LocalizedString ERROR_INITIALIZING			( "StepMania", "Initializing %s..." );
+static LocalizedString ERROR_INITIALIZING		( "StepMania", "Initializing %s..." );
 static LocalizedString ERROR_UNKNOWN_VIDEO_RENDERER	( "StepMania", "Unknown video renderer value: %s" );
 
 RageDisplay *CreateDisplay()
