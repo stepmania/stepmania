@@ -43,6 +43,7 @@
 #include "Steps.h"
 #include "GameCommand.h"
 #include "LocalizedString.h"
+#include "AdjustSync.h"
 
 RString COMBO_X_NAME( size_t p, size_t both_sides )			{ return "ComboXOffset" + (both_sides ? RString("BothSides") : ssprintf("OneSideP%d",int(p+1)) ); }
 RString ATTACK_DISPLAY_X_NAME( size_t p, size_t both_sides ){ return "AttackDisplayXOffset" + (both_sides ? RString("BothSides") : ssprintf("OneSideP%d",int(p+1)) ); }
@@ -81,7 +82,6 @@ Player::Player( bool bShowNoteField, bool bShowJudgment )
 	m_pInventory = NULL;
 	
 	m_bPaused = false;
-	m_iOffsetSample = 0;
 
 	m_pJudgment = NULL;
 	if( bShowJudgment )
@@ -117,8 +117,6 @@ Player::Player( bool bShowNoteField, bool bShowJudgment )
 	{
 		m_pNoteField = new NoteField;
 	}
-
-	this->SubscribeToMessage( Message_AutosyncChanged );
 }
 
 Player::~Player()
@@ -1242,7 +1240,7 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 		}
 
 		if( m_pPlayerState->m_PlayerController == PC_HUMAN && score >= TNS_W3 ) 
-			HandleAutosync( fNoteOffset );
+			AdjustSync::HandleAutosync( fNoteOffset );
 
 		// Do game-specific and mode-specific score mapping.
 		score = GAMESTATE->GetCurrentGame()->MapTapNoteScore( score );
@@ -1323,61 +1321,6 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 				m_vKeysounds[tn.iKeysoundIndex].Play();
 		}
 	}
-}
-
-static LocalizedString AUTOSYNC_CORRECTION_APPLIED		( "Player", "Autosync: Correction applied." );
-static LocalizedString AUTOSYNC_CORRECTION_NOT_APPLIED	( "Player", "Autosync: Correction NOT applied. Deviation too high." );
-static LocalizedString AUTOSYNC_SONG					( "Player", "Autosync Song" );
-static LocalizedString AUTOSYNC_MACHINE					( "Player", "Autosync Machine" );
-void Player::HandleAutosync(float fNoteOffset)
-{
-	if( GAMESTATE->m_SongOptions.m_AutosyncType == SongOptions::AUTOSYNC_OFF )
-		return;
-
-	m_fOffset[m_iOffsetSample] = fNoteOffset;
-	m_iOffsetSample++;
-
-	if( m_iOffsetSample < SAMPLE_COUNT ) 
-		return; /* need more */
-
-	const float mean = calc_mean( m_fOffset, m_fOffset+SAMPLE_COUNT );
-	const float stddev = calc_stddev( m_fOffset, m_fOffset+SAMPLE_COUNT );
-
-	RString sAutosyncType;
-	switch( GAMESTATE->m_SongOptions.m_AutosyncType )
-	{
-	case SongOptions::AUTOSYNC_SONG:
-		sAutosyncType = AUTOSYNC_SONG;
-		break;
-	case SongOptions::AUTOSYNC_MACHINE:
-		sAutosyncType = AUTOSYNC_MACHINE;
-		break;
-	default:
-		ASSERT(0);
-	}
-
-	if( stddev < .03 && stddev < fabsf(mean) )  // If they stepped with less than .03 error
-	{
-		switch( GAMESTATE->m_SongOptions.m_AutosyncType )
-		{
-		case SongOptions::AUTOSYNC_SONG:
-			GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds += mean;
-			break;
-		case SongOptions::AUTOSYNC_MACHINE:
-			PREFSMAN->m_fGlobalOffsetSeconds.Set( PREFSMAN->m_fGlobalOffsetSeconds + mean );
-			break;
-		default:
-			ASSERT(0);
-		}
-
-		SCREENMAN->SystemMessage( AUTOSYNC_CORRECTION_APPLIED.GetValue() );
-	}
-	else
-	{
-		SCREENMAN->SystemMessage( AUTOSYNC_CORRECTION_NOT_APPLIED.GetValue() );
-	}
-
-	m_iOffsetSample = 0;
 }
 
 void Player::DisplayJudgedRow( int iIndexThatWasSteppedOn, TapNoteScore score, int iTrack )
@@ -1858,13 +1801,6 @@ bool Player::IsPlayingBeginner() const
 		return false;
 	Steps *pSteps = GAMESTATE->m_pCurSteps[ m_pPlayerState->m_PlayerNumber ];
 	return pSteps && pSteps->GetDifficulty() == DIFFICULTY_BEGINNER;
-}
-
-void Player::HandleMessage( const RString& sMessage )
-{
-	// Reset autosync samples when toggling
-	if( sMessage == MessageToString(Message_AutosyncChanged) )
-		m_iOffsetSample = 0;
 }
 
 

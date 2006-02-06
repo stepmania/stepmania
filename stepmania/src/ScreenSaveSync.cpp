@@ -4,7 +4,7 @@
 #include "song.h"
 #include "PrefsManager.h"
 #include "LocalizedString.h"
-
+#include "AdjustSync.h"
 
 static LocalizedString EARLIER					("ScreenSaveSync","earlier");
 static LocalizedString LATER					("ScreenSaveSync","later");
@@ -20,7 +20,7 @@ static RString GetPromptText()
 	RString s;
 
 	{
-		float fOld = GAMESTATE->m_fGlobalOffsetSecondsOriginal;
+		float fOld = AdjustSync::s_fGlobalOffsetSecondsOriginal;
 		float fNew = PREFSMAN->m_fGlobalOffsetSeconds;
 		float fDelta = fNew - fOld;
 
@@ -40,7 +40,7 @@ static RString GetPromptText()
 	if( GAMESTATE->m_pCurSong.Get() )
 	{
 		{
-			float fOld = GAMESTATE->m_pTimingDataOriginal->m_fBeat0OffsetInSeconds;
+			float fOld = AdjustSync::s_pTimingDataOriginal->m_fBeat0OffsetInSeconds;
 			float fNew = GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds;
 			float fDelta = fNew - fOld;
 
@@ -57,7 +57,7 @@ static RString GetPromptText()
 
 		for( unsigned i=0; i<GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments.size(); i++ )
 		{
-			float fOld = GAMESTATE->m_pTimingDataOriginal->m_BPMSegments[i].m_fBPS;
+			float fOld = AdjustSync::s_pTimingDataOriginal->m_BPMSegments[i].m_fBPS;
 			float fNew = GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments[i].m_fBPS;
 			float fDelta = fNew - fOld;
 
@@ -74,7 +74,7 @@ static RString GetPromptText()
 
 		for( unsigned i=0; i<GAMESTATE->m_pCurSong->m_Timing.m_StopSegments.size(); i++ )
 		{
-			float fOld = GAMESTATE->m_pTimingDataOriginal->m_StopSegments[i].m_fStopSeconds;
+			float fOld = AdjustSync::s_pTimingDataOriginal->m_StopSegments[i].m_fStopSeconds;
 			float fNew = GAMESTATE->m_pCurSong->m_Timing.m_StopSegments[i].m_fStopSeconds;
 			float fDelta = fNew - fOld;
 
@@ -109,12 +109,12 @@ static RString GetPromptText()
 			
 static void SaveSyncChanges( void* pThrowAway )
 {
-	GAMESTATE->SaveSyncChanges();
+	AdjustSync::SaveSyncChanges();
 }
 
 static void RevertSyncChanges( void* pThrowAway )
 {
-	GAMESTATE->RevertSyncChanges();
+	AdjustSync::RevertSyncChanges();
 }
 
 void ScreenSaveSync::Init()

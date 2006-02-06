@@ -22,8 +22,6 @@ class RageTimer;
 class NoteField;
 class PlayerStageStats;
 
-#define	SAMPLE_COUNT	32
-
 class Player: public ActorFrame
 {
 public:
@@ -33,7 +31,6 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void ProcessMessages( float fDeltaTime );
 	virtual void DrawPrimitives();
-	virtual void HandleMessage( const RString& sMessage );
 
 	void Init( 
 		const RString &sType,
@@ -70,7 +67,6 @@ protected:
 	void OnRowCompletelyJudged( int iStepIndex );
 	void HandleTapRowScore( unsigned row );
 	void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore );
-	void HandleAutosync(float fNoteOffset);
 	void DrawTapJudgments();
 	void DrawHoldJudgments();
 
@@ -86,8 +82,6 @@ protected:
 	float			m_fNoteFieldHeight;
 
 	bool			m_bPaused;
-	float			m_fOffset[SAMPLE_COUNT]; // for AutoSync
-	int			m_iOffsetSample;
 
 	NoteField		*m_pNoteField;
 

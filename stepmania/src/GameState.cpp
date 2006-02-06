@@ -35,6 +35,7 @@
 #include "CommonMetrics.h"
 #include "CharacterManager.h"
 #include "Game.h"
+#include "AdjustSync.h"
 
 #include <ctime>
 #include <set>
@@ -108,8 +109,6 @@ GameState::GameState() :
 
 	m_Environment = new LuaTable;
 
-	m_pTimingDataOriginal = new TimingData;
-
 	/* Don't reset yet; let the first screen do it, so we can
 	 * use PREFSMAN and THEME. */
 //	Reset();
@@ -123,8 +122,6 @@ GameState::~GameState()
 		SAFE_DELETE( m_pMultiPlayerState[p] );
 
 	SAFE_DELETE( m_Environment );
-
-	SAFE_DELETE( m_pTimingDataOriginal );
 }
 
 void GameState::ApplyGameCommand( const RString &sCommand, PlayerNumber pn )
@@ -640,7 +637,7 @@ void GameState::ResetStageStatistics()
 	// get new shuffle patterns if they Back out of gameplay and play again.
 	GAMESTATE->m_iStageSeed = rand();
 
-	ResetOriginalSyncData();
+	AdjustSync::ResetOriginalSyncData();
 }
 
 void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp )
@@ -1740,48 +1737,6 @@ Profile* GameState::GetEditLocalProfile()
 	if( m_sEditLocalProfileID.Get().empty() )
 		return NULL;
 	return PROFILEMAN->GetLocalProfile( m_sEditLocalProfileID );
-}
-
-void GameState::ResetOriginalSyncData()
-{
-	if( m_pCurSong )
-		*m_pTimingDataOriginal = m_pCurSong->m_Timing;
-	else
-		*m_pTimingDataOriginal = TimingData();
-	m_fGlobalOffsetSecondsOriginal = PREFSMAN->m_fGlobalOffsetSeconds;
-}
-
-bool GameState::IsSyncDataChanged()
-{
-	// Can't sync in course modes
-	if( IsCourseMode() )
-		return false;
-
-	if( m_pCurSong  &&  *m_pTimingDataOriginal != m_pCurSong->m_Timing )
-		return true;
-	if( m_fGlobalOffsetSecondsOriginal != PREFSMAN->m_fGlobalOffsetSeconds )
-		return true;
-
-	return false;
-}
-
-void GameState::SaveSyncChanges()
-{
-	if( IsCourseMode() )
-		return;
-	if( m_pCurSong  &&  *m_pTimingDataOriginal != m_pCurSong->m_Timing )
-		GAMESTATE->m_pCurSong->Save();
-	if( m_fGlobalOffsetSecondsOriginal != PREFSMAN->m_fGlobalOffsetSeconds )
-		PREFSMAN->SavePrefsToDisk();
-	ResetOriginalSyncData();
-}
-
-void GameState::RevertSyncChanges()
-{
-	if( IsCourseMode() )
-		return;
-	PREFSMAN->m_fGlobalOffsetSeconds.Set( GAMESTATE->m_fGlobalOffsetSecondsOriginal );
-	GAMESTATE->m_pCurSong->m_Timing = *GAMESTATE->m_pTimingDataOriginal;
 }
 
 

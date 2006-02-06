@@ -292,14 +292,6 @@ public:
 	float GetGoalPercentComplete( PlayerNumber pn );
 	bool IsGoalComplete( PlayerNumber pn )	{ return GetGoalPercentComplete( pn ) >= 1; }
 
-	// Sync changes stuff
-	TimingData *m_pTimingDataOriginal;
-	float m_fGlobalOffsetSecondsOriginal;
-	void ResetOriginalSyncData();
-	bool IsSyncDataChanged();
-	void SaveSyncChanges();
-	void RevertSyncChanges();
-
 	// Lua
 	void PushSelf( lua_State *L );
 };

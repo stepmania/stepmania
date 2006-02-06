@@ -4,6 +4,7 @@
 #include "GameState.h"
 #include "GameManager.h"
 #include "PrefsManager.h"
+#include "AdjustSync.h"
 
 REGISTER_SCREEN_CLASS( ScreenGameplaySyncMachine );
 
@@ -11,7 +12,7 @@ void ScreenGameplaySyncMachine::Init()
 {
 	GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 	GAMESTATE->m_pCurStyle.Set( GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame) );
-	GAMESTATE->ResetOriginalSyncData();
+	AdjustSync::ResetOriginalSyncData();
 	
 	SMLoader ld;
 	RString sFile = THEME->GetPathO("ScreenGameplaySyncMachine","music.sm");

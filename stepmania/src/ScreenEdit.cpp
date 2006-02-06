@@ -33,6 +33,7 @@
 #include "InputEventPlus.h"
 #include "NotesWriterSM.h"
 #include "LocalizedString.h"
+#include "AdjustSync.h"
 
 static Preference<float> g_iDefaultRecordLength( "DefaultRecordLength", 4 );
 static Preference<bool> g_bEditorShowBGChangesPlay( "EditorShowBGChangesPlay", false );
@@ -1987,7 +1988,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 		break;
 
 	case STATE_PLAYING:
-		if( GAMESTATE->IsSyncDataChanged() )
+		if( AdjustSync::IsSyncDataChanged() )
 			ScreenSaveSync::PromptSaveSync();
 		break;
 
@@ -2048,7 +2049,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 	case STATE_PLAYING:
 	case STATE_RECORDING:
 	{
-		GAMESTATE->ResetOriginalSyncData();
+		AdjustSync::ResetOriginalSyncData();
 
 		/* Give a 1 second lead-in.  If we're loading Player, this must be done first. */
 		float fSeconds = m_pSong->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_iStartPlayingAt) ) - 1;

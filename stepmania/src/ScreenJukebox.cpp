@@ -19,6 +19,7 @@
 #include "CommonMetrics.h"
 #include "PrefsManager.h"
 #include "InputEventPlus.h"
+#include "AdjustSync.h"
 
 #define SHOW_COURSE_MODIFIERS_PROBABILITY	THEME->GetMetricF(m_sName,"ShowCourseModifiersProbability")
 
@@ -95,7 +96,7 @@ void ScreenJukebox::SetSong()
 		// Found something we can use!
 		GAMESTATE->m_pCurSong.Set( pSong );
 		// We just changed the song. Reset the original sync data.
-		GAMESTATE->ResetOriginalSyncData();
+		AdjustSync::ResetOriginalSyncData();
 		FOREACH_PlayerNumber( p )
 			GAMESTATE->m_pCurSteps[p].Set( pSteps );
 		

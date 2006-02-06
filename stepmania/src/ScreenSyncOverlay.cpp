@@ -7,6 +7,7 @@
 #include "PrefsManager.h"
 #include "InputEventPlus.h"
 #include "LocalizedString.h"
+#include "AdjustSync.h"
 
 static bool IsGameplay()
 {
@@ -103,7 +104,7 @@ void ScreenSyncOverlay::UpdateText()
 	if( GAMESTATE->m_pCurSong != NULL  &&  !GAMESTATE->IsCourseMode() )	// sync controls available
 	{
 		{
-			float fOld = GAMESTATE->m_fGlobalOffsetSecondsOriginal;
+			float fOld = AdjustSync::s_fGlobalOffsetSecondsOriginal;
 			float fNew = PREFSMAN->m_fGlobalOffsetSeconds;
 			float fDelta = fNew - fOld;
 
@@ -118,7 +119,7 @@ void ScreenSyncOverlay::UpdateText()
 		}
 
 		{
-			float fOld = GAMESTATE->m_pTimingDataOriginal->m_fBeat0OffsetInSeconds;
+			float fOld = AdjustSync::s_pTimingDataOriginal->m_fBeat0OffsetInSeconds;
 			float fNew = GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds;
 			float fDelta = fNew - fOld;
 
@@ -132,11 +133,11 @@ void ScreenSyncOverlay::UpdateText()
 			}
 		}
 
-		ASSERT( GAMESTATE->m_pTimingDataOriginal->m_BPMSegments.size() == GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments.size() );
+		ASSERT( AdjustSync::s_pTimingDataOriginal->m_BPMSegments.size() == GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments.size() );
 
 		for( unsigned i=0; i<GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments.size(); i++ )
 		{
-			float fOldBpm = GAMESTATE->m_pTimingDataOriginal->m_BPMSegments[i].m_fBPS;
+			float fOldBpm = AdjustSync::s_pTimingDataOriginal->m_BPMSegments[i].m_fBPS;
 			float fNewBpm = GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments[i].m_fBPS;
 			float fDelta = fNewBpm - fOldBpm;
 
@@ -203,7 +204,7 @@ bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
 	{
 	case RevertSyncChanges:
 		SCREENMAN->SystemMessage( SYNC_CHANGES_REVERTED );
-		GAMESTATE->RevertSyncChanges();
+		AdjustSync::RevertSyncChanges();
 		break;
 	case ChangeSongBPM:
 		{

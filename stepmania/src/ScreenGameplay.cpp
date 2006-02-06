@@ -53,6 +53,7 @@
 #include "Background.h"
 #include "Foreground.h"
 #include "ScreenSaveSync.h"
+#include "AdjustSync.h"
 
 //
 // Defines
@@ -2504,7 +2505,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 		GAMESTATE->CancelStage();
 
-		if( GAMESTATE->IsSyncDataChanged() )
+		if( AdjustSync::IsSyncDataChanged() )
 			ScreenSaveSync::PromptSaveSync( SM_GoToPrevScreen );
 		else
 			HandleScreenMessage( SM_GoToPrevScreen );
@@ -2515,7 +2516,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		StageFinished( false );
 		//SaveRecordedResults();
 
-		if( GAMESTATE->IsSyncDataChanged() )
+		if( AdjustSync::IsSyncDataChanged() )
 			ScreenSaveSync::PromptSaveSync( SM_GoToNextScreen );
 		else
 			HandleScreenMessage( SM_GoToNextScreen );
