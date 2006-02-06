@@ -744,6 +744,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ActorCommands.h">
 			</File>
 			<File
+				RelativePath=".\AdjustSync.cpp">
+			</File>
+			<File
+				RelativePath=".\AdjustSync.h">
+			</File>
+			<File
 				RelativePath="Attack.cpp">
 			</File>
 			<File
