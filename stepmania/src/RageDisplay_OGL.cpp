@@ -44,6 +44,7 @@
 #include "Foreach.h"
 #include "ProductInfo.h"
 #include "DisplayResolutions.h"
+#include "LocalizedString.h"
 
 #include "arch/LowLevelWindow/LowLevelWindow.h"
 
@@ -387,6 +388,8 @@ void InitScalingScript()
 	GLExt.glVertexAttrib2fARB( ATTRIB_TEXTURE_MATRIX_SCALE, 1, 1 );
 }
 
+static LocalizedString OBTAIN_AN_UPDATED_VIDEO_DRIVER ( "RageDisplay_OGL", "Obtain an updated driver from your video card manufacturer." );
+static LocalizedString GLDIRECT_IS_NOT_COMPATIBLE ( "RageDisplay_OGL", "GLDirect was detected.  GLDirect is not compatible with this game and should be disabled." );
 RString RageDisplay_OGL::Init( const VideoModeParams &p, bool bAllowUnacceleratedRenderer )
 {
 	g_pWind = MakeLowLevelWindow();
@@ -408,7 +411,7 @@ RString RageDisplay_OGL::Init( const VideoModeParams &p, bool bAllowUnaccelerate
 	if( g_pWind->IsSoftwareRenderer(sError) )
 	{
 		if( !bAllowUnacceleratedRenderer )
-			return sError + "  Please obtain an updated driver from your video card manufacturer.\n\n";
+			return sError + "  " + OBTAIN_AN_UPDATED_VIDEO_DRIVER.GetValue() + "\n\n";
 		LOG->Warn( "Low-performance OpenGL renderer: " + sError );
 	}
 
@@ -418,7 +421,7 @@ RString RageDisplay_OGL::Init( const VideoModeParams &p, bool bAllowUnaccelerate
 	 * too using Direct3D directly.  (If we can't, it's a bug that we can work
 	 * around--if GLDirect can do it, so can we!) */
 	if( !strncmp( (const char *) glGetString(GL_RENDERER), "GLDirect", 8 ) )
-		return "GLDirect was detected.  GLDirect is not compatible with " PRODUCT_NAME ", and should be disabled.\n";
+		return GLDIRECT_IS_NOT_COMPATIBLE.GetValue() + "\n";
 #endif
 
 	/* Log this, so if people complain that the radar looks bad on their

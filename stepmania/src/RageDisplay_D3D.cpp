@@ -14,6 +14,7 @@
 #include "RageSurfaceUtils.h"
 #include "EnumHelper.h"
 #include "DisplayResolutions.h"
+#include "LocalizedString.h"
 
 #include <D3D8.h>
 #include <D3dx8math.h>
@@ -203,10 +204,11 @@ RageDisplay_D3D::RageDisplay_D3D()
 
 }
 
-#define D3D_NOT_INSTALLED \
-	"DirectX 8.1 or greater is not installed.  You can download it from:\n" \
-	"http://www.microsoft.com/downloads/details.aspx?FamilyID=a19bed22-0b25-4e5d-a584-6389d8a3dad0&displaylang=en"
 
+static LocalizedString D3D_NOT_INSTALLED ( "RageDisplay_D3D", "DirectX 8.1 or greater is not installed.  You can download it from:" );
+const RString D3D_URL = "http://www.microsoft.com/downloads/details.aspx?FamilyID=a19bed22-0b25-4e5d-a584-6389d8a3dad0&displaylang=en";
+static LocalizedString HARDWARE_ACCELERATION_NOT_AVAILABLE ( "RageDisplay_D3D", 
+	"Your system is reporting that Direct3D hardware acceleration is not available.  Please obtain an updated driver from your video card manufacturer." );
 RString RageDisplay_D3D::Init( const VideoModeParams &p, bool bAllowUnacceleratedRenderer )
 {
 	GraphicsWindow::Initialize( true );
@@ -221,7 +223,7 @@ RString RageDisplay_D3D::Init( const VideoModeParams &p, bool bAllowUnaccelerate
 #else
 	g_D3D8_Module = LoadLibrary("D3D8.dll");
 	if(!g_D3D8_Module)
-		return D3D_NOT_INSTALLED;
+		return D3D_NOT_INSTALLED.GetValue() + "\n" + D3D_URL;
 
 	pDirect3DCreate8 = (Direct3DCreate8_t) GetProcAddress(g_D3D8_Module, "Direct3DCreate8");
 	if(!pDirect3DCreate8)
@@ -239,9 +241,8 @@ RString RageDisplay_D3D::Init( const VideoModeParams &p, bool bAllowUnaccelerate
 	}
 
 	if( FAILED( g_pd3d->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &g_DeviceCaps) ) )
-		return
-			"Your system is reporting that Direct3D hardware acceleration is not available.  "
-			"Please obtain an updated driver from your video card manufacturer.\n\n";
+		return HARDWARE_ACCELERATION_NOT_AVAILABLE;
+			
 
 	D3DADAPTER_IDENTIFIER8	identifier;
 	g_pd3d->GetAdapterIdentifier( D3DADAPTER_DEFAULT, 0, &identifier );
