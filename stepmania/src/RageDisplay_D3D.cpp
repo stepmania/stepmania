@@ -314,6 +314,16 @@ void RageDisplay_D3D::GetDisplayResolutions( DisplayResolutions &out ) const
 	}
 }
 
+float RageDisplay_D3D::GetMonitorAspectRatio() const
+{
+#if defined(XBOX)
+	// FIXME
+	return 4/3.f;
+#else
+	return g_DesktopMode.Width / (float)g_DesktopMode.Height;
+#endif
+}
+
 D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP)
 {
 	HRESULT hr;

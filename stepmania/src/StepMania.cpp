@@ -102,7 +102,7 @@ void StepMania::GetPreferredVideoModeParams( VideoModeParams &paramsOut )
 			CommonMetrics::WINDOW_TITLE,
 			THEME->GetPathG("Common","window icon"),
 			PREFSMAN->m_bPAL,
-			PREFSMAN->m_fDisplayAspectRatio
+			ScreenDimensions::GetScreenAspectRatio()
 	);
 }
 

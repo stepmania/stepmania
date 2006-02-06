@@ -5,6 +5,7 @@
 
 namespace ScreenDimensions
 {
+	float GetScreenAspectRatio();
 	float GetThemeAspectRatio();
 	float GetScreenWidth();
 	float GetScreenHeight();

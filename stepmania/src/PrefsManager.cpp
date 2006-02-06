@@ -154,7 +154,6 @@ PrefsManager::PrefsManager() :
 	m_bWindowed		( "Windowed",			TRUE_IF_DEBUG ),
 	m_iDisplayWidth		( "DisplayWidth",		640 ),
 	m_iDisplayHeight	( "DisplayHeight",		480 ),
-	m_fDisplayAspectRatio	( "DisplayAspectRatio",		4/3.f ),
 	m_iDisplayColorDepth	( "DisplayColorDepth",		16 ),
 	m_iTextureColorDepth	( "TextureColorDepth",		16 ),
 	m_iMovieColorDepth	( "MovieColorDepth",		16 ),
@@ -431,8 +430,6 @@ void PrefsManager::ReadPrefsFromIni( const IniFile &ini, const RString &sSection
 	IPreference::ReadAllPrefsFromNode( ini.GetChild(sSection) );
 
 	// validate
-	if( m_fDisplayAspectRatio < 0 )
-		m_fDisplayAspectRatio.Set( 4/3.f );
 	m_iSongsPerPlay.Set( clamp(m_iSongsPerPlay.Get(),0,MAX_SONGS_PER_PLAY) );
 	m_RandomBackgroundMode.Set( (RandomBackgroundMode)clamp((int)m_RandomBackgroundMode.Get(),0,(int)NUM_RandomBackgroundMode-1) );
 }
