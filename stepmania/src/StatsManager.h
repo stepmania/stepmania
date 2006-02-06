@@ -12,7 +12,7 @@ public:
 
 	void Reset();
 
-	StageStats			m_CurStageStats;	// current stage (not necessarily passed if Extra Stage)
+	StageStats		m_CurStageStats;	// current stage (not necessarily passed if Extra Stage)
 	vector<StageStats>	m_vPlayedStageStats;
 
 	// Only the latest 3 normal songs + passed extra stages.
