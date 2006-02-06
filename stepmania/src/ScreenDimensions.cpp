@@ -26,25 +26,6 @@ static ThemeMetric<float> THEME_SCREEN_HEIGHT("Common","ScreenHeight");
  */
 #define THEME_NATIVE_ASPECT (THEME_SCREEN_WIDTH/THEME_SCREEN_HEIGHT)
 
-#define ASPECT_AUTO -1
-static Preference<float> g_fDisplayAspectRatio( "DisplayAspectRatio", ASPECT_AUTO );
-
-float ScreenDimensions::GetScreenAspectRatio()
-{
-	float fAspect = g_fDisplayAspectRatio;
-	if( fAspect == ASPECT_AUTO )
-	{
-		/* Most PC monitor resolutions have square pixels (PAR 1:1), so the DAR
-		 * is simply width:height.  1280x1024 is an exception; treat it as 4:3,
-		 * not 5:4. */
-		if( PREFSMAN->m_iDisplayWidth == 1280 && PREFSMAN->m_iDisplayHeight == 1024 )
-			fAspect = 4.0f/3.0f;
-		else
-			fAspect = PREFSMAN->m_iDisplayWidth / (float)PREFSMAN->m_iDisplayHeight;
-	}
-	return fAspect;
-}
-
 float ScreenDimensions::GetThemeAspectRatio()
 {
 	return THEME_NATIVE_ASPECT;
@@ -52,7 +33,7 @@ float ScreenDimensions::GetThemeAspectRatio()
 
 float ScreenDimensions::GetScreenWidth()
 {
-	float fAspect = GetScreenAspectRatio();
+	float fAspect = PREFSMAN->m_fDisplayAspectRatio;
 	float fScale = 1;
 	if( fAspect > THEME_NATIVE_ASPECT )
 		fScale = fAspect / THEME_NATIVE_ASPECT;
@@ -62,7 +43,7 @@ float ScreenDimensions::GetScreenWidth()
 
 float ScreenDimensions::GetScreenHeight()
 {
-	float fAspect = GetScreenAspectRatio();
+	float fAspect = PREFSMAN->m_fDisplayAspectRatio;
 	float fScale = 1;
 	if( fAspect < THEME_NATIVE_ASPECT )
 		fScale = THEME_NATIVE_ASPECT / fAspect;
@@ -86,7 +67,7 @@ void ScreenDimensions::ReloadScreenDimensions()
 	LUA->SetGlobal( "SCREEN_CENTER_Y", (int) SCREEN_CENTER_Y );
 }
 
-LuaFunction_NoArgs( GetScreenAspectRatio,	ScreenDimensions::GetScreenAspectRatio() );
+LuaFunction_NoArgs( GetScreenAspectRatio,	PREFSMAN->m_fDisplayAspectRatio.Get() );
 LuaFunction_NoArgs( GetThemeAspectRatio,	ScreenDimensions::GetThemeAspectRatio() );
 
 
