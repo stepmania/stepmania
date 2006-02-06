@@ -703,7 +703,7 @@ RageDisplay *CreateDisplay()
 		else if( sRenderer.CompareNoCase("d3d")==0 )
 		{
 #if defined(SUPPORT_D3D)
-			RageDisplay_D3D *pRet = new RageDisplay_D3D;
+			pRet = new RageDisplay_D3D;
 #endif
 		}
 		else if( sRenderer.CompareNoCase("null")==0 )
@@ -719,16 +719,15 @@ RageDisplay *CreateDisplay()
 			continue;
 
 		RString sError = pRet->Init( params, PREFSMAN->m_bAllowUnacceleratedRenderer );
-		if( sError.empty() )
-		{
-			break;	// we have a display, don't try any more
-		}
-		else
+		if( !sError.empty() )
 		{
 			error += ssprintf(ERROR_INITIALIZING.GetValue(),sRenderer)+"\n" + sError;
 			SAFE_DELETE( pRet );
 			error += "\n\n\n";
+			continue;
 		}
+
+		break;	// the display is ready to go
 	}
 
 	if( pRet == NULL)
