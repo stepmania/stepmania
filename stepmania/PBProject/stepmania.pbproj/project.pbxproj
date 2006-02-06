@@ -4275,6 +4275,9 @@
 					"-fsingle-precision-constant",
 				);
 				OTHER_LDFLAGS = "-lz";
+				PREBINDING = "$(PREBINDING_$(CURRENT_ARCH))";
+				PREBINDING_i386 = NO;
+				PREBINDING_ppc = YES;
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
 				PRODUCT_NAME = "$(value)";
 				STRIP_STYLE = "non-global";
@@ -4407,6 +4410,9 @@
 					"-fsingle-precision-constant",
 				);
 				OTHER_LDFLAGS = "-lz";
+				PREBINDING = "$(PREBINDING_$(CURRENT_ARCH))";
+				PREBINDING_i386 = NO;
+				PREBINDING_ppc = YES;
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
 				PRODUCT_NAME = "$(value)";
 				STRIP_STYLE = "non-global";
@@ -4539,6 +4545,9 @@
 					"-fsingle-precision-constant",
 				);
 				OTHER_LDFLAGS = "-lz";
+				PREBINDING = "$(PREBINDING_$(CURRENT_ARCH))";
+				PREBINDING_i386 = NO;
+				PREBINDING_ppc = YES;
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
 				PRODUCT_NAME = "$(value)";
 				STRIP_STYLE = "non-global";
