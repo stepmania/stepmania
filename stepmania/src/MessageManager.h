@@ -3,26 +3,6 @@
 #ifndef MessageManager_H
 #define MessageManager_H
 
-class IMessageSubscriber
-{
-public:
-	virtual ~IMessageSubscriber() { }
-	virtual void HandleMessage( const RString& sMessage ) = 0;
-	virtual void ProcessMessages( float fDeltaTime );
-	void ClearMessages( const RString sMessage = "" );
-
-private:
-	struct QueuedMessage
-	{
-		RString sMessage;
-		float fDelayRemaining;
-	};
-	void HandleMessageInternal( const RString& sMessage );
-	vector<QueuedMessage> m_aMessages;
-
-	friend class MessageManager;
-};
-
 struct lua_State;
 
 enum Message
@@ -85,6 +65,46 @@ enum Message
 	Message_Invalud
 };
 const RString& MessageToString( Message m );
+
+
+class IMessageSubscriber
+{
+public:
+	virtual ~IMessageSubscriber() { }
+	virtual void HandleMessage( const RString& sMessage ) = 0;
+	virtual void ProcessMessages( float fDeltaTime );
+	void ClearMessages( const RString sMessage = "" );
+
+private:
+	struct QueuedMessage
+	{
+		RString sMessage;
+		float fDelayRemaining;
+	};
+	void HandleMessageInternal( const RString& sMessage );
+	vector<QueuedMessage> m_aMessages;
+
+	friend class MessageManager;
+};
+
+class MessageSubscriber : public IMessageSubscriber
+{
+public:
+	MessageSubscriber() {}
+	MessageSubscriber( const MessageSubscriber &cpy );
+
+	//
+	// Messages
+	//
+	void SubscribeToMessage( Message message ); // will automatically unsubscribe
+	void SubscribeToMessage( const RString &sMessageName ); // will automatically unsubscribe
+
+	void UnsubscribeAll();
+
+private:
+	vector<RString> m_vsSubscribedTo;
+};
+
 
 class MessageManager
 {

@@ -89,7 +89,7 @@ void Actor::InitDefaults()
 	m_bZWrite = false;
 	m_CullMode = CULL_NONE;
 
-	UnsubcribeAndClearCommands();
+	UnsubscribeAll();
 }
 
 static bool GetMessageNameFromCommandName( const RString &sCommandName, RString &sMessageNameOut )
@@ -105,13 +105,6 @@ static bool GetMessageNameFromCommandName( const RString &sCommandName, RString 
 	}
 }
 
-void Actor::UnsubcribeAndClearCommands()
-{
-	FOREACH_CONST( RString, m_vsSubscribedTo, s )
-		MESSAGEMAN->Unsubscribe( this, *s );
-	m_vsSubscribedTo.clear();
-}
-
 Actor::Actor()
 {
 	m_pLuaInstance = new LuaClass;
@@ -123,11 +116,11 @@ Actor::Actor()
 Actor::~Actor()
 {
 	StopTweening();
-	UnsubcribeAndClearCommands();
+	UnsubscribeAll();
 }
 
 Actor::Actor( const Actor &cpy ):
-	IMessageSubscriber( cpy )
+	MessageSubscriber( cpy )
 {
 	/* Don't copy an Actor in the middle of rendering. */
 	ASSERT( cpy.m_pTempState == NULL );
@@ -183,7 +176,6 @@ Actor::Actor( const Actor &cpy ):
 	CPY( m_CullMode );
 
 	CPY( m_mapNameToCommands );
-	CPY( m_vsSubscribedTo );
 #undef CPY
 }
 
@@ -1276,18 +1268,6 @@ void Actor::PlayCommand( const RString &sCommandName, Actor *pParent )
 void Actor::HandleMessage( const RString& sMessage )
 {
 	PlayCommand( sMessage );
-}
-
-void Actor::SubscribeToMessage( const RString &sMessageName )
-{
-	MESSAGEMAN->Subscribe( this, sMessageName );
-	m_vsSubscribedTo.push_back( sMessageName );
-}
-
-void Actor::SubscribeToMessage( Message message )
-{
-	MESSAGEMAN->Subscribe( this, message );
-	m_vsSubscribedTo.push_back( MessageToString(message) );
 }
 
 Actor::TweenInfo::TweenInfo()

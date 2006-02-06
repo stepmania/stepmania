@@ -22,14 +22,13 @@ class LuaClass;
 #define DRAW_ORDER_TRANSITIONS			+110
 #define DRAW_ORDER_AFTER_EVERYTHING		+200
 
-class Actor : public IMessageSubscriber
+class Actor : public MessageSubscriber
 {
 public:
 	Actor();
 	Actor( const Actor &cpy );
 	virtual ~Actor();
 	virtual Actor *Copy() const;
-	void UnsubcribeAndClearCommands();
 	virtual void LoadFromNode( const RString& sDir, const XNode* pNode );
 	bool IsType( const RString &sType );
 
@@ -346,10 +345,7 @@ public:
 	//
 	// Messages
 	//
-	void SubscribeToMessage( Message message ); // will automatically unsubscribe
-	void SubscribeToMessage( const RString &sMessageName ); // will automatically unsubscribe
 	virtual void HandleMessage( const RString& sMessage );
-
 
 	//
 	// Animation
@@ -465,7 +461,6 @@ private:
 	// commands
 	//
 	map<RString, apActorCommands> m_mapNameToCommands;
-	vector<RString> m_vsSubscribedTo;
 };
 
 #endif

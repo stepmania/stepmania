@@ -193,6 +193,30 @@ void IMessageSubscriber::ProcessMessages( float fDeltaTime )
 	g_Mutex.Unlock();
 }
 
+MessageSubscriber::MessageSubscriber( const MessageSubscriber &cpy )
+{
+	m_vsSubscribedTo = cpy.m_vsSubscribedTo;
+}
+
+void MessageSubscriber::SubscribeToMessage( const RString &sMessageName )
+{
+	MESSAGEMAN->Subscribe( this, sMessageName );
+	m_vsSubscribedTo.push_back( sMessageName );
+}
+
+void MessageSubscriber::SubscribeToMessage( Message message )
+{
+	MESSAGEMAN->Subscribe( this, message );
+	m_vsSubscribedTo.push_back( MessageToString(message) );
+}
+
+void MessageSubscriber::UnsubscribeAll()
+{
+	FOREACH_CONST( RString, m_vsSubscribedTo, s )
+		MESSAGEMAN->Unsubscribe( this, *s );
+	m_vsSubscribedTo.clear();
+}
+
 
 // lua start
 #include "LuaBinding.h"
