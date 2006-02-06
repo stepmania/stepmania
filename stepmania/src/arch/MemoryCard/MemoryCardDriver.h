@@ -11,7 +11,6 @@ struct UsbStorageDevice
 		iBus = -1;
 		iPort = -1;
 		iLevel = -1;
-		iRefNum = -1;
 		sDevice = "";
 		sSerial = "<none>"; // be different than a card with no serial
 		sOsMountDir = "";
@@ -28,7 +27,6 @@ struct UsbStorageDevice
 	int iBus;
 	int iPort;
 	int iLevel;
-	int iRefNum;
 	RString sSerial;
 	RString sDevice;
 	RString	sOsMountDir;	// WITHOUT trailing slash

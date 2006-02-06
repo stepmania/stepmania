@@ -44,15 +44,16 @@ MemoryCardDriverThreaded_OSX::~MemoryCardDriverThreaded_OSX()
 }
 
 void MemoryCardDriverThreaded_OSX::Unmount( UsbStorageDevice *pDevice )
-{
-	if( pDevice->iRefNum == -1 )
-		return;
-	
+{	
 	ParamBlockRec pb;
+	Str255 name; // A pascal string.
+	const RString& base = Basename( pDevice->sOsMountDir );
 	
 	memset( &pb, 0, sizeof(pb) );
-	pb.volumeParam.ioNamePtr = NULL;
-	pb.volumeParam.ioVRefNum = pDevice->iRefNum;
+	name[0] = min( base.length(), size_t(255) );
+	strncpy( (char *)&name[1], base, name[0] );
+	pb.volumeParam.ioNamePtr = name;
+	pb.volumeParam.ioVolIndex = -1; // Use ioNamePtr to find the volume.
 	
 	if( PBFlushVolSync(&pb) != noErr )
 		LOG->Warn( "Failed to flush the memory card." );
@@ -109,7 +110,6 @@ static RString GetStringProperty( io_registry_entry_t entry, CFStringRef key )
 
 void MemoryCardDriverThreaded_OSX::GetUSBStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 {
-	LOG->Trace( "GetUSBStorageDevices." );
 	LockMut( m_ChangedLock );
 	// First, get all device paths
 	struct statfs *fs;
@@ -192,38 +192,8 @@ void MemoryCardDriverThreaded_OSX::GetUSBStorageDevices( vector<UsbStorageDevice
 			
 			LOG->Trace( "Found memory card at path: %s.", fs[i].f_mntonname );
 			usbd.SetOsMountDir( fs[i].f_mntonname );
-			
-			// Find volume reference number for flushing.
-			XVolumeParam param;
-			Str255 name; // A pascal string.
-			const RString& base = Basename( fs[i].f_mntonname );
-			
-			memset( &param, 0, sizeof(param) );
-			name[0] = min( base.length(), size_t(255) );
-			strncpy( (char *)&name[1], base, name[0] );
-			param.ioNamePtr = name;
-			param.ioVolIndex = -1; // Use ioNamePtr to find the volume.
-
-			/* At this point, we have 3 methods available to get the volume size.
-			 * we can use:
-			 * param.ioVTotalBytes,
-			 * IORegistryEntryCreateCFProperty( entry, CFSTR(kIOMediaSizeKey), NULL, 0 ),
-			 * or fs[i].f_blocks * fs[i].f_bsize, however, we released entry already. */
-			// XXX PBXGetVolInfoSync is apparently deprecated.
-			if( PBXGetVolInfoSync(&param) == noErr )
-			{
-				usbd.iRefNum = param.ioVRefNum;
-				usbd.iVolumeSizeMB = param.ioVTotalBytes >> 20;
-			}
-			else
-			{
-				/* We could fall back on one of the other methods but if we can't
-				 * get the volume info then something is wrong so give up. */
-				usbd.SetError( "Failed to get volume info." );
-				IOObjectRelease( device );
-				break;
-			}
-			
+			usbd.iVolumeSizeMB = (uint64_t(fs[i].f_blocks) * fs[i].f_bsize) >> 20;
+		
 			// Now we can get some more information from the registry tree.
 			usbd.iBus = GetIntProperty( device, CFSTR("USB Address") );
 			usbd.iPort = GetIntProperty( device, CFSTR("PortNum") );
