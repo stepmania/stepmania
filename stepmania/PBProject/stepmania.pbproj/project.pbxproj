@@ -651,6 +651,8 @@
 		AA80C75C07F20D8000C99272 /* ScreenMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA80C75B07F20D7F00C99272 /* ScreenMessage.cpp */; };
 		AA817DF80622889500EA44DB /* splash.png in Resources */ = {isa = PBXBuildFile; fileRef = AA817DF70622889500EA44DB /* splash.png */; };
 		AA817E070623237A00EA44DB /* StepMania.pch in Headers */ = {isa = PBXBuildFile; fileRef = AAD64AA10603FE7300EF8CDE /* StepMania.pch */; };
+		AA84B7070996F8370085EECB /* AdjustSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA84B7050996F8370085EECB /* AdjustSync.cpp */; };
+		AA84B7080996F8370085EECB /* AdjustSync.h in Headers */ = {isa = PBXBuildFile; fileRef = AA84B7060996F8370085EECB /* AdjustSync.h */; };
 		AA8A3E6406EDCD11002F25AB /* DarwinThreadHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8A3E6306EDCD11002F25AB /* DarwinThreadHelpers.cpp */; };
 		AA8A3EC906EDDAE4002F25AB /* DarwinThreadHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8A3EC806EDDAE4002F25AB /* DarwinThreadHelpers.h */; };
 		AA8A405106EEFF72002F25AB /* RageUtil_BackgroundLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8A404F06EEFF72002F25AB /* RageUtil_BackgroundLoader.cpp */; };
@@ -1521,6 +1523,8 @@
 		AA80C75807F20D6600C99272 /* OptionRowHandler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = OptionRowHandler.h; path = ../src/OptionRowHandler.h; sourceTree = "<group>"; };
 		AA80C75B07F20D7F00C99272 /* ScreenMessage.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenMessage.cpp; path = ../src/ScreenMessage.cpp; sourceTree = "<group>"; };
 		AA817DF70622889500EA44DB /* splash.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = splash.png; path = ../Data/splash.png; sourceTree = "<group>"; };
+		AA84B7050996F8370085EECB /* AdjustSync.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AdjustSync.cpp; path = ../src/AdjustSync.cpp; sourceTree = "<group>"; };
+		AA84B7060996F8370085EECB /* AdjustSync.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = AdjustSync.h; path = ../src/AdjustSync.h; sourceTree = "<group>"; };
 		AA8A3E6306EDCD11002F25AB /* DarwinThreadHelpers.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = DarwinThreadHelpers.cpp; sourceTree = "<group>"; };
 		AA8A3EC806EDDAE4002F25AB /* DarwinThreadHelpers.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = DarwinThreadHelpers.h; sourceTree = "<group>"; };
 		AA8A3F0106EDE6BF002F25AB /* LinuxThreadHelpers.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = LinuxThreadHelpers.cpp; sourceTree = "<group>"; };
@@ -2550,6 +2554,8 @@
 			children = (
 				AAE7812B0608249E0034E65F /* ActiveAttackList.cpp */,
 				AAE7812C0608249E0034E65F /* ActiveAttackList.h */,
+				AA84B7050996F8370085EECB /* AdjustSync.cpp */,
+				AA84B7060996F8370085EECB /* AdjustSync.h */,
 				AAFF5541054E736D00D02EE9 /* Attack.cpp */,
 				AAFF5542054E736D00D02EE9 /* Attack.h */,
 				AAAB2CDD072BD2EC00CD9FC9 /* AutoKeysounds.cpp */,
@@ -3586,6 +3592,7 @@
 				AA4470BC098476F600983E82 /* KeyboardDevice.h in Headers */,
 				AAC0C8C30984AE3B0075FC53 /* Tween.h in Headers */,
 				AA65877C098C322800CE55CC /* ScreenUnlockStatus.h in Headers */,
+				AA84B7080996F8370085EECB /* AdjustSync.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4150,6 +4157,7 @@
 				AA4470BD098476F600983E82 /* KeyboardDevice.cpp in Sources */,
 				AAC0C8C20984AE3B0075FC53 /* Tween.cpp in Sources */,
 				AA65877B098C322800CE55CC /* ScreenUnlockStatus.cpp in Sources */,
+				AA84B7070996F8370085EECB /* AdjustSync.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
