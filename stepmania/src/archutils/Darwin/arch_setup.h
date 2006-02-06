@@ -34,14 +34,17 @@ typedef unsigned long long UInt64;
  * even though they resolve to the same thing (bug in gcc?). */
 #define HAVE_MACHINE_ENDIAN_H
 
-// Looking ahead to "Universal binaries."
-#ifdef __ppc__
+#if defined(__ppc__)
+# define CPU_PPC
 # define ENDIAN_BIG
 # define BACKTRACE_LOOKUP_METHOD_DARWIN_DYLD
 # define BACKTRACE_METHOD_POWERPC_DARWIN
 # define CRASH_HANDLER
-#else
+#elif defined(__i386__)
+# define CPU_X86
 # define ENDIAN_LITTLE
+# define BACKTRACE_METHOD_X86_DARWIN
+# define BACKTRACE_LOOKUP_METHOD_DLADDR
 #endif
 
 #ifndef MACOSX
@@ -197,7 +200,7 @@ namespace std
 #endif
 
 /*
- * (c) 2003-2005 Steve Checkoway
+ * (c) 2003-2006 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

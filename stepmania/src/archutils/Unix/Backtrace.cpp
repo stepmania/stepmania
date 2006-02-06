@@ -404,6 +404,22 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 
 	do_backtrace( buf, size, ctx );
 }
+#elif defined(BACKTRACE_METHOD_X86_DARWIN)
+void InitializeBacktrace() { }
+
+void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc )
+{
+	ctx->ip = (void *) uc->uc_mcontext->ss.eip;
+	ctx->bp = (void *) uc->uc_mcontext->ss.ebp;
+	ctx->sp = (void *) uc->uc_mcontext->ss.esp;
+}
+
+void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
+{
+	buf[0] = BACKTRACE_METHOD_NOT_AVAILABLE;
+	buf[1] = NULL;
+}
+
 #elif defined(BACKTRACE_METHOD_POWERPC_DARWIN)
 typedef struct Frame
 {
