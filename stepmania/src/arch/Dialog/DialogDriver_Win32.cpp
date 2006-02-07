@@ -14,6 +14,7 @@
 #include "archutils/win32/WindowsResources.h"
 #include "archutils/win32/GraphicsWindow.h"
 #endif
+#include "archutils/win32/DialogUtil.h"
 
 static bool g_bHush;
 static RString g_sMessage;
@@ -29,22 +30,24 @@ static BOOL CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
 			// Disable the parent window, like a modal MessageBox does.
 			EnableWindow( GetParent(hWnd), FALSE );
 
+			DialogUtil::LocalizeDialogAndContents( hWnd );
+
 			// Hide or display "Don't show this message."
 			g_bHush = false;
 			HWND hHushButton = GetDlgItem( hWnd, IDC_HUSH );
-	        int iStyle = GetWindowLong( hHushButton, GWL_STYLE );
+			int iStyle = GetWindowLong( hHushButton, GWL_STYLE );
 
 			if( g_bAllowHush )
 				iStyle |= WS_VISIBLE;
 			else
 				iStyle &= ~WS_VISIBLE;
-	        SetWindowLong( hHushButton, GWL_STYLE, iStyle );
+			SetWindowLong( hHushButton, GWL_STYLE, iStyle );
 
 			// Set static text.
 			RString sMessage = g_sMessage;
 			sMessage.Replace( "\n", "\r\n" );
 			SetWindowText( GetDlgItem(hWnd, IDC_MESSAGE), sMessage );
-			
+
 			// Focus is on any of the controls in the dialog by default.
 			// I'm not sure why.  Set focus to the button manually. -Chris
 			SetFocus( GetDlgItem(hWnd, IDOK) );
@@ -118,6 +121,9 @@ static BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 			RString sMessage = g_sErrorString;
 			sMessage.Replace( "\n", "\r\n" );
 			SetWindowText( GetDlgItem(hWnd, IDC_EDIT_ERROR), sMessage );
+
+			DialogUtil::LocalizeDialogAndContents( hWnd );
+			DialogUtil::SetHeaderFont( hWnd, IDC_STATIC_HEADER_TEXT );
 		}
 		break;
 	case WM_COMMAND:
@@ -171,6 +177,8 @@ void DialogDriver_Win32::Error( RString sError, RString sID )
 	// throw up a pretty error dialog
 	AppInstance handle;
 	DialogBox( handle.Get(), MAKEINTRESOURCE(IDD_ERROR_DIALOG), NULL, ErrorWndProc );
+#else
+	::MessageBox( ::GetHwnd(), ConvertUTF8ToACP(sError).c_str(), ConvertUTF8ToACP(::GetWindowTitle()).c_str(), MB_OK );
 #endif
 }
 

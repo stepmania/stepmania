@@ -1603,6 +1603,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					RelativePath=".\archutils\Win32\DebugInfoHunt.h">
 				</File>
 				<File
+					RelativePath=".\archutils\Win32\DialogUtil.cpp">
+				</File>
+				<File
+					RelativePath=".\archutils\Win32\DialogUtil.h">
+				</File>
+				<File
 					RelativePath="archutils\Win32\GetFileInformation.cpp">
 				</File>
 				<File
@@ -3020,6 +3026,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 		</File>
 		<File
 			RelativePath="archutils\Win32\DialogErrorHeader.bmp">
+		</File>
+		<File
+			RelativePath=".\archutils\Win32\header.bmp">
 		</File>
 		<File
 			RelativePath="StepMania.xpm">

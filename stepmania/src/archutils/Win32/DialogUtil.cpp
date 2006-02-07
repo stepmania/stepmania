@@ -62,7 +62,7 @@ void DialogUtil::LocalizeDialogAndContents( HWND hdlg )
 	{
 		::GetWindowText( hdlg, szTemp, ARRAYSIZE(szTemp) );
 		RString s = szTemp;
-		sGroup = "Tools-"+s;
+		sGroup = "Dialog-"+s;
 		s = THEME->GetString( sGroup, s );
 		::SetWindowText( hdlg, ConvertUTF8ToACP(s).c_str() );
 	}

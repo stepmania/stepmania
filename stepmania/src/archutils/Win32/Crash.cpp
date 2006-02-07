@@ -12,7 +12,7 @@
 #include "archutils/Win32/WindowsResources.h"
 #include "crash.h"
 #include "ProductInfo.h"
-
+#include "archutils/win32/DialogUtil.h"
 #include "RageLog.h" /* for RageLog::GetAdditionalLog and Flush */
 #include "RageThreads.h" /* for GetCheckpointLogs */
 #include "PrefsManager.h" /* for g_bAutoRestart */
@@ -877,7 +877,11 @@ BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 			HWND hwndReason = GetDlgItem(hDlg, IDC_STATIC_BOMBREASON);
 
 			if (hFontMono)
+			{
 				SendMessage(hwndList, WM_SETFONT, (WPARAM)hFontMono, MAKELPARAM(TRUE, 0));
+				SendMessage(hwndReason, WM_SETFONT, (WPARAM)hFontMono, MAKELPARAM(TRUE, 0));
+			}
+			DialogUtil::SetHeaderFont( hDlg, IDC_STATIC_HEADER_TEXT );
 
 			ReportReason( hwndReason, NULL, &g_CrashInfo );
 			s_bHaveCallstack = ReportCallStack( hwndList, NULL, g_CrashInfo.m_BacktracePointers );
