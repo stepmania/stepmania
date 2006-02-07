@@ -8,21 +8,21 @@
 // this will not work on 95 and NT because of EnumDisplayDevices
 RString GetPrimaryVideoName()
 {
-    typedef BOOL (WINAPI* pfnEnumDisplayDevices)(PVOID,DWORD,PDISPLAY_DEVICE,DWORD);
+	typedef BOOL (WINAPI* pfnEnumDisplayDevices)(PVOID,DWORD,PDISPLAY_DEVICE,DWORD);
 	pfnEnumDisplayDevices EnumDisplayDevices;
-    HINSTANCE hInstUser32;
-    
-    hInstUser32 = LoadLibrary( "User32.DLL" );
-    if( !hInstUser32 ) 
+	HINSTANCE hInstUser32;
+
+	hInstUser32 = LoadLibrary( "User32.DLL" );
+	if( !hInstUser32 ) 
 		return RString();  
 
 	// VC6 don't have a stub to static link with, so link dynamically.
 	EnumDisplayDevices = (pfnEnumDisplayDevices)GetProcAddress(hInstUser32,"EnumDisplayDevicesA");
-    if( EnumDisplayDevices == NULL )
+	if( EnumDisplayDevices == NULL )
 	{
-        FreeLibrary(hInstUser32);
-        return RString();
-    }
+		FreeLibrary(hInstUser32);
+		return RString();
+	}
 	
 	RString sPrimaryDeviceName;
 	for( int i=0; true; ++i )
@@ -39,7 +39,7 @@ RString GetPrimaryVideoName()
 		}
 	}
 
-    FreeLibrary( hInstUser32 );
+	FreeLibrary( hInstUser32 );
 	return sPrimaryDeviceName;
 }
 
