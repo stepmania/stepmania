@@ -141,7 +141,8 @@ static void StoreActualGraphicOptions()
 	PREFSMAN->m_iDisplayWidth	.Set( params.width );
 	PREFSMAN->m_iDisplayHeight	.Set( params.height );
 	PREFSMAN->m_iDisplayColorDepth	.Set( params.bpp );
-	PREFSMAN->m_iRefreshRate	.Set( params.rate );
+	if( PREFSMAN->m_iRefreshRate != REFRESH_DEFAULT )
+		PREFSMAN->m_iRefreshRate.Set( params.rate );
 	PREFSMAN->m_bVsync		.Set( params.vsync );
 
 	Dialog::SetWindowed( params.windowed );
