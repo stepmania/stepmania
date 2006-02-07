@@ -1494,10 +1494,10 @@ void ScreenGameplay::UpdateSongPosition( float fDeltaTime )
 
 void ScreenGameplay::BeginScreen()
 {
-	ScreenWithMenuElements::BeginScreen();
-
 	if( GAMESTATE->m_pCurSong == NULL  )
 		return;
+
+	ScreenWithMenuElements::BeginScreen();
 
 	SOUND->PlayOnceFromAnnouncer( "gameplay intro" );	// crowd cheer
 
