@@ -420,13 +420,13 @@ void LowLevelWindow_Cocoa::GetDisplayResolutions( DisplayResolutions &dr ) const
 		int width = GetIntValue( CFDictionaryGetValue(dict, kCGDisplayWidth) );
 		int height = GetIntValue( CFDictionaryGetValue(dict, kCGDisplayHeight) );
 		CFTypeRef safe = CFDictionaryGetValue( dict, kCGDisplayModeIsSafeForHardware );
-		//bool stretched = GetBoolValue( CFDictionaryGetValue(dict, kCGDisplayModeIsStretched) );
+		bool stretched = GetBoolValue( CFDictionaryGetValue(dict, kCGDisplayModeIsStretched) );
 		
 		if( !width || !height )
 			continue;
 		if( safe && !GetBoolValue( safe ) )
 			continue;
-		DisplayResolution res = { width, height };
+		DisplayResolution res = { width, height, stretched };
 		dr.insert( res );
 	}
 	// Do not release modes! We don't own it here.
