@@ -197,7 +197,7 @@ static void DisplayResolutionChoices( vector<RString> &out )
 	DisplayResolutions d;
 	DISPLAY->GetDisplayResolutions( d );
 	
-	FOREACHS_CONST( DisplayResolution, d.s, iter )
+	FOREACHS_CONST( DisplayResolution, d, iter )
 	{
 		RString s = ssprintf("%dx%d", iter->iWidth, iter->iHeight);
 		out.push_back( s );
@@ -460,7 +460,7 @@ static void DisplayResolutionM( int &sel, bool ToSel, const ConfOption *pConfOpt
 	DisplayResolutions d;
 	DISPLAY->GetDisplayResolutions( d );
 	
-	FOREACHS_CONST( DisplayResolution, d.s, iter )
+	FOREACHS_CONST( DisplayResolution, d, iter )
 	{
 		v.push_back( res_t(iter->iWidth, iter->iHeight) );
 	}

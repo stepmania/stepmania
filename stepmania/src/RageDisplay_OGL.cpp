@@ -441,7 +441,7 @@ RageDisplay_OGL::~RageDisplay_OGL()
 
 void RageDisplay_OGL::GetDisplayResolutions( DisplayResolutions &out ) const
 {
-	out.s.clear();
+	out.clear();
 	g_pWind->GetDisplayResolutions( out );
 }
 

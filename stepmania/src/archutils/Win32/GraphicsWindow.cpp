@@ -511,7 +511,7 @@ void GraphicsWindow::GetDisplayResolutions( DisplayResolutions &out )
 		if(ChangeDisplaySettings(&dm, CDS_TEST)==DISP_CHANGE_SUCCESSFUL)
 		{
 			DisplayResolution res = { dm.dmPelsWidth, dm.dmPelsHeight };
-			out.s.insert( res );
+			out.insert( res );
 		}
 	}
 }

@@ -19,11 +19,7 @@ public:
 	}
 };
 
-class DisplayResolutions
-{
-public:
-	set<DisplayResolution> s;
-};
+typedef set<DisplayResolution> DisplayResolutions;
 
 #endif
 

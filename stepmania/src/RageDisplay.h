@@ -5,7 +5,10 @@
 
 #include "RageTypes.h"
 #include "ModelTypes.h"
-class DisplayResolutions;
+#include <set>
+
+class DisplayResolution;
+typedef set<DisplayResolution> DisplayResolutions;
 
 const int REFRESH_DEFAULT = 0;
 struct RageSurface;

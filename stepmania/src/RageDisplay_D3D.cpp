@@ -310,7 +310,7 @@ void RageDisplay_D3D::GetDisplayResolutions( DisplayResolutions &out ) const
 		g_pd3d->EnumAdapterModes( D3DADAPTER_DEFAULT, i, &mode );
 
 		DisplayResolution res = { mode.Width, mode.Height };
-		out.s.insert( res );
+		out.insert( res );
 	}
 }
 

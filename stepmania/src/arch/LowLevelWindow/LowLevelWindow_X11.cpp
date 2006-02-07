@@ -300,7 +300,7 @@ void LowLevelWindow_X11::GetDisplayResolutions( DisplayResolutions &out ) const
 	for( int i = 0; i < iSizesXct; ++i )
 	{
 		DisplayResolution res = { pSizesX[i].width, pSizesX[i].height };
-		out.s.insert( res );
+		out.insert( res );
 	}
 }
 

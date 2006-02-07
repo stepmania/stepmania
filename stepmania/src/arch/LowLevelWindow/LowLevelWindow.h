@@ -3,7 +3,10 @@
 
 /* This handles low-level operations that OGL 1.x doesn't give us. */
 
-class DisplayResolutions;
+#include <set>
+
+class DisplayResolution;
+typedef set<DisplayResolution> DisplayResolutions;
 class VideoModeParams;
 
 class LowLevelWindow

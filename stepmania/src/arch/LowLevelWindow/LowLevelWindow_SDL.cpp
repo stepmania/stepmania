@@ -218,7 +218,7 @@ void LowLevelWindow_SDL::GetDisplayResolutions( DisplayResolutions &out ) const
 	for(int i=0; modes[i]; ++i )
 	{
 		DisplayResolution res = { modes[i]->w, modes[i]->h };
-		out.s.insert( res );
+		out.insert( res );
 	}
 }
 

@@ -427,7 +427,7 @@ void LowLevelWindow_Cocoa::GetDisplayResolutions( DisplayResolutions &dr ) const
 		if( safe && !GetBoolValue( safe ) )
 			continue;
 		DisplayResolution res = { width, height };
-		dr.s.insert( res );
+		dr.insert( res );
 	}
 	// Do not release modes! We don't own it here.
 }

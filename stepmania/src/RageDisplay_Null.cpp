@@ -85,9 +85,9 @@ RString RageDisplay_Null::Init( const VideoModeParams &p, bool bAllowUnaccelerat
 
 void RageDisplay_Null::GetDisplayResolutions( DisplayResolutions &out ) const
 {
-	out.s.clear();
+	out.clear();
 	DisplayResolution res = { 640, 480 };
-	out.s.insert( res );
+	out.insert( res );
 }
 
 RageSurface* RageDisplay_Null::CreateScreenshot()
