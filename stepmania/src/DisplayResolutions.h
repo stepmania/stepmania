@@ -8,12 +8,14 @@ class DisplayResolution
 public:
 	int iWidth;
 	int iHeight;
+	bool bStretched;
 
 	bool operator<( const DisplayResolution &other ) const
 	{
 #define COMPARE(x) if( x != other.x ) return x < other.x;
 		COMPARE( iWidth );
 		COMPARE( iHeight );
+		COMPARE( bStretched );
 #undef COMPARE
 		return false;
 	}
