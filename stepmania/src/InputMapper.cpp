@@ -340,7 +340,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			//{ 0, JOY_BUTTON_6,	/* Square */	DANCE_BUTTON_BACK,	false },
 			//{ 1, JOY_BUTTON_7,	/* X */		DANCE_BUTTON_START,	false },
 			{ 0, JOY_BUTTON_8,	/* O */		DANCE_BUTTON_START,	false },
-			{ 0, JOY_BUTTON_9,	/* Start */	DANCE_BUTTON_START,	false },
+			{ 1, JOY_BUTTON_9,	/* Start */	DANCE_BUTTON_START,	false },
 			//{ 0, JOY_BUTTON_10,	/* Sel */	DANCE_BUTTON_START,	false },
 			END_MARKER
 		}
