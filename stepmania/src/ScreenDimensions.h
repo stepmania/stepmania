@@ -5,7 +5,6 @@
 
 namespace ScreenDimensions
 {
-	float GetScreenAspectRatio();
 	float GetThemeAspectRatio();
 	float GetScreenWidth();
 	float GetScreenHeight();
@@ -15,17 +14,17 @@ namespace ScreenDimensions
 #define SCREEN_WIDTH	ScreenDimensions::GetScreenWidth()
 #define SCREEN_HEIGHT	ScreenDimensions::GetScreenHeight()
 
-#define		SCREEN_LEFT		(0)
-#define		SCREEN_RIGHT	(SCREEN_WIDTH)
-#define		SCREEN_TOP		(0)
-#define		SCREEN_BOTTOM	(SCREEN_HEIGHT)
+#define	SCREEN_LEFT	(0)
+#define	SCREEN_RIGHT	(SCREEN_WIDTH)
+#define	SCREEN_TOP	(0)
+#define	SCREEN_BOTTOM	(SCREEN_HEIGHT)
 
-#define		SCREEN_CENTER_X		(SCREEN_LEFT + (SCREEN_RIGHT - SCREEN_LEFT)/2.0f)
-#define		SCREEN_CENTER_Y		(SCREEN_TOP + (SCREEN_BOTTOM - SCREEN_TOP)/2.0f)
+#define	SCREEN_CENTER_X	(SCREEN_LEFT + (SCREEN_RIGHT - SCREEN_LEFT)/2.0f)
+#define	SCREEN_CENTER_Y	(SCREEN_TOP + (SCREEN_BOTTOM - SCREEN_TOP)/2.0f)
 
 #define FullScreenRectF RectF(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM)
 
-#define	ARROW_SIZE		(64)
+#define	ARROW_SIZE	(64)
 
 #endif
 

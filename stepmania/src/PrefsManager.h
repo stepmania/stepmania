@@ -43,6 +43,7 @@ public:
 	Preference<bool>	m_bWindowed;
 	Preference<int>		m_iDisplayWidth;
 	Preference<int>		m_iDisplayHeight;
+	Preference<float>	m_fDisplayAspectRatio;
 	Preference<int>		m_iDisplayColorDepth;
 	Preference<int>		m_iTextureColorDepth;
 	Preference<int>		m_iMovieColorDepth;

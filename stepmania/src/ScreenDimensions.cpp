@@ -27,24 +27,6 @@ static ThemeMetric<float> THEME_SCREEN_HEIGHT("Common","ScreenHeight");
  */
 #define THEME_NATIVE_ASPECT (THEME_SCREEN_WIDTH/THEME_SCREEN_HEIGHT)
 
-#define ASPECT_AUTO -1
-static Preference<float> g_fDisplayAspectRatio( "DisplayAspectRatio", ASPECT_AUTO );
-
-float ScreenDimensions::GetScreenAspectRatio()
-{
-	float fAspect = g_fDisplayAspectRatio;
-	if( fAspect == ASPECT_AUTO )
-	{
-		// Lua values will be reloaded after the display is created, so any value we 
-		// return before DISPLAY is created will never be used.
-		if( DISPLAY )
-			fAspect = DISPLAY->GetMonitorAspectRatio();
-		else
-			fAspect = 4/3.f;
-	}
-	return fAspect;
-}
-
 float ScreenDimensions::GetThemeAspectRatio()
 {
 	return THEME_NATIVE_ASPECT;
@@ -52,7 +34,7 @@ float ScreenDimensions::GetThemeAspectRatio()
 
 float ScreenDimensions::GetScreenWidth()
 {
-	float fAspect = GetScreenAspectRatio();
+	float fAspect = PREFSMAN->m_fDisplayAspectRatio;
 	float fScale = 1;
 	if( fAspect > THEME_NATIVE_ASPECT )
 		fScale = fAspect / THEME_NATIVE_ASPECT;
@@ -62,7 +44,7 @@ float ScreenDimensions::GetScreenWidth()
 
 float ScreenDimensions::GetScreenHeight()
 {
-	float fAspect = GetScreenAspectRatio();
+	float fAspect = PREFSMAN->m_fDisplayAspectRatio;
 	float fScale = 1;
 	if( fAspect < THEME_NATIVE_ASPECT )
 		fScale = THEME_NATIVE_ASPECT / fAspect;
@@ -86,7 +68,7 @@ void ScreenDimensions::ReloadScreenDimensions()
 	LUA->SetGlobal( "SCREEN_CENTER_Y", (int) SCREEN_CENTER_Y );
 }
 
-LuaFunction_NoArgs( GetScreenAspectRatio,	ScreenDimensions::GetScreenAspectRatio() );
+LuaFunction_NoArgs( GetScreenAspectRatio,	PREFSMAN->m_fDisplayAspectRatio );
 LuaFunction_NoArgs( GetThemeAspectRatio,	ScreenDimensions::GetThemeAspectRatio() );
 
 
