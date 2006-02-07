@@ -229,7 +229,7 @@ RString RageDisplay_D3D::Init( const VideoModeParams &p, bool bAllowUnaccelerate
 	if(!pDirect3DCreate8)
 	{
 		LOG->Trace( "Direct3DCreate8 not found" );
-		return D3D_NOT_INSTALLED;
+		return D3D_NOT_INSTALLED.GetValue();
 	}
 #endif
 
@@ -237,11 +237,11 @@ RString RageDisplay_D3D::Init( const VideoModeParams &p, bool bAllowUnaccelerate
 	if(!g_pd3d)
 	{
 		LOG->Trace( "Direct3DCreate8 failed" );
-		return D3D_NOT_INSTALLED;
+		return D3D_NOT_INSTALLED.GetValue();
 	}
 
 	if( FAILED( g_pd3d->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &g_DeviceCaps) ) )
-		return HARDWARE_ACCELERATION_NOT_AVAILABLE;
+		return HARDWARE_ACCELERATION_NOT_AVAILABLE.GetValue();
 			
 
 	D3DADAPTER_IDENTIFIER8	identifier;
