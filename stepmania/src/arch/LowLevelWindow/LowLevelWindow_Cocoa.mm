@@ -12,6 +12,12 @@
 #import <OpenGL/gl.h>
 #import <mach-o/dyld.h>
 
+// Bad header!
+extern "C" {
+#include <IOKit/graphics/IOGraphicsLib.h>
+}
+
+
 static const unsigned int g_iStyleMask = NSTitledWindowMask | NSClosableWindowMask |
 					 NSMiniaturizableWindowMask | NSResizableWindowMask;
 static bool g_bResized;
@@ -364,8 +370,9 @@ void LowLevelWindow_Cocoa::SetActualParamsFromMode( CFDictionaryRef mode )
 {
 	SInt32 rate;
 	
-	if( CFNumberGetValue( (CFNumberRef)CFDictionaryGetValue(mode, CFSTR("RefreshRate")), kCFNumberSInt32Type, &rate) )
-		m_CurrentParams.rate = rate;
+	if( !CFNumberGetValue( (CFNumberRef)CFDictionaryGetValue(mode, CFSTR("RefreshRate")), kCFNumberSInt32Type, &rate) )
+		rate = 60;
+	m_CurrentParams.rate = rate;
 
 	if( !m_CurrentParams.windowed )
 	{
@@ -387,6 +394,20 @@ void LowLevelWindow_Cocoa::SetActualParamsFromMode( CFDictionaryRef mode )
 	m_CurrentParams.bpp = CGDisplayBitsPerPixel( kCGDirectMainDisplay );
 }
 
+static int GetIntValue( CFTypeRef r )
+{
+	int ret;
+	
+	if( !r || CFGetTypeID(r) != CFNumberGetTypeID() || !CFNumberGetValue(CFNumberRef(r), kCFNumberIntType, &ret) )
+		return 0;
+	return ret;
+}
+
+static bool GetBoolValue( CFTypeRef r )
+{
+	return r && CFGetTypeID( r ) == CFBooleanGetTypeID() && CFBooleanGetValue( CFBooleanRef(r) );
+}
+
 void LowLevelWindow_Cocoa::GetDisplayResolutions( DisplayResolutions &dr ) const
 {
 	CFArrayRef modes = CGDisplayAvailableModes( kCGDirectMainDisplay );
@@ -396,15 +417,15 @@ void LowLevelWindow_Cocoa::GetDisplayResolutions( DisplayResolutions &dr ) const
 	for( CFIndex i = 0; i < count; ++i )
 	{
 		CFDictionaryRef dict = (CFDictionaryRef)CFArrayGetValueAtIndex( modes, i );
-		CFNumberRef num = (CFNumberRef)CFDictionaryGetValue( dict, CFSTR("Width") );
-		SInt32 width, height;
+		int width = GetIntValue( CFDictionaryGetValue(dict, kCGDisplayWidth) );
+		int height = GetIntValue( CFDictionaryGetValue(dict, kCGDisplayHeight) );
+		CFTypeRef safe = CFDictionaryGetValue( dict, kCGDisplayModeIsSafeForHardware );
+		//bool stretched = GetBoolValue( CFDictionaryGetValue(dict, kCGDisplayModeIsStretched) );
 		
-		if( !num || !CFNumberGetValue(num, kCFNumberSInt32Type, &width) )
+		if( !width || !height )
 			continue;
-		num = (CFNumberRef)CFDictionaryGetValue( dict, CFSTR("Height") );
-		if( !num || !CFNumberGetValue(num, kCFNumberSInt32Type, &height) )
+		if( safe && !GetBoolValue( safe ) )
 			continue;
-		
 		DisplayResolution res = { width, height };
 		dr.s.insert( res );
 	}
@@ -413,6 +434,15 @@ void LowLevelWindow_Cocoa::GetDisplayResolutions( DisplayResolutions &dr ) const
 
 float LowLevelWindow_Cocoa::GetMonitorAspectRatio() const
 {
+	io_connect_t displayPort = CGDisplayIOServicePort( CGMainDisplayID() );
+	CFDictionaryRef dict = IODisplayCreateInfoDictionary( displayPort, 0 );
+	int width = GetIntValue( CFDictionaryGetValue(dict, CFSTR(kDisplayHorizontalImageSize)) );
+	int height = GetIntValue( CFDictionaryGetValue(dict, CFSTR(kDisplayVerticalImageSize)) );
+	
+	CFRelease( dict );
+	
+	if( width && height )
+		return float(width)/height;
 	return 4/3.f;
 }
 
