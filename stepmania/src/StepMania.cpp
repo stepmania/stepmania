@@ -116,7 +116,24 @@ static LocalizedString NO_VSYNC		("StepMania","NoVsync");
 static LocalizedString SMOOTH_LINES	("StepMania","SmoothLines");
 static LocalizedString NO_SMOOTH_LINES	("StepMania","NoSmoothLines");
 
-static void StoreActualGraphicOptions( bool initial )
+static RString GetActualGraphicOptionsString()
+{
+	const VideoModeParams &params = DISPLAY->GetActualVideoModeParams();
+	RString sFormat = "%s %s %dx%d %d "+COLOR.GetValue()+" %d "+TEXTURE.GetValue()+" %dHz %s %s";
+	RString sLog = ssprintf( sFormat,
+		DISPLAY->GetApiDescription().c_str(),
+		(params.windowed? WINDOWED : FULLSCREEN).GetValue().c_str(),
+		(int)params.width, 
+		(int)params.height, 
+		(int)params.bpp, 
+		(int)PREFSMAN->m_iTextureColorDepth, 
+		(int)params.rate,
+		(params.vsync? VSYNC : NO_VSYNC).GetValue().c_str(),
+		(PREFSMAN->m_bSmoothLines? SMOOTH_LINES : NO_SMOOTH_LINES).GetValue().c_str() );
+	return sLog;
+}
+
+static void StoreActualGraphicOptions()
 {
 	// find out what we actually have
 	const VideoModeParams &params = DISPLAY->GetActualVideoModeParams();
@@ -126,22 +143,6 @@ static void StoreActualGraphicOptions( bool initial )
 	PREFSMAN->m_iDisplayColorDepth	.Set( params.bpp );
 	PREFSMAN->m_iRefreshRate	.Set( params.rate );
 	PREFSMAN->m_bVsync		.Set( params.vsync );
-
-	RString sFormat = "%s %s %dx%d %d "+COLOR.GetValue()+" %d "+TEXTURE.GetValue()+" %dHz %s %s";
-	RString log = ssprintf( sFormat,
-		DISPLAY->GetApiDescription().c_str(),
-		(PREFSMAN->m_bWindowed ? WINDOWED : FULLSCREEN).GetValue().c_str(),
-		(int)PREFSMAN->m_iDisplayWidth, 
-		(int)PREFSMAN->m_iDisplayHeight, 
-		(int)PREFSMAN->m_iDisplayColorDepth, 
-		(int)PREFSMAN->m_iTextureColorDepth, 
-		(int)PREFSMAN->m_iRefreshRate,
-		(PREFSMAN->m_bVsync ? VSYNC : NO_VSYNC).GetValue().c_str(),
-		(PREFSMAN->m_bSmoothLines? SMOOTH_LINES : NO_SMOOTH_LINES).GetValue().c_str() );
-	if( initial )
-		LOG->Info( "%s", log.c_str() );
-	else
-		SCREENMAN->SystemMessage( log );
 
 	Dialog::SetWindowed( params.windowed );
 }
@@ -216,7 +217,8 @@ void StepMania::ApplyGraphicOptions()
 	if( bNeedReload )
 		TEXTUREMAN->ReloadAll();
 
-	StoreActualGraphicOptions( false );
+	StoreActualGraphicOptions();
+	SCREENMAN->SystemMessage( GetActualGraphicOptionsString() );
 
 	/* Give the input handlers a chance to re-open devices as necessary. */
 	INPUTMAN->WindowReset();
@@ -1052,7 +1054,8 @@ int main(int argc, char* argv[])
 
 	StartDisplay();
 
-	StoreActualGraphicOptions( true );
+	StoreActualGraphicOptions();
+	LOG->Info( "%s", GetActualGraphicOptionsString().c_str() );
 
 	SONGMAN->PreloadSongImages();
 
