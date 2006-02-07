@@ -6,6 +6,7 @@
 #include <windows.h>
 class VideoModeParams;
 class DisplayResolutions;
+class DisplayResolution;
 
 namespace GraphicsWindow
 {
@@ -20,6 +21,7 @@ namespace GraphicsWindow
 	void DestroyGraphicsWindow();
 
 	void GetDisplayResolutions( DisplayResolutions &out );
+	float GetMonitorAspectRatio();
 
 	const VideoModeParams &GetParams();
 	HDC GetHDC();

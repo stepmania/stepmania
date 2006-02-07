@@ -516,6 +516,18 @@ void GraphicsWindow::GetDisplayResolutions( DisplayResolutions &out )
 	}
 }
 
+float GraphicsWindow::GetMonitorAspectRatio()
+{
+	// There's no way to query the monitor for this, so assume that the
+	// normal desktop resolution is using square pixels.
+	DEVMODE dm;
+	ZERO( dm );
+	dm.dmSize = sizeof(dm);
+	BOOL bResult = EnumDisplaySettings( NULL, ENUM_REGISTRY_SETTINGS, &dm );
+	ASSERT( bResult );
+	return dm.dmPelsWidth / (float)dm.dmPelsHeight;
+}
+
 
 /*
  * (c) 2004 Glenn Maynard

@@ -411,6 +411,11 @@ void LowLevelWindow_Cocoa::GetDisplayResolutions( DisplayResolutions &dr ) const
 	// Do not release modes! We don't own it here.
 }
 
+float LowLevelWindow_Cocoa::GetMonitorAspectRatio() const
+{
+	return 4/3.f;
+}
+
 void LowLevelWindow_Cocoa::SwapBuffers()
 {
 	CGLFlushDrawable( CGLGetCurrentContext() );
