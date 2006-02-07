@@ -721,7 +721,7 @@ RageDisplay *CreateDisplay()
 		RString sError = pRet->Init( params, PREFSMAN->m_bAllowUnacceleratedRenderer );
 		if( !sError.empty() )
 		{
-			error += ssprintf(ERROR_INITIALIZING.GetValue(),sRenderer)+"\n" + sError;
+			error += ssprintf(ERROR_INITIALIZING.GetValue(), sRenderer.c_str())+"\n" + sError;
 			SAFE_DELETE( pRet );
 			error += "\n\n\n";
 			continue;
