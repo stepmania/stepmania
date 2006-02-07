@@ -59,6 +59,11 @@ void LowLevelWindow_Win32::GetDisplayResolutions( DisplayResolutions &out ) cons
 	GraphicsWindow::GetDisplayResolutions( out );
 }
 
+float LowLevelWindow_Win32::GetMonitorAspectRatio() const
+{
+	return GraphicsWindow::GetMonitorAspectRatio();
+}
+
 int ChooseWindowPixelFormat( const VideoModeParams &p, PIXELFORMATDESCRIPTOR *PixelFormat )
 {
 	ASSERT( GraphicsWindow::GetHwnd() != NULL );
