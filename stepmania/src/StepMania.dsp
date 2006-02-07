@@ -1,5 +1,5 @@
 # Microsoft Developer Studio Project File - Name="StepMania" - Package Owner=<4>
-# Microsoft Developer Studio Generated Build File, Format Version 6.00
+# Microsoft Developer Studio Generated Build File, Format Version 60000
 # ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Application" 0x0101
@@ -62,7 +62,7 @@ IntDir=.\../Debug6
 TargetDir=\cvs\stepmania\Program
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc    cl    /Zl    /nologo    /c    verstub.cpp    /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc     cl     /Zl     /nologo     /c     verstub.cpp     /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -99,7 +99,7 @@ IntDir=.\../Release6
 TargetDir=\cvs\stepmania\Program
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc    cl    /Zl    /nologo    /c    verstub.cpp    /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc     cl     /Zl     /nologo     /c     verstub.cpp     /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -665,6 +665,14 @@ SOURCE=.\ActorCommands.cpp
 # Begin Source File
 
 SOURCE=.\ActorCommands.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\AdjustSync.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\AdjustSync.h
 # End Source File
 # Begin Source File
 
