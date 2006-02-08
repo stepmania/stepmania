@@ -9,7 +9,6 @@
 #include "RageTextureManager.h"
 #include "RageMath.h"
 #include "RageTypes.h"
-#include "StepMania.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
 #include "EnumHelper.h"
