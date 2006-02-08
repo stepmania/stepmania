@@ -385,22 +385,18 @@ void ScreenPackages::HTMLParse()
 	UpdateLinksList();
 }
 
-RString ScreenPackages::URLEncode( const RString &URL )
+RString ScreenPackages::URLEncode( const RString &sInput )
 {
-	RString Input = StripOutContainers( URL );
-	RString Output;
-
-	for( unsigned k = 0; k < Input.size(); k++ )
+	RString sOutput;
+	for( unsigned k = 0; k < sInput.size(); k++ )
 	{
-		char t = Input.at( k );
-		if ( ( t >= '!' ) && ( t <= 'z' ) )
-		{
-			Output+=t;
-		}
+		char t = sInput[k];
+		if( t >= '!' && t <= 'z' )
+			sOutput += t;
 		else
-			Output += "%" + ssprintf( "%X", t );
+			sOutput += "%" + ssprintf( "%X", t );
 	}
-	return Output;
+	return sOutput;
 }
 
 RString ScreenPackages::StripOutContainers( const RString & In )
@@ -523,7 +519,7 @@ void ScreenPackages::EnterURL( const RString & sURL )
 	}
 	//Continue...
 
-	sAddress = URLEncode( sAddress );
+	sAddress = URLEncode( StripOutContainers(sAddress) );
 
 	if ( sAddress != "/" )
 		sAddress = "/" + sAddress;
