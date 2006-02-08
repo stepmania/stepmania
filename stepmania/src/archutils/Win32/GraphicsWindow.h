@@ -4,8 +4,8 @@
 #define GRAPHICS_WINDOW_H
 
 #include <windows.h>
+#include "DisplayResolutions.h"
 class VideoModeParams;
-class DisplayResolutions;
 class DisplayResolution;
 
 namespace GraphicsWindow

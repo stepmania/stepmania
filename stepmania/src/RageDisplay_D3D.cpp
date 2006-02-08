@@ -301,7 +301,7 @@ RageDisplay_D3D::~RageDisplay_D3D()
 
 void RageDisplay_D3D::GetDisplayResolutions( DisplayResolutions &out ) const
 {
-	out.s.clear();
+	out.clear();
 	int iCnt = g_pd3d->GetAdapterModeCount( D3DADAPTER_DEFAULT );
 
 	for( int i = 0; i < iCnt; ++i )
