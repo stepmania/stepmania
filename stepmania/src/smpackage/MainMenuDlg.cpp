@@ -174,6 +174,8 @@ BOOL MainMenuDlg::OnInitDialog()
 	DialogUtil::LocalizeDialogAndContents( *this );
 	DialogUtil::SetHeaderFont( *this, IDC_STATIC_HEADER_TEXT );
 
+	//DialogUtil::SetDlgItemHeader( *this, IDC_STATIC_HEADER_TEXT, "header" );
+
 	TCHAR szCurDir[MAX_PATH];
 	GetCurrentDirectory( ARRAYSIZE(szCurDir), szCurDir );
 	GetDlgItem( IDC_EDIT_INSTALLATION )->SetWindowText( szCurDir );
@@ -263,10 +265,14 @@ HBRUSH MainMenuDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	HBRUSH hbr = CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
 
 	// TODO:  Change any attributes of the DC here
-	if( pWnd->GetDlgCtrlID() == IDC_STATIC_HEADER_TEXT )
+	switch( pWnd->GetDlgCtrlID() )
 	{
-        hbr = (HBRUSH)::GetStockObject(HOLLOW_BRUSH); 
-        pDC->SetBkMode(TRANSPARENT); 
+	case IDC_STATIC_HEADER_TEXT:
+	case IDC_STATIC_ICON:
+		hbr = (HBRUSH)::GetStockObject(WHITE_BRUSH); 
+		pDC->SetBkMode(OPAQUE);
+		pDC->SetBkColor( RGB(255,255,255) );
+		break;
 	}
 
 	// TODO:  Return a different brush if the default is not desired

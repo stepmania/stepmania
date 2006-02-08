@@ -163,21 +163,6 @@ void ChangeGameSettings::OnOK()
 	CDialog::OnOK();
 }
 
-HBRUSH ChangeGameSettings::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
-{
-	HBRUSH hbr = CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
-
-	// TODO:  Change any attributes of the DC here
-	if( pWnd->GetDlgCtrlID() == IDC_STATIC_HEADER_TEXT )
-	{
-        hbr = (HBRUSH)::GetStockObject(HOLLOW_BRUSH); 
-        pDC->SetBkMode(TRANSPARENT); 
-	}
-
-	// TODO:  Return a different brush if the default is not desired
-	return hbr;
-}
-
 /*
  * (c) 2002-2005 Chris Danford
  * All rights reserved.

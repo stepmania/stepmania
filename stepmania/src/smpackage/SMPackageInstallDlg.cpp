@@ -415,10 +415,14 @@ HBRUSH CSMPackageInstallDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	HBRUSH hbr = CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
 
 	// TODO:  Change any attributes of the DC here
-	if( pWnd->GetDlgCtrlID() == IDC_STATIC_HEADER_TEXT )
+	switch( pWnd->GetDlgCtrlID() )
 	{
-        hbr = (HBRUSH)::GetStockObject(HOLLOW_BRUSH); 
-        pDC->SetBkMode(TRANSPARENT); 
+	case IDC_STATIC_HEADER_TEXT:
+	case IDC_STATIC_ICON:
+		hbr = (HBRUSH)::GetStockObject(WHITE_BRUSH); 
+		pDC->SetBkMode(OPAQUE);
+		pDC->SetBkColor( RGB(255,255,255) );
+		break;
 	}
 
 	// TODO:  Return a different brush if the default is not desired

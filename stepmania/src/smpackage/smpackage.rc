@@ -84,7 +84,6 @@ BEGIN
     DEFPUSHBUTTON   "Finish >",IDOK,200,215,55,15
     PUSHBUTTON      "Cancel",IDCANCEL,275,215,50,15
     PUSHBUTTON      "< Back",IDC_BUTTON_BACK,145,215,55,15,WS_DISABLED
-    CONTROL         1045,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
     EDITTEXT        IDC_EDIT_MESSAGE2,5,90,320,87,ES_MULTILINE | 
                     ES_AUTOHSCROLL | ES_READONLY | WS_VSCROLL | NOT 
                     WS_TABSTOP
@@ -93,13 +92,17 @@ BEGIN
     PUSHBUTTON      "Edit Installations",IDC_BUTTON_EDIT,233,194,85,14
     CONTROL         "",IDC_PROGRESS1,"msctls_progress32",NOT WS_VISIBLE | 
                     WS_BORDER,7,72,318,14
-    LTEXT           "Install a package",IDC_STATIC_HEADER_TEXT,5,5,280,24
     LTEXT           "You have chosen to install the package:",
                     IDC_STATIC_MESSAGE1,7,41,318,10
     LTEXT           "This package contains the following files:",
                     IDC_STATIC_MESSAGE2,7,76,318,10
     LTEXT           "The package will be installed in the following program folder:",
                     IDC_STATIC,7,181,318,10
+    CONTROL         "",IDC_STATIC,"Static",SS_WHITERECT,0,0,331,33
+    LTEXT           "Install a package",IDC_STATIC_HEADER_TEXT,6,4,273,20
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDFRAME,0,33,331,1
+    ICON            IDR_MAINFRAME,IDC_STATIC_ICON,295,6,21,20,0,
+                    WS_EX_TRANSPARENT
 END
 
 IDD_EXPORTER DIALOGEX 0, 0, 349, 222
@@ -165,8 +168,10 @@ STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "StepMania Tools Main Menu"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
+    CONTROL         "",IDC_STATIC,"Static",SS_WHITERECT,0,0,331,33
+    LTEXT           "StepMania Tools Main Menu",IDC_STATIC_HEADER_TEXT,6,4,
+                    273,20
     DEFPUSHBUTTON   "Exit",IDOK,275,263,50,14
-    CONTROL         1045,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
     GROUPBOX        "Installation",IDC_STATIC,7,41,318,28
     PUSHBUTTON      "Edit Installations",IDC_EDIT_INSTALLATIONS,233,49,83,15
     GROUPBOX        "Create and Share",IDC_STATIC,7,176,318,78
@@ -191,12 +196,13 @@ BEGIN
     PUSHBUTTON      "Languages",IDC_LANGUAGES,14,232,91,15
     LTEXT           "Create a new or manage existing language translations.",
                     IDC_STATIC,109,232,213,20
-    LTEXT           "StepMania Tools Main Menu",IDC_STATIC_HEADER_TEXT,5,5,
-                    280,24
     LTEXT           "Open the preferences file to make changes by hand.",
                     IDC_STATIC,109,127,213,18
     LTEXT           "Clear all preferences if you've made changes and the game won't start.",
                     IDC_STATIC,109,106,213,18
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDFRAME,0,33,331,1
+    ICON            IDR_MAINFRAME,IDC_STATIC_ICON,295,6,21,20,0,
+                    WS_EX_TRANSPARENT
 END
 
 IDD_ENTER_COMMENT DIALOGEX 0, 0, 312, 202
@@ -460,13 +466,6 @@ BEGIN
 END
 #endif    // APSTUDIO_INVOKED
 
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Bitmap
-//
-
-IDB_HEADER              BITMAP                  "header.bmp"
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 
