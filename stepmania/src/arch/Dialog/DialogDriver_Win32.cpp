@@ -117,13 +117,12 @@ static BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 	{
 	case WM_INITDIALOG:
 		{
+			DialogUtil::SetHeaderFont( hWnd, IDC_STATIC_HEADER_TEXT );
+		
 			// Set static text
 			RString sMessage = g_sErrorString;
 			sMessage.Replace( "\n", "\r\n" );
 			SetWindowText( GetDlgItem(hWnd, IDC_EDIT_ERROR), sMessage );
-
-			DialogUtil::LocalizeDialogAndContents( hWnd );
-			DialogUtil::SetHeaderFont( hWnd, IDC_STATIC_HEADER_TEXT );
 		}
 		break;
 	case WM_COMMAND:
