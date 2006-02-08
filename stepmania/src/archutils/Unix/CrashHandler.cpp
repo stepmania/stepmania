@@ -87,7 +87,7 @@ static void NORETURN spawn_child_process( int from_parent )
 	 * FDs except for 0-2 and to_child, and then assign to_child to 3. */
 	for( int fd = 3; fd < 1024; ++fd )
 		if( fd != from_parent ) close(fd);
-       
+
 	if( from_parent != 3 )
 	{
 		dup2( from_parent, 3 );
@@ -177,21 +177,21 @@ static void parent_process( int to_child, const CrashData *crash )
 			return;
 	}
 
-    /* 5. Write CHECKPOINTs. */
-    static char buf[1024*32];
-    Checkpoints::GetLogs( buf, sizeof(buf), "\n" );
-    size = strlen( buf )+1;
-    if( !parent_write(to_child, &size, sizeof(size)) )
+	/* 5. Write CHECKPOINTs. */
+	static char buf[1024*32];
+	Checkpoints::GetLogs( buf, sizeof(buf), "\n" );
+	size = strlen( buf )+1;
+	if( !parent_write(to_child, &size, sizeof(size)) )
 		return;
-    if( !parent_write(to_child, buf, size) )
+	if( !parent_write(to_child, buf, size) )
 		return;
 	
-    /* 6. Write the crashed thread's name. */
-    p = RageThread::GetCurThreadName();
-    size = strlen( p )+1;
-    if( !parent_write(to_child, &size, sizeof(size)) )
+	/* 6. Write the crashed thread's name. */
+	p = RageThread::GetCurThreadName();
+	size = strlen( p )+1;
+	if( !parent_write(to_child, &size, sizeof(size)) )
 		return;
-    if( !parent_write(to_child, p, size) )
+	if( !parent_write(to_child, p, size) )
 		return;
 }
 
@@ -268,7 +268,7 @@ static void RunCrashHandler( const CrashData *crash )
 		safe_print( fileno(stderr), "sigaction() failed: %s", strerror(errno), NULL );
 		/* non-fatal */
 	}
-	       
+
 	static int received = 0;
 	static int active = 0;
 
