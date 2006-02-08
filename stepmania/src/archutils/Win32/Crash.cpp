@@ -943,6 +943,26 @@ BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 			break;
 		}
 		break;
+	case WM_CTLCOLORSTATIC:
+		{
+			HDC hdc = (HDC)wParam;
+			HWND hwndStatic = (HWND)lParam;
+			HBRUSH hbr = NULL;
+
+			// TODO:  Change any attributes of the DC here
+			switch( GetDlgCtrlID(hwndStatic) )
+			{
+			case IDC_STATIC_HEADER_TEXT:
+			case IDC_STATIC_ICON:
+				hbr = (HBRUSH)::GetStockObject(WHITE_BRUSH); 
+				SetBkMode( hdc, OPAQUE );
+				SetBkColor( hdc, RGB(255,255,255) );
+				break;
+			}
+
+			// TODO:  Return a different brush if the default is not desired
+			return (BOOL)hbr;
+		}
 	}
 
 	return FALSE;

@@ -10,7 +10,6 @@
 #define IDD_DISASM_CRASH                120
 #define BITMAP_CRASH                    121
 #define BITMAP_ERROR                    129
-#define IDB_HEADER                      131
 #define IDC_SHOCKWAVEFLASH1             1000
 #define IDC_BUTTON_RESTART              1001
 #define IDM_TOGGLEFULLSCREEN            1002
@@ -35,6 +34,7 @@
 #define IDC_CHECK2                      1019
 #define IDC_SPLASH                      1020
 #define IDC_STATIC_HEADER_TEXT          1021
+#define IDC_STATIC_ICON                 1022
 #define IDC_ASMBOX                      1133
 #define IDC_REGDUMP                     1283
 #define IDC_STATIC_BOMBREASON           1284
@@ -48,7 +48,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        132
 #define _APS_NEXT_COMMAND_VALUE         40009
-#define _APS_NEXT_CONTROL_VALUE         1022
+#define _APS_NEXT_CONTROL_VALUE         1023
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

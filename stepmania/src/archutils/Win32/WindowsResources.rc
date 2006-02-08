@@ -31,16 +31,18 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION
 CAPTION "Fatal Error"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
+    CONTROL         "",IDC_STATIC,"Static",SS_WHITERECT,0,0,332,35
     DEFPUSHBUTTON   "Close",IDOK,265,215,60,15
     EDITTEXT        IDC_EDIT_ERROR,5,59,320,151,ES_MULTILINE | ES_READONLY | 
                     WS_VSCROLL | NOT WS_TABSTOP
     PUSHBUTTON      "View Log",IDC_BUTTON_VIEW_LOG,8,215,74,15
     PUSHBUTTON      "Report Error",IDC_BUTTON_REPORT,90,215,76,15
     PUSHBUTTON      "Restart Game",IDC_BUTTON_RESTART,175,215,80,15
-    CONTROL         131,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
     LTEXT           "Specific details about the error are shown in the box below:",
                     IDC_STATIC,7,45,319,11
     LTEXT           "Fatal Error",IDC_STATIC_HEADER_TEXT,5,5,249,23
+    ICON            IDI_ICON,IDC_STATIC_ICON,296,6,21,20
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDFRAME,0,34,332,1
 END
 
 IDD_LOADING_DIALOG DIALOG  0, 0, 312, 82
@@ -61,7 +63,6 @@ STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION
 CAPTION "Program Crash"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    CONTROL         131,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
     PUSHBUTTON      "&View Crash Info",IDC_CRASH_SAVE,29,169,94,15
     PUSHBUTTON      "View &Log",IDC_VIEW_LOG,128,169,63,15
     PUSHBUTTON      "Report the &Error",IDC_BUTTON_REPORT,196,169,89,15
@@ -72,9 +73,12 @@ BEGIN
     LTEXT           "A crash has occurred.  Diagnostic information has been saved to a file called ""crashinfo.txt"" in the game program directory.",
                     IDC_STATIC,8,41,312,19
     LTEXT           "Estimated call stack",IDC_STATIC,6,85,155,10
-    LTEXT           "Program Crash",IDC_STATIC_HEADER_TEXT,6,5,276,22
     LTEXT           "Crash reason:",IDC_STATIC,7,64,219,8
     CTEXT           "crash reason here",IDC_STATIC_BOMBREASON,6,72,322,11
+    CONTROL         "",IDC_STATIC,"Static",SS_WHITERECT,0,0,332,35
+    LTEXT           "Program Crash",IDC_STATIC_HEADER_TEXT,5,5,249,23
+    ICON            IDI_ICON,IDC_STATIC_ICON,296,6,21,20
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDFRAME,0,34,332,1
 END
 
 IDD_OK DIALOGEX 0, 0, 336, 98
@@ -200,13 +204,6 @@ BEGIN
     END
 END
 
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Bitmap
-//
-
-IDB_HEADER              BITMAP                  "header.bmp"
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 
