@@ -58,26 +58,21 @@ BEGIN
     CONTROL         "",IDC_SPLASH,"Static",SS_BITMAP,0,0,310,25
 END
 
-IDD_DISASM_CRASH DIALOGEX 0, 0, 332, 210
+IDD_DISASM_CRASH DIALOGEX 0, 0, 332, 114
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION
 CAPTION "Program Crash"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    PUSHBUTTON      "&View Crash Info",IDC_CRASH_SAVE,29,169,94,15
-    PUSHBUTTON      "View &Log",IDC_VIEW_LOG,128,169,63,15
-    PUSHBUTTON      "Report the &Error",IDC_BUTTON_REPORT,196,169,89,15
-    PUSHBUTTON      "&Close",IDC_BUTTON_CLOSE,278,191,50,15
-    PUSHBUTTON      "&Restart Game",IDC_BUTTON_RESTART,193,191,78,15
-    LISTBOX         IDC_CALL_STACK,6,96,316,65,LBS_NOINTEGRALHEIGHT | 
-                    WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "&View Crash Info",IDC_CRASH_SAVE,29,73,94,15
+    PUSHBUTTON      "View &Log",IDC_VIEW_LOG,128,73,63,15
+    PUSHBUTTON      "Report the &Error",IDC_BUTTON_REPORT,196,73,89,15
+    PUSHBUTTON      "&Close",IDC_BUTTON_CLOSE,278,95,50,15
+    PUSHBUTTON      "&Restart Game",IDC_BUTTON_RESTART,193,95,78,15
     LTEXT           "A crash has occurred.  Diagnostic information has been saved to a file called ""crashinfo.txt"" in the game program directory.",
                     IDC_STATIC,8,41,312,19
-    LTEXT           "Estimated call stack",IDC_STATIC,6,85,155,10
-    LTEXT           "Crash reason:",IDC_STATIC,7,64,219,8
-    CTEXT           "crash reason here",IDC_STATIC_BOMBREASON,6,72,322,11
     CONTROL         "",IDC_STATIC,"Static",SS_WHITERECT,0,0,332,35
     LTEXT           "Program Crash",IDC_STATIC_HEADER_TEXT,5,5,249,23
-    ICON            IDI_ICON,IDC_STATIC_ICON,296,6,21,20
+    ICON            IDI_ICON,IDC_STATIC_ICON,296,6,20,20
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDFRAME,0,34,332,1
 END
 
@@ -116,8 +111,8 @@ BEGIN
     BEGIN
         RIGHTMARGIN, 328
         VERTGUIDE, 6
-        BOTTOMMARGIN, 206
-        HORZGUIDE, 169
+        BOTTOMMARGIN, 110
+        HORZGUIDE, 96
     END
 
     IDD_OK, DIALOG
