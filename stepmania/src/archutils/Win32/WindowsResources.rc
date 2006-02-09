@@ -63,11 +63,11 @@ STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION
 CAPTION "Program Crash"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    PUSHBUTTON      "&View Crash Info",IDC_CRASH_SAVE,29,73,94,15
-    PUSHBUTTON      "View &Log",IDC_VIEW_LOG,128,73,63,15
-    PUSHBUTTON      "Report the &Error",IDC_BUTTON_REPORT,196,73,89,15
+    PUSHBUTTON      "&View Crash Info",IDC_CRASH_SAVE,40,73,94,15
+    PUSHBUTTON      "View &Log",IDC_VIEW_LOG,137,73,63,15
+    PUSHBUTTON      "Report the &Error",IDC_BUTTON_REPORT,203,73,89,15
     PUSHBUTTON      "&Close",IDC_BUTTON_CLOSE,278,95,50,15
-    PUSHBUTTON      "&Restart Game",IDC_BUTTON_RESTART,193,95,78,15
+    PUSHBUTTON      "&Restart Game",IDC_BUTTON_RESTART,197,95,78,15
     LTEXT           "A crash has occurred.  Diagnostic information has been saved to a file called ""crashinfo.txt"" in the game program directory.",
                     IDC_STATIC,8,41,312,19
     CONTROL         "",IDC_STATIC,"Static",SS_WHITERECT,0,0,332,35
