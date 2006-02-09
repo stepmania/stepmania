@@ -1597,6 +1597,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					RelativePath="archutils\Win32\Crash.h">
 				</File>
 				<File
+					RelativePath=".\archutils\Win32\CrashHandlerChild.cpp">
+				</File>
+				<File
+					RelativePath=".\archutils\Win32\CrashHandlerInternal.h">
+				</File>
+				<File
 					RelativePath=".\archutils\Win32\DebugInfoHunt.cpp">
 				</File>
 				<File
