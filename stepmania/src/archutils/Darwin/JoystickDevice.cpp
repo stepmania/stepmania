@@ -19,8 +19,16 @@ Joystick::Joystick() :	id( DEVICE_NONE ),
 
 bool JoystickDevice::AddLogicalDevice( int usagePage, int usage )
 {
-	if( usagePage != kHIDPage_GenericDesktop || usage != kHIDUsage_GD_Joystick )
+	if( usagePage != kHIDPage_GenericDesktop )
 		return false;
+	switch( usage )
+	{
+	case kHIDUsage_GD_Joystick:
+	case kHIDUsage_GD_GamePad:
+		break;
+	default:
+		return false;
+	}
 	m_vSticks.push_back( Joystick() );
 	return true;
 }
