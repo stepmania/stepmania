@@ -943,7 +943,7 @@ RString URLEncode( const RString &sStr )
 		if( t >= '!' && t <= 'z' )
 			sOutput += t;
 		else
-			sOutput += "%" + ssprintf( "%X", t );
+			sOutput += "%" + ssprintf( "%02X", t );
 	}
 	return sOutput;
 }
