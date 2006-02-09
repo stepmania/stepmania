@@ -55,6 +55,8 @@ void DialogUtil::SetHeaderFont( HWND hdlg, int nID )
 
 void DialogUtil::LocalizeDialogAndContents( HWND hdlg )
 {
+	ASSERT( THEME );
+
 	const int LARGE_STRING = 256;
 	char szTemp[LARGE_STRING] = "";
 	RString sGroup;
