@@ -77,7 +77,7 @@ void ScreenOptionsMemoryCard::CreateMenu()
 		def.m_sName = "No USB memory cards found";
 		def.m_sExplanationName = "No Memory Card";
 		def.m_vsChoices.push_back( "" );
-		def.m_bAllowThemeTitle = false;
+		def.m_bAllowThemeTitle = true;
 		def.m_bOneChoiceForAllPlayers = true;
 	}
 	
