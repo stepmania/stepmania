@@ -93,7 +93,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 	{
 		"dance",
 		"4 axis 16 button joystick",
-		"PC Magic Box",
+		"EMS USB2",
 		{
 			{ 0, JOY_BUTTON_16,	DANCE_BUTTON_LEFT,	false },
 			{ 0, JOY_BUTTON_14,	DANCE_BUTTON_RIGHT,	false },
@@ -401,7 +401,25 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 	},
 };
 
-void InputMapper::ApplyMapping( const Mapping *maps, GameController gc, InputDevice device )
+void InputMapper::Unmap( InputDevice id )
+{
+	for( int i=0; i<MAX_GAME_CONTROLLERS; i++ )
+	{
+		for( int j=0; j<MAX_GAME_BUTTONS; j++ )
+		{
+			for( int k=0; k<NUM_USER_GAME_TO_DEVICE_SLOTS; k++ )
+			{
+				DeviceInput &di = m_GItoDI[i][j][k];
+				if( di.device == id )
+					di.MakeInvalid();
+			}
+		}
+	}
+
+	UpdateTempDItoGI();
+}
+
+void InputMapper::ApplyMapping( const Mapping *maps, GameController gc, InputDevice id )
 {
 	for( int k=0; !maps[k].IsEndMarker(); k++ )
 	{
@@ -417,7 +435,7 @@ void InputMapper::ApplyMapping( const Mapping *maps, GameController gc, InputDev
 				continue;
 		}
 
-		DeviceInput di( device, maps[k].deviceButton );
+		DeviceInput di( id, maps[k].deviceButton );
 		GameInput gi( map_gc, maps[k].gb );
 		SetInputMap( di, gi, maps[k].iSlotIndex );
 	}
@@ -435,7 +453,7 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 
 	for( unsigned i=0; i<vDevices.size(); i++ )
 	{
-		InputDevice device = vDevices[i];
+		InputDevice id = vDevices[i];
 		RString sDescription = vDescriptions[i];
 		for( unsigned j=0; j<ARRAYSIZE(g_AutoJoyMappings); j++ )
 		{
@@ -459,7 +477,8 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 			LOG->Info( "Applying default joystick mapping #%d for device '%s' (%s)",
 				iNumJoysticksMapped+1, mapping.szDriverRegex, mapping.szControllerName );
 
-			ApplyMapping( mapping.maps, gc, device );
+			Unmap( id );
+			ApplyMapping( mapping.maps, gc, id );
 
 			iNumJoysticksMapped++;
 		}
