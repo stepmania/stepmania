@@ -372,7 +372,6 @@ RString SpliceProgramPath( RString fn )
 
 namespace
 {
-	HFONT hFontMono = NULL;
 	VDDebugInfo::Context g_debugInfo;
 
 	RString ReportCallStack( const void * const *Backtrace )
@@ -647,26 +646,6 @@ void ChildProcess()
 	/* Now that we've done that, the process is gone.  Don't use g_hParent. */
 	CloseHandle( SymbolLookup::g_hParent );
 	SymbolLookup::g_hParent = NULL;
-
-	hFontMono = CreateFont(
-		10,				// nHeight
-		0,				// nWidth
-		0,				// nEscapement
-		0,				// nOrientation
-		FW_DONTCARE,			// fnWeight
-		FALSE,				// fdwItalic
-		FALSE,				// fdwUnderline
-		FALSE,				// fdwStrikeOut
-		ANSI_CHARSET,			// fdwCharSet
-		OUT_DEFAULT_PRECIS,		// fdwOutputPrecision
-		CLIP_DEFAULT_PRECIS,		// fdwClipPrecision
-		DEFAULT_QUALITY,		// fdwQuality
-		DEFAULT_PITCH | FF_DONTCARE,	// fdwPitchAndFamily
-		"Lucida Console"
-	);
-
-	if( !hFontMono )
-		hFontMono = (HFONT) GetStockObject( ANSI_FIXED_FONT );
 
 	/* Little trick to get an HINSTANCE of ourself without having access to the hwnd ... */
 	{
