@@ -1,31 +1,35 @@
-/* Win32 crash handling. */
+#ifndef CRASH_HANDLER_INTERNAL_H
+#define CRASH_HANDLER_INTERNAL_H
 
-#ifndef CRASH_H
-#define CRASH_H
-#include <windows.h>
-namespace CrashHandler
+#define BACKTRACE_MAX_SIZE 100
+
+struct CrashInfo
 {
-	extern long __stdcall ExceptionHandler(struct _EXCEPTION_POINTERS *ExceptionInfo);
+	char m_CrashReason[1024*8];
 
-	void do_backtrace( const void **buf, size_t size, HANDLE hProcess, HANDLE hThread, const CONTEXT *pContext );
-	void SymLookup( const void *ptr, char *buf );
-	void ForceCrash( const char *reason );
-	void ForceDeadlock( RString reason, uint64_t iID );
+	const void *m_BacktracePointers[BACKTRACE_MAX_SIZE];
 
-	/* Inform the crash handler of a foreground window that may be fullscreen.  If
-	 * set, the crash handler will attempt to hide the window or reset the video
-	 * mode. */
-	void SetForegroundWindow( HWND hWnd );
+	enum { MAX_BACKTRACE_THREADS = 32 };
+	const void *m_AlternateThreadBacktrace[MAX_BACKTRACE_THREADS][BACKTRACE_MAX_SIZE];
+	char m_AlternateThreadName[MAX_BACKTRACE_THREADS][128];
 
-	void CrashHandlerHandleArgs( int argc, char* argv[] );
+	CrashInfo()
+	{
+		m_CrashReason[0] = 0;
+		memset( m_AlternateThreadBacktrace, 0, sizeof(m_AlternateThreadBacktrace) );
+		memset( m_AlternateThreadName, 0, sizeof(m_AlternateThreadName) );
+		m_BacktracePointers[0] = NULL;
+	}
 };
 
+#define CHILD_MAGIC_PARAMETER "--private-do-crash-handler"
+
 #endif
+
 /*
- * (c) 1998-2001 Avery Lee
- * (c) 2003-2004 Glenn Maynard
+ * (c) 2003-2006 Glenn Maynard
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -35,7 +39,7 @@ namespace CrashHandler
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

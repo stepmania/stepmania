@@ -2,50 +2,22 @@
 
 // DO NOT USE stdio.h!  printf() calls malloc()!
 //#include <stdio.h>
-#include <stdarg.h>
-#include <crtdbg.h>
 
 #include <windows.h>
-#include <tlhelp32.h>
 
 #include "arch/Threads/Threads_Win32.h"
-#include "archutils/Win32/WindowsResources.h"
 #include "crash.h"
-#include "ProductInfo.h"
-#include "archutils/win32/DialogUtil.h"
+#include "CrashHandlerInternal.h"
 #include "RageLog.h" /* for RageLog::GetAdditionalLog and Flush */
 #include "RageThreads.h" /* for GetCheckpointLogs */
 #include "PrefsManager.h" /* for g_bAutoRestart */
 #include "RestartProgram.h"
-
-#include "GotoURL.h"
-
-static HFONT hFontMono = NULL;
-
-static void DoSave();
-
-extern HINSTANCE g_hInstance;
-extern unsigned long version_num;
-extern const char *version_time;
-extern HINSTANCE g_hInstance;
-#define BACKTRACE_MAX_SIZE 100
 
 // WARNING: This is called from crash-time conditions!  No malloc() or new!!!
 
 #define malloc not_allowed_here
 #define new not_allowed_here
 
-
-static void GetVDIPath( char *buf, int bufsiz )
-{
-	GetModuleFileName( NULL, buf, bufsiz );
-	buf[bufsiz-5] = 0;
-	char *p = strrchr( buf, '.' );
-	if( p )
-		strcpy( p, ".vdi" );
-	else
-		strcat( buf, ".vdi" );
-}
 
 static void SpliceProgramPath(char *buf, int bufsiz, const char *fn) {
 	char tbuf[MAX_PATH];
@@ -56,50 +28,26 @@ static void SpliceProgramPath(char *buf, int bufsiz, const char *fn) {
 	strcpy(pszFile, fn);
 }
 
-struct VDDebugInfoContext
-{
-	VDDebugInfoContext() { pRVAHeap=NULL; }
-	bool Loaded() const { return pRVAHeap != NULL; }
-	void *pRawBlock;
-
-	int nBuildNumber;
-
-	const unsigned char *pRVAHeap;
-	unsigned	nFirstRVA;
-
-	const char *pFuncNameHeap;
-	const unsigned long (*pSegments)[2];
-	int		nSegments;
-	char	sFilename[1024];
-	char	szError[1024];
-};
-
-
-static VDDebugInfoContext g_debugInfo;
-
-BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
-
-
 ///////////////////////////////////////////////////////////////////////////
 
 static const struct ExceptionLookup {
 	DWORD	code;
 	const char *name;
 } exceptions[]={
-	{ EXCEPTION_ACCESS_VIOLATION,		"Access Violation"			},
-	{ EXCEPTION_BREAKPOINT,			"Breakpoint"				},
-	{ EXCEPTION_FLT_DENORMAL_OPERAND,	"FP Denormal Operand"			},
-	{ EXCEPTION_FLT_DIVIDE_BY_ZERO,		"FP Divide-by-Zero"			},
-	{ EXCEPTION_FLT_INEXACT_RESULT,		"FP Inexact Result"			},
-	{ EXCEPTION_FLT_INVALID_OPERATION,	"FP Invalid Operation"			},
-	{ EXCEPTION_FLT_OVERFLOW,		"FP Overflow",				},
-	{ EXCEPTION_FLT_STACK_CHECK,		"FP Stack Check",			},
-	{ EXCEPTION_FLT_UNDERFLOW,		"FP Underflow",				},
-	{ EXCEPTION_INT_DIVIDE_BY_ZERO,		"Integer Divide-by-Zero",		},
-	{ EXCEPTION_INT_OVERFLOW,		"Integer Overflow",			},
-	{ EXCEPTION_PRIV_INSTRUCTION,		"Privileged Instruction",		},
-	{ EXCEPTION_ILLEGAL_INSTRUCTION,	"Illegal instruction"			},
-	{ EXCEPTION_INVALID_HANDLE,		"Invalid handle"			},
+	{ EXCEPTION_ACCESS_VIOLATION,		"Access Violation"		},
+	{ EXCEPTION_BREAKPOINT,			"Breakpoint"			},
+	{ EXCEPTION_FLT_DENORMAL_OPERAND,	"FP Denormal Operand"		},
+	{ EXCEPTION_FLT_DIVIDE_BY_ZERO,		"FP Divide-by-Zero"		},
+	{ EXCEPTION_FLT_INEXACT_RESULT,		"FP Inexact Result"		},
+	{ EXCEPTION_FLT_INVALID_OPERATION,	"FP Invalid Operation"		},
+	{ EXCEPTION_FLT_OVERFLOW,		"FP Overflow",			},
+	{ EXCEPTION_FLT_STACK_CHECK,		"FP Stack Check",		},
+	{ EXCEPTION_FLT_UNDERFLOW,		"FP Underflow",			},
+	{ EXCEPTION_INT_DIVIDE_BY_ZERO,		"Integer Divide-by-Zero",	},
+	{ EXCEPTION_INT_OVERFLOW,		"Integer Overflow",		},
+	{ EXCEPTION_PRIV_INSTRUCTION,		"Privileged Instruction",	},
+	{ EXCEPTION_ILLEGAL_INSTRUCTION,	"Illegal instruction"		},
+	{ EXCEPTION_INVALID_HANDLE,		"Invalid handle"		},
 	{ 0xe06d7363,				"Unhandled Microsoft C++ Exception",	},
 	{ NULL },
 };
@@ -112,25 +60,6 @@ static const char *LookupException( DWORD code )
 
 	return NULL;
 }
-
-struct CrashInfo
-{
-	char m_CrashReason[1024*8];
-
-	const void *m_BacktracePointers[BACKTRACE_MAX_SIZE];
-
-	enum { MAX_BACKTRACE_THREADS = 32 };
-	const void *m_AlternateThreadBacktrace[MAX_BACKTRACE_THREADS][BACKTRACE_MAX_SIZE];
-	char m_AlternateThreadName[MAX_BACKTRACE_THREADS][128];
-
-	CrashInfo()
-	{
-		m_CrashReason[0] = 0;
-		memset( m_AlternateThreadBacktrace, 0, sizeof(m_AlternateThreadBacktrace) );
-		memset( m_AlternateThreadName, 0, sizeof(m_AlternateThreadName) );
-		m_BacktracePointers[0] = NULL;
-	}
-};
 
 static CrashInfo g_CrashInfo;
 static void GetReason( const EXCEPTION_RECORD *pRecord, CrashInfo *crash )
@@ -147,15 +76,191 @@ static void GetReason( const EXCEPTION_RECORD *pRecord, CrashInfo *crash )
 	}
 }
 
-long VDDebugInfoLookupRVA(VDDebugInfoContext *pctx, unsigned rva, char *buf, int buflen);
-bool VDDebugInfoInitFromMemory(VDDebugInfoContext *pctx, const void *_src);
-bool VDDebugInfoInitFromFile( VDDebugInfoContext *pctx );
-void VDDebugInfoDeinit( VDDebugInfoContext *pctx );
-
 static HWND g_hForegroundWnd = NULL;
 void CrashHandler::SetForegroundWindow( HWND hWnd )
 {
 	g_hForegroundWnd = hWnd;
+}
+
+void WriteToChild( HANDLE hPipe, const void *pData, size_t iSize )
+{
+	while( iSize )
+	{
+		DWORD iActual;
+		if( !WriteFile(hPipe, pData, iSize, &iActual, NULL) )
+			return;
+		iSize -= iActual;
+	}
+}
+
+/* Execute the child process.  Return a handle to the process, a writable handle
+ * to its stdin, and a readable handle to its stdout. */
+bool StartChild( HANDLE &hProcess, HANDLE &hToStdin, HANDLE &hFromStdout )
+{
+	char cwd[MAX_PATH];
+	SpliceProgramPath( cwd, MAX_PATH, "" );
+
+	STARTUPINFO si;
+	ZeroMemory( &si, sizeof(si) );
+	si.dwFlags |= STARTF_USESTDHANDLES;
+
+	{
+		SECURITY_ATTRIBUTES sa;
+		sa.nLength = sizeof(SECURITY_ATTRIBUTES);
+		sa.bInheritHandle = true;
+		sa.lpSecurityDescriptor = NULL;
+
+		CreatePipe( &si.hStdInput, &hToStdin, &sa, 0 );
+		CreatePipe( &hFromStdout, &si.hStdOutput, &sa, 0 );
+		SetHandleInformation( hToStdin, HANDLE_FLAG_INHERIT, 0 );
+		SetHandleInformation( hFromStdout, HANDLE_FLAG_INHERIT, 0 );
+	}
+
+	char szBuf[256] = "";
+	GetModuleFileName( NULL, szBuf, MAX_PATH );
+	strcat( szBuf, " " );
+	strcat( szBuf, CHILD_MAGIC_PARAMETER );
+
+	PROCESS_INFORMATION pi;
+	if( !CreateProcess(
+		NULL,		// pointer to name of executable module
+		szBuf,		// pointer to command line string
+		NULL,		// process security attributes
+		NULL,		// thread security attributes
+		true,		// handle inheritance flag
+		0,		// creation flags
+		NULL,		// pointer to new environment block
+		cwd,		// pointer to current directory name
+		&si,		// pointer to STARTUPINFO
+		&pi		// pointer to PROCESS_INFORMATION
+	) )
+		return false;
+
+	hProcess = pi.hProcess;
+
+	return true;
+}
+
+static const char *CrashGetModuleBaseName(HMODULE hmod, char *pszBaseName)
+{
+	char szPath1[MAX_PATH];
+	char szPath2[MAX_PATH];
+
+	__try {
+		if( !GetModuleFileName(hmod, szPath1, sizeof(szPath1)) )
+			return NULL;
+
+		char *pszFile;
+		DWORD dw = GetFullPathName( szPath1, sizeof(szPath2), szPath2, &pszFile );
+
+		if( !dw || dw > sizeof(szPath2) )
+			return NULL;
+
+		strcpy( pszBaseName, pszFile );
+
+		pszFile = pszBaseName;
+
+		char *period = NULL;
+		while( *pszFile++ )
+			if( pszFile[-1]=='.' )
+				period = pszFile-1;
+
+		if( period )
+			*period = 0;
+	} __except(1) {
+		return NULL;
+	}
+
+	return pszBaseName;
+}
+
+void RunChild()
+{
+	HANDLE hProcess, hToStdin, hFromStdout;
+	StartChild( hProcess, hToStdin, hFromStdout );
+
+	/* 0. Send a handle of this process to the crash handling process, which it can use to handle symbol lookups. */
+	{
+		HANDLE hTargetHandle;
+		DuplicateHandle(
+			GetCurrentProcess(),
+			GetCurrentProcess(),
+			hProcess,
+			&hTargetHandle,
+			0,
+			false,
+			DUPLICATE_SAME_ACCESS
+		);
+
+		WriteToChild( hToStdin, &hTargetHandle, sizeof(hTargetHandle) );
+	}
+
+        /* 1. Write the CrashData. */
+	WriteToChild( hToStdin, &g_CrashInfo, sizeof(g_CrashInfo) );
+
+        /* 2. Write info. */
+        const char *p = RageLog::GetInfo();
+        int iSize = strlen( p )+1;
+        WriteToChild( hToStdin, &iSize, sizeof(iSize) );
+        WriteToChild( hToStdin, p, iSize );
+
+        /* 3. Write AdditionalLog. */
+        p = RageLog::GetAdditionalLog();
+        iSize = strlen( p )+1;
+        WriteToChild( hToStdin, &iSize, sizeof(iSize) );
+        WriteToChild( hToStdin, p, iSize );
+
+        /* 4. Write RecentLogs. */
+        int cnt = 0;
+        const char *ps[1024];
+        while( cnt < 1024 && (ps[cnt] = RageLog::GetRecentLog( cnt )) != NULL )
+                ++cnt;
+
+        WriteToChild(hToStdin, &cnt, sizeof(cnt));
+        for( int i = 0; i < cnt; ++i )
+        {
+                iSize = strlen(ps[i])+1;
+                WriteToChild( hToStdin, &iSize, sizeof(iSize) );
+                WriteToChild( hToStdin, ps[i], iSize );
+        }
+
+        /* 5. Write CHECKPOINTs. */
+        static char buf[1024*32];
+        Checkpoints::GetLogs( buf, sizeof(buf), "$$" );
+        iSize = strlen( buf )+1;
+        WriteToChild( hToStdin, &iSize, sizeof(iSize) );
+        WriteToChild( hToStdin, buf, iSize );
+
+        /* 6. Write the crashed thread's name. */
+        p = RageThread::GetCurThreadName();
+        iSize = strlen( p )+1;
+        WriteToChild( hToStdin, &iSize, sizeof(iSize) );
+        WriteToChild( hToStdin, p, iSize );
+
+	/* The parent process needs to access this process briefly.  When it's done, it'll
+	 * write a byte to stdout.  Wait until we see that before exiting. */
+	while(1)
+	{
+		int iCmd;
+		DWORD iActual;
+		ReadFile( hFromStdout, &iCmd, sizeof(iCmd), &iActual, NULL );
+		if( iCmd == 0 )
+			break;
+
+		/* Ugly: the new process can't execute GetModuleFileName on this process,
+		 * since GetModuleFileNameEx might not be available.  Run the requests here. */
+		if( iCmd == 1 )
+		{
+			HMODULE hMod;
+			ReadFile( hFromStdout, &hMod, sizeof(hMod), &iActual, NULL );
+			char szName[MAX_PATH];
+			if( !CrashGetModuleBaseName(hMod, szName) )
+				strcpy( szName, "???" );
+			iSize = strlen( szName );
+			WriteToChild( hToStdin, &iSize, sizeof(iSize) );
+			WriteToChild( hToStdin, szName, iSize );
+		}
+	}
 }
 
 long __stdcall CrashHandler::ExceptionHandler( EXCEPTION_POINTERS *pExc )
@@ -213,38 +318,16 @@ long __stdcall CrashHandler::ExceptionHandler( EXCEPTION_POINTERS *pExc )
 
 	RageThread::HaltAllThreads( false );
 
-	hFontMono = CreateFont(
-			10,				// nHeight
-			0,				// nWidth
-			0,				// nEscapement
-			0,				// nOrientation
-			FW_DONTCARE,	// fnWeight
-			FALSE,			// fdwItalic
-			FALSE,			// fdwUnderline
-			FALSE,			// fdwStrikeOut
-			ANSI_CHARSET,	// fdwCharSet
-			OUT_DEFAULT_PRECIS,		// fdwOutputPrecision
-			CLIP_DEFAULT_PRECIS,	// fdwClipPrecision
-			DEFAULT_QUALITY,		// fdwQuality
-			DEFAULT_PITCH | FF_DONTCARE,	// fdwPitchAndFamily
-			"Lucida Console"
-			);
-
-	if( !hFontMono )
-		hFontMono = (HFONT) GetStockObject( ANSI_FIXED_FONT );
-
-	// Attempt to read debug file.
-
-	VDDebugInfoInitFromFile( &g_debugInfo );
-
-	/* In case something goes amiss before the user can view the crash
-	 * dump, save it now. */
 	if( !g_CrashInfo.m_CrashReason[0] )
 		GetReason( pExc->ExceptionRecord, &g_CrashInfo );
 	do_backtrace( g_CrashInfo.m_BacktracePointers, BACKTRACE_MAX_SIZE, GetCurrentProcess(),  GetCurrentThread(), pExc->ContextRecord );
-	DoSave();
+
+	RunChild();
 
 	++InHere;
+
+	if( g_bAutoRestart )
+		Win32RestartProgram();
 
 	/* Now things get more risky.  If we're fullscreen, the window will obscure the
 	 * crash dialog.  Try to hide the window.  Things might blow up here; do this
@@ -261,20 +344,6 @@ long __stdcall CrashHandler::ExceptionHandler( EXCEPTION_POINTERS *pExc )
 		ChangeDisplaySettings( NULL, 0 );
 	}
 
-	if( g_bAutoRestart )
-		Win32RestartProgram();
-
-	/* Little trick to get an HINSTANCE of ourself without having access to the hwnd ... */
-	{
-		TCHAR szFullAppPath[MAX_PATH];
-		GetModuleFileName( NULL, szFullAppPath, MAX_PATH );
-		HINSTANCE hHandle = LoadLibrary( szFullAppPath );
-
-		DialogBoxParam( hHandle, MAKEINTRESOURCE(IDD_DISASM_CRASH), NULL, CrashDlgProc, (LPARAM) pExc );
-	}
-
-	VDDebugInfoDeinit( &g_debugInfo );
-
 	InHere = false;
 
 	SetUnhandledExceptionFilter( NULL );
@@ -284,46 +353,6 @@ long __stdcall CrashHandler::ExceptionHandler( EXCEPTION_POINTERS *pExc )
 	TerminateProcess( GetCurrentProcess(), 0 );
 
 	return EXCEPTION_EXECUTE_HANDLER;
-}
-
-static void Report(HWND hwndList, HANDLE hFile, const char *format, ...) {
-	char buf[10240];
-	va_list val;
-	int ch;
-
-	va_start(val, format);
-	ch = wvsprintf(buf, format, val);
-	va_end(val);
-
-	if (hwndList)
-		SendMessage(hwndList, LB_ADDSTRING, 0, (LPARAM)buf);
-
-	if (hFile) {
-		DWORD dwActual;
-
-		buf[ch] = '\r';
-		buf[ch+1] = '\n';
-		WriteFile(hFile, buf, ch+2, &dwActual, NULL);
-	}
-}
-
-
-
-static void ReportReason( HWND hwndReason, HANDLE hFile, const CrashInfo *pCrash )
-{
-	if( hwndReason )
-		SetWindowText( hwndReason, pCrash->m_CrashReason );
-
-	if( hFile )
-		Report( NULL, hFile, pCrash->m_CrashReason );
-}
-
-static const char *GetNameFromHeap(const char *heap, int idx)
-{
-	while(idx--)
-		while(*heap++);
-
-	return heap;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -374,8 +403,6 @@ static bool IsValidCall(char *buf, int len)
 	return false;
 }
 
-///////////////////////////////////////////////////////////////////////////
-
 static bool IsExecutableProtection(DWORD dwProtect) {
 	MEMORY_BASIC_INFORMATION meminfo;
 
@@ -398,246 +425,6 @@ static bool IsExecutableProtection(DWORD dwProtect) {
 		return true;
 	}
 	return false;
-}
-
-static const char *CrashGetModuleBaseName(HMODULE hmod, char *pszBaseName) {
-	char szPath1[MAX_PATH];
-	char szPath2[MAX_PATH];
-
-	__try {
-		DWORD dw;
-		char *pszFile, *period = NULL;
-
-		if (!GetModuleFileName(hmod, szPath1, sizeof szPath1))
-			return NULL;
-
-		dw = GetFullPathName(szPath1, sizeof szPath2, szPath2, &pszFile);
-
-		if (!dw || dw>sizeof szPath2)
-			return NULL;
-
-		strcpy(pszBaseName, pszFile);
-
-		pszFile = pszBaseName;
-
-		while(*pszFile++)
-			if (pszFile[-1]=='.')
-				period = pszFile-1;
-
-		if (period)
-			*period = 0;
-	} __except(1) {
-		return NULL;
-	}
-
-	return pszBaseName;
-}
-
-
-///////////////////////////////////////////////////////////////////////////
-
-bool VDDebugInfoInitFromMemory(VDDebugInfoContext *pctx, const void *_src) {
-	const unsigned char *src = (const unsigned char *)_src;
-
-	pctx->pRVAHeap = NULL;
-
-	static const char *header = "symbolic debug information";
-	if (memcmp((char *)src, header, strlen(header)))
-	{
-		strcpy( pctx->szError, "header doesn't match" );
-		return false;
-	}
-
-	// Extract fields
-
-	src += 64;
-
-	pctx->nBuildNumber		= *(int *)src;
-	pctx->pRVAHeap			= (const unsigned char *)(src + 20);
-	pctx->nFirstRVA			= *(const long *)(src + 16);
-	pctx->pFuncNameHeap		= (const char *)pctx->pRVAHeap - 4 + *(const long *)(src + 4);
-	pctx->pSegments			= (unsigned long (*)[2])(pctx->pFuncNameHeap + *(const long *)(src + 8));
-	pctx->nSegments			= *(const long *)(src + 12);
-
-	return true;
-}
-
-void VDDebugInfoDeinit(VDDebugInfoContext *pctx) {
-	if (pctx->pRawBlock) {
-		VirtualFree(pctx->pRawBlock, 0, MEM_RELEASE);
-		pctx->pRawBlock = NULL;
-	}
-}
-
-bool VDDebugInfoInitFromFile( VDDebugInfoContext *pctx )
-{
-	if( pctx->Loaded() )
-		return true;
-
-	pctx->pRawBlock = NULL;
-	pctx->pRVAHeap = NULL;
-	GetVDIPath( pctx->sFilename, ARRAYSIZE(pctx->sFilename) );
-	pctx->szError[0] = 0;
-
-	HANDLE h = CreateFile(pctx->sFilename, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-
-	if (INVALID_HANDLE_VALUE == h)
-	{
-		strcpy( pctx->szError, "CreateFile failed" );
-		return false;
-	}
-
-	do {
-		DWORD dwFileSize = GetFileSize(h, NULL);
-
-		if (dwFileSize == 0xFFFFFFFF)
-			break;
-
-		pctx->pRawBlock = VirtualAlloc(NULL, dwFileSize, MEM_COMMIT, PAGE_READWRITE);
-		if (!pctx->pRawBlock)
-			break;
-
-		DWORD dwActual;
-		if (!ReadFile(h, pctx->pRawBlock, dwFileSize, &dwActual, NULL) || dwActual != dwFileSize)
-			break;
-
-		if (VDDebugInfoInitFromMemory(pctx, pctx->pRawBlock)) {
-			CloseHandle(h);
-			return true;
-		}
-
-		VirtualFree(pctx->pRawBlock, 0, MEM_RELEASE);
-
-	} while(false);
-
-	VDDebugInfoDeinit(pctx);
-	CloseHandle(h);
-	return false;
-}
-
-static bool PointerIsInAnySegment( const VDDebugInfoContext *pctx, unsigned rva )
-{
-	for( int i=0; i<pctx->nSegments; ++i )
-	{
-		if (rva >= pctx->pSegments[i][0] && rva < pctx->pSegments[i][0] + pctx->pSegments[i][1])
-			return true;
-	}
-
-	return false;
-}
-
-long VDDebugInfoLookupRVA(VDDebugInfoContext *pctx, unsigned rva, char *buf, int buflen)
-{
-	if ( !PointerIsInAnySegment(pctx, rva) )
-		return -1;
-
-	const unsigned char *pr = pctx->pRVAHeap;
-	const unsigned char *pr_limit = (const unsigned char *)pctx->pFuncNameHeap;
-	int idx = 0;
-
-	// Linearly unpack RVA deltas and find lower_bound
-
-	rva -= pctx->nFirstRVA;
-
-	if ((signed)rva < 0)
-		return -1;
-
-	while(pr < pr_limit) {
-		unsigned char c;
-		unsigned diff = 0;
-
-		do {
-			c = *pr++;
-
-			diff = (diff << 7) | (c & 0x7f);
-		} while(c & 0x80);
-
-		rva -= diff;
-
-		if ((signed)rva < 0) {
-			rva += diff;
-			break;
-		}
-
-		++idx;
-	}
-	if (pr >= pr_limit)
-		return -1;
-
-	// Decompress name for RVA
-	const char *fn_name = GetNameFromHeap(pctx->pFuncNameHeap, idx);
-
-	if (!*fn_name)
-		fn_name = "(special)";
-
-	strncpy( buf, fn_name, buflen );
-	buf[buflen-1]=0;
-
-	return rva;
-}
-
-///////////////////////////////////////////////////////////////////////////
-#include "archutils/Win32/ddk/dbghelp.h"
-#if defined(_MSC_VER)
-#pragma comment(lib, "archutils/Win32/ddk/dbghelp.lib")
-#endif
-
-static bool InitDbghelp()
-{
-	static bool initted = false;
-	if( !initted )
-	{
-		SymSetOptions( SYMOPT_UNDNAME | SYMOPT_DEFERRED_LOADS );
-
-		if (!SymInitialize(GetCurrentProcess(), NULL, TRUE))
-			return false;
-
-		initted = true;
-	}
-
-	return true;
-}
-
-static SYMBOL_INFO *GetSym( unsigned long ptr, DWORD64 &disp )
-{
-	InitDbghelp();
-
-	static BYTE buffer[1024];
-	SYMBOL_INFO *pSymbol = (PSYMBOL_INFO)buffer;
-
-	pSymbol->SizeOfStruct = sizeof(SYMBOL_INFO);
-	pSymbol->MaxNameLen = sizeof(buffer) - sizeof(SYMBOL_INFO) + 1;
-
-	if (!SymFromAddr(GetCurrentProcess(), ptr, &disp, pSymbol))
-		return NULL;
-
-	return pSymbol;
-}
-
-static const char *Demangle( const char *buf )
-{
-	if( !InitDbghelp() )
-		return buf;
-
-	static char obuf[1024];
-	if( !UnDecorateSymbolName(buf, obuf, sizeof(obuf),
-		UNDNAME_COMPLETE
-		| UNDNAME_NO_CV_THISTYPE
-		| UNDNAME_NO_ALLOCATION_MODEL
-		| UNDNAME_NO_ACCESS_SPECIFIERS // no public:
-		| UNDNAME_NO_MS_KEYWORDS // no __cdecl 
-		) )
-	{
-		return buf;
-	}
-
-	if( obuf[0] == '_' )
-	{
-		strcat( obuf, "()" ); /* _main -> _main() */
-		return obuf+1; /* _main -> main */
-	}
-
-	return obuf;
 }
 
 static bool PointsToValidCall( unsigned long ptr )
@@ -706,265 +493,6 @@ void CrashHandler::do_backtrace( const void **buf, size_t size,
 	} while( ReadProcessMemory(hProcess, lpAddr-4, &data, 4, NULL));
 
 	buf[i++] = NULL;
-}
-
-void SymLookup( const void *ptr, char *buf )
-{
-	VDDebugInfoInitFromFile( &g_debugInfo );
-	if( !g_debugInfo.Loaded() )
-	{
-		strcpy( buf, "error" );
-		return;
-	}
-
-	MEMORY_BASIC_INFORMATION meminfo;
-	VirtualQuery( ptr, &meminfo, sizeof meminfo );
-
-	char tmp[512];
-	if( VDDebugInfoLookupRVA(&g_debugInfo, (unsigned int)ptr, tmp, sizeof(tmp)) >= 0 )
-	{
-		wsprintf( buf, "%08x: %s", ptr, Demangle(tmp) );
-		return;
-	}
-
-	char szName[MAX_PATH];
-	if( !CrashGetModuleBaseName((HMODULE)meminfo.AllocationBase, szName) )
-		strcpy( szName, "???" );
-
-	DWORD64 disp;
-	SYMBOL_INFO *pSymbol = GetSym( (unsigned int)ptr, disp );
-
-	if( pSymbol )
-	{
-		wsprintf( buf, "%08lx: %s!%s [%08lx+%lx+%lx]",
-			(unsigned long) ptr, szName, pSymbol->Name,
-			(unsigned long) meminfo.AllocationBase,
-			(unsigned long) (pSymbol->Address) - (unsigned long) (meminfo.AllocationBase),
-			(unsigned long) disp);
-		return;
-	}
-
-	wsprintf( buf, "%08lx: %s!%08lx",
-		(unsigned long) ptr, szName, 
-		(unsigned long) meminfo.AllocationBase );
-}
-
-static bool ReportCallStack( HWND hwnd, HANDLE hFile, const void **Backtrace )
-{
-	VDDebugInfoInitFromFile( &g_debugInfo );
-	if( !g_debugInfo.Loaded() )
-	{
-		Report( hwnd, hFile, "debug resource file '%s': %s.", g_debugInfo.sFilename, g_debugInfo.szError );
-		return false;
-	}
-
-	if( g_debugInfo.nBuildNumber != int(version_num) )
-	{
-		Report(hwnd, hFile, "Incorrect %s file (build %d, expected %d) for this version of " PRODUCT_NAME " -- call stack unavailable.",
-			g_debugInfo.sFilename, g_debugInfo.nBuildNumber, int(version_num));
-		return false;
-	}
-
-	for( int i = 0; Backtrace[i]; ++i )
-	{
-		char buf[10240];
-		SymLookup( Backtrace[i], buf );
-		Report( hwnd, hFile, "%s", buf );
-	}
-
-	return true;
-}
-
-void WriteBuf( HANDLE hFile, const char *buf )
-{
-	DWORD dwActual;
-	WriteFile(hFile, buf, strlen(buf), &dwActual, NULL);
-}
-
-static void DoSave()
-{
-	char szModName2[MAX_PATH];
-
-	SpliceProgramPath(szModName2, sizeof szModName2, "../crashinfo.txt");
-
-	HANDLE hFile = CreateFile(szModName2, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-	if (INVALID_HANDLE_VALUE == hFile)
-		return;
-
-	Report(NULL, hFile,
-			"%s crash report (build %d, %s)\r\n"
-			"--------------------------------------"
-			"\r\n", PRODUCT_NAME_VER, version_num, version_time);
-
-	ReportReason( NULL, hFile, &g_CrashInfo );
-	Report(NULL, hFile, "");
-
-	// Dump thread stacks
-	static char buf[1024*32];
-	Checkpoints::GetLogs( buf, sizeof(buf), "\r\n" );
-	WriteBuf( hFile, buf );
-	Report(NULL, hFile, "");
-
-	ReportCallStack( NULL, hFile, g_CrashInfo.m_BacktracePointers );
-	Report(NULL, hFile, "");
-
-	if( g_CrashInfo.m_AlternateThreadBacktrace[0] )
-	{
-		for( int i = 0; i < CrashInfo::MAX_BACKTRACE_THREADS; ++i )
-		{
-			if( !g_CrashInfo.m_AlternateThreadBacktrace[i][0] )
-				continue;
-
-			Report( NULL, hFile, "Thread %s:", g_CrashInfo.m_AlternateThreadName[i] );
-			Report( NULL, hFile, "" );
-			ReportCallStack( NULL, hFile, g_CrashInfo.m_AlternateThreadBacktrace[i] );
-			Report(NULL, hFile, "");
-		}
-	}
-
-	Report(NULL, hFile, "Static log:");
-	WriteBuf( hFile, RageLog::GetInfo() );
-	WriteBuf( hFile, RageLog::GetAdditionalLog() );
-	Report(NULL, hFile, "");
-
-	Report(NULL, hFile, "Partial log:");
-	int i = 0;
-	while( const char *p = RageLog::GetRecentLog( i++ ) )
-		Report(NULL, hFile, "%s", p);
-	Report(NULL, hFile, "");
-
-	Report(NULL, hFile, "-- End of report");
-	CloseHandle(hFile);
-}
-
-void ViewWithNotepad(const char *str)
-{
-	char buf[256] = "";
-	strcat(buf, "notepad.exe  ");
-	strcat(buf, str);
-
-	char cwd[MAX_PATH];
-	SpliceProgramPath(cwd, MAX_PATH, "");
-
-	PROCESS_INFORMATION pi;
-	STARTUPINFO	si;
-	ZeroMemory( &si, sizeof(si) );
-
-	CreateProcess(
-		NULL,		// pointer to name of executable module
-		buf,		// pointer to command line string
-		NULL,  // process security attributes
-		NULL,   // thread security attributes
-		false,  // handle inheritance flag
-		0, // creation flags
-		NULL,  // pointer to new environment block
-		cwd,   // pointer to current directory name
-		&si,  // pointer to STARTUPINFO
-		&pi  // pointer to PROCESS_INFORMATION
-	);
-}
-
-BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-	static bool s_bHaveCallstack;
-
-	switch(msg)
-	{
-	case WM_INITDIALOG:
-		{
-			HWND hwndList = GetDlgItem(hDlg, IDC_CALL_STACK);
-			HWND hwndReason = GetDlgItem(hDlg, IDC_STATIC_BOMBREASON);
-
-			if (hFontMono)
-			{
-				SendMessage(hwndList, WM_SETFONT, (WPARAM)hFontMono, MAKELPARAM(TRUE, 0));
-				SendMessage(hwndReason, WM_SETFONT, (WPARAM)hFontMono, MAKELPARAM(TRUE, 0));
-			}
-			DialogUtil::SetHeaderFont( hDlg, IDC_STATIC_HEADER_TEXT );
-
-			ReportReason( hwndReason, NULL, &g_CrashInfo );
-			s_bHaveCallstack = ReportCallStack( hwndList, NULL, g_CrashInfo.m_BacktracePointers );
-		}
-		return TRUE;
-
-	case WM_COMMAND:
-		switch(LOWORD(wParam)) {
-		case IDC_BUTTON_CLOSE:
-			EndDialog(hDlg, FALSE);
-			return TRUE;
-		case IDOK:
-			// EndDialog(hDlg, TRUE); /* don't always exit on ENTER */
-			return TRUE;
-		case IDC_VIEW_LOG:
-			ViewWithNotepad("../log.txt");
-			break;
-		case IDC_CRASH_SAVE:
-			if (!s_bHaveCallstack)
-				if (IDOK != MessageBox(hDlg,
-					PRODUCT_NAME " cannot load its crash resource file, and thus the crash dump will be "
-					"missing the most important part, the call stack. Crash dumps are much less useful "
-					"without the call stack.",
-					PRODUCT_NAME " warning", MB_OK|MB_ICONEXCLAMATION))
-					return TRUE;
-
-			ViewWithNotepad("../crashinfo.txt");
-			return TRUE;
-		case IDC_BUTTON_RESTART:
-			{
-				char cwd[MAX_PATH];
-				SpliceProgramPath(cwd, MAX_PATH, "");
-
-				TCHAR szFullAppPath[MAX_PATH];
-				GetModuleFileName(NULL, szFullAppPath, MAX_PATH);
-
-				// Launch StepMania
-				PROCESS_INFORMATION pi;
-				STARTUPINFO	si;
-				ZeroMemory( &si, sizeof(si) );
-
-				CreateProcess(
-					NULL,		// pointer to name of executable module
-					szFullAppPath,		// pointer to command line string
-					NULL,  // process security attributes
-					NULL,   // thread security attributes
-					false,  // handle inheritance flag
-					0, // creation flags
-					NULL,  // pointer to new environment block
-					cwd,   // pointer to current directory name
-					&si,  // pointer to STARTUPINFO
-					&pi  // pointer to PROCESS_INFORMATION
-				);
-			}
-			EndDialog( hDlg, FALSE );
-			break;
-		case IDC_BUTTON_REPORT:
-			GotoURL( REPORT_BUG_URL );
-			break;
-		}
-		break;
-	case WM_CTLCOLORSTATIC:
-		{
-			HDC hdc = (HDC)wParam;
-			HWND hwndStatic = (HWND)lParam;
-			HBRUSH hbr = NULL;
-
-			// TODO:  Change any attributes of the DC here
-			switch( GetDlgCtrlID(hwndStatic) )
-			{
-			case IDC_STATIC_HEADER_TEXT:
-			case IDC_STATIC_ICON:
-				hbr = (HBRUSH)::GetStockObject(WHITE_BRUSH); 
-				SetBkMode( hdc, OPAQUE );
-				SetBkColor( hdc, RGB(255,255,255) );
-				break;
-			}
-
-			// TODO:  Return a different brush if the default is not desired
-			return (BOOL)hbr;
-		}
-	}
-
-	return FALSE;
 }
 
 /* Trigger the crash handler.  This works even in the debugger. */
