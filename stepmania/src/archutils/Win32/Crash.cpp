@@ -86,23 +86,22 @@ static const struct ExceptionLookup {
 	DWORD	code;
 	const char *name;
 } exceptions[]={
-	{	EXCEPTION_ACCESS_VIOLATION,			"Access Violation"		},
-	{	EXCEPTION_BREAKPOINT,				"Breakpoint"			},
-	{	EXCEPTION_FLT_DENORMAL_OPERAND,		"FP Denormal Operand"	},
-	{	EXCEPTION_FLT_DIVIDE_BY_ZERO,		"FP Divide-by-Zero"		},
-	{	EXCEPTION_FLT_INEXACT_RESULT,		"FP Inexact Result"		},
-	{	EXCEPTION_FLT_INVALID_OPERATION,	"FP Invalid Operation"	},
-	{	EXCEPTION_FLT_OVERFLOW,				"FP Overflow",			},
-	{	EXCEPTION_FLT_STACK_CHECK,			"FP Stack Check",		},
-	{	EXCEPTION_FLT_UNDERFLOW,			"FP Underflow",			},
-	{	EXCEPTION_INT_DIVIDE_BY_ZERO,		"Integer Divide-by-Zero",	},
-	{	EXCEPTION_INT_OVERFLOW,				"Integer Overflow",		},
-	{	EXCEPTION_PRIV_INSTRUCTION,			"Privileged Instruction",	},
-	{	EXCEPTION_ILLEGAL_INSTRUCTION,		"Illegal instruction"	},
-	{	EXCEPTION_INVALID_HANDLE,			"Invalid handle"		},
-	{	0xe06d7363,							"Unhandled Microsoft C++ Exception",	},
-			// hmm... '_msc'... gee, who would have thought?
-	{	NULL	},
+	{ EXCEPTION_ACCESS_VIOLATION,		"Access Violation"			},
+	{ EXCEPTION_BREAKPOINT,			"Breakpoint"				},
+	{ EXCEPTION_FLT_DENORMAL_OPERAND,	"FP Denormal Operand"			},
+	{ EXCEPTION_FLT_DIVIDE_BY_ZERO,		"FP Divide-by-Zero"			},
+	{ EXCEPTION_FLT_INEXACT_RESULT,		"FP Inexact Result"			},
+	{ EXCEPTION_FLT_INVALID_OPERATION,	"FP Invalid Operation"			},
+	{ EXCEPTION_FLT_OVERFLOW,		"FP Overflow",				},
+	{ EXCEPTION_FLT_STACK_CHECK,		"FP Stack Check",			},
+	{ EXCEPTION_FLT_UNDERFLOW,		"FP Underflow",				},
+	{ EXCEPTION_INT_DIVIDE_BY_ZERO,		"Integer Divide-by-Zero",		},
+	{ EXCEPTION_INT_OVERFLOW,		"Integer Overflow",			},
+	{ EXCEPTION_PRIV_INSTRUCTION,		"Privileged Instruction",		},
+	{ EXCEPTION_ILLEGAL_INSTRUCTION,	"Illegal instruction"			},
+	{ EXCEPTION_INVALID_HANDLE,		"Invalid handle"			},
+	{ 0xe06d7363,				"Unhandled Microsoft C++ Exception",	},
+	{ NULL },
 };
 
 static const char *LookupException( DWORD code )
