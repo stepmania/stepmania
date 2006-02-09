@@ -560,77 +560,81 @@ BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 
 
-void ChildProcess()
+bool ReadCrashDataFromParent( int iFD, CompleteCrashData &Data )
 {
-	CompleteCrashData Data;
-	/* Read the crash data from the crashed parent. */
+	_setmode( _fileno(stdin), O_BINARY );
+
+	/* 0. Read the parent handle. */
+	if( !ReadFromParent(iFD, &SymbolLookup::g_hParent, sizeof(SymbolLookup::g_hParent)) )
+		return false;
+
+	/* 1. Read the CrashData. */
+	if( !ReadFromParent(iFD, &Data.m_CrashInfo, sizeof(Data.m_CrashInfo)) )
+		return false;
+
+	/* 2. Read info. */
+	int iSize;
+	if( !ReadFromParent(iFD, &iSize, sizeof(iSize)) )
+		return false;
+
+	char *pBuf = Data.m_sInfo.GetBuffer( iSize );
+	if( !ReadFromParent(iFD, pBuf, iSize) )
+		return false;
+	Data.m_sInfo.ReleaseBuffer( iSize );
+
+	/* 3. Read AdditionalLog. */
+	if( !ReadFromParent(iFD, &iSize, sizeof(iSize)) )
+		return false;
+
+	pBuf = Data.m_sAdditionalLog.GetBuffer( iSize );
+	if( !ReadFromParent(iFD, pBuf, iSize) )
+		return false;
+	Data.m_sAdditionalLog.ReleaseBuffer( iSize );
+
+	/* 4. Read RecentLogs. */
+	int iCnt = 0;
+	if( !ReadFromParent(iFD, &iCnt, sizeof(iCnt)) )
+		return false;
+	for( int i = 0; i < iCnt; ++i )
 	{
-		_setmode( _fileno(stdin), O_BINARY );
-
-		/* 0. Read the parent handle. */
-		int iFD = fileno(stdin);
-		if( !ReadFromParent(iFD, &SymbolLookup::g_hParent, sizeof(SymbolLookup::g_hParent)) )
-			return;
-
-		/* 1. Read the CrashData. */
-		if( !ReadFromParent(iFD, &Data.m_CrashInfo, sizeof(Data.m_CrashInfo)) )
-			return;
-
-		/* 2. Read info. */
-		int iSize;
 		if( !ReadFromParent(iFD, &iSize, sizeof(iSize)) )
-			return;
-
-		char *pBuf = Data.m_sInfo.GetBuffer( iSize );
-		if( !ReadFromParent(iFD, pBuf, iSize) )
-			return;
-		Data.m_sInfo.ReleaseBuffer( iSize );
-
-		/* 3. Read AdditionalLog. */
-		if( !ReadFromParent(iFD, &iSize, sizeof(iSize)) )
-			return;
-
-		pBuf = Data.m_sAdditionalLog.GetBuffer( iSize );
-		if( !ReadFromParent(iFD, pBuf, iSize) )
-			return;
-		Data.m_sAdditionalLog.ReleaseBuffer( iSize );
-
-		/* 4. Read RecentLogs. */
-		int iCnt = 0;
-		if( !ReadFromParent(iFD, &iCnt, sizeof(iCnt)) )
-			return;
-		for( int i = 0; i < iCnt; ++i )
-		{
-			if( !ReadFromParent(iFD, &iSize, sizeof(iSize)) )
-				return;
-			RString sBuf;
-			pBuf = sBuf.GetBuffer( iSize );
-			if( !ReadFromParent(iFD, pBuf, iSize) )
-				return;
-			Data.m_asRecent.push_back( sBuf );
-			sBuf.ReleaseBuffer( iSize );
-		}
-
-		/* 5. Read CHECKPOINTs. */
-		if( !ReadFromParent(iFD, &iSize, sizeof(iSize)) )
-			return;
-
+			return false;
 		RString sBuf;
 		pBuf = sBuf.GetBuffer( iSize );
 		if( !ReadFromParent(iFD, pBuf, iSize) )
-			return;
-
-		split( sBuf, "$$", Data.m_asCheckpoints );
+			return false;
+		Data.m_asRecent.push_back( sBuf );
 		sBuf.ReleaseBuffer( iSize );
-
-		/* 6. Read the crashed thread's name. */
-		if( !ReadFromParent(iFD, &iSize, sizeof(iSize)) )
-			return;
-		pBuf = Data.m_sCrashedThread.GetBuffer( iSize );
-		if( !ReadFromParent(iFD, pBuf, iSize) )
-			return;
-		Data.m_sCrashedThread.ReleaseBuffer();
 	}
+
+	/* 5. Read CHECKPOINTs. */
+	if( !ReadFromParent(iFD, &iSize, sizeof(iSize)) )
+		return false;
+
+	RString sBuf;
+	pBuf = sBuf.GetBuffer( iSize );
+	if( !ReadFromParent(iFD, pBuf, iSize) )
+		return false;
+
+	split( sBuf, "$$", Data.m_asCheckpoints );
+	sBuf.ReleaseBuffer( iSize );
+
+	/* 6. Read the crashed thread's name. */
+	if( !ReadFromParent(iFD, &iSize, sizeof(iSize)) )
+		return false;
+	pBuf = Data.m_sCrashedThread.GetBuffer( iSize );
+	if( !ReadFromParent(iFD, pBuf, iSize) )
+		return false;
+	Data.m_sCrashedThread.ReleaseBuffer();
+
+	return true;
+}
+
+void ChildProcess()
+{
+	/* Read the crash data from the crashed parent. */
+	CompleteCrashData Data;
+	ReadCrashDataFromParent( fileno(stdin), Data );
 
 	VDDebugInfoInitFromFile( &g_debugInfo );
 	DoSave( Data );

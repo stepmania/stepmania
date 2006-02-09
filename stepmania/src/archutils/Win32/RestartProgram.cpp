@@ -1,6 +1,6 @@
 #include "global.h"
 #include "RestartProgram.h"
-#include "windows.h"
+#include <windows.h>
 
 void Win32RestartProgram()
 {
@@ -9,7 +9,7 @@ void Win32RestartProgram()
 
 	// Relaunch
 	PROCESS_INFORMATION pi;
-	STARTUPINFO	si;
+	STARTUPINFO si;
 	ZeroMemory( &si, sizeof(si) );
 	CreateProcess(
 		NULL,		// pointer to name of executable module
