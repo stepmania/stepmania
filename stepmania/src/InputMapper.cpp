@@ -87,6 +87,14 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 0, JOY_BUTTON_14,	DANCE_BUTTON_RIGHT,	false },
 			{ 0, JOY_BUTTON_13,	DANCE_BUTTON_UP,	false },
 			{ 0, JOY_BUTTON_15,	DANCE_BUTTON_DOWN,	false },
+			{ 1, JOY_BUTTON_4,	DANCE_BUTTON_LEFT,	false },
+			{ 1, JOY_BUTTON_2,	DANCE_BUTTON_RIGHT,	false },
+			{ 1, JOY_BUTTON_1,	DANCE_BUTTON_UP,	false },
+			{ 1, JOY_BUTTON_3,	DANCE_BUTTON_DOWN,	false },
+			{ 0, JOY_BUTTON_7,	DANCE_BUTTON_UPLEFT,	false },
+			{ 0, JOY_BUTTON_8,	DANCE_BUTTON_UPRIGHT,	false },
+			{ 0, JOY_BUTTON_9,	DANCE_BUTTON_BACK,	false },
+			{ 0, JOY_BUTTON_12,	DANCE_BUTTON_START,	false },
 			END_MARKER
 		}
 	},
@@ -163,10 +171,8 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 1, JOY_BUTTON_2,	DANCE_BUTTON_RIGHT,	false },
 			{ 1, JOY_BUTTON_1,	DANCE_BUTTON_UP,	false },
 			{ 1, JOY_BUTTON_3,	DANCE_BUTTON_DOWN,	false },
-			{ 0, JOY_BUTTON_5,	DANCE_BUTTON_UPLEFT,	false },
-			{ 0, JOY_BUTTON_6,	DANCE_BUTTON_UPRIGHT,	false },
-			{ 1, JOY_BUTTON_7,	DANCE_BUTTON_UPLEFT,	false },
-			{ 1, JOY_BUTTON_8,	DANCE_BUTTON_UPRIGHT,	false },
+			{ 0, JOY_BUTTON_7,	DANCE_BUTTON_UPLEFT,	false },
+			{ 0, JOY_BUTTON_8,	DANCE_BUTTON_UPRIGHT,	false },
 			{ 0, JOY_BUTTON_10,	DANCE_BUTTON_BACK,	false },
 			{ 0, JOY_BUTTON_9,	DANCE_BUTTON_START,	false },
 			END_MARKER
