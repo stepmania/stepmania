@@ -350,12 +350,12 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 0, JOY_BUTTON_4,	/* dpad R */	DANCE_BUTTON_RIGHT,	false },
 			{ 0, JOY_BUTTON_3,	/* dpad U */	DANCE_BUTTON_UP,	false },
 			{ 0, JOY_BUTTON_2,	/* dpad D */	DANCE_BUTTON_DOWN,	false },
-			{ 0, JOY_BUTTON_5,	/* Tri */	DANCE_BUTTON_BACK,	false },
+			//{ 0, JOY_BUTTON_5,	/* Tri */	DANCE_BUTTON_BACK,	false },
 			//{ 0, JOY_BUTTON_6,	/* Square */	DANCE_BUTTON_BACK,	false },
 			//{ 1, JOY_BUTTON_7,	/* X */		DANCE_BUTTON_START,	false },
 			{ 0, JOY_BUTTON_8,	/* O */		DANCE_BUTTON_START,	false },
 			{ 1, JOY_BUTTON_9,	/* Start */	DANCE_BUTTON_START,	false },
-			//{ 0, JOY_BUTTON_10,	/* Sel */	DANCE_BUTTON_START,	false },
+			{ 0, JOY_BUTTON_10,	/* Sel */	DANCE_BUTTON_BACK,	false },
 			END_MARKER
 		}
 	},
