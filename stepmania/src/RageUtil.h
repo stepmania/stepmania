@@ -346,6 +346,7 @@ void TrimRight( RString &sStr, const char *szTrim = "\r\n\t " );
 void StripCrnl( RString &sStr );
 bool BeginsWith( const RString &sTestThis, const RString &sBeginning );
 bool EndsWith( const RString &sTestThis, const RString &sEnding );
+RString URLEncode( const RString &sStr );
 
 void StripCvs( vector<RString> &vs );	// remove all items that end in "cvs"
 

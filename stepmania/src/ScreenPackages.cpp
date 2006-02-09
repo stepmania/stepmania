@@ -385,20 +385,6 @@ void ScreenPackages::HTMLParse()
 	UpdateLinksList();
 }
 
-RString ScreenPackages::URLEncode( const RString &sInput )
-{
-	RString sOutput;
-	for( unsigned k = 0; k < sInput.size(); k++ )
-	{
-		char t = sInput[k];
-		if( t >= '!' && t <= 'z' )
-			sOutput += t;
-		else
-			sOutput += "%" + ssprintf( "%X", t );
-	}
-	return sOutput;
-}
-
 RString ScreenPackages::StripOutContainers( const RString & In )
 {
 	if( In.size() == 0 )

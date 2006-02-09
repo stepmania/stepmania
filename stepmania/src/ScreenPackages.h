@@ -33,7 +33,6 @@ private:
 
 	void HTMLParse();
 
-	RString URLEncode( const RString &URL );			//Encode any string in URL-style
 	RString StripOutContainers( const RString & In );	//Strip off "'s and ''s
 
 	Sprite	m_sprExistingBG;

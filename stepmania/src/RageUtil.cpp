@@ -934,6 +934,20 @@ bool EndsWith( const RString &sTestThis, const RString &sEnding )
 	return sTestThis.compare( sTestThis.length()-sEnding.length(), sEnding.length(), sEnding ) == 0;
 }
 
+RString URLEncode( const RString &sStr )
+{
+	RString sOutput;
+	for( unsigned k = 0; k < sStr.size(); k++ )
+	{
+		char t = sStr[k];
+		if( t >= '!' && t <= 'z' )
+			sOutput += t;
+		else
+			sOutput += "%" + ssprintf( "%X", t );
+	}
+	return sOutput;
+}
+
 void StripCvs( vector<RString> &vs )
 {
 	for( unsigned i=0; i<vs.size(); i++ )
