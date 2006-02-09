@@ -72,7 +72,13 @@ void ScreenOptionsMemoryCard::CreateMenu()
 
 	if( m_CurrentUsbStorageDevices.empty() )
 	{
-		OptionRowDefinition def( "No memory cards detected", true, "" );
+		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
+		OptionRowDefinition &def = vHands.back()->m_Def;
+		def.m_sName = "No USB memory cards found";
+		def.m_sExplanationName = "No Memory Card";
+		def.m_vsChoices.push_back( "" );
+		def.m_bAllowThemeTitle = false;
+		def.m_bOneChoiceForAllPlayers = true;
 	}
 	
 	InitMenu( vHands );
