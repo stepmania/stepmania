@@ -14,7 +14,9 @@ static bool g_bIsMultipleInstance = false;
 
 ArchHooks_Win32::ArchHooks_Win32()
 {
+	CrashHandler::CrashHandlerHandleArgs( g_argc, g_argv );
 	SetUnhandledExceptionFilter( CrashHandler::ExceptionHandler );
+
 	TimeCritMutex = new RageMutex("TimeCritMutex");
 
 	/* Disable critical errors, and handle them internally.  We never want the
