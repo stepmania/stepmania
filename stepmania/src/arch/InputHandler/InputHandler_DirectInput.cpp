@@ -16,7 +16,7 @@ static vector<DIDevice> Devices;
 /* Number of joysticks found: */
 static int g_iNumJoysticks;
 
-static BOOL CALLBACK EnumDevices( const DIDEVICEINSTANCE *pdidInstance, void *pContext )
+static BOOL CALLBACK EnumDevicesCallback( const DIDEVICEINSTANCE *pdidInstance, void *pContext )
 {
 	DIDevice device;
 
@@ -60,13 +60,22 @@ static void CheckForDirectInputDebugMode()
 	}
 }
 
-static int GetNumUsbHidDevices()
+
+static BOOL CALLBACK CountDevicesCallback( const DIDEVICEINSTANCE *pdidInstance, void *pContext )
 {
-	// The "Enum" key doesn't exist if no hid devices are attached, so it's expected that GetRegValue will sometimes fail.
-	// TODO: Does this work in Win98 and Win2K?
-	int i = 0;	
-	RegistryAccess::GetRegValue( "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\HidUsb\\Enum", "Count", i, false );	// don't warn on error
-	return i;
+	(*(int*)pContext)++;
+	return DIENUM_CONTINUE;
+}
+
+static int GetNumJoysticksQuick()
+{
+	int iCount = 0;
+	HRESULT hr = g_dinput->EnumDevices( DIDEVTYPE_JOYSTICK, CountDevicesCallback, &iCount, DIEDFL_ATTACHEDONLY );
+	if( hr != DI_OK )
+	{
+		LOG->Warn( hr_ssprintf(hr, "g_dinput->EnumDevices") );
+	}
+	return iCount;
 }
 
 InputHandler_DInput::InputHandler_DInput()
@@ -76,21 +85,20 @@ InputHandler_DInput::InputHandler_DInput()
 	CheckForDirectInputDebugMode();
 	
 	m_bShutdown = false;
-	m_iLastSeenNumUsbHid = GetNumUsbHidDevices();
 	g_iNumJoysticks = 0;
 
 	AppInstance inst;	
-	HRESULT hr = DirectInputCreate(inst.Get(), DIRECTINPUT_VERSION, &dinput, NULL);
+	HRESULT hr = DirectInputCreate(inst.Get(), DIRECTINPUT_VERSION, &g_dinput, NULL);
 	if( hr != DI_OK )
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: DirectInputCreate") );
 
 	LOG->Trace( "InputHandler_DInput: IDirectInput::EnumDevices(DIDEVTYPE_KEYBOARD)" );
-	hr = dinput->EnumDevices( DIDEVTYPE_KEYBOARD, EnumDevices, NULL, DIEDFL_ATTACHEDONLY );
+	hr = g_dinput->EnumDevices( DIDEVTYPE_KEYBOARD, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY );
 	if( hr != DI_OK )
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: IDirectInput::EnumDevices") );
 
 	LOG->Trace( "InputHandler_DInput: IDirectInput::EnumDevices(DIDEVTYPE_JOYSTICK)" );
-	hr = dinput->EnumDevices( DIDEVTYPE_JOYSTICK, EnumDevices, NULL, DIEDFL_ATTACHEDONLY );
+	hr = g_dinput->EnumDevices( DIDEVTYPE_JOYSTICK, EnumDevicesCallback, NULL, DIEDFL_ATTACHEDONLY );
 	if( hr != DI_OK )
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: IDirectInput::EnumDevices") );
 
@@ -115,6 +123,8 @@ InputHandler_DInput::InputHandler_DInput()
 			Devices[i].buttons,
 			Devices[i].buffered? "buffered": "unbuffered" );
 	}
+
+	m_iLastSeenNumJoysticks = GetNumJoysticksQuick();
 
 	StartThread();
 }
@@ -149,8 +159,8 @@ InputHandler_DInput::~InputHandler_DInput()
 		Devices[i].Close();
 
 	Devices.clear();
-	dinput->Release();	
-	dinput = NULL;
+	g_dinput->Release();	
+	g_dinput = NULL;
 }
 
 void InputHandler_DInput::WindowReset()
@@ -505,9 +515,9 @@ void InputHandler_DInput::Update()
 
 bool InputHandler_DInput::DevicesChanged()
 {
-	int iOldNumUsbHid = m_iLastSeenNumUsbHid;
-	m_iLastSeenNumUsbHid = GetNumUsbHidDevices();
-	return iOldNumUsbHid != m_iLastSeenNumUsbHid;
+	int iOldNumJoysticks = m_iLastSeenNumJoysticks;
+	m_iLastSeenNumJoysticks = GetNumJoysticksQuick();
+	return iOldNumJoysticks != m_iLastSeenNumJoysticks;
 }
 
 void InputHandler_DInput::InputThreadMain()

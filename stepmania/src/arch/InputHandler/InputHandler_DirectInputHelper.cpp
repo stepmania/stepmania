@@ -10,7 +10,7 @@
 #pragma comment(lib, "dxguid.lib")
 #endif
 #endif
-LPDIRECTINPUT dinput = NULL;
+LPDIRECTINPUT g_dinput = NULL;
 
 static int ConvertScancodeToKey( int scancode );
 static BOOL CALLBACK DIJoystick_EnumDevObjectsProc(LPCDIDEVICEOBJECTINSTANCE dev, LPVOID data);
@@ -30,7 +30,7 @@ bool DIDevice::Open()
 	buffered = true;
 	
 	LPDIRECTINPUTDEVICE tmpdevice;
-	HRESULT hr = dinput->CreateDevice( JoystickInst.guidInstance, &tmpdevice, NULL );
+	HRESULT hr = g_dinput->CreateDevice( JoystickInst.guidInstance, &tmpdevice, NULL );
 	if ( hr != DI_OK )
 	{
 		LOG->Info( hr_ssprintf(hr, "OpenDevice: IDirectInput_CreateDevice") );

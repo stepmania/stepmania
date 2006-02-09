@@ -18,7 +18,7 @@ public:
 private:
 	RageThread m_Thread;
 	bool m_bShutdown;
-	int m_iLastSeenNumUsbHid;	// use this to figure out if a device was plugged/unplugged
+	int m_iLastSeenNumJoysticks;	// use this to figure out if a joystick was plugged/unplugged
 
 	void UpdatePolled( DIDevice &device, const RageTimer &tm );
 	void UpdateBuffered( DIDevice &device, const RageTimer &tm );
