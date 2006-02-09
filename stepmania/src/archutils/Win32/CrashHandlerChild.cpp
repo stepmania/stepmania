@@ -10,6 +10,7 @@
 #include "archutils/Win32/WindowsResources.h"
 #include "archutils/Win32/DialogUtil.h"
 #include "archutils/Win32/GotoURL.h"
+#include "archutils/Win32/RestartProgram.h"
 #include "ProductInfo.h"
 #include "RageUtil.h"
 
@@ -521,33 +522,9 @@ BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 			ViewWithNotepad("../crashinfo.txt");
 			return TRUE;
 		case IDC_BUTTON_RESTART:
-		{
-			RString cwd = SpliceProgramPath("");
-
-			TCHAR szFullAppPath[MAX_PATH];
-			GetModuleFileName( NULL, szFullAppPath, MAX_PATH );
-
-			// Launch StepMania
-			PROCESS_INFORMATION pi;
-			STARTUPINFO si;
-			ZeroMemory( &si, sizeof(si) );
-
-			CreateProcess(
-				NULL,		// pointer to name of executable module
-				szFullAppPath,		// pointer to command line string
-				NULL,  // process security attributes
-				NULL,   // thread security attributes
-				false,  // handle inheritance flag
-				0, // creation flags
-				NULL,  // pointer to new environment block
-				cwd,   // pointer to current directory name
-				&si,  // pointer to STARTUPINFO
-				&pi  // pointer to PROCESS_INFORMATION
-			);
-
+			Win32RestartProgram();
 			EndDialog( hDlg, FALSE );
 			break;
-		}
 		case IDC_BUTTON_REPORT:
 			GotoURL( REPORT_BUG_URL );
 			break;
