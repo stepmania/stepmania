@@ -43,7 +43,7 @@ public:
 
 private:
 	RageMutex m_Mutex;
-    vector<RageFileObjMemFile *> m_Files;
+	vector<RageFileObjMemFile *> m_Files;
 };
 
 #endif
