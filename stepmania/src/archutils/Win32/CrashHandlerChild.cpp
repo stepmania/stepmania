@@ -498,44 +498,6 @@ void ViewWithNotepad(const char *str)
 }
 
 
-BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-	switch(msg)
-	{
-	case WM_INITDIALOG:
-		DialogUtil::SetHeaderFont( hDlg, IDC_STATIC_HEADER_TEXT );
-		return TRUE;
-
-	case WM_COMMAND:
-		switch(LOWORD(wParam))
-		{
-		case IDC_BUTTON_CLOSE:
-			EndDialog(hDlg, FALSE);
-			return TRUE;
-		case IDOK:
-			// EndDialog(hDlg, TRUE); /* don't always exit on ENTER */
-			return TRUE;
-		case IDC_VIEW_LOG:
-			ViewWithNotepad("../log.txt");
-			break;
-		case IDC_CRASH_SAVE:
-			ViewWithNotepad("../crashinfo.txt");
-			return TRUE;
-		case IDC_BUTTON_RESTART:
-			Win32RestartProgram();
-			EndDialog( hDlg, FALSE );
-			break;
-		case IDC_BUTTON_REPORT:
-			GotoURL( REPORT_BUG_URL );
-			break;
-		}
-		break;
-	}
-
-	return FALSE;
-}
-
-
 bool ReadCrashDataFromParent( int iFD, CompleteCrashData &Data )
 {
 	_setmode( _fileno(stdin), O_BINARY );
@@ -604,6 +566,43 @@ bool ReadCrashDataFromParent( int iFD, CompleteCrashData &Data )
 	Data.m_sCrashedThread.ReleaseBuffer();
 
 	return true;
+}
+
+BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	switch(msg)
+	{
+	case WM_INITDIALOG:
+		DialogUtil::SetHeaderFont( hDlg, IDC_STATIC_HEADER_TEXT );
+		return TRUE;
+
+	case WM_COMMAND:
+		switch(LOWORD(wParam))
+		{
+		case IDC_BUTTON_CLOSE:
+			EndDialog(hDlg, FALSE);
+			return TRUE;
+		case IDOK:
+			// EndDialog(hDlg, TRUE); /* don't always exit on ENTER */
+			return TRUE;
+		case IDC_VIEW_LOG:
+			ViewWithNotepad("../log.txt");
+			break;
+		case IDC_CRASH_SAVE:
+			ViewWithNotepad("../crashinfo.txt");
+			return TRUE;
+		case IDC_BUTTON_RESTART:
+			Win32RestartProgram();
+			EndDialog( hDlg, FALSE );
+			break;
+		case IDC_BUTTON_REPORT:
+			GotoURL( REPORT_BUG_URL );
+			break;
+		}
+		break;
+	}
+
+	return FALSE;
 }
 
 void ChildProcess()
