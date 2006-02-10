@@ -8,7 +8,7 @@ bool KeyboardDevice::AddLogicalDevice( int usagePage, int usage )
 	return usagePage == kHIDPage_GenericDesktop && usage == kHIDUsage_GD_Keyboard;
 }
 
-void KeyboardDevice::AddElement( int usagePage, int usage, int cookie, const CFDictionaryRef dict )
+void KeyboardDevice::AddElement( int usagePage, int usage, int cookie, const CFDictionaryRef properties )
 {
 	if( usagePage != kHIDPage_KeyboardOrKeypad )
 		return;

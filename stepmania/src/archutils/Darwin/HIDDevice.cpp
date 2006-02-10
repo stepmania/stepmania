@@ -175,7 +175,7 @@ void HIDDevice::AddLogicalDevice( const void *value, void *context )
 	if( CFGetTypeID(CFTypeRef(value)) != CFDictionaryGetTypeID() )
 		return;
 	
-	CFDictionaryRef dict = CFDictionaryRef( value );
+	CFDictionaryRef properties = CFDictionaryRef( value );
 	HIDDevice *This = (HIDDevice *)context;
 	CFArrayRef elements;
 	CFTypeRef object;
@@ -183,16 +183,16 @@ void HIDDevice::AddLogicalDevice( const void *value, void *context )
 	CFTypeID numID = CFNumberGetTypeID();
 	
 	// Get usage page
-	object = CFDictionaryGetValue( dict, CFSTR(kIOHIDElementUsagePageKey) );
+	object = CFDictionaryGetValue( properties, CFSTR(kIOHIDElementUsagePageKey) );
 	if( !object || CFGetTypeID(object) != numID || !IntValue(object, usagePage) )
 		return;
 	
 	// Get usage
-	object = CFDictionaryGetValue( dict, CFSTR(kIOHIDElementUsageKey) );
+	object = CFDictionaryGetValue( properties, CFSTR(kIOHIDElementUsageKey) );
 	if( !object || CFGetTypeID(object) != numID || !IntValue(object, usage) )
 		return;
 	
-	if( !(elements = (CFArrayRef)CFDictionaryGetValue( dict, CFSTR(kIOHIDElementKey))) )
+	if( !(elements = (CFArrayRef)CFDictionaryGetValue( properties, CFSTR(kIOHIDElementKey))) )
 		return;
 	
 	if( !This->AddLogicalDevice(usagePage, usage) )
@@ -208,7 +208,7 @@ void HIDDevice::AddElement( const void *value, void *context )
 	if( CFGetTypeID(CFTypeRef(value)) != CFDictionaryGetTypeID() )
 		return;
 	
-	CFDictionaryRef dict = CFDictionaryRef( value );
+	CFDictionaryRef properties = CFDictionaryRef( value );
 	HIDDevice *This = (HIDDevice *)context;
 	CFTypeRef object;
 	CFTypeID numID = CFNumberGetTypeID();
@@ -216,7 +216,7 @@ void HIDDevice::AddElement( const void *value, void *context )
 	CFArrayRef elements;
 	
 	// Recursively add elements
-	if( (elements = (CFArrayRef)CFDictionaryGetValue(dict, CFSTR(kIOHIDElementKey))) )
+	if( (elements = (CFArrayRef)CFDictionaryGetValue(properties, CFSTR(kIOHIDElementKey))) )
 	{
 		CFRange r = { 0, CFArrayGetCount(elements) };
 		
@@ -224,21 +224,21 @@ void HIDDevice::AddElement( const void *value, void *context )
 	}
 	
 	// Get usage page
-	object = CFDictionaryGetValue( dict, CFSTR(kIOHIDElementUsagePageKey) );
+	object = CFDictionaryGetValue( properties, CFSTR(kIOHIDElementUsagePageKey) );
 	if( !object || CFGetTypeID(object) != numID || !IntValue(object, usagePage) )
 		return;
 	
 	// Get usage
-	object = CFDictionaryGetValue( dict, CFSTR(kIOHIDElementUsageKey) );
+	object = CFDictionaryGetValue( properties, CFSTR(kIOHIDElementUsageKey) );
 	if( !object || CFGetTypeID(object) != numID || !IntValue(object, usage) )
 		return;
 	
 	
 	// Get cookie
-	object = CFDictionaryGetValue( dict, CFSTR(kIOHIDElementCookieKey) );
+	object = CFDictionaryGetValue( properties, CFSTR(kIOHIDElementCookieKey) );
 	if( !object || CFGetTypeID(object) != numID || !IntValue(object, cookie) )
 		return;
-	This->AddElement( usagePage, usage, cookie, dict );
+	This->AddElement( usagePage, usage, cookie, properties );
 }
 
 /*

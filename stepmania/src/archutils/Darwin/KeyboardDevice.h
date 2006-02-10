@@ -11,7 +11,7 @@ private:
 	
 protected:
 	bool AddLogicalDevice( int usagePage, int usage );
-	void AddElement( int usagePage, int usage, int cookie, const CFDictionaryRef dict );
+	void AddElement( int usagePage, int usage, int cookie, const CFDictionaryRef properties );
 	void Open();
 
 public:

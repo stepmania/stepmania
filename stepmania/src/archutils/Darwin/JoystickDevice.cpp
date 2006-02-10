@@ -33,7 +33,7 @@ bool JoystickDevice::AddLogicalDevice( int usagePage, int usage )
 	return true;
 }
 
-void JoystickDevice::AddElement( int usagePage, int usage, int cookie, const CFDictionaryRef dict )
+void JoystickDevice::AddElement( int usagePage, int usage, int cookie, const CFDictionaryRef properties )
 {
 	CFTypeRef object;
 	CFTypeID numID = CFNumberGetTypeID();
@@ -48,11 +48,11 @@ void JoystickDevice::AddElement( int usagePage, int usage, int cookie, const CFD
 		int iMin = 0;
 		int iMax = 0;
 		
-		object = CFDictionaryGetValue( dict, CFSTR(kIOHIDElementMinKey) );
+		object = CFDictionaryGetValue( properties, CFSTR(kIOHIDElementMinKey) );
 		if( object && CFGetTypeID(object) == numID )
 			IntValue( object, iMin );
 		
-		object = CFDictionaryGetValue( dict, CFSTR(kIOHIDElementMaxKey) );
+		object = CFDictionaryGetValue( properties, CFSTR(kIOHIDElementMaxKey) );
 		if( object && CFGetTypeID(object) == numID )
 			IntValue( object, iMax );
 		
