@@ -1,15 +1,26 @@
 #include "global.h"
 #include "ArchHooks_darwin.h"
 #include "RageLog.h"
+#include "RageThreads.h"
+#include "RageTimer.h"
 #include "RageUtil.h"
 #include "archutils/Darwin/Crash.h"
 #include "archutils/Unix/CrashHandler.h"
 #include "archutils/Unix/SignalHandler.h"
 #include "ProductInfo.h"
 #include <Carbon/Carbon.h>
+#include <CoreFoundation/CoreFoundation.h>
+#include <mach/thread_act.h>
 #include <mach/mach.h>
 #include <mach/host_info.h>
 #include <mach/mach_time.h>
+#include <sys/types.h>
+#include <sys/time.h>
+
+#if 0 // Time critical stuff
+static thread_time_constraint_policy g_oldttcpolicy;
+static float g_fStartedTimeCritAt;
+#endif
 
 static bool IsFatalSignal( int signal )
 {
@@ -54,6 +65,8 @@ ArchHooks_darwin::ArchHooks_darwin()
 	CrashHandler::CrashHandlerHandleArgs( g_argc, g_argv );
 	SignalHandler::OnClose( DoCrashSignalHandler );
 #endif
+	
+	//TimeCritMutex = new RageMutex("TimeCritMutex");
 	
 	// CF*Copy* functions' return values need to be released, CF*Get* functions' do not.
 	CFStringRef key = CFSTR( "ApplicationBundlePath" );
@@ -101,6 +114,11 @@ ArchHooks_darwin::ArchHooks_darwin()
 	}
 	CFRelease( value );
 	CFRelease( path );
+}
+
+ArchHooks_darwin::~ArchHooks_darwin()
+{
+	//delete TimeCritMutex;
 }
 
 void ArchHooks_darwin::DumpDebugInfo()
@@ -205,6 +223,53 @@ RString ArchHooks::GetPreferredLanguage()
 	
 	free(lang);
 	return ret.ToUpper();
+}
+
+void ArchHooks_darwin::EnterTimeCriticalSection()
+{
+#if 0
+	TimeCritMutex->Lock();
+
+	int mib[] = { CTL_HW, HW_BUS_FREQ };
+	int miblen = ARRAYSIZE( mib );
+	int bus_speed;
+	size_t len = sizeof (bus_speed);
+	if( sysctl( mib, miblen, &bus_speed, &len, NULL, 0 ) == -1 )
+	{
+		LOG->Warn( "sysctl(HW_BUS_FREQ): %s", strerror(errno) );
+		return;
+	}
+
+	mach_msg_type_number_t cnt = THREAD_TIME_CONSTRAINT_POLICY_COUNT;
+	boolean_t bDefaults = false;
+	thread_policy_get( mach_thread_self(), THREAD_TIME_CONSTRAINT_POLICY, (int*)&g_oldttcpolicy, &cnt, &bDefaults );
+
+	/* We want to monopolize the CPU for a very short period of time.  This means that the
+	 * period doesn't really matter, and we don't want to be preempted.  Set the period
+	 * very high (~1 second), so that if we ever lose the CPU when we shouldn't, we can
+	 * detect it and log it in ExitTimeCriticalSection(). */
+	thread_time_constraint_policy ttcpolicy;
+	ttcpolicy.period = bus_speed;
+	ttcpolicy.computation = ttcpolicy.constraint = bus_speed/60;
+	ttcpolicy.preemptible = 0;
+	thread_policy_set( mach_thread_self(), THREAD_TIME_CONSTRAINT_POLICY,
+		(int*)&ttcpolicy, THREAD_TIME_CONSTRAINT_POLICY_COUNT );
+
+	g_fStartedTimeCritAt = RageTimer::GetTimeSinceStart();
+#endif
+}
+
+void ArchHooks_darwin::ExitTimeCriticalSection()
+{
+#if 0
+	thread_policy_set( mach_thread_self(), THREAD_TIME_CONSTRAINT_POLICY,
+		(int*) &g_oldttcpolicy, THREAD_TIME_CONSTRAINT_POLICY_COUNT );
+	TimeCritMutex->Unlock();
+
+	float fTimeCritLen = RageTimer::GetTimeSinceStart() - g_fStartedTimeCritAt;
+	if( fTimeCritLen > 0.1f )
+		LOG->Warn( "Time-critical section lasted for %f", fTimeCritLen );
+#endif
 }
 
 int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
