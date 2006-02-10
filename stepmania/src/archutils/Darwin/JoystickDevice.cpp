@@ -173,9 +173,19 @@ void JoystickDevice::GetButtonPresses( vector<pair<DeviceInput, bool> >& vPresse
 
 int JoystickDevice::AssignIDs( InputDevice startID )
 {
+	if( startID < DEVICE_JOY1 )
+	{
+		m_vSticks.clear();
+		return 0;
+	}
 	FOREACH( Joystick, m_vSticks, i )
 	{
-		i->id = InputDevice( startID );
+		if( startID > DEVICE_JOY16 )
+		{
+			m_vSticks.erase( i, m_vSticks.end() );
+			break;
+		}
+		i->id = startID;
 		enum_add( startID, 1 );
 	}
 	return m_vSticks.size();
