@@ -18,17 +18,17 @@
 /* A few helper functions. */
 
 // The result needs to be released.
-static inline CFNumberRef CFInt( int n )
+inline CFNumberRef CFInt( int n )
 {
 	return CFNumberCreate( kCFAllocatorDefault, kCFNumberIntType, &n );
 }
 
-static inline void PrintIOErr( IOReturn err, const char *s )
+inline void PrintIOErr( IOReturn err, const char *s )
 {
 	LOG->Warn( "%s - %s(%x,%d)", s, mach_error_string(err), err, err & 0xFFFFFF );
 }
 
-static inline Boolean IntValue( const void *o, int &n )
+inline Boolean IntValue( const void *o, int &n )
 {
 	return CFNumberGetValue( CFNumberRef(o), kCFNumberIntType, &n );
 }
@@ -74,7 +74,8 @@ public:
 	
 	/*
 	 * Returns the number of IDs assigned starting from startID. This is not meaningful for devices like
-	 * keyboards that all share the same InputDevice id.
+	 * keyboards that all share the same InputDevice id. If a particular device has multiple logical
+	 * devices, then it must ensure that AssignIDs does not assign an ID outside of its range.
 	 */
 	virtual int AssignIDs( InputDevice startID ) { return 0; }
 	virtual void GetDevicesAndDescriptions( vector<InputDevice>& dev, vector<RString>& desc ) const = 0;
