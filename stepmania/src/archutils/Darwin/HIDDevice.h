@@ -30,7 +30,7 @@ inline void PrintIOErr( IOReturn err, const char *s )
 
 inline Boolean IntValue( CFTypeRef o, int &n )
 {
-	if( CFGetTypeID(o) != CFNumberGetTypeID() )
+	if( !o || CFGetTypeID(o) != CFNumberGetTypeID() )
 		return false;
 	return CFNumberGetValue( CFNumberRef(o), kCFNumberIntType, &n );
 }
