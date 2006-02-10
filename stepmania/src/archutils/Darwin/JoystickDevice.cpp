@@ -35,12 +35,9 @@ bool JoystickDevice::AddLogicalDevice( int usagePage, int usage )
 
 void JoystickDevice::AddElement( int usagePage, int usage, int cookie, const CFDictionaryRef properties )
 {
-	CFTypeRef object;
-	CFTypeID numID = CFNumberGetTypeID();
-	
 	ASSERT( m_vSticks.size() );
 	Joystick& js = m_vSticks.back();
-	
+
 	switch( usagePage )
 	{
 	case kHIDPage_GenericDesktop:
@@ -48,13 +45,8 @@ void JoystickDevice::AddElement( int usagePage, int usage, int cookie, const CFD
 		int iMin = 0;
 		int iMax = 0;
 		
-		object = CFDictionaryGetValue( properties, CFSTR(kIOHIDElementMinKey) );
-		if( object && CFGetTypeID(object) == numID )
-			IntValue( object, iMin );
-		
-		object = CFDictionaryGetValue( properties, CFSTR(kIOHIDElementMaxKey) );
-		if( object && CFGetTypeID(object) == numID )
-			IntValue( object, iMax );
+		IntValue( CFDictionaryGetValue(properties, CFSTR(kIOHIDElementMinKey)), iMin );
+		IntValue( CFDictionaryGetValue(properties, CFSTR(kIOHIDElementMaxKey)), iMax );
 		
 		switch( usage )
 		{
