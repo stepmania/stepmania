@@ -152,86 +152,76 @@ static CFDictionaryRef GetMatchingDictionary( int usagePage, int usage )
 	return dict;
 }
 
-InputHandler_Carbon::InputHandler_Carbon() : m_Sem( "Input thread started" ), m_ChangeLock( "Input handler change lock" )
+// Factor this out because nothing else in IH_C::AddDevices() needs to know the type of the device.
+static HIDDevice *MakeDevice( InputDevice id )
 {
-	// Set up the notify ports
-	m_NotifyPort = IONotificationPortCreate( kIOMasterPortDefault );
-	
-	// Find the keyboards.
+	if( id == DEVICE_KEYBOARD )
+		return new KeyboardDevice;
+	if( id <= DEVICE_JOY16 )
+		return new JoystickDevice;
+	return NULL;
+}
+
+void InputHandler_Carbon::AddDevices( int usage, InputDevice &id )
+{
 	io_iterator_t iter;
-	CFDictionaryRef dict = GetMatchingDictionary( kHIDPage_GenericDesktop, kHIDUsage_GD_Keyboard );
+	CFDictionaryRef dict = GetMatchingDictionary( kHIDPage_GenericDesktop, usage );
 	kern_return_t ret = IOServiceAddMatchingNotification( m_NotifyPort, kIOFirstMatchNotification, dict,
 							      InputHandler_Carbon::DeviceAdded, this, &iter );
-	
-	if( ret == KERN_SUCCESS )
-	{
-		m_vIters.push_back( iter );
-		// Iterate over the keyboards and add them.
-		io_object_t device;
-		
-		while( (device = IOIteratorNext(iter)) )
-		{
-			HIDDevice *kd = new KeyboardDevice;
-			
-			if( !kd->Open(device) )
-			{
-				delete kd;
-				IOObjectRelease( device );
-				continue;
-			}
-			
-			m_vDevices.push_back( kd );
-			
-			io_iterator_t i;
-			ret = IOServiceAddInterestNotification( m_NotifyPort, device, kIOGeneralInterest,
-								InputHandler_Carbon::DeviceChanged, this, &i );
-			
-			if( ret == KERN_SUCCESS )
-				m_vIters.push_back( i );
-			
-			IOObjectRelease( device );
-		}
-	}
-	
-	// Find the joysticks.
-	dict = GetMatchingDictionary( kHIDPage_GenericDesktop, kHIDUsage_GD_Joystick );
-	ret = IOServiceAddMatchingNotification( m_NotifyPort, kIOFirstMatchNotification, dict,
-						InputHandler_Carbon::DeviceAdded, this, &iter );
-	
-	if( ret == KERN_SUCCESS )
-	{
-		m_vIters.push_back( iter );
-		// Iterate over the joysticks and add them.
-		io_object_t device;
-		InputDevice id = DEVICE_JOY1;
-		
-		while( (device = IOIteratorNext(iter)) )
-		{
-			HIDDevice *jd = new JoystickDevice;
-			
-			if( !jd->Open(device) )
-			{
-				delete jd;
-				IOObjectRelease( device );
-				continue;
-			}
-	
-			int num = jd->AssignIDs( id );
-			
-			enum_add( id, num );
-			m_vDevices.push_back( jd );
-			
-			io_iterator_t i;
-			ret = IOServiceAddInterestNotification( m_NotifyPort, device, kIOGeneralInterest,
-								InputHandler_Carbon::DeviceChanged, this, &i );
+	io_object_t device;
 
-			if( ret == KERN_SUCCESS )
-				m_vIters.push_back( i );
-			IOObjectRelease( device );
-		}
-	}
+	if( ret != KERN_SUCCESS )
+		return;
 	
+	m_vIters.push_back( iter );
+	
+	// Iterate over the devices and add them
+	while( (device = IOIteratorNext(iter)) )
+	{
+		HIDDevice *dev = MakeDevice( id );
+		
+		if( !dev )
+		{
+			IOObjectRelease( device );
+			continue;
+		}
+		
+		if( !dev->Open(device) )
+		{
+			delete dev;
+			IOObjectRelease( device );
+			continue;
+		}
+		
+		int num = dev->AssignIDs( id );
+		io_iterator_t i;
+		
+		enum_add( id, num );
+		m_vDevices.push_back( dev );
+		
+		ret = IOServiceAddInterestNotification( m_NotifyPort, device, kIOGeneralInterest,
+							InputHandler_Carbon::DeviceChanged, this, &i );
+		
+		if( ret == KERN_SUCCESS )
+			m_vIters.push_back( i );
+		IOObjectRelease( device );
+	}
+}
+
+InputHandler_Carbon::InputHandler_Carbon() : m_Sem( "Input thread started" ), m_ChangeLock( "Input handler change lock" )
+{
+	InputDevice id = DEVICE_KEYBOARD;
+
+	// Set up the notify ports.
+	m_NotifyPort = IONotificationPortCreate( kIOMasterPortDefault );
+	
+	// Add devices.
+	AddDevices( kHIDUsage_GD_Keyboard, id );
+	id = DEVICE_JOY1;
+	AddDevices( kHIDUsage_GD_Joystick, id );
+	AddDevices( kHIDUsage_GD_GamePad, id );
 	m_bChanged = false;
+	
 	if( PREFSMAN->m_bThreadedInput )
 	{
 		m_InputThread.SetName( "Input thread" );

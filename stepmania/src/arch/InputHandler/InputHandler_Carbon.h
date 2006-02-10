@@ -12,12 +12,12 @@ class HIDDevice;
 class InputHandler_Carbon : public InputHandler
 {
 private:
-	std::vector<HIDDevice *> m_vDevices;
+	vector<HIDDevice *> m_vDevices;
 	RageThread m_InputThread;
 	RageSemaphore m_Sem;
 	CFRunLoopRef m_LoopRef;
 	CFRunLoopSourceRef m_SourceRef;
-	std::vector<io_iterator_t> m_vIters; // We don't really care about these but they need to stick around
+	vector<io_iterator_t> m_vIters; // We don't really care about these but they need to stick around
 	IONotificationPortRef m_NotifyPort;
 	RageMutex m_ChangeLock;
 	bool m_bChanged;
@@ -26,6 +26,7 @@ private:
 	static void DeviceAdded( void *refCon, io_iterator_t iter );
 	static void DeviceChanged( void *refCon, io_service_t service, natural_t messageType, void *arg );
 	void StartDevices();
+	void AddDevices( int usage, InputDevice &id );
 
 public:
 	InputHandler_Carbon();
