@@ -11,7 +11,7 @@ typedef struct OpaqueEventHandlerCallRef *EventHandlerCallRef;
 typedef struct OpaqueEventRef *EventRef;
 typedef long int OSStatus;
 typedef OSStatus (*EventHandlerProcPtr)( EventHandlerCallRef inHandlerCallRef,
-										 EventRef inEvent, void * inUserData );
+					 EventRef inEvent, void * inUserData );
 typedef EventHandlerProcPtr EventHandlerUPP;
 
 class MemoryCardDriverThreaded_OSX : public MemoryCardDriver
