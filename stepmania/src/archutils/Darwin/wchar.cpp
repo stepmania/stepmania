@@ -20,7 +20,7 @@ size_t wcslen( const wchar_t *ws )
 #if ! _GLIB_CHECK(HAVE_WMEMCHR)
 wchar_t *wmemchr( const wchar_t *ws, wchar_t wc, size_t n )
 {
-	for( unsigned i=0; i<n; ++i, ++ws )
+	for( size_t i=0; i<n; ++i, ++ws )
 		if( *ws == wc )
 			return (wchar_t *)ws;
 	return NULL;
@@ -30,7 +30,7 @@ wchar_t *wmemchr( const wchar_t *ws, wchar_t wc, size_t n )
 #if ! _GLIB_CHECK(HAVE_WMEMCMP)
 int wmemcmp( const wchar_t *ws1, const wchar_t *ws2, size_t n )
 {
-	for( unsigned i=0; i<n; ++i, ++ws1, ++ws2 )
+	for( size_t i=0; i<n; ++i, ++ws1, ++ws2 )
 		if( *ws1 != *ws2 )
 			return *ws1 - *ws2;
 	return 0;
@@ -55,7 +55,7 @@ wchar_t *wmemmove( wchar_t *ws1, const wchar_t *ws2, size_t n )
 wchar_t *wmemset( wchar_t *ws , wchar_t wc, size_t n )
 {
 	wchar_t *temp = ws;
-	for( unsigned i=0; i<n; ++i, ++temp )
+	for( size_t i=0; i<n; ++i, ++temp )
 		*temp = wc;
 	return ws;
 }
