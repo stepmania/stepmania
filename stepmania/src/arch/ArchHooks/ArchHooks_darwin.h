@@ -7,13 +7,13 @@ class RageMutex;
 class ArchHooks_darwin : public ArchHooks
 {
 public:
-    ArchHooks_darwin();
-    ~ArchHooks_darwin();
-    void DumpDebugInfo();
+	ArchHooks_darwin();
+	~ArchHooks_darwin();
+	void DumpDebugInfo();
 	RString GetPreferredLanguage();
 	void EnterTimeCriticalSection();
 	void ExitTimeCriticalSection();
-
+	
 protected:
 	//RageMutex *TimeCritMutex;
 };
