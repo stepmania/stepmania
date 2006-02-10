@@ -25,11 +25,11 @@ bool GetThreadBacktraceContext( uint64_t iID, BacktraceContext *ctx )
 {
 	/* Can't GetThreadBacktraceContext the current thread. */
 	ASSERT( iID != GetCurrentThreadId() );
+	SuspendThread( iID );
+	
+	thread_act_t thread = thread_act_t( iID );	
 
 #if defined(__ppc__)
-	SuspendThread( iID );
-
-	thread_act_t thread = thread_act_t( iID );
 	ppc_thread_state state;
 	mach_msg_type_number_t count = PPC_THREAD_STATE_COUNT;
 	
@@ -37,6 +37,16 @@ bool GetThreadBacktraceContext( uint64_t iID, BacktraceContext *ctx )
 		return false;
 	ctx->FramePtr = (void *)state.r1;
 	ctx->PC = (void *)state.srr0;
+	return true;
+#elif defined(__i386__)
+	i386_thread_state state;
+	mach_msg_type_number_t count = i386_THREAD_STATE_COUNT;
+	
+	if( thread_get_state(thread, i386_THREAD_STATE, thread_state_t(&state), &count) )
+		return false;
+	ctx->ip = (void *)state.eip;
+	ctx->bp = (void *)state.ebp;
+	ctx->sp = (void *)state.esp;
 	return true;
 #else
 	return false;
