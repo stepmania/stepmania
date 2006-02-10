@@ -92,7 +92,7 @@ protected:
 
 	bool m_bUsingCustomTexCoords;
 	bool m_bSkipNextUpdate;
-	float m_CustomTexCoords[8];     // (x,y) * 4: top left, bottom left, bottom right, top right
+	float m_CustomTexCoords[8];	// (x,y) * 4: top left, bottom left, bottom right, top right
 
 	// Remembered clipped dimensions are applied on Load().
 	// -1 means no remembered dimensions;

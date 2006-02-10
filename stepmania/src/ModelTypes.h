@@ -7,7 +7,7 @@
 
 struct msTriangle
 {
-    uint16_t    nVertexIndices[3];
+	uint16_t nVertexIndices[3];
 };
 
 
@@ -16,17 +16,17 @@ struct msMesh
 	msMesh();
 	~msMesh();
 
-    RString		sName;
-    char		nMaterialIndex;
+	RString			sName;
+	char			nMaterialIndex;
 
-	vector<RageModelVertex>   Vertices;
+	vector<RageModelVertex>	Vertices;
 
 	// OPTIMIZATION: If all verts in a mesh are transformed by the same bone, 
 	// then send the transform to the graphics card for the whole mesh instead
 	// of transforming each vertex on the CPU;
-	char        nBoneIndex;	// -1 = no bone
+	char			nBoneIndex;	// -1 = no bone
 
-    vector<msTriangle> Triangles;
+	vector<msTriangle>	Triangles;
 };
 
 class RageTexture;
@@ -84,52 +84,52 @@ private:
 
 struct msMaterial
 {
-    int         nFlags;
-    RString     sName;
-    RageColor   Ambient;
-    RageColor   Diffuse;
-    RageColor   Specular;
-    RageColor   Emissive;
-    float       fShininess;
-    float       fTransparency;
-    int         nName;	// not used in SM.  What is this for anyway?
+	int		nFlags;
+	RString		sName;
+	RageColor	Ambient;
+	RageColor	Diffuse;
+	RageColor	Specular;
+	RageColor	Emissive;
+	float		fShininess;
+	float		fTransparency;
+	int		nName;	// not used in SM.  What is this for anyway?
 
-	AnimatedTexture diffuse;
-	AnimatedTexture alpha;
+	AnimatedTexture	diffuse;
+	AnimatedTexture	alpha;
 
 	bool NeedsNormals() const { return diffuse.NeedsNormals() || alpha.NeedsNormals() ; }
 };
 
 struct msPositionKey
 {
-    float       fTime;
-    RageVector3      Position;
+	float fTime;
+	RageVector3 Position;
 };
 
 struct msRotationKey
 {
-    float   fTime;
-    RageVector3  Rotation;
+	float fTime;
+	RageVector3 Rotation;
 };
 
 struct msBone
 {
-    int			nFlags;
-    RString		sName;
-    RString		sParentName;
-    RageVector3	Position;
-    RageVector3	Rotation;
+	int			nFlags;
+	RString			sName;
+	RString			sParentName;
+	RageVector3		Position;
+	RageVector3		Rotation;
 
-    vector<msPositionKey>	PositionKeys;
+	vector<msPositionKey>	PositionKeys;
 
-    int		nNumRotationKeys;
-    int		nNumAllocedRotationKeys;
-    vector<msRotationKey>	RotationKeys;
+	int			nNumRotationKeys;
+	int			nNumAllocedRotationKeys;
+	vector<msRotationKey>	RotationKeys;
 };
 
 struct msAnimation
 {
-    vector<msBone>     Bones;
+	vector<msBone>		Bones;
 
 	int FindBoneByName( const RString &sName ) const
 	{
@@ -141,18 +141,18 @@ struct msAnimation
 
 	bool LoadMilkshapeAsciiBones( RString sAniName, RString sPath );
 
-    int		nTotalFrames;
+	int			nTotalFrames;
 
-    RageVector3	Position;
-    RageVector3	Rotation;
+	RageVector3		Position;
+	RageVector3		Rotation;
 };
 
 struct myBone_t
 {
-	RageMatrix	mRelative;
-	RageMatrix	mAbsolute;
-	RageMatrix	mRelativeFinal;
-	RageMatrix	mFinal;
+	RageMatrix		mRelative;
+	RageMatrix		mAbsolute;
+	RageMatrix		mRelativeFinal;
+	RageMatrix		mFinal;
 };
 
 #endif
