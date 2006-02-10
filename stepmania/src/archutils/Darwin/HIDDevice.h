@@ -28,8 +28,10 @@ inline void PrintIOErr( IOReturn err, const char *s )
 	LOG->Warn( "%s - %s(%x,%d)", s, mach_error_string(err), err, err & 0xFFFFFF );
 }
 
-inline Boolean IntValue( const void *o, int &n )
+inline Boolean IntValue( CFTypeRef o, int &n )
 {
+	if( CFGetTypeID(o) != CFNumberGetTypeID() )
+		return false;
 	return CFNumberGetValue( CFNumberRef(o), kCFNumberIntType, &n );
 }
 

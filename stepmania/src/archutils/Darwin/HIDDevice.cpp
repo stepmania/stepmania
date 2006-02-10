@@ -36,6 +36,7 @@ bool HIDDevice::Open( io_object_t device )
 	IOReturn ret;
 	CFMutableDictionaryRef properties;
 	kern_return_t result;
+	CFTypeRef object;
 	
 	result = IORegistryEntryCreateCFProperties( device, &properties, kCFAllocatorDefault, kNilOptions );
 	if ( result != KERN_SUCCESS || !properties )
@@ -44,14 +45,14 @@ bool HIDDevice::Open( io_object_t device )
 		return false;
 	}
 	
-	CFStringRef productRef = (CFStringRef)CFDictionaryGetValue( properties, CFSTR(kIOHIDProductKey) );
+	object = CFDictionaryGetValue( properties, CFSTR(kIOHIDProductKey) );
 	
-	if( productRef )
-		m_sDescription = CFStringGetCStringPtr( productRef, CFStringGetSystemEncoding() );
+	if( object && CFGetTypeID(object) == CFStringGetTypeID() )
+		m_sDescription = CFStringGetCStringPtr( CFStringRef(object), CFStringGetSystemEncoding() );
 	if( m_sDescription == "" )
 	{
-		CFTypeRef vidRef = (CFTypeRef)CFDictionaryGetValue( properties, CFSTR(kIOHIDVendorIDKey) );
-		CFTypeRef pidRef = (CFTypeRef)CFDictionaryGetValue( properties, CFSTR(kIOHIDProductIDKey) );
+		CFTypeRef vidRef = CFDictionaryGetValue( properties, CFSTR(kIOHIDVendorIDKey) );
+		CFTypeRef pidRef = CFDictionaryGetValue( properties, CFSTR(kIOHIDProductIDKey) );
 		int vid, pid;
 		
 		if( vidRef && !IntValue(vidRef, vid) )
@@ -61,13 +62,14 @@ bool HIDDevice::Open( io_object_t device )
 		m_sDescription = ssprintf( "%04x:%04x", vid, pid );
 	}
 	
-	CFArrayRef logicalDevices;
-	
-	if ( !(logicalDevices = (CFArrayRef)CFDictionaryGetValue(properties, CFSTR(kIOHIDElementKey))) )
+	object = CFDictionaryGetValue( properties, CFSTR(kIOHIDElementKey) );
+	if ( !object || CFGetTypeID(object) != CFArrayGetTypeID() )
 	{
 		CFRelease( properties );
 		return false;
 	}
+	
+	CFArrayRef logicalDevices = CFArrayRef( object );
 	CFRange r = { 0, CFArrayGetCount(logicalDevices) };
 	
 	CFArrayApplyFunction( logicalDevices, r, HIDDevice::AddLogicalDevice, this );
@@ -177,7 +179,6 @@ void HIDDevice::AddLogicalDevice( const void *value, void *context )
 	
 	CFDictionaryRef properties = CFDictionaryRef( value );
 	HIDDevice *This = (HIDDevice *)context;
-	CFArrayRef elements;
 	CFTypeRef object;
 	int usage, usagePage;
 	CFTypeID numID = CFNumberGetTypeID();
@@ -192,12 +193,14 @@ void HIDDevice::AddLogicalDevice( const void *value, void *context )
 	if( !object || CFGetTypeID(object) != numID || !IntValue(object, usage) )
 		return;
 	
-	if( !(elements = (CFArrayRef)CFDictionaryGetValue( properties, CFSTR(kIOHIDElementKey))) )
+	object = CFDictionaryGetValue( properties, CFSTR(kIOHIDElementKey) );
+	if( !object || CFGetTypeID(object) != CFArrayGetTypeID() )
 		return;
 	
 	if( !This->AddLogicalDevice(usagePage, usage) )
 		return;
 	
+	CFArrayRef elements = CFArrayRef( object );
 	CFRange r = { 0, CFArrayGetCount(elements) };
 		
 	CFArrayApplyFunction( elements, r, HIDDevice::AddElement, This );
@@ -213,11 +216,12 @@ void HIDDevice::AddElement( const void *value, void *context )
 	CFTypeRef object;
 	CFTypeID numID = CFNumberGetTypeID();
 	int cookie, usage, usagePage;
-	CFArrayRef elements;
 	
 	// Recursively add elements
-	if( (elements = (CFArrayRef)CFDictionaryGetValue(properties, CFSTR(kIOHIDElementKey))) )
+	object = CFDictionaryGetValue( properties, CFSTR(kIOHIDElementKey) );
+	if( object && CFGetTypeID(object) == CFArrayGetTypeID() )
 	{
+		CFArrayRef elements = CFArrayRef( object );
 		CFRange r = { 0, CFArrayGetCount(elements) };
 		
 		CFArrayApplyFunction( elements, r, AddElement, context );
