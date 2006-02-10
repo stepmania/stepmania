@@ -14,13 +14,13 @@
 #include <mach/mach.h>
 #include <mach/host_info.h>
 #include <mach/mach_time.h>
+#include <mach/mach_error.h>
 #include <sys/types.h>
 #include <sys/time.h>
+#include <sys/sysctl.h>
 
-#if 0 // Time critical stuff
 static thread_time_constraint_policy g_oldttcpolicy;
 static float g_fStartedTimeCritAt;
-#endif
 
 static bool IsFatalSignal( int signal )
 {
@@ -66,7 +66,7 @@ ArchHooks_darwin::ArchHooks_darwin()
 	SignalHandler::OnClose( DoCrashSignalHandler );
 #endif
 	
-	//TimeCritMutex = new RageMutex("TimeCritMutex");
+	TimeCritMutex = new RageMutex("TimeCritMutex");
 	
 	// CF*Copy* functions' return values need to be released, CF*Get* functions' do not.
 	CFStringRef key = CFSTR( "ApplicationBundlePath" );
@@ -118,7 +118,7 @@ ArchHooks_darwin::ArchHooks_darwin()
 
 ArchHooks_darwin::~ArchHooks_darwin()
 {
-	//delete TimeCritMutex;
+	delete TimeCritMutex;
 }
 
 void ArchHooks_darwin::DumpDebugInfo()
@@ -227,53 +227,60 @@ RString ArchHooks::GetPreferredLanguage()
 
 void ArchHooks_darwin::EnterTimeCriticalSection()
 {
-#if 0
 	TimeCritMutex->Lock();
-
-	int mib[] = { CTL_HW, HW_BUS_FREQ };
-	int miblen = ARRAYSIZE( mib );
-	int bus_speed;
-	size_t len = sizeof (bus_speed);
-	if( sysctl( mib, miblen, &bus_speed, &len, NULL, 0 ) == -1 )
-	{
-		LOG->Warn( "sysctl(HW_BUS_FREQ): %s", strerror(errno) );
-		return;
-	}
-
+	
 	mach_msg_type_number_t cnt = THREAD_TIME_CONSTRAINT_POLICY_COUNT;
 	boolean_t bDefaults = false;
-	thread_policy_get( mach_thread_self(), THREAD_TIME_CONSTRAINT_POLICY, (int*)&g_oldttcpolicy, &cnt, &bDefaults );
+	kern_return_t ret;
+
+	ret = thread_policy_get( mach_thread_self(), THREAD_TIME_CONSTRAINT_POLICY,
+				 (int*)&g_oldttcpolicy, &cnt, &bDefaults );
+	
+	if( unlikely(ret != KERN_SUCCESS) )
+		LOG->Warn( "thread_policy_get(): %s", mach_error_string(ret) );
 
 	/* We want to monopolize the CPU for a very short period of time.  This means that the
-	 * period doesn't really matter, and we don't want to be preempted.  Set the period
-	 * very high (~1 second), so that if we ever lose the CPU when we shouldn't, we can
-	 * detect it and log it in ExitTimeCriticalSection(). */
+	 * period doesn't really matter, and we don't want to be preempted. The thread_policy_set
+	 * call will fail unless 50 us <= computation <= constraint <= 50 ms. This isn't
+	 * anywhere except in the kernel source. Way to go Apple! */
 	thread_time_constraint_policy ttcpolicy;
-	ttcpolicy.period = bus_speed;
-	ttcpolicy.computation = ttcpolicy.constraint = bus_speed/60;
+	mach_timebase_info_data_t timeBase;
+		
+	mach_timebase_info( &timeBase );
+	
+	ttcpolicy.period = 0; // no periodicity
+	// http://developer.apple.com/qa/qa2004/qa1398.html
+	ttcpolicy.computation = uint32_t( 3000000.0 * timeBase.denom / timeBase.numer ); // 3 ms
+	ttcpolicy.constraint = ttcpolicy.computation;
 	ttcpolicy.preemptible = 0;
-	thread_policy_set( mach_thread_self(), THREAD_TIME_CONSTRAINT_POLICY,
-		(int*)&ttcpolicy, THREAD_TIME_CONSTRAINT_POLICY_COUNT );
+	ret = thread_policy_set( mach_thread_self(), THREAD_TIME_CONSTRAINT_POLICY,
+				 (int*)&ttcpolicy, THREAD_TIME_CONSTRAINT_POLICY_COUNT );
+	
+	if( unlikely(ret != KERN_SUCCESS) )
+		LOG->Warn( "thread_policy_set(THREAD_TIME_CONSTRAINT_POLICY): %s", mach_error_string(ret) );
 
 	g_fStartedTimeCritAt = RageTimer::GetTimeSinceStart();
-#endif
 }
 
 void ArchHooks_darwin::ExitTimeCriticalSection()
 {
-#if 0
-	thread_policy_set( mach_thread_self(), THREAD_TIME_CONSTRAINT_POLICY,
-		(int*) &g_oldttcpolicy, THREAD_TIME_CONSTRAINT_POLICY_COUNT );
+	kern_return_t ret;
+	
+	ret = thread_policy_set( mach_thread_self(), THREAD_TIME_CONSTRAINT_POLICY,
+				 (int*) &g_oldttcpolicy, THREAD_TIME_CONSTRAINT_POLICY_COUNT );
+	
 	TimeCritMutex->Unlock();
+	if( unlikely(ret != KERN_SUCCESS) )
+		LOG->Warn( "thread_policy_set(g_oldttcpolicy): %s", mach_error_string(ret) );
 
 	float fTimeCritLen = RageTimer::GetTimeSinceStart() - g_fStartedTimeCritAt;
-	if( fTimeCritLen > 0.1f )
+	if( fTimeCritLen > 0.003f )
 		LOG->Warn( "Time-critical section lasted for %f", fTimeCritLen );
-#endif
 }
 
 int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 {
+	// http://developer.apple.com/qa/qa2004/qa1398.html
 	static uint64_t iStartTime = mach_absolute_time();
 	static double factor = 0.0;
 	
