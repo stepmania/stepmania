@@ -242,7 +242,8 @@ void ArchHooks_darwin::EnterTimeCriticalSection()
 	/* We want to monopolize the CPU for a very short period of time.  This means that the
 	 * period doesn't really matter, and we don't want to be preempted. The thread_policy_set
 	 * call will fail unless 50 us <= computation <= constraint <= 50 ms. This isn't
-	 * anywhere except in the kernel source. Way to go Apple! */
+	 * anywhere except in the kernel source: min_rt_quantum and max_rt_quantum in
+	 * http://darwinsource.opendarwin.org/10.4/xnu-792/osfmk/kern/sched_prim.c */
 	thread_time_constraint_policy ttcpolicy;
 	mach_timebase_info_data_t timeBase;
 		
