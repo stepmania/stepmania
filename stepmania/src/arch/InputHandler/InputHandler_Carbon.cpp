@@ -194,7 +194,7 @@ InputHandler_Carbon::InputHandler_Carbon() : m_Sem( "Input thread started" ), m_
 	}
 	
 	// Find the joysticks.
-	dict = GetMatchingDictionary( kHIDPage_GenericDesktop, kHIDUsage_GD_Joystick|kHIDUsage_GD_GamePad );
+	dict = GetMatchingDictionary( kHIDPage_GenericDesktop, kHIDUsage_GD_Joystick );
 	ret = IOServiceAddMatchingNotification( m_NotifyPort, kIOFirstMatchNotification, dict,
 						InputHandler_Carbon::DeviceAdded, this, &iter );
 	
