@@ -59,7 +59,7 @@ protected:
 	RString GetExplanationText( int iRow ) const;
 	void RefreshIcons( int iRow, PlayerNumber pn );
 	void PositionCursor( PlayerNumber pn );
-	void PositionRows();
+	void PositionRows( bool bTween );
 	void TweenCursor( PlayerNumber pn );
 	void StoreFocus( PlayerNumber pn );
 
@@ -132,7 +132,7 @@ protected:	// derived classes need access to these
 	ThemeMetric<apActorCommands>	ROW_INIT_COMMAND;
 	ThemeMetric<apActorCommands>	ROW_ON_COMMAND;
 	ThemeMetric<apActorCommands>	ROW_OFF_COMMAND;
-	LuaExpressionTransform m_exprRowPositionTransformFunction;		// params: self,positionIndex,itemIndex,numItems
+	LuaExpressionTransform		m_exprRowPositionTransformFunction;	// params: self,positionIndex,itemIndex,numItems
 	ThemeMetric1D<float>		EXPLANATION_X;
 	ThemeMetric1D<float>		EXPLANATION_Y;
 	ThemeMetric1D<apActorCommands>	EXPLANATION_ON_COMMAND;

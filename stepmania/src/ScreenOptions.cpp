@@ -287,7 +287,7 @@ void ScreenOptions::RestartOptions()
 
 	CHECKPOINT;
 
-	PositionRows();
+	PositionRows( false );
 	FOREACH_HumanPlayer( pn )
 	{
 		// Hide the highlight if no rows are enabled.
@@ -564,7 +564,7 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 }
 
 
-void ScreenOptions::PositionRows()
+void ScreenOptions::PositionRows( bool bTween )
 {
 	const int total = NUM_ROWS_SHOWN;
 	const int halfsize = total / 2;
@@ -656,7 +656,7 @@ void ScreenOptions::PositionRows()
 		else if( i >= second_end )			fPos = ((int)NUM_ROWS_SHOWN)-0.5f;
 
 		Actor::TweenState tsDestination = m_exprRowPositionTransformFunction.GetPosition( (float) fPos, i, min( (int)Rows.size(), (int)NUM_ROWS_SHOWN ) );
-		row.SetDestination( tsDestination );
+		row.SetDestination( tsDestination, bTween );
 
 		bool bHidden = 
 			i < first_start ||
@@ -672,7 +672,7 @@ void ScreenOptions::PositionRows()
 		Actor::TweenState tsDestination;
 		tsDestination.Init();
 		tsDestination.pos.y = SEPARATE_EXIT_ROW_Y;
-		pSeparateExitRow->SetDestination( tsDestination );
+		pSeparateExitRow->SetDestination( tsDestination, bTween );
 
 		pSeparateExitRow->SetRowHidden( second_end != (int) Rows.size() );
 	}
@@ -690,7 +690,7 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 		return;
 	
 	/* Update m_fY and m_bHidden[]. */
-	PositionRows();
+	PositionRows( true );
 
 	/* Do positioning. */
 	for( unsigned r=0; r<m_pRows.size(); r++ )

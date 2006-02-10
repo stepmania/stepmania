@@ -553,12 +553,12 @@ void OptionRow::SetRowHasFocus( PlayerNumber pn, bool bRowHasFocus )
 	m_bRowHasFocus[pn] = bRowHasFocus;
 }
 
-void OptionRow::SetDestination( Actor::TweenState &ts )
+void OptionRow::SetDestination( Actor::TweenState &ts, bool bTween )
 {
 	if( m_Frame.DestTweenState() != ts )
 	{
 		m_Frame.StopTweening();
-		if( m_pParentType->TWEEN_SECONDS != 0 )
+		if( bTween && m_pParentType->TWEEN_SECONDS != 0 )
 			m_Frame.BeginTweening( m_pParentType->TWEEN_SECONDS );
 		m_Frame.DestTweenState() = ts;
 	}

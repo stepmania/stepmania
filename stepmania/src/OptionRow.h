@@ -223,7 +223,7 @@ protected:
 	Actor::TweenState m_tsDestination;	// this should approach m_tsDestination.
 
 public:
-	void SetDestination( Actor::TweenState &ts );
+	void SetDestination( Actor::TweenState &ts, bool bTween );
 protected:
 	bool m_bHidden; // currently off screen
 };
