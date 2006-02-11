@@ -616,7 +616,7 @@ void ChildProcess()
 	MakeCrashReport( Data, sCrashReport );
 	VDDebugInfoDeinit( &g_debugInfo );
 
-	DoSave( Data );
+	DoSave( sCrashReport );
 
 	/* Tell the crashing process that it can exit.  Be sure to write crashinfo.txt first. */
 	int iCmd = 0;
