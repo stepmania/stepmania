@@ -11,6 +11,7 @@
 #include "archutils/Win32/DialogUtil.h"
 #include "archutils/Win32/GotoURL.h"
 #include "archutils/Win32/RestartProgram.h"
+#include "archutils/Win32/WindowsDialogBox.h"
 #include "ProductInfo.h"
 #include "RageUtil.h"
 
@@ -565,8 +566,16 @@ bool ReadCrashDataFromParent( int iFD, CompleteCrashData &Data )
 	return true;
 }
 
-BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+class CrashDialog: public WindowsDialogBox
 {
+protected:
+	virtual bool HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam );
+};
+
+bool CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
+{
+	HWND hDlg = GetHwnd();
+
 	switch(msg)
 	{
 	case WM_INITDIALOG:
@@ -623,14 +632,8 @@ void ChildProcess()
 	CloseHandle( SymbolLookup::g_hParent );
 	SymbolLookup::g_hParent = NULL;
 
-	/* Little trick to get an HINSTANCE of ourself without having access to the hwnd ... */
-	{
-		TCHAR szFullAppPath[MAX_PATH];
-		GetModuleFileName( NULL, szFullAppPath, MAX_PATH );
-		HINSTANCE hHandle = LoadLibrary( szFullAppPath );
-
-		DialogBoxParam( hHandle, MAKEINTRESOURCE(IDD_DISASM_CRASH), NULL, CrashDlgProc, NULL );
-	}
+	CrashDialog cd;
+	cd.Run( IDD_DISASM_CRASH );
 }
 
 }
