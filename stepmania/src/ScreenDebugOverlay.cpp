@@ -160,7 +160,7 @@ void ScreenDebugOverlay::Init()
 		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Co);
 		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_UP);
 		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_DOWN);
-
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_BACK);
 	}
 
 
@@ -405,6 +405,7 @@ static LocalizedString PULL_BACK_CAMERA		( "ScreenDebugOverlay", "Pull Back Came
 static LocalizedString VOLUME_UP		( "ScreenDebugOverlay", "Volume Up" );
 static LocalizedString VOLUME_DOWN		( "ScreenDebugOverlay", "Volume Down" );
 static LocalizedString UPTIME			( "ScreenDebugOverlay", "Uptime" );
+static LocalizedString FORCE_CRASH		( "ScreenDebugOverlay", "Force Crash" );
 static LocalizedString SLOW			( "ScreenDebugOverlay", "Slow" );
 static LocalizedString ON			( "ScreenDebugOverlay", "on" );
 static LocalizedString OFF			( "ScreenDebugOverlay", "off" );
@@ -843,6 +844,14 @@ class DebugLineVolumeDown : public IDebugLine
 	}
 };
 
+class DebugLineForceCrash : public IDebugLine
+{
+	virtual RString GetDescription() { return FORCE_CRASH.GetValue(); }
+	virtual RString GetValue() { return RString(); }
+	virtual bool IsEnabled() { return false; }
+	virtual void Do( RString &sMessageOut ) { FAIL_M("DebugLineCrash"); }
+};
+
 class DebugLineUptime : public IDebugLine
 {
 	virtual RString GetDescription() { return UPTIME.GetValue(); }
@@ -880,6 +889,7 @@ DECLARE_ONE( DebugLineFlushLog );
 DECLARE_ONE( DebugLinePullBackCamera );
 DECLARE_ONE( DebugLineVolumeUp );
 DECLARE_ONE( DebugLineVolumeDown );
+DECLARE_ONE( DebugLineForceCrash );
 DECLARE_ONE( DebugLineUptime );
 
 
