@@ -581,10 +581,10 @@ RString str="a,b,c";
 int start = 0, size = -1;
 while( 1 )
 {
-	do_split( str, ",", begin, size );
-	if( begin == str.end() )
+	do_split( str, ",", start, size );
+	if( start == str.size() )
 		break;
-	str[begin] = 'Q';
+	str[start] = 'Q';
 }
 
  */
