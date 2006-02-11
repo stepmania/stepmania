@@ -3,6 +3,7 @@
 #include "Crash.h"
 
 #include <windows.h>
+#include <commctrl.h>
 #include "archutils/Win32/ddk/dbghelp.h"
 #include <io.h>
 #include <fcntl.h>
@@ -11,9 +12,12 @@
 #include "archutils/Win32/DialogUtil.h"
 #include "archutils/Win32/GotoURL.h"
 #include "archutils/Win32/RestartProgram.h"
+#include "archutils/Win32/CrashHandlerNetworking.h"
 #include "archutils/Win32/WindowsDialogBox.h"
 #include "ProductInfo.h"
 #include "RageUtil.h"
+#include "XmlFile.h"
+#include "LocalizedString.h"
 
 #if defined(_MSC_VER)
 #pragma comment(lib, "archutils/Win32/ddk/dbghelp.lib")
@@ -566,11 +570,86 @@ bool ReadCrashDataFromParent( int iFD, CompleteCrashData &Data )
 	return true;
 }
 
+/*
+ * Localization for the crash handler is different, and a little tricky.  We don't
+ * have ThemeManager loaded, so we have to localize it ourself.  We can supply
+ * translations with our own substitution function.  We need to figure out which
+ * language to use.  Since these strings won't be pulled from the theme, defer
+ * loading them until we use them.  XXX
+ */
+static LocalizedString A_CRASH_HAS_OCCURRED;
+static LocalizedString REPORTING_THE_PROBLEM;
+static LocalizedString CLOSE;
+static LocalizedString CANCEL;
+static LocalizedString VIEW_UPDATE;
+static LocalizedString UPDATE_IS_AVAILABLE;
+static LocalizedString UPDATE_IS_NOT_AVAILABLE;
+
+// #define AUTOMATED_CRASH_REPORTS
+#define CRASH_REPORT_HOST "example.com"
+#define CRASH_REPORT_PORT 80
+#define CRASH_REPORT_PATH "/report.cgi"
+
+void LoadLocalizedStrings()
+{
+#if defined(AUTOMATED_CRASH_REPORTS)
+	A_CRASH_HAS_OCCURRED.Load( "CrashHandler",
+		"A crash has occurred.  Would you like to automatically report the "
+		"problem and check for updates?" );
+#else
+	A_CRASH_HAS_OCCURRED.Load( "CrashHandler",
+		"A crash has occurred.  Diagnostic information has been saved to a file "
+		"called \"crashinfo.txt\" in the game program directory." );
+#endif
+	REPORTING_THE_PROBLEM.Load( "CrashHandler",
+		"Reporting the problem and checking for updates ..." );
+	CLOSE.Load( "CrashHandler", "&Close" );
+	CANCEL.Load( "CrashHandler", "&Cancel" );
+	VIEW_UPDATE.Load( "CrashHandler", "View &update" );
+	UPDATE_IS_AVAILABLE.Load( "CrashHandler", "An update is available." );
+	UPDATE_IS_NOT_AVAILABLE.Load( "CrashHandler", "The error has been reported.  No updates are available." );
+}
+
 class CrashDialog: public WindowsDialogBox
 {
+public:
+	CrashDialog( const RString &sCrashReport, const CompleteCrashData &CrashData );
+	~CrashDialog();
+
 protected:
 	virtual bool HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam );
+
+private:
+	void SetDialogInitial();
+
+	NetworkPostData *m_pPost;
+	RString m_sUpdateURL;
+	const RString m_sCrashReport;
+	CompleteCrashData m_CrashData;
 };
+
+CrashDialog::CrashDialog( const RString &sCrashReport, const CompleteCrashData &CrashData ):
+	m_sCrashReport( sCrashReport ),
+	m_CrashData( CrashData )
+{
+	LoadLocalizedStrings();
+	m_pPost = NULL;
+}
+
+CrashDialog::~CrashDialog()
+{
+	delete m_pPost;
+}
+
+void CrashDialog::SetDialogInitial()
+{
+	HWND hDlg = GetHwnd();
+
+	SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), A_CRASH_HAS_OCCURRED.GetValue() );
+	SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_CLOSE), CLOSE.GetValue() );
+	ShowWindow( GetDlgItem(hDlg, IDC_PROGRESS), false );
+	ShowWindow( GetDlgItem(hDlg, IDC_BUTTON_AUTO_REPORT), true );
+}
 
 bool CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 {
@@ -579,6 +658,7 @@ bool CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 	switch(msg)
 	{
 	case WM_INITDIALOG:
+		SetDialogInitial();
 		DialogUtil::SetHeaderFont( hDlg, IDC_STATIC_HEADER_TEXT );
 		return TRUE;
 
@@ -586,6 +666,18 @@ bool CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 		switch(LOWORD(wParam))
 		{
 		case IDC_BUTTON_CLOSE:
+			if( m_pPost != NULL )
+			{
+				/* Cancel reporting, and revert the dialog as if "report" had not been pressed. */
+				m_pPost->Cancel();
+				KillTimer( hDlg, 0 );
+
+				SetDialogInitial();
+				SAFE_DELETE( m_pPost );
+				return TRUE;
+			}
+
+			/* Close the dialog. */
 			EndDialog(hDlg, FALSE);
 			return TRUE;
 		case IDOK:
@@ -604,8 +696,75 @@ bool CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 		case IDC_BUTTON_REPORT:
 			GotoURL( REPORT_BUG_URL );
 			break;
+		case IDC_BUTTON_AUTO_REPORT:
+			if( !m_sUpdateURL.empty() )
+			{
+				/* We already sent the report, were told that there's an update, and
+				 * substituted the URL. */
+				GotoURL( m_sUpdateURL );
+				break;
+			}
+
+			ShowWindow( GetDlgItem(hDlg, IDC_BUTTON_AUTO_REPORT), false );
+			ShowWindow( GetDlgItem(hDlg, IDC_PROGRESS), true );
+			SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), REPORTING_THE_PROBLEM.GetValue() );
+			SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_CLOSE), CANCEL.GetValue() );
+			SendDlgItemMessage( hDlg, IDC_PROGRESS, PBM_SETRANGE, 0, MAKELPARAM(0,100) );
+			SendDlgItemMessage( hDlg, IDC_PROGRESS, PBM_SETPOS, 0, 0 );
+
+			/* Create the form data to send. */
+			m_pPost = new NetworkPostData;
+			m_pPost->SetData( "ProductName", PRODUCT_NAME );
+			m_pPost->SetData( "ProductVersion", PRODUCT_VER );
+			m_pPost->SetData( "Report", m_sCrashReport );
+			m_pPost->SetData( "Reason", m_CrashData.m_CrashInfo.m_CrashReason );
+
+			m_pPost->Start( CRASH_REPORT_HOST, CRASH_REPORT_PORT, CRASH_REPORT_PATH );
+
+			SetTimer( hDlg, 0, 100, NULL );
+			break;
 		}
 		break;
+	case WM_TIMER:
+	{
+		if( m_pPost == NULL )
+			break;
+
+		float fProgress = m_pPost->GetProgress();
+		SendDlgItemMessage( hDlg, IDC_PROGRESS, PBM_SETPOS, int(fProgress*100), 0 );
+
+		if( m_pPost->IsFinished() )
+		{
+			KillTimer( hDlg, 0 );
+
+			/* Grab the result, which is the data output from the HTTP request.  It's
+			 * simple XML. */
+			RString sResult = m_pPost->GetResult();
+			SAFE_DELETE( m_pPost );
+
+			PARSEINFO pi;
+			XNode xml;
+			xml.Load( sResult, &pi );
+
+			int iID;
+			if( xml.GetAttrValue("UpdateAvailable", m_sUpdateURL) )
+			{
+				SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), UPDATE_IS_AVAILABLE.GetValue() );
+				SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_AUTO_REPORT), VIEW_UPDATE.GetValue() );
+				ShowWindow( GetDlgItem(hDlg, IDC_BUTTON_AUTO_REPORT), true );
+				ShowWindow( GetDlgItem(hDlg, IDC_PROGRESS), false );
+			}
+			else if( xml.GetAttrValue("ReportId", iID) )
+			{
+				SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), UPDATE_IS_NOT_AVAILABLE.GetValue() );
+				SetWindowText( GetDlgItem(hDlg, IDC_RESULT_ID), ssprintf("#%i", iID) );
+				ShowWindow( GetDlgItem(hDlg, IDC_RESULT_ID), true );
+				ShowWindow( GetDlgItem(hDlg, IDC_PROGRESS), false );
+			}
+
+			SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_CLOSE), CLOSE.GetValue() );
+		}
+	}
 	}
 
 	return FALSE;
@@ -632,8 +791,12 @@ void ChildProcess()
 	CloseHandle( SymbolLookup::g_hParent );
 	SymbolLookup::g_hParent = NULL;
 
-	CrashDialog cd;
+	CrashDialog cd( sCrashReport, Data );
+#if defined(AUTOMATED_CRASH_REPORTS)
+	cd.Run( IDD_REPORT_CRASH );
+#else
 	cd.Run( IDD_DISASM_CRASH );
+#endif
 }
 
 }
