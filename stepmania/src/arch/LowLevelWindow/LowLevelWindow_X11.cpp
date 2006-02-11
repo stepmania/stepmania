@@ -304,6 +304,11 @@ void LowLevelWindow_X11::GetDisplayResolutions( DisplayResolutions &out ) const
 	}
 }
 
+float LowLevelWindow_X11::GetMonitorAspectRatio() const
+{
+	return 4.0f/3;
+}
+
 bool LowLevelWindow_X11::SupportsThreadedRendering()
 {
 	return g_pBackgroundContext != NULL;

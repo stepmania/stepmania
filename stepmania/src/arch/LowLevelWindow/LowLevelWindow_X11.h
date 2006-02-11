@@ -20,6 +20,7 @@ public:
 	const VideoModeParams &GetActualVideoModeParams() const { return CurrentParams; }
 	
 	void GetDisplayResolutions( DisplayResolutions &out ) const;
+	float GetMonitorAspectRatio() const;
 
 	bool SupportsThreadedRendering();
 	void BeginConcurrentRenderingMainThread();
