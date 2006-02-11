@@ -60,14 +60,13 @@ END
 
 IDD_DISASM_CRASH DIALOGEX 0, 0, 332, 114
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION
-CAPTION "Program Crash"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     PUSHBUTTON      "&View Crash Info",IDC_CRASH_SAVE,40,73,94,15
     PUSHBUTTON      "View &Log",IDC_VIEW_LOG,137,73,63,15
     PUSHBUTTON      "Report the &Error",IDC_BUTTON_REPORT,203,73,89,15
-    PUSHBUTTON      "&Close",IDC_BUTTON_CLOSE,278,95,50,15
     PUSHBUTTON      "&Restart Game",IDC_BUTTON_RESTART,197,95,78,15
+    PUSHBUTTON      "&Close",IDC_BUTTON_CLOSE,278,95,50,15
     LTEXT           "A crash has occurred.  Diagnostic information has been saved to a file called ""crashinfo.txt"" in the game program directory.",
                     IDC_STATIC,8,41,312,19
     CONTROL         "",IDC_STATIC,"Static",SS_WHITERECT,0,0,332,35
@@ -88,6 +87,28 @@ BEGIN
     EDITTEXT        IDC_MESSAGE,7,7,322,55,ES_CENTER | ES_MULTILINE | 
                     ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER | 
                     WS_VSCROLL
+END
+
+IDD_REPORT_CRASH DIALOGEX 0, 0, 332, 83
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | DS_CENTERMOUSE | WS_POPUP | 
+    WS_CAPTION
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    PUSHBUTTON      "&View error report",IDC_CRASH_SAVE,47,64,94,15
+    PUSHBUTTON      "&Report the problem",IDC_BUTTON_AUTO_REPORT,143,64,89,
+                    15
+    CONTROL         "",IDC_PROGRESS,"msctls_progress32",NOT WS_VISIBLE | 
+                    WS_BORDER,143,64,89,15
+    PUSHBUTTON      "&Close",IDC_BUTTON_CLOSE,234,64,50,15
+    CTEXT           "A crash has occurred.  Would you like to automatically report the problem and check for updates?",
+                    IDC_MAIN_TEXT,6,41,322,8
+    CONTROL         "",IDC_STATIC,"Static",SS_WHITERECT,0,0,332,35
+    LTEXT           "Program Crash",IDC_STATIC_HEADER_TEXT,5,5,249,23
+    ICON            IDI_ICON,IDC_STATIC_ICON,296,6,20,20
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDFRAME,0,34,332,1
+    EDITTEXT        IDC_RESULT_ID,6,71,27,12,ES_AUTOHSCROLL | ES_READONLY | 
+                    NOT WS_VISIBLE | NOT WS_BORDER | NOT WS_TABSTOP,
+                    WS_EX_RIGHT
 END
 
 
@@ -121,6 +142,13 @@ BEGIN
         RIGHTMARGIN, 329
         TOPMARGIN, 7
         BOTTOMMARGIN, 91
+    END
+
+    IDD_REPORT_CRASH, DIALOG
+    BEGIN
+        RIGHTMARGIN, 328
+        VERTGUIDE, 6
+        BOTTOMMARGIN, 79
     END
 END
 #endif    // APSTUDIO_INVOKED
