@@ -1603,6 +1603,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					RelativePath=".\archutils\Win32\CrashHandlerInternal.h">
 				</File>
 				<File
+					RelativePath=".\archutils\Win32\CrashHandlerNetworking.cpp">
+				</File>
+				<File
+					RelativePath=".\archutils\Win32\CrashHandlerNetworking.h">
+				</File>
+				<File
 					RelativePath=".\archutils\Win32\DebugInfoHunt.cpp">
 				</File>
 				<File
@@ -1631,6 +1637,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				</File>
 				<File
 					RelativePath="archutils\Win32\GraphicsWindow.h">
+				</File>
+				<File
+					RelativePath=".\archutils\Win32\MessageWindow.cpp">
+				</File>
+				<File
+					RelativePath=".\archutils\Win32\MessageWindow.h">
 				</File>
 				<File
 					RelativePath="archutils\Win32\RegistryAccess.cpp">
@@ -1670,6 +1682,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				</File>
 				<File
 					RelativePath="archutils\Win32\WindowIcon.h">
+				</File>
+				<File
+					RelativePath=".\archutils\Win32\WindowsDialogBox.cpp">
+				</File>
+				<File
+					RelativePath=".\archutils\Win32\WindowsDialogBox.h">
 				</File>
 				<File
 					RelativePath="archutils\Win32\WindowsResources.h">
