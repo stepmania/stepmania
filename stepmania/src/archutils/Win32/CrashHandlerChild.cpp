@@ -452,7 +452,7 @@ static void MakeCrashReport( const CompleteCrashData &Data, RString &sOut )
 	sOut += ssprintf( "-- End of report\n" );
 }
 
-static void DoSave( const CompleteCrashData &Data )
+static void DoSave( const RString &sReport )
 {
 	RString sReport;
 	MakeCrashReport( Data, sReport );
@@ -611,9 +611,12 @@ void ChildProcess()
 	CompleteCrashData Data;
 	ReadCrashDataFromParent( fileno(stdin), Data );
 
+	RString sCrashReport;
 	VDDebugInfoInitFromFile( &g_debugInfo );
-	DoSave( Data );
+	MakeCrashReport( Data, sCrashReport );
 	VDDebugInfoDeinit( &g_debugInfo );
+
+	DoSave( Data );
 
 	/* Tell the crashing process that it can exit.  Be sure to write crashinfo.txt first. */
 	int iCmd = 0;
