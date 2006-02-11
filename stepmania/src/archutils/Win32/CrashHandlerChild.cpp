@@ -454,9 +454,6 @@ static void MakeCrashReport( const CompleteCrashData &Data, RString &sOut )
 
 static void DoSave( const RString &sReport )
 {
-	RString sReport;
-	MakeCrashReport( Data, sReport );
-
 	RString sName = SpliceProgramPath( "../crashinfo.txt" );
 
 	SetFileAttributes( sName, FILE_ATTRIBUTE_NORMAL );
