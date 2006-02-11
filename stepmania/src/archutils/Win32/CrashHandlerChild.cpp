@@ -415,7 +415,7 @@ static void MakeCrashReport( const CompleteCrashData &Data, RString &sOut )
 			"--------------------------------------\n\n",
 			PRODUCT_NAME_VER, version_num, version_time );
 
-	sOut += ssprintf( "%s\n", Data.m_CrashInfo.m_CrashReason );
+	sOut += ssprintf( "Crash reason: %s\n", Data.m_CrashInfo.m_CrashReason );
 	sOut += ssprintf( "\n" );
 
 	// Dump thread stacks
