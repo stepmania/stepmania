@@ -222,7 +222,7 @@ RString ArchHooks::GetPreferredLanguage()
 	RString ret = lang;
 	
 	free(lang);
-	return ret.ToUpper();
+	return ret.ToLower();
 }
 
 void ArchHooks_darwin::EnterTimeCriticalSection()

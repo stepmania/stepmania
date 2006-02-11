@@ -15,7 +15,7 @@ public:
 
 	/*
 	 * Get the 2-letter RFC-639 code of the user's preferred language
-	 * for localized messages, in uppercase.
+	 * for localized messages, in lowercase.
 	 */
 	static RString GetPreferredLanguage();
 
