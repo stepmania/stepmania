@@ -200,13 +200,13 @@ void RunChild()
 
         /* 2. Write info. */
         const char *p = RageLog::GetInfo();
-        int iSize = strlen( p )+1;
+        int iSize = strlen( p );
         WriteToChild( hToStdin, &iSize, sizeof(iSize) );
         WriteToChild( hToStdin, p, iSize );
 
         /* 3. Write AdditionalLog. */
         p = RageLog::GetAdditionalLog();
-        iSize = strlen( p )+1;
+        iSize = strlen( p );
         WriteToChild( hToStdin, &iSize, sizeof(iSize) );
         WriteToChild( hToStdin, p, iSize );
 
