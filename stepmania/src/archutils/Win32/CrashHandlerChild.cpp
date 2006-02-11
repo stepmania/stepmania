@@ -440,8 +440,8 @@ static void MakeCrashReport( const CompleteCrashData &Data, RString &sOut )
 	}
 
 	sOut += ssprintf( "Static log:\n" );
-	sOut += ssprintf( "%s\n", Data.m_sInfo.c_str() );
-	sOut += ssprintf( "%s\n", Data.m_sAdditionalLog.c_str() );
+	sOut += ssprintf( "%s", Data.m_sInfo.c_str() );
+	sOut += ssprintf( "%s", Data.m_sAdditionalLog.c_str() );
 	sOut += ssprintf( "\n" );
 
 	sOut += ssprintf( "Partial log:\n" );
