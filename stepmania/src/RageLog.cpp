@@ -268,18 +268,7 @@ void RageLog::Flush()
 }
 
 
-/* These Get* functions are designed to be called from crash conditions.  We
- * store the text in a static buffer, which we can always access, and we double-
- * check that it's null terminated when we return them.  Finally, multi-line
- * outputs can specify the string used to delineate lines (\n, \r or \r\n).  That
- * way, crash handlers can simply write() the buffer to a file without having
- * to convert line endings, which is tedious when you can't malloc(). */
-
-#if defined(WIN32)
-#define NEWLINE "\r\n"
-#else
 #define NEWLINE "\n"
-#endif
 
 static char staticlog[1024*32]="";
 static unsigned staticlog_size = 0;
