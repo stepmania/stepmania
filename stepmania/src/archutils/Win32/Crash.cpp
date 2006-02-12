@@ -122,7 +122,7 @@ bool StartChild( HANDLE &hProcess, HANDLE &hToStdin, HANDLE &hFromStdout )
 	strcat( szBuf, CHILD_MAGIC_PARAMETER );
 
 	PROCESS_INFORMATION pi;
-	if( !CreateProcess(
+	int iRet = CreateProcess(
 		NULL,		// pointer to name of executable module
 		szBuf,		// pointer to command line string
 		NULL,		// process security attributes
@@ -133,8 +133,17 @@ bool StartChild( HANDLE &hProcess, HANDLE &hToStdin, HANDLE &hFromStdout )
 		cwd,		// pointer to current directory name
 		&si,		// pointer to STARTUPINFO
 		&pi		// pointer to PROCESS_INFORMATION
-	) )
+	);
+
+	CloseHandle( si.hStdInput );
+	CloseHandle( si.hStdOutput );
+
+	if( !iRet )
+	{
+		CloseHandle( hToStdin );
+		CloseHandle( hFromStdout );
 		return false;
+	}
 
 	hProcess = pi.hProcess;
 
