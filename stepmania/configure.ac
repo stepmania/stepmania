@@ -49,8 +49,8 @@ esac
 # Define UNIX for all Unix-like systems.  Don't define it for cross-compiling to
 # non-Unix-like systems.  (-DUNIX selects the archutils and ArchHooks to use; if
 # your platform doesn't use the Unix ones, you probably don't want to define UNIX.)
-case $host in
-*-linux-*)
+case $host_os in
+*linux*)
 	AC_DEFINE(LINUX, 1, [Linux])
 	AC_DEFINE(UNIX, 1, [Unix])
 	linux=yes
@@ -70,14 +70,14 @@ AM_CONDITIONAL(LINUX, test "$linux" = "yes" )
 # AMD, etc.  If you need CPU-specific assembly, check at runtime--don't create
 # separate binaries for each CPU if the binaries themselves are otherwise
 # compatible.
-case $host in
-i?86-*)
+case $host_cpu in
+i?86*)
 	AC_DEFINE(CPU_X86, 1, [x86])
 	;;
-x86_64-*)
+x86_64*)
 	AC_DEFINE(CPU_X86_64, 1, [x86-64])
 	;;
-powerpc-*)
+powerpc*)
 	AC_DEFINE(CPU_PPC, 1, [PPC])
 	have_parallel_port=no
 	;;
