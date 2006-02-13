@@ -1,5 +1,5 @@
 # Microsoft Developer Studio Project File - Name="StepMania" - Package Owner=<4>
-# Microsoft Developer Studio Generated Build File, Format Version 60000
+# Microsoft Developer Studio Generated Build File, Format Version 6.00
 # ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Application" 0x0101
@@ -62,7 +62,7 @@ IntDir=.\../Debug6
 TargetDir=\cvs\stepmania\Program
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc     cl     /Zl     /nologo     /c     verstub.cpp     /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc      cl      /Zl      /nologo      /c      verstub.cpp      /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -99,7 +99,7 @@ IntDir=.\../Release6
 TargetDir=\cvs\stepmania\Program
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc     cl     /Zl     /nologo     /c     verstub.cpp     /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc      cl      /Zl      /nologo      /c      verstub.cpp      /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -1715,6 +1715,22 @@ SOURCE=.\archutils\Win32\Crash.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\archutils\Win32\CrashHandlerChild.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\archutils\Win32\CrashHandlerInternal.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\archutils\Win32\CrashHandlerNetworking.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\archutils\Win32\CrashHandlerNetworking.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\archutils\Win32\DebugInfoHunt.cpp
 # End Source File
 # Begin Source File
@@ -1752,6 +1768,14 @@ SOURCE=.\archutils\Win32\GraphicsWindow.cpp
 # Begin Source File
 
 SOURCE=.\archutils\Win32\GraphicsWindow.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\archutils\Win32\MessageWindow.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\archutils\Win32\MessageWindow.h
 # End Source File
 # Begin Source File
 
@@ -1804,6 +1828,14 @@ SOURCE=.\archutils\Win32\WindowIcon.cpp
 # Begin Source File
 
 SOURCE=.\archutils\Win32\WindowIcon.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\archutils\Win32\WindowsDialogBox.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\archutils\Win32\WindowsDialogBox.h
 # End Source File
 # Begin Source File
 
