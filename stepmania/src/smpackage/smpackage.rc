@@ -299,7 +299,7 @@ BEGIN
     PUSHBUTTON      "Delete Language",IDC_BUTTON_DELETE,230,62,91,15
     PUSHBUTTON      "Export CSV",IDC_BUTTON_EXPORT,230,83,91,15
     PUSHBUTTON      "Import CSV",IDC_BUTTON_IMPORT,230,123,91,15
-    LTEXT           "- Create a new language\n- Export the theme strings to a CSV\n- Edit the CSV using Excel or a text editor\n- Import the CSV file back into the same language",
+    LTEXT           "1) Create a new language\n2) Export the theme strings to a CSV\n3) Edit the CSV using Excel or a text editor\n4) Import the CSV file back into the same language",
                     IDC_STATIC,7,145,258,37
     LTEXT           "Selection details",IDC_STATIC,230,7,100,9
     LTEXT           "Total Strings:",IDC_STATIC,221,17,89,10

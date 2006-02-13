@@ -332,7 +332,7 @@ namespace SymbolLookup
 		VirtualQueryEx( g_hParent, ptr, &meminfo, sizeof meminfo );
 
 		char tmp[512];
-		if( VDDebugInfoLookupRVA(pctx, (unsigned int)ptr, tmp, sizeof(tmp)) >= 0 )
+		if( VDDebugInfo::VDDebugInfoLookupRVA(pctx, (unsigned int)ptr, tmp, sizeof(tmp)) >= 0 )
 		{
 			wsprintf( buf, "%08x: %s", ptr, Demangle(tmp) );
 			return;
@@ -777,9 +777,9 @@ void ChildProcess()
 	ReadCrashDataFromParent( fileno(stdin), Data );
 
 	RString sCrashReport;
-	VDDebugInfoInitFromFile( &g_debugInfo );
+	VDDebugInfo::VDDebugInfoInitFromFile( &g_debugInfo );
 	MakeCrashReport( Data, sCrashReport );
-	VDDebugInfoDeinit( &g_debugInfo );
+	VDDebugInfo::VDDebugInfoDeinit( &g_debugInfo );
 
 	DoSave( sCrashReport );
 
