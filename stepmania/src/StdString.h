@@ -543,6 +543,13 @@ public:
 		}
 	#endif
 
+	/* VC6 string is missing clear(). */
+	#if defined(_MSC_VER) && ( _MSC_VER < 1200 )
+	void clear()
+	{
+		this->erase();
+	}
+	#endif
 
 	// -------------------------------------------------------------------------
 	// CStdStr inline concatenation.
