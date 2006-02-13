@@ -665,7 +665,7 @@ void NetworkPostData::HttpThread()
 	RString sResult;
 	while( m_pStream->GetState() == NetworkStream::STATE_CONNECTED )
 	{
-		sBuf.erase( sBuf.begin(), sBuf.end() );
+		sBuf.clear();
 		void *p = sBuf.GetBuffer( 1024 );
 		int iGot = m_pStream->Read( p, 1024 );
 		if( iGot >= 0 )
@@ -704,7 +704,7 @@ void NetworkPostData::Start( const RString &sHost, int iPort, const RString &sPa
 	m_sHost = sHost;
 	m_iPort = iPort;
 	m_sPath = sPath;
-	m_sStatus.erase( m_sStatus.begin(), m_sStatus.end() );
+	m_sStatus.clear();
 	m_fProgress = 0;
 
 	m_Thread.SetName( "HTTP thread" );
