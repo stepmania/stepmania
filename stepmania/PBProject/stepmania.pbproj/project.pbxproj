@@ -649,7 +649,6 @@
 		AA80C75907F20D6600C99272 /* OptionRowHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA80C75707F20D6600C99272 /* OptionRowHandler.cpp */; };
 		AA80C75A07F20D6600C99272 /* OptionRowHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = AA80C75807F20D6600C99272 /* OptionRowHandler.h */; };
 		AA80C75C07F20D8000C99272 /* ScreenMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA80C75B07F20D7F00C99272 /* ScreenMessage.cpp */; };
-		AA817DF80622889500EA44DB /* splash.png in Resources */ = {isa = PBXBuildFile; fileRef = AA817DF70622889500EA44DB /* splash.png */; };
 		AA817E070623237A00EA44DB /* StepMania.pch in Headers */ = {isa = PBXBuildFile; fileRef = AAD64AA10603FE7300EF8CDE /* StepMania.pch */; };
 		AA84B7070996F8370085EECB /* AdjustSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA84B7050996F8370085EECB /* AdjustSync.cpp */; };
 		AA84B7080996F8370085EECB /* AdjustSync.h in Headers */ = {isa = PBXBuildFile; fileRef = AA84B7060996F8370085EECB /* AdjustSync.h */; };
@@ -3727,7 +3726,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA29CD3E0558741A00961A51 /* smicon.icns in Resources */,
-				AA817DF80622889500EA44DB /* splash.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
