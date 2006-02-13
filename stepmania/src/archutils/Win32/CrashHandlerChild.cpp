@@ -784,8 +784,7 @@ void ChildProcess()
 	DoSave( sCrashReport );
 
 	/* Tell the crashing process that it can exit.  Be sure to write crashinfo.txt first. */
-	int iCmd = 0;
-	write( _fileno(stdout), &iCmd, sizeof(iCmd) );
+	fclose( stdout );
 
 	/* Now that we've done that, the process is gone.  Don't use g_hParent. */
 	CloseHandle( SymbolLookup::g_hParent );

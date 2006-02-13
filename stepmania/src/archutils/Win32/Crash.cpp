@@ -247,27 +247,22 @@ void RunChild()
         WriteToChild( hToStdin, p, iSize );
 
 	/* The parent process needs to access this process briefly.  When it's done, it'll
-	 * write a byte to stdout.  Wait until we see that before exiting. */
+	 * close the handle.  Wait until we see that before exiting. */
 	while(1)
 	{
-		int iCmd;
-		DWORD iActual;
-		if( !ReadFile(hFromStdout, &iCmd, sizeof(iCmd), &iActual, NULL) )
-			break;
-
 		/* Ugly: the new process can't execute GetModuleFileName on this process,
 		 * since GetModuleFileNameEx might not be available.  Run the requests here. */
-		if( iCmd == 1 )
-		{
-			HMODULE hMod;
-			ReadFile( hFromStdout, &hMod, sizeof(hMod), &iActual, NULL );
-			char szName[MAX_PATH];
-			if( !CrashGetModuleBaseName(hMod, szName) )
-				strcpy( szName, "???" );
-			iSize = strlen( szName );
-			WriteToChild( hToStdin, &iSize, sizeof(iSize) );
-			WriteToChild( hToStdin, szName, iSize );
-		}
+		HMODULE hMod;
+		DWORD iActual;
+		if( !ReadFile( hFromStdout, &hMod, sizeof(hMod), &iActual, NULL) )
+			break;
+
+		char szName[MAX_PATH];
+		if( !CrashGetModuleBaseName(hMod, szName) )
+			strcpy( szName, "???" );
+		iSize = strlen( szName );
+		WriteToChild( hToStdin, &iSize, sizeof(iSize) );
+		WriteToChild( hToStdin, szName, iSize );
 	}
 }
 
