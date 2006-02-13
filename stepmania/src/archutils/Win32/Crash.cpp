@@ -252,8 +252,7 @@ void RunChild()
 	{
 		int iCmd;
 		DWORD iActual;
-		ReadFile( hFromStdout, &iCmd, sizeof(iCmd), &iActual, NULL );
-		if( iCmd == 0 )
+		if( !ReadFile(hFromStdout, &iCmd, sizeof(iCmd), &iActual, NULL) )
 			break;
 
 		/* Ugly: the new process can't execute GetModuleFileName on this process,
