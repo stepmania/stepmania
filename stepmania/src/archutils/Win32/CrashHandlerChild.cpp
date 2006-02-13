@@ -304,8 +304,6 @@ namespace SymbolLookup
 
 	RString CrashChildGetModuleBaseName( HMODULE hMod )
 	{
-		int iCmd = 1;
-		write( _fileno(stdout), &iCmd, sizeof(iCmd) );
 		write( _fileno(stdout), &hMod,  sizeof(hMod) );
 
 		int iFD = fileno(stdin);
