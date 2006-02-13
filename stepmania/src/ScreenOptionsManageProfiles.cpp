@@ -113,7 +113,7 @@ void ScreenOptionsManageProfiles::BeginScreen()
 		pHand->m_Def.m_layoutType = LAYOUT_SHOW_ALL_IN_ROW;
 		pHand->m_Def.m_bAllowThemeTitle = false;
 		pHand->m_Def.m_bAllowThemeItems = false;
-		pHand->m_Def.m_sName = ssprintf( "%d", iIndex );
+		pHand->m_Def.m_sName = pProfile->m_sDisplayName;
 		OptionRowHandlers.push_back( pHand );
 
 		// FIXME
@@ -320,7 +320,7 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( const InputEventPlus &input 
 		g_TempMenu.rows.clear();
 
 #define ADD_ACTION( i )	\
-		g_TempMenu.rows.push_back( MenuRowDef( i, ProfileActionToLocalizedString(i), true, EditMode_Home, true, 0, "" ) );
+		g_TempMenu.rows.push_back( MenuRowDef( i, ProfileActionToLocalizedString(i), true, EditMode_Home, false, false, 0, "" ) );
 
 		ADD_ACTION( ProfileAction_SetDefaultP1 );
 		ADD_ACTION( ProfileAction_SetDefaultP2 );

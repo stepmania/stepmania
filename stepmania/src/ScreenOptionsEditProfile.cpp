@@ -48,6 +48,8 @@ void ScreenOptionsEditProfile::BeginScreen()
 		CHARMAN->GetCharacters( vpCharacters );
 		FOREACH_CONST( Character*, vpCharacters, c )
 			def.m_vsChoices.push_back( (*c)->GetDisplayName() );
+		if( def.m_vsChoices.empty() )
+			def.m_vsChoices.push_back( RString() );
 	}
 
 	InitMenu( vHands );

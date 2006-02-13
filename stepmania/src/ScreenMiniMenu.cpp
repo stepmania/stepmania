@@ -95,6 +95,7 @@ void ScreenMiniMenu::LoadMenu( const MenuDef* pDef )
 		if( pHand->m_Def.m_vsChoices.empty() )
 			pHand->m_Def.m_vsChoices.push_back( "" );
 		
+		pHand->m_Def.m_bAllowThemeTitle = mr.bThemeTitle;
 		pHand->m_Def.m_bAllowThemeItems = mr.bThemeItems;
 
 		FOREACH( RString, pHand->m_Def.m_vsChoices, c )
