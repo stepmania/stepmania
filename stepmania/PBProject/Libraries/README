@@ -1,7 +1,6 @@
 Frameworks:
 ffmpeg-0.4.9-pre1
 libmad-0.1.5.1b
-libresample
 
 Static Libraries:
 jpeg-6b
@@ -12,8 +11,7 @@ libtheora-1.0alpha5
 lua-5.0
 
 Directions:
-1. Decompress all of those in the Libraries directory (libresample can be
-copied from stepmania/src/libresample).
+1. Decompress all of those in the Libraries directory.
 2. Patch ffmpeg using ffmpeg-0.4.9-pre1-sm.patch.
 3. Open Libraries.xcode and build target all.
 4. Copy the frameworks (except for ffmpeg-i386.framework) to

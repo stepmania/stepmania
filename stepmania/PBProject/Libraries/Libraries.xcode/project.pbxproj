@@ -28,7 +28,6 @@
 				AA3AE294097B4E0C00575EA1 /* PBXTargetDependency */,
 				AA4B45A905738890005FB5DB /* PBXTargetDependency */,
 				AAA373B00909996E00141131 /* PBXTargetDependency */,
-				AAA373B20909996E00141131 /* PBXTargetDependency */,
 				AA3AE1A9097B473600575EA1 /* PBXTargetDependency */,
 				AA3AE887097B738D00575EA1 /* PBXTargetDependency */,
 				AA3AE889097B738D00575EA1 /* PBXTargetDependency */,
@@ -681,13 +680,6 @@
 		AAA37331090995F200141131 /* decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA71D9005EDD1EE00D2E8FF /* decoder.c */; };
 		AAA37332090995F200141131 /* bit.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA71D8505EDD1EE00D2E8FF /* bit.h */; };
 		AAA37333090995F300141131 /* bit.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA71D8405EDD1EE00D2E8FF /* bit.c */; };
-		AAA37388090998F700141131 /* libresample.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA37365090998F700141131 /* libresample.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		AAA3738F090998F700141131 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA3736D090998F700141131 /* config.h */; };
-		AAA37391090998F700141131 /* filterkit.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA3736F090998F700141131 /* filterkit.c */; };
-		AAA37392090998F700141131 /* filterkit.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA37370090998F700141131 /* filterkit.h */; };
-		AAA37394090998F700141131 /* resample.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA37372090998F700141131 /* resample.c */; };
-		AAA37395090998F700141131 /* resample_defs.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA37373090998F700141131 /* resample_defs.h */; };
-		AAA389680909BF9200141131 /* resamplesubs.c in Sources */ = {isa = PBXBuildFile; fileRef = AAA37374090998F700141131 /* resamplesubs.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -716,22 +708,6 @@
 			);
 		};
 		AA91AD20087C60AE00FB2F8F /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.gcc.3_3;
-			fileType = sourcecode.asm;
-			isEditable = 1;
-			outputFiles = (
-			);
-		};
-		AAD5214A0954F8B500073D86 /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.gcc.3_3;
-			fileType = sourcecode.c;
-			isEditable = 1;
-			outputFiles = (
-			);
-		};
-		AAD5214B0954F8C000073D86 /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
 			compilerSpec = com.apple.compilers.gcc.3_3;
 			fileType = sourcecode.asm;
@@ -793,56 +769,56 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = AA3ADFB9097B23BE00575EA1 /* jpeg */;
+			remoteGlobalIDString = AA3ADFB9097B23BE00575EA1;
 			remoteInfo = jpeg;
 		};
 		AA3AE293097B4E0C00575EA1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = AA3AE1AD097B475400575EA1 /* ffmpeg-i386 */;
+			remoteGlobalIDString = AA3AE1AD097B475400575EA1;
 			remoteInfo = "ffmpeg-i386";
 		};
 		AA3AE886097B738D00575EA1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = AA3AE365097B668900575EA1 /* ogg */;
+			remoteGlobalIDString = AA3AE365097B668900575EA1;
 			remoteInfo = ogg;
 		};
 		AA3AE888097B738D00575EA1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = AA3AE50F097B699500575EA1 /* png */;
+			remoteGlobalIDString = AA3AE50F097B699500575EA1;
 			remoteInfo = png;
 		};
 		AA3AE88A097B738D00575EA1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = AA3AE622097B6B7800575EA1 /* vorbis */;
+			remoteGlobalIDString = AA3AE622097B6B7800575EA1;
 			remoteInfo = vorbis;
 		};
 		AA3AE88C097B738D00575EA1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = AA3AE72C097B705A00575EA1 /* theora */;
+			remoteGlobalIDString = AA3AE72C097B705A00575EA1;
 			remoteInfo = theora;
 		};
 		AA3AE88E097B738D00575EA1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = AA3AE784097B723000575EA1 /* lua */;
+			remoteGlobalIDString = AA3AE784097B723000575EA1;
 			remoteInfo = lua;
 		};
 		AA3AE8B4097B7A5300575EA1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = AA4B430E0573703D005FB5DB /* ffmpeg */;
+			remoteGlobalIDString = AA4B430E0573703D005FB5DB;
 			remoteInfo = ffmpeg;
 		};
 		AA4B45A805738890005FB5DB /* PBXContainerItemProxy */ = {
@@ -858,13 +834,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = AAA3730D090994F500141131;
 			remoteInfo = mad;
-		};
-		AAA373B10909996E00141131 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = AAA37353090998C400141131;
-			remoteInfo = resample;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -1333,15 +1302,6 @@
 		AA90E77806C4592F00A6878F /* westwood.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = westwood.c; sourceTree = "<group>"; };
 		AAA3730E090994F500141131 /* mad.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = mad.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AAA3730F090994F500141131 /* mad-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "mad-Info.plist"; sourceTree = "<group>"; };
-		AAA37354090998C400141131 /* resample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = resample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		AAA37365090998F700141131 /* libresample.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = libresample.h; sourceTree = "<group>"; };
-		AAA3736D090998F700141131 /* config.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
-		AAA3736F090998F700141131 /* filterkit.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = filterkit.c; sourceTree = "<group>"; };
-		AAA37370090998F700141131 /* filterkit.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = filterkit.h; sourceTree = "<group>"; };
-		AAA37372090998F700141131 /* resample.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = resample.c; sourceTree = "<group>"; };
-		AAA37373090998F700141131 /* resample_defs.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = resample_defs.h; sourceTree = "<group>"; };
-		AAA37374090998F700141131 /* resamplesubs.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = resamplesubs.c; sourceTree = "<group>"; };
-		AAA389650909BF6200141131 /* hackedresamplesubs.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = hackedresamplesubs.c; sourceTree = "<group>"; };
 		AAA71D8405EDD1EE00D2E8FF /* bit.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = bit.c; sourceTree = "<group>"; };
 		AAA71D8505EDD1EE00D2E8FF /* bit.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = bit.h; sourceTree = "<group>"; };
 		AAA71D9005EDD1EE00D2E8FF /* decoder.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = decoder.c; sourceTree = "<group>"; };
@@ -1431,13 +1391,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AAA37352090998C400141131 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -1446,7 +1399,6 @@
 			children = (
 				AA4B430F0573703D005FB5DB /* ffmpeg.framework */,
 				AAA3730E090994F500141131 /* mad.framework */,
-				AAA37354090998C400141131 /* resample.framework */,
 				AA3ADFBA097B23BE00575EA1 /* libjpeg.a */,
 				AA3AE276097B475400575EA1 /* ffmpeg-i386.framework */,
 				AA3AE366097B668900575EA1 /* libogg.a */,
@@ -1467,7 +1419,6 @@
 				AAA71D8205EDD1ED00D2E8FF /* libmad-0.15.1b */,
 				AA3AE444097B673200575EA1 /* libogg-1.1.2 */,
 				AA3AE513097B69EB00575EA1 /* libpng-1.2.8 */,
-				AAA3735F090998F700141131 /* libresample */,
 				AA3AE732097B70B200575EA1 /* libtheora-1.0alpha5 */,
 				AA3AE6C7097B6BCA00575EA1 /* libvorbis-1.1.1 */,
 				AA3AE78A097B727800575EA1 /* lua-5.0.2 */,
@@ -2130,37 +2081,6 @@
 			path = ppc;
 			sourceTree = "<group>";
 		};
-		AAA3735F090998F700141131 /* libresample */ = {
-			isa = PBXGroup;
-			children = (
-				AAA37364090998F700141131 /* include */,
-				AAA3736C090998F700141131 /* src */,
-			);
-			path = libresample;
-			sourceTree = "<group>";
-		};
-		AAA37364090998F700141131 /* include */ = {
-			isa = PBXGroup;
-			children = (
-				AAA37365090998F700141131 /* libresample.h */,
-			);
-			path = include;
-			sourceTree = "<group>";
-		};
-		AAA3736C090998F700141131 /* src */ = {
-			isa = PBXGroup;
-			children = (
-				AAA389650909BF6200141131 /* hackedresamplesubs.c */,
-				AAA3736D090998F700141131 /* config.h */,
-				AAA3736F090998F700141131 /* filterkit.c */,
-				AAA37370090998F700141131 /* filterkit.h */,
-				AAA37372090998F700141131 /* resample.c */,
-				AAA37373090998F700141131 /* resample_defs.h */,
-				AAA37374090998F700141131 /* resamplesubs.c */,
-			);
-			path = src;
-			sourceTree = "<group>";
-		};
 		AAA71D8205EDD1ED00D2E8FF /* libmad-0.15.1b */ = {
 			isa = PBXGroup;
 			children = (
@@ -2445,17 +2365,6 @@
 				AAA37330090995F100141131 /* decoder.h in Headers */,
 				AAA37332090995F200141131 /* bit.h in Headers */,
 				AA3AE142097B3C8100575EA1 /* mad.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		AAA3734F090998C400141131 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				AAA37388090998F700141131 /* libresample.h in Headers */,
-				AAA3738F090998F700141131 /* config.h in Headers */,
-				AAA37392090998F700141131 /* filterkit.h in Headers */,
-				AAA37395090998F700141131 /* resample_defs.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2860,73 +2769,6 @@
 ";
 			productType = "com.apple.product-type.framework";
 		};
-		AAA37353090998C400141131 /* resample */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = AAA37356090998C500141131 /* Build configuration list for PBXNativeTarget "resample" */;
-			buildPhases = (
-				AAA3734F090998C400141131 /* Headers */,
-				AAA37350090998C400141131 /* Resources */,
-				AAA37351090998C400141131 /* Sources */,
-				AAA37352090998C400141131 /* Frameworks */,
-			);
-			buildRules = (
-				AAD5214B0954F8C000073D86 /* PBXBuildRule */,
-				AAD5214A0954F8B500073D86 /* PBXBuildRule */,
-			);
-			buildSettings = {
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
-				INFOPLIST_FILE = "resample-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				OPTIMIZATION_CFLAGS = "";
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Carbon,
-				);
-				OTHER_REZFLAGS = "";
-				PREBINDING = NO;
-				PRODUCT_NAME = resample;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
-				);
-			};
-			dependencies = (
-			);
-			name = resample;
-			productName = resample;
-			productReference = AAA37354090998C400141131 /* resample.framework */;
-			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
-<plist version=\"1.0\">
-<dict>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>English</string>
-	<key>CFBundleExecutable</key>
-	<string>resample</string>
-	<key>CFBundleIdentifier</key>
-	<string>com.yourcompany.resample</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundlePackageType</key>
-	<string>FMWK</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>CFBundleVersion</key>
-	<string>1.0</string>
-</dict>
-</plist>
-";
-			productType = "com.apple.product-type.framework";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -2947,7 +2789,6 @@
 				AA4B41EA05733B47005FB5DB /* All */,
 				AA4B430E0573703D005FB5DB /* ffmpeg */,
 				AAA3730D090994F500141131 /* mad */,
-				AAA37353090998C400141131 /* resample */,
 				AA3ADFB9097B23BE00575EA1 /* jpeg */,
 				AA3AE1AD097B475400575EA1 /* ffmpeg-i386 */,
 				AA3AE365097B668900575EA1 /* ogg */,
@@ -2975,13 +2816,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		AAA3730A090994F500141131 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		AAA37350090998C400141131 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3606,16 +3440,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AAA37351090998C400141131 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				AAA37391090998F700141131 /* filterkit.c in Sources */,
-				AAA37394090998F700141131 /* resample.c in Sources */,
-				AAA389680909BF9200141131 /* resamplesubs.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -3668,11 +3492,6 @@
 			isa = PBXTargetDependency;
 			target = AAA3730D090994F500141131 /* mad */;
 			targetProxy = AAA373AF0909996E00141131 /* PBXContainerItemProxy */;
-		};
-		AAA373B20909996E00141131 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = AAA37353090998C400141131 /* resample */;
-			targetProxy = AAA373B10909996E00141131 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -3905,9 +3724,10 @@
 				INFOPLIST_FILE = "mad-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				LIBRARY_STYLE = DYNAMIC;
+				MACH_O_TYPE = mh_dylib;
 				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.2;
-				OPTIMIZATION_CFLAGS = "";
+				OPTIMIZATION_CFLAGS = "-O0";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-seg1addr",
@@ -3916,45 +3736,6 @@
 				OTHER_REZFLAGS = "";
 				PREBINDING = YES;
 				PRODUCT_NAME = mad;
-				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
-				);
-			};
-			name = .;
-		};
-		AAA37357090998C500141131 /* . */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
-				GCC_VERSION_i386 = 4.0;
-				GCC_VERSION_ppc = 3.3;
-				INFOPLIST_FILE = "resample-Info.plist";
-				INSTALL_PATH = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.2;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"-seg1addr",
-					0x30800000,
-				);
-				OTHER_REZFLAGS = "";
-				PREBINDING = YES;
-				PRODUCT_NAME = resample;
 				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
 				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
 				SECTORDER_FLAGS = "";
@@ -4117,14 +3898,6 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AAA37317090994F600141131 /* . */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = .;
-		};
-		AAA37356090998C500141131 /* Build configuration list for PBXNativeTarget "resample" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				AAA37357090998C500141131 /* . */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = .;
