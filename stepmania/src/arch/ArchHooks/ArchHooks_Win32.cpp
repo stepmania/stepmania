@@ -17,14 +17,14 @@ ArchHooks_Win32::ArchHooks_Win32()
 	TimeCritMutex = NULL;
 	HOOKS = this;
 
+	/* Disable critical errors, and handle them internally.  We never want the
+	 * "drive not ready", etc. dialogs to pop up. */
+	SetErrorMode( SetErrorMode(0) | SEM_FAILCRITICALERRORS );
+
 	CrashHandler::CrashHandlerHandleArgs( g_argc, g_argv );
 	SetUnhandledExceptionFilter( CrashHandler::ExceptionHandler );
 
 	TimeCritMutex = new RageMutex("TimeCritMutex");
-
-	/* Disable critical errors, and handle them internally.  We never want the
-	 * "drive not ready", etc. dialogs to pop up. */
-	SetErrorMode( SetErrorMode(0) | SEM_FAILCRITICALERRORS );
 
 	/* Windows boosts priority on keyboard input, among other things.  Disable that for
 	 * the main thread. */
