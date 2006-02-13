@@ -2,8 +2,8 @@
 #import "ProductInfo.h"
 #import "archutils/Darwin/SMMainThread.h"
 
-static NSWindow *g_window;
-static NSTextView *g_text;
+static NSWindow *g_window = nil;
+static NSTextView *g_text = nil;
 
 void MakeNewCocoaWindow( const void *data, unsigned length )
 {
@@ -16,9 +16,8 @@ void MakeNewCocoaWindow( const void *data, unsigned length )
 		
 		image = [[[NSImage alloc] initWithData:d] autorelease];
 	}
-	
 	if( !image )
-		image = [NSImage imageNamed:@"splash.png"];
+		return;
 	
 	NSView *view;
 	NSSize size = [image size];
