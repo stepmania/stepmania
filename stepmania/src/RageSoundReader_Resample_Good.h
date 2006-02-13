@@ -1,10 +1,12 @@
-/* RageSoundReader_Resample_Fast - interface for libresample. */
+/* RageSoundReader_Resample_Good - fast audio resampling. */
 
 #ifndef RAGE_SOUND_READER_RESAMPLE_GOOD_H
 #define RAGE_SOUND_READER_RESAMPLE_GOOD_H
 
 #include "RageSoundReader.h"
 #include "RageSoundReader_Resample.h"
+
+class RageSoundResampler_Polyphase;
 
 /* This class changes the sampling rate of a sound. */
 class RageSoundReader_Resample_Good: public RageSoundReader_Resample
@@ -23,40 +25,26 @@ public:
 
 	/* Change the actual sample rate of a sound. */
 	void SetSampleRate( int hz );
-	void SetHighQuality( bool hq ) { HighQuality = hq; }
+	void SetHighQuality( bool hq ) { }
 
-	int GetSampleRate() const { return samplerate; }
-	unsigned GetNumChannels() const { return source->GetNumChannels(); }
-	bool IsStreamingFromDisk() const { return source->IsStreamingFromDisk(); }
-
-	enum { BUFSIZE = 4096 };
+	int GetSampleRate() const { return m_iSampleRate; }
+	unsigned GetNumChannels() const { return m_pSource->GetNumChannels(); }
+	bool IsStreamingFromDisk() const { return m_pSource->IsStreamingFromDisk(); }
 
 private:
-	SoundReader *source;
-	bool HighQuality;
-	int samplerate;
-
-	void *empty_resamp;
-	struct resample_channel
-	{
-		resample_channel(): resamp(NULL) { }
-		void *resamp;
-		float inbuf[BUFSIZE];
-	};
-	vector<resample_channel> resamplers; /* one per channel */
-	int BufSamples;
-	bool eof;
-
 	void Reset();
 	void ReopenResampler();
-	float GetFactor() const;
-	bool FillBuf();
+
+	vector<RageSoundResampler_Polyphase *> resamplers; /* one per channel */
+
+	SoundReader *m_pSource;
+	int m_iSampleRate;
 };
 
 #endif
 
 /*
- * Copyright (c) 2003 Glenn Maynard
+ * (c) 2006 Glenn Maynard
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
