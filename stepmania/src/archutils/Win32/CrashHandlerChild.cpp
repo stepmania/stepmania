@@ -584,6 +584,7 @@ static LocalizedString CANCEL;
 static LocalizedString VIEW_UPDATE;
 static LocalizedString UPDATE_IS_AVAILABLE;
 static LocalizedString UPDATE_IS_NOT_AVAILABLE;
+static LocalizedString ERROR_SENDING_REPORT;
 
 // #define AUTOMATED_CRASH_REPORTS
 #define CRASH_REPORT_HOST "example.com"
@@ -608,6 +609,7 @@ void LoadLocalizedStrings()
 	VIEW_UPDATE.Load( "CrashHandler", "View &update" );
 	UPDATE_IS_AVAILABLE.Load( "CrashHandler", "An update is available." );
 	UPDATE_IS_NOT_AVAILABLE.Load( "CrashHandler", "The error has been reported.  No updates are available." );
+	ERROR_SENDING_REPORT.Load( "CrashHandler", "An error was encountered sending the report." );
 }
 
 class CrashDialog: public WindowsDialogBox
@@ -741,6 +743,18 @@ bool CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 			/* Grab the result, which is the data output from the HTTP request.  It's
 			 * simple XML. */
 			RString sResult = m_pPost->GetResult();
+			RString sError = m_pPost->GetError();
+			if( sError.empty() && sResult.empty() )
+				sError = "No data received";
+
+			if( !sError.empty() )
+			{
+				SetDialogInitial();
+				SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), ERROR_SENDING_REPORT.GetValue() );
+				SAFE_DELETE( m_pPost );
+				break;
+			}
+
 			SAFE_DELETE( m_pPost );
 
 			PARSEINFO pi;
