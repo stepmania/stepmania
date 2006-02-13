@@ -5,8 +5,8 @@
 class ArchHooks_Unix: public ArchHooks
 {
 public:
-    ArchHooks_Unix();
-    void DumpDebugInfo();
+	ArchHooks_Unix();
+	void DumpDebugInfo();
 
 	void SetTime( tm newtime );
 	int64_t GetMicrosecondsSinceStart();
