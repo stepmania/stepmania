@@ -9,9 +9,12 @@ class ArchHooks_Xbox: public ArchHooks
 public:
 	ArchHooks_Xbox();
 	~ArchHooks_Xbox();
+	RString GetArchName() { return "Xbox"; }
 
 	//void MountInitialFilesystems( const RString &sDirOfExecutable );
 };
+
+// XXX: This stuff doesn't belong here.  Hide it in ArchHooks.
 
 // Read a 64 bit MSR register
 inline void READMSRREG( UINT32 reg, LARGE_INTEGER *val ) 

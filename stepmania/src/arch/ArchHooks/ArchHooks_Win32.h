@@ -9,6 +9,7 @@ class ArchHooks_Win32: public ArchHooks
 public:
 	ArchHooks_Win32();
 	~ArchHooks_Win32();
+	RString GetArchName() { return "Windows"; }
 	void DumpDebugInfo();
 	void RestartProgram();
 	bool CheckForMultipleInstances();

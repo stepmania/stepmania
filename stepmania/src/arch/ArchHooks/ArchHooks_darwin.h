@@ -9,6 +9,7 @@ class ArchHooks_darwin : public ArchHooks
 public:
 	ArchHooks_darwin();
 	~ArchHooks_darwin();
+	RString GetArchName() { return "OSX"; }
 	void DumpDebugInfo();
 	RString GetPreferredLanguage();
 	void EnterTimeCriticalSection();

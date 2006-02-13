@@ -6,6 +6,11 @@ class ArchHooks
 public:
 	virtual ~ArchHooks() { }
 
+	/*
+	 * Return the general name of the architecture, eg. "Windows", "OSX", "Unix".
+	 */
+	virtual RString GetArchName() { return "generic"; }
+
 	/* This is called as soon as the loading window is shown, and we can
 	 * safely log. */
 	virtual void DumpDebugInfo() { }
