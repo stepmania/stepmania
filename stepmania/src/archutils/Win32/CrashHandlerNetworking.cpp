@@ -525,7 +525,6 @@ int NetworkStream_Win32::Read( void *pBuffer, size_t iSize )
 		if( iRet == 0 )
 		{
 			/* We hit EOF. */
-			Shutdown();
 			break;
 		}
 
