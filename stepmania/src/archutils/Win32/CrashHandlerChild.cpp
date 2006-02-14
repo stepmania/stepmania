@@ -770,16 +770,15 @@ bool CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 				SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), UPDATE_IS_AVAILABLE.GetValue() );
 				SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_AUTO_REPORT), VIEW_UPDATE.GetValue() );
 				ShowWindow( GetDlgItem(hDlg, IDC_BUTTON_AUTO_REPORT), true );
-				ShowWindow( GetDlgItem(hDlg, IDC_PROGRESS), false );
 			}
 			else if( xml.GetAttrValue("ReportId", iID) )
 			{
 				SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), UPDATE_IS_NOT_AVAILABLE.GetValue() );
 				SetWindowText( GetDlgItem(hDlg, IDC_RESULT_ID), ssprintf("#%i", iID) );
 				ShowWindow( GetDlgItem(hDlg, IDC_RESULT_ID), true );
-				ShowWindow( GetDlgItem(hDlg, IDC_PROGRESS), false );
 			}
 
+			ShowWindow( GetDlgItem(hDlg, IDC_PROGRESS), false );
 			SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_CLOSE), CLOSE.GetValue() );
 		}
 	}
