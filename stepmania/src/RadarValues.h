@@ -30,8 +30,8 @@ struct RadarValues
 		float f[NUM_RadarCategory];
 	} m_Values;
 
-    operator const float* () const	{ return m_Values.f; };
-    operator float* ()				{ return m_Values.f; };
+	operator const float* () const	{ return m_Values.f; };
+	operator float* ()		{ return m_Values.f; };
 
 	RadarValues();
 	void MakeUnknown();

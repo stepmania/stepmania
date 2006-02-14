@@ -396,7 +396,7 @@ void BannerCache::CacheBannerInternal( RString BannerPath )
 		RageSurfaceUtils::ConvertSurface(img, img->w, img->h, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
 		
 		RageSurface *dst = CreateSurface(
-            256, 64, img->format->BitsPerPixel, 
+			256, 64, img->format->BitsPerPixel, 
 			img->format->Rmask, img->format->Gmask, img->format->Bmask, img->format->Amask );
 
 		if( img->format->BitsPerPixel == 8 ) 

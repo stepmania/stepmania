@@ -40,12 +40,11 @@ static inline RString GradeToString( Grade g )
 	ASSERT_M( (g >= 0 && g<NUM_Grade) || g == Grade_NoData, ssprintf("grade = %d",g) );
 
 	switch( g )
-    {
-    case Grade_NoData:	return "NoData";
-    case Grade_Failed:	return "Failed";
-    default:
-            return ssprintf("Tier%02d",g+1);
-    }
+	{
+	case Grade_NoData:	return "NoData";
+	case Grade_Failed:	return "Failed";
+	default:		return ssprintf("Tier%02d",g+1);
+	}
 }
 
 RString GradeToOldString( Grade g );	// "AAA", "B", etc for backward compatibility.  Used in announcer

@@ -406,9 +406,9 @@ void ScoreKeeperNormal::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNum
 	
 	// TODO: Remove indexing with PlayerNumber
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-	NSMAN->ReportScore(pn, scoreOfLastTap,
-                       m_pPlayerStageStats->iScore,
-                       m_pPlayerStageStats->iCurCombo);
+	NSMAN->ReportScore( pn, scoreOfLastTap,
+			m_pPlayerStageStats->iScore,
+			m_pPlayerStageStats->iCurCombo );
 }
 
 
@@ -434,8 +434,8 @@ void ScoreKeeperNormal::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore t
 	NSMAN->ReportScore(
 		pn, 
 		holdScore+TNS_W1, 
-        m_pPlayerStageStats->iScore,
-        m_pPlayerStageStats->iCurCombo );
+		m_pPlayerStageStats->iScore,
+		m_pPlayerStageStats->iCurCombo );
 }
 
 

@@ -73,9 +73,9 @@ protected:
 
 	void CheckBackgroundRequests();
 
-	vector<Steps*>		m_vpSteps;
-	vector<Trail*>		m_vpTrails;
-	int					m_iSelection[NUM_PLAYERS];
+	vector<Steps*>			m_vpSteps;
+	vector<Trail*>			m_vpTrails;
+	int				m_iSelection[NUM_PLAYERS];
 
 	ThemeMetric<float> BANNER_WIDTH;
 	ThemeMetric<float> BANNER_HEIGHT;
@@ -100,14 +100,14 @@ protected:
 	RString m_sFallbackCDTitlePath;
 
 	Sprite				m_sprBannerMask;
-	FadingBanner		m_Banner;
+	FadingBanner			m_Banner;
 	AutoActor			m_sprBannerFrame;
 	BPMDisplay			m_BPMDisplay;
 	Sprite				m_sprCDTitleFront, m_sprCDTitleBack;
 	Sprite				m_sprDifficultyFrame[NUM_PLAYERS];
-	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
+	DifficultyIcon			m_DifficultyIcon[NUM_PLAYERS];
 	Sprite				m_AutoGenIcon[NUM_PLAYERS];
-    GrooveRadar			m_GrooveRadar;
+	GrooveRadar			m_GrooveRadar;
 	BitmapText			m_textSongOptions;
 	BitmapText			m_textNumSongs;
 	BitmapText			m_textTotalTime;
@@ -120,9 +120,9 @@ protected:
 	AutoActor			m_sprLongBalloon;
 	AutoActor			m_sprMarathonBalloon;
 	AutoActor			m_sprCourseHasMods;
-	DifficultyDisplay   m_DifficultyDisplay;
-	DifficultyList		m_DifficultyList;
-	CourseContentsList	m_CourseContents;
+	DifficultyDisplay		m_DifficultyDisplay;
+	DifficultyList			m_DifficultyList;
+	CourseContentsList		m_CourseContents;
 	HelpDisplay			m_Artist;
 	BitmapText			m_MachineRank;
 	PaneDisplay			m_PaneDisplay[NUM_PLAYERS];
@@ -141,8 +141,8 @@ protected:
 	RageSound			m_soundLocked;
 	RageSound			m_soundSelectPressed;
 
-	BackgroundLoader	m_BackgroundLoader;
-	RageTexturePreloader m_TexturePreload;
+	BackgroundLoader		m_BackgroundLoader;
+	RageTexturePreloader		m_TexturePreload;
 };
 
 #endif
