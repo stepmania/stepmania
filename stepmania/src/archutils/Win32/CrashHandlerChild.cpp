@@ -170,7 +170,7 @@ namespace VDDebugInfo
 		return heap;
 	}
 
-	long VDDebugInfoLookupRVA( Context *pctx, unsigned rva, char *buf, int buflen )
+	long VDDebugInfoLookupRVA( const Context *pctx, unsigned rva, char *buf, int buflen )
 	{
 		if( !PointerIsInAnySegment(pctx, rva) )
 			return -1;
