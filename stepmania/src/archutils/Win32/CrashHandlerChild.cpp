@@ -781,6 +781,10 @@ bool CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 				SetWindowText( GetDlgItem(hDlg, IDC_RESULT_ID), ssprintf("#%i", iID) );
 				ShowWindow( GetDlgItem(hDlg, IDC_RESULT_ID), true );
 			}
+			else
+			{
+				SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), ERROR_SENDING_REPORT.GetValue() );
+			}
 
 			ShowWindow( GetDlgItem(hDlg, IDC_PROGRESS), false );
 			SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_CLOSE), CLOSE.GetValue() );
