@@ -46,15 +46,14 @@ enum ScreenMessage {
 	SM_Invalid = 999999
 };
 
-//AutoScreenMessageHandler Class
 class ASMHClass
 {
 public:
 	ScreenMessage ToMessageNumber( const RString & Name );
-	RString	NumberToString( ScreenMessage SM );
-	void LogMessageNumbers();
+	RString	NumberToString( ScreenMessage SM ) const;
+
 private:
-	map < RString, ScreenMessage > *m_pScreenMessages;
+	map<RString, ScreenMessage> *m_pScreenMessages;
 	ScreenMessage m_iCurScreenMessage;
 };
 
