@@ -46,7 +46,7 @@ namespace VDDebugInfo
 		const unsigned long (*pSegments)[2];
 		int nSegments;
 		char sFilename[1024];
-		char szError[1024];
+		RString sError;
 	};
 
 	static void GetVDIPath( char *buf, int bufsiz )
@@ -69,7 +69,7 @@ namespace VDDebugInfo
 		static const char *header = "symbolic debug information";
 		if( memcmp(src, header, strlen(header)) )
 		{
-			strcpy( pctx->szError, "header doesn't match" );
+			pctx->sError = "header doesn't match";
 			return false;
 		}
 
@@ -104,12 +104,12 @@ namespace VDDebugInfo
 		pctx->pRawBlock = NULL;
 		pctx->pRVAHeap = NULL;
 		GetVDIPath( pctx->sFilename, ARRAYSIZE(pctx->sFilename) );
-		pctx->szError[0] = 0;
+		pctx->sError = RString();
 
 		HANDLE h = CreateFile( pctx->sFilename, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL );
 		if( h == INVALID_HANDLE_VALUE )
 		{
-			strcpy( pctx->szError, "CreateFile failed" );
+			pctx->sError = "CreateFile failed";
 			return false;
 		}
 
@@ -382,7 +382,7 @@ namespace
 	RString ReportCallStack( const void * const *Backtrace )
 	{
 		if( !g_debugInfo.Loaded() )
-			return ssprintf( "debug resource file '%s': %s.\n", g_debugInfo.sFilename, g_debugInfo.szError );
+			return ssprintf( "debug resource file '%s': %s.\n", g_debugInfo.sFilename, g_debugInfo.sError.c_str() );
 
 		if( g_debugInfo.nBuildNumber != int(version_num) )
 		{
