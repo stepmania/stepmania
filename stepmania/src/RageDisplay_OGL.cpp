@@ -1636,6 +1636,7 @@ void RageDisplay_OGL::EndConcurrentRenderingMainThread()
 void RageDisplay_OGL::BeginConcurrentRendering()
 {
 	g_pWind->BeginConcurrentRendering();
+	SetDefaultRenderStates();
 }
 
 void RageDisplay_OGL::EndConcurrentRendering()
