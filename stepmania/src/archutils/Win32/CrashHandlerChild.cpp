@@ -106,8 +106,7 @@ namespace VDDebugInfo
 		GetVDIPath( pctx->sFilename, ARRAYSIZE(pctx->sFilename) );
 		pctx->szError[0] = 0;
 
-		HANDLE h = CreateFile("StepMania.vdi", GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-
+		HANDLE h = CreateFile( pctx->sFilename, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL );
 		if( h == INVALID_HANDLE_VALUE )
 		{
 			strcpy( pctx->szError, "CreateFile failed" );
