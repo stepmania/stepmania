@@ -479,6 +479,7 @@ void NetworkStream_Win32::Shutdown()
 		return;
 
 	shutdown( m_Socket, SD_BOTH );
+	m_State = STATE_SHUTDOWN;
 }
 
 void NetworkStream_Win32::Cancel()
@@ -539,6 +540,10 @@ int NetworkStream_Win32::Read( void *pBuffer, size_t iSize )
 			if( iError == 0 )
 				continue;
 		}
+
+		/* If the other side closed the connection, just return EOF. */
+		if( iError == WSAECONNRESET )
+			break;
 
 		/* If we're cancelled or hit an error while reading, do return the data we managed
 		 * to get.  Be sure not to overwrite CANCELLED with ERROR. */
@@ -736,6 +741,11 @@ float NetworkPostData::GetProgress() const
 {
 	LockMut( m_Mutex );
 	return m_fProgress;
+}
+
+RString NetworkPostData::GetError() const
+{
+	return m_pStream->GetError();
 }
 
 void NetworkPostData::SetProgress( float fProgress )

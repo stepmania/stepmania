@@ -28,6 +28,7 @@ public:
 
 	RString GetStatus() const;
 	float GetProgress() const;
+	RString GetError() const;
 	RString GetResult() const { return m_sResult; }
 
 private:
