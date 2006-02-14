@@ -749,23 +749,27 @@ bool CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 
 			SAFE_DELETE( m_pPost );
 
+			XNode xml;
+			if( sError.empty() )
+			{
+				PARSEINFO pi;
+				xml.Load( sResult, &pi );
+				if( pi.error_occur )
+				{
+					sError = ssprintf( "Error parsing response: %s", pi.error_string.c_str() );
+					xml.Clear();
+				}
+			}
+
+			int iID;
 			if( !sError.empty() )
 			{
 				/* On error, don't show the "report" button again.  If the submission was actually
 				 * successful, then it'd be too easy to accidentally spam the server by holding
 				 * down the button. */
 				SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), ERROR_SENDING_REPORT.GetValue() );
-				SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_CLOSE), CLOSE.GetValue() );
-				ShowWindow( GetDlgItem(hDlg, IDC_PROGRESS), false );
-				break;
 			}
-
-			PARSEINFO pi;
-			XNode xml;
-			xml.Load( sResult, &pi );
-
-			int iID;
-			if( xml.GetAttrValue("UpdateAvailable", m_sUpdateURL) )
+			else if( xml.GetAttrValue("UpdateAvailable", m_sUpdateURL) )
 			{
 				SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), UPDATE_IS_AVAILABLE.GetValue() );
 				SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_AUTO_REPORT), VIEW_UPDATE.GetValue() );
