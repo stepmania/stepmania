@@ -747,15 +747,14 @@ bool CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 			if( sError.empty() && sResult.empty() )
 				sError = "No data received";
 
+			SAFE_DELETE( m_pPost );
+
 			if( !sError.empty() )
 			{
 				SetDialogInitial();
 				SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), ERROR_SENDING_REPORT.GetValue() );
-				SAFE_DELETE( m_pPost );
 				break;
 			}
-
-			SAFE_DELETE( m_pPost );
 
 			PARSEINFO pi;
 			XNode xml;
