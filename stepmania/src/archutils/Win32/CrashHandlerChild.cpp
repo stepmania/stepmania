@@ -20,6 +20,7 @@
 #include "RageUtil.h"
 #include "XmlFile.h"
 #include "LocalizedString.h"
+#include "RageFileDriverDeflate.h"
 
 #if defined(_MSC_VER)
 #pragma comment(lib, "archutils/Win32/ddk/dbghelp.lib")
@@ -35,7 +36,7 @@ namespace VDDebugInfo
 	{
 		Context() { pRVAHeap=NULL; }
 		bool Loaded() const { return pRVAHeap != NULL; }
-		void *pRawBlock;
+		RString sRawBlock;
 
 		int nBuildNumber;
 
@@ -60,9 +61,24 @@ namespace VDDebugInfo
 			strcat( buf, ".vdi" );
 	}
 
-	bool VDDebugInfoInitFromMemory( Context *pctx, const void *src_ )
+	bool VDDebugInfoInitFromMemory( Context *pctx )
 	{
-		const unsigned char *src = (const unsigned char *)src_;
+		if( pctx->sRawBlock[0] == '\x1f' &&
+			pctx->sRawBlock[1] == '\x8b' )
+		{
+			RString sBufOut;
+			RString sError;
+			if( !GunzipString(pctx->sRawBlock, sBufOut, sError) )
+			{
+				pctx->sError = werr_ssprintf( GetLastError(), "VDI error: %s", sError.c_str() );
+				return false;
+			}
+
+			pctx->sRawBlock = sBufOut;
+		}
+
+
+		const unsigned char *src = (const unsigned char *) pctx->sRawBlock.data();
 
 		pctx->pRVAHeap = NULL;
 
@@ -89,11 +105,8 @@ namespace VDDebugInfo
 
 	void VDDebugInfoDeinit( Context *pctx )
 	{
-		if( pctx->pRawBlock )
-		{
-			VirtualFree(pctx->pRawBlock, 0, MEM_RELEASE);
-			pctx->pRawBlock = NULL;
-		}
+		if( !pctx->sRawBlock.empty() )
+			pctx->sRawBlock = RString();
 	}
 
 	bool VDDebugInfoInitFromFile( Context *pctx )
@@ -101,7 +114,7 @@ namespace VDDebugInfo
 		if( pctx->Loaded() )
 			return true;
 
-		pctx->pRawBlock = NULL;
+		pctx->sRawBlock = RString();
 		pctx->pRVAHeap = NULL;
 		GetVDIPath( pctx->sFilename, ARRAYSIZE(pctx->sFilename) );
 		pctx->sError = RString();
@@ -118,22 +131,20 @@ namespace VDDebugInfo
 			if( dwFileSize == INVALID_FILE_SIZE )
 				break;
 
-			pctx->pRawBlock = VirtualAlloc( NULL, dwFileSize, MEM_COMMIT, PAGE_READWRITE );
-			if( !pctx->pRawBlock )
+			char *pBuf = pctx->sRawBlock.GetBuffer( dwFileSize );
+			if( pBuf == NULL )
 				break;
 
 			DWORD dwActual;
-			if( !ReadFile(h, pctx->pRawBlock, dwFileSize, &dwActual, NULL) || dwActual != dwFileSize )
+			int iRet = ReadFile(h, pBuf, dwFileSize, &dwActual, NULL);
+			CloseHandle(h);
+			pctx->sRawBlock.ReleaseBuffer( dwActual );
+
+			if( !iRet || dwActual != dwFileSize )
 				break;
 
-			CloseHandle(h);
-
-			if( VDDebugInfoInitFromMemory(pctx, pctx->pRawBlock) )
-			{
+			if( VDDebugInfoInitFromMemory(pctx) )
 				return true;
-			}
-
-			VirtualFree( pctx->pRawBlock, 0, MEM_RELEASE );
 		} while(0);
 
 		VDDebugInfoDeinit(pctx);
