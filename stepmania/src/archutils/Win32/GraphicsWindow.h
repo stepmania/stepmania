@@ -16,7 +16,11 @@ namespace GraphicsWindow
 	/* Shut down completely. */
 	void Shutdown();
 
+	/* Set the display mode.  p will not be second-guessed, except to try disabling
+	 * the refresh rate setting. */
 	RString SetScreenMode( const VideoModeParams &p );
+
+	/* Create the window.  This also updates VideoModeParams (returned by GetParams). */
 	void CreateGraphicsWindow( const VideoModeParams &p, bool bForceRecreateWindow = false );
 	void DestroyGraphicsWindow();
 
