@@ -226,13 +226,18 @@ int NetworkStream_Win32::WaitForCompletionOrCancellation( int iEvent )
 
 		m_Mutex.Unlock();
 
-		/* If the socket was closed while we were waiting, stop. */
-		if( (events.lNetworkEvents & (1<<FD_CLOSE_BIT)) )
-			return WSAECONNRESET;
-
 		/* If the event didn't actually occur, keep waiting. */
 		if( !(events.lNetworkEvents & (1<<iEvent)) )
+		{
+			/* If the socket was closed while we were waiting, stop.  Note that when the
+			 * connection closes immediately after sending data, we'll receive both this
+			 * message and FD_READ at the same time.  Only do this if the event we really
+			 * want hasn't happened yet. */
+			if( (events.lNetworkEvents & (1<<FD_CLOSE_BIT)) )
+				return WSAECONNRESET;
+
 			continue;
+		}
 
 		return events.iErrorCode[iEvent];
 	}
