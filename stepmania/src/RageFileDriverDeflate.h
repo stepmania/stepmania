@@ -70,7 +70,7 @@ RageFileBasic *GunzipFile( RageFileBasic &file, RString &sError, uint32_t *iCRC3
 
 /* Quick helpers: */
 void GzipString( const RString &sIn, RString &sOut );
-bool GunzipString( const RString &sIn, RString &sOut ); // returns false on CRC, etc. error
+bool GunzipString( const RString &sIn, RString &sOut, RString &sError ); // returns false on CRC, etc. error
 
 #endif
 

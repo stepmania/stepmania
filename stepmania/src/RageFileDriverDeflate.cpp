@@ -523,12 +523,11 @@ void GzipString( const RString &sIn, RString &sOut )
 	sOut = mem.GetString();
 }
 
-bool GunzipString( const RString &sIn, RString &sOut )
+bool GunzipString( const RString &sIn, RString &sOut, RString &sError )
 {
 	RageFileObjMem mem;
 	mem.PutString( sIn );
 
-	RString sError;
 	uint32_t iCRC32;
 	RageFileBasic *pFile = GunzipFile( mem, sError, &iCRC32 );
 	if( pFile == NULL )
@@ -542,7 +541,10 @@ bool GunzipString( const RString &sIn, RString &sOut )
 	SAFE_DELETE( pFile );
 
 	if( iRet != iCRC32 )
+	{
+		sError = "CRC error";
 		return false;
+	}
 
 	return true;
 }
