@@ -1,3 +1,5 @@
+/* AppInstance - get an HINSTANCE for starting dialog boxes. */
+
 #ifndef APP_INSTANCE_H
 #define APP_INSTANCE_H
 
@@ -5,16 +7,16 @@
 #  include "windows.h"
 #endif
 
-/* Win32 only: get an HINSTANCE; used for starting dialog boxes. */
 class AppInstance
 {
-	HINSTANCE h;
-
 public:
 	AppInstance();
 	~AppInstance();
 	HINSTANCE Get() const { return h; }
 	operator HINSTANCE () const { return h; }
+
+private:
+	HINSTANCE h;
 };
 
 #endif

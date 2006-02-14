@@ -1,3 +1,5 @@
+/* Helper to simulate standard argv[] semantics with WinMain. */
+
 #ifndef CommandLine_H
 #define CommandLine_H
 

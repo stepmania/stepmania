@@ -1,4 +1,4 @@
-/* WindowsFileIO - Windows device I/O */
+/* WindowsFileIO - Windows device I/O. */
 
 #ifndef WIN32_USB_H
 #define WIN32_USB_H

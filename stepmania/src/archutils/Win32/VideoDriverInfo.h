@@ -1,4 +1,4 @@
-/* GetVideoDriverInfo: Get information about Win32 video drivers. */
+/* GetVideoDriverInfo - Get information about Win32 video drivers. */
 
 #ifndef VIDEO_DRIVER_INFO_H
 #define VIDEO_DRIVER_INFO_H
