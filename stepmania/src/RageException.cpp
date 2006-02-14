@@ -19,12 +19,12 @@ void RageException::SetCleanupHandler( void (*pHandler)(const RString &sError) )
  * the same way to code in practice. */
 void RageException::Throw(const char *fmt, ...)
 {
-    va_list	va;
-    va_start(va, fmt);
-    RString error = vssprintf( fmt, va );
-    va_end(va);
+	va_list	va;
+	va_start(va, fmt);
+	RString error = vssprintf( fmt, va );
+	va_end(va);
 
-    RString msg = ssprintf(
+	RString msg = ssprintf(
 				"\n"
 				"//////////////////////////////////////////////////////\n"
 				"Exception: %s\n"

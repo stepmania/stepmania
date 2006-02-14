@@ -76,7 +76,7 @@ int RageFileObj::Seek( int offset, int whence )
 
 int RageFileObj::Read( void *pBuffer, size_t iBytes )
 {
-        int ret = 0;
+	int ret = 0;
 
 	while( !m_bEOF && iBytes > 0 )
 	{

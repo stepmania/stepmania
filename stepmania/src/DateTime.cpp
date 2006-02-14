@@ -45,7 +45,7 @@ bool DateTime::operator==( const DateTime& other ) const
 DateTime DateTime::GetNowDateTime()
 {
 	time_t now = time(NULL);
-    tm tNow;
+	tm tNow;
 	localtime_r( &now, &tNow );
 	DateTime dtNow;
 #define COPY_M( v ) dtNow.v = tNow.v;
@@ -61,7 +61,7 @@ DateTime DateTime::GetNowDateTime()
 
 DateTime DateTime::GetNowDate()
 {
-    DateTime tNow = GetNowDateTime();
+	DateTime tNow = GetNowDateTime();
 	tNow.StripTime();
 	return tNow;
 }

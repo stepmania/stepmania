@@ -13,7 +13,7 @@
 
 RageFile::RageFile()
 {
-    m_File = NULL;
+	m_File = NULL;
 }
 	
 RageFile::RageFile( const RageFile &cpy ):
@@ -73,7 +73,7 @@ bool RageFile::Open( const RString& path, int mode )
 		return false;
 	}
 
-    return true;
+	return true;
 }
 
 void RageFile::Close()

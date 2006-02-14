@@ -87,7 +87,7 @@ static const RString EMPTY_STRING;
 	{	\
 		RString s2 = s;	\
 		s2.MakeLower();	\
-        unsigned i; \
+		unsigned i; \
 		for( i = 0; i < ARRAYSIZE(X##Names); ++i )	\
 			if( !s2.CompareNoCase(X##Names[i]) )	\
 				return (X)i;	\

@@ -672,8 +672,8 @@ public:
 	// -------------------------------------------------------------------------
 	// formatting (using wsprintf style formatting)
 
-    // If they want a Format() function that safely handles string objects
-    // without casting
+	// If they want a Format() function that safely handles string objects
+	// without casting
  
 
 	void Format(const CT* szFmt, ...)
@@ -804,7 +804,7 @@ public:
 
 	MYTYPE Left(int nCount) const
 	{
-        // Range check the count.
+		// Range check the count.
 
 		nCount = max(0, min(nCount, static_cast<int>(this->size())));
 		return this->substr(0, static_cast<MYSIZE>(nCount)); 
@@ -867,7 +867,7 @@ public:
 
 	MYTYPE Right(int nCount) const
 	{
-        // Range check the count.
+		// Range check the count.
 
 		nCount = max(0, min(nCount, static_cast<int>(this->size())));
 		return this->substr(this->size()-static_cast<MYSIZE>(nCount));

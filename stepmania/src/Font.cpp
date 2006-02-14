@@ -309,8 +309,8 @@ bool Font::FontCompleteForString( const wstring &str ) const
 void Font::CapsOnly()
 {
 	/* For each uppercase character that we have a mapping for, add
-     * a lowercase one. */
-	for(char c = 'A'; c <= 'Z'; ++c)
+	 * a lowercase one. */
+	for( char c = 'A'; c <= 'Z'; ++c )
 	{
 		map<longchar,glyph*>::const_iterator it = m_iCharToGlyph.find(c);
 

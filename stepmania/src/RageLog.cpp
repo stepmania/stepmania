@@ -169,8 +169,8 @@ void RageLog::SetShowLogOutput( bool show )
 	{
 		// create a new console window and attach standard handles
 		AllocConsole();
-		freopen("CONOUT$","wb",stdout);
-		freopen("CONOUT$","wb",stderr);
+		freopen( "CONOUT$","wb", stdout );
+		freopen( "CONOUT$","wb", stderr );
 	}
 	else
 	{
@@ -181,32 +181,32 @@ void RageLog::SetShowLogOutput( bool show )
 
 void RageLog::Trace( const char *fmt, ...)
 {
-    va_list	va;
-    va_start(va, fmt);
-    RString sBuff = vssprintf( fmt, va );
-    va_end(va);
+	va_list	va;
+	va_start( va, fmt );
+	RString sBuff = vssprintf( fmt, va );
+	va_end( va);
 
-	Write(0, sBuff);
+	Write(0, sBuff );
 }
 
 /* Use this for more important information; it'll always be included
  * in crash dumps. */
 void RageLog::Info( const char *fmt, ...)
 {
-    va_list	va;
-    va_start(va, fmt);
-    RString sBuff = vssprintf( fmt, va );
-    va_end(va);
+	va_list	va;
+	va_start( va, fmt );
+	RString sBuff = vssprintf( fmt, va );
+	va_end( va );
 
-	Write(WRITE_TO_INFO, sBuff);
+	Write( WRITE_TO_INFO, sBuff );
 }
 
 void RageLog::Warn( const char *fmt, ...)
 {
-    va_list	va;
-    va_start(va, fmt);
-    RString sBuff = vssprintf( fmt, va );
-    va_end(va);
+	va_list	va;
+	va_start(va, fmt);
+	RString sBuff = vssprintf( fmt, va );
+	va_end(va);
 
 	Write( WRITE_TO_INFO | WRITE_LOUD, sBuff );
 }
@@ -362,9 +362,9 @@ void RageLog::MapLog(const RString &key, const char *fmt, ...)
 	RString s;
 
 	va_list	va;
-    va_start(va, fmt);
+	va_start(va, fmt);
 	s += vssprintf( fmt, va );
-    va_end(va);
+	va_end(va);
 
 	LogMaps[key] = s;
 	UpdateMappedLog();

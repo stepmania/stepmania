@@ -283,14 +283,10 @@ void LifeMeterBar::AfterLifeChanged()
 
 bool LifeMeterBar::IsPastPassmark() const
 {
-    if( m_pPlayerState->m_PlayerOptions.m_fPassmark > 0 )
-    {
+	if( m_pPlayerState->m_PlayerOptions.m_fPassmark > 0 )
 		return m_fLifePercentage >= m_pPlayerState->m_PlayerOptions.m_fPassmark;
-    }
-    else
-    {
+	else
 		return false;
-    }
 }
 
 bool LifeMeterBar::IsHot() const
@@ -367,7 +363,8 @@ void LifeMeterBar::UpdateNonstopLifebar(const int cleared,
 
 	if (m_fLifeDifficulty >= 0.4) return;
 
-    /* Approximate deductions for a miss
+	/*
+	 * Approximate deductions for a miss
 	 * Life 1 :    5   %
 	 * Life 2 :    5.7 %
 	 * Life 3 :    6.6 %
@@ -389,7 +386,7 @@ void LifeMeterBar::UpdateNonstopLifebar(const int cleared,
 	 * a miss, and a W5 would suck up half of your lifebar.
 	 *
 	 * Everything past 7 is intended mainly for nonstop mode.
-     */
+	 */
 
 
 	// the lifebar is pretty harsh at 0.4 already (you lose

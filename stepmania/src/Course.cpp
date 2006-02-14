@@ -362,7 +362,7 @@ bool Course::GetTrailSorted( StepsType st, CourseDifficulty cd, Trail &trail ) c
 			ASSERT( bOK );
 		}
 		ASSERT_M( trail.m_vEntries.size() == SortTrail.m_vEntries.size(),
-                  ssprintf("%i %i", int(trail.m_vEntries.size()), int(SortTrail.m_vEntries.size())) );
+			ssprintf("%i %i", int(trail.m_vEntries.size()), int(SortTrail.m_vEntries.size())) );
 
 		vector<SortTrailEntry> entries;
 		for( unsigned i = 0; i < trail.m_vEntries.size(); ++i )
@@ -665,7 +665,7 @@ void Course::GetAllTrails( vector<Trail*> &AddTo ) const
 
 int Course::GetMeter( StepsType st, CourseDifficulty cd ) const
 {
-    if( m_iCustomMeter[cd] != -1 )
+	if( m_iCustomMeter[cd] != -1 )
 		return m_iCustomMeter[cd];
 	const Trail* pTrail = GetTrail( st );
 	if( pTrail != NULL )
