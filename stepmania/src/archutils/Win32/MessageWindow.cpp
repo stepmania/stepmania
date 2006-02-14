@@ -38,8 +38,9 @@ MessageWindow::~MessageWindow()
 
 void MessageWindow::Run()
 {
-	/* Process messages until we get WM_QUIT. */
-	while( 1 )
+	/* Process messages until StopRunning is called. */
+	m_bDone = false;
+	while( !m_bDone )
 	{
 		MSG msg;
 		int iRet = GetMessage( &msg, m_hWnd, 0, 0 );
@@ -48,6 +49,11 @@ void MessageWindow::Run()
 			break;
 		DispatchMessage( &msg );
 	}
+}
+
+void MessageWindow::StopRunning()
+{
+	m_bDone = true;
 }
 
 LRESULT CALLBACK MessageWindow::WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )

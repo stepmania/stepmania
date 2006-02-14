@@ -18,10 +18,12 @@ public:
 
 protected:
 	virtual bool HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam ) { return false; }
+	void StopRunning();
 
 private:
 	static LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
 	HWND m_hWnd;
+	bool m_bDone;
 };
 
 #endif

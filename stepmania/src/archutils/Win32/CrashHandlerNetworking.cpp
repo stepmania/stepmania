@@ -337,14 +337,14 @@ protected:
 		if( msg == WM_USER )
 		{
 			m_iResult = WSAGETASYNCERROR( lParam );
-			PostQuitMessage( 0 );
+			StopRunning();
 			return true;
 		}
 
 		if( msg == WM_USER+1 )
 		{
 			m_iResult = 0;
-			PostQuitMessage( 0 );
+			StopRunning();
 			return true;
 		}
 
