@@ -62,24 +62,24 @@ Song* GameState::GetDefaultSong() const
 
 
 GameState::GameState() :
-    m_pCurGame(				Message_CurrentGameChanged ),
-    m_pCurStyle(			Message_CurrentStyleChanged ),
-    m_PlayMode(				Message_PlayModeChanged ),
-	m_sPreferredSongGroup(	Message_PreferredSongGroupChanged ),
-	m_sPreferredCourseGroup(Message_PreferredCourseGroupChanged ),
-	m_PreferredDifficulty(	Message_PreferredDifficultyP1Changed ),
-	m_PreferredCourseDifficulty( Message_PreferredCourseDifficultyP1Changed ),
+	m_pCurGame(			Message_CurrentGameChanged ),
+	m_pCurStyle(			Message_CurrentStyleChanged ),
+	m_PlayMode(			Message_PlayModeChanged ),
+	m_sPreferredSongGroup(		Message_PreferredSongGroupChanged ),
+	m_sPreferredCourseGroup(	Message_PreferredCourseGroupChanged ),
+	m_PreferredDifficulty(		Message_PreferredDifficultyP1Changed ),
+	m_PreferredCourseDifficulty(	Message_PreferredCourseDifficultyP1Changed ),
 	m_SortOrder(			Message_SortOrderChanged ),
-    m_pCurSong(				Message_CurrentSongChanged ),
+	m_pCurSong(			Message_CurrentSongChanged ),
 	m_pCurSteps(			Message_CurrentStepsP1Changed ),
-    m_pCurCourse(			Message_CurrentCourseChanged ),
+	m_pCurCourse(			Message_CurrentCourseChanged ),
 	m_pCurTrail(			Message_CurrentTrailP1Changed ),
 	m_bGameplayLeadIn(		Message_GameplayLeadInChanged ),
-	m_stEdit(				Message_EditStepsTypeChanged ),
-    m_pEditSourceSteps(		Message_EditSourceStepsChanged ),
+	m_stEdit(			Message_EditStepsTypeChanged ),
+	m_pEditSourceSteps(		Message_EditSourceStepsChanged ),
 	m_stEditSource(			Message_EditSourceStepsTypeChanged ),
-	m_iEditCourseEntryIndex(Message_EditCourseEntryIndexChanged ),
-	m_sEditLocalProfileID(	Message_EditLocalProfileIDChanged )
+	m_iEditCourseEntryIndex(	Message_EditCourseEntryIndexChanged ),
+	m_sEditLocalProfileID(		Message_EditLocalProfileIDChanged )
 {
 	m_pCurStyle.Set( NULL );
 

@@ -66,24 +66,24 @@ int ThreadImpl_Win32::Wait()
 
 typedef struct tagTHREADNAME_INFO
 {
-    DWORD dwType;        // must be 0x1000
-    LPCSTR szName;       // pointer to name (in same addr space)
-    DWORD dwThreadID;    // thread ID (-1 caller thread)
-    DWORD dwFlags;       // reserved for future use, most be zero
+	DWORD dwType;        // must be 0x1000
+	LPCSTR szName;       // pointer to name (in same addr space)
+	DWORD dwThreadID;    // thread ID (-1 caller thread)
+	DWORD dwFlags;       // reserved for future use, most be zero
 } THREADNAME_INFO;
 
 static void SetThreadName( DWORD dwThreadID, LPCTSTR szThreadName )
 {
-    THREADNAME_INFO info;
-    info.dwType = 0x1000;
-    info.szName = szThreadName;
-    info.dwThreadID = dwThreadID;
-    info.dwFlags = 0;
+	THREADNAME_INFO info;
+	info.dwType = 0x1000;
+	info.szName = szThreadName;
+	info.dwThreadID = dwThreadID;
+	info.dwFlags = 0;
 
-    __try {
-        RaiseException(MS_VC_EXCEPTION, 0, sizeof(info) / sizeof(DWORD), (ULONG_PTR *)&info);
-    } __except (EXCEPTION_CONTINUE_EXECUTION) {
-    }
+	__try {
+		RaiseException(MS_VC_EXCEPTION, 0, sizeof(info) / sizeof(DWORD), (ULONG_PTR *)&info);
+	} __except (EXCEPTION_CONTINUE_EXECUTION) {
+	}
 }
 
 static DWORD WINAPI StartThread( LPVOID pData )
