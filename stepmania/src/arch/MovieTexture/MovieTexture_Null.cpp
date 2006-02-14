@@ -9,42 +9,42 @@
 
 MovieTexture_Null::MovieTexture_Null(RageTextureID ID) : RageMovieTexture(ID)
 {
-    LOG->Trace("MovieTexture_Null::MovieTexture_Null(ID)");
-    texHandle = 0;
+	LOG->Trace("MovieTexture_Null::MovieTexture_Null(ID)");
+	texHandle = 0;
 
-    RageTextureID actualID = GetID();
+	RageTextureID actualID = GetID();
 
-    actualID.iAlphaBits = 0;
+	actualID.iAlphaBits = 0;
 	int size = 64;
-    m_iSourceWidth = size;
-    m_iSourceHeight = size;
-    m_iImageWidth = size;
-    m_iImageHeight = size;
-    m_iTextureWidth = power_of_two(size);
-    m_iTextureHeight = m_iTextureWidth;
-    m_iFramesWide = 1;
-    m_iFramesHigh = 1;
+	m_iSourceWidth = size;
+	m_iSourceHeight = size;
+	m_iImageWidth = size;
+	m_iImageHeight = size;
+	m_iTextureWidth = power_of_two(size);
+	m_iTextureHeight = m_iTextureWidth;
+	m_iFramesWide = 1;
+	m_iFramesHigh = 1;
 
-    CreateFrameRects();
+	CreateFrameRects();
 
-    PixelFormat pixfmt = PixelFormat_RGBA4;
-    if( !DISPLAY->SupportsTextureFormat(pixfmt) )
-	    pixfmt = PixelFormat_RGBA8;
-    ASSERT( DISPLAY->SupportsTextureFormat(pixfmt) );
+	PixelFormat pixfmt = PixelFormat_RGBA4;
+	if( !DISPLAY->SupportsTextureFormat(pixfmt) )
+		pixfmt = PixelFormat_RGBA8;
+	ASSERT( DISPLAY->SupportsTextureFormat(pixfmt) );
 
-    const RageDisplay::PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc( pixfmt );
-    RageSurface *img = CreateSurface( size, size, pfd->bpp,
+	const RageDisplay::PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc( pixfmt );
+	RageSurface *img = CreateSurface( size, size, pfd->bpp,
 		pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
-    memset( img->pixels, 0, img->pitch*img->h );
+	memset( img->pixels, 0, img->pitch*img->h );
 
-    texHandle = DISPLAY->CreateTexture( pixfmt, img, false );
+	texHandle = DISPLAY->CreateTexture( pixfmt, img, false );
 
-    delete img;
+	delete img;
 }
 
 MovieTexture_Null::~MovieTexture_Null()
 {
-    DISPLAY->DeleteTexture( texHandle );
+	DISPLAY->DeleteTexture( texHandle );
 }
 
 /*

@@ -22,7 +22,7 @@ MovieTexture_Generic::MovieTexture_Generic( RageTextureID ID, MovieDecoder *pDec
 
 	m_uTexHandle = 0;
 	m_bLoop = true;
-    m_State = DECODER_QUIT; /* it's quit until we call StartThread */
+	m_State = DECODER_QUIT; /* it's quit until we call StartThread */
 	m_pSurface = NULL;
 	m_ImageWaiting = FRAME_NONE;
 	m_fRate = 1;
@@ -93,8 +93,8 @@ void MovieTexture_Generic::DestroyTexture()
 
 void MovieTexture_Generic::CreateTexture()
 {
-    if( m_uTexHandle )
-        return;
+	if( m_uTexHandle )
+		return;
 
 	CHECKPOINT;
 
@@ -155,7 +155,7 @@ void MovieTexture_Generic::CreateTexture()
 		}
 	}
 
-    m_uTexHandle = DISPLAY->CreateTexture( pixfmt, m_pSurface, false );
+	m_uTexHandle = DISPLAY->CreateTexture( pixfmt, m_pSurface, false );
 }
 
 
@@ -390,16 +390,16 @@ void MovieTexture_Generic::UpdateFrame()
 {
 	ASSERT_M( m_ImageWaiting == FRAME_WAITING, ssprintf("%i", m_ImageWaiting) );
 
-    /* Just in case we were invalidated: */
-    CreateTexture();
+	/* Just in case we were invalidated: */
+	CreateTexture();
 
 	CHECKPOINT;
 	DISPLAY->UpdateTexture(
-        m_uTexHandle,
-        m_pSurface,
-        0, 0,
-        m_iImageWidth, m_iImageHeight );
-    CHECKPOINT;
+		m_uTexHandle,
+		m_pSurface,
+		0, 0,
+		m_iImageWidth, m_iImageHeight );
+	CHECKPOINT;
 
 	m_ImageWaiting = FRAME_NONE;
 }
@@ -443,7 +443,7 @@ void MovieTexture_Generic::StopThread()
 
 void MovieTexture_Generic::SetPosition( float fSeconds )
 {
-    ASSERT( m_State != DECODER_QUIT );
+	ASSERT( m_State != DECODER_QUIT );
 
 	/* We can reset to 0, but I don't think this API supports fast seeking
 	 * yet.  I don't think we ever actually seek except to 0 right now,

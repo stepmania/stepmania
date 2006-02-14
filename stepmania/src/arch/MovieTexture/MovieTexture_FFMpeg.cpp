@@ -422,10 +422,10 @@ void MovieDecoder_FFMpeg::ConvertToSurface( RageSurface *pSurface ) const
 
 static avcodec::AVStream *FindVideoStream( avcodec::AVFormatContext *m_fctx )
 {
-    for( int stream = 0; stream < m_fctx->nb_streams; ++stream )
+	for( int stream = 0; stream < m_fctx->nb_streams; ++stream )
 	{
 		avcodec::AVStream *enc = m_fctx->streams[stream];
-        if( enc->codec.codec_type == avcodec::CODEC_TYPE_VIDEO )
+		if( enc->codec.codec_type == avcodec::CODEC_TYPE_VIDEO )
 			return enc;
 	}
 	return NULL;

@@ -12,11 +12,11 @@ struct __declspec(uuid("{71771540-2017-11cf-ae26-0020afd79767}")) CLSID_TextureR
 static HRESULT CBV_ret;
 CTextureRenderer::CTextureRenderer():
 	CBaseVideoRenderer(__uuidof(CLSID_TextureRenderer), 
-    NAME("Texture Renderer"), NULL, &CBV_ret),
+	NAME("Texture Renderer"), NULL, &CBV_ret),
 	m_OneFrameDecoded( "m_OneFrameDecoded", 0 )
 {
-    if( FAILED(CBV_ret) )
-        RageException::Throw( hr_ssprintf(CBV_ret, "Could not create texture renderer object!") );
+	if( FAILED(CBV_ret) )
+		RageException::Throw( hr_ssprintf(CBV_ret, "Could not create texture renderer object!") );
 
 	m_pTexture = NULL;
 }
@@ -28,35 +28,35 @@ CTextureRenderer::~CTextureRenderer()
 
 HRESULT CTextureRenderer::CheckMediaType(const CMediaType *pmt)
 {
-    VIDEOINFO *pvi;
-    
-    // Reject the connection if this is not a video type
-    if( *pmt->FormatType() != FORMAT_VideoInfo )
-        return E_INVALIDARG;
-    
+	VIDEOINFO *pvi;
+
+	// Reject the connection if this is not a video type
+	if( *pmt->FormatType() != FORMAT_VideoInfo )
+		return E_INVALIDARG;
+
 	/* Force the graph to R8G8B8.  DirectShow won't generate a FMT_RGB5 that OpenGL
 	 * can handle.  It's faster to generate FMT8 and let OpenGL convert on the fly
 	 * than to generate FMT_RGB5 and convert it ourself. */
-    pvi = (VIDEOINFO *)pmt->Format();
-    if(IsEqualGUID( *pmt->Type(),    MEDIATYPE_Video)  &&
-       IsEqualGUID( *pmt->Subtype(), MEDIASUBTYPE_RGB24))
-        return S_OK;
-    
-    return E_FAIL;
+	pvi = (VIDEOINFO *)pmt->Format();
+	if( IsEqualGUID( *pmt->Type(), MEDIATYPE_Video)  &&
+		IsEqualGUID( *pmt->Subtype(), MEDIASUBTYPE_RGB24) )
+		return S_OK;
+
+	return E_FAIL;
 }
 
 
 // SetMediaType: Graph connection has been made. 
 HRESULT CTextureRenderer::SetMediaType(const CMediaType *pmt)
 {
-    // Retrive the size of this media type
-    VIDEOINFO *pviBmp;                      // Bitmap info header
-    pviBmp = (VIDEOINFO *)pmt->Format();
-    m_lVidWidth  = pviBmp->bmiHeader.biWidth;
-    m_lVidHeight = abs(pviBmp->bmiHeader.biHeight);
-    m_lVidPitch = (m_lVidWidth * 3 + 3) + ~3; // We are forcing RGB24
+	// Retrive the size of this media type
+	VIDEOINFO *pviBmp;                      // Bitmap info header
+	pviBmp = (VIDEOINFO *)pmt->Format();
+	m_lVidWidth  = pviBmp->bmiHeader.biWidth;
+	m_lVidHeight = abs(pviBmp->bmiHeader.biHeight);
+	m_lVidPitch = (m_lVidWidth * 3 + 3) + ~3; // We are forcing RGB24
 
-    return S_OK;
+	return S_OK;
 }
 
 
@@ -74,15 +74,15 @@ HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
 		return S_OK;
 	}
 
-    BYTE  *pBmpBuffer;		// Bitmap buffer
+	BYTE  *pBmpBuffer;		// Bitmap buffer
 
-    // Get the video bitmap buffer
-    pSample->GetPointer( &pBmpBuffer );
+	// Get the video bitmap buffer
+	pSample->GetPointer( &pBmpBuffer );
 
-    // Copy the bits    
+	// Copy the bits
 	m_pTexture->NewData((char *) pBmpBuffer);
 
-    return S_OK;
+	return S_OK;
 }
 
 void CTextureRenderer::OnReceiveFirstSample( IMediaSample * pSample )

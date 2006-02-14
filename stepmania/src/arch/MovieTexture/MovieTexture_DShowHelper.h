@@ -15,8 +15,8 @@
 class CTextureRenderer : public CBaseVideoRenderer
 {
 public:
-    CTextureRenderer();
-    ~CTextureRenderer();
+	CTextureRenderer();
+	~CTextureRenderer();
 
 	HRESULT CheckMediaType( const CMediaType *pmt );     // Format acceptable?
 	HRESULT SetMediaType( const CMediaType *pmt );       // Video format notification
