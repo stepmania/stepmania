@@ -181,60 +181,62 @@ static void mad_timer_sub(mad_timer_t *a, mad_timer_t b)
 /* internal->decoder_private field */
 struct madlib_t
 {
-    uint8_t inbuf[16384], outbuf[8192];
-    int outpos;
+	uint8_t inbuf[16384], outbuf[8192];
+	int outpos;
 	unsigned outleft;
 
-    struct mad_stream	Stream;
-    struct mad_frame	Frame;
-    struct mad_synth	Synth;
-    /* Timestamp of the next frame. */
-    mad_timer_t		Timer;
+	struct mad_stream	Stream;
+	struct mad_frame	Frame;
+	struct mad_synth	Synth;
+	/* Timestamp of the next frame. */
+	mad_timer_t		Timer;
 
-    /* Whether Timer is trusted; this is false after doing a quick seek. */
-    int	timer_accurate;
+	/* Whether Timer is trusted; this is false after doing a quick seek. */
+	int timer_accurate;
 
-    /* Frame index of each percentage of the file.  This is like the
-     * Xing TOC, except it's actual byte indices, not percentages, so
-     * it's accurate enough for "precise" seeking.  -1 indicates we don't
-     * yet know; we always fill this in from beginning to end, so if n
-     * is not -1, 0..n-1 are also not -1. 
-     *
-     * If we're VBR and have no Xing tag, we don't know the exact length
-     * ahead of time, so we might end up going past the length we thought
-     * the file was.  We don't want to change length after we've set it
-     * (that would change all of the toc entries), so allow the TOC to
-     * go up to 200%.  (Beyond that, we'll always hard seek; perhaps this
-     * should be larger?) */
-    int toc[200];
+	/*
+	 * Frame index of each percentage of the file.  This is like the
+	 * Xing TOC, except it's actual byte indices, not percentages, so
+	 * it's accurate enough for "precise" seeking.  -1 indicates we don't
+	 * yet know; we always fill this in from beginning to end, so if n
+	 * is not -1, 0..n-1 are also not -1. 
+	 *
+	 * If we're VBR and have no Xing tag, we don't know the exact length
+	 * ahead of time, so we might end up going past the length we thought
+	 * the file was.  We don't want to change length after we've set it
+	 * (that would change all of the toc entries), so allow the TOC to
+	 * go up to 200%.  (Beyond that, we'll always hard seek; perhaps this
+	 * should be larger?)
+	 */
+	int toc[200];
 
-    /* Position in the file of inbuf: */
-    int inbuf_filepos;
+	/* Position in the file of inbuf: */
+	int inbuf_filepos;
 
-    /* File size. */
-    int filesize;
+	/* File size. */
+	int filesize;
 
-    /* Number of bytes of header data at the beginning; used for seeking. */
-    int header_bytes;
+	/* Number of bytes of header data at the beginning; used for seeking. */
+	int header_bytes;
 
 	/* Whether we've decoded the first frame of real audio yet.  If this
 	 * is false, we're somewhere before the first frame; we might be in
 	 * the middle of headers. */
 	int first_frame;
 
-    /* This data is filled in when the first frame is decoded. */
-    int has_xing; /* whether xingtag is valid */
-    struct xing xingtag;
+	/* This data is filled in when the first frame is decoded. */
+	int has_xing; /* whether xingtag is valid */
+	struct xing xingtag;
 
-    /* If has_xing is true, this is filled in based on the xing header.
-     * If it's false, this is filled in based on the size of the file
-     * and the first frame. */
-    int length;
-    mad_timer_t framelength;
+	/* If has_xing is true, this is filled in based on the xing header.
+	 * If it's false, this is filled in based on the size of the file
+	 * and the first frame. */
+	int length;
+	mad_timer_t framelength;
 
-    /* If we have a Xing tag, this is the average bitrate; otherwise it's
-     * the bitrate of the first frame. */
-    int bitrate;
+	/* If we have a Xing tag, this is the average bitrate; otherwise it's
+	 * the bitrate of the first frame. */
+	int bitrate;
 };
 
 
@@ -246,28 +248,28 @@ struct madlib_t
 
 static signed int scale(mad_fixed_t sample)
 {
-    /* round */
-    sample += (1L << (MAD_F_FRACBITS - 16));
+	/* round */
+	sample += (1L << (MAD_F_FRACBITS - 16));
 
-    /* clip */
-    if (sample >= MAD_F_ONE)
-	sample = MAD_F_ONE - 1;
-    else if (sample < -MAD_F_ONE)
-        sample = -MAD_F_ONE;
+	/* clip */
+	if (sample >= MAD_F_ONE)
+		sample = MAD_F_ONE - 1;
+	else if (sample < -MAD_F_ONE)
+		sample = -MAD_F_ONE;
 
-    /* quantize */
-    return sample >> (MAD_F_FRACBITS + 1 - 16);
+	/* quantize */
+	return sample >> (MAD_F_FRACBITS + 1 - 16);
 }
 
 static int get_this_frame_byte( const madlib_t *mad )
 {
-    int ret = mad->inbuf_filepos;
+	int ret = mad->inbuf_filepos;
 
-    /* If we have a frame, adjust. */
-    if( mad->Stream.this_frame != NULL )
+	/* If we have a frame, adjust. */
+	if( mad->Stream.this_frame != NULL )
 		ret += mad->Stream.this_frame-mad->inbuf;
 
-    return ret;
+	return ret;
 }
 
 
@@ -617,9 +619,9 @@ RageSoundReader_MP3::RageSoundReader_MP3()
 
 RageSoundReader_MP3::~RageSoundReader_MP3()
 {
-    mad_synth_finish( &mad->Synth );
-    mad_frame_finish( &mad->Frame );
-    mad_stream_finish( &mad->Stream );
+	mad_synth_finish( &mad->Synth );
+	mad_frame_finish( &mad->Frame );
+	mad_stream_finish( &mad->Stream );
 
 	delete mad;
 }
@@ -662,8 +664,8 @@ SoundReader_FileReader::OpenResult RageSoundReader_MP3::Open( RString filename_ 
 	 * the stream. */
 	synth_output();
 
-    if(mad->length == -1)
-    {
+	if(mad->length == -1)
+	{
 		/* If vbr and !xing, this is just an estimate. */
 		int bps = mad->bitrate / 8;
 		float secs = (float)(mad->filesize - mad->header_bytes) / bps;
@@ -774,7 +776,7 @@ bool RageSoundReader_MP3::MADLIB_rewind()
 	 * set it, then we'll be desynced by a frame after an accurate seek. */
 //	mad->header_bytes = 0;
 	mad->first_frame = true;
-    mad->Stream.this_frame = NULL;
+	mad->Stream.this_frame = NULL;
 
 	return true;
 }
@@ -801,18 +803,18 @@ bool RageSoundReader_MP3::MADLIB_rewind()
 /* Returns actual position on success, 0 if past EOF, -1 on error. */
 int RageSoundReader_MP3::SetPosition_toc( int ms, bool Xing )
 {
-    int percent;
-    
-    ASSERT( !Xing || mad->has_xing );
-    ASSERT( mad->length != -1 );
+	int percent;
 
-    /* This leaves our timer accurate if we're using our own TOC, and inaccurate
-     * if we're using Xing. */
-    mad->timer_accurate = !Xing;
+	ASSERT( !Xing || mad->has_xing );
+	ASSERT( mad->length != -1 );
 
-    /* We can speed up the seek using the XING tag.  First, figure
-     * out what percentage the requested position falls in. */
-    percent = ms * 100 / mad->length;
+	/* This leaves our timer accurate if we're using our own TOC, and inaccurate
+	 * if we're using Xing. */
+	mad->timer_accurate = !Xing;
+
+	/* We can speed up the seek using the XING tag.  First, figure
+	 * out what percentage the requested position falls in. */
+	percent = ms * 100 / mad->length;
     
 	if(percent >= 0)
 	{
@@ -857,7 +859,7 @@ int RageSoundReader_MP3::SetPosition_toc( int ms, bool Xing )
 		}
 	}
 
-    return ms;
+	return ms;
 }
 
 int RageSoundReader_MP3::SetPosition_hard( int ms )

@@ -211,9 +211,9 @@ void ScreenSelectGroup::MenuStart( PlayerNumber pn )
 	GAMESTATE->m_sPreferredSongGroup.Set( m_GroupList.GetSelectionName()==ALL_MUSIC_STRING.GetValue() ? GROUP_ALL : m_GroupList.GetSelectionName() );
 
 	if( GAMESTATE->m_sPreferredSongGroup == GROUP_ALL )
-       	SOUND->PlayOnceFromAnnouncer( "select group comment all music" );
+		SOUND->PlayOnceFromAnnouncer( "select group comment all music" );
 	else
-        SOUND->PlayOnceFromAnnouncer( "select group comment general" );
+		SOUND->PlayOnceFromAnnouncer( "select group comment general" );
 
 	this->PostScreenMessage( SM_BeginFadingOut, 0 );
 }

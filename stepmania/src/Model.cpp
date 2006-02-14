@@ -96,7 +96,7 @@ void Model::LoadPieces( RString sMeshesPath, RString sMaterialsPath, RString sBo
 
 
 	//
-    // Setup temp vertices (if necessary)
+	// Setup temp vertices (if necessary)
 	//
 	if( m_pGeometry->HasAnyPerVertexBones() )
 	{
@@ -146,102 +146,102 @@ void Model::LoadMaterialsFromMilkshapeAscii( RString sPath )
 	RString sLine;
 	int iLineNum = 0;
 
-    while( f.GetLine( sLine ) > 0 )
-    {
+	while( f.GetLine( sLine ) > 0 )
+	{
 		iLineNum++;
 
-        if( !strncmp (sLine, "//", 2) )
-            continue;
+		if( !strncmp (sLine, "//", 2) )
+			continue;
 
-        int nFrame;
-        if( sscanf(sLine, "Frames: %d", &nFrame) == 1 )
-        {
+		int nFrame;
+		if( sscanf(sLine, "Frames: %d", &nFrame) == 1 )
+		{
 			// ignore
 			// m_pModel->nTotalFrames = nFrame;
-        }
-        if( sscanf(sLine, "Frame: %d", &nFrame) == 1 )
-        {
+		}
+		if( sscanf(sLine, "Frame: %d", &nFrame) == 1 )
+		{
 			// ignore
 			// m_pModel->nFrame = nFrame;
-        }
+		}
 
 
-        //
-        // materials
-        //
-        int nNumMaterials = 0;
-        if( sscanf(sLine, "Materials: %d", &nNumMaterials) == 1 )
-        {
-            m_Materials.resize( nNumMaterials );
-      
-            char szName[256];
+		//
+		// materials
+		//
+		int nNumMaterials = 0;
+		if( sscanf(sLine, "Materials: %d", &nNumMaterials) == 1 )
+		{
+			m_Materials.resize( nNumMaterials );
 
-            for( int i = 0; i < nNumMaterials; i++ )
-            {
+			char szName[256];
+
+			for( int i = 0; i < nNumMaterials; i++ )
+			{
 				msMaterial& Material = m_Materials[i];
 
-                // name
-			    if( f.GetLine( sLine ) <= 0 )
+				// name
+				if( f.GetLine( sLine ) <= 0 )
 					THROW;
-                if( sscanf(sLine, "\"%[^\"]\"", szName) != 1 )
+				if( sscanf(sLine, "\"%[^\"]\"", szName) != 1 )
 					THROW;
-                Material.sName = szName;
+				Material.sName = szName;
 
-                // ambient
-			    if( f.GetLine( sLine ) <= 0 )
+				// ambient
+				if( f.GetLine( sLine ) <= 0 )
 					THROW;
-                RageVector4 Ambient;
-                if( sscanf(sLine, "%f %f %f %f", &Ambient[0], &Ambient[1], &Ambient[2], &Ambient[3]) != 4 )
+				RageVector4 Ambient;
+				if( sscanf(sLine, "%f %f %f %f", &Ambient[0], &Ambient[1], &Ambient[2], &Ambient[3]) != 4 )
 					THROW;
-                memcpy( &Material.Ambient, &Ambient, sizeof(Material.Ambient) );
+				memcpy( &Material.Ambient, &Ambient, sizeof(Material.Ambient) );
 
-                // diffuse
-			    if( f.GetLine( sLine ) <= 0 )
+				// diffuse
+				if( f.GetLine( sLine ) <= 0 )
 					THROW;
-                RageVector4 Diffuse;
-                if( sscanf(sLine, "%f %f %f %f", &Diffuse[0], &Diffuse[1], &Diffuse[2], &Diffuse[3]) != 4 )
+				RageVector4 Diffuse;
+				if( sscanf(sLine, "%f %f %f %f", &Diffuse[0], &Diffuse[1], &Diffuse[2], &Diffuse[3]) != 4 )
 					THROW;
-                memcpy( &Material.Diffuse, &Diffuse, sizeof(Material.Diffuse) );
+				memcpy( &Material.Diffuse, &Diffuse, sizeof(Material.Diffuse) );
 
-                // specular
-			    if( f.GetLine( sLine ) <= 0 )
+				// specular
+				if( f.GetLine( sLine ) <= 0 )
 					THROW;
-                RageVector4 Specular;
-                if( sscanf(sLine, "%f %f %f %f", &Specular[0], &Specular[1], &Specular[2], &Specular[3]) != 4 )
+				RageVector4 Specular;
+				if( sscanf(sLine, "%f %f %f %f", &Specular[0], &Specular[1], &Specular[2], &Specular[3]) != 4 )
 					THROW;
-                memcpy( &Material.Specular, &Specular, sizeof(Material.Specular) );
+				memcpy( &Material.Specular, &Specular, sizeof(Material.Specular) );
 
-                // emissive
-			    if( f.GetLine( sLine ) <= 0 )
+				// emissive
+				if( f.GetLine( sLine ) <= 0 )
 					THROW;
-                RageVector4 Emissive;
-                if( sscanf (sLine, "%f %f %f %f", &Emissive[0], &Emissive[1], &Emissive[2], &Emissive[3]) != 4 )
+				RageVector4 Emissive;
+				if( sscanf (sLine, "%f %f %f %f", &Emissive[0], &Emissive[1], &Emissive[2], &Emissive[3]) != 4 )
 					THROW;
-                memcpy( &Material.Emissive, &Emissive, sizeof(Material.Emissive) );
+				memcpy( &Material.Emissive, &Emissive, sizeof(Material.Emissive) );
 
-                // shininess
-			    if( f.GetLine( sLine ) <= 0 )
+				// shininess
+				if( f.GetLine( sLine ) <= 0 )
 					THROW;
 				char *p;
-                float fShininess = strtof( sLine, &p );
-                if( p == sLine )
+				float fShininess = strtof( sLine, &p );
+				if( p == sLine )
 					THROW;
-                Material.fShininess = fShininess;
+				Material.fShininess = fShininess;
 
-                // transparency
-			    if( f.GetLine( sLine ) <= 0 )
+				// transparency
+				if( f.GetLine( sLine ) <= 0 )
 					THROW;
-                float fTransparency = strtof( sLine, &p );
-                if( p == sLine )
+				float fTransparency = strtof( sLine, &p );
+				if( p == sLine )
 					THROW;
-                Material.fTransparency = fTransparency;
+				Material.fTransparency = fTransparency;
 
-                // diffuse texture
-			    if( f.GetLine( sLine ) <= 0 )
+				// diffuse texture
+				if( f.GetLine( sLine ) <= 0 )
 					THROW;
-                strcpy( szName, "" );
-                sscanf( sLine, "\"%[^\"]\"", szName );
-                RString sDiffuseTexture = szName;
+				strcpy( szName, "" );
+				sscanf( sLine, "\"%[^\"]\"", szName );
+				RString sDiffuseTexture = szName;
 
 				if( sDiffuseTexture != "" )
 				{
@@ -257,11 +257,11 @@ void Model::LoadMaterialsFromMilkshapeAscii( RString sPath )
 					}
 				}
 
-                // alpha texture
-			    if( f.GetLine( sLine ) <= 0 )
+				// alpha texture
+				if( f.GetLine( sLine ) <= 0 )
 					THROW;
-                strcpy( szName, "" );
-                sscanf( sLine, "\"%[^\"]\"", szName );
+				strcpy( szName, "" );
+				sscanf( sLine, "\"%[^\"]\"", szName );
 				RString sAlphaTexture = szName;
 
 				if( sAlphaTexture != "" )
@@ -277,9 +277,9 @@ void Model::LoadMaterialsFromMilkshapeAscii( RString sPath )
 						RageException::Throw( sError );
 					}
 				}
-            }
-        }
-    }
+			}
+		}
+	}
 
 	f.Close();
 }

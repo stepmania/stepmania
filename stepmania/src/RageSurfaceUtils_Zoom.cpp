@@ -94,7 +94,7 @@ static void ZoomSurface( const RageSurface * src, RageSurface * dst )
 
 	/* This is where all of the real work is done. */
 	const uint8_t *sp = (uint8_t *) src->pixels;
-    for( int y = 0; y < dst->h; y++ )
+	for( int y = 0; y < dst->h; y++ )
 	{
 		uint32_t *dp = (uint32_t *) (dst->pixels + dst->pitch*y);
 		/* current source pointer and next source pointer (first and second 
@@ -127,7 +127,7 @@ static void ZoomSurface( const RageSurface * src, RageSurface * dst )
 			/* Advance destination pointer. */
 			++dp;
 		}
-    }
+	}
 }
 
 
@@ -135,7 +135,7 @@ void RageSurfaceUtils::Zoom( RageSurface *&src, int dstwidth, int dstheight )
 {
 	ASSERT_M( dstwidth > 0, ssprintf("%i",dstwidth) );
 	ASSERT_M( dstheight > 0, ssprintf("%i",dstheight) );
-    if( src == NULL )
+	if( src == NULL )
 		return;
 
 	if( src->w == dstwidth && src->h == dstheight )

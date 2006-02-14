@@ -113,7 +113,7 @@ RageSurface *RageSurface_Load_XPM( char * const *xpm, RString &error )
 		}
 	}
 
-    return img;
+	return img;
 }
 
 /*

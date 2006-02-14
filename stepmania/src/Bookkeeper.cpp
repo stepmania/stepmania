@@ -131,7 +131,7 @@ void Bookkeeper::ReadFromDisk()
 void Bookkeeper::WriteToDisk()
 {
 	// Write data.  Use SLOW_FLUSH, to help ensure that we don't lose coin data.
-    RageFile f;
+	RageFile f;
 	if( !f.Open(COINS_DAT, RageFile::WRITE|RageFile::SLOW_FLUSH) )
 	{
 		LOG->Warn( "Couldn't open file \"%s\" for writing: %s", COINS_DAT.c_str(), f.GetError().c_str() );
@@ -181,7 +181,7 @@ int Bookkeeper::GetCoinsTotal() const
 void Bookkeeper::GetCoinsLastDays( int coins[NUM_LAST_DAYS] ) const
 {
 	time_t lOldTime = time(NULL);
-    tm time;
+	tm time;
 	localtime_r( &lOldTime, &time );
 
 	time.tm_hour = 0;
@@ -197,7 +197,7 @@ void Bookkeeper::GetCoinsLastDays( int coins[NUM_LAST_DAYS] ) const
 void Bookkeeper::GetCoinsLastWeeks( int coins[NUM_LAST_WEEKS] ) const
 {
 	time_t lOldTime = time(NULL);
-    tm time;
+	tm time;
 	localtime_r( &lOldTime, &time );
 
 	time = GetNextSunday( time );

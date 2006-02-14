@@ -7,41 +7,41 @@
 
 uint32_t RageSurfaceUtils::decodepixel( const uint8_t *p, int bpp )
 {
-    switch(bpp)
+	switch(bpp)
 	{
-    case 1: return *p;
-    case 2: return *(uint16_t *)p;
+	case 1: return *p;
+	case 2: return *(uint16_t *)p;
 	case 3:
-        if( BYTE_ORDER == BIG_ENDIAN )
-            return p[0] << 16 | p[1] << 8 | p[2];
-        else
-            return p[0] | p[1] << 8 | p[2] << 16;
+		if( BYTE_ORDER == BIG_ENDIAN )
+			return p[0] << 16 | p[1] << 8 | p[2];
+		else
+			return p[0] | p[1] << 8 | p[2] << 16;
 
-    case 4: return *(uint32_t *)p;
-    default: return 0;       /* shouldn't happen, but avoids warnings */
-    }
+	case 4: return *(uint32_t *)p;
+	default: return 0;       /* shouldn't happen, but avoids warnings */
+	}
 }
 
 void RageSurfaceUtils::encodepixel( uint8_t *p, int bpp, uint32_t pixel )
 {
-    switch(bpp)
+	switch(bpp)
 	{
-    case 1: *p = uint8_t(pixel); break;
-    case 2: *(uint16_t *)p = uint16_t(pixel); break;
-    case 3:
-        if( BYTE_ORDER == BIG_ENDIAN )
+	case 1: *p = uint8_t(pixel); break;
+	case 2: *(uint16_t *)p = uint16_t(pixel); break;
+	case 3:
+		if( BYTE_ORDER == BIG_ENDIAN )
 		{
-            p[0] = uint8_t((pixel >> 16) & 0xff);
-            p[1] = uint8_t((pixel >> 8) & 0xff);
-            p[2] = uint8_t(pixel & 0xff);
-        } else {
-            p[0] = uint8_t(pixel & 0xff);
-            p[1] = uint8_t((pixel >> 8) & 0xff);
-            p[2] = uint8_t((pixel >> 16) & 0xff);
-        }
-        break;
-    case 4: *(uint32_t *)p = pixel; break;
-    }
+			p[0] = uint8_t((pixel >> 16) & 0xff);
+			p[1] = uint8_t((pixel >> 8) & 0xff);
+			p[2] = uint8_t(pixel & 0xff);
+		} else {
+			p[0] = uint8_t(pixel & 0xff);
+			p[1] = uint8_t((pixel >> 8) & 0xff);
+			p[2] = uint8_t((pixel >> 16) & 0xff);
+		}
+		break;
+	case 4: *(uint32_t *)p = pixel; break;
+	}
 }
 
 /* Get and set colors without scaling to 0..255. */
@@ -145,7 +145,7 @@ bool RageSurfaceUtils::ConvertSurface( RageSurface *src, RageSurface *&dst,
 		int width, int height, int bpp,
 		uint32_t R, uint32_t G, uint32_t B, uint32_t A )
 {
-    dst = CreateSurface( width, height, bpp, R, G, B, A );
+	dst = CreateSurface( width, height, bpp, R, G, B, A );
 
 	/* If the formats are the same, no conversion is needed.  Ignore the palette. */
 	if( width == src->w && height == src->h && src->format->Equivalent( *dst->format ) )
@@ -163,7 +163,7 @@ void RageSurfaceUtils::ConvertSurface(RageSurface *&image,
 		int width, int height, int bpp,
 		uint32_t R, uint32_t G, uint32_t B, uint32_t A)
 {
-    RageSurface *ret_image;
+	RageSurface *ret_image;
 	if( !ConvertSurface( image, ret_image, width, height, bpp, R, G, B, A ) )
 		return;
 
@@ -492,16 +492,16 @@ static bool blit_same_type( const RageSurface *src_surf, const RageSurface *dst_
 	/* If possible, memcpy the whole thing. */
 	if( src_surf->w == width && dst_surf->w == width && src_surf->pitch == dst_surf->pitch )
 	{
-        memcpy( dst, src, height*src_surf->pitch );
+		memcpy( dst, src, height*src_surf->pitch );
 		return true;
 	}
 
 	/* The rows don't line up, so memcpy row by row. */
 	while( height-- )
 	{
-        memcpy( dst, src, width*src_surf->format->BytesPerPixel );
-        src += src_surf->pitch;
-        dst += dst_surf->pitch;
+		memcpy( dst, src, width*src_surf->format->BytesPerPixel );
+		src += src_surf->pitch;
+		dst += dst_surf->pitch;
 	}
 
 	return true;
@@ -939,7 +939,7 @@ RageSurface *RageSurfaceUtils::PalettizeToGrayscale( const RageSurface *src_surf
 
 RageSurface *RageSurfaceUtils::MakeDummySurface( int height, int width )
 {
-    RageSurface *ret_image = CreateSurface( width, height, 8, 0,0,0,0 );
+	RageSurface *ret_image = CreateSurface( width, height, 8, 0,0,0,0 );
 
 	RageSurfaceColor pink( 0xFF, 0x10, 0xFF, 0xFF );
 	ret_image->fmt.palette->colors[0] = pink;

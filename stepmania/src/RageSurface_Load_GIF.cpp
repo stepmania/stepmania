@@ -35,7 +35,7 @@ static bool ReadPalette( RageFile &f, int number, RageSurfaceColor buffer[MAXCOL
 		buffer[i].a = 0xFF;
 	}
 
-    return true;
+	return true;
 }
 
 
@@ -105,7 +105,7 @@ RageSurfaceUtils::OpenResult RageSurface_Load_GIF( const RString &sPath, RageSur
 
 	GlobalBitPixel = 2 << (buf[4] & 0x07);
 
-    if( BitSet(buf[4], LOCALCOLORMAP) )
+	if( BitSet(buf[4], LOCALCOLORMAP) )
 	{
 		/* Global Colormap */
 		if( !ReadPalette(f, GlobalBitPixel, GlobalColorMap ) )
@@ -113,11 +113,11 @@ RageSurfaceUtils::OpenResult RageSurface_Load_GIF( const RString &sPath, RageSur
 			error = "error reading global colormap";
 			return RageSurfaceUtils::OPEN_FATAL_ERROR;
 		}
-    }
+	}
 
-    int transparency = -1;
+	int transparency = -1;
 
-    while(1)
+	while(1)
 	{
 		unsigned char type;
 		if( !ReadOK(f, &type, 1) )
@@ -202,18 +202,18 @@ RageSurfaceUtils::OpenResult RageSurface_Load_GIF( const RString &sPath, RageSur
 		}
 	}
 
-    return RageSurfaceUtils::OPEN_FATAL_ERROR;
+	return RageSurfaceUtils::OPEN_FATAL_ERROR;
 }
 
 struct LWZState
 {
 	bool fresh;
-    int code_size, set_code_size;
-    int max_code, max_code_size;
-    int firstcode, oldcode;
-    int clear_code, end_code;
-    int table[2][(1 << MAX_LWZ_BITS)];
-    int stack[(1 << (MAX_LWZ_BITS)) * 2], *sp;
+	int code_size, set_code_size;
+	int max_code, max_code_size;
+	int firstcode, oldcode;
+	int clear_code, end_code;
+	int table[2][(1 << MAX_LWZ_BITS)];
+	int stack[(1 << (MAX_LWZ_BITS)) * 2], *sp;
 
 	struct Code
 	{
@@ -273,14 +273,14 @@ int LWZState::Code::Get( RageFile &f, int code_size )
 
 bool LWZState::Init( RageFile &f )
 {
-    unsigned char input_code_size;
+	unsigned char input_code_size;
 
 	/* code size: */
-    if( !ReadOK(f, &input_code_size, 1) )
+	if( !ReadOK(f, &input_code_size, 1) )
 	{
 //		RWSetMsg("EOF / read error on image data");
 		return false;
-    }
+	}
 
 	set_code_size = input_code_size;
 	code_size = set_code_size + 1;
@@ -317,7 +317,7 @@ int LWZState::ReadByte( RageFile &f )
 	if( sp > stack )
 		return *--sp;
 
-    int code;
+	int code;
 	while( (code = m_Code.Get(f, code_size)) >= 0 )
 	{
 		if( code == clear_code )
@@ -384,23 +384,23 @@ int LWZState::ReadByte( RageFile &f )
 
 		if( sp > stack )
 			return *--sp;
-    }
-    return code;
+	}
+	return code;
 }
 
 static RageSurface *ReadImage( RageFile &f, int len, int height,
 		const RageSurfaceColor localColorMap[MAXCOLORMAPSIZE],
 		int interlace, int ignore )
 {
-    int xpos = 0, ypos = 0, pass = 0;
+	int xpos = 0, ypos = 0, pass = 0;
 
-    /* Initialize the compression routines */
+	/* Initialize the compression routines */
 	LWZState state;
-    if( !state.Init(f) )
+	if( !state.Init(f) )
 	{
 //		RWSetMsg("error reading image");
 		return NULL;
-    }
+	}
 	/* If this is an "uninteresting picture" ignore it. */
 	if( ignore )
 	{
@@ -409,7 +409,7 @@ static RageSurface *ReadImage( RageFile &f, int len, int height,
 		return NULL;
 	}
 
-    RageSurface *image = CreateSurface( len, height, 8, 0, 0, 0, 0 );
+	RageSurface *image = CreateSurface( len, height, 8, 0, 0, 0, 0 );
 	memcpy( image->fmt.palette->colors, localColorMap, 256*sizeof(RageSurfaceColor) );
 
 	int v;
@@ -431,7 +431,7 @@ static RageSurface *ReadImage( RageFile &f, int len, int height,
 				{
 					++pass;
 					if( pass == 4 )
-					    return image;
+						return image;
 					int start[] = { 0, 4, 2, 1 };
 					ypos = start[pass];
 				}
@@ -443,7 +443,7 @@ static RageSurface *ReadImage( RageFile &f, int len, int height,
 			break;
 	}
 
-    return image;
+	return image;
 }
 
 /*

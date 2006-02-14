@@ -234,27 +234,27 @@ static RString BinaryToHex( const unsigned char *string, int iNumBytes )
 
 RString CryptManager::GetMD5( RString fn )
 {
-       struct MD5Context md5c;
-       unsigned char digest[16];
-       int iBytesRead;
-       unsigned char buffer[1024];
+	struct MD5Context md5c;
+	unsigned char digest[16];
+	int iBytesRead;
+	unsigned char buffer[1024];
 
-       RageFile file;
-       if( !file.Open( fn, RageFile::READ ) )
-       {
-               LOG->Warn( "GetMD5: Failed to open file '%s'", fn.c_str() );
-               return RString();
-       }
+	RageFile file;
+	if( !file.Open( fn, RageFile::READ ) )
+	{
+		LOG->Warn( "GetMD5: Failed to open file '%s'", fn.c_str() );
+		return RString();
+	}
 
-       MD5Init(&md5c);
-       while( !file.AtEOF() && file.GetError().empty() )
-       {
-               iBytesRead = file.Read( buffer, sizeof(buffer) );
-               MD5Update(&md5c, buffer, iBytesRead);
-       }
-       MD5Final(digest, &md5c);
+	MD5Init(&md5c);
+	while( !file.AtEOF() && file.GetError().empty() )
+	{
+		iBytesRead = file.Read( buffer, sizeof(buffer) );
+		MD5Update(&md5c, buffer, iBytesRead);
+	}
+	MD5Final(digest, &md5c);
 
-       return BinaryToHex( digest, sizeof(digest) );
+	return BinaryToHex( digest, sizeof(digest) );
 }
 
 RString CryptManager::GetPublicKeyFileName()
