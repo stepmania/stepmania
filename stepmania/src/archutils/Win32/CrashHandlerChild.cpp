@@ -726,9 +726,9 @@ bool CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 
 			/* Create the form data to send. */
 			m_pPost = new NetworkPostData;
-			m_pPost->SetData( "ProductName", PRODUCT_NAME );
-			m_pPost->SetData( "ProductVersion", PRODUCT_VER );
-			m_pPost->SetData( "ProductArch", HOOKS->GetArchName().c_str() );
+			m_pPost->SetData( "Product", PRODUCT_NAME );
+			m_pPost->SetData( "Version", PRODUCT_VER );
+			m_pPost->SetData( "Arch", HOOKS->GetArchName().c_str() );
 			m_pPost->SetData( "Report", m_sCrashReport );
 			m_pPost->SetData( "Reason", m_CrashData.m_CrashInfo.m_CrashReason );
 
