@@ -109,7 +109,7 @@ namespace VDDebugInfo
 		HANDLE h = CreateFile( pctx->sFilename, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL );
 		if( h == INVALID_HANDLE_VALUE )
 		{
-			pctx->sError = "CreateFile failed";
+			pctx->sError = werr_ssprintf( GetLastError(), "CreateFile failed" );
 			return false;
 		}
 
