@@ -126,9 +126,10 @@ namespace VDDebugInfo
 			if( !ReadFile(h, pctx->pRawBlock, dwFileSize, &dwActual, NULL) || dwActual != dwFileSize )
 				break;
 
+			CloseHandle(h);
+
 			if( VDDebugInfoInitFromMemory(pctx, pctx->pRawBlock) )
 			{
-				CloseHandle(h);
 				return true;
 			}
 
@@ -136,7 +137,6 @@ namespace VDDebugInfo
 		} while(0);
 
 		VDDebugInfoDeinit(pctx);
-		CloseHandle(h);
 		return false;
 	}
 
