@@ -14,7 +14,6 @@ public:
 	enum { IDD = IDD_UNINSTALL_OLD_PACKAGES };
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	virtual BOOL OnInitDialog();
 	void OnOK();
 	void OnCancel();

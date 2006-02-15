@@ -19,6 +19,7 @@
 #include "LocalizedString.h"
 #include "RageLog.h"
 #include "arch/Dialog/Dialog.h"
+#include "RageFileDriverDirect.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -183,7 +184,7 @@ static bool CheckPackages( RageFileDriverZip &fileDriver )
 	int cnt = 0;
 	ini.GetValue( "Packages", "NumPackages", cnt );
 
-	vector<RString> Directories;
+	vector<RString> vsDirectories;
 	for( int i = 0; i < cnt; ++i )
 	{
 		RString path;
@@ -197,15 +198,15 @@ static bool CheckPackages( RageFileDriverZip &fileDriver )
 		if( !SMPackageUtil::IsValidPackageDirectory(path) )
 			continue;
 		
-		Directories.push_back(path);
+		vsDirectories.push_back(path);
 	}
 
-	if( Directories.empty() )
+	if( vsDirectories.empty() )
 		return true;
 
 	{
 		UninstallOld UninstallOldDlg;
-		UninstallOldDlg.m_sPackages = join("\r\n", Directories);
+		UninstallOldDlg.m_sPackages = join("\r\n", vsDirectories);
 		int nResponse = UninstallOldDlg.DoModal();
 		if( nResponse == IDCANCEL )
 			return false;	// cancelled
@@ -219,9 +220,10 @@ static bool CheckPackages( RageFileDriverZip &fileDriver )
 	if( cwd[cwd.size()-1] != '\\' )
 		cwd += "\\";
 
-	for( i = 0; i < (int) Directories.size(); ++i )
+	for( i = 0; i < (int)vsDirectories.size(); ++i )
 	{
-		RString sDir = Directories[i];
+		RString sDir = vsDirectories[i];
+		sDir += "/";
 		if( !DeleteRecursive(sDir) )	// error deleting
 		{
 			return false;
@@ -278,6 +280,9 @@ void CSMPackageInstallDlg::OnOK()
 		Dialog::OK( ssprintf(IS_NOT_A_VALID_ZIP.GetValue(),m_sPackagePath.c_str()) );
 		exit(1);	// better way to abort?
 	}
+
+	RageFileDriverDirect dir( sInstallDir );
+	// handle error?
 
 	// Show comment (if any)
 	{
@@ -344,19 +349,23 @@ retry_unzip:
 				goto show_error;
 			}
 
-			RageFile fileTo;		
-			if( !fileTo.Open(sFile, RageFile::WRITE) )
+			int iError;
+			RageFileBasic *pFileTo = dir.Open( sFile, RageFile::WRITE, iError );
+			if( pFileTo == NULL )
 			{
-				sError = ssprintf( ERROR_OPENING_DESTINATION_FILE.GetValue(), sFile.c_str(), fileTo.GetError().c_str() );
+				sError = ssprintf( ERROR_OPENING_DESTINATION_FILE.GetValue(), sFile.c_str(), pFileTo->GetError().c_str() );
 				goto show_error;
 			}
 
 			RString sErr;
-			if( !FileCopy(*pFileFrom, fileTo, sErr) )
+			if( !FileCopy(*pFileFrom, *pFileTo, sErr) )
 			{
 				sError = ssprintf( ERROR_COPYING_FILE.GetValue(), sFile.c_str(), sErr.c_str() );
 				goto show_error;
 			}
+
+			SAFE_DELETE( pFileFrom );
+			SAFE_DELETE( pFileTo );
 		}
 
 		goto done_with_file;

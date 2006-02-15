@@ -21,17 +21,13 @@ UninstallOld::~UninstallOld()
 {
 }
 
-void UninstallOld::DoDataExchange(CDataExchange* pDX)
-{
-	CDialog::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_PACKAGES, m_sPackages);
-}
-
 BOOL UninstallOld::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
 	DialogUtil::LocalizeDialogAndContents( *this );
+
+	GetDlgItem(IDC_PACKAGES)->SetWindowText( m_sPackages );
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }

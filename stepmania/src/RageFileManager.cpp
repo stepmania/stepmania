@@ -896,6 +896,23 @@ void GetDirListingRecursive( RageFileDriver *prfd, const RString &sDir, const RS
 	}
 }
 
+bool DeleteRecursive( RageFileDriver *prfd, const RString &sDir )
+{
+	ASSERT( sDir.Right(1) == "/" );
+
+	vector<RString> vsFiles;
+	prfd->GetDirListing( sDir+"*", vsFiles, false, true );
+	FOREACH_CONST( RString, vsFiles, s )
+	{
+		if( IsADirectory(*s) )
+			DeleteRecursive( *s+"/" );
+		else
+			FILEMAN->Remove( *s );
+	}
+
+	return FILEMAN->Remove( sDir );
+}
+
 bool DeleteRecursive( const RString &sDir )
 {
 	ASSERT( sDir.Right(1) == "/" );
