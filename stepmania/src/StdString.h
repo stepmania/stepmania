@@ -544,7 +544,7 @@ public:
 	#endif
 
 	/* VC6 string is missing clear(). */
-	#if defined(_MSC_VER) && ( _MSC_VER < 1200 )
+	#if defined(_MSC_VER) && ( _MSC_VER < 1300 )	/* VC6, not VC7 */
 	void clear()
 	{
 		this->erase();
