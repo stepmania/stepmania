@@ -193,6 +193,7 @@ struct PolyphaseFilter
 		AlignedBuffer<float> m_fBuf;
 		int m_iBufNext;
 	};
+	friend struct State;
 
 	PolyphaseFilter( int iUpFactor ):
 		m_pPolyphase( L*iUpFactor )
