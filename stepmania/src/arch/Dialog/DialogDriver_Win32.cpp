@@ -16,6 +16,10 @@
 #endif
 #include "archutils/win32/DialogUtil.h"
 
+#if defined(SMPACKAGE)
+int __stdcall AfxMessageBox(LPCTSTR lpszText, UINT nType, UINT nIDHelp);
+#endif
+
 static bool g_bHush;
 static RString g_sMessage;
 static bool g_bAllowHush;
@@ -74,25 +78,20 @@ static BOOL CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
 }
 #endif
 
+#if !defined(SMPACKAGE)
 static HWND GetHwnd()
 {
-#if !defined(SMPACKAGE)
 	return GraphicsWindow::GetHwnd();
-#else
-	return NULL;
-#endif
 }
+#endif
 
+#if !defined(SMPACKAGE)
 static RString GetWindowTitle()
 {
-	RString s;
-#if !defined(SMPACKAGE)
-	s = CommonMetrics::WINDOW_TITLE.GetValue();
-#else
-	s = PRODUCT_NAME;
-#endif
+	RString s = CommonMetrics::WINDOW_TITLE.GetValue();
 	return s;
 }
+#endif
 
 void DialogDriver_Win32::OK( RString sMessage, RString sID )
 {
@@ -102,7 +101,7 @@ void DialogDriver_Win32::OK( RString sMessage, RString sID )
 #if !defined(SMPACKAGE)
 	DialogBox( handle.Get(), MAKEINTRESOURCE(IDD_OK), ::GetHwnd(), OKWndProc );
 #else
-	::MessageBox( ::GetHwnd(), ConvertUTF8ToACP(sMessage).c_str(), ConvertUTF8ToACP(::GetWindowTitle()).c_str(), MB_OK );
+	::AfxMessageBox( ConvertUTF8ToACP(sMessage).c_str(), MB_OK, 0 );
 #endif
 	if( g_bAllowHush && g_bHush )
 		Dialog::IgnoreMessage( sID );
@@ -196,13 +195,19 @@ void DialogDriver_Win32::Error( RString sError, RString sID )
 	AppInstance handle;
 	DialogBox( handle.Get(), MAKEINTRESOURCE(IDD_ERROR_DIALOG), NULL, ErrorWndProc );
 #else
-	::MessageBox( ::GetHwnd(), ConvertUTF8ToACP(sError).c_str(), ConvertUTF8ToACP(::GetWindowTitle()).c_str(), MB_OK );
+	::AfxMessageBox( ConvertUTF8ToACP(sError).c_str(), MB_OK, 0 );
 #endif
 }
 
 Dialog::Result DialogDriver_Win32::AbortRetryIgnore( RString sMessage, RString ID )
 {
-	switch( MessageBox(::GetHwnd(), ConvertUTF8ToACP(sMessage).c_str(), ConvertUTF8ToACP(::GetWindowTitle()).c_str(), MB_ABORTRETRYIGNORE|MB_DEFBUTTON3 ) )
+	int iRet = 0;
+#if !defined(SMPACKAGE)
+	iRet = ::MessageBox(::GetHwnd(), ConvertUTF8ToACP(sMessage).c_str(), ConvertUTF8ToACP(::GetWindowTitle()).c_str(), MB_ABORTRETRYIGNORE|MB_DEFBUTTON3 );
+#else
+	iRet = ::AfxMessageBox( ConvertUTF8ToACP(sMessage).c_str(), MB_ABORTRETRYIGNORE|MB_DEFBUTTON3, 0 );
+#endif
+	switch( iRet )
 	{
 	case IDABORT:	return Dialog::abort;
 	case IDRETRY:	return Dialog::retry;
@@ -213,7 +218,13 @@ Dialog::Result DialogDriver_Win32::AbortRetryIgnore( RString sMessage, RString I
 
 Dialog::Result DialogDriver_Win32::AbortRetry( RString sMessage, RString sID )
 {
-	switch( MessageBox(::GetHwnd(), ConvertUTF8ToACP(sMessage).c_str(), ConvertUTF8ToACP(::GetWindowTitle()).c_str(), MB_RETRYCANCEL) )
+	int iRet = 0;
+#if !defined(SMPACKAGE)
+	iRet = ::MessageBox(::GetHwnd(), ConvertUTF8ToACP(sMessage).c_str(), ConvertUTF8ToACP(::GetWindowTitle()).c_str(), MB_RETRYCANCEL);
+#else
+	iRet = ::AfxMessageBox( ConvertUTF8ToACP(sMessage).c_str(), MB_RETRYCANCEL, 0 );
+#endif
+	switch( iRet )
 	{
 	case IDRETRY:	return Dialog::retry;
 	default:	ASSERT(0);
