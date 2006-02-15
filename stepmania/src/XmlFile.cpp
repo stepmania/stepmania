@@ -670,7 +670,7 @@ bool XNode::SaveToFile( const RString &sFile, DISP_OPT &opt ) const
 	RageFile f;
 	if( !f.Open(sFile, RageFile::WRITE) )
 	{
-		LOG->Warn("Couldn't open %s for writing: %s", sFile.c_str(), f.GetError().c_str() );
+		LOG->Warn( "Couldn't open %s for writing: %s", sFile.c_str(), f.GetError().c_str() );
 		return false;
 	}
 
