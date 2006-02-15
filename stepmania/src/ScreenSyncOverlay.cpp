@@ -137,8 +137,8 @@ void ScreenSyncOverlay::UpdateText()
 
 		for( unsigned i=0; i<GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments.size(); i++ )
 		{
-			float fOldBpm = AdjustSync::s_pTimingDataOriginal->m_BPMSegments[i].m_fBPS;
-			float fNewBpm = GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments[i].m_fBPS;
+			float fOldBpm = AdjustSync::s_pTimingDataOriginal->m_BPMSegments[i].m_fBPS * 60;
+			float fNewBpm = GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments[i].m_fBPS * 60;
 			float fDelta = fNewBpm - fOldBpm;
 
 			if( fabsf(fDelta) > 0.00001f )
