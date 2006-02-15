@@ -97,7 +97,7 @@ protected:
 	virtual int WriteInternal( const void *pBuffer, size_t iBytes ) = 0;
 	virtual int FlushInternal() { return 0; }
 
-	void EnableBuffering();
+	void EnableReadBuffering();
 
 	void SetError( const RString &sError ) { m_sError = sError; }
 	RString m_sError;
@@ -115,7 +115,7 @@ private:
 	 * that buffering is only enabled if:
 	 *
 	 *  - GetLine() is called (which requires buffering to efficiently search for newlines);
-	 *  - or EnableBuffering() is called
+	 *  - or EnableReadBuffering() is called
 	 *
 	 * Once buffering is enabled, it stays enabled for the life of the object.
 	 *

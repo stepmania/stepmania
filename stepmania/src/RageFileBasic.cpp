@@ -205,7 +205,7 @@ int RageFileObj::Flush()
 }
 
 
-void RageFileObj::EnableBuffering()
+void RageFileObj::EnableReadBuffering()
 {
 	if( m_pBuffer == NULL )
 		m_pBuffer = new char[BSIZE];
@@ -241,7 +241,7 @@ int RageFileObj::GetLine( RString &sOut )
 	if( m_bEOF )
 		return 0;
 
-	EnableBuffering();
+	EnableReadBuffering();
 
 	bool bGotData = false;
 	while( 1 )
