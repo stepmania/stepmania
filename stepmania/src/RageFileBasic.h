@@ -110,9 +110,9 @@ private:
 	int m_iFilePos;
 
 	/*
-	 * If buffering is enabled, m_pBuffer is the buffer, m_pBuf is the current read
-	 * position in the buffer and m_iBufAvail is the number of bytes at m_pBuf.  Note
-	 * that buffering is only enabled if:
+	 * If read buffering is enabled, m_pReadBuffer is the buffer, m_pReadBuf is the
+	 * current read position in the buffer, and m_iReadBufAvail is the number of
+	 * bytes at m_pReadBuf.  Note that read buffering is only enabled if:
 	 *
 	 *  - GetLine() is called (which requires buffering to efficiently search for newlines);
 	 *  - or EnableReadBuffering() is called
@@ -126,9 +126,9 @@ private:
 	 * memory.
 	 */
 	enum { BSIZE = 1024 };
-	char *m_pBuffer;
-	char *m_pBuf;
-	int  m_iBufAvail;
+	char *m_pReadBuffer;
+	char *m_pReadBuf;
+	int  m_iReadBufAvail;
 
 	/* If EnableCRC32() is called, a CRC32 will be calculated as the file is read.
 	 * This is only meaningful if EnableCRC32() is called at the very start of the
