@@ -28,12 +28,14 @@ public:
 	RageFile( const RageFile &cpy );
 	RageFileBasic *Copy() const;
 
-	/* Use GetRealPath to get the path this file was opened with; use that if you
+	/*
+	 * Use GetRealPath to get the path this file was opened with; use that if you
 	 * want a path that will probably get you the same file again.
 	 *
 	 * GetPath can be overridden by drivers.  Use it to get a path for display;
 	 * it may give more information, such as the name of the archive the file
-	 * is in.  It has no parsable meaning. */
+	 * is in.  It has no parsable meaning.
+	 */
 	const RString &GetRealPath() const { return m_Path; }
 	RString GetPath() const;
     
@@ -68,10 +70,9 @@ public:
 	void EnableCRC32( bool on=true );
 	bool GetCRC32( uint32_t *iRet );
 
-protected:
+private:
 	void SetError( const RString &err );
 	
-private:
 	RageFileBasic *m_File;
 	RString	m_Path;
 	RString	m_sError;
