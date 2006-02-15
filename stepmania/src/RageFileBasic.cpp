@@ -28,7 +28,9 @@ RageFileObj::RageFileObj( const RageFileObj &cpy ):
 		m_pBuf = m_pBuffer + iOffsetIntoBuffer;
 	}
 	else
+	{
 		m_pBuffer = NULL;
+	}
 
 	m_iBufAvail = cpy.m_iBufAvail;
 	m_bEOF = cpy.m_bEOF;
@@ -76,7 +78,7 @@ int RageFileObj::Seek( int offset, int whence )
 
 int RageFileObj::Read( void *pBuffer, size_t iBytes )
 {
-	int ret = 0;
+	int iRet = 0;
 
 	while( !m_bEOF && iBytes > 0 )
 	{
@@ -88,7 +90,7 @@ int RageFileObj::Read( void *pBuffer, size_t iBytes )
 			if( m_bCRC32Enabled )
 				CRC32( m_iCRC32, pBuffer, iFromBuffer );
 
-			ret += iFromBuffer;
+			iRet += iFromBuffer;
 			m_iFilePos += iFromBuffer;
 			iBytes -= iFromBuffer;
 			m_iBufAvail -= iFromBuffer;
@@ -117,21 +119,21 @@ int RageFileObj::Read( void *pBuffer, size_t iBytes )
 
 			if( m_bCRC32Enabled )
 				CRC32( m_iCRC32, pBuffer, iFromFile );
-			ret += iFromFile;
+			iRet += iFromFile;
 			m_iFilePos += iFromFile;
-			return ret;
+			return iRet;
 		}
 
 		/* If buffering is enabled, and we need more data, fill the buffer. */
 		m_pBuf = m_pBuffer;
-		int got = FillBuf();
-		if( got == -1 )
-			return got;
-		if( got == 0 )
+		int iGot = FillBuf();
+		if( iGot == -1 )
+			return iGot;
+		if( iGot == 0 )
 			m_bEOF = true;
 	}
 
-	return ret;
+	return iRet;
 }
 
 int RageFileObj::Read( RString &sBuffer, int iBytes )
@@ -161,19 +163,19 @@ int RageFileObj::Read( RString &sBuffer, int iBytes )
 	return iRet;
 }
 
-int RageFileObj::Read( void *buffer, size_t bytes, int nmemb )
+int RageFileObj::Read( void *pBuffer, size_t iBytes, int iNmemb )
 {
-	const int iRet = Read( buffer, bytes*nmemb );
+	const int iRet = Read( pBuffer, iBytes*iNmemb );
 	if( iRet == -1 )
 		return -1;
 
 	/* If we're reading 10-byte blocks, and we got 27 bytes, we have 7 extra bytes.
 	 * Seek back.  XXX: seeking is very slow for eg. deflated ZIPs.  If the block is
 	 * small enough, we may be able to stuff the extra data into the buffer. */
-	const int iExtra = iRet % bytes;
+	const int iExtra = iRet % iBytes;
 	Seek( Tell()-iExtra );
 
-	return iRet/bytes;
+	return iRet/iBytes;
 }
 
 int RageFileObj::Write( const void *pBuffer, size_t iBytes )
@@ -188,13 +190,13 @@ int RageFileObj::Write( const void *pBuffer, size_t iBytes )
 	return iRet;
 }
 
-int RageFileObj::Write( const void *buffer, size_t bytes, int nmemb )
+int RageFileObj::Write( const void *pBuffer, size_t iBytes, int iNmemb )
 {
 	/* Simple write.  We never return partial writes. */
-	int ret = Write( buffer, bytes*nmemb ) / bytes;
-	if( ret == -1 )
+	int iRet = Write( pBuffer, iBytes*iNmemb ) / iBytes;
+	if( iRet == -1 )
 		return -1;
-	return ret / bytes;
+	return iRet / iBytes;
 }
 
 int RageFileObj::Flush()
@@ -209,9 +211,9 @@ void RageFileObj::EnableBuffering()
 		m_pBuffer = new char[BSIZE];
 }
 
-void RageFileObj::EnableCRC32( bool on )
+void RageFileObj::EnableCRC32( bool bOn )
 {
-	if( !on )
+	if( !bOn )
 	{
 		m_bCRC32Enabled = false;
 		return;
@@ -232,23 +234,23 @@ bool RageFileObj::GetCRC32( uint32_t *iRet )
 
 /* Read up to the next \n, and return it in out.  Strip the \n.  If the \n is
  * preceded by a \r (DOS newline), strip that, too. */
-int RageFileObj::GetLine( RString &out )
+int RageFileObj::GetLine( RString &sOut )
 {
-	out = "";
+	sOut = "";
 
 	if( m_bEOF )
 		return 0;
 
 	EnableBuffering();
 
-	bool GotData = false;
+	bool bGotData = false;
 	while( 1 )
 	{
-		bool done = false;
+		bool bDone = false;
 
 		/* Find the end of the block we'll move to out. */
 		char *p = (char *) memchr( m_pBuf, '\n', m_iBufAvail );
-		bool ReAddCR = false;
+		bool bReAddCR = false;
 		if( p == NULL )
 		{
 			/* Hack: If the last character of the buffer is \r, then it's likely that an
@@ -256,36 +258,38 @@ int RageFileObj::GetLine( RString &out )
 			 * \r to the beginning of the buffer and handle it the next time around the loop. */
 			if( m_iBufAvail && m_pBuf[m_iBufAvail-1] == '\r' )
 			{
-				ReAddCR = true;
+				bReAddCR = true;
 				--m_iBufAvail;
 			}
 
 			p = m_pBuf+m_iBufAvail; /* everything */
 		}
 		else
-			done = true;
+		{
+			bDone = true;
+		}
 
 		if( p >= m_pBuf )
 		{
 			char *RealEnd = p;
-			if( done && p > m_pBuf && p[-1] == '\r' )
+			if( bDone && p > m_pBuf && p[-1] == '\r' )
 				--RealEnd; /* not including \r */
-			out.append( m_pBuf, RealEnd );
+			sOut.append( m_pBuf, RealEnd );
 
-			if( done )
+			if( bDone )
 				++p; /* skip \n */
 
-			const int used = p-m_pBuf;
-			if( used )
+			const int iUsed = p-m_pBuf;
+			if( iUsed )
 			{
-				m_iBufAvail -= used;
-				m_iFilePos += used;
-				GotData = true;
+				m_iBufAvail -= iUsed;
+				m_iFilePos += iUsed;
+				bGotData = true;
 				m_pBuf = p;
 			}
 		}
 
-		if( ReAddCR )
+		if( bReAddCR )
 		{
 			ASSERT( m_iBufAvail == 0 );
 			m_pBuf = m_pBuffer;
@@ -293,27 +297,27 @@ int RageFileObj::GetLine( RString &out )
 			++m_iBufAvail;
 		}
 
-		if( done )
+		if( bDone )
 			break;
 
 		/* We need more data. */
 		m_pBuf = m_pBuffer;
 
-		const int size = FillBuf();
+		const int iSize = FillBuf();
 
 		/* If we've read data already, then don't mark EOF yet.  Wait until the
 		 * next time we're called. */
-		if( size == 0 && !GotData )
+		if( iSize == 0 && !bGotData )
 		{
 			m_bEOF = true;
 			return 0;
 		}
-		if( size == -1 )
+		if( iSize == -1 )
 			return -1; // error
-		if( size == 0 )
+		if( iSize == 0 )
 			break; // EOF or error
 	}
-	return GotData? 1:0;
+	return bGotData? 1:0;
 }
 
 // Always use "\r\n".  Even though the program may be running on Unix, the
@@ -324,9 +328,9 @@ int RageFileObj::GetLine( RString &out )
 //#define NEWLINE "\n"
 //#endif
 
-int RageFileObj::PutLine( const RString &str )
+int RageFileObj::PutLine( const RString &sStr )
 {
-	if( Write(str) == -1 )
+	if( Write(sStr) == -1 )
 		return -1;
 	return Write( RString(NEWLINE) );
 }
@@ -344,12 +348,12 @@ int RageFileObj::FillBuf()
 	 * for seeking backwards.) */
 	const int iBufAvail = BSIZE - (m_pBuf-m_pBuffer) - m_iBufAvail;
 	ASSERT_M( iBufAvail >= 0, ssprintf("%p, %p, %i", m_pBuf, m_pBuffer, (int) BSIZE ) );
-	const int size = this->ReadInternal( m_pBuf+m_iBufAvail, iBufAvail );
+	const int iSize = this->ReadInternal( m_pBuf+m_iBufAvail, iBufAvail );
 
-	if( size > 0 )
-		m_iBufAvail += size;
+	if( iSize > 0 )
+		m_iBufAvail += iSize;
 
-	return size;
+	return iSize;
 }
 
 void RageFileObj::ResetBuf()
