@@ -1420,24 +1420,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					</File>
 					<File
 						RelativePath="arch\MovieTexture\MovieTexture_FFMpeg.cpp">
-						<FileConfiguration
-							Name="Debug|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								AdditionalIncludeDirectories=""/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								AdditionalIncludeDirectories=""/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="FastDebug|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								AdditionalIncludeDirectories=""/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="arch\MovieTexture\MovieTexture_FFMpeg.h">
@@ -1456,24 +1438,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					</File>
 					<File
 						RelativePath=".\arch\MovieTexture\MovieTexture_Theora.cpp">
-						<FileConfiguration
-							Name="Debug|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								AdditionalIncludeDirectories=""/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								AdditionalIncludeDirectories=""/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="FastDebug|Win32">
-							<Tool
-								Name="VCCLCompilerTool"
-								AdditionalIncludeDirectories=""/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\arch\MovieTexture\MovieTexture_Theora.h">
