@@ -282,7 +282,7 @@ void Sprite::UpdateAnimationState()
 	// We already know what's going to show.
 	if( m_States.size() > 1 )
 	{
-		while( m_fSecsIntoState > m_States[m_iCurState].fDelay )	// it's time to switch frames
+		while( m_fSecsIntoState+0.0001f > m_States[m_iCurState].fDelay )	// it's time to switch frames
 		{
 			// increment frame and reset the counter
 			m_fSecsIntoState -= m_States[m_iCurState].fDelay;		// leave the left over time for the next frame
