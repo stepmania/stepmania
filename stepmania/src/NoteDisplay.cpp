@@ -301,10 +301,9 @@ void NoteDisplay::SetActiveFrame( float fNoteBeat, Actor &actorToSet, float fAni
 	if( bVivid )
 	{
 		float fNoteBeatFraction = fmodf( fNoteBeat, 1.0f );
-		fNoteBeatFraction -= 1/(fAnimationLengthInBeats*4);
 
 		const float fInterval = 1.f / fAnimationLengthInBeats;
-		fPercentIntoAnimation += Quantize( fNoteBeatFraction, fInterval );
+		fPercentIntoAnimation += QuantizeDown( fNoteBeatFraction, fInterval );
 
 		// just in case somehow we're majorly negative with the subtraction
 		wrap( fPercentIntoAnimation, 1.f );
