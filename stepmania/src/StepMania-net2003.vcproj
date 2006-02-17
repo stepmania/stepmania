@@ -3052,9 +3052,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			RelativePath="archutils\Win32\DialogErrorHeader.bmp">
 		</File>
 		<File
-			RelativePath=".\archutils\Win32\header.bmp">
-		</File>
-		<File
 			RelativePath="StepMania.xpm">
 		</File>
 	</Files>
