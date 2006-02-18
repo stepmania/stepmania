@@ -497,17 +497,18 @@ Screen* ScreenManager::MakeNewScreen( const RString &sScreenName )
 	RageTimer t;
 	LOG->Trace( "Loading screen name '%s'", sScreenName.c_str() );
 
-	RString sClassName = THEME->GetMetric(sScreenName,"Class");
+	RString sClassName = THEME->GetMetric( sScreenName,"Class" );
 	
 	map<RString,CreateScreenFn>::iterator iter = g_pmapRegistrees->find( sClassName );
-	ASSERT_M( iter != g_pmapRegistrees->end(), ssprintf("Screen '%s' has an invalid class '%s'",sScreenName.c_str(),sClassName.c_str()) );
+	if( iter == g_pmapRegistrees->end() )
+		RageException::Throw( "Screen '%s' has an invalid class '%s'", sScreenName.c_str(), sClassName.c_str() );
 
 	this->ZeroNextUpdate();
 
 	CreateScreenFn pfn = iter->second;
-	Screen* ret = pfn( sScreenName );
+	Screen *ret = pfn( sScreenName );
 
-	LOG->Trace( "Loaded '%s' ('%s') in %f", sScreenName.c_str(), sClassName.c_str(), t.GetDeltaTime());
+	LOG->Trace( "Loaded '%s' ('%s') in %f", sScreenName.c_str(), sClassName.c_str(), t.GetDeltaTime() );
 
 	return ret;
 }
