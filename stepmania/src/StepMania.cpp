@@ -676,7 +676,8 @@ RageDisplay *CreateDisplay()
 	 * Actually, right now we're falling back.  I'm not sure which behavior is better.
 	 */
 
-	bool bAppliedDefaults = CheckVideoDefaultSettings();
+	//bool bAppliedDefaults = CheckVideoDefaultSettings();
+	CheckVideoDefaultSettings();
 
 	VideoModeParams params;
 	StepMania::GetPreferredVideoModeParams( params );
