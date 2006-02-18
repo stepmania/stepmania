@@ -2909,7 +2909,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if test -f $BUILD_DIR/ffmpeg.framework/ffmpeg -a -f $BUILD_DIR/ffmpeg-i386.framework/ffmpeg-i386; then\n\tlipo -remove i386 $BUILD_DIR/ffmpeg.framework/ffmpeg -output $BUILD_DIR/ffmpeg.framework/Versions/Current/ffmpeg\n\tlipo -create $BUILD_DIR/ffmpeg.framework/ffmpeg $BUILD_DIR/ffmpeg-i386.framework/ffmpeg-i386 -output $BUILD_DIR/ffmpeg.framework/Versions/Current/ffmpeg\nfi\n";
+			shellScript = "if test -f $BUILD_DIR/ffmpeg.framework/ffmpeg -a -f $BUILD_DIR/ffmpeg-i386.framework/ffmpeg-i386; then\n\tinstall_name_tool -id '@executable_path/../Frameworks/ffmpeg.framework/Versions/A/ffmpeg' $BUILD_DIR/ffmpeg-i386.framework/ffmpeg-i386\n\tlipo -remove i386 $BUILD_DIR/ffmpeg.framework/ffmpeg -output $BUILD_DIR/ffmpeg.framework/Versions/Current/ffmpeg\n\tlipo -create $BUILD_DIR/ffmpeg.framework/ffmpeg $BUILD_DIR/ffmpeg-i386.framework/ffmpeg-i386 -output $BUILD_DIR/ffmpeg.framework/Versions/Current/ffmpeg\nfi\n";
 		};
 		AA3AE504097B687C00575EA1 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
