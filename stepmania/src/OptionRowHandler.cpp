@@ -255,6 +255,15 @@ public:
 		const GameCommand &gc = m_aListEntries[iChoice];
 		return gc.m_sScreen;
 	}
+
+	virtual bool Reload()
+	{
+		// HACK: always reload "speed", to update the BPM text in the name of the speed line
+		if( !m_Def.m_sName.CompareNoCase("speed") )
+			return true;
+
+		return OptionRowHandler::Reload();
+	}
 };
 
 class OptionRowHandlerListNoteSkins : public OptionRowHandlerList
