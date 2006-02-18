@@ -282,6 +282,9 @@ void ScreenOptions::RestartOptions()
 				break;
 			}
 		}
+
+		// Hide the highlight if no rows are enabled.
+		m_sprLineHighlight[p]->SetHidden( m_iCurrentRow[p] == -1 || !GAMESTATE->IsHumanPlayer(p) );
 	}
 
 
@@ -290,9 +293,6 @@ void ScreenOptions::RestartOptions()
 	PositionRows( false );
 	FOREACH_HumanPlayer( pn )
 	{
-		// Hide the highlight if no rows are enabled.
-		m_sprLineHighlight[pn]->SetHidden( m_iCurrentRow[pn] == -1 );
-
 		for( unsigned r=0; r<m_pRows.size(); ++r )
 			this->RefreshIcons( r, pn );
 		PositionCursor( pn );
@@ -331,10 +331,7 @@ void ScreenOptions::TweenOnScreen()
 
 	ON_COMMAND( m_sprPage );
 	FOREACH_HumanPlayer( p )
-	{
 		ON_COMMAND( m_Cursor[p] );
-		ON_COMMAND( m_sprLineHighlight[p] );
-	}
 
 	ON_COMMAND( m_sprMore );
 
