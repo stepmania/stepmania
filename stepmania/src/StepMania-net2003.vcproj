@@ -14,7 +14,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="./../Program"
+			OutputDirectory="$(TargetDir)"
 			IntermediateDirectory="./../Debug"
 			ConfigurationType="1"
 			UseOfMFC="0"
@@ -89,7 +89,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="./../Program"
+			OutputDirectory="$(TargetDir)"
 			IntermediateDirectory="./../Release"
 			ConfigurationType="1"
 			UseOfMFC="0"
@@ -173,7 +173,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 		</Configuration>
 		<Configuration
 			Name="FastDebug|Win32"
-			OutputDirectory="FastDebug"
+			OutputDirectory="$(TargetDir)"
 			IntermediateDirectory="FastDebug"
 			ConfigurationType="1"
 			UseOfMFC="0"
