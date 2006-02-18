@@ -148,7 +148,7 @@ static void StoreActualGraphicOptions()
 	Dialog::SetWindowed( params.windowed );
 }
 
-RageDisplay *CreateDisplay();
+static RageDisplay *CreateDisplay();
 
 static void StartDisplay()
 {
