@@ -1,6 +1,7 @@
 #include "global.h"
 #include "CrashHandlerInternal.h"
 #include "Crash.h"
+#include <errno.h>
 
 #include <windows.h>
 #include <commctrl.h>
