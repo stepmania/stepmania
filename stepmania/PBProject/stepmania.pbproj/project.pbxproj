@@ -1593,6 +1593,12 @@
 		AAB00864057F4F7A000BBA58 /* RageFileDriverDirect.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB0085E057F4F7A000BBA58 /* RageFileDriverDirect.h */; };
 		AAB00865057F4F7A000BBA58 /* RageFileManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB0085F057F4F7A000BBA58 /* RageFileManager.cpp */; };
 		AAB00866057F4F7A000BBA58 /* RageFileManager.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB00860057F4F7A000BBA58 /* RageFileManager.h */; };
+		AAB55EBB09A7E3D3008FDC69 /* ScreenGameplaySyncMachine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB55EB509A7E3D3008FDC69 /* ScreenGameplaySyncMachine.cpp */; };
+		AAB55EBC09A7E3D3008FDC69 /* ScreenGameplaySyncMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB55EB609A7E3D3008FDC69 /* ScreenGameplaySyncMachine.h */; };
+		AAB55EBD09A7E3D3008FDC69 /* ScreenUnlockBrowse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB55EB709A7E3D3008FDC69 /* ScreenUnlockBrowse.cpp */; };
+		AAB55EBE09A7E3D3008FDC69 /* ScreenUnlockBrowse.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB55EB809A7E3D3008FDC69 /* ScreenUnlockBrowse.h */; };
+		AAB55EBF09A7E3D3008FDC69 /* ScreenUnlockCelebrate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB55EB909A7E3D3008FDC69 /* ScreenUnlockCelebrate.cpp */; };
+		AAB55EC009A7E3D3008FDC69 /* ScreenUnlockCelebrate.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB55EBA09A7E3D3008FDC69 /* ScreenUnlockCelebrate.h */; };
 		AAB691F405704FA50078BED4 /* LightsDriver_SystemMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB691F205704FA50078BED4 /* LightsDriver_SystemMessage.cpp */; };
 		AAB691F505704FA50078BED4 /* LightsDriver_SystemMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB691F305704FA50078BED4 /* LightsDriver_SystemMessage.h */; };
 		AAB6B477085761B700CEE7BA /* ScreenSplash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB6B475085761B700CEE7BA /* ScreenSplash.cpp */; };
@@ -1954,7 +1960,7 @@
 		AA28B47A058F2F5D0097C109 /* MemoryCardManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MemoryCardManager.cpp; path = ../src/MemoryCardManager.cpp; sourceTree = "<group>"; };
 		AA28B47B058F2F5D0097C109 /* MemoryCardManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MemoryCardManager.h; path = ../src/MemoryCardManager.h; sourceTree = "<group>"; };
 		AA29CE570558741A00961A51 /* Info-StepMania.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Info-StepMania.plist"; sourceTree = "<group>"; };
-		AA29CE580558741A00961A51 /* StepMania.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = StepMania.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA29CE580558741A00961A51 /* StepMania.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StepMania.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA2FB62909120FC5000FD574 /* PreferredLanguage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PreferredLanguage.m; sourceTree = "<group>"; };
 		AA2FB638091212AF000FD574 /* LifeMeter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = LifeMeter.cpp; path = ../src/LifeMeter.cpp; sourceTree = "<group>"; };
 		AA34ED1F0611FB83003E5955 /* CAConditionalMacros.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = CAConditionalMacros.h; sourceTree = "<group>"; };
@@ -2514,6 +2520,12 @@
 		AAB3B38804C5701D00D02EE9 /* MovieTexture_DShowHelper.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MovieTexture_DShowHelper.h; path = MovieTexture/MovieTexture_DShowHelper.h; sourceTree = "<group>"; };
 		AAB3B39004C5921800D02EE9 /* MovieTexture_Null.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MovieTexture_Null.cpp; path = MovieTexture/MovieTexture_Null.cpp; sourceTree = "<group>"; };
 		AAB3B39104C5921800D02EE9 /* MovieTexture_Null.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MovieTexture_Null.h; path = MovieTexture/MovieTexture_Null.h; sourceTree = "<group>"; };
+		AAB55EB509A7E3D3008FDC69 /* ScreenGameplaySyncMachine.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenGameplaySyncMachine.cpp; path = ../src/ScreenGameplaySyncMachine.cpp; sourceTree = "<group>"; };
+		AAB55EB609A7E3D3008FDC69 /* ScreenGameplaySyncMachine.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ScreenGameplaySyncMachine.h; path = ../src/ScreenGameplaySyncMachine.h; sourceTree = "<group>"; };
+		AAB55EB709A7E3D3008FDC69 /* ScreenUnlockBrowse.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenUnlockBrowse.cpp; path = ../src/ScreenUnlockBrowse.cpp; sourceTree = "<group>"; };
+		AAB55EB809A7E3D3008FDC69 /* ScreenUnlockBrowse.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ScreenUnlockBrowse.h; path = ../src/ScreenUnlockBrowse.h; sourceTree = "<group>"; };
+		AAB55EB909A7E3D3008FDC69 /* ScreenUnlockCelebrate.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenUnlockCelebrate.cpp; path = ../src/ScreenUnlockCelebrate.cpp; sourceTree = "<group>"; };
+		AAB55EBA09A7E3D3008FDC69 /* ScreenUnlockCelebrate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ScreenUnlockCelebrate.h; path = ../src/ScreenUnlockCelebrate.h; sourceTree = "<group>"; };
 		AAB691F205704FA50078BED4 /* LightsDriver_SystemMessage.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = LightsDriver_SystemMessage.cpp; sourceTree = "<group>"; };
 		AAB691F305704FA50078BED4 /* LightsDriver_SystemMessage.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = LightsDriver_SystemMessage.h; sourceTree = "<group>"; };
 		AAB6B475085761B700CEE7BA /* ScreenSplash.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenSplash.cpp; path = ../src/ScreenSplash.cpp; sourceTree = "<group>"; };
@@ -2978,6 +2990,12 @@
 		AA6E00090477103E005F316C /* Screens */ = {
 			isa = PBXGroup;
 			children = (
+				AAB55EB509A7E3D3008FDC69 /* ScreenGameplaySyncMachine.cpp */,
+				AAB55EB609A7E3D3008FDC69 /* ScreenGameplaySyncMachine.h */,
+				AAB55EB709A7E3D3008FDC69 /* ScreenUnlockBrowse.cpp */,
+				AAB55EB809A7E3D3008FDC69 /* ScreenUnlockBrowse.h */,
+				AAB55EB909A7E3D3008FDC69 /* ScreenUnlockCelebrate.cpp */,
+				AAB55EBA09A7E3D3008FDC69 /* ScreenUnlockCelebrate.h */,
 				AA6E000A047711F3005F316C /* Screen.cpp */,
 				AA6E000B047711F3005F316C /* Screen.h */,
 				AA6E0010047711F3005F316C /* ScreenAttract.cpp */,
@@ -4495,6 +4513,9 @@
 				AAC0C8C30984AE3B0075FC53 /* Tween.h in Headers */,
 				AA65877C098C322800CE55CC /* ScreenUnlockStatus.h in Headers */,
 				AA84B7080996F8370085EECB /* AdjustSync.h in Headers */,
+				AAB55EBC09A7E3D3008FDC69 /* ScreenGameplaySyncMachine.h in Headers */,
+				AAB55EBE09A7E3D3008FDC69 /* ScreenUnlockBrowse.h in Headers */,
+				AAB55EC009A7E3D3008FDC69 /* ScreenUnlockCelebrate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5617,6 +5638,9 @@
 				AAC0C8C20984AE3B0075FC53 /* Tween.cpp in Sources */,
 				AA65877B098C322800CE55CC /* ScreenUnlockStatus.cpp in Sources */,
 				AA84B7070996F8370085EECB /* AdjustSync.cpp in Sources */,
+				AAB55EBB09A7E3D3008FDC69 /* ScreenGameplaySyncMachine.cpp in Sources */,
+				AAB55EBD09A7E3D3008FDC69 /* ScreenUnlockBrowse.cpp in Sources */,
+				AAB55EBF09A7E3D3008FDC69 /* ScreenUnlockCelebrate.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
