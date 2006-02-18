@@ -250,6 +250,9 @@ void ScreenOptionsEditCourse::ExportOptions( int iRow, const vector<PlayerNumber
 
 void ScreenOptionsEditCourse::ProcessMenuStart( const InputEventPlus &input )
 {
+	if( IsTransitioning() )
+		return;
+
 	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
 	Course *pCourse = GAMESTATE->m_pCurCourse;
 

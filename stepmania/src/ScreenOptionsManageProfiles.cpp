@@ -287,6 +287,9 @@ void ScreenOptionsManageProfiles::AfterChangeRow( PlayerNumber pn )
 
 void ScreenOptionsManageProfiles::ProcessMenuStart( const InputEventPlus &input )
 {
+	if( IsTransitioning() )
+		return;
+
 	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
 	OptionRow &row = *m_pRows[iCurRow];
 	

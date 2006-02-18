@@ -237,6 +237,9 @@ static LocalizedString YOU_HAVE_MAX_STEP_EDITS( "ScreenOptionsManageEditSteps", 
 static LocalizedString YOU_MUST_DELETE( "ScreenOptionsManageEditSteps", "You must delete an existing steps edit before creating a new steps edit." );
 void ScreenOptionsManageEditSteps::ProcessMenuStart( const InputEventPlus &input )
 {
+	if( IsTransitioning() )
+		return;
+
 	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
 
 	if( iCurRow == 0 )	// "create new"

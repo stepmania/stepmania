@@ -343,6 +343,9 @@ static LocalizedString YOU_HAVE_MAXIMUM_EDITS_ALLOWED( "ScreenOptionsManageCours
 static LocalizedString YOU_MUST_DELETE( "ScreenOptionsManageCourses", "You must delete an existing course edit before creating a new course edit." );
 void ScreenOptionsManageCourses::ProcessMenuStart( const InputEventPlus &input )
 {
+	if( IsTransitioning() )
+		return;
+
 	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
 
 	if( iCurRow == 0 )	// "create new"

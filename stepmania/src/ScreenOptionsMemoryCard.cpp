@@ -171,6 +171,9 @@ void ScreenOptionsMemoryCard::SelectRowWithMemoryCard( const RString &sOsMountPo
 static LocalizedString ERROR_MOUNTING_CARD ("ScreenOptionsMemoryCard", "Error mounting card: %s" );
 void ScreenOptionsMemoryCard::ProcessMenuStart( const InputEventPlus &input )
 {
+	if( IsTransitioning() )
+		return;
+
 	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
 
 	const vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
