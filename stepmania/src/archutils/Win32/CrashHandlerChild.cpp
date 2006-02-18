@@ -300,6 +300,7 @@ namespace SymbolLookup
 			| UNDNAME_NO_ALLOCATION_MODEL
 			| UNDNAME_NO_ACCESS_SPECIFIERS // no public:
 			| UNDNAME_NO_MS_KEYWORDS // no __cdecl 
+			| UNDNAME_NO_MEMBER_TYPE // no virtual, static
 			) )
 		{
 			return buf;
