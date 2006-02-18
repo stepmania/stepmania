@@ -316,10 +316,7 @@ void ScreenOptions::BeginScreen()
 	ON_COMMAND( m_framePage );
 
 	FOREACH_PlayerNumber( p )
-	{
-		m_sprLineHighlight[p]->SetHidden( !GAMESTATE->IsHumanPlayer(p) );
 		m_Cursor[p].SetHidden( !GAMESTATE->IsHumanPlayer(p) );
-	}
 }
 
 void ScreenOptions::TweenOnScreen()
@@ -331,7 +328,10 @@ void ScreenOptions::TweenOnScreen()
 
 	ON_COMMAND( m_sprPage );
 	FOREACH_HumanPlayer( p )
+	{
 		ON_COMMAND( m_Cursor[p] );
+		ON_COMMAND( m_sprLineHighlight[p] );
+	}
 
 	ON_COMMAND( m_sprMore );
 
