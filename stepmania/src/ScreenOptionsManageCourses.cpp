@@ -29,6 +29,7 @@ struct StepsTypeAndDifficulty
 	StepsType st;
 	Difficulty cd;
 
+	StepsTypeAndDifficulty( const StepsType &s, const Difficulty &d ) : st( s ), cd( d ) { }
 	bool operator==( const StepsTypeAndDifficulty &stad ) const { return st == stad.st && cd == stad.cd; }
 };
 static void SetNextCombination()
@@ -38,25 +39,16 @@ static void SetNextCombination()
 		FOREACH_CONST( StepsType, CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue(), st )
 		{
 			FOREACH_CONST( CourseDifficulty, CommonMetrics::COURSE_DIFFICULTIES_TO_SHOW.GetValue(), cd )
-			{
-				StepsTypeAndDifficulty stad = { *st, *cd };
-				v.push_back( stad );
-			}
+				v.push_back( StepsTypeAndDifficulty(*st, *cd) );
 		}
 	}
 
-	StepsTypeAndDifficulty curVal = { GAMESTATE->m_stEdit, GAMESTATE->m_PreferredCourseDifficulty[PLAYER_1] };
-
-	int iIndex = -1;
+	StepsTypeAndDifficulty curVal( GAMESTATE->m_stEdit, GAMESTATE->m_PreferredCourseDifficulty[PLAYER_1] );
 	vector<StepsTypeAndDifficulty>::const_iterator iter = find( v.begin(), v.end(), curVal );
-	if( iter != v.end() )
-	{
-		iIndex = iter - v.begin();
-	}
+	if( iter == v.end() || ++iter == v.end() )
+		iter = v.begin();
 
-	iIndex++;
-	wrap( iIndex, v.size() );
-	curVal = v[iIndex];
+	curVal = *iter;
 
 	GAMESTATE->m_stEdit.Set( curVal.st );
 	GAMESTATE->m_PreferredCourseDifficulty[PLAYER_1].Set( curVal.cd );
@@ -134,13 +126,13 @@ void ScreenOptionsManageCourses::Init()
 {
 	ScreenOptions::Init();
 
-	EDIT_MODE.Load(m_sName,"EditMode");
+	EDIT_MODE.Load( m_sName,"EditMode" );
 }
 
 void ScreenOptionsManageCourses::BeginScreen()
 {
 	if( GAMESTATE->m_stEdit == STEPS_TYPE_INVALID  ||
-		GAMESTATE->m_PreferredCourseDifficulty[PLAYER_1] == DIFFICULTY_INVALID )
+	    GAMESTATE->m_PreferredCourseDifficulty[PLAYER_1] == DIFFICULTY_INVALID )
 	{
 		SetNextCombination();
 	}
@@ -202,7 +194,6 @@ void ScreenOptionsManageCourses::BeginScreen()
 
 		def.m_sName = ssprintf("%d",iIndex) + " " + def.m_sName;
 		def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
-		def.m_vsChoices.clear();
 		def.m_vsChoices.push_back( (*c)->GetDisplayFullTitle() );
 		iIndex++;
 	}
@@ -291,25 +282,22 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 			switch( ScreenMiniMenu::s_iLastRowCode )
 			{
 			case CourseAction_Edit:
-				{
-					Course *pCourse = GetCourseWithFocus();
-					Trail *pTrail = pCourse->GetTrail( STEPS_TYPE_DANCE_SINGLE );
-					GAMESTATE->m_pCurCourse.Set( pCourse );
-					GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
+			{
+				Course *pCourse = GetCourseWithFocus();
+				Trail *pTrail = pCourse->GetTrail( STEPS_TYPE_DANCE_SINGLE );
+				GAMESTATE->m_pCurCourse.Set( pCourse );
+				GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
 
-					ScreenOptions::BeginFadingOut();
-				}
+				ScreenOptions::BeginFadingOut();
 				break;
+			}
 			case CourseAction_Rename:
-				{
-					ScreenTextEntry::TextEntry( 
-						SM_BackFromRename, 
-						ENTER_COURSE_NAME, 
-						GAMESTATE->m_pCurCourse->GetDisplayFullTitle(), 
-						MAX_EDIT_COURSE_TITLE_LENGTH, 
-						ValidateEditCourseName );
-				}
-				break;
+				ScreenTextEntry::TextEntry( SM_BackFromRename, 
+							    ENTER_COURSE_NAME, 
+							    GAMESTATE->m_pCurCourse->GetDisplayFullTitle(), 
+							    MAX_EDIT_COURSE_TITLE_LENGTH, 
+							    ValidateEditCourseName );
+			break;
 			case CourseAction_Delete:
 				ScreenPrompt::Prompt( SM_None, COURSE_WILL_BE_LOST.GetValue()+"\n\n"+CONTINUE_WITH_DELETE.GetValue(), PROMPT_YES_NO, ANSWER_NO );
 				break;
@@ -367,12 +355,11 @@ void ScreenOptionsManageCourses::ProcessMenuStart( const InputEventPlus &input )
 			if( ValidateEditCourseName(sDefaultName,sThrowAway) )
 				break;
 		}
-		ScreenTextEntry::TextEntry( 
-			SM_BackFromEnterNameForNew, 
-			ENTER_COURSE_NAME, 
-			sDefaultName, 
-			MAX_EDIT_COURSE_TITLE_LENGTH, 
-			ValidateEditCourseName );
+		ScreenTextEntry::TextEntry( SM_BackFromEnterNameForNew, 
+					    ENTER_COURSE_NAME, 
+					    sDefaultName, 
+					    MAX_EDIT_COURSE_TITLE_LENGTH, 
+					    ValidateEditCourseName );
 	}
 	else if( iCurRow == (int)m_pRows.size()-1 )	// "done"
 	{
