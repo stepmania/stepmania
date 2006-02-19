@@ -1599,6 +1599,10 @@
 		AAB55EBE09A7E3D3008FDC69 /* ScreenUnlockBrowse.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB55EB809A7E3D3008FDC69 /* ScreenUnlockBrowse.h */; };
 		AAB55EBF09A7E3D3008FDC69 /* ScreenUnlockCelebrate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB55EB909A7E3D3008FDC69 /* ScreenUnlockCelebrate.cpp */; };
 		AAB55EC009A7E3D3008FDC69 /* ScreenUnlockCelebrate.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB55EBA09A7E3D3008FDC69 /* ScreenUnlockCelebrate.h */; };
+		AAB55FFF09A84E62008FDC69 /* ScreenUnlockCelebrate.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB55EBA09A7E3D3008FDC69 /* ScreenUnlockCelebrate.h */; };
+		AAB5600009A84E63008FDC69 /* ScreenUnlockCelebrate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB55EB909A7E3D3008FDC69 /* ScreenUnlockCelebrate.cpp */; };
+		AAB5600109A84E64008FDC69 /* ScreenUnlockBrowse.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB55EB809A7E3D3008FDC69 /* ScreenUnlockBrowse.h */; };
+		AAB5600209A84E65008FDC69 /* ScreenUnlockBrowse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB55EB709A7E3D3008FDC69 /* ScreenUnlockBrowse.cpp */; };
 		AAB691F405704FA50078BED4 /* LightsDriver_SystemMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB691F205704FA50078BED4 /* LightsDriver_SystemMessage.cpp */; };
 		AAB691F505704FA50078BED4 /* LightsDriver_SystemMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB691F305704FA50078BED4 /* LightsDriver_SystemMessage.h */; };
 		AAB6B477085761B700CEE7BA /* ScreenSplash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB6B475085761B700CEE7BA /* ScreenSplash.cpp */; };
@@ -2990,12 +2994,6 @@
 		AA6E00090477103E005F316C /* Screens */ = {
 			isa = PBXGroup;
 			children = (
-				AAB55EB509A7E3D3008FDC69 /* ScreenGameplaySyncMachine.cpp */,
-				AAB55EB609A7E3D3008FDC69 /* ScreenGameplaySyncMachine.h */,
-				AAB55EB709A7E3D3008FDC69 /* ScreenUnlockBrowse.cpp */,
-				AAB55EB809A7E3D3008FDC69 /* ScreenUnlockBrowse.h */,
-				AAB55EB909A7E3D3008FDC69 /* ScreenUnlockCelebrate.cpp */,
-				AAB55EBA09A7E3D3008FDC69 /* ScreenUnlockCelebrate.h */,
 				AA6E000A047711F3005F316C /* Screen.cpp */,
 				AA6E000B047711F3005F316C /* Screen.h */,
 				AA6E0010047711F3005F316C /* ScreenAttract.cpp */,
@@ -3038,6 +3036,8 @@
 				AA07A5580843E72B00E33D21 /* ScreenGameplayMultiplayer.h */,
 				1215D7A008C6559A00B87D8B /* ScreenGameplayNormal.cpp */,
 				1215D7A108C6559A00B87D8B /* ScreenGameplayNormal.h */,
+				AAB55EB509A7E3D3008FDC69 /* ScreenGameplaySyncMachine.cpp */,
+				AAB55EB609A7E3D3008FDC69 /* ScreenGameplaySyncMachine.h */,
 				AA6E002F047711F3005F316C /* ScreenHowToPlay.cpp */,
 				AA6E0030047711F3005F316C /* ScreenHowToPlay.h */,
 				AA6E0033047711F3005F316C /* ScreenInstructions.cpp */,
@@ -3148,6 +3148,10 @@
 				AA6E007E047711F3005F316C /* ScreenTextEntry.h */,
 				AA6E007F047711F3005F316C /* ScreenTitleMenu.cpp */,
 				AA6E0080047711F3005F316C /* ScreenTitleMenu.h */,
+				AAB55EB709A7E3D3008FDC69 /* ScreenUnlockBrowse.cpp */,
+				AAB55EB809A7E3D3008FDC69 /* ScreenUnlockBrowse.h */,
+				AAB55EB909A7E3D3008FDC69 /* ScreenUnlockCelebrate.cpp */,
+				AAB55EBA09A7E3D3008FDC69 /* ScreenUnlockCelebrate.h */,
 				AA658779098C322800CE55CC /* ScreenUnlockStatus.cpp */,
 				AA65877A098C322800CE55CC /* ScreenUnlockStatus.h */,
 				AAA6BFEA0644AB3700AFBBC8 /* ScreenWithMenuElements.cpp */,
@@ -4970,6 +4974,8 @@
 				AA40D37809A08D650068C0D5 /* Tween.h in Headers */,
 				AA40D37909A08D650068C0D5 /* ScreenUnlockStatus.h in Headers */,
 				AA40D37A09A08D650068C0D5 /* AdjustSync.h in Headers */,
+				AAB55FFF09A84E62008FDC69 /* ScreenUnlockCelebrate.h in Headers */,
+				AAB5600109A84E64008FDC69 /* ScreenUnlockBrowse.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6048,6 +6054,8 @@
 				AA40D51109A08D650068C0D5 /* Tween.cpp in Sources */,
 				AA40D51209A08D650068C0D5 /* ScreenUnlockStatus.cpp in Sources */,
 				AA40D51309A08D650068C0D5 /* AdjustSync.cpp in Sources */,
+				AAB5600009A84E63008FDC69 /* ScreenUnlockCelebrate.cpp in Sources */,
+				AAB5600209A84E65008FDC69 /* ScreenUnlockBrowse.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6067,7 +6075,7 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		AA0AA8FE0963CF7700427F4D /* Debug PPC */ = {
+		AA0AA8FE0963CF7700427F4D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -6091,13 +6099,12 @@
 				PRODUCT_NAME = version;
 				ZERO_LINK = NO;
 			};
-			name = "Debug PPC";
+			name = Debug;
 		};
-		AA0AA8FF0963CF7700427F4D /* Debug PPC */ = {
+		AA0AA8FF0963CF7700427F4D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AA8B8C49091F48C000D14C5F /* product.xcconfig */;
 			buildSettings = {
-				ARCHS = ppc;
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -6106,18 +6113,18 @@
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks",
 				);
 				FULL_NAME = "$(PRODUCT_NAME).$(WRAPPER_EXTENSION)";
-				GCC_AUTO_VECTORIZATION = YES;
 				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_ENABLE_SSE3_EXTENSIONS = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_MODEL_TUNING = G4;
-				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/../src/archutils/Darwin/StepMania.pch";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_USE_GCC3_PFE_SUPPORT = NO;
+				GCC_VERSION_i386 = 4.0;
+				GCC_VERSION_ppc = 3.3;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
@@ -6158,11 +6165,12 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(SDKROOT)/usr/lib",
-					"$(SRCROOT)/../src/libresample",
 					"$(SRCROOT)/Libraries",
 				);
 				LIBRARY_STYLE = Bundle;
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
+				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
+				MACOSX_DEPLOYMENT_TARGET_ppc = 10.2;
 				OBJROOT = "$(SRCROOT)/build";
 				ONLY_LINK_ESSENTIAL_SYMBOLS = YES;
 				OTHER_CPLUSPLUSFLAGS = (
@@ -6176,19 +6184,22 @@
 				PREBINDING_ppc = YES;
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
 				PRODUCT_NAME = "$(value)";
+				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
 				STRIP_STYLE = "non-global";
 				SYMROOT = "$(SRCROOT)/..";
 				WARNING_CFLAGS = "";
 				WRAPPER_EXTENSION = app;
 			};
-			name = "Debug PPC";
+			name = Debug;
 		};
-		AA0AA9000963CF7700427F4D /* Debug PPC */ = {
+		AA0AA9000963CF7700427F4D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = ppc;
+				ARCHS = "$(NATIVE_ARCH)";
 				BUILD_VARIANTS = normal;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
+				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_FAST_MATH = YES;
 				GCC_FAST_OBJC_DISPATCH = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -6197,15 +6208,21 @@
 				GCC_STRICT_ALIASING = YES;
 				GCC_UNROLL_LOOPS = YES;
 				GCC_VERSION = 3.3;
+				GCC_VERSION_i386 = 4.0;
+				GCC_VERSION_ppc = 3.3;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				SDKROOT = /Developer/SDKs/MacOSX10.2.8.sdk;
+				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
+				MACOSX_DEPLOYMENT_TARGET_ppc = 10.2;
+				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
+				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(CONFIGURATION)";
 			};
-			name = "Debug PPC";
+			name = Debug;
 		};
-		AA40D52809A08D650068C0D5 /* Release */ = {
+		AA40D52809A08D650068C0D5 /* Native */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AA8B8C49091F48C000D14C5F /* product.xcconfig */;
 			buildSettings = {
@@ -6217,7 +6234,6 @@
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks",
 				);
 				FULL_NAME = "$(PRODUCT_NAME).$(WRAPPER_EXTENSION)";
-				GCC_AUTO_VECTORIZATION = YES;
 				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_ENABLE_SSE3_EXTENSIONS = YES;
@@ -6296,9 +6312,9 @@
 				WARNING_CFLAGS = "";
 				WRAPPER_EXTENSION = app;
 			};
-			name = Release;
+			name = Native;
 		};
-		AA40D52909A08D650068C0D5 /* Debug Universal */ = {
+		AA40D52909A08D650068C0D5 /* Universal */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AA8B8C49091F48C000D14C5F /* product.xcconfig */;
 			buildSettings = {
@@ -6310,7 +6326,6 @@
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks",
 				);
 				FULL_NAME = "$(PRODUCT_NAME).$(WRAPPER_EXTENSION)";
-				GCC_AUTO_VECTORIZATION = YES;
 				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_ENABLE_SSE3_EXTENSIONS = YES;
@@ -6389,9 +6404,9 @@
 				WARNING_CFLAGS = "";
 				WRAPPER_EXTENSION = app;
 			};
-			name = "Debug Universal";
+			name = Universal;
 		};
-		AA40D52A09A08D660068C0D5 /* Debug PPC */ = {
+		AA40D52A09A08D660068C0D5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AA8B8C49091F48C000D14C5F /* product.xcconfig */;
 			buildSettings = {
@@ -6403,7 +6418,6 @@
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks",
 				);
 				FULL_NAME = "$(PRODUCT_NAME).$(WRAPPER_EXTENSION)";
-				GCC_AUTO_VECTORIZATION = YES;
 				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_ENABLE_SSE3_EXTENSIONS = YES;
@@ -6482,9 +6496,9 @@
 				WARNING_CFLAGS = "";
 				WRAPPER_EXTENSION = app;
 			};
-			name = "Debug PPC";
+			name = Debug;
 		};
-		AAC8450D0856A19700A9FEAB /* Release */ = {
+		AAC8450D0856A19700A9FEAB /* Native */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -6508,9 +6522,9 @@
 				PRODUCT_NAME = version;
 				ZERO_LINK = NO;
 			};
-			name = Release;
+			name = Native;
 		};
-		AAC845110856A19700A9FEAB /* Release */ = {
+		AAC845110856A19700A9FEAB /* Native */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AA8B8C49091F48C000D14C5F /* product.xcconfig */;
 			buildSettings = {
@@ -6522,18 +6536,18 @@
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks",
 				);
 				FULL_NAME = "$(PRODUCT_NAME).$(WRAPPER_EXTENSION)";
-				GCC_AUTO_VECTORIZATION = YES;
 				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_ENABLE_SSE3_EXTENSIONS = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/../src/archutils/Darwin/StepMania.pch";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_USE_GCC3_PFE_SUPPORT = NO;
+				GCC_VERSION_i386 = 4.0;
+				GCC_VERSION_ppc = 3.3;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
@@ -6574,11 +6588,12 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(SDKROOT)/usr/lib",
-					"$(SRCROOT)/../src/libresample",
 					"$(SRCROOT)/Libraries",
 				);
 				LIBRARY_STYLE = Bundle;
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
+				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
+				MACOSX_DEPLOYMENT_TARGET_ppc = 10.2;
 				OBJROOT = "$(SRCROOT)/build";
 				ONLY_LINK_ESSENTIAL_SYMBOLS = YES;
 				OTHER_CPLUSPLUSFLAGS = (
@@ -6592,14 +6607,16 @@
 				PREBINDING_ppc = YES;
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
 				PRODUCT_NAME = "$(value)";
+				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
 				STRIP_STYLE = "non-global";
 				SYMROOT = "$(SRCROOT)/..";
 				WARNING_CFLAGS = "";
 				WRAPPER_EXTENSION = app;
 			};
-			name = Release;
+			name = Native;
 		};
-		AAC845150856A19700A9FEAB /* Release */ = {
+		AAC845150856A19700A9FEAB /* Native */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUILD_VARIANTS = normal;
@@ -6612,15 +6629,21 @@
 				GCC_STRICT_ALIASING = YES;
 				GCC_UNROLL_LOOPS = YES;
 				GCC_VERSION = 3.3;
+				GCC_VERSION_i386 = 4.0;
+				GCC_VERSION_ppc = 3.3;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				SDKROOT = /Developer/SDKs/MacOSX10.2.8.sdk;
+				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
+				MACOSX_DEPLOYMENT_TARGET_ppc = 10.2;
+				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
+				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(CONFIGURATION)";
 			};
-			name = Release;
+			name = Native;
 		};
-		AAE44A2B0965707500B025E5 /* Debug Universal */ = {
+		AAE44A2B0965707500B025E5 /* Universal */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -6644,13 +6667,12 @@
 				PRODUCT_NAME = version;
 				ZERO_LINK = NO;
 			};
-			name = "Debug Universal";
+			name = Universal;
 		};
-		AAE44A2C0965707500B025E5 /* Debug Universal */ = {
+		AAE44A2C0965707500B025E5 /* Universal */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AA8B8C49091F48C000D14C5F /* product.xcconfig */;
 			buildSettings = {
-				ARCHS = i386;
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -6659,18 +6681,18 @@
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks",
 				);
 				FULL_NAME = "$(PRODUCT_NAME).$(WRAPPER_EXTENSION)";
-				GCC_AUTO_VECTORIZATION = YES;
 				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_ENABLE_SSE3_EXTENSIONS = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_MODEL_TUNING = G4;
-				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/../src/archutils/Darwin/StepMania.pch";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_USE_GCC3_PFE_SUPPORT = NO;
+				GCC_VERSION_i386 = 4.0;
+				GCC_VERSION_ppc = 3.3;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
@@ -6711,11 +6733,12 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(SDKROOT)/usr/lib",
-					"$(SRCROOT)/../src/libresample",
 					"$(SRCROOT)/Libraries",
 				);
 				LIBRARY_STYLE = Bundle;
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
+				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
+				MACOSX_DEPLOYMENT_TARGET_ppc = 10.2;
 				OBJROOT = "$(SRCROOT)/build";
 				ONLY_LINK_ESSENTIAL_SYMBOLS = YES;
 				OTHER_CPLUSPLUSFLAGS = (
@@ -6729,14 +6752,16 @@
 				PREBINDING_ppc = YES;
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
 				PRODUCT_NAME = "$(value)";
+				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
 				STRIP_STYLE = "non-global";
 				SYMROOT = "$(SRCROOT)/..";
 				WARNING_CFLAGS = "";
 				WRAPPER_EXTENSION = app;
 			};
-			name = "Debug Universal";
+			name = Universal;
 		};
-		AAE44A2D0965707500B025E5 /* Debug Universal */ = {
+		AAE44A2D0965707500B025E5 /* Universal */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (
@@ -6749,7 +6774,7 @@
 				GCC_FAST_OBJC_DISPATCH = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_STRICT_ALIASING = YES;
 				GCC_UNROLL_LOOPS = YES;
 				GCC_VERSION_i386 = 4.0;
@@ -6762,243 +6787,9 @@
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.2;
 				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
 				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
+				SHARED_PRECOMPS_DIR = "/Library/Caches/com.apple.Xcode.$(UID)/SharedPrecompiledHeaders/$(CONFIGURATION)";
 			};
-			name = "Debug Universal";
-		};
-		F464C64009A8374800BC2CF1 /* Debug i386 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = YES;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				GCC_WARN_SHADOW = NO;
-				GCC_WARN_SIGN_COMPARE = YES;
-				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNKNOWN_PRAGMAS = YES;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_LABEL = NO;
-				GCC_WARN_UNUSED_PARAMETER = NO;
-				GCC_WARN_UNUSED_VALUE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				LIBRARY_STYLE = Bundle;
-				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				PRODUCT_NAME = version;
-				ZERO_LINK = NO;
-			};
-			name = "Debug i386";
-		};
-		F464C64109A8374800BC2CF1 /* Debug i386 */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = AA8B8C49091F48C000D14C5F /* product.xcconfig */;
-			buildSettings = {
-				ARCHS = i386;
-				COPY_PHASE_STRIP = YES;
-				DEAD_CODE_STRIPPING = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SRCROOT)/Frameworks",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks",
-				);
-				FULL_NAME = "$(PRODUCT_NAME).$(WRAPPER_EXTENSION)";
-				GCC_AUTO_VECTORIZATION = YES;
-				GCC_DEBUGGING_SYMBOLS = full;
-				GCC_ENABLE_CPP_RTTI = YES;
-				GCC_ENABLE_SSE3_EXTENSIONS = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INPUT_FILETYPE = automatic;
-				GCC_MODEL_TUNING = G4;
-				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SRCROOT)/../src/archutils/Darwin/StepMania.pch";
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_USE_GCC3_PFE_SUPPORT = NO;
-				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
-				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
-				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
-				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
-				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
-				GCC_WARN_MISSING_PARENTHESES = YES;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				GCC_WARN_SHADOW = NO;
-				GCC_WARN_SIGN_COMPARE = YES;
-				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNKNOWN_PRAGMAS = YES;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_LABEL = YES;
-				GCC_WARN_UNUSED_PARAMETER = NO;
-				GCC_WARN_UNUSED_VALUE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(SRCROOT)/../src",
-					"$(SRCROOT)/Frameworks/SDL.framework/Headers",
-					"$(SRCROOT)/Frameworks/ffmpeg.framework/Headers",
-					"$(SRCROOT)/Frameworks/mad.framework/Headers",
-					"$(SRCROOT)/Frameworks/resample.framework/Headers",
-					"$(SRCROOT)/../src/lua-5.0/include",
-					"$(SRCROOT)/../src/vorbis",
-					"$(SRCROOT)/../src/libjpeg",
-					"$(SRCROOT)/../src/libpng/include",
-					"$(SRCROOT)/../src/archutils/Darwin/PublicUtility",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks/CarbonCore.framework/Versions/A/Headers",
-					"$(SDKROOT)/usr/include",
-				);
-				INFOPLIST_FILE = "Info-StepMania.plist";
-				INFOPLIST_PREFIX_HEADER = "$(SRCROOT)/../src/ProductInfo.h";
-				INFOPLIST_PREPROCESS = YES;
-				INFOPLIST_PREPROCESSOR_DEFINITIONS = "EXECUTABLE_NAME=\"$(PRODUCT_NAME)\"";
-				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = (
-					"$(SDKROOT)/usr/lib",
-					"$(SRCROOT)/../src/libresample",
-					"$(SRCROOT)/Libraries",
-				);
-				LIBRARY_STYLE = Bundle;
-				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				OBJROOT = "$(SRCROOT)/build";
-				ONLY_LINK_ESSENTIAL_SYMBOLS = YES;
-				OTHER_CPLUSPLUSFLAGS = (
-					"-finline-limit=300",
-					"-fconstant-cfstrings",
-					"-fsingle-precision-constant",
-				);
-				OTHER_LDFLAGS = "-lz";
-				PREBINDING = "$(PREBINDING_$(CURRENT_ARCH))";
-				PREBINDING_i386 = NO;
-				PREBINDING_ppc = YES;
-				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
-				PRODUCT_NAME = "$(value)";
-				STRIP_STYLE = "non-global";
-				SYMROOT = "$(SRCROOT)/..";
-				WARNING_CFLAGS = "";
-				WRAPPER_EXTENSION = app;
-			};
-			name = "Debug i386";
-		};
-		F464C64209A8374900BC2CF1 /* Debug i386 */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = AA8B8C49091F48C000D14C5F /* product.xcconfig */;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				DEAD_CODE_STRIPPING = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SRCROOT)/Frameworks",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks",
-				);
-				FULL_NAME = "$(PRODUCT_NAME).$(WRAPPER_EXTENSION)";
-				GCC_AUTO_VECTORIZATION = YES;
-				GCC_DEBUGGING_SYMBOLS = full;
-				GCC_ENABLE_CPP_RTTI = YES;
-				GCC_ENABLE_SSE3_EXTENSIONS = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INPUT_FILETYPE = automatic;
-				GCC_MODEL_TUNING = G4;
-				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SRCROOT)/../src/archutils/Darwin/StepMania.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					NO_MP3_SUPPORT,
-					WITHOUT_NETWORKING,
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_USE_GCC3_PFE_SUPPORT = NO;
-				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
-				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
-				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
-				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = NO;
-				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
-				GCC_WARN_MISSING_PARENTHESES = YES;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				GCC_WARN_SHADOW = NO;
-				GCC_WARN_SIGN_COMPARE = YES;
-				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNKNOWN_PRAGMAS = YES;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_LABEL = YES;
-				GCC_WARN_UNUSED_PARAMETER = NO;
-				GCC_WARN_UNUSED_VALUE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(SRCROOT)/../src",
-					"$(SRCROOT)/Frameworks/SDL.framework/Headers",
-					"$(SRCROOT)/Frameworks/ffmpeg.framework/Headers",
-					"$(SRCROOT)/Frameworks/mad.framework/Headers",
-					"$(SRCROOT)/Frameworks/resample.framework/Headers",
-					"$(SRCROOT)/../src/lua-5.0/include",
-					"$(SRCROOT)/../src/vorbis",
-					"$(SRCROOT)/../src/libjpeg",
-					"$(SRCROOT)/../src/libpng/include",
-					"$(SRCROOT)/../src/archutils/Darwin/PublicUtility",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks/CarbonCore.framework/Versions/A/Headers",
-					"$(SDKROOT)/usr/include",
-				);
-				INFOPLIST_FILE = "/Users/steve/programming/stepmania/PBProject/Info-StepMania.plist";
-				INFOPLIST_PREFIX_HEADER = "$(SRCROOT)/../src/ProductInfo.h";
-				INFOPLIST_PREPROCESS = YES;
-				INFOPLIST_PREPROCESSOR_DEFINITIONS = "EXECUTABLE_NAME=\"$(PRODUCT_NAME)\"";
-				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = (
-					"$(SDKROOT)/usr/lib",
-					"$(SRCROOT)/../src/libresample",
-					"$(SRCROOT)/Libraries",
-				);
-				LIBRARY_STYLE = Bundle;
-				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				OBJROOT = "$(SRCROOT)/build";
-				ONLY_LINK_ESSENTIAL_SYMBOLS = YES;
-				OTHER_CPLUSPLUSFLAGS = (
-					"-finline-limit=300",
-					"-fconstant-cfstrings",
-					"-fsingle-precision-constant",
-				);
-				OTHER_LDFLAGS = "-lz";
-				PREBINDING = "$(PREBINDING_$(CURRENT_ARCH))";
-				PREBINDING_i386 = NO;
-				PREBINDING_ppc = YES;
-				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
-				PRODUCT_NAME = "$(value)";
-				STRIP_STYLE = "non-global";
-				SYMROOT = "$(SRCROOT)/..";
-				WARNING_CFLAGS = "";
-				WRAPPER_EXTENSION = app;
-			};
-			name = "Debug i386";
-		};
-		F464C64309A8374900BC2CF1 /* Debug i386 */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = i386;
-				BUILD_VARIANTS = normal;
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
-				GCC_FAST_MATH = YES;
-				GCC_FAST_OBJC_DISPATCH = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_STRICT_ALIASING = YES;
-				GCC_UNROLL_LOOPS = YES;
-				GCC_VERSION_i386 = 4.0;
-				GCC_VERSION_ppc = 3.3;
-				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				GCC_WARN_SIGN_COMPARE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.2;
-				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
-			};
-			name = "Debug i386";
+			name = Universal;
 		};
 /* End XCBuildConfiguration section */
 
@@ -7006,46 +6797,42 @@
 		AA40D52709A08D650068C0D5 /* Build configuration list for PBXNativeTarget "stepmania-bare" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				AA40D52809A08D650068C0D5 /* Release */,
-				AA40D52909A08D650068C0D5 /* Debug Universal */,
-				F464C64209A8374900BC2CF1 /* Debug i386 */,
-				AA40D52A09A08D660068C0D5 /* Debug PPC */,
+				AA40D52809A08D650068C0D5 /* Native */,
+				AA40D52909A08D650068C0D5 /* Universal */,
+				AA40D52A09A08D660068C0D5 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Native;
 		};
 		AAC8450B0856A19700A9FEAB /* Build configuration list for PBXLegacyTarget "version" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				AAC8450D0856A19700A9FEAB /* Release */,
-				AAE44A2B0965707500B025E5 /* Debug Universal */,
-				F464C64009A8374800BC2CF1 /* Debug i386 */,
-				AA0AA8FE0963CF7700427F4D /* Debug PPC */,
+				AAC8450D0856A19700A9FEAB /* Native */,
+				AAE44A2B0965707500B025E5 /* Universal */,
+				AA0AA8FE0963CF7700427F4D /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Native;
 		};
 		AAC8450F0856A19700A9FEAB /* Build configuration list for PBXNativeTarget "stepmania" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				AAC845110856A19700A9FEAB /* Release */,
-				AAE44A2C0965707500B025E5 /* Debug Universal */,
-				F464C64109A8374800BC2CF1 /* Debug i386 */,
-				AA0AA8FF0963CF7700427F4D /* Debug PPC */,
+				AAC845110856A19700A9FEAB /* Native */,
+				AAE44A2C0965707500B025E5 /* Universal */,
+				AA0AA8FF0963CF7700427F4D /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Native;
 		};
 		AAC845130856A19700A9FEAB /* Build configuration list for PBXProject "stepmania" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				AAC845150856A19700A9FEAB /* Release */,
-				AAE44A2D0965707500B025E5 /* Debug Universal */,
-				F464C64309A8374900BC2CF1 /* Debug i386 */,
-				AA0AA9000963CF7700427F4D /* Debug PPC */,
+				AAC845150856A19700A9FEAB /* Native */,
+				AAE44A2D0965707500B025E5 /* Universal */,
+				AA0AA9000963CF7700427F4D /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Native;
 		};
 /* End XCConfigurationList section */
 	};
