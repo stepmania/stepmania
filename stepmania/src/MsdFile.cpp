@@ -50,8 +50,7 @@ void MsdFile::ReadBuf( char *buf, int len )
 			{
 				buf[i] = ' ';
 				i++;
-			}
-			while( i < len && buf[i] != '\n' );
+			} while( i < len && buf[i] != '\n' );
 
 			continue;
 		}
