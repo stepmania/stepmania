@@ -6186,6 +6186,7 @@
 				PRODUCT_NAME = "$(value)";
 				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
 				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
+				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_STYLE = "non-global";
 				SYMROOT = "$(SRCROOT)/..";
 				WARNING_CFLAGS = "";
@@ -6609,6 +6610,7 @@
 				PRODUCT_NAME = "$(value)";
 				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
 				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
+				STRIP_INSTALLED_PRODUCT = YES;
 				STRIP_STYLE = "non-global";
 				SYMROOT = "$(SRCROOT)/..";
 				WARNING_CFLAGS = "";
@@ -6754,6 +6756,7 @@
 				PRODUCT_NAME = "$(value)";
 				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
 				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
+				STRIP_INSTALLED_PRODUCT = YES;
 				STRIP_STYLE = "non-global";
 				SYMROOT = "$(SRCROOT)/..";
 				WARNING_CFLAGS = "";
