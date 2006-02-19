@@ -24,12 +24,12 @@
 
 void MsdFile::AddParam( char *buf, int len )
 {
-	values.back().params.push_back(RString(buf, len));
+	values.back().params.push_back( RString(buf, len) );
 }
 
 void MsdFile::AddValue() /* (no extra charge) */
 {
-	values.push_back(value_t());
+	values.push_back( value_t() );
 	values.back().params.reserve( 32 );
 }
 
@@ -41,27 +41,30 @@ void MsdFile::ReadBuf( char *buf, int len )
 
 	bool ReadingValue=false;
 	int i = 0;
-	while(i < len)
+	while( i < len )
 	{
 		if( i+1 < len && buf[i] == '/' && buf[i+1] == '/' )
 		{
 			/* //; erase with spaces until newline */
-			do {
+			do
+			{
 				buf[i] = ' ';
 				i++;
-			} while(i < len && buf[i] != '\n');
+			}
+			while( i < len && buf[i] != '\n' );
 
 			continue;
 		}
 
-		if(ReadingValue && buf[i] == '#') {
+		if( ReadingValue && buf[i] == '#' )
+		{
 			/* Unfortunately, many of these files are missing ;'s.
 			 * If we get a # when we thought we were inside a value, assume we
 			 * missed the ;.  Back up and end the value. */
 			/* Make sure this # is the first non-whitespace character on the line. */
 			bool FirstChar = true;
 			int j;
-			for(j = i-1; j >= 0 && !strchr("\r\n", buf[j]); --j)
+			for( j = i-1; j >= 0 && !strchr("\r\n", buf[j]); --j )
 			{
 				if(buf[j] == ' ' || buf[j] == '\t')
 					continue;
@@ -70,7 +73,8 @@ void MsdFile::ReadBuf( char *buf, int len )
 				break;
 			}
 
-			if(!FirstChar) {
+			if( !FirstChar )
+			{
 				/* Oops, we're not; handle this like a regular character. */
 				i++;
 				continue;
@@ -80,28 +84,29 @@ void MsdFile::ReadBuf( char *buf, int len )
 			while( j >= 1 && strchr("\r\n", buf[j-1]) )
 				--j;
 
-			AddParam(buf+value_start, j - value_start);
+			AddParam( buf+value_start, j - value_start );
 			ReadingValue=false;
 		}
 
 		/* # starts a new value. */
-		if(!ReadingValue && buf[i] == '#') {
+		if( !ReadingValue && buf[i] == '#' )
+		{
 			AddValue();
 			ReadingValue=true;
 		}
 
-		if(!ReadingValue)
+		if( !ReadingValue )
 		{
 			i++;
 			continue; /* nothing else is meaningful outside of a value */
 		}
 
 		/* : and ; end the current param, if any. */
-		if(value_start != -1 && (buf[i] == ':' || buf[i] == ';'))
+		if( value_start != -1 && (buf[i] == ':' || buf[i] == ';') )
 			AddParam(buf+value_start, i - value_start);
 
 		/* # and : begin new params. */
-		if(buf[i] == '#' || buf[i] == ':')
+		if( buf[i] == '#' || buf[i] == ':' )
 		{
 			i++; /* skip */
 			value_start = i;
@@ -109,15 +114,15 @@ void MsdFile::ReadBuf( char *buf, int len )
 		}
 
 		/* ; ends the current value. */
-		if(buf[i] == ';')
+		if( buf[i] == ';' )
 			ReadingValue=false;
 
 		i++;
 	}
 	
 	/* Add any unterminated value at the very end. */
-	if(ReadingValue)
-		AddParam(buf+value_start, i - value_start);
+	if( ReadingValue )
+		AddParam( buf+value_start, i - value_start );
 }
 
 // returns true if successful, false otherwise
@@ -160,8 +165,8 @@ void MsdFile::ReadFromString( const RString &sString )
 
 RString MsdFile::GetParam(unsigned val, unsigned par) const
 {
-	if(val >= GetNumValues()) return RString();
-	if(par >= GetNumParams(val)) return RString();
+	if( val >= GetNumValues() || par >= GetNumParams(val) )
+		return RString();
 
 	return values[val].params[par];
 }

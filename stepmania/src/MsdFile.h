@@ -11,7 +11,7 @@ public:
 	{
 		vector<RString> params;
 
-		RString operator[](unsigned i) const { if(i >= params.size()) return RString(); return params[i]; }
+		RString operator[]( unsigned i ) const { if( i >= params.size() ) return RString(); return params[i]; }
 	};
 
 	virtual ~MsdFile() { }
@@ -23,9 +23,9 @@ public:
 	RString GetError() const { return error; }
 
 	unsigned GetNumValues() const { return values.size(); }
-	unsigned GetNumParams(unsigned val) const { if(val >= GetNumValues()) return 0; return values[val].params.size(); }
-	const value_t &GetValue(unsigned val) const { ASSERT(val < GetNumValues()); return values[val]; }
-	RString GetParam(unsigned val, unsigned par) const;
+	unsigned GetNumParams( unsigned val ) const { if( val >= GetNumValues() ) return 0; return values[val].params.size(); }
+	const value_t &GetValue( unsigned val ) const { ASSERT(val < GetNumValues()); return values[val]; }
+	RString GetParam( unsigned val, unsigned par ) const;
 
 
 private:
