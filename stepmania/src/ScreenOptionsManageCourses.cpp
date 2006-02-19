@@ -147,7 +147,8 @@ void ScreenOptionsManageCourses::BeginScreen()
 		OptionRowDefinition &def = vHands.back()->m_Def;
 		def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 		def.m_sName = "";
-		def.m_vsChoices.clear();
+		def.m_bAllowThemeItems = false;
+		def.m_bOneChoiceForAllPlayers = true;
 		def.m_vsChoices.push_back( "Create New" );
 		iIndex++;
 	}
@@ -161,11 +162,7 @@ void ScreenOptionsManageCourses::BeginScreen()
 	case EditMode_Practice:
 	case EditMode_Home:
 		// strip out non-edits
-		for( int i=m_vpCourses.size()-1; i>=0; i-- )
-		{
-			if( !m_vpCourses[i]->IsAnEdit() )
-				m_vpCourses.erase( m_vpCourses.begin()+i );
-		}
+		RemoveIf( m_vpCourses, not1(mem_fun(&Course::IsAnEdit)) );
 		break;
 	case EditMode_Full:
 		break;
@@ -194,6 +191,9 @@ void ScreenOptionsManageCourses::BeginScreen()
 
 		def.m_sName = ssprintf("%d",iIndex) + " " + def.m_sName;
 		def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+		def.m_bAllowThemeItems = false;
+		def.m_bAllowThemeTitle = false;
+		def.m_bOneChoiceForAllPlayers = true;
 		def.m_vsChoices.push_back( (*c)->GetDisplayFullTitle() );
 		iIndex++;
 	}
