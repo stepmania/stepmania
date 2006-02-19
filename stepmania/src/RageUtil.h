@@ -96,6 +96,18 @@ void CircularShift( vector<T> &v, int dist )
 }
 
 /*
+ * Helper function to remove all objects from an STL container for which the
+ * Predicate pred is true. If you want to remove all objects for which the predicate
+ * returns false, wrap the predicate with not1().
+ */
+template<typename Container, typename Predicate>
+inline void RemoveIf( Container& c, Predicate p )
+{
+	c.erase( remove_if(c.begin(), c.end(), p), c.end() );
+}
+
+
+/*
  * We only have unsigned swaps; byte swapping a signed value doesn't make sense. 
  *
  * Platform-specific, optimized versions are defined in arch_setup, with the names
