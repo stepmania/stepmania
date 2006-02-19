@@ -577,7 +577,7 @@ void ScreenOptions::PositionRows( bool bTween )
 
 	if( (bool)SEPARATE_EXIT_ROW && !Rows.empty() && Rows.back()->GetRowType() == OptionRow::RowType_Exit )
 	{
-		pSeparateExitRow = &*Rows.back();
+		pSeparateExitRow = Rows.back();
 
 		/* Remove the exit row for purposes of positioning everything else. */
 		if( P1Choice == (int) Rows.size()-1 )
@@ -585,7 +585,7 @@ void ScreenOptions::PositionRows( bool bTween )
 		if( P2Choice == (int) Rows.size()-1 )
 			--P2Choice;
 
-		Rows.erase( Rows.begin()+Rows.size()-1, Rows.end() );
+		Rows.pop_back();
 	}
 
 	const bool BothPlayersActivated = GAMESTATE->IsHumanPlayer(PLAYER_1) && GAMESTATE->IsHumanPlayer(PLAYER_2);
