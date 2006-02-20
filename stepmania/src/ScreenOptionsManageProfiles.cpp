@@ -86,7 +86,8 @@ void ScreenOptionsManageProfiles::Init()
 
 void ScreenOptionsManageProfiles::BeginScreen()
 {
-	int iIndex = 0;
+	// FIXME
+	// int iIndex = 0;
 	vector<OptionRowHandler*> OptionRowHandlers;
 
 	if( SHOW_CREATE_NEW )
