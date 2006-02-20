@@ -89,6 +89,7 @@ void ScreenOptionsEditCourse::BeginScreen()
 		pHand->m_Def.m_sName = ssprintf( ENTRY.GetValue(), iEntryIndex+1 );
 		pHand->m_Def.m_bAllowThemeItems = false;
 		pHand->m_Def.m_bAllowThemeTitle = false;
+		pHand->m_Def.m_vsChoices.push_back( "RANDOM" ); // XXX Localize?
 		FOREACH_CONST( Song*, m_vpDisplayedSongs, s )
 			pHand->m_Def.m_vsChoices.push_back( (*s)->GetTranslitFullTitle() );
 		vHands.push_back( pHand );
@@ -98,7 +99,6 @@ void ScreenOptionsEditCourse::BeginScreen()
 	pHand->m_Def.m_sName = "";
 	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 	pHand->m_Def.m_bExportOnChange = true;
-	pHand->m_Def.m_vsChoices.clear();
 	pHand->m_Def.m_vsChoices.push_back( "Insert Entry" );
 	vHands.push_back( pHand );
 
@@ -107,7 +107,7 @@ void ScreenOptionsEditCourse::BeginScreen()
 	ScreenOptions::BeginScreen();
 
 	if( GAMESTATE->m_iEditCourseEntryIndex > -1 )
-		this->MoveRowAbsolute( PLAYER_1, NUM_EditCourseRow + GAMESTATE->m_iEditCourseEntryIndex );
+		this->MoveRowAbsolute( GAMESTATE->m_MasterPlayerNumber, NUM_EditCourseRow + GAMESTATE->m_iEditCourseEntryIndex );
 	AfterChangeRow( GAMESTATE->m_MasterPlayerNumber );
 }
 
@@ -196,12 +196,12 @@ void ScreenOptionsEditCourse::AfterChangeValueInRow( int iRow, PlayerNumber pn )
 	Course *pCourse = GAMESTATE->m_pCurCourse;
 	
 	// Regenerate Trails so that the new values propagate
-	GAMESTATE->m_pCurTrail[PLAYER_1].Set( NULL );
+	GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber].Set( NULL );
 	Trail *pTrail = pCourse->GetTrailForceRegenCache( GAMESTATE->m_stEdit, GAMESTATE->m_cdEdit );
 
 	// cause overlay elements to refresh by changing the course
 	GAMESTATE->m_pCurCourse.Set( pCourse );
-	GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
+	GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber].Set( pTrail );
 }
 
 void ScreenOptionsEditCourse::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
@@ -213,16 +213,32 @@ void ScreenOptionsEditCourse::ImportOptions( int iRow, const vector<PlayerNumber
 	{
 	case EditCourseRow_Type:
 		row.SetOneSharedSelection( pCourse->GetCourseType() );
-		break;
+		return;
 	case EditCourseRow_Meter:
 	{
-		int iMeter = pCourse->m_iCustomMeter[DIFFICULTY_MEDIUM];
+		int iMeter = pCourse->m_iCustomMeter[GAMESTATE->m_cdEdit];
 		if( iMeter == -1 )
 			row.SetOneSharedSelection( 0 );
 		else
 			row.SetOneSharedSelection( iMeter + 1 - MIN_METER );
-		break;
+		return;
 	}
+	}
+
+	const CourseEntry& ce = pCourse->m_vEntries[iRow - NUM_EditCourseRow];
+	
+	if( ce.IsRandomSong() )
+	{
+		row.SetOneSharedSelection( 0 );
+	}
+	else
+	{
+		vector<Song *>::const_iterator iter = find( m_vpDisplayedSongs.begin(), m_vpDisplayedSongs.end(), ce.pSong );
+		
+		if( iter == m_vpDisplayedSongs.end() )
+			row.SetOneSharedSelection( 0 );
+		else
+			row.SetOneSharedSelection( iter - m_vpDisplayedSongs.begin() + 1 );
 	}
 }
 
@@ -243,9 +259,9 @@ void ScreenOptionsEditCourse::ExportOptions( int iRow, const vector<PlayerNumber
 	{
 		int iSel = row.GetOneSharedSelection();
 		if( iSel == 0 )	// "auto"
-			pCourse->m_iCustomMeter[DIFFICULTY_MEDIUM] = -1;
+			pCourse->m_iCustomMeter[GAMESTATE->m_cdEdit] = -1;
 		else
-			pCourse->m_iCustomMeter[DIFFICULTY_MEDIUM] = iSel - 1 + MIN_METER;
+			pCourse->m_iCustomMeter[GAMESTATE->m_cdEdit] = iSel - 1 + MIN_METER;
 		break;
 	}
 	}
@@ -289,7 +305,7 @@ void ScreenOptionsEditCourse::ProcessMenuStart( const InputEventPlus &input )
 		}
 
 		int iWidth, iX, iY;
-		this->GetWidthXY( PLAYER_1, iCurRow, 0, iWidth, iX, iY );
+		this->GetWidthXY( GAMESTATE->m_MasterPlayerNumber, iCurRow, 0, iWidth, iX, iY );
 		ScreenMiniMenu::MiniMenu( &g_TempMenu, SM_BackFromContextMenu, SM_BackFromContextMenu, (float)iX, (float)iY );
 	}
 

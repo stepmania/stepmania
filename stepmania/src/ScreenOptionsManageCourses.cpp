@@ -21,7 +21,7 @@ static void RefreshTrail()
 		return;
 	GAMESTATE->m_pCurCourse.Set( pCourse );
 	Trail *pTrail = pCourse->GetTrail( GAMESTATE->m_stEdit, GAMESTATE->m_cdEdit );
-	GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
+	GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber].Set( pTrail );
 }
 
 struct StepsTypeAndDifficulty
@@ -188,11 +188,11 @@ void ScreenOptionsManageCourses::BeginScreen()
 			if( (*c)->IsAnEdit() )
 				def.m_sName = "Edit";
 			else
-				def.m_sName = (*c)->m_sGroupName;
+				def.m_sName = SONGMAN->ShortenGroupName( (*c)->m_sGroupName );
 			break;
 		}
 
-		def.m_sName = ssprintf("%d",iIndex) + " " + def.m_sName;
+		def.m_sName = ssprintf( "%3d  %s", iIndex, def.m_sName.c_str() );
 		def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 		def.m_bAllowThemeItems = false;
 		def.m_bAllowThemeTitle = false;
@@ -212,11 +212,11 @@ void ScreenOptionsManageCourses::BeginScreen()
 		if( iter != m_vpCourses.end() )
 		{
 			int iIndex = iter - m_vpCourses.begin();
-			this->MoveRowAbsolute( PLAYER_1, 1 + iIndex );
+			this->MoveRowAbsolute( GAMESTATE->m_MasterPlayerNumber, 1 + iIndex );
 		}
 	}
 
-	AfterChangeRow( PLAYER_1 );
+	AfterChangeRow( GAMESTATE->m_MasterPlayerNumber );
 }
 
 static LocalizedString COURSE_WILL_BE_LOST	("ScreenOptionsManageCourses", "This course will be lost permanently.");
@@ -289,7 +289,7 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 				Course *pCourse = GetCourseWithFocus();
 				Trail *pTrail = pCourse->GetTrail( STEPS_TYPE_DANCE_SINGLE );
 				GAMESTATE->m_pCurCourse.Set( pCourse );
-				GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
+				GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber].Set( pTrail );
 
 				ScreenOptions::BeginFadingOut();
 				break;
@@ -325,7 +325,7 @@ void ScreenOptionsManageCourses::AfterChangeRow( PlayerNumber pn )
 	Trail *pTrail = pCourse ? pCourse->GetTrail( STEPS_TYPE_DANCE_SINGLE ) : NULL;
 	
 	GAMESTATE->m_pCurCourse.Set( pCourse );
-	GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
+	GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber].Set( pTrail );
 
 	ScreenOptions::AfterChangeRow( pn );
 }
@@ -379,7 +379,7 @@ void ScreenOptionsManageCourses::ProcessMenuStart( const InputEventPlus &input )
 		}
 
 		int iWidth, iX, iY;
-		this->GetWidthXY( PLAYER_1, iCurRow, 0, iWidth, iX, iY );
+		this->GetWidthXY( GAMESTATE->m_MasterPlayerNumber, iCurRow, 0, iWidth, iX, iY );
 		ScreenMiniMenu::MiniMenu( &g_TempMenu, SM_BackFromContextMenu, SM_BackFromContextMenu, (float)iX, (float)iY );
 	}
 }
