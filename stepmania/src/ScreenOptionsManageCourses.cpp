@@ -147,7 +147,6 @@ void ScreenOptionsManageCourses::BeginScreen()
 		OptionRowDefinition &def = vHands.back()->m_Def;
 		def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 		def.m_sName = "";
-		def.m_bAllowThemeItems = false;
 		def.m_bOneChoiceForAllPlayers = true;
 		def.m_vsChoices.push_back( "Create New" );
 		iIndex++;
