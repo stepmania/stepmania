@@ -45,7 +45,7 @@ REGISTER_SCREEN_CLASS( ScreenOptionsEditCourse );
 
 void ScreenOptionsEditCourse::Init()
 {
-	ScreenOptions::Init();
+	ScreenOptionsEditCourseSubMenu::Init();
 }
 
 static LocalizedString ENTRY( "OptionTitles", "Entry %d" );
@@ -197,7 +197,7 @@ void ScreenOptionsEditCourse::AfterChangeValueInRow( int iRow, PlayerNumber pn )
 	
 	// Regenerate Trails so that the new values propagate
 	GAMESTATE->m_pCurTrail[PLAYER_1].Set( NULL );
-	Trail *pTrail = pCourse->GetTrailForceRegenCache( GAMESTATE->m_stEdit, GAMESTATE->m_PreferredCourseDifficulty[PLAYER_1] );
+	Trail *pTrail = pCourse->GetTrailForceRegenCache( GAMESTATE->m_stEdit, GAMESTATE->m_cdEdit );
 
 	// cause overlay elements to refresh by changing the course
 	GAMESTATE->m_pCurCourse.Set( pCourse );
@@ -230,7 +230,7 @@ void ScreenOptionsEditCourse::ExportOptions( int iRow, const vector<PlayerNumber
 {
 	OptionRow &row = *m_pRows[iRow];
 	Course *pCourse = GAMESTATE->m_pCurCourse;
-
+	
 	switch( iRow )
 	{
 	case EditCourseRow_Type:
@@ -249,6 +249,7 @@ void ScreenOptionsEditCourse::ExportOptions( int iRow, const vector<PlayerNumber
 		break;
 	}
 	}
+	
 }
 
 void ScreenOptionsEditCourse::ProcessMenuStart( const InputEventPlus &input )

@@ -18,6 +18,7 @@ enum Message
 	Message_CurrentTrailP2Changed,
 	Message_GameplayLeadInChanged,
 	Message_EditStepsTypeChanged,
+	Message_EditCourseDifficulityChanged,
 	Message_EditSourceStepsChanged,
 	Message_EditSourceStepsTypeChanged,
 	Message_PreferredDifficultyP1Changed,

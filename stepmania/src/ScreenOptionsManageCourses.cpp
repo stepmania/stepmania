@@ -20,7 +20,7 @@ static void RefreshTrail()
 	if( pCourse == NULL )
 		return;
 	GAMESTATE->m_pCurCourse.Set( pCourse );
-	Trail *pTrail = pCourse->GetTrail( GAMESTATE->m_stEdit, GAMESTATE->m_PreferredCourseDifficulty[PLAYER_1] );
+	Trail *pTrail = pCourse->GetTrail( GAMESTATE->m_stEdit, GAMESTATE->m_cdEdit );
 	GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
 }
 
@@ -43,7 +43,7 @@ static void SetNextCombination()
 		}
 	}
 
-	StepsTypeAndDifficulty curVal( GAMESTATE->m_stEdit, GAMESTATE->m_PreferredCourseDifficulty[PLAYER_1] );
+	StepsTypeAndDifficulty curVal( GAMESTATE->m_stEdit, GAMESTATE->m_cdEdit );
 	vector<StepsTypeAndDifficulty>::const_iterator iter = find( v.begin(), v.end(), curVal );
 	if( iter == v.end() || ++iter == v.end() )
 		iter = v.begin();
@@ -51,9 +51,15 @@ static void SetNextCombination()
 	curVal = *iter;
 
 	GAMESTATE->m_stEdit.Set( curVal.st );
-	GAMESTATE->m_PreferredCourseDifficulty[PLAYER_1].Set( curVal.cd );
+	GAMESTATE->m_cdEdit.Set( curVal.cd );
 
 	RefreshTrail();
+}
+
+void ScreenOptionsEditCourseSubMenu::Init()
+{
+	m_soundDifficultyChanged.Load( THEME->GetPathS("ScreenEditCourseSubmenu", "difficulty changed") );
+	ScreenOptions::Init();
 }
 
 void ScreenOptionsEditCourseSubMenu::MenuSelect( const InputEventPlus &input )
@@ -61,9 +67,7 @@ void ScreenOptionsEditCourseSubMenu::MenuSelect( const InputEventPlus &input )
 	if( input.type == IET_FIRST_PRESS )
 	{
 		SetNextCombination();
-
-		SCREENMAN->PlayInvalidSound();
-
+		m_soundDifficultyChanged.Play();
 		return;
 	}
 
@@ -107,7 +111,7 @@ static bool ValidateEditCourseName( const RString &sAnswer, RString &sErrorOut )
 	FOREACH_CONST( Course*, v, c )
 	{
 		if( GAMESTATE->m_pCurCourse.Get() == *c )
-			continue;	// don't comepare name against ourself
+			continue;	// don't compare name against ourself
 
 		if( (*c)->GetDisplayFullTitle() == sAnswer )
 		{
@@ -124,7 +128,7 @@ REGISTER_SCREEN_CLASS( ScreenOptionsManageCourses );
 
 void ScreenOptionsManageCourses::Init()
 {
-	ScreenOptions::Init();
+	ScreenOptionsEditCourseSubMenu::Init();
 
 	EDIT_MODE.Load( m_sName,"EditMode" );
 }
@@ -132,7 +136,7 @@ void ScreenOptionsManageCourses::Init()
 void ScreenOptionsManageCourses::BeginScreen()
 {
 	if( GAMESTATE->m_stEdit == STEPS_TYPE_INVALID  ||
-	    GAMESTATE->m_PreferredCourseDifficulty[PLAYER_1] == DIFFICULTY_INVALID )
+	    GAMESTATE->m_cdEdit == DIFFICULTY_INVALID )
 	{
 		SetNextCombination();
 	}

@@ -3,12 +3,17 @@
 
 #include "ScreenOptions.h"
 #include "GameConstantsAndTypes.h"
+#include "RageSound.h"
 
 class Course;
 
 class ScreenOptionsEditCourseSubMenu : public ScreenOptions
 {
+	RageSound m_soundDifficultyChanged;
+	
 public:
+	virtual void Init();
+	
 protected:
 	virtual void MenuSelect( const InputEventPlus &input );
 };

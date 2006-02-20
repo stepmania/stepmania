@@ -282,6 +282,7 @@ public:
 	// Edit stuff
 	//
 	BroadcastOnChange<StepsType> m_stEdit;
+	BroadcastOnChange<CourseDifficulty> m_cdEdit;
 	BroadcastOnChangePtr<Steps> m_pEditSourceSteps;
 	BroadcastOnChange<StepsType> m_stEditSource;
 	BroadcastOnChange<int> m_iEditCourseEntryIndex;
