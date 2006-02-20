@@ -48,6 +48,8 @@ void ScreenOptionsEditCourse::Init()
 	ScreenOptions::Init();
 }
 
+static LocalizedString ENTRY( "OptionTitles", "Entry %d" );
+
 void ScreenOptionsEditCourse::BeginScreen()
 {
 	// save a backup that we'll use if we revert.
@@ -63,7 +65,7 @@ void ScreenOptionsEditCourse::BeginScreen()
 	pHand->m_Def.m_sName = "Type";
 	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 	pHand->m_Def.m_bExportOnChange = true;
-	pHand->m_Def.m_vsChoices.clear();
+	pHand->m_Def.m_bAllowThemeItems = false;
 	FOREACH_CourseType( i )
 		pHand->m_Def.m_vsChoices.push_back( CourseTypeToLocalizedString(i) );
 	vHands.push_back( pHand );
@@ -84,8 +86,9 @@ void ScreenOptionsEditCourse::BeginScreen()
 		int iEntryIndex = ce - pCourse->m_vEntries.begin();
 		pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 		pHand->m_Def.m_bExportOnChange = true;
-		pHand->m_Def.m_sName = ssprintf( "Entry %d", iEntryIndex+1 );
-		pHand->m_Def.m_vsChoices.clear();
+		pHand->m_Def.m_sName = ssprintf( ENTRY.GetValue(), iEntryIndex+1 );
+		pHand->m_Def.m_bAllowThemeItems = false;
+		pHand->m_Def.m_bAllowThemeTitle = false;
 		FOREACH_CONST( Song*, m_vpDisplayedSongs, s )
 			pHand->m_Def.m_vsChoices.push_back( (*s)->GetTranslitFullTitle() );
 		vHands.push_back( pHand );
