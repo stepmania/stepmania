@@ -115,7 +115,7 @@ void MemoryCardDriverThreaded_Windows::GetUSBStorageDevices( vector<UsbStorageDe
 
 		vDevicesOut.push_back( UsbStorageDevice() );
 		UsbStorageDevice &usbd = vDevicesOut.back();
-		usbd.SetOsMountDir( sDrive + "\\" );
+		usbd.SetOsMountDir( sDrive );
 		usbd.sDevice = sDrive;
 		usbd.sVolumeLabel = sVolumeLabel;
 
