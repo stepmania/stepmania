@@ -153,27 +153,27 @@ void ScreenOptionsEditCourse::HandleScreenMessage( const ScreenMessage SM )
 				ScreenOptions::BeginFadingOut();
 				break;
 			case CourseEntryAction_InsertEntry:
-				{
-					if( AreEntriesFull() )
-						return;
-					CourseEntry ce;
-					CourseUtil::MakeDefaultEditCourseEntry( ce );
-					pCourse->m_vEntries.insert( pCourse->m_vEntries.begin() + GetCourseEntryIndexWithFocus(), ce );
-					SCREENMAN->SetNewScreen( this->m_sName ); // reload
-				}
+			{
+				if( AreEntriesFull() )
+					return;
+				CourseEntry ce;
+				CourseUtil::MakeDefaultEditCourseEntry( ce );
+				pCourse->m_vEntries.insert( pCourse->m_vEntries.begin() + GetCourseEntryIndexWithFocus(), ce );
+				SCREENMAN->SetNewScreen( this->m_sName ); // reload
 				break;
+			}
 			case CourseEntryAction_Delete:
+			{
+				if( pCourse->m_vEntries.size() == 1 )
 				{
-					if( pCourse->m_vEntries.size() == 1 )
-					{
-						ScreenPrompt::Prompt( SM_None, CANNOT_DELETE_LAST_ENTRY );
-						return;
-					}
-					pCourse->m_vEntries.erase( pCourse->m_vEntries.begin() + GetCourseEntryIndexWithFocus() );
-					GAMESTATE->m_iEditCourseEntryIndex.Set( GAMESTATE->m_iEditCourseEntryIndex );
-					SCREENMAN->SetNewScreen( this->m_sName ); // reload
+					ScreenPrompt::Prompt( SM_None, CANNOT_DELETE_LAST_ENTRY );
+					return;
 				}
+				pCourse->m_vEntries.erase( pCourse->m_vEntries.begin() + GetCourseEntryIndexWithFocus() );
+				GAMESTATE->m_iEditCourseEntryIndex.Set( GAMESTATE->m_iEditCourseEntryIndex );
+				SCREENMAN->SetNewScreen( this->m_sName ); // reload
 				break;
+			}
 			}
 		}
 	}
@@ -215,14 +215,14 @@ void ScreenOptionsEditCourse::ImportOptions( int iRow, const vector<PlayerNumber
 		row.SetOneSharedSelection( pCourse->GetCourseType() );
 		break;
 	case EditCourseRow_Meter:
-		{
-			int iMeter = pCourse->m_iCustomMeter[DIFFICULTY_MEDIUM];
-			if( iMeter == -1 )
-				row.SetOneSharedSelection( 0 );
-			else
-				row.SetOneSharedSelection( iMeter + 1 - MIN_METER );
-		}
+	{
+		int iMeter = pCourse->m_iCustomMeter[DIFFICULTY_MEDIUM];
+		if( iMeter == -1 )
+			row.SetOneSharedSelection( 0 );
+		else
+			row.SetOneSharedSelection( iMeter + 1 - MIN_METER );
 		break;
+	}
 	}
 }
 
@@ -234,20 +234,20 @@ void ScreenOptionsEditCourse::ExportOptions( int iRow, const vector<PlayerNumber
 	switch( iRow )
 	{
 	case EditCourseRow_Type:
-		{
-			CourseType ct = (CourseType)row.GetOneSharedSelection();
-			pCourse->SetCourseType( ct );
-		}
+	{
+		CourseType ct = (CourseType)row.GetOneSharedSelection();
+		pCourse->SetCourseType( ct );
 		break;
+	}
 	case EditCourseRow_Meter:
-		{
-			int iSel = row.GetOneSharedSelection();
-			if( iSel == 0 )	// "auto"
-				pCourse->m_iCustomMeter[DIFFICULTY_MEDIUM] = -1;
-			else
-				pCourse->m_iCustomMeter[DIFFICULTY_MEDIUM] = iSel - 1 + MIN_METER;
-		}
+	{
+		int iSel = row.GetOneSharedSelection();
+		if( iSel == 0 )	// "auto"
+			pCourse->m_iCustomMeter[DIFFICULTY_MEDIUM] = -1;
+		else
+			pCourse->m_iCustomMeter[DIFFICULTY_MEDIUM] = iSel - 1 + MIN_METER;
 		break;
+	}
 	}
 }
 
