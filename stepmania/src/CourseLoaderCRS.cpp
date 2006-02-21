@@ -142,7 +142,6 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			else if( sParams[1] == "*" )
 			{
 				//new_entry.bSecret = true;
-				new_entry.iChooseIndex = -1;
 			}
 			else if( sParams[1].Right(1) == "*" )
 			{
