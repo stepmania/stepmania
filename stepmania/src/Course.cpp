@@ -710,7 +710,7 @@ void Course::Invalidate( Song *pStaleSong )
 	}
 }
 
-void Course::RegenerateNonFixedTrails()
+void Course::RegenerateNonFixedTrails() const
 {
 	// Only need to regen Trails if the Course has a random entry.
 	// We can create these Trails on demand because we don't 

@@ -178,7 +178,7 @@ public:
 	void UpdateCourseStats( StepsType st );
 
 	/* Call to regenerate Trails with random entries */
-	void RegenerateNonFixedTrails();
+	void RegenerateNonFixedTrails() const;
 
 	/* Call when a Song or its Steps are deleted/changed. */
 	void Invalidate( Song *pStaleSong );
