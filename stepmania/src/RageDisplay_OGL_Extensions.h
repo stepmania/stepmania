@@ -9,6 +9,7 @@ typedef bool (APIENTRY * PWSWAPINTERVALEXTPROC) (int interval);
 class LowLevelWindow;
 struct GLExt_t
 {
+	bool m_bARB_texture_env_combine;
 	bool m_bEXT_texture_env_combine;
 	bool m_bGL_EXT_bgra;
 

@@ -1419,7 +1419,7 @@ void RageDisplay_OGL::SetTextureModeModulate()
 
 void RageDisplay_OGL::SetTextureModeGlow()
 {
-	if( !GLExt.m_bEXT_texture_env_combine )
+	if( !GLExt.m_bARB_texture_env_combine && !GLExt.m_bEXT_texture_env_combine )
 	{
 		/* This is changing blend state, instead of texture state, which isn't
 		 * great, but it's better than doing nothing. */

@@ -82,6 +82,7 @@ void GLExt_t::Load( LowLevelWindow *pWind )
 
 	GetGLExtensions( g_glExts );
 
+	m_bARB_texture_env_combine = HasExtension("GL_ARB_texture_env_combine");
 	m_bEXT_texture_env_combine = HasExtension("GL_EXT_texture_env_combine");
 	m_bGL_EXT_bgra = HasExtension("GL_EXT_bgra");
 
