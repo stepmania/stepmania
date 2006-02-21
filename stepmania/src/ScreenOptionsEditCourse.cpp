@@ -98,7 +98,7 @@ void ScreenOptionsEditCourse::BeginScreen()
 	pHand = OptionRowHandlerUtil::MakeNull();
 	pHand->m_Def.m_sName = "";
 	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
-	pHand->m_Def.m_bExportOnChange = true;
+	pHand->m_Def.m_bExportOnChange = false;
 	pHand->m_Def.m_vsChoices.push_back( "Insert Entry" );
 	vHands.push_back( pHand );
 
@@ -192,7 +192,7 @@ void ScreenOptionsEditCourse::AfterChangeRow( PlayerNumber pn )
 void ScreenOptionsEditCourse::AfterChangeValueInRow( int iRow, PlayerNumber pn )
 {
 	ScreenOptions::AfterChangeValueInRow( iRow, pn );
-	
+
 	Course *pCourse = GAMESTATE->m_pCurCourse;
 	
 	// Regenerate Trails so that the new values propagate
@@ -207,6 +207,9 @@ void ScreenOptionsEditCourse::AfterChangeValueInRow( int iRow, PlayerNumber pn )
 void ScreenOptionsEditCourse::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
 	OptionRow &row = *m_pRows[iRow];
+	
+	if( row.GetRowType() == OptionRow::RowType_Exit )
+		return;
 	Course *pCourse = GAMESTATE->m_pCurCourse;
 
 	switch( iRow )
@@ -227,7 +230,7 @@ void ScreenOptionsEditCourse::ImportOptions( int iRow, const vector<PlayerNumber
 
 	const CourseEntry& ce = pCourse->m_vEntries[iRow - NUM_EditCourseRow];
 	
-	if( ce.IsRandomSong() )
+	if( !ce.IsFixedSong() )
 	{
 		row.SetOneSharedSelection( 0 );
 	}
@@ -235,7 +238,7 @@ void ScreenOptionsEditCourse::ImportOptions( int iRow, const vector<PlayerNumber
 	{
 		vector<Song *>::const_iterator iter = find( m_vpDisplayedSongs.begin(), m_vpDisplayedSongs.end(), ce.pSong );
 		
-		if( iter == m_vpDisplayedSongs.end() )
+		if( iter == m_vpDisplayedSongs.end() ) // This song isn't being displayed, set to "RANDOM"
 			row.SetOneSharedSelection( 0 );
 		else
 			row.SetOneSharedSelection( iter - m_vpDisplayedSongs.begin() + 1 );
@@ -245,27 +248,36 @@ void ScreenOptionsEditCourse::ImportOptions( int iRow, const vector<PlayerNumber
 void ScreenOptionsEditCourse::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
 	OptionRow &row = *m_pRows[iRow];
-	Course *pCourse = GAMESTATE->m_pCurCourse;
 	
+	if( row.GetRowType() == OptionRow::RowType_Exit )
+		return;
+	Course *pCourse = GAMESTATE->m_pCurCourse;
+	int iSel = row.GetOneSharedSelection();
+
 	switch( iRow )
 	{
 	case EditCourseRow_Type:
 	{
-		CourseType ct = (CourseType)row.GetOneSharedSelection();
+		CourseType ct = (CourseType)iSel;
 		pCourse->SetCourseType( ct );
-		break;
+		return;
 	}
 	case EditCourseRow_Meter:
 	{
-		int iSel = row.GetOneSharedSelection();
 		if( iSel == 0 )	// "auto"
 			pCourse->m_iCustomMeter[GAMESTATE->m_cdEdit] = -1;
 		else
 			pCourse->m_iCustomMeter[GAMESTATE->m_cdEdit] = iSel - 1 + MIN_METER;
-		break;
+		return;
 	}
 	}
 	
+	CourseEntry& ce = pCourse->m_vEntries[iRow - NUM_EditCourseRow];
+
+	if( iSel == 0 )
+		ce.pSong = NULL;
+	else
+		ce.pSong = m_vpDisplayedSongs[iSel - 1];
 }
 
 void ScreenOptionsEditCourse::ProcessMenuStart( const InputEventPlus &input )
@@ -277,10 +289,9 @@ void ScreenOptionsEditCourse::ProcessMenuStart( const InputEventPlus &input )
 	Course *pCourse = GAMESTATE->m_pCurCourse;
 
 	if( iCurRow < NUM_EditCourseRow )
-	{
-		// ignore
-	}
-	else if( iCurRow == (int)m_pRows.size()-2 )	// "create entry"
+		return;
+	
+	if( iCurRow == (int)m_pRows.size()-2 )	// "create entry"
 	{
 		if( AreEntriesFull() )
 			return;
