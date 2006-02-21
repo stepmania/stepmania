@@ -525,16 +525,15 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 				continue;
 
 			CourseSortSongs( e->songSort, vpPossibleSongs, rnd );
-
-			if( e->iChooseIndex < int(vpPossibleSongs.size()) )
-			{
+			
+			ASSERT( e->iChooseIndex >= -1 );
+			if( e->iChooseIndex == -1 )
+				pResolvedSong = vpPossibleSongs[RandomInt(0, vpPossibleSongs.size()-1)];
+			else if( e->iChooseIndex < int(vpPossibleSongs.size()) )
 				pResolvedSong = vpPossibleSongs[e->iChooseIndex];
-				pResolvedSong->GetSteps( vpPossibleSteps, st, e->baseDifficulty, e->iLowMeter, e->iHighMeter );
-			}
 			else
-			{
 				continue;
-			}
+			pResolvedSong->GetSteps( vpPossibleSteps, st, e->baseDifficulty, e->iLowMeter, e->iHighMeter );
 		}
 
 		ASSERT( !vpPossibleSteps.empty() );	// if no steps are playable, this shouldn't be a possible song
