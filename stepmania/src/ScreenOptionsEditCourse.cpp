@@ -255,6 +255,9 @@ void ScreenOptionsEditCourse::ExportOptions( int iRow, const vector<PlayerNumber
 	if( row.GetRowType() == OptionRow::RowType_Exit )
 		return;
 	Course *pCourse = GAMESTATE->m_pCurCourse;
+	if( iRow == (int)pCourse->m_vEntries.size() + NUM_EditCourseRow )
+		return; // "Insert Entry"
+
 	int iSel = row.GetOneSharedSelection();
 
 	switch( iRow )
