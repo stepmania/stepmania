@@ -212,6 +212,9 @@ void ScreenOptionsEditCourse::ImportOptions( int iRow, const vector<PlayerNumber
 		return;
 	Course *pCourse = GAMESTATE->m_pCurCourse;
 
+	if( iRow == (int)pCourse->m_vEntries.size() + NUM_EditCourseRow )
+		return; // "Insert Entry"
+	
 	switch( iRow )
 	{
 	case EditCourseRow_Type:
