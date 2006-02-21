@@ -513,10 +513,8 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 
 			CourseSortSongs( e->songSort, vpPossibleSongs, rnd );
 			
-			ASSERT( e->iChooseIndex >= -1 );
-			if( e->iChooseIndex == -1 )
-				pResolvedSong = vpPossibleSongs[RandomInt(0, vpPossibleSongs.size()-1)];
-			else if( e->iChooseIndex < int(vpPossibleSongs.size()) )
+			ASSERT( e->iChooseIndex >= 0 );
+			if( e->iChooseIndex < int(vpPossibleSongs.size()) )
 				pResolvedSong = vpPossibleSongs[e->iChooseIndex];
 			else
 				continue;
@@ -674,7 +672,7 @@ bool Course::AllSongsAreFixed() const
 {
 	FOREACH_CONST( CourseEntry, m_vEntries, e )
 	{
-		if( e->pSong == NULL )
+		if( !e->IsFixedSong() )
 			return false;
 	}
 	return true;

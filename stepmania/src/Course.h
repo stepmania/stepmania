@@ -89,12 +89,7 @@ public:
 		fGainSeconds = 0;
 	}
 
-	bool IsRandomSong() const
-	{
-		return
-			iChooseIndex == -1  &&
-			pSong == NULL;
-	}
+	bool IsFixedSong() const { return pSong != NULL; }
 
 	RString GetTextDescription() const;
 	int GetNumModChanges() const;
