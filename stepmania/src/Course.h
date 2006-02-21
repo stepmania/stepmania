@@ -60,15 +60,15 @@ public:
 	Song* pSong;			// don't filter if NULL
 	RString sSongGroup;		// don't filter if empty
 	Difficulty baseDifficulty;	// don't filter if DIFFICULTY_INVALID
-	bool bNoDifficult;			// if true, CourseDifficulty doesn't affect this entry
+	bool bNoDifficult;		// if true, CourseDifficulty doesn't affect this entry
 	int iLowMeter;			// don't filter if -1
 	int iHighMeter;			// don't filter if -1
 	
-	SongSort songSort;	// sort by this after filtering
-	int iChooseIndex;	// 
+	SongSort songSort;		// sort by this after filtering
+	int iChooseIndex;		// 
 
 	RString sModifiers;		// set player and song options using these
-	AttackArray attacks;	// timed sModifiers
+	AttackArray attacks;		// timed sModifiers
 	float fGainSeconds;		// time gained back at the beginning of the song.  LifeMeterTime only.
 
 	CourseEntry()
@@ -119,8 +119,8 @@ public:
 
 	bool		m_bRepeat;	// repeat after last song?  "Endless"
 	bool		m_bShuffle;	// play the songs in a random order
-	int			m_iLives;	// -1 means use bar life meter
-	int			m_iCustomMeter[NUM_Difficulty];	// -1 = no meter specified
+	int		m_iLives;	// -1 means use bar life meter
+	int		m_iCustomMeter[NUM_Difficulty];	// -1 = no meter specified
 	bool		m_bSortByMeter;
 
 	vector<CourseEntry> m_vEntries;
