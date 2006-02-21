@@ -115,7 +115,7 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 			Course* pCourse = vpCourses[i];
 			// skip non-fixed courses.  We don't have any stable data for them other than 
 			// the title.
-			if( !pCourse->IsFixed() )
+			if( !pCourse->AllSongsAreFixed() )
 				continue;
 			if( UNLOCKMAN->CourseIsLocked(pCourse) )
 				continue;
@@ -203,7 +203,7 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 
 			// skip non-fixed courses.  We don't have any stable data for them other than 
 			// the title.
-			if( !pCourse->IsFixed() )
+			if( !pCourse->AllSongsAreFixed() )
 				continue;
 			if( UNLOCKMAN->CourseIsLocked(pCourse) )
 				continue;

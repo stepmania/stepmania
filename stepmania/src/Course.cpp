@@ -277,20 +277,7 @@ Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 	//
 	if( m_iTrailCacheSeed != GAMESTATE->m_iStageSeed )
 	{
-		/* If we have any random entries (so that the seed matters), invalidate the cache. */
-		bool bHaveRandom = false;
-		FOREACH_CONST( CourseEntry, m_vEntries, e )
-		{
-			if( e->IsRandomSong() )
-			{
-				bHaveRandom = true;
-				break;
-			}
-		}
-		
-		if( bHaveRandom )
-			m_TrailCache.clear();
-
+		RegenerateNonFixedTrails();
 		m_iTrailCacheSeed = GAMESTATE->m_iStageSeed;
 	}
 
@@ -729,7 +716,7 @@ void Course::RegenerateNonFixedTrails()
 	// We can create these Trails on demand because we don't 
 	// calculate RadarValues for Trails with one or more non-fixed 
 	// entry.
-	if( !IsFixed() )
+	if( !AllSongsAreFixed() )
 		m_TrailCache.clear();
 }
 
@@ -746,14 +733,14 @@ RageColor Course::GetColor() const
 		else									return SORT_LEVEL5_COLOR;
 
 	case PrefsManager::COURSE_SORT_METER:
-		if( !IsFixed() )						return SORT_LEVEL1_COLOR;
+		if( !AllSongsAreFixed() )						return SORT_LEVEL1_COLOR;
 		else if( iMeter > 9 )					return SORT_LEVEL2_COLOR;
 		else if( iMeter >= 7 )					return SORT_LEVEL3_COLOR;
 		else if( iMeter >= 5 )					return SORT_LEVEL4_COLOR;
 		else 									return SORT_LEVEL5_COLOR;
 
 	case PrefsManager::COURSE_SORT_METER_SUM:
-		if( !IsFixed() )						return SORT_LEVEL1_COLOR;
+		if( !AllSongsAreFixed() )						return SORT_LEVEL1_COLOR;
 		if( m_SortOrder_TotalDifficulty >= 40 )	return SORT_LEVEL2_COLOR;
 		if( m_SortOrder_TotalDifficulty >= 30 )	return SORT_LEVEL3_COLOR;
 		if( m_SortOrder_TotalDifficulty >= 20 )	return SORT_LEVEL4_COLOR;
@@ -770,21 +757,9 @@ RageColor Course::GetColor() const
 	}
 }
 
-bool Course::IsFixed() const
-{
-	for(unsigned i = 0; i < m_vEntries.size(); i++)
-	{
-		if( m_vEntries[i].pSong == NULL )
-			return false;
-	}
-
-	return true;
-}
-
-
 bool Course::GetTotalSeconds( StepsType st, float& fSecondsOut ) const
 {
-	if( !IsFixed() )
+	if( !AllSongsAreFixed() )
 		return false;
 
 	Trail* pTrail = GetTrail( st, DIFFICULTY_MEDIUM );
@@ -892,7 +867,7 @@ void Course::CalculateRadarValues()
 		{
 			// For courses that aren't fixed, the radar values are meaningless.
 			// Makes non-fixed courses have unknown radar values.
-			if( IsFixed() )
+			if( AllSongsAreFixed() )
 			{
 				Trail *pTrail = GetTrail( st, cd );
 				if( pTrail == NULL )

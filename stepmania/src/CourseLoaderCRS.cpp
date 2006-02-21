@@ -142,6 +142,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			else if( sParams[1] == "*" )
 			{
 				//new_entry.bSecret = true;
+				new_entry.iChooseIndex = -1;
 			}
 			else if( sParams[1].Right(1) == "*" )
 			{
@@ -164,7 +165,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				if( !SONGMAN->DoesSongGroupExist(new_entry.sSongGroup) )
 				{
 					/* XXX: We need a place to put "user warnings".  This is too loud for info.txt--
-				     * it obscures important warnings--and regular users never look there, anyway. */
+					 * it obscures important warnings--and regular users never look there, anyway. */
 					LOG->Trace( "Course file '%s' random_within_group entry '%s' specifies a group that doesn't exist. "
 								"This entry will be ignored.",
 								sPath.c_str(), sSong.c_str());

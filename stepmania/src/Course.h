@@ -165,8 +165,6 @@ public:
 	void SetCourseType( CourseType ct );
 	PlayMode GetPlayMode() const;
 
-	bool IsFixed() const;
-
 	bool ShowInDemonstrationAndRanking() const;
 
 	void RevertFromDisk();

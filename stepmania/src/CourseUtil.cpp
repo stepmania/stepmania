@@ -72,7 +72,7 @@ static bool MovePlayersBestToEnd( const Course* pCourse1, const Course* pCourse2
 
 static bool CompareRandom( const Course* pCourse1, const Course* pCourse2 )
 {
-	return ( pCourse1->IsFixed() && !pCourse2->IsFixed() );
+	return ( pCourse1->AllSongsAreFixed() && !pCourse2->AllSongsAreFixed() );
 }
 
 static bool CompareCoursePointersByRanking( const Course* pCourse1, const Course* pCourse2 )
