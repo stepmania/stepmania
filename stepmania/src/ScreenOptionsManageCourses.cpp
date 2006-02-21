@@ -52,6 +52,9 @@ static void SetNextCombination()
 
 	GAMESTATE->m_stEdit.Set( curVal.st );
 	GAMESTATE->m_cdEdit.Set( curVal.cd );
+	// XXX Testing.
+	SCREENMAN->SystemMessage( ssprintf("%s, %s", GAMEMAN->StepsTypeToString(curVal.st).c_str(),
+					   CourseDifficultyToString(curVal.cd).c_str()) );
 
 	RefreshTrail();
 }
@@ -131,6 +134,7 @@ void ScreenOptionsManageCourses::Init()
 	ScreenOptionsEditCourseSubMenu::Init();
 
 	EDIT_MODE.Load( m_sName,"EditMode" );
+	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 }
 
 void ScreenOptionsManageCourses::BeginScreen()
@@ -322,7 +326,7 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 void ScreenOptionsManageCourses::AfterChangeRow( PlayerNumber pn )
 {
 	Course *pCourse = GetCourseWithFocus();
-	Trail *pTrail = pCourse ? pCourse->GetTrail( STEPS_TYPE_DANCE_SINGLE ) : NULL;
+	Trail *pTrail = pCourse ? pCourse->GetTrail( GAMESTATE->m_stEdit, GAMESTATE->m_cdEdit ) : NULL;
 	
 	GAMESTATE->m_pCurCourse.Set( pCourse );
 	GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber].Set( pTrail );
