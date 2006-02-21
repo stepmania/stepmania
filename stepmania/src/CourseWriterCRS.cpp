@@ -128,8 +128,8 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 		f.Write( ":" );
 
 		RString sModifiers = entry.sModifiers;
-		bool bDefaultSecret = entry.IsRandomSong();
-		if( bDefaultSecret != entry.bSecret )
+
+		if( entry.bSecret )
 		{
 			if( sModifiers != "" )
 				sModifiers += ",";
