@@ -23,7 +23,7 @@ static const char *MessageNames[] = {
 	"CurrentTrailP2Changed",
 	"GameplayLeadInChanged",
 	"EditStepsTypeChanged",
-	"EditCourseDifficulityChanged",
+	"EditCourseDifficultyChanged",
 	"EditSourceStepsChanged",
 	"EditSourceStepsTypeChanged",
 	"PreferredDifficutyP1Changed",
