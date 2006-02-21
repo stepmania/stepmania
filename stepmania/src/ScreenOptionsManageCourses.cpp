@@ -168,8 +168,13 @@ void ScreenOptionsManageCourses::BeginScreen()
 		ASSERT(0);
 	case EditMode_Practice:
 	case EditMode_Home:
-		// strip out non-edits
-		RemoveIf( m_vpCourses, not1(mem_fun(&Course::IsAnEdit)) );
+		// Strip out non-edits.
+		// VC6 is missing mem_fun for const members.  Lame.  Work around by not using mem_fun. */
+		for( int i=m_vpCourses.size()-1; i>=0; i-- )
+		{
+			if( m_vpCourses[i]->IsAnEdit() )
+				m_vpCourses.erase( m_vpCourses.begin()+i );
+		}
 		break;
 	case EditMode_Full:
 		break;
