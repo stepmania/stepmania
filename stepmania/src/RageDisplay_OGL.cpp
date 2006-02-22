@@ -1988,7 +1988,9 @@ bool RageDisplay_OGL::SupportsTextureFormat( PixelFormat pixfmt, bool bRealtime 
 
 bool RageDisplay_OGL::SupportsPerVertexMatrixScale()
 {
-	return g_bTextureMatrixShader != 0;
+	// Intel i915 on OSX 10.4.4 supports vertex programs but not hardware vertex buffers.
+	// Our software vertex rendering doesn't support vertex programs.
+	return GLExt.glGenBuffersARB  &&  g_bTextureMatrixShader != 0;
 }
 
 void RageDisplay_OGL::SetSphereEnvironmentMapping( bool b )
