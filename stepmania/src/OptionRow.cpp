@@ -183,6 +183,14 @@ void OptionRow::ChoicesChanged()
 {
 	ASSERT( !m_pHand->m_Def.m_vsChoices.empty() );
 
+	// Remove the NextRow marker before reloading choices
+	if( m_pHand->m_Def.m_vsChoices[0] == NEXT_ROW_NAME )
+	{
+		m_pHand->m_Def.m_vsChoices.erase( m_pHand->m_Def.m_vsChoices.begin() );
+		FOREACH_PlayerNumber( p )
+			m_vbSelected[p].erase( m_vbSelected[p].begin() );
+	}
+
 	FOREACH_PlayerNumber( p )
 	{
 		vector<bool> &vbSelected = m_vbSelected[p];
