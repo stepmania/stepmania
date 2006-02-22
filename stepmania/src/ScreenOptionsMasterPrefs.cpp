@@ -510,6 +510,26 @@ static void DisplayAspectRatio( int &sel, bool ToSel, const ConfOption *pConfOpt
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
+/* Simpler DisplayAspectRatio setting, which only offers "on" and "off".  "On" can be 16:9
+ * or 16:10. */
+static void WideScreen16_10( int &sel, bool ToSel, const ConfOption *pConfOption )
+{
+	IPreference *pPref = IPreference::GetPreferenceByName( "DisplayAspectRatio" );
+	ASSERT_M( pPref != NULL, pConfOption->name );
+
+	const float mapping[] = { 4/3.0f, 16/10.0f };
+	MoveMap( sel, *pPref, ToSel, mapping, ARRAYSIZE(mapping) );
+}
+
+static void WideScreen16_9( int &sel, bool ToSel, const ConfOption *pConfOption )
+{
+	IPreference *pPref = IPreference::GetPreferenceByName( "DisplayAspectRatio" );
+	ASSERT_M( pPref != NULL, pConfOption->name );
+
+	const float mapping[] = { 4/3.0f, 16/9.0f };
+	MoveMap( sel, *pPref, ToSel, mapping, ARRAYSIZE(mapping) );
+}
+
 /* Sound options */
 
 static void SoundVolume( int &sel, bool ToSel, const ConfOption *pConfOption )
@@ -615,6 +635,10 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "DisplayResolution",		DisplayResolutionM, DisplayResolutionChoices ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS | OPT_APPLY_ASPECT_RATIO;
 	ADD( ConfOption( "DisplayAspectRatio",		DisplayAspectRatio,	"|3:4","|1:1","|4:3","|16:10","|16:9","|8:3" ) );
+	g_ConfOptions.back().m_iEffects = OPT_APPLY_ASPECT_RATIO;
+	ADD( ConfOption( "WideScreen16_10",		WideScreen16_10,	"Off", "On" ) );
+	g_ConfOptions.back().m_iEffects = OPT_APPLY_ASPECT_RATIO;
+	ADD( ConfOption( "WideScreen16_9",		WideScreen16_9,		"Off", "On" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_ASPECT_RATIO;
 	ADD( ConfOption( "DisplayColorDepth",		DisplayColorDepth,	"16bit","32bit" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
