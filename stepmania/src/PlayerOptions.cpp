@@ -192,7 +192,9 @@ void PlayerOptions::GetMods( vector<RString> &AddTo ) const
 		AddPart( AddTo, m_fSkew, "Incoming" );
 	}
 
-	if( !m_sNoteSkin.empty() )
+	// Don't display a string if using the default NoteSkin.
+	// TODO: The default NoteSkin is not necessarily called "default".
+	if( !m_sNoteSkin.empty() && m_sNoteSkin != "default" )
 	{
 		RString s = m_sNoteSkin;
 		Capitalize( s );
