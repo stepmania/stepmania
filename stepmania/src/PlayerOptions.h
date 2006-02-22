@@ -134,7 +134,7 @@ public:
 	bool		m_bTransforms[NUM_TRANSFORMS];
 	ScoreDisplay m_ScoreDisplay;
 
-	RString		m_sNoteSkin;
+	RString		m_sNoteSkin;	// "" means "no change"
 
 	void NextAccel();
 	void NextEffect();

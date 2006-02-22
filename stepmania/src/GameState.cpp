@@ -1016,6 +1016,8 @@ void GameState::GetDefaultPlayerOptions( PlayerOptions &po )
 	po.Init();
 	po.FromString( PREFSMAN->m_sDefaultModifiers );
 	po.FromString( CommonMetrics::DEFAULT_MODIFIERS );
+	if( po.m_sNoteSkin.empty() )
+		po.m_sNoteSkin = "default";
 }
 
 void GameState::GetDefaultSongOptions( SongOptions &so )
@@ -1106,7 +1108,8 @@ void GameState::GetAllUsedNoteSkins( vector<RString> &out ) const
 			{
 				PlayerOptions po;
 				po.FromString( e->Modifiers );
-				out.push_back( po.m_sNoteSkin );
+				if( !po.m_sNoteSkin.empty() )
+					out.push_back( po.m_sNoteSkin );
 			}
 		}
 	}

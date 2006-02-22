@@ -36,7 +36,7 @@ void PlayerOptions::Init()
 	ZERO( m_bTurns );
 	ZERO( m_bTransforms );
 	m_ScoreDisplay = SCORING_ADD;
-	m_sNoteSkin = "default";
+	m_sNoteSkin = "";
 }
 
 void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
@@ -192,7 +192,7 @@ void PlayerOptions::GetMods( vector<RString> &AddTo ) const
 		AddPart( AddTo, m_fSkew, "Incoming" );
 	}
 
-	if( !m_sNoteSkin.empty()  &&  m_sNoteSkin.CompareNoCase("default")!=0 )
+	if( !m_sNoteSkin.empty() )
 	{
 		RString s = m_sNoteSkin;
 		Capitalize( s );
@@ -333,7 +333,7 @@ void PlayerOptions::FromString( const RString &sOptions, bool bWarnOnInvalid )
 		else if( sBit == "hallway" )		{ m_bSetTiltOrSkew = true; m_fSkew = 0;		m_fPerspectiveTilt = -level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
 		else if( sBit == "distant" )		{ m_bSetTiltOrSkew = true; m_fSkew = 0;		m_fPerspectiveTilt = +level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
 		else if( NOTESKIN && NOTESKIN->DoesNoteSkinExist(sBit) )	m_sNoteSkin = sBit;
-		else if( sBit == "noteskin" && !on ) /* "no noteskin" */	m_sNoteSkin = "default";
+		else if( sBit == "noteskin" && !on ) /* "no noteskin" */	m_sNoteSkin = "default";	// TODO: The default NoteSkin isn't necessarily "default"
 		else if( sBit == "randomspeed" ) 	SET_FLOAT( fRandomSpeed )
 		else if( sBit == "addscore" )		m_ScoreDisplay = SCORING_ADD;
 		else if( sBit == "subtractscore" )	m_ScoreDisplay = SCORING_SUBTRACT;
