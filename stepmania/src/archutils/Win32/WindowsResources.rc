@@ -89,26 +89,28 @@ BEGIN
                     WS_VSCROLL
 END
 
-IDD_REPORT_CRASH DIALOGEX 0, 0, 332, 83
+IDD_REPORT_CRASH DIALOGEX 0, 0, 287, 117
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | DS_CENTERMOUSE | WS_POPUP | 
     WS_CAPTION
+CAPTION "Program Crash"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    PUSHBUTTON      "&View error report",IDC_CRASH_SAVE,47,64,94,15
-    PUSHBUTTON      "&Report the problem",IDC_BUTTON_AUTO_REPORT,143,64,89,
-                    15
+    PUSHBUTTON      "&Send Error Report",IDC_BUTTON_AUTO_REPORT,132,98,89,15
+    PUSHBUTTON      "&View Error Report",IDC_CRASH_SAVE,6,98,86,15
     CONTROL         "",IDC_PROGRESS,"msctls_progress32",NOT WS_VISIBLE | 
-                    WS_BORDER,143,64,89,15
-    PUSHBUTTON      "&Close",IDC_BUTTON_CLOSE,234,64,50,15
-    CTEXT           "A crash has occurred.  Would you like to automatically report the problem and check for updates?",
-                    IDC_MAIN_TEXT,6,41,322,8
-    CONTROL         "",IDC_STATIC,"Static",SS_WHITERECT,0,0,332,35
+                    WS_BORDER,132,98,89,15
+    PUSHBUTTON      "&Don't Send",IDC_BUTTON_CLOSE,224,98,59,15
+    LTEXT           "Please choose Send Error Report to check for updates.",
+                    IDC_MAIN_TEXT,6,63,258,18
+    CONTROL         "",IDC_STATIC,"Static",SS_WHITERECT,0,0,287,35
     LTEXT           "Program Crash",IDC_STATIC_HEADER_TEXT,5,5,249,23
-    ICON            IDI_ICON,IDC_STATIC_ICON,296,6,20,20
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDFRAME,0,34,332,1
-    EDITTEXT        IDC_RESULT_ID,6,71,27,12,ES_AUTOHSCROLL | ES_READONLY | 
+    ICON            IDI_ICON,IDC_STATIC_ICON,259,6,21,20
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDFRAME,0,34,287,1
+    EDITTEXT        IDC_RESULT_ID,98,101,27,12,ES_AUTOHSCROLL | ES_READONLY | 
                     NOT WS_VISIBLE | NOT WS_BORDER | NOT WS_TABSTOP,
                     WS_EX_RIGHT
+    LTEXT           "The program has encountered an error and has been closed.  We have created an error report that is confidential and anonymous.",
+                    IDC_STATIC,6,39,265,24
 END
 
 
@@ -146,9 +148,9 @@ BEGIN
 
     IDD_REPORT_CRASH, DIALOG
     BEGIN
-        RIGHTMARGIN, 328
+        RIGHTMARGIN, 283
         VERTGUIDE, 6
-        BOTTOMMARGIN, 79
+        BOTTOMMARGIN, 113
     END
 END
 #endif    // APSTUDIO_INVOKED
