@@ -7,6 +7,7 @@
 #include "smpackage.h"
 #include "EnterComment.h"
 #include "archutils/Win32/DialogUtil.h"
+#include ".\entercomment.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -21,6 +22,7 @@ static char THIS_FILE[] = __FILE__;
 EnterComment::EnterComment(CWnd* pParent /*=NULL*/)
 	: CDialog(EnterComment::IDD, pParent)
 	, m_bDontAsk(FALSE)
+	, m_bShowAComment(FALSE)
 {
 	//{{AFX_DATA_INIT(EnterComment)
 		// NOTE: the ClassWizard will add member initialization here
@@ -35,6 +37,7 @@ void EnterComment::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT, m_edit);
 	//}}AFX_DATA_MAP
 	DDX_Check(pDX, IDC_DONTASK, m_bDontAsk);
+	DDX_Check(pDX, IDC_SHOW_A_COMMENT, m_bShowAComment);
 }
 
 BOOL EnterComment::OnInitDialog() 
@@ -44,6 +47,8 @@ BOOL EnterComment::OnInitDialog()
 	// TODO: Add extra initialization here
 	DialogUtil::LocalizeDialogAndContents( *this );
 
+	OnBnClickedShowAComment();
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -51,6 +56,7 @@ BOOL EnterComment::OnInitDialog()
 BEGIN_MESSAGE_MAP(EnterComment, CDialog)
 	//{{AFX_MSG_MAP(EnterComment)
 	//}}AFX_MSG_MAP
+	ON_BN_CLICKED(IDC_SHOW_A_COMMENT, OnBnClickedShowAComment)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -60,9 +66,20 @@ void EnterComment::OnOK()
 {
 	// TODO: Add extra validation here
 
-	m_edit.GetWindowText( m_sEnteredComment );
+	UpdateData( TRUE );
+
+	if( m_bShowAComment )
+		m_edit.GetWindowText( m_sEnteredComment );
 
 	CDialog::OnOK();
+}
+
+void EnterComment::OnBnClickedShowAComment()
+{
+	UpdateData( TRUE );
+
+	// TODO: Add your control notification handler code here
+	GetDlgItem( IDC_EDIT )->EnableWindow( m_bShowAComment );
 }
 
 /*

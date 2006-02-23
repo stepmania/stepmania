@@ -44,6 +44,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	BOOL m_bDontAsk;
+	BOOL m_bShowAComment;
+	afx_msg void OnBnClickedShowAComment();
 };
 
 //{{AFX_INSERT_LOCATION}}
