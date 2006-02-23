@@ -631,7 +631,7 @@ public:
 	~CrashDialog();
 
 protected:
-	virtual bool HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam );
+	virtual BOOL HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam );
 
 private:
 	void SetDialogInitial();
@@ -665,7 +665,7 @@ void CrashDialog::SetDialogInitial()
 	ShowWindow( GetDlgItem(hDlg, IDC_BUTTON_AUTO_REPORT), true );
 }
 
-bool CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
+BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 {
 	HWND hDlg = GetHwnd();
 
@@ -675,6 +675,27 @@ bool CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 		SetDialogInitial();
 		DialogUtil::SetHeaderFont( hDlg, IDC_STATIC_HEADER_TEXT );
 		return TRUE;
+
+	case WM_CTLCOLORSTATIC:
+		{
+			HDC hdc = (HDC)wParam;
+			HWND hwndStatic = (HWND)lParam;
+			HBRUSH hbr = NULL;
+
+			// TODO:  Change any attributes of the DC here
+			switch( GetDlgCtrlID(hwndStatic) )
+			{
+			case IDC_STATIC_HEADER_TEXT:
+			case IDC_STATIC_ICON:
+				hbr = (HBRUSH)::GetStockObject(WHITE_BRUSH); 
+				SetBkMode( hdc, OPAQUE );
+				SetBkColor( hdc, RGB(255,255,255) );
+				break;
+			}
+
+			// TODO:  Return a different brush if the default is not desired
+			return (BOOL)hbr;
+		}
 
 	case WM_COMMAND:
 		switch(LOWORD(wParam))
@@ -741,67 +762,67 @@ bool CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 		}
 		break;
 	case WM_TIMER:
-	{
-		if( m_pPost == NULL )
-			break;
-
-		float fProgress = m_pPost->GetProgress();
-		SendDlgItemMessage( hDlg, IDC_PROGRESS, PBM_SETPOS, int(fProgress*100), 0 );
-
-		if( m_pPost->IsFinished() )
 		{
-			KillTimer( hDlg, 0 );
+			if( m_pPost == NULL )
+				break;
 
-			/* Grab the result, which is the data output from the HTTP request.  It's
-			 * simple XML. */
-			RString sResult = m_pPost->GetResult();
-			RString sError = m_pPost->GetError();
-			if( sError.empty() && sResult.empty() )
-				sError = "No data received";
+			float fProgress = m_pPost->GetProgress();
+			SendDlgItemMessage( hDlg, IDC_PROGRESS, PBM_SETPOS, int(fProgress*100), 0 );
 
-			SAFE_DELETE( m_pPost );
-
-			XNode xml;
-			if( sError.empty() )
+			if( m_pPost->IsFinished() )
 			{
-				PARSEINFO pi;
-				xml.Load( sResult, &pi );
-				if( pi.error_occur )
+				KillTimer( hDlg, 0 );
+
+				/* Grab the result, which is the data output from the HTTP request.  It's
+				* simple XML. */
+				RString sResult = m_pPost->GetResult();
+				RString sError = m_pPost->GetError();
+				if( sError.empty() && sResult.empty() )
+					sError = "No data received";
+
+				SAFE_DELETE( m_pPost );
+
+				XNode xml;
+				if( sError.empty() )
 				{
-					sError = ssprintf( "Error parsing response: %s", pi.error_string.c_str() );
-					xml.Clear();
+					PARSEINFO pi;
+					xml.Load( sResult, &pi );
+					if( pi.error_occur )
+					{
+						sError = ssprintf( "Error parsing response: %s", pi.error_string.c_str() );
+						xml.Clear();
+					}
 				}
-			}
 
-			int iID;
-			if( !sError.empty() )
-			{
-				/* On error, don't show the "report" button again.  If the submission was actually
-				 * successful, then it'd be too easy to accidentally spam the server by holding
-				 * down the button. */
-				SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), ERROR_SENDING_REPORT.GetValue() );
-			}
-			else if( xml.GetAttrValue("UpdateAvailable", m_sUpdateURL) )
-			{
-				SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), UPDATE_IS_AVAILABLE.GetValue() );
-				SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_AUTO_REPORT), VIEW_UPDATE.GetValue() );
-				ShowWindow( GetDlgItem(hDlg, IDC_BUTTON_AUTO_REPORT), true );
-			}
-			else if( xml.GetAttrValue("ReportId", iID) )
-			{
-				SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), UPDATE_IS_NOT_AVAILABLE.GetValue() );
-				SetWindowText( GetDlgItem(hDlg, IDC_RESULT_ID), ssprintf("#%i", iID) );
-				ShowWindow( GetDlgItem(hDlg, IDC_RESULT_ID), true );
-			}
-			else
-			{
-				SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), ERROR_SENDING_REPORT.GetValue() );
-			}
+				int iID;
+				if( !sError.empty() )
+				{
+					/* On error, don't show the "report" button again.  If the submission was actually
+					* successful, then it'd be too easy to accidentally spam the server by holding
+					* down the button. */
+					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), ERROR_SENDING_REPORT.GetValue() );
+				}
+				else if( xml.GetAttrValue("UpdateAvailable", m_sUpdateURL) )
+				{
+					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), UPDATE_IS_AVAILABLE.GetValue() );
+					SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_AUTO_REPORT), VIEW_UPDATE.GetValue() );
+					ShowWindow( GetDlgItem(hDlg, IDC_BUTTON_AUTO_REPORT), true );
+				}
+				else if( xml.GetAttrValue("ReportId", iID) )
+				{
+					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), UPDATE_IS_NOT_AVAILABLE.GetValue() );
+					SetWindowText( GetDlgItem(hDlg, IDC_RESULT_ID), ssprintf("#%i", iID) );
+					ShowWindow( GetDlgItem(hDlg, IDC_RESULT_ID), true );
+				}
+				else
+				{
+					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), ERROR_SENDING_REPORT.GetValue() );
+				}
 
-			ShowWindow( GetDlgItem(hDlg, IDC_PROGRESS), false );
-			SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_CLOSE), CLOSE.GetValue() );
+				ShowWindow( GetDlgItem(hDlg, IDC_PROGRESS), false );
+				SetWindowText( GetDlgItem(hDlg, IDC_BUTTON_CLOSE), CLOSE.GetValue() );
+			}
 		}
-	}
 	}
 
 	return FALSE;

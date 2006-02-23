@@ -15,7 +15,7 @@ public:
 	HWND GetHwnd() { return m_hWnd; }
 
 protected:
-	virtual bool HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam ) { return false; }
+	virtual BOOL HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam ) { return false; }
 
 private:
 	static BOOL APIENTRY DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
