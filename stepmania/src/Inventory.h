@@ -6,6 +6,11 @@
 #include "Actor.h"
 #include "PlayerNumber.h"
 #include "RageSound.h"
+#include "ScreenMessage.h"
+
+AutoScreenMessage( SM_BattleDamageLevel1 );
+AutoScreenMessage( SM_BattleDamageLevel2 );
+AutoScreenMessage( SM_BattleDamageLevel3 );
 
 class PlayerState;
 

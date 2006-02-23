@@ -5,9 +5,12 @@
 
 #include "ScoreKeeper.h"
 #include "Attack.h"
+#include "ScreenMessage.h"
 class Steps;
 class Song;
 struct RadarValues;
+
+AutoScreenMessage( SM_PlayToasty );
 
 class ScoreKeeperNormal: public ScoreKeeper
 {

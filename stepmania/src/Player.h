@@ -12,6 +12,7 @@
 #include "AttackDisplay.h"
 #include "NoteData.h"
 #include "ControllerStateDisplay.h"
+#include "ScreenMessage.h"
 
 class ScoreDisplay;
 class LifeMeter;
@@ -21,6 +22,20 @@ class Inventory;
 class RageTimer;
 class NoteField;
 class PlayerStageStats;
+
+AutoScreenMessage( SM_100Combo );
+AutoScreenMessage( SM_200Combo );
+AutoScreenMessage( SM_300Combo );
+AutoScreenMessage( SM_400Combo );
+AutoScreenMessage( SM_500Combo );
+AutoScreenMessage( SM_600Combo );
+AutoScreenMessage( SM_700Combo );
+AutoScreenMessage( SM_800Combo );
+AutoScreenMessage( SM_900Combo );
+AutoScreenMessage( SM_1000Combo );
+AutoScreenMessage( SM_ComboStopped );
+AutoScreenMessage( SM_ComboContinuing );
+AutoScreenMessage( SM_MissComboAborted );
 
 class Player: public ActorFrame
 {

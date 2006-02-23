@@ -82,6 +82,10 @@ AutoScreenMessage( SM_DoNextScreen )
 AutoScreenMessage( SM_StartHereWeGo )
 AutoScreenMessage( SM_StopHereWeGo )
 
+AutoScreenMessage( SM_BattleTrickLevel1 );
+AutoScreenMessage( SM_BattleTrickLevel2 );
+AutoScreenMessage( SM_BattleTrickLevel3 );
+
 static Preference<float> g_fNetStartOffset( "NetworkStartOffset", -3.0 );
 
 
@@ -2485,13 +2489,9 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	{
 		int iTrickLevel = SM-SM_BattleTrickLevel1+1;
 		PlayAnnouncer( ssprintf("gameplay battle trick level%d",iTrickLevel), 3 );
-		switch( SM )
-		{
-		case SM_BattleTrickLevel1: m_soundBattleTrickLevel1.Play();	break;
-		case SM_BattleTrickLevel2: m_soundBattleTrickLevel2.Play();	break;
-		case SM_BattleTrickLevel3: m_soundBattleTrickLevel3.Play();	break;
-		default:	ASSERT(0);
-		}
+		if( SM == SM_BattleTrickLevel1 ) m_soundBattleTrickLevel1.Play();
+		else if( SM == SM_BattleTrickLevel2 ) m_soundBattleTrickLevel2.Play();
+		else if( SM == SM_BattleTrickLevel3 ) m_soundBattleTrickLevel3.Play();
 	}
 	else if( SM >= SM_BattleDamageLevel1 && SM <= SM_BattleDamageLevel3 )
 	{

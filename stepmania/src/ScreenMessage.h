@@ -18,29 +18,6 @@ enum ScreenMessage {
 	SM_Success,
 	SM_Failure,
 
-	// messages sent by Combo
-	SM_PlayToasty,
-	SM_100Combo,
-	SM_200Combo,
-	SM_300Combo,
-	SM_400Combo,
-	SM_500Combo,
-	SM_600Combo,
-	SM_700Combo,
-	SM_800Combo,
-	SM_900Combo,
-	SM_1000Combo,
-	SM_ComboStopped,
-	SM_ComboContinuing,
-	SM_MissComboAborted,
-
-	SM_BattleTrickLevel1,
-	SM_BattleTrickLevel2,
-	SM_BattleTrickLevel3,
-	SM_BattleDamageLevel1,
-	SM_BattleDamageLevel2,
-	SM_BattleDamageLevel3,
-
 	SM_User,
 
 	SM_Invalid = 999999
