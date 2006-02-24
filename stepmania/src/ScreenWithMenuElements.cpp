@@ -266,8 +266,10 @@ void ScreenWithMenuElements::TweenOffScreen()
 	OFF_COMMAND( m_sprUnderlay );
 	OFF_COMMAND( m_sprOverlay );
 
-	SCREENMAN->PlaySharedBackgroundOffCommand();
-
+	// If we're a stacked screen, then there's someone else between us and the
+	// background, so don't tween it off.
+	if( !SCREENMAN->IsStackedScreen(this) )
+		SCREENMAN->PlaySharedBackgroundOffCommand();
 }
 
 void ScreenWithMenuElements::Cancel( ScreenMessage smSendWhenDone )
