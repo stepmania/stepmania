@@ -243,14 +243,10 @@ void ScreenSelectMode::UpdateSelectableChoices()
 
 void ScreenSelectMode::HandleScreenMessage( const ScreenMessage SM )
 {
-	switch( SM )
+	if( SM == SM_MenuTimer )
 	{
-	case SM_MenuTimer:
-		{
-			m_bSelected = true;
-			SetCharacters();
-		}
-		break;
+		m_bSelected = true;
+		SetCharacters();
 	}
 	ScreenSelect::HandleScreenMessage(SM);
 }

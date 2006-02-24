@@ -113,16 +113,14 @@ void ScreenEz2SelectPlayer::HandleScreenMessage( const ScreenMessage SM )
 {
 	Screen::HandleScreenMessage( SM );
 
-	switch( SM )
+	if( SM == SM_MenuTimer )
 	{
-	case SM_MenuTimer:
 		if( GAMESTATE->GetNumSidesJoined() == 0 )
 		{
 			MenuStart(PLAYER_1);
 		}
 
 		StartTransitioningScreen( SM_GoToNextScreen );
-		break;
 	}
 
 	ScreenWithMenuElements::HandleScreenMessage( SM );

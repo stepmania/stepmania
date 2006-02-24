@@ -280,18 +280,18 @@ void ScreenHowToPlay::Update( float fDelta )
 
 void ScreenHowToPlay::HandleScreenMessage( const ScreenMessage SM )
 {
-	switch( SM )
+	if( SM == SM_GainFocus )
 	{
-	case SM_GainFocus:
 		/* We do this ourself. */
 		SOUND->HandleSongTimer( false );
-		break;
-	case SM_LoseFocus:
+	}
+	else if( SM == SM_LoseFocus )
+	{
 		SOUND->HandleSongTimer( true );
-		break;
-	case SM_GoToNextScreen:
+	}
+	else if( SM == SM_GoToNextScreen )
+	{
 		GAMESTATE->Reset();
-		break;
 	}
 	ScreenAttract::HandleScreenMessage( SM );
 }

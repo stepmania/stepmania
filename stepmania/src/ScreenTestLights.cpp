@@ -98,12 +98,8 @@ void ScreenTestLights::Input( const InputEventPlus &input )
 
 void ScreenTestLights::HandleScreenMessage( const ScreenMessage SM )
 {
-	switch( SM )
-	{
-	case SM_LoseFocus:
+	if( SM == SM_LoseFocus )
 		LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
-		break;
-	}
 }
 
 void ScreenTestLights::MenuLeft( PlayerNumber pn )

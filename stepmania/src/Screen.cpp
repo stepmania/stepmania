@@ -208,24 +208,24 @@ void Screen::Input( const InputEventPlus &input )
 
 void Screen::HandleScreenMessage( const ScreenMessage SM )
 {
-	switch( SM )
+	if( SM == SM_MenuTimer )
 	{
-	case SM_MenuTimer:
 		FOREACH_HumanPlayer(p)
 			MenuStart( p );
-		break;
-	case SM_GoToNextScreen:
+	}
+	else if( SM == SM_GoToNextScreen )
+	{
 		if( SCREENMAN->IsStackedScreen(this) )
 			SCREENMAN->PopTopScreen( m_smSendOnPop );
 		else
 			SCREENMAN->SetNewScreen( GetNextScreen() );
-		break;
-	case SM_GoToPrevScreen:
+	}
+	else if( SM == SM_GoToPrevScreen )
+	{
 		if( SCREENMAN->IsStackedScreen(this) )
 			SCREENMAN->PopTopScreen( m_smSendOnPop );
 		else
 			SCREENMAN->SetNewScreen( GetPrevScreen() );
-		break;
 	}
 }
 

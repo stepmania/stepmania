@@ -138,9 +138,8 @@ void ScreenSelectGroup::Input( const InputEventPlus &input )
 
 void ScreenSelectGroup::HandleScreenMessage( const ScreenMessage SM )
 {
-	switch( SM )
+	if( SM == SM_BeginFadingOut )
 	{
-	case SM_BeginFadingOut:
 		StartTransitioningScreen( SM_GoToNextScreen );
 		return;
 	}

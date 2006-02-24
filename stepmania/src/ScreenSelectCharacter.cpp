@@ -172,18 +172,20 @@ void ScreenSelectCharacter::Input( const InputEventPlus &input )
 
 void ScreenSelectCharacter::HandleScreenMessage( const ScreenMessage SM )
 {
-	switch( SM )
+	if( SM == SM_BeginFadingOut )
 	{
-	case SM_BeginFadingOut:
 		StartTransitioningScreen( SM_GoToNextScreen );
-		return;
-	case SM_MenuTimer:
+	}
+	else if( SM == SM_MenuTimer )
+	{
 		MenuStart(PLAYER_1);
 		if( !AllAreFinishedChoosing() )
 			ResetTimer();
-		return;
 	}
-	Screen::HandleScreenMessage( SM );
+	else
+	{
+		Screen::HandleScreenMessage( SM );
+	}
 }
 
 PlayerNumber ScreenSelectCharacter::GetAffectedPlayerNumber( PlayerNumber pn )

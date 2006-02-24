@@ -366,28 +366,25 @@ void ScreenNameEntry::Input( const InputEventPlus &input )
 
 void ScreenNameEntry::HandleScreenMessage( const ScreenMessage SM )
 {
-	switch( SM )
+	if( SM == SM_MenuTimer )
 	{
-	case SM_MenuTimer:
 		if( !m_Out.IsTransitioning() )
 		{
 			FOREACH_PlayerNumber( p )
 				this->MenuStart( p );
 		}
-		break;
-	case SM_GoToNextScreen:
-		{
-			GAMESTATE->RestoreSelectedOptions();
+	}
+	else if( SM == SM_GoToNextScreen )
+	{
+		GAMESTATE->RestoreSelectedOptions();
 
-			// There shouldn't be NameEntry in event mode.  -Chris
-//			/* Hack: go back to the select course screen in event mode. */
-//			if( GAMESTATE->GetEventMode() && GAMESTATE->IsCourseMode() )
-//			{
-//				SCREENMAN->SetNewScreen( "ScreenSelectCourse" );
-//				break;
-//			}
-		}
-		break;
+		// There shouldn't be NameEntry in event mode.  -Chris
+//		/* Hack: go back to the select course screen in event mode. */
+//		if( GAMESTATE->GetEventMode() && GAMESTATE->IsCourseMode() )
+//		{
+//			SCREENMAN->SetNewScreen( "ScreenSelectCourse" );
+//			break;
+//		}
 	}
 
 	Screen::HandleScreenMessage( SM );
