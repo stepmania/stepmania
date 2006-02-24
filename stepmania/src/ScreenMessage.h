@@ -1,27 +1,24 @@
 /* ScreenMessage - Definition of common ScreenMessages. */
 
-#ifndef SCREENMESSAGE_H
-#define SCREENMESSAGE_H
+#ifndef SCREEN_MESSAGE_H
+#define SCREEN_MESSAGE_H
 
 #include <map>
 
-enum ScreenMessage {
-	SM_None = 0,
-	SM_MenuTimer,
-	SM_DoneFadingIn,
-	SM_BeginFadingOut,
-	SM_GoToNextScreen,
-	SM_GoToPrevScreen,
-	SM_GainFocus,
-	SM_LoseFocus,
-	SM_Pause,
-	SM_Success,
-	SM_Failure,
+typedef int ScreenMessage;
 
-	SM_User,
-
-	SM_Invalid = 999999
-};
+extern const ScreenMessage SM_Invalid;
+extern const ScreenMessage SM_None;
+extern const ScreenMessage SM_MenuTimer;
+extern const ScreenMessage SM_DoneFadingIn;
+extern const ScreenMessage SM_BeginFadingOut;
+extern const ScreenMessage SM_GoToNextScreen;
+extern const ScreenMessage SM_GoToPrevScreen;
+extern const ScreenMessage SM_GainFocus;
+extern const ScreenMessage SM_LoseFocus;
+extern const ScreenMessage SM_Pause;
+extern const ScreenMessage SM_Success;
+extern const ScreenMessage SM_Failure;
 
 class ASMHClass
 {

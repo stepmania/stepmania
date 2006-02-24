@@ -3,6 +3,19 @@
 #include "RageLog.h"
 #include "Foreach.h"
 
+const ScreenMessage SM_Invalid = 999999;
+AutoScreenMessage(SM_None);
+AutoScreenMessage(SM_MenuTimer);
+AutoScreenMessage(SM_DoneFadingIn);
+AutoScreenMessage(SM_BeginFadingOut);
+AutoScreenMessage(SM_GoToNextScreen);
+AutoScreenMessage(SM_GoToPrevScreen);
+AutoScreenMessage(SM_GainFocus);
+AutoScreenMessage(SM_LoseFocus);
+AutoScreenMessage(SM_Pause);
+AutoScreenMessage(SM_Success);
+AutoScreenMessage(SM_Failure);
+
 ASMHClass AutoScreenMessageHandler;
 
 ScreenMessage ASMHClass::ToMessageNumber( const RString &sName )
@@ -10,7 +23,7 @@ ScreenMessage ASMHClass::ToMessageNumber( const RString &sName )
 	if( m_pScreenMessages == NULL )
 	{
 		m_pScreenMessages = new map<RString, ScreenMessage>;
-		m_iCurScreenMessage = SM_User;
+		m_iCurScreenMessage = (ScreenMessage) 0;
 	}
 
 	if( m_pScreenMessages->find( sName ) == m_pScreenMessages->end() )
