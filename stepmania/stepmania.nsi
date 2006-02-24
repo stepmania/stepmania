@@ -173,8 +173,8 @@ Section "Main Section" SecMain
 	; Do this copy before anything else.  It's the most likely to fail.  
 	; Possible failure reasons are: scratched CD, user tried to copy the installer but forgot the pcks.
 	CreateDirectory $INSTDIR\pcks
-	CopyFiles /SILENT "$EXEDIR\${PRODUCT_NAME}.app\Contents\pcks\*.idx" $INSTDIR\pcks 1
-	CopyFiles /SILENT "$EXEDIR\${PRODUCT_NAME}.app\Contents\pcks\*.pck" $INSTDIR\pcks 650000	; assume a CD full of data
+	CopyFiles /SILENT "$EXEDIR\${PRODUCT_NAME}.app\Contents\Resources\pcks\*.idx" $INSTDIR\pcks 1
+	CopyFiles /SILENT "$EXEDIR\${PRODUCT_NAME}.app\Contents\Resources\pcks\*.pck" $INSTDIR\pcks 650000	; assume a CD full of data
 	IfErrors do_error do_no_error
 	do_error:
 	MessageBox MB_OK|MB_ICONSTOP "Fatal error copying pck files."
@@ -280,7 +280,6 @@ Section "Main Section" SecMain
 	File "Data\*.*"
 	
 	SetOutPath "$INSTDIR"
-	File "Docs\Copying.txt"
 	File "README-FIRST.html"
 	File "NEWS"
 !endif
@@ -295,6 +294,9 @@ Section "Main Section" SecMain
 	SetOutPath "$INSTDIR\Save\MachineProfile"
 	File "Docs\Stats.xml"
 	SetOverwrite on
+
+	SetOutPath "$INSTDIR"
+	File "Docs\Licenses.txt"
 
 	SetOutPath "$INSTDIR\Program"
 	File "Program\${PRODUCT_NAME}.exe"
@@ -644,7 +646,7 @@ Section "Uninstall"
 	Delete "$INSTDIR\Save\MachineProfile\stats.html"
 	RMDir "$INSTDIR\Save\MachineProfile"
 
-	Delete "$INSTDIR\COPYING.txt"
+	Delete "$INSTDIR\Licenses.txt"
 	Delete "$INSTDIR\README-FIRST.html"
 	Delete "$INSTDIR\NEWS"
 	Delete "$INSTDIR\log.txt"
