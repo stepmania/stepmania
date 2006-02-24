@@ -3,8 +3,6 @@
 #ifndef SCREEN_MESSAGE_H
 #define SCREEN_MESSAGE_H
 
-#include <map>
-
 typedef int ScreenMessage;
 
 extern const ScreenMessage SM_Invalid;
@@ -20,22 +18,15 @@ extern const ScreenMessage SM_Pause;
 extern const ScreenMessage SM_Success;
 extern const ScreenMessage SM_Failure;
 
-class ASMHClass
+namespace ScreenMessageHelpers
 {
-public:
 	ScreenMessage ToMessageNumber( const RString & Name );
-	RString	NumberToString( ScreenMessage SM ) const;
-
-private:
-	map<RString, ScreenMessage> *m_pScreenMessages;
-	ScreenMessage m_iCurScreenMessage;
+	RString	NumberToString( ScreenMessage SM );
 };
-
-extern ASMHClass AutoScreenMessageHandler;
 
 // Automatically generate a unique ScreenMessage value
 #define AutoScreenMessage( x ) \
-	const ScreenMessage x = AutoScreenMessageHandler.ToMessageNumber( #x );
+	const ScreenMessage x = ScreenMessageHelpers::ToMessageNumber( #x );
 
 
 #endif

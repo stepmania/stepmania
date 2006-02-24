@@ -2,6 +2,7 @@
 #include "ScreenMessage.h"
 #include "RageLog.h"
 #include "Foreach.h"
+#include <map>
 
 const ScreenMessage SM_Invalid = 999999;
 AutoScreenMessage(SM_None);
@@ -16,9 +17,10 @@ AutoScreenMessage(SM_Pause);
 AutoScreenMessage(SM_Success);
 AutoScreenMessage(SM_Failure);
 
-ASMHClass AutoScreenMessageHandler;
+static map<RString, ScreenMessage> *m_pScreenMessages;
+static ScreenMessage m_iCurScreenMessage;
 
-ScreenMessage ASMHClass::ToMessageNumber( const RString &sName )
+ScreenMessage ScreenMessageHelpers::ToMessageNumber( const RString &sName )
 {
 	if( m_pScreenMessages == NULL )
 	{
@@ -35,7 +37,7 @@ ScreenMessage ASMHClass::ToMessageNumber( const RString &sName )
 	return (*m_pScreenMessages)[sName];
 }
 
-RString	ASMHClass::NumberToString( ScreenMessage SM ) const
+RString	ScreenMessageHelpers::NumberToString( ScreenMessage SM )
 {
 	FOREACHM( RString, ScreenMessage, *m_pScreenMessages, it )
 		if( SM == it->second )
