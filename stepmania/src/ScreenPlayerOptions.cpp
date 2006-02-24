@@ -136,25 +136,21 @@ void ScreenPlayerOptions::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( m_bAskOptionsMessage )
 	{
-		switch( SM )
+		if( SM == SM_BeginFadingOut ) // when the user accepts the page of options
 		{
-		case SM_BeginFadingOut: // when the user accepts the page of options
-			{
-				m_bAcceptedChoices = true;
-
-				float fShowSeconds = m_Out.GetLengthSeconds();
-
-				// show "hold START for options"
-				m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
-				m_sprOptionsMessage.BeginTweening( 0.15f );     // fade in
-				m_sprOptionsMessage.SetZoomY( 1 );
-				m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,1) );
-				m_sprOptionsMessage.BeginTweening( fShowSeconds-0.3f ); // sleep
-				m_sprOptionsMessage.BeginTweening( 0.15f );     // fade out
-				m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
-				m_sprOptionsMessage.SetZoomY( 0 );
-			}
-			break;
+			m_bAcceptedChoices = true;
+			
+			float fShowSeconds = m_Out.GetLengthSeconds();
+			
+			// show "hold START for options"
+			m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
+			m_sprOptionsMessage.BeginTweening( 0.15f );     // fade in
+			m_sprOptionsMessage.SetZoomY( 1 );
+			m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,1) );
+			m_sprOptionsMessage.BeginTweening( fShowSeconds-0.3f ); // sleep
+			m_sprOptionsMessage.BeginTweening( 0.15f );     // fade out
+			m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
+			m_sprOptionsMessage.SetZoomY( 0 );
 		}
 	}
 
