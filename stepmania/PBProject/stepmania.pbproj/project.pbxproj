@@ -90,6 +90,10 @@
 		AA1B08400762532800835464 /* Preference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA1B083B0762532800835464 /* Preference.cpp */; };
 		AA1CD943060AE571003702C4 /* RageSoundDriver_Generic_Software.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA1CD941060AE571003702C4 /* RageSoundDriver_Generic_Software.cpp */; };
 		AA1CD944060AE571003702C4 /* RageSoundDriver_Generic_Software.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1CD942060AE571003702C4 /* RageSoundDriver_Generic_Software.h */; };
+		AA1F9C4709AF1BF5002C15A8 /* PumpDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1F9C4509AF1BF5002C15A8 /* PumpDevice.h */; };
+		AA1F9C4809AF1BF5002C15A8 /* PumpDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA1F9C4609AF1BF5002C15A8 /* PumpDevice.cpp */; };
+		AA1F9C4909AF1BF5002C15A8 /* PumpDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1F9C4509AF1BF5002C15A8 /* PumpDevice.h */; };
+		AA1F9C4A09AF1BF5002C15A8 /* PumpDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA1F9C4609AF1BF5002C15A8 /* PumpDevice.cpp */; };
 		AA21D59D0712ADE4008B825F /* ScreenDimensions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA21D59C0712ADE4008B825F /* ScreenDimensions.cpp */; };
 		AA21D5A20712AE16008B825F /* ThemeMetric.h in Headers */ = {isa = PBXBuildFile; fileRef = AA21D5A10712AE16008B825F /* ThemeMetric.h */; };
 		AA22CBA506DE909C0083BA97 /* ScreenNetSelectMusic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA22CBA306DE909C0083BA97 /* ScreenNetSelectMusic.cpp */; };
@@ -1945,6 +1949,8 @@
 		AA1DC47804A4866B00D02EE9 /* ActorCollision.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ActorCollision.h; path = ../src/ActorCollision.h; sourceTree = "<group>"; };
 		AA1DCB6104A4872700D02EE9 /* glext.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = glext.h; path = ../src/glext.h; sourceTree = "<group>"; };
 		AA1DCB6304A4872700D02EE9 /* MenuInput.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MenuInput.h; path = ../src/MenuInput.h; sourceTree = "<group>"; };
+		AA1F9C4509AF1BF5002C15A8 /* PumpDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PumpDevice.h; sourceTree = "<group>"; };
+		AA1F9C4609AF1BF5002C15A8 /* PumpDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PumpDevice.cpp; sourceTree = "<group>"; };
 		AA21D59C0712ADE4008B825F /* ScreenDimensions.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenDimensions.cpp; path = ../src/ScreenDimensions.cpp; sourceTree = "<group>"; };
 		AA21D5A10712AE16008B825F /* ThemeMetric.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ThemeMetric.h; path = ../src/ThemeMetric.h; sourceTree = "<group>"; };
 		AA22CBA306DE909C0083BA97 /* ScreenNetSelectMusic.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenNetSelectMusic.cpp; path = ../src/ScreenNetSelectMusic.cpp; sourceTree = "<group>"; };
@@ -4008,6 +4014,8 @@
 				AA4470BA098476F600983E82 /* KeyboardDevice.h */,
 				AA2FB62909120FC5000FD574 /* PreferredLanguage.m */,
 				AAF744A306116B0500B19AD1 /* PublicUtility */,
+				AA1F9C4609AF1BF5002C15A8 /* PumpDevice.cpp */,
+				AA1F9C4509AF1BF5002C15A8 /* PumpDevice.h */,
 				AABBFCD209838C3A00F077E2 /* SMMain.mm */,
 				AAABB2D90979DB5B006C9F25 /* SMMainThread.h */,
 				AAABB2DA0979DB5B006C9F25 /* SMMainThread.m */,
@@ -4520,6 +4528,7 @@
 				AAB55EBC09A7E3D3008FDC69 /* ScreenGameplaySyncMachine.h in Headers */,
 				AAB55EBE09A7E3D3008FDC69 /* ScreenUnlockBrowse.h in Headers */,
 				AAB55EC009A7E3D3008FDC69 /* ScreenUnlockCelebrate.h in Headers */,
+				AA1F9C4709AF1BF5002C15A8 /* PumpDevice.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4976,6 +4985,7 @@
 				AA40D37A09A08D650068C0D5 /* AdjustSync.h in Headers */,
 				AAB55FFF09A84E62008FDC69 /* ScreenUnlockCelebrate.h in Headers */,
 				AAB5600109A84E64008FDC69 /* ScreenUnlockBrowse.h in Headers */,
+				AA1F9C4909AF1BF5002C15A8 /* PumpDevice.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5647,6 +5657,7 @@
 				AAB55EBB09A7E3D3008FDC69 /* ScreenGameplaySyncMachine.cpp in Sources */,
 				AAB55EBD09A7E3D3008FDC69 /* ScreenUnlockBrowse.cpp in Sources */,
 				AAB55EBF09A7E3D3008FDC69 /* ScreenUnlockCelebrate.cpp in Sources */,
+				AA1F9C4809AF1BF5002C15A8 /* PumpDevice.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6056,6 +6067,7 @@
 				AA40D51309A08D650068C0D5 /* AdjustSync.cpp in Sources */,
 				AAB5600009A84E63008FDC69 /* ScreenUnlockCelebrate.cpp in Sources */,
 				AAB5600209A84E65008FDC69 /* ScreenUnlockBrowse.cpp in Sources */,
+				AA1F9C4A09AF1BF5002C15A8 /* PumpDevice.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

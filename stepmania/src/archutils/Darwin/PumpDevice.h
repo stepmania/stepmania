@@ -1,48 +1,30 @@
-#ifndef JOYSTICK_H
-#define JOYSTICK_H
+#ifndef PUMP_DEVICE_H
+#define PUMP_DEVICE_H
 
-#include <vector>
-#include <CoreFoundation/CoreFoundation.h>
-#include <IOKit/IOKitLib.h>
-#include "InputHandler.h"
-#include "RageThreads.h"
+#include "HIDDevice.h"
 
-class HIDDevice;
-
-class InputHandler_Carbon : public InputHandler
+class PumpDevice : public HIDDevice
 {
 private:
-	vector<HIDDevice *> m_vDevices;
-	RageThread m_InputThread;
-	RageSemaphore m_Sem;
-	CFRunLoopRef m_LoopRef;
-	CFRunLoopSourceRef m_SourceRef;
-	vector<io_iterator_t> m_vIters; // We don't really care about these but they need to stick around
-	IONotificationPortRef m_NotifyPort;
-	RageMutex m_ChangeLock;
-	bool m_bChanged;
+	InputDevice id;
+protected:
+	bool AddLogicalDevice( int usagePage, int usage ) { return true; }
+	void AddElement( int usagePage, int usage, int cookie,
+			 const CFDictionaryRef properties ) { }
+	void Open();
+	bool SupportsVidPid( int vid, int pid ) { return vid == 0x0d2f && pid == 0x0001; }
 	
-	static int Run( void *data );
-	static void DeviceAdded( void *refCon, io_iterator_t iter );
-	static void DeviceChanged( void *refCon, io_service_t service, natural_t messageType, void *arg );
-	void StartDevices();
-	void AddDevices( int usagePage, int usage, InputDevice &id );
-
 public:
-	InputHandler_Carbon();
-	~InputHandler_Carbon();
-
-	bool DevicesChanged() { LockMut( m_ChangeLock ); return m_bChanged; }
-	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut );
-
-	static void QueueCallBack( void *target, int result, void *refcon, void *sender );
+	void GetButtonPresses( vector<pair<DeviceInput, bool> >& vPresses, int cookie,
+			       int value, const RageTimer& now ) const;
+	int AssignIDs( InputDevice startID );
+	void GetDevicesAndDescriptions( vector<InputDevice>& dev, vector<RString>& desc ) const;
 };
-#define USE_INPUT_HANDLER_CARBON
 
 #endif
 
 /*
- * (c) 2005-2006 Steve Checkoway
+ * (c) 2006 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
@@ -65,4 +47,3 @@ public:
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-

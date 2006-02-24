@@ -10,6 +10,7 @@
 #include "archutils/Darwin/DarwinThreadHelpers.h"
 #include "archutils/Darwin/KeyboardDevice.h"
 #include "archutils/Darwin/JoystickDevice.h"
+#include "archutils/Darwin/PumpDevice.h"
 #include <IOKit/IOMessage.h>
 
 void InputHandler_Carbon::QueueCallBack( void *target, int result, void *refcon, void *sender )
@@ -159,13 +160,15 @@ static HIDDevice *MakeDevice( InputDevice id )
 		return new KeyboardDevice;
 	if( id <= DEVICE_JOY16 )
 		return new JoystickDevice;
+	if( id <= DEVICE_PUMP2 )
+		return new PumpDevice;
 	return NULL;
 }
 
-void InputHandler_Carbon::AddDevices( int usage, InputDevice &id )
+void InputHandler_Carbon::AddDevices( int usagePage, int usage, InputDevice &id )
 {
 	io_iterator_t iter;
-	CFDictionaryRef dict = GetMatchingDictionary( kHIDPage_GenericDesktop, usage );
+	CFDictionaryRef dict = GetMatchingDictionary( usagePage, usage );
 	kern_return_t ret = IOServiceAddMatchingNotification( m_NotifyPort, kIOFirstMatchNotification, dict,
 							      InputHandler_Carbon::DeviceAdded, this, &iter );
 	io_object_t device;
@@ -216,10 +219,12 @@ InputHandler_Carbon::InputHandler_Carbon() : m_Sem( "Input thread started" ), m_
 	m_NotifyPort = IONotificationPortCreate( kIOMasterPortDefault );
 	
 	// Add devices.
-	AddDevices( kHIDUsage_GD_Keyboard, id );
+	AddDevices( kHIDPage_GenericDesktop, kHIDUsage_GD_Keyboard, id );
 	id = DEVICE_JOY1;
-	AddDevices( kHIDUsage_GD_Joystick, id );
-	AddDevices( kHIDUsage_GD_GamePad, id );
+	AddDevices( kHIDPage_GenericDesktop, kHIDUsage_GD_Joystick, id );
+	AddDevices( kHIDPage_GenericDesktop, kHIDUsage_GD_GamePad, id );
+	id = DEVICE_PUMP1;
+	AddDevices( 0xFF00, 0x0001, id ); // Pump pads use the first vendor specific usage page.
 	m_bChanged = false;
 	
 	if( PREFSMAN->m_bThreadedInput )
