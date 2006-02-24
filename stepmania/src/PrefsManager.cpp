@@ -144,6 +144,23 @@ void TimeMeterSecondsChangeInit( size_t /*ScoreEvent*/ i, RString &sNameOut, flo
 }
 
 
+void ValidateDisplayAspectRatio( float &val )
+{
+	if( val < 0 )
+		val = 4/3.f;
+}
+
+void ValidateSongsPerPlay( int &val )
+{
+	CLAMP(val,0,MAX_SONGS_PER_PLAY);
+}
+
+void ValidateRandomBackgroundMode( PrefsManager::RandomBackgroundMode &val )
+{
+	CLAMP((int&)val,0,PrefsManager::NUM_RandomBackgroundMode-1);
+}
+
+
 PrefsManager::PrefsManager() :
 	m_sCurrentGame		( "CurrentGame",		"" ),
 
@@ -154,7 +171,7 @@ PrefsManager::PrefsManager() :
 	m_bWindowed		( "Windowed",			TRUE_IF_DEBUG ),
 	m_iDisplayWidth		( "DisplayWidth",		640 ),
 	m_iDisplayHeight	( "DisplayHeight",		480 ),
-	m_fDisplayAspectRatio	( "DisplayAspectRatio",		4/3.f ),
+	m_fDisplayAspectRatio	( "DisplayAspectRatio",		4/3.f, ValidateDisplayAspectRatio ),
 	m_iDisplayColorDepth	( "DisplayColorDepth",		16 ),
 	m_iTextureColorDepth	( "TextureColorDepth",		16 ),
 	m_iMovieColorDepth	( "MovieColorDepth",		16 ),
@@ -165,7 +182,7 @@ PrefsManager::PrefsManager() :
 	m_bShowBanners		( "ShowBanners",		true ),
 
 	m_bSongBackgrounds	( "SongBackgrounds",		true ),
-	m_RandomBackgroundMode	( "RandomBackgroundMode",	BGMODE_ANIMATIONS ),
+	m_RandomBackgroundMode	( "RandomBackgroundMode",	BGMODE_ANIMATIONS, ValidateRandomBackgroundMode ),
 	m_iNumBackgrounds	( "NumBackgrounds",		8 ),
 	m_fBGBrightness		( "BGBrightness",		0.8f ),
 	m_bHiddenSongs		( "HiddenSongs",		false ),
@@ -222,7 +239,7 @@ PrefsManager::PrefsManager() :
 	m_AllowW1			( "AllowW1",			ALLOW_W1_EVERYWHERE ),
 	m_bEventMode			( "EventMode",			false ),
 	m_iCoinsPerCredit		( "CoinsPerCredit",		1 ),
-	m_iSongsPerPlay			( "SongsPerPlay",		3 ),
+	m_iSongsPerPlay			( "SongsPerPlay",		3, ValidateSongsPerPlay ),
 
 	m_CoinMode			( "CoinMode",			COIN_MODE_HOME ),
 	m_Premium			( "Premium",			PREMIUM_NONE ),
@@ -429,12 +446,6 @@ void PrefsManager::ReadPrefsFromIni( const IniFile &ini, const RString &sSection
 	//	pPref->FromString( sVal );
 
 	IPreference::ReadAllPrefsFromNode( ini.GetChild(sSection) );
-
-	// validate
-	if( m_fDisplayAspectRatio < 0 )
-		m_fDisplayAspectRatio.Set( 4/3.f );
-	m_iSongsPerPlay.Set( clamp(m_iSongsPerPlay.Get(),0,MAX_SONGS_PER_PLAY) );
-	m_RandomBackgroundMode.Set( (RandomBackgroundMode)clamp((int)m_RandomBackgroundMode.Get(),0,(int)NUM_RandomBackgroundMode-1) );
 }
 
 void PrefsManager::ReadGamePrefsFromIni( const RString &sIni )

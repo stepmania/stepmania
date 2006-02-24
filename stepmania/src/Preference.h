@@ -49,17 +49,18 @@ template <class T, class BasicType=T>
 class Preference : public IPreference
 {
 public:
-	Preference( const RString& sName, const T& defaultValue ):
+	Preference( const RString& sName, const T& defaultValue, void (pfnValidate)(T& val) = NULL ):
 		IPreference( sName ),
 		m_currentValue( defaultValue ),
-		m_defaultValue( defaultValue )
+		m_defaultValue( defaultValue ),
+		m_pfnValidate( pfnValidate )
 	{
 		LoadDefault();
 	}
 
 	RString ToString() const { return PrefToString( (const BasicType &) m_currentValue ); }
-	void FromString( const RString &s ) { PrefFromString( s, (BasicType &)m_currentValue ); }
-	void SetFromStack( lua_State *L ) { PrefSetFromStack( L, (BasicType &)m_currentValue ); }
+	void FromString( const RString &s ) { PrefFromString( s, (BasicType &)m_currentValue ); if(m_pfnValidate) m_pfnValidate(m_currentValue); }
+	void SetFromStack( lua_State *L ) { PrefSetFromStack( L, (BasicType &)m_currentValue ); if(m_pfnValidate) m_pfnValidate(m_currentValue); }
 	void PushValue( lua_State *L ) const { PrefPushValue( L, (BasicType &)m_currentValue ); }
 
 	void LoadDefault()
@@ -90,6 +91,7 @@ public:
 private:
 	T m_currentValue;
 	T m_defaultValue;
+	void (*m_pfnValidate)(T& val);
 };
 
 template <class T>
