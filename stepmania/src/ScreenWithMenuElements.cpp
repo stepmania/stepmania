@@ -35,6 +35,7 @@ void ScreenWithMenuElements::Init()
 	LOG->Trace( "ScreenWithMenuElements::Init()" );
 
 	PLAY_MUSIC.Load( m_sName, "PlayMusic" );
+	CANCEL_TRANSITIONS_OUT.Load( m_sName, "CancelTransitionsOut" );
 	TIMER_SECONDS.Load( m_sName, "TimerSeconds" );
 
 	Screen::Init();
@@ -271,6 +272,13 @@ void ScreenWithMenuElements::TweenOffScreen()
 
 void ScreenWithMenuElements::Cancel( ScreenMessage smSendWhenDone )
 {
+	if( CANCEL_TRANSITIONS_OUT )
+	{
+		SCREENMAN->PlayStartSound();
+		StartTransitioningScreen( smSendWhenDone );
+		return;
+	}
+
 	if( m_Cancel.IsTransitioning() )
 		return;	// ignore
 
