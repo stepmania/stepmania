@@ -224,7 +224,7 @@ InputHandler_Carbon::InputHandler_Carbon() : m_Sem( "Input thread started" ), m_
 	AddDevices( kHIDPage_GenericDesktop, kHIDUsage_GD_Joystick, id );
 	AddDevices( kHIDPage_GenericDesktop, kHIDUsage_GD_GamePad, id );
 	id = DEVICE_PUMP1;
-	AddDevices( 0xFF00, 0x0001, id ); // Pump pads use the first vendor specific usage page.
+	AddDevices( kHIDPage_VendorDefinedStart, 0x0001, id ); // Pump pads use the first vendor specific usage page.
 	m_bChanged = false;
 	
 	if( PREFSMAN->m_bThreadedInput )
@@ -332,7 +332,6 @@ RString InputHandler_Carbon::GetDeviceSpecificInputString( const DeviceInput &di
 		case JOY_BUTTON_10: return "P2 DL";
 		case JOY_BUTTON_11: return "P2 DR";
 		}
-		
 	}
 	
 	return InputHandler::GetDeviceSpecificInputString( di );
