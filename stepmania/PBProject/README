@@ -13,11 +13,10 @@ The build process has been revised yet again.
 3. Cd to Frameworks and unpack Frameworks.tar.bz2 by:
 $ tar jxf Frameworks.tar.bz2
 4. Build StepMania by running:
-$ xcodebuild -target stepmania -configuration .
-in the PBProject directory. (Note the period there.)
+$ xcodebuild -target stepmania -configuration Native
+in the PBProject directory.
 To build a universal binary instead, use "-configuration Universal"
-instead of "-configuration ." (Note that this will place StepMania.app
-in the Universal directory and it will need to be moved to be used.)
+instead of "-configuration Native"
 5. (Optional) Run:
 $ strip -x StepMania.app/Contents/MacOS/StepMania
 to reduce the size of the binary.
