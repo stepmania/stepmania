@@ -64,14 +64,14 @@ void KeyboardDevice::AddElement( int usagePage, int usage, int cookie, const CFD
 		return;
 	}
 	
-	// [20, 31]
+	// [20, 41]
 	if( usage >= kHIDUsage_KeypadEqualSignAS400 && usage <= kHIDUsage_KeyboardCancel )
 	{
 		m_Mapping[cookie] = OTHER( 20 + usage - kHIDUsage_KeypadEqualSignAS400 );
 		return;
 	}
 	
-	// [32, 37] 
+	// [42, 47] 
 	// XXX kHIDUsage_KeyboardClearOrAgain
 	if( usage >= kHIDUsage_KeyboardSeparator && usage <= kHIDUsage_KeyboardExSel )
 	{
@@ -106,7 +106,7 @@ void KeyboardDevice::AddElement( int usagePage, int usage, int cookie, const CFD
 		X( kHIDUsage_KeyboardCapsLock, KEY_CAPSLOCK );
 		X( kHIDUsage_KeyboardPrintScreen, KEY_PRTSC );
 		X( kHIDUsage_KeyboardScrollLock, KEY_SCRLLOCK );
-		X( kHIDUsage_KeyboardPause, OTHER(38) );
+		X( kHIDUsage_KeyboardPause, KEY_PAUSE );
 		X( kHIDUsage_KeyboardInsert, KEY_INSERT );
 		X( kHIDUsage_KeyboardHome, KEY_HOME );
 		X( kHIDUsage_KeyboardPageUp, KEY_PGUP );
@@ -125,8 +125,8 @@ void KeyboardDevice::AddElement( int usagePage, int usage, int cookie, const CFD
 		X( kHIDUsage_KeypadPlus, KEY_KP_PLUS );
 		X( kHIDUsage_KeypadEnter, KEY_KP_ENTER );
 		X( kHIDUsage_KeypadPeriod, KEY_KP_PERIOD );
-		X( kHIDUsage_KeyboardNonUSBackslash, OTHER(39) );
-		X( kHIDUsage_KeyboardApplication, OTHER(40) );
+		X( kHIDUsage_KeyboardNonUSBackslash, OTHER(48) );
+		X( kHIDUsage_KeyboardApplication, OTHER(49) );
 		X( kHIDUsage_KeyboardClear, KEY_NUMLOCK ); // XXX
 		X( kHIDUsage_KeyboardHelp, KEY_INSERT );
 		X( kHIDUsage_KeyboardMenu, KEY_MENU );
@@ -135,7 +135,7 @@ void KeyboardDevice::AddElement( int usagePage, int usage, int cookie, const CFD
 		// XXX kHIDUsage_KeyboardLockingScrollLock
 		X( kHIDUsage_KeypadComma, KEY_KP_PERIOD ); // XXX
 		X( kHIDUsage_KeyboardReturn, KEY_ENTER );
-		X( kHIDUsage_KeyboardPrior, OTHER(41) );
+		X( kHIDUsage_KeyboardPrior, OTHER(50) );
 		X( kHIDUsage_KeyboardLeftControl, KEY_LCTRL );
 		X( kHIDUsage_KeyboardLeftShift, KEY_LSHIFT );
 		X( kHIDUsage_KeyboardLeftAlt, KEY_LALT );
