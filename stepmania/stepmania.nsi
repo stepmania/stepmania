@@ -313,7 +313,6 @@ Section "Main Section" SecMain
 	File "Program\avformat.dll"
 	File "Program\dbghelp.dll"
 	File "Program\zlib1.dll"
-	File "Program\resample.dll"
 
 	; Create Start Menu icons
 	SetShellVarContext current  # 	'all' doesn't work on Win9x
@@ -639,7 +638,6 @@ Section "Uninstall"
 	Delete "$INSTDIR\Program\avformat.dll"
 	Delete "$INSTDIR\Program\dbghelp.dll"
 	Delete "$INSTDIR\Program\zlib1.dll"
-	Delete "$INSTDIR\Program\resample.dll"
 	RMDir "$INSTDIR\Program"
 
 	; It's harmless to delete this, as long as we leave Stats.xml alone; it'll be rewritten
