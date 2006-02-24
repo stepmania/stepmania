@@ -18,21 +18,14 @@ AutoScreenMessage(SM_Success);
 AutoScreenMessage(SM_Failure);
 
 static map<RString, ScreenMessage> *m_pScreenMessages;
-static ScreenMessage m_iCurScreenMessage;
 
 ScreenMessage ScreenMessageHelpers::ToMessageNumber( const RString &sName )
 {
 	if( m_pScreenMessages == NULL )
-	{
 		m_pScreenMessages = new map<RString, ScreenMessage>;
-		m_iCurScreenMessage = (ScreenMessage) 0;
-	}
 
 	if( m_pScreenMessages->find( sName ) == m_pScreenMessages->end() )
-	{
-		m_iCurScreenMessage = ScreenMessage((int)m_iCurScreenMessage + 1);
-		(*m_pScreenMessages)[sName] = m_iCurScreenMessage;
-	}
+		(*m_pScreenMessages)[sName] = (ScreenMessage) m_pScreenMessages->size();
 
 	return (*m_pScreenMessages)[sName];
 }
