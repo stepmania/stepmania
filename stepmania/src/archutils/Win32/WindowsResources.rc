@@ -100,17 +100,17 @@ BEGIN
     CONTROL         "",IDC_PROGRESS,"msctls_progress32",NOT WS_VISIBLE | 
                     WS_BORDER,132,98,89,15
     PUSHBUTTON      "&Don't Send",IDC_BUTTON_CLOSE,224,98,59,15
-    LTEXT           "Please choose Send Error Report to check for updates.",
-                    IDC_MAIN_TEXT,6,63,258,18
+    LTEXT           "Please choose Send Error Report to check for program updates.",
+                    IDC_MAIN_TEXT,13,67,263,18
     CONTROL         "",IDC_STATIC,"Static",SS_WHITERECT,0,0,287,35
     LTEXT           "Program Crash",IDC_STATIC_HEADER_TEXT,5,5,249,23
-    ICON            IDI_ICON,IDC_STATIC_ICON,259,6,21,20
+    ICON            IDI_ICON,IDC_STATIC_ICON,259,6,20,20
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDFRAME,0,34,287,1
     EDITTEXT        IDC_RESULT_ID,98,101,27,12,ES_AUTOHSCROLL | ES_READONLY | 
                     NOT WS_VISIBLE | NOT WS_BORDER | NOT WS_TABSTOP,
                     WS_EX_RIGHT
-    LTEXT           "The program has encountered an error and has been closed.  We have created an error report that is confidential and anonymous.",
-                    IDC_STATIC,6,39,265,24
+    LTEXT           "The program has encountered an error and has been closed.  We have created an anonymous error report.",
+                    IDC_STATIC,13,42,263,24
 END
 
 
