@@ -47,20 +47,25 @@ bool HIDDevice::Open( io_object_t device )
 	
 	object = CFDictionaryGetValue( properties, CFSTR(kIOHIDProductKey) );
 	
+	CFTypeRef vidRef = CFDictionaryGetValue( properties, CFSTR(kIOHIDVendorIDKey) );
+	CFTypeRef pidRef = CFDictionaryGetValue( properties, CFSTR(kIOHIDProductIDKey) );
+	int vid, pid;
+	
+	if( vidRef && !IntValue(vidRef, vid) )
+		vid = 0;
+	if( pidRef && !IntValue(pidRef, pid) )
+		pid = 0;
+	
+	if( !SupportsVidPid(vid, pid) )
+	{
+		CFRelease( properties );
+		return false;
+	}
+	
 	if( object && CFGetTypeID(object) == CFStringGetTypeID() )
 		m_sDescription = CFStringGetCStringPtr( CFStringRef(object), CFStringGetSystemEncoding() );
 	if( m_sDescription == "" )
-	{
-		CFTypeRef vidRef = CFDictionaryGetValue( properties, CFSTR(kIOHIDVendorIDKey) );
-		CFTypeRef pidRef = CFDictionaryGetValue( properties, CFSTR(kIOHIDProductIDKey) );
-		int vid, pid;
-		
-		if( vidRef && !IntValue(vidRef, vid) )
-			vid = 0;
-		if( pidRef && !IntValue(pidRef, pid) )
-			pid = 0;
 		m_sDescription = ssprintf( "%04x:%04x", vid, pid );
-	}
 	
 	object = CFDictionaryGetValue( properties, CFSTR(kIOHIDElementKey) );
 	if ( !object || CFGetTypeID(object) != CFArrayGetTypeID() )
