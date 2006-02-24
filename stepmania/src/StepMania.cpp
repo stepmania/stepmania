@@ -277,6 +277,12 @@ void ShutdownGame()
 
 static void HandleException( const RString &sError )
 {
+	if( SCREENMAN && SCREENMAN->IsConcurrentlyLoading() )
+	{
+		LOG->Trace( "HandleException: FinishConcurrentRendering" );
+		GameLoop::FinishConcurrentRendering();
+	}
+
 	if( g_bAutoRestart )
 		HOOKS->RestartProgram();
 
