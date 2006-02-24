@@ -43,6 +43,7 @@ public:
 	void SetSecondsPauseBetweenItems( float fSeconds ) { m_fSecondsPauseBetweenItems = fSeconds; }
 	void SetNumSubdivisions( int iNumSubdivisions ) { m_exprTransformFunction.SetNumSubdivisions( iNumSubdivisions ); }
 	float GetSecondsForCompleteScrollThrough() const;
+	float GetSecondsToDestination() const;
 
 	//
 	// Commands

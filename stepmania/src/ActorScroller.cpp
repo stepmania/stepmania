@@ -103,6 +103,12 @@ float ActorScroller::GetSecondsForCompleteScrollThrough() const
 	return fTotalItems * (m_fSecondsPerItem + m_fSecondsPauseBetweenItems );
 }
 
+float ActorScroller::GetSecondsToDestination() const
+{
+	float fTotalItemsToMove = fabsf(m_fCurrentItem - m_fDestinationItem);
+	return fTotalItemsToMove * m_fSecondsPerItem;
+}
+
 void ActorScroller::LoadFromNode( const RString &sDir, const XNode *pNode )
 {
 	ActorFrame::LoadFromNode( sDir, pNode );
@@ -300,6 +306,7 @@ public:
 	static int SetTransformFromExpression( T* p, lua_State *L )	{ p->SetTransformFromExpression(SArg(1)); return 0; }
 	static int SetTransformFromHeight( T* p, lua_State *L )	{ p->SetTransformFromHeight(FArg(1)); return 0; }
 	static int SetCurrentAndDestinationItem( T* p, lua_State *L )	{ p->SetCurrentAndDestinationItem( FArg(1) ); return 0; }
+	static int getsecondtodestination( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetSecondsToDestination() ); return 1; }
 	static int setsecondsperitem( T* p, lua_State *L )	{ p->SetSecondsPerItem(FArg(1)); return 0; }
 	static int setnumsubdivisions( T* p, lua_State *L )	{ p->SetNumSubdivisions(IArg(1)); return 0; }
 	static int scrollthroughallitems( T* p, lua_State *L )	{ p->ScrollThroughAllItems(); return 0; }
@@ -312,6 +319,7 @@ public:
 		ADD_METHOD( SetTransformFromExpression );
 		ADD_METHOD( SetTransformFromHeight );
 		ADD_METHOD( SetCurrentAndDestinationItem );
+		ADD_METHOD( getsecondtodestination );
 		ADD_METHOD( setsecondsperitem );
 		ADD_METHOD( setnumsubdivisions );
 		ADD_METHOD( scrollthroughallitems );
