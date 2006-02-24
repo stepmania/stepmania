@@ -321,9 +321,18 @@ class LunaScreen: public Luna<Screen>
 {
 public:
 	LunaScreen() { LUA->Register( Register ); }
+	static int PostScreenMessage( T* p, lua_State *L )
+	{
+		RString sMessage = SArg(1);
+		ScreenMessage SM = ScreenMessageHelpers::ToMessageNumber( sMessage );
+		p->PostScreenMessage( SM, 0 );
+		return 0;
+	}
 
 	static void Register( Lua *L )
 	{
+		ADD_METHOD( PostScreenMessage );
+
 		Luna<T>::Register( L );
 	}
 };
