@@ -641,7 +641,9 @@ Screen *ScreenManager::ActivatePreparedScreenAndBackground( const RString &sScre
 	{
 		Actor *pNewBGA = NULL;
 		if( sNewBGA.empty() )
+		{
 			pNewBGA = new Actor;
+		}
 		else
 		{
 			FOREACH( Actor*, g_vPreparedBackgrounds, a )
