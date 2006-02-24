@@ -247,6 +247,97 @@ void InputHandler_Carbon::GetDevicesAndDescriptions( vector<InputDevice>& dev, v
 		(*i)->GetDevicesAndDescriptions( dev, desc );
 }
 
+RString InputHandler_Carbon::GetDeviceSpecificInputString( const DeviceInput &di )
+{
+	if( di.device == DEVICE_KEYBOARD )
+	{
+#define OTHER(n) (KEY_OTHER_0 + (n))
+		switch( di.button )
+		{
+		case KEY_DEL: return "del";
+		case KEY_BACK: return "delete";
+		case KEY_ENTER: return "return";
+		case KEY_LALT: return "left option";
+		case KEY_RALT: return "right option";
+		case KEY_LMETA: return "left cmd";
+		case KEY_RMETA: return "right cmd";
+		case KEY_INSERT: return "help";
+		case OTHER(0): return "F17";
+		case OTHER(1): return "F18";
+		case OTHER(2): return "F19";
+		case OTHER(3): return "F20";
+		case OTHER(4): return "F21";
+		case OTHER(5): return "F22";
+		case OTHER(6): return "F23";
+		case OTHER(7): return "F25";
+		case OTHER(8): return "execute";
+		case OTHER(9): return "select";
+		case OTHER(10): return "stop";
+		case OTHER(11): return "again";
+		case OTHER(12): return "undo";
+		case OTHER(13): return "cut";
+		case OTHER(14): return "copy";
+		case OTHER(15): return "paste";
+		case OTHER(16): return "find";
+		case OTHER(17): return "mute";
+		case OTHER(18): return "volume up";
+		case OTHER(19): return "volume down";
+		case OTHER(20): return "AS/400 equal";
+		case OTHER(21): return "international 1";
+		case OTHER(22): return "international 2";
+		case OTHER(23): return "international 3";
+		case OTHER(24): return "international 4";
+		case OTHER(25): return "international 5";
+		case OTHER(26): return "international 6";
+		case OTHER(27): return "international 7";
+		case OTHER(28): return "international 8";
+		case OTHER(29): return "international 9";
+		case OTHER(30): return "lang 1";
+		case OTHER(31): return "lang 2";
+		case OTHER(32): return "lang 3";
+		case OTHER(33): return "lang 4";
+		case OTHER(34): return "lang 5";
+		case OTHER(35): return "lang 6";
+		case OTHER(36): return "lang 7";
+		case OTHER(37): return "lang 8";
+		case OTHER(38): return "lang 9";
+		case OTHER(39): return "alt erase";
+		case OTHER(40): return "sys req";
+		case OTHER(41): return "cancel";
+		case OTHER(42): return "separator";
+		case OTHER(43): return "out";
+		case OTHER(44): return "oper";
+		case OTHER(45): return "clear/again"; // XXX huh?
+		case OTHER(46): return "cr sel/props"; // XXX
+		case OTHER(47): return "ex sel";
+		case OTHER(48): return "non US backslash";
+		case OTHER(49): return "application";
+		case OTHER(50): return "prior";
+		}
+#undef OTHER
+	}
+	if( di.device == DEVICE_PUMP1 || di.device == DEVICE_PUMP2 )
+	{
+		switch( di.button )
+		{
+		case JOY_BUTTON_1:  return "UL";
+		case JOY_BUTTON_2:  return "UR";
+		case JOY_BUTTON_3:  return "MID";
+		case JOY_BUTTON_4:  return "DL";
+		case JOY_BUTTON_5:  return "DR";
+		case JOY_BUTTON_6:  return "Esc";
+		case JOY_BUTTON_7:  return "P2 UL";
+		case JOY_BUTTON_8:  return "P2 UR";
+		case JOY_BUTTON_9:  return "P2 MID";
+		case JOY_BUTTON_10: return "P2 DL";
+		case JOY_BUTTON_11: return "P2 DR";
+		}
+		
+	}
+	
+	return InputHandler::GetDeviceSpecificInputString( di );
+}
+
 /*
  * (c) 2005, 2006 Steve Checkoway
  * All rights reserved.
