@@ -17,32 +17,32 @@ void RageException::SetCleanupHandler( void (*pHandler)(const RString &sError) )
 
 /* This is no longer actually implemented by throwing an exception, but it acts
  * the same way to code in practice. */
-void RageException::Throw(const char *fmt, ...)
+void RageException::Throw( const char *sFmt, ... )
 {
 	va_list	va;
-	va_start(va, fmt);
-	RString error = vssprintf( fmt, va );
+	va_start( va, sFmt );
+	RString error = vssprintf( sFmt, va );
 	va_end(va);
 
 	RString msg = ssprintf(
-				"\n"
-				"//////////////////////////////////////////////////////\n"
-				"Exception: %s\n"
-				"//////////////////////////////////////////////////////\n"
-				"",
-				error.c_str());
-	if(LOG)
+		"\n"
+		"//////////////////////////////////////////////////////\n"
+		"Exception: %s\n"
+		"//////////////////////////////////////////////////////\n"
+		"",
+		error.c_str() );
+	if( LOG )
 	{
-		LOG->Trace("%s", msg.c_str());
+		LOG->Trace( "%s", msg.c_str() );
 		LOG->Flush();
 	}
 	else
 	{
-		printf("%s\n", msg.c_str());
-		fflush(stdout);
+		printf( "%s\n", msg.c_str() );
+		fflush( stdout );
 	}
 
-#if defined(_WINDOWS) && defined(DEBUG)
+#if defined(WINDOWS) && defined(DEBUG)
 	if( IsDebuggerPresent() )
 		DebugBreak();
 #endif
