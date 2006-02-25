@@ -78,7 +78,7 @@ void ScreenMiniMenu::LoadMenu( const MenuDef* pDef )
 		FontCharAliases::ReplaceMarkers( pHand->m_Def.m_sName );	// Allow special characters
 		
 		pHand->m_Def.m_vEnabledForPlayers.clear();
-		if( mr.bEnabled )
+		if( mr.pfnEnabled? mr.pfnEnabled():mr.bEnabled )
 		{
 			FOREACH_EnabledPlayer( pn )
 				pHand->m_Def.m_vEnabledForPlayers.insert( pn );
