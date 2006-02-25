@@ -126,12 +126,12 @@ void ArchHooks_Win32::SetTime( tm newtime )
 	SYSTEMTIME st;
 	ZERO( st );
 	st.wYear = (WORD)newtime.tm_year+1900;
-    st.wMonth = (WORD)newtime.tm_mon+1;
-    st.wDay = (WORD)newtime.tm_mday;
-    st.wHour = (WORD)newtime.tm_hour;
-    st.wMinute = (WORD)newtime.tm_min;
-    st.wSecond = (WORD)newtime.tm_sec;
-    st.wMilliseconds = 0;
+	st.wMonth = (WORD)newtime.tm_mon+1;
+	st.wDay = (WORD)newtime.tm_mday;
+	st.wHour = (WORD)newtime.tm_hour;
+	st.wMinute = (WORD)newtime.tm_min;
+	st.wSecond = (WORD)newtime.tm_sec;
+	st.wMilliseconds = 0;
 	SetLocalTime( &st ); 
 }
 
