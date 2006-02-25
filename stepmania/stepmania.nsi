@@ -271,17 +271,12 @@ Section "Main Section" SecMain
 	File "Themes\instructions.txt"
 	File /r "Themes\default"
 
-	CreateDirectory "$INSTDIR\Docs"
-	SetOutPath "$INSTDIR\Docs"
-	File "Docs\ChangeLog.txt"
-
 	CreateDirectory "$INSTDIR\Data"
 	SetOutPath "$INSTDIR\Data"
 	File "Data\*.*"
-	
-	SetOutPath "$INSTDIR"
-	File "README-FIRST.html"
-	File "NEWS"
+
+	CreateDirectory "$INSTDIR\Manual"
+	File /r "Manual"
 !endif
 
 !ifdef INSTALL_TYPE_INTERNAL_PCKS
@@ -324,7 +319,7 @@ Section "Main Section" SecMain
 !endif
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\View Statistics.lnk" "$INSTDIR\Program\tools.exe" "--machine-profile-stats"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME} Tools.lnk" "$INSTDIR\Program\tools.exe"
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME} Documentation.lnk" "$INSTDIR\README-FIRST.html"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME} Manual.lnk" "$INSTDIR\Manual\index.html"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Uninstall ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\uninstall.exe"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Go to the ${PRODUCT_NAME} web site.lnk" "${PRODUCT_URL}"
 !ifdef MAKE_UPDATES_SHORTCUT
@@ -646,8 +641,6 @@ Section "Uninstall"
 	RMDir "$INSTDIR\Save\MachineProfile"
 
 	Delete "$INSTDIR\Licenses.txt"
-	Delete "$INSTDIR\README-FIRST.html"
-	Delete "$INSTDIR\NEWS"
 	Delete "$INSTDIR\log.txt"
 	Delete "$INSTDIR\info.txt"
 	Delete "$INSTDIR\crashinfo.txt"
