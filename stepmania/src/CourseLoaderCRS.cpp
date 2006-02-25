@@ -72,7 +72,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				if( cd == DIFFICULTY_INVALID )
 				{
 					LOG->Warn( "Course file '%s' contains an invalid #METER string: \"%s\"",
-								sPath.c_str(), sParams[1].c_str() );
+						   sPath.c_str(), sParams[1].c_str() );
 					continue;
 				}
 				out.m_iCustomMeter[cd] = atoi( sParams[2] );
@@ -157,8 +157,8 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				else
 				{
 					LOG->Warn( "Course file '%s' contains a random_within_group entry '%s' that is invalid. "
-								"Song should be in the format '<group>/*'.",
-								sPath.c_str(), sSong.c_str());
+						   "Song should be in the format '<group>/*'.",
+						    sPath.c_str(), sSong.c_str() );
 				}
 
 				if( !SONGMAN->DoesSongGroupExist(new_entry.sSongGroup) )
@@ -166,9 +166,9 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 					/* XXX: We need a place to put "user warnings".  This is too loud for info.txt--
 					 * it obscures important warnings--and regular users never look there, anyway. */
 					LOG->Trace( "Course file '%s' random_within_group entry '%s' specifies a group that doesn't exist. "
-								"This entry will be ignored.",
-								sPath.c_str(), sSong.c_str());
-					continue;	// skip this #SONG
+						    "This entry will be ignored.",
+						    sPath.c_str(), sSong.c_str() );
+					continue; // skip this #SONG
 				}
 			}
 			else
@@ -179,11 +179,11 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				if( new_entry.pSong == NULL )
 				{
 					/* XXX: We need a place to put "user warnings".  This is too loud for info.txt--
-				     * it obscures important warnings--and regular users never look there, anyway. */
+					 * it obscures important warnings--and regular users never look there, anyway. */
 					LOG->Trace( "Course file '%s' contains a fixed song entry '%s' that does not exist. "
-								"This entry will be ignored.",
-								sPath.c_str(), sSong.c_str());
-					continue;	// skip this #SONG
+						    "This entry will be ignored.",
+						    sPath.c_str(), sSong.c_str());
+					continue; // skip this #SONG
 				}
 			}
 
@@ -195,16 +195,15 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 					new_entry.iHighMeter = new_entry.iLowMeter;
 				else if( retval != 2 )
 				{
-					LOG->Warn("Course file '%s' contains an invalid difficulty setting: \"%s\", 3..6 used instead",
-						sPath.c_str(), sParams[2].c_str());
+					LOG->Warn( "Course file '%s' contains an invalid difficulty setting: \"%s\", 3..6 used instead",
+						   sPath.c_str(), sParams[2].c_str() );
 					new_entry.iLowMeter = 3;
 					new_entry.iHighMeter = 6;
 				}
 			}
 
 			{
-				/* If "showcourse" or "noshowcourse" is in the list, force new_entry.secret 
-				 * on or off. */
+				/* If "showcourse" or "noshowcourse" is in the list, force new_entry.secret on or off. */
 				vector<RString> mods;
 				split( sParams[3], ",", mods, true );
 				for( int j = (int) mods.size()-1; j >= 0 ; --j )
@@ -273,13 +272,13 @@ bool CourseLoaderCRS::LoadFromCRSFile( const RString &_sPath, Course &out )
 
 	out.Init();
 
-	out.m_sPath = sPath;	// save path
+	out.m_sPath = sPath; // save path
 
 	// save group name
 	{
 		vector<RString> parts;
 		split( sPath, "/", parts, false );
-		if( parts.size() >= 4 )		// e.g. "/Courses/blah/fun.cvs"
+		if( parts.size() >= 4 ) // e.g. "/Courses/blah/fun.cvs"
 			out.m_sGroupName = parts[parts.size()-2];
 	}
 
