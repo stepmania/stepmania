@@ -855,7 +855,7 @@ extern const char *version_time;
 
 static void WriteLogHeader()
 {
-	LOG->Info( PRODUCT_NAME_VER );
+	LOG->Info( PRODUCT_ID_VER );
 
 #if defined(HAVE_VERSION_INFO)
 	LOG->Info( "Compiled %s (build %lu)", version_time, version_num );

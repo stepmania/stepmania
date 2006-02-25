@@ -87,7 +87,7 @@ BOOL CALLBACK LoadingWindow_Win32::WndProc( HWND hWnd, UINT msg, WPARAM wParam, 
 			STM_SETIMAGE, 
 			(WPARAM) IMAGE_BITMAP, 
 			(LPARAM) (HANDLE) g_hBitmap );
-		SetWindowTextA( hWnd, PRODUCT_NAME );
+		SetWindowTextA( hWnd, PRODUCT_ID );
 		break;
 
 	case WM_DESTROY:

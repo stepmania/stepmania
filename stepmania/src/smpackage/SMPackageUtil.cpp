@@ -172,7 +172,7 @@ bool SMPackageUtil::LaunchGame()
 	STARTUPINFO	si;
 	ZeroMemory( &si, sizeof(si) );
 
-	RString sExe = PRODUCT_NAME ".exe";
+	RString sExe = PRODUCT_FAMILY ".exe";
 	RString sFile = sExe;
 	if( !DoesFileExist(sFile) )
 	{

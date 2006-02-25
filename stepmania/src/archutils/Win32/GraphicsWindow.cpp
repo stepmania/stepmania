@@ -13,7 +13,7 @@
 
 #include <set>
 
-static const RString g_sClassName = PRODUCT_NAME;
+static const RString g_sClassName = PRODUCT_ID;
 
 static HWND g_hWndMain;
 static HDC g_HDC;

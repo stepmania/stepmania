@@ -399,7 +399,7 @@ namespace
 
 		if( g_debugInfo.nBuildNumber != int(version_num) )
 		{
-			return ssprintf( "Incorrect %s file (build %d, expected %d) for this version of " PRODUCT_NAME " -- call stack unavailable.\n",
+			return ssprintf( "Incorrect %s file (build %d, expected %d) for this version of " PRODUCT_ID " -- call stack unavailable.\n",
 				g_debugInfo.sFilename, g_debugInfo.nBuildNumber, int(version_num) );
 		}
 
@@ -430,7 +430,7 @@ static void MakeCrashReport( const CompleteCrashData &Data, RString &sOut )
 	sOut += ssprintf(
 			"%s crash report (build %d, %s)\n"
 			"--------------------------------------\n\n",
-			PRODUCT_NAME_VER, version_num, version_time );
+			PRODUCT_ID_VER, version_num, version_time );
 
 	sOut += ssprintf( "Crash reason: %s\n", Data.m_CrashInfo.m_CrashReason );
 	sOut += ssprintf( "\n" );
@@ -749,7 +749,7 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 
 			/* Create the form data to send. */
 			m_pPost = new NetworkPostData;
-			m_pPost->SetData( "Product", PRODUCT_NAME );
+			m_pPost->SetData( "Product", PRODUCT_ID );
 			m_pPost->SetData( "Version", PRODUCT_VER );
 			m_pPost->SetData( "Arch", HOOKS->GetArchName().c_str() );
 			m_pPost->SetData( "Report", m_sCrashReport );

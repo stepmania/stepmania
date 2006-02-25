@@ -30,7 +30,7 @@ ArchHooks_Win32::ArchHooks_Win32()
 	 * the main thread. */
 	SetThreadPriorityBoost( GetCurrentThread(), TRUE );
 
-	g_hInstanceMutex = CreateMutex( NULL, TRUE, PRODUCT_NAME );
+	g_hInstanceMutex = CreateMutex( NULL, TRUE, PRODUCT_ID );
 
 	g_bIsMultipleInstance = false;
 	if( GetLastError() == ERROR_ALREADY_EXISTS )
@@ -79,9 +79,9 @@ bool ArchHooks_Win32::CheckForMultipleInstances()
 	/* Search for the existing window.  Prefer to use the class name, which is less likely to
 	 * have a false match, and will match the gameplay window.  If that fails, try the window
 	 * name, which should match the loading window. */
-	HWND hWnd = FindWindow( PRODUCT_NAME, NULL );
+	HWND hWnd = FindWindow( PRODUCT_ID, NULL );
 	if( hWnd == NULL )
-		hWnd = FindWindow( NULL, PRODUCT_NAME );
+		hWnd = FindWindow( NULL, PRODUCT_ID );
 
 	if( hWnd != NULL )
 	{
