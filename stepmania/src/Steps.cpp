@@ -134,10 +134,10 @@ void Steps::TidyUpData()
 	
 	if( GetDifficulty() == DIFFICULTY_INVALID )
 	{
-		if(		 GetMeter() == 1 )	SetDifficulty( DIFFICULTY_BEGINNER );
+		if(	 GetMeter() == 1 )	SetDifficulty( DIFFICULTY_BEGINNER );
 		else if( GetMeter() <= 3 )	SetDifficulty( DIFFICULTY_EASY );
 		else if( GetMeter() <= 6 )	SetDifficulty( DIFFICULTY_MEDIUM );
-		else						SetDifficulty( DIFFICULTY_HARD );
+		else				SetDifficulty( DIFFICULTY_HARD );
 	}
 
 	if( GetMeter() < 1) // meter is invalid
@@ -270,10 +270,10 @@ void Steps::DeAutogen()
 
 	Decompress();	// fills in m_pNoteData with sliding window transform
 
-	m_sDescription	= Real()->m_sDescription;
-	m_Difficulty	= Real()->m_Difficulty;
+	m_sDescription		= Real()->m_sDescription;
+	m_Difficulty		= Real()->m_Difficulty;
 	m_iMeter		= Real()->m_iMeter;
-	m_CachedRadarValues   = Real()->m_CachedRadarValues;
+	m_CachedRadarValues	= Real()->m_CachedRadarValues;
 
 	parent = NULL;
 
@@ -363,7 +363,7 @@ public:
 	static int GetStepsType( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_StepsType ); return 1; }
 	static int GetDifficulty( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetDifficulty() ); return 1; }
 	static int GetDescription( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDescription() ); return 1; }
-	static int GetMeter( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetMeter() ); return 1; }
+	static int GetMeter( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetMeter() ); return 1; }
 	static int GetFilename( T* p, lua_State *L )	{ lua_pushstring(L, p->GetFilename() ); return 1; }
 
 	static void Register(lua_State *L)

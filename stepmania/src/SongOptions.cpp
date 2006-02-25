@@ -43,7 +43,7 @@ void SongOptions::GetMods( vector<RString> &AddTo ) const
 	case FAIL_IMMEDIATE:						break;
 	case FAIL_END_OF_SONG:	AddTo.push_back("FailEndOfSong");	break;
 	case FAIL_OFF:		AddTo.push_back("FailOff");		break;
-	default:	ASSERT(0);
+	default:		ASSERT(0);
 	}
 
 	if( m_fMusicRate != 1 )
@@ -56,10 +56,10 @@ void SongOptions::GetMods( vector<RString> &AddTo ) const
 
 	switch( m_AutosyncType )
 	{
-	case AUTOSYNC_OFF:					break;
+	case AUTOSYNC_OFF:						break;
 	case AUTOSYNC_SONG:	AddTo.push_back("AutosyncSong");	break;
 	case AUTOSYNC_MACHINE:	AddTo.push_back("AutosyncMachine");	break;
-	default:	ASSERT(0);
+	default:		ASSERT(0);
 	}
 }
 
@@ -132,13 +132,13 @@ void SongOptions::FromString( const RString &sOptions )
 				on = false;
 		}
 
-		if(	     sBit == "norecover" )		m_DrainType = DRAIN_NO_RECOVER;
+		if(	     sBit == "norecover" )	m_DrainType = DRAIN_NO_RECOVER;
 		else if( sBit == "suddendeath" )	m_DrainType = DRAIN_SUDDEN_DEATH;
 		else if( sBit == "power-drop" )		m_DrainType = DRAIN_NO_RECOVER;
-		else if( sBit == "death" )			m_DrainType = DRAIN_SUDDEN_DEATH;
+		else if( sBit == "death" )		m_DrainType = DRAIN_SUDDEN_DEATH;
 		else if( sBit == "normal-drain" )	m_DrainType = DRAIN_NORMAL;
 		else if( sBit == "failarcade" || 
-				 sBit == "failimmediate" )	m_FailType = FAIL_IMMEDIATE;
+			 sBit == "failimmediate" )	m_FailType = FAIL_IMMEDIATE;
 		else if( sBit == "failendofsong" )	m_FailType = FAIL_END_OF_SONG;
 		else if( sBit == "failoff" )		m_FailType = FAIL_OFF;
 		
@@ -151,11 +151,11 @@ void SongOptions::FromString( const RString &sOptions )
 
 		else if( sBit == "assisttick" )		m_bAssistTick = on;
 		else if( sBit == "autosync" || sBit == "autosyncsong" )
-											m_AutosyncType = on ? AUTOSYNC_SONG : AUTOSYNC_OFF;
+							m_AutosyncType = on ? AUTOSYNC_SONG : AUTOSYNC_OFF;
 		else if( sBit == "autosyncmachine" )	
-											m_AutosyncType = on ? AUTOSYNC_MACHINE : AUTOSYNC_OFF;
+							m_AutosyncType = on ? AUTOSYNC_MACHINE : AUTOSYNC_OFF;
 		else if( sBit == "savescore" )		m_bSaveScore = on;
-		else if( sBit == "bar" )			m_LifeType = LIFE_BAR;
+		else if( sBit == "bar" )		m_LifeType = LIFE_BAR;
 		else if( sBit == "battery" )		m_LifeType = LIFE_BATTERY;
 		else if( sBit == "lifetime" )		m_LifeType = LIFE_TIME;
 	}
