@@ -286,11 +286,6 @@ Section "Main Section" SecMain
 	File "pcks\*.*"
 !endif
 
-	SetOverwrite off
-	SetOutPath "$INSTDIR\Save\MachineProfile"
-	File "Docs\Stats.xml"
-	SetOverwrite on
-
 	SetOutPath "$INSTDIR"
 	File "Docs\Licenses.txt"
 
@@ -600,6 +595,10 @@ Section "Uninstall"
 	RMDir "$INSTDIR\NoteSkins\para"
 	RMDir "$INSTDIR\NoteSkins"
 
+	RMDir /r "$INSTDIR\BackgroundEffects"
+
+	RMDir /r "$INSTDIR\BackgroundTransitions"
+
 	Delete "$INSTDIR\RandomMovies\instructions.txt"
 	RMDir "$INSTDIR\RandomMovies"
 
@@ -610,14 +609,10 @@ Section "Uninstall"
 	RMDir /r "$INSTDIR\Themes\default"
 	RMDir "$INSTDIR\Themes"
 
-	Delete "$INSTDIR\Visualizations\instructions.txt"
-	RMDir "$INSTDIR\Visualizations"
-
-	Delete "$INSTDIR\Docs\*.*"
-	RMDir "$INSTDIR\Docs"
-
 	Delete "$INSTDIR\Data\*.*"
 	RMDir "$INSTDIR\Data"
+
+	RMDir /r "$INSTDIR\Manual"
 !endif
 
 	Delete "$INSTDIR\Program\${PRODUCT_NAME}.exe"
@@ -635,11 +630,6 @@ Section "Uninstall"
 	Delete "$INSTDIR\Program\dbghelp.dll"
 	Delete "$INSTDIR\Program\zlib1.dll"
 	RMDir "$INSTDIR\Program"
-
-	; It's harmless to delete this, as long as we leave Stats.xml alone; it'll be rewritten
-	; by the program the next time it's run.
-	Delete "$INSTDIR\Save\MachineProfile\stats.html"
-	RMDir "$INSTDIR\Save\MachineProfile"
 
 	Delete "$INSTDIR\Licenses.txt"
 	Delete "$INSTDIR\log.txt"
