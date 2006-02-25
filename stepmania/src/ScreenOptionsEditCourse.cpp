@@ -66,6 +66,7 @@ void ScreenOptionsEditCourse::BeginScreen()
 	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 	pHand->m_Def.m_bExportOnChange = true;
 	pHand->m_Def.m_bAllowThemeItems = false;
+	pHand->m_Def.m_bOneChoiceForAllPlayers = true;
 	FOREACH_CourseType( i )
 		pHand->m_Def.m_vsChoices.push_back( CourseTypeToLocalizedString(i) );
 	vHands.push_back( pHand );
@@ -74,7 +75,7 @@ void ScreenOptionsEditCourse::BeginScreen()
 	pHand->m_Def.m_sName = "Meter";
 	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 	pHand->m_Def.m_bExportOnChange = true;
-	pHand->m_Def.m_vsChoices.clear();
+	pHand->m_Def.m_bOneChoiceForAllPlayers = true;
 	pHand->m_Def.m_vsChoices.push_back( "Auto" );
 	for( int i=MIN_METER; i<=MAX_METER; i++ )
 		pHand->m_Def.m_vsChoices.push_back( ssprintf("%d",i) );
@@ -89,6 +90,7 @@ void ScreenOptionsEditCourse::BeginScreen()
 		pHand->m_Def.m_sName = ssprintf( ENTRY.GetValue(), iEntryIndex+1 );
 		pHand->m_Def.m_bAllowThemeItems = false;
 		pHand->m_Def.m_bAllowThemeTitle = false;
+		pHand->m_Def.m_bOneChoiceForAllPlayers = true;
 		pHand->m_Def.m_vsChoices.push_back( "RANDOM" ); // XXX Localize?
 		FOREACH_CONST( Song*, m_vpDisplayedSongs, s )
 			pHand->m_Def.m_vsChoices.push_back( (*s)->GetTranslitFullTitle() );
@@ -99,6 +101,7 @@ void ScreenOptionsEditCourse::BeginScreen()
 	pHand->m_Def.m_sName = "";
 	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 	pHand->m_Def.m_bExportOnChange = false;
+	pHand->m_Def.m_bOneChoiceForAllPlayers = true;
 	pHand->m_Def.m_vsChoices.push_back( "Insert Entry" );
 	vHands.push_back( pHand );
 

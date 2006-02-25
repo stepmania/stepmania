@@ -54,11 +54,7 @@ public:
 	RString m_sSongGroup;
 
 	OptionRowHandlerSongChoices() { Init(); }
-	void Init()
-	{
-		OptionRowHandler::Init();
-		m_vpDisplayedSongs.clear();
-	}
+	
 	virtual void LoadInternal( const Commands &cmds )
 	{
 		FillSongsAndChoices( m_sSongGroup, m_vpDisplayedSongs, m_Def.m_vsChoices );
@@ -98,12 +94,13 @@ void ScreenOptionsEditCourseEntry::Init()
 	pHand->m_Def.m_sName = "Song Group";
 	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 	pHand->m_Def.m_bExportOnChange = true;
-	pHand->m_Def.m_vsChoices.clear();
+	pHand->m_Def.m_bAllowThemeItems = false;
+	pHand->m_Def.m_bOneChoiceForAllPlayers = true;
 	vector<RString> vsSongGroups;
 	SONGMAN->GetSongGroupNames( vsSongGroups );
 	pHand->m_Def.m_vsChoices.push_back( "(any)" );
-	FOREACH_CONST( RString, vsSongGroups, song )
-		pHand->m_Def.m_vsChoices.push_back( *song );
+	FOREACH_CONST( RString, vsSongGroups, group )
+		pHand->m_Def.m_vsChoices.push_back( *group );
 	vHands.push_back( pHand );
 
 	{
@@ -113,6 +110,8 @@ void ScreenOptionsEditCourseEntry::Init()
 		m_pSongHandler->m_Def.m_sName = "Song";
 		m_pSongHandler->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 		m_pSongHandler->m_Def.m_bExportOnChange = true;
+		m_pSongHandler->m_Def.m_bAllowThemeItems = false;
+		m_pSongHandler->m_Def.m_bOneChoiceForAllPlayers = true;
 		vHands.push_back( m_pSongHandler );
 	}
 
@@ -120,7 +119,8 @@ void ScreenOptionsEditCourseEntry::Init()
 	pHand->m_Def.m_sName = "Base Difficulty";
 	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 	pHand->m_Def.m_bExportOnChange = true;
-	pHand->m_Def.m_vsChoices.clear();
+	pHand->m_Def.m_bAllowThemeItems = false;
+	pHand->m_Def.m_bOneChoiceForAllPlayers = true;
 	pHand->m_Def.m_vsChoices.push_back( "(any)" );
 	FOREACH_CONST( Difficulty, CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue(), dc )
 		pHand->m_Def.m_vsChoices.push_back( DifficultyToLocalizedString(*dc) );
@@ -130,7 +130,8 @@ void ScreenOptionsEditCourseEntry::Init()
 	pHand->m_Def.m_sName = "Low Meter";
 	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 	pHand->m_Def.m_bExportOnChange = true;
-	pHand->m_Def.m_vsChoices.clear();
+	pHand->m_Def.m_bAllowThemeItems = false;
+	pHand->m_Def.m_bOneChoiceForAllPlayers = true;
 	pHand->m_Def.m_vsChoices.push_back( "(any)" );
 	for( int i=MIN_METER; i<=MAX_METER; i++ )
 		pHand->m_Def.m_vsChoices.push_back( ssprintf("%i",i) );
@@ -140,7 +141,8 @@ void ScreenOptionsEditCourseEntry::Init()
 	pHand->m_Def.m_sName = "High Meter";
 	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 	pHand->m_Def.m_bExportOnChange = true;
-	pHand->m_Def.m_vsChoices.clear();
+	pHand->m_Def.m_bAllowThemeItems = false;
+	pHand->m_Def.m_bOneChoiceForAllPlayers = true;
 	pHand->m_Def.m_vsChoices.push_back( "(any)" );
 	for( int i=MIN_METER; i<=MAX_METER; i++ )
 		pHand->m_Def.m_vsChoices.push_back( ssprintf("%i",i) );
@@ -150,7 +152,8 @@ void ScreenOptionsEditCourseEntry::Init()
 	pHand->m_Def.m_sName = "Sort";
 	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 	pHand->m_Def.m_bExportOnChange = true;
-	pHand->m_Def.m_vsChoices.clear();
+	pHand->m_Def.m_bAllowThemeItems = false;
+	pHand->m_Def.m_bOneChoiceForAllPlayers = true;
 	FOREACH_SongSort( i )
 		pHand->m_Def.m_vsChoices.push_back( SongSortToLocalizedString(i) );
 	vHands.push_back( pHand );
@@ -159,7 +162,8 @@ void ScreenOptionsEditCourseEntry::Init()
 	pHand->m_Def.m_sName = "Choose";
 	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 	pHand->m_Def.m_bExportOnChange = true;
-	pHand->m_Def.m_vsChoices.clear();
+	pHand->m_Def.m_bAllowThemeItems = false;
+	pHand->m_Def.m_bOneChoiceForAllPlayers = true;
 	for( int i=0; i<20; i++ )
 		pHand->m_Def.m_vsChoices.push_back( FormatNumberAndSuffix(i+1) );
 	vHands.push_back( pHand );
@@ -168,7 +172,8 @@ void ScreenOptionsEditCourseEntry::Init()
 	m_pModChangesHandler->m_Def.m_sName = "Set Mods";
 	m_pModChangesHandler->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 	m_pModChangesHandler->m_Def.m_bExportOnChange = true;
-	m_pModChangesHandler->m_Def.m_vsChoices.clear();
+	m_pModChangesHandler->m_Def.m_bAllowThemeItems = false;
+	m_pModChangesHandler->m_Def.m_bOneChoiceForAllPlayers = true;
 	m_pModChangesHandler->m_Def.m_vsChoices.push_back( "" );
 	vHands.push_back( m_pModChangesHandler );
 
@@ -207,21 +212,21 @@ void ScreenOptionsEditCourseEntry::HandleScreenMessage( const ScreenMessage SM )
 		case ROW_CHOOSE_INDEX: 
 			break;
 		case ROW_SET_MODS:
-			{
-				Trail *pTrail = GAMESTATE->m_pCurTrail[PLAYER_1];
-				TrailEntry *pTrailEntry = &pTrail->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
-				Song *pSong = pTrailEntry->pSong;
-				Steps *pSteps = pTrailEntry->pSteps;
+		{
+			Trail *pTrail = GAMESTATE->m_pCurTrail[PLAYER_1];
+			TrailEntry *pTrailEntry = &pTrail->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
+			Song *pSong = pTrailEntry->pSong;
+			Steps *pSteps = pTrailEntry->pSteps;
 
-				// Set up for ScreenEdit
-				const Style *pStyle = GAMEMAN->GetEditorStyleForStepsType(pSteps->m_StepsType);
-				GAMESTATE->m_pCurStyle.Set( pStyle );
-				GAMESTATE->m_pCurSong.Set( pSong );
-				GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );
+			// Set up for ScreenEdit
+			const Style *pStyle = GAMEMAN->GetEditorStyleForStepsType(pSteps->m_StepsType);
+			GAMESTATE->m_pCurStyle.Set( pStyle );
+			GAMESTATE->m_pCurSong.Set( pSong );
+			GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );
 
-				SCREENMAN->SetNewScreen( "ScreenEditCourseMods" );
-			}
+			SCREENMAN->SetNewScreen( "ScreenEditCourseMods" );
 			break;
+		}
 		case ROW_DONE:
 			SCREENMAN->SetNewScreen( "ScreenOptionsEditCourse" );
 			break;
@@ -242,11 +247,12 @@ void ScreenOptionsEditCourseEntry::HandleScreenMessage( const ScreenMessage SM )
 	
 void ScreenOptionsEditCourseEntry::AfterChangeValueInRow( int iRow, PlayerNumber pn )
 {
+	PlayerNumber mpn = GAMESTATE->m_MasterPlayerNumber;
 	ScreenOptions::AfterChangeValueInRow( iRow, pn );
-
 	Course *pCourse = GAMESTATE->m_pCurCourse;
-	GAMESTATE->m_pCurTrail[PLAYER_1].Set( NULL );
-	Trail *pTrail = pCourse->GetTrailForceRegenCache( GAMESTATE->m_stEdit, GAMESTATE->m_PreferredCourseDifficulty[PLAYER_1] );
+	
+	GAMESTATE->m_pCurTrail[mpn].Set( NULL );
+	Trail *pTrail = pCourse->GetTrailForceRegenCache( GAMESTATE->m_stEdit, GAMESTATE->m_PreferredCourseDifficulty[mpn] );
 	int iEntryIndex = GAMESTATE->m_iEditCourseEntryIndex;
 	ASSERT( iEntryIndex >= 0 && iEntryIndex < (int) pCourse->m_vEntries.size() );
 	CourseEntry &ce = pCourse->m_vEntries[ iEntryIndex ];
@@ -254,26 +260,26 @@ void ScreenOptionsEditCourseEntry::AfterChangeValueInRow( int iRow, PlayerNumber
 	switch( iRow )
 	{
 	case ROW_SONG_GROUP:
-		// refresh songs
-		{
-			vector<PlayerNumber> vpns;
-			vpns.push_back( PLAYER_1 );
-			ExportOptions( ROW_SONG_GROUP, vpns );
+	// refresh songs
+	{
+		vector<PlayerNumber> vpns;
+		vpns.push_back( mpn );
+		ExportOptions( ROW_SONG_GROUP, vpns );
 
-			m_pSongHandler->m_sSongGroup = ce.sSongGroup;
+		m_pSongHandler->m_sSongGroup = ce.sSongGroup;
 
-			OptionRow &row = *m_pRows[ROW_SONG];
-			row.Reload();
-			ImportOptions( ROW_SONG, vpns );
-			row.AfterImportOptions( PLAYER_1 );
-		}
+		OptionRow &row = *m_pRows[ROW_SONG];
+		row.Reload();
+		ImportOptions( ROW_SONG, vpns );
+		row.AfterImportOptions( mpn );
 		break;
+	}
 	}
 
 
 	// cause overlay elements to refresh by changing the course
 	GAMESTATE->m_pCurCourse.Set( pCourse );
-	GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
+	GAMESTATE->m_pCurTrail[mpn].Set( pTrail );
 
 }
 
@@ -301,57 +307,58 @@ void ScreenOptionsEditCourseEntry::ImportOptions( int iRow, const vector<PlayerN
 		}
 		break;
 	case ROW_SONG:
-		{
-			GAMESTATE->m_pCurSong.Set( ce.pSong );
+	{
+		GAMESTATE->m_pCurSong.Set( ce.pSong );
 
-			// XXX: copy and pasted from ScreenOptionsMaster
-			FOREACH_CONST( PlayerNumber, vpns, pn )
-				ASSERT( GAMESTATE->IsHumanPlayer(*pn) );
-			OptionRow &row = *m_pRows[iRow];
-			row.ImportOptions( vpns );
-		}
+		// XXX: copy and pasted from ScreenOptionsMaster
+		FOREACH_CONST( PlayerNumber, vpns, pn )
+			ASSERT( GAMESTATE->IsHumanPlayer(*pn) );
+		OptionRow &row = *m_pRows[iRow];
+		row.ImportOptions( vpns );
 		break;
+	}
 	case ROW_BASE_DIFFICULTY:
-		{
-			vector<Difficulty>::const_iterator iter = find( CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue().begin(), CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue().end(), ce.baseDifficulty );
-			int iChoice = 0;
-			if( iter != CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue().end() )
-				iChoice = iter - CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue().begin() + 1;
-			OptionRow &row = *m_pRows[ROW_BASE_DIFFICULTY];
-			row.SetOneSharedSelection( iChoice );
-		}
+	{
+		vector<Difficulty>::const_iterator iter = find( CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue().begin(), CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue().end(), ce.baseDifficulty );
+		int iChoice = 0;
+		if( iter != CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue().end() )
+			iChoice = iter - CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue().begin() + 1;
+		OptionRow &row = *m_pRows[ROW_BASE_DIFFICULTY];
+		row.SetOneSharedSelection( iChoice );
 		break;
+	}
 	case ROW_LOW_METER:
-		{
-			int iChoice = 0;
-			if( ce.iLowMeter != -1 )
-				iChoice = ce.iLowMeter;
-			OptionRow &row = *m_pRows[ROW_LOW_METER];
-			row.SetOneSharedSelection( iChoice );
-		}
+	{
+		int iChoice = 0;
+		if( ce.iLowMeter != -1 )
+			iChoice = ce.iLowMeter;
+		OptionRow &row = *m_pRows[ROW_LOW_METER];
+		row.SetOneSharedSelection( iChoice );
 		break;
+	}
 	case ROW_HIGH_METER:
-		{
-			int iChoice = 0;
-			if( ce.iHighMeter != -1 )
-				iChoice = ce.iHighMeter;
-			OptionRow &row = *m_pRows[ROW_HIGH_METER];
-			row.SetOneSharedSelection( iChoice );
-		}
+	{
+		int iChoice = 0;
+		if( ce.iHighMeter != -1 )
+			iChoice = ce.iHighMeter;
+		OptionRow &row = *m_pRows[ROW_HIGH_METER];
+		row.SetOneSharedSelection( iChoice );
 		break;
+	}
 	case ROW_SORT:
-		{
-			int iChoice = ce.songSort;
-			OptionRow &row = *m_pRows[ROW_SORT];
-			row.SetOneSharedSelection( iChoice );
-		}
+	{
+		int iChoice = ce.songSort;
+		OptionRow &row = *m_pRows[ROW_SORT];
+		row.SetOneSharedSelection( iChoice );
 		break;
+	}
 	case ROW_CHOOSE_INDEX:
-		{
-			int iChoice = ce.iChooseIndex;
-			OptionRow &row = *m_pRows[ROW_CHOOSE_INDEX];
-			row.SetOneSharedSelection( iChoice );
-		}
+	{
+		int iChoice = ce.iChooseIndex;
+		OptionRow &row = *m_pRows[ROW_CHOOSE_INDEX];
+		row.SetOneSharedSelection( iChoice );
+		break;
+	}
 	}
 }
 
@@ -365,80 +372,80 @@ void ScreenOptionsEditCourseEntry::ExportOptions( int iRow, const vector<PlayerN
 	switch( iRow )
 	{
 	case ROW_SONG_GROUP:
-		{
-			OptionRow &row = *m_pRows[ROW_SONG_GROUP];
-			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
-			if( iChoice == 0 )
-				ce.sSongGroup = "";
-			else
-				ce.sSongGroup = row.GetRowDef().m_vsChoices[ iChoice ];
-		}
+	{
+		OptionRow &row = *m_pRows[ROW_SONG_GROUP];
+		int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
+		if( iChoice == 0 )
+			ce.sSongGroup = "";
+		else
+			ce.sSongGroup = row.GetRowDef().m_vsChoices[ iChoice ];
 		break;
+	}
 	case ROW_SONG:
+	{
+		// XXX: copy and pasted from ScreenOptionsMaster
+		OptionRow &row = *m_pRows[iRow];
+		bool bRowHasFocus[NUM_PLAYERS];
+		ZERO( bRowHasFocus );
+		FOREACH_CONST( PlayerNumber, vpns, p )
 		{
-			// XXX: copy and pasted from ScreenOptionsMaster
-			OptionRow &row = *m_pRows[iRow];
-			bool bRowHasFocus[NUM_PLAYERS];
-			ZERO( bRowHasFocus );
-			FOREACH_CONST( PlayerNumber, vpns, p )
-			{
-				int iCurRow = m_iCurrentRow[*p];
-				bRowHasFocus[*p] = iCurRow == iRow;
-			}
-			row.ExportOptions( vpns, bRowHasFocus );
-
-			ce.pSong = GAMESTATE->m_pCurSong;
+			int iCurRow = m_iCurrentRow[*p];
+			bRowHasFocus[*p] = iCurRow == iRow;
 		}
+		row.ExportOptions( vpns, bRowHasFocus );
+		
+		ce.pSong = GAMESTATE->m_pCurSong;
 		break;
+	}
 	case ROW_BASE_DIFFICULTY:
+	{
+		OptionRow &row = *m_pRows[ROW_BASE_DIFFICULTY];
+		int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
+		if( iChoice == 0 )
 		{
-			OptionRow &row = *m_pRows[ROW_BASE_DIFFICULTY];
-			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
-			if( iChoice == 0 )
-			{
-				ce.baseDifficulty = DIFFICULTY_INVALID;
-			}
-			else
-			{
-				Difficulty d = CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue()[iChoice-1];
-				ce.baseDifficulty = d;
-			}
+			ce.baseDifficulty = DIFFICULTY_INVALID;
+		}
+		else
+		{
+			Difficulty d = CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue()[iChoice-1];
+			ce.baseDifficulty = d;
 		}
 		break;
+	}
 	case ROW_LOW_METER:
-		{
-			OptionRow &row = *m_pRows[ROW_LOW_METER];
-			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
-			if( iChoice == 0 )
-				ce.iLowMeter = -1;
-			else
-				ce.iLowMeter = iChoice;
-		}
+	{
+		OptionRow &row = *m_pRows[ROW_LOW_METER];
+		int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
+		if( iChoice == 0 )
+			ce.iLowMeter = -1;
+		else
+			ce.iLowMeter = iChoice;
 		break;
+	}
 	case ROW_HIGH_METER:
-		{
-			OptionRow &row = *m_pRows[ROW_HIGH_METER];
-			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
-			if( iChoice == 0 )
-				ce.iHighMeter = -1;
-			else
-				ce.iHighMeter = iChoice;
-		}
+	{
+		OptionRow &row = *m_pRows[ROW_HIGH_METER];
+		int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
+		if( iChoice == 0 )
+			ce.iHighMeter = -1;
+		else
+			ce.iHighMeter = iChoice;
 		break;
+	}
 	case ROW_SORT:
-		{
-			OptionRow &row = *m_pRows[ROW_SORT];
-			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
-			ce.songSort = (SongSort)iChoice;
-		}
+	{
+		OptionRow &row = *m_pRows[ROW_SORT];
+		int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
+		ce.songSort = (SongSort)iChoice;
 		break;
+	}
 	case ROW_CHOOSE_INDEX:
-		{
-			OptionRow &row = *m_pRows[ROW_CHOOSE_INDEX];
-			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
-			ce.iChooseIndex = iChoice;
-		}
+	{
+		OptionRow &row = *m_pRows[ROW_CHOOSE_INDEX];
+		int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
+		ce.iChooseIndex = iChoice;
 		break;
+	}
 	}
 }
 
