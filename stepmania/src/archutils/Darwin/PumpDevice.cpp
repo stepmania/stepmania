@@ -8,6 +8,8 @@ void PumpDevice::Open()
 	AddElementToQueue( 3 );
 	AddElementToQueue( 4 );
 	AddElementToQueue( 6 );
+	AddElementToQueue( 7 );
+	AddElementToQueue( 8 );
 }
 
 void PumpDevice::GetButtonPresses( vector<pair<DeviceInput, bool> >& vPresses, int cookie,
@@ -15,66 +17,44 @@ void PumpDevice::GetButtonPresses( vector<pair<DeviceInput, bool> >& vPresses, i
 {
 	DeviceButton db1 = DeviceButton_Invalid;
 	DeviceButton db2 = DeviceButton_Invalid;
-	bool pressed;
+	bool pressed1 = !(value & 0x1);
+	bool pressed2 = !(value & 0x2);
 	
-	LOG->Trace( "Pump button: %d, %d.", cookie, value );
 	switch( cookie )
 	{
 	case 2:
-		db1 = JOY_BUTTON_1;
-		pressed = value == 0;
+		db2 = JOY_BUTTON_1; // bit 9
 		break;
 	case 3:
-		switch( value )
-		{
-		case 1:
-			db1 = JOY_BUTTON_5;
-			pressed = true;
-			break;
-		case 2:
-			db1 = JOY_BUTTON_4;
-			pressed = true;
-			break;
-		case 3:
-			db1 = JOY_BUTTON_5;
-			db2 = JOY_BUTTON_4;
-			pressed = false;
-			break;
-		}
+		db1 = JOY_BUTTON_5; // bit 10
+		db2 = JOY_BUTTON_4; // bit 11
 		break;
 	case 4:
-		switch( value )
-		{
-		case 1:
-			db1 = JOY_BUTTON_2;
-			pressed = true;
-			break;
-		case 2:
-			db1 = JOY_BUTTON_3;
-			pressed = true;
-			break;
-		case 3:
-			db1 = JOY_BUTTON_2;
-			db2 = JOY_BUTTON_3;
-			pressed = false;
-			break;
-		}
+		db1 = JOY_BUTTON_2; // bit 12
+		db2 = JOY_BUTTON_3; // bit 13
 		break;
 	case 6:
-		db1 = JOY_BUTTON_6;
-		pressed = value == 2;
+		db1 = JOY_BUTTON_6; // bit 16
+		db2 = JOY_BUTTON_7; // bit 17
+		break;
+	case 7:
+		db1 = JOY_BUTTON_11; // bit 18
+		db2 = JOY_BUTTON_10; // bit 19
+		break;
+	case 8:
+		db1 = JOY_BUTTON_8; // bit 20
+		db2 = JOY_BUTTON_9; // bit 21
 		break;
 	}
-	
 	if( db1 != DeviceButton_Invalid )
 	{
-		DeviceInput di( id, db1, pressed ? 1.0f : 0.0f , now );
-		vPresses.push_back( pair<DeviceInput, bool>(di, pressed) );
+		DeviceInput di( id, db1, pressed1 ? 1.0f : 0.0f , now );
+		vPresses.push_back( pair<DeviceInput, bool>(di, pressed1) );
 	}
 	if( db2 != DeviceButton_Invalid )
 	{
-		DeviceInput di( id, db2, pressed ? 1.0f : 0.0f , now );
-		vPresses.push_back( pair<DeviceInput, bool>(di, pressed) );
+		DeviceInput di( id, db2, pressed2 ? 1.0f : 0.0f , now );
+		vPresses.push_back( pair<DeviceInput, bool>(di, pressed2) );
 	}
 }
 
