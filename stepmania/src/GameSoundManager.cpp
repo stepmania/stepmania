@@ -441,7 +441,7 @@ float GameSoundManager::GetFrameTimingAdjustment( float fDeltaTime )
 
 	const float fExpectedDelay = 1.0f / iThisFPS;
 	const float fExtraDelay = fDeltaTime - fExpectedDelay;
-	if( fabsf(fExtraDelay) >= fExpectedDelay )
+	if( fabsf(fExtraDelay) >= fExpectedDelay/2 )
 		return 0;
 
 	/* Subtract the extra delay. */

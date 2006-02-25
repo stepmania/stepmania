@@ -88,6 +88,10 @@ void Foreground::Update( float fDeltaTime )
 		{
 			fDeltaTime = GAMESTATE->m_fMusicSeconds - m_fLastMusicSeconds;
 		}
+
+		/* This shouldn't go down, but be safe: */
+		fDeltaTime = max( fDeltaTime, 0 );
+
 		bga.m_bga->Update( fDeltaTime / fRate );
 
 		if( GAMESTATE->m_fSongBeat > bga.m_fStopBeat )
