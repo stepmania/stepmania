@@ -29,7 +29,6 @@ public:
 	void EndConcurrentRendering();
 
 private:
-	bool m_bWindowIsOpen;
 	bool m_bWasWindowed;
 	VideoModeParams CurrentParams;
 };

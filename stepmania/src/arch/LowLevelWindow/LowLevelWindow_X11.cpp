@@ -27,7 +27,6 @@ static Window g_AltWindow = 0;
 static LocalizedString FAILED_CONNECTION_XSERVER( "LowLevelWindow_X11", "Failed to establish a connection with the X server'" );
 LowLevelWindow_X11::LowLevelWindow_X11()
 {
-	m_bWindowIsOpen = false;
 	if( !X11Helper::Go() )
 		RageException::Throw( FAILED_CONNECTION_XSERVER.GetValue() );
 
@@ -95,7 +94,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 	hints.base_width = p.width;
 	hints.base_height = p.height;
 
-	if( !m_bWindowIsOpen || p.bpp != CurrentParams.bpp || ( m_bWasWindowed != p.windowed ) )
+	if( g_pContext == NULL || p.bpp != CurrentParams.bpp || m_bWasWindowed != p.windowed )
 	{
 		// Different depth, or we didn't make a window before. New context.
 		bNewDeviceOut = true;
@@ -137,8 +136,6 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		
 		g_AltWindow = X11Helper::CreateWindow(xvi->screen, xvi->depth, xvi->visual, p.width, p.height, !p.windowed);
 		ASSERT( g_AltWindow );
-
-		m_bWindowIsOpen = true;
 
 		char *szWindowTitle = const_cast<char *>( p.sWindowTitle.c_str() );
 		XChangeProperty( X11Helper::Dpy, X11Helper::Win, XA_WM_NAME, XA_STRING, 8, PropModeReplace,
