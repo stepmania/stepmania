@@ -257,8 +257,6 @@ void ScreenSelect::HandleMessage( const RString &sMessage )
 
 void ScreenSelect::MenuBack( PlayerNumber pn )
 {
-	SOUND->StopMusic();
-
 	Cancel( SM_GoToPrevScreen );
 }
 
