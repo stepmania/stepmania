@@ -10,8 +10,8 @@
 #include "LocalizedString.h"
 #include "arch/Dialog/Dialog.h"
 
-static const RString SMPACKAGE_KEY = "HKEY_LOCAL_MACHINE\\Software\\StepMania\\smpackage";
-static const RString INSTALLATIONS_KEY = "HKEY_LOCAL_MACHINE\\Software\\StepMania\\smpackage\\Installations";
+static const RString SMPACKAGE_KEY = "HKEY_LOCAL_MACHINE\\Software\\" PRODUCT_ID "\\smpackage";
+static const RString INSTALLATIONS_KEY = "HKEY_LOCAL_MACHINE\\Software\\" PRODUCT_ID "\\smpackage\\Installations";
 
 void SMPackageUtil::WriteGameInstallDirs( const vector<RString>& asInstallDirsToWrite )
 {

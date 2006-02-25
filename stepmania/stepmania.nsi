@@ -35,7 +35,7 @@
 	; ShowInstDetails hide ; (can be show to have them shown, or nevershow to disable)
 	SetDateSave on ; (can be on to have files restored to their orginal date)
 	InstallDir "$PROGRAMFILES\${PRODUCT_ID}"
-	InstallDirRegKey HKEY_LOCAL_MACHINE "SOFTWARE\${PRODUCT_NAME}\${PRODUCT_ID}" ""
+	InstallDirRegKey HKEY_LOCAL_MACHINE "SOFTWARE\${PRODUCT_ID}" ""
 	; DirShow show ; (make this hide to not let the user change it)
 	DirText "${PRODUCT_NAME_VER}"
 	InstallColors /windows
@@ -55,7 +55,7 @@
 
 	;Remember the installer language
 	!define MUI_LANGDLL_REGISTRY_ROOT "HKCU" 
-	!define MUI_LANGDLL_REGISTRY_KEY "Software\${PRODUCT_NAME}\${PRODUCT_ID}" 
+	!define MUI_LANGDLL_REGISTRY_KEY "Software\${PRODUCT_ID}" 
 	!define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
 
 ;--------------------------------
@@ -165,7 +165,7 @@ Section "Main Section" SecMain
 	WriteUninstaller "$INSTDIR\uninstall.exe"
 
 	; add registry entries
-	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\${PRODUCT_NAME}\${PRODUCT_ID}" "" "$INSTDIR"
+	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\${PRODUCT_ID}" "" "$INSTDIR"
 	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "DisplayName" "${PRODUCT_ID} (remove only)"
 	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "UninstallString" '"$INSTDIR\uninstall.exe"'
 
@@ -543,7 +543,7 @@ FunctionEnd
 Section "Uninstall"
 
 	; add delete commands to delete whatever files/registry keys/etc you installed here.
-	DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\${PRODUCT_NAME}\${PRODUCT_ID}"
+	DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\${PRODUCT_ID}"
 	DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}"
 
 !ifdef INSTALL_TYPE_EXTERNAL_PCKS | INSTALL_TYPE_INTERNAL_PCKS
