@@ -276,6 +276,7 @@ Section "Main Section" SecMain
 	File "Data\*.*"
 
 	CreateDirectory "$INSTDIR\Manual"
+	SetOutPath "$INSTDIR"
 	File /r "Manual"
 !endif
 
