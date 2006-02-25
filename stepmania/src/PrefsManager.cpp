@@ -8,13 +8,12 @@
 #include "Foreach.h"
 #include "Preference.h"
 #include "RageLog.h"
-
-
-const RString DEFAULTS_INI_PATH		= "Data/Defaults.ini";		// these can be overridden
-//PREFERENCES_INI_PATH	// overlay on Defaults.ini, contains the user's choices
 #include "SpecialFiles.h"
-const RString STATIC_INI_PATH		= "Data/Static.ini";		// overlay on the 2 above, can't be overridden
-const RString TYPE_TXT_FILE			= "Data/Type.txt";
+
+//DEFAULTS_INI_PATH	= "Data/Defaults.ini";		// these can be overridden
+//PREFERENCES_INI_PATH	// overlay on Defaults.ini, contains the user's choices
+//STATIC_INI_PATH	= "Data/Static.ini";		// overlay on the 2 above, can't be overridden
+//TYPE_TXT_FILE	= "Data/Type.txt";
 
 PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our program
 

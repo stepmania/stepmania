@@ -71,19 +71,41 @@ BOOL CSmpackageApp::InitInstance()
 
 	// TODO: Use PrefsManager to get the current language instead?  PrefsManager would 
 	// need to be split up to reduce dependencies
-	IniFile ini;
+	RString sTheme = SpecialFiles::BASE_THEME_NAME;
+
+	{
+		RString sType = "Preferences";
+		GetFileContents( SpecialFiles::TYPE_TXT_FILE, sType, true );
+		IniFile ini;
+		if( ini.ReadFile(SpecialFiles::STATIC_INI_PATH) )
+		{
+			while( 1 )
+			{
+				if( ini.GetValue(sType, "Theme", sTheme) )
+					break;
+				if( ini.GetValue(sType, "Fallback", sType) )
+					continue;
+				break;
+			}			
+		}
+	}
+
 	RString sLanguage;
 	bool bPseudoLocalize = false;
 	bool bShowLogOutput = false;
 	bool bLogToDisk = false;
-	if( ini.ReadFile(SpecialFiles::PREFERENCES_INI_PATH) )
 	{
+		IniFile ini;
+		if( ini.ReadFile(SpecialFiles::PREFERENCES_INI_PATH) )
+		{
+			ini.GetValue( "Options", "Theme", sTheme );
 			ini.GetValue( "Options", "Language", sLanguage );
-		ini.GetValue( "Options", "PseudoLocalize", bPseudoLocalize );
-		ini.GetValue( "Options", "ShowLogOutput", bShowLogOutput );
-		ini.GetValue( "Options", "LogToDisk", bLogToDisk );
+			ini.GetValue( "Options", "PseudoLocalize", bPseudoLocalize );
+			ini.GetValue( "Options", "ShowLogOutput", bShowLogOutput );
+			ini.GetValue( "Options", "LogToDisk", bLogToDisk );
+		}
 	}
-	THEME->SwitchThemeAndLanguage( SpecialFiles::BASE_THEME_NAME, sLanguage, bPseudoLocalize );
+	THEME->SwitchThemeAndLanguage( sTheme, sLanguage, bPseudoLocalize );
 	LOG->SetShowLogOutput( bShowLogOutput );
 	LOG->SetLogToDisk( bLogToDisk );
 	LOG->SetInfoToDisk( true );
