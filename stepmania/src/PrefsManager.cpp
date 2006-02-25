@@ -389,17 +389,17 @@ void PrefsManager::RestoreGamePrefs()
 	m_sDefaultModifiers	.Set( gp.m_sDefaultModifiers );
 
 	// give Static.ini a chance to clobber the saved game prefs
-	ReadPrefsFromFile( STATIC_INI_PATH, GetPreferencesSection() );
+	ReadPrefsFromFile( SpecialFiles::STATIC_INI_PATH, GetPreferencesSection() );
 }
 
 void PrefsManager::ReadPrefsFromDisk()
 {
-	ReadDefaultsFromFile( DEFAULTS_INI_PATH, GetPreferencesSection() );
+	ReadDefaultsFromFile( SpecialFiles::DEFAULTS_INI_PATH, GetPreferencesSection() );
 	IPreference::LoadAllDefaults();
 
 	ReadPrefsFromFile( SpecialFiles::PREFERENCES_INI_PATH, "Options" );
 	ReadGamePrefsFromIni( SpecialFiles::PREFERENCES_INI_PATH );
-	ReadPrefsFromFile( STATIC_INI_PATH, GetPreferencesSection() );
+	ReadPrefsFromFile( SpecialFiles::STATIC_INI_PATH, GetPreferencesSection() );
 
 	if( !m_sCurrentGame.Get().empty() )
 		RestoreGamePrefs();
@@ -410,7 +410,7 @@ void PrefsManager::ResetToFactoryDefaults()
 	// clobber the users prefs by initing then applying defaults
 	Init();
 	IPreference::LoadAllDefaults();
-	ReadPrefsFromFile( STATIC_INI_PATH, GetPreferencesSection() );
+	ReadPrefsFromFile( SpecialFiles::STATIC_INI_PATH, GetPreferencesSection() );
 	
 	SavePrefsToDisk();
 }
@@ -520,7 +520,7 @@ RString PrefsManager::GetPreferencesSection() const
 	RString sSection = "Preferences";
 
 	// OK if this fails
-	GetFileContents( TYPE_TXT_FILE, sSection, true );
+	GetFileContents( SpecialFiles::TYPE_TXT_FILE, sSection, true );
 	
 	// OK if this fails
 	GetCommandlineArgument( "Type", &sSection );
