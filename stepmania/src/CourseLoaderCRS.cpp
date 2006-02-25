@@ -230,10 +230,16 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			
 			out.m_vEntries.push_back( new_entry );
 		}
+		else if( !stricmp(sValueName, "DISPLAYCOURSE") || !stricmp(sValueName, "COMBO") ||
+			 !stricmp(sValueName, "COMBOMODE") )
+		{
+			// Ignore
+		}
+		
 		else if( bFromCache && !stricmp(sValueName, "RADAR") )
 		{
 			StepsType st = (StepsType) atoi(sParams[1]);
-			CourseDifficulty cd = (CourseDifficulty) atoi(sParams[2]);
+			CourseDifficulty cd = (CourseDifficulty) atoi( sParams[2] );
 
 			RadarValues rv;
 			rv.FromString( sParams[3] );
