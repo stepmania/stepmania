@@ -42,6 +42,7 @@ CSmpackageApp theApp;
 #include "archutils/Win32/CommandLine.h"
 extern RString GetLastErrorString();
 
+static LocalizedString STATS_XML_NOT_YET_CREATED	( "CSmpackageApp", "The file Stats.xml has not yet been created.  It will be created once the game is run." );
 static LocalizedString FAILED_TO_OPEN			( "CSmpackageApp", "Failed to open '%s': %s" );
 static LocalizedString THE_FILE_DOES_NOT_EXIST	( "CSmpackageApp", "The file '%s' does not exist.  Aborting installation." );
 BOOL CSmpackageApp::InitInstance()
@@ -119,7 +120,11 @@ BOOL CSmpackageApp::InitInstance()
 		{
 			RString sPersonalDir = SpecialDirs::GetMyDocumentsDir();
 			RString sFile = sPersonalDir + PRODUCT_ID +"/Save/MachineProfile/Stats.xml";
-			if( NULL == ::ShellExecute( NULL, "open", sFile, "", "", SW_SHOWNORMAL ) )
+			HINSTANCE hinst = ::ShellExecute( NULL, "open", sFile, "", "", SW_SHOWNORMAL );
+			// See MSDN for an explanation of this return value
+			if( (int)hinst == SE_ERR_FNF )
+				Dialog::OK( STATS_XML_NOT_YET_CREATED );
+			else if( (int)hinst <= 32 )
 				Dialog::OK( ssprintf(FAILED_TO_OPEN.GetValue(),sFile.c_str(),GetLastErrorString().c_str()) );
 			exit(1);	// better way to quit?
 		}
