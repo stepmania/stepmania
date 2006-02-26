@@ -509,7 +509,7 @@ void OptionRow::PositionUnderlines( PlayerNumber pn )
 		ASSERT( m_vbSelected[pnTakeSelectedFrom].size() == m_pHand->m_Def.m_vsChoices.size() );
 
 		bool bSelected = (iChoiceWithFocus==-1) ? false : m_vbSelected[pnTakeSelectedFrom][ iChoiceWithFocus ];
-		bool bHidden = !bSelected || m_bHidden;
+		bool bHidden = !bSelected || m_bHidden || !GAMESTATE->IsHumanPlayer(pn);
 
 		ul.StopTweening();
 		ul.BeginTweening( m_pParentType->TWEEN_SECONDS );
