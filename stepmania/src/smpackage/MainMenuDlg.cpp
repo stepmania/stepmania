@@ -192,7 +192,8 @@ static LocalizedString CLEARED( "MainMenuDlg", "'%s' cleared" );
 void MainMenuDlg::OnBnClickedClearKeymaps()
 {
 	// TODO: Add your control notification handler code here
-	
+
+	FlushDirCache();
 	if( !DoesFileExist( SpecialFiles::KEYMAPS_PATH ) )
 	{
 		Dialog::OK( ssprintf(IS_ALREADY_CLEARED.GetValue(),SpecialFiles::KEYMAPS_PATH.c_str()) );
@@ -217,20 +218,19 @@ static LocalizedString FAILED_TO_OPEN					( "MainMenuDlg", "Failed to open '%s':
 void MainMenuDlg::OnBnClickedOpenPreferences()
 {
 	// TODO: Add your control notification handler code here
-	if( !DoesFileExist( SpecialFiles::PREFERENCES_INI_PATH ) )
-	{
-		Dialog::OK( ssprintf(DOESNT_EXIST_IT_WILL_BE_CREATED.GetValue(),SpecialFiles::PREFERENCES_INI_PATH.c_str()) );
-	}
-	else
-	{
-		if( NULL == ::ShellExecute( this->m_hWnd, "open", SpecialFiles::PREFERENCES_INI_PATH, "", "", SW_SHOWNORMAL ) )
-			Dialog::OK( ssprintf(FAILED_TO_OPEN.GetValue(),SpecialFiles::PREFERENCES_INI_PATH.c_str(),GetLastErrorString().c_str()) );
-	}
+	// TODO: Have RageFile* do the mapping to the OS file location.
+	RString sPreferencesOSFile = SpecialDirs::GetMyDocumentsDir() + PRODUCT_ID + "/" + SpecialFiles::PREFERENCES_INI_PATH;
+	HINSTANCE hinst = ::ShellExecute( this->m_hWnd, "open", sPreferencesOSFile, "", "", SW_SHOWNORMAL );
+	if( (int)hinst == SE_ERR_FNF )
+		Dialog::OK( ssprintf(DOESNT_EXIST_IT_WILL_BE_CREATED.GetValue(),sPreferencesOSFile.c_str()) );
+	else if( (int)hinst <= 32 )
+		Dialog::OK( ssprintf(FAILED_TO_OPEN.GetValue(),sPreferencesOSFile.c_str(),GetLastErrorString().c_str()) );
 }
 
 void MainMenuDlg::OnBnClickedClearPreferences()
 {
 	// TODO: Add your control notification handler code here
+	FlushDirCache();
 	if( !DoesFileExist(SpecialFiles::PREFERENCES_INI_PATH) )
 	{
 		Dialog::OK( ssprintf(IS_ALREADY_CLEARED.GetValue(),SpecialFiles::PREFERENCES_INI_PATH.c_str()) );

@@ -118,14 +118,13 @@ BOOL CSmpackageApp::InitInstance()
 		CString sArg = argv[i];
 		if( sArg == "--machine-profile-stats" )
 		{
-			RString sPersonalDir = SpecialDirs::GetMyDocumentsDir();
-			RString sFile = sPersonalDir + PRODUCT_ID +"/Save/MachineProfile/Stats.xml";
-			HINSTANCE hinst = ::ShellExecute( NULL, "open", sFile, "", "", SW_SHOWNORMAL );
+			RString sOSFile = SpecialDirs::GetMyDocumentsDir() + PRODUCT_ID +"/Save/MachineProfile/Stats.xml";
+			HINSTANCE hinst = ::ShellExecute( NULL, "open", sOSFile, "", "", SW_SHOWNORMAL );
 			// See MSDN for an explanation of this return value
 			if( (int)hinst == SE_ERR_FNF )
 				Dialog::OK( STATS_XML_NOT_YET_CREATED );
 			else if( (int)hinst <= 32 )
-				Dialog::OK( ssprintf(FAILED_TO_OPEN.GetValue(),sFile.c_str(),GetLastErrorString().c_str()) );
+				Dialog::OK( ssprintf(FAILED_TO_OPEN.GetValue(),sOSFile.c_str(),GetLastErrorString().c_str()) );
 			exit(1);	// better way to quit?
 		}
 	}
