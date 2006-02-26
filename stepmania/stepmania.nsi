@@ -274,10 +274,6 @@ Section "Main Section" SecMain
 	CreateDirectory "$INSTDIR\Data"
 	SetOutPath "$INSTDIR\Data"
 	File "Data\*.*"
-
-	CreateDirectory "$INSTDIR\Manual"
-	SetOutPath "$INSTDIR"
-	File /r "Manual"
 !endif
 
 !ifdef INSTALL_TYPE_INTERNAL_PCKS
@@ -285,9 +281,6 @@ Section "Main Section" SecMain
 	SetOutPath "$INSTDIR\pcks"
 	File "pcks\*.*"
 !endif
-
-	SetOutPath "$INSTDIR"
-	File "Docs\Licenses.txt"
 
 	SetOutPath "$INSTDIR\Program"
 	File "Program\${PRODUCT_FAMILY}.exe"
@@ -304,6 +297,13 @@ Section "Main Section" SecMain
 	File "Program\avformat.dll"
 	File "Program\dbghelp.dll"
 	File "Program\zlib1.dll"
+
+	SetOutPath "$INSTDIR"
+	File "Docs\Licenses.txt"
+
+	CreateDirectory "$INSTDIR\Manual"
+	SetOutPath "$INSTDIR"
+	File /r "Manual"
 
 	; Create Start Menu icons
 	SetShellVarContext current  # 	'all' doesn't work on Win9x
@@ -611,8 +611,6 @@ Section "Uninstall"
 
 	Delete "$INSTDIR\Data\*.*"
 	RMDir "$INSTDIR\Data"
-
-	RMDir /r "$INSTDIR\Manual"
 !endif
 
 	Delete "$INSTDIR\Program\${PRODUCT_FAMILY}.exe"
@@ -632,6 +630,7 @@ Section "Uninstall"
 	RMDir "$INSTDIR\Program"
 
 	Delete "$INSTDIR\Licenses.txt"
+	RMDir /r "$INSTDIR\Manual"
 	Delete "$INSTDIR\log.txt"
 	Delete "$INSTDIR\info.txt"
 	Delete "$INSTDIR\crashinfo.txt"
