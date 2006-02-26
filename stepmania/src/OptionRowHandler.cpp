@@ -981,6 +981,11 @@ public:
 		// XXX: allow specifying the mask
 		return 0;
 	}
+
+	virtual bool Reload()
+	{
+		return true;
+	}
 };
 
 class OptionRowHandlerConfig : public OptionRowHandler
