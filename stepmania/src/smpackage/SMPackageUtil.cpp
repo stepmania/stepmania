@@ -172,20 +172,9 @@ bool SMPackageUtil::LaunchGame()
 	STARTUPINFO	si;
 	ZeroMemory( &si, sizeof(si) );
 
-	RString sExe = PRODUCT_FAMILY ".exe";
-	RString sFile = sExe;
-	if( !DoesFileExist(sFile) )
-	{
-		sFile = "Program\\" + sFile;
-		if( !DoesFileExist(sFile) )
-		{
-			RString sError = ssprintf( COULD_NOT_FIND.GetValue(), sExe.c_str() );
-			Dialog::OK( sError );
-			return false;
-		}
-	}
+	RString sFile = "Program\\" PRODUCT_FAMILY ".exe";
 
-	CreateProcess(
+	BOOL bSuccess = CreateProcess(
 		sFile,	// pointer to name of executable module
 		NULL,	// pointer to command line string
 		NULL,  // process security attributes
@@ -197,6 +186,13 @@ bool SMPackageUtil::LaunchGame()
 		&si,  // pointer to STARTUPINFO
 		&pi  // pointer to PROCESS_INFORMATION
 	);
+	if( !bSuccess )
+	{
+		RString sError = ssprintf( COULD_NOT_FIND.GetValue(), sFile.c_str() );
+		Dialog::OK( sError );
+		return false;
+	}
+
 	return true;
 }
 
