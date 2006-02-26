@@ -593,7 +593,7 @@ void OptionRow::UpdateEnabledDisabled()
 	RageColor color;
 	if( bThisRowHasFocusByAny )	color = m_pParentType->COLOR_SELECTED;
 	else if( bRowEnabled )		color = m_pParentType->COLOR_NOT_SELECTED;
-	else						color = m_pParentType->COLOR_DISABLED;
+	else				color = m_pParentType->COLOR_DISABLED;
 
 	if( m_bHidden )
 		color.a = 0;
