@@ -827,17 +827,17 @@ public:
 
 		LUA->Release(L);
 	}
-	virtual void ReLoadInternal( OptionRowDefinition &defOut )
+	virtual bool Reload()
 	{
 		Lua *L = LUA->Get();
 
 		/* Run the Lua expression.  It should return a table. */
 		const Command &command = m_cmds.v[0];
-		RString sName = command.m_vsArgs[0];
-		m_pLuaTable->SetFromExpression( sName );
+		RString sLuaFunction = command.m_vsArgs[1];
+		m_pLuaTable->SetFromExpression( sLuaFunction );
 
 		if( m_pLuaTable->GetLuaType() != LUA_TTABLE )
-			RageException::Throw( "Result of \"%s\" is not a table", sName.c_str() );
+			RageException::Throw( "Result of \"%s\" is not a table", sLuaFunction.c_str() );
 
 		m_pLuaTable->PushSelf( L );
 
@@ -848,7 +848,7 @@ public:
 		if( !lua_isnil( L, -1 ) )
 		{
 			if( !lua_istable( L, -1 ) )
-				RageException::Throw( "\"%s\" \"EnabledForPlayers\" is not a table", sName.c_str() );
+				RageException::Throw( "\"%s\" \"EnabledForPlayers\" is not a table", sLuaFunction.c_str() );
 
 			m_Def.m_vEnabledForPlayers.clear();	// and fill in with supplied PlayerNumbers below
 
@@ -870,6 +870,8 @@ public:
 		ASSERT( lua_gettop(L) == 0 );
 
 		LUA->Release(L);
+
+		return true;
 	}
 	virtual void ImportOption( const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
@@ -980,11 +982,6 @@ public:
 
 		// XXX: allow specifying the mask
 		return 0;
-	}
-
-	virtual bool Reload()
-	{
-		return true;
 	}
 };
 
