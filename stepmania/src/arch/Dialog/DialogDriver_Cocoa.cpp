@@ -11,7 +11,7 @@ static CFOptionFlags ShowAlert( CFOptionFlags flags, const RString& sMessage, CF
 	CFOptionFlags result;
 	CFStringRef text = CFStringCreateWithCString( NULL, sMessage, kCFStringEncodingUTF8 );
 	
-	CFUserNotificationDisplayAlert( 0.0, flags, NULL, NULL, NULL, CFSTR(PRODUCT_ID),
+	CFUserNotificationDisplayAlert( 0.0, flags, NULL, NULL, NULL, CFSTR(PRODUCT_FAMILY),
 					text, OK, alt, other, &result );
 	CFRelease( text );
 	return result;
