@@ -21,11 +21,11 @@
 	!system "echo This may take a moment ..." ignore
 	; upx isn't working with VC++2003 executables.  Disable temporarily.  ;!system "utils\upx Program\*.exe Program\*.dll" ignore
 
-	Name "${PRODUCT_NAME_VER}"
-	OutFile "${PRODUCT_NAME_VER}.exe"
+	Name "${PRODUCT_ID_VER}"
+	OutFile "${PRODUCT_ID_VER}.exe"
 
-	Caption "${PRODUCT_NAME_VER}"
-	UninstallCaption "${PRODUCT_NAME_VER}"
+	Caption "${PRODUCT_ID_VER}"
+	UninstallCaption "${PRODUCT_ID_VER}"
 
 	; Some default compiler settings (uncomment and change at will):
 	SetCompress auto ; (can be off or force)
@@ -37,7 +37,7 @@
 	InstallDir "$PROGRAMFILES\${PRODUCT_ID}"
 	InstallDirRegKey HKEY_LOCAL_MACHINE "SOFTWARE\${PRODUCT_ID}" ""
 	; DirShow show ; (make this hide to not let the user change it)
-	DirText "${PRODUCT_NAME_VER}"
+	DirText "${PRODUCT_ID_VER}"
 	InstallColors /windows
 	InstProgressFlags smooth
 
@@ -173,8 +173,8 @@ Section "Main Section" SecMain
 	; Do this copy before anything else.  It's the most likely to fail.  
 	; Possible failure reasons are: scratched CD, user tried to copy the installer but forgot the pcks.
 	CreateDirectory $INSTDIR\pcks
-	CopyFiles /SILENT "$EXEDIR\${PRODUCT_NAME}.app\Contents\Resources\pcks\*.idx" $INSTDIR\pcks 1
-	CopyFiles /SILENT "$EXEDIR\${PRODUCT_NAME}.app\Contents\Resources\pcks\*.pck" $INSTDIR\pcks 650000	; assume a CD full of data
+	CopyFiles /SILENT "$EXEDIR\${PRODUCT_ID}.app\Contents\Resources\pcks\*.idx" $INSTDIR\pcks 1
+	CopyFiles /SILENT "$EXEDIR\${PRODUCT_ID}.app\Contents\Resources\pcks\*.pck" $INSTDIR\pcks 650000	; assume a CD full of data
 	IfErrors do_error do_no_error
 	do_error:
 	MessageBox MB_OK|MB_ICONSTOP "Fatal error copying pck files."
@@ -290,8 +290,8 @@ Section "Main Section" SecMain
 	File "Docs\Licenses.txt"
 
 	SetOutPath "$INSTDIR\Program"
-	File "Program\${PRODUCT_NAME}.exe"
-	File "Program\${PRODUCT_NAME}.vdi"
+	File "Program\${PRODUCT_FAMILY}.exe"
+	File "Program\${PRODUCT_FAMILY}.vdi"
 	File "Program\tools.exe"
 	File "Program\mfc71.dll"
 !ifdef ASSOCIATE_SMZIP
@@ -308,21 +308,21 @@ Section "Main Section" SecMain
 	; Create Start Menu icons
 	SetShellVarContext current  # 	'all' doesn't work on Win9x
 	CreateDirectory "$SMPROGRAMS\${PRODUCT_ID}\"
-	CreateShortCut "$DESKTOP\${PRODUCT_NAME_VER}.lnk" "$INSTDIR\Program\${PRODUCT_NAME}.exe"
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME_VER}.lnk" "$INSTDIR\Program\${PRODUCT_NAME}.exe"
+	CreateShortCut "$DESKTOP\${PRODUCT_ID_VER}.lnk" "$INSTDIR\Program\${PRODUCT_FAMILY}.exe"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_ID_VER}.lnk" "$INSTDIR\Program\${PRODUCT_FAMILY}.exe"
 !ifdef MAKE_OPEN_PROGRAM_FOLDER_SHORTCUT
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Open ${PRODUCT_NAME} Program Folder.lnk" "$WINDIR\explorer.exe" "$INSTDIR\"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Open ${PRODUCT_ID} Program Folder.lnk" "$WINDIR\explorer.exe" "$INSTDIR\"
 !endif
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\View Statistics.lnk" "$INSTDIR\Program\tools.exe" "--machine-profile-stats"
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME} Tools.lnk" "$INSTDIR\Program\tools.exe"
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME} Manual.lnk" "$INSTDIR\Manual\index.html"
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Uninstall ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\uninstall.exe"
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Go to the ${PRODUCT_NAME} web site.lnk" "${PRODUCT_URL}"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_FAMILY} Tools.lnk" "$INSTDIR\Program\tools.exe"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_FAMILY} Manual.lnk" "$INSTDIR\Manual\index.html"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Uninstall ${PRODUCT_ID_VER}.lnk" "$INSTDIR\uninstall.exe"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_FAMILY} Web Site.lnk" "${PRODUCT_URL}"
 !ifdef MAKE_UPDATES_SHORTCUT
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Check for Updates.lnk" "${UPDATES_URL}"
 !endif
 
-	CreateShortCut "$INSTDIR\${PRODUCT_NAME}.lnk" "$INSTDIR\Program\${PRODUCT_NAME}.exe"
+	CreateShortCut "$INSTDIR\${PRODUCT_ID}.lnk" "$INSTDIR\Program\${PRODUCT_FAMILY}.exe"
 
 	# We want to delete a few old desktop icons, since they weren't being
 	# uninstalled correctly during alpha 2 and 3.  They were installed in
@@ -342,27 +342,27 @@ SectionEnd
 ;--------------------------------
 ;Installer Functions
 
-LangString TEXT_IO_TITLE		${LANG_ENGLISH} "${PRODUCT_NAME_VER}"
+LangString TEXT_IO_TITLE		${LANG_ENGLISH} "${PRODUCT_ID_VER}"
 LangString TEXT_IO_SUBTITLE		${LANG_ENGLISH} " "
 LangString TEXT_IO_INSTALL		${LANG_ENGLISH} "Install"
 LangString TEXT_IO_PLAY			${LANG_ENGLISH} "Play"
 LangString TEXT_IO_REINSTALL	${LANG_ENGLISH} "Reinstall"
-LangString TEXT_IO_TITLE		${LANG_FRENCH} "${PRODUCT_NAME_VER}"
+LangString TEXT_IO_TITLE		${LANG_FRENCH} "${PRODUCT_ID_VER}"
 LangString TEXT_IO_SUBTITLE		${LANG_FRENCH} " "
 LangString TEXT_IO_INSTALL		${LANG_FRENCH} "Install (S)"
 LangString TEXT_IO_PLAY			${LANG_FRENCH} "Play (S)"
 LangString TEXT_IO_REINSTALL	${LANG_FRENCH} "Reinstall (S)"
-LangString TEXT_IO_TITLE		${LANG_GERMAN} "${PRODUCT_NAME_VER}"
+LangString TEXT_IO_TITLE		${LANG_GERMAN} "${PRODUCT_ID_VER}"
 LangString TEXT_IO_SUBTITLE		${LANG_GERMAN} " "
 LangString TEXT_IO_INSTALL		${LANG_GERMAN} "Install (G)"
 LangString TEXT_IO_PLAY			${LANG_GERMAN} "Play (G)"
 LangString TEXT_IO_REINSTALL	${LANG_GERMAN} "Reinstall (G)"
-LangString TEXT_IO_TITLE		${LANG_SPANISH} "${PRODUCT_NAME_VER}"
+LangString TEXT_IO_TITLE		${LANG_SPANISH} "${PRODUCT_ID_VER}"
 LangString TEXT_IO_SUBTITLE		${LANG_SPANISH} " "
 LangString TEXT_IO_INSTALL		${LANG_SPANISH} "Install (S)"
 LangString TEXT_IO_PLAY			${LANG_SPANISH} "Play (S)"
 LangString TEXT_IO_REINSTALL	${LANG_SPANISH} "Reinstall (S)"
-LangString TEXT_IO_TITLE		${LANG_ITALIAN} "${PRODUCT_NAME_VER}"
+LangString TEXT_IO_TITLE		${LANG_ITALIAN} "${PRODUCT_ID_VER}"
 LangString TEXT_IO_SUBTITLE		${LANG_ITALIAN} " "
 LangString TEXT_IO_INSTALL		${LANG_ITALIAN} "Install (I)"
 LangString TEXT_IO_PLAY			${LANG_ITALIAN} "Play (I)"
@@ -425,12 +425,12 @@ Function LeaveCustom
 	GoTo proceed
 	
 	play:
-	Exec "$INSTDIR\Program\${PRODUCT_NAME}.exe"
+	Exec "$INSTDIR\Program\${PRODUCT_FAMILY}.exe"
 	IfErrors play_error
 	quit
 
 	play_error:
-	MessageBox MB_ICONEXCLAMATION "Could not execute $INSTDIR\Program\${PRODUCT_NAME}.exe"
+	MessageBox MB_ICONEXCLAMATION "Could not execute $INSTDIR\Program\${PRODUCT_FAMILY}.exe"
 	abort
 	
 	proceed:
@@ -615,13 +615,13 @@ Section "Uninstall"
 	RMDir /r "$INSTDIR\Manual"
 !endif
 
-	Delete "$INSTDIR\Program\${PRODUCT_NAME}.exe"
+	Delete "$INSTDIR\Program\${PRODUCT_FAMILY}.exe"
 	Delete "$INSTDIR\Program\tools.exe"
 	Delete "$INSTDIR\Program\mfc71.dll"
 !ifdef ASSOCIATE_SMZIP
 	Call un.RefreshShellIcons
 !endif
-	Delete "$INSTDIR\Program\${PRODUCT_NAME}.vdi"
+	Delete "$INSTDIR\Program\${PRODUCT_FAMILY}.vdi"
 	Delete "$INSTDIR\Program\msvcr71.dll"
 	Delete "$INSTDIR\Program\msvcp71.dll"
 	Delete "$INSTDIR\Program\jpeg.dll"
@@ -635,20 +635,20 @@ Section "Uninstall"
 	Delete "$INSTDIR\log.txt"
 	Delete "$INSTDIR\info.txt"
 	Delete "$INSTDIR\crashinfo.txt"
-	Delete "$INSTDIR\${PRODUCT_NAME}.lnk"
+	Delete "$INSTDIR\${PRODUCT_ID}.lnk"
 
 	RMDir "$INSTDIR"	; will delete only if empty
 
 	SetShellVarContext current
 	Delete "$DESKTOP\Play StepMania CVS.lnk"
-	Delete "$DESKTOP\${PRODUCT_NAME_VER}.lnk"
+	Delete "$DESKTOP\${PRODUCT_ID_VER}.lnk"
 	; I'm being paranoid here:
 	Delete "$SMPROGRAMS\${PRODUCT_ID}\*.*"
 	RMDir "$SMPROGRAMS\${PRODUCT_ID}"
 
 	Delete "$INSTDIR\Uninstall.exe"
 
-	DeleteRegKey /ifempty HKEY_LOCAL_MACHINE "SOFTWARE\${PRODUCT_NAME}\${PRODUCT_ID}"
+	DeleteRegKey /ifempty HKEY_LOCAL_MACHINE "SOFTWARE\${PRODUCT_ID}"
 
 SectionEnd
 
