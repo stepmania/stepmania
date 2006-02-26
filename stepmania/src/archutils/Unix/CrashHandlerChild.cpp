@@ -275,7 +275,7 @@ static void child_process()
 		exit(1);
 	}
 	
-	fprintf( CrashDump, "%s crash report", PRODUCT_NAME_VER );
+	fprintf( CrashDump, "%s crash report", PRODUCT_ID_VER );
 #if defined(HAVE_VERSION_INFO)
 	fprintf( CrashDump, " (build %u)", version_num);
 #endif
@@ -359,7 +359,7 @@ static void child_process()
 	
 	fprintf( tty,
 		 "\n"
-		 PRODUCT_NAME " has crashed.  Debug information has been output to\n"
+		 PRODUCT_ID " has crashed.  Debug information has been output to\n"
 		 "\n"
 		 "    " + sCrashInfoPath + "\n"
 		 "\n"

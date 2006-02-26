@@ -240,7 +240,7 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 	 * scores.  It would need to handle permissions properly. */
 /*	RageFileManager::Mount( "dir", "/var/lib/games/stepmania", "/Save/Profiles" ); */
 	
-	// RString Home = getenv( "HOME" ) + "/" + PRODUCT_NAME;
+	// RString Home = getenv( "HOME" ) + "/" + PRODUCT_ID;
 
 	/*
 	 * Next: path to write general mutable user data.  If the above path fails (eg.
@@ -250,10 +250,10 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 	 * seems wrong to put lots of data (eg. music) in one.  Hmm. 
 	 */
 	/* XXX: create */
-/*	RageFileManager::Mount( "dir", Home + "." PRODUCT_NAME, "/Data" ); */
+/*	RageFileManager::Mount( "dir", Home + "." PRODUCT_ID, "/Data" ); */
 
 	/* Next, search ~/StepMania.  This is where users can put music, themes, etc. */
-	/* RageFileManager::Mount( "dir", Home + PRODUCT_NAME, "/" ); */
+	/* RageFileManager::Mount( "dir", Home + PRODUCT_ID, "/" ); */
 
 	/* Search for a directory with "Songs" in it.  Be careful: the CWD is likely to
 	 * be ~, and it's possible that some users will have a ~/Songs/ directory that

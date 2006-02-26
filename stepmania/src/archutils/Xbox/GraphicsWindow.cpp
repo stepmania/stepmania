@@ -5,7 +5,7 @@
 #include "RageUtil.h"
 #include "RageDisplay.h"
 
-static const RString g_sClassName = RString(PRODUCT_NAME) + " LowLevelWindow_Win32";
+static const RString g_sClassName = RString(PRODUCT_ID) + " LowLevelWindow_Win32";
 
 static VideoModeParams g_CurrentParams;
 static bool g_bResolutionChanged = false;
