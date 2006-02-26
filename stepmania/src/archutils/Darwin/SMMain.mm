@@ -84,17 +84,17 @@ static NSMenuItem *MenuItem( NSString *title, SEL action, NSString *code )
 static void setupMenus( void )
 {
 	// Get the localized strings from the file.
-	NSString *sWindow =          NSLocalizedString( @"Window",              @"Menu title" );
-	NSString *sHideOthers =      NSLocalizedString( @"Hide Others",         @"Menu item" );
-	NSString *sAbout =           NSLocalizedString( @"About " PRODUCT_NAME, @"Menu item" );
-	NSString *sHide =            NSLocalizedString( @"Hide " PRODUCT_NAME,  @"Menu item" );
-	NSString *sShowAll =         NSLocalizedString( @"Show All",            @"Menu item" );
-	NSString *sQuit =            NSLocalizedString( @"Quit " PRODUCT_NAME,  @"Menu item" );
-	NSString *sMinimize =        NSLocalizedString( @"Minimize",            @"Menu item" );
-	NSString *sEnterFullScreen = NSLocalizedString( @"Enter Full Screen",   @"Menu item" );
+	NSString *sWindow =          NSLocalizedString( @"Window",                @"Menu title" );
+	NSString *sHideOthers =      NSLocalizedString( @"Hide Others",           @"Menu item" );
+	NSString *sAbout =           NSLocalizedString( @"About " PRODUCT_FAMILY, @"Menu item" );
+	NSString *sHide =            NSLocalizedString( @"Hide " PRODUCT_FAMILY,  @"Menu item" );
+	NSString *sShowAll =         NSLocalizedString( @"Show All",              @"Menu item" );
+	NSString *sQuit =            NSLocalizedString( @"Quit " PRODUCT_FAMILY,  @"Menu item" );
+	NSString *sMinimize =        NSLocalizedString( @"Minimize",              @"Menu item" );
+	NSString *sEnterFullScreen = NSLocalizedString( @"Enter Full Screen",     @"Menu item" );
 	
 	NSMenu *mainMenu = [[[NSMenu alloc] initWithTitle:@""] autorelease];
-	NSMenu *appMenu = [[[NSMenu alloc] initWithTitle:@PRODUCT_NAME] autorelease];
+	NSMenu *appMenu = [[[NSMenu alloc] initWithTitle:@PRODUCT_FAMILY] autorelease];
 	NSMenu *windowMenu = [[[NSMenu alloc] initWithTitle:sWindow] autorelease];
 	NSMenuItem *hideOthers = MenuItem( sHideOthers, @selector(hideOtherApplications:), @"h" );
 	

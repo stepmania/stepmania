@@ -59,7 +59,7 @@ void MakeNewCocoaWindow( const void *data, unsigned length )
 	ADD_ACTIONb( mt, g_window, setOneShot:, YES );
 	ADD_ACTIONb( mt, g_window, setExcludedFromWindowsMenu:, YES );
 	ADD_ACTIONb( mt, g_window, useOptimizedDrawing:, YES );
-	ADD_ACTION1( mt, g_window, setTitle:, @PRODUCT_NAME );
+	ADD_ACTION1( mt, g_window, setTitle:, @PRODUCT_FAMILY );
 	ADD_ACTION0( mt, g_window, center );
 	// Set subviews.
 	ADD_ACTION1( mt, view, addSubview:, g_text );

@@ -3,10 +3,10 @@
 void InformUserOfCrash( const char *sPath )
 {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	NSString *s = @PRODUCT_NAME " has crashed. Debugging information has been output to\n\n%s\n\n"
+	NSString *s = @PRODUCT_FAMILY " has crashed. Debugging information has been output to\n\n%s\n\n"
 	@"Please file a bug report at\n\n" REPORT_BUG_URL;
 	
-	int ret = NSRunCriticalAlertPanel( @PRODUCT_NAME " has crashed", s, @"File Bug Report",
+	int ret = NSRunCriticalAlertPanel( @PRODUCT_FAMILY " has crashed", s, @"File Bug Report",
 					   @"Quit", @"Open crashinfo.txt", sPath );
 	
 	NSWorkspace *ws = [NSWorkspace sharedWorkspace];

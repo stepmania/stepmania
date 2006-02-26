@@ -7,15 +7,15 @@
 	<key>CFBundleExecutable</key>
 	<string>EXECUTABLE_NAME</string>
 	<key>CFBundleGetInfoString</key>
-	<string>PRODUCT_NAME_BARE PRODUCT_VER_BARE</string>
+	<string>PRODUCT_ID_BARE PRODUCT_VER_BARE</string>
 	<key>CFBundleIconFile</key>
 	<string>smicon.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.PRODUCT_NAME_BARE</string>
+	<string>com.PRODUCT_ID_BARE</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>PRODUCT_NAME_BARE</string>
+	<string>PRODUCT_FAMILY_BARE</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
