@@ -12,7 +12,7 @@ public:
 	void Update();
 	InputHandler_Linux_tty();
 	~InputHandler_Linux_tty();
-	void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut);
+	void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut );
 };
 #define USE_INPUT_HANDLER_LINUX_TTY
 

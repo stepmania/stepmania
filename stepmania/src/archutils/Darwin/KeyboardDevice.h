@@ -17,7 +17,7 @@ protected:
 public:
 	void GetButtonPresses( vector<pair<DeviceInput, bool> >& vPresses, int cookie,
 			       int value, const RageTimer& now ) const;
-	void GetDevicesAndDescriptions( vector<InputDevice>& dev, vector<RString>& desc ) const;
+	void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevices ) const;
 };
 
 

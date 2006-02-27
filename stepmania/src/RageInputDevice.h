@@ -36,6 +36,26 @@ enum InputDevice
 #define FOREACH_InputDevice( i ) FOREACH_ENUM( InputDevice, NUM_INPUT_DEVICES, i )
 const RString& InputDeviceToString( InputDevice i );
 InputDevice StringToInputDevice( const RString& s );
+inline bool IsJoystick( InputDevice id ) { return DEVICE_JOY1 <= id && id < DEVICE_JOY1+NUM_JOYSTICKS; }
+
+
+struct InputDeviceInfo
+{
+	InputDeviceInfo( InputDevice id_, RString sDesc_ )
+	{
+		id = id_;
+		sDesc = sDesc_;
+	}
+
+	InputDevice id;
+	RString sDesc;
+
+	bool operator==( const InputDeviceInfo &other ) const
+	{
+		return id == other.id && 
+			sDesc == other.sDesc;
+	}
+};
 
 
 enum InputDeviceState
@@ -302,7 +322,7 @@ public:
 
 	char ToChar() const;
 
-	bool IsJoystick() const { return DEVICE_JOY1 <= device && device < DEVICE_JOY1+NUM_JOYSTICKS; }
+	bool IsJoystick() const { return ::IsJoystick(device); }
 };
 
 #endif

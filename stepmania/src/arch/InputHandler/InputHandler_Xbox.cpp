@@ -161,14 +161,13 @@ void InputHandler_Xbox::Update()
 	InputHandler::UpdateTimer();
 }
 
-void InputHandler_Xbox::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut)
+void InputHandler_Xbox::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut )
 {
 	for( int i=0; i<NUM_JOYSTICKS; i++ )
 	{
 		if( joysticks[i] != 0 )
 		{
-			vDevicesOut.push_back( InputDevice(DEVICE_JOY1+i) );
-			vDescriptionsOut.push_back( "XboxGameHardware" );
+			vDevicesOut.push_back( InputDeviceInfo(InputDevice(DEVICE_JOY1+i),"XboxGameHardware") );
 		}
 	}
 }

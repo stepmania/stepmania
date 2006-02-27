@@ -62,10 +62,10 @@ bool RageInput::DevicesChanged()
 	return false;
 }
 
-void RageInput::GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut ) const
+void RageInput::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut ) const
 {
 	for( unsigned i = 0; i < m_pDevices.size(); ++i )
-		m_pDevices[i]->GetDevicesAndDescriptions( vDevicesOut, vDescriptionsOut );	
+		m_pDevices[i]->GetDevicesAndDescriptions( vDevicesOut );	
 }
 
 void RageInput::WindowReset()
@@ -84,13 +84,14 @@ RString RageInput::GetDeviceSpecificInputString( const DeviceInput &di )
 {
 	FOREACH( InputHandler*, m_pDevices, i )
 	{
-		vector<InputDevice> vDevices;
-		vector<RString> vDescriptions;
-		(*i)->GetDevicesAndDescriptions( vDevices, vDescriptions );
+		vector<InputDeviceInfo> vDevices;
+		(*i)->GetDevicesAndDescriptions( vDevices );
 
-		bool bMatch = find(vDevices.begin(), vDevices.end(), di.device) != vDevices.end();
-		if( bMatch )
-			return (*i)->GetDeviceSpecificInputString(di);
+		FOREACH_CONST( InputDeviceInfo, vDevices, idi )
+		{
+			if( idi->id == di.device )
+				return (*i)->GetDeviceSpecificInputString(di);
+		}
 	}
 
 	return di.ToString();
@@ -100,13 +101,14 @@ InputDeviceState RageInput::GetInputDeviceState( InputDevice id )
 {
 	FOREACH( InputHandler*, m_pDevices, i )
 	{
-		vector<InputDevice> vDevices;
-		vector<RString> vDescriptions;
-		(*i)->GetDevicesAndDescriptions( vDevices, vDescriptions );
+		vector<InputDeviceInfo> vDevices;
+		(*i)->GetDevicesAndDescriptions( vDevices );
 
-		bool bMatch = find(vDevices.begin(), vDevices.end(), id) != vDevices.end();
-		if( bMatch )
-			return (*i)->GetInputDeviceState(id);
+		FOREACH_CONST( InputDeviceInfo, vDevices, idi )
+		{
+			if( idi->id == id )
+				return (*i)->GetInputDeviceState(id);
+		}
 	}
 
 	return InputDeviceState_INVALID;
@@ -114,18 +116,17 @@ InputDeviceState RageInput::GetInputDeviceState( InputDevice id )
 
 RString RageInput::GetDisplayDevicesString() const
 {
-	vector<InputDevice> vDevices;
-	vector<RString> vDescriptions;
+	vector<InputDeviceInfo> vDevices;
+	GetDevicesAndDescriptions( vDevices );
+
 	vector<RString> vs;
-	GetDevicesAndDescriptions( vDevices, vDescriptions );
-	ASSERT( vDevices.size() == vDescriptions.size() );
 	for( unsigned i=0; i<vDevices.size(); ++i )
 	{
-		const RString sDescription = vDescriptions[i];
-		InputDevice device = vDevices[i];
+		const RString &sDescription = vDevices[i].sDesc;
+		InputDevice id = vDevices[i].id;
 		if( sDescription == "MonkeyKeyboard" )
 			continue;	// hide this
-		vs.push_back( ssprintf("%s (%s)", sDescription.c_str(), InputDeviceToString(device).c_str()) );
+		vs.push_back( ssprintf("%s (%s)", sDescription.c_str(), InputDeviceToString(id).c_str()) );
 	}
 	return join("\n",vs);
 }
@@ -140,9 +141,11 @@ public:
 
 	static int GetDescriptions( T* p, lua_State *L )
 	{
-		vector<InputDevice> vDevices;
+		vector<InputDeviceInfo> vDevices;
+		p->GetDevicesAndDescriptions( vDevices );
 		vector<RString> vsDescriptions;
-		p->GetDevicesAndDescriptions( vDevices, vsDescriptions );
+		FOREACH_CONST( InputDeviceInfo, vDevices, idi )
+			vsDescriptions.push_back( idi->sDesc );
 		LuaHelpers::CreateTableFromArray( vsDescriptions, L );
 		return 1;
 	}

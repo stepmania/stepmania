@@ -11,7 +11,7 @@ public:
 	InputHandler_X11();
 	~InputHandler_X11();
 	void Update();
-	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut );
+	void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut );
 };
 #define USE_INPUT_HANDLER_X11
 

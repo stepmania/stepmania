@@ -457,9 +457,8 @@ void InputMapper::ApplyMapping( const Mapping *maps, GameController gc, InputDev
 
 void InputMapper::AutoMapJoysticksForCurrentGame()
 {
-	vector<InputDevice> vDevices;
-	vector<RString> vDescriptions;
-	INPUTMAN->GetDevicesAndDescriptions(vDevices,vDescriptions);
+	vector<InputDeviceInfo> vDevices;
+	INPUTMAN->GetDevicesAndDescriptions(vDevices);
 
 	int iNumJoysticksMapped = 0;
 
@@ -467,8 +466,8 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 
 	for( unsigned i=0; i<vDevices.size(); i++ )
 	{
-		InputDevice id = vDevices[i];
-		RString sDescription = vDescriptions[i];
+		InputDevice id = vDevices[i].id;
+		const RString &sDescription = vDevices[i].sDesc;
 		for( unsigned j=0; j<ARRAYSIZE(g_AutoJoyMappings); j++ )
 		{
 			const AutoJoyMapping& mapping = g_AutoJoyMappings[j];
@@ -576,45 +575,63 @@ void InputMapper::SaveMappingsToDisk()
 	ini.WriteFile( SpecialFiles::KEYMAPS_PATH );
 }
 
-static LocalizedString CONNECTED				( "InputMapper", "Connected" );
-static LocalizedString DISCONNECTED				( "InputMapper", "Disconnected" );
-static LocalizedString REMAPPING_ALL_JOYSTICKS	( "InputMapper", "Remapping all joysticks." );
-bool InputMapper::CheckForChangedInputDevicesAndRemap( RString &sMessage )
+static LocalizedString CONNECTED			( "InputMapper", "Connected" );
+static LocalizedString DISCONNECTED			( "InputMapper", "Disconnected" );
+static LocalizedString AUTOMAPPING_ALL_JOYSTICKS	( "InputMapper", "Auto-mapping all joysticks." );
+bool InputMapper::CheckForChangedInputDevicesAndRemap( RString &sMessageOut )
 {
-	//
-	// update last seen joysticks
-	//
-	vector<InputDevice> vDevices;
-	vector<RString> vsDescriptions;
-	INPUTMAN->GetDevicesAndDescriptions( vDevices, vsDescriptions );
-	RString sInputDevices = join( ",", vsDescriptions );
+	// Only check for changes in joysticks since that's all we know how to remap.
 
-	if( g_sLastSeenInputDevices.Get() == sInputDevices )
+	// update last seen joysticks
+	vector<InputDeviceInfo> vDevices;
+	INPUTMAN->GetDevicesAndDescriptions( vDevices );
+
+	// Strip non-joysticks.
+	vector<RString> vsLastSeenJoysticks;
+	split( g_sLastSeenInputDevices, ",", vsLastSeenJoysticks );
+
+	vector<RString> vsCurrent;
+	vector<RString> vsCurrentJoysticks;
+	for( int i=vDevices.size()-1; i>=0; i-- )
+	{
+		vsCurrent.push_back( vDevices[i].sDesc );
+		if( IsJoystick(vDevices[i].id) )
+		{
+			vsCurrentJoysticks.push_back( vDevices[i].sDesc );
+		}
+		else
+		{
+			vector<RString>::iterator iter = find( vsLastSeenJoysticks.begin(), vsLastSeenJoysticks.end(), vDevices[i].sDesc );
+			if( iter != vsLastSeenJoysticks.end() )
+				vsLastSeenJoysticks.erase( iter );
+		}
+	}
+
+
+	bool bJoysticksChanged = !VectorsAreEqual(vsCurrentJoysticks,vsLastSeenJoysticks);
+	if( !bJoysticksChanged )
 		return false;
 
-	vector<RString> vsLastSeen;
-	split( g_sLastSeenInputDevices, ",", vsLastSeen );
-
 	vector<RString> vsConnects, vsDisconnects;
-	GetConnectsDisconnects( vsLastSeen, vsDescriptions, vsDisconnects, vsConnects );
+	GetConnectsDisconnects( vsLastSeenJoysticks, vsCurrentJoysticks, vsDisconnects, vsConnects );
 
-	sMessage = RString();
+	sMessageOut = RString();
 	if( !vsConnects.empty() )
-		sMessage += CONNECTED.GetValue()+": " + join( "\n", vsConnects ) + "\n";
+		sMessageOut += CONNECTED.GetValue()+": " + join( "\n", vsConnects ) + "\n";
 	if( !vsDisconnects.empty() )
-		sMessage += DISCONNECTED.GetValue()+": " + join( "\n", vsDisconnects ) + "\n";
+		sMessageOut += DISCONNECTED.GetValue()+": " + join( "\n", vsDisconnects ) + "\n";
 
 	if( g_bAutoMapOnJoyChange )
 	{
-		sMessage += REMAPPING_ALL_JOYSTICKS.GetValue();
+		sMessageOut += AUTOMAPPING_ALL_JOYSTICKS.GetValue();
 		AutoMapJoysticksForCurrentGame();
 		SaveMappingsToDisk();
 		MESSAGEMAN->Broadcast( Message_AutoJoyMappingApplied );
 	}
 
-	LOG->Info( sMessage );
+	LOG->Info( sMessageOut );
 
-	g_sLastSeenInputDevices.Set( sInputDevices );
+	g_sLastSeenInputDevices.Set( join(",",vsCurrent) );
 	PREFSMAN->SavePrefsToDisk();
 
 	return true;

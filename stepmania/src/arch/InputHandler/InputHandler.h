@@ -29,7 +29,7 @@ public:
 	virtual ~InputHandler() { }
 	virtual void Update() { }
 	virtual bool DevicesChanged() { return false; }
-	virtual void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut ) = 0;
+	virtual void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut ) = 0;
 	
 	// Override to return a pretty string that's specific to the controller type.
 	virtual RString GetDeviceSpecificInputString( const DeviceInput &di );

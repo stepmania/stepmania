@@ -117,7 +117,7 @@ public:
 	/*
 	 * Add a device and a description for each logical device.
 	 */
-	virtual void GetDevicesAndDescriptions( vector<InputDevice>& dev, vector<RString>& desc ) const = 0;
+	virtual void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevices ) const = 0;
 };
 
 #endif

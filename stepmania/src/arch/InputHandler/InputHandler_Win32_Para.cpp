@@ -37,7 +37,7 @@ InputHandler_Win32_Para::InputHandler_Win32_Para()
 	SAFE_DELETE( dev );
 }
 
-void InputHandler_Win32_Para::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut)
+void InputHandler_Win32_Para::GetDevicesAndDescriptions(vector<InputDeviceInfo>& vDevicesOut )
 {
 	// The device appears as a HID joystick
 }

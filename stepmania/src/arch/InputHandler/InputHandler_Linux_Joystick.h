@@ -11,7 +11,7 @@ public:
 	enum { NUM_JOYSTICKS = 4 };
 	InputHandler_Linux_Joystick();
 	~InputHandler_Linux_Joystick();
-	void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut);
+	void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut );
 
 private:
 	static int InputThread_Start( void *p );

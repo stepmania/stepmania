@@ -12,7 +12,7 @@ public:
 	InputHandler_Win32_Pump();
 	~InputHandler_Win32_Pump();
 	RString GetDeviceSpecificInputString( const DeviceInput &di );
-	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut );
+	void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut );
 
 private:
 	USBDevice *m_pDevice;

@@ -87,14 +87,13 @@ RString InputHandler_Win32_Pump::GetDeviceSpecificInputString( const DeviceInput
 	return InputHandler::GetDeviceSpecificInputString( di );
 }
 
-void InputHandler_Win32_Pump::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut)
+void InputHandler_Win32_Pump::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut )
 {
 	for(int i = 0; i < NUM_PUMPS; ++i)
 	{
 		if( m_pDevice[i].IsOpen() )
 		{
-			vDevicesOut.push_back( InputDevice(DEVICE_PUMP1+i) );
-			vDescriptionsOut.push_back( "Pump USB" );
+			vDevicesOut.push_back( InputDeviceInfo(InputDevice(DEVICE_PUMP1+i),"Pump USB") );
 		}
 	}
 }

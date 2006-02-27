@@ -33,7 +33,7 @@ public:
 	~InputHandler_Carbon();
 
 	bool DevicesChanged() { LockMut( m_ChangeLock ); return m_bChanged; }
-	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut );
+	void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut );
 	RString GetDeviceSpecificInputString( const DeviceInput &di );
 	static void QueueCallBack( void *target, int result, void *refcon, void *sender );
 	

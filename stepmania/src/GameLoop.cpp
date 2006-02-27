@@ -77,18 +77,19 @@ static bool ChangeAppPri()
 #if defined(_WINDOWS)
 	if( g_BoostAppPriority == BOOST_AUTO )
 	{
-		vector<InputDevice> vDevices;
-		vector<RString> vDescriptions;
+		vector<InputDeviceInfo> vDevices;
 
 		// This can get called before INPUTMAN is constructed.
 		if( INPUTMAN )
 		{
-			INPUTMAN->GetDevicesAndDescriptions(vDevices,vDescriptions);
-			RString sInputDevices = join( ",", vDescriptions );
-			if( sInputDevices.find("NTPAD") != string::npos )
+			INPUTMAN->GetDevicesAndDescriptions(vDevices);
+			FOREACH_CONST( InputDeviceInfo, vDevices, d )
 			{
-				LOG->Trace( "Using NTPAD.  Don't boost priority." );
-				return false;
+				if( d->sDesc.find("NTPAD") != string::npos )
+				{
+					LOG->Trace( "Using NTPAD.  Don't boost priority." );
+					return false;
+				}
 			}
 		}
 	}

@@ -165,12 +165,11 @@ void KeyboardDevice::GetButtonPresses( vector<pair<DeviceInput, bool> >& vPresse
 	
 }
 	
-void KeyboardDevice::GetDevicesAndDescriptions( vector<InputDevice>& dev, vector<RString>& desc ) const
+void KeyboardDevice::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevices ) const
 {
-	if( dev.size() && dev[0] == DEVICE_KEYBOARD )
+	if( vDevices.size() && vDevices[0] == DEVICE_KEYBOARD )
 		return;
-	dev.insert( dev.begin(), DEVICE_KEYBOARD );
-	desc.insert( desc.begin(), "Keyboard" );
+	vDevices.insert( dev.begin(), InputDeviceInfo(DEVICE_KEYBOARD,"Keyboard") );
 }
 		
 /*

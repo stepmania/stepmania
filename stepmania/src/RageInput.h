@@ -17,7 +17,7 @@ public:
 	void LoadDrivers();
 	void Update();
 	bool DevicesChanged();
-	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<RString>& vsDescriptionsOut ) const;
+	void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vOut ) const;
 	void WindowReset();
 	void AddHandler( InputHandler *pHandler );
 	RString GetDeviceSpecificInputString( const DeviceInput &di );

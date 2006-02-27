@@ -12,10 +12,9 @@ InputHandler_MonkeyKeyboard::~InputHandler_MonkeyKeyboard()
 {
 }
 
-void InputHandler_MonkeyKeyboard::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut)
+void InputHandler_MonkeyKeyboard::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut )
 {
-	vDevicesOut.push_back( InputDevice(DEVICE_KEYBOARD) );
-	vDescriptionsOut.push_back( "MonkeyKeyboard" );
+	vDevicesOut.push_back( InputDeviceInfo(DEVICE_KEYBOARD,"MonkeyKeyboard") );
 }
 
 static const DeviceButton g_keys[] =

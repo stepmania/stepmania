@@ -240,10 +240,10 @@ InputHandler_Carbon::InputHandler_Carbon() : m_Sem( "Input thread started" ), m_
 	}
 }
 
-void InputHandler_Carbon::GetDevicesAndDescriptions( vector<InputDevice>& dev, vector<RString>& desc )
+void InputHandler_Carbon::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevices )
 {
 	FOREACH_CONST( HIDDevice *, m_vDevices, i )
-		(*i)->GetDevicesAndDescriptions( dev, desc );
+		(*i)->GetDevicesAndDescriptions( vDevices );
 }
 
 RString InputHandler_Carbon::GetDeviceSpecificInputString( const DeviceInput &di )

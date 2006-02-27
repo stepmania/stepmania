@@ -66,10 +66,9 @@ int PumpDevice::AssignIDs( InputDevice startID )
 	return 1;
 }
 
-void PumpDevice::GetDevicesAndDescriptions( vector<InputDevice>& dev, vector<RString>& desc ) const
+void PumpDevice::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevices ) const
 {
-	dev.push_back( m_Id );
-	desc.push_back( "Pump USB" );
+	vDevices.push_back( InputDeviceInfo(m_Id,"Pump USB") );
 }
 
 /*

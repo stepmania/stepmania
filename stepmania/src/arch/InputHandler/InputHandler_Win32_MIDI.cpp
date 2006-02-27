@@ -65,12 +65,11 @@ InputHandler_Win32_MIDI::~InputHandler_Win32_MIDI()
 	}
 }
 
-void InputHandler_Win32_MIDI::GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut )
+void InputHandler_Win32_MIDI::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut )
 {
 	if( m_bFoundDevice )
 	{
-		vDevicesOut.push_back( InputDevice(DEVICE_MIDI) );
-		vDescriptionsOut.push_back( "Win32_MIDI" );
+		vDevicesOut.push_back( InputDeviceInfo(DEVICE_MIDI,"Win32_MIDI") );
 	}
 }
 

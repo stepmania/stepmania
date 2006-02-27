@@ -586,13 +586,10 @@ void InputHandler_DInput::InputThreadMain()
 	CloseHandle(Handle);
 }
 
-void InputHandler_DInput::GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<RString>& vDescriptionsOut )
+void InputHandler_DInput::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut )
 {
 	for( unsigned i=0; i < Devices.size(); ++i )
-	{
-		vDevicesOut.push_back( Devices[i].dev );
-		vDescriptionsOut.push_back( Devices[i].JoystickInst.tszProductName );
-	}
+		vDevicesOut.push_back( InputDeviceInfo(Devices[i].dev, Devices[i].JoystickInst.tszProductName) );
 }
 
 /*

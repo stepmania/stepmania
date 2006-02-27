@@ -192,12 +192,11 @@ int JoystickDevice::AssignIDs( InputDevice startID )
 	return m_vSticks.size();
 }
 
-void JoystickDevice::GetDevicesAndDescriptions( vector<InputDevice>& dev, vector<RString>& desc ) const
+void JoystickDevice::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevices ) const
 {
 	FOREACH_CONST( Joystick, m_vSticks, i )
 	{
-		dev.push_back( i->id );
-		desc.push_back( GetDescription() );
+		vDevices.push_back( InputDeviceInfo(i->id,GetDescription()) );
 	}
 }
 
