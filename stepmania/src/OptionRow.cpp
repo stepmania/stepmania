@@ -517,18 +517,18 @@ void OptionRow::PositionUnderlines( PlayerNumber pn )
 		}
 
 		/* Don't tween X movement and color changes. */
+		ul.StopTweening();
+
 		int iWidth, iX, iY;
 		GetWidthXY( pn, iChoiceWithFocus, iWidth, iX, iY );
-		ul.SetGlobalX( (float)iX );
-		ul.SetGlobalDiffuseColor( RageColor(1,1,1,1) );
+		ul.SetX( (float)iX );
+		ul.SetDiffuse( RageColor(1,1,1,fAlpha) );
 
 		ASSERT( m_vbSelected[pnTakeSelectedFrom].size() == m_pHand->m_Def.m_vsChoices.size() );
 
 		bool bSelected = (iChoiceWithFocus==-1) ? false : m_vbSelected[pnTakeSelectedFrom][ iChoiceWithFocus ];
 		bool bHidden = !bSelected || !GAMESTATE->IsHumanPlayer(pn);
 
-		ul.StopTweening();
-		ul.SetDiffuseAlpha( fAlpha );
 		ul.BeginTweening( m_pParentType->TWEEN_SECONDS );
 		ul.SetHidden( bHidden );
 		ul.SetBarWidth( iWidth );
