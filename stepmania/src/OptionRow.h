@@ -162,7 +162,6 @@ public:
 	int GetChoiceInRowWithFocus( PlayerNumber pn ) const;
 	int GetChoiceInRowWithFocusShared() const;
 	void SetChoiceInRowWithFocus( PlayerNumber pn, int iChoice );
-	void SetChoiceInRowWithFocusShared( int iChoice );
 	void ResetFocusFromSelection( PlayerNumber pn );
 
 	bool GetSelected( PlayerNumber pn, int iChoice ) const;

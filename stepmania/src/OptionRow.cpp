@@ -799,12 +799,6 @@ void OptionRow::SetChoiceInRowWithFocus( PlayerNumber pn, int iChoice )
 	UpdateText( pn );
 }
 
-void OptionRow::SetChoiceInRowWithFocusShared( int iChoice )
-{
-	FOREACH_PlayerNumber( pn )
-		SetChoiceInRowWithFocus( pn, iChoice );
-}
-
 void OptionRow::ResetFocusFromSelection( PlayerNumber pn )
 {
 	int iSelection = -1;
