@@ -115,6 +115,18 @@ void JoystickDevice::Open()
 			AddElementToQueue( j->first );
 	}
 }
+bool JoystickDevice::SupportsVidPid( int vid, int pid )
+{
+	if( vid != 0x0507 || pid != 0x0011 )
+		return true;
+	// It's a Para controller so try to power it on.
+	uint8_t powerOn = 1;
+	IOReturn ret = SetReport( kIOHIDReportTypeFeature, 0, &powerOn, 1, 10 );
+	
+	if( ret )
+		LOG->Warn( "Failed to power on the Para controller: %#08x", ret );
+	return true;
+}
 
 void JoystickDevice::GetButtonPresses( vector<pair<DeviceInput, bool> >& vPresses, int cookie,
 				       int value, const RageTimer& now ) const

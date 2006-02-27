@@ -25,6 +25,7 @@ protected:
 	bool AddLogicalDevice( int usagePage, int usage );
 	void AddElement( int usagePage, int usage, int cookie, const CFDictionaryRef properties );
 	void Open();
+	bool SupportsVidPid( int vid, int pid );
 	
 public:
 	void GetButtonPresses( vector<pair<DeviceInput, bool> >& vPresses, int cookie,
