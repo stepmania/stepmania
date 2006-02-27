@@ -685,7 +685,6 @@ void OptionRow::Update( float fDeltaTime )
 	{
 		FOREACH( OptionsCursor *, m_Underline[pn], pUnderline )
 			(*pUnderline)->SetBaseAlpha( fAlpha );
-		/* XXX: this doesn't work since icon is an ActorFrame */
 		if( m_OptionIcons[pn] )
 			m_OptionIcons[pn]->SetBaseAlpha( fAlpha );
 	}
