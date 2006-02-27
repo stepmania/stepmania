@@ -1098,14 +1098,6 @@ void Actor::SetGlobalDiffuseColor( RageColor c )
 	}
 }
 
-void Actor::SetGlobalX( float x )
-{
-	for( unsigned ts = 0; ts < m_Tweens.size(); ++ts )
-		m_Tweens[ts]->state.pos.x = x; 
-	m_current.pos.x = x;
-	m_start.pos.x = x;
-}
-
 void Actor::SetDiffuseColor( RageColor c )
 {
 	for( int i=0; i<4; i++ )
