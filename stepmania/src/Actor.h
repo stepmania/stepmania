@@ -170,6 +170,7 @@ public:
 
 	virtual void SetDiffuse( RageColor c )		{ for(int i=0; i<4; i++) DestTweenState().diffuse[i] = c; };
 	virtual void SetDiffuseAlpha( float f )		{ for(int i = 0; i < 4; ++i) { RageColor c = GetDiffuses( i ); c.a = f; SetDiffuses( i, c ); } }
+	float GetCurrentDiffuseAlpha() const		{ return m_current.diffuse[0].a; }
 	void SetDiffuseColor( RageColor c );
 	void SetDiffuses( int i, RageColor c )		{ DestTweenState().diffuse[i] = c; };
 	void SetDiffuseUpperLeft( RageColor c )		{ DestTweenState().diffuse[0] = c; };
