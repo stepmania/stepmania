@@ -223,8 +223,6 @@ protected:
 
 public:
 	void SetDestination( Actor::TweenState &ts, bool bTween );
-protected:
-	bool m_bHidden; // currently off screen
 };
 
 #endif
