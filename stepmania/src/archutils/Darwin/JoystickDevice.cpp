@@ -165,11 +165,8 @@ void JoystickDevice::GetButtonPresses( vector<pair<DeviceInput, bool> >& vPresse
 
 int JoystickDevice::AssignIDs( InputDevice startID )
 {
-	if( startID < DEVICE_JOY1 )
-	{
-		m_vSticks.clear();
-		return 0;
-	}
+	if( startID < DEVICE_JOY1 || startID > DEVICE_JOY16 )
+		return -1;
 	FOREACH( Joystick, m_vSticks, i )
 	{
 		if( startID > DEVICE_JOY16 )

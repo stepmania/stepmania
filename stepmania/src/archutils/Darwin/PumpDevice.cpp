@@ -48,33 +48,32 @@ void PumpDevice::GetButtonPresses( vector<pair<DeviceInput, bool> >& vPresses, i
 	}
 	if( db1 != DeviceButton_Invalid )
 	{
-		DeviceInput di( id, db1, pressed1 ? 1.0f : 0.0f , now );
+		DeviceInput di( m_Id, db1, pressed1 ? 1.0f : 0.0f , now );
 		vPresses.push_back( pair<DeviceInput, bool>(di, pressed1) );
 	}
 	if( db2 != DeviceButton_Invalid )
 	{
-		DeviceInput di( id, db2, pressed2 ? 1.0f : 0.0f , now );
+		DeviceInput di( m_Id, db2, pressed2 ? 1.0f : 0.0f , now );
 		vPresses.push_back( pair<DeviceInput, bool>(di, pressed2) );
 	}
 }
 
 int PumpDevice::AssignIDs( InputDevice startID )
 {
-	id = DEVICE_NONE;
 	if( startID < DEVICE_PUMP1 || startID > DEVICE_PUMP2 )
-		return 0;
-	id = startID;
+		return -1;
+	m_Id = startID;
 	return 1;
 }
 
 void PumpDevice::GetDevicesAndDescriptions( vector<InputDevice>& dev, vector<RString>& desc ) const
 {
-	dev.push_back( id );
+	dev.push_back( m_Id );
 	desc.push_back( "Pump USB" );
 }
 
 /*
- * (c) 2005-2006 Steve Checkoway
+ * (c) 2006 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
