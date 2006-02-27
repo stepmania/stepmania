@@ -20,8 +20,9 @@
 #include "CommonMetrics.h"
 #include "InputEventPlus.h"
 
+static ThemeMetric<bool> USE_MACHINE_PROFILE( "ScreenEnding", "UseMachineProfile" );
 
-RString GetStatsLineTitle( PlayerNumber pn, EndingStatsLine line )
+static RString GetStatsLineTitle( PlayerNumber pn, EndingStatsLine line )
 {
 	switch( line )
 	{
@@ -58,11 +59,20 @@ RString GetStatsLineTitle( PlayerNumber pn, EndingStatsLine line )
 	}
 }
 
-RString GetStatsLineValue( PlayerNumber pn, EndingStatsLine line )
+static bool ShowStatsFor( PlayerNumber pn )
+{
+	return USE_MACHINE_PROFILE || PROFILEMAN->IsPersistentProfile(pn);
+}
+
+static RString GetStatsLineValue( PlayerNumber pn, EndingStatsLine line )
 {
 	CHECKPOINT_M( ssprintf("GetStatsLineValue(%d,%d)",pn,line) );
 
-	Profile* pProfile = PROFILEMAN->GetProfile( pn );
+	Profile* pProfile = NULL;
+	if( USE_MACHINE_PROFILE )
+		pProfile = PROFILEMAN->GetMachineProfile();
+	else
+		pProfile = PROFILEMAN->GetProfile( pn );
 	ASSERT( pProfile );
 
 	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
@@ -70,7 +80,7 @@ RString GetStatsLineValue( PlayerNumber pn, EndingStatsLine line )
 	switch( line )
 	{
 	case CALORIES_TODAY:		return pProfile->GetDisplayTotalCaloriesBurnedToday();
-	case CURRENT_COMBO:			return Commify( pProfile->m_iCurrentCombo );
+	case CURRENT_COMBO:		return Commify( pProfile->m_iCurrentCombo );
 	case PERCENT_COMPLETE:
 		{
 			float fActual = 0;
@@ -196,8 +206,7 @@ void ScreenEnding::Init()
 
 	FOREACH_HumanPlayer( p )
 	{
-		// don't show stats if not using a persistent profile
-		if( !PROFILEMAN->IsPersistentProfile(p) )
+		if( !ShowStatsFor(p) )
 			continue;
 	
 		FOREACH_EndingStatsLine( i )
