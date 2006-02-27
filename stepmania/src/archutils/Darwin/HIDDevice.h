@@ -103,7 +103,8 @@ public:
 	/*
 	 * Returns the number of IDs assigned starting from startID. This is not meaningful for devices like
 	 * keyboards that all share the same InputDevice id. If a particular device has multiple logical
-	 * devices, then it must ensure that AssignIDs does not assign an ID outside of its range.
+	 * devices, then it must ensure that AssignIDs does not assign an ID outside of its range. Return
+	 * -1 to indicate that the device does not share the same InputDevice and none could be assigned.
 	 */
 	virtual int AssignIDs( InputDevice startID ) { return 0; }
 	

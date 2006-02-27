@@ -182,6 +182,7 @@ void InputHandler_Carbon::AddDevices( int usagePage, int usage, InputDevice &id 
 	while( (device = IOIteratorNext(iter)) )
 	{
 		HIDDevice *dev = MakeDevice( id );
+		int num;
 		
 		if( !dev )
 		{
@@ -189,14 +190,12 @@ void InputHandler_Carbon::AddDevices( int usagePage, int usage, InputDevice &id 
 			continue;
 		}
 		
-		if( !dev->Open(device) )
+		if( !dev->Open(device) || (num = dev->AssignIDs(id)) == -1 )
 		{
 			delete dev;
 			IOObjectRelease( device );
 			continue;
 		}
-		
-		int num = dev->AssignIDs( id );
 		io_iterator_t i;
 		
 		enum_add( id, num );
