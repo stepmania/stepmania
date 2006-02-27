@@ -690,10 +690,10 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 	PositionRows( true );
 
 	/* Do positioning. */
+	RefreshIcons( iCurRow, pn );
 	for( unsigned r=0; r<m_pRows.size(); r++ )
 		FOREACH_HumanPlayer( p )
 			m_pRows[r]->PositionUnderlines( p );
-	RefreshIcons( iCurRow, pn );
 	for( unsigned r=0; r<m_pRows.size(); r++ )	// foreach options line
 	{
 		m_pRows[r]->PositionIcons( pn );
