@@ -25,6 +25,7 @@ void ScreenUnlockBrowse::Init()
 
 void ScreenUnlockBrowse::MenuStart( PlayerNumber pn )
 {
+	m_soundStart.Play();
 	this->PostScreenMessage( SM_BeginFadingOut, 0 );
 }
 
