@@ -503,6 +503,19 @@ void OptionRow::PositionUnderlines( PlayerNumber pn )
 
 		int iChoiceWithFocus = (m_pHand->m_Def.m_layoutType == LAYOUT_SHOW_ONE_IN_ROW) ? GetChoiceInRowWithFocus(pn) : i;
 
+		float fAlpha = 1.0f;
+		if( m_pHand->m_Def.m_layoutType == LAYOUT_SHOW_ONE_IN_ROW )
+		{
+			bool bRowEnabled = m_pHand->m_Def.m_vEnabledForPlayers.find(pn) != m_pHand->m_Def.m_vEnabledForPlayers.end();
+
+			if( !m_pHand->m_Def.m_bOneChoiceForAllPlayers )
+			{
+				if( m_bRowHasFocus[pn] )	fAlpha = m_pParentType->COLOR_SELECTED.GetValue().a;
+				else if( bRowEnabled )		fAlpha = m_pParentType->COLOR_NOT_SELECTED.GetValue().a;
+				else				fAlpha = m_pParentType->COLOR_DISABLED.GetValue().a;
+			}
+		}
+
 		/* Don't tween X movement and color changes. */
 		int iWidth, iX, iY;
 		GetWidthXY( pn, iChoiceWithFocus, iWidth, iX, iY );
@@ -515,6 +528,7 @@ void OptionRow::PositionUnderlines( PlayerNumber pn )
 		bool bHidden = !bSelected || !GAMESTATE->IsHumanPlayer(pn);
 
 		ul.StopTweening();
+		ul.SetDiffuseAlpha( fAlpha );
 		ul.BeginTweening( m_pParentType->TWEEN_SECONDS );
 		ul.SetHidden( bHidden );
 		ul.SetBarWidth( iWidth );
