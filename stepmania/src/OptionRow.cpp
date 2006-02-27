@@ -678,20 +678,7 @@ void OptionRow::Update( float fDeltaTime )
 	ActorFrame::Update( fDeltaTime );
 
 	float fAlpha = m_Frame.GetCurrentDiffuseAlpha();
-	m_textTitle->SetBaseAlpha( fAlpha );
-	if( m_sprBullet != NULL )
-		m_sprBullet->SetBaseAlpha( fAlpha );
-	FOREACH_HumanPlayer( pn )
-	{
-		FOREACH( OptionsCursor *, m_Underline[pn], pUnderline )
-			(*pUnderline)->SetBaseAlpha( fAlpha );
-		if( m_OptionIcons[pn] )
-			m_OptionIcons[pn]->SetBaseAlpha( fAlpha );
-	}
-	if( m_sprBullet != NULL )
-		m_sprBullet->SetBaseAlpha( fAlpha );
-	for( unsigned j=0; j<m_textItems.size(); j++ )
-		m_textItems[j]->SetBaseAlpha( fAlpha );
+	m_Frame.SetBaseAlpha( fAlpha );
 }
 
 void OptionRow::SetOptionIcon( PlayerNumber pn, const RString &sText, GameCommand &gc )
