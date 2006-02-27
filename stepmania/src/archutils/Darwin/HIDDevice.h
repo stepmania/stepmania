@@ -82,6 +82,12 @@ protected:
 	{
 		CALL( m_Queue, addElement, IOHIDElementCookie(cookie), 0 );
 	}
+	
+	// Perform a synchronous set report on the HID interface.
+	inline IOReturn SetReport( IOHIDReportType type, UInt32 reportID, void *buffer, UInt32 size, UInt32 timeoutMS )
+	{
+		return CALL( m_Interface, setReport, type, reportID, buffer, size, timeoutMS, NULL, NULL, NULL );
+	}
 public:
 	HIDDevice();
 	virtual ~HIDDevice();
