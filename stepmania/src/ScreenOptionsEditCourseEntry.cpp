@@ -60,10 +60,10 @@ public:
 		FillSongsAndChoices( m_sSongGroup, m_vpDisplayedSongs, m_Def.m_vsChoices );
 	}
 
-	virtual bool Reload()
+	virtual ReloadChanged Reload()
 	{
 		FillSongsAndChoices( m_sSongGroup, m_vpDisplayedSongs, m_Def.m_vsChoices );
-		return true;
+		return RELOAD_CHANGED_ALL;
 	}
 
 	virtual void ImportOption( const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const

@@ -256,11 +256,11 @@ public:
 		return gc.m_sScreen;
 	}
 
-	virtual bool Reload()
+	virtual ReloadChanged Reload()
 	{
 		// HACK: always reload "speed", to update the BPM text in the name of the speed line
 		if( !m_Def.m_sName.CompareNoCase("speed") )
-			return true;
+			return RELOAD_CHANGED_ALL;
 
 		return OptionRowHandler::Reload();
 	}
@@ -300,7 +300,7 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 		// OptionRowHandlerList::LoadInternal( cmds );
 	}
 
-	virtual bool Reload()
+	virtual ReloadChanged Reload()
 	{
 		m_Def.m_vsChoices.clear();
 		m_aListEntries.clear();
@@ -361,7 +361,7 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 			m_aListEntries.push_back( GameCommand() );
 		}
 
-		return true;
+		return RELOAD_CHANGED_ALL;
 	}
 };
 
@@ -671,6 +671,7 @@ class OptionRowHandlerLua : public OptionRowHandler
 {
 public:
 	LuaExpression *m_pLuaTable;
+	LuaReference m_EnabledForPlayersFunc;
 
 	OptionRowHandlerLua() { m_pLuaTable = new LuaExpression; Init(); }
 	virtual ~OptionRowHandlerLua() { delete m_pLuaTable; }
@@ -679,6 +680,43 @@ public:
 		OptionRowHandler::Init();
 		m_pLuaTable->Unset();
 	}
+
+	void SetEnabledForPlayers()
+	{
+		Lua *L = LUA->Get();
+
+		if( m_EnabledForPlayersFunc.IsNil() )
+		{
+			LUA->Release(L);
+			return;
+		}
+
+		m_EnabledForPlayersFunc.PushSelf( L );
+		
+		/* Argument 1 (self): */
+		m_pLuaTable->PushSelf( L );
+		
+		lua_call( L, 1, 1 ); // call function with 1 argument and 1 result
+		if( !lua_istable(L, -1) )
+			RageException::Throw( "\"EnabledForPlayers\" did not return a table" );
+
+		m_Def.m_vEnabledForPlayers.clear();	// and fill in with supplied PlayerNumbers below
+
+		lua_pushnil( L );
+		while( lua_next(L, -2) != 0 )
+		{
+			/* `key' is at index -2 and `value' at index -1 */
+			PlayerNumber pn = (PlayerNumber)luaL_checkint( L, -1 );
+
+			m_Def.m_vEnabledForPlayers.insert( pn );
+
+			lua_pop( L, 1 );  /* removes `value'; keeps `key' for next iteration */
+		}
+		lua_pop( L, 1 );
+
+		LUA->Release(L);
+	}
+
 	virtual void LoadInternal( const Commands &cmds )
 	{
 		ASSERT( cmds.v.size() == 1 );
@@ -763,29 +801,13 @@ public:
 		lua_pop( L, 1 ); /* pop choices table */
 
 
-		/* Iterate over the "EnabledForPlayers" table. */
+		/* Set the EnabledForPlayers function. */
 		lua_pushstring( L, "EnabledForPlayers" );
 		lua_gettable( L, -2 );
-		if( !lua_isnil( L, -1 ) )
-		{
-			if( !lua_istable( L, -1 ) )
-				RageException::Throw( "\"%s\" \"EnabledForPlayers\" is not a table", sLuaFunction.c_str() );
-
-			m_Def.m_vEnabledForPlayers.clear();	// and fill in with supplied PlayerNumbers below
-
-			lua_pushnil( L );
-			while( lua_next(L, -2) != 0 )
-			{
-				/* `key' is at index -2 and `value' at index -1 */
-				PlayerNumber pn = (PlayerNumber)luaL_checkint( L, -1 );
-
-				m_Def.m_vEnabledForPlayers.insert( pn );
-
-				lua_pop( L, 1 );  /* removes `value'; keeps `key' for next iteration */
-			}
-		}
-		lua_pop( L, 1 ); /* pop EnabledForPlayers table */
-
+		if( !lua_isfunction( L, -1 ) && !lua_isnil( L, -1 ) )
+			RageException::Throw( "\"%s\" \"EnabledForPlayers\" is not a table", sLuaFunction.c_str() );
+		m_EnabledForPlayersFunc.SetFromStack( L );
+		SetEnabledForPlayers();
 		
 		/* Iterate over the "ReloadRowMessages" table. */
 		lua_pushstring( L, "ReloadRowMessages" );
@@ -827,52 +849,13 @@ public:
 
 		LUA->Release(L);
 	}
-	virtual bool Reload()
+
+	virtual ReloadChanged Reload()
 	{
-		Lua *L = LUA->Get();
-
-		/* Run the Lua expression.  It should return a table. */
-		const Command &command = m_cmds.v[0];
-		RString sLuaFunction = command.m_vsArgs[1];
-		m_pLuaTable->SetFromExpression( sLuaFunction );
-
-		if( m_pLuaTable->GetLuaType() != LUA_TTABLE )
-			RageException::Throw( "Result of \"%s\" is not a table", sLuaFunction.c_str() );
-
-		m_pLuaTable->PushSelf( L );
-
-
-		/* Iterate over the "EnabledForPlayers" table. */
-		lua_pushstring( L, "EnabledForPlayers" );
-		lua_gettable( L, -2 );
-		if( !lua_isnil( L, -1 ) )
-		{
-			if( !lua_istable( L, -1 ) )
-				RageException::Throw( "\"%s\" \"EnabledForPlayers\" is not a table", sLuaFunction.c_str() );
-
-			m_Def.m_vEnabledForPlayers.clear();	// and fill in with supplied PlayerNumbers below
-
-			lua_pushnil( L );
-			while( lua_next(L, -2) != 0 )
-			{
-				/* `key' is at index -2 and `value' at index -1 */
-				PlayerNumber pn = (PlayerNumber)luaL_checkint( L, -1 );
-
-				m_Def.m_vEnabledForPlayers.insert( pn );
-
-				lua_pop( L, 1 );  /* removes `value'; keeps `key' for next iteration */
-			}
-		}
-		lua_pop( L, 1 ); /* pop EnabledForPlayers table */
-
-
-		lua_pop( L, 1 ); /* pop main table */
-		ASSERT( lua_gettop(L) == 0 );
-
-		LUA->Release(L);
-
-		return true;
+		SetEnabledForPlayers();
+		return RELOAD_CHANGED_ENABLED;
 	}
+
 	virtual void ImportOption( const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
 		Lua *L = LUA->Get();

@@ -40,11 +40,14 @@ public:
 	 * and reinitialize them.  As an optimization, rows which do not
 	 * change can be initialized just once and left alone.
 	 *
-	 * If the row has been reinitialized, return true, and the graphic
-	 * elements will also be reinitialized.  If the row is static, and
-	 * nothing has changed, return false.
+	 * If the row has been reinitialized, return RELOAD_CHANGED_ALL, and the
+	 * graphic elements will also be reinitialized.  If only m_vEnabledForPlayers
+	 * has been changed, return RELOAD_CHANGED_ENABLED.  If the row is static, and
+	 * nothing has changed, return RELOAD_CHANGED_NONE.
 	 */
-	virtual bool Reload() { return false; }
+	enum ReloadChanged { RELOAD_CHANGED_NONE, RELOAD_CHANGED_ENABLED, RELOAD_CHANGED_ALL };
+	virtual ReloadChanged Reload() { return RELOAD_CHANGED_NONE; }
+
 	virtual void ImportOption( const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const = 0;
 	/* Returns an OPT mask. */
 	virtual int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const = 0;

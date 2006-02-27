@@ -866,17 +866,31 @@ void OptionRow::Reload()
 	//	ExportOptions( vpns, bRowHasFocus );
 	//}
 
-	if( !m_pHand->Reload() )
-		return;
+	switch( m_pHand->Reload() )
+	{
+	case OptionRowHandler::RELOAD_CHANGED_NONE:
+		break;
 
-	ChoicesChanged();
+	case OptionRowHandler::RELOAD_CHANGED_ALL:
+	{
+		ChoicesChanged();
 
-	vector<PlayerNumber> vpns;
-	FOREACH_HumanPlayer( p )
-		vpns.push_back( p );
-	ImportOptions( vpns );
-	FOREACH_HumanPlayer( p )
-		AfterImportOptions( p );
+		vector<PlayerNumber> vpns;
+		FOREACH_HumanPlayer( p )
+			vpns.push_back( p );
+		ImportOptions( vpns );
+		FOREACH_HumanPlayer( p )
+			AfterImportOptions( p );
+		// fall through
+	}
+
+	case OptionRowHandler::RELOAD_CHANGED_ENABLED:
+		UpdateEnabledDisabled();
+		FOREACH_HumanPlayer( pn )
+			PositionUnderlines( pn );
+		break;
+	}
+
 
 	// TODO: Nothing uses this yet and it causes skips when changing options.
 	//if( m_pHand->m_Def.m_bExportOnChange )
@@ -885,8 +899,6 @@ void OptionRow::Reload()
 	//	ZERO( bRowHasFocus );
 	//	ExportOptions( vpns, bRowHasFocus );
 	//}
-
-	UpdateEnabledDisabled();
 }
 
 void OptionRow::HandleMessage( const RString& sMessage )
