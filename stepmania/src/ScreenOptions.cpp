@@ -692,10 +692,11 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 	/* Do positioning. */
 	RefreshIcons( iCurRow, pn );
 	for( unsigned r=0; r<m_pRows.size(); r++ )
+	{
+		/* After changing a value, position underlines.  Do this for both players, since
+		 * underlines for both players will change with m_bOneChoiceForAllPlayers. */
 		FOREACH_HumanPlayer( p )
 			m_pRows[r]->PositionUnderlines( p );
-	for( unsigned r=0; r<m_pRows.size(); r++ )	// foreach options line
-	{
 		m_pRows[r]->PositionIcons( pn );
 		m_pRows[r]->SetRowHasFocus( pn, GAMESTATE->IsHumanPlayer(pn) && m_iCurrentRow[pn] == (int)r );
 		m_pRows[r]->UpdateEnabledDisabled();
