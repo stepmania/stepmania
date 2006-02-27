@@ -509,7 +509,7 @@ void OptionRow::PositionUnderlines( PlayerNumber pn )
 		ASSERT( m_vbSelected[pnTakeSelectedFrom].size() == m_pHand->m_Def.m_vsChoices.size() );
 
 		bool bSelected = (iChoiceWithFocus==-1) ? false : m_vbSelected[pnTakeSelectedFrom][ iChoiceWithFocus ];
-		bool bHidden = !bSelected || m_bHidden || !GAMESTATE->IsHumanPlayer(pn);
+		bool bHidden = !bSelected || !GAMESTATE->IsHumanPlayer(pn);
 
 		ul.StopTweening();
 		ul.BeginTweening( m_pParentType->TWEEN_SECONDS );
@@ -525,9 +525,6 @@ void OptionRow::PositionIcons( PlayerNumber pn )
 		return;
 
 	pIcon->SetX( m_pParentType->ICONS_X.GetValue(pn) );
-
-	/* XXX: this doesn't work since icon is an ActorFrame */
-	pIcon->SetDiffuse( RageColor(1,1,1, m_bHidden? 0.0f:1.0f) );
 }
 
 /* This is called when the focus changes, to update "long row" text. */
@@ -595,9 +592,6 @@ void OptionRow::UpdateEnabledDisabled()
 	else if( bRowEnabled )		color = m_pParentType->COLOR_NOT_SELECTED;
 	else				color = m_pParentType->COLOR_DISABLED;
 
-	if( m_bHidden )
-		color.a = 0;
-
 	if( m_sprBullet != NULL )
 		m_sprBullet->SetGlobalDiffuseColor( color );
 	m_sprBullet->PlayCommand( bThisRowHasFocusByAny ? "GainFocus" : "LoseFocus" );
@@ -649,9 +643,6 @@ void OptionRow::UpdateEnabledDisabled()
 				if( m_bRowHasFocus[pn] )	color = m_pParentType->COLOR_SELECTED;
 				else if( bRowEnabled )		color = m_pParentType->COLOR_NOT_SELECTED;
 				else				color = m_pParentType->COLOR_DISABLED;
-
-				if( m_bHidden )
-					color.a = 0;
 			}
 
 			unsigned item_no = m_pHand->m_Def.m_bOneChoiceForAllPlayers ? 0 : pn;
@@ -666,18 +657,6 @@ void OptionRow::UpdateEnabledDisabled()
 				bt.StopTweening();
 				bt.BeginTweening( m_pParentType->TWEEN_SECONDS );
 				bt.SetDiffuse( color );
-
-				/* Only reposition the underline if the text changed, too, or
-				 * we'll cancel PositionUnderlines moving and resizing the
-				 * underline.  (XXX: This is brittle; if we're actually changing
-				 * available options, this will break, too.  Use m_fBaseAlpha?) */
-				if( m_Underline[pn].size() )
-				{
-					OptionsCursor *pUnderline = m_Underline[pn][0];
-					pUnderline->StopTweening();
-					pUnderline->BeginTweening( m_pParentType->TWEEN_SECONDS );
-					pUnderline->SetDiffuseAlpha( color.a );
-				}
 			}
 		}
 		break;
@@ -692,20 +671,28 @@ void OptionRow::UpdateEnabledDisabled()
 		else
 			m_textItems[0]->StopEffect();
 	}
+}
 
-	if( m_sprBullet->DestTweenState().diffuse[0] != color )
+void OptionRow::Update( float fDeltaTime )
+{
+	ActorFrame::Update( fDeltaTime );
+
+	float fAlpha = m_Frame.GetCurrentDiffuseAlpha();
+	m_textTitle->SetBaseAlpha( fAlpha );
+	if( m_sprBullet != NULL )
+		m_sprBullet->SetBaseAlpha( fAlpha );
+	FOREACH_HumanPlayer( pn )
 	{
-		m_textTitle->StopTweening();
-		m_textTitle->BeginTweening( m_pParentType->TWEEN_SECONDS );
-		m_textTitle->SetDiffuseAlpha( color.a );
-		
-		if( m_sprBullet != NULL )
-		{
-			m_sprBullet->StopTweening();
-			m_sprBullet->BeginTweening( m_pParentType->TWEEN_SECONDS );
-			m_sprBullet->SetDiffuseAlpha( color.a );
-		}
+		FOREACH( OptionsCursor *, m_Underline[pn], pUnderline )
+			(*pUnderline)->SetBaseAlpha( fAlpha );
+		/* XXX: this doesn't work since icon is an ActorFrame */
+		if( m_OptionIcons[pn] )
+			m_OptionIcons[pn]->SetBaseAlpha( fAlpha );
 	}
+	if( m_sprBullet != NULL )
+		m_sprBullet->SetBaseAlpha( fAlpha );
+	for( unsigned j=0; j<m_textItems.size(); j++ )
+		m_textItems[j]->SetBaseAlpha( fAlpha );
 }
 
 void OptionRow::SetOptionIcon( PlayerNumber pn, const RString &sText, GameCommand &gc )

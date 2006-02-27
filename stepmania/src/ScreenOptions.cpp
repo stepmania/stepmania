@@ -653,15 +653,16 @@ void ScreenOptions::PositionRows( bool bTween )
 		else if( i >= second_end )			fPos = ((int)NUM_ROWS_SHOWN)-0.5f;
 
 		Actor::TweenState tsDestination = m_exprRowPositionTransformFunction.GetPosition( fPos, i, min( (int)Rows.size(), (int)NUM_ROWS_SHOWN ) );
-		row.SetDestination( tsDestination, bTween );
 
 		bool bHidden = 
 			i < first_start ||
 			(i >= first_end && i < second_start) ||
 			i >= second_end;
+		for( int j=0; j<4; j++ )
+			tsDestination.diffuse[j].a = bHidden? 0.0f:1.0f;
 		if( !bHidden )
 			pos++;
-		row.SetRowHidden( bHidden );
+		row.SetDestination( tsDestination, bTween );
 	}
 
 	if( pSeparateExitRow )
@@ -669,9 +670,11 @@ void ScreenOptions::PositionRows( bool bTween )
 		Actor::TweenState tsDestination;
 		tsDestination.Init();
 		tsDestination.pos.y = SEPARATE_EXIT_ROW_Y;
-		pSeparateExitRow->SetDestination( tsDestination, bTween );
 
-		pSeparateExitRow->SetRowHidden( second_end != (int) Rows.size() );
+		bool bHidden = (second_end != (int) Rows.size());
+		for( int j=0; j<4; j++ )
+			tsDestination.diffuse[j].a = bHidden? 0.0f:1.0f;
+		pSeparateExitRow->SetDestination( tsDestination, bTween );
 	}
 }
 
