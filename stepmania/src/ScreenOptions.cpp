@@ -698,7 +698,7 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 		FOREACH_HumanPlayer( p )
 			m_pRows[r]->PositionUnderlines( p );
 		m_pRows[r]->PositionIcons( pn );
-		m_pRows[r]->SetRowHasFocus( pn, GAMESTATE->IsHumanPlayer(pn) && m_iCurrentRow[pn] == (int)r );
+		m_pRows[r]->SetRowHasFocus( pn, GAMESTATE->IsHumanPlayer(pn) && iCurRow == (int)r );
 		m_pRows[r]->UpdateEnabledDisabled();
 	}
 
@@ -706,7 +706,7 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 	{
 		float fPercent = 0;
 		if( m_pRows.size() > 1 )
-			fPercent = m_iCurrentRow[pn] / float(m_pRows.size()-1);
+			fPercent = iCurRow / float(m_pRows.size()-1);
 		m_ScrollBar.SetPercentage( pn, fPercent );
 	}
 
@@ -716,8 +716,7 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 
 	FOREACH_PlayerNumber( p )
 	{
-		int iCurrentRow = m_iCurrentRow[pn];
-		OptionRow &row = *m_pRows[iCurrentRow];
+		OptionRow &row = *m_pRows[iCurRow];
 		const bool bExitSelected = row.GetRowType() == OptionRow::RowType_Exit;
 		if( GAMESTATE->GetNumHumanPlayers() != 1 && p != pn )
 			continue;
