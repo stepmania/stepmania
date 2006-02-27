@@ -358,6 +358,9 @@ void OptionRow::InitText()
 				pText->SetX( m_pParentType->ITEMS_LONG_ROW_X.GetValue(p) );
 			}
 
+			// Set the text now, so SetWidthXY below is correct.
+			UpdateText( p );
+
 			// init underlines
 			if( m_pParentType->SHOW_UNDERLINES && GetRowType() != OptionRow::RowType_Exit )
 			{
@@ -368,7 +371,7 @@ void OptionRow::InitText()
 				int iWidth, iX, iY;
 				GetWidthXY( p, 0, iWidth, iX, iY );
 				pCursor->SetX( float(iX) );
-				pCursor->SetWidth( float(iWidth) );
+				pCursor->SetBarWidth( iWidth );
 			}
 		}
 		break;
@@ -401,7 +404,7 @@ void OptionRow::InitText()
 						m_Underline[p].push_back( ul );
 						ul->Set( p );
 						ul->SetX( fX );
-						ul->SetWidth( truncf(fItemWidth) );
+						ul->SetBarWidth( int(fItemWidth) );
 					}
 				}
 
