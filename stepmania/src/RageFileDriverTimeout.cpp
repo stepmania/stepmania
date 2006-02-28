@@ -723,6 +723,10 @@ protected:
 
 	int ReadInternal( void *pBuffer, size_t iBytes )
 	{
+		/* We have a lot of overhead per read and write operation, since we send
+		 * commands to the worker thread.  Buffer these operations. */
+		EnableReadBuffering();
+
 		RString sError;
 		int iRet = m_pWorker->Read( m_pFile, pBuffer, iBytes, sError );
 
@@ -740,6 +744,8 @@ protected:
 
 	int WriteInternal( const void *pBuffer, size_t iBytes )
 	{
+		EnableWriteBuffering();
+
 		RString sError;
 		int iRet = m_pWorker->Write( m_pFile, pBuffer, iBytes, sError );
 

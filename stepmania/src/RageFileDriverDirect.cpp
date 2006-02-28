@@ -48,7 +48,6 @@ private:
 	int m_iFD;
 	int m_iMode;
 	RString m_sPath; /* for Copy */
-	RString m_sWriteBuf;
 	
 	/*
 	 * When not streaming to disk, we write to a temporary file, and rename to the
@@ -218,7 +217,7 @@ RageFileObjDirect::RageFileObjDirect( const RString &sPath, int iFD, int iMode )
 	ASSERT( m_iFD != -1 );
 
 	if( m_iMode & RageFile::WRITE )
-		m_sWriteBuf.reserve( BUFSIZE );
+		this->EnableWriteBuffering( BUFSIZE );
 }
 
 bool RageFileObjDirect::FinalFlush()
@@ -364,21 +363,7 @@ int RageFileObjDirect::FlushInternal()
 		return -1;
 	}
 
-	if( !m_sWriteBuf.size() )
-		return 0;
-
-	int iRet = RetriedWrite( m_iFD, m_sWriteBuf.data(), m_sWriteBuf.size() );
-	if( iRet == -1 )
-	{
-		LOG->Warn("Error writing %s: %s", this->m_sPath.c_str(), strerror(errno) );
-		SetError( strerror(errno) );
-		m_bWriteFailed = true;
-		return -1;
-	}
-
-	m_sWriteBuf.erase();
-	m_sWriteBuf.reserve( BUFSIZE );
-	return iRet;
+	return 0;
 }
 
 int RageFileObjDirect::WriteInternal( const void *pBuf, size_t iBytes )
@@ -389,29 +374,16 @@ int RageFileObjDirect::WriteInternal( const void *pBuf, size_t iBytes )
 		return -1;
 	}
 
-	if( m_sWriteBuf.size()+iBytes > BUFSIZE )
+	/* The buffer is cleared.  If we still don't have space, it's bigger than
+	 * the buffer size, so just write it directly. */
+	int iRet = RetriedWrite( m_iFD, pBuf, iBytes );
+	if( iRet == -1 )
 	{
-		if( FlushInternal() == -1 )
-			return -1;
-		ASSERT( !m_sWriteBuf.size() );
-
-		/* The buffer is cleared.  If we still don't have space, it's bigger than
-		 * the buffer size, so just write it directly. */
-		if( iBytes >= BUFSIZE )
-		{
-			int iRet = RetriedWrite( m_iFD, pBuf, iBytes );
-			if( iRet == -1 )
-			{
-				LOG->Warn("Error writing %s: %s", this->m_sPath.c_str(), strerror(errno) );
-				SetError( strerror(errno) );
-				m_bWriteFailed = true;
-				return -1;
-			}
-			return iBytes;
-		}
+		LOG->Warn("Error writing %s: %s", this->m_sPath.c_str(), strerror(errno) );
+		SetError( strerror(errno) );
+		m_bWriteFailed = true;
+		return -1;
 	}
-
-	m_sWriteBuf.append( (const char *) pBuf, (const char *) pBuf+iBytes );
 	return iBytes;
 }
 

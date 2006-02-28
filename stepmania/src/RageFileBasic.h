@@ -98,6 +98,7 @@ protected:
 	virtual int FlushInternal() { return 0; }
 
 	void EnableReadBuffering();
+	void EnableWriteBuffering( int iBytes=1024*64 );
 
 	void SetError( const RString &sError ) { m_sError = sError; }
 	RString m_sError;
@@ -105,6 +106,7 @@ protected:
 private:
 	int FillReadBuf();
 	void ResetReadBuf();
+	int EmptyWriteBuf();
 
 	bool m_bEOF;
 	int m_iFilePos;
@@ -129,6 +131,15 @@ private:
 	char *m_pReadBuffer;
 	char *m_pReadBuf;
 	int  m_iReadBufAvail;
+
+	/*
+	 * If write buffering is enabled, m_pWriteBuffer will be allocated, and m_iWriteBufferPos
+	 * is the file position of the start of the buffer.
+	 */
+	char *m_pWriteBuffer;
+	int m_iWriteBufferPos;
+	int m_iWriteBufferSize;
+	int m_iWriteBufferUsed;
 
 	/* If EnableCRC32() is called, a CRC32 will be calculated as the file is read.
 	 * This is only meaningful if EnableCRC32() is called at the very start of the

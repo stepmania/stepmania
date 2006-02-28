@@ -5,10 +5,13 @@
 RageFileObj::RageFileObj()
 {
 	m_pReadBuffer = NULL;
+	m_pWriteBuffer = NULL;
 
 	ResetReadBuf();
 
 	m_iReadBufAvail = 0;
+	m_iWriteBufferPos = 0;
+	m_iWriteBufferUsed = 0;
 	m_bEOF = false;
 	m_iFilePos = 0;
 	m_bCRC32Enabled = false;
@@ -32,6 +35,19 @@ RageFileObj::RageFileObj( const RageFileObj &cpy ):
 		m_pReadBuffer = NULL;
 	}
 
+	if( cpy.m_pWriteBuffer != NULL )
+	{
+		m_pWriteBuffer = new char[cpy.m_iWriteBufferSize];
+		m_iWriteBufferPos = cpy.m_iWriteBufferPos;
+		m_iWriteBufferUsed = cpy.m_iWriteBufferUsed;
+		m_iWriteBufferSize = cpy.m_iWriteBufferSize;
+		memcpy( m_pWriteBuffer, cpy.m_pWriteBuffer, m_iWriteBufferUsed );
+	}
+	else
+	{
+		m_pWriteBuffer = NULL;
+	}
+
 	m_iReadBufAvail = cpy.m_iReadBufAvail;
 	m_bEOF = cpy.m_bEOF;
 	m_iFilePos = cpy.m_iFilePos;
@@ -42,6 +58,7 @@ RageFileObj::RageFileObj( const RageFileObj &cpy ):
 RageFileObj::~RageFileObj()
 {
 	delete [] m_pReadBuffer;
+	delete [] m_pWriteBuffer;
 }
 
 int RageFileObj::Seek( int iOffset )
@@ -56,6 +73,9 @@ int RageFileObj::Seek( int iOffset )
 	/* If we're calculating a CRC32, disable it. */
 	m_bCRC32Enabled = false;
 
+	/* Note that seeks do not flush the write buffer.  Instead, we flush lazily, on the next
+	 * actual Write (or Flush).  Seek is not allowed to fail, and users should not need to
+	 * flush before seeking to do proper error checking. */
 	ResetReadBuf();
 
 	int iPos = SeekInternal( iOffset );
@@ -178,8 +198,61 @@ int RageFileObj::Read( void *pBuffer, size_t iBytes, int iNmemb )
 	return iRet/iBytes;
 }
 
+/* Empty the write buffer to disk.  Return -1 on error, 0 on success. */
+int RageFileObj::EmptyWriteBuf()
+{
+	if( m_pWriteBuffer == NULL )
+		return 0;
+
+	/* The write buffer may not align with the actual file, if we've seeked.  Only
+	 * seek if needed. */
+	bool bSeeked = (m_iWriteBufferPos+m_iWriteBufferUsed != m_iFilePos);
+	if( bSeeked )
+		SeekInternal( m_iWriteBufferPos );
+
+	int iRet = WriteInternal( m_pWriteBuffer, m_iWriteBufferUsed );
+
+	if( bSeeked )
+		SeekInternal( m_iFilePos );
+	if( iRet == -1 )
+		return iRet;
+
+	m_iWriteBufferPos = m_iFilePos;
+	m_iWriteBufferUsed = 0;
+	return 0;
+}
+
 int RageFileObj::Write( const void *pBuffer, size_t iBytes )
 {
+	if( m_pWriteBuffer != NULL )
+	{
+		/* If the file position has moved away from the write buffer, or the
+		 * incoming data won't fit in the buffer, flush. */
+		if( m_iWriteBufferUsed )
+		{
+			if( m_iWriteBufferPos+m_iWriteBufferUsed != m_iFilePos || m_iWriteBufferUsed + (int)iBytes > m_iWriteBufferSize )
+			{
+				int iRet = EmptyWriteBuf();
+				if( iRet == -1 )
+					return iRet;
+			}
+		}
+
+		if( m_iWriteBufferUsed + (int)iBytes <= m_iWriteBufferSize )
+		{
+			memcpy( m_pWriteBuffer+m_iWriteBufferUsed, pBuffer, iBytes );
+			m_iWriteBufferUsed += iBytes;
+			m_iFilePos += iBytes;
+			if( m_bCRC32Enabled )
+				CRC32( m_iCRC32, pBuffer, iBytes );
+			return iBytes;
+		}
+
+		/* We're writing a lot of data, and it won't fit in the buffer.  We already
+		 * flushed above, so m_iWriteBufferUsed; fall through and write the block normally. */
+		ASSERT_M( m_iWriteBufferUsed == 0, ssprintf("%i", m_iWriteBufferUsed) );
+	}
+
 	int iRet = WriteInternal( pBuffer, iBytes );
 	if( iRet != -1 )
 	{
@@ -201,14 +274,26 @@ int RageFileObj::Write( const void *pBuffer, size_t iBytes, int iNmemb )
 
 int RageFileObj::Flush()
 {
+	int iRet = EmptyWriteBuf();
+	if( iRet == -1 )
+		return iRet;
 	return FlushInternal();
 }
-
 
 void RageFileObj::EnableReadBuffering()
 {
 	if( m_pReadBuffer == NULL )
 		m_pReadBuffer = new char[BSIZE];
+}
+
+void RageFileObj::EnableWriteBuffering( int iBytes )
+{
+	if( m_pWriteBuffer == NULL )
+	{
+		m_pWriteBuffer = new char[iBytes];
+		m_iWriteBufferPos = m_iFilePos;
+		m_iWriteBufferSize = iBytes;
+	}
 }
 
 void RageFileObj::EnableCRC32( bool bOn )
