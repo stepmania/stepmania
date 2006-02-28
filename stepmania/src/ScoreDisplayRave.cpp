@@ -17,12 +17,10 @@ ScoreDisplayRave::ScoreDisplayRave()
 	{
 		m_sprMeter[i].Load( THEME->GetPathG("ScoreDisplayRave",ssprintf("stream level%d",i+1)) ); 
 		m_sprMeter[i].SetCropRight( 1.f );
-		this->AddChild( &m_sprMeter[i] );
 	}
 
 	m_textLevel.LoadFromFont( THEME->GetPathF("ScoreDisplayRave","level") );
 	m_textLevel.SetText( "1" );
-	this->AddChild( &m_textLevel );
 }
 
 void ScoreDisplayRave::Init( const PlayerState* pPlayerState, const PlayerStageStats* pPlayerStageStats )
@@ -38,10 +36,12 @@ void ScoreDisplayRave::Init( const PlayerState* pPlayerState, const PlayerStageS
 	{
 		m_sprMeter[i].SetName( ssprintf("MeterP%d",pn+1) );
 		ON_COMMAND( m_sprMeter[i] );
+		this->AddChild( &m_sprMeter[i] );
 	}
 		
 	m_textLevel.SetName( ssprintf("LevelP%d",pn+1) );
 	ON_COMMAND( m_textLevel );
+	this->AddChild( &m_textLevel );
 
 	m_sprFrameOverlay.Load( THEME->GetPathG("ScoreDisplayRave",ssprintf("frame overlay p%d",pn+1)) );
 	this->AddChild( m_sprFrameOverlay );
