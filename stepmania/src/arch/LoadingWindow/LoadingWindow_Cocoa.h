@@ -21,7 +21,9 @@ public:
 		RageFile f;
 		RString data;
 		
-		if( f.Open("Data/splash.png") )
+		vector<RString> vs;
+		GetDirListing( "Data/splash*.png", vs, false, true );
+		if( !vs.empty() && f.Open(vs[0]) )
 			f.Read( data );
 		MakeNewCocoaWindow( data.data(), data.length() );
 	}

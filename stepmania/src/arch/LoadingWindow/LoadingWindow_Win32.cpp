@@ -79,7 +79,12 @@ BOOL CALLBACK LoadingWindow_Win32::WndProc( HWND hWnd, UINT msg, WPARAM wParam, 
 	switch( msg )
 	{
 	case WM_INITDIALOG:
-		g_hBitmap = LoadWin32Surface( "Data/splash.png", hWnd );
+		{
+			vector<RString> vs;
+			GetDirListing( "Data/splash*.png", vs, false, true );
+			if( !vs.empty() )
+				g_hBitmap = LoadWin32Surface( vs[0], hWnd );
+		}
 		if( g_hBitmap == NULL )
 			g_hBitmap = LoadWin32Surface( "Data/splash.bmp", hWnd );
 		SendMessage( 
