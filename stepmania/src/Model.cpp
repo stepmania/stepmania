@@ -453,8 +453,8 @@ void Model::DrawPrimitives()
 
 			// apply material
 			RageColor emissive = RageColor(0,0,0,0);
-			RageColor ambient = m_pTempState->glow;
-			RageColor diffuse = RageColor(0,0,0,0);
+			RageColor ambient = RageColor(0,0,0,0);
+			RageColor diffuse = m_pTempState->glow;
 			RageColor specular = RageColor(0,0,0,0);
 			float shininess = 1;
 
