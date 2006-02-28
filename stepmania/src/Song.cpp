@@ -192,7 +192,7 @@ NotesLoader *Song::MakeLoader( RString sDir ) const
 
 /* Hack: This should be a parameter to TidyUpData, but I don't want to
  * pull in <set> into Song.h, which is heavily used. */
-static set<istring> BlacklistedImages;
+static set<RString> BlacklistedImages;
 
 /*
  * If PREFSMAN->m_bFastLoad is true, always load from cache if possible. Don't read
@@ -641,7 +641,9 @@ void Song::TidyUpData()
 			break; /* done */
 
 		// ignore DWI "-char" graphics
-		if( BlacklistedImages.find( arrayImages[i].c_str() ) != BlacklistedImages.end() )
+		RString sLower = arrayImages[i];
+		sLower.ToLower();
+		if( BlacklistedImages.find(sLower) != BlacklistedImages.end() )
 			continue;	// skip
 		
 		// Skip any image that we've already classified
