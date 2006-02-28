@@ -391,7 +391,7 @@ int RageFileObjDirect::WriteInternal( const void *pBuf, size_t iBytes )
 
 	if( m_sWriteBuf.size()+iBytes > BUFSIZE )
 	{
-		if( Flush() == -1 )
+		if( FlushInternal() == -1 )
 			return -1;
 		ASSERT( !m_sWriteBuf.size() );
 
