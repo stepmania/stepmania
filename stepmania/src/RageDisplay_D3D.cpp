@@ -1091,7 +1091,10 @@ void RageDisplay_D3D::SetTexture( TextureUnit tu, RageTexture* pTexture )
 	if( pTexture == NULL )
 	{
 		g_pd3dDevice->SetTexture( g_currentTextureUnit, NULL );
-		g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLOROP, D3DTOP_DISABLE );
+
+		// Intentionally commented out.  Don't mess with texture stage state when just setting the texture.  
+		// Model sets its texture modes before setting the final texture.
+		//g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLOROP, D3DTOP_DISABLE );
 	}
 	else
 	{
@@ -1099,7 +1102,9 @@ void RageDisplay_D3D::SetTexture( TextureUnit tu, RageTexture* pTexture )
 		IDirect3DTexture8* pTex = (IDirect3DTexture8*)uTexHandle;
 		g_pd3dDevice->SetTexture( g_currentTextureUnit, pTex );
 		
-		g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLOROP, D3DTOP_MODULATE );
+		// Intentionally commented out.  Don't mess with texture stage state when just setting the texture.  
+		// Model sets its texture modes before setting the final texture.
+		//g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLOROP, D3DTOP_MODULATE );
 
 		// Set palette (if any)
 		SetPalette(uTexHandle);
