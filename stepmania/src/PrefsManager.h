@@ -89,7 +89,6 @@ public:
 	Preference<int>		m_iRegenComboAfterMiss;
 	Preference<int>		m_iMaxRegenComboAfterFail;
 	Preference<int>		m_iMaxRegenComboAfterMiss;
-	Preference<bool>	m_bTwoPlayerRecovery;
 	Preference<bool>	m_bMercifulDrain;	// negative life deltas are scaled by the players life percentage
 	Preference<bool>	m_bMinimum1FullSongInCourses;	// FEoS for 1st song, FailImmediate thereafter
 	Preference<bool>	m_bFailOffInBeginner;
@@ -119,7 +118,6 @@ public:
 	enum MusicWheelUsesSections { NEVER, ALWAYS, ABC_ONLY };
 	Preference<MusicWheelUsesSections,int>		m_MusicWheelUsesSections;
 	Preference<int>		m_iMusicWheelSwitchSpeed;
-	Preference<bool>	m_bEasterEggs;
 	enum AllowW1 { ALLOW_W1_NEVER, ALLOW_W1_COURSES_ONLY, ALLOW_W1_EVERYWHERE };
 	Preference<AllowW1,int>		m_AllowW1;
 	Preference<bool>	m_bEventMode;
@@ -138,13 +136,11 @@ public:
 	Preference<float>	m_fMarathonVerSongSeconds;
 	enum Maybe { ASK = -1, NO = 0, YES = 1 };
 	Preference<Maybe,int>		m_ShowSongOptions;
-	Preference<bool>	m_bCenter1Player;
 	Preference<bool>	m_bDancePointsForOni;
 	Preference<bool>	m_bPercentageScoring;
 	Preference<float>	m_fMinPercentageForMachineSongHighScore;
 	Preference<float>	m_fMinPercentageForMachineCourseHighScore;
 	Preference<bool>	m_bDisqualification;
-	Preference<bool>	m_bShowLyrics;
 	Preference<bool>	m_bAutogenSteps;
 	Preference<bool>	m_bAutogenGroupCourses;
 	Preference<bool>	m_bBreakComboToGetItem;

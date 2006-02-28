@@ -86,7 +86,11 @@ AutoScreenMessage( SM_BattleTrickLevel1 );
 AutoScreenMessage( SM_BattleTrickLevel2 );
 AutoScreenMessage( SM_BattleTrickLevel3 );
 
+static Preference<bool> g_bCenter1Player( "Center1Player", false );
+static Preference<bool> g_bShowLyrics( "ShowLyrics", true );
 static Preference<float> g_fNetStartOffset( "NetworkStartOffset", -3.0 );
+static Preference<bool> g_bTwoPlayerRecovery( "TwoPlayerRecovery", true );
+static Preference<bool> g_bEasterEggs( "EasterEggs", true );
 
 
 PlayerInfo::PlayerInfo()
@@ -487,7 +491,7 @@ void ScreenGameplay::Init( bool bUseSongBackgroundAndForeground )
 		 * StyleType for ONE_PLAYER_ONE_CREDIT_AND_ONE_COMPUTER,
 		 * but for now just ignore Center1Player when it's Battle or Rave
 		 * Mode.  This doesn't begin to address two-player solo (6 arrows) */
-		if( PREFSMAN->m_bCenter1Player && 
+		if( g_bCenter1Player && 
 			GAMESTATE->m_PlayMode != PLAY_MODE_BATTLE &&
 			GAMESTATE->m_PlayMode != PLAY_MODE_RAVE &&
 			GAMESTATE->GetCurrentStyle()->m_StyleType == ONE_PLAYER_ONE_SIDE )
@@ -744,7 +748,7 @@ void ScreenGameplay::Init( bool bUseSongBackgroundAndForeground )
 
 
 
-	if( PREFSMAN->m_bShowLyrics )
+	if( g_bShowLyrics )
 		this->AddChild( &m_LyricDisplay );
 	
 
@@ -1655,7 +1659,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			/* If recovery is enabled, only set fail if both are failing.
 			* There's no way to recover mid-song in battery mode. */
 			if( lt != SongOptions::LIFE_BATTERY &&
-				PREFSMAN->m_bTwoPlayerRecovery && !GAMESTATE->AllAreDead() )
+				g_bTwoPlayerRecovery && !GAMESTATE->AllAreDead() )
 				continue;
 
 			LOG->Trace("Player %d failed", (int)pn);
@@ -2327,7 +2331,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				pi->GetPlayerStageStats()->bFailed = true;
 			}
 
-			/* Mark failure.  This hasn't been done yet if m_bTwoPlayerRecovery is set. */
+			/* Mark failure.  This hasn't been done yet if g_bTwoPlayerRecovery is set. */
 			if( GAMESTATE->GetPlayerFailType(pi->GetPlayerState()) != SongOptions::FAIL_OFF &&
 				(pi->m_pLifeMeter && pi->m_pLifeMeter->IsFailing()) || 
 				(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsFailing(pi->GetStepsAndTrailIndex())) )
@@ -2468,7 +2472,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_PlayToasty )
 	{
-		if( PREFSMAN->m_bEasterEggs )
+		if( g_bEasterEggs )
 			if( !m_Toasty.IsTransitioning()  &&  !m_Toasty.IsFinished() )	// don't play if we've already played it once
 				m_Toasty.StartTransitioning();
 	}

@@ -209,7 +209,6 @@ PrefsManager::PrefsManager() :
 	m_iRegenComboAfterMiss		( "RegenComboAfterMiss",	5 ),
 	m_iMaxRegenComboAfterFail	( "MaxRegenComboAfterFail",	10 ),
 	m_iMaxRegenComboAfterMiss	( "MaxRegenComboAfterMiss",	10 ),
-	m_bTwoPlayerRecovery		( "TwoPlayerRecovery",		true ),
 	m_bMercifulDrain		( "MercifulDrain",		true ),	// negative life deltas are scaled by the players life percentage
 	m_bMinimum1FullSongInCourses	( "Minimum1FullSongInCourses",	false ),	// FEoS for 1st song, FailImmediate thereafter
 	m_bFailOffInBeginner		( "FailOffInBeginner",		false ),
@@ -234,7 +233,6 @@ PrefsManager::PrefsManager() :
 	m_bArcadeOptionsNavigation	( "ArcadeOptionsNavigation",	false ),
 	m_MusicWheelUsesSections	( "MusicWheelUsesSections",	ALWAYS ),
 	m_iMusicWheelSwitchSpeed	( "MusicWheelSwitchSpeed",	10 ),
-	m_bEasterEggs			( "EasterEggs",			true ),
 	m_AllowW1			( "AllowW1",			ALLOW_W1_EVERYWHERE ),
 	m_bEventMode			( "EventMode",			false ),
 	m_iCoinsPerCredit		( "CoinsPerCredit",		1 ),
@@ -249,13 +247,11 @@ PrefsManager::PrefsManager() :
 	m_fLongVerSongSeconds		( "LongVerSongSeconds",		60*2.5f ),	// Dynamite Rave is 2:55
 	m_fMarathonVerSongSeconds	( "MarathonVerSongSeconds",	60*5.f ),
 	m_ShowSongOptions		( "ShowSongOptions",		YES ),
-	m_bCenter1Player		( "Center1Player",		false ),
 	m_bDancePointsForOni		( "DancePointsForOni",		false ),
 	m_bPercentageScoring		( "PercentageScoring",		false ),
 	m_fMinPercentageForMachineSongHighScore		( "MinPercentageForMachineSongHighScore",	0.5f ),
 	m_fMinPercentageForMachineCourseHighScore	( "MinPercentageForMachineCourseHighScore",	0.0001f ),	// don't save course scores with 0 percentage
 	m_bDisqualification		( "Disqualification",			false ),
-	m_bShowLyrics			( "ShowLyrics",				true ),
 	m_bAutogenSteps			( "AutogenSteps",			true ),
 	m_bAutogenGroupCourses		( "AutogenGroupCourses",		true ),
 	m_bBreakComboToGetItem		( "BreakComboToGetItem",		false ),
