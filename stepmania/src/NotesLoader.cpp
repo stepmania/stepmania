@@ -2,6 +2,7 @@
 #include "NotesLoader.h"
 #include "NoteTypes.h"
 #include "GameManager.h"
+#include "RageUtil.h"
 
 bool NotesLoader::Loadable( const RString &sPath )
 {
