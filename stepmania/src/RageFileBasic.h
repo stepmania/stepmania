@@ -104,7 +104,7 @@ protected:
 
 private:
 	int FillReadBuf();
-	void ResetBuf();
+	void ResetReadBuf();
 
 	bool m_bEOF;
 	int m_iFilePos;

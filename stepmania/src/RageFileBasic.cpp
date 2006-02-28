@@ -6,7 +6,7 @@ RageFileObj::RageFileObj()
 {
 	m_pReadBuffer = NULL;
 
-	ResetBuf();
+	ResetReadBuf();
 
 	m_iReadBufAvail = 0;
 	m_bEOF = false;
@@ -56,7 +56,7 @@ int RageFileObj::Seek( int iOffset )
 	/* If we're calculating a CRC32, disable it. */
 	m_bCRC32Enabled = false;
 
-	ResetBuf();
+	ResetReadBuf();
 
 	int iPos = SeekInternal( iOffset );
 	if( iPos != -1 )
@@ -356,7 +356,7 @@ int RageFileObj::FillReadBuf()
 	return iSize;
 }
 
-void RageFileObj::ResetBuf()
+void RageFileObj::ResetReadBuf()
 {
 	m_iReadBufAvail = 0;
 	m_pReadBuf = m_pReadBuffer;
