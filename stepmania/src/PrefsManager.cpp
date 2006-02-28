@@ -58,11 +58,11 @@ void TimingWindowSecondsInit( size_t /*TimingWindow*/ i, RString &sNameOut, floa
 	switch( i )
 	{
 	default:	ASSERT(0);
-	case TW_W1:		defaultValueOut = 0.0225f;	break;
-	case TW_W2:		defaultValueOut = 0.045f;	break;
-	case TW_W3:		defaultValueOut = 0.090f;	break;
-	case TW_W4:		defaultValueOut = 0.135f;	break;
-	case TW_W5:		defaultValueOut = 0.180f;	break;
+	case TW_W1:	defaultValueOut = 0.0225f;	break;
+	case TW_W2:	defaultValueOut = 0.045f;	break;
+	case TW_W3:	defaultValueOut = 0.090f;	break;
+	case TW_W4:	defaultValueOut = 0.135f;	break;
+	case TW_W5:	defaultValueOut = 0.180f;	break;
 	case TW_Mine:	defaultValueOut = 0.090f;	break;	// same as great
 	case TW_Hold:	defaultValueOut = 0.250f;	break;	// allow enough time to take foot off and put back on
 	case TW_Roll:	defaultValueOut = 0.350f;	break;
@@ -75,12 +75,12 @@ void PercentScoreWeightInit( size_t /*ScoreEvent*/ i, RString &sNameOut, int &de
 	sNameOut = "PercentScoreWeight" + ScoreEventToString( (ScoreEvent)i );
 	switch( i )
 	{
-	default:	ASSERT(0);
-	case SE_W1:			defaultValueOut = 3;	break;
-	case SE_W2:			defaultValueOut = 2;	break;
-	case SE_W3:			defaultValueOut = 1;	break;
-	case SE_W4:			defaultValueOut = 0;	break;
-	case SE_W5:			defaultValueOut = 0;	break;
+	default:		ASSERT(0);
+	case SE_W1:		defaultValueOut = 3;	break;
+	case SE_W2:		defaultValueOut = 2;	break;
+	case SE_W3:		defaultValueOut = 1;	break;
+	case SE_W4:		defaultValueOut = 0;	break;
+	case SE_W5:		defaultValueOut = 0;	break;
 	case SE_Miss:		defaultValueOut = 0;	break;
 	case SE_HitMine:	defaultValueOut = -2;	break;
 	case SE_Held:		defaultValueOut = 3;	break;
@@ -93,12 +93,12 @@ void GradeWeightInit( size_t /*ScoreEvent*/ i, RString &sNameOut, int &defaultVa
 	sNameOut = "GradeWeight" + ScoreEventToString( (ScoreEvent)i );
 	switch( i )
 	{
-	default:	ASSERT(0);
-	case SE_W1:			defaultValueOut = 2;	break;
-	case SE_W2:			defaultValueOut = 2;	break;
-	case SE_W3:			defaultValueOut = 1;	break;
-	case SE_W4:			defaultValueOut = 0;	break;
-	case SE_W5:			defaultValueOut = -4;	break;
+	default:		ASSERT(0);
+	case SE_W1:		defaultValueOut = 2;	break;
+	case SE_W2:		defaultValueOut = 2;	break;
+	case SE_W3:		defaultValueOut = 1;	break;
+	case SE_W4:		defaultValueOut = 0;	break;
+	case SE_W5:		defaultValueOut = -4;	break;
 	case SE_Miss:		defaultValueOut = -8;	break;
 	case SE_HitMine:	defaultValueOut = -8;	break;
 	case SE_Held:		defaultValueOut = 6;	break;
@@ -111,12 +111,12 @@ void SuperMeterPercentChangeInit( size_t /*ScoreEvent*/ i, RString &sNameOut, fl
 	sNameOut = "SuperMeterPercentChange" + ScoreEventToString( (ScoreEvent)i );
 	switch( i )
 	{
-	default:	ASSERT(0);
-	case SE_W1:			defaultValueOut = +0.05f;	break;
-	case SE_W2:			defaultValueOut = +0.04f;	break;
-	case SE_W3:			defaultValueOut = +0.02f;	break;
-	case SE_W4:			defaultValueOut = +0.00f;	break;
-	case SE_W5:			defaultValueOut = -0.00f;	break;
+	default:		ASSERT(0);
+	case SE_W1:		defaultValueOut = +0.05f;	break;
+	case SE_W2:		defaultValueOut = +0.04f;	break;
+	case SE_W3:		defaultValueOut = +0.02f;	break;
+	case SE_W4:		defaultValueOut = +0.00f;	break;
+	case SE_W5:		defaultValueOut = -0.00f;	break;
 	case SE_Miss:		defaultValueOut = -0.20f;	break;
 	case SE_HitMine:	defaultValueOut = -0.40f;	break;
 	case SE_Held:		defaultValueOut = +0.04f;	break;
@@ -129,12 +129,12 @@ void TimeMeterSecondsChangeInit( size_t /*ScoreEvent*/ i, RString &sNameOut, flo
 	sNameOut = "TimeMeterSecondsChange" + ScoreEventToString( (ScoreEvent)i );
 	switch( i )
 	{
-	default:	ASSERT(0);
-	case SE_W1:			defaultValueOut = +0.1f;	break;
-	case SE_W2:			defaultValueOut = +0.0f;	break;
-	case SE_W3:			defaultValueOut = -0.5f;	break;
-	case SE_W4:			defaultValueOut = -1.0f;	break;
-	case SE_W5:			defaultValueOut = -2.0f;	break;
+	default:		ASSERT(0);
+	case SE_W1:		defaultValueOut = +0.1f;	break;
+	case SE_W2:		defaultValueOut = +0.0f;	break;
+	case SE_W3:		defaultValueOut = -0.5f;	break;
+	case SE_W4:		defaultValueOut = -1.0f;	break;
+	case SE_W5:		defaultValueOut = -2.0f;	break;
 	case SE_Miss:		defaultValueOut = -4.0f;	break;
 	case SE_HitMine:	defaultValueOut = -2.0f;	break;
 	case SE_Held:		defaultValueOut = -0.0f;	break;
