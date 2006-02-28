@@ -15,17 +15,16 @@ static const RString INSTALLATIONS_KEY = "HKEY_LOCAL_MACHINE\\Software\\" PRODUC
 
 void SMPackageUtil::WriteGameInstallDirs( const vector<RString>& asInstallDirsToWrite )
 {
+	RegistryAccess::CreateKey( INSTALLATIONS_KEY );
+
 	for( unsigned i=0; i<100; i++ )
 	{
 		RString sName = ssprintf("%d",i);
-//		Reg.DeleteKey( sName );	// delete key is broken in this library, so just write over it with ""
-		RegistryAccess::SetRegValue( INSTALLATIONS_KEY, sName, RString() );
-	}
+		RString sValue;
+		if( i < asInstallDirsToWrite.size() )
+			sValue = asInstallDirsToWrite[i];
 
-	for( unsigned i=0; i<asInstallDirsToWrite.size(); i++ )
-	{
-		RString sName = ssprintf("%d",i);
-		RegistryAccess::SetRegValue( INSTALLATIONS_KEY, sName, asInstallDirsToWrite[i] );
+		RegistryAccess::SetRegValue( INSTALLATIONS_KEY, sName, sValue );
 	}
 }
 

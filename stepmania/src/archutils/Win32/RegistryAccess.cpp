@@ -190,6 +190,32 @@ bool RegistryAccess::SetRegValue( const RString &sKey, const RString &sName, boo
 	return bSuccess;
 }
 
+bool RegistryAccess::CreateKey( const RString &sKey )
+{
+	RString sSubkey;
+	HKEY hType;
+	if( !GetRegKeyType(sKey, sSubkey, hType) )
+		return NULL;
+
+	HKEY hKey;
+	DWORD dwDisposition = 0;
+	if( ::RegCreateKeyEx(
+		hType, 
+		sSubkey, 
+		0, 
+		NULL,
+		REG_OPTION_NON_VOLATILE, 
+		KEY_ALL_ACCESS, 
+		NULL, 
+		&hKey,
+		&dwDisposition ) != ERROR_SUCCESS )
+	{
+		return false;
+	}
+	::RegCloseKey(hKey);
+	return true;
+}
+
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.

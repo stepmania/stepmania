@@ -63,6 +63,7 @@ BOOL CSmpackageApp::InitInstance()
 	if( CAN_INSTALL_PACKAGES && SMPackageUtil::IsValidInstallDir(szCurrentDirectory) )
 	{
 		SMPackageUtil::AddGameInstallDir( szCurrentDirectory );	// add this if it doesn't already exist
+		SMPackageUtil::SetDefaultInstallDir( szCurrentDirectory );
 	}	
 
 

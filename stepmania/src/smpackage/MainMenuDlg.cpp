@@ -179,8 +179,6 @@ BOOL MainMenuDlg::OnInitDialog()
 	TCHAR szCurDir[MAX_PATH];
 	GetCurrentDirectory( ARRAYSIZE(szCurDir), szCurDir );
 	GetDlgItem( IDC_EDIT_INSTALLATION )->SetWindowText( szCurDir );
-	SMPackageUtil::AddGameInstallDir( szCurDir );
-	SMPackageUtil::SetDefaultInstallDir( szCurDir );
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
