@@ -210,7 +210,7 @@ public:
 			{
 				if( iFallbackOption == -1 )
 				{
-					RString s = ssprintf("No options in row \"%s\" were selected, and no fallback row found; selected entry 0", m_cmds.v[0].GetName().c_str());
+					RString s = ssprintf("No options in row \"list,%s\" were selected, and no fallback row found; selected entry 0", m_Def.m_sName.c_str());
 					LOG->Warn( s );
 					CHECKPOINT_M( s );
 					iFallbackOption = 0;
