@@ -126,7 +126,7 @@ int RageFileObj::Read( void *pBuffer, size_t iBytes )
 
 		/* If buffering is enabled, and we need more data, fill the buffer. */
 		m_pReadBuf = m_pReadBuffer;
-		int iGot = FillBuf();
+		int iGot = FillReadBuf();
 		if( iGot == -1 )
 			return iGot;
 		if( iGot == 0 )
@@ -303,7 +303,7 @@ int RageFileObj::GetLine( RString &sOut )
 		/* We need more data. */
 		m_pReadBuf = m_pReadBuffer;
 
-		const int iSize = FillBuf();
+		const int iSize = FillReadBuf();
 
 		/* If we've read data already, then don't mark EOF yet.  Wait until the
 		 * next time we're called. */
@@ -338,7 +338,7 @@ int RageFileObj::PutLine( const RString &sStr )
 /* Fill the internal buffer.  This never marks EOF, since this is an internal, hidden
  * read; EOF should only be set as a result of a real read.  (That is, disabling buffering
  * shouldn't cause the results of AtEOF to change.) */
-int RageFileObj::FillBuf()
+int RageFileObj::FillReadBuf()
 {
 	/* Don't call this unless buffering is enabled. */
 	ASSERT( m_pReadBuffer != NULL );

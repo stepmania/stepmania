@@ -103,7 +103,7 @@ protected:
 	RString m_sError;
 
 private:
-	int FillBuf();
+	int FillReadBuf();
 	void ResetBuf();
 
 	bool m_bEOF;
