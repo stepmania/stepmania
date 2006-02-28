@@ -493,7 +493,7 @@ void ScreenGameplay::Init( bool bUseSongBackgroundAndForeground )
 		 * but for now just ignore Center1Player when it's Battle or Rave
 		 * Mode.  This doesn't begin to address two-player solo (6 arrows) */
 		if( g_bCenter1Player && 
-			ALLOW_CENTER_1_PLAYER &&
+			(bool)ALLOW_CENTER_1_PLAYER &&
 			GAMESTATE->m_PlayMode != PLAY_MODE_BATTLE &&
 			GAMESTATE->m_PlayMode != PLAY_MODE_RAVE &&
 			GAMESTATE->GetCurrentStyle()->m_StyleType == ONE_PLAYER_ONE_SIDE )
