@@ -368,6 +368,7 @@ void ScreenGameplay::Init( bool bUseSongBackgroundAndForeground )
 	GIVING_UP_GOES_TO_NEXT_SCREEN.Load( m_sName, "GivingUpGoesToNextScreen" );
 	FAIL_AFTER_30_MISSES.Load( m_sName, "FailAfter30Misses" );
 	USE_FORCED_MODIFIERS_IN_BEGINNER.Load( m_sName, "UseForcedModifiersInBeginner" );
+	ALLOW_CENTER_1_PLAYER.Load( m_sName, "AllowCenter1Player" );
 	FORCED_MODIFIERS_IN_BEGINNER.Load( m_sName, "ForcedModifiersInBeginner" );
 	
 	if( bUseSongBackgroundAndForeground )
@@ -492,6 +493,7 @@ void ScreenGameplay::Init( bool bUseSongBackgroundAndForeground )
 		 * but for now just ignore Center1Player when it's Battle or Rave
 		 * Mode.  This doesn't begin to address two-player solo (6 arrows) */
 		if( g_bCenter1Player && 
+			ALLOW_CENTER_1_PLAYER &&
 			GAMESTATE->m_PlayMode != PLAY_MODE_BATTLE &&
 			GAMESTATE->m_PlayMode != PLAY_MODE_RAVE &&
 			GAMESTATE->GetCurrentStyle()->m_StyleType == ONE_PLAYER_ONE_SIDE )
