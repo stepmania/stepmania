@@ -487,16 +487,7 @@ void ScreenGameplay::Init( bool bUseSongBackgroundAndForeground )
 		// visible and don't bother setting its position.
 
 		float fPlayerX = PLAYER_X( pi->GetName(), GAMESTATE->GetCurrentStyle()->m_StyleType );
-
-		/* Perhaps this should be handled better by defining a new
-		 * StyleType for ONE_PLAYER_ONE_CREDIT_AND_ONE_COMPUTER,
-		 * but for now just ignore Center1Player when it's Battle or Rave
-		 * Mode.  This doesn't begin to address two-player solo (6 arrows) */
-		if( g_bCenter1Player && 
-			(bool)ALLOW_CENTER_1_PLAYER &&
-			GAMESTATE->m_PlayMode != PLAY_MODE_BATTLE &&
-			GAMESTATE->m_PlayMode != PLAY_MODE_RAVE &&
-			GAMESTATE->GetCurrentStyle()->m_StyleType == ONE_PLAYER_ONE_SIDE )
+		if( Center1Player() )
 			fPlayerX = SCREEN_CENTER_X;
 
 		pi->m_pPlayer->SetXY( fPlayerX, SCREEN_CENTER_Y );
@@ -841,6 +832,19 @@ void ScreenGameplay::Init( bool bUseSongBackgroundAndForeground )
 	this->SortByDrawOrder();
 
 	m_GiveUpTimer.SetZero();
+}
+
+bool ScreenGameplay::Center1Player() const
+{
+	/* Perhaps this should be handled better by defining a new
+	 * StyleType for ONE_PLAYER_ONE_CREDIT_AND_ONE_COMPUTER,
+	 * but for now just ignore Center1Player when it's Battle or Rave
+	 * Mode.  This doesn't begin to address two-player solo (6 arrows) */
+	return g_bCenter1Player && 
+		(bool)ALLOW_CENTER_1_PLAYER &&
+		GAMESTATE->m_PlayMode != PLAY_MODE_BATTLE &&
+		GAMESTATE->m_PlayMode != PLAY_MODE_RAVE &&
+		GAMESTATE->GetCurrentStyle()->m_StyleType == ONE_PLAYER_ONE_SIDE;
 }
 
 //
@@ -2735,9 +2739,11 @@ public:
 	LunaScreenGameplay() { LUA->Register( Register ); }
 
 	static int GetNextCourseSong( T* p, lua_State *L ) { p->GetNextCourseSong()->PushSelf(L); return 1; }
+	static int Center1Player( T* p, lua_State *L ) { lua_pushboolean( L, p->Center1Player() ); return 1; }
 	static void Register( Lua *L )
 	{
   		ADD_METHOD( GetNextCourseSong );
+  		ADD_METHOD( Center1Player );
 
 		Luna<T>::Register( L );
 	}

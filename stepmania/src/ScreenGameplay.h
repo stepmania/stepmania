@@ -110,6 +110,8 @@ public:
 
 	virtual ScreenType GetScreenType() const { return gameplay; }
 
+	bool Center1Player() const;
+
 	//
 	// Lua
 	//
