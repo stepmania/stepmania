@@ -117,6 +117,12 @@ typedef char*			PSTR;
 	#define Q172398(x)
 #endif
 
+/* In RageUtil: */
+void MakeUpper( char *p, size_t iLen );
+void MakeLower( char *p, size_t iLen );
+void MakeUpper( wchar_t *p, size_t iLen );
+void MakeLower( wchar_t *p, size_t iLen );
+
 // =============================================================================
 // INLINE FUNCTIONS ON WHICH CSTDSTRING RELIES
 //
@@ -272,6 +278,7 @@ inline void	ssadd(std::string& sDst, PCSTR pA)
 // -----------------------------------------------------------------------------
 // ssupr/sslwr: Uppercase/Lowercase conversion functions
 // -----------------------------------------------------------------------------
+#if 0
 	template<typename CT>
 	inline void sslwr(CT* pT, size_t nLen)
 	{
@@ -283,6 +290,24 @@ inline void	ssadd(std::string& sDst, PCSTR pA)
 	{
 		for ( CT* p = pT; static_cast<size_t>(p - pT) < nLen; ++p)
 			*p = (CT)sstoupper(*p);
+	}
+#endif
+
+	inline void sslwr(char *pT, size_t nLen)
+	{
+		MakeLower( pT, nLen );
+	}
+	inline void ssupr(char *pT, size_t nLen)
+	{
+		MakeUpper( pT, nLen );
+	}
+	inline void sslwr(wchar_t *pT, size_t nLen)
+	{
+		MakeLower( pT, nLen );
+	}
+	inline void ssupr(wchar_t *pT, size_t nLen)
+	{
+		MakeUpper( pT, nLen );
 	}
 // -----------------------------------------------------------------------------
 //  vsprintf/vswprintf or _vsnprintf/_vsnwprintf equivalents.  In standard

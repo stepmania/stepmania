@@ -286,6 +286,10 @@ void wchar_to_utf8( wchar_t ch, RString &out );
 wchar_t utf8_get_char( const RString &s );
 bool utf8_is_valid( const RString &s );
 void utf8_remove_bom( RString &s );
+void MakeUpper( char *p, size_t iLen );
+void MakeLower( char *p, size_t iLen );
+void MakeUpper( wchar_t *p, size_t iLen );
+void MakeLower( wchar_t *p, size_t iLen );
 
 RString WStringToRString( const wstring &sString );
 RString WcharToUTF8( wchar_t c );
@@ -402,6 +406,7 @@ RString Capitalize( const RString &s );
 #endif
 
 extern unsigned char g_UpperCase[256];
+extern unsigned char g_LowerCase[256];
 
 /* ASCII-only case insensitivity. */
 struct char_traits_char_nocase: public char_traits<char>
