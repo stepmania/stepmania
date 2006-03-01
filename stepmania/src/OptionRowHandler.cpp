@@ -311,7 +311,7 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 			m_Def.m_vsChoices.push_back( "" );
 			m_aListEntries.push_back( GameCommand() );
 		}
-		else if( GAMESTATE->IsCourseMode() )   // playing a course
+		else if( GAMESTATE->IsCourseMode() && GAMESTATE->m_pCurCourse )   // playing a course
 		{
 			m_Def.m_bOneChoiceForAllPlayers = (bool)PREFSMAN->m_bLockCourseDifficulties;
 
