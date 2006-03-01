@@ -689,8 +689,10 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		input.type != IET_LEVEL_CHANGED &&
 		OPTIONS_MENU_AVAILABLE.GetValue() )
 	{
-		if(m_bGoToOptions) return; /* got it already */
-		if(!m_bAllowOptionsMenu) return; /* not allowed */
+		if( m_bGoToOptions )
+			return; /* got it already */
+		if( !m_bAllowOptionsMenu )
+			return; /* not allowed */
 
 		if( !m_bAllowOptionsMenuRepeat &&
 			(input.type == IET_SLOW_REPEAT || input.type == IET_FAST_REPEAT ))
