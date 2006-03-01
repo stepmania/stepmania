@@ -596,7 +596,7 @@ public:
 	// Case changing functions
 	// -------------------------------------------------------------------------
 	// -------------------------------------------------------------------------
-	MYTYPE& ToUpper()
+	MYTYPE& MakeUpper()
 	{
 		//  Strictly speaking, this would be about the most portable way
 
@@ -615,7 +615,7 @@ public:
 
 
 
-	MYTYPE& ToLower()
+	MYTYPE& MakeLower()
 	{
 		//  Strictly speaking, this would be about the most portable way
 
@@ -810,19 +810,9 @@ public:
 		return this->substr(0, static_cast<MYSIZE>(nCount)); 
 	}
 
-	void MakeLower()
-	{
-		ToLower();
-	}
-
 	void MakeReverse()
 	{
 		std::reverse(this->begin(), this->end());
-	}
-
-	void MakeUpper()
-	{ 
-		ToUpper();
 	}
 
 	void ReleaseBuffer(int nNewLen=-1)
