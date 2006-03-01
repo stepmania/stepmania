@@ -950,6 +950,10 @@ void ScreenOptions::StoreFocus( PlayerNumber pn )
 RString ScreenOptions::GetNextScreenForSelection( PlayerNumber pn ) const
 {
 	int iCurRow = this->GetCurrentRow( pn );
+
+	if( iCurRow == -1 )
+		return RString();
+
 	ASSERT( iCurRow >= 0 && iCurRow < (int)m_pRows.size() );
 	const OptionRow *pRow = m_pRows[iCurRow];
 
