@@ -525,7 +525,7 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 
 				pos = endpos + 1;
 
-				sub.ToLower();
+				sub.MakeLower();
 				BlacklistedImages.insert( sub );
 			}
 		}

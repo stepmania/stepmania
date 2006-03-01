@@ -58,7 +58,7 @@ void NoteField::Unload()
 void NoteField::CacheNoteSkin( const RString &sNoteSkin_ )
 {
 	RString sNoteSkin = sNoteSkin_;
-	sNoteSkin.ToLower();
+	sNoteSkin.MakeLower();
 
 	if( m_NoteDisplays.find(sNoteSkin) != m_NoteDisplays.end() )
 		return;
@@ -78,7 +78,7 @@ void NoteField::CacheNoteSkin( const RString &sNoteSkin_ )
 void NoteField::UncacheNoteSkin( const RString &sNoteSkin_ )
 {
 	RString sNoteSkin( sNoteSkin_ );
-	sNoteSkin.ToLower();
+	sNoteSkin.MakeLower();
 
 	LOG->Trace("NoteField::CacheNoteSkin: release %s", sNoteSkin.c_str() );
 	ASSERT_M( m_NoteDisplays.find(sNoteSkin) != m_NoteDisplays.end(), sNoteSkin );

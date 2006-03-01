@@ -642,7 +642,7 @@ void Song::TidyUpData()
 
 		// ignore DWI "-char" graphics
 		RString sLower = arrayImages[i];
-		sLower.ToLower();
+		sLower.MakeLower();
 		if( BlacklistedImages.find(sLower) != BlacklistedImages.end() )
 			continue;	// skip
 		

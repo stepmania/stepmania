@@ -47,7 +47,7 @@ SoundReader *RageSoundReader_Chain::Copy() const
  * read it more than once at a time. */
 bool RageSoundReader_Chain::AddSound( RString sPath, float fOffsetSecs, float fPan )
 {
-	sPath.ToLower();
+	sPath.MakeLower();
 
 	map<RString, SoundReader *>::const_iterator it;
 	it = m_apLoadedSounds.find( sPath );

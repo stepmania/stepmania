@@ -230,7 +230,7 @@ int BMSLoader::GetMeasureStartRow( const MeasureToTimeSig_t &sigs, int iMeasureN
 
 void BMSLoader::SearchForDifficulty( RString sTag, Steps *pOut )
 {
-	sTag.ToLower();
+	sTag.MakeLower();
 
 	/* Only match "Light" in parentheses. */
 	if( sTag.find( "(light" ) != sTag.npos )
@@ -892,7 +892,7 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 		if( GetTagFromMap( aBMSData[i], "#title", sTag ) && sTag.size() != commonSubstring.size() )
 		{
 			sTag = sTag.substr( commonSubstring.size(), sTag.size() - commonSubstring.size() );
-			sTag.ToLower();
+			sTag.MakeLower();
 
 			// XXX: We should do this with filenames too, I have plenty of examples.
 			//      however, filenames will be trickier, as stuffs at the beginning AND

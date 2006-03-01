@@ -10,11 +10,11 @@ void FileSet::GetFilesMatching( const RString &sBeginning_, const RString &sCont
 	/* "files" is a case-insensitive mapping, by filename.  Use lower_bound to figure
 	 * out where to start. */
 	RString sBeginning = sBeginning_;
-	sBeginning.ToLower();
+	sBeginning.MakeLower();
 	RString sContaining = sContaining_;
-	sContaining.ToLower();
+	sContaining.MakeLower();
 	RString sEnding = sEnding_;
-	sEnding.ToLower();
+	sEnding.MakeLower();
 
 	set<File>::const_iterator i = files.lower_bound( File(sBeginning) );
 	for( ; i != files.end(); ++i )
