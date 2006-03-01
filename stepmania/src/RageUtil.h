@@ -404,7 +404,7 @@ RString Capitalize( const RString &s );
 /* ASCII-only case insensitivity. */
 struct char_traits_char_nocase: public char_traits<char>
 {
-	static char uptab[256];
+	static unsigned char uptab[256];
 
 	static inline bool eq( char c1, char c2 )
 	{ return uptab[(unsigned char)c1] == uptab[(unsigned char)c2]; }
