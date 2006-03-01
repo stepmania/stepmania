@@ -24,11 +24,11 @@ void Combo::Load( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats
 	m_pPlayerStageStats = pPlayerStageStats;
 
 	SHOW_COMBO_AT		.Load(m_sName,"ShowComboAt");
-	LABEL_X				.Load(m_sName,"LabelX");
-	LABEL_Y				.Load(m_sName,"LabelY");
+	LABEL_X			.Load(m_sName,"LabelX");
+	LABEL_Y			.Load(m_sName,"LabelY");
 	LABEL_ON_COMMAND	.Load(m_sName,"LabelOnCommand");
-	NUMBER_X			.Load(m_sName,"NumberX");
-	NUMBER_Y			.Load(m_sName,"NumberY");
+	NUMBER_X		.Load(m_sName,"NumberX");
+	NUMBER_Y		.Load(m_sName,"NumberY");
 	NUMBER_ON_COMMAND	.Load(m_sName,"NumberOnCommand");
 	NUMBER_MIN_ZOOM		.Load(m_sName,"NumberMinZoom");
 	NUMBER_MAX_ZOOM		.Load(m_sName,"NumberMaxZoom");
@@ -38,7 +38,7 @@ void Combo::Load( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats
 	FULL_COMBO_W2_COMMAND	.Load(m_sName,"FullComboW2Command");
 	FULL_COMBO_W1_COMMAND	.Load(m_sName,"FullComboW1Command");
 	FULL_COMBO_BROKEN_COMMAND	.Load(m_sName,"FullComboBrokenCommand");
-	MISS_COMBO_COMMAND			.Load(m_sName,"MissComboCommand");
+	MISS_COMBO_COMMAND	.Load(m_sName,"MissComboCommand");
 	
 	m_spr100Milestone.Load( THEME->GetPathG(m_sName,"100milestone") );
 	this->AddChild( m_spr100Milestone );
