@@ -1227,14 +1227,14 @@ bool utf8_to_wchar_ec( const RString &s, unsigned &start, wchar_t &ch )
 }
 
 /* Like utf8_to_wchar_ec, but only does enough error checking to prevent crashing. */
-bool utf8_to_wchar( const RString &s, unsigned &start, wchar_t &ch )
+bool utf8_to_wchar( const char *s, size_t iLength, unsigned &start, wchar_t &ch )
 {
-	if( start >= s.size() )
+	if( start >= iLength )
 		return false;
 
 	int len = utf8_get_char_len( s[start] );
 
-	if( start+len > s.size() )
+	if( start+len > iLength )
 	{
 		/* We don't have room for enough continuation bytes.  Return error. */
 		start += len;
@@ -1377,7 +1377,7 @@ wstring RStringToWstring( const RString &s )
 		}
 		
 		wchar_t ch;
-		if( !utf8_to_wchar( s, start, ch ) )
+		if( !utf8_to_wchar( s.data(), s.size(), start, ch ) )
 			ch = INVALID_CHAR;
 		ret += ch;
 	}
