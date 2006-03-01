@@ -50,6 +50,7 @@ RString ATTACK_DISPLAY_X_NAME( size_t p, size_t both_sides ){ return "AttackDisp
 
 /* Distance to search for a note in Step(), in seconds. */
 static const float StepSearchDistance = 1.0f;
+static const float JUMP_WINDOW_SECONDS = 0.25f;
 
 float AdjustedWindowSeconds( TimingWindow tw, bool bIsPlayingBeginner )
 {
@@ -1027,7 +1028,7 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 				const StyleInput StyleI( pn, t );
 				const GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( StyleI );
 				float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI );
-				if( fSecsHeld > 0 )
+				if( fSecsHeld > 0  && fSecsHeld < JUMP_WINDOW_SECONDS )
 					iNumTracksHeld++;
 			}
 
@@ -1040,8 +1041,8 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 				// fall through
 			default:
 				{
-					float fCalsFor100Lbs = SCALE( iNumTracksHeld, 1, 2, 0.029f, 0.193f );
-					float fCalsFor200Lbs = SCALE( iNumTracksHeld, 1, 2, 0.052f, 0.334f );
+					float fCalsFor100Lbs = SCALE( iNumTracksHeld, 1, 2, 0.029f, 0.097f );
+					float fCalsFor200Lbs = SCALE( iNumTracksHeld, 1, 2, 0.052f, 0.167f );
 					fCals = SCALE( pProfile->GetCalculatedWeightPounds(), 100.f, 200.f, fCalsFor100Lbs, fCalsFor200Lbs );
 				}
 				break;
