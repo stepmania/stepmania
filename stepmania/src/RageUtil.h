@@ -401,19 +401,19 @@ RString Capitalize( const RString &s );
 #include <unistd.h> /* correct place with correct definitions */
 #endif
 
-extern unsigned char g_Uptab[256];
+extern unsigned char g_UpperCase[256];
 
 /* ASCII-only case insensitivity. */
 struct char_traits_char_nocase: public char_traits<char>
 {
 	static inline bool eq( char c1, char c2 )
-	{ return g_Uptab[(unsigned char)c1] == g_Uptab[(unsigned char)c2]; }
+	{ return g_UpperCase[(unsigned char)c1] == g_UpperCase[(unsigned char)c2]; }
 
 	static inline bool ne( char c1, char c2 )
-	{ return g_Uptab[(unsigned char)c1] != g_Uptab[(unsigned char)c2]; }
+	{ return g_UpperCase[(unsigned char)c1] != g_UpperCase[(unsigned char)c2]; }
 
 	static inline bool lt( char c1, char c2 )
-	{ return g_Uptab[(unsigned char)c1] < g_Uptab[(unsigned char)c2]; }
+	{ return g_UpperCase[(unsigned char)c1] < g_UpperCase[(unsigned char)c2]; }
 
 	static int compare( const char* s1, const char* s2, size_t n )
 	{
@@ -429,7 +429,7 @@ struct char_traits_char_nocase: public char_traits<char>
 
 	static inline char fasttoupper(char a)
 	{
-		return g_Uptab[(unsigned char)a];
+		return g_UpperCase[(unsigned char)a];
 	}
 	
 	static const char *find( const char* s, int n, char a )
