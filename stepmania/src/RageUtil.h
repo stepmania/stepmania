@@ -407,13 +407,13 @@ extern unsigned char g_Uptab[256];
 struct char_traits_char_nocase: public char_traits<char>
 {
 	static inline bool eq( char c1, char c2 )
-	{ return g_Uptab[(unsigned char)c1] == uptab[(unsigned char)c2]; }
+	{ return g_Uptab[(unsigned char)c1] == g_Uptab[(unsigned char)c2]; }
 
 	static inline bool ne( char c1, char c2 )
-	{ return g_Uptab[(unsigned char)c1] != uptab[(unsigned char)c2]; }
+	{ return g_Uptab[(unsigned char)c1] != g_Uptab[(unsigned char)c2]; }
 
 	static inline bool lt( char c1, char c2 )
-	{ return g_Uptab[(unsigned char)c1] < uptab[(unsigned char)c2]; }
+	{ return g_Uptab[(unsigned char)c1] < g_Uptab[(unsigned char)c2]; }
 
 	static int compare( const char* s1, const char* s2, size_t n )
 	{
