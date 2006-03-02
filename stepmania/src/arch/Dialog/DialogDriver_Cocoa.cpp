@@ -17,11 +17,15 @@ static CFOptionFlags ShowAlert( CFOptionFlags flags, const RString& sMessage, CF
 	return result;
 }
 
+#define LSTRING(b,x) CFBundleCopyLocalizedString( (b), CFSTR(x), NULL, CFSTR("Localizable") )
+
 void DialogDriver_Cocoa::OK( RString sMessage, RString sID )
 {
-	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage,
-					  CFSTR("OK"), CFSTR("Don't show again") );
+	CFBundleRef bundle = CFBundleGetMainBundle();
+	CFStringRef sDSA = LSTRING( bundle, "Don't show again" );
+	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage, CFSTR("OK"), sDSA );
 
+	CFRelease( sDSA );
 	if( result == kCFUserNotificationAlternateResponse )
 		Dialog::IgnoreMessage( sID );
 }
@@ -33,9 +37,15 @@ void DialogDriver_Cocoa::Error( RString sError, RString sID )
 
 Dialog::Result DialogDriver_Cocoa::AbortRetryIgnore( RString sMessage, RString sID )
 {
-	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage, CFSTR("Ignore"),
-					  CFSTR("Retry"), CFSTR("Abort") );
+	CFBundleRef bundle = CFBundleGetMainBundle();
+	CFStringRef sIgnore = LSTRING( bundle, "Ignore" );
+	CFStringRef sRetry = LSTRING( bundle, "Retry" );
+	CFStringRef sAbort = LSTRING( bundle, "Abort" );
+	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage, sIgnore, sRetry, sAbort );
 
+	CFRelease( sIgnore );
+	CFRelease( sRetry );
+	CFRelease( sAbort );
 	switch( result )
 	{
 	case kCFUserNotificationDefaultResponse:
@@ -52,9 +62,13 @@ Dialog::Result DialogDriver_Cocoa::AbortRetryIgnore( RString sMessage, RString s
 
 Dialog::Result DialogDriver_Cocoa::AbortRetry( RString sMessage, RString sID )
 {
-	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage,
-					  CFSTR("Abort"), CFSTR("Retry") );
-	
+	CFBundleRef bundle = CFBundleGetMainBundle();
+	CFStringRef sRetry = LSTRING( bundle, "Retry" );
+	CFStringRef sAbort = LSTRING( bundle, "Abort" );
+	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage, sRetry, sAbort );
+
+	CFRelease( sRetry );
+	CFRelease( sAbort );
 	switch( result )
 	{
 	case kCFUserNotificationDefaultResponse:
@@ -67,7 +81,7 @@ Dialog::Result DialogDriver_Cocoa::AbortRetry( RString sMessage, RString sID )
 }
 
 /*
- * (c) 2003-2005 Steve Checkoway
+ * (c) 2003-2006 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
