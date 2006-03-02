@@ -302,8 +302,11 @@ Section "Main Section" SecMain
 	File "Docs\Licenses.txt"
 
 	CreateDirectory "$INSTDIR\Manual"
-	SetOutPath "$INSTDIR"
-	File /r "Manual"
+	SetOutPath "$INSTDIR\Manual"
+	File "Manual\*.*"
+	CreateDirectory "$INSTDIR\Manual\images"
+	SetOutPath "$INSTDIR\Manual\images"
+	File "Manual\images\*.*"
 
 	; Create Start Menu icons
 	SetShellVarContext current  # 	'all' doesn't work on Win9x
