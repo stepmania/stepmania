@@ -41,7 +41,8 @@ BOOL CreateLanguageDlg::OnInitDialog()
 	FOREACH_CONST( const LanguageInfo*, v, i )
 	{
 		RString s = SMPackageUtil::GetLanguageDisplayString((*i)->szIsoCode);
-		m_comboLanguages.AddString( s );
+		RString sLanguage = ConvertUTF8ToACP( s );
+		m_comboLanguages.AddString( sLanguage );
 	}
 	ASSERT( !v.empty() );
 	m_comboLanguages.SetCurSel( 0 );

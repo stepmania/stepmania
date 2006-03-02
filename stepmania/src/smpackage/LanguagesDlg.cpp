@@ -100,7 +100,8 @@ void LanguagesDlg::OnSelchangeListThemes()
 		FOREACH_CONST( RString, vs, s )
 		{
 			RString sIsoCode = GetFileNameWithoutExtension(*s);
-			m_listLanguages.AddString( SMPackageUtil::GetLanguageDisplayString(sIsoCode) );
+			RString sLanguage = SMPackageUtil::GetLanguageDisplayString(sIsoCode);
+			m_listLanguages.AddString( ConvertUTF8ToACP(sLanguage) );
 		}
 		if( !vs.empty() )
 			m_listLanguages.SetSel( 0 );
