@@ -484,7 +484,7 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RStr
 				 * range Unicode #3041-3094=0
 				 */
 				vector<RString> asMatches;
-				static Regex parse("^RANGE ([A-Z\\-]+)( ?#([0-9A-F]+)-([0-9A-F]+))?$");
+				static Regex parse("^RANGE ([A-Z0-9\\-]+)( ?#([0-9A-F]+)-([0-9A-F]+))?$");
 				bool bMatch = parse.Compare( sName, asMatches );
 				
 				ASSERT( asMatches.size() == 4 ); /* 4 parens */
