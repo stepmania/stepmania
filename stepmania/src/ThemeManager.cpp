@@ -327,12 +327,11 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 	bool bThemeChanging = (sThemeName != m_sCurThemeName);
 	LoadThemeMetrics( g_vThemes, sThemeName, sLanguage );
 
+	// Clear the theme path cache.  This caches language-specific graphic paths, so do this
+	// even if only the language is changing.
+	ClearThemePathCache();
 	if( bThemeChanging )
 	{
-		// clear theme path cache
-		for( int i = 0; i < NUM_ElementCategory; ++i )
-			g_ThemePathCache[i].clear();
-
 #if !defined(SMPACKAGE)
 		// reload common sounds
 		if( SCREENMAN != NULL )
@@ -718,11 +717,7 @@ void ThemeManager::ReloadMetrics()
 		SCREENMAN->SystemMessage( RELOADED_METRICS );
 #endif
 
-	//
-	// clear theme path cache
-	//
-	for( int i = 0; i < NUM_ElementCategory; ++i )
-		g_ThemePathCache[i].clear();
+	ClearThemePathCache();
 }
 
 
