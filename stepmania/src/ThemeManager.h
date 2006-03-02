@@ -91,6 +91,7 @@ public:
 	// Languages
 	RString	GetString( const RString &sClassName, const RString &sValueName );
 	void	GetString( const RString &sClassName, const RString &sValueName, RString &valueOut )		{ valueOut = GetString( sClassName, sValueName ); }
+	void FilterFileLanguages( vector<RString> &asElementPaths );
 
 	void GetMetricsThatBeginWith( const RString &sClassName, const RString &sValueName, set<RString> &vsValueNamesOut );
 

@@ -80,7 +80,10 @@ retry:
 				ASSERT(0);
 			}
 		}
-		else if( asPaths.size() > 1 )
+
+		THEME->FilterFileLanguages( asPaths );
+
+		if( asPaths.size() > 1 )
 		{
 			RString sError = ssprintf( "A file in '%s' references a file '%s' which has multiple matches.", sName.c_str(), sPath.c_str() );
 			switch( Dialog::AbortRetryIgnore( sError, "BROKEN_FILE_REFERENCE" ) )
