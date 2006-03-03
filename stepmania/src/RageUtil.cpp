@@ -2025,6 +2025,10 @@ bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bRe
 LuaFunction( SecondsToMSSMsMs, SecondsToMSSMsMs( FArg(1) ) )
 LuaFunction( FormatNumberAndSuffix, FormatNumberAndSuffix( IArg(1) ) )
 LuaFunction( Basename, Basename( SArg(1) ) )
+static RString MakeLower( RString s ) { s.MakeLower(); return s; }
+LuaFunction( Lowercase, MakeLower( SArg(1) ) )
+static RString MakeUpper( RString s ) { s.MakeUpper(); return s; }
+LuaFunction( Uppercase, MakeUpper( SArg(1) ) )
 
 /*
  * Copyright (c) 2001-2005 Chris Danford, Glenn Maynard
