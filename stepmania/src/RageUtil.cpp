@@ -1373,8 +1373,10 @@ static int UnicodeDoUpper( char *p, size_t iLen, const unsigned char pMapping[25
 	{
 		RString sOut;
 		wchar_to_utf8( iUpper, sOut );
-		ASSERT( sOut.size() == iStart );
-		memcpy( p, sOut.data(), sOut.size() );
+		if( sOut.size() == iStart )
+			memcpy( p, sOut.data(), sOut.size() );
+		else
+			WARN( ssprintf("UnicodeDoUpper: invalid character at \"%s\"", RString(p,iLen).c_str()) );
 	}
 
 	return iStart;
