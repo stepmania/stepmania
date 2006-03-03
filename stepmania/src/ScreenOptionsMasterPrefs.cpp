@@ -182,8 +182,9 @@ static void Language( int &sel, bool ToSel, const ConfOption *pConfOption )
 	} else {
 		const RString &sNewLanguage = vs[sel];
 		
+		PREFSMAN->m_sLanguage.Set( sNewLanguage );
 		if( THEME->GetCurLanguage() != sNewLanguage )
-			THEME->SwitchThemeAndLanguage( THEME->GetCurThemeName(), sNewLanguage, PREFSMAN->m_bPseudoLocalize );
+			THEME->SwitchThemeAndLanguage( THEME->GetCurThemeName(), PREFSMAN->m_sLanguage, PREFSMAN->m_bPseudoLocalize );
 	}
 }
 
