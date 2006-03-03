@@ -316,12 +316,12 @@ void LanguagesDlg::OnBnClickedButtonExport()
 		Dialog::OK( ssprintf(FAILED_TO_SAVE.GetValue(),sFullFile.c_str()) );
 }
 
-static LocalizedString ERROR_READING_FILE					( "LanguagesDlg", "Error reading file '%s'." );
-static LocalizedString ERROR_PARSING_FILE					( "LanguagesDlg", "Error parsing file '%s'." );
-static LocalizedString IMPORTING_THESE_STRINGS_WILL_OVERRIDE( "LanguagesDlg", "Importing these strings will override all data in '%s'. Continue?" );
-static LocalizedString ERROR_READING						( "LanguagesDlg", "Error reading '%s'." );
-static LocalizedString ERROR_READING_EACH_LINE_MUST_HAVE	( "LanguagesDlg", "Error reading '%s': Each line must have either 3 or 4 values.  This row has %d values." );
-static LocalizedString IMPORTED_STRINGS_INTO				( "LanguagesDlg", "Imported %d strings into '%s'. %d empty strings were ignored." );
+static LocalizedString ERROR_READING_FILE			( "LanguagesDlg", "Error reading file '%s'." );
+static LocalizedString ERROR_PARSING_FILE			( "LanguagesDlg", "Error parsing file '%s'." );
+static LocalizedString IMPORTING_THESE_STRINGS_WILL_OVERRIDE	( "LanguagesDlg", "Importing these strings will override all data in '%s'. Continue?" );
+static LocalizedString ERROR_READING				( "LanguagesDlg", "Error reading '%s'." );
+static LocalizedString ERROR_READING_EACH_LINE_MUST_HAVE	( "LanguagesDlg", "Error reading line '%s' from '%s': Each line must have either 3 or 4 values.  This row has %d values." );
+static LocalizedString IMPORTED_STRINGS_INTO			( "LanguagesDlg", "Imported %d strings into '%s'. %d empty strings were ignored." );
 void LanguagesDlg::OnBnClickedButtonImport()
 {
 	// TODO: Add your control notification handler code here
@@ -375,15 +375,20 @@ void LanguagesDlg::OnBnClickedButtonImport()
 	int iNumIgnored = 0;
 	FOREACH_CONST( CsvFile::StringVector, csv.m_vvs, line ) 
 	{
+		int iLineIndex = line - csv.m_vvs.begin();
+
 		// Skip the header row
-		if( line == csv.m_vvs.begin() )
+		if( iLineIndex == 0 )
 			continue;
 
 		TranslationLine tl;
 		int iNumValues = line->size();
 		if( iNumValues != 3 && iNumValues != 4 )
 		{
-			Dialog::OK( ssprintf(ERROR_READING_EACH_LINE_MUST_HAVE.GetValue(),sCsvFile.c_str(),iNumValues) );
+			Dialog::OK( ssprintf(ERROR_READING_EACH_LINE_MUST_HAVE.GetValue(),
+				join(",",*line).c_str(),
+				sCsvFile.c_str(),
+				iNumValues) );
 			return;
 		}
 		tl.sSection = (*line)[0];
