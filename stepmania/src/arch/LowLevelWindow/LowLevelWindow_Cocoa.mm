@@ -99,6 +99,8 @@ LowLevelWindow_Cocoa::LowLevelWindow_Cocoa() : m_Context(nil), m_BGContext(nil),
 	[mt performOnMainThread];
 	[mt release];
 	m_CurrentParams.windowed = true; // We are essentially windowed to begin with.
+	SetActualParamsFromMode( CGDisplayCurrentMode(kCGDirectMainDisplay) );
+	HOOKS->SetHasFocus( [NSApp isActive] );
 }
 
 LowLevelWindow_Cocoa::~LowLevelWindow_Cocoa()
@@ -369,8 +371,10 @@ int LowLevelWindow_Cocoa::ChangeDisplayMode( const VideoModeParams& p )
 void LowLevelWindow_Cocoa::SetActualParamsFromMode( CFDictionaryRef mode )
 {
 	SInt32 rate;
+	bool ret = CFNumberGetValue( (CFNumberRef)CFDictionaryGetValue(mode, CFSTR("RefreshRate")),
+				     kCFNumberSInt32Type, &rate );
 	
-	if( !CFNumberGetValue( (CFNumberRef)CFDictionaryGetValue(mode, CFSTR("RefreshRate")), kCFNumberSInt32Type, &rate) )
+	if( !ret || rate == 0)
 		rate = 60;
 	m_CurrentParams.rate = rate;
 
