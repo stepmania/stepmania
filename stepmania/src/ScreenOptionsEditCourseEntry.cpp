@@ -247,12 +247,11 @@ void ScreenOptionsEditCourseEntry::HandleScreenMessage( const ScreenMessage SM )
 	
 void ScreenOptionsEditCourseEntry::AfterChangeValueInRow( int iRow, PlayerNumber pn )
 {
-	PlayerNumber mpn = GAMESTATE->m_MasterPlayerNumber;
 	ScreenOptions::AfterChangeValueInRow( iRow, pn );
 	Course *pCourse = GAMESTATE->m_pCurCourse;
 	
-	GAMESTATE->m_pCurTrail[mpn].Set( NULL );
-	Trail *pTrail = pCourse->GetTrailForceRegenCache( GAMESTATE->m_stEdit, GAMESTATE->m_PreferredCourseDifficulty[mpn] );
+	GAMESTATE->m_pCurTrail[PLAYER_1].Set( NULL );
+	Trail *pTrail = pCourse->GetTrailForceRegenCache( GAMESTATE->m_stEdit, GAMESTATE->m_cdEdit );
 	int iEntryIndex = GAMESTATE->m_iEditCourseEntryIndex;
 	ASSERT( iEntryIndex >= 0 && iEntryIndex < (int) pCourse->m_vEntries.size() );
 	CourseEntry &ce = pCourse->m_vEntries[ iEntryIndex ];
@@ -263,7 +262,7 @@ void ScreenOptionsEditCourseEntry::AfterChangeValueInRow( int iRow, PlayerNumber
 	// refresh songs
 	{
 		vector<PlayerNumber> vpns;
-		vpns.push_back( mpn );
+		vpns.push_back( pn );
 		ExportOptions( ROW_SONG_GROUP, vpns );
 
 		m_pSongHandler->m_sSongGroup = ce.sSongGroup;
@@ -271,7 +270,7 @@ void ScreenOptionsEditCourseEntry::AfterChangeValueInRow( int iRow, PlayerNumber
 		OptionRow &row = *m_pRows[ROW_SONG];
 		row.Reload();
 		ImportOptions( ROW_SONG, vpns );
-		row.AfterImportOptions( mpn );
+		row.AfterImportOptions( pn );
 		break;
 	}
 	}
@@ -279,7 +278,7 @@ void ScreenOptionsEditCourseEntry::AfterChangeValueInRow( int iRow, PlayerNumber
 
 	// cause overlay elements to refresh by changing the course
 	GAMESTATE->m_pCurCourse.Set( pCourse );
-	GAMESTATE->m_pCurTrail[mpn].Set( pTrail );
+	GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
 
 }
 

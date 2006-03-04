@@ -199,12 +199,12 @@ void ScreenOptionsEditCourse::AfterChangeValueInRow( int iRow, PlayerNumber pn )
 	Course *pCourse = GAMESTATE->m_pCurCourse;
 	
 	// Regenerate Trails so that the new values propagate
-	GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber].Set( NULL );
+	GAMESTATE->m_pCurTrail[PLAYER_1].Set( NULL );
 	Trail *pTrail = pCourse->GetTrailForceRegenCache( GAMESTATE->m_stEdit, GAMESTATE->m_cdEdit );
 
 	// cause overlay elements to refresh by changing the course
 	GAMESTATE->m_pCurCourse.Set( pCourse );
-	GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber].Set( pTrail );
+	GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
 }
 
 void ScreenOptionsEditCourse::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )

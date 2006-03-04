@@ -21,7 +21,7 @@ static void RefreshTrail()
 		return;
 	GAMESTATE->m_pCurCourse.Set( pCourse );
 	Trail *pTrail = pCourse->GetTrail( GAMESTATE->m_stEdit, GAMESTATE->m_cdEdit );
-	GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber].Set( pTrail );
+	GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
 }
 
 struct StepsTypeAndDifficulty
@@ -134,7 +134,7 @@ void ScreenOptionsManageCourses::Init()
 	ScreenOptionsEditCourseSubMenu::Init();
 
 	EDIT_MODE.Load( m_sName,"EditMode" );
-	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+	GAMESTATE->m_MasterPlayerNumber = GetNextEnabledPlayer( PlayerNumber(-1) );
 }
 
 void ScreenOptionsManageCourses::BeginScreen()
@@ -298,7 +298,7 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 				Course *pCourse = GetCourseWithFocus();
 				Trail *pTrail = pCourse->GetTrail( STEPS_TYPE_DANCE_SINGLE );
 				GAMESTATE->m_pCurCourse.Set( pCourse );
-				GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber].Set( pTrail );
+				GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
 
 				ScreenOptions::BeginFadingOut();
 				break;
@@ -334,7 +334,7 @@ void ScreenOptionsManageCourses::AfterChangeRow( PlayerNumber pn )
 	Trail *pTrail = pCourse ? pCourse->GetTrail( GAMESTATE->m_stEdit, GAMESTATE->m_cdEdit ) : NULL;
 	
 	GAMESTATE->m_pCurCourse.Set( pCourse );
-	GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber].Set( pTrail );
+	GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
 
 	ScreenOptions::AfterChangeRow( pn );
 }
