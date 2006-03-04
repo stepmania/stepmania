@@ -76,7 +76,7 @@ public:
 	const Profile* GetProfile( ProfileSlot slot ) const;
 	Profile* GetProfile( ProfileSlot slot ) { return (Profile*) ((const ProfileManager *) this)->GetProfile(slot); }
 	
-	RString GetProfileDir( ProfileSlot slot ) const;
+	const RString& GetProfileDir( ProfileSlot slot ) const;
 	RString GetProfileDirImportedFrom( ProfileSlot slot ) const;
 
 	Profile* GetMachineProfile() { return m_pMachineProfile; }

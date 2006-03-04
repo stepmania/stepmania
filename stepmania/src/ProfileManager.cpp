@@ -35,9 +35,9 @@ static void DefaultLocalProfileIDInit( size_t /*PlayerNumber*/ i, RString &sName
 
 Preference1D<RString> ProfileManager::m_sDefaultLocalProfileID( DefaultLocalProfileIDInit, NUM_PLAYERS );
 
-#define NEW_MEM_CARD_NAME		""
-#define USER_PROFILES_DIR		"/Save/LocalProfiles/"
-#define MACHINE_PROFILE_DIR		"/Save/MachineProfile/"
+const RString NEW_MEM_CARD_NAME	=	"";
+const RString USER_PROFILES_DIR	=	"/Save/LocalProfiles/";
+const RString MACHINE_PROFILE_DIR =	"/Save/MachineProfile/";
 const RString LAST_GOOD_SUBDIR	=	"LastGood/";
 
 
@@ -383,7 +383,7 @@ void ProfileManager::RefreshLocalProfilesFromDisk()
 	UnloadAllLocalProfiles();
 
 	vector<RString> vsProfileID;
-	GetDirListing( USER_PROFILES_DIR "*", vsProfileID, true, true );
+	GetDirListing( USER_PROFILES_DIR + "*", vsProfileID, true, true );
 	FOREACH_CONST( RString, vsProfileID, p )
 	{
 		g_vLocalProfile.push_back( DirAndProfile() );
@@ -540,7 +540,7 @@ bool ProfileManager::LastLoadWasFromLastGood( PlayerNumber pn ) const
 	return !m_sProfileDir[pn].empty() && m_bLastLoadWasFromLastGood[pn];
 }
 
-RString ProfileManager::GetProfileDir( ProfileSlot slot ) const
+const RString& ProfileManager::GetProfileDir( ProfileSlot slot ) const
 {
 	switch( slot )
 	{
