@@ -354,6 +354,8 @@ bool CourseLoaderCRS::LoadEdit( const RString &sEditFilePath, ProfileSlot slot )
 		return false;
 	}
 	Course *pCourse = new Course;
+	
+	pCourse->m_sPath = sEditFilePath;
 	LoadFromMsd( sEditFilePath, msd, *pCourse, true );
 
 	pCourse->m_LoadedFromProfile = slot;
