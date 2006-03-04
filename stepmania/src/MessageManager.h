@@ -134,7 +134,7 @@ private:
 	T val;
 
 public:
-	BroadcastOnChange( Message m ) { mSendWhenChanged = m; }
+	explicit BroadcastOnChange( Message m ) { mSendWhenChanged = m; }
 	const T Get() const { return val; }
 	void Set( T t ) { val = t; MESSAGEMAN->Broadcast( MessageToString(mSendWhenChanged) ); }
 	operator T () const { return val; }
@@ -149,7 +149,7 @@ private:
 	typedef BroadcastOnChange<T> MyType;
 	vector<MyType> val;
 public:
-	BroadcastOnChange1D( Message m )
+	explicit BroadcastOnChange1D( Message m )
 	{
 		for( unsigned i=0; i<N; i++ )
 			val.push_back( BroadcastOnChange<T>((Message)(m+i)) );
@@ -165,7 +165,7 @@ private:
 	Message mSendWhenChanged;
 	T *val;
 public:
-	BroadcastOnChangePtr( Message m ) { mSendWhenChanged = m; val = NULL; }
+	explicit BroadcastOnChangePtr( Message m ) { mSendWhenChanged = m; val = NULL; }
 	T* Get() const { return val; }
 	void Set( T* t ) { val = t; if(MESSAGEMAN) MESSAGEMAN->Broadcast( MessageToString(mSendWhenChanged) ); }
 	/* This is only intended to be used for setting temporary values; always
@@ -183,7 +183,7 @@ private:
 	typedef BroadcastOnChangePtr<T> MyType;
 	vector<MyType> val;
 public:
-	BroadcastOnChangePtr1D( Message m )
+	explicit BroadcastOnChangePtr1D( Message m )
 	{
 		for( unsigned i=0; i<N; i++ )
 			val.push_back( BroadcastOnChangePtr<T>((Message)(m+i)) );
