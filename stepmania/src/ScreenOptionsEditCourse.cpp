@@ -138,12 +138,16 @@ void ScreenOptionsEditCourse::HandleScreenMessage( const ScreenMessage SM )
 		int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
 		if( iCurRow == (int)m_pRows.size() - 1 )
 		{
+			m_Original = *pCourse;
+			WriteCourse();
 			this->HandleScreenMessage( SM_GoToPrevScreen );
 			return;	// don't call base
 		}
 	}
 	else if( SM == SM_GoToPrevScreen )
 	{
+		*pCourse = m_Original;
+		GAMESTATE->m_pCurCourse.Set( pCourse );
 		GAMESTATE->m_iEditCourseEntryIndex.Set( -1 );
 	}
 	else if( SM == SM_BackFromContextMenu )

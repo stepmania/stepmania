@@ -13,12 +13,21 @@
 #include "CourseUtil.h"
 #include "LocalizedString.h"
 #include "OptionRowHandler.h"
+#include "ProfileManager.h"
+#include "Profile.h"
+#include "CourseWriterCRS.h"
+#include "RageFileManager.h"
+
+static ThemeMetricEnum<EditMode> EDIT_MODE;
 
 static void RefreshTrail()
 {
 	Course *pCourse = GAMESTATE->m_pCurCourse;
 	if( pCourse == NULL )
+	{
+		GAMESTATE->m_pCurTrail[PLAYER_1].Set( NULL );
 		return;
+	}
 	GAMESTATE->m_pCurCourse.Set( pCourse );
 	Trail *pTrail = pCourse->GetTrail( GAMESTATE->m_stEdit, GAMESTATE->m_cdEdit );
 	GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
@@ -75,6 +84,29 @@ void ScreenOptionsEditCourseSubMenu::MenuSelect( const InputEventPlus &input )
 	}
 
 	ScreenOptions::MenuSelect( input );
+}
+
+static LocalizedString FAILED_TO_WRITE_COURSE( "ScreenOptionsEditCourseSubMenu", "Failed to write course." );
+void ScreenOptionsEditCourseSubMenu::WriteCourse()
+{
+	Course *pCourse = GAMESTATE->m_pCurCourse;
+		
+	if( pCourse->m_sPath.empty() )
+	{
+		// Write the course to the profile directory
+		const RString& dir = PROFILEMAN->GetProfileDir( pCourse->GetLoadedFromProfileSlot() );
+		
+		ASSERT( !dir.empty() );
+		pCourse->m_sPath = dir + EDIT_COURSES_SUBDIR + pCourse->m_sMainTitle + ".crs";
+	}
+	if( !CourseWriterCRS::Write(*pCourse, pCourse->m_sPath, false) )
+	{
+		ScreenPrompt::Prompt( SM_None, FAILED_TO_WRITE_COURSE );
+		return;
+	}
+	
+	if( !pCourse->IsAnEdit() )
+		CourseWriterCRS::Write( *pCourse, pCourse->GetCacheFilePath(), true );
 }
 
 
@@ -134,7 +166,7 @@ void ScreenOptionsManageCourses::Init()
 	ScreenOptionsEditCourseSubMenu::Init();
 
 	EDIT_MODE.Load( m_sName,"EditMode" );
-	GAMESTATE->m_MasterPlayerNumber = GetNextEnabledPlayer( PlayerNumber(-1) );
+	GAMESTATE->m_MasterPlayerNumber = GAMESTATE->GetFirstHumanPlayer();
 }
 
 void ScreenOptionsManageCourses::BeginScreen()
@@ -228,21 +260,28 @@ void ScreenOptionsManageCourses::BeginScreen()
 	AfterChangeRow( GAMESTATE->m_MasterPlayerNumber );
 }
 
-static LocalizedString COURSE_WILL_BE_LOST	("ScreenOptionsManageCourses", "This course will be lost permanently.");
-static LocalizedString CONTINUE_WITH_DELETE	("ScreenOptionsManageCourses", "Continue with delete?");
-static LocalizedString ENTER_COURSE_NAME	("ScreenOptionsManageCourses", "Enter a name for the course.");
+static LocalizedString COURSE_WILL_BE_LOST	( "ScreenOptionsManageCourses", "This course will be lost permanently." );
+static LocalizedString CONTINUE_WITH_DELETE	( "ScreenOptionsManageCourses", "Continue with delete?" );
+static LocalizedString ENTER_COURSE_NAME	( "ScreenOptionsManageCourses", "Enter a name for the course." );
 void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_Success )
 	{
-		LOG->Trace( "Delete successful; deleting course from memory" );
-
-		SONGMAN->DeleteCourse( GetCourseWithFocus() );
+		LOG->Trace( "Delete succeeded; deleting course." );
+		Course *pCourse = GetCourseWithFocus();
+		
+		GAMESTATE->m_pCurCourse.Set( NULL ); // Maybe I should just go to the next course
+		RefreshTrail();
+		SONGMAN->DeleteCourse( pCourse );
+		FILEMAN->Remove( pCourse->m_sPath );
+		if( !pCourse->IsAnEdit() )
+			FILEMAN->Remove( pCourse->GetCacheFilePath() );
+		delete pCourse;
 		SCREENMAN->SetNewScreen( this->m_sName ); // reload
 	}
 	else if( SM == SM_Failure )
 	{
-		LOG->Trace( "Delete failed; not deleting course" );
+		LOG->Trace( "Delete failed; not deleting course." );
 	}
 	else if( SM == SM_GoToNextScreen )
 	{
@@ -259,17 +298,35 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 		{
 			ASSERT( ScreenTextEntry::s_sLastAnswer != "" );	// validate should have assured this
 		
-			RString sNewName = ScreenTextEntry::s_sLastAnswer;
-
 			// create
 			Course *pCourse = new Course;
+			ProfileSlot slot;
+			
 			pCourse->m_sMainTitle = ScreenTextEntry::s_sLastAnswer;
-			pCourse->SetLoadedFromProfile( ProfileSlot_Machine );
+			
+			switch( EDIT_MODE.GetValue() )
+			{
+				case EditMode_Practice:
+				case EditMode_Home:
+					slot = ProfileSlot_Machine;
+					break;
+				case EditMode_Full:
+					if( PROFILEMAN->IsPersistentProfile(GAMESTATE->m_MasterPlayerNumber) )
+						slot = (ProfileSlot)GAMESTATE->m_MasterPlayerNumber; // XXX I don't like this
+					else
+						slot = ProfileSlot_Machine;
+					break;
+				default:
+					FAIL_M( "Invalid EditMode." );
+			}
+			
+			pCourse->SetLoadedFromProfile( slot );
 			CourseEntry ce;
 			CourseUtil::MakeDefaultEditCourseEntry( ce );
 			pCourse->m_vEntries.push_back( ce );
 			SONGMAN->AddCourse( pCourse );
 			GAMESTATE->m_pCurCourse.Set( pCourse );
+			WriteCourse();
 
 			RefreshTrail();
 
@@ -280,10 +337,20 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 	{
 		if( !ScreenTextEntry::s_bCancelledLast )
 		{
+			Course *pCourse = GAMESTATE->m_pCurCourse;
+			const RString& sNewName = ScreenTextEntry::s_sLastAnswer;
+			RString sDir, sName, sExt;
+			
 			ASSERT( ScreenTextEntry::s_sLastAnswer != "" );	// validate should have assured this
-		
-			GAMESTATE->m_pCurCourse->m_sMainTitle = ScreenTextEntry::s_sLastAnswer;
-
+			ASSERT( !pCourse->m_sPath.empty() );
+			FILEMAN->Remove( pCourse->m_sPath );
+			if( !pCourse->IsAnEdit() )
+				FILEMAN->Remove( pCourse->GetCacheFilePath() );			
+			
+			splitpath( pCourse->m_sPath, sDir, sName, sExt );
+			pCourse->m_sPath = sDir + sNewName + sExt;
+			pCourse->m_sMainTitle = sNewName;
+			WriteCourse();
 			SCREENMAN->SetNewScreen( this->m_sName ); // reload
 		}
 	}
@@ -296,7 +363,7 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 			case CourseAction_Edit:
 			{
 				Course *pCourse = GetCourseWithFocus();
-				Trail *pTrail = pCourse->GetTrail( STEPS_TYPE_DANCE_SINGLE );
+				Trail *pTrail = pCourse->GetTrail( GAMESTATE->m_stEdit );
 				GAMESTATE->m_pCurCourse.Set( pCourse );
 				GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
 

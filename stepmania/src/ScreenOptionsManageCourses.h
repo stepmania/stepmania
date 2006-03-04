@@ -16,6 +16,7 @@ public:
 	
 protected:
 	virtual void MenuSelect( const InputEventPlus &input );
+	void WriteCourse();
 };
 
 class ScreenOptionsManageCourses : public ScreenOptionsEditCourseSubMenu
@@ -36,8 +37,6 @@ protected:
 	Course *GetCourseWithFocus() const;
 
 	vector<Course*> m_vpCourses;
-
-	ThemeMetricEnum<EditMode> EDIT_MODE;
 };
 
 #endif
