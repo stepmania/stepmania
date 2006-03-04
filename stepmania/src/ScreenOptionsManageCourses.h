@@ -37,6 +37,8 @@ protected:
 	Course *GetCourseWithFocus() const;
 
 	vector<Course*> m_vpCourses;
+	ThemeMetricEnum<EditMode> EDIT_MODE;
+
 };
 
 #endif

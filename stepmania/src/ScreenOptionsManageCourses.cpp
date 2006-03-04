@@ -18,8 +18,6 @@
 #include "CourseWriterCRS.h"
 #include "RageFileManager.h"
 
-static ThemeMetricEnum<EditMode> EDIT_MODE;
-
 static void RefreshTrail()
 {
 	Course *pCourse = GAMESTATE->m_pCurCourse;
