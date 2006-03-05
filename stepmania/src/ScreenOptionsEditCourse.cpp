@@ -46,6 +46,7 @@ REGISTER_SCREEN_CLASS( ScreenOptionsEditCourse );
 void ScreenOptionsEditCourse::Init()
 {
 	ScreenOptionsEditCourseSubMenu::Init();
+	SubscribeToMessage( Message_EditCourseDifficultyChanged );
 }
 
 static LocalizedString ENTRY( "OptionTitles", "Entry %d" );
@@ -57,7 +58,6 @@ void ScreenOptionsEditCourse::BeginScreen()
 	Course *pCourse = GAMESTATE->m_pCurCourse;
 	m_Original = *pCourse;
 	SONGMAN->GetSongs( m_vpDisplayedSongs );
-
 
 	vector<OptionRowHandler*> vHands;
 
@@ -335,6 +335,29 @@ void ScreenOptionsEditCourse::ProcessMenuStart( const InputEventPlus &input )
 
 }
 
+void ScreenOptionsEditCourse::HandleMessage( const RString& sMessage )
+{
+	if( sMessage == "EditCourseDifficultyChanged" )
+	{
+#if 1
+		const int iMeter = GAMESTATE->m_pCurCourse->m_iCustomMeter[GAMESTATE->m_cdEdit];
+		int iSel;
+		
+		if( iMeter == -1 )
+			iSel = 0;
+		else
+			iSel = iMeter + 1 - MIN_METER;
+		ChangeValueInRowAbsolute( EditCourseRow_Meter, GAMESTATE->m_MasterPlayerNumber, iSel, false );
+#else
+		const vector<PlayerNumber> vpns( 1, GAMESTATE->m_MasterPlayerNumber );
+		
+		ImportOptions( EditCourseRow_Meter, vpns );
+		AfterChangeValueOrRow( GAMESTATE->m_MasterPlayerNumber );
+#endif
+	}
+	ScreenOptionsEditCourseSubMenu::HandleMessage( sMessage );
+}
+
 int ScreenOptionsEditCourse::GetCourseEntryIndexWithFocus() const
 {
 	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
@@ -347,7 +370,7 @@ int ScreenOptionsEditCourse::GetCourseEntryIndexWithFocus() const
 }
 
 /*
- * (c) 2002-2004 Chris Danford
+ * (c) 2002-2006 Chris Danford, Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

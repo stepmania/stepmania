@@ -78,10 +78,8 @@ void ScreenOptionsEditCourseSubMenu::MenuSelect( const InputEventPlus &input )
 	{
 		SetNextCombination();
 		m_soundDifficultyChanged.Play();
-		return;
 	}
 
-	ScreenOptions::MenuSelect( input );
 }
 
 static LocalizedString FAILED_TO_WRITE_COURSE( "ScreenOptionsEditCourseSubMenu", "Failed to write course." );
@@ -361,7 +359,7 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 			case CourseAction_Edit:
 			{
 				Course *pCourse = GetCourseWithFocus();
-				Trail *pTrail = pCourse->GetTrail( GAMESTATE->m_stEdit );
+				Trail *pTrail = pCourse->GetTrail( GAMESTATE->m_stEdit, GAMESTATE->m_cdEdit );
 				GAMESTATE->m_pCurCourse.Set( pCourse );
 				GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
 
