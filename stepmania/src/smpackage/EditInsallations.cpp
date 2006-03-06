@@ -77,6 +77,7 @@ void EditInsallations::OnButtonRemove()
 	ASSERT( m_list.GetCurSel() != LB_ERR );
 
 	m_list.DeleteString( m_list.GetCurSel() );
+	OnLbnSelchangeList();
 }
 
 void EditInsallations::OnButtonMakeDefault() 
@@ -88,6 +89,7 @@ void EditInsallations::OnButtonMakeDefault()
 	m_list.GetText( m_list.GetCurSel(), sText );
 	m_list.DeleteString( m_list.GetCurSel() );
 	m_list.InsertString( 0, sText );
+	m_list.SetCurSel( 0 );
 }
 
 static LocalizedString YOU_MUST_TYPE_IN			("EditInstallations","You must type a program directory before clicking Add.");
@@ -146,7 +148,7 @@ void EditInsallations::OnLbnSelchangeList()
 {
 	// TODO: Add your control notification handler code here
 	bool bSomethingSelected = m_list.GetCurSel() != LB_ERR;
-	bool bMoreThanOne = m_list.GetCurSel() != LB_ERR;
+	bool bMoreThanOne = m_list.GetCount() > 1;
 
 	this->GetDlgItem(IDC_BUTTON_MAKE_DEFAULT)->EnableWindow( bSomethingSelected );
 	this->GetDlgItem(IDC_BUTTON_REMOVE)->EnableWindow( bMoreThanOne );
