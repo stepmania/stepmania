@@ -55,7 +55,7 @@ BOOL CSmpackageApp::InitInstance()
 	FILEMAN->MountInitialFilesystems();
 
 	/* Set this up next.  Do this early, since it's needed for RageException::Throw. */
-	LOG			= new RageLog();
+	LOG			= new RageLog;
 
 
 	TCHAR szCurrentDirectory[MAX_PATH];
@@ -67,8 +67,8 @@ BOOL CSmpackageApp::InitInstance()
 	}	
 
 
-	LUA = new LuaManager();
-	THEME = new ThemeManager();
+	LUA = new LuaManager;
+	THEME = new ThemeManager;
 
 	// TODO: Use PrefsManager to get the current language instead?  PrefsManager would 
 	// need to be split up to reduce dependencies
