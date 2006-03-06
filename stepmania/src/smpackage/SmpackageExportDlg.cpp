@@ -193,7 +193,7 @@ static bool ExportPackage( const RString &sPackageName, const RString &sSourceIn
 
 		try
 		{
-			zip.AddNewFile( sSourceInstallDir+sFilePath, bUseCompression?Z_BEST_COMPRESSION:Z_NO_COMPRESSION, true );
+			zip.AddNewFile( sSourceInstallDir+sFilePath, sFilePath, bUseCompression?Z_BEST_COMPRESSION:Z_NO_COMPRESSION, true );
 		}
 		catch (CException* e)
 		{
@@ -290,11 +290,7 @@ void CSmpackageExportDlg::OnButtonExportAsIndividual()
 		// Generate a package name for every path
 		RString sPath = asPaths[i];
 
-		RString sPackageName;
-		vector<RString> asPathBits;
-		split( sPath, "/", asPathBits, true );
-		sPackageName = asPathBits[ asPathBits.size()-1 ] + ".smzip";
-		sPackageName = ReplaceInvalidFileNameChars( sPackageName );
+		RString sPackageName = ReplaceInvalidFileNameChars( sPath ) + ".smzip";
 
 		vector<RString> asPathsToExport;
 		asPathsToExport.push_back( sPath );
