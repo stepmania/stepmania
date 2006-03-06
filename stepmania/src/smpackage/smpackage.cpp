@@ -67,7 +67,6 @@ BOOL CSmpackageApp::InitInstance()
 	}	
 
 
-	FILEMAN = new RageFileManager( "" );
 	LUA = new LuaManager();
 	THEME = new ThemeManager();
 
