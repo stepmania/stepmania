@@ -312,25 +312,23 @@ void OptionRow::InitText()
 		BitmapText bt( m_pParentType->m_textItemParent );
 		bt.RunCommands( m_pParentType->ITEMS_ON_COMMAND );
 
-		float fX = m_pParentType->ITEMS_START_X;
-		
+		/* Figure out the width of the row. */
+		float fWidth = m_pParentType->ITEMS_START_X;
 		for( unsigned c=0; c<m_pHand->m_Def.m_vsChoices.size(); c++ )
 		{
 			RString sText = m_pHand->m_Def.m_vsChoices[c];
 			PrepareItemText( sText );
 			bt.SetText( sText );
 			
-			fX += bt.GetZoomedWidth();
+			fWidth += bt.GetZoomedWidth();
 			
 			if( c != m_pHand->m_Def.m_vsChoices.size()-1 )
-				fX += m_pParentType->ITEMS_GAP_X;
-
-			if( fX > m_pParentType->ITEMS_END_X ) 
-			{
-				m_pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
-				break;
-			}
+				fWidth += m_pParentType->ITEMS_GAP_X;
 		}
+
+		float fTotalWidth = m_pParentType->ITEMS_END_X - m_pParentType->ITEMS_START_X;
+		if( fWidth > fTotalWidth ) 
+			m_pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 	}
 
 	//
