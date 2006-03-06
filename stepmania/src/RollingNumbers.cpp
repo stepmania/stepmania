@@ -4,6 +4,7 @@
 #include "XmlFile.h"
 #include "ActorUtil.h"
 #include "LuaManager.h"
+#include "ThemeManager.h"
 REGISTER_ACTOR_CLASS( RollingNumbers )
 
 RollingNumbers::RollingNumbers()
@@ -21,6 +22,7 @@ void RollingNumbers::LoadFromNode( const RString& sDir, const XNode* pNode )
 	BitmapText::LoadFromNode( sDir, pNode );
 
 	pNode->GetAttrValue( "Format", m_sFormat );
+	ThemeManager::EvaluateString( m_sFormat );
 	pNode->GetAttrValue( "ApproachSeconds", m_fApproachSeconds );
 	
 	RString sTargetNumber;
