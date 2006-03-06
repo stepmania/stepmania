@@ -313,7 +313,7 @@ void OptionRow::InitText()
 		bt.RunCommands( m_pParentType->ITEMS_ON_COMMAND );
 
 		/* Figure out the width of the row. */
-		float fWidth = m_pParentType->ITEMS_START_X;
+		float fWidth = 0;
 		for( unsigned c=0; c<m_pHand->m_Def.m_vsChoices.size(); c++ )
 		{
 			RString sText = m_pHand->m_Def.m_vsChoices[c];
