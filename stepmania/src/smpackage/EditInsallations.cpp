@@ -10,6 +10,7 @@
 #include "archutils/Win32/DialogUtil.h"
 #include ".\editinsallations.h"
 #include "LocalizedString.h"
+#include "RageFileManager.h"
 #include "RageUtil.h"
 #include "arch/Dialog/Dialog.h"
 
@@ -140,6 +141,11 @@ void EditInsallations::OnOK()
 		vs.push_back( s );
 	}
 	SMPackageUtil::WriteGameInstallDirs( vs );
+
+	// set the new default
+	vector<RString> asInstallDirs;
+	SMPackageUtil::GetGameInstallDirs( asInstallDirs );
+	FILEMAN->Remount( "/", asInstallDirs[0] );
 
 	CDialog::OnOK();
 }

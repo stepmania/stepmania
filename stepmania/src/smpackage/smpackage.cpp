@@ -66,6 +66,12 @@ BOOL CSmpackageApp::InitInstance()
 		SMPackageUtil::SetDefaultInstallDir( szCurrentDirectory );
 	}	
 
+	{
+		vector<RString> asInstallDirs;
+		SMPackageUtil::GetGameInstallDirs( asInstallDirs );
+		FILEMAN->Remount( "/", asInstallDirs[0] );
+	}
+
 
 	LUA = new LuaManager;
 	THEME = new ThemeManager;
