@@ -169,7 +169,7 @@ void ScreenNameEntry::Init()
 			continue;	// skip
 
 		// remove modifiers that may have been on the last song
-		GAMESTATE->m_pPlayerState[p]->m_PlayerOptions = PlayerOptions();
+		GAMESTATE->GetDefaultPlayerOptions( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions );
 
 		ASSERT( GAMESTATE->IsHumanPlayer(p) );	// they better be enabled if they made a high score!
 
