@@ -72,6 +72,8 @@ RageFileDriver *RageFileManager::GetFileDriver( RString sMountpoint )
 	RageFileDriver *pRet = NULL;
 	for( unsigned i = 0; i < g_pDrivers.size(); ++i )
 	{
+		if( g_pDrivers[i]->m_sType == "mountpoints" )
+			continue;
 		if( g_pDrivers[i]->m_sMountPoint.CompareNoCase( sMountpoint ) )
 			continue;
 
@@ -234,6 +236,7 @@ RageFileManager::RageFileManager( const RString &argv0 )
 	LoadedDriver *pLoadedDriver = new LoadedDriver;
 	pLoadedDriver->m_pDriver = g_Mountpoints;
 	pLoadedDriver->m_sMountPoint = "/";
+	pLoadedDriver->m_sType = "mountpoints";
 	g_pDrivers.push_back( pLoadedDriver );
 
 	/* The mount path is unused, but must be nonempty. */
