@@ -108,6 +108,7 @@ private:
 	ThemeMetric<float>		ITEMS_START_X;
 	ThemeMetric<float>		ITEMS_END_X;
 	ThemeMetric<float>		ITEMS_GAP_X;
+	ThemeMetric<float>		ITEMS_MIN_BASE_ZOOM;
 	ThemeMetric1D<float>		ITEMS_LONG_ROW_X;
 	ThemeMetric<float>		ITEMS_LONG_ROW_SHARED_X;
 	ThemeMetric<apActorCommands>	ITEMS_ON_COMMAND;

@@ -128,6 +128,7 @@ void OptionRowType::Load( const RString &sType )
 	ITEMS_START_X			.Load(sType,"ItemsStartX");
 	ITEMS_END_X			.Load(sType,"ItemsEndX");
 	ITEMS_GAP_X			.Load(sType,"ItemsGapX");
+	ITEMS_MIN_BASE_ZOOM		.Load(sType,"ItemsMinBaseZoom");
 	ITEMS_LONG_ROW_X		.Load(sType,ITEMS_LONG_ROW_X_NAME,NUM_PLAYERS);
 	ITEMS_LONG_ROW_SHARED_X		.Load(sType,"ItemsLongRowSharedX");
 	ITEMS_ON_COMMAND		.Load(sType,"ItemsOnCommand");
@@ -308,6 +309,7 @@ void OptionRow::InitText()
 	}
 
 	// If the items will go off the edge of the screen, then force LAYOUT_SHOW_ONE_IN_ROW.
+	float fBaseZoom = 1.0f;
 	{
 		BitmapText bt( m_pParentType->m_textItemParent );
 		bt.RunCommands( m_pParentType->ITEMS_ON_COMMAND );
@@ -326,9 +328,15 @@ void OptionRow::InitText()
 				fWidth += m_pParentType->ITEMS_GAP_X;
 		}
 
+		/* Try to fit everything on one line. */
 		float fTotalWidth = m_pParentType->ITEMS_END_X - m_pParentType->ITEMS_START_X;
 		if( fWidth > fTotalWidth ) 
-			m_pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+		{
+			if( fTotalWidth / fWidth >= m_pParentType->ITEMS_MIN_BASE_ZOOM )
+				fBaseZoom = fTotalWidth / fWidth;
+			else
+				m_pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+		}
 	}
 
 	//
@@ -385,6 +393,7 @@ void OptionRow::InitText()
 				RString sText = m_pHand->m_Def.m_vsChoices[c];
 				PrepareItemText( sText );
 				bt->SetText( sText );
+				bt->SetBaseZoomX( fBaseZoom );
 				bt->RunCommands( m_pParentType->ITEMS_ON_COMMAND );
 				bt->SetShadowLength( 0 );
 
@@ -406,7 +415,7 @@ void OptionRow::InitText()
 					}
 				}
 
-				fX += fItemWidth/2 + m_pParentType->ITEMS_GAP_X;
+				fX += fItemWidth/2 + m_pParentType->ITEMS_GAP_X * fBaseZoom;
 			}
 		}
 		break;
