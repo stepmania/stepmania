@@ -122,7 +122,8 @@ enum EditButton
 	EDIT_BUTTON_INVALID
 };
 #define FOREACH_EditButton( e ) FOREACH_ENUM( EditButton, NUM_EDIT_BUTTONS, e )
-#define NUM_EDIT_TO_DEVICE_SLOTS 2
+const int NUM_EDIT_TO_DEVICE_SLOTS = 2;
+const int NUM_EDIT_TO_MENU_SLOTS = 2;
 
 /*
  * g_MapEditToDI is a simple mapping: edit functions map to DeviceInputs.
@@ -142,6 +143,18 @@ struct MapEditToDI
 				button[e][slot].MakeInvalid();
 				hold[e][slot].MakeInvalid();
 			}
+	}
+};
+
+// Like MapEditToDI, but maps MenuButton instead of DeviceInput.
+struct MapEditButtonToMenuButton
+{
+	MenuButton button[NUM_EDIT_BUTTONS][NUM_EDIT_TO_MENU_SLOTS];
+	void Clear()
+	{
+		FOREACH_EditButton(e)
+			for( int slot = 0; slot < NUM_EDIT_TO_MENU_SLOTS; ++slot )
+				button[e][slot] = MenuButton_INVALID;
 	}
 };
 
@@ -426,12 +439,15 @@ public:
 	};
 
 	void InitEditMappings();
-	bool DeviceToEdit( DeviceInput DeviceI, EditButton &button ) const;
+	bool DeviceToEdit( const DeviceInput &DeviceI, EditButton &button ) const;
+	bool MenuInputToEditButton( const MenuInput &MenuI, EditButton &button ) const;
 	bool EditToDevice( EditButton button, int iSlotNum, DeviceInput &DeviceI ) const;
 	bool EditPressed( EditButton button, const DeviceInput &DeviceI );
 	bool EditIsBeingPressed( EditButton button ) const;
-	const MapEditToDI *GetCurrentMap() const;
-	MapEditToDI m_EditMappings, m_PlayMappings, m_RecordMappings, m_RecordPausedMappings;
+	const MapEditToDI *GetCurrentDeviceInputMap() const;
+	const MapEditButtonToMenuButton *GetCurrentMenuButtonMap() const;
+	MapEditToDI m_EditMappingsDeviceInput, m_PlayMappingsDeviceInput, m_RecordMappingsDeviceInput, m_RecordPausedMappingsDeviceInput;
+	MapEditButtonToMenuButton m_EditMappingsMenuButton, m_PlayMappingsMenuButton, m_RecordMappingsMenuButton, m_RecordPausedMappingsMenuButton;
 
 	void MakeFilteredMenuDef( const MenuDef* pDef, MenuDef &menu );
 	void EditMiniMenu( const MenuDef* pDef, ScreenMessage SM_SendOnOK = SM_None, ScreenMessage SM_SendOnCancel = SM_None );
