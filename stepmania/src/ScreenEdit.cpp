@@ -43,18 +43,19 @@ static Preference<bool> g_bEditorShowBGChangesPlay( "EditorShowBGChangesPlay", f
 //
 const float RECORD_HOLD_SECONDS = 0.3f;
 
-#define PLAYER_X			(SCREEN_CENTER_X)
-#define PLAYER_Y			(SCREEN_CENTER_Y)
+#define PLAYER_X		(SCREEN_CENTER_X)
+#define PLAYER_Y		(SCREEN_CENTER_Y)
 #define PLAYER_HEIGHT		(360)
 #define PLAYER_Y_STANDARD	(PLAYER_Y-PLAYER_HEIGHT/2)
 
-#define EDIT_X				(SCREEN_CENTER_X)
-#define EDIT_Y				(PLAYER_Y)
+#define EDIT_X			(SCREEN_CENTER_X)
+#define EDIT_Y			(PLAYER_Y)
 
-#define RECORD_X			(SCREEN_CENTER_X)
-#define RECORD_Y			(SCREEN_CENTER_Y)
+#define RECORD_X		(SCREEN_CENTER_X)
+#define RECORD_Y		(SCREEN_CENTER_Y)
 
 #define PLAY_RECORD_HELP_TEXT	THEME->GetString(m_sName,"PlayRecordHelpText")
+#define EDIT_HELP_TEXT		THEME->GetString(m_sName,"EditHelpText")
 
 AutoScreenMessage( SM_UpdateTextInfo )
 AutoScreenMessage( SM_BackFromMainMenu )
@@ -85,27 +86,6 @@ static const char *EditStateNames[] = {
 };
 XToString( EditState, NUM_EDIT_STATES );
 
-const RString INPUT_TIPS_TEXT = 
-#if defined(XBOX)
-	"Up/Down:\n     change beat\n"
-	"Left/Right:\n     change snap\n"
-	"A/B/X/Y:\n     add/remove\n     tap note\n"
-	"Create hold note:\n     Hold a button\n     while moving\n     Up or Down\n"
-	"White:\n     Set area\n     marker\n"
-	"Start:\n     Area Menu\n"
-	"Select:\n     Main Menu\n"
-	"Black:\n     Show\n     shortcuts\n";
-#else
-	"Up/Down:\n     change beat\n"
-	"Left/Right:\n     change snap\n"
-	"Number keys:\n     add/remove\n     tap note\n"
-	"Create hold note:\n     Hold a number\n     while moving\n     Up or Down\n"
-	"Space bar:\n     Set area\n     marker\n"
-	"Enter:\n     Area Menu\n"
-	"Escape:\n     Main Menu\n"
-	"F1:\n     Show help\n";
-#endif
-
 #if defined(XBOX)
 void ScreenEdit::InitEditMappings()
 {
@@ -117,10 +97,22 @@ void ScreenEdit::InitEditMappings()
 	m_EditMappingsDeviceInput.Clear();
 
 	// Global mappings:
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_UP_LINE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_UP);
-	m_EditMappingsMenuButton.button[EDIT_BUTTON_SCROLL_UP_LINE][0] = MENU_BUTTON_UP;
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_DOWN_LINE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_DOWN);
-	m_EditMappingsMenuButton.button[EDIT_BUTTON_SCROLL_DOWN_LINE][0] = MENU_BUTTON_DOWN;
+	switch( EDIT_MODE.GetValue() )
+	{
+	case EditMode_Practice:
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_PREV_MEASURE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_UP);
+		m_EditMappingsMenuButton.button[EDIT_BUTTON_SCROLL_PREV_MEASURE][0] = MENU_BUTTON_UP;
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_NEXT_MEASURE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_DOWN);
+		m_EditMappingsMenuButton.button[EDIT_BUTTON_SCROLL_NEXT_MEASURE][0] = MENU_BUTTON_DOWN;
+		break;
+	default:
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_UP_LINE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_UP);
+		m_EditMappingsMenuButton.button[EDIT_BUTTON_SCROLL_UP_LINE][0] = MENU_BUTTON_UP;
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_DOWN_LINE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_DOWN);
+		m_EditMappingsMenuButton.button[EDIT_BUTTON_SCROLL_DOWN_LINE][0] = MENU_BUTTON_DOWN;
+		break;
+	}
+
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_UP_PAGE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_PGUP);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_DOWN_PAGE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_PGDN);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SCROLL_HOME][0] = DeviceInput(DEVICE_KEYBOARD, KEY_HOME);
@@ -152,11 +144,13 @@ void ScreenEdit::InitEditMappings()
 		// Esc = Show Edit Menu
 		m_EditMappingsDeviceInput.button   [EDIT_BUTTON_OPEN_EDIT_MENU][0]    = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
 		m_EditMappingsMenuButton.button   [EDIT_BUTTON_OPEN_EDIT_MENU][0]    = MENU_BUTTON_START;
+		m_EditMappingsMenuButton.button   [EDIT_BUTTON_OPEN_EDIT_MENU][1]    = MENU_BUTTON_BACK;
 
 		// Escape, Enter = exit play/record
 		m_PlayMappingsDeviceInput.button   [EDIT_BUTTON_RETURN_TO_EDIT][0]    = DeviceInput(DEVICE_KEYBOARD, KEY_ENTER);
 		m_PlayMappingsDeviceInput.button   [EDIT_BUTTON_RETURN_TO_EDIT][1]    = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
 		m_PlayMappingsMenuButton.button   [EDIT_BUTTON_RETURN_TO_EDIT][0]    = MENU_BUTTON_START;
+		m_PlayMappingsMenuButton.button   [EDIT_BUTTON_RETURN_TO_EDIT][1]    = MENU_BUTTON_BACK;
 		return;
 	}
 
@@ -232,6 +226,7 @@ void ScreenEdit::InitEditMappings()
 
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_EDIT_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
 	m_EditMappingsMenuButton.button[EDIT_BUTTON_OPEN_EDIT_MENU][0] = MENU_BUTTON_START;
+	m_EditMappingsMenuButton.button[EDIT_BUTTON_OPEN_EDIT_MENU][1] = MENU_BUTTON_BACK;
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_AREA_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ENTER);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_INPUT_HELP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F1);
 	
@@ -264,6 +259,7 @@ void ScreenEdit::InitEditMappings()
 	
 	m_PlayMappingsDeviceInput.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
 	m_PlayMappingsMenuButton.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = MENU_BUTTON_START;
+	m_PlayMappingsMenuButton.button[EDIT_BUTTON_RETURN_TO_EDIT][1] = MENU_BUTTON_BACK;
 	m_PlayMappingsDeviceInput.button[EDIT_BUTTON_TOGGLE_ASSIST_TICK][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F4);
 	m_PlayMappingsDeviceInput.button[EDIT_BUTTON_TOGGLE_AUTOPLAY][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F8);
 
@@ -273,6 +269,7 @@ void ScreenEdit::InitEditMappings()
 	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_REMOVE_NOTE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RALT);
 	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
 	m_RecordMappingsMenuButton.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = MENU_BUTTON_START;
+	m_RecordMappingsMenuButton.button[EDIT_BUTTON_RETURN_TO_EDIT][1] = MENU_BUTTON_BACK;
 
 	m_RecordPausedMappingsDeviceInput.button[EDIT_BUTTON_PLAY_SELECTION][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cp);
 	m_RecordPausedMappingsDeviceInput.button[EDIT_BUTTON_RECORD_SELECTION][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cr);
@@ -281,6 +278,7 @@ void ScreenEdit::InitEditMappings()
 	m_RecordPausedMappingsDeviceInput.button[EDIT_BUTTON_RECORD_FROM_CURSOR][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cr);
 	m_RecordPausedMappingsDeviceInput.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
 	m_RecordPausedMappingsMenuButton.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = MENU_BUTTON_START;
+	m_RecordPausedMappingsMenuButton.button[EDIT_BUTTON_RETURN_TO_EDIT][1] = MENU_BUTTON_BACK;
 	m_RecordPausedMappingsDeviceInput.button[EDIT_BUTTON_UNDO][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cu);
 }
 
@@ -498,6 +496,9 @@ static MenuDef g_PracticeHelp(
 
 static MenuDef g_MainMenu(
 	"ScreenMiniMenuMainMenu",
+	MenuRowDef( ScreenEdit::play_selection,			"Play selection",		true, EditMode_Practice, true, true, 0, NULL ),
+	MenuRowDef( ScreenEdit::set_selection_start,		"Set Selection Start",		true, EditMode_Practice, true, true, 0, NULL ),
+	MenuRowDef( ScreenEdit::set_selection_end,		"Set Selection End",		true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::edit_steps_information,		"Edit Steps Information",	true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::play_whole_song,		"Play Whole Song",		true, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::play_current_beat_to_end,	"Play Current Beat to End",	true, EditMode_Practice, true, true, 0, NULL ),
@@ -744,9 +745,9 @@ void ScreenEdit::Init()
 
 	this->AddChild( &m_Foreground );
 
-	m_textInputTips.SetName( "InputTips" );
-	m_textInputTips.LoadFromFont( THEME->GetPathF("ScreenEdit","InputTips") );
-	m_textInputTips.SetText( INPUT_TIPS_TEXT );
+	m_textInputTips.SetName( "EditHelp" );
+	m_textInputTips.LoadFromFont( THEME->GetPathF("ScreenEdit","EditHelp") );
+	m_textInputTips.SetText( EDIT_HELP_TEXT );
 	SET_XY_AND_ON_COMMAND( m_textInputTips );
 	this->AddChild( &m_textInputTips );
 
@@ -1139,7 +1140,6 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		return;
 	}
 
-	const int iSongBeat = BeatToNoteRow(GAMESTATE->m_fSongBeat);
 	switch( EditB )
 	{
 	case EDIT_BUTTON_COLUMN_0:
@@ -1309,29 +1309,32 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			OnSnapModeChange();
 		break;
 	case EDIT_BUTTON_LAY_SELECT:
-		if( m_NoteFieldEdit.m_iBeginMarker==-1 && m_NoteFieldEdit.m_iEndMarker==-1 )
 		{
-			// lay begin marker
-			m_NoteFieldEdit.m_iBeginMarker = BeatToNoteRow(GAMESTATE->m_fSongBeat);
-		}
-		else if( m_NoteFieldEdit.m_iEndMarker==-1 )	// only begin marker is laid
-		{
-			if( iSongBeat == m_NoteFieldEdit.m_iBeginMarker )
+			const int iCurrentRow = BeatToNoteRow(GAMESTATE->m_fSongBeat);
+			if( m_NoteFieldEdit.m_iBeginMarker==-1 && m_NoteFieldEdit.m_iEndMarker==-1 )
 			{
-				m_NoteFieldEdit.m_iBeginMarker = -1;
+				// lay begin marker
+				m_NoteFieldEdit.m_iBeginMarker = BeatToNoteRow(GAMESTATE->m_fSongBeat);
 			}
-			else
+			else if( m_NoteFieldEdit.m_iEndMarker==-1 )	// only begin marker is laid
 			{
-				m_NoteFieldEdit.m_iEndMarker = max( m_NoteFieldEdit.m_iBeginMarker, iSongBeat );
-				m_NoteFieldEdit.m_iBeginMarker = min( m_NoteFieldEdit.m_iBeginMarker, iSongBeat );
+				if( iCurrentRow == m_NoteFieldEdit.m_iBeginMarker )
+				{
+					m_NoteFieldEdit.m_iBeginMarker = -1;
+				}
+				else
+				{
+					m_NoteFieldEdit.m_iEndMarker = max( m_NoteFieldEdit.m_iBeginMarker, iCurrentRow );
+					m_NoteFieldEdit.m_iBeginMarker = min( m_NoteFieldEdit.m_iBeginMarker, iCurrentRow );
+				}
 			}
+			else	// both markers are laid
+			{
+				m_NoteFieldEdit.m_iBeginMarker = iCurrentRow;
+				m_NoteFieldEdit.m_iEndMarker = -1;
+			}
+			m_soundMarker.Play();
 		}
-		else	// both markers are laid
-		{
-			m_NoteFieldEdit.m_iBeginMarker = iSongBeat;
-			m_NoteFieldEdit.m_iEndMarker = -1;
-		}
-		m_soundMarker.Play();
 		break;
 	case EDIT_BUTTON_OPEN_AREA_MENU:
 		{
@@ -2595,16 +2598,47 @@ static void ChangeArtistTranslit( const RString &sNew )
 
 // End helper functions
 
-static LocalizedString REVERT_LAST_SAVE				( "ScreenEdit", "Do you want to revert to your last save?" );
+static LocalizedString REVERT_LAST_SAVE			( "ScreenEdit", "Do you want to revert to your last save?" );
 static LocalizedString DESTROY_ALL_UNSAVED_CHANGES	( "ScreenEdit", "This will destroy all unsaved changes." );
-static LocalizedString REVERT_FROM_DISK				( "ScreenEdit", "Do you want to revert from disk?" );
+static LocalizedString REVERT_FROM_DISK			( "ScreenEdit", "Do you want to revert from disk?" );
 static LocalizedString SAVE_CHANGES_BEFORE_EXITING	( "ScreenEdit", "Do you want to save changes before exiting?" );
-static LocalizedString ENTER_BPM_VALUE				( "ScreenEdit", "Enter a new BPM value." );
-static LocalizedString ENTER_STOP_VALUE				( "ScreenEdit", "Enter a new Stop value." );
+static LocalizedString ENTER_BPM_VALUE			( "ScreenEdit", "Enter a new BPM value." );
+static LocalizedString ENTER_STOP_VALUE			( "ScreenEdit", "Enter a new Stop value." );
 void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAnswers )
 {
 	switch( c )
 	{
+		case play_selection:
+			HandleAreaMenuChoice( play, false );
+			break;
+		case set_selection_start:
+			{
+				const int iCurrentRow = BeatToNoteRow(GAMESTATE->m_fSongBeat);
+				if( m_NoteFieldEdit.m_iEndMarker!=-1 && iCurrentRow >= m_NoteFieldEdit.m_iEndMarker )
+				{
+					SCREENMAN->PlayInvalidSound();
+				}
+				else
+				{
+					m_NoteFieldEdit.m_iBeginMarker = iCurrentRow;
+					m_soundMarker.Play();
+				}
+			}
+			break;
+		case set_selection_end:
+			{
+				const int iCurrentRow = BeatToNoteRow(GAMESTATE->m_fSongBeat);
+				if( m_NoteFieldEdit.m_iBeginMarker!=-1 && iCurrentRow <= m_NoteFieldEdit.m_iBeginMarker )
+				{
+					SCREENMAN->PlayInvalidSound();
+				}
+				else
+				{
+					m_NoteFieldEdit.m_iEndMarker = iCurrentRow;
+					m_soundMarker.Play();
+				}
+			}
+			break;
 		case edit_steps_information:
 			{
 				/* XXX: If the difficulty is changed from EDIT, and pSteps->WasLoadedFromProfile()

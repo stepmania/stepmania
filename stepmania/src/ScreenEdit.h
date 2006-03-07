@@ -270,6 +270,9 @@ protected:
 
 public:
 	enum MainMenuChoice {
+		play_selection,
+		set_selection_start,
+		set_selection_end,
 		edit_steps_information,
 		play_whole_song,
 		play_current_beat_to_end,
