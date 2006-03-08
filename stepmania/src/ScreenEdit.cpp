@@ -2677,10 +2677,13 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 					{
 						ASSERT( pSteps->IsAnEdit() );
 
-						// XXX show error
 						NotesWriterSM w;
-						if( !w.WriteEditFileToMachine(pSong, pSteps) )
+						RString sError;
+						if( !w.WriteEditFileToMachine(pSong,pSteps,sError) )
+						{
+							ScreenPrompt::Prompt( SM_None, sError );
 							break;
+						}
 
 						// HACK: clear undo, so "exit" below knows we don't need to save.
 						// This only works because important non-steps data can't be changed in

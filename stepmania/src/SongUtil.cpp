@@ -425,10 +425,11 @@ RString SongUtil::MakeUniqueEditDescription( const Song *pSong, StepsType st, co
 
 static LocalizedString YOU_MUST_SUPPLY_NAME	( "SongUtil", "You must supply a name for your new edit." );
 static LocalizedString EDIT_NAME_CONFLICTS	( "SongUtil", "The name you chose conflicts with another edit. Please use a different name." );
-
+static LocalizedString EDIT_NAME_CANNOT_CONTAIN	( "SongUtil", "The edit name cannot contain any of the following characters: %s" );
 bool SongUtil::ValidateCurrentEditStepsDescription( const RString &sAnswer, RString &sErrorOut )
 {
 	Steps *pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
+	Song *pSong = SONGMAN->GetSongFromSteps( pSteps );
 
 	ASSERT( pSteps->IsAnEdit() );
 
@@ -438,9 +439,16 @@ bool SongUtil::ValidateCurrentEditStepsDescription( const RString &sAnswer, RStr
 		return false;
 	}
 
-	// Steps name must be unique
+	static const RString sInvalidChars = "\\/:*?\"<>|";
+	if( strpbrk(sAnswer, sInvalidChars) != NULL )
+	{
+		sErrorOut = ssprintf( EDIT_NAME_CANNOT_CONTAIN.GetValue(), sInvalidChars.c_str() );
+		return false;
+	}
+
+	// Steps name must be unique for this song.
 	vector<Steps*> v;
-	SONGMAN->GetStepsLoadedFromProfile( v, ProfileSlot_Machine );
+	pSong->GetSteps( v, STEPS_TYPE_INVALID, DIFFICULTY_EDIT ); 
 	FOREACH_CONST( Steps*, v, s )
 	{
 		if( pSteps == *s )

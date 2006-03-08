@@ -14,6 +14,7 @@
 #include "BackgroundUtil.h"
 #include "ProfileManager.h"
 #include "Profile.h"
+#include "LocalizedString.h"
 
 static RString BackgroundChangeToString( const BackgroundChange &bgc )
 {
@@ -272,7 +273,9 @@ RString NotesWriterSM::GetEditFileName( const Song *pSong, const Steps *pSteps )
 	return sFile;
 }
 
-bool NotesWriterSM::WriteEditFileToMachine( const Song *pSong, Steps *pSteps )
+static LocalizedString DESTINATION_ALREADY_EXISTS	("NotesWriterSM", "Error renaming file.  Destination file '%s' already exists.");
+static LocalizedString ERROR_WRITING_FILE		("NotesWriterSM", "Error writing file '%s'.");
+bool NotesWriterSM::WriteEditFileToMachine( const Song *pSong, Steps *pSteps, RString &sErrorOut )
 {
 	RString sDir = PROFILEMAN->GetProfileDir( ProfileSlot_Machine ) + EDIT_STEPS_SUBDIR;
 
@@ -281,12 +284,20 @@ bool NotesWriterSM::WriteEditFileToMachine( const Song *pSong, Steps *pSteps )
 	/* Flush dir cache when writing steps, so the old size isn't cached. */
 	FILEMAN->FlushDirCache( Dirname(sPath) );
 
-	// TODO: Check to make sure that we're not clobering an existing file before opening.
+	// Check to make sure that we're not clobering an existing file before opening.
+	bool bFileNameChanging = 
+		pSteps->GetSavedToDisk()  && 
+		pSteps->GetFilename() != sPath;
+	if( bFileNameChanging  &&  DoesFileExist(sPath) )
+	{
+		sErrorOut = ssprintf( DESTINATION_ALREADY_EXISTS.GetValue(), sPath.c_str() );
+		return false;
+	}
 
 	RageFile f;
 	if( !f.Open(sPath, RageFile::WRITE | RageFile::SLOW_FLUSH) )
 	{
-		LOG->Warn( "Error opening song file '%s' for writing: %s", sPath.c_str(), f.GetError().c_str() );
+		sErrorOut = ssprintf( ERROR_WRITING_FILE.GetValue(), sPath.c_str() );
 		return false;
 	}
 
@@ -294,19 +305,19 @@ bool NotesWriterSM::WriteEditFileToMachine( const Song *pSong, Steps *pSteps )
 	GetEditFileContents( pSong, pSteps, sTag );
 	if( f.PutLine(sTag) == -1 || f.Flush() == -1 )
 	{
-		LOG->Warn( "Error writing song file '%s': %s", sPath.c_str(), f.GetError().c_str() );
+		sErrorOut = ssprintf( ERROR_WRITING_FILE.GetValue(), sPath.c_str() );
 		return false;
 	}
 
 	/* If the file name of the edit has changed since the last save, then delete the old
 	 * file after saving the new one.  If we delete it first, then we'll lose data on error. */
-	bool bFileNameChanged = 
-		pSteps->GetSavedToDisk()  && 
-		pSteps->GetFilename() != sPath;
 
-	if( bFileNameChanged )
+	if( bFileNameChanging )
 		FILEMAN->Remove( pSteps->GetFilename() );
 	pSteps->SetFilename( sPath );
+
+	/* Flush dir cache or else the new file won't be seen. */
+	FILEMAN->FlushDirCache( Dirname(sPath) );
 
 	return true;
 }

@@ -14,6 +14,11 @@
 #include "LocalizedString.h"
 #include "OptionRowHandler.h"
 #include "SongUtil.h"
+#include "song.h"
+#include "ProfileManager.h"
+#include "Profile.h"
+#include "SpecialFiles.h"
+#include "NotesWriterSM.h"
 
 AutoScreenMessage( SM_BackFromRename )
 AutoScreenMessage( SM_BackFromDelete )
@@ -49,6 +54,12 @@ void ScreenOptionsManageEditSteps::Init()
 
 void ScreenOptionsManageEditSteps::BeginScreen()
 {
+	// Reload so that we're consistent with the disk in case the user has been dinking around with their edits.
+	SONGMAN->FreeAllLoadedFromProfile( ProfileSlot_Machine );
+	SONGMAN->LoadAllFromProfileDir( PROFILEMAN->GetProfileDir(ProfileSlot_Machine), ProfileSlot_Machine );
+	GAMESTATE->m_pCurSong.Set( NULL );
+	GAMESTATE->m_pCurSteps[0].Set( NULL );
+
 	vector<OptionRowHandler*> vHands;
 
 	int iIndex = 0;
@@ -71,7 +82,10 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 	{
 		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
 		OptionRowDefinition &def = vHands.back()->m_Def;
-		def.m_sName = (*s)->GetDescription();
+		
+		Song *pSong = SONGMAN->GetSongFromSteps( *s );
+
+		def.m_sName = pSong->GetTranslitFullTitle() + " - " + (*s)->GetDescription();
 		def.m_bAllowThemeTitle = false;	// not themable
 		def.m_sExplanationName = "Select Edit Steps";
 		def.m_vsChoices.clear();
@@ -132,8 +146,20 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 		if( !ScreenTextEntry::s_bCancelledLast )
 		{
 			ASSERT( ScreenTextEntry::s_sLastAnswer != "" );	// validate should have assured this
-		
-			GAMESTATE->m_pCurSteps[PLAYER_1]->SetDescription( ScreenTextEntry::s_sLastAnswer );
+
+			Steps *pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
+			Song *pSong = SONGMAN->GetSongFromSteps( pSteps );
+
+			RString sOldDescription = pSteps->GetDescription();
+			pSteps->SetDescription( ScreenTextEntry::s_sLastAnswer );
+
+			RString sError;
+			NotesWriterSM sm;
+			if( !sm.WriteEditFileToMachine(pSong,pSteps,sError) )
+			{
+				ScreenPrompt::Prompt( SM_None, sError );
+				return;
+			}
 
 			SCREENMAN->SetNewScreen( this->m_sName ); // reload
 		}
