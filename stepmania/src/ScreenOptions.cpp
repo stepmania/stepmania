@@ -95,12 +95,6 @@ void ScreenOptions::Init()
 	ROW_INIT_COMMAND.Load( m_sName, "RowInitCommand" );
 	ROW_ON_COMMAND.Load( m_sName, "RowOnCommand" );
 	ROW_OFF_COMMAND.Load( m_sName, "RowOffCommand" );
-	EXPLANATION_X.Load( m_sName, EXPLANATION_X_NAME, NUM_PLAYERS );
-	EXPLANATION_Y.Load( m_sName, EXPLANATION_Y_NAME, NUM_PLAYERS );
-	EXPLANATION_ON_COMMAND.Load( m_sName, EXPLANATION_ON_COMMAND_NAME, NUM_PLAYERS );
-	EXPLANATION_TOGETHER_X.Load( m_sName, "ExplanationTogetherX" );
-	EXPLANATION_TOGETHER_Y.Load( m_sName, "ExplanationTogetherY" );
-	EXPLANATION_TOGETHER_ON_COMMAND.Load( m_sName, "ExplanationTogetherOnCommand" );
 	SHOW_SCROLL_BAR.Load( m_sName, "ShowScrollBar" );
 	SCROLL_BAR_HEIGHT.Load( m_sName, "ScrollBarHeight" );
 	SCROLL_BAR_TIME.Load( m_sName, "ScrollBarTime" );
@@ -150,23 +144,25 @@ void ScreenOptions::Init()
 		m_framePage.AddChild( &m_Cursor[p] );
 	}
 	
-	// on top:
-	FOREACH_PlayerNumber( p )
-	{
-		m_textExplanation[p].LoadFromFont( THEME->GetPathF(m_sName,"explanation") );
-		m_textExplanation[p].SetShadowLength( 0 );
-		m_textExplanation[p].SetDrawOrder( 2 );
-		m_framePage.AddChild( &m_textExplanation[p] );
-	}
-
 	switch( m_InputMode )
 	{
 	case INPUTMODE_INDIVIDUAL:
 		FOREACH_PlayerNumber( p )
-			m_textExplanation[p].SetXY( EXPLANATION_X.GetValue(p), EXPLANATION_Y.GetValue(p) );
+		{
+			m_textExplanation[p].LoadFromFont( THEME->GetPathF(m_sName,"explanation") );
+			m_textExplanation[p].SetDrawOrder( 2 );
+			m_textExplanation[p].SetName( "Explanation" + PlayerNumberToString(p) );
+			SET_XY( m_textExplanation[p] );
+			m_framePage.AddChild( &m_textExplanation[p] );
+
+		}
 		break;
 	case INPUTMODE_SHARE_CURSOR:
-		m_textExplanation[0].SetXY( EXPLANATION_TOGETHER_X, EXPLANATION_TOGETHER_Y );
+		m_textExplanationTogether.LoadFromFont( THEME->GetPathF(m_sName,"explanation") );
+		m_textExplanationTogether.SetDrawOrder( 2 );
+		m_textExplanationTogether.SetName( "ExplanationTogether" );
+		SET_XY( m_textExplanationTogether );
+		m_framePage.AddChild( &m_textExplanationTogether );
 		break;
 	default:
 		ASSERT(0);
@@ -335,6 +331,12 @@ void ScreenOptions::TweenOnScreen()
 
 	ON_COMMAND( m_sprMore );
 
+	FOREACH_PlayerNumber( p )
+		if( !m_textExplanation[p].GetName().empty() )
+			ON_COMMAND( m_textExplanation[p] );
+	if( !m_textExplanationTogether.GetName().empty() )
+		ON_COMMAND( m_textExplanationTogether );
+
 	m_framePage.SortByDrawOrder();
 }
 
@@ -346,6 +348,10 @@ void ScreenOptions::TweenOffScreen()
 		(*p)->RunCommands( ROW_OFF_COMMAND );
 
 	OFF_COMMAND( m_framePage );
+
+	FOREACH_PlayerNumber( p )
+		OFF_COMMAND( m_textExplanation[p] );
+	OFF_COMMAND( m_textExplanationTogether );
 }
 
 ScreenOptions::~ScreenOptions()
@@ -731,28 +737,21 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 	}
 
 	const RString text = GetExplanationText( iCurRow );
-
 	BitmapText *pText = NULL;
 	switch( m_InputMode )
 	{
 	case INPUTMODE_INDIVIDUAL:
 		pText = &m_textExplanation[pn];
-		if( pText->GetText() != text )
-		{
-			pText->FinishTweening();
-			pText->RunCommands( EXPLANATION_ON_COMMAND.GetValue(pn) );
-			pText->SetText( text );
-		}
 		break;
 	case INPUTMODE_SHARE_CURSOR:
-		pText = &m_textExplanation[0];
-		if( pText->GetText() != text )
-		{
-			pText->FinishTweening();
-			pText->RunCommands( EXPLANATION_TOGETHER_ON_COMMAND );
-			pText->SetText( text );
-		}
+		pText = &m_textExplanationTogether;
 		break;
+	}
+	if( pText->GetText() != text )
+	{
+		pText->FinishTweening();
+		ON_COMMAND( pText );
+		pText->SetText( text );
 	}
 }
 

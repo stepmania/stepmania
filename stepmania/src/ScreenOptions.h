@@ -118,6 +118,7 @@ protected:	// derived classes need access to these
 	AutoActor		m_sprLineHighlight[NUM_PLAYERS];
 
 	BitmapText		m_textExplanation[NUM_PLAYERS];
+	BitmapText		m_textExplanationTogether;
 	DualScrollBar		m_ScrollBar;
 	AutoActor		m_sprMore;
 
@@ -133,12 +134,6 @@ protected:	// derived classes need access to these
 	ThemeMetric<apActorCommands>	ROW_ON_COMMAND;
 	ThemeMetric<apActorCommands>	ROW_OFF_COMMAND;
 	LuaExpressionTransform		m_exprRowPositionTransformFunction;	// params: self,positionIndex,itemIndex,numItems
-	ThemeMetric1D<float>		EXPLANATION_X;
-	ThemeMetric1D<float>		EXPLANATION_Y;
-	ThemeMetric1D<apActorCommands>	EXPLANATION_ON_COMMAND;
-	ThemeMetric<float>		EXPLANATION_TOGETHER_X;
-	ThemeMetric<float>		EXPLANATION_TOGETHER_Y;
-	ThemeMetric<apActorCommands>	EXPLANATION_TOGETHER_ON_COMMAND;
 	ThemeMetric<bool>		SHOW_SCROLL_BAR;
 	ThemeMetric<float>		SCROLL_BAR_HEIGHT;
 	ThemeMetric<float>		SCROLL_BAR_TIME;
