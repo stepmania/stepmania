@@ -256,6 +256,7 @@ void ScreenManager::ThemeChanged()
 	// reload common sounds
 	m_soundStart.Load( THEME->GetPathS("Common","start") );
 	m_soundCoin.Load( THEME->GetPathS("Common","coin"), true );
+	m_soundCancel.Load( THEME->GetPathS("Common","cancel"), true );
 	m_soundInvalid.Load( THEME->GetPathS("Common","invalid") );
 	m_soundScreenshot.Load( THEME->GetPathS("Common","screenshot") );
 
@@ -850,6 +851,13 @@ void ScreenManager::PlayCoinSound()
 	RageSoundParams p;
 	p.m_bIsCriticalSound = true;
 	m_soundCoin.Play( &p );
+}
+
+void ScreenManager::PlayCancelSound()
+{
+	RageSoundParams p;
+	p.m_bIsCriticalSound = true;
+	m_soundCancel.Play( &p );
 }
 
 void ScreenManager::PlayScreenshotSound()

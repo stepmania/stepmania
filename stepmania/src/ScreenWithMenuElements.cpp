@@ -276,7 +276,7 @@ void ScreenWithMenuElements::Cancel( ScreenMessage smSendWhenDone )
 {
 	if( CANCEL_TRANSITIONS_OUT )
 	{
-		SCREENMAN->PlayStartSound();
+		SCREENMAN->PlayCancelSound();
 		StartTransitioningScreen( smSendWhenDone );
 		return;
 	}

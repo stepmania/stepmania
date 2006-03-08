@@ -92,12 +92,14 @@ private:
 public:
 	void PlayStartSound();
 	void PlayCoinSound();
+	void PlayCancelSound();
 	void PlayInvalidSound();
 	void PlayScreenshotSound();
 
 private:
 	RageSound	m_soundStart;
 	RageSound	m_soundCoin;
+	RageSound	m_soundCancel;
 	RageSound	m_soundInvalid;
 	RageSound	m_soundScreenshot;
 };

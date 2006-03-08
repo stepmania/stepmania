@@ -758,8 +758,6 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 
 void ScreenOptions::MenuBack( PlayerNumber pn )
 {
-	Screen::MenuBack( pn );
-
 	Cancel( SM_GoToPrevScreen );
 }
 
