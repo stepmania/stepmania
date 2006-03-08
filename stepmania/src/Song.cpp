@@ -1485,47 +1485,6 @@ float Song::GetStepsSeconds() const
 	return GetElapsedTimeFromBeat( m_fLastBeat ) - GetElapsedTimeFromBeat( m_fFirstBeat );
 }
 
-bool Song::IsEditDescriptionUnique( StepsType st, RString sPreferredDescription, const Steps *pExclude ) const
-{
-	FOREACH_CONST( Steps*, m_vpSteps, s )
-	{
-		Steps *pSteps = *s;
-
-		if( pSteps->GetDifficulty() != DIFFICULTY_EDIT )
-			continue;
-		if( pSteps->m_StepsType != st )
-			continue;
-		if( pSteps == pExclude )
-			continue;
-		if( pSteps->GetDescription() == sPreferredDescription )
-			return false;
-	}
-	return true;
-}
-
-void Song::MakeUniqueEditDescription( StepsType st, RString &sPreferredDescriptionInOut ) const
-{
-	if( IsEditDescriptionUnique( st, sPreferredDescriptionInOut, NULL ) )
-		return;
-
-	RString sTemp;
-
-	for( int i=0; i<1000; i++ )
-	{
-		// make name "My Edit" -> "My Edit2"
-		RString sNum = ssprintf("%d", i+1);
-		sTemp = sPreferredDescriptionInOut.Left( MAX_EDIT_STEPS_DESCRIPTION_LENGTH - sNum.size() ) + sNum;
-
-		if( IsEditDescriptionUnique(st, sTemp, NULL) )
-		{
-			sPreferredDescriptionInOut = sTemp;
-			return;
-		}
-	}
-	
-	// Edit limit guards should keep us from ever having more than 1000 edits per song.
-}
-
 
 // lua start
 #include "LuaBinding.h"

@@ -13,6 +13,7 @@
 #include "RageFileManager.h"
 #include "LocalizedString.h"
 #include "OptionRowHandler.h"
+#include "SongUtil.h"
 
 AutoScreenMessage( SM_BackFromRename )
 AutoScreenMessage( SM_BackFromDelete )
@@ -37,32 +38,6 @@ static MenuDef g_TempMenu(
 	"ScreenMiniMenuContext"
 );
 
-
-static bool ValidateEditStepsDescription( const RString &sAnswer, RString &sErrorOut )
-{
-	if( sAnswer.empty() )
-	{
-		sErrorOut = "Description cannot be blank";
-		return false;
-	}
-
-	// Steps name must be unique
-	vector<Steps*> v;
-	SONGMAN->GetStepsLoadedFromProfile( v, ProfileSlot_Machine );
-	FOREACH_CONST( Steps*, v, s )
-	{
-		if( GAMESTATE->m_pCurSteps[PLAYER_1].Get() == *s )
-			continue;	// don't comepare name against ourself
-
-		if( (*s)->GetDescription() == sAnswer )
-		{
-			sErrorOut = "There is already another edit steps with this description.  Each description must be unique.";
-			return false;
-		}
-	}
-
-	return true;
-}
 
 
 REGISTER_SCREEN_CLASS( ScreenOptionsManageEditSteps );
@@ -98,7 +73,7 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 		OptionRowDefinition &def = vHands.back()->m_Def;
 		def.m_sName = (*s)->GetDescription();
 		def.m_bAllowThemeTitle = false;	// not themable
-		def.m_sExplanationName = "Edit Steps";
+		def.m_sExplanationName = "Select Edit Steps";
 		def.m_vsChoices.clear();
 		RString sType = GAMEMAN->StepsTypeToLocalizedString( (*s)->m_StepsType );
 		def.m_vsChoices.push_back( sType );
@@ -199,7 +174,7 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 						ENTER_NAME_FOR_STEPS, 
 						GAMESTATE->m_pCurSteps[PLAYER_1]->GetDescription(), 
 						MAX_EDIT_STEPS_DESCRIPTION_LENGTH, 
-						ValidateEditStepsDescription );
+						SongUtil::ValidateCurrentEditStepsDescription );
 				}
 				break;
 			case StepsEditAction_Delete:

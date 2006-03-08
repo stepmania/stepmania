@@ -15,6 +15,7 @@
 #include "ScreenTextEntry.h"
 #include "ScreenPrompt.h"
 #include "LocalizedString.h"
+#include "SongUtil.h"
 
 #define EXPLANATION_TEXT( row )	THEME->GetString(m_sName,"Explanation"+EditMenuRowToString(row))
 #define EDIT_MENU_TYPE			THEME->GetMetric(m_sName,"EditMenuType")
@@ -138,27 +139,6 @@ static RString GetCopyDescription( const Steps *pSourceSteps )
 		s = DifficultyToLocalizedString( pSourceSteps->GetDifficulty() );
 	return s;
 }
-
-static LocalizedString YOU_MUST_SUPPLY_NAME	( "ScreenEditMenu", "You must supply a name for your new edit." );
-static LocalizedString EDIT_NAME_CONFLICTS	( "ScreenEditMenu", "The name you chose conflicts with another edit. Please use a different name." );
-static bool ValidateCurrentStepsDescription( const RString &s, RString &sErrorOut )
-{
-	ASSERT( GAMESTATE->m_pCurSteps[0]->GetDifficulty() == DIFFICULTY_EDIT );
-
-	if( s.empty() )
-	{
-		sErrorOut = YOU_MUST_SUPPLY_NAME;
-		return false;
-	}
-
-	if( !GAMESTATE->m_pCurSong->IsEditDescriptionUnique(GAMESTATE->m_pCurSteps[0]->m_StepsType, s, GAMESTATE->m_pCurSteps[0]) )
-	{
-		sErrorOut = EDIT_NAME_CONFLICTS;
-		return false;
-	}
-
-	return true;
-}
 	
 static void SetCurrentStepsDescription( const RString &s )
 {
@@ -258,7 +238,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			}
 
 			pSteps->SetDifficulty( dc );	// override difficulty with the user's choice
-			pSong->MakeUniqueEditDescription( st, sEditName ); 
+			SongUtil::MakeUniqueEditDescription( pSong, st, sEditName ); 
 			pSteps->SetDescription( sEditName );
 			pSong->AddSteps( pSteps );
 				
@@ -292,7 +272,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 					ENTER_EDIT_DESCRIPTION, 
 					GAMESTATE->m_pCurSteps[0]->GetDescription(), 
 					MAX_EDIT_STEPS_DESCRIPTION_LENGTH,
-					ValidateCurrentStepsDescription,
+					SongUtil::ValidateCurrentStepsDescription,
 					SetCurrentStepsDescription, 
 					DeleteCurrentSteps );
 			}

@@ -2524,36 +2524,6 @@ static void ChangeDescription( const RString &sNew )
 	pSteps->SetDescription(sNew);
 }
 
-static bool ValidateDescription( const RString &sAnswer, RString &sErrorOut )
-{
-	if( sAnswer.empty() )
-		return true;
-
-	/* Don't allow duplicate edit names within the same StepsType; edit names uniquely
-	 * identify the edit. */
-	Steps *pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
-	Song *pSong = GAMESTATE->m_pCurSong;
-	if( pSteps->GetDifficulty() != DIFFICULTY_EDIT )
-		return true;
-
-	/* If unchanged: */
-	if( pSteps->GetDescription() == sAnswer )
-		return true;
-
-	vector<Steps*> apSteps;
-	pSong->GetSteps( apSteps, pSteps->m_StepsType, DIFFICULTY_EDIT, -1, -1, sAnswer );
-
-	if( apSteps.size() == 0 )
-		return true;
-
-	/* The name is already used, */
-	if( apSteps.size() > 1 )
-		LOG->Warn( "Multiple edits for song \"%s\" named \"%s\"", pSong->GetSongDir().c_str(), sAnswer.c_str() );
-
-	sErrorOut = "The supplied name supplied conflicts with another edit.\n\nPlease use a different name.";
-	return false;
-}
-
 static void ChangeMainTitle( const RString &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
@@ -3148,7 +3118,7 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 			ENTER_NEW_DESCRIPTION, 
 			m_pSteps->GetDescription(), 
 			(dc == DIFFICULTY_EDIT) ? MAX_EDIT_STEPS_DESCRIPTION_LENGTH : 255,
-			ValidateDescription,
+			SongUtil::ValidateCurrentStepsDescription,
 			ChangeDescription, 
 			NULL 
 			);
@@ -3156,10 +3126,10 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 	}
 }
 
-static LocalizedString ENTER_MAIN_TITLE				("ScreenEdit","Enter a new main title.");
-static LocalizedString ENTER_SUB_TITLE				("ScreenEdit","Enter a new sub title.");
-static LocalizedString ENTER_ARTIST					("ScreenEdit","Enter a new artist.");
-static LocalizedString ENTER_CREDIT					("ScreenEdit","Enter a new credit.");
+static LocalizedString ENTER_MAIN_TITLE			("ScreenEdit","Enter a new main title.");
+static LocalizedString ENTER_SUB_TITLE			("ScreenEdit","Enter a new sub title.");
+static LocalizedString ENTER_ARTIST			("ScreenEdit","Enter a new artist.");
+static LocalizedString ENTER_CREDIT			("ScreenEdit","Enter a new credit.");
 static LocalizedString ENTER_MAIN_TITLE_TRANSLIT	("ScreenEdit","Enter a new main title transliteration.");
 static LocalizedString ENTER_SUB_TITLE_TRANSLIT		("ScreenEdit","Enter a new sub title transliteration.");
 static LocalizedString ENTER_ARTIST_TRANSLIT		("ScreenEdit","Enter a new artist transliteration.");

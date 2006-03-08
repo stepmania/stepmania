@@ -7,6 +7,7 @@
 #include "Difficulty.h"
 
 class Song;
+class Steps;
 class Profile;
 class XNode;
 
@@ -28,6 +29,11 @@ namespace SongUtil
 	void SortByMostRecentlyPlayedForMachine( vector<Song*> &vpSongsInOut );
 
 	int CompareSongPointersByGroup(const Song *pSong1, const Song *pSong2);
+
+	bool IsEditDescriptionUnique( const Song* pSong, StepsType st, const RString &sPreferredDescription, const Steps *pExclude );
+	RString MakeUniqueEditDescription( const Song* pSong, StepsType st, const RString &sPreferredDescription );
+	bool ValidateCurrentEditStepsDescription( const RString &sAnswer, RString &sErrorOut );
+	bool ValidateCurrentStepsDescription( const RString &sAnswer, RString &sErrorOut );
 }
 
 class SongID

@@ -383,6 +383,105 @@ void SongUtil::SortByMostRecentlyPlayedForMachine( vector<Song*> &vpSongsInOut )
 	g_mapSongSortVal.clear();
 }
 
+bool SongUtil::IsEditDescriptionUnique( const Song* pSong, StepsType st, const RString &sPreferredDescription, const Steps *pExclude )
+{
+	FOREACH_CONST( Steps*, pSong->GetAllSteps(), s )
+	{
+		Steps *pSteps = *s;
+
+		if( pSteps->GetDifficulty() != DIFFICULTY_EDIT )
+			continue;
+		if( pSteps->m_StepsType != st )
+			continue;
+		if( pSteps == pExclude )
+			continue;
+		if( pSteps->GetDescription() == sPreferredDescription )
+			return false;
+	}
+	return true;
+}
+
+RString SongUtil::MakeUniqueEditDescription( const Song *pSong, StepsType st, const RString &sPreferredDescription )
+{
+	if( IsEditDescriptionUnique( pSong, st, sPreferredDescription, NULL ) )
+		return sPreferredDescription;
+
+	RString sTemp;
+
+	for( int i=0; i<1000; i++ )
+	{
+		// make name "My Edit" -> "My Edit2"
+		RString sNum = ssprintf("%d", i+1);
+		sTemp = sPreferredDescription.Left( MAX_EDIT_STEPS_DESCRIPTION_LENGTH - sNum.size() ) + sNum;
+
+		if( IsEditDescriptionUnique(pSong, st, sTemp, NULL) )
+			return sTemp;
+	}
+	
+	// Edit limit guards should keep us from ever having more than 1000 edits per song.
+	ASSERT(0);
+	return RString();
+}
+
+static LocalizedString YOU_MUST_SUPPLY_NAME	( "SongUtil", "You must supply a name for your new edit." );
+static LocalizedString EDIT_NAME_CONFLICTS	( "SongUtil", "The name you chose conflicts with another edit. Please use a different name." );
+
+bool SongUtil::ValidateCurrentEditStepsDescription( const RString &sAnswer, RString &sErrorOut )
+{
+	Steps *pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
+
+	ASSERT( pSteps->IsAnEdit() );
+
+	if( sAnswer.empty() )
+	{
+		sErrorOut = YOU_MUST_SUPPLY_NAME;
+		return false;
+	}
+
+	// Steps name must be unique
+	vector<Steps*> v;
+	SONGMAN->GetStepsLoadedFromProfile( v, ProfileSlot_Machine );
+	FOREACH_CONST( Steps*, v, s )
+	{
+		if( pSteps == *s )
+			continue;	// don't comepare name against ourself
+
+		if( (*s)->GetDescription() == sAnswer )
+		{
+			sErrorOut = EDIT_NAME_CONFLICTS;
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool SongUtil::ValidateCurrentStepsDescription( const RString &sAnswer, RString &sErrorOut )
+{
+	if( sAnswer.empty() )
+		return true;
+
+	/* Don't allow duplicate edit names within the same StepsType; edit names uniquely
+	 * identify the edit. */
+	Steps *pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
+	Song *pSong = GAMESTATE->m_pCurSong;
+
+
+	/* If unchanged: */
+	if( pSteps->GetDescription() == sAnswer )
+		return true;
+
+	
+	if( pSteps->IsAnEdit() )
+	{
+		return SongUtil::ValidateCurrentEditStepsDescription( sAnswer, sErrorOut );
+	}
+
+	return true;
+}
+
+
+
 //////////////////////////////////
 // SongID
 //////////////////////////////////
