@@ -168,13 +168,13 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		return;
 	}
 
-	Song* pSong				= m_Selector.GetSelectedSong();
-	StepsType st			= m_Selector.GetSelectedStepsType();
-	Difficulty dc			= m_Selector.GetSelectedDifficulty();
-	Steps* pSteps			= m_Selector.GetSelectedSteps();
-//	StepsType soureNT		= m_Selector.GetSelectedSourceStepsType();
+	Song* pSong		= m_Selector.GetSelectedSong();
+	StepsType st		= m_Selector.GetSelectedStepsType();
+	Difficulty dc		= m_Selector.GetSelectedDifficulty();
+	Steps* pSteps		= m_Selector.GetSelectedSteps();
+//	StepsType soureNT	= m_Selector.GetSelectedSourceStepsType();
 //	Difficulty sourceDiff	= m_Selector.GetSelectedSourceDifficulty();
-	Steps* pSourceSteps		= m_Selector.GetSelectedSourceSteps();
+	Steps* pSourceSteps	= m_Selector.GetSelectedSourceSteps();
 	EditMenuAction action	= m_Selector.GetSelectedAction();
 
 	GAMESTATE->m_pCurSong.Set( pSong );
