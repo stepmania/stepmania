@@ -24,6 +24,8 @@ ScreenDemonstration::ScreenDemonstration()
 
 void ScreenDemonstration::Init()
 {
+	GAMESTATE->Reset();
+
 	// Choose a Style
 	{
 		vector<RString> v;
