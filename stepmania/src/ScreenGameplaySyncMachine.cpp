@@ -79,6 +79,9 @@ void ScreenGameplaySyncMachine::ResetAndRestartCurrentSong()
 	m_pSoundMusic->Stop();
 	ReloadCurrentSong();
 	StartPlayingSong( 4, 0 );
+
+	// reset autosync
+	AdjustSync::s_iAutosyncOffsetSample = 0;
 }
 
 void ScreenGameplaySyncMachine::RefreshText()
