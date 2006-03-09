@@ -60,6 +60,11 @@ static DialogDriver *g_pImpl = NULL;
 static DialogDriver_Null g_NullDriver;
 static bool g_bWindowed = true;		// Start out true so that we'll show errors before DISPLAY is init'd.
 
+static bool DialogsEnabled()
+{
+	return !g_bWindowed;
+}
+
 void Dialog::Init()
 {
 	if( g_pImpl != NULL )
@@ -149,7 +154,7 @@ void Dialog::OK( RString sMessage, RString sID )
 	RageThread::SetIsShowingDialog( true );
 	
 	// only show Dialog if windowed
-	if( !g_bWindowed )
+	if( DialogsEnabled() )
 		g_NullDriver.OK( sMessage, sID );
 	else
 		g_pImpl->OK( sMessage, sID );	// call derived version
@@ -171,7 +176,7 @@ Dialog::Result Dialog::AbortRetryIgnore( RString sMessage, RString sID )
 	
 	// only show Dialog if windowed
 	Dialog::Result ret;
-	if( !g_bWindowed )
+	if( DialogsEnabled() )
 		ret = g_NullDriver.AbortRetryIgnore( sMessage, sID );
 	else
 		ret = g_pImpl->AbortRetryIgnore( sMessage, sID );	// call derived version
@@ -195,7 +200,7 @@ Dialog::Result Dialog::AbortRetry( RString sMessage, RString sID )
 
 	// only show Dialog if windowed
 	Dialog::Result ret;
-	if( !g_bWindowed )
+	if( DialogsEnabled() )
 		ret = g_NullDriver.AbortRetry( sMessage, sID );
 	else
 		ret = g_pImpl->AbortRetry( sMessage, sID );	// call derived version
