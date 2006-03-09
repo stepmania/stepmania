@@ -63,10 +63,6 @@
  * in player options menus, but it should in the options menu.
  */
 
-static RString EXPLANATION_X_NAME( size_t p )			{ return ssprintf("ExplanationP%dX",int(p+1)); }
-static RString EXPLANATION_Y_NAME( size_t p )			{ return ssprintf("ExplanationP%dY",int(p+1)); }
-static RString EXPLANATION_ON_COMMAND_NAME( size_t p )	{ return ssprintf("ExplanationP%dOnCommand",int(p+1)); }
-
 static RString OPTION_EXPLANATION( RString s )
 {
 	return THEME->GetString("OptionExplanations",s);
