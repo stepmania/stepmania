@@ -472,8 +472,6 @@ bool SongUtil::ValidateCurrentStepsDescription( const RString &sAnswer, RString 
 	/* Don't allow duplicate edit names within the same StepsType; edit names uniquely
 	 * identify the edit. */
 	Steps *pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
-	Song *pSong = GAMESTATE->m_pCurSong;
-
 
 	/* If unchanged: */
 	if( pSteps->GetDescription() == sAnswer )
