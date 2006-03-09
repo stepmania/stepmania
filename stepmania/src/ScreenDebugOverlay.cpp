@@ -119,6 +119,7 @@ static RString GetDebugButtonName( const IDebugLine *pLine )
 		return INPUTMAN->GetDeviceSpecificInputString(pLine->m_Button);
 }
 
+static LocalizedString DEBUG_MENU( "ScreenDebugOverlay", "Debug Menu" );
 void ScreenDebugOverlay::Init()
 {
 	Screen::Init();
@@ -183,7 +184,7 @@ void ScreenDebugOverlay::Init()
 	m_textHeader.SetX( SCREEN_LEFT+20 );
 	m_textHeader.SetY( SCREEN_TOP+20 );
 	m_textHeader.SetZoom( 1.0f );
-	m_textHeader.SetText( "Debug Menu" );
+	m_textHeader.SetText( DEBUG_MENU );
 	this->AddChild( &m_textHeader );
 
 	FOREACH_CONST( IDebugLine*, *g_pvpSubscribers, p )
