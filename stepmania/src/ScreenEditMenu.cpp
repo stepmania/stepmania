@@ -62,7 +62,7 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 		m_Selector.RefreshAll();
 		RefreshNumStepsLoadedFromProfile();
 	}
-	else if( SM == SM_Success )
+	else if( SM == SM_Success && m_Selector.GetSelectedAction() == EditMenuAction_Delete )
 	{
 		LOG->Trace( "Delete successful; deleting steps from memory" );
 
@@ -80,7 +80,7 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 		}
 		SCREENMAN->SendMessageToTopScreen( SM_RefreshSelector );
 	}
-	else if( SM == SM_Failure )
+	else if( SM == SM_Failure && m_Selector.GetSelectedAction() == EditMenuAction_Delete )
 	{
 		LOG->Trace( "Delete failed; not deleting steps" );
 	}
