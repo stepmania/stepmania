@@ -6,13 +6,13 @@
 #include "LocalizedString.h"
 #include "AdjustSync.h"
 
-static LocalizedString EARLIER					("ScreenSaveSync","earlier");
-static LocalizedString LATER					("ScreenSaveSync","later");
+static LocalizedString EARLIER			("ScreenSaveSync","earlier");
+static LocalizedString LATER			("ScreenSaveSync","later");
 static LocalizedString CHANGED_GLOBAL_OFFSET	("ScreenSaveSync","You have changed the Global Offset from %+.3f to %+.3f (change of %+.3f, making the notes %s).");
-static LocalizedString CHANGED_SONG_OFFSET		("ScreenSaveSync","You have changed the Song Offset from %+.3f to %+.3f (change of %+.3f, making the notes %s).");
-static LocalizedString CHANGED_BPM				("ScreenSaveSync","The BPM segment number #%d changed from %+.3f BPS to %+.3f BPS (change of %+.3f).");
-static LocalizedString CHANGED_STOP				("ScreenSaveSync","The stop segment #%d changed from %+.3f seconds to %+.3f seconds (change of %+.3f).");
-static LocalizedString CHANGED_TIMING_OF		("ScreenSaveSync","You have changed the timing of");
+static LocalizedString CHANGED_SONG_OFFSET	("ScreenSaveSync","You have changed the Song Offset from %+.3f to %+.3f (change of %+.3f, making the notes %s).");
+static LocalizedString CHANGED_BPM		("ScreenSaveSync","The BPM segment number #%d changed from %+.3f BPS to %+.3f BPS (change of %+.3f).");
+static LocalizedString CHANGED_STOP		("ScreenSaveSync","The stop segment #%d changed from %+.3f seconds to %+.3f seconds (change of %+.3f).");
+static LocalizedString CHANGED_TIMING_OF	("ScreenSaveSync","You have changed the timing of");
 static LocalizedString WOULD_YOU_LIKE_TO_SAVE	("ScreenSaveSync","Would you like to save these changes?");
 static LocalizedString CHOOSING_NO_WILL_DISCARD	("ScreenSaveSync","Choosing NO will discard your changes.");
 static RString GetPromptText()
@@ -20,8 +20,8 @@ static RString GetPromptText()
 	RString s;
 
 	{
-		float fOld = AdjustSync::s_fGlobalOffsetSecondsOriginal;
-		float fNew = PREFSMAN->m_fGlobalOffsetSeconds;
+		float fOld = Quantize( AdjustSync::s_fGlobalOffsetSecondsOriginal, 0.001f );
+		float fNew = Quantize( PREFSMAN->m_fGlobalOffsetSeconds, 0.001f ) ;
 		float fDelta = fNew - fOld;
 
 		if( fabs(fDelta) > 0.00001 )
@@ -40,8 +40,8 @@ static RString GetPromptText()
 	if( GAMESTATE->m_pCurSong.Get() )
 	{
 		{
-			float fOld = AdjustSync::s_pTimingDataOriginal->m_fBeat0OffsetInSeconds;
-			float fNew = GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds;
+			float fOld = Quantize( AdjustSync::s_pTimingDataOriginal->m_fBeat0OffsetInSeconds, 0.001f );
+			float fNew = Quantize( GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds, 0.001f );
 			float fDelta = fNew - fOld;
 
 			if( fabs(fDelta) > 0.00001 )
@@ -57,8 +57,8 @@ static RString GetPromptText()
 
 		for( unsigned i=0; i<GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments.size(); i++ )
 		{
-			float fOld = AdjustSync::s_pTimingDataOriginal->m_BPMSegments[i].m_fBPS;
-			float fNew = GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments[i].m_fBPS;
+			float fOld = Quantize( AdjustSync::s_pTimingDataOriginal->m_BPMSegments[i].m_fBPS, 0.001f );
+			float fNew = Quantize( GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments[i].m_fBPS, 0.001f );
 			float fDelta = fNew - fOld;
 
 			if( fabs(fDelta) > 0.00001 )
@@ -74,8 +74,8 @@ static RString GetPromptText()
 
 		for( unsigned i=0; i<GAMESTATE->m_pCurSong->m_Timing.m_StopSegments.size(); i++ )
 		{
-			float fOld = AdjustSync::s_pTimingDataOriginal->m_StopSegments[i].m_fStopSeconds;
-			float fNew = GAMESTATE->m_pCurSong->m_Timing.m_StopSegments[i].m_fStopSeconds;
+			float fOld = Quantize( AdjustSync::s_pTimingDataOriginal->m_StopSegments[i].m_fStopSeconds, 0.001f );
+			float fNew = Quantize( GAMESTATE->m_pCurSong->m_Timing.m_StopSegments[i].m_fStopSeconds, 0.001f );
 			float fDelta = fNew - fOld;
 
 			if( fabs(fDelta) > 0.00001 )
