@@ -27,7 +27,7 @@ static RString GetStatsLineTitle( PlayerNumber pn, EndingStatsLine line )
 	switch( line )
 	{
 	case CALORIES_TODAY:	return "Calories Today";
-	case CURRENT_COMBO:		return "Current Combo";
+	case CURRENT_COMBO:	return "Current Combo";
 	case PERCENT_COMPLETE:
 		{
 			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
