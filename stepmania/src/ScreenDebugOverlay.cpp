@@ -266,15 +266,17 @@ void ScreenDebugOverlay::UpdateText()
 	FOREACH_CONST( IDebugLine*, *g_pvpSubscribers, p )
 	{
 		int i = p-g_pvpSubscribers->begin();
+		float fOffsetFromCenterIndex = i - (NUM_DEBUG_LINES-1)/2.0f; 
+		float fY = SCREEN_CENTER_Y+10 + fOffsetFromCenterIndex * 16;
 
 		BitmapText &txt1 = *m_vptextButton[i];
 		txt1.SetX( SCREEN_CENTER_X-50 );
-		txt1.SetY( SCALE(i, 0, NUM_DEBUG_LINES-1, SCREEN_TOP+60, SCREEN_BOTTOM-40) );
+		txt1.SetY( fY );
 		txt1.SetZoom( 0.7f );
 
 		BitmapText &txt2 = *m_vptextFunction[i];
 		txt2.SetX( SCREEN_CENTER_X-30 );
-		txt2.SetY( SCALE(i, 0, NUM_DEBUG_LINES-1, SCREEN_TOP+60, SCREEN_BOTTOM-40) );
+		txt2.SetY( fY );
 		txt2.SetZoom( 0.7f );
 
 		RString s1 = (*p)->GetDescription();
