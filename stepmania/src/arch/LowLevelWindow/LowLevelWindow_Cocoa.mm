@@ -214,7 +214,8 @@ RString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 	
 	ASSERT( p.bpp == 16 || p.bpp == 32 );
 	
-	if( p.windowed )
+	// If we don't have focus, we cannot be full screen.
+	if( p.windowed || !HOOKS->AppHasFocus() )
 	{		
 		if( bRebuildContext )
 		{
