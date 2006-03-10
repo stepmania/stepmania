@@ -342,7 +342,6 @@ void ScreenOptionsEditCourse::HandleMessage( const RString& sMessage )
 		const vector<PlayerNumber> vpns( 1, GAMESTATE->m_MasterPlayerNumber );
 		OptionRow &row = *m_pRows[EditCourseRow_Meter];
 		
-		row.Reload();
 		ImportOptions( EditCourseRow_Meter, vpns );
 		row.AfterImportOptions( GAMESTATE->m_MasterPlayerNumber );
 	}
