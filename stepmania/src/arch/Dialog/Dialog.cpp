@@ -155,9 +155,9 @@ void Dialog::OK( RString sMessage, RString sID )
 	
 	// only show Dialog if windowed
 	if( DialogsEnabled() )
-		g_NullDriver.OK( sMessage, sID );
-	else
 		g_pImpl->OK( sMessage, sID );	// call derived version
+	else
+		g_NullDriver.OK( sMessage, sID );
 	
 	RageThread::SetIsShowingDialog( false );
 }
@@ -177,9 +177,9 @@ Dialog::Result Dialog::AbortRetryIgnore( RString sMessage, RString sID )
 	// only show Dialog if windowed
 	Dialog::Result ret;
 	if( DialogsEnabled() )
-		ret = g_NullDriver.AbortRetryIgnore( sMessage, sID );
-	else
 		ret = g_pImpl->AbortRetryIgnore( sMessage, sID );	// call derived version
+	else
+		ret = g_NullDriver.AbortRetryIgnore( sMessage, sID );
 	
 	RageThread::SetIsShowingDialog( false );
 
@@ -201,9 +201,9 @@ Dialog::Result Dialog::AbortRetry( RString sMessage, RString sID )
 	// only show Dialog if windowed
 	Dialog::Result ret;
 	if( DialogsEnabled() )
-		ret = g_NullDriver.AbortRetry( sMessage, sID );
-	else
 		ret = g_pImpl->AbortRetry( sMessage, sID );	// call derived version
+	else
+		ret = g_NullDriver.AbortRetry( sMessage, sID );
 	
 	RageThread::SetIsShowingDialog( false );
 
