@@ -174,7 +174,7 @@ void ThemeManager::GetLanguages( vector<RString>& AddTo )
 		GetLanguagesForTheme( g_vThemes[i].sThemeName, AddTo );
 
 	FOREACH( RString, AddTo, s )
-		s->MakeUpper();
+		s->MakeLower();
 
 	// remove dupes
 	sort( AddTo.begin(), AddTo.end() );
