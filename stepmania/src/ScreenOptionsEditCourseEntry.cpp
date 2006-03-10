@@ -12,14 +12,15 @@
 
 enum EditCourseEntryRow
 {
-	ROW_SONG_GROUP, 
-	ROW_SONG, 
-	ROW_BASE_DIFFICULTY, 
+	ROW_SONG_GROUP,
+	ROW_SONG,
+	ROW_BASE_DIFFICULTY,
 	ROW_LOW_METER,
-	ROW_HIGH_METER, 
-	ROW_SORT, 
-	ROW_CHOOSE_INDEX, 
-	ROW_SET_MODS, 
+	ROW_HIGH_METER,
+	ROW_SORT,
+	ROW_CHOOSE_INDEX,
+	ROW_SECRET,
+	ROW_SET_MODS,
 	ROW_DONE,
 	NUM_EditCourseEntryRow
 };
@@ -166,6 +167,15 @@ void ScreenOptionsEditCourseEntry::Init()
 	pHand->m_Def.m_bOneChoiceForAllPlayers = true;
 	for( int i=0; i<20; i++ )
 		pHand->m_Def.m_vsChoices.push_back( FormatNumberAndSuffix(i+1) );
+	vHands.push_back( pHand );
+	
+	pHand = OptionRowHandlerUtil::MakeNull();
+	pHand->m_Def.m_sName = "Secret";
+	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+	pHand->m_Def.m_bExportOnChange = true;
+	pHand->m_Def.m_bOneChoiceForAllPlayers = true;
+	pHand->m_Def.m_vsChoices.push_back( "No" );
+	pHand->m_Def.m_vsChoices.push_back( "Yes" );
 	vHands.push_back( pHand );
 	
 	SHOW_MODS_ROW.Load( m_sName, "ShowModsRow" );
@@ -367,6 +377,9 @@ void ScreenOptionsEditCourseEntry::ImportOptions( int iRow, const vector<PlayerN
 		row.SetOneSharedSelection( iChoice );
 		break;
 	}
+	case ROW_SECRET:
+		row.SetOneSharedSelection( ce.bSecret ? 1 : 0 );
+		break;
 	}
 }
 
@@ -443,6 +456,9 @@ void ScreenOptionsEditCourseEntry::ExportOptions( int iRow, const vector<PlayerN
 		ce.iChooseIndex = iChoice;
 		break;
 	}
+	case ROW_SECRET:
+		ce.bSecret = iChoice;
+		break;
 	}
 }
 
