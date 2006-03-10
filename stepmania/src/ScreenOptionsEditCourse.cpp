@@ -339,7 +339,7 @@ void ScreenOptionsEditCourse::HandleMessage( const RString& sMessage )
 {
 	if( sMessage == "EditCourseDifficultyChanged" )
 	{
-#if 1
+#if 0
 		const int iMeter = GAMESTATE->m_pCurCourse->m_iCustomMeter[GAMESTATE->m_cdEdit];
 		int iSel;
 		
@@ -350,9 +350,11 @@ void ScreenOptionsEditCourse::HandleMessage( const RString& sMessage )
 		ChangeValueInRowAbsolute( EditCourseRow_Meter, GAMESTATE->m_MasterPlayerNumber, iSel, false );
 #else
 		const vector<PlayerNumber> vpns( 1, GAMESTATE->m_MasterPlayerNumber );
+		OptionRow &row = *m_pRows[EditCourseRow_Meter];
 		
+		row.Reload();
 		ImportOptions( EditCourseRow_Meter, vpns );
-		AfterChangeValueOrRow( GAMESTATE->m_MasterPlayerNumber );
+		row.AfterImportOptions( GAMESTATE->m_MasterPlayerNumber );
 #endif
 	}
 	ScreenOptionsEditCourseSubMenu::HandleMessage( sMessage );

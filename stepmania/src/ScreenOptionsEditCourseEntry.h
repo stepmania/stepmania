@@ -26,12 +26,13 @@ protected:
 	virtual void ProcessMenuStart( const InputEventPlus &input );
 
 	CourseEntry m_Original;	// use this to revert when cancelling
+	ThemeMetric<bool> SHOW_MODS_ROW;
 };
 
 #endif
 
 /*
- * (c) 2003-2004 Chris Danford
+ * (c) 2003-2006 Chris Danford, Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
