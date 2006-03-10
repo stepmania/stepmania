@@ -40,9 +40,8 @@ void ScreenMapControllers::Init()
 
 
 	m_textDevices.LoadFromFont( THEME->GetPathF("Common","normal") );
-	m_textDevices.SetXY( SCREEN_CENTER_X, SCREEN_TOP+30 );
-	m_textDevices.SetDiffuse( RageColor(1,1,1,1) );
-	m_textDevices.SetZoom( 0.6f );
+	m_textDevices.SetName( "Devices" );
+	SET_XY_AND_ON_COMMAND( m_textDevices );
 	this->AddChild( &m_textDevices );
 
 
@@ -422,6 +421,7 @@ void ScreenMapControllers::TweenOffScreen()
 	ScreenWithMenuElements::TweenOffScreen();
 
 	OFF_COMMAND( m_LineScroller );
+	OFF_COMMAND( m_textDevices );
 }
 
 Actor *ScreenMapControllers::GetActorWithFocus()
