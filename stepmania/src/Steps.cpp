@@ -237,9 +237,16 @@ void Steps::Compress() const
 		return;
 	}
 
-	if( !m_sFilename.empty() )
+	if( !m_sFilename.empty() && m_LoadedFromProfile == ProfileSlot_INVALID )
 	{
-		/* We have a file on disk; clear all data in memory. */
+		/*
+		 * We have a file on disk; clear all data in memory.
+		 *
+		 * Data on profiles can't be accessed normally (need to mount and time-out the
+		 * device), and when we start a game and load edits, we want to be sure that
+		 * it'll be available if the user picks it and pulls the device.  Also,
+		 * Decompress() doesn't know how to load .edits.
+		 */
 		m_pNoteData->Init();
 		m_bNoteDataIsFilled = false;
 
