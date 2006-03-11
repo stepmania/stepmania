@@ -2884,8 +2884,8 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				TurnType tt = (TurnType)iAnswers[c];
 				switch( tt )
 				{
-				case left:			NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::left );			break;
-				case right:			NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::right );			break;
+				case left:		NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::left );		break;
+				case right:		NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::right );		break;
 				case mirror:		NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::mirror );		break;
 				case shuffle:		NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::shuffle );		break;
 				case super_shuffle:	NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::super_shuffle );	break;
@@ -2905,23 +2905,23 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 
 				switch( tt )
 				{
-				case noholds:	NoteDataUtil::RemoveHoldNotes( m_NoteDataEdit, iBeginRow, iEndRow );	break;
-				case nomines:	NoteDataUtil::RemoveMines( m_NoteDataEdit, iBeginRow, iBeginRow );	break;
-				case little:	NoteDataUtil::Little( m_NoteDataEdit, iBeginRow, iEndRow );	break;
-				case wide:		NoteDataUtil::Wide( m_NoteDataEdit, iBeginRow, iEndRow );	break;
+				case noholds:		NoteDataUtil::RemoveHoldNotes( m_NoteDataEdit, iBeginRow, iEndRow );	break;
+				case nomines:		NoteDataUtil::RemoveMines( m_NoteDataEdit, iBeginRow, iBeginRow );	break;
+				case little:		NoteDataUtil::Little( m_NoteDataEdit, iBeginRow, iEndRow );		break;
+				case wide:		NoteDataUtil::Wide( m_NoteDataEdit, iBeginRow, iEndRow );		break;
 				case big:		NoteDataUtil::Big( m_NoteDataEdit, iBeginRow, iEndRow );		break;
-				case quick:		NoteDataUtil::Quick( m_NoteDataEdit, iBeginRow, iEndRow );	break;
-				case skippy:	NoteDataUtil::Skippy( m_NoteDataEdit, iBeginRow, iEndRow );	break;
-				case add_mines:	NoteDataUtil::AddMines( m_NoteDataEdit, iBeginRow, iEndRow );	break;
-				case echo:		NoteDataUtil::Echo( m_NoteDataEdit, iBeginRow, iEndRow );	break;
-				case stomp:		NoteDataUtil::Stomp( m_NoteDataEdit, st, iBeginRow, iEndRow );	break;
-				case planted:	NoteDataUtil::Planted( m_NoteDataEdit, iBeginRow, iEndRow );	break;
-				case floored:	NoteDataUtil::Floored( m_NoteDataEdit, iBeginRow, iEndRow );	break;
-				case twister:	NoteDataUtil::Twister( m_NoteDataEdit, iBeginRow, iEndRow );	break;
-				case nojumps:	NoteDataUtil::RemoveJumps( m_NoteDataEdit, iBeginRow, iEndRow );	break;
-				case nohands:	NoteDataUtil::RemoveHands( m_NoteDataEdit, iBeginRow, iEndRow );	break;
-				case noquads:	NoteDataUtil::RemoveQuads( m_NoteDataEdit, iBeginRow, iEndRow );	break;
-				case nostretch:	NoteDataUtil::RemoveStretch( m_NoteDataEdit, st, iBeginRow, iBeginRow );	break;
+				case quick:		NoteDataUtil::Quick( m_NoteDataEdit, iBeginRow, iEndRow );		break;
+				case skippy:		NoteDataUtil::Skippy( m_NoteDataEdit, iBeginRow, iEndRow );		break;
+				case add_mines:		NoteDataUtil::AddMines( m_NoteDataEdit, iBeginRow, iEndRow );		break;
+				case echo:		NoteDataUtil::Echo( m_NoteDataEdit, iBeginRow, iEndRow );		break;
+				case stomp:		NoteDataUtil::Stomp( m_NoteDataEdit, st, iBeginRow, iEndRow );		break;
+				case planted:		NoteDataUtil::Planted( m_NoteDataEdit, iBeginRow, iEndRow );		break;
+				case floored:		NoteDataUtil::Floored( m_NoteDataEdit, iBeginRow, iEndRow );		break;
+				case twister:		NoteDataUtil::Twister( m_NoteDataEdit, iBeginRow, iEndRow );		break;
+				case nojumps:		NoteDataUtil::RemoveJumps( m_NoteDataEdit, iBeginRow, iEndRow );	break;
+				case nohands:		NoteDataUtil::RemoveHands( m_NoteDataEdit, iBeginRow, iEndRow );	break;
+				case noquads:		NoteDataUtil::RemoveQuads( m_NoteDataEdit, iBeginRow, iEndRow );	break;
+				case nostretch:		NoteDataUtil::RemoveStretch( m_NoteDataEdit, st, iBeginRow, iBeginRow );break;
 				default:		ASSERT(0);
 				}
 
@@ -2948,17 +2948,17 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 						NoteDataUtil::RemoveStretch( m_Clipboard, GAMESTATE->m_pCurSteps[0]->m_StepsType );
 					}
 					break;
-				case backwards:				NoteDataUtil::Backwards( m_Clipboard );			break;
-				case swap_sides:			NoteDataUtil::SwapSides( m_Clipboard );			break;
-				case copy_left_to_right:	NoteDataUtil::CopyLeftToRight( m_Clipboard );	break;
-				case copy_right_to_left:	NoteDataUtil::CopyRightToLeft( m_Clipboard );	break;
-				case clear_left:			NoteDataUtil::ClearLeft( m_Clipboard );			break;
-				case clear_right:			NoteDataUtil::ClearRight( m_Clipboard );		break;
+				case backwards:			NoteDataUtil::Backwards( m_Clipboard );			break;
+				case swap_sides:		NoteDataUtil::SwapSides( m_Clipboard );			break;
+				case copy_left_to_right:	NoteDataUtil::CopyLeftToRight( m_Clipboard );		break;
+				case copy_right_to_left:	NoteDataUtil::CopyRightToLeft( m_Clipboard );		break;
+				case clear_left:		NoteDataUtil::ClearLeft( m_Clipboard );			break;
+				case clear_right:		NoteDataUtil::ClearRight( m_Clipboard );		break;
 				case collapse_to_one:		NoteDataUtil::CollapseToOne( m_Clipboard );		break;
-				case collapse_left:			NoteDataUtil::CollapseLeft( m_Clipboard );		break;
-				case shift_left:			NoteDataUtil::ShiftLeft( m_Clipboard );			break;
-				case shift_right:			NoteDataUtil::ShiftRight( m_Clipboard );		break;
-				default:		ASSERT(0);
+				case collapse_left:		NoteDataUtil::CollapseLeft( m_Clipboard );		break;
+				case shift_left:		NoteDataUtil::ShiftLeft( m_Clipboard );			break;
+				case shift_right:		NoteDataUtil::ShiftRight( m_Clipboard );		break;
+				default:			ASSERT(0);
 				}
 
 				HandleAreaMenuChoice( paste_at_begin_marker );
@@ -2980,7 +2980,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				case compress_4_3:	fScale = 0.75f;		break;
 				case expand_4_3:	fScale = 4.0f/3;	break;
 				case expand_3_2:	fScale = 1.5f;		break;
-				case expand_2x:		fScale = 2;			break;
+				case expand_2x:		fScale = 2;		break;
 				default:		ASSERT(0);
 				}
 
@@ -3071,11 +3071,11 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				// be sure not to clobber the row at the start - a row at the end
 				// can be dropped safely, though
 				NoteDataUtil::DeleteRows( m_NoteDataEdit, 
-										 m_NoteFieldEdit.m_iBeginMarker + 1,
-										 m_NoteFieldEdit.m_iEndMarker-m_NoteFieldEdit.m_iBeginMarker
-									   );
+						m_NoteFieldEdit.m_iBeginMarker + 1,
+						m_NoteFieldEdit.m_iEndMarker-m_NoteFieldEdit.m_iBeginMarker
+					);
 				m_pSong->m_Timing.DeleteRows( m_NoteFieldEdit.m_iBeginMarker,
-										     m_NoteFieldEdit.m_iEndMarker-m_NoteFieldEdit.m_iBeginMarker );
+						m_NoteFieldEdit.m_iEndMarker-m_NoteFieldEdit.m_iBeginMarker );
 				m_pSong->m_Timing.SetStopAtRow( m_NoteFieldEdit.m_iBeginMarker, fStopLength );
 				m_NoteFieldEdit.m_iBeginMarker = -1;
 				m_NoteFieldEdit.m_iEndMarker = -1;
@@ -3192,8 +3192,8 @@ void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, const vector<int> &iAns
 	switch( iAnswers[file1_type] )
 	{
 	default:	ASSERT(0);
-	case none:				newChange.m_def.m_sFile1 = "";								break;
-	case dynamic_random:	newChange.m_def.m_sFile1 = RANDOM_BACKGROUND_FILE;			break;
+	case none:			newChange.m_def.m_sFile1 = "";					break;
+	case dynamic_random:		newChange.m_def.m_sFile1 = RANDOM_BACKGROUND_FILE;		break;
 	case baked_random:		newChange.m_def.m_sFile1 = GetOneBakedRandomFile( m_pSong );	break;
 	case song_bganimation:
 	case song_movie:
@@ -3211,8 +3211,8 @@ void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, const vector<int> &iAns
 	switch( iAnswers[file2_type] )
 	{
 	default:	ASSERT(0);
-	case none:				newChange.m_def.m_sFile2 = "";									break;
-	case dynamic_random:	newChange.m_def.m_sFile2 = RANDOM_BACKGROUND_FILE;				break;
+	case none:				newChange.m_def.m_sFile2 = "";				break;
+	case dynamic_random:		newChange.m_def.m_sFile2 = RANDOM_BACKGROUND_FILE;		break;
 	case baked_random:		newChange.m_def.m_sFile2 = GetOneBakedRandomFile( m_pSong );	break;
 	case song_bganimation:
 	case song_movie:
@@ -3309,7 +3309,7 @@ void ScreenEdit::SaveUndo()
 }
 
 static LocalizedString UNDO			("ScreenEdit", "Undo");
-static LocalizedString CANT_UNDO	("ScreenEdit", "Can't undo - no undo data.");
+static LocalizedString CANT_UNDO		("ScreenEdit", "Can't undo - no undo data.");
 void ScreenEdit::Undo()
 {
 	if( m_bHasUndo )
@@ -3335,9 +3335,9 @@ void ScreenEdit::ClearUndo()
 }
 
 static LocalizedString CREATES_MORE_THAN_NOTES	( "ScreenEdit", "This change creates more than %d notes in a measure." );
-static LocalizedString MORE_THAN_NOTES			( "ScreenEdit", "More than %d notes per measure is not allowed.  This change has been reverted." );
+static LocalizedString MORE_THAN_NOTES		( "ScreenEdit", "More than %d notes per measure is not allowed.  This change has been reverted." );
 static LocalizedString CREATES_NOTES_PAST_END	( "ScreenEdit", "This change creates notes past the end of the music and is not allowed." );
-static LocalizedString CHANGE_REVERTED			( "ScreenEdit", "The change has been reverted." );
+static LocalizedString CHANGE_REVERTED		( "ScreenEdit", "The change has been reverted." );
 void ScreenEdit::CheckNumberOfNotesAndUndo()
 {
 	for( int row=0; row<=m_NoteDataEdit.GetLastRow(); row+=ROWS_PER_MEASURE )
