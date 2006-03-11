@@ -252,7 +252,7 @@ void NotesWriterSM::GetEditFileContents( const Song *pSong, const Steps *pSteps,
 	split( sDir, "/", asParts );
 	if( asParts.size() )
 		sDir = join( "/", asParts.begin()+1, asParts.end() );
-	sOut += ssprintf( "#SONG:%s;\n", sDir.c_str() );
+	sOut += ssprintf( "#SONG:%s;\r\n", sDir.c_str() );
 	sOut += GetSMNotesTag( *pSong, *pSteps, false );
 }
 
