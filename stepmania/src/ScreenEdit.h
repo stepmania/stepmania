@@ -22,7 +22,8 @@
 const int NUM_EDIT_BUTTON_COLUMNS = 10;
 struct MenuDef;
 
-enum EditState {
+enum EditState
+{
 	STATE_EDITING,
 	STATE_RECORDING,
 	STATE_RECORDING_PAUSED,
@@ -219,7 +220,7 @@ protected:
 	float			m_fTrailingBeat;	// this approaches GAMESTATE->m_fSongBeat, which is the actual beat
 	/* The location we were at when shift was pressed, or
 	 * -1 when shift isn't pressed: */
-	int m_iShiftAnchor;
+	int			m_iShiftAnchor;
 
 	NoteData		m_Clipboard;
 	bool			m_bHasUndo;
@@ -263,13 +264,13 @@ protected:
 	float			m_fBeatToReturnTo;
 
 	RageSound		m_soundMusic;
-
 	RageSound		m_soundAssistTick;
 
 	ThemeMetricEnum<EditMode> EDIT_MODE;
 
 public:
-	enum MainMenuChoice {
+	enum MainMenuChoice
+	{
 		play_selection,
 		set_selection_start,
 		set_selection_end,
@@ -293,7 +294,8 @@ public:
 	void HandleMainMenuChoice( MainMenuChoice c ) { const vector<int> v; HandleMainMenuChoice( c, v ); }
 	MainMenuChoice m_CurrentAction;
 
-	enum AreaMenuChoice {
+	enum AreaMenuChoice
+	{
 		cut,
 		copy,
 		paste_at_current_beat,
@@ -373,7 +375,8 @@ public:
 		NUM_TEMPO_TYPES 
 	};
 
-	enum StepsInformationChoice {
+	enum StepsInformationChoice
+	{
 		difficulty,
 		meter,
 		description,
@@ -393,7 +396,8 @@ public:
 	};
 	void HandleStepsInformationChoice( StepsInformationChoice c, const vector<int> &iAnswers );
 
-	enum SongInformationChoice {
+	enum SongInformationChoice
+	{
 		main_title,
 		sub_title,
 		artist,
@@ -405,7 +409,8 @@ public:
 	};
 	void HandleSongInformationChoice( SongInformationChoice c, const vector<int> &iAnswers );
 
-	enum BGChangeChoice {
+	enum BGChangeChoice
+	{
 		layer,
 		rate,
 		transition,
@@ -434,7 +439,8 @@ public:
 
 	void HandleBGChangeChoice( BGChangeChoice c, const vector<int> &iAnswers );
 
-	enum CourseAttackChoice {
+	enum CourseAttackChoice
+	{
 		duration,
 		set_mods,
 		remove,
@@ -449,8 +455,14 @@ public:
 	bool EditIsBeingPressed( EditButton button ) const;
 	const MapEditToDI *GetCurrentDeviceInputMap() const;
 	const MapEditButtonToMenuButton *GetCurrentMenuButtonMap() const;
-	MapEditToDI m_EditMappingsDeviceInput, m_PlayMappingsDeviceInput, m_RecordMappingsDeviceInput, m_RecordPausedMappingsDeviceInput;
-	MapEditButtonToMenuButton m_EditMappingsMenuButton, m_PlayMappingsMenuButton, m_RecordMappingsMenuButton, m_RecordPausedMappingsMenuButton;
+	MapEditToDI		m_EditMappingsDeviceInput;
+	MapEditToDI		m_PlayMappingsDeviceInput;
+	MapEditToDI		m_RecordMappingsDeviceInput;
+	MapEditToDI		m_RecordPausedMappingsDeviceInput;
+	MapEditButtonToMenuButton m_EditMappingsMenuButton;
+	MapEditButtonToMenuButton m_PlayMappingsMenuButton;
+	MapEditButtonToMenuButton m_RecordMappingsMenuButton;
+	MapEditButtonToMenuButton m_RecordPausedMappingsMenuButton;
 
 	void MakeFilteredMenuDef( const MenuDef* pDef, MenuDef &menu );
 	void EditMiniMenu( const MenuDef* pDef, ScreenMessage SM_SendOnOK = SM_None, ScreenMessage SM_SendOnCancel = SM_None );
