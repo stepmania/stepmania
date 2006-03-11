@@ -596,18 +596,18 @@ class LunaPlayerStageStats: public Luna<PlayerStageStats>
 public:
 	LunaPlayerStageStats() { LUA->Register( Register ); }
 
-	DEFINE_METHOD( GetCaloriesBurned,			fCaloriesBurned )
+	DEFINE_METHOD( GetCaloriesBurned,		fCaloriesBurned )
 	DEFINE_METHOD( GetLifeRemainingSeconds,		fLifeRemainingSeconds )
-	DEFINE_METHOD( GetSurvivalSeconds,			GetSurvivalSeconds() )
-	DEFINE_METHOD( FullCombo,					FullCombo() )
-	DEFINE_METHOD( MaxCombo,					GetMaxCombo().cnt )
-	DEFINE_METHOD( GetGrade,					GetGrade() )
+	DEFINE_METHOD( GetSurvivalSeconds,		GetSurvivalSeconds() )
+	DEFINE_METHOD( FullCombo,			FullCombo() )
+	DEFINE_METHOD( MaxCombo,			GetMaxCombo().cnt )
+	DEFINE_METHOD( GetGrade,			GetGrade() )
 	DEFINE_METHOD( GetLessonScoreActual,		GetLessonScoreActual() )
 	DEFINE_METHOD( GetLessonScoreNeeded,		GetLessonScoreNeeded() )
 	DEFINE_METHOD( GetPersonalHighScoreIndex,	m_iPersonalHighScoreIndex )
 	DEFINE_METHOD( GetMachineHighScoreIndex,	m_iMachineHighScoreIndex )
 	DEFINE_METHOD( GetPerDifficultyAward,		m_pdaToShow )
-	DEFINE_METHOD( GetPeakComboAward,			m_pcaToShow )
+	DEFINE_METHOD( GetPeakComboAward,		m_pcaToShow )
 
 	static void Register(lua_State *L)
 	{
