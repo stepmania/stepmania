@@ -152,10 +152,6 @@ void ScreenEdit::InitEditMappings()
 		m_PlayMappingsMenuButton.button   [EDIT_BUTTON_RETURN_TO_EDIT][0]    = MENU_BUTTON_START;
 		m_PlayMappingsMenuButton.button   [EDIT_BUTTON_RETURN_TO_EDIT][1]    = MENU_BUTTON_BACK;
 		return;
-	}
-
-	switch( EDIT_MODE.GetValue() )
-	{
 	case EditMode_Full:
 		/* Don't allow F5/F6 in home mode.  It breaks the "delay creation until first save" logic. */
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_PREV_STEPS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F5);
