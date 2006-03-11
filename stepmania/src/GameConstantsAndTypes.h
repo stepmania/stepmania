@@ -406,7 +406,7 @@ enum GoalType
 	NUM_GOAL_TYPES,
 	GOAL_INVALID,
 };
-#define FOREACH_GoalType( md ) FOREACH_ENUM( GoalType, NUM_GOAL_TYPES, gt )
+#define FOREACH_GoalType( gt ) FOREACH_ENUM( GoalType, NUM_GOAL_TYPES, gt )
 const RString& GoalTypeToString( GoalType gt );
 GoalType StringToGoalType( const RString& s );
 
@@ -416,6 +416,7 @@ enum EditMode
 	EditMode_Practice,
 	EditMode_Home,
 	EditMode_Full,
+	EditMode_CourseMods,
 	NUM_EditMode,
 	EditMode_INVALID,
 };
