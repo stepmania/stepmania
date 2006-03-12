@@ -527,7 +527,8 @@ BOOL WINAPI DbgCheckModuleLevel(DWORD Type,DWORD Level) {
     if(g_fAutoRefreshLevels) {
         // re-read the registry every second. We cannot use RegNotify() to
         // notice registry changes because it's not available on win9x.
-        static g_dwLastRefresh = 0;
+		/*NABIL: This needed to be a static int, not ust static*/
+        static int g_dwLastRefresh = 0;
         DWORD dwTime = timeGetTime();
         if(dwTime - g_dwLastRefresh > 1000) {
             g_dwLastRefresh = dwTime;

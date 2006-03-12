@@ -126,7 +126,9 @@ STDMETHODIMP CBaseControlWindow::put_Caption(BSTR strCaption) {
 // which ensures the interface doesn't fiddle around with getting memory. A
 // BSTR is a normal C string with the length at position (-1), we use the
 // WriteBSTR helper function to create the caption to try and avoid OLE32
-/*
+
+/* NABIL: I un-commented this entire function...*/
+
 STDMETHODIMP CBaseControlWindow::get_Caption(BSTR *pstrCaption) {
     CheckPointer(pstrCaption,E_POINTER);
     CheckConnected(m_pPin,VFW_E_NOT_CONNECTED);
@@ -143,7 +145,8 @@ STDMETHODIMP CBaseControlWindow::get_Caption(BSTR *pstrCaption) {
 #endif
     return WriteBSTR(pstrCaption,WideCaption);
 }
-*/
+
+/*NABIL: END Un-comment*/
 
 // Set the window style using GWL_EXSTYLE
 

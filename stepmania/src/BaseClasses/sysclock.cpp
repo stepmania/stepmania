@@ -11,20 +11,21 @@
 #include <streams.h>
 #include <limits.h>
 
-
-#ifdef FILTER_DLL
+/*NABIL: I changed this*/
+//#ifdef FILTER_DLL
 
 /* List of class IDs and creator functions for the class factory. This
    provides the link between the OLE entry point in the DLL and an object
    being created. The class factory will call the static CreateInstance
    function when it is asked to create a CLSID_SystemClock object */
 
+/*NABIL: This was screwed up....(It didn't have the "blah")*/
 CFactoryTemplate g_Templates[1] = {
-    {&CLSID_SystemClock, CSystemClock::CreateInstance}
+	{ (const WCHAR *) "blah", &CLSID_SystemClock, CSystemClock::CreateInstance }
 };
 
 int g_cTemplates = sizeof(g_Templates) / sizeof(g_Templates[0]);
-#endif
+//#endif
 
 /* This goes in the factory template table to create new instances */
 CUnknown * WINAPI CSystemClock::CreateInstance(LPUNKNOWN pUnk,HRESULT *phr)

@@ -626,7 +626,9 @@ HRESULT COutputQueue::ReceiveMultiple(
         //  Loop processing the samples in batches
 
         LONG iLost = 0;
-        for(long iDone = 0;
+/*NABIL: I moved this long declaration out of the for loop, incorrect scope*/
+		long iDone;
+        for(iDone = 0;
             iDone < nSamples || (m_nBatched != 0 && m_bSendAnyway);) {
 
             //pragma message (REMIND("Implement threshold scheme"))

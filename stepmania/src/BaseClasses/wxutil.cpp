@@ -6,8 +6,7 @@
 //
 // Copyright (c) 1992-2001 Microsoft Corporation.  All rights reserved.
 //------------------------------------------------------------------------------
-
-
+#include <objbase.h>
 #include <streams.h>
 
 //
@@ -260,7 +259,7 @@ HRESULT CAMThread::CoInitializeHelper() {
         PCoInitializeEx pCoInitializeEx =
             (PCoInitializeEx)(GetProcAddress(hOle, "CoInitializeEx"));
         if(pCoInitializeEx) {
-            hr = (*pCoInitializeEx)(0, COINIT_DISABLE_OLE1DDE );
+            hr = (*pCoInitializeEx)(0, 0x4 );	/*NABIL: Changed this to the constant, rather than the Variable...*/
         }
     }
     else {
@@ -989,14 +988,15 @@ BOOL WINAPI CritCheckOut(const CCritSec * pcCrit) {
 }
 #endif
 
-/*
+/*NABIL: I un-commented this...*/
 STDAPI WriteBSTR(BSTR *pstrDest, LPCWSTR szSrc) {
     *pstrDest = SysAllocString(szSrc);
     if(!(*pstrDest)) return E_OUTOFMEMORY;
     return NOERROR;
 }
+/*END un-comment*/
 
-
+/*
 STDAPI FreeBSTR(BSTR* pstr) {
     if(*pstr == NULL) return S_FALSE;
     SysFreeString(*pstr);
