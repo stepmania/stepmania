@@ -225,7 +225,7 @@ void StepMania::ApplyGraphicOptions()
 	INPUTMAN->WindowReset();
 }
 
-bool CheckVideoDefaultSettings();
+static bool CheckVideoDefaultSettings();
 
 void StepMania::ResetPreferences()
 {
@@ -599,7 +599,7 @@ static RString GetVideoDriverName()
 #endif
 }
 
-static bool CheckVideoDefaultSettings()
+bool CheckVideoDefaultSettings()
 {
 	// Video card changed since last run
 	RString sVideoDriver = GetVideoDriverName();
