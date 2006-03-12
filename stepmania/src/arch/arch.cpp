@@ -161,9 +161,6 @@ LowLevelWindow *MakeLowLevelWindow()
 #include "MemoryCard/Selector_MemoryCardDriver.h"
 MemoryCardDriver *MakeMemoryCardDriver()
 {
-	if( !PREFSMAN->m_bMemoryCards )
-		return new MemoryCardDriver_Null;
-
 	MemoryCardDriver *ret = NULL;
 
 #ifdef ARCH_MEMORY_CARD_DRIVER

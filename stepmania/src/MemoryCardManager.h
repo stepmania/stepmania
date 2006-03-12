@@ -16,6 +16,8 @@ public:
 	MemoryCardManager();
 	~MemoryCardManager();
 
+	void ResetMemoryCardDriver( bool bInEditScreens );
+
 	void Update( float fDelta );
 
 	MemoryCardState GetCardState( PlayerNumber pn ) const { return m_State[pn]; }
@@ -48,6 +50,9 @@ public:
 	static Preference1D<int>		m_iMemoryCardUsbLevel;
 
 	static Preference<RString>	m_sEditorMemoryCardOsMountPoint;	
+
+	// Lua
+	void PushSelf( lua_State *L );
 
 protected:
 	void CheckStateChanges();

@@ -10,8 +10,9 @@
 #include "MessageManager.h"
 #include "Foreach.h"
 #include "RageUtil_WorkerThread.h"
-
 #include "arch/arch.h"
+#include "arch/MemoryCard/MemoryCardDriver_Null.h"
+#include "PrefsManager.h"
 
 MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -66,7 +67,7 @@ static const RString MEM_CARD_MOUNT_POINT_INTERNAL[NUM_PLAYERS] =
 class ThreadedMemoryCardWorker: public RageWorkerThread
 {
 public:
-	ThreadedMemoryCardWorker();
+	ThreadedMemoryCardWorker( bool bInEditScreens );
 	~ThreadedMemoryCardWorker();
 
 	enum MountThreadState 
@@ -131,11 +132,15 @@ bool ThreadedMemoryCardWorker::StorageDevicesChanged( vector<UsbStorageDevice> &
 }
 
 
-ThreadedMemoryCardWorker::ThreadedMemoryCardWorker():
+ThreadedMemoryCardWorker::ThreadedMemoryCardWorker( bool bInEditScreens ):
 	RageWorkerThread("MemoryCardWorker"),
 	UsbStorageDevicesMutex("UsbStorageDevicesMutex")
 {
-	m_pDriver = MakeMemoryCardDriver();
+	if( PREFSMAN->m_bMemoryCards || bInEditScreens )
+		m_pDriver = MakeMemoryCardDriver();
+	else
+		m_pDriver = new MemoryCardDriver_Null;
+
 	m_MountThreadState = detect_and_mount;
 	SetHeartbeat( 0.1f );
 
@@ -148,6 +153,8 @@ ThreadedMemoryCardWorker::~ThreadedMemoryCardWorker()
 
 	delete m_pDriver;
 }
+
+
 
 void ThreadedMemoryCardWorker::SetMountThreadState( MountThreadState mts )
 {
@@ -249,7 +256,7 @@ MemoryCardManager::MemoryCardManager()
 {
 	ASSERT( g_pWorker == NULL );
 
-	g_pWorker = new ThreadedMemoryCardWorker;
+	g_pWorker = new ThreadedMemoryCardWorker( false );
 
 	m_bCardsLocked = false;
 	FOREACH_PlayerNumber( p )
@@ -284,6 +291,12 @@ MemoryCardManager::~MemoryCardManager()
 		FILEMAN->Unmount( "", "", MEM_CARD_MOUNT_POINT[pn] );
 		FILEMAN->Unmount( "", "", MEM_CARD_MOUNT_POINT_INTERNAL[pn] );
 	}
+}
+
+void MemoryCardManager::ResetMemoryCardDriver( bool bInEditScreens )
+{
+	SAFE_DELETE(g_pWorker);
+	g_pWorker = new ThreadedMemoryCardWorker( bInEditScreens );
 }
 
 void MemoryCardManager::Update( float fDelta )
@@ -669,8 +682,40 @@ bool IsAnyPlayerUsingMemoryCard()
 	return false;
 }
 
-#include "LuaFunctions.h"
-LuaFunction_NoArgs( IsAnyPlayerUsingMemoryCard,		IsAnyPlayerUsingMemoryCard() )
+
+// lua start
+#include "LuaBinding.h"
+
+class LunaMemoryCardManager: public Luna<MemoryCardManager>
+{
+public:
+	LunaMemoryCardManager() { LUA->Register( Register ); }
+
+	static int IsAnyPlayerUsingMemoryCard( T* p, lua_State *L )	{ lua_pushboolean(L, ::IsAnyPlayerUsingMemoryCard() ); return 1; }
+	static int ResetMemoryCardDriver( T* p, lua_State *L )		{ p->ResetMemoryCardDriver( BArg(1) ); return 0; }
+
+	static void Register(lua_State *L)
+	{
+		ADD_METHOD( IsAnyPlayerUsingMemoryCard );
+		ADD_METHOD( ResetMemoryCardDriver );
+
+		Luna<T>::Register( L );
+
+		// Add global singleton if constructed already.  If it's not constructed yet,
+		// then we'll register it later when we reinit Lua just before 
+		// initializing the display.
+		if( MEMCARDMAN )
+		{
+			lua_pushstring(L, "MEMCARDMAN");
+			MEMCARDMAN->PushSelf( L );
+			lua_settable(L, LUA_GLOBALSINDEX);
+		}
+	}
+};
+
+LUA_REGISTER_CLASS( MemoryCardManager )
+// lua end
+
 
 /*
  * (c) 2003-2005 Chris Danford, Glenn Maynard
