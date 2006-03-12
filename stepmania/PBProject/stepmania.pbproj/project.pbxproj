@@ -6154,7 +6154,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = AA8B8C49091F48C000D14C5F /* product.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SRCROOT)/Frameworks",
@@ -6221,7 +6221,7 @@
 				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.2;
 				OBJROOT = "$(SRCROOT)/build";
-				ONLY_LINK_ESSENTIAL_SYMBOLS = YES;
+				ONLY_LINK_ESSENTIAL_SYMBOLS = NO;
 				OTHER_CPLUSPLUSFLAGS = (
 					"-finline-limit=300",
 					"-fconstant-cfstrings",
@@ -6529,7 +6529,7 @@
 				LIBRARY_STYLE = Bundle;
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OBJROOT = "$(SRCROOT)/build";
-				ONLY_LINK_ESSENTIAL_SYMBOLS = YES;
+				ONLY_LINK_ESSENTIAL_SYMBOLS = NO;
 				OTHER_CPLUSPLUSFLAGS = (
 					"-finline-limit=300",
 					"-fconstant-cfstrings",
