@@ -12,7 +12,6 @@
 #include "BannerCache.h"
 #include "RageFileManager.h"
 #include "CourseWriterCRS.h"
-#include "song.h"
 
 const int MAX_EDIT_COURSE_SIZE_BYTES	= 30*1024;	// 30KB
 
@@ -175,7 +174,19 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			else
 			{
 				RString sSong = sParams[1];
-				new_entry.pSong = SONGMAN->FindSong( sSong );
+				sSong.Replace( "\\", "/" );
+				vector<RString> bits;
+				split( sSong, "/", bits );
+
+				if( bits.size() == 2 )
+				{
+					new_entry.sSongGroup = bits[0];
+					new_entry.pSong = SONGMAN->FindSong( bits[0], bits[1] );
+				}
+				else if( bits.size() == 1 )
+				{
+					new_entry.pSong = SONGMAN->FindSong( "", sSong );
+				}
 
 				if( new_entry.pSong == NULL )
 				{
@@ -186,7 +197,6 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 						    sPath.c_str(), sSong.c_str());
 					continue; // skip this #SONG
 				}
-				new_entry.sSongGroup = new_entry.pSong->m_sGroupName;
 			}
 
 			new_entry.baseDifficulty = StringToDifficulty( sParams[2] );

@@ -102,14 +102,12 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 		}
 		else if( entry.pSong )
 		{
-			// strip off everything but the group name and song dir
-			vector<RString> as;
-			ASSERT( entry.pSong != NULL );
-			split( entry.pSong->GetSongDir(), "/", as );
-			ASSERT( as.size() >= 2 );
-			RString sGroup = as[ as.size()-2 ];
-			RString sSong = as[ as.size()-1 ];
-			f.Write( "#SONG:" + sGroup + '/' + sSong );
+			const RString &sSong = Basename( entry.pSong->GetSongDir() );
+			
+			f.Write( "#SONG:" );
+			if( !entry.sSongGroup.empty() )
+				f.Write( entry.sSongGroup + '/' );
+			f.Write( sSong );
 		}
 		else if( !entry.sSongGroup.empty() )
 		{
