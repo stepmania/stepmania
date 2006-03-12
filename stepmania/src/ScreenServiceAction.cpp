@@ -14,6 +14,7 @@
 #include "GameState.h"
 #include "PlayerState.h"
 #include "LocalizedString.h"
+#include "StepMania.h"
 
 static LocalizedString BOOKKEEPING_DATA_CLEARED( "ScreenServiceAction", "Bookkeeping data cleared." );
 static RString ClearBookkeepingData()
@@ -174,15 +175,15 @@ static RString TransferStatsMemoryCardToMachine()
 	return s;
 }
 
-static void CopyEdits( const RString &sFrom, const RString &sTo, int &iNumAttempted, int &iNumSuccessful, int &iNumOverwritten )
+static void CopyEdits( const RString &sFromProfileDir, const RString &sToProfileDir, int &iNumAttempted, int &iNumSuccessful, int &iNumOverwritten )
 {
 	iNumAttempted = 0;
 	iNumSuccessful = 0;
 	iNumOverwritten = 0;
 
 	{
-		RString sFromDir = sFrom + EDIT_STEPS_SUBDIR;
-		RString sToDir = sTo + EDIT_STEPS_SUBDIR;
+		RString sFromDir = sFromProfileDir + EDIT_STEPS_SUBDIR;
+		RString sToDir = sToProfileDir + EDIT_STEPS_SUBDIR;
 
 		vector<RString> vsFiles;
 		GetDirListing( sFromDir+"*.edit", vsFiles, false, false );
@@ -195,11 +196,13 @@ static void CopyEdits( const RString &sFrom, const RString &sTo, int &iNumAttemp
 			if( bSuccess )
 				iNumSuccessful++;
 		}
+	
+		FILEMAN->FlushDirCache( sToDir );
 	}
 
 	{
-		RString sFromDir = sFrom + EDIT_COURSES_SUBDIR;
-		RString sToDir = sTo + EDIT_COURSES_SUBDIR;
+		RString sFromDir = sFromProfileDir + EDIT_COURSES_SUBDIR;
+		RString sToDir = sToProfileDir + EDIT_COURSES_SUBDIR;
 
 		vector<RString> vsFiles;
 		GetDirListing( sFromDir+"*.crs", vsFiles, false, false );
@@ -212,7 +215,10 @@ static void CopyEdits( const RString &sFrom, const RString &sTo, int &iNumAttemp
 			if( bSuccess )
 				iNumSuccessful++;
 		}
+
+		FILEMAN->FlushDirCache( sToDir );
 	}
+
 }
 
 static void SyncFiles( const RString &sFromDir, const RString &sToDir, const RString &sMask, int &iNumAdded, int &iNumDeleted, int &iNumOverwritten, int &iNumFailed )
@@ -254,6 +260,8 @@ static void SyncFiles( const RString &sFromDir, const RString &sToDir, const RSt
 		else
 			++iNumFailed;
 	}
+
+	FILEMAN->FlushDirCache( sToDir );
 }
 
 static void SyncEdits( const RString &sFromDir, const RString &sToDir, int &iNumAdded, int &iNumDeleted, int &iNumOverwritten, int &iNumFailed )
@@ -362,7 +370,7 @@ static RString CopyEditsMemoryCardToMachine()
 static LocalizedString PREFERENCES_RESET( "ScreenServiceAction", "Preferences reset." );
 static RString ResetPreferences()
 {
-	PREFSMAN->ResetToFactoryDefaults();
+	StepMania::ResetPreferences();
 	return PREFERENCES_RESET.GetValue();
 }
 

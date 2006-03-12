@@ -225,6 +225,16 @@ void StepMania::ApplyGraphicOptions()
 	INPUTMAN->WindowReset();
 }
 
+bool CheckVideoDefaultSettings();
+
+void StepMania::ResetPreferences()
+{
+	PREFSMAN->ResetToFactoryDefaults();
+	SOUNDMAN->SetMixVolume( PREFSMAN->GetSoundVolume() );
+	CheckVideoDefaultSettings();
+	ApplyGraphicOptions();
+}
+
 /* Shutdown all global singletons.  Note that this may be called partway through
  * initialization, due to an object failing to initialize, in which case some of
  * these may still be NULL. */

@@ -10,6 +10,7 @@ int main( int argc, char* argv[] );
 namespace StepMania
 {
 	void ApplyGraphicOptions();
+	void ResetPreferences();
 	void ResetGame();
 	void ChangeCurrentGame( const Game* g );
 
