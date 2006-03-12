@@ -152,6 +152,34 @@ void ScreenEdit::InitEditMappings()
 		m_PlayMappingsMenuButton.button   [EDIT_BUTTON_RETURN_TO_EDIT][0]    = MENU_BUTTON_START;
 		m_PlayMappingsMenuButton.button   [EDIT_BUTTON_RETURN_TO_EDIT][1]    = MENU_BUTTON_BACK;
 		return;
+	case EditMode_CourseMods:
+		// Left/Right = Snap to Next/Prev
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SNAP_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LEFT);
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_SNAP_PREV][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RIGHT);
+		
+		// v = course attack menu
+		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_COURSE_ATTACK_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cv);
+		
+		// Enter = Play selection
+		// P = Play current beat to end
+		m_EditMappingsDeviceInput.button   [EDIT_BUTTON_PLAY_SELECTION][0]    = DeviceInput(DEVICE_KEYBOARD, KEY_ENTER);
+		m_EditMappingsDeviceInput.button   [EDIT_BUTTON_PLAY_FROM_CURSOR][0]  = DeviceInput(DEVICE_KEYBOARD, KEY_Cp);
+		
+		// F1 = Show help popup
+		m_EditMappingsDeviceInput.button   [EDIT_BUTTON_OPEN_INPUT_HELP][0]   = DeviceInput(DEVICE_KEYBOARD, KEY_F1);
+		
+		// Esc = Show Edit Menu
+		m_EditMappingsDeviceInput.button   [EDIT_BUTTON_OPEN_EDIT_MENU][0]    = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
+		m_EditMappingsMenuButton.button   [EDIT_BUTTON_OPEN_EDIT_MENU][0]    = MENU_BUTTON_START;
+		m_EditMappingsMenuButton.button   [EDIT_BUTTON_OPEN_EDIT_MENU][1]    = MENU_BUTTON_BACK;
+		
+		// Escape, Enter = exit play/record
+		m_PlayMappingsDeviceInput.button   [EDIT_BUTTON_RETURN_TO_EDIT][0]    = DeviceInput(DEVICE_KEYBOARD, KEY_ENTER);
+		m_PlayMappingsDeviceInput.button   [EDIT_BUTTON_RETURN_TO_EDIT][1]    = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
+		m_PlayMappingsMenuButton.button   [EDIT_BUTTON_RETURN_TO_EDIT][0]    = MENU_BUTTON_START;
+		m_PlayMappingsMenuButton.button   [EDIT_BUTTON_RETURN_TO_EDIT][1]    = MENU_BUTTON_BACK;
+		return;
+		
 	case EditMode_Full:
 		/* Don't allow F5/F6 in home mode.  It breaks the "delay creation until first save" logic. */
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_PREV_STEPS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F5);
@@ -666,7 +694,7 @@ void ScreenEdit::Init()
 	ASSERT( GAMESTATE->m_pCurSong );
 	ASSERT( GAMESTATE->m_pCurSteps[0] );
 
-	EDIT_MODE.Load(m_sName,"EditMode");
+	EDIT_MODE.Load( m_sName, "EditMode" );
 	ScreenWithMenuElements::Init();
 
 	InitEditMappings();
@@ -688,7 +716,11 @@ void ScreenEdit::Init()
 
 
 	GAMESTATE->m_bGameplayLeadIn.Set( true );
-	GAMESTATE->m_EditMode = EDIT_MODE.GetValue();
+	// XXX hack
+	if( EDIT_MODE.GetValue() == EditMode_CourseMods )
+		GAMESTATE->m_EditMode = EditMode_Practice;
+	else
+		GAMESTATE->m_EditMode = EDIT_MODE.GetValue();
 	GAMESTATE->m_fSongBeat = 0;
 	m_fTrailingBeat = GAMESTATE->m_fSongBeat;
 
@@ -999,6 +1031,7 @@ void ScreenEdit::UpdateTextInfo()
 	{
 	case EditMode_Practice:
 		break;
+	case EditMode_CourseMods:
 	case EditMode_Home:
 	case EditMode_Full:
 		sText += ssprintf( "%s:\n  %s\n", SNAP_TO.GetValue().c_str(), sNoteType.c_str() );
@@ -1020,6 +1053,7 @@ void ScreenEdit::UpdateTextInfo()
 	switch( EDIT_MODE.GetValue() )
 	{
 	case EditMode_Practice:
+	case EditMode_CourseMods:
 	case EditMode_Home:
 		break;
 	case EditMode_Full:
@@ -1041,6 +1075,7 @@ void ScreenEdit::UpdateTextInfo()
 	switch( EDIT_MODE.GetValue() )
 	{
 	case EditMode_Practice:
+	case EditMode_CourseMods:
 	case EditMode_Home:
 		break;
 	case EditMode_Full:
@@ -1122,7 +1157,7 @@ static void ShiftToRightSide( int &iCol, int iNumTracks )
 	}
 }
 
-static LocalizedString SWITCHED_TO				( "ScreenEdit", "Switched to" );
+static LocalizedString SWITCHED_TO		( "ScreenEdit", "Switched to" );
 static LocalizedString NO_BACKGROUNDS_AVAILABLE	( "ScreenEdit", "No backgrounds available" );
 void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 {
@@ -1549,7 +1584,9 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			{
 				m_pSong->m_fMusicSampleLengthSeconds += fDelta;
 				m_pSong->m_fMusicSampleLengthSeconds = max(m_pSong->m_fMusicSampleLengthSeconds,0);
-			} else {
+			}
+			else
+			{
 				m_pSong->m_fMusicSampleStartSeconds += fDelta;
 				m_pSong->m_fMusicSampleStartSeconds = max(m_pSong->m_fMusicSampleStartSeconds,0);
 			}
@@ -2710,6 +2747,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 						HandleScreenMessage( SM_SaveSuccessful );
 					}
 					break;
+				case EditMode_CourseMods:
 				case EditMode_Practice:
 					break;
 				default:
@@ -2772,6 +2810,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 					SCREENMAN->SendMessageToTopScreen( SM_DoExit );
 				break;
 			case EditMode_Practice:
+			case EditMode_CourseMods:
 				SCREENMAN->SendMessageToTopScreen( SM_DoExit );
 				break;
 			default:
@@ -3249,7 +3288,8 @@ void ScreenEdit::SetupCourseAttacks()
 
 	if( GAMESTATE->m_pCurCourse )
 	{
-		GAMESTATE->m_pCurCourse->RevertFromDisk();	// Remove this and have a separate reload key?
+		if( EDIT_MODE.GetValue() != EditMode_CourseMods )
+			GAMESTATE->m_pCurCourse->RevertFromDisk();	// Remove this and have a separate reload key?
 
 		AttackArray Attacks;
 		for( unsigned e = 0; e < GAMESTATE->m_pCurCourse->m_vEntries.size(); ++e )
@@ -3375,6 +3415,7 @@ float ScreenEdit::GetMaximumBeatForNewNote() const
 	switch( EDIT_MODE.GetValue() )
 	{
 	case EditMode_Practice:
+	case EditMode_CourseMods:
 	case EditMode_Home:
 		{
 			float fEndBeat = GAMESTATE->m_pCurSong->m_fLastBeat;
