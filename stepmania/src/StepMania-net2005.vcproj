@@ -50,11 +50,11 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/EHa"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.0\include&quot;;&quot;ffmpeg\include&quot;"
+				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.0\include&quot;;&quot;ffmpeg\include&quot;;&quot;BaseClasses&quot;"
 				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
+				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
 				PrecompiledHeaderFile="$(IntDir)/StepMania.pch"
 				AssemblerListingLocation=".\../Debug/"
@@ -79,11 +79,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
+				AdditionalDependencies="shell32.lib gdi32.lib"
 				OutputFile="../Program/StepMania-debug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories=""
-				IgnoreDefaultLibraryNames="wininet.lib;msimg32.lib;libci.lib"
+				GenerateManifest="true"
+				IgnoreDefaultLibraryNames="wininet.lib;msimg32.lib;libci.lib;msvcrt.lib"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="../Debug/StepMania-debug.pdb"
 				GenerateMapFile="true"
@@ -396,14 +398,6 @@
 			</File>
 			<File
 				RelativePath="ScreenEdit.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ScreenEditCourseMods.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ScreenEditCourseMods.h"
 				>
 			</File>
 			<File
@@ -1861,6 +1855,22 @@
 						>
 					</File>
 					<File
+						RelativePath=".\arch\MovieTexture\MovieTexture_DShow.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\arch\MovieTexture\MovieTexture_DShow.h"
+						>
+					</File>
+					<File
+						RelativePath=".\arch\MovieTexture\MovieTexture_DShowHelper.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\arch\MovieTexture\MovieTexture_DShowHelper.h"
+						>
+					</File>
+					<File
 						RelativePath="arch\MovieTexture\MovieTexture_FFMpeg.cpp"
 						>
 					</File>
@@ -1910,34 +1920,6 @@
 					</File>
 					<File
 						RelativePath="arch\LowLevelWindow\LowLevelWindow_Win32.h"
-						>
-					</File>
-				</Filter>
-				<Filter
-					Name="Lights"
-					>
-					<File
-						RelativePath="arch\Lights\LightsDriver.h"
-						>
-					</File>
-					<File
-						RelativePath="arch\Lights\LightsDriver_Null.h"
-						>
-					</File>
-					<File
-						RelativePath="arch\Lights\LightsDriver_SystemMessage.cpp"
-						>
-					</File>
-					<File
-						RelativePath="arch\Lights\LightsDriver_SystemMessage.h"
-						>
-					</File>
-					<File
-						RelativePath="arch\Lights\LightsDriver_Win32Parallel.cpp"
-						>
-					</File>
-					<File
-						RelativePath="arch\Lights\LightsDriver_Win32Parallel.h"
 						>
 					</File>
 				</Filter>
@@ -2002,6 +1984,34 @@
 					</File>
 					<File
 						RelativePath="arch\Threads\Threads_Win32.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Lights"
+					>
+					<File
+						RelativePath="arch\Lights\LightsDriver.h"
+						>
+					</File>
+					<File
+						RelativePath="arch\Lights\LightsDriver_Null.h"
+						>
+					</File>
+					<File
+						RelativePath="arch\Lights\LightsDriver_SystemMessage.cpp"
+						>
+					</File>
+					<File
+						RelativePath="arch\Lights\LightsDriver_SystemMessage.h"
+						>
+					</File>
+					<File
+						RelativePath="arch\Lights\LightsDriver_Win32Parallel.cpp"
+						>
+					</File>
+					<File
+						RelativePath="arch\Lights\LightsDriver_Win32Parallel.h"
 						>
 					</File>
 				</Filter>
@@ -3962,6 +3972,262 @@
 					>
 				</File>
 			</Filter>
+		</Filter>
+		<Filter
+			Name="BaseClasses"
+			>
+			<File
+				RelativePath=".\BaseClasses\amextra.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\amextra.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\amfilter.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\amfilter.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\amvideo.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\AMVIDEO.H"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\cache.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\combase.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\combase.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\cprop.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\cprop.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\ctlutil.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\ctlutil.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\ddmm.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\ddmm.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\dllentry.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\dllsetup.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\dllsetup.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\dsschedule.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\fourcc.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\measure.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\msgthrd.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\mtype.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\mtype.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\outputq.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\outputq.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\pstream.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\pstream.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\pullpin.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\pullpin.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\refclock.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\refclock.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\reftime.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\renbase.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\renbase.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\schedule.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\seekpt.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\seekpt.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\source.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\source.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\streams.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\strmctl.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\strmctl.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\sysclock.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\sysclock.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\transfrm.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\transfrm.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\transip.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\transip.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\videoctl.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\videoctl.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\vtrans.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\vtrans.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\winctrl.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\winctrl.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\winutil.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\winutil.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\wxdebug.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\wxdebug.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\wxlist.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\wxlist.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\wxutil.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\BaseClasses\wxutil.h"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath="archutils\Win32\DialogCrashHeader.bmp"
