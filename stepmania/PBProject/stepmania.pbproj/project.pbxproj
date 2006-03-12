@@ -981,7 +981,6 @@
 		AA40D35309A08D650068C0D5 /* CharacterManager.h in Headers */ = {isa = PBXBuildFile; fileRef = AA77E74608B64B1400FA24CA /* CharacterManager.h */; };
 		AA40D35409A08D650068C0D5 /* CourseLoaderCRS.h in Headers */ = {isa = PBXBuildFile; fileRef = AA77E74C08B64B5600FA24CA /* CourseLoaderCRS.h */; };
 		AA40D35509A08D650068C0D5 /* CourseWriterCRS.h in Headers */ = {isa = PBXBuildFile; fileRef = AA77E74E08B64B5600FA24CA /* CourseWriterCRS.h */; };
-		AA40D35609A08D650068C0D5 /* ScreenEditCourseMods.h in Headers */ = {isa = PBXBuildFile; fileRef = AA77E75608B64B9A00FA24CA /* ScreenEditCourseMods.h */; };
 		AA40D35709A08D650068C0D5 /* ScreenOptionsEditCourse.h in Headers */ = {isa = PBXBuildFile; fileRef = AA77E75808B64B9A00FA24CA /* ScreenOptionsEditCourse.h */; };
 		AA40D35809A08D650068C0D5 /* ScreenOptionsEditCourseEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = AA77E75A08B64B9A00FA24CA /* ScreenOptionsEditCourseEntry.h */; };
 		AA40D35909A08D650068C0D5 /* ScreenOptionsManageCourses.h in Headers */ = {isa = PBXBuildFile; fileRef = AA77E75C08B64B9A00FA24CA /* ScreenOptionsManageCourses.h */; };
@@ -1379,7 +1378,6 @@
 		AA40D4E809A08D650068C0D5 /* CharacterManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA77E74508B64B1400FA24CA /* CharacterManager.cpp */; };
 		AA40D4E909A08D650068C0D5 /* CourseLoaderCRS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA77E74B08B64B5600FA24CA /* CourseLoaderCRS.cpp */; };
 		AA40D4EA09A08D650068C0D5 /* CourseWriterCRS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA77E74D08B64B5600FA24CA /* CourseWriterCRS.cpp */; };
-		AA40D4EB09A08D650068C0D5 /* ScreenEditCourseMods.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA77E75508B64B9900FA24CA /* ScreenEditCourseMods.cpp */; };
 		AA40D4EC09A08D650068C0D5 /* ScreenOptionsEditCourse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA77E75708B64B9A00FA24CA /* ScreenOptionsEditCourse.cpp */; };
 		AA40D4ED09A08D650068C0D5 /* ScreenOptionsEditCourseEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA77E75908B64B9A00FA24CA /* ScreenOptionsEditCourseEntry.cpp */; };
 		AA40D4EE09A08D650068C0D5 /* ScreenOptionsManageCourses.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA77E75B08B64B9A00FA24CA /* ScreenOptionsManageCourses.cpp */; };
@@ -1488,8 +1486,6 @@
 		AA77E75008B64B5600FA24CA /* CourseLoaderCRS.h in Headers */ = {isa = PBXBuildFile; fileRef = AA77E74C08B64B5600FA24CA /* CourseLoaderCRS.h */; };
 		AA77E75108B64B5600FA24CA /* CourseWriterCRS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA77E74D08B64B5600FA24CA /* CourseWriterCRS.cpp */; };
 		AA77E75208B64B5600FA24CA /* CourseWriterCRS.h in Headers */ = {isa = PBXBuildFile; fileRef = AA77E74E08B64B5600FA24CA /* CourseWriterCRS.h */; };
-		AA77E75F08B64B9A00FA24CA /* ScreenEditCourseMods.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA77E75508B64B9900FA24CA /* ScreenEditCourseMods.cpp */; };
-		AA77E76008B64B9A00FA24CA /* ScreenEditCourseMods.h in Headers */ = {isa = PBXBuildFile; fileRef = AA77E75608B64B9A00FA24CA /* ScreenEditCourseMods.h */; };
 		AA77E76108B64B9A00FA24CA /* ScreenOptionsEditCourse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA77E75708B64B9A00FA24CA /* ScreenOptionsEditCourse.cpp */; };
 		AA77E76208B64B9A00FA24CA /* ScreenOptionsEditCourse.h in Headers */ = {isa = PBXBuildFile; fileRef = AA77E75808B64B9A00FA24CA /* ScreenOptionsEditCourse.h */; };
 		AA77E76308B64B9A00FA24CA /* ScreenOptionsEditCourseEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA77E75908B64B9A00FA24CA /* ScreenOptionsEditCourseEntry.cpp */; };
@@ -2388,8 +2384,6 @@
 		AA77E74C08B64B5600FA24CA /* CourseLoaderCRS.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = CourseLoaderCRS.h; path = ../src/CourseLoaderCRS.h; sourceTree = "<group>"; };
 		AA77E74D08B64B5600FA24CA /* CourseWriterCRS.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = CourseWriterCRS.cpp; path = ../src/CourseWriterCRS.cpp; sourceTree = "<group>"; };
 		AA77E74E08B64B5600FA24CA /* CourseWriterCRS.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = CourseWriterCRS.h; path = ../src/CourseWriterCRS.h; sourceTree = "<group>"; };
-		AA77E75508B64B9900FA24CA /* ScreenEditCourseMods.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenEditCourseMods.cpp; path = ../src/ScreenEditCourseMods.cpp; sourceTree = "<group>"; };
-		AA77E75608B64B9A00FA24CA /* ScreenEditCourseMods.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenEditCourseMods.h; path = ../src/ScreenEditCourseMods.h; sourceTree = "<group>"; };
 		AA77E75708B64B9A00FA24CA /* ScreenOptionsEditCourse.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenOptionsEditCourse.cpp; path = ../src/ScreenOptionsEditCourse.cpp; sourceTree = "<group>"; };
 		AA77E75808B64B9A00FA24CA /* ScreenOptionsEditCourse.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenOptionsEditCourse.h; path = ../src/ScreenOptionsEditCourse.h; sourceTree = "<group>"; };
 		AA77E75908B64B9A00FA24CA /* ScreenOptionsEditCourseEntry.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenOptionsEditCourseEntry.cpp; path = ../src/ScreenOptionsEditCourseEntry.cpp; sourceTree = "<group>"; };
@@ -3025,8 +3019,6 @@
 				AA6EFE6104770CF7005F316C /* ScreenDimensions.h */,
 				AA6E001D047711F3005F316C /* ScreenEdit.cpp */,
 				AA6E001E047711F3005F316C /* ScreenEdit.h */,
-				AA77E75508B64B9900FA24CA /* ScreenEditCourseMods.cpp */,
-				AA77E75608B64B9A00FA24CA /* ScreenEditCourseMods.h */,
 				AA6E001F047711F3005F316C /* ScreenEditMenu.cpp */,
 				AA6E0020047711F3005F316C /* ScreenEditMenu.h */,
 				AABE321A05ACD8ED001A0E84 /* ScreenEnding.cpp */,
@@ -4495,7 +4487,6 @@
 				AA77E74808B64B1400FA24CA /* CharacterManager.h in Headers */,
 				AA77E75008B64B5600FA24CA /* CourseLoaderCRS.h in Headers */,
 				AA77E75208B64B5600FA24CA /* CourseWriterCRS.h in Headers */,
-				AA77E76008B64B9A00FA24CA /* ScreenEditCourseMods.h in Headers */,
 				AA77E76208B64B9A00FA24CA /* ScreenOptionsEditCourse.h in Headers */,
 				AA77E76408B64B9A00FA24CA /* ScreenOptionsEditCourseEntry.h in Headers */,
 				AA77E76608B64B9A00FA24CA /* ScreenOptionsManageCourses.h in Headers */,
@@ -4953,7 +4944,6 @@
 				AA40D35309A08D650068C0D5 /* CharacterManager.h in Headers */,
 				AA40D35409A08D650068C0D5 /* CourseLoaderCRS.h in Headers */,
 				AA40D35509A08D650068C0D5 /* CourseWriterCRS.h in Headers */,
-				AA40D35609A08D650068C0D5 /* ScreenEditCourseMods.h in Headers */,
 				AA40D35709A08D650068C0D5 /* ScreenOptionsEditCourse.h in Headers */,
 				AA40D35809A08D650068C0D5 /* ScreenOptionsEditCourseEntry.h in Headers */,
 				AA40D35909A08D650068C0D5 /* ScreenOptionsManageCourses.h in Headers */,
@@ -5634,7 +5624,6 @@
 				AA77E74708B64B1400FA24CA /* CharacterManager.cpp in Sources */,
 				AA77E74F08B64B5600FA24CA /* CourseLoaderCRS.cpp in Sources */,
 				AA77E75108B64B5600FA24CA /* CourseWriterCRS.cpp in Sources */,
-				AA77E75F08B64B9A00FA24CA /* ScreenEditCourseMods.cpp in Sources */,
 				AA77E76108B64B9A00FA24CA /* ScreenOptionsEditCourse.cpp in Sources */,
 				AA77E76308B64B9A00FA24CA /* ScreenOptionsEditCourseEntry.cpp in Sources */,
 				AA77E76508B64B9A00FA24CA /* ScreenOptionsManageCourses.cpp in Sources */,
@@ -6045,7 +6034,6 @@
 				AA40D4E809A08D650068C0D5 /* CharacterManager.cpp in Sources */,
 				AA40D4E909A08D650068C0D5 /* CourseLoaderCRS.cpp in Sources */,
 				AA40D4EA09A08D650068C0D5 /* CourseWriterCRS.cpp in Sources */,
-				AA40D4EB09A08D650068C0D5 /* ScreenEditCourseMods.cpp in Sources */,
 				AA40D4EC09A08D650068C0D5 /* ScreenOptionsEditCourse.cpp in Sources */,
 				AA40D4ED09A08D650068C0D5 /* ScreenOptionsEditCourseEntry.cpp in Sources */,
 				AA40D4EE09A08D650068C0D5 /* ScreenOptionsManageCourses.cpp in Sources */,
