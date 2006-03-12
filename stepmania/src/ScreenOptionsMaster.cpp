@@ -113,6 +113,7 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 		if( m_iChangeMask & OPT_APPLY_ASPECT_RATIO )
 		{
 			THEME->UpdateLuaGlobals();	// This needs to be done before resetting the projection matrix below
+			THEME->ReloadSubscribers();	// SCREEN_* has changed, so re-read all subscribing ThemeMetrics
 			SCREENMAN->ThemeChanged();	// recreate ScreenSystemLayer and SharedBGA
 		}
 

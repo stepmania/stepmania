@@ -49,6 +49,7 @@ public:
 	RString GetCurThemeDir() const { return GetThemeDirFromName(m_sCurThemeName); };
 	void NextTheme();
 	void ReloadMetrics();
+	void ReloadSubscribers();
 	void GetModifierNames( vector<RString>& AddTo );
 
 	static void EvaluateString( RString &sText );

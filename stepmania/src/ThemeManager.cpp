@@ -350,6 +350,11 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 	// Use theme metrics for localization.
 	LocalizedString::RegisterLocalizer( LocalizedStringImplThemeMetric::Create );
 
+	ReloadSubscribers();
+}
+
+void ThemeManager::ReloadSubscribers()
+{
 	// reload subscribers
 	if( g_Subscribers.m_pSubscribers )
 	{
