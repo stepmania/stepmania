@@ -81,6 +81,7 @@ public:
 	void GetSongs( vector<Song*> &AddTo, int iMaxStages ) const { GetSongs(AddTo,GROUP_ALL,iMaxStages); }
 	void GetSongs( vector<Song*> &AddTo ) const { GetSongs(AddTo,GROUP_ALL,INT_MAX); }
 	Song *FindSong( RString sPath );
+	Song *FindSong( RString sGroup, RString sSong );
 	Course *FindCourse( RString sName );
 	int GetNumSongs() const;
 	int GetNumSongGroups() const;
@@ -123,8 +124,6 @@ protected:
 	void SanityCheckGroupDir( RString sDir ) const;
 	void AddGroup( RString sDir, RString sGroupDirName );
 	int GetNumEditsLoadedFromProfile( ProfileSlot slot ) const;
-
-	Song *FindSong( RString sGroup, RString sSong );
 
 	vector<Song*>		m_pSongs;	// all songs that can be played
 	vector<Song*>		m_pBestSongs[NUM_ProfileSlot];
