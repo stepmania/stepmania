@@ -12,6 +12,7 @@
 #include "BannerCache.h"
 #include "RageFileManager.h"
 #include "CourseWriterCRS.h"
+#include "song.h"
 
 const int MAX_EDIT_COURSE_SIZE_BYTES	= 30*1024;	// 30KB
 
@@ -185,6 +186,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 						    sPath.c_str(), sSong.c_str());
 					continue; // skip this #SONG
 				}
+				new_entry.sSongGroup = new_entry.pSong->m_sGroupName;
 			}
 
 			new_entry.baseDifficulty = StringToDifficulty( sParams[2] );
