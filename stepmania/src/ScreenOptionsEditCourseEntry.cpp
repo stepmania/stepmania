@@ -457,7 +457,7 @@ void ScreenOptionsEditCourseEntry::ExportOptions( int iRow, const vector<PlayerN
 		break;
 	}
 	case ROW_SECRET:
-		ce.bSecret = iChoice;
+		ce.bSecret = !!iChoice;
 		break;
 	}
 }
