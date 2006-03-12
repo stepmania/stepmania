@@ -645,7 +645,7 @@ bool MemoryCardManager::IsNameAvailable( PlayerNumber pn ) const
 	return m_Device[pn].bIsNameAvailable;
 }
 
-const RString& MemoryCardManager::GetName( PlayerNumber pn ) const
+RString MemoryCardManager::GetName( PlayerNumber pn ) const
 {
 	return m_Device[pn].sName;
 }

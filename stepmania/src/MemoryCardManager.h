@@ -21,7 +21,7 @@ public:
 	void Update( float fDelta );
 
 	MemoryCardState GetCardState( PlayerNumber pn ) const { return m_State[pn]; }
-	const RString& GetCardError( PlayerNumber pn ) const { return m_sError[pn]; }
+	RString GetCardError( PlayerNumber pn ) const { return m_sError[pn]; }
 	
 	void LockCards();	// prevent removing or changing of memory cards
 	void UnlockCards();
@@ -40,7 +40,7 @@ public:
 	bool PathIsMemCard( RString sDir ) const;
 
 	bool IsNameAvailable( PlayerNumber pn ) const;
-	const RString& GetName( PlayerNumber pn ) const;
+	RString GetName( PlayerNumber pn ) const;
 
 	const vector<UsbStorageDevice> &GetStorageDevices() { return m_vStorageDevices; }
 
