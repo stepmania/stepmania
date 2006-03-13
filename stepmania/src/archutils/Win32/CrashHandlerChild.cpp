@@ -811,12 +811,17 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 				else if( xml.GetAttrValue("ReportId", iID) )
 				{
 					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), UPDATE_IS_NOT_AVAILABLE.GetValue() );
-					SetWindowText( GetDlgItem(hDlg, IDC_RESULT_ID), ssprintf("#%i", iID) );
-					ShowWindow( GetDlgItem(hDlg, IDC_RESULT_ID), true );
 				}
 				else
 				{
 					SetWindowText( GetDlgItem(hDlg, IDC_MAIN_TEXT), ERROR_SENDING_REPORT.GetValue() );
+				}
+
+				if( xml.GetAttrValue("ReportId", iID) )
+				{
+					char sBuf[1024];
+					GetWindowText( hDlg, sBuf, 1024 );
+					SetWindowText( hDlg, ssprintf("%s (#%i)", sBuf, iID) );
 				}
 
 				ShowWindow( GetDlgItem(hDlg, IDC_PROGRESS), false );
