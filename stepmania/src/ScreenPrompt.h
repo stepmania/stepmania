@@ -47,6 +47,8 @@ protected:
 	virtual void End( bool bCancelled );
 	void PositionCursor();
 
+	virtual void TweenOffScreen();
+
 	BitmapText		m_textQuestion;
 	AutoActor		m_sprCursor;
 	BitmapText		m_textAnswer[NUM_PROMPT_ANSWERS];

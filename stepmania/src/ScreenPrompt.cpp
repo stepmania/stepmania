@@ -206,10 +206,7 @@ void ScreenPrompt::End( bool bCancelled )
 		m_Out.StartTransitioning( SM_GoToNextScreen );
 	}
 
-	OFF_COMMAND( m_textQuestion );
-	OFF_COMMAND( m_sprCursor );
-	for( int i=0; i<=g_PromptType; i++ )
-		OFF_COMMAND( m_textAnswer[i] );
+	TweenOffScreen();
 
 	switch( m_Answer )
 	{
@@ -233,6 +230,15 @@ void ScreenPrompt::PositionCursor()
 	m_sprCursor->SetXY( bt.GetX(), bt.GetY() );
 }
 
+void ScreenPrompt::TweenOffScreen()
+{
+	OFF_COMMAND( m_textQuestion );
+	OFF_COMMAND( m_sprCursor );
+	for( int i=0; i<=g_PromptType; i++ )
+		OFF_COMMAND( m_textAnswer[i] );
+
+	ScreenWithMenuElements::TweenOffScreen();
+}
 
 /*
  * (c) 2001-2004 Chris Danford
