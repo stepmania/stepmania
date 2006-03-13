@@ -10,11 +10,11 @@ void ScreenUnlockCelebrate::Init()
 	// We shouldn't be called if there aren't any unlocks to celebrate
 	ASSERT( UNLOCKMAN->AnyUnlocksToCelebrate() );
 
-	ScreenUnlockBrowse::Init();
-
 	// Mark this unlock as celebrated
-	int iIndex = UNLOCKMAN->GetUnlockIndexToCelebrate();
-	UNLOCKMAN->m_UnlockEntries[iIndex].m_bCelebrated = true;
+	int iUnlockID = UNLOCKMAN->GetUnlockEntryIDToCelebrate();
+	UNLOCKMAN->UnlockEntryID( iUnlockID );
+
+	ScreenUnlockBrowse::Init();
 }
 
 void ScreenUnlockCelebrate::MenuLeft( const InputEventPlus &input )
