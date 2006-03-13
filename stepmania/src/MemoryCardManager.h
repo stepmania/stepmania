@@ -45,9 +45,9 @@ public:
 	const vector<UsbStorageDevice> &GetStorageDevices() { return m_vStorageDevices; }
 
 	static Preference1D<RString>	m_sMemoryCardOsMountPoint;
-	static Preference1D<int>		m_iMemoryCardUsbBus;
-	static Preference1D<int>		m_iMemoryCardUsbPort;
-	static Preference1D<int>		m_iMemoryCardUsbLevel;
+	static Preference1D<int>	m_iMemoryCardUsbBus;
+	static Preference1D<int>	m_iMemoryCardUsbPort;
+	static Preference1D<int>	m_iMemoryCardUsbLevel;
 
 	static Preference<RString>	m_sEditorMemoryCardOsMountPoint;	
 
