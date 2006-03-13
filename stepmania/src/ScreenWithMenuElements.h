@@ -49,22 +49,22 @@ protected:
 	AutoActor			m_autoHeader;
 	Sprite				m_sprStyleIcon;
 	AutoActor			m_sprStage;
-	MemoryCardDisplay	*m_MemoryCardDisplay[NUM_PLAYERS];
+	MemoryCardDisplay		*m_MemoryCardDisplay[NUM_PLAYERS];
 	MenuTimer			*m_MenuTimer;
 	AutoActor			m_autoFooter;
 	HelpDisplay			*m_textHelp;
 	AutoActor			m_sprOverlay;
 
-	Transition	m_In;
-	Transition	m_Out;
-	Transition	m_Cancel;
+	Transition			m_In;
+	Transition			m_Out;
+	Transition			m_Cancel;
 
-	ThemeMetric<bool>			PLAY_MUSIC;
-	ThemeMetric<bool>			CANCEL_TRANSITIONS_OUT;
-	ThemeMetric<float>			TIMER_SECONDS;
+	ThemeMetric<bool>		PLAY_MUSIC;
+	ThemeMetric<bool>		CANCEL_TRANSITIONS_OUT;
+	ThemeMetric<float>		TIMER_SECONDS;
 
 private:
-	RString m_sPathToMusic;
+	RString				m_sPathToMusic;
 };
 
 #endif
