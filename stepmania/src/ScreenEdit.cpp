@@ -2614,7 +2614,11 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 	switch( c )
 	{
 		case play_selection:
-			HandleAreaMenuChoice( play, false );
+			if( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 )
+				HandleAreaMenuChoice( play );
+			else
+				HandleMainMenuChoice( play_current_beat_to_end );
+
 			break;
 		case set_selection_start:
 			{
