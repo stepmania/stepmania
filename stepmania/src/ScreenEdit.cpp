@@ -2620,6 +2620,24 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				HandleMainMenuChoice( play_current_beat_to_end );
 
 			break;
+		case play_whole_song:
+			{
+				m_iStartPlayingAt = 0;
+				m_iStopPlayingAt = m_NoteDataEdit.GetLastRow();
+				m_iStopPlayingAt += BeatToNoteRow(4);		// give a one measure lead out
+
+				TransitionEditState( STATE_PLAYING );
+			}
+			break;
+		case play_current_beat_to_end:
+			{
+				m_iStartPlayingAt = BeatToNoteRow(GAMESTATE->m_fSongBeat);
+				m_iStopPlayingAt = m_NoteDataEdit.GetLastRow();
+				m_iStopPlayingAt += BeatToNoteRow(4);		// give a one measure lead out
+
+				TransitionEditState( STATE_PLAYING );
+			}
+			break;
 		case set_selection_start:
 			{
 				const int iCurrentRow = BeatToNoteRow(GAMESTATE->m_fSongBeat);
@@ -2677,24 +2695,6 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_StepsInformation.rows[freeze].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetFreezeRadarValue(m_NoteDataEdit,fMusicSeconds)) );
 				g_StepsInformation.rows[chaos].SetOneUnthemedChoice( ssprintf("%.2f", NoteDataUtil::GetChaosRadarValue(m_NoteDataEdit,fMusicSeconds)) );
 				EditMiniMenu( &g_StepsInformation, SM_BackFromStepsInformation, SM_None );
-			}
-			break;
-		case play_whole_song:
-			{
-				m_iStartPlayingAt = 0;
-				m_iStopPlayingAt = m_NoteDataEdit.GetLastRow();
-				m_iStopPlayingAt += BeatToNoteRow(4);		// give a one measure lead out
-
-				TransitionEditState( STATE_PLAYING );
-			}
-			break;
-		case play_current_beat_to_end:
-			{
-				m_iStartPlayingAt = BeatToNoteRow(GAMESTATE->m_fSongBeat);
-				m_iStopPlayingAt = m_NoteDataEdit.GetLastRow();
-				m_iStopPlayingAt += BeatToNoteRow(4);		// give a one measure lead out
-
-				TransitionEditState( STATE_PLAYING );
 			}
 			break;
 		case save:
