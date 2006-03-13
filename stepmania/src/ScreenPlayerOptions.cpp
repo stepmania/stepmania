@@ -56,10 +56,6 @@ void ScreenPlayerOptions::Init()
 	m_bAcceptedChoices = false;
 	m_bGoToOptions = ( PREFSMAN->m_ShowSongOptions == PrefsManager::YES );
 
-	RString sPath = THEME->GetPathS( m_sName,"cancel all", true );
-	if( sPath != "" )
-		m_CancelAll.Load( sPath, true );
-
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("player options intro") );
 
 	this->SortByDrawOrder();
@@ -102,9 +98,6 @@ void ScreenPlayerOptions::Input( const InputEventPlus &input )
 	PlayerNumber pn = GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber( input.GameI.controller );
 	if( GAMESTATE->IsHumanPlayer(pn) && CodeDetector::EnteredCode(input.GameI.controller,CODE_CANCEL_ALL_PLAYER_OPTIONS) )
 	{
-		if( m_CancelAll.IsLoaded() )
-			m_CancelAll.Play();
-		
 		// apply the game default mods, but not the Profile saved mods
 		GAMESTATE->GetDefaultPlayerOptions( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions );
 		

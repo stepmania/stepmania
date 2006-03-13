@@ -2,7 +2,6 @@
 #define SCREENPLAYEROPTIONS_H
 
 #include "ScreenOptionsMaster.h"
-#include "RageSound.h"
 
 struct lua_State;
 
@@ -32,8 +31,6 @@ private:
 
 	// show if the current selections will disqualify a high score
 	AutoActor		m_sprDisqualify[NUM_PLAYERS];
-
-	RageSound	m_CancelAll;
 };
 
 #endif
