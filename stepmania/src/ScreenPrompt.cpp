@@ -198,15 +198,13 @@ void ScreenPrompt::End( bool bCancelled )
 
 	if( bCancelled )
 	{
-		m_Cancel.StartTransitioning( SM_GoToNextScreen );
+		Cancel( SM_GoToNextScreen );
 	}
 	else
 	{
 		SCREENMAN->PlayStartSound();
-		m_Out.StartTransitioning( SM_GoToNextScreen );
+		StartTransitioningScreen( SM_GoToNextScreen );
 	}
-
-	TweenOffScreen();
 
 	switch( m_Answer )
 	{
