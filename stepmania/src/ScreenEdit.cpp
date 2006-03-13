@@ -1243,28 +1243,30 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		{
 			PlayerState *pPlayerState = const_cast<PlayerState *> (m_NoteFieldEdit.GetPlayerState());
 			float& fScrollSpeed = pPlayerState->m_PlayerOptions.m_fScrollSpeed;
-			float fNewScrollSpeed = fScrollSpeed;
+
+			const float fSpeeds[] = { 1.0f, 1.5f, 2.0f, 3.0f, 4.0f, 6.0f, 8.0f };
+			int iSpeed = 0;
+			for( unsigned i = 0; i < ARRAYSIZE(fSpeeds); ++i )
+			{
+				if( fSpeeds[i] == fScrollSpeed )
+				{
+					iSpeed = i;
+					break;
+				}
+			}
 
 			if( EditB == EDIT_BUTTON_SCROLL_SPEED_DOWN )
-			{
-				if( fScrollSpeed == 4 )
-					fNewScrollSpeed = 2;
-				else if( fScrollSpeed == 2 )
-					fNewScrollSpeed = 1;
-			}
+				--iSpeed;
 			else if( EditB == EDIT_BUTTON_SCROLL_SPEED_UP )
+				++iSpeed;
+			iSpeed = clamp( iSpeed, 0, (int) ARRAYSIZE(fSpeeds)-1 );
+			
+			if( fSpeeds[iSpeed] != fScrollSpeed )
 			{
-				if( fScrollSpeed == 2 )
-					fNewScrollSpeed = 4;
-				else if( fScrollSpeed == 1 )
-					fNewScrollSpeed = 2;
+				m_soundMarker.Play();
+				fScrollSpeed = fSpeeds[iSpeed];
 			}
 
-			if( fNewScrollSpeed != fScrollSpeed )
-			{
-				fScrollSpeed = fNewScrollSpeed;
-				m_soundMarker.Play();
-			}
 			break;
 		}
 
