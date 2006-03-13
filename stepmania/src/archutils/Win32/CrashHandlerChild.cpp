@@ -399,7 +399,7 @@ namespace
 
 		if( g_debugInfo.nBuildNumber != int(version_num) )
 		{
-			return ssprintf( "Incorrect %s file (build %d, expected %d) for this version of " PRODUCT_ID " -- call stack unavailable.\n",
+			return ssprintf( "Incorrect %s file (build %d, expected %d) for this version of " PRODUCT_FAMILY " -- call stack unavailable.\n",
 				g_debugInfo.sFilename, g_debugInfo.nBuildNumber, int(version_num) );
 		}
 
