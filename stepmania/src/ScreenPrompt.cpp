@@ -88,6 +88,9 @@ void ScreenPrompt::BeginScreen()
 		SET_XY_AND_ON_COMMAND( m_textAnswer[i] );
 	}
 
+	for( int i=g_PromptType+1; i<NUM_PROMPT_ANSWERS; i++ )
+		m_textAnswer[i].SetText( "" );
+
 	PositionCursor();
 }
 
