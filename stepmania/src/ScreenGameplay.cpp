@@ -1839,7 +1839,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			pi->GetPlayerStageStats()->bFailed |= GAMESTATE->AllHumanHaveComboOf30OrMoreMisses();
 		}
 
-		m_GiveUpTimer.SetZero();
+		AbortGiveUp( false );
 
 		if( GIVING_UP_GOES_TO_PREV_SCREEN )
 		{
