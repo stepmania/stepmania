@@ -229,10 +229,25 @@ void ScreenOptionsEditCourseEntry::HandleScreenMessage( const ScreenMessage SM )
 		case ROW_SET_MODS:
 			if( SHOW_MODS_ROW )
 			{
-				Trail *pTrail = GAMESTATE->m_pCurTrail[PLAYER_1];
-				TrailEntry *pTrailEntry = &pTrail->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
-				Song *pSong = pTrailEntry->pSong;
-				Steps *pSteps = pTrailEntry->pSteps;
+				/* We can't rely on the trail here since it depends on what steps are available.
+				 * Use the course entry directly instead. */
+				CourseEntry& ce = pCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
+				Song *pSong = ce.pSong;
+				Steps *pSteps;
+				StepsType st = GAMESTATE->m_stEdit;
+				CourseDifficulty cd = ( ce.baseDifficulty == DIFFICULTY_INVALID ?
+							GAMESTATE->m_cdEdit : ce.baseDifficulty );
+				
+				ASSERT( pSong );
+				// Try to find steps first using st and cd, then st, then cd, then any.
+				pSteps = pSong->GetStepsByDifficulty( st, cd, false );
+				if( !pSteps )
+					pSteps = pSong->GetStepsByDifficulty( st, DIFFICULTY_INVALID, false );
+				if( !pSteps )
+					pSteps = pSong->GetStepsByDifficulty( STEPS_TYPE_INVALID, cd, false );
+				if( !pSteps )
+					pSteps = pSong->GetStepsByDifficulty( STEPS_TYPE_INVALID, DIFFICULTY_INVALID, false );
+				ASSERT( pSteps );
 				
 				// Set up for ScreenEdit
 				const Style *pStyle = GAMEMAN->GetEditorStyleForStepsType(pSteps->m_StepsType);
@@ -241,6 +256,7 @@ void ScreenOptionsEditCourseEntry::HandleScreenMessage( const ScreenMessage SM )
 				GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );
 				break;
 			}
+			// fall through
 		case ROW_DONE:
 			m_Original = pCourse->m_vEntries[ GAMESTATE->m_iEditCourseEntryIndex ];
 			SCREENMAN->SetNewScreen( "ScreenOptionsEditCourse" );
@@ -460,6 +476,10 @@ void ScreenOptionsEditCourseEntry::ExportOptions( int iRow, const vector<PlayerN
 		ce.bSecret = !!iChoice;
 		break;
 	}
+	Trail *pTrail = pCourse->GetTrailForceRegenCache( GAMESTATE->m_stEdit, GAMESTATE->m_cdEdit );
+	
+	GAMESTATE->m_pCurCourse.Set( pCourse );
+	GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );	
 }
 
 void ScreenOptionsEditCourseEntry::ProcessMenuStart( const InputEventPlus &input )
