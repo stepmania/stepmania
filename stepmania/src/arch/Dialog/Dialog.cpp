@@ -62,7 +62,7 @@ static bool g_bWindowed = true;		// Start out true so that we'll show errors bef
 
 static bool DialogsEnabled()
 {
-	return !g_bWindowed;
+	return g_bWindowed;
 }
 
 void Dialog::Init()
