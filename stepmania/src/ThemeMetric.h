@@ -22,7 +22,7 @@ class ThemeMetric : public IThemeMetric
 protected:
 	RString		m_sGroup;
 	RString		m_sName;
-	T			m_currentValue;
+	T		m_currentValue;
 	bool		m_bIsLoaded;
 
 	/* HACK: If true, reload the metric each time it's read.  This is like DynamicThemeMetric,
@@ -219,15 +219,20 @@ public:
 	}
 };
 
-template <class T>
-class ThemeMetricEnum : public ThemeMetric<int>
+template<class T> T StringTo( const RString& s );
+template<class T>
+class ThemeMetricEnum : public ThemeMetric<RString>
 {
+	T m_Value;
 public:
-	ThemeMetricEnum() : ThemeMetric<int>() {}
-	ThemeMetricEnum( const RString& sGroup, const RString& sName ) : ThemeMetric<int>(sGroup,sName) {}
-	T GetValue() const { return (T)ThemeMetric<int>::GetValue(); }
-	bool operator ==( T other ) const { return GetValue() == other; }
+	ThemeMetricEnum() : ThemeMetric<RString>() {}
+	ThemeMetricEnum( const RString& sGroup, const RString& sName ) :
+	ThemeMetric<RString>( sGroup, sName ) {}
+	void Read() { ThemeMetric<RString>::Read(); m_Value = StringTo<T>(m_currentValue); }
+	T GetValue() const { ASSERT( !m_sName.empty() && m_bIsLoaded ); return m_Value; }
+	operator T () const { return GetValue(); }
 };
+
 
 /*
  * Like ThemeMetric, but allows evaluating Lua expressions each time.  This is

@@ -92,7 +92,9 @@ static const RString EMPTY_STRING;
 			if( !s2.CompareNoCase(X##Names[i]) )	\
 				return (X)i;	\
 		return (X)(i+1); /*invalid*/	\
-	}
+	} \
+	template<> X StringTo<X>( const RString& s ) { return StringTo##X( s ); }
+template<class T> T StringTo( const RString& s );
 
 #define LuaXToString(X)	\
 LuaFunction( X##ToString, X##ToString( (X) IArg(1) ) );
