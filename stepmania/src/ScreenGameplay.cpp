@@ -2131,11 +2131,13 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 		(!GAMESTATE->m_bMultiplayer || input.mp == MultiPlayer_1)  &&
 		!m_Cancel.IsTransitioning() )
 	{
-		/* Allow bailing out by holding the START button of all active players.  This
+		/*
+		 * Allow bailing out by holding the START button of all active players.  This
 		 * gives a way to "give up" when a back button isn't available.  Doing this is
 		 * treated as failing the song, unlike BACK, since it's always available.
 		 *
-		 * However, if this is also a style button, don't do this. (pump center = start) */
+		 * However, if this is also a style button, don't do this. (pump center = start)
+		 */
 		bool bHoldingGiveUp = false;
 		bHoldingGiveUp |= ( START_GIVES_UP && input.MenuI.button == MENU_BUTTON_START && !input.StyleI.IsValid() );
 		bHoldingGiveUp |= ( BACK_GIVES_UP && input.MenuI.button == MENU_BUTTON_BACK && !input.StyleI.IsValid() );
@@ -2144,7 +2146,9 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 		{
 			/* No PREFSMAN->m_bDelayedEscape; always delayed. */
 			if( input.type==IET_RELEASE )
+			{
 				AbortGiveUp( true );
+			}
 			else if( input.type==IET_FIRST_PRESS && m_GiveUpTimer.IsZero() )
 			{
 				m_textDebug.SetText( GIVE_UP_TEXT );
