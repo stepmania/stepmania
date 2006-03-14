@@ -37,10 +37,9 @@ void ScreenGameplaySyncMachine::Init()
 
 	m_DancingState = STATE_DANCING;
 
+	m_textSyncInfo.SetName( "SyncInfo" );
 	m_textSyncInfo.LoadFromFont( THEME->GetPathF("Common","normal") );
-	m_textSyncInfo.SetXY( SCREEN_CENTER_X+160, SCREEN_CENTER_Y );
-	m_textSyncInfo.SetDiffuse( RageColor(1,1,1,1) );
-	m_textSyncInfo.SetZoom( 0.6f );
+	ON_COMMAND( m_textSyncInfo );
 	this->AddChild( &m_textSyncInfo );
 
 	this->SubscribeToMessage( Message_AutosyncChanged );
