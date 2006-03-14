@@ -9,6 +9,7 @@
 #include "song.h"
 #include "Steps.h"
 #include "OptionRowHandler.h"
+#include "PlayerState.h"
 
 enum EditCourseEntryRow
 {
@@ -25,6 +26,8 @@ enum EditCourseEntryRow
 	NUM_EditCourseEntryRow
 };
 #define FOREACH_EditCourseEntryRow( i ) FOREACH_ENUM( EditCourseEntryRow, NUM_EditCourseEntryRow, i )
+
+AutoScreenMessage( SM_BackFromCoursePlayerOptions );
 
 static void FillSongsAndChoices( const RString &sSongGroup, vector<Song*> &vpSongsOut, vector<RString> &vsChoicesOut )
 {
@@ -78,7 +81,7 @@ public:
 	}
 	virtual int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
 	{
-		int iChoice = OptionRowHandlerUtil::GetOneSelection( vbSelected[PLAYER_1] );
+		int iChoice = OptionRowHandlerUtil::GetOneSelection( vbSelected[GAMESTATE->m_MasterPlayerNumber] );
 		GAMESTATE->m_pCurSong.Set( m_vpDisplayedSongs[iChoice] );
 		return 0;
 	}
@@ -275,6 +278,13 @@ void ScreenOptionsEditCourseEntry::HandleScreenMessage( const ScreenMessage SM )
 		GAMESTATE->m_pCurCourse.Set( pCourse );
 		GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
 		
+	}
+	else if( SM == SM_BackFromCoursePlayerOptions )
+	{
+		const PlayerOptions &po = GAMESTATE->m_pPlayerState[GAMESTATE->m_MasterPlayerNumber]->m_PlayerOptions;
+		CourseEntry &ce = pCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
+		
+		ce.sModifiers = po.GetString();
 	}
 
 	ScreenOptions::HandleScreenMessage( SM );
@@ -484,7 +494,9 @@ void ScreenOptionsEditCourseEntry::ExportOptions( int iRow, const vector<PlayerN
 
 void ScreenOptionsEditCourseEntry::ProcessMenuStart( const InputEventPlus &input )
 {
-	switch( m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber] )
+	PlayerNumber pn = GAMESTATE->m_MasterPlayerNumber;
+	
+	switch( m_iCurrentRow[pn] )
 	{
 	case ROW_SONG_GROUP: 
 	case ROW_SONG: 
@@ -498,7 +510,17 @@ void ScreenOptionsEditCourseEntry::ProcessMenuStart( const InputEventPlus &input
 		if( SHOW_MODS_ROW )
 		{
 			if( !GAMESTATE->m_pCurCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex].IsFixedSong() )
+			{
+				// Set up for ScreenPlayerOptions
+				const Style *pStyle = GAMEMAN->GetEditorStyleForStepsType( GAMESTATE->m_stEdit );
+				CourseEntry &ce = GAMESTATE->m_pCurCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
+				
+				GAMESTATE->m_pCurStyle.Set( pStyle );
+				GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.Init();
+				GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.FromString( ce.sModifiers );
+				SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromCoursePlayerOptions );
 				break;
+			}
 		}
 		// fall through
 	case ROW_DONE:
