@@ -20,6 +20,7 @@
 #include "archutils/Win32/DialogUtil.h"
 #include "LocalizedString.h"
 #include "arch/Dialog/Dialog.h"
+#include "archutils/Win32/SpecialDirs.h"
 
 // LanguagesDlg dialog
 
@@ -249,9 +250,9 @@ struct TranslationLine
 	RString sSection, sID, sBaseLanguage, sCurrentLanguage;
 };
 
-static LocalizedString FAILED_TO_SAVE					( "LanguagesDlg", "Failed to save '%s'." );
+static LocalizedString FAILED_TO_SAVE			( "LanguagesDlg", "Failed to save '%s'." );
 static LocalizedString THERE_ARE_NO_STRINGS_TO_EXPORT	( "LanguagesDlg", "There are no strings to export for this language." );
-static LocalizedString EXPORTED_TO_YOUR_DESKTOP			( "LanguagesDlg", "Exported to your Desktop as '%s'." );
+static LocalizedString EXPORTED_TO_YOUR_DESKTOP		( "LanguagesDlg", "Exported to your Desktop as '%s'." );
 void LanguagesDlg::OnBnClickedButtonExport()
 {
 	// TODO: Add your control notification handler code here
@@ -302,15 +303,18 @@ void LanguagesDlg::OnBnClickedButtonExport()
 			}
 		}
 	}
+
+	RageFileOsAbsolute file;
 	RString sFile = sTheme+"-"+sLanguage+".csv";
-	RString sFullFile = "Desktop/"+sFile;
+	RString sFullFile = SpecialDirs::GetDesktopDir() + sFile;
+	file.Open( sFullFile, RageFile::WRITE );
 	if( iNumExpored == 0 )
 	{
 		Dialog::OK( THERE_ARE_NO_STRINGS_TO_EXPORT.GetValue() );	
 		return;
 	}
 
-	if( csv.WriteFile(sFullFile) )
+	if( csv.WriteFile(file) )
 		Dialog::OK( ssprintf(EXPORTED_TO_YOUR_DESKTOP.GetValue(),sFile.c_str()) );
 	else
 		Dialog::OK( ssprintf(FAILED_TO_SAVE.GetValue(),sFullFile.c_str()) );
