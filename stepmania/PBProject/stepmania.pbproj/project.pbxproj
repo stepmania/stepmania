@@ -2121,7 +2121,7 @@
 		AA6E010E0477128A005F316C /* PrefsManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = PrefsManager.h; path = ../src/PrefsManager.h; sourceTree = "<group>"; };
 		AA6E010F0477128A005F316C /* SongManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = SongManager.cpp; path = ../src/SongManager.cpp; sourceTree = "<group>"; };
 		AA6E01100477128A005F316C /* SongManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = SongManager.h; path = ../src/SongManager.h; sourceTree = "<group>"; };
-		AA6E01120477128A005F316C /* ThemeManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ThemeManager.cpp; path = ../src/ThemeManager.cpp; sourceTree = "<group>"; };
+		AA6E01120477128A005F316C /* ThemeManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ThemeManager.cpp; path = ../src/ThemeManager.cpp; sourceTree = "<group>"; };
 		AA6E01130477128A005F316C /* ThemeManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ThemeManager.h; path = ../src/ThemeManager.h; sourceTree = "<group>"; };
 		AA6E012E047712BE005F316C /* RageSoundDriver_Null.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = RageSoundDriver_Null.cpp; sourceTree = "<group>"; };
 		AA6E012F047712BE005F316C /* RageSoundDriver_Null.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = RageSoundDriver_Null.h; sourceTree = "<group>"; };
