@@ -1163,7 +1163,7 @@ static int FindAttackAtTime( const AttackArray& attacks, float fStartTime )
 {
 	for( unsigned i = 0; i < attacks.size(); ++i )
 	{
-		if( attacks[i].fStartSecond == fStartTime )
+		if( fabs(attacks[i].fStartSecond - fStartTime) < 0.001f )
 			return i;
 	}
 	return -1;
@@ -1754,7 +1754,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			
 			if( iAttack >= 0 )
 			{
-				const RString sDuration = ssprintf( "%f", ce.attacks[iAttack].fSecsRemaining );
+				const RString sDuration = ssprintf( "%.3f", ce.attacks[iAttack].fSecsRemaining );
 				
 				g_InsertCourseAttack.rows[remove].bEnabled = true;
 				if( g_InsertCourseAttack.rows[duration].choices.size() == 9 )
