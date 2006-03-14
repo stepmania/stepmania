@@ -252,13 +252,13 @@ int EditMenu::GetRowSize( EditMenuRow er ) const
 {
 	switch( er )
 	{
-	case ROW_GROUP:				return m_sGroups.size();
-	case ROW_SONG:				return m_pSongs.size();
+	case ROW_GROUP:			return m_sGroups.size();
+	case ROW_SONG:			return m_pSongs.size();
 	case ROW_STEPS_TYPE:		return m_StepsTypes.size();
-	case ROW_STEPS:				return m_vpSteps.size();
-	case ROW_SOURCE_STEPS_TYPE: return m_StepsTypes.size();
+	case ROW_STEPS:			return m_vpSteps.size();
+	case ROW_SOURCE_STEPS_TYPE:	return m_StepsTypes.size();
 	case ROW_SOURCE_STEPS:		return m_vpSourceSteps.size();
-	case ROW_ACTION:			return m_Actions.size();
+	case ROW_ACTION:		return m_Actions.size();
 	default: FAIL_M( ssprintf("%i", er) );
 	}
 }

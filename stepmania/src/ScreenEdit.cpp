@@ -96,7 +96,9 @@ void ScreenEdit::InitEditMappings()
 {
 	m_EditMappingsDeviceInput.Clear();
 
-	// Global mappings:
+	//
+	// Common mappings:
+	//
 	switch( EDIT_MODE.GetValue() )
 	{
 	case EditMode_Practice:
@@ -125,6 +127,17 @@ void ScreenEdit::InitEditMappings()
 
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_LAY_SELECT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_SPACE);
 
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_PLAY_FROM_START][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cp);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_PLAY_FROM_START][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_PLAY_FROM_START][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_PLAY_FROM_CURSOR][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cp);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_PLAY_FROM_CURSOR][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
+	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_PLAY_FROM_CURSOR][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_PLAY_SELECTION][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cp);
+
+	//
+	// EditMode-specific mappings
+	//
 	switch( EDIT_MODE.GetValue() )
 	{
 	case EditMode_Practice:
@@ -132,11 +145,6 @@ void ScreenEdit::InitEditMappings()
 		// Right = Zoom in
 		m_EditMappingsDeviceInput.button   [EDIT_BUTTON_SCROLL_SPEED_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LEFT);
 		m_EditMappingsDeviceInput.button   [EDIT_BUTTON_SCROLL_SPEED_UP][0]   = DeviceInput(DEVICE_KEYBOARD, KEY_RIGHT);
-
-		// Enter = Play selection
-		// P = Play current beat to end
-		m_EditMappingsDeviceInput.button   [EDIT_BUTTON_PLAY_SELECTION][0]    = DeviceInput(DEVICE_KEYBOARD, KEY_ENTER);
-		m_EditMappingsDeviceInput.button   [EDIT_BUTTON_PLAY_FROM_CURSOR][0]  = DeviceInput(DEVICE_KEYBOARD, KEY_Cp);
 
 		// F1 = Show help popup
 		m_EditMappingsDeviceInput.button   [EDIT_BUTTON_OPEN_INPUT_HELP][0]   = DeviceInput(DEVICE_KEYBOARD, KEY_F1);
@@ -160,11 +168,6 @@ void ScreenEdit::InitEditMappings()
 		// v = course attack menu
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_OPEN_COURSE_ATTACK_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cv);
 		m_EditMappingsDeviceInput.button[EDIT_BUTTON_ADD_COURSE_MODS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cm);
-		
-		// Enter = Play selection
-		// P = Play current beat to end
-		m_EditMappingsDeviceInput.button   [EDIT_BUTTON_PLAY_SELECTION][0]    = DeviceInput(DEVICE_KEYBOARD, KEY_ENTER);
-		m_EditMappingsDeviceInput.button   [EDIT_BUTTON_PLAY_FROM_CURSOR][0]  = DeviceInput(DEVICE_KEYBOARD, KEY_Cp);
 		
 		// F1 = Show help popup
 		m_EditMappingsDeviceInput.button   [EDIT_BUTTON_OPEN_INPUT_HELP][0]   = DeviceInput(DEVICE_KEYBOARD, KEY_F1);
@@ -262,13 +265,6 @@ void ScreenEdit::InitEditMappings()
 	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP_AND_GENRE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
 	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP_AND_GENRE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
 
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_PLAY_FROM_START][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cp);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_PLAY_FROM_START][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_PLAY_FROM_START][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_PLAY_FROM_CURSOR][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cp);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_PLAY_FROM_CURSOR][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
-	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_PLAY_FROM_CURSOR][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_PLAY_SELECTION][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cp);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_RECORD_SELECTION][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cr);
 	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_RECORD_SELECTION][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
 	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_RECORD_SELECTION][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
@@ -480,10 +476,11 @@ static MenuDef g_EditHelp(
 	MenuRowDef( -1, "PgUp/PgDn: jump measure",				false, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( -1, "Home/End: jump to first/last beat",			false, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( -1, "Ctrl + Up/Down: Change zoom",				false, EditMode_Practice, true, true, 0, NULL ),
+	MenuRowDef( -1, "Space: Set selection",					false, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( -1, "Shift + Up/Down: Drag area marker",			false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "P: Play selection",					false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "Ctrl + P: Play whole song",				false, EditMode_Practice, true, true, 0, NULL ),
+	MenuRowDef( -1, "P: Play",						false, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( -1, "Shift + P: Play current beat to end",			false, EditMode_Practice, true, true, 0, NULL ),
+	MenuRowDef( -1, "Ctrl + P: Play whole song",				false, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( -1, "Ctrl + R: Record",					false, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( -1, "F4: Toggle assist tick",				false, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( -1, "F5/F6: Next/prev steps of same StepsType",		false, EditMode_Full,     true, true, 0, NULL ),
@@ -515,8 +512,8 @@ static MenuDef g_PracticeHelp(
 	MenuRowDef( -1, "Home, End: Jump to first/last beat",	false, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( -1, "Hold Shift: Select region",		false, EditMode_Practice, true, true, 0, NULL ),
 	MenuRowDef( -1, "Left, Right: Zoom",			false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "Enter: Play selection",		false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "P: Play from cursor",			false, EditMode_Practice, true, true, 0, NULL )
+	MenuRowDef( -1, "P: Play",				false, EditMode_Practice, true, true, 0, NULL ),
+	MenuRowDef( -1, "Space: Set selection",			false, EditMode_Practice, true, true, 0, NULL )
 );
 
 static MenuDef g_MainMenu(
@@ -1849,14 +1846,13 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		break;
 
 	case EDIT_BUTTON_PLAY_SELECTION:
-		if( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 )
-			HandleAreaMenuChoice( play );
-		else
-			HandleMainMenuChoice( play_current_beat_to_end );
+		HandleMainMenuChoice( play_selection );
 		break;
 	case EDIT_BUTTON_RECORD_SELECTION:
 		if( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 )
+		{
 			HandleAreaMenuChoice( record );
+		}
 		else
 		{
 			if( g_iDefaultRecordLength.Get() == -1 )
@@ -2687,16 +2683,24 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 		case play_selection:
 			if( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 )
 				HandleAreaMenuChoice( play );
+			else if( m_NoteFieldEdit.m_iBeginMarker!=-1 )
+				HandleMainMenuChoice( play_selection_start_to_end );
 			else
 				HandleMainMenuChoice( play_current_beat_to_end );
-
 			break;
 		case play_whole_song:
 			{
 				m_iStartPlayingAt = 0;
 				m_iStopPlayingAt = m_NoteDataEdit.GetLastRow();
 				m_iStopPlayingAt += BeatToNoteRow(4);		// give a one measure lead out
-
+				TransitionEditState( STATE_PLAYING );
+			}
+			break;
+		case play_selection_start_to_end:
+			{
+				m_iStartPlayingAt = m_NoteFieldEdit.m_iBeginMarker;
+				m_iStopPlayingAt = m_NoteDataEdit.GetLastRow();
+				m_iStopPlayingAt += BeatToNoteRow(4);		// give a one measure lead out
 				TransitionEditState( STATE_PLAYING );
 			}
 			break;
@@ -2705,7 +2709,6 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				m_iStartPlayingAt = BeatToNoteRow(GAMESTATE->m_fSongBeat);
 				m_iStopPlayingAt = m_NoteDataEdit.GetLastRow();
 				m_iStopPlayingAt += BeatToNoteRow(4);		// give a one measure lead out
-
 				TransitionEditState( STATE_PLAYING );
 			}
 			break;

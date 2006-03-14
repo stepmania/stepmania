@@ -278,6 +278,7 @@ public:
 		set_selection_end,
 		edit_steps_information,
 		play_whole_song,
+		play_selection_start_to_end,
 		play_current_beat_to_end,
 		save,
 		revert_to_last_save,
