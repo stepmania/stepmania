@@ -407,6 +407,14 @@ static void LuaGoalType(lua_State* L)
 }
 REGISTER_WITH_LUA_FUNCTION( LuaGoalType );
 
+static const char *EditModeNames[] = {
+	"Practice",
+	"CourseMods",
+	"Home",
+	"Full"
+};
+XToString( EditMode, EditMode_INVALID );
+StringToX( EditMode );
 
 static const char *StageNames[] = {
 	"1",

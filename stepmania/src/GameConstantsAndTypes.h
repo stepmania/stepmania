@@ -414,13 +414,14 @@ GoalType StringToGoalType( const RString& s );
 enum EditMode
 {
 	EditMode_Practice,
+	EditMode_CourseMods,
 	EditMode_Home,
 	EditMode_Full,
-	EditMode_CourseMods,
 	NUM_EditMode,
 	EditMode_INVALID,
 };
-
+const RString& EditModeToString( EditMode em );
+EditMode StringToEditMode( const RString& s );
 
 enum Stage
 {
