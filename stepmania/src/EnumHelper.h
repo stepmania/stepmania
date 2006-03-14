@@ -93,8 +93,8 @@ static const RString EMPTY_STRING;
 				return (X)i;	\
 		return (X)(i+1); /*invalid*/	\
 	} \
-	template<> X StringTo<X>( const RString& s ) { return StringTo##X( s ); }
-template<class T> T StringTo( const RString& s );
+	template<> void StringTo<X>( const RString& s, X &out ) { out = StringTo##X( s ); }
+template<class T> void StringTo( const RString& s, T &out );
 
 #define LuaXToString(X)	\
 LuaFunction( X##ToString, X##ToString( (X) IArg(1) ) );

@@ -219,7 +219,7 @@ public:
 	}
 };
 
-template<class T> T StringTo( const RString& s );
+template<class T> void StringTo( const RString& s, T &out );
 template<class T>
 class ThemeMetricEnum : public ThemeMetric<RString>
 {
@@ -228,7 +228,7 @@ public:
 	ThemeMetricEnum() : ThemeMetric<RString>() {}
 	ThemeMetricEnum( const RString& sGroup, const RString& sName ) :
 	ThemeMetric<RString>( sGroup, sName ) {}
-	void Read() { ThemeMetric<RString>::Read(); m_Value = StringTo<T>(m_currentValue); }
+	void Read() { ThemeMetric<RString>::Read(); StringTo<T>(m_currentValue,m_Value); }
 	T GetValue() const { ASSERT( !m_sName.empty() && m_bIsLoaded ); return m_Value; }
 	operator T () const { return GetValue(); }
 };
