@@ -219,6 +219,7 @@ public:
 	}
 };
 
+// VC 6 hack: even templated functions can't differ by only return value.  Move return value to a reference parameter.
 template<class T> void StringTo( const RString& s, T &out );
 template<class T>
 class ThemeMetricEnum : public ThemeMetric<RString>
