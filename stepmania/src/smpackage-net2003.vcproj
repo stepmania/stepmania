@@ -46,7 +46,7 @@
 				LinkIncremental="0"
 				SuppressStartupBanner="TRUE"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile=".\../../Program/smpackage-debug.pdb"
+				ProgramDatabaseFile="../Program/smpackage-debug.pdb"
 				SubSystem="2"
 				TargetMachine="1"/>
 			<Tool
@@ -113,7 +113,7 @@
 				OutputFile="./../Program/tools.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				ProgramDatabaseFile=".\../../Program/smpackage.pdb"
+				ProgramDatabaseFile="../Program/smpackage.pdb"
 				SubSystem="2"
 				TargetMachine="1"/>
 			<Tool
@@ -247,10 +247,10 @@
 				RelativePath=".\smpackage\resource.h">
 			</File>
 			<File
-				RelativePath="smpackage.ICO">
+				RelativePath="res\smpackage.ico">
 			</File>
 			<File
-				RelativePath="res\smpackage.ico">
+				RelativePath="smpackage.ICO">
 			</File>
 			<File
 				RelativePath=".\smpackage\smpackage.rc">
