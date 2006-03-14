@@ -368,7 +368,6 @@ void ScreenGameplay::Init( bool bUseSongBackgroundAndForeground )
 	GIVING_UP_GOES_TO_NEXT_SCREEN.Load( m_sName, "GivingUpGoesToNextScreen" );
 	FAIL_AFTER_30_MISSES.Load( m_sName, "FailAfter30Misses" );
 	ALLOW_CENTER_1_PLAYER.Load( m_sName, "AllowCenter1Player" );
-	FORCED_MODIFIERS_IN_BEGINNER.Load( m_sName, "ForcedModifiersInBeginner" );
 	
 	if( bUseSongBackgroundAndForeground )
 	{

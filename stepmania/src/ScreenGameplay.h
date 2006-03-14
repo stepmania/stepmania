@@ -129,7 +129,6 @@ protected:
 	ThemeMetric<bool> GIVING_UP_GOES_TO_NEXT_SCREEN;
 	ThemeMetric<bool> FAIL_AFTER_30_MISSES;
 	ThemeMetric<bool> ALLOW_CENTER_1_PLAYER;
-	ThemeMetric<RString> FORCED_MODIFIERS_IN_BEGINNER;
 
 	void TweenOnScreen();
 	void TweenOffScreen();
