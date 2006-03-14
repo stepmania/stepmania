@@ -704,7 +704,8 @@ void PlayerOptions::ResetSavedPrefs()
 	CPY( m_bTransforms[TRANSFORM_NOHANDS] );
 	CPY( m_bTransforms[TRANSFORM_NOQUADS] );
 	CPY( m_bTransforms[TRANSFORM_NOSTRETCH] );
-	CPY( m_sNoteSkin );
+	// Don't clear this.
+	// CPY( m_sNoteSkin );
 #undef CPY
 }
 
