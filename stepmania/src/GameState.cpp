@@ -1768,7 +1768,7 @@ public:
 	{
 		PlayerNumber pn = PLAYER_INVALID;
 		if( lua_gettop(L) >= 2 && !lua_isnil(L,2) )
-			pn = (PlayerNumber)(IArg(2)-1);
+			pn = (PlayerNumber)IArg(2);
 		p->ApplyGameCommand(SArg(1),pn);
 		return 0;
 	}
