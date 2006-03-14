@@ -367,7 +367,6 @@ void ScreenGameplay::Init( bool bUseSongBackgroundAndForeground )
 	GIVING_UP_GOES_TO_PREV_SCREEN.Load( m_sName, "GivingUpGoesToPrevScreen" );
 	GIVING_UP_GOES_TO_NEXT_SCREEN.Load( m_sName, "GivingUpGoesToNextScreen" );
 	FAIL_AFTER_30_MISSES.Load( m_sName, "FailAfter30Misses" );
-	USE_FORCED_MODIFIERS_IN_BEGINNER.Load( m_sName, "UseForcedModifiersInBeginner" );
 	ALLOW_CENTER_1_PLAYER.Load( m_sName, "AllowCenter1Player" );
 	FORCED_MODIFIERS_IN_BEGINNER.Load( m_sName, "ForcedModifiersInBeginner" );
 	
@@ -903,12 +902,6 @@ void ScreenGameplay::InitSongQueues()
 
 			AttackArray aa;
 			pi->m_asModifiersQueue.push_back( aa );
-			
-			if( pSteps->GetDifficulty() == DIFFICULTY_BEGINNER && (bool)USE_FORCED_MODIFIERS_IN_BEGINNER )
-			{
-				pi->GetPlayerState()->m_StagePlayerOptions.FromString( FORCED_MODIFIERS_IN_BEGINNER, true );
-				pi->GetPlayerState()->RebuildPlayerOptionsFromActiveAttacks();
-			}
 		}
 	}
 
