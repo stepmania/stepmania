@@ -91,6 +91,7 @@
 #define IDC_STATIC_MESSAGE1             1069
 #define IDC_STATIC_ICON                 1070
 #define IDC_SHOW_A_COMMENT              1071
+#define IDC_CHECK_LANGUAGE              1072
 
 // Next default values for new objects
 // 
@@ -98,7 +99,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        155
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1072
+#define _APS_NEXT_CONTROL_VALUE         1073
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif
