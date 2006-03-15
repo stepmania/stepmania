@@ -21,6 +21,7 @@
 #include "LocalizedString.h"
 #include "arch/Dialog/Dialog.h"
 #include "archutils/Win32/SpecialDirs.h"
+#include "archutils/Win32/GotoURL.h"
 
 // LanguagesDlg dialog
 
@@ -181,6 +182,7 @@ void LanguagesDlg::OnSelchangeListLanguages()
 	GetDlgItem(IDC_BUTTON_DELETE)->EnableWindow( !sLanguage.empty() ); 
 	GetDlgItem(IDC_BUTTON_EXPORT)->EnableWindow( !sLanguage.empty() ); 
 	GetDlgItem(IDC_BUTTON_IMPORT)->EnableWindow( !sLanguage.empty() );
+	GetDlgItem(IDC_CHECK_LANGUAGE)->EnableWindow( !sLanguage.empty() );
 	GetDlgItem(IDC_CHECK_EXPORT_ALREADY_TRANSLATED)->EnableWindow( !sLanguage.empty() ); 
 }
 
@@ -192,6 +194,7 @@ BEGIN_MESSAGE_MAP(LanguagesDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON_DELETE, OnBnClickedButtonDelete)
 	ON_BN_CLICKED(IDC_BUTTON_EXPORT, OnBnClickedButtonExport)
 	ON_BN_CLICKED(IDC_BUTTON_IMPORT, OnBnClickedButtonImport)
+	ON_BN_CLICKED(IDC_CHECK_LANGUAGE, OnBnClickedCheckLanguage)
 END_MESSAGE_MAP()
 
 
@@ -417,4 +420,136 @@ void LanguagesDlg::OnBnClickedButtonImport()
 		Dialog::OK( ssprintf(FAILED_TO_SAVE.GetValue(),sLanguageFile.c_str()) );
 
 	OnSelchangeListThemes();
+}
+
+void GetAllMatches( const RString &sRegex, const RString &sString, vector<RString> &asOut )
+{
+	Regex re( sRegex + "(.*)$");
+	RString sMatch( sString );
+	while(1)
+	{
+		vector<RString> asMatches;
+		if( !re.Compare(sMatch, asMatches) )
+			break;
+		asOut.push_back( asMatches[0] );
+		sMatch = asMatches[1];
+	}
+}
+
+void LanguagesDlg::OnBnClickedCheckLanguage()
+{
+	RString sTheme = GetCurrentString( m_listThemes );
+	ASSERT( !sTheme.empty() );
+	RString sLanguage = GetCurrentString( m_listLanguages );
+	ASSERT( !sLanguage.empty() );
+	sLanguage = SMPackageUtil::GetLanguageCodeFromDisplayString( sLanguage );
+
+	RString sBaseLanguageFile = GetLanguageFile( sTheme, SpecialFiles::BASE_LANGUAGE );
+	RString sLanguageFile = GetLanguageFile( sTheme, sLanguage );
+
+	IniFile ini1;
+	ini1.ReadFile( sBaseLanguageFile );
+	IniFile ini2;
+	ini2.ReadFile( sLanguageFile );
+
+	RageFileOsAbsolute file;
+	RString sFile = sTheme+"-"+sLanguage+" check.txt";
+	RString sFullFile = SpecialDirs::GetDesktopDir() + sFile;
+	file.Open( sFullFile, RageFile::WRITE );
+
+	{
+		FOREACH_CONST_Child( &ini1, key )
+		{
+			FOREACH_CONST_Attr( key, value )
+			{
+				const RString &sSection = key->m_sName;
+				const RString &sID = value->first;
+				const RString &sBaseLanguage = value->second;
+				RString sCurrentLanguage;
+				ini2.GetValue( sSection, sID, sCurrentLanguage );
+
+				if( sCurrentLanguage.empty() )
+					continue;
+
+				/* Check &FOO;, %{foo}.  Some mismatches here are normal, particularly in
+				 * languages with substantially different word order rules than English. */
+				{
+					RString sRegex = "(&[A-Za-z]+;|%{[A-Za-z]+}|%)";
+					vector<RString> asMatchesBase;
+					GetAllMatches( sRegex, sBaseLanguage, asMatchesBase );
+
+					vector<RString> asMatches;
+					GetAllMatches( sRegex, sCurrentLanguage, asMatches );
+
+					if( asMatchesBase.size() != asMatches.size() ||
+						!std::equal(asMatchesBase.begin(), asMatchesBase.end(), asMatches.begin()) )
+					{
+						file.PutLine( ssprintf("Entity/substitution mismatch in section [%s] (%s):", sSection.c_str(), sID.c_str()) );
+						file.PutLine( ssprintf("    %s", sCurrentLanguage.c_str()) );
+						file.PutLine( ssprintf("    %s", sBaseLanguage.c_str()) );
+					}
+				}
+
+				/* Check "foo::bar", "foo\nbar" and double quotes.  Check these independently
+				 * of the above. */
+				{
+					RString sRegex = "(\"|::|\\n)";
+					vector<RString> asMatchesBase;
+					GetAllMatches( sRegex, sBaseLanguage, asMatchesBase );
+
+					vector<RString> asMatches;
+					GetAllMatches( sRegex, sCurrentLanguage, asMatches );
+
+					if( asMatchesBase.size() != asMatches.size() ||
+						!std::equal(asMatchesBase.begin(), asMatchesBase.end(), asMatches.begin()) )
+					{
+						file.PutLine( ssprintf("Quote/line break mismatch in section [%s] (%s):", sSection.c_str(), sID.c_str()) );
+						file.PutLine( ssprintf("    %s", sCurrentLanguage.c_str()) );
+						file.PutLine( ssprintf("    %s", sBaseLanguage.c_str()) );
+					}
+				}
+			}
+		}
+	}
+
+	{
+		FOREACH_CONST_Child( &ini1, key )
+		{
+			bool bFirst = true;
+			RString sLastSection;
+			RString sLine;
+			FOREACH_CONST_Attr( key, value )
+			{
+				const RString &sSection = key->m_sName;
+				const RString &sID = value->first;
+				RString sCurrentLanguage;
+				ini2.GetValue( sSection, sID, sCurrentLanguage );
+				if( !sCurrentLanguage.empty() )
+					continue;
+
+				if( bFirst )
+				{
+					bFirst = false;
+					file.PutLine( ssprintf("Not translated in section [%s]:", sSection.c_str()) );
+				}
+				if( sLine.size() + sID.size() > 100 )
+				{
+					file.PutLine( sLine );
+					sLine = "";
+				}
+				if( sLine.size() )
+					sLine += ", ";
+				else
+					sLine += "    ";
+
+				sLine += sID;
+			}
+			if( sLine.size() )
+				file.PutLine( sLine );
+		}
+	}
+
+	file.Close();
+
+	GotoURL( ssprintf("file://%s", sFullFile.c_str()) );
 }

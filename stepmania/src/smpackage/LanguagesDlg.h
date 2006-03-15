@@ -30,4 +30,5 @@ public:
 	afx_msg void OnBnClickedButtonExport();
 	afx_msg void OnBnClickedButtonImport();
 	CButton m_buttonExportAlreadyTranslated;
+	afx_msg void OnBnClickedCheckLanguage();
 };
