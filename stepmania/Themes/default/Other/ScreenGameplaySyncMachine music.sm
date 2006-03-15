@@ -11,7 +11,7 @@
 #LYRICSPATH:;
 #CDTITLE:;
 #MUSIC:ScreenGameplaySyncMachine music.ogg;
-#OFFSET:-0.030;
+#OFFSET:-0.020;
 #SAMPLESTART:0.000;
 #SAMPLELENGTH:12.000;
 #SELECTABLE:YES;
@@ -20,18 +20,18 @@
 #BGCHANGES:;
 #KEYSOUNDS:;
 
-//---------------dance-single - Blàáñk----------------
+//---------------dance-single - blank----------------
 #NOTES:
      dance-single:
-     Blàáñk:
+     blank:
      Beginner:
      1:
      0.302,0.205,0.000,0.000,0.000:
   // measure 1
-1000
-0001
-1000
-0001
+0000
+0000
+0000
+0000
 ,  // measure 2
 1000
 0001
