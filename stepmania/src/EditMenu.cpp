@@ -271,28 +271,46 @@ bool EditMenu::CanGoRight()
 	return m_iSelection[m_SelectedRow] != GetRowSize(m_SelectedRow)-1;
 }
 
+bool EditMenu::RowIsSelectable( EditMenuRow row )
+{
+	if( EDIT_MODE == EditMode_Home  &&  row == ROW_STEPS )
+		return false;
+
+	if( GetSelectedSteps() )
+	{
+		switch( row )
+		{
+		case ROW_SOURCE_STEPS_TYPE:
+		case ROW_SOURCE_STEPS:
+			return false;
+		}
+	}
+
+	return true;
+}
+
 void EditMenu::Up()
 {
-	if( CanGoUp() )
-	{
-		if( GetSelectedSteps() && m_SelectedRow==ROW_ACTION )
-			ChangeToRow( ROW_STEPS );
-		else
-			ChangeToRow( EditMenuRow(m_SelectedRow-1) );
-		m_soundChangeRow.Play();
-	}
+	EditMenuRow dest = m_SelectedRow;
+try_again:
+	dest = (EditMenuRow)(dest-1);
+	if( !RowIsSelectable(dest) )
+		goto try_again;
+	ASSERT( dest >= 0 );
+	ChangeToRow( dest );
+	m_soundChangeRow.Play();
 }
 
 void EditMenu::Down()
 {
-	if( CanGoDown() )
-	{
-		if( GetSelectedSteps() && m_SelectedRow==ROW_STEPS )
-			ChangeToRow( ROW_ACTION );
-		else
-			ChangeToRow( EditMenuRow(m_SelectedRow+1) );
-		m_soundChangeRow.Play();
-	}
+	EditMenuRow dest = m_SelectedRow;
+try_again:
+	dest = (EditMenuRow)(dest+1);
+	if( !RowIsSelectable(dest) )
+		goto try_again;
+	ASSERT( dest < NUM_EditMenuRow );
+	ChangeToRow( dest );
+	m_soundChangeRow.Play();
 }
 
 void EditMenu::Left()

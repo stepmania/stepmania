@@ -54,6 +54,7 @@ public:
 	bool CanGoDown();
 	bool CanGoLeft();
 	bool CanGoRight();
+	bool RowIsSelectable( EditMenuRow row );
 
 	void Up();
 	void Down();
@@ -62,15 +63,15 @@ public:
 
 	void RefreshAll();
 
-	RString			GetSelectedGroup() const			{ if( !SHOW_GROUPS.GetValue() ) return GROUP_ALL; ASSERT(m_iSelection[ROW_GROUP]			< (int)m_sGroups.size());		return m_sGroups[m_iSelection[ROW_GROUP]]; }
-	Song*			GetSelectedSong() const				{ ASSERT(m_iSelection[ROW_SONG]				< (int)m_pSongs.size());		return m_pSongs[m_iSelection[ROW_SONG]]; }
-	StepsType		GetSelectedStepsType() const		{ ASSERT(m_iSelection[ROW_STEPS_TYPE]		< (int)m_StepsTypes.size());	return m_StepsTypes[m_iSelection[ROW_STEPS_TYPE]]; }
-	Steps*			GetSelectedSteps() const			{ ASSERT(m_iSelection[ROW_STEPS]			< (int)m_vpSteps.size());		return m_vpSteps[m_iSelection[ROW_STEPS]].pSteps; }
-	Difficulty		GetSelectedDifficulty() const		{ ASSERT(m_iSelection[ROW_STEPS]			< (int)m_vpSteps.size());		return m_vpSteps[m_iSelection[ROW_STEPS]].dc; }
-	StepsType		GetSelectedSourceStepsType() const	{ ASSERT(m_iSelection[ROW_SOURCE_STEPS_TYPE]< (int)m_StepsTypes.size());	return m_StepsTypes[m_iSelection[ROW_SOURCE_STEPS_TYPE]]; }
-	Steps*			GetSelectedSourceSteps() const		{ ASSERT(m_iSelection[ROW_SOURCE_STEPS]		< (int)m_vpSourceSteps.size());	return m_vpSourceSteps[m_iSelection[ROW_SOURCE_STEPS]].pSteps; }
-	Difficulty		GetSelectedSourceDifficulty() const	{ ASSERT(m_iSelection[ROW_SOURCE_STEPS]		< (int)m_vpSourceSteps.size());	return m_vpSourceSteps[m_iSelection[ROW_SOURCE_STEPS]].dc; }
-	EditMenuAction	GetSelectedAction() const			{ ASSERT(m_iSelection[ROW_ACTION]			< (int)m_Actions.size());		return m_Actions[m_iSelection[ROW_ACTION]]; }
+	RString		GetSelectedGroup() const		{ if( !SHOW_GROUPS.GetValue() ) return GROUP_ALL; ASSERT(m_iSelection[ROW_GROUP]	< (int)m_sGroups.size()); return m_sGroups[m_iSelection[ROW_GROUP]]; }
+	Song*		GetSelectedSong() const			{ ASSERT(m_iSelection[ROW_SONG]			< (int)m_pSongs.size());	return m_pSongs[m_iSelection[ROW_SONG]]; }
+	StepsType	GetSelectedStepsType() const		{ ASSERT(m_iSelection[ROW_STEPS_TYPE]		< (int)m_StepsTypes.size());	return m_StepsTypes[m_iSelection[ROW_STEPS_TYPE]]; }
+	Steps*		GetSelectedSteps() const		{ ASSERT(m_iSelection[ROW_STEPS]		< (int)m_vpSteps.size());	return m_vpSteps[m_iSelection[ROW_STEPS]].pSteps; }
+	Difficulty	GetSelectedDifficulty() const		{ ASSERT(m_iSelection[ROW_STEPS]		< (int)m_vpSteps.size());	return m_vpSteps[m_iSelection[ROW_STEPS]].dc; }
+	StepsType	GetSelectedSourceStepsType() const	{ ASSERT(m_iSelection[ROW_SOURCE_STEPS_TYPE]	< (int)m_StepsTypes.size());	return m_StepsTypes[m_iSelection[ROW_SOURCE_STEPS_TYPE]]; }
+	Steps*		GetSelectedSourceSteps() const		{ ASSERT(m_iSelection[ROW_SOURCE_STEPS]		< (int)m_vpSourceSteps.size());	return m_vpSourceSteps[m_iSelection[ROW_SOURCE_STEPS]].pSteps; }
+	Difficulty	GetSelectedSourceDifficulty() const	{ ASSERT(m_iSelection[ROW_SOURCE_STEPS]		< (int)m_vpSourceSteps.size());	return m_vpSourceSteps[m_iSelection[ROW_SOURCE_STEPS]].dc; }
+	EditMenuAction	GetSelectedAction() const			{ ASSERT(m_iSelection[ROW_ACTION]		< (int)m_Actions.size());	return m_Actions[m_iSelection[ROW_ACTION]]; }
 
 	EditMenuRow GetSelectedRow() const { return m_SelectedRow; }
 
@@ -84,13 +85,13 @@ private:
 	EditMenuRow m_SelectedRow;
 	EditMenuRow GetFirstRow() const { return SHOW_GROUPS.GetValue()? ROW_GROUP:ROW_SONG; }
 	int GetRowSize( EditMenuRow er ) const;
-	int			m_iSelection[NUM_EditMenuRow];
+	int		m_iSelection[NUM_EditMenuRow];
 	BitmapText	m_textLabel[NUM_EditMenuRow];
 	BitmapText	m_textValue[NUM_EditMenuRow];
 
 	FadingBanner	m_GroupBanner;
 	FadingBanner	m_SongBanner;
-	TextBanner		m_SongTextBanner;
+	TextBanner	m_SongTextBanner;
 	DifficultyMeter	m_Meter;
 	DifficultyMeter	m_SourceMeter;
 
@@ -102,9 +103,9 @@ private:
 		Difficulty dc;
 	};
 
-	vector<RString>				m_sGroups;
-	vector<Song*>				m_pSongs;
-	vector<StepsType>			m_StepsTypes;
+	vector<RString>			m_sGroups;
+	vector<Song*>			m_pSongs;
+	vector<StepsType>		m_StepsTypes;
 	vector<StepsAndDifficulty>	m_vpSteps;
 	vector<StepsAndDifficulty>	m_vpSourceSteps;
 	vector<EditMenuAction>		m_Actions;
