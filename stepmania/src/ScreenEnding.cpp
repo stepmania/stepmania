@@ -119,8 +119,7 @@ void ScreenEnding::Init()
 
 void ScreenEnding::Input( const InputEventPlus &input )
 {
-	bool bIsTransitioning = m_In.IsTransitioning() || m_Out.IsTransitioning();
-	if( input.MenuI.IsValid() && !bIsTransitioning )
+	if( input.MenuI.IsValid() && !IsTransitioning() )
 	{
 		switch( input.MenuI.button )
 		{
