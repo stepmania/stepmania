@@ -20,120 +20,6 @@
 #include "CommonMetrics.h"
 #include "InputEventPlus.h"
 
-static ThemeMetric<bool> USE_MACHINE_PROFILE( "ScreenEnding", "UseMachineProfile" );
-
-static RString GetStatsLineTitle( PlayerNumber pn, EndingStatsLine line )
-{
-	switch( line )
-	{
-	case CALORIES_TODAY:	return "Calories Today";
-	case CURRENT_COMBO:	return "Current Combo";
-	case PERCENT_COMPLETE:
-		{
-			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
-			RString sStepsType = GAMEMAN->StepsTypeToLocalizedString(st);
-			return ssprintf( "%s %%", sStepsType.c_str() );
-		}
-	case PERCENT_COMPLETE_EASY:
-	case PERCENT_COMPLETE_MEDIUM:
-	case PERCENT_COMPLETE_HARD:
-	case PERCENT_COMPLETE_CHALLENGE:
-		{
-			if( GAMESTATE->IsCourseMode() )
-			{
-				CourseDifficulty cd = (CourseDifficulty)(DIFFICULTY_EASY+line-PERCENT_COMPLETE_EASY);
-				ASSERT( cd >= 0 && cd < NUM_CourseDifficulty );
-				if( !GAMESTATE->IsCourseDifficultyShown(cd) )
-					return RString();
-				return CourseDifficultyToLocalizedString(cd);
-			}
-			else
-			{
-				Difficulty dc = (Difficulty)(DIFFICULTY_EASY+line-PERCENT_COMPLETE_EASY);
-				ASSERT( dc >= 0 && dc < NUM_Difficulty );
-				return DifficultyToLocalizedString(dc);
-			}
-		}
-	default:	ASSERT(0);	return RString();
-	}
-}
-
-static bool ShowStatsFor( PlayerNumber pn )
-{
-	return USE_MACHINE_PROFILE || PROFILEMAN->IsPersistentProfile(pn);
-}
-
-static RString GetStatsLineValue( PlayerNumber pn, EndingStatsLine line )
-{
-	CHECKPOINT_M( ssprintf("GetStatsLineValue(%d,%d)",pn,line) );
-
-	Profile* pProfile = NULL;
-	if( USE_MACHINE_PROFILE )
-		pProfile = PROFILEMAN->GetMachineProfile();
-	else
-		pProfile = PROFILEMAN->GetProfile( pn );
-	ASSERT( pProfile );
-
-	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
-
-	switch( line )
-	{
-	case CALORIES_TODAY:		return pProfile->GetDisplayTotalCaloriesBurnedToday();
-	case CURRENT_COMBO:		return Commify( pProfile->m_iCurrentCombo );
-	case PERCENT_COMPLETE:
-		{
-			float fActual = 0;
-			float fPossible = 0;
-
-			if( GAMESTATE->IsCourseMode() )
-			{
-				FOREACH_CONST( CourseDifficulty, CommonMetrics::COURSE_DIFFICULTIES_TO_SHOW.GetValue(), iter )
-				{
-					fActual += pProfile->GetCoursesActual(st,*iter);
-					fPossible += pProfile->GetCoursesPossible(st,*iter);
-				}
-			}
-			else
-			{
-				FOREACH_CONST( Difficulty, CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue(), iter )
-				{
-					fActual += pProfile->GetSongsActual(st,*iter);
-					fPossible += pProfile->GetSongsPossible(st,*iter);
-				}
-			}
-
-			return ssprintf( "%05.2f%%", fActual/fPossible*100 );
-		}
-	case PERCENT_COMPLETE_EASY:
-	case PERCENT_COMPLETE_MEDIUM:
-	case PERCENT_COMPLETE_HARD:
-	case PERCENT_COMPLETE_CHALLENGE:
-		// Ugly...
-		{
-			RString sStepsType = GAMEMAN->StepsTypeToLocalizedString(st);
-			float fPercent = 0;
-			if( GAMESTATE->IsCourseMode() )
-			{
-				CourseDifficulty cd = (CourseDifficulty)(DIFFICULTY_EASY+line-PERCENT_COMPLETE_EASY);
-				ASSERT( cd >= 0 && cd < NUM_CourseDifficulty );
-				if( !GAMESTATE->IsCourseDifficultyShown(cd) )
-					return RString();
-				RString sDifficulty = CourseDifficultyToLocalizedString(cd);
-				fPercent = pProfile->GetCoursesPercentComplete(st,cd);
-			}
-			else
-			{
-				Difficulty dc = (Difficulty)(DIFFICULTY_EASY+line-PERCENT_COMPLETE_EASY);
-				ASSERT( dc >= 0 && dc < NUM_Difficulty );
-				RString sDifficulty = DifficultyToLocalizedString(dc);
-				fPercent = pProfile->GetSongsPercentComplete(st,dc);
-			}
-			return ssprintf( "%05.2f%%", fPercent*100 );
-		}
-	default:	ASSERT(0);	return RString();
-	}
-}
-
 
 REGISTER_SCREEN_CLASS( ScreenEnding );
 ScreenEnding::ScreenEnding() : ScreenAttract( false/*dont reset GAMESTATE*/ )
@@ -205,24 +91,9 @@ void ScreenEnding::Init()
 
 	FOREACH_HumanPlayer( p )
 	{
-		if( !ShowStatsFor(p) )
+		if( !PROFILEMAN->IsPersistentProfile(p) )
 			continue;
 	
-		FOREACH_EndingStatsLine( i )
-		{
-			m_Lines[i][p].title.LoadFromFont( THEME->GetPathF("ScreenEnding","stats title") );
-			m_Lines[i][p].title.SetText( GetStatsLineTitle(p, i) );
-			m_Lines[i][p].title.SetName( ssprintf("StatsTitleP%dLine%d",p+1,i+1) );
-			SET_XY_AND_ON_COMMAND( m_Lines[i][p].title );
-			this->AddChild( &m_Lines[i][p].title );
-		
-			m_Lines[i][p].value.LoadFromFont( THEME->GetPathF("ScreenEnding","stats value") );
-			m_Lines[i][p].value.SetText( GetStatsLineValue(p, i) );
-			m_Lines[i][p].value.SetName( ssprintf("StatsValueP%dLine%d",p+1,i+1) );
-			SET_XY_AND_ON_COMMAND( m_Lines[i][p].value );
-			this->AddChild( &m_Lines[i][p].value );
-		}
-
 		m_sprRemoveMemoryCard[p].SetName( ssprintf("RemoveCardP%d",p+1) );
 		m_sprRemoveMemoryCard[p].Load( THEME->GetPathG("ScreenEnding",ssprintf("remove card P%d",p+1)) );
 		switch( MEMCARDMAN->GetCardState(p) )
