@@ -244,7 +244,7 @@ PrefsManager::PrefsManager() :
 	m_bPickExtraStage		( "PickExtraStage",		false ),
 
 	m_bComboContinuesBetweenSongs	( "ComboContinuesBetweenSongs",	false ),
-	m_fLongVerSongSeconds		( "LongVerSongSeconds",		60*2.5f ),	// Dynamite Rave is 2:55
+	m_fLongVerSongSeconds		( "LongVerSongSeconds",		60*2.5f ),
 	m_fMarathonVerSongSeconds	( "MarathonVerSongSeconds",	60*5.f ),
 	m_ShowSongOptions		( "ShowSongOptions",		YES ),
 	m_bDancePointsForOni		( "DancePointsForOni",		false ),
