@@ -196,8 +196,6 @@ protected:
 	void CheckNumberOfNotesAndUndo();
 
 	void OnSnapModeChange();
-	void MenuItemGainFocus( BitmapText* menuitem );
-	void MenuItemLoseFocus( BitmapText* menuitem );
 
 	float GetMaximumBeatForNewNote() const;	// don't allow Down key to go past this beat.
 	float GetMaximumBeatForMoving() const;	// don't allow Down key to go past this beat.
