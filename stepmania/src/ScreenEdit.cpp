@@ -801,10 +801,9 @@ void ScreenEdit::Init()
 	m_soundValueDecrease.Load(	THEME->GetPathS("ScreenEdit","value decrease"), true );
 	m_soundSwitchSteps.Load(	THEME->GetPathS("ScreenEdit","switch steps") );
 	m_soundSave.Load(		THEME->GetPathS("ScreenEdit","save") );
+	m_soundAssistTick.Load(		THEME->GetPathS("ScreenEdit","assist tick"), true );
 
 	m_soundMusic.Load( m_pSong->GetMusicPath() );
-
-	m_soundAssistTick.Load( THEME->GetPathS("ScreenEdit","assist tick"), true );
 
 	this->HandleScreenMessage( SM_UpdateTextInfo );
 	m_bTextInfoNeedsUpdate = true;
