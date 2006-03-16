@@ -786,7 +786,7 @@ void RageDisplay_D3D::SendCurrentMatrices()
 
 	/* Convert to OpenGL-style "pixel-centered" coords */
 	RageMatrix m;
-	RageMatrixTranslation( &m, +0.5f, +0.5f, 0 );
+	RageMatrixTranslation( &m, -0.5f, -0.5f, 0 );
 	RageMatrixMultiply( &m, &m, GetWorldTop() );
 	g_pd3dDevice->SetTransform( D3DTS_WORLD, (D3DMATRIX*)&m );
 	
