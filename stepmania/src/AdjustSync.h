@@ -3,7 +3,7 @@
 
 class TimingData;
 
-const int SAMPLE_COUNT = 30;
+const int SAMPLE_COUNT = 25;
 
 class AdjustSync
 {
