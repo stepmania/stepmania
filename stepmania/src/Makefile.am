@@ -28,7 +28,6 @@ ScreenCenterImage.cpp ScreenCenterImage.h ScreenCredits.cpp ScreenCredits.h \
 ScreenDebugOverlay.cpp ScreenDebugOverlay.h \
 ScreenDemonstration.cpp ScreenDemonstration.h ScreenDimensions.h \
 ScreenEdit.cpp ScreenEdit.h \
-ScreenEditCourseMods.cpp ScreenEditCourseMods.h \
 ScreenEditMenu.cpp ScreenEditMenu.h ScreenEnding.cpp ScreenEnding.h \
 ScreenEvaluation.cpp ScreenEvaluation.h \
 ScreenEvaluationMultiplayer.cpp ScreenEvaluationMultiplayer.h \
