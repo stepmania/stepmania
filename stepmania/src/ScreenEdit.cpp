@@ -460,60 +460,8 @@ const MapEditButtonToMenuButton *ScreenEdit::GetCurrentMenuButtonMap() const
 
 
 static MenuDef g_EditHelp(
-	"ScreenMiniMenuEditHelp",
-#if defined(XBOX)
-	MenuRowDef( -1, "L + Up/Down: Change zoom",				false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "R + Up/Down: Drag area marker",			false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "L + Select: Play selection",				false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "R + Start: Play whole song",				false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "R + Select: Record",					false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "L + Black: Toggle assist tick",			false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "R + White: Insert beat and shift down",		false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "R + Black: Delete beat and shift up",			false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "R + button: Lay mine",					false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "L + button: Add to/remove from right half",		false, EditMode_Practice, true, true, 0, NULL )
-#else
-	MenuRowDef( -1, "PgUp/PgDn: jump measure",				false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "Home/End: jump to first/last beat",			false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "Ctrl + Up/Down: Change zoom",				false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "Space: Set selection",					false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "Shift + Up/Down: Drag area marker",			false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "P: Play",						false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "Shift + P: Play current beat to end",			false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "Ctrl + P: Play whole song",				false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "Ctrl + R: Record",					false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "F4: Toggle assist tick",				false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "F5/F6: Next/prev steps of same StepsType",		false, EditMode_Full,     true, true, 0, NULL ),
-	MenuRowDef( -1, "F7/F8: Decrease/increase BPM at cur beat",		false, EditMode_Full,     true, true, 0, NULL ),
-	MenuRowDef( -1, "F9/F10: Decrease/increase stop at cur beat",		false, EditMode_Full,     true, true, 0, NULL ),
-	MenuRowDef( -1, "F11/F12: Decrease/increase music offset",		false, EditMode_Full,     true, true, 0, NULL ),
-			/* XXX: This would be better as a single submenu, to let people tweak
-			* and play the sample several times (without having to re-enter the
-			* menu each time), so it doesn't use a whole bunch of hotkeys. */
-	MenuRowDef( -1, "[ and ]: Decrease/increase sample music start",	false, EditMode_Full,     true, true, 0, NULL ),
-	MenuRowDef( -1, "{ and }: Decrease/increase sample music length",	false, EditMode_Full,     true, true, 0, NULL ),
-	MenuRowDef( -1, "M: Play sample music",					false, EditMode_Full,     true, true, 0, NULL ),
-	MenuRowDef( -1, "B: Add/Edit Background Change",			false, EditMode_Full,     true, true, 0, NULL ),
-	MenuRowDef( -1, "Insert: Insert beat and shift down",			false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "Ctrl + Insert: Shift BPM changes and stops down one beat",
-										false, EditMode_Full,     true, true, 0, NULL ),
-	MenuRowDef( -1, "Delete: Delete beat and shift up",			false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "Ctrl + Delete: Shift BPM changes and stops up one beat",
-										false, EditMode_Full,     true, true, 0, NULL ),
-	MenuRowDef( -1, "Shift + number: Lay mine",				false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "Alt + number: Add to/remove from right half",		false, EditMode_Practice, true, true, 0, NULL )
-#endif
-);
-
-static MenuDef g_PracticeHelp(
-	"ScreenMiniMenuPracticeHelp",
-	MenuRowDef( -1, "Up, Down: Move cursor",		false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "PgUp, PgDn: Jump measure",		false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "Home, End: Jump to first/last beat",	false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "Hold Shift: Select region",		false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "Left, Right: Zoom",			false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "P: Play",				false, EditMode_Practice, true, true, 0, NULL ),
-	MenuRowDef( -1, "Space: Set selection",			false, EditMode_Practice, true, true, 0, NULL )
+	"ScreenMiniMenuEditHelp"
+	// fill this in dynamically
 );
 
 static MenuDef g_MainMenu(
@@ -1413,10 +1361,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		EditMiniMenu( &g_MainMenu, SM_BackFromMainMenu );
 		break;
 	case EDIT_BUTTON_OPEN_INPUT_HELP:
-		if( EDIT_MODE.GetValue() == EditMode_Practice )
-			EditMiniMenu( &g_PracticeHelp );
-		else
-			EditMiniMenu( &g_EditHelp );
+		DoHelp();
 		break;
 	case EDIT_BUTTON_TOGGLE_ASSIST_TICK:
 		GAMESTATE->m_SongOptions.m_bAssistTick ^= 1;
@@ -3533,6 +3478,145 @@ float ScreenEdit::GetMaximumBeatForMoving() const
 	fEndBeat = max( fEndBeat, m_NoteDataEdit.GetLastBeat() );
 
 	return fEndBeat;
+}
+
+struct EditHelpLine
+{
+	const char *szEnglishDescription;
+	vector<EditButton> veb;
+
+	EditHelpLine( 
+		const char *_szEnglishDescription,
+		EditButton eb0, 
+		EditButton eb1 = EDIT_BUTTON_INVALID, 
+		EditButton eb2 = EDIT_BUTTON_INVALID, 
+		EditButton eb3 = EDIT_BUTTON_INVALID, 
+		EditButton eb4 = EDIT_BUTTON_INVALID, 
+		EditButton eb5 = EDIT_BUTTON_INVALID, 
+		EditButton eb6 = EDIT_BUTTON_INVALID, 
+		EditButton eb7 = EDIT_BUTTON_INVALID, 
+		EditButton eb8 = EDIT_BUTTON_INVALID, 
+		EditButton eb9 = EDIT_BUTTON_INVALID )
+	{
+		szEnglishDescription = _szEnglishDescription;
+#define PUSH_IF_VALID( x ) if( x != EDIT_BUTTON_INVALID ) veb.push_back( x );
+		PUSH_IF_VALID( eb0 );
+		PUSH_IF_VALID( eb1 );
+		PUSH_IF_VALID( eb2 ); 
+		PUSH_IF_VALID( eb3 ); 
+		PUSH_IF_VALID( eb4 ); 
+		PUSH_IF_VALID( eb5 ); 
+		PUSH_IF_VALID( eb6 ); 
+		PUSH_IF_VALID( eb7 ); 
+		PUSH_IF_VALID( eb8 ); 
+		PUSH_IF_VALID( eb9 ); 
+#undef PUSH_IF_VALID
+	}
+};
+static const EditHelpLine g_EditHelpLines[] =
+{
+	EditHelpLine( "Move cursor",					EDIT_BUTTON_SCROLL_UP_LINE,	EDIT_BUTTON_SCROLL_DOWN_LINE ),
+	EditHelpLine( "Jump measure",					EDIT_BUTTON_SCROLL_UP_PAGE,	EDIT_BUTTON_SCROLL_DOWN_PAGE ),
+	EditHelpLine( "Jump measure",					EDIT_BUTTON_SCROLL_PREV_MEASURE,	EDIT_BUTTON_SCROLL_NEXT_MEASURE ),
+	EditHelpLine( "Select region",					EDIT_BUTTON_SCROLL_SELECT ),
+	EditHelpLine( "Jump to first/last beat",			EDIT_BUTTON_SCROLL_HOME,		EDIT_BUTTON_SCROLL_END ),
+	EditHelpLine( "Change zoom",					EDIT_BUTTON_SCROLL_SPEED_UP,	EDIT_BUTTON_SCROLL_SPEED_DOWN ),
+	EditHelpLine( "Play",						EDIT_BUTTON_PLAY_SELECTION ),
+	EditHelpLine( "Play current beat to end",			EDIT_BUTTON_PLAY_FROM_CURSOR ),
+	EditHelpLine( "Play whole song",				EDIT_BUTTON_PLAY_FROM_START ),
+	EditHelpLine( "Record",						EDIT_BUTTON_RECORD_SELECTION ),
+	EditHelpLine( "Set selection",					EDIT_BUTTON_LAY_SELECT ),
+	EditHelpLine( "Drag area marker",				EDIT_BUTTON_SCROLL_SELECT ),
+	EditHelpLine( "Toggle assist tick",				EDIT_BUTTON_TOGGLE_ASSIST_TICK ),
+	EditHelpLine( "Next/prev steps of same StepsType",		EDIT_BUTTON_OPEN_NEXT_STEPS,	EDIT_BUTTON_OPEN_PREV_STEPS ),
+	EditHelpLine( "Decrease/increase BPM at cur beat",		EDIT_BUTTON_BPM_DOWN,		EDIT_BUTTON_BPM_UP ),
+	EditHelpLine( "Decrease/increase stop at cur beat",		EDIT_BUTTON_STOP_DOWN,		EDIT_BUTTON_STOP_UP ),
+	EditHelpLine( "Decrease/increase music offset",			EDIT_BUTTON_OFFSET_DOWN,		EDIT_BUTTON_OFFSET_UP ),
+	EditHelpLine( "Decrease/increase sample music start",		EDIT_BUTTON_SAMPLE_START_DOWN,	EDIT_BUTTON_SAMPLE_START_UP ),
+	EditHelpLine( "Decrease/increase sample music length",		EDIT_BUTTON_SAMPLE_LENGTH_DOWN,	EDIT_BUTTON_SAMPLE_LENGTH_UP ),
+	EditHelpLine( "Play sample music",				EDIT_BUTTON_PLAY_SAMPLE_MUSIC ),
+	EditHelpLine( "Add/Edit Background Change",			EDIT_BUTTON_OPEN_BGCHANGE_LAYER1_MENU ),
+	EditHelpLine( "Insert beat and shift down",			EDIT_BUTTON_INSERT ),
+	EditHelpLine( "Shift BPM changes and stops down one beat",	EDIT_BUTTON_INSERT_SHIFT_PAUSES ),
+	EditHelpLine( "Delete beat and shift up",			EDIT_BUTTON_DELETE ),
+	EditHelpLine( "Shift BPM changes and stops up one beat",	EDIT_BUTTON_DELETE_SHIFT_PAUSES ),
+	EditHelpLine( "Lay mine",					EDIT_BUTTON_LAY_MINE_OR_ROLL ),
+	EditHelpLine( "Add to/remove from right half",			EDIT_BUTTON_RIGHT_SIDE ),
+};
+
+static bool IsMapped( EditButton eb, const MapEditToDI &editmap )
+{
+	for( int s=0; s<NUM_EDIT_TO_DEVICE_SLOTS; s++ )
+	{
+		DeviceInput diPress = editmap.button[eb][s];
+		DeviceInput diHold = editmap.hold[eb][s];
+		if( diPress.IsValid() )
+			return true;
+	}
+	return false;
+}
+
+static void ProcessKeyName( RString &s )
+{
+	s.Replace( "Key_", "" );
+}
+
+static void ProcessKeyNames( vector<RString> &vs )
+{
+	FOREACH( RString, vs, s )
+		ProcessKeyName( *s );
+
+	sort( vs.begin(), vs.end() );
+	vector<RString>::iterator toDelete = unique( vs.begin(), vs.end() );
+	vs.erase(toDelete, vs.end());
+}
+
+static RString GetDeviceButtonsLocalized( const vector<EditButton> &veb, const MapEditToDI &editmap )
+{
+	vector<RString> vsPress;
+	vector<RString> vsHold;
+	FOREACH_CONST( EditButton, veb, eb )
+	{
+		if( !IsMapped( *eb, editmap ) )
+			continue;
+
+		for( int s=0; s<NUM_EDIT_TO_DEVICE_SLOTS; s++ )
+		{
+			DeviceInput diPress = editmap.button[*eb][s];
+			DeviceInput diHold = editmap.hold[*eb][s];
+			if( diPress.IsValid() )
+				vsPress.push_back( DeviceButtonToLocalizedString(diPress.button) );
+			if( diHold.IsValid() )
+				vsHold.push_back( DeviceButtonToLocalizedString(diHold.button) );
+		}
+	}
+
+	ProcessKeyNames( vsPress );
+	ProcessKeyNames( vsHold );
+
+	RString s = join("/",vsPress);
+	if( !vsHold.empty() )
+		s = join("/",vsHold) + " + " + s;
+	return s;
+}
+
+void ScreenEdit::DoHelp()
+{
+	g_EditHelp.rows.clear();
+
+	for( int i=0; i<ARRAYSIZE(g_EditHelpLines); i++ )
+	{
+		const EditHelpLine &hl = g_EditHelpLines[i];
+		
+		if( !IsMapped(hl.veb[0],m_EditMappingsDeviceInput) )
+			continue;
+
+		RString sButtons = GetDeviceButtonsLocalized( hl.veb, m_EditMappingsDeviceInput );
+		RString sDescription = THEME->GetString( "EditHelpDescription", hl.szEnglishDescription );
+		g_EditHelp.rows.push_back( MenuRowDef( -1, sDescription, false, EditMode_Practice, false, false, 0, sButtons ) );
+	}
+	
+	EditMiniMenu( &g_EditHelp );
 }
 
 /*

@@ -200,6 +200,7 @@ protected:
 	float GetMaximumBeatForNewNote() const;	// don't allow Down key to go past this beat.
 	float GetMaximumBeatForMoving() const;	// don't allow Down key to go past this beat.
 
+	void DoHelp();
 
 	EditState		m_EditState;
 
