@@ -165,6 +165,9 @@ class ScreenEdit : public ScreenWithMenuElements
 {
 public:
 	virtual void Init();
+	virtual void BeginScreen();
+	virtual void EndScreen();
+
 	virtual ~ScreenEdit();
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();

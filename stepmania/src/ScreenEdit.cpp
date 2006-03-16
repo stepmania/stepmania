@@ -819,6 +819,17 @@ ScreenEdit::~ScreenEdit()
 	m_soundMusic.StopPlaying();
 }
 
+void ScreenEdit::BeginScreen()
+{
+	/* We do this ourself. */
+	SOUND->HandleSongTimer( false );
+}
+
+void ScreenEdit::EndScreen()
+{
+	SOUND->HandleSongTimer( true );
+}
+
 // play assist ticks
 void ScreenEdit::PlayTicks()
 {
@@ -2581,9 +2592,6 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_GainFocus )
 	{
-		/* We do this ourself. */
-		SOUND->HandleSongTimer( false );
-
 		/* When another screen comes up, RageSounds takes over the sound timer.  When we come
 		 * back, put the timer back to where it was. */
 		GAMESTATE->m_fSongBeat = m_fTrailingBeat;
