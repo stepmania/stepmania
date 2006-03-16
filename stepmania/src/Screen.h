@@ -45,6 +45,9 @@ public:
 	/* This is called immediately before the screen is used. */
 	virtual void BeginScreen();
 
+	/* This is called when the screen is popped. */
+	virtual void EndScreen() { }
+
 	virtual void Update( float fDeltaTime );
 	virtual bool OverlayInput( const InputEventPlus &input );
 	virtual void Input( const InputEventPlus &input );

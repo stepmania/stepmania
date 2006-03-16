@@ -323,6 +323,7 @@ ScreenMessage ScreenManager::PopTopScreenInternal( bool bSendLoseFocus )
 
 	if( bSendLoseFocus )
 		ls.m_pScreen->HandleScreenMessage( SM_LoseFocus );
+	ls.m_pScreen->EndScreen();
 
 	if( g_setPersistantScreens.find(ls.m_pScreen->GetName()) != g_setPersistantScreens.end() )
 	{
