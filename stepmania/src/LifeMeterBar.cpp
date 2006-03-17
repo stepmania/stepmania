@@ -134,7 +134,7 @@ void LifeMeterBar::Load( const PlayerState *pPlayerState, PlayerStageStats *pPla
 		PREFSMAN->m_bMercifulBeginner;
 	if( bMercifulBeginnerInEffect )
 	{
-		m_fBaseLifeDifficulty = 2.5f;
+		m_fBaseLifeDifficulty = 5.0f;
 		m_fLifeDifficulty = m_fBaseLifeDifficulty;
 	}
 }
