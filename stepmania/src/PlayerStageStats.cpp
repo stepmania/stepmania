@@ -10,11 +10,14 @@
 #include "Course.h"
 #include "Steps.h"
 #include "ScoreKeeperNormal.h"
+#include "PrefsManager.h"
 
 #define GRADE_PERCENT_TIER(i)	THEME->GetMetricF("PlayerStageStats",ssprintf("GradePercent%s",GradeToString((Grade)i).c_str()))
 #define GRADE_TIER02_IS_ALL_W2S	THEME->GetMetricB("PlayerStageStats","GradeTier02IsAllW2s")
 
 const float LESSON_PASS_THRESHOLD = 0.8f;
+
+Grade GetGradeFromPercent( float fPercent, bool bMerciful );
 
 void PlayerStageStats::Init()
 {
@@ -120,8 +123,11 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 	}
 }
 
-Grade PlayerStageStats::GetGradeFromPercent( float fPercent )
+Grade GetGradeFromPercent( float fPercent, bool bMerciful )
 {
+	if( bMerciful )
+		fPercent = SCALE( fPercent, 0.0f, 1.0f, 0.5f, 1.0f );
+
 	Grade grade = Grade_Failed;
 
 	FOREACH_Grade(g)
@@ -167,7 +173,18 @@ Grade PlayerStageStats::GetGrade() const
 
 	float fPercent = (iPossibleGradePoints == 0) ? 0 : fActual / iPossibleGradePoints;
 
-	Grade grade = GetGradeFromPercent( fPercent );
+
+	bool bMerciful = 
+		vpPlayedSteps.size() > 0  &&
+		GAMESTATE->m_PlayMode == PLAY_MODE_REGULAR &&
+		PREFSMAN->m_bMercifulBeginner;
+	FOREACH_CONST( Steps*, vpPlayedSteps, s )
+	{
+		if( (*s)->GetDifficulty() != DIFFICULTY_BEGINNER )
+			bMerciful = false;
+	}
+
+	Grade grade = GetGradeFromPercent( fPercent, bMerciful );
 
 	LOG->Trace( "GetGrade: Grade: %s, %i", GradeToString(grade).c_str(), GRADE_TIER02_IS_ALL_W2S );
 	if( GRADE_TIER02_IS_ALL_W2S )
@@ -585,7 +602,7 @@ void PlayerStageStats::CalcAwards( PlayerNumber p, bool bGaveUp, bool bUsedAutop
 }
 
 
-LuaFunction( GetGradeFromPercent,	PlayerStageStats::GetGradeFromPercent( FArg(1) ) )
+LuaFunction( GetGradeFromPercent,	GetGradeFromPercent( FArg(1), false ) )
 
 
 // lua start
