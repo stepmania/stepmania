@@ -39,7 +39,7 @@ float ScreenDimensions::GetScreenWidth()
 	if( fAspect > THEME_NATIVE_ASPECT )
 		fScale = fAspect / THEME_NATIVE_ASPECT;
 	ASSERT( fScale >= 1 );
-	return THEME_SCREEN_WIDTH * fScale;
+	return (float) lrintf(THEME_SCREEN_WIDTH * fScale);
 }
 
 float ScreenDimensions::GetScreenHeight()
@@ -49,7 +49,7 @@ float ScreenDimensions::GetScreenHeight()
 	if( fAspect < THEME_NATIVE_ASPECT )
 		fScale = THEME_NATIVE_ASPECT / fAspect;
 	ASSERT( fScale >= 1 );
-	return THEME_SCREEN_HEIGHT * fScale;
+	return (float) lrintf(THEME_SCREEN_HEIGHT * fScale);
 }
 
 void ScreenDimensions::ReloadScreenDimensions()
