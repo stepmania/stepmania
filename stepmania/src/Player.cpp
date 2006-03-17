@@ -52,18 +52,16 @@ RString ATTACK_DISPLAY_X_NAME( size_t p, size_t both_sides ){ return "AttackDisp
 static const float StepSearchDistance = 1.0f;
 static const float JUMP_WINDOW_SECONDS = 0.25f;
 
-float AdjustedWindowSeconds( TimingWindow tw, bool bIsPlayingBeginner )
+float AdjustedWindowSeconds( TimingWindow tw )
 {
 	float fSecs = PREFSMAN->m_fTimingWindowSeconds[tw];
 	fSecs *= PREFSMAN->m_fTimingWindowScale;
 	fSecs += PREFSMAN->m_fTimingWindowAdd;
-	if( tw==TW_W5 && bIsPlayingBeginner && PREFSMAN->m_bMercifulBeginner )
-		fSecs += 0.5f;
 	return fSecs;
 }
 
 
-#define ADJUSTED_WINDOW_SECONDS( tw )	AdjustedWindowSeconds( tw, IsPlayingBeginner() )
+#define ADJUSTED_WINDOW_SECONDS( tw )	AdjustedWindowSeconds( tw )
 
 
 Player::Player( bool bShowNoteField, bool bShowJudgment )
@@ -1246,57 +1244,48 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 		if( score == TNS_W1 && !GAMESTATE->ShowW1() )
 			score = TNS_W2;
 
-		bool bSteppedEarly = -fNoteOffset < 0;
-		if( IsPlayingBeginner() && PREFSMAN->m_bMercifulBeginner && score==TNS_W5 && bSteppedEarly )
+		tn.result.tns = score;
+
+		if( score != TNS_None )
+			tn.result.fTapNoteOffset = -fNoteOffset;
+
+		if( score != TNS_None && score != TNS_Miss )
 		{
-			if( m_pJudgment )
-				m_pJudgment->SetJudgment( score, bSteppedEarly );
+			int ms_error = (int) roundf( fSecondsFromExact * 1000 );
+			ms_error = min( ms_error, MAX_PRO_TIMING_ERROR.GetValue() );
+
+			if( m_pPlayerStageStats )
+				m_pPlayerStageStats->iTotalError += ms_error;
 		}
-		else
+
+		//LOG->Trace("XXX: %i col %i, at %f, music at %f, step was at %f, off by %f",
+		//	score, col, fStepSeconds, fCurrentMusicSeconds, fMusicSeconds, fNoteOffset );
+//		LOG->Trace("Note offset: %f (fSecondsFromExact = %f), Score: %i", fNoteOffset, fSecondsFromExact, score);
+		
+		m_NoteData.SetTapNote( col, iIndexOverlappingNote, tn );
+
+
+		// TODO: Remove use of PlayerNumber.
+		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
+		// Keep this here so we get the same data as Autosync
+		NSMAN->ReportTiming( fNoteOffset,pn );
+		
+		if( m_pPrimaryScoreKeeper )
+			m_pPrimaryScoreKeeper->HandleTapScore( score );
+		if( m_pSecondaryScoreKeeper )
+			m_pSecondaryScoreKeeper->HandleTapScore( score );
+
+		switch( tn.type )
 		{
-			tn.result.tns = score;
-
-			if( score != TNS_None )
-				tn.result.fTapNoteOffset = -fNoteOffset;
-
-			if( score != TNS_None && score != TNS_Miss )
-			{
-				int ms_error = (int) roundf( fSecondsFromExact * 1000 );
-				ms_error = min( ms_error, MAX_PRO_TIMING_ERROR.GetValue() );
-
-				if( m_pPlayerStageStats )
-					m_pPlayerStageStats->iTotalError += ms_error;
-			}
-
-			//LOG->Trace("XXX: %i col %i, at %f, music at %f, step was at %f, off by %f",
-			//	score, col, fStepSeconds, fCurrentMusicSeconds, fMusicSeconds, fNoteOffset );
-	//		LOG->Trace("Note offset: %f (fSecondsFromExact = %f), Score: %i", fNoteOffset, fSecondsFromExact, score);
-			
-			m_NoteData.SetTapNote( col, iIndexOverlappingNote, tn );
-
-
-			// TODO: Remove use of PlayerNumber.
-			PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-
-			// Keep this here so we get the same data as Autosync
-			NSMAN->ReportTiming( fNoteOffset,pn );
-			
-			if( m_pPrimaryScoreKeeper )
-				m_pPrimaryScoreKeeper->HandleTapScore( score );
-			if( m_pSecondaryScoreKeeper )
-				m_pSecondaryScoreKeeper->HandleTapScore( score );
-
-			switch( tn.type )
-			{
-			case TapNote::tap:
-			case TapNote::hold_head:
-				// don't judge the row if this note is a mine or tap attack
-				if( NoteDataWithScoring::IsRowCompletelyJudged( m_NoteData, iIndexOverlappingNote ) )
-					OnRowCompletelyJudged( iIndexOverlappingNote );
-			}
-
-			m_LastTapNoteScore = score;
+		case TapNote::tap:
+		case TapNote::hold_head:
+			// don't judge the row if this note is a mine or tap attack
+			if( NoteDataWithScoring::IsRowCompletelyJudged( m_NoteData, iIndexOverlappingNote ) )
+				OnRowCompletelyJudged( iIndexOverlappingNote );
 		}
+
+		m_LastTapNoteScore = score;
 	}
 
 
