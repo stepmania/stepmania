@@ -137,7 +137,7 @@ Grade PlayerStageStats::GetGradeFromPercent( float fPercent )
 
 Grade PlayerStageStats::GetGrade() const
 {
-	if( bFailedEarlier )
+	if( bFailed )
 		return Grade_Failed;
 
 	/* XXX: This entire calculation should be in ScoreKeeper, but final evaluation
