@@ -97,7 +97,9 @@ bool DIDevice::Open()
 			/* This device doesn't support buffering, so we're forced
 			 * to use less reliable polling. */
 			buffered = false;
-		} else if ( hr != DI_OK ) {
+		}
+		else if ( hr != DI_OK )
+		{
 			LOG->Info( hr_ssprintf(hr, "OpenDevice(%s): IDirectInputDevice2::SetProperty", JoystickInst.tszProductName) );
 			return false;
 		}

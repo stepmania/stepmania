@@ -26,7 +26,7 @@ struct tm *my_gmtime_r( const time_t *timep, struct tm *result )
 
 void my_usleep( unsigned long usec )
 {
-	Sleep( usec/1000 );
+	::Sleep( usec/1000 );
 }
 
 /*
