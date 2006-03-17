@@ -67,7 +67,7 @@ static BOOL CALLBACK CountDevicesCallback( const DIDEVICEINSTANCE *pdidInstance,
 	return DIENUM_CONTINUE;
 }
 
-static int GetNumJoysticksQuick()
+static int GetNumJoysticksSlow()
 {
 	int iCount = 0;
 	HRESULT hr = g_dinput->EnumDevices( DIDEVTYPE_JOYSTICK, CountDevicesCallback, &iCount, DIEDFL_ATTACHEDONLY );
@@ -124,30 +124,41 @@ InputHandler_DInput::InputHandler_DInput()
 			Devices[i].buffered? "buffered": "unbuffered" );
 	}
 
-	m_iLastSeenNumJoysticks = GetNumJoysticksQuick();
+	m_iCurrentNumJoysticks = GetNumJoysticksSlow();
+	m_iLastSeenNumJoysticks = m_iCurrentNumJoysticks;
 
 	StartThread();
 }
 
 void InputHandler_DInput::StartThread()
 {
-	ASSERT( !m_Thread.IsCreated() );
+	ASSERT( !m_InputThread.IsCreated() );
 	if( PREFSMAN->m_bThreadedInput )
 	{
-		m_Thread.SetName( "DirectInput thread" );
-		m_Thread.Create( InputThread_Start, this );
+		m_InputThread.SetName( "DirectInput thread" );
+		m_InputThread.Create( InputThread_Start, this );
+
+		// TODO: Check for changed devices with non-threaded input?
+		m_DevicesChangedThread.SetName( "DI DevicesChanged thread" );
+		m_DevicesChangedThread.Create( DevicesChangedThread_Start, this );
 	}
 }
 
 void InputHandler_DInput::ShutdownThread()
 {
-	if( !m_Thread.IsCreated() )
-		return;
-
 	m_bShutdown = true;
-	LOG->Trace( "Shutting down DirectInput thread ..." );
-	m_Thread.Wait();
-	LOG->Trace( "DirectInput thread shut down." );
+	if( m_InputThread.IsCreated() )
+	{
+		LOG->Trace( "Shutting down DirectInput thread ..." );
+		m_InputThread.Wait();
+		LOG->Trace( "DirectInput thread shut down." );
+	}
+	if( m_DevicesChangedThread.IsCreated() )
+	{
+		LOG->Trace( "Shutting down DI DevicesChanged thread ..." );
+		m_DevicesChangedThread.Wait();
+		LOG->Trace( "DI DevicesChanged thread shut down." );
+	}
 	m_bShutdown = false;
 }
 
@@ -494,7 +505,7 @@ void InputHandler_DInput::Update()
 
 	/* Handle polled devices.  Handle buffered, too, if there's no input thread to do it. */
 	PollAndAcquireDevices( false );
-	if( !m_Thread.IsCreated() )
+	if( !m_InputThread.IsCreated() )
 		PollAndAcquireDevices( true );
 
 	for( unsigned i = 0; i < Devices.size(); ++i )
@@ -503,7 +514,7 @@ void InputHandler_DInput::Update()
 		{
 			UpdatePolled( Devices[i], zero );
 		}
-		else if( !m_Thread.IsCreated() )
+		else if( !m_InputThread.IsCreated() )
 		{
 			/* If we have an input thread, it'll handle buffered devices. */
 			UpdateBuffered( Devices[i], zero );
@@ -516,8 +527,21 @@ void InputHandler_DInput::Update()
 bool InputHandler_DInput::DevicesChanged()
 {
 	int iOldNumJoysticks = m_iLastSeenNumJoysticks;
-	m_iLastSeenNumJoysticks = GetNumJoysticksQuick();
+	m_iLastSeenNumJoysticks = m_iCurrentNumJoysticks;
 	return iOldNumJoysticks != m_iLastSeenNumJoysticks;
+}
+
+void InputHandler_DInput::DevicesChangedThreadMain()
+{
+	while( !m_bShutdown )
+	{
+		m_iCurrentNumJoysticks = GetNumJoysticksSlow();
+		CHECKPOINT;
+		// We'll miss a device if one is plugged in and removed in the same 1/10th of a second.
+		// This is hard to do in practice even on purpose.
+		usleep( 100*1000 ); // .1s
+	}
+	CHECKPOINT;
 }
 
 void InputHandler_DInput::InputThreadMain()
