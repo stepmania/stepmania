@@ -378,6 +378,11 @@ void RageLog::UnmapLog(const RString &key)
 
 void ShowWarning( const char *file, int line, const char *message )
 {
+	/* Ignore everything up to and including the first "src/". */
+	const char *temp = strstr( file, "src/" );
+	if( temp )
+		file = temp + 4;
+	
 	if( LOG != NULL )
 		LOG->Warn( "%s:%i: %s", file, line, message );
 	else
