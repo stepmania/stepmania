@@ -82,11 +82,6 @@ static LocalizedString AUTO_PLAY		( "ScreenSyncOverlay", "AutoPlay" );
 static LocalizedString AUTO_PLAY_CPU		( "ScreenSyncOverlay", "AutoPlayCPU" );
 static LocalizedString AUTO_SYNC_SONG		( "ScreenSyncOverlay", "AutoSync Song" );
 static LocalizedString AUTO_SYNC_MACHINE	( "ScreenSyncOverlay", "AutoSync Machine" );
-static LocalizedString EARLIER			( "ScreenSyncOverlay", "earlier" );
-static LocalizedString LATER			( "ScreenSyncOverlay", "later" );
-static LocalizedString GLOBAL_OFFSET_FROM	( "ScreenSyncOverlay", "Global Offset from %+.3f to %+.3f (notes %s)" );
-static LocalizedString SONG_OFFSET_FROM		( "ScreenSyncOverlay", "Song offset from %+.3f to %+.3f (notes %s)" );
-static LocalizedString TEMPO_SEGMENT_FROM	( "ScreenSyncOverlay", "%s tempo segment from %+.3f BPM to %+.3f BPM." );
 void ScreenSyncOverlay::UpdateText()
 {
 	vector<RString> vs;
@@ -109,53 +104,8 @@ void ScreenSyncOverlay::UpdateText()
 
 	if( GAMESTATE->m_pCurSong != NULL  &&  !GAMESTATE->IsCourseMode() )	// sync controls available
 	{
-		{
-			float fOld = AdjustSync::s_fGlobalOffsetSecondsOriginal;
-			float fNew = PREFSMAN->m_fGlobalOffsetSeconds;
-			float fDelta = fNew - fOld;
-
-			if( fabsf(fDelta) > 0.00001f )
-			{
-				vs.push_back( ssprintf( 
-					GLOBAL_OFFSET_FROM.GetValue(),
-					fOld, 
-					fNew,
-					(fDelta > 0 ? EARLIER:LATER).GetValue().c_str() ) );
-			}
-		}
-
-		{
-			float fOld = AdjustSync::s_pTimingDataOriginal->m_fBeat0OffsetInSeconds;
-			float fNew = GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds;
-			float fDelta = fNew - fOld;
-
-			if( fabsf(fDelta) > 0.00001f )
-			{
-				vs.push_back( ssprintf( 
-					SONG_OFFSET_FROM.GetValue(),
-					fOld, 
-					fNew,
-					(fDelta > 0 ? EARLIER:LATER).GetValue().c_str() ) );
-			}
-		}
-
-		ASSERT( AdjustSync::s_pTimingDataOriginal->m_BPMSegments.size() == GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments.size() );
-
-		for( unsigned i=0; i<GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments.size(); i++ )
-		{
-			float fOldBpm = AdjustSync::s_pTimingDataOriginal->m_BPMSegments[i].m_fBPS * 60;
-			float fNewBpm = GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments[i].m_fBPS * 60;
-			float fDelta = fNewBpm - fOldBpm;
-
-			if( fabsf(fDelta) > 0.00001f )
-			{
-				vs.push_back( ssprintf( 
-					TEMPO_SEGMENT_FROM.GetValue(),
-					FormatNumberAndSuffix(i+1).c_str(),
-					fOldBpm, 
-					fNewBpm ) );
-			}
-		}	
+		AdjustSync::GetSyncChangeTextGlobal( vs );
+		AdjustSync::GetSyncChangeTextSong( vs );
 	}	
 
 	m_textStatus.SetText( join("\n",vs) );

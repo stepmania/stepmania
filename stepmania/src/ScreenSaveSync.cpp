@@ -6,12 +6,6 @@
 #include "LocalizedString.h"
 #include "AdjustSync.h"
 
-static LocalizedString EARLIER			("ScreenSaveSync","earlier");
-static LocalizedString LATER			("ScreenSaveSync","later");
-static LocalizedString CHANGED_GLOBAL_OFFSET	("ScreenSaveSync","You have changed the Global Offset from %+.3f to %+.3f (change of %+.3f, making the notes %s).");
-static LocalizedString CHANGED_SONG_OFFSET	("ScreenSaveSync","You have changed the Song Offset from %+.3f to %+.3f (change of %+.3f, making the notes %s).");
-static LocalizedString CHANGED_BPM		("ScreenSaveSync","The BPM segment number #%d changed from %+.3f BPS to %+.3f BPS (change of %+.3f).");
-static LocalizedString CHANGED_STOP		("ScreenSaveSync","The stop segment #%d changed from %+.3f seconds to %+.3f seconds (change of %+.3f).");
 static LocalizedString CHANGED_TIMING_OF	("ScreenSaveSync","You have changed the timing of");
 static LocalizedString WOULD_YOU_LIKE_TO_SAVE	("ScreenSaveSync","Would you like to save these changes?");
 static LocalizedString CHOOSING_NO_WILL_DISCARD	("ScreenSaveSync","Choosing NO will discard your changes.");
@@ -20,89 +14,28 @@ static RString GetPromptText()
 	RString s;
 
 	{
-		float fOld = Quantize( AdjustSync::s_fGlobalOffsetSecondsOriginal, 0.001f );
-		float fNew = Quantize( PREFSMAN->m_fGlobalOffsetSeconds, 0.001f ) ;
-		float fDelta = fNew - fOld;
+		vector<RString> vs;
+		AdjustSync::GetSyncChangeTextGlobal( vs );
+		if( !vs.empty() )
+			s += join( "\n", vs ) + "\n\n";
+	}
 
-		if( fabs(fDelta) > 0.00001 )
+	{
+		vector<RString> vs;
+		AdjustSync::GetSyncChangeTextSong( vs );
+		if( !vs.empty() )
 		{
 			s += ssprintf( 
-				CHANGED_GLOBAL_OFFSET.GetValue()+"\n\n",
-				fOld, 
-				fNew,
-				fDelta,
-				(fDelta > 0 ? EARLIER:LATER).GetValue().c_str()  );
+				CHANGED_TIMING_OF.GetValue()+"\n"
+				"%s:\n"
+				"\n", 
+				GAMESTATE->m_pCurSong->GetDisplayFullTitle().c_str() );
+
+			s += join( "\n", vs ) + "\n\n";
 		}
 	}
 
-	vector<RString> vsSongChanges;
-
-	if( GAMESTATE->m_pCurSong.Get() )
-	{
-		{
-			float fOld = Quantize( AdjustSync::s_pTimingDataOriginal->m_fBeat0OffsetInSeconds, 0.001f );
-			float fNew = Quantize( GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds, 0.001f );
-			float fDelta = fNew - fOld;
-
-			if( fabs(fDelta) > 0.00001 )
-			{
-				vsSongChanges.push_back( ssprintf( 
-					CHANGED_SONG_OFFSET.GetValue()+"\n\n",
-					fOld, 
-					fNew,
-					fDelta,
-					(fDelta > 0 ? EARLIER:LATER).GetValue().c_str() ) );
-			}
-		}
-
-		for( unsigned i=0; i<GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments.size(); i++ )
-		{
-			float fOld = Quantize( AdjustSync::s_pTimingDataOriginal->m_BPMSegments[i].m_fBPS, 0.001f );
-			float fNew = Quantize( GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments[i].m_fBPS, 0.001f );
-			float fDelta = fNew - fOld;
-
-			if( fabs(fDelta) > 0.00001 )
-			{
-				vsSongChanges.push_back( ssprintf( 
-					CHANGED_BPM.GetValue()+"\n\n",
-					i+1,
-					fOld, 
-					fNew,
-					fDelta ) );
-			}
-		}
-
-		for( unsigned i=0; i<GAMESTATE->m_pCurSong->m_Timing.m_StopSegments.size(); i++ )
-		{
-			float fOld = Quantize( AdjustSync::s_pTimingDataOriginal->m_StopSegments[i].m_fStopSeconds, 0.001f );
-			float fNew = Quantize( GAMESTATE->m_pCurSong->m_Timing.m_StopSegments[i].m_fStopSeconds, 0.001f );
-			float fDelta = fNew - fOld;
-
-			if( fabs(fDelta) > 0.00001 )
-			{
-				vsSongChanges.push_back( ssprintf( 
-					CHANGED_STOP.GetValue()+"\n\n",
-					i+1,
-					fOld, 
-					fNew,
-					fDelta ) );
-			}
-		}
-	}
-
-	if( !vsSongChanges.empty() )
-	{
-		s += ssprintf( 
-			CHANGED_TIMING_OF.GetValue()+"\n"
-			"%s:\n"
-			"\n", 
-			GAMESTATE->m_pCurSong->GetDisplayFullTitle().c_str() );
-
-		s += join( "\n", vsSongChanges );
-	}
-
-	s +="\n\n"+
-		WOULD_YOU_LIKE_TO_SAVE.GetValue()+"\n"+
+	s += WOULD_YOU_LIKE_TO_SAVE.GetValue()+"\n"+
 		CHOOSING_NO_WILL_DISCARD.GetValue();
 	return s;
 }

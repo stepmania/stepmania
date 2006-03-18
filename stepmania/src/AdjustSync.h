@@ -15,6 +15,8 @@ public:
 	static void SaveSyncChanges();
 	static void RevertSyncChanges();
 	static void HandleAutosync( float fNoteOffBySeconds );
+	static void GetSyncChangeTextGlobal( vector<RString> &vsAddTo );
+	static void GetSyncChangeTextSong( vector<RString> &vsAddTo );
 
 	static float s_fAutosyncOffset[SAMPLE_COUNT];
 	static int s_iAutosyncOffsetSample;

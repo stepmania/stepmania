@@ -114,6 +114,84 @@ void AdjustSync::HandleAutosync( float fNoteOffBySeconds )
 }
 
 
+static LocalizedString EARLIER			("AdjustSync","earlier");
+static LocalizedString LATER			("AdjustSync","later");
+static LocalizedString GLOBAL_OFFSET_FROM	( "AdjustSync", "Global Offset from %+.3f to %+.3f (notes %s)" );
+static LocalizedString SONG_OFFSET_FROM		( "AdjustSync", "Song offset from %+.3f to %+.3f (notes %s)" );
+static LocalizedString TEMPO_SEGMENT_FROM	( "AdjustSync", "%s tempo segment from %+.3f BPM to %+.3f BPM." );
+static LocalizedString CHANGED_STOP		("AdjustSync","The stop segment #%d changed from %+.3f seconds to %+.3f seconds (change of %+.3f).");
+
+void AdjustSync::GetSyncChangeTextGlobal( vector<RString> &vsAddTo )
+{
+	{
+		float fOld = Quantize( AdjustSync::s_fGlobalOffsetSecondsOriginal, 0.001f );
+		float fNew = Quantize( PREFSMAN->m_fGlobalOffsetSeconds, 0.001f ) ;
+		float fDelta = fNew - fOld;
+
+		if( fabs(fDelta) > 0.00001 )
+		{
+			vsAddTo.push_back( ssprintf( 
+				GLOBAL_OFFSET_FROM.GetValue(),
+				fOld, 
+				fNew,
+				(fDelta > 0 ? EARLIER:LATER).GetValue().c_str() ) );
+		}
+	}
+}
+
+void AdjustSync::GetSyncChangeTextSong( vector<RString> &vsAddTo )
+{
+	if( GAMESTATE->m_pCurSong.Get() )
+	{
+		{
+			float fOld = Quantize( AdjustSync::s_pTimingDataOriginal->m_fBeat0OffsetInSeconds, 0.001f );
+			float fNew = Quantize( GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds, 0.001f );
+			float fDelta = fNew - fOld;
+
+			if( fabs(fDelta) > 0.00001 )
+			{
+				vsAddTo.push_back( ssprintf( 
+					SONG_OFFSET_FROM.GetValue(),
+					fOld, 
+					fNew,
+					(fDelta > 0 ? EARLIER:LATER).GetValue().c_str() ) );
+			}
+		}
+
+		for( unsigned i=0; i<GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments.size(); i++ )
+		{
+			float fOld = Quantize( AdjustSync::s_pTimingDataOriginal->m_BPMSegments[i].m_fBPS, 0.001f );
+			float fNew = Quantize( GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments[i].m_fBPS, 0.001f );
+			float fDelta = fNew - fOld;
+
+			if( fabs(fDelta) > 0.00001 )
+			{
+				vsAddTo.push_back( ssprintf( 
+					TEMPO_SEGMENT_FROM.GetValue(),
+					FormatNumberAndSuffix(i+1).c_str(),
+					fOld, 
+					fNew ) );
+			}
+		}
+
+		for( unsigned i=0; i<GAMESTATE->m_pCurSong->m_Timing.m_StopSegments.size(); i++ )
+		{
+			float fOld = Quantize( AdjustSync::s_pTimingDataOriginal->m_StopSegments[i].m_fStopSeconds, 0.001f );
+			float fNew = Quantize( GAMESTATE->m_pCurSong->m_Timing.m_StopSegments[i].m_fStopSeconds, 0.001f );
+			float fDelta = fNew - fOld;
+
+			if( fabs(fDelta) > 0.00001 )
+			{
+				vsAddTo.push_back( ssprintf( 
+					CHANGED_STOP.GetValue(),
+					i+1,
+					fOld, 
+					fNew ) );
+			}
+		}
+	}
+}
+
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
