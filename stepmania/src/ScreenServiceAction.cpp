@@ -25,7 +25,7 @@ static RString ClearBookkeepingData()
 }
 
 static LocalizedString MACHINE_STATS_CLEARED( "ScreenServiceAction", "Machine stats cleared." );
-static RString ClearMachineStats()
+RString ClearMachineStats()
 {
 	Profile* pProfile = PROFILEMAN->GetMachineProfile();
 	// don't reset the Guid

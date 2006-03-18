@@ -8,6 +8,8 @@
 #undef FAILED
 #endif
 
+RString ClearMachineStats();
+
 #include "ScreenPrompt.h"
 
 class ScreenServiceAction : public ScreenPrompt

@@ -24,6 +24,7 @@
 #include "Profile.h"
 #include "SongManager.h"
 #include "GameLoop.h"
+#include "ScreenServiceAction.h"
 
 static bool g_bIsDisplayed = false;
 static bool g_bIsSlow = false;
@@ -609,8 +610,7 @@ class DebugLineClearMachineStats : public IDebugLine
 	virtual void Do( RString &sMessageOut )
 	{
 		GameCommand gc;
-		gc.Load( 0, ParseCommands("ClearMachineStats") );
-		gc.ApplyToAllPlayers();
+		ClearMachineStats();
 		IDebugLine::Do( sMessageOut );
 	}
 };
@@ -642,7 +642,7 @@ static HighScore MakeRandomHighScore( float fPercentDP )
 	return hs;
 }
 
-static void FillProfile( Profile *pProfile )
+static void FillProfileStats( Profile *pProfile )
 {
 	// Choose a percent for all scores.  This is useful for testing unlocks
 	// where some elements are unlocked at a certain percent complete
@@ -694,7 +694,7 @@ class DebugLineFillMachineStats : public IDebugLine
 	virtual void Do( RString &sMessageOut )
 	{
 		Profile* pProfile = PROFILEMAN->GetMachineProfile();
-		FillProfile( pProfile );
+		FillProfileStats( pProfile );
 		PROFILEMAN->SaveMachineProfile();
 		IDebugLine::Do( sMessageOut );
 	}
