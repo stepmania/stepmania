@@ -26,6 +26,7 @@ protected:
 	virtual void ProcessMenuStart( const InputEventPlus &input );
 
 	CourseEntry m_Original;	// use this to revert when cancelling
+	Song *m_pLongSong;
 	ThemeMetric<bool> SHOW_MODS_ROW;
 };
 

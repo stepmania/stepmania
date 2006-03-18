@@ -196,6 +196,8 @@ void ScreenOptionsEditCourseEntry::Init()
 		vHands.push_back( m_pModChangesHandler );
 	}
 	
+	m_pLongSong = NULL;
+	
 	ScreenOptions::InitMenu( vHands );
 }
 
@@ -214,6 +216,7 @@ void ScreenOptionsEditCourseEntry::BeginScreen()
 	ScreenOptions::BeginScreen();
 }
 
+static LocalizedString NO_SONGS( "ScreenOptionsEditCourseEntry", "No songs loaded." );
 void ScreenOptionsEditCourseEntry::HandleScreenMessage( const ScreenMessage SM )
 {
 	Course *pCourse = GAMESTATE->m_pCurCourse;
@@ -240,8 +243,34 @@ void ScreenOptionsEditCourseEntry::HandleScreenMessage( const ScreenMessage SM )
 				StepsType st = GAMESTATE->m_stEdit;
 				CourseDifficulty cd = ( ce.baseDifficulty == DIFFICULTY_INVALID ?
 							GAMESTATE->m_cdEdit : ce.baseDifficulty );
+
+				if( pSong == NULL )
+					pSong = m_pLongSong;
+				if( pSong == NULL )
+				{
+					// Find the longest non-tutorial song.
+					vector<Song *> vSongs;
+					
+					SONGMAN->GetSongs( vSongs );
+					
+					float fLen = -1.f;
+					
+					FOREACH( Song*, vSongs, i )
+					{
+						if( !(*i)->IsTutorial() && (*i)->m_fMusicLengthSeconds > fLen )
+						{
+							pSong = *i;
+							fLen = pSong->m_fMusicLengthSeconds;
+						}
+					}
+					if( pSong == NULL )
+					{
+						SCREENMAN->SystemMessage( NO_SONGS );
+						return;
+					}
+					m_pLongSong = pSong;
+				}				
 				
-				ASSERT( pSong );
 				// Try to find steps first using st and cd, then st, then cd, then any.
 				pSteps = pSong->GetStepsByDifficulty( st, cd, false );
 				if( !pSteps )
@@ -507,22 +536,6 @@ void ScreenOptionsEditCourseEntry::ProcessMenuStart( const InputEventPlus &input
 	case ROW_CHOOSE_INDEX: 
 		break;
 	case ROW_SET_MODS:
-		if( SHOW_MODS_ROW )
-		{
-			if( !GAMESTATE->m_pCurCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex].IsFixedSong() )
-			{
-				// Set up for ScreenPlayerOptions
-				const Style *pStyle = GAMEMAN->GetEditorStyleForStepsType( GAMESTATE->m_stEdit );
-				CourseEntry &ce = GAMESTATE->m_pCurCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
-				
-				GAMESTATE->m_pCurStyle.Set( pStyle );
-				GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.Init();
-				GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.FromString( ce.sModifiers );
-				SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromCoursePlayerOptions );
-				break;
-			}
-		}
-		// fall through
 	case ROW_DONE:
 		SCREENMAN->PlayStartSound();
 		ScreenOptions::BeginFadingOut();
