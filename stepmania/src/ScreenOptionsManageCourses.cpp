@@ -163,19 +163,13 @@ void ScreenOptionsManageCourses::Init()
 
 	EDIT_MODE.Load( m_sName,"EditMode" );
 	GAMESTATE->m_MasterPlayerNumber = GAMESTATE->GetFirstHumanPlayer();
+	RebuildOptionRows();
 }
 
-void ScreenOptionsManageCourses::BeginScreen()
+void ScreenOptionsManageCourses::RebuildOptionRows()
 {
-	if( GAMESTATE->m_stEdit == STEPS_TYPE_INVALID  ||
-	    GAMESTATE->m_cdEdit == DIFFICULTY_INVALID )
-	{
-		SetNextCombination();
-	}
-
-
 	vector<OptionRowHandler*> vHands;
-
+	
 	int iIndex = 0;
 	
 	{
@@ -187,48 +181,50 @@ void ScreenOptionsManageCourses::BeginScreen()
 		def.m_vsChoices.push_back( "Create New" );
 		iIndex++;
 	}
-
+	
+	m_vpCourses.clear();
 	SONGMAN->GetAllCourses( m_vpCourses, false );
-
+	
 	switch( EDIT_MODE.GetValue() )
 	{
-	default:
-		ASSERT(0);
-	case EditMode_Practice:
-	case EditMode_Home:
-		// Strip out non-edits.
-		// VC6 is missing mem_fun for const members.  Lame.  Work around by not using mem_fun. */
-		for( int i=m_vpCourses.size()-1; i>=0; i-- )
-		{
-			if( m_vpCourses[i]->IsAnEdit() )
-				m_vpCourses.erase( m_vpCourses.begin()+i );
-		}
-		break;
-	case EditMode_Full:
-		break;
+		default:
+			RageException::Throw( "ScreenOptionsManageCourses: Invalid edit mode:",
+					      EditModeToString(EDIT_MODE.GetValue()).c_str() );
+		case EditMode_Practice:
+		case EditMode_Home:
+			// Strip out non-edits.
+			// VC6 is missing mem_fun for const members.  Lame.  Work around by not using mem_fun. */
+			for( int i=m_vpCourses.size()-1; i>=0; i-- )
+			{
+				if( m_vpCourses[i]->IsAnEdit() )
+					m_vpCourses.erase( m_vpCourses.begin()+i );
+			}
+			break;
+		case EditMode_Full:
+			break;
 	}
-
+	
 	FOREACH_CONST( Course*, m_vpCourses, c )
 	{
 		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
 		OptionRowDefinition &def = vHands.back()->m_Def;
-
+		
 		switch( EDIT_MODE.GetValue() )
 		{
-		default:
-			ASSERT(0);
-		case EditMode_Practice:
-		case EditMode_Home:
-			def.m_sName = CourseTypeToLocalizedString( (*c)->GetCourseType() );
-			break;
-		case EditMode_Full:
-			if( (*c)->IsAnEdit() )
-				def.m_sName = "Edit";
-			else
-				def.m_sName = SONGMAN->ShortenGroupName( (*c)->m_sGroupName );
-			break;
+			default:
+				ASSERT(0);
+			case EditMode_Practice:
+			case EditMode_Home:
+				def.m_sName = CourseTypeToLocalizedString( (*c)->GetCourseType() );
+				break;
+			case EditMode_Full:
+				if( (*c)->IsAnEdit() )
+					def.m_sName = "Edit";
+				else
+					def.m_sName = SONGMAN->ShortenGroupName( (*c)->m_sGroupName );
+				break;
 		}
-
+		
 		def.m_sName = ssprintf( "%3d  %s", iIndex, def.m_sName.c_str() );
 		def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 		def.m_bAllowThemeItems = false;
@@ -237,8 +233,21 @@ void ScreenOptionsManageCourses::BeginScreen()
 		def.m_vsChoices.push_back( (*c)->GetDisplayFullTitle() );
 		iIndex++;
 	}
-
+	
 	ScreenOptions::InitMenu( vHands );
+	m_bForceRebuild = false;
+}
+
+void ScreenOptionsManageCourses::BeginScreen()
+{
+	if( GAMESTATE->m_stEdit == STEPS_TYPE_INVALID  ||
+	    GAMESTATE->m_cdEdit == DIFFICULTY_INVALID )
+	{
+		SetNextCombination();
+	}
+	
+	if( m_bForceRebuild )
+		RebuildOptionRows();
 
 	ScreenOptions::BeginScreen();
 	
@@ -254,6 +263,12 @@ void ScreenOptionsManageCourses::BeginScreen()
 	}
 
 	AfterChangeRow( GAMESTATE->m_MasterPlayerNumber );
+}
+
+void ScreenOptionsManageCourses::ReloadScreen()
+{
+	m_bForceRebuild = true;
+	ScreenOptionsEditCourseSubMenu::ReloadScreen();
 }
 
 static LocalizedString COURSE_WILL_BE_LOST	( "ScreenOptionsManageCourses", "This course will be lost permanently." );
@@ -273,7 +288,7 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 		if( !pCourse->IsAnEdit() )
 			FILEMAN->Remove( pCourse->GetCacheFilePath() );
 		delete pCourse;
-		SCREENMAN->SetNewScreen( this->m_sName ); // reload
+		ReloadScreen();
 	}
 	else if( SM == SM_Failure )
 	{
@@ -325,7 +340,7 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 			WriteCourse();
 
 			RefreshTrail();
-
+			m_bForceRebuild = true;
 			this->HandleScreenMessage( SM_GoToNextScreen );
 		}
 	}
@@ -347,7 +362,7 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 			pCourse->m_sPath = sDir + sNewName + sExt;
 			pCourse->m_sMainTitle = sNewName;
 			WriteCourse();
-			SCREENMAN->SetNewScreen( this->m_sName ); // reload
+			ReloadScreen();
 		}
 	}
 	else if( SM == SM_BackFromContextMenu )
