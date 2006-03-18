@@ -161,7 +161,7 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 				return;
 			}
 
-			SCREENMAN->SetNewScreen( this->m_sName ); // reload
+			ReloadScreen();
 		}
 	}
 	else if( SM == SM_BackFromDelete )
@@ -174,7 +174,7 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 			FILEMAN->Remove( pSteps->GetFilename() );
 			SONGMAN->DeleteSteps( pSteps );
 			GAMESTATE->m_pCurSteps[PLAYER_1].Set( NULL );
-			SCREENMAN->SetNewScreen( this->m_sName ); // reload
+			ReloadScreen();
 		}
 	}
 	else if( SM == SM_BackFromContextMenu )
