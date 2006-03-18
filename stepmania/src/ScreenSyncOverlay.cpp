@@ -16,6 +16,12 @@ static bool IsGameplay()
 
 REGISTER_SCREEN_CLASS( ScreenSyncOverlay );
 
+static LocalizedString REVERT_SYNC_CHANGES	( "ScreenSyncOverlay", "Revert sync changes" );
+static LocalizedString CURRENT_BPM		( "ScreenSyncOverlay", "Current BPM - smaller/larger" );
+static LocalizedString SONG_OFFSET		( "ScreenSyncOverlay", "Song offset - notes earlier/later" );
+static LocalizedString MACHINE_OFFSET		( "ScreenSyncOverlay", "Machine offset - notes earlier/later" );
+static LocalizedString HOLD_ALT			( "ScreenSyncOverlay", "(hold Alt for smaller increment)" );
+
 void ScreenSyncOverlay::Init()
 {
 	Screen::Init();
@@ -32,15 +38,15 @@ void ScreenSyncOverlay::Init()
 	m_textHelp.SetZoom( 0.6f );
 	m_textHelp.SetShadowLength( 2 );
 	m_textHelp.SetText( 
-		"Revert sync changes:\n"
-		"    F4\n"
-		"Current BPM - smaller/larger:\n"
-		"    F9/F10\n"
-		"Song offset - notes earlier/later:\n"
-		"    F11/F12\n"
-		"Machine offset - notes earlier/later:\n"
-		"    Shift + F11/F12\n"
-		"(hold Alt for smaller increment)" );
+		REVERT_SYNC_CHANGES.GetValue()+":\n"
+		"    F4\n" +
+		CURRENT_BPM.GetValue()+":\n"
+		"    F9/F10\n" +
+		CURRENT_BPM.GetValue()+":\n"
+		"    F11/F12\n" +
+		MACHINE_OFFSET.GetValue()+":\n"
+		"    Shift + F11/F12\n" +
+		HOLD_ALT.GetValue() );
 	this->AddChild( &m_textHelp );
 	
 	m_quad.ZoomToWidth( m_textHelp.GetZoomedWidth()+20 ); 
@@ -238,7 +244,7 @@ bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
 			}
 			switch( input.type )
 			{
-			case IET_RELEASE:		fDelta *= 0;	break;
+			case IET_RELEASE:	fDelta *= 0;	break;
 			case IET_SLOW_REPEAT:	fDelta *= 0;	break;
 			case IET_FAST_REPEAT:	fDelta *= 10;	break;
 			}
