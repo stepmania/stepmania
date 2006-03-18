@@ -166,7 +166,7 @@ void ScreenOptionsEditCourse::HandleScreenMessage( const ScreenMessage SM )
 				CourseEntry ce;
 				CourseUtil::MakeDefaultEditCourseEntry( ce );
 				pCourse->m_vEntries.insert( pCourse->m_vEntries.begin() + GetCourseEntryIndexWithFocus(), ce );
-				ReloadScreen();
+				SCREENMAN->SetNewScreen( this->m_sName ); // reload
 				break;
 			}
 			case CourseEntryAction_Delete:
@@ -178,7 +178,7 @@ void ScreenOptionsEditCourse::HandleScreenMessage( const ScreenMessage SM )
 				}
 				pCourse->m_vEntries.erase( pCourse->m_vEntries.begin() + GetCourseEntryIndexWithFocus() );
 				GAMESTATE->m_iEditCourseEntryIndex.Set( GAMESTATE->m_iEditCourseEntryIndex );
-				ReloadScreen();
+				SCREENMAN->SetNewScreen( this->m_sName ); // reload
 				break;
 			}
 			}
@@ -312,7 +312,7 @@ void ScreenOptionsEditCourse::ProcessMenuStart( const InputEventPlus &input )
 		CourseUtil::MakeDefaultEditCourseEntry( ce );
 		pCourse->m_vEntries.push_back( ce );
 		GAMESTATE->m_iEditCourseEntryIndex.Set( pCourse->m_vEntries.size()-1 );
-		ReloadScreen();
+		SCREENMAN->SetNewScreen( this->m_sName ); // reload
 	}
 	else if( iCurRow == (int)m_pRows.size()-1 )	// "done"
 	{

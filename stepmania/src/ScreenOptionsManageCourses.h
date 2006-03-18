@@ -24,7 +24,6 @@ class ScreenOptionsManageCourses : public ScreenOptionsEditCourseSubMenu
 public:
 	void Init();
 	virtual void BeginScreen();
-	virtual void ReloadScreen();
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
@@ -36,11 +35,9 @@ protected:
 
 private:
 	Course *GetCourseWithFocus() const;
-	void RebuildOptionRows();
 
 	vector<Course*> m_vpCourses;
 	ThemeMetricEnum<EditMode> EDIT_MODE;
-	bool m_bForceRebuild;
 };
 
 #endif

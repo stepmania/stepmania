@@ -163,11 +163,16 @@ void ScreenOptionsManageCourses::Init()
 
 	EDIT_MODE.Load( m_sName,"EditMode" );
 	GAMESTATE->m_MasterPlayerNumber = GAMESTATE->GetFirstHumanPlayer();
-	RebuildOptionRows();
 }
 
-void ScreenOptionsManageCourses::RebuildOptionRows()
+void ScreenOptionsManageCourses::BeginScreen()
 {
+	if( GAMESTATE->m_stEdit == STEPS_TYPE_INVALID  ||
+	    GAMESTATE->m_cdEdit == DIFFICULTY_INVALID )
+	{
+		SetNextCombination();
+	}
+	
 	vector<OptionRowHandler*> vHands;
 	
 	int iIndex = 0;
@@ -235,20 +240,7 @@ void ScreenOptionsManageCourses::RebuildOptionRows()
 	}
 	
 	ScreenOptions::InitMenu( vHands );
-	m_bForceRebuild = false;
-}
-
-void ScreenOptionsManageCourses::BeginScreen()
-{
-	if( GAMESTATE->m_stEdit == STEPS_TYPE_INVALID  ||
-	    GAMESTATE->m_cdEdit == DIFFICULTY_INVALID )
-	{
-		SetNextCombination();
-	}
 	
-	if( m_bForceRebuild )
-		RebuildOptionRows();
-
 	ScreenOptions::BeginScreen();
 	
 	// select the last chosen course
@@ -263,12 +255,6 @@ void ScreenOptionsManageCourses::BeginScreen()
 	}
 
 	AfterChangeRow( GAMESTATE->m_MasterPlayerNumber );
-}
-
-void ScreenOptionsManageCourses::ReloadScreen()
-{
-	m_bForceRebuild = true;
-	ScreenOptionsEditCourseSubMenu::ReloadScreen();
 }
 
 static LocalizedString COURSE_WILL_BE_LOST	( "ScreenOptionsManageCourses", "This course will be lost permanently." );
@@ -288,7 +274,7 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 		if( !pCourse->IsAnEdit() )
 			FILEMAN->Remove( pCourse->GetCacheFilePath() );
 		delete pCourse;
-		ReloadScreen();
+		SCREENMAN->SetNewScreen( this->m_sName ); // reload
 	}
 	else if( SM == SM_Failure )
 	{
@@ -340,7 +326,6 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 			WriteCourse();
 
 			RefreshTrail();
-			m_bForceRebuild = true;
 			this->HandleScreenMessage( SM_GoToNextScreen );
 		}
 	}
@@ -362,7 +347,7 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 			pCourse->m_sPath = sDir + sNewName + sExt;
 			pCourse->m_sMainTitle = sNewName;
 			WriteCourse();
-			ReloadScreen();
+			SCREENMAN->SetNewScreen( this->m_sName ); // reload
 		}
 	}
 	else if( SM == SM_BackFromContextMenu )

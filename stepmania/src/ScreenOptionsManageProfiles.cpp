@@ -185,7 +185,7 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 			RString sNewName = ScreenTextEntry::s_sLastAnswer;
 			PROFILEMAN->RenameLocalProfile( GAMESTATE->m_sEditLocalProfileID, sNewName );
 
-			ReloadScreen();
+			SCREENMAN->SetNewScreen( this->m_sName ); // reload
 		}
 	}
 	else if( SM == SM_BackFromDeleteConfirm )
@@ -202,7 +202,7 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 
 			PROFILEMAN->DeleteLocalProfile( GetLocalProfileIDWithFocus() );
 			
-			ReloadScreen();
+			SCREENMAN->SetNewScreen( this->m_sName ); // reload
 		}
 	}
 	else if( SM == SM_BackFromClearConfirm )
@@ -211,7 +211,7 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 		{
 			GAMESTATE->GetEditLocalProfile()->InitAll();
 
-			ReloadScreen();
+			SCREENMAN->SetNewScreen( this->m_sName ); // reload
 		}
 	}
 	else if( SM == SM_BackFromContextMenu )

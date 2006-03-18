@@ -77,11 +77,6 @@ void Screen::BeginScreen()
 	this->RunCommands( THEME->GetMetricA(m_sName, "ScreenOnCommand") );
 }
 
-void Screen::ReloadScreen()
-{
-	SCREENMAN->SetNewScreen( m_sName );
-}
-
 void Screen::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );

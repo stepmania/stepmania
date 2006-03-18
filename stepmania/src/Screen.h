@@ -47,9 +47,6 @@ public:
 
 	/* This is called when the screen is popped. */
 	virtual void EndScreen() { }
-	
-	/* Call this to reload the current screen. */
-	virtual void ReloadScreen();
 
 	virtual void Update( float fDeltaTime );
 	virtual bool OverlayInput( const InputEventPlus &input );
