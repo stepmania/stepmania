@@ -387,23 +387,31 @@ float Profile::GetSongsPercentComplete( StepsType st, Difficulty dc ) const
 	return GetSongsActual(st,dc) / GetSongsPossible(st,dc);
 }
 
+static GetHighScoreCourses( vector<Course*> &vpCoursesOut )
+{
+	vpCoursesOut.clear();
+
+	vector<Course*> vpCourses;
+	SONGMAN->GetAllCourses( vpCourses, false );
+	FOREACH_CONST( Course*, vpCourses, c )
+	{
+		// Don't count any course that has any entries that change over time.
+		if( !(*c)->AllSongsAreFixed() )
+			continue;
+
+		vpCoursesOut.push_back( *c );
+	}
+}
 
 float Profile::GetCoursesPossible( StepsType st, CourseDifficulty cd ) const
 {
 	int iTotalTrails = 0;
 
-	// add course high scores
-	vector<Course*> vCourses;
-	SONGMAN->GetAllCourses( vCourses, false );
-	for( unsigned i=0; i<vCourses.size(); i++ )
+	vector<Course*> vpCourses;
+	GetHighScoreCourses( vpCourses );
+	FOREACH_CONST( Course*, vpCourses, c )
 	{
-		const Course* pCourse = vCourses[i];
-		
-		// Don't count any course that has any entries that change over time.
-		if( !pCourse->AllSongsAreFixed() )
-			continue;
-
-		Trail* pTrail = pCourse->GetTrail(st,cd);
+		Trail* pTrail = (*c)->GetTrail(st,cd);
 		if( pTrail == NULL )
 			continue;
 
@@ -417,44 +425,16 @@ float Profile::GetCoursesActual( StepsType st, CourseDifficulty cd ) const
 {
 	float fTotalPercents = 0;
 	
-	// add course high scores
-	FOREACHM_CONST( CourseID, HighScoresForACourse, m_CourseHighScores, i )
+	vector<Course*> vpCourses;
+	GetHighScoreCourses( vpCourses );
+	FOREACH_CONST( Course*, vpCourses, c )
 	{
-		CourseID id = i->first;
-		const Course* pCourse = id.ToCourse();
-		
-		// If the Course isn't loaded on the current machine, then we can't 
-		// get radar values to compute dance points.
-		if( pCourse == NULL )
-			continue;
-		
-		// Don't count any course that has any entries that change over time.
-		if( !pCourse->AllSongsAreFixed() )
+		Trail *pTrail = (*c)->GetTrail( st, cd );
+		if( pTrail == NULL )
 			continue;
 
-		const HighScoresForACourse &hsfac = i->second;
-
-		FOREACHM_CONST( TrailID, HighScoresForATrail, hsfac.m_TrailHighScores, j )
-		{
-			const TrailID &id = j->first;
-			Trail* pTrail = id.ToTrail( pCourse, true );
-			
-			// If the Steps isn't loaded on the current machine, then we can't 
-			// get radar values to compute dance points.
-			if( pTrail == NULL )
-				continue;
-
-			if( pTrail->m_StepsType != st )
-				continue;
-
-			if( pTrail->m_CourseDifficulty != cd )
-				continue;
-
-			const HighScoresForATrail& h = j->second;
-			const HighScoreList& hsl = h.hsl;
-
-			fTotalPercents += hsl.GetTopScore().GetPercentDP();
-		}
+		const HighScoreList& hsl = GetCourseHighScoreList( *c, pTrail );
+		fTotalPercents += hsl.GetTopScore().GetPercentDP();
 	}
 
 	return fTotalPercents;
