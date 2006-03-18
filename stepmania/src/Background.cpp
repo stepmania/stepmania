@@ -331,8 +331,8 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 		if( sToResolve == SONG_BACKGROUND_FILE )
 			vsPaths.push_back( pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathG("Common","fallback background") );
 		if( vsPaths.empty() )	BackgroundUtil::GetSongBGAnimations(	pSong, sToResolve, vsPaths, vsThrowAway );
-		if( vsPaths.empty() )	BackgroundUtil::GetSongMovies(			pSong, sToResolve, vsPaths, vsThrowAway );
-		if( vsPaths.empty() )	BackgroundUtil::GetSongBitmaps(			pSong, sToResolve, vsPaths, vsThrowAway );
+		if( vsPaths.empty() )	BackgroundUtil::GetSongMovies(		pSong, sToResolve, vsPaths, vsThrowAway );
+		if( vsPaths.empty() )	BackgroundUtil::GetSongBitmaps(		pSong, sToResolve, vsPaths, vsThrowAway );
 		if( vsPaths.empty() )	BackgroundUtil::GetGlobalBGAnimations(	pSong, sToResolve, vsPaths, vsThrowAway );
 		if( vsPaths.empty() )	BackgroundUtil::GetGlobalRandomMovies(	pSong, sToResolve, vsPaths, vsThrowAway );
 
@@ -363,7 +363,8 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 		switch( ft )
 		{
 		default:
-			ASSERT(0);	// fall through
+			LOG->Warn( "CreateBackground() Unknown file type '%s'", vsResolved[0].c_str() );
+			// fall through
 		case FT_Bitmap:
 		case FT_Movie:
 			sEffect = SBE_StretchNormal;
