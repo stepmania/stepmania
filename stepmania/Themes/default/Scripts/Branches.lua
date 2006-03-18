@@ -58,7 +58,7 @@ function ScreenPlayerOptionsNext()
 end
 
 function GetGameplayScreen()
-	if IsExtraStage() or IsExtraStage2() then return "ScreenGameplay" end
+	if GAMESTATE:IsExtraStage() or GAMESTATE:IsExtraStage2() then return "ScreenGameplay" end
 	return "ScreenGameplay"
 end
 
@@ -137,12 +137,12 @@ function GetGameplayNextScreen()
 	local Passed = not AllFailed()
 	Trace( " Passed = "..tostring(Passed) )
 	Trace( " IsCourseMode = "..tostring(GAMESTATE:IsCourseMode()) )
-	Trace( " IsExtraStage = "..tostring(IsExtraStage()) )
-	Trace( " IsExtraStage2 = "..tostring(IsExtraStage2()) )
+	Trace( " IsExtraStage = "..tostring(GAMESTATE:IsExtraStage()) )
+	Trace( " IsExtraStage2 = "..tostring(GAMESTATE:IsExtraStage2()) )
 	Trace( " Event mode = "..tostring(IsEventMode()) )
 	
 	if Passed or GAMESTATE:IsCourseMode() or
-		IsExtraStage() or IsExtraStage2()
+		GAMESTATE:IsExtraStage() or GAMESTATE:IsExtraStage2()
 	then
 		Trace( "Go to evaluation screen" )
 		return SelectEvaluationScreen()

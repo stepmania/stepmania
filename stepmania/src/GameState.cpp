@@ -1851,7 +1851,7 @@ public:
 		else		 { lua_pushnil(L); }
 		return 1;
 	}
-	static int GetPreferredDifficulty( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_PreferredDifficulty[IArg(1)] ); return 1; }
+	static int GetPreferredDifficulty( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_PreferredDifficulty[IArg(1)] ); return 1; }
 	static int AnyPlayerHasRankingFeats( T* p, lua_State *L )	{ lua_pushboolean(L, p->AnyPlayerHasRankingFeats() ); return 1; }
 	static int IsCourseMode( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsCourseMode() ); return 1; }
 	static int IsDemonstration( T* p, lua_State *L )		{ lua_pushboolean(L, p->m_bDemonstrationOrJukebox ); return 1; }
@@ -1859,28 +1859,28 @@ public:
 	static int GetSortOrder( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_SortOrder ); return 1; }
 	static int StageIndex( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetStageIndex() ); return 1; }
 	static int IsGoalComplete( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsGoalComplete((PlayerNumber)IArg(1)) ); return 1; }
-	static int PlayerIsUsingModifier( T* p, lua_State *L )	{ lua_pushboolean(L, p->PlayerIsUsingModifier((PlayerNumber)IArg(1),SArg(2)) ); return 1; }
+	static int PlayerIsUsingModifier( T* p, lua_State *L )		{ lua_pushboolean(L, p->PlayerIsUsingModifier((PlayerNumber)IArg(1),SArg(2)) ); return 1; }
 	static int GetCourseSongIndex( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetCourseSongIndex() ); return 1; }
 	static int IsFinalStage( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsFinalStage() ); return 1; }
 	static int IsExtraStage( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsExtraStage() ); return 1; }
 	static int IsExtraStage2( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsExtraStage2() ); return 1; }
 	static int GetCurrentStage( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetCurrentStage() ); return 1; }
-	static int IsStagePossible( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsStagePossible((Stage)IArg(1)) ); return 1; }
-	static int HasEarnedExtraStage( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasEarnedExtraStage() ); return 1; }
-	static int GetEasiestStepsDifficulty( T* p, lua_State *L ){ lua_pushnumber(L, p->GetEasiestStepsDifficulty() ); return 1; }
+	static int IsStagePossible( T* p, lua_State *L )		{ lua_pushboolean(L, p->IsStagePossible((Stage)IArg(1)) ); return 1; }
+	static int HasEarnedExtraStage( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasEarnedExtraStage() ); return 1; }
+	static int GetEasiestStepsDifficulty( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetEasiestStepsDifficulty() ); return 1; }
 	static int IsEventMode( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsEventMode() ); return 1; }
-	static int GetNumPlayersEnabled( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetNumPlayersEnabled() ); return 1; }
+	static int GetNumPlayersEnabled( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetNumPlayersEnabled() ); return 1; }
 	static int GetSongBeat( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_fSongBeat ); return 1; }
-	static int GetGameplayLeadIn( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_bGameplayLeadIn ); return 1; }
-	static int PlayerUsingBothSides( T* p, lua_State *L )	{ lua_pushboolean(L, p->PlayerUsingBothSides() ); return 1; }
-	static int GetCoins( T* p, lua_State *L )				{ lua_pushnumber(L, p->m_iCoins ); return 1; }
+	static int GetGameplayLeadIn( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_bGameplayLeadIn ); return 1; }
+	static int PlayerUsingBothSides( T* p, lua_State *L )		{ lua_pushboolean(L, p->PlayerUsingBothSides() ); return 1; }
+	static int GetCoins( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_iCoins ); return 1; }
 	static int IsSideJoined( T* p, lua_State *L )			{ lua_pushboolean(L, p->m_bSideIsJoined[(PlayerNumber)IArg(1)] ); return 1; }
-	static int GetCoinsNeededToJoin( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetCoinsNeededToJoin() ); return 1; }
+	static int GetCoinsNeededToJoin( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetCoinsNeededToJoin() ); return 1; }
 	static int PlayersCanJoin( T* p, lua_State *L )			{ lua_pushboolean(L, p->PlayersCanJoin() ); return 1; }
 	static int GetNumSidesJoined( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetNumSidesJoined() ); return 1; }
 	static int GetCoinMode( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetCoinMode() ); return 1; }
-	static int GetPremium( T* p, lua_State *L )				{ lua_pushnumber(L, p->GetPremium() ); return 1; }
-	static int GetSongOptionsString( T* p, lua_State *L )	{ lua_pushstring(L, p->m_SongOptions.GetString() ); return 1; }
+	static int GetPremium( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetPremium() ); return 1; }
+	static int GetSongOptionsString( T* p, lua_State *L )		{ lua_pushstring(L, p->m_SongOptions.GetString() ); return 1; }
 	static int IsWinner( T* p, lua_State *L )
 	{
 		PlayerNumber pn = (PlayerNumber)IArg(1);
@@ -2020,29 +2020,6 @@ public:
 
 LUA_REGISTER_CLASS( GameState )
 // lua end
-
-
-
-
-
-#include "LuaFunctions.h"
-LuaFunction_NoArgs( NumStagesLeft,			GAMESTATE->GetNumStagesLeft() )
-LuaFunction_NoArgs( IsFinalStage,			GAMESTATE->IsFinalStage() )
-LuaFunction_NoArgs( IsExtraStage,			GAMESTATE->IsExtraStage() )
-LuaFunction_NoArgs( IsExtraStage2,			GAMESTATE->IsExtraStage2() )
-LuaFunction_NoArgs( CourseSongIndex,		GAMESTATE->GetCourseSongIndex() )
-LuaFunction_NoArgs( CurStyleName,			RString( GAMESTATE->m_pCurStyle == NULL ? "none": GAMESTATE->GetCurrentStyle()->m_szName ) )
-LuaFunction_NoArgs( GetNumPlayersEnabled,	GAMESTATE->GetNumPlayersEnabled() )
-LuaFunction_NoArgs( GetEasiestNotesDifficulty, GAMESTATE->GetEasiestStepsDifficulty() )
-
-RString GetStageText()
-{
-	// all lowercase or compatibility with scripts
-	RString s = StageToString( GAMESTATE->GetCurrentStage() );
-	s.MakeLower();
-	return s;
-}
-LuaFunction_NoArgs( GetStageText, GetStageText() )
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard, Chris Gomez
