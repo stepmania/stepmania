@@ -3604,7 +3604,7 @@ void ScreenEdit::DoHelp()
 {
 	g_EditHelp.rows.clear();
 
-	for( int i=0; i<ARRAYSIZE(g_EditHelpLines); i++ )
+	for( unsigned i=0; i<ARRAYSIZE(g_EditHelpLines); ++i )
 	{
 		const EditHelpLine &hl = g_EditHelpLines[i];
 		
