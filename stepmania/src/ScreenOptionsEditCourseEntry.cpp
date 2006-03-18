@@ -265,6 +265,7 @@ void ScreenOptionsEditCourseEntry::HandleScreenMessage( const ScreenMessage SM )
 					}
 					if( pSong == NULL )
 					{
+						SCREENMAN->PlayInvalidSound();
 						SCREENMAN->SystemMessage( NO_SONGS );
 						return;
 					}
