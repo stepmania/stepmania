@@ -14,84 +14,77 @@
 #include "LocalizedString.h"
 
 
-REGISTER_SCREEN_CLASS( ScreenTestInput );
-
-void ScreenTestInput::Init()
+class DeviceList: public BitmapText
 {
-	ScreenWithMenuElements::Init();
+public:
+	void Update( float fDeltaTime )
+	{
+		//
+		// Update devices text
+		//
+		this->SetText( INPUTMAN->GetDisplayDevicesString() );
+	}
 
-	m_textDevices.LoadFromFont( THEME->GetPathF("Common","normal") );
-	m_textDevices.SetXY( SCREEN_LEFT+20, SCREEN_TOP+80 );
-	m_textDevices.SetDiffuse( RageColor(1,1,1,1) );
-	m_textDevices.SetZoom( 0.7f );
-	m_textDevices.SetHorizAlign( Actor::align_left );
-	this->AddChild( &m_textDevices );
+	virtual Actor *Copy() const;
+};
 
-	m_textInputs.LoadFromFont( THEME->GetPathF("Common","normal") );
-	m_textInputs.SetXY( SCREEN_CENTER_X-250, SCREEN_CENTER_Y );
-	m_textInputs.SetDiffuse( RageColor(1,1,1,1) );
-	m_textInputs.SetZoom( 0.7f );
-	m_textInputs.SetHorizAlign( Actor::align_left );
-	m_textInputs.SetVertSpacing( +8 );
-	this->AddChild( &m_textInputs );
-
-	this->SortByDrawOrder();
-}
-
+REGISTER_ACTOR_CLASS( DeviceList );
 
 static LocalizedString CONTROLLER	( "ScreenTestInput", "Controller" );
 static LocalizedString SECONDARY	( "ScreenTestInput", "secondary" );
 static LocalizedString NOT_MAPPED	( "ScreenTestInput", "not mapped" );
-void ScreenTestInput::Update( float fDeltaTime )
+class InputList: public BitmapText
 {
-	Screen::Update( fDeltaTime );
+	virtual Actor *Copy() const;
 
-	//
-	// Update devices text
-	//
-	m_textDevices.SetText( INPUTMAN->GetDisplayDevicesString() );
-
-	//
-	// Update input texts
-	//
-	vector<RString> asInputs;
-
-	DeviceInput di;
-	vector<DeviceInput> DeviceInputs;
-	INPUTFILTER->GetPressedButtons( DeviceInputs );
-	FOREACH( DeviceInput, DeviceInputs, di )
+	void Update( float fDeltaTime )
 	{
-		RString sTemp;
-		sTemp += INPUTMAN->GetDeviceSpecificInputString(*di);
-		
-		GameInput gi;
-		if( INPUTMAPPER->DeviceToGame(*di,gi) )
-		{
-			RString sName = GameButtonToLocalizedString( GAMESTATE->GetCurrentGame(), gi.button );
-			sTemp += ssprintf(" - "+CONTROLLER.GetValue()+" %d %s", gi.controller+1, sName.c_str() );
+		//
+		// Update input texts
+		//
+		vector<RString> asInputs;
 
-			if( !PREFSMAN->m_bOnlyDedicatedMenuButtons )
+		DeviceInput di;
+		vector<DeviceInput> DeviceInputs;
+		INPUTFILTER->GetPressedButtons( DeviceInputs );
+		FOREACH( DeviceInput, DeviceInputs, di )
+		{
+			RString sTemp;
+			sTemp += INPUTMAN->GetDeviceSpecificInputString(*di);
+			
+			GameInput gi;
+			if( INPUTMAPPER->DeviceToGame(*di,gi) )
 			{
-				MenuButton mb = GAMEMAN->GetMenuButtonSecondaryFunction( GAMESTATE->GetCurrentGame(), gi.button );
-				if( mb != MenuButton_INVALID )
-					sTemp += ssprintf( " - (%s %s)", MenuButtonToLocalizedString(mb).c_str(), SECONDARY.GetValue().c_str() );
+				RString sName = GameButtonToLocalizedString( GAMESTATE->GetCurrentGame(), gi.button );
+				sTemp += ssprintf(" - "+CONTROLLER.GetValue()+" %d %s", gi.controller+1, sName.c_str() );
+
+				if( !PREFSMAN->m_bOnlyDedicatedMenuButtons )
+				{
+					MenuButton mb = GAMEMAN->GetMenuButtonSecondaryFunction( GAMESTATE->GetCurrentGame(), gi.button );
+					if( mb != MenuButton_INVALID )
+						sTemp += ssprintf( " - (%s %s)", MenuButtonToLocalizedString(mb).c_str(), SECONDARY.GetValue().c_str() );
+				}
 			}
-		}
-		else
-		{
-			sTemp += " - "+NOT_MAPPED.GetValue();
+			else
+			{
+				sTemp += " - "+NOT_MAPPED.GetValue();
+			}
+
+			RString sComment = INPUTFILTER->GetButtonComment( *di );
+			if( sComment != "" )
+				sTemp += " - " + sComment;
+
+			asInputs.push_back( sTemp );
 		}
 
-		RString sComment = INPUTFILTER->GetButtonComment( *di );
-		if( sComment != "" )
-			sTemp += " - " + sComment;
-
-		asInputs.push_back( sTemp );
+		this->SetText( join( "\n", asInputs ) );
 	}
 
-	m_textInputs.SetText( join( "\n", asInputs ) );
-}
+};
 
+REGISTER_ACTOR_CLASS( InputList );
+
+REGISTER_SCREEN_CLASS( ScreenTestInput );
 
 void ScreenTestInput::Input( const InputEventPlus &input )
 {
