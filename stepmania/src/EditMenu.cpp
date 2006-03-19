@@ -52,6 +52,7 @@ void EditMenu::GetSongsToShowForGroup( const RString &sGroup, vector<Song*> &vpS
 	switch( EDIT_MODE.GetValue() )
 	{
 	case EditMode_Practice:
+	case EditMode_CourseMods:
 	case EditMode_Home:
 		for( int i=vpSongsOut.size()-1; i>=0; i-- )
 		{
@@ -389,6 +390,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				switch( EDIT_MODE.GetValue() )
 				{
 				case EditMode_Full:
+				case EditMode_CourseMods:
 				case EditMode_Practice:
 					{
 						vector<Steps*> v;
@@ -408,6 +410,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				switch( EDIT_MODE.GetValue() )
 				{
 				case EditMode_Practice:
+				case EditMode_CourseMods:
 					break;
 				case EditMode_Home:
 				case EditMode_Full:
@@ -429,6 +432,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 					// don't allow selecting of non-edits in HomeMode
 					break;
 				case EditMode_Practice:
+				case EditMode_CourseMods:
 					// only show this difficulty if steps exist
 					if( pSteps )
 						m_vpSteps.push_back( StepsAndDifficulty(pSteps,dc) );
@@ -469,6 +473,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 					s = "New " + s;
 					break;
 				case EditMode_Practice:
+				case EditMode_CourseMods:
 				case EditMode_Full:
 					break;
 				default:
@@ -540,6 +545,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				switch( EDIT_MODE.GetValue() )
 				{
 				case EditMode_Practice:
+				case EditMode_CourseMods:
 					m_Actions.push_back( EditMenuAction_Practice );
 					break;
 				case EditMode_Home:

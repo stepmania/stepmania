@@ -545,6 +545,7 @@ void NoteField::DrawPrimitives()
 		switch( GAMESTATE->m_EditMode )
 		{
 		case EditMode_Home:
+		case EditMode_CourseMods:
 		case EditMode_Practice:
 			break;
 		case EditMode_Full:

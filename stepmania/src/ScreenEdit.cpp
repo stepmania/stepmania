@@ -661,13 +661,8 @@ void ScreenEdit::Init()
 	m_bReturnToRecordMenuAfterPlay = false;
 	m_fBeatToReturnTo = 0;
 
-
 	GAMESTATE->m_bGameplayLeadIn.Set( true );
-	// XXX hack
-	if( EDIT_MODE.GetValue() == EditMode_CourseMods )
-		GAMESTATE->m_EditMode = EditMode_Practice;
-	else
-		GAMESTATE->m_EditMode = EDIT_MODE.GetValue();
+	GAMESTATE->m_EditMode = EDIT_MODE.GetValue();
 	GAMESTATE->m_fSongBeat = 0;
 	m_fTrailingBeat = GAMESTATE->m_fSongBeat;
 
