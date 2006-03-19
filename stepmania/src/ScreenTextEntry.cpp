@@ -135,7 +135,7 @@ void ScreenTextEntry::Update( float fDelta )
 
 void ScreenTextEntry::Input( const InputEventPlus &input )
 {
-	if( m_In.IsTransitioning() || m_Out.IsTransitioning() || m_Cancel.IsTransitioning() )
+	if( IsTransitioning() )
 		return;
 
 	if( input.type == IET_FIRST_PRESS )
