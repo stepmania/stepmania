@@ -23,6 +23,8 @@ public:
 		// Update devices text
 		//
 		this->SetText( INPUTMAN->GetDisplayDevicesString() );
+
+		BitmapText::Update( fDeltaTime );
 	}
 
 	virtual Actor *Copy() const;
@@ -78,8 +80,9 @@ class InputList: public BitmapText
 		}
 
 		this->SetText( join( "\n", asInputs ) );
-	}
 
+		BitmapText::Update( fDeltaTime );
+	}
 };
 
 REGISTER_ACTOR_CLASS( InputList );
