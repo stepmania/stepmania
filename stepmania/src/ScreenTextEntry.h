@@ -69,7 +69,6 @@ private:
 	bool			m_bShowAnswerCaret;
 
 	BitmapText		m_textQuestion;
-	AutoActor		m_sprAnswerBox;
 	BitmapText		m_textAnswer;
 	
 	RageSound		m_sndType;

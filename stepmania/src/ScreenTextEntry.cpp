@@ -80,10 +80,6 @@ void ScreenTextEntry::Init()
 	m_textQuestion.SetName( "Question" );
 	this->AddChild( &m_textQuestion );
 
-	m_sprAnswerBox.Load( THEME->GetPathG(m_sName,"AnswerBox") );
-	m_sprAnswerBox->SetName( "AnswerBox" );
-	this->AddChild( m_sprAnswerBox );
-
 	m_textAnswer.LoadFromFont( THEME->GetPathF(m_sName,"answer") );
 	m_textAnswer.SetName( "Answer" );
 	this->AddChild( &m_textAnswer );
@@ -102,7 +98,6 @@ void ScreenTextEntry::BeginScreen()
 
 	m_textQuestion.SetText( g_sQuestion );
 	SET_XY_AND_ON_COMMAND( m_textQuestion );
-	SET_XY_AND_ON_COMMAND( m_sprAnswerBox );
 	SET_XY_AND_ON_COMMAND( m_textAnswer );
 
 	UpdateAnswerText();
@@ -229,7 +224,6 @@ void ScreenTextEntry::TweenOffScreen()
 	ScreenWithMenuElements::TweenOffScreen();
 
 	OFF_COMMAND( m_textQuestion );
-	OFF_COMMAND( m_sprAnswerBox );
 	OFF_COMMAND( m_textAnswer );
 }
 
