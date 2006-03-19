@@ -4,7 +4,6 @@
 namespace SpecialDirs
 {
 	RString GetMyDocumentsDir();
-	RString GetApplicationDataDir();
 	RString GetDesktopDir();
 };
 

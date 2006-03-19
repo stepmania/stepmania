@@ -13,17 +13,6 @@ RString SpecialDirs::GetMyDocumentsDir()
 	return sMyDocumentsDir;
 }
 
-RString SpecialDirs::GetApplicationDataDir()
-{
-	RString sDir;
-	TCHAR szDir[MAX_PATH] = "";
-	BOOL bResult = SHGetSpecialFolderPath( NULL, szDir, CSIDL_APPDATA, FALSE );
-	ASSERT( bResult );
-	sDir = szDir;
-	sDir += "/";
-	return sDir;
-}
-
 RString SpecialDirs::GetDesktopDir()
 {
 	RString sDir;
