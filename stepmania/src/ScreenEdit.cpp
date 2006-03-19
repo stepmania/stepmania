@@ -3315,21 +3315,28 @@ void ScreenEdit::SetupCourseAttacks()
 
 	if( GAMESTATE->m_pCurCourse )
 	{
-		if( EDIT_MODE.GetValue() != EditMode_CourseMods )
+		AttackArray Attacks;
+		
+		if( EDIT_MODE == EditMode_CourseMods )
+		{
+			Attacks = GAMESTATE->m_pCurCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex].attacks;
+		}
+		else
+		{
 			GAMESTATE->m_pCurCourse->RevertFromDisk();	// Remove this and have a separate reload key?
 
-		AttackArray Attacks;
-		for( unsigned e = 0; e < GAMESTATE->m_pCurCourse->m_vEntries.size(); ++e )
-		{
-			if( GAMESTATE->m_pCurCourse->m_vEntries[e].pSong != m_pSong )
-				continue;
+			for( unsigned e = 0; e < GAMESTATE->m_pCurCourse->m_vEntries.size(); ++e )
+			{
+				if( GAMESTATE->m_pCurCourse->m_vEntries[e].pSong != m_pSong )
+					continue;
 
-			Attacks = GAMESTATE->m_pCurCourse->m_vEntries[e].attacks;
-			break;
+				Attacks = GAMESTATE->m_pCurCourse->m_vEntries[e].attacks;
+				break;
+			}
 		}
 
-		for( unsigned i=0; i<Attacks.size(); ++i )
-			GAMESTATE->m_pPlayerState[PLAYER_1]->LaunchAttack( Attacks[i] );
+		FOREACH( Attack, Attacks, attack )
+			GAMESTATE->m_pPlayerState[PLAYER_1]->LaunchAttack( *attack );
 	}
 	GAMESTATE->m_pPlayerState[PLAYER_1]->RebuildPlayerOptionsFromActiveAttacks();
 }
