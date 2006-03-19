@@ -387,7 +387,7 @@ float Profile::GetSongsPercentComplete( StepsType st, Difficulty dc ) const
 	return GetSongsActual(st,dc) / GetSongsPossible(st,dc);
 }
 
-static GetHighScoreCourses( vector<Course*> &vpCoursesOut )
+static void GetHighScoreCourses( vector<Course*> &vpCoursesOut )
 {
 	vpCoursesOut.clear();
 
