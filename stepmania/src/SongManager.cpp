@@ -41,8 +41,10 @@ SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our progr
 const RString SONGS_DIR		= "Songs/";
 const RString COURSES_DIR	= "Courses/";
 
-static const ThemeMetric<RageColor> EXTRA_COLOR			("SongManager","ExtraColor");
+static const ThemeMetric<RageColor>	EXTRA_COLOR		("SongManager","ExtraColor");
 static const ThemeMetric<int>		EXTRA_COLOR_METER	("SongManager","ExtraColorMeter");
+static const ThemeMetric<bool>		USE_UNLOCK_COLOR	("SongManager","UseUnlockColor");
+static const ThemeMetric<RageColor>	UNLOCK_COLOR		("SongManager","UnlockColor");
 
 RString SONG_GROUP_COLOR_NAME( size_t i )   { return ssprintf("SongGroupColor%i",(int) i+1); }
 RString COURSE_GROUP_COLOR_NAME( size_t i ) { return ssprintf("CourseGroupColor%i",(int) i+1); }
@@ -51,9 +53,9 @@ RString COURSE_GROUP_COLOR_NAME( size_t i ) { return ssprintf("CourseGroupColor%
 SongManager::SongManager()
 {
 	NUM_SONG_GROUP_COLORS	.Load("SongManager","NumSongGroupColors");
-	SONG_GROUP_COLOR		.Load("SongManager",SONG_GROUP_COLOR_NAME,NUM_SONG_GROUP_COLORS);
+	SONG_GROUP_COLOR	.Load("SongManager",SONG_GROUP_COLOR_NAME,NUM_SONG_GROUP_COLORS);
 	NUM_COURSE_GROUP_COLORS	.Load("SongManager","NumCourseGroupColors");
-	COURSE_GROUP_COLOR		.Load("SongManager",COURSE_GROUP_COLOR_NAME,NUM_COURSE_GROUP_COLORS);
+	COURSE_GROUP_COLOR	.Load("SongManager",COURSE_GROUP_COLOR_NAME,NUM_COURSE_GROUP_COLORS);
 }
 
 SongManager::~SongManager()
@@ -332,7 +334,7 @@ RageColor SongManager::GetSongGroupColor( const RString &sSongGroup )
 	for( unsigned i=0; i<m_sSongGroupNames.size(); i++ )
 	{
 		if( m_sSongGroupNames[i] == sSongGroup )
-			return SONG_GROUP_COLOR.GetValue( i%NUM_SONG_GROUP_COLORS );	// TODO: Add course group colors?
+			return SONG_GROUP_COLOR.GetValue( i%NUM_SONG_GROUP_COLORS );
 	}
 	
 	ASSERT_M( 0, ssprintf("requested color for song group '%s' that doesn't exist",sSongGroup.c_str()) );
@@ -342,6 +344,9 @@ RageColor SongManager::GetSongGroupColor( const RString &sSongGroup )
 RageColor SongManager::GetSongColor( const Song* pSong )
 {
 	ASSERT( pSong );
+
+	if( USE_UNLOCK_COLOR  &&  UNLOCKMAN->FindSong(pSong) != NULL )
+		return UNLOCK_COLOR;
 
 	/* XXX:
 	 * Previously, this matched all notes, which set a song to "extra" if it
@@ -418,6 +423,9 @@ RageColor SongManager::GetCourseGroupColor( const RString &sCourseGroup )
 
 RageColor SongManager::GetCourseColor( const Course* pCourse )
 {
+	if( USE_UNLOCK_COLOR  &&  UNLOCKMAN->FindCourse(pCourse) != NULL )
+		return UNLOCK_COLOR;
+
 	return GetCourseGroupColor( pCourse->m_sGroupName );
 }
 

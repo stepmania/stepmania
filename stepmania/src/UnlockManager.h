@@ -118,7 +118,7 @@ public:
 	void PreferUnlockEntryID( int iEntryID );
 
 	// Unlocks a song.
-	void UnlockSong( const Song *song );
+	void UnlockSong( const Song *pSong );
 
 	// Return the associated EntryID.
 	int FindEntryID( const RString &sName ) const;
@@ -133,6 +133,11 @@ public:
 	void GetSongsUnlockedByEntryID( vector<Song *> &apSongsOut, int iEntryID );
 	void GetStepsUnlockedByEntryID( vector<Song *> &apSongsOut, vector<Difficulty> &apStepsOut, int iEntryID );
 
+	const UnlockEntry *FindSong( const Song *pSong ) const;
+	const UnlockEntry *FindSteps( const Song *pSong, const Steps *pSteps ) const;
+	const UnlockEntry *FindCourse( const Course *pCourse ) const;
+	const UnlockEntry *FindModifier( const RString &sOneMod ) const;
+
 	// Lua
 	void PushSelf( lua_State *L );
 
@@ -140,11 +145,6 @@ private:
 	// read unlocks
 	void Load();
 	
-	const UnlockEntry *FindSong( const Song *pSong ) const;
-	const UnlockEntry *FindSteps( const Song *pSong, const Steps *pSteps ) const;
-	const UnlockEntry *FindCourse( const Course *pCourse ) const;
-	const UnlockEntry *FindModifier( const RString &sOneMod ) const;
-
 	set<int> m_RouletteCodes; // "codes" which are available in roulette and which unlock if rouletted
 };
 
