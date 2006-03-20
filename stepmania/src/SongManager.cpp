@@ -1311,7 +1311,7 @@ void SongManager::UpdatePreferredSort()
 		RString sLine;
 		while( file.GetLine(sLine) )
 		{
-			bool bSectionDivider = sLine.find("---") != -1;
+			bool bSectionDivider = sLine.find("---") != RString::npos;
 			if( bSectionDivider )
 			{
 				if( !vpSongs.empty() )
