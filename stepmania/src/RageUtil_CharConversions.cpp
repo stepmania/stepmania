@@ -73,7 +73,7 @@ static bool ConvertFromCharset( RString &txt, const char *charset )
 
 	if( inleft != 0 )
 	{
-		LOG->Warn( "iconv(UTF-8,%s) for \"%s\": whole buffer not converted (%i left)", charset, txt.c_str(), inleft );
+		LOG->Warn( "iconv(UTF-8,%s) for \"%s\": whole buffer not converted (%i left)", charset, txt.c_str(), int(inleft) );
 		return false;
 	}
 
