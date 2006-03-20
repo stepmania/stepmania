@@ -17,9 +17,9 @@ fi
 echo Copying...
 
 mkdir $PRODUCTVER
-cp -a autoconf $PRODUCTVER/
-cp -a Utils $PRODUCTVER/
-cp -a src $PRODUCTVER/
+cp -dpR autoconf $PRODUCTVER/
+cp -dpR Utils $PRODUCTVER/
+cp -dpR src $PRODUCTVER/
 
 cp Docs/Copying.txt NEWS README-FIRST.html Makefile.am aclocal.m4 \
    configure Makefile.in configure.ac   $PRODUCTVER
@@ -54,11 +54,11 @@ rm -rf SDLx-0.02.rar
 
 cd ..
 
-find -type d -name 'CVS' | xargs rm -rf
-find -type f -name '*.lib' | xargs rm -rf
-find -type f -name '*.exe' | xargs rm -rf
-find -type f -name '*.a' | xargs rm -rf
-find -type f -name '*.o' | xargs rm -rf
+find . -type d -name 'CVS' | xargs rm -rf
+find . -type f -name '*.lib' | xargs rm -rf
+find . -type f -name '*.exe' | xargs rm -rf
+find . -type f -name '*.a' | xargs rm -rf
+find . -type f -name '*.o' | xargs rm -rf
 
 cd ..
 rm -rf Utils/Font\ generation/
