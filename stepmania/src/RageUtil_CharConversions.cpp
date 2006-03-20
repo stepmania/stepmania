@@ -52,7 +52,7 @@ static bool ConvertFromCharset( RString &txt, const char *charset )
 	}
 
 	/* Copy the string into a char* for iconv */
-	char *txtin = const_cast<char*>( txt.data() );
+	ICONV_CONST char *txtin = const_cast<ICONV_CONST char*>( txt.data() );
 	size_t inleft = txt.size();
 
 	/* Create a new string with enough room for the new conversion */
