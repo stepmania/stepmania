@@ -36,6 +36,8 @@ const RString SCREENSHOTS_SUBDIR   = "Screenshots/";
 const RString EDIT_STEPS_SUBDIR    = "Edits/";
 const RString EDIT_COURSES_SUBDIR  = "EditCourses/";
 
+ThemeMetric<bool> SHOW_COIN_DATA( "Profile", "ShowCoinData" );
+
 #define GUID_SIZE_BYTES 8
 
 #define MAX_EDITABLE_INI_SIZE_BYTES			2*1024		// 2KB
@@ -924,7 +926,7 @@ XNode *Profile::SaveStatsXmlCreateNode() const
 	xml->AppendChild( SaveCalorieDataCreateNode() );
 	xml->AppendChild( SaveRecentSongScoresCreateNode() );
 	xml->AppendChild( SaveRecentCourseScoresCreateNode() );
-	if( IsMachine() )
+	if( SHOW_COIN_DATA.GetValue() && IsMachine() )
 		xml->AppendChild( SaveCoinDataCreateNode() );
 
 	return xml;
