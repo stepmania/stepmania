@@ -226,6 +226,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 			m_bWasWindowed = true;
 		}
 	}
+	int rate = XRRConfigCurrentRate( pScreenConfig );
 
 	XRRFreeScreenConfigInfo( pScreenConfig );
 
@@ -238,7 +239,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 	XResizeWindow( X11Helper::Dpy, X11Helper::Win, p.width, p.height );
 
 	CurrentParams = p;
-
+	CurrentParams.rate = rate;
 	return ""; // Success
 }
 
