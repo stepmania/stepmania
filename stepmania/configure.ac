@@ -60,7 +60,7 @@ case $host_os in
 *bsd*)
 	AC_DEFINE(BSD, 1, [BSD])
 	AC_DEFINE(UNIX, 1, [Unix])
-	BSD=yes
+	bsd=yes
 	unix=yes
 	;;
 *)
