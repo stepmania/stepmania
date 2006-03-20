@@ -11,11 +11,11 @@ void ScreenUnlockBrowse::Init()
 	FOREACH_CONST( UnlockEntry, UNLOCKMAN->m_UnlockEntries, ue )
 	{
 		GameCommand gc;
-		if( !ue->IsLocked() )
+		if( ue->IsRequirementMet() )
 			gc.m_bInvalid = false;
 		gc.m_iIndex = ue - UNLOCKMAN->m_UnlockEntries.begin();
 		gc.m_iUnlockEntryID = ue->m_iEntryID;
-		gc.m_sName = ssprintf("%d",ue->m_iEntryID);
+		gc.m_sName = ssprintf("%d",gc.m_iIndex);
 		
 		m_aGameCommands.push_back( gc );
 	}

@@ -608,20 +608,26 @@ DateTime Profile::GetSongLastPlayedDateTime( const Song* pSong ) const
 	return dtLatest;
 }
 
+bool Profile::HasPassedSteps( const Song* pSong, const Steps* pSteps ) const
+{
+	const HighScoreList &hsl = GetStepsHighScoreList( pSong, pSteps );
+	Grade grade = hsl.GetTopScore().GetGrade();
+	switch( grade )
+	{
+	case Grade_Failed:
+	case Grade_NoData:
+		return false;
+	default:
+		return true;
+	}
+}
+
 bool Profile::HasPassedAnyStepsInSong( const Song* pSong ) const
 {
 	FOREACH_CONST( Steps*, pSong->GetAllSteps(), steps )
 	{
-		const HighScoreList &hsl = GetStepsHighScoreList( pSong, *steps );
-		Grade grade = hsl.GetTopScore().GetGrade();
-		switch( grade )
-		{
-		case Grade_Failed:
-		case Grade_NoData:
-			break;
-		default:
+		if( HasPassedSteps( pSong, *steps ) )
 			return true;
-		}
 	}
 	return false;
 }

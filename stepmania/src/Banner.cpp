@@ -132,7 +132,8 @@ void Banner::LoadIconFromCharacter( Character* pCharacter )
 
 void Banner::LoadTABreakFromCharacter( Character* pCharacter )
 {
-	if( pCharacter == NULL )					Load( THEME->GetPathG("Common","fallback takingabreak") );
+	if( pCharacter == NULL )
+		Load( THEME->GetPathG("Common","fallback takingabreak") );
 	else 
 	{
 		Load( pCharacter->GetTakingABreakPath() );
@@ -142,7 +143,8 @@ void Banner::LoadTABreakFromCharacter( Character* pCharacter )
 
 void Banner::LoadBannerFromUnlockEntry( UnlockEntry* pUE )
 {
-	if( pUE == NULL )					LoadFallback();
+	if( pUE == NULL )
+		LoadFallback();
 	else 
 	{
 		RString sFile = pUE->GetBannerFile();
@@ -153,7 +155,8 @@ void Banner::LoadBannerFromUnlockEntry( UnlockEntry* pUE )
 
 void Banner::LoadBackgroundFromUnlockEntry( UnlockEntry* pUE )
 {
-	if( pUE == NULL )					LoadFallback();
+	if( pUE == NULL )
+		LoadFallback();
 	else 
 	{
 		RString sFile = pUE->GetBackgroundFile();

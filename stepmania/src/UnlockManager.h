@@ -52,7 +52,8 @@ public:
 		m_pCourse = NULL;
 
 		ZERO( m_fRequirement );
-		m_iEntryID = -1;
+		m_bRequrePassHardSteps = false;
+		m_iEntryID = -1;	// -1 == not yet filled.  This will be filled in automatically if not specified.
 	}
 
 	UnlockRewardType m_Type;
@@ -64,7 +65,8 @@ public:
 	Difficulty m_dc;
 	Course	*m_pCourse;
 
-	float	m_fRequirement[NUM_UnlockRequirement];
+	float	m_fRequirement[NUM_UnlockRequirement];	// unlocked if any of of these are met
+	bool	m_bRequrePassHardSteps;
 	int	m_iEntryID;
 
 	bool	IsValid() const;
@@ -102,7 +104,6 @@ public:
 	// Gets number of unlocks for title screen
 	int GetNumUnlocks() const;
 	bool AllAreLocked() const;
-	int GetUnlockEntryIDToCelebrate() const;
 	int GetUnlockEntryIndexToCelebrate() const;
 	bool AnyUnlocksToCelebrate() const;
 
@@ -110,6 +111,7 @@ public:
 
 	// Unlock an entry by code.
 	void UnlockEntryID( int iEntryID );
+	void UnlockEntryIndex( int iEntryIndex );
 
 	/*
 	 * If a code is associated with at least one song or course, set the preferred song

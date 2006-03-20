@@ -21,6 +21,8 @@ UnlockManager*	UNLOCKMAN = NULL;	// global and accessable from anywhere in our p
 #define UNLOCK_NAMES		THEME->GetMetric ("Unlocks","UnlockNames")
 #define UNLOCK(sLineName)	THEME->GetMetric ("Unlocks",ssprintf("Unlock%s",sLineName.c_str()))
 
+ThemeMetric<bool> AUTO_LOCK_CHALLENGE_STEPS( "UnlockManager", "AutoLockChallengeSteps" );
+
 static const char *UnlockRequirementNames[] =
 {
 	"ArcadePoints",
@@ -299,6 +301,19 @@ bool UnlockEntry::IsRequirementMet() const
 		if( m_fRequirement[i] && fScores[i] >= m_fRequirement[i] )
 			return true;
 
+	if( m_bRequrePassHardSteps && m_pSong )
+	{
+		vector<Steps*> vp;
+		m_pSong->GetSteps(
+			vp, 
+			STEPS_TYPE_INVALID, 
+			DIFFICULTY_HARD
+			);
+		FOREACH_CONST( Steps*, vp, s )
+			if( PROFILEMAN->GetMachineProfile()->HasPassedSteps( m_pSong, *s ) )
+				return true;
+	}
+
 	return false;
 }
 
@@ -320,7 +335,7 @@ RString UnlockEntry::GetDescription() const
 	case UnlockRewardType_Song:
 		return m_pSong ? m_pSong->GetDisplayFullTitle() : "";
 	case UnlockRewardType_Steps:
-		return DifficultyToLocalizedString( m_dc );
+		return (m_pSong ? m_pSong->GetDisplayFullTitle() : "") + ", " + DifficultyToLocalizedString( m_dc );
 	case UnlockRewardType_Course:
 		return m_pCourse ? m_pCourse->GetDisplayFullTitle() : "";
 	case UnlockRewardType_Modifier:
@@ -336,9 +351,8 @@ RString	UnlockEntry::GetBannerFile() const
 		ASSERT(0);
 		return "";
 	case UnlockRewardType_Song:
-		return m_pSong ? m_pSong->GetBannerPath() : "";
 	case UnlockRewardType_Steps:
-		return "";
+		return m_pSong ? m_pSong->GetBannerPath() : "";
 	case UnlockRewardType_Course:
 		return m_pCourse ? m_pCourse->m_sBannerPath : "";
 	case UnlockRewardType_Modifier:
@@ -421,6 +435,10 @@ void UnlockManager::Load()
 			{
 				bRoulette = true;
 			}
+			else if( sName == "RequrePassHardSteps" )
+			{
+				current.m_bRequrePassHardSteps = true;
+			}
 			else
 			{
 				const UnlockRequirement ut = StringToUnlockRequirement( cmd.GetName() );
@@ -432,22 +450,54 @@ void UnlockManager::Load()
 		if( bRoulette )
 			m_RouletteCodes.insert( current.m_iEntryID );
 
-		// Make sure that we don't have duplicate unlock IDs.  This can cause problems 
-		// with UnlockCelebrate and with codes.
-		FOREACH_CONST( UnlockEntry, m_UnlockEntries, ue )
-			ASSERT( ue->m_iEntryID != current.m_iEntryID );
-
 		m_UnlockEntries.push_back( current );
 	}
 
+	if( AUTO_LOCK_CHALLENGE_STEPS )
+	{
+		FOREACH_CONST( Song*, SONGMAN->GetAllSongs(), s )
+		{
+			if( (*s)->GetOneSteps(STEPS_TYPE_INVALID, DIFFICULTY_HARD) == NULL )
+				continue;
+				
+			UnlockEntry ue;			
+			ue.m_Type = UnlockRewardType_Steps;
+			ue.m_cmd.Load( "steps,"+(*s)->m_sGroupName+"/"+(*s)->GetTranslitFullTitle()+",expert" );
+			ue.m_bRequrePassHardSteps = true;
+
+			m_UnlockEntries.push_back( ue );
+		}
+	}
+
+	//
+	// Fill in unlock entry IDs that weren't specified
+	//
+	FOREACH( UnlockEntry, m_UnlockEntries, e )
+	{
+		if( e->m_iEntryID == -1 )
+			e->m_iEntryID = e - m_UnlockEntries.begin();
+	}
+
+	// Make sure that we don't have duplicate unlock IDs.  This can cause problems 
+	// with UnlockCelebrate and with codes.
+	FOREACH_CONST( UnlockEntry, m_UnlockEntries, ue )
+		FOREACH_CONST( UnlockEntry, m_UnlockEntries, ue2 )
+			if( ue != ue2 )
+				ASSERT_M( ue->m_iEntryID != ue2->m_iEntryID, ssprintf("duplicate unlock entry id %d",ue->m_iEntryID) );
+
 	UpdateCachedPointers();
 
+	//
+	// Log unlocks
+	//
 	FOREACH_CONST( UnlockEntry, m_UnlockEntries, e )
 	{
 		RString str = ssprintf( "Unlock: %s; ", join("\n",e->m_cmd.m_vsArgs).c_str() );
 		FOREACH_ENUM2( UnlockRequirement, j )
 			if( e->m_fRequirement[j] )
 				str += ssprintf( "%s = %f; ", UnlockRequirementToString(j).c_str(), e->m_fRequirement[j] );
+		if( e->m_bRequrePassHardSteps )
+			str += "RequrePassHardSteps; ";
 
 		str += ssprintf( "entryID = %i ", e->m_iEntryID );
 		str += e->IsLocked()? "locked":"unlocked";
@@ -530,6 +580,12 @@ void UnlockManager::UnlockEntryID( int iEntryID )
 	PROFILEMAN->GetMachineProfile()->m_UnlockedEntryIDs.insert( iEntryID );
 }
 
+void UnlockManager::UnlockEntryIndex( int iEntryIndex )
+{
+	int iEntryID = m_UnlockEntries[iEntryIndex].m_iEntryID;
+	UnlockEntryID( iEntryID );
+}
+
 void UnlockManager::PreferUnlockEntryID( int iUnlockEntryID )
 {
 	for( unsigned i = 0; i < m_UnlockEntries.size(); ++i )
@@ -560,16 +616,6 @@ bool UnlockManager::AllAreLocked() const
 	return true;
 }
 
-int UnlockManager::GetUnlockEntryIDToCelebrate() const
-{
-	FOREACH_CONST( UnlockEntry, m_UnlockEntries, ue )
-	{
-		if( ue->IsRequirementMet()  &&  ue->IsLocked() )
-			return ue->m_iEntryID;
-	}
-	return -1;
-}
-
 int UnlockManager::GetUnlockEntryIndexToCelebrate() const
 {
 	FOREACH_CONST( UnlockEntry, m_UnlockEntries, ue )
@@ -582,7 +628,7 @@ int UnlockManager::GetUnlockEntryIndexToCelebrate() const
 
 bool UnlockManager::AnyUnlocksToCelebrate() const
 {
-	return GetUnlockEntryIDToCelebrate() != -1;
+	return GetUnlockEntryIndexToCelebrate() != -1;
 }
 
 void UnlockManager::GetUnlocksByType( UnlockRewardType t, vector<UnlockEntry *> &apEntries )
@@ -627,16 +673,20 @@ public:
 	LunaUnlockEntry() { LUA->Register( Register ); }
 
 	static int IsLocked( T* p, lua_State *L )		{ lua_pushboolean(L, p->IsLocked() ); return 1; }
+	static int IsRequirementMet( T* p, lua_State *L )	{ lua_pushboolean(L, p->IsRequirementMet() ); return 1; }
 	static int GetDescription( T* p, lua_State *L )		{ lua_pushstring(L, p->GetDescription() ); return 1; }
 	static int GetUnlockRewardType( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_Type ); return 1; }
 	static int GetRequirement( T* p, lua_State *L )		{ UnlockRequirement i = (UnlockRequirement)IArg(1); lua_pushnumber(L, p->m_fRequirement[i] ); return 1; }
+	static int GetRequrePassHardSteps( T* p, lua_State *L )	{ lua_pushboolean(L, p->m_bRequrePassHardSteps); return 1; }
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( IsLocked );
+		ADD_METHOD( IsRequirementMet );
 		ADD_METHOD( GetDescription );
 		ADD_METHOD( GetUnlockRewardType );
 		ADD_METHOD( GetRequirement );
+		ADD_METHOD( GetRequrePassHardSteps );
 
 		Luna<T>::Register( L );
 	}
@@ -654,7 +704,6 @@ public:
 	static int PreferUnlockEntryID( T* p, lua_State *L )		{ int iUnlockEntryID = IArg(1); p->PreferUnlockEntryID(iUnlockEntryID); return 0; }
 	static int GetNumUnlocks( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetNumUnlocks() ); return 1; }
 	static int AllAreLocked( T* p, lua_State *L )			{ lua_pushboolean( L, p->AllAreLocked() ); return 1; }
-	static int GetUnlockEntryIDToCelebrate( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetUnlockEntryIDToCelebrate() ); return 1; }
 	static int GetUnlockEntryIndexToCelebrate( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetUnlockEntryIndexToCelebrate() ); return 1; }
 	static int AnyUnlocksToCelebrate( T* p, lua_State *L )		{ lua_pushboolean( L, p->AnyUnlocksToCelebrate() ); return 1; }
 	static int GetUnlockEntry( T* p, lua_State *L )			{ int iIndex = IArg(1); p->m_UnlockEntries[iIndex].PushSelf(L); return 1; }
@@ -684,7 +733,6 @@ public:
 		ADD_METHOD( PreferUnlockEntryID );
 		ADD_METHOD( GetNumUnlocks );
 		ADD_METHOD( AllAreLocked );
-		ADD_METHOD( GetUnlockEntryIDToCelebrate );
 		ADD_METHOD( GetUnlockEntryIndexToCelebrate );
 		ADD_METHOD( AnyUnlocksToCelebrate );
 		ADD_METHOD( GetUnlockEntry );
