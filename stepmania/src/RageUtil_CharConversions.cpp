@@ -90,6 +90,37 @@ static bool AttemptEnglishConversion( RString &txt ) { return ConvertFromCharset
 static bool AttemptKoreanConversion( RString &txt ) { return ConvertFromCharset( txt, "CP949" ); }
 static bool AttemptJapaneseConversion( RString &txt ) { return ConvertFromCharset( txt, "CP932" ); }
 
+#elif defined(MACOSX)
+#include <CoreFoundation/CoreFoundation.h>
+
+static bool ConvertFromCP( RString &txt, int cp )
+{
+	CFStringEncoding encoding = CFStringConvertWindowsCodepageToEncoding( cp );
+	
+	if( encoding == kCFStringEncodingInvalidId )
+		return false;
+	
+	CFStringRef old = CFStringCreateWithCString( kCFAllocatorDefault, txt, encoding );
+	
+	if( old == NULL )
+		return false;
+	const size_t size = CFStringGetMaximumSizeForEncoding( CFStringGetLength(old), kCFStringEncodingUTF8 );
+	
+	char *buf = new char[size];
+	if( !CFStringGetCString(old, buf, size, kCFStringEncodingUTF8) )
+	{
+		delete[] buf;
+		return false;
+	}
+	txt = buf;
+	delete[] buf;
+	return true;
+}
+
+static bool AttemptEnglishConversion( RString &txt ) { return ConvertFromCP( txt, 1252 ); }
+static bool AttemptKoreanConversion( RString &txt ) { return ConvertFromCP( txt, 949 ); }
+static bool AttemptJapaneseConversion( RString &txt ) { return ConvertFromCP( txt, 932 ); }
+
 #else
 
 /* No converters are available, so all fail--we only accept UTF-8. */
