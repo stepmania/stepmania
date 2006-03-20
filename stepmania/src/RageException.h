@@ -7,6 +7,7 @@ namespace RageException
 {
 	void NORETURN Throw(const char *fmt, ...);
 	void SetCleanupHandler( void (*pHandler)(const RString &sError) );
+	void CallCleanupHandler( const RString &sError );
 };
 
 #endif

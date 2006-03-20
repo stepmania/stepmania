@@ -15,6 +15,12 @@ void RageException::SetCleanupHandler( void (*pHandler)(const RString &sError) )
 	g_CleanupHandler = pHandler;
 }
 
+void RageException::CallCleanupHandler( const RString &sError )
+{
+	if( g_CleanupHandler )
+		g_CleanupHandler( sError );
+}
+
 /* This is no longer actually implemented by throwing an exception, but it acts
  * the same way to code in practice. */
 void RageException::Throw( const char *sFmt, ... )
