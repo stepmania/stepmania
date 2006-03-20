@@ -460,7 +460,9 @@ void BannerCache::CacheBannerInternal( RString BannerPath )
 	{
 		if( img->fmt.BytesPerPixel != 1 )
 			RageSurfaceUtils::Palettize( img );
-	} else {
+	}
+	else
+	{
 		/* Dither to the final format.  We use A1RGB5, since that's usually supported
 		 * natively by both OpenGL and D3D. */
 		RageSurface *dst = CreateSurface( img->w, img->h, 16,
