@@ -241,7 +241,7 @@ public:
 	float GetSoundVolume();
 
 
-	void ReadPrefsFromIni( const IniFile &ini, const RString &sSection );
+	void ReadPrefsFromIni( const IniFile &ini, const RString &sSection, bool bIsStatic );
 	void ReadGamePrefsFromIni( const RString &sIni );
 	void ReadDefaultsFromIni( const IniFile &ini, const RString &sSection );
 	void SavePrefsToIni( IniFile &ini );
@@ -257,7 +257,7 @@ public:
 	void PushSelf( lua_State *L );
 
 protected:
-	void ReadPrefsFromFile( const RString &sIni, const RString &sSection );
+	void ReadPrefsFromFile( const RString &sIni, const RString &sSection, bool bIsStatic );
 	void ReadDefaultsFromFile( const RString &sIni, const RString &sSection );
 };
 

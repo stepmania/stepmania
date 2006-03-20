@@ -385,7 +385,7 @@ void PrefsManager::RestoreGamePrefs()
 	m_sDefaultModifiers	.Set( gp.m_sDefaultModifiers );
 
 	// give Static.ini a chance to clobber the saved game prefs
-	ReadPrefsFromFile( SpecialFiles::STATIC_INI_PATH, GetPreferencesSection() );
+	ReadPrefsFromFile( SpecialFiles::STATIC_INI_PATH, GetPreferencesSection(), true );
 }
 
 void PrefsManager::ReadPrefsFromDisk()
@@ -393,9 +393,9 @@ void PrefsManager::ReadPrefsFromDisk()
 	ReadDefaultsFromFile( SpecialFiles::DEFAULTS_INI_PATH, GetPreferencesSection() );
 	IPreference::LoadAllDefaults();
 
-	ReadPrefsFromFile( SpecialFiles::PREFERENCES_INI_PATH, "Options" );
+	ReadPrefsFromFile( SpecialFiles::PREFERENCES_INI_PATH, "Options", false );
 	ReadGamePrefsFromIni( SpecialFiles::PREFERENCES_INI_PATH );
-	ReadPrefsFromFile( SpecialFiles::STATIC_INI_PATH, GetPreferencesSection() );
+	ReadPrefsFromFile( SpecialFiles::STATIC_INI_PATH, GetPreferencesSection(), true );
 
 	if( !m_sCurrentGame.Get().empty() )
 		RestoreGamePrefs();
@@ -406,31 +406,34 @@ void PrefsManager::ResetToFactoryDefaults()
 	// clobber the users prefs by initing then applying defaults
 	Init();
 	IPreference::LoadAllDefaults();
-	ReadPrefsFromFile( SpecialFiles::STATIC_INI_PATH, GetPreferencesSection() );
+	ReadPrefsFromFile( SpecialFiles::STATIC_INI_PATH, GetPreferencesSection(), true );
 	
 	SavePrefsToDisk();
 }
 
-void PrefsManager::ReadPrefsFromFile( const RString &sIni, const RString &sSection )
+void PrefsManager::ReadPrefsFromFile( const RString &sIni, const RString &sSection, bool bIsStatic )
 {
 	IniFile ini;
 	if( !ini.ReadFile(sIni) )
 		return;
 
-	ReadPrefsFromIni( ini, sSection );
+	ReadPrefsFromIni( ini, sSection, bIsStatic );
 }
 
 static const RString GAME_SECTION_PREFIX = "Game-";
 
-void PrefsManager::ReadPrefsFromIni( const IniFile &ini, const RString &sSection )
+void PrefsManager::ReadPrefsFromIni( const IniFile &ini, const RString &sSection, bool bIsStatic )
 {
 	// Apply our fallback recursively (if any) before applying ourself.
-	// TODO: detect circular?
+	static int s_iDepth = 0;
+	s_iDepth++;
+	ASSERT( s_iDepth < 100 );
 	RString sFallback;
 	if( ini.GetValue(sSection,"Fallback",sFallback) )
 	{
-		ReadPrefsFromIni( ini, sFallback );
+		ReadPrefsFromIni( ini, sFallback, bIsStatic );
 	}
+	s_iDepth--;
 
 	//IPreference *pPref = PREFSMAN->GetPreferenceByName( *sName );
 	//	if( pPref == NULL )
@@ -440,7 +443,9 @@ void PrefsManager::ReadPrefsFromIni( const IniFile &ini, const RString &sSection
 	//	}
 	//	pPref->FromString( sVal );
 
-	IPreference::ReadAllPrefsFromNode( ini.GetChild(sSection) );
+	const XNode *pChild = ini.GetChild(sSection);
+	if( pChild )
+		IPreference::ReadAllPrefsFromNode( pChild, bIsStatic );
 }
 
 void PrefsManager::ReadGamePrefsFromIni( const RString &sIni )
@@ -505,7 +510,7 @@ void PrefsManager::SavePrefsToIni( IniFile &ini )
 		RString sSection = "Game-" + RString( iter->first );
 
 		ini.SetValue( sSection, "Announcer",		iter->second.m_sAnnouncer );
-		ini.SetValue( sSection, "Theme",			iter->second.m_sTheme );
+		ini.SetValue( sSection, "Theme",		iter->second.m_sTheme );
 		ini.SetValue( sSection, "DefaultModifiers",	iter->second.m_sDefaultModifiers );
 	}
 }

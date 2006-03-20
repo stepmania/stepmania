@@ -13,7 +13,7 @@ class IPreference
 public:
 	IPreference( const RString& sName );
 	virtual ~IPreference();
-	void ReadFrom( const XNode* pNode );
+	void ReadFrom( const XNode* pNode, bool bIsStatic );
 	void WriteTo( XNode* pNode ) const;
 	void ReadDefaultFrom( const XNode* pNode );
 
@@ -30,12 +30,14 @@ public:
 
 	static IPreference *GetPreferenceByName( const RString &sName );
 	static void LoadAllDefaults();
-	static void ReadAllPrefsFromNode( const XNode* pNode );
+	static void ReadAllPrefsFromNode( const XNode* pNode, bool bIsStatic );
 	static void SavePrefsToNode( XNode* pNode );
 	static void ReadAllDefaultsFromNode( const XNode* pNode );
 
-protected:
-	RString		m_sName;
+	RString GetName() { return m_sName; }
+private:
+	RString	m_sName;
+	bool m_bLoadedFromStatic;	// loaded from Static.ini?  If so, don't write to Preferences.ini
 };
 
 void BroadcastPreferenceChanged( const RString& sPreferenceName );
@@ -59,9 +61,22 @@ public:
 	}
 
 	RString ToString() const { return PrefToString( (const BasicType &) m_currentValue ); }
-	void FromString( const RString &s ) { PrefFromString( s, (BasicType &)m_currentValue ); if(m_pfnValidate) m_pfnValidate(m_currentValue); }
-	void SetFromStack( lua_State *L ) { PrefSetFromStack( L, (BasicType &)m_currentValue ); if(m_pfnValidate) m_pfnValidate(m_currentValue); }
-	void PushValue( lua_State *L ) const { PrefPushValue( L, (BasicType &)m_currentValue ); }
+	void FromString( const RString &s )
+	{
+		PrefFromString( s, (BasicType &)m_currentValue );
+		if( m_pfnValidate ) 
+			m_pfnValidate( m_currentValue );
+	}
+	void SetFromStack( lua_State *L )
+	{
+		PrefSetFromStack( L, (BasicType &)m_currentValue ); 
+		if( m_pfnValidate )
+			m_pfnValidate( m_currentValue );
+	}
+	void PushValue( lua_State *L ) const
+	{
+		PrefPushValue( L, (BasicType &)m_currentValue );
+	}
 
 	void LoadDefault()
 	{
@@ -85,7 +100,7 @@ public:
 	void Set( const T& other )
 	{
 		m_currentValue = other;
-		BroadcastPreferenceChanged( m_sName );
+		BroadcastPreferenceChanged( GetName() );
 	}
 
 private:

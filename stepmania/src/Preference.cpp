@@ -37,12 +37,11 @@ void IPreference::LoadAllDefaults()
 		(*p)->LoadDefault();
 }
 
-void IPreference::ReadAllPrefsFromNode( const XNode* pNode )
+void IPreference::ReadAllPrefsFromNode( const XNode* pNode, bool bIsStatic )
 {
-	if( pNode == NULL )
-		return;
+	ASSERT( pNode );
 	FOREACHS_CONST( IPreference*, *m_Subscribers.m_pSubscribers, p )
-		(*p)->ReadFrom( pNode );
+		(*p)->ReadFrom( pNode, bIsStatic );
 }
 
 void IPreference::SavePrefsToNode( XNode* pNode )
@@ -97,16 +96,20 @@ READFROM_AND_WRITETO( float )
 READFROM_AND_WRITETO( bool )
 READFROM_AND_WRITETO( RString )
 
-void IPreference::ReadFrom( const XNode* pNode )
+void IPreference::ReadFrom( const XNode* pNode, bool bIsStatic )
 {
 	RString sVal;
 	if( pNode->GetAttrValue(m_sName, sVal) )
+	{
 		FromString( sVal );
+		m_bLoadedFromStatic = bIsStatic;
+	}
 }
 
 void IPreference::WriteTo( XNode* pNode ) const
 {
-	pNode->AppendAttr( m_sName, ToString() );
+	if( !m_bLoadedFromStatic )
+		pNode->AppendAttr( m_sName, ToString() );
 }
 
 /* Load our value from the node, and make it the new default. */
