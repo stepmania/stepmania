@@ -103,7 +103,7 @@ public:
 
 	// super meter used in rave
 	Preference1D<float>	m_fSuperMeterPercentChange;
-	Preference<float>	m_bMercifulSuperMeter;	// negative super deltas are scaled by the players life percentage
+	Preference<bool>	m_bMercifulSuperMeter;	// negative super deltas are scaled by the players life percentage
 
 	// time meter used in survival
 	Preference1D<float>	m_fTimeMeterSecondsChange;
