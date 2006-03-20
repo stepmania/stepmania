@@ -77,10 +77,11 @@ static int TestTLSThread( void *p )
 
 static void TestTLS()
 {
+#if defined(LINUX)
 	/* TLS won't work on older threads libraries, and may crash. */
 	if( !UsingNPTL() )
 		return;
-
+#endif
 	/* TLS won't work on older Linux kernels.  Do a simple check. */
 	g_iTestTLS = 1;
 
@@ -167,7 +168,7 @@ ArchHooks_Unix::ArchHooks_Unix()
 
 	InstallExceptionHandler();
 	
-#if defined(HAVE_TLS)
+#if defined(HAVE_TLS) && !defined(BSD)
 	TestTLS();
 #endif
 }
