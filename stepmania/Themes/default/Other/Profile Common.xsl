@@ -166,21 +166,21 @@
 					}
 				</script>
 				<style type='text/css'>
-A, A:visited	{
+a, a:visited	{
 	color: #0072C2;
 }
-A:hover, A:active	{
+a:hover, a:active	{
 	color: #FF6E00;
 }
 
-BODY	{
+body	{
 	font-family: Arial,Verdana,sans-serif;
 	font-size: 11px;
 	color: #3D5066;
 	background: #A1ACB9;
 }
 
-TD	{
+td	{
 	background: #FFFFFF;
 	vertical-align: top;
 }
@@ -208,33 +208,33 @@ TD	{
 	display:none
 }
 
-TABLE	{
+table	{
 	font-size: 11px;
 	margin-top: 2px;
 	margin-bottom: 5px;
 	background: #DBE0E5;
 }
 
-SELECT	{
+select	{
 	font-size: 11px;
 	background: #F4F6F7;
 }
 
-TH	{
+th	{
 	font-size: 11px;
 	font-weight: bold;
 	text-align: left;
 	color: #3D5066;
 }
 
-TH.main	{
+th.main	{
 	font-size: 12px;
 	font-weight: bold;
 	text-align: left;
 	color: #3D5066;
 }
 
-H1	{
+h1	{
 	margin-top: 0px;
 	margin-bottom: 8px;
 	font-size: 16px;
@@ -242,7 +242,7 @@ H1	{
 	color: #005CB1;
 }
 
-H2	{
+h2	{
 	margin-top: 0px;
 	margin-bottom: 5px;
 	font-size: 12px;
@@ -250,7 +250,7 @@ H2	{
 	color: #3D5066;
 }
 
-H3	{
+h3	{
 	margin-top: 0px;
 	margin-bottom: 2px;
 	font-size: 11px;
@@ -258,7 +258,7 @@ H3	{
 	color: #3D5066;
 }
 
-HR	{
+hr	{
 	height: 1px;
 	color: #DBE0E5;
 }
