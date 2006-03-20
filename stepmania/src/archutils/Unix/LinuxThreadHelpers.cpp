@@ -7,6 +7,7 @@
 #include "Backtrace.h"
 #include "archutils/Unix/RunningUnderValgrind.h"
 
+#if defined(LINUX)
 #include <unistd.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -235,6 +236,31 @@ bool GetThreadBacktraceContext( uint64_t ThreadID, BacktraceContext *ctx )
 #endif
 
 	return true;
+}
+#endif
+
+#elif defined(BSD)
+#include <pthread.h>
+#include <signal.h>
+
+RString ThreadsVersion()
+{
+	return "(unknown)";
+}
+
+uint64_t GetCurrentThreadId()
+{
+	return uint64_t( pthread_self() );
+}
+
+int SuspendThread( uint64_t id )
+{
+	return pthread_kill( id, SIGSTOP );
+}
+
+int ResumeThread( uint64_t id )
+{
+	return pthread_kill( id, SIGCONT );
 }
 #endif
 

@@ -14,6 +14,8 @@
 
 #if defined(MACOSX)
 extern "C" int sigaltstack(const stack_t * __restrict, stack_t * __restrict);
+#endif
+#if !defined(MAP_ANONYMOUS) && defined(MAP_ANON)
 # define MAP_ANONYMOUS MAP_ANON
 #endif
 
