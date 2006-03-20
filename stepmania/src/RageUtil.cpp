@@ -1361,7 +1361,7 @@ void utf8_remove_bom( RString &sLine )
 
 static int UnicodeDoUpper( char *p, size_t iLen, const unsigned char pMapping[256] )
 {
-	wchar_t wc;
+	wchar_t wc = L'\0';
 	unsigned iStart = 0;
 	if( !utf8_to_wchar(p, iLen, iStart, wc) )
 		return 1;
@@ -1463,7 +1463,7 @@ wstring RStringToWstring( const RString &s )
 			continue;
 		}
 		
-		wchar_t ch;
+		wchar_t ch = L'\0';
 		if( !utf8_to_wchar( s.data(), s.size(), start, ch ) )
 			ch = INVALID_CHAR;
 		ret += ch;
