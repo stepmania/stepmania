@@ -1,5 +1,6 @@
 #include "global.h"
 #include "RageUtil.h"
+#include "RageException.h"
 #include "archutils/Unix/EmergencyShutdown.h"
 #include <unistd.h>
 #include <assert.h>
@@ -18,7 +19,7 @@ extern "C" void __assert_fail( const char *assertion, const char *file, unsigned
 #else
 	/* It'd be nice to just throw an exception here, but throwing an exception
 	 * through C code sometimes explodes. */
-	HandleException( error );
+	RageException::CallCleanupHandler( error );
 
 	DoEmergencyShutdown();
 
@@ -35,7 +36,7 @@ extern "C" void __assert_perror_fail( int errnum, const char *file, unsigned int
 	Checkpoints::SetCheckpoint( file, line, error );
 	sm_crash( strerror(errnum) );
 #else
-	HandleException( error );
+	RageException::CallCleanupHandler( error );
 
 	DoEmergencyShutdown();
 
@@ -57,7 +58,7 @@ void UnexpectedExceptionHandler()
 #if defined(CRASH_HANDLER)
 	sm_crash( error );
 #else
-	HandleException( error );
+	RageException::CallCleanupHandler( error );
 #endif
 }
 
