@@ -204,7 +204,7 @@ union dword_union
 #define CRYPTOPP_WIN32_AVAILABLE
 #endif
 
-#if defined(__unix__) || defined(__MACH__)
+#if defined(__unix__) || defined(__MACH__) || defined(__NetBSD__)
 #define CRYPTOPP_UNIX_AVAILABLE
 #endif
 
