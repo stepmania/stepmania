@@ -5,7 +5,7 @@
 #include <sys/time.h>
 #include <errno.h>
 
-#if defined(LINUX)
+#if defined(LINUX) || defined(BSD)
 #include "archutils/Unix/LinuxThreadHelpers.h"
 #include "archutils/Unix/RunningUnderValgrind.h"
 #endif
