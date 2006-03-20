@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	
@@ -7,41 +7,6 @@
 	<xsl:output method="html" omit-xml-declaration="no" encoding="iso-8859-1" indent="no"/>
 
 	<xsl:strip-space elements="*" />
-		
-	<xsl:attribute-set name="TopLevelTableAttr">
-		<xsl:attribute name="cellpadding">4</xsl:attribute>
-		<xsl:attribute name="cellspacing">1</xsl:attribute>
-		<xsl:attribute name="border">0</xsl:attribute>
-		<xsl:attribute name="width">100%</xsl:attribute>
-	</xsl:attribute-set>
-
-	<xsl:attribute-set name="DataTableAttr">
-		<xsl:attribute name="align">left</xsl:attribute>
-		<xsl:attribute name="cellpadding">2</xsl:attribute>
-		<xsl:attribute name="cellspacing">0</xsl:attribute>
-		<xsl:attribute name="border">0</xsl:attribute>
-	</xsl:attribute-set>
-
-	<xsl:attribute-set name="EntityTableAttr">
-		<xsl:attribute name="cellpadding">3</xsl:attribute>
-		<xsl:attribute name="cellspacing">1</xsl:attribute>
-		<xsl:attribute name="border">0</xsl:attribute>
-	</xsl:attribute-set>
-
-	<xsl:attribute-set name="CollapsableTableAttr">
-		<xsl:attribute name="cellpadding">3</xsl:attribute>
-		<xsl:attribute name="cellspacing">1</xsl:attribute>
-		<xsl:attribute name="border">0</xsl:attribute>
-		<xsl:attribute name="width">100%</xsl:attribute>
-	</xsl:attribute-set>
-
-	<xsl:attribute-set name="CompactTableAttr">
-		<xsl:attribute name="align">left</xsl:attribute>
-		<xsl:attribute name="class">CompactTableAttr</xsl:attribute>
-		<xsl:attribute name="cellpadding">3</xsl:attribute>
-		<xsl:attribute name="cellspacing">1</xsl:attribute>
-		<xsl:attribute name="border">0</xsl:attribute>
-	</xsl:attribute-set>
 	
 	<xsl:attribute-set name="ToggleLinkAttr">
 		<xsl:attribute name="onClick">JavaScript: toggleLinkClicked(event);</xsl:attribute>
@@ -172,68 +137,56 @@ a, a:visited	{
 a:hover, a:active	{
 	color: #FF6E00;
 }
-
 body	{
 	font-family: Arial,Verdana,sans-serif;
 	font-size: 11px;
 	color: #3D5066;
 	background: #A1ACB9;
+	margin: 3px;
 }
-
-td	{
-	background: #FFFFFF;
-	vertical-align: top;
-}
-
 .pageheader	{
 	background: #E1E5EA;
 }
-
 .pagefooter {
 	background: #E1E5EA;
 }
-
 .clear	{
 	background: #F4F6F7;
 }
-
 .valuename	{
 	margin-bottom: 5px;
 }
-
 .visible {
 }
-
 .hidden {
 	display:none
 }
-
 table	{
 	font-size: 11px;
 	margin-top: 2px;
 	margin-bottom: 5px;
 	background: #DBE0E5;
 }
-
+td	{
+	vertical-align: top;
+	border: 0;
+}
 select	{
 	font-size: 11px;
 	background: #F4F6F7;
 }
-
 th	{
 	font-size: 11px;
 	font-weight: bold;
 	text-align: left;
 	color: #3D5066;
 }
-
 th.main	{
 	font-size: 12px;
 	font-weight: bold;
 	text-align: left;
 	color: #3D5066;
 }
-
 h1	{
 	margin-top: 0px;
 	margin-bottom: 8px;
@@ -241,7 +194,6 @@ h1	{
 	font-weight: bold;
 	color: #005CB1;
 }
-
 h2	{
 	margin-top: 0px;
 	margin-bottom: 5px;
@@ -249,7 +201,6 @@ h2	{
 	font-weight: bold;
 	color: #3D5066;
 }
-
 h3	{
 	margin-top: 0px;
 	margin-bottom: 2px;
@@ -257,34 +208,69 @@ h3	{
 	font-weight: bold;
 	color: #3D5066;
 }
-
 hr	{
 	height: 1px;
 	color: #DBE0E5;
 }
-
 .dyndata	{
 	color: #005CB1;
 }
-
 .titlename	{
 	font-size: 10px;
 }
-
 .titlevalue {
 	font-size: 10px;
 	font-weight: bold;
 }
-
-.CompactTableAttr {
+.LargeNumber {
+	font-size: 20px;
+}
+.TopLevelTableAttr	{
+	cellpadding: 4;
+	cellspacing: 1;
+	border: 0;
+	width: 100%;
+}
+.DataTableAttr	{
+	background: #FFFFFF;
+	text-align: left;
+	cellpadding: 3;
+	cellspacing: 1;
+	border: 0;
+	width: 100%;
+}
+.EntityTableAttr	{
+	background: #FFFFFF;
+	cellpadding: 3;
+	cellspacing: 1;
+	border: 0;
+}
+.CollapsableTableAttr	{
+	text-align: left;
+	cellpadding: 2;
+	cellspacing: 0;
+	border: 0;
+}
+.CompactTableAttr	{
+	background: #FFFFFF;
+	text-align: left;
+	cellpadding: 3;
+	cellspacing: 1;
+	border: 0;
 	margin: 2px 2px 2px 2px;
+}
+.MasterContainer	{
+	background: #FFFFFF;
+}
+.HeaderContainer	{
+	background: #FFFFFF;
 }
 			</style>  
 
 			</head>
 
 
-			<body topmargin="3" bottommargin="3" leftmargin="3" rightmargin="3" onLoad="JavaScript: startItUp();">
+			<body onLoad="JavaScript: startItUp();">
 
 				<table cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
 					<tr>
@@ -300,9 +286,9 @@ hr	{
 					</tr>
 					
 					<tr>
-						<td width="100%" height="100%" valign="top" name="masterContainer">
+						<td width="100%" height="100%" valign="top" class="MasterContainer">
 							<br />
-							<table cellpadding="10" cellspacing="0" border="0" width="100%">
+							<table cellpadding="10" cellspacing="0" border="0" width="100%" class="HeaderContainer">
 								<xsl:if test="$FullHeader = 1">
 									<tr>
 										<td nowrap="nowrap">
@@ -588,11 +574,11 @@ hr	{
 	
 	<xsl:template name="PrintHorizontalDataTable">
 		<xsl:param name="text" />
-		<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+		<table class="EntityTableAttr">
 			<tr>
 				<xsl:copy-of select="$text" />
 			</tr>
-		</xsl:element>
+		</table>
 	</xsl:template>
 
 
@@ -600,7 +586,7 @@ hr	{
 		<xsl:param name="name" />
 		<xsl:param name="value" />
 		<td>
-			<xsl:element name="table" use-attribute-sets="DataTableAttr">
+			<table class="DataTableAttr">
 				<tr>
 					<xsl:element name="td">
 						<xsl:attribute name="class">valuename</xsl:attribute>										
@@ -612,21 +598,21 @@ hr	{
 						<xsl:copy-of select="$value" />
 					</xsl:element>
 				</tr>
-			</xsl:element>
+			</table>
 		</td>
 	</xsl:template>
 
 	<xsl:template name="PrintVerticalDataTable">
 		<xsl:param name="text" />
-		<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+		<table class="EntityTableAttr">
 			<tr>
 				<td>
-					<xsl:element name="table" use-attribute-sets="DataTableAttr">
+					<table class="DataTableAttr">
 						<xsl:copy-of select="$text" />
-					</xsl:element>
+					</table>
 				</td>
 			</tr>
-		</xsl:element>
+		</table>
 	</xsl:template>
 
 	<xsl:template name="PrintVerticalDataRow">
@@ -737,9 +723,9 @@ hr	{
 		<xsl:param name="nodecounter" select="1" />
 		<xsl:variable name="skip" select="ceiling( count($nodeset) div $cols )" />
 		<td valign="top">
-			<xsl:element name="table" use-attribute-sets="DataTableAttr">
+			<table class="DataTableAttr">
 				<xsl:apply-templates select="$nodeset[(position() >= $nodecounter) and (position() &lt; ($nodecounter + $skip))]" mode="DataTableElement" />
-			</xsl:element>
+			</table>
 		</td>
 		<xsl:if test="($nodecounter + $skip) &lt;= count($nodeset)">
 			<xsl:call-template name="DataTableGenerator">
@@ -761,13 +747,13 @@ hr	{
 		<xsl:call-template name="CollapsibleSubSection">
 			<xsl:with-param name="title" select="$title" />
 			<xsl:with-param name="text">
-				<xsl:element name="table" use-attribute-sets="CollapsableTableAttr">
+				<table class="CollapsableTableAttr">
 					<tr>
 						<td>
 							<xsl:copy-of select="$text" />
 						</td>
 					</tr>
-				</xsl:element>
+				</table>
 			</xsl:with-param>
 		</xsl:call-template>
 	</xsl:template>
@@ -776,7 +762,7 @@ hr	{
 	<xsl:template name="CollapsibleSubSection">
 		<xsl:param name="title" />
 		<xsl:param name="text" />
-		<xsl:element name="table" use-attribute-sets="CollapsableTableAttr">
+		<table class="CollapsableTableAttr">
 			<tr>
 				<xsl:element name="th" use-attribute-sets="ToggleLinkAttr">
 					<xsl:attribute name="class">main</xsl:attribute>
@@ -789,13 +775,13 @@ hr	{
 					<xsl:copy-of select="$text" />
 				</td>
 			</tr>
-		</xsl:element>
+		</table>
 	</xsl:template>
 	
 	<xsl:template name="SubSectionCompact">
 		<xsl:param name="title" />
 		<xsl:param name="text" />
-		<xsl:element name="table" use-attribute-sets="CompactTableAttr">
+		<table class="CompactTableAttr">
 			<tr>
 				<xsl:element name="th">
 					<xsl:attribute name="class">main</xsl:attribute>
@@ -807,13 +793,13 @@ hr	{
 					<xsl:copy-of select="$text" />
 				</td>
 			</tr>
-		</xsl:element>
+		</table>
 	</xsl:template>
 	
 	<xsl:template name="CollapsibleTopSection">
 		<xsl:param name="title" />
 		<xsl:param name="text" />
-		<xsl:element name="table" use-attribute-sets="TopLevelTableAttr">
+		<table class="TopLevelTableAttr">
 			<tr>
 				<xsl:element name="th" use-attribute-sets="ToggleLinkAttr">
 					<xsl:attribute name="class">main</xsl:attribute>
@@ -826,7 +812,7 @@ hr	{
 					<xsl:copy-of select="$text" />
 				</td>
 			</tr>
-		</xsl:element>
+		</table>
 	</xsl:template>
 
 

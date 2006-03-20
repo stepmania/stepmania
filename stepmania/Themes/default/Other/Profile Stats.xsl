@@ -48,18 +48,18 @@
 			<xsl:with-param name="text">
 
 				<h2>Overview</h2>
-				<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+				<table class="EntityTableAttr">
 					<tr>
 						<td>
 							This section explains all the files saved to your memory card. Please read the instructions below before modifying any files on your memory card. Modifying files may result in irreversible loss of your data.
 						</td>
 					</tr>
-				</xsl:element>
+				</table>
 				
 				<hr />
 				
 				<h2>Description of Files</h2>
-				<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+				<table class="EntityTableAttr">
 					<tr>
 						<td><a href="Edits/" target="_new">Edits/</a></td>
 						<td>
@@ -150,7 +150,7 @@
 							</xsl:call-template>
 						</td>
 					</tr>
-				</xsl:element>
+				</table>
 				
 			</xsl:with-param>
 		</xsl:call-template>
@@ -169,12 +169,12 @@
 			</xsl:with-param>
 			<xsl:with-param name="text">
 
-				<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+				<table class="EntityTableAttr">
 					<xsl:call-template name="DataTableGenerator">
 						<xsl:with-param name="cols" select="2" />
 						<xsl:with-param name="nodeset" select="*[text() and name() != 'NumExtraStagesPassed' and name() != 'NumExtraStagesFailed' and name() != 'NumToasties'] | Song | Course" />
 					</xsl:call-template>
-				</xsl:element>
+				</table>
 				
 				<hr/>
 				
@@ -407,7 +407,7 @@
 									<xsl:apply-templates select="$StepsType" />
 								</xsl:with-param>
 								<xsl:with-param name="text">
-									<xsl:element name="table" use-attribute-sets="DataTableAttr">
+									<table class="DataTableAttr">
 										<xsl:for-each select="$SubTypes[@StepsType=$StepsType]">
 										<xsl:sort select="sum(HighScoreList/NumTimesPlayed)" data-type="number" order="descending"/>
 											<xsl:variable name="Dir" select="../@Dir" />
@@ -432,7 +432,7 @@
 												</td>
 											</tr>
 										</xsl:for-each>
-									</xsl:element>
+									</table>
 								</xsl:with-param>
 							</xsl:call-template>
 							
@@ -502,12 +502,12 @@
 
 	
 	<xsl:template match="HighScoreList">
-		<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+		<table class="EntityTableAttr">
 			<xsl:call-template name="DataTableGenerator">
 				<xsl:with-param name="cols" select="2" />
 				<xsl:with-param name="nodeset" select="*[text()]" />
 			</xsl:call-template>
-		</xsl:element>
+		</table>
 		<xsl:apply-templates select="HighScore" />
 	</xsl:template>		
 
@@ -517,12 +517,12 @@
 				<xsl:apply-templates select="PercentDP"/><xsl:text> </xsl:text><xsl:apply-templates select="Grade"/><xsl:text> </xsl:text><xsl:value-of select="Name"/>
 			</xsl:with-param>
 			<xsl:with-param name="text">
-				<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+				<table class="EntityTableAttr">
 					<xsl:call-template name="DataTableGenerator">
 						<xsl:with-param name="cols" select="2" />
 						<xsl:with-param name="nodeset" select="*[text()]" />
 					</xsl:call-template>
-				</xsl:element>
+				</table>
 			</xsl:with-param>
 		</xsl:call-template>		
 	</xsl:template>		
@@ -567,7 +567,7 @@
 							<xsl:variable name="PossibleO" select="count($Catalog/*/*[name()=$Type]/*[@StepsType=$StepsType])" />
 							
 
-							<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+							<table class="EntityTableAttr">
 								<tr>
 									<td>
 										<font size="+2">
@@ -584,7 +584,7 @@
 										</font>
 									</td>
 								</tr>
-							</xsl:element>
+							</table>
 							
 							
 							<hr />
@@ -769,7 +769,7 @@
 	</xsl:template>		
 	
 	<xsl:template match="Screenshot">
-		<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+		<table class="EntityTableAttr">
 			<tr>
 				<td style="background: #F4F6F7;">
 					<a>
@@ -784,16 +784,16 @@
 					</a>
 				</td>
 				<td style="background: #F4F6F7;">
-					<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+					<table class="EntityTableAttr">
 						<xsl:call-template name="DataTableGenerator">
 							<xsl:with-param name="cols" select="2" />
 							<xsl:with-param name="nodeset" select="*[text()]" />
 						</xsl:call-template>
-					</xsl:element>
+					</table>
 					<xsl:apply-templates select="HighScore" />
 				</td>
 			</tr>
-		</xsl:element>
+		</table>
 	</xsl:template>		
 	
 
@@ -817,12 +817,12 @@
 						<xsl:with-param name="text">
 						
 				
-							<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+							<table class="EntityTableAttr">
 								<xsl:call-template name="DataTableGenerator">
 									<xsl:with-param name="cols" select="2" />
 									<xsl:with-param name="nodeset" select="./*[text()]" />
 								</xsl:call-template>
-							</xsl:element>
+							</table>
 					
 						</xsl:with-param>
 					</xsl:call-template>

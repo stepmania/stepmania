@@ -30,12 +30,12 @@
 			</xsl:with-param>
 			<xsl:with-param name="text">
 
-				<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+				<table class="EntityTableAttr">
 					<xsl:call-template name="DataTableGenerator">
 						<xsl:with-param name="cols" select="2" />
 						<xsl:with-param name="nodeset" select="*[text()]" />
 					</xsl:call-template>
-				</xsl:element>
+				</table>
 				
 			</xsl:with-param>
 		</xsl:call-template>
@@ -84,12 +84,12 @@
 			</xsl:with-param>
 			<xsl:with-param name="text">
 				
-				<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+				<table class="EntityTableAttr">
 					<xsl:call-template name="DataTableGenerator">
 						<xsl:with-param name="cols" select="1" />
 						<xsl:with-param name="nodeset" select="*[text()] | ./*/*[text()]" />
 					</xsl:call-template>
-				</xsl:element>
+				</table>
 
 			</xsl:with-param>
 		</xsl:call-template>
