@@ -45,6 +45,8 @@ typedef unsigned long long UInt64;
 # define ENDIAN_LITTLE
 # define BACKTRACE_METHOD_X86_DARWIN
 # define BACKTRACE_LOOKUP_METHOD_DLADDR
+# define HAVE_ICONV // XXX Ugly. This has nothing to do with arch, only the version of OS X.
+# define ICONV_CONST const
 #endif
 
 #ifndef MACOSX
