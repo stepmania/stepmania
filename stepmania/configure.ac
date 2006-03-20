@@ -57,6 +57,12 @@ case $host_os in
 	unix=yes
 	;;
 
+*bsd*)
+	AC_DEFINE(BSD, 1, [BSD])
+	AC_DEFINE(UNIX, 1, [Unix])
+	BSD=yes
+	unix=yes
+	;;
 *)
 	AC_DEFINE(UNIX, 1, [Unix])
 	unix=yes
@@ -64,6 +70,7 @@ case $host_os in
 esac
 AM_CONDITIONAL(UNIX, test "$unix" = "yes" )
 AM_CONDITIONAL(LINUX, test "$linux" = "yes" )
+AM_CONDITIONAL(BSD, test "$bsd" = "yes" )
 
 # Define macros for individual CPU types, for a few bits of inline assembly.
 # This is for major, compatible CPU classes--"CPU_X86" includes P2, P3, P4,
@@ -159,7 +166,7 @@ AC_CHECK_HEADER(sys/soundcard.h, [AC_DEFINE(HAVE_OSS, 1, [OSS support available]
 AC_CHECK_DECL(OSS_GETVERSION, AC_DEFINE([HAVE_OSS_GETVERSION],1,[OSS_GETVERSION is defined]), , [#include <sys/soundcard.h>])
 AC_ARG_ENABLE(force-oss, AC_HELP_STRING([--enable-force-oss], [Force OSS]), force_oss=$enableval, force_oss=no)
 AC_CHECK_HEADER(stdint.h, , [AC_DEFINE(MISSING_STDINT_H, 1, [stdint.h is missing])])
-AC_CHECK_HEADERS([inttypes.h endian.h])
+AC_CHECK_HEADERS([inttypes.h endian.h machine/endian.h])
 
 AC_MSG_CHECKING(if cstdlib breaks llabs)
 AC_LANG_PUSH(C++)
@@ -196,6 +203,7 @@ AC_CHECK_DECL(cosf, , AC_DEFINE([NEED_TANF],1,[Need cosf]), [#include <math.h>])
 AC_CHECK_DECL(acosf, , AC_DEFINE([NEED_ACOSF],1,[Need acosf]), [#include <math.h>])
 AC_CHECK_DECL(roundf, , AC_DEFINE([NEED_ROUNDF],1,[Need roundf]), [#include <math.h>])
 AC_CHECK_DECL(truncf, , AC_DEFINE([NEED_TRUNCF],1,[Need truncf]), [#include <math.h>])
+AC_CHECK_DECL(strtof, , AC_DEFINE([NEED_STRTOF],1,[Need strtof]), [#include <stdlib.h])
 
 # This doesn't work on glibc math functions:
 # AC_CHECK_FUNCS([sqrtf sinf tanf cosf acosf roundf truncf])
