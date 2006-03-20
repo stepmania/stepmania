@@ -220,11 +220,11 @@ void GameState::Reset()
 	FOREACH_PlayerNumber( pn )
 		PROFILEMAN->UnloadProfile( pn );
 
-	SONGMAN->UpdateBest();
+	SONGMAN->UpdatePopular();
 	SONGMAN->UpdateShuffled();
 
 	/* We may have cached trails from before everything was loaded (eg. from before
-	 * SongManager::UpdateBest could be called).  Erase the cache. */
+	 * SongManager::UpdatePopular could be called).  Erase the cache. */
 	SONGMAN->RegenerateNonFixedCourses();
 
 	STATSMAN->Reset();

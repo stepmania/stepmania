@@ -41,10 +41,9 @@ SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our progr
 const RString SONGS_DIR		= "Songs/";
 const RString COURSES_DIR	= "Courses/";
 
-static const ThemeMetric<RageColor>	EXTRA_COLOR		("SongManager","ExtraColor");
-static const ThemeMetric<int>		EXTRA_COLOR_METER	("SongManager","ExtraColorMeter");
-static const ThemeMetric<bool>		USE_UNLOCK_COLOR	("SongManager","UseUnlockColor");
-static const ThemeMetric<RageColor>	UNLOCK_COLOR		("SongManager","UnlockColor");
+static const ThemeMetric<RageColor>	EXTRA_COLOR			("SongManager","ExtraColor");
+static const ThemeMetric<int>		EXTRA_COLOR_METER		("SongManager","ExtraColorMeter");
+static const ThemeMetric<bool>		USE_PREFERRED_SORT_COLOR	("SongManager","UsePreferredSortColor");
 
 RString SONG_GROUP_COLOR_NAME( size_t i )   { return ssprintf("SongGroupColor%i",(int) i+1); }
 RString COURSE_GROUP_COLOR_NAME( size_t i ) { return ssprintf("CourseGroupColor%i",(int) i+1); }
@@ -71,6 +70,8 @@ void SongManager::InitAll( LoadingWindow *ld )
 	InitSongsFromDisk( ld );
 	InitCoursesFromDisk( ld );
 	InitAutogenCourses();
+
+	UpdatePreferredSort();
 }
 
 static LocalizedString RELOADING ( "SongManager", "Reloading..." );
@@ -123,7 +124,8 @@ void SongManager::AddGroup( RString sDir, RString sGroupDirName )
 {
 	unsigned j;
 	for(j = 0; j < m_sSongGroupNames.size(); ++j)
-		if( sGroupDirName == m_sSongGroupNames[j] ) break;
+		if( sGroupDirName == m_sSongGroupNames[j] )
+			break;
 
 	if( j != m_sSongGroupNames.size() )
 		return; /* the group is already added */
@@ -304,7 +306,7 @@ void SongManager::FreeSongs()
 	m_sSongGroupBannerPaths.clear();
 
 	for( int i = 0; i < NUM_ProfileSlot; ++i )
-		m_pBestSongs[i].clear();
+		m_pPopularSongs[i].clear();
 	m_pShuffledSongs.clear();
 }
 
@@ -345,41 +347,59 @@ RageColor SongManager::GetSongColor( const Song* pSong )
 {
 	ASSERT( pSong );
 
-	if( USE_UNLOCK_COLOR  &&  UNLOCKMAN->FindSong(pSong) != NULL )
-		return UNLOCK_COLOR;
-
-	/* XXX:
-	 * Previously, this matched all notes, which set a song to "extra" if it
-	 * had any 10-foot steps at all, even edits or doubles.
-	 *
-	 * For now, only look at notes for the current note type.  This means that
-	 * if a song has 10-foot steps on Doubles, it'll only show up red in Doubles.
-	 * That's not too bad, I think.  This will also change it in the song scroll,
-	 * which is a little odd but harmless. 
-	 *
-	 * XXX: Ack.  This means this function can only be called when we have a style
-	 * set up, which is too restrictive.  How to handle this?
-	 */
-//	const StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
-	const vector<Steps*>& vpSteps = pSong->GetAllSteps();
-	for( unsigned i=0; i<vpSteps.size(); i++ )
+	if( USE_PREFERRED_SORT_COLOR )
 	{
-		const Steps* pSteps = vpSteps[i];
-		switch( pSteps->GetDifficulty() )
+		FOREACH_CONST( SongPointerVector, m_vPreferredSortGroups, v )
 		{
-		case DIFFICULTY_CHALLENGE:
-		case DIFFICULTY_EDIT:
-			continue;
+			FOREACH_CONST( Song*, *v, s )
+			{
+				if( *s == pSong )
+				{
+					int i = v - m_vPreferredSortGroups.begin();
+					return SONG_GROUP_COLOR.GetValue( i%NUM_SONG_GROUP_COLORS );
+				}
+			}
 		}
 
-//		if(pSteps->m_StepsType != st)
-//			continue;
-
-		if( pSteps->GetMeter() >= EXTRA_COLOR_METER )
-			return (RageColor)EXTRA_COLOR;
+		int i = m_vPreferredSortGroups.size();
+		return SONG_GROUP_COLOR.GetValue( i%NUM_SONG_GROUP_COLORS );
 	}
+	else
+	{
 
-	return GetSongGroupColor( pSong->m_sGroupName );
+		/* XXX:
+		 * Previously, this matched all notes, which set a song to "extra" if it
+		 * had any 10-foot steps at all, even edits or doubles.
+		 *
+		 * For now, only look at notes for the current note type.  This means that
+		 * if a song has 10-foot steps on Doubles, it'll only show up red in Doubles.
+		 * That's not too bad, I think.  This will also change it in the song scroll,
+		 * which is a little odd but harmless. 
+		 *
+		 * XXX: Ack.  This means this function can only be called when we have a style
+		 * set up, which is too restrictive.  How to handle this?
+		 */
+	//	const StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+		const vector<Steps*>& vpSteps = pSong->GetAllSteps();
+		for( unsigned i=0; i<vpSteps.size(); i++ )
+		{
+			const Steps* pSteps = vpSteps[i];
+			switch( pSteps->GetDifficulty() )
+			{
+			case DIFFICULTY_CHALLENGE:
+			case DIFFICULTY_EDIT:
+				continue;
+			}
+
+	//		if(pSteps->m_StepsType != st)
+	//			continue;
+
+			if( pSteps->GetMeter() >= EXTRA_COLOR_METER )
+				return (RageColor)EXTRA_COLOR;
+		}
+
+		return GetSongGroupColor( pSong->m_sGroupName );
+	}
 }
 
 RString SongManager::GetCourseGroupBannerPath( const RString &sCourseGroup )
@@ -423,9 +443,6 @@ RageColor SongManager::GetCourseGroupColor( const RString &sCourseGroup )
 
 RageColor SongManager::GetCourseColor( const Course* pCourse )
 {
-	if( USE_UNLOCK_COLOR  &&  UNLOCKMAN->FindCourse(pCourse) != NULL )
-		return UNLOCK_COLOR;
-
 	return GetCourseGroupColor( pCourse->m_sGroupName );
 }
 
@@ -444,9 +461,22 @@ void SongManager::GetSongs( vector<Song*> &AddTo, RString sGroupName, int iMaxSt
 	GetSongsFromVector( m_pSongs, AddTo, sGroupName, iMaxStages );
 }
 
-void SongManager::GetBestSongs( vector<Song*> &AddTo, RString sGroupName, int iMaxStages, ProfileSlot slot ) const
+void SongManager::GetPopularSongs( vector<Song*> &AddTo, RString sGroupName, int iMaxStages, ProfileSlot slot ) const
 {
-	GetSongsFromVector( m_pBestSongs[slot], AddTo, sGroupName, iMaxStages );
+	GetSongsFromVector( m_pPopularSongs[slot], AddTo, sGroupName, iMaxStages );
+}
+
+void SongManager::GetPreferredSortSongs( vector<Song*> &AddTo, int iMaxStages ) const
+{
+	if( m_vPreferredSortGroups.empty() )
+	{
+		GetSongs( AddTo, iMaxStages );
+		return;
+	}
+
+	FOREACH_CONST( SongPointerVector, m_vPreferredSortGroups, v )
+		FOREACH_CONST( Song*, *v, s )
+			AddTo.push_back( *s );
 }
 
 int SongManager::GetNumSongs() const
@@ -653,7 +683,7 @@ void SongManager::FreeCourses()
 
 	for( int i = 0; i < NUM_ProfileSlot; ++i )
 		FOREACH_CourseType( ct )
-			m_pBestCourses[i][ct].clear();
+			m_pPopularCourses[i][ct].clear();
 	m_pShuffledCourses.clear();
 
 	m_mapCourseGroupToInfo.clear();
@@ -662,7 +692,7 @@ void SongManager::FreeCourses()
 void SongManager::AddCourse( Course *pCourse )
 {
 	m_pCourses.push_back( pCourse );
-	UpdateBest();
+	UpdatePopular();
 	UpdateShuffled();
 	m_mapCourseGroupToInfo[ pCourse->m_sGroupName ];	// insert
 }
@@ -672,7 +702,7 @@ void SongManager::DeleteCourse( Course *pCourse )
 	vector<Course*>::iterator iter = find( m_pCourses.begin(), m_pCourses.end(), pCourse );
 	ASSERT( iter != m_pCourses.end() );
 	m_pCourses.erase( iter );
-	UpdateBest();
+	UpdatePopular();
 	UpdateShuffled();
 	RefreshCourseGroupInfo();
 }
@@ -1212,7 +1242,7 @@ Course *SongManager::FindCourse( RString sName )
 	return NULL;
 }
 
-void SongManager::UpdateBest()
+void SongManager::UpdatePopular()
 {
 	// update players best
 	vector<Song*> apBestSongs = m_pSongs;
@@ -1245,13 +1275,13 @@ void SongManager::UpdateBest()
 
 	FOREACH_ProfileSlot( i )
 	{
-		m_pBestSongs[i] = apBestSongs;
+		m_pPopularSongs[i] = apBestSongs;
 
-		SongUtil::SortSongPointerArrayByNumPlays( m_pBestSongs[i], i, true );
+		SongUtil::SortSongPointerArrayByNumPlays( m_pPopularSongs[i], i, true );
 
 		FOREACH_CourseType( ct )
 		{
-			vector<Course*> &vpCourses = m_pBestCourses[i][ct];
+			vector<Course*> &vpCourses = m_pPopularCourses[i][ct];
 			vpCourses = apBestCourses[ct];
 			CourseUtil::SortCoursePointerArrayByNumPlays( vpCourses, i, true );
 		}
@@ -1266,6 +1296,46 @@ void SongManager::UpdateShuffled()
 
 	m_pShuffledCourses = m_pCourses;
 	random_shuffle( m_pShuffledCourses.begin(), m_pShuffledCourses.end() );
+}
+
+void SongManager::UpdatePreferredSort()
+{
+	m_vPreferredSortGroups.clear();
+
+	RString sFile = THEME->GetPathO( "SongManager", "PreferredSort.txt" );
+	RageFile file;
+	if( file.Open( sFile ) )
+	{
+		vector<Song*> vpSongs;
+
+		RString sLine;
+		while( file.GetLine(sLine) )
+		{
+			bool bSectionDivider = sLine.find("---") != -1;
+			if( bSectionDivider )
+			{
+				if( !vpSongs.empty() )
+				{
+					m_vPreferredSortGroups.push_back( vpSongs );
+					vpSongs.clear();
+				}
+			}
+			else
+			{
+				Song *pSong = NULL;
+				if( !sLine.empty() )
+					pSong = FindSong( sLine );
+				if( pSong )
+					vpSongs.push_back( pSong );
+			}
+		}
+
+		if( !vpSongs.empty() )
+		{
+			m_vPreferredSortGroups.push_back( vpSongs );
+			vpSongs.clear();
+		}
+	}
 }
 
 void SongManager::SortSongs()

@@ -1527,7 +1527,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			g_sCDTitlePath = pSong->GetCDTitlePath();
 			g_bWantFallbackCdTitle = true;
 
-			const vector<Song*> best = SONGMAN->GetBestSongs( ProfileSlot_Machine );
+			const vector<Song*> best = SONGMAN->GetPopularSongs( ProfileSlot_Machine );
 			const int index = FindIndex( best.begin(), best.end(), pSong );
 			if( index != -1 )
 				m_MachineRank.SetText( FormatNumberAndSuffix( index+1 ) );
@@ -1660,7 +1660,7 @@ void ScreenSelectMusic::AfterMusicChange()
 		}
 
 		CourseType ct = PlayModeToCourseType( GAMESTATE->m_PlayMode );
-		const vector<Course*> best = SONGMAN->GetBestCourses( ct, ProfileSlot_Machine );
+		const vector<Course*> best = SONGMAN->GetPopularCourses( ct, ProfileSlot_Machine );
 		const int index = FindCourseIndexOfSameMode( best.begin(), best.end(), pCourse );
 		if( index != -1 )
 			m_MachineRank.SetText( FormatNumberAndSuffix( index+1 ) );

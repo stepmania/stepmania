@@ -60,7 +60,7 @@ public:
 protected:
 	virtual void LoadFromMetrics( RString sType );
 	virtual bool MoveSpecific(int n);
-	void GetSongList(vector<Song*> &arraySongs, SortOrder so, RString sPreferredGroup );
+	void GetSongList(vector<Song*> &arraySongs, SortOrder so, const RString &sPreferredGroup );
 	void BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItems, SortOrder so );
 	bool SelectSongOrCourse();
 	bool SelectCourse( Course *p );

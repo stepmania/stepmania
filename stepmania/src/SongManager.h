@@ -74,9 +74,10 @@ public:
 
 	// Lookup
 	const vector<Song*> &GetAllSongs() const { return m_pSongs; }
-	void GetBestSongs( vector<Song*> &AddTo, RString sGroupName, int iMaxStages = INT_MAX, ProfileSlot slot=ProfileSlot_Machine ) const;
-	const vector<Song*> &GetBestSongs( ProfileSlot slot=ProfileSlot_Machine ) const { return m_pBestSongs[slot]; }
-	const vector<Course*> &GetBestCourses( CourseType ct, ProfileSlot slot=ProfileSlot_Machine ) const { return m_pBestCourses[slot][ct]; }
+	void GetPopularSongs( vector<Song*> &AddTo, RString sGroupName, int iMaxStages = INT_MAX, ProfileSlot slot=ProfileSlot_Machine ) const;
+	void GetPreferredSortSongs( vector<Song*> &AddTo, int iMaxStages = INT_MAX ) const;
+	const vector<Song*> &GetPopularSongs( ProfileSlot slot=ProfileSlot_Machine ) const { return m_pPopularSongs[slot]; }
+	const vector<Course*> &GetPopularCourses( CourseType ct, ProfileSlot slot=ProfileSlot_Machine ) const { return m_pPopularCourses[slot][ct]; }
 	void GetSongs( vector<Song*> &AddTo, RString sGroupName, int iMaxStages = INT_MAX ) const;
 	void GetSongs( vector<Song*> &AddTo, int iMaxStages ) const { GetSongs(AddTo,GROUP_ALL,iMaxStages); }
 	void GetSongs( vector<Song*> &AddTo ) const { GetSongs(AddTo,GROUP_ALL,INT_MAX); }
@@ -106,9 +107,10 @@ public:
 	Course* GetCourseFromName( RString sName );
 
 
-	void UpdateBest();				// update Players Best
-	void UpdateShuffled();			// re-shuffle songs and courses
-	void SortSongs();				// sort m_pSongs
+	void UpdatePopular();
+	void UpdateShuffled();		// re-shuffle songs and courses
+	void UpdatePreferredSort(); 
+	void SortSongs();		// sort m_pSongs by CompareSongPointersByTitle
 
 	void UpdateRankingCourses();	// courses shown on the ranking screen
 	void RefreshCourseGroupInfo();
@@ -126,13 +128,15 @@ protected:
 	int GetNumEditsLoadedFromProfile( ProfileSlot slot ) const;
 
 	vector<Song*>		m_pSongs;	// all songs that can be played
-	vector<Song*>		m_pBestSongs[NUM_ProfileSlot];
+	vector<Song*>		m_pPopularSongs[NUM_ProfileSlot];
 	vector<Song*>		m_pShuffledSongs;	// used by GetRandomSong
+	typedef vector<Song*> SongPointerVector;
+	vector<SongPointerVector> m_vPreferredSortGroups;
 	vector<RString>		m_sSongGroupNames;
 	vector<RString>		m_sSongGroupBannerPaths; // each song group may have a banner associated with it
 
 	vector<Course*>		m_pCourses;
-	vector<Course*>		m_pBestCourses[NUM_ProfileSlot][NUM_CourseType];
+	vector<Course*>		m_pPopularCourses[NUM_ProfileSlot][NUM_CourseType];
 	vector<Course*>		m_pShuffledCourses;	// used by GetRandomCourse
 	struct CourseGroupInfo
 	{
@@ -142,9 +146,9 @@ protected:
 
 	RageTexturePreloader m_TexturePreload;
 
-	ThemeMetric<int>			NUM_SONG_GROUP_COLORS;
+	ThemeMetric<int>		NUM_SONG_GROUP_COLORS;
 	ThemeMetric1D<RageColor>	SONG_GROUP_COLOR;
-	ThemeMetric<int>			NUM_COURSE_GROUP_COLORS;
+	ThemeMetric<int>		NUM_COURSE_GROUP_COLORS;
 	ThemeMetric1D<RageColor>	COURSE_GROUP_COLOR;
 };
 

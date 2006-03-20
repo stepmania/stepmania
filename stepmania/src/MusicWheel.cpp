@@ -141,7 +141,7 @@ void MusicWheel::Load( RString sType )
 		GAMESTATE->m_PreferredSortOrder = GAMESTATE->m_SortOrder;
 
 	/* Update for SORT_MOST_PLAYED. */
-	SONGMAN->UpdateBest();
+	SONGMAN->UpdatePopular();
 
 	/* Sort SONGMAN's songs by CompareSongPointersByTitle, so we can do other sorts (with
 	 * stable_sort) from its output, and title will be the secondary sort, without having
@@ -351,17 +351,21 @@ bool MusicWheel::SelectModeMenuItem()
 	return true;
 }
 
-void MusicWheel::GetSongList(vector<Song*> &arraySongs, SortOrder so, RString sPreferredGroup )
+void MusicWheel::GetSongList(vector<Song*> &arraySongs, SortOrder so, const RString &sPreferredGroup )
 {
 	vector<Song*> apAllSongs;
-//	if( so==SORT_PREFERRED && GAMESTATE->m_sPreferredGroup!=GROUP_ALL)
-//		SONGMAN->GetSongs( apAllSongs, GAMESTATE->m_sPreferredGroup, GAMESTATE->GetNumStagesLeft() );	
-//	else
-//		SONGMAN->GetSongs( apAllSongs, GAMESTATE->GetNumStagesLeft() );
-	if( so == SORT_POPULARITY )
-		SONGMAN->GetBestSongs( apAllSongs, GAMESTATE->m_sPreferredSongGroup, GAMESTATE->GetNumStagesLeft() );
-	else
-		SONGMAN->GetSongs( apAllSongs, GAMESTATE->m_sPreferredSongGroup, GAMESTATE->GetNumStagesLeft() );	
+	switch( so )
+	{
+	case SORT_PREFERRED:
+		SONGMAN->GetPreferredSortSongs( apAllSongs, GAMESTATE->GetNumStagesLeft() );
+		break;
+	case SORT_POPULARITY:
+		SONGMAN->GetPopularSongs( apAllSongs, GAMESTATE->m_sPreferredSongGroup, GAMESTATE->GetNumStagesLeft() );
+		break;
+	default:
+		SONGMAN->GetSongs( apAllSongs, GAMESTATE->m_sPreferredSongGroup, GAMESTATE->GetNumStagesLeft() );
+		break;
+	}
 
 	// copy only songs that have at least one Steps for the current GameMode
 	for( unsigned i=0; i<apAllSongs.size(); i++ )
@@ -469,6 +473,8 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			switch( so )
 			{
 			case SORT_PREFERRED:
+				// obey order specified by the preferred sort list
+				break;
 			case SORT_ROULETTE:
 				SongUtil::SortSongPointerArrayByMeter( arraySongs, DIFFICULTY_EASY );
 				if( (bool)PREFSMAN->m_bPreferredSortUsesGroups )
