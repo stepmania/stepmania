@@ -16,8 +16,8 @@
 #include "LuaManager.h"
 #include "XmlFile.h"
 
-#define SHIFT_X(p)			THEME->GetMetricF(sMetricsGroup, ssprintf("ShiftP%iX", p+1))
-#define SHIFT_Y(p)			THEME->GetMetricF(sMetricsGroup, ssprintf("ShiftP%iY", p+1))
+#define SHIFT_X(p)	THEME->GetMetricF(sMetricsGroup, ssprintf("ShiftP%iX", p+1))
+#define SHIFT_Y(p)	THEME->GetMetricF(sMetricsGroup, ssprintf("ShiftP%iY", p+1))
 
 enum { NEED_NOTES=1, NEED_COURSE=2, NEED_PROFILE=4 };
 struct Content_t
@@ -29,24 +29,24 @@ struct Content_t
 
 static const Content_t g_Contents[NUM_PANE_CONTENTS] =
 {
-	{ "SongNumSteps",			PANE_SONG_DIFFICULTY,		NEED_NOTES },
-	{ "SongJumps",				PANE_SONG_DIFFICULTY,		NEED_NOTES },
-	{ "SongHolds",				PANE_SONG_DIFFICULTY,		NEED_NOTES },
-	{ "SongRolls",				PANE_SONG_DIFFICULTY,		NEED_NOTES },
-	{ "SongMines",				PANE_SONG_DIFFICULTY,		NEED_NOTES },
-	{ "SongHands",				PANE_SONG_DIFFICULTY,		NEED_NOTES },
+	{ "SongNumSteps",		PANE_SONG_DIFFICULTY,		NEED_NOTES },
+	{ "SongJumps",			PANE_SONG_DIFFICULTY,		NEED_NOTES },
+	{ "SongHolds",			PANE_SONG_DIFFICULTY,		NEED_NOTES },
+	{ "SongRolls",			PANE_SONG_DIFFICULTY,		NEED_NOTES },
+	{ "SongMines",			PANE_SONG_DIFFICULTY,		NEED_NOTES },
+	{ "SongHands",			PANE_SONG_DIFFICULTY,		NEED_NOTES },
 	{ "MachineHighScore",		PANE_SONG_DIFFICULTY,		NEED_NOTES },
 	{ "MachineHighName",		PANE_SONG_DIFFICULTY,		NEED_NOTES },
 	{ "ProfileHighScore",		PANE_SONG_DIFFICULTY,		NEED_NOTES|NEED_PROFILE },
 	{ "CourseMachineHighScore",	PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
 	{ "CourseMachineHighName",	PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
 	{ "CourseProfileHighScore",	PANE_COURSE_MACHINE_SCORES,	NEED_COURSE|NEED_PROFILE },
-	{ "CourseNumSteps",			PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
-	{ "CourseJumps",			PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
-	{ "CourseHolds",			PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
-	{ "CourseMines",			PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
-	{ "CourseHands",			PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
-	{ "CourseRolls",			PANE_COURSE_MACHINE_SCORES,	NEED_COURSE }
+	{ "CourseNumSteps",		PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
+	{ "CourseJumps",		PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
+	{ "CourseHolds",		PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
+	{ "CourseMines",		PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
+	{ "CourseHands",		PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
+	{ "CourseRolls",		PANE_COURSE_MACHINE_SCORES,	NEED_COURSE }
 };
 
 REGISTER_ACTOR_CLASS( PaneDisplay )
@@ -152,17 +152,17 @@ void PaneDisplay::SetContent( PaneContents c )
 		switch( c )
 		{
 		case COURSE_NUM_STEPS:
-		case SONG_NUM_STEPS:				val = rv[RadarCategory_TapsAndHolds]; break;
+		case SONG_NUM_STEPS:	val = rv[RadarCategory_TapsAndHolds]; break;
 		case COURSE_JUMPS:
-		case SONG_JUMPS:					val = rv[RadarCategory_Jumps]; break;
+		case SONG_JUMPS:	val = rv[RadarCategory_Jumps]; break;
 		case COURSE_HOLDS:
-		case SONG_HOLDS:					val = rv[RadarCategory_Holds]; break;
+		case SONG_HOLDS:	val = rv[RadarCategory_Holds]; break;
 		case COURSE_ROLLS:
-		case SONG_ROLLS:					val = rv[RadarCategory_Rolls]; break;
+		case SONG_ROLLS:	val = rv[RadarCategory_Rolls]; break;
 		case COURSE_MINES:
-		case SONG_MINES:					val = rv[RadarCategory_Mines]; break;
+		case SONG_MINES:	val = rv[RadarCategory_Mines]; break;
 		case COURSE_HANDS:
-		case SONG_HANDS:					val = rv[RadarCategory_Hands]; break;
+		case SONG_HANDS:	val = rv[RadarCategory_Hands]; break;
 		case SONG_PROFILE_HIGH_SCORE:
 			val = PROFILEMAN->GetProfile(m_PlayerNumber)->GetStepsHighScoreList(pSong,pSteps).GetTopScore().GetPercentDP();
 			break;
@@ -320,7 +320,7 @@ class LunaPaneDisplay: public Luna<PaneDisplay>
 public:
 	LunaPaneDisplay() { LUA->Register( Register ); }
 
-	static int SetFromGameState( T* p, lua_State *L )			{ p->SetFromGameState(SORT_PREFERRED); return 0; }
+	static int SetFromGameState( T* p, lua_State *L )	{ p->SetFromGameState(SORT_PREFERRED); return 0; }
 
 	static void Register(lua_State *L) 
 	{
