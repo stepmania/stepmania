@@ -606,14 +606,14 @@ int UnlockManager::GetNumUnlocks() const
 	return m_UnlockEntries.size();
 }
 
-bool UnlockManager::AllAreLocked() const
+bool UnlockManager::AnyRequirementsAreMet() const
 {
 	FOREACH_CONST( UnlockEntry, m_UnlockEntries, ue )
 	{
-		if( !ue->IsLocked() )
-			return false;
+		if( ue->IsRequirementMet() )
+			return true;
 	}
-	return true;
+	return false;
 }
 
 int UnlockManager::GetUnlockEntryIndexToCelebrate() const
@@ -703,7 +703,7 @@ public:
 	static int UnlockEntryID( T* p, lua_State *L )			{ int iUnlockEntryID = IArg(1); p->UnlockEntryID(iUnlockEntryID); return 0; }
 	static int PreferUnlockEntryID( T* p, lua_State *L )		{ int iUnlockEntryID = IArg(1); p->PreferUnlockEntryID(iUnlockEntryID); return 0; }
 	static int GetNumUnlocks( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetNumUnlocks() ); return 1; }
-	static int AllAreLocked( T* p, lua_State *L )			{ lua_pushboolean( L, p->AllAreLocked() ); return 1; }
+	static int AnyRequirementsAreMet( T* p, lua_State *L )		{ lua_pushboolean( L, p->AnyRequirementsAreMet() ); return 1; }
 	static int GetUnlockEntryIndexToCelebrate( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetUnlockEntryIndexToCelebrate() ); return 1; }
 	static int AnyUnlocksToCelebrate( T* p, lua_State *L )		{ lua_pushboolean( L, p->AnyUnlocksToCelebrate() ); return 1; }
 	static int GetUnlockEntry( T* p, lua_State *L )			{ int iIndex = IArg(1); p->m_UnlockEntries[iIndex].PushSelf(L); return 1; }
@@ -732,7 +732,7 @@ public:
 		ADD_METHOD( UnlockEntryID );
 		ADD_METHOD( PreferUnlockEntryID );
 		ADD_METHOD( GetNumUnlocks );
-		ADD_METHOD( AllAreLocked );
+		ADD_METHOD( AnyRequirementsAreMet );
 		ADD_METHOD( GetUnlockEntryIndexToCelebrate );
 		ADD_METHOD( AnyUnlocksToCelebrate );
 		ADD_METHOD( GetUnlockEntry );

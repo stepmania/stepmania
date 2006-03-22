@@ -103,7 +103,7 @@ public:
 
 	// Gets number of unlocks for title screen
 	int GetNumUnlocks() const;
-	bool AllAreLocked() const;
+	bool AnyRequirementsAreMet() const;
 	int GetUnlockEntryIndexToCelebrate() const;
 	bool AnyUnlocksToCelebrate() const;
 
