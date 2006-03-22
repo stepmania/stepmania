@@ -8,6 +8,7 @@
 #include "PlayerNumber.h"
 #include "Sprite.h"
 #include "RageInput.h"
+#include "GameInput.h"
 
 enum ControllerStateButton
 {
@@ -23,17 +24,32 @@ class ControllerStateDisplay : public ActorFrame
 {
 public:
 	ControllerStateDisplay();
-	void Load( MultiPlayer mp );
+	void LoadMultiPlayer( MultiPlayer mp );
+	void LoadGameController( GameController gc );
 	virtual void Update( float fDelta );
 	bool IsLoaded() const { return m_bIsLoaded; }
+
+	virtual Actor *Copy() const;
+
+	//
+	// Lua
+	//
+	virtual void PushSelf( lua_State *L );
 
 protected:
 	bool m_bIsLoaded;
 	Sprite m_sprFrame;
 	struct Button
 	{
+		Button()
+		{
+			di.MakeInvalid();
+			gi.MakeInvalid();
+		}
+
 		Sprite spr;
 		DeviceInput di;
+		GameInput gi;
 	};
 	Button m_Buttons[NUM_ControllerStateButton];
 };

@@ -99,7 +99,7 @@ public:
 			PositionItem( expr, &text, i, NUM_MultiplayerJudgeLine );
 		}
 
-		m_ControllerStateDisplay.Load( mp );
+		m_ControllerStateDisplay.LoadMultiPlayer( mp );
 		this->AddChild( &m_ControllerStateDisplay );
 		PositionItem( expr, &m_ControllerStateDisplay, NUM_MultiplayerJudgeLine, NUM_MultiplayerJudgeLine );
 	}

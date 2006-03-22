@@ -63,7 +63,7 @@ void ScreenJoinMultiplayer::Init()
 
 		LUA->UnsetGlobal( "ThisGameCommand" );
 
-		m_ControllerState[p].Load( p );
+		m_ControllerState[p].LoadMultiPlayer( p );
 	}
 
 	m_exprOnCommandFunction.SetFromExpression( THEME->GetMetric(m_sName,"TranformFunction") );

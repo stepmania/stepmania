@@ -242,7 +242,7 @@ void Player::Init(
 	// Load CSD
 	if( GAMESTATE->m_bMultiplayer  &&  m_pControllerStateDisplay  &&  !m_pControllerStateDisplay->IsLoaded() )	// only load the first time
 	{
-		m_pControllerStateDisplay->Load( pPlayerState->m_mp );
+		m_pControllerStateDisplay->LoadMultiPlayer( pPlayerState->m_mp );
 		this->AddChild( m_pControllerStateDisplay );
 	}
 
