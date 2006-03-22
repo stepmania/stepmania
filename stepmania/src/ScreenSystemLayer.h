@@ -23,7 +23,6 @@ private:
 	AutoActor  m_sprMessageFrame;
 	BitmapText m_textMessage;
 	BitmapText m_textCredits[NUM_PLAYERS];
-	Quad m_quadBrightnessAdd;
 
 	RString GetCreditsMessage( PlayerNumber pn ) const;
 
@@ -40,6 +39,8 @@ private:
 	LocalizedString CREDITS_LOAD_FAILED;
 	LocalizedString CREDITS_LOADED_FROM_LAST_GOOD_APPEND;
 	ThemeMetric<bool> CREDITS_JOIN_ONLY;
+
+	AutoActor m_sprOverlay;
 };
 
 

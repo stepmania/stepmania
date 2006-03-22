@@ -42,17 +42,13 @@ void ScreenSystemLayer::Init()
 	FOREACH_PlayerNumber( p )
 		this->AddChild(&m_textCredits[p]);
 
-	m_quadBrightnessAdd.StretchTo( RectF(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
-	m_quadBrightnessAdd.SetDiffuse( RageColor(1,1,1,PREFSMAN->m_fBrightnessAdd) );
-	m_quadBrightnessAdd.SetHidden( PREFSMAN->m_fBrightnessAdd == 0 );
-	m_quadBrightnessAdd.SetBlendMode( BLEND_ADD );
-	this->AddChild( &m_quadBrightnessAdd );
-
-
 	ReloadCreditsText();
 	/* This will be done when we set up the first screen, after GAMESTATE->Reset has
 	 * been called. */
 	// RefreshCreditsMessages();
+
+	m_sprOverlay.Load( THEME->GetPathB("ScreenSystemLayer", "overlay") );
+	this->AddChild( m_sprOverlay );
 }
 
 void ScreenSystemLayer::ReloadCreditsText()
