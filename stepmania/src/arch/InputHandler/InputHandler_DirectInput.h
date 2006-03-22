@@ -17,21 +17,18 @@ public:
 
 private:
 	RageThread m_InputThread;
-	RageThread m_DevicesChangedThread;
 	bool m_bShutdown;
 
-	// Use these to figure out if a joystick was plugged/unplugged
-	int m_iCurrentNumJoysticks;
-	int m_iLastSeenNumJoysticks;
+	int m_iLastSeenNumHidDevices;	// This changes first on plug/unplug
+	int m_iNumTimesLeftToPollForJoysticksChanged;
+	int m_iLastSeenNumJoysticks;	// This changes sometime after m_iLastSeenNumHidDevices
 
 	void UpdatePolled( DIDevice &device, const RageTimer &tm );
 	void UpdateBuffered( DIDevice &device, const RageTimer &tm );
 	void PollAndAcquireDevices( bool bBuffered );
 
 	static int InputThread_Start( void *p )		 { ((InputHandler_DInput *) p)->InputThreadMain();  return 0; }
-	static int DevicesChangedThread_Start( void *p ) { ((InputHandler_DInput *) p)->DevicesChangedThreadMain();  return 0; }
 	void InputThreadMain();
-	void DevicesChangedThreadMain();
 
 	void StartThread();
 	void ShutdownThread();

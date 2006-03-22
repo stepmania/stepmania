@@ -67,6 +67,13 @@ static BOOL CALLBACK CountDevicesCallback( const DIDEVICEINSTANCE *pdidInstance,
 	return DIENUM_CONTINUE;
 }
 
+static int GetNumHidDevices()
+{
+	int i = 0;	
+	RegistryAccess::GetRegValue( "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\HidUsb\\Enum", "Count", i, false );	// don't warn on error
+	return i;
+}
+
 static int GetNumJoysticksSlow()
 {
 	int iCount = 0;
@@ -124,8 +131,9 @@ InputHandler_DInput::InputHandler_DInput()
 			Devices[i].buffered? "buffered": "unbuffered" );
 	}
 
-	m_iCurrentNumJoysticks = GetNumJoysticksSlow();
-	m_iLastSeenNumJoysticks = m_iCurrentNumJoysticks;
+	m_iLastSeenNumHidDevices = GetNumHidDevices();
+	m_iNumTimesLeftToPollForJoysticksChanged = 0;
+	m_iLastSeenNumJoysticks = GetNumJoysticksSlow();
 
 	StartThread();
 }
@@ -137,10 +145,6 @@ void InputHandler_DInput::StartThread()
 	{
 		m_InputThread.SetName( "DirectInput thread" );
 		m_InputThread.Create( InputThread_Start, this );
-
-		// TODO: Check for changed devices with non-threaded input?
-		m_DevicesChangedThread.SetName( "DI DevicesChanged thread" );
-		m_DevicesChangedThread.Create( DevicesChangedThread_Start, this );
 	}
 }
 
@@ -152,12 +156,6 @@ void InputHandler_DInput::ShutdownThread()
 		LOG->Trace( "Shutting down DirectInput thread ..." );
 		m_InputThread.Wait();
 		LOG->Trace( "DirectInput thread shut down." );
-	}
-	if( m_DevicesChangedThread.IsCreated() )
-	{
-		LOG->Trace( "Shutting down DI DevicesChanged thread ..." );
-		m_DevicesChangedThread.Wait();
-		LOG->Trace( "DI DevicesChanged thread shut down." );
 	}
 	m_bShutdown = false;
 }
@@ -524,24 +522,55 @@ void InputHandler_DInput::Update()
 	InputHandler::UpdateTimer();
 }
 
+const float POLL_FOR_JOYSTICK_CHANGES_LENGTH_SECONDS = 15.0f;
+const float POLL_FOR_JOYSTICK_CHANGES_EVERY_SECONDS = 0.25f;
+
 bool InputHandler_DInput::DevicesChanged()
 {
-	int iOldNumJoysticks = m_iLastSeenNumJoysticks;
-	m_iLastSeenNumJoysticks = m_iCurrentNumJoysticks;
-	return iOldNumJoysticks != m_iLastSeenNumJoysticks;
-}
+	//
+	// GetNumJoysticksSlow() blocks DirectInput for a while even if called from a 
+	// different thread, so we can't poll with it.
+	// GetNumHidDevices() is fast, but sometimes the DirectInput joysticks haven't updated by 
+	// the time the HID registry value changes.
+	// So, poll using GetNumHidDevices().   When that changes, poll using GetNumJoysticksSlow() 
+	// for a little while to give DirectInput time to catch up.  On this XP machine, it takes
+	// 2-10 DirectInput polls (0.5-2.5 seconds) to catch a newly installed device after the 
+	// registry value changes, and catches non-new plugged/unplugged devices on the first 
+	// DirectInputPoll.
+	// Note that this "poll for N seconds" method will not work if the Add New Hardware wizard
+	// halts device installation to wait for a driver.  Most of the joysticks people would
+	// want to use don't prompt for a driver though and the wizard adds them pretty quickly.
+	//
 
-void InputHandler_DInput::DevicesChangedThreadMain()
-{
-	while( !m_bShutdown )
+	int iOldNumHidDevices = m_iLastSeenNumHidDevices;
+	m_iLastSeenNumHidDevices = GetNumHidDevices();
+	if( iOldNumHidDevices != m_iLastSeenNumHidDevices )
 	{
-		m_iCurrentNumJoysticks = GetNumJoysticksSlow();
-		CHECKPOINT;
-		// We'll miss a device if one is plugged in and removed in the same 1/10th of a second.
-		// This is hard to do in practice even on purpose.
-		usleep( 100*1000 ); // .1s
+		LOG->Warn( "HID devices changes" );
+		m_iNumTimesLeftToPollForJoysticksChanged = (int)(POLL_FOR_JOYSTICK_CHANGES_LENGTH_SECONDS / POLL_FOR_JOYSTICK_CHANGES_EVERY_SECONDS);
 	}
-	CHECKPOINT;
+
+	if( m_iNumTimesLeftToPollForJoysticksChanged > 0 )
+	{
+		static RageTimer timerPollJoysticks;
+		if( timerPollJoysticks.Ago() >= POLL_FOR_JOYSTICK_CHANGES_EVERY_SECONDS )
+		{
+			m_iNumTimesLeftToPollForJoysticksChanged--;
+			timerPollJoysticks.Touch();
+			LOG->Warn( "polling for joystick changes" );
+
+			int iOldNumJoysticks = m_iLastSeenNumJoysticks;
+			m_iLastSeenNumJoysticks = GetNumJoysticksSlow();
+			if( iOldNumJoysticks != m_iLastSeenNumJoysticks )
+			{
+				LOG->Warn( "joysticks changed" );
+				m_iNumTimesLeftToPollForJoysticksChanged = 0;
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 void InputHandler_DInput::InputThreadMain()
