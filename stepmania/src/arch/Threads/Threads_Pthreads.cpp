@@ -229,6 +229,7 @@ bool EventImpl_Pthreads::Wait( RageTimer *pTimeout )
 		return true;
 	}
 
+#if 1
 	float fSecondsInFuture = -pTimeout->Ago();
 
 	RageTimer timeofday;
@@ -244,6 +245,13 @@ bool EventImpl_Pthreads::Wait( RageTimer *pTimeout )
 	timespec abstime;
 	abstime.tv_sec = timeofday.m_secs;
 	abstime.tv_nsec = timeofday.m_us * 1000;
+#else
+	/* XXX: This is how it should look for CLOCK_MONOTONIC: simply use the
+	 * time directly.  This requires that the condition be set to that clock,
+	 * which requires pthread_condattr_setclock(). */
+	abstime.tv_sec = pTimeout->m_secs;
+	abstime.tv_nsec = pTimeout->m_us * 1000;
+#endif
 
 	int iRet = pthread_cond_timedwait( &m_Cond, &m_pParent->mutex, &abstime );
 	return iRet != ETIMEDOUT;
