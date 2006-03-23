@@ -6,7 +6,7 @@
 #include "ActorFrame.h"
 #include "ActorUtil.h"
 #include "PlayerNumber.h"
-#include "Sprite.h"
+#include "AutoActor.h"
 #include "RageInput.h"
 #include "GameInput.h"
 
@@ -37,8 +37,10 @@ public:
 	virtual void PushSelf( lua_State *L );
 
 protected:
+	void LoadInternal( MultiPlayer mp, GameController gc );
+
 	bool m_bIsLoaded;
-	Sprite m_sprFrame;
+	AutoActor m_sprFrame;
 	struct Button
 	{
 		Button()
@@ -47,7 +49,7 @@ protected:
 			gi.MakeInvalid();
 		}
 
-		Sprite spr;
+		AutoActor spr;
 		DeviceInput di;
 		GameInput gi;
 	};

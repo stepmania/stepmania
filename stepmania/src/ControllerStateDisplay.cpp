@@ -36,36 +36,25 @@ REGISTER_ACTOR_CLASS( ControllerStateDisplay )
 ControllerStateDisplay::ControllerStateDisplay()
 {
 	m_bIsLoaded = false;
-
-	this->AddChild( &m_sprFrame );
-	FOREACH_ENUM2( ControllerStateButton, b )
-		this->AddChild( &m_Buttons[b].spr );
 }
 
 void ControllerStateDisplay::LoadMultiPlayer( MultiPlayer mp )
 {
-	m_bIsLoaded = true;
-
-	m_sprFrame.Load( THEME->GetPathG("ControllerStateDisplay", "frame") );
-
-	FOREACH_ENUM2( ControllerStateButton, b )
-	{
-		Button &button = m_Buttons[ b ];
-
-		//LOG->Warn( "csd: %d %d", mp, b );
-
-		RString sPath = THEME->GetPathG( "ControllerStateDisplay", ControllerStateButtonToString(b) );
-		button.spr.Load( sPath );
-		
-		button.di = DeviceInput( INPUTMAPPER->MultiPlayerToInputDevice(mp), ControllerStateButtonToDeviceButton[b] );
-	}
+	LoadInternal( mp, GAME_CONTROLLER_INVALID );
 }
 
 void ControllerStateDisplay::LoadGameController( GameController gc )
 {
+	LoadInternal( MultiPlayer_INVALID, gc );
+}
+
+void ControllerStateDisplay::LoadInternal( MultiPlayer mp, GameController gc )
+{
+	ASSERT( !m_bIsLoaded );
 	m_bIsLoaded = true;
 
 	m_sprFrame.Load( THEME->GetPathG("ControllerStateDisplay", "frame") );
+	this->AddChild( m_sprFrame );
 
 	FOREACH_ENUM2( ControllerStateButton, b )
 	{
@@ -75,8 +64,12 @@ void ControllerStateDisplay::LoadGameController( GameController gc )
 
 		RString sPath = THEME->GetPathG( "ControllerStateDisplay", ControllerStateButtonToString(b) );
 		button.spr.Load( sPath );
+		this->AddChild( m_Buttons[b].spr );
 		
-		button.gi = GameInput( gc, ControllerStateButtonToGameButton[b] );
+		if( mp != MultiPlayer_INVALID )
+			button.di = DeviceInput( INPUTMAPPER->MultiPlayerToInputDevice(mp), ControllerStateButtonToDeviceButton[b] );
+		if( gc != GAME_CONTROLLER_INVALID )
+			button.gi = GameInput( gc, ControllerStateButtonToGameButton[b] );
 	}
 }
 
@@ -93,7 +86,7 @@ void ControllerStateDisplay::Update( float fDelta )
 		else if( button.di.IsValid() )
 			bVisible = INPUTFILTER->IsBeingPressed(button.di);
 
-		button.spr.SetVisible( bVisible );
+		button.spr->SetVisible( bVisible );
 	}
 }
 
