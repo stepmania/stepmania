@@ -229,9 +229,21 @@ bool EventImpl_Pthreads::Wait( RageTimer *pTimeout )
 		return true;
 	}
 
+	float fSecondsInFuture = -pTimeout->Ago();
+
+	RageTimer timeofday;
+	{
+		timeval tv;
+		gettimeofday( &tv, NULL );
+		timeofday.m_secs = tv.tv_sec;
+		timeofday.m_us = tv.tv_usec;
+	}
+	timeofday += fSecondsInFuture;
+	
+
 	timespec abstime;
-	abstime.tv_sec = pTimeout->m_secs;
-	abstime.tv_nsec = pTimeout->m_us * 1000;
+	abstime.tv_sec = timeofday.m_secs;
+	abstime.tv_nsec = timeofday.m_us * 1000;
 
 	int iRet = pthread_cond_timedwait( &m_Cond, &m_pParent->mutex, &abstime );
 	return iRet != ETIMEDOUT;
