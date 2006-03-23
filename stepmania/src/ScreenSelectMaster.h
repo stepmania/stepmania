@@ -11,6 +11,7 @@
 class ScreenSelectMaster : public ScreenSelect
 {
 public:
+	ScreenSelectMaster();
 	virtual void Init();
 	virtual void BeginScreen();
 

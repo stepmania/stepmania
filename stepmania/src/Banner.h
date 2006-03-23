@@ -29,8 +29,8 @@ public:
 	void LoadCardFromCharacter( Character* pCharacter );
 	void LoadIconFromCharacter( Character* pCharacter );
 	void LoadTABreakFromCharacter( Character* pCharacter );
-	void LoadBannerFromUnlockEntry( UnlockEntry* pUE );
-	void LoadBackgroundFromUnlockEntry( UnlockEntry* pUE );
+	void LoadBannerFromUnlockEntry( const UnlockEntry* pUE );
+	void LoadBackgroundFromUnlockEntry( const UnlockEntry* pUE );
 	void LoadRoulette();
 	void LoadRandom();
 	void LoadFallback();

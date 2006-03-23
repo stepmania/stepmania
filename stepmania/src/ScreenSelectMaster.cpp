@@ -23,6 +23,13 @@ RString OPTION_ORDER_NAME( size_t dir )							{ return "OptionOrder"+MenuDirToSt
 
 REGISTER_SCREEN_CLASS( ScreenSelectMaster );
 
+ScreenSelectMaster::ScreenSelectMaster()
+{
+	ZERO( m_iChoice );
+	ZERO( m_bChosen );
+	m_fLockInputSecs = 0;
+}
+
 void ScreenSelectMaster::Init()
 {
 	SHOW_ICON.Load( m_sName, "ShowIcon" );
@@ -398,6 +405,7 @@ void ScreenSelectMaster::MenuLeft( const InputEventPlus &input )
 		m_TrackingRepeatingInput = input.MenuI;
 		m_soundChange.Play();
 		MESSAGEMAN->Broadcast( (Message)(Message_MenuLeftP1+pn) );
+		MESSAGEMAN->Broadcast( (Message)(Message_MenuSelectionChanged) );
 	}
 }
 
@@ -420,6 +428,7 @@ void ScreenSelectMaster::MenuRight( const InputEventPlus &input )
 		m_TrackingRepeatingInput = input.MenuI;
 		m_soundChange.Play();
 		MESSAGEMAN->Broadcast( (Message)(Message_MenuRightP1+pn) );
+		MESSAGEMAN->Broadcast( (Message)(Message_MenuSelectionChanged) );
 	}
 }
 
@@ -442,6 +451,7 @@ void ScreenSelectMaster::MenuUp( const InputEventPlus &input )
 		m_TrackingRepeatingInput = input.MenuI;
 		m_soundChange.Play();
 		MESSAGEMAN->Broadcast( (Message)(Message_MenuUpP1+pn) );
+		MESSAGEMAN->Broadcast( (Message)(Message_MenuSelectionChanged) );
 	}
 }
 
@@ -464,6 +474,7 @@ void ScreenSelectMaster::MenuDown( const InputEventPlus &input )
 		m_TrackingRepeatingInput = input.MenuI;
 		m_soundChange.Play();
 		MESSAGEMAN->Broadcast( (Message)(Message_MenuDownP1+pn) );
+		MESSAGEMAN->Broadcast( (Message)(Message_MenuSelectionChanged) );
 	}
 }
 

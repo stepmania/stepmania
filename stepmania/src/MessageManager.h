@@ -44,6 +44,7 @@ enum Message
 	Message_MenuLeftP2,
 	Message_MenuRightP1,
 	Message_MenuRightP2,
+	Message_MenuSelectionChanged,
 	Message_MadeChoiceP1,
 	Message_MadeChoiceP2,
 	Message_CoinInserted,

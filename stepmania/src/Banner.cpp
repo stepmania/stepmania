@@ -141,7 +141,7 @@ void Banner::LoadTABreakFromCharacter( Character* pCharacter )
 	}
 }
 
-void Banner::LoadBannerFromUnlockEntry( UnlockEntry* pUE )
+void Banner::LoadBannerFromUnlockEntry( const UnlockEntry* pUE )
 {
 	if( pUE == NULL )
 		LoadFallback();
@@ -153,7 +153,7 @@ void Banner::LoadBannerFromUnlockEntry( UnlockEntry* pUE )
 	}
 }
 
-void Banner::LoadBackgroundFromUnlockEntry( UnlockEntry* pUE )
+void Banner::LoadBackgroundFromUnlockEntry( const UnlockEntry* pUE )
 {
 	if( pUE == NULL )
 		LoadFallback();

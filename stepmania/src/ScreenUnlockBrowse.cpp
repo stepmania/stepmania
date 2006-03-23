@@ -21,6 +21,20 @@ void ScreenUnlockBrowse::Init()
 	}
 
 	ScreenSelectMaster::Init();
+
+	m_banner.SetName( "Banner" );
+	this->AddChild( &m_banner );
+
+	this->SortByDrawOrder();
+
+	this->SubscribeToMessage( Message_MenuSelectionChanged );
+}
+
+void ScreenUnlockBrowse::BeginScreen()
+{
+	ScreenSelectMaster::BeginScreen();
+
+	HandleMessage( MessageToString(Message_MenuSelectionChanged) );
 }
 
 void ScreenUnlockBrowse::MenuStart( PlayerNumber pn )
@@ -29,6 +43,29 @@ void ScreenUnlockBrowse::MenuStart( PlayerNumber pn )
 	this->PostScreenMessage( SM_BeginFadingOut, 0 );
 }
 
+void ScreenUnlockBrowse::TweenOnScreen()
+{
+	SET_XY_AND_ON_COMMAND( m_banner );
+	ScreenSelectMaster::TweenOnScreen();
+}
+
+void ScreenUnlockBrowse::TweenOffScreen()
+{
+	OFF_COMMAND( m_banner );
+	ScreenSelectMaster::TweenOffScreen();
+}
+
+void ScreenUnlockBrowse::HandleMessage( const RString& sMessage )
+{
+	if( sMessage == MessageToString(Message_MenuSelectionChanged) )
+	{
+		int iSelection = this->GetSelectionIndex(PLAYER_1);
+		const UnlockEntry &ue = UNLOCKMAN->m_UnlockEntries[ iSelection ];
+		m_banner.LoadBannerFromUnlockEntry( &ue );
+	}
+
+	ScreenSelectMaster::HandleMessage( sMessage );
+}
 
 /*
  * (c) 2006 Chris Danford

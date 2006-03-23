@@ -2,13 +2,21 @@
 #define ScreenUnlockBrowse_H
 
 #include "ScreenSelectMaster.h"
+#include "FadingBanner.h"
 
 class ScreenUnlockBrowse : public ScreenSelectMaster
 {
 public:
 	virtual void Init();
+	virtual void BeginScreen();
 	virtual void MenuStart( PlayerNumber pn );
+
+	virtual void TweenOnScreen();
+	virtual void TweenOffScreen();
+	virtual void HandleMessage( const RString& sMessage );
+
 protected:
+	FadingBanner m_banner;
 };
 
 #endif
