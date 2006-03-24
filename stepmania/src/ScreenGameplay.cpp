@@ -926,6 +926,8 @@ ScreenGameplay::~ScreenGameplay()
 	LOG->Trace( "ScreenGameplay::~ScreenGameplay()" );
 
 	SAFE_DELETE( m_pPlayerScoreList );
+	SAFE_DELETE( m_pSongBackground );
+	SAFE_DELETE( m_pSongForeground );
 	
 	if( !GAMESTATE->m_bDemonstrationOrJukebox )
 		MEMCARDMAN->UnPauseMountingThread();
