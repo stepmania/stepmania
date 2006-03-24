@@ -254,7 +254,7 @@ void BackgroundImpl::Unload()
 
 void BackgroundImpl::Layer::Unload()
 {
-    FOREACHM( BackgroundDef, Actor*, m_BGAnimations, iter )
+	FOREACHM( BackgroundDef, Actor*, m_BGAnimations, iter )
 		delete iter->second;
 	m_BGAnimations.clear();
 	m_aBGChanges.clear();
@@ -727,7 +727,7 @@ int BackgroundImpl::Layer::FindBGSegmentForBeat( float fBeat ) const
 	
 	// assumption: m_aBGChanges are sorted by m_fStartBeat
 	int i;
-    for( i=m_aBGChanges.size()-1; i>=0; i-- )
+	for( i=m_aBGChanges.size()-1; i>=0; i-- )
 	{
 		if( fBeat >= m_aBGChanges[i].m_fStartBeat )
 			return i;
