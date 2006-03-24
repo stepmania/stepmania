@@ -52,7 +52,7 @@ public:
 		m_pCourse = NULL;
 
 		ZERO( m_fRequirement );
-		m_bRequrePassHardSteps = false;
+		m_bRequirePassHardSteps = false;
 		m_iEntryID = -1;	// -1 == not yet filled.  This will be filled in automatically if not specified.
 	}
 
@@ -66,7 +66,7 @@ public:
 	Course	*m_pCourse;
 
 	float	m_fRequirement[NUM_UnlockRequirement];	// unlocked if any of of these are met
-	bool	m_bRequrePassHardSteps;
+	bool	m_bRequirePassHardSteps;
 	int	m_iEntryID;
 
 	bool	IsValid() const;

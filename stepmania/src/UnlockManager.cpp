@@ -677,7 +677,7 @@ public:
 	static int GetDescription( T* p, lua_State *L )		{ lua_pushstring(L, p->GetDescription() ); return 1; }
 	static int GetUnlockRewardType( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_Type ); return 1; }
 	static int GetRequirement( T* p, lua_State *L )		{ UnlockRequirement i = (UnlockRequirement)IArg(1); lua_pushnumber(L, p->m_fRequirement[i] ); return 1; }
-	static int GetRequrePassHardSteps( T* p, lua_State *L )	{ lua_pushboolean(L, p->m_bRequirePassHardSteps); return 1; }
+	static int GetRequirePassHardSteps( T* p, lua_State *L ){ lua_pushboolean(L, p->m_bRequirePassHardSteps); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -686,7 +686,7 @@ public:
 		ADD_METHOD( GetDescription );
 		ADD_METHOD( GetUnlockRewardType );
 		ADD_METHOD( GetRequirement );
-		ADD_METHOD( GetRequrePassHardSteps );
+		ADD_METHOD( GetRequirePassHardSteps );
 
 		Luna<T>::Register( L );
 	}
