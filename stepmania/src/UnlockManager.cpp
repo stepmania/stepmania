@@ -301,7 +301,7 @@ bool UnlockEntry::IsRequirementMet() const
 		if( m_fRequirement[i] && fScores[i] >= m_fRequirement[i] )
 			return true;
 
-	if( m_bRequrePassHardSteps && m_pSong )
+	if( m_bRequirePassHardSteps && m_pSong )
 	{
 		vector<Steps*> vp;
 		m_pSong->GetSteps(
@@ -437,7 +437,7 @@ void UnlockManager::Load()
 			}
 			else if( sName == "RequrePassHardSteps" )
 			{
-				current.m_bRequrePassHardSteps = true;
+				current.m_bRequirePassHardSteps = true;
 			}
 			else
 			{
@@ -463,7 +463,7 @@ void UnlockManager::Load()
 			UnlockEntry ue;			
 			ue.m_Type = UnlockRewardType_Steps;
 			ue.m_cmd.Load( "steps,"+(*s)->m_sGroupName+"/"+(*s)->GetTranslitFullTitle()+",expert" );
-			ue.m_bRequrePassHardSteps = true;
+			ue.m_bRequirePassHardSteps = true;
 
 			m_UnlockEntries.push_back( ue );
 		}
@@ -496,7 +496,7 @@ void UnlockManager::Load()
 		FOREACH_ENUM2( UnlockRequirement, j )
 			if( e->m_fRequirement[j] )
 				str += ssprintf( "%s = %f; ", UnlockRequirementToString(j).c_str(), e->m_fRequirement[j] );
-		if( e->m_bRequrePassHardSteps )
+		if( e->m_bRequirePassHardSteps )
 			str += "RequrePassHardSteps; ";
 
 		str += ssprintf( "entryID = %i ", e->m_iEntryID );
@@ -677,7 +677,7 @@ public:
 	static int GetDescription( T* p, lua_State *L )		{ lua_pushstring(L, p->GetDescription() ); return 1; }
 	static int GetUnlockRewardType( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_Type ); return 1; }
 	static int GetRequirement( T* p, lua_State *L )		{ UnlockRequirement i = (UnlockRequirement)IArg(1); lua_pushnumber(L, p->m_fRequirement[i] ); return 1; }
-	static int GetRequrePassHardSteps( T* p, lua_State *L )	{ lua_pushboolean(L, p->m_bRequrePassHardSteps); return 1; }
+	static int GetRequrePassHardSteps( T* p, lua_State *L )	{ lua_pushboolean(L, p->m_bRequirePassHardSteps); return 1; }
 
 	static void Register(lua_State *L)
 	{
