@@ -384,12 +384,12 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 		if( vsPaths.empty() )
 		{
 			LOG->Warn( "BackgroundEffect '%s' is missing.",sEffect.c_str() );
-			sEffect = SBE_Centered;
+			BackgroundUtil::GetBackgroundEffects( SBE_Centered, vsPaths, vsThrowAway );
 		}
 		else if( vsPaths.size() > 1 )
 		{
 			LOG->Warn( "BackgroundEffect '%s' has more than one match.",sEffect.c_str() );
-			sEffect = SBE_Centered;
+			BackgroundUtil::GetBackgroundEffects( SBE_Centered, vsPaths, vsThrowAway );
 		}
 		else
 		{
