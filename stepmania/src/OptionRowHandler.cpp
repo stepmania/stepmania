@@ -158,13 +158,13 @@ public:
 	}
 	void ImportOption( const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
-		int iFallbackOption = -1;
-		bool bUseFallbackOption = true;
-
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 		{
 			PlayerNumber p = *pn;
 			vector<bool> &vbSelOut = vbSelectedOut[p];
+
+			int iFallbackOption = -1;
+			bool bUseFallbackOption = true;
 
 			for( unsigned e = 0; e < m_aListEntries.size(); ++e )
 			{
