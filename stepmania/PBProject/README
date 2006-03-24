@@ -23,7 +23,7 @@ to reduce the size of the binary.
 INSTALL
 From the PBProject directory, run:
 $ scripts/mkrelease.pl .. <version>
-Build a package using PackageMaker.
+Build a package using the PackageMaker project stepmania.pmproj.
 
 Steve Checkoway
 steve@cs.washington.edu
