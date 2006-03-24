@@ -287,15 +287,6 @@ Actor *MakeVisualization( const RString &sVisPath )
 	return pFrame;
 }
 
-Actor *MakeMovie( const RString &sMoviePath )
-{
-	Sprite *pSprite = new Sprite;
-	pSprite->LoadBG( sMoviePath );
-	pSprite->StretchTo( FullScreenRectF );
-	pSprite->EnableAnimation( false );
-	return pSprite;
-}
-
 bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const BackgroundDef &bd )
 {
 	ASSERT( m_BGAnimations.find(bd) == m_BGAnimations.end() );
