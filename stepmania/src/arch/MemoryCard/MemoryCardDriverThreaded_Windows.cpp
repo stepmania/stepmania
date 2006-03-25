@@ -102,7 +102,7 @@ void MemoryCardDriverThreaded_Windows::GetUSBStorageDevices( vector<UsbStorageDe
 		if( !(m_dwLastLogicalDrives & mask) )
 			continue; // drive letter is invalid
 
-		RString sDrive = ssprintf( "%c:", 'a'+i%26 );
+		RString sDrive = ssprintf( "%c:", 'A'+i%26 );
 		if( IsFloppyDrive(sDrive) )
 			continue;
 
