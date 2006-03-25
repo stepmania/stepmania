@@ -159,12 +159,12 @@ void MemoryCardDriverThreaded_Windows::Unmount( UsbStorageDevice* pDevice )
 
 	if( hDevice == INVALID_HANDLE_VALUE )
 	{
-		LOG->Warn( werr_ssprintf(GetLastError(), "Couldn't open memory card device to flush: CreateFile") );
+		LOG->Warn( werr_ssprintf(GetLastError(), "Couldn't open memory card device to flush (%s): CreateFile", pDevice->sDevice.c_str()) );
 		return;
 	}
 
 	if( !FlushFileBuffers(hDevice) )
-		LOG->Warn( werr_ssprintf(GetLastError(), "Couldn't flush memory card device: FlushFileBuffers") );
+		LOG->Warn( werr_ssprintf(GetLastError(), "Couldn't flush memory card device (%s): FlushFileBuffers", pDevice->sDevice.c_str()) );
 	CloseHandle( hDevice );
 }
 
