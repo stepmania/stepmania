@@ -116,7 +116,7 @@ void MemoryCardDriverThreaded_Windows::GetUSBStorageDevices( vector<UsbStorageDe
 		vDevicesOut.push_back( UsbStorageDevice() );
 		UsbStorageDevice &usbd = vDevicesOut.back();
 		usbd.SetOsMountDir( sDrive );
-		usbd.sDevice = sDrive;
+		usbd.sDevice = "\\\\.\\" + sDrive;
 		usbd.sVolumeLabel = sVolumeLabel;
 
 		// TODO: fill in bus/level/port with this:
@@ -153,7 +153,7 @@ bool MemoryCardDriverThreaded_Windows::Mount( UsbStorageDevice* pDevice )
 void MemoryCardDriverThreaded_Windows::Unmount( UsbStorageDevice* pDevice )
 {
 	/* Try to flush the device before returning.  This requires administrator priviliges. */
-	HANDLE hDevice = CreateFile( "\\\\.\\" + pDevice->sDevice, GENERIC_WRITE,
+	HANDLE hDevice = CreateFile( pDevice->sDevice, GENERIC_WRITE,
 		FILE_SHARE_READ | FILE_SHARE_WRITE,
 		NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL );
 
