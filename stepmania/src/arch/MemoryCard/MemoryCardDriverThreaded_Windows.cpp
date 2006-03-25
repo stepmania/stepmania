@@ -118,7 +118,12 @@ void MemoryCardDriverThreaded_Windows::GetUSBStorageDevices( vector<UsbStorageDe
 		usbd.SetOsMountDir( sDrive );
 		usbd.sDevice = "\\\\.\\" + sDrive;
 		usbd.sVolumeLabel = sVolumeLabel;
+	}
 
+	for( size_t i = 0; i < vDevicesOut.size(); ++i )
+	{
+		UsbStorageDevice &usbd = vDevicesOut[i];
+		
 		// TODO: fill in bus/level/port with this:
 		// http://www.codeproject.com/system/EnumDeviceProperties.asp
 
@@ -128,7 +133,7 @@ void MemoryCardDriverThreaded_Windows::GetUSBStorageDevices( vector<UsbStorageDe
 		DWORD dwNumberOfFreeClusters;
 		DWORD dwTotalNumberOfClusters;
 		if( GetDiskFreeSpace(
-				sDrive,
+				usbd.sOsMountDir,
 				&dwSectorsPerCluster,
 				&dwBytesPerSector,
 				&dwNumberOfFreeClusters,
