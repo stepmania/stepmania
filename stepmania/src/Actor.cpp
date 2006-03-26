@@ -1240,11 +1240,12 @@ bool Actor::HasCommand( const RString &sCmdName )
 	return it != m_mapNameToCommands.end();
 }
 
-const apActorCommands& Actor::GetCommand( const RString &sCommandName ) const
+const apActorCommands *Actor::GetCommand( const RString &sCommandName ) const
 {
 	map<RString, apActorCommands>::const_iterator it = m_mapNameToCommands.find( sCommandName );
-	ASSERT( it != m_mapNameToCommands.end() );
-	return it->second;
+	if( it == m_mapNameToCommands.end() )
+		return NULL;
+	return &it->second;
 }
 
 void Actor::PlayCommand( const RString &sCommandName, Actor *pParent )
