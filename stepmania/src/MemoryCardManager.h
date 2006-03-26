@@ -55,6 +55,7 @@ public:
 	void PushSelf( lua_State *L );
 
 protected:
+	void UpdateAssignments();
 	void CheckStateChanges();
 
 	vector<UsbStorageDevice> m_vStorageDevices;	// all currently connected

@@ -311,6 +311,12 @@ void MemoryCardManager::Update( float fDelta )
 
 	MESSAGEMAN->Broadcast( Message_StorageDevicesChanged );
 
+	UpdateAssignments();
+}
+
+/* Assign cards from m_vStorageDevices to m_Device. */
+void MemoryCardManager::UpdateAssignments()
+{
 	// make a list of unassigned
 	vector<UsbStorageDevice> vUnassignedDevices = m_vStorageDevices;        // copy
 	
