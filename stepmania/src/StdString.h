@@ -812,11 +812,16 @@ public:
 	// RString Facade Functions:
 	//
 	// The following methods are intended to allow you to use this class as a
-	// drop-in replacement for RString.
+	// drop-in replacement for CString.
 	// -------------------------------------------------------------------------
 	int CompareNoCase(PCMYSTR szThat)	const
 	{
 		return ssicmp(this->c_str(), szThat);
+	}
+
+	bool EqualsNoCase(PCMYSTR szThat)	const
+	{
+		return CompareNoCase(szThat) == 0;
 	}
 
 	// -------------------------------------------------------------------------
