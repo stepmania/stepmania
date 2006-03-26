@@ -63,6 +63,7 @@ enum Message
 	Message_LessonFailed,
 	Message_StorageDevicesChanged,
 	Message_AutoJoyMappingApplied,
+	Message_ScreenChanged,
 	NUM_Message,	// leave this at the end
 	Message_Invalud
 };

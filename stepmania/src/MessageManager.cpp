@@ -68,6 +68,7 @@ static const char *MessageNames[] = {
 	"LessonFailed",
 	"StorageDevicesChanged",
 	"AutoJoyMappingApplied",
+	"ScreenChanged",
 };
 XToString( Message, NUM_Message );
 

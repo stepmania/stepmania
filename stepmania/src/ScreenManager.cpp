@@ -673,6 +673,8 @@ Screen *ScreenManager::ActivatePreparedScreenAndBackground( const RString &sScre
 	LOG->Trace("... PushScreen");
 	PushLoadedScreen( ls );
 
+	MESSAGEMAN->Broadcast( Message_ScreenChanged );
+
 	return ls.m_pScreen;
 }
 
