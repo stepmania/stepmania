@@ -778,18 +778,17 @@ VideoModeParams RageDisplay_D3D::GetActualVideoModeParams() const
 
 void RageDisplay_D3D::SendCurrentMatrices()
 {
+	RageMatrix m;
+	RageMatrixMultiply( &m, GetCentering(), GetProjectionTop() );
+
+	/* Convert to OpenGL-style "pixel-centered" coords */
+	RageMatrix m2 = GetCenteringMatrix( -0.5f, -0.5f, 0, 0 );
 	RageMatrix projection;
-	RageMatrixMultiply( &projection, GetCentering(), GetProjectionTop() );
+	RageMatrixMultiply( &projection, &m2, &m );
 	g_pd3dDevice->SetTransform( D3DTS_PROJECTION, (D3DMATRIX*)&projection );
 
 	g_pd3dDevice->SetTransform( D3DTS_VIEW, (D3DMATRIX*)GetViewTop() );
-
-	/* Convert to OpenGL-style "pixel-centered" coords */
-	RageMatrix m;
-	RageMatrixTranslation( &m, -0.5f, -0.5f, 0 );
-	RageMatrixMultiply( &m, &m, GetWorldTop() );
-	g_pd3dDevice->SetTransform( D3DTS_WORLD, (D3DMATRIX*)&m );
-	
+	g_pd3dDevice->SetTransform( D3DTS_WORLD, (D3DMATRIX*)GetWorldTop() );
 
 	FOREACH_ENUM2( TextureUnit, tu )
 	{
