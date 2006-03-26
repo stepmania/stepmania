@@ -610,7 +610,7 @@ bool MemoryCardManager::MountCard( PlayerNumber pn, const UsbStorageDevice &d )
 void MemoryCardManager::UnmountCard( PlayerNumber pn )
 {
 	LOG->Trace( "MemoryCardManager::UnmountCard(%i)", pn );
-	if ( m_Device[pn].IsBlank() )
+	if( m_Device[pn].IsBlank() )
 		return;
 
 	if( !m_bMounted[pn] )
