@@ -608,6 +608,7 @@ bool MemoryCardManager::MountCard( PlayerNumber pn, int iTimeout )
 bool MemoryCardManager::MountCard( PlayerNumber pn, const UsbStorageDevice &d )
 {
 	m_Device[pn] = d;
+	CheckStateChanges();
 	return MountCard( pn );
 }
 
