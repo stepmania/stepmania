@@ -40,6 +40,7 @@ static void MemoryCardUsbLevelInit( size_t /*PlayerNumber*/ i, RString &sNameOut
 }
 
 static Preference<bool>		g_bMemoryCards( "MemoryCards", true );
+static Preference<bool>		g_bMemoryCardProfiles( "MemoryCardProfiles", true );
 
 // if set, always use the device that mounts to this point
 Preference1D<RString>		MemoryCardManager::m_sMemoryCardOsMountPoint( MemoryCardOsMountPointInit,	NUM_PLAYERS );
@@ -317,6 +318,9 @@ void MemoryCardManager::Update( float fDelta )
 /* Assign cards from m_vStorageDevices to m_Device. */
 void MemoryCardManager::UpdateAssignments()
 {
+	if( !g_bMemoryCardProfiles.Get() )
+		return;
+
 	// make a list of unassigned
 	vector<UsbStorageDevice> vUnassignedDevices = m_vStorageDevices;        // copy
 	
@@ -605,6 +609,8 @@ bool MemoryCardManager::MountCard( PlayerNumber pn, int iTimeout )
 	return true;
 }
 
+/* Temporarily mount a specific card.  On unmount, the device will be reverted.  This is used
+ * to access cards in the editor. */
 bool MemoryCardManager::MountCard( PlayerNumber pn, const UsbStorageDevice &d )
 {
 	m_Device[pn] = d;
@@ -639,6 +645,14 @@ void MemoryCardManager::UnmountCard( PlayerNumber pn )
 			bNeedUnpause = false;
 	if( bNeedUnpause )
 		this->UnPauseMountingThread();
+
+	/* If memory card profiles are disabled, then this was assigned by passing to a
+	 * UsbStorageDevice to MountCard.  Remove the temporary assignment. */
+	if( !g_bMemoryCardProfiles.Get() )
+	{
+		m_Device[pn] = UsbStorageDevice();
+		CheckStateChanges();
+	}
 }
 
 bool MemoryCardManager::PathIsMemCard( RString sDir ) const
