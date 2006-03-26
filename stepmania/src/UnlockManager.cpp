@@ -701,6 +701,7 @@ public:
 
 	static int FindEntryID( T* p, lua_State *L )			{ RString sName = SArg(1); int i = p->FindEntryID(sName); if( i == -1 ) lua_pushnil(L); else lua_pushnumber(L, i); return 1; }
 	static int UnlockEntryID( T* p, lua_State *L )			{ int iUnlockEntryID = IArg(1); p->UnlockEntryID(iUnlockEntryID); return 0; }
+	static int UnlockEntryIndex( T* p, lua_State *L )		{ int iUnlockEntryID = IArg(1); p->UnlockEntryIndex(iUnlockEntryID); return 0; }
 	static int PreferUnlockEntryID( T* p, lua_State *L )		{ int iUnlockEntryID = IArg(1); p->PreferUnlockEntryID(iUnlockEntryID); return 0; }
 	static int GetNumUnlocks( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetNumUnlocks() ); return 1; }
 	static int AnyRequirementsAreMet( T* p, lua_State *L )		{ lua_pushboolean( L, p->AnyRequirementsAreMet() ); return 1; }
@@ -730,6 +731,7 @@ public:
 	{
 		ADD_METHOD( FindEntryID );
 		ADD_METHOD( UnlockEntryID );
+		ADD_METHOD( UnlockEntryIndex );
 		ADD_METHOD( PreferUnlockEntryID );
 		ADD_METHOD( GetNumUnlocks );
 		ADD_METHOD( AnyRequirementsAreMet );
