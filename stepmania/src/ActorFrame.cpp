@@ -398,7 +398,7 @@ public:
 	static void Register(lua_State *L) 
 	{
 		ADD_METHOD( playcommandonchildren );
-		ADD_METHOD( propagate );
+		ADD_METHOD( propagate ); // deprecated
 		ADD_METHOD( fov );
 		ADD_METHOD( SetUpdateRate );
 		ADD_METHOD( SetFOV );
