@@ -70,7 +70,7 @@ static const RString MEM_CARD_MOUNT_POINT_INTERNAL[NUM_PLAYERS] =
 class ThreadedMemoryCardWorker: public RageWorkerThread
 {
 public:
-	ThreadedMemoryCardWorker( bool bInEditScreens );
+	ThreadedMemoryCardWorker();
 	~ThreadedMemoryCardWorker();
 
 	enum MountThreadState 
@@ -135,11 +135,11 @@ bool ThreadedMemoryCardWorker::StorageDevicesChanged( vector<UsbStorageDevice> &
 }
 
 
-ThreadedMemoryCardWorker::ThreadedMemoryCardWorker( bool bInEditScreens ):
+ThreadedMemoryCardWorker::ThreadedMemoryCardWorker():
 	RageWorkerThread("MemoryCardWorker"),
 	UsbStorageDevicesMutex("UsbStorageDevicesMutex")
 {
-	if( g_bMemoryCards || bInEditScreens )
+	if( g_bMemoryCards )
 		m_pDriver = MakeMemoryCardDriver();
 	else
 		m_pDriver = new MemoryCardDriver_Null;
@@ -259,7 +259,7 @@ MemoryCardManager::MemoryCardManager()
 {
 	ASSERT( g_pWorker == NULL );
 
-	g_pWorker = new ThreadedMemoryCardWorker( false );
+	g_pWorker = new ThreadedMemoryCardWorker;
 
 	m_bCardsLocked = false;
 	FOREACH_PlayerNumber( p )
@@ -294,12 +294,6 @@ MemoryCardManager::~MemoryCardManager()
 		FILEMAN->Unmount( "", "", MEM_CARD_MOUNT_POINT[pn] );
 		FILEMAN->Unmount( "", "", MEM_CARD_MOUNT_POINT_INTERNAL[pn] );
 	}
-}
-
-void MemoryCardManager::ResetMemoryCardDriver( bool bInEditScreens )
-{
-	SAFE_DELETE(g_pWorker);
-	g_pWorker = new ThreadedMemoryCardWorker( bInEditScreens );
 }
 
 void MemoryCardManager::Update( float fDelta )
@@ -715,12 +709,10 @@ public:
 	LunaMemoryCardManager() { LUA->Register( Register ); }
 
 	static int IsAnyPlayerUsingMemoryCard( T* p, lua_State *L )	{ lua_pushboolean(L, ::IsAnyPlayerUsingMemoryCard() ); return 1; }
-	static int ResetMemoryCardDriver( T* p, lua_State *L )		{ p->ResetMemoryCardDriver( BArg(1) ); return 0; }
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( IsAnyPlayerUsingMemoryCard );
-		ADD_METHOD( ResetMemoryCardDriver );
 
 		Luna<T>::Register( L );
 

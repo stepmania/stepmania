@@ -16,8 +16,6 @@ public:
 	MemoryCardManager();
 	~MemoryCardManager();
 
-	void ResetMemoryCardDriver( bool bInEditScreens );
-
 	void Update( float fDelta );
 
 	MemoryCardState GetCardState( PlayerNumber pn ) const { return m_State[pn]; }
