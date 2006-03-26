@@ -2601,6 +2601,9 @@ void ScreenGameplay::TweenOnScreen()
 	ON_COMMAND( m_MaxCombo );
 	ON_COMMAND( m_pPlayerScoreList );
 
+	if( !GAMESTATE->m_bDemonstrationOrJukebox )
+		ON_COMMAND( m_textDebug );
+
 	if( m_pCombinedLifeMeter )
 		ON_COMMAND( *m_pCombinedLifeMeter );
 	FOREACH( PlayerInfo, m_vPlayerInfo, pi )
