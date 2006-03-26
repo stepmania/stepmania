@@ -12,7 +12,6 @@
 #include "RageUtil_WorkerThread.h"
 #include "arch/arch.h"
 #include "arch/MemoryCard/MemoryCardDriver_Null.h"
-#include "PrefsManager.h"
 
 MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -39,6 +38,8 @@ static void MemoryCardUsbLevelInit( size_t /*PlayerNumber*/ i, RString &sNameOut
 	sNameOut = ssprintf( "MemoryCardUsbLevelP%d", int(i+1) );
 	defaultValueOut = -1;
 }
+
+static Preference<bool>		g_bMemoryCards( "MemoryCards", true );
 
 // if set, always use the device that mounts to this point
 Preference1D<RString>	MemoryCardManager::m_sMemoryCardOsMountPoint( MemoryCardOsMountPointInit, NUM_PLAYERS );
@@ -136,7 +137,7 @@ ThreadedMemoryCardWorker::ThreadedMemoryCardWorker( bool bInEditScreens ):
 	RageWorkerThread("MemoryCardWorker"),
 	UsbStorageDevicesMutex("UsbStorageDevicesMutex")
 {
-	if( PREFSMAN->m_bMemoryCards || bInEditScreens )
+	if( g_bMemoryCards || bInEditScreens )
 		m_pDriver = MakeMemoryCardDriver();
 	else
 		m_pDriver = new MemoryCardDriver_Null;
