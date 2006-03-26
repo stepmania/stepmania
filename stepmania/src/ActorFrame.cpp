@@ -226,6 +226,13 @@ void ActorFrame::DrawPrimitives()
 	}
 }
 
+void ActorFrame::PlayCommandOnChildren( const RString &sCommandName )
+{
+	const apActorCommands *pCmd = GetCommand( sCommandName );
+	if( pCmd != NULL )
+		RunCommandsOnChildren( *pCmd );
+}
+
 void ActorFrame::RunCommandsOnChildren( const LuaReference& cmds )
 {
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
@@ -370,6 +377,7 @@ class LunaActorFrame : public Luna<ActorFrame>
 public:
 	LunaActorFrame() { LUA->Register( Register ); }
 
+	static int playcommandonchildren( T* p, lua_State *L )		{ p->PlayCommandOnChildren(SArg(1)); return 0; }
 	static int propagate( T* p, lua_State *L )			{ p->SetPropagateCommands( !!IArg(1) ); return 0; }
 	static int fov( T* p, lua_State *L )				{ p->SetFOV( FArg(1) ); return 0; }
 	static int SetUpdateRate( T* p, lua_State *L )		{ p->SetUpdateRate( FArg(1) ); return 0; }
@@ -389,6 +397,7 @@ public:
 
 	static void Register(lua_State *L) 
 	{
+		ADD_METHOD( playcommandonchildren );
 		ADD_METHOD( propagate );
 		ADD_METHOD( fov );
 		ADD_METHOD( SetUpdateRate );
