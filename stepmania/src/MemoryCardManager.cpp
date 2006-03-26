@@ -399,7 +399,7 @@ void MemoryCardManager::CheckStateChanges()
 	/* Deal with assignment changes. */
 	FOREACH_PlayerNumber( p )
 	{
-		UsbStorageDevice &new_device = m_Device[p];		    
+		const UsbStorageDevice &new_device = m_Device[p];		    
 
 		MemoryCardState state = MemoryCardState_INVALID;
 		RString sError;
