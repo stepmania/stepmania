@@ -17,7 +17,6 @@
 #include "RageFile.h"
 #include "Sprite.h"
 #include "ProfileManager.h"
-#include "MemoryCardManager.h"
 #include "NotesLoaderSM.h"
 #include "song.h"
 #include "SongUtil.h"
