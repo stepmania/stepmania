@@ -805,26 +805,26 @@ void Actor::ScaleTo( const RectF &rect, StretchType st )
 
 void Actor::SetHorizAlignString( const RString &s )
 {
-	if     (s.CompareNoCase("left")==0)	this->SetHorizAlign( align_left ); /* call derived */
-	else if(s.CompareNoCase("center")==0)	this->SetHorizAlign( align_center );
-	else if(s.CompareNoCase("right")==0)	this->SetHorizAlign( align_right );
+	if     (s.EqualsNoCase("left"))		this->SetHorizAlign( align_left ); /* call derived */
+	else if(s.EqualsNoCase("center"))	this->SetHorizAlign( align_center );
+	else if(s.EqualsNoCase("right"))	this->SetHorizAlign( align_right );
 	else	ASSERT(0);
 }
 
 void Actor::SetVertAlignString( const RString &s )
 {
-	if     (s.CompareNoCase("top")==0)	this->SetVertAlign( align_top ); /* call derived */
-	else if(s.CompareNoCase("middle")==0)	this->SetVertAlign( align_middle );
-	else if(s.CompareNoCase("bottom")==0)	this->SetVertAlign( align_bottom );
+	if     (s.EqualsNoCase("top"))		this->SetVertAlign( align_top ); /* call derived */
+	else if(s.EqualsNoCase("middle"))	this->SetVertAlign( align_middle );
+	else if(s.EqualsNoCase("bottom"))	this->SetVertAlign( align_bottom );
 	else	ASSERT(0);
 }
 
 void Actor::SetEffectClockString( const RString &s )
 {
-	if     (s.CompareNoCase("timer")==0)	this->SetEffectClock( CLOCK_TIMER );
-	else if(s.CompareNoCase("beat")==0)	this->SetEffectClock( CLOCK_BGM_BEAT );
-	else if(s.CompareNoCase("music")==0)	this->SetEffectClock( CLOCK_BGM_TIME );
-	else if(s.CompareNoCase("bgm")==0)	this->SetEffectClock( CLOCK_BGM_BEAT ); // compat, deprecated
+	if     (s.EqualsNoCase("timer"))	this->SetEffectClock( CLOCK_TIMER );
+	else if(s.EqualsNoCase("beat"))		this->SetEffectClock( CLOCK_BGM_BEAT );
+	else if(s.EqualsNoCase("music"))	this->SetEffectClock( CLOCK_BGM_TIME );
+	else if(s.EqualsNoCase("bgm"))		this->SetEffectClock( CLOCK_BGM_BEAT ); // compat, deprecated
 	else
 	{
 		CabinetLight cl = StringToCabinetLight( s );
@@ -1168,26 +1168,26 @@ void Actor::TweenState::MakeWeightedAverage( TweenState& average_out, const Twee
 
 void Actor::SetBlendModeString( const RString &s )
 {
-	if     (s.CompareNoCase("normal")==0)	this->SetBlendMode( BLEND_NORMAL );
-	else if(s.CompareNoCase("add")==0)	this->SetBlendMode( BLEND_ADD );
-	else if(s.CompareNoCase("noeffect")==0)	this->SetBlendMode( BLEND_NO_EFFECT );
+	if     (s.EqualsNoCase("normal"))	this->SetBlendMode( BLEND_NORMAL );
+	else if(s.EqualsNoCase("add"))		this->SetBlendMode( BLEND_ADD );
+	else if(s.EqualsNoCase("noeffect"))	this->SetBlendMode( BLEND_NO_EFFECT );
 	else	ASSERT(0);
 }
 
 void Actor::SetCullModeString( const RString &s )
 {
-	if     (s.CompareNoCase("back")==0)	this->SetCullMode( CULL_BACK );
-	else if(s.CompareNoCase("front")==0)	this->SetCullMode( CULL_FRONT );
-	else if(s.CompareNoCase("none")==0)	this->SetCullMode( CULL_NONE );
+	if     (s.EqualsNoCase("back"))		this->SetCullMode( CULL_BACK );
+	else if(s.EqualsNoCase("front"))	this->SetCullMode( CULL_FRONT );
+	else if(s.EqualsNoCase("none"))		this->SetCullMode( CULL_NONE );
 	else	ASSERT(0);
 }
 
 void Actor::SetZTestModeString( const RString &s )
 {
 	// for metrics backward compatibility
-	if(s.CompareNoCase("off")==0)			this->SetZTestMode( ZTEST_OFF );
-	else if(s.CompareNoCase("writeonpass")==0)	this->SetZTestMode( ZTEST_WRITE_ON_PASS );
-	else if(s.CompareNoCase("writeonfail")==0)	this->SetZTestMode( ZTEST_WRITE_ON_FAIL );
+	if(s.EqualsNoCase("off"))		this->SetZTestMode( ZTEST_OFF );
+	else if(s.EqualsNoCase("writeonpass"))	this->SetZTestMode( ZTEST_WRITE_ON_PASS );
+	else if(s.EqualsNoCase("writeonfail"))	this->SetZTestMode( ZTEST_WRITE_ON_FAIL );
 	else	ASSERT(0);
 }
 
