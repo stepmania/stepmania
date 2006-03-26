@@ -1236,8 +1236,7 @@ void Actor::AddCommand( const RString &sCmdName, apActorCommands apac )
 
 bool Actor::HasCommand( const RString &sCmdName )
 {
-	map<RString, apActorCommands>::const_iterator it = m_mapNameToCommands.find( sCmdName );
-	return it != m_mapNameToCommands.end();
+	return GetCommand(sCmdName) != NULL;
 }
 
 const apActorCommands *Actor::GetCommand( const RString &sCommandName ) const
@@ -1250,12 +1249,9 @@ const apActorCommands *Actor::GetCommand( const RString &sCommandName ) const
 
 void Actor::PlayCommand( const RString &sCommandName, Actor *pParent )
 {
-	map<RString, apActorCommands>::const_iterator it = m_mapNameToCommands.find( sCommandName );
-
-	if( it == m_mapNameToCommands.end() )
-		return;
-
-	RunCommands( *it->second );
+	const apActorCommands *pCmd = GetCommand( sCommandName );
+	if( pCmd != NULL )
+		RunCommands( *pCmd );
 }
 
 void Actor::HandleMessage( const RString& sMessage )
