@@ -649,11 +649,11 @@ void split( const wstring &Source, const wstring &Delimitor, int &begin, int &si
  * c:\foo\bar.txt    -> "c:\foo\", "bar", ".txt"
  * \\foo\fum         -> "\\foo\", "fum", ""
  */
-void splitpath( const RString &Path, RString& Dir, RString& Filename, RString& Ext )
+void splitpath( const RString &sPath, RString &sDir, RString &sFilename, RString &sExt )
 {
-	Dir = Filename = Ext = "";
+	sDir = sFilename = sExt = "";
 
-	vector<RString> mat;
+	vector<RString> asMatches;
 
 	/*
 	 * One level of escapes for the regex, one for C. Ew. 
@@ -661,31 +661,34 @@ void splitpath( const RString &Path, RString& Dir, RString& Filename, RString& E
 	 * ^(.*[\\/])?(.*)$ 
 	 */
 	static Regex sep("^(.*[\\\\/])?(.*)$");
-	bool check = sep.Compare(Path, mat);
-	ASSERT(check);
+	bool bCheck = sep.Compare( sPath, asMatches );
+	ASSERT( bCheck );
 
-	Dir = mat[0];
-	const RString Base = mat[1];
+	sDir = asMatches[0];
+	const RString sBase = asMatches[1];
 
 	/* ^(.*)(\.[^\.]+)$ */
 	static Regex SplitExt("^(.*)(\\.[^\\.]+)$");
-	if( SplitExt.Compare(Base, mat) )
+	if( SplitExt.Compare(sBase, asMatches) )
 	{
-		Filename = mat[0];
-		Ext = mat[1];
-	} else
-		Filename = Base;
+		sFilename = asMatches[0];
+		sExt = asMatches[1];
+	}
+	else
+	{
+		sFilename = sBase;
+	}
 }
 
 
 /* "foo.bar", "baz" -> "foo.baz"
  * "foo", "baz" -> "foo.baz"
  * "foo.bar", "" -> "foo" */
-RString SetExtension( const RString &path, const RString &ext )
+RString SetExtension( const RString &sPath, const RString &sExt )
 {
-	RString Dir, FName, OldExt;
-	splitpath( path, Dir, FName, OldExt );
-	return Dir + FName + (ext.size()? ".":"") + ext;
+	RString sDir, sFileName, sOldExt;
+	splitpath( sPath, sDir, sFileName, sOldExt );
+	return sDir + sFileName + (sExt.size()? ".":"") + sExt;
 }
 
 RString GetExtension( const RString &sPath )
