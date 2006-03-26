@@ -208,6 +208,7 @@ public:
 	void GetDefaultSongOptions( SongOptions &so );
 	void ApplyModifiers( PlayerNumber pn, RString sModifiers );
 	void StoreSelectedOptions();
+	void StoreStageOptions();
 	void RestoreSelectedOptions();
 	void RestoreStageOptions();
 	void ResetCurrentOptions();

@@ -160,6 +160,7 @@ void ScreenPlayerOptions::UpdateDisqualified( int row, PlayerNumber pn )
 	vector<PlayerNumber> v;
 	v.push_back( pn );
 	ExportOptions( row, v );
+	GAMESTATE->StoreSelectedOptions();
 	bool bRowCausesDisqualified = GAMESTATE->IsDisqualified( pn );
 	m_bRowCausesDisqualified[pn][row] = bRowCausesDisqualified;
 

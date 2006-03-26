@@ -574,7 +574,7 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	return true;
 }
 
-bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps )
+bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps ) const
 {
 	if( m_fTimeSpacing && pSong->HasSignificantBpmChangesOrStops() )
 		return true;
@@ -606,7 +606,7 @@ bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps )
 	return false;
 }
 
-bool PlayerOptions::IsEasierForCourseAndTrail( Course* pCourse, Trail* pTrail )
+bool PlayerOptions::IsEasierForCourseAndTrail( Course* pCourse, Trail* pTrail ) const
 {
 	ASSERT( pCourse );
 	ASSERT( pTrail );

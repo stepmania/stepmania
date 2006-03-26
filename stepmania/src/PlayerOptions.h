@@ -157,8 +157,8 @@ public:
 
 
 	// return true if any mods being used will make the song(s) easier
-	bool IsEasierForSongAndSteps( Song* pSong, Steps* pSteps );
-	bool IsEasierForCourseAndTrail( Course* pCourse, Trail* pTrail );
+	bool IsEasierForSongAndSteps( Song* pSong, Steps* pSteps ) const;
+	bool IsEasierForCourseAndTrail( Course* pCourse, Trail* pTrail ) const;
 };
 
 #endif

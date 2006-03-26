@@ -378,7 +378,13 @@ void ScreenGameplay::Init( bool bUseSongBackgroundAndForeground )
 	this->FillPlayerInfo( m_vPlayerInfo );
 	ASSERT_M( !m_vPlayerInfo.empty(), "m_vPlayerInfo must be filled by FillPlayerInfo" );
 
+	/* Save selected options before we change them in ScreenInitCommand. */
+	GAMESTATE->StoreSelectedOptions();
+
 	ScreenWithMenuElements::Init();
+
+	/* Save selected stage options now that we've changed them in ScreenInitCommand. */
+	GAMESTATE->StoreStageOptions();
 
 	/* Pause MEMCARDMAN.  If a memory card is removed, we don't want to interrupt the
 	 * player by making a noise until the game finishes. */
@@ -397,9 +403,6 @@ void ScreenGameplay::Init( bool bUseSongBackgroundAndForeground )
 
 	if( GAMESTATE->m_pCurSong == NULL && GAMESTATE->m_pCurCourse == NULL )
 		return;	// ScreenDemonstration will move us to the next screen.  We just need to survive for one update without crashing.
-
-	/* Save selected options before we change them. */
-	GAMESTATE->StoreSelectedOptions();
 
 	/* Save settings to the profile now.  Don't do this on extra stages, since the
 	 * user doesn't have full control; saving would force profiles to DIFFICULTY_HARD

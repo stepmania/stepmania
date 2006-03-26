@@ -1038,10 +1038,14 @@ void GameState::ApplyModifiers( PlayerNumber pn, RString sModifiers )
 void GameState::StoreSelectedOptions()
 {
 	FOREACH_PlayerNumber( pn )
-	{
 		m_pPlayerState[pn]->m_StoredPlayerOptions = m_pPlayerState[pn]->m_PlayerOptions;
+	m_StoredSongOptions = m_SongOptions;
+}
+
+void GameState::StoreStageOptions()
+{
+	FOREACH_PlayerNumber( pn )
 		m_pPlayerState[pn]->m_StagePlayerOptions = m_pPlayerState[pn]->m_PlayerOptions;
-	}
 	m_StoredSongOptions = m_SongOptions;
 }
 
@@ -1078,15 +1082,19 @@ bool GameState::IsDisqualified( PlayerNumber pn )
 	if( !GAMESTATE->IsHumanPlayer(pn) )
 		return false;
 
+	const PlayerOptions &po = GAMESTATE->m_pPlayerState[pn]->m_StoredPlayerOptions;
+
+	// Check the stored player options for disqualify.  Don't disqualify because
+	// of mods that were forced.
 	if( GAMESTATE->IsCourseMode() )
 	{
-		return GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.IsEasierForCourseAndTrail( 
+		return po.IsEasierForCourseAndTrail( 
 			GAMESTATE->m_pCurCourse, 
 			GAMESTATE->m_pCurTrail[pn] );
 	}
 	else
 	{
-		return GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.IsEasierForSongAndSteps( 
+		return po.IsEasierForSongAndSteps( 
 			GAMESTATE->m_pCurSong, 
 			GAMESTATE->m_pCurSteps[pn] );
 	}
