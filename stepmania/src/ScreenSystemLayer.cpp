@@ -111,8 +111,8 @@ RString ScreenSystemLayer::GetCreditsMessage( PlayerNumber pn ) const
 				return RString();
 
 		case MemoryCardState_Error: 		return THEME->GetMetric( m_sName, "CreditsCard" + MEMCARDMAN->GetCardError(pn) );
-		case MemoryCardState_TooLate:	return CREDITS_CARD_TOO_LATE.GetValue();
-		case MemoryCardState_Checking:	return CREDITS_CARD_CHECKING.GetValue();
+		case MemoryCardState_TooLate:		return CREDITS_CARD_TOO_LATE.GetValue();
+		case MemoryCardState_Checking:		return CREDITS_CARD_CHECKING.GetValue();
 		case MemoryCardState_Removed:		return CREDITS_CARD_REMOVED.GetValue();
 		case MemoryCardState_Ready:
 			{
