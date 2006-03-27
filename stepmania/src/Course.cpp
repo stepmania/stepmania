@@ -23,7 +23,7 @@
 #include "CourseLoaderCRS.h"
 #include "LuaFunctions.h"
 #include "LocalizedString.h"
-
+#include "StepsUtil.h"
 
 static const char *CourseTypeNames[] = {
 	"Nonstop",
@@ -501,6 +501,8 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 
 				vector<Steps*> vpMatchingSteps;
 				(*song)->GetSteps( vpMatchingSteps, st, e->baseDifficulty, e->iLowMeter, e->iHighMeter );
+				StepsUtil::RemoveLockedSteps( *song, vpMatchingSteps );
+
 				if( vpMatchingSteps.empty() )
 					continue;
 
@@ -519,6 +521,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 			else
 				continue;
 			pResolvedSong->GetSteps( vpPossibleSteps, st, e->baseDifficulty, e->iLowMeter, e->iHighMeter );
+			StepsUtil::RemoveLockedSteps( pResolvedSong, vpPossibleSteps );
 		}
 
 		ASSERT( !vpPossibleSteps.empty() );	// if no steps are playable, this shouldn't be a possible song
