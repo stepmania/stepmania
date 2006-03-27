@@ -457,7 +457,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 		
 			FOREACH( StepsAndDifficulty, m_vpSteps, s )
 			{
-				if( s->pSteps->GetDifficulty() == dcOld )
+				if( s->dc == dcOld )
 				{
 					m_iSelection[ROW_STEPS] = s - m_vpSteps.begin();
 					break;
