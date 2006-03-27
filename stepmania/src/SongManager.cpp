@@ -1395,7 +1395,7 @@ void SongManager::LoadAllFromProfileDir( const RString &sProfileDir, ProfileSlot
 		{
 			RString fn = vsFiles[i];
 
-			SMLoader::LoadEdit( fn, slot );
+			SMLoader::LoadEditFromFile( fn, slot, true );
 		}
 	}
 
@@ -1415,7 +1415,7 @@ void SongManager::LoadAllFromProfileDir( const RString &sProfileDir, ProfileSlot
 		{
 			RString fn = vsFiles[i];
 
-			CourseLoaderCRS::LoadEdit( fn, slot );
+			CourseLoaderCRS::LoadEditFromFile( fn, slot );
 		}
 	}
 }

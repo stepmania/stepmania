@@ -348,7 +348,7 @@ bool CourseLoaderCRS::LoadFromCRSFile( const RString &_sPath, Course &out )
 	return true;
 }
 
-bool CourseLoaderCRS::LoadEdit( const RString &sEditFilePath, ProfileSlot slot )
+bool CourseLoaderCRS::LoadEditFromFile( const RString &sEditFilePath, ProfileSlot slot )
 {
 	LOG->Trace( "CourseLoaderCRS::LoadEdit(%s)", sEditFilePath.c_str() );
 

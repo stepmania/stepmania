@@ -15,6 +15,7 @@
 #include "PlayerState.h"
 #include "LocalizedString.h"
 #include "StepMania.h"
+#include "NotesLoaderSM.h"
 
 static LocalizedString BOOKKEEPING_DATA_CLEARED( "ScreenServiceAction", "Bookkeeping data cleared." );
 static RString ClearBookkeepingData()
@@ -175,11 +176,12 @@ static RString TransferStatsMemoryCardToMachine()
 	return s;
 }
 
-static void CopyEdits( const RString &sFromProfileDir, const RString &sToProfileDir, int &iNumAttempted, int &iNumSuccessful, int &iNumOverwritten )
+static void CopyEdits( const RString &sFromProfileDir, const RString &sToProfileDir, int &iNumSucceeded, int &iNumOverwritten, int &iNumIgnored, int &iNumErrored )
 {
-	iNumAttempted = 0;
-	iNumSuccessful = 0;
+	iNumSucceeded = 0;
 	iNumOverwritten = 0;
+	iNumIgnored = 0;
+	iNumErrored = 0;
 
 	{
 		RString sFromDir = sFromProfileDir + EDIT_STEPS_SUBDIR;
@@ -189,16 +191,26 @@ static void CopyEdits( const RString &sFromProfileDir, const RString &sToProfile
 		GetDirListing( sFromDir+"*.edit", vsFiles, false, false );
 		FOREACH_CONST( RString, vsFiles, i )
 		{
-			iNumAttempted++;
 			if( DoesFileExist(sToDir+*i) )
 				iNumOverwritten++;
 			bool bSuccess = FileCopy( sFromDir+*i, sToDir+*i );
 			if( bSuccess )
-				iNumSuccessful++;
+				iNumSucceeded++;
+			else
+				iNumErrored++;
+
+			// Test whether the song we need for this edit is present and ignore this edit if not present.
+			if( !SMLoader::LoadEditFromFile( sFromDir+*i, ProfileSlot_Machine, false ) )
+			{
+				iNumIgnored++;
+				continue;
+			}
 		}
 	
 		FILEMAN->FlushDirCache( sToDir );
 	}
+
+	// TODO: Seprarate copying stats for steps and courses
 
 	{
 		RString sFromDir = sFromProfileDir + EDIT_COURSES_SUBDIR;
@@ -208,12 +220,13 @@ static void CopyEdits( const RString &sFromProfileDir, const RString &sToProfile
 		GetDirListing( sFromDir+"*.crs", vsFiles, false, false );
 		FOREACH_CONST( RString, vsFiles, i )
 		{
-			iNumAttempted++;
 			if( DoesFileExist(sToDir+*i) )
 				iNumOverwritten++;
 			bool bSuccess = FileCopy( sFromDir+*i, sToDir+*i );
 			if( bSuccess )
-				iNumSuccessful++;
+				iNumSucceeded++;
+			else
+				iNumErrored++;
 		}
 
 		FILEMAN->FlushDirCache( sToDir );
@@ -225,24 +238,27 @@ static LocalizedString EDITS_NOT_COPIED		( "ScreenServiceAction", "Edits not cop
 static LocalizedString COPIED_TO_CARD		( "ScreenServiceAction", "Copied to P%d card:" );
 static LocalizedString COPIED			( "ScreenServiceAction", "%d copied" );
 static LocalizedString OVERWRITTEN		( "ScreenServiceAction", "%d overwritten" );
-static LocalizedString ADDED_AND_OVERWRITTEN	( "ScreenServiceAction", "%d added, %d overwritten" );
+static LocalizedString ADDED			( "ScreenServiceAction", "%d added" );
+static LocalizedString IGNORED			( "ScreenServiceAction", "%d ignored" );
 static LocalizedString FAILED			( "ScreenServiceAction", "%d failed" );
 static LocalizedString DELETED			( "ScreenServiceAction", "%d deleted" );
 
 static RString CopyEdits( const RString &sFromProfileDir, const RString &sToProfileDir, const RString &sDisplayDir )
 {
-	int iNumAttempted = 0;
-	int iNumSuccessful = 0;
+	int iNumSucceeded = 0;
 	int iNumOverwritten = 0;
+	int iNumIgnored = 0;
+	int iNumErrored = 0;
 
-	CopyEdits( sFromProfileDir, sToProfileDir, iNumAttempted, iNumSuccessful, iNumOverwritten );
+	CopyEdits( sFromProfileDir, sToProfileDir, iNumSucceeded, iNumOverwritten, iNumIgnored, iNumErrored );
 
 	vector<RString> vs;
 	vs.push_back( sDisplayDir );
-	vs.push_back( ssprintf( COPIED.GetValue(), iNumSuccessful ) );
-	vs.push_back( ssprintf( OVERWRITTEN.GetValue(), iNumOverwritten ) );
-	if( iNumSuccessful < iNumAttempted )
-		vs.push_back( ssprintf( FAILED.GetValue(), iNumAttempted-iNumSuccessful ) );
+	vs.push_back( ssprintf( COPIED.GetValue(), iNumSucceeded ) + ", " + ssprintf( OVERWRITTEN.GetValue(), iNumOverwritten ) );
+	if( iNumIgnored )
+		vs.push_back( ssprintf( IGNORED.GetValue(), iNumIgnored ) );
+	if( iNumErrored )
+		vs.push_back( ssprintf( FAILED.GetValue(), iNumErrored ) );
 	return join( "\n", vs );
 }
 
@@ -343,7 +359,7 @@ static RString SyncEditsMachineToMemoryCard()
 	MEMCARDMAN->UnmountCard(pn);
 
 	RString sRet = ssprintf( COPIED_TO_CARD.GetValue(), pn+1 ) + " ";
-	sRet += ssprintf( ADDED_AND_OVERWRITTEN.GetValue(), iNumAdded, iNumOverwritten );
+	sRet += ssprintf( ADDED.GetValue(), iNumAdded ) + ", " + ssprintf( OVERWRITTEN.GetValue(), iNumOverwritten );
 	if( iNumDeleted )
 		sRet += RString(" ") + ssprintf( DELETED.GetValue(), iNumDeleted );
 	if( iNumFailed )

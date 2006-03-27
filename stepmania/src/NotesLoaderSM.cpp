@@ -462,9 +462,9 @@ bool SMLoader::LoadFromDir( const RString &sPath, Song &out )
 	return LoadFromSMFile( sPath + aFileNames[0], out );
 }
 
-bool SMLoader::LoadEdit( RString sEditFilePath, ProfileSlot slot )
+bool SMLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong )
 {
-	LOG->Trace( "SMLoader::LoadEdit(%s)", sEditFilePath.c_str() );
+	LOG->Trace( "SMLoader::LoadEditFromFile(%s)", sEditFilePath.c_str() );
 
 	int iBytes = FILEMAN->GetFileSizeInBytes( sEditFilePath );
 	if( iBytes > MAX_EDIT_STEPS_SIZE_BYTES )
@@ -480,17 +480,17 @@ bool SMLoader::LoadEdit( RString sEditFilePath, ProfileSlot slot )
 		return false;
 	}
 
-	return LoadEditFromMsd( msd, sEditFilePath, slot );
+	return LoadEditFromMsd( msd, sEditFilePath, slot, bAddStepsToSong );
 }
 
 bool SMLoader::LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot )
 {
 	MsdFile msd;
 	msd.ReadFromString( sBuffer );
-	return LoadEditFromMsd( msd, sEditFilePath, slot );
+	return LoadEditFromMsd( msd, sEditFilePath, slot, true );
 }
 
-bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot )
+bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong )
 {
 	Song* pSong = NULL;
 
@@ -540,6 +540,9 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 				LOG->Trace( "The song file '%s' is has %d fields in a #NOTES tag, but should have at least %d.", sEditFilePath.c_str(), iNumParams, 7 );
 				continue;
 			}
+
+			if( !bAddStepsToSong )
+				return true;
 
 			Steps* pNewNotes = new Steps;
 			LoadFromSMTokens( 

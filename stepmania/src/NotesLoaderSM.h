@@ -38,10 +38,9 @@ public:
 	void TidyUpData( Song &song, bool cache );
 	static bool LoadTimingFromFile( const RString &fn, TimingData &out );
 	static void LoadTimingFromSMFile( const MsdFile &msd, TimingData &out );
-	static bool LoadEdit( RString sEditFilePath, ProfileSlot slot );
+	static bool LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
 	static bool LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot );
-private:
-	static bool LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot );
+	static bool LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
 };
 
 #endif
