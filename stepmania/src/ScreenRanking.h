@@ -12,6 +12,7 @@
 #include "Difficulty.h"
 #include "ThemeMetric.h"
 #include "CommonMetrics.h"
+#include "RageSound.h"
 
 class Course;
 class Song;
@@ -98,7 +99,7 @@ public:
 		const vector<Difficulty> &DifficultiesToShow,
 		float fItemHeight );
 	void SetStepsType( StepsType st, RageColor color );
-	void Scroll( int iDir );
+	bool Scroll( int iDir );
 	void ScrollTop();
 
 protected:
@@ -140,12 +141,13 @@ public:
 	virtual void Init();
 	virtual void BeginScreen();
 
-	virtual void MenuLeft( const InputEventPlus &input )		{ m_ListScoreRowItems.Scroll(-1); }
-	virtual void MenuRight( const InputEventPlus &input )		{ m_ListScoreRowItems.Scroll(+1); }
-	virtual void MenuUp( const InputEventPlus &input )			{ m_ListScoreRowItems.Scroll(-1); }
-	virtual void MenuDown( const InputEventPlus &input )		{ m_ListScoreRowItems.Scroll(+1); }
+	virtual void MenuLeft( const InputEventPlus &input )	{ DoScroll(-1); }
+	virtual void MenuRight( const InputEventPlus &input )	{ DoScroll(+1); }
+	virtual void MenuUp( const InputEventPlus &input )	{ DoScroll(-1); }
+	virtual void MenuDown( const InputEventPlus &input )	{ DoScroll(+1); }
 
 private:
+	void DoScroll( int iDir );
 	virtual float SetPage( const PageToShow &pts );
 
 	ScoreScroller m_ListScoreRowItems;
@@ -159,6 +161,8 @@ private:
 	ThemeMetric<float>			DIFFICULTY_START_X;
 	ThemeMetric<float>			DIFFICULTY_Y;
 	ThemeMetric<int>			NUM_MOST_RECENT_SCORES_TO_SHOW;
+
+	RageSound	m_soundChange;
 };
 
 static const int NUM_RANKING_LINES = 5;

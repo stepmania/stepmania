@@ -201,6 +201,16 @@ float ScreenRanking::SetPage( const PageToShow &pts )
 	return 0;
 }
 
+void ScreenRankingScroller::DoScroll( int iDir )
+{
+	if( m_ListScoreRowItems.Scroll(iDir) )
+		m_soundChange.Play();
+	else
+		SCREENMAN->PlayInvalidSound();
+}
+
+/////////////////////////////////////////////
+
 ScoreScroller::ScoreScroller()
 {
 	this->DeleteChildrenWhenDone();
@@ -221,17 +231,25 @@ void ScoreScroller::SetStepsType( StepsType st, RageColor color )
 	ShiftSubActors( INT_MAX );
 }
 
-void ScoreScroller::Scroll( int iDir )
+bool ScoreScroller::Scroll( int iDir )
 {
+	if( m_vScoreRowItemData.size() <= m_metricSongScoreRowsToDraw )
+		return false;
+
 	float fDest = GetDestinationItem();
 	float fOldDest = fDest;
 	fDest += iDir;
-	CLAMP( fDest, (m_metricSongScoreRowsToDraw-1)/2.0f, m_vScoreRowItemData.size()-(m_metricSongScoreRowsToDraw-1)/2.0f-1 );
+	float fLowClamp = (m_metricSongScoreRowsToDraw-1)/2.0f;
+	float fHighClamp = m_vScoreRowItemData.size()-(m_metricSongScoreRowsToDraw-1)/2.0f-1;
+	CLAMP( fDest, fLowClamp, fHighClamp );
 	if( fOldDest != fDest )
 	{
-		// TODO: play sound
 		SetDestinationItem( fDest );
-		SetDestinationItem( fDest );
+		return true;
+	}
+	else
+	{
+		return false();
 	}
 }
 
@@ -425,6 +443,8 @@ void ScreenRankingScroller::Init()
 		pts.st = STEPS_TYPES_TO_SHOW.GetValue()[i];
 		m_vPagesToShow.push_back( pts );
 	}
+
+	m_soundChange.Load( THEME->GetPathS(m_sName,"change") );
 }
 
 void ScreenRankingScroller::BeginScreen()
