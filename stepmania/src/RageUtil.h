@@ -41,18 +41,21 @@ inline U lerp( T x, U l, U h )
 
 inline bool CLAMP( int &x, int l, int h )
 {
+	ASSERT( l <= h );
 	if (x > h)		{ x = h; return true; }
 	else if (x < l) { x = l; return true; }
 	return false;
 }
 inline bool CLAMP( unsigned &x, unsigned l, unsigned h )
 {
+	ASSERT( l <= h );
 	if (x > h)		{ x = h; return true; }
 	else if (x < l) { x = l; return true; }
 	return false;
 }
 inline bool CLAMP( float &x, float l, float h )
 {
+	ASSERT( l <= h );
 	if (x > h)		{ x = h; return true; }
 	else if (x < l) { x = l; return true; }
 	return false;
