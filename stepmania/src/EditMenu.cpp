@@ -381,68 +381,86 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 	case ROW_STEPS_TYPE:
 		m_textValue[ROW_STEPS_TYPE].SetText( GAMEMAN->StepsTypeToLocalizedString(GetSelectedStepsType()) );
 
-		m_vpSteps.clear();
-		
-		FOREACH_Difficulty( dc )
 		{
-			if( dc == DIFFICULTY_EDIT )
+			Difficulty dcOld = DIFFICULTY_INVALID;
+			if( !m_vpSteps.empty() )
 			{
-				switch( EDIT_MODE.GetValue() )
-				{
-				case EditMode_Full:
-				case EditMode_CourseMods:
-				case EditMode_Practice:
-					{
-						vector<Steps*> v;
-						GetSelectedSong()->GetSteps( v, GetSelectedStepsType(), DIFFICULTY_EDIT );
-						StepsUtil::SortStepsByDescription( v );
-						FOREACH_CONST( Steps*, v, p )
-						m_vpSteps.push_back( StepsAndDifficulty(*p,dc) );
-					}
-					break;
-				case EditMode_Home:
-					// have only "New Edit"
-					break;
-				default:
-					ASSERT(0);
-				}
+				Steps *pSteps = GetSelectedSteps();
+				dcOld = pSteps->GetDifficulty();
+			}
 
-				switch( EDIT_MODE.GetValue() )
+			m_vpSteps.clear();
+			
+			FOREACH_Difficulty( dc )
+			{
+				if( dc == DIFFICULTY_EDIT )
 				{
-				case EditMode_Practice:
-				case EditMode_CourseMods:
-					break;
-				case EditMode_Home:
-				case EditMode_Full:
-					m_vpSteps.push_back( StepsAndDifficulty(NULL,dc) );	// "New Edit"
-					break;
-				default:
-					ASSERT(0);
+					switch( EDIT_MODE.GetValue() )
+					{
+					case EditMode_Full:
+					case EditMode_CourseMods:
+					case EditMode_Practice:
+						{
+							vector<Steps*> v;
+							GetSelectedSong()->GetSteps( v, GetSelectedStepsType(), DIFFICULTY_EDIT );
+							StepsUtil::SortStepsByDescription( v );
+							FOREACH_CONST( Steps*, v, p )
+							m_vpSteps.push_back( StepsAndDifficulty(*p,dc) );
+						}
+						break;
+					case EditMode_Home:
+						// have only "New Edit"
+						break;
+					default:
+						ASSERT(0);
+					}
+
+					switch( EDIT_MODE.GetValue() )
+					{
+					case EditMode_Practice:
+					case EditMode_CourseMods:
+						break;
+					case EditMode_Home:
+					case EditMode_Full:
+						m_vpSteps.push_back( StepsAndDifficulty(NULL,dc) );	// "New Edit"
+						break;
+					default:
+						ASSERT(0);
+					}
+				}
+				else
+				{
+					Steps *pSteps = GetSelectedSong()->GetStepsByDifficulty( GetSelectedStepsType(), dc );
+					if( pSteps && UNLOCKMAN->StepsIsLocked( GetSelectedSong(), pSteps ) )
+						pSteps = NULL;
+
+					switch( EDIT_MODE.GetValue() )
+					{
+					case EditMode_Home:
+						// don't allow selecting of non-edits in HomeMode
+						break;
+					case EditMode_Practice:
+					case EditMode_CourseMods:
+						// only show this difficulty if steps exist
+						if( pSteps )
+							m_vpSteps.push_back( StepsAndDifficulty(pSteps,dc) );
+						break;
+					case EditMode_Full:
+						// show this difficulty whether or not steps exist.
+						m_vpSteps.push_back( StepsAndDifficulty(pSteps,dc) );
+						break;
+					default:
+						ASSERT(0);
+					}
 				}
 			}
-			else
+		
+			FOREACH( StepsAndDifficulty, m_vpSteps, s )
 			{
-				Steps *pSteps = GetSelectedSong()->GetStepsByDifficulty( GetSelectedStepsType(), dc );
-				if( pSteps && UNLOCKMAN->StepsIsLocked( GetSelectedSong(), pSteps ) )
-					pSteps = NULL;
-
-				switch( EDIT_MODE.GetValue() )
+				if( s->pSteps->GetDifficulty() == dcOld )
 				{
-				case EditMode_Home:
-					// don't allow selecting of non-edits in HomeMode
+					m_iSelection[ROW_STEPS] = s - m_vpSteps.begin();
 					break;
-				case EditMode_Practice:
-				case EditMode_CourseMods:
-					// only show this difficulty if steps exist
-					if( pSteps )
-						m_vpSteps.push_back( StepsAndDifficulty(pSteps,dc) );
-					break;
-				case EditMode_Full:
-					// show this difficulty whether or not steps exist.
-					m_vpSteps.push_back( StepsAndDifficulty(pSteps,dc) );
-					break;
-				default:
-					ASSERT(0);
 				}
 			}
 		}

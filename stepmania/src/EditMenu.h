@@ -71,7 +71,7 @@ public:
 	StepsType	GetSelectedSourceStepsType() const	{ ASSERT(m_iSelection[ROW_SOURCE_STEPS_TYPE]	< (int)m_StepsTypes.size());	return m_StepsTypes[m_iSelection[ROW_SOURCE_STEPS_TYPE]]; }
 	Steps*		GetSelectedSourceSteps() const		{ ASSERT(m_iSelection[ROW_SOURCE_STEPS]		< (int)m_vpSourceSteps.size());	return m_vpSourceSteps[m_iSelection[ROW_SOURCE_STEPS]].pSteps; }
 	Difficulty	GetSelectedSourceDifficulty() const	{ ASSERT(m_iSelection[ROW_SOURCE_STEPS]		< (int)m_vpSourceSteps.size());	return m_vpSourceSteps[m_iSelection[ROW_SOURCE_STEPS]].dc; }
-	EditMenuAction	GetSelectedAction() const			{ ASSERT(m_iSelection[ROW_ACTION]		< (int)m_Actions.size());	return m_Actions[m_iSelection[ROW_ACTION]]; }
+	EditMenuAction	GetSelectedAction() const		{ ASSERT(m_iSelection[ROW_ACTION]		< (int)m_Actions.size());	return m_Actions[m_iSelection[ROW_ACTION]]; }
 
 	EditMenuRow GetSelectedRow() const { return m_SelectedRow; }
 
