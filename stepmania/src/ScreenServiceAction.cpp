@@ -221,6 +221,31 @@ static void CopyEdits( const RString &sFromProfileDir, const RString &sToProfile
 
 }
 
+static LocalizedString EDITS_NOT_COPIED		( "ScreenServiceAction", "Edits not copied - No memory cards ready." );
+static LocalizedString COPIED_TO_CARD		( "ScreenServiceAction", "Copied to P%d card:" );
+static LocalizedString COPIED			( "ScreenServiceAction", "%d copied" );
+static LocalizedString OVERWRITTEN		( "ScreenServiceAction", "%d overwritten" );
+static LocalizedString ADDED_AND_OVERWRITTEN	( "ScreenServiceAction", "%d added, %d overwritten" );
+static LocalizedString FAILED			( "ScreenServiceAction", "%d failed" );
+static LocalizedString DELETED			( "ScreenServiceAction", "%d deleted" );
+
+static RString CopyEdits( const RString &sFromProfileDir, const RString &sToProfileDir, const RString &sDisplayDir )
+{
+	int iNumAttempted = 0;
+	int iNumSuccessful = 0;
+	int iNumOverwritten = 0;
+
+	CopyEdits( sFromProfileDir, sToProfileDir, iNumAttempted, iNumSuccessful, iNumOverwritten );
+
+	vector<RString> vs;
+	vs.push_back( sDisplayDir );
+	vs.push_back( ssprintf( COPIED.GetValue(), iNumSuccessful ) );
+	vs.push_back( ssprintf( OVERWRITTEN.GetValue(), iNumOverwritten ) );
+	if( iNumSuccessful < iNumAttempted )
+		vs.push_back( ssprintf( FAILED.GetValue(), iNumAttempted-iNumSuccessful ) );
+	return join( "\n", vs );
+}
+
 static void SyncFiles( const RString &sFromDir, const RString &sToDir, const RString &sMask, int &iNumAdded, int &iNumDeleted, int &iNumOverwritten, int &iNumFailed )
 {
 	vector<RString> vsFilesSource;
@@ -275,12 +300,6 @@ static void SyncEdits( const RString &sFromDir, const RString &sToDir, int &iNum
 	SyncFiles( sFromDir + EDIT_COURSES_SUBDIR, sToDir + EDIT_COURSES_SUBDIR, "*.crs", iNumAdded, iNumDeleted, iNumOverwritten, iNumFailed );
 }
 
-static LocalizedString EDITS_NOT_COPIED( "ScreenServiceAction", "Edits not copied - No memory cards ready." );
-static LocalizedString COPIED_TO_CARD( "ScreenServiceAction", "Copied to P%d card:" );
-static LocalizedString COPIED_AND_OVERWRITTEN( "ScreenServiceAction", "%d copied, %d overwritten" );
-static LocalizedString ADDED_AND_OVERWRITTEN( "ScreenServiceAction", "%d added, %d overwritten" );
-static LocalizedString FAILED( "ScreenServiceAction", "%d failed" );
-static LocalizedString DELETED( "ScreenServiceAction", "%d deleted" );
 static RString CopyEditsMachineToMemoryCard()
 {
 	PlayerNumber pn = GetFirstReadyMemoryCard();
@@ -290,21 +309,17 @@ static RString CopyEditsMachineToMemoryCard()
 	if( !MEMCARDMAN->IsMounted(pn) )
 		MEMCARDMAN->MountCard(pn);
 
-	int iNumAttempted = 0;
-	int iNumSuccessful = 0;
-	int iNumOverwritten = 0;
 	RString sFromDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine);
 	RString sToDir = MEM_CARD_MOUNT_POINT[pn] + (RString)PREFSMAN->m_sMemoryCardProfileSubdir + "/";
 
-	CopyEdits( sFromDir, sToDir, iNumAttempted, iNumSuccessful, iNumOverwritten );
+	vector<RString> vs;
+	vs.push_back( ssprintf( COPIED_TO_CARD.GetValue(), pn+1 ) );
+	RString s = CopyEdits( sFromDir, sToDir, PREFSMAN->m_sMemoryCardProfileSubdir );
+	vs.push_back( s );
 	
 	MEMCARDMAN->UnmountCard(pn);
 
-	RString sRet = ssprintf( COPIED_TO_CARD.GetValue(), pn+1 ) + " ";
-	sRet += ssprintf( COPIED_AND_OVERWRITTEN.GetValue(), iNumSuccessful, iNumOverwritten );
-	if( iNumSuccessful < iNumAttempted )
-		sRet += RString("; ") + ssprintf( FAILED.GetValue(), iNumAttempted-iNumSuccessful );
-	return sRet;
+	return join("\n\n",vs);
 }
 
 static RString SyncEditsMachineToMemoryCard()
@@ -346,13 +361,20 @@ static RString CopyEditsMemoryCardToMachine()
 	if( !MEMCARDMAN->IsMounted(pn) )
 		MEMCARDMAN->MountCard(pn);
 
-	int iNumAttempted = 0;
-	int iNumSuccessful = 0;
-	int iNumOverwritten = 0;
-	RString sFromDir = MEM_CARD_MOUNT_POINT[pn] + (RString)PREFSMAN->m_sMemoryCardProfileSubdir + "/";
-	RString sToDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine);
-	
-	CopyEdits( sFromDir, sToDir, iNumAttempted, iNumSuccessful, iNumOverwritten );
+	vector<RString> vsSubDirs;
+	ProfileManager::GetMemoryCardProfileDirectoriesToTry( vsSubDirs );
+
+	vector<RString> vs;
+	vs.push_back( ssprintf( COPIED_TO_CARD.GetValue(), pn+1 ) );
+
+	FOREACH_CONST( RString, vsSubDirs, sSubDir )
+	{
+		RString sFromDir = MEM_CARD_MOUNT_POINT[pn] + (RString)(*sSubDir) + "/";
+		RString sToDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine);
+
+		RString s = CopyEdits( sFromDir, sToDir, *sSubDir );
+		vs.push_back( s );
+	}
 	
 	MEMCARDMAN->UnmountCard(pn);
 
@@ -360,11 +382,7 @@ static RString CopyEditsMemoryCardToMachine()
 	PROFILEMAN->SaveMachineProfile();
 	PROFILEMAN->LoadMachineProfile();
 
-	RString sRet = ssprintf( COPIED_FROM_CARD.GetValue(), pn+1 ) + " ";
-	sRet += ssprintf( COPIED_AND_OVERWRITTEN.GetValue(), iNumSuccessful, iNumOverwritten );
-	if( iNumSuccessful < iNumAttempted )
-		sRet += RString("; ") + ssprintf( FAILED.GetValue(), iNumAttempted-iNumSuccessful );
-	return sRet;
+	return join("\n\n",vs);
 }
 
 static LocalizedString PREFERENCES_RESET( "ScreenServiceAction", "Preferences reset." );

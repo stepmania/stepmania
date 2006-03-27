@@ -108,6 +108,7 @@ public:
 	void AddCategoryScore( StepsType st, RankingCategory rc, PlayerNumber pn, const HighScore &hs, int &iPersonalIndexOut, int &iMachineIndexOut );
 	void IncrementCategoryPlayCount( StepsType st, RankingCategory rc, PlayerNumber pn );
 
+	static void GetMemoryCardProfileDirectoriesToTry( vector<RString> &asDirsToTry );
 
 	// Lua
 	void PushSelf( lua_State *L );
@@ -116,7 +117,6 @@ public:
 
 private:
 	ProfileLoadResult LoadProfile( PlayerNumber pn, RString sProfileDir, bool bIsMemCard );
-	void GetMemoryCardProfileDirectoriesToTry( vector<RString> &asDirsToTry ) const;
 
 	// Directory that contains the profile.  Either on local machine or
 	// on a memory card.

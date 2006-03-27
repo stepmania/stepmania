@@ -189,7 +189,7 @@ bool ProfileManager::LoadLocalProfileFromMachine( PlayerNumber pn )
 	return true;
 }
 
-void ProfileManager::GetMemoryCardProfileDirectoriesToTry( vector<RString> &asDirsToTry ) const
+void ProfileManager::GetMemoryCardProfileDirectoriesToTry( vector<RString> &asDirsToTry )
 {
 	/* Try to load the preferred profile. */
 	asDirsToTry.push_back( PREFSMAN->m_sMemoryCardProfileSubdir );
