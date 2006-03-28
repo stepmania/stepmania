@@ -6,6 +6,7 @@
 #include "PrefsManager.h"
 #include "AdjustSync.h"
 #include "ScreenDimensions.h"
+#include "InputEventPlus.h"
 
 REGISTER_SCREEN_CLASS( ScreenGameplaySyncMachine );
 
@@ -53,6 +54,21 @@ void ScreenGameplaySyncMachine::Update( float fDelta )
 	RefreshText();
 }
 
+void ScreenGameplaySyncMachine::Input( const InputEventPlus &input )
+{
+	// Hack to make this work from Player2's controls
+	InputEventPlus _input = input;
+
+	if( _input.GameI.controller != GAME_CONTROLLER_INVALID )
+		_input.GameI.controller = GAME_CONTROLLER_1;
+	if( _input.MenuI.player != PLAYER_INVALID )
+		_input.MenuI.player = PLAYER_1;
+	if( _input.StyleI.player != PLAYER_INVALID )
+		_input.StyleI.player = PLAYER_1;
+
+	ScreenGameplay::Input( _input );
+}
+
 void ScreenGameplaySyncMachine::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_NotesEnded )
@@ -63,12 +79,10 @@ void ScreenGameplaySyncMachine::HandleScreenMessage( const ScreenMessage SM )
 	
 	ScreenGameplayNormal::HandleScreenMessage( SM );
 
-	if( SM == SM_GoToPrevScreen )
+	if( SM == SM_GoToPrevScreen || SM == SM_GoToNextScreen )
 	{
-		GAMESTATE->m_pCurSong.Set( NULL );
-	}
-	else if( SM == 	SM_GoToNextScreen )
-	{
+		GAMESTATE->m_PlayMode.Set( PLAY_MODE_INVALID );
+		GAMESTATE->m_pCurStyle.Set( NULL );
 		GAMESTATE->m_pCurSong.Set( NULL );
 	}
 }
