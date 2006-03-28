@@ -50,7 +50,6 @@ int RandomGen::operator() ( int n )
 {
 	float f = RandomFloat(seed) * (n);
 	int ans = int(f);
-	CLAMP( ans, 0, n-1 );
 	return ans;
 }
 

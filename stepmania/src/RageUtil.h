@@ -157,7 +157,7 @@ inline uint16_t Swap16LE( uint16_t n ) { return Swap16( n ); }
 
 extern int randseed;
 
-float RandomFloat( int &seed );	// between 0.0f and 1.0f
+float RandomFloat( int &seed );	// [0.0f,1.0f)
 
 inline float RandomFloat()
 {
