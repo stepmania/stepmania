@@ -18,9 +18,6 @@ AM_CXXFLAGS += $(XCFLAGS)
 LIBS += $(LUA_LIBS)
 LIBS += -lpthread -lrt
 
-$(srcdir)/libresample/libresample.a:
-	cd $(srcdir)/libresample && autoconf && sh ./configure && make
-
 Screens = \
 Screen.cpp Screen.h ScreenAttract.cpp ScreenAttract.h \
 ScreenBookkeeping.cpp ScreenBookkeeping.h \
@@ -233,7 +230,8 @@ if USE_CRASH_HANDLER
 ArchUtils +=    archutils/Unix/Backtrace.cpp archutils/Unix/Backtrace.h \
 		archutils/Unix/BacktraceNames.cpp archutils/Unix/BacktraceNames.h \
 		archutils/Unix/CrashHandler.cpp archutils/Unix/CrashHandler.h \
-		archutils/Unix/CrashHandlerChild.cpp archutils/Unix/CrashHandlerInternal.h
+		archutils/Unix/CrashHandlerChild.cpp archutils/Unix/CrashHandlerInternal.h \
+		archutils/Unix/CrashHandlerInternal.cpp
 endif
 
 endif
@@ -415,8 +413,7 @@ main_SOURCES = $(Screens) \
 
 main_LDADD = \
 		  $(AUDIO_LIBS) \
-		  $(XLIBS) \
-		  $(srcdir)/libresample/libresample.a
+		  $(XLIBS)
 
 stepmania_SOURCES = $(main_SOURCES)
 stepmania_LDADD = $(main_LDADD)
