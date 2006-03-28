@@ -242,6 +242,8 @@ void ScreenOptions::InitMenu( const vector<OptionRowHandler*> &vHands )
 /* Call when option rows have been re-initialized. */
 void ScreenOptions::RestartOptions()
 {
+	m_exprRowPositionTransformFunction.ClearCache();
+
 	for( unsigned r=0; r<m_pRows.size(); r++ )		// foreach row
 	{
 		OptionRow *pRow = m_pRows[r];
