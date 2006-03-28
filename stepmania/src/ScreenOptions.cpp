@@ -291,7 +291,7 @@ void ScreenOptions::RestartOptions()
 	}
 
 	FOREACH_PlayerNumber( p )
-		AfterChangeValueOrRow( p );
+		AfterChangeRow( p );
 
 	CHECKPOINT;
 }
