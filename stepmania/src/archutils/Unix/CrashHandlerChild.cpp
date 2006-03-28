@@ -233,7 +233,7 @@ static void child_process()
 	
 	fprintf( CrashDump, "Static log:\n" );
 	fprintf( CrashDump, "%s", Info );
-	fprintf(  CrashDump, "%s", AdditionalLog );
+	fprintf( CrashDump, "%s", AdditionalLog );
 	fprintf(CrashDump, "\nPartial log:\n" );
 	for( int i = 0; i < cnt; ++i )
 		fprintf( CrashDump, "%s\n", Recent[i] );
@@ -242,8 +242,6 @@ static void child_process()
 	fclose( CrashDump) ;
 	
 #if defined(MACOSX)
-	/* Forcibly kill our parent. */
-	//kill( getppid(), SIGKILL );
 	InformUserOfCrash( sCrashInfoPath );
 #else
 	/* stdout may have been inadvertently closed by the crash in the parent;
