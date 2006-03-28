@@ -46,9 +46,12 @@ RandomGen::RandomGen( unsigned long seed_ )
 		seed = time(NULL);
 }
 
-int RandomGen::operator() ( int maximum )
+int RandomGen::operator() ( int n )
 {
-	return int(RandomFloat( seed ) * maximum);
+	float f = RandomFloat(seed) * (n);
+	int ans = int(f);
+	CLAMP( ans, 0, n-1 );
+	return ans;
 }
 
 

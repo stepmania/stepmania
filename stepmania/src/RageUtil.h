@@ -183,7 +183,7 @@ class RandomGen
 
 public:
 	RandomGen( unsigned long seed = 0 );
-	int operator() ( int maximum = INT_MAX-1 );
+	int operator() ( int n = INT_MAX-1 );	// return number [0,n)
 };
 
 
