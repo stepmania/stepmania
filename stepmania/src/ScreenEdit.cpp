@@ -2156,6 +2156,9 @@ void ScreenEdit::TransitionEditState( EditState em )
 	{
 	case STATE_PLAYING:
 	{
+		GAMESTATE->RestoreSelectedOptions();
+		GAMESTATE->StoreStageOptions();
+
 		/* If we're in course display mode, set that up. */
 		SetupCourseAttacks();
 
