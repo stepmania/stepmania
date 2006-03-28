@@ -11,6 +11,11 @@ public:
 	void BeginScreen();
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual void TweenOnScreen();
+	virtual void TweenOffScreen();
+
+protected:
+	virtual void AfterChangeRow( PlayerNumber pn );
 
 private:
 	void ImportOptions( int iRow, const vector<PlayerNumber> &vpns );
@@ -25,6 +30,8 @@ private:
 
 	bool UpdateCurrentUsbStorageDevices();
 	vector<UsbStorageDevice> m_CurrentUsbStorageDevices;
+
+	BitmapText m_textCurrentCard;
 };
 
 #endif

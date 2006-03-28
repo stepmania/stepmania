@@ -16,7 +16,25 @@ void ScreenOptionsMemoryCard::Init()
 {
 	ScreenOptions::Init();
 
+	m_textCurrentCard.SetName( "CurrentCard" );
+	m_textCurrentCard.LoadFromFont( THEME->GetPathF(m_sName,"current") );
+	this->AddChild( &m_textCurrentCard );
+
 	this->SubscribeToMessage( Message_StorageDevicesChanged );
+}
+
+void ScreenOptionsMemoryCard::TweenOnScreen()
+{
+	ON_COMMAND( m_textCurrentCard );
+
+	ScreenOptions::TweenOnScreen();
+}
+
+void ScreenOptionsMemoryCard::TweenOffScreen()
+{
+	OFF_COMMAND( m_textCurrentCard );
+
+	ScreenOptions::TweenOffScreen();
 }
 
 bool ScreenOptionsMemoryCard::UpdateCurrentUsbStorageDevices()
@@ -46,10 +64,6 @@ void ScreenOptionsMemoryCard::CreateMenu()
 		// TODO: Make these string themable
 
 		vector<RString> vs;
-		if( iter->sOsMountDir.empty() )
-			vs.push_back( "(no mount dir)" );
-		else
-			vs.push_back( iter->sOsMountDir );
 		if( iter->sVolumeLabel.empty() )
 			vs.push_back( "(no label)" );
 		else
@@ -98,6 +112,21 @@ void ScreenOptionsMemoryCard::BeginScreen()
 void ScreenOptionsMemoryCard::HandleScreenMessage( const ScreenMessage SM )
 {
 	ScreenOptions::HandleScreenMessage( SM );
+}
+
+void ScreenOptionsMemoryCard::AfterChangeRow( PlayerNumber pn )
+{
+	ScreenOptions::AfterChangeRow( pn );
+
+	if( m_CurrentUsbStorageDevices.empty() )
+	{
+		m_textCurrentCard.SetText( "" );
+	}
+	else
+	{
+		int iRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
+		m_textCurrentCard.SetText( m_CurrentUsbStorageDevices[iRow].sOsMountDir );
+	}
 }
 
 void ScreenOptionsMemoryCard::HandleMessage( const RString& sMessage )
