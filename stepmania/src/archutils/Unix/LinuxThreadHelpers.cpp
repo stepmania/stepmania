@@ -208,14 +208,11 @@ bool GetThreadBacktraceContext( uint64_t ThreadID, BacktraceContext *ctx )
 	 *
 	 * If it's in a debugger, we won't be able to ptrace(PTRACE_GETREGS). If
 	 * it's us that attached, we will. */
-	if( PtraceAttach( int(ThreadID) ) == -1 )
+	if( PtraceAttach( int(ThreadID) ) == -1 && errno != EPERM )
 	{
-		if( errno != EPERM )
-		{
-			CHECKPOINT_M( ssprintf( "%s (pid %i tid %i locking tid %i)",
-									strerror(errno), getpid(), (int)GetCurrentThreadId(), int(ThreadID) ) );
+		CHECKPOINT_M( ssprintf( "%s (pid %i tid %i locking tid %i)",
+					strerror(errno), getpid(), (int)GetCurrentThreadId(), int(ThreadID) ) );
 			return false;
-		}
 	}
 
 	user_regs_struct regs;
