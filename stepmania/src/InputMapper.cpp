@@ -344,7 +344,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 	{
 		"dance",
 		"RedOctane USB Pad",
-		"RedOctane USB Pad",
+		"RedOctane Ignition 3 or Afterburner",
 		{
 			{ 0, JOY_BUTTON_1,	/* dpad L */	DANCE_BUTTON_LEFT,	false },
 			{ 0, JOY_BUTTON_4,	/* dpad R */	DANCE_BUTTON_RIGHT,	false },
