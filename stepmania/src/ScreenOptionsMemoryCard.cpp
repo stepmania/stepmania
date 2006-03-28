@@ -182,6 +182,8 @@ void ScreenOptionsMemoryCard::ProcessMenuStart( const InputEventPlus &input )
 		const vector<UsbStorageDevice> &v = m_CurrentUsbStorageDevices;
 		const UsbStorageDevice &dev = v[iCurRow];
 		MEMCARDMAN->m_sEditorMemoryCardOsMountPoint.Set( dev.sOsMountDir );
+
+		/* The destination screen must UnmountCard.  XXX: brittle */
 		bool bSuccess = MEMCARDMAN->MountCard( PLAYER_1, dev );
 		if( bSuccess )
 		{
