@@ -1433,7 +1433,7 @@ void ScreenGameplay::PlayTicks()
 	 * will start coming out the speaker.  Compensate for this by boosting fPositionSeconds
 	 * ahead.  This is just to make sure that we request the sound early enough for it to
 	 * come out on time; the actual precise timing is handled by SetStartTime. */
-	float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
+	float fPositionSeconds = GAMESTATE->m_fMusicSecondsNoOffset;
 	fPositionSeconds += SOUND->GetPlayLatency() + (float)CommonMetrics::TICK_EARLY_SECONDS + 0.250f;
 	const float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
 
@@ -1455,7 +1455,7 @@ void ScreenGameplay::PlayTicks()
 	{
 		const float fTickBeat = NoteRowToBeat( iTickRow );
 		const float fTickSecond = GAMESTATE->m_pCurSong->m_Timing.GetElapsedTimeFromBeat( fTickBeat );
-		float fSecondsUntil = fTickSecond - GAMESTATE->m_fMusicSeconds;
+		float fSecondsUntil = fTickSecond - GAMESTATE->m_fMusicSecondsNoOffset;
 		fSecondsUntil /= GAMESTATE->m_SongOptions.m_fMusicRate; /* 2x music rate means the time until the tick is halved */
 
 		RageSoundParams p;

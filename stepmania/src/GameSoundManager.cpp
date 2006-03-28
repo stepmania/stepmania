@@ -491,7 +491,7 @@ void GameSoundManager::Update( float fDeltaTime )
 	{
 		/* There's no song playing.  Fake it. */
 		CHECKPOINT_M( ssprintf("%f, delta %f", GAMESTATE->m_fMusicSeconds, fDeltaTime) );
-		GAMESTATE->UpdateSongPosition( GAMESTATE->m_fMusicSeconds + fDeltaTime, g_Playing->m_Timing );
+		GAMESTATE->UpdateSongPosition( GAMESTATE->m_fMusicSecondsNoOffset + fDeltaTime, g_Playing->m_Timing );
 		return;
 	}
 
@@ -537,7 +537,7 @@ void GameSoundManager::Update( float fDeltaTime )
 	{
 		/* We're still waiting for the new sound to start playing, so keep using the
 		 * old timing data and fake the time. */
-		GAMESTATE->UpdateSongPosition( GAMESTATE->m_fMusicSeconds + fDeltaTime, g_Playing->m_Timing );
+		GAMESTATE->UpdateSongPosition( GAMESTATE->m_fMusicSecondsNoOffset + fDeltaTime, g_Playing->m_Timing );
 	}
 	else
 	{

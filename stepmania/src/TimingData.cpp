@@ -201,8 +201,6 @@ void TimingData::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatO
 {
 //	LOG->Trace( "GetBeatAndBPSFromElapsedTime( fElapsedTime = %f )", fElapsedTime );
 
-	fElapsedTime += PREFSMAN->m_fGlobalOffsetSeconds;
-
 	fElapsedTime += m_fBeat0OffsetInSeconds;
 
 
@@ -264,7 +262,6 @@ void TimingData::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatO
 float TimingData::GetElapsedTimeFromBeat( float fBeat ) const
 {
 	float fElapsedTime = 0;
-	fElapsedTime -= PREFSMAN->m_fGlobalOffsetSeconds;
 	fElapsedTime -= m_fBeat0OffsetInSeconds;
 
 	int iRow = BeatToNoteRow(fBeat);
