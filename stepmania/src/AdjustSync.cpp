@@ -30,13 +30,10 @@ bool AdjustSync::IsSyncDataChanged()
 	// Can't sync in course modes
 	if( GAMESTATE->IsCourseMode() )
 		return false;
-
-	if( GAMESTATE->m_pCurSong  &&  *s_pTimingDataOriginal != GAMESTATE->m_pCurSong->m_Timing )
-		return true;
-	if( s_fGlobalOffsetSecondsOriginal != PREFSMAN->m_fGlobalOffsetSeconds )
-		return true;
-
-	return false;
+	vector<RString> vs;
+	AdjustSync::GetSyncChangeTextGlobal( vs );
+	AdjustSync::GetSyncChangeTextSong( vs );
+	return !vs.empty();
 }
 
 void AdjustSync::SaveSyncChanges()
