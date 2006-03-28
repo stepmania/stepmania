@@ -12,13 +12,13 @@
 #include "AnnouncerManager.h"
 #include "MemoryCardDisplay.h"
 
-#define TIMER_STEALTH			THEME->GetMetricB(m_sName,"TimerStealth")
+#define TIMER_STEALTH				THEME->GetMetricB(m_sName,"TimerStealth")
 #define STYLE_ICON				THEME->GetMetricB(m_sName,"StyleIcon")
 #define SHOW_STAGE				THEME->GetMetricB(m_sName,"ShowStage")
-#define MEMORY_CARD_ICONS		THEME->GetMetricB(m_sName,"MemoryCardIcons")
+#define MEMORY_CARD_ICONS			THEME->GetMetricB(m_sName,"MemoryCardIcons")
 #define FORCE_TIMER				THEME->GetMetricB(m_sName,"ForceTimer")
-#define STOP_MUSIC_ON_BACK		THEME->GetMetricB(m_sName,"StopMusicOnBack")
-#define WAIT_FOR_CHILDREN_BEFORE_TWEENING_OUT		THEME->GetMetricB(m_sName,"WaitForChildrenBeforeTweeningOut")
+#define STOP_MUSIC_ON_BACK			THEME->GetMetricB(m_sName,"StopMusicOnBack")
+#define WAIT_FOR_CHILDREN_BEFORE_TWEENING_OUT	THEME->GetMetricB(m_sName,"WaitForChildrenBeforeTweeningOut")
 
 //REGISTER_SCREEN_CLASS( ScreenWithMenuElements );
 ScreenWithMenuElements::ScreenWithMenuElements()
