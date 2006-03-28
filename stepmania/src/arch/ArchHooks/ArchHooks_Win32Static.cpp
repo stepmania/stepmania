@@ -54,6 +54,7 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 
 	// Mount everything game-writable (not counting the editor) to the user's directory.
 	FILEMAN->Mount( "dir", sMyDocumentsDir + PRODUCT_ID + "/Cache", "/Cache" );
+	FILEMAN->Mount( "dir", sMyDocumentsDir + PRODUCT_ID + "/Logs", "/Logs" );
 	FILEMAN->Mount( "dir", sMyDocumentsDir + PRODUCT_ID + "/Save", "/Save" );
 	FILEMAN->Mount( "dir", sMyDocumentsDir + PRODUCT_ID + "/Screenshots", "/Screenshots" );
 }
