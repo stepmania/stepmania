@@ -58,106 +58,6 @@ static void output_stack_trace( FILE *out, const void **BacktracePointers )
 	}
 }
 
-#if !defined(MACOSX)
-const char *SignalCodeName( int signo, int code )
-{
-	switch( code )
-	{
-	case SI_USER:    return "user signal";
-	case SI_KERNEL:  return "kernel signal";
-	case SI_QUEUE:   return "sigqueue signal";
-	case SI_TIMER:   return "timer expired";
-	case SI_MESGQ:   return "mesgq state changed";
-	case SI_ASYNCIO: return "async I/O completed";
-	case SI_SIGIO:   return "queued SIGIO";
-	}
-	
-	switch( signo )
-	{
-	case SIGILL:
-		switch( code )
-		{
-		case ILL_ILLOPC: return "illegal opcode";
-		case ILL_ILLOPN: return "illegal operand";
-		case ILL_ILLADR: return "illegal addressing mode";
-		case ILL_ILLTRP: return "illegal trap";
-		case ILL_PRVOPC: return "privileged opcode";
-		case ILL_PRVREG: return "privileged register";
-		case ILL_COPROC: return "coprocessor error";
-		case ILL_BADSTK: return "internal stack error";
-		}
-		break;
-	
-	case SIGFPE:
-		switch( code )
-		{
-		case FPE_INTDIV: return "integer divide by zero";
-		case FPE_INTOVF: return "integer overflow";
-		case FPE_FLTDIV: return "floating point divide by zero";
-		case FPE_FLTOVF: return "floating point overflow";
-		case FPE_FLTUND: return "floating point underflow";
-		case FPE_FLTRES: return "floating point inexact result";
-		case FPE_FLTINV: return "floating point invalid operation";
-		case FPE_FLTSUB: return "subscript out of range";
-		}
-		break;
-	
-	case SIGSEGV:
-		switch( code )
-		{
-		case SEGV_MAPERR:    return "address not mapped";
-		case SEGV_ACCERR:    return "invalid permissions";
-		}
-		break;
-	
-		case SIGBUS:
-		switch( code )
-		{
-		case BUS_ADRALN: return "invalid address alignment";
-		case BUS_ADRERR: return "non‐existent physical address";
-		case BUS_OBJERR: return "object specific hardware error";
-		}
-		break;
-	
-	case SIGTRAP:
-		switch( code )
-		{
-		case TRAP_BRKPT: return "process breakpoint";
-		case TRAP_TRACE: return "process trace trap";
-		}
-		break;
-	
-	case SIGCHLD:
-		switch( code )
-		{
-		case CLD_EXITED: return "child has exited";
-		case CLD_KILLED: return "child was killed";
-		case CLD_DUMPED: return "child terminated abnormally";
-		case CLD_TRAPPED: return "traced child has trapped";
-		case CLD_STOPPED: return "child has stopped";
-		case CLD_CONTINUED: return "stopped child has continued";
-		}
-		break;
-	
-	case SIGPOLL:
-		switch( code )
-		{
-		case POLL_IN:  return "data input available";
-		case POLL_OUT: return "output buffers available";
-		case POLL_MSG: return "input message available";
-		case POLL_ERR: return "i/o error";
-		case POLL_PRI: return "high priority input available";
-		case POLL_HUP: return "device disconnected";
-		}
-		break;
-	}
-	
-	static char buf[128];
-	sprintf( buf, "Unknown code %i", code );
-	return buf;
-}
-#endif
-
 bool child_read( int fd, void *p, int size )
 {
 	char *buf = (char *) p;
@@ -288,13 +188,8 @@ static void child_process()
 	{
 	case CrashData::SIGNAL:
 	{
-		RString Signal = SignalName( crash.signal );
-	
-#if !defined(MACOSX)
-		reason = ssprintf( "%s - %s", Signal.c_str(), SignalCodeName(crash.signal, crash.si.si_code) );
-#else
-		reason = Signal;
-#endif
+		reason = ssprintf( "%s - %s", SignalName(crash.signal), SignalCodeName(crash.signal, crash.si.si_code) );
+		
 		/* Linux puts the PID that sent the signal in si_addr for SI_USER. */
 		if( crash.si.si_code == SI_USER )
 		{
@@ -348,7 +243,7 @@ static void child_process()
 	
 #if defined(MACOSX)
 	/* Forcibly kill our parent. */
-	kill( getppid(), SIGKILL );
+	//kill( getppid(), SIGKILL );
 	InformUserOfCrash( sCrashInfoPath );
 #else
 	/* stdout may have been inadvertently closed by the crash in the parent;

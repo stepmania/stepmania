@@ -37,22 +37,6 @@ static void safe_print( int fd, ... )
 	va_end( ap );
 }
 
-static const char *itoa( unsigned n )
-{
-	static char ret[32];
-	char *p = ret;
-	for( int div = 1000000000; div > 0; div /= 10 )
-	{
-		*p++ = (n / div) + '0';
-		n %= div;
-	}
-	*p = 0;
-	p = ret;
-	while( p[0] == '0' && p[1] )
-		++p;
-	return p;
-}
-
 #if defined(LINUX)
 static void GetExecutableName( char *buf, int bufsize )
 {
@@ -218,38 +202,6 @@ static void parent_process( int to_child, const CrashData *crash )
  * signal trampolines.  The result is that it doesn't properly show the
  * function that actually caused the signal--which is the most important
  * one!  So, we have to do it all ourself. */
-const char *SignalName( int signo )
-{
-#define X(a) case a: return #a;
-	switch( signo )
-	{
-	case SIGALRM: return "Alarm";
-	case SIGBUS: return "Bus error";
-	case SIGFPE: return "Floating point exception";
-	X(SIGHUP)
-	case SIGILL: return "Illegal instruction";
-	X(SIGINT)
-	case SIGPIPE: return "Broken pipe";
-	case SIGABRT: return "Aborted";
-	X(SIGQUIT)
-	case SIGSEGV: return "Segmentation fault";
-	X(SIGTRAP) X(SIGTERM) X(SIGVTALRM) X(SIGXCPU) X(SIGXFSZ)
-#if defined(HAVE_DECL_SIGPWR) && HAVE_DECL_SIGPWR
-	X(SIGPWR)
-#endif
-#if defined(HAVE_DECL_SIGUSR1) && HAVE_DECL_SIGUSR1
-	case SIGUSR1: return "Forced crash";
-#endif
-	default:
-	{
-		static char buf[128];
-		strcpy( buf, "Unknown signal " );
-		strcat( buf, itoa(signo) );
-		return buf;
-	}
-	}
-#undef X
-}
 
 static void RunCrashHandler( const CrashData *crash )
 {
@@ -335,7 +287,9 @@ static void RunCrashHandler( const CrashData *crash )
 		close( fds[1] );
 
 		int status = 0;
+#if !defined(MACOSX)
 		waitpid( childpid, &status, 0 );
+#endif
 
 		/* We need to resume threads before continuing, or we may deadlock on _exit(). */
 		/* XXX: race condition:  If two threads are deadlocked on a pair of mutexes, there's
@@ -435,7 +389,7 @@ void CrashHandler::CrashSignalHandler( int signal, siginfo_t *si, const ucontext
 	BacktraceContext ctx;
 	GetSignalBacktraceContext( &ctx, uc );
 	GetBacktrace( crash.BacktracePointers[0], BACKTRACE_MAX_SIZE, &ctx );
-#if defined(HAVE_DECL_SIGUSR1)
+#if defined(HAVE_DECL_SIGUSR1) && HAVE_DECL_SIGUSR1
 	if( signal == SIGUSR1 )
 		BacktraceAllThreads( crash );
 #endif

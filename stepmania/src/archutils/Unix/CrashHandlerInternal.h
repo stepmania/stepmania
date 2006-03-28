@@ -30,12 +30,15 @@ struct CrashData
 
 #define CHILD_MAGIC_PARAMETER "--private-do-crash-handler"
 
+/* These can return a pointer to static memory. Copy the returned string if you wish to save it. */
+const char *itoa( unsigned n );
 const char *SignalName( int signo );
+const char *SignalCodeName( int signo, int code );
 
 #endif
 
 /*
- * (c) 2003-2004 Glenn Maynard
+ * (c) 2003-2006 Glenn Maynard
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
