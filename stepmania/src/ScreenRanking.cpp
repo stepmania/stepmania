@@ -233,7 +233,7 @@ void ScoreScroller::SetStepsType( StepsType st, RageColor color )
 
 bool ScoreScroller::Scroll( int iDir )
 {
-	if( m_vScoreRowItemData.size() <= m_metricSongScoreRowsToDraw )
+	if( (int)m_vScoreRowItemData.size() <= m_metricSongScoreRowsToDraw )
 		return false;
 
 	float fDest = GetDestinationItem();
@@ -249,7 +249,7 @@ bool ScoreScroller::Scroll( int iDir )
 	}
 	else
 	{
-		return false();
+		return false;
 	}
 }
 
