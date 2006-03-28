@@ -19,8 +19,12 @@
 #include <sys/time.h>
 #include <sys/sysctl.h>
 
+#define REAL_TIME_CRITICAL_SECTION 0
+
+#if REAL_TIME_CRITICAL_SECTION
 static thread_time_constraint_policy g_oldttcpolicy;
 static float g_fStartedTimeCritAt;
+#endif
 
 static bool IsFatalSignal( int signal )
 {
@@ -227,6 +231,7 @@ RString ArchHooks::GetPreferredLanguage()
 
 void ArchHooks_darwin::EnterTimeCriticalSection()
 {
+#if REAL_TIME_CRITICAL_SECTION
 	TimeCritMutex->Lock();
 	
 	mach_msg_type_number_t cnt = THREAD_TIME_CONSTRAINT_POLICY_COUNT;
@@ -261,10 +266,12 @@ void ArchHooks_darwin::EnterTimeCriticalSection()
 		LOG->Warn( "thread_policy_set(THREAD_TIME_CONSTRAINT_POLICY): %s", mach_error_string(ret) );
 
 	g_fStartedTimeCritAt = RageTimer::GetTimeSinceStart();
+#endif
 }
 
 void ArchHooks_darwin::ExitTimeCriticalSection()
 {
+#if REAL_TIME_CRITICAL_SECTION
 	kern_return_t ret;
 	
 	ret = thread_policy_set( mach_thread_self(), THREAD_TIME_CONSTRAINT_POLICY,
@@ -277,6 +284,7 @@ void ArchHooks_darwin::ExitTimeCriticalSection()
 	float fTimeCritLen = RageTimer::GetTimeSinceStart() - g_fStartedTimeCritAt;
 	if( fTimeCritLen > 0.003f )
 		LOG->Warn( "Time-critical section lasted for %f", fTimeCritLen );
+#endif
 }
 
 int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
