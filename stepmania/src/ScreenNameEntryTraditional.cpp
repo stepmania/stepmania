@@ -230,49 +230,49 @@ void ScreenNameEntryTraditional::Init()
 			this->AddChild( &m_Keyboard[p] );
 
 			/* Add letters to m_Keyboard. */
-			const RString fontpath = THEME->GetPathF(m_sName,"letters");
-			const wstring Chars = RStringToWstring(KEYBOARD_LETTERS);
-			for( unsigned ch = 0; ch < Chars.size(); ++ch )
+			const RString sFontPath = THEME->GetPathF(m_sName,"letters");
+			const wstring sChars = RStringToWstring(KEYBOARD_LETTERS);
+			for( unsigned ch = 0; ch < sChars.size(); ++ch )
 			{
-				BitmapText *Letter = new BitmapText;
-				Letter->SetName( ssprintf("LetterP%i",p+1) );
-				Letter->LoadFromFont( fontpath );
-				Letter->SetText( ssprintf("%lc", Chars[ch]) );
-				m_textAlphabet[p].push_back( Letter );
-				m_Keyboard[p].AddChild( Letter );
-				Letter->RunCommands( ALPHABET_INIT_COMMMAND );
+				BitmapText *pLetter = new BitmapText;
+				pLetter->SetName( ssprintf("LetterP%i",p+1) );
+				pLetter->LoadFromFont( sFontPath );
+				pLetter->SetText( ssprintf("%lc", sChars[ch]) );
+				m_textAlphabet[p].push_back( pLetter );
+				m_Keyboard[p].AddChild( pLetter );
+				pLetter->RunCommands( ALPHABET_INIT_COMMMAND );
 
-				m_AlphabetLetter[p].push_back( Chars[ch] );
+				m_AlphabetLetter[p].push_back( sChars[ch] );
 			}
 
 			/* Add "<-". */
 			{
-				BitmapText *Letter = new BitmapText;
-				Letter->SetName( ssprintf("LetterP%i",p+1) );
-				Letter->LoadFromFont( fontpath );
-				RString text = "&leftarrow;";
-				FontCharAliases::ReplaceMarkers( text );
-				Letter->SetText( text );
-				m_textAlphabet[p].push_back( Letter );
-				m_Keyboard[p].AddChild( Letter );
+				BitmapText *pLetter = new BitmapText;
+				pLetter->SetName( ssprintf("LetterP%i",p+1) );
+				pLetter->LoadFromFont( sFontPath );
+				RString sText = "&leftarrow;";
+				FontCharAliases::ReplaceMarkers( sText );
+				pLetter->SetText( sText );
+				m_textAlphabet[p].push_back( pLetter );
+				m_Keyboard[p].AddChild( pLetter );
 
 				m_AlphabetLetter[p].push_back( CHAR_BACK );
-				Letter->RunCommands( OK_INIT_COMMMAND );
+				pLetter->RunCommands( OK_INIT_COMMMAND );
 			}
 
 			/* Add "OK". */
 			{
-				BitmapText *Letter = new BitmapText;
-				Letter->SetName( ssprintf("LetterP%i",p+1) );
-				Letter->LoadFromFont( fontpath );
-				RString text = "&ok;";
-				FontCharAliases::ReplaceMarkers( text );
-				Letter->SetText( text );
-				m_textAlphabet[p].push_back( Letter );
-				m_Keyboard[p].AddChild( Letter );
+				BitmapText *pLetter = new BitmapText;
+				pLetter->SetName( ssprintf("LetterP%i",p+1) );
+				pLetter->LoadFromFont( sFontPath );
+				RString sText = "&ok;";
+				FontCharAliases::ReplaceMarkers( sText );
+				pLetter->SetText( sText );
+				m_textAlphabet[p].push_back( pLetter );
+				m_Keyboard[p].AddChild( pLetter );
 
 				m_AlphabetLetter[p].push_back( CHAR_OK );
-				Letter->RunCommands( OK_INIT_COMMMAND );
+				pLetter->RunCommands( OK_INIT_COMMMAND );
 			}
 
 			m_sprCursor[p].SetName( ssprintf("CursorP%i",p+1) );
@@ -451,26 +451,26 @@ static inline int wrapn( int x, int n )
 
 void ScreenNameEntryTraditional::PositionCharsAndCursor( int pn )
 {
-	const int Selected = m_SelectedChar[pn];
-	const int NumDisplayed = NUM_ALPHABET_DISPLAYED;
+	const int iSelected = m_SelectedChar[pn];
+	const int iNumDisplayed = NUM_ALPHABET_DISPLAYED;
 
-	const int TotalDisplayed = (int)m_textAlphabet[pn].size();
-	const int Start = wrapn( Selected - TotalDisplayed/2, TotalDisplayed );
+	const int iTotalDisplayed = (int)m_textAlphabet[pn].size();
+	const int iStart = wrapn( iSelected - iTotalDisplayed/2, iTotalDisplayed );
 
-	const int First = -NumDisplayed/2;
-	const int Last = NumDisplayed/2;
+	const int iFirst = -iNumDisplayed/2;
+	const int iLast = iNumDisplayed/2;
 	for( int i = 0; i < (int)m_textAlphabet[pn].size(); ++i )
 	{
-		const int Num = wrapn( Start+i, (int) m_textAlphabet[pn].size() );
-		BitmapText *bt = m_textAlphabet[pn][Num];
+		const int iNum = wrapn( iStart+i, (int) m_textAlphabet[pn].size() );
+		BitmapText *bt = m_textAlphabet[pn][iNum];
 
-		const int Pos = i - TotalDisplayed/2;
-		const bool hidden = ( Pos < First || Pos > Last );
-		const int ActualPos = clamp( Pos, First-1, Last+1 );
+		const int iPos = i - iTotalDisplayed/2;
+		const bool bHidden = ( iPos < iFirst || iPos > iLast );
+		const int iActualPos = clamp( iPos, iFirst-1, iLast+1 );
 
 		bt->RunCommands( CHANGE_COMMAND );
-		bt->SetX( ActualPos * ALPHABET_GAP_X );
-		bt->SetDiffuseAlpha( hidden? 0.0f:1.0f );
+		bt->SetX( iActualPos * ALPHABET_GAP_X );
+		bt->SetDiffuseAlpha( bHidden? 0.0f:1.0f );
 	}
 
 	m_sprCursor[pn].SetXY( 0,0 );
@@ -576,16 +576,16 @@ void ScreenNameEntryTraditional::Finish( PlayerNumber pn )
 
 	UpdateSelectionText( pn ); /* hide NAME_ cursor */
 
-	RString selection = WStringToRString( m_sSelection[pn] );
+	RString sSelection = WStringToRString( m_sSelection[pn] );
 
 	// save last used ranking name
 	Profile* pProfile = PROFILEMAN->GetProfile(pn);
-	pProfile->m_sLastUsedHighScoreName = selection;
+	pProfile->m_sLastUsedHighScoreName = sSelection;
 
-	TrimRight( selection, " " );
-	TrimLeft( selection, " " );
+	TrimRight( sSelection, " " );
+	TrimLeft( sSelection, " " );
 
-	GAMESTATE->StoreRankingName( pn, selection );
+	GAMESTATE->StoreRankingName( pn, sSelection );
 
 	OFF_COMMAND( m_Keyboard[pn] );
 	for( int i = 0; i < (int)m_textAlphabet[pn].size(); ++i )
@@ -626,9 +626,9 @@ void ScreenNameEntryTraditional::HandleStart( PlayerNumber pn )
 	if( !m_bStillEnteringName[pn] )
 		return;	// ignore
 
-	const int CurrentSelection = m_SelectedChar[pn];
-	const int SelectedLetter = m_AlphabetLetter[pn][CurrentSelection];
-	switch( SelectedLetter )
+	const int iCurrentSelection = m_SelectedChar[pn];
+	const int iSelectedLetter = m_AlphabetLetter[pn][iCurrentSelection];
+	switch( iSelectedLetter )
 	{
 	case CHAR_OK:
 		m_soundKey.Play();
@@ -647,7 +647,7 @@ void ScreenNameEntryTraditional::HandleStart( PlayerNumber pn )
 			SelectChar( pn, CHAR_BACK );
 			break;
 		}
-		m_sSelection[pn] += wchar_t(SelectedLetter);
+		m_sSelection[pn] += wchar_t(iSelectedLetter);
 		UpdateSelectionText( pn );
 		m_soundKey.Play();
 
