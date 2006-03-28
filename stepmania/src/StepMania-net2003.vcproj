@@ -2674,12 +2674,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="CryptManager.h">
 			</File>
 			<File
-				RelativePath="ezsockets.cpp">
-			</File>
-			<File
-				RelativePath="ezsockets.h">
-			</File>
-			<File
 				RelativePath=".\FontManager.cpp">
 			</File>
 			<File
