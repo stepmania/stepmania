@@ -571,6 +571,8 @@
 		AA3D790206A275E90064B980 /* RadarValues.h in Headers */ = {isa = PBXBuildFile; fileRef = AA3D790006A275E90064B980 /* RadarValues.h */; };
 		AA3D793306A279530064B980 /* DateTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA3D793106A279530064B980 /* DateTime.cpp */; };
 		AA3D793406A279530064B980 /* DateTime.h in Headers */ = {isa = PBXBuildFile; fileRef = AA3D793206A279530064B980 /* DateTime.h */; };
+		AA3E3DF109D96A1400A259C7 /* CrashHandlerInternal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA3E3DF009D96A1400A259C7 /* CrashHandlerInternal.cpp */; };
+		AA3E3DF209D96A1400A259C7 /* CrashHandlerInternal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA3E3DF009D96A1400A259C7 /* CrashHandlerInternal.cpp */; };
 		AA40D1B909A08D650068C0D5 /* StepMania.pch in Headers */ = {isa = PBXBuildFile; fileRef = AAD64AA10603FE7300EF8CDE /* StepMania.pch */; };
 		AA40D1BA09A08D650068C0D5 /* RageBitmapTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFD6E04770A7C005F316C /* RageBitmapTexture.h */; };
 		AA40D1BB09A08D650068C0D5 /* RageDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFD7004770A7C005F316C /* RageDisplay.h */; };
@@ -1987,6 +1989,7 @@
 		AA3D790006A275E90064B980 /* RadarValues.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RadarValues.h; path = ../src/RadarValues.h; sourceTree = "<group>"; };
 		AA3D793106A279530064B980 /* DateTime.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = DateTime.cpp; path = ../src/DateTime.cpp; sourceTree = "<group>"; };
 		AA3D793206A279530064B980 /* DateTime.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = DateTime.h; path = ../src/DateTime.h; sourceTree = "<group>"; };
+		AA3E3DF009D96A1400A259C7 /* CrashHandlerInternal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CrashHandlerInternal.cpp; sourceTree = "<group>"; };
 		AA3F283B04BE6DDC00D02EE9 /* ArchHooks.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ArchHooks.cpp; path = ArchHooks/ArchHooks.cpp; sourceTree = "<group>"; };
 		AA40D52B09A08D660068C0D5 /* StepMania.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StepMania.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA42F5E6067068D30013509E /* ScreenNetworkOptions.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenNetworkOptions.cpp; path = ../src/ScreenNetworkOptions.cpp; sourceTree = "<group>"; };
@@ -3983,6 +3986,7 @@
 				AADB4E8A04D50FB900D02EE9 /* CrashHandlerInternal.h */,
 				AADB4E8B04D50FB900D02EE9 /* SignalHandler.cpp */,
 				AADB4E8C04D50FB900D02EE9 /* SignalHandler.h */,
+				AA3E3DF009D96A1400A259C7 /* CrashHandlerInternal.cpp */,
 			);
 			path = Unix;
 			sourceTree = "<group>";
@@ -5668,6 +5672,7 @@
 				AAB55EBD09A7E3D3008FDC69 /* ScreenUnlockBrowse.cpp in Sources */,
 				AAB55EBF09A7E3D3008FDC69 /* ScreenUnlockCelebrate.cpp in Sources */,
 				AA1F9C4809AF1BF5002C15A8 /* PumpDevice.cpp in Sources */,
+				AA3E3DF109D96A1400A259C7 /* CrashHandlerInternal.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6077,6 +6082,7 @@
 				AAB5600009A84E63008FDC69 /* ScreenUnlockCelebrate.cpp in Sources */,
 				AAB5600209A84E65008FDC69 /* ScreenUnlockBrowse.cpp in Sources */,
 				AA1F9C4A09AF1BF5002C15A8 /* PumpDevice.cpp in Sources */,
+				AA3E3DF209D96A1400A259C7 /* CrashHandlerInternal.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
