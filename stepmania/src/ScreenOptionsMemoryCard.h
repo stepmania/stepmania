@@ -31,7 +31,7 @@ private:
 	bool UpdateCurrentUsbStorageDevices();
 	vector<UsbStorageDevice> m_CurrentUsbStorageDevices;
 
-	BitmapText m_textCurrentCard;
+	BitmapText m_textOsMountDir;
 };
 
 #endif

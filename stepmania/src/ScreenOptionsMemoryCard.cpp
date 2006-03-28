@@ -16,23 +16,23 @@ void ScreenOptionsMemoryCard::Init()
 {
 	ScreenOptions::Init();
 
-	m_textCurrentCard.SetName( "CurrentCard" );
-	m_textCurrentCard.LoadFromFont( THEME->GetPathF(m_sName,"current") );
-	this->AddChild( &m_textCurrentCard );
+	m_textOsMountDir.SetName( "Mount" );
+	m_textOsMountDir.LoadFromFont( THEME->GetPathF(m_sName,"mount") );
+	this->AddChild( &m_textOsMountDir );
 
 	this->SubscribeToMessage( Message_StorageDevicesChanged );
 }
 
 void ScreenOptionsMemoryCard::TweenOnScreen()
 {
-	ON_COMMAND( m_textCurrentCard );
+	ON_COMMAND( m_textOsMountDir );
 
 	ScreenOptions::TweenOnScreen();
 }
 
 void ScreenOptionsMemoryCard::TweenOffScreen()
 {
-	OFF_COMMAND( m_textCurrentCard );
+	OFF_COMMAND( m_textOsMountDir );
 
 	ScreenOptions::TweenOffScreen();
 }
@@ -120,12 +120,12 @@ void ScreenOptionsMemoryCard::AfterChangeRow( PlayerNumber pn )
 
 	if( m_CurrentUsbStorageDevices.empty() )
 	{
-		m_textCurrentCard.SetText( "" );
+		m_textOsMountDir.SetText( "" );
 	}
 	else
 	{
 		int iRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
-		m_textCurrentCard.SetText( m_CurrentUsbStorageDevices[iRow].sOsMountDir );
+		m_textOsMountDir.SetText( m_CurrentUsbStorageDevices[iRow].sOsMountDir );
 	}
 }
 
