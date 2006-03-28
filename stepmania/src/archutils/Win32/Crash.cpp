@@ -69,12 +69,9 @@ static void GetReason( const EXCEPTION_RECORD *pRecord, CrashInfo *crash )
 	const char *reason = LookupException( pRecord->ExceptionCode );
 
 	if( reason == NULL )
-		wsprintf( crash->m_CrashReason, "Crash reason: unknown exception 0x%08lx", pRecord->ExceptionCode );
+		wsprintf( crash->m_CrashReason, "unknown exception 0x%08lx", pRecord->ExceptionCode );
 	else
-	{
-		strcpy( crash->m_CrashReason, "Crash reason: " );
-		strcat( crash->m_CrashReason, reason );
-	}
+		strcpy( crash->m_CrashReason, reason );
 }
 
 static HWND g_hForegroundWnd = NULL;
@@ -447,13 +444,26 @@ static bool PointsToValidCall( unsigned long ptr )
 void CrashHandler::do_backtrace( const void **buf, size_t size, 
 						 HANDLE hProcess, HANDLE hThread, const CONTEXT *pContext )
 {
+	const void **pLast = buf + size - 1;
+	bool bFirst = true;
+
+	/* The EIP of the position that crashed is normally on the stack, since the exception
+	 * handler was called on the same stack.  However, once in a while, due to stack corruption,
+	 * we might not be able to get any frames from the stack.  Pull it out of pContext->Eip,
+	 * which is always valid, and then discard the first stack frame if it's the same. */
+	if( buf+1 != pLast )
+	{
+		*buf = (void *) pContext->Eip;
+		++buf;
+	}
+		
 	// Retrieve stack pointers.
 	const char *pStackBase;
 	{
 		LDT_ENTRY sel;
 		if( !GetThreadSelectorEntry( hThread, pContext->SegFs, &sel ) )
 		{
-			buf[0] = NULL;
+			*buf = NULL;
 			return;
 		}
 
@@ -466,15 +476,18 @@ void CrashHandler::do_backtrace( const void **buf, size_t size,
 	const char *lpAddr = (const char *)pContext->Esp;
 
 	const void *data = (void *) pContext->Eip;
-	size_t i = 0;
 	do {
-		if( i+1 >= size )
+		if( buf == pLast )
 			break;
 
 		bool fValid = true;
 
-		/* The first entry is EIP, which is always interesting, even if it's not valid. */
-		if( i != 0 )
+		/* The first entry is usually EIP.  We already logged it; skip it, so we don't always
+		 * show the first frame twice. */
+		if( bFirst && data == (void *) pContext->Eip )
+			fValid = false;
+		bFirst = false;
+
 		{
 			MEMORY_BASIC_INFORMATION meminfo;
 
@@ -488,7 +501,10 @@ void CrashHandler::do_backtrace( const void **buf, size_t size,
 		}
 
 		if( fValid )
-			buf[i++] = data;
+		{
+			*buf = data;
+			++buf;
+		}
 
 		if (lpAddr >= pStackBase)
 			break;
@@ -496,7 +512,7 @@ void CrashHandler::do_backtrace( const void **buf, size_t size,
 		lpAddr += 4;
 	} while( ReadProcessMemory(hProcess, lpAddr-4, &data, 4, NULL));
 
-	buf[i++] = NULL;
+	*buf = NULL;
 }
 
 /* Trigger the crash handler.  This works even in the debugger. */
