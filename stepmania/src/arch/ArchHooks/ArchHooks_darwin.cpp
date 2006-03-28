@@ -305,6 +305,16 @@ int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 
 #include "RageFileManager.h"
 
+static void PathForFolderType( char dir[PATH_MAX], OSType folderType )
+{
+	FSRef fs;
+
+	if( FSFindFolder(kUserDomain, folderType, kDontCreateFolder, &fs) )
+		FAIL_M( ssprintf("FSFindFolder(%lu) failed.", folderType) );
+	if( FSRefMakePath(&fs, (UInt8 *)dir, PATH_MAX) )
+		FAIL_M( "FSRefMakePath() failed." );
+}
+
 void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 {
 	CFBundleRef bundle = CFBundleGetMainBundle();
@@ -318,18 +328,21 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 	CFRelease( dirURL );
 	FILEMAN->Mount( "dir", dir, "/" );
 	
-	FSRef fs; // This does not need to be "released" by the file manager
+	// /Save -> ~/Library/Application Support/PRODUCT_ID
+	PathForFolderType( dir, kApplicationSupportFolderType );
+	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID, dir), "/Save" );
 	
-	// This returns the absolute path for ~/Library/Application Support
-	if( FSFindFolder(kUserDomain, kApplicationSupportFolderType, kDontCreateFolder, &fs) )
-		FAIL_M( "FSFindFolder() failed." );
-	if( FSRefMakePath(&fs, (UInt8 *)dir, sizeof(dir)) )
-		FAIL_M( "FSRefMakePath() failed." );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/Save", dir), "/Save" );
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/Screenshots", dir), "/Screenshots" );
-	/* The Cache directory should probably go in ~/Library/Caches/bundle_identifier/Cache but
-	 * why bother we're already using ~/Library/Application Support/PRODUCT_ID. */
-	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/Cache", dir), "/Cache" );
+	// /Screenshots -> ~/Documents/PRODUCT_ID Screenshots
+	PathForFolderType( dir, kDocumentsFolderType );
+	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID " Screenshots", dir), "/Screenshots" );
+	
+	// /Cache -> ~/Library/Caches/PRODUCT_ID
+	PathForFolderType( dir, kCachedDataFolderType );
+	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID, dir), "/Cache" );
+
+	// /Logs -> ~/Library/Logs/PRODUCT_ID
+	PathForFolderType( dir, kDomainLibraryFolderType );
+	FILEMAN->Mount( "dir", ssprintf("%s/Logs/" PRODUCT_ID, dir), "/Logs" );
 }
 
 /*
