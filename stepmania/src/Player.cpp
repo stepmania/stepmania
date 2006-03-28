@@ -1411,7 +1411,7 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		bool bFreeze;
 		float fMissIfOlderThanThisBeat;
 		float fThrowAway;
-		GAMESTATE->m_pCurSong->GetBeatAndBPSFromElapsedTime( fEarliestTime, fMissIfOlderThanThisBeat, fThrowAway, bFreeze );
+		GAMESTATE->m_pCurSong->m_Timing.GetBeatAndBPSFromElapsedTime( fEarliestTime, fMissIfOlderThanThisBeat, fThrowAway, bFreeze );
 
 		iMissIfOlderThanThisIndex = BeatToNoteRow( fMissIfOlderThanThisBeat );
 		if( bFreeze )
