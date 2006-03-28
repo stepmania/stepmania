@@ -282,10 +282,16 @@ RageDisplay_D3D::~RageDisplay_D3D()
 	LOG->Trace( "RageDisplay_D3D::~RageDisplay()" );
 
 	if( g_pd3dDevice )
+	{
 		g_pd3dDevice->Release();
+		g_pd3dDevice = NULL;
+	}
 
 	if( g_pd3d )
+	{
 		g_pd3d->Release();
+		g_pd3d = NULL;
+	}
 
 #if !defined(XBOX)
 	if( g_D3D8_Module )
