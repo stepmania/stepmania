@@ -43,12 +43,12 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 {
 	/* All Windows data goes in the directory one level above the executable. */
 	CHECKPOINT_M( ssprintf( "DOE \"%s\"", sDirOfExecutable.c_str()) );
-	vector<RString> parts;
-	split( sDirOfExecutable, "/", parts );
-	CHECKPOINT_M( ssprintf( "... %i parts", parts.size()) );
-	ASSERT_M( parts.size() > 1, ssprintf("Strange sDirOfExecutable: %s", sDirOfExecutable.c_str()) );
-	RString Dir = join( "/", parts.begin(), parts.end()-1 );
-	FILEMAN->Mount( "dir", Dir, "/" );
+	vector<RString> asParts;
+	split( sDirOfExecutable, "/", asParts );
+	CHECKPOINT_M( ssprintf( "... %i asParts", asParts.size()) );
+	ASSERT_M( asParts.size() > 1, ssprintf("Strange sDirOfExecutable: %s", sDirOfExecutable.c_str()) );
+	RString sDir = join( "/", asParts.begin(), asParts.end()-1 );
+	FILEMAN->Mount( "dir", sDir, "/" );
 
 	RString sMyDocumentsDir = SpecialDirs::GetMyDocumentsDir();
 
