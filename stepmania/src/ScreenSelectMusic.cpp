@@ -631,18 +631,17 @@ void ScreenSelectMusic::CheckBackgroundRequests()
 	if( g_bSampleMusicWaiting )
 	{
 		/* Don't start the music sample when moving fast. */
-		if( g_StartedLoadingAt.Ago() >= SAMPLE_MUSIC_DELAY )
-		{
-			g_bSampleMusicWaiting = false;
-
-			SOUND->PlayMusic(
-				m_sSampleMusicToPlay, m_pSampleMusicTimingData,
-				true, m_fSampleStartSeconds, m_fSampleLengthSeconds,
-				1.5f, /* fade out for 1.5 seconds */
-				ALIGN_MUSIC_BEATS );
-		}
-		else
+		if( g_StartedLoadingAt.Ago() < SAMPLE_MUSIC_DELAY )
 			return;
+
+		g_bSampleMusicWaiting = false;
+
+		SOUND->PlayMusic(
+			m_sSampleMusicToPlay, m_pSampleMusicTimingData,
+			true, m_fSampleStartSeconds, m_fSampleLengthSeconds,
+			1.5f, /* fade out for 1.5 seconds */
+			ALIGN_MUSIC_BEATS );
+		}
 	}
 }
 
