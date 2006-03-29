@@ -63,7 +63,7 @@ private:
 	void Finish( PlayerNumber pn );
 	void UpdateSelectionText( int pn );
 	void ChangeDisplayedFeat();
-	void SelectChar( PlayerNumber pn, int c );
+	bool SelectChar( PlayerNumber pn, int c, bool bOptional );
 	void Backspace( PlayerNumber pn );
 	void HandleStart( PlayerNumber pn );
 
@@ -77,7 +77,7 @@ private:
 	Sprite			m_sprCursor[NUM_PLAYERS];
 	vector<BitmapText*>	m_textAlphabet[NUM_PLAYERS];
 	vector<int>		m_AlphabetLetter[NUM_PLAYERS];
-	int				m_SelectedChar[NUM_PLAYERS];
+	int			m_SelectedChar[NUM_PLAYERS];
 	AutoActor		m_sprOutOfRanking[NUM_PLAYERS];	// shown if didn't make any high scores
 	Sprite			m_sprNameFrame[NUM_PLAYERS];
 	BitmapText		m_textSelection[NUM_PLAYERS];

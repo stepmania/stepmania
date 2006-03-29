@@ -296,7 +296,7 @@ void ScreenNameEntryTraditional::Init()
 					m_sSelection[p].erase( MAX_RANKING_NAME_LENGTH );
 				ASSERT( (int) m_sSelection[p].size() <= MAX_RANKING_NAME_LENGTH );
 				if( m_sSelection[p].size() )
-					SelectChar(  p, CHAR_OK );
+					SelectChar(  p, CHAR_OK, false );
 			}
 
 			UpdateSelectionText( p );
@@ -508,7 +508,28 @@ void ScreenNameEntryTraditional::Input( const InputEventPlus &input )
 	if( IsTransitioning() )
 		return;
 
-	ScreenWithMenuElements::Input( input );
+	if( input.MenuI.IsValid() )
+	{
+		ScreenWithMenuElements::Input( input );
+	}
+	else
+	{
+		if( input.DeviceI.device == DEVICE_KEYBOARD  &&  input.type == IET_FIRST_PRESS )
+		{
+			char c = -1;
+			if( input.DeviceI.button == KEY_BACK )
+				c = CHAR_BACK;
+			else
+				c = toupper( input.DeviceI.ToChar() );
+
+			bool bChanged = SelectChar( GAMESTATE->m_MasterPlayerNumber, c, true );
+			if( bChanged )
+			{
+				m_soundChange.Play();
+				HandleStart( GAMESTATE->m_MasterPlayerNumber );
+			}
+		}
+	}
 }
 
 void ScreenNameEntryTraditional::ChangeDisplayedFeat()
@@ -644,7 +665,7 @@ void ScreenNameEntryTraditional::HandleStart( PlayerNumber pn )
 		if( (int) m_sSelection[pn].size() == MAX_RANKING_NAME_LENGTH )
 		{
 			m_soundInvalid.Play();
-			SelectChar( pn, CHAR_BACK );
+			SelectChar( pn, CHAR_BACK, false );
 			break;
 		}
 		m_sSelection[pn] += wchar_t(iSelectedLetter);
@@ -653,7 +674,7 @@ void ScreenNameEntryTraditional::HandleStart( PlayerNumber pn )
 
 		/* If that filled the string, set the cursor on OK. */
 		if( (int) m_sSelection[pn].size() == MAX_RANKING_NAME_LENGTH )
-			SelectChar( pn, CHAR_OK );
+			SelectChar( pn, CHAR_OK, false );
 	}
 }
 
@@ -669,7 +690,7 @@ void ScreenNameEntryTraditional::MenuSelect( const InputEventPlus &input )
 	Backspace( pn );
 }
 
-void ScreenNameEntryTraditional::SelectChar( PlayerNumber pn, int c )
+bool ScreenNameEntryTraditional::SelectChar( PlayerNumber pn, int c, bool bOptional )
 {
 	FOREACH( int, m_AlphabetLetter[pn], letter )
 	{
@@ -677,10 +698,12 @@ void ScreenNameEntryTraditional::SelectChar( PlayerNumber pn, int c )
 		{
 			m_SelectedChar[pn] = letter - m_AlphabetLetter[pn].begin();
 			PositionCharsAndCursor( pn );
-			return;
+			return true;
 		}
 	}
-	ASSERT( false );	// character not found
+	if( !bOptional )
+		ASSERT( false );	// character not found
+	return false;
 }
 
 void ScreenNameEntryTraditional::Backspace( PlayerNumber pn )
