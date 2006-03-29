@@ -209,15 +209,15 @@ static void StartMusic( MusicToPlay &ToPlay )
 		const float PresumedLatency = SOUND->GetPlayLatency() + 0.040f;
 		const float fCurSecond = GAMESTATE->m_fMusicSeconds + PresumedLatency;
 		const float fCurBeat = g_Playing->m_Timing.GetBeatFromElapsedTime( fCurSecond );
-		const float fCurBeatFraction = fmodfp( fCurBeat,1 );
 
 		/* The beat that the new sound will start on. */
 		const float fStartBeat = NewMusic->m_NewTiming.GetBeatFromElapsedTime( ToPlay.start_sec );
-		float fStartBeatFraction = fmodfp( fStartBeat, 1 );
-		if( fStartBeatFraction < fCurBeatFraction )
-			fStartBeatFraction += 1.0f; /* unwrap */
+		const float fStartBeatFraction = fmodfp( fStartBeat, 1 );
 
-		const float fCurBeatToStartOn = truncf(fCurBeat) + fStartBeatFraction;
+		float fCurBeatToStartOn = truncf(fCurBeat) + fStartBeatFraction;
+		if( fCurBeatToStartOn < fCurBeat )
+			fCurBeatToStartOn += 1.0f;
+
 		const float fSecondToStartOn = g_Playing->m_Timing.GetElapsedTimeFromBeat( fCurBeatToStartOn );
 		const float fMaximumDistance = 2;
 		const float fDistance = min( fSecondToStartOn - GAMESTATE->m_fMusicSeconds, fMaximumDistance );
