@@ -616,7 +616,7 @@ bool MemoryCardManager::MountCard( PlayerNumber pn, const UsbStorageDevice &d )
  * will block until flushed. */
 void MemoryCardManager::UnmountCard( PlayerNumber pn )
 {
-	LOG->Trace( "MemoryCardManager::UnmountCard(%i)", pn );
+	LOG->Trace( "MemoryCardManager::UnmountCard(%i) (mounted: %i)", pn, m_bMounted[pn] );
 	if( m_Device[pn].IsBlank() )
 		return;
 
