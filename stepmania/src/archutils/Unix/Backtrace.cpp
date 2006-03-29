@@ -421,17 +421,17 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 }
 
 #elif defined(BACKTRACE_METHOD_POWERPC_DARWIN)
-typedef struct Frame
+struct Frame
 {
     Frame *stackPointer;
     long conditionReg;
     void *linkReg;
-} *FramePtr;
+};
 
 void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc )
 {
-	ctx->PC = (void *) uc->uc_mcontext->ss.srr0;
-	ctx->FramePtr = (void *) uc->uc_mcontext->ss.r1;
+	ctx->PC = (const void *) uc->uc_mcontext->ss.srr0;
+	ctx->FramePtr = (const Frame *) uc->uc_mcontext->ss.r1;
 }
 
 void InitializeBacktrace() { }
@@ -445,11 +445,11 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 
 		/* __builtin_frame_address is broken on OS X; it sometimes returns bogus results. */
 		register void *r1 __asm__ ("r1");
-		CurrentCtx.FramePtr = (void *) r1;
+		CurrentCtx.FramePtr = (const Frame *) r1;
 		CurrentCtx.PC = NULL;
 	}
 	
-	const Frame *frame = (Frame *) ctx->FramePtr;
+	const Frame *frame = ctx->FramePtr;
 
 	unsigned i = 0;
 	if( ctx->PC && i < size-1 )
