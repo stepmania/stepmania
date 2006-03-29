@@ -632,7 +632,7 @@ void ScreenSelectMusic::CheckBackgroundRequests( bool bForce )
 	if( g_bSampleMusicWaiting )
 	{
 		/* Don't start the music sample when moving fast. */
-		if( g_StartedLoadingAt.Ago() < SAMPLE_MUSIC_DELAY || bForce )
+		if( g_StartedLoadingAt.Ago() < SAMPLE_MUSIC_DELAY && !bForce )
 			return;
 
 		g_bSampleMusicWaiting = false;
