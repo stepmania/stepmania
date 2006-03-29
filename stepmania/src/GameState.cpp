@@ -1599,11 +1599,14 @@ bool GameState::ChangePreferredDifficulty( PlayerNumber pn, Difficulty dc )
 	return true;
 }
 
+/* When only displaying difficulties in DIFFICULTIES_TO_SHOW, use GetClosestShownDifficulty
+ * to find which difficulty to show, and ChangePreferredDifficulty(pn, dir) to change
+ * difficulty. */
 bool GameState::ChangePreferredDifficulty( PlayerNumber pn, int dir )
 {
 	const vector<Difficulty> &v = CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue();
 
-	Difficulty d = m_PreferredDifficulty[pn];
+	Difficulty d = GAMESTATE->GetClosestShownDifficulty(pn);
 	while( 1 )
 	{
 		d = (Difficulty)(d+dir);
@@ -1614,6 +1617,28 @@ bool GameState::ChangePreferredDifficulty( PlayerNumber pn, int dir )
 	}
 
 	return ChangePreferredDifficulty( pn, d );
+}
+
+/* The user may be set to prefer a difficulty that isn't always shown; typically,
+ * DIFFICULTY_EDIT.  Return the closest shown difficulty <= m_PreferredDifficulty. */
+Difficulty GameState::GetClosestShownDifficulty( PlayerNumber pn ) const
+{
+	const vector<Difficulty> &v = CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue();
+
+	Difficulty iClosest = (Difficulty) 0;
+	int iClosestDist = -1;
+	FOREACH_CONST( Difficulty, v, dc )
+	{
+		int iDist = m_PreferredDifficulty[pn] - *dc;
+		if( iDist < 0 )
+			continue;
+		if( iClosestDist != -1 && iDist > iClosestDist )
+			continue;
+		iClosestDist = iDist;
+		iClosest = *dc;
+	}
+
+	return iClosest;
 }
 
 bool GameState::ChangePreferredCourseDifficulty( PlayerNumber pn, CourseDifficulty cd )

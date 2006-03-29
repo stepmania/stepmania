@@ -70,13 +70,15 @@ void DifficultyList::Load()
 
 int DifficultyList::GetCurrentRowIndex( PlayerNumber pn ) const
 {
+	Difficulty ClosestDifficulty = GAMESTATE->GetClosestShownDifficulty(pn);
+	
 	for( unsigned i=0; i<m_Rows.size(); i++ )
 	{
 		const Row &row = m_Rows[i];
 
 		if( GAMESTATE->m_pCurSteps[pn] == NULL )
 		{
-			if( row.m_dc == GAMESTATE->m_PreferredDifficulty[pn] )
+			if( row.m_dc == ClosestDifficulty )
 				return i;
 		}
 		else
