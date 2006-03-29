@@ -1,6 +1,5 @@
 #include "global.h"
 #include "TimingData.h"
-#include "PrefsManager.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "NoteTypes.h"
