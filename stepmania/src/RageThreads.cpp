@@ -91,6 +91,17 @@ void ThreadSlot::ThreadCheckpoint::Set( const char *szFile, int iLine, const cha
 	m_szFile = szFile;
 	m_iLine = iLine;
 	m_szMessage = szMessage;
+
+	/* Skip any path components. */
+	if( m_szFile != NULL )
+	{
+		const char *p = strrchr( m_szFile, '/' );
+		if( p == NULL )
+			p = strrchr( m_szFile, '\\' );
+		if( p != NULL && p[1] != '\0' )
+			m_szFile = p+1;
+	}
+
 	sprintf( m_szFormattedBuf, "        %s:%i %s", m_szFile, m_iLine, m_szMessage? m_szMessage:"" );
 }
 
