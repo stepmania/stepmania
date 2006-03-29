@@ -71,7 +71,7 @@ protected:
 	void AfterMusicChange();
 	void SortOrderChanged();
 
-	void CheckBackgroundRequests();
+	void CheckBackgroundRequests( bool bForce );
 
 	vector<Steps*>			m_vpSteps;
 	vector<Trail*>			m_vpTrails;

@@ -563,7 +563,8 @@ void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
 	}
 }
 
-void ScreenSelectMusic::CheckBackgroundRequests()
+/* If bForce is true, the next request will be started even if it might cause a skip. */
+void ScreenSelectMusic::CheckBackgroundRequests( bool bForce )
 {
 	if( g_bCDTitleWaiting )
 	{
@@ -597,7 +598,7 @@ void ScreenSelectMusic::CheckBackgroundRequests()
 	 * for the options screen if a song is selected quickly.  Also, don't do this
 	 * if the wheel is locked, since we're just bouncing around after selecting TYPE_RANDOM,
 	 * and it'll take a while before the wheel will settle. */
-	if( !m_MusicWheel.IsSettled() && !m_MusicWheel.WheelIsLocked() && !m_Out.IsTransitioning() )
+	if( !m_MusicWheel.IsSettled() && !m_MusicWheel.WheelIsLocked() && !bForce )
 		return;
 
 	if( g_bBannerWaiting )
@@ -631,7 +632,7 @@ void ScreenSelectMusic::CheckBackgroundRequests()
 	if( g_bSampleMusicWaiting )
 	{
 		/* Don't start the music sample when moving fast. */
-		if( g_StartedLoadingAt.Ago() < SAMPLE_MUSIC_DELAY )
+		if( g_StartedLoadingAt.Ago() < SAMPLE_MUSIC_DELAY || bForce )
 			return;
 
 		g_bSampleMusicWaiting = false;
@@ -648,7 +649,7 @@ void ScreenSelectMusic::Update( float fDeltaTime )
 {
 	Screen::Update( fDeltaTime );
 
-	CheckBackgroundRequests();
+	CheckBackgroundRequests( false );
 }
 
 void ScreenSelectMusic::Input( const InputEventPlus &input )
@@ -1205,7 +1206,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 		 * come through, the music will still start. */
 		g_bCDTitleWaiting = g_bBannerWaiting = false;
 		m_BackgroundLoader.Abort();
-		CheckBackgroundRequests();
+		CheckBackgroundRequests( true );
 
 		if( OPTIONS_MENU_AVAILABLE )
 		{
