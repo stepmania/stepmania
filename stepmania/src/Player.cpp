@@ -991,6 +991,7 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 					// this is handled in Update
 					break;
 				case TapNote::hold_head_roll:
+					if( bSteppedOnTapNote )
 					{
 						// Increase life
 						tn.HoldResult.fLife = 1;
