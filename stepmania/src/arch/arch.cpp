@@ -100,7 +100,9 @@ LoadingWindow *MakeLoadingWindow()
 {
 	if( !PREFSMAN->m_bShowLoadingWindow )
 		return new LoadingWindow_Null;
-
+#if defined(LINUX) && !defined(HAVE_GTK)
+	return new LoadingWindow_Null;
+#endif
 	/* Don't load NULL by default. */
 	const RString drivers = "xbox,win32,cocoa,gtk";
 	vector<RString> DriversToTry;
