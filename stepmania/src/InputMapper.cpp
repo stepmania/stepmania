@@ -343,7 +343,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 	},
 	{
 		"dance",
-		"RedOctane USB Pad",
+		"RedOctane USB Pad|XBOX DDR", // "RedOctane USB Pad" is Ignition 3s and newer Afterburners.  "XBOX DDR" is older Afterburners.
 		"RedOctane Ignition 3 or Afterburner",
 		{
 			{ 0, JOY_BUTTON_1,	/* dpad L */	DANCE_BUTTON_LEFT,	false },
