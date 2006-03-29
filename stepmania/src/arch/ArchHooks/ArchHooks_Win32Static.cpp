@@ -48,6 +48,7 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 	CHECKPOINT_M( ssprintf( "... %i asParts", asParts.size()) );
 	ASSERT_M( asParts.size() > 1, ssprintf("Strange sDirOfExecutable: %s", sDirOfExecutable.c_str()) );
 	RString sDir = join( "/", asParts.begin(), asParts.end()-1 );
+	
 	FILEMAN->Mount( "dir", sDir, "/" );
 
 	RString sMyDocumentsDir = SpecialDirs::GetMyDocumentsDir();
