@@ -384,10 +384,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 		{
 			Difficulty dcOld = DIFFICULTY_INVALID;
 			if( !m_vpSteps.empty() )
-			{
-				Steps *pSteps = GetSelectedSteps();
-				dcOld = pSteps->GetDifficulty();
-			}
+				dcOld = GetSelectedDifficulty();
 
 			m_vpSteps.clear();
 			
