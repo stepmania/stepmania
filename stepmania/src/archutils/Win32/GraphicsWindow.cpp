@@ -49,6 +49,8 @@ static RString GetNewWindow()
 
 static LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
+	CHECKPOINT_M( ssprintf("%p, %u, %08x, %08x", hWnd, msg, wParam, lParam) );
+
 	/* Suppress autorun. */
 	if( msg == g_iQueryCancelAutoPlayMessage )
 		return true;
@@ -158,6 +160,8 @@ static LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wPar
 		break;
 	}
 	}
+
+	CHECKPOINT_M( ssprintf("%p, %u, %08x, %08x", hWnd, msg, wParam, lParam) );
 
 	if( m_bWideWindowClass )
 		return DefWindowProcW( hWnd, msg, wParam, lParam );
