@@ -509,7 +509,7 @@ void GameSoundManager::Update( float fDeltaTime )
 	if( PREFSMAN->m_bLogSkips && !g_Playing->m_bTimingDelayed )
 	{
 		const float fExpectedTimePassed = (tm - GAMESTATE->m_LastBeatUpdate) * g_Playing->m_Music->GetPlaybackRate();
-		const float fSoundTimePassed = fSeconds - GAMESTATE->m_fMusicSeconds;
+		const float fSoundTimePassed = fSeconds - GAMESTATE->m_fMusicSecondsNoOffset;
 		const float fDiff = fExpectedTimePassed - fSoundTimePassed;
 
 		static RString sLastFile = "";
@@ -518,7 +518,7 @@ void GameSoundManager::Update( float fDeltaTime )
 		/* If fSoundTimePassed < 0, the sound has probably looped. */
 		if( sLastFile == ThisFile && fSoundTimePassed >= 0 && fabsf(fDiff) > 0.003f )
 			LOG->Trace("Song position skip in %s: expected %.3f, got %.3f (cur %f, prev %f) (%.3f difference)",
-				Basename(ThisFile).c_str(), fExpectedTimePassed, fSoundTimePassed, fSeconds, GAMESTATE->m_fMusicSeconds, fDiff );
+				Basename(ThisFile).c_str(), fExpectedTimePassed, fSoundTimePassed, fSeconds, GAMESTATE->m_fMusicSecondsNoOffset, fDiff );
 		sLastFile = ThisFile;
 	}
 
