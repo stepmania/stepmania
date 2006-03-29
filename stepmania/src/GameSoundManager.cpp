@@ -206,8 +206,8 @@ static void StartMusic( MusicToPlay &ToPlay )
 		/* GetPlayLatency returns the minimum time until a sound starts.  That's
 		 * common when starting a precached sound, but our sound isn't, so it'll
 		 * probably take a little longer.  Nudge the latency up. */
-		const float PresumedLatency = SOUND->GetPlayLatency() + 0.040f;
-		const float fCurSecond = GAMESTATE->m_fMusicSecondsNoOffset + PresumedLatency;
+		const float fPresumedLatency = SOUND->GetPlayLatency() + 0.040f;
+		const float fCurSecond = GAMESTATE->m_fMusicSecondsNoOffset + fPresumedLatency;
 		const float fCurBeat = g_Playing->m_Timing.GetBeatFromElapsedTime( fCurSecond );
 
 		/* The beat that the new sound will start on. */
