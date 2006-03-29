@@ -515,7 +515,8 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			if( dc != DIFFICULTY_EDIT )
 			{
 				Steps *pSteps = GetSelectedSong()->GetStepsByDifficulty( GetSelectedSourceStepsType(), dc );
-				m_vpSourceSteps.push_back( StepsAndDifficulty(pSteps,dc) );
+				if( pSteps != NULL )
+					m_vpSourceSteps.push_back( StepsAndDifficulty(pSteps,dc) );
 			}
 			else
 			{
@@ -524,8 +525,6 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				StepsUtil::SortStepsByDescription( v );
 				FOREACH_CONST( Steps*, v, pSteps )
 					m_vpSourceSteps.push_back( StepsAndDifficulty(*pSteps,dc) );
-				if( v.empty() )
-					m_vpSourceSteps.push_back( StepsAndDifficulty(NULL,dc) );
 			}
 		}
 		CLAMP( m_iSelection[ROW_SOURCE_STEPS], 0, m_vpSourceSteps.size()-1 );
