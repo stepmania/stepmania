@@ -220,9 +220,9 @@ static void StartMusic( MusicToPlay &ToPlay )
 		const float fCurBeatToStartOn = truncf(fCurBeat) + fStartBeatFraction;
 		const float fSecondToStartOn = g_Playing->m_Timing.GetElapsedTimeFromBeat( fCurBeatToStartOn );
 		const float fMaximumDistance = 2;
-		const float fDistance = min( fSecondToStartOn - fCurSecond, fMaximumDistance );
+		const float fDistance = min( fSecondToStartOn - GAMESTATE->m_fMusicSeconds, fMaximumDistance );
 
-		when = GAMESTATE->m_LastBeatUpdate + PresumedLatency + fDistance;
+		when = GAMESTATE->m_LastBeatUpdate + fDistance;
 	}
 
 	/* Important: don't hold the mutex while we load and seek the actual sound. */
