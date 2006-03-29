@@ -344,9 +344,13 @@ namespace SymbolLookup
 		VirtualQueryEx( g_hParent, ptr, &meminfo, sizeof meminfo );
 
 		char tmp[512];
-		if( VDDebugInfo::VDDebugInfoLookupRVA(pctx, (unsigned int)ptr, tmp, sizeof(tmp)) >= 0 )
+		long iAddress = VDDebugInfo::VDDebugInfoLookupRVA(pctx, (unsigned int)ptr, tmp, sizeof(tmp));
+		if( iAddress >= 0 )
 		{
-			wsprintf( buf, "%08x: %s", ptr, Demangle(tmp) );
+			wsprintf( buf, "%08x: %s [%08lx+%lx+%lx]", ptr, Demangle(tmp),
+				pctx->nFirstRVA,
+				((unsigned int) ptr) - pctx->nFirstRVA - iAddress,
+				iAddress );
 			return;
 		}
 
