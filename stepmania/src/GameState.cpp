@@ -582,7 +582,6 @@ const float GameState::MUSIC_SECONDS_INVALID = -5000.0f;
 void GameState::ResetMusicStatistics()
 {	
 	m_fMusicSeconds = 0; // MUSIC_SECONDS_INVALID;
-	m_fMusicSecondsNoOffset = 0;
 	m_fSongBeat = 0;
 	m_fCurBPS = 10;
 	m_bFreeze = false;
@@ -644,10 +643,6 @@ void GameState::ResetStageStatistics()
 
 void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp )
 {
-	m_fMusicSecondsNoOffset = fPositionSeconds;
-
-	fPositionSeconds += PREFSMAN->m_fGlobalOffsetSeconds;
-
 	if( !timestamp.IsZero() )
 		m_LastBeatUpdate = timestamp;
 	else

@@ -69,6 +69,17 @@ public:
 		return fBeat;
 	}
 	float GetElapsedTimeFromBeat( float fBeat ) const;
+
+	void GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut ) const;
+	float GetBeatFromElapsedTimeNoOffset( float fElapsedTime ) const	// shortcut for places that care only about the beat
+	{
+		float fBeat, fThrowAway;
+		bool bThrowAway;
+		GetBeatAndBPSFromElapsedTimeNoOffset( fElapsedTime, fBeat, fThrowAway, bThrowAway );
+		return fBeat;
+	}
+	float GetElapsedTimeFromBeatNoOffset( float fBeat ) const;
+
 	bool HasBpmChanges() const;
 	bool HasStops() const;
 

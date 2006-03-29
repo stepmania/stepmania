@@ -1,5 +1,6 @@
 #include "global.h"
 #include "TimingData.h"
+#include "PrefsManager.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "NoteTypes.h"
@@ -198,6 +199,13 @@ BPMSegment& TimingData::GetBPMSegmentAtBeat( float fBeat )
 
 void TimingData::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut ) const
 {
+	fElapsedTime += PREFSMAN->m_fGlobalOffsetSeconds;
+
+	GetBeatAndBPSFromElapsedTimeNoOffset( fElapsedTime, fBeatOut, fBPSOut, bFreezeOut );
+}
+
+void TimingData::GetBeatAndBPSFromElapsedTimeNoOffset( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut ) const
+{
 //	LOG->Trace( "GetBeatAndBPSFromElapsedTime( fElapsedTime = %f )", fElapsedTime );
 
 	fElapsedTime += m_fBeat0OffsetInSeconds;
@@ -259,6 +267,11 @@ void TimingData::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatO
 
 
 float TimingData::GetElapsedTimeFromBeat( float fBeat ) const
+{
+	return TimingData::GetElapsedTimeFromBeatNoOffset( fBeat ) - PREFSMAN->m_fGlobalOffsetSeconds;
+}
+
+float TimingData::GetElapsedTimeFromBeatNoOffset( float fBeat ) const
 {
 	float fElapsedTime = 0;
 	fElapsedTime -= m_fBeat0OffsetInSeconds;

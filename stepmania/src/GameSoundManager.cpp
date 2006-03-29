@@ -207,7 +207,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 		 * common when starting a precached sound, but our sound isn't, so it'll
 		 * probably take a little longer.  Nudge the latency up. */
 		const float fPresumedLatency = SOUND->GetPlayLatency() + 0.040f;
-		const float fCurSecond = GAMESTATE->m_fMusicSecondsNoOffset + fPresumedLatency;
+		const float fCurSecond = GAMESTATE->m_fMusicSeconds + fPresumedLatency;
 		const float fCurBeat = g_Playing->m_Timing.GetBeatFromElapsedTime( fCurSecond );
 
 		/* The beat that the new sound will start on. */
@@ -220,7 +220,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 
 		const float fSecondToStartOn = g_Playing->m_Timing.GetElapsedTimeFromBeat( fCurBeatToStartOn );
 		const float fMaximumDistance = 2;
-		const float fDistance = min( fSecondToStartOn - GAMESTATE->m_fMusicSecondsNoOffset, fMaximumDistance );
+		const float fDistance = min( fSecondToStartOn - GAMESTATE->m_fMusicSeconds, fMaximumDistance );
 
 		when = GAMESTATE->m_LastBeatUpdate + fDistance;
 	}
@@ -490,8 +490,8 @@ void GameSoundManager::Update( float fDeltaTime )
 	if( !g_Playing->m_Music->IsPlaying() )
 	{
 		/* There's no song playing.  Fake it. */
-		CHECKPOINT_M( ssprintf("%f, delta %f", GAMESTATE->m_fMusicSecondsNoOffset, fDeltaTime) );
-		GAMESTATE->UpdateSongPosition( GAMESTATE->m_fMusicSecondsNoOffset + fDeltaTime, g_Playing->m_Timing );
+		CHECKPOINT_M( ssprintf("%f, delta %f", GAMESTATE->m_fMusicSeconds, fDeltaTime) );
+		GAMESTATE->UpdateSongPosition( GAMESTATE->m_fMusicSeconds + fDeltaTime, g_Playing->m_Timing );
 		return;
 	}
 
@@ -509,7 +509,7 @@ void GameSoundManager::Update( float fDeltaTime )
 	if( PREFSMAN->m_bLogSkips && !g_Playing->m_bTimingDelayed )
 	{
 		const float fExpectedTimePassed = (tm - GAMESTATE->m_LastBeatUpdate) * g_Playing->m_Music->GetPlaybackRate();
-		const float fSoundTimePassed = fSeconds - GAMESTATE->m_fMusicSecondsNoOffset;
+		const float fSoundTimePassed = fSeconds - GAMESTATE->m_fMusicSeconds;
 		const float fDiff = fExpectedTimePassed - fSoundTimePassed;
 
 		static RString sLastFile = "";
@@ -518,7 +518,7 @@ void GameSoundManager::Update( float fDeltaTime )
 		/* If fSoundTimePassed < 0, the sound has probably looped. */
 		if( sLastFile == ThisFile && fSoundTimePassed >= 0 && fabsf(fDiff) > 0.003f )
 			LOG->Trace("Song position skip in %s: expected %.3f, got %.3f (cur %f, prev %f) (%.3f difference)",
-				Basename(ThisFile).c_str(), fExpectedTimePassed, fSoundTimePassed, fSeconds, GAMESTATE->m_fMusicSecondsNoOffset, fDiff );
+				Basename(ThisFile).c_str(), fExpectedTimePassed, fSoundTimePassed, fSeconds, GAMESTATE->m_fMusicSeconds, fDiff );
 		sLastFile = ThisFile;
 	}
 
@@ -537,7 +537,7 @@ void GameSoundManager::Update( float fDeltaTime )
 	{
 		/* We're still waiting for the new sound to start playing, so keep using the
 		 * old timing data and fake the time. */
-		GAMESTATE->UpdateSongPosition( GAMESTATE->m_fMusicSecondsNoOffset + fDeltaTime, g_Playing->m_Timing );
+		GAMESTATE->UpdateSongPosition( GAMESTATE->m_fMusicSeconds + fDeltaTime, g_Playing->m_Timing );
 	}
 	else
 	{
