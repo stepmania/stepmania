@@ -402,7 +402,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 							GetSelectedSong()->GetSteps( v, GetSelectedStepsType(), DIFFICULTY_EDIT );
 							StepsUtil::SortStepsByDescription( v );
 							FOREACH_CONST( Steps*, v, p )
-							m_vpSteps.push_back( StepsAndDifficulty(*p,dc) );
+								m_vpSteps.push_back( StepsAndDifficulty(*p,dc) );
 						}
 						break;
 					case EditMode_Home:
