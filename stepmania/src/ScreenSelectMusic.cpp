@@ -641,7 +641,6 @@ void ScreenSelectMusic::CheckBackgroundRequests()
 			true, m_fSampleStartSeconds, m_fSampleLengthSeconds,
 			1.5f, /* fade out for 1.5 seconds */
 			ALIGN_MUSIC_BEATS );
-		}
 	}
 }
 
