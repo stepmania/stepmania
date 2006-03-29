@@ -39,46 +39,46 @@ bool RageThread::s_bIsShowingDialog = false;
 
 struct ThreadSlot
 {
-	mutable char name[1024]; /* mutable so we can force nul-termination */
+	mutable char m_szName[1024]; /* mutable so we can force nul-termination */
 
 	/* Format this beforehand, since it's easier to do that than to do it under crash conditions. */
-	char ThreadFormattedOutput[1024];
+	char m_szThreadFormattedOutput[1024];
 
-	bool used;
-	uint64_t id;
+	bool m_bUsed;
+	uint64_t m_iID;
 
-	ThreadImpl *pImpl;
+	ThreadImpl *m_pImpl;
 
 	#undef CHECKPOINT_COUNT
 	#define CHECKPOINT_COUNT 5
 	struct ThreadCheckpoint
 	{
-		const char *File, *Message;
-		int Line;
-		char FormattedBuf[1024];
+		const char *m_szFile, *m_szMessage;
+		int m_iLine;
+		char m_szFormattedBuf[1024];
 
 		ThreadCheckpoint() { Set( NULL, 0, NULL ); }
-		void Set(const char *File_, int Line_, const char *Message_=NULL);
+		void Set( const char *szFile, int iLine, const char *szMessage = NULL );
 		const char *GetFormattedCheckpoint();
 	};
-	ThreadCheckpoint Checkpoints[CHECKPOINT_COUNT];
-	int CurCheckpoint, NumCheckpoints;
+	ThreadCheckpoint m_Checkpoints[CHECKPOINT_COUNT];
+	int m_iCurCheckpoint, m_iNumCheckpoints;
 	const char *GetFormattedCheckpoint( int lineno );
 
 	ThreadSlot() { Init(); }
 	void Init()
 	{
-		id = GetInvalidThreadId();
-		CurCheckpoint = NumCheckpoints = 0;
-		pImpl = NULL;
+		m_iID = GetInvalidThreadId();
+		m_iCurCheckpoint = m_iNumCheckpoints = 0;
+		m_pImpl = NULL;
 
 		/* Reset used last; otherwise, a thread creation might pick up the slot. */
-		used = false;
+		m_bUsed = false;
 	}
 
 	void Release()
 	{
-		SAFE_DELETE( pImpl );
+		SAFE_DELETE( m_pImpl );
 		Init();
 	}
 
@@ -86,43 +86,43 @@ struct ThreadSlot
 };
 
 
-void ThreadSlot::ThreadCheckpoint::Set( const char *File_, int Line_, const char *Message_ )
+void ThreadSlot::ThreadCheckpoint::Set( const char *szFile, int iLine, const char *szMessage )
 {
-	File=File_;
-	Line=Line_;
-	Message=Message_;
-	sprintf( FormattedBuf, "        %s:%i %s", File, Line, Message? Message:"" );
+	m_szFile = szFile;
+	m_iLine = iLine;
+	m_szMessage = szMessage;
+	sprintf( m_szFormattedBuf, "        %s:%i %s", m_szFile, m_iLine, m_szMessage? m_szMessage:"" );
 }
 
 const char *ThreadSlot::ThreadCheckpoint::GetFormattedCheckpoint()
 {
-	if( File == NULL )
+	if( m_szFile == NULL )
 		return NULL;
 
 	/* Make sure it's terminated: */
-	FormattedBuf [ sizeof(FormattedBuf)-1 ] = 0;
+	m_szFormattedBuf[ sizeof(m_szFormattedBuf)-1 ] = 0;
 
-	return FormattedBuf;
+	return m_szFormattedBuf;
 }
 
 const char *ThreadSlot::GetFormattedCheckpoint( int lineno )
 {
-	if( lineno >= CHECKPOINT_COUNT || lineno >= NumCheckpoints )
+	if( lineno >= CHECKPOINT_COUNT || lineno >= m_iNumCheckpoints )
 		return NULL;
 
-	if( NumCheckpoints == CHECKPOINT_COUNT )
+	if( m_iNumCheckpoints == CHECKPOINT_COUNT )
 	{
-		lineno += CurCheckpoint;
+		lineno += m_iCurCheckpoint;
 		lineno %= CHECKPOINT_COUNT;
 	}
 
-	return Checkpoints[lineno].GetFormattedCheckpoint();
+	return m_Checkpoints[lineno].GetFormattedCheckpoint();
 }
 
 static ThreadSlot g_ThreadSlots[MAX_THREADS];
 struct ThreadSlot *g_pUnknownThreadSlot = NULL;
 
-/* Lock this mutex before using or modifying pImpl.  Other values are just identifiers,
+/* Lock this mutex before using or modifying m_pImpl.  Other values are just identifiers,
  * so possibly racing over them is harmless (simply using a stale thread ID, etc). */
 static RageMutex &GetThreadSlotsLock()
 {
@@ -135,10 +135,10 @@ static int FindEmptyThreadSlot()
 	LockMut( GetThreadSlotsLock() );
 	for( int entry = 0; entry < MAX_THREADS; ++entry )
 	{
-		if( g_ThreadSlots[entry].used )
+		if( g_ThreadSlots[entry].m_bUsed )
 			continue;
 
-		g_ThreadSlots[entry].used = true;
+		g_ThreadSlots[entry].m_bUsed = true;
 		return entry;
 	}
 			
@@ -167,9 +167,9 @@ static void InitThreads()
 
 	/* Register the "unknown thread" slot. */
 	int slot = FindEmptyThreadSlot();
-	strcpy( g_ThreadSlots[slot].name, "Unknown thread" );
-	g_ThreadSlots[slot].id = GetInvalidThreadId();
-	sprintf( g_ThreadSlots[slot].ThreadFormattedOutput, "Unknown thread" );
+	strcpy( g_ThreadSlots[slot].m_szName, "Unknown thread" );
+	g_ThreadSlots[slot].m_iID = GetInvalidThreadId();
+	sprintf( g_ThreadSlots[slot].m_szThreadFormattedOutput, "Unknown thread" );
 	g_pUnknownThreadSlot = &g_ThreadSlots[slot];
 
 	GetThreadSlotsLock().Unlock();
@@ -182,9 +182,9 @@ static ThreadSlot *GetThreadSlotFromID( uint64_t iID )
 
 	for( int entry = 0; entry < MAX_THREADS; ++entry )
 	{
-		if( !g_ThreadSlots[entry].used )
+		if( !g_ThreadSlots[entry].m_bUsed )
 			continue;
-		if( g_ThreadSlots[entry].id == iID )
+		if( g_ThreadSlots[entry].m_iID == iID )
 			return &g_ThreadSlots[entry];
 	}
 	return NULL;
@@ -215,9 +215,9 @@ const char *ThreadSlot::GetThreadName() const
 {
 	/* This function may be called in crash conditions, so guarantee the string
 	 * is null-terminated. */
-	name[sizeof(name)-1] = 0;
+	m_szName[sizeof(m_szName)-1] = 0;
 
-	return name;
+	return m_szName;
 }
 
 void RageThread::Create( int (*fn)(void *), void *data )
@@ -239,21 +239,21 @@ void RageThread::Create( int (*fn)(void *), void *data )
 			LOG->Warn( "Created a thread without naming it first." );
 
 		/* If you don't name it, I will: */
-		strcpy( m_pSlot->name, "Joe" );
+		strcpy( m_pSlot->m_szName, "Joe" );
 	}
 	else
 	{
-		strcpy( m_pSlot->name, name.c_str() );
+		strcpy( m_pSlot->m_szName, name.c_str() );
 	}
 
 	if( LOG )
 		LOG->Trace( "Starting thread: %s", name.c_str() );
-	sprintf( m_pSlot->ThreadFormattedOutput, "Thread: %s", name.c_str() );
+	sprintf( m_pSlot->m_szThreadFormattedOutput, "Thread: %s", name.c_str() );
 
 	/* Start a thread using our own startup function.  We pass the id to fill in,
 	 * to make sure it's set before the thread actually starts.  (Otherwise, early
 	 * checkpoints might not have a completely set-up thread slot.) */
-	m_pSlot->pImpl = MakeThread( fn, data, &m_pSlot->id );
+	m_pSlot->m_pImpl = MakeThread( fn, data, &m_pSlot->m_iID );
 }
 
 RageThreadRegister::RageThreadRegister( const RString &sName )
@@ -265,11 +265,11 @@ RageThreadRegister::RageThreadRegister( const RString &sName )
 	
 	m_pSlot = &g_ThreadSlots[iSlot];
 	
-	strcpy( m_pSlot->name, sName );
-	sprintf( m_pSlot->ThreadFormattedOutput, "Thread: %s", sName.c_str() );
+	strcpy( m_pSlot->m_szName, sName );
+	sprintf( m_pSlot->m_szThreadFormattedOutput, "Thread: %s", sName.c_str() );
 
-	m_pSlot->id = GetThisThreadId();
-	m_pSlot->pImpl = MakeThisThread();
+	m_pSlot->m_iID = GetThisThreadId();
+	m_pSlot->m_pImpl = MakeThisThread();
 
 }
 
@@ -303,8 +303,8 @@ bool RageThread::EnumThreadIDs( int n, uint64_t &iID )
 	LockMut(GetThreadSlotsLock());
 	const ThreadSlot *slot = &g_ThreadSlots[n];
 
-	if( slot->used )
-		iID = slot->id;
+	if( slot->m_bUsed )
+		iID = slot->m_iID;
 	else
 		iID = GetInvalidThreadId();
 
@@ -314,8 +314,8 @@ bool RageThread::EnumThreadIDs( int n, uint64_t &iID )
 int RageThread::Wait()
 {
 	ASSERT( m_pSlot != NULL );
-	ASSERT( m_pSlot->pImpl != NULL );
-	int ret = m_pSlot->pImpl->Wait();
+	ASSERT( m_pSlot->m_pImpl != NULL );
+	int ret = m_pSlot->m_pImpl->Wait();
 
 	LockMut( GetThreadSlotsLock() );
 
@@ -331,11 +331,11 @@ void RageThread::HaltAllThreads( bool Kill )
 	const uint64_t ThisThreadID = GetThisThreadId();
 	for( int entry = 0; entry < MAX_THREADS; ++entry )
 	{
-		if( !g_ThreadSlots[entry].used )
+		if( !g_ThreadSlots[entry].m_bUsed )
 			continue;
-		if( ThisThreadID == g_ThreadSlots[entry].id || g_ThreadSlots[entry].pImpl == NULL )
+		if( ThisThreadID == g_ThreadSlots[entry].m_iID || g_ThreadSlots[entry].m_pImpl == NULL )
 			continue;
-		g_ThreadSlots[entry].pImpl->Halt( Kill );
+		g_ThreadSlots[entry].m_pImpl->Halt( Kill );
 	}
 }
 
@@ -344,12 +344,12 @@ void RageThread::ResumeAllThreads()
 	const uint64_t ThisThreadID = GetThisThreadId();
 	for( int entry = 0; entry < MAX_THREADS; ++entry )
 	{
-		if( !g_ThreadSlots[entry].used )
+		if( !g_ThreadSlots[entry].m_bUsed )
 			continue;
-		if( ThisThreadID == g_ThreadSlots[entry].id || g_ThreadSlots[entry].pImpl == NULL )
+		if( ThisThreadID == g_ThreadSlots[entry].m_iID || g_ThreadSlots[entry].m_pImpl == NULL )
 			continue;
 
-		g_ThreadSlots[entry].pImpl->Resume();
+		g_ThreadSlots[entry].m_pImpl->Resume();
 	}
 }
 
@@ -379,21 +379,21 @@ void Checkpoints::SetCheckpoint( const char *file, int line, const char *message
 	const char *temp = strstr( file, "src/" );
 	if( temp )
 		file = temp + 4;
-	slot->Checkpoints[slot->CurCheckpoint].Set( file, line, message );
+	slot->m_Checkpoints[slot->m_iCurCheckpoint].Set( file, line, message );
 
 	if( g_LogCheckpoints )
-		LOG->Trace( "%s", slot->Checkpoints[slot->CurCheckpoint].FormattedBuf );
+		LOG->Trace( "%s", slot->m_Checkpoints[slot->m_iCurCheckpoint].m_szFormattedBuf );
 
-	++slot->CurCheckpoint;
-	slot->NumCheckpoints = max( slot->NumCheckpoints, slot->CurCheckpoint );
-	slot->CurCheckpoint %= CHECKPOINT_COUNT;
+	++slot->m_iCurCheckpoint;
+	slot->m_iNumCheckpoints = max( slot->m_iNumCheckpoints, slot->m_iCurCheckpoint );
+	slot->m_iCurCheckpoint %= CHECKPOINT_COUNT;
 }
 
 /* This is called under crash conditions.  Be careful. */
 static const char *GetCheckpointLog( int slotno, int lineno )
 {
 	ThreadSlot &slot = g_ThreadSlots[slotno];
-	if( !slot.used )
+	if( !slot.m_bUsed )
 		return NULL;
 
 	/* Only show the "Unknown thread" entry if it has at least one checkpoint. */
@@ -403,8 +403,8 @@ static const char *GetCheckpointLog( int slotno, int lineno )
 	if( lineno != 0 )
 		return slot.GetFormattedCheckpoint( lineno-1 );
 
-	slot.ThreadFormattedOutput[sizeof(slot.ThreadFormattedOutput)-1] = 0;
-	return slot.ThreadFormattedOutput;
+	slot.m_szThreadFormattedOutput[sizeof(slot.m_szThreadFormattedOutput)-1] = 0;
+	return slot.m_szThreadFormattedOutput;
 }
 
 /* XXX: iSize check unimplemented */
@@ -588,16 +588,16 @@ void RageMutex::Lock()
 		RString ThisSlotName = "(???" ")"; // stupid trigraph warnings
 		RString OtherSlotName = "(???" ")"; // stupid trigraph warnings
 		if( ThisSlot )
-			ThisSlotName = ssprintf( "%s (%i)", ThisSlot->GetThreadName(), (int) ThisSlot->id );
+			ThisSlotName = ssprintf( "%s (%i)", ThisSlot->GetThreadName(), (int) ThisSlot->m_iID );
 		if( OtherSlot )
-			OtherSlotName = ssprintf( "%s (%i)", OtherSlot->GetThreadName(), (int) OtherSlot->id );
+			OtherSlotName = ssprintf( "%s (%i)", OtherSlot->GetThreadName(), (int) OtherSlot->m_iID );
 		const RString sReason = ssprintf( "Thread deadlock on mutex %s between %s and %s",
 			GetName().c_str(), ThisSlotName.c_str(), OtherSlotName.c_str() );
 
 #if defined(CRASH_HANDLER)
 		/* Don't leave GetThreadSlotsLock() locked when we call ForceCrashHandlerDeadlock. */
 		GetThreadSlotsLock().Lock();
-		uint64_t CrashHandle = OtherSlot? OtherSlot->id:0;
+		uint64_t CrashHandle = OtherSlot? OtherSlot->m_iID:0;
 		GetThreadSlotsLock().Unlock();
 
 		/* Pass the crash handle of the other thread, so it can backtrace that thread. */
