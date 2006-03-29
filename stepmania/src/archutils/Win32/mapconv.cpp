@@ -181,7 +181,7 @@ int main(int argc, char **argv) {
 			if (4!=sscanf(line, "%lx:%lx %s %lx", &grp, &start, symname, &rva))
 				break;
 
-			if (!(codeseg_flags & (1<<grp)))
+			if (!(codeseg_flags & (1<<grp)) && strcmp(symname, "___ImageBase") )
 				continue;
 
 			RVAEnt entry = { rva, strdup(line) };
