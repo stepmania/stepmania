@@ -183,7 +183,7 @@ PrefsManager::PrefsManager() :
 	m_bSongBackgrounds	( "SongBackgrounds",		true ),
 	m_RandomBackgroundMode	( "RandomBackgroundMode",	BGMODE_ANIMATIONS, ValidateRandomBackgroundMode ),
 	m_iNumBackgrounds	( "NumBackgrounds",		8 ),
-	m_fBGBrightness		( "BGBrightness",		0.8f ),
+	m_fBGBrightness		( "BGBrightness",		0.7f ),
 	m_bHiddenSongs		( "HiddenSongs",		false ),
 	m_bVsync		( "Vsync",			true ),
 	m_bInterlaced		( "Interlaced",			false ),
