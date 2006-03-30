@@ -102,8 +102,8 @@ void EditMenu::Load( const RString &sType )
 
 	SHOW_GROUPS.Load(sType,"ShowGroups");
 	ARROWS_X.Load(sType,ARROWS_X_NAME,NUM_ARROWS);
-	ARROWS_ENABLED_COLOR.Load(sType,"ArrowsEnabledColor");
-	ARROWS_DISABLED_COLOR.Load(sType,"ArrowsDisabledColor");
+	ARROWS_ENABLED_COMMAND.Load(sType,"ArrowsEnabledCommand");
+	ARROWS_DISABLED_COMMAND.Load(sType,"ArrowsDisabledCommand");
 	SONG_BANNER_WIDTH.Load(sType,"SongBannerWidth");
 	SONG_BANNER_HEIGHT.Load(sType,"SongBannerHeight");
 	GROUP_BANNER_WIDTH.Load(sType,"GroupBannerWidth");
@@ -118,8 +118,8 @@ void EditMenu::Load( const RString &sType )
 	for( int i=0; i<2; i++ )
 	{
 		m_sprArrows[i].Load( THEME->GetPathG(sType,i==0?"left":"right") );
-		m_sprArrows[i].SetX( ARROWS_X.GetValue(i) );
-		this->AddChild( &m_sprArrows[i] );
+		m_sprArrows[i]->SetX( ARROWS_X.GetValue(i) );
+		this->AddChild( m_sprArrows[i] );
 	}
 
 	m_SelectedRow = GetFirstRow();
@@ -342,16 +342,16 @@ void EditMenu::ChangeToRow( EditMenuRow newRow )
 	m_SelectedRow = newRow;
 
 	for( int i=0; i<2; i++ )
-		m_sprArrows[i].SetY( ROW_Y.GetValue(newRow) );
+		m_sprArrows[i]->SetY( ROW_Y.GetValue(newRow) );
 	UpdateArrows();
 }
 
 void EditMenu::UpdateArrows()
 {
-	m_sprArrows[0].SetDiffuse( CanGoLeft() ? ARROWS_ENABLED_COLOR : ARROWS_DISABLED_COLOR );
-	m_sprArrows[1].SetDiffuse( CanGoRight()? ARROWS_ENABLED_COLOR : ARROWS_DISABLED_COLOR );
-	m_sprArrows[0].EnableAnimation( CanGoLeft() );
-	m_sprArrows[1].EnableAnimation( CanGoRight() );
+	m_sprArrows[0]->RunCommands( CanGoLeft() ? ARROWS_ENABLED_COMMAND : ARROWS_DISABLED_COMMAND );
+	m_sprArrows[1]->RunCommands( CanGoRight()? ARROWS_ENABLED_COMMAND : ARROWS_DISABLED_COMMAND );
+	m_sprArrows[0]->EnableAnimation( CanGoLeft() );
+	m_sprArrows[1]->EnableAnimation( CanGoRight() );
 }
 
 static LocalizedString BLANK ( "EditMenu", "Blank" );

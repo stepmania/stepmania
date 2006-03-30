@@ -80,7 +80,7 @@ private:
 	void GetGroupsToShow( vector<RString> &vsGroupsOut );
 
 	void UpdateArrows();
-	Sprite	m_sprArrows[NUM_ARROWS];
+	AutoActor	m_sprArrows[NUM_ARROWS];
 
 	EditMenuRow m_SelectedRow;
 	EditMenuRow GetFirstRow() const { return SHOW_GROUPS.GetValue()? ROW_GROUP:ROW_SONG; }
@@ -118,8 +118,8 @@ private:
 
 	ThemeMetric<bool> SHOW_GROUPS;
 	ThemeMetric1D<float> ARROWS_X;
-	ThemeMetric<RageColor> ARROWS_ENABLED_COLOR;
-	ThemeMetric<RageColor> ARROWS_DISABLED_COLOR;
+	ThemeMetric<apActorCommands> ARROWS_ENABLED_COMMAND;
+	ThemeMetric<apActorCommands> ARROWS_DISABLED_COMMAND;
 	ThemeMetric<float> SONG_BANNER_WIDTH;
 	ThemeMetric<float> SONG_BANNER_HEIGHT;
 	ThemeMetric<float> GROUP_BANNER_WIDTH;
