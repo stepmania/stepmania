@@ -1863,7 +1863,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 
 void ScreenEdit::InputRecord( const InputEventPlus &input, EditButton EditB )
 {
-	if( EditB == EDIT_BUTTON_RETURN_TO_EDIT )
+	if( input.type == IET_FIRST_PRESS  &&  EditB == EDIT_BUTTON_RETURN_TO_EDIT )
 	{
 		TransitionEditState( STATE_EDITING );
 		return;
