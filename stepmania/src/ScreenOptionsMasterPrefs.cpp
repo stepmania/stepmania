@@ -298,7 +298,7 @@ static void BGBrightnessNoZero( int &sel, bool ToSel, const ConfOption *pConfOpt
 
 static void BGBrightnessOrStatic( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const float mapping[] = { 0.4f,0.4f,0.7f };
+	const float mapping[] = { 0.2f,0.2f,0.4f,0.7f };
 	MoveMap( sel, PREFSMAN->m_fBGBrightness, ToSel, mapping, ARRAYSIZE(mapping) );
 
 	if( ToSel && !PREFSMAN->m_bSongBackgrounds )
@@ -587,7 +587,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "RandomBackgroundMode",	MovePref,		"Off","Animations","Random Movies" ) );
 	ADD( ConfOption( "BGBrightness",		BGBrightness,		"|0%","|10%","|20%","|30%","|40%","|50%","|60%","|70%","|80%","|90%","|100%" ) );
 	ADD( ConfOption( "BGBrightnessNoZero",		BGBrightnessNoZero,	"|10%","|20%","|30%","|40%","|50%","|60%","|70%","|80%","|90%","|100%" ) );
-	ADD( ConfOption( "BGBrightnessOrStatic",	BGBrightnessOrStatic,	"Disabled","Dim","Bright" ) );
+	ADD( ConfOption( "BGBrightnessOrStatic",	BGBrightnessOrStatic,	"Disabled","Dark","Dim","Bright" ) );
 	ADD( ConfOption( "ShowDanger",			MovePref,		"Hide","Show" ) );
 	ADD( ConfOption( "ShowDancingCharacters",	MovePref,		"Default to Off","Default to Random","Select" ) );
 	ADD( ConfOption( "ShowBeginnerHelper",		MovePref,		"Off","On" ) );
