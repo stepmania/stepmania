@@ -332,8 +332,9 @@ void OptionRow::InitText()
 		float fTotalWidth = m_pParentType->ITEMS_END_X - m_pParentType->ITEMS_START_X;
 		if( fWidth > fTotalWidth ) 
 		{
-			if( fTotalWidth / fWidth >= m_pParentType->ITEMS_MIN_BASE_ZOOM )
-				fBaseZoom = fTotalWidth / fWidth;
+			float fPossibleBaseZoom = fTotalWidth / fWidth;
+			if( fPossibleBaseZoom >= m_pParentType->ITEMS_MIN_BASE_ZOOM )
+				fBaseZoom = fPossibleBaseZoom;
 			else
 				m_pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 		}
