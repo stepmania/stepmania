@@ -508,28 +508,28 @@ void ScreenNameEntryTraditional::Input( const InputEventPlus &input )
 	if( IsTransitioning() )
 		return;
 
-	if( input.MenuI.IsValid() )
-	{
-		ScreenWithMenuElements::Input( input );
-	}
-	else
-	{
-		if( input.DeviceI.device == DEVICE_KEYBOARD  &&  input.type == IET_FIRST_PRESS )
-		{
-			char c = -1;
-			if( input.DeviceI.button == KEY_BACK )
-				c = CHAR_BACK;
-			else
-				c = toupper( input.DeviceI.ToChar() );
 
-			bool bChanged = SelectChar( GAMESTATE->m_MasterPlayerNumber, c, true );
+	if( input.type == IET_FIRST_PRESS )
+	{
+		int c;
+		if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_BACK) )
+			c = CHAR_BACK;
+		else
+			c = toupper( input.DeviceI.ToChar() );
+		if( c )
+		{
+			PlayerNumber pn = GAMESTATE->m_MasterPlayerNumber;
+			bool bChanged = SelectChar( pn, c, true );
 			if( bChanged )
 			{
 				m_soundChange.Play();
 				HandleStart( GAMESTATE->m_MasterPlayerNumber );
 			}
+			return;
 		}
 	}
+
+	ScreenWithMenuElements::Input( input );
 }
 
 void ScreenNameEntryTraditional::ChangeDisplayedFeat()
