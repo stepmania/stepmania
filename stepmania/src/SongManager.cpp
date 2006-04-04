@@ -37,8 +37,9 @@
 
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
 
-const RString SONGS_DIR		= "Songs/";
-const RString COURSES_DIR	= "Courses/";
+const RString SONGS_DIR			= "/Songs/";
+const RString ADDITIONAL_SONGS_DIR	= "/AdditionalSongs/";
+const RString COURSES_DIR		= "/Courses/";
 
 static const ThemeMetric<RageColor>	EXTRA_COLOR			("SongManager","ExtraColor");
 static const ThemeMetric<int>		EXTRA_COLOR_METER		("SongManager","ExtraColorMeter");
@@ -103,6 +104,7 @@ void SongManager::InitSongsFromDisk( LoadingWindow *ld )
 {
 	RageTimer tm;
 	LoadStepManiaSongDir( SONGS_DIR, ld );
+	LoadStepManiaSongDir( ADDITIONAL_SONGS_DIR, ld );
 	LOG->Trace( "Found %d songs in %f seconds.", (int)m_pSongs.size(), tm.GetDeltaTime() );
 }
 
@@ -935,6 +937,12 @@ void SongManager::DeleteSteps( Steps *pSteps )
 {
 	Song *pSong = GetSongFromSteps( pSteps );
 	pSong->DeleteSteps( pSteps );
+}
+
+bool SongManager::WasLoadedFromAdditionalSongs( const Song *pSong ) const
+{
+	RString sDir = pSong->GetSongDir();
+	return BeginsWith( sDir, ADDITIONAL_SONGS_DIR );
 }
 
 void SongManager::GetAllCourses( vector<Course*> &AddTo, bool bIncludeAutogen )

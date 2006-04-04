@@ -95,6 +95,7 @@ public:
 	void GetStepsLoadedFromProfile( vector<Steps*> &AddTo, ProfileSlot slot );
 	Song *GetSongFromSteps( Steps *pSteps );
 	void DeleteSteps( Steps *pSteps );	// transfers ownership of pSteps
+	bool WasLoadedFromAdditionalSongs( const Song *pSong ) const;
 
 	void GetAllCourses( vector<Course*> &AddTo, bool bIncludeAutogen );
 	void GetCourses( CourseType ct, vector<Course*> &AddTo, bool bIncludeAutogen );

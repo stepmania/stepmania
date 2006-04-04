@@ -57,7 +57,7 @@ void EditMenu::GetSongsToShowForGroup( const RString &sGroup, vector<Song*> &vpS
 		for( int i=vpSongsOut.size()-1; i>=0; i-- )
 		{
 			const Song* pSong = vpSongsOut[i];
-			if( UNLOCKMAN->SongIsLocked(pSong)  ||  pSong->IsTutorial() )
+			if( UNLOCKMAN->SongIsLocked(pSong)  ||  pSong->IsTutorial()  ||  SONGMAN->WasLoadedFromAdditionalSongs(pSong) )
 				vpSongsOut.erase( vpSongsOut.begin()+i );
 		}
 		break;

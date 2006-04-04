@@ -975,7 +975,7 @@ int main(int argc, char* argv[])
 		vector<RString> dirs;
 		split( PREFSMAN->m_sAdditionalSongFolders, ",", dirs, true );
 		for( unsigned i=0; i < dirs.size(); i++)
-			FILEMAN->Mount( "dir", dirs[i], "/Songs" );
+			FILEMAN->Mount( "dir", dirs[i], "/AdditionalSongs" );
 	}
 	MountTreeOfZips( ZIPS_DIR );
 
