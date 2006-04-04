@@ -152,9 +152,13 @@ void Steps::CalculateRadarValues( float fMusicLengthSeconds )
 	if( parent != NULL )
 		return;
 
+	// Do write radar values, and leave it up to the reading app whether they want to trust
+	// the cached values without recalculating them.
+	/*
 	// If we're an edit, leave the RadarValues invalid.
 	if( IsAnEdit() )
 		return;
+	*/
 
 	NoteData tempNoteData;
 	this->GetNoteData( tempNoteData );

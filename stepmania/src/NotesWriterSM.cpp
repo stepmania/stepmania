@@ -170,9 +170,8 @@ RString NotesWriterSM::GetSMNotesTag( const Song &song, const Steps &in, bool bS
 	lines.push_back( ssprintf( "     %s:", DifficultyToString(in.GetDifficulty()).c_str() ) );
 	lines.push_back( ssprintf( "     %d:", in.GetMeter() ) );
 	
-	int MaxRadar = bSavingCache? NUM_RadarCategory:5;
 	vector<RString> asRadarValues;
-	for( int r=0; r < MaxRadar; r++ )
+	for( int r=0; r < NUM_RadarCategory; r++ )
 		asRadarValues.push_back( ssprintf("%.3f", in.GetRadarValues()[r]) );
 	/* Don't append a newline here; it's added in NoteDataUtil::GetSMNoteDataString.
 	 * If we add it here, then every time we write unmodified data we'll add an extra
