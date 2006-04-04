@@ -112,15 +112,11 @@ void ScreenMiniMenu::AfterChangeValueOrRow( PlayerNumber pn )
 	ScreenOptions::AfterChangeValueOrRow( pn );
 
 	vector<PlayerNumber> vpns;
-	vpns.push_back( GAMESTATE->m_MasterPlayerNumber );
+	FOREACH_PlayerNumber( p )
+		vpns.push_back( p );
 	for( unsigned i=0; i<m_pRows.size(); i++ )
 		ExportOptions( i, vpns );
 	
-	{
-		int iCurRow = GetCurrentRow( pn );
-		s_iLastRowCode = m_vMenuRows[iCurRow].iRowCode;
-	}
-
 	// Changing one option can affect whether other options are available.
 	for( unsigned i=0; i<m_pRows.size(); i++ )
 	{
@@ -146,6 +142,8 @@ void ScreenMiniMenu::ImportOptions( int r, const vector<PlayerNumber> &vpns )
 
 void ScreenMiniMenu::ExportOptions( int r, const vector<PlayerNumber> &vpns )
 {
+	if( r == GetCurrentRow() )
+		s_iLastRowCode = m_vMenuRows[r].iRowCode;
 	s_viLastAnswers.resize( m_vMenuRows.size() );
 	s_viLastAnswers[r] = m_pRows[r]->GetOneSharedSelection( true );
 }
