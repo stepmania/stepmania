@@ -26,7 +26,9 @@ DIDevice::DIDevice()
 
 bool DIDevice::Open()
 {
-	LOG->Trace( "Opening device '%s'", JoystickInst.tszProductName );
+	m_sName = ConvertACPToUTF8( JoystickInst.tszProductName );
+
+	LOG->Trace( "Opening device '%s'", m_sName.c_str() );
 	buffered = true;
 	
 	LPDIRECTINPUTDEVICE tmpdevice;
@@ -41,7 +43,7 @@ bool DIDevice::Open()
 	tmpdevice->Release();
 	if ( hr != DI_OK )
 	{
-		LOG->Info( hr_ssprintf(hr, "OpenDevice(%s): IDirectInputDevice::QueryInterface", JoystickInst.tszProductName) );
+		LOG->Info( hr_ssprintf(hr, "OpenDevice(%s): IDirectInputDevice::QueryInterface", m_sName.c_str()) );
 		return false;
 	}
 
@@ -52,14 +54,14 @@ bool DIDevice::Open()
 	hr = Device->SetCooperativeLevel( GraphicsWindow::GetHwnd(), coop );
 	if ( hr != DI_OK )
 	{
-		LOG->Info( hr_ssprintf(hr, "OpenDevice(%s): IDirectInputDevice2::SetCooperativeLevel", JoystickInst.tszProductName) );
+		LOG->Info( hr_ssprintf(hr, "OpenDevice(%s): IDirectInputDevice2::SetCooperativeLevel", m_sName.c_str()) );
 		return false;
 	}
 
 	hr = Device->SetDataFormat( type == JOYSTICK? &c_dfDIJoystick: &c_dfDIKeyboard );
 	if ( hr != DI_OK )
 	{
-		LOG->Info( hr_ssprintf(hr, "OpenDevice(%s): IDirectInputDevice2::SetDataFormat", JoystickInst.tszProductName) );
+		LOG->Info( hr_ssprintf(hr, "OpenDevice(%s): IDirectInputDevice2::SetDataFormat", m_sName.c_str()) );
 		return false;
 	}
 
@@ -100,7 +102,7 @@ bool DIDevice::Open()
 		}
 		else if ( hr != DI_OK )
 		{
-			LOG->Info( hr_ssprintf(hr, "OpenDevice(%s): IDirectInputDevice2::SetProperty", JoystickInst.tszProductName) );
+			LOG->Info( hr_ssprintf(hr, "OpenDevice(%s): IDirectInputDevice2::SetProperty", m_sName.c_str()) );
 			return false;
 		}
 	}

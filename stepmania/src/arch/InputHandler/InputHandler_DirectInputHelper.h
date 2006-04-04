@@ -24,6 +24,7 @@ struct DIDevice
 {
 	DIDEVICEINSTANCE JoystickInst;
 	LPDIRECTINPUTDEVICE2 Device;
+	RString m_sName;
 
 	enum { KEYBOARD, JOYSTICK } type;
 

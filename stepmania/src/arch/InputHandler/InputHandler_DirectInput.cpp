@@ -124,7 +124,7 @@ InputHandler_DInput::InputHandler_DInput()
 	{
 		LOG->Info( "   %d: '%s' axes: %d, hats: %d, buttons: %d (%s)",
 			i,
-			Devices[i].JoystickInst.tszProductName,
+			Devices[i].m_sName.c_str(),
 			Devices[i].axes,
 			Devices[i].hats,
 			Devices[i].buttons,
@@ -333,7 +333,7 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 									break;
 					default: LOG->MapLog( "unknown input", 
 									"Controller '%s' is returning an unknown joystick offset, %i",
-									device.JoystickInst.tszProductName, in.ofs );
+									device.m_sName.c_str(), in.ofs );
 							 continue;
 					}
 					if( neg != DeviceButton_Invalid )
@@ -450,7 +450,7 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 				case DIJOFS_SLIDER(1): up = JOY_AUX_3; down = JOY_AUX_4; break;
 				default: LOG->MapLog( "unknown input", 
 							 "Controller '%s' is returning an unknown joystick offset, %i",
-							 device.JoystickInst.tszProductName, in.ofs );
+							 device.m_sName.c_str(), in.ofs );
 					continue;
 				}
 
@@ -639,7 +639,7 @@ void InputHandler_DInput::InputThreadMain()
 void InputHandler_DInput::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut )
 {
 	for( unsigned i=0; i < Devices.size(); ++i )
-		vDevicesOut.push_back( InputDeviceInfo(Devices[i].dev, Devices[i].JoystickInst.tszProductName) );
+		vDevicesOut.push_back( InputDeviceInfo(Devices[i].dev, Devices[i].m_sName) );
 }
 
 /*
