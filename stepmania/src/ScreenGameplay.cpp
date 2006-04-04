@@ -2013,7 +2013,7 @@ void ScreenGameplay::SendCrossedMessages()
 
 	{
 		const int NUM_MESSAGES_TO_SEND = 4;
-		const float MESSAGE_SPACING_SECONDS = 0.5f;
+		const float MESSAGE_SPACING_SECONDS = 0.4f;
 
 		PlayerNumber pn = PLAYER_INVALID;
 		FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
