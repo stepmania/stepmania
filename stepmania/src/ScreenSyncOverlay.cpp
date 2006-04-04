@@ -67,8 +67,7 @@ void ScreenSyncOverlay::Update( float fDeltaTime )
 	this->SetVisible( IsGameplay() );
 	if( !IsGameplay() )
 	{
-		m_quad.SetDiffuseAlpha( 0 );
-		m_textHelp.SetDiffuseAlpha( 0 );
+		HideHelp();
 		return;
 	}
 
@@ -239,6 +238,13 @@ void ScreenSyncOverlay::ShowHelp()
 	m_textHelp.BeginTweening( 0.3f, TWEEN_LINEAR );
 	m_textHelp.SetDiffuseAlpha( 0 );
 }
+
+void ScreenSyncOverlay::HideHelp()
+{
+	m_quad.FinishTweening();
+	m_textHelp.FinishTweening();
+}
+
 
 /*
  * (c) 2001-2005 Chris Danford

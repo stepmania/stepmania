@@ -19,6 +19,7 @@ public:
 private:
 	void UpdateText();
 	void ShowHelp();
+	void HideHelp();
 
 	Quad		m_quad;
 	BitmapText	m_textHelp;
