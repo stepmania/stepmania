@@ -920,8 +920,12 @@ void ScreenEdit::Update( float fDeltaTime )
 			fLastBeat = m_pSong->m_Timing.GetBeatFromElapsedTime( fSeconds + 0.5f );
 		}
 
-		if( GAMESTATE->m_fSongBeat > fLastBeat )
-			TransitionEditState( STATE_EDITING );
+		float fStopAtSeconds = m_pSong->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_iStopPlayingAt) ) + 1;
+		if( GAMESTATE->m_fMusicSeconds > fStopAtSeconds )
+		{
+			// loop
+			TransitionEditState( STATE_PLAYING );
+		}
 	}
 
 
@@ -1831,7 +1835,6 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 	case EDIT_BUTTON_RECORD_FROM_CURSOR:
 		m_iStartPlayingAt = BeatToNoteRow(GAMESTATE->m_fSongBeat);
 		m_iStopPlayingAt = m_NoteDataEdit.GetLastRow();
-		m_iStopPlayingAt += BeatToNoteRow(4);		// give a one measure lead out
 		TransitionEditState( STATE_RECORDING );
 		break;
 
@@ -2039,6 +2042,8 @@ void ScreenEdit::TransitionEditState( EditState em )
 	if( old == STATE_RECORDING_PAUSED && em == STATE_PLAYING )
 		m_bReturnToRecordMenuAfterPlay = true;
 
+	const bool bStateChanging = em != old;
+
 #if 0
 	//
 	// If switching out of record, open the menu.
@@ -2062,28 +2067,31 @@ void ScreenEdit::TransitionEditState( EditState em )
 	m_soundAssistTick.StopPlaying();
 	GAMESTATE->m_bGameplayLeadIn.Set( true );
 
-	switch( old )
+	if( bStateChanging )
 	{
-	case STATE_EDITING:
-		// If exiting EDIT mode, save the cursor position.
-		m_fBeatToReturnTo = GAMESTATE->m_fSongBeat;
-		break;
+		switch( old )
+		{
+		case STATE_EDITING:
+			// If exiting EDIT mode, save the cursor position.
+			m_fBeatToReturnTo = GAMESTATE->m_fSongBeat;
+			break;
 
-	case STATE_PLAYING:
-		if( AdjustSync::IsSyncDataChanged() )
-			ScreenSaveSync::PromptSaveSync();
-		break;
+		case STATE_PLAYING:
+			if( AdjustSync::IsSyncDataChanged() )
+				ScreenSaveSync::PromptSaveSync();
+			break;
 
-	case STATE_RECORDING:
-		SaveUndo();
+		case STATE_RECORDING:
+			SaveUndo();
 
-		// delete old TapNotes in the range
-		m_NoteDataEdit.ClearRange( m_iStartPlayingAt, m_iStopPlayingAt );
-		m_NoteDataEdit.CopyRange( m_NoteDataRecord, m_iStartPlayingAt, m_iStopPlayingAt, m_iStartPlayingAt );
-		m_NoteDataRecord.ClearAll();
+			// delete old TapNotes in the range
+			m_NoteDataEdit.ClearRange( m_iStartPlayingAt, m_iStopPlayingAt );
+			m_NoteDataEdit.CopyRange( m_NoteDataRecord, m_iStartPlayingAt, m_iStopPlayingAt, m_iStartPlayingAt );
+			m_NoteDataRecord.ClearAll();
 
-		CheckNumberOfNotesAndUndo();
-		break;
+			CheckNumberOfNotesAndUndo();
+			break;
+		}
 	}
 
 	//
@@ -2131,7 +2139,8 @@ void ScreenEdit::TransitionEditState( EditState em )
 	case STATE_PLAYING:
 	case STATE_RECORDING:
 	{
-		AdjustSync::ResetOriginalSyncData();
+		if( bStateChanging )
+			AdjustSync::ResetOriginalSyncData();
 
 		/* Give a 1 second lead-in.  If we're loading Player, this must be done first. */
 		float fSeconds = m_pSong->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_iStartPlayingAt) ) - 1;
@@ -2642,7 +2651,6 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 			{
 				m_iStartPlayingAt = 0;
 				m_iStopPlayingAt = m_NoteDataEdit.GetLastRow();
-				m_iStopPlayingAt += BeatToNoteRow(4);		// give a one measure lead out
 				TransitionEditState( STATE_PLAYING );
 			}
 			break;
@@ -2650,7 +2658,6 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 			{
 				m_iStartPlayingAt = m_NoteFieldEdit.m_iBeginMarker;
 				m_iStopPlayingAt = m_NoteDataEdit.GetLastRow();
-				m_iStopPlayingAt += BeatToNoteRow(4);		// give a one measure lead out
 				TransitionEditState( STATE_PLAYING );
 			}
 			break;
@@ -2658,7 +2665,6 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 			{
 				m_iStartPlayingAt = BeatToNoteRow(GAMESTATE->m_fSongBeat);
 				m_iStopPlayingAt = m_NoteDataEdit.GetLastRow();
-				m_iStopPlayingAt += BeatToNoteRow(4);		// give a one measure lead out
 				TransitionEditState( STATE_PLAYING );
 			}
 			break;
