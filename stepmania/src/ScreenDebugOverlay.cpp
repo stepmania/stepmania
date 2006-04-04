@@ -49,7 +49,8 @@ public:
 		g_pvpSubscribers->push_back( this );
 	}
 	virtual ~IDebugLine() { }
-	virtual bool GameplayOnly() const { return false; }
+	enum Type { all_screens, gameplay_only, editor_gameplay_only };
+	virtual Type GetType() const { return all_screens; }
 	virtual RString GetDescription() = 0;
 	virtual RString GetValue() = 0;
 	virtual bool IsEnabled() = 0;
@@ -65,10 +66,20 @@ public:
 	DeviceInput m_Button;
 };
 
-
 static bool IsGameplay()
 {
 	return SCREENMAN && SCREENMAN->GetTopScreen() && SCREENMAN->GetTopScreen()->GetScreenType() == gameplay;
+}
+
+static bool IsEditorGameplay()
+{
+	if( IsGameplay() )
+	{
+		RString s = SCREENMAN->GetTopScreen()->GetName();
+		if( s.find("ScreenEdit") != s.npos )
+			return true;
+	}
+	return false;
 }
 
 
@@ -111,13 +122,22 @@ struct MapDebugToDI
 static MapDebugToDI g_Mappings;
 
 static LocalizedString IN_GAMEPLAY( "ScreenDebugOverlay", "%s in gameplay" );
+static LocalizedString IN_EDITOR_GAMEPLAY( "ScreenDebugOverlay", "%s in editor gameplay" );
 static LocalizedString OR( "ScreenDebugOverlay", "or" );
 static RString GetDebugButtonName( const IDebugLine *pLine )
 {
-	if( pLine->GameplayOnly() )
-		return ssprintf( IN_GAMEPLAY.GetValue(), INPUTMAN->GetDeviceSpecificInputString(pLine->m_Button).c_str() );
-	else
-		return INPUTMAN->GetDeviceSpecificInputString(pLine->m_Button);
+	RString s = INPUTMAN->GetDeviceSpecificInputString(pLine->m_Button);
+	switch( pLine->GetType() )
+	{
+	case IDebugLine::all_screens:
+		return s;
+	case IDebugLine::gameplay_only:
+		return ssprintf( IN_GAMEPLAY.GetValue(), s.c_str() );
+	case IDebugLine::editor_gameplay_only:
+		return ssprintf( IN_EDITOR_GAMEPLAY.GetValue(), s.c_str() );
+	default:
+		ASSERT(0);
+	}
 }
 
 static LocalizedString DEBUG_MENU( "ScreenDebugOverlay", "Debug Menu" );
@@ -170,10 +190,16 @@ void ScreenDebugOverlay::Init()
 	int iNextDebugButton = 0;
 	FOREACH( IDebugLine*, *g_pvpSubscribers, p )
 	{
-		if( (*p)->GameplayOnly() )
-			(*p)->m_Button = g_Mappings.gameplayButton[iNextGameplayButton++];
-		else
+		switch( (*p)->GetType() )
+		{
+		case IDebugLine::all_screens:
 			(*p)->m_Button = g_Mappings.debugButton[iNextDebugButton++];
+			break;
+		case IDebugLine::gameplay_only:
+		case IDebugLine::editor_gameplay_only:
+			(*p)->m_Button = g_Mappings.gameplayButton[iNextGameplayButton++];
+			break;
+		}
 	}
 
 	m_Quad.StretchTo( RectF( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT ) );
@@ -330,10 +356,22 @@ bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
 
 		// Gameplay buttons are available only in gameplay.  Non-gameplay buttons are
 		// only available when the screen is displayed.
-		if( (*p)->GameplayOnly() && !IsGameplay() )
-			continue;
-		if( !(*p)->GameplayOnly() && !g_bIsDisplayed )
-			continue;
+		switch( (*p)->GetType() )
+		{
+		case IDebugLine::all_screens:
+			if( !g_bIsDisplayed )
+				continue;
+			break;
+		case IDebugLine::gameplay_only:
+			if( !IsGameplay() )
+				continue;
+			break;
+		case IDebugLine::editor_gameplay_only:
+			if( !IsEditorGameplay() )
+				continue;
+			break;
+		}
+
 		if( input.DeviceI == (*p)->m_Button )
 		{
 			if( input.type != IET_FIRST_PRESS )
@@ -431,12 +469,17 @@ class DebugLineAutoplay : public IDebugLine
 		default:	ASSERT(0);	return RString();
 		}
 	}
-	virtual bool GameplayOnly() const { return true; }
+	virtual Type GetType() const { return IDebugLine::gameplay_only; }
 	virtual bool IsEnabled() { return PREFSMAN->m_AutoPlay.Get() != PC_HUMAN; }
 	virtual void Do( RString &sMessageOut )
 	{
-		PlayerController pc = (PlayerController)(PREFSMAN->m_AutoPlay+1);
-		wrap( (int&)pc, NUM_PlayerController );
+		ASSERT( GAMESTATE->m_MasterPlayerNumber != PLAYER_INVALID );
+		PlayerController pc = GAMESTATE->m_pPlayerState[GAMESTATE->m_MasterPlayerNumber]->m_PlayerController;
+		bool bHoldingShift = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT) );
+		if( bHoldingShift )
+			pc = (pc==PC_CPU) ? PC_HUMAN : PC_CPU;
+		else
+			pc = (pc==PC_AUTOPLAY) ? PC_HUMAN : PC_AUTOPLAY;
 		PREFSMAN->m_AutoPlay.Set( pc );
 		FOREACH_HumanPlayer(p)
 			GAMESTATE->m_pPlayerState[p]->m_PlayerController = PREFSMAN->m_AutoPlay;
@@ -450,7 +493,7 @@ class DebugLineAssistTick : public IDebugLine
 {
 	virtual RString GetDescription() { return ASSIST_TICK.GetValue(); }
 	virtual RString GetValue() { return IsEnabled() ? ON.GetValue():OFF.GetValue(); }
-	virtual bool GameplayOnly() const { return true; }
+	virtual Type GetType() const { return gameplay_only; }
 	virtual bool IsEnabled() { return GAMESTATE->m_SongOptions.m_bAssistTick; }
 	virtual void Do( RString &sMessageOut )
 	{
@@ -475,7 +518,7 @@ class DebugLineAutosync : public IDebugLine
 		default:	ASSERT(0);
 		}
 	}
-	virtual bool GameplayOnly() const { return true; }
+	virtual Type GetType() const { return IDebugLine::gameplay_only; }
 	virtual bool IsEnabled() { return GAMESTATE->m_SongOptions.m_AutosyncType!=SongOptions::AUTOSYNC_OFF; }
 	virtual void Do( RString &sMessageOut )
 	{
