@@ -279,12 +279,12 @@ RString werr_ssprintf( int err, const char *fmt, ...)
 	return s += ssprintf( " (%s)", text.c_str() );
 }
 
-RString ConvertWstringToACP( wstring s )
+RString ConvertWstringToCodepage( wstring s, int iCodePage )
 {
 	if( s.empty() )
 		return RString();
 
-	int iBytes = WideCharToMultiByte( CP_ACP, 0, s.data(), s.size(), 
+	int iBytes = WideCharToMultiByte( iCodePage, 0, s.data(), s.size(), 
 					NULL, 0, NULL, FALSE );
 	ASSERT_M( iBytes > 0, werr_ssprintf( GetLastError(), "WideCharToMultiByte" ).c_str() );
 
@@ -298,7 +298,28 @@ RString ConvertWstringToACP( wstring s )
 
 RString ConvertUTF8ToACP( const RString &s )
 {
-	return ConvertWstringToACP( RStringToWstring(s) );
+	return ConvertWstringToCodepage( RStringToWstring(s), CP_ACP );
+}
+
+wstring ConvertCodepageToWString( RString s, int iCodePage )
+{
+	if( s.empty() )
+		return wstring();
+
+	int iBytes = MultiByteToWideChar( iCodePage, 0, s.data(), s.size(), NULL, 0 );
+	ASSERT_M( iBytes > 0, werr_ssprintf( GetLastError(), "MultiByteToWideChar" ).c_str() );
+
+	wchar_t *pTemp = new wchar_t[iBytes];
+	MultiByteToWideChar( CP_ACP, 0, s.data(), s.size(), pTemp, iBytes );
+	wstring sRet( pTemp, iBytes );
+	delete [] pTemp;
+
+	return sRet;
+}
+
+RString ConvertACPToUTF8( const RString &s )
+{
+	return WStringToRString( ConvertCodepageToWString(s, CP_ACP) );
 }
 
 #endif
