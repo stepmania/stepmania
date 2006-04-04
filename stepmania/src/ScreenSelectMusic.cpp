@@ -289,6 +289,8 @@ void ScreenSelectMusic::BeginScreen()
 {
 	ScreenWithMenuElements::BeginScreen();
 
+	m_MusicWheel.BeginScreen();
+
 	m_bMadeChoice = false;
 	m_bGoToOptions = false;
 	m_bAllowOptionsMenu = m_bAllowOptionsMenuRepeat = false;

@@ -97,10 +97,8 @@ void MusicWheel::Load( RString sType )
 
 	SONGMAN->UpdateRankingCourses();
 
-	m_soundChangeSort.Load(		THEME->GetPathS(sType,"sort") );
-	m_soundExpand.Load(			THEME->GetPathS(sType,"expand"), true );
-
-	m_WheelState = STATE_SELECTING;
+	m_soundChangeSort.Load(	THEME->GetPathS(sType,"sort") );
+	m_soundExpand.Load(	THEME->GetPathS(sType,"expand"), true );
 
 	if( GAMESTATE->IsExtraStage() ||  GAMESTATE->IsExtraStage2() )
 	{
@@ -127,19 +125,6 @@ void MusicWheel::Load( RString sType )
 		GAMESTATE->m_SongOptions = so;
 	}
 
-	GAMESTATE->m_SortOrder.Set( GAMESTATE->m_PreferredSortOrder );
-
-	/* Never start in the mode menu; some elements may not initialize correctly. */
-	if( GAMESTATE->m_SortOrder == SORT_MODE_MENU )
-		GAMESTATE->m_SortOrder.Set( SORT_INVALID );
-
-	GAMESTATE->m_SortOrder.Set( ForceAppropriateSort(GAMESTATE->m_PlayMode, GAMESTATE->m_SortOrder) );
-
-	/* Only save the sort order if the player didn't already have one.  If he did, don't
-	 * overwrite it. */
-	if( GAMESTATE->m_PreferredSortOrder == SORT_INVALID )
-		GAMESTATE->m_PreferredSortOrder = GAMESTATE->m_SortOrder;
-
 	/* Update for SORT_MOST_PLAYED. */
 	SONGMAN->UpdatePopular();
 
@@ -164,13 +149,32 @@ void MusicWheel::Load( RString sType )
 	{
 		const vector<WheelItemData> &from = m_WheelItemDatas[SORT_MODE_MENU];
 		for( unsigned i=0; i<from.size(); i++ )
+		{
 			if( from[i].m_Action.DescribesCurrentModeForAllPlayers() )
 			{
 				m_sLastModeMenuItem = from[i].m_Action.m_sName;
 				break;
 			}
+		}
 	}
+}
 
+void MusicWheel::BeginScreen()
+{
+	m_WheelState = STATE_SELECTING;
+
+	GAMESTATE->m_SortOrder.Set( GAMESTATE->m_PreferredSortOrder );
+
+	/* Never start in the mode menu; some elements may not initialize correctly. */
+	if( GAMESTATE->m_SortOrder == SORT_MODE_MENU )
+		GAMESTATE->m_SortOrder.Set( SORT_INVALID );
+
+	GAMESTATE->m_SortOrder.Set( ForceAppropriateSort(GAMESTATE->m_PlayMode, GAMESTATE->m_SortOrder) );
+
+	/* Only save the sort order if the player didn't already have one.  If he did, don't
+	 * overwrite it. */
+	if( GAMESTATE->m_PreferredSortOrder == SORT_INVALID )
+		GAMESTATE->m_PreferredSortOrder = GAMESTATE->m_SortOrder;
 
 	// HACK: invalidate currently selected song in the case that it
 	// cannot be played due to lack of stages remaining

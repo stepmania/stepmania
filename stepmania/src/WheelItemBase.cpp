@@ -80,11 +80,16 @@ void WheelItemBase::DrawGrayBar( Actor& bar )
 	if( m_fPercentGray == 0 )
 		return;
 
+	RageColor glow = bar.GetGlow();
+	RageColor diffuse = bar.GetDiffuse();
+
 	bar.SetGlow( RageColor(0,0,0,m_fPercentGray) );
 	bar.SetDiffuse( RageColor(0,0,0,0) );
+	
 	bar.Draw();
-	bar.SetDiffuse( RageColor(0,0,0,1) );
-	bar.SetGlow( RageColor(0,0,0,0) );
+	
+	bar.SetGlow( glow );
+	bar.SetDiffuse( diffuse );
 }
 
 void WheelItemBase::DrawPrimitives()

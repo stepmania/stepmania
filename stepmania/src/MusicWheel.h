@@ -28,6 +28,7 @@ public:
 	MusicWheel();
 	~MusicWheel();
 	virtual void Load( RString sType );
+	void BeginScreen();
 
 	virtual void DrawItem( int index );
 
