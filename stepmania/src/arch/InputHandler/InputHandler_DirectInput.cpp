@@ -498,9 +498,6 @@ void InputHandler_DInput::PollAndAcquireDevices( bool bBuffered )
 
 void InputHandler_DInput::Update()
 {
-	RageTimer zero;
-	zero.SetZero();
-
 	/* Handle polled devices.  Handle buffered, too, if there's no input thread to do it. */
 	PollAndAcquireDevices( false );
 	if( !m_InputThread.IsCreated() )
@@ -510,12 +507,12 @@ void InputHandler_DInput::Update()
 	{
 		if( !Devices[i].buffered )
 		{
-			UpdatePolled( Devices[i], zero );
+			UpdatePolled( Devices[i], RageZeroTimer );
 		}
 		else if( !m_InputThread.IsCreated() )
 		{
 			/* If we have an input thread, it'll handle buffered devices. */
-			UpdateBuffered( Devices[i], zero );
+			UpdateBuffered( Devices[i], RageZeroTimer );
 		}
 	}
 
