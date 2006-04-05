@@ -38,9 +38,6 @@ RageFileObj::RageFileObj( const RageFileObj &cpy ):
 	if( cpy.m_pWriteBuffer != NULL )
 	{
 		m_pWriteBuffer = new char[cpy.m_iWriteBufferSize];
-		m_iWriteBufferPos = cpy.m_iWriteBufferPos;
-		m_iWriteBufferUsed = cpy.m_iWriteBufferUsed;
-		m_iWriteBufferSize = cpy.m_iWriteBufferSize;
 		memcpy( m_pWriteBuffer, cpy.m_pWriteBuffer, m_iWriteBufferUsed );
 	}
 	else
@@ -51,6 +48,9 @@ RageFileObj::RageFileObj( const RageFileObj &cpy ):
 	m_iReadBufAvail = cpy.m_iReadBufAvail;
 	m_bEOF = cpy.m_bEOF;
 	m_iFilePos = cpy.m_iFilePos;
+	m_iWriteBufferPos = cpy.m_iWriteBufferPos;
+	m_iWriteBufferSize = cpy.m_iWriteBufferSize;
+	m_iWriteBufferUsed = cpy.m_iWriteBufferUsed;
 	m_bCRC32Enabled = cpy.m_bCRC32Enabled;
 	m_iCRC32 = cpy.m_iCRC32;
 }
