@@ -1336,19 +1336,19 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 		FOREACH_HumanPlayer( pn )
 		{
 			/* Find the closest match to the user's preferred difficulty. */
-			int CurDifference = -1;
+			int iCurDifference = -1;
 			for( unsigned i=0; i<m_vpSteps.size(); i++ )
 			{
-				int Diff = abs(m_vpSteps[i]->GetDifficulty() - GAMESTATE->m_PreferredDifficulty[pn]);
+				int iDiff = abs(m_vpSteps[i]->GetDifficulty() - GAMESTATE->m_PreferredDifficulty[pn]);
 
-				if( CurDifference == -1 || Diff < CurDifference )
+				if( iCurDifference == -1 || iDiff < iCurDifference )
 				{
 					m_iSelection[pn] = i;
-					CurDifference = Diff;
+					iCurDifference = iDiff;
 				}
 			}
 
-			CLAMP( m_iSelection[pn],0,m_vpSteps.size()-1 );
+			CLAMP( m_iSelection[pn], 0, m_vpSteps.size()-1 );
 		}
 	}
 	else
@@ -1356,19 +1356,19 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 		FOREACH_HumanPlayer( pn )
 		{
 			/* Find the closest match to the user's preferred difficulty. */
-			int CurDifference = -1;
+			int iCurDifference = -1;
 			for( unsigned i=0; i<m_vpTrails.size(); i++ )
 			{
-				int Diff = abs(m_vpTrails[i]->m_CourseDifficulty - GAMESTATE->m_PreferredCourseDifficulty[pn]);
+				int iDiff = abs(m_vpTrails[i]->m_CourseDifficulty - GAMESTATE->m_PreferredCourseDifficulty[pn]);
 
-				if( CurDifference == -1 || Diff < CurDifference )
+				if( iCurDifference == -1 || iDiff < iCurDifference )
 				{
 					m_iSelection[pn] = i;
-					CurDifference = Diff;
+					iCurDifference = iDiff;
 				}
 			}
 
-			CLAMP( m_iSelection[pn],0,m_vpTrails.size()-1 );
+			CLAMP( m_iSelection[pn], 0, m_vpTrails.size()-1 );
 		}
 	}
 }
