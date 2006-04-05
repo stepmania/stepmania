@@ -179,17 +179,6 @@ void GameLoop::RunGameLoop()
 		 * Render
 		 */
 		SCREENMAN->Draw();
-
-		/* If we don't have focus, give up lots of CPU. */
-		// XXX: do this in DISPLAY EndFrame?
-		if( !HOOKS->AppHasFocus() )
-			usleep( 10000 );// give some time to other processes and threads
-#if defined(_WINDOWS)
-		/* In Windows, we want to give up some CPU for other threads.  Most OS's do
-		 * this more intelligently. */
-		else
-			usleep( 1000 );	// give some time to other processes and threads
-#endif
 	}
 
 	if( ChangeAppPri() )
