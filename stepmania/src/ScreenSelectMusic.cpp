@@ -1244,6 +1244,7 @@ void ScreenSelectMusic::AfterStepsChange( const vector<PlayerNumber> &vpns )
 		Steps* pSteps = m_vpSteps.empty()? NULL: m_vpSteps[m_iSelection[pn]];
 
 		GAMESTATE->m_pCurSteps[pn].Set( pSteps );
+		GAMESTATE->m_pCurTrail[pn].Set( NULL );
 
 		int iScore = 0;
 		if( pSteps )
@@ -1288,6 +1289,7 @@ void ScreenSelectMusic::AfterTrailChange( const vector<PlayerNumber> &vpns )
 		Course* pCourse = GAMESTATE->m_pCurCourse;
 		Trail* pTrail = m_vpTrails.empty()? NULL: m_vpTrails[m_iSelection[pn]];
 
+		GAMESTATE->m_pCurSteps[pn].Set( NULL );
 		GAMESTATE->m_pCurTrail[pn].Set( pTrail );
 
 		int iScore = 0;
@@ -1337,18 +1339,26 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 		{
 			/* Find the closest match to the user's preferred difficulty. */
 			int iCurDifference = -1;
+			int &iSelection = m_iSelection[pn];
 			for( unsigned i=0; i<m_vpSteps.size(); i++ )
 			{
+				/* If the current steps are listed, use them. */
+				if( GAMESTATE->m_pCurSteps[pn] == m_vpSteps[i] )
+				{
+					iSelection = i;
+					break;
+				}
+
 				int iDiff = abs(m_vpSteps[i]->GetDifficulty() - GAMESTATE->m_PreferredDifficulty[pn]);
 
 				if( iCurDifference == -1 || iDiff < iCurDifference )
 				{
-					m_iSelection[pn] = i;
+					iSelection = i;
 					iCurDifference = iDiff;
 				}
 			}
 
-			CLAMP( m_iSelection[pn], 0, m_vpSteps.size()-1 );
+			CLAMP( iSelection, 0, m_vpSteps.size()-1 );
 		}
 	}
 	else
@@ -1357,18 +1367,26 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 		{
 			/* Find the closest match to the user's preferred difficulty. */
 			int iCurDifference = -1;
+			int &iSelection = m_iSelection[pn];
 			for( unsigned i=0; i<m_vpTrails.size(); i++ )
 			{
+				/* If the current trail is listed, use it. */
+				if( GAMESTATE->m_pCurTrail[pn] == m_vpTrails[i] )
+				{
+					iSelection = i;
+					break;
+				}
+
 				int iDiff = abs(m_vpTrails[i]->m_CourseDifficulty - GAMESTATE->m_PreferredCourseDifficulty[pn]);
 
 				if( iCurDifference == -1 || iDiff < iCurDifference )
 				{
-					m_iSelection[pn] = i;
+					iSelection = i;
 					iCurDifference = iDiff;
 				}
 			}
 
-			CLAMP( m_iSelection[pn], 0, m_vpTrails.size()-1 );
+			CLAMP( iSelection, 0, m_vpTrails.size()-1 );
 		}
 	}
 }
@@ -1421,12 +1439,6 @@ void ScreenSelectMusic::AfterMusicChange()
 	GAMESTATE->m_pCurCourse.Set( pCourse );
 	if( pCourse )
 		GAMESTATE->m_pPreferredCourse = pCourse;
-
-	FOREACH_PlayerNumber( p )
-	{
-		GAMESTATE->m_pCurSteps[p].Set( NULL );
-		GAMESTATE->m_pCurTrail[p].Set( NULL );
-	}
 
 	m_vpSteps.clear();
 	m_vpTrails.clear();
