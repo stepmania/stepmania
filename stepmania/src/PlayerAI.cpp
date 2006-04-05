@@ -22,7 +22,7 @@ struct TapScoreDistribution
 			if( fRand <= fCumulativePercent+1e-4 ) /* rounding error */
 				return (TapNoteScore)i;
 		}
-		ASSERT(0);	// the fCumulativePercents must sum to 1.0, so we should never get here!
+		ASSERT_M( 0, ssprintf("%f,%f",fRand,fCumulativePercent) );	// the fCumulativePercents must sum to 1.0, so we should never get here!
 		return TNS_W1;
 	}
 
@@ -33,8 +33,11 @@ static TapScoreDistribution g_Distributions[NUM_SKILL_LEVELS];
 
 void PlayerAI::InitFromDisk()
 {
+	bool bSuccess;
+	
 	IniFile ini;
-	ini.ReadFile( AI_PATH );
+	bSuccess = ini.ReadFile( AI_PATH );
+	ASSERT( bSuccess );
 
 	for( int i=0; i<NUM_SKILL_LEVELS; i++ )
 	{
@@ -45,12 +48,18 @@ void PlayerAI::InitFromDisk()
 
 		TapScoreDistribution& dist = g_Distributions[i];
 		dist.fPercent[TNS_None] = 0;
-		pNode->GetAttrValue( "WeightMiss", dist.fPercent[TNS_Miss] );
-		pNode->GetAttrValue( "WeightW5", dist.fPercent[TNS_W5] );
-		pNode->GetAttrValue( "WeightW4", dist.fPercent[TNS_W4] );
-		pNode->GetAttrValue( "WeightW3", dist.fPercent[TNS_W3] );
-		pNode->GetAttrValue( "WeightW2", dist.fPercent[TNS_W2] );
-		pNode->GetAttrValue( "WeightW1", dist.fPercent[TNS_W1] );
+		bSuccess = pNode->GetAttrValue( "WeightMiss", dist.fPercent[TNS_Miss] );
+		ASSERT( bSuccess );
+		bSuccess = pNode->GetAttrValue( "WeightW5", dist.fPercent[TNS_W5] );
+		ASSERT( bSuccess );
+		bSuccess = pNode->GetAttrValue( "WeightW4", dist.fPercent[TNS_W4] );
+		ASSERT( bSuccess );
+		bSuccess = pNode->GetAttrValue( "WeightW3", dist.fPercent[TNS_W3] );
+		ASSERT( bSuccess );
+		bSuccess = pNode->GetAttrValue( "WeightW2", dist.fPercent[TNS_W2] );
+		ASSERT( bSuccess );
+		bSuccess = pNode->GetAttrValue( "WeightW1", dist.fPercent[TNS_W1] );
+		ASSERT( bSuccess );
 		
 		float fSum = 0;
 		for( int j=0; j<NUM_TapNoteScore; j++ )

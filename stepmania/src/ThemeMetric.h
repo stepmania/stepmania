@@ -88,7 +88,7 @@ public:
 	const T& GetValue() const
 	{
 		ASSERT( m_sName != "" );
-		ASSERT( m_bIsLoaded );
+		ASSERT_M( m_bIsLoaded, m_sGroup + " " + m_sName );
 
 		if( m_bAlwaysReload )
 		{
