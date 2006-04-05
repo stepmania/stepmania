@@ -1432,7 +1432,6 @@ void ScreenSelectMusic::AfterMusicChange()
 
 	m_Banner.SetMovingFast( !!m_MusicWheel.IsMoving() );
 
-	RString SampleMusicToPlay, SampleMusicTimingData;
 	vector<RString> m_Artists, m_AltArtists;
 
 	m_MachineRank.SetText( "" );
