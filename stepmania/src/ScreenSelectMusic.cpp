@@ -1426,9 +1426,10 @@ void ScreenSelectMusic::AfterMusicChange()
 	{
 		GAMESTATE->m_pCurSteps[p].Set( NULL );
 		GAMESTATE->m_pCurTrail[p].Set( NULL );
-		m_vpSteps.clear();
-		m_vpTrails.clear();
 	}
+
+	m_vpSteps.clear();
+	m_vpTrails.clear();
 
 	m_Banner.SetMovingFast( !!m_MusicWheel.IsMoving() );
 
