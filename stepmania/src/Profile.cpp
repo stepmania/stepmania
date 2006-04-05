@@ -977,7 +977,7 @@ void Profile::SaveEditableDataToDir( RString sDir ) const
 
 	ini.SetValue( "Editable", "DisplayName",			m_sDisplayName );
 	ini.SetValue( "Editable", "CharacterID",			m_sCharacterID );
-	ini.SetValue( "Editable", "LastUsedHighScoreName",	m_sLastUsedHighScoreName );
+	ini.SetValue( "Editable", "LastUsedHighScoreName",		m_sLastUsedHighScoreName );
 	ini.SetValue( "Editable", "WeightPounds",			m_iWeightPounds );
 
 	ini.WriteFile( sDir + EDITABLE_INI );
@@ -991,40 +991,40 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	// TRICKY: These are write-only elements that are normally never read again.
 	// This data is required by other apps (like internet ranking), but is 
 	// redundant to the game app.
-	pGeneralDataNode->AppendChild( "DisplayName",					GetDisplayNameOrHighScoreName() );
-	pGeneralDataNode->AppendChild( "CharacterID",					m_sCharacterID );
-	pGeneralDataNode->AppendChild( "LastUsedHighScoreName",			m_sLastUsedHighScoreName );
-	pGeneralDataNode->AppendChild( "WeightPounds",					m_iWeightPounds );
-	pGeneralDataNode->AppendChild( "IsMachine",						IsMachine() );
-	pGeneralDataNode->AppendChild( "IsWeightSet",					m_iWeightPounds != 0 );
+	pGeneralDataNode->AppendChild( "DisplayName",			GetDisplayNameOrHighScoreName() );
+	pGeneralDataNode->AppendChild( "CharacterID",			m_sCharacterID );
+	pGeneralDataNode->AppendChild( "LastUsedHighScoreName",		m_sLastUsedHighScoreName );
+	pGeneralDataNode->AppendChild( "WeightPounds",			m_iWeightPounds );
+	pGeneralDataNode->AppendChild( "IsMachine",			IsMachine() );
+	pGeneralDataNode->AppendChild( "IsWeightSet",			m_iWeightPounds != 0 );
 
-	pGeneralDataNode->AppendChild( "Guid",							m_sGuid );
-	pGeneralDataNode->AppendChild( "SortOrder",						SortOrderToString(m_SortOrder) );
-	pGeneralDataNode->AppendChild( "LastDifficulty",				DifficultyToString(m_LastDifficulty) );
-	pGeneralDataNode->AppendChild( "LastCourseDifficulty",			CourseDifficultyToString(m_LastCourseDifficulty) );
+	pGeneralDataNode->AppendChild( "Guid",				m_sGuid );
+	pGeneralDataNode->AppendChild( "SortOrder",			SortOrderToString(m_SortOrder) );
+	pGeneralDataNode->AppendChild( "LastDifficulty",		DifficultyToString(m_LastDifficulty) );
+	pGeneralDataNode->AppendChild( "LastCourseDifficulty",		CourseDifficultyToString(m_LastCourseDifficulty) );
 	pGeneralDataNode->AppendChild( m_lastSong.CreateNode() );
 	pGeneralDataNode->AppendChild( m_lastCourse.CreateNode() );
-	pGeneralDataNode->AppendChild( "TotalPlays",					m_iTotalPlays );
-	pGeneralDataNode->AppendChild( "TotalPlaySeconds",				m_iTotalPlaySeconds );
-	pGeneralDataNode->AppendChild( "TotalGameplaySeconds",			m_iTotalGameplaySeconds );
-	pGeneralDataNode->AppendChild( "CurrentCombo",					m_iCurrentCombo );
-	pGeneralDataNode->AppendChild( "TotalCaloriesBurned",			m_fTotalCaloriesBurned );
-	pGeneralDataNode->AppendChild( "GoalType",						m_GoalType );
-	pGeneralDataNode->AppendChild( "GoalCalories",					m_iGoalCalories );
-	pGeneralDataNode->AppendChild( "GoalSeconds",					m_iGoalSeconds );
-	pGeneralDataNode->AppendChild( "LastPlayedMachineGuid",			m_sLastPlayedMachineGuid );
-	pGeneralDataNode->AppendChild( "LastPlayedDate",				m_LastPlayedDate );
-	pGeneralDataNode->AppendChild( "TotalDancePoints",				m_iTotalDancePoints );
-	pGeneralDataNode->AppendChild( "NumExtraStagesPassed",			m_iNumExtraStagesPassed );
-	pGeneralDataNode->AppendChild( "NumExtraStagesFailed",			m_iNumExtraStagesFailed );
-	pGeneralDataNode->AppendChild( "NumToasties",					m_iNumToasties );
-	pGeneralDataNode->AppendChild( "TotalTapsAndHolds",				m_iTotalTapsAndHolds );
-	pGeneralDataNode->AppendChild( "TotalJumps",					m_iTotalJumps );
-	pGeneralDataNode->AppendChild( "TotalHolds",					m_iTotalHolds );
-	pGeneralDataNode->AppendChild( "TotalRolls",					m_iTotalRolls );
-	pGeneralDataNode->AppendChild( "TotalMines",					m_iTotalMines );
-	pGeneralDataNode->AppendChild( "TotalHands",					m_iTotalHands );
-	pGeneralDataNode->AppendChild( "Data",							m_SavedLuaData.Serialize() );
+	pGeneralDataNode->AppendChild( "TotalPlays",			m_iTotalPlays );
+	pGeneralDataNode->AppendChild( "TotalPlaySeconds",		m_iTotalPlaySeconds );
+	pGeneralDataNode->AppendChild( "TotalGameplaySeconds",		m_iTotalGameplaySeconds );
+	pGeneralDataNode->AppendChild( "CurrentCombo",			m_iCurrentCombo );
+	pGeneralDataNode->AppendChild( "TotalCaloriesBurned",		m_fTotalCaloriesBurned );
+	pGeneralDataNode->AppendChild( "GoalType",			m_GoalType );
+	pGeneralDataNode->AppendChild( "GoalCalories",			m_iGoalCalories );
+	pGeneralDataNode->AppendChild( "GoalSeconds",			m_iGoalSeconds );
+	pGeneralDataNode->AppendChild( "LastPlayedMachineGuid",		m_sLastPlayedMachineGuid );
+	pGeneralDataNode->AppendChild( "LastPlayedDate",		m_LastPlayedDate );
+	pGeneralDataNode->AppendChild( "TotalDancePoints",		m_iTotalDancePoints );
+	pGeneralDataNode->AppendChild( "NumExtraStagesPassed",		m_iNumExtraStagesPassed );
+	pGeneralDataNode->AppendChild( "NumExtraStagesFailed",		m_iNumExtraStagesFailed );
+	pGeneralDataNode->AppendChild( "NumToasties",			m_iNumToasties );
+	pGeneralDataNode->AppendChild( "TotalTapsAndHolds",		m_iTotalTapsAndHolds );
+	pGeneralDataNode->AppendChild( "TotalJumps",			m_iTotalJumps );
+	pGeneralDataNode->AppendChild( "TotalHolds",			m_iTotalHolds );
+	pGeneralDataNode->AppendChild( "TotalRolls",			m_iTotalRolls );
+	pGeneralDataNode->AppendChild( "TotalMines",			m_iTotalMines );
+	pGeneralDataNode->AppendChild( "TotalHands",			m_iTotalHands );
+	pGeneralDataNode->AppendChild( "Data",				m_SavedLuaData.Serialize() );
 
 	// Keep declared variables in a very local scope so they aren't 
 	// accidentally used where they're not intended.  There's a lot of
@@ -1135,7 +1135,7 @@ ProfileLoadResult Profile::LoadEditableDataFromDir( RString sDir )
 
 	ini.GetValue( "Editable", "DisplayName",			m_sDisplayName );
 	ini.GetValue( "Editable", "CharacterID",			m_sCharacterID );
-	ini.GetValue( "Editable", "LastUsedHighScoreName",	m_sLastUsedHighScoreName );
+	ini.GetValue( "Editable", "LastUsedHighScoreName",		m_sLastUsedHighScoreName );
 	ini.GetValue( "Editable", "WeightPounds",			m_iWeightPounds );
 
 	// This is data that the user can change, so we have to validate it.
@@ -1157,36 +1157,36 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	RString s;
 	const XNode* pTemp;
 
-	pNode->GetChildValue( "DisplayName",					m_sDisplayName );
-	pNode->GetChildValue( "CharacterID",					m_sCharacterID );
+	pNode->GetChildValue( "DisplayName",				m_sDisplayName );
+	pNode->GetChildValue( "CharacterID",				m_sCharacterID );
 	pNode->GetChildValue( "LastUsedHighScoreName",			m_sLastUsedHighScoreName );
-	pNode->GetChildValue( "WeightPounds",					m_iWeightPounds );
-	pNode->GetChildValue( "Guid",							m_sGuid );
-	pNode->GetChildValue( "SortOrder",						s );	m_SortOrder = StringToSortOrder( s );
-	pNode->GetChildValue( "LastDifficulty",					s );	m_LastDifficulty = StringToDifficulty( s );
+	pNode->GetChildValue( "WeightPounds",				m_iWeightPounds );
+	pNode->GetChildValue( "Guid",					m_sGuid );
+	pNode->GetChildValue( "SortOrder",				s );	m_SortOrder = StringToSortOrder( s );
+	pNode->GetChildValue( "LastDifficulty",				s );	m_LastDifficulty = StringToDifficulty( s );
 	pNode->GetChildValue( "LastCourseDifficulty",			s );	m_LastCourseDifficulty = StringToCourseDifficulty( s );
 	pTemp = pNode->GetChild( "Song" );				if( pTemp ) m_lastSong.LoadFromNode( pTemp );
-	pTemp = pNode->GetChild( "Course" );			if( pTemp ) m_lastCourse.LoadFromNode( pTemp );
-	pNode->GetChildValue( "TotalPlays",						m_iTotalPlays );
-	pNode->GetChildValue( "TotalPlaySeconds",				m_iTotalPlaySeconds );
+	pTemp = pNode->GetChild( "Course" );				if( pTemp ) m_lastCourse.LoadFromNode( pTemp );
+	pNode->GetChildValue( "TotalPlays",				m_iTotalPlays );
+	pNode->GetChildValue( "TotalPlaySeconds",			m_iTotalPlaySeconds );
 	pNode->GetChildValue( "TotalGameplaySeconds",			m_iTotalGameplaySeconds );
-	pNode->GetChildValue( "CurrentCombo",					m_iCurrentCombo );
+	pNode->GetChildValue( "CurrentCombo",				m_iCurrentCombo );
 	pNode->GetChildValue( "TotalCaloriesBurned",			m_fTotalCaloriesBurned );
-	pNode->GetChildValue( "GoalType",						(int&)m_GoalType );
-	pNode->GetChildValue( "GoalCalories",					m_iGoalCalories );
-	pNode->GetChildValue( "GoalSeconds",					m_iGoalSeconds );
+	pNode->GetChildValue( "GoalType",				(int&)m_GoalType );
+	pNode->GetChildValue( "GoalCalories",				m_iGoalCalories );
+	pNode->GetChildValue( "GoalSeconds",				m_iGoalSeconds );
 	pNode->GetChildValue( "LastPlayedMachineGuid",			m_sLastPlayedMachineGuid );
-	pNode->GetChildValue( "LastPlayedDate",					m_LastPlayedDate );
-	pNode->GetChildValue( "TotalDancePoints",				m_iTotalDancePoints );
+	pNode->GetChildValue( "LastPlayedDate",				m_LastPlayedDate );
+	pNode->GetChildValue( "TotalDancePoints",			m_iTotalDancePoints );
 	pNode->GetChildValue( "NumExtraStagesPassed",			m_iNumExtraStagesPassed );
 	pNode->GetChildValue( "NumExtraStagesFailed",			m_iNumExtraStagesFailed );
-	pNode->GetChildValue( "NumToasties",					m_iNumToasties );
-	pNode->GetChildValue( "TotalTapsAndHolds",				m_iTotalTapsAndHolds );
-	pNode->GetChildValue( "TotalJumps",						m_iTotalJumps );
-	pNode->GetChildValue( "TotalHolds",						m_iTotalHolds );
-	pNode->GetChildValue( "TotalRolls",						m_iTotalRolls );
-	pNode->GetChildValue( "TotalMines",						m_iTotalMines );
-	pNode->GetChildValue( "TotalHands",						m_iTotalHands );
+	pNode->GetChildValue( "NumToasties",				m_iNumToasties );
+	pNode->GetChildValue( "TotalTapsAndHolds",			m_iTotalTapsAndHolds );
+	pNode->GetChildValue( "TotalJumps",				m_iTotalJumps );
+	pNode->GetChildValue( "TotalHolds",				m_iTotalHolds );
+	pNode->GetChildValue( "TotalRolls",				m_iTotalRolls );
+	pNode->GetChildValue( "TotalMines",				m_iTotalMines );
+	pNode->GetChildValue( "TotalHands",				m_iTotalHands );
 
 	{
 		RString sData;
@@ -1939,7 +1939,7 @@ public:
 	static int GetGoalSeconds( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_iGoalSeconds ); return 1; }
 	static int SetGoalSeconds( T* p, lua_State *L )			{ p->m_iGoalSeconds = IArg(1); return 0; }
 	static int GetCaloriesBurnedToday( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetCaloriesBurnedToday() ); return 1; }
-	static int GetSaved( T* p, lua_State *L )				{ p->m_SavedLuaData.PushSelf(L); return 1; }
+	static int GetSaved( T* p, lua_State *L )			{ p->m_SavedLuaData.PushSelf(L); return 1; }
 	static int GetTotalNumSongsPlayed( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_iNumTotalSongsPlayed ); return 1; }
 	static int IsCodeUnlocked( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsCodeUnlocked(IArg(1)) ); return 1; }
 	static int GetSongsActual( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetSongsActual((StepsType)IArg(1),(Difficulty)IArg(2)) ); return 1; }
@@ -1953,7 +1953,7 @@ public:
 	static int GetNumTotalSongsPlayed( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iNumTotalSongsPlayed ); return 1; }
 	static int GetLastPlayedStepsType( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetLastPlayedStepsType() ); return 1; }
 	static int GetSongsAndCoursesPercentCompleteAllDifficulties( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetSongsAndCoursesPercentCompleteAllDifficulties((StepsType)IArg(1)) ); return 1; }
-	static int GetDisplayTotalCaloriesBurned( T* p, lua_State *L )		{ lua_pushstring(L, p->GetDisplayTotalCaloriesBurned() ); return 1; }
+	static int GetDisplayTotalCaloriesBurned( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayTotalCaloriesBurned() ); return 1; }
 	static int GetMostPopularSong( T* p, lua_State *L )
 	{
 		Song *p2 = p->GetMostPopularSong();
