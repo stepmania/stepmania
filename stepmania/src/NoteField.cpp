@@ -453,6 +453,7 @@ void NoteField::DrawPrimitives()
 	
 	float fDrawScale = 1;
 	fDrawScale *= 1 + 0.5f * fabsf( current_po.m_fPerspectiveTilt );
+	fDrawScale *= 1 + fabsf( current_po.m_fEffects[PlayerOptions::EFFECT_TINY] );
 	
 	iFirstPixelToDraw = (int)(iFirstPixelToDraw * fDrawScale);
 	iLastPixelToDraw = (int)(iLastPixelToDraw * fDrawScale);

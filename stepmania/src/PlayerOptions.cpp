@@ -119,6 +119,7 @@ void PlayerOptions::GetMods( vector<RString> &AddTo ) const
 	AddPart( AddTo, m_fEffects[EFFECT_DRUNK],	"Drunk" );
 	AddPart( AddTo, m_fEffects[EFFECT_DIZZY],	"Dizzy" );
 	AddPart( AddTo, m_fEffects[EFFECT_MINI],	"Mini" );
+	AddPart( AddTo, m_fEffects[EFFECT_TINY],	"Tiny" );
 	AddPart( AddTo, m_fEffects[EFFECT_FLIP],	"Flip" );
 	AddPart( AddTo, m_fEffects[EFFECT_INVERT],	"Invert" );
 	AddPart( AddTo, m_fEffects[EFFECT_TORNADO],	"Tornado" );
@@ -282,6 +283,7 @@ void PlayerOptions::FromString( const RString &sOptions, bool bWarnOnInvalid )
 		else if( sBit == "drunk" )		SET_FLOAT( fEffects[EFFECT_DRUNK] )
 		else if( sBit == "dizzy" )		SET_FLOAT( fEffects[EFFECT_DIZZY] )
 		else if( sBit == "mini" )		SET_FLOAT( fEffects[EFFECT_MINI] )
+		else if( sBit == "tiny" )		SET_FLOAT( fEffects[EFFECT_TINY] )
 		else if( sBit == "flip" )		SET_FLOAT( fEffects[EFFECT_FLIP] )
 		else if( sBit == "invert" )		SET_FLOAT( fEffects[EFFECT_INVERT] )
 		else if( sBit == "tornado" )		SET_FLOAT( fEffects[EFFECT_TORNADO] )

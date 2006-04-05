@@ -280,8 +280,16 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 
 static void ArrowGetReverseShiftAndScale( const PlayerState* pPlayerState, int iCol, float fYReverseOffsetPixels, float &fShiftOut, float &fScaleOut )
 {
+	/* XXX: Hack: we need to scale the reverse shift by the zoom. */
+	float fTinyPercent = pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_TINY];
+	float fZoom = 1 - fTinyPercent*0.5f;
+	
+	// don't divide by 0
+	if( fabsf(fZoom) < 0.01 )
+		fZoom = 0.01f;
+
 	float fPercentReverse = pPlayerState->m_CurrentPlayerOptions.GetReversePercentForColumn(iCol);
-	fShiftOut = SCALE( fPercentReverse, 0.f, 1.f, -fYReverseOffsetPixels/2, fYReverseOffsetPixels/2 );
+	fShiftOut = SCALE( fPercentReverse, 0.f, 1.f, -fYReverseOffsetPixels/fZoom/2, fYReverseOffsetPixels/fZoom/2 );
 	float fPercentCentered = pPlayerState->m_CurrentPlayerOptions.m_fScrolls[PlayerOptions::SCROLL_CENTERED];
 	fShiftOut = SCALE( fPercentCentered, 0.f, 1.f, fShiftOut, 0.0f );
 
@@ -394,7 +402,11 @@ float ArrowEffects::GetRotation( const PlayerState* pPlayerState, float fNoteBea
 
 static float GetCenterLine( const PlayerState* pPlayerState )
 {
-	return CENTER_LINE_Y;
+	/* Another mini hack: if EFFECT_MINI is on, then our center line is at eg. 320, 
+	 * not 160. */
+	const float fMiniPercent = pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_TINY];
+	const float fZoom = 1 - fMiniPercent*0.5f;
+	return CENTER_LINE_Y / fZoom;
 }
 
 static float GetHiddenSudden( const PlayerState* pPlayerState ) 

@@ -19,8 +19,9 @@ void NoteFieldMode::BeginDrawTrack( const PlayerState* pPlayerState, int iTrack 
 	// TODO: Remove indexing by PlayerNumber.
 	float fPixelXOffsetFromCenter = s->m_ColumnInfo[pPlayerState->m_PlayerNumber][iTrack].fXOffset;
 
-	/* Allow Mini to pull tracks together, but not to push them apart. */
 	const float* fEffects = pPlayerState->m_CurrentPlayerOptions.m_fEffects;
+
+	/* Allow Mini to pull tracks together, but not to push them apart. */
 	float fMiniPercent = fEffects[PlayerOptions::EFFECT_MINI];
 	fMiniPercent = min( powf(0.5f, fMiniPercent), 1.0f );
 	fPixelXOffsetFromCenter *= fMiniPercent;

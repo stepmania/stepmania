@@ -517,7 +517,11 @@ void Player::Update( float fDeltaTime )
 
 
 	float fMiniPercent = m_pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_MINI];
-	float fJudgmentZoom = min( powf(0.5f, fMiniPercent), 1.0f );
+	float fTinyPercent = m_pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_TINY];
+	float fNoteFieldZoom = 1 - fTinyPercent*0.5f;
+	float fJudgmentZoom = min( powf(0.5f, fMiniPercent+fTinyPercent), 1.0f );
+	if( m_pNoteField )
+		m_pNoteField->SetZoom( fNoteFieldZoom );
 	if( m_pJudgment )
 		m_pJudgment->SetZoom( m_pJudgment->GetZoom() * fJudgmentZoom );
 	if( m_sprJudgmentFrame.IsLoaded() )
@@ -816,6 +820,12 @@ void Player::DrawPrimitives()
 
 		float fTiltDegrees = SCALE(fTilt,-1.f,+1.f,+30,-30) * (bReverse?-1:1);
 
+		float fZoom = SCALE( m_pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_TINY], 0.f, 1.f, 1.f, 0.5f );
+		if( fTilt > 0 )
+			fZoom *= SCALE( fTilt, 0.f, 1.f, 1.f, 0.9f );
+		else
+			fZoom *= SCALE( fTilt, 0.f, -1.f, 1.f, 0.9f );
+
 		float fYOffset;
 		if( fTilt > 0 )
 			fYOffset = SCALE( fTilt, 0.f, 1.f, 0.f, -45.f ) * (bReverse?-1:1);
@@ -823,6 +833,7 @@ void Player::DrawPrimitives()
 			fYOffset = SCALE( fTilt, 0.f, -1.f, 0.f, -20.f ) * (bReverse?-1:1);
 
 		m_pNoteField->SetY( fOriginalY + fYOffset );
+		m_pNoteField->SetZoom( fZoom );
 		m_pNoteField->SetRotationX( fTiltDegrees );
 		m_pNoteField->Draw();
 
@@ -1040,8 +1051,8 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 				// fall through
 			default:
 				{
-					float fCalsFor100Lbs = SCALE( iNumTracksHeld, 1, 2, 0.029f, 0.097f );
-					float fCalsFor200Lbs = SCALE( iNumTracksHeld, 1, 2, 0.052f, 0.167f );
+					float fCalsFor100Lbs = SCALE( iNumTracksHeld, 1, 2, 0.023f, 0.077f );
+					float fCalsFor200Lbs = SCALE( iNumTracksHeld, 1, 2, 0.041f, 0.133f );
 					fCals = SCALE( pProfile->GetCalculatedWeightPounds(), 100.f, 200.f, fCalsFor100Lbs, fCalsFor200Lbs );
 				}
 				break;
