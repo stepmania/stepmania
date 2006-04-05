@@ -215,6 +215,7 @@ bool GetThreadBacktraceContext( uint64_t ThreadID, BacktraceContext *ctx )
 			return false;
 	}
 
+#if defined(CPU_X86_64) || defined(CPU_X86)
 	user_regs_struct regs;
 	if( ptrace( PTRACE_GETREGS, pid_t(ThreadID), NULL, &regs ) == -1 )
 		return false;
@@ -224,10 +225,19 @@ bool GetThreadBacktraceContext( uint64_t ThreadID, BacktraceContext *ctx )
 	ctx->ip = (void *) regs.rip;
 	ctx->bp = (void *) regs.rbp;
 	ctx->sp = (void *) regs.rsp;
-#elif defined(CPU_X86)
+#else
 	ctx->ip = (void *) regs.eip;
 	ctx->bp = (void *) regs.ebp;
 	ctx->sp = (void *) regs.esp;
+#endif
+#elif defined(CPU_PPC)
+	errno = 0;
+	ctx->FramePtr = (const Frame *)ptrace( PTRACE_PEEKUSER, pid_t(ThreadID), (void *)(PT_R1<<2), 0 );
+	if( errno )
+		return false;
+	ctx->PC = (void *)ptrace( PTRACE_PEEKUSER, pid_t(ThreadID), (void *)(PT_NIP<<2), 0 );
+	if( errno )
+		return false;
 #else
 #error GetThreadBacktraceContext: which arch?
 #endif

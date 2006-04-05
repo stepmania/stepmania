@@ -466,6 +466,51 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 	buf[i] = NULL;
 }
 
+#elif defined(BACKTRACE_METHOD_PPC_LINUX)
+#include <asm/ptrace.h>
+
+struct Frame
+{
+	Frame *stackPointer;
+	void *linkReg;
+};
+
+void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc )
+{
+	// Wow, this is an ugly structure...
+	ctx->PC = (void *)uc->uc_mcontext.uc_regs->gregs[PT_NIP];
+	ctx->FramePtr = (const Frame *)uc->uc_mcontext.uc_regs->gregs[PT_R1];
+}
+
+void InitializeBacktrace() { }
+
+void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
+{
+	BacktraceContext CurrentCtx;
+
+	if( ctx == NULL )
+	{
+		ctx = &CurrentCtx;
+
+		register void *r1 __asm__("1");
+		CurrentCtx.FramePtr = (const Frame *)r1;
+		CurrentCtx.PC = NULL;
+	}
+
+	const Frame *frame = (const Frame *)ctx->FramePtr;
+	unsigned i = 0;
+
+	if( ctx->PC && i < size-1 )
+		buf[i++] = ctx->PC;
+
+	while( frame && i < size-1 )
+	{
+		if( frame->linkReg )
+			buf[i++] = frame->linkReg;
+	}
+	buf[i] = NULL;
+}
+
 #else
 
 #warning Undefined BACKTRACE_METHOD_*

@@ -56,6 +56,11 @@ AC_DEFUN([SM_CHECK_CRASH_HANDLER],
 	    AC_DEFINE([BACKTRACE_METHOD_TEXT],["x86 custom backtrace"],[Define backtrace type])
 	    have_backtrace=yes
 	    ;;
+	powerpc-*-linux* )
+	    AC_DEFINE([BACKTRACE_METHOD_PPC_LINUX],[1],[Define backtrace type])
+	    AC_DEFINE([BACKTRACE_METHOD_TEXT],["ppc custom backtrace"],[Define backtrace type])
+	    have_backtrace=yes
+	    ;;
     esac
 
     # Do we have a libdl with dladdr?
