@@ -471,10 +471,10 @@ void LanguagesDlg::OnBnClickedCheckLanguage()
 				if( sCurrentLanguage.empty() )
 					continue;
 
-				/* Check &FOO;, %{foo}.  Some mismatches here are normal, particularly in
+				/* Check &FOO;, %{foo}, %-1.2f, %.  Some mismatches here are normal, particularly in
 				 * languages with substantially different word order rules than English. */
 				{
-					RString sRegex = "(&[A-Za-z]+;|%{[A-Za-z]+}|%)";
+					RString sRegex = "(&[A-Za-z]+;|%{[A-Za-z]+}|%[+-]?[0-9]*.?[0-9]*[sidf]|%)";
 					vector<RString> asMatchesBase;
 					GetAllMatches( sRegex, sBaseLanguage, asMatchesBase );
 
