@@ -158,13 +158,15 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 	thread->m_pFunc = pFunc;
 	thread->m_pData = pData;
 
-	thread->ThreadHandle = CreateThread( NULL, 0, &StartThread, thread, 0, &thread->ThreadId );
+	thread->ThreadHandle = CreateThread( NULL, 0, &StartThread, thread, CREATE_SUSPENDED, &thread->ThreadId );
 	*piThreadID = (uint64_t) thread->ThreadId;
-
 	ASSERT_M( thread->ThreadHandle, ssprintf("%s", werr_ssprintf(GetLastError(), "CreateThread")) );
 
 	int slot = GetOpenSlot( thread->ThreadId );
 	g_ThreadHandles[slot] = thread->ThreadHandle;
+
+	int iRet = ResumeThread( thread->ThreadHandle );
+	ASSERT_M( iRet == 1, ssprintf("%s", werr_ssprintf(GetLastError(), "ResumeThread")) );
 
 	return thread;
 }
