@@ -293,6 +293,10 @@ RageDisplay_D3D::~RageDisplay_D3D()
 		g_pd3d = NULL;
 	}
 
+	GraphicsWindow::Shutdown();
+
+	/* Even after we call Release(), D3D may still affect our window.  It seems to subclass
+	 * the window, and never release it.  Free the window after destroying the window. */
 #if !defined(XBOX)
 	if( g_D3D8_Module )
 	{
@@ -300,8 +304,6 @@ RageDisplay_D3D::~RageDisplay_D3D()
 		g_D3D8_Module = NULL;
 	}
 #endif
-
-	GraphicsWindow::Shutdown();
 }
 
 void RageDisplay_D3D::GetDisplayResolutions( DisplayResolutions &out ) const
