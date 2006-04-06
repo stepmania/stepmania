@@ -97,14 +97,17 @@ void ScreenGameplaySyncMachine::ResetAndRestartCurrentSong()
 	AdjustSync::s_iAutosyncOffsetSample = 0;
 }
 
+static LocalizedString OLD_OFFSET	( "ScreenGameplaySyncMachine", "Old offset" );
+static LocalizedString NEW_OFFSET	( "ScreenGameplaySyncMachine", "New offset" );
+static LocalizedString COLLECTING_SAMPLE( "ScreenGameplaySyncMachine", "Collecting sample" );
 void ScreenGameplaySyncMachine::RefreshText()
 {
 	float fNew = PREFSMAN->m_fGlobalOffsetSeconds;
 	float fOld = AdjustSync::s_fGlobalOffsetSecondsOriginal;
 	RString s;
-	s += ssprintf( "Old offset: %0.3f\n", fOld );
-	s += ssprintf( "New offset: %0.3f\n", fNew );
-	s += ssprintf( "Collecting sample: %d / %d", AdjustSync::s_iAutosyncOffsetSample+1, SAMPLE_COUNT );
+	s += OLD_OFFSET.GetValue() + ssprintf( ": %0.3f\n", fOld );
+	s += NEW_OFFSET.GetValue() + ssprintf( ": %0.3f\n", fNew );
+	s += COLLECTING_SAMPLE.GetValue() + ssprintf( ": %d / %d", AdjustSync::s_iAutosyncOffsetSample+1, SAMPLE_COUNT );
 
 	m_textSyncInfo.SetText( s );
 }
