@@ -1877,8 +1877,6 @@ unsigned RageDisplay_OGL::CreateTexture(
 	return uTexHandle;
 }
 
-/* This doesn't support img being paletted if the surface itself isn't paletted.
- * This is only used for movies anyway, which are never paletted. */
 void RageDisplay_OGL::UpdateTexture( 
 	unsigned uTexHandle, 
 	RageSurface* pImg,
@@ -1891,9 +1889,17 @@ void RageDisplay_OGL::UpdateTexture(
 
 	glPixelStorei( GL_UNPACK_ROW_LENGTH, pImg->pitch / pImg->format->BytesPerPixel );
 
-//	GLenum glTexFormat = g_GLPixFmtInfo[pixfmt].internalfmt;
 	GLenum glImageFormat = g_GLPixFmtInfo[SurfacePixFmt].format;
 	GLenum glImageType = g_GLPixFmtInfo[SurfacePixFmt].type;
+
+	/* If the image is paletted, but we're not sending it to a paletted image,
+	 * set up glPixelMap. */
+	if( pImg->format->palette )
+	{
+		GLenum glTexFormat = 0;
+		glGetTexLevelParameteriv( GL_PROXY_TEXTURE_2D, 0, GLenum(GL_TEXTURE_INTERNAL_FORMAT), (GLint *) &glTexFormat );
+		SetPixelMapForSurface( glImageFormat, glTexFormat, pImg->format->palette );
+	}
 
 	glTexSubImage2D( GL_TEXTURE_2D, 0,
 		iXOffset, iYOffset,
