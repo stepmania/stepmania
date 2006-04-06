@@ -289,7 +289,6 @@ PrefsManager::PrefsManager() :
 
 	m_bSignProfileData		( "SignProfileData",			false ),
 	m_CourseSortOrder		( "CourseSortOrder",			COURSE_SORT_SONGS ),
-	m_bMoveRandomToEnd		( "MoveRandomToEnd",			false ),
 	m_bSubSortByNumSteps		( "SubSortByNumSteps",			false ),
 	m_GetRankingName		( "GetRankingName",			RANKING_ON ),
 	m_ScoringType			( "ScoringType",			SCORING_NEW ),
@@ -303,7 +302,6 @@ PrefsManager::PrefsManager() :
 	m_iSoundDevice			( "SoundDevice",			"" ),
 	m_iSoundPreferredSampleRate	( "SoundPreferredSampleRate",		44100 ),
 	m_sLightsStepsDifficulty	( "LightsStepsDifficulty",		"medium" ),
-	m_bBlinkGameplayButtonLightsOnNote	( "BlinkGameplayButtonLightsOnNote",false ),
 	m_bAllowUnacceleratedRenderer	( "AllowUnacceleratedRenderer",		false ),
 	m_bThreadedInput		( "ThreadedInput",			true ),
 	m_bThreadedMovieDecode		( "ThreadedMovieDecode",		true ),

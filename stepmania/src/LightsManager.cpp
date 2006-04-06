@@ -21,7 +21,7 @@ const RString DEFAULT_LIGHTS_DRIVER = "Null";
 static Preference<RString> g_sLightsDriver( "LightsDriver", "" ); // "" == DEFAULT_LIGHTS_DRIVER
 Preference<float>	g_fLightsFalloffSeconds( "LightsFalloffSeconds", 0.1f );
 Preference<float>	g_fLightsAheadSeconds( "LightsAheadSeconds", 0.05f );
-
+static Preference<bool>	g_bBlinkGameplayButtonLightsOnNote( "BlinkGameplayButtonLightsOnNote", false );
 
 static const char *CabinetLightNames[] = {
 	"MarqueeUpLeft",
@@ -330,7 +330,7 @@ void LightsManager::Update( float fDeltaTime )
 	case LIGHTSMODE_MENU:
 	case LIGHTSMODE_GAMEPLAY:
 		{
-			if( m_LightsMode == LIGHTSMODE_GAMEPLAY  &&  PREFSMAN->m_bBlinkGameplayButtonLightsOnNote )
+			if( m_LightsMode == LIGHTSMODE_GAMEPLAY  &&  g_bBlinkGameplayButtonLightsOnNote )
 			{
 				//
 				// Blink on notes.

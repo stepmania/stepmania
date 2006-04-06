@@ -22,6 +22,8 @@
 #include "ThemeMetric.h"
 #include "PlayerState.h"
 
+static Preference<bool> g_bMoveRandomToEnd( "MoveRandomToEnd", false );
+
 #define NUM_WHEEL_ITEMS		((int)ceil(NUM_WHEEL_ITEMS_TO_DRAW+2))
 #define WHEEL_TEXT(s)             THEME->GetString( "MusicWheel", ssprintf("%sText",s.c_str()) );
 
@@ -658,7 +660,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 				}
 
 				// since we can't agree, make it an option
-				if( PREFSMAN->m_bMoveRandomToEnd )
+				if( g_bMoveRandomToEnd )
 					CourseUtil::MoveRandomToEnd( apCourses );
 			}
 

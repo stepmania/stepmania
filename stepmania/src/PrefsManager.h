@@ -192,7 +192,6 @@ public:
 	// course ranking
 	enum CourseSortOrders { COURSE_SORT_SONGS, COURSE_SORT_METER, COURSE_SORT_METER_SUM, COURSE_SORT_RANK };
 	Preference<CourseSortOrders,int>	m_CourseSortOrder;
-	Preference<bool>	m_bMoveRandomToEnd;
 	Preference<bool>	m_bSubSortByNumSteps;	
 	enum GetRankingName { RANKING_OFF, RANKING_ON, RANKING_LIST };
 	Preference<GetRankingName,int>	m_GetRankingName;
@@ -211,7 +210,6 @@ public:
 	Preference<RString>	m_iSoundDevice;	
 	Preference<int>		m_iSoundPreferredSampleRate;
 	Preference<RString>	m_sLightsStepsDifficulty;
-	Preference<bool>	m_bBlinkGameplayButtonLightsOnNote;
 	Preference<bool>	m_bAllowUnacceleratedRenderer;
 	Preference<bool>	m_bThreadedInput;
 	Preference<bool>	m_bThreadedMovieDecode;
