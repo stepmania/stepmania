@@ -329,7 +329,7 @@ void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 	FILEMAN->Mount( "dir", dir, "/" );
 	
 	// /Save -> ~/Library/Application Support/PRODUCT_ID
-	PathForFolderType( dir, kApplicationSupportFolderType );
+	PathForFolderType( dir, kPreferencesFolderType );
 	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID, dir), "/Save" );
 	
 	// /Screenshots -> ~/Documents/PRODUCT_ID Screenshots
