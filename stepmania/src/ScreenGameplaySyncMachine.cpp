@@ -100,13 +100,16 @@ void ScreenGameplaySyncMachine::ResetAndRestartCurrentSong()
 static LocalizedString OLD_OFFSET	( "ScreenGameplaySyncMachine", "Old offset" );
 static LocalizedString NEW_OFFSET	( "ScreenGameplaySyncMachine", "New offset" );
 static LocalizedString COLLECTING_SAMPLE( "ScreenGameplaySyncMachine", "Collecting sample" );
+static LocalizedString STANDARD_DEVIATION( "ScreenGameplaySyncMachine", "Standard deviation" );
 void ScreenGameplaySyncMachine::RefreshText()
 {
 	float fNew = PREFSMAN->m_fGlobalOffsetSeconds;
 	float fOld = AdjustSync::s_fGlobalOffsetSecondsOriginal;
+	float fStdDev = AdjustSync::s_fStandardDeviation;
 	RString s;
 	s += OLD_OFFSET.GetValue() + ssprintf( ": %0.3f\n", fOld );
 	s += NEW_OFFSET.GetValue() + ssprintf( ": %0.3f\n", fNew );
+	s += STANDARD_DEVIATION.GetValue() + ssprintf( ": %0.3f\n", fStdDev );
 	s += COLLECTING_SAMPLE.GetValue() + ssprintf( ": %d / %d", AdjustSync::s_iAutosyncOffsetSample+1, SAMPLE_COUNT );
 
 	m_textSyncInfo.SetText( s );

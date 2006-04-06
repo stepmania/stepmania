@@ -10,6 +10,7 @@ TimingData *AdjustSync::s_pTimingDataOriginal = NULL;
 float AdjustSync::s_fGlobalOffsetSecondsOriginal = 0;
 int AdjustSync::s_iAutosyncOffsetSample = 0;
 float AdjustSync::s_fAutosyncOffset[SAMPLE_COUNT];
+float AdjustSync::s_fStandardDeviation = 0;
 
 void AdjustSync::ResetOriginalSyncData()
 {
@@ -45,6 +46,7 @@ void AdjustSync::SaveSyncChanges()
 	if( s_fGlobalOffsetSecondsOriginal != PREFSMAN->m_fGlobalOffsetSeconds )
 		PREFSMAN->SavePrefsToDisk();
 	ResetOriginalSyncData();
+	s_fStandardDeviation = 0;
 }
 
 void AdjustSync::RevertSyncChanges()
@@ -53,6 +55,7 @@ void AdjustSync::RevertSyncChanges()
 		return;
 	PREFSMAN->m_fGlobalOffsetSeconds.Set( s_fGlobalOffsetSecondsOriginal );
 	GAMESTATE->m_pCurSong->m_Timing = *s_pTimingDataOriginal;
+	s_fStandardDeviation = 0;
 }
 
 static LocalizedString AUTOSYNC_CORRECTION_APPLIED	( "AdjustSync", "Autosync: Correction applied." );
@@ -108,6 +111,7 @@ void AdjustSync::HandleAutosync( float fNoteOffBySeconds )
 	}
 
 	s_iAutosyncOffsetSample = 0;
+	s_fStandardDeviation = stddev;
 }
 
 

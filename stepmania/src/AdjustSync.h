@@ -20,6 +20,7 @@ public:
 
 	static float s_fAutosyncOffset[SAMPLE_COUNT];
 	static int s_iAutosyncOffsetSample;
+	static float s_fStandardDeviation;
 };
 
 #endif
