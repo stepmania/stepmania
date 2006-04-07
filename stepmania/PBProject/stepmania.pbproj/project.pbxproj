@@ -6186,10 +6186,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../src",
-					"$(SRCROOT)/Frameworks/SDL.framework/Headers",
 					"$(SRCROOT)/Frameworks/ffmpeg.framework/Headers",
 					"$(SRCROOT)/Frameworks/mad.framework/Headers",
-					"$(SRCROOT)/Frameworks/resample.framework/Headers",
 					"$(SRCROOT)/../src/lua-5.0/include",
 					"$(SRCROOT)/../src/vorbis",
 					"$(SRCROOT)/../src/libjpeg",
@@ -6307,10 +6305,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../src",
-					"$(SRCROOT)/Frameworks/SDL.framework/Headers",
 					"$(SRCROOT)/Frameworks/ffmpeg.framework/Headers",
 					"$(SRCROOT)/Frameworks/mad.framework/Headers",
-					"$(SRCROOT)/Frameworks/resample.framework/Headers",
 					"$(SRCROOT)/../src/lua-5.0/include",
 					"$(SRCROOT)/../src/vorbis",
 					"$(SRCROOT)/../src/libjpeg",
@@ -6326,7 +6322,6 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(SDKROOT)/usr/lib",
-					"$(SRCROOT)/../src/libresample",
 					"$(SRCROOT)/Libraries",
 				);
 				LIBRARY_STYLE = Bundle;
@@ -6395,10 +6390,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../src",
-					"$(SRCROOT)/Frameworks/SDL.framework/Headers",
 					"$(SRCROOT)/Frameworks/ffmpeg.framework/Headers",
 					"$(SRCROOT)/Frameworks/mad.framework/Headers",
-					"$(SRCROOT)/Frameworks/resample.framework/Headers",
 					"$(SRCROOT)/../src/lua-5.0/include",
 					"$(SRCROOT)/../src/vorbis",
 					"$(SRCROOT)/../src/libjpeg",
@@ -6414,7 +6407,6 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(SDKROOT)/usr/lib",
-					"$(SRCROOT)/../src/libresample",
 					"$(SRCROOT)/Libraries",
 				);
 				LIBRARY_STYLE = Bundle;
@@ -6483,10 +6475,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../src",
-					"$(SRCROOT)/Frameworks/SDL.framework/Headers",
 					"$(SRCROOT)/Frameworks/ffmpeg.framework/Headers",
 					"$(SRCROOT)/Frameworks/mad.framework/Headers",
-					"$(SRCROOT)/Frameworks/resample.framework/Headers",
 					"$(SRCROOT)/../src/lua-5.0/include",
 					"$(SRCROOT)/../src/vorbis",
 					"$(SRCROOT)/../src/libjpeg",
@@ -6502,7 +6492,6 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(SDKROOT)/usr/lib",
-					"$(SRCROOT)/../src/libresample",
 					"$(SRCROOT)/Libraries",
 				);
 				LIBRARY_STYLE = Bundle;
@@ -6595,10 +6584,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../src",
-					"$(SRCROOT)/Frameworks/SDL.framework/Headers",
 					"$(SRCROOT)/Frameworks/ffmpeg.framework/Headers",
 					"$(SRCROOT)/Frameworks/mad.framework/Headers",
-					"$(SRCROOT)/Frameworks/resample.framework/Headers",
 					"$(SRCROOT)/../src/lua-5.0/include",
 					"$(SRCROOT)/../src/vorbis",
 					"$(SRCROOT)/../src/libjpeg",
@@ -6738,10 +6725,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../src",
-					"$(SRCROOT)/Frameworks/SDL.framework/Headers",
 					"$(SRCROOT)/Frameworks/ffmpeg.framework/Headers",
 					"$(SRCROOT)/Frameworks/mad.framework/Headers",
-					"$(SRCROOT)/Frameworks/resample.framework/Headers",
 					"$(SRCROOT)/../src/lua-5.0/include",
 					"$(SRCROOT)/../src/vorbis",
 					"$(SRCROOT)/../src/libjpeg",
