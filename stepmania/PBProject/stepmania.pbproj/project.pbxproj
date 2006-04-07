@@ -1761,6 +1761,8 @@
 		AAFBEEF0094D807E000029DE /* ScreenServiceAction.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFBEEEA094D807E000029DE /* ScreenServiceAction.h */; };
 		AAFC6CF1072A30440053AAD3 /* InputHandler_MonkeyKeyboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFC6CEF072A30440053AAD3 /* InputHandler_MonkeyKeyboard.cpp */; };
 		AAFC6CF2072A30440053AAD3 /* InputHandler_MonkeyKeyboard.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFC6CF0072A30440053AAD3 /* InputHandler_MonkeyKeyboard.h */; };
+		F4BC045409E6B578003F770B /* ScreenGameplaySyncMachine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB55EB509A7E3D3008FDC69 /* ScreenGameplaySyncMachine.cpp */; };
+		F4BC045509E6B582003F770B /* ScreenGameplaySyncMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB55EB609A7E3D3008FDC69 /* ScreenGameplaySyncMachine.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -4987,6 +4989,7 @@
 				AAB55FFF09A84E62008FDC69 /* ScreenUnlockCelebrate.h in Headers */,
 				AAB5600109A84E64008FDC69 /* ScreenUnlockBrowse.h in Headers */,
 				AA1F9C4909AF1BF5002C15A8 /* PumpDevice.h in Headers */,
+				F4BC045509E6B582003F770B /* ScreenGameplaySyncMachine.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6083,6 +6086,7 @@
 				AAB5600209A84E65008FDC69 /* ScreenUnlockBrowse.cpp in Sources */,
 				AA1F9C4A09AF1BF5002C15A8 /* PumpDevice.cpp in Sources */,
 				AA3E3DF209D96A1400A259C7 /* CrashHandlerInternal.cpp in Sources */,
+				F4BC045409E6B578003F770B /* ScreenGameplaySyncMachine.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
