@@ -451,7 +451,7 @@ void CrashHandler::do_backtrace( const void **buf, size_t size,
 	 * handler was called on the same stack.  However, once in a while, due to stack corruption,
 	 * we might not be able to get any frames from the stack.  Pull it out of pContext->Eip,
 	 * which is always valid, and then discard the first stack frame if it's the same. */
-	if( buf+1 != pLast )
+	if( buf+1 != pLast && pContext->Eip != NULL )
 	{
 		*buf = (void *) pContext->Eip;
 		++buf;
