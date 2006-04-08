@@ -2358,7 +2358,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		const bool bStopCourseEarly = STOP_COURSE_EARLY;
 		const bool bIsLastSong = IsLastSong();
 
-		//LOG->Trace( "bAllReallyFailed = %d, bStopCourseEarly = %d, bIsLastSong = %d", bAllReallyFailed, bStopCourseEarly, bIsLastSong );
+		LOG->Trace( "bAllReallyFailed = %d, bStopCourseEarly = %d, bIsLastSong = %d", bAllReallyFailed, bStopCourseEarly, bIsLastSong );
 
 		if( bStopCourseEarly || bAllReallyFailed || bIsLastSong )
 		{
