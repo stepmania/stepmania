@@ -75,8 +75,10 @@ void ScreenNetSelectMusic::Init()
 	m_MusicWheel.SetName( "MusicWheel" );
 	SET_XY( m_MusicWheel );
 	m_MusicWheel.TweenOnScreen();
+	m_MusicWheel.BeginScreen();
 	this->AddChild( &m_MusicWheel );
 	this->MoveToHead( &m_MusicWheel );
+
 	ON_COMMAND( m_MusicWheel );	
 	
 	m_BPMDisplay.SetName( "BPMDisplay" );
