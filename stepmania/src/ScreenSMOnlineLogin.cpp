@@ -20,6 +20,7 @@ REGISTER_SCREEN_CLASS(ScreenSMOnlineLogin);
 
 AutoScreenMessage( SM_SMOnlinePack )
 AutoScreenMessage( SM_PasswordDone )
+AutoScreenMessage( SM_NoProfilesDefined )
 
 static LocalizedString DEFINE_A_PROFILE( "ScreenSMOnlineLogin", "You must define a Profile." );
 void ScreenSMOnlineLogin::Init()
@@ -28,21 +29,27 @@ void ScreenSMOnlineLogin::Init()
 	m_iPlayer = 0;
 
 	vector<OptionRowHandler*> vHands;
-	vHands.push_back( OptionRowHandlerUtil::MakeNull() );
-	OptionRowDefinition &def = vHands.back()->m_Def;
-	def.m_sName = "Profile";
-	def.m_bOneChoiceForAllPlayers = false;
-	def.m_bAllowThemeItems = false;
-	def.m_vEnabledForPlayers.clear();
+
+	OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
+
+	pHand->m_Def.m_sName = "Profile";
+	pHand->m_Def.m_bOneChoiceForAllPlayers = true;
+	pHand->m_Def.m_bAllowThemeItems = false;
+	pHand->m_Def.m_vEnabledForPlayers.clear();
+
 	FOREACH_PlayerNumber( pn )
-		def.m_vEnabledForPlayers.insert( pn );
-	def.m_vsChoices.clear();
-	PROFILEMAN->GetLocalProfileDisplayNames( def.m_vsChoices );
-	if( def.m_vsChoices.empty() )
+		pHand->m_Def.m_vEnabledForPlayers.insert( pn );
+
+	PROFILEMAN->GetLocalProfileDisplayNames( pHand->m_Def.m_vsChoices );
+
+	if( pHand->m_Def.m_vsChoices.empty() )
 	{
-		SCREENMAN->SystemMessage( DEFINE_A_PROFILE );
-		SCREENMAN->SetNewScreen("ScreenProfileOptions");
+		//Give myself a message so that I can bail out later
+		PostScreenMessage(SM_NoProfilesDefined, 0);
+		SAFE_DELETE(pHand);
 	}
+	else
+		vHands.push_back( pHand );
 
 	InitMenu( vHands );
   	SOUND->PlayMusic( THEME->GetPathS("ScreenMachineOptions", "music"));
@@ -102,6 +109,11 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 			SendLogin(ScreenTextEntry::s_sLastAnswer);
 		else
 			SCREENMAN->PostMessageToTopScreen( SM_GoToPrevScreen, 0 );
+	}
+	else if( SM == SM_NoProfilesDefined )
+	{
+		SCREENMAN->SystemMessage(DEFINE_A_PROFILE);
+		SCREENMAN->SetNewScreen("ScreenOptionsManageProfiles");
 	}
 	else if( SM == SM_SMOnlinePack )
 	{
