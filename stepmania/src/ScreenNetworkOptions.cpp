@@ -59,6 +59,7 @@ void ScreenNetworkOptions::Init()
 		OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
 		vHands.push_back( pHand );
 		pHand->m_Def.m_bAllowThemeItems = false;
+		pHand->m_Def.m_bOneChoiceForAllPlayers = true;
 		pHand->m_Def.m_sName = "Server";
 		pHand->m_Def.m_vsChoices.push_back("Stop");
 		pHand->m_Def.m_vsChoices.push_back("Start");
@@ -68,21 +69,23 @@ void ScreenNetworkOptions::Init()
 		vHands.push_back( pHand );
 		pHand->m_Def.m_sName = "Scoreboard";
 		pHand->m_Def.m_vsChoices.clear();
+		pHand->m_Def.m_bOneChoiceForAllPlayers = true;
 		pHand->m_Def.m_vsChoices.push_back("Off");
 		pHand->m_Def.m_vsChoices.push_back("On");
 	}
 	{
-		OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
-		vHands.push_back( pHand );
-		pHand->m_Def.m_sName = "Servers";
 
 		// Get info on all received servers from NSMAN.
+		AllServers.clear();
 		NSMAN->GetListOfLANServers( AllServers );
-		if( AllServers.size() == 0 )
-			pHand->m_Def.m_vsChoices.push_back( "-none-" );
-
-		for( unsigned int j = 0; j < AllServers.size(); j++ )
-			pHand->m_Def.m_vsChoices.push_back( AllServers[j].Name );
+		if( !AllServers.empty() )
+		{
+			OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
+			pHand->m_Def.m_sName = "Servers";
+			for( unsigned int j = 0; j < AllServers.size(); j++ )
+				pHand->m_Def.m_vsChoices.push_back( AllServers[j].Name );
+			vHands.push_back( pHand );
+		}
 	}
 
 	InitMenu( vHands );
@@ -174,12 +177,17 @@ void ScreenNetworkOptions::MenuStart( const InputEventPlus &input )
 			PREFSMAN->m_bEnableScoreboard.Set(false);
 		break;
 	case PO_SERVERS:
-		if ( AllServers.size() != 0 )
+		if ( !AllServers.empty() )
 		{
 			string sNewName = AllServers[m_pRows[GetCurrentRow()]->GetOneSharedSelection()].Address;
 			NSMAN->PostStartUp(sNewName);
 			NSMAN->DisplayStartupStatus();
 			UpdateConnectStatus( );
+		}
+		else
+		{
+			//If the server list is empty, keep passing the message on so exit works
+			ScreenOptions::MenuStart( input );
 		}
 		break;
 	default:
