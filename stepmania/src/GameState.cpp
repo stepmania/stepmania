@@ -583,6 +583,7 @@ void GameState::ResetMusicStatistics()
 {	
 	m_fMusicSeconds = 0; // MUSIC_SECONDS_INVALID;
 	m_fSongBeat = 0;
+	m_fSongBeatNoOffset = 0;
 	m_fCurBPS = 10;
 	m_bFreeze = false;
 	Actor::SetBGMTime( 0, 0 );
@@ -653,7 +654,8 @@ void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &ti
 	m_fMusicSeconds = fPositionSeconds;
 	m_fLightSongBeat = timing.GetBeatFromElapsedTime( fPositionSeconds + g_fLightsAheadSeconds );
 
-	Actor::SetBGMTime( fPositionSeconds, m_fSongBeat );
+	m_fSongBeatNoOffset = timing.GetBeatFromElapsedTimeNoOffset( fPositionSeconds );
+	Actor::SetBGMTime( fPositionSeconds, m_fSongBeatNoOffset );
 	
 //	LOG->Trace( "m_fMusicSeconds = %f, m_fSongBeat = %f, m_fCurBPS = %f, m_bFreeze = %f", m_fMusicSeconds, m_fSongBeat, m_fCurBPS, m_bFreeze );
 }

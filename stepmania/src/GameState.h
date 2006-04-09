@@ -158,6 +158,7 @@ public:
 	//
 	float		m_fMusicSeconds;	// time into the current song
 	float		m_fSongBeat;
+	float		m_fSongBeatNoOffset;
 	float		m_fCurBPS;
 	float		m_fLightSongBeat; // g_fLightsFalloffSeconds ahead
 	bool		m_bFreeze;	// in the middle of a freeze

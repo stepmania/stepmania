@@ -159,9 +159,9 @@ static void StartMusic( MusicToPlay &ToPlay )
 		/* Extend the loop period so it always starts and ends on the same fractional
 		 * beat.  That is, if it starts on beat 1.5, and ends on beat 10.2, extend it
 		 * to end on beat 10.5.  This way, effects always loop cleanly. */
-		float fStartBeat = NewMusic->m_NewTiming.GetBeatFromElapsedTime( ToPlay.start_sec );
+		float fStartBeat = NewMusic->m_NewTiming.GetBeatFromElapsedTimeNoOffset( ToPlay.start_sec );
 		float fEndSec = ToPlay.start_sec + ToPlay.length_sec;
-		float fEndBeat = NewMusic->m_NewTiming.GetBeatFromElapsedTime( fEndSec );
+		float fEndBeat = NewMusic->m_NewTiming.GetBeatFromElapsedTimeNoOffset( fEndSec );
 		
 		const float fStartBeatFraction = fmodfp( fStartBeat, 1 );
 		const float fEndBeatFraction = fmodfp( fEndBeat, 1 );
@@ -172,7 +172,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 
 		fEndBeat += fBeatDifference;
 
-		const float fRealEndSec = NewMusic->m_NewTiming.GetElapsedTimeFromBeat( fEndBeat );
+		const float fRealEndSec = NewMusic->m_NewTiming.GetElapsedTimeFromBeatNoOffset( fEndBeat );
 		const float fNewLengthSec = fRealEndSec - ToPlay.start_sec;
 
 		/* Extend the fade_len, so the added time is faded out. */
@@ -185,8 +185,8 @@ static void StartMusic( MusicToPlay &ToPlay )
 	{
 		/* This song has no real timing data.  The offset is arbitrary.  Change it so
 		 * the beat will line up to where we are now, so we don't have to delay. */
-		float fDestBeat = fmodfp( GAMESTATE->m_fSongBeat, 1 );
-		float fTime = NewMusic->m_NewTiming.GetElapsedTimeFromBeat( fDestBeat );
+		float fDestBeat = fmodfp( GAMESTATE->m_fSongBeatNoOffset, 1 );
+		float fTime = NewMusic->m_NewTiming.GetElapsedTimeFromBeatNoOffset( fDestBeat );
 
 		NewMusic->m_NewTiming.m_fBeat0OffsetInSeconds = fTime;
 
@@ -208,17 +208,17 @@ static void StartMusic( MusicToPlay &ToPlay )
 		 * probably take a little longer.  Nudge the latency up. */
 		const float fPresumedLatency = SOUND->GetPlayLatency() + 0.040f;
 		const float fCurSecond = GAMESTATE->m_fMusicSeconds + fPresumedLatency;
-		const float fCurBeat = g_Playing->m_Timing.GetBeatFromElapsedTime( fCurSecond );
+		const float fCurBeat = g_Playing->m_Timing.GetBeatFromElapsedTimeNoOffset( fCurSecond );
 
 		/* The beat that the new sound will start on. */
-		const float fStartBeat = NewMusic->m_NewTiming.GetBeatFromElapsedTime( ToPlay.start_sec );
+		const float fStartBeat = NewMusic->m_NewTiming.GetBeatFromElapsedTimeNoOffset( ToPlay.start_sec );
 		const float fStartBeatFraction = fmodfp( fStartBeat, 1 );
 
 		float fCurBeatToStartOn = truncf(fCurBeat) + fStartBeatFraction;
 		if( fCurBeatToStartOn < fCurBeat )
 			fCurBeatToStartOn += 1.0f;
 
-		const float fSecondToStartOn = g_Playing->m_Timing.GetElapsedTimeFromBeat( fCurBeatToStartOn );
+		const float fSecondToStartOn = g_Playing->m_Timing.GetElapsedTimeFromBeatNoOffset( fCurBeatToStartOn );
 		const float fMaximumDistance = 2;
 		const float fDistance = min( fSecondToStartOn - GAMESTATE->m_fMusicSeconds, fMaximumDistance );
 
