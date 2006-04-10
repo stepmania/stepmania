@@ -281,6 +281,8 @@ RageDisplay_D3D::~RageDisplay_D3D()
 {
 	LOG->Trace( "RageDisplay_D3D::~RageDisplay()" );
 
+	GraphicsWindow::Shutdown();
+
 	if( g_pd3dDevice )
 	{
 		g_pd3dDevice->Release();
@@ -292,8 +294,6 @@ RageDisplay_D3D::~RageDisplay_D3D()
 		g_pd3d->Release();
 		g_pd3d = NULL;
 	}
-
-	GraphicsWindow::Shutdown();
 
 	/* Even after we call Release(), D3D may still affect our window.  It seems to subclass
 	 * the window, and never release it.  Free the DLL after destroying the window. */
