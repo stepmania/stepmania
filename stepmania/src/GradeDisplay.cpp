@@ -118,10 +118,12 @@ void GradeDisplay::SetGrade( PlayerNumber pn, Grade g )
 	{
 		SetState( GetFrameIndex(pn,g) );
 		SetHidden( false );
+		SetDiffuseAlpha(1);
 	}
 	else
 	{
 		SetHidden( true );
+		SetDiffuseAlpha(0);
 	}
 }
 
