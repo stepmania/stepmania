@@ -703,7 +703,11 @@ void NoteDataUtil::ChangeRollsToHolds( NoteData &in, int iStartIndex, int iEndIn
 
 void NoteDataUtil::RemoveSimultaneousNotes( NoteData &in, int iMaxSimultaneous, int iStartIndex, int iEndIndex )
 {
-	// turn all the HoldNotes into TapNotes
+	// Remove tap and hold notes so no more than iMaxSimultaneous buttons are being held at any
+	// given time.  Never touch data outside of the range given; if many hold notes are overlapping
+	// iStartIndex, and we'd have to change those holds to obey iMaxSimultaneous, just do the best
+	// we can without doing so.
+	notes to turn all the HoldNotes into TapNotes
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( in, r, iStartIndex, iEndIndex )
 	{
 		set<int> viTracksHeld;
@@ -715,18 +719,9 @@ void NoteDataUtil::RemoveSimultaneousNotes( NoteData &in, int iMaxSimultaneous, 
 		for( int t=0; iTracksToRemove>0 && t<in.GetNumTracks(); t++ )
 		{
 			const TapNote &tn = in.GetTapNote(t,r);
-			if( tn.type == TapNote::tap )
+			if( tn.type == TapNote::tap || tn.type == TapNote::hold_head )
 			{
 				in.SetTapNote( t, r, TAP_EMPTY );
-				iTracksToRemove--;
-			}
-			else if( tn.type == TapNote::hold_head )
-			{
-				int iStartTrack;
-				if( !in.IsHoldNoteAtRow( t, r, &iStartTrack ) )
-					continue;
-
-				in.SetTapNote( t, iStartTrack, TAP_EMPTY );
 				iTracksToRemove--;
 			}
 		}
