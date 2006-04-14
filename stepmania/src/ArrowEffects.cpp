@@ -373,10 +373,10 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 		fPixelOffsetFromCenter += data.m_fInvertDistance[iColNum] * fEffects[PlayerOptions::EFFECT_INVERT];
 
 	if( fEffects[PlayerOptions::EFFECT_BEAT] != 0 )
-	do {
+	{
 		const float fShift = data.m_fBeatFactor*RageFastSin( fYOffset / 15.0f + PI/2.0f );
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_BEAT] * fShift;
-	} while(0);
+	}
 
 	fPixelOffsetFromCenter += pCols[iColNum].fXOffset;
 
