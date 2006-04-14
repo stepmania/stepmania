@@ -378,6 +378,16 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_BEAT] * fShift;
 	} while(0);
 
+	fPixelOffsetFromCenter += pCols[iColNum].fXOffset;
+
+	if( fEffects[PlayerOptions::EFFECT_MINI] != 0 )
+	{
+		/* Allow Mini to pull tracks together, but not to push them apart. */
+		float fMiniPercent = fEffects[PlayerOptions::EFFECT_MINI];
+		fMiniPercent = min( powf(0.5f, fMiniPercent), 1.0f );
+		fPixelOffsetFromCenter *= fMiniPercent;
+	}
+
 	return fPixelOffsetFromCenter;
 }
 

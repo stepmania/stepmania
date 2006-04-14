@@ -9,32 +9,10 @@
 
 void NoteFieldMode::BeginDrawTrack( const PlayerState* pPlayerState, int iTrack )
 {
-	DISPLAY->CameraPushMatrix();
-
-	ASSERT( iTrack != -1 );
-
-	DISPLAY->PushMatrix();
-
-	const Style *s = GAMESTATE->GetCurrentStyle();
-	// TODO: Remove indexing by PlayerNumber.
-	float fPixelXOffsetFromCenter = s->m_ColumnInfo[pPlayerState->m_PlayerNumber][iTrack].fXOffset;
-
-	const float* fEffects = pPlayerState->m_CurrentPlayerOptions.m_fEffects;
-
-	/* Allow Mini to pull tracks together, but not to push them apart. */
-	float fMiniPercent = fEffects[PlayerOptions::EFFECT_MINI];
-	fMiniPercent = min( powf(0.5f, fMiniPercent), 1.0f );
-	fPixelXOffsetFromCenter *= fMiniPercent;
-
-	DISPLAY->Translate( fPixelXOffsetFromCenter, 0, 0 );
 }
 
 void NoteFieldMode::EndDrawTrack( int iTrack )
 {
-	ASSERT( iTrack != -1 );
-
-	DISPLAY->PopMatrix();
-	DISPLAY->CameraPopMatrix();
 }
 
 
