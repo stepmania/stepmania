@@ -749,6 +749,22 @@ void NetworkSyncManager::ProcessInput()
 				LOG->Trace( "Received SMOnline Command: %d, size:%d", command, packetSize - 1 );
 				SCREENMAN->SendMessageToTopScreen( SM_SMOnlinePack );
 			}
+			break;
+		case NSCAttack:
+			{
+				PlayerNumber iPlayerNumber = (PlayerNumber)m_packet.Read1();
+
+				if( GAMESTATE->IsPlayerEnabled( iPlayerNumber ) )	//Only attack if the player can be attacked.
+				{
+					Attack a;
+					a.fSecsRemaining = float( m_packet.Read4() ) / 1000.0f;
+					a.bGlobal = false;
+					a.sModifiers = m_packet.ReadNT();
+					GAMESTATE->m_pPlayerState[iPlayerNumber]->LaunchAttack( a );
+				}
+				m_packet.ClearPacket();
+			}
+			break;
 		}
 		m_packet.ClearPacket();
 	}

@@ -28,6 +28,8 @@ enum NSCommand
 	NSCSMS,			//10
 	NSCUPOpts,		//11
 	NSCSMOnline,	//12
+	NSCFormatted,	//13
+	NSCAttack,		//14
 	NUM_NS_COMMANDS
 };
 
