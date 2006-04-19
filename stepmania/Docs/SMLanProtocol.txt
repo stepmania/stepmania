@@ -330,6 +330,11 @@ NOTE: Server responces always add 128, thus a server responce for no operation
     2		Port the server is listening on
     2		Number of players connected
 
+014:(142)Attack Client
+ Size:
+    1		Player Number
+    4		Time to Last (in MS)
+    NT		Text describing modifiers.
 
 ----------------------------------------------------------------
 Client SMOnline packets:
@@ -383,7 +388,7 @@ Server SMOnline packets:
     NT		Room Title
     NT		Room Description
     1		Type of room:
-		0: Chat room
+ 		0: Chat room
 		1: Game room
     1		Allows creation of sub room.
 		0: Does not allow creation of subrooms
