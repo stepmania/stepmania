@@ -454,6 +454,18 @@ enum ProfileLoadResult
 };
 
 
+enum MultiPlayerStatus
+{
+	MultiPlayerStatus_Joined,
+	MultiPlayerStatus_NotJoined,
+	MultiPlayerStatus_Unplugged,
+	MultiPlayerStatus_MissingMultitap,
+	NUM_MultiPlayerStatus,
+	MultiPlayerStatus_INVALID
+};
+const RString& MultiPlayerStatusToString( MultiPlayerStatus i );
+
+
 #endif
 
 /*

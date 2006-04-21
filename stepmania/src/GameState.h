@@ -55,12 +55,12 @@ public:
 	void SetCurGame( const Game *pGame );	// Call this instead of m_pCurGame.Set to make sure PREFSMAN->m_sCurrentGame stays in sync
 	BroadcastOnChangePtr<const Game>	m_pCurGame;
 	BroadcastOnChangePtr<const Style>	m_pCurStyle;
-	bool								m_bSideIsJoined[NUM_PLAYERS];	// left side, right side
-	bool								m_bIsMultiPlayerJoined[NUM_MultiPlayer];
-	BroadcastOnChange<PlayMode>			m_PlayMode;			// many screens display different info depending on this value
-	int									m_iCoins;			// not "credits"
-	PlayerNumber						m_MasterPlayerNumber;	// used in Styles where one player controls both sides
-	bool								m_bMultiplayer;
+	bool					m_bSideIsJoined[NUM_PLAYERS];	// left side, right side
+	MultiPlayerStatus			m_MultiPlayerStatus[NUM_MultiPlayer];
+	BroadcastOnChange<PlayMode>		m_PlayMode;			// many screens display different info depending on this value
+	int					m_iCoins;			// not "credits"
+	PlayerNumber				m_MasterPlayerNumber;	// used in Styles where one player controls both sides
+	bool					m_bMultiplayer;
 	bool DifficultiesLocked();
 	bool ChangePreferredDifficulty( PlayerNumber pn, Difficulty dc );
 	bool ChangePreferredDifficulty( PlayerNumber pn, int dir );
@@ -75,10 +75,10 @@ public:
 	/* This is set to a random number per-game/round; it can be used for a random seed. */
 	int				m_iGameSeed, m_iStageSeed;
 
-	bool			PlayersCanJoin() const;	// true if it's not too late for a player to join
-	int 			GetCoinsNeededToJoin() const;
-	bool			EnoughCreditsToJoin() const { return GetCoinsNeededToJoin() <= 0; }
-	int				GetNumSidesJoined() const;
+	bool		PlayersCanJoin() const;	// true if it's not too late for a player to join
+	int 		GetCoinsNeededToJoin() const;
+	bool		EnoughCreditsToJoin() const { return GetCoinsNeededToJoin() <= 0; }
+	int		GetNumSidesJoined() const;
 
 	const Game*	GetCurrentGame();
 	const Style*	GetCurrentStyle() const;

@@ -171,7 +171,7 @@ void GameState::Reset()
 	FOREACH_PlayerNumber( p )
 		m_bSideIsJoined[p] = false;
 	FOREACH_MultiPlayer( p )
-		m_bIsMultiPlayerJoined[p] = false;
+		m_MultiPlayerStatus[p] = MultiPlayerStatus_NotJoined;
 	MEMCARDMAN->UnlockCards();
 //	m_iCoins = 0;	// don't reset coin count!
 	m_MasterPlayerNumber = PLAYER_INVALID;
@@ -819,13 +819,13 @@ bool GameState::IsPlayerEnabled( PlayerNumber pn ) const
 
 bool GameState::IsMultiPlayerEnabled( MultiPlayer mp ) const
 {
-	return m_bIsMultiPlayerJoined[ mp ];
+	return m_MultiPlayerStatus[ mp ] == MultiPlayerStatus_Joined;
 }
 
 bool GameState::IsPlayerEnabled( const PlayerState* pPlayerState ) const
 {
 	if( pPlayerState->m_mp != MultiPlayer_INVALID )
-		return m_bIsMultiPlayerJoined[ pPlayerState->m_mp ];
+		return IsMultiPlayerEnabled( pPlayerState->m_mp );
 	if( pPlayerState->m_PlayerNumber != PLAYER_INVALID )
 		return IsPlayerEnabled( pPlayerState->m_PlayerNumber );
 	return false;
@@ -1790,13 +1790,19 @@ public:
 
 	DEFINE_METHOD( IsPlayerEnabled,			IsPlayerEnabled((PlayerNumber)IArg(1)) )
 	DEFINE_METHOD( IsHumanPlayer,			IsHumanPlayer((PlayerNumber)IArg(1)) )
-	DEFINE_METHOD( GetPlayerDisplayName,	GetPlayerDisplayName((PlayerNumber)IArg(1)) )
-	DEFINE_METHOD( GetMasterPlayerNumber,	m_MasterPlayerNumber )
+	DEFINE_METHOD( GetPlayerDisplayName,		GetPlayerDisplayName((PlayerNumber)IArg(1)) )
+	DEFINE_METHOD( GetMasterPlayerNumber,		m_MasterPlayerNumber )
 	DEFINE_METHOD( GetMultiplayer,			m_bMultiplayer )
 	static int GetPlayerState( T* p, lua_State *L )
 	{ 
 		PlayerNumber pn = (PlayerNumber)IArg(1);
 		p->m_pPlayerState[pn]->PushSelf(L);
+		return 1;
+	}
+	static int GetMultiPlayerState( T* p, lua_State *L )
+	{ 
+		MultiPlayer mp = (MultiPlayer)IArg(1);
+		p->m_pMultiPlayerState[mp]->PushSelf(L);
 		return 1;
 	}
 	static int ApplyGameCommand( T* p, lua_State *L )
@@ -1984,6 +1990,7 @@ public:
 		ADD_METHOD( GetMasterPlayerNumber );
 		ADD_METHOD( GetMultiplayer );
 		ADD_METHOD( GetPlayerState );
+		ADD_METHOD( GetMultiPlayerState );
 		ADD_METHOD( ApplyGameCommand );
 		ADD_METHOD( GetCurrentSong );
 		ADD_METHOD( SetCurrentSong );

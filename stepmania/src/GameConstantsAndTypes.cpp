@@ -446,6 +446,15 @@ REGISTER_WITH_LUA_FUNCTION( LuaStage );
 LuaXToString( Stage );
 
 
+static const char *MultiPlayerStatusNames[] = {
+	"Joined",
+	"NotJoined",
+	"Unplugged",
+	"MissingMultitap",
+};
+XToString( MultiPlayerStatus, NUM_MultiPlayerStatus );
+
+
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
