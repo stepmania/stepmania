@@ -206,7 +206,7 @@ public:
 
 	static int GetCurStageStats( T* p, lua_State *L )	{ p->m_CurStageStats.PushSelf(L); return 1; }
 	static int GetAccumStageStats( T* p, lua_State *L )	{ p->GetAccumStageStats().PushSelf(L); return 1; }
-	static int Reset( T* p, lua_State *L )				{ p->Reset(); return 0; }
+	static int Reset( T* p, lua_State *L )			{ p->Reset(); return 0; }
 	static int GetFinalGrade( T* p, lua_State *L )
 	{
 		PlayerNumber pn = (PlayerNumber)IArg(1);
