@@ -260,7 +260,6 @@ Transition.cpp Transition.h
 
 ActorsInMenus = \
 ActiveAttackList.cpp ActiveAttackList.h BPMDisplay.cpp BPMDisplay.h ComboGraph.cpp ComboGraph.h \
-ControllerStateDisplay.cpp ControllerStateDisplay.h \
 CourseContentsList.cpp CourseContentsList.h \
 CourseEntryDisplay.cpp CourseEntryDisplay.h \
 DifficultyDisplay.cpp DifficultyDisplay.h DifficultyList.cpp DifficultyList.h \
