@@ -31,9 +31,11 @@ void PlayerStageStats::Init()
 	iCurCombo = iMaxCombo = iCurMissCombo = iScore = iBonus = iMaxScore = iCurMaxScore = 0;
 	iSongsPassed = iSongsPlayed = 0;
 	iTotalError = 0;
-	fCaloriesBurned = 0;
 	iTotalError = 0;
 	fLifeRemainingSeconds = 0;
+	fCaloriesBurned = 0;
+	tnsLast = TNS_INVALID;
+	hnsLast = HNS_INVALID;
 
 	ZERO( iTapNoteScores );
 	ZERO( iHoldNoteScores );
