@@ -1374,6 +1374,10 @@ void HandleInputEvents(float fDeltaTime)
 				input.DeviceI.device = (InputDevice)(input.DeviceI.device + 2);
 			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,KEY_LALT) ) )
 				input.DeviceI.device = (InputDevice)(input.DeviceI.device + 4);
+			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,KEY_RALT) ) )
+				input.DeviceI.device = (InputDevice)(input.DeviceI.device + 8);
+			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,KEY_RCTRL) ) )
+				input.DeviceI.device = (InputDevice)(input.DeviceI.device + 16);
 		}
 
 		INPUTMAPPER->DeviceToGame( input.DeviceI, input.GameI );
