@@ -320,12 +320,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenEvaluation.h">
 			</File>
 			<File
-				RelativePath=".\ScreenEvaluationMultiplayer.cpp">
-			</File>
-			<File
-				RelativePath=".\ScreenEvaluationMultiplayer.h">
-			</File>
-			<File
 				RelativePath="ScreenExit.cpp">
 			</File>
 			<File
@@ -356,12 +350,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\ScreenGameplayLesson.h">
 			</File>
 			<File
-				RelativePath="ScreenGameplayMultiplayer.cpp">
-			</File>
-			<File
-				RelativePath="ScreenGameplayMultiplayer.h">
-			</File>
-			<File
 				RelativePath=".\ScreenGameplayNormal.cpp">
 			</File>
 			<File
@@ -384,12 +372,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScreenInstructions.h">
-			</File>
-			<File
-				RelativePath=".\ScreenJoinMultiplayer.cpp">
-			</File>
-			<File
-				RelativePath=".\ScreenJoinMultiplayer.h">
 			</File>
 			<File
 				RelativePath="ScreenJukebox.cpp">
@@ -2064,12 +2046,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath=".\Player.h">
-			</File>
-			<File
-				RelativePath=".\PlayerScoreList.cpp">
-			</File>
-			<File
-				RelativePath=".\PlayerScoreList.h">
 			</File>
 			<File
 				RelativePath=".\ReceptorArrow.cpp">
