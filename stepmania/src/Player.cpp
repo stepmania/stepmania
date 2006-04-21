@@ -89,12 +89,6 @@ Player::Player( bool bShowNoteField, bool bShowJudgment )
 		this->AddChild( m_pJudgment );
 	}
 
-	m_pControllerStateDisplay = NULL;
-	if( bShowJudgment )
-	{
-		m_pControllerStateDisplay = new ControllerStateDisplay;
-	}
-
 	m_pCombo = NULL;
 	if( bShowNoteField )
 	{
@@ -121,7 +115,6 @@ Player::Player( bool bShowNoteField, bool bShowJudgment )
 Player::~Player()
 {
 	SAFE_DELETE( m_pJudgment );
-	SAFE_DELETE( m_pControllerStateDisplay );
 	SAFE_DELETE( m_pCombo );
 	SAFE_DELETE( m_pAttackDisplay );
 	SAFE_DELETE( m_pNoteField );
@@ -227,23 +220,35 @@ void Player::Init(
 			GameCommand gc;
 			ASSERT( pPlayerState->m_mp != MultiPlayer_INVALID );
 			gc.m_MultiPlayer = pPlayerState->m_mp;
-			Lua *L = LUA->Get();
-			gc.PushSelf( L );
-			lua_setglobal( L, "ThisGameCommand" );
-			LUA->Release( L );
-
+			
+			{
+				Lua *L = LUA->Get();		
+				gc.PushSelf( L );
+				lua_setglobal( L, "ThisGameCommand" );
+				LUA->Release( L );
+			}
+			
 			m_sprJudgmentFrame.Load( THEME->GetPathG(sType,"JudgmentFrame") );
+
+			{
+				Lua *L = LUA->Get();		
+				expr.PushSelf( L );
+				ASSERT( !lua_isnil(L, -1) );
+				m_sprJudgmentFrame->PushSelf( L );
+				LuaHelpers::Push( pPlayerState->m_PlayerNumber, L );
+				LuaHelpers::Push( pPlayerState->m_mp, L );
+				LuaHelpers::Push( iEnabledPlayerIndex, L );
+				LuaHelpers::Push( iNumEnabledPlayers, L );
+				LuaHelpers::Push( bPlayerUsingBothSides, L );
+				LuaHelpers::Push( false, L );
+				LuaHelpers::Push( false, L );
+				lua_call( L, 8, 0 ); // 8 args, 0 results
+				LUA->Release( L );
+			}
 
 			LUA->UnsetGlobal( "ThisGameCommand" );
 			this->AddChild( m_sprJudgmentFrame );
 		}
-	}
-
-	// Load CSD
-	if( GAMESTATE->m_bMultiplayer  &&  m_pControllerStateDisplay  &&  !m_pControllerStateDisplay->IsLoaded() )	// only load the first time
-	{
-		m_pControllerStateDisplay->LoadMultiPlayer( pPlayerState->m_mp );
-		this->AddChild( m_pControllerStateDisplay );
 	}
 
 	this->SortByDrawOrder();
@@ -299,7 +304,7 @@ void Player::Init(
 	if( m_pJudgment )
 	{
 		m_pJudgment->SetName( "Judgment" );
-		m_pJudgment->Load( IsPlayingBeginner() );
+		m_pJudgment->LoadNormal( IsPlayingBeginner() );
 		ActorUtil::OnCommand( m_pJudgment, sType );
 	}
 
@@ -506,13 +511,6 @@ void Player::Update( float fDeltaTime )
 		Actor::TweenState::MakeWeightedAverage( m_pJudgment->DestTweenState(), ts1, ts2, fPercentCentered );
 		if( m_sprJudgmentFrame.IsLoaded() )
 			Actor::TweenState::MakeWeightedAverage( m_sprJudgmentFrame->DestTweenState(), ts1, ts2, fPercentCentered );
-		if( m_pControllerStateDisplay->IsLoaded() )
-		{
-			Actor::TweenState::MakeWeightedAverage( m_pControllerStateDisplay->DestTweenState(), ts1, ts2, fPercentCentered );
-	
-			// temp hack
-			m_pControllerStateDisplay->DestTweenState().pos.x *= 1.35f;
-		}
 	}
 
 
@@ -695,6 +693,11 @@ void Player::Update( float fDeltaTime )
 			{
 				/* this note has been judged */
 				HandleHoldScore( hns, tns );
+				
+				m_pPlayerStageStats->hnsLast = hns;
+				if( m_pPlayerState->m_mp != MultiPlayer_INVALID )
+					MESSAGEMAN->Broadcast( enum_add2(Message_ShowHoldJudgmentMuliPlayerP1,m_pPlayerState->m_mp) );
+
 				m_vHoldJudgment[iTrack]->SetHoldJudgment( hns );
 
 				int ms_error = (hns == HNS_Held)? 0:MAX_PRO_TIMING_ERROR;
@@ -858,8 +861,6 @@ void Player::DrawTapJudgments()
 
 	if( m_sprJudgmentFrame.IsLoaded() )
 		m_sprJudgmentFrame->Draw();
-	if( m_pControllerStateDisplay )
-		m_pControllerStateDisplay->Draw();
 	if( m_pJudgment )
 		m_pJudgment->Draw();
 }
@@ -1389,8 +1390,7 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 			DisplayJudgedRow( iIndexThatWasSteppedOn, score, c );
 		}
 
-		if( m_pJudgment )
-			m_pJudgment->SetJudgment( score, tnr.fTapNoteOffset < 0 );
+		SetJudgment( score, tnr.fTapNoteOffset < 0 );
 	}
 	else
 	{
@@ -1405,8 +1405,7 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 
 			DisplayJudgedRow( iIndexThatWasSteppedOn, score, c );
 
-			if( m_pJudgment )
-				m_pJudgment->SetJudgment( score, tnr.fTapNoteOffset < 0 );
+			SetJudgment( score, tnr.fTapNoteOffset < 0 );
 		}
 	}
 
@@ -1485,8 +1484,7 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 
 	if( iNumMissesFound > 0 )
 	{
-		if( m_pJudgment )
-			m_pJudgment->SetJudgment( TNS_Miss, false );
+		SetJudgment( TNS_Miss, false );
 	}
 }
 
@@ -1803,6 +1801,15 @@ bool Player::IsPlayingBeginner() const
 	return pSteps && pSteps->GetDifficulty() == DIFFICULTY_BEGINNER;
 }
 
+void Player::SetJudgment( TapNoteScore tns, bool bEarly )
+{
+	m_pPlayerStageStats->tnsLast = tns;
+	if( m_pPlayerState->m_mp != MultiPlayer_INVALID )
+		MESSAGEMAN->Broadcast( enum_add2(Message_ShowJudgmentMuliPlayerP1,m_pPlayerState->m_mp) );
+
+	if( m_pJudgment )
+		m_pJudgment->SetJudgment( tns, bEarly );
+}
 
 /*
  * (c) 2001-2004 Chris Danford

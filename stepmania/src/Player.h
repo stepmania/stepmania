@@ -11,7 +11,6 @@
 #include "RageSound.h"
 #include "AttackDisplay.h"
 #include "NoteData.h"
-#include "ControllerStateDisplay.h"
 #include "ScreenMessage.h"
 
 class ScoreDisplay;
@@ -85,6 +84,8 @@ protected:
 	void DrawTapJudgments();
 	void DrawHoldJudgments();
 
+	void SetJudgment( TapNoteScore tns, bool bEarly );
+
 	int GetClosestNoteDirectional( int col, int iStartRow, int iMaxRowsAhead, bool bAllowGraded, bool bForward ) const;
 	int GetClosestNote( int col, int iNoteRow, int iMaxRowsAhead, int iMaxRowsBehind, bool bAllowGraded ) const;
 
@@ -104,9 +105,7 @@ protected:
 
 	Judgment		*m_pJudgment;
 	AutoActor		m_sprJudgmentFrame;
-	
-	ControllerStateDisplay	*m_pControllerStateDisplay;
-	
+		
 	Combo			*m_pCombo;
 
 	AttackDisplay		*m_pAttackDisplay;
