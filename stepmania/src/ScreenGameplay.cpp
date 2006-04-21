@@ -47,7 +47,6 @@
 #include "Player.h"
 #include "DifficultyIcon.h"
 #include "DifficultyMeter.h"
-#include "PlayerScoreList.h"
 #include "InputEventPlus.h"
 #include "XmlFile.h"
 #include "Background.h"
@@ -348,7 +347,6 @@ ScreenGameplay::ScreenGameplay()
 {
 	m_pSongBackground = NULL;
 	m_pSongForeground = NULL;
-	m_pPlayerScoreList = NULL;
 }
 
 void ScreenGameplay::Init()
@@ -613,25 +611,6 @@ void ScreenGameplay::Init( bool bUseSongBackgroundAndForeground )
 	SET_XY( m_MaxCombo );
 	m_MaxCombo.SetText( ssprintf("%d", m_vPlayerInfo[0].GetPlayerStageStats()->iMaxCombo) ); // TODO: Make this work for both players
 	this->AddChild( &m_MaxCombo );
-
-
-	if( GAMESTATE->m_bMultiplayer )
-	{
-		vector<const PlayerState*> vpPlayerState;
-		vector<const PlayerStageStats*> vpPlayerStageStats;
-
-		FOREACH_EnabledMultiPlayer( p )
-		{
-			vpPlayerState.push_back( m_vPlayerInfo[p].GetPlayerState() );
-			vpPlayerStageStats.push_back( m_vPlayerInfo[p].GetPlayerStageStats() );
-		}
-
-		m_pPlayerScoreList = new PlayerScoreList;
-		m_pPlayerScoreList->Init( vpPlayerState, vpPlayerStageStats );
-		m_pPlayerScoreList->SetName( "PlayerScoreList" );
-		SET_XY( m_pPlayerScoreList );
-		this->AddChild( m_pPlayerScoreList );
-	}
 
 
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
@@ -928,7 +907,6 @@ ScreenGameplay::~ScreenGameplay()
 
 	LOG->Trace( "ScreenGameplay::~ScreenGameplay()" );
 
-	SAFE_DELETE( m_pPlayerScoreList );
 	SAFE_DELETE( m_pSongBackground );
 	SAFE_DELETE( m_pSongForeground );
 	
@@ -2525,7 +2503,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	{
 		SongFinished();
 		StageFinished( false );
-		//SaveRecordedResults();
+		//SaveReplay();
 
 		if( AdjustSync::IsSyncDataChanged() )
 			ScreenSaveSync::PromptSaveSync( SM_GoToNextScreen );
@@ -2602,7 +2580,6 @@ void ScreenGameplay::TweenOnScreen()
 	ON_COMMAND( m_sprScoreFrame );
 	ON_COMMAND( m_BPMDisplay );
 	ON_COMMAND( m_MaxCombo );
-	ON_COMMAND( m_pPlayerScoreList );
 
 	if( !GAMESTATE->m_bDemonstrationOrJukebox )
 		ON_COMMAND( m_textDebug );
@@ -2647,7 +2624,6 @@ void ScreenGameplay::TweenOffScreen()
 	OFF_COMMAND( m_sprScoreFrame );
 	OFF_COMMAND( m_BPMDisplay );
 	OFF_COMMAND( m_MaxCombo );
-	OFF_COMMAND( m_pPlayerScoreList );
 
 	if( m_pCombinedLifeMeter )
 		OFF_COMMAND( *m_pCombinedLifeMeter );
@@ -2691,7 +2667,7 @@ Song *ScreenGameplay::GetNextCourseSong() const
 	return m_apSongsQueue[iPlaySongIndex];
 }
 
-void ScreenGameplay::SaveRecordedResults()
+void ScreenGameplay::SaveReplay()
 {
 	FOREACH_HumanPlayer( pn )
 	{
@@ -2706,15 +2682,15 @@ void ScreenGameplay::SaveRecordedResults()
 			FlushDirCache();
 
 			vector<RString> files;
-			GetDirListing( "Save/recording*", files, false, false );
+			GetDirListing( "Save/reply*", files, false, false );
 			sort( files.begin(), files.end() );
 
-			/* Files should be of the form "recording######.xxx". */
+			/* Files should be of the form "reply######.xxx". */
 			int iIndex = 0;
 
 			for( int i = files.size()-1; i >= 0; --i )
 			{
-				static Regex re( "^recording([0-9]{5})\\....$" );
+				static Regex re( "^replay([0-9]{5})\\....$" );
 				vector<RString> matches;
 				if( !re.Compare( files[i], matches ) )
 					continue;
@@ -2724,7 +2700,7 @@ void ScreenGameplay::SaveRecordedResults()
 				break;
 			}
 
-			RString sFileName = ssprintf( "recording%05d.xml", iIndex );
+			RString sFileName = ssprintf( "replay%05d.xml", iIndex );
 
 			p->SaveToFile( "Save/"+sFileName, opt );
 			SAFE_DELETE( p );

@@ -29,7 +29,6 @@ class DifficultyIcon;
 class DifficultyMeter;
 class Inventory;
 class ScoreKeeper;
-class PlayerScoreList;
 class Background;
 class Foreground;
 
@@ -151,7 +150,7 @@ protected:
 	void UpdateLyrics( float fDeltaTime );
 	void SongFinished();
 	void StageFinished( bool bBackedOut );
-	void SaveRecordedResults();
+	void SaveReplay();
 
 	virtual void InitSongQueues();
 
@@ -196,8 +195,6 @@ protected:
 
 	BitmapText		m_MaxCombo;		// TODO: move this into an overlay
 
-	PlayerScoreList		*m_pPlayerScoreList;
-
 	Transition		m_Ready;
 	Transition		m_Go;
 	Transition		m_Failed;
@@ -225,17 +222,17 @@ protected:
 	virtual void FillPlayerInfo( vector<PlayerInfo> &vPlayerInfoOut ) = 0;
 };
 
-vector<PlayerInfo>::iterator GetNextEnabledPlayerInfo			( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &v );
+vector<PlayerInfo>::iterator GetNextEnabledPlayerInfo		( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &v );
 vector<PlayerInfo>::iterator GetNextEnabledPlayerInfoNotDummy	( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &v );
-vector<PlayerInfo>::iterator GetNextEnabledPlayerNumberInfo		( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &v );
-vector<PlayerInfo>::iterator GetNextPlayerNumberInfo			( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &v );
-vector<PlayerInfo>::iterator GetNextVisiblePlayerInfo			( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &v );
+vector<PlayerInfo>::iterator GetNextEnabledPlayerNumberInfo	( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &v );
+vector<PlayerInfo>::iterator GetNextPlayerNumberInfo		( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &v );
+vector<PlayerInfo>::iterator GetNextVisiblePlayerInfo		( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &v );
 
-#define FOREACH_EnabledPlayerInfo( v, pi )			for( vector<PlayerInfo>::iterator pi = GetNextEnabledPlayerInfo			(v.begin()-1,v);	pi != v.end(); pi = GetNextEnabledPlayerInfo(pi,v) )
+#define FOREACH_EnabledPlayerInfo( v, pi )		for( vector<PlayerInfo>::iterator pi = GetNextEnabledPlayerInfo		(v.begin()-1,v);	pi != v.end(); pi = GetNextEnabledPlayerInfo(pi,v) )
 #define FOREACH_EnabledPlayerInfoNotDummy( v, pi )	for( vector<PlayerInfo>::iterator pi = GetNextEnabledPlayerInfoNotDummy	(v.begin()-1,v);	pi != v.end(); pi = GetNextEnabledPlayerInfoNotDummy(pi,v) )
 #define FOREACH_EnabledPlayerNumberInfo( v, pi )	for( vector<PlayerInfo>::iterator pi = GetNextEnabledPlayerNumberInfo	(v.begin()-1,v);	pi != v.end(); pi = GetNextEnabledPlayerNumberInfo(pi,v) )
-#define FOREACH_PlayerNumberInfo( v, pi )			for( vector<PlayerInfo>::iterator pi = GetNextPlayerNumberInfo			(v.begin()-1,v);	pi != v.end(); pi = GetNextPlayerNumberInfo(pi,v) )
-#define FOREACH_VisiblePlayerInfo( v, pi )			for( vector<PlayerInfo>::iterator pi = GetNextVisiblePlayerInfo			(v.begin()-1,v);	pi != v.end(); pi = GetNextVisiblePlayerInfo(pi,v) )
+#define FOREACH_PlayerNumberInfo( v, pi )		for( vector<PlayerInfo>::iterator pi = GetNextPlayerNumberInfo		(v.begin()-1,v);	pi != v.end(); pi = GetNextPlayerNumberInfo(pi,v) )
+#define FOREACH_VisiblePlayerInfo( v, pi )		for( vector<PlayerInfo>::iterator pi = GetNextVisiblePlayerInfo		(v.begin()-1,v);	pi != v.end(); pi = GetNextVisiblePlayerInfo(pi,v) )
 
 
 #endif
