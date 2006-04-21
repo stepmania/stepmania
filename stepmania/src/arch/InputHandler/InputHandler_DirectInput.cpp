@@ -422,6 +422,9 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 				case 100:	//d
 					ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_BUTTON_1, -1, tm), !!(evtbuf[i].dwData & 0x80) );
 					break;
+				case 101:	//e
+					ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_BUTTON_2, -1, tm), !!(evtbuf[i].dwData & 0x80) );
+					break;
 				default:
 					*/
 					ButtonPressed( DeviceInput(dev, (DeviceButton) in.num, -1, tm), !!(evtbuf[i].dwData & 0x80)) ;
