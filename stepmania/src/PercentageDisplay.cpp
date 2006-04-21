@@ -8,7 +8,6 @@
 #include "RageLog.h"
 #include "StageStats.h"
 #include "PlayerState.h"
-#include "LuaFunctions.h"
 #include "XmlFile.h"
 
 ThemeMetric<int> PERCENT_DECIMAL_PLACES	( "PercentageDisplay", "PercentDecimalPlaces" );
@@ -27,8 +26,6 @@ PercentageDisplay::PercentageDisplay()
 
 void PercentageDisplay::LoadFromNode( const RString& sDir, const XNode* pNode )
 {
-	ActorFrame::LoadFromNode( sDir, pNode );
-
 	pNode->GetAttrValue( "DancePointsDigits", m_iDancePointsDigits );
 	pNode->GetAttrValue( "PercentUseRemainder", m_bUseRemainder );
 	pNode->GetAttrValue( "ApplyScoreDisplayOptions", m_bApplyScoreDisplayOptions );
@@ -36,7 +33,7 @@ void PercentageDisplay::LoadFromNode( const RString& sDir, const XNode* pNode )
 
 	const XNode *pChild = pNode->GetChild( "Percent" );
 	if( pChild == NULL )
-		RageException::Throw( ssprintf("ComboGraph in \"%s\" is missing the node \"Percent\"", sDir.c_str()) );
+		RageException::Throw( ssprintf("PercentageDisplay in \"%s\" is missing the node \"Percent\"", sDir.c_str()) );
 	m_textPercent.LoadFromNode( sDir, pChild );
 	this->AddChild( &m_textPercent );
 
@@ -48,6 +45,9 @@ void PercentageDisplay::LoadFromNode( const RString& sDir, const XNode* pNode )
 		m_textPercentRemainder.LoadFromNode( sDir, pChild );
 		this->AddChild( &m_textPercentRemainder );
 	}
+
+	// only run the Init command after we load Fonts.
+	ActorFrame::LoadFromNode( sDir, pNode );
 }
 
 void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStageStats *pPlayerStageStats )
@@ -180,6 +180,8 @@ RString PercentageDisplay::FormatPercentScore( float fPercentDancePoints )
 }
 
 // lua start
+#include "LuaFunctions.h"
+
 LuaFunction( FormatPercentScore,	PercentageDisplay::FormatPercentScore( FArg(1) ) )
 
 #include "LuaBinding.h"
