@@ -5,19 +5,24 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "ThemeMetric.h"
+#include "ActorUtil.h"
+#include "StatsManager.h"
 
-static ThemeMetric<apActorCommands>	W1_COMMAND		("Judgment","W1Command");
-static ThemeMetric<apActorCommands>	W2_COMMAND		("Judgment","W2Command");
-static ThemeMetric<apActorCommands>	W3_COMMAND		("Judgment","W3Command");
-static ThemeMetric<apActorCommands>	W4_COMMAND		("Judgment","W4Command");
-static ThemeMetric<apActorCommands>	W5_COMMAND		("Judgment","W5Command");
+static ThemeMetric<apActorCommands>	W1_COMMAND	("Judgment","W1Command");
+static ThemeMetric<apActorCommands>	W2_COMMAND	("Judgment","W2Command");
+static ThemeMetric<apActorCommands>	W3_COMMAND	("Judgment","W3Command");
+static ThemeMetric<apActorCommands>	W4_COMMAND	("Judgment","W4Command");
+static ThemeMetric<apActorCommands>	W5_COMMAND	("Judgment","W5Command");
 static ThemeMetric<apActorCommands>	MISS_COMMAND	("Judgment","MissCommand");
+
+REGISTER_ACTOR_CLASS( Judgment )
 
 Judgment::Judgment()
 {
+	m_mpToTrack = MultiPlayer_INVALID;
 }
 
-void Judgment::Load( bool bBeginner )
+void Judgment::LoadNormal( bool bBeginner )
 {
 	m_sprJudgment.Load( THEME->GetPathG("Judgment",bBeginner?"BeginnerLabel":"label") );
 	ASSERT( m_sprJudgment.GetNumStates() == 6  ||  m_sprJudgment.GetNumStates() == 12 );
@@ -25,7 +30,6 @@ void Judgment::Load( bool bBeginner )
 	Reset();
 	this->AddChild( &m_sprJudgment );
 }
-
 
 void Judgment::Reset()
 {
@@ -76,6 +80,50 @@ void Judgment::SetJudgment( TapNoteScore score, bool bEarly )
 		ASSERT(0);
 	}
 }
+
+void Judgment::LoadFromMultiPlayer( MultiPlayer mp )
+{
+	LoadNormal( false );
+	ASSERT( m_mpToTrack == MultiPlayer_INVALID );	// assert only load once
+	m_mpToTrack = mp;
+	this->SubscribeToMessage( enum_add2(Message_ShowJudgmentMuliPlayerP1,m_mpToTrack) );
+}
+
+void Judgment::HandleMessage( const RString &sMessage )
+{
+	ASSERT( m_mpToTrack != MultiPlayer_INVALID );
+	if( sMessage == MessageToString( enum_add2(Message_ShowJudgmentMuliPlayerP1,m_mpToTrack) ) )
+		SetJudgment( STATSMAN->m_CurStageStats.m_multiPlayer[m_mpToTrack].tnsLast, false );	// FIXME: save and pass early bool?
+
+	ActorFrame::HandleMessage( sMessage );
+}
+
+void Judgment::DrawPrimitives()
+{
+	ActorFrame::DrawPrimitives();
+}
+
+
+// lua start
+#include "LuaBinding.h"
+
+class LunaJudgment: public Luna<Judgment>
+{
+public:
+	LunaJudgment() { LUA->Register( Register ); }
+
+	static int LoadFromMultiPlayer( T* p, lua_State *L ) { p->LoadFromMultiPlayer( (MultiPlayer)IArg(1) ); return 0; }
+
+	static void Register(lua_State *L) 
+	{
+		ADD_METHOD( LoadFromMultiPlayer );
+
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( Judgment, ActorFrame )
+// lua end
 
 /*
  * (c) 2001-2004 Chris Danford

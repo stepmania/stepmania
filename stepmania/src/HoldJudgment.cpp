@@ -4,10 +4,13 @@
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
 #include "ThemeMetric.h"
+#include "ActorUtil.h"
+#include "StatsManager.h"
 
 static ThemeMetric<apActorCommands>	HELD_COMMAND	("HoldJudgment","HeldCommand");
 static ThemeMetric<apActorCommands>	LET_GO_COMMAND	("HoldJudgment","LetGoCommand");
 
+REGISTER_ACTOR_CLASS( HoldJudgment )
 
 HoldJudgment::HoldJudgment()
 {
@@ -15,6 +18,8 @@ HoldJudgment::HoldJudgment()
 	m_sprJudgment->StopAnimating();
 	ResetAnimation();
 	this->AddChild( m_sprJudgment );
+
+	m_mpToTrack = MultiPlayer_INVALID;
 }
 
 void HoldJudgment::ResetAnimation()
@@ -47,6 +52,43 @@ void HoldJudgment::SetHoldJudgment( HoldNoteScore hns )
 		ASSERT(0);
 	}
 }
+
+void HoldJudgment::LoadFromMultiPlayer( MultiPlayer mp )
+{
+	ASSERT( m_mpToTrack == MultiPlayer_INVALID );	// assert only load once
+	m_mpToTrack = mp;
+	this->SubscribeToMessage( enum_add2(Message_ShowHoldJudgmentMuliPlayerP1,m_mpToTrack) );
+}
+
+void HoldJudgment::HandleMessage( const RString &sMessage )
+{
+	ASSERT( m_mpToTrack != MultiPlayer_INVALID );
+	if( sMessage == MessageToString( enum_add2(Message_ShowHoldJudgmentMuliPlayerP1,m_mpToTrack) ) )
+		SetHoldJudgment( STATSMAN->m_CurStageStats.m_multiPlayer[m_mpToTrack].hnsLast );
+
+	ActorFrame::HandleMessage( sMessage );
+}
+
+// lua start
+#include "LuaBinding.h"
+
+class LunaHoldJudgment: public Luna<HoldJudgment>
+{
+public:
+	LunaHoldJudgment() { LUA->Register( Register ); }
+
+	static int LoadFromMultiPlayer( T* p, lua_State *L ) { p->LoadFromMultiPlayer( (MultiPlayer)IArg(1) ); return 0; }
+
+	static void Register(lua_State *L) 
+	{
+		ADD_METHOD( LoadFromMultiPlayer );
+
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( HoldJudgment, ActorFrame )
+// lua end
 
 /*
  * (c) 2001-2004 Chris Danford

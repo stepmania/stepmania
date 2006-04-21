@@ -10,12 +10,21 @@ class HoldJudgment : public ActorFrame
 {
 public:
 	HoldJudgment();
+	virtual Actor *Copy() const;
 
 	void SetHoldJudgment( HoldNoteScore hns );
+	void LoadFromMultiPlayer( MultiPlayer mp );
+	void HandleMessage( const RString &sMessage );
+
+	//
+	// Lua
+	//
+	virtual void PushSelf( lua_State *L );
 
 protected:
 	void ResetAnimation();
 	AutoActor		m_sprJudgment;
+	MultiPlayer		m_mpToTrack;
 };
 
 #endif

@@ -12,12 +12,22 @@ class Judgment : public ActorFrame
 {
 public:
 	Judgment();
-	void Load( bool bAlternateLabel );
+	virtual Actor *Copy() const;
+	void LoadNormal( bool bAlternateLabel );
+	void LoadFromMultiPlayer( MultiPlayer mp );
 	void Reset();
 	void SetJudgment( TapNoteScore score, bool bEarly );
+	void HandleMessage( const RString &sMessage );
+	virtual void DrawPrimitives();
+
+	//
+	// Lua
+	//
+	virtual void PushSelf( lua_State *L );
 
 protected:
 	Sprite		m_sprJudgment;
+	MultiPlayer	m_mpToTrack;
 };
 
 #endif
