@@ -1,5 +1,5 @@
 AC_DEFUN([SM_VIDEO], [
-AC_ARG_WITH(ffmpeg, AC_HELP_STRING([--without-ffmpeg], [Disable ffmpeg support]), with_ffmpeg=no, with_ffmpeg=yes)
+AC_ARG_WITH(ffmpeg, AC_HELP_STRING([--without-ffmpeg], [Disable ffmpeg support]), with_ffmpeg=$withval, with_ffmpeg=yes)
 
 if test "$with_ffmpeg" = "yes"; then
 AC_SEARCH_LIBS(avcodec_init, [avcodec], have_libavcodec=yes,  have_libavcodec=no)
