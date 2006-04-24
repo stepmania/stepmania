@@ -463,96 +463,92 @@ void LanguagesDlg::OnBnClickedCheckLanguage()
 	RString sFullFile = SpecialDirs::GetDesktopDir() + sFile;
 	file.Open( sFullFile, RageFile::WRITE );
 
+	FOREACH_CONST_Child( &ini1, key )
 	{
-		FOREACH_CONST_Child( &ini1, key )
+		FOREACH_CONST_Attr( key, value )
 		{
-			FOREACH_CONST_Attr( key, value )
+			const RString &sSection = key->m_sName;
+			const RString &sID = value->first;
+			const RString &sBaseLanguage = value->second;
+			RString sCurrentLanguage;
+			ini2.GetValue( sSection, sID, sCurrentLanguage );
+
+			if( sCurrentLanguage.empty() )
+				continue;
+
+			/* Check &FOO;, %{foo}, %-1.2f, %.  Some mismatches here are normal, particularly in
+			 * languages with substantially different word order rules than English. */
 			{
-				const RString &sSection = key->m_sName;
-				const RString &sID = value->first;
-				const RString &sBaseLanguage = value->second;
-				RString sCurrentLanguage;
-				ini2.GetValue( sSection, sID, sCurrentLanguage );
+				RString sRegex = "(&[A-Za-z]+;|%{[A-Za-z]+}|%[+-]?[0-9]*.?[0-9]*[sidf]|%)";
+				vector<RString> asMatchesBase;
+				GetAllMatches( sRegex, sBaseLanguage, asMatchesBase );
 
-				if( sCurrentLanguage.empty() )
-					continue;
+				vector<RString> asMatches;
+				GetAllMatches( sRegex, sCurrentLanguage, asMatches );
 
-				/* Check &FOO;, %{foo}, %-1.2f, %.  Some mismatches here are normal, particularly in
-				 * languages with substantially different word order rules than English. */
+				if( asMatchesBase.size() != asMatches.size() ||
+					!std::equal(asMatchesBase.begin(), asMatchesBase.end(), asMatches.begin()) )
 				{
-					RString sRegex = "(&[A-Za-z]+;|%{[A-Za-z]+}|%[+-]?[0-9]*.?[0-9]*[sidf]|%)";
-					vector<RString> asMatchesBase;
-					GetAllMatches( sRegex, sBaseLanguage, asMatchesBase );
-
-					vector<RString> asMatches;
-					GetAllMatches( sRegex, sCurrentLanguage, asMatches );
-
-					if( asMatchesBase.size() != asMatches.size() ||
-						!std::equal(asMatchesBase.begin(), asMatchesBase.end(), asMatches.begin()) )
-					{
-						file.PutLine( ssprintf("Entity/substitution mismatch in section [%s] (%s):", sSection.c_str(), sID.c_str()) );
-						file.PutLine( ssprintf("    %s", sCurrentLanguage.c_str()) );
-						file.PutLine( ssprintf("    %s", sBaseLanguage.c_str()) );
-					}
+					file.PutLine( ssprintf("Entity/substitution mismatch in section [%s] (%s):", sSection.c_str(), sID.c_str()) );
+					file.PutLine( ssprintf("    %s", sCurrentLanguage.c_str()) );
+					file.PutLine( ssprintf("    %s", sBaseLanguage.c_str()) );
 				}
+			}
 
-				/* Check "foo::bar", "foo\nbar" and double quotes.  Check these independently
-				 * of the above. */
+			/* Check "foo::bar", "foo\nbar" and double quotes.  Check these independently
+			 * of the above. */
+			{
+				RString sRegex = "(\"|::|\\n)";
+				vector<RString> asMatchesBase;
+				GetAllMatches( sRegex, sBaseLanguage, asMatchesBase );
+
+				vector<RString> asMatches;
+				GetAllMatches( sRegex, sCurrentLanguage, asMatches );
+
+				if( asMatchesBase.size() != asMatches.size() ||
+					!std::equal(asMatchesBase.begin(), asMatchesBase.end(), asMatches.begin()) )
 				{
-					RString sRegex = "(\"|::|\\n)";
-					vector<RString> asMatchesBase;
-					GetAllMatches( sRegex, sBaseLanguage, asMatchesBase );
-
-					vector<RString> asMatches;
-					GetAllMatches( sRegex, sCurrentLanguage, asMatches );
-
-					if( asMatchesBase.size() != asMatches.size() ||
-						!std::equal(asMatchesBase.begin(), asMatchesBase.end(), asMatches.begin()) )
-					{
-						file.PutLine( ssprintf("Quote/line break mismatch in section [%s] (%s):", sSection.c_str(), sID.c_str()) );
-						file.PutLine( ssprintf("    %s", sCurrentLanguage.c_str()) );
-						file.PutLine( ssprintf("    %s", sBaseLanguage.c_str()) );
-					}
+					file.PutLine( ssprintf("Quote/line break mismatch in section [%s] (%s):", sSection.c_str(), sID.c_str()) );
+					file.PutLine( ssprintf("    %s", sCurrentLanguage.c_str()) );
+					file.PutLine( ssprintf("    %s", sBaseLanguage.c_str()) );
 				}
 			}
 		}
 	}
 
+	FOREACH_CONST_Child( &ini1, key )
 	{
-		FOREACH_CONST_Child( &ini1, key )
+		bool bFirst = true;
+		RString sLastSection;
+		RString sLine;
+		FOREACH_CONST_Attr( key, value )
 		{
-			bool bFirst = true;
-			RString sLastSection;
-			RString sLine;
-			FOREACH_CONST_Attr( key, value )
+			const RString &sSection = key->m_sName;
+			const RString &sID = value->first;
+			RString sCurrentLanguage;
+			ini2.GetValue( sSection, sID, sCurrentLanguage );
+			if( !sCurrentLanguage.empty() )
+				continue;
+
+			if( bFirst )
 			{
-				const RString &sSection = key->m_sName;
-				const RString &sID = value->first;
-				RString sCurrentLanguage;
-				ini2.GetValue( sSection, sID, sCurrentLanguage );
-				if( !sCurrentLanguage.empty() )
-					continue;
-
-				if( bFirst )
-				{
-					bFirst = false;
-					file.PutLine( ssprintf("Not translated in section [%s]:", sSection.c_str()) );
-				}
-				if( sLine.size() + sID.size() > 100 )
-				{
-					file.PutLine( sLine );
-					sLine = "";
-				}
-				if( sLine.size() )
-					sLine += ", ";
-				else
-					sLine += "    ";
-
-				sLine += sID;
+				bFirst = false;
+				file.PutLine( ssprintf("Not translated in section [%s]:", sSection.c_str()) );
+			}
+			if( sLine.size() + sID.size() > 100 )
+			{
+				file.PutLine( sLine );
+				sLine = "";
 			}
 			if( sLine.size() )
-				file.PutLine( sLine );
+				sLine += ", ";
+			else
+				sLine += "    ";
+
+			sLine += sID;
 		}
+		if( sLine.size() )
+			file.PutLine( sLine );
 	}
 
 	file.Close();
