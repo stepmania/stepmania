@@ -1812,7 +1812,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			if( g_iDefaultRecordLength.Get() == -1 )
 			{
 				m_iStartPlayingAt = BeatToNoteRow(GAMESTATE->m_fSongBeat);
-				m_iStopPlayingAt = m_NoteDataEdit.GetLastRow() + 1;
+				m_iStopPlayingAt = max( m_iStartPlayingAt, m_NoteDataEdit.GetLastRow() + 1 );
 			}
 			else
 			{
@@ -1834,7 +1834,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		break;
 	case EDIT_BUTTON_RECORD_FROM_CURSOR:
 		m_iStartPlayingAt = BeatToNoteRow(GAMESTATE->m_fSongBeat);
-		m_iStopPlayingAt = m_NoteDataEdit.GetLastRow();
+		m_iStopPlayingAt = max( m_iStartPlayingAt, m_NoteDataEdit.GetLastRow() );
 		TransitionEditState( STATE_RECORDING );
 		break;
 
@@ -2657,14 +2657,14 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 		case play_selection_start_to_end:
 			{
 				m_iStartPlayingAt = m_NoteFieldEdit.m_iBeginMarker;
-				m_iStopPlayingAt = m_NoteDataEdit.GetLastRow();
+				m_iStopPlayingAt = max( m_iStartPlayingAt, m_NoteDataEdit.GetLastRow() );
 				TransitionEditState( STATE_PLAYING );
 			}
 			break;
 		case play_current_beat_to_end:
 			{
 				m_iStartPlayingAt = BeatToNoteRow(GAMESTATE->m_fSongBeat);
-				m_iStopPlayingAt = m_NoteDataEdit.GetLastRow();
+				m_iStopPlayingAt = max( m_iStartPlayingAt, m_NoteDataEdit.GetLastRow() );
 				TransitionEditState( STATE_PLAYING );
 			}
 			break;
