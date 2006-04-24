@@ -541,6 +541,30 @@ void LanguagesDlg::OnBnClickedCheckLanguage()
 	}
 
 	{
+		FOREACH_CONST_Child( &ini2, key )
+		{
+			FOREACH_CONST_Attr( key, value )
+			{
+				const RString &sSection = key->m_sName;
+				const RString &sID = value->first;
+				const RString &sCurrentLanguage = value->second;
+				if( utf8_is_valid(sCurrentLanguage) )
+					continue;
+
+				/* The text isn't valid UTF-8.  We don't know what encoding it is; guess that it's
+				 * ISO-8859-1 and convert it so it'll display correctly and can be pasted into
+				 * the file.  Don't include the original text: if we include multiple encodings
+				 * in the resulting text file, editors won't understand the encoding of the
+				 * file and will pick one arbitrarily. */
+				file.PutLine( ssprintf("Incorrect encoding in section [%s]:", sSection.c_str()) );
+				wstring wsConverted = ConvertCodepageToWString( sCurrentLanguage, 1252 );
+				RString sConverted = WStringToRString( wsConverted );
+				file.PutLine( ssprintf("%s=%s", sID.c_str(), sConverted.c_str()) );
+			}
+		}
+	}
+
+	{
 		FOREACH_CONST_Child( &ini1, key )
 		{
 			vector<RString> asList;
