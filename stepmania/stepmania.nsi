@@ -167,6 +167,7 @@ LangString TEXT_IO_VIEW_STATISTICS			${LANG_ENGLISH} "View Statistics"
 LangString TEXT_IO_REMOVE_ONLY				${LANG_ENGLISH} "${PRODUCT_ID_VER} (remove only)"
 LangString TEXT_IO_SMZIP_PACKAGE			${LANG_ENGLISH} "SMZIP package"
 LangString TEXT_IO_FATAL_ERROR_COPYING_PCK	${LANG_ENGLISH} "Fatal error copying pck files."
+LangString TEXT_IO_FATAL_ERROR_INSTALL		${LANG_ENGLISH} "Fatal error during install."
 LangString TEXT_IO_CHECK_FOR_UPDATES		${LANG_FRENCH} "Vérifier les mises à jour"
 LangString TEXT_IO_RUN						${LANG_FRENCH} "${PRODUCT_ID_VER}"
 LangString TEXT_IO_OPEN_PROGRAM_FOLDER		${LANG_FRENCH} "Open ${PRODUCT_ID} Program Folder"
@@ -178,6 +179,7 @@ LangString TEXT_IO_VIEW_STATISTICS			${LANG_FRENCH} "Voir les statistiques"
 LangString TEXT_IO_REMOVE_ONLY				${LANG_FRENCH} "${PRODUCT_ID_VER} (Supprimer uniquement)"
 LangString TEXT_IO_SMZIP_PACKAGE			${LANG_FRENCH} "SMZIP package"
 LangString TEXT_IO_FATAL_ERROR_COPYING_PCK	${LANG_FRENCH} "Fatal error copying pck files."
+LangString TEXT_IO_FATAL_ERROR_INSTALL		${LANG_FRENCH} "Fatal error during install."
 LangString TEXT_IO_CHECK_FOR_UPDATES		${LANG_GERMAN} "Updates zu überprüfen"
 LangString TEXT_IO_RUN						${LANG_GERMAN} "${PRODUCT_ID_VER}"
 LangString TEXT_IO_OPEN_PROGRAM_FOLDER		${LANG_GERMAN} "Open ${PRODUCT_ID} Program Folder"
@@ -189,6 +191,7 @@ LangString TEXT_IO_VIEW_STATISTICS			${LANG_GERMAN} "Statistiken anschauen"
 LangString TEXT_IO_REMOVE_ONLY				${LANG_GERMAN} "${PRODUCT_ID_VER} (Nur entfernen)"
 LangString TEXT_IO_SMZIP_PACKAGE			${LANG_GERMAN} "SMZIP package"
 LangString TEXT_IO_FATAL_ERROR_COPYING_PCK	${LANG_GERMAN} "Fatal error copying pck files."
+LangString TEXT_IO_FATAL_ERROR_INSTALL		${LANG_GERMAN} "Fatal error during install."
 LangString TEXT_IO_CHECK_FOR_UPDATES		${LANG_SPANISH} "Compruebe para actualizaciones"
 LangString TEXT_IO_RUN						${LANG_SPANISH} "${PRODUCT_ID_VER}"
 LangString TEXT_IO_OPEN_PROGRAM_FOLDER		${LANG_SPANISH} "Open ${PRODUCT_ID} Program Folder"
@@ -200,6 +203,7 @@ LangString TEXT_IO_VIEW_STATISTICS			${LANG_SPANISH} "Vea la estadística"
 LangString TEXT_IO_REMOVE_ONLY				${LANG_SPANISH} "${PRODUCT_ID_VER} (Quite solamente)"
 LangString TEXT_IO_SMZIP_PACKAGE			${LANG_SPANISH} "SMZIP package"
 LangString TEXT_IO_FATAL_ERROR_COPYING_PCK	${LANG_SPANISH} "Fatal error copying pck files."
+LangString TEXT_IO_FATAL_ERROR_INSTALL		${LANG_SPANISH} "Fatal error during install."
 LangString TEXT_IO_CHECK_FOR_UPDATES		${LANG_ITALIAN} "Per cercare aggiornamenti"
 LangString TEXT_IO_RUN						${LANG_ITALIAN} "${PRODUCT_ID_VER}"
 LangString TEXT_IO_OPEN_PROGRAM_FOLDER		${LANG_ITALIAN} "Open ${PRODUCT_ID} Program Folder"
@@ -211,6 +215,7 @@ LangString TEXT_IO_VIEW_STATISTICS			${LANG_ITALIAN} "Mostra Statistiche"
 LangString TEXT_IO_REMOVE_ONLY				${LANG_ITALIAN} "${PRODUCT_ID_VER} (Elimina soltanto)"
 LangString TEXT_IO_SMZIP_PACKAGE			${LANG_ITALIAN} "SMZIP package"
 LangString TEXT_IO_FATAL_ERROR_COPYING_PCK	${LANG_ITALIAN} "Fatal error copying pck files."
+LangString TEXT_IO_FATAL_ERROR_INSTALL		${LANG_ITALIAN} "Fatal error during install."
 
 Section "Main Section" SecMain
 
@@ -233,7 +238,7 @@ Section "Main Section" SecMain
 	CopyFiles /SILENT "$EXEDIR\${PRODUCT_ID}.app\Contents\Resources\pcks\*.pck" $INSTDIR\pcks 650000	; assume a CD full of data
 	IfErrors do_error do_no_error
 	do_error:
-	MessageBox MB_OK|MB_ICONSTOP "${TEXT_IO_FATAL_ERROR_COPYING_PCK}"
+	MessageBox MB_OK|MB_ICONSTOP "$(TEXT_IO_FATAL_ERROR_COPYING_PCK)"
 	Quit
 	do_no_error:
 !endif
@@ -382,6 +387,12 @@ Section "Main Section" SecMain
 !endif
 
 	CreateShortCut "$INSTDIR\${PRODUCT_ID}.lnk" "$INSTDIR\Program\${PRODUCT_FAMILY}.exe"
+
+	IfErrors do_error do_no_error
+	do_error:
+	MessageBox MB_OK|MB_ICONSTOP "$(TEXT_IO_FATAL_ERROR_INSTALL)"
+	Quit
+	do_no_error:
 
 	Exec '$WINDIR\explorer.exe "$SMPROGRAMS\${PRODUCT_ID}\"'
 
@@ -615,6 +626,12 @@ FunctionEnd
 ;--------------------------------
 ;Uninstaller Section
 
+LangString TEXT_IO_FATAL_ERROR_UNINSTALL		${LANG_ENGLISH} "Fatal error during uninstall."
+LangString TEXT_IO_FATAL_ERROR_UNINSTALL		${LANG_FRENCH} "Fatal error during uninstall."
+LangString TEXT_IO_FATAL_ERROR_UNINSTALL		${LANG_GERMAN} "Fatal error during uninstall."
+LangString TEXT_IO_FATAL_ERROR_UNINSTALL		${LANG_SPANISH} "Fatal error during uninstall."
+LangString TEXT_IO_FATAL_ERROR_UNINSTALL		${LANG_ITALIAN} "Fatal error during uninstall."
+
 Section "Uninstall"
 
 	; add delete commands to delete whatever files/registry keys/etc you installed here.
@@ -719,6 +736,12 @@ Section "Uninstall"
 	; I'm being paranoid here:
 	Delete "$SMPROGRAMS\${PRODUCT_ID}\*.*"
 	RMDir "$SMPROGRAMS\${PRODUCT_ID}"
+
+	IfErrors do_error do_no_error
+	do_error:
+	MessageBox MB_OK|MB_ICONSTOP "$(TEXT_IO_FATAL_ERROR_UNINSTALL)"
+	Quit
+	do_no_error:
 
 	Delete "$INSTDIR\Uninstall.exe"
 
