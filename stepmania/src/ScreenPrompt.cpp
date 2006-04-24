@@ -13,7 +13,14 @@
 PromptAnswer ScreenPrompt::s_LastAnswer = ANSWER_YES;
 bool ScreenPrompt::s_bCancelledLast = false;
 
-#define ANSWER_TEXT( elem )		THEME->GetString(m_sName,elem+"Text")
+#define ANSWER_TEXT( s )	THEME->GetString(m_sName,s)
+
+static const char *PromptAnswerNames[] = {
+	"Yes",
+	"No",
+	"Cancel",
+};
+XToString( PromptAnswer, NUM_PromptAnswer );
 
 /* Settings: */
 namespace
@@ -59,7 +66,7 @@ void ScreenPrompt::Init()
 	m_sprCursor->SetName( "Cursor" );
 	this->AddChild( m_sprCursor );
 
-	for( int i=0; i<NUM_PROMPT_ANSWERS; i++ )
+	for( int i=0; i<NUM_PromptAnswer; i++ )
 	{
 		m_textAnswer[i].LoadFromFont( THEME->GetPathF(m_sName,"answer") );
 		this->AddChild( &m_textAnswer[i] );
@@ -84,11 +91,16 @@ void ScreenPrompt::BeginScreen()
 	{
 		RString sElem = ssprintf("Answer%dOf%d", i+1, g_PromptType+1);
 		m_textAnswer[i].SetName( sElem );
-		m_textAnswer[i].SetText( ANSWER_TEXT(sElem) );
+		RString sAnswer = PromptAnswerToString( (PromptAnswer)i );
+		// FRAGILE
+		if( g_PromptType == PROMPT_OK )
+			sAnswer = "OK";
+		
+		m_textAnswer[i].SetText( ANSWER_TEXT(sAnswer) );
 		SET_XY_AND_ON_COMMAND( m_textAnswer[i] );
 	}
 
-	for( int i=g_PromptType+1; i<NUM_PROMPT_ANSWERS; i++ )
+	for( int i=g_PromptType+1; i<NUM_PromptAnswer; i++ )
 		m_textAnswer[i].SetText( "" );
 
 	PositionCursor();
@@ -140,7 +152,7 @@ void ScreenPrompt::Change( int dir )
 {
 	m_textAnswer[m_Answer].StopEffect();
 	m_Answer = (PromptAnswer)(m_Answer+dir);
-	ASSERT( m_Answer >= 0  &&  m_Answer < NUM_PROMPT_ANSWERS );  
+	ASSERT( m_Answer >= 0  &&  m_Answer < NUM_PromptAnswer );  
 
 	PositionCursor();
 

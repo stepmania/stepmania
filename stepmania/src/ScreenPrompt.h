@@ -19,7 +19,7 @@ enum PromptAnswer
 	ANSWER_YES,
 	ANSWER_NO,
 	ANSWER_CANCEL,
-	NUM_PROMPT_ANSWERS
+	NUM_PromptAnswer
 };
 
 class ScreenPrompt : public ScreenWithMenuElements
@@ -51,7 +51,7 @@ protected:
 
 	BitmapText		m_textQuestion;
 	AutoActor		m_sprCursor;
-	BitmapText		m_textAnswer[NUM_PROMPT_ANSWERS];
+	BitmapText		m_textAnswer[NUM_PromptAnswer];
 	PromptAnswer	m_Answer;
 
 	RageSound		m_sndChange;
