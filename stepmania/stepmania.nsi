@@ -156,6 +156,62 @@ FunctionEnd
 ;--------------------------------
 ;Installer Sections
 
+LangString TEXT_IO_CHECK_FOR_UPDATES		${LANG_ENGLISH} "Check for Updates"
+LangString TEXT_IO_RUN						${LANG_ENGLISH} "${PRODUCT_ID_VER}"
+LangString TEXT_IO_OPEN_PROGRAM_FOLDER		${LANG_ENGLISH} "Open ${PRODUCT_ID} Program Folder"
+LangString TEXT_IO_MANUAL					${LANG_ENGLISH} "${PRODUCT_ID} Manual"
+LangString TEXT_IO_TOOLS					${LANG_ENGLISH} "${PRODUCT_ID} Tools"
+LangString TEXT_IO_WEB_SITE					${LANG_ENGLISH} "${PRODUCT_ID} Web Site"
+LangString TEXT_IO_UNINSTALL				${LANG_ENGLISH} "Uninstall ${PRODUCT_ID_VER}"
+LangString TEXT_IO_VIEW_STATISTICS			${LANG_ENGLISH} "View Statistics"
+LangString TEXT_IO_REMOVE_ONLY				${LANG_ENGLISH} "${PRODUCT_ID_VER} (remove only)"
+LangString TEXT_IO_SMZIP_PACKAGE			${LANG_ENGLISH} "SMZIP package"
+LangString TEXT_IO_FATAL_ERROR_COPYING_PCK	${LANG_ENGLISH} "Fatal error copying pck files."
+LangString TEXT_IO_CHECK_FOR_UPDATES		${LANG_FRENCH} "Vérifier les mises à jour"
+LangString TEXT_IO_RUN						${LANG_FRENCH} "${PRODUCT_ID_VER}"
+LangString TEXT_IO_OPEN_PROGRAM_FOLDER		${LANG_FRENCH} "Open ${PRODUCT_ID} Program Folder"
+LangString TEXT_IO_MANUAL					${LANG_FRENCH} "Documentation de ${PRODUCT_ID}"
+LangString TEXT_IO_TOOLS					${LANG_FRENCH} "d'Outils de ${PRODUCT_ID}"
+LangString TEXT_IO_WEB_SITE					${LANG_FRENCH} "Le site web de ${PRODUCT_ID}"
+LangString TEXT_IO_UNINSTALL				${LANG_FRENCH} "Désinstaller ${PRODUCT_ID_VER}"
+LangString TEXT_IO_VIEW_STATISTICS			${LANG_FRENCH} "Voir les statistiques"
+LangString TEXT_IO_REMOVE_ONLY				${LANG_FRENCH} "${PRODUCT_ID_VER} (Supprimer uniquement)"
+LangString TEXT_IO_SMZIP_PACKAGE			${LANG_FRENCH} "SMZIP package"
+LangString TEXT_IO_FATAL_ERROR_COPYING_PCK	${LANG_FRENCH} "Fatal error copying pck files."
+LangString TEXT_IO_CHECK_FOR_UPDATES		${LANG_GERMAN} "Updates zu überprüfen"
+LangString TEXT_IO_RUN						${LANG_GERMAN} "${PRODUCT_ID_VER}"
+LangString TEXT_IO_OPEN_PROGRAM_FOLDER		${LANG_GERMAN} "Open ${PRODUCT_ID} Program Folder"
+LangString TEXT_IO_MANUAL					${LANG_GERMAN} "${PRODUCT_ID} Dokumentation"
+LangString TEXT_IO_TOOLS					${LANG_GERMAN} "${PRODUCT_ID} Werkzeug"
+LangString TEXT_IO_WEB_SITE					${LANG_GERMAN} "${PRODUCT_ID} Webseite"
+LangString TEXT_IO_UNINSTALL				${LANG_GERMAN} "Deinstallation von ${PRODUCT_ID_VER}"
+LangString TEXT_IO_VIEW_STATISTICS			${LANG_GERMAN} "Statistiken anschauen"
+LangString TEXT_IO_REMOVE_ONLY				${LANG_GERMAN} "${PRODUCT_ID_VER} (Nur entfernen)"
+LangString TEXT_IO_SMZIP_PACKAGE			${LANG_GERMAN} "SMZIP package"
+LangString TEXT_IO_FATAL_ERROR_COPYING_PCK	${LANG_GERMAN} "Fatal error copying pck files."
+LangString TEXT_IO_CHECK_FOR_UPDATES		${LANG_SPANISH} "Compruebe para actualizaciones"
+LangString TEXT_IO_RUN						${LANG_SPANISH} "${PRODUCT_ID_VER}"
+LangString TEXT_IO_OPEN_PROGRAM_FOLDER		${LANG_SPANISH} "Open ${PRODUCT_ID} Program Folder"
+LangString TEXT_IO_MANUAL					${LANG_SPANISH} "${PRODUCT_ID} Documenatione"
+LangString TEXT_IO_TOOLS					${LANG_SPANISH} "${PRODUCT_ID} Herramientas"
+LangString TEXT_IO_WEB_SITE					${LANG_SPANISH} "${PRODUCT_ID} Web Site"
+LangString TEXT_IO_UNINSTALL				${LANG_SPANISH} "Uninstall ${PRODUCT_ID_VER}"
+LangString TEXT_IO_VIEW_STATISTICS			${LANG_SPANISH} "Vea la estadística"
+LangString TEXT_IO_REMOVE_ONLY				${LANG_SPANISH} "${PRODUCT_ID_VER} (Quite solamente)"
+LangString TEXT_IO_SMZIP_PACKAGE			${LANG_SPANISH} "SMZIP package"
+LangString TEXT_IO_FATAL_ERROR_COPYING_PCK	${LANG_SPANISH} "Fatal error copying pck files."
+LangString TEXT_IO_CHECK_FOR_UPDATES		${LANG_ITALIAN} "Per cercare aggiornamenti"
+LangString TEXT_IO_RUN						${LANG_ITALIAN} "${PRODUCT_ID_VER}"
+LangString TEXT_IO_OPEN_PROGRAM_FOLDER		${LANG_ITALIAN} "Open ${PRODUCT_ID} Program Folder"
+LangString TEXT_IO_MANUAL					${LANG_ITALIAN} "${PRODUCT_ID} Documentazione"
+LangString TEXT_IO_TOOLS					${LANG_ITALIAN} "${PRODUCT_ID} Strumenti"
+LangString TEXT_IO_WEB_SITE					${LANG_ITALIAN} "${PRODUCT_ID} Sito Web"
+LangString TEXT_IO_UNINSTALL				${LANG_ITALIAN} "Disinstalla ${PRODUCT_ID_VER}"
+LangString TEXT_IO_VIEW_STATISTICS			${LANG_ITALIAN} "Mostra Statistiche"
+LangString TEXT_IO_REMOVE_ONLY				${LANG_ITALIAN} "${PRODUCT_ID_VER} (Elimina soltanto)"
+LangString TEXT_IO_SMZIP_PACKAGE			${LANG_ITALIAN} "SMZIP package"
+LangString TEXT_IO_FATAL_ERROR_COPYING_PCK	${LANG_ITALIAN} "Fatal error copying pck files."
+
 Section "Main Section" SecMain
 
 	; write out uninstaller
@@ -166,7 +222,7 @@ Section "Main Section" SecMain
 
 	; add registry entries
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\${PRODUCT_ID}" "" "$INSTDIR"
-	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "DisplayName" "${PRODUCT_ID} (remove only)"
+	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "DisplayName" "$(TEXT_IO_REMOVE_ONLY)"
 	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "UninstallString" '"$INSTDIR\uninstall.exe"'
 
 !ifdef INSTALL_TYPE_EXTERNAL_PCKS
@@ -177,14 +233,14 @@ Section "Main Section" SecMain
 	CopyFiles /SILENT "$EXEDIR\${PRODUCT_ID}.app\Contents\Resources\pcks\*.pck" $INSTDIR\pcks 650000	; assume a CD full of data
 	IfErrors do_error do_no_error
 	do_error:
-	MessageBox MB_OK|MB_ICONSTOP "Fatal error copying pck files."
+	MessageBox MB_OK|MB_ICONSTOP "${TEXT_IO_FATAL_ERROR_COPYING_PCK}"
 	Quit
 	do_no_error:
 !endif
 
 !ifdef ASSOCIATE_SMZIP
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\Applications\tools.exe\shell\open\command" "" '"$INSTDIR\Program\tools.exe" "%1"'
-	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile" "" "SMZIP package"
+	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile" "" "$(TEXT_IO_SMZIP_PACKAGE)"
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile\DefaultIcon" "" "$INSTDIR\Program\tools.exe,0"
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile\shell\open\command" "" '"$INSTDIR\Program\tools.exe" "%1"'
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\.smzip" "" "smzipfile"
@@ -311,32 +367,21 @@ Section "Main Section" SecMain
 	; Create Start Menu icons
 	SetShellVarContext current  # 	'all' doesn't work on Win9x
 	CreateDirectory "$SMPROGRAMS\${PRODUCT_ID}\"
-	CreateShortCut "$DESKTOP\${PRODUCT_ID_VER}.lnk" "$INSTDIR\Program\${PRODUCT_FAMILY}.exe"
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_ID_VER}.lnk" "$INSTDIR\Program\${PRODUCT_FAMILY}.exe"
+	CreateShortCut "$DESKTOP\$(TEXT_IO_RUN).lnk" "$INSTDIR\Program\${PRODUCT_FAMILY}.exe"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_RUN).lnk" "$INSTDIR\Program\${PRODUCT_FAMILY}.exe"
 !ifdef MAKE_OPEN_PROGRAM_FOLDER_SHORTCUT
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Open ${PRODUCT_ID} Program Folder.lnk" "$WINDIR\explorer.exe" "$INSTDIR\"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_OPEN_PROGRAM_FOLDER).lnk" "$WINDIR\explorer.exe" "$INSTDIR\"
 !endif
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\View Statistics.lnk" "$INSTDIR\Program\tools.exe" "--machine-profile-stats"
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_FAMILY} Tools.lnk" "$INSTDIR\Program\tools.exe"
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_FAMILY} Manual.lnk" "$INSTDIR\Manual\index.html"
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Uninstall ${PRODUCT_ID_VER}.lnk" "$INSTDIR\uninstall.exe"
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_FAMILY} Web Site.lnk" "${PRODUCT_URL}"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_VIEW_STATISTICS).lnk" "$INSTDIR\Program\tools.exe" "--machine-profile-stats"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_TOOLS).lnk" "$INSTDIR\Program\tools.exe"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_MANUAL).lnk" "$INSTDIR\Manual\index.html"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_UNINSTALL).lnk" "$INSTDIR\uninstall.exe"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_WEB_SITE).lnk" "${PRODUCT_URL}"
 !ifdef MAKE_UPDATES_SHORTCUT
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Check for Updates.lnk" "${UPDATES_URL}"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_CHECK_FOR_UPDATES).lnk" "${UPDATES_URL}"
 !endif
 
 	CreateShortCut "$INSTDIR\${PRODUCT_ID}.lnk" "$INSTDIR\Program\${PRODUCT_FAMILY}.exe"
-
-	# We want to delete a few old desktop icons, since they weren't being
-	# uninstalled correctly during alpha 2 and 3.  They were installed in
-	# the 'all' context.  Try to delete them in both contexts.
-	SetShellVarContext all
-	Delete "$DESKTOP\Play StepMania 3.9 alpha 2.lnk"
-	Delete "$DESKTOP\Play StepMania 3.9 alpha 3.lnk"
-
-	SetShellVarContext current
-	Delete "$DESKTOP\Play StepMania 3.9 alpha 2.lnk"
-	Delete "$DESKTOP\Play StepMania 3.9 alpha 3.lnk"
 
 	Exec '$WINDIR\explorer.exe "$SMPROGRAMS\${PRODUCT_ID}\"'
 
@@ -352,24 +397,24 @@ LangString TEXT_IO_PLAY			${LANG_ENGLISH} "Play"
 LangString TEXT_IO_REINSTALL	${LANG_ENGLISH} "Reinstall"
 LangString TEXT_IO_TITLE		${LANG_FRENCH} "${PRODUCT_ID_VER}"
 LangString TEXT_IO_SUBTITLE		${LANG_FRENCH} " "
-LangString TEXT_IO_INSTALL		${LANG_FRENCH} "Install (S)"
-LangString TEXT_IO_PLAY			${LANG_FRENCH} "Play (S)"
-LangString TEXT_IO_REINSTALL	${LANG_FRENCH} "Reinstall (S)"
+LangString TEXT_IO_INSTALL		${LANG_FRENCH} "Installer"
+LangString TEXT_IO_PLAY			${LANG_FRENCH} "Jouer"
+LangString TEXT_IO_REINSTALL	${LANG_FRENCH} "Réinstaller"
 LangString TEXT_IO_TITLE		${LANG_GERMAN} "${PRODUCT_ID_VER}"
 LangString TEXT_IO_SUBTITLE		${LANG_GERMAN} " "
-LangString TEXT_IO_INSTALL		${LANG_GERMAN} "Install (G)"
-LangString TEXT_IO_PLAY			${LANG_GERMAN} "Play (G)"
-LangString TEXT_IO_REINSTALL	${LANG_GERMAN} "Reinstall (G)"
+LangString TEXT_IO_INSTALL		${LANG_GERMAN} "Installieren"
+LangString TEXT_IO_PLAY			${LANG_GERMAN} "Spielen"
+LangString TEXT_IO_REINSTALL	${LANG_GERMAN} "Noch mal installieren"
 LangString TEXT_IO_TITLE		${LANG_SPANISH} "${PRODUCT_ID_VER}"
 LangString TEXT_IO_SUBTITLE		${LANG_SPANISH} " "
-LangString TEXT_IO_INSTALL		${LANG_SPANISH} "Install (S)"
-LangString TEXT_IO_PLAY			${LANG_SPANISH} "Play (S)"
-LangString TEXT_IO_REINSTALL	${LANG_SPANISH} "Reinstall (S)"
+LangString TEXT_IO_INSTALL		${LANG_SPANISH} "Instale"
+LangString TEXT_IO_PLAY			${LANG_SPANISH} "Juego"
+LangString TEXT_IO_REINSTALL	${LANG_SPANISH} "Reinstálese"
 LangString TEXT_IO_TITLE		${LANG_ITALIAN} "${PRODUCT_ID_VER}"
 LangString TEXT_IO_SUBTITLE		${LANG_ITALIAN} " "
-LangString TEXT_IO_INSTALL		${LANG_ITALIAN} "Install (I)"
-LangString TEXT_IO_PLAY			${LANG_ITALIAN} "Play (I)"
-LangString TEXT_IO_REINSTALL	${LANG_ITALIAN} "Reinstall (I)"
+LangString TEXT_IO_INSTALL		${LANG_ITALIAN} "Installa"
+LangString TEXT_IO_PLAY			${LANG_ITALIAN} "Gioca"
+LangString TEXT_IO_REINSTALL	${LANG_ITALIAN} "Re-installa"
 
 !ifdef SHOW_AUTORUN
 Var hwnd ; Window handle of the custom page
@@ -413,6 +458,12 @@ Function ShowCustom
 
 FunctionEnd
 
+LangString TEXT_IO_COULD_NOT_EXECUTE	${LANG_ENGLISH} "Could not execute $INSTDIR\Program\${PRODUCT_FAMILY}.exe"
+LangString TEXT_IO_COULD_NOT_EXECUTE	${LANG_FRENCH} "N'a pas pu exécuter $INSTDIR\Program\${PRODUCT_FAMILY}.exe"
+LangString TEXT_IO_COULD_NOT_EXECUTE	${LANG_GERMAN} "Konnte $INSTDIR\Program\${PRODUCT_FAMILY}.exe nicht ausführen"
+LangString TEXT_IO_COULD_NOT_EXECUTE	${LANG_SPANISH} "$INSTDIR\Program\${PRODUCT_FAMILY}.exe No podía ejecutarse"
+LangString TEXT_IO_COULD_NOT_EXECUTE	${LANG_ITALIAN} "Impossibile eseguire $INSTDIR\Program\${PRODUCT_FAMILY}.exe"
+
 Function LeaveCustom
 
 	; At this point the user has either pressed Next or one of our custom buttons
@@ -433,7 +484,7 @@ Function LeaveCustom
 	quit
 
 	play_error:
-	MessageBox MB_ICONEXCLAMATION "Could not execute $INSTDIR\Program\${PRODUCT_FAMILY}.exe"
+	MessageBox MB_ICONEXCLAMATION "$(TEXT_IO_COULD_NOT_EXECUTE)"
 	abort
 	
 	proceed:
@@ -442,6 +493,27 @@ Function LeaveCustom
 
 FunctionEnd
 !endif
+
+LangString TEXT_IO_UNINSTALL_PREVIOUS				${LANG_ENGLISH} "The previous version of ${PRODUCT_ID} must be uninstalled before continuing.$\nDo you wish to continue?"
+LangString TEXT_IO_DIRECTX_VISIT_MICROSOFT			${LANG_ENGLISH} "The latest version of DirectX (8.1 or higher) is strongly recommended.$\n Do you wish to visit Microsoft's site now?"
+LangString TEXT_IO_UNINSTALL_FAILED_INSTALL_ANYWAY	${LANG_ENGLISH} "Uninstallation failed.  Install anyway?"
+LangString TEXT_IO_INSTALL_DIRECTX					${LANG_ENGLISH} "The latest version of DirectX (8.1 or higher) is required.$\n Do you wish to install DirectX 8.1 now?"
+LangString TEXT_IO_UNINSTALL_PREVIOUS				${LANG_FRENCH} "La version précédente de ${PRODUCT_ID} doit être déinstallée pour pouvoir continuer. Voulez-vous continuer ?"
+LangString TEXT_IO_DIRECTX_VISIT_MICROSOFT			${LANG_FRENCH} "La dernière version de DirectX (8.1 ou supérieure) est hautement recommandée. Voulez-vous visiter le site de Microsoft maintenant ?"
+LangString TEXT_IO_UNINSTALL_FAILED_INSTALL_ANYWAY	${LANG_FRENCH} "Echec de la déinstallation. Voulez-vous tout de même lancer l'installation ?"
+LangString TEXT_IO_INSTALL_DIRECTX					${LANG_FRENCH} "La dernière version de DirectX (8.1 ou supérieure) est hautement recommandée. Désirez-vous l'installer maintenant ?"
+LangString TEXT_IO_UNINSTALL_PREVIOUS				${LANG_GERMAN} "Die letzte Version von ${PRODUCT_ID} muss deinstalliert werden, bevor Sie weiter machen. Wollen Sie fortfahren?"
+LangString TEXT_IO_DIRECTX_VISIT_MICROSOFT			${LANG_GERMAN} "Die letzte Version von DirectX (8.1 oder höher) ist dringend zu empfehlen.  Wollen Sie die Webseite von Microsoft jetzt besuchen?"
+LangString TEXT_IO_UNINSTALL_FAILED_INSTALL_ANYWAY	${LANG_GERMAN} "Deinstallation fehlgeschlagen.  Trotzdem installieren?"
+LangString TEXT_IO_INSTALL_DIRECTX					${LANG_GERMAN} "Die letzte Version von DirectX (8.1 oder höher) ist dringend zu empfehlen.  Wollen Sie es jetzt installieren?"
+LangString TEXT_IO_UNINSTALL_PREVIOUS				${LANG_SPANISH} "La versión ${PRODUCT_ID} anterior del debe ser uninstalled antes de continuar.  Usted desea continuar?"
+LangString TEXT_IO_DIRECTX_VISIT_MICROSOFT			${LANG_SPANISH} "La versión más última de DirectX (8,1 o más alto) se recomienda fuertemente.  Usted desea ahora visitar el sitio de Microsoft?"
+LangString TEXT_IO_UNINSTALL_FAILED_INSTALL_ANYWAY	${LANG_SPANISH} "Uninstallation falló.  ¿Instale de todos modos?"
+LangString TEXT_IO_INSTALL_DIRECTX					${LANG_SPANISH} "La versión más última de DirectX (8,1 o más alto) se recomienda fuertemente.  Usted desea ahora instalarla?"
+LangString TEXT_IO_UNINSTALL_PREVIOUS				${LANG_ITALIAN} "Prima di continuare va installata la versione precendente di ${PRODUCT_ID}.  Vuoi continuare?"
+LangString TEXT_IO_DIRECTX_VISIT_MICROSOFT			${LANG_ITALIAN} "Si consiglia vivamente di installare la versione più recente di TDirectX (8.1 o superiore).  Vuoi visitare il sito Microsoft adesso?"
+LangString TEXT_IO_UNINSTALL_FAILED_INSTALL_ANYWAY	${LANG_ITALIAN} "Disinstallazione non riuscita.  Vuoi installare comunque?"
+LangString TEXT_IO_INSTALL_DIRECTX					${LANG_ITALIAN} "Si consiglia vivamente di installare la versione più recente di TDirectX (8.1 o superiore).  Vuoi installarla adesso?"
 
 Function PreInstall
 
@@ -463,7 +535,7 @@ Function PreInstall
 	IfFileExists "$R1" prompt_uninstall_nsis old_nsis_not_installed
 
 	prompt_uninstall_nsis:
-	MessageBox MB_YESNO|MB_ICONINFORMATION "The previous version of ${PRODUCT_ID} must be uninstalled before continuing.$\nDo you wish to continue?" IDYES do_uninstall_nsis
+	MessageBox MB_YESNO|MB_ICONINFORMATION "$(TEXT_IO_UNINSTALL_PREVIOUS)" IDYES do_uninstall_nsis
 	Abort
 
 	do_uninstall_nsis:
@@ -477,7 +549,7 @@ Function PreInstall
 	; failure (eg. aborted).
 	IntCmp $R4 0 old_nsis_not_installed ; jump if 0
 
-	MessageBox MB_YESNO|MB_DEFBUTTON2|MB_ICONINFORMATION "Uninstallation failed.  Install anyway?" IDYES old_nsis_not_installed
+	MessageBox MB_YESNO|MB_DEFBUTTON2|MB_ICONINFORMATION "$(TEXT_IO_UNINSTALL_FAILED_INSTALL_ANYWAY)" IDYES old_nsis_not_installed
 	Abort
 
 
@@ -499,12 +571,12 @@ Function PreInstall
 	; We can function without it (using WaveOut), so don't *require* this.
 	old_dx:
 !ifdef DIRECTX_81_REDIST_PRESENT
-	MessageBox MB_YESNO|MB_ICONINFORMATION "The latest version of DirectX (8.1 or higher) is required.$\n Do you wish to install DirectX 8.1 now?" IDNO ok
+	MessageBox MB_YESNO|MB_ICONINFORMATION "$(TEXT_IO_INSTALL_DIRECTX)" IDNO ok
 	Exec "DirectX81\dxsetup.exe"
 	quit
 	ok:
 !else
-	MessageBox MB_YESNO|MB_ICONINFORMATION "The latest version of DirectX (8.1 or higher) is strongly recommended.$\n Do you wish to visit Microsoft's site now?" IDNO ok
+	MessageBox MB_YESNO|MB_ICONINFORMATION "$(TEXT_IO_DIRECTX_VISIT_MICROSOFT)" IDNO ok
 	ExecShell "" "http://www.microsoft.com/directx/"
 	Abort
 	ok:
