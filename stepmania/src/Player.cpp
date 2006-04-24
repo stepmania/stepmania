@@ -1803,7 +1803,8 @@ bool Player::IsPlayingBeginner() const
 
 void Player::SetJudgment( TapNoteScore tns, bool bEarly )
 {
-	m_pPlayerStageStats->tnsLast = tns;
+	if( m_pPlayerStageStats )
+		m_pPlayerStageStats->tnsLast = tns;
 	if( m_pPlayerState->m_mp != MultiPlayer_INVALID )
 		MESSAGEMAN->Broadcast( enum_add2(Message_ShowJudgmentMuliPlayerP1,m_pPlayerState->m_mp) );
 
