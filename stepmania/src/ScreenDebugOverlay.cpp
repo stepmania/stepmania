@@ -33,6 +33,8 @@ static RageTimer g_HaltTimer(RageZeroTimer);
 static float g_fImageScaleCurrent = 1;
 static float g_fImageScaleDestination = 1;
 
+Preference<bool> g_bAllowFastAndSlow ("AllowFastAndSlow", true);
+
 //
 // self-registering debug lines
 // We don't use SubscriptionManager, because we want to keep the line order.
@@ -152,8 +154,11 @@ void ScreenDebugOverlay::Init()
 
 		g_Mappings.holdForDebug1 = DeviceInput(DEVICE_KEYBOARD, KEY_F3);
 		g_Mappings.holdForDebug2.MakeInvalid();
-		g_Mappings.holdForSlow = DeviceInput(DEVICE_KEYBOARD, KEY_ACCENT);
-		g_Mappings.holdForFast = DeviceInput(DEVICE_KEYBOARD, KEY_TAB);
+		if( g_bAllowFastAndSlow )
+		{
+			g_Mappings.holdForSlow = DeviceInput(DEVICE_KEYBOARD, KEY_ACCENT);
+			g_Mappings.holdForFast = DeviceInput(DEVICE_KEYBOARD, KEY_TAB);
+		}
 
 
 		int i=0;
