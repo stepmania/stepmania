@@ -565,6 +565,28 @@ void LanguagesDlg::OnBnClickedCheckLanguage()
 	}
 
 	{
+		FOREACH_CONST_Child( &ini2, key )
+		{
+			vector<RString> asList;
+			const RString &sSection = key->m_sName;
+			FOREACH_CONST_Attr( key, value )
+			{
+				const RString &sID = value->first;
+				RString sCurrentLanguage;
+				if( ini1.GetValue(sSection, sID, sCurrentLanguage) )
+					continue;
+
+				asList.push_back( sID );
+			}
+			if( !asList.empty() )
+			{
+				file.PutLine( ssprintf("Obsolete translation in section [%s]:", sSection.c_str()) );
+				DumpList( asList, file );
+			}
+		}
+	}
+
+	{
 		FOREACH_CONST_Child( &ini1, key )
 		{
 			vector<RString> asList;
