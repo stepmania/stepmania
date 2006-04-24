@@ -310,7 +310,7 @@ wstring ConvertCodepageToWString( RString s, int iCodePage )
 	ASSERT_M( iBytes > 0, werr_ssprintf( GetLastError(), "MultiByteToWideChar" ).c_str() );
 
 	wchar_t *pTemp = new wchar_t[iBytes];
-	MultiByteToWideChar( CP_ACP, 0, s.data(), s.size(), pTemp, iBytes );
+	MultiByteToWideChar( iCodePage, 0, s.data(), s.size(), pTemp, iBytes );
 	wstring sRet( pTemp, iBytes );
 	delete [] pTemp;
 
