@@ -442,6 +442,28 @@ void GetAllMatches( const RString &sRegex, const RString &sString, vector<RStrin
 	}
 }
 
+void DumpList( const vector<RString> &asList, RageFile &file )
+{
+	RString sLine;
+	FOREACH_CONST( RString, asList, s )
+	{
+		if( sLine.size() + s->size() > 100 )
+		{
+			file.PutLine( sLine );
+			sLine = "";
+		}
+
+		if( sLine.size() )
+			sLine += ", ";
+		else
+			sLine += "    ";
+
+		sLine += *s;
+	}
+
+	file.PutLine( sLine );
+}
+
 void LanguagesDlg::OnBnClickedCheckLanguage()
 {
 	RString sTheme = GetCurrentString( m_listThemes );
@@ -521,37 +543,23 @@ void LanguagesDlg::OnBnClickedCheckLanguage()
 	{
 		FOREACH_CONST_Child( &ini1, key )
 		{
-			bool bFirst = true;
-			RString sLastSection;
-			RString sLine;
+			vector<RString> asList;
+			const RString &sSection = key->m_sName;
 			FOREACH_CONST_Attr( key, value )
 			{
-				const RString &sSection = key->m_sName;
 				const RString &sID = value->first;
 				RString sCurrentLanguage;
 				ini2.GetValue( sSection, sID, sCurrentLanguage );
 				if( !sCurrentLanguage.empty() )
 					continue;
 
-				if( bFirst )
-				{
-					bFirst = false;
-					file.PutLine( ssprintf("Not translated in section [%s]:", sSection.c_str()) );
-				}
-				if( sLine.size() + sID.size() > 100 )
-				{
-					file.PutLine( sLine );
-					sLine = "";
-				}
-				if( sLine.size() )
-					sLine += ", ";
-				else
-					sLine += "    ";
-
-				sLine += sID;
+				asList.push_back( sID );
 			}
-			if( sLine.size() )
-				file.PutLine( sLine );
+			if( !asList.empty() )
+			{
+				file.PutLine( ssprintf("Not translated in section [%s]:", sSection.c_str()) );
+				DumpList( asList, file );
+			}
 		}
 	}
 
