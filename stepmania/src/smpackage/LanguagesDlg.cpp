@@ -595,8 +595,7 @@ void LanguagesDlg::OnBnClickedCheckLanguage()
 			{
 				const RString &sID = value->first;
 				RString sCurrentLanguage;
-				ini2.GetValue( sSection, sID, sCurrentLanguage );
-				if( !sCurrentLanguage.empty() )
+				if( ini2.GetValue(sSection, sID, sCurrentLanguage) )
 					continue;
 
 				asList.push_back( sID );
