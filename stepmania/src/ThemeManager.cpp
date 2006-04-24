@@ -968,6 +968,7 @@ RString ThemeManager::GetString( const RString &sClassName, const RString &sValu
 	DEBUG_ASSERT( sValueName.find('=') == sValueName.npos );
 
 	// TODO: Move this escaping into IniFile?
+	sValueName.Replace( "\r\n", "\\n" );
 	sValueName.Replace( "\n", "\\n" );
 
 	
