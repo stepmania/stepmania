@@ -594,6 +594,9 @@ void LanguagesDlg::OnBnClickedCheckLanguage()
 			FOREACH_CONST_Attr( key, value )
 			{
 				const RString &sID = value->first;
+				const RString &sBaseText = value->second;
+				if( sBaseText.empty() )
+					continue;
 				RString sCurrentLanguage;
 				if( ini2.GetValue(sSection, sID, sCurrentLanguage) )
 					continue;
