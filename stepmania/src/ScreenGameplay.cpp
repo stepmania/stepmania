@@ -2272,7 +2272,10 @@ void ScreenGameplay::StageFinished( bool bBackedOut )
 		STATSMAN->m_vPlayedStageStats.push_back( STATSMAN->m_CurStageStats );
 
 	/* Reset options. */
-	GAMESTATE->RestoreStageOptions();
+	if( bBackedOut )
+		GAMESTATE->RestoreSelectedOptions();
+	else
+		GAMESTATE->RestoreStageOptions();
 }
 
 void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
