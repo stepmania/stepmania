@@ -166,7 +166,7 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_BackFromDelete )
 	{
-		if( !ScreenTextEntry::s_bCancelledLast )
+		if( ScreenPrompt::s_LastAnswer == ANSWER_YES )
 		{
 			LOG->Trace( "Delete successful; deleting Steps from memory" );
 
