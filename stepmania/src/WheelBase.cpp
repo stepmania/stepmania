@@ -17,7 +17,6 @@
 #include "ScreenDimensions.h"
 
 
-	
 const int MAX_WHEEL_SOUND_SPEED = 15;
 
 WheelBase::WheelBase()
@@ -59,24 +58,25 @@ void WheelBase::Load( RString sType )
 
 void WheelBase::LoadFromMetrics( RString sType )
 {
-	SWITCH_SECONDS				.Load(sType,"SwitchSeconds");
+	SWITCH_SECONDS			.Load(sType,"SwitchSeconds");
 	LOCKED_INITIAL_VELOCITY		.Load(sType,"LockedInitialVelocity");
-	SCROLL_BAR_X				.Load(sType,"ScrollBarX");
-	SCROLL_BAR_HEIGHT			.Load(sType,"ScrollBarHeight");
-	ITEM_CURVE_X				.Load(sType,"ItemCurveX");
-	USE_LINEAR_WHEEL			.Load(sType,"NoCurving");
-	ITEM_SPACING_Y				.Load(sType,"ItemSpacingY");
-	WHEEL_3D_RADIUS				.Load(sType,"Wheel3DRadius");
-	CIRCLE_PERCENT				.Load(sType,"CirclePercent");
-	USE_3D						.Load(sType,"Use3D");
+	SCROLL_BAR_X			.Load(sType,"ScrollBarX");
+	SCROLL_BAR_HEIGHT		.Load(sType,"ScrollBarHeight");
+	ITEM_CURVE_X			.Load(sType,"ItemCurveX");
+	USE_LINEAR_WHEEL		.Load(sType,"NoCurving");
+	ITEM_SPACING_Y			.Load(sType,"ItemSpacingY");
+	WHEEL_3D_RADIUS			.Load(sType,"Wheel3DRadius");
+	CIRCLE_PERCENT			.Load(sType,"CirclePercent");
+	USE_3D				.Load(sType,"Use3D");
 	NUM_WHEEL_ITEMS_TO_DRAW		.Load(sType,"NumWheelItems");
 	WHEEL_ITEM_ON_DELAY_CENTER	.Load(sType,"WheelItemOnDelayCenter");
 	WHEEL_ITEM_ON_DELAY_OFFSET	.Load(sType,"WheelItemOnDelayOffset");
 	WHEEL_ITEM_OFF_DELAY_CENTER	.Load(sType,"WheelItemOffDelayCenter");
 	WHEEL_ITEM_OFF_DELAY_OFFSET	.Load(sType,"WheelItemOffDelayOffset");
+	WHEEL_ITEM_LOCKED_COLOR		.Load(sType,"WheelItemLockedColor");
 
 	m_soundChangeMusic.Load(	THEME->GetPathS(sType,"change"), true );
-	m_soundLocked.Load(			THEME->GetPathS(sType,"locked"), true );
+	m_soundLocked.Load(		THEME->GetPathS(sType,"locked"), true );
 
 	m_sprHighlight.Load( THEME->GetPathG(sType,"highlight") );
 	m_sprHighlight->SetName( "Highlight" );
@@ -177,9 +177,9 @@ void WheelBase::DrawItem( int i, WheelItemBase *display, const float fThisBanner
 	}
 
 	if( m_WheelState == STATE_LOCKED  &&  i != NUM_WHEEL_ITEMS/2 )
-		display->m_fPercentGray = 0.5f;
+		display->m_colorLocked = WHEEL_ITEM_LOCKED_COLOR.GetValue();
 	else
-		display->m_fPercentGray = 0;
+		display->m_colorLocked = RageColor(0,0,0,0);
 
 	display->Draw();
 }

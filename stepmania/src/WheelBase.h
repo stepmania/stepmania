@@ -67,25 +67,25 @@ protected:
 	virtual void BuildWheelItemsData( vector<WheelItemBaseData *> &arrayWheelItemDatas );
 	int FirstVisibleIndex();
 
-	ScrollBar			m_ScrollBar;
-	AutoActor			m_sprHighlight;
+	ScrollBar	m_ScrollBar;
+	AutoActor	m_sprHighlight;
 
 	vector<WheelItemBaseData *> m_WheelBaseItemsData;
 	vector<WheelItemBase *> m_WheelBaseItems;
 	WheelItemBaseData* m_LastSelection;
 	
-	bool				m_isEmpty;
-	int					m_iSelection;		// index into m_CurWheelItemBaseData
-	RString				m_sExpandedSectionName;
+	bool		m_isEmpty;
+	int		m_iSelection;		// index into m_CurWheelItemBaseData
+	RString		m_sExpandedSectionName;
 
 
-	int					m_iSwitchesLeftInSpinDown;		
-	float				m_fLockedWheelVelocity;
+	int		m_iSwitchesLeftInSpinDown;		
+	float		m_fLockedWheelVelocity;
 	/* 0 = none; -1 or 1 = up/down */
-	int					m_Moving;
-	RageTimer			m_MovingSoundTimer;
-	float				m_TimeBeforeMovingBegins;
-	float				m_SpinSpeed;
+	int		m_Moving;
+	RageTimer	m_MovingSoundTimer;
+	float		m_TimeBeforeMovingBegins;
+	float		m_SpinSpeed;
 	enum WheelState { 
 		STATE_SELECTING,
 		STATE_FLYING_OFF_BEFORE_NEXT_SORT, 
@@ -98,9 +98,9 @@ protected:
 		STATE_RANDOM_SPINNING,
 		STATE_LOCKED,
 	};
-	WheelState			m_WheelState;
-	float				m_fTimeLeftInState;
-	float				m_fPositionOffsetFromSelection;
+	WheelState	m_WheelState;
+	float		m_fTimeLeftInState;
+	float		m_fPositionOffsetFromSelection;
 
 	RageSound m_soundChangeMusic;
 	RageSound m_soundExpand;
@@ -111,20 +111,21 @@ protected:
 	void UpdateScrollbar(unsigned int size);
 
 	ThemeMetric<float>	SWITCH_SECONDS;
-	ThemeMetric<float> LOCKED_INITIAL_VELOCITY;
-	ThemeMetric<float> SCROLL_BAR_X;
-	ThemeMetric<int> SCROLL_BAR_HEIGHT;
+	ThemeMetric<float>	LOCKED_INITIAL_VELOCITY;
+	ThemeMetric<float>	SCROLL_BAR_X;
+	ThemeMetric<int>	SCROLL_BAR_HEIGHT;
 	ThemeMetric<float>	ITEM_CURVE_X;
-	ThemeMetric<bool> USE_LINEAR_WHEEL;
+	ThemeMetric<bool>	USE_LINEAR_WHEEL;
 	ThemeMetric<float>	ITEM_SPACING_Y;
 	ThemeMetric<float>	WHEEL_3D_RADIUS;
 	ThemeMetric<float>	CIRCLE_PERCENT;
 	ThemeMetric<bool>	USE_3D;
 	ThemeMetric<float>	NUM_WHEEL_ITEMS_TO_DRAW;
-	ThemeMetric<float> WHEEL_ITEM_ON_DELAY_CENTER;
-	ThemeMetric<float> WHEEL_ITEM_ON_DELAY_OFFSET;
-	ThemeMetric<float> WHEEL_ITEM_OFF_DELAY_CENTER;
-	ThemeMetric<float> WHEEL_ITEM_OFF_DELAY_OFFSET;
+	ThemeMetric<float>	WHEEL_ITEM_ON_DELAY_CENTER;
+	ThemeMetric<float>	WHEEL_ITEM_ON_DELAY_OFFSET;
+	ThemeMetric<float>	WHEEL_ITEM_OFF_DELAY_CENTER;
+	ThemeMetric<float>	WHEEL_ITEM_OFF_DELAY_OFFSET;
+	ThemeMetric<RageColor>	WHEEL_ITEM_LOCKED_COLOR;
 };
 
 #endif

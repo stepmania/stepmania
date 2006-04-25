@@ -39,7 +39,7 @@ void WheelItemBase::Load( RString sType )
 	TEXT_Y			.Load(sType,"TextY");
 	TEXT_ON_COMMAND	.Load(sType,"TextOnCommand");
 
-	m_fPercentGray = 0;
+	m_colorLocked = RageColor(0,0,0,0);
 
 	m_sprBar.Load( THEME->GetPathG(sType,"bar") );
 	m_sprBar.SetXY( 0, 0 );
@@ -77,13 +77,13 @@ void WheelItemBase::LoadFromWheelItemBaseData( WheelItemBaseData* pWID )
 
 void WheelItemBase::DrawGrayBar( Actor& bar )
 {
-	if( m_fPercentGray == 0 )
+	if( m_colorLocked.a == 0 )
 		return;
 
 	RageColor glow = bar.GetGlow();
 	RageColor diffuse = bar.GetDiffuse();
 
-	bar.SetGlow( RageColor(0,0,0,m_fPercentGray) );
+	bar.SetGlow( m_colorLocked );
 	bar.SetDiffuse( RageColor(0,0,0,0) );
 	
 	bar.Draw();

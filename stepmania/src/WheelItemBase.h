@@ -35,7 +35,7 @@ public:
 
 	virtual void LoadFromWheelItemBaseData( WheelItemBaseData* pWID );
 
-	float				m_fPercentGray;
+	RageColor	m_colorLocked;
 
 protected:
 	void SetGrayBar( Actor *pBar ) { m_pBar = pBar; }

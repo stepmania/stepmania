@@ -62,7 +62,6 @@ MusicWheelItem::MusicWheelItem( RString sType ):
 	m_sprSortBar.Load( THEME->GetPathG(sType,"sort") );
 	this->AddChild( &m_sprSortBar );
 
-	m_fPercentGray = 0;
 	m_WheelNotifyIcon.SetXY( ICON_X, ICON_Y );
 	m_WheelNotifyIcon.RunCommands( ICON_ON_COMMAND );
 	this->AddChild( &m_WheelNotifyIcon );
