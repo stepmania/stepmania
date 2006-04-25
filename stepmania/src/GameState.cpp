@@ -1084,6 +1084,9 @@ bool GameState::IsDisqualified( PlayerNumber pn )
 	if( !GAMESTATE->IsHumanPlayer(pn) )
 		return false;
 
+	if( STATSMAN->m_CurStageStats.bGaveUp )
+		return true;
+
 	const PlayerOptions &po = GAMESTATE->m_pPlayerState[pn]->m_StoredPlayerOptions;
 
 	// Check the stored player options for disqualify.  Don't disqualify because
