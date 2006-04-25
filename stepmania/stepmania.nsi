@@ -737,12 +737,6 @@ Section "Uninstall"
 	Delete "$SMPROGRAMS\${PRODUCT_ID}\*.*"
 	RMDir "$SMPROGRAMS\${PRODUCT_ID}"
 
-	IfErrors do_error do_no_error
-	do_error:
-	MessageBox MB_OK|MB_ICONSTOP "$(TEXT_IO_FATAL_ERROR_UNINSTALL)"
-	Quit
-	do_no_error:
-
 	Delete "$INSTDIR\Uninstall.exe"
 
 	DeleteRegKey /ifempty HKEY_LOCAL_MACHINE "SOFTWARE\${PRODUCT_ID}"
