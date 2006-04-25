@@ -1087,6 +1087,11 @@ bool GameState::IsDisqualified( PlayerNumber pn )
 	if( STATSMAN->m_CurStageStats.bGaveUp )
 		return true;
 
+#ifndef DEBUG
+	if( STATSMAN->m_CurStageStats.bUsedAutoplay )
+		return true;
+#endif //DEBUG
+
 	const PlayerOptions &po = GAMESTATE->m_pPlayerState[pn]->m_StoredPlayerOptions;
 
 	// Check the stored player options for disqualify.  Don't disqualify because

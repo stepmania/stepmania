@@ -51,7 +51,7 @@ public:
 		g_pvpSubscribers->push_back( this );
 	}
 	virtual ~IDebugLine() { }
-	enum Type { all_screens, gameplay_only, editor_gameplay_only };
+	enum Type { all_screens, gameplay_only };
 	virtual Type GetType() const { return all_screens; }
 	virtual RString GetDescription() = 0;
 	virtual RString GetValue() = 0;
@@ -71,17 +71,6 @@ public:
 static bool IsGameplay()
 {
 	return SCREENMAN && SCREENMAN->GetTopScreen() && SCREENMAN->GetTopScreen()->GetScreenType() == gameplay;
-}
-
-static bool IsEditorGameplay()
-{
-	if( IsGameplay() )
-	{
-		RString s = SCREENMAN->GetTopScreen()->GetName();
-		if( s.find("ScreenEdit") != s.npos )
-			return true;
-	}
-	return false;
 }
 
 
@@ -124,7 +113,6 @@ struct MapDebugToDI
 static MapDebugToDI g_Mappings;
 
 static LocalizedString IN_GAMEPLAY( "ScreenDebugOverlay", "%s in gameplay" );
-static LocalizedString IN_EDITOR_GAMEPLAY( "ScreenDebugOverlay", "%s in editor gameplay" );
 static LocalizedString OR( "ScreenDebugOverlay", "or" );
 static RString GetDebugButtonName( const IDebugLine *pLine )
 {
@@ -135,8 +123,6 @@ static RString GetDebugButtonName( const IDebugLine *pLine )
 		return s;
 	case IDebugLine::gameplay_only:
 		return ssprintf( IN_GAMEPLAY.GetValue(), s.c_str() );
-	case IDebugLine::editor_gameplay_only:
-		return ssprintf( IN_EDITOR_GAMEPLAY.GetValue(), s.c_str() );
 	default:
 		ASSERT(0);
 	}
@@ -201,7 +187,6 @@ void ScreenDebugOverlay::Init()
 			(*p)->m_Button = g_Mappings.debugButton[iNextDebugButton++];
 			break;
 		case IDebugLine::gameplay_only:
-		case IDebugLine::editor_gameplay_only:
 			(*p)->m_Button = g_Mappings.gameplayButton[iNextGameplayButton++];
 			break;
 		}
@@ -371,10 +356,8 @@ bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
 			if( !IsGameplay() )
 				continue;
 			break;
-		case IDebugLine::editor_gameplay_only:
-			if( !IsEditorGameplay() )
-				continue;
-			break;
+		default:
+			ASSERT(0);
 		}
 
 		if( input.DeviceI == (*p)->m_Button )

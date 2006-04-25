@@ -578,6 +578,8 @@ void Player::Update( float fDeltaTime )
 
 			RageTimer now;
 			Step( iTrack, now, false );
+			if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
+				STATSMAN->m_CurStageStats.bUsedAutoplay = true;
 		}
 	}
 
@@ -619,6 +621,8 @@ void Player::Update( float fDeltaTime )
 			{
 				// TODO: Make the CPU miss sometimes.
 				bIsHoldingButton = true;
+				if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
+					STATSMAN->m_CurStageStats.bUsedAutoplay = true;
 			}
 			else
 			{
@@ -1505,7 +1509,8 @@ void Player::CrossedRow( int iNoteRow )
 			if( tn.type != TapNote::empty && tn.result.tns == TNS_None )
 			{
 				Step( t, now );
-				STATSMAN->m_CurStageStats.bUsedAutoplay = true;
+				if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
+					STATSMAN->m_CurStageStats.bUsedAutoplay = true;
 			}
 		}
 	}

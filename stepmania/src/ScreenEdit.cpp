@@ -2331,9 +2331,6 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM == SM_GoToNextScreen )
 	{
 		GAMESTATE->m_EditMode = EditMode_INVALID;
-
-		// HACK to fix "AutoPlay remains on for normal play even if it's only togglable in the editor."
-		PREFSMAN->m_AutoPlay.Set( PC_HUMAN );
 	}
 	else if( SM == SM_BackFromMainMenu )
 	{
