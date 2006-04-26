@@ -15,8 +15,6 @@
 		AA0732910954381800F396C5 /* XmlFileUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = AA07328D0954381800F396C5 /* XmlFileUtil.h */; };
 		AA07A55F0843E72B00E33D21 /* ScreenDebugOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA07A5550843E72B00E33D21 /* ScreenDebugOverlay.cpp */; };
 		AA07A5600843E72B00E33D21 /* ScreenDebugOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA07A5560843E72B00E33D21 /* ScreenDebugOverlay.h */; };
-		AA07A5610843E72B00E33D21 /* ScreenGameplayMultiplayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA07A5570843E72B00E33D21 /* ScreenGameplayMultiplayer.cpp */; };
-		AA07A5620843E72B00E33D21 /* ScreenGameplayMultiplayer.h in Headers */ = {isa = PBXBuildFile; fileRef = AA07A5580843E72B00E33D21 /* ScreenGameplayMultiplayer.h */; };
 		AA07A5630843E72B00E33D21 /* ScreenSaveSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA07A5590843E72B00E33D21 /* ScreenSaveSync.cpp */; };
 		AA07A5640843E72B00E33D21 /* ScreenSaveSync.h in Headers */ = {isa = PBXBuildFile; fileRef = AA07A55A0843E72B00E33D21 /* ScreenSaveSync.h */; };
 		AA07A5650843E72B00E33D21 /* ScreenSMOnlineLogin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA07A55B0843E72B00E33D21 /* ScreenSMOnlineLogin.cpp */; };
@@ -971,7 +969,6 @@
 		AA40D34609A08D650068C0D5 /* WheelBase.h in Headers */ = {isa = PBXBuildFile; fileRef = AAAFE81D0835E7FF00FC43E0 /* WheelBase.h */; };
 		AA40D34709A08D650068C0D5 /* WheelItemBase.h in Headers */ = {isa = PBXBuildFile; fileRef = AAAFE81F0835E7FF00FC43E0 /* WheelItemBase.h */; };
 		AA40D34909A08D650068C0D5 /* ScreenDebugOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA07A5560843E72B00E33D21 /* ScreenDebugOverlay.h */; };
-		AA40D34A09A08D650068C0D5 /* ScreenGameplayMultiplayer.h in Headers */ = {isa = PBXBuildFile; fileRef = AA07A5580843E72B00E33D21 /* ScreenGameplayMultiplayer.h */; };
 		AA40D34B09A08D650068C0D5 /* ScreenSaveSync.h in Headers */ = {isa = PBXBuildFile; fileRef = AA07A55A0843E72B00E33D21 /* ScreenSaveSync.h */; };
 		AA40D34C09A08D650068C0D5 /* ScreenSMOnlineLogin.h in Headers */ = {isa = PBXBuildFile; fileRef = AA07A55C0843E72B00E33D21 /* ScreenSMOnlineLogin.h */; };
 		AA40D34D09A08D650068C0D5 /* ScreenSyncOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA07A55E0843E72B00E33D21 /* ScreenSyncOverlay.h */; };
@@ -990,10 +987,7 @@
 		AA40D35B09A08D650068C0D5 /* ScreenGameplayNormal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1215D7A108C6559A00B87D8B /* ScreenGameplayNormal.h */; };
 		AA40D35C09A08D650068C0D5 /* ActorSound.h in Headers */ = {isa = PBXBuildFile; fileRef = AACFBE2708E7D793005087FC /* ActorSound.h */; };
 		AA40D35D09A08D650068C0D5 /* InputEventPlus.h in Headers */ = {isa = PBXBuildFile; fileRef = AACFBE3908E7D832005087FC /* InputEventPlus.h */; };
-		AA40D35E09A08D650068C0D5 /* ScreenEvaluationMultiplayer.h in Headers */ = {isa = PBXBuildFile; fileRef = AACFBE4808E7D893005087FC /* ScreenEvaluationMultiplayer.h */; };
 		AA40D35F09A08D650068C0D5 /* ScreenGameplayLesson.h in Headers */ = {isa = PBXBuildFile; fileRef = AACFBE4A08E7D893005087FC /* ScreenGameplayLesson.h */; };
-		AA40D36009A08D650068C0D5 /* ScreenJoinMultiplayer.h in Headers */ = {isa = PBXBuildFile; fileRef = AACFBE4C08E7D893005087FC /* ScreenJoinMultiplayer.h */; };
-		AA40D36109A08D650068C0D5 /* PlayerScoreList.h in Headers */ = {isa = PBXBuildFile; fileRef = AACFBE5A08E7D8C6005087FC /* PlayerScoreList.h */; };
 		AA40D36209A08D650068C0D5 /* LuaExpressionTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = AACFBE6208E7DBA8005087FC /* LuaExpressionTransform.h */; };
 		AA40D36309A08D650068C0D5 /* DynamicActorScroller.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF3442A08F1C36A0006EDB7 /* DynamicActorScroller.h */; };
 		AA40D36409A08D650068C0D5 /* ScoreKeeperNormal.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF34ADD0900AEBD0006EDB7 /* ScoreKeeperNormal.h */; };
@@ -1011,7 +1005,6 @@
 		AA40D37009A08D650068C0D5 /* XmlFileUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = AA07328D0954381800F396C5 /* XmlFileUtil.h */; };
 		AA40D37109A08D650068C0D5 /* LocalizedString.h in Headers */ = {isa = PBXBuildFile; fileRef = AADD1CC3095C233F0088C9DF /* LocalizedString.h */; };
 		AA40D37209A08D650068C0D5 /* LowLevelWindow_Cocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = AAEF7D21090DD45900A1CAFC /* LowLevelWindow_Cocoa.h */; };
-		AA40D37309A08D650068C0D5 /* ControllerStateDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8E4BC509787C9400765149 /* ControllerStateDisplay.h */; };
 		AA40D37409A08D650068C0D5 /* SMMainThread.h in Headers */ = {isa = PBXBuildFile; fileRef = AAABB2D90979DB5B006C9F25 /* SMMainThread.h */; };
 		AA40D37509A08D650068C0D5 /* HIDDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = AA44705209846B0800983E82 /* HIDDevice.h */; };
 		AA40D37609A08D650068C0D5 /* JoystickDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = AA44708C0984720900983E82 /* JoystickDevice.h */; };
@@ -1367,7 +1360,6 @@
 		AA40D4DA09A08D650068C0D5 /* WheelBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAAFE81C0835E7FF00FC43E0 /* WheelBase.cpp */; };
 		AA40D4DB09A08D650068C0D5 /* WheelItemBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAAFE81E0835E7FF00FC43E0 /* WheelItemBase.cpp */; };
 		AA40D4DD09A08D650068C0D5 /* ScreenDebugOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA07A5550843E72B00E33D21 /* ScreenDebugOverlay.cpp */; };
-		AA40D4DE09A08D650068C0D5 /* ScreenGameplayMultiplayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA07A5570843E72B00E33D21 /* ScreenGameplayMultiplayer.cpp */; };
 		AA40D4DF09A08D650068C0D5 /* ScreenSaveSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA07A5590843E72B00E33D21 /* ScreenSaveSync.cpp */; };
 		AA40D4E009A08D650068C0D5 /* ScreenSMOnlineLogin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA07A55B0843E72B00E33D21 /* ScreenSMOnlineLogin.cpp */; };
 		AA40D4E109A08D650068C0D5 /* ScreenSyncOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA07A55D0843E72B00E33D21 /* ScreenSyncOverlay.cpp */; };
@@ -1387,10 +1379,7 @@
 		AA40D4F009A08D650068C0D5 /* wchar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA4B5CC40573AD81005FB5DB /* wchar.cpp */; };
 		AA40D4F109A08D650068C0D5 /* ScreenGameplayNormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1215D7A008C6559A00B87D8B /* ScreenGameplayNormal.cpp */; };
 		AA40D4F209A08D650068C0D5 /* ActorSound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACFBE2608E7D793005087FC /* ActorSound.cpp */; };
-		AA40D4F309A08D650068C0D5 /* ScreenEvaluationMultiplayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACFBE4708E7D893005087FC /* ScreenEvaluationMultiplayer.cpp */; };
 		AA40D4F409A08D650068C0D5 /* ScreenGameplayLesson.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACFBE4908E7D893005087FC /* ScreenGameplayLesson.cpp */; };
-		AA40D4F509A08D650068C0D5 /* ScreenJoinMultiplayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACFBE4B08E7D893005087FC /* ScreenJoinMultiplayer.cpp */; };
-		AA40D4F609A08D650068C0D5 /* PlayerScoreList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACFBE5908E7D8C6005087FC /* PlayerScoreList.cpp */; };
 		AA40D4F709A08D650068C0D5 /* LuaExpressionTransform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACFBE6108E7DBA8005087FC /* LuaExpressionTransform.cpp */; };
 		AA40D4F809A08D650068C0D5 /* DynamicActorScroller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF3442908F1C36A0006EDB7 /* DynamicActorScroller.cpp */; };
 		AA40D4F909A08D650068C0D5 /* ScoreKeeperNormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF34ADC0900AEBD0006EDB7 /* ScoreKeeperNormal.cpp */; };
@@ -1410,7 +1399,6 @@
 		AA40D50709A08D650068C0D5 /* XmlFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC6889905D7F3C800964E6D /* XmlFile.cpp */; };
 		AA40D50809A08D650068C0D5 /* LocalizedString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AADD1CC2095C233E0088C9DF /* LocalizedString.cpp */; };
 		AA40D50909A08D650068C0D5 /* LowLevelWindow_Cocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = AAEF7D22090DD45900A1CAFC /* LowLevelWindow_Cocoa.mm */; };
-		AA40D50A09A08D650068C0D5 /* ControllerStateDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8E4BC409787C9400765149 /* ControllerStateDisplay.cpp */; };
 		AA40D50B09A08D650068C0D5 /* MenuInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8E4BC609787C9400765149 /* MenuInput.cpp */; };
 		AA40D50C09A08D650068C0D5 /* SMMainThread.m in Sources */ = {isa = PBXBuildFile; fileRef = AAABB2DA0979DB5B006C9F25 /* SMMainThread.m */; };
 		AA40D50D09A08D650068C0D5 /* SMMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = AABBFCD209838C3A00F077E2 /* SMMain.mm */; };
@@ -1543,8 +1531,6 @@
 		AA8BD2C407C939F800EA04E1 /* ScoreDisplayCalories.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8BD2BD07C939F800EA04E1 /* ScoreDisplayCalories.cpp */; };
 		AA8BD2C507C939F800EA04E1 /* ScoreDisplayCalories.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8BD2BE07C939F800EA04E1 /* ScoreDisplayCalories.h */; };
 		AA8BD2C707C93A1E00EA04E1 /* CommonMetrics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8BD2C607C93A1E00EA04E1 /* CommonMetrics.cpp */; };
-		AA8E4BC709787C9400765149 /* ControllerStateDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8E4BC409787C9400765149 /* ControllerStateDisplay.cpp */; };
-		AA8E4BC809787C9500765149 /* ControllerStateDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8E4BC509787C9400765149 /* ControllerStateDisplay.h */; };
 		AA8E4BC909787C9500765149 /* MenuInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8E4BC609787C9400765149 /* MenuInput.cpp */; };
 		AA8E55AD090B7F3C00D8CD2D /* libvorbis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA3791409099AE200141131 /* libvorbis.a */; };
 		AA8E55AE090B7F4000D8CD2D /* libogg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA378E809099AE100141131 /* libogg.a */; };
@@ -1671,14 +1657,8 @@
 		AACFBE2808E7D793005087FC /* ActorSound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACFBE2608E7D793005087FC /* ActorSound.cpp */; };
 		AACFBE2908E7D793005087FC /* ActorSound.h in Headers */ = {isa = PBXBuildFile; fileRef = AACFBE2708E7D793005087FC /* ActorSound.h */; };
 		AACFBE3A08E7D832005087FC /* InputEventPlus.h in Headers */ = {isa = PBXBuildFile; fileRef = AACFBE3908E7D832005087FC /* InputEventPlus.h */; };
-		AACFBE4D08E7D893005087FC /* ScreenEvaluationMultiplayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACFBE4708E7D893005087FC /* ScreenEvaluationMultiplayer.cpp */; };
-		AACFBE4E08E7D893005087FC /* ScreenEvaluationMultiplayer.h in Headers */ = {isa = PBXBuildFile; fileRef = AACFBE4808E7D893005087FC /* ScreenEvaluationMultiplayer.h */; };
 		AACFBE4F08E7D893005087FC /* ScreenGameplayLesson.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACFBE4908E7D893005087FC /* ScreenGameplayLesson.cpp */; };
 		AACFBE5008E7D893005087FC /* ScreenGameplayLesson.h in Headers */ = {isa = PBXBuildFile; fileRef = AACFBE4A08E7D893005087FC /* ScreenGameplayLesson.h */; };
-		AACFBE5108E7D893005087FC /* ScreenJoinMultiplayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACFBE4B08E7D893005087FC /* ScreenJoinMultiplayer.cpp */; };
-		AACFBE5208E7D893005087FC /* ScreenJoinMultiplayer.h in Headers */ = {isa = PBXBuildFile; fileRef = AACFBE4C08E7D893005087FC /* ScreenJoinMultiplayer.h */; };
-		AACFBE5B08E7D8C6005087FC /* PlayerScoreList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACFBE5908E7D8C6005087FC /* PlayerScoreList.cpp */; };
-		AACFBE5C08E7D8C6005087FC /* PlayerScoreList.h in Headers */ = {isa = PBXBuildFile; fileRef = AACFBE5A08E7D8C6005087FC /* PlayerScoreList.h */; };
 		AACFBE6308E7DBA8005087FC /* LuaExpressionTransform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACFBE6108E7DBA8005087FC /* LuaExpressionTransform.cpp */; };
 		AACFBE6408E7DBA8005087FC /* LuaExpressionTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = AACFBE6208E7DBA8005087FC /* LuaExpressionTransform.h */; };
 		AAD36084062BB8AE00D0CED8 /* RageSoundPosMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAD36082062BB8AE00D0CED8 /* RageSoundPosMap.cpp */; };
@@ -1862,8 +1842,6 @@
 		AA07328D0954381800F396C5 /* XmlFileUtil.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = XmlFileUtil.h; path = ../src/XmlFileUtil.h; sourceTree = "<group>"; };
 		AA07A5550843E72B00E33D21 /* ScreenDebugOverlay.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenDebugOverlay.cpp; path = ../src/ScreenDebugOverlay.cpp; sourceTree = "<group>"; };
 		AA07A5560843E72B00E33D21 /* ScreenDebugOverlay.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenDebugOverlay.h; path = ../src/ScreenDebugOverlay.h; sourceTree = "<group>"; };
-		AA07A5570843E72B00E33D21 /* ScreenGameplayMultiplayer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenGameplayMultiplayer.cpp; path = ../src/ScreenGameplayMultiplayer.cpp; sourceTree = "<group>"; };
-		AA07A5580843E72B00E33D21 /* ScreenGameplayMultiplayer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenGameplayMultiplayer.h; path = ../src/ScreenGameplayMultiplayer.h; sourceTree = "<group>"; };
 		AA07A5590843E72B00E33D21 /* ScreenSaveSync.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenSaveSync.cpp; path = ../src/ScreenSaveSync.cpp; sourceTree = "<group>"; };
 		AA07A55A0843E72B00E33D21 /* ScreenSaveSync.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenSaveSync.h; path = ../src/ScreenSaveSync.h; sourceTree = "<group>"; };
 		AA07A55B0843E72B00E33D21 /* ScreenSMOnlineLogin.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenSMOnlineLogin.cpp; path = ../src/ScreenSMOnlineLogin.cpp; sourceTree = "<group>"; };
@@ -2455,8 +2433,6 @@
 		AA8BD2BE07C939F800EA04E1 /* ScoreDisplayCalories.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScoreDisplayCalories.h; path = ../src/ScoreDisplayCalories.h; sourceTree = "<group>"; };
 		AA8BD2C607C93A1E00EA04E1 /* CommonMetrics.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = CommonMetrics.cpp; path = ../src/CommonMetrics.cpp; sourceTree = "<group>"; };
 		AA8DD84904A2E51400D02EE9 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
-		AA8E4BC409787C9400765149 /* ControllerStateDisplay.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ControllerStateDisplay.cpp; path = ../src/ControllerStateDisplay.cpp; sourceTree = "<group>"; };
-		AA8E4BC509787C9400765149 /* ControllerStateDisplay.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ControllerStateDisplay.h; path = ../src/ControllerStateDisplay.h; sourceTree = "<group>"; };
 		AA8E4BC609787C9400765149 /* MenuInput.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MenuInput.cpp; path = ../src/MenuInput.cpp; sourceTree = "<group>"; };
 		AA8EE0750866E266002C51A7 /* LuaBinding.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = LuaBinding.cpp; path = ../src/LuaBinding.cpp; sourceTree = "<group>"; };
 		AA8F118204A04F9B00D02EE9 /* DifficultyDisplay.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = DifficultyDisplay.cpp; path = ../src/DifficultyDisplay.cpp; sourceTree = "<group>"; };
@@ -2628,14 +2604,8 @@
 		AACFBE2608E7D793005087FC /* ActorSound.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ActorSound.cpp; path = ../src/ActorSound.cpp; sourceTree = "<group>"; };
 		AACFBE2708E7D793005087FC /* ActorSound.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ActorSound.h; path = ../src/ActorSound.h; sourceTree = "<group>"; };
 		AACFBE3908E7D832005087FC /* InputEventPlus.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = InputEventPlus.h; path = ../src/InputEventPlus.h; sourceTree = "<group>"; };
-		AACFBE4708E7D893005087FC /* ScreenEvaluationMultiplayer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenEvaluationMultiplayer.cpp; path = ../src/ScreenEvaluationMultiplayer.cpp; sourceTree = "<group>"; };
-		AACFBE4808E7D893005087FC /* ScreenEvaluationMultiplayer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenEvaluationMultiplayer.h; path = ../src/ScreenEvaluationMultiplayer.h; sourceTree = "<group>"; };
 		AACFBE4908E7D893005087FC /* ScreenGameplayLesson.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenGameplayLesson.cpp; path = ../src/ScreenGameplayLesson.cpp; sourceTree = "<group>"; };
 		AACFBE4A08E7D893005087FC /* ScreenGameplayLesson.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenGameplayLesson.h; path = ../src/ScreenGameplayLesson.h; sourceTree = "<group>"; };
-		AACFBE4B08E7D893005087FC /* ScreenJoinMultiplayer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenJoinMultiplayer.cpp; path = ../src/ScreenJoinMultiplayer.cpp; sourceTree = "<group>"; };
-		AACFBE4C08E7D893005087FC /* ScreenJoinMultiplayer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenJoinMultiplayer.h; path = ../src/ScreenJoinMultiplayer.h; sourceTree = "<group>"; };
-		AACFBE5908E7D8C6005087FC /* PlayerScoreList.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = PlayerScoreList.cpp; path = ../src/PlayerScoreList.cpp; sourceTree = "<group>"; };
-		AACFBE5A08E7D8C6005087FC /* PlayerScoreList.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = PlayerScoreList.h; path = ../src/PlayerScoreList.h; sourceTree = "<group>"; };
 		AACFBE6108E7DBA8005087FC /* LuaExpressionTransform.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = LuaExpressionTransform.cpp; path = ../src/LuaExpressionTransform.cpp; sourceTree = "<group>"; };
 		AACFBE6208E7DBA8005087FC /* LuaExpressionTransform.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = LuaExpressionTransform.h; path = ../src/LuaExpressionTransform.h; sourceTree = "<group>"; };
 		AAD36082062BB8AE00D0CED8 /* RageSoundPosMap.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageSoundPosMap.cpp; path = ../src/RageSoundPosMap.cpp; sourceTree = "<group>"; };
@@ -3030,8 +3000,6 @@
 				AABE321B05ACD8ED001A0E84 /* ScreenEnding.h */,
 				AA6E0021047711F3005F316C /* ScreenEvaluation.cpp */,
 				AA6E0022047711F3005F316C /* ScreenEvaluation.h */,
-				AACFBE4708E7D893005087FC /* ScreenEvaluationMultiplayer.cpp */,
-				AACFBE4808E7D893005087FC /* ScreenEvaluationMultiplayer.h */,
 				AAECF8BF05265DB600D02EE9 /* ScreenExit.cpp */,
 				AAECF8C005265DB600D02EE9 /* ScreenExit.h */,
 				AA6E0023047711F3005F316C /* ScreenEz2SelectMusic.cpp */,
@@ -3042,8 +3010,6 @@
 				AA6E002A047711F3005F316C /* ScreenGameplay.h */,
 				AACFBE4908E7D893005087FC /* ScreenGameplayLesson.cpp */,
 				AACFBE4A08E7D893005087FC /* ScreenGameplayLesson.h */,
-				AA07A5570843E72B00E33D21 /* ScreenGameplayMultiplayer.cpp */,
-				AA07A5580843E72B00E33D21 /* ScreenGameplayMultiplayer.h */,
 				1215D7A008C6559A00B87D8B /* ScreenGameplayNormal.cpp */,
 				1215D7A108C6559A00B87D8B /* ScreenGameplayNormal.h */,
 				AAB55EB509A7E3D3008FDC69 /* ScreenGameplaySyncMachine.cpp */,
@@ -3052,8 +3018,6 @@
 				AA6E0030047711F3005F316C /* ScreenHowToPlay.h */,
 				AA6E0033047711F3005F316C /* ScreenInstructions.cpp */,
 				AA6E0034047711F3005F316C /* ScreenInstructions.h */,
-				AACFBE4B08E7D893005087FC /* ScreenJoinMultiplayer.cpp */,
-				AACFBE4C08E7D893005087FC /* ScreenJoinMultiplayer.h */,
 				AA6E0037047711F3005F316C /* ScreenJukebox.cpp */,
 				AA6E0038047711F3005F316C /* ScreenJukebox.h */,
 				AA6E0041047711F3005F316C /* ScreenMapControllers.cpp */,
@@ -3802,8 +3766,6 @@
 				AA6EFF2404770F63005F316C /* NoteField.h */,
 				AAD620A5052EC78B00D02EE9 /* PercentageDisplay.cpp */,
 				AAD620A6052EC78B00D02EE9 /* PercentageDisplay.h */,
-				AACFBE5908E7D8C6005087FC /* PlayerScoreList.cpp */,
-				AACFBE5A08E7D8C6005087FC /* PlayerScoreList.h */,
 				AA729C4E0599B58D00779F33 /* ReceptorArrow.cpp */,
 				AA729C4F0599B58D00779F33 /* ReceptorArrow.h */,
 				AA729C500599B58D00779F33 /* ReceptorArrowRow.cpp */,
@@ -3864,8 +3826,6 @@
 				AA8BD2B007C9395400EA04E1 /* AutoActor.h */,
 				AA6EFFB904770FFD005F316C /* BitmapText.cpp */,
 				AA6EFFBA04770FFD005F316C /* BitmapText.h */,
-				AA8E4BC409787C9400765149 /* ControllerStateDisplay.cpp */,
-				AA8E4BC509787C9400765149 /* ControllerStateDisplay.h */,
 				AA8F118204A04F9B00D02EE9 /* DifficultyDisplay.cpp */,
 				AA8F118304A04F9B00D02EE9 /* DifficultyDisplay.h */,
 				AAF3442908F1C36A0006EDB7 /* DynamicActorScroller.cpp */,
@@ -4481,7 +4441,6 @@
 				AAAFE8230835E7FF00FC43E0 /* WheelItemBase.h in Headers */,
 				AAAFE8310835E8B100FC43E0 /* RoomWheel.h in Headers */,
 				AA07A5600843E72B00E33D21 /* ScreenDebugOverlay.h in Headers */,
-				AA07A5620843E72B00E33D21 /* ScreenGameplayMultiplayer.h in Headers */,
 				AA07A5640843E72B00E33D21 /* ScreenSaveSync.h in Headers */,
 				AA07A5660843E72B00E33D21 /* ScreenSMOnlineLogin.h in Headers */,
 				AA07A5680843E72B00E33D21 /* ScreenSyncOverlay.h in Headers */,
@@ -4500,10 +4459,7 @@
 				1215D7A308C6559A00B87D8B /* ScreenGameplayNormal.h in Headers */,
 				AACFBE2908E7D793005087FC /* ActorSound.h in Headers */,
 				AACFBE3A08E7D832005087FC /* InputEventPlus.h in Headers */,
-				AACFBE4E08E7D893005087FC /* ScreenEvaluationMultiplayer.h in Headers */,
 				AACFBE5008E7D893005087FC /* ScreenGameplayLesson.h in Headers */,
-				AACFBE5208E7D893005087FC /* ScreenJoinMultiplayer.h in Headers */,
-				AACFBE5C08E7D8C6005087FC /* PlayerScoreList.h in Headers */,
 				AACFBE6408E7DBA8005087FC /* LuaExpressionTransform.h in Headers */,
 				AAF3442C08F1C36A0006EDB7 /* DynamicActorScroller.h in Headers */,
 				AAF34ADF0900AEBD0006EDB7 /* ScoreKeeperNormal.h in Headers */,
@@ -4521,7 +4477,6 @@
 				AA0732910954381800F396C5 /* XmlFileUtil.h in Headers */,
 				AADD1CC6095C233F0088C9DF /* LocalizedString.h in Headers */,
 				AA32F97E096A255500F45B24 /* LowLevelWindow_Cocoa.h in Headers */,
-				AA8E4BC809787C9500765149 /* ControllerStateDisplay.h in Headers */,
 				AAABB2DB0979DB5B006C9F25 /* SMMainThread.h in Headers */,
 				AA44705409846B0800983E82 /* HIDDevice.h in Headers */,
 				AA44708E0984720900983E82 /* JoystickDevice.h in Headers */,
@@ -4938,7 +4893,6 @@
 				AA40D34609A08D650068C0D5 /* WheelBase.h in Headers */,
 				AA40D34709A08D650068C0D5 /* WheelItemBase.h in Headers */,
 				AA40D34909A08D650068C0D5 /* ScreenDebugOverlay.h in Headers */,
-				AA40D34A09A08D650068C0D5 /* ScreenGameplayMultiplayer.h in Headers */,
 				AA40D34B09A08D650068C0D5 /* ScreenSaveSync.h in Headers */,
 				AA40D34C09A08D650068C0D5 /* ScreenSMOnlineLogin.h in Headers */,
 				AA40D34D09A08D650068C0D5 /* ScreenSyncOverlay.h in Headers */,
@@ -4957,10 +4911,7 @@
 				AA40D35B09A08D650068C0D5 /* ScreenGameplayNormal.h in Headers */,
 				AA40D35C09A08D650068C0D5 /* ActorSound.h in Headers */,
 				AA40D35D09A08D650068C0D5 /* InputEventPlus.h in Headers */,
-				AA40D35E09A08D650068C0D5 /* ScreenEvaluationMultiplayer.h in Headers */,
 				AA40D35F09A08D650068C0D5 /* ScreenGameplayLesson.h in Headers */,
-				AA40D36009A08D650068C0D5 /* ScreenJoinMultiplayer.h in Headers */,
-				AA40D36109A08D650068C0D5 /* PlayerScoreList.h in Headers */,
 				AA40D36209A08D650068C0D5 /* LuaExpressionTransform.h in Headers */,
 				AA40D36309A08D650068C0D5 /* DynamicActorScroller.h in Headers */,
 				AA40D36409A08D650068C0D5 /* ScoreKeeperNormal.h in Headers */,
@@ -4978,7 +4929,6 @@
 				AA40D37009A08D650068C0D5 /* XmlFileUtil.h in Headers */,
 				AA40D37109A08D650068C0D5 /* LocalizedString.h in Headers */,
 				AA40D37209A08D650068C0D5 /* LowLevelWindow_Cocoa.h in Headers */,
-				AA40D37309A08D650068C0D5 /* ControllerStateDisplay.h in Headers */,
 				AA40D37409A08D650068C0D5 /* SMMainThread.h in Headers */,
 				AA40D37509A08D650068C0D5 /* HIDDevice.h in Headers */,
 				AA40D37609A08D650068C0D5 /* JoystickDevice.h in Headers */,
@@ -5618,7 +5568,6 @@
 				AAAFE8220835E7FF00FC43E0 /* WheelItemBase.cpp in Sources */,
 				AAAFE8300835E8B100FC43E0 /* RoomWheel.cpp in Sources */,
 				AA07A55F0843E72B00E33D21 /* ScreenDebugOverlay.cpp in Sources */,
-				AA07A5610843E72B00E33D21 /* ScreenGameplayMultiplayer.cpp in Sources */,
 				AA07A5630843E72B00E33D21 /* ScreenSaveSync.cpp in Sources */,
 				AA07A5650843E72B00E33D21 /* ScreenSMOnlineLogin.cpp in Sources */,
 				AA07A5670843E72B00E33D21 /* ScreenSyncOverlay.cpp in Sources */,
@@ -5638,10 +5587,7 @@
 				AA77E8B808B6AC0000FA24CA /* wchar.cpp in Sources */,
 				1215D7A208C6559A00B87D8B /* ScreenGameplayNormal.cpp in Sources */,
 				AACFBE2808E7D793005087FC /* ActorSound.cpp in Sources */,
-				AACFBE4D08E7D893005087FC /* ScreenEvaluationMultiplayer.cpp in Sources */,
 				AACFBE4F08E7D893005087FC /* ScreenGameplayLesson.cpp in Sources */,
-				AACFBE5108E7D893005087FC /* ScreenJoinMultiplayer.cpp in Sources */,
-				AACFBE5B08E7D8C6005087FC /* PlayerScoreList.cpp in Sources */,
 				AACFBE6308E7DBA8005087FC /* LuaExpressionTransform.cpp in Sources */,
 				AAF3442B08F1C36A0006EDB7 /* DynamicActorScroller.cpp in Sources */,
 				AAF34ADE0900AEBD0006EDB7 /* ScoreKeeperNormal.cpp in Sources */,
@@ -5661,7 +5607,6 @@
 				AAD5219C095513DA00073D86 /* XmlFile.cpp in Sources */,
 				AADD1CC5095C233F0088C9DF /* LocalizedString.cpp in Sources */,
 				AA32F97F096A255C00F45B24 /* LowLevelWindow_Cocoa.mm in Sources */,
-				AA8E4BC709787C9400765149 /* ControllerStateDisplay.cpp in Sources */,
 				AA8E4BC909787C9500765149 /* MenuInput.cpp in Sources */,
 				AAABB2DC0979DB5B006C9F25 /* SMMainThread.m in Sources */,
 				AABBFCD309838C3A00F077E2 /* SMMain.mm in Sources */,
@@ -6029,7 +5974,6 @@
 				AA40D4DA09A08D650068C0D5 /* WheelBase.cpp in Sources */,
 				AA40D4DB09A08D650068C0D5 /* WheelItemBase.cpp in Sources */,
 				AA40D4DD09A08D650068C0D5 /* ScreenDebugOverlay.cpp in Sources */,
-				AA40D4DE09A08D650068C0D5 /* ScreenGameplayMultiplayer.cpp in Sources */,
 				AA40D4DF09A08D650068C0D5 /* ScreenSaveSync.cpp in Sources */,
 				AA40D4E009A08D650068C0D5 /* ScreenSMOnlineLogin.cpp in Sources */,
 				AA40D4E109A08D650068C0D5 /* ScreenSyncOverlay.cpp in Sources */,
@@ -6049,10 +5993,7 @@
 				AA40D4F009A08D650068C0D5 /* wchar.cpp in Sources */,
 				AA40D4F109A08D650068C0D5 /* ScreenGameplayNormal.cpp in Sources */,
 				AA40D4F209A08D650068C0D5 /* ActorSound.cpp in Sources */,
-				AA40D4F309A08D650068C0D5 /* ScreenEvaluationMultiplayer.cpp in Sources */,
 				AA40D4F409A08D650068C0D5 /* ScreenGameplayLesson.cpp in Sources */,
-				AA40D4F509A08D650068C0D5 /* ScreenJoinMultiplayer.cpp in Sources */,
-				AA40D4F609A08D650068C0D5 /* PlayerScoreList.cpp in Sources */,
 				AA40D4F709A08D650068C0D5 /* LuaExpressionTransform.cpp in Sources */,
 				AA40D4F809A08D650068C0D5 /* DynamicActorScroller.cpp in Sources */,
 				AA40D4F909A08D650068C0D5 /* ScoreKeeperNormal.cpp in Sources */,
@@ -6072,7 +6013,6 @@
 				AA40D50709A08D650068C0D5 /* XmlFile.cpp in Sources */,
 				AA40D50809A08D650068C0D5 /* LocalizedString.cpp in Sources */,
 				AA40D50909A08D650068C0D5 /* LowLevelWindow_Cocoa.mm in Sources */,
-				AA40D50A09A08D650068C0D5 /* ControllerStateDisplay.cpp in Sources */,
 				AA40D50B09A08D650068C0D5 /* MenuInput.cpp in Sources */,
 				AA40D50C09A08D650068C0D5 /* SMMainThread.m in Sources */,
 				AA40D50D09A08D650068C0D5 /* SMMain.mm in Sources */,
