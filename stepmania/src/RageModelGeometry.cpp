@@ -247,6 +247,10 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 					// deflate the normals into vertices
 					for( int k=0; k<3; k++ )
 					{
+						ASSERT_M( nIndices[k] < Vertices.size(), ssprintf("mesh \"%s\" tri #%i accesses vertex %i, but we only have %i",
+							szName, j, nIndices[k], Vertices.size()) );
+						ASSERT_M( nNormalIndices[k] < Normals.size(), ssprintf("mesh \"%s\" tri #%i accesses normal %i, but we only have %i",
+							szName, j, nNormalIndices[k], Normals.size()) );
 						RageModelVertex& vertex = Vertices[ nIndices[k] ];
 						RageVector3& normal = Normals[ nNormalIndices[k] ];
 						vertex.n = normal;
