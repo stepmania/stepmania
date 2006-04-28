@@ -103,6 +103,11 @@ public:
 	 */
 	bool AppHasFocus();
 
+	/*
+	 * Open a URL in the default web browser
+	 */
+	virtual bool GoToURL( RString sUrl );
+
 private:
 	/* This are helpers for GetMicrosecondsSinceStart on systems with a timer
 	 * that may loop or move backwards. */

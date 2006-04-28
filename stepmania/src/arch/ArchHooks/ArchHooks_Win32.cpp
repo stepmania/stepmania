@@ -8,6 +8,7 @@
 #include "archutils/win32/crash.h"
 #include "archutils/win32/DebugInfoHunt.h"
 #include "archutils/win32/RestartProgram.h"
+#include "archutils/win32/GotoURL.h"
 
 static HANDLE g_hInstanceMutex;
 static bool g_bIsMultipleInstance = false;
@@ -170,6 +171,11 @@ void ArchHooks_Win32::UnBoostPriority()
 void ArchHooks_Win32::SetupConcurrentRenderingThread()
 {
 	SetThreadPriority( GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL );
+}
+
+bool ArchHooks_Win32::GoToURL( RString sUrl )
+{
+	return ::GotoURL( sUrl );
 }
 
 /*

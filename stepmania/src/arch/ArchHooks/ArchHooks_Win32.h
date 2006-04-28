@@ -23,6 +23,8 @@ public:
 	void BoostPriority();
 	void UnBoostPriority();
 	void SetupConcurrentRenderingThread();
+	
+	bool GoToURL( RString sUrl );
 };
 
 #ifdef ARCH_HOOKS

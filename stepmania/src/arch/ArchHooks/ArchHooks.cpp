@@ -45,6 +45,11 @@ bool ArchHooks::AppHasFocus()
 	return g_bHasFocus;
 }
 
+bool ArchHooks::GoToURL( RString sUrl )
+{
+	return false;
+}
+
 /*
  * (c) 2003-2004 Glenn Maynard, Chris Danford
  * All rights reserved.
