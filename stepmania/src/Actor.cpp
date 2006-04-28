@@ -1414,6 +1414,16 @@ public:
 		p->AddCommand( SArg(1), apActorCommands(pRef) );
 		return 0;
 	}
+	static int GetCommand( T* p, lua_State *L )
+	{
+		const apActorCommands *pCommand = p->GetCommand(SArg(1));
+		if( pCommand == NULL )
+			lua_pushnil( L );
+		else
+			(*pCommand)->PushSelf(L);
+
+		return 1;
+	}
 
 	static int GetX( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetX() ); return 1; }
 	static int GetY( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetY() ); return 1; }
@@ -1545,6 +1555,7 @@ public:
 		ADD_METHOD( queuecommand );
 		ADD_METHOD( queuemessage );
 		ADD_METHOD( addcommand );
+		ADD_METHOD( GetCommand );
 
 		ADD_METHOD( GetX );
 		ADD_METHOD( GetY );
