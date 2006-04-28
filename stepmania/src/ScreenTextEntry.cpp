@@ -38,6 +38,25 @@ namespace
 	bool g_bPassword;
 };
 
+void ScreenTextEntry::SetTextEntrySettings( 
+	RString sQuestion, 
+	RString sInitialAnswer, 
+	int iMaxInputLength,
+	bool(*Validate)(const RString &sAnswer,RString &sErrorOut), 
+	void(*OnOK)(const RString &sAnswer), 
+	void(*OnCancel)(),
+	bool bPassword
+	)
+{	
+	g_sQuestion = sQuestion;
+	g_sInitialAnswer = sInitialAnswer;
+	g_iMaxInputLength = iMaxInputLength;
+	g_pValidate = Validate;
+	g_pOnOK = OnOK;
+	g_pOnCancel = OnCancel;
+	g_bPassword = bPassword;
+}
+
 void ScreenTextEntry::TextEntry( 
 	ScreenMessage smSendOnPop, 
 	RString sQuestion, 

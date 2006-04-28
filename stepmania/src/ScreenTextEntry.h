@@ -24,6 +24,14 @@ enum KeyboardRowSpecialKey
 class ScreenTextEntry : public ScreenWithMenuElements
 {
 public:
+	static void SetTextEntrySettings( 
+		RString sQuestion, 
+		RString sInitialAnswer, 
+		int iMaxInputLength, 
+		bool(*Validate)(const RString &sAnswer,RString &sErrorOut) = NULL, 
+		void(*OnOK)(const RString &sAnswer) = NULL, 
+		void(*OnCanel)() = NULL,
+		bool bPassword = false );
 	static void TextEntry( 
 		ScreenMessage smSendOnPop, 
 		RString sQuestion, 
