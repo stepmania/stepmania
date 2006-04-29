@@ -707,7 +707,6 @@ void NoteDataUtil::RemoveSimultaneousNotes( NoteData &in, int iMaxSimultaneous, 
 	// given time.  Never touch data outside of the range given; if many hold notes are overlapping
 	// iStartIndex, and we'd have to change those holds to obey iMaxSimultaneous, just do the best
 	// we can without doing so.
-	// notes to turn all the HoldNotes into TapNotes
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( in, r, iStartIndex, iEndIndex )
 	{
 		set<int> viTracksHeld;
