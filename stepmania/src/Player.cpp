@@ -875,13 +875,7 @@ void Player::DrawHoldJudgments()
 		return;
 
 	for( int c=0; c<m_NoteData.GetNumTracks(); c++ )
-	{
-		NoteFieldMode::BeginDrawTrack( m_pPlayerState, c );
-
 		m_vHoldJudgment[c]->Draw();
-
-		NoteFieldMode::EndDrawTrack(c);
-	}
 }
 
 int Player::GetClosestNoteDirectional( int col, int iStartRow, int iEndRow, bool bAllowGraded, bool bForward ) const
