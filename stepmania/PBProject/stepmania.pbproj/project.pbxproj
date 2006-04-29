@@ -499,7 +499,6 @@
 		AA29CE090558741A00961A51 /* ActorUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA983CA04B9060A00D02EE9 /* ActorUtil.cpp */; };
 		AA29CE0B0558741A00961A51 /* ArchHooks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA3F283B04BE6DDC00D02EE9 /* ArchHooks.cpp */; };
 		AA29CE0C0558741A00961A51 /* InputHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB3B36B04C38B4600D02EE9 /* InputHandler.cpp */; };
-		AA29CE0D0558741A00961A51 /* ArchHooks_darwin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB3B38004C3F48700D02EE9 /* ArchHooks_darwin.cpp */; };
 		AA29CE0E0558741A00961A51 /* MovieTexture_Null.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB3B39004C5921800D02EE9 /* MovieTexture_Null.cpp */; };
 		AA29CE100558741A00961A51 /* RageFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA272C3004CD757100D02EE9 /* RageFile.cpp */; };
 		AA29CE140558741A00961A51 /* CrashHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA76D15404D9D2D200D02EE9 /* CrashHandler.cpp */; };
@@ -539,7 +538,6 @@
 		AA29CE3F0558741A00961A51 /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA0F7D2047ACBC9005F316C /* QuickTime.framework */; };
 		AA29CE400558741A00961A51 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA8DD84904A2E51400D02EE9 /* OpenGL.framework */; };
 		AA29CE420558741A00961A51 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAF33F2A04FF213100F93C24 /* CoreFoundation.framework */; };
-		AA2FB62A09120FC5000FD574 /* PreferredLanguage.m in Sources */ = {isa = PBXBuildFile; fileRef = AA2FB62909120FC5000FD574 /* PreferredLanguage.m */; };
 		AA2FB639091212B0000FD574 /* LifeMeter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA2FB638091212AF000FD574 /* LifeMeter.cpp */; };
 		AA32F97E096A255500F45B24 /* LowLevelWindow_Cocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = AAEF7D21090DD45900A1CAFC /* LowLevelWindow_Cocoa.h */; };
 		AA32F97F096A255C00F45B24 /* LowLevelWindow_Cocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = AAEF7D22090DD45900A1CAFC /* LowLevelWindow_Cocoa.mm */; };
@@ -1387,7 +1385,6 @@
 		AA40D4FB09A08D650068C0D5 /* InputHandler_Carbon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA69675106840991007802A5 /* InputHandler_Carbon.cpp */; };
 		AA40D4FC09A08D650068C0D5 /* MovieTexture_Generic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA372D00909934500141131 /* MovieTexture_Generic.cpp */; };
 		AA40D4FD09A08D650068C0D5 /* MovieTexture_Theora.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA372D20909934500141131 /* MovieTexture_Theora.cpp */; };
-		AA40D4FE09A08D650068C0D5 /* PreferredLanguage.m in Sources */ = {isa = PBXBuildFile; fileRef = AA2FB62909120FC5000FD574 /* PreferredLanguage.m */; };
 		AA40D4FF09A08D650068C0D5 /* LifeMeter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA2FB638091212AF000FD574 /* LifeMeter.cpp */; };
 		AA40D50009A08D650068C0D5 /* MemoryCardDriverThreaded_OSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACF47B8094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.cpp */; };
 		AA40D50109A08D650068C0D5 /* SpecialFiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFBEECF094D7FCB000029DE /* SpecialFiles.cpp */; };
@@ -1705,6 +1702,7 @@
 		AAED6F2D0601C528002D2DEE /* Backtrace.h in Headers */ = {isa = PBXBuildFile; fileRef = AAED6F290601C528002D2DEE /* Backtrace.h */; };
 		AAED6F2E0601C528002D2DEE /* BacktraceNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAED6F2A0601C528002D2DEE /* BacktraceNames.cpp */; };
 		AAED6F2F0601C528002D2DEE /* BacktraceNames.h in Headers */ = {isa = PBXBuildFile; fileRef = AAED6F2B0601C528002D2DEE /* BacktraceNames.h */; };
+		AAEDFD490A036C8B00590617 /* ArchHooks_darwin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB3B38004C3F48700D02EE9 /* ArchHooks_darwin.cpp */; };
 		AAF3442B08F1C36A0006EDB7 /* DynamicActorScroller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF3442908F1C36A0006EDB7 /* DynamicActorScroller.cpp */; };
 		AAF3442C08F1C36A0006EDB7 /* DynamicActorScroller.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF3442A08F1C36A0006EDB7 /* DynamicActorScroller.h */; };
 		AAF34ADE0900AEBD0006EDB7 /* ScoreKeeperNormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF34ADC0900AEBD0006EDB7 /* ScoreKeeperNormal.cpp */; };
@@ -1951,7 +1949,6 @@
 		AA28B47B058F2F5D0097C109 /* MemoryCardManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MemoryCardManager.h; path = ../src/MemoryCardManager.h; sourceTree = "<group>"; };
 		AA29CE570558741A00961A51 /* Info-StepMania.plist */ = {isa = PBXFileReference; explicitFileType = text.plist; path = "Info-StepMania.plist"; sourceTree = SOURCE_ROOT; };
 		AA29CE580558741A00961A51 /* StepMania.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StepMania.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		AA2FB62909120FC5000FD574 /* PreferredLanguage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PreferredLanguage.m; sourceTree = "<group>"; };
 		AA2FB638091212AF000FD574 /* LifeMeter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = LifeMeter.cpp; path = ../src/LifeMeter.cpp; sourceTree = "<group>"; };
 		AA34ED1F0611FB83003E5955 /* CAConditionalMacros.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = CAConditionalMacros.h; sourceTree = "<group>"; };
 		AA34ED270611FE33003E5955 /* CAAutoDisposer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = CAAutoDisposer.h; sourceTree = "<group>"; };
@@ -3977,7 +3974,6 @@
 				AA44708C0984720900983E82 /* JoystickDevice.h */,
 				AA4470BB098476F600983E82 /* KeyboardDevice.cpp */,
 				AA4470BA098476F600983E82 /* KeyboardDevice.h */,
-				AA2FB62909120FC5000FD574 /* PreferredLanguage.m */,
 				AAF744A306116B0500B19AD1 /* PublicUtility */,
 				AA1F9C4609AF1BF5002C15A8 /* PumpDevice.cpp */,
 				AA1F9C4509AF1BF5002C15A8 /* PumpDevice.h */,
@@ -5390,7 +5386,6 @@
 				AA29CE090558741A00961A51 /* ActorUtil.cpp in Sources */,
 				AA29CE0B0558741A00961A51 /* ArchHooks.cpp in Sources */,
 				AA29CE0C0558741A00961A51 /* InputHandler.cpp in Sources */,
-				AA29CE0D0558741A00961A51 /* ArchHooks_darwin.cpp in Sources */,
 				AA29CE0E0558741A00961A51 /* MovieTexture_Null.cpp in Sources */,
 				AA29CE100558741A00961A51 /* RageFile.cpp in Sources */,
 				AA29CE140558741A00961A51 /* CrashHandler.cpp in Sources */,
@@ -5595,7 +5590,6 @@
 				AAF34B190900D1A20006EDB7 /* InputHandler_Carbon.cpp in Sources */,
 				AAA372D40909934500141131 /* MovieTexture_Generic.cpp in Sources */,
 				AAA372D60909934500141131 /* MovieTexture_Theora.cpp in Sources */,
-				AA2FB62A09120FC5000FD574 /* PreferredLanguage.m in Sources */,
 				AA2FB639091212B0000FD574 /* LifeMeter.cpp in Sources */,
 				AACF47BA094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.cpp in Sources */,
 				AAFBEED1094D7FCB000029DE /* SpecialFiles.cpp in Sources */,
@@ -5621,6 +5615,7 @@
 				AAB55EBF09A7E3D3008FDC69 /* ScreenUnlockCelebrate.cpp in Sources */,
 				AA1F9C4809AF1BF5002C15A8 /* PumpDevice.cpp in Sources */,
 				AA3E3DF109D96A1400A259C7 /* CrashHandlerInternal.cpp in Sources */,
+				AAEDFD490A036C8B00590617 /* ArchHooks_darwin.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6001,7 +5996,6 @@
 				AA40D4FB09A08D650068C0D5 /* InputHandler_Carbon.cpp in Sources */,
 				AA40D4FC09A08D650068C0D5 /* MovieTexture_Generic.cpp in Sources */,
 				AA40D4FD09A08D650068C0D5 /* MovieTexture_Theora.cpp in Sources */,
-				AA40D4FE09A08D650068C0D5 /* PreferredLanguage.m in Sources */,
 				AA40D4FF09A08D650068C0D5 /* LifeMeter.cpp in Sources */,
 				AA40D50009A08D650068C0D5 /* MemoryCardDriverThreaded_OSX.cpp in Sources */,
 				AA40D50109A08D650068C0D5 /* SpecialFiles.cpp in Sources */,

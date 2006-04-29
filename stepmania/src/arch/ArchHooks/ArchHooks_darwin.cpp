@@ -214,18 +214,31 @@ void ArchHooks_darwin::DumpDebugInfo()
 	LOG->Info( "Memory: %ld MB total, %ld MB swap", ram, vRam );
 }
 
-// In archutils/darwin/PreferredLanguage.m
-extern "C"
-{
-	extern char *GetPreferredLanguage();
-}
-
 RString ArchHooks::GetPreferredLanguage()
 {
-	char *lang = ::GetPreferredLanguage();
-	RString ret = lang;
+	CFStringRef app = kCFPreferencesCurrentApplication;
+	CFTypeRef t = CFPreferencesCopyAppValue( CFSTR("AppleLanguages"), app );
+	RString ret = "en";
 	
-	free(lang);
+	if( t == NULL )
+		return ret;
+	if( CFGetTypeID(t) != CFArrayGetTypeID() )
+	{
+		CFRelease( t );
+		return ret;
+	}
+	
+	CFArrayRef languages = CFArrayRef( t );
+	CFStringRef lang;
+	
+	if( CFArrayGetCount(languages) > 0 &&
+	    (lang = (CFStringRef)CFArrayGetValueAtIndex(languages, 0)) != NULL )
+	{
+		// MacRoman agrees with ASCII in the low-order 7 bits.
+		ret = RString( CFStringGetCStringPtr(lang, kCFStringEncodingMacRoman), 2 );
+	}
+	
+	CFRelease( languages );
 	return ret;
 }
 
