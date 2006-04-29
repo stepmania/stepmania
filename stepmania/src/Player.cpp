@@ -19,7 +19,6 @@
 #include "CombinedLifeMeter.h"
 #include "PlayerAI.h"
 #include "NoteField.h"
-#include "NoteFieldPositioning.h"
 #include "NoteDataUtil.h"
 #include "ScreenMessage.h"
 #include "ScreenManager.h"

@@ -4,7 +4,6 @@
 #include "GameConstantsAndTypes.h"
 #include "ArrowEffects.h"
 #include "GameState.h"
-#include "NoteFieldPositioning.h"
 #include "PlayerState.h"
 #include "Style.h"
 

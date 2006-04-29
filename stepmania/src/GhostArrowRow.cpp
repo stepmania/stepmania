@@ -5,7 +5,6 @@
 #include "ArrowEffects.h"
 #include "NoteSkinManager.h"
 #include "GameState.h"
-#include "NoteFieldPositioning.h"
 #include "Game.h"
 #include "PlayerState.h"
 #include "Style.h"

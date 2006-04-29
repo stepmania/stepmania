@@ -6,7 +6,6 @@
 #include "RageLog.h"
 #include "RageDisplay.h"
 #include "NoteTypes.h"
-#include "NoteFieldPositioning.h"
 #include "ActorUtil.h"
 #include "Game.h"
 #include "PlayerState.h"
