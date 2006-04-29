@@ -81,7 +81,7 @@ static NSMenuItem *MenuItem( NSString *title, SEL action, NSString *code )
 	return [[[NSMenuItem alloc] initWithTitle:title action:action keyEquivalent:code] autorelease];
 }
 
-static void setupMenus( void )
+static void SetupMenus( void )
 {
 	// Get the localized strings from the file.
 	NSString *sWindow =          NSLocalizedString( @"Window",                @"Menu title" );
@@ -143,7 +143,7 @@ int main( int argc, char **argv )
 	NSSetUncaughtExceptionHandler( HandleNSException );
 	
 	// Set up the menubar.
-	setupMenus();
+	SetupMenus();
 	
 	// Create SDLMain and make it the app delegate.
 	sm = [[SMMain alloc] initWithArgc:argc argv:argv];
