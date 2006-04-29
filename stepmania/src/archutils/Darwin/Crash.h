@@ -10,7 +10,7 @@ namespace CrashHandler
 #endif /* DARWIN_CRASH_H */
 
 /*
- * (c) 2003-2005 Steve Checkoway
+ * (c) 2003-2006 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
