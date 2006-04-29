@@ -9,11 +9,12 @@ class ArchHooks_darwin : public ArchHooks
 public:
 	ArchHooks_darwin();
 	~ArchHooks_darwin();
-	RString GetArchName() { return "OSX"; }
+	RString GetArchName() { return "OS X"; }
 	void DumpDebugInfo();
 	RString GetPreferredLanguage();
 	void EnterTimeCriticalSection();
 	void ExitTimeCriticalSection();
+	bool GoToURL( RString sUrl );
 	
 protected:
 	RageMutex *TimeCritMutex;

@@ -287,6 +287,16 @@ void ArchHooks_darwin::ExitTimeCriticalSection()
 #endif
 }
 
+bool ArchHooks_darwin::GoToURL( RString sUrl )
+{
+	CFURLRef url = CFURLCreateWithBytes( kCFAllocatorDefault, (const UInt8*)sUrl.data(),
+					     sUrl.length(), kCFStringEncodingUTF8, NULL );
+	OSStatus result = LSOpenCFURLRef( url, NULL );
+	
+	CFRelease( url );
+	return result == 0;
+}
+
 int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 {
 	// http://developer.apple.com/qa/qa2004/qa1398.html
