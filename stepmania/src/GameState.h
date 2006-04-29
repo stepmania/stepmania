@@ -132,6 +132,8 @@ public:
 	int				GetCourseSongIndex() const;
 	RString				GetPlayerDisplayName( PlayerNumber pn ) const;
 
+	bool				m_bLoadingNextSong;
+	int				GetLoadingCourseSongIndex() const;
 
 	//
 	// State Info used during gameplay

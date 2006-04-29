@@ -2435,19 +2435,23 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 		int iPlaySongIndex = GAMESTATE->GetCourseSongIndex()+1;
 		iPlaySongIndex %= m_apSongsQueue.size();
+		GAMESTATE->m_bLoadingNextSong = true;
 		MESSAGEMAN->Broadcast( "BeforeLoadingNextCourseSong" );
 		m_NextSong.Reset();
 		m_NextSong.PlayCommand( "Start" );
 		m_NextSong.StartTransitioning( SM_LoadNextSong );
 		LoadCourseSongNumber( GAMESTATE->GetCourseSongIndex()+1 );
+		MESSAGEMAN->Broadcast( "ChangeCourseSongIn" );
 		COMMAND( m_sprCourseSongNumber, "ChangeIn" );
 	}
 	else if( SM == SM_LoadNextSong )
 	{
 		SongFinished();
 
+		MESSAGEMAN->Broadcast( "ChangeCourseSongOut" );
 		COMMAND( m_sprCourseSongNumber, "ChangeOut" );
 
+		GAMESTATE->m_bLoadingNextSong = false;
 		LoadNextSong();
 
 		m_NextSong.Reset();

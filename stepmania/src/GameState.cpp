@@ -194,6 +194,7 @@ void GameState::Reset()
 	m_iCurrentStageIndex = 0;
 	m_bGameplayLeadIn.Set( false );
 	m_iNumStagesOfThisSong = 0;
+	m_bLoadingNextSong = false;
 
 	NOTESKIN->RefreshNoteSkinData( this->m_pCurGame );
 
@@ -756,6 +757,16 @@ int GameState::GetCourseSongIndex() const
 	FOREACH_EnabledPlayer( pn )
 		iSongIndex = max( iSongIndex, STATSMAN->m_CurStageStats.m_player[pn].iSongsPlayed-1 );
 	return iSongIndex;
+}
+
+/* Hack: when we're loading a new course song, we want to display the new song number, even
+ * though we havn't started that song yet. */
+int GameState::GetLoadingCourseSongIndex() const
+{
+	int iIndex = GetCourseSongIndex();
+	if( m_bLoadingNextSong )
+		++iIndex;
+	return iIndex;
 }
 
 static LocalizedString PLAYER1	("GameState","Player 1");
@@ -1910,6 +1921,7 @@ public:
 	static int IsGoalComplete( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsGoalComplete((PlayerNumber)IArg(1)) ); return 1; }
 	static int PlayerIsUsingModifier( T* p, lua_State *L )		{ lua_pushboolean(L, p->PlayerIsUsingModifier((PlayerNumber)IArg(1),SArg(2)) ); return 1; }
 	static int GetCourseSongIndex( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetCourseSongIndex() ); return 1; }
+	static int GetLoadingCourseSongIndex( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetLoadingCourseSongIndex() ); return 1; }
 	static int IsFinalStage( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsFinalStage() ); return 1; }
 	static int IsExtraStage( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsExtraStage() ); return 1; }
 	static int IsExtraStage2( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsExtraStage2() ); return 1; }
@@ -2025,6 +2037,7 @@ public:
 		ADD_METHOD( IsGoalComplete );
 		ADD_METHOD( PlayerIsUsingModifier );
 		ADD_METHOD( GetCourseSongIndex );
+		ADD_METHOD( GetLoadingCourseSongIndex );
 		ADD_METHOD( IsFinalStage );
 		ADD_METHOD( IsExtraStage );
 		ADD_METHOD( IsExtraStage2 );
