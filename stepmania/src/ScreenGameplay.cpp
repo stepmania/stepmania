@@ -2433,8 +2433,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		if( m_pCombinedLifeMeter )
 			m_pCombinedLifeMeter->OnSongEnded();	
 
-		int iPlaySongIndex = GAMESTATE->GetCourseSongIndex()+1;
-		iPlaySongIndex %= m_apSongsQueue.size();
 		GAMESTATE->m_bLoadingNextSong = true;
 		MESSAGEMAN->Broadcast( "BeforeLoadingNextCourseSong" );
 		m_NextSong.Reset();
