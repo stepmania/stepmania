@@ -1332,7 +1332,6 @@
 		AA40D4C009A08D650068C0D5 /* RageSurfaceUtils_Dither.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAEBC6C807A20AFE00793F0E /* RageSurfaceUtils_Dither.cpp */; };
 		AA40D4C109A08D650068C0D5 /* RageSurfaceUtils_Zoom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAEBC6CA07A20AFE00793F0E /* RageSurfaceUtils_Zoom.cpp */; };
 		AA40D4C209A08D650068C0D5 /* LuaManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAEBC78D07A4FF5600793F0E /* LuaManager.cpp */; };
-		AA40D4C309A08D650068C0D5 /* Crash.m in Sources */ = {isa = PBXBuildFile; fileRef = AACA591707B5DB1700763545 /* Crash.m */; };
 		AA40D4C409A08D650068C0D5 /* ActorCommands.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACA592407B5E1E500763545 /* ActorCommands.cpp */; };
 		AA40D4C509A08D650068C0D5 /* RageDisplay_OGL_Extensions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACA592807B5E23400763545 /* RageDisplay_OGL_Extensions.cpp */; };
 		AA40D4C609A08D650068C0D5 /* RageFileDriverTimeout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACA592A07B5E23400763545 /* RageFileDriverTimeout.cpp */; };
@@ -1638,7 +1637,6 @@
 		AAC9F331069E22BB00D53E2C /* GameSoundManager.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC9F32F069E22BB00D53E2C /* GameSoundManager.h */; };
 		AAC9F334069E22CF00D53E2C /* MemoryCardDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC9F332069E22CF00D53E2C /* MemoryCardDriver.cpp */; };
 		AAC9F335069E22CF00D53E2C /* MemoryCardDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC9F333069E22CF00D53E2C /* MemoryCardDriver.h */; };
-		AACA591807B5DB1700763545 /* Crash.m in Sources */ = {isa = PBXBuildFile; fileRef = AACA591707B5DB1700763545 /* Crash.m */; };
 		AACA592607B5E1E500763545 /* ActorCommands.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACA592407B5E1E500763545 /* ActorCommands.cpp */; };
 		AACA592707B5E1E500763545 /* ActorCommands.h in Headers */ = {isa = PBXBuildFile; fileRef = AACA592507B5E1E500763545 /* ActorCommands.h */; };
 		AACA592F07B5E23400763545 /* RageDisplay_OGL_Extensions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACA592807B5E23400763545 /* RageDisplay_OGL_Extensions.cpp */; };
@@ -1703,6 +1701,8 @@
 		AAED6F2E0601C528002D2DEE /* BacktraceNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAED6F2A0601C528002D2DEE /* BacktraceNames.cpp */; };
 		AAED6F2F0601C528002D2DEE /* BacktraceNames.h in Headers */ = {isa = PBXBuildFile; fileRef = AAED6F2B0601C528002D2DEE /* BacktraceNames.h */; };
 		AAEDFD490A036C8B00590617 /* ArchHooks_darwin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB3B38004C3F48700D02EE9 /* ArchHooks_darwin.cpp */; };
+		AAEDFD690A03762B00590617 /* Crash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAEDFD680A03762B00590617 /* Crash.cpp */; };
+		AAEDFD6A0A03762B00590617 /* Crash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAEDFD680A03762B00590617 /* Crash.cpp */; };
 		AAF3442B08F1C36A0006EDB7 /* DynamicActorScroller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF3442908F1C36A0006EDB7 /* DynamicActorScroller.cpp */; };
 		AAF3442C08F1C36A0006EDB7 /* DynamicActorScroller.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF3442A08F1C36A0006EDB7 /* DynamicActorScroller.h */; };
 		AAF34ADE0900AEBD0006EDB7 /* ScoreKeeperNormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF34ADC0900AEBD0006EDB7 /* ScoreKeeperNormal.cpp */; };
@@ -2583,7 +2583,6 @@
 		AAC9F32F069E22BB00D53E2C /* GameSoundManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = GameSoundManager.h; path = ../src/GameSoundManager.h; sourceTree = "<group>"; };
 		AAC9F332069E22CF00D53E2C /* MemoryCardDriver.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = MemoryCardDriver.cpp; sourceTree = "<group>"; };
 		AAC9F333069E22CF00D53E2C /* MemoryCardDriver.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = MemoryCardDriver.h; sourceTree = "<group>"; };
-		AACA591707B5DB1700763545 /* Crash.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; path = Crash.m; sourceTree = "<group>"; };
 		AACA592407B5E1E500763545 /* ActorCommands.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ActorCommands.cpp; path = ../src/ActorCommands.cpp; sourceTree = "<group>"; };
 		AACA592507B5E1E500763545 /* ActorCommands.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ActorCommands.h; path = ../src/ActorCommands.h; sourceTree = "<group>"; };
 		AACA592807B5E23400763545 /* RageDisplay_OGL_Extensions.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageDisplay_OGL_Extensions.cpp; path = ../src/RageDisplay_OGL_Extensions.cpp; sourceTree = "<group>"; };
@@ -2686,6 +2685,7 @@
 		AAED6F290601C528002D2DEE /* Backtrace.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = Backtrace.h; sourceTree = "<group>"; };
 		AAED6F2A0601C528002D2DEE /* BacktraceNames.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = BacktraceNames.cpp; sourceTree = "<group>"; };
 		AAED6F2B0601C528002D2DEE /* BacktraceNames.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = BacktraceNames.h; sourceTree = "<group>"; };
+		AAEDFD680A03762B00590617 /* Crash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Crash.cpp; sourceTree = "<group>"; };
 		AAEF3D0C04B533CC00D02EE9 /* LoadingWindow_Cocoa.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = LoadingWindow_Cocoa.h; sourceTree = "<group>"; };
 		AAEF3D0D04B533CC00D02EE9 /* LoadingWindow_Cocoa.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; path = LoadingWindow_Cocoa.m; sourceTree = "<group>"; };
 		AAEF3D1004B53E2900D02EE9 /* LoadingWindow.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = LoadingWindow.h; sourceTree = "<group>"; };
@@ -3964,8 +3964,8 @@
 			isa = PBXGroup;
 			children = (
 				AADB4E8F04D5263200D02EE9 /* arch_setup.h */,
+				AAEDFD680A03762B00590617 /* Crash.cpp */,
 				AADB4F5904D9220700D02EE9 /* Crash.h */,
-				AACA591707B5DB1700763545 /* Crash.m */,
 				AA8A3E6306EDCD11002F25AB /* DarwinThreadHelpers.cpp */,
 				AA8A3EC806EDDAE4002F25AB /* DarwinThreadHelpers.h */,
 				AA44705309846B0800983E82 /* HIDDevice.cpp */,
@@ -5536,7 +5536,6 @@
 				AAEBC6CE07A20AFE00793F0E /* RageSurfaceUtils_Dither.cpp in Sources */,
 				AAEBC6D007A20AFE00793F0E /* RageSurfaceUtils_Zoom.cpp in Sources */,
 				AAEBC79107A4FF5600793F0E /* LuaManager.cpp in Sources */,
-				AACA591807B5DB1700763545 /* Crash.m in Sources */,
 				AACA592607B5E1E500763545 /* ActorCommands.cpp in Sources */,
 				AACA592F07B5E23400763545 /* RageDisplay_OGL_Extensions.cpp in Sources */,
 				AACA593107B5E23400763545 /* RageFileDriverTimeout.cpp in Sources */,
@@ -5616,6 +5615,7 @@
 				AA1F9C4809AF1BF5002C15A8 /* PumpDevice.cpp in Sources */,
 				AA3E3DF109D96A1400A259C7 /* CrashHandlerInternal.cpp in Sources */,
 				AAEDFD490A036C8B00590617 /* ArchHooks_darwin.cpp in Sources */,
+				AAEDFD690A03762B00590617 /* Crash.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5943,7 +5943,6 @@
 				AA40D4C009A08D650068C0D5 /* RageSurfaceUtils_Dither.cpp in Sources */,
 				AA40D4C109A08D650068C0D5 /* RageSurfaceUtils_Zoom.cpp in Sources */,
 				AA40D4C209A08D650068C0D5 /* LuaManager.cpp in Sources */,
-				AA40D4C309A08D650068C0D5 /* Crash.m in Sources */,
 				AA40D4C409A08D650068C0D5 /* ActorCommands.cpp in Sources */,
 				AA40D4C509A08D650068C0D5 /* RageDisplay_OGL_Extensions.cpp in Sources */,
 				AA40D4C609A08D650068C0D5 /* RageFileDriverTimeout.cpp in Sources */,
@@ -6021,6 +6020,7 @@
 				AA1F9C4A09AF1BF5002C15A8 /* PumpDevice.cpp in Sources */,
 				AA3E3DF209D96A1400A259C7 /* CrashHandlerInternal.cpp in Sources */,
 				F4BC045409E6B578003F770B /* ScreenGameplaySyncMachine.cpp in Sources */,
+				AAEDFD6A0A03762B00590617 /* Crash.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,9 +1,10 @@
 #ifndef DARWIN_CRASH_H
 #define DARWIN_CRASH_H
 
-extern "C"
+namespace CrashHandler
 {
-	extern void InformUserOfCrash( const char *sPath );
+	RString GetLogsDirectory();
+	void InformUserOfCrash( const RString& sPath );
 }
 
 #endif /* DARWIN_CRASH_H */

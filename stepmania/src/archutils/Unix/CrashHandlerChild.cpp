@@ -162,10 +162,14 @@ static void child_process()
 		/* keep going */
 	}
 	
-	const char *home = getenv( "HOME" );
 	RString sCrashInfoPath = "/tmp";
+#if defined(MACOSX)
+	sCrashInfoPath = CrashHandler::GetLogsDirectory();
+#else
+	const char *home = getenv( "HOME" );
 	if( home )
 		sCrashInfoPath = home;
+#endif
 	sCrashInfoPath += "/crashinfo.txt";
 	
 	FILE *CrashDump = fopen( sCrashInfoPath, "w+" );
@@ -242,7 +246,7 @@ static void child_process()
 	fclose( CrashDump) ;
 	
 #if defined(MACOSX)
-	InformUserOfCrash( sCrashInfoPath );
+	CrashHandler::InformUserOfCrash( sCrashInfoPath );
 #else
 	/* stdout may have been inadvertently closed by the crash in the parent;
 	* write to /dev/tty instead. */

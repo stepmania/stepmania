@@ -1,0 +1,96 @@
+#include "global.h"
+#include "Crash.h"
+#include "ProductInfo.h"
+#include <Carbon/Carbon.h>
+
+RString CrashHandler::GetLogsDirectory()
+{
+	FSRef fs;
+	char dir[PATH_MAX];
+	
+	if( FSFindFolder(kUserDomain, kDomainLibraryFolderType, kDontCreateFolder, &fs) ||
+	    FSRefMakePath(&fs, (UInt8 *)dir, PATH_MAX) )
+	{
+		return "/tmp";
+	}
+	return RString( dir ) + "/Logs/" PRODUCT_ID;
+}
+
+// More or less copied from ArchHooks_darwin::GoToURL(), hmm.
+static void OpenURL( const RString sURL )
+{
+	CFURLRef url = CFURLCreateWithBytes( kCFAllocatorDefault, (const UInt8*)sURL.data(),
+					     sURL.length(), kCFStringEncodingUTF8, NULL );
+	
+	LSOpenCFURLRef( url, NULL );
+	CFRelease( url );
+}
+
+// XXX Can we use LocalizedString here instead?
+#define LSTRING(b,x) CFBundleCopyLocalizedString( (b), CFSTR(x), NULL, CFSTR("Localizable") )
+
+void CrashHandler::InformUserOfCrash( const RString& sPath )
+{
+	CFBundleRef bundle = CFBundleGetMainBundle();
+	CFStringRef sAlternate = LSTRING( bundle, "Quit " PRODUCT_FAMILY );
+	/* XXX Translate these and remove the redefine of LSTRING. Another way to do this
+	 * would be to pass bundle's URL to CFUserNotificationDisplayAlert's localizationURL
+	 * parameter and let it do it. This wouldn't work for sBody though. */
+#undef LSTRING
+#define LSTRING(b,x) CFSTR(x)
+	CFStringRef sDefault = LSTRING( bundle, "File Bug Report" );
+	CFStringRef sOther = LSTRING( bundle, "Open crashinfo.txt" );
+	CFStringRef sTitle = LSTRING( bundle, PRODUCT_FAMILY " has crashed" );
+	CFStringRef sFormat = LSTRING( bundle, PRODUCT_FAMILY " hash crashed. "
+				       "Debugging information has been output to\n\n%s\n\n"
+				       "Please file a bug report at\n\n%s" );
+	CFStringRef sBody = CFStringCreateWithFormat( kCFAllocatorDefault, NULL, sFormat,
+						      sPath.c_str(), REPORT_BUG_URL );
+	CFOptionFlags response = kCFUserNotificationCancelResponse;
+	CFTimeInterval timeout = 0.0; // Should we ever time out?
+	
+	CFUserNotificationDisplayAlert( timeout, kCFUserNotificationStopAlertLevel, NULL, NULL, NULL,
+					sTitle, sBody, sDefault, sAlternate, sOther, &response );
+	
+	switch( response )
+	{
+	case kCFUserNotificationDefaultResponse:
+		OpenURL( REPORT_BUG_URL );
+		// Fall through.
+	case kCFUserNotificationOtherResponse:
+		// Open the file with the default application (probably TextEdit).
+		OpenURL( "file://" + sPath );
+		break;
+	}
+	CFRelease( sBody );
+	CFRelease( sFormat );
+	CFRelease( sTitle );
+	CFRelease( sOther );
+	CFRelease( sDefault );
+	CFRelease( sAlternate );
+}
+
+/*
+ * (c) 2003-2006 Steve Checkoway
+ * All rights reserved.
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, and/or sell copies of the Software, and to permit persons to
+ * whom the Software is furnished to do so, provided that the above
+ * copyright notice(s) and this permission notice appear in all copies of
+ * the Software and that both the above copyright notice(s) and this
+ * permission notice appear in supporting documentation.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
+ * THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS
+ * INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT
+ * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+ * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
