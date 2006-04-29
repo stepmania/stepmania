@@ -65,11 +65,7 @@ void ReceptorArrowRow::Update( float fDeltaTime )
 void ReceptorArrowRow::DrawPrimitives()
 {
 	for( unsigned c=0; c<m_ReceptorArrow.size(); c++ ) 
-	{
-		NoteFieldMode::BeginDrawTrack( m_pPlayerState, c );
 		m_ReceptorArrow[c]->Draw();
-		NoteFieldMode::EndDrawTrack(c);
-	}
 }
 
 void ReceptorArrowRow::Step( int iCol, TapNoteScore score )

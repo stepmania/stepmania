@@ -75,11 +75,7 @@ void GhostArrowRow::Update( float fDeltaTime )
 void GhostArrowRow::DrawPrimitives()
 {
 	for( unsigned c=0; c<m_Ghost.size(); c++ )
-	{
-		NoteFieldMode::BeginDrawTrack( m_pPlayerState, c );
 		m_Ghost[c]->Draw();
-		NoteFieldMode::EndDrawTrack( c );
-	}
 }
 
 

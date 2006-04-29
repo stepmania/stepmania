@@ -645,8 +645,6 @@ void NoteField::DrawPrimitives()
 
 	for( int c=0; c<m_pNoteData->GetNumTracks(); c++ )	// for each arrow column
 	{
-		NoteFieldMode::BeginDrawTrack( m_pPlayerState, c );
-
 		//
 		// Draw all HoldNotes in this column (so that they appear under the tap notes)
 		//	
@@ -770,9 +768,6 @@ void NoteField::DrawPrimitives()
 				m_pCurDisplay->display[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bIsAddition, bIsMine, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels );
 			}
 		}
-
-
-		NoteFieldMode::EndDrawTrack( c );
 	}
 
 	cur->m_GhostArrowRow.Draw();
