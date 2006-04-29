@@ -425,14 +425,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenEvaluationMultiplayer.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ScreenEvaluationMultiplayer.h"
-				>
-			</File>
-			<File
 				RelativePath="ScreenExit.cpp"
 				>
 			</File>
@@ -469,18 +461,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ScreenGameplayLesson.h"
-				>
-			</File>
-			<File
-				RelativePath="ScreenGameplayMultiplayer.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ScreenGameplayMultiplayer.h"
-				>
-			</File>
-			<File
 				RelativePath=".\ScreenGameplayNormal.cpp"
 				>
 			</File>
@@ -510,14 +490,6 @@
 			</File>
 			<File
 				RelativePath="ScreenInstructions.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ScreenJoinMultiplayer.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ScreenJoinMultiplayer.h"
 				>
 			</File>
 			<File
@@ -2269,14 +2241,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ControllerStateDisplay.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ControllerStateDisplay.h"
-				>
-			</File>
-			<File
 				RelativePath="CourseContentsList.cpp"
 				>
 			</File>
@@ -2730,14 +2694,6 @@
 			</File>
 			<File
 				RelativePath=".\Player.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PlayerScoreList.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\PlayerScoreList.h"
 				>
 			</File>
 			<File
