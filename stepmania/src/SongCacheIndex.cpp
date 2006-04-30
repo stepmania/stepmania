@@ -31,9 +31,11 @@ SongCacheIndex *SONGINDEX;
 
 RString SongCacheIndex::GetCacheFilePath( const RString &sGroup, const RString &sPath )
 {
-	/* Use GetHashForString, not ForFile, since we don't want to spend time
+	/* Don't use GetHashForFile, since we don't want to spend time
 	 * checking the file size and date. */
-	return ssprintf( "%s/%s/%u", SpecialFiles::CACHE_DIR.c_str(), sGroup.c_str(), GetHashForString(sPath) );
+	RString s = sPath;
+	s.Replace( '/', '_' );
+	return ssprintf( "%s/%s/%s", SpecialFiles::CACHE_DIR.c_str(), sGroup.c_str(), s.c_str() );
 }
 
 SongCacheIndex::SongCacheIndex()
