@@ -1661,7 +1661,8 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<File
 				RelativePath="MeterDisplay.cpp">
 			</File>
-			<File
+			<
+File
 				RelativePath="MeterDisplay.h">
 			</File>
 			<File
@@ -1691,9 +1692,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ComboGraph.h">
-			</File>
-			<File
-				RelativePath=".\ControllerStateDisplay.cpp">
 			</File>
 			<File
 				RelativePath=".\ControllerStateDisplay.h">
