@@ -227,7 +227,7 @@ PrefsManager::PrefsManager() :
 	m_AutoPlay			( "AutoPlay",			PC_HUMAN ),
 	m_bDelayedBack			( "DelayedBack",		true ),
 	m_bShowInstructions		( "ShowInstructions",		true ),
-	m_bShowSelectGroup		( "ShowSelectGroup",		true ),
+	m_bShowSelectGroup		( "ShowSelectGroup",		false ),
 	m_bShowCaution			( "ShowCaution",		true ),
 	m_bShowNativeLanguage		( "ShowNativeLanguage",		true ),
 	m_bArcadeOptionsNavigation	( "ArcadeOptionsNavigation",	false ),
