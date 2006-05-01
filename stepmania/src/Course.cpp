@@ -892,12 +892,12 @@ class LunaCourse: public Luna<Course>
 public:
 	LunaCourse() { LUA->Register( Register ); }
 
-	static int GetPlayMode( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetPlayMode() ); return 1; }
+	static int GetPlayMode( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetPlayMode() ); return 1; }
 	static int GetDisplayFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayFullTitle() ); return 1; }
 	static int GetTranslitFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitFullTitle() ); return 1; }
-	static int HasMods( T* p, lua_State *L )				{ lua_pushboolean(L, p->HasMods() ); return 1; }
-	static int GetCourseType( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetCourseType() ); return 1; }
-	static int GetCourseEntry( T* p, lua_State *L )			{ CourseEntry &ce = p->m_vEntries[IArg(1)]; ce.PushSelf(L); return 1; }
+	static int HasMods( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasMods() ); return 1; }
+	static int GetCourseType( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetCourseType() ); return 1; }
+	static int GetCourseEntry( T* p, lua_State *L )		{ CourseEntry &ce = p->m_vEntries[IArg(1)]; ce.PushSelf(L); return 1; }
 	static int GetAllTrails( T* p, lua_State *L )
 	{
 		vector<Trail*> v;
@@ -905,6 +905,7 @@ public:
 		LuaHelpers::CreateTableFromArray<Trail*>( v, L );
 		return 1;
 	}
+	static int GetGroupName( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sGroupName ); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -915,6 +916,7 @@ public:
 		ADD_METHOD( GetCourseType );
 		ADD_METHOD( GetCourseEntry );
 		ADD_METHOD( GetAllTrails );
+		ADD_METHOD( GetGroupName );
 
 		Luna<T>::Register( L );
 	}
