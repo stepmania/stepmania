@@ -367,12 +367,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenEdit.h">
 			</File>
 			<File
-				RelativePath="ScreenEditCourseMods.cpp">
-			</File>
-			<File
-				RelativePath="ScreenEditCourseMods.h">
-			</File>
-			<File
 				RelativePath="ScreenEditMenu.cpp">
 			</File>
 			<File
@@ -389,12 +383,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ScreenEvaluation.h">
-			</File>
-			<File
-				RelativePath="ScreenEvaluationMultiplayer.cpp">
-			</File>
-			<File
-				RelativePath="ScreenEvaluationMultiplayer.h">
 			</File>
 			<File
 				RelativePath="ScreenExit.cpp">
@@ -427,12 +415,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenGameplayLesson.h">
 			</File>
 			<File
-				RelativePath="ScreenGameplayMultiplayer.cpp">
-			</File>
-			<File
-				RelativePath="ScreenGameplayMultiplayer.h">
-			</File>
-			<File
 				RelativePath="ScreenGameplayNormal.cpp">
 			</File>
 			<File
@@ -449,12 +431,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ScreenInstructions.h">
-			</File>
-			<File
-				RelativePath="ScreenJoinMultiplayer.cpp">
-			</File>
-			<File
-				RelativePath="ScreenJoinMultiplayer.h">
 			</File>
 			<File
 				RelativePath="ScreenJukebox.cpp">
@@ -733,12 +709,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\ScreenSystemLayer.h">
 			</File>
 			<File
-				RelativePath="ScreenTest.cpp">
-			</File>
-			<File
-				RelativePath="ScreenTest.h">
-			</File>
-			<File
 				RelativePath="ScreenTestFonts.cpp">
 			</File>
 			<File
@@ -773,12 +743,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ScreenTitleMenu.h">
-			</File>
-			<File
-				RelativePath="ScreenUnlock.cpp">
-			</File>
-			<File
-				RelativePath="ScreenUnlock.h">
 			</File>
 			<File
 				RelativePath="ScreenWithMenuElements.cpp">
@@ -1013,12 +977,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="NoteDataWithScoring.h">
 			</File>
 			<File
-				RelativePath="NoteFieldPositioning.cpp">
-			</File>
-			<File
-				RelativePath="NoteFieldPositioning.h">
-			</File>
-			<File
 				RelativePath="NotesLoader.cpp">
 			</File>
 			<File
@@ -1089,12 +1047,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="PlayerOptions.h">
-			</File>
-			<File
-				RelativePath="PlayerScoreList.cpp">
-			</File>
-			<File
-				RelativePath="PlayerScoreList.h">
 			</File>
 			<File
 				RelativePath=".\PlayerStageStats.cpp">
@@ -1621,12 +1573,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ComboGraph.h">
-			</File>
-			<File
-				RelativePath=".\ControllerStateDisplay.cpp">
-			</File>
-			<File
-				RelativePath=".\ControllerStateDisplay.h">
 			</File>
 			<File
 				RelativePath="CourseContentsList.cpp">
@@ -2241,12 +2187,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="RageSoundReader_WAV.h">
-			</File>
-			<File
-				RelativePath="RageSoundResampler.cpp">
-			</File>
-			<File
-				RelativePath="RageSoundResampler.h">
 			</File>
 			<File
 				RelativePath="RageSoundUtil.cpp">
