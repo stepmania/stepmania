@@ -83,7 +83,8 @@ public:
 	void GetSongs( vector<Song*> &AddTo ) const { GetSongs(AddTo,GROUP_ALL,INT_MAX); }
 	Song *FindSong( RString sPath );
 	Song *FindSong( RString sGroup, RString sSong );
-	Course *FindCourse( RString sName );
+	Course *FindCourse( RString sPath );
+	Course *FindCourse( RString sGroup, RString sName );
 	int GetNumSongs() const;
 	int GetNumSongGroups() const;
 	int GetNumCourses() const;
@@ -98,8 +99,9 @@ public:
 	bool WasLoadedFromAdditionalSongs( const Song *pSong ) const;
 
 	void GetAllCourses( vector<Course*> &AddTo, bool bIncludeAutogen );
-	void GetCourses( CourseType ct, vector<Course*> &AddTo, bool bIncludeAutogen );
+	void GetCourses( CourseType ct, vector<Course*> &AddTo, bool bIncludeAutogen ) const;
 	void GetCoursesInGroup( vector<Course*> &AddTo, const RString &sCourseGroup, bool bIncludeAutogen );
+	void GetPreferredSortCourses( CourseType ct, vector<Course*> &AddTo, bool bIncludeAutogen ) const;
 
 	void GetExtraStageInfo( bool bExtra2, const Style *s, 
 		Song*& pSongOut, Steps*& pStepsOut, PlayerOptions *pPlayerOptionsOut, SongOptions *pSongOptionsOut );
@@ -132,7 +134,7 @@ protected:
 	vector<Song*>		m_pPopularSongs[NUM_ProfileSlot];
 	vector<Song*>		m_pShuffledSongs;	// used by GetRandomSong
 	typedef vector<Song*> SongPointerVector;
-	vector<SongPointerVector> m_vPreferredSortGroups;
+	vector<SongPointerVector> m_vPreferredSongSort;
 	vector<RString>		m_sSongGroupNames;
 	vector<RString>		m_sSongGroupBannerPaths; // each song group may have a banner associated with it
 
@@ -144,6 +146,8 @@ protected:
 		RString m_sBannerPath;
 	};
 	map<RString,CourseGroupInfo> m_mapCourseGroupToInfo;
+	typedef vector<Course*> CoursePointerVector;
+	vector<CoursePointerVector> m_vPreferredCourseSort;
 
 	RageTexturePreloader m_TexturePreload;
 

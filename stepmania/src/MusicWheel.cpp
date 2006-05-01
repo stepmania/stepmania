@@ -624,14 +624,14 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			switch( so )
 			{
 			case SORT_NONSTOP_COURSES:
-				SONGMAN->GetCourses( COURSE_TYPE_NONSTOP,	apCourses, PREFSMAN->m_bAutogenGroupCourses );	
+				SONGMAN->GetPreferredSortCourses( COURSE_TYPE_NONSTOP,	apCourses, PREFSMAN->m_bAutogenGroupCourses );
 				break;
 			case SORT_ONI_COURSES:
-				SONGMAN->GetCourses( COURSE_TYPE_ONI,		apCourses, PREFSMAN->m_bAutogenGroupCourses );
-				SONGMAN->GetCourses( COURSE_TYPE_SURVIVAL,	apCourses, PREFSMAN->m_bAutogenGroupCourses );
+				SONGMAN->GetPreferredSortCourses( COURSE_TYPE_ONI,	apCourses, PREFSMAN->m_bAutogenGroupCourses );
+				SONGMAN->GetPreferredSortCourses( COURSE_TYPE_SURVIVAL,	apCourses, PREFSMAN->m_bAutogenGroupCourses );
 				break;
 			case SORT_ENDLESS_COURSES:
-				SONGMAN->GetCourses( COURSE_TYPE_ENDLESS,	apCourses, PREFSMAN->m_bAutogenGroupCourses );
+				SONGMAN->GetPreferredSortCourses( COURSE_TYPE_ENDLESS,	apCourses, PREFSMAN->m_bAutogenGroupCourses );
 				break;
 			case SORT_ALL_COURSES:
 				SONGMAN->GetAllCourses( apCourses, PREFSMAN->m_bAutogenGroupCourses );
@@ -647,6 +647,8 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			{
 				switch( PREFSMAN->m_CourseSortOrder )
 				{
+				case PrefsManager::COURSE_SOFT_PREFERRED:
+					break;
 				case PrefsManager::COURSE_SORT_METER:
 					CourseUtil::SortCoursePointerArrayByAvgDifficulty( apCourses );
 					break;
@@ -684,7 +686,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 				{
 					switch( pCourse->GetPlayMode() )
 					{
-					case PLAY_MODE_ONI:		sThisSection = "Oni";		break;
+					case PLAY_MODE_ONI:	sThisSection = "Oni";		break;
 					case PLAY_MODE_NONSTOP:	sThisSection = "Nonstop";	break;
 					case PLAY_MODE_ENDLESS:	sThisSection = "Endless";	break;
 					}
@@ -702,7 +704,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 					sLastSection = sThisSection;
 				}
 
-				RageColor c = ( pCourse->m_sGroupName.size() == 0 ) ? pCourse->GetColor() : pCourse->GetColor() * SONGMAN->GetCourseColor(pCourse);
+				RageColor c = ( pCourse->m_sGroupName.size() == 0 ) ? pCourse->GetColor() : SONGMAN->GetCourseColor(pCourse);
 				arrayWheelItemDatas.push_back( WheelItemData(TYPE_COURSE, NULL, sThisSection, pCourse, c) );
 			}
 			break;

@@ -186,6 +186,8 @@ public:
 	ProfileSlot GetLoadedFromProfileSlot() const { return m_LoadedFromProfile; }
 	void SetLoadedFromProfile( ProfileSlot slot ) { m_LoadedFromProfile = slot; }
 
+	bool Matches(RString sGroup, RString sCourse) const;
+
 	// Lua
 	void PushSelf( lua_State *L );
 

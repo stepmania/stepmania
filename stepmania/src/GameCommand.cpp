@@ -261,7 +261,7 @@ void GameCommand::LoadOne( const Command& cmd )
 
 	else if( sName == "course" )
 	{
-		m_pCourse = SONGMAN->FindCourse( sValue );
+		m_pCourse = SONGMAN->FindCourse( "", sValue );
 		if( m_pCourse == NULL )
 		{
 			m_sInvalidReason = ssprintf( "Course \"%s\" not found", sValue.c_str() );

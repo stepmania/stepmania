@@ -884,6 +884,27 @@ void Course::CalculateRadarValues()
 	}
 }
 
+bool Course::Matches( RString sGroup, RString sCourse ) const
+{
+	if( sGroup.size() && sGroup.CompareNoCase(this->m_sGroupName) != 0)
+		return false;
+
+	RString sFile = m_sPath;
+	sFile.Replace("\\","/");
+	vector<RString> bits;
+	split( sFile, "/", bits );
+	ASSERT(bits.size() >= 2); /* should always have at least two parts */
+	const RString &sLastBit = bits[bits.size()-1];
+
+	if( sCourse.EqualsNoCase(sLastBit) )
+		return true;
+	if( sCourse.EqualsNoCase(this->GetTranslitFullTitle()) )
+		return true;
+
+	return false;
+}
+
+
 // lua start
 #include "LuaBinding.h"
 

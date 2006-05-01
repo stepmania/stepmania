@@ -190,7 +190,7 @@ public:
 	Preference<bool>	m_bSignProfileData;
 	
 	// course ranking
-	enum CourseSortOrders { COURSE_SORT_SONGS, COURSE_SORT_METER, COURSE_SORT_METER_SUM, COURSE_SORT_RANK };
+	enum CourseSortOrders { COURSE_SOFT_PREFERRED, COURSE_SORT_SONGS, COURSE_SORT_METER, COURSE_SORT_METER_SUM, COURSE_SORT_RANK };
 	Preference<CourseSortOrders,int>	m_CourseSortOrder;
 	Preference<bool>	m_bSubSortByNumSteps;	
 	enum GetRankingName { RANKING_OFF, RANKING_ON, RANKING_LIST };
