@@ -31,7 +31,10 @@ public:
 		bool(*Validate)(const RString &sAnswer,RString &sErrorOut) = NULL, 
 		void(*OnOK)(const RString &sAnswer) = NULL, 
 		void(*OnCanel)() = NULL,
-		bool bPassword = false );
+		bool bPassword = false,
+		bool (*ValidateAppend)(const RString &sAnswerBeforeChar, RString &sAppend) = NULL,
+		RString (*FormatAnswerForDisplay)(const RString &sAnswer) = NULL
+		);
 	static void TextEntry( 
 		ScreenMessage smSendOnPop, 
 		RString sQuestion, 
@@ -40,7 +43,10 @@ public:
 		bool(*Validate)(const RString &sAnswer,RString &sErrorOut) = NULL, 
 		void(*OnOK)(const RString &sAnswer) = NULL, 
 		void(*OnCanel)() = NULL,
-		bool bPassword = false );
+		bool bPassword = false,
+		bool (*ValidateAppend)(const RString &sAnswerBeforeChar, RString &sAppend) = NULL,
+		RString (*FormatAnswerForDisplay)(const RString &sAnswer) = NULL
+		);
 	static void Password( 
 		ScreenMessage smSendOnPop, 
 		const RString &sQuestion, 
@@ -61,7 +67,7 @@ public:
 	static bool s_bCancelledLast;
 
 protected:
-	void AppendToAnswer( RString s );
+	void TryAppendToAnswer( RString s );
 	void BackspaceInAnswer();
 	virtual void TextEnteredDirectly() { }
 

@@ -36,6 +36,8 @@ namespace
 	void(*g_pOnOK)(const RString &sAnswer);
 	void(*g_pOnCancel)();
 	bool g_bPassword;
+	bool (*g_pValidateAppend)(const RString &sAnswerBeforeChar, RString &sAppend);
+	RString (*g_pFormatAnswerForDisplay)(const RString &sAnswer);
 };
 
 void ScreenTextEntry::SetTextEntrySettings( 
@@ -45,7 +47,9 @@ void ScreenTextEntry::SetTextEntrySettings(
 	bool(*Validate)(const RString &sAnswer,RString &sErrorOut), 
 	void(*OnOK)(const RString &sAnswer), 
 	void(*OnCancel)(),
-	bool bPassword
+	bool bPassword,
+	bool (*ValidateAppend)(const RString &sAnswerBeforeChar, RString &sAppend),
+	RString (*FormatAnswerForDisplay)(const RString &sAnswer)
 	)
 {	
 	g_sQuestion = sQuestion;
@@ -54,7 +58,8 @@ void ScreenTextEntry::SetTextEntrySettings(
 	g_pValidate = Validate;
 	g_pOnOK = OnOK;
 	g_pOnCancel = OnCancel;
-	g_bPassword = bPassword;
+	g_pValidateAppend = ValidateAppend;
+	g_pFormatAnswerForDisplay = FormatAnswerForDisplay;
 }
 
 void ScreenTextEntry::TextEntry( 
@@ -65,7 +70,9 @@ void ScreenTextEntry::TextEntry(
 	bool(*Validate)(const RString &sAnswer,RString &sErrorOut), 
 	void(*OnOK)(const RString &sAnswer), 
 	void(*OnCancel)(),
-	bool bPassword
+	bool bPassword,
+	bool (*ValidateAppend)(const RString &sAnswerBeforeChar, RString &sAppend),
+	RString (*FormatAnswerForDisplay)(const RString &sAnswer)
 	)
 {	
 	g_sQuestion = sQuestion;
@@ -75,6 +82,8 @@ void ScreenTextEntry::TextEntry(
 	g_pOnOK = OnOK;
 	g_pOnCancel = OnCancel;
 	g_bPassword = bPassword;
+	g_pValidateAppend = ValidateAppend;
+	g_pFormatAnswerForDisplay = FormatAnswerForDisplay;
 
 	SCREENMAN->AddNewScreenToTop( "ScreenTextEntry", smSendOnPop );
 }
@@ -129,6 +138,9 @@ void ScreenTextEntry::UpdateAnswerText()
 		s = RString( m_sAnswer.size(), '*' );
 	else
 		s = WStringToRString(m_sAnswer);
+
+	if( g_pFormatAnswerForDisplay )
+		s = g_pFormatAnswerForDisplay( s );
 
 	bool bAnswerFull = (int) s.length() >= g_iMaxInputLength;
 	if( m_bShowAnswerCaret 	&&  !bAnswerFull )
@@ -198,7 +210,7 @@ void ScreenTextEntry::Input( const InputEventPlus &input )
 				}
 			}
 
-			AppendToAnswer( ssprintf( "%c", c ) );
+			TryAppendToAnswer( ssprintf( "%c", c ) );
 
 			TextEnteredDirectly();
 		}
@@ -207,15 +219,24 @@ void ScreenTextEntry::Input( const InputEventPlus &input )
 	ScreenWithMenuElements::Input( input );
 }
 
-void ScreenTextEntry::AppendToAnswer( RString s )
+void ScreenTextEntry::TryAppendToAnswer( RString s )
 {
-	wstring sNewAnswer = m_sAnswer+RStringToWstring(s);
-	if( (int)sNewAnswer.length() > g_iMaxInputLength )
+	{
+		wstring sNewAnswer = m_sAnswer+RStringToWstring(s);
+		if( (int)sNewAnswer.length() > g_iMaxInputLength )
+		{
+			SCREENMAN->PlayInvalidSound();
+			return;
+		}
+	}
+
+	if( g_pValidateAppend  &&  !g_pValidateAppend( WStringToRString(m_sAnswer), s ) )
 	{
 		SCREENMAN->PlayInvalidSound();
 		return;
 	}
 
+	wstring sNewAnswer = m_sAnswer+RStringToWstring(s);
 	m_sAnswer = sNewAnswer;
 	m_sndType.Play();
 	UpdateAnswerText();
@@ -430,7 +451,7 @@ void ScreenTextEntryVisual::MenuStart( PlayerNumber pn )
 		switch( m_iFocusX )
 		{
 		case SPACEBAR:
-			AppendToAnswer( " " );
+			TryAppendToAnswer( " " );
 			break;
 		case BACKSPACE:
 			BackspaceInAnswer();
@@ -447,7 +468,7 @@ void ScreenTextEntryVisual::MenuStart( PlayerNumber pn )
 	}
 	else
 	{
-		AppendToAnswer( g_szKeys[m_iFocusY][m_iFocusX] );
+		TryAppendToAnswer( g_szKeys[m_iFocusY][m_iFocusX] );
 	}
 }
 
