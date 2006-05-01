@@ -44,6 +44,7 @@ const RString COURSES_DIR		= "/Courses/";
 static const ThemeMetric<RageColor>	EXTRA_COLOR			("SongManager","ExtraColor");
 static const ThemeMetric<int>		EXTRA_COLOR_METER		("SongManager","ExtraColorMeter");
 static const ThemeMetric<bool>		USE_PREFERRED_SORT_COLOR	("SongManager","UsePreferredSortColor");
+static const ThemeMetric<RageColor>	UNLOCK_COLOR			("SongManager","UnlockColor");
 
 RString SONG_GROUP_COLOR_NAME( size_t i )   { return ssprintf("SongGroupColor%i",(int) i+1); }
 RString COURSE_GROUP_COLOR_NAME( size_t i ) { return ssprintf("CourseGroupColor%i",(int) i+1); }
@@ -70,8 +71,6 @@ void SongManager::InitAll( LoadingWindow *ld )
 	InitSongsFromDisk( ld );
 	InitCoursesFromDisk( ld );
 	InitAutogenCourses();
-
-	UpdatePreferredSort();
 }
 
 static LocalizedString RELOADING ( "SongManager", "Reloading..." );
@@ -347,6 +346,12 @@ RageColor SongManager::GetSongGroupColor( const RString &sSongGroup )
 RageColor SongManager::GetSongColor( const Song* pSong )
 {
 	ASSERT( pSong );
+
+	// Use unlock color if applicable
+	const UnlockEntry *pUE = UNLOCKMAN->FindSong( pSong );
+	if( pUE )
+		return UNLOCK_COLOR;
+
 
 	if( USE_PREFERRED_SORT_COLOR )
 	{
@@ -1307,42 +1312,66 @@ void SongManager::UpdateShuffled()
 
 void SongManager::UpdatePreferredSort()
 {
+	ASSERT( UNLOCKMAN );
+
 	m_vPreferredSortGroups.clear();
 
 	RString sFile = THEME->GetPathO( "SongManager", "PreferredSort.txt" );
 	RageFile file;
-	if( file.Open( sFile ) )
-	{
-		vector<Song*> vpSongs;
+	if( !file.Open( sFile ) )
+		return;
 
-		RString sLine;
-		while( file.GetLine(sLine) )
+	vector<Song*> vpSongs;
+
+	RString sLine;
+	while( file.GetLine(sLine) )
+	{
+		bool bSectionDivider = sLine.find("---") != RString::npos;
+		if( bSectionDivider )
 		{
-			bool bSectionDivider = sLine.find("---") != RString::npos;
-			if( bSectionDivider )
+			if( !vpSongs.empty() )
 			{
-				if( !vpSongs.empty() )
-				{
-					m_vPreferredSortGroups.push_back( vpSongs );
-					vpSongs.clear();
-				}
-			}
-			else
-			{
-				Song *pSong = NULL;
-				if( !sLine.empty() )
-					pSong = FindSong( sLine );
-				if( pSong )
-					vpSongs.push_back( pSong );
+				m_vPreferredSortGroups.push_back( vpSongs );
+				vpSongs.clear();
 			}
 		}
-
-		if( !vpSongs.empty() )
+		else
 		{
-			m_vPreferredSortGroups.push_back( vpSongs );
-			vpSongs.clear();
+			Song *pSong = NULL;
+			if( !sLine.empty() )
+				pSong = FindSong( sLine );
+			if( pSong )
+				vpSongs.push_back( pSong );
 		}
 	}
+
+	if( !vpSongs.empty() )
+	{
+		m_vPreferredSortGroups.push_back( vpSongs );
+		vpSongs.clear();
+	}
+
+	// move all unlock songs to a group at the bottom
+	vector<Song*> vpUnlockSongs;
+	FOREACH( UnlockEntry, UNLOCKMAN->m_UnlockEntries, ue )
+	{
+		if( ue->m_Type == UnlockRewardType_Song )
+			vpUnlockSongs.push_back( ue->m_pSong );
+	}
+
+	FOREACH( SongPointerVector, m_vPreferredSortGroups, v )
+	{
+		for( int i=v->size()-1; i>=0; i-- )
+		{
+			Song *pSong = (*v)[i];
+			if( find(vpUnlockSongs.begin(),vpUnlockSongs.end(),pSong) != vpUnlockSongs.end() )
+			{
+				v->erase( v->begin()+i );
+			}
+		}
+	}
+
+	m_vPreferredSortGroups.push_back( vpUnlockSongs );
 }
 
 void SongManager::SortSongs()

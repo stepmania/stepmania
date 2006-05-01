@@ -1059,6 +1059,7 @@ int main(int argc, char* argv[])
 	PROFILEMAN	= new ProfileManager;
 	PROFILEMAN->Init();				// must load after SONGMAN
 	UNLOCKMAN	= new UnlockManager;
+	SONGMAN->UpdatePreferredSort();
 
 	/* This shouldn't need to be here; if it's taking long enough that this is
 	 * even visible, we should be fixing it, not showing a progress display. */
