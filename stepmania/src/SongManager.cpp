@@ -350,7 +350,7 @@ RageColor SongManager::GetSongColor( const Song* pSong )
 	// Use unlock color if applicable
 	const UnlockEntry *pUE = UNLOCKMAN->FindSong( pSong );
 	if( pUE )
-		return UNLOCK_COLOR;
+		return UNLOCK_COLOR.GetValue();
 
 
 	if( USE_PREFERRED_SORT_COLOR )
@@ -452,7 +452,7 @@ RageColor SongManager::GetCourseColor( const Course* pCourse )
 	// Use unlock color if applicable
 	const UnlockEntry *pUE = UNLOCKMAN->FindCourse( pCourse );
 	if( pUE )
-		return UNLOCK_COLOR;
+		return UNLOCK_COLOR.GetValue();
 
 
 	if( USE_PREFERRED_SORT_COLOR )
