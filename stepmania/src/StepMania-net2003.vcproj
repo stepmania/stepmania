@@ -1661,8 +1661,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<File
 				RelativePath="MeterDisplay.cpp">
 			</File>
-			<
-File
+			<File
 				RelativePath="MeterDisplay.h">
 			</File>
 			<File
