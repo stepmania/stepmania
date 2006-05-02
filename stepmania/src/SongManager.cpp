@@ -94,8 +94,9 @@ void SongManager::Reload( LoadingWindow *ld )
 
 	InitAll( ld );
 
-	// reload scores afterward
+	// reload scores and unlocks afterward
 	PROFILEMAN->LoadMachineProfile();
+	UNLOCKMAN->Reload();
 
 	PREFSMAN->m_bFastLoad.Set( OldVal );
 

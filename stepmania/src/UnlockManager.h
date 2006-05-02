@@ -87,6 +87,7 @@ class UnlockManager
 
 public:
 	UnlockManager();
+	void Reload();
 
 	// returns # of points till next unlock - used for ScreenUnlock
 	float PointsUntilNextUnlock( UnlockRequirement t ) const;

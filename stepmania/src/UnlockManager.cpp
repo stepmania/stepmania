@@ -511,6 +511,16 @@ void UnlockManager::Load()
 	return;
 }
 
+
+void UnlockManager::Reload()
+{
+	// clear old data, if any
+	m_UnlockEntries.clear();
+	m_RouletteCodes.clear();
+
+	Load();
+}
+
 float UnlockManager::PointsUntilNextUnlock( UnlockRequirement t ) const
 {
 	float fScores[NUM_UnlockRequirement];
