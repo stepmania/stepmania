@@ -1990,10 +1990,6 @@ public:
 			const Steps* pSteps = vpStepsToShow[i];
 			RString sDifficulty = DifficultyToLocalizedString( pSteps->GetDifficulty() );
 			
-			// HACK: reset capitalization
-			sDifficulty.MakeLower();
-			sDifficulty = Capitalize( sDifficulty );
-			
 			lua_pushstring( L, sDifficulty );
 			lua_pushstring( L, pSteps->GetDescription() );
 		}
