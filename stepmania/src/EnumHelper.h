@@ -113,10 +113,16 @@ static void Lua##X(lua_State* L) \
 			s.MakeUpper(); \
 		LUA->SetGlobal( Prefix+s, i ); \
 	} \
-	RString sType = "NUM" #X "S" ; \
-	if( bCapitalize ) \
-		sType.MakeUpper(); \
-	LUA->SetGlobal( sType, CNT ); \
+	{ \
+		RString sNum = "NUM" #X "S" ; \
+		if( bCapitalize ) \
+			sNum.MakeUpper(); \
+		LUA->SetGlobal( sNum, CNT ); \
+	} \
+	{ \
+		RString sNum = "NUM_" #X; \
+		LUA->SetGlobal( sNum, CNT ); \
+	} \
 	LUA->SetGlobal( Prefix "INVALID", CNT+1 ); \
 } \
 REGISTER_WITH_LUA_FUNCTION( Lua##X );
