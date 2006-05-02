@@ -40,6 +40,7 @@ SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our progr
 const RString SONGS_DIR			= "/Songs/";
 const RString ADDITIONAL_SONGS_DIR	= "/AdditionalSongs/";
 const RString COURSES_DIR		= "/Courses/";
+const RString EDIT_SUBDIR	= "Edits/";
 
 static const ThemeMetric<RageColor>	EXTRA_COLOR			("SongManager","ExtraColor");
 static const ThemeMetric<int>		EXTRA_COLOR_METER		("SongManager","ExtraColorMeter");
@@ -97,6 +98,8 @@ void SongManager::Reload( LoadingWindow *ld )
 	PROFILEMAN->LoadMachineProfile();
 
 	PREFSMAN->m_bFastLoad.Set( OldVal );
+
+	UpdatePreferredSort();
 }
 
 void SongManager::InitSongsFromDisk( LoadingWindow *ld )
@@ -173,6 +176,12 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 	FOREACH_CONST( RString, arrayGroupDirs, s )	// foreach dir in /Songs/
 	{
 		RString sGroupDirName = *s;
+
+#if defined(ITG)
+		// Don't load any folders containing "In The Groove" so that they don't conflict with the official songs.
+		if( sDir == ADDITIONAL_SONGS_DIR  &&  sGroupDirName.find("In The Groove") != sGroupDirName.npos )
+			continue;
+#endif
 
 		SanityCheckGroupDir(sDir+sGroupDirName);
 
@@ -507,8 +516,14 @@ void SongManager::GetPreferredSortSongs( vector<Song*> &AddTo, int iMaxStages ) 
 	}
 
 	FOREACH_CONST( SongPointerVector, m_vPreferredSongSort, v )
+	{
 		FOREACH_CONST( Song*, *v, s )
-			AddTo.push_back( *s );
+		{
+			Song* pSong = *s;
+			ASSERT( pSong );
+			AddTo.push_back( pSong );
+		}
+	}
 }
 
 void SongManager::GetPreferredSortCourses( CourseType ct, vector<Course*> &AddTo, bool bIncludeAutogen ) const
@@ -520,9 +535,14 @@ void SongManager::GetPreferredSortCourses( CourseType ct, vector<Course*> &AddTo
 	}
 
 	FOREACH_CONST( CoursePointerVector, m_vPreferredCourseSort, v )
+	{
 		FOREACH_CONST( Course*, *v, c )
-			if( (*c)->GetCourseType() == ct )
-				AddTo.push_back( *c );
+		{
+			Course *pCourse = *c;
+			if( pCourse->GetCourseType() == ct )
+				AddTo.push_back( pCourse );
+		}
+	}
 }
 
 int SongManager::GetNumSongs() const
@@ -1411,7 +1431,8 @@ void SongManager::UpdatePreferredSort()
 		FOREACH( UnlockEntry, UNLOCKMAN->m_UnlockEntries, ue )
 		{
 			if( ue->m_Type == UnlockRewardType_Song )
-				vpUnlockSongs.push_back( ue->m_pSong );
+				if( ue->m_pSong )
+					vpUnlockSongs.push_back( ue->m_pSong );
 		}
 
 		FOREACH( SongPointerVector, m_vPreferredSongSort, v )
@@ -1427,6 +1448,15 @@ void SongManager::UpdatePreferredSort()
 		}
 
 		m_vPreferredSongSort.push_back( vpUnlockSongs );
+
+		// prune empty groups
+		for( int i=m_vPreferredSongSort.size()-1; i>=0; i-- )
+			if( m_vPreferredSongSort[i].empty() )
+				m_vPreferredSongSort.erase( m_vPreferredSongSort.begin()+i );
+
+		FOREACH( SongPointerVector, m_vPreferredSongSort, i )
+			FOREACH( Song*, *i, j )
+				ASSERT( *j );
 	}
 
 	{
@@ -1472,7 +1502,8 @@ void SongManager::UpdatePreferredSort()
 		FOREACH( UnlockEntry, UNLOCKMAN->m_UnlockEntries, ue )
 		{
 			if( ue->m_Type == UnlockRewardType_Course )
-				vpUnlockCourses.push_back( ue->m_pCourse );
+				if( ue->m_pCourse )
+					vpUnlockCourses.push_back( ue->m_pCourse );
 		}
 
 		FOREACH( CoursePointerVector, m_vPreferredCourseSort, v )
@@ -1488,6 +1519,15 @@ void SongManager::UpdatePreferredSort()
 		}
 
 		m_vPreferredCourseSort.push_back( vpUnlockCourses );
+
+		// prune empty groups
+		for( int i=m_vPreferredCourseSort.size()-1; i>=0; i-- )
+			if( m_vPreferredCourseSort[i].empty() )
+				m_vPreferredCourseSort.erase( m_vPreferredCourseSort.begin()+i );
+
+		FOREACH( CoursePointerVector, m_vPreferredCourseSort, i )
+			FOREACH( Course*, *i, j )
+				ASSERT( *j );
 	}
 }
 
