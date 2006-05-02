@@ -495,6 +495,7 @@ LuaFunction( Trace, Trace(SArg(1)) );
 
 #include "ProductInfo.h"
 LuaFunction( ProductVersion, (RString) PRODUCT_VER );
+LuaFunction( ProductID, (RString) PRODUCT_ID );
 
 static float scale( float x, float l1, float h1, float l2, float h2 )
 {
