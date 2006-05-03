@@ -35,9 +35,10 @@ public:
 	static void ReadAllDefaultsFromNode( const XNode* pNode );
 
 	RString GetName() { return m_sName; }
+	void SetStatic( bool b ) { m_bIsStatic = b; }
 private:
 	RString	m_sName;
-	bool m_bLoadedFromStatic;	// loaded from Static.ini?  If so, don't write to Preferences.ini
+	bool m_bIsStatic;	// loaded from Static.ini?  If so, don't write to Preferences.ini
 };
 
 void BroadcastPreferenceChanged( const RString& sPreferenceName );

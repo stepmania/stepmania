@@ -11,7 +11,7 @@ static SubscriptionManager<IPreference> m_Subscribers;
 
 IPreference::IPreference( const RString& sName ):
 	m_sName( sName ),
-	m_bLoadedFromStatic( false )
+	m_bIsStatic( false )
 {
 	m_Subscribers.Subscribe( this );
 }
@@ -103,13 +103,13 @@ void IPreference::ReadFrom( const XNode* pNode, bool bIsStatic )
 	if( pNode->GetAttrValue(m_sName, sVal) )
 	{
 		FromString( sVal );
-		m_bLoadedFromStatic = bIsStatic;
+		m_bIsStatic = bIsStatic;
 	}
 }
 
 void IPreference::WriteTo( XNode* pNode ) const
 {
-	if( !m_bLoadedFromStatic )
+	if( !m_bIsStatic )
 		pNode->AppendAttr( m_sName, ToString() );
 }
 
