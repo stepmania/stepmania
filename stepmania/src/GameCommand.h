@@ -71,11 +71,11 @@ public:
 	std::map<RString,RString> m_SetEnv;
 	RString		m_sSongGroup;
 	SortOrder	m_SortOrder;
-	int			m_iUnlockEntryID;	// -1 for no unlock
+	RString		m_sUnlockEntryID;	// "" for no unlock
 	RString		m_sSoundPath;	// "" for no sound
 	vector<RString>	m_vsScreensToPrepare;
-	int			m_iWeightPounds;	// -1 == none specified
-	int			m_iGoalCalories;	// -1 == none specified
+	int		m_iWeightPounds;	// -1 == none specified
+	int		m_iGoalCalories;	// -1 == none specified
 	GoalType	m_GoalType;
 	RString		m_sProfileID;
 

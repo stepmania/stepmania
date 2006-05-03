@@ -514,9 +514,9 @@ void Profile::SetDefaultModifiers( const Game* pGameType, const RString &sModifi
 		m_sDefaultModifiers[pGameType->m_szName] = sModifiers;
 }
 
-bool Profile::IsCodeUnlocked( int iCode ) const
+bool Profile::IsCodeUnlocked( RString sUnlockEntryID ) const
 {
-	return m_UnlockedEntryIDs.find( iCode ) != m_UnlockedEntryIDs.end();
+	return m_UnlockedEntryIDs.find( sUnlockEntryID ) != m_UnlockedEntryIDs.end();
 }
 
 
@@ -1037,9 +1037,9 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	}
 
 	{
-		XNode* pUnlockedSongs = pGeneralDataNode->AppendChild("UnlockedSongs");
-		FOREACHS_CONST( int, m_UnlockedEntryIDs, it )
-			pUnlockedSongs->AppendChild( ssprintf("Unlock%i", *it) );
+		XNode* pUnlocks = pGeneralDataNode->AppendChild("Unlocks");
+		FOREACHS_CONST( RString, m_UnlockedEntryIDs, it )
+			pUnlocks->AppendChild("UnlockEntry")->AppendAttr( "UnlockEntryID", it->c_str() );
 	}
 
 	{
@@ -1216,14 +1216,14 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	}
 
 	{
-		const XNode* pUnlockedSongs = pNode->GetChild("UnlockedSongs");
-		if( pUnlockedSongs )
+		const XNode* pUnlocks = pNode->GetChild("Unlocks");
+		if( pUnlocks )
 		{
-			FOREACH_CONST_Child( pUnlockedSongs, song )
+			FOREACH_CONST_Child( pUnlocks, unlock )
 			{
-				int iUnlock;
-				if( sscanf(song->m_sName.c_str(),"Unlock%d",&iUnlock) == 1 )
-					m_UnlockedEntryIDs.insert( iUnlock );
+				RString sUnlockEntryID;
+				if( unlock->GetAttrValue("UnlockEntryID",sUnlockEntryID) )
+					m_UnlockedEntryIDs.insert( sUnlockEntryID );
 			}
 		}
 	}
@@ -1941,7 +1941,7 @@ public:
 	static int GetCaloriesBurnedToday( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetCaloriesBurnedToday() ); return 1; }
 	static int GetSaved( T* p, lua_State *L )			{ p->m_SavedLuaData.PushSelf(L); return 1; }
 	static int GetTotalNumSongsPlayed( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_iNumTotalSongsPlayed ); return 1; }
-	static int IsCodeUnlocked( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsCodeUnlocked(IArg(1)) ); return 1; }
+	static int IsCodeUnlocked( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsCodeUnlocked(SArg(1)) ); return 1; }
 	static int GetSongsActual( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetSongsActual((StepsType)IArg(1),(Difficulty)IArg(2)) ); return 1; }
 	static int GetCoursesActual( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetCoursesActual((StepsType)IArg(1),(CourseDifficulty)IArg(2)) ); return 1; }
 	static int GetSongsPossible( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetSongsPossible((StepsType)IArg(1),(Difficulty)IArg(2)) ); return 1; }

@@ -14,7 +14,7 @@ void ScreenUnlockBrowse::Init()
 		if( ue->GetUnlockEntryStatus() >= UnlockEntryStatus_RequirementsMet )
 			gc.m_bInvalid = false;
 		gc.m_iIndex = ue - UNLOCKMAN->m_UnlockEntries.begin();
-		gc.m_iUnlockEntryID = ue->m_iEntryID;
+		gc.m_sUnlockEntryID = ue->m_sEntryID;
 		gc.m_sName = ssprintf("%d",gc.m_iIndex);
 		
 		m_aGameCommands.push_back( gc );

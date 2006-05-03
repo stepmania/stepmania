@@ -60,13 +60,13 @@ void UnlockManager::UnlockSong( const Song *song )
 	const UnlockEntry *p = FindSong( song );
 	if( !p )
 		return;  // does not exist
-	if( p->m_iEntryID == -1 )
+	if( p->m_sEntryID.empty() )
 		return;
 
-	UnlockEntryID( p->m_iEntryID );
+	UnlockEntryID( p->m_sEntryID );
 }
 
-int UnlockManager::FindEntryID( const RString &sName ) const
+RString UnlockManager::FindEntryID( const RString &sName ) const
 {
 	const UnlockEntry *pEntry = NULL;
 	
@@ -84,10 +84,10 @@ int UnlockManager::FindEntryID( const RString &sName ) const
 	if( pEntry == NULL )
 	{
 		LOG->Warn( "Couldn't find locked entry \"%s\"", sName.c_str() );
-		return -1;
+		return "";
 	}
 
-	return pEntry->m_iEntryID;
+	return pEntry->m_sEntryID;
 }
 
 bool UnlockManager::CourseIsLocked( const Course *course ) const
@@ -125,7 +125,7 @@ bool UnlockManager::SongIsRouletteOnly( const Song *song ) const
 		return false;
 
 	/* If the song is locked by a code, and it's a roulette code, honor IsLocked. */
-	if( p->m_iEntryID == -1 || m_RouletteCodes.find( p->m_iEntryID ) == m_RouletteCodes.end() )
+	if( p->m_sEntryID.empty() || m_RouletteCodes.find( p->m_sEntryID ) == m_RouletteCodes.end() )
 		return false;
 
 	return p->IsLocked();
@@ -294,7 +294,7 @@ bool UnlockEntry::IsValid() const
 
 UnlockEntryStatus UnlockEntry::GetUnlockEntryStatus() const
 {
-	if( m_iEntryID != -1 && PROFILEMAN->GetMachineProfile()->m_UnlockedEntryIDs.find(m_iEntryID) != PROFILEMAN->GetMachineProfile()->m_UnlockedEntryIDs.end() )
+	if( !m_sEntryID.empty() && PROFILEMAN->GetMachineProfile()->m_UnlockedEntryIDs.find(m_sEntryID) != PROFILEMAN->GetMachineProfile()->m_UnlockedEntryIDs.end() )
 		return UnlockEntryStatus_Unlocked;
 
 	float fScores[NUM_UnlockRequirement];
@@ -336,7 +336,7 @@ RString UnlockEntry::GetDescription() const
 		return m_pCourse ? m_pCourse->GetDisplayFullTitle() : "";
 	case UnlockRewardType_Modifier:
 		return CommonMetrics::LocalizeOptionItem( GetModifier(), false );
-	}	
+	}
 }
 
 RString	UnlockEntry::GetBannerFile() const
@@ -425,7 +425,7 @@ void UnlockManager::Load()
 				// Hack: Lua only has a floating point type, and codes may be big enough
 				// that converting them from string to float to int introduces rounding
 				// error.  Convert directly to int.
-				current.m_iEntryID = atoi( (RString) cmd.GetArg(1) );
+				current.m_sEntryID = (RString)cmd.GetArg(1);
 			}
 			else if( sName == "roulette" )
 			{
@@ -444,7 +444,7 @@ void UnlockManager::Load()
 		}
 
 		if( bRoulette )
-			m_RouletteCodes.insert( current.m_iEntryID );
+			m_RouletteCodes.insert( current.m_sEntryID );
 
 		m_UnlockEntries.push_back( current );
 	}
@@ -454,6 +454,8 @@ void UnlockManager::Load()
 		FOREACH_CONST( Song*, SONGMAN->GetAllSongs(), s )
 		{
 			if( (*s)->GetOneSteps(STEPS_TYPE_INVALID, DIFFICULTY_HARD) == NULL )
+				continue;
+			if( SONGMAN->WasLoadedFromAdditionalSongs(*s) )
 				continue;
 				
 			UnlockEntry ue;			
@@ -470,8 +472,8 @@ void UnlockManager::Load()
 	//
 	FOREACH( UnlockEntry, m_UnlockEntries, e )
 	{
-		if( e->m_iEntryID == -1 )
-			e->m_iEntryID = e - m_UnlockEntries.begin();
+		if( e->m_sEntryID.empty() )
+			e->m_sEntryID = e->m_cmd.GetOriginalCommandString();
 	}
 
 	// Make sure that we don't have duplicate unlock IDs.  This can cause problems 
@@ -479,7 +481,7 @@ void UnlockManager::Load()
 	FOREACH_CONST( UnlockEntry, m_UnlockEntries, ue )
 		FOREACH_CONST( UnlockEntry, m_UnlockEntries, ue2 )
 			if( ue != ue2 )
-				ASSERT_M( ue->m_iEntryID != ue2->m_iEntryID, ssprintf("duplicate unlock entry id %d",ue->m_iEntryID) );
+				ASSERT_M( ue->m_sEntryID != ue2->m_sEntryID, ssprintf("duplicate unlock entry id %s",ue->m_sEntryID.c_str()) );
 
 	UpdateCachedPointers();
 
@@ -495,7 +497,7 @@ void UnlockManager::Load()
 		if( e->m_bRequirePassHardSteps )
 			str += "RequrePassHardSteps; ";
 
-		str += ssprintf( "entryID = %i ", e->m_iEntryID );
+		str += ssprintf( "entryID = %s ", e->m_sEntryID.c_str() );
 		str += e->IsLocked()? "locked":"unlocked";
 		if( e->m_pSong )
 			str += ( " (found song)" );
@@ -577,27 +579,27 @@ void UnlockManager::UpdateCachedPointers()
 
 
 
-void UnlockManager::UnlockEntryID( int iEntryID )
+void UnlockManager::UnlockEntryID( RString sEntryID )
 {
 	FOREACH_PlayerNumber( pn )
 		if( PROFILEMAN->IsPersistentProfile(pn) )
-			PROFILEMAN->GetProfile(pn)->m_UnlockedEntryIDs.insert( iEntryID );
+			PROFILEMAN->GetProfile(pn)->m_UnlockedEntryIDs.insert( sEntryID );
 
-	PROFILEMAN->GetMachineProfile()->m_UnlockedEntryIDs.insert( iEntryID );
+	PROFILEMAN->GetMachineProfile()->m_UnlockedEntryIDs.insert( sEntryID );
 }
 
 void UnlockManager::UnlockEntryIndex( int iEntryIndex )
 {
-	int iEntryID = m_UnlockEntries[iEntryIndex].m_iEntryID;
-	UnlockEntryID( iEntryID );
+	RString sEntryID = m_UnlockEntries[iEntryIndex].m_sEntryID;
+	UnlockEntryID( sEntryID );
 }
 
-void UnlockManager::PreferUnlockEntryID( int iUnlockEntryID )
+void UnlockManager::PreferUnlockEntryID( RString sUnlockEntryID )
 {
 	for( unsigned i = 0; i < m_UnlockEntries.size(); ++i )
 	{
 		UnlockEntry &pEntry = m_UnlockEntries[i];
-		if( pEntry.m_iEntryID != iUnlockEntryID )
+		if( pEntry.m_sEntryID != sUnlockEntryID )
 			continue;
 
 		if( pEntry.m_pSong != NULL )
@@ -645,24 +647,24 @@ void UnlockManager::GetUnlocksByType( UnlockRewardType t, vector<UnlockEntry *> 
 			apEntries.push_back( &m_UnlockEntries[i] );
 }
 
-void UnlockManager::GetSongsUnlockedByEntryID( vector<Song *> &apSongsOut, int iUnlockEntryID )
+void UnlockManager::GetSongsUnlockedByEntryID( vector<Song *> &apSongsOut, RString sUnlockEntryID )
 {
 	vector<UnlockEntry *> apEntries;
 	GetUnlocksByType( UnlockRewardType_Song, apEntries );
 
 	for( unsigned i = 0; i < apEntries.size(); ++i )
-		if( apEntries[i]->m_iEntryID == iUnlockEntryID )
+		if( apEntries[i]->m_sEntryID == sUnlockEntryID )
 			apSongsOut.push_back( apEntries[i]->m_pSong );
 }
 
-void UnlockManager::GetStepsUnlockedByEntryID( vector<Song *> &apSongsOut, vector<Difficulty> &apDifficultyOut, int iUnlockEntryID )
+void UnlockManager::GetStepsUnlockedByEntryID( vector<Song *> &apSongsOut, vector<Difficulty> &apDifficultyOut, RString sUnlockEntryID )
 {
 	vector<UnlockEntry *> apEntries;
 	GetUnlocksByType( UnlockRewardType_Steps, apEntries );
 
 	for( unsigned i = 0; i < apEntries.size(); ++i )
 	{
-		if( apEntries[i]->m_iEntryID == iUnlockEntryID )
+		if( apEntries[i]->m_sEntryID == sUnlockEntryID )
 		{
 			apSongsOut.push_back( apEntries[i]->m_pSong );
 			apDifficultyOut.push_back( apEntries[i]->m_dc );
@@ -704,10 +706,10 @@ class LunaUnlockManager: public Luna<UnlockManager>
 public:
 	LunaUnlockManager() { LUA->Register( Register ); }
 
-	static int FindEntryID( T* p, lua_State *L )			{ RString sName = SArg(1); int i = p->FindEntryID(sName); if( i == -1 ) lua_pushnil(L); else lua_pushnumber(L, i); return 1; }
-	static int UnlockEntryID( T* p, lua_State *L )			{ int iUnlockEntryID = IArg(1); p->UnlockEntryID(iUnlockEntryID); return 0; }
+	static int FindEntryID( T* p, lua_State *L )			{ RString sName = SArg(1); RString s = p->FindEntryID(sName); if( s.empty() ) lua_pushnil(L); else lua_pushstring(L, s); return 1; }
+	static int UnlockEntryID( T* p, lua_State *L )			{ RString sUnlockEntryID = SArg(1); p->UnlockEntryID(sUnlockEntryID); return 0; }
 	static int UnlockEntryIndex( T* p, lua_State *L )		{ int iUnlockEntryID = IArg(1); p->UnlockEntryIndex(iUnlockEntryID); return 0; }
-	static int PreferUnlockEntryID( T* p, lua_State *L )		{ int iUnlockEntryID = IArg(1); p->PreferUnlockEntryID(iUnlockEntryID); return 0; }
+	static int PreferUnlockEntryID( T* p, lua_State *L )		{ RString sUnlockEntryID = SArg(1); p->PreferUnlockEntryID(sUnlockEntryID); return 0; }
 	static int GetNumUnlocks( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetNumUnlocks() ); return 1; }
 	static int GetNumUnlocked( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetNumUnlocked() ); return 1; }
 	static int AnyUnlocksToCelebrate( T* p, lua_State *L )		{ lua_pushboolean( L, p->AnyUnlocksToCelebrate() ); return 1; }
@@ -715,7 +717,7 @@ public:
 	static int GetSongsUnlockedByEntryID( T* p, lua_State *L )
 	{
 		vector<Song *> apSongs;
-		UNLOCKMAN->GetSongsUnlockedByEntryID( apSongs, IArg(1) );
+		UNLOCKMAN->GetSongsUnlockedByEntryID( apSongs, SArg(1) );
 		LuaHelpers::CreateTableFromArray( apSongs, L );
 		return 1;
 	}
@@ -725,7 +727,7 @@ public:
 		// Return the song each steps are associated with, too.
 		vector<Song *> apSongs;
 		vector<Difficulty> apDifficulty;
-		UNLOCKMAN->GetStepsUnlockedByEntryID( apSongs, apDifficulty, IArg(1) );
+		UNLOCKMAN->GetStepsUnlockedByEntryID( apSongs, apDifficulty, SArg(1) );
 		LuaHelpers::CreateTableFromArray( apSongs, L );
 		LuaHelpers::CreateTableFromArray( apDifficulty, L );
 		return 2;

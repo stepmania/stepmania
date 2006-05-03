@@ -86,7 +86,7 @@ public:
 	float GetSongsAndCoursesPercentCompleteAllDifficulties( StepsType st ) const;
 	bool GetDefaultModifiers( const Game* pGameType, RString &sModifiersOut ) const;
 	void SetDefaultModifiers( const Game* pGameType, const RString &sModifiers );
-	bool IsCodeUnlocked( int iCode ) const;
+	bool IsCodeUnlocked( RString sUnlockEntryID ) const;
 	Song *GetMostPopularSong() const;
 	Course *GetMostPopularCourse() const;
 	
@@ -132,7 +132,7 @@ public:
 	int m_iTotalRolls;
 	int m_iTotalMines;
 	int m_iTotalHands;
-	set<int> m_UnlockedEntryIDs;
+	set<RString> m_UnlockedEntryIDs;
 	mutable RString m_sLastPlayedMachineGuid;	// mutable because we overwrite this on save, and I don't want to remove const from the whole save chain. -Chris
 	mutable DateTime m_LastPlayedDate;
 	/* These stats count twice in the machine profile if two players are playing;

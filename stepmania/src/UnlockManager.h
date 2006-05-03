@@ -58,7 +58,7 @@ public:
 
 		ZERO( m_fRequirement );
 		m_bRequirePassHardSteps = false;
-		m_iEntryID = -1;	// -1 == not yet filled.  This will be filled in automatically if not specified.
+		m_sEntryID = "";	// "" means not yet filled.  This will be filled in automatically if not specified.
 	}
 
 	UnlockRewardType m_Type;
@@ -72,7 +72,7 @@ public:
 
 	float	m_fRequirement[NUM_UnlockRequirement];	// unlocked if any of of these are met
 	bool	m_bRequirePassHardSteps;
-	int	m_iEntryID;
+	RString	m_sEntryID;
 
 	bool	IsValid() const;
 	bool	IsLocked() const	{ return GetUnlockEntryStatus() != UnlockEntryStatus_Unlocked; }
@@ -117,20 +117,20 @@ public:
 	void GetPoints( const Profile *pProfile, float fScores[NUM_UnlockRequirement] ) const;
 
 	// Unlock an entry by code.
-	void UnlockEntryID( int iEntryID );
+	void UnlockEntryID( RString sEntryID );
 	void UnlockEntryIndex( int iEntryIndex );
 
 	/*
 	 * If a code is associated with at least one song or course, set the preferred song
 	 * and/or course in GAMESTATE to them.
 	 */
-	void PreferUnlockEntryID( int iEntryID );
+	void PreferUnlockEntryID( RString sEntryID );
 
 	// Unlocks a song.
 	void UnlockSong( const Song *pSong );
 
 	// Return the associated EntryID.
-	int FindEntryID( const RString &sName ) const;
+	RString FindEntryID( const RString &sName ) const;
 
 	// All locked songs are stored here
 	vector<UnlockEntry>	m_UnlockEntries;
@@ -139,8 +139,8 @@ public:
 	void UpdateCachedPointers();
 
 	void GetUnlocksByType( UnlockRewardType t, vector<UnlockEntry *> &apEntries );
-	void GetSongsUnlockedByEntryID( vector<Song *> &apSongsOut, int iEntryID );
-	void GetStepsUnlockedByEntryID( vector<Song *> &apSongsOut, vector<Difficulty> &apStepsOut, int iEntryID );
+	void GetSongsUnlockedByEntryID( vector<Song *> &apSongsOut, RString sEntryID );
+	void GetStepsUnlockedByEntryID( vector<Song *> &apSongsOut, vector<Difficulty> &apStepsOut, RString sEntryID );
 
 	const UnlockEntry *FindSong( const Song *pSong ) const;
 	const UnlockEntry *FindSteps( const Song *pSong, const Steps *pSteps ) const;
@@ -154,7 +154,7 @@ private:
 	// read unlocks
 	void Load();
 	
-	set<int> m_RouletteCodes; // "codes" which are available in roulette and which unlock if rouletted
+	set<RString> m_RouletteCodes; // "codes" which are available in roulette and which unlock if rouletted
 };
 
 extern UnlockManager*	UNLOCKMAN;  // global and accessable from anywhere in program
