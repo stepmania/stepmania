@@ -357,7 +357,8 @@ void ScreenGameplay::Init()
 void ScreenGameplay::Init( bool bUseSongBackgroundAndForeground )
 {
 	PLAYER_TYPE.Load( m_sName, "PlayerType" );
-	GIVE_UP_TEXT.Load( m_sName, "GiveUpText" );
+	GIVE_UP_START_TEXT.Load( m_sName, "GiveUpStartText" );
+	GIVE_UP_BACK_TEXT.Load( m_sName, "GiveUpBackText" );
 	GIVE_UP_ABORTED_TEXT.Load( m_sName, "GiveUpAbortedText" );
 	MUSIC_FADE_OUT_SECONDS.Load( m_sName, "MusicFadeOutSeconds" );
 	START_GIVES_UP.Load( m_sName, "StartGivesUp" );
@@ -2134,7 +2135,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 			}
 			else if( input.type==IET_FIRST_PRESS && m_GiveUpTimer.IsZero() )
 			{
-				m_textDebug.SetText( GIVE_UP_TEXT );
+				m_textDebug.SetText( GIVE_UP_START_TEXT );
 				m_textDebug.StopTweening();
 				m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
 				m_textDebug.BeginTweening( 1/8.f );
@@ -2158,7 +2159,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 			}
 			else if( PREFSMAN->m_bDelayedBack && input.type==IET_FIRST_PRESS )
 			{
-				m_textDebug.SetText( "Continue holding BACK to quit" );
+				m_textDebug.SetText( GIVE_UP_BACK_TEXT );
 				m_textDebug.StopTweening();
 				m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
 				m_textDebug.BeginTweening( 1/8.f );

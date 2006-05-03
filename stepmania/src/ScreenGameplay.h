@@ -119,7 +119,8 @@ public:
 
 protected:
 	ThemeMetric<RString> PLAYER_TYPE;
-	LocalizedString GIVE_UP_TEXT;
+	LocalizedString GIVE_UP_START_TEXT;
+	LocalizedString GIVE_UP_BACK_TEXT;
 	LocalizedString GIVE_UP_ABORTED_TEXT;
 	ThemeMetric<float> MUSIC_FADE_OUT_SECONDS;
 	ThemeMetric<bool> START_GIVES_UP;
