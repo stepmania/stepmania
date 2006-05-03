@@ -40,12 +40,14 @@ SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our progr
 const RString SONGS_DIR			= "/Songs/";
 const RString ADDITIONAL_SONGS_DIR	= "/AdditionalSongs/";
 const RString COURSES_DIR		= "/Courses/";
-const RString EDIT_SUBDIR	= "Edits/";
+const RString EDIT_SUBDIR		= "Edits/";
 
 static const ThemeMetric<RageColor>	EXTRA_COLOR			("SongManager","ExtraColor");
 static const ThemeMetric<int>		EXTRA_COLOR_METER		("SongManager","ExtraColorMeter");
 static const ThemeMetric<bool>		USE_PREFERRED_SORT_COLOR	("SongManager","UsePreferredSortColor");
+static const ThemeMetric<bool>		USE_UNLOCK_COLOR		("SongManager","UseUnlockColor");
 static const ThemeMetric<RageColor>	UNLOCK_COLOR			("SongManager","UnlockColor");
+static const ThemeMetric<bool>		MOVE_UNLOCKS_TO_BOTTOM_OF_PREFERRED_SORT	("SongManager","MoveUnlocksToBottomOfPreferredSort");
 
 RString SONG_GROUP_COLOR_NAME( size_t i )   { return ssprintf("SongGroupColor%i",(int) i+1); }
 RString COURSE_GROUP_COLOR_NAME( size_t i ) { return ssprintf("CourseGroupColor%i",(int) i+1); }
@@ -359,7 +361,7 @@ RageColor SongManager::GetSongColor( const Song* pSong )
 
 	// Use unlock color if applicable
 	const UnlockEntry *pUE = UNLOCKMAN->FindSong( pSong );
-	if( pUE )
+	if( pUE  &&  USE_UNLOCK_COLOR.GetValue() )
 		return UNLOCK_COLOR.GetValue();
 
 
@@ -461,7 +463,7 @@ RageColor SongManager::GetCourseColor( const Course* pCourse )
 {
 	// Use unlock color if applicable
 	const UnlockEntry *pUE = UNLOCKMAN->FindCourse( pCourse );
-	if( pUE )
+	if( pUE  &&  USE_UNLOCK_COLOR.GetValue() )
 		return UNLOCK_COLOR.GetValue();
 
 
@@ -549,6 +551,28 @@ void SongManager::GetPreferredSortCourses( CourseType ct, vector<Course*> &AddTo
 int SongManager::GetNumSongs() const
 {
 	return m_pSongs.size();
+}
+
+int SongManager::GetNumUnlockedSongs() const
+{
+	int num = 0;
+	FOREACH_CONST( Song*, m_pSongs, i )
+	{
+		if( !UNLOCKMAN->SongIsLocked( *i ) )
+			num++;
+	}
+	return num;
+}
+
+int SongManager::GetNumAdditionalSongs() const
+{
+	int num = 0;
+	FOREACH_CONST( Song*, m_pSongs, i )
+	{
+		if( SONGMAN->WasLoadedFromAdditionalSongs( *i ) )
+			num++;
+	}
+	return num;
 }
 
 int SongManager::GetNumSongGroups() const
@@ -1427,37 +1451,40 @@ void SongManager::UpdatePreferredSort()
 			vpSongs.clear();
 		}
 
-		// move all unlock songs to a group at the bottom
-		vector<Song*> vpUnlockSongs;
-		FOREACH( UnlockEntry, UNLOCKMAN->m_UnlockEntries, ue )
+		if( MOVE_UNLOCKS_TO_BOTTOM_OF_PREFERRED_SORT.GetValue() )
 		{
-			if( ue->m_Type == UnlockRewardType_Song )
-				if( ue->m_pSong )
-					vpUnlockSongs.push_back( ue->m_pSong );
-		}
-
-		FOREACH( SongPointerVector, m_vPreferredSongSort, v )
-		{
-			for( int i=v->size()-1; i>=0; i-- )
+			// move all unlock songs to a group at the bottom
+			vector<Song*> vpUnlockSongs;
+			FOREACH( UnlockEntry, UNLOCKMAN->m_UnlockEntries, ue )
 			{
-				Song *pSong = (*v)[i];
-				if( find(vpUnlockSongs.begin(),vpUnlockSongs.end(),pSong) != vpUnlockSongs.end() )
+				if( ue->m_Type == UnlockRewardType_Song )
+					if( ue->m_pSong )
+						vpUnlockSongs.push_back( ue->m_pSong );
+			}
+
+			FOREACH( SongPointerVector, m_vPreferredSongSort, v )
+			{
+				for( int i=v->size()-1; i>=0; i-- )
 				{
-					v->erase( v->begin()+i );
+					Song *pSong = (*v)[i];
+					if( find(vpUnlockSongs.begin(),vpUnlockSongs.end(),pSong) != vpUnlockSongs.end() )
+					{
+						v->erase( v->begin()+i );
+					}
 				}
 			}
+
+			m_vPreferredSongSort.push_back( vpUnlockSongs );
+
+			// prune empty groups
+			for( int i=m_vPreferredSongSort.size()-1; i>=0; i-- )
+				if( m_vPreferredSongSort[i].empty() )
+					m_vPreferredSongSort.erase( m_vPreferredSongSort.begin()+i );
+
+			FOREACH( SongPointerVector, m_vPreferredSongSort, i )
+				FOREACH( Song*, *i, j )
+					ASSERT( *j );
 		}
-
-		m_vPreferredSongSort.push_back( vpUnlockSongs );
-
-		// prune empty groups
-		for( int i=m_vPreferredSongSort.size()-1; i>=0; i-- )
-			if( m_vPreferredSongSort[i].empty() )
-				m_vPreferredSongSort.erase( m_vPreferredSongSort.begin()+i );
-
-		FOREACH( SongPointerVector, m_vPreferredSongSort, i )
-			FOREACH( Song*, *i, j )
-				ASSERT( *j );
 	}
 
 	{
@@ -1498,37 +1525,40 @@ void SongManager::UpdatePreferredSort()
 			vpCourses.clear();
 		}
 
-		// move all unlock Courses to a group at the bottom
-		vector<Course*> vpUnlockCourses;
-		FOREACH( UnlockEntry, UNLOCKMAN->m_UnlockEntries, ue )
+		if( MOVE_UNLOCKS_TO_BOTTOM_OF_PREFERRED_SORT.GetValue() )
 		{
-			if( ue->m_Type == UnlockRewardType_Course )
-				if( ue->m_pCourse )
-					vpUnlockCourses.push_back( ue->m_pCourse );
-		}
-
-		FOREACH( CoursePointerVector, m_vPreferredCourseSort, v )
-		{
-			for( int i=v->size()-1; i>=0; i-- )
+			// move all unlock Courses to a group at the bottom
+			vector<Course*> vpUnlockCourses;
+			FOREACH( UnlockEntry, UNLOCKMAN->m_UnlockEntries, ue )
 			{
-				Course *pCourse = (*v)[i];
-				if( find(vpUnlockCourses.begin(),vpUnlockCourses.end(),pCourse) != vpUnlockCourses.end() )
+				if( ue->m_Type == UnlockRewardType_Course )
+					if( ue->m_pCourse )
+						vpUnlockCourses.push_back( ue->m_pCourse );
+			}
+
+			FOREACH( CoursePointerVector, m_vPreferredCourseSort, v )
+			{
+				for( int i=v->size()-1; i>=0; i-- )
 				{
-					v->erase( v->begin()+i );
+					Course *pCourse = (*v)[i];
+					if( find(vpUnlockCourses.begin(),vpUnlockCourses.end(),pCourse) != vpUnlockCourses.end() )
+					{
+						v->erase( v->begin()+i );
+					}
 				}
 			}
+
+			m_vPreferredCourseSort.push_back( vpUnlockCourses );
+
+			// prune empty groups
+			for( int i=m_vPreferredCourseSort.size()-1; i>=0; i-- )
+				if( m_vPreferredCourseSort[i].empty() )
+					m_vPreferredCourseSort.erase( m_vPreferredCourseSort.begin()+i );
+
+			FOREACH( CoursePointerVector, m_vPreferredCourseSort, i )
+				FOREACH( Course*, *i, j )
+					ASSERT( *j );
 		}
-
-		m_vPreferredCourseSort.push_back( vpUnlockCourses );
-
-		// prune empty groups
-		for( int i=m_vPreferredCourseSort.size()-1; i>=0; i-- )
-			if( m_vPreferredCourseSort[i].empty() )
-				m_vPreferredCourseSort.erase( m_vPreferredCourseSort.begin()+i );
-
-		FOREACH( CoursePointerVector, m_vPreferredCourseSort, i )
-			FOREACH( Course*, *i, j )
-				ASSERT( *j );
 	}
 }
 
@@ -1702,6 +1732,8 @@ public:
 	static int GetRandomSong( T* p, lua_State *L )	{ Song *pS = p->GetRandomSong(); if(pS) pS->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int GetRandomCourse( T* p, lua_State *L ){ Course *pC = p->GetRandomCourse(); if(pC) pC->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int GetNumSongs( T* p, lua_State *L )    { lua_pushnumber( L, p->GetNumSongs() ); return 1; }
+	static int GetNumUnlockedSongs( T* p, lua_State *L )    { lua_pushnumber( L, p->GetNumUnlockedSongs() ); return 1; }
+	static int GetNumAdditionalSongs( T* p, lua_State *L )    { lua_pushnumber( L, p->GetNumAdditionalSongs() ); return 1; }
 	static int GetNumSongGroups( T* p, lua_State *L ) { lua_pushnumber( L, p->GetNumSongGroups() ); return 1; }
 	static int GetNumCourses( T* p, lua_State *L )  { lua_pushnumber( L, p->GetNumCourses() ); return 1; }
 	static int GetNumCourseGroups( T* p, lua_State *L ) { lua_pushnumber( L, p->GetNumCourseGroups() ); return 1; }
@@ -1724,6 +1756,8 @@ public:
 		ADD_METHOD( GetRandomSong );
 		ADD_METHOD( GetRandomCourse );
 		ADD_METHOD( GetNumSongs );
+		ADD_METHOD( GetNumUnlockedSongs );
+		ADD_METHOD( GetNumAdditionalSongs );
 		ADD_METHOD( GetNumSongGroups );
 		ADD_METHOD( GetNumCourses );
 		ADD_METHOD( GetNumCourseGroups );
