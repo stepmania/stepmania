@@ -39,6 +39,11 @@ enum UnlockRewardType {
 const RString& UnlockRewardTypeToString( UnlockRewardType i );
 const RString& UnlockRewardTypeToLocalizedString( UnlockRewardType i );
 
+enum UnlockEntryStatus {
+	UnlockEntryStatus_RequrementsNotMet, 
+	UnlockEntryStatus_RequirementsMet, 
+	UnlockEntryStatus_Unlocked, 
+};
 
 class UnlockEntry
 {
@@ -70,8 +75,9 @@ public:
 	int	m_iEntryID;
 
 	bool	IsValid() const;
-	bool	IsRequirementMet() const;
-	bool	IsLocked() const;
+	bool	IsLocked() const	{ return GetUnlockEntryStatus() != UnlockEntryStatus_Unlocked; }
+	//bool	IsUnlocked() const { return !IsLocked(); }
+	UnlockEntryStatus GetUnlockEntryStatus() const;
 	RString	GetModifier() const { return m_cmd.GetArg(1).s; }
 	RString	GetDescription() const;
 	RString	GetBannerFile() const;
@@ -104,7 +110,7 @@ public:
 
 	// Gets number of unlocks for title screen
 	int GetNumUnlocks() const;
-	bool AnyRequirementsAreMet() const;
+	int GetNumUnlocked() const;
 	int GetUnlockEntryIndexToCelebrate() const;
 	bool AnyUnlocksToCelebrate() const;
 

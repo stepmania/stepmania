@@ -1,14 +1,22 @@
 #include "global.h"
 #include "ScreenUnlockCelebrate.h"
 #include "UnlockManager.h"
+#include "LuaFunctions.h"
 
 
 REGISTER_SCREEN_CLASS( ScreenUnlockCelebrate );
+
+static int g_iUnlockEntryIndexToCelebrate = 0;
+
+LuaFunction( GetUnlockEntryIndexToCelebrate, g_iUnlockEntryIndexToCelebrate );
 
 void ScreenUnlockCelebrate::Init()
 {
 	// We shouldn't be called if there aren't any unlocks to celebrate
 	ASSERT( UNLOCKMAN->AnyUnlocksToCelebrate() );
+
+	g_iUnlockEntryIndexToCelebrate = UNLOCKMAN->GetUnlockEntryIndexToCelebrate();
+	UNLOCKMAN->UnlockEntryIndex( g_iUnlockEntryIndexToCelebrate );
 
 	ScreenUnlockBrowse::Init();
 }
@@ -31,10 +39,6 @@ void ScreenUnlockCelebrate::MenuDown( const InputEventPlus &input )
 
 void ScreenUnlockCelebrate::MenuStart( PlayerNumber pn )
 {
-	// Mark this unlock as celebrated
-	int iUnlockIndex = UNLOCKMAN->GetUnlockEntryIndexToCelebrate();
-	UNLOCKMAN->UnlockEntryIndex( iUnlockIndex );
-
 	ScreenUnlockBrowse::MenuStart( pn );
 }
 

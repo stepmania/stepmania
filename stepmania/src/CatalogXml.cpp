@@ -127,7 +127,7 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 		int iNumUnlockedCourses = 0;
 		FOREACH_CONST( UnlockEntry, UNLOCKMAN->m_UnlockEntries, e )
 		{
-			if( e->IsLocked() )
+			if( e->GetUnlockEntryStatus() == UnlockEntryStatus_Unlocked )
 				continue;
 			switch( e->m_Type )
 			{

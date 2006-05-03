@@ -292,14 +292,17 @@ bool UnlockEntry::IsValid() const
 	}
 }
 
-bool UnlockEntry::IsRequirementMet() const
+UnlockEntryStatus UnlockEntry::GetUnlockEntryStatus() const
 {
+	if( m_iEntryID != -1 && PROFILEMAN->GetMachineProfile()->m_UnlockedEntryIDs.find(m_iEntryID) != PROFILEMAN->GetMachineProfile()->m_UnlockedEntryIDs.end() )
+		return UnlockEntryStatus_Unlocked;
+
 	float fScores[NUM_UnlockRequirement];
 	UNLOCKMAN->GetPoints( PROFILEMAN->GetMachineProfile(), fScores );
 
 	for( int i = 0; i < NUM_UnlockRequirement; ++i )
 		if( m_fRequirement[i] && fScores[i] >= m_fRequirement[i] )
-			return true;
+			return UnlockEntryStatus_RequirementsMet;
 
 	if( m_bRequirePassHardSteps && m_pSong )
 	{
@@ -311,18 +314,11 @@ bool UnlockEntry::IsRequirementMet() const
 			);
 		FOREACH_CONST( Steps*, vp, s )
 			if( PROFILEMAN->GetMachineProfile()->HasPassedSteps( m_pSong, *s ) )
-				return true;
+				return UnlockEntryStatus_RequirementsMet;
 	}
 
-	return false;
-}
 
-bool UnlockEntry::IsLocked() const
-{
-	if( m_iEntryID != -1 && PROFILEMAN->GetMachineProfile()->m_UnlockedEntryIDs.find(m_iEntryID) != PROFILEMAN->GetMachineProfile()->m_UnlockedEntryIDs.end() )
-		return false;
-
-	return true;
+	return UnlockEntryStatus_RequrementsNotMet;
 }
 
 RString UnlockEntry::GetDescription() const
@@ -616,21 +612,22 @@ int UnlockManager::GetNumUnlocks() const
 	return m_UnlockEntries.size();
 }
 
-bool UnlockManager::AnyRequirementsAreMet() const
+int UnlockManager::GetNumUnlocked() const
 {
+	int count = 0;
 	FOREACH_CONST( UnlockEntry, m_UnlockEntries, ue )
 	{
-		if( ue->IsRequirementMet() )
-			return true;
+		if( ue->GetUnlockEntryStatus() == UnlockEntryStatus_Unlocked )
+			count++;
 	}
-	return false;
+	return count;
 }
 
 int UnlockManager::GetUnlockEntryIndexToCelebrate() const
 {
 	FOREACH_CONST( UnlockEntry, m_UnlockEntries, ue )
 	{
-		if( ue->IsRequirementMet()  &&  ue->IsLocked() )
+		if( ue->GetUnlockEntryStatus() == UnlockEntryStatus_RequirementsMet )
 			return ue - m_UnlockEntries.begin();
 	}
 	return -1;
@@ -683,7 +680,6 @@ public:
 	LunaUnlockEntry() { LUA->Register( Register ); }
 
 	static int IsLocked( T* p, lua_State *L )		{ lua_pushboolean(L, p->IsLocked() ); return 1; }
-	static int IsRequirementMet( T* p, lua_State *L )	{ lua_pushboolean(L, p->IsRequirementMet() ); return 1; }
 	static int GetDescription( T* p, lua_State *L )		{ lua_pushstring(L, p->GetDescription() ); return 1; }
 	static int GetUnlockRewardType( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_Type ); return 1; }
 	static int GetRequirement( T* p, lua_State *L )		{ UnlockRequirement i = (UnlockRequirement)IArg(1); lua_pushnumber(L, p->m_fRequirement[i] ); return 1; }
@@ -692,7 +688,6 @@ public:
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( IsLocked );
-		ADD_METHOD( IsRequirementMet );
 		ADD_METHOD( GetDescription );
 		ADD_METHOD( GetUnlockRewardType );
 		ADD_METHOD( GetRequirement );
@@ -714,8 +709,7 @@ public:
 	static int UnlockEntryIndex( T* p, lua_State *L )		{ int iUnlockEntryID = IArg(1); p->UnlockEntryIndex(iUnlockEntryID); return 0; }
 	static int PreferUnlockEntryID( T* p, lua_State *L )		{ int iUnlockEntryID = IArg(1); p->PreferUnlockEntryID(iUnlockEntryID); return 0; }
 	static int GetNumUnlocks( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetNumUnlocks() ); return 1; }
-	static int AnyRequirementsAreMet( T* p, lua_State *L )		{ lua_pushboolean( L, p->AnyRequirementsAreMet() ); return 1; }
-	static int GetUnlockEntryIndexToCelebrate( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetUnlockEntryIndexToCelebrate() ); return 1; }
+	static int GetNumUnlocked( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetNumUnlocked() ); return 1; }
 	static int AnyUnlocksToCelebrate( T* p, lua_State *L )		{ lua_pushboolean( L, p->AnyUnlocksToCelebrate() ); return 1; }
 	static int GetUnlockEntry( T* p, lua_State *L )			{ int iIndex = IArg(1); p->m_UnlockEntries[iIndex].PushSelf(L); return 1; }
 	static int GetSongsUnlockedByEntryID( T* p, lua_State *L )
@@ -744,8 +738,7 @@ public:
 		ADD_METHOD( UnlockEntryIndex );
 		ADD_METHOD( PreferUnlockEntryID );
 		ADD_METHOD( GetNumUnlocks );
-		ADD_METHOD( AnyRequirementsAreMet );
-		ADD_METHOD( GetUnlockEntryIndexToCelebrate );
+		ADD_METHOD( GetNumUnlocked );
 		ADD_METHOD( AnyUnlocksToCelebrate );
 		ADD_METHOD( GetUnlockEntry );
 		ADD_METHOD( GetSongsUnlockedByEntryID );
