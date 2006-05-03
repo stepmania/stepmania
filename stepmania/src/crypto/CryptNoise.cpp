@@ -30,7 +30,12 @@ void noise_get_heavy(void (*func) (void *, int))
 	if( hProv == NULL )
 	{
 		if( !CryptAcquireContext(&hProv, NULL, NULL, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT) )
-			RageException::Throw( "CryptAcquireContext" );
+		{
+			char buf[1024] = "";
+			FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM,
+				0, GetLastError(), 0, buf, sizeof(buf), NULL);
+			RageException::Throw( "CryptAcquireContext: %s", buf );
+		}
 	}
 
 	char buf[2048];
