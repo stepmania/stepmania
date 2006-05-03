@@ -10,7 +10,8 @@
 static SubscriptionManager<IPreference> m_Subscribers;
 
 IPreference::IPreference( const RString& sName ):
-	m_sName( sName )
+	m_sName( sName ),
+	m_bLoadedFromStatic( false )
 {
 	m_Subscribers.Subscribe( this );
 }
