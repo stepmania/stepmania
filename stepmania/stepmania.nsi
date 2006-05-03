@@ -21,23 +21,28 @@
 	!system "echo This may take a moment ..." ignore
 	; upx isn't working with VC++2003 executables.  Disable temporarily.  ;!system "utils\upx Program\*.exe Program\*.dll" ignore
 
-	Name "${PRODUCT_ID_VER}"
-	OutFile "${PRODUCT_ID_VER}.exe"
+	Name "${PRODUCT_DISPLAY}"
+	OutFile "${PRODUCT_DISPLAY}.exe"
 
-	Caption "${PRODUCT_ID_VER}"
-	UninstallCaption "${PRODUCT_ID_VER}"
+	Caption "${PRODUCT_DISPLAY}"
+	UninstallCaption "${PRODUCT_DISPLAY}"
 
 	; Some default compiler settings (uncomment and change at will):
 	SetCompress auto ; (can be off or force)
 	SetDatablockOptimize on ; (can be off)
-	CRCCheck on ; (can be off)
+!ifdef CRC_CHECK
+	CRCCheck on;
+!else
+	CRCCheck off;
+!endif
+	
 	AutoCloseWindow true ; (can be true for the window go away automatically at end)
 	; ShowInstDetails hide ; (can be show to have them shown, or nevershow to disable)
 	SetDateSave on ; (can be on to have files restored to their orginal date)
 	InstallDir "$PROGRAMFILES\${PRODUCT_ID}"
 	InstallDirRegKey HKEY_LOCAL_MACHINE "SOFTWARE\${PRODUCT_ID}" ""
 	; DirShow show ; (make this hide to not let the user change it)
-	DirText "${PRODUCT_ID_VER}"
+	DirText "${PRODUCT_DISPLAY}"
 	InstallColors /windows
 	InstProgressFlags smooth
 
@@ -62,7 +67,7 @@
 ;Pages
 
 !ifdef SHOW_AUTORUN
-	Page custom ShowCustom LeaveCustom
+	Page custom ShowAutorun LeaveAutorun
 !endif
 
 	;!insertmacro MUI_PAGE_LICENSE "${NSISDIR}\Docs\Modern UI\License.txt"
@@ -157,62 +162,62 @@ FunctionEnd
 ;Installer Sections
 
 LangString TEXT_IO_CHECK_FOR_UPDATES		${LANG_ENGLISH} "Check for Updates"
-LangString TEXT_IO_RUN						${LANG_ENGLISH} "${PRODUCT_ID_VER}"
+LangString TEXT_IO_RUN						${LANG_ENGLISH} "${PRODUCT_DISPLAY}"
 LangString TEXT_IO_OPEN_PROGRAM_FOLDER		${LANG_ENGLISH} "Open ${PRODUCT_ID} Program Folder"
 LangString TEXT_IO_MANUAL					${LANG_ENGLISH} "${PRODUCT_ID} Manual"
 LangString TEXT_IO_TOOLS					${LANG_ENGLISH} "${PRODUCT_ID} Tools"
 LangString TEXT_IO_WEB_SITE					${LANG_ENGLISH} "${PRODUCT_ID} Web Site"
-LangString TEXT_IO_UNINSTALL				${LANG_ENGLISH} "Uninstall ${PRODUCT_ID_VER}"
+LangString TEXT_IO_UNINSTALL				${LANG_ENGLISH} "Uninstall ${PRODUCT_DISPLAY}"
 LangString TEXT_IO_VIEW_STATISTICS			${LANG_ENGLISH} "View Statistics"
-LangString TEXT_IO_REMOVE_ONLY				${LANG_ENGLISH} "${PRODUCT_ID_VER} (remove only)"
+LangString TEXT_IO_REMOVE_ONLY				${LANG_ENGLISH} "${PRODUCT_DISPLAY} (remove only)"
 LangString TEXT_IO_SMZIP_PACKAGE			${LANG_ENGLISH} "SMZIP package"
 LangString TEXT_IO_FATAL_ERROR_COPYING_PCK	${LANG_ENGLISH} "Fatal error copying pck files."
 LangString TEXT_IO_FATAL_ERROR_INSTALL		${LANG_ENGLISH} "Fatal error during install."
 LangString TEXT_IO_CHECK_FOR_UPDATES		${LANG_FRENCH} "Vérifier les mises à jour"
-LangString TEXT_IO_RUN						${LANG_FRENCH} "${PRODUCT_ID_VER}"
+LangString TEXT_IO_RUN						${LANG_FRENCH} "${PRODUCT_DISPLAY}"
 LangString TEXT_IO_OPEN_PROGRAM_FOLDER		${LANG_FRENCH} "Open ${PRODUCT_ID} Program Folder"
 LangString TEXT_IO_MANUAL					${LANG_FRENCH} "Documentation de ${PRODUCT_ID}"
 LangString TEXT_IO_TOOLS					${LANG_FRENCH} "d'Outils de ${PRODUCT_ID}"
 LangString TEXT_IO_WEB_SITE					${LANG_FRENCH} "Le site web de ${PRODUCT_ID}"
-LangString TEXT_IO_UNINSTALL				${LANG_FRENCH} "Désinstaller ${PRODUCT_ID_VER}"
+LangString TEXT_IO_UNINSTALL				${LANG_FRENCH} "Désinstaller ${PRODUCT_DISPLAY}"
 LangString TEXT_IO_VIEW_STATISTICS			${LANG_FRENCH} "Voir les statistiques"
-LangString TEXT_IO_REMOVE_ONLY				${LANG_FRENCH} "${PRODUCT_ID_VER} (Supprimer uniquement)"
+LangString TEXT_IO_REMOVE_ONLY				${LANG_FRENCH} "${PRODUCT_DISPLAY} (Supprimer uniquement)"
 LangString TEXT_IO_SMZIP_PACKAGE			${LANG_FRENCH} "SMZIP package"
 LangString TEXT_IO_FATAL_ERROR_COPYING_PCK	${LANG_FRENCH} "Fatal error copying pck files."
 LangString TEXT_IO_FATAL_ERROR_INSTALL		${LANG_FRENCH} "Fatal error during install."
 LangString TEXT_IO_CHECK_FOR_UPDATES		${LANG_GERMAN} "Updates zu überprüfen"
-LangString TEXT_IO_RUN						${LANG_GERMAN} "${PRODUCT_ID_VER}"
+LangString TEXT_IO_RUN						${LANG_GERMAN} "${PRODUCT_DISPLAY}"
 LangString TEXT_IO_OPEN_PROGRAM_FOLDER		${LANG_GERMAN} "Open ${PRODUCT_ID} Program Folder"
 LangString TEXT_IO_MANUAL					${LANG_GERMAN} "${PRODUCT_ID} Dokumentation"
 LangString TEXT_IO_TOOLS					${LANG_GERMAN} "${PRODUCT_ID} Werkzeug"
 LangString TEXT_IO_WEB_SITE					${LANG_GERMAN} "${PRODUCT_ID} Webseite"
-LangString TEXT_IO_UNINSTALL				${LANG_GERMAN} "Deinstallation von ${PRODUCT_ID_VER}"
+LangString TEXT_IO_UNINSTALL				${LANG_GERMAN} "Deinstallation von ${PRODUCT_DISPLAY}"
 LangString TEXT_IO_VIEW_STATISTICS			${LANG_GERMAN} "Statistiken anschauen"
-LangString TEXT_IO_REMOVE_ONLY				${LANG_GERMAN} "${PRODUCT_ID_VER} (Nur entfernen)"
+LangString TEXT_IO_REMOVE_ONLY				${LANG_GERMAN} "${PRODUCT_DISPLAY} (Nur entfernen)"
 LangString TEXT_IO_SMZIP_PACKAGE			${LANG_GERMAN} "SMZIP package"
 LangString TEXT_IO_FATAL_ERROR_COPYING_PCK	${LANG_GERMAN} "Fatal error copying pck files."
 LangString TEXT_IO_FATAL_ERROR_INSTALL		${LANG_GERMAN} "Fatal error during install."
 LangString TEXT_IO_CHECK_FOR_UPDATES		${LANG_SPANISH} "Compruebe para actualizaciones"
-LangString TEXT_IO_RUN						${LANG_SPANISH} "${PRODUCT_ID_VER}"
+LangString TEXT_IO_RUN						${LANG_SPANISH} "${PRODUCT_DISPLAY}"
 LangString TEXT_IO_OPEN_PROGRAM_FOLDER		${LANG_SPANISH} "Open ${PRODUCT_ID} Program Folder"
 LangString TEXT_IO_MANUAL					${LANG_SPANISH} "${PRODUCT_ID} Documenatione"
 LangString TEXT_IO_TOOLS					${LANG_SPANISH} "${PRODUCT_ID} Herramientas"
 LangString TEXT_IO_WEB_SITE					${LANG_SPANISH} "${PRODUCT_ID} Web Site"
-LangString TEXT_IO_UNINSTALL				${LANG_SPANISH} "Uninstall ${PRODUCT_ID_VER}"
+LangString TEXT_IO_UNINSTALL				${LANG_SPANISH} "Uninstall ${PRODUCT_DISPLAY}"
 LangString TEXT_IO_VIEW_STATISTICS			${LANG_SPANISH} "Vea la estadística"
-LangString TEXT_IO_REMOVE_ONLY				${LANG_SPANISH} "${PRODUCT_ID_VER} (Quite solamente)"
+LangString TEXT_IO_REMOVE_ONLY				${LANG_SPANISH} "${PRODUCT_DISPLAY} (Quite solamente)"
 LangString TEXT_IO_SMZIP_PACKAGE			${LANG_SPANISH} "SMZIP package"
 LangString TEXT_IO_FATAL_ERROR_COPYING_PCK	${LANG_SPANISH} "Fatal error copying pck files."
 LangString TEXT_IO_FATAL_ERROR_INSTALL		${LANG_SPANISH} "Fatal error during install."
 LangString TEXT_IO_CHECK_FOR_UPDATES		${LANG_ITALIAN} "Per cercare aggiornamenti"
-LangString TEXT_IO_RUN						${LANG_ITALIAN} "${PRODUCT_ID_VER}"
+LangString TEXT_IO_RUN						${LANG_ITALIAN} "${PRODUCT_DISPLAY}"
 LangString TEXT_IO_OPEN_PROGRAM_FOLDER		${LANG_ITALIAN} "Open ${PRODUCT_ID} Program Folder"
 LangString TEXT_IO_MANUAL					${LANG_ITALIAN} "${PRODUCT_ID} Documentazione"
 LangString TEXT_IO_TOOLS					${LANG_ITALIAN} "${PRODUCT_ID} Strumenti"
 LangString TEXT_IO_WEB_SITE					${LANG_ITALIAN} "${PRODUCT_ID} Sito Web"
-LangString TEXT_IO_UNINSTALL				${LANG_ITALIAN} "Disinstalla ${PRODUCT_ID_VER}"
+LangString TEXT_IO_UNINSTALL				${LANG_ITALIAN} "Disinstalla ${PRODUCT_DISPLAY}"
 LangString TEXT_IO_VIEW_STATISTICS			${LANG_ITALIAN} "Mostra Statistiche"
-LangString TEXT_IO_REMOVE_ONLY				${LANG_ITALIAN} "${PRODUCT_ID_VER} (Elimina soltanto)"
+LangString TEXT_IO_REMOVE_ONLY				${LANG_ITALIAN} "${PRODUCT_DISPLAY} (Elimina soltanto)"
 LangString TEXT_IO_SMZIP_PACKAGE			${LANG_ITALIAN} "SMZIP package"
 LangString TEXT_IO_FATAL_ERROR_COPYING_PCK	${LANG_ITALIAN} "Fatal error copying pck files."
 LangString TEXT_IO_FATAL_ERROR_INSTALL		${LANG_ITALIAN} "Fatal error during install."
@@ -223,14 +228,17 @@ Section "Main Section" SecMain
 	SetOutPath "$INSTDIR"
 	AllowSkipFiles off
 	SetOverwrite on
+
+!ifdef FULL_VERSION_INSTALL
 	WriteUninstaller "$INSTDIR\uninstall.exe"
 
 	; add registry entries
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\${PRODUCT_ID}" "" "$INSTDIR"
 	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "DisplayName" "$(TEXT_IO_REMOVE_ONLY)"
 	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "UninstallString" '"$INSTDIR\uninstall.exe"'
+!endif
 
-!ifdef INSTALL_TYPE_EXTERNAL_PCKS
+!ifdef INSTALL_EXTERNAL_PCKS
 	; Do this copy before anything else.  It's the most likely to fail.  
 	; Possible failure reasons are: scratched CD, user tried to copy the installer but forgot the pcks.
 	CreateDirectory $INSTDIR\pcks
@@ -251,7 +259,7 @@ Section "Main Section" SecMain
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\.smzip" "" "smzipfile"
 !endif
 
-!ifdef INSTALL_TYPE_NON_PCK_DATA
+!ifdef INSTALL_NON_PCK_FILES
 	CreateDirectory "$INSTDIR\Announcers"
 	SetOutPath "$INSTDIR\Announcers"
 	File "Announcers\instructions.txt"
@@ -337,7 +345,7 @@ Section "Main Section" SecMain
 	File "Data\*.*"
 !endif
 
-!ifdef INSTALL_TYPE_INTERNAL_PCKS
+!ifdef INSTALL_INTERNAL_PCKS
 	CreateDirectory "$INSTDIR\pcks"
 	SetOutPath "$INSTDIR\pcks"
 	File "pcks\*.*"
@@ -347,10 +355,11 @@ Section "Main Section" SecMain
 	File "Program\${PRODUCT_FAMILY}.exe"
 	File "Program\${PRODUCT_FAMILY}.vdi"
 	File "Program\tools.exe"
-	File "Program\mfc71.dll"
 !ifdef ASSOCIATE_SMZIP
 	Call RefreshShellIcons
 !endif
+!ifdef FULL_VERSION_INSTALL
+	File "Program\mfc71.dll"
 	File "Program\msvcr71.dll"
 	File "Program\msvcp71.dll"
 	File "Program\jpeg.dll"
@@ -374,19 +383,20 @@ Section "Main Section" SecMain
 	CreateDirectory "$SMPROGRAMS\${PRODUCT_ID}\"
 	CreateShortCut "$DESKTOP\$(TEXT_IO_RUN).lnk" "$INSTDIR\Program\${PRODUCT_FAMILY}.exe"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_RUN).lnk" "$INSTDIR\Program\${PRODUCT_FAMILY}.exe"
-!ifdef MAKE_OPEN_PROGRAM_FOLDER_SHORTCUT
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_OPEN_PROGRAM_FOLDER).lnk" "$WINDIR\explorer.exe" "$INSTDIR\"
-!endif
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_VIEW_STATISTICS).lnk" "$INSTDIR\Program\tools.exe" "--machine-profile-stats"
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_TOOLS).lnk" "$INSTDIR\Program\tools.exe"
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_MANUAL).lnk" "$INSTDIR\Manual\index.html"
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_UNINSTALL).lnk" "$INSTDIR\uninstall.exe"
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_WEB_SITE).lnk" "${PRODUCT_URL}"
-!ifdef MAKE_UPDATES_SHORTCUT
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_CHECK_FOR_UPDATES).lnk" "${UPDATES_URL}"
-!endif
+	!ifdef MAKE_OPEN_PROGRAM_FOLDER_SHORTCUT
+		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_OPEN_PROGRAM_FOLDER).lnk" "$WINDIR\explorer.exe" "$INSTDIR\"
+	!endif
+		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_VIEW_STATISTICS).lnk" "$INSTDIR\Program\tools.exe" "--machine-profile-stats"
+		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_TOOLS).lnk" "$INSTDIR\Program\tools.exe"
+		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_MANUAL).lnk" "$INSTDIR\Manual\index.html"
+		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_UNINSTALL).lnk" "$INSTDIR\uninstall.exe"
+		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_WEB_SITE).lnk" "${PRODUCT_URL}"
+	!ifdef MAKE_UPDATES_SHORTCUT
+		CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\$(TEXT_IO_CHECK_FOR_UPDATES).lnk" "${UPDATES_URL}"
+	!endif
 
 	CreateShortCut "$INSTDIR\${PRODUCT_ID}.lnk" "$INSTDIR\Program\${PRODUCT_FAMILY}.exe"
+!endif
 
 	IfErrors do_error do_no_error
 	do_error:
@@ -401,27 +411,27 @@ SectionEnd
 ;--------------------------------
 ;Installer Functions
 
-LangString TEXT_IO_TITLE		${LANG_ENGLISH} "${PRODUCT_ID_VER}"
+LangString TEXT_IO_TITLE		${LANG_ENGLISH} "${PRODUCT_DISPLAY}"
 LangString TEXT_IO_SUBTITLE		${LANG_ENGLISH} " "
 LangString TEXT_IO_INSTALL		${LANG_ENGLISH} "Install"
 LangString TEXT_IO_PLAY			${LANG_ENGLISH} "Play"
 LangString TEXT_IO_REINSTALL	${LANG_ENGLISH} "Reinstall"
-LangString TEXT_IO_TITLE		${LANG_FRENCH} "${PRODUCT_ID_VER}"
+LangString TEXT_IO_TITLE		${LANG_FRENCH} "${PRODUCT_DISPLAY}"
 LangString TEXT_IO_SUBTITLE		${LANG_FRENCH} " "
 LangString TEXT_IO_INSTALL		${LANG_FRENCH} "Installer"
 LangString TEXT_IO_PLAY			${LANG_FRENCH} "Jouer"
 LangString TEXT_IO_REINSTALL	${LANG_FRENCH} "Réinstaller"
-LangString TEXT_IO_TITLE		${LANG_GERMAN} "${PRODUCT_ID_VER}"
+LangString TEXT_IO_TITLE		${LANG_GERMAN} "${PRODUCT_DISPLAY}"
 LangString TEXT_IO_SUBTITLE		${LANG_GERMAN} " "
 LangString TEXT_IO_INSTALL		${LANG_GERMAN} "Installieren"
 LangString TEXT_IO_PLAY			${LANG_GERMAN} "Spielen"
 LangString TEXT_IO_REINSTALL	${LANG_GERMAN} "Noch mal installieren"
-LangString TEXT_IO_TITLE		${LANG_SPANISH} "${PRODUCT_ID_VER}"
+LangString TEXT_IO_TITLE		${LANG_SPANISH} "${PRODUCT_DISPLAY}"
 LangString TEXT_IO_SUBTITLE		${LANG_SPANISH} " "
 LangString TEXT_IO_INSTALL		${LANG_SPANISH} "Instale"
 LangString TEXT_IO_PLAY			${LANG_SPANISH} "Juego"
 LangString TEXT_IO_REINSTALL	${LANG_SPANISH} "Reinstálese"
-LangString TEXT_IO_TITLE		${LANG_ITALIAN} "${PRODUCT_ID_VER}"
+LangString TEXT_IO_TITLE		${LANG_ITALIAN} "${PRODUCT_DISPLAY}"
 LangString TEXT_IO_SUBTITLE		${LANG_ITALIAN} " "
 LangString TEXT_IO_INSTALL		${LANG_ITALIAN} "Installa"
 LangString TEXT_IO_PLAY			${LANG_ITALIAN} "Gioca"
@@ -430,7 +440,7 @@ LangString TEXT_IO_REINSTALL	${LANG_ITALIAN} "Re-installa"
 !ifdef SHOW_AUTORUN
 Var hwnd ; Window handle of the custom page
 
-Function ShowCustom
+Function ShowAutorun
 
 	!insertmacro MUI_HEADER_TEXT "$(TEXT_IO_TITLE)" "$(TEXT_IO_SUBTITLE)"
 	
@@ -475,7 +485,7 @@ LangString TEXT_IO_COULD_NOT_EXECUTE	${LANG_GERMAN} "Konnte $INSTDIR\Program\${P
 LangString TEXT_IO_COULD_NOT_EXECUTE	${LANG_SPANISH} "$INSTDIR\Program\${PRODUCT_FAMILY}.exe No podía ejecutarse"
 LangString TEXT_IO_COULD_NOT_EXECUTE	${LANG_ITALIAN} "Impossibile eseguire $INSTDIR\Program\${PRODUCT_FAMILY}.exe"
 
-Function LeaveCustom
+Function LeaveAutorun
 
 	; At this point the user has either pressed Next or one of our custom buttons
 	; We find out which by reading from the INI file
@@ -528,69 +538,71 @@ LangString TEXT_IO_INSTALL_DIRECTX					${LANG_ITALIAN} "Si consiglia vivamente d
 
 Function PreInstall
 
-	; force uninstall of previous version using NSIS
-	; We need to wait until the uninstaller finishes before continuing, since it's possible
-	; to click the next button again before the uninstaller's window appears and takes focus.
-	; This is tricky: we can't just ExecWait the uninstaller, since it copies off the uninstaller
-	; EXE and exec's that (otherwise it couldn't delete itself), so it appears to exit immediately.
-	; We need to copy it off ourself, run it with the hidden parameter to tell it it's a copy,
-	; and then delete the copy ourself.  There's one more trick: the hidden parameter changed
-	; between NSIS 1 and 2: in 1.x it was _=C:\Foo, in 2.x it's _?=C:\Foo.  Rename the installer
-	; for newer versions, so we can tell the difference: "uninst.exe" is the old 1.x uninstaller,
-	; "uninstall.exe" is 2.x.
-	StrCpy $R1 "$INSTDIR\uninst.exe"
-	StrCpy $R2 "_="
-	IfFileExists "$R1" prompt_uninstall_nsis
-	StrCpy $R1 "$INSTDIR\uninstall.exe"
-	StrCpy $R2 "_?="
-	IfFileExists "$R1" prompt_uninstall_nsis old_nsis_not_installed
+!ifdef FULL_VERSION_INSTALL
+		; force uninstall of previous version using NSIS
+		; We need to wait until the uninstaller finishes before continuing, since it's possible
+		; to click the next button again before the uninstaller's window appears and takes focus.
+		; This is tricky: we can't just ExecWait the uninstaller, since it copies off the uninstaller
+		; EXE and exec's that (otherwise it couldn't delete itself), so it appears to exit immediately.
+		; We need to copy it off ourself, run it with the hidden parameter to tell it it's a copy,
+		; and then delete the copy ourself.  There's one more trick: the hidden parameter changed
+		; between NSIS 1 and 2: in 1.x it was _=C:\Foo, in 2.x it's _?=C:\Foo.  Rename the installer
+		; for newer versions, so we can tell the difference: "uninst.exe" is the old 1.x uninstaller,
+		; "uninstall.exe" is 2.x.
+		StrCpy $R1 "$INSTDIR\uninst.exe"
+		StrCpy $R2 "_="
+		IfFileExists "$R1" prompt_uninstall_nsis
+		StrCpy $R1 "$INSTDIR\uninstall.exe"
+		StrCpy $R2 "_?="
+		IfFileExists "$R1" prompt_uninstall_nsis old_nsis_not_installed
 
-	prompt_uninstall_nsis:
-	MessageBox MB_YESNO|MB_ICONINFORMATION "$(TEXT_IO_UNINSTALL_PREVIOUS)" IDYES do_uninstall_nsis
-	Abort
+		prompt_uninstall_nsis:
+		MessageBox MB_YESNO|MB_ICONINFORMATION "$(TEXT_IO_UNINSTALL_PREVIOUS)" IDYES do_uninstall_nsis
+		Abort
 
-	do_uninstall_nsis:
-	GetTempFileName $R3
-	CopyFiles /SILENT $R1 $R3
-	ExecWait '$R3 $R2$INSTDIR' $R4
-	; Delete the copy of the installer.
-	Delete $R3
+		do_uninstall_nsis:
+		GetTempFileName $R3
+		CopyFiles /SILENT $R1 $R3
+		ExecWait '$R3 $R2$INSTDIR' $R4
+		; Delete the copy of the installer.
+		Delete $R3
 
-	; $R4 is the exit value of the uninstaller.  0 means success, anything else is
-	; failure (eg. aborted).
-	IntCmp $R4 0 old_nsis_not_installed ; jump if 0
+		; $R4 is the exit value of the uninstaller.  0 means success, anything else is
+		; failure (eg. aborted).
+		IntCmp $R4 0 old_nsis_not_installed ; jump if 0
 
-	MessageBox MB_YESNO|MB_DEFBUTTON2|MB_ICONINFORMATION "$(TEXT_IO_UNINSTALL_FAILED_INSTALL_ANYWAY)" IDYES old_nsis_not_installed
-	Abort
+		MessageBox MB_YESNO|MB_DEFBUTTON2|MB_ICONINFORMATION "$(TEXT_IO_UNINSTALL_FAILED_INSTALL_ANYWAY)" IDYES old_nsis_not_installed
+		Abort
 
 
-	old_nsis_not_installed:
+		old_nsis_not_installed:
 
-	; Check for DirectX 8.0 (to be moved to the right section later)
-	; We only use this for sound.  Actually, I could probably make the sound
-	; work with an earlier one; I'm not sure if that's needed or not.  For one
-	; thing, forcing people to upgrade drivers is somewhat of a good thing;
-	; but upgrading to DX8 if you really don't have to is also somewhat
-	; annoying, too ... -g
-	ReadRegStr $0 HKEY_LOCAL_MACHINE "Software\Microsoft\DirectX" "Version"
-	StrCpy $1 $0 2 2 ;  8.1 is "4.08.01.0810"
-	IntCmpU $1 8 check_subversion old_dx ok
-	check_subversion:
-	StrCpy $1 $0 2 5
-	IntCmpU $1 0 ok old_dx ok
+		; Check for DirectX 8.0 (to be moved to the right section later)
+		; We only use this for sound.  Actually, I could probably make the sound
+		; work with an earlier one; I'm not sure if that's needed or not.  For one
+		; thing, forcing people to upgrade drivers is somewhat of a good thing;
+		; but upgrading to DX8 if you really don't have to is also somewhat
+		; annoying, too ... -g
+		ReadRegStr $0 HKEY_LOCAL_MACHINE "Software\Microsoft\DirectX" "Version"
+		StrCpy $1 $0 2 2 ;  8.1 is "4.08.01.0810"
+		IntCmpU $1 8 check_subversion old_dx ok
+		check_subversion:
+		StrCpy $1 $0 2 5
+		IntCmpU $1 0 ok old_dx ok
 
-	; We can function without it (using WaveOut), so don't *require* this.
-	old_dx:
-!ifdef DIRECTX_81_REDIST_PRESENT
-	MessageBox MB_YESNO|MB_ICONINFORMATION "$(TEXT_IO_INSTALL_DIRECTX)" IDNO ok
-	Exec "DirectX81\dxsetup.exe"
-	quit
-	ok:
-!else
-	MessageBox MB_YESNO|MB_ICONINFORMATION "$(TEXT_IO_DIRECTX_VISIT_MICROSOFT)" IDNO ok
-	ExecShell "" "http://www.microsoft.com/directx/"
-	Abort
-	ok:
+		; We can function without it (using WaveOut), so don't *require* this.
+		old_dx:
+	!ifdef DIRECTX_81_REDIST_PRESENT
+		MessageBox MB_YESNO|MB_ICONINFORMATION "$(TEXT_IO_INSTALL_DIRECTX)" IDNO ok
+		Exec "DirectX81\dxsetup.exe"
+		quit
+		ok:
+	!else
+		MessageBox MB_YESNO|MB_ICONINFORMATION "$(TEXT_IO_DIRECTX_VISIT_MICROSOFT)" IDNO ok
+		ExecShell "" "http://www.microsoft.com/directx/"
+		Abort
+		ok:
+	!endif
 !endif
 
 FunctionEnd
@@ -618,6 +630,7 @@ Function .onInit
 	File /oname=$PLUGINSDIR\image.bmp "Installer\custom.bmp"
 	WriteINIStr $PLUGINSDIR\custom.ini "Field 5" "Text" $PLUGINSDIR\image.bmp	
 !else
+
 	call PreInstall
 !endif
 
@@ -638,7 +651,7 @@ Section "Uninstall"
 	DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\${PRODUCT_ID}"
 	DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}"
 
-!ifdef INSTALL_TYPE_EXTERNAL_PCKS | INSTALL_TYPE_INTERNAL_PCKS
+!ifdef INSTALL_EXTERNAL_PCKS | INSTALL_INTERNAL_PCKS
 	RMDir /r "$INSTDIR\pcks"
 !endif
 
@@ -648,7 +661,7 @@ Section "Uninstall"
 	DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Classes\.smzip"
 !endif
 
-!ifdef INSTALL_TYPE_NON_PCK_DATA
+!ifdef INSTALL_NON_PCK_FILES
 	Delete "$INSTDIR\Announcers\instructions.txt"
 	RMDir "$INSTDIR\Announcers"
 
@@ -712,6 +725,8 @@ Section "Uninstall"
 	Call un.RefreshShellIcons
 !endif
 	Delete "$INSTDIR\Program\${PRODUCT_FAMILY}.vdi"
+!ifdef FULL_VERSION_INSTALL
+	Delete "$INSTDIR\Program\mfc71.dll"
 	Delete "$INSTDIR\Program\msvcr71.dll"
 	Delete "$INSTDIR\Program\msvcp71.dll"
 	Delete "$INSTDIR\Program\jpeg.dll"
@@ -723,6 +738,8 @@ Section "Uninstall"
 
 	Delete "$INSTDIR\Licenses.txt"
 	RMDir /r "$INSTDIR\Manual"
+!endif
+
 	Delete "$INSTDIR\log.txt"
 	Delete "$INSTDIR\info.txt"
 	Delete "$INSTDIR\crashinfo.txt"
@@ -732,7 +749,7 @@ Section "Uninstall"
 
 	SetShellVarContext current
 	Delete "$DESKTOP\Play StepMania CVS.lnk"
-	Delete "$DESKTOP\${PRODUCT_ID_VER}.lnk"
+	Delete "$DESKTOP\${PRODUCT_DISPLAY}.lnk"
 	; I'm being paranoid here:
 	Delete "$SMPROGRAMS\${PRODUCT_ID}\*.*"
 	RMDir "$SMPROGRAMS\${PRODUCT_ID}"
