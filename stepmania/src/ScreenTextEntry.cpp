@@ -169,13 +169,13 @@ void ScreenTextEntry::Input( const InputEventPlus &input )
 	if( IsTransitioning() )
 		return;
 
-	if( input.type == IET_FIRST_PRESS )
+	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_BACK)  &&  input.type != IET_RELEASE )
 	{
-		if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_BACK) )
-		{
-			BackspaceInAnswer();
-		}
-		else if( input.DeviceI.ToChar() >= ' ' ) 
+		BackspaceInAnswer();
+	}
+	else if( input.type == IET_FIRST_PRESS )
+	{
+		if( input.DeviceI.ToChar() >= ' ' ) 
 		{
 			bool bIsHoldingShift = 
 					INPUTFILTER->IsBeingPressed( DeviceInput(input.DeviceI.device, KEY_RSHIFT)) ||
