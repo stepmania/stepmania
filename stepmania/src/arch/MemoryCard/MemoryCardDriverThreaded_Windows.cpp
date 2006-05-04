@@ -92,6 +92,8 @@ static bool IsFloppyDrive( const RString &sDrive )
 
 void MemoryCardDriverThreaded_Windows::GetUSBStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 {
+	LOG->Trace( "MemoryCardDriverThreaded_Windows::GetUSBStorageDevices" );
+
 	DWORD dwLogicalDrives = ::GetLogicalDrives();
 	m_dwLastLogicalDrives = dwLogicalDrives;
 
@@ -103,15 +105,27 @@ void MemoryCardDriverThreaded_Windows::GetUSBStorageDevices( vector<UsbStorageDe
 			continue; // drive letter is invalid
 
 		RString sDrive = ssprintf( "%c:", 'A'+i%26 );
+
+		LOG->Trace( sDrive );
+
 		if( IsFloppyDrive(sDrive) )
+		{
+			LOG->Trace( "IsFloppyDrive" );
 			continue;
+		}
 
 		if( GetDriveType(sDrive + "\\") != DRIVE_REMOVABLE )	// is a removable drive
-			continue;
+		{
+			LOG->Trace( "not DRIVE_REMOVABLE" );
+			continue;	
+		}
 
 		RString sVolumeLabel;
 		if( !TestReady(sDrive + "\\", sVolumeLabel) )
-			continue;
+		{
+			LOG->Trace( "not TestReady" );
+			continue;	
+		}
 
 		vDevicesOut.push_back( UsbStorageDevice() );
 		UsbStorageDevice &usbd = vDevicesOut.back();
