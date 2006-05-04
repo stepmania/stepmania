@@ -890,14 +890,16 @@ bool Course::Matches( RString sGroup, RString sCourse ) const
 		return false;
 
 	RString sFile = m_sPath;
-	sFile.Replace("\\","/");
-	vector<RString> bits;
-	split( sFile, "/", bits );
-	ASSERT(bits.size() >= 2); /* should always have at least two parts */
-	const RString &sLastBit = bits[bits.size()-1];
+	if( !sFile.empty() )
+	{
+		sFile.Replace("\\","/");
+		vector<RString> bits;
+		split( sFile, "/", bits );
+		const RString &sLastBit = bits[bits.size()-1];
+		if( sCourse.EqualsNoCase(sLastBit) )
+			return true;
+	}
 
-	if( sCourse.EqualsNoCase(sLastBit) )
-		return true;
 	if( sCourse.EqualsNoCase(this->GetTranslitFullTitle()) )
 		return true;
 
