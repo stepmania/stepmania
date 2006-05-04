@@ -31,9 +31,9 @@
 	SetCompress auto ; (can be off or force)
 	SetDatablockOptimize on ; (can be off)
 !ifdef CRC_CHECK
-	CRCCheck on;
+	CRCCheck on
 !else
-	CRCCheck off;
+	CRCCheck off
 !endif
 	
 	AutoCloseWindow true ; (can be true for the window go away automatically at end)
