@@ -61,7 +61,10 @@ void ScreenUnlockBrowse::HandleMessage( const RString& sMessage )
 	{
 		int iSelection = this->GetSelectionIndex(PLAYER_1);
 		const UnlockEntry &ue = UNLOCKMAN->m_UnlockEntries[ iSelection ];
-		m_banner.LoadBannerFromUnlockEntry( &ue );
+		if( ue.IsLocked() )
+			m_banner.LoadFallback();
+		else
+			m_banner.LoadBannerFromUnlockEntry( &ue );
 	}
 
 	ScreenSelectMaster::HandleMessage( sMessage );
