@@ -9,6 +9,7 @@
 #include "archutils/win32/DebugInfoHunt.h"
 #include "archutils/win32/RestartProgram.h"
 #include "archutils/win32/GotoURL.h"
+#include "archutils/Win32/RegistryAccess.h"
 
 static HANDLE g_hInstanceMutex;
 static bool g_bIsMultipleInstance = false;
@@ -70,6 +71,16 @@ static BOOL CALLBACK GetEnabledPopup( HWND hWnd, LPARAM lParam )
 
 	pData->hResult = hWnd;
 	return FALSE;
+}
+
+static const RString CURRENT_VERSION_KEY = "HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion";
+
+RString ArchHooks_Win32::GetMachineId()
+{
+	RString s;
+	if( RegistryAccess::GetRegValue( CURRENT_VERSION_KEY, "ProductID", s ) )
+		return s;
+	return RString();
 }
 
 bool ArchHooks_Win32::CheckForMultipleInstances()

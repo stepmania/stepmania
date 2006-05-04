@@ -12,6 +12,7 @@ public:
 	RString GetArchName() { return "Windows"; }
 	void DumpDebugInfo();
 	void RestartProgram();
+	RString GetMachineId();
 	bool CheckForMultipleInstances();
 
 	int OldThreadPriority;

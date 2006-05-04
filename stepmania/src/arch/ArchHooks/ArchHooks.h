@@ -25,6 +25,11 @@ public:
 	static RString GetPreferredLanguage();
 
 	/*
+	 * A string that uniquely identifies the machine in some way
+	 */
+	virtual RString GetMachineId() { return RString(); }
+
+	/*
 	 * If this is a second instance, return true.  Optionally, give focus to the existing
 	 * window.
 	 */
