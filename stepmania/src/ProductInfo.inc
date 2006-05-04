@@ -15,7 +15,7 @@
 ;!define INSTALL_EXTERNAL_PCKS
 ;!define INSTALL_INTERNAL_PCKS
 !define INSTALL_NON_PCK_FILES
-;!define FULL_VERSION_INSTALL	; remove to make a patch
+!define FULL_INSTALL	; remove to make a patch
 !define ASSOCIATE_SMZIP
 ;!define SHOW_AUTORUN
 !define MAKE_OPEN_PROGRAM_FOLDER_SHORTCUT

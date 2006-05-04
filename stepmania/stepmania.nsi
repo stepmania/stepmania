@@ -229,7 +229,7 @@ Section "Main Section" SecMain
 	AllowSkipFiles off
 	SetOverwrite on
 
-!ifdef FULL_VERSION_INSTALL
+!ifdef FULL_INSTALL
 	WriteUninstaller "$INSTDIR\uninstall.exe"
 
 	; add registry entries
@@ -358,7 +358,7 @@ Section "Main Section" SecMain
 !ifdef ASSOCIATE_SMZIP
 	Call RefreshShellIcons
 !endif
-!ifdef FULL_VERSION_INSTALL
+!ifdef FULL_INSTALL
 	File "Program\mfc71.dll"
 	File "Program\msvcr71.dll"
 	File "Program\msvcp71.dll"
@@ -517,28 +517,33 @@ FunctionEnd
 
 LangString TEXT_IO_UNINSTALL_PREVIOUS				${LANG_ENGLISH} "The previous version of ${PRODUCT_ID} must be uninstalled before continuing.$\nDo you wish to continue?"
 LangString TEXT_IO_DIRECTX_VISIT_MICROSOFT			${LANG_ENGLISH} "The latest version of DirectX (8.1 or higher) is strongly recommended.$\n Do you wish to visit Microsoft's site now?"
-LangString TEXT_IO_UNINSTALL_FAILED_INSTALL_ANYWAY	${LANG_ENGLISH} "Uninstallation failed.  Install anyway?"
-LangString TEXT_IO_INSTALL_DIRECTX					${LANG_ENGLISH} "The latest version of DirectX (8.1 or higher) is required.$\n Do you wish to install DirectX 8.1 now?"
+LangString TEXT_IO_UNINSTALL_FAILED_INSTALL_ANYWAY		${LANG_ENGLISH} "Uninstallation failed.  Install anyway?"
+LangString TEXT_IO_INSTALL_DIRECTX				${LANG_ENGLISH} "The latest version of DirectX (8.1 or higher) is required.$\n Do you wish to install DirectX 8.1 now?"
+LangString TEXT_IO_FULL_INSTALL_NOT_FOUND			${LANG_ENGLISH} "${PRODUCT_ID} does not appear to be installed.$\nDo you wish to continue?"
 LangString TEXT_IO_UNINSTALL_PREVIOUS				${LANG_FRENCH} "La version précédente de ${PRODUCT_ID} doit être déinstallée pour pouvoir continuer. Voulez-vous continuer ?"
 LangString TEXT_IO_DIRECTX_VISIT_MICROSOFT			${LANG_FRENCH} "La dernière version de DirectX (8.1 ou supérieure) est hautement recommandée. Voulez-vous visiter le site de Microsoft maintenant ?"
-LangString TEXT_IO_UNINSTALL_FAILED_INSTALL_ANYWAY	${LANG_FRENCH} "Echec de la déinstallation. Voulez-vous tout de même lancer l'installation ?"
-LangString TEXT_IO_INSTALL_DIRECTX					${LANG_FRENCH} "La dernière version de DirectX (8.1 ou supérieure) est hautement recommandée. Désirez-vous l'installer maintenant ?"
+LangString TEXT_IO_UNINSTALL_FAILED_INSTALL_ANYWAY		${LANG_FRENCH} "Echec de la déinstallation. Voulez-vous tout de même lancer l'installation ?"
+LangString TEXT_IO_INSTALL_DIRECTX				${LANG_FRENCH} "La dernière version de DirectX (8.1 ou supérieure) est hautement recommandée. Désirez-vous l'installer maintenant ?"
+LangString TEXT_IO_FULL_INSTALL_NOT_FOUND			${LANG_FRENCH} "${PRODUCT_ID}"
 LangString TEXT_IO_UNINSTALL_PREVIOUS				${LANG_GERMAN} "Die letzte Version von ${PRODUCT_ID} muss deinstalliert werden, bevor Sie weiter machen. Wollen Sie fortfahren?"
 LangString TEXT_IO_DIRECTX_VISIT_MICROSOFT			${LANG_GERMAN} "Die letzte Version von DirectX (8.1 oder höher) ist dringend zu empfehlen.  Wollen Sie die Webseite von Microsoft jetzt besuchen?"
-LangString TEXT_IO_UNINSTALL_FAILED_INSTALL_ANYWAY	${LANG_GERMAN} "Deinstallation fehlgeschlagen.  Trotzdem installieren?"
-LangString TEXT_IO_INSTALL_DIRECTX					${LANG_GERMAN} "Die letzte Version von DirectX (8.1 oder höher) ist dringend zu empfehlen.  Wollen Sie es jetzt installieren?"
+LangString TEXT_IO_UNINSTALL_FAILED_INSTALL_ANYWAY		${LANG_GERMAN} "Deinstallation fehlgeschlagen.  Trotzdem installieren?"
+LangString TEXT_IO_INSTALL_DIRECTX				${LANG_GERMAN} "Die letzte Version von DirectX (8.1 oder höher) ist dringend zu empfehlen.  Wollen Sie es jetzt installieren?"
+LangString TEXT_IO_FULL_INSTALL_NOT_FOUND			${LANG_GERMAN} "${PRODUCT_ID}"
 LangString TEXT_IO_UNINSTALL_PREVIOUS				${LANG_SPANISH} "La versión ${PRODUCT_ID} anterior del debe ser uninstalled antes de continuar.  Usted desea continuar?"
 LangString TEXT_IO_DIRECTX_VISIT_MICROSOFT			${LANG_SPANISH} "La versión más última de DirectX (8,1 o más alto) se recomienda fuertemente.  Usted desea ahora visitar el sitio de Microsoft?"
-LangString TEXT_IO_UNINSTALL_FAILED_INSTALL_ANYWAY	${LANG_SPANISH} "Uninstallation falló.  ¿Instale de todos modos?"
-LangString TEXT_IO_INSTALL_DIRECTX					${LANG_SPANISH} "La versión más última de DirectX (8,1 o más alto) se recomienda fuertemente.  Usted desea ahora instalarla?"
+LangString TEXT_IO_UNINSTALL_FAILED_INSTALL_ANYWAY		${LANG_SPANISH} "Uninstallation falló.  ¿Instale de todos modos?"
+LangString TEXT_IO_INSTALL_DIRECTX				${LANG_SPANISH} "La versión más última de DirectX (8,1 o más alto) se recomienda fuertemente.  Usted desea ahora instalarla?"
+LangString TEXT_IO_FULL_INSTALL_NOT_FOUND			${LANG_SPANISH} "${PRODUCT_ID}"
 LangString TEXT_IO_UNINSTALL_PREVIOUS				${LANG_ITALIAN} "Prima di continuare va installata la versione precendente di ${PRODUCT_ID}.  Vuoi continuare?"
 LangString TEXT_IO_DIRECTX_VISIT_MICROSOFT			${LANG_ITALIAN} "Si consiglia vivamente di installare la versione più recente di TDirectX (8.1 o superiore).  Vuoi visitare il sito Microsoft adesso?"
-LangString TEXT_IO_UNINSTALL_FAILED_INSTALL_ANYWAY	${LANG_ITALIAN} "Disinstallazione non riuscita.  Vuoi installare comunque?"
-LangString TEXT_IO_INSTALL_DIRECTX					${LANG_ITALIAN} "Si consiglia vivamente di installare la versione più recente di TDirectX (8.1 o superiore).  Vuoi installarla adesso?"
+LangString TEXT_IO_UNINSTALL_FAILED_INSTALL_ANYWAY		${LANG_ITALIAN} "Disinstallazione non riuscita.  Vuoi installare comunque?"
+LangString TEXT_IO_INSTALL_DIRECTX				${LANG_ITALIAN} "Si consiglia vivamente di installare la versione più recente di TDirectX (8.1 o superiore).  Vuoi installarla adesso?"
+LangString TEXT_IO_FULL_INSTALL_NOT_FOUND			${LANG_ITALIAN} "${PRODUCT_ID}"
 
 Function PreInstall
 
-!ifdef FULL_VERSION_INSTALL
+!ifdef FULL_INSTALL
 		; force uninstall of previous version using NSIS
 		; We need to wait until the uninstaller finishes before continuing, since it's possible
 		; to click the next button again before the uninstaller's window appears and takes focus.
@@ -603,6 +608,12 @@ Function PreInstall
 		Abort
 		ok:
 	!endif
+!else
+		; Check that full version is installed.
+		IfFileExists "$INSTDIR\Program\${PRODUCT_FAMILY}.exe" proceed_with_patch
+		MessageBox MB_YESNO|MB_ICONINFORMATION "$(TEXT_IO_FULL_INSTALL_NOT_FOUND)" IDYES proceed_with_patch
+		Abort
+		proceed_with_patch:
 !endif
 
 FunctionEnd
@@ -725,7 +736,7 @@ Section "Uninstall"
 	Call un.RefreshShellIcons
 !endif
 	Delete "$INSTDIR\Program\${PRODUCT_FAMILY}.vdi"
-!ifdef FULL_VERSION_INSTALL
+!ifdef FULL_INSTALL
 	Delete "$INSTDIR\Program\mfc71.dll"
 	Delete "$INSTDIR\Program\msvcr71.dll"
 	Delete "$INSTDIR\Program\msvcp71.dll"
