@@ -10,6 +10,7 @@ public:
 	ArchHooks_darwin();
 	~ArchHooks_darwin();
 	RString GetArchName() { return "OS X"; }
+	RString GetMachineId();
 	void DumpDebugInfo();
 	RString GetPreferredLanguage();
 	void EnterTimeCriticalSection();

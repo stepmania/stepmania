@@ -18,6 +18,11 @@
 #include <sys/types.h>
 #include <sys/time.h>
 #include <sys/sysctl.h>
+#include <IOKit/IOKitLib.h>
+#include <IOKit/IOKitKeys.h>
+#include <IOKit/network/IOEthernetInterface.h>
+#include <IOKit/network/IONetworkInterface.h>
+#include <IOKit/network/IOEthernetController.h>
 
 #define REAL_TIME_CRITICAL_SECTION 0
 
@@ -123,6 +128,84 @@ ArchHooks_darwin::ArchHooks_darwin()
 ArchHooks_darwin::~ArchHooks_darwin()
 {
 	delete TimeCritMutex;
+}
+
+RString ArchHooks_darwin::GetMachineId()
+{
+	RString ret;
+	CFMutableDictionaryRef dict = IOServiceMatching( "IOPlatformExpertDevice" );
+	CFMutableDictionaryRef property;
+	io_service_t service;
+	
+	if( dict )
+	{
+		// This consumes the reference.
+		service = IOServiceGetMatchingService( kIOMasterPortDefault, dict );
+		
+		if( service )
+		{
+			CFTypeRef serial;
+			CFStringRef key = CFSTR( "IOPlatformSerialNumber" ); // kIOPlatformSerialNumberKey
+			
+			serial = IORegistryEntryCreateCFProperty( service, key, kCFAllocatorDefault, 0 );
+			
+			if( serial )
+			{
+				ret = CFStringGetCStringPtr( (CFStringRef)serial, kCFStringEncodingMacRoman );
+				CFRelease( serial );
+			}
+			IOObjectRelease( service );
+		}
+	}
+	
+	dict = IOServiceMatching( kIOEthernetInterfaceClass );
+	
+	if( !dict )
+		return ret;
+	
+	property = CFDictionaryCreateMutable( kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks,
+					      &kCFTypeDictionaryValueCallBacks );
+	
+	if( !property )
+	{
+		CFRelease( dict );
+		return ret;
+	}
+	
+	CFDictionarySetValue( property, CFSTR(kIOPrimaryInterface), kCFBooleanTrue );
+	CFDictionarySetValue( dict, CFSTR(kIOPropertyMatchKey), property );
+	CFRelease( property );
+	
+	io_iterator_t iter;
+	
+	if( IOServiceGetMatchingServices(kIOMasterPortDefault, dict, &iter) != KERN_SUCCESS )
+		return ret;
+	while( (service = IOIteratorNext(iter)) )
+	{
+		CFTypeRef data;
+		io_object_t controller;
+		
+		if( IORegistryEntryGetParentEntry(service, kIOServicePlane, &controller) != KERN_SUCCESS )
+		{
+			IOObjectRelease( service );
+			continue;
+		}
+		
+		data = IORegistryEntryCreateCFProperty( controller, CFSTR(kIOMACAddress),
+							kCFAllocatorDefault, 0 );
+		if( data )
+		{
+			const uint8_t *p = CFDataGetBytePtr( (CFDataRef)data );
+			
+			ret += ssprintf( "-%02x:%02x:%02x:%02x:%02x:%02x",
+					 p[0], p[1], p[2], p[3], p[4], p[5] );
+			CFRelease( data );
+		}
+		IOObjectRelease( controller );
+		IOObjectRelease( service );
+	}
+	IOObjectRelease( iter );
+	return ret;
 }
 
 void ArchHooks_darwin::DumpDebugInfo()
