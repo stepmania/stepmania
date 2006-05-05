@@ -74,9 +74,10 @@ ArchHooks_darwin::ArchHooks_darwin()
 	CrashHandler::CrashHandlerHandleArgs( g_argc, g_argv );
 	SignalHandler::OnClose( DoCrashSignalHandler );
 #endif
-	
+#if REAL_TIME_CRITICAL_SECTION
 	TimeCritMutex = new RageMutex("TimeCritMutex");
-	
+#endif
+
 	// CF*Copy* functions' return values need to be released, CF*Get* functions' do not.
 	CFStringRef key = CFSTR( "ApplicationBundlePath" );
 	
@@ -127,7 +128,9 @@ ArchHooks_darwin::ArchHooks_darwin()
 
 ArchHooks_darwin::~ArchHooks_darwin()
 {
+#if REAL_TIME_CRITICAL_SECTION
 	delete TimeCritMutex;
+#endif
 }
 
 RString ArchHooks_darwin::GetMachineId()
