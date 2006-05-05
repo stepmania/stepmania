@@ -53,7 +53,7 @@ public:
 
 
 	void InitAll( LoadingWindow *ld );	// songs, courses, groups - everything.
-	void Reload( LoadingWindow *ld=NULL );	// songs, courses, groups - everything.
+	void Reload( bool bAllowFastLoad, LoadingWindow *ld=NULL );	// songs, courses, groups - everything.
 	void PreloadSongImages();
 
 	RString GetSongGroupBannerPath( RString sSongGroup );

@@ -77,7 +77,7 @@ void SongManager::InitAll( LoadingWindow *ld )
 }
 
 static LocalizedString RELOADING ( "SongManager", "Reloading..." );
-void SongManager::Reload( LoadingWindow *ld )
+void SongManager::Reload( bool bAllowFastLoad, LoadingWindow *ld )
 {
 	FlushDirCache();
 
@@ -90,9 +90,9 @@ void SongManager::Reload( LoadingWindow *ld )
 	FreeSongs();
 	FreeCourses();
 
-	/* Always check songs for changes. */
 	const bool OldVal = PREFSMAN->m_bFastLoad;
-	PREFSMAN->m_bFastLoad.Set( false );
+	if( !bAllowFastLoad )
+		PREFSMAN->m_bFastLoad.Set( false );
 
 	InitAll( ld );
 
@@ -100,7 +100,8 @@ void SongManager::Reload( LoadingWindow *ld )
 	PROFILEMAN->LoadMachineProfile();
 	UNLOCKMAN->Reload();
 
-	PREFSMAN->m_bFastLoad.Set( OldVal );
+	if( !bAllowFastLoad )
+		PREFSMAN->m_bFastLoad.Set( OldVal );
 
 	UpdatePreferredSort();
 }

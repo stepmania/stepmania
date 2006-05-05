@@ -48,6 +48,11 @@ SongCacheIndex::~SongCacheIndex()
 
 }
 
+void SongCacheIndex::ReadFromDisk()
+{
+	ReadCacheIndex();
+}
+
 static void EmptyDir( RString dir )
 {
 	ASSERT(dir[dir.size()-1] == '/');
@@ -90,7 +95,7 @@ void SongCacheIndex::AddCacheIndex(const RString &path, unsigned hash)
 
 unsigned SongCacheIndex::GetCacheHash( const RString &path ) const
 {
-	unsigned iDirHash;
+	unsigned iDirHash = 0;
 	if( !CacheIndex.GetValue( "Cache", MangleName(path), iDirHash ) )
 		return 0;
 	if( iDirHash == 0 )

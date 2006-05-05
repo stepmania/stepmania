@@ -11,6 +11,7 @@ class SongCacheIndex
 public:
 	SongCacheIndex();
 	~SongCacheIndex();
+	void ReadFromDisk();
 	static RString GetCacheFilePath( const RString &sGroup, const RString &sPath );
 
 	void ReadCacheIndex();

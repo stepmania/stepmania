@@ -75,7 +75,7 @@ void ScreenReloadSongs::Update( float fDeltaTime )
 		return;
 	ASSERT( !IsFirstUpdate() );
 
-	SONGMAN->Reload( m_LoadingWindow );
+	SONGMAN->Reload( false, m_LoadingWindow );
 	UNLOCKMAN->UpdateCachedPointers();
 
 	SCREENMAN->PostMessageToTopScreen( SM_GoToNextScreen, 0 );
