@@ -71,6 +71,15 @@ function ActorFrame:propagatecommand( cmd )
 	self:propagate(0);
 end
 
+-- Most backgrounds are 640x480.  Some are 768x480.  Stretch the 640x480 ones.
+function Actor:scale_or_crop_background()
+	if self:GetWidth() == 640 and self:GetHeight() == 480 then
+		self:stretchto( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT );
+	else
+		self:scaletocover( 0,0,SCREEN_WIDTH,SCREEN_HEIGHT );
+	end
+end
+
 -- (c) 2006 Glenn Maynard
 -- All rights reserved.
 --
