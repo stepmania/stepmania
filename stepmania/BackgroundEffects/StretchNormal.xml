@@ -1,8 +1,10 @@
 <ActorFrame><children>
-	<AutoActor 
+	<Layer
 		File="@File1" 
-		OnCommand="x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;zoomtowidth,SCREEN_WIDTH;zoomtoheight,SCREEN_HEIGHT;diffuse,color(Color1)" 
+		OnCommand="scale_or_crop_background;diffuse,color(self.Color1)" 
 		GainFocusCommand="Play"
 		LoseFocusCommand="Pause"
-	/>
+	>
+		<Input Name="Color1" />
+	</Layer>
 </children></ActorFrame>
