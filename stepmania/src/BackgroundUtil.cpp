@@ -267,6 +267,7 @@ void BackgroundUtil::GetGlobalRandomMovies(
 		
 		if( sMatch != NO_SONG_BG_FILE )
 			LOG->Warn( "Background missing: %s", sMatch.c_str() );
+		return;
 	}
 
 	//
@@ -293,6 +294,7 @@ void BackgroundUtil::GetGlobalRandomMovies(
 
 			if( !ssFileNameWhitelist.empty() )
 			{
+				vector<RString> vsFiltered = vsPathsOut;
 				for( unsigned i=0; i<vsPathsOut.size(); i++ )
 				{
 					RString sBasename = Basename( vsPathsOut[i] );
@@ -303,6 +305,9 @@ void BackgroundUtil::GetGlobalRandomMovies(
 						i--;
 					}
 				}
+				// If we filtered every movie out then this was a bad whitelist, so ignore the whitelist.
+				if( !vsFiltered.empty() )
+					vsPathsOut = vsFiltered;
 			}
 
 			if( !vsPathsOut.empty() )

@@ -67,6 +67,13 @@ ActorFrame::ActorFrame( const ActorFrame &cpy ):
 	}
 }
 
+void ActorFrame::InitDefaults()
+{
+	FOREACH( Actor*, m_SubActors, a )
+		(*a)->InitDefaults();
+	Actor::InitDefaults();
+}
+
 void ActorFrame::LoadFromNode( const RString& sDir, const XNode* pNode )
 {
 	if( AutoLoadChildren() )

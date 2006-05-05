@@ -302,8 +302,8 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 	{
 		const RString &sToResolve = vsToResolve[i];
 	
-		LUA->SetGlobal( ssprintf("File%d",i+1), RString() );
-
+		LUA->SetGlobal( ssprintf("File%d",i+1), RString() );	// clear
+		
 		if( sToResolve.empty() )
 		{
 			if( i == 0 )
@@ -512,11 +512,13 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 			BackgroundUtil::GetGlobalBGAnimations( pSong, "", vsThrowAway, vsNames );
 			break;
 		case PrefsManager::BGMODE_RANDOMMOVIES:
-			BackgroundUtil::GetGlobalRandomMovies( pSong, "", vsThrowAway, vsNames );
+			BackgroundUtil::GetGlobalRandomMovies( pSong, "", vsThrowAway, vsNames, true, true );
 			break;
 		}
 
-		random_shuffle( vsNames.begin(), vsNames.end() );
+		// Pick the same random items every time the song is played.
+		RandomGen rnd( GetHashForString(pSong->GetSongDir()) );
+		random_shuffle( vsNames.begin(), vsNames.end(), rnd );
 		int iSize = min( (int)PREFSMAN->m_iNumBackgrounds, (int)vsNames.size() );
 		vsNames.resize( iSize );
 
@@ -575,7 +577,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 						if( i == BACKGROUND_LAYER_1 )
 						{
 							// The background was not found.  Try to use a random one instead.
-							bd = layer.CreateRandomBGA( pSong, "", m_RandomBGAnimations );
+							bd = layer.CreateRandomBGA( pSong, bd.m_sEffect, m_RandomBGAnimations );
 							if( bd.IsEmpty() )
 								bd = m_StaticBackgroundDef;
 						}
@@ -808,6 +810,7 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 		LUA->SetGlobal( "Color1", change.m_def.m_sColor1.empty() ? RString("1,1,1,1") : change.m_def.m_sColor1 );
 		LUA->SetGlobal( "Color2", change.m_def.m_sColor2.empty() ? RString("1,1,1,1") : change.m_def.m_sColor2 );
 		
+		m_pCurrentBGA->InitDefaults();
 		m_pCurrentBGA->PlayCommand( "Init" );
 		m_pCurrentBGA->PlayCommand( "On" );
 		m_pCurrentBGA->PlayCommand( "GainFocus" );
