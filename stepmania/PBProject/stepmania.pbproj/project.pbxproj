@@ -136,7 +136,6 @@
 		AA29CC4A0558741A00961A51 /* LyricsLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFDE404770C79005F316C /* LyricsLoader.h */; };
 		AA29CC4B0558741A00961A51 /* NoteData.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFDE604770C79005F316C /* NoteData.h */; };
 		AA29CC4C0558741A00961A51 /* NoteDataWithScoring.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFDE804770C79005F316C /* NoteDataWithScoring.h */; };
-		AA29CC4D0558741A00961A51 /* NoteFieldPositioning.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFDEA04770C79005F316C /* NoteFieldPositioning.h */; };
 		AA29CC4E0558741A00961A51 /* NotesLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFDEE04770C79005F316C /* NotesLoader.h */; };
 		AA29CC4F0558741A00961A51 /* NotesLoaderBMS.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFDF004770C79005F316C /* NotesLoaderBMS.h */; };
 		AA29CC500558741A00961A51 /* NotesLoaderDWI.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFDF204770C79005F316C /* NotesLoaderDWI.h */; };
@@ -358,7 +357,6 @@
 		AA29CD620558741A00961A51 /* LyricsLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFDE304770C79005F316C /* LyricsLoader.cpp */; };
 		AA29CD630558741A00961A51 /* NoteData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFDE504770C79005F316C /* NoteData.cpp */; };
 		AA29CD640558741A00961A51 /* NoteDataWithScoring.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFDE704770C79005F316C /* NoteDataWithScoring.cpp */; };
-		AA29CD650558741A00961A51 /* NoteFieldPositioning.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFDE904770C79005F316C /* NoteFieldPositioning.cpp */; };
 		AA29CD660558741A00961A51 /* NotesLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFDED04770C79005F316C /* NotesLoader.cpp */; };
 		AA29CD670558741A00961A51 /* NotesLoaderBMS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFDEF04770C79005F316C /* NotesLoaderBMS.cpp */; };
 		AA29CD680558741A00961A51 /* NotesLoaderDWI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFDF104770C79005F316C /* NotesLoaderDWI.cpp */; };
@@ -601,7 +599,6 @@
 		AA40D1D609A08D650068C0D5 /* LyricsLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFDE404770C79005F316C /* LyricsLoader.h */; };
 		AA40D1D709A08D650068C0D5 /* NoteData.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFDE604770C79005F316C /* NoteData.h */; };
 		AA40D1D809A08D650068C0D5 /* NoteDataWithScoring.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFDE804770C79005F316C /* NoteDataWithScoring.h */; };
-		AA40D1D909A08D650068C0D5 /* NoteFieldPositioning.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFDEA04770C79005F316C /* NoteFieldPositioning.h */; };
 		AA40D1DA09A08D650068C0D5 /* NotesLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFDEE04770C79005F316C /* NotesLoader.h */; };
 		AA40D1DB09A08D650068C0D5 /* NotesLoaderBMS.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFDF004770C79005F316C /* NotesLoaderBMS.h */; };
 		AA40D1DC09A08D650068C0D5 /* NotesLoaderDWI.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFDF204770C79005F316C /* NotesLoaderDWI.h */; };
@@ -1042,7 +1039,6 @@
 		AA40D39C09A08D650068C0D5 /* LyricsLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFDE304770C79005F316C /* LyricsLoader.cpp */; };
 		AA40D39D09A08D650068C0D5 /* NoteData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFDE504770C79005F316C /* NoteData.cpp */; };
 		AA40D39E09A08D650068C0D5 /* NoteDataWithScoring.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFDE704770C79005F316C /* NoteDataWithScoring.cpp */; };
-		AA40D39F09A08D650068C0D5 /* NoteFieldPositioning.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFDE904770C79005F316C /* NoteFieldPositioning.cpp */; };
 		AA40D3A009A08D650068C0D5 /* NotesLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFDED04770C79005F316C /* NotesLoader.cpp */; };
 		AA40D3A109A08D650068C0D5 /* NotesLoaderBMS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFDEF04770C79005F316C /* NotesLoaderBMS.cpp */; };
 		AA40D3A209A08D650068C0D5 /* NotesLoaderDWI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFDF104770C79005F316C /* NotesLoaderDWI.cpp */; };
@@ -2183,8 +2179,6 @@
 		AA6EFDE604770C79005F316C /* NoteData.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = NoteData.h; path = ../src/NoteData.h; sourceTree = "<group>"; };
 		AA6EFDE704770C79005F316C /* NoteDataWithScoring.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = NoteDataWithScoring.cpp; path = ../src/NoteDataWithScoring.cpp; sourceTree = "<group>"; };
 		AA6EFDE804770C79005F316C /* NoteDataWithScoring.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = NoteDataWithScoring.h; path = ../src/NoteDataWithScoring.h; sourceTree = "<group>"; };
-		AA6EFDE904770C79005F316C /* NoteFieldPositioning.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = NoteFieldPositioning.cpp; path = ../src/NoteFieldPositioning.cpp; sourceTree = "<group>"; };
-		AA6EFDEA04770C79005F316C /* NoteFieldPositioning.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = NoteFieldPositioning.h; path = ../src/NoteFieldPositioning.h; sourceTree = "<group>"; };
 		AA6EFDED04770C79005F316C /* NotesLoader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = NotesLoader.cpp; path = ../src/NotesLoader.cpp; sourceTree = "<group>"; };
 		AA6EFDEE04770C79005F316C /* NotesLoader.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = NotesLoader.h; path = ../src/NotesLoader.h; sourceTree = "<group>"; };
 		AA6EFDEF04770C79005F316C /* NotesLoaderBMS.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = NotesLoaderBMS.cpp; path = ../src/NotesLoaderBMS.cpp; sourceTree = "<group>"; };
@@ -3525,8 +3519,6 @@
 				AA4F38C104E2D0B700D02EE9 /* NoteDataUtil.h */,
 				AA6EFDE704770C79005F316C /* NoteDataWithScoring.cpp */,
 				AA6EFDE804770C79005F316C /* NoteDataWithScoring.h */,
-				AA6EFDE904770C79005F316C /* NoteFieldPositioning.cpp */,
-				AA6EFDEA04770C79005F316C /* NoteFieldPositioning.h */,
 				AA6EFDED04770C79005F316C /* NotesLoader.cpp */,
 				AA6EFDEE04770C79005F316C /* NotesLoader.h */,
 				AA6EFDEF04770C79005F316C /* NotesLoaderBMS.cpp */,
@@ -4068,7 +4060,6 @@
 				AA29CC4A0558741A00961A51 /* LyricsLoader.h in Headers */,
 				AA29CC4B0558741A00961A51 /* NoteData.h in Headers */,
 				AA29CC4C0558741A00961A51 /* NoteDataWithScoring.h in Headers */,
-				AA29CC4D0558741A00961A51 /* NoteFieldPositioning.h in Headers */,
 				AA29CC4E0558741A00961A51 /* NotesLoader.h in Headers */,
 				AA29CC4F0558741A00961A51 /* NotesLoaderBMS.h in Headers */,
 				AA29CC500558741A00961A51 /* NotesLoaderDWI.h in Headers */,
@@ -4523,7 +4514,6 @@
 				AA40D1D609A08D650068C0D5 /* LyricsLoader.h in Headers */,
 				AA40D1D709A08D650068C0D5 /* NoteData.h in Headers */,
 				AA40D1D809A08D650068C0D5 /* NoteDataWithScoring.h in Headers */,
-				AA40D1D909A08D650068C0D5 /* NoteFieldPositioning.h in Headers */,
 				AA40D1DA09A08D650068C0D5 /* NotesLoader.h in Headers */,
 				AA40D1DB09A08D650068C0D5 /* NotesLoaderBMS.h in Headers */,
 				AA40D1DC09A08D650068C0D5 /* NotesLoaderDWI.h in Headers */,
@@ -5245,7 +5235,6 @@
 				AA29CD620558741A00961A51 /* LyricsLoader.cpp in Sources */,
 				AA29CD630558741A00961A51 /* NoteData.cpp in Sources */,
 				AA29CD640558741A00961A51 /* NoteDataWithScoring.cpp in Sources */,
-				AA29CD650558741A00961A51 /* NoteFieldPositioning.cpp in Sources */,
 				AA29CD660558741A00961A51 /* NotesLoader.cpp in Sources */,
 				AA29CD670558741A00961A51 /* NotesLoaderBMS.cpp in Sources */,
 				AA29CD680558741A00961A51 /* NotesLoaderDWI.cpp in Sources */,
@@ -5653,7 +5642,6 @@
 				AA40D39C09A08D650068C0D5 /* LyricsLoader.cpp in Sources */,
 				AA40D39D09A08D650068C0D5 /* NoteData.cpp in Sources */,
 				AA40D39E09A08D650068C0D5 /* NoteDataWithScoring.cpp in Sources */,
-				AA40D39F09A08D650068C0D5 /* NoteFieldPositioning.cpp in Sources */,
 				AA40D3A009A08D650068C0D5 /* NotesLoader.cpp in Sources */,
 				AA40D3A109A08D650068C0D5 /* NotesLoaderBMS.cpp in Sources */,
 				AA40D3A209A08D650068C0D5 /* NotesLoaderDWI.cpp in Sources */,
