@@ -168,12 +168,17 @@ void BannerCache::UnloadAllBanners()
 
 BannerCache::BannerCache()
 {
-	BannerData.ReadFile( BANNER_CACHE_INDEX );	// don't care if this fails
+	ReadFromDisk();
 }
 
 BannerCache::~BannerCache()
 {
 	UnloadAllBanners();
+}
+
+void BannerCache::ReadFromDisk()
+{
+	BannerData.ReadFile( BANNER_CACHE_INDEX );	// don't care if this fails
 }
 
 struct BannerTexture: public RageTexture

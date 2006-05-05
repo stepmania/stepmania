@@ -20,6 +20,7 @@ class BannerCache
 public:
 	BannerCache();
 	~BannerCache();
+	void ReadFromDisk();
 
 	RageTextureID LoadCachedBanner( RString BannerPath );
 	void CacheBanner( RString BannerPath );
