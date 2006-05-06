@@ -6,7 +6,6 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <AudioToolbox/AudioToolbox.h>
 
-class CAAudioHardwareDevice;
 class RageSoundBase;
 class RageThreadRegister;
 
@@ -23,8 +22,9 @@ public:
 
 private:
 	float m_fLatency;
-	CAAudioHardwareDevice *m_pOutputDevice;
+	AudioDeviceID m_OutputDevice;
 	AudioConverterRef m_Converter;
+	bool m_bStarted;
 	int m_iSampleRate;
 	mutable int64_t m_iLastSampleTime;
 	int64_t m_iOffset;

@@ -6,11 +6,10 @@
 #include "PrefsManager.h"
 #include "archutils/Darwin/DarwinThreadHelpers.h"
 
-#include "CAAudioHardwareSystem.h"
-#include "CAAudioHardwareDevice.h"
-#include "CAAudioHardwareStream.h"
-#include "CAStreamBasicDescription.h"
-#include "CAException.h"
+static const UInt8 kAudioDeviceSectionInput    = 0x01;
+static const UInt8 kAudioDeviceSectionOutput   = 0x00;
+static const UInt8 kAudioDeviceSectionGlobal   = 0x00;
+static const UInt8 kAudioDeviceSectionWildcard = 0xFF;
 
 static const UInt32 kFramesPerPacket = 1;
 static const UInt32 kChannelsPerFrame = 2;
@@ -19,7 +18,25 @@ static const UInt32 kBytesPerPacket = kChannelsPerFrame * kBitsPerChannel / 8;
 static const UInt32 kBytesPerFrame = kBytesPerPacket;
 static const UInt32 kFormatFlags = kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsSignedInteger;
 
-typedef CAStreamBasicDescription Desc;
+struct Desc : public AudioStreamBasicDescription
+{
+	Desc( Float64 sampleRate, UInt32 formatID, UInt32 formatFlags, UInt32 bytesPerPacket,
+	      UInt32 framesPerPacket, UInt32 bytesPerFrame, UInt32 channelsPerFrame, UInt32 bitsPerChannel );
+};
+
+Desc::Desc( Float64 sampleRate, UInt32 formatID, UInt32 formatFlags, UInt32 bytesPerPacket,
+	    UInt32 framesPerPacket, UInt32 bytesPerFrame, UInt32 channelsPerFrame, UInt32 bitsPerChannel )
+{
+	mSampleRate = sampleRate;
+	mFormatID = formatID;
+	mFormatFlags = formatFlags;
+	mBytesPerPacket = bytesPerPacket;
+	mFramesPerPacket = framesPerPacket;
+	mBytesPerFrame = bytesPerFrame;
+	mChannelsPerFrame = channelsPerFrame;
+	mBitsPerChannel = bitsPerChannel;
+	mReserved = 0;
+}
 
 /* temporary hack: */
 static float g_fLastIOProcTime = 0;
@@ -28,167 +45,221 @@ static float g_fLastMixTimes[NUM_MIX_TIMES];
 static int g_iLastMixTimePos = 0;
 static int g_iNumIOProcCalls = 0;
 
-RageSound_CA::RageSound_CA() : m_iSampleRate(0), m_iOffset(0)
+RageSound_CA::RageSound_CA() : m_fLatency(0.0f), m_Converter(NULL), m_bStarted(false), m_iSampleRate(0),
+			       m_iLastSampleTime(0), m_iOffset(0), m_pIOThread(NULL), m_pNotificationThread(NULL)
 {
-	m_pOutputDevice = NULL;
-	m_Converter = NULL;
-	m_pIOThread = NULL;
-	m_pNotificationThread = NULL;
 }
+
+static inline RString FourCCToString( uint32_t num )
+{
+	RString s( '?', 4 );
+	char c;
+	
+	c = (num >> 24) & 0xFF;
+	if( c >='\x20' && c <= '\x7e' )
+		s[0] = c;
+	c = (num >> 16) & 0xFF;
+	if( c >='\x20' && c <= '\x7e' )
+		s[1] = c;
+	c = (num >> 8) & 0xFF;
+	if( c >='\x20' && c <= '\x7e' )
+		s[2] = c;
+	c = num & 0xFF;
+	if( c >= '\x20' && c <= '\x7e' )
+		s[3] = c;
+	
+	return s;
+}
+#define WERROR(str, num, extra...) str ": '%s' (%lu).", ## extra, FourCCToString(num).c_str(), (num)
+#define ERROR(str, num, extra...) (ssprintf(WERROR(str, (num), ## extra)))
 
 RString RageSound_CA::Init()
 {
-	try
-	{
-		AudioDeviceID dID = CAAudioHardwareSystem::GetDefaultDevice( false, false );
-		m_pOutputDevice = new CAAudioHardwareDevice( dID );
-	}
-	catch( const CAException& e )
-	{
-		return "Couldn't create default output device.";
-	}
+	OSStatus error;
+	UInt32 size = sizeof(m_OutputDevice);
+	
+	if( (error = AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice, &size, &m_OutputDevice)) )
+		return ERROR( "Couldn't create default output device", error );
+	
 	// Get the HAL's runloop and attach an observer
-	try
 	{
 		CFRunLoopRef runLoopRef;
 		CFRunLoopObserverRef observerRef;
-		UInt32 size = sizeof( runLoopRef );
 		CFRunLoopObserverContext context = { 0, this, NULL, NULL, NULL };
 		
-		CAAudioHardwareSystem::GetPropertyData( kAudioHardwarePropertyRunLoop, size, &runLoopRef );
+		size = sizeof(CFRunLoopRef);
+		if( (error = AudioHardwareGetProperty(kAudioHardwarePropertyRunLoop, &size, &runLoopRef)) )
+		{
+			LOG->Warn( WERROR("Couldn't get the HAL's run loop", error) );
+		}
+		else
+		{
+			observerRef = CFRunLoopObserverCreate( kCFAllocatorDefault, kCFRunLoopEntry,
+							       false, 0, NameHALThread, &context );
+			CFRunLoopAddObserver( runLoopRef, observerRef, kCFRunLoopDefaultMode );
+		}
 		observerRef = CFRunLoopObserverCreate( kCFAllocatorDefault, kCFRunLoopEntry,
 						       false, 0, NameHALThread, &context );
 		CFRunLoopAddObserver( runLoopRef, observerRef, kCFRunLoopDefaultMode );
 	}
-	catch( CAException& e )
-	{
-		LOG->Warn( "Couldn't get the HAL's run loop." );
-	}
-	// Log the name and manufacturer
-	char str[256];
-	CFStringRef ref = m_pOutputDevice->CopyName();
 	
-	if( !CFStringGetCString(ref, str, sizeof(str), kCFStringEncodingUTF8) )
-		strcpy( str, "(unknown)" );
-	LOG->Info( "Audio device: %s", str );
-	CFRelease( ref );
-	ref = m_pOutputDevice->CopyManufacturer();
-	if( !CFStringGetCString(ref, str, sizeof(str), kCFStringEncodingUTF8) )
-		strcpy( str, "(unknown)" );
-	LOG->Info( "Audio device manufacturer: %s", str );
-	CFRelease( ref );
+	// Log the name and manufacturer
+	{
+		char str[256];
+		CFStringRef ref;
+		
+		str[0] = '\0';
+		size = sizeof(CFStringRef);
+		if( !AudioDeviceGetProperty(m_OutputDevice, 0, kAudioDeviceSectionGlobal,
+					    kAudioDevicePropertyDeviceNameCFString, &size, &ref) )
+		{
+			CFStringGetCString( ref, str, sizeof(str), kCFStringEncodingUTF8 );
+			CFRelease( ref );
+		}
+		if( str[0] == '\0' )
+			strcpy( str, "(unknown)" );
+		
+		LOG->Info( "Audio device: %s", str );
+		str[0] = '\0';
+		size = sizeof(CFStringRef);
+		if( !AudioDeviceGetProperty(m_OutputDevice, 0, kAudioDeviceSectionGlobal,
+					    kAudioDevicePropertyDeviceManufacturerCFString, &size, &ref) )
+		{
+			CFStringGetCString( ref, str, sizeof(str), kCFStringEncodingUTF8 );
+			CFRelease( ref );
+		}
+		if( str[0] == '\0' )
+			strcpy( str, "(unknown)" );
+		LOG->Info( "Audio device manufacturer: %s", str );
+	}
 	
 	m_iSampleRate = PREFSMAN->m_iSoundPreferredSampleRate;
 	Float64 nominalSampleRate = m_iSampleRate;
     
-	try
+	if( (error = AudioDeviceSetProperty(m_OutputDevice, NULL, 0, kAudioDeviceSectionGlobal,
+					    kAudioDevicePropertyNominalSampleRate, sizeof(Float64), &nominalSampleRate)) )
 	{
-		m_pOutputDevice->SetNominalSampleRate(nominalSampleRate);
-		LOG->Info( "Set the nominal sample rate to %f.", nominalSampleRate );
-	}
-	catch( const CAException& e )
-	{
-		LOG->Warn( "Couldn't set the nominal sample rate." );
-		nominalSampleRate = m_pOutputDevice->GetNominalSampleRate();
-		LOG->Warn( "Device's nominal sample rate is %f", nominalSampleRate );
+		LOG->Warn( WERROR("Couldn't set the nominal sample rate", error) );
+		size = sizeof(Float64);
+		AudioDeviceGetProperty( m_OutputDevice, 0, kAudioDeviceSectionGlobal,
+					kAudioDevicePropertyNominalSampleRate, &size, &nominalSampleRate );
 		m_iSampleRate = int( nominalSampleRate );
+		LOG->Warn( "Device's nominal sample rate is %f", nominalSampleRate );
 	}
-	AudioStreamID sID = m_pOutputDevice->GetStreamByIndex( kAudioDeviceSectionOutput, 0 );
-	CAAudioHardwareStream stream( sID );
+	
+	AudioStreamID *streams, stream;
+	
+	if( (error = AudioDeviceGetPropertyInfo(m_OutputDevice, 0, kAudioDeviceSectionOutput,
+						kAudioDevicePropertyStreams, &size, NULL)) )
+	{
+		return ERROR( "Couldn't get the stream size", error );
+	}
+	if( size == 0 )
+		return "No streams.";
+	streams = new AudioStreamID[size/sizeof(AudioStreamID)];
+	if( (error = AudioDeviceGetProperty(m_OutputDevice, 0, kAudioDeviceSectionOutput,
+					    kAudioDevicePropertyStreams, &size, streams)) )
+	{
+		delete[] streams;
+		return ERROR( "Couldn't get streams", error );
+	}
+	stream = *min_element( streams, streams + size/sizeof(AudioStreamID) );
+	delete[] streams;
+	
 	AddListener( kAudioDeviceProcessorOverload, OverloadListener, "overload" );
 	AddListener( kAudioDevicePropertyDeviceHasChanged, DeviceChanged, "device changed" );
 	AddListener( kAudioDevicePropertyJackIsConnected, JackChanged, "jack changed" );
 
 	// The canonical format
-	Desc IOProcFormat( nominalSampleRate, kAudioFormatLinearPCM, 8, 1, 8, 2, 32,
-			   kAudioFormatFlagsNativeFloatPacked);
-	const Desc SMFormat( nominalSampleRate, kAudioFormatLinearPCM, kBytesPerPacket, kFramesPerPacket,
-			     kBytesPerFrame, kChannelsPerFrame, kBitsPerChannel, kFormatFlags );
+	Desc IOProcFormat( nominalSampleRate, kAudioFormatLinearPCM, kAudioFormatFlagsNativeFloatPacked, 8, 1, 8, 2, 32 );
+	const Desc SMFormat( nominalSampleRate, kAudioFormatLinearPCM, kFormatFlags, kBytesPerPacket,
+			     kFramesPerPacket, kBytesPerFrame, kChannelsPerFrame, kBitsPerChannel );
 	
-	try
+	if( (error = AudioStreamSetProperty(stream, NULL, 0, kAudioDevicePropertyStreamFormat,
+					    sizeof(Desc), &IOProcFormat)) )
 	{
-		stream.SetCurrentIOProcFormat( IOProcFormat );
-	}
-	catch( const CAException& e )
-	{
-		LOG->Warn( "Could not set the IOProc format to the canonical format." );
-		stream.GetCurrentIOProcFormat( IOProcFormat );
+		LOG->Warn( WERROR("Couldn't set the IOProc format to the canonical format.", error) );
+		size = sizeof(Desc);
+		if( (error = AudioStreamGetProperty(stream, 0, kAudioDevicePropertyStreamFormat, &size, &IOProcFormat)) )
+			return ERROR( "Couldn't get the IOProc format", error );
 	}
 	
-	if( AudioConverterNew(&SMFormat, &IOProcFormat, &m_Converter) )
-		return "Couldn't create the audio converter";
+	if( (error = AudioConverterNew(&SMFormat, &IOProcFormat, &m_Converter)) )
+		return ERROR( "Couldn't create the audio converter", error );
 
 	UInt32 bufferSize;
-	
-	try
+
+	size = sizeof(UInt32);
+	if( (error = AudioDeviceGetProperty(m_OutputDevice, 0, kAudioDeviceSectionGlobal,
+					    kAudioDevicePropertyBufferFrameSize, &size, &bufferSize)) )
 	{
-		bufferSize = m_pOutputDevice->GetIOBufferSize();
-		LOG->Info("I/O Buffer size: %lu frames", bufferSize);
-	}
-	catch( const CAException& e )
-	{
-		LOG->Warn( "Could not determine buffer size." );
+		LOG->Warn( WERROR("Couldn't determine buffer size", error) );
 		bufferSize = 0;
-	}    
-    
-	try
-	{
-		UInt32 frames = m_pOutputDevice->GetLatency( kAudioDeviceSectionOutput );
-		if( stream.HasProperty(0, kAudioDevicePropertyLatency) )
-		{
-			UInt32 t, size = 4;
-            
-			stream.GetPropertyData( 0, kAudioDevicePropertyLatency, size, &t );
-			frames += t;
-			LOG->Info( "Frames of stream latency: %lu", t );
-		}
-		else
-		{
-			LOG->Warn( "Stream does not report latency." );
-		}
-		frames += m_pOutputDevice->GetSafetyOffset( kAudioDeviceSectionOutput );
-		frames += bufferSize;
-		m_fLatency = frames / nominalSampleRate;
-		LOG->Info( "Frames of latency:        %lu\n"
-			   "Seconds of latency:       %f", frames, m_fLatency );
 	}
-	catch( const CAException& e )
+	else
 	{
-		return "Couldn't get latency.";
-	}		
+		LOG->Info( "I/O buffer size: %lu frames.", bufferSize );
+	}
+		
+	UInt32 frames;
+	
+	size = sizeof(UInt32);
+	if( (error = AudioDeviceGetProperty(m_OutputDevice, 0, kAudioDeviceSectionOutput,
+					    kAudioDevicePropertyLatency, &size, &frames)) )
+	{
+		return ERROR( "Couldn't get device latency", error );
+	}
+	bufferSize += frames;
+	size = sizeof(UInt32);
+	if( (error = AudioDeviceGetProperty(m_OutputDevice, 0, kAudioDeviceSectionOutput,
+					    kAudioDevicePropertySafetyOffset, &size, &frames)) )
+	{
+		return ERROR( "Couldn't get device safety offset", error );
+	}
+	bufferSize += frames;
+	size = sizeof(UInt32);
+	if( (error = AudioStreamGetProperty(stream, 0, kAudioDevicePropertyLatency, &size, &frames)) )
+	{
+		LOG->Warn( WERROR("Stream does not report latency", error) );
+	}
+	else
+	{
+		bufferSize += frames;
+		LOG->Info( "Frames of stream latency: %lu", bufferSize );
+	}
+	m_fLatency = bufferSize / nominalSampleRate;
+	LOG->Info( "Frames of latency:        %lu\n"
+		   "Seconds of latency:       %f", frames, m_fLatency );
 
 	StartDecodeThread();
     
-	try
+	if( (error = AudioDeviceAddIOProc(m_OutputDevice, GetData, this)) )
+		return ERROR( "Couldn't add the IOProc", error );
+	if( (error = AudioDeviceStart(m_OutputDevice, GetData)) )
 	{
-		m_pOutputDevice->AddIOProc( GetData, this );
-		m_pOutputDevice->StartIOProc( GetData );
+		AudioDeviceRemoveIOProc( m_OutputDevice, GetData );
+		return ERROR( "Couldn't start the IOProc", error );
 	}
-	catch( const CAException& e )
-	{
-		return "Couldn't start the IOProc.";
-	}
+	m_bStarted = true;
 	return RString();
 }
 
 RageSound_CA::~RageSound_CA()
 {
-	if( m_pOutputDevice != NULL )
+	if( m_bStarted )
 	{
-		m_pOutputDevice->StopIOProc( GetData );
-		m_pOutputDevice->RemoveIOProc( GetData );
+		AudioDeviceStop( m_OutputDevice, GetData );
+		AudioDeviceRemoveIOProc( m_OutputDevice, GetData );
 		
 		while( m_vPropertyListeners.size() )
 		{
 			pair<AudioHardwarePropertyID, AudioDevicePropertyListenerProc>& p = m_vPropertyListeners.back();
 			
-			CATry;
-			m_pOutputDevice->RemovePropertyListener( kAudioPropertyWildcardChannel, kAudioDeviceSectionOutput,
-								 p.first, p.second );
-			CACatch;
+			AudioDeviceRemovePropertyListener( m_OutputDevice, kAudioPropertyWildcardChannel,
+							   kAudioDeviceSectionOutput, p.first, p.second );
+			
 			m_vPropertyListeners.pop_back();
 		}
-		delete m_pOutputDevice;
 		delete m_pIOThread;
 		delete m_pNotificationThread;
 	}
@@ -201,50 +272,33 @@ RageSound_CA::~RageSound_CA()
 void RageSound_CA::AddListener( AudioDevicePropertyID propertyID, AudioDevicePropertyListenerProc handler,
 				const char *name )
 {
-	try
+	OSStatus error;
+	
+	if( (error = AudioDeviceAddPropertyListener(m_OutputDevice, kAudioPropertyWildcardChannel,
+						    kAudioDeviceSectionOutput, propertyID, handler, this)) )
 	{
-		m_pOutputDevice->AddPropertyListener( kAudioPropertyWildcardChannel, kAudioDeviceSectionOutput,
-						      propertyID, handler, this );
+	     LOG->Warn( WERROR("Couldn't install %s listener", error, name) );
+	}
+	else
+	{
 		m_vPropertyListeners.push_back( pair<AudioDevicePropertyID,
 						AudioDevicePropertyListenerProc>(propertyID, handler) );
-	}
-	catch( const CAException& e )
-	{
-		LOG->Warn( "Could not install %s listener.", name );
 	}
 }
 
 int64_t RageSound_CA::GetPosition( const RageSoundBase *sound ) const
 {
 	AudioTimeStamp time;
-	static bool bStopped = false;
+	OSStatus error;
 	
-	try
+	if( (error = AudioDeviceGetCurrentTime(m_OutputDevice, &time)) )
 	{
-		m_pOutputDevice->GetCurrentTime( time );
-		if( bStopped )
-		{
-			LOG->Trace( "old time %lld, new time %lld",
-				    m_iLastSampleTime, int64_t(time.mSampleTime) );
-			bStopped = false;
-		}
-		m_iLastSampleTime = int64_t( time.mSampleTime ) + m_iOffset;
+		if( error != kAudioHardwareNotRunningError )
+			FAIL_M( ERROR("GetCurrentTime() failed", error) );
 		return m_iLastSampleTime;
 	}
-	catch( const CAException& e )
-	{
-		if( e.GetError() == kAudioHardwareNotRunningError )
-		{
-			bStopped = true;
-			return m_iLastSampleTime;
-		}
-		
-		char error[5];
-		
-		*(int32_t*)error = e.GetError();
-		error[4] = '\0';
-		FAIL_M( ssprintf("GetCurrentTime() returned error '%s'.", error) );
-	}
+	m_iLastSampleTime = int64_t( time.mSampleTime ) + m_iOffset;
+	return m_iLastSampleTime;
 }
 
 void RageSound_CA::NameHALThread( CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info )
@@ -335,12 +389,14 @@ OSStatus RageSound_CA::JackChanged( AudioDeviceID inDevice, UInt32 inChannel, Bo
 	UInt32 result;
 	UInt32 size = sizeof( result );
 	AudioTimeStamp time;
+	OSStatus error;
 
-	This->m_pOutputDevice->GetPropertyData( inChannel, 0, inPropertyID, size, &result );
-	CHECKPOINT_M( ssprintf("Channel %u's has %s plugged into its jack.", unsigned(inChannel),
+	AudioDeviceGetProperty( inDevice, inChannel, 0, inPropertyID, &size, &result );
+	CHECKPOINT_M( ssprintf("Channel %lu's has %s plugged into its jack.", inChannel,
 			       result ? "something" : "nothing") );
 
-	This->m_pOutputDevice->GetCurrentTime( time );
+	if( (error = AudioDeviceGetCurrentTime(inDevice, &time)) )
+		FAIL_M( ERROR("Couldn't get current time when jack changed", error) );
 	This->m_iOffset = This->m_iLastSampleTime - int64_t( time.mSampleTime );
 	return noErr;
 }
