@@ -169,9 +169,16 @@ void ScreenTextEntry::Input( const InputEventPlus &input )
 	if( IsTransitioning() )
 		return;
 
-	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_BACK)  &&  input.type != IET_RELEASE )
+	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_BACK) )
 	{
-		BackspaceInAnswer();
+		switch( input.type )
+		{
+		case IET_FIRST_PRESS:
+		case IET_SLOW_REPEAT:
+		case IET_FAST_REPEAT:
+			BackspaceInAnswer();
+			break;
+		}
 	}
 	else if( input.type == IET_FIRST_PRESS )
 	{
