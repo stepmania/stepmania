@@ -539,19 +539,6 @@
 		AA2FB639091212B0000FD574 /* LifeMeter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA2FB638091212AF000FD574 /* LifeMeter.cpp */; };
 		AA32F97E096A255500F45B24 /* LowLevelWindow_Cocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = AAEF7D21090DD45900A1CAFC /* LowLevelWindow_Cocoa.h */; };
 		AA32F97F096A255C00F45B24 /* LowLevelWindow_Cocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = AAEF7D22090DD45900A1CAFC /* LowLevelWindow_Cocoa.mm */; };
-		AA34ECF70611C9A7003E5955 /* CAAudioHardwareStream.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF744B306116B0500B19AD1 /* CAAudioHardwareStream.h */; };
-		AA34ECF80611C9A8003E5955 /* CAAudioHardwareStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF744B206116B0500B19AD1 /* CAAudioHardwareStream.cpp */; };
-		AA34ECF90611C9A9003E5955 /* CAAudioHardwareDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF744B106116B0500B19AD1 /* CAAudioHardwareDevice.h */; };
-		AA34ECFA0611C9AA003E5955 /* CAAudioHardwareDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF744B006116B0500B19AD1 /* CAAudioHardwareDevice.cpp */; };
-		AA34ECFB0611C9AC003E5955 /* CAAudioHardwareSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF744B406116B0500B19AD1 /* CAAudioHardwareSystem.cpp */; };
-		AA34ECFC0611C9AD003E5955 /* CAAudioHardwareSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF744B506116B0500B19AD1 /* CAAudioHardwareSystem.h */; };
-		AA34ECFD0611C9B8003E5955 /* CAPrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF744E706116B0600B19AD1 /* CAPrefix.h */; };
-		AA34ECFE0611C9C6003E5955 /* CAStreamBasicDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF744F306116B0600B19AD1 /* CAStreamBasicDescription.cpp */; };
-		AA34ECFF0611C9C7003E5955 /* CAStreamBasicDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF744F406116B0600B19AD1 /* CAStreamBasicDescription.h */; };
-		AA34ED000611D8C2003E5955 /* CAException.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF744DA06116B0600B19AD1 /* CAException.h */; };
-		AA34ED210611FB83003E5955 /* CAConditionalMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = AA34ED1F0611FB83003E5955 /* CAConditionalMacros.h */; };
-		AA34ED290611FE33003E5955 /* CAAutoDisposer.h in Headers */ = {isa = PBXBuildFile; fileRef = AA34ED270611FE33003E5955 /* CAAutoDisposer.h */; };
-		AA34ED2A0611FE33003E5955 /* CADebugMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = AA34ED280611FE33003E5955 /* CADebugMacros.h */; };
 		AA3A705F06AA144C006F755E /* CommonMetrics.h in Headers */ = {isa = PBXBuildFile; fileRef = AA3A705E06AA144C006F755E /* CommonMetrics.h */; };
 		AA3A706206AA1645006F755E /* StyleUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA3A706006AA1645006F755E /* StyleUtil.cpp */; };
 		AA3A706306AA1645006F755E /* StyleUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = AA3A706106AA1645006F755E /* StyleUtil.h */; };
@@ -828,15 +815,6 @@
 		AA40D2BE09A08D650068C0D5 /* RageSoundDriver_Generic_Software.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1CD942060AE571003702C4 /* RageSoundDriver_Generic_Software.h */; };
 		AA40D2BF09A08D650068C0D5 /* ScreenTestLights.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF7435A06110E8D00B19AD1 /* ScreenTestLights.h */; };
 		AA40D2C009A08D650068C0D5 /* RageDisplay_Null.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF7458F061181F700B19AD1 /* RageDisplay_Null.h */; };
-		AA40D2C109A08D650068C0D5 /* CAAudioHardwareStream.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF744B306116B0500B19AD1 /* CAAudioHardwareStream.h */; };
-		AA40D2C209A08D650068C0D5 /* CAAudioHardwareDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF744B106116B0500B19AD1 /* CAAudioHardwareDevice.h */; };
-		AA40D2C309A08D650068C0D5 /* CAAudioHardwareSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF744B506116B0500B19AD1 /* CAAudioHardwareSystem.h */; };
-		AA40D2C409A08D650068C0D5 /* CAPrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF744E706116B0600B19AD1 /* CAPrefix.h */; };
-		AA40D2C509A08D650068C0D5 /* CAStreamBasicDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF744F406116B0600B19AD1 /* CAStreamBasicDescription.h */; };
-		AA40D2C609A08D650068C0D5 /* CAException.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF744DA06116B0600B19AD1 /* CAException.h */; };
-		AA40D2C709A08D650068C0D5 /* CAConditionalMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = AA34ED1F0611FB83003E5955 /* CAConditionalMacros.h */; };
-		AA40D2C809A08D650068C0D5 /* CAAutoDisposer.h in Headers */ = {isa = PBXBuildFile; fileRef = AA34ED270611FE33003E5955 /* CAAutoDisposer.h */; };
-		AA40D2C909A08D650068C0D5 /* CADebugMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = AA34ED280611FE33003E5955 /* CADebugMacros.h */; };
 		AA40D2CA09A08D650068C0D5 /* arch_platform.h in Headers */ = {isa = PBXBuildFile; fileRef = AADBA562062007BA005D4FC2 /* arch_platform.h */; };
 		AA40D2CB09A08D650068C0D5 /* EnumHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8F136F0624BAB200C6A467 /* EnumHelper.h */; };
 		AA40D2CC09A08D650068C0D5 /* RageSoundPosMap.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD36083062BB8AE00D0CED8 /* RageSoundPosMap.h */; };
@@ -1245,10 +1223,6 @@
 		AA40D46D09A08D650068C0D5 /* RageSoundDriver_Generic_Software.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA1CD941060AE571003702C4 /* RageSoundDriver_Generic_Software.cpp */; };
 		AA40D46E09A08D650068C0D5 /* ScreenTestLights.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF7435906110E8D00B19AD1 /* ScreenTestLights.cpp */; };
 		AA40D46F09A08D650068C0D5 /* RageDisplay_Null.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF7458E061181F700B19AD1 /* RageDisplay_Null.cpp */; };
-		AA40D47009A08D650068C0D5 /* CAAudioHardwareStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF744B206116B0500B19AD1 /* CAAudioHardwareStream.cpp */; };
-		AA40D47109A08D650068C0D5 /* CAAudioHardwareDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF744B006116B0500B19AD1 /* CAAudioHardwareDevice.cpp */; };
-		AA40D47209A08D650068C0D5 /* CAAudioHardwareSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF744B406116B0500B19AD1 /* CAAudioHardwareSystem.cpp */; };
-		AA40D47309A08D650068C0D5 /* CAStreamBasicDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF744F306116B0600B19AD1 /* CAStreamBasicDescription.cpp */; };
 		AA40D47409A08D650068C0D5 /* RageSoundPosMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAD36082062BB8AE00D0CED8 /* RageSoundPosMap.cpp */; };
 		AA40D47509A08D650068C0D5 /* SignalHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AADB4E8B04D50FB900D02EE9 /* SignalHandler.cpp */; };
 		AA40D47609A08D650068C0D5 /* CourseUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA5C73F70637A5F000AFB891 /* CourseUtil.cpp */; };
@@ -1946,9 +1920,6 @@
 		AA29CE570558741A00961A51 /* Info-StepMania.plist */ = {isa = PBXFileReference; explicitFileType = text.plist; path = "Info-StepMania.plist"; sourceTree = SOURCE_ROOT; };
 		AA29CE580558741A00961A51 /* StepMania.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StepMania.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA2FB638091212AF000FD574 /* LifeMeter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = LifeMeter.cpp; path = ../src/LifeMeter.cpp; sourceTree = "<group>"; };
-		AA34ED1F0611FB83003E5955 /* CAConditionalMacros.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = CAConditionalMacros.h; sourceTree = "<group>"; };
-		AA34ED270611FE33003E5955 /* CAAutoDisposer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = CAAutoDisposer.h; sourceTree = "<group>"; };
-		AA34ED280611FE33003E5955 /* CADebugMacros.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = CADebugMacros.h; sourceTree = "<group>"; };
 		AA3A705E06AA144C006F755E /* CommonMetrics.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = CommonMetrics.h; path = ../src/CommonMetrics.h; sourceTree = "<group>"; };
 		AA3A706006AA1645006F755E /* StyleUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = StyleUtil.cpp; path = ../src/StyleUtil.cpp; sourceTree = "<group>"; };
 		AA3A706106AA1645006F755E /* StyleUtil.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = StyleUtil.h; path = ../src/StyleUtil.h; sourceTree = "<group>"; };
@@ -2708,16 +2679,6 @@
 		AAF6A3B309B6A91600D5C614 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		AAF7435906110E8D00B19AD1 /* ScreenTestLights.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenTestLights.cpp; path = ../src/ScreenTestLights.cpp; sourceTree = "<group>"; };
 		AAF7435A06110E8D00B19AD1 /* ScreenTestLights.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenTestLights.h; path = ../src/ScreenTestLights.h; sourceTree = "<group>"; };
-		AAF744B006116B0500B19AD1 /* CAAudioHardwareDevice.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = CAAudioHardwareDevice.cpp; sourceTree = "<group>"; };
-		AAF744B106116B0500B19AD1 /* CAAudioHardwareDevice.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = CAAudioHardwareDevice.h; sourceTree = "<group>"; };
-		AAF744B206116B0500B19AD1 /* CAAudioHardwareStream.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = CAAudioHardwareStream.cpp; sourceTree = "<group>"; };
-		AAF744B306116B0500B19AD1 /* CAAudioHardwareStream.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = CAAudioHardwareStream.h; sourceTree = "<group>"; };
-		AAF744B406116B0500B19AD1 /* CAAudioHardwareSystem.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = CAAudioHardwareSystem.cpp; sourceTree = "<group>"; };
-		AAF744B506116B0500B19AD1 /* CAAudioHardwareSystem.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = CAAudioHardwareSystem.h; sourceTree = "<group>"; };
-		AAF744DA06116B0600B19AD1 /* CAException.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = CAException.h; sourceTree = "<group>"; };
-		AAF744E706116B0600B19AD1 /* CAPrefix.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = CAPrefix.h; sourceTree = "<group>"; };
-		AAF744F306116B0600B19AD1 /* CAStreamBasicDescription.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = CAStreamBasicDescription.cpp; sourceTree = "<group>"; };
-		AAF744F406116B0600B19AD1 /* CAStreamBasicDescription.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = CAStreamBasicDescription.h; sourceTree = "<group>"; };
 		AAF7458E061181F700B19AD1 /* RageDisplay_Null.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageDisplay_Null.cpp; path = ../src/RageDisplay_Null.cpp; sourceTree = "<group>"; };
 		AAF7458F061181F700B19AD1 /* RageDisplay_Null.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageDisplay_Null.h; path = ../src/RageDisplay_Null.h; sourceTree = "<group>"; };
 		AAF793F1074FE69E00D74516 /* ScreenNetRoom.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenNetRoom.cpp; path = ../src/ScreenNetRoom.cpp; sourceTree = "<group>"; };
@@ -3966,7 +3927,6 @@
 				AA44708C0984720900983E82 /* JoystickDevice.h */,
 				AA4470BB098476F600983E82 /* KeyboardDevice.cpp */,
 				AA4470BA098476F600983E82 /* KeyboardDevice.h */,
-				AAF744A306116B0500B19AD1 /* PublicUtility */,
 				AA1F9C4609AF1BF5002C15A8 /* PumpDevice.cpp */,
 				AA1F9C4509AF1BF5002C15A8 /* PumpDevice.h */,
 				AABBFCD209838C3A00F077E2 /* SMMain.mm */,
@@ -3999,26 +3959,6 @@
 			);
 			name = crypto;
 			path = ../src/crypto;
-			sourceTree = "<group>";
-		};
-		AAF744A306116B0500B19AD1 /* PublicUtility */ = {
-			isa = PBXGroup;
-			children = (
-				AAF744B006116B0500B19AD1 /* CAAudioHardwareDevice.cpp */,
-				AAF744B106116B0500B19AD1 /* CAAudioHardwareDevice.h */,
-				AAF744B206116B0500B19AD1 /* CAAudioHardwareStream.cpp */,
-				AAF744B306116B0500B19AD1 /* CAAudioHardwareStream.h */,
-				AAF744B406116B0500B19AD1 /* CAAudioHardwareSystem.cpp */,
-				AAF744B506116B0500B19AD1 /* CAAudioHardwareSystem.h */,
-				AA34ED270611FE33003E5955 /* CAAutoDisposer.h */,
-				AA34ED1F0611FB83003E5955 /* CAConditionalMacros.h */,
-				AA34ED280611FE33003E5955 /* CADebugMacros.h */,
-				AAF744DA06116B0600B19AD1 /* CAException.h */,
-				AAF744E706116B0600B19AD1 /* CAPrefix.h */,
-				AAF744F306116B0600B19AD1 /* CAStreamBasicDescription.cpp */,
-				AAF744F406116B0600B19AD1 /* CAStreamBasicDescription.h */,
-			);
-			path = PublicUtility;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -4291,15 +4231,6 @@
 				AA1CD944060AE571003702C4 /* RageSoundDriver_Generic_Software.h in Headers */,
 				AAF7435C06110E8D00B19AD1 /* ScreenTestLights.h in Headers */,
 				AAF74591061181F700B19AD1 /* RageDisplay_Null.h in Headers */,
-				AA34ECF70611C9A7003E5955 /* CAAudioHardwareStream.h in Headers */,
-				AA34ECF90611C9A9003E5955 /* CAAudioHardwareDevice.h in Headers */,
-				AA34ECFC0611C9AD003E5955 /* CAAudioHardwareSystem.h in Headers */,
-				AA34ECFD0611C9B8003E5955 /* CAPrefix.h in Headers */,
-				AA34ECFF0611C9C7003E5955 /* CAStreamBasicDescription.h in Headers */,
-				AA34ED000611D8C2003E5955 /* CAException.h in Headers */,
-				AA34ED210611FB83003E5955 /* CAConditionalMacros.h in Headers */,
-				AA34ED290611FE33003E5955 /* CAAutoDisposer.h in Headers */,
-				AA34ED2A0611FE33003E5955 /* CADebugMacros.h in Headers */,
 				AADBA563062007BA005D4FC2 /* arch_platform.h in Headers */,
 				AA8F13710624BAB200C6A467 /* EnumHelper.h in Headers */,
 				AAD36085062BB8AE00D0CED8 /* RageSoundPosMap.h in Headers */,
@@ -4743,15 +4674,6 @@
 				AA40D2BE09A08D650068C0D5 /* RageSoundDriver_Generic_Software.h in Headers */,
 				AA40D2BF09A08D650068C0D5 /* ScreenTestLights.h in Headers */,
 				AA40D2C009A08D650068C0D5 /* RageDisplay_Null.h in Headers */,
-				AA40D2C109A08D650068C0D5 /* CAAudioHardwareStream.h in Headers */,
-				AA40D2C209A08D650068C0D5 /* CAAudioHardwareDevice.h in Headers */,
-				AA40D2C309A08D650068C0D5 /* CAAudioHardwareSystem.h in Headers */,
-				AA40D2C409A08D650068C0D5 /* CAPrefix.h in Headers */,
-				AA40D2C509A08D650068C0D5 /* CAStreamBasicDescription.h in Headers */,
-				AA40D2C609A08D650068C0D5 /* CAException.h in Headers */,
-				AA40D2C709A08D650068C0D5 /* CAConditionalMacros.h in Headers */,
-				AA40D2C809A08D650068C0D5 /* CAAutoDisposer.h in Headers */,
-				AA40D2C909A08D650068C0D5 /* CADebugMacros.h in Headers */,
 				AA40D2CA09A08D650068C0D5 /* arch_platform.h in Headers */,
 				AA40D2CB09A08D650068C0D5 /* EnumHelper.h in Headers */,
 				AA40D2CC09A08D650068C0D5 /* RageSoundPosMap.h in Headers */,
@@ -5442,10 +5364,6 @@
 				AA1CD943060AE571003702C4 /* RageSoundDriver_Generic_Software.cpp in Sources */,
 				AAF7435B06110E8D00B19AD1 /* ScreenTestLights.cpp in Sources */,
 				AAF74590061181F700B19AD1 /* RageDisplay_Null.cpp in Sources */,
-				AA34ECF80611C9A8003E5955 /* CAAudioHardwareStream.cpp in Sources */,
-				AA34ECFA0611C9AA003E5955 /* CAAudioHardwareDevice.cpp in Sources */,
-				AA34ECFB0611C9AC003E5955 /* CAAudioHardwareSystem.cpp in Sources */,
-				AA34ECFE0611C9C6003E5955 /* CAStreamBasicDescription.cpp in Sources */,
 				AAD36084062BB8AE00D0CED8 /* RageSoundPosMap.cpp in Sources */,
 				AA2828B3062FC0B8006F61EC /* SignalHandler.cpp in Sources */,
 				AA5C73FD0637A5F100AFB891 /* CourseUtil.cpp in Sources */,
@@ -5848,10 +5766,6 @@
 				AA40D46D09A08D650068C0D5 /* RageSoundDriver_Generic_Software.cpp in Sources */,
 				AA40D46E09A08D650068C0D5 /* ScreenTestLights.cpp in Sources */,
 				AA40D46F09A08D650068C0D5 /* RageDisplay_Null.cpp in Sources */,
-				AA40D47009A08D650068C0D5 /* CAAudioHardwareStream.cpp in Sources */,
-				AA40D47109A08D650068C0D5 /* CAAudioHardwareDevice.cpp in Sources */,
-				AA40D47209A08D650068C0D5 /* CAAudioHardwareSystem.cpp in Sources */,
-				AA40D47309A08D650068C0D5 /* CAStreamBasicDescription.cpp in Sources */,
 				AA40D47409A08D650068C0D5 /* RageSoundPosMap.cpp in Sources */,
 				AA40D47509A08D650068C0D5 /* SignalHandler.cpp in Sources */,
 				AA40D47609A08D650068C0D5 /* CourseUtil.cpp in Sources */,
