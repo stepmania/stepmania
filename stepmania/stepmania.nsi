@@ -244,11 +244,11 @@ Section "Main Section" SecMain
 	CreateDirectory $INSTDIR\pcks
 	CopyFiles /SILENT "$EXEDIR\${PRODUCT_ID}.app\Contents\Resources\pcks\*.idx" $INSTDIR\pcks 1
 	CopyFiles /SILENT "$EXEDIR\${PRODUCT_ID}.app\Contents\Resources\pcks\*.pck" $INSTDIR\pcks 650000	; assume a CD full of data
-	IfErrors do_error do_no_error
-	do_error:
+	IfErrors do_error_pck do_no_error_pck
+	do_error_pck:
 	MessageBox MB_OK|MB_ICONSTOP "$(TEXT_IO_FATAL_ERROR_COPYING_PCK)"
 	Quit
-	do_no_error:
+	do_no_error_pck:
 !endif
 
 !ifdef ASSOCIATE_SMZIP
