@@ -2,6 +2,7 @@
 #include "ScreenUnlockCelebrate.h"
 #include "UnlockManager.h"
 #include "LuaFunctions.h"
+#include "GameState.h"
 
 
 REGISTER_SCREEN_CLASS( ScreenUnlockCelebrate );
@@ -17,6 +18,9 @@ void ScreenUnlockCelebrate::Init()
 
 	g_iUnlockEntryIndexToCelebrate = UNLOCKMAN->GetUnlockEntryIndexToCelebrate();
 	UNLOCKMAN->UnlockEntryIndex( g_iUnlockEntryIndexToCelebrate );
+	Song* pSong = UNLOCKMAN->m_UnlockEntries[ g_iUnlockEntryIndexToCelebrate ].m_pSong;
+	if( pSong )
+		GAMESTATE->m_pCurSong.Set( pSong );
 
 	ScreenUnlockBrowse::Init();
 }
