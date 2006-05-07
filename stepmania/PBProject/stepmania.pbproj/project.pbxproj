@@ -5104,7 +5104,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "ranlib Libraries/*.a";
+			shellScript = "ranlib Libraries/*.a\nrm -rf \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/mad.framework\"\n";
 		};
 		AAA74CCF090CE268003F9A36 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
