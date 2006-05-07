@@ -225,6 +225,11 @@ void ScreenSelectMaster::Init()
 	}
 }
 
+RString ScreenSelectMaster::GetDefaultChoice()
+{
+	return DEFAULT_CHOICE;
+}
+
 void ScreenSelectMaster::BeginScreen()
 {
 	// TODO: Move default choice to ScreenSelect

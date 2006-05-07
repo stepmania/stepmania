@@ -13,6 +13,7 @@ class ScreenSelectMaster : public ScreenSelect
 public:
 	ScreenSelectMaster();
 	virtual void Init();
+	virtual RString GetDefaultChoice();
 	virtual void BeginScreen();
 
 	virtual void Update( float fDelta );

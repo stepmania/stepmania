@@ -1,6 +1,7 @@
 #include "global.h"
 #include "ScreenSelectLanguage.h"
 #include "PrefsManager.h"
+#include "arch/ArchHooks/ArchHooks.h"
 
 
 REGISTER_SCREEN_CLASS( ScreenSelectLanguage );
@@ -29,6 +30,11 @@ void ScreenSelectLanguage::Init()
 	}
 
 	ScreenSelectMaster::Init();
+}
+
+RString ScreenSelectLanguage::GetDefaultChoice()
+{
+	return HOOKS->GetPreferredLanguage();
 }
 
 void ScreenSelectLanguage::BeginScreen()

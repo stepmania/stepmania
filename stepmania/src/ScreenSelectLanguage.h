@@ -8,6 +8,7 @@ class ScreenSelectLanguage : public ScreenSelectMaster
 {
 public:
 	virtual void Init();
+	virtual RString GetDefaultChoice();
 	virtual void BeginScreen();
 	virtual void MenuStart( PlayerNumber pn );
 	virtual void MenuBack( PlayerNumber pn );
