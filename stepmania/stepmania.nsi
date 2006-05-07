@@ -246,7 +246,6 @@ Section "Main Section" SecMain
 	; Do this copy before anything else.  It's the most likely to fail.  
 	; Possible failure reasons are: scratched CD, user tried to copy the installer but forgot the pcks.
 	CreateDirectory $INSTDIR\pcks
-	CopyFiles "$EXEDIR\${PRODUCT_ID}\${PRODUCT_ID}.app\Contents\Resources\pcks\*.idx" $INSTDIR\pcks 1
 	CopyFiles "$EXEDIR\${PRODUCT_ID}\${PRODUCT_ID}.app\Contents\Resources\pcks\*.pck" $INSTDIR\pcks 650000	; assume a CD full of data
 	IfErrors do_error_pck do_no_error_pck
 	do_error_pck:
