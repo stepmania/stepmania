@@ -75,7 +75,7 @@ void KeyboardDevice::AddElement( int usagePage, int usage, int cookie, const CFD
 	// XXX kHIDUsage_KeyboardClearOrAgain
 	if( usage >= kHIDUsage_KeyboardSeparator && usage <= kHIDUsage_KeyboardExSel )
 	{
-		m_Mapping[cookie] = OTHER( 32 + usage - kHIDUsage_KeyboardSeparator );
+		m_Mapping[cookie] = OTHER( 42 + usage - kHIDUsage_KeyboardSeparator );
 		return;
 	}
 	
