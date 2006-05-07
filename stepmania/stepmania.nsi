@@ -28,7 +28,11 @@
 	UninstallCaption "${PRODUCT_DISPLAY}"
 
 	; Some default compiler settings (uncomment and change at will):
-	SetCompress auto ; (can be off or force)
+!ifdef COMPRESS
+	SetCompress auto
+!else
+	SetCompress off
+!endif
 	SetDatablockOptimize on ; (can be off)
 !ifdef CRC_CHECK
 	CRCCheck on
@@ -242,8 +246,8 @@ Section "Main Section" SecMain
 	; Do this copy before anything else.  It's the most likely to fail.  
 	; Possible failure reasons are: scratched CD, user tried to copy the installer but forgot the pcks.
 	CreateDirectory $INSTDIR\pcks
-	CopyFiles /SILENT "$EXEDIR\${PRODUCT_ID}.app\Contents\Resources\pcks\*.idx" $INSTDIR\pcks 1
-	CopyFiles /SILENT "$EXEDIR\${PRODUCT_ID}.app\Contents\Resources\pcks\*.pck" $INSTDIR\pcks 650000	; assume a CD full of data
+	CopyFiles "$EXEDIR\${PRODUCT_ID}\${PRODUCT_ID}.app\Contents\Resources\pcks\*.idx" $INSTDIR\pcks 1
+	CopyFiles "$EXEDIR\${PRODUCT_ID}\${PRODUCT_ID}.app\Contents\Resources\pcks\*.pck" $INSTDIR\pcks 650000	; assume a CD full of data
 	IfErrors do_error_pck do_no_error_pck
 	do_error_pck:
 	MessageBox MB_OK|MB_ICONSTOP "$(TEXT_IO_FATAL_ERROR_COPYING_PCK)"
