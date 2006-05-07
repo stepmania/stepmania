@@ -227,7 +227,7 @@ void ScreenSelectMaster::Init()
 
 RString ScreenSelectMaster::GetDefaultChoice()
 {
-	return DEFAULT_CHOICE;
+	return DEFAULT_CHOICE.GetValue();
 }
 
 void ScreenSelectMaster::BeginScreen()
