@@ -4,8 +4,9 @@
 
 #if defined(MACOSX)
 #include "archutils/Darwin/VectorHelper.h"
-
+#ifdef USE_VEC
 static bool g_bVector;
+#endif
 #endif
 
 RageSoundMixBuffer::RageSoundMixBuffer()
