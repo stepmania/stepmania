@@ -1,103 +1,172 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
 use strict;
+use File::Copy;
+use File::Path;
+use File::Basename;
+use File::Temp qw/tempfile tempdir/;
+use Cwd;
 
-my @filelist = qw(Announcers/instructions.txt
-				  BackgroundTransitions
-				  BackgroundEffects
-				  BGAnimations/instructions.txt
-				  CDTitles/instructions.txt
-				  Characters/default
-				  Courses/instructions.txt
-				  Courses/Samples
-				  Packages/instructions.txt
-				  NoteSkins/instructions.txt
-				  NoteSkins/common/default
-				  NoteSkins/dance/default
-				  NoteSkins/dance/flat
-				  NoteSkins/dance/note
-				  NoteSkins/dance/solo
-				  NoteSkins/pump/Classic
-				  NoteSkins/pump/default
-				  RandomMovies/instructions.txt
-				  Songs/instructions.txt
-				  Themes/instructions.txt
-				  Themes/default
-				  Data/Translations.xml
-				  Data/AI.ini
-				  Data/splash.png
-				  README-FIRST.html
-				  NEWS
-				  StepMania.app);
-my @docs = qw(Copying.txt ChangeLog.txt);
+my @filelist = qw( Announcers/instructions.txt
+		   BackgroundTransitions
+		   BackgroundEffects
+		   BGAnimations/instructions.txt
+		   CDTitles/instructions.txt
+		   Characters/default
+		   Courses/instructions.txt
+		   Courses/Samples
+		   Packages/instructions.txt
+		   NoteSkins/instructions.txt
+		   NoteSkins/common/default
+		   NoteSkins/dance/default
+		   NoteSkins/dance/flat
+		   NoteSkins/dance/note
+		   NoteSkins/dance/solo
+		   NoteSkins/pump/Classic
+		   NoteSkins/pump/default
+		   RandomMovies/instructions.txt
+		   Songs/instructions.txt
+		   Themes/instructions.txt
+		   Themes/default
+		   Data/Translations.xml
+		   Data/AI.ini
+		   Data/splash.png
+		   StepMania.app );
+my @docs = ( "BGAnimation conditionals.txt",
+	     "BMA-fmt.txt",
+	     "ConditionalBGA Info.txt",
+	     "Copying.MAD",
+	     "ChangeLog.txt",
+	     "Licenses.txt" );
 
-die "usage: $0 path version\n" if @ARGV < 2;
-my $srcdir = $ARGV[0];
-my $destdir = "StepMania-$ARGV[1]";
-my $smdir = "$destdir/StepMania";
-my $scripts = `dirname $0`;
+# Passing a date for a CVS release gives StepMania-CVS-date.
+# Otherwise you get Stepmania-ver.
+die "usage: $0 [date]\n" if @ARGV > 1;
+my $root = getcwd;
+my $scripts = dirname $0;
+my $srcdir = ( $scripts =~ m{^/} ? "$scripts/../.." :
+	       "$root/$scripts/../.." );
+my $family;
+my $id;
+my $ver;
 
-chomp $scripts;
-
-if (-e $destdir)
+open FH, "$srcdir/src/ProductInfo.h" or die "Where am I?\n";
+while( <FH> )
 {
-	print "Removing $destdir.\n";
-	system(("rm", "-rf", "$destdir")) == 0 or die "$0: rm -rf failed: $!\n";
-}
-
-mkdir $destdir;
-mkdir $smdir;
-foreach (@filelist)
-{
-	my $file = "$srcdir/$_";
-	my @parts = split /\//;
-
-	if (@parts > 1)
-	{
-		pop @parts;
-		my $dir = "$smdir/" . join '/', @parts;
-		my @args = ("mkdir", "-p", $dir);
-
-		system(@args) == 0 or die "$0: mkdir -p failed: $!\n";
+	if( /^#define\s+PRODUCT_FAMILY_BARE\s+(.*?)\s*$/ ) {
+		$family = $1;
+	} elsif( /^#define\s+PRODUCT_ID_BARE\s+(.*?)\s*$/ ) {
+		$id = $1;
+	} elsif( /^#define\s+PRODUCT_VER_BARE\s+(.*?)\s*$/ ) {
+		$ver = $1;
 	}
-
-	my @args = ("cp", "-r", $file, "$smdir/$_");
-
-	system(@args) == 0 or die "$0: cp -r failed: $!\n";
 }
-foreach (@docs)
+close FH;
+
+my $destname = @ARGV ? "$id-$ARGV[0]" : "$family-$ver";
+
+$destname =~ s/\s+/-/g;
+
+my $destdir = tempdir;
+my $smdir = "$destdir/$id";
+my $pkg = "$root/$destname.pkg";
+
+for( @filelist )
 {
-	my @args = ("cp", "$srcdir/Docs/$_", "$smdir/$_");
-	
-	system(@args) == 0 or die "$0: cp -v failed: $!\n";
+	mkpath "$smdir/" . dirname $_;
+	system 'cp', '-r', "$srcdir/$_", "$smdir/$_" and die "cp -r failed: $!\n";
 }
+
+# Copy docs
+mkdir "$smdir/Docs";
+copy "$srcdir/Docs/$_", "$smdir/Docs/$_" for @docs;
+
 #clean up CVS directories
-my @args = ('find', $smdir, '-name', 'CVS', '-prune', '-exec', 'rm',
-			'-rf', '{}', ';');
-system(@args) == 0 or die "$0: failed to clean up CVS directories: $!\n";
-system(("strip", "-x", "$smdir/StepMania.app/Contents/MacOS/StepMania"));
+my @cvsdirs = split /\n/, `find "$smdir" -name CVS`;
+rmtree \@cvsdirs;
+system 'strip', '-x', "$smdir/StepMania.app/Contents/MacOS/StepMania";
 
-my $rscdir = "Install_Resources";
+my ($ih, $infoname) = tempfile;
+my ($dh, $descname) = tempfile;
+my $year = 1900+(localtime)[5];
 
-if (-e $rscdir)
+$ver =~ /(\d+)\.(\d+)/;
+my ($major, $minor) = ($1, $2);
+$major ||= 0;
+$minor ||= 0;
+
+print $ih <<EOF;
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0/EN" "http://www.apple.com/DTDs/P
+ropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleGetInfoString</key>
+	<string>$ver, Copyright ©2001-$year $family</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.$family.$id</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$ver</string>
+	<key>IFMajorVersion</key>
+	<integer>$major</integer>
+	<key>IFMinorVersion</key>
+	<integer>$minor</integer>
+	<key>IFPkgFlagAllowBackRev</key>
+	<true/>
+	<key>IFPkgFlagAuthorizationAction</key>
+	<string>AdminAuthorization</string>
+	<key>IFPkgFlagBackgroundAlignment</key>
+	<string>center</string>
+	<key>IFPkgFlagBackgroundScaling</key>
+	<string>none</string>
+	<key>IFPkgFlagDefaultLocation</key>
+	<string>/Applications</string>
+	<key>IFPkgFlagFollowLinks</key>
+	<true/>
+	<key>IFPkgFlagInstallFat</key>
+	<true/>
+	<key>IFPkgFlagInstalledSize</key>
+	<integer>36080</integer>
+	<key>IFPkgFlagIsRequired</key>
+	<false/>
+	<key>IFPkgFlagOverwritePermissions</key>
+	<false/>
+	<key>IFPkgFlagRelocatable</key>
+	<true/>
+	<key>IFPkgFlagRestartAction</key>
+	<string>NoRestart</string>
+	<key>IFPkgFlagRootVolumeOnly</key>
+	<false/>
+	<key>IFPkgFlagUpdateInstalledLanguages</key>
+	<false/>
+	<key>IFPkgFormatVersion</key>
+	<real>0.10000000149011612</real>
+</dict>
+</plist>
+EOF
+close $ih;
+print $dh <<EOF;
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IFPkgDescriptionDescription</key>
+	<string></string>
+	<key>IFPkgDescriptionTitle</key>
+	<string>$id</string>
+</dict>
+</plist>
+EOF
+close $dh;
+if( -e $pkg )
 {
-	print "Removing $rscdir.\n";
-	system(("rm", "-rf", "$rscdir")) == 0 or die "$0: rm -rf failed: $!\n";
+	print "Removing $pkg\n";
+	rmtree "$pkg";
 }
-
-# Make the resources directory now
-mkdir $rscdir;
-system(("cp", "$srcdir/README-FIRST.html", "$rscdir/ReadMe.html")) == 0
-  or die "$0: cp failed: $!\n";
-system(("cp", "$srcdir/Docs/Copying.txt", "$rscdir/License.txt")) == 0
-  or die "$0: cp failed $!\n";
-system(("cp", "$scripts/postinstall", $rscdir)) == 0
-  or die "$0: cp failed $!\n";
-
-# build the package
-# my $tool = "/Developer/Applications/Utilities/PackageMaker.app/"
-#   . "Contents/MacOS/PackageMaker";
-# @args = ($tool, "-build", "-p", "$destdir.pkg", "-f", $destdir,
-# 		 "-r", $rscdir);
-# system(@args) == 0 or die "$0: system @args failed: $!\n";
-print "Success.\n";
+my $pm =
+'/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker';
+system $pm, '-build', '-p', "$pkg", '-f', $destdir, '-ds',
+	'-i', $infoname, '-d', $descname;
+unlink $infoname, $descname;
+rmtree $destdir;
+print "Created $destname.pkg.\n";

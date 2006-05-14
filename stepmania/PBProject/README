@@ -2,12 +2,11 @@ REQUIREMENTS
 Mac OS X 10.4 or higher is required. The Mac OS X 10.2.8 SDK needs to be
 installed.
 
-XCode 2.2.1 is required to build. Even though the stepmania project
+Xcode 2.2.1 is required to build. Even though the stepmania project
 appears to be a ProjectBuilder project, it has been updated by XCode and
 no longer works with ProjectBuilder.
 
 BUILD
-The build process has been revised yet again.
 1. Download StepMania from sourceforge.
 2. Cd to the PBProject directory enter: $ touch ver.cpp
 3. Cd to Frameworks and unpack Frameworks.tar.bz2 by:
@@ -20,10 +19,15 @@ instead of "-configuration Native"
 5. (Optional) Run:
 $ strip -x StepMania.app/Contents/MacOS/StepMania
 to reduce the size of the binary.
+
 INSTALL
-From the PBProject directory, run:
-$ scripts/mkrelease.pl .. <version>
-Build a package using the PackageMaker project stepmania.pmproj.
+To build an Installer package, run scripts/mkrelease.pl. It takes one
+optional argument which should probably be a date. For example
+$ scripts/mkrelease.pl
+will produce StepMania-4.0-beta4.pkg if ProductInfo.h defines the
+version to be "4.0 beta4".
+$ scripts/mkrelease.pl 20060507
+will produce StepMania-CVS-20060507.pkg for CVS releases
 
 Steve Checkoway
 steve@cs.washington.edu
