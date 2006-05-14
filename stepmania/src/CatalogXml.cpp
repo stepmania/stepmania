@@ -22,14 +22,19 @@
 #include "arch/LoadingWindow/LoadingWindow.h"
 #include "LocalizedString.h"
 
-#define SHOW_PLAY_MODE(pm)				THEME->GetMetricB("CatalogXml",ssprintf("ShowPlayMode%s",PlayModeToString(pm).c_str()))
-#define SHOW_STYLE(ps)					THEME->GetMetricB("CatalogXml",ssprintf("ShowStyle%s",Capitalize((ps)->m_szName).c_str()))
+#define SHOW_PLAY_MODE(pm)					THEME->GetMetricB("CatalogXml",ssprintf("ShowPlayMode%s",PlayModeToString(pm).c_str()))
+#define SHOW_STYLE(ps)						THEME->GetMetricB("CatalogXml",ssprintf("ShowStyle%s",Capitalize((ps)->m_szName).c_str()))
 #define INTERNET_RANKING_HOME_URL		THEME->GetMetric ("CatalogXml","InternetRankingHomeUrl")
 #define INTERNET_RANKING_UPLOAD_URL		THEME->GetMetric ("CatalogXml","InternetRankingUploadUrl")
 #define INTERNET_RANKING_VIEW_GUID_URL	THEME->GetMetric ("CatalogXml","InternetRankingViewGuidUrl")
-#define PRODUCT_TITLE					THEME->GetMetric ("CatalogXml","ProductTitle")
-#define FOOTER_TEXT						THEME->GetMetric ("CatalogXml","FooterText")
-#define FOOTER_LINK						THEME->GetMetric ("CatalogXml","FooterLink")
+#define PRODUCT_TITLE						THEME->GetMetric ("CatalogXml","ProductTitle")
+#define FOOTER_TEXT							THEME->GetMetric ("CatalogXml","FooterText")
+#define FOOTER_LINK							THEME->GetMetric ("CatalogXml","FooterLink")
+
+/*
+ * These RStrings store where the Catalog* files are located, and what they
+ * called.
+ */
 
 const RString CATALOG_XML       = "Catalog.xml";
 const RString CATALOG_XSL       = "Catalog.xsl";
@@ -76,22 +81,35 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 			{
 				XNode* p3 = p2->AppendChild( "StepsType" );
 				p3->AppendAttr( "StepsType", GAMEMAN->StepsTypeToString(*st) );
-
+				
 				int iNumStepsInGroupAndStepsType[NUM_Difficulty];
 				ZERO( iNumStepsInGroupAndStepsType );
 				FOREACH_CONST( Song*, vpSongsInGroup, i )
 				{
 					Song *pSong = *i;
+				
+				/*
+				 * Not all songs should be stored in Catalog.xml.  Tutorial songs
+				 * are meant to learn how to play the game, not for playing for
+				 * a grade.  Locked songs aren't shown to keep them a surprise
+				 * until such a time when they are unlocked.
+				 */
+				
 					if( pSong->IsTutorial() )
-						continue;	// skip
+						continue;	// skip: Tutorial song.
 					if( UNLOCKMAN->SongIsLocked(pSong) )
-						continue;	// skip
+						continue;	// skip: Locked song.
 					iTotalSongs++;
 					iNumSongsInGroup++;
-
 					FOREACH_CONST( Difficulty, CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue(), dc )
 					{
 						Steps* pSteps = pSong->GetStepsByDifficulty( *st, *dc, false );	// no autogen
+						
+						/*
+						 * There is no point in storing the steps if either there
+						 * are no steps, or the song is locked.
+						 */
+						
 						if( pSteps == NULL )
 							continue;	// skip
 						if( UNLOCKMAN->StepsIsLocked(pSong,pSteps) )
@@ -153,10 +171,17 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 		{
 			Song* pSong = vpSongs[i];
 			
+			/*
+			 * Not all songs should be stored in Catalog.xml.  Tutorial songs
+			 * are meant to learn how to play the game, not for playing for
+			 * a grade.  Locked songs aren't shown to keep them a surprise
+			 * until such a time when they are unlocked.
+			 */
+			
 			if( pSong->IsTutorial() )
-				continue;	// skip
+				continue;	// skip: Tutorial song.
 			if( UNLOCKMAN->SongIsLocked(pSong) )
-				continue;	// skip
+				continue;	// skip: Locked song.
 
 			SongID songID;
 			songID.FromSong( pSong );
