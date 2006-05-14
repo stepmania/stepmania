@@ -169,11 +169,20 @@ void MemoryCardDriverThreaded_OSX::GetUSBStorageDevices( vector<UsbStorageDevice
 			RString::size_type pos = sRegistryPath.rfind( "/IOUSBMassStorageClass" );
 			
 			if( pos == RString::npos )
-				continue; // Probably not a USB device.
+			{
+				// Probably not a USB device.
+				LOG->Trace( "Device \"%s\" (%s) has IOServicePlane path: %s.",
+					    fs[i].f_mntfromname, fs[i].f_mntonname, path );
+				continue;
+			}
 			// The path does not start with / so pos - 1 >= 0.
 			pos = sRegistryPath.rfind( '/', pos - 1 );
 			if( pos == RString::npos )
-				continue; // Something is horribly wrong at this point.
+			{
+				// Something is horribly wrong at this point.
+				LOG->Trace( "Device has unusual IOServicePlane path: %s", path );
+				continue;
+			}
 			path[pos] = '\0';
 			
 			io_registry_entry_t device = IORegistryEntryFromPath( kIOMasterPortDefault, path );

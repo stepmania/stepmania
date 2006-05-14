@@ -2,12 +2,21 @@
 #include "RageSoundMixBuffer.h"
 #include "RageUtil.h"
 
+#if defined(MACOSX)
+#include "archutils/Darwin/VectorHelper.h"
+
+static bool g_bVector;
+#endif
+
 RageSoundMixBuffer::RageSoundMixBuffer()
 {
 	m_iBufSize = m_iBufUsed = 0;
 	m_pMixbuf = NULL;
 	m_iOffset = 0;
 	SetVolume( 1.0f );
+#ifdef USE_VEC
+	g_bVector = Vector::CheckForVector();
+#endif
 }
 
 RageSoundMixBuffer::~RageSoundMixBuffer()
@@ -49,6 +58,13 @@ void RageSoundMixBuffer::write( const int16_t *buf, unsigned size )
 
 	/* Scale volume and add. */
 	int32_t *pBuf = m_pMixbuf+m_iOffset;
+#ifdef USE_VEC
+	if( g_bVector )
+	{
+		Vector::FastSoundWrite( pBuf, buf, size, m_iVolumeFactor );
+		return;
+	}
+#endif
 	for( unsigned pos = 0; pos < size; ++pos )
 	{
 		*pBuf += buf[pos] * m_iVolumeFactor; ++pBuf;
@@ -57,6 +73,14 @@ void RageSoundMixBuffer::write( const int16_t *buf, unsigned size )
 
 void RageSoundMixBuffer::read( int16_t *buf )
 {
+#ifdef USE_VEC
+	if( g_bVector )
+	{
+		Vector::FastSoundRead( buf, m_pMixbuf, m_iBufUsed );
+		m_iBufUsed = 0;
+		return;
+	}
+#endif
 	for( unsigned pos = 0; pos < m_iBufUsed; ++pos )
 	{
 		int32_t out = (m_pMixbuf[pos]) / 256;
@@ -67,6 +91,14 @@ void RageSoundMixBuffer::read( int16_t *buf )
 
 void RageSoundMixBuffer::read( float *buf )
 {
+#ifdef USE_VEC
+	if( g_bVector )
+	{
+		Vector::FastSoundRead( buf, m_pMixbuf, m_iBufUsed );
+		m_iBufUsed = 0;
+		return;
+	}
+#endif
 	const int Minimum = -32768 * 256;
 	const int Maximum = 32767 * 256;
 

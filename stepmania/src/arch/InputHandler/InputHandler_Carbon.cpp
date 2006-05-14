@@ -123,7 +123,7 @@ InputHandler_Carbon::~InputHandler_Carbon()
 		CFRunLoopWakeUp( m_LoopRef );
 		m_InputThread.Wait();
 		CFRelease( m_SourceRef );
-		// Don't release the loop ref.
+		CFRelease( m_LoopRef );
 		LOG->Trace( "Input handler thread shut down." );
 	}
 	
@@ -236,6 +236,7 @@ InputHandler_Carbon::InputHandler_Carbon() : m_Sem( "Input thread started" ), m_
 	else
 	{
 		m_LoopRef = CFRunLoopRef( GetCFRunLoopFromEventLoop(GetMainEventLoop()) );
+		CFRetain( m_LoopRef );
 		StartDevices();
 	}
 }
