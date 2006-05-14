@@ -5,7 +5,15 @@
 namespace Vector
 {
 	bool CheckForVector();
+	
+	/* The dest parameter needs to be 16 byte aligned. This is unlikely
+	 * to be the case for the src so we handle it correctly but it does need to be at
+	 * least aligned to its data type (which gcc should ensure). */
 	void FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, short volume );
+	
+	/* For both FastSoundRead(), dest and src need to be 16 byte aligned. The audio HAL
+	 * will provide a 16-byte aligned buffer and RageSoundMixBuffer's buffer is also
+	 * 16-byte aligned since it lives on the heap. */
 	void FastSoundRead( int16_t *dest, const int32_t *src, unsigned size );
 	void FastSoundRead( float *dest, const int32_t *src, unsigned size );
 }

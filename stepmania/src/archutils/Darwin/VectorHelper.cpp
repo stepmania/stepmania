@@ -24,29 +24,49 @@ bool Vector::CheckForVector()
 	return err == noErr && ( cpuAttributes & (1 << gestaltPowerPCHasVectorInstructions) );
 }
 
+/* for( size_t pos = 0; pos < size; ++pos )
+ *         dest[pos] += src[pos] * volume;
+ */
 void Vector::FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, short volume )
 {
 	if( unlikely(size == 0) )
 		return;
 	ASSERT_M( (unsigned(dest) &0xF) == 0, ssprintf("dest = %p", dest) );
 	
-	vUInt8 splat_mask = vec_lvsl( 0, &volume );
+	/* We want to splat the volume across a vector but it is unlikely to be aligned in
+	 * the same location every time so we are going to load it into some offset in
+	 * the vector, permute it to the first word and splat it. */
+	vUInt8 mask = vec_lvsl( 0, &volume );
 	vSInt16 vol = vec_lde( 0, &volume );
 	
-	vol = vec_splat( vec_perm(vol, vol, splat_mask), 0 );
+	vol = vec_splat( vec_perm(vol, vol, mask), 0 );
 	
+	/* To handle src being unaligned we're going to load an initial vector and each
+	 * iteration of the loop, we'll load 15 bytes past the first to pick up the next
+	 * vector of data (note that if we can load one element of a vector, it's always
+	 * safe to load the whole vector) unless src is actually aligned in which case
+	 * we'll end up with the same vector. To handle that, be tricky with the
+	 * permutation mask to load from LSQ otherwise every iteration but the first we
+	 * will be loading the wrong data. */
 	vSInt16 MSQ = vec_ld( 0, src );
 	vSInt16 LSQ;
-	vUInt8 mask = vec_add( vec_lvsl(15, src), vec_splat_u8(1) );
+	
+	mask = vec_add( vec_lvsl(15, src), vec_splat_u8(1) );
 	
 	while( size & ~0x7 )
 	{
-		// Deal with unaligned data.
+		// Load next 16 bytes.
 		LSQ = vec_ld( 15, src );
 		
 		vSInt16 data = vec_perm( MSQ, LSQ, mask );
 		vSInt32 result1 = vec_ld( 0, dest );
 		vSInt32 result2 = vec_ld( 16, dest );
+		
+		/* Multiply the even 2-byte elements in data with those in vol to get
+		 * 4-byte elements. Do the same with the odd elements then merge both
+		 * high and low halves of the vectors into two new 4-element, 4-byte
+		 * vectors. In this way the combined vector <first,second> contains
+		 * the 8 products in the correct order. */
 		vSInt32 even = vec_mule( data, vol );
 		vSInt32 odd = vec_mulo( data, vol );
 		vSInt32 first = vec_mergeh( even, odd );
@@ -61,8 +81,9 @@ void Vector::FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, s
 	}
 	if( size )
 	{
-		// Deal with the remaining samples but be careful while storing.
-		// Deal with unaligned data.
+		/* There is more data left but fewer than 14 bytes (7 2-byte elements)
+		 * to be written. Handle it exactly the same as above but be careful
+		 * to only store size 4-byte products. */
 		LSQ = vec_ld( 15, src );
 		
 		vSInt16 data = vec_perm( MSQ, LSQ, mask );
@@ -77,6 +98,8 @@ void Vector::FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, s
 		result2 = vec_add( result2, second );
 		if( size >= 4 )
 		{
+			/* We can store the first 4 in one store instruction. Store
+			 * the size-4 others one at a time. */
 			vec_st( result1, 0, dest );
 			dest += 4;
 			size -= 4;
@@ -85,12 +108,16 @@ void Vector::FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, s
 		}
 		else
 		{
+			/* We have fewer than 4 so store them one at a time. */
 			while( size-- )
 				vec_ste( result1, 0, dest++ );
 		}
 	}
 }
 
+/* for( size_t pos = 0; pos < size; ++pos )
+ *         dest[pos] = clamp( src[pos]/256, -32768, 32767 );
+ */
 void Vector::FastSoundRead( int16_t *dest, const int32_t *src, unsigned size )
 {
 	ASSERT_M( (unsigned(dest) & 0xF) == 0, ssprintf("dest = %p", dest) );
@@ -99,6 +126,15 @@ void Vector::FastSoundRead( int16_t *dest, const int32_t *src, unsigned size )
 	vSInt32 zero = (vSInt32)( 0 );
 	vUInt32 shift = (vUInt32)( 8 );
 	
+	/* This is tricky. We need to divide signed 4-byte integers by 256 and stuff
+	 * them into 2-byte integers. First, find the elements which are negative
+	 * by comparing to zero (those less than zero will have each bit in the
+	 * 32-bit element set to 1 and those at least zero will have them all set
+	 * to 0). Take the absolute value (it actually subtracts the vector from zero
+	 * and computes the max to do that), shift right by 8 bits, use the masks
+	 * to get vectors containing only those elements which were negative and
+	 * subtract twice. Use saturated arithmatic to deal with overflow. Lastly,
+	 * pack the two vectors into signed 2-byte integers (again saturated). */
 	while( size & ~0x7 )
 	{
 		vSInt32 first = vec_ldl( 0, src );
@@ -126,7 +162,7 @@ void Vector::FastSoundRead( int16_t *dest, const int32_t *src, unsigned size )
 	}
 	if( size )
 	{
-		// Deal with the remaining samples but be careful while storing.
+		// Deal with the remaining samples but be careful while storing as above.
 		vSInt32 first = vec_ldl( 0, src );
 		vSInt32 second = vec_ldl( 16, src );
 		vBool32 b1 = vec_cmplt( first, zero );
@@ -149,9 +185,11 @@ void Vector::FastSoundRead( int16_t *dest, const int32_t *src, unsigned size )
 		while( size-- )
 			vec_ste( result, 0, dest++ );
 	}
-		
 }
 
+/* for( size_t pos = 0; pos < size; ++pos )
+ *         dest[pos] = SCALE( float(src[pos]), -32768*256, 32767*256, -1.0f, 1.0f );
+ */
 void Vector::FastSoundRead( float *dest, const int32_t *src, unsigned size )
 {
 	ASSERT_M( (unsigned(dest) &0xF) == 0, ssprintf("dest = %p", dest) );
@@ -163,6 +201,10 @@ void Vector::FastSoundRead( float *dest, const int32_t *src, unsigned size )
 	
 	while( size & ~0x3 )
 	{
+		/* By far the simplest of these, we need only perform the scale
+		 * operation which amounts to subtracting l1, converting to a float,
+		 * multiplying by a constant, and adding l1. We can multiply and add
+		 * in one instruction. */
 		vFloat result = vec_ctf( vec_subs(vec_ldl(0, src), l1), 8 );
 		
 		vec_st( vec_madd(result, scale, l2), 0, dest );
@@ -172,7 +214,7 @@ void Vector::FastSoundRead( float *dest, const int32_t *src, unsigned size )
 	}
 	if( size )
 	{
-		// Deal with the remaining samples but be careful while storing.
+		// Deal with the remaining samples but be careful while storing as above.
 		vFloat result = vec_madd( vec_ctf(vec_subs(vec_ldl(0, src), l1), 8), scale, l2 );
 		
 		while( size-- )
