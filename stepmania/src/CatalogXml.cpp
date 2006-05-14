@@ -24,9 +24,9 @@
 
 #define SHOW_PLAY_MODE(pm)					THEME->GetMetricB("CatalogXml",ssprintf("ShowPlayMode%s",PlayModeToString(pm).c_str()))
 #define SHOW_STYLE(ps)						THEME->GetMetricB("CatalogXml",ssprintf("ShowStyle%s",Capitalize((ps)->m_szName).c_str()))
-#define INTERNET_RANKING_HOME_URL		THEME->GetMetric ("CatalogXml","InternetRankingHomeUrl")
-#define INTERNET_RANKING_UPLOAD_URL		THEME->GetMetric ("CatalogXml","InternetRankingUploadUrl")
-#define INTERNET_RANKING_VIEW_GUID_URL	THEME->GetMetric ("CatalogXml","InternetRankingViewGuidUrl")
+#define INTERNET_RANKING_HOME_URL			THEME->GetMetric ("CatalogXml","InternetRankingHomeUrl")
+#define INTERNET_RANKING_UPLOAD_URL			THEME->GetMetric ("CatalogXml","InternetRankingUploadUrl")
+#define INTERNET_RANKING_VIEW_GUID_URL		THEME->GetMetric ("CatalogXml","InternetRankingViewGuidUrl")
 #define PRODUCT_TITLE						THEME->GetMetric ("CatalogXml","ProductTitle")
 #define FOOTER_TEXT							THEME->GetMetric ("CatalogXml","FooterText")
 #define FOOTER_LINK							THEME->GetMetric ("CatalogXml","FooterLink")
