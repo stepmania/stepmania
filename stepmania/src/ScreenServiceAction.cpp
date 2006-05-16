@@ -381,7 +381,7 @@ static RString CopyEditsMemoryCardToMachine()
 	ProfileManager::GetMemoryCardProfileDirectoriesToTry( vsSubDirs );
 
 	vector<RString> vs;
-	vs.push_back( ssprintf( COPIED_TO_CARD.GetValue(), pn+1 ) );
+	vs.push_back( ssprintf( COPIED_FROM_CARD.GetValue(), pn+1 ) );
 
 	FOREACH_CONST( RString, vsSubDirs, sSubDir )
 	{
