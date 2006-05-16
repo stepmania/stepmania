@@ -45,7 +45,7 @@ static RString ROW_Y_NAME( size_t i )		{ return ssprintf("Row%dY",int(i+1)); }
 void EditMenu::StripLockedStepsAndDifficulty( vector<StepsAndDifficulty> &v )
 {
 	const Song *pSong = GetSelectedSong();
-	for( int i=(int)v.size(); i>=0; i-- )
+	for( int i=(int)v.size()-1; i>=0; i-- )
 	{
 		if( v[i].pSteps  &&  UNLOCKMAN->StepsIsLocked(pSong, v[i].pSteps) )
 				v.erase( v.begin()+i );
@@ -480,31 +480,20 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 		{
 			RString s;
 			Steps *pSteps = GetSelectedSteps();
-			if( pSteps  &&  GetSelectedDifficulty() == DIFFICULTY_EDIT )
-			{
-				if( pSteps->GetDescription().empty() )
-					 s += "-no name-";
-				else
-					s += pSteps->GetDescription();
-				s += " (" + DifficultyToLocalizedString(DIFFICULTY_EDIT) + ")";
-			}
-			else
-			{
-				s = DifficultyToLocalizedString(GetSelectedDifficulty());
+			s = DifficultyToLocalizedString(GetSelectedDifficulty());
 
-				// UGLY.  "Edit" -> "New Edit"
-				switch( EDIT_MODE.GetValue() )
-				{
-				case EditMode_Home:
-					s = "New " + s;
-					break;
-				case EditMode_Practice:
-				case EditMode_CourseMods:
-				case EditMode_Full:
-					break;
-				default:
-					ASSERT(0);
-				}
+			// UGLY.  "Edit" -> "New Edit"
+			switch( EDIT_MODE.GetValue() )
+			{
+			case EditMode_Home:
+				s = "New " + s;
+				break;
+			case EditMode_Practice:
+			case EditMode_CourseMods:
+			case EditMode_Full:
+				break;
+			default:
+				ASSERT(0);
 			}
 			m_textValue[ROW_STEPS].SetText( s );
 		}
@@ -550,8 +539,6 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				Steps *pSourceSteps = GetSelectedSourceSteps();
 				if( GetSelectedSourceDifficulty() == DIFFICULTY_INVALID )
 					s = BLANK;
-				else if( pSourceSteps  &&  GetSelectedSourceDifficulty() == DIFFICULTY_EDIT )
-					s = pSourceSteps->GetDescription() + " (" + DifficultyToLocalizedString(DIFFICULTY_EDIT) + ")";
 				else
 					s = DifficultyToLocalizedString(GetSelectedSourceDifficulty());
 				m_textValue[ROW_SOURCE_STEPS].SetText( s );
