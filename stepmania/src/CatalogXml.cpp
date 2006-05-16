@@ -37,7 +37,7 @@ const RString CATALOG_XSL       = "Catalog.xsl";
 const RString CATALOG_XML_FILE  = "Save/" + CATALOG_XML;
 
 static LocalizedString SAVING_CATALOG_XML( "CatalogXml", "Saving %s ..." );
-void SaveCatalogXml( LoadingWindow *loading_window )
+void CatalogXml::Save( LoadingWindow *loading_window )
 {
 	ASSERT( SONGMAN );
 	ASSERT( UNLOCKMAN );

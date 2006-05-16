@@ -34,6 +34,7 @@
 #include "CourseLoaderCRS.h"
 #include "TitleSubstitution.h"
 #include "LocalizedString.h"
+#include "CatalogXml.h"
 
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -99,6 +100,7 @@ void SongManager::Reload( bool bAllowFastLoad, LoadingWindow *ld )
 	// reload scores and unlocks afterward
 	PROFILEMAN->LoadMachineProfile();
 	UNLOCKMAN->Reload();
+	CatalogXml::Save( NULL );
 
 	if( !bAllowFastLoad )
 		PREFSMAN->m_bFastLoad.Set( OldVal );
