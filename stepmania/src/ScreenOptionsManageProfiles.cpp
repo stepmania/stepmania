@@ -161,7 +161,7 @@ void ScreenOptionsManageProfiles::BeginScreen()
 
 static LocalizedString CONFIRM_DELETE_PROFILE	( "ScreenOptionsManageProfiles", "Are you sure you want to delete the profile '%s'?" );
 static LocalizedString CONFIRM_CLEAR_PROFILE	( "ScreenOptionsManageProfiles", "Are you sure you want to clear all data in the profile '%s'?" );
-static LocalizedString ENTER_PROFILE_NAME		( "ScreenOptionsManageProfiles", "Enter a name for the profile." );
+static LocalizedString ENTER_PROFILE_NAME	( "ScreenOptionsManageProfiles", "Enter a name for the profile." );
 void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_GoToNextScreen )
@@ -183,10 +183,30 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 			RString sNewName = ScreenTextEntry::s_sLastAnswer;
 			ASSERT( GAMESTATE->m_sEditLocalProfileID.Get().empty() );
 
+			int iNumProfiles = PROFILEMAN->GetNumLocalProfiles();
+
 			// create
 			RString sProfileID;
-			PROFILEMAN->CreateLocalProfile( ScreenTextEntry::s_sLastAnswer, sProfileID );
+			PROFILEMAN->CreateLocalProfile( ScreenTextEntry::s_sLastAnswer, sProfileID );	// TODO: Check return value
 			GAMESTATE->m_sEditLocalProfileID.Set( sProfileID );
+
+			if( iNumProfiles < NUM_PLAYERS )
+			{
+				int iFirstUnused = -1;
+				FOREACH_CONST( Preference<RString>*, PROFILEMAN->m_sDefaultLocalProfileID.m_v, i )
+				{
+					RString sLocalProfileID = (*i)->Get();
+					if( sLocalProfileID.empty() )
+					{
+						iFirstUnused = i - PROFILEMAN->m_sDefaultLocalProfileID.m_v.begin();
+						break;
+					}
+				}
+				if( iFirstUnused != -1 )
+				{
+					PROFILEMAN->m_sDefaultLocalProfileID.m_v[iFirstUnused]->Set( sProfileID );
+				}
+			}
 
 			SCREENMAN->SetNewScreen( this->m_sName ); // reload
 		}

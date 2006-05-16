@@ -486,6 +486,14 @@ bool ProfileManager::DeleteLocalProfile( RString sProfileID )
 			if( DeleteRecursive(sProfileDir) )
 			{
 				g_vLocalProfile.erase( i );
+
+				// Delete all references to this profileID
+				FOREACH_CONST( Preference<RString>*, PROFILEMAN->m_sDefaultLocalProfileID.m_v, i )
+				{
+					if( (*i)->Get() == sProfileID )
+						(*i)->Set( "" );
+				}
+
 				return true;
 			}
 			else
@@ -494,6 +502,8 @@ bool ProfileManager::DeleteLocalProfile( RString sProfileID )
 			}
 		}
 	}
+
+
 
 	LOG->Warn( "DeleteLocalProfile: ProfileID '%s' doesn't exist", sProfileID.c_str() );
 	return false;

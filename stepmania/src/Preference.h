@@ -113,10 +113,10 @@ private:
 template <class T>
 class Preference1D
 {
+public:
 	typedef Preference<T> PreferenceT;
 	vector<PreferenceT*> m_v;
 	
-public:
 	Preference1D( void pfn(size_t i, RString &sNameOut, T &defaultValueOut ), size_t N )
 	{
 		for( size_t i=0; i<N; ++i )
