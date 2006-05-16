@@ -76,6 +76,9 @@ public:
 	EditMenuRow GetSelectedRow() const { return m_SelectedRow; }
 
 private:
+	struct StepsAndDifficulty;
+
+	void StripLockedStepsAndDifficulty( vector<StepsAndDifficulty> &v );
 	void GetSongsToShowForGroup( const RString &sGroup, vector<Song*> &vpSongsOut );
 	void GetGroupsToShow( vector<RString> &vsGroupsOut );
 

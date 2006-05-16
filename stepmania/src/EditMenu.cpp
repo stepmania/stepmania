@@ -42,6 +42,16 @@ static RString ROW_VALUE_X_NAME( size_t i )	{ return ssprintf("RowValue%dX",int(
 static RString ROW_Y_NAME( size_t i )		{ return ssprintf("Row%dY",int(i+1)); }
 
 
+void EditMenu::StripLockedStepsAndDifficulty( vector<StepsAndDifficulty> &v )
+{
+	const Song *pSong = GetSelectedSong();
+	for( int i=(int)v.size(); i>=0; i-- )
+	{
+		if( v[i].pSteps  &&  UNLOCKMAN->StepsIsLocked(pSong, v[i].pSteps) )
+				v.erase( v.begin()+i );
+	}
+}
+
 void EditMenu::GetSongsToShowForGroup( const RString &sGroup, vector<Song*> &vpSongsOut )
 {
 	vpSongsOut.clear();
@@ -451,6 +461,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 					}
 				}
 			}
+			StripLockedStepsAndDifficulty( m_vpSteps );
 		
 			FOREACH( StepsAndDifficulty, m_vpSteps, s )
 			{
@@ -511,7 +522,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 		m_vpSourceSteps.push_back( StepsAndDifficulty(NULL,DIFFICULTY_INVALID) );	// "blank"
 		FOREACH_Difficulty( dc )
 		{
-			// fill in pSteps
+			// fill in m_vpSourceSteps
 			if( dc != DIFFICULTY_EDIT )
 			{
 				Steps *pSteps = GetSelectedSong()->GetStepsByDifficulty( GetSelectedSourceStepsType(), dc );
@@ -527,6 +538,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 					m_vpSourceSteps.push_back( StepsAndDifficulty(*pSteps,dc) );
 			}
 		}
+		StripLockedStepsAndDifficulty( m_vpSteps );
 		CLAMP( m_iSelection[ROW_SOURCE_STEPS], 0, m_vpSourceSteps.size()-1 );
 		// fall through
 	case ROW_SOURCE_STEPS:
