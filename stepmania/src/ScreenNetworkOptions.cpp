@@ -14,6 +14,21 @@
 #include "LocalizedString.h"
 #include "OptionRowHandler.h"
 
+static LocalizedString CLIENT_CONNECT	( "ScreenNetworkOptions", "Connect" );
+static LocalizedString CLIENT_DISCONNECT	( "ScreenNetworkOptions", "Disconnect" );
+static LocalizedString SERVER_START	( "ScreenNetworkOptions", "Start" );
+static LocalizedString SERVER_STOP	( "ScreenNetworkOptions", "Stop" );
+static LocalizedString SCORE_ON	( "ScreenNetworkOptions", "ScoreOn" );
+static LocalizedString SCORE_OFF	( "ScreenNetworkOptions", "ScoreOff" );
+static LocalizedString SERVER_STARTED	( "ScreenNetworkOptions", "Server started." );
+static LocalizedString SERVER_FAILED	( "ScreenNetworkOptions", "Server failed: %s Code:%d" );
+
+static LocalizedString DISCONNECTED				( "ScreenNetworkOptions", "Disconnected from server." );
+static LocalizedString SERVER_STOPPED			( "ScreenNetworkOptions", "Server stopped." );
+static LocalizedString ENTER_NETWORK_ADDRESS	("ScreenNetworkOptions","Enter a network address.");
+static LocalizedString CONNECT_TO_YOURSELF		("ScreenNetworkOptions","Use 127.0.0.1 to connect to yourself.");
+static LocalizedString ENTER_A_SERVER_NAME		("ScreenNetworkOptions","Enter a server name.");
+
 enum {
 	PO_CONNECTION,
 	PO_SERVER,
@@ -51,9 +66,9 @@ void ScreenNetworkOptions::Init()
 		pHand->m_Def.m_sName = "Connection";
 		pHand->m_Def.m_bOneChoiceForAllPlayers = true;
 		if ( NSMAN->useSMserver )
-			pHand->m_Def.m_vsChoices.push_back("Disconnect");
+			pHand->m_Def.m_vsChoices.push_back(CLIENT_DISCONNECT);
 		else
-			pHand->m_Def.m_vsChoices.push_back("Connect");
+			pHand->m_Def.m_vsChoices.push_back(CLIENT_CONNECT);
 	}
 	{
 		OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
@@ -61,8 +76,8 @@ void ScreenNetworkOptions::Init()
 		pHand->m_Def.m_bAllowThemeItems = false;
 		pHand->m_Def.m_bOneChoiceForAllPlayers = true;
 		pHand->m_Def.m_sName = "Server";
-		pHand->m_Def.m_vsChoices.push_back("Stop");
-		pHand->m_Def.m_vsChoices.push_back("Start");
+		pHand->m_Def.m_vsChoices.push_back(SERVER_START);
+		pHand->m_Def.m_vsChoices.push_back(SERVER_STOP);
 	}
 	{
 		OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
@@ -70,8 +85,8 @@ void ScreenNetworkOptions::Init()
 		pHand->m_Def.m_sName = "Scoreboard";
 		pHand->m_Def.m_vsChoices.clear();
 		pHand->m_Def.m_bOneChoiceForAllPlayers = true;
-		pHand->m_Def.m_vsChoices.push_back("Off");
-		pHand->m_Def.m_vsChoices.push_back("On");
+		pHand->m_Def.m_vsChoices.push_back(SCORE_OFF);
+		pHand->m_Def.m_vsChoices.push_back(SCORE_ON);
 	}
 	{
 
@@ -93,8 +108,6 @@ void ScreenNetworkOptions::Init()
 	m_pRows[PO_SCOREBOARD]->SetOneSharedSelection(PREFSMAN->m_bEnableScoreboard);
 }
 
-static LocalizedString SERVER_STARTED	( "ScreenNetworkOptions", "Server started." );
-static LocalizedString SERVER_FAILED	( "ScreenNetworkOptions", "Server failed: %s Code:%d" );
 void ScreenNetworkOptions::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_DoneConnecting )
@@ -130,11 +143,6 @@ void ScreenNetworkOptions::HandleScreenMessage( const ScreenMessage SM )
 	ScreenOptions::HandleScreenMessage( SM );
 }
 
-static LocalizedString DISCONNECTED				( "ScreenNetworkOptions", "Disconnected from server." );
-static LocalizedString SERVER_STOPPED			( "ScreenNetworkOptions", "Server stopped." );
-static LocalizedString ENTER_NETWORK_ADDRESS	("ScreenNetworkOptions","Enter a network address.");
-static LocalizedString CONNECT_TO_YOURSELF		("ScreenNetworkOptions","Use 127.0.0.1 to connect to yourself.");
-static LocalizedString ENTER_A_SERVER_NAME		("ScreenNetworkOptions","Enter a server name.");
 void ScreenNetworkOptions::MenuStart( const InputEventPlus &input )
 {
 #if defined( WITHOUT_NETWORKING )
