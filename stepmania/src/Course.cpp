@@ -728,6 +728,8 @@ RageColor Course::GetColor() const
 	
 	switch( PREFSMAN->m_CourseSortOrder )
 	{
+	case PrefsManager::COURSE_SORT_PREFERRED:
+		break;
 	case PrefsManager::COURSE_SORT_SONGS:	
 		if( m_vEntries.size() >= 7 )				return SORT_LEVEL2_COLOR;
 		else if( m_vEntries.size() >= 4 )		return SORT_LEVEL4_COLOR;
