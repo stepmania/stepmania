@@ -647,7 +647,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			{
 				switch( PREFSMAN->m_CourseSortOrder )
 				{
-				case PrefsManager::COURSE_SOFT_PREFERRED:
+				case PrefsManager::COURSE_SORT_PREFERRED:
 					break;
 				case PrefsManager::COURSE_SORT_METER:
 					CourseUtil::SortCoursePointerArrayByAvgDifficulty( apCourses );
