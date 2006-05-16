@@ -559,8 +559,23 @@ int SongManager::GetNumUnlockedSongs() const
 	int num = 0;
 	FOREACH_CONST( Song*, m_pSongs, i )
 	{
-		if( !UNLOCKMAN->SongIsLocked( *i ) )
-			num++;
+		if( UNLOCKMAN->SongIsLocked( *i ) )
+			continue;
+		num++;
+	}
+	return num;
+}
+
+int SongManager::GetNumSelectableAndUnlockedSongs() const
+{
+	int num = 0;
+	FOREACH_CONST( Song*, m_pSongs, i )
+	{
+		if( UNLOCKMAN->SongIsLocked( *i ) )
+			continue;
+		if( (*i)->m_SelectionDisplay != Song::SHOW_ALWAYS )
+			continue;
+		num++;
 	}
 	return num;
 }
@@ -1730,14 +1745,15 @@ public:
 	}
 	static int FindSong( T* p, lua_State *L )		{ Song *pS = p->FindSong(SArg(1)); if(pS) pS->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int FindCourse( T* p, lua_State *L )		{ Course *pC = p->FindCourse(SArg(1)); if(pC) pC->PushSelf(L); else lua_pushnil(L); return 1; }
-	static int GetRandomSong( T* p, lua_State *L )	{ Song *pS = p->GetRandomSong(); if(pS) pS->PushSelf(L); else lua_pushnil(L); return 1; }
-	static int GetRandomCourse( T* p, lua_State *L ){ Course *pC = p->GetRandomCourse(); if(pC) pC->PushSelf(L); else lua_pushnil(L); return 1; }
-	static int GetNumSongs( T* p, lua_State *L )    { lua_pushnumber( L, p->GetNumSongs() ); return 1; }
+	static int GetRandomSong( T* p, lua_State *L )		{ Song *pS = p->GetRandomSong(); if(pS) pS->PushSelf(L); else lua_pushnil(L); return 1; }
+	static int GetRandomCourse( T* p, lua_State *L )	{ Course *pC = p->GetRandomCourse(); if(pC) pC->PushSelf(L); else lua_pushnil(L); return 1; }
+	static int GetNumSongs( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumSongs() ); return 1; }
 	static int GetNumUnlockedSongs( T* p, lua_State *L )    { lua_pushnumber( L, p->GetNumUnlockedSongs() ); return 1; }
-	static int GetNumAdditionalSongs( T* p, lua_State *L )    { lua_pushnumber( L, p->GetNumAdditionalSongs() ); return 1; }
-	static int GetNumSongGroups( T* p, lua_State *L ) { lua_pushnumber( L, p->GetNumSongGroups() ); return 1; }
-	static int GetNumCourses( T* p, lua_State *L )  { lua_pushnumber( L, p->GetNumCourses() ); return 1; }
-	static int GetNumCourseGroups( T* p, lua_State *L ) { lua_pushnumber( L, p->GetNumCourseGroups() ); return 1; }
+	static int GetNumSelectableAndUnlockedSongs( T* p, lua_State *L )    { lua_pushnumber( L, p->GetNumSelectableAndUnlockedSongs() ); return 1; }
+	static int GetNumAdditionalSongs( T* p, lua_State *L )  { lua_pushnumber( L, p->GetNumAdditionalSongs() ); return 1; }
+	static int GetNumSongGroups( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetNumSongGroups() ); return 1; }
+	static int GetNumCourses( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumCourses() ); return 1; }
+	static int GetNumCourseGroups( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetNumCourseGroups() ); return 1; }
 	static int GetSongFromSteps( T* p, lua_State *L )
 	{
 		Song *pSong = NULL;
@@ -1758,6 +1774,7 @@ public:
 		ADD_METHOD( GetRandomCourse );
 		ADD_METHOD( GetNumSongs );
 		ADD_METHOD( GetNumUnlockedSongs );
+		ADD_METHOD( GetNumSelectableAndUnlockedSongs );
 		ADD_METHOD( GetNumAdditionalSongs );
 		ADD_METHOD( GetNumSongGroups );
 		ADD_METHOD( GetNumCourses );

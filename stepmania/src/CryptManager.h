@@ -19,7 +19,8 @@ public:
 	static RString Sign( RString sPath );
 	static bool Verify( RString sPath, RString sSignature );
 
-	static RString GetMD5( RString fn );	// in Hex
+	static RString GetMD5ForFile( RString fn );	// in Hex
+	static RString GetMD5ForString( RString sData );	// in Hex
 
 	static RString GetPublicKeyFileName();
 };

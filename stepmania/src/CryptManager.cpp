@@ -232,7 +232,7 @@ static RString BinaryToHex( const unsigned char *string, int iNumBytes )
 	return s;
 }
 
-RString CryptManager::GetMD5( RString fn )
+RString CryptManager::GetMD5ForFile( RString fn )
 {
 	struct MD5Context md5c;
 	unsigned char digest[16];
@@ -252,6 +252,18 @@ RString CryptManager::GetMD5( RString fn )
 		iBytesRead = file.Read( buffer, sizeof(buffer) );
 		MD5Update(&md5c, buffer, iBytesRead);
 	}
+	MD5Final(digest, &md5c);
+
+	return BinaryToHex( digest, sizeof(digest) );
+}
+
+RString CryptManager::GetMD5ForString( RString sData )
+{
+	struct MD5Context md5c;
+	unsigned char digest[16];
+
+	MD5Init(&md5c);
+	MD5Update(&md5c, reinterpret_cast<const unsigned char*>(sData.c_str()), sData.size());
 	MD5Final(digest, &md5c);
 
 	return BinaryToHex( digest, sizeof(digest) );

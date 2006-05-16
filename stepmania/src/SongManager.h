@@ -87,6 +87,7 @@ public:
 	Course *FindCourse( RString sGroup, RString sName );
 	int GetNumSongs() const;
 	int GetNumUnlockedSongs() const;
+	int GetNumSelectableAndUnlockedSongs() const;
 	int GetNumAdditionalSongs() const;
 	int GetNumSongGroups() const;
 	int GetNumCourses() const;
