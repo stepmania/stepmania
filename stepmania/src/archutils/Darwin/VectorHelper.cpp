@@ -201,7 +201,65 @@ void Vector::FastSoundRead( int16_t *dest, const int32_t *src, unsigned size )
 	 * to get vectors containing only those elements which were negative and
 	 * subtract twice. Use saturated arithmatic to deal with overflow. Lastly,
 	 * pack the two vectors into signed 2-byte integers (again saturated). */
-	while( size > 7 )
+	while( size >= 32 )
+	{
+		// Use LRU load which marks the address as LRU. Does nothing on the G5.
+		vSInt32 first   = vec_ldl(   0, src );
+		vSInt32 second  = vec_ldl(  16, src );
+		vSInt32 third   = vec_ldl(  32, src );
+		vSInt32 fourth  = vec_ldl(  48, src );
+		vSInt32 fifth   = vec_ldl(  64, src );
+		vSInt32 sixth   = vec_ldl(  80, src );
+		vSInt32 seventh = vec_ldl(  96, src );
+		vSInt32 eighth  = vec_ldl( 112, src );
+		
+		vBool32 b1 = vec_cmplt( first,   zero );
+		vBool32 b2 = vec_cmplt( second,  zero );
+		vBool32 b3 = vec_cmplt( third,   zero );
+		vBool32 b4 = vec_cmplt( fourth,  zero );
+		vBool32 b5 = vec_cmplt( fifth,   zero );
+		vBool32 b6 = vec_cmplt( sixth,   zero );
+		vBool32 b7 = vec_cmplt( seventh, zero );
+		vBool32 b8 = vec_cmplt( eighth,  zero );
+		
+		first   = vec_sr( vec_abss(first),   shift );
+		second  = vec_sr( vec_abss(second),  shift );
+		third   = vec_sr( vec_abss(third),   shift );
+		fourth  = vec_sr( vec_abss(fourth),  shift );
+		fifth   = vec_sr( vec_abss(fifth),   shift );
+		sixth   = vec_sr( vec_abss(sixth),   shift );
+		seventh = vec_sr( vec_abss(seventh), shift );
+		eighth  = vec_sr( vec_abss(eighth),  shift );
+		
+		vSInt32 temp1 = vec_and( first,   (vSInt32)b1 );
+		vSInt32 temp2 = vec_and( second,  (vSInt32)b2 );
+		vSInt32 temp3 = vec_and( third,   (vSInt32)b3 );
+		vSInt32 temp4 = vec_and( fourth,  (vSInt32)b4 );
+		vSInt32 temp5 = vec_and( fifth,   (vSInt32)b5 );
+		vSInt32 temp6 = vec_and( sixth,   (vSInt32)b6 );
+		vSInt32 temp7 = vec_and( seventh, (vSInt32)b7 );
+		vSInt32 temp8 = vec_and( eighth,  (vSInt32)b8 );
+		
+		first   = vec_subs( vec_sub(first,   temp1), temp1 );
+		second  = vec_subs( vec_sub(second,  temp2), temp2 );
+		third   = vec_subs( vec_sub(third,   temp3), temp3 );
+		fourth  = vec_subs( vec_sub(fourth,  temp4), temp4 );
+		fifth   = vec_subs( vec_sub(fifth,   temp5), temp5 );
+		sixth   = vec_subs( vec_sub(sixth,   temp6), temp6 );
+		seventh = vec_subs( vec_sub(seventh, temp7), temp7 );
+		eighth  = vec_subs( vec_sub(eighth,  temp8), temp8 );
+		
+		vec_st( vec_packs(first,   second),  0, dest );
+		vec_st( vec_packs(third,   fourth), 16, dest );
+		vec_st( vec_packs(fifth,   sixth),  32, dest );
+		vec_st( vec_packs(seventh, eighth), 48, dest );
+		
+		dest += 32;
+		src += 32;
+		size -= 32;
+	}
+	// Befuddle optimizer as above.	
+	while( size & ~0x7 )
 	{
 		vSInt32 first = vec_ldl( 0, src );
 		vSInt32 second = vec_ldl( 16, src );
