@@ -38,6 +38,9 @@ Desc::Desc( Float64 sampleRate, UInt32 formatID, UInt32 formatFlags, UInt32 byte
 	mReserved = 0;
 }
 
+static OSStatus SampleRateChanged( AudioDeviceID inDevice, UInt32 inChannel, Boolean isInput,
+				   AudioDevicePropertyID inPropertyID, void *inData );
+
 /* temporary hack: */
 static float g_fLastIOProcTime = 0;
 static const int NUM_MIX_TIMES = 16;
@@ -135,16 +138,28 @@ RString RageSound_CA::Init()
 	
 	m_iSampleRate = PREFSMAN->m_iSoundPreferredSampleRate;
 	Float64 nominalSampleRate = m_iSampleRate;
-    
+	Float64 actualSampleRate;
+	
 	if( (error = AudioDeviceSetProperty(m_OutputDevice, NULL, 0, kAudioDeviceSectionGlobal,
 					    kAudioDevicePropertyNominalSampleRate, sizeof(Float64), &nominalSampleRate)) )
 	{
 		LOG->Warn( WERROR("Couldn't set the nominal sample rate", error) );
-		size = sizeof(Float64);
-		AudioDeviceGetProperty( m_OutputDevice, 0, kAudioDeviceSectionGlobal,
-					kAudioDevicePropertyNominalSampleRate, &size, &nominalSampleRate );
-		m_iSampleRate = int( nominalSampleRate );
-		LOG->Warn( "Device's nominal sample rate is %f", nominalSampleRate );
+		nominalSampleRate = 0.0;
+	}
+	size = sizeof(Float64);
+	if( (error = AudioDeviceGetProperty(m_OutputDevice, 0, kAudioDeviceSectionGlobal,
+					    kAudioDevicePropertyNominalSampleRate, &size, &actualSampleRate)) )
+	{
+		return ERROR( "Couldn't get the nominal sample rate", error );
+	}
+	if( actualSampleRate == nominalSampleRate )
+	{
+		LOG->Info( "Set the nominal sample rate to %f.", nominalSampleRate );
+	}
+	else
+	{
+		LOG->Warn( "Reported nominal sample rate of %f.", actualSampleRate );
+		m_iSampleRate = int( actualSampleRate );
 	}
 	
 	AudioStreamID *streams, stream;
@@ -169,10 +184,11 @@ RString RageSound_CA::Init()
 	AddListener( kAudioDeviceProcessorOverload, OverloadListener, "overload" );
 	AddListener( kAudioDevicePropertyDeviceHasChanged, DeviceChanged, "device changed" );
 	AddListener( kAudioDevicePropertyJackIsConnected, JackChanged, "jack changed" );
+	AddListener( kAudioDevicePropertyActualSampleRate, SampleRateChanged, "sample rate changed" );
 
 	// The canonical format
-	Desc IOProcFormat( nominalSampleRate, kAudioFormatLinearPCM, kAudioFormatFlagsNativeFloatPacked, 8, 1, 8, 2, 32 );
-	const Desc SMFormat( nominalSampleRate, kAudioFormatLinearPCM, kFormatFlags, kBytesPerPacket,
+	Desc IOProcFormat( actualSampleRate, kAudioFormatLinearPCM, kAudioFormatFlagsNativeFloatPacked, 8, 1, 8, 2, 32 );
+	const Desc SMFormat( actualSampleRate, kAudioFormatLinearPCM, kFormatFlags, kBytesPerPacket,
 			     kFramesPerPacket, kBytesPerFrame, kChannelsPerFrame, kBitsPerChannel );
 	
 	if( (error = AudioStreamSetProperty(stream, NULL, 0, kAudioDevicePropertyStreamFormat,
@@ -398,6 +414,19 @@ OSStatus RageSound_CA::JackChanged( AudioDeviceID inDevice, UInt32 inChannel, Bo
 	if( (error = AudioDeviceGetCurrentTime(inDevice, &time)) )
 		FAIL_M( ERROR("Couldn't get current time when jack changed", error) );
 	This->m_iOffset = This->m_iLastSampleTime - int64_t( time.mSampleTime );
+	return noErr;
+}
+
+OSStatus SampleRateChanged( AudioDeviceID inDevice, UInt32 inChannel, Boolean isInput,
+			    AudioDevicePropertyID inPropertyID, void *inData )
+{
+	if( isInput )
+		return noErr;
+	Float64 sampleRate;
+	UInt32 size = sizeof( sampleRate );
+	
+	AudioDeviceGetProperty( inDevice, inChannel, 0, inPropertyID, &size, &sampleRate );
+	LOG->Warn( "Sample rate changed to %f.", sampleRate );
 	return noErr;
 }
 							   
