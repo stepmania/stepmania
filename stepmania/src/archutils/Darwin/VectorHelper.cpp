@@ -29,10 +29,9 @@ bool Vector::CheckForVector()
  */
 void Vector::FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, short volume )
 {
-	if( unlikely(size == 0) )
+	if( size == 0 )
 		return;
 	ASSERT_M( (unsigned(dest) &0xF) == 0, ssprintf("dest = %p", dest) );
-	
 	/* We want to splat the volume across a vector but it is unlikely to be aligned in
 	 * the same location every time so we are going to load it into some offset in
 	 * the vector, permute it to the first word and splat it. */
@@ -52,7 +51,74 @@ void Vector::FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, s
 	vSInt16 LSQ;
 	
 	mask = vec_add( vec_lvsl(15, src), vec_splat_u8(1) );
-	
+
+	while( size >= 32 )
+	{
+		vSInt16 data1, data2, data3, data4;
+		
+		LSQ = vec_ld( 15, src );
+		data1 = vec_perm( MSQ, LSQ, mask );
+		MSQ = vec_ld( 31, src );
+		data2 = vec_perm( LSQ, MSQ, mask ); // Reverse MSQ and LSQ.
+		LSQ = vec_ld( 47, src );
+		data3 = vec_perm( MSQ, LSQ, mask );
+		MSQ = vec_ld( 63, src );
+		data4 = vec_perm( LSQ, MSQ, mask ); // Reversed.
+		
+		// Load early, let gcc schedule them where it wants.
+		vSInt32 result1 = vec_ld(   0, dest );
+		vSInt32 result2 = vec_ld(  16, dest );
+		vSInt32 result3 = vec_ld(  32, dest );
+		vSInt32 result4 = vec_ld(  48, dest );
+		vSInt32 result5 = vec_ld(  64, dest );
+		vSInt32 result6 = vec_ld(  80, dest );
+		vSInt32 result7 = vec_ld(  96, dest );
+		vSInt32 result8 = vec_ld( 112, dest );
+		
+		vSInt32 even1   = vec_mule( data1, vol );
+		vSInt32 odd1    = vec_mulo( data1, vol );
+		vSInt32 even2   = vec_mule( data2, vol );
+		vSInt32 odd2    = vec_mulo( data2, vol );
+		vSInt32 even3   = vec_mule( data3, vol );
+		vSInt32 odd3    = vec_mulo( data3, vol );
+		vSInt32 even4   = vec_mule( data4, vol );
+		vSInt32 odd4    = vec_mulo( data4, vol );
+		vSInt32 first   = vec_mergeh( even1, odd1 );
+		vSInt32 second  = vec_mergel( even1, odd1 );
+		vSInt32 third   = vec_mergeh( even2, odd2 );
+		vSInt32 fourth  = vec_mergel( even2, odd2 );
+		vSInt32 fifth   = vec_mergeh( even3, odd3 );
+		vSInt32 sixth   = vec_mergel( even3, odd3 );
+		vSInt32 seventh = vec_mergeh( even4, odd4 );
+		vSInt32 eighth  = vec_mergel( even4, odd4 );
+		
+		result1 = vec_add( result1, first );
+		result2 = vec_add( result2, second );
+		result3 = vec_add( result3, third );
+		result4 = vec_add( result4, fourth );
+		result5 = vec_add( result5, fifth );
+		result6 = vec_add( result6, sixth );
+		result7 = vec_add( result7, seventh );
+		result8 = vec_add( result8, eighth );
+		
+		vec_st( result1,   0, dest );
+		vec_st( result2,  16, dest );
+		vec_st( result3,  32, dest );
+		vec_st( result4,  48, dest );
+		vec_st( result5,  64, dest );
+		vec_st( result6,  80, dest );
+		vec_st( result7,  96, dest );
+		vec_st( result8, 112, dest );
+		dest += 32;
+		src += 32;
+		size -= 32;
+	}
+	/* This completely baffles gcc's loop unrolling. If I make it > 7 instead,
+	 * then gcc produces 4 identical copies of the loop without scheduling them
+	 * in a sane manner (hence the manual unrolling above) but this loop will
+	 * never be executed more than 3 times so that code will never be used.
+	 * This produces code the way gcc _should_ do it by unrolling and scheduling
+	 * and then producing the rolled version. */
 	while( size & ~0x7 )
 	{
 		// Load next 16 bytes.
@@ -135,7 +201,7 @@ void Vector::FastSoundRead( int16_t *dest, const int32_t *src, unsigned size )
 	 * to get vectors containing only those elements which were negative and
 	 * subtract twice. Use saturated arithmatic to deal with overflow. Lastly,
 	 * pack the two vectors into signed 2-byte integers (again saturated). */
-	while( size & ~0x7 )
+	while( size > 7 )
 	{
 		vSInt32 first = vec_ldl( 0, src );
 		vSInt32 second = vec_ldl( 16, src );
@@ -199,7 +265,7 @@ void Vector::FastSoundRead( float *dest, const int32_t *src, unsigned size )
 	vSInt32 l1 = (vSInt32) ( -8388608 );
 	vFloat l2 = (vFloat) ( -1.0f );
 	
-	while( size & ~0x3 )
+	while( size > 3 )
 	{
 		/* By far the simplest of these, we need only perform the scale
 		 * operation which amounts to subtracting l1, converting to a float,
