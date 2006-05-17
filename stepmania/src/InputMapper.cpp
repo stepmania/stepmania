@@ -360,6 +360,24 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		}
 	},
 	{
+		"dance",
+		"Joypad to USB converter",
+		"EMS Trio Linker",
+		{
+			{ 0, JOY_BUTTON_16,	/* dpad L */	DANCE_BUTTON_LEFT,	false },
+			{ 0, JOY_BUTTON_14,	/* dpad R */	DANCE_BUTTON_RIGHT,	false },
+			{ 0, JOY_BUTTON_13,	/* dpad U */	DANCE_BUTTON_UP,	false },
+			{ 0, JOY_BUTTON_15,	/* dpad D */	DANCE_BUTTON_DOWN,	false },
+			//{ 0, JOY_BUTTON_5,	/* Tri */	DANCE_BUTTON_BACK,	false },
+			//{ 0, JOY_BUTTON_6,	/* Square */	DANCE_BUTTON_BACK,	false },
+			//{ 1, JOY_BUTTON_7,	/* X */		DANCE_BUTTON_START,	false },
+			{ 0, JOY_BUTTON_2,	/* O */		DANCE_BUTTON_START,	false },
+			{ 1, JOY_BUTTON_10,	/* Start */	DANCE_BUTTON_START,	false },
+			{ 0, JOY_BUTTON_9,	/* Sel */	DANCE_BUTTON_BACK,	false },
+			END_MARKER
+		}
+	},
+	{
 		"pump",
 		"Pump USB",
 		"Pump USB pad",
