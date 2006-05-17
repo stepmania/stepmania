@@ -51,6 +51,7 @@ XToLocalizedString( SongSort );
 /* Maximum lower value of ranges when difficult: */
 const int MAX_BOTTOM_RANGE = 10;
 
+#define SORT_PREFERRED_COLOR	THEME->GetMetricC("Course","SortPreferredColor")
 #define SORT_LEVEL1_COLOR		THEME->GetMetricC("Course","SortLevel1Color")
 #define SORT_LEVEL2_COLOR		THEME->GetMetricC("Course","SortLevel2Color")
 #define SORT_LEVEL3_COLOR		THEME->GetMetricC("Course","SortLevel3Color")
@@ -729,7 +730,8 @@ RageColor Course::GetColor() const
 	switch( PREFSMAN->m_CourseSortOrder )
 	{
 	case PrefsManager::COURSE_SORT_PREFERRED:
-		break;
+		return SORT_PREFERRED_COLOR;		//This will also be used for autogen'd courses in some cases.	
+
 	case PrefsManager::COURSE_SORT_SONGS:	
 		if( m_vEntries.size() >= 7 )				return SORT_LEVEL2_COLOR;
 		else if( m_vEntries.size() >= 4 )		return SORT_LEVEL4_COLOR;
