@@ -62,7 +62,8 @@ void RageSoundMixBuffer::write( const int16_t *buf, unsigned size )
 #ifdef USE_VEC
 	if( g_bVector )
 	{
-		Vector::FastSoundWrite( pBuf, buf, size, m_iVolumeFactor );
+		if( size )
+			Vector::FastSoundWrite( pBuf, buf, size, m_iVolumeFactor );
 		return;
 	}
 #endif
