@@ -339,7 +339,7 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 			if( i == 0 )
 				return false;
 			else
-				sResolved = ThemeManager::GetBlankGraphicPath();
+				sResolved = "../"+ThemeManager::GetBlankGraphicPath();
 		}
 		
 		ASSERT( !sResolved.empty() );
