@@ -70,6 +70,7 @@ $destname =~ s/\s+/-/g;
 my $destdir = tempdir;
 my $smdir = "$destdir/$id";
 my $pkg = "$root/$destname.pkg";
+my $zip = "$root/$destname.zip";
 
 for( @filelist )
 {
@@ -165,8 +166,16 @@ if( -e $pkg )
 }
 my $pm =
 '/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker';
-system $pm, '-build', '-p', "$pkg", '-f', $destdir, '-ds',
+system $pm, '-build', '-p', $pkg, '-f', $destdir, '-ds',
 	'-i', $infoname, '-d', $descname;
 unlink $infoname, $descname;
 rmtree $destdir;
 print "Created $destname.pkg.\n";
+if( -e $zip )
+{
+	print "Removing $zip\n";
+	unlink $zip;
+}
+chdir $root;
+system '/usr/bin/zip', '-9Tqyr', $zip, "$destname.pkg";
+print "Created $destname.zip.\n";
