@@ -478,9 +478,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 		// fall through
 	case ROW_STEPS:
 		{
-			RString s;
-			Steps *pSteps = GetSelectedSteps();
-			s = DifficultyToLocalizedString(GetSelectedDifficulty());
+			RString s = DifficultyToLocalizedString(GetSelectedDifficulty());
 
 			// UGLY.  "Edit" -> "New Edit"
 			switch( EDIT_MODE.GetValue() )
@@ -536,7 +534,6 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			m_textValue[ROW_SOURCE_STEPS].SetHidden( GetSelectedSteps() ? true : false );
 			{
 				RString s;
-				Steps *pSourceSteps = GetSelectedSourceSteps();
 				if( GetSelectedSourceDifficulty() == DIFFICULTY_INVALID )
 					s = BLANK;
 				else
