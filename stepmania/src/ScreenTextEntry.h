@@ -71,7 +71,7 @@ protected:
 	void BackspaceInAnswer();
 	virtual void TextEnteredDirectly() { }
 
-	void End( bool bCancelled );
+	virtual void End( bool bCancelled );
 
 private:
 	virtual void MenuStart( PlayerNumber pn );
