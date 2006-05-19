@@ -164,6 +164,8 @@ if( -e $pkg )
 	print "Removing $pkg\n";
 	rmtree "$pkg";
 }
+system '/usr/bin/find', "$smdir/StepMania.app", '-name', 'Headers',
+	'-exec', 'rm', '-rf', '{}', ';';
 my $pm =
 '/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker';
 system $pm, '-build', '-p', $pkg, '-f', $destdir, '-ds',
