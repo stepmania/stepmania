@@ -136,18 +136,34 @@ RString RageSound_CA::Init()
 		LOG->Info( "Audio device manufacturer: %s", str );
 	}
 	
+	// Find the stereo channels
+	UInt32 channels[2];
+	
+	size = sizeof( channels );
+	if( (error = AudioDeviceGetProperty(m_OutputDevice, 0, kAudioDeviceSectionOutput,
+					    kAudioDevicePropertyPreferredChannelsForStereo, &size, channels)) )
+	{
+		LOG->Warn( WERROR( "Couldn't get the preferred stereo channels", error) );
+		channels[0] = channels[1] = 0; // Master channel
+	}
+	else
+	{
+		LOG->Info( "Preferred stereo channels { %lu, %lu }.", channels[0], channels[1] );
+	}
+	UInt32 iFirstChannel = min( channels[0], channels[1] );
+	
 	m_iSampleRate = PREFSMAN->m_iSoundPreferredSampleRate;
 	Float64 nominalSampleRate = m_iSampleRate;
 	Float64 actualSampleRate;
 	
-	if( (error = AudioDeviceSetProperty(m_OutputDevice, NULL, 0, kAudioDeviceSectionGlobal,
+	if( (error = AudioDeviceSetProperty(m_OutputDevice, NULL, iFirstChannel, kAudioDeviceSectionGlobal,
 					    kAudioDevicePropertyNominalSampleRate, sizeof(Float64), &nominalSampleRate)) )
 	{
 		LOG->Warn( WERROR("Couldn't set the nominal sample rate", error) );
 		nominalSampleRate = 0.0;
 	}
 	size = sizeof(Float64);
-	if( (error = AudioDeviceGetProperty(m_OutputDevice, 0, kAudioDeviceSectionGlobal,
+	if( (error = AudioDeviceGetProperty(m_OutputDevice, iFirstChannel, kAudioDeviceSectionGlobal,
 					    kAudioDevicePropertyNominalSampleRate, &size, &actualSampleRate)) )
 	{
 		return ERROR( "Couldn't get the nominal sample rate", error );
@@ -164,7 +180,7 @@ RString RageSound_CA::Init()
 	
 	AudioStreamID *streams, stream;
 	
-	if( (error = AudioDeviceGetPropertyInfo(m_OutputDevice, 0, kAudioDeviceSectionOutput,
+	if( (error = AudioDeviceGetPropertyInfo(m_OutputDevice, iFirstChannel, kAudioDeviceSectionOutput,
 						kAudioDevicePropertyStreams, &size, NULL)) )
 	{
 		return ERROR( "Couldn't get the stream size", error );
@@ -172,13 +188,35 @@ RString RageSound_CA::Init()
 	if( size == 0 )
 		return "No streams.";
 	streams = new AudioStreamID[size/sizeof(AudioStreamID)];
-	if( (error = AudioDeviceGetProperty(m_OutputDevice, 0, kAudioDeviceSectionOutput,
+	if( (error = AudioDeviceGetProperty(m_OutputDevice, iFirstChannel, kAudioDeviceSectionOutput,
 					    kAudioDevicePropertyStreams, &size, streams)) )
 	{
 		delete[] streams;
 		return ERROR( "Couldn't get streams", error );
 	}
-	stream = *min_element( streams, streams + size/sizeof(AudioStreamID) );
+	stream = streams[0];
+	size = sizeof( UInt32 );
+	for( unsigned i = 0; i < size/sizeof(AudioStreamID); ++i )
+	{
+		UInt32 firstChannel;
+		
+		// I'm not really sure why I'm doing this except it's what the c++ wrapper did, more or less.
+		if( streams[i] < stream )
+			stream = streams[i];
+		// Look for the matching stream.
+		if( (error = AudioStreamGetProperty(streams[i], 0, kAudioStreamPropertyStartingChannel,
+						    &size, &firstChannel)) )
+		{
+			LOG->Warn( WERROR("Failed to get stream starting channel", error) );
+			continue;
+		}
+		if( firstChannel != iFirstChannel )
+		{
+			stream = streams[i];
+			LOG->Trace( "Found a stream with a matching channel." );
+			break;
+		}
+	}
 	delete[] streams;
 	
 	AddListener( kAudioDeviceProcessorOverload, OverloadListener, "overload" );
@@ -202,11 +240,34 @@ RString RageSound_CA::Init()
 	
 	if( (error = AudioConverterNew(&SMFormat, &IOProcFormat, &m_Converter)) )
 		return ERROR( "Couldn't create the audio converter", error );
+	
+	// Find which stream of the ones passed to the GetData should be used.
+	AudioBufferList abl;
+	
+	size = sizeof(abl);
+	if( (error = AudioDeviceGetProperty(m_OutputDevice, 0, kAudioDeviceSectionOutput,
+					    kAudioDevicePropertyStreamConfiguration, &size, &abl)) )
+	{
+		return ERROR( "Couldn't get the stream configuration", error );
+	}
+	
+	m_iBufferNumber = 0;
+	for( UInt32 i = 0, channelCount = 0; i < abl.mNumberBuffers; ++i )
+	{
+		// 0 is the master channel so others start at 1 (I hope) so >= instead of >.
+		channelCount += abl.mBuffers[i].mNumberChannels;
+		if( channelCount >= iFirstChannel )
+		{
+			m_iBufferNumber = i;
+			LOG->Trace( "Found the correct buffer number: %lu", i );
+			break;
+		}
+	}
 
 	UInt32 bufferSize;
 
 	size = sizeof(UInt32);
-	if( (error = AudioDeviceGetProperty(m_OutputDevice, 0, kAudioDeviceSectionGlobal,
+	if( (error = AudioDeviceGetProperty(m_OutputDevice, iFirstChannel, kAudioDeviceSectionOutput,
 					    kAudioDevicePropertyBufferFrameSize, &size, &bufferSize)) )
 	{
 		LOG->Warn( WERROR("Couldn't determine buffer size", error) );
@@ -220,14 +281,14 @@ RString RageSound_CA::Init()
 	UInt32 frames;
 	
 	size = sizeof(UInt32);
-	if( (error = AudioDeviceGetProperty(m_OutputDevice, 0, kAudioDeviceSectionOutput,
+	if( (error = AudioDeviceGetProperty(m_OutputDevice, iFirstChannel, kAudioDeviceSectionOutput,
 					    kAudioDevicePropertyLatency, &size, &frames)) )
 	{
 		return ERROR( "Couldn't get device latency", error );
 	}
 	bufferSize += frames;
 	size = sizeof(UInt32);
-	if( (error = AudioDeviceGetProperty(m_OutputDevice, 0, kAudioDeviceSectionOutput,
+	if( (error = AudioDeviceGetProperty(m_OutputDevice, iFirstChannel, kAudioDeviceSectionOutput,
 					    kAudioDevicePropertySafetyOffset, &size, &frames)) )
 	{
 		return ERROR( "Couldn't get device safety offset", error );
@@ -245,7 +306,7 @@ RString RageSound_CA::Init()
 	}
 	m_fLatency = bufferSize / nominalSampleRate;
 	LOG->Info( "Frames of latency:        %lu\n"
-		   "Seconds of latency:       %f", frames, m_fLatency );
+		   "Seconds of latency:       %f", bufferSize, m_fLatency );
 
 	StartDecodeThread();
     
@@ -342,7 +403,7 @@ OSStatus RageSound_CA::GetData( AudioDeviceID inDevice,
 	if( unlikely(This->m_pIOThread == NULL) )
 		This->m_pIOThread = new RageThreadRegister( "HAL I/O thread" );
 	
-	AudioBuffer& buf = outOutputData->mBuffers[0];
+	AudioBuffer& buf = outOutputData->mBuffers[This->m_iBufferNumber];
 	UInt32 dataPackets = buf.mDataByteSize >> 3; // 8 byes per packet
 	int64_t decodePos = int64_t( inOutputTime->mSampleTime ) + This->m_iOffset;
 	int64_t now = int64_t( inNow->mSampleTime ) + This->m_iOffset;
@@ -358,7 +419,14 @@ OSStatus RageSound_CA::GetData( AudioDeviceID inDevice,
 	
 	AudioConverterConvertBuffer( This->m_Converter, dataPackets * kBytesPerPacket,
 				     buffer, &buf.mDataByteSize, buf.mData );
-		
+	
+	// Zero other buffers. Not sure if this is needed, but I suspect it is.
+	for( unsigned i = 0; i < outOutputData->mNumberBuffers; ++i )
+	{
+		if( i == This->m_iBufferNumber )
+			continue;
+		memset( outOutputData->mBuffers[i].mData, 0, outOutputData->mBuffers[i].mDataByteSize );
+	}
 	g_fLastIOProcTime = tm.GetDeltaTime();
 	++g_iNumIOProcCalls;
 	
