@@ -148,7 +148,7 @@ RString RageSound_CA::Init()
 	}
 	else
 	{
-		LOG->Info( "Preferred stereo channels { %lu, %lu }.", channels[0], channels[1] );
+		LOG->Trace( "Preferred stereo channels { %lu, %lu }.", channels[0], channels[1] );
 	}
 	UInt32 iFirstChannel = min( channels[0], channels[1] );
 	
@@ -275,7 +275,7 @@ RString RageSound_CA::Init()
 	}
 	else
 	{
-		LOG->Info( "I/O buffer size: %lu frames.", bufferSize );
+		LOG->Trace( "I/O buffer size: %lu frames.", bufferSize );
 	}
 		
 	UInt32 frames;
@@ -287,6 +287,7 @@ RString RageSound_CA::Init()
 		return ERROR( "Couldn't get device latency", error );
 	}
 	bufferSize += frames;
+	LOG->Trace( "Frames of device latency: %lu", frames );
 	size = sizeof(UInt32);
 	if( (error = AudioDeviceGetProperty(m_OutputDevice, iFirstChannel, kAudioDeviceSectionOutput,
 					    kAudioDevicePropertySafetyOffset, &size, &frames)) )
@@ -294,6 +295,7 @@ RString RageSound_CA::Init()
 		return ERROR( "Couldn't get device safety offset", error );
 	}
 	bufferSize += frames;
+	LOG->Trace( "Frames of safety offset:  %lu", frames );
 	size = sizeof(UInt32);
 	if( (error = AudioStreamGetProperty(stream, 0, kAudioDevicePropertyLatency, &size, &frames)) )
 	{
@@ -302,7 +304,7 @@ RString RageSound_CA::Init()
 	else
 	{
 		bufferSize += frames;
-		LOG->Info( "Frames of stream latency: %lu", bufferSize );
+		LOG->Trace( "Frames of stream latency: %lu", frames );
 	}
 	m_fLatency = bufferSize / nominalSampleRate;
 	LOG->Info( "Frames of latency:        %lu\n"
