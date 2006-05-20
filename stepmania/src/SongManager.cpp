@@ -35,6 +35,7 @@
 #include "TitleSubstitution.h"
 #include "LocalizedString.h"
 #include "CatalogXml.h"
+#include "NoteSkinManager.h"
 
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -1076,8 +1077,8 @@ void SongManager::GetCoursesInGroup( vector<Course*> &AddTo, const RString &sCou
 				AddTo.push_back( m_pCourses[i] );
 }
 
-bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, RString sPreferredGroup,
-								   Song*& pSongOut, Steps*& pStepsOut, PlayerOptions *pPlayerOptionsOut, SongOptions *pSongOptionsOut )
+bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, RString sPreferredGroup, Song*& pSongOut, Steps*& pStepsOut,
+					       PlayerOptions *pPlayerOptionsOut, SongOptions *pSongOptionsOut )
 {
 	const RString sCourseSuffix = sPreferredGroup + "/" + (bExtra2 ? "extra2" : "extra1") + ".crs";
 	RString sCoursePath = SONGS_DIR + sCourseSuffix;
@@ -1097,6 +1098,7 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, RString sPreferredG
 	if( pPlayerOptionsOut != NULL )
 	{
 		pPlayerOptionsOut->Init();
+		pPlayerOptionsOut->m_sNoteSkin = NOTESKIN->GAME_BASE_NOTESKIN_NAME;
 		pPlayerOptionsOut->FromString( pTrail->m_vEntries[0].Modifiers );
 	}
 	if( pSongOptionsOut != NULL )
@@ -1128,8 +1130,8 @@ bool CompareNotesPointersForExtra(const Steps *n1, const Steps *n2)
 	return StepsUtil::CompareNotesPointersByRadarValues(n1,n2);
 }
 
-void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, 
-								   Song*& pSongOut, Steps*& pStepsOut, PlayerOptions *pPlayerOptionsOut, SongOptions *pSongOptionsOut )
+void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSongOut, Steps*& pStepsOut,
+				     PlayerOptions *pPlayerOptionsOut, SongOptions *pSongOptionsOut )
 {
 	RString sGroup = GAMESTATE->m_sPreferredSongGroup;
 	if( sGroup == GROUP_ALL )
@@ -1204,6 +1206,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd,
 	if( pPlayerOptionsOut != NULL )
 	{
 		pPlayerOptionsOut->Init();
+		pPlayerOptionsOut->m_sNoteSkin = NOTESKIN->GAME_BASE_NOTESKIN_NAME;
 		pPlayerOptionsOut->m_fScrolls[PlayerOptions::SCROLL_REVERSE] = 1;
 		pPlayerOptionsOut->m_fScrollSpeed = 1.5f;
 		pPlayerOptionsOut->m_fDark = 1;
