@@ -17,12 +17,12 @@ NoteSkinManager*	NOTESKIN = NULL;	// global object accessable from anywhere in t
 
 
 const RString NOTESKINS_DIR = "NoteSkins/";
-const RString GAME_BASE_NOTESKIN_NAME = "default";
 const RString GLOBAL_BASE_NOTESKIN_DIR = NOTESKINS_DIR + "common/default/";
 static map<RString,RString> g_PathCache;
 
 NoteSkinManager::NoteSkinManager()
 {
+	GAME_BASE_NOTESKIN_NAME.Load( "NoteSkinManager", "GameBaseNoteSkin" );
 	m_pCurGame = NULL;
 }
 
@@ -103,11 +103,50 @@ void NoteSkinManager::GetNoteSkinNames( vector<RString> &AddTo )
 
 void NoteSkinManager::GetNoteSkinNames( const Game* pGame, vector<RString> &AddTo, bool bFilterDefault )
 {
+	GetAllNoteSkinNamesForGame( pGame, AddTo );
+
+	/* Move "default" to the front if it exists. */
+	vector<RString>::iterator iter = find( AddTo.begin(), AddTo.end(), GAME_BASE_NOTESKIN_NAME.GetValue() );
+	if( iter != AddTo.end() )
+	{
+		AddTo.erase( iter );
+		if( !bFilterDefault || !PREFSMAN->m_bHideDefaultNoteSkin )
+			AddTo.insert( AddTo.begin(), GAME_BASE_NOTESKIN_NAME );
+	}
+}
+
+
+bool NoteSkinManager::DoesNoteSkinExist( const RString &sSkinName )
+{
+	vector<RString> asSkinNames;	
+	GetAllNoteSkinNamesForGame( GAMESTATE->m_pCurGame, asSkinNames );
+	for( unsigned i=0; i<asSkinNames.size(); i++ )
+		if( 0==stricmp(sSkinName, asSkinNames[i]) )
+			return true;
+	return false;
+}
+
+bool NoteSkinManager::DoNoteSkinsExistForGame( const Game *pGame )
+{
+	vector<RString> asSkinNames;
+	GetAllNoteSkinNamesForGame( pGame, asSkinNames );
+	return !asSkinNames.empty();
+}
+
+RString NoteSkinManager::GetNoteSkinDir( const RString &sSkinName )
+{
+	RString sGame = m_pCurGame->m_szName;
+
+	return NOTESKINS_DIR + sGame + "/" + sSkinName + "/";
+}
+
+void NoteSkinManager::GetAllNoteSkinNamesForGame( const Game *pGame, vector<RString> &AddTo )
+{
 	if( pGame == m_pCurGame )
 	{
 		/* Faster: */
 		for( map<RString,NoteSkinData>::const_iterator iter = m_mapNameToData.begin();
-				iter != m_mapNameToData.end(); ++iter )
+		     iter != m_mapNameToData.end(); ++iter )
 		{
 			AddTo.push_back( iter->second.sName );
 		}
@@ -118,36 +157,7 @@ void NoteSkinManager::GetNoteSkinNames( const Game* pGame, vector<RString> &AddT
 		GetDirListing( sBaseSkinFolder + "*", AddTo, true );
 		StripCvs( AddTo );
 	}
-
-	/* Move "default" to the front if it exists. */
-	{
-		vector<RString>::iterator iter = find( AddTo.begin(), AddTo.end(), "default" );
-		if( iter != AddTo.end() )
-		{
-			AddTo.erase( iter );
-			if( !bFilterDefault || !PREFSMAN->m_bHideDefaultNoteSkin )
-				AddTo.insert( AddTo.begin(), "default" );
-		}
-	}
-}
-
-
-bool NoteSkinManager::DoesNoteSkinExist( const RString &sSkinName )
-{
-	vector<RString> asSkinNames;	
-	GetNoteSkinNames( asSkinNames );
-	for( unsigned i=0; i<asSkinNames.size(); i++ )
-		if( 0==stricmp(sSkinName, asSkinNames[i]) )
-			return true;
-	return false;
-}
-
-RString NoteSkinManager::GetNoteSkinDir( const RString &sSkinName )
-{
-	RString sGame = m_pCurGame->m_szName;
-
-	return NOTESKINS_DIR + sGame + "/" + sSkinName + "/";
-}
+}	
 
 RString NoteSkinManager::GetMetric( const RString &sButtonName, const RString &sValue )
 {

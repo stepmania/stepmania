@@ -2712,9 +2712,7 @@ const Game* GameManager::GetGameFromIndex( int index ) const
 
 bool GameManager::IsGameEnabled( const Game *pGame ) const
 {
-	vector<RString> asNoteSkins;
-	NOTESKIN->GetNoteSkinNames( pGame, asNoteSkins, false ); /* don't omit default */
-	return asNoteSkins.size() > 0;
+	return NOTESKIN->DoNoteSkinsExistForGame( pGame );
 }
 
 int GameManager::StepsTypeToNumTracks( StepsType st )

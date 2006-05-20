@@ -7,6 +7,7 @@
 #include "RageTypes.h"
 #include "PlayerNumber.h"
 #include "IniFile.h"
+#include "ThemeMetric.h"
 #include <map>
 #include <deque>
 
@@ -22,6 +23,7 @@ public:
 	void GetNoteSkinNames( const Game* game, vector<RString> &AddTo, bool bFilterDefault=true );
 	void GetNoteSkinNames( vector<RString> &AddTo );	// looks up current const Game* in GAMESTATE
 	bool DoesNoteSkinExist( const RString &sNoteSkin );	// looks up current const Game* in GAMESTATE
+	bool DoNoteSkinsExistForGame( const Game *pGame );
 
 	void SetCurrentNoteSkin( const RString &sNoteSkin ) { m_sCurrentNoteSkin = sNoteSkin; }
 	const RString &GetCurrentNoteSkin() { return m_sCurrentNoteSkin; }
@@ -29,10 +31,11 @@ public:
 	RString GetPath( const RString &sButtonName, const RString &sElement );
 
 	RString		GetMetric( const RString &sButtonName, const RString &sValue );
-	int			GetMetricI( const RString &sButtonName, const RString &sValueName );
+	int		GetMetricI( const RString &sButtonName, const RString &sValueName );
 	float		GetMetricF( const RString &sButtonName, const RString &sValueName );
 	bool		GetMetricB( const RString &sButtonName, const RString &sValueName );
-	apActorCommands   GetMetricA( const RString &sButtonName, const RString &sValueName );
+	apActorCommands	GetMetricA( const RString &sButtonName, const RString &sValueName );
+	ThemeMetric<RString> GAME_BASE_NOTESKIN_NAME;
 
 	// Lua
 	void PushSelf( lua_State *L );
@@ -40,6 +43,7 @@ public:
 protected:
 	RString GetNoteSkinDir( const RString &sSkinName );
 	RString GetPathFromDirAndFile( const RString &sDir, const RString &sFileName );
+	void GetAllNoteSkinNamesForGame( const Game *pGame, vector<RString> &AddTo );
 
 	struct NoteSkinData
 	{
