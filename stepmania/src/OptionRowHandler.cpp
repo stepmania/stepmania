@@ -21,7 +21,7 @@
 #include "CharacterManager.h"
 #include "ScreenManager.h"
 
-#define ENTRY(s)			THEME->GetMetric ("ScreenOptionsMaster",s)
+#define ENTRY(s)		THEME->GetMetric ("ScreenOptionsMaster",s)
 #define ENTRY_MODE(s,i)		THEME->GetMetric ("ScreenOptionsMaster",ssprintf("%s,%i",(s).c_str(),(i+1)))
 #define ENTRY_DEFAULT(s)	THEME->GetMetric ("ScreenOptionsMaster",(s) + "Default")
 
@@ -100,7 +100,7 @@ public:
 				const Command &cmd = cmds.v[i];
 				RString sName = cmd.GetName();
 
-				if(		 sName == "together" )	m_Def.m_bOneChoiceForAllPlayers = true;
+				if(	 sName == "together" )		m_Def.m_bOneChoiceForAllPlayers = true;
 				else if( sName == "selectmultiple" )	m_Def.m_selectType = SELECT_MULTIPLE;
 				else if( sName == "selectone" )		m_Def.m_selectType = SELECT_ONE;
 				else if( sName == "selectnone" )	m_Def.m_selectType = SELECT_NONE;
@@ -127,7 +127,7 @@ public:
 					for( unsigned i=1; i<cmd.m_vsArgs.size(); i++ )
 						m_vsBroadcastOnExport.push_back( cmd.m_vsArgs[i] );
 				}
-				else		RageException::Throw( "Unkown row flag \"%s\"", sName.c_str() );
+				else	RageException::Throw( "Unkown row flag \"%s\"", sName.c_str() );
 			}
 
 			for( int col = 0; col < NumCols; ++col )
