@@ -28,6 +28,7 @@ private:
 	int m_iSampleRate;
 	mutable int64_t m_iLastSampleTime;
 	int64_t m_iOffset;
+	UInt32 m_iBufferNumber;
 	vector<pair<AudioDevicePropertyID, AudioDevicePropertyListenerProc> > m_vPropertyListeners;
 	RageThreadRegister *m_pIOThread, *m_pNotificationThread;
 	
