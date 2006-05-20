@@ -82,9 +82,9 @@ struct FileSet
 class FilenameDB
 {
 public:
-	FilenameDB::FilenameDB():
+	FilenameDB():
 		m_Mutex("FilenameDB"), ExpireSeconds( -1 ) { }
-	virtual FilenameDB::~FilenameDB() { FlushDirCache(); }
+	virtual ~FilenameDB() { FlushDirCache(); }
 
 	void AddFile( const RString &sPath, int iSize, int iHash, void *pPriv=NULL );
 	void DelFile( const RString &sPath );
