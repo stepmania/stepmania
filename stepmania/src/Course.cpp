@@ -52,11 +52,11 @@ XToLocalizedString( SongSort );
 const int MAX_BOTTOM_RANGE = 10;
 
 #define SORT_PREFERRED_COLOR	THEME->GetMetricC("Course","SortPreferredColor")
-#define SORT_LEVEL1_COLOR		THEME->GetMetricC("Course","SortLevel1Color")
-#define SORT_LEVEL2_COLOR		THEME->GetMetricC("Course","SortLevel2Color")
-#define SORT_LEVEL3_COLOR		THEME->GetMetricC("Course","SortLevel3Color")
-#define SORT_LEVEL4_COLOR		THEME->GetMetricC("Course","SortLevel4Color")
-#define SORT_LEVEL5_COLOR		THEME->GetMetricC("Course","SortLevel5Color")
+#define SORT_LEVEL1_COLOR	THEME->GetMetricC("Course","SortLevel1Color")
+#define SORT_LEVEL2_COLOR	THEME->GetMetricC("Course","SortLevel2Color")
+#define SORT_LEVEL3_COLOR	THEME->GetMetricC("Course","SortLevel3Color")
+#define SORT_LEVEL4_COLOR	THEME->GetMetricC("Course","SortLevel4Color")
+#define SORT_LEVEL5_COLOR	THEME->GetMetricC("Course","SortLevel5Color")
 
 
 RString CourseEntry::GetTextDescription() const
@@ -733,31 +733,31 @@ RageColor Course::GetColor() const
 		return SORT_PREFERRED_COLOR;		//This will also be used for autogen'd courses in some cases.	
 
 	case PrefsManager::COURSE_SORT_SONGS:	
-		if( m_vEntries.size() >= 7 )				return SORT_LEVEL2_COLOR;
-		else if( m_vEntries.size() >= 4 )		return SORT_LEVEL4_COLOR;
-		else									return SORT_LEVEL5_COLOR;
+		if( m_vEntries.size() >= 7 )		return SORT_LEVEL2_COLOR;
+		else if( m_vEntries.size() >= 4 )	return SORT_LEVEL4_COLOR;
+		else					return SORT_LEVEL5_COLOR;
 
 	case PrefsManager::COURSE_SORT_METER:
-		if( !AllSongsAreFixed() )						return SORT_LEVEL1_COLOR;
-		else if( iMeter > 9 )					return SORT_LEVEL2_COLOR;
-		else if( iMeter >= 7 )					return SORT_LEVEL3_COLOR;
-		else if( iMeter >= 5 )					return SORT_LEVEL4_COLOR;
-		else 									return SORT_LEVEL5_COLOR;
+		if( !AllSongsAreFixed() )		return SORT_LEVEL1_COLOR;
+		else if( iMeter > 9 )			return SORT_LEVEL2_COLOR;
+		else if( iMeter >= 7 )			return SORT_LEVEL3_COLOR;
+		else if( iMeter >= 5 )			return SORT_LEVEL4_COLOR;
+		else 					return SORT_LEVEL5_COLOR;
 
 	case PrefsManager::COURSE_SORT_METER_SUM:
-		if( !AllSongsAreFixed() )						return SORT_LEVEL1_COLOR;
+		if( !AllSongsAreFixed() )		return SORT_LEVEL1_COLOR;
 		if( m_SortOrder_TotalDifficulty >= 40 )	return SORT_LEVEL2_COLOR;
 		if( m_SortOrder_TotalDifficulty >= 30 )	return SORT_LEVEL3_COLOR;
 		if( m_SortOrder_TotalDifficulty >= 20 )	return SORT_LEVEL4_COLOR;
-		else									return SORT_LEVEL5_COLOR;
+		else					return SORT_LEVEL5_COLOR;
 
 	case PrefsManager::COURSE_SORT_RANK:
-		if( m_SortOrder_Ranking == 3 )			return SORT_LEVEL1_COLOR;
-		else if( m_SortOrder_Ranking == 2 )		return SORT_LEVEL3_COLOR;
-		else if( m_SortOrder_Ranking == 1 )		return SORT_LEVEL5_COLOR;
-		else									return SORT_LEVEL4_COLOR;
+		if( m_SortOrder_Ranking == 3 )		return SORT_LEVEL1_COLOR;
+		else if( m_SortOrder_Ranking == 2 )	return SORT_LEVEL3_COLOR;
+		else if( m_SortOrder_Ranking == 1 )	return SORT_LEVEL5_COLOR;
+		else					return SORT_LEVEL4_COLOR;
 	default:
-		ASSERT(0);
+		FAIL_M( ssprintf("Invalid course sort %d.", int(PREFSMAN->m_CourseSortOrder)) );
 		return RageColor(1,1,1,1);  // white, never should reach here
 	}
 }
