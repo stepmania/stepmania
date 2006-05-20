@@ -1030,7 +1030,7 @@ void GameState::GetDefaultPlayerOptions( PlayerOptions &po )
 	po.FromString( PREFSMAN->m_sDefaultModifiers );
 	po.FromString( CommonMetrics::DEFAULT_MODIFIERS );
 	if( po.m_sNoteSkin.empty() )
-		po.m_sNoteSkin = "default";
+		po.m_sNoteSkin = NOTESKIN->GAME_BASE_NOTESKIN_NAME;
 }
 
 void GameState::GetDefaultSongOptions( SongOptions &so )
