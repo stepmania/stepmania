@@ -6,6 +6,7 @@
 #include "PlayerNumber.h"
 #include "PlayerOptions.h"
 #include "Attack.h"
+#include "RageTimer.h"
 struct lua_State;
 
 class PlayerState
@@ -22,6 +23,7 @@ public:
 	MultiPlayer m_mp;
 	
 
+	RageTimer m_timerPlayerOptions;
 	PlayerOptions	m_CurrentPlayerOptions;    // current approaches destination
 	PlayerOptions	m_PlayerOptions;			// change this, and current will move gradually toward it
 	PlayerOptions	m_StagePlayerOptions;	// options that are in effect for this stage.  May be different from m_StoredPlayerOptions if using forced beginner or forced Survial mods

@@ -41,7 +41,10 @@ void PlayerState::Reset()
 
 void PlayerState::Update( float fDelta )
 {
-	m_CurrentPlayerOptions.Approach( m_PlayerOptions, fDelta );
+	// Don't let the mod approach speed be affected by Tab.
+	// TODO: Find a more elegant way of handling this.
+	float fRealDelta = m_timerPlayerOptions.GetDeltaTime();
+	m_CurrentPlayerOptions.Approach( m_PlayerOptions, fRealDelta );
 
 	// TRICKY: GAMESTATE->Update is run before any of the Screen update's,
 	// so we'll clear these flags here and let them get turned on later
