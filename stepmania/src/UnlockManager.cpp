@@ -453,8 +453,14 @@ void UnlockManager::Load()
 	{
 		FOREACH_CONST( Song*, SONGMAN->GetAllSongs(), s )
 		{
+			// If no hard steps to play to unlock, skip
 			if( (*s)->GetOneSteps(STEPS_TYPE_INVALID, DIFFICULTY_HARD) == NULL )
 				continue;
+			
+			// If no challenge steps to unlock, skip
+			if( (*s)->GetOneSteps(STEPS_TYPE_INVALID, DIFFICULTY_CHALLENGE) == NULL )
+				continue;
+
 			if( SONGMAN->WasLoadedFromAdditionalSongs(*s) )
 				continue;
 				
