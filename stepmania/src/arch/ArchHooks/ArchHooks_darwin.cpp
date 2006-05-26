@@ -85,7 +85,7 @@ ArchHooks_darwin::ArchHooks_darwin()
 	CFStringRef appID = CFBundleGetIdentifier( bundle );
 	CFStringRef version = CFStringRef( CFBundleGetValueForInfoDictionaryKey(bundle, kCFBundleVersionKey) );
 	CFURLRef path = CFBundleCopyBundleURL( bundle );
-	CFPropertyListRef value = CFURLCopyPath( path );
+	CFPropertyListRef value = CFURLCopyFileSystemPath( path, kCFURLPOSIXPathStyle );
 	CFPropertyListRef old = CFPreferencesCopyAppValue( key, appID );
 	CFMutableDictionaryRef newDict = NULL;
 	
@@ -110,7 +110,7 @@ ArchHooks_darwin::ArchHooks_darwin()
 		{
 			// The value is either not present or it is but it is different
 			newDict = CFDictionaryCreateMutableCopy( kCFAllocatorDefault, 0, dict );
-			CFDictionaryAddValue( newDict, version, value );
+			CFDictionarySetValue( newDict, version, value );
 		}
 		CFRelease( old );
 	}
