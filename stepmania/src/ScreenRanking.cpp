@@ -138,6 +138,9 @@ void ScreenRanking::Input( const InputEventPlus &input )
 {
 	LOG->Trace( "ScreenRanking::Input()" );
 
+	if( IsTransitioning() )
+		return;
+
 	// If manually scrolling, then pass the input to Scree::Input so it will call Menu*
 	if( (bool)MANUAL_SCROLLING )
 		Screen::Input( input );
