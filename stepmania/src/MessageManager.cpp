@@ -50,8 +50,6 @@ static const char *MessageNames[] = {
 	"MenuRightP1",
 	"MenuRightP2",
 	"MenuSelectionChanged",
-	"MadeChoiceP1",
-	"MadeChoiceP2",
 	"CoinInserted",
 	"SideJoinedP1",
 	"SideJoinedP2",

@@ -45,8 +45,6 @@ enum Message
 	Message_MenuRightP1,
 	Message_MenuRightP2,
 	Message_MenuSelectionChanged,
-	Message_MadeChoiceP1,
-	Message_MadeChoiceP2,
 	Message_CoinInserted,
 	Message_SideJoinedP1,
 	Message_SideJoinedP2,

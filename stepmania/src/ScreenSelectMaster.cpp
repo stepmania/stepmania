@@ -679,7 +679,7 @@ float ScreenSelectMaster::DoMenuStart( PlayerNumber pn )
 
 	m_bChosen[pn] = true;
 
-	MESSAGEMAN->Broadcast( (Message)(Message_MadeChoiceP1+pn) );
+	this->PlayCommand( "MadeChoice"+PlayerNumberToString(pn) );
 
 	bool bIsFirstToChoose = bAnyChosen;
 
