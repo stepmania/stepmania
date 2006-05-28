@@ -27,7 +27,7 @@ int CabinetLightToIndex( CabinetLight cl )
 
 int GameControllerAndGameButtonToIndex( GameController gc, GameButton gb )
 {
-	CLAMP( (int&)gb, 0, 3 );
+	CLAMP( (int&)gb, 0, 4 );
 	return NUM_CABINET_LIGHTS + gc*4 + gb;
 }
 
