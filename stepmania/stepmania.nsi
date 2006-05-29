@@ -278,13 +278,13 @@ Section "Main Section" SecMain
 	RMDir /r "$INSTDIR\Characters\default"
 	CreateDirectory "$INSTDIR\Characters\default"
 	SetOutPath "$INSTDIR\Characters"
-	File /r "Characters\default"
+	File /r /x CVS /x .svn "Characters\default"
 	# File "Characters\instructions.txt"
 
 	CreateDirectory "$INSTDIR\Courses"
 	SetOutPath "$INSTDIR\Courses"
 	File "Courses\instructions.txt"
-	File /r "Courses\Samples"
+	File /r /x CVS /x .svn "Courses\Samples"
 
 	CreateDirectory "$INSTDIR\Packages"
 	File "Packages\Instructions.txt"
@@ -299,35 +299,35 @@ Section "Main Section" SecMain
 	File "NoteSkins\instructions.txt"
 
 	SetOutPath "$INSTDIR\NoteSkins\common"
-	File /r "NoteSkins\common\default"
+	File /r /x CVS /x .svn "NoteSkins\common\default"
 
 	SetOutPath "$INSTDIR\NoteSkins\dance"
-	File /r "NoteSkins\dance\default"
-	File /r "NoteSkins\dance\flat"
-	File /r "NoteSkins\dance\note"
-	File /r "NoteSkins\dance\solo"
+	File /r /x CVS /x .svn "NoteSkins\dance\default"
+	File /r /x CVS /x .svn "NoteSkins\dance\flat"
+	File /r /x CVS /x .svn "NoteSkins\dance\note"
+	File /r /x CVS /x .svn "NoteSkins\dance\solo"
 
 	SetOutPath "$INSTDIR\NoteSkins\pump"
-	File /r "NoteSkins\pump\Classic" ; what the heck, they're tiny
-	File /r "NoteSkins\pump\default"
+	File /r /x CVS /x .svn "NoteSkins\pump\Classic" ; what the heck, they're tiny
+	File /r /x CVS /x .svn "NoteSkins\pump\default"
 
 	SetOutPath "$INSTDIR\NoteSkins\para"
-	File /r "NoteSkins\para\default"
+	File /r /x CVS /x .svn "NoteSkins\para\default"
 
 	; temporarily disabled--noteskin needs updating
 	;SetOutPath "$INSTDIR\NoteSkins\ez2"
-	;File /r "NoteSkins\ez2\original"
+	;File /r /x CVS /x .svn "NoteSkins\ez2\original"
 
 	;SetOutPath "$INSTDIR\NoteSkins\para"
-	;File /r "NoteSkins\para\original"
+	;File /r /x CVS /x .svn "NoteSkins\para\original"
 
 	SetOutPath "$INSTDIR"
 
 	CreateDirectory "$INSTDIR\BackgroundEffects"
-	File /r "BackgroundEffects"
+	File /r /x CVS /x .svn "BackgroundEffects"
 
 	CreateDirectory "$INSTDIR\BackgroundTransitions"
-	File /r "BackgroundTransitions"
+	File /r /x CVS /x .svn "BackgroundTransitions"
 
 	CreateDirectory "$INSTDIR\RandomMovies"
 	SetOutPath "$INSTDIR\RandomMovies"
@@ -341,7 +341,7 @@ Section "Main Section" SecMain
 	CreateDirectory "$INSTDIR\Themes"
 	SetOutPath "$INSTDIR\Themes"
 	File "Themes\instructions.txt"
-	File /r "Themes\default"
+	File /r /x CVS /x .svn "Themes\default"
 
 	CreateDirectory "$INSTDIR\Data"
 	SetOutPath "$INSTDIR\Data"
@@ -376,10 +376,7 @@ Section "Main Section" SecMain
 
 	CreateDirectory "$INSTDIR\Manual"
 	SetOutPath "$INSTDIR\Manual"
-	File "Manual\*.*"
-	CreateDirectory "$INSTDIR\Manual\images"
-	SetOutPath "$INSTDIR\Manual\images"
-	File "Manual\images\*.*"
+	File /r /x CVS /x .svn /x _* /x desktop.ini "Manual\*.*"
 
 	; Create Start Menu icons
 	SetShellVarContext current  # 	'all' doesn't work on Win9x
