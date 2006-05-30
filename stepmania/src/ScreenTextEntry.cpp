@@ -139,10 +139,11 @@ void ScreenTextEntry::UpdateAnswerText()
 	else
 		s = WStringToRString(m_sAnswer);
 
+	bool bAnswerFull = (int) s.length() >= g_iMaxInputLength;
+
 	if( g_pFormatAnswerForDisplay )
 		s = g_pFormatAnswerForDisplay( s );
 
-	bool bAnswerFull = (int) s.length() >= g_iMaxInputLength;
 	if( m_bShowAnswerCaret 	&&  !bAnswerFull )
 		s += '_';
 	else
