@@ -2887,7 +2887,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 			bSaveUndo = true;
 			break;
 		default:
-			ASSERT(0);
+			FAIL_M( ssprintf("%i", c) );
 	}
 
 	// We call HandleAreaMenuChoice recursively.  Only the outermost HandleAreaMenuChoice
@@ -3168,7 +3168,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 			Undo();
 			break;
 		default:
-			ASSERT(0);
+			FAIL_M( ssprintf("%i", c) );
 	};
 
 	if( bSaveUndo )
