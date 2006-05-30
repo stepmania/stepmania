@@ -48,6 +48,13 @@ void Actor::SetBGMLight( int iLightNumber, float fCabinetLights )
 
 void Actor::InitDefaults()
 {
+	InitState();
+
+	UnsubscribeAll();
+}
+
+void Actor::InitState()
+{
 	StopTweening();
 
 	m_pTempState = NULL;
@@ -88,8 +95,6 @@ void Actor::InitDefaults()
 	m_ZTestMode = ZTEST_OFF;
 	m_bZWrite = false;
 	m_CullMode = CULL_NONE;
-
-	UnsubscribeAll();
 }
 
 static bool GetMessageNameFromCommandName( const RString &sCommandName, RString &sMessageNameOut )

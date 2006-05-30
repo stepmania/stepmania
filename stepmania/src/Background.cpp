@@ -810,7 +810,7 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 		LUA->SetGlobal( "Color1", change.m_def.m_sColor1.empty() ? RString("1,1,1,1") : change.m_def.m_sColor1 );
 		LUA->SetGlobal( "Color2", change.m_def.m_sColor2.empty() ? RString("1,1,1,1") : change.m_def.m_sColor2 );
 		
-		m_pCurrentBGA->InitDefaults();
+		m_pCurrentBGA->InitState();
 		m_pCurrentBGA->PlayCommand( "On" );
 		m_pCurrentBGA->PlayCommand( "GainFocus" );
 
