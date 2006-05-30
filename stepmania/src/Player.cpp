@@ -695,7 +695,8 @@ void Player::Update( float fDeltaTime )
 				/* this note has been judged */
 				HandleHoldScore( hns, tns );
 				
-				m_pPlayerStageStats->hnsLast = hns;
+				if( m_pPlayerStageStats != NULL )
+					m_pPlayerStageStats->hnsLast = hns;
 				if( m_pPlayerState->m_mp != MultiPlayer_INVALID )
 					MESSAGEMAN->Broadcast( enum_add2(Message_ShowHoldJudgmentMuliPlayerP1,m_pPlayerState->m_mp) );
 
