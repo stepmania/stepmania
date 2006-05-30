@@ -1483,7 +1483,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 					break;
 			}
 
-			if( i == m_pSong->m_Timing.m_StopSegments.size() )	// there is no BPMSegment at the current beat
+			if( i == m_pSong->m_Timing.m_StopSegments.size() )	// there is no StopSegment at the current beat
 			{
 				// create a new StopSegment
 				if( fDelta > 0 )
