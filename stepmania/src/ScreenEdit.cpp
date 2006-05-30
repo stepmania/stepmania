@@ -3472,7 +3472,7 @@ float ScreenEdit::GetMaximumBeatForNewNote() const
 			return fEndBeat;
 		}
 	case EditMode_Full:
-		return FLT_MAX;
+		return NoteRowToBeat(MAX_NOTE_ROW);
 	default:
 		ASSERT(0);	return 0;
 	}
