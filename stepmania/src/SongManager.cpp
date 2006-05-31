@@ -184,12 +184,6 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 	{
 		RString sGroupDirName = *s;
 
-#if defined(ITG)
-		// Don't load any folders containing "In The Groove" so that they don't conflict with the official songs.
-		if( sDir == ADDITIONAL_SONGS_DIR  &&  sGroupDirName.find("In The Groove") != sGroupDirName.npos )
-			continue;
-#endif
-
 		SanityCheckGroupDir(sDir+sGroupDirName);
 
 		// Find all Song folders in this group directory
