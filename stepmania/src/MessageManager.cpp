@@ -258,7 +258,8 @@ void IMessageSubscriber::ProcessMessages( float fDeltaTime )
 	g_Mutex.Unlock();
 }
 
-MessageSubscriber::MessageSubscriber( const MessageSubscriber &cpy )
+MessageSubscriber::MessageSubscriber( const MessageSubscriber &cpy ):
+	IMessageSubscriber(cpy)
 {
 	m_vsSubscribedTo = cpy.m_vsSubscribedTo;
 }
