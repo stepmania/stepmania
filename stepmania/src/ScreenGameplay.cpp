@@ -2138,6 +2138,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 				m_textDebug.SetText( GIVE_UP_START_TEXT );
 				m_textDebug.StopTweening();
 				m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
+				m_textDebug.Sleep( 0.5f );
 				m_textDebug.BeginTweening( 1/8.f );
 				m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
 				m_GiveUpTimer.Touch(); /* start the timer */
@@ -2162,6 +2163,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 				m_textDebug.SetText( GIVE_UP_BACK_TEXT );
 				m_textDebug.StopTweening();
 				m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
+				m_textDebug.Sleep( 0.5f );
 				m_textDebug.BeginTweening( 1/8.f );
 				m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
 			}
