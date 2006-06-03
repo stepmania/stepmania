@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!-- 
 # This file is UTF-8; to be readable, edit it in an editor capable
 # of UTF-8, such as Notepad in Windows 2000 and later.
@@ -35,7 +35,6 @@
 		<Translation TitleFrom="Sana Mo((ll?)|(rr?))et(t?)e Ne Ente" TitleTo="サナ・モレッテ・ネ・エンテ" />
 		<!-- "Candy", "Candy star", or "Candy #". -->
 		<Translation TitleFrom="Candy(( star)?|#)" ArtistFrom="Luv.*" TitleTo="CANDY☆" />
-		<Translation TitleFrom="Flash in the Night" TitleTo="FLA♮H IN THE NIGHT" />
 		<Translation TitleFrom="Freckles( ?-? ?Sobakasu)?" TitleTo="そばかす" />
 		<Translation TitleFrom="Sobakasu( ?-? ?Freckles)?" TitleTo="そばかす" />
 		<Translation TitleFrom="Yozora no Muko" TitleTo="夜空ノムコウ" />
