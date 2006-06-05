@@ -202,7 +202,8 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 		{
 			const GameCommand &gc = m_aGameCommands[iMastersIndex];
 			m_sNextScreen = gc.m_sScreen;
-			gc.ApplyToAllPlayers();
+			if( !gc.m_bInvalid )
+				gc.ApplyToAllPlayers();
 		}
 		else
 		{
@@ -211,7 +212,8 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 				int iIndex = this->GetSelectionIndex(p);
 				const GameCommand &gc = m_aGameCommands[iIndex];
 				m_sNextScreen = gc.m_sScreen;
-				gc.Apply( p );
+				if( !gc.m_bInvalid )
+					gc.Apply( p );
 			}
 		}
 
