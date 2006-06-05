@@ -521,6 +521,9 @@ void GameState::FinishStage()
 
 	m_iNumStagesOfThisSong = 0;
 
+	// necessary so that bGaveUp is reset
+	GAMESTATE->ResetStageStatistics();
+
 	if( m_bDemonstrationOrJukebox )
 		return;
 
