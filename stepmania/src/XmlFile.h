@@ -24,16 +24,18 @@ typedef multimap<RString,XNode*> XNodes;
 #define FOREACH_Child( pNode, Var ) \
 	XNodes::iterator Var##Iter; \
 	XNode *Var = NULL; \
-	for( Var##Iter = (pNode)->m_childs.begin(), Var = Var##Iter->second; \
+	for( Var##Iter = (pNode)->m_childs.begin(); \
+		Var = (Var##Iter != (pNode)->m_childs.end())? Var##Iter->second:NULL, \
 		Var##Iter != (pNode)->m_childs.end(); \
-		++Var##Iter, Var = Var##Iter->second )
+		++Var##Iter )
 
 #define FOREACH_CONST_Child( pNode, Var ) \
 	XNodes::const_iterator Var##Iter; \
 	const XNode *Var = NULL; \
-	for( Var##Iter = (pNode)->m_childs.begin(), Var = Var##Iter->second; \
+	for( Var##Iter = (pNode)->m_childs.begin(); \
+		Var = (Var##Iter != (pNode)->m_childs.end())? Var##Iter->second:NULL, \
 		Var##Iter != (pNode)->m_childs.end(); \
-		++Var##Iter, Var = Var##Iter->second )
+		++Var##Iter )
 
 enum PCODE
 {
