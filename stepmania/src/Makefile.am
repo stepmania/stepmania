@@ -130,15 +130,16 @@ Trail.cpp Trail.h TrailUtil.cpp TrailUtil.h TitleSubstitution.cpp TitleSubstitut
 Tween.cpp Tween.h
 
 FileTypes = IniFile.cpp IniFile.h \
-		MsdFile.cpp MsdFile.h \
-		XmlFile.cpp XmlFile.h \
-		XmlFileUtil.cpp XmlFileUtil.h
+MsdFile.cpp MsdFile.h \
+XmlFile.cpp XmlFile.h \
+XmlFileUtil.cpp XmlFileUtil.h
 
-StepMania = StdString.h \
-		StepMania.cpp StepMania.h \
-		GameLoop.cpp GameLoop.h \
-		global.cpp global.h \
-		SpecialFiles.cpp SpecialFiles.h
+StepMania = ExportNsisStrings.cpp ExportNsisStrings.h \
+StdString.h \
+StepMania.cpp StepMania.h \
+GameLoop.cpp GameLoop.h \
+global.cpp global.h \
+SpecialFiles.cpp SpecialFiles.h
 
 LoadingWindow = arch/LoadingWindow/LoadingWindow.h \
 		arch/LoadingWindow/LoadingWindow_Null.h

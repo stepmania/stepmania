@@ -38,6 +38,7 @@
 #include "RageSurface_Load.h"
 #include "arch/arch.h"
 #include "CatalogXml.h"
+#include "ExportNsisStrings.h"
 
 //
 // StepMania global classes
@@ -1113,7 +1114,10 @@ int main(int argc, char* argv[])
 		NSMAN->DisplayStartupStatus();	// If we're using networking show what happened
 
 	/* Run the main loop. */
-	GameLoop::RunGameLoop();
+	if( GetCommandlineArgument("ExportNsisStrings") )
+		ExportNsisStrings::Do();
+	else
+		GameLoop::RunGameLoop();
 
 	/* If we ended mid-game, finish up. */
 	GAMESTATE->EndGame();

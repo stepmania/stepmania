@@ -135,6 +135,10 @@
 	;!insertmacro MUI_LANGUAGE "Bosnian"
 	;!insertmacro MUI_LANGUAGE "Kurdish"
 
+	; generate, then include installer strings
+	!system "Program\${PRODUCT_FAMILY}.exe --ExportNsisStrings"
+	!include "nsis_strings_temp.inc"
+
 ;--------------------------------
 ;Reserve Files
   
@@ -164,67 +168,6 @@ FunctionEnd
 
 ;--------------------------------
 ;Installer Sections
-
-LangString TEXT_IO_CHECK_FOR_UPDATES		${LANG_ENGLISH} "Check for Updates"
-LangString TEXT_IO_RUN						${LANG_ENGLISH} "${PRODUCT_DISPLAY}"
-LangString TEXT_IO_OPEN_PROGRAM_FOLDER		${LANG_ENGLISH} "Open ${PRODUCT_ID} Program Folder"
-LangString TEXT_IO_MANUAL					${LANG_ENGLISH} "${PRODUCT_ID} Manual"
-LangString TEXT_IO_TOOLS					${LANG_ENGLISH} "${PRODUCT_ID} Tools"
-LangString TEXT_IO_WEB_SITE					${LANG_ENGLISH} "${PRODUCT_ID} Web Site"
-LangString TEXT_IO_UNINSTALL				${LANG_ENGLISH} "Uninstall ${PRODUCT_DISPLAY}"
-LangString TEXT_IO_VIEW_STATISTICS			${LANG_ENGLISH} "View Statistics"
-LangString TEXT_IO_REMOVE_ONLY				${LANG_ENGLISH} "${PRODUCT_DISPLAY} (remove only)"
-LangString TEXT_IO_SMZIP_PACKAGE			${LANG_ENGLISH} "SMZIP package"
-LangString TEXT_IO_FATAL_ERROR_COPYING_PCK	${LANG_ENGLISH} "Fatal error copying pck files."
-LangString TEXT_IO_FATAL_ERROR_INSTALL		${LANG_ENGLISH} "Fatal error during install."
-LangString TEXT_IO_CHECK_FOR_UPDATES		${LANG_FRENCH} "Vérifier les mises à jour"
-LangString TEXT_IO_RUN						${LANG_FRENCH} "${PRODUCT_DISPLAY}"
-LangString TEXT_IO_OPEN_PROGRAM_FOLDER		${LANG_FRENCH} "Open ${PRODUCT_ID} Program Folder"
-LangString TEXT_IO_MANUAL					${LANG_FRENCH} "Documentation de ${PRODUCT_ID}"
-LangString TEXT_IO_TOOLS					${LANG_FRENCH} "d'Outils de ${PRODUCT_ID}"
-LangString TEXT_IO_WEB_SITE					${LANG_FRENCH} "Le site web de ${PRODUCT_ID}"
-LangString TEXT_IO_UNINSTALL				${LANG_FRENCH} "Désinstaller ${PRODUCT_DISPLAY}"
-LangString TEXT_IO_VIEW_STATISTICS			${LANG_FRENCH} "Voir les statistiques"
-LangString TEXT_IO_REMOVE_ONLY				${LANG_FRENCH} "${PRODUCT_DISPLAY} (Supprimer uniquement)"
-LangString TEXT_IO_SMZIP_PACKAGE			${LANG_FRENCH} "SMZIP package"
-LangString TEXT_IO_FATAL_ERROR_COPYING_PCK	${LANG_FRENCH} "Fatal error copying pck files."
-LangString TEXT_IO_FATAL_ERROR_INSTALL		${LANG_FRENCH} "Fatal error during install."
-LangString TEXT_IO_CHECK_FOR_UPDATES		${LANG_GERMAN} "Updates zu überprüfen"
-LangString TEXT_IO_RUN						${LANG_GERMAN} "${PRODUCT_DISPLAY}"
-LangString TEXT_IO_OPEN_PROGRAM_FOLDER		${LANG_GERMAN} "Open ${PRODUCT_ID} Program Folder"
-LangString TEXT_IO_MANUAL					${LANG_GERMAN} "${PRODUCT_ID} Dokumentation"
-LangString TEXT_IO_TOOLS					${LANG_GERMAN} "${PRODUCT_ID} Werkzeug"
-LangString TEXT_IO_WEB_SITE					${LANG_GERMAN} "${PRODUCT_ID} Webseite"
-LangString TEXT_IO_UNINSTALL				${LANG_GERMAN} "Deinstallation von ${PRODUCT_DISPLAY}"
-LangString TEXT_IO_VIEW_STATISTICS			${LANG_GERMAN} "Statistiken anschauen"
-LangString TEXT_IO_REMOVE_ONLY				${LANG_GERMAN} "${PRODUCT_DISPLAY} (Nur entfernen)"
-LangString TEXT_IO_SMZIP_PACKAGE			${LANG_GERMAN} "SMZIP package"
-LangString TEXT_IO_FATAL_ERROR_COPYING_PCK	${LANG_GERMAN} "Fatal error copying pck files."
-LangString TEXT_IO_FATAL_ERROR_INSTALL		${LANG_GERMAN} "Fatal error during install."
-LangString TEXT_IO_CHECK_FOR_UPDATES		${LANG_SPANISH} "Compruebe para actualizaciones"
-LangString TEXT_IO_RUN						${LANG_SPANISH} "${PRODUCT_DISPLAY}"
-LangString TEXT_IO_OPEN_PROGRAM_FOLDER		${LANG_SPANISH} "Open ${PRODUCT_ID} Program Folder"
-LangString TEXT_IO_MANUAL					${LANG_SPANISH} "${PRODUCT_ID} Documenatione"
-LangString TEXT_IO_TOOLS					${LANG_SPANISH} "${PRODUCT_ID} Herramientas"
-LangString TEXT_IO_WEB_SITE					${LANG_SPANISH} "${PRODUCT_ID} Web Site"
-LangString TEXT_IO_UNINSTALL				${LANG_SPANISH} "Uninstall ${PRODUCT_DISPLAY}"
-LangString TEXT_IO_VIEW_STATISTICS			${LANG_SPANISH} "Vea la estadística"
-LangString TEXT_IO_REMOVE_ONLY				${LANG_SPANISH} "${PRODUCT_DISPLAY} (Quite solamente)"
-LangString TEXT_IO_SMZIP_PACKAGE			${LANG_SPANISH} "SMZIP package"
-LangString TEXT_IO_FATAL_ERROR_COPYING_PCK	${LANG_SPANISH} "Fatal error copying pck files."
-LangString TEXT_IO_FATAL_ERROR_INSTALL		${LANG_SPANISH} "Fatal error during install."
-LangString TEXT_IO_CHECK_FOR_UPDATES		${LANG_ITALIAN} "Per cercare aggiornamenti"
-LangString TEXT_IO_RUN						${LANG_ITALIAN} "${PRODUCT_DISPLAY}"
-LangString TEXT_IO_OPEN_PROGRAM_FOLDER		${LANG_ITALIAN} "Open ${PRODUCT_ID} Program Folder"
-LangString TEXT_IO_MANUAL					${LANG_ITALIAN} "${PRODUCT_ID} Documentazione"
-LangString TEXT_IO_TOOLS					${LANG_ITALIAN} "${PRODUCT_ID} Strumenti"
-LangString TEXT_IO_WEB_SITE					${LANG_ITALIAN} "${PRODUCT_ID} Sito Web"
-LangString TEXT_IO_UNINSTALL				${LANG_ITALIAN} "Disinstalla ${PRODUCT_DISPLAY}"
-LangString TEXT_IO_VIEW_STATISTICS			${LANG_ITALIAN} "Mostra Statistiche"
-LangString TEXT_IO_REMOVE_ONLY				${LANG_ITALIAN} "${PRODUCT_DISPLAY} (Elimina soltanto)"
-LangString TEXT_IO_SMZIP_PACKAGE			${LANG_ITALIAN} "SMZIP package"
-LangString TEXT_IO_FATAL_ERROR_COPYING_PCK	${LANG_ITALIAN} "Fatal error copying pck files."
-LangString TEXT_IO_FATAL_ERROR_INSTALL		${LANG_ITALIAN} "Fatal error during install."
 
 Section "Main Section" SecMain
 
@@ -411,32 +354,6 @@ SectionEnd
 ;--------------------------------
 ;Installer Functions
 
-LangString TEXT_IO_TITLE		${LANG_ENGLISH} "${PRODUCT_DISPLAY}"
-LangString TEXT_IO_SUBTITLE		${LANG_ENGLISH} " "
-LangString TEXT_IO_INSTALL		${LANG_ENGLISH} "Install"
-LangString TEXT_IO_PLAY			${LANG_ENGLISH} "Play"
-LangString TEXT_IO_REINSTALL	${LANG_ENGLISH} "Reinstall"
-LangString TEXT_IO_TITLE		${LANG_FRENCH} "${PRODUCT_DISPLAY}"
-LangString TEXT_IO_SUBTITLE		${LANG_FRENCH} " "
-LangString TEXT_IO_INSTALL		${LANG_FRENCH} "Installer"
-LangString TEXT_IO_PLAY			${LANG_FRENCH} "Jouer"
-LangString TEXT_IO_REINSTALL	${LANG_FRENCH} "Réinstaller"
-LangString TEXT_IO_TITLE		${LANG_GERMAN} "${PRODUCT_DISPLAY}"
-LangString TEXT_IO_SUBTITLE		${LANG_GERMAN} " "
-LangString TEXT_IO_INSTALL		${LANG_GERMAN} "Installieren"
-LangString TEXT_IO_PLAY			${LANG_GERMAN} "Spielen"
-LangString TEXT_IO_REINSTALL	${LANG_GERMAN} "Noch mal installieren"
-LangString TEXT_IO_TITLE		${LANG_SPANISH} "${PRODUCT_DISPLAY}"
-LangString TEXT_IO_SUBTITLE		${LANG_SPANISH} " "
-LangString TEXT_IO_INSTALL		${LANG_SPANISH} "Instale"
-LangString TEXT_IO_PLAY			${LANG_SPANISH} "Juego"
-LangString TEXT_IO_REINSTALL	${LANG_SPANISH} "Reinstálese"
-LangString TEXT_IO_TITLE		${LANG_ITALIAN} "${PRODUCT_DISPLAY}"
-LangString TEXT_IO_SUBTITLE		${LANG_ITALIAN} " "
-LangString TEXT_IO_INSTALL		${LANG_ITALIAN} "Installa"
-LangString TEXT_IO_PLAY			${LANG_ITALIAN} "Gioca"
-LangString TEXT_IO_REINSTALL	${LANG_ITALIAN} "Re-installa"
-
 !ifdef SHOW_AUTORUN
 Var hwnd ; Window handle of the custom page
 
@@ -479,12 +396,6 @@ Function ShowAutorun
 
 FunctionEnd
 
-LangString TEXT_IO_COULD_NOT_EXECUTE	${LANG_ENGLISH} "Could not execute $INSTDIR\Program\${PRODUCT_FAMILY}.exe"
-LangString TEXT_IO_COULD_NOT_EXECUTE	${LANG_FRENCH} "N'a pas pu exécuter $INSTDIR\Program\${PRODUCT_FAMILY}.exe"
-LangString TEXT_IO_COULD_NOT_EXECUTE	${LANG_GERMAN} "Konnte $INSTDIR\Program\${PRODUCT_FAMILY}.exe nicht ausführen"
-LangString TEXT_IO_COULD_NOT_EXECUTE	${LANG_SPANISH} "$INSTDIR\Program\${PRODUCT_FAMILY}.exe No podía ejecutarse"
-LangString TEXT_IO_COULD_NOT_EXECUTE	${LANG_ITALIAN} "Impossibile eseguire $INSTDIR\Program\${PRODUCT_FAMILY}.exe"
-
 Function LeaveAutorun
 
 	; At this point the user has either pressed Next or one of our custom buttons
@@ -514,32 +425,6 @@ Function LeaveAutorun
 
 FunctionEnd
 !endif
-
-LangString TEXT_IO_UNINSTALL_PREVIOUS				${LANG_ENGLISH} "The previous version of ${PRODUCT_ID} must be uninstalled before continuing.$\nDo you wish to continue?"
-LangString TEXT_IO_DIRECTX_VISIT_MICROSOFT			${LANG_ENGLISH} "The latest version of DirectX (8.1 or higher) is strongly recommended.$\n Do you wish to visit Microsoft's site now?"
-LangString TEXT_IO_UNINSTALL_FAILED_INSTALL_ANYWAY		${LANG_ENGLISH} "Uninstallation failed.  Install anyway?"
-LangString TEXT_IO_INSTALL_DIRECTX				${LANG_ENGLISH} "The latest version of DirectX (8.1 or higher) is required.$\n Do you wish to install DirectX 8.1 now?"
-LangString TEXT_IO_FULL_INSTALL_NOT_FOUND			${LANG_ENGLISH} "${PRODUCT_ID} does not appear to be installed.$\nDo you wish to continue?"
-LangString TEXT_IO_UNINSTALL_PREVIOUS				${LANG_FRENCH} "La version précédente de ${PRODUCT_ID} doit être déinstallée pour pouvoir continuer. Voulez-vous continuer ?"
-LangString TEXT_IO_DIRECTX_VISIT_MICROSOFT			${LANG_FRENCH} "La dernière version de DirectX (8.1 ou supérieure) est hautement recommandée. Voulez-vous visiter le site de Microsoft maintenant ?"
-LangString TEXT_IO_UNINSTALL_FAILED_INSTALL_ANYWAY		${LANG_FRENCH} "Echec de la déinstallation. Voulez-vous tout de même lancer l'installation ?"
-LangString TEXT_IO_INSTALL_DIRECTX				${LANG_FRENCH} "La dernière version de DirectX (8.1 ou supérieure) est hautement recommandée. Désirez-vous l'installer maintenant ?"
-LangString TEXT_IO_FULL_INSTALL_NOT_FOUND			${LANG_FRENCH} "${PRODUCT_ID}"
-LangString TEXT_IO_UNINSTALL_PREVIOUS				${LANG_GERMAN} "Die letzte Version von ${PRODUCT_ID} muss deinstalliert werden, bevor Sie weiter machen. Wollen Sie fortfahren?"
-LangString TEXT_IO_DIRECTX_VISIT_MICROSOFT			${LANG_GERMAN} "Die letzte Version von DirectX (8.1 oder höher) ist dringend zu empfehlen.  Wollen Sie die Webseite von Microsoft jetzt besuchen?"
-LangString TEXT_IO_UNINSTALL_FAILED_INSTALL_ANYWAY		${LANG_GERMAN} "Deinstallation fehlgeschlagen.  Trotzdem installieren?"
-LangString TEXT_IO_INSTALL_DIRECTX				${LANG_GERMAN} "Die letzte Version von DirectX (8.1 oder höher) ist dringend zu empfehlen.  Wollen Sie es jetzt installieren?"
-LangString TEXT_IO_FULL_INSTALL_NOT_FOUND			${LANG_GERMAN} "${PRODUCT_ID}"
-LangString TEXT_IO_UNINSTALL_PREVIOUS				${LANG_SPANISH} "La versión ${PRODUCT_ID} anterior del debe ser uninstalled antes de continuar.  Usted desea continuar?"
-LangString TEXT_IO_DIRECTX_VISIT_MICROSOFT			${LANG_SPANISH} "La versión más última de DirectX (8,1 o más alto) se recomienda fuertemente.  Usted desea ahora visitar el sitio de Microsoft?"
-LangString TEXT_IO_UNINSTALL_FAILED_INSTALL_ANYWAY		${LANG_SPANISH} "Uninstallation falló.  ¿Instale de todos modos?"
-LangString TEXT_IO_INSTALL_DIRECTX				${LANG_SPANISH} "La versión más última de DirectX (8,1 o más alto) se recomienda fuertemente.  Usted desea ahora instalarla?"
-LangString TEXT_IO_FULL_INSTALL_NOT_FOUND			${LANG_SPANISH} "${PRODUCT_ID}"
-LangString TEXT_IO_UNINSTALL_PREVIOUS				${LANG_ITALIAN} "Prima di continuare va installata la versione precendente di ${PRODUCT_ID}.  Vuoi continuare?"
-LangString TEXT_IO_DIRECTX_VISIT_MICROSOFT			${LANG_ITALIAN} "Si consiglia vivamente di installare la versione più recente di TDirectX (8.1 o superiore).  Vuoi visitare il sito Microsoft adesso?"
-LangString TEXT_IO_UNINSTALL_FAILED_INSTALL_ANYWAY		${LANG_ITALIAN} "Disinstallazione non riuscita.  Vuoi installare comunque?"
-LangString TEXT_IO_INSTALL_DIRECTX				${LANG_ITALIAN} "Si consiglia vivamente di installare la versione più recente di TDirectX (8.1 o superiore).  Vuoi installarla adesso?"
-LangString TEXT_IO_FULL_INSTALL_NOT_FOUND			${LANG_ITALIAN} "${PRODUCT_ID}"
 
 Function PreInstall
 
@@ -649,12 +534,6 @@ FunctionEnd
  
 ;--------------------------------
 ;Uninstaller Section
-
-LangString TEXT_IO_FATAL_ERROR_UNINSTALL		${LANG_ENGLISH} "Fatal error during uninstall."
-LangString TEXT_IO_FATAL_ERROR_UNINSTALL		${LANG_FRENCH} "Fatal error during uninstall."
-LangString TEXT_IO_FATAL_ERROR_UNINSTALL		${LANG_GERMAN} "Fatal error during uninstall."
-LangString TEXT_IO_FATAL_ERROR_UNINSTALL		${LANG_SPANISH} "Fatal error during uninstall."
-LangString TEXT_IO_FATAL_ERROR_UNINSTALL		${LANG_ITALIAN} "Fatal error during uninstall."
 
 Section "Uninstall"
 
