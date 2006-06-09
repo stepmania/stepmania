@@ -437,20 +437,17 @@ if not conf.CheckLib('png', 'png_create_read_struct'):
 #			autoconf's doesn't. Haven't tested it on others.
 if conf.CheckLib('jpeg', 'jpeg_read_scanlines'):# and conf.CheckHeader('jpeglib.h')
 	FileTypes += [ "RageSurface_Save_JPEG.cpp", "RageSurface_Load_JPEG.cpp" ]
-	env.Append(LIBS=['jpeg'])
 else:
 	# XXX: Bail but allow forcing
 	print "*** WARNING: libjpeg not found. You will not be able to read JPEG files."
 	env.Append(CPPDEFINES=["NO_JPEG_SUPPORT"])
 
 if conf.CheckLib('vorbisfile', 'ov_info'):
-	env.Append(LIBS=['vorbisfile'])
 	RageSoundFileReaders += [ "RageSoundReader_Vorbisfile.cpp" ]
 else:
 	env.Append(CPPDEFINES=["NO_VORBIS_SUPPORT"])
 
 if conf.CheckLib('mad', 'mad_stream_buffer'):
-	env.Append(LIBS=['mad'])
 	RageSoundFileReaders += [ "RageSoundReader_MP3.cpp" ]
 else:
 	env.Append(CPPDEFINES=["NO_MP3_SUPPORT"])
@@ -463,13 +460,10 @@ if not conf.CheckLib('GLU', 'gluErrorString'):
 	print "Can't find suitable GLU library."
 	Exit(1)
 
-env.Append(LIBS=[ "GL", "GLU" ])
-
 if env['PLATFORM'] == 'posix':
 	if not conf.CheckLib('pthread', 'pthread_join'):
 		print "Pthread not present! Your system is insane! Bailing!"
 		Exit(1)
-	env.Append(LIBS=['pthread'])
 	# NOPORT: This assumes Linux. I don't know how to check for say, FreeBSD or even OS X vs. Linux.
 	env.Append(CPPDEFINES=["UNIX", "LINUX", ("BACKTRACE_METHOD_TEXT", "\"\\\"FIXME\\\"\""),
 				("BACKTRACE_LOOKUP_METHOD_TEXT", "\"\\\"FIXME\\\"\"")])
@@ -503,7 +497,7 @@ if env['PLATFORM'] == 'posix':
 		print "*** Couldn't find suitable symbol lookup method."
 		print "*** Generated crash logs will be worthless."
 	if conf.CheckHeader('libiberty.h') and conf.CheckLib('iberty', 'cplus_demangle'):
-		env.Append(CPPDEFINES=['HAVE_LIBIBERTY'], LIBS=['iberty'])
+		env.Append(CPPDEFINES=['HAVE_LIBIBERTY'])
 	else:
 		print "*** Backtrace support has been detected, but libiberty is not installed."
 		print "*** Libiberty will make crash reports for developers much easier to read,"
@@ -528,12 +522,12 @@ if Have_GTK:
 
 # REMEMBER, only ONE LowLevelWindow!
 if conf.CheckLib('X11', 'XMapWindow') and conf.CheckLib('Xrandr', 'XRRSizes'):
-	env.Append(CPPDEFINES=["HAVE_X11"], LIBS=["X11", "Xrandr"])
+	env.Append(CPPDEFINES=["HAVE_X11"])
 	ArchUtils += [ "archutils/Unix/X11Helper.cpp" ]
 	LowLevelWindow += [ "arch/LowLevelWindow/LowLevelWindow_X11.cpp" ]
 	InputHandler += [ "arch/InputHandler/InputHandler_X11.cpp" ]
 	if conf.CheckLib('Xtst', 'XTestQueryExtension'):
-		env.Append(CPPDEFINES=["HAVE_LIBXTST"], LIBS=['Xtst'])
+		env.Append(CPPDEFINES=["HAVE_LIBXTST"])
 
 Arch = LoadingWindow + Sound + ArchHooks + InputHandler + MovieTexture +\
 		Lights + MemoryCard + LowLevelWindow + ArchUtils + Dialog +\
