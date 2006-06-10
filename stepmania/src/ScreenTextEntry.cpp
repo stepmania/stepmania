@@ -183,42 +183,10 @@ void ScreenTextEntry::Input( const InputEventPlus &input )
 	}
 	else if( input.type == IET_FIRST_PRESS )
 	{
-		char c = INPUTMAN->DeviceButtonToChar( input.DeviceI.button );
+		wchar_t c = INPUTMAN->DeviceButtonToChar(input.DeviceI.button,true);
 		if( c >= ' ' ) 
 		{
-			bool bIsHoldingShift = 
-					INPUTFILTER->IsBeingPressed( DeviceInput(input.DeviceI.device, KEY_RSHIFT)) ||
-					INPUTFILTER->IsBeingPressed( DeviceInput(input.DeviceI.device, KEY_LSHIFT));
-			if( bIsHoldingShift )
-			{
-				c = (char)toupper( c );
-				switch( c )
-				{
-				case '`':	c='~';	break;
-				case '1':	c='!';	break;
-				case '2':	c='@';	break;
-				case '3':	c='#';	break;
-				case '4':	c='$';	break;
-				case '5':	c='%';	break;
-				case '6':	c='^';	break;
-				case '7':	c='&';	break;
-				case '8':	c='*';	break;
-				case '9':	c='(';	break;
-				case '0':	c=')';	break;
-				case '-':	c='_';	break;
-				case '=':	c='+';	break;
-				case '[':	c='{';	break;
-				case ']':	c='}';	break;
-				case '\'':	c='"';	break;
-				case '\\':	c='|';	break;
-				case ';':	c=':';	break;
-				case ',':	c='<';	break;
-				case '.':	c='>';	break;
-				case '/':	c='?';	break;
-				}
-			}
-
-			TryAppendToAnswer( ssprintf( "%c", c ) );
+			TryAppendToAnswer( WStringToRString(wstring()+c) );
 
 			TextEnteredDirectly();
 		}

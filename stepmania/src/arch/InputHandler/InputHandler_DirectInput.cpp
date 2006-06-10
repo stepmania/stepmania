@@ -272,7 +272,7 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 			for( int k = 0; k < 256; ++k )
 			{
 				const DeviceButton key = (DeviceButton) device.Inputs[k].num;
-				ButtonPressed(DeviceInput(device.dev, key), !!(keys[k] & 0x80));
+				ButtonPressed( DeviceInput(device.dev, key), !!(keys[k] & 0x80) );
 			}
 		}
 		break;
@@ -645,7 +645,25 @@ void InputHandler_DInput::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vD
 		vDevicesOut.push_back( InputDeviceInfo(Devices[i].dev, Devices[i].m_sName) );
 }
 
-char InputHandler_DInput::DeviceButtonToChar( DeviceButton button )
+static wchar_t ScancodeAndKeysToChar( DWORD scancode, unsigned char keys[256] )
+{
+	static HKL layout = GetKeyboardLayout(0);	// 0 == current thread
+	UINT vk = MapVirtualKeyEx( scancode, 1, layout );
+	
+	unsigned short result[2];	// ToAscii writes a max of 2 chars
+	ZERO( result );
+	// TODO: Use ToUnicodeEx
+	int iNum = ToAsciiEx( vk, scancode, keys, result, 0, layout );
+	// iNum == 2 will happen only for dead keys.  See MSDN for ToAsciiEx.
+	if( iNum == 1 )
+	{
+		RString s = RString()+(char)result[0];
+		return RStringToWstring( ConvertACPToUTF8(s) )[0];
+	}
+	return '\0';
+}
+
+wchar_t InputHandler_DInput::DeviceButtonToChar( DeviceButton button, bool bUseCurrentKeyModifiers )
 {
 	FOREACH_CONST( DIDevice, Devices, d )
 	{
@@ -657,28 +675,15 @@ char InputHandler_DInput::DeviceButtonToChar( DeviceButton button )
 			if( button != i->num )
 				continue;
 
-			DWORD scancode = i->ofs;
-
-			HKL layout = GetKeyboardLayout(0);	// 0 == current thread
-
-			unsigned char state[256];
-			// Don't fill key state.  We'll do the shift/ctrl/alt 
-			// translations ourself in ScreenTextEntry.
-			ZERO( state );
-
-			UINT vk = MapVirtualKeyEx( scancode, 1, layout );
-			
-			unsigned short result[2];	// ToAscii writes a max of 2 chars
-			ZERO( result );
-			// TODO: Use ToUnicodeEx
-			int iNum = ToAsciiEx( vk, scancode, state, result, 0, layout );
-			if( iNum == 1 )
-				return (char)result[0];
-			// iNum == 2 will happen only for dead keys.  See MSDN for ToAsciiEx.
+			unsigned char keys[256];
+			ZERO( keys );
+			if( bUseCurrentKeyModifiers )
+				GetKeyboardState(keys);
+			return ScancodeAndKeysToChar( i->ofs, keys );
 		}
 	}
 
-	return InputHandler::DeviceButtonToChar( button );
+	return InputHandler::DeviceButtonToChar( button, bUseCurrentKeyModifiers );
 }
 
 /*

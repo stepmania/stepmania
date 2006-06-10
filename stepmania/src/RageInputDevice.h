@@ -292,7 +292,8 @@ enum DeviceButton
 };
 
 RString DeviceButtonToString( DeviceButton i );
-RString DeviceButtonToLocalizedString( DeviceButton i );
+RString DeviceButtonToTranslatedString( DeviceButton i );
+RString DeviceButtonToLocalizedAndTranslatedString( DeviceButton i );
 DeviceButton StringToDeviceButton( const RString& s );
 
 struct DeviceInput

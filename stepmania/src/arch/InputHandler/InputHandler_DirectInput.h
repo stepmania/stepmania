@@ -11,7 +11,7 @@ public:
 	InputHandler_DInput();
 	~InputHandler_DInput();
 	void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut );
-	char DeviceButtonToChar( DeviceButton button );
+	wchar_t DeviceButtonToChar( DeviceButton button, bool bUseCurrentKeyModifiers );
 	void Update();
 	bool DevicesChanged();
 	void WindowReset();

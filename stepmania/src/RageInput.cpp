@@ -97,7 +97,7 @@ RString RageInput::GetDeviceSpecificInputString( const DeviceInput &di )
 	return di.ToString();
 }
 
-char RageInput::DeviceButtonToChar( DeviceButton button )
+wchar_t RageInput::DeviceButtonToChar( DeviceButton button, bool bUseCurrentKeyModifiers )
 {
 	FOREACH( InputHandler*, m_pDevices, i )
 	{
@@ -107,7 +107,7 @@ char RageInput::DeviceButtonToChar( DeviceButton button )
 		FOREACH_CONST( InputDeviceInfo, vDevices, idi )
 		{
 			if( idi->id == DEVICE_KEYBOARD )
-				return (*i)->DeviceButtonToChar(button);
+				return (*i)->DeviceButtonToChar(button, bUseCurrentKeyModifiers);
 		}
 	}
 

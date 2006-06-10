@@ -8,6 +8,7 @@
 #include "RageUtil.h"
 #include "EnumHelper.h"
 #include "LocalizedString.h"
+#include "RageInput.h"
 
 static map<DeviceButton,RString> g_mapNamesToString;
 static map<RString,DeviceButton> g_mapStringToNames;
@@ -147,6 +148,16 @@ RString DeviceButtonToString( DeviceButton key )
 	return "unknown";
 }
 
+RString DeviceButtonToTranslatedString( DeviceButton key )
+{
+	/* All printable ASCII except for uppercase alpha characters line up. */
+	if( key >= 33 && key < 127 &&
+		!(key >= 'A' && key <= 'Z' ) )
+		return WStringToRString( wstring()+INPUTMAN->DeviceButtonToChar(key,false) );
+
+	return DeviceButtonToString( key );
+}
+
 static LocalizedString HOME	( "DeviceButton", "Home" );
 static LocalizedString END	( "DeviceButton", "End" );
 static LocalizedString UP	( "DeviceButton", "Up" );
@@ -161,7 +172,7 @@ static LocalizedString PGUP	( "DeviceButton", "PgUp" );
 static LocalizedString PGDN	( "DeviceButton", "PgDn" );
 static LocalizedString BACKSLASH	( "DeviceButton", "Backslash" );
 
-RString DeviceButtonToLocalizedString( DeviceButton key )
+RString DeviceButtonToLocalizedAndTranslatedString( DeviceButton key )
 {
 	switch( key )
 	{
@@ -178,7 +189,7 @@ RString DeviceButtonToLocalizedString( DeviceButton key )
 	case KEY_PGUP:		return PGUP.GetValue();
 	case KEY_PGDN:		return PGDN.GetValue();
 	case KEY_BACKSLASH:	return BACKSLASH.GetValue();
-	default:	return Capitalize( DeviceButtonToString(key) );
+	default:	return Capitalize( DeviceButtonToTranslatedString(key) );
 	}
 }
 

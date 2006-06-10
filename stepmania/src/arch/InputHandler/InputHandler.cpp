@@ -34,24 +34,67 @@ void InputHandler::ButtonPressed( DeviceInput di, bool Down )
 	}
 }
 
-char InputHandler::DeviceButtonToChar( DeviceButton button )
+wchar_t InputHandler::DeviceButtonToChar( DeviceButton button, bool bUseCurrentKeyModifiers )
 {
-	if( button < 127 )
-		return (char) button;
-
-	if( button >= KEY_KP_C0 && button <= KEY_KP_C9 )
-		return (char) (button - KEY_KP_C0) + '0';
-
+	wchar_t c;
 	switch( button )
 	{
-	case KEY_KP_SLASH: return '/';
-	case KEY_KP_ASTERISK: return '*';
-	case KEY_KP_HYPHEN: return '-';
-	case KEY_KP_PLUS: return '+';
-	case KEY_KP_PERIOD: return '.';
-	case KEY_KP_EQUAL: return '=';
+	default:
+		if( button < 127 )
+			c = (char) button;
+		else if( button >= KEY_KP_C0 && button <= KEY_KP_C9 )
+			c =(char) (button - KEY_KP_C0) + '0';
+		break;
+	case KEY_KP_SLASH:	c ='/';	break;
+	case KEY_KP_ASTERISK:	c ='*';	break;
+	case KEY_KP_HYPHEN:	c ='-';	break;
+	case KEY_KP_PLUS:	c ='+';	break;
+	case KEY_KP_PERIOD:	c ='.';	break;
+	case KEY_KP_EQUAL:	c ='=';	break;
 	}
 
+	if( bUseCurrentKeyModifiers )
+	{
+		bool bHoldingShift = 
+			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT)) ||
+			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT));
+
+		bool bHoldingCtrl = 
+			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL)) ||
+			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL));
+		
+		if( bHoldingShift && !bHoldingCtrl )
+		{
+			c = (char)toupper(c);
+
+			switch( c )
+			{
+			case '`':	c='~';	break;
+			case '1':	c='!';	break;
+			case '2':	c='@';	break;
+			case '3':	c='#';	break;
+			case '4':	c='$';	break;
+			case '5':	c='%';	break;
+			case '6':	c='^';	break;
+			case '7':	c='&';	break;
+			case '8':	c='*';	break;
+			case '9':	c='(';	break;
+			case '0':	c=')';	break;
+			case '-':	c='_';	break;
+			case '=':	c='+';	break;
+			case '[':	c='{';	break;
+			case ']':	c='}';	break;
+			case '\'':	c='"';	break;
+			case '\\':	c='|';	break;
+			case ';':	c=':';	break;
+			case ',':	c='<';	break;
+			case '.':	c='>';	break;
+			case '/':	c='?';	break;
+			}
+		}
+
+	}
+	
 	return '\0';
 }
 
@@ -59,15 +102,15 @@ RString InputHandler::GetDeviceSpecificInputString( const DeviceInput &di )
 {
 	if( di.device == DEVICE_KEYBOARD )
 	{
-		char c = DeviceButtonToChar( di.button );
+		wchar_t c = DeviceButtonToChar( di.button, false );
 		if( c )
 		{
 			if( c == ' ' )
 				return "space";	// Don't show "Key  " for space.
 			else
-				return ssprintf( "Key %c", c );
+				return "Key " + WStringToRString(wstring()+c);
 		}
-		return DeviceButtonToString( di.button );
+		return DeviceButtonToTranslatedString( di.button );
 	}
 
 	return di.ToString();

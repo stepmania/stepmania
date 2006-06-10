@@ -95,10 +95,6 @@ void ScreenNetSelectBase::Input( const InputEventPlus &input )
 	if( (input.type != IET_FIRST_PRESS) && (input.type != IET_SLOW_REPEAT) && (input.type != IET_FAST_REPEAT ) )
 		return;
 
-	bool bHoldingShift = 
-		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT)) ||
-		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT));
-
 	bool bHoldingCtrl = 
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL)) ||
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL)) ||
@@ -123,38 +119,9 @@ void ScreenNetSelectBase::Input( const InputEventPlus &input )
 		UpdateTextInput();
 		break;
 	default:
-		char c;
-		c = INPUTMAN->DeviceButtonToChar( input.DeviceI.button );
+		wchar_t c;
+		c = INPUTMAN->DeviceButtonToChar(input.DeviceI.button,true);
 
-		if( bHoldingShift && !bHoldingCtrl )
-		{
-			c = (char)toupper(c);
-
-			switch( c )
-			{
-			case '`':	c='~';	break;
-			case '1':	c='!';	break;
-			case '2':	c='@';	break;
-			case '3':	c='#';	break;
-			case '4':	c='$';	break;
-			case '5':	c='%';	break;
-			case '6':	c='^';	break;
-			case '7':	c='&';	break;
-			case '8':	c='*';	break;
-			case '9':	c='(';	break;
-			case '0':	c=')';	break;
-			case '-':	c='_';	break;
-			case '=':	c='+';	break;
-			case '[':	c='{';	break;
-			case ']':	c='}';	break;
-			case '\'':	c='"';	break;
-			case '\\':	c='|';	break;
-			case ';':	c=':';	break;
-			case ',':	c='<';	break;
-			case '.':	c='>';	break;
-			case '/':	c='?';	break;
-			}
-		}
 		if( (c >= ' ') && (!bHoldingCtrl) )
 		{
 			m_sTextInput += c;
