@@ -3,6 +3,7 @@
 #include "RageUtil.h"
 #include "InputHandler.h"
 #include "RageLog.h"
+#include <wctype.h>
 
 void InputHandler::UpdateTimer()
 {
@@ -36,21 +37,21 @@ void InputHandler::ButtonPressed( DeviceInput di, bool Down )
 
 wchar_t InputHandler::DeviceButtonToChar( DeviceButton button, bool bUseCurrentKeyModifiers )
 {
-	wchar_t c = '\0';
+	wchar_t c = L'\0';
 	switch( button )
 	{
 	default:
 		if( button < 127 )
-			c = (char) button;
+			c = (wchar_t) button;
 		else if( button >= KEY_KP_C0 && button <= KEY_KP_C9 )
-			c =(char) (button - KEY_KP_C0) + '0';
+			c =(wchar_t) (button - KEY_KP_C0) + '0';
 		break;
-	case KEY_KP_SLASH:	c ='/';	break;
-	case KEY_KP_ASTERISK:	c ='*';	break;
-	case KEY_KP_HYPHEN:	c ='-';	break;
-	case KEY_KP_PLUS:	c ='+';	break;
-	case KEY_KP_PERIOD:	c ='.';	break;
-	case KEY_KP_EQUAL:	c ='=';	break;
+	case KEY_KP_SLASH:	c = L'/';	break;
+	case KEY_KP_ASTERISK:	c = L'*';	break;
+	case KEY_KP_HYPHEN:	c = L'-';	break;
+	case KEY_KP_PLUS:	c = L'+';	break;
+	case KEY_KP_PERIOD:	c = L'.';	break;
+	case KEY_KP_EQUAL:	c = L'=';	break;
 	}
 
 	// Handle some default US keyboard modifiers for derived InputHandlers that 
@@ -67,31 +68,31 @@ wchar_t InputHandler::DeviceButtonToChar( DeviceButton button, bool bUseCurrentK
 		
 		if( bHoldingShift && !bHoldingCtrl )
 		{
-			c = (char)toupper(c);
+			c = towupper(c);
 
 			switch( c )
 			{
-			case '`':	c='~';	break;
-			case '1':	c='!';	break;
-			case '2':	c='@';	break;
-			case '3':	c='#';	break;
-			case '4':	c='$';	break;
-			case '5':	c='%';	break;
-			case '6':	c='^';	break;
-			case '7':	c='&';	break;
-			case '8':	c='*';	break;
-			case '9':	c='(';	break;
-			case '0':	c=')';	break;
-			case '-':	c='_';	break;
-			case '=':	c='+';	break;
-			case '[':	c='{';	break;
-			case ']':	c='}';	break;
-			case '\'':	c='"';	break;
-			case '\\':	c='|';	break;
-			case ';':	c=':';	break;
-			case ',':	c='<';	break;
-			case '.':	c='>';	break;
-			case '/':	c='?';	break;
+			case '`':	c = L'~';	break;
+			case '1':	c = L'!';	break;
+			case '2':	c = L'@';	break;
+			case '3':	c = L'#';	break;
+			case '4':	c = L'$';	break;
+			case '5':	c = L'%';	break;
+			case '6':	c = L'^';	break;
+			case '7':	c = L'&';	break;
+			case '8':	c = L'*';	break;
+			case '9':	c = L'(';	break;
+			case '0':	c = L')';	break;
+			case '-':	c = L'_';	break;
+			case '=':	c = L'+';	break;
+			case '[':	c = L'{';	break;
+			case ']':	c = L'}';	break;
+			case '\'':	c = L'"';	break;
+			case '\\':	c = L'|';	break;
+			case ';':	c = L':';	break;
+			case ',':	c = L'<';	break;
+			case '.':	c = L'>';	break;
+			case '/':	c = L'?';	break;
 			}
 		}
 
@@ -107,7 +108,7 @@ RString InputHandler::GetDeviceSpecificInputString( const DeviceInput &di )
 		wchar_t c = DeviceButtonToChar( di.button, false );
 		if( c )
 		{
-			if( c == ' ' )
+			if( c == L' ' )
 				return "space";	// Don't show "Key  " for space.
 			else
 				return "Key " + WStringToRString(wstring()+c);
