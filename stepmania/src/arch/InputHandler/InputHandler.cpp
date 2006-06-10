@@ -34,11 +34,32 @@ void InputHandler::ButtonPressed( DeviceInput di, bool Down )
 	}
 }
 
+char InputHandler::DeviceButtonToChar( DeviceButton button )
+{
+	if( button < 127 )
+		return (char) button;
+
+	if( button >= KEY_KP_C0 && button <= KEY_KP_C9 )
+		return (char) (button - KEY_KP_C0) + '0';
+
+	switch( button )
+	{
+	case KEY_KP_SLASH: return '/';
+	case KEY_KP_ASTERISK: return '*';
+	case KEY_KP_HYPHEN: return '-';
+	case KEY_KP_PLUS: return '+';
+	case KEY_KP_PERIOD: return '.';
+	case KEY_KP_EQUAL: return '=';
+	}
+
+	return '\0';
+}
+
 RString InputHandler::GetDeviceSpecificInputString( const DeviceInput &di )
 {
 	if( di.device == DEVICE_KEYBOARD )
 	{
-		char c = di.ToChar();
+		char c = DeviceButtonToChar( di.button );
 		if( c )
 		{
 			if( c == ' ' )

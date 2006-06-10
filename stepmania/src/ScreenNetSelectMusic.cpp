@@ -22,6 +22,7 @@
 #include "RageLog.h"
 #include "song.h"
 #include "InputEventPlus.h"
+#include "RageInput.h"
 
 AutoScreenMessage( SM_NoSongs )
 AutoScreenMessage( SM_ChangeSong )
@@ -128,7 +129,7 @@ void ScreenNetSelectMusic::Input( const InputEventPlus &input )
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL)) ||
 		(!NSMAN->useSMserver);	//If we are disconnected, assume no chatting
 
-	char c = (char) toupper(input.DeviceI.ToChar() );
+	char c = (char) toupper( INPUTMAN->DeviceButtonToChar(input.DeviceI.button) );
 
 	if ( bHoldingCtrl && ( c >= 'A' ) && ( c <= 'Z' ) )
 	{

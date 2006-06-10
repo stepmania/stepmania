@@ -21,6 +21,7 @@ public:
 	void WindowReset();
 	void AddHandler( InputHandler *pHandler );
 	RString GetDeviceSpecificInputString( const DeviceInput &di );
+	char DeviceButtonToChar( DeviceButton button );
 	InputDeviceState GetInputDeviceState( InputDevice id );
 	RString GetDisplayDevicesString() const;
 

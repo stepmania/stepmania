@@ -23,6 +23,7 @@
 #include "ScreenDimensions.h"
 #include "Command.h"
 #include "InputEventPlus.h"
+#include "RageInput.h"
 
 //
 // Defines specific to ScreenNameEntryTraditional
@@ -515,7 +516,7 @@ void ScreenNameEntryTraditional::Input( const InputEventPlus &input )
 		if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_BACK) )
 			c = CHAR_BACK;
 		else
-			c = toupper( input.DeviceI.ToChar() );
+			c = toupper( INPUTMAN->DeviceButtonToChar( input.DeviceI.button ) );
 		if( c )
 		{
 			PlayerNumber pn = GAMESTATE->m_MasterPlayerNumber;

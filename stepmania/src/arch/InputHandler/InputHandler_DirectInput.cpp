@@ -645,6 +645,42 @@ void InputHandler_DInput::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vD
 		vDevicesOut.push_back( InputDeviceInfo(Devices[i].dev, Devices[i].m_sName) );
 }
 
+char InputHandler_DInput::DeviceButtonToChar( DeviceButton button )
+{
+	FOREACH_CONST( DIDevice, Devices, d )
+	{
+		if( d->type != DIDevice::KEYBOARD )
+			continue;
+
+		FOREACH_CONST( input_t, d->Inputs, i )
+		{
+			if( button != i->num )
+				continue;
+
+			DWORD scancode = i->ofs;
+
+			HKL layout = GetKeyboardLayout(0);	// 0 == current thread
+
+			unsigned char state[256];
+			// Don't fill key state.  We'll do the shift/ctrl/alt 
+			// translations ourself in ScreenTextEntry.
+			ZERO( state );
+
+			UINT vk = MapVirtualKeyEx( scancode, 1, layout );
+			
+			unsigned short result[2];	// ToAscii writes a max of 2 chars
+			ZERO( result );
+			// TODO: Use ToUnicodeEx
+			int iNum = ToAsciiEx( vk, scancode, state, result, 0, layout );
+			if( iNum == 1 )
+				return (char)result[0];
+			// iNum == 2 will happen only for dead keys.  See MSDN for ToAsciiEx.
+		}
+	}
+
+	return InputHandler::DeviceButtonToChar( button );
+}
+
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.

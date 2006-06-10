@@ -13,6 +13,7 @@
 #include "RageUtil.h"
 #include "GameState.h"
 #include "InputEventPlus.h"
+#include "RageInput.h"
 
 #define CHATINPUT_WIDTH				THEME->GetMetricF(m_sName,"ChatInputBoxWidth")
 #define CHATINPUT_HEIGHT			THEME->GetMetricF(m_sName,"ChatInputBoxHeight")
@@ -123,7 +124,7 @@ void ScreenNetSelectBase::Input( const InputEventPlus &input )
 		break;
 	default:
 		char c;
-		c = input.DeviceI.ToChar();
+		c = INPUTMAN->DeviceButtonToChar( input.DeviceI.button );
 
 		if( bHoldingShift && !bHoldingCtrl )
 		{

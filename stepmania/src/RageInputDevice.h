@@ -337,8 +337,6 @@ public:
 	bool IsValid() const { return device != DEVICE_NONE; };
 	void MakeInvalid() { device = DEVICE_NONE; };
 
-	char ToChar() const;
-
 	bool IsJoystick() const { return ::IsJoystick(device); }
 };
 

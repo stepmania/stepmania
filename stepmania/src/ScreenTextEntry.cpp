@@ -10,7 +10,7 @@
 #include "ScreenPrompt.h"
 #include "ActorUtil.h"
 #include "InputEventPlus.h"
-
+#include "RageInput.h"
 
 static const char* g_szKeys[NUM_KEYBOARD_ROWS][KEYS_PER_ROW] =
 {
@@ -183,15 +183,15 @@ void ScreenTextEntry::Input( const InputEventPlus &input )
 	}
 	else if( input.type == IET_FIRST_PRESS )
 	{
-		if( input.DeviceI.ToChar() >= ' ' ) 
+		char c = INPUTMAN->DeviceButtonToChar( input.DeviceI.button );
+		if( c >= ' ' ) 
 		{
 			bool bIsHoldingShift = 
 					INPUTFILTER->IsBeingPressed( DeviceInput(input.DeviceI.device, KEY_RSHIFT)) ||
 					INPUTFILTER->IsBeingPressed( DeviceInput(input.DeviceI.device, KEY_LSHIFT));
-			char c = input.DeviceI.ToChar();
 			if( bIsHoldingShift )
 			{
-				c = (char)toupper( input.DeviceI.ToChar() );
+				c = (char)toupper( c );
 				switch( c )
 				{
 				case '`':	c='~';	break;
