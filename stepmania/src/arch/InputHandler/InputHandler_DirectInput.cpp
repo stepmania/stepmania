@@ -679,7 +679,9 @@ wchar_t InputHandler_DInput::DeviceButtonToChar( DeviceButton button, bool bUseC
 			ZERO( keys );
 			if( bUseCurrentKeyModifiers )
 				GetKeyboardState(keys);
-			return ScancodeAndKeysToChar( i->ofs, keys );
+			wchar_t c = ScancodeAndKeysToChar( i->ofs, keys );
+			if( c )
+				return c;
 		}
 	}
 

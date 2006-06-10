@@ -36,7 +36,7 @@ void InputHandler::ButtonPressed( DeviceInput di, bool Down )
 
 wchar_t InputHandler::DeviceButtonToChar( DeviceButton button, bool bUseCurrentKeyModifiers )
 {
-	wchar_t c;
+	wchar_t c = '\0';
 	switch( button )
 	{
 	default:
@@ -53,6 +53,8 @@ wchar_t InputHandler::DeviceButtonToChar( DeviceButton button, bool bUseCurrentK
 	case KEY_KP_EQUAL:	c ='=';	break;
 	}
 
+	// Handle some default US keyboard modifiers for derived InputHandlers that 
+	// don't implement DeviceButtonToChar.
 	if( bUseCurrentKeyModifiers )
 	{
 		bool bHoldingShift = 
@@ -95,7 +97,7 @@ wchar_t InputHandler::DeviceButtonToChar( DeviceButton button, bool bUseCurrentK
 
 	}
 	
-	return '\0';
+	return c;
 }
 
 RString InputHandler::GetDeviceSpecificInputString( const DeviceInput &di )
