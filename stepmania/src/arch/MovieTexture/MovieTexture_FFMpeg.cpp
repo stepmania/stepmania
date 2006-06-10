@@ -166,8 +166,8 @@ public:
 
 	int GetFrame( RageSurface *pOut, float fTargetTime );
 
-	int GetWidth() const { return m_pStream->codec.width; }
-	int GetHeight() const { return m_pStream->codec.height; }
+	int GetWidth() const { return m_pStream->codec->width; }
+	int GetHeight() const { return m_pStream->codec->height; }
 
 	RageSurface *CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor );
 
@@ -333,7 +333,7 @@ int MovieDecoder_FFMpeg::DecodePacket( RageSurface *pOut, float fTargetTime )
 		bool bSkipThisFrame = 
 			fTargetTime != -1 &&
 			GetTimestamp() + GetFrameDuration() <= fTargetTime &&
-			(m_pStream->codec.frame_number % 2) == 0;
+			(m_pStream->codec->frame_number % 2) == 0;
 
 		int iGotFrame;
 		CHECKPOINT;
@@ -341,7 +341,7 @@ int MovieDecoder_FFMpeg::DecodePacket( RageSurface *pOut, float fTargetTime )
 		 * to give it a buffer to read from since it tries to read anyway. */
 		static uint8_t dummy[FF_INPUT_BUFFER_PADDING_SIZE] = { 0 };
 		int len = avcodec::avcodec_decode_video(
-				&m_pStream->codec, 
+				m_pStream->codec, 
 				&m_Frame, &iGotFrame,
 				m_Packet.size? m_Packet.data:dummy, m_Packet.size );
 		CHECKPOINT;
@@ -375,7 +375,7 @@ int MovieDecoder_FFMpeg::DecodePacket( RageSurface *pOut, float fTargetTime )
 		}
 
 		/* Length of this frame: */
-		m_fLastFrameDelay = (float)m_pStream->codec.frame_rate_base / m_pStream->codec.frame_rate;
+		m_fLastFrameDelay = (m_pStream->r_frame_rate.num * m_pStream->codec->time_base.den) / (m_pStream->r_frame_rate.den * m_pStream->codec->time_base.num);
 		m_fLastFrameDelay += m_Frame.repeat_pict * (m_fLastFrameDelay * 0.5f);
 
 		++m_iFrameNumber;
@@ -416,8 +416,8 @@ void MovieDecoder_FFMpeg::ConvertToSurface( RageSurface *pSurface ) const
 	pict.linesize[0] = pSurface->pitch;
 
 	avcodec::img_convert( &pict, m_AVTexfmt,
-			(avcodec::AVPicture *) &m_Frame, m_pStream->codec.pix_fmt, 
-			m_pStream->codec.width, m_pStream->codec.height );
+			(avcodec::AVPicture *) &m_Frame, m_pStream->codec->pix_fmt, 
+			m_pStream->codec->width, m_pStream->codec->height );
 }
 
 static avcodec::AVStream *FindVideoStream( avcodec::AVFormatContext *m_fctx )
@@ -425,7 +425,7 @@ static avcodec::AVStream *FindVideoStream( avcodec::AVFormatContext *m_fctx )
 	for( int stream = 0; stream < m_fctx->nb_streams; ++stream )
 	{
 		avcodec::AVStream *enc = m_fctx->streams[stream];
-		if( enc->codec.codec_type == avcodec::CODEC_TYPE_VIDEO )
+		if( enc->codec->codec_type == avcodec::CODEC_TYPE_VIDEO )
 			return enc;
 	}
 	return NULL;
@@ -549,21 +549,21 @@ RString MovieDecoder_FFMpeg::Open( RString sFile )
 	if ( stream == NULL )
 		return ssprintf( "AVCodec (%s): Couldn't find any video streams", sFile.c_str() );
 
-	if( stream->codec.codec_id == avcodec::CODEC_ID_NONE )
-		return ssprintf( "AVCodec (%s): Unsupported codec %08x", sFile.c_str(), stream->codec.codec_tag );
+	if( stream->codec->codec_id == avcodec::CODEC_ID_NONE )
+		return ssprintf( "AVCodec (%s): Unsupported codec %08x", sFile.c_str(), stream->codec->codec_tag );
 
-	avcodec::AVCodec *codec = avcodec::avcodec_find_decoder( stream->codec.codec_id );
+	avcodec::AVCodec *codec = avcodec::avcodec_find_decoder( stream->codec->codec_id );
 	if( codec == NULL )
-		return ssprintf( "AVCodec (%s): Couldn't find decoder %i", sFile.c_str(), stream->codec.codec_id );
+		return ssprintf( "AVCodec (%s): Couldn't find decoder %i", sFile.c_str(), stream->codec->codec_id );
 
 	LOG->Trace("Opening codec %s", codec->name );
-	ret = avcodec::avcodec_open( &stream->codec, codec );
+	ret = avcodec::avcodec_open( stream->codec, codec );
 	if ( ret < 0 )
 		return ssprintf( averr_ssprintf(ret, "AVCodec (%s): Couldn't open codec \"%s\"", sFile.c_str(), codec->name) );
 	m_pStream = stream;
 
-	LOG->Trace( "Bitrate: %i", m_pStream->codec.bit_rate );
-	LOG->Trace( "Codec pixel format: %s", avcodec::avcodec_get_pix_fmt_name(m_pStream->codec.pix_fmt) );
+	LOG->Trace( "Bitrate: %i", m_pStream->codec->bit_rate );
+	LOG->Trace( "Codec pixel format: %s", avcodec::avcodec_get_pix_fmt_name(m_pStream->codec->pix_fmt) );
 
 	return RString();
 }
@@ -572,7 +572,7 @@ void MovieDecoder_FFMpeg::Close()
 {
 	if( m_pStream )
 	{
-		avcodec::avcodec_close( &m_pStream->codec );
+		avcodec::avcodec_close( m_pStream->codec );
 		m_pStream = NULL;
 	}
 

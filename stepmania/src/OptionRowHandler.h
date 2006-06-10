@@ -17,7 +17,7 @@ public:
 	OptionRowDefinition m_Def;
 	vector<RString> m_vsReloadRowMessages;	// refresh this row on on these messages
 	
-	OptionRowHandler::OptionRowHandler() { Init(); }
+	OptionRowHandler() { Init(); }
 	virtual ~OptionRowHandler() { }
 	virtual void Init()
 	{
