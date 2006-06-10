@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #ifndef RTSP_H
 #define RTSP_H
@@ -35,10 +35,6 @@ enum RTSPProtocol {
 #define RTSP_DEFAULT_PORT   554
 #define RTSP_MAX_TRANSPORTS 8
 #define RTSP_TCP_MAX_PACKET_SIZE 1472
-#define RTSP_DEFAULT_NB_AUDIO_CHANNELS 2
-#define RTSP_DEFAULT_AUDIO_SAMPLERATE 44100
-#define RTSP_RTP_PORT_MIN 5000
-#define RTSP_RTP_PORT_MAX 10000
 
 typedef struct RTSPTransportField {
     int interleaved_min, interleaved_max;  /* interleave ids, if TCP transport */
@@ -54,8 +50,6 @@ typedef struct RTSPHeader {
     int content_length;
     enum RTSPStatusCode status_code; /* response code from server */
     int nb_transports;
-    /* in AV_TIME_BASE unit, AV_NOPTS_VALUE if not used */
-    int64_t range_start, range_end;
     RTSPTransportField transports[RTSP_MAX_TRANSPORTS];
     int seq; /* sequence number */
     char session_id[512];
@@ -74,7 +68,7 @@ typedef struct RTSPActionServerSetup {
     char transport_option[512];
 } RTSPActionServerSetup;
 
-typedef int FFRTSPCallback(enum RTSPCallbackAction action,
+typedef int FFRTSPCallback(enum RTSPCallbackAction action, 
                            const char *session_id,
                            char *buf, int buf_size,
                            void *arg);

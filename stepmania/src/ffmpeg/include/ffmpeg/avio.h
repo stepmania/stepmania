@@ -9,7 +9,7 @@ typedef int64_t offset_t;
 
 struct URLContext {
     struct URLProtocol *prot;
-    int flags;
+    int flags;        
     int is_streamed;  /* true if streamed (no seek possible), default = false */
     int max_packet_size;  /* if non zero, the stream is packetized with this max packet size */
     void *priv_data;
@@ -70,8 +70,8 @@ typedef struct {
     unsigned char *buf_ptr, *buf_end;
     void *opaque;
     int (*read_packet)(void *opaque, uint8_t *buf, int buf_size);
-    int (*write_packet)(void *opaque, uint8_t *buf, int buf_size);
-    offset_t (*seek)(void *opaque, offset_t offset, int whence);
+    void (*write_packet)(void *opaque, uint8_t *buf, int buf_size);
+    int (*seek)(void *opaque, offset_t offset, int whence);
     offset_t pos; /* position in the file of the current buffer */
     int must_flush; /* true if the next seek should flush */
     int eof_reached; /* true if eof reached */
@@ -81,7 +81,6 @@ typedef struct {
     unsigned long checksum;
     unsigned char *checksum_ptr;
     unsigned long (*update_checksum)(unsigned long checksum, const uint8_t *buf, unsigned int size);
-    int error;         ///< contains the error code or 0 if no error happened
 } ByteIOContext;
 
 int init_put_byte(ByteIOContext *s,
@@ -90,8 +89,8 @@ int init_put_byte(ByteIOContext *s,
                   int write_flag,
                   void *opaque,
                   int (*read_packet)(void *opaque, uint8_t *buf, int buf_size),
-                  int (*write_packet)(void *opaque, uint8_t *buf, int buf_size),
-                  offset_t (*seek)(void *opaque, offset_t offset, int whence));
+                  void (*write_packet)(void *opaque, uint8_t *buf, int buf_size),
+                  int (*seek)(void *opaque, offset_t offset, int whence));
 
 void put_byte(ByteIOContext *s, int b);
 void put_buffer(ByteIOContext *s, const unsigned char *buf, int size);
@@ -99,20 +98,17 @@ void put_le64(ByteIOContext *s, uint64_t val);
 void put_be64(ByteIOContext *s, uint64_t val);
 void put_le32(ByteIOContext *s, unsigned int val);
 void put_be32(ByteIOContext *s, unsigned int val);
-void put_le24(ByteIOContext *s, unsigned int val);
-void put_be24(ByteIOContext *s, unsigned int val);
 void put_le16(ByteIOContext *s, unsigned int val);
 void put_be16(ByteIOContext *s, unsigned int val);
 void put_tag(ByteIOContext *s, const char *tag);
 
+void put_be64_double(ByteIOContext *s, double val);
 void put_strz(ByteIOContext *s, const char *buf);
 
 offset_t url_fseek(ByteIOContext *s, offset_t offset, int whence);
 void url_fskip(ByteIOContext *s, offset_t offset);
 offset_t url_ftell(ByteIOContext *s);
-offset_t url_fsize(ByteIOContext *s);
 int url_feof(ByteIOContext *s);
-int url_ferror(ByteIOContext *s);
 
 #define URL_EOF (-1)
 int url_fgetc(ByteIOContext *s);
@@ -128,14 +124,13 @@ void put_flush_packet(ByteIOContext *s);
 int get_buffer(ByteIOContext *s, unsigned char *buf, int size);
 int get_partial_buffer(ByteIOContext *s, unsigned char *buf, int size);
 int get_byte(ByteIOContext *s);
-unsigned int get_le24(ByteIOContext *s);
 unsigned int get_le32(ByteIOContext *s);
 uint64_t get_le64(ByteIOContext *s);
 unsigned int get_le16(ByteIOContext *s);
 
+double get_be64_double(ByteIOContext *s);
 char *get_strz(ByteIOContext *s, char *buf, int maxlen);
 unsigned int get_be16(ByteIOContext *s);
-unsigned int get_be24(ByteIOContext *s);
 unsigned int get_be32(ByteIOContext *s);
 uint64_t get_be64(ByteIOContext *s);
 
