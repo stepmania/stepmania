@@ -339,6 +339,32 @@ RString InputHandler_Carbon::GetDeviceSpecificInputString( const DeviceInput &di
 
 wchar_t InputHandler_Carbon::DeviceButtonToChar( DeviceButton button, bool bUseCurrentKeyModifiers )
 {
+	// KeyTranslate maps these keys to a character.  They shouldn't be mapped to any character.
+	switch( button )
+	{
+		default:
+			if( (button >= KEY_F1 && button <= KEY_F16) )
+				return '\0';
+			break;
+		case KEY_UP:
+		case KEY_DOWN:
+		case KEY_LEFT:
+		case KEY_RIGHT:
+		case KEY_ESC:
+		case KEY_TAB:
+		case KEY_PRTSC:
+		case KEY_SCRLLOCK:
+		case KEY_PAUSE:
+		case KEY_DEL:
+		case KEY_HOME:
+		case KEY_END:
+		case KEY_PGUP:
+		case KEY_PGDN:
+		case KEY_NUMLOCK:
+		case KEY_KP_ENTER:
+			return '\0';		
+	}
+
 	// Find the USB key code for this DeviceButton
 	UInt8 iMacVirtualKey;
 	if( KeyboardDevice::DeviceButtonToMacVirtualKey( button, iMacVirtualKey ) )
