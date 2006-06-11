@@ -11,11 +11,12 @@ my @filelist = qw( Announcers/instructions.txt
 		   BackgroundTransitions
 		   BackgroundEffects
 		   BGAnimations/instructions.txt
-		   CDTitles/instructions.txt
+		   CDTitles/Instructions.txt
 		   Characters/default
+		   Characters/Instructions.txt
 		   Courses/instructions.txt
 		   Courses/Samples
-		   Packages/instructions.txt
+		   Packages/Instructions.txt
 		   NoteSkins/instructions.txt
 		   NoteSkins/common/default
 		   NoteSkins/dance/default
@@ -25,7 +26,7 @@ my @filelist = qw( Announcers/instructions.txt
 		   NoteSkins/pump/Classic
 		   NoteSkins/pump/default
 		   RandomMovies/instructions.txt
-		   Songs/instructions.txt
+		   Songs/Instructions.txt
 		   Themes/instructions.txt
 		   Themes/default
 		   Data/Translations.xml
