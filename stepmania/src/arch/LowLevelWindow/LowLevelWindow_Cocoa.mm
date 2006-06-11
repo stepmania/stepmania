@@ -458,6 +458,9 @@ void LowLevelWindow_Cocoa::SwapBuffers()
 
 void LowLevelWindow_Cocoa::Update()
 {
+	// Keep the system from sleeping or the screen saver from activating.
+	UpdateSystemActivity( IdleActivity );
+	
 	LockMutex lock( g_ResizeLock );
 	if( likely(!g_bResized) )
 		return;
