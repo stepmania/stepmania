@@ -180,7 +180,9 @@ void RageSound_Generic_Software::DecodeThread()
 		for( unsigned i = 0; i < ARRAYSIZE(sounds); ++i )
 		{
 			/* The volume can change while the sound is playing; update it. */
-			if( sounds[i].state == sound::PLAYING || sounds[i].state == sound::STOPPING )
+			/* XXX: We can't access snd when in STOPPING; it doesn't exist anymore. */
+			// if( sounds[i].state == sound::PLAYING || sounds[i].state == sound::STOPPING )
+			if( sounds[i].state == sound::PLAYING )
 				sounds[i].volume = sounds[i].snd->GetAbsoluteVolume();
 		}
 
