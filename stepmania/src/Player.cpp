@@ -469,6 +469,10 @@ void Player::Update( float fDeltaTime )
 	if( m_pNoteField )
 		m_pNoteField->Update( fDeltaTime );
 
+	float fMiniPercent = m_pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_MINI];
+	float fTinyPercent = m_pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_TINY];
+	float fJudgmentZoom = min( powf(0.5f, fMiniPercent+fTinyPercent), 1.0f );
+	
 	//
 	// Update Y positions
 	//
@@ -485,6 +489,7 @@ void Player::Update( float fDeltaTime )
 			m_vHoldJudgment[c]->SetX( fX );
 			m_vHoldJudgment[c]->SetY( fHoldJudgeYPos );
 			m_vHoldJudgment[c]->SetZ( fZ );
+			m_vHoldJudgment[c]->SetZoom( fJudgmentZoom );
 		}
 	}
 
@@ -511,10 +516,7 @@ void Player::Update( float fDeltaTime )
 	}
 
 
-	float fMiniPercent = m_pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_MINI];
-	float fTinyPercent = m_pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_TINY];
 	float fNoteFieldZoom = 1 - fTinyPercent*0.5f;
-	float fJudgmentZoom = min( powf(0.5f, fMiniPercent+fTinyPercent), 1.0f );
 	if( m_pNoteField )
 		m_pNoteField->SetZoom( fNoteFieldZoom );
 	if( m_pJudgment )
