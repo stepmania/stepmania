@@ -3,7 +3,6 @@
 #include "RageUtil.h"
 #include "InputHandler.h"
 #include "RageLog.h"
-#include <wctype.h>
 
 void InputHandler::UpdateTimer()
 {

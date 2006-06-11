@@ -35,6 +35,7 @@ public:
 	bool DevicesChanged() { LockMut( m_ChangeLock ); return m_bChanged; }
 	void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut );
 	RString GetDeviceSpecificInputString( const DeviceInput &di );
+	wchar_t DeviceButtonToChar( DeviceButton button, bool bUseCurrentKeyModifiers );
 	static void QueueCallBack( void *target, int result, void *refcon, void *sender );
 	
 };

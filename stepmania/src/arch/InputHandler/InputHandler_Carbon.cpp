@@ -337,6 +337,35 @@ RString InputHandler_Carbon::GetDeviceSpecificInputString( const DeviceInput &di
 	return InputHandler::GetDeviceSpecificInputString( di );
 }
 
+wchar_t InputHandler_Carbon::DeviceButtonToChar( DeviceButton button, bool bUseCurrentKeyModifiers )
+{
+	// Find the USB key code for this DeviceButton
+	UInt8 iMacVirtualKey;
+	if( KeyboardDevice::DeviceButtonToMacVirtualKey( button, iMacVirtualKey ) )
+	{
+		UInt32 modifiers = 0;
+		if( bUseCurrentKeyModifiers )
+			modifiers = GetCurrentKeyModifiers();
+		
+		static unsigned long state = 0;
+		static Ptr keymap = nil;
+		Ptr new_keymap;
+	
+		new_keymap = (Ptr)GetScriptManagerVariable(smKCHRCache);
+		if( new_keymap != keymap )
+		{
+			keymap = new_keymap;
+			state = 0;
+		}
+		// TODO: Use UCKeyTranslate
+		wchar_t ch = KeyTranslate( keymap, ((int)iMacVirtualKey)|modifiers, &state ) & 0xFFFF;
+		return ch;
+	}
+	
+	return InputHandler::DeviceButtonToChar( button, bUseCurrentKeyModifiers );
+}
+
+
 /*
  * (c) 2005, 2006 Steve Checkoway
  * All rights reserved.
