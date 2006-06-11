@@ -514,9 +514,16 @@ void ScreenNameEntryTraditional::Input( const InputEventPlus &input )
 	{
 		int c;
 		if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_BACK) )
+		{
 			c = CHAR_BACK;
+		}
 		else
-			c = towupper( INPUTMAN->DeviceButtonToChar(input.DeviceI.button,true) );
+		{
+			wchar_t ch = INPUTMAN->DeviceButtonToChar(input.DeviceI.button,true);
+			MakeUpper( &ch, 1 );
+			c = ch;
+		}
+
 		if( c )
 		{
 			PlayerNumber pn = GAMESTATE->m_MasterPlayerNumber;

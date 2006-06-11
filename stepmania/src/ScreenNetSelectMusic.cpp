@@ -129,7 +129,8 @@ void ScreenNetSelectMusic::Input( const InputEventPlus &input )
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL)) ||
 		(!NSMAN->useSMserver);	//If we are disconnected, assume no chatting
 
-	wchar_t c = (wchar_t) towupper( INPUTMAN->DeviceButtonToChar(input.DeviceI.button,true) );
+	wchar_t c = INPUTMAN->DeviceButtonToChar(input.DeviceI.button,true);
+	MakeUpper( &c, 1 );
 
 	if ( bHoldingCtrl && ( c >= 'A' ) && ( c <= 'Z' ) )
 	{

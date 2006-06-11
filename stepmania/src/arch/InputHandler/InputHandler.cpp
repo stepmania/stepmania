@@ -68,7 +68,7 @@ wchar_t InputHandler::DeviceButtonToChar( DeviceButton button, bool bUseCurrentK
 		
 		if( bHoldingShift && !bHoldingCtrl )
 		{
-			c = towupper(c);
+			MakeUpper( &c, 1 );
 
 			switch( c )
 			{
