@@ -1689,6 +1689,10 @@
 		AAF4206805D63FA700056441 /* ModelManager.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF4206605D63FA700056441 /* ModelManager.h */; };
 		AAF4206B05D6400800056441 /* RageModelGeometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF4206905D6400800056441 /* RageModelGeometry.cpp */; };
 		AAF4206C05D6400800056441 /* RageModelGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF4206A05D6400800056441 /* RageModelGeometry.h */; };
+		AAF565FC0A3BFE2B00D5A105 /* ExportNsisStrings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF565FA0A3BFE2B00D5A105 /* ExportNsisStrings.cpp */; };
+		AAF565FD0A3BFE2B00D5A105 /* ExportNsisStrings.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF565FB0A3BFE2B00D5A105 /* ExportNsisStrings.h */; };
+		AAF565FE0A3BFE2B00D5A105 /* ExportNsisStrings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF565FA0A3BFE2B00D5A105 /* ExportNsisStrings.cpp */; };
+		AAF565FF0A3BFE2B00D5A105 /* ExportNsisStrings.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF565FB0A3BFE2B00D5A105 /* ExportNsisStrings.h */; };
 		AAF6A2F909B695BA00D5C614 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AAF6A2F709B695BA00D5C614 /* Localizable.strings */; };
 		AAF6A2FA09B695BA00D5C614 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AAF6A2F709B695BA00D5C614 /* Localizable.strings */; };
 		AAF7435B06110E8D00B19AD1 /* ScreenTestLights.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF7435906110E8D00B19AD1 /* ScreenTestLights.cpp */; };
@@ -1716,50 +1720,6 @@
 		F4BC045409E6B578003F770B /* ScreenGameplaySyncMachine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB55EB509A7E3D3008FDC69 /* ScreenGameplaySyncMachine.cpp */; };
 		F4BC045509E6B582003F770B /* ScreenGameplaySyncMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB55EB609A7E3D3008FDC69 /* ScreenGameplaySyncMachine.h */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXBuildStyle section */
-		4A9504CCFFE6A4B311CA0CBA /* Development */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
-				LIBRARY_STYLE = Static;
-				OPTIMIZATION_CFLAGS = "-O0";
-				ZERO_LINK = NO;
-			};
-			name = Development;
-		};
-		4A9504CDFFE6A4B311CA0CBA /* Deployment */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = YES;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				GCC_WARN_SHADOW = NO;
-				GCC_WARN_SIGN_COMPARE = YES;
-				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNKNOWN_PRAGMAS = YES;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_LABEL = NO;
-				GCC_WARN_UNUSED_PARAMETER = NO;
-				GCC_WARN_UNUSED_VALUE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				LIBRARY_STYLE = Bundle;
-				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				ZERO_LINK = NO;
-			};
-			name = Deployment;
-		};
-/* End PBXBuildStyle section */
 
 /* Begin PBXContainerItemProxy section */
 		AA30C61907F5E2EF0066F398 /* PBXContainerItemProxy */ = {
@@ -1924,7 +1884,7 @@
 		AA28B47A058F2F5D0097C109 /* MemoryCardManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MemoryCardManager.cpp; path = ../src/MemoryCardManager.cpp; sourceTree = "<group>"; };
 		AA28B47B058F2F5D0097C109 /* MemoryCardManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MemoryCardManager.h; path = ../src/MemoryCardManager.h; sourceTree = "<group>"; };
 		AA29CE570558741A00961A51 /* Info-StepMania.plist */ = {isa = PBXFileReference; explicitFileType = text.plist; path = "Info-StepMania.plist"; sourceTree = SOURCE_ROOT; };
-		AA29CE580558741A00961A51 /* StepMania.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = StepMania.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA29CE580558741A00961A51 /* StepMania.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StepMania.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA2FB638091212AF000FD574 /* LifeMeter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = LifeMeter.cpp; path = ../src/LifeMeter.cpp; sourceTree = "<group>"; };
 		AA3A705E06AA144C006F755E /* CommonMetrics.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = CommonMetrics.h; path = ../src/CommonMetrics.h; sourceTree = "<group>"; };
 		AA3A706006AA1645006F755E /* StyleUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = StyleUtil.cpp; path = ../src/StyleUtil.cpp; sourceTree = "<group>"; };
@@ -2673,6 +2633,8 @@
 		AAF4206A05D6400800056441 /* RageModelGeometry.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageModelGeometry.h; path = ../src/RageModelGeometry.h; sourceTree = "<group>"; };
 		AAF430FD04DC98BC00D02EE9 /* Steps.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = Steps.cpp; path = ../src/Steps.cpp; sourceTree = "<group>"; };
 		AAF430FE04DC98BC00D02EE9 /* Steps.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Steps.h; path = ../src/Steps.h; sourceTree = "<group>"; };
+		AAF565FA0A3BFE2B00D5A105 /* ExportNsisStrings.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ExportNsisStrings.cpp; sourceTree = "<group>"; };
+		AAF565FB0A3BFE2B00D5A105 /* ExportNsisStrings.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ExportNsisStrings.h; sourceTree = "<group>"; };
 		AAF580A704B3E2DC00D02EE9 /* RageUtil_FileDB.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageUtil_FileDB.cpp; path = ../src/RageUtil_FileDB.cpp; sourceTree = "<group>"; };
 		AAF580A804B3E2DC00D02EE9 /* RageUtil_FileDB.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageUtil_FileDB.h; path = ../src/RageUtil_FileDB.h; sourceTree = "<group>"; };
 		AAF6A33109B69C7700D5C614 /* it */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -2840,6 +2802,8 @@
 			children = (
 				AA082E9D0653C7E6001A3A80 /* CryptHelpers.cpp */,
 				AA082E9E0653C7E6001A3A80 /* CryptHelpers.h */,
+				AAF565FA0A3BFE2B00D5A105 /* ExportNsisStrings.cpp */,
+				AAF565FB0A3BFE2B00D5A105 /* ExportNsisStrings.h */,
 				AA70E3640663112800DAE1FD /* Foreach.h */,
 			);
 			name = "Other Source";
@@ -4411,6 +4375,7 @@
 				AAB55EC009A7E3D3008FDC69 /* ScreenUnlockCelebrate.h in Headers */,
 				AA1F9C4709AF1BF5002C15A8 /* PumpDevice.h in Headers */,
 				AA147F1A0A0F78D8006EADF6 /* VectorHelper.h in Headers */,
+				AAF565FD0A3BFE2B00D5A105 /* ExportNsisStrings.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4854,6 +4819,7 @@
 				AA1F9C4909AF1BF5002C15A8 /* PumpDevice.h in Headers */,
 				F4BC045509E6B582003F770B /* ScreenGameplaySyncMachine.h in Headers */,
 				AA147F1C0A0F78D8006EADF6 /* VectorHelper.h in Headers */,
+				AAF565FF0A3BFE2B00D5A105 /* ExportNsisStrings.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4866,9 +4832,6 @@
 			buildConfigurationList = AAC8450B0856A19700A9FEAB /* Build configuration list for PBXLegacyTarget "version" */;
 			buildPhases = (
 			);
-			buildSettings = {
-				PRODUCT_NAME = version;
-			};
 			buildToolPath = /bin/sh;
 			dependencies = (
 			);
@@ -4892,65 +4855,6 @@
 			);
 			buildRules = (
 			);
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(BUILD_DIR)/$(FULL_NAME)/Contents/Frameworks",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks",
-					Frameworks,
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks",
-				);
-				GCC_ALTIVEC_EXTENSIONS = NO;
-				GCC_ENABLE_CPP_RTTI = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INPUT_FILETYPE = automatic;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = ../src/archutils/Darwin/StepMania.pch;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					PBBUILD,
-					"SM_PCH=TRUE",
-				);
-				GCC_USE_GCC3_PFE_SUPPORT = NO;
-				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
-				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNKNOWN_PRAGMAS = NO;
-				HEADER_SEARCH_PATHS = (
-					/usr/include,
-					../src,
-					"$(BUILD_DIR)/$(FULL_NAME)/Contents/Frameworks/SDL.framework/Headers",
-					"$(BUILD_DIR)/$(FULL_NAME)/Contents/Frameworks/jpeg62.framework/Headers",
-					"$(BUILD_DIR)/$(FULL_NAME)/Contents/Frameworks/lua.framework/Headers",
-					"$(BUILD_DIR)/$(FULL_NAME)/Contents/Frameworks/ffmpeg.framework/Headers",
-					"$(BUILD_DIR)/$(FULL_NAME)/Contents/Frameworks/png.framework/Headers",
-					"$(BUILD_DIR)/$(FULL_NAME)/Contents/Frameworks/mad.framework/Headers",
-					../src/archutils/Darwin/PublicUtility,
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks/CarbonCore.framework/Versions/A/Headers",
-				);
-				INFOPLIST_FILE = "Info-StepMania.plist";
-				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = /usr/lib;
-				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				OTHER_CFLAGS = "";
-				OTHER_CPLUSPLUSFLAGS = (
-					"-finline-limit=300",
-					"-Wno-switch",
-					"-Wno-missing-braces",
-					"-fconstant-cfstrings",
-					"-falign-loops=32",
-				);
-				OTHER_LDFLAGS = (
-					"-lz",
-					"-lstdc++",
-				);
-				PRODUCT_NAME = StepMania;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = "-Wmost";
-				WRAPPER_EXTENSION = app;
-			};
 			dependencies = (
 				AA30C61A07F5E2EF0066F398 /* PBXTargetDependency */,
 			);
@@ -4973,65 +4877,6 @@
 			);
 			buildRules = (
 			);
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(BUILD_DIR)/$(FULL_NAME)/Contents/Frameworks",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks",
-					Frameworks,
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks",
-				);
-				GCC_ALTIVEC_EXTENSIONS = NO;
-				GCC_ENABLE_CPP_RTTI = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INPUT_FILETYPE = automatic;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = ../src/archutils/Darwin/StepMania.pch;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					PBBUILD,
-					"SM_PCH=TRUE",
-				);
-				GCC_USE_GCC3_PFE_SUPPORT = NO;
-				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
-				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNKNOWN_PRAGMAS = NO;
-				HEADER_SEARCH_PATHS = (
-					/usr/include,
-					../src,
-					"$(BUILD_DIR)/$(FULL_NAME)/Contents/Frameworks/SDL.framework/Headers",
-					"$(BUILD_DIR)/$(FULL_NAME)/Contents/Frameworks/jpeg62.framework/Headers",
-					"$(BUILD_DIR)/$(FULL_NAME)/Contents/Frameworks/lua.framework/Headers",
-					"$(BUILD_DIR)/$(FULL_NAME)/Contents/Frameworks/ffmpeg.framework/Headers",
-					"$(BUILD_DIR)/$(FULL_NAME)/Contents/Frameworks/png.framework/Headers",
-					"$(BUILD_DIR)/$(FULL_NAME)/Contents/Frameworks/mad.framework/Headers",
-					../src/archutils/Darwin/PublicUtility,
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks/CarbonCore.framework/Versions/A/Headers",
-				);
-				INFOPLIST_FILE = "Info-StepMania.plist";
-				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = /usr/lib;
-				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				OTHER_CFLAGS = "";
-				OTHER_CPLUSPLUSFLAGS = (
-					"-finline-limit=300",
-					"-Wno-switch",
-					"-Wno-missing-braces",
-					"-fconstant-cfstrings",
-					"-falign-loops=32",
-				);
-				OTHER_LDFLAGS = (
-					"-lz",
-					"-lstdc++",
-				);
-				PRODUCT_NAME = StepMania;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = "-Wmost";
-				WRAPPER_EXTENSION = app;
-			};
 			dependencies = (
 				AA40D1B509A08D650068C0D5 /* PBXTargetDependency */,
 			);
@@ -5047,12 +4892,6 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = AAC845130856A19700A9FEAB /* Build configuration list for PBXProject "stepmania" */;
-			buildSettings = {
-			};
-			buildStyles = (
-				4A9504CCFFE6A4B311CA0CBA /* Development */,
-				4A9504CDFFE6A4B311CA0CBA /* Deployment */,
-			);
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -5530,6 +5369,7 @@
 				AAEDFD490A036C8B00590617 /* ArchHooks_darwin.cpp in Sources */,
 				AAEDFD690A03762B00590617 /* Crash.cpp in Sources */,
 				AA147F1B0A0F78D8006EADF6 /* VectorHelper.cpp in Sources */,
+				AAF565FC0A3BFE2B00D5A105 /* ExportNsisStrings.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5931,6 +5771,7 @@
 				F4BC045409E6B578003F770B /* ScreenGameplaySyncMachine.cpp in Sources */,
 				AAEDFD6A0A03762B00590617 /* Crash.cpp in Sources */,
 				AA147F1D0A0F78D8006EADF6 /* VectorHelper.cpp in Sources */,
+				AAF565FE0A3BFE2B00D5A105 /* ExportNsisStrings.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6086,7 +5927,6 @@
 		AA0AA9000963CF7700427F4D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(NATIVE_ARCH)";
 				BUILD_VARIANTS = normal;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)";
 				GCC_DEBUGGING_SYMBOLS = full;
