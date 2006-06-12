@@ -222,17 +222,16 @@ void Model::LoadMaterialsFromMilkshapeAscii( RString sPath )
 				// shininess
 				if( f.GetLine( sLine ) <= 0 )
 					THROW;
-				char *p;
-				float fShininess = strtof( sLine, &p );
-				if( p == sLine )
+				float fShininess;
+				if( !FromString(sLine, fShininess) )
 					THROW;
 				Material.fShininess = fShininess;
 
 				// transparency
 				if( f.GetLine( sLine ) <= 0 )
 					THROW;
-				float fTransparency = strtof( sLine, &p );
-				if( p == sLine )
+				float fTransparency;
+				if( !FromString(sLine, fTransparency) )
 					THROW;
 				Material.fTransparency = fTransparency;
 

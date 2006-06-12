@@ -107,19 +107,12 @@ void SongOptions::FromString( const RString &sOptions )
 		Regex mult("^([0-9]+(\\.[0-9]+)?)xmusic$");
 		vector<RString> matches;
 		if( mult.Compare(sBit, matches) )
-		{
-			char *p = NULL;
-			m_fMusicRate = strtof( matches[0], &p );
-			ASSERT( p != matches[0] );
-		}
+			::FromString( matches[0], m_fMusicRate );
 
 		matches.clear();
 		Regex lives("^([0-9]+) ?(lives|life)$");
 		if( lives.Compare(sBit, matches) )
-		{
-			int ret = sscanf( matches[0], "%i", &m_iBatteryLives );
-			ASSERT( ret == 1 );
-		}
+			::FromString( matches[0], m_iBatteryLives );
 
 		vector<RString> asParts;
 		split( sBit, " ", asParts, true );
@@ -132,7 +125,7 @@ void SongOptions::FromString( const RString &sOptions )
 				on = false;
 		}
 
-		if(	     sBit == "norecover" )	m_DrainType = DRAIN_NO_RECOVER;
+		if(	 sBit == "norecover" )	m_DrainType = DRAIN_NO_RECOVER;
 		else if( sBit == "suddendeath" )	m_DrainType = DRAIN_SUDDEN_DEATH;
 		else if( sBit == "power-drop" )		m_DrainType = DRAIN_NO_RECOVER;
 		else if( sBit == "death" )		m_DrainType = DRAIN_SUDDEN_DEATH;
