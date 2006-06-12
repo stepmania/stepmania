@@ -282,7 +282,8 @@ const glyph &Font::GetGlyph( wchar_t c ) const
 	map<longchar,glyph*>::const_iterator it = m_iCharToGlyph.find(c);
 
 	/* If that's missing, use the default glyph. */
-	if(it == m_iCharToGlyph.end()) it = m_iCharToGlyph.find(FONT_DEFAULT_GLYPH);
+	if(it == m_iCharToGlyph.end()) 
+		it = m_iCharToGlyph.find(FONT_DEFAULT_GLYPH);
 
 	if(it == m_iCharToGlyph.end()) 
 		RageException::Throw( "The default glyph is missing from the font '%s'", path.c_str() );
