@@ -6,6 +6,7 @@
 #include "Foreach.h"
 #include "LocalizedString.h"
 #include "LuaFunctions.h"
+#include <float.h>
 
 #include <numeric>
 #include <ctime>
@@ -1476,7 +1477,7 @@ float StringToFloat( const RString &sString )
 {
 	float ret = strtof( sString, NULL );
 	
-	if( !isfinite(ret) )
+	if( !finite(ret) )
 		ret = 0.0f;
 	return ret;
 }
@@ -1905,7 +1906,7 @@ bool FromString( const RString &sValue, float &out )
 {
 	const char *endptr = sValue.data() + sValue.size();
 	out = strtof( sValue, (char **) &endptr );
-	return endptr != sValue.data() && isfinite( out );
+	return endptr != sValue.data() && finite( out );
 }
 
 bool FromString( const RString &sValue, bool &out )

@@ -12,6 +12,7 @@
 #include "Style.h"
 #include "CommonMetrics.h"
 #include "arch/Dialog/Dialog.h"
+#include <float.h>
 
 #define ONE( arr ) { for( unsigned Z = 0; Z < ARRAYSIZE(arr); ++Z ) arr[Z]=1.0f; }
 
@@ -257,7 +258,7 @@ void PlayerOptions::FromString( const RString &sOptions, bool bWarnOnInvalid )
 			else if( *s[0]=='*' )
 			{
 				sscanf( *s, "*%f", &speed );
-				if( !isfinite(speed) )
+				if( !finite(speed) )
 					speed = 1.0f;
 			}
 		}
@@ -279,7 +280,7 @@ void PlayerOptions::FromString( const RString &sOptions, bool bWarnOnInvalid )
 		}
 		else if( sscanf( sBit, "c%f", &level ) == 1 )
 		{
-			if( !isfinite(level) || level <= 0.0f )
+			if( !finite(level) || level <= 0.0f )
 				level = 200.0f; // Just pick some value.
 			SET_FLOAT( fScrollBPM )
 			SET_FLOAT( fTimeSpacing )

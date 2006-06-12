@@ -13,6 +13,7 @@
 #include "RageFileManager.h"
 #include "CourseWriterCRS.h"
 #include "RageUtil.h"
+#include <float.h>
 
 const int MAX_EDIT_COURSE_SIZE_BYTES	= 30*1024;	// 30KB
 
@@ -63,7 +64,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 		{
 			fGainSeconds = StringToFloat( sParams[1] );
 			
-			if( !isfinite(fGainSeconds) )
+			if( !finite(fGainSeconds) )
 				fGainSeconds = 0.0f;
 		}
 		else if( 0 == stricmp(sValueName, "METER") )
