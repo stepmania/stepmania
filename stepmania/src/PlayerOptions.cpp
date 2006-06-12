@@ -257,6 +257,8 @@ void PlayerOptions::FromString( const RString &sOptions, bool bWarnOnInvalid )
 			else if( *s[0]=='*' )
 			{
 				sscanf( *s, "*%f", &speed );
+				if( !isfinite(speed) )
+					speed = 1.0f;
 			}
 		}
 
@@ -270,9 +272,7 @@ void PlayerOptions::FromString( const RString &sOptions, bool bWarnOnInvalid )
 		vector<RString> matches;
 		if( mult.Compare(sBit, matches) )
 		{
-			char *p = NULL;
-			level = strtof( matches[0], &p );
-			ASSERT( p != matches[0] );
+			::FromString( matches[0], level );
 			SET_FLOAT( fScrollSpeed )
 			SET_FLOAT( fTimeSpacing )
 			m_fTimeSpacing = 0;
