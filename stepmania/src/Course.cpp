@@ -24,6 +24,9 @@
 #include "LuaFunctions.h"
 #include "LocalizedString.h"
 #include "StepsUtil.h"
+#include "Preference.h"
+
+static Preference<int> MAX_SONGS_IN_EDIT_COURSE( "MaxSongsInEditCourse", -1 );
 
 static const char *CourseTypeNames[] = {
 	"Nonstop",
@@ -419,6 +422,11 @@ static void GetSongsValidForRandom( vector<Song*> &vpSongsOut )
 	}
 }
 
+static bool StepsIsLocked( const Song *pSong, const Steps *pSteps )
+{
+	return UNLOCKMAN->StepsIsLocked( pSong, pSteps );
+}
+
 bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail ) const
 {
 	trail.Init();
@@ -476,8 +484,13 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 
 		if( e->pSong )
 		{
+			if( IsAnEdit() && UNLOCKMAN->SongIsLocked(e->pSong) )
+				continue;
 			// Choose an exact song, if we have matching steps and all
 			e->pSong->GetSteps( vpPossibleSteps, st, e->baseDifficulty, e->iLowMeter, e->iHighMeter );
+			// Remove all locked steps.
+			if( IsAnEdit() )
+				RemoveIf( vpPossibleSteps, bind1st(ptr_fun(StepsIsLocked), e->pSong) );
 			if( !vpPossibleSteps.empty() )
 				pResolvedSong = e->pSong;
 			else
@@ -607,7 +620,13 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 			 * This may or may not be the same as e.difficulty. */
 			te.dc = dc;
 		}
-		trail.m_vEntries.push_back( te ); 
+		trail.m_vEntries.push_back( te );
+		
+		if( IsAnEdit() && MAX_SONGS_IN_EDIT_COURSE > 0 &&
+		    int(trail.m_vEntries.size()) >= MAX_SONGS_IN_EDIT_COURSE )
+		{
+			break;
+		}
 	}
 
 	/* Hack: If any entry was non-FIXED, or m_bShuffle is set, then radar values
