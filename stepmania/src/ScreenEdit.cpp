@@ -2350,13 +2350,13 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_BackFromBPMChange )
 	{
-		float fBPM = strtof( ScreenTextEntry::s_sLastAnswer, NULL );
+		float fBPM = StringToFloat( ScreenTextEntry::s_sLastAnswer );
 		if( fBPM > 0 )
 			m_pSong->SetBPMAtBeat( GAMESTATE->m_fSongBeat, fBPM );
 	}
 	else if( SM == SM_BackFromStopChange )
 	{
-		float fStop = strtof( ScreenTextEntry::s_sLastAnswer, NULL );
+		float fStop = StringToFloat( ScreenTextEntry::s_sLastAnswer );
 		if( fStop >= 0 )
 			m_pSong->m_Timing.SetStopAtBeat( GAMESTATE->m_fSongBeat, fStop );
 	}
@@ -2391,7 +2391,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM == SM_BackFromInsertTapAttack )
 	{
 		int iDurationChoice = ScreenMiniMenu::s_viLastAnswers[0];
-		g_fLastInsertAttackDurationSeconds = strtof( g_InsertTapAttack.rows[0].choices[iDurationChoice], NULL );
+		g_fLastInsertAttackDurationSeconds = StringToFloat( g_InsertTapAttack.rows[0].choices[iDurationChoice] );
 
 		SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertTapAttackPlayerOptions );
 	}
@@ -2422,7 +2422,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		int iAttack;
 		
 		g_fLastInsertAttackPositionSeconds = m_pSong->GetElapsedTimeFromBeat( GAMESTATE->m_fSongBeat );
-		g_fLastInsertAttackDurationSeconds = strtof( g_InsertCourseAttack.rows[0].choices[iDurationChoice], NULL );
+		g_fLastInsertAttackDurationSeconds = StringToFloat( g_InsertCourseAttack.rows[0].choices[iDurationChoice] );
 		iAttack = FindAttackAtTime( ce.attacks, g_fLastInsertAttackPositionSeconds );
 		
 		if( ScreenMiniMenu::s_iLastRowCode == ScreenEdit::remove )
@@ -3255,7 +3255,7 @@ void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, const vector<int> &iAns
 	}
 
 	newChange.m_fStartBeat = GAMESTATE->m_fSongBeat;
-	newChange.m_fRate = strtof( g_BackgroundChange.rows[rate].choices[iAnswers[rate]], NULL )/100.f;
+	newChange.m_fRate = StringToFloat( g_BackgroundChange.rows[rate].choices[iAnswers[rate]] )/100.f;
 	newChange.m_sTransition = g_BackgroundChange.rows[transition].choices[iAnswers[transition]];
 	newChange.m_def.m_sEffect = g_BackgroundChange.rows[effect].choices[iAnswers[effect]];
 	newChange.m_def.m_sColor1 = g_BackgroundChange.rows[color1].choices[iAnswers[color1]];

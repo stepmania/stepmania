@@ -346,9 +346,9 @@ float DWILoader::ParseBrokenDWITimestamp(const RString &arg1, const RString &arg
 	{
 		/* If the value contains a period, treat it as seconds; otherwise ms. */
 		if(arg1.find_first_of(".") != arg1.npos)
-			return strtof( arg1, NULL );
+			return StringToFloat( arg1 );
 		else
-			return strtof( arg1, NULL ) / 1000.f;
+			return StringToFloat( arg1 ) / 1000.f;
 	}
 
 	/* 2+ args */
@@ -404,7 +404,7 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 			out.m_sCDTitleFile = sParams[1];
 
 		else if( 0==stricmp(sValueName,"BPM") )
-			out.AddBPMSegment( BPMSegment(0, strtof(sParams[1], NULL)) );
+			out.AddBPMSegment( BPMSegment(0, StringToFloat(sParams[1])) );
 
 		else if( 0==stricmp(sValueName,"DISPLAYBPM") )
 		{
@@ -454,8 +454,8 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 					LOG->Warn( "Invalid FREEZE in '%s': '%s'", m_sLoadingFile.c_str(), arrayFreezeExpressions[f].c_str() );
 					continue;
 				}
-				int iFreezeRow = BeatToNoteRow( strtof( arrayFreezeValues[0],NULL ) / 4.0f );
-				float fFreezeSeconds = strtof( arrayFreezeValues[1], NULL ) / 1000.0f;
+				int iFreezeRow = BeatToNoteRow( StringToFloat(arrayFreezeValues[0]) / 4.0f );
+				float fFreezeSeconds = StringToFloat( arrayFreezeValues[1] ) / 1000.0f;
 				
 				out.AddStopSegment( StopSegment(iFreezeRow, fFreezeSeconds) );
 //				LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", fFreezeBeat, fFreezeSeconds );
@@ -478,8 +478,8 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 				}
 				
 				BPMSegment bs;
-				bs.m_iStartIndex = BeatToNoteRow( strtof( arrayBPMChangeValues[0],NULL ) / 4.0f );
-				bs.SetBPM( strtof( arrayBPMChangeValues[1], NULL ) );
+				bs.m_iStartIndex = BeatToNoteRow( StringToFloat(arrayBPMChangeValues[0]) / 4.0f );
+				bs.SetBPM( StringToFloat( arrayBPMChangeValues[1] ) );
 				out.AddBPMSegment( bs );
 			}
 		}

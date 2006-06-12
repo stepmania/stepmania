@@ -242,7 +242,7 @@ void PlayerOptions::FromString( const RString &sOptions, bool bWarnOnInvalid )
 				if( s->Right(1) == "*" )
 					RageException::Throw("Invalid player options '%i*'; did you mean '*%i'?", 
 						atoi(*s), atoi(*s) );
-				level = strtof( *s, NULL ) / 100.0f;
+				level = StringToFloat( *s ) / 100.0f;
 			}
 			else if( *s[0]=='*' )
 			{

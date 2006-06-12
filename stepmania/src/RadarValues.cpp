@@ -85,7 +85,7 @@ void RadarValues::FromString( RString sRadarValues )
 	}
 
 	FOREACH_RadarCategory(rc)
-		m_Values.f[rc] = strtof( saValues[rc], NULL );
+		m_Values.f[rc] = StringToFloat( saValues[rc] );
     
 }
 

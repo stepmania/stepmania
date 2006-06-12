@@ -603,7 +603,7 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
 
 	if( GetTagFromMap( mapNameToData, "#bpm", sData ) )
 	{
-		BPMSegment newSeg( 0, strtof(sData, NULL) );
+		BPMSegment newSeg( 0, StringToFloat(sData) );
 		out.AddBPMSegment( newSeg );
 
 		LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(newSeg.m_iStartIndex), newSeg.GetBPM() );
@@ -690,7 +690,7 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
 				RString sBPM;
 				if( GetTagFromMap( mapNameToData, sTagToLookFor, sBPM ) )
 				{
-					float fBPM = strtof( sBPM, NULL );
+					float fBPM = StringToFloat( sBPM );
 
 					BPMSegment newSeg;
 					newSeg.m_iStartIndex = BeatToNoteRow(fBeat);
@@ -710,7 +710,7 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
 				{
 					// find the BPM at the time of this freeze
 					float fBPS = out.m_Timing.GetBPMAtBeat(fBeat) / 60.0f;
-					float fBeats = strtof(sBeats,NULL) / 48.0f;
+					float fBeats = StringToFloat( sBeats ) / 48.0f;
 					float fFreezeSecs = fBeats / fBPS;
 
 					StopSegment newSeg( BeatToNoteRow(fBeat), fFreezeSecs );
@@ -736,7 +736,7 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
 			RString sTagToLookFor = ssprintf( "#bpm%02x", iBPMNo );
 			if( GetTagFromMap( mapNameToData, sTagToLookFor, sBPM ) )
 			{
-				float fBPM = strtof( sBPM, NULL );
+				float fBPM = StringToFloat( sBPM );
 
 				BPMSegment newSeg;
 				newSeg.m_iStartIndex = iStepIndex;

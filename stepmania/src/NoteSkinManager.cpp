@@ -188,7 +188,7 @@ int NoteSkinManager::GetMetricI( const RString &sButtonName, const RString &sVal
 
 float NoteSkinManager::GetMetricF( const RString &sButtonName, const RString &sValueName )
 {
-	return strtof( GetMetric(sButtonName,sValueName), NULL );
+	return StringToFloat( GetMetric(sButtonName,sValueName) );
 }
 
 bool NoteSkinManager::GetMetricB( const RString &sButtonName, const RString &sValueName )

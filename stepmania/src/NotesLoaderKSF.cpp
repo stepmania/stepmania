@@ -282,17 +282,17 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 		if( 0==stricmp(sValueName,"TITLE") )
 			LoadTags(sParams[1], out);
 		else if( 0==stricmp(sValueName,"BPM") )
-			out.AddBPMSegment( BPMSegment(0, strtof(sParams[1], NULL)) );
+			out.AddBPMSegment( BPMSegment(0, StringToFloat(sParams[1])) );
 		else if( 0==stricmp(sValueName,"BPM2") )
-			BPM2 = strtof( sParams[1], NULL );
+			BPM2 = StringToFloat( sParams[1] );
 		else if( 0==stricmp(sValueName,"BPM3") )
-			BPM3 = strtof( sParams[1], NULL );
+			BPM3 = StringToFloat( sParams[1] );
 		else if( 0==stricmp(sValueName,"BUNKI") )
-			BPMPos2 = strtof( sParams[1], NULL ) / 100.0f;
+			BPMPos2 = StringToFloat( sParams[1] ) / 100.0f;
 		else if( 0==stricmp(sValueName,"BUNKI2") )
-			BPMPos3 = strtof( sParams[1], NULL ) / 100.0f;
+			BPMPos3 = StringToFloat( sParams[1] ) / 100.0f;
 		else if( 0==stricmp(sValueName,"STARTTIME") )
-			out.m_Timing.m_fBeat0OffsetInSeconds = -strtof( sParams[1], NULL )/100;		
+			out.m_Timing.m_fBeat0OffsetInSeconds = -StringToFloat( sParams[1] )/100;		
 		else if( 0==stricmp(sValueName,"TICKCOUNT") ||
 				 0==stricmp(sValueName,"STEP") ||
 				 0==stricmp(sValueName,"DIFFICULTY"))

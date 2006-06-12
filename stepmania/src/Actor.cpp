@@ -227,16 +227,16 @@ void Actor::LoadFromNode( const RString& sDir, const XNode* pNode )
 		}
 		
 		// TODO: Remove these
-		else if( sKeyName == "BaseRotationXDegrees" )	SetBaseRotationX( strtof( sValue, NULL ) );
-		else if( sKeyName == "BaseRotationYDegrees" )	SetBaseRotationY( strtof( sValue, NULL ) );
-		else if( sKeyName == "BaseRotationZDegrees" )	SetBaseRotationZ( strtof( sValue, NULL ) );
+		else if( sKeyName == "BaseRotationXDegrees" )	SetBaseRotationX( StringToFloat(sValue) );
+		else if( sKeyName == "BaseRotationYDegrees" )	SetBaseRotationY( StringToFloat(sValue) );
+		else if( sKeyName == "BaseRotationZDegrees" )	SetBaseRotationZ( StringToFloat(sValue) );
 		
-		else if( sKeyName == "BaseRotationX" )		SetBaseRotationX( strtof( sValue, NULL ) );
-		else if( sKeyName == "BaseRotationY" )		SetBaseRotationY( strtof( sValue, NULL ) );
-		else if( sKeyName == "BaseRotationZ" )		SetBaseRotationZ( strtof( sValue, NULL ) );
-		else if( sKeyName == "BaseZoomX" )			SetBaseZoomX( strtof( sValue, NULL ) );
-		else if( sKeyName == "BaseZoomY" )			SetBaseZoomY( strtof( sValue, NULL ) );
-		else if( sKeyName == "BaseZoomZ" )			SetBaseZoomZ( strtof( sValue, NULL ) );
+		else if( sKeyName == "BaseRotationX" )		SetBaseRotationX( StringToFloat(sValue) );
+		else if( sKeyName == "BaseRotationY" )		SetBaseRotationY( StringToFloat(sValue) );
+		else if( sKeyName == "BaseRotationZ" )		SetBaseRotationZ( StringToFloat(sValue) );
+		else if( sKeyName == "BaseZoomX" )		SetBaseZoomX( StringToFloat(sValue) );
+		else if( sKeyName == "BaseZoomY" )		SetBaseZoomY( StringToFloat(sValue) );
+		else if( sKeyName == "BaseZoomZ" )		SetBaseZoomZ( StringToFloat(sValue) );
 		else if( EndsWith(sKeyName,"Command") )
 		{
 			apActorCommands apac( new ActorCommands( sValue ) );

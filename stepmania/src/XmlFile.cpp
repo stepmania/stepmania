@@ -547,14 +547,14 @@ RString XNode::GetXML() const
 
 void XNode::GetValue( RString &out ) const	{ out = m_sValue; }
 void XNode::GetValue( int &out ) const		{ out = atoi(m_sValue); }
-void XNode::GetValue( float &out ) const	{ out = strtof(m_sValue, NULL); }
+void XNode::GetValue( float &out ) const	{ out = StringToFloat(m_sValue); }
 void XNode::GetValue( bool &out ) const		{ out = atoi(m_sValue) != 0; }
 void XNode::GetValue( unsigned &out ) const	{ out = 0; sscanf(m_sValue,"%u",&out); }
 void XNode::GetValue( DateTime &out ) const	{ out.FromString( m_sValue ); }
 
 bool XNode::GetAttrValue( const RString &sName, RString &out ) const	{ const RString* pAttr=GetAttr(sName); if(pAttr==NULL) return false; out = *pAttr; return true; }
 bool XNode::GetAttrValue( const RString &sName, int &out ) const		{ const RString* pAttr=GetAttr(sName); if(pAttr==NULL) return false; out = atoi(*pAttr); return true; }
-bool XNode::GetAttrValue( const RString &sName, float &out ) const	{ const RString* pAttr=GetAttr(sName); if(pAttr==NULL) return false; out = strtof(*pAttr, NULL); return true; }
+bool XNode::GetAttrValue( const RString &sName, float &out ) const	{ const RString* pAttr=GetAttr(sName); if(pAttr==NULL) return false; out = StringToFloat(*pAttr); return true; }
 bool XNode::GetAttrValue( const RString &sName, bool &out ) const		{ const RString* pAttr=GetAttr(sName); if(pAttr==NULL) return false; out = atoi(*pAttr) != 0; return true; }
 bool XNode::GetAttrValue( const RString &sName, unsigned &out ) const	{ const RString* pAttr=GetAttr(sName); if(pAttr==NULL) return false; out = 0; sscanf(*pAttr,"%u",&out); return true; }
 bool XNode::GetAttrValue( const RString &sName, DateTime &out ) const	{ const RString* pAttr=GetAttr(sName); if(pAttr==NULL) return false; out.FromString( *pAttr ); return true; }
