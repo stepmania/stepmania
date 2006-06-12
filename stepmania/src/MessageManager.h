@@ -127,7 +127,7 @@ enum Message
 	Message_ShowHoldJudgmentMuliPlayerP31,
 	Message_ShowHoldJudgmentMuliPlayerP32,
 	NUM_Message,	// leave this at the end
-	Message_Invalud
+	Message_Invalid
 };
 const RString& MessageToString( Message m );
 
