@@ -1905,7 +1905,7 @@ bool FromString( const RString &sValue, float &out )
 {
 	const char *endptr = sValue.data() + sValue.size();
 	out = strtof( sValue, (char **) &endptr );
-	return endptr != sValue.data();
+	return endptr != sValue.data() && isfinite( out );
 }
 
 bool FromString( const RString &sValue, bool &out )
