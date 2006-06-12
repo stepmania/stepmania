@@ -126,10 +126,11 @@ void ScoreDisplayLifeTime::OnJudgment( HoldNoteScore hns, TapNoteScore tns )
 
 void ScoreDisplayLifeTime::PlayGainLoss( const RString &sCommand, float fDeltaLifeSecs )
 {
-	RString s;
-	if( fDeltaLifeSecs != 0 )
-		s = ssprintf( "%+1.1fs", fDeltaLifeSecs);
+	if( fDeltaLifeSecs == 0 )
+		return;	// don't animate if no change
+	RString s = ssprintf( "%+1.1fs", fDeltaLifeSecs);
 	m_textDeltaSeconds.SetText( s );
+	m_textDeltaSeconds.FinishTweening();
 	m_textDeltaSeconds.PlayCommand( sCommand );
 }
 

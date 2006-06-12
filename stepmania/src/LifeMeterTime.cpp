@@ -78,8 +78,7 @@ void LifeMeterTime::OnLoadSong()
 	const CourseEntry *pEntry = &pCourse->m_vEntries[GAMESTATE->GetCourseSongIndex()];
 	m_fLifeTotalGainedSeconds += pEntry->fGainSeconds;
 
-	if( GAMESTATE->GetCourseSongIndex() > 0 )
-		m_soundGainLife.Play();
+	m_soundGainLife.Play();
 }
 
 
