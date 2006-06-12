@@ -485,6 +485,7 @@ void GameState::BeginStage()
 void GameState::CancelStage()
 {
 	m_iNumStagesOfThisSong = 0;
+	GAMESTATE->ResetStageStatistics();
 }
 
 void GameState::CommitStageStats()
