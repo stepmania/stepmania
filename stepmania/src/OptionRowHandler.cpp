@@ -13,6 +13,7 @@
 #include "SongManager.h"
 #include "Character.h"
 #include "PrefsManager.h"
+#include "SongUtil.h"
 #include "StepsUtil.h"
 #include "GameManager.h"
 #include "Foreach.h"
@@ -20,6 +21,8 @@
 #include "CommonMetrics.h"
 #include "CharacterManager.h"
 #include "ScreenManager.h"
+#include "ScreenMiniMenu.h"	// for MenuRowDef
+#include "FontCharAliases.h"
 
 #define ENTRY(s)		THEME->GetMetric ("ScreenOptionsMaster",s)
 #define ENTRY_MODE(s,i)		THEME->GetMetric ("ScreenOptionsMaster",ssprintf("%s,%i",(s).c_str(),(i+1)))
@@ -333,7 +336,7 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 		{
 			vector<Steps*> vpSteps;
 			Song *pSong = GAMESTATE->m_pCurSong;
-			pSong->GetSteps( vpSteps, GAMESTATE->GetCurrentStyle()->m_StepsType );
+			SongUtil::GetSteps( pSong, vpSteps, GAMESTATE->GetCurrentStyle()->m_StepsType );
 			StepsUtil::RemoveLockedSteps( pSong, vpSteps );
 			StepsUtil::SortNotesArrayByDifficulty( vpSteps );
 			for( unsigned i=0; i<vpSteps.size(); i++ )
@@ -429,10 +432,10 @@ public:
 				if( dc == DIFFICULTY_EDIT )
 					continue;
 				m_vDifficulties.push_back( dc );
-				Steps* pSteps = GAMESTATE->m_pCurSong->GetStepsByDifficulty( *m_pst, dc );
+				Steps* pSteps = SongUtil::GetStepsByDifficulty( GAMESTATE->m_pCurSong, *m_pst, dc );
 				m_vSteps.push_back( pSteps );
 			}
-			GAMESTATE->m_pCurSong->GetSteps( m_vSteps, *m_pst, DIFFICULTY_EDIT );
+			SongUtil::GetSteps( GAMESTATE->m_pCurSong, m_vSteps, *m_pst, DIFFICULTY_EDIT );
 			m_vDifficulties.resize( m_vSteps.size(), DIFFICULTY_EDIT );
 
 			if( sParam == "EditSteps" )
@@ -1251,6 +1254,40 @@ OptionRowHandler* OptionRowHandlerUtil::MakeNull()
 	OptionRowHandler* pHand = NULL;
 	Commands cmds;
 	MAKE( OptionRowHandlerNull )
+	return pHand;
+}
+
+OptionRowHandler* OptionRowHandlerUtil::MakeSimple( const MenuRowDef &mr )
+{
+	OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
+
+	pHand->m_Def.m_sName = mr.sName;
+	FontCharAliases::ReplaceMarkers( pHand->m_Def.m_sName );	// Allow special characters
+	
+	pHand->m_Def.m_vEnabledForPlayers.clear();
+	if( mr.pfnEnabled? mr.pfnEnabled():mr.bEnabled )
+	{
+		FOREACH_EnabledPlayer( pn )
+			pHand->m_Def.m_vEnabledForPlayers.insert( pn );
+	}
+
+	pHand->m_Def.m_bOneChoiceForAllPlayers = true;
+	pHand->m_Def.m_selectType = SELECT_ONE;
+	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+	pHand->m_Def.m_bExportOnChange = false;
+		
+	pHand->m_Def.m_vsChoices = mr.choices;
+
+	// Each row must have at least one choice.
+	if( pHand->m_Def.m_vsChoices.empty() )
+		pHand->m_Def.m_vsChoices.push_back( "" );
+	
+	pHand->m_Def.m_bAllowThemeTitle = mr.bThemeTitle;
+	pHand->m_Def.m_bAllowThemeItems = mr.bThemeItems;
+
+	FOREACH( RString, pHand->m_Def.m_vsChoices, c )
+		FontCharAliases::ReplaceMarkers( *c );	// Allow special characters
+
 	return pHand;
 }
 

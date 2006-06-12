@@ -7,6 +7,7 @@
 #include "GameCommand.h"
 #include "LuaReference.h"
 #include "RageUtil.h"
+struct MenuRowDef;
 
 struct ConfOption;
 
@@ -60,6 +61,7 @@ namespace OptionRowHandlerUtil
 {
 	OptionRowHandler* Make( const Commands &cmds );
 	OptionRowHandler* MakeNull();
+	OptionRowHandler* MakeSimple( const MenuRowDef &mrd );
 
 	void SelectExactlyOne( int iSelection, vector<bool> &vbSelectedOut );
 	int GetOneSelection( const vector<bool> &vbSelected );

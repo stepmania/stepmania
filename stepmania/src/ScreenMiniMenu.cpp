@@ -70,37 +70,8 @@ void ScreenMiniMenu::LoadMenu( const MenuDef* pDef )
 	vector<OptionRowHandler*> vHands;
 	for( unsigned r=0; r<m_vMenuRows.size(); r++ )
 	{
-		OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
-
 		const MenuRowDef &mr = m_vMenuRows[r];
-
-		pHand->m_Def.m_sName = mr.sName;
-		FontCharAliases::ReplaceMarkers( pHand->m_Def.m_sName );	// Allow special characters
-		
-		pHand->m_Def.m_vEnabledForPlayers.clear();
-		if( mr.pfnEnabled? mr.pfnEnabled():mr.bEnabled )
-		{
-			FOREACH_EnabledPlayer( pn )
-				pHand->m_Def.m_vEnabledForPlayers.insert( pn );
-		}
-
-		pHand->m_Def.m_bOneChoiceForAllPlayers = true;
-		pHand->m_Def.m_selectType = SELECT_ONE;
-		pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
-		pHand->m_Def.m_bExportOnChange = false;
-			
-		pHand->m_Def.m_vsChoices = mr.choices;
-
-		// Each row must have at least one choice.
-		if( pHand->m_Def.m_vsChoices.empty() )
-			pHand->m_Def.m_vsChoices.push_back( "" );
-		
-		pHand->m_Def.m_bAllowThemeTitle = mr.bThemeTitle;
-		pHand->m_Def.m_bAllowThemeItems = mr.bThemeItems;
-
-		FOREACH( RString, pHand->m_Def.m_vsChoices, c )
-			FontCharAliases::ReplaceMarkers( *c );	// Allow special characters
-
+		OptionRowHandler *pHand = OptionRowHandlerUtil::MakeSimple( mr );
 		vHands.push_back( pHand );
 	}
 
