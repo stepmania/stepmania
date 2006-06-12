@@ -136,7 +136,8 @@
 	;!insertmacro MUI_LANGUAGE "Kurdish"
 
 	; generate, then include installer strings
-	!system "Program\${PRODUCT_FAMILY}.exe --ExportNsisStrings"
+	!delfile "nsis_strings_temp.inc"
+	!system '"Program\${PRODUCT_FAMILY}.exe" --ExportNsisStrings'
 	!include "nsis_strings_temp.inc"
 
 ;--------------------------------
