@@ -20,6 +20,11 @@
 #include "SongManager.h"
 #include "song.h"
 #include "UnlockManager.h"
+#include "LocalizedString.h"
+#include "arch/ArchHooks/ArchHooks.h"
+#include "ScreenPrompt.h"
+
+static LocalizedString COULD_NOT_LAUNCH_BROWSER( "GameCommand", "Could not launch web browser." );
 
 void GameCommand::Init()
 {
@@ -51,6 +56,7 @@ void GameCommand::Init()
 	m_iGoalCalories = -1;
 	m_GoalType = GOAL_INVALID;
 	m_sProfileID = "";
+	m_sUrl = "";
 
 	m_bInsertCredit = false;
 	m_bStopMusic = false;
@@ -334,6 +340,10 @@ void GameCommand::LoadOne( const Command& cmd )
 		m_sProfileID = sValue;
 	}
 
+	else if( sName == "url" )
+	{
+		m_sUrl = sValue;
+	}
 	else if( sName == "unlock" )
 	{
 		m_sUnlockEntryID = sValue;
@@ -703,6 +713,13 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	if( !m_sProfileID.empty() )
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 			ProfileManager::m_sDefaultLocalProfileID[*pn].Set( m_sProfileID );
+	if( !m_sUrl.empty() )
+	{
+		if( HOOKS->GoToURL( m_sUrl ) )
+			SCREENMAN->SetNewScreen( "ScreenExit" );
+		else
+			ScreenPrompt::Prompt( SM_None, COULD_NOT_LAUNCH_BROWSER );
+	}		
 
 	/* If we're going to stop music, do so before preparing new screens, so we don't
 	 * stop music between preparing screens and loading screens. */
@@ -751,8 +768,8 @@ bool GameCommand::IsZero() const
 		m_iWeightPounds != -1 ||
 		m_iGoalCalories != -1 ||
 		m_GoalType != GOAL_INVALID ||
-		!m_sProfileID.empty()
-		)
+		!m_sProfileID.empty() ||
+		!m_sUrl.empty() )
 		return false;
 
 	return true;

@@ -78,6 +78,7 @@ public:
 	int		m_iGoalCalories;	// -1 == none specified
 	GoalType	m_GoalType;
 	RString		m_sProfileID;
+	RString		m_sUrl;
 
 	bool m_bInsertCredit;
 	bool m_bStopMusic;
