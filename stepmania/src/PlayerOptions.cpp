@@ -240,9 +240,19 @@ void PlayerOptions::FromString( const RString &sOptions, bool bWarnOnInvalid )
 				/* If the last character is a *, they probably said "123*" when
 				 * they meant "*123". */
 				if( s->Right(1) == "*" )
-					RageException::Throw("Invalid player options '%i*'; did you mean '*%i'?", 
-						atoi(*s), atoi(*s) );
-				level = StringToFloat( *s ) / 100.0f;
+				{
+					if( bWarnOnInvalid )
+					{
+						LOG->Warn( "Invalid player options '%s'; did you mean '*%d'?",
+							   s->c_str(), atoi(*s) );
+					}
+					// XXX We know what they want, is there any reason not to handle it?
+					speed = StringToFloat( *s );
+				}
+				else
+				{
+					level = StringToFloat( *s ) / 100.0f;
+				}
 			}
 			else if( *s[0]=='*' )
 			{
@@ -269,11 +279,13 @@ void PlayerOptions::FromString( const RString &sOptions, bool bWarnOnInvalid )
 		}
 		else if( sscanf( sBit, "c%f", &level ) == 1 )
 		{
+			if( !isfinite(level) || level <= 0.0f )
+				level = 200.0f; // Just pick some value.
 			SET_FLOAT( fScrollBPM )
 			SET_FLOAT( fTimeSpacing )
 			m_fTimeSpacing = 1;
 		}
-		else if( sBit == "clearall" )	Init();
+		else if( sBit == "clearall" )		Init();
 		else if( sBit == "boost" )		SET_FLOAT( fAccels[ACCEL_BOOST] )
 		else if( sBit == "brake" || sBit == "land" ) SET_FLOAT( fAccels[ACCEL_BRAKE] )
 		else if( sBit == "wave" )		SET_FLOAT( fAccels[ACCEL_WAVE] )
