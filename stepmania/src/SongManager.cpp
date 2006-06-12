@@ -811,6 +811,17 @@ void SongManager::DeleteCourse( Course *pCourse )
 	RefreshCourseGroupInfo();
 }
 
+void SongManager::InvalidateCachedTrails()
+{
+	FOREACH_CONST( Course *, m_pCourses, pCourse )
+	{
+		const Course &c = **pCourse;
+		
+		if( c.IsAnEdit() )
+			c.m_TrailCache.clear();
+	}
+}
+
 /* Called periodically to wipe out cached NoteData.  This is called when we change
  * screens. */
 void SongManager::Cleanup()

@@ -593,6 +593,7 @@ void UnlockManager::UnlockEntryID( RString sEntryID )
 			PROFILEMAN->GetProfile(pn)->m_UnlockedEntryIDs.insert( sEntryID );
 
 	PROFILEMAN->GetMachineProfile()->m_UnlockedEntryIDs.insert( sEntryID );
+	SONGMAN->InvalidateCachedTrails();
 }
 
 void UnlockManager::UnlockEntryIndex( int iEntryIndex )
