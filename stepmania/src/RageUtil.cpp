@@ -122,7 +122,7 @@ float HHMMSSToSeconds( const RString &sHHMMSS )
 	float fSeconds = 0;
 	fSeconds += atoi( arrayBits[0] ) * 60 * 60;
 	fSeconds += atoi( arrayBits[1] ) * 60;
-	fSeconds += strtof( arrayBits[2], NULL );
+	fSeconds += StringToFloat( arrayBits[2] );
 
 	return fSeconds;
 }
@@ -1472,6 +1472,15 @@ void MakeLower( wchar_t *p, size_t iLen )
 	UnicodeUpperLower( p, iLen, g_LowerCase );
 }
 
+float StringToFloat( const RString &sString )
+{
+	float ret = strtof( sString, NULL );
+	
+	if( !isfinite(ret) )
+		ret = 0.0f;
+	return ret;
+}
+
 const wchar_t INVALID_CHAR = 0xFFFD; /* U+FFFD REPLACEMENT CHARACTER */
 
 wstring RStringToWstring( const RString &s )
@@ -1964,7 +1973,7 @@ bool FileRead( RageFileBasic& f, float& fOut )
 	RString s;
 	if( !FileRead(f, s) )
 		return false;
-	fOut = strtof( s, NULL );
+	fOut = StringToFloat( s );
 	return true;
 }
 
