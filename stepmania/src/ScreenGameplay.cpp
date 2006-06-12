@@ -374,13 +374,13 @@ void ScreenGameplay::Init( bool bUseSongBackgroundAndForeground )
 		m_pSongForeground = new Foreground;
 	}
 
-	this->FillPlayerInfo( m_vPlayerInfo );
-	ASSERT_M( !m_vPlayerInfo.empty(), "m_vPlayerInfo must be filled by FillPlayerInfo" );
-
 	/* Save selected options before we change them in ScreenInitCommand. */
 	GAMESTATE->StoreSelectedOptions();
 
 	ScreenWithMenuElements::Init();
+
+	this->FillPlayerInfo( m_vPlayerInfo );
+	ASSERT_M( !m_vPlayerInfo.empty(), "m_vPlayerInfo must be filled by FillPlayerInfo" );
 
 	/* Save selected stage options now that we've changed them in ScreenInitCommand. */
 	GAMESTATE->StoreStageOptions();
@@ -869,7 +869,7 @@ void ScreenGameplay::InitSongQueues()
 			// In a survival course, override stored mods
 			if( pCourse->GetCourseType() == COURSE_TYPE_SURVIVAL )
 			{
-				pi->GetPlayerState()->m_StagePlayerOptions.FromString( "clearall,"+CommonMetrics::DEFAULT_MODIFIERS.GetValue(), true );
+				pi->GetPlayerState()->m_StagePlayerOptions.FromString( "clearall,"+CommonMetrics::DEFAULT_MODIFIERS.GetValue() );
 				pi->GetPlayerState()->RebuildPlayerOptionsFromActiveAttacks();
 			}
 		}
