@@ -1953,6 +1953,7 @@ public:
 	static int GetNumTotalSongsPlayed( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iNumTotalSongsPlayed ); return 1; }
 	static int GetLastPlayedStepsType( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetLastPlayedStepsType() ); return 1; }
 	static int GetSongsAndCoursesPercentCompleteAllDifficulties( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetSongsAndCoursesPercentCompleteAllDifficulties((StepsType)IArg(1)) ); return 1; }
+	static int GetTotalCaloriesBurned( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_fTotalCaloriesBurned ); return 1; }
 	static int GetDisplayTotalCaloriesBurned( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayTotalCaloriesBurned() ); return 1; }
 	static int GetMostPopularSong( T* p, lua_State *L )
 	{
@@ -2014,6 +2015,7 @@ public:
 		ADD_METHOD( GetNumTotalSongsPlayed );
 		ADD_METHOD( GetLastPlayedStepsType );
 		ADD_METHOD( GetSongsAndCoursesPercentCompleteAllDifficulties );
+		ADD_METHOD( GetTotalCaloriesBurned );
 		ADD_METHOD( GetDisplayTotalCaloriesBurned );
 		ADD_METHOD( GetMostPopularSong );
 		ADD_METHOD( GetMostPopularCourse );
