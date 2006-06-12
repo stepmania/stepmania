@@ -23,6 +23,7 @@ static const char *PageTypeNames[] = {
 	"NonstopCourses",
 	"OniCourses",
 	"SurvivalCourses",
+	"AllCourses",
 };
 XToString( PageType, NUM_PAGE_TYPES );
 StringToX( PageType );
@@ -62,7 +63,10 @@ static void GetAllCoursesToShow( vector<Course*> &vpOut, CourseType ct, bool bSh
 {
 	vpOut.clear();
 	vector<Course*> vpCourses;
-	SONGMAN->GetCourses( ct, vpCourses, false );
+	if( ct == CourseType_INVALID )
+		SONGMAN->GetAllCourses( vpCourses, false );
+	else
+		SONGMAN->GetCourses( ct, vpCourses, false );
 
 	FOREACH_CONST( Course*, vpCourses, c)
 	{
@@ -80,7 +84,6 @@ static void GetAllCoursesToShow( vector<Course*> &vpOut, CourseType ct, bool bSh
 			vpOut.erase( vpOut.begin()+iNumMostRecentScoresToShow, vpOut.end() );
 	}
 }
-
 
 static RString STEPS_TYPE_COLOR_NAME( size_t i ) { return ssprintf("StepsTypeColor%d",int(i+1)); }
 
@@ -395,10 +398,6 @@ void ScoreScroller::Load(
 	m_iNumItems = m_vScoreRowItemData.size();
 }
 
-// PAGE_TYPE_ALL_STEPS:
-// PAGE_TYPE_NONSTOP_COURSES:
-// PAGE_TYPE_ONI_COURSES:
-// PAGE_TYPE_SURVIVAL_COURSES:
 void ScreenRankingScroller::Init()
 {
 	DIFFICULTIES_TO_SHOW.Load( m_sName, "DifficultiesToShow" );
@@ -414,7 +413,7 @@ void ScreenRankingScroller::Init()
 
 	FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), d )
 	{
-		if( m_PageType == PAGE_TYPE_ALL_STEPS )
+		if( m_PageType == PageType_AllSteps )
 			m_sprDifficulty[*d].Load( THEME->GetPathG(m_sName,"difficulty "+DifficultyToString(*d)) );
 		else
 			m_sprDifficulty[*d].Load( THEME->GetPathG(m_sName,"CourseDifficulty "+CourseDifficultyToString(*d)) );
@@ -424,16 +423,30 @@ void ScreenRankingScroller::Init()
 	}
 
 	m_ListScoreRowItems.SetName( "ListScoreRowItems" );
-	if( m_PageType == PAGE_TYPE_ALL_STEPS )
-		m_ListScoreRowItems.LoadSongs( SHOW_ONLY_MOST_RECENT_SCORES, NUM_MOST_RECENT_SCORES_TO_SHOW );
-	else if( m_PageType == PAGE_TYPE_NONSTOP_COURSES ||
-		m_PageType == PAGE_TYPE_ONI_COURSES ||
-		m_PageType == PAGE_TYPE_SURVIVAL_COURSES )
+	switch( m_PageType )
 	{
-		CourseType ct = m_PageType == PAGE_TYPE_NONSTOP_COURSES? COURSE_TYPE_NONSTOP :
-						m_PageType == PAGE_TYPE_ONI_COURSES? COURSE_TYPE_ONI :
-							COURSE_TYPE_SURVIVAL;
-		m_ListScoreRowItems.LoadCourses( ct, SHOW_ONLY_MOST_RECENT_SCORES, NUM_MOST_RECENT_SCORES_TO_SHOW );
+	default:	ASSERT(0);
+	case PageType_AllSteps:
+		m_ListScoreRowItems.LoadSongs( SHOW_ONLY_MOST_RECENT_SCORES, NUM_MOST_RECENT_SCORES_TO_SHOW );
+		break;
+	case PageType_NonstopCourses:
+	case PageType_OniCourses:
+	case PageType_SurvivalCourses:
+	case PageType_AllCourses:
+		{
+			CourseType ct;
+			switch( m_PageType )
+			{
+			default:	ASSERT(0);
+			case PageType_NonstopCourses:	ct = COURSE_TYPE_NONSTOP;	break;
+			case PageType_OniCourses:	ct = COURSE_TYPE_ONI;		break;
+			case PageType_SurvivalCourses:	ct = COURSE_TYPE_SURVIVAL;	break;
+			case PageType_AllCourses:	ct = CourseType_INVALID;	break;
+			}
+
+			m_ListScoreRowItems.LoadCourses( ct, SHOW_ONLY_MOST_RECENT_SCORES, NUM_MOST_RECENT_SCORES_TO_SHOW );
+		}
+		break;
 	}
 
 	m_ListScoreRowItems.Load( m_sName, DIFFICULTIES_TO_SHOW.GetValue(), ROW_SPACING_Y );
@@ -492,8 +505,8 @@ float ScreenRankingScroller::SetPage( const PageToShow &pts )
 	return m_ListScoreRowItems.GetSecondsForCompleteScrollThrough();
 }
 
-// PAGE_TYPE_CATEGORY:
-// PAGE_TYPE_TRAIL:
+// PageType_Category:
+// PageType_Trail:
 #define BULLET_X(row)				(BULLET_START_X+ROW_SPACING_X*row)
 #define BULLET_Y(row)				(BULLET_START_Y+ROW_SPACING_Y*row)
 #define NAME_X(row)					(NAME_START_X+ROW_SPACING_X*row)
@@ -520,7 +533,7 @@ void ScreenRankingLines::Init()
 
 	ScreenRanking::Init();
 
-	if( m_PageType == PAGE_TYPE_CATEGORY )
+	if( m_PageType == PageType_Category )
 	{
 		m_textCategory.SetName( "Category" );
 		m_textCategory.LoadFromFont( THEME->GetPathF(m_sName,"category") );
@@ -540,7 +553,7 @@ void ScreenRankingLines::Init()
 		}
 	}
 
-	if( m_PageType == PAGE_TYPE_TRAIL )
+	if( m_PageType == PageType_Trail )
 	{
 		m_Banner.SetName( "Banner" );
 		this->AddChild( &m_Banner );
@@ -619,10 +632,10 @@ float ScreenRankingLines::SetPage( const PageToShow &pts )
 	bool bShowTime = false;
 	switch( m_PageType )
 	{
-	case PAGE_TYPE_CATEGORY:
+	case PageType_Category:
 		bShowScores = true;
 		break;
-	case PAGE_TYPE_TRAIL:
+	case PageType_Trail:
 		bShowScores = !pts.pCourse->IsOni();
 		bShowPoints = pts.pCourse->IsOni();
 		bShowTime = pts.pCourse->IsOni();
@@ -645,7 +658,7 @@ float ScreenRankingLines::SetPage( const PageToShow &pts )
 
 	switch( m_PageType )
 	{
-	case PAGE_TYPE_CATEGORY:
+	case PageType_Category:
 		{
 			m_textCategory.SetText( ssprintf("Type %c", 'A'+pts.category) );
 
@@ -683,7 +696,7 @@ float ScreenRankingLines::SetPage( const PageToShow &pts )
 			}
 		}
 		return SECONDS_PER_PAGE;
-	case PAGE_TYPE_TRAIL:
+	case PageType_Trail:
 		{
 			m_textCourseTitle.SetText( pts.pCourse->GetDisplayFullTitle() );
 
@@ -742,10 +755,10 @@ float ScreenRankingLines::SetPage( const PageToShow &pts )
 
 void ScreenRankingLines::BeginScreen()
 {
-	if( m_PageType == PAGE_TYPE_CATEGORY )
+	if( m_PageType == PageType_Category )
 		SET_XY( m_textCategory );
 
-	if( m_PageType == PAGE_TYPE_TRAIL )
+	if( m_PageType == PageType_Trail )
 	{
 		SET_XY( m_Banner );
 		SET_XY( m_textCourseTitle );

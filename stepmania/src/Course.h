@@ -27,7 +27,8 @@ enum CourseType
 	COURSE_TYPE_ONI,		// if life meter type is BATTERY
 	COURSE_TYPE_ENDLESS,	// if set to REPEAT
 	COURSE_TYPE_SURVIVAL,	// if life meter type is TIME
-	NUM_CourseType
+	NUM_CourseType,
+	CourseType_INVALID
 };
 #define FOREACH_CourseType( i ) FOREACH_ENUM( CourseType, NUM_CourseType, i )
 const RString& CourseTypeToString( CourseType i );

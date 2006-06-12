@@ -21,12 +21,13 @@ struct HighScoreList;
 
 enum PageType
 {
-	PAGE_TYPE_CATEGORY, 
-	PAGE_TYPE_TRAIL, 
-	PAGE_TYPE_ALL_STEPS, 
-	PAGE_TYPE_NONSTOP_COURSES,
-	PAGE_TYPE_ONI_COURSES,
-	PAGE_TYPE_SURVIVAL_COURSES,
+	PageType_Category, 
+	PageType_Trail, 
+	PageType_AllSteps, 
+	PageType_NonstopCourses,
+	PageType_OniCourses,
+	PageType_SurvivalCourses,
+	PageType_AllCourses,
 	NUM_PAGE_TYPES
 };
 #define FOREACH_PageType( pt ) FOREACH_ENUM( PageType, NUM_PAGE_TYPES, pt )
