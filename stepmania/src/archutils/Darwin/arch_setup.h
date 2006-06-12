@@ -113,14 +113,39 @@ typedef int socklen_t;
 
 /* cmath #undefs all of the math.h macros but fails to replace some of them
  * with functions if _GLIBCPP_USE_C99 is not defined. As such, yank the
- * definition out of math.h.
+ * definitions out of math.h.
  */
-# include <cmath>
-# define isnan( x ) ( ( sizeof ( x ) == sizeof(double) ) ?           \
-                      __isnand ( x ) :                               \
-                      ( sizeof ( x ) == sizeof( float) ) ?           \
-                      __isnanf ( x ) :                               \
-                      __isnan  ( x ) )
+#include <cmath>
+#define fpclassify( x )	( ( sizeof ( x ) == sizeof(double) ) ?	\
+			  __fpclassifyd  ( x ) :		\
+			  ( sizeof ( x ) == sizeof( float) ) ?	\
+			  __fpclassifyf ( x ) :			\
+			  __fpclassify  ( x ) )
+#define isnormal( x )	( ( sizeof ( x ) == sizeof(double) ) ?	\
+			  __isnormald ( x ) :			\
+			  ( sizeof ( x ) == sizeof( float) ) ?	\
+			  __isnormalf ( x ) :			\
+			  __isnormal  ( x ) )
+#define isfinite( x )	( ( sizeof ( x ) == sizeof(double) ) ?	\
+			  __isfinited ( x ) :			\
+			  ( sizeof ( x ) == sizeof( float) ) ?	\
+			  __isfinitef ( x ) :			\
+			  __isfinite  ( x ) )
+#define isinf( x )	( ( sizeof ( x ) == sizeof(double) ) ?	\
+			  __isinfd ( x ) :			\
+			  ( sizeof ( x ) == sizeof( float) ) ?	\
+			  __isinff ( x ) :			\
+			  __isinf  ( x ) )
+#define isnan( x )	( ( sizeof ( x ) == sizeof(double) ) ?	\
+			  __isnand ( x ) :			\
+			  ( sizeof ( x ) == sizeof( float) ) ?	\
+			  __isnanf ( x ) :			\
+			  __isnan  ( x ) )
+#define signbit( x )	( ( sizeof ( x ) == sizeof(double) ) ?	\
+			  __signbitd ( x ) :			\
+			  ( sizeof ( x ) == sizeof( float) ) ?	\
+			  __signbitf ( x ) :			\
+			  __signbitl  ( x ) )
 #endif
 
 #if ! _GLIB_CHECK(USE_WCHAR_T)
