@@ -99,7 +99,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				TrimLeft( sBits[0] );
 				TrimRight( sBits[0] );
 				if( !sBits[0].CompareNoCase("TIME") )
-					attack.fStartSecond = StringToFloat( sBits[1] );
+					attack.fStartSecond = max( StringToFloat(sBits[1]), 0.0f );
 				else if( !sBits[0].CompareNoCase("LEN") )
 					attack.fSecsRemaining = StringToFloat( sBits[1] );
 				else if( !sBits[0].CompareNoCase("END") )
