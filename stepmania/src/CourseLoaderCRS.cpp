@@ -12,6 +12,7 @@
 #include "BannerCache.h"
 #include "RageFileManager.h"
 #include "CourseWriterCRS.h"
+#include "RageUtil.h"
 
 const int MAX_EDIT_COURSE_SIZE_BYTES	= 30*1024;	// 30KB
 
@@ -55,16 +56,21 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 		}
 
 		else if( 0 == stricmp(sValueName, "LIVES") )
-			out.m_iLives = atoi( sParams[1] );
-
+		{
+			out.m_iLives = max( atoi(sParams[1]), 0 );
+		}
 		else if( 0 == stricmp(sValueName, "GAINSECONDS") )
-			fGainSeconds = strtof( sParams[1], NULL );
-
+		{
+			fGainSeconds = StringToFloat( sParams[1] );
+			
+			if( !isfinite(fGainSeconds) )
+				fGainSeconds = 0.0f;
+		}
 		else if( 0 == stricmp(sValueName, "METER") )
 		{
 			if( sParams.params.size() == 2 )
 			{
-				out.m_iCustomMeter[DIFFICULTY_MEDIUM] = atoi( sParams[1] ); /* compat */
+				out.m_iCustomMeter[DIFFICULTY_MEDIUM] = max( atoi(sParams[1]), 0 ); /* compat */
 			}
 			else if( sParams.params.size() == 3 )
 			{
@@ -75,7 +81,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 						   sPath.c_str(), sParams[1].c_str() );
 					continue;
 				}
-				out.m_iCustomMeter[cd] = atoi( sParams[2] );
+				out.m_iCustomMeter[cd] = max( atoi(sParams[2]), 0 );
 			}
 		}
 
@@ -93,19 +99,25 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				TrimLeft( sBits[0] );
 				TrimRight( sBits[0] );
 				if( !sBits[0].CompareNoCase("TIME") )
-					attack.fStartSecond = strtof( sBits[1], NULL );
+					attack.fStartSecond = StringToFloat( sBits[1] );
 				else if( !sBits[0].CompareNoCase("LEN") )
-					attack.fSecsRemaining = strtof( sBits[1], NULL );
+					attack.fSecsRemaining = StringToFloat( sBits[1] );
 				else if( !sBits[0].CompareNoCase("END") )
-					end = strtof( sBits[1], NULL );
+					end = StringToFloat( sBits[1] );
 				else if( !sBits[0].CompareNoCase("MODS") )
 				{
 					attack.sModifiers = sBits[1];
+					
 					if( end != -9999 )
 					{
-						ASSERT_M( end >= attack.fStartSecond, ssprintf("Attack ends before it starts.  end %f, start %f", end, attack.fStartSecond) );
 						attack.fSecsRemaining = end - attack.fStartSecond;
 						end = -9999;
+					}
+
+					if( attack.fSecsRemaining <= 0.0f)
+					{
+						LOG->Warn( "Attack has nonpositive length: %s", sBits[1].c_str() );
+						attack.fSecsRemaining = 0.0f;
 					}
 					
 					// warn on invalid so we catch bogus mods on load
