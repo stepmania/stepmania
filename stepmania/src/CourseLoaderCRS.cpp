@@ -165,7 +165,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				split( sSong, "/", bits );
 				if( bits.size() == 2 )
 				{
-					new_entry.sSongGroup = bits[0];
+					new_entry.songCriteria.m_sGroupName = bits[0];
 				}
 				else
 				{
@@ -174,7 +174,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 						    sPath.c_str(), sSong.c_str() );
 				}
 
-				if( !SONGMAN->DoesSongGroupExist(new_entry.sSongGroup) )
+				if( !SONGMAN->DoesSongGroupExist(new_entry.songCriteria.m_sGroupName) )
 				{
 					/* XXX: We need a place to put "user warnings".  This is too loud for info.txt--
 					 * it obscures important warnings--and regular users never look there, anyway. */
@@ -193,7 +193,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 
 				if( bits.size() == 2 )
 				{
-					new_entry.sSongGroup = bits[0];
+					new_entry.songCriteria.m_sGroupName = bits[0];
 					new_entry.pSong = SONGMAN->FindSong( bits[0], bits[1] );
 				}
 				else if( bits.size() == 1 )
@@ -212,18 +212,18 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				}
 			}
 
-			new_entry.baseDifficulty = StringToDifficulty( sParams[2] );
-			if( new_entry.baseDifficulty == DIFFICULTY_INVALID )
+			new_entry.stepsCriteria.m_difficulty = StringToDifficulty( sParams[2] );
+			if( new_entry.stepsCriteria.m_difficulty == DIFFICULTY_INVALID )
 			{
-				int retval = sscanf( sParams[2], "%d..%d", &new_entry.iLowMeter, &new_entry.iHighMeter );
+				int retval = sscanf( sParams[2], "%d..%d", &new_entry.stepsCriteria.m_iLowMeter, &new_entry.stepsCriteria.m_iHighMeter );
 				if( retval == 1 )
-					new_entry.iHighMeter = new_entry.iLowMeter;
+					new_entry.stepsCriteria.m_iHighMeter = new_entry.stepsCriteria.m_iLowMeter;
 				else if( retval != 2 )
 				{
 					LOG->Warn( "Course file '%s' contains an invalid difficulty setting: \"%s\", 3..6 used instead",
 						   sPath.c_str(), sParams[2].c_str() );
-					new_entry.iLowMeter = 3;
-					new_entry.iHighMeter = 6;
+					new_entry.stepsCriteria.m_iLowMeter = 3;
+					new_entry.stepsCriteria.m_iHighMeter = 6;
 				}
 			}
 

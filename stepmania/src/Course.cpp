@@ -69,14 +69,16 @@ RString CourseEntry::GetTextDescription() const
 		vsEntryDescription.push_back( pSong->GetTranslitFullTitle() ); 
 	else
 		vsEntryDescription.push_back( "Random" );
-	if( !sSongGroup.empty() )
-		vsEntryDescription.push_back( sSongGroup );
-	if( baseDifficulty != DIFFICULTY_INVALID && baseDifficulty != DIFFICULTY_MEDIUM )
-		vsEntryDescription.push_back( DifficultyToLocalizedString(baseDifficulty) );
-	if( iLowMeter != -1 )
-		vsEntryDescription.push_back( ssprintf("Low meter: %d", iLowMeter) );
-	if( iHighMeter != -1 )
-		vsEntryDescription.push_back( ssprintf("High meter: %d", iHighMeter) );
+	if( !songCriteria.m_sGroupName.empty() )
+		vsEntryDescription.push_back( songCriteria.m_sGroupName );
+	if( !songCriteria.m_sGenre.empty() )
+		vsEntryDescription.push_back( songCriteria.m_sGenre );
+	if( stepsCriteria.m_difficulty != DIFFICULTY_INVALID  &&  stepsCriteria.m_difficulty != DIFFICULTY_MEDIUM )
+		vsEntryDescription.push_back( DifficultyToLocalizedString(stepsCriteria.m_difficulty) );
+	if( stepsCriteria.m_iLowMeter != -1 )
+		vsEntryDescription.push_back( ssprintf("Low meter: %d", stepsCriteria.m_iLowMeter) );
+	if( stepsCriteria.m_iHighMeter != -1 )
+		vsEntryDescription.push_back( ssprintf("High meter: %d", stepsCriteria.m_iHighMeter) );
 	if( songSort != SongSort_Randomize )
 		vsEntryDescription.push_back( "Sort: %d" + SongSortToLocalizedString(songSort) );
 	if( songSort != SongSort_Randomize && iChooseIndex != 0 )
@@ -487,7 +489,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 			if( IsAnEdit() && UNLOCKMAN->SongIsLocked(e->pSong) )
 				continue;
 			// Choose an exact song, if we have matching steps and all
-			e->pSong->GetSteps( vpPossibleSteps, st, e->baseDifficulty, e->iLowMeter, e->iHighMeter );
+			SongUtil::GetSteps( e->pSong, vpPossibleSteps, st, e->stepsCriteria.m_difficulty, e->stepsCriteria.m_iLowMeter, e->stepsCriteria.m_iHighMeter );
 			// Remove all locked steps.
 			if( IsAnEdit() )
 				RemoveIf( vpPossibleSteps, bind1st(ptr_fun(StepsIsLocked), e->pSong) );
@@ -510,11 +512,11 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 			vector<Song*> vpPossibleSongs;
 			FOREACH( Song*, vpAllPossibleSongs, song )
 			{
-				if( !e->sSongGroup.empty() && (*song)->m_sGroupName != e->sSongGroup )
+				if( !e->songCriteria.Matches( *song ) )
 					continue;
 
 				vector<Steps*> vpMatchingSteps;
-				(*song)->GetSteps( vpMatchingSteps, st, e->baseDifficulty, e->iLowMeter, e->iHighMeter );
+				SongUtil::GetSteps( *song, vpMatchingSteps, st, e->stepsCriteria.m_difficulty, e->stepsCriteria.m_iLowMeter, e->stepsCriteria.m_iHighMeter );
 				StepsUtil::RemoveLockedSteps( *song, vpMatchingSteps );
 
 				if( vpMatchingSteps.empty() )
@@ -534,7 +536,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 				pResolvedSong = vpPossibleSongs[e->iChooseIndex];
 			else
 				continue;
-			pResolvedSong->GetSteps( vpPossibleSteps, st, e->baseDifficulty, e->iLowMeter, e->iHighMeter );
+			SongUtil::GetSteps( pResolvedSong, vpPossibleSteps, st, e->stepsCriteria.m_difficulty, e->stepsCriteria.m_iLowMeter, e->stepsCriteria.m_iHighMeter );
 			StepsUtil::RemoveLockedSteps( pResolvedSong, vpPossibleSteps );
 		}
 
@@ -550,8 +552,8 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		 * either easier or harder than the base difficulty.  If no such steps exist, then 
 		 * just use the one we already have. */
 		Difficulty dc = pResolvedSteps->GetDifficulty();
-		int iLowMeter = e->iLowMeter;
-		int iHighMeter = e->iHighMeter;
+		int iLowMeter = e->stepsCriteria.m_iLowMeter;
+		int iHighMeter = e->stepsCriteria.m_iHighMeter;
 		if( cd != DIFFICULTY_MEDIUM  &&  !e->bNoDifficult )
 		{
 			Difficulty new_dc = (Difficulty)(dc + cd - DIFFICULTY_MEDIUM);
@@ -560,7 +562,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 			bool bChangedDifficulty = false;
 			if( new_dc != dc )
 			{
-				Steps* pNewSteps = pResolvedSong->GetStepsByDifficulty( st, new_dc );
+				Steps* pNewSteps = SongUtil::GetStepsByDifficulty( pResolvedSong, st, new_dc );
 				if( pNewSteps )
 				{
 					dc = new_dc;
@@ -577,7 +579,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 			 * on the original range, bump the steps based on course difficulty, and
 			 * then retroactively tweak the low_meter/high_meter so course displays
 			 * line up. */
-			if( e->baseDifficulty == DIFFICULTY_INVALID && bChangedDifficulty )
+			if( e->stepsCriteria.m_difficulty == DIFFICULTY_INVALID && bChangedDifficulty )
 			{
 				/* Minimum and maximum to add to make the meter range contain the actual
 				 * meter: */
@@ -610,7 +612,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 
 		/* If we chose based on meter (not difficulty), then store DIFFICULTY_INVALID, so
 		 * other classes can tell that we used meter. */
-		if( e->baseDifficulty == DIFFICULTY_INVALID )
+		if( e->stepsCriteria.m_difficulty == DIFFICULTY_INVALID )
 		{
 			te.dc = DIFFICULTY_INVALID;
 		}

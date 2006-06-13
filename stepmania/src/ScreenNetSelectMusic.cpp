@@ -22,6 +22,7 @@
 #include "RageLog.h"
 #include "song.h"
 #include "InputEventPlus.h"
+#include "SongUtil.h"
 #include "RageInput.h"
 
 AutoScreenMessage( SM_NoSongs )
@@ -472,7 +473,7 @@ void ScreenNetSelectMusic::StartSelectedSong()
 	FOREACH_EnabledPlayer (pn)
 	{
 		GAMESTATE->m_PreferredDifficulty[pn].Set( m_DC[pn] );
-		Steps * pSteps = pSong->GetStepsByDifficulty(st,m_DC[pn]);
+		Steps *pSteps = SongUtil::GetStepsByDifficulty(pSong, st, m_DC[pn]);
 		GAMESTATE->m_pCurSteps[pn].Set( pSteps );
 	}
 
@@ -501,7 +502,7 @@ void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )
 
 	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 
-	Steps * pSteps = GAMESTATE->m_pCurSong->GetStepsByDifficulty( st, m_DC[pn] );
+	Steps * pSteps = SongUtil::GetStepsByDifficulty( GAMESTATE->m_pCurSong, st, m_DC[pn] );
 	GAMESTATE->m_pCurSteps[pn].Set( pSteps );
 
 	if ( ( m_DC[pn] < NUM_Difficulty ) && ( m_DC[pn] >= DIFFICULTY_BEGINNER ) )

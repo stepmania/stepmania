@@ -13,6 +13,7 @@
 #include <map>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <float.h>
 
 int randseed = time(NULL);
 
