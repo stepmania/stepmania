@@ -76,14 +76,11 @@ static bool XIsEmptyString( const RString &s )
 // put string of (psz~end) on ps string
 static void SetString( const RString &s, int iStart, int iEnd, RString* ps, bool trim = false )
 {
-	ASSERT( iStart >= 0 );
-	ASSERT( iEnd < int(s.length()) );
-	ASSERT( iStart <= iEnd );
 	if( trim )
 	{
-		while( iStart < iEnd && isspace(s[iStart]) )
+		while( iStart < iEnd && s[iStart] > 0 && isspace(s[iStart]) )
 			iStart++;
-		while( iEnd-1 >= iStart && isspace(s[iEnd-1]) )
+		while( iEnd-1 >= iStart && s[iEnd-1] > 0 && isspace(s[iEnd-1]) )
 			iEnd--;
 	}
 
