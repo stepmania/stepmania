@@ -17,7 +17,8 @@ namespace Vector
 	void FastSoundRead( int16_t *dest, const int32_t *src, unsigned size );
 	void FastSoundRead( float *dest, const int32_t *src, unsigned size );
 }
-#define USE_VEC
+// XXX Fix FastSoundWrite to handle unaligned dest.
+//#define USE_VEC
 #endif
 
 #endif
