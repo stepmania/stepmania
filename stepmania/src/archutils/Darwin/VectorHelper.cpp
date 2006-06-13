@@ -1,6 +1,8 @@
 #include "global.h"
 #include "VectorHelper.h"
 #include "RageUtil.h"
+#include "RageLog.h"
+#include <sys/sysctl.h>
 
 #ifdef USE_VEC
 #include <vecLib/vecLib.h>
@@ -18,167 +20,219 @@ typedef vector bool int                 vBool32;
 
 bool Vector::CheckForVector()
 {
-	long cpuAttributes;
-	OSErr err = Gestalt( gestaltPowerPCProcessorFeatures, &cpuAttributes );
+	int selectors[2] = { CTL_HW, HW_VECTORUNIT };
+	int32_t result = 0;
+	size_t length = 4;
 	
-	return err == noErr && ( cpuAttributes & (1 << gestaltPowerPCHasVectorInstructions) );
+	return !sysctl( selectors, 2, &result, &length, NULL, 0 ) && result;
 }
 
 /* for( size_t pos = 0; pos < size; ++pos )
  *         dest[pos] += src[pos] * volume;
- */
+ * Idea from: http://developer.apple.com/hardwaredrivers/ve/downloads/add.c */
 void Vector::FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, short volume )
 {
 	if( size == 0 )
 		return;
-	ASSERT_M( (unsigned(dest) &0xF) == 0, ssprintf("dest = %p", dest) );
-	/* We want to splat the volume across a vector but it is unlikely to be aligned in
-	 * the same location every time so we are going to load it into some offset in
-	 * the vector, permute it to the first word and splat it. */
-	vUInt8 mask = vec_lvsl( 0, &volume );
-	vSInt16 vol = vec_lde( 0, &volume );
-	
-	vol = vec_splat( vec_perm(vol, vol, mask), 0 );
-	
-	/* To handle src being unaligned we're going to load an initial vector and each
-	 * iteration of the loop, we'll load 15 bytes past the first to pick up the next
-	 * vector of data (note that if we can load one element of a vector, it's always
-	 * safe to load the whole vector) unless src is actually aligned in which case
-	 * we'll end up with the same vector. To handle that, be tricky with the
-	 * permutation mask to load from LSQ otherwise every iteration but the first we
-	 * will be loading the wrong data. */
-	vSInt16 MSQ = vec_ld( 0, src );
-	vSInt16 LSQ;
-	
-	mask = vec_add( vec_lvsl(15, src), vec_splat_u8(1) );
+	ASSERT_M( (intptr_t(dest) & 0x7) == 0, ssprintf("dest = %p", dest) );
+	if( size > 7 )
+	{
+		int index = 0;
+		vUInt8 one = (vUInt8)(1);
+		vUInt8 volMask = vec_lvsl( 0, &volume );
+		vSInt16 vol = vec_lde( 0, &volume );
+		
+		vol = vec_splat( vec_perm(vol, vol, volMask), 0 );
+		
+		// Setup the masks.
+		vUInt8 srcMask = vec_add( vec_lvsl(15, src), one );
+		vUInt8 loadMask = vec_add( vec_lvsl(15, dest), one );
+		vUInt8 storeMask = vec_lvsr( 0, dest ); // I have no idea why shift right for stores.
+		vSInt16 load1Src = vec_ld( 0, src );
+		vSInt32 load1Dest = vec_ld( 0, dest );
+		vSInt32 store = (vSInt32)(0);
+		
+		// If dest is unaligned, pull first loop iteration out.
+		if( intptr_t(dest) & 0xF )
+		{
+			vSInt16 load2Src  = vec_ld( 15, src );
+			vSInt32 load2Dest = vec_ld( 15, dest );
+			vSInt32 load3Dest = vec_ld( 31, dest );
 
-	while( size >= 32 )
-	{
-		vSInt16 data1, data2, data3, data4;
-		
-		LSQ = vec_ld( 15, src );
-		data1 = vec_perm( MSQ, LSQ, mask );
-		MSQ = vec_ld( 31, src );
-		data2 = vec_perm( LSQ, MSQ, mask ); // Reverse MSQ and LSQ.
-		LSQ = vec_ld( 47, src );
-		data3 = vec_perm( MSQ, LSQ, mask );
-		MSQ = vec_ld( 63, src );
-		data4 = vec_perm( LSQ, MSQ, mask ); // Reversed.
-		
-		// Load early, let gcc schedule them where it wants.
-		vSInt32 result1 = vec_ld(   0, dest );
-		vSInt32 result2 = vec_ld(  16, dest );
-		vSInt32 result3 = vec_ld(  32, dest );
-		vSInt32 result4 = vec_ld(  48, dest );
-		vSInt32 result5 = vec_ld(  64, dest );
-		vSInt32 result6 = vec_ld(  80, dest );
-		vSInt32 result7 = vec_ld(  96, dest );
-		vSInt32 result8 = vec_ld( 112, dest );
-		
-		vSInt32 even1   = vec_mule( data1, vol );
-		vSInt32 odd1    = vec_mulo( data1, vol );
-		vSInt32 even2   = vec_mule( data2, vol );
-		vSInt32 odd2    = vec_mulo( data2, vol );
-		vSInt32 even3   = vec_mule( data3, vol );
-		vSInt32 odd3    = vec_mulo( data3, vol );
-		vSInt32 even4   = vec_mule( data4, vol );
-		vSInt32 odd4    = vec_mulo( data4, vol );
-		vSInt32 first   = vec_mergeh( even1, odd1 );
-		vSInt32 second  = vec_mergel( even1, odd1 );
-		vSInt32 third   = vec_mergeh( even2, odd2 );
-		vSInt32 fourth  = vec_mergel( even2, odd2 );
-		vSInt32 fifth   = vec_mergeh( even3, odd3 );
-		vSInt32 sixth   = vec_mergel( even3, odd3 );
-		vSInt32 seventh = vec_mergeh( even4, odd4 );
-		vSInt32 eighth  = vec_mergel( even4, odd4 );
-		
-		result1 = vec_add( result1, first );
-		result2 = vec_add( result2, second );
-		result3 = vec_add( result3, third );
-		result4 = vec_add( result4, fourth );
-		result5 = vec_add( result5, fifth );
-		result6 = vec_add( result6, sixth );
-		result7 = vec_add( result7, seventh );
-		result8 = vec_add( result8, eighth );
-		
-		vec_st( result1,   0, dest );
-		vec_st( result2,  16, dest );
-		vec_st( result3,  32, dest );
-		vec_st( result4,  48, dest );
-		vec_st( result5,  64, dest );
-		vec_st( result6,  80, dest );
-		vec_st( result7,  96, dest );
-		vec_st( result8, 112, dest );
-		dest += 32;
-		src += 32;
-		size -= 32;
-	}
-	/* This completely baffles gcc's loop unrolling. If I make it > 7 instead,
-	 * then gcc produces 4 identical copies of the loop without scheduling them
-	 * in a sane manner (hence the manual unrolling above) but this loop will
-	 * never be executed more than 3 times so that code will never be used.
-	 * This produces code the way gcc _should_ do it by unrolling and scheduling
-	 * and then producing the rolled version. */
-	while( size & ~0x7 )
-	{
-		// Load next 16 bytes.
-		LSQ = vec_ld( 15, src );
-		
-		vSInt16 data = vec_perm( MSQ, LSQ, mask );
-		vSInt32 result1 = vec_ld( 0, dest );
-		vSInt32 result2 = vec_ld( 16, dest );
-		
-		/* Multiply the even 2-byte elements in data with those in vol to get
-		 * 4-byte elements. Do the same with the odd elements then merge both
-		 * high and low halves of the vectors into two new 4-element, 4-byte
-		 * vectors. In this way the combined vector <first,second> contains
-		 * the 8 products in the correct order. */
-		vSInt32 even = vec_mule( data, vol );
-		vSInt32 odd = vec_mulo( data, vol );
-		vSInt32 first = vec_mergeh( even, odd );
-		vSInt32 second = vec_mergel( even, odd );
-		
-		vec_st( vec_add(result1, first), 0, dest );
-		vec_st( vec_add(result2, second), 16, dest );
-		dest += 8;
-		src += 8;
-		size -= 8;
-		MSQ = LSQ;
-	}
-	if( size )
-	{
-		/* There is more data left but fewer than 14 bytes (7 2-byte elements)
-		 * to be written. Handle it exactly the same as above but be careful
-		 * to only store size 4-byte products. */
-		LSQ = vec_ld( 15, src );
-		
-		vSInt16 data = vec_perm( MSQ, LSQ, mask );
-		vSInt32 result1 = vec_ld( 0, dest );
-		vSInt32 result2 = vec_ld( 16, dest );
-		vSInt32 even = vec_mule( data, vol );
-		vSInt32 odd = vec_mulo( data, vol );
-		vSInt32 first = vec_mergeh( even, odd );
-		vSInt32 second = vec_mergel( even, odd );
-		
-		result1 = vec_add( result1, first );
-		result2 = vec_add( result2, second );
-		if( size >= 4 )
-		{
-			/* We can store the first 4 in one store instruction. Store
-			 * the size-4 others one at a time. */
-			vec_st( result1, 0, dest );
-			dest += 4;
-			size -= 4;
-			while( size-- )
-				vec_ste( result2, 0, dest++ );
+			load1Src  = vec_perm( load1Src,  load2Src,  srcMask );
+			load1Dest = vec_perm( load1Dest, load2Dest, loadMask );
+			load2Dest = vec_perm( load2Dest, load3Dest, loadMask );
+			
+			/* Multiply the even 2-byte elements in data with those in vol to get
+			 * 4-byte elements. Do the same with the odd elements then merge both
+			 * high and low halves of the vectors into two new 4-element, 4-byte
+			 * vectors. In this way the combined vector <first,second> contains
+			 * the 8 products in the correct order. */
+			vSInt32 even = vec_mule( load1Src, vol );
+			vSInt32 odd  = vec_mulo( load1Src, vol );
+			vSInt32 first  = vec_mergeh( even, odd );
+			vSInt32 second = vec_mergel( even, odd );
+			
+			load1Dest = vec_add( load1Dest, first );
+			load2Dest = vec_add( load2Dest, second );
+			store     = vec_perm( load1Dest, load1Dest, storeMask );
+			load1Dest = vec_perm( load1Dest, load2Dest, storeMask );
+			
+			while( (intptr_t(dest) + index) & 0xC )
+			{
+				vec_ste( store, index, dest );
+				index += 4;
+			}
+			vec_st( load1Dest, index, dest );
+			
+			load1Src = load2Src;
+			load1Dest = load3Dest;
+			store = load2Dest;
+			src += 8;
+			dest += 8;
+			size -= 8;
+			/* Incrementing the index is supposed to have the same effect
+			 * as incrementing dest bust since we read from dest as well
+			 * we don't want to increment twice so decrement the index. */
+			index -= 16;
 		}
-		else
+		ASSERT( index <= 0 );
+		while( size >= 32 )
 		{
-			/* We have fewer than 4 so store them one at a time. */
-			while( size-- )
-				vec_ste( result1, 0, dest++ );
+			vSInt16 load2Src  = vec_ld(  15, src );
+			vSInt16 load3Src  = vec_ld(  31, src );
+			vSInt16 load4Src  = vec_ld(  47, src );
+			vSInt16 load5Src  = vec_ld(  63, src );
+			vSInt32 load2Dest = vec_ld(  15, dest );
+			vSInt32 load3Dest = vec_ld(  31, dest );
+			vSInt32 load4Dest = vec_ld(  47, dest );
+			vSInt32 load5Dest = vec_ld(  63, dest );
+			vSInt32 load6Dest = vec_ld(  79, dest );
+			vSInt32 load7Dest = vec_ld(  95, dest );
+			vSInt32 load8Dest = vec_ld( 111, dest );
+			vSInt32 load9Dest = vec_ld( 127, dest );
+			
+			// Align the data
+			load1Src  = vec_perm( load1Src,  load2Src,  srcMask );
+			load2Src  = vec_perm( load2Src,  load3Src,  srcMask );
+			load3Src  = vec_perm( load3Src,  load4Src,  srcMask );
+			load4Src  = vec_perm( load4Src,  load5Src,  srcMask );
+			// Not load5Src, it's untouched and used later.
+			load1Dest = vec_perm( load1Dest, load2Dest, loadMask );
+			load2Dest = vec_perm( load2Dest, load3Dest, loadMask );
+			load3Dest = vec_perm( load3Dest, load4Dest, loadMask );
+			load4Dest = vec_perm( load4Dest, load5Dest, loadMask );
+			load5Dest = vec_perm( load5Dest, load6Dest, loadMask );
+			load6Dest = vec_perm( load6Dest, load7Dest, loadMask );
+			load7Dest = vec_perm( load7Dest, load8Dest, loadMask );
+			load8Dest = vec_perm( load8Dest, load9Dest, loadMask );
+			// Not load9Dest.
+			
+			vSInt32 even1   = vec_mule( load1Src, vol );
+			vSInt32 odd1    = vec_mulo( load1Src, vol );
+			vSInt32 even2   = vec_mule( load2Src, vol );
+			vSInt32 odd2    = vec_mulo( load2Src, vol );
+			vSInt32 even3   = vec_mule( load3Src, vol );
+			vSInt32 odd3    = vec_mulo( load3Src, vol );
+			vSInt32 even4   = vec_mule( load4Src, vol );
+			vSInt32 odd4    = vec_mulo( load4Src, vol );
+			vSInt32 first   = vec_mergeh( even1, odd1 );
+			vSInt32 second  = vec_mergel( even1, odd1 );
+			vSInt32 third   = vec_mergeh( even2, odd2 );
+			vSInt32 fourth  = vec_mergel( even2, odd2 );
+			vSInt32 fifth   = vec_mergeh( even3, odd3 );
+			vSInt32 sixth   = vec_mergel( even3, odd3 );
+			vSInt32 seventh = vec_mergeh( even4, odd4 );
+			vSInt32 eighth  = vec_mergel( even4, odd4 );
+			
+			load1Dest = vec_add( load1Dest, first );
+			load2Dest = vec_add( load2Dest, second );
+			load3Dest = vec_add( load3Dest, third );
+			load4Dest = vec_add( load4Dest, fourth );
+			load5Dest = vec_add( load5Dest, fifth );
+			load6Dest = vec_add( load6Dest, sixth );
+			load7Dest = vec_add( load7Dest, seventh );
+			load8Dest = vec_add( load8Dest, eighth );
+			
+			// Unalign results.
+			store     = vec_perm( store,     load1Dest, storeMask );
+			load1Dest = vec_perm( load1Dest, load2Dest, storeMask );
+			load2Dest = vec_perm( load2Dest, load3Dest, storeMask );
+			load3Dest = vec_perm( load3Dest, load4Dest, storeMask );
+			load4Dest = vec_perm( load4Dest, load5Dest, storeMask );
+			load5Dest = vec_perm( load5Dest, load6Dest, storeMask );
+			load6Dest = vec_perm( load6Dest, load7Dest, storeMask );
+			load7Dest = vec_perm( load7Dest, load8Dest, storeMask );
+
+			// store the results
+			vec_st( store,     index,       dest );
+			vec_st( load1Dest, index +  16, dest );
+			vec_st( load2Dest, index +  32, dest );
+			vec_st( load3Dest, index +  48, dest );
+			vec_st( load4Dest, index +  64, dest );
+			vec_st( load5Dest, index +  80, dest );
+			vec_st( load6Dest, index +  96, dest );
+			vec_st( load7Dest, index + 112, dest );
+			
+			load1Src  = load5Src;
+			load1Dest = load9Dest;
+			store     = load8Dest;
+			dest += 32;
+			src  += 32;
+			size -= 32;
+		}
+		/* This completely baffles gcc's loop unrolling. If I make it > 7 instead,
+		 * then gcc produces 4 identical copies of the loop without scheduling them
+		 * in a sane manner (hence the manual unrolling above) but this loop will
+		 * never be executed more than 3 times so that code will never be used.
+		 * This produces code the way gcc _should_ do it by unrolling and scheduling
+		 * and then producing the rolled version. */
+		while( size & ~0x7 )
+		{
+			vSInt16 load2Src  = vec_ld( 15, src );
+			vSInt32 load2Dest = vec_ld( 15, dest );
+			vSInt32 load3Dest = vec_ld( 31, dest );
+			
+			load1Src  = vec_perm( load1Src,  load2Src,  srcMask );
+			load1Dest = vec_perm( load1Dest, load2Dest, loadMask );
+			load2Dest = vec_perm( load2Dest, load3Dest, loadMask );
+			
+			vSInt32 even = vec_mule( load1Src, vol );
+			vSInt32 odd  = vec_mulo( load1Src, vol );
+			vSInt32 first  = vec_mergeh( even, odd );
+			vSInt32 second = vec_mergel( even, odd );
+			
+			load1Dest = vec_add( load1Dest, first );
+			load2Dest = vec_add( load2Dest, second );
+			store     = vec_perm( store,     load1Dest, storeMask );
+			load1Dest = vec_perm( load1Dest, load2Dest, storeMask );
+			
+			vec_st( store,     index,      dest );
+			vec_st( load1Dest, index + 16, dest );
+			
+			load1Src  = load2Src;
+			load1Dest = load3Dest;
+			store     = load2Dest;
+			src  += 8;
+			dest += 8;
+			size -= 8;
+		}
+		
+		// Store the remainder of the vector, if it was unaligned.
+		if( index < 0 )
+		{
+			store = vec_perm( store, store, storeMask );
+			while( index < 0 )
+			{
+				vec_ste( store, index, dest );
+				index += 4;
+			}
 		}
 	}
+	/* If we account for both unaligned dest and src, there is really no way to
+	 * do this in vector code so do the last at most 7 elements in scalar code. */
+	while( size-- )
+		*(dest++) += *(src++) * volume;
 }
 
 /* for( size_t pos = 0; pos < size; ++pos )
