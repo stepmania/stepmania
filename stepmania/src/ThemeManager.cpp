@@ -762,38 +762,39 @@ RString ThemeManager::GetMetricRaw( const RString &sClassName_, const RString &s
 	const RString sClassName = sClassName_;
 	const RString sValueName = sValueName_;
 
-try_metric_again:
-
-	RString ret;
-	if( ThemeManager::GetMetricRawRecursive( sClassName, sValueName, ret ) )
-		return ret;
-
-
-	RString sMessage = ssprintf( "The theme metric '%s' - '%s' is missing.  Correct this and click Retry, or Cancel to break.",sClassName.c_str(),sValueName.c_str() );
-	switch( Dialog::AbortRetryIgnore(sMessage) )
+	while( true )
 	{
-	case Dialog::abort:
-		break;	// fall through
-	case Dialog::retry:
-		FlushDirCache();
-		ReloadMetrics();
-		goto try_metric_again;
-	case Dialog::ignore:
-		return NULL;
-	default:
-		ASSERT(0);
+		RString ret;
+		if( ThemeManager::GetMetricRawRecursive( sClassName, sValueName, ret ) )
+			return ret;
+		
+		
+		RString sMessage = ssprintf( "The theme metric '%s' - '%s' is missing.  Correct this and click Retry, or Cancel to break.",sClassName.c_str(),sValueName.c_str() );
+		switch( Dialog::AbortRetryIgnore(sMessage) )
+		{
+			case Dialog::abort:
+				break;	// fall through
+			case Dialog::retry:
+				FlushDirCache();
+				ReloadMetrics();
+				continue;
+			case Dialog::ignore:
+				return NULL;
+			default:
+				ASSERT(0);
+		}
+		
+		RString sCurMetricPath = GetMetricsIniPath(m_sCurThemeName);
+		RString sDefaultMetricPath = GetMetricsIniPath(SpecialFiles::BASE_THEME_NAME);
+		
+		RString sError = ssprintf( "Theme metric '%s : %s' could not be found in '%s' or '%s'.", 
+					   sClassName.c_str(),
+					   sValueName.c_str(),
+					   sCurMetricPath.c_str(), 
+					   sDefaultMetricPath.c_str()
+					   );
+		RageException::Throw( sError );
 	}
-
-	RString sCurMetricPath = GetMetricsIniPath(m_sCurThemeName);
-	RString sDefaultMetricPath = GetMetricsIniPath(SpecialFiles::BASE_THEME_NAME);
-
-	RString sError = ssprintf( "Theme metric '%s : %s' could not be found in '%s' or '%s'.", 
-		sClassName.c_str(),
-		sValueName.c_str(),
-		sCurMetricPath.c_str(), 
-		sDefaultMetricPath.c_str()
-		);
-	RageException::Throw( sError );
 }
 
 /* Get a string metric. */
