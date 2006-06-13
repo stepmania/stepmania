@@ -162,6 +162,7 @@ void ScreenOptionsManageCourses::Init()
 	ScreenOptionsEditCourseSubMenu::Init();
 
 	EDIT_MODE.Load( m_sName,"EditMode" );
+	CREATE_NEW_SCREEN.Load( m_sName, "CreateNewScreen" );
 	GAMESTATE->m_MasterPlayerNumber = GAMESTATE->GetFirstHumanPlayer();
 }
 
@@ -181,12 +182,14 @@ void ScreenOptionsManageCourses::BeginScreen()
 		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
 		OptionRowDefinition &def = vHands.back()->m_Def;
 		def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
-		def.m_sName = "";
 		def.m_bOneChoiceForAllPlayers = true;
-		def.m_vsChoices.push_back( "Create New" );
+		def.m_sName = "Create New Course";
+		def.m_sExplanationName = "Create New Course";
+		def.m_vsChoices.clear();
+		def.m_vsChoices.push_back( "" );
 		iIndex++;
-	}
-	
+	}	
+
 	m_vpCourses.clear();
 	SONGMAN->GetAllCourses( m_vpCourses, false );
 	
@@ -413,6 +416,8 @@ void ScreenOptionsManageCourses::ProcessMenuStart( const InputEventPlus &input )
 
 	if( iCurRow == 0 )	// "create new"
 	{
+		SCREENMAN->SetNewScreen( CREATE_NEW_SCREEN );
+		/*
 		if( SONGMAN->GetNumEditCourses(ProfileSlot_Machine) >= MAX_EDIT_COURSES_PER_PROFILE )
 		{
 			RString s = ssprintf( 
@@ -435,6 +440,7 @@ void ScreenOptionsManageCourses::ProcessMenuStart( const InputEventPlus &input )
 					    sDefaultName, 
 					    MAX_EDIT_COURSE_TITLE_LENGTH, 
 					    ValidateEditCourseName );
+		*/
 	}
 	else if( iCurRow == (int)m_pRows.size()-1 )	// "done"
 	{
