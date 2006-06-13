@@ -108,7 +108,7 @@ ropertyList-1.0.dtd">
 	<key>CFBundleIdentifier</key>
 	<string>com.$family.$id</string>
 	<key>CFBundleShortVersionString</key>
-	<string>$ver</string>
+	<string>$major.$minor</string>
 	<key>IFMajorVersion</key>
 	<integer>$major</integer>
 	<key>IFMinorVersion</key>
