@@ -328,7 +328,7 @@ static LocalizedString ERROR_PARSING_FILE			( "LanguagesDlg", "Error parsing fil
 static LocalizedString IMPORTING_THESE_STRINGS_WILL_OVERRIDE	( "LanguagesDlg", "Importing these strings will override all data in '%s'. Continue?" );
 static LocalizedString ERROR_READING				( "LanguagesDlg", "Error reading '%s'." );
 static LocalizedString ERROR_READING_EACH_LINE_MUST_HAVE	( "LanguagesDlg", "Error reading line '%s' from '%s': Each line must have either 3 or 4 values.  This row has %d values." );
-static LocalizedString IMPORTED_STRINGS_INTO			( "LanguagesDlg", "Imported %d strings into '%s'.  %d were overwritten.  %d empty strings were ignored." );
+static LocalizedString IMPORTED_STRINGS_INTO			( "LanguagesDlg", "Imported %d strings into '%s'.\n - %d were added.\n - %d were modified\n - %d were unchanged\n - %d empty strings were ignored" );
 void LanguagesDlg::OnBnClickedButtonImport()
 {
 	// TODO: Add your control notification handler code here
@@ -379,8 +379,10 @@ void LanguagesDlg::OnBnClickedButtonImport()
 	}
 
 	int iNumImported = 0;
+	int iNumAdded = 0;
+	int iNumModified = 0;
+	int iNumUnchanged = 0;
 	int iNumIgnored = 0;
-	int iNumOverwritten = 0;
 	FOREACH_CONST( CsvFile::StringVector, csv.m_vvs, line ) 
 	{
 		int iLineIndex = line - csv.m_vvs.begin();
@@ -410,10 +412,19 @@ void LanguagesDlg::OnBnClickedButtonImport()
 		}
 		else
 		{
-			RString sThrowAway;
-			bool bExists = ini.GetValue( tl.sSection, tl.sID, sThrowAway );
+			RString sOldCurrentLanguage;
+			bool bExists = ini.GetValue( tl.sSection, tl.sID, sOldCurrentLanguage );
 			if( bExists )
-				iNumOverwritten++;
+			{
+				if( sOldCurrentLanguage == tl.sCurrentLanguage )
+					iNumUnchanged++;
+				else
+					iNumModified++;
+			}
+			else
+			{
+				iNumAdded++;
+			}
 
 			ini.SetValue( tl.sSection, tl.sID, tl.sCurrentLanguage );
 			iNumImported++;
@@ -421,7 +432,7 @@ void LanguagesDlg::OnBnClickedButtonImport()
 	}
 
 	if( ini.WriteFile(sLanguageFile) )
-		Dialog::OK( ssprintf(IMPORTED_STRINGS_INTO.GetValue(),iNumImported,sLanguageFile.c_str(),iNumOverwritten,iNumIgnored) );
+		Dialog::OK( ssprintf(IMPORTED_STRINGS_INTO.GetValue(),iNumImported,sLanguageFile.c_str(),iNumAdded,iNumModified,iNumUnchanged,iNumIgnored) );
 	else
 		Dialog::OK( ssprintf(FAILED_TO_SAVE.GetValue(),sLanguageFile.c_str()) );
 
