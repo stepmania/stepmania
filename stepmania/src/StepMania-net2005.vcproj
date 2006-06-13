@@ -2525,11 +2525,11 @@
 			Name="Actors used in Gameplay"
 			>
 			<File
-				RelativePath="ActiveAttackList.cpp"
+				RelativePath=".\ActiveAttackList.cpp"
 				>
 			</File>
 			<File
-				RelativePath="ActiveAttackList.h"
+				RelativePath=".\ActiveAttackList.h"
 				>
 			</File>
 			<File
@@ -3311,6 +3311,10 @@
 					Name="pcre"
 					>
 					<File
+						RelativePath=".\pcre\chartables.c"
+						>
+					</File>
+					<File
 						RelativePath="pcre\get.c"
 						>
 					</File>
@@ -3490,6 +3494,14 @@
 			</File>
 			<File
 				RelativePath="CryptManager.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ExportNsisStrings.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ExportNsisStrings.h"
 				>
 			</File>
 			<File
