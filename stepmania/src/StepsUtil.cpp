@@ -8,18 +8,47 @@
 #include "GameManager.h"
 #include "XmlFile.h"
 #include "UnlockManager.h"
+#include "SongUtil.h"
+
+
+bool StepsCriteria::Matches( const Steps *p ) const
+{
+	if( m_difficulty != DIFFICULTY_INVALID  &&  p->GetDifficulty() != m_difficulty )
+		return false;
+	if( m_iLowMeter != -1  &&  p->GetMeter() < m_iLowMeter )
+		return false;
+	if( m_iHighMeter != -1  &&  p->GetMeter() > m_iHighMeter )
+		return false;
+	return true;
+}
+
+void StepsUtil::GetAllMatching( const SongCriteria &soc, const StepsCriteria &stc, vector<SongAndSteps> &out )
+{
+	FOREACH_CONST( Song*, SONGMAN->GetAllSongs(), so )
+	{
+		if( !soc.Matches(*so) )
+			continue;
+		FOREACH_CONST( Steps*, (*so)->GetAllSteps(), st )
+		{
+			if( !stc.Matches(*st) )
+				continue;
+
+		}
+	}
+}
+
 
 //
 // Sorting stuff
 //
 map<const Steps*, RString> steps_sort_val;
 
-bool CompareStepsPointersBySortValueAscending(const Steps *pSteps1, const Steps *pSteps2)
+static bool CompareStepsPointersBySortValueAscending(const Steps *pSteps1, const Steps *pSteps2)
 {
 	return steps_sort_val[pSteps1] < steps_sort_val[pSteps2];
 }
 
-bool CompareStepsPointersBySortValueDescending(const Steps *pSteps1, const Steps *pSteps2)
+static bool CompareStepsPointersBySortValueDescending(const Steps *pSteps1, const Steps *pSteps2)
 {
 	return steps_sort_val[pSteps1] > steps_sort_val[pSteps2];
 }
@@ -191,11 +220,11 @@ Steps *StepsID::ToSteps( const Song *p, bool bAllowNull, bool bUseCache ) const
 	Steps *ret = NULL;
 	if( dc == DIFFICULTY_EDIT )
 	{
-		ret = p->GetOneSteps( st, dc, -1, -1, sDescription, uHash, true );
+		ret = SongUtil::GetOneSteps( p, st, dc, -1, -1, sDescription, uHash, true );
 	}
 	else
 	{
-		ret = p->GetOneSteps( st, dc, -1, -1, "", 0, true );
+		ret = SongUtil::GetOneSteps( p, st, dc, -1, -1, "", 0, true );
 	}
 	
 	if( !bAllowNull && ret == NULL )

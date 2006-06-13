@@ -99,7 +99,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 					iNumSongsInGroup++;
 					FOREACH_CONST( Difficulty, CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue(), dc )
 					{
-						Steps* pSteps = pSong->GetStepsByDifficulty( *st, *dc, false );	// no autogen
+						Steps* pSteps = SongUtil::GetStepsByDifficulty( pSong, *st, *dc, false );	// no autogen
 						
 						/*
 						 * There is no point in storing the steps if either there
@@ -193,7 +193,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 			{
 				FOREACH_CONST( Difficulty, CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue(), dc )
 				{
-					Steps* pSteps = pSong->GetStepsByDifficulty( *st, *dc, false );	// no autogen
+					Steps* pSteps = SongUtil::GetStepsByDifficulty( pSong, *st, *dc, false );	// no autogen
 					if( pSteps == NULL )
 						continue;	// skip
 					if( UNLOCKMAN->StepsIsLocked(pSong,pSteps) )

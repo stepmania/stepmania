@@ -10,6 +10,7 @@
 #include "Steps.h"
 #include "OptionRowHandler.h"
 #include "PlayerState.h"
+#include "SongUtil.h"
 
 enum EditCourseEntryRow
 {
@@ -208,7 +209,7 @@ void ScreenOptionsEditCourseEntry::BeginScreen()
 	const CourseEntry &ce = pCourse->m_vEntries[ GAMESTATE->m_iEditCourseEntryIndex ];
 	m_Original = ce;
 
-	m_pSongHandler->m_sSongGroup = ce.sSongGroup;
+	m_pSongHandler->m_sSongGroup = ce.songCriteria.m_sGroupName;
 
 	if( SHOW_MODS_ROW )
 		m_pModChangesHandler->m_Def.m_vsChoices[0] = ssprintf( "%d mod changes", ce.GetNumModChanges() );
@@ -241,8 +242,8 @@ void ScreenOptionsEditCourseEntry::HandleScreenMessage( const ScreenMessage SM )
 				Song *pSong = ce.pSong;
 				Steps *pSteps;
 				StepsType st = GAMESTATE->m_stEdit;
-				CourseDifficulty cd = ( ce.baseDifficulty == DIFFICULTY_INVALID ?
-							GAMESTATE->m_cdEdit : ce.baseDifficulty );
+				CourseDifficulty cd = ( ce.stepsCriteria.m_difficulty == DIFFICULTY_INVALID ?
+							GAMESTATE->m_cdEdit : ce.stepsCriteria.m_difficulty );
 
 				if( pSong == NULL )
 					pSong = m_pLongSong;
@@ -273,13 +274,13 @@ void ScreenOptionsEditCourseEntry::HandleScreenMessage( const ScreenMessage SM )
 				}				
 				
 				// Try to find steps first using st and cd, then st, then cd, then any.
-				pSteps = pSong->GetStepsByDifficulty( st, cd, false );
+				pSteps = SongUtil::GetStepsByDifficulty( pSong, st, cd, false );
 				if( !pSteps )
-					pSteps = pSong->GetStepsByDifficulty( st, DIFFICULTY_INVALID, false );
+					pSteps = SongUtil::GetStepsByDifficulty( pSong, st, DIFFICULTY_INVALID, false );
 				if( !pSteps )
-					pSteps = pSong->GetStepsByDifficulty( STEPS_TYPE_INVALID, cd, false );
+					pSteps = SongUtil::GetStepsByDifficulty( pSong, STEPS_TYPE_INVALID, cd, false );
 				if( !pSteps )
-					pSteps = pSong->GetStepsByDifficulty( STEPS_TYPE_INVALID, DIFFICULTY_INVALID, false );
+					pSteps = SongUtil::GetStepsByDifficulty( pSong, STEPS_TYPE_INVALID, DIFFICULTY_INVALID, false );
 				ASSERT( pSteps );
 				
 				// Set up for ScreenEdit
@@ -340,7 +341,7 @@ void ScreenOptionsEditCourseEntry::AfterChangeValueInRow( int iRow, PlayerNumber
 		vpns.push_back( pn );
 		ExportOptions( ROW_SONG_GROUP, vpns );
 
-		m_pSongHandler->m_sSongGroup = ce.sSongGroup;
+		m_pSongHandler->m_sSongGroup = ce.songCriteria.m_sGroupName;
 
 		OptionRow &row = *m_pRows[ROW_SONG];
 		row.Reload();
@@ -371,7 +372,7 @@ void ScreenOptionsEditCourseEntry::ImportOptions( int iRow, const vector<PlayerN
 	case ROW_SONG_GROUP:
 		FOREACH_CONST( RString, row.GetRowDef().m_vsChoices, s )
 		{
-			if( *s == ce.sSongGroup )
+			if( *s == ce.songCriteria.m_sGroupName )
 			{
 				int iChoice = s - row.GetRowDef().m_vsChoices.begin();
 				row.SetOneSharedSelection( iChoice );
@@ -393,7 +394,7 @@ void ScreenOptionsEditCourseEntry::ImportOptions( int iRow, const vector<PlayerN
 	}
 	case ROW_BASE_DIFFICULTY:
 	{
-		vector<Difficulty>::const_iterator iter = find( CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue().begin(), CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue().end(), ce.baseDifficulty );
+		vector<Difficulty>::const_iterator iter = find( CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue().begin(), CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue().end(), ce.stepsCriteria.m_difficulty );
 		int iChoice = 0;
 		if( iter != CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue().end() )
 			iChoice = iter - CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue().begin() + 1;
@@ -404,8 +405,8 @@ void ScreenOptionsEditCourseEntry::ImportOptions( int iRow, const vector<PlayerN
 	case ROW_LOW_METER:
 	{
 		int iChoice = 0;
-		if( ce.iLowMeter != -1 )
-			iChoice = ce.iLowMeter;
+		if( ce.stepsCriteria.m_iLowMeter != -1 )
+			iChoice = ce.stepsCriteria.m_iLowMeter;
 		OptionRow &row = *m_pRows[ROW_LOW_METER];
 		row.SetOneSharedSelection( iChoice );
 		break;
@@ -413,8 +414,8 @@ void ScreenOptionsEditCourseEntry::ImportOptions( int iRow, const vector<PlayerN
 	case ROW_HIGH_METER:
 	{
 		int iChoice = 0;
-		if( ce.iHighMeter != -1 )
-			iChoice = ce.iHighMeter;
+		if( ce.stepsCriteria.m_iHighMeter != -1 )
+			iChoice = ce.stepsCriteria.m_iHighMeter;
 		OptionRow &row = *m_pRows[ROW_HIGH_METER];
 		row.SetOneSharedSelection( iChoice );
 		break;
@@ -453,9 +454,9 @@ void ScreenOptionsEditCourseEntry::ExportOptions( int iRow, const vector<PlayerN
 	case ROW_SONG_GROUP:
 	{
 		if( iChoice == 0 )
-			ce.sSongGroup = "";
+			ce.songCriteria.m_sGroupName = "";
 		else
-			ce.sSongGroup = row.GetRowDef().m_vsChoices[ iChoice ];
+			ce.songCriteria.m_sGroupName = row.GetRowDef().m_vsChoices[ iChoice ];
 		break;
 	}
 	case ROW_SONG:
@@ -477,29 +478,29 @@ void ScreenOptionsEditCourseEntry::ExportOptions( int iRow, const vector<PlayerN
 	{
 		if( iChoice == 0 )
 		{
-			ce.baseDifficulty = DIFFICULTY_INVALID;
+			ce.stepsCriteria.m_difficulty = DIFFICULTY_INVALID;
 		}
 		else
 		{
 			Difficulty d = CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue()[iChoice-1];
-			ce.baseDifficulty = d;
+			ce.stepsCriteria.m_difficulty = d;
 		}
 		break;
 	}
 	case ROW_LOW_METER:
 	{
 		if( iChoice == 0 )
-			ce.iLowMeter = -1;
+			ce.stepsCriteria.m_iLowMeter = -1;
 		else
-			ce.iLowMeter = iChoice;
+			ce.stepsCriteria.m_iLowMeter = iChoice;
 		break;
 	}
 	case ROW_HIGH_METER:
 	{
 		if( iChoice == 0 )
-			ce.iHighMeter = -1;
+			ce.stepsCriteria.m_iHighMeter = -1;
 		else
-			ce.iHighMeter = iChoice;
+			ce.stepsCriteria.m_iHighMeter = iChoice;
 		break;
 	}
 	case ROW_SORT:

@@ -978,7 +978,7 @@ void ScreenEdit::UpdateTextInfo()
 
 	m_bTextInfoNeedsUpdate = false;
 
-	RString sNoteType = NoteTypeToLocalizedString(m_SnapDisplay.GetNoteType()) + " notes";
+	RString sNoteType = NoteTypeToLocalizedString(m_SnapDisplay.GetNoteType());
 
 	RString sText;
 	sText += ssprintf( "%s:\n  %.3f\n",	CURRENT_BEAT.GetValue().c_str(), GAMESTATE->m_fSongBeat );
@@ -1379,7 +1379,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			// Get all Steps of this StepsType
 			StepsType st = pSteps->m_StepsType;
 			vector<Steps*> vSteps;
-			GAMESTATE->m_pCurSong->GetSteps( vSteps, st );
+			SongUtil::GetSteps( GAMESTATE->m_pCurSong, vSteps, st );
 
 			// Sort them by difficulty.
 			StepsUtil::SortStepsByTypeAndDifficulty( vSteps );

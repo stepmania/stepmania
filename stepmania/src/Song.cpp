@@ -19,9 +19,9 @@
 #include "RageFileManager.h"
 #include "RageSurface.h"
 #include "NoteDataUtil.h"
+#include "SongUtil.h"
 #include "StepsUtil.h"
 #include "Foreach.h"
-#include "UnlockManager.h"
 #include "BackgroundUtil.h"
 #include "SpecialFiles.h"
 
@@ -317,114 +317,6 @@ static void GetImageDirListing( RString sPath, vector<RString> &AddTo, bool bRet
 	GetDirListing( sPath + ".jpg", AddTo, false, bReturnPathToo ); 
 	GetDirListing( sPath + ".bmp", AddTo, false, bReturnPathToo ); 
 	GetDirListing( sPath + ".gif", AddTo, false, bReturnPathToo ); 
-}
-
-static RString RemoveInitialWhitespace( RString s )
-{
-	size_t i = s.find_first_not_of(" \t\r\n");
-	if( i != s.npos )
-		s.erase( 0, i );
-	return s;
-}
-
-/* This is called within TidyUpData, before autogen notes are added. */
-void Song::DeleteDuplicateSteps( vector<Steps*> &vSteps )
-{
-	/* vSteps have the same StepsType and Difficulty.  Delete them if they have the
-	 * same m_sDescription, m_iMeter and SMNoteData. */
-	CHECKPOINT;
-	for( unsigned i=0; i<vSteps.size(); i++ )
-	{
-		CHECKPOINT;
-		const Steps *s1 = vSteps[i];
-
-		for( unsigned j=i+1; j<vSteps.size(); j++ )
-		{
-			CHECKPOINT;
-			const Steps *s2 = vSteps[j];
-
-			if( s1->GetDescription() != s2->GetDescription() )
-				continue;
-			if( s1->GetMeter() != s2->GetMeter() )
-				continue;
-			/* Compare, ignoring whitespace. */
-			RString sSMNoteData1;
-			s1->GetSMNoteData( sSMNoteData1 );
-			RString sSMNoteData2;
-			s2->GetSMNoteData( sSMNoteData2 );
-			if( RemoveInitialWhitespace(sSMNoteData1) != RemoveInitialWhitespace(sSMNoteData2) )
-				continue;
-
-			LOG->Trace("Removed %p duplicate steps in song \"%s\" with description \"%s\" and meter \"%i\"",
-				s2, this->GetSongDir().c_str(), s1->GetDescription().c_str(), s1->GetMeter() );
-				
-			/* Don't use RemoveSteps; autogen notes havn't yet been created and it'll
-			 * create them. */
-			FOREACH_StepsType( st )
-			{
-				for( int k=this->m_vpStepsByType[st].size()-1; k>=0; k-- )
-				{
-					if( this->m_vpStepsByType[st][k] == s2 )
-					{
-						// delete this->m_vpStepsByType[k]; // delete below
-						this->m_vpStepsByType[st].erase( this->m_vpStepsByType[st].begin()+k );
-						break;
-					}
-				}
-			}
-
-			for( int k=this->m_vpSteps.size()-1; k>=0; k-- )
-			{
-				if( this->m_vpSteps[k] == s2 )
-				{
-					delete this->m_vpSteps[k];
-					this->m_vpSteps.erase( this->m_vpSteps.begin()+k );
-					break;
-				}
-			}
-
-			vSteps.erase(vSteps.begin()+j);
-			--j;
-		}
-	}
-}
-
-/* Make any duplicate difficulties edits.  (Note that BMS files do a first pass
- * on this; see BMSLoader::SlideDuplicateDifficulties.) */
-void Song::AdjustDuplicateSteps()
-{
-	FOREACH_StepsType( st )
-	{
-		FOREACH_Difficulty( dc )
-		{
-			if( dc == DIFFICULTY_EDIT )
-				continue;
-
-			vector<Steps*> vSteps;
-			this->GetSteps( vSteps, st, dc );
-
-			/* Delete steps that are completely identical.  This happened due to a
-			 * bug in an earlier version. */
-			DeleteDuplicateSteps( vSteps );
-
-			CHECKPOINT;
-			StepsUtil::SortNotesArrayByDifficulty( vSteps );
-			CHECKPOINT;
-			for( unsigned k=1; k<vSteps.size(); k++ )
-			{
-				vSteps[k]->SetDifficulty( DIFFICULTY_EDIT );
-				if( vSteps[k]->GetDescription() == "" )
-				{
-					/* "Hard Edit" */
-					RString EditName = Capitalize( DifficultyToString(dc) ) + " Edit";
-					vSteps[k]->SetDescription( EditName );
-				}
-			}
-		}
-
-		/* XXX: Don't allow edits to have descriptions that look like regular difficulties.
-		 * These are confusing, and they're ambiguous when passed to GetStepsByID. */
-	}
 }
 
 /* Fix up song paths.  If there's a leading "./", be sure to keep it: it's
@@ -738,7 +630,7 @@ void Song::TidyUpData()
 
 	/* Don't allow multiple Steps of the same StepsType and Difficulty (except for edits).
 	 * We should be able to use difficulty names as unique identifiers for steps. */
-	AdjustDuplicateSteps();
+	SongUtil::AdjustDuplicateSteps( this );
 
 	{
 		/* Generated filename; this doesn't always point to a loadable file,
@@ -835,142 +727,6 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 	m_fLastBeat = fLastBeat;
 }
 
-void Song::GetSteps( 
-	vector<Steps*>& arrayAddTo, 
-	StepsType st, 
-	Difficulty dc, 
-	int iMeterLow, 
-	int iMeterHigh, 
-	const RString &sDescription, 
-	bool bIncludeAutoGen, 
-	unsigned uHash,
-	int iMaxToGet 
-	) const
-{
-	if( !iMaxToGet )
-		return;
-
-	const vector<Steps*> &vpSteps = st == STEPS_TYPE_INVALID ? GetAllSteps() : GetStepsByStepsType(st);
-	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
-	{
-		Steps* pSteps = vpSteps[i];
-
-		if( dc != DIFFICULTY_INVALID && dc != pSteps->GetDifficulty() )
-			continue;
-		if( iMeterLow != -1 && iMeterLow > pSteps->GetMeter() )
-			continue;
-		if( iMeterHigh != -1 && iMeterHigh < pSteps->GetMeter() )
-			continue;
-		if( sDescription.size() && sDescription != pSteps->GetDescription() )
-			continue;
-		if( uHash != 0 && uHash != pSteps->GetHash() )
-			continue;
-		if( !bIncludeAutoGen && pSteps->IsAutogen() )
-			continue;
-
-		arrayAddTo.push_back( pSteps );
-
-		if( iMaxToGet != -1 )
-		{
-			--iMaxToGet;
-			if( !iMaxToGet )
-				break;
-		}
-	}
-}
-
-Steps* Song::GetOneSteps( 
-	StepsType st, 
-	Difficulty dc, 
-	int iMeterLow, 
-	int iMeterHigh, 
-	const RString &sDescription, 
-	unsigned uHash,
-	bool bIncludeAutoGen
-	) const
-{
-	vector<Steps*> vpSteps;
-	GetSteps( vpSteps, st, dc, iMeterLow, iMeterHigh, sDescription, bIncludeAutoGen, uHash, 1 );	// get max 1
-	if( vpSteps.empty() )
-		return NULL;
-	else
-		return vpSteps[0];
-}
-
-Steps* Song::GetStepsByDifficulty( StepsType st, Difficulty dc, bool bIncludeAutoGen ) const
-{
-	const vector<Steps*>& vpSteps = (st == STEPS_TYPE_INVALID)? GetAllSteps():GetStepsByStepsType(st);
-	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
-	{
-		Steps* pSteps = vpSteps[i];
-
-		if( dc != DIFFICULTY_INVALID && dc != pSteps->GetDifficulty() )
-			continue;
-		if( !bIncludeAutoGen && pSteps->IsAutogen() )
-			continue;
-
-		return pSteps;
-	}
-
-	return NULL;
-}
-
-Steps* Song::GetStepsByMeter( StepsType st, int iMeterLow, int iMeterHigh ) const
-{
-	const vector<Steps*>& vpSteps = (st == STEPS_TYPE_INVALID)? GetAllSteps():GetStepsByStepsType(st);
-	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
-	{
-		Steps* pSteps = vpSteps[i];
-
-		if( iMeterLow > pSteps->GetMeter() )
-			continue;
-		if( iMeterHigh < pSteps->GetMeter() )
-			continue;
-
-		return pSteps;
-	}
-
-	return NULL;
-}
-
-Steps* Song::GetStepsByDescription( StepsType st, RString sDescription ) const
-{
-	vector<Steps*> vNotes;
-	GetSteps( vNotes, st, DIFFICULTY_INVALID, -1, -1, sDescription );
-	if( vNotes.size() == 0 )
-		return NULL;
-	else 
-		return vNotes[0];
-}
-
-
-Steps* Song::GetClosestNotes( StepsType st, Difficulty dc, bool bIgnoreLocked ) const
-{
-	ASSERT( dc != DIFFICULTY_INVALID );
-
-	const vector<Steps*>& vpSteps = (st == STEPS_TYPE_INVALID)? GetAllSteps():GetStepsByStepsType(st);
-	Steps *pClosest = NULL;
-	int iClosestDistance = 999;
-	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
-	{
-		Steps* pSteps = vpSteps[i];
-
-		if( pSteps->GetDifficulty() == DIFFICULTY_EDIT && dc != DIFFICULTY_EDIT )
-			continue;
-		if( bIgnoreLocked && UNLOCKMAN->StepsIsLocked(this, pSteps) )
-			continue;
-
-		int iDistance = abs(dc - pSteps->GetDifficulty());
-		if( iDistance < iClosestDistance )
-		{
-			pClosest = pSteps;
-			iClosestDistance = iDistance;
-		}
-	}
-
-	return pClosest;
-}
-
 /* Return whether the song is playable in the given style. */
 bool Song::SongCompleteForStyle( const Style *st ) const
 {
@@ -979,12 +735,12 @@ bool Song::SongCompleteForStyle( const Style *st ) const
 
 bool Song::HasStepsType( StepsType st ) const
 {
-	return GetOneSteps( st ) != NULL;
+	return SongUtil::GetOneSteps( this, st ) != NULL;
 }
 
 bool Song::HasStepsTypeAndDifficulty( StepsType st, Difficulty dc ) const
 {
-	return GetOneSteps( st, dc ) != NULL;
+	return SongUtil::GetOneSteps( this, st, dc ) != NULL;
 }
 
 void Song::Save()
@@ -1156,11 +912,11 @@ bool Song::IsEasy( StepsType st ) const
 	/* The easy marker indicates which songs a beginner, having selected "beginner",
 	 * can play and actually get a very easy song: if there are actual beginner
 	 * steps, or if the light steps are 1- or 2-foot. */
-	const Steps* pBeginnerNotes = GetStepsByDifficulty( st, DIFFICULTY_BEGINNER );
+	const Steps* pBeginnerNotes = SongUtil::GetStepsByDifficulty( this, st, DIFFICULTY_BEGINNER );
 	if( pBeginnerNotes )
 		return true;
 	
-	const Steps* pEasyNotes = GetStepsByDifficulty( st, DIFFICULTY_EASY );
+	const Steps* pEasyNotes = SongUtil::GetStepsByDifficulty( this, st, DIFFICULTY_EASY );
 	if( pEasyNotes && pEasyNotes->GetMeter() == 1 )
 		return true;
 
@@ -1349,12 +1105,13 @@ void Song::AddSteps( Steps* pSteps )
 	m_vpStepsByType[pSteps->m_StepsType].push_back( pSteps );
 }
 
-void Song::DeleteSteps( const Steps* pSteps )
+void Song::DeleteSteps( const Steps* pSteps, bool bReAutoGen )
 {
 	// Avoid any stale Note::parent pointers by removing all AutoGen'd Steps,
 	// then adding them again.
 
-	RemoveAutoGenNotes();
+	if( bReAutoGen )
+		RemoveAutoGenNotes();
 
 
 	vector<Steps*> &vpSteps = m_vpStepsByType[pSteps->m_StepsType];
@@ -1378,7 +1135,8 @@ void Song::DeleteSteps( const Steps* pSteps )
 		}
 	}
 
-	AddAutoGenNotes();
+	if( bReAutoGen )
+		AddAutoGenNotes();
 }
 
 bool Song::Matches(RString sGroup, RString sSong) const
@@ -1404,7 +1162,7 @@ bool Song::Matches(RString sGroup, RString sSong) const
 
 void Song::FreeAllLoadedFromProfile( ProfileSlot slot )
 {
-	/* RemoveSteps will remove and recreate autogen notes, which may reorder
+	/* DeleteSteps will remove and recreate autogen notes, which may reorder
 	 * m_vpSteps, so be careful not to skip over entries. */
 	vector<Steps*> apToRemove;
 	for( int s=m_vpSteps.size()-1; s>=0; s-- )

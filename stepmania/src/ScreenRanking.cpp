@@ -277,7 +277,7 @@ void ScoreScroller::ConfigureActor( Actor *pActor, int iItem )
 
 		FOREACH_CONST( Difficulty, m_DifficultiesToShow, iter )
 		{							
-			const Steps* pSteps = pSong->GetStepsByDifficulty( m_StepsType, *iter, false );
+			const Steps* pSteps = SongUtil::GetStepsByDifficulty( pSong, m_StepsType, *iter, false );
 			if( pSteps  &&  UNLOCKMAN->StepsIsLocked(pSong, pSteps) )
 				pSteps = NULL;
 			BitmapText* pTextStepsScore = &item.m_textScore[*iter];

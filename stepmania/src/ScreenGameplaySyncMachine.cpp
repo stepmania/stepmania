@@ -7,6 +7,7 @@
 #include "AdjustSync.h"
 #include "ScreenDimensions.h"
 #include "InputEventPlus.h"
+#include "SongUtil.h"
 
 REGISTER_SCREEN_CLASS( ScreenGameplaySyncMachine );
 
@@ -23,7 +24,7 @@ void ScreenGameplaySyncMachine::Init()
 	m_Song.TidyUpData();
 
 	GAMESTATE->m_pCurSong.Set( &m_Song );
-	Steps *pSteps = m_Song.GetOneSteps();
+	Steps *pSteps = SongUtil::GetOneSteps( &m_Song );
 	ASSERT( pSteps );
 	GAMESTATE->m_pCurSteps[0].Set( pSteps );
 

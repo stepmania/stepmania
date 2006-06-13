@@ -8,9 +8,39 @@ class Steps;
 class Song;
 class Profile;
 class XNode;
+class SongCriteria;
+
+class StepsCriteria
+{
+public:
+	Difficulty m_difficulty;	// don't filter if DIFFICULTY_INVALID
+	int m_iLowMeter;		// don't filter if -1
+	int m_iHighMeter;		// don't filter if -1
+
+	StepsCriteria()
+	{
+		m_difficulty = DIFFICULTY_INVALID;
+		m_iLowMeter = -1;
+		m_iHighMeter = -1;
+	}
+
+	bool Matches( const Steps *p ) const;
+};
+
+class SongAndSteps
+{
+public:
+	Song* pSong;
+	Steps* pSteps;
+	bool operator==( const SongAndSteps& other ) const { return pSong==other.pSong && pSteps==other.pSteps; }
+	bool operator<( const SongAndSteps& other ) const { return pSong<=other.pSong && pSteps<=other.pSteps; }
+};
 
 namespace StepsUtil
 {
+
+	void GetAllMatching( const SongCriteria &soc, const StepsCriteria &stc, vector<SongAndSteps> &out );	// look up in SONGMAN
+
 	bool CompareNotesPointersByRadarValues(const Steps* pSteps1, const Steps* pSteps2);
 	bool CompareNotesPointersByMeter(const Steps *pSteps1, const Steps* pSteps2);
 	bool CompareNotesPointersByDifficulty(const Steps *pSteps1, const Steps *pSteps2);

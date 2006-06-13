@@ -20,6 +20,7 @@
 #include "PrefsManager.h"
 #include "InputEventPlus.h"
 #include "AdjustSync.h"
+#include "SongUtil.h"
 
 #define SHOW_COURSE_MODIFIERS_PROBABILITY	THEME->GetMetricF(m_sName,"ShowCourseModifiersProbability")
 
@@ -85,7 +86,7 @@ void ScreenJukebox::SetSong()
 			continue;	// skip
 
 		Difficulty dc = vDifficultiesToShow[ rand()%vDifficultiesToShow.size() ];
-		Steps* pSteps = pSong->GetStepsByDifficulty( GAMESTATE->GetCurrentStyle()->m_StepsType, dc );
+		Steps* pSteps = SongUtil::GetStepsByDifficulty( pSong, GAMESTATE->GetCurrentStyle()->m_StepsType, dc );
 
 		if( pSteps == NULL )
 			continue;	// skip

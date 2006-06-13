@@ -19,6 +19,7 @@
 #include "PrefsManager.h"
 #include "CharacterManager.h"
 #include "StatsManager.h"
+#include "SongUtil.h"
 
 static const ThemeMetric<RString>	STEPFILE		("ScreenHowToPlay","Stepfile");
 static const ThemeMetric<int>		NUM_W2S			("ScreenHowToPlay","NumW2s");
@@ -142,7 +143,7 @@ void ScreenHowToPlay::Init()
 
 		const Style* pStyle = GAMESTATE->GetCurrentStyle();
 		
-		Steps *pSteps = m_Song.GetStepsByDescription( pStyle->m_StepsType, "" );
+		Steps *pSteps = SongUtil::GetStepsByDescription( &m_Song, pStyle->m_StepsType, "" );
 		ASSERT_M( pSteps != NULL, ssprintf("%i", pStyle->m_StepsType) );
 
 		NoteData tempNoteData;

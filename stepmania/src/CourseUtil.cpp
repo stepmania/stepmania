@@ -192,7 +192,7 @@ void CourseUtil::SortByMostRecentlyPlayedForMachine( vector<Course*> &vpCoursesI
 void CourseUtil::MakeDefaultEditCourseEntry( CourseEntry& out )
 {
 	out.pSong = GAMESTATE->GetDefaultSong();
-	out.baseDifficulty = DIFFICULTY_MEDIUM;
+	out.stepsCriteria.m_difficulty = DIFFICULTY_MEDIUM;
 }
 
 //////////////////////////////////
@@ -223,12 +223,12 @@ void CourseUtil::AutogenEndlessFromGroup( const RString &sGroupName, Difficulty 
 	// gameplay. (We might still get a repeat at the repeat boundary,
 	// but that'd be rare.) -glenn
 	CourseEntry e;
-	e.sSongGroup = sGroupName;
-	e.baseDifficulty = diff;
+	e.songCriteria.m_sGroupName = sGroupName;
+	e.stepsCriteria.m_difficulty = diff;
 	e.bSecret = true;
 
 	vector<Song*> vSongs;
-	SONGMAN->GetSongs( vSongs, e.sSongGroup );
+	SONGMAN->GetSongs( vSongs, e.songCriteria.m_sGroupName );
 	for( unsigned i = 0; i < vSongs.size(); ++i)
 		out.m_vEntries.push_back( e );
 }
@@ -283,7 +283,7 @@ void CourseUtil::AutogenOniFromArtist( const RString &sArtistName, RString sArti
 		aSongs.erase( aSongs.begin()+4, aSongs.end() );
 
 	CourseEntry e;
-	e.baseDifficulty = dc;
+	e.stepsCriteria.m_difficulty = dc;
 
 	for( unsigned i = 0; i < aSongs.size(); ++i )
 	{

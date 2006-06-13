@@ -1222,14 +1222,6 @@ bool GameState::ShowW1() const
 	}
 }
 
-struct SongAndSteps
-{
-	Song* pSong;
-	Steps* pSteps;
-	bool operator==( const SongAndSteps& other ) const { return pSong==other.pSong && pSteps==other.pSteps; }
-	bool operator<( const SongAndSteps& other ) const { return pSong<=other.pSong && pSteps<=other.pSteps; }
-};
-
 void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOut ) const
 {
 	if( !IsHumanPlayer(pn) )

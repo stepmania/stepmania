@@ -13,13 +13,248 @@
 #include "UnlockManager.h"
 #include "ThemeMetric.h"
 #include "LocalizedString.h"
+#include "RageLog.h"
 
-static LocalizedString SORT_NOT_AVAILABLE( "Sort", "NotAvailable" );
-static LocalizedString SORT_OTHER        ( "Sort", "Other" );
+bool SongCriteria::Matches( const Song *p ) const
+{
+	if( !m_sGroupName.empty()  &&  m_sGroupName != p->m_sGroupName )
+		return false;
+	if( !m_sGenre.empty()  &&  m_sGenre != p->m_sGenre )
+		return false;
+	return true;
+}
+
+void SongUtil::GetSteps( 
+	const Song *pSong, 
+	vector<Steps*>& arrayAddTo, 
+	StepsType st, 
+	Difficulty dc, 
+	int iMeterLow, 
+	int iMeterHigh, 
+	const RString &sDescription, 
+	bool bIncludeAutoGen, 
+	unsigned uHash,
+	int iMaxToGet 
+	)
+{
+	if( !iMaxToGet )
+		return;
+
+	const vector<Steps*> &vpSteps = st == STEPS_TYPE_INVALID ? pSong->GetAllSteps() : pSong->GetStepsByStepsType(st);
+	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
+	{
+		Steps* pSteps = vpSteps[i];
+
+		if( dc != DIFFICULTY_INVALID && dc != pSteps->GetDifficulty() )
+			continue;
+		if( iMeterLow != -1 && iMeterLow > pSteps->GetMeter() )
+			continue;
+		if( iMeterHigh != -1 && iMeterHigh < pSteps->GetMeter() )
+			continue;
+		if( sDescription.size() && sDescription != pSteps->GetDescription() )
+			continue;
+		if( uHash != 0 && uHash != pSteps->GetHash() )
+			continue;
+		if( !bIncludeAutoGen && pSteps->IsAutogen() )
+			continue;
+
+		arrayAddTo.push_back( pSteps );
+
+		if( iMaxToGet != -1 )
+		{
+			--iMaxToGet;
+			if( !iMaxToGet )
+				break;
+		}
+	}
+}
+
+Steps* SongUtil::GetOneSteps( 
+	const Song *pSong, 
+	StepsType st, 
+	Difficulty dc, 
+	int iMeterLow, 
+	int iMeterHigh, 
+	const RString &sDescription, 
+	unsigned uHash,
+	bool bIncludeAutoGen
+	)
+{
+	vector<Steps*> vpSteps;
+	GetSteps( pSong, vpSteps, st, dc, iMeterLow, iMeterHigh, sDescription, bIncludeAutoGen, uHash, 1 );	// get max 1
+	if( vpSteps.empty() )
+		return NULL;
+	else
+		return vpSteps[0];
+}
+
+Steps* SongUtil::GetStepsByDifficulty( const Song *pSong, StepsType st, Difficulty dc, bool bIncludeAutoGen )
+{
+	const vector<Steps*>& vpSteps = (st == STEPS_TYPE_INVALID)? pSong->GetAllSteps() : pSong->GetStepsByStepsType(st);
+	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
+	{
+		Steps* pSteps = vpSteps[i];
+
+		if( dc != DIFFICULTY_INVALID && dc != pSteps->GetDifficulty() )
+			continue;
+		if( !bIncludeAutoGen && pSteps->IsAutogen() )
+			continue;
+
+		return pSteps;
+	}
+
+	return NULL;
+}
+
+Steps* SongUtil::GetStepsByMeter( const Song *pSong, StepsType st, int iMeterLow, int iMeterHigh )
+{
+	const vector<Steps*>& vpSteps = (st == STEPS_TYPE_INVALID)? pSong->GetAllSteps() : pSong->GetStepsByStepsType(st);
+	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
+	{
+		Steps* pSteps = vpSteps[i];
+
+		if( iMeterLow > pSteps->GetMeter() )
+			continue;
+		if( iMeterHigh < pSteps->GetMeter() )
+			continue;
+
+		return pSteps;
+	}
+
+	return NULL;
+}
+
+Steps* SongUtil::GetStepsByDescription( const Song *pSong, StepsType st, RString sDescription )
+{
+	vector<Steps*> vNotes;
+	GetSteps( pSong, vNotes, st, DIFFICULTY_INVALID, -1, -1, sDescription );
+	if( vNotes.size() == 0 )
+		return NULL;
+	else 
+		return vNotes[0];
+}
+
+
+Steps* SongUtil::GetClosestNotes( const Song *pSong, StepsType st, Difficulty dc, bool bIgnoreLocked )
+{
+	ASSERT( dc != DIFFICULTY_INVALID );
+
+	const vector<Steps*>& vpSteps = (st == STEPS_TYPE_INVALID)? pSong->GetAllSteps() : pSong->GetStepsByStepsType(st);
+	Steps *pClosest = NULL;
+	int iClosestDistance = 999;
+	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
+	{
+		Steps* pSteps = vpSteps[i];
+
+		if( pSteps->GetDifficulty() == DIFFICULTY_EDIT && dc != DIFFICULTY_EDIT )
+			continue;
+		if( bIgnoreLocked && UNLOCKMAN->StepsIsLocked(pSong,pSteps) )
+			continue;
+
+		int iDistance = abs(dc - pSteps->GetDifficulty());
+		if( iDistance < iClosestDistance )
+		{
+			pClosest = pSteps;
+			iClosestDistance = iDistance;
+		}
+	}
+
+	return pClosest;
+}
+
+
+/* Make any duplicate difficulties edits.  (Note that BMS files do a first pass
+ * on this; see BMSLoader::SlideDuplicateDifficulties.) */
+void SongUtil::AdjustDuplicateSteps( Song *pSong )
+{
+	FOREACH_StepsType( st )
+	{
+		FOREACH_Difficulty( dc )
+		{
+			if( dc == DIFFICULTY_EDIT )
+				continue;
+
+			vector<Steps*> vSteps;
+			SongUtil::GetSteps( pSong, vSteps, st, dc );
+
+			/* Delete steps that are completely identical.  This happened due to a
+			 * bug in an earlier version. */
+			DeleteDuplicateSteps( pSong, vSteps );
+
+			CHECKPOINT;
+			StepsUtil::SortNotesArrayByDifficulty( vSteps );
+			CHECKPOINT;
+			for( unsigned k=1; k<vSteps.size(); k++ )
+			{
+				vSteps[k]->SetDifficulty( DIFFICULTY_EDIT );
+				if( vSteps[k]->GetDescription() == "" )
+				{
+					/* "Hard Edit" */
+					RString EditName = Capitalize( DifficultyToString(dc) ) + " Edit";
+					vSteps[k]->SetDescription( EditName );
+				}
+			}
+		}
+
+		/* XXX: Don't allow edits to have descriptions that look like regular difficulties.
+		 * These are confusing, and they're ambiguous when passed to GetStepsByID. */
+	}
+}
+
+static RString RemoveInitialWhitespace( RString s )
+{
+	size_t i = s.find_first_not_of(" \t\r\n");
+	if( i != s.npos )
+		s.erase( 0, i );
+	return s;
+}
+
+/* This is called within TidyUpData, before autogen notes are added. */
+void SongUtil::DeleteDuplicateSteps( Song *pSong, vector<Steps*> &vSteps )
+{
+	/* vSteps have the same StepsType and Difficulty.  Delete them if they have the
+	 * same m_sDescription, m_iMeter and SMNoteData. */
+	CHECKPOINT;
+	for( unsigned i=0; i<vSteps.size(); i++ )
+	{
+		CHECKPOINT;
+		const Steps *s1 = vSteps[i];
+
+		for( unsigned j=i+1; j<vSteps.size(); j++ )
+		{
+			CHECKPOINT;
+			const Steps *s2 = vSteps[j];
+
+			if( s1->GetDescription() != s2->GetDescription() )
+				continue;
+			if( s1->GetMeter() != s2->GetMeter() )
+				continue;
+			/* Compare, ignoring whitespace. */
+			RString sSMNoteData1;
+			s1->GetSMNoteData( sSMNoteData1 );
+			RString sSMNoteData2;
+			s2->GetSMNoteData( sSMNoteData2 );
+			if( RemoveInitialWhitespace(sSMNoteData1) != RemoveInitialWhitespace(sSMNoteData2) )
+				continue;
+
+			LOG->Trace("Removed %p duplicate steps in song \"%s\" with description \"%s\" and meter \"%i\"",
+				s2, pSong->GetSongDir().c_str(), s1->GetDescription().c_str(), s1->GetMeter() );
+				
+			pSong->DeleteSteps( s2, false );
+
+			vSteps.erase(vSteps.begin()+j);
+			--j;
+		}
+	}
+}
+
 
 /////////////////////////////////////
 // Sorting
 /////////////////////////////////////
+
+static LocalizedString SORT_NOT_AVAILABLE( "Sort", "NotAvailable" );
+static LocalizedString SORT_OTHER        ( "Sort", "Other" );
 
 /* Just calculating GetNumTimesPlayed within the sort is pretty slow, so let's precompute
  * it.  (This could be generalized with a template.) */
@@ -280,28 +515,28 @@ RString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 		}
 	case SORT_EASY_METER:
 		{
-			Steps* pSteps = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyle()->m_StepsType,DIFFICULTY_EASY);
+			Steps* pSteps = GetStepsByDifficulty(pSong, GAMESTATE->GetCurrentStyle()->m_StepsType,DIFFICULTY_EASY);
 			if( pSteps && !UNLOCKMAN->StepsIsLocked(pSong,pSteps) )	
 				return ssprintf("%02d", pSteps->GetMeter() );
 			return SORT_NOT_AVAILABLE.GetValue();
 		}
 	case SORT_MEDIUM_METER:
 		{
-			Steps* pSteps = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyle()->m_StepsType,DIFFICULTY_MEDIUM);
+			Steps* pSteps = GetStepsByDifficulty(pSong, GAMESTATE->GetCurrentStyle()->m_StepsType,DIFFICULTY_MEDIUM);
 			if( pSteps && !UNLOCKMAN->StepsIsLocked(pSong,pSteps) )	
 				return ssprintf("%02d", pSteps->GetMeter() );
 			return SORT_NOT_AVAILABLE.GetValue();
 		}
 	case SORT_HARD_METER:
 		{
-			Steps* pSteps = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyle()->m_StepsType,DIFFICULTY_HARD);
+			Steps* pSteps = GetStepsByDifficulty(pSong, GAMESTATE->GetCurrentStyle()->m_StepsType,DIFFICULTY_HARD);
 			if( pSteps && !UNLOCKMAN->StepsIsLocked(pSong,pSteps) )	
 				return ssprintf("%02d", pSteps->GetMeter() );
 			return SORT_NOT_AVAILABLE.GetValue();
 		}
 	case SORT_CHALLENGE_METER:
 		{
-			Steps* pSteps = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyle()->m_StepsType,DIFFICULTY_CHALLENGE);
+			Steps* pSteps = GetStepsByDifficulty(pSong, GAMESTATE->GetCurrentStyle()->m_StepsType,DIFFICULTY_CHALLENGE);
 			if( pSteps && !UNLOCKMAN->StepsIsLocked(pSong,pSteps) )	
 				return ssprintf("%02d", pSteps->GetMeter() );
 			return SORT_NOT_AVAILABLE.GetValue();
@@ -343,7 +578,7 @@ void SongUtil::SortSongPointerArrayByMeter( vector<Song*> &vpSongsInOut, Difficu
 	for(unsigned i = 0; i < vpSongsInOut.size(); ++i)
 	{
 		/* Ignore locked steps. */
-		const Steps* pSteps = vpSongsInOut[i]->GetClosestNotes( GAMESTATE->GetCurrentStyle()->m_StepsType, dc, true );
+		const Steps* pSteps = GetClosestNotes( vpSongsInOut[i], GAMESTATE->GetCurrentStyle()->m_StepsType, dc, true );
 		RString &s = g_mapSongSortVal[vpSongsInOut[i]];
 		s = ssprintf("%03d", pSteps ? pSteps->GetMeter() : 0);
 
@@ -448,7 +683,7 @@ bool SongUtil::ValidateCurrentEditStepsDescription( const RString &sAnswer, RStr
 
 	// Steps name must be unique for this song.
 	vector<Steps*> v;
-	pSong->GetSteps( v, STEPS_TYPE_INVALID, DIFFICULTY_EDIT ); 
+	GetSteps( pSong, v, STEPS_TYPE_INVALID, DIFFICULTY_EDIT ); 
 	FOREACH_CONST( Steps*, v, s )
 	{
 		if( pSteps == *s )
@@ -486,6 +721,20 @@ bool SongUtil::ValidateCurrentStepsDescription( const RString &sAnswer, RString 
 	return true;
 }
 
+void SongUtil::GetAllSongGenres( vector<RString> &vsOut )
+{
+	set<RString> genres;
+	FOREACH_CONST( Song*, SONGMAN->GetAllSongs(), song )
+	{
+		if( !(*song)->m_sGenre.empty() )
+			genres.insert( (*song)->m_sGenre );
+	}
+
+	FOREACHS_CONST( RString, genres, s )
+	{
+		vsOut.push_back( *s );
+	}
+}
 
 
 //////////////////////////////////

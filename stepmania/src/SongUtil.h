@@ -11,8 +11,52 @@ class Steps;
 class Profile;
 class XNode;
 
+
+class SongCriteria
+{
+public:
+	RString m_sGroupName;	// "" means don't match
+	RString m_sGenre;	// "" means don't match
+
+	SongCriteria()
+	{
+
+	}
+	bool Matches( const Song *p ) const;
+};
+
 namespace SongUtil
 {
+	void GetSteps( 
+		const Song *pSong,
+		vector<Steps*>& arrayAddTo, 
+		StepsType st = STEPS_TYPE_INVALID, 
+		Difficulty dc = DIFFICULTY_INVALID, 
+		int iMeterLow = -1, 
+		int iMeterHigh = -1, 
+		const RString &sDescription = "", 
+		bool bIncludeAutoGen = true, 
+		unsigned uHash = 0,
+		int iMaxToGet = -1 
+		);
+	Steps* GetOneSteps( 
+		const Song *pSong,
+		StepsType st = STEPS_TYPE_INVALID, 
+		Difficulty dc = DIFFICULTY_INVALID, 
+		int iMeterLow = -1, 
+		int iMeterHigh = -1, 
+		const RString &sDescription = "", 
+		unsigned uHash = 0,
+		bool bIncludeAutoGen = true
+		);
+	Steps* GetStepsByDifficulty(	const Song *pSong, StepsType st, Difficulty dc, bool bIncludeAutoGen = true );
+	Steps* GetStepsByMeter(		const Song *pSong, StepsType st, int iMeterLow, int iMeterHigh );
+	Steps* GetStepsByDescription(	const Song *pSong, StepsType st, RString sDescription );
+	Steps* GetClosestNotes(		const Song *pSong, StepsType st, Difficulty dc, bool bIgnoreLocked=false );
+
+	void AdjustDuplicateSteps( Song *pSong ); // part of TidyUpData
+	void DeleteDuplicateSteps( Song *pSong, vector<Steps*> &vSteps );
+
 	RString MakeSortString( RString s );
 	void SortSongPointerArrayByTitle( vector<Song*> &vpSongsInOut );
 	void SortSongPointerArrayByBPM( vector<Song*> &vpSongsInOut );
@@ -24,7 +68,7 @@ namespace SongUtil
 	void SortSongPointerArrayByNumPlays( vector<Song*> &vpSongsInOut, ProfileSlot slot, bool bDescending );
 	void SortSongPointerArrayByNumPlays( vector<Song*> &vpSongsInOut, const Profile* pProfile, bool bDescending );
 	void SortSongPointerArrayByMeter( vector<Song*> &vpSongsInOut, Difficulty dc );
-	RString GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so );
+	RString GetSectionNameFromSongAndSort( const Song *pSong, SortOrder so );
 	void SortSongPointerArrayBySectionName( vector<Song*> &vpSongsInOut, SortOrder so );
 	void SortByMostRecentlyPlayedForMachine( vector<Song*> &vpSongsInOut );
 
@@ -34,6 +78,9 @@ namespace SongUtil
 	RString MakeUniqueEditDescription( const Song* pSong, StepsType st, const RString &sPreferredDescription );
 	bool ValidateCurrentEditStepsDescription( const RString &sAnswer, RString &sErrorOut );
 	bool ValidateCurrentStepsDescription( const RString &sAnswer, RString &sErrorOut );
+
+	void GetAllSongGenres( vector<RString> &vsOut );
+	void FilterSongs( const SongCriteria &sc, const vector<Song*> &in, vector<Song*> &out );
 }
 
 class SongID

@@ -129,8 +129,8 @@ void CourseEntryDisplay::SetFromGameState( int iCourseEntryIndex )
 			if( te == NULL || ce == NULL )
 				continue;
 
-			int iLow = ce->iLowMeter;
-			int iHigh = ce->iHighMeter;
+			int iLow = ce->stepsCriteria.m_iLowMeter;
+			int iHigh = ce->stepsCriteria.m_iHighMeter;
 
 			bool bLowIsSet = iLow != -1;
 			bool bHighIsSet = iHigh != -1;

@@ -672,10 +672,10 @@ void ProfileManager::GetHighScoreForDifficulty( const Song *s, const Style *st, 
 {
 	// return max grade of notes in difficulty class
 	vector<Steps*> aNotes;
-	s->GetSteps( aNotes, st->m_StepsType );
+	SongUtil::GetSteps( s, aNotes, st->m_StepsType );
 	StepsUtil::SortNotesArrayByDifficulty( aNotes );
 
-	const Steps* pSteps = s->GetStepsByDifficulty( st->m_StepsType, dc );
+	const Steps* pSteps = SongUtil::GetStepsByDifficulty( s, st->m_StepsType, dc );
 
 	if( pSteps && PROFILEMAN->IsPersistentProfile(slot) )
 		hsOut = PROFILEMAN->GetProfile(slot)->GetStepsHighScoreList(s,pSteps).GetTopScore();

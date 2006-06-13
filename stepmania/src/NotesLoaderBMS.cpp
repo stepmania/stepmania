@@ -6,6 +6,7 @@
 #include "GameManager.h"
 #include "RageException.h"
 #include "RageFile.h"
+#include "SongUtil.h"
 #include "StepsUtil.h"
 #include "song.h"
 #include "Steps.h"
@@ -997,7 +998,7 @@ void BMSLoader::SlideDuplicateDifficulties( Song &p )
 				continue;
 
 			vector<Steps*> vSteps;
-			p.GetSteps( vSteps, st, dc );
+			SongUtil::GetSteps( &p, vSteps, st, dc );
 
 			StepsUtil::SortNotesArrayByDifficulty( vSteps );
 			for( unsigned k=1; k<vSteps.size(); k++ )

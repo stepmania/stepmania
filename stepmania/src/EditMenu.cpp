@@ -409,7 +409,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 					case EditMode_Practice:
 						{
 							vector<Steps*> v;
-							GetSelectedSong()->GetSteps( v, GetSelectedStepsType(), DIFFICULTY_EDIT );
+							SongUtil::GetSteps( GetSelectedSong(), v, GetSelectedStepsType(), DIFFICULTY_EDIT );
 							StepsUtil::SortStepsByDescription( v );
 							FOREACH_CONST( Steps*, v, p )
 								m_vpSteps.push_back( StepsAndDifficulty(*p,dc) );
@@ -437,7 +437,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				}
 				else
 				{
-					Steps *pSteps = GetSelectedSong()->GetStepsByDifficulty( GetSelectedStepsType(), dc );
+					Steps *pSteps = SongUtil::GetStepsByDifficulty( GetSelectedSong(), GetSelectedStepsType(), dc );
 					if( pSteps && UNLOCKMAN->StepsIsLocked( GetSelectedSong(), pSteps ) )
 						pSteps = NULL;
 
@@ -512,14 +512,14 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			// fill in m_vpSourceSteps
 			if( dc != DIFFICULTY_EDIT )
 			{
-				Steps *pSteps = GetSelectedSong()->GetStepsByDifficulty( GetSelectedSourceStepsType(), dc );
+				Steps *pSteps = SongUtil::GetStepsByDifficulty( GetSelectedSong(), GetSelectedSourceStepsType(), dc );
 				if( pSteps != NULL )
 					m_vpSourceSteps.push_back( StepsAndDifficulty(pSteps,dc) );
 			}
 			else
 			{
 				vector<Steps*> v;
-				GetSelectedSong()->GetSteps( v, GetSelectedSourceStepsType(), dc );
+				SongUtil::GetSteps( GetSelectedSong(), v, GetSelectedSourceStepsType(), dc );
 				StepsUtil::SortStepsByDescription( v );
 				FOREACH_CONST( Steps*, v, pSteps )
 					m_vpSourceSteps.push_back( StepsAndDifficulty(*pSteps,dc) );

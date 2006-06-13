@@ -14,6 +14,7 @@
 #include "ActorUtil.h"
 #include "AnnouncerManager.h"
 #include "MenuTimer.h"
+#include "SongUtil.h"
 #include "StepsUtil.h"
 #include "ScreenDimensions.h"
 #include "ScreenPrompt.h"
@@ -640,7 +641,7 @@ void ScreenEz2SelectMusic::MusicChanged()
 
 	for( pn = 0; pn < NUM_PLAYERS; ++pn)
 	{
-		pSong->GetSteps( m_arrayNotes[pn], GAMESTATE->GetCurrentStyle()->m_StepsType );
+		SongUtil::GetSteps( pSong, m_arrayNotes[pn], GAMESTATE->GetCurrentStyle()->m_StepsType );
 		StepsUtil::SortNotesArrayByDifficulty( m_arrayNotes[pn] );
 	}
 

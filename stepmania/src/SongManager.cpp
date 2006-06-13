@@ -1033,7 +1033,7 @@ Song *SongManager::GetSongFromSteps( Steps *pSteps )
 	FOREACH_CONST( Song*, vSongs, song )
 	{
 		vector<Steps*> vSteps;
-		(*song)->GetSteps( vSteps );
+		SongUtil::GetSteps( *song, vSteps );
 
 		FOREACH_CONST( Steps*, vSteps, steps )
 		{
@@ -1171,7 +1171,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSong
 		Song* pSong = apSongs[s];
 
 		vector<Steps*> apSteps;
-		pSong->GetSteps( apSteps, sd->m_StepsType );
+		SongUtil::GetSteps( pSong, apSteps, sd->m_StepsType );
 		for( unsigned n=0; n<apSteps.size(); n++ )	// foreach Steps
 		{
 			Steps* pSteps = apSteps[n];
@@ -1678,7 +1678,7 @@ int SongManager::GetNumEditsLoadedFromProfile( ProfileSlot slot ) const
 	{
 		const Song *pSong = m_pSongs[s];
 		vector<Steps*> apSteps;
-		pSong->GetSteps( apSteps );
+		SongUtil::GetSteps( pSong, apSteps );
 
 		for( unsigned i = 0; i < apSteps.size(); ++i )
 		{

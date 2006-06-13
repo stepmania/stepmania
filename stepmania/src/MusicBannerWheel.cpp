@@ -21,6 +21,7 @@ TODO:
 #include "song.h"
 #include "Steps.h"
 #include "ActorUtil.h"
+#include "SongUtil.h"
 
 #define BANNERSPACING THEME->GetMetricI("ScreenEz2SelectMusic","BannerSpacing")
 #define MAXSONGSINBUFFER 5
@@ -68,7 +69,7 @@ MusicBannerWheel::MusicBannerWheel()
 		for ( unsigned i = 0; i < arraySongs.size(); i++)
 		{
 			//ONLY get non-autogenned steps
-			Steps* pSteps = arraySongs[i]->GetStepsByDifficulty( GAMESTATE->GetCurrentStyle()->m_StepsType, DIFFICULTY_INVALID, false );
+			Steps* pSteps = SongUtil::GetStepsByDifficulty( arraySongs[i], GAMESTATE->GetCurrentStyle()->m_StepsType, DIFFICULTY_INVALID, false );
 			if ( pSteps != NULL )
 				pNotAutogen.push_back( arraySongs[i] );
 		}

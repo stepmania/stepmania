@@ -307,7 +307,8 @@ UnlockEntryStatus UnlockEntry::GetUnlockEntryStatus() const
 	if( m_bRequirePassHardSteps && m_pSong )
 	{
 		vector<Steps*> vp;
-		m_pSong->GetSteps(
+		SongUtil::GetSteps(
+			m_pSong,
 			vp, 
 			STEPS_TYPE_INVALID, 
 			DIFFICULTY_HARD
@@ -454,11 +455,11 @@ void UnlockManager::Load()
 		FOREACH_CONST( Song*, SONGMAN->GetAllSongs(), s )
 		{
 			// If no hard steps to play to unlock, skip
-			if( (*s)->GetOneSteps(STEPS_TYPE_INVALID, DIFFICULTY_HARD) == NULL )
+			if( SongUtil::GetOneSteps(*s, STEPS_TYPE_INVALID, DIFFICULTY_HARD) == NULL )
 				continue;
 			
 			// If no challenge steps to unlock, skip
-			if( (*s)->GetOneSteps(STEPS_TYPE_INVALID, DIFFICULTY_CHALLENGE) == NULL )
+			if( SongUtil::GetOneSteps(*s, STEPS_TYPE_INVALID, DIFFICULTY_CHALLENGE) == NULL )
 				continue;
 
 			if( SONGMAN->WasLoadedFromAdditionalSongs(*s) )

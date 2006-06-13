@@ -105,13 +105,13 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 			const RString &sSong = Basename( entry.pSong->GetSongDir() );
 			
 			f.Write( "#SONG:" );
-			if( !entry.sSongGroup.empty() )
-				f.Write( entry.sSongGroup + '/' );
+			if( !entry.songCriteria.m_sGroupName.empty() )
+				f.Write( entry.songCriteria.m_sGroupName + '/' );
 			f.Write( sSong );
 		}
-		else if( !entry.sSongGroup.empty() )
+		else if( !entry.songCriteria.m_sGroupName.empty() )
 		{
-			f.Write( ssprintf( "#SONG:%s/*", entry.sSongGroup.c_str() ) );
+			f.Write( ssprintf( "#SONG:%s/*", entry.songCriteria.m_sGroupName.c_str() ) );
 		}
 		else 
 		{
@@ -119,10 +119,10 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 		}
 
 		f.Write( ":" );
-		if( entry.baseDifficulty != DIFFICULTY_INVALID )
-			f.Write( DifficultyToString(entry.baseDifficulty) );
-		else if( entry.iLowMeter != -1  &&  entry.iHighMeter != -1 )
-			f.Write( ssprintf( "%d..%d", entry.iLowMeter, entry.iHighMeter ) );
+		if( entry.stepsCriteria.m_difficulty != DIFFICULTY_INVALID )
+			f.Write( DifficultyToString(entry.stepsCriteria.m_difficulty) );
+		else if( entry.stepsCriteria.m_iLowMeter != -1  &&  entry.stepsCriteria.m_iHighMeter != -1 )
+			f.Write( ssprintf( "%d..%d", entry.stepsCriteria.m_iLowMeter, entry.stepsCriteria.m_iHighMeter ) );
 		f.Write( ":" );
 
 		RString sModifiers = entry.sModifiers;

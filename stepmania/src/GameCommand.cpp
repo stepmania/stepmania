@@ -254,9 +254,9 @@ void GameCommand::LoadOne( const Command& cmd )
 
 			Difficulty dc = StringToDifficulty( sSteps );
 			if( dc != DIFFICULTY_EDIT )
-				m_pSteps = pSong->GetStepsByDifficulty( pStyle->m_StepsType, dc );
+				m_pSteps = SongUtil::GetStepsByDifficulty( pSong, pStyle->m_StepsType, dc );
 			else
-				m_pSteps = pSong->GetStepsByDescription( pStyle->m_StepsType, sSteps );
+				m_pSteps = SongUtil::GetStepsByDescription( pSong, pStyle->m_StepsType, sSteps );
 			if( m_pSteps == NULL )
 			{
 				m_sInvalidReason = "steps not found";

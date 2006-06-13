@@ -13,6 +13,7 @@
 #include "CommonMetrics.h"
 #include "Command.h"
 #include "Foreach.h"
+#include "SongUtil.h"
 
 #define MAX_METERS NUM_Difficulty + MAX_EDITS_PER_SONG
 
@@ -276,7 +277,7 @@ void DifficultyList::SetFromGameState()
 		else
 		{
 			vector<Steps*>	CurSteps;
-			pSong->GetSteps( CurSteps, GAMESTATE->GetCurrentStyle()->m_StepsType );
+			SongUtil::GetSteps( pSong, CurSteps, GAMESTATE->GetCurrentStyle()->m_StepsType );
 
 			/* Should match the sort in ScreenSelectMusic::AfterMusicChange. */
 			StepsUtil::RemoveLockedSteps( pSong, CurSteps );

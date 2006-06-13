@@ -11,6 +11,8 @@
 #include <set>
 #include "EnumHelper.h"
 #include "RageTypes.h"
+#include "SongUtil.h"
+#include "StepsUtil.h"
 
 class PlayerOptions;
 class SongOptions;
@@ -59,11 +61,9 @@ public:
 	// filter criteria, applied from top to bottom
 	// TODO: change this to be a SongID
 	Song* pSong;			// don't filter if NULL
-	RString sSongGroup;		// don't filter if empty
-	Difficulty baseDifficulty;	// don't filter if DIFFICULTY_INVALID
+	SongCriteria songCriteria;
+	StepsCriteria stepsCriteria;
 	bool bNoDifficult;		// if true, CourseDifficulty doesn't affect this entry
-	int iLowMeter;			// don't filter if -1
-	int iHighMeter;			// don't filter if -1
 	
 	SongSort songSort;		// sort by this after filtering
 	int iChooseIndex;		// 
@@ -77,11 +77,7 @@ public:
 		bSecret = false;
 
 		pSong = NULL;
-		sSongGroup = "";
-		baseDifficulty = DIFFICULTY_INVALID;
 		bNoDifficult = false;
-		iLowMeter = -1;
-		iHighMeter = -1;
 
 		songSort = SongSort_Randomize;
 		iChooseIndex = 0;

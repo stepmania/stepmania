@@ -186,30 +186,6 @@ public:
 	bool HasStepsTypeAndDifficulty( StepsType st, Difficulty dc ) const;
 	const vector<Steps*>& GetAllSteps() const { return m_vpSteps; }
 	const vector<Steps*>& GetStepsByStepsType( StepsType st ) const { return m_vpStepsByType[st]; }
-	void GetSteps( 
-		vector<Steps*>& arrayAddTo, 
-		StepsType st = STEPS_TYPE_INVALID, 
-		Difficulty dc = DIFFICULTY_INVALID, 
-		int iMeterLow = -1, 
-		int iMeterHigh = -1, 
-		const RString &sDescription = "", 
-		bool bIncludeAutoGen = true, 
-		unsigned uHash = 0,
-		int iMaxToGet = -1 
-		) const;
-	Steps* GetOneSteps( 
-		StepsType st = STEPS_TYPE_INVALID, 
-		Difficulty dc = DIFFICULTY_INVALID, 
-		int iMeterLow = -1, 
-		int iMeterHigh = -1, 
-		const RString &sDescription = "", 
-		unsigned uHash = 0,
-		bool bIncludeAutoGen = true
-		) const;
-	Steps* GetStepsByDifficulty( StepsType st, Difficulty dc, bool bIncludeAutoGen = true ) const;
-	Steps* GetStepsByMeter( StepsType st, int iMeterLow, int iMeterHigh ) const;
-	Steps* GetStepsByDescription( StepsType st, RString sDescription ) const;
-	Steps* GetClosestNotes( StepsType st, Difficulty dc, bool bIgnoreLocked=false ) const;
 	bool IsEasy( StepsType st ) const;
 	bool IsTutorial() const;
 	bool HasEdits( StepsType st ) const;
@@ -220,7 +196,7 @@ public:
 	bool ShowInDemonstrationAndRanking() const;
 
 	void AddSteps( Steps* pSteps );		// we are responsible for deleting the memory pointed to by pSteps!
-	void DeleteSteps( const Steps* pSteps );
+	void DeleteSteps( const Steps* pSteps, bool bReAutoGen = true );
 
 	void FreeAllLoadedFromProfile( ProfileSlot slot = ProfileSlot_INVALID );
 	bool WasLoadedFromProfile() const { return m_LoadedFromProfile != ProfileSlot_INVALID; }
@@ -239,8 +215,6 @@ public:
 	void PushSelf( lua_State *L );
 
 private:
-	void AdjustDuplicateSteps(); // part of TidyUpData
-	void DeleteDuplicateSteps( vector<Steps*> &vSteps );
 
 	vector<Steps*> m_vpSteps;
 	vector<Steps*> m_vpStepsByType[NUM_STEPS_TYPES];

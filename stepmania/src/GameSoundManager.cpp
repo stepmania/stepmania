@@ -14,6 +14,7 @@
 #include "song.h"
 #include "Steps.h"
 #include "LightsManager.h"
+#include "SongUtil.h"
 
 GameSoundManager *SOUND = NULL;
 
@@ -142,7 +143,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 			ToPlay.HasTiming = true;
 			ToPlay.timing_data = song.m_Timing;
 			// get cabinet lights if any
-			Steps *pStepsCabinetLights = song.GetOneSteps( STEPS_TYPE_LIGHTS_CABINET );
+			Steps *pStepsCabinetLights = SongUtil::GetOneSteps( &song, STEPS_TYPE_LIGHTS_CABINET );
 			if( pStepsCabinetLights )
 				pStepsCabinetLights->GetNoteData( ToPlay.lights_data );
 		}

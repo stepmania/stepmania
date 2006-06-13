@@ -53,6 +53,7 @@
 #include "Foreground.h"
 #include "ScreenSaveSync.h"
 #include "AdjustSync.h"
+#include "SongUtil.h"
 
 //
 // Defines
@@ -1295,7 +1296,7 @@ void ScreenGameplay::LoadLights()
 	m_CabinetLightsNoteData.Init();
 	ASSERT( GAMESTATE->m_pCurSong );
 
-	const Steps *pSteps = GAMESTATE->m_pCurSong->GetClosestNotes( STEPS_TYPE_LIGHTS_CABINET, DIFFICULTY_MEDIUM );
+	const Steps *pSteps = SongUtil::GetClosestNotes( GAMESTATE->m_pCurSong, STEPS_TYPE_LIGHTS_CABINET, DIFFICULTY_MEDIUM );
 	if( pSteps != NULL )
 	{
 		pSteps->GetNoteData( m_CabinetLightsNoteData );
@@ -1312,7 +1313,7 @@ void ScreenGameplay::LoadLights()
 	Difficulty d1 = DIFFICULTY_INVALID;
 	if( asDifficulties.size() > 0 )
 		d1 = StringToDifficulty( asDifficulties[0] );
-	pSteps = GAMESTATE->m_pCurSong->GetClosestNotes( GAMESTATE->GetCurrentStyle()->m_StepsType, d1 );
+	pSteps = SongUtil::GetClosestNotes( GAMESTATE->m_pCurSong, GAMESTATE->GetCurrentStyle()->m_StepsType, d1 );
 
 	// If we can't find anything at all, stop.
 	if( pSteps == NULL )
@@ -1324,7 +1325,7 @@ void ScreenGameplay::LoadLights()
 	if( asDifficulties.size() > 1 )
 	{
 		Difficulty d2 = StringToDifficulty( asDifficulties[1] );
-		const Steps *pSteps2 = GAMESTATE->m_pCurSong->GetClosestNotes( GAMESTATE->GetCurrentStyle()->m_StepsType, d2 );
+		const Steps *pSteps2 = SongUtil::GetClosestNotes( GAMESTATE->m_pCurSong, GAMESTATE->GetCurrentStyle()->m_StepsType, d2 );
 		if( pSteps != NULL && pSteps2 != NULL && pSteps != pSteps2 )
 		{
 			NoteData TapNoteData2;
