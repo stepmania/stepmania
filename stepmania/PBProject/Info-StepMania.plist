@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>EXECUTABLE_NAME</string>
 	<key>CFBundleGetInfoString</key>
-	<string>PRODUCT_ID_BARE PRODUCT_VER_BARE</string>
+	<string>PRODUCT_FAMILY_BARE PRODUCT_VER_BARE</string>
 	<key>CFBundleIconFile</key>
 	<string>smicon.icns</string>
 	<key>CFBundleIdentifier</key>
