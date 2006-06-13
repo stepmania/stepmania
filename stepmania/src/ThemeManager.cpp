@@ -535,7 +535,7 @@ try_element_again:
 		g_ThemePathCache[category].clear();
 
 		RString message = ssprintf( 
-			"ThemeManager:  There is more than one theme element element that matches "
+			"ThemeManager:  There is more than one theme element that matches "
 			"'%s/%s/%s'.  Please remove all but one of these matches.",
 			sThemeName.c_str(), sCategory.c_str(), ClassAndElementToFileName(sClassName,sElement).c_str() );
 
