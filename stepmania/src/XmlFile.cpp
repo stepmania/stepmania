@@ -76,6 +76,9 @@ static bool XIsEmptyString( const RString &s )
 // put string of (psz~end) on ps string
 static void SetString( const RString &s, int iStart, int iEnd, RString* ps, bool trim = false )
 {
+	ASSERT( iStart >= 0 );
+	ASSERT( iEnd < int(s.length()) );
+	ASSERT( iStart <= iEnd );
 	if( trim )
 	{
 		while( iStart < iEnd && isspace(s[iStart]) )
