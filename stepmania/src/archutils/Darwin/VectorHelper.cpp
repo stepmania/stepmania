@@ -1,7 +1,6 @@
 #include "global.h"
 #include "VectorHelper.h"
 #include "RageUtil.h"
-#include "RageLog.h"
 #include <sys/sysctl.h>
 
 #ifdef USE_VEC
@@ -96,7 +95,6 @@ void Vector::FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, s
 			 * we don't want to increment twice so decrement the index. */
 			index -= 16;
 		}
-		ASSERT( index <= 0 );
 		while( size >= 32 )
 		{
 			vSInt16 load2Src  = vec_ld(  15, src );
