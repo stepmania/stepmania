@@ -3058,7 +3058,6 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				case expand_4_3:	NoteDataUtil::Scale( m_Clipboard, fScale );	break;
 				case expand_3_2:	NoteDataUtil::Scale( m_Clipboard, fScale );	break;
 				case expand_2x:		NoteDataUtil::Scale( m_Clipboard, fScale );	break;
-				default:		ASSERT(0);
 				}
 
 				int iOldClipboardRow = m_NoteFieldEdit.m_iEndMarker - m_NoteFieldEdit.m_iBeginMarker;
