@@ -127,7 +127,7 @@ SubscriptionManager.h \
 StyleInput.h TimingData.cpp TimingData.h \
 ThemeMetric.h \
 Trail.cpp Trail.h TrailUtil.cpp TrailUtil.h TitleSubstitution.cpp TitleSubstitution.h \
-Tween.cpp Tween.h
+Tween.cpp Tween.h ExportNsisStrings.h ExportNsisStrings.cpp
 
 FileTypes = IniFile.cpp IniFile.h \
 MsdFile.cpp MsdFile.h \
@@ -142,7 +142,9 @@ global.cpp global.h \
 SpecialFiles.cpp SpecialFiles.h
 
 LoadingWindow = arch/LoadingWindow/LoadingWindow.h \
-		arch/LoadingWindow/LoadingWindow_Null.h
+		arch/LoadingWindow/LoadingWindow_Null.h \
+		arch/LoadingWindow/LoadingWindow_X11.cpp \
+		arch/LoadingWindow/LoadingWindow_X11.h
 
 if HAVE_GTK
 LoadingWindow += arch/LoadingWindow/LoadingWindow_Gtk.cpp arch/LoadingWindow/LoadingWindow_Gtk.h
