@@ -141,7 +141,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 		int iNumUnlockedCourses = 0;
 		FOREACH_CONST( UnlockEntry, UNLOCKMAN->m_UnlockEntries, e )
 		{
-			if( e->GetUnlockEntryStatus() == UnlockEntryStatus_Unlocked )
+			if( e->IsLocked() )
 				continue;
 			switch( e->m_Type )
 			{
