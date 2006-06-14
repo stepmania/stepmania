@@ -5,7 +5,7 @@
 
 // Don't forget to also change ProductInfo.inc!
 
-// Change these two
+// Change these three.
 #define PRODUCT_FAMILY_BARE StepMania
 #define PRODUCT_ID_BARE StepMania CVS
 #define PRODUCT_VER_BARE 4.0 CVS
