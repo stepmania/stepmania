@@ -187,15 +187,7 @@ bool ThemeManager::DoesThemeExist( const RString &sThemeName )
 
 bool ThemeManager::IsThemeSelectable( const RString &sThemeName )
 {
-	RString sDir = GetThemeDirFromName(sThemeName);
-	IniFile ini;
-	ini.ReadFile( sDir + THEME_INFO_INI );
-
-	bool b;
-	if( ini.GetValue("ThemeInfo","Selectable",b) && !b )
-		return false;
-
-	return true;
+	return sThemeName.Left(1) == "_";
 }
 
 RString ThemeManager::GetThemeDisplayName( const RString &sThemeName )
