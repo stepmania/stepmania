@@ -297,7 +297,7 @@ int NoteData::GetFirstTrackWithTapOrHoldHead( int row ) const
 void NoteData::AddHoldNote( int iTrack, int iStartRow, int iEndRow, TapNote tn )
 {
 	ASSERT( iStartRow>=0 && iEndRow>=0 );
-	ASSERT( iEndRow >= iStartRow );
+	ASSERT_M( iEndRow >= iStartRow, ssprinf("%d %d",iEndRow,iStartRow) );
 	
 	/* Include adjacent (non-overlapping) hold notes, since we need to merge with them. */
 	iterator begin, end;
