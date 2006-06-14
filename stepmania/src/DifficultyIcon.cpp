@@ -10,6 +10,7 @@
 #include "Trail.h"
 #include "ActorUtil.h"
 #include "XmlFile.h"
+#include "LuaManager.h"
 
 REGISTER_ACTOR_CLASS(DifficultyIcon)
 
@@ -45,8 +46,12 @@ void DifficultyIcon::LoadFromNode( const RString& sDir, const XNode* pNode )
 	if( !pNode->GetAttrValue( "File", sFile ) )
 		RageException::Throw( "MeterDisplay in " + sDir + " missing File attribute" );
 
-	sFile = sDir + sFile;
-	ActorUtil::ResolvePath( sFile, sDir );
+	LuaHelpers::RunAtExpressionS( sFile );
+	if( !sFile.empty() && sFile[0] != '/' )
+	{
+		sFile = sDir + sFile;
+		ActorUtil::ResolvePath( sFile, sDir );
+	}
 
 	Load( sFile );
 

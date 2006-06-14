@@ -43,8 +43,12 @@ void MeterDisplay::LoadFromNode( const RString& sDir, const XNode* pNode )
 		if( !pNode->GetAttrValue( "StreamPath", sStreamPath ) )
 			RageException::Throw( "MeterDisplay in " + sDir + " missing StreamPath attribute" );
 
-		sStreamPath = sDir + sStreamPath;
-		ActorUtil::ResolvePath( sStreamPath, sDir );
+		LuaHelpers::RunAtExpressionS( sStreamPath );
+		if( !sStreamPath.empty() && sStreamPath[0] != '/' )
+		{
+			sStreamPath = sDir + sStreamPath;
+			ActorUtil::ResolvePath( sStreamPath, sDir );
+		}
 
 		m_sprStream.Load( sStreamPath );
 		m_sprStream->SetZoomX( m_fStreamWidth / m_sprStream->GetUnzoomedWidth() );
