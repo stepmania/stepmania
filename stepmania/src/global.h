@@ -105,6 +105,9 @@ void NORETURN sm_crash( const char *reason = "Internal error" );
 #define ASSERT(COND) ASSERT_M((COND), "Assertion '" #COND "' failed")
 #endif
 
+/* Use this to catch switching on invalid values */
+#define DEFAULT_FAIL(i) 	default: FAIL_M( ssprintf("%i", i) )
+
 void ShowWarning( const char *file, int line, const char *message ); // don't pull in LOG here
 #define WARN(MESSAGE) (ShowWarning(__FILE__, __LINE__, MESSAGE))
 
