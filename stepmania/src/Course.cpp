@@ -525,6 +525,19 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 				vpPossibleSongs.push_back( *song );
 			}
 
+			// It looks bad to have the same song 2x in a row in a randomly generated course.
+			// Don't allow the same song to be played 2x in a row, unless there's only
+			// one song in vpPossibleSongs.
+			if( trail.m_vEntries.size() > 0  &&  vpPossibleSongs.size() > 1 )
+			{
+				const TrailEntry &teLast = trail.m_vEntries[trail.m_vEntries.size()-1];
+				for( int i=vpPossibleSongs.size()-1; i>=0; i-- )
+				{
+					if( vpPossibleSongs[i] == teLast.pSong )
+						vpPossibleSongs.erase( vpPossibleSongs.begin()+i );
+				}
+			}
+
 			// if there are no songs to choose from, abort now
 			if( vpPossibleSongs.empty() )
 				continue;
