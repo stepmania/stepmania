@@ -190,7 +190,9 @@ static void Language( int &sel, bool ToSel, const ConfOption *pConfOption )
 
 static void ThemeChoices( vector<RString> &out )
 {
-	THEME->GetThemeNames( out );
+	THEME->GetSelectableThemeNames( out );
+	FOREACH( RString, out, s )
+		*s = THEME->GetThemeDisplayName( *s );
 }
 
 static void DisplayResolutionChoices( vector<RString> &out )
@@ -210,14 +212,17 @@ static void Theme( int &sel, bool ToSel, const ConfOption *pConfOption )
 	vector<RString> choices;
 	pConfOption->MakeOptionsList( choices );
 
+	vector<RString> vsThemeNames;
+	THEME->GetSelectableThemeNames( vsThemeNames );
+
 	if( ToSel )
 	{
 		sel = 0;
-		for( unsigned i=1; i<choices.size(); i++ )
-			if( !stricmp(choices[i], THEME->GetCurThemeName()) )
+		for( unsigned i=1; i<vsThemeNames.size(); i++ )
+			if( !stricmp(vsThemeNames[i], THEME->GetCurThemeName()) )
 				sel = i;
 	} else {
-		const RString sNewTheme = choices[sel];
+		const RString sNewTheme = vsThemeNames[sel];
 		if( THEME->GetCurThemeName() != sNewTheme )
 			THEME->SwitchThemeAndLanguage( sNewTheme, THEME->GetCurLanguage(), PREFSMAN->m_bPseudoLocalize );
 	}

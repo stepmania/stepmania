@@ -4,7 +4,7 @@
 #include "RageUtil.h"
 #include "IniFile.h"
 
-const RString INSTALLER_LANGUAGES_DIR = "Installer/Languages/";
+const RString INSTALLER_LANGUAGES_DIR = "Themes/Installer/Languages/";
 
 void ExportNsisStrings::Do()
 {

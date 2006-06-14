@@ -38,7 +38,11 @@ public:
 	~ThemeManager();
 
 	void GetThemeNames( vector<RString>& AddTo );
+	void GetSelectableThemeNames( vector<RString>& AddTo );
+	int GetNumSelectableThemes();
 	bool DoesThemeExist( const RString &sThemeName );
+	bool ThemeIsSelectable( const RString &sThemeName );
+	RString GetThemeDisplayName( const RString &sThemeName );
 	void GetLanguages( vector<RString>& AddTo );
 	bool DoesLanguageExist( const RString &sLanguage );
 	void SwitchThemeAndLanguage( const RString &sThemeName, const RString &sLanguage, bool bPseudoLocalize );

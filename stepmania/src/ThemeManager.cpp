@@ -25,6 +25,8 @@
 
 ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the program
 
+static const RString THEME_INFO_INI = "ThemeInfo.ini";
+
 static const char *ElementCategoryNames[] = {
 	"BGAnimations",
 	"Fonts",
@@ -154,6 +156,23 @@ void ThemeManager::GetThemeNames( vector<RString>& AddTo )
 	StripCvs( AddTo );
 }
 
+void ThemeManager::GetSelectableThemeNames( vector<RString>& AddTo )
+{
+	GetThemeNames( AddTo );
+	for( int i=AddTo.size()-1; i>=0; i-- )
+	{
+		if( !IsThemeSelectable(AddTo[i]) )
+			AddTo.erase( AddTo.begin()+i );
+	}
+}
+
+int ThemeManager::GetNumSelectableThemes()
+{
+	vector<RString> vs;
+	GetSelectableThemeNames( vs );
+	return vs.size();
+}
+
 bool ThemeManager::DoesThemeExist( const RString &sThemeName )
 {
 	vector<RString> asThemeNames;	
@@ -164,6 +183,32 @@ bool ThemeManager::DoesThemeExist( const RString &sThemeName )
 			return true;
 	}
 	return false;
+}
+
+bool ThemeManager::IsThemeSelectable( const RString &sThemeName )
+{
+	RString sDir = GetThemeDirFromName(sThemeName);
+	IniFile ini;
+	ini.ReadFile( sDir + THEME_INFO_INI );
+
+	bool b;
+	if( ini.GetValue("ThemeInfo","Selectable",b) && !b )
+		return false;
+
+	return true;
+}
+
+RString ThemeManager::GetThemeDisplayName( const RString &sThemeName )
+{
+	RString sDir = GetThemeDirFromName(sThemeName);
+	IniFile ini;
+	ini.ReadFile( sDir + THEME_INFO_INI );
+
+	RString s;
+	if( ini.GetValue("ThemeInfo","DisplayName",s) )
+		return s;
+
+	return sThemeName;
 }
 
 void ThemeManager::GetLanguages( vector<RString>& AddTo )
@@ -1070,6 +1115,7 @@ public:
 	static int GetPathG( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathG(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathB( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathB(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathS( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathS(SArg(1),SArg(2)) ); return 1; }
+	static int GetNumSelectableThemes( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetNumSelectableThemes() ); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -1078,6 +1124,7 @@ public:
 		ADD_METHOD( GetPathG );
 		ADD_METHOD( GetPathB );
 		ADD_METHOD( GetPathS );
+		ADD_METHOD( GetNumSelectableThemes );
 
 		Luna<T>::Register( L );
 
