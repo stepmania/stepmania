@@ -97,6 +97,14 @@ function GetRandomSongBackground()
 	return THEME:GetPathG("", "_blank")
 end
 
+function GetSongBackground()
+	local Path = GAMESTATE:GetCurrentSong():GetBackgroundPath()
+	if not Path then
+		return THEME:GetPathG("Common","fallback background")
+	end
+	return Path
+end
+
 -- (c) 2005 Glenn Maynard, Chris Danford
 -- All rights reserved.
 -- 
