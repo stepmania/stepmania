@@ -18,14 +18,11 @@ echo Copying...
 
 mkdir $PRODUCTVER
 cp -dpR autoconf $PRODUCTVER/
-cp -dpR Utils $PRODUCTVER/
+#cp -dpR Utils $PRODUCTVER/
 cp -dpR src $PRODUCTVER/
 
-cp Docs/Copying.txt NEWS README-FIRST.html Makefile.am aclocal.m4 \
+cp Docs/Copying.MAD Docs/Licenses.txt Makefile.am aclocal.m4 \
    configure Makefile.in configure.ac   $PRODUCTVER
-
-mkdir $PRODUCTVER/Docs/
-cp Docs/ChangeLog.txt $PRODUCTVER/Docs/
 
 echo Pruning...
 cd $PRODUCTVER/src
@@ -61,7 +58,7 @@ find . -type f -name '*.a' | xargs rm -rf
 find . -type f -name '*.o' | xargs rm -rf
 
 cd ..
-rm -rf Utils/Font\ generation/
+#rm -rf Utils/Font\ generation/
 
 echo Archiving...
 tar zchvf "$PRODUCTVER".tar.gz $PRODUCTVER/
