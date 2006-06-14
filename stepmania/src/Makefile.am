@@ -127,7 +127,7 @@ SubscriptionManager.h \
 StyleInput.h TimingData.cpp TimingData.h \
 ThemeMetric.h \
 Trail.cpp Trail.h TrailUtil.cpp TrailUtil.h TitleSubstitution.cpp TitleSubstitution.h \
-Tween.cpp Tween.h ExportNsisStrings.h ExportNsisStrings.cpp
+Tween.cpp Tween.h
 
 FileTypes = IniFile.cpp IniFile.h \
 MsdFile.cpp MsdFile.h \
