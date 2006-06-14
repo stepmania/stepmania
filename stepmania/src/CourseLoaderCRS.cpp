@@ -63,9 +63,6 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 		else if( 0 == stricmp(sValueName, "GAINSECONDS") )
 		{
 			fGainSeconds = StringToFloat( sParams[1] );
-			
-			if( !finite(fGainSeconds) )
-				fGainSeconds = 0.0f;
 		}
 		else if( 0 == stricmp(sValueName, "METER") )
 		{
@@ -225,6 +222,8 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 					new_entry.stepsCriteria.m_iLowMeter = 3;
 					new_entry.stepsCriteria.m_iHighMeter = 6;
 				}
+				new_entry.stepsCriteria.m_iLowMeter = max( new_entry.stepsCriteria.m_iLowMeter, 1 );
+				new_entry.stepsCriteria.m_iHighMeter = max( new_entry.stepsCriteria.m_iHighMeter, new_entry.stepsCriteria.m_iLowMeter );
 			}
 
 			{
@@ -341,7 +340,11 @@ bool CourseLoaderCRS::LoadFromCRSFile( const RString &_sPath, Course &out )
 
 	MsdFile msd;
 	if( !msd.ReadFile(sPath) )
-		RageException::Throw( "Error opening CRS file '%s'.", sPath.c_str() );
+	{
+		
+		LOG->Trace( "Error opening CRS file '%s': %s.", sPath.c_str(), msd.GetError().c_str() );
+		return false;
+	}
 	
 	if( !LoadFromMsd(sPath, msd, out, bUseCache) )
 		return false;
