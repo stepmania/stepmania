@@ -79,7 +79,7 @@ private:
 	vector<int>		m_AlphabetLetter[NUM_PLAYERS];
 	int			m_SelectedChar[NUM_PLAYERS];
 	AutoActor		m_sprOutOfRanking[NUM_PLAYERS];	// shown if didn't make any high scores
-	Sprite			m_sprNameFrame[NUM_PLAYERS];
+	AutoActor		m_sprNameFrame[NUM_PLAYERS];
 	BitmapText		m_textSelection[NUM_PLAYERS];
 
 	/* Feat display: */
@@ -89,10 +89,10 @@ private:
 		GradeDisplay		m_Grade;
 		DifficultyIcon		m_DifficultyIcon;
 		DifficultyMeter		m_DifficultyMeter;
-		BitmapText			m_textCategory;
+		BitmapText		m_textCategory;
 		PercentageDisplay	m_textScore;
-		Banner				m_sprBanner;
-		Sprite				m_sprBannerFrame;
+		Banner			m_sprBanner;
+		AutoActor		m_sprBannerFrame;
 	};
 
 	vector<FeatDisplay>		m_FeatDisplay[NUM_PLAYERS];

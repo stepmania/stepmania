@@ -221,10 +221,10 @@ void ScreenNameEntryTraditional::Init()
 				continue;	// skip
 			}
 
-			m_sprNameFrame[p].SetName( ssprintf("EntryFrameP%i",p+1) );
 			m_sprNameFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("name frame p%i",p+1)) );
+			m_sprNameFrame[p]->SetName( ssprintf("EntryFrameP%i",p+1) );
 			SET_XY_AND_ON_COMMAND( m_sprNameFrame[p] );
-			this->AddChild( &m_sprNameFrame[p] );
+			this->AddChild( m_sprNameFrame[p] );
 
 			m_Keyboard[p].SetName( ssprintf("KeyboardP%i",p+1) );
 			SET_XY_AND_ON_COMMAND( m_Keyboard[p] );
@@ -427,10 +427,10 @@ void ScreenNameEntryTraditional::Init()
 
 			/* We always show the banner frame (if any), because fading from a graphic to
 			 * itself is ugly. */
-			display.m_sprBannerFrame.SetName( ssprintf("BannerFrameP%i",p+1) );
 			display.m_sprBannerFrame.Load( THEME->GetPathG(m_sName,ssprintf("banner frame p%i",p+1)) );
+			display.m_sprBannerFrame->SetName( ssprintf("BannerFrameP%i",p+1) );
 			SET_XY_AND_ON_COMMAND( display.m_sprBannerFrame );
-			this->AddChild( &display.m_sprBannerFrame );
+			this->AddChild( display.m_sprBannerFrame );
 		}
 #undef SET_ON
 	}
