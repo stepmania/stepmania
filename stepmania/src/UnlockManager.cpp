@@ -589,10 +589,6 @@ void UnlockManager::UpdateCachedPointers()
 
 void UnlockManager::UnlockEntryID( RString sEntryID )
 {
-	FOREACH_PlayerNumber( pn )
-		if( PROFILEMAN->IsPersistentProfile(pn) )
-			PROFILEMAN->GetProfile(pn)->m_UnlockedEntryIDs.insert( sEntryID );
-
 	PROFILEMAN->GetMachineProfile()->m_UnlockedEntryIDs.insert( sEntryID );
 	SONGMAN->InvalidateCachedTrails();
 }
