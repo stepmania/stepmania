@@ -432,7 +432,7 @@ void UnlockManager::Load()
 			{
 				bRoulette = true;
 			}
-			else if( sName == "RequrePassHardSteps" )
+			else if( sName == "requrepasshardsteps" )
 			{
 				current.m_bRequirePassHardSteps = true;
 			}
