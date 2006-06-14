@@ -124,6 +124,7 @@ void NoteField::Load(
 	int iFirstPixelToDraw, 
 	int iLastPixelToDraw )
 {
+	ASSERT( pNoteData );
 	m_pNoteData = pNoteData;
 	m_iStartDrawingPixel = iFirstPixelToDraw;
 	m_iEndDrawingPixel = iLastPixelToDraw;
