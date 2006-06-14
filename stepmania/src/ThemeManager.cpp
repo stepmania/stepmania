@@ -187,7 +187,7 @@ bool ThemeManager::DoesThemeExist( const RString &sThemeName )
 
 bool ThemeManager::IsThemeSelectable( const RString &sThemeName )
 {
-	return sThemeName.Left(1) == "_";
+	return sThemeName.Left(1) != "_";
 }
 
 RString ThemeManager::GetThemeDisplayName( const RString &sThemeName )
