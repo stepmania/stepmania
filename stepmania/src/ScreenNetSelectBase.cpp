@@ -124,7 +124,7 @@ void ScreenNetSelectBase::Input( const InputEventPlus &input )
 
 		if( (c >= ' ') && (!bHoldingCtrl) )
 		{
-			m_sTextInput += c;
+			m_sTextInput += WStringToRString(wstring()+c);
 			UpdateTextInput();
 		}
 
