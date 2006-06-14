@@ -948,8 +948,8 @@ void ScreenEdit::Update( float fDeltaTime )
 static LocalizedString CURRENT_BEAT("ScreenEdit", "Current beat");
 static LocalizedString CURRENT_SECOND("ScreenEdit", "Current second");
 static LocalizedString SNAP_TO("ScreenEdit", "Snap to");
+static LocalizedString NOTES("ScreenEdit", "%s notes");
 static LocalizedString SELECTION_BEAT("ScreenEdit", "Selection beat");
-
 static LocalizedString DIFFICULTY("ScreenEdit", "Difficulty");
 static LocalizedString DESCRIPTION("ScreenEdit", "Description");
 static LocalizedString MAIN_TITLE("ScreenEdit", "Main title");
@@ -963,7 +963,6 @@ static LocalizedString ROLLS("ScreenEdit", "Rolls");
 static LocalizedString BEAT_0_OFFSET("ScreenEdit", "Beat 0 offset");
 static LocalizedString PREVIEW_START("ScreenEdit", "Preview Start");
 static LocalizedString PREVIEW_LENGTH("ScreenEdit", "Preview Length");
-
 void ScreenEdit::UpdateTextInfo()
 {
 	if( m_pSteps == NULL )
@@ -978,7 +977,7 @@ void ScreenEdit::UpdateTextInfo()
 
 	m_bTextInfoNeedsUpdate = false;
 
-	RString sNoteType = NoteTypeToLocalizedString(m_SnapDisplay.GetNoteType());
+	RString sNoteType = ssprintf( NOTES.GetValue(), NoteTypeToLocalizedString(m_SnapDisplay.GetNoteType()).c_str() );
 
 	RString sText;
 	sText += ssprintf( "%s:\n  %.3f\n",	CURRENT_BEAT.GetValue().c_str(), GAMESTATE->m_fSongBeat );
