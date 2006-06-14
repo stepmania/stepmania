@@ -1390,7 +1390,8 @@ void SongManager::UpdatePopular()
 		if( apBestSongs[j]->GetDisplayed() != Song::SHOW_ALWAYS )
 			bFiltered = true;
 		/* Filter out locked songs. */
-		if( UNLOCKMAN->SongIsLocked(apBestSongs[j]) )
+		// XXX Hack, this depends on UNLOCKMAN being around.
+		if( UNLOCKMAN && UNLOCKMAN->SongIsLocked(apBestSongs[j]) )
 			bFiltered = true;
 		if( !bFiltered )
 			continue;
