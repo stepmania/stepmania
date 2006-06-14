@@ -34,10 +34,10 @@ void WheelNotifyIcon::SetFlags( Flags flags )
 
 	switch( flags.iStagesForSong )
 	{
-	case 1:										break;
+	case 1:						break;
 	case 2:	m_vIconsToShow.push_back( long_ver );	break;
 	case 3:	m_vIconsToShow.push_back( marathon );	break;
-	default:	ASSERT(0);
+	default:	FAIL_M( ssprintf("flags.iStagesForSong = %d", flags.iStagesForSong) );
 	}
 
 	if( flags.bHasBeginnerOr1Meter && (bool)SHOW_TRAINING )
