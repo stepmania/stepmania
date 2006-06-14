@@ -714,14 +714,19 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 	// init music status icons
 	for( unsigned i=0; i<arrayWheelItemDatas.size(); i++ )
 	{
-		Song* pSong = arrayWheelItemDatas[i].m_pSong;
-		if( pSong == NULL )
-			continue;
-
 		WheelItemData& WID = arrayWheelItemDatas[i];
-		WID.m_Flags.bHasBeginnerOr1Meter = pSong->IsEasy( GAMESTATE->GetCurrentStyle()->m_StepsType );
-		WID.m_Flags.bEdits = pSong->HasEdits( GAMESTATE->GetCurrentStyle()->m_StepsType );
-		WID.m_Flags.iStagesForSong = SongManager::GetNumStagesForSong( pSong );
+		if( WID.m_pSong != NULL )
+		{
+			WID.m_Flags.bHasBeginnerOr1Meter = WID.m_pSong->IsEasy( GAMESTATE->GetCurrentStyle()->m_StepsType );
+			WID.m_Flags.bEdits = WID.m_pSong->HasEdits( GAMESTATE->GetCurrentStyle()->m_StepsType );
+			WID.m_Flags.iStagesForSong = SongManager::GetNumStagesForSong( WID.m_pSong );
+		}
+		else if( WID.m_pCourse != NULL )
+		{
+			WID.m_Flags.bHasBeginnerOr1Meter = false;
+			WID.m_Flags.bEdits = WID.m_pCourse->IsAnEdit();
+			WID.m_Flags.iStagesForSong = 1;
+		}
 	}
 
 	// init crowns

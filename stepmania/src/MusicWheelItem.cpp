@@ -18,20 +18,20 @@
 static RString GRADE_X_NAME( size_t p ) { return ssprintf("GradeP%dX",int(p+1)); }
 static RString GRADE_Y_NAME( size_t p ) { return ssprintf("GradeP%dY",int(p+1)); }
 
-static ThemeMetric<float>				ICON_X				("MusicWheelItem","IconX");
-static ThemeMetric<float>				ICON_Y				("MusicWheelItem","IconY");
-static ThemeMetric<apActorCommands>		ICON_ON_COMMAND		("MusicWheelItem","IconOnCommand");
-static ThemeMetric<float>				SONG_NAME_X			("MusicWheelItem","SongNameX");
-static ThemeMetric<float>				SONG_NAME_Y			("MusicWheelItem","SongNameY");
-static ThemeMetric<apActorCommands>		SONG_NAME_ON_COMMAND("MusicWheelItem","SongNameOnCommand");
-static ThemeMetric<float>				SECTION_X			("MusicWheelItem","SectionX");
-static ThemeMetric<float>				SECTION_Y			("MusicWheelItem","SectionY");
-static ThemeMetric<apActorCommands>		SECTION_ON_COMMAND	("MusicWheelItem","SectionOnCommand");
-static ThemeMetric<float>				ROULETTE_X			("MusicWheelItem","RouletteX");
-static ThemeMetric<float>				ROULETTE_Y			("MusicWheelItem","RouletteY");
-static ThemeMetric<apActorCommands>		ROULETTE_ON_COMMAND	("MusicWheelItem","RouletteOnCommand");
-static ThemeMetric1D<float>				GRADE_X				("MusicWheelItem",GRADE_X_NAME,NUM_PLAYERS);
-static ThemeMetric1D<float>				GRADE_Y				("MusicWheelItem",GRADE_Y_NAME,NUM_PLAYERS);
+static ThemeMetric<float>		ICON_X			("MusicWheelItem","IconX");
+static ThemeMetric<float>		ICON_Y			("MusicWheelItem","IconY");
+static ThemeMetric<apActorCommands>	ICON_ON_COMMAND		("MusicWheelItem","IconOnCommand");
+static ThemeMetric<float>		SONG_NAME_X		("MusicWheelItem","SongNameX");
+static ThemeMetric<float>		SONG_NAME_Y		("MusicWheelItem","SongNameY");
+static ThemeMetric<apActorCommands>	SONG_NAME_ON_COMMAND	("MusicWheelItem","SongNameOnCommand");
+static ThemeMetric<float>		SECTION_X		("MusicWheelItem","SectionX");
+static ThemeMetric<float>		SECTION_Y		("MusicWheelItem","SectionY");
+static ThemeMetric<apActorCommands>	SECTION_ON_COMMAND	("MusicWheelItem","SectionOnCommand");
+static ThemeMetric<float>		ROULETTE_X		("MusicWheelItem","RouletteX");
+static ThemeMetric<float>		ROULETTE_Y		("MusicWheelItem","RouletteY");
+static ThemeMetric<apActorCommands>	ROULETTE_ON_COMMAND	("MusicWheelItem","RouletteOnCommand");
+static ThemeMetric1D<float>		GRADE_X			("MusicWheelItem",GRADE_X_NAME,NUM_PLAYERS);
+static ThemeMetric1D<float>		GRADE_Y			("MusicWheelItem",GRADE_Y_NAME,NUM_PLAYERS);
 
 
 WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, RString sSectionName, Course* pCourse, RageColor color ):
@@ -186,6 +186,8 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID, bool bExpanded 
 				sDisplayName = data->m_pCourse->GetDisplayFullTitle();
 				sTranslitName = data->m_pCourse->GetTranslitFullTitle();
 				bt = &m_textCourse;
+				m_WheelNotifyIcon.SetFlags( data->m_Flags );
+				m_WheelNotifyIcon.SetHidden( false );
 				break;
 			case TYPE_SORT:
 				sDisplayName = data->m_sLabel;
