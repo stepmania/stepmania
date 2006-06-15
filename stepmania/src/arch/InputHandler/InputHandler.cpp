@@ -120,13 +120,8 @@ RString InputHandler::GetDeviceSpecificInputString( const DeviceInput &di )
 	if( di.device == DEVICE_KEYBOARD )
 	{
 		wchar_t c = DeviceButtonToChar( di.button, false );
-		if( c )
-		{
-			if( c == L' ' )
-				return SPACE.GetValue();	// Don't show "Key  " for space.
-			else
-				return "Key " + Capitalize( WStringToRString(wstring()+c) );
-		}
+		if( c && c != L' ' )				// Don't show "Key  " for space.
+			return "Key " + Capitalize( WStringToRString(wstring()+c) );
 		return DeviceButtonToString( di.button );
 	}
 
@@ -141,6 +136,7 @@ RString InputHandler::GetLocalizedInputString( const DeviceInput &di )
 	case KEY_END:		return END.GetValue();
 	case KEY_UP:		return UP.GetValue();
 	case KEY_DOWN:		return DOWN.GetValue();
+	case KEY_SPACE:		return SPACE.GetValue();
 	case KEY_LSHIFT: case KEY_RSHIFT:	return SHIFT.GetValue();
 	case KEY_LCTRL:	 case KEY_RCTRL:	return CTRL.GetValue();
 	case KEY_LALT:	 case KEY_RALT:		return ALT.GetValue();
@@ -151,13 +147,8 @@ RString InputHandler::GetLocalizedInputString( const DeviceInput &di )
 	case KEY_BACKSLASH:	return BACKSLASH.GetValue();
 	default:
 		wchar_t c = DeviceButtonToChar(di.button,false);
-		if( c )
-		{
-			if( c == L' ' )
-				return SPACE.GetValue();	// Don't show "Key  " for space.
-			else
-				return Capitalize( WStringToRString(wstring()+c) );
-		}
+		if( c && c != L' ' )				// Don't show "Key  " for space.
+			return Capitalize( WStringToRString(wstring()+c) );
 
 		return DeviceButtonToString(di.button);
 	}
