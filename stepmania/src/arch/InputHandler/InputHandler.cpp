@@ -159,7 +159,7 @@ RString InputHandler::GetLocalizedInputString( const DeviceInput &di )
 				return Capitalize( WStringToRString(wstring()+c) );
 		}
 
-		return Capitalize( DeviceButtonToString(di.button) );
+		return DeviceButtonToString(di.button);
 	}
 }
 
