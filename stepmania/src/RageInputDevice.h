@@ -339,7 +339,6 @@ public:
 	bool IsJoystick() const { return ::IsJoystick(device); }
 };
 
-RString DeviceInputToTranslatedString( DeviceInput di );
 RString DeviceInputToLocalizedAndTranslatedString( DeviceInput di );
 
 #endif

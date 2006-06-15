@@ -150,17 +150,6 @@ RString DeviceButtonToString( DeviceButton key )
 	return "unknown";
 }
 
-/* Return the name of the button, as it probably appears on the device itself, such as a keycap;
- * eg. "a". */
-RString DeviceInputToTranslatedString( DeviceInput di )
-{
-	wchar_t c = INPUTMAN->DeviceInputToChar(di,false);
-	if( c )
-		return WStringToRString( wstring()+c );
-
-	return DeviceButtonToString( di.button );
-}
-
 static LocalizedString HOME	( "DeviceButton", "Home" );
 static LocalizedString END	( "DeviceButton", "End" );
 static LocalizedString UP	( "DeviceButton", "Up" );
@@ -175,6 +164,8 @@ static LocalizedString PGUP	( "DeviceButton", "PgUp" );
 static LocalizedString PGDN	( "DeviceButton", "PgDn" );
 static LocalizedString BACKSLASH	( "DeviceButton", "Backslash" );
 
+/* Return the name of the button, as it probably appears on the device itself, such as a keycap;
+ * eg. "a". */
 RString DeviceInputToLocalizedAndTranslatedString( DeviceInput di )
 {
 	switch( di.button )
@@ -192,7 +183,12 @@ RString DeviceInputToLocalizedAndTranslatedString( DeviceInput di )
 	case KEY_PGUP:		return PGUP.GetValue();
 	case KEY_PGDN:		return PGDN.GetValue();
 	case KEY_BACKSLASH:	return BACKSLASH.GetValue();
-	default:	return Capitalize( DeviceInputToTranslatedString(di) );
+	default:
+		wchar_t c = INPUTMAN->DeviceInputToChar(di,false);
+		if( c )
+			return Capitalize( WStringToRString(wstring()+c) );
+
+		return Capitalize( DeviceButtonToString(di.button) );
 	}
 }
 
