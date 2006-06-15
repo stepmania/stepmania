@@ -97,6 +97,23 @@ RString RageInput::GetDeviceSpecificInputString( const DeviceInput &di )
 	return di.ToString();
 }
 
+wchar_t RageInput::DeviceInputToChar( DeviceInput di, bool bUseCurrentKeyModifiers )
+{
+	FOREACH( InputHandler*, m_pDevices, i )
+	{
+		vector<InputDeviceInfo> vDevices;
+		(*i)->GetDevicesAndDescriptions( vDevices );
+
+		FOREACH_CONST( InputDeviceInfo, vDevices, idi )
+		{
+			if( idi->id == di.device )
+				return (*i)->DeviceButtonToChar(di.button, bUseCurrentKeyModifiers);
+		}
+	}
+
+	return '\0';
+}
+
 wchar_t RageInput::DeviceButtonToChar( DeviceButton button, bool bUseCurrentKeyModifiers )
 {
 	FOREACH( InputHandler*, m_pDevices, i )
