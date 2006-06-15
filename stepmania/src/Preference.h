@@ -93,6 +93,11 @@ public:
 		return m_currentValue;
 	}
 	
+	const T &GetDefault() const
+	{
+		return m_defaultValue;
+	}
+
 	operator const T () const
 	{
 		return Get();

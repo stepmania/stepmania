@@ -22,6 +22,7 @@
 #include "LocalizedString.h"
 #include "SpecialFiles.h"
 #include "EnumHelper.h"
+#include "PrefsManager.h"
 
 ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the program
 
@@ -187,6 +188,9 @@ bool ThemeManager::DoesThemeExist( const RString &sThemeName )
 
 bool ThemeManager::IsThemeSelectable( const RString &sThemeName )
 {
+	if( !DoesThemeExist(sThemeName) )
+		return false;
+
 	return sThemeName.Left(1) != "_";
 }
 
@@ -346,8 +350,8 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 {
 	RString sThemeName = sThemeName_;
 	RString sLanguage = sLanguage_;
-	if( !DoesThemeExist(sThemeName) )
-		sThemeName = SpecialFiles::BASE_THEME_NAME;
+	if( !IsThemeSelectable(sThemeName) )
+		sThemeName = PREFSMAN->m_sTheme.GetDefault();
 
 	/* We havn't actually loaded the theme yet, so we can't check whether sLanguage
 	 * exists.  Just check for empty. */
