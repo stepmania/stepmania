@@ -134,7 +134,7 @@ void StreamDisplay::SetPercent( float fPercent )
 		DEBUG_ASSERT_M( 0, "fPercent is NaN" );
 		fPercent = 1;
 	}
-	if( !finite(fPercent) )
+	if( !isfinite(fPercent) )
 	{
 		DEBUG_ASSERT_M( 0, "fPercent is infinite" );
 		fPercent = 1;

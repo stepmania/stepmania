@@ -1478,7 +1478,7 @@ float StringToFloat( const RString &sString )
 {
 	float ret = strtof( sString, NULL );
 	
-	if( !finite(ret) )
+	if( !isfinite(ret) )
 		ret = 0.0f;
 	return ret;
 }
@@ -1907,7 +1907,7 @@ bool FromString( const RString &sValue, float &out )
 {
 	const char *endptr = sValue.data() + sValue.size();
 	out = strtof( sValue, (char **) &endptr );
-	return endptr != sValue.data() && finite( out );
+	return endptr != sValue.data() && isfinite( out );
 }
 
 bool FromString( const RString &sValue, bool &out )
