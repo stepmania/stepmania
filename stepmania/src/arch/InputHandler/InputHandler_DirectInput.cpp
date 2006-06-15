@@ -668,11 +668,11 @@ wchar_t InputHandler_DInput::DeviceButtonToChar( DeviceButton button, bool bUseC
 	// ToAsciiEx maps these keys to a character.  They shouldn't be mapped to any character.
 	switch( button )
 	{
-		case KEY_ESC:
-		case KEY_TAB:
-		case KEY_ENTER:
-		case KEY_BACK:
-			return '\0';
+	case KEY_ESC:
+	case KEY_TAB:
+	case KEY_ENTER:
+	case KEY_BACK:
+		return '\0';
 	}
 
 	FOREACH_CONST( DIDevice, Devices, d )
