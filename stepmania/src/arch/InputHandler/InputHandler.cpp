@@ -112,7 +112,7 @@ RString InputHandler::GetDeviceSpecificInputString( const DeviceInput &di )
 			else
 				return "Key " + WStringToRString(wstring()+c);
 		}
-		return DeviceButtonToTranslatedString( di.button );
+		return DeviceInputToTranslatedString( di );
 	}
 
 	return di.ToString();
