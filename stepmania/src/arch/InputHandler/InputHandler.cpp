@@ -125,7 +125,7 @@ RString InputHandler::GetDeviceSpecificInputString( const DeviceInput &di )
 			if( c == L' ' )
 				return SPACE.GetValue();	// Don't show "Key  " for space.
 			else
-				return "Key " + WStringToRString(wstring()+c);
+				return "Key " + Capitalize( WStringToRString(wstring()+c) );
 		}
 		return DeviceButtonToString( di.button );
 	}
