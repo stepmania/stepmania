@@ -292,8 +292,6 @@ enum DeviceButton
 };
 
 RString DeviceButtonToString( DeviceButton i );
-RString DeviceButtonToTranslatedString( DeviceButton i );
-RString DeviceButtonToLocalizedAndTranslatedString( DeviceButton i );
 DeviceButton StringToDeviceButton( const RString& s );
 
 struct DeviceInput
@@ -340,6 +338,9 @@ public:
 
 	bool IsJoystick() const { return ::IsJoystick(device); }
 };
+
+RString DeviceInputToTranslatedString( DeviceInput di );
+RString DeviceInputToLocalizedAndTranslatedString( DeviceInput di );
 
 #endif
 /*

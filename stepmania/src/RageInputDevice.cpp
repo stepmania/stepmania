@@ -148,14 +148,14 @@ RString DeviceButtonToString( DeviceButton key )
 	return "unknown";
 }
 
-RString DeviceButtonToTranslatedString( DeviceButton key )
+RString DeviceInputToTranslatedString( DeviceInput di )
 {
 	/* All printable ASCII except for uppercase alpha characters line up. */
-	if( key >= 33 && key < 127 &&
-		!(key >= 'A' && key <= 'Z' ) )
-		return WStringToRString( wstring()+INPUTMAN->DeviceButtonToChar(key,false) );
+	if( di.button >= 33 && di.button < 127 &&
+		!(di.button >= 'A' && di.button <= 'Z' ) )
+		return WStringToRString( wstring()+INPUTMAN->DeviceInputToChar(di,false) );
 
-	return DeviceButtonToString( key );
+	return DeviceButtonToString( di.button );
 }
 
 static LocalizedString HOME	( "DeviceButton", "Home" );
@@ -172,9 +172,9 @@ static LocalizedString PGUP	( "DeviceButton", "PgUp" );
 static LocalizedString PGDN	( "DeviceButton", "PgDn" );
 static LocalizedString BACKSLASH	( "DeviceButton", "Backslash" );
 
-RString DeviceButtonToLocalizedAndTranslatedString( DeviceButton key )
+RString DeviceInputToLocalizedAndTranslatedString( DeviceInput di )
 {
-	switch( key )
+	switch( di.button )
 	{
 	case KEY_HOME:		return HOME.GetValue();
 	case KEY_END:		return END.GetValue();
@@ -189,7 +189,7 @@ RString DeviceButtonToLocalizedAndTranslatedString( DeviceButton key )
 	case KEY_PGUP:		return PGUP.GetValue();
 	case KEY_PGDN:		return PGDN.GetValue();
 	case KEY_BACKSLASH:	return BACKSLASH.GetValue();
-	default:	return Capitalize( DeviceButtonToTranslatedString(key) );
+	default:	return Capitalize( DeviceInputToTranslatedString(di) );
 	}
 }
 
