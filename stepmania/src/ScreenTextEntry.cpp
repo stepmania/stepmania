@@ -183,7 +183,7 @@ void ScreenTextEntry::Input( const InputEventPlus &input )
 	}
 	else if( input.type == IET_FIRST_PRESS )
 	{
-		wchar_t c = INPUTMAN->DeviceButtonToChar(input.DeviceI.button,true);
+		wchar_t c = INPUTMAN->DeviceInputToChar(input.DeviceI,true);
 		if( c >= ' ' ) 
 		{
 			TryAppendToAnswer( WStringToRString(wstring()+c) );

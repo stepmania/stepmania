@@ -519,7 +519,7 @@ void ScreenNameEntryTraditional::Input( const InputEventPlus &input )
 		}
 		else
 		{
-			wchar_t ch = INPUTMAN->DeviceButtonToChar(input.DeviceI.button,true);
+			wchar_t ch = INPUTMAN->DeviceInputToChar(input.DeviceI,true);
 			MakeUpper( &ch, 1 );
 			c = ch;
 		}

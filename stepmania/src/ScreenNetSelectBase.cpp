@@ -120,7 +120,7 @@ void ScreenNetSelectBase::Input( const InputEventPlus &input )
 		break;
 	default:
 		wchar_t c;
-		c = INPUTMAN->DeviceButtonToChar(input.DeviceI.button,true);
+		c = INPUTMAN->DeviceInputToChar(input.DeviceI, true);
 
 		if( (c >= ' ') && (!bHoldingCtrl) )
 		{
