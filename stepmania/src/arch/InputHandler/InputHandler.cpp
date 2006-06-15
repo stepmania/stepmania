@@ -101,24 +101,6 @@ wchar_t InputHandler::DeviceButtonToChar( DeviceButton button, bool bUseCurrentK
 	return c;
 }
 
-RString InputHandler::GetDeviceSpecificInputString( const DeviceInput &di )
-{
-	if( di.device == DEVICE_KEYBOARD )
-	{
-		wchar_t c = DeviceButtonToChar( di.button, false );
-		if( c )
-		{
-			if( c == L' ' )
-				return "space";	// Don't show "Key  " for space.
-			else
-				return "Key " + WStringToRString(wstring()+c);
-		}
-		return DeviceButtonToString( di.button );
-	}
-
-	return di.ToString();
-}
-
 static LocalizedString HOME	( "DeviceButton", "Home" );
 static LocalizedString END	( "DeviceButton", "End" );
 static LocalizedString UP	( "DeviceButton", "Up" );
@@ -132,6 +114,24 @@ static LocalizedString DELETE	( "DeviceButton", "Delete" );
 static LocalizedString PGUP	( "DeviceButton", "PgUp" );
 static LocalizedString PGDN	( "DeviceButton", "PgDn" );
 static LocalizedString BACKSLASH	( "DeviceButton", "Backslash" );
+
+RString InputHandler::GetDeviceSpecificInputString( const DeviceInput &di )
+{
+	if( di.device == DEVICE_KEYBOARD )
+	{
+		wchar_t c = DeviceButtonToChar( di.button, false );
+		if( c )
+		{
+			if( c == L' ' )
+				return SPACE.GetValue();	// Don't show "Key  " for space.
+			else
+				return "Key " + WStringToRString(wstring()+c);
+		}
+		return DeviceButtonToString( di.button );
+	}
+
+	return di.ToString();
+}
 
 RString InputHandler::GetLocalizedInputString( const DeviceInput &di )
 {
