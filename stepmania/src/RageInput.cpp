@@ -114,23 +114,6 @@ wchar_t RageInput::DeviceInputToChar( DeviceInput di, bool bUseCurrentKeyModifie
 	return '\0';
 }
 
-wchar_t RageInput::DeviceButtonToChar( DeviceButton button, bool bUseCurrentKeyModifiers )
-{
-	FOREACH( InputHandler*, m_pDevices, i )
-	{
-		vector<InputDeviceInfo> vDevices;
-		(*i)->GetDevicesAndDescriptions( vDevices );
-
-		FOREACH_CONST( InputDeviceInfo, vDevices, idi )
-		{
-			if( idi->id == DEVICE_KEYBOARD )
-				return (*i)->DeviceButtonToChar(button, bUseCurrentKeyModifiers);
-		}
-	}
-
-	return '\0';
-}
-
 InputDeviceState RageInput::GetInputDeviceState( InputDevice id )
 {
 	FOREACH( InputHandler*, m_pDevices, i )

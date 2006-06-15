@@ -22,7 +22,6 @@ public:
 	void AddHandler( InputHandler *pHandler );
 	RString GetDeviceSpecificInputString( const DeviceInput &di );
 	wchar_t DeviceInputToChar( DeviceInput di, bool bUseCurrentKeyModifiers );
-	wchar_t DeviceButtonToChar( DeviceButton button, bool bUseCurrentKeyModifiers );
 	InputDeviceState GetInputDeviceState( InputDevice id );
 	RString GetDisplayDevicesString() const;
 
