@@ -339,8 +339,6 @@ public:
 	bool IsJoystick() const { return ::IsJoystick(device); }
 };
 
-RString DeviceInputToLocalizedString( DeviceInput di );
-
 #endif
 /*
  * Copyright (c) 2001-2002 Chris Danford

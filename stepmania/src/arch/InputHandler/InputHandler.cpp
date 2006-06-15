@@ -3,6 +3,7 @@
 #include "RageUtil.h"
 #include "InputHandler.h"
 #include "RageLog.h"
+#include "LocalizedString.h"
 
 void InputHandler::UpdateTimer()
 {
@@ -116,6 +117,46 @@ RString InputHandler::GetDeviceSpecificInputString( const DeviceInput &di )
 	}
 
 	return di.ToString();
+}
+
+static LocalizedString HOME	( "DeviceButton", "Home" );
+static LocalizedString END	( "DeviceButton", "End" );
+static LocalizedString UP	( "DeviceButton", "Up" );
+static LocalizedString DOWN	( "DeviceButton", "Down" );
+static LocalizedString SPACE	( "DeviceButton", "Space" );
+static LocalizedString SHIFT	( "DeviceButton", "Shift" );
+static LocalizedString CTRL	( "DeviceButton", "Ctrl" );
+static LocalizedString ALT	( "DeviceButton", "Alt" );
+static LocalizedString INSERT	( "DeviceButton", "Insert" );
+static LocalizedString DELETE	( "DeviceButton", "Delete" );
+static LocalizedString PGUP	( "DeviceButton", "PgUp" );
+static LocalizedString PGDN	( "DeviceButton", "PgDn" );
+static LocalizedString BACKSLASH	( "DeviceButton", "Backslash" );
+
+RString InputHandler::GetLocalizedInputString( const DeviceInput &di )
+{
+	switch( di.button )
+	{
+	case KEY_HOME:		return HOME.GetValue();
+	case KEY_END:		return END.GetValue();
+	case KEY_UP:		return UP.GetValue();
+	case KEY_DOWN:		return DOWN.GetValue();
+	case KEY_SPACE:		return SPACE.GetValue();
+	case KEY_LSHIFT: case KEY_RSHIFT:	return SHIFT.GetValue();
+	case KEY_LCTRL:	 case KEY_RCTRL:	return CTRL.GetValue();
+	case KEY_LALT:	 case KEY_RALT:		return ALT.GetValue();
+	case KEY_INSERT:	return INSERT.GetValue();
+	case KEY_DEL:		return DELETE.GetValue();
+	case KEY_PGUP:		return PGUP.GetValue();
+	case KEY_PGDN:		return PGDN.GetValue();
+	case KEY_BACKSLASH:	return BACKSLASH.GetValue();
+	default:
+		wchar_t c = DeviceButtonToChar(di.button,false);
+		if( c )
+			return Capitalize( WStringToRString(wstring()+c) );
+
+		return Capitalize( DeviceButtonToString(di.button) );
+	}
 }
 
 /*

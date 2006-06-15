@@ -6,6 +6,7 @@
 #include "ScreenSaveSync.h"
 #include "GameConstantsAndTypes.h"
 #include "GameManager.h"
+#include "RageInput.h"
 #include "RageLog.h"
 #include "GameSoundManager.h"
 #include "GameState.h"
@@ -3585,9 +3586,9 @@ static RString GetDeviceButtonsLocalized( const vector<EditButton> &veb, const M
 			DeviceInput diPress = editmap.button[*eb][s];
 			DeviceInput diHold = editmap.hold[*eb][s];
 			if( diPress.IsValid() )
-				vsPress.push_back( DeviceInputToLocalizedString(diPress) );
+				vsPress.push_back( INPUTMAN->GetLocalizedInputString(diPress) );
 			if( diHold.IsValid() )
-				vsHold.push_back( DeviceInputToLocalizedString(diHold) );
+				vsHold.push_back( INPUTMAN->GetLocalizedInputString(diHold) );
 		}
 	}
 

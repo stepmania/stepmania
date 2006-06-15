@@ -21,6 +21,7 @@ public:
 	void WindowReset();
 	void AddHandler( InputHandler *pHandler );
 	RString GetDeviceSpecificInputString( const DeviceInput &di );
+	RString GetLocalizedInputString( const DeviceInput &di );
 	wchar_t DeviceInputToChar( DeviceInput di, bool bUseCurrentKeyModifiers );
 	InputDeviceState GetInputDeviceState( InputDevice id );
 	RString GetDisplayDevicesString() const;
