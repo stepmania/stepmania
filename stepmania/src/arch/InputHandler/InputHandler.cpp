@@ -154,7 +154,7 @@ RString InputHandler::GetLocalizedInputString( const DeviceInput &di )
 		if( c )
 		{
 			if( c == L' ' )
-				return Capitalize( SPACE.GetValue() );	// Don't show "Key  " for space.
+				return SPACE.GetValue();	// Don't show "Key  " for space.
 			else
 				return Capitalize( WStringToRString(wstring()+c) );
 		}
