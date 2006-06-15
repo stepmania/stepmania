@@ -107,12 +107,12 @@ void SongOptions::FromString( const RString &sOptions )
 		Regex mult("^([0-9]+(\\.[0-9]+)?)xmusic$");
 		vector<RString> matches;
 		if( mult.Compare(sBit, matches) )
-			::FromString( matches[0], m_fMusicRate );
+			m_fMusicRate = StringToFloat( matches[0] );
 
 		matches.clear();
 		Regex lives("^([0-9]+) ?(lives|life)$");
 		if( lives.Compare(sBit, matches) )
-			::FromString( matches[0], m_iBatteryLives );
+			m_iBatteryLives = atoi( matches[0] );
 
 		vector<RString> asParts;
 		split( sBit, " ", asParts, true );
