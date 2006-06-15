@@ -1135,7 +1135,6 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 
 	switch( EditB )
 	{
-	DEFAULT_FAIL( EditB );
 	case EDIT_BUTTON_COLUMN_0:
 	case EDIT_BUTTON_COLUMN_1:
 	case EDIT_BUTTON_COLUMN_2:
@@ -1928,7 +1927,6 @@ void ScreenEdit::InputRecordPaused( const InputEventPlus &input, EditButton Edit
 
 	switch( EditB )
 	{
-	DEFAULT_FAIL( EditB );
 	case EDIT_BUTTON_UNDO:
 		/* We've already actually committed changes to m_NoteDataEdit, so all we have
 		 * to do to undo is Undo() as usual, and copy the note data back in. */
@@ -1982,7 +1980,6 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 
 	switch( EditB )
 	{
-	DEFAULT_FAIL( EditB );
 	case EDIT_BUTTON_RETURN_TO_EDIT:
 		/* When exiting play mode manually, leave the cursor where it is. */
 		m_fBeatToReturnTo = GAMESTATE->m_fSongBeat;
