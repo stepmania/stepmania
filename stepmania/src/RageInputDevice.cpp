@@ -166,7 +166,7 @@ static LocalizedString BACKSLASH	( "DeviceButton", "Backslash" );
 
 /* Return the name of the button, as it probably appears on the device itself, such as a keycap;
  * eg. "a". */
-RString DeviceInputToLocalizedAndTranslatedString( DeviceInput di )
+RString DeviceInputToLocalizedString( DeviceInput di )
 {
 	switch( di.button )
 	{

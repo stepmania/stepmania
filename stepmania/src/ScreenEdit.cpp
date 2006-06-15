@@ -3585,9 +3585,9 @@ static RString GetDeviceButtonsLocalized( const vector<EditButton> &veb, const M
 			DeviceInput diPress = editmap.button[*eb][s];
 			DeviceInput diHold = editmap.hold[*eb][s];
 			if( diPress.IsValid() )
-				vsPress.push_back( DeviceInputToLocalizedAndTranslatedString(diPress) );
+				vsPress.push_back( DeviceInputToLocalizedString(diPress) );
 			if( diHold.IsValid() )
-				vsHold.push_back( DeviceInputToLocalizedAndTranslatedString(diHold) );
+				vsHold.push_back( DeviceInputToLocalizedString(diHold) );
 		}
 	}
 
