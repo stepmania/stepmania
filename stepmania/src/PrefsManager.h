@@ -72,6 +72,7 @@ public:
 	Preference<BannerCache,int>		m_BannerCache;
 	Preference<bool>	m_bPalettedBannerCache;
 	Preference<bool>	m_bFastLoad;
+	Preference<bool>        m_bFastLoadAdditionalSongs;
 
 	Preference<bool>	m_bOnlyDedicatedMenuButtons;
 	Preference<bool>	m_bMenuTimer;

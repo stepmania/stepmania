@@ -193,6 +193,7 @@ PrefsManager::PrefsManager() :
 	m_BannerCache		( "BannerCache",		BNCACHE_LOW_RES_PRELOAD ),
 	m_bPalettedBannerCache	( "PalettedBannerCache",	false ),
 	m_bFastLoad		( "FastLoad",			false ),
+	m_bFastLoadAdditionalSongs      ( "FastLoadAdditionalSongs",    false ),
 
 	m_bOnlyDedicatedMenuButtons	( "OnlyDedicatedMenuButtons",	false ),
 	m_bMenuTimer		( "MenuTimer",			true ),

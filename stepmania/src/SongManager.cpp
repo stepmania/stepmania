@@ -113,7 +113,12 @@ void SongManager::InitSongsFromDisk( LoadingWindow *ld )
 {
 	RageTimer tm;
 	LoadStepManiaSongDir( SONGS_DIR, ld );
+
+	const bool bOldVal = PREFSMAN->m_bFastLoad;
+	PREFSMAN->m_bFastLoad.Set( PREFSMAN->m_bFastLoadAdditionalSongs );
 	LoadStepManiaSongDir( ADDITIONAL_SONGS_DIR, ld );
+	PREFSMAN->m_bFastLoad.Set( bOldVal );
+
 	LOG->Trace( "Found %d songs in %f seconds.", (int)m_pSongs.size(), tm.GetDeltaTime() );
 }
 
