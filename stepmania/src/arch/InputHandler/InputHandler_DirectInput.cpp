@@ -658,7 +658,7 @@ static wchar_t ScancodeAndKeysToChar( DWORD scancode, unsigned char keys[256] )
 	if( iNum == 1 )
 	{
 		RString s = RString()+(char)result[0];
-		return RStringToWstring( ConvertACPToUTF8(s) )[0];
+		return ConvertCodepageToWString( s, CP_ACP )[0];
 	}
 	return '\0';
 }
