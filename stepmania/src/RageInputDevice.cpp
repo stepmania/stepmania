@@ -258,6 +258,8 @@ static const char *InputDeviceNames[] = {
 XToString( InputDevice, NUM_INPUT_DEVICES );
 StringToX( InputDevice );
 
+/* Return a reversible representation of a DeviceInput.  This is not affected by InputDrivers,
+ * localization or the keyboard language. */
 RString DeviceInput::ToString() const
 {
 	if( device == DEVICE_NONE )
