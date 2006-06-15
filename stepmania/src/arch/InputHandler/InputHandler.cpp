@@ -125,10 +125,11 @@ RString InputHandler::GetDeviceSpecificInputString( const DeviceInput &di )
 		wchar_t c = DeviceButtonToChar( di.button, false );
 		if( c && c != L' ' )				// Don't show "Key  " for space.
 			return InputDeviceToString(di.device) + " " + + Capitalize( WStringToRString(wstring()+c) );
-		return DeviceButtonToString( di.button );
 	}
 
-	RString s = InputDeviceToString(di.device) + " " + DeviceButtonToString(di.button);
+	RString s = DeviceButtonToString(di.button);
+	if( di.device != DEVICE_KEYBOARD )
+		InputDeviceToString(di.device) + " " + s;
 	return s;
 }
 
