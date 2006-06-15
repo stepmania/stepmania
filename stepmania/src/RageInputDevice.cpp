@@ -123,6 +123,8 @@ static void InitNames()
 		g_mapStringToNames[m->second] = m->first;
 }
 
+/* Return a reversible representation of a DeviceButton.  This is not affected by InputDrivers,
+ * localization or the keyboard language. */
 RString DeviceButtonToString( DeviceButton key )
 {
 	InitNames();
@@ -148,12 +150,13 @@ RString DeviceButtonToString( DeviceButton key )
 	return "unknown";
 }
 
+/* Return the name of the button, as it probably appears on the device itself, such as a keycap;
+ * eg. "a". */
 RString DeviceInputToTranslatedString( DeviceInput di )
 {
-	/* All printable ASCII except for uppercase alpha characters line up. */
-	if( di.button >= 33 && di.button < 127 &&
-		!(di.button >= 'A' && di.button <= 'Z' ) )
-		return WStringToRString( wstring()+INPUTMAN->DeviceInputToChar(di,false) );
+	wchar_t c = INPUTMAN->DeviceInputToChar(di,false);
+	if( c )
+		return WStringToRString( wstring()+c );
 
 	return DeviceButtonToString( di.button );
 }
