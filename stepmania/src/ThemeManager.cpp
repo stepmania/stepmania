@@ -352,6 +352,11 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 	RString sLanguage = sLanguage_;
 	if( !IsThemeSelectable(sThemeName) )
 		sThemeName = PREFSMAN->m_sTheme.GetDefault();
+	
+	if( !IsThemeSelectable(sThemeName) )
+		sThemeName = SpecialFiles::BASE_THEME_NAME;
+	
+	ASSERT( IsThemeSelectable(sThemeName) );
 
 	/* We havn't actually loaded the theme yet, so we can't check whether sLanguage
 	 * exists.  Just check for empty. */
