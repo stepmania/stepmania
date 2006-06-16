@@ -634,7 +634,7 @@ float RageFastSin( float x )
 		{
 			// sin(x) == -sin(PI+x)
 			iSample -= ARRAYSIZE(table);
-			DEBUG_ASSERT( iSample>=0 && iSample<ARRAYSIZE(table) );
+			DEBUG_ASSERT( iSample>=0 && iSample<int(ARRAYSIZE(table)) );
 			fVal = -table[iSample];
 		}
 		else
