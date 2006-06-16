@@ -221,10 +221,15 @@ static void Theme( int &sel, bool ToSel, const ConfOption *pConfOption )
 		for( unsigned i=1; i<vsThemeNames.size(); i++ )
 			if( !stricmp(vsThemeNames[i], THEME->GetCurThemeName()) )
 				sel = i;
-	} else {
+	}
+	else
+	{
 		const RString sNewTheme = vsThemeNames[sel];
 		if( THEME->GetCurThemeName() != sNewTheme )
+		{
 			THEME->SwitchThemeAndLanguage( sNewTheme, THEME->GetCurLanguage(), PREFSMAN->m_bPseudoLocalize );
+			PREFSMAN->m_sTheme.Set( sNewTheme );
+		}
 	}
 }
 
