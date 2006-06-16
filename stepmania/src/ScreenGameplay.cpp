@@ -273,8 +273,7 @@ bool PlayerInfo::IsEnabled()
 vector<PlayerInfo>::iterator 
 GetNextEnabledPlayerInfo( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &v )
 {
-	iter++;
-	for( ; iter != v.end(); iter++ )
+	for( ; iter != v.end(); ++iter )
 	{
 		if( !iter->IsEnabled() )
 			continue;
@@ -286,7 +285,6 @@ GetNextEnabledPlayerInfo( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> 
 vector<PlayerInfo>::iterator 
 GetNextEnabledPlayerInfoNotDummy( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &v )
 {
-	iter++;
 	for( ; iter != v.end(); iter++ )
 	{
 		if( iter->m_bIsDummy )
@@ -301,8 +299,7 @@ GetNextEnabledPlayerInfoNotDummy( vector<PlayerInfo>::iterator iter, vector<Play
 vector<PlayerInfo>::iterator
 GetNextEnabledPlayerNumberInfo( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &v )
 {
-	iter++;
-	for( ; iter != v.end(); iter++ )
+	for( ; iter != v.end(); ++iter )
 	{
 		if( iter->m_bIsDummy )
 			continue;
@@ -318,8 +315,7 @@ GetNextEnabledPlayerNumberInfo( vector<PlayerInfo>::iterator iter, vector<Player
 vector<PlayerInfo>::iterator
 GetNextPlayerNumberInfo( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &v )
 {
-	iter++;
-	for( ; iter != v.end(); iter++ )
+	for( ; iter != v.end(); ++iter )
 	{
 		if( iter->m_bIsDummy )
 			continue;
@@ -333,8 +329,7 @@ GetNextPlayerNumberInfo( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &
 vector<PlayerInfo>::iterator
 GetNextVisiblePlayerInfo( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &v )
 {
-	iter++;
-	for( ; iter != v.end(); iter++ )
+	for( ; iter != v.end(); ++iter )
 	{
 		if( !iter->m_pPlayer->HasNoteField() )
 			continue;
