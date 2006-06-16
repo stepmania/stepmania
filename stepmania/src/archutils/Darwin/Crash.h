@@ -5,6 +5,8 @@ namespace CrashHandler
 {
 	RString GetLogsDirectory();
 	void InformUserOfCrash( const RString& sPath );
+	bool IsDebuggerPresent();
+	void DebugBreak();
 }
 
 #endif /* DARWIN_CRASH_H */

@@ -2,6 +2,9 @@
 #include "Crash.h"
 #include "ProductInfo.h"
 #include <Carbon/Carbon.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/sysctl.h>
 
 RString CrashHandler::GetLogsDirectory()
 {
@@ -68,6 +71,40 @@ void CrashHandler::InformUserOfCrash( const RString& sPath )
 	CFRelease( sOther );
 	CFRelease( sDefault );
 	CFRelease( sAlternate );
+}
+
+/* IMPORTANT: Because the definition of the kinfo_proc structure (in <sys/sysctl.h>)
+ * is conditionalized by __APPLE_API_UNSTABLE, you should restrict use of the [below]
+ * code to the debug build of your program.
+ * http://developer.apple.com/qa/qa2004/qa1361.html */
+bool CrashHandler::IsDebuggerPresent()
+{
+#ifdef DEBUG
+	int                 ret;
+	int                 mib[] = { CTL_KERN, KERN_PROC, KERN_PROC_PID, getpid() };
+	struct kinfo_proc   info;
+	size_t              size;
+	
+	// Initialize the flags so that, if sysctl fails for some bizarre
+	// reason, we get a predictable result.
+	
+	info.kp_proc.p_flag = 0;
+	
+	// Call sysctl.
+	size = sizeof(info);
+	ret = sysctl(mib, sizeof(mib) / sizeof(*mib), &info, &size, NULL, 0);
+	
+	// We're being debugged if the P_TRACED flag is set.
+	
+	return  ret == 0 && (info.kp_proc.p_flag & P_TRACED) != 0;
+#else
+	return false;
+#endif
+}
+
+void CrashHandler::DebugBreak()
+{
+	DebugStr( "\pDebugBreak()" );
 }
 
 /*
