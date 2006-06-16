@@ -352,6 +352,7 @@ wchar_t InputHandler_Carbon::DeviceButtonToChar( DeviceButton button, bool bUseC
 		case KEY_RIGHT:
 		case KEY_ESC:
 		case KEY_TAB:
+		case KEY_ENTER:
 		case KEY_PRTSC:
 		case KEY_SCRLLOCK:
 		case KEY_PAUSE:
