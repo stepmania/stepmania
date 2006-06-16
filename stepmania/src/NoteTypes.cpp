@@ -65,7 +65,7 @@ NoteType GetNoteType( int row )
 	else if( row % (ROWS_PER_MEASURE/32) == 0)	return NOTE_TYPE_32ND;
 	else if( row % (ROWS_PER_MEASURE/48) == 0)	return NOTE_TYPE_48TH;
 	else if( row % (ROWS_PER_MEASURE/64) == 0)	return NOTE_TYPE_64TH;
-	else												return NOTE_TYPE_INVALID;
+	else						return NOTE_TYPE_INVALID;
 };
 
 NoteType BeatToNoteType( float fBeat )

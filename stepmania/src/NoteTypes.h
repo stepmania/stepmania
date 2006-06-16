@@ -63,7 +63,8 @@ struct HoldNoteResult
 
 struct TapNote
 {
-	enum Type { 
+	enum Type
+	{ 
 		empty, 		// no note here
 		tap, 
 		hold_head,	// graded like a TAP_TAP if
@@ -78,30 +79,31 @@ struct TapNote
 		hold_head_roll,
 		SubType_invalid
 	} subType;	// only used if type == hold_head
-	enum Source {
+	enum Source
+	{
 		original,	// part of the original NoteData
 		addition,	// additional note added by a transform
 		removed,	// Removed taps, e.g. in Little - play keysounds here as if
-					// judged W2, but don't bother rendering or judging this
-					// step.  Also used for when we implement auto-scratch,
-					// and for if/when we do a "reduce" modifier that cancels out
-					// all but N keys on a line [useful for beat->dance autogen, too].
-					// Removed hold body (...why?) - acts as follows:
-					// 1 - if we're using a sustained-sound gametype [Keyboardmania], and
-					//     we've already hit the start of the sound (?? we put Holds Off on?)
-					//     then this is triggered automatically to keep the sound going
-					// 2 - if we're NOT [anything else], we ignore this.
-					// Equivalent to all 4s aside from the first one.
+				// judged W2, but don't bother rendering or judging this
+				// step.  Also used for when we implement auto-scratch,
+				// and for if/when we do a "reduce" modifier that cancels out
+				// all but N keys on a line [useful for beat->dance autogen, too].
+				// Removed hold body (...why?) - acts as follows:
+				// 1 - if we're using a sustained-sound gametype [Keyboardmania], and
+				//     we've already hit the start of the sound (?? we put Holds Off on?)
+				//     then this is triggered automatically to keep the sound going
+				// 2 - if we're NOT [anything else], we ignore this.
+				// Equivalent to all 4s aside from the first one.
 	} source;
 
 	// Only valid if type == attack.
 	RString sAttackModifiers;
 	float fAttackDurationSeconds;
 
-	bool bKeysound;	// true if this note plays a keysound when hit
+	bool bKeysound;		// true if this note plays a keysound when hit
 
 	int iKeysoundIndex;	// index into Song's vector of keysound files.  
-							// Only valid if bKeysound.
+				// Only valid if bKeysound.
 
 	/* hold_head only: */
 	int iDuration;
@@ -152,12 +154,12 @@ struct TapNote
 	}
 };
 
-extern TapNote TAP_EMPTY;					// '0'
-extern TapNote TAP_ORIGINAL_TAP;			// '1'
+extern TapNote TAP_EMPTY;			// '0'
+extern TapNote TAP_ORIGINAL_TAP;		// '1'
 extern TapNote TAP_ORIGINAL_HOLD_HEAD;		// '2'
 extern TapNote TAP_ORIGINAL_ROLL_HEAD;		// '4'
-extern TapNote TAP_ORIGINAL_MINE;			// 'M'
-extern TapNote TAP_ORIGINAL_ATTACK;			// 'A'
+extern TapNote TAP_ORIGINAL_MINE;		// 'M'
+extern TapNote TAP_ORIGINAL_ATTACK;		// 'A'
 extern TapNote TAP_ORIGINAL_AUTO_KEYSOUND;	// 'K'
 extern TapNote TAP_ADDITION_TAP;
 extern TapNote TAP_ADDITION_MINE;
@@ -214,9 +216,9 @@ inline int   BeatToNoteRow( float fBeatNum )
 	return integer + lrintf(fraction * ROWS_PER_BEAT);
 }
 */
-inline int   BeatToNoteRow( float fBeatNum )			{ return lrintf( fBeatNum * ROWS_PER_BEAT ); }	// round
+inline int   BeatToNoteRow( float fBeatNum )		{ return lrintf( fBeatNum * ROWS_PER_BEAT ); }	// round
 inline int   BeatToNoteRowNotRounded( float fBeatNum )	{ return (int)( fBeatNum * ROWS_PER_BEAT ); }
-inline float NoteRowToBeat( int iRow )					{ return iRow / (float)ROWS_PER_BEAT; }
+inline float NoteRowToBeat( int iRow )			{ return iRow / (float)ROWS_PER_BEAT; }
 
 #endif
 
