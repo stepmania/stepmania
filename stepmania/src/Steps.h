@@ -83,16 +83,16 @@ protected:
 
 	const Steps *Real() const;
 
-	RString			m_sFilename;
-	bool			m_bSavedToDisk;	// true if this was loaded from disk or has been saved to disk.
+	RString		m_sFilename;
+	bool		m_bSavedToDisk;		// true if this was loaded from disk or has been saved to disk.
 
 	/* These values are pulled from the autogen source first, if there is one. */
-	ProfileSlot		m_LoadedFromProfile;	// ProfileSlot_INVALID if wasn't loaded from a profile
-	unsigned		m_uHash;			// only used if m_Difficulty == DIFFICULTY_EDIT
-	RString			m_sDescription;		// Step author, edit name, or something meaningful
-	Difficulty		m_Difficulty;		// difficulty classification
-	int				m_iMeter;			// difficulty rating from MIN_METER to MAX_METER
-	RadarValues		m_CachedRadarValues;
+	ProfileSlot	m_LoadedFromProfile;	// ProfileSlot_INVALID if wasn't loaded from a profile
+	unsigned	m_uHash;		// only used if m_Difficulty == DIFFICULTY_EDIT
+	RString		m_sDescription;		// Step author, edit name, or something meaningful
+	Difficulty	m_Difficulty;		// difficulty classification
+	int		m_iMeter;		// difficulty rating from MIN_METER to MAX_METER
+	RadarValues	m_CachedRadarValues;
 };
 
 #endif
