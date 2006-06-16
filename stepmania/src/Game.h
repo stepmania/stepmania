@@ -38,17 +38,17 @@ class Style;
 class Game
 {
 public:
-	const char *m_szName;
-	const char *m_szDescription;
+	const char	*m_szName;
+	const char	*m_szDescription;
 
 	int		m_iNumControllers;
-	bool	m_bCountNotesSeparately;	// Count multiple notes in a row as separate notes or as one note
+	bool		m_bCountNotesSeparately;	// Count multiple notes in a row as separate notes or as one note
 	int		m_iButtonsPerController;
 	int		GetNumGameplayButtons() const;
-	char	m_szButtonNames[MAX_GAME_BUTTONS][60];	// The name used by the button graphics system.  e.g. "left", "right", "middle C", "snare"
+	char		m_szButtonNames[MAX_GAME_BUTTONS][60];	// The name used by the button graphics system.  e.g. "left", "right", "middle C", "snare"
 	GameButton	m_DedicatedMenuButton[NUM_MenuButton];
 	GameButton	m_SecondaryMenuButton[NUM_MenuButton];
-	DeviceButton m_iDefaultKeyboardKey[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS];	// default keyboard keys only have an effect the current game is this game
+	DeviceButton	m_iDefaultKeyboardKey[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS];	// default keyboard keys only have an effect the current game is this game
 
 	GameButton ButtonNameToIndex( const RString &sButtonName ) const;
 	MenuInput GameInputToMenuInput( GameInput GameI ) const;	// looks up current style in GAMESTATE.  Yuck.
@@ -56,11 +56,11 @@ public:
 	RString ColToButtonName( int col ) const;	// looks up current style.  Yuck.
 
 	TapNoteScore MapTapNoteScore( TapNoteScore tns ) const;
-	TapNoteScore m_mapW1To;
-	TapNoteScore m_mapW2To;
-	TapNoteScore m_mapW3To;
-	TapNoteScore m_mapW4To;
-	TapNoteScore m_mapW5To;
+	TapNoteScore	m_mapW1To;
+	TapNoteScore	m_mapW2To;
+	TapNoteScore	m_mapW3To;
+	TapNoteScore	m_mapW4To;
+	TapNoteScore	m_mapW5To;
 
 	//
 	// Lua

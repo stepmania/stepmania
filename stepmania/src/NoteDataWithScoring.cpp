@@ -263,17 +263,17 @@ void NoteDataWithScoring::GetActualRadarValues( const NoteData &in, PlayerNumber
 	{
 		switch( rc )
 		{
-		case RadarCategory_Stream:				out[rc] = GetActualStreamRadarValue( in, fSongSeconds, pn );	break;
-		case RadarCategory_Voltage:				out[rc] = GetActualVoltageRadarValue( in, fSongSeconds, pn );	break;
-		case RadarCategory_Air:					out[rc] = GetActualAirRadarValue( in, fSongSeconds, pn );		break;
-		case RadarCategory_Freeze:				out[rc] = GetActualFreezeRadarValue( in, fSongSeconds, pn );	break;
-		case RadarCategory_Chaos:				out[rc] = GetActualChaosRadarValue( in, fSongSeconds, pn );		break;
+		case RadarCategory_Stream:		out[rc] = GetActualStreamRadarValue( in, fSongSeconds, pn );	break;
+		case RadarCategory_Voltage:		out[rc] = GetActualVoltageRadarValue( in, fSongSeconds, pn );	break;
+		case RadarCategory_Air:			out[rc] = GetActualAirRadarValue( in, fSongSeconds, pn );		break;
+		case RadarCategory_Freeze:		out[rc] = GetActualFreezeRadarValue( in, fSongSeconds, pn );	break;
+		case RadarCategory_Chaos:		out[rc] = GetActualChaosRadarValue( in, fSongSeconds, pn );		break;
 		case RadarCategory_TapsAndHolds:	out[rc] = (float) GetNumNWithScore( in, TNS_W4, 1 );			break;
-		case RadarCategory_Jumps:			out[rc] = (float) GetNumNWithScore( in, TNS_W4, 2 );			break;
-		case RadarCategory_Holds:			out[rc] = (float) GetNumHoldNotesWithScore( in, TapNote::hold_head_hold, HNS_Held );	break;
-		case RadarCategory_Mines:			out[rc] = (float) GetSuccessfulMines( in );						break;
-		case RadarCategory_Hands:			out[rc] = (float) GetSuccessfulHands( in );						break;
-		case RadarCategory_Rolls:			out[rc] = (float) GetNumHoldNotesWithScore( in, TapNote::hold_head_roll, HNS_Held ); break;
+		case RadarCategory_Jumps:		out[rc] = (float) GetNumNWithScore( in, TNS_W4, 2 );			break;
+		case RadarCategory_Holds:		out[rc] = (float) GetNumHoldNotesWithScore( in, TapNote::hold_head_hold, HNS_Held );	break;
+		case RadarCategory_Mines:		out[rc] = (float) GetSuccessfulMines( in );						break;
+		case RadarCategory_Hands:		out[rc] = (float) GetSuccessfulHands( in );						break;
+		case RadarCategory_Rolls:		out[rc] = (float) GetNumHoldNotesWithScore( in, TapNote::hold_head_roll, HNS_Held ); break;
 		default:	ASSERT(0);
 		}
 	}
