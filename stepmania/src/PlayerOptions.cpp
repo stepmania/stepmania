@@ -609,6 +609,7 @@ bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps ) const
 
 	// Inserted holds can be really easy on some songs, and scores will be 
 	// highly hold-weighted, and very little tap score weighted.
+	if( m_bTransforms[TRANSFORM_LITTLE] )	return true;
 	if( m_bTransforms[TRANSFORM_PLANTED] )	return true;
 	if( m_bTransforms[TRANSFORM_FLOORED] )	return true;
 	if( m_bTransforms[TRANSFORM_TWISTER] )	return true;
