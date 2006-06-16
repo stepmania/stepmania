@@ -16,8 +16,6 @@ const int MAX_STYLES_PER_GAME = 10;
 // PrimaryMenuButton and SecondaryMenuButton are used to support using DeviceInputs that only 
 // navigate the menus.
 // 
-// A button being a primary menu button means that this GameButton will generate a the 
-// corresponding MenuInput.
 // A button being a primary menu button means that this GameButton will generate a the
 // corresponding MenuInput IF AND ONLY IF the GameButton corresponding to the pimary input 
 // is not mapped.
