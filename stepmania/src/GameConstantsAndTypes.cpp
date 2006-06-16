@@ -374,6 +374,7 @@ static const char *StyleTypeNames[] = {
 	"OnePlayerOneSide",
 	"TwoPlayersTwoSides",
 	"OnePlayerTwoSides",
+	"TwoPlayersSharedSides",
 };
 XToString( StyleType, NUM_STYLE_TYPES );
 StringToX( StyleType );

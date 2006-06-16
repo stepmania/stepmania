@@ -65,7 +65,7 @@ const int TECHNO_VERSUS_COL_SPACING = 33;
 const int POPN5_COL_SPACING = 32; 
 const int POPN9_COL_SPACING = 32; 
 
-struct {
+static struct {
 	char *name;
 	int NumTracks;
 } const StepsTypes[NUM_STEPS_TYPES] = {
@@ -73,6 +73,7 @@ struct {
 	{ "dance-double",	8 },
 	{ "dance-couple",	8 },
 	{ "dance-solo",		6 },
+	{ "dance-routine",	8 },
 	{ "pump-single",	5 },
 	{ "pump-halfdouble",6 },
 	{ "pump-double",	10 },
@@ -102,7 +103,7 @@ struct {
 //
 // Important:  Every game must define the buttons: "Start", "Back", "MenuLeft", "Operator" and "MenuRight"
 //
-Game g_Games[NUM_GAMES] = 
+static Game g_Games[NUM_GAMES] = 
 {
 	{	// GAME_DANCE
 		"dance",				// m_szName
@@ -1006,7 +1007,7 @@ Game g_Games[NUM_GAMES] =
 	},
 };
 
-Style g_Styles[] = 
+static Style g_Styles[] = 
 {
 	{	// STYLE_DANCE_SINGLE
 		&g_Games[GAME_DANCE],		// m_Game
@@ -1272,6 +1273,50 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 		false, // m_bLockDifficulties
 	},	*/
+	{	// STYLE_DANCE_ROUTINE
+		&g_Games[GAME_DANCE],		// m_Game
+		true,				// m_bUsedForGameplay
+		false,				// m_bUsedForEdit XXX should it be used?
+		false,				// m_bUsedForDemonstration
+		false,				// m_bUsedForHowToPlay
+		"routine",			// m_szName
+		STEPS_TYPE_DANCE_ROUTINE,	// m_StepsType
+		TWO_PLAYERS_SHARED_SIDES,	// m_StyleType
+		8,				// m_iColsPerPlayer
+		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+			{	// PLAYER_1
+				{ TRACK_1,	-DANCE_COL_SPACING*4.0f, NULL },
+				{ TRACK_2,	-DANCE_COL_SPACING*3.0f, NULL },
+				{ TRACK_3,	-DANCE_COL_SPACING*2.0f, NULL },
+				{ TRACK_4,	-DANCE_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+DANCE_COL_SPACING*1.0f, NULL },
+				{ TRACK_6,	+DANCE_COL_SPACING*2.0f, NULL },
+				{ TRACK_7,	+DANCE_COL_SPACING*3.0f, NULL },
+				{ TRACK_8,	+DANCE_COL_SPACING*4.0f, NULL },
+			},
+			{	// PLAYER_2
+				{ TRACK_1,	-DANCE_COL_SPACING*4.0f, NULL },
+				{ TRACK_2,	-DANCE_COL_SPACING*3.0f, NULL },
+				{ TRACK_3,	-DANCE_COL_SPACING*2.0f, NULL },
+				{ TRACK_4,	-DANCE_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+DANCE_COL_SPACING*1.0f, NULL },
+				{ TRACK_6,	+DANCE_COL_SPACING*2.0f, NULL },
+				{ TRACK_7,	+DANCE_COL_SPACING*3.0f, NULL },
+				{ TRACK_8,	+DANCE_COL_SPACING*4.0f, NULL },
+			},
+		},
+		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+			{ 0, 3, 2, 1, Style::END_MAPPING },
+			{ 4, 7, 6, 5, Style::END_MAPPING }
+		},
+		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+			0,1,2,3,4,5,6,7
+		},
+		false, // m_bNeedsZoomOutWith2Players
+		false, // m_bCanUseBeginnerHelper
+		true, // m_bLockDifficulties
+		
+	},
 	{	// STYLE_PUMP_SINGLE
 		&g_Games[GAME_PUMP],		// m_Game
 		true,				// m_bUsedForGameplay
@@ -2875,7 +2920,7 @@ LUA_REGISTER_CLASS( GameManager )
 
 
 /*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
+ * (c) 2001-2006 Chris Danford, Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
