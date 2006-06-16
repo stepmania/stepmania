@@ -112,7 +112,8 @@ struct TapNote
 
 	/* hold_head only: */
 	HoldNoteResult HoldResult;
-
+	
+	PlayerNumber pn;
 
 	// XML
 	XNode* CreateNode() const;
@@ -137,6 +138,7 @@ struct TapNote
 		bKeysound = bKeysound_;
 		iKeysoundIndex = iKeysoundIndex_;
 		iDuration = 0;
+		pn = PLAYER_INVALID;
 	}
 	bool operator==( const TapNote &other ) const
 	{
@@ -149,6 +151,7 @@ struct TapNote
 		COMPARE(bKeysound);
 		COMPARE(iKeysoundIndex);
 		COMPARE(iDuration);
+		COMPARE(pn);
 #undef COMPARE
 		return true;
 	}
