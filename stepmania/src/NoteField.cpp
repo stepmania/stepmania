@@ -52,6 +52,7 @@ void NoteField::Unload()
 		delete it->second;
 	m_NoteDisplays.clear();
 	m_pCurDisplay = NULL;
+	memset( m_pDisplays, NULL, sizeof(m_pDisplays) );
 }
 
 void NoteField::CacheNoteSkin( const RString &sNoteSkin_ )
@@ -110,6 +111,14 @@ void NoteField::CacheAllUsedNoteSkins()
 	map<RString, NoteDisplayCols *>::iterator it = m_NoteDisplays.find( m_pPlayerState->m_PlayerOptions.m_sNoteSkin );
 	ASSERT_M( it != m_NoteDisplays.end(), m_pPlayerState->m_PlayerOptions.m_sNoteSkin );
 	m_pCurDisplay = it->second;
+	memset( m_pDisplays, NULL, sizeof(m_pDisplays) );
+	FOREACH_EnabledPlayer( pn )
+	{
+		const RString& sNoteSkin = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.m_sNoteSkin;
+		it = m_NoteDisplays.find( sNoteSkin );
+		ASSERT_M( it != m_NoteDisplays.end(), sNoteSkin );
+		m_pDisplays[pn] = it->second;
+	}
 }
 
 void NoteField::Init( const PlayerState* pPlayerState, float fYReverseOffsetPixels )
@@ -141,6 +150,14 @@ void NoteField::Load(
 	map<RString, NoteDisplayCols *>::iterator it = m_NoteDisplays.find( m_pPlayerState->m_PlayerOptions.m_sNoteSkin );
 	ASSERT_M( it != m_NoteDisplays.end(), m_pPlayerState->m_PlayerOptions.m_sNoteSkin );
 	m_pCurDisplay = it->second;
+	memset( m_pDisplays, NULL, sizeof(m_pDisplays) );
+	FOREACH_EnabledPlayer( pn )
+	{
+		const RString& sNoteSkin = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.m_sNoteSkin;
+		it = m_NoteDisplays.find( sNoteSkin );
+		ASSERT_M( it != m_NoteDisplays.end(), sNoteSkin );
+		m_pDisplays[pn] = it->second;
+	}
 }
 
 void NoteField::Update( float fDeltaTime )
@@ -204,7 +221,7 @@ void NoteField::DrawBeatBar( const float fBeat )
 	NoteType nt = BeatToNoteType( fBeat );
 
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
-	const float fYPos		= ArrowEffects::GetYPos(	m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
+	const float fYPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
 
 	float fAlpha;
 	int iState;
@@ -222,7 +239,7 @@ void NoteField::DrawBeatBar( const float fBeat )
 		default:	ASSERT(0);
 		case NOTE_TYPE_4TH:	fAlpha = 1;					iState = 1;	break;
 		case NOTE_TYPE_8TH:	fAlpha = SCALE(fScrollSpeed,1.f,2.f,0.f,1.f);	iState = 2;	break;
-		case NOTE_TYPE_16TH:fAlpha = SCALE(fScrollSpeed,2.f,4.f,0.f,1.f);	iState = 3;	break;
+		case NOTE_TYPE_16TH:	fAlpha = SCALE(fScrollSpeed,2.f,4.f,0.f,1.f);	iState = 3;	break;
 		}
 		CLAMP( fAlpha, 0, 1 );
 	}
@@ -254,7 +271,7 @@ void NoteField::DrawMarkerBar( int iBeat )
 {
 	float fBeat = NoteRowToBeat( iBeat );
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
-	const float fYPos		= ArrowEffects::GetYPos(	m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
+	const float fYPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
 
 
 	m_rectMarkerBar.StretchTo( RectF(-GetWidth()/2, fYPos-ARROW_SIZE/2, GetWidth()/2, fYPos+ARROW_SIZE/2) );
@@ -266,9 +283,9 @@ void NoteField::DrawAreaHighlight( int iStartBeat, int iEndBeat )
 	float fStartBeat = NoteRowToBeat( iStartBeat );
 	float fEndBeat = NoteRowToBeat( iEndBeat );
 	float fYStartOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fStartBeat );
-	float fYStartPos	= ArrowEffects::GetYPos(	m_pPlayerState, 0, fYStartOffset, m_fYReverseOffsetPixels );
+	float fYStartPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYStartOffset, m_fYReverseOffsetPixels );
 	float fYEndOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fEndBeat );
-	float fYEndPos		= ArrowEffects::GetYPos(	m_pPlayerState, 0, fYEndOffset, m_fYReverseOffsetPixels );
+	float fYEndPos		= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYEndOffset, m_fYReverseOffsetPixels );
 
 	// The caller should have clamped these to reasonable values
 	ASSERT( fYStartPos > -1000 );
@@ -284,8 +301,8 @@ void NoteField::DrawAreaHighlight( int iStartBeat, int iEndBeat )
 void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 {
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
-	const float fYPos	= ArrowEffects::GetYPos(	m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
-	const float fZoom	= ArrowEffects::GetZoom( m_pPlayerState );
+	const float fYPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
+	const float fZoom	= ArrowEffects::GetZoom(    m_pPlayerState );
 
 	m_textMeasureNumber.SetZoom( fZoom );
 	m_textMeasureNumber.SetHorizAlign( Actor::align_right );
@@ -299,8 +316,8 @@ void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 void NoteField::DrawFreezeText( const float fBeat, const float fSecs )
 {
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
- 	const float fYPos	= ArrowEffects::GetYPos(	m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
-	const float fZoom	= ArrowEffects::GetZoom( m_pPlayerState );
+ 	const float fYPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
+	const float fZoom	= ArrowEffects::GetZoom(    m_pPlayerState );
 
 	m_textMeasureNumber.SetZoom( fZoom );
 	m_textMeasureNumber.SetHorizAlign( Actor::align_right );
@@ -314,8 +331,8 @@ void NoteField::DrawFreezeText( const float fBeat, const float fSecs )
 void NoteField::DrawAttackText( const float fBeat, const Attack &attack )
 {
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
- 	const float fYPos		= ArrowEffects::GetYPos(	m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
-	const float fZoom	= ArrowEffects::GetZoom( m_pPlayerState );
+ 	const float fYPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
+	const float fZoom	= ArrowEffects::GetZoom(    m_pPlayerState );
 
 	m_textMeasureNumber.SetZoom( fZoom );
 	m_textMeasureNumber.SetHorizAlign( Actor::align_left );
@@ -329,8 +346,8 @@ void NoteField::DrawAttackText( const float fBeat, const Attack &attack )
 void NoteField::DrawBGChangeText( const float fBeat, const RString sNewBGName )
 {
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
-	const float fYPos		= ArrowEffects::GetYPos(	m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
-	const float fZoom	= ArrowEffects::GetZoom( m_pPlayerState );
+	const float fYPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
+	const float fZoom	= ArrowEffects::GetZoom(    m_pPlayerState );
 
 	m_textMeasureNumber.SetZoom( fZoom );
 	m_textMeasureNumber.SetHorizAlign( Actor::align_left );
@@ -694,8 +711,9 @@ void NoteField::DrawPrimitives()
 				bool bIsInSelectionRange = false;
 				if( m_iBeginMarker!=-1 && m_iEndMarker!=-1 )
 					bIsInSelectionRange = (m_iBeginMarker <= iStartRow && iEndRow < m_iEndMarker);
-
-				m_pCurDisplay->display[c].DrawHold( tn, c, iStartRow, bIsHoldingNote, bIsActive, Result, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, false, m_fYReverseOffsetPixels, (float) iFirstPixelToDraw, (float) iLastPixelToDraw );
+				
+				NoteDisplayCols *displayCols = tn.pn == PLAYER_INVALID ? m_pCurDisplay : m_pDisplays[tn.pn];
+				displayCols->display[c].DrawHold( tn, c, iStartRow, bIsHoldingNote, bIsActive, Result, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, false, m_fYReverseOffsetPixels, (float) iFirstPixelToDraw, (float) iLastPixelToDraw );
 			}
 
 		}
@@ -755,17 +773,18 @@ void NoteField::DrawPrimitives()
 			bool bIsAddition = (tn.source == TapNote::addition);
 			bool bIsMine = (tn.type == TapNote::mine);
 			bool bIsAttack = (tn.type == TapNote::attack);
-
+			NoteDisplayCols *displayCols = tn.pn == PLAYER_INVALID ? m_pCurDisplay : m_pDisplays[tn.pn];
+			
 			if( bIsAttack )
 			{
 				Sprite sprite;
 				sprite.Load( THEME->GetPathG("NoteField","attack "+tn.sAttackModifiers) );
 				float fBeat = NoteRowToBeat(i);
-				m_pCurDisplay->display[c].DrawActor( &sprite, c, fBeat, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels, false, NotePart_Tap );
+				displayCols->display[c].DrawActor( &sprite, c, fBeat, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels, false, NotePart_Tap );
 			}
 			else
 			{
-				m_pCurDisplay->display[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bIsAddition, bIsMine, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels );
+				displayCols->display[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bIsAddition, bIsMine, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels );
 			}
 		}
 	}

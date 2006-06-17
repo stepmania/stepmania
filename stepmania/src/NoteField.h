@@ -79,6 +79,7 @@ protected:
 	/* All loaded note displays, mapped by their name. */
 	map<RString, NoteDisplayCols *> m_NoteDisplays;
 	NoteDisplayCols			*m_pCurDisplay;
+	NoteDisplayCols			*m_pDisplays[NUM_PlayerNumber];
 
 	// used in MODE_EDIT
 	Sprite				m_sprBars;	// 4 frames: Measure, 4th, 8th, 16th
