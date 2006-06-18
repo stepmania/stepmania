@@ -34,6 +34,7 @@ private:
 	
 	void AddListener( AudioDevicePropertyID propertyID,
 			  AudioDevicePropertyListenerProc handler, const char *name );
+	void RemoveListeners();
 	static OSStatus GetData( AudioDeviceID inDevice,
 				 const AudioTimeStamp *inNow,
 				 const AudioBufferList *inInputData,
