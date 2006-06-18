@@ -50,6 +50,8 @@ REGISTER_SCREEN_CLASS( ScreenOptionsManageEditSteps );
 void ScreenOptionsManageEditSteps::Init()
 {
 	ScreenOptions::Init();
+
+	CREATE_NEW_SCREEN.Load( m_sName, "CreateNewScreen" );
 }
 
 void ScreenOptionsManageEditSteps::BeginScreen()
@@ -124,7 +126,8 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 
 		if( iCurRow == 0 )	// "create new"
 		{
-			// do base behavior
+			SCREENMAN->SetNewScreen( CREATE_NEW_SCREEN );
+			return;	// don't call base
 		}
 		else if( m_pRows[iCurRow]->GetRowType() == OptionRow::RowType_Exit )
 		{
@@ -137,8 +140,7 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 			ASSERT( pSteps );
 			const Style *pStyle = GAMEMAN->GetEditorStyleForStepsType( pSteps->m_StepsType );
 			GAMESTATE->m_pCurStyle.Set( pStyle );
-			SCREENMAN->SetNewScreen( "ScreenEdit" );
-			return;	// don't call base
+			// do base behavior
 		}
 	}
 	else if( SM == SM_BackFromRename )

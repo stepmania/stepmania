@@ -24,6 +24,8 @@ protected:
 	Steps *GetStepsWithFocus() const;
 
 	vector<Steps*> m_vpSteps;
+
+	ThemeMetric<RString> CREATE_NEW_SCREEN;
 };
 
 #endif
