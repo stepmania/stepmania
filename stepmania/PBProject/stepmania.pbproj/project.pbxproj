@@ -1501,6 +1501,10 @@
 		AA8BD2C407C939F800EA04E1 /* ScoreDisplayCalories.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8BD2BD07C939F800EA04E1 /* ScoreDisplayCalories.cpp */; };
 		AA8BD2C507C939F800EA04E1 /* ScoreDisplayCalories.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8BD2BE07C939F800EA04E1 /* ScoreDisplayCalories.h */; };
 		AA8BD2C707C93A1E00EA04E1 /* CommonMetrics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8BD2C607C93A1E00EA04E1 /* CommonMetrics.cpp */; };
+		AA8CF5170A4518BE0005F1B4 /* RageSoundDriver_AU.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8CF5150A4518BE0005F1B4 /* RageSoundDriver_AU.h */; };
+		AA8CF5180A4518BE0005F1B4 /* RageSoundDriver_AU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8CF5160A4518BE0005F1B4 /* RageSoundDriver_AU.cpp */; };
+		AA8CF5190A4518BE0005F1B4 /* RageSoundDriver_AU.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8CF5150A4518BE0005F1B4 /* RageSoundDriver_AU.h */; };
+		AA8CF51A0A4518BE0005F1B4 /* RageSoundDriver_AU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8CF5160A4518BE0005F1B4 /* RageSoundDriver_AU.cpp */; };
 		AA8E4BC909787C9500765149 /* MenuInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8E4BC609787C9400765149 /* MenuInput.cpp */; };
 		AA8E55AD090B7F3C00D8CD2D /* libvorbis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA3791409099AE200141131 /* libvorbis.a */; };
 		AA8E55AE090B7F4000D8CD2D /* libogg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA378E809099AE100141131 /* libogg.a */; };
@@ -2360,6 +2364,8 @@
 		AA8BD2BD07C939F800EA04E1 /* ScoreDisplayCalories.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScoreDisplayCalories.cpp; path = ../src/ScoreDisplayCalories.cpp; sourceTree = "<group>"; };
 		AA8BD2BE07C939F800EA04E1 /* ScoreDisplayCalories.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScoreDisplayCalories.h; path = ../src/ScoreDisplayCalories.h; sourceTree = "<group>"; };
 		AA8BD2C607C93A1E00EA04E1 /* CommonMetrics.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = CommonMetrics.cpp; path = ../src/CommonMetrics.cpp; sourceTree = "<group>"; };
+		AA8CF5150A4518BE0005F1B4 /* RageSoundDriver_AU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RageSoundDriver_AU.h; sourceTree = "<group>"; };
+		AA8CF5160A4518BE0005F1B4 /* RageSoundDriver_AU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RageSoundDriver_AU.cpp; sourceTree = "<group>"; };
 		AA8DD84904A2E51400D02EE9 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		AA8E4BC609787C9400765149 /* MenuInput.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MenuInput.cpp; path = ../src/MenuInput.cpp; sourceTree = "<group>"; };
 		AA8EE0750866E266002C51A7 /* LuaBinding.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = LuaBinding.cpp; path = ../src/LuaBinding.cpp; sourceTree = "<group>"; };
@@ -3136,6 +3142,8 @@
 				AA6E012E047712BE005F316C /* RageSoundDriver_Null.cpp */,
 				AA6E012F047712BE005F316C /* RageSoundDriver_Null.h */,
 				AA80C73207F208E200C99272 /* Selector_RageSoundDriver.h */,
+				AA8CF5150A4518BE0005F1B4 /* RageSoundDriver_AU.h */,
+				AA8CF5160A4518BE0005F1B4 /* RageSoundDriver_AU.cpp */,
 			);
 			path = Sound;
 			sourceTree = "<group>";
@@ -4376,6 +4384,7 @@
 				AA1F9C4709AF1BF5002C15A8 /* PumpDevice.h in Headers */,
 				AA147F1A0A0F78D8006EADF6 /* VectorHelper.h in Headers */,
 				AAF565FD0A3BFE2B00D5A105 /* ExportNsisStrings.h in Headers */,
+				AA8CF5170A4518BE0005F1B4 /* RageSoundDriver_AU.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4820,6 +4829,7 @@
 				F4BC045509E6B582003F770B /* ScreenGameplaySyncMachine.h in Headers */,
 				AA147F1C0A0F78D8006EADF6 /* VectorHelper.h in Headers */,
 				AAF565FF0A3BFE2B00D5A105 /* ExportNsisStrings.h in Headers */,
+				AA8CF5190A4518BE0005F1B4 /* RageSoundDriver_AU.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5370,6 +5380,7 @@
 				AAEDFD690A03762B00590617 /* Crash.cpp in Sources */,
 				AA147F1B0A0F78D8006EADF6 /* VectorHelper.cpp in Sources */,
 				AAF565FC0A3BFE2B00D5A105 /* ExportNsisStrings.cpp in Sources */,
+				AA8CF5180A4518BE0005F1B4 /* RageSoundDriver_AU.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5772,6 +5783,7 @@
 				AAEDFD6A0A03762B00590617 /* Crash.cpp in Sources */,
 				AA147F1D0A0F78D8006EADF6 /* VectorHelper.cpp in Sources */,
 				AAF565FE0A3BFE2B00D5A105 /* ExportNsisStrings.cpp in Sources */,
+				AA8CF51A0A4518BE0005F1B4 /* RageSoundDriver_AU.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
