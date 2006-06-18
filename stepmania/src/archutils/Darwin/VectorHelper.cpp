@@ -341,7 +341,7 @@ void Vector::FastSoundRead( int16_t *dest, const int32_t *src, unsigned size )
 	{
 		// Deal with the remaining samples but be careful while storing as above.
 		vSInt32 first = vec_ldl( 0, src );
-		vSInt32 second = vec_ldl( 16, src );
+		vSInt32 second = size > 4 ? vec_ldl( 16, src ) : (vSInt32)( 0 );
 		vBool32 b1 = vec_cmplt( first, zero );
 		vBool32 b2 = vec_cmplt( second, zero );
 		
