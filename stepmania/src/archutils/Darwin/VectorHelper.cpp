@@ -266,14 +266,14 @@ void Vector::FastSoundRead( int16_t *dest, const int32_t *src, unsigned size )
 		vSInt32 seventh = vec_ldl(  96, src );
 		vSInt32 eighth  = vec_ldl( 112, src );
 		
-		vBool32 b1 = vec_cmplt( first,   zero );
-		vBool32 b2 = vec_cmplt( second,  zero );
-		vBool32 b3 = vec_cmplt( third,   zero );
-		vBool32 b4 = vec_cmplt( fourth,  zero );
-		vBool32 b5 = vec_cmplt( fifth,   zero );
-		vBool32 b6 = vec_cmplt( sixth,   zero );
-		vBool32 b7 = vec_cmplt( seventh, zero );
-		vBool32 b8 = vec_cmplt( eighth,  zero );
+		vSInt32 temp1 = (vSInt32)vec_cmplt( first,   zero );
+		vSInt32 temp2 = (vSInt32)vec_cmplt( second,  zero );
+		vSInt32 temp3 = (vSInt32)vec_cmplt( third,   zero );
+		vSInt32 temp4 = (vSInt32)vec_cmplt( fourth,  zero );
+		vSInt32 temp5 = (vSInt32)vec_cmplt( fifth,   zero );
+		vSInt32 temp6 = (vSInt32)vec_cmplt( sixth,   zero );
+		vSInt32 temp7 = (vSInt32)vec_cmplt( seventh, zero );
+		vSInt32 temp8 = (vSInt32)vec_cmplt( eighth,  zero );
 		
 		first   = vec_sr( vec_abss(first),   shift );
 		second  = vec_sr( vec_abss(second),  shift );
@@ -284,14 +284,14 @@ void Vector::FastSoundRead( int16_t *dest, const int32_t *src, unsigned size )
 		seventh = vec_sr( vec_abss(seventh), shift );
 		eighth  = vec_sr( vec_abss(eighth),  shift );
 		
-		vSInt32 temp1 = vec_and( first,   (vSInt32)b1 );
-		vSInt32 temp2 = vec_and( second,  (vSInt32)b2 );
-		vSInt32 temp3 = vec_and( third,   (vSInt32)b3 );
-		vSInt32 temp4 = vec_and( fourth,  (vSInt32)b4 );
-		vSInt32 temp5 = vec_and( fifth,   (vSInt32)b5 );
-		vSInt32 temp6 = vec_and( sixth,   (vSInt32)b6 );
-		vSInt32 temp7 = vec_and( seventh, (vSInt32)b7 );
-		vSInt32 temp8 = vec_and( eighth,  (vSInt32)b8 );
+		temp1 = vec_and( first,   temp1 );
+		temp2 = vec_and( second,  temp2 );
+		temp3 = vec_and( third,   temp3 );
+		temp4 = vec_and( fourth,  temp4 );
+		temp5 = vec_and( fifth,   temp5 );
+		temp6 = vec_and( sixth,   temp6 );
+		temp7 = vec_and( seventh, temp7 );
+		temp8 = vec_and( eighth,  temp8 );
 		
 		first   = vec_subs( vec_sub(first,   temp1), temp1 );
 		second  = vec_subs( vec_sub(second,  temp2), temp2 );
@@ -316,16 +316,16 @@ void Vector::FastSoundRead( int16_t *dest, const int32_t *src, unsigned size )
 	{
 		vSInt32 first = vec_ldl( 0, src );
 		vSInt32 second = vec_ldl( 16, src );
-		vBool32 b1 = vec_cmplt( first, zero );
-		vBool32 b2 = vec_cmplt( second, zero );
+		vSInt32 temp1 = (vSInt32)vec_cmplt( first, zero );
+		vSInt32 temp2 = (vSInt32)vec_cmplt( second, zero );
 		
 		first = vec_abss( first );
 		second = vec_abss( second );
 		first = vec_sr( first, shift );
 		second = vec_sr( second, shift );
 		
-		vSInt32 temp1 = vec_and( first, (vSInt32)b1 );
-		vSInt32 temp2 = vec_and( second, (vSInt32) b2 );
+		temp1 = vec_and( first,  temp1 );
+		temp2 = vec_and( second, temp2 );
 		
 		first = vec_subs( first, temp1 );
 		second = vec_subs( second, temp2 );
@@ -342,16 +342,16 @@ void Vector::FastSoundRead( int16_t *dest, const int32_t *src, unsigned size )
 		// Deal with the remaining samples but be careful while storing as above.
 		vSInt32 first = vec_ldl( 0, src );
 		vSInt32 second = size > 4 ? vec_ldl( 16, src ) : (vSInt32)( 0 );
-		vBool32 b1 = vec_cmplt( first, zero );
-		vBool32 b2 = vec_cmplt( second, zero );
+		vSInt32 temp1 = (vSInt32)vec_cmplt( first, zero );
+		vSInt32 temp2 = (vSInt32)vec_cmplt( second, zero );
 		
 		first = vec_abss( first );
 		second = vec_abss( second );
 		first = vec_sr( first, shift );
 		second = vec_sr( second, shift );
 		
-		vSInt32 temp1 = vec_and( first, (vSInt32)b1 );
-		vSInt32 temp2 = vec_and( second, (vSInt32) b2 );
+		temp1 = vec_and( first,  temp1 );
+		temp2 = vec_and( second, temp2 );
 		
 		first = vec_subs( first, temp1 );
 		second = vec_subs( second, temp2 );
