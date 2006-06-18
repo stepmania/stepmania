@@ -422,6 +422,7 @@ void MovieDecoder_FFMpeg::ConvertToSurface( RageSurface *pSurface ) const
 
 static avcodec::AVStream *FindVideoStream( avcodec::AVFormatContext *m_fctx )
 {
+	ASSERT_M( m_fctx->nb_streams <= MAX_STREAMS, ssprintf( "m_fctx->nb_streams = %d", m_fctx->nb_streams) );
 	for( int stream = 0; stream < m_fctx->nb_streams; ++stream )
 	{
 		avcodec::AVStream *enc = m_fctx->streams[stream];
