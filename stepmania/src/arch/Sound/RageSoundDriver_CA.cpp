@@ -486,8 +486,15 @@ OSStatus RageSound_CA::JackChanged( AudioDeviceID inDevice, UInt32 inChannel, Bo
 			       result ? "something" : "nothing") );
 
 	if( (error = AudioDeviceGetCurrentTime(inDevice, &time)) )
-		FAIL_M( ERROR("Couldn't get current time when jack changed", error) );
-	This->m_iOffset = This->m_iLastSampleTime - int64_t( time.mSampleTime );
+	{
+		if( error != kAudioHardwareNotRunningError )
+			FAIL_M( ERROR("Couldn't get current time when jack changed", error) );
+		This->m_iOffset = This->m_iLastSampleTime;
+	}
+	else
+	{
+		This->m_iOffset = This->m_iLastSampleTime - int64_t( time.mSampleTime );
+	}
 	return noErr;
 }
 
