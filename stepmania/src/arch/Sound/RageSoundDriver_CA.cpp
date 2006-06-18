@@ -38,9 +38,6 @@ Desc::Desc( Float64 sampleRate, UInt32 formatID, UInt32 formatFlags, UInt32 byte
 	mReserved = 0;
 }
 
-static OSStatus SampleRateChanged( AudioDeviceID inDevice, UInt32 inChannel, Boolean isInput,
-				   AudioDevicePropertyID inPropertyID, void *inData );
-
 /* temporary hack: */
 static float g_fLastIOProcTime = 0;
 static const int NUM_MIX_TIMES = 16;
@@ -55,7 +52,7 @@ RageSound_CA::RageSound_CA() : m_fLatency(0.0f), m_Converter(NULL), m_bStarted(f
 
 static inline RString FourCCToString( uint32_t num )
 {
-	RString s( '?', 4 );
+	RString s( 4, '?' );
 	char c;
 	
 	c = (num >> 24) & 0xFF;
@@ -135,6 +132,14 @@ RString RageSound_CA::Init()
 			strcpy( str, "(unknown)" );
 		LOG->Info( "Audio device manufacturer: %s", str );
 	}
+	
+	AddListener( kAudioDeviceProcessorOverload,			OverloadListener,	"overload" );
+	AddListener( kAudioDevicePropertyDeviceHasChanged,		DeviceChanged,		"device changed" );
+	AddListener( kAudioDevicePropertyJackIsConnected,		JackChanged,		"jack changed" );
+	AddListener( kAudioDevicePropertyStreamConfiguration,		DeviceChanged,		"configuration changed" );
+	AddListener( kAudioDevicePropertyPreferredChannelsForStereo,	DeviceChanged,		"preferred channels changed" );
+	AddListener( kAudioHardwarePropertyDefaultOutputDevice,		DeviceChanged,		"default output device changed" );
+//	AddListener( kAudioDevicePropertyStreamFormat,			FormatChanged,		"stream format changed" );
 	
 	// Find the stereo channels
 	UInt32 channels[2];
@@ -219,11 +224,6 @@ RString RageSound_CA::Init()
 	}
 	delete[] streams;
 	
-	AddListener( kAudioDeviceProcessorOverload, OverloadListener, "overload" );
-	AddListener( kAudioDevicePropertyDeviceHasChanged, DeviceChanged, "device changed" );
-	AddListener( kAudioDevicePropertyJackIsConnected, JackChanged, "jack changed" );
-	AddListener( kAudioDevicePropertyActualSampleRate, SampleRateChanged, "sample rate changed" );
-
 	// The canonical format
 	Desc IOProcFormat( actualSampleRate, kAudioFormatLinearPCM, kAudioFormatFlagsNativeFloatPacked, 8, 1, 8, 2, 32 );
 	const Desc SMFormat( actualSampleRate, kAudioFormatLinearPCM, kFormatFlags, kBytesPerPacket,
@@ -329,16 +329,7 @@ RageSound_CA::~RageSound_CA()
 	{
 		AudioDeviceStop( m_OutputDevice, GetData );
 		AudioDeviceRemoveIOProc( m_OutputDevice, GetData );
-		
-		while( m_vPropertyListeners.size() )
-		{
-			pair<AudioHardwarePropertyID, AudioDevicePropertyListenerProc>& p = m_vPropertyListeners.back();
-			
-			AudioDeviceRemovePropertyListener( m_OutputDevice, kAudioPropertyWildcardChannel,
-							   kAudioDeviceSectionOutput, p.first, p.second );
-			
-			m_vPropertyListeners.pop_back();
-		}
+		RemoveListeners();
 		delete m_pIOThread;
 		delete m_pNotificationThread;
 	}
@@ -364,6 +355,19 @@ void RageSound_CA::AddListener( AudioDevicePropertyID propertyID, AudioDevicePro
 						AudioDevicePropertyListenerProc>(propertyID, handler) );
 	}
 }
+
+void RageSound_CA::RemoveListeners()
+{
+	while( m_vPropertyListeners.size() )
+	{
+		pair<AudioHardwarePropertyID, AudioDevicePropertyListenerProc>& p = m_vPropertyListeners.back();
+		
+		AudioDeviceRemovePropertyListener( m_OutputDevice, kAudioPropertyWildcardChannel,
+						   kAudioDeviceSectionOutput, p.first, p.second );
+		
+		m_vPropertyListeners.pop_back();
+	}
+}	
 
 int64_t RageSound_CA::GetPosition( const RageSoundBase *sound ) const
 {
@@ -487,19 +491,6 @@ OSStatus RageSound_CA::JackChanged( AudioDeviceID inDevice, UInt32 inChannel, Bo
 	return noErr;
 }
 
-OSStatus SampleRateChanged( AudioDeviceID inDevice, UInt32 inChannel, Boolean isInput,
-			    AudioDevicePropertyID inPropertyID, void *inData )
-{
-	if( isInput )
-		return noErr;
-	Float64 sampleRate;
-	UInt32 size = sizeof( sampleRate );
-	
-	AudioDeviceGetProperty( inDevice, inChannel, 0, inPropertyID, &size, &sampleRate );
-	LOG->Warn( "Sample rate changed to %f.", sampleRate );
-	return noErr;
-}
-							   
 
 void RageSound_CA::SetupDecodingThread()
 {
