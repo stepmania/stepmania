@@ -1,7 +1,7 @@
 #ifndef VECTOR_HELPER_H
 #define VECTOR_HELPER_H
 
-#if defined(__VEC__)
+#if defined(__VEC__) || (defined(__SSE__) && 0)
 namespace Vector
 {
 	bool CheckForVector();

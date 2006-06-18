@@ -4,6 +4,7 @@
 #include <sys/sysctl.h>
 
 #ifdef USE_VEC
+#if defined(__VEC__)
 #include <vecLib/vecLib.h>
 #ifndef __VECLIBTYPES__
 // Copy this from the header since it isn't in the 10.2.8 sdk
@@ -238,8 +239,8 @@ void Vector::FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, s
  */
 void Vector::FastSoundRead( int16_t *dest, const int32_t *src, unsigned size )
 {
-	ASSERT_M( (unsigned(dest) & 0xF) == 0, ssprintf("dest = %p", dest) );
-	ASSERT_M( (unsigned(src) & 0xF) == 0, ssprintf("src = %p", src) );
+	ASSERT_M( (intptr_t(dest) & 0xF) == 0, ssprintf("dest = %p", dest) );
+	ASSERT_M( (intptr_t(src) & 0xF) == 0, ssprintf("src = %p", src) );
 	
 	vSInt32 zero = (vSInt32)( 0 );
 	vUInt32 shift = (vUInt32)( 8 );
@@ -397,7 +398,154 @@ void Vector::FastSoundRead( float *dest, const int32_t *src, unsigned size )
 			vec_ste( result, 0, dest++ );
 	}
 }
+#elif defined(__SSE__)
+#include <xmmintrin.h>
+// This might even be portable to other sysems since it uses Intel's intrinsics.
+
+bool Vector::CheckForVector()
+{
+	// MMX, SSE, and SSE2 must be present, we don't use SSE3 so no need to check for it.
+	return true;
+}
+
+void Vector::FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, short volume )
+{
+        if( size == 0 )
+                return;
+ 	ASSERT_M( (intptr_t(dest) & 0x7) == 0, ssprintf("dest = %p", dest) );
+	if( intptr_t(dest) & 0xF )
+        {
+                // Misaligned stores are slow.
+                *(dest++) += *(src++) * volume;
+                --size;
+        }
+	
+        // There are only 8 XMM registers so no 4x unrolling
+        __m128i vol = _mm_set1_epi16( volume );
+	
+        while( size >= 8 )
+        {
+                // Aligned stores, possibly misaligned loads.
+                __m128i data    = _mm_loadu_si128( (__m128i *)src );
+                __m128i hi      = _mm_mulhi_epi16( data, vol );
+                __m128i low     = _mm_mullo_epi16( data, vol );
+                __m128i result1 = _mm_unpacklo_epi16( hi, low );
+                __m128i result2 = _mm_unpackhi_epi16( hi, low );
+		
+                result1 = _mm_add_epi32( result1, *(__m128i *)(dest + 0) );
+                result2 = _mm_add_epi32( result2, *(__m128i *)(dest + 4) );
+                _mm_store_si128( (__m128i *)(dest + 0), result1 );
+                _mm_store_si128( (__m128i *)(dest + 4), result2 );
+                src += 8;
+                dest += 8;
+                size -= 8;
+        }
+        while( size-- )
+                *(dest++) += *(src++) * volume;
+}
+
+void Vector::FastSoundRead( int16_t *dest, const int32_t *src, unsigned size )
+{
+	ASSERT_M( (intptr_t(dest) & 0xF) == 0, ssprintf("dest = %p", dest) );
+	ASSERT_M( (intptr_t(src) & 0xF) == 0, ssprintf("src = %p", src) );
+	
+	// Both dest and src are aligned. Still need to watch out for register spill.
+	__m128i zero = _mm_setzero_si128();
+	while( size >= 8 )
+	{
+		__m128i data1 = _mm_load_si128(  (__m128i *)(src + 0) );
+		__m128i data2 = _mm_load_si128(  (__m128i *)(src + 4) );
+		__m128i mask1 = _mm_cmplt_epi32( data1, zero );
+		__m128i mask2 = _mm_cmplt_epi32( data2, zero );
+		__m128i t1    = _mm_srai_epi32(  data1, 31 );
+		__m128i t2    = _mm_srai_epi32(  data2, 31 );
+		
+		// We can't do 32 bit saturating arithmetic but that's unlikely to be a problem
+		data1 = _mm_sub_epi32(  _mm_xor_si128(data1, t1), t1 );
+		data2 = _mm_sub_epi32(  _mm_xor_si128(data2, t2), t2 );
+		data1 = _mm_srai_epi32( data1, 8 );
+		data2 = _mm_srai_epi32( data2, 8 );
+		mask1 = _mm_and_si128(  mask1, data1 ); // destructive logic, we want data1 still
+		mask2 = _mm_and_si128(  mask2, data2 ); // destructive logic
+		data1 = _mm_sub_epi32( _mm_sub_epi32(data1, mask1), mask1 );
+		data2 = _mm_sub_epi32( _mm_sub_epi32(data2, mask2), mask2 );
+		/* This is little-endian so data is stored in the register as
+		 * { r0, r1, r2, r3, r4, r5, r6, r7 } an is stored in memory as
+		 * { r7, r6, r5, r4, r3, r2, r1, r0 } so we want r0-r3 to come from data2. */
+		data2 = _mm_packs_epi32( data2, data1 );
+		_mm_store_si128( (__m128i *)dest, data2 );
+		src += 8;
+		dest += 8;
+		size -= 8;
+	}
+	if( size )
+	{
+		__m128i data1 = _mm_load_si128(  (__m128i *)(src + 0) );
+		__m128i data2 = size > 4 ? _mm_load_si128(  (__m128i *)(src + 4) ) : zero;
+		__m128i mask1 = _mm_cmplt_epi32( data1, zero );
+		__m128i mask2 = _mm_cmplt_epi32( data2, zero );
+		__m128i t1    = _mm_srai_epi32(  data1, 31 );
+		__m128i t2    = _mm_srai_epi32(  data2, 31 );
+		
+		// We can't do 32 bit saturating arithmetic but that's unlikely to be a problem
+		data1 = _mm_sub_epi32(  _mm_xor_si128(data1, t1), t1 );
+		data2 = _mm_sub_epi32(  _mm_xor_si128(data2, t2), t2 );
+		data1 = _mm_srai_epi32( data1, 8 );
+		data2 = _mm_srai_epi32( data2, 8 );
+		mask1 = _mm_and_si128(  mask1, data1 ); // destructive logic, we want data1 still
+		mask2 = _mm_and_si128(  mask2, data2 ); // destructive logic
+		data1 = _mm_sub_epi32( _mm_sub_epi32(data1, mask1), mask1 );
+		data2 = _mm_sub_epi32( _mm_sub_epi32(data2, mask2), mask2 );
+		/* This is little-endian so data is stored in the register as
+		 * { r0, r1, r2, r3, r4, r5, r6, r7 } an is stored in memory as
+		 * { r7, r6, r5, r4, r3, r2, r1, r0 } so we want r0-r3 to come from data2. */
+		data2 = _mm_packs_epi32( data2, data1 );
+#define X(x) (-(size >= (x)))
+		data1 = _mm_set_epi8( 0, 0, X(7), X(7), X(6), X(6), X(5), X(5),
+				      X(4), X(4), X(3), X(3), X(2), X(2), -1, -1 );
+#undef X
+		_mm_maskmoveu_si128( data2, data1, (char *)dest );
+	}
+}
+
+void Vector::FastSoundRead( float *dest, const int32_t *src, unsigned size )
+{
+	ASSERT_M( (unsigned(dest) &0xF) == 0, ssprintf("dest = %p", dest) );
+	ASSERT_M( (unsigned(src) & 0xF) == 0, ssprintf("src = %p", src) );
+
+	__m128 scale = _mm_set1_ps( 127.998046875f );
+	__m128i l1   = _mm_set1_epi32( -8388608 );
+	__m128 l2    = _mm_set1_ps( -1.0f );
+	
+	while( size >= 4 )
+	{
+		__m128i data = _mm_sub_epi32( _mm_load_si128((__m128i *)src), l1 );
+		__m128 result = _mm_cvtepi32_ps( data );
+		
+		result = _mm_add_ps( _mm_mul_ps(result, scale), l2 );
+		_mm_store_ps( dest, result );
+		src += 4;
+		dest += 4;
+		size -= 4;
+	}
+	if( size )
+	{
+#define X(x) (-(size >= (x)))
+		__m128i storeMask = _mm_set_epi8( 0, 0, 0, 0, X(3), X(3), X(3), X(3),
+						  X(2), X(2), X(2), X(2), -1, -1, -1, -1 );
+		__m128i data = _mm_sub_epi32( _mm_load_si128((__m128i *)src), l1 );
+		__m128 result = _mm_cvtepi32_ps( data );
+		
+		result = _mm_add_ps( _mm_mul_ps(result, scale), l2 );
+		// This might not be valid.
+		_mm_maskmoveu_si128( (__m128i)result, storeMask, (char *)dest );
+	}
+}
+#else
+#error huh?
 #endif
+#endif
+
 
 /*
  * (c) 2006 Steve Checkoway
