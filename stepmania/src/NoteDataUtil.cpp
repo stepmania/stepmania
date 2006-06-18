@@ -57,15 +57,14 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, RString sSMNoteData 
 	out.Init();
 	out.SetNumTracks( iNumTracks );
 
-	// strip comments out of sSMNoteData
-	while( sSMNoteData.find("//") != string::npos )
 	{
-		size_t iIndexCommentStart = sSMNoteData.find("//");
-		size_t iIndexCommentEnd = sSMNoteData.find("\n", iIndexCommentStart);
-		if( iIndexCommentEnd == string::npos )	// comment doesn't have an end?
-			sSMNoteData.erase( iIndexCommentStart, 2 );
-		else
-			sSMNoteData.erase( iIndexCommentStart, iIndexCommentEnd-iIndexCommentStart );
+		RString::size_type iIndexCommentStart = 0;
+		
+		while( (iIndexCommentStart = sSMNoteData.find("//", iIndexCommentStart)) != RString::npos )
+		{
+			RString::size_type iIndexCommentEnd = sSMNoteData.find( "\n", iIndexCommentStart );
+			sSMNoteData.erase( iIndexCommentStart, iIndexCommentEnd - iIndexCommentStart );
+		}
 	}
 
 	vector<RString> asMeasures;
