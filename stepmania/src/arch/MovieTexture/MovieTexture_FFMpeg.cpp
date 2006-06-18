@@ -444,11 +444,11 @@ static RString averr_ssprintf( int err, const char *fmt, ... )
 	RString Error;
 	switch( err )
 	{
-	case AVERROR_IO:			Error = "I/O error"; break;
+	case AVERROR_IO:		Error = "I/O error"; break;
 	case AVERROR_NUMEXPECTED:	Error = "number syntax expected in filename"; break;
 	case AVERROR_INVALIDDATA:	Error = "invalid data found"; break;
-	case AVERROR_NOMEM:			Error = "not enough memory"; break;
-	case AVERROR_NOFMT:			Error = "unknown format"; break;
+	case AVERROR_NOMEM:		Error = "not enough memory"; break;
+	case AVERROR_NOFMT:		Error = "unknown format"; break;
 	case AVERROR_UNKNOWN:		Error = "unknown error"; break;
 	default: Error = ssprintf( "unknown error %i", err ); break;
 	}
