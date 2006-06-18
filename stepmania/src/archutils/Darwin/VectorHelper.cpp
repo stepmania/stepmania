@@ -73,8 +73,8 @@ void Vector::FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, s
 			vSInt32 first  = vec_mergeh( even, odd );
 			vSInt32 second = vec_mergel( even, odd );
 			
-			load1Dest = vec_add( load1Dest, first );
-			load2Dest = vec_add( load2Dest, second );
+			load1Dest = vec_add(  load1Dest, first );
+			load2Dest = vec_add(  load2Dest, second );
 			store     = vec_perm( load1Dest, load1Dest, storeMask );
 			load1Dest = vec_perm( load1Dest, load2Dest, storeMask );
 			
@@ -85,10 +85,10 @@ void Vector::FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, s
 			}
 			vec_st( load1Dest, index, dest );
 			
-			load1Src = load2Src;
+			load1Src  = load2Src;
 			load1Dest = load3Dest;
-			store = load2Dest;
-			src += 8;
+			store     = load2Dest;
+			src  += 8;
 			dest += 8;
 			size -= 8;
 			/* Incrementing the index is supposed to have the same effect
@@ -135,6 +135,7 @@ void Vector::FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, s
 			vSInt32 odd3    = vec_mulo( load3Src, vol );
 			vSInt32 even4   = vec_mule( load4Src, vol );
 			vSInt32 odd4    = vec_mulo( load4Src, vol );
+			
 			vSInt32 first   = vec_mergeh( even1, odd1 );
 			vSInt32 second  = vec_mergel( even1, odd1 );
 			vSInt32 third   = vec_mergeh( even2, odd2 );
@@ -164,7 +165,7 @@ void Vector::FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, s
 			load7Dest = vec_perm( load7Dest, load8Dest, storeMask );
 
 			// store the results
-			vec_st( store,     index,       dest );
+			vec_st( store,     index +   0, dest );
 			vec_st( load1Dest, index +  16, dest );
 			vec_st( load2Dest, index +  32, dest );
 			vec_st( load3Dest, index +  48, dest );
@@ -206,7 +207,7 @@ void Vector::FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, s
 			store     = vec_perm( store,     load1Dest, storeMask );
 			load1Dest = vec_perm( load1Dest, load2Dest, storeMask );
 			
-			vec_st( store,     index,      dest );
+			vec_st( store,     index +  0, dest );
 			vec_st( load1Dest, index + 16, dest );
 			
 			load1Src  = load2Src;
@@ -314,23 +315,19 @@ void Vector::FastSoundRead( int16_t *dest, const int32_t *src, unsigned size )
 	// Befuddle optimizer as above.	
 	while( size & ~0x7 )
 	{
-		vSInt32 first = vec_ldl( 0, src );
+		vSInt32 first  = vec_ldl( 0, src );
 		vSInt32 second = vec_ldl( 16, src );
-		vSInt32 temp1 = (vSInt32)vec_cmplt( first, zero );
-		vSInt32 temp2 = (vSInt32)vec_cmplt( second, zero );
+		vSInt32 temp1  = (vSInt32)vec_cmplt( first,  zero );
+		vSInt32 temp2  = (vSInt32)vec_cmplt( second, zero );
 		
-		first = vec_abss( first );
-		second = vec_abss( second );
-		first = vec_sr( first, shift );
-		second = vec_sr( second, shift );
+		first  = vec_sr( vec_abss(first),  shift );
+		second = vec_sr( vec_abss(second), shift );
 		
 		temp1 = vec_and( first,  temp1 );
 		temp2 = vec_and( second, temp2 );
 		
-		first = vec_subs( first, temp1 );
-		second = vec_subs( second, temp2 );
-		first = vec_subs( first, temp1 );
-		second = vec_sub( second, temp2 );
+		first  = vec_subs( vec_sub(first,  temp1), temp1 );
+		second = vec_subs( vec_sub(second, temp2), temp2 );
 		
 		vec_st( vec_packs(first, second), 0, dest );
 		dest += 8;
@@ -340,23 +337,19 @@ void Vector::FastSoundRead( int16_t *dest, const int32_t *src, unsigned size )
 	if( size )
 	{
 		// Deal with the remaining samples but be careful while storing as above.
-		vSInt32 first = vec_ldl( 0, src );
+		vSInt32 first  = vec_ldl( 0, src );
 		vSInt32 second = size > 4 ? vec_ldl( 16, src ) : (vSInt32)( 0 );
-		vSInt32 temp1 = (vSInt32)vec_cmplt( first, zero );
-		vSInt32 temp2 = (vSInt32)vec_cmplt( second, zero );
+		vSInt32 temp1  = (vSInt32)vec_cmplt( first,  zero );
+		vSInt32 temp2  = (vSInt32)vec_cmplt( second, zero );
 		
-		first = vec_abss( first );
-		second = vec_abss( second );
-		first = vec_sr( first, shift );
-		second = vec_sr( second, shift );
+		first  = vec_sr( vec_abss(first),  shift );
+		second = vec_sr( vec_abss(second), shift );
 		
 		temp1 = vec_and( first,  temp1 );
 		temp2 = vec_and( second, temp2 );
 		
-		first = vec_subs( first, temp1 );
-		second = vec_subs( second, temp2 );
-		first = vec_subs( first, temp1 );
-		second = vec_sub( second, temp2 );
+		first  = vec_subs( vec_sub(first,  temp1), temp1 );
+		second = vec_subs( vec_sub(second, temp2), temp2 );
 		
 		vSInt16 result = vec_packs( first, second );
 		while( size-- )
