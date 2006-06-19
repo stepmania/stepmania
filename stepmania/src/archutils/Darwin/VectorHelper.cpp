@@ -507,7 +507,13 @@ void Vector::FastSoundRead( float *dest, const int32_t *src, unsigned size )
 	ASSERT_M( (unsigned(dest) &0xF) == 0, ssprintf("dest = %p", dest) );
 	ASSERT_M( (unsigned(src) & 0xF) == 0, ssprintf("src = %p", src) );
 
-	__m128 scale = _mm_set1_ps( 127.998046875f );
+	/* m = -32768; M = 32767
+	 * (x-2^8*m)(1-(-1))/(2^8*M-2^8*m)+(-1)
+	 * (x-2^8*m)/(2^7*(M-m))+(-1)
+	 * l1 = 2^8*m = -8388608
+	 * scale = 1/(2^7*(M-m)) = 0.00000011921110856794
+	 * l2 = -1 */
+	__m128 scale = _mm_set1_ps( 0.00000011921110856794f );
 	__m128i l1   = _mm_set1_epi32( -8388608 );
 	__m128 l2    = _mm_set1_ps( -1.0f );
 	
