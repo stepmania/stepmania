@@ -61,19 +61,27 @@ private:
 	/*
 	 * Thread safety and state transitions:
 	 *
-	 * STOPPED: The sound is idle, and can be used to play a new sound.  The decoding and
-	 * mixing threads will not touch a sound in this state.
+	 * AVAILABLE: The sound is available to play a new sound. The decoding and mixing threads
+	 * will not touch a sound in this state.
+	 *
+	 * BUFFERING: The sound is stopped but StartMixing() is prebuffering. No other threads
+	 * will touch a sound that is BUFFERING. This isn't necessary if only the main thread
+	 * can call StartMixing().
+	 *
+	 * STOPPED: The sound is idle, but memory is still allocated for its buffer. Update()
+	 * will deallocate memory and the sound will be changed to AVAILABLE.
 	 *
 	 * PLAYING: The sound is being decoded by the decoding thread, and played by the mixing
 	 * thread.  If the decoding thread hits EOF, the decoding thread will changed the state
 	 * to STOPPING.
 	 *
 	 * STOPPING: The sound is being played by the mixing thread.  No new data will be decoded.
-	 * Once the data buffer is empty (all sound has been played), Update() will call StopMixing,
-	 * and the sound will be changed to STOPPED.
+	 * Once the data buffer is empty (all sound has been played), Update() will change the
+	 * sound to HALTING.
 	 *
-	 * HALTING: The main thread has called StopMixing.  The mixing thread will flush the buffered
-	 * data without playing it, and then move the sound to STOPPED.
+	 * HALTING: The main thread has called StopMixing or the data buffer is empty.  The mixing
+	 * thread will flush any remaining buffered data without playing it, and then move the
+	 * sound to STOPPED.
 	 * 
 	 * The mixing thread operates without any locks.  This can lead to a little overlap.  For
 	 * example, if StopMixing() is called, moving the sound from PLAYING to HALTING, the mixing
@@ -87,6 +95,9 @@ private:
 	 *
 	 * The only state change made by the mixing thread is from HALTING to STOPPED.
 	 * This is done with no locks; no other thread can take a sound out of the HALTING state.
+	 *
+	 * Do not allocate or deallocate memory in the mixing thread since allocating memory
+	 * involves taking a lock. Instead, push the deallocation to the main thread.
 	 */
 	struct sound_block
 	{
@@ -106,12 +117,13 @@ private:
 		CircBuf<sound_block> buffer;
 
 		/* If true, this sound is in STOPPED and available for use. */
-		bool available;
 
 		bool paused;
 
 		enum
 		{
+			AVAILABLE,
+			BUFFERING,
 			STOPPED,	/* idle */
 
 			/* This state is set by the decoder thread, indicating that the sound has just

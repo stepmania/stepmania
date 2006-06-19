@@ -24,8 +24,7 @@ static int underruns = 0, logged_underruns = 0;
 RageSound_Generic_Software::sound::sound()
 {
 	snd = NULL;
-	state = STOPPED;
-	available = true;
+	state = AVAILABLE;
 	paused = false;
 }
 
@@ -71,10 +70,8 @@ void RageSound_Generic_Software::Mix( int16_t *buf, int frames, int64_t frameno,
 		if( s.state == sound::HALTING )
 		{
 			/* This indicates that this stream can be reused. */
-			s.Deallocate();
-			s.state = sound::STOPPED;
-			s.available = true; /* do this last */
 			s.paused = false;
+			s.state = sound::STOPPED;
 
 //			LOG->Trace("set %p from HALTING to STOPPED", sounds[i].snd);
 			continue;
@@ -268,8 +265,17 @@ void RageSound_Generic_Software::Update(float delta)
 	 * this is the only place it'll be changed (to STOPPED). */
 	for( unsigned i = 0; i < ARRAYSIZE(sounds); ++i )
 	{
-		if( sounds[i].state != sound::STOPPING )
+		switch( sounds[i].state )
+		{
+		case sound::STOPPED:
+			sounds[i].Deallocate();
+			sounds[i].state = sound::AVAILABLE;
 			continue;
+		case sound::STOPPING:
+			break;
+		default:
+			continue;
+		}
 
 		if( sounds[i].buffer.num_readable() != 0 )
 			continue;
@@ -311,7 +317,7 @@ void RageSound_Generic_Software::StartMixing( RageSoundBase *snd )
 
 	unsigned i;
 	for( i = 0; i < ARRAYSIZE(sounds); ++i )
-		if( sounds[i].available )
+		if( sounds[i].state == sound::AVAILABLE )
 			break;
 	if( i == ARRAYSIZE(sounds) )
 	{
@@ -320,7 +326,7 @@ void RageSound_Generic_Software::StartMixing( RageSoundBase *snd )
 	}
 
 	sound &s = sounds[i];
-	s.available = false;
+	s.state = sound::BUFFERING;
 
 	/* We've reserved our slot; we can safely unlock now.  Don't hold onto it longer
 	 * than needed, since prebuffering might take some time. */
@@ -376,7 +382,7 @@ void RageSound_Generic_Software::StopMixing( RageSoundBase *snd )
 	/* Find the sound. */
 	unsigned i;
 	for( i = 0; i < ARRAYSIZE(sounds); ++i )
-		if( !sounds[i].available && sounds[i].snd == snd )
+		if( sounds[i].state != sound::AVAILABLE && sounds[i].snd == snd )
 			break;
 	if( i == ARRAYSIZE(sounds) )
 	{
@@ -411,7 +417,7 @@ bool RageSound_Generic_Software::PauseMixing( RageSoundBase *snd, bool bStop )
 	/* Find the sound. */
 	unsigned i;
 	for( i = 0; i < ARRAYSIZE(sounds); ++i )
-		if( !sounds[i].available && sounds[i].snd == snd )
+		if( sounds[i].state != sound::AVAILABLE && sounds[i].snd == snd )
 			break;
 
 	/* A sound can be paused in PLAYING or STOPPING.  (STOPPING means the sound
