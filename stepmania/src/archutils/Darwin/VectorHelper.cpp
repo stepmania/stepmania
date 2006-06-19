@@ -462,11 +462,8 @@ void Vector::FastSoundRead( int16_t *dest, const int32_t *src, unsigned size )
 		mask2 = _mm_and_si128(  mask2, data2 ); // destructive logic
 		data1 = _mm_sub_epi32( _mm_sub_epi32(data1, mask1), mask1 );
 		data2 = _mm_sub_epi32( _mm_sub_epi32(data2, mask2), mask2 );
-		/* This is little-endian so data is stored in the register as
-		 * { r0, r1, r2, r3, r4, r5, r6, r7 } an is stored in memory as
-		 * { r7, r6, r5, r4, r3, r2, r1, r0 } so we want r0-r3 to come from data2. */
-		data2 = _mm_packs_epi32( data2, data1 );
-		_mm_store_si128( (__m128i *)dest, data2 );
+		data1 = _mm_packs_epi32( data1, data2 );
+		_mm_store_si128( (__m128i *)dest, data1 );
 		src += 8;
 		dest += 8;
 		size -= 8;
@@ -489,15 +486,12 @@ void Vector::FastSoundRead( int16_t *dest, const int32_t *src, unsigned size )
 		mask2 = _mm_and_si128(  mask2, data2 ); // destructive logic
 		data1 = _mm_sub_epi32( _mm_sub_epi32(data1, mask1), mask1 );
 		data2 = _mm_sub_epi32( _mm_sub_epi32(data2, mask2), mask2 );
-		/* This is little-endian so data is stored in the register as
-		 * { r0, r1, r2, r3, r4, r5, r6, r7 } an is stored in memory as
-		 * { r7, r6, r5, r4, r3, r2, r1, r0 } so we want r0-r3 to come from data2. */
-		data2 = _mm_packs_epi32( data2, data1 );
+		data1 = _mm_packs_epi32( data1, data2 );
 #define X(x) (-(size >= (x)))
-		data1 = _mm_set_epi8( 0, 0, X(7), X(7), X(6), X(6), X(5), X(5),
+		data2 = _mm_set_epi8( 0, 0, X(7), X(7), X(6), X(6), X(5), X(5),
 				      X(4), X(4), X(3), X(3), X(2), X(2), -1, -1 );
 #undef X
-		_mm_maskmoveu_si128( data2, data1, (char *)dest );
+		_mm_maskmoveu_si128( data1, data2, (char *)dest );
 	}
 }
 
