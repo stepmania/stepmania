@@ -365,7 +365,14 @@ void Vector::FastSoundRead( float *dest, const int32_t *src, unsigned size )
 	ASSERT_M( (unsigned(dest) &0xF) == 0, ssprintf("dest = %p", dest) );
 	ASSERT_M( (unsigned(src) & 0xF) == 0, ssprintf("src = %p", src) );
 	
-	vFloat scale = (vFloat) ( 32767.5f );
+	/* m = -32768; M = 32767
+	 * (x-2^8*m)(1-(-1))/(2^8*M-2^8*m)+(-1)
+	 * = ((x-2^8*m)/(2^8))*(2/(M-m))+(-1)
+	 * = ((x-2^8*m)/(2^16))*((2*2^8)/(M-m))+(-1)
+	 * l1 = 2^8*m = -8388608
+	 * scale = 2*2^8/(M-m) = 0.00781261921110856794
+	 * l2 = -1 */
+	vFloat scale = (vFloat) ( 0.00781261921110856794f );
 	vSInt32 l1 = (vSInt32) ( -8388608 );
 	vFloat l2 = (vFloat) ( -1.0f );
 	
@@ -373,9 +380,9 @@ void Vector::FastSoundRead( float *dest, const int32_t *src, unsigned size )
 	{
 		/* By far the simplest of these, we need only perform the scale
 		 * operation which amounts to subtracting l1, converting to a float,
-		 * multiplying by a constant, and adding l1. We can multiply and add
-		 * in one instruction. */
-		vFloat result = vec_ctf( vec_subs(vec_ldl(0, src), l1), 8 );
+		 * multiplying by a constant, and adding l2. We can multiply and add
+		 * in one instruction. The 16 in vec_ctf(X,16) divides by 2^16. */ 
+		vFloat result = vec_ctf( vec_subs(vec_ldl(0, src), l1), 16 );
 		
 		vec_st( vec_madd(result, scale, l2), 0, dest );
 		dest += 4;
