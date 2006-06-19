@@ -406,7 +406,7 @@ void Vector::FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, s
         if( size == 0 )
                 return;
  	ASSERT_M( (intptr_t(dest) & 0x7) == 0, ssprintf("dest = %p", dest) );
-	if( intptr_t(dest) & 0xF )
+	while( (intptr_t(dest) & 0xF) && size )
         {
                 // Misaligned stores are slow.
                 *(dest++) += *(src++) * volume;
@@ -422,8 +422,8 @@ void Vector::FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, s
                 __m128i data    = _mm_loadu_si128( (__m128i *)src );
                 __m128i hi      = _mm_mulhi_epi16( data, vol );
                 __m128i low     = _mm_mullo_epi16( data, vol );
-                __m128i result1 = _mm_unpacklo_epi16( hi, low );
-                __m128i result2 = _mm_unpackhi_epi16( hi, low );
+                __m128i result1 = _mm_unpacklo_epi16( low, hi );
+                __m128i result2 = _mm_unpackhi_epi16( low, hi );
 		
                 result1 = _mm_add_epi32( result1, *(__m128i *)(dest + 0) );
                 result2 = _mm_add_epi32( result2, *(__m128i *)(dest + 4) );
