@@ -16,6 +16,10 @@
 #include "ScreenPrompt.h"
 #include "LocalizedString.h"
 #include "SongUtil.h"
+#include "RageFile.h"
+#include "RageFileManager.h"
+
+static const RString TEMP_FILE_NAME = "--temp--";
 
 #define EXPLANATION_TEXT( row )	THEME->GetString(m_sName,"Explanation"+EditMenuRowToString(row))
 #define EDIT_MENU_TYPE			THEME->GetMetric(m_sName,"EditMenuType")
@@ -152,6 +156,7 @@ static void DeleteCurrentSteps()
 }
 	
 static LocalizedString MISSING_MUSIC_FILE	( "ScreenEditMenu", "This song is missing a music file and cannot be edited." );
+static LocalizedString SONG_DIR_READ_ONLY	( "ScreenEditMenu", "The song directory is read-only and cannot be edited." );
 static LocalizedString STEPS_WILL_BE_LOST	( "ScreenEditMenu", "These steps will be lost permanently." );
 static LocalizedString CONTINUE_WITH_DELETE	( "ScreenEditMenu", "Continue with delete?" );
 static LocalizedString BLANK			( "ScreenEditMenu", "Blank" );
@@ -189,6 +194,20 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 	{
 		ScreenPrompt::Prompt( SM_None, MISSING_MUSIC_FILE );
 		return;
+	}
+
+	{
+		RString sDir = pSong->GetSongDir();
+		RString sTempFile = sDir + TEMP_FILE_NAME;
+		RageFile file;
+		if( !file.Open( sTempFile, RageFile::WRITE ) )
+		{
+			ScreenPrompt::Prompt( SM_None, SONG_DIR_READ_ONLY );
+			return;
+		}
+
+		file.Close();
+		FILEMAN->Remove( sTempFile );
 	}
 
 	//
