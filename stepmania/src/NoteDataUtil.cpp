@@ -72,8 +72,8 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, RString sSMNoteData 
 	for( unsigned m=0; m<asMeasures.size(); m++ )	// foreach measure
 	{
 		RString &sMeasureString = asMeasures[m];
-		TrimLeft(sMeasureString);
-		TrimRight(sMeasureString);
+		TrimLeft( sMeasureString );
+		TrimRight( sMeasureString );
 
 		vector<RString> asMeasureLines;
 		split( sMeasureString, "\n", asMeasureLines, true );	// ignore empty is important
@@ -81,8 +81,8 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, RString sSMNoteData 
 		for( unsigned l=0; l<asMeasureLines.size(); l++ )
 		{
 			RString &sMeasureLine = asMeasureLines[l];
-			TrimLeft(sMeasureLine);
-			TrimRight(sMeasureLine);
+			TrimLeft( sMeasureLine );
+			TrimRight( sMeasureLine );
 
 			const float fPercentIntoMeasure = l/(float)asMeasureLines.size();
 			const float fBeat = (m + fPercentIntoMeasure) * BEATS_PER_MEASURE;
@@ -100,7 +100,7 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, RString sSMNoteData 
 				
 				switch( ch )
 				{
-				case '0': tn = TAP_EMPTY;					break;
+				case '0': tn = TAP_EMPTY;				break;
 				case '1': tn = TAP_ORIGINAL_TAP;			break;
 				case '2':
 				case '4':
@@ -138,7 +138,7 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, RString sSMNoteData 
 				// that's what we've been writing to disk.  -Chris
 				case 'M': tn = TAP_ORIGINAL_MINE;			break;
 				// case 'A': tn = TAP_ORIGINAL_ATTACK;			break;
-				case 'K': tn = TAP_ORIGINAL_AUTO_KEYSOUND;	break;
+				case 'K': tn = TAP_ORIGINAL_AUTO_KEYSOUND;		break;
 				default: 
 					/* Invalid data.  We don't want to assert, since there might
 					 * simply be invalid data in an .SM, and we don't want to die
@@ -169,12 +169,8 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, RString sSMNoteData 
 					// skip past the '}'
 					while( *p )
 					{
-						if( *p == '}' )
-						{
-							p++;
+						if( *(p++) == '}' )
 							break;
-						}
-						p++;
 					}
 				}
 #endif
@@ -193,12 +189,8 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, RString sSMNoteData 
 					// skip past the ']'
 					while( *p )
 					{
-						if( *p == ']' )
-						{
-							p++;
+						if( *(p++) == ']' )
 							break;
-						}
-						p++;
 					}
 				}
 
