@@ -26,16 +26,16 @@ void SMLoader::LoadFromSMTokens(
 {
 	out.SetSavedToDisk( true );	// we're loading from disk, so this is by definintion already saved
 
-	TrimLeft(sStepsType); 	TrimRight(sStepsType); 
-	TrimLeft(sDescription);	TrimRight(sDescription); 
-	TrimLeft(sDifficulty); 	TrimRight(sDifficulty); 
+	TrimLeft( sStepsType ); 	TrimRight( sStepsType ); 
+	TrimLeft( sDescription );	TrimRight( sDescription ); 
+	TrimLeft( sDifficulty ); 	TrimRight( sDifficulty ); 
 
 
 //	LOG->Trace( "Steps::LoadFromSMTokens()" );
 
-	out.m_StepsType = GameManager::StringToStepsType(sStepsType);
-	out.SetDescription(sDescription);
-	out.SetDifficulty(StringToDifficulty( sDifficulty ));
+	out.m_StepsType = GameManager::StringToStepsType( sStepsType );
+	out.SetDescription( sDescription );
+	out.SetDifficulty( StringToDifficulty(sDifficulty) );
 
 	// HACK:  We used to store SMANIAC as DIFFICULTY_HARD with special description.
 	// Now, it has its own DIFFICULTY_CHALLENGE
@@ -46,18 +46,18 @@ void SMLoader::LoadFromSMTokens(
 	if( sDescription.CompareNoCase("challenge") == 0 ) 
 		out.SetDifficulty( DIFFICULTY_CHALLENGE );
 
-	out.SetMeter(atoi(sMeter));
+	out.SetMeter( atoi(sMeter) );
 	vector<RString> saValues;
 	split( sRadarValues, ",", saValues, true );
 	if( saValues.size() == NUM_RadarCategory )
 	{
 		RadarValues v;
-		FOREACH_RadarCategory(rc)
+		FOREACH_RadarCategory( rc )
 			v[rc] = StringToFloat( saValues[rc] );
 		out.SetCachedRadarValues( v ); 
 	}
     
-	out.SetSMNoteData(sNoteData);
+	out.SetSMNoteData( sNoteData );
 
 	out.TidyUpData();
 }
