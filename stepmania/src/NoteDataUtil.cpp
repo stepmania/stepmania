@@ -312,76 +312,85 @@ void NoteDataUtil::InsertHoldTails( NoteData &inout )
 	}
 }
 
-void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, RString &notes_out )
+void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 {
 	//
 	// Get note data
 	//
-	NoteData in( in_ );
-	InsertHoldTails( in );
+	vector<NoteData> parts;
+	float fLastBeat = -1.0f;
+	
+	SplitCompositeNoteData( in, parts );
+	
+	FOREACH( NoteData, parts, nd )
+	{
+		InsertHoldTails( *nd );
+		fLastBeat = max( fLastBeat, nd->GetLastBeat() );
+	}
 
-	float fLastBeat = in.GetLastBeat();
 	int iLastMeasure = int( fLastBeat/BEATS_PER_MEASURE );
 
-	RString &sRet = notes_out;
-
 	sRet = "";
-	
-	for( int m=0; m<=iLastMeasure; m++ )	// foreach measure
+	FOREACH( NoteData, parts, nd )
 	{
-		if( m )
-			sRet.append( 1, ',' );
-
-		NoteType nt = GetSmallestNoteTypeForMeasure( in, m );
-		int iRowSpacing;
-		if( nt == NOTE_TYPE_INVALID )
-			iRowSpacing = 1;
-		else
-			iRowSpacing = int(roundf( NoteTypeToBeat(nt) * ROWS_PER_BEAT ));
+		if( nd != parts.begin() )
+			sRet.append( "&\n" );
+		for( int m = 0; m <= iLastMeasure; ++m ) // foreach measure
+		{
+			if( m )
+				sRet.append( 1, ',' );
+			sRet += ssprintf("  // measure %d\n", m+1);
+			
+			NoteType nt = GetSmallestNoteTypeForMeasure( *nd, m );
+			int iRowSpacing;
+			if( nt == NOTE_TYPE_INVALID )
+				iRowSpacing = 1;
+			else
+				iRowSpacing = int(roundf( NoteTypeToBeat(nt) * ROWS_PER_BEAT ));
 			// (verify first)
 			// iRowSpacing = BeatToNoteRow( NoteTypeToBeat(nt) );
-		sRet += ssprintf("  // measure %d\n", m+1);
-
-		const int iMeasureStartRow = m * ROWS_PER_MEASURE;
-		const int iMeasureLastRow = (m+1) * ROWS_PER_MEASURE - 1;
-
-		for( int r=iMeasureStartRow; r<=iMeasureLastRow; r+=iRowSpacing )
-		{
-			for( int t=0; t<in.GetNumTracks(); t++ )
-			{
-				const TapNote &tn = in.GetTapNote(t, r);
-				char c;
-				switch( tn.type )
-				{
-				case TapNote::empty:			c = '0'; break;
-				case TapNote::tap:			c = '1'; break;
-				case TapNote::hold_head:
-					switch( tn.subType )
-					{
-					case TapNote::hold_head_hold:	c = '2'; break;
-					case TapNote::hold_head_roll:	c = '4'; break;
-					default:	ASSERT(0);
-					}
-					break;
-				case TapNote::hold_tail:		c = '3'; break;
-				case TapNote::mine:			c = 'M'; break;
-				case TapNote::attack:			c = 'A'; break;
-				case TapNote::autoKeysound:		c = 'K'; break;
-				default: 
-					FAIL_M( ssprintf("tn %i", tn.type) );	// invalid enum value
-				}
-				sRet.append( 1, c );
-
-				if( tn.type == TapNote::attack )
-				{
-					sRet.append( ssprintf("{%s:%.2f}", tn.sAttackModifiers.c_str(),
-							      tn.fAttackDurationSeconds) );
-				}
-				if( tn.bKeysound )
-					sRet.append( ssprintf("[%d]",tn.iKeysoundIndex) );
-			}
 			
-			sRet.append( 1, '\n' );
+			const int iMeasureStartRow = m * ROWS_PER_MEASURE;
+			const int iMeasureLastRow = (m+1) * ROWS_PER_MEASURE - 1;
+			
+			for( int r=iMeasureStartRow; r<=iMeasureLastRow; r+=iRowSpacing )
+			{
+				for( int t = 0; t < nd->GetNumTracks(); ++t )
+				{
+					const TapNote &tn = nd->GetTapNote(t, r);
+					char c;
+					switch( tn.type )
+					{
+					case TapNote::empty:			c = '0'; break;
+					case TapNote::tap:			c = '1'; break;
+					case TapNote::hold_head:
+						switch( tn.subType )
+						{
+						case TapNote::hold_head_hold:	c = '2'; break;
+						case TapNote::hold_head_roll:	c = '4'; break;
+						default:	ASSERT(0);
+						}
+						break;
+					case TapNote::hold_tail:		c = '3'; break;
+					case TapNote::mine:			c = 'M'; break;
+					case TapNote::attack:			c = 'A'; break;
+					case TapNote::autoKeysound:		c = 'K'; break;
+					default: 
+						FAIL_M( ssprintf("tn %i", tn.type) );	// invalid enum value
+					}
+					sRet.append( 1, c );
+					
+					if( tn.type == TapNote::attack )
+					{
+						sRet.append( ssprintf("{%s:%.2f}", tn.sAttackModifiers.c_str(),
+								      tn.fAttackDurationSeconds) );
+					}
+					if( tn.bKeysound )
+						sRet.append( ssprintf("[%d]",tn.iKeysoundIndex) );
+				}
+				
+				sRet.append( 1, '\n' );
+			}
 		}
 	}
 }
