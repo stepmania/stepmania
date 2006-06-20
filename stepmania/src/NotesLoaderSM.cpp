@@ -404,13 +404,7 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out )
 
 		else if( sValueName=="KEYSOUNDS" )
 		{
-			vector<RString> aKeysoundFiles;
-			split( sParams[1], ",", aKeysoundFiles );
-
-			for( unsigned k=0; k<aKeysoundFiles.size(); k++ )
-			{
-				out.m_vsKeysoundFile.push_back( aKeysoundFiles[k] );
-			}
+			split( sParams[1], ",", out.m_vsKeysoundFile );
 		}
 
 		else if( sValueName=="NOTES" || sValueName=="NOTES2" )
