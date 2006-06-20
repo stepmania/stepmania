@@ -1,9 +1,24 @@
 AC_DEFUN([SM_VIDEO], [
 AC_ARG_WITH(ffmpeg, AC_HELP_STRING([--without-ffmpeg], [Disable ffmpeg support]), with_ffmpeg=$withval, with_ffmpeg=yes)
+AC_ARG_WITH(static-ffmpeg-prefix, AC_HELP_STRING([--with-static-ffmpeg-prefix=path], [Path to ffmpeg prefix]), with_static_ffmpeg_prefix=$withval, with_static_ffmpeg_prefix=)
 
 if test "$with_ffmpeg" = "yes"; then
+if test -n "$with_static_ffmpeg_prefix"; then
+if test $(echo $with_static_ffmpeg_prefix|cut -c 1) != /; then
+with_static_ffmpeg_prefix=$(/bin/pwd)/$with_static_ffmpeg_prefix
+fi
+CFLAGS="-I$with_static_ffmpeg_prefix/include $CFLAGS"
+CXXFLAGS="-I$with_static_ffmpeg_prefix/include $CXXFLAGS"
+old_LIBS="$LIBS"
+LIBS="$with_static_ffmpeg_prefix/lib/libavcodec.a $LIBS"
+AC_CHECK_FUNC([avcodec_init], have_libavcodec=yes; old_LIBS="$LIBS", have_libavcodec=no)
+LIBS="$with_static_ffmpeg_prefix/lib/libavformat.a $LIBS"
+AC_CHECK_FUNC([guess_format], have_libavformat=yes; old_LIBS="$LIBS", have_libavformat=no)
+LIBS="$old_LIBS"
+else
 AC_SEARCH_LIBS(avcodec_init, [avcodec], have_libavcodec=yes,  have_libavcodec=no)
 AC_SEARCH_LIBS(guess_format, [avformat], have_libavformat=yes,  have_libavformat=no)
+fi
 
 if test "$have_libavcodec" = "yes"; then
   AC_MSG_CHECKING([for libavcodec >= 0.4.9])
