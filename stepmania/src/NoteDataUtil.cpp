@@ -7,6 +7,7 @@
 #include "GameState.h"
 #include "RadarValues.h"
 #include "Foreach.h"
+#include <utility>
 
 NoteType NoteDataUtil::GetSmallestNoteTypeForMeasure( const NoteData &n, int iMeasureIndex )
 {
@@ -46,54 +47,61 @@ NoteType NoteDataUtil::GetSmallestNoteTypeForMeasure( const NoteData &n, int iMe
 		return nt;
 }
 
-void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, RString sSMNoteData )
+static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sSMNoteData, int start,
+						int len, PlayerNumber pn, int iNumTracks )
 {
-	//
-	// Load note data
-	//
-
-	/* Clear notes, but keep the same number of tracks. */
-	int iNumTracks = out.GetNumTracks();
-	out.Init();
-	out.SetNumTracks( iNumTracks );
-
+	/* Don't allocate memory for the entire string, nor per measure. Instead, use the in-place
+	 * partial string split twice. By maintaining begin and end pointers to each measure line
+	 * we can perform this without copying the string at all. */
+	int size = -1;
+	const int end = start + len;
+	vector<pair<const char *, const char *> > aMeasureLines;
+	for( unsigned m = 0; true; ++m )
 	{
-		RString::size_type iIndexCommentStart = 0;
+		/* XXX Ignoring empty seems wrong for measures. It means that ",,," is treated as
+		 * "," where I would expect most people would want 2 empty measures. ",\n,\n,"
+		 * would do as I would expect. */
+		split( sSMNoteData, ",", start, size, end, true ); // Ignore empty is important.
+		if( start == end )
+			break;
 		
-		while( (iIndexCommentStart = sSMNoteData.find("//", iIndexCommentStart)) != RString::npos )
+		// Partial string split.
+		int measureLineStart = start, measureLineSize = -1;
+		const int measureEnd = start + size;
+		
+		aMeasureLines.clear();
+		while( true )
 		{
-			RString::size_type iIndexCommentEnd = sSMNoteData.find( "\n", iIndexCommentStart );
-			sSMNoteData.erase( iIndexCommentStart, iIndexCommentEnd - iIndexCommentStart );
+			// Ignore empty is clearly important here.
+			split( sSMNoteData, "\n", measureLineStart, measureLineSize, measureEnd, true );
+			if( measureLineStart == measureEnd )
+				break;
+			//RString &line = sSMNoteData.substr( measureLineStart, measureLineSize );
+			const char *beginLine = sSMNoteData.data() + measureLineStart;
+			const char *endLine = beginLine + measureLineSize;
+			
+			while( beginLine < endLine && strchr("\r\n\t ", *beginLine) )
+				++beginLine;
+			while( endLine > beginLine && strchr("\r\n\t ", *(endLine - 1)) )
+				--endLine;
+			if( beginLine < endLine ) // nonempty
+				aMeasureLines.push_back( pair<const char *, const char *>(beginLine, endLine) );
 		}
-	}
-
-	vector<RString> asMeasures;
-	split( sSMNoteData, ",", asMeasures, true );	// ignore empty is important
-	for( unsigned m=0; m<asMeasures.size(); m++ )	// foreach measure
-	{
-		RString &sMeasureString = asMeasures[m];
-		TrimLeft( sMeasureString );
-		TrimRight( sMeasureString );
-
-		vector<RString> asMeasureLines;
-		split( sMeasureString, "\n", asMeasureLines, true );	// ignore empty is important
-
-		for( unsigned l=0; l<asMeasureLines.size(); l++ )
+			
+		for( unsigned l=0; l<aMeasureLines.size(); l++ )
 		{
-			RString &sMeasureLine = asMeasureLines[l];
-			TrimLeft( sMeasureLine );
-			TrimRight( sMeasureLine );
-
-			const float fPercentIntoMeasure = l/(float)asMeasureLines.size();
+			//RString &sMeasureLine = asMeasureLines[l];
+			const char *p = aMeasureLines[l].first;
+			const char *const beginLine = p;
+			const char *const endLine = aMeasureLines[l].second;
+			
+			const float fPercentIntoMeasure = l/(float)aMeasureLines.size();
 			const float fBeat = (m + fPercentIntoMeasure) * BEATS_PER_MEASURE;
 			const int iIndex = BeatToNoteRow( fBeat );
-
-//			if( m_iNumTracks != sMeasureLine.GetLength() )
-//				RageException::Throw( "Actual number of note columns (%d) is different from the StepsType (%d).", m_iNumTracks, sMeasureLine.GetLength() );
-
-			const char *p = sMeasureLine;
+						
+			//const char *p = sMeasureLine;
 			int iTrack = 0;
-			while( iTrack < iNumTracks && *p )
+			while( iTrack < iNumTracks && p < endLine )
 			{
 				TapNote tn;
 				char ch = *p;
@@ -110,9 +118,9 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, RString sSMNoteData 
 					case '4':	tn = TAP_ORIGINAL_ROLL_HEAD;	break;
 					default:	ASSERT(0);
 					}
-
+						
 					/* Set the hold note to have infinite length.  We'll clamp it when
-					 * we hit the tail. */
+					* we hit the tail. */
 					tn.iDuration = MAX_NOTE_ROW;
 					break;
 				case '3':
@@ -121,7 +129,8 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, RString sSMNoteData 
 					int iHeadRow;
 					if( !out.IsHoldNoteAtRow( iTrack, iIndex, &iHeadRow ) )
 					{
-						LOG->Warn( "Unmatched 3 in \"%s\"", sMeasureLine.c_str() );
+						int n = intptr_t(endLine) - intptr_t(beginLine);
+						LOG->Warn( "Unmatched 3 in \"%.*s\"", n, beginLine );
 					}
 					else
 					{
@@ -129,11 +138,11 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, RString sSMNoteData 
 						head_tap.iDuration = iIndex - iHeadRow;
 						out.SetTapNote( iTrack, iHeadRow, head_tap );
 					}
-
+					
 					/* This won't write tn, but keep parsing normally anyway. */
 					break;
 				}
-//				case 'm':
+				//				case 'm':
 				// Don't be loose with the definition.  Use only 'M' since
 				// that's what we've been writing to disk.  -Chris
 				case 'M': tn = TAP_ORIGINAL_MINE;			break;
@@ -150,13 +159,13 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, RString sSMNoteData 
 				}
 				
 				p++;
-				
+				// We won't scan past the end of the line so these are safe to do.
 #if 0
 				// look for optional attack info (e.g. "{tipsy,50% drunk:15.2}")
 				if( *p == '{' )
 				{
 					p++;
-
+					
 					char szModifiers[256] = "";
 					float fDurationSeconds = 0;
 					if( sscanf( p, "%255[^:]:%f}", szModifiers, &fDurationSeconds ) == 2 )	// not fatal if this fails due to malformed data
@@ -165,16 +174,16 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, RString sSMNoteData 
 						tn.sAttackModifiers = szModifiers;
 		 				tn.fAttackDurationSeconds = fDurationSeconds;
 					}
-
+					
 					// skip past the '}'
-					while( *p )
+					while( p < endLine )
 					{
 						if( *(p++) == '}' )
 							break;
 					}
 				}
 #endif
-
+				
 				// look for optional keysound index (e.g. "[123]")
 				if( *p == '[' )
 				{
@@ -185,26 +194,29 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, RString sSMNoteData 
 						tn.bKeysound = true;
 		 				tn.iKeysoundIndex = iKeysoundIndex;
 					}
-
+					
 					// skip past the ']'
-					while( *p )
+					while( p < endLine )
 					{
 						if( *(p++) == ']' )
 							break;
 					}
 				}
-
+				
 				/* Optimization: if we pass TAP_EMPTY, NoteData will do a search
 				 * to remove anything in this position.  We know that there's nothing
 				 * there, so avoid the search. */
 				if( tn.type != TapNote::empty && ch != '3' )
+				{
+					tn.pn = pn;
 					out.SetTapNote( iTrack, iIndex, tn );
-
+				}
+				
 				iTrack++;
 			}
 		}
 	}
-
+	
 	/* Make sure we don't have any hold notes that didn't find a tail. */
 	for( int t=0; t<out.GetNumTracks(); t++ )
 	{
@@ -220,10 +232,41 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, RString sSMNoteData 
 				LOG->Warn( "Unmatched 2 at beat %f", NoteRowToBeat(iRow) );
 				out.RemoveTapNote( t, begin );
 			}
-
+			
 			begin = next;
 		}
 	}
+	
+}
+
+void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, const RString &sSMNoteData_ )
+{
+	//
+	// Load note data
+	//
+	RString sSMNoteData;
+	RString::size_type iIndexCommentStart = 0;
+	RString::size_type iIndexCommentEnd = 0;
+	RString::size_type origSize = sSMNoteData_.size();
+	const char *p = sSMNoteData_.data();
+	
+	sSMNoteData.reserve( origSize );
+	while( (iIndexCommentStart = sSMNoteData.find("//", iIndexCommentEnd)) != RString::npos )
+	{
+		sSMNoteData.append( p, iIndexCommentStart - iIndexCommentEnd );
+		p += iIndexCommentStart - iIndexCommentEnd;
+		iIndexCommentEnd = sSMNoteData.find( "\n", iIndexCommentStart );
+		iIndexCommentEnd = (iIndexCommentEnd == RString::npos ? origSize : iIndexCommentEnd+1);
+		p += iIndexCommentEnd - iIndexCommentStart;
+	}
+	sSMNoteData.append( p, origSize - iIndexCommentEnd );
+	
+	/* Clear notes, but keep the same number of tracks. */
+	int iNumTracks = out.GetNumTracks();
+	out.Init();
+	out.SetNumTracks( iNumTracks );
+	
+	LoadFromSMNoteDataStringWithPlayer( out, sSMNoteData, 0, sSMNoteData.size(), PLAYER_INVALID, iNumTracks );
 }
 
 void NoteDataUtil::InsertHoldTails( NoteData &inout )

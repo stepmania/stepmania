@@ -17,7 +17,7 @@ struct RadarValues;
 namespace NoteDataUtil
 {
 	NoteType GetSmallestNoteTypeForMeasure( const NoteData &n, int iMeasureIndex );
-	void LoadFromSMNoteDataString( NoteData &out, RString sSMNoteData );
+	void LoadFromSMNoteDataString( NoteData &out, const RString &sSMNoteData );
 	void GetSMNoteDataString( const NoteData &in, RString &notes_out );
 	void LoadTransformedSlidingWindow( const NoteData &in, NoteData &out, int iNewNumTracks );
 	void LoadOverlapped( const NoteData &in, NoteData &out, int iNewNumTracks );
