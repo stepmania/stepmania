@@ -120,8 +120,8 @@ public:
 	float	m_fMusicSampleStartSeconds;
 	float	m_fMusicSampleLengthSeconds;
 	enum { DISPLAY_ACTUAL, DISPLAY_SPECIFIED, DISPLAY_RANDOM } m_DisplayBPMType;
-	float		m_fSpecifiedBPMMin;
-	float		m_fSpecifiedBPMMax;	// if a range, then Min != Max
+	float	m_fSpecifiedBPMMin;
+	float	m_fSpecifiedBPMMax;	// if a range, then Min != Max
 
 	RString	m_sBannerFile;
 	RString m_sLyricsFile;
@@ -147,20 +147,20 @@ public:
 
 	bool Matches(RString sGroup, RString sSong) const;
 
-	TimingData					m_Timing;
+	TimingData				m_Timing;
 
-	typedef vector<BackgroundChange> VBackgroundChange;
+	typedef vector<BackgroundChange> 	VBackgroundChange;
 private:
 	// AutoPtr instead of raw pointer so that the auto gen'd copy constructor works correctly.
 	AutoPtrCopyOnWrite<VBackgroundChange>	m_BackgroundChanges[NUM_BackgroundLayer];	// these must be sorted before gameplay
 	AutoPtrCopyOnWrite<VBackgroundChange>	m_ForegroundChanges;	// this must be sorted before gameplay
 public:
 	const vector<BackgroundChange>	&GetBackgroundChanges( BackgroundLayer bl ) const;
-	vector<BackgroundChange>		&GetBackgroundChanges( BackgroundLayer bl );
+	vector<BackgroundChange>	&GetBackgroundChanges( BackgroundLayer bl );
 	const vector<BackgroundChange>	&GetForegroundChanges() const;
-	vector<BackgroundChange>		&GetForegroundChanges();
+	vector<BackgroundChange>	&GetForegroundChanges();
 
-	vector<LyricSegment>		m_LyricSegments;		// this must be sorted before gameplay
+	vector<LyricSegment>			m_LyricSegments;	// this must be sorted before gameplay
 
 	void AddBPMSegment( const BPMSegment &seg ) { m_Timing.AddBPMSegment( seg ); }
 	void AddStopSegment( const StopSegment &seg ) { m_Timing.AddStopSegment( seg ); }
