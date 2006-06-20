@@ -263,10 +263,28 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, const RString &sSMNo
 	
 	/* Clear notes, but keep the same number of tracks. */
 	int iNumTracks = out.GetNumTracks();
+	bool bComposite = out.IsComposite();
 	out.Init();
 	out.SetNumTracks( iNumTracks );
+	out.SetComposite( bComposite );
 	
-	LoadFromSMNoteDataStringWithPlayer( out, sSMNoteData, 0, sSMNoteData.size(), PLAYER_INVALID, iNumTracks );
+	if( !bComposite )
+	{
+		LoadFromSMNoteDataStringWithPlayer( out, sSMNoteData, 0, sSMNoteData.size(),
+						    PLAYER_INVALID, iNumTracks );
+		return;
+	}
+	
+	int start = 0, size = -1;
+	
+	FOREACH_PlayerNumber( pn )
+	{
+		// Split in place.
+		split( sSMNoteData, "&", start, size, false );
+		if( unsigned(start) == sSMNoteData.size() )
+			break;
+		LoadFromSMNoteDataStringWithPlayer( out, sSMNoteData, start, size, pn, iNumTracks );
+	}
 }
 
 void NoteDataUtil::InsertHoldTails( NoteData &inout )
@@ -368,6 +386,32 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, RString &notes_out 
 		}
 	}
 }
+
+void NoteDataUtil::SplitCompositeNoteData( const NoteData &in, vector<NoteData> &out )
+{
+	if( !in.IsComposite() )
+	{
+		out.push_back( in );
+		return;
+	}
+	
+	for( int t = 0; t < in.GetNumTracks(); ++t )
+	{
+		for( NoteData::const_iterator iter = in.begin(t); iter != in.end(t); ++iter )
+		{
+			int row = iter->first;
+			TapNote tn = iter->second;
+			unsigned index = int( tn.pn );
+			
+			DEBUG_ASSERT( index < NUM_PlayerNumber );
+			if( out.size() <= index )
+				out.resize( index + 1 );
+			tn.pn = PLAYER_INVALID;
+			out[index].SetTapNote( t, row, tn );
+		}
+	}
+}
+
 
 void NoteDataUtil::LoadTransformedSlidingWindow( const NoteData &in, NoteData &out, int iNewNumTracks )
 {
