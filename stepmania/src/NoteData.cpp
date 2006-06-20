@@ -21,6 +21,7 @@ NoteData::NoteData()
 
 void NoteData::Init()
 {
+	m_bComposite = false;
 	ClearAll();
 	m_TapNotes = vector<TrackMap>();	// ensure that the memory is freed
 }
