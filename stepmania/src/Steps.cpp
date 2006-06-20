@@ -255,7 +255,7 @@ void Steps::Compress() const
 		m_bNoteDataIsFilled = false;
 
 		/* Be careful; 'x = ""', m_sNoteDataCompressed.clear() and m_sNoteDataCompressed.reserve(0)
-		 * don't always free the alocated memory. */
+		 * don't always free the allocated memory. */
 		m_sNoteDataCompressed = RString("");
 		return;
 	}
