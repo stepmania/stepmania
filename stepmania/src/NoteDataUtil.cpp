@@ -353,7 +353,7 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, RString &notes_out 
 				char c;
 				switch( tn.type )
 				{
-				case TapNote::empty:		c = '0'; break;
+				case TapNote::empty:			c = '0'; break;
 				case TapNote::tap:			c = '1'; break;
 				case TapNote::hold_head:
 					switch( tn.subType )
@@ -363,26 +363,25 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, RString &notes_out 
 					default:	ASSERT(0);
 					}
 					break;
-				case TapNote::hold_tail:	c = '3'; break;
+				case TapNote::hold_tail:		c = '3'; break;
 				case TapNote::mine:			c = 'M'; break;
-				case TapNote::attack:		c = 'A'; break;
-				case TapNote::autoKeysound:	c = 'K'; break;
+				case TapNote::attack:			c = 'A'; break;
+				case TapNote::autoKeysound:		c = 'K'; break;
 				default: 
 					FAIL_M( ssprintf("tn %i", tn.type) );	// invalid enum value
 				}
-				sRet.append(1, c);
+				sRet.append( 1, c );
 
 				if( tn.type == TapNote::attack )
 				{
-					sRet.append( ssprintf("{%s:%.2f}",tn.sAttackModifiers.c_str(), tn.fAttackDurationSeconds) );
+					sRet.append( ssprintf("{%s:%.2f}", tn.sAttackModifiers.c_str(),
+							      tn.fAttackDurationSeconds) );
 				}
 				if( tn.bKeysound )
-				{
 					sRet.append( ssprintf("[%d]",tn.iKeysoundIndex) );
-				}
 			}
 			
-			sRet.append(1, '\n');
+			sRet.append( 1, '\n' );
 		}
 	}
 }
