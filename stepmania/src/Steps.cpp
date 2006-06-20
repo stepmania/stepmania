@@ -227,6 +227,7 @@ void Steps::Decompress() const
 		// load from compressed
 		m_bNoteDataIsFilled = true;
 		m_pNoteData->SetNumTracks( GameManager::StepsTypeToNumTracks(m_StepsType) );
+		m_pNoteData->SetComposite( m_StepsType == STEPS_TYPE_DANCE_ROUTINE );
 
 		NoteDataUtil::LoadFromSMNoteDataString( *m_pNoteData, m_sNoteDataCompressed );
 	}
