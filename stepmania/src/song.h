@@ -58,8 +58,6 @@ public:
 	void Reset();
 	void DetachSteps();
 
-	NotesLoader *MakeLoader( RString sDir ) const;
-
 	bool LoadFromSongDir( RString sDir );
 
 	void TidyUpData();	// call after loading to clean up invalid data

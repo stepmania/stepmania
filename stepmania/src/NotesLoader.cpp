@@ -4,6 +4,11 @@
 #include "GameManager.h"
 #include "RageUtil.h"
 
+#include "NotesLoaderSM.h"
+#include "NotesLoaderDWI.h"
+#include "NotesLoaderBMS.h"
+#include "NotesLoaderKSF.h"
+
 bool NotesLoader::Loadable( const RString &sPath )
 {
 	vector<RString> list;
@@ -26,7 +31,34 @@ void NotesLoader::GetMainAndSubTitlesFromFullTitle( const RString &sFullTitle, R
 	}
 	sMainTitleOut = sFullTitle; 
 	sSubTitleOut = ""; 
-};	
+};
+
+NotesLoader *NotesLoader::MakeLoader( const RString &sDir )
+{
+	NotesLoader *ret;
+	
+	/* Actually, none of these have any persistant data, so we 
+	* could optimize this, but since they don't have any data,
+	* there's no real point ... */
+	ret = new SMLoader;
+	if(ret->Loadable( sDir )) return ret;
+	delete ret;
+	
+	ret = new DWILoader;
+	if(ret->Loadable( sDir )) return ret;
+	delete ret;
+	
+	ret = new BMSLoader;
+	if(ret->Loadable( sDir )) return ret;
+	delete ret;
+	
+	ret = new KSFLoader;
+	if(ret->Loadable( sDir )) return ret;
+	delete ret;
+	
+	return NULL;
+}
+
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard

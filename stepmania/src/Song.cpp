@@ -26,9 +26,6 @@
 #include "SpecialFiles.h"
 
 #include "NotesLoaderSM.h"
-#include "NotesLoaderDWI.h"
-#include "NotesLoaderBMS.h"
-#include "NotesLoaderKSF.h"
 #include "NotesWriterDWI.h"
 #include "NotesWriterSM.h"
 
@@ -164,32 +161,6 @@ const RString &Song::GetSongFilePath() const
 	return m_sSongFileName;
 }
 
-NotesLoader *Song::MakeLoader( RString sDir ) const
-{
-	NotesLoader *ret;
-
-	/* Actually, none of these have any persistant data, so we 
-	 * could optimize this, but since they don't have any data,
-	 * there's no real point ... */
-	ret = new SMLoader;
-	if(ret->Loadable( sDir )) return ret;
-	delete ret;
-
-	ret = new DWILoader;
-	if(ret->Loadable( sDir )) return ret;
-	delete ret;
-
-	ret = new BMSLoader;
-	if(ret->Loadable( sDir )) return ret;
-	delete ret;
-
-	ret = new KSFLoader;
-	if(ret->Loadable( sDir )) return ret;
-	delete ret;
-
-	return NULL;
-}
-
 /* Hack: This should be a parameter to TidyUpData, but I don't want to
  * pull in <set> into Song.h, which is heavily used. */
 static set<RString> BlacklistedImages;
@@ -244,7 +215,7 @@ bool Song::LoadFromSongDir( RString sDir )
 		// Let's load it from a file, then write a cache entry.
 		//
 		
-		NotesLoader *ld = MakeLoader( sDir );
+		NotesLoader *ld = NotesLoader::MakeLoader( sDir );
 		if( ld )
 		{
 			bool success = ld->LoadFromDir( sDir, *this );

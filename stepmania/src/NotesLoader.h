@@ -21,6 +21,8 @@ public:
 	virtual bool LoadFromDir( const RString &sPath, Song &out ) = 0;
 	virtual void TidyUpData( Song &song, bool cache ) { }
 	bool Loadable( const RString &sPath );
+
+	static NotesLoader *MakeLoader( const RString& sDir );
 };
 
 #endif
