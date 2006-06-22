@@ -59,6 +59,7 @@ ScreenServiceAction.cpp ScreenServiceAction.h \
 ScreenStatsOverlay.cpp ScreenStatsOverlay.h \
 ScreenSelect.cpp ScreenSelect.h ScreenSelectCharacter.cpp ScreenSelectCharacter.h \
 ScreenSelectDifficulty.cpp ScreenSelectDifficulty.h ScreenSelectGroup.cpp ScreenSelectGroup.h \
+ScreenSelectLanguage.cpp  ScreenSelectLanguage.h \
 ScreenSelectMaster.cpp ScreenSelectMaster.h ScreenSelectMode.cpp ScreenSelectMode.h \
 ScreenSelectMusic.cpp ScreenSelectMusic.h \
 ScreenSelectStyle.cpp ScreenSelectStyle.h \
