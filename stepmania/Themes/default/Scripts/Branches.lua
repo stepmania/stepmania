@@ -86,9 +86,10 @@ function GetEvaluationNextScreen( sNextScreen, sFailedScreen, sEndScreen )
 		Trace( "IsEventMode" )
 		return sNextScreen
 	end
-
+	
+	local bIsExtraStage = GAMESTATE:IsExtraStage() or GAMESTATE:IsExtraStage2()
 	-- Not in event mode.  If failed, go to the game over screen.
-	if STATSMAN:GetCurStageStats():AllFailed() then
+	if STATSMAN:GetCurStageStats():AllFailed() and not bIsExtraStage then
 		Trace( "Failed" )
 		return sFailedScreen
 	end
@@ -97,7 +98,7 @@ function GetEvaluationNextScreen( sNextScreen, sFailedScreen, sEndScreen )
 	if sIsStage then
 		local bHasAnotherStage = GAMESTATE:HasEarnedExtraStage()
 		bHasAnotherStage = bHasAnotherStage or not
-			(GAMESTATE:IsFinalStage() or GAMESTATE:IsExtraStage() or GAMESTATE:IsExtraStage2() )
+			(GAMESTATE:IsFinalStage() or bIsExtraStage )
 		if bHasAnotherStage then
 			Trace( "Another" )
 			return sNextScreen
@@ -142,7 +143,8 @@ function GetGameplayNextScreen()
 	Trace( " Event mode = "..tostring(IsEventMode()) )
 	
 	if Passed or GAMESTATE:IsCourseMode() or
-		GAMESTATE:IsExtraStage() or GAMESTATE:IsExtraStage2()
+		GAMESTATE:IsExtraStage() or GAMESTATE:IsExtraStage2() or
+		GetTopScreenMetric( "ShowEvaluationOnFail" ) == "1"
 	then
 		Trace( "Go to evaluation screen" )
 		return SelectEvaluationScreen()
