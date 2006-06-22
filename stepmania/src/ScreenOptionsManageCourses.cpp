@@ -416,31 +416,35 @@ void ScreenOptionsManageCourses::ProcessMenuStart( const InputEventPlus &input )
 
 	if( iCurRow == 0 )	// "create new"
 	{
-		SCREENMAN->SetNewScreen( CREATE_NEW_SCREEN );
-		/*
-		if( SONGMAN->GetNumEditCourses(ProfileSlot_Machine) >= MAX_EDIT_COURSES_PER_PROFILE )
+		if( !CREATE_NEW_SCREEN.GetValue().empty() )
 		{
-			RString s = ssprintf( 
-				YOU_HAVE_MAXIMUM_EDITS_ALLOWED.GetValue() + "\n\n" + YOU_MUST_DELETE.GetValue(),
-				MAX_EDIT_COURSES_PER_PROFILE );
-			ScreenPrompt::Prompt( SM_None, s );
-			return;
+			SCREENMAN->SetNewScreen( CREATE_NEW_SCREEN );
 		}
-
-		RString sDefaultName;
-		RString sThrowAway;
-		for( int i=1; i<=9999; i++ )
+		else
 		{
-			sDefaultName = ssprintf( "NewCourse%04d", i );
-			if( ValidateEditCourseName(sDefaultName,sThrowAway) )
-				break;
+			if( SONGMAN->GetNumEditCourses(ProfileSlot_Machine) >= MAX_EDIT_COURSES_PER_PROFILE )
+			{
+				RString s = ssprintf( 
+						      YOU_HAVE_MAXIMUM_EDITS_ALLOWED.GetValue() + "\n\n" + YOU_MUST_DELETE.GetValue(),
+						      MAX_EDIT_COURSES_PER_PROFILE );
+				ScreenPrompt::Prompt( SM_None, s );
+				return;
+			}
+			
+			RString sDefaultName;
+			RString sThrowAway;
+			for( int i=1; i<=9999; i++ )
+			{
+				sDefaultName = ssprintf( "NewCourse%04d", i );
+				if( ValidateEditCourseName(sDefaultName,sThrowAway) )
+					break;
+			}
+			ScreenTextEntry::TextEntry( SM_BackFromEnterNameForNew, 
+						    ENTER_COURSE_NAME, 
+						    sDefaultName, 
+						    MAX_EDIT_COURSE_TITLE_LENGTH, 
+						    ValidateEditCourseName );
 		}
-		ScreenTextEntry::TextEntry( SM_BackFromEnterNameForNew, 
-					    ENTER_COURSE_NAME, 
-					    sDefaultName, 
-					    MAX_EDIT_COURSE_TITLE_LENGTH, 
-					    ValidateEditCourseName );
-		*/
 	}
 	else if( iCurRow == (int)m_pRows.size()-1 )	// "done"
 	{
