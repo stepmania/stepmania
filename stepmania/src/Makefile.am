@@ -118,7 +118,7 @@ PlayerAI.cpp PlayerAI.h PlayerNumber.cpp PlayerNumber.h PlayerOptions.cpp Player
 PlayerStageStats.cpp PlayerStageStats.h \
 PlayerState.cpp PlayerState.h Preference.cpp Preference.h Profile.cpp Profile.h \
 RandomSample.cpp RandomSample.h RadarValues.cpp RadarValues.h \
-RoomWheel.cpp RoomWheel.h ScreenDimensions.h ScreenDimensions.cpp \
+ScreenDimensions.h ScreenDimensions.cpp \
 ScoreKeeper.h ScoreKeeperNormal.cpp ScoreKeeperNormal.h \
 ScoreKeeperRave.cpp ScoreKeeperRave.h Song.cpp song.h SongCacheIndex.cpp SongCacheIndex.h \
 SongOptions.cpp SongOptions.h SongUtil.cpp SongUtil.h StageStats.cpp StageStats.h Steps.cpp Steps.h \
@@ -128,6 +128,10 @@ StyleInput.h TimingData.cpp TimingData.h \
 ThemeMetric.h \
 Trail.cpp Trail.h TrailUtil.cpp TrailUtil.h TitleSubstitution.cpp TitleSubstitution.h \
 Tween.cpp Tween.h
+
+if !WITHOUT_NETWORKING
+DataStructures += RoomWheel.cpp RoomWheel.h
+endif
 
 FileTypes = IniFile.cpp IniFile.h \
 MsdFile.cpp MsdFile.h \
