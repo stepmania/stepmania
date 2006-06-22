@@ -79,6 +79,7 @@ PlayerNumber Style::ControllerToPlayerNumber( GameController controller ) const
 	{
 	case ONE_PLAYER_ONE_SIDE:
 	case TWO_PLAYERS_TWO_SIDES:
+	case TWO_PLAYERS_SHARED_SIDES:
 		return (PlayerNumber)controller;
 	case ONE_PLAYER_TWO_SIDES:
 		return GAMESTATE->m_MasterPlayerNumber;
