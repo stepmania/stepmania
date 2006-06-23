@@ -815,6 +815,7 @@ void ScreenEdit::PlayTicks()
 
 void ScreenEdit::PlayPreviewMusic()
 {
+	SOUND->StopMusic();
 	SOUND->PlayMusic( 
 		m_pSong->GetMusicPath(), 
 		NULL,
