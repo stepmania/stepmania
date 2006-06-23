@@ -350,9 +350,10 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 {
 	RString sThemeName = sThemeName_;
 	RString sLanguage = sLanguage_;
+#if !defined(SMPACKAGE)
 	if( !IsThemeSelectable(sThemeName) )
 		sThemeName = PREFSMAN->m_sTheme.GetDefault();
-	
+#endif
 	if( !IsThemeSelectable(sThemeName) )
 		sThemeName = SpecialFiles::BASE_THEME_NAME;
 	
