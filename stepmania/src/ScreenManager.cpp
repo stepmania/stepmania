@@ -512,6 +512,9 @@ Screen* ScreenManager::MakeNewScreen( const RString &sScreenName )
 
 	LOG->Trace( "Loaded '%s' ('%s') in %f", sScreenName.c_str(), sClassName.c_str(), t.GetDeltaTime() );
 
+	// Screens may not call SetNewScreen from the ctor or Init().
+	ASSERT_M( m_sDelayedScreen.empty(), m_sDelayedScreen );
+
 	return ret;
 }
 
@@ -633,9 +636,6 @@ Screen *ScreenManager::ActivatePreparedScreenAndBackground( const RString &sScre
 	LoadedScreen ls;
 	if( !GetPreppedScreen(sScreenName, ls) )
 		return NULL;
-
-	// Screens may not call SetNewScreen from the ctor or Init().
-	ASSERT_M( m_sDelayedScreen.empty(), m_sDelayedScreen );
 
 	// Find the prepared shared background (if any), and activate it.
 	RString sNewBGA = THEME->GetPathB(sScreenName,"background");
