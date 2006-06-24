@@ -144,6 +144,7 @@ void ScreenWithMenuElements::BeginScreen()
 		this->PlayCommand( "On" );
 	else
 		TweenOnScreen(); // deprecated
+	this->SortByDrawOrder();
 	m_In.StartTransitioning( SM_DoneFadingIn );
 
 	Screen::BeginScreen();
@@ -177,8 +178,6 @@ void ScreenWithMenuElements::TweenOnScreen()
 	ON_COMMAND( m_textHelp );
 	ON_COMMAND( m_sprUnderlay );
 	ON_COMMAND( m_sprOverlay );
-
-	this->SortByDrawOrder();
 }
 
 ScreenWithMenuElements::~ScreenWithMenuElements()
