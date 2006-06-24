@@ -1306,8 +1306,8 @@ static Style g_Styles[] =
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
-			{ 0, 3, 2, 1, Style::END_MAPPING },
-			{ 4, 7, 6, 5, Style::END_MAPPING }
+			{ 0, 3, 2, 1, 4, 7, 6, 5, Style::END_MAPPING },
+			{ 0, 3, 2, 1, 4, 7, 6, 5, Style::END_MAPPING }
 		},
 		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 			0,1,2,3,4,5,6,7
