@@ -68,6 +68,22 @@ private:
 	RString				m_sPathToMusic;
 };
 
+class ScreenWithMenuElementsSimple: public ScreenWithMenuElements
+{
+public:
+	void MenuStart( PlayerNumber pn );
+	void MenuBack( PlayerNumber pn );
+
+	//
+	// Lua
+	//
+	virtual void PushSelf( lua_State *L );
+
+protected:
+	virtual bool GenericTweenOn() const { return true; }
+	virtual bool GenericTweenOff() const { return true; }
+};
+
 #endif
 
 /*

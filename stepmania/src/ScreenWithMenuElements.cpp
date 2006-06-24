@@ -314,6 +314,24 @@ void ScreenWithMenuElements::StopTimer()
 		m_MenuTimer->Stop();
 }
 
+REGISTER_SCREEN_CLASS( ScreenWithMenuElementsSimple );
+
+void ScreenWithMenuElementsSimple::MenuStart( PlayerNumber pn )
+{
+	if( IsTransitioning() )
+		return;
+
+	StartTransitioningScreen( SM_GoToNextScreen );
+}
+
+void ScreenWithMenuElementsSimple::MenuBack( PlayerNumber pn )
+{
+	if( IsTransitioning() )
+		return;
+
+	StartTransitioningScreen( SM_GoToPrevScreen );
+}
+
 // lua start
 #include "LuaBinding.h"
 
@@ -329,6 +347,20 @@ public:
 };
 
 LUA_REGISTER_DERIVED_CLASS( ScreenWithMenuElements, Screen )
+
+class LunaScreenWithMenuElementsSimple: public Luna<ScreenWithMenuElementsSimple>
+{
+public:
+	LunaScreenWithMenuElementsSimple() { LUA->Register( Register ); }
+
+	static void Register( Lua *L )
+	{
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( ScreenWithMenuElementsSimple, ScreenWithMenuElements )
+
 // lua end
 
 /*
