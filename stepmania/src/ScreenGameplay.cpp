@@ -59,7 +59,6 @@
 // Defines
 //
 #define SHOW_LIFE_METER_FOR_DISABLED_PLAYERS	THEME->GetMetricB(m_sName,"ShowLifeMeterForDisabledPlayers")
-#define EVAL_ON_FAIL				THEME->GetMetricB(m_sName,"ShowEvaluationOnFail")
 #define SHOW_SCORE_IN_RAVE			THEME->GetMetricB(m_sName,"ShowScoreInRave")
 #define SONG_POSITION_METER_WIDTH		THEME->GetMetricF(m_sName,"SongPositionMeterWidth")
 #define PLAYER_X( sName, styleType )		THEME->GetMetricF(m_sName,ssprintf("Player%s%sX",sName.c_str(),StyleTypeToString(styleType).c_str()))
@@ -200,7 +199,7 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField )
 	if( IsMultiPlayer() )
 	{
 		GetPlayerState()->m_CurrentPlayerOptions	= GAMESTATE->m_pPlayerState[PLAYER_1]->m_CurrentPlayerOptions;
-		GetPlayerState()->m_PlayerOptions			= GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
+		GetPlayerState()->m_PlayerOptions		= GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
 		GetPlayerState()->m_StagePlayerOptions		= GAMESTATE->m_pPlayerState[PLAYER_1]->m_StagePlayerOptions;
 		GetPlayerState()->m_StoredPlayerOptions		= GAMESTATE->m_pPlayerState[PLAYER_1]->m_StoredPlayerOptions;
 	}
