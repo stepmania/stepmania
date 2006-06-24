@@ -1699,6 +1699,8 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 	case EDIT_BUTTON_OPEN_COURSE_ATTACK_MENU:
 		{
 			Course *pCourse = GAMESTATE->m_pCurCourse;
+			if( pCourse == NULL )
+				break;
 			CourseEntry &ce = pCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
 			float fStartTime = m_pSong->GetElapsedTimeFromBeat( GAMESTATE->m_fSongBeat );
 			int iAttack = FindAttackAtTime( ce.attacks, fStartTime );
@@ -1730,6 +1732,8 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			float fStart, fEnd;
 			PlayerOptions po;
 			const Course *pCourse = GAMESTATE->m_pCurCourse;
+			if( pCourse == NULL )
+				break;
 			const CourseEntry &ce = pCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
 			
 			if( m_NoteFieldEdit.m_iBeginMarker == -1 )
