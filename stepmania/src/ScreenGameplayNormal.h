@@ -5,7 +5,6 @@
 
 #include "ScreenGameplay.h"
 
-class LyricsLoader;
 class ScreenGameplayNormal : public ScreenGameplay
 {
 public:
