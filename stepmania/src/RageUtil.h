@@ -8,11 +8,11 @@
 #include "Foreach.h"
 class RageFileDriver;
 
-#define SAFE_DELETE(p)       { delete (p);     (p)=NULL; }
-#define SAFE_DELETE_ARRAY(p) { delete[] (p);   (p)=NULL; }
+#define SAFE_DELETE(p)       do { delete (p);     (p)=NULL; } while( false )
+#define SAFE_DELETE_ARRAY(p) do { delete[] (p);   (p)=NULL; } while( false )
 
-#define ZERO(x)	memset(&x, 0, sizeof(x))
-#define COPY(a,b) { ASSERT(sizeof(a)==sizeof(b)); memcpy(&(a), &(b), sizeof(a)); }
+#define ZERO(x)	memset(&(x), 0, sizeof(x))
+#define COPY(a,b) do { ASSERT(sizeof(a)==sizeof(b)); memcpy(&(a), &(b), sizeof(a)); } while( false )
 #define ARRAYSIZE(a) (sizeof(a) / sizeof((a)[0]))
 
 /* Common harmless mismatches.  All min(T,T) and max(T,T) cases are handled
