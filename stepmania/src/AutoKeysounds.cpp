@@ -70,6 +70,9 @@ void AutoKeysounds::FinishLoading()
 			int iNextRow = INT_MAX;
 			FOREACH_EnabledPlayer(pn)
 			{
+				// XXX Hack. Enabled players need not have their own note data.
+				if( t >= m_ndAutoKeysoundsOnly[pn].GetNumTracks() )
+					continue;
 				int iNextRowForPlayer = iRow;
 				if( m_ndAutoKeysoundsOnly[pn].GetNextTapNoteRowForTrack( t, iNextRowForPlayer ) )
 					iNextRow = min( iNextRow, iNextRowForPlayer );
