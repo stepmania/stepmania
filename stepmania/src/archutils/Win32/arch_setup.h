@@ -30,6 +30,9 @@ template<class T>
 inline const T& min(const T &a, const T &b)			{ return b < a? b:a; }
 template<class T, class P>
 inline const T& min(const T &a, const T &b, P Pr)	{ return Pr(b, a)? b:a; }
+
+typedef long int intptr_t;
+typedef unsigned long int uintptr_t;
 #endif
 
 // HACK: Fake correct scoping rules in VC6.
