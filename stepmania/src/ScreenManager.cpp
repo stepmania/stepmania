@@ -628,14 +628,14 @@ void ScreenManager::SetNewScreen( const RString &sScreenName )
 	m_sDelayedScreen = sScreenName;
 }
 
-Screen *ScreenManager::ActivatePreparedScreenAndBackground( const RString &sScreenName )
+bool ScreenManager::ActivatePreparedScreenAndBackground( const RString &sScreenName )
 {
 	//
 	// Find the prepped screen.
 	//
 	LoadedScreen ls;
 	if( !GetPreppedScreen(sScreenName, ls) )
-		return NULL;
+		return false;
 
 	// Find the prepared shared background (if any), and activate it.
 	RString sNewBGA = THEME->GetPathB(sScreenName,"background");
@@ -675,7 +675,7 @@ Screen *ScreenManager::ActivatePreparedScreenAndBackground( const RString &sScre
 
 	MESSAGEMAN->Broadcast( Message_ScreenChanged );
 
-	return ls.m_pScreen;
+	return true;
 }
 
 void ScreenManager::LoadDelayedScreen()
@@ -688,7 +688,7 @@ void ScreenManager::LoadDelayedScreen()
 
 	/* If the screen is already prepared, activate it before performing any cleanup, so
 	 * it doesn't get deleted by cleanup. */
-	Screen *pScreen = ActivatePreparedScreenAndBackground( sScreenName );
+	bool bLoaded = ActivatePreparedScreenAndBackground( sScreenName );
 
 	vector<Actor*> apActorsToDelete;
 	if( g_setGroupedScreens.find(sScreenName) == g_setGroupedScreens.end() )
@@ -706,11 +706,11 @@ void ScreenManager::LoadDelayedScreen()
 	}
 
 	/* If the screen wasn't already prepared, load it. */
-	if( pScreen == NULL )
+	if( !bLoaded )
 	{
 		PrepareScreen( sScreenName );
-		pScreen = ActivatePreparedScreenAndBackground( sScreenName );
-		ASSERT( pScreen != NULL );
+		bLoaded = ActivatePreparedScreenAndBackground( sScreenName );
+		ASSERT( bLoaded );
 	}
 
 	if( !apActorsToDelete.empty() )

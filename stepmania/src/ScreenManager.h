@@ -83,7 +83,7 @@ private:
 
 	Screen *MakeNewScreen( const RString &sName );
 	void LoadDelayedScreen();
-	Screen *ActivatePreparedScreenAndBackground( const RString &sScreenName );
+	bool ActivatePreparedScreenAndBackground( const RString &sScreenName );
 	ScreenMessage PopTopScreenInternal( bool bSendLoseFocus = true );
 	void RunConcurrentlyPrepareScreen();
 
