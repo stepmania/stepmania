@@ -130,6 +130,22 @@ retry:
 
 		CollapsePath( sPath );
 	}
+	if( sPath == sDir )
+	{
+		RString sMessage = ssprintf( "'%s' has a texture '%s' that collapses to './'.",
+					     m_sSpritePath.c_str(), sTextureFile.c_str() );
+		switch( Dialog::AbortRetryIgnore(sMessage) )
+		{
+		case Dialog::abort:
+			RageException::Throw( sMessage );
+		case Dialog::retry:
+			goto retry;
+		case Dialog::ignore:
+			return;
+		default:
+			ASSERT(0);
+		}
+	}
 
 	if( !sPath.empty() )
 	{
