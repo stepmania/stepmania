@@ -2199,7 +2199,10 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 			AbortGiveUp( true );
 			
 			if( PREFSMAN->m_AutoPlay == PC_HUMAN )
-				m_vPlayerInfo[input.StyleI.player].m_pPlayer->Step( input.StyleI.col, input.DeviceI.ts ); 
+			{
+				PlayerInfo& pi = PlayerNumberToPlayerInfo( input.StyleI.player );
+				pi.m_pPlayer->Step( input.StyleI.col, input.DeviceI.ts );
+			}
 		}
 	}
 }

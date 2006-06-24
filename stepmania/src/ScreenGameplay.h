@@ -221,6 +221,7 @@ protected:
 
 	vector<PlayerInfo>	m_vPlayerInfo;	// filled by SGameplay derivatives in Init
 	virtual void FillPlayerInfo( vector<PlayerInfo> &vPlayerInfoOut ) = 0;
+	virtual PlayerInfo &PlayerNumberToPlayerInfo( PlayerNumber pn )  { return m_vPlayerInfo[pn]; }
 };
 
 vector<PlayerInfo>::iterator GetNextEnabledPlayerInfo		( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &v );
