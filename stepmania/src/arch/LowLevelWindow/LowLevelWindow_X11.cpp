@@ -24,7 +24,7 @@ static GLXContext g_pContext = NULL;
 static GLXContext g_pBackgroundContext = NULL;
 static Window g_AltWindow = 0;
 
-static LocalizedString FAILED_CONNECTION_XSERVER( "LowLevelWindow_X11", "Failed to establish a connection with the X server'" );
+static LocalizedString FAILED_CONNECTION_XSERVER( "LowLevelWindow_X11", "Failed to establish a connection with the X server" );
 LowLevelWindow_X11::LowLevelWindow_X11()
 {
 	if( !X11Helper::Go() )
