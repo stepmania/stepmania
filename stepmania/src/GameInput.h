@@ -10,7 +10,7 @@ class Game;
 enum GameController
 {
 	GAME_CONTROLLER_1 = 0,	// left controller
-	GAME_CONTROLLER_2,		// right controller
+	GAME_CONTROLLER_2,	// right controller
 	MAX_GAME_CONTROLLERS,	// leave this at the end
 	GAME_CONTROLLER_INVALID,
 };

@@ -25,7 +25,7 @@ public:
 	bool		m_bUsedForHowToPlay;		// Can be used for HowToPlay?
 	
 	/* The name of the style.  (This is currently unused.) */
-	const char *m_szName;
+	const char 	*m_szName;
 	
 	/* Steps format used for each player.  For example, "dance versus" reads
 	 * the Steps with the tag "dance-single". */

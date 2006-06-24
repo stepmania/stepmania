@@ -270,8 +270,8 @@ void ScoreKeeperNormal::AddScore( TapNoteScore score )
 	{
 	case TNS_W1:	p = 10;		break;
 	case TNS_W2:	p = GAMESTATE->ShowW1()? 9:10; break;
-	case TNS_W3:		p = 5;		break;
-	default:			p = 0;		break;
+	case TNS_W3:	p = 5;		break;
+	default:	p = 0;		break;
 	}
 
 	m_iTapNotesHit++;

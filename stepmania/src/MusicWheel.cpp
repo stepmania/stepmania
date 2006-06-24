@@ -204,19 +204,19 @@ void MusicWheel::LoadFromMetrics( RString sType )
 
 	ROULETTE_SWITCH_SECONDS		.Load(sType,"RouletteSwitchSeconds");
 	ROULETTE_SLOW_DOWN_SWITCHES	.Load(sType,"RouletteSlowDownSwitches");
-	NUM_SECTION_COLORS			.Load(sType,"NumSectionColors");
+	NUM_SECTION_COLORS		.Load(sType,"NumSectionColors");
 	SONG_REAL_EXTRA_COLOR		.Load(sType,"SongRealExtraColor");
-	SORT_MENU_COLOR				.Load(sType,"SortMenuColor");
-	SHOW_ROULETTE				.Load(sType,"ShowRoulette");
-	SHOW_RANDOM					.Load(sType,"ShowRandom");
-	SHOW_PORTAL					.Load(sType,"ShowPortal");
+	SORT_MENU_COLOR			.Load(sType,"SortMenuColor");
+	SHOW_ROULETTE			.Load(sType,"ShowRoulette");
+	SHOW_RANDOM			.Load(sType,"ShowRandom");
+	SHOW_PORTAL			.Load(sType,"ShowPortal");
 	RANDOM_PICKS_LOCKED_SONGS	.Load(sType,"RandomPicksLockedSongs");
 	MOST_PLAYED_SONGS_TO_SHOW	.Load(sType,"MostPlayedSongsToShow");
 	MODE_MENU_CHOICE_NAMES		.Load(sType,"ModeMenuChoiceNames");
 	vector<RString> vsModeChoiceNames;
 	split( MODE_MENU_CHOICE_NAMES, ",", vsModeChoiceNames );
-	CHOICE						.Load(sType,CHOICE_NAME,vsModeChoiceNames);
-	SECTION_COLORS				.Load(sType,SECTION_COLORS_NAME,NUM_SECTION_COLORS);
+	CHOICE				.Load(sType,CHOICE_NAME,vsModeChoiceNames);
+	SECTION_COLORS			.Load(sType,SECTION_COLORS_NAME,NUM_SECTION_COLORS);
 }
 
 MusicWheel::~MusicWheel()

@@ -9,7 +9,7 @@
 struct StyleInput
 {
 	PlayerNumber	player;
-	int				col;
+	int		col;
 
 	StyleInput() { MakeInvalid(); };
 	StyleInput( PlayerNumber pn, int c ) { player = pn; col = c; };
