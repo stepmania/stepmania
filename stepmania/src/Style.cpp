@@ -42,10 +42,11 @@ GameInput Style::StyleInputToGameInput( const StyleInput& StyleI ) const
 {
 	ASSERT_M( StyleI.player < NUM_PLAYERS  &&  StyleI.col < MAX_COLS_PER_PLAYER,
 		ssprintf("P%i C%i", StyleI.player, StyleI.col) );
+	bool bUsingOneSide = m_StyleType != ONE_PLAYER_TWO_SIDES && m_StyleType != TWO_PLAYERS_SHARED_SIDES;
 
 	FOREACH_GameController(gc)
 	{
-		if( this->m_StyleType != ONE_PLAYER_TWO_SIDES && gc != (int) StyleI.player )
+		if( bUsingOneSide && gc != (int) StyleI.player )
 			continue;
 
 		for( int i = 0; i < m_pGame->m_iButtonsPerController && m_iInputColumn[gc][i] != END_MAPPING; ++i )
