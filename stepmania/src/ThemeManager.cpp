@@ -218,6 +218,10 @@ RString ThemeManager::GetThemeDisplayName( const RString &sThemeName )
 	return sThemeName;
 }
 
+static bool EqualsNoCase( const RString &s1, const RString &s2 )
+{
+       return s1.EqualsNoCase(s2);
+}
 void ThemeManager::GetLanguages( vector<RString>& AddTo )
 {
 	AddTo.clear();
@@ -225,12 +229,9 @@ void ThemeManager::GetLanguages( vector<RString>& AddTo )
 	for( unsigned i = 0; i < g_vThemes.size(); ++i )
 		GetLanguagesForTheme( g_vThemes[i].sThemeName, AddTo );
 
-	FOREACH( RString, AddTo, s )
-		s->MakeLower();
-
 	// remove dupes
 	sort( AddTo.begin(), AddTo.end() );
-	vector<RString>::iterator it = unique( AddTo.begin(), AddTo.end() );
+	vector<RString>::iterator it = unique( AddTo.begin(), AddTo.end(), EqualsNoCase );
 	AddTo.erase(it, AddTo.end());
 }
 
