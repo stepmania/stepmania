@@ -667,13 +667,10 @@ bool ScreenManager::ActivatePreparedScreenAndBackground( const RString &sScreenN
 		else
 			g_vPreparedBackgrounds.push_back( g_pSharedBGA );
 		g_pSharedBGA = pNewBGA;
-		g_pSharedBGA->PlayCommand( "On" );
 	}
 
 	LOG->Trace("... PushScreen");
 	PushLoadedScreen( ls );
-
-	MESSAGEMAN->Broadcast( Message_ScreenChanged );
 
 	return true;
 }
@@ -720,6 +717,9 @@ void ScreenManager::LoadDelayedScreen()
 			SAFE_DELETE( *a );
 		AfterDeleteScreen();
 	}
+
+	g_pSharedBGA->PlayCommand( "On" );
+	MESSAGEMAN->Broadcast( Message_ScreenChanged );
 
 	SendMessageToTopScreen( SM );
 }
