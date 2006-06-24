@@ -35,8 +35,8 @@ protected:
 	ThemeMetric<RageColor> CHANGE_COLOR;
 	ThemeMetric<RageColor> EXTRA_COLOR;
 	ThemeMetric<bool> CYCLE;
-	LocalizedString SEPARATOR;
-	LocalizedString NO_BPM_TEXT;
+	ThemeMetric<RString> SEPARATOR;
+	ThemeMetric<RString> NO_BPM_TEXT;
 	
 	BitmapText m_textBPM;
 	AutoActor m_sprLabel;

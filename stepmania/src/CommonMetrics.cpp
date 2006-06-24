@@ -6,6 +6,7 @@
 #include "RageLog.h"
 #include "GameState.h"
 #include "ProductInfo.h"
+#include "LuaFunctions.h"
 
 
 static RString PLAYER_COLOR_NAME( size_t p ) { return ssprintf("ColorP%dCommand",int(p+1)); }
@@ -124,11 +125,12 @@ const vector<StepsType>& ThemeMetricStepsTypesToShow::GetValue() { return m_v; }
 
 RString CommonMetrics::LocalizeOptionItem( const RString &s, bool bOptional )
 {
-	if( bOptional && !THEME->HasMetric("OptionNames",s) )
+	if( bOptional && !THEME->HasString("OptionNames",s) )
 		return s;
 	return THEME->GetString( "OptionNames", s );
 }
 
+LuaFunction( LocalizeOptionItem, CommonMetrics::LocalizeOptionItem(SArg(1),true) );
 
 /*
  * (c) 2001-2004 Chris Danford

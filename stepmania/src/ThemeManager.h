@@ -71,9 +71,9 @@ public:
 
 	// TODO: Make these return values const refs.
 	bool		HasMetric( const RString &sClassName, const RString &sValueName );
-	RString		GetMetricRaw( const RString &sClassName, const RString &sValueName );
+	RString		GetMetricRaw( const IniFile &ini, const RString &sClassName, const RString &sValueName );
 	RString		GetMetric( const RString &sClassName, const RString &sValueName );
-	int			GetMetricI( const RString &sClassName, const RString &sValueName );
+	int		GetMetricI( const RString &sClassName, const RString &sValueName );
 	float		GetMetricF( const RString &sClassName, const RString &sValueName );
 	bool		GetMetricB( const RString &sClassName, const RString &sValueName );
 	RageColor	GetMetricC( const RString &sClassName, const RString &sValueName );
@@ -94,6 +94,7 @@ public:
 #endif
 
 	// Languages
+	bool	HasString( const RString &sClassName, const RString &sValueName );
 	RString	GetString( const RString &sClassName, const RString &sValueName );
 	void	GetString( const RString &sClassName, const RString &sValueName, RString &valueOut )		{ valueOut = GetString( sClassName, sValueName ); }
 	void FilterFileLanguages( vector<RString> &asElementPaths );
@@ -114,7 +115,7 @@ public:
 protected:
 	void RunLuaScripts( const RString &sMask );
 	void LoadThemeMetrics( deque<Theme> &theme, const RString &sThemeName, const RString &sLanguage_ );
-	bool GetMetricRawRecursive( const RString &sClassName, const RString &sValueName, RString &sRet );
+	bool GetMetricRawRecursive( const IniFile &ini, const RString &sClassName, const RString &sValueName, RString &sRet );
 	RString GetPathToAndFallback( ElementCategory category, const RString &sClassName, const RString &sFile );
 	RString GetPathToRaw( const RString &sThemeName, ElementCategory category, const RString &sClassName, const RString &sFile );
 	static RString GetThemeDirFromName( const RString &sThemeName );

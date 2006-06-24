@@ -45,7 +45,18 @@ struct Theme
 };
 // When looking for a metric or an element, search these from head to tail.
 static deque<Theme> g_vThemes;
-static IniFile *g_pIniMetrics;
+class LoadedThemeData
+{
+public:
+	IniFile iniMetrics;
+	IniFile iniStrings;
+	void ClearAll()
+	{
+		iniMetrics.Clear();
+		iniStrings.Clear();
+	}
+};
+LoadedThemeData *g_pLoadedThemeData = NULL;
 
 
 //
@@ -148,7 +159,7 @@ ThemeManager::ThemeManager()
 ThemeManager::~ThemeManager()
 {
 	g_vThemes.clear();
-	SAFE_DELETE( g_pIniMetrics );
+	SAFE_DELETE( g_pLoadedThemeData );
 }
 
 void ThemeManager::GetThemeNames( vector<RString>& AddTo )
@@ -269,8 +280,12 @@ static void MergeIniUnder( XNode *pFrom, XNode *pTo )
 
 void ThemeManager::LoadThemeMetrics( deque<Theme> &theme, const RString &sThemeName_, const RString &sLanguage_ )
 {
-	delete g_pIniMetrics;
-	g_pIniMetrics = new IniFile;
+	if( g_pLoadedThemeData == NULL )
+		g_pLoadedThemeData = new LoadedThemeData;
+
+	// Don't delete and recreate LoadedThemeData.  There are references iniMetrics and iniStrings 
+	// on the stack, so Clear them instead.
+	g_pLoadedThemeData->ClearAll();
 	g_vThemes.clear();
 
 	RString sThemeName(sThemeName_);
@@ -288,14 +303,15 @@ void ThemeManager::LoadThemeMetrics( deque<Theme> &theme, const RString &sThemeN
 		Theme &t = g_vThemes.back();
 		t.sThemeName = sThemeName;
 
-		IniFile ini;
-		ini.ReadFile( GetMetricsIniPath(sThemeName) );
-		ini.ReadFile( GetLanguageIniPath(sThemeName,SpecialFiles::BASE_LANGUAGE) );
+		IniFile iniMetrics;
+		IniFile iniStrings;
+		iniMetrics.ReadFile( GetMetricsIniPath(sThemeName) );
+			iniStrings.ReadFile( GetLanguageIniPath(sThemeName,SpecialFiles::BASE_LANGUAGE) );
 		if( sLanguage.CompareNoCase(SpecialFiles::BASE_LANGUAGE) )
-			ini.ReadFile( GetLanguageIniPath(sThemeName,sLanguage) );
+			iniStrings.ReadFile( GetLanguageIniPath(sThemeName,sLanguage) );
 
 		bool bIsBaseTheme = !sThemeName.CompareNoCase(SpecialFiles::BASE_THEME_NAME);
-		ini.GetValue( "Global", "IsBaseTheme", bIsBaseTheme );
+		iniMetrics.GetValue( "Global", "IsBaseTheme", bIsBaseTheme );
 		if( bIsBaseTheme )
 			bLoadedBase = true;
 
@@ -303,7 +319,7 @@ void ThemeManager::LoadThemeMetrics( deque<Theme> &theme, const RString &sThemeN
 		 * already loaded it, fall back on SpecialFiles::BASE_THEME_NAME.  That way, default theme
 		 * fallbacks can be disabled with "FallbackTheme=". */
 		RString sFallback;
-		if( !ini.GetValue("Global","FallbackTheme",sFallback) )
+		if( !iniMetrics.GetValue("Global","FallbackTheme",sFallback) )
 		{
 			if( sThemeName.CompareNoCase( SpecialFiles::BASE_THEME_NAME ) && !bLoadedBase )
 				sFallback = SpecialFiles::BASE_THEME_NAME;
@@ -314,7 +330,8 @@ void ThemeManager::LoadThemeMetrics( deque<Theme> &theme, const RString &sThemeN
 		 * need to load the derived theme first, to find out the name of the fallback
 		 * theme.  Avoid having to load IniFile twice, merging the fallback theme
 		 * into the derived theme that we've already loaded. */
-		MergeIniUnder( &ini, g_pIniMetrics );
+		MergeIniUnder( &iniMetrics, &g_pLoadedThemeData->iniMetrics );
+		MergeIniUnder( &iniStrings, &g_pLoadedThemeData->iniStrings );
 
 		if( sFallback.empty() )
 			break;
@@ -333,7 +350,7 @@ void ThemeManager::LoadThemeMetrics( deque<Theme> &theme, const RString &sThemeN
 		if( !re.Compare( sMetric, sBits ) )
 			RageException::Throw( "Invalid argument \"--metric=%s\"", sMetric.c_str() );
 
-		g_pIniMetrics->SetValue( sBits[0], sBits[1], sBits[2] );
+		g_pLoadedThemeData->iniMetrics.SetValue( sBits[0], sBits[1], sBits[2] );
 	}
 
 	LOG->MapLog( "theme", "Theme: %s", m_sCurThemeName.c_str() );
@@ -665,7 +682,7 @@ RString ThemeManager::GetPathToAndFallback( ElementCategory category, const RStr
 
 		// search fallback name (if any)
 		RString sFallback;
-		if( !GetMetricRawRecursive(sClassName, "Fallback", sFallback) )
+		if( !GetMetricRawRecursive( g_pLoadedThemeData->iniMetrics, sClassName, "Fallback", sFallback) )
 			return RString();
 		sClassName = sFallback;
 	}
@@ -758,7 +775,13 @@ RString ThemeManager::GetMetricsIniPath( const RString &sThemeName )
 bool ThemeManager::HasMetric( const RString &sClassName, const RString &sValueName )
 {
 	RString sThrowAway;
-	return GetMetricRawRecursive( sClassName, sValueName, sThrowAway );
+	return GetMetricRawRecursive( g_pLoadedThemeData->iniMetrics, sClassName, sValueName, sThrowAway );
+}
+
+bool ThemeManager::HasString( const RString &sClassName, const RString &sValueName )
+{
+	RString sThrowAway;
+	return GetMetricRawRecursive( g_pLoadedThemeData->iniStrings, sClassName, sValueName, sThrowAway );
 }
 
 static LocalizedString RELOADED_METRICS( "ThemeManager", "Reloaded metrics" );
@@ -776,24 +799,25 @@ void ThemeManager::ReloadMetrics()
 }
 
 
-bool ThemeManager::GetMetricRawRecursive( const RString &sClassName_, const RString &sValueName, RString &sOut )
+bool ThemeManager::GetMetricRawRecursive( const IniFile &ini, const RString &sClassName_, const RString &sValueName, RString &sOut )
 {
 	ASSERT( sValueName != "" );
 	RString sClassName( sClassName_ );
 
-	ASSERT( g_pIniMetrics );
+	ASSERT( g_pLoadedThemeData );
 
 	int n = 100;
 	while( n-- )
 	{
-		if( g_pIniMetrics->GetValue(sClassName,sValueName,sOut) )
+		if( ini.GetValue(sClassName,sValueName,sOut) )
 			return true;
 
 		if( !sValueName.compare("Fallback") )
 			return false;
 
 		RString sFallback;
-		if( !GetMetricRawRecursive(sClassName,"Fallback",sFallback) )
+		// always look in iniMetrics for "Fallback"
+		if( !GetMetricRawRecursive(g_pLoadedThemeData->iniMetrics,sClassName,"Fallback",sFallback) )
 			return false;
 
 		sClassName = sFallback;
@@ -802,7 +826,7 @@ bool ThemeManager::GetMetricRawRecursive( const RString &sClassName_, const RStr
 	RageException::Throw( "Infinite recursion looking up theme metric \"%s::%s\"", sClassName.c_str(), sValueName.c_str() );
 }
 
-RString ThemeManager::GetMetricRaw( const RString &sClassName_, const RString &sValueName_ )
+RString ThemeManager::GetMetricRaw( const IniFile &ini, const RString &sClassName_, const RString &sValueName_ )
 {
 	/* Ugly: the parameters to this function may be a reference into g_vThemes, or something
 	 * else that might suddenly go away when we call ReloadMetrics. */
@@ -812,7 +836,7 @@ RString ThemeManager::GetMetricRaw( const RString &sClassName_, const RString &s
 	while( true )
 	{
 		RString ret;
-		if( ThemeManager::GetMetricRawRecursive( sClassName, sValueName, ret ) )
+		if( ThemeManager::GetMetricRawRecursive( ini, sClassName, sValueName, ret ) )
 			return ret;
 		
 		
@@ -847,7 +871,7 @@ RString ThemeManager::GetMetricRaw( const RString &sClassName_, const RString &s
 /* Get a string metric. */
 RString ThemeManager::GetMetric( const RString &sClassName, const RString &sValueName )
 {
-	RString sValue = GetMetricRaw(sClassName,sValueName);
+	RString sValue = GetMetricRaw(g_pLoadedThemeData->iniMetrics,sClassName,sValueName);
 
 	EvaluateString( sValue );
 
@@ -921,7 +945,7 @@ Commands ThemeManager::GetMetricM( const RString &sClassName, const RString &sVa
 #if !defined(SMPACKAGE)
 apActorCommands ThemeManager::GetMetricA( const RString &sClassName, const RString &sValueName )
 {
-	RString sValue = GetMetricRaw( sClassName, sValueName );
+	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName );
 	return apActorCommands( new ActorCommands( sValue ) );
 }
 #endif
@@ -963,7 +987,7 @@ RString ThemeManager::GetLanguageIniPath( const RString &sThemeName, const RStri
 
 void ThemeManager::GetModifierNames( vector<RString>& AddTo )
 {
-	const XNode *cur = g_pIniMetrics->GetChild( "OptionNames" );
+	const XNode *cur = g_pLoadedThemeData->iniStrings.GetChild( "OptionNames" );
 	if( cur )
 	{
 		FOREACH_CONST_Attr( cur, p )
@@ -980,7 +1004,7 @@ void ThemeManager::GetMetric( const RString &sClassName, const RString &sValueNa
 
 void ThemeManager::GetMetric( const RString &sClassName, const RString &sValueName, LuaExpression &valueOut )
 {
-	RString sValue = GetMetricRaw( sClassName, sValueName );
+	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName );
 	valueOut.SetFromExpression( "function(self) " + sValue + "end" );
 }
 
@@ -1019,9 +1043,13 @@ RString ThemeManager::GetString( const RString &sClassName, const RString &sValu
 	sValueName.Replace( "\r\n", "\\n" );
 	sValueName.Replace( "\n", "\\n" );
 
-	
+	RString s = GetMetricRaw(g_pLoadedThemeData->iniStrings,sClassName,sValueName);
+	FontCharAliases::ReplaceMarkers( s );
+
+	// Don't EvalulateString.  Strings are raw and shouldn't allow Lua.
+	//EvaluateString( s );
+
 	// Write stubs for missing strings into every language file.
-	RString s = ThemeManager::GetMetric( sClassName, sValueName );
 	/*
 	if( !ThemeManager::GetMetricRawRecursive( sClassName, sValueName, s ) )
 	{
@@ -1035,7 +1063,6 @@ RString ThemeManager::GetString( const RString &sClassName, const RString &sValu
 		LoadThemeMetrics( g_vThemes, m_sCurThemeName, m_sCurLanguage );
 	}
 	*/
-	EvaluateString( s );
 
 	s.Replace( "\\n", "\n" );
 
@@ -1075,7 +1102,7 @@ void ThemeManager::GetMetricsThatBeginWith( const RString &sClassName_, const RS
 	RString sClassName( sClassName_ );
 	while( !sClassName.empty() )
 	{
-		const XNode *cur = g_pIniMetrics->GetChild( sClassName );
+		const XNode *cur = g_pLoadedThemeData->iniMetrics.GetChild( sClassName );
 		if( cur != NULL )
 		{
 			// Iterate over all metrics that match.
@@ -1091,7 +1118,7 @@ void ThemeManager::GetMetricsThatBeginWith( const RString &sClassName_, const RS
 
 		// put the fallback (if any) in sClassName
 		RString sFallback;
-		if( GetMetricRawRecursive( sClassName, "Fallback", sFallback ) )
+		if( GetMetricRawRecursive( g_pLoadedThemeData->iniMetrics, sClassName, "Fallback", sFallback ) )
 			sClassName = sFallback;
 		else
 			sClassName = "";

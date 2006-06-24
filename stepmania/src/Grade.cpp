@@ -12,7 +12,7 @@ LuaFunction( GradeToString,			GradeToString((Grade)IArg(1)) )
 RString GradeToLocalizedString( Grade g )
 {
 	RString s = GradeToString(g);
-	if( !THEME->HasMetric("Grade",s) )
+	if( !THEME->HasString("Grade",s) )
 		return "???";
 	return THEME->GetString( "Grade",s );
 }
