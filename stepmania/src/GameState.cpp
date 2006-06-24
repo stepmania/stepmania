@@ -2000,6 +2000,11 @@ public:
 
 		return vpStepsToShow.size()*2;
 	}
+	static int GetCurrentStyleType( T* p, lua_State *L )
+	{
+		lua_pushstring( L, StyleTypeToString(p->GetCurrentStyle()->m_StyleType) );
+		return 1;
+	}
 
 
 	static void Register(lua_State *L)
@@ -2066,6 +2071,7 @@ public:
 		ADD_METHOD( GetEditLocalProfileID );
 		ADD_METHOD( GetEditLocalProfile );
 		ADD_METHOD( GetCurrentStepsCredits );
+		ADD_METHOD( GetCurrentStyleType );
 
 		Luna<T>::Register( L );
 
