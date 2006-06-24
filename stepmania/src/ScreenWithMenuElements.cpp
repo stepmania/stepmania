@@ -232,7 +232,19 @@ void ScreenWithMenuElements::ResetTimer()
 
 void ScreenWithMenuElements::StartTransitioningScreen( ScreenMessage smSendWhenDone )
 {
-	TweenOffScreen();
+	if( GenericTweenOff() )
+	{
+		this->PlayCommand( "Off" );
+
+		// If we're a stacked screen, then there's someone else between us and the
+		// background, so don't tween it off.
+		if( !SCREENMAN->IsStackedScreen(this) )
+			SCREENMAN->PlaySharedBackgroundOffCommand();
+	}
+	else
+	{
+		TweenOffScreen();
+	}
 
 	if( WAIT_FOR_CHILDREN_BEFORE_TWEENING_OUT )
 	{

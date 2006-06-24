@@ -44,6 +44,7 @@ protected:
 	 * TweenOnScreen will not be called.  (Eventually, all screens should
 	 * use this, and this will be removed.) */
 	virtual bool GenericTweenOn() const { return false; }
+	virtual bool GenericTweenOff() const { return false; }
 
 	AutoActor			m_sprUnderlay;
 	AutoActor			m_autoHeader;
