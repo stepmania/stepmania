@@ -198,21 +198,21 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 
 	switch( m_Selector.EDIT_MODE )
 	{
-		case EditMode_Full:
+	case EditMode_Full:
+	{
+		RString sDir = pSong->GetSongDir();
+		RString sTempFile = sDir + TEMP_FILE_NAME;
+		RageFile file;
+		if( !file.Open( sTempFile, RageFile::WRITE ) )
 		{
-			RString sDir = pSong->GetSongDir();
-			RString sTempFile = sDir + TEMP_FILE_NAME;
-			RageFile file;
-			if( !file.Open( sTempFile, RageFile::WRITE ) )
-			{
-				ScreenPrompt::Prompt( SM_None, SONG_DIR_READ_ONLY );
-				return;
-			}
-
-			file.Close();
-			FILEMAN->Remove( sTempFile );
+			ScreenPrompt::Prompt( SM_None, SONG_DIR_READ_ONLY );
+			return;
 		}
+
+		file.Close();
+		FILEMAN->Remove( sTempFile );
 		break;
+	}
 	}
 
 	//
