@@ -857,7 +857,14 @@ int	GameState::GetNumPlayersEnabled() const
 bool GameState::PlayerUsingBothSides() const
 {
 	ASSERT( this->GetCurrentStyle() != NULL );
-	return this->GetCurrentStyle()->m_StyleType == ONE_PLAYER_TWO_SIDES;
+	switch( GetCurrentStyle()->m_StyleType )
+	{
+	case ONE_PLAYER_TWO_SIDES:
+	case TWO_PLAYERS_SHARED_SIDES:
+		return true;
+	default:
+		return false;
+	}
 }
 
 bool GameState::IsHumanPlayer( PlayerNumber pn ) const
@@ -873,6 +880,7 @@ bool GameState::IsHumanPlayer( PlayerNumber pn ) const
 	switch( GetCurrentStyle()->m_StyleType )
 	{
 	case TWO_PLAYERS_TWO_SIDES:
+	case TWO_PLAYERS_SHARED_SIDES:
 		return true;
 	case ONE_PLAYER_ONE_SIDE:
 	case ONE_PLAYER_TWO_SIDES:

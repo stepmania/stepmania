@@ -85,7 +85,8 @@ void ArrowEffects::Update()
 		for( int iColNum = 0; iColNum < MAX_COLS_PER_PLAYER; ++iColNum )
 		{
 			const int iNumCols = pStyle->m_iColsPerPlayer;
-			const int iNumSides = pStyle->m_StyleType==ONE_PLAYER_TWO_SIDES ? 2 : 1;
+			const int iNumSides = (pStyle->m_StyleType==ONE_PLAYER_TWO_SIDES ||
+					       pStyle->m_StyleType==TWO_PLAYERS_SHARED_SIDES) ? 2 : 1;
 			const int iNumColsPerSide = iNumCols / iNumSides;
 			const int iSideIndex = iColNum / iNumColsPerSide;
 			const int iColOnSide = iColNum % iNumColsPerSide;

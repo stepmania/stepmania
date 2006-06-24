@@ -1105,6 +1105,7 @@ static void ShiftToRightSide( int &iCol, int iNumTracks )
 		break;
 	case TWO_PLAYERS_TWO_SIDES:
 	case ONE_PLAYER_TWO_SIDES:
+	case TWO_PLAYERS_SHARED_SIDES: // XXX is this right?
 		iCol += iNumTracks/2;
 		break;
 	}

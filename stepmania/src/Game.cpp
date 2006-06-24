@@ -67,6 +67,7 @@ void Game::MenuInputToGameInput( MenuInput MenuI, GameInput GameIout[4] ) const
 		iNumSidesUsing = 1;
 		break;
 	case ONE_PLAYER_TWO_SIDES:
+	case TWO_PLAYERS_SHARED_SIDES:
 		controller[0] = GAME_CONTROLLER_1;
 		controller[1] = GAME_CONTROLLER_2;
 		iNumSidesUsing = 2;

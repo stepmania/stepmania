@@ -403,13 +403,12 @@ int GetCreditsRequiredToPlayStyle( const Style *style )
 	{
 	case ONE_PLAYER_ONE_SIDE:
 		return 1;
+	case TWO_PLAYERS_SHARED_SIDES:
 	case TWO_PLAYERS_TWO_SIDES:
 		return 2;
 	case ONE_PLAYER_TWO_SIDES:
 		return (GAMESTATE->GetPremium() == PREMIUM_DOUBLE) ? 1 : 2;
-	default:
-		ASSERT(0);
-		return 1;
+	DEFAULT_FAIL( style->m_StyleType );
 	}
 }
 
@@ -629,6 +628,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 			break;
 		case TWO_PLAYERS_TWO_SIDES:
 		case ONE_PLAYER_TWO_SIDES:
+		case TWO_PLAYERS_SHARED_SIDES:
 			{
 				FOREACH_PlayerNumber( p )
 					GAMESTATE->m_bSideIsJoined[p] = true;
