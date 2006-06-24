@@ -54,7 +54,7 @@ public:
 	void NextTheme();
 	void ReloadMetrics();
 	void ReloadSubscribers();
-	void GetModifierNames( vector<RString>& AddTo );
+	void GetOptionNames( vector<RString>& AddTo );
 
 	static void EvaluateString( RString &sText );
 

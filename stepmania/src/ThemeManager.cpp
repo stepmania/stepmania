@@ -985,7 +985,7 @@ RString ThemeManager::GetLanguageIniPath( const RString &sThemeName, const RStri
 	return GetThemeDirFromName(sThemeName) + SpecialFiles::LANGUAGES_SUBDIR + sLanguage + ".ini";
 }
 
-void ThemeManager::GetModifierNames( vector<RString>& AddTo )
+void ThemeManager::GetOptionNames( vector<RString>& AddTo )
 {
 	const XNode *cur = g_pLoadedThemeData->iniStrings.GetChild( "OptionNames" );
 	if( cur )

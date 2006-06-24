@@ -369,7 +369,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 		{
 			XNode* pNode2 = pNode->AppendChild( "Modifier" );
 			vector<RString> modifiers;
-			THEME->GetModifierNames( modifiers );
+			THEME->GetOptionNames( modifiers );
 			FOREACH_CONST( RString, modifiers, iter )
 			{
 				PlayerOptions po;
