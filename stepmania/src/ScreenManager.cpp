@@ -632,12 +632,21 @@ void ScreenManager::SetNewScreen( const RString &sScreenName )
  * activated. */
 bool ScreenManager::ActivatePreparedScreenAndBackground( const RString &sScreenName )
 {
+	bool bLoadedBoth = true;
+
 	//
 	// Find the prepped screen.
 	//
 	LoadedScreen ls;
 	if( !GetPreppedScreen(sScreenName, ls) )
-		return false;
+	{
+		bLoadedBoth = false;
+	}
+	else
+	{
+		LOG->Trace("... PushScreen");
+		PushLoadedScreen( ls );
+	}
 
 	// Find the prepared shared background (if any), and activate it.
 	RString sNewBGA = THEME->GetPathB(sScreenName,"background");
@@ -660,7 +669,14 @@ bool ScreenManager::ActivatePreparedScreenAndBackground( const RString &sScreenN
 				}
 			}
 		}
-		ASSERT( pNewBGA != NULL );
+
+		/* If the BGA isn't loaded yet, load a dummy actor.  If we're not going to use the same
+		 * BGA for the new screen, always move the old BGA back to g_vPreparedBackgrounds now. */
+		if( pNewBGA == NULL )
+		{
+			bLoadedBoth = false;
+			pNewBGA = new Actor;
+		}
 
 		/* Move the old background back to the prepared list, or delete it if
 		 * it's a blank actor. */
@@ -672,10 +688,7 @@ bool ScreenManager::ActivatePreparedScreenAndBackground( const RString &sScreenN
 		g_pSharedBGA->PlayCommand( "On" );
 	}
 
-	LOG->Trace("... PushScreen");
-	PushLoadedScreen( ls );
-
-	return true;
+	return bLoadedBoth;
 }
 
 void ScreenManager::LoadDelayedScreen()
