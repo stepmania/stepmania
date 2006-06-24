@@ -156,8 +156,20 @@ retry:
 				"There is more than one file that matches "
 				"'%s'.  Please remove all but one of these matches.",
 				sPath.c_str() );
-
-			RageException::Throw( message ); 
+#ifdef DEBUG
+			message += "\n" + join( "\n", asElementPaths );
+#endif
+			switch( Dialog::AbortRetryIgnore(message) )
+			{
+			case Dialog::abort:
+				RageException::Throw( message );
+			case Dialog::retry:
+				goto retry;
+			case Dialog::ignore:
+				return;
+			default:
+				ASSERT(0);
+			}
 		}
 		sPath = asElementPaths[0];
 
