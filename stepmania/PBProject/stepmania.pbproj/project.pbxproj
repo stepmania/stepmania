@@ -1647,6 +1647,10 @@
 		AAD6A6E1065E0A8D0042165A /* CatalogXml.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD6A6DF065E0A8D0042165A /* CatalogXml.h */; };
 		AAD6A714065E0FDF0042165A /* Difficulty.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAD6A712065E0FDF0042165A /* Difficulty.cpp */; };
 		AAD6A715065E0FDF0042165A /* Difficulty.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD6A713065E0FDF0042165A /* Difficulty.h */; };
+		AAD8F9340A4B97DF000311CF /* ScreenGameplayShared.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD8F9320A4B97DF000311CF /* ScreenGameplayShared.h */; };
+		AAD8F9350A4B97DF000311CF /* ScreenGameplayShared.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAD8F9330A4B97DF000311CF /* ScreenGameplayShared.cpp */; };
+		AAD8F9360A4B97DF000311CF /* ScreenGameplayShared.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD8F9320A4B97DF000311CF /* ScreenGameplayShared.h */; };
+		AAD8F9370A4B97DF000311CF /* ScreenGameplayShared.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAD8F9330A4B97DF000311CF /* ScreenGameplayShared.cpp */; };
 		AADBA563062007BA005D4FC2 /* arch_platform.h in Headers */ = {isa = PBXBuildFile; fileRef = AADBA562062007BA005D4FC2 /* arch_platform.h */; };
 		AADD1CC5095C233F0088C9DF /* LocalizedString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AADD1CC2095C233E0088C9DF /* LocalizedString.cpp */; };
 		AADD1CC6095C233F0088C9DF /* LocalizedString.h in Headers */ = {isa = PBXBuildFile; fileRef = AADD1CC3095C233F0088C9DF /* LocalizedString.h */; };
@@ -2556,6 +2560,9 @@
 		AAD6A6DF065E0A8D0042165A /* CatalogXml.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = CatalogXml.h; path = ../src/CatalogXml.h; sourceTree = "<group>"; };
 		AAD6A712065E0FDF0042165A /* Difficulty.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = Difficulty.cpp; path = ../src/Difficulty.cpp; sourceTree = "<group>"; };
 		AAD6A713065E0FDF0042165A /* Difficulty.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Difficulty.h; path = ../src/Difficulty.h; sourceTree = "<group>"; };
+		AAD8F9320A4B97DF000311CF /* ScreenGameplayShared.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenGameplayShared.h; path = ../src/ScreenGameplayShared.h; sourceTree = "<group>"; };
+		AAD8F9330A4B97DF000311CF /* ScreenGameplayShared.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenGameplayShared.cpp; path = ../src/ScreenGameplayShared.cpp; sourceTree = "<group>"; };
+		AAD8FAE20A4CD36F000311CF /* ScreenGameplayShared.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenGameplayShared.cpp; path = ../src/ScreenGameplayShared.cpp; sourceTree = "<group>"; };
 		AADB4E7A04D4FE5D00D02EE9 /* RageSoundReader_FileReader.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageSoundReader_FileReader.h; path = ../src/RageSoundReader_FileReader.h; sourceTree = "<group>"; };
 		AADB4E8004D4FEC400D02EE9 /* ArchHooks_Win32.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ArchHooks_Win32.cpp; path = ArchHooks/ArchHooks_Win32.cpp; sourceTree = "<group>"; };
 		AADB4E8104D4FEC400D02EE9 /* ArchHooks_Win32.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ArchHooks_Win32.h; path = ArchHooks/ArchHooks_Win32.h; sourceTree = "<group>"; };
@@ -2938,6 +2945,9 @@
 				AACFBE4A08E7D893005087FC /* ScreenGameplayLesson.h */,
 				1215D7A008C6559A00B87D8B /* ScreenGameplayNormal.cpp */,
 				1215D7A108C6559A00B87D8B /* ScreenGameplayNormal.h */,
+				AAD8FAE20A4CD36F000311CF /* ScreenGameplayShared.cpp */,
+				AAD8F9330A4B97DF000311CF /* ScreenGameplayShared.cpp */,
+				AAD8F9320A4B97DF000311CF /* ScreenGameplayShared.h */,
 				AAB55EB509A7E3D3008FDC69 /* ScreenGameplaySyncMachine.cpp */,
 				AAB55EB609A7E3D3008FDC69 /* ScreenGameplaySyncMachine.h */,
 				AA6E002F047711F3005F316C /* ScreenHowToPlay.cpp */,
@@ -3135,6 +3145,8 @@
 			isa = PBXGroup;
 			children = (
 				AABE37030497CF85005F316C /* RageSoundDriver.h */,
+				AA8CF5160A4518BE0005F1B4 /* RageSoundDriver_AU.cpp */,
+				AA8CF5150A4518BE0005F1B4 /* RageSoundDriver_AU.h */,
 				AA7D404704FC3C270020E02B /* RageSoundDriver_CA.cpp */,
 				AA7D404604FC3C270020E02B /* RageSoundDriver_CA.h */,
 				AA1CD941060AE571003702C4 /* RageSoundDriver_Generic_Software.cpp */,
@@ -3142,8 +3154,6 @@
 				AA6E012E047712BE005F316C /* RageSoundDriver_Null.cpp */,
 				AA6E012F047712BE005F316C /* RageSoundDriver_Null.h */,
 				AA80C73207F208E200C99272 /* Selector_RageSoundDriver.h */,
-				AA8CF5150A4518BE0005F1B4 /* RageSoundDriver_AU.h */,
-				AA8CF5160A4518BE0005F1B4 /* RageSoundDriver_AU.cpp */,
 			);
 			path = Sound;
 			sourceTree = "<group>";
@@ -4385,6 +4395,7 @@
 				AA147F1A0A0F78D8006EADF6 /* VectorHelper.h in Headers */,
 				AAF565FD0A3BFE2B00D5A105 /* ExportNsisStrings.h in Headers */,
 				AA8CF5170A4518BE0005F1B4 /* RageSoundDriver_AU.h in Headers */,
+				AAD8F9360A4B97DF000311CF /* ScreenGameplayShared.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4830,6 +4841,7 @@
 				AA147F1C0A0F78D8006EADF6 /* VectorHelper.h in Headers */,
 				AAF565FF0A3BFE2B00D5A105 /* ExportNsisStrings.h in Headers */,
 				AA8CF5190A4518BE0005F1B4 /* RageSoundDriver_AU.h in Headers */,
+				AAD8F9340A4B97DF000311CF /* ScreenGameplayShared.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5381,6 +5393,7 @@
 				AA147F1B0A0F78D8006EADF6 /* VectorHelper.cpp in Sources */,
 				AAF565FC0A3BFE2B00D5A105 /* ExportNsisStrings.cpp in Sources */,
 				AA8CF5180A4518BE0005F1B4 /* RageSoundDriver_AU.cpp in Sources */,
+				AAD8F9370A4B97DF000311CF /* ScreenGameplayShared.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5784,6 +5797,7 @@
 				AA147F1D0A0F78D8006EADF6 /* VectorHelper.cpp in Sources */,
 				AAF565FE0A3BFE2B00D5A105 /* ExportNsisStrings.cpp in Sources */,
 				AA8CF51A0A4518BE0005F1B4 /* RageSoundDriver_AU.cpp in Sources */,
+				AAD8F9350A4B97DF000311CF /* ScreenGameplayShared.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
