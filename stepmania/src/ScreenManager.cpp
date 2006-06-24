@@ -628,6 +628,8 @@ void ScreenManager::SetNewScreen( const RString &sScreenName )
 	m_sDelayedScreen = sScreenName;
 }
 
+/* Activate the screen and/or its background, if either are loaded.  Return true if both were
+ * activated. */
 bool ScreenManager::ActivatePreparedScreenAndBackground( const RString &sScreenName )
 {
 	//
@@ -667,6 +669,7 @@ bool ScreenManager::ActivatePreparedScreenAndBackground( const RString &sScreenN
 		else
 			g_vPreparedBackgrounds.push_back( g_pSharedBGA );
 		g_pSharedBGA = pNewBGA;
+		g_pSharedBGA->PlayCommand( "On" );
 	}
 
 	LOG->Trace("... PushScreen");
@@ -718,7 +721,6 @@ void ScreenManager::LoadDelayedScreen()
 		AfterDeleteScreen();
 	}
 
-	g_pSharedBGA->PlayCommand( "On" );
 	MESSAGEMAN->Broadcast( Message_ScreenChanged );
 
 	SendMessageToTopScreen( SM );
