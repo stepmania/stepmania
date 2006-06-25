@@ -186,7 +186,7 @@ void BitmapText::BuildChars()
 	iPadding += m_iVertSpacing;
 
 	/* There's padding between every line: */
-	m_size.y += iPadding * (m_wTextLines.size()-1);
+	m_size.y += iPadding * int(m_wTextLines.size()-1);
 
 	int iY;	//	 the top position of the first row of characters
 	switch( m_VertAlign )
