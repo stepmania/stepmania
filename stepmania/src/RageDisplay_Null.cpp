@@ -86,7 +86,7 @@ RString RageDisplay_Null::Init( const VideoModeParams &p, bool bAllowUnaccelerat
 void RageDisplay_Null::GetDisplayResolutions( DisplayResolutions &out ) const
 {
 	out.clear();
-	DisplayResolution res = { 640, 480 };
+	DisplayResolution res = { 640, 480, true };
 	out.insert( res );
 }
 
