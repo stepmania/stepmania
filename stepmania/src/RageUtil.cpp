@@ -119,7 +119,7 @@ RString BinaryToHex( const unsigned char *string, int iNumBytes )
        for( int i=0; i<iNumBytes; i++ )
        {
                unsigned val = string[i];
-               s += ssprintf( "%0x", val );
+               s += ssprintf( "%02x", val );
        }
        return s;
 }
