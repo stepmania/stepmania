@@ -285,6 +285,8 @@ void ScreenWithMenuElements::TweenOffScreen()
 
 void ScreenWithMenuElements::Cancel( ScreenMessage smSendWhenDone )
 {
+	m_sNextScreen = GetPrevScreen();
+
 	if( CANCEL_TRANSITIONS_OUT )
 	{
 		SCREENMAN->PlayCancelSound();

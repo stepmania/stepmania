@@ -81,8 +81,8 @@ protected:
 	RString GetNextScreen() const;
 	RString GetPrevScreen() const;
 
-	// If these are left blank, the NextScreen and PrevScreen metrics will be used.
-	RString m_sNextScreen, m_sPrevScreen;
+	// If left blank, the NextScreen metric will be used.
+	RString m_sNextScreen;
 	ScreenMessage m_smSendOnPop;
 
 public:

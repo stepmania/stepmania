@@ -72,7 +72,6 @@ void Screen::BeginScreen()
 	/* Screens set these when they determine their next screen dynamically.  Reset them
 	 * here, so a reused screen doesn't inherit these from the last time it was used. */
 	m_sNextScreen = RString();
-	m_sPrevScreen = RString();
 	
 	this->RunCommands( THEME->GetMetricA(m_sName, "ScreenOnCommand") );
 }
@@ -213,19 +212,12 @@ void Screen::HandleScreenMessage( const ScreenMessage SM )
 		FOREACH_HumanPlayer(p)
 			MenuStart( p );
 	}
-	else if( SM == SM_GoToNextScreen )
+	else if( SM == SM_GoToNextScreen || SM == SM_GoToPrevScreen )
 	{
 		if( SCREENMAN->IsStackedScreen(this) )
 			SCREENMAN->PopTopScreen( m_smSendOnPop );
 		else
 			SCREENMAN->SetNewScreen( GetNextScreen() );
-	}
-	else if( SM == SM_GoToPrevScreen )
-	{
-		if( SCREENMAN->IsStackedScreen(this) )
-			SCREENMAN->PopTopScreen( m_smSendOnPop );
-		else
-			SCREENMAN->SetNewScreen( GetPrevScreen() );
 	}
 }
 
@@ -238,8 +230,6 @@ RString Screen::GetNextScreen() const
 
 RString Screen::GetPrevScreen() const
 {
-	if( !m_sPrevScreen.empty() )
-		return m_sPrevScreen;
 	return PREV_SCREEN;
 }
 

@@ -2500,6 +2500,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 		GAMESTATE->CancelStage();
 
+		m_sNextScreen = GetPrevScreen();
+
 		if( AdjustSync::IsSyncDataChanged() )
 			ScreenSaveSync::PromptSaveSync( SM_GoToPrevScreen );
 		else

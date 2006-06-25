@@ -107,6 +107,7 @@ void ScreenStage::MenuBack( PlayerNumber pn )
 		return;
 	
 	this->ClearMessageQueue();
+	m_sNextScreen = GetPrevScreen();
 	m_Cancel.StartTransitioning( SM_GoToPrevScreen );
 
 	/* If a Back is buffered while we're prepping the screen (very common), we'll
