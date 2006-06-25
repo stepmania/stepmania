@@ -119,7 +119,7 @@ RString BinaryToHex( const unsigned char *string, int iNumBytes )
        for( int i=0; i<iNumBytes; i++ )
        {
                unsigned val = string[i];
-               s += ssprintf( "%x", val );
+               s += ssprintf( "%0x", val );
        }
        return s;
 }
@@ -136,7 +136,7 @@ bool HexToBinary( const RString &s, unsigned char *stringOut )
                RString sByte = s.substr( i*2, 2 );
 
                uint8_t val = 0;
-               if( sscanf( sByte, "%hx", &val ) != 1 )
+               if( sscanf( sByte, "%hhx", &val ) != 1 )
                        return false;
                stringOut[i] = val;
        }
