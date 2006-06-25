@@ -217,7 +217,7 @@ void Screen::HandleScreenMessage( const ScreenMessage SM )
 		if( SCREENMAN->IsStackedScreen(this) )
 			SCREENMAN->PopTopScreen( m_smSendOnPop );
 		else
-			SCREENMAN->SetNewScreen( GetNextScreen() );
+			SCREENMAN->SetNewScreen( SM == SM_GoToNextScreen? GetNextScreen():GetPrevScreen() );
 	}
 }
 
