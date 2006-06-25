@@ -469,9 +469,7 @@ test_audio_readers_SOURCES = \
 		RageSoundReader_Resample_Good.cpp RageSoundReader_Resample_Good.h \
 		RageSoundReader_Chain.cpp RageSoundReader_Chain.h
 
-test_audio_readers_LDADD = \
-		$(AUDIO_LIBS) \
-		$(srcdir)/libresample/libresample.a
+test_audio_readers_LDADD = $(AUDIO_LIBS)
 
 TESTS += test_file_readers
 test_file_readers_SOURCES = \
