@@ -52,7 +52,7 @@ void NoteField::Unload()
 		delete it->second;
 	m_NoteDisplays.clear();
 	m_pCurDisplay = NULL;
-	memset( m_pDisplays, NULL, sizeof(m_pDisplays) );
+	memset( m_pDisplays, 0, sizeof(m_pDisplays) );
 }
 
 void NoteField::CacheNoteSkin( const RString &sNoteSkin_ )
@@ -111,7 +111,7 @@ void NoteField::CacheAllUsedNoteSkins()
 	map<RString, NoteDisplayCols *>::iterator it = m_NoteDisplays.find( m_pPlayerState->m_PlayerOptions.m_sNoteSkin );
 	ASSERT_M( it != m_NoteDisplays.end(), m_pPlayerState->m_PlayerOptions.m_sNoteSkin );
 	m_pCurDisplay = it->second;
-	memset( m_pDisplays, NULL, sizeof(m_pDisplays) );
+	memset( m_pDisplays, 0, sizeof(m_pDisplays) );
 	FOREACH_EnabledPlayer( pn )
 	{
 		const RString& sNoteSkin = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.m_sNoteSkin;
@@ -150,7 +150,7 @@ void NoteField::Load(
 	map<RString, NoteDisplayCols *>::iterator it = m_NoteDisplays.find( m_pPlayerState->m_PlayerOptions.m_sNoteSkin );
 	ASSERT_M( it != m_NoteDisplays.end(), m_pPlayerState->m_PlayerOptions.m_sNoteSkin );
 	m_pCurDisplay = it->second;
-	memset( m_pDisplays, NULL, sizeof(m_pDisplays) );
+	memset( m_pDisplays, 0, sizeof(m_pDisplays) );
 	FOREACH_EnabledPlayer( pn )
 	{
 		const RString& sNoteSkin = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.m_sNoteSkin;
