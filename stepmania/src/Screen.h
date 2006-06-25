@@ -78,14 +78,13 @@ protected:
 
 	ThemeMetric<bool>	ALLOW_OPERATOR_MENU_BUTTON;
 
-	RString GetNextScreen() const;
-	RString GetPrevScreen() const;
-
 	// If left blank, the NextScreen metric will be used.
 	RString m_sNextScreen;
 	ScreenMessage m_smSendOnPop;
 
 public:
+	RString GetNextScreen() const;
+	RString GetPrevScreen() const;
 
 	// let subclass override if they want
 	virtual void MenuUp(	const InputEventPlus &input );
