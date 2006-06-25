@@ -246,15 +246,15 @@ void ScreenWithMenuElements::StartTransitioningScreen( ScreenMessage smSendWhenD
 		TweenOffScreen();
 	}
 
+	m_Out.StartTransitioning( smSendWhenDone );
 	if( WAIT_FOR_CHILDREN_BEFORE_TWEENING_OUT )
 	{
 		// Time the transition so that it finishes exactly when all actors have 
 		// finished tweening.
 		float fSecondsUntilFinished = GetTweenTimeLeft();
-		float fSecondsUntilBeginOff = max( fSecondsUntilFinished - m_Out.GetLengthSeconds(), 0 );
+		float fSecondsUntilBeginOff = max( fSecondsUntilFinished - m_Out.GetTweenTimeLeft(), 0 );
 		m_Out.SetHibernate( fSecondsUntilBeginOff );
 	}
-	m_Out.StartTransitioning( smSendWhenDone );
 }
 
 void ScreenWithMenuElements::TweenOffScreen()
