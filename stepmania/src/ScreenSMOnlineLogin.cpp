@@ -33,7 +33,7 @@ void ScreenSMOnlineLogin::Init()
 	OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
 
 	pHand->m_Def.m_sName = "Profile";
-	pHand->m_Def.m_bOneChoiceForAllPlayers = true;
+	pHand->m_Def.m_bOneChoiceForAllPlayers = false;
 	pHand->m_Def.m_bAllowThemeItems = false;
 	pHand->m_Def.m_vEnabledForPlayers.clear();
 
