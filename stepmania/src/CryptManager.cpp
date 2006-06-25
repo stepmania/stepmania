@@ -221,17 +221,6 @@ bool CryptManager::Verify( RString sPath, RString sSignature )
 }
 #endif
 
-static RString BinaryToHex( const unsigned char *string, int iNumBytes )
-{
-	RString s;
-	for( int i=0; i<iNumBytes; i++ )
-	{
-		unsigned val = string[i];
-		s += ssprintf( "%x", val );
-	}
-	return s;
-}
-
 RString CryptManager::GetMD5ForFile( RString fn )
 {
 	struct MD5Context md5c;

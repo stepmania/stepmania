@@ -113,6 +113,36 @@ bool IsHexVal( const RString &s )
 	return true;
 }
 
+RString BinaryToHex( const unsigned char *string, int iNumBytes )
+{
+       RString s;
+       for( int i=0; i<iNumBytes; i++ )
+       {
+               unsigned val = string[i];
+               s += ssprintf( "%x", val );
+       }
+       return s;
+}
+
+bool HexToBinary( const RString &s, unsigned char *stringOut )
+{
+       if( !IsHexVal(s) )
+               return false;
+
+       for( int i=0; true; i++ )
+       {
+               if( (int)s.size() <= i*2 )
+                       break;
+               RString sByte = s.substr( i*2, 2 );
+
+               uint8_t val = 0;
+               if( sscanf( sByte, "%hx", &val ) != 1 )
+                       return false;
+               stringOut[i] = val;
+       }
+       return true;
+}
+
 float HHMMSSToSeconds( const RString &sHHMMSS )
 {
 	vector<RString> arrayBits;

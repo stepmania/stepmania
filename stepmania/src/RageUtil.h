@@ -241,6 +241,8 @@ float fmodfp( float x, float y );
 int power_of_two( int input );
 bool IsAnInt( const RString &s );
 bool IsHexVal( const RString &s );
+RString BinaryToHex( const unsigned char *string, int iNumBytes );
+bool HexToBinary( const RString &s, unsigned char *stringOut );
 float HHMMSSToSeconds( const RString &sHMS );
 RString SecondsToHHMMSS( float fSecs );
 RString SecondsToMSSMsMs( float fSecs );
