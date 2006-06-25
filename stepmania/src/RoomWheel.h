@@ -64,7 +64,7 @@ private:
 	};
 
 	RoomInfoDisplayState m_state;
-	Quad m_bg;
+	AutoActor m_bg;
 	BitmapText m_Title;
 	BitmapText m_Desc;
 

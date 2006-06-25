@@ -175,11 +175,9 @@ void RoomInfoDisplay::Load( RString sType )
 
 	m_state = LOCKED;
 
-	m_bg.SetName("Background");
-	m_bg.SetWidth( THEME->GetMetricF(sType,"BackgroundWidth") );
-	m_bg.SetHeight( THEME->GetMetricF(sType,"BackgroundHeight") );
-	ON_COMMAND(&m_bg);
-	this->AddChild(&m_bg);
+	m_bg.Load( THEME->GetPathG(m_sName,"Background") );
+	m_bg->SetName("Background");
+	this->AddChild(m_bg);
 
 	m_Title.LoadFromFont( THEME->GetPathF(sType,"text") );
 	m_Title.SetName("RoomTitle");
