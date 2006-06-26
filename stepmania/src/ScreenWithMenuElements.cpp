@@ -159,10 +159,11 @@ void ScreenWithMenuElements::BeginScreen()
 void ScreenWithMenuElements::TweenOnScreen()
 {
 	ON_COMMAND( m_autoHeader );
-	if( STYLE_ICON && GAMESTATE->m_pCurStyle )
+
+	if( STYLE_ICON && !m_sprStyleIcon.GetName().empty() )
 		ON_COMMAND( m_sprStyleIcon );
 
-	if( SHOW_STAGE && GAMESTATE->m_pCurStyle )
+	if( SHOW_STAGE && !m_sprStage->GetName().empty() )
 		ON_COMMAND( m_sprStage );
 
 	if( MEMORY_CARD_ICONS )
