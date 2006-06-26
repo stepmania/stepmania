@@ -818,6 +818,18 @@ void NoteDataUtil::RemoveSimultaneousNotes( NoteData &in, int iMaxSimultaneous, 
 	// given time.  Never touch data outside of the range given; if many hold notes are overlapping
 	// iStartIndex, and we'd have to change those holds to obey iMaxSimultaneous, just do the best
 	// we can without doing so.
+	if( in.IsComposite() )
+	{
+		// Do this per part.
+		vector<NoteData> vParts;
+		
+		SplitCompositeNoteData( in, vParts );
+		FOREACH( NoteData, vParts, nd )
+			RemoveSimultaneousNotes( *nd, iMaxSimultaneous, iStartIndex, iEndIndex );
+		in.Init();
+		in.SetNumTracks( vParts.front().GetNumTracks() );
+		CombineCompositeNoteData( in, vParts );
+	}
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( in, r, iStartIndex, iEndIndex )
 	{
 		set<int> viTracksHeld;
@@ -891,12 +903,13 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 	{
 	case NoteDataUtil::left:
 	case NoteDataUtil::right:
-		// Is there a way to do this withoutn handling each StepsType? -Chris
+		// Is there a way to do this without handling each StepsType? -Chris
 		switch( st )
 		{
 		case STEPS_TYPE_DANCE_SINGLE:
 		case STEPS_TYPE_DANCE_DOUBLE:
 		case STEPS_TYPE_DANCE_COUPLE:
+		case STEPS_TYPE_DANCE_ROUTINE:
 			iTakeFromTrack[0] = 2;
 			iTakeFromTrack[1] = 0;
 			iTakeFromTrack[2] = 3;
@@ -999,6 +1012,7 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 			iTakeFromTrack[7] = 4;
 			break;
 		case STEPS_TYPE_DANCE_DOUBLE:
+		case STEPS_TYPE_DANCE_ROUTINE:
 			iTakeFromTrack[0] = 1;
 			iTakeFromTrack[1] = 0;
 			iTakeFromTrack[2] = 3;
@@ -1046,7 +1060,7 @@ static void SuperShuffleTaps( NoteData &inout, int iStartIndex, int iEndIndex )
 				ASSERT(0);
 			}
 
-#if _DEBUG
+#if DEBUG
 			ASSERT_M( !inout.IsHoldNoteAtRow(t1,r), ssprintf("There is a tap.type = %d inside of a hold at row %d", tn1.type, r) );
 #endif
 
