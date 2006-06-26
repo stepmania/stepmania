@@ -50,6 +50,7 @@ void ScreenSelectLanguage::MenuStart( PlayerNumber pn )
 	int iIndex = this->GetSelectionIndex( pn );
 	RString sLangCode = m_aGameCommands[iIndex].m_sName;
 	PREFSMAN->m_sLanguage.Set( sLangCode );
+	PREFSMAN->SavePrefsToDisk();
 	THEME->SwitchThemeAndLanguage( THEME->GetCurThemeName(), PREFSMAN->m_sLanguage, PREFSMAN->m_bPseudoLocalize );
 
 	m_soundStart.Play();
