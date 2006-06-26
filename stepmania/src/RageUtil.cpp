@@ -32,7 +32,7 @@ float RandomFloat( int &seed )
 	long k = seed / IQ;
 	seed = IA*(seed-k*IQ)-IR*k;
 	if( seed < 0 )
-			seed += IM;
+		seed += IM;
 
 	const float AM = .999999f / IM;
 	float ans = AM * seed;
