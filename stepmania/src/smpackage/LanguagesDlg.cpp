@@ -547,6 +547,21 @@ void LanguagesDlg::OnBnClickedCheckLanguage()
 						file.PutLine( ssprintf("    %s", sBaseLanguage.c_str()) );
 					}
 				}
+
+				/* Check that both end in a period or both don't end an a period. */
+				{
+					RString sBaseLanguage2 = sBaseLanguage;
+					TrimRight( sBaseLanguage2, " " );
+					RString sCurrentLanguage2 = sCurrentLanguage;
+					TrimRight( sCurrentLanguage2, " " );
+
+					if( (sBaseLanguage2.Right(1) == ".")  ^  (sCurrentLanguage2.Right(1) == ".") )
+					{
+						file.PutLine( ssprintf("Period mismatch in section [%s] (%s):", sSection.c_str(), sID.c_str()) );
+						file.PutLine( ssprintf("    %s", sCurrentLanguage.c_str()) );
+						file.PutLine( ssprintf("    %s", sBaseLanguage.c_str()) );
+					}
+				}
 			}
 		}
 	}
