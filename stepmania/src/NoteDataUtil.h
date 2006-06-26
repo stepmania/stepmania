@@ -3,12 +3,14 @@
 #ifndef NOTEDATAUTIL_H
 #define NOTEDATAUTIL_H
 
-#include "GameConstantsAndTypes.h"	// for RadarCategory
+#include "GameConstantsAndTypes.h"
 #include "NoteTypes.h"
-#include "NoteData.h"
 
 class PlayerOptions;
 struct RadarValues;
+class NoteData;
+class Song;
+struct AttackArray;
 
 /* Utils for NoteData.  Things should go in here if they can be (cleanly and
  * efficiently) implemented using only NoteData's primitives; this improves
@@ -20,6 +22,7 @@ namespace NoteDataUtil
 	void LoadFromSMNoteDataString( NoteData &out, const RString &sSMNoteData, bool bComposite );
 	void GetSMNoteDataString( const NoteData &in, RString &notes_out );
 	void SplitCompositeNoteData( const NoteData &in, vector<NoteData> &out );
+	void CombineCompositeNoteData( NoteData &out, const vector<NoteData> &in );
 	void LoadTransformedSlidingWindow( const NoteData &in, NoteData &out, int iNewNumTracks );
 	void LoadOverlapped( const NoteData &in, NoteData &out, int iNewNumTracks );
 	void LoadTransformedLights( const NoteData &in, NoteData &out, int iNewNumTracks );

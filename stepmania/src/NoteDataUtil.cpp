@@ -1,5 +1,6 @@
 #include "global.h"
 #include "NoteDataUtil.h"
+#include "NoteData.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "PlayerOptions.h"
@@ -90,7 +91,6 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 			
 		for( unsigned l=0; l<aMeasureLines.size(); l++ )
 		{
-			//RString &sMeasureLine = asMeasureLines[l];
 			const char *p = aMeasureLines[l].first;
 			const char *const beginLine = p;
 			const char *const endLine = aMeasureLines[l].second;
@@ -99,7 +99,6 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 			const float fBeat = (m + fPercentIntoMeasure) * BEATS_PER_MEASURE;
 			const int iIndex = BeatToNoteRow( fBeat );
 						
-			//const char *p = sMeasureLine;
 			int iTrack = 0;
 			while( iTrack < iNumTracks && p < endLine )
 			{
@@ -120,7 +119,7 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 					}
 						
 					/* Set the hold note to have infinite length.  We'll clamp it when
-					* we hit the tail. */
+					 * we hit the tail. */
 					tn.iDuration = MAX_NOTE_ROW;
 					break;
 				case '3':
@@ -275,14 +274,20 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, const RString &sSMNo
 	
 	int start = 0, size = -1;
 	
+	vector<NoteData> vParts;
 	FOREACH_PlayerNumber( pn )
 	{
 		// Split in place.
 		split( sSMNoteData, "&", start, size, false );
 		if( unsigned(start) == sSMNoteData.size() )
 			break;
-		LoadFromSMNoteDataStringWithPlayer( out, sSMNoteData, start, size, pn, iNumTracks );
+		vParts.push_back( NoteData() );
+		NoteData &nd = vParts.back();
+		
+		nd.SetNumTracks( iNumTracks );
+		LoadFromSMNoteDataStringWithPlayer( nd, sSMNoteData, start, size, pn, iNumTracks );
 	}
+	CombineCompositeNoteData( out, vParts );
 }
 
 void NoteDataUtil::InsertHoldTails( NoteData &inout )
@@ -414,6 +419,28 @@ void NoteDataUtil::SplitCompositeNoteData( const NoteData &in, vector<NoteData> 
 				out.resize( index + 1 );
 			tn.pn = PLAYER_INVALID;
 			out[index].SetTapNote( t, row, tn );
+		}
+	}
+}
+
+void NoteDataUtil::CombineCompositeNoteData( NoteData &out, const vector<NoteData> &in )
+{
+	FOREACH_CONST( NoteData, in, nd )
+	{
+		const int iMaxTracks = min( out.GetNumTracks(), nd->GetNumTracks() );
+		
+		for( int track = 0; track < iMaxTracks; ++track )
+		{
+			for( NoteData::const_iterator i = nd->begin(track); i != nd->end(track); ++i )
+			{
+				int row = i->first;
+				if( out.IsHoldNoteAtRow(track, i->first) )
+					continue;
+				if( i->second.type == TapNote::hold_head )
+					out.AddHoldNote( track, row, row + i->second.iDuration, i->second );
+				else
+					out.SetTapNote( track, row, i->second );
+			}
 		}
 	}
 }
