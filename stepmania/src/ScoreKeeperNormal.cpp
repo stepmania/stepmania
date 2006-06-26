@@ -8,6 +8,7 @@
 #include "Course.h"
 #include "SongManager.h"
 #include "NoteDataUtil.h"
+#include "NoteData.h"
 #include "RageLog.h"
 #include "StageStats.h"
 #include "ProfileManager.h"
