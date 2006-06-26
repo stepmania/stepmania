@@ -21,7 +21,6 @@ NoteData::NoteData()
 
 void NoteData::Init()
 {
-	m_bComposite = false;
 	ClearAll();
 	m_TapNotes = vector<TrackMap>();	// ensure that the memory is freed
 }
@@ -37,6 +36,16 @@ void NoteData::SetNumTracks( int iNewNumTracks )
 	m_TapNotes.resize( iNewNumTracks );
 }
 
+bool NoteData::IsComposite() const
+{
+	for( int track = 0; track < GetNumTracks(); ++track )
+	{
+		FOREACHM_CONST( int, TapNote, m_TapNotes[track], tn )
+			if( tn->second.pn != PLAYER_INVALID )
+				return true;
+	}
+	return false;
+}
 
 /* Clear [rowBegin,rowEnd). */
 void NoteData::ClearRangeForTrack( int rowBegin, int rowEnd, int iTrack )

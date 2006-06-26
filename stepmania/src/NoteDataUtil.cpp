@@ -239,7 +239,7 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 	
 }
 
-void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, const RString &sSMNoteData_ )
+void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, const RString &sSMNoteData_, bool bComposite )
 {
 	//
 	// Load note data
@@ -263,10 +263,8 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, const RString &sSMNo
 	
 	/* Clear notes, but keep the same number of tracks. */
 	int iNumTracks = out.GetNumTracks();
-	bool bComposite = out.IsComposite();
 	out.Init();
 	out.SetNumTracks( iNumTracks );
-	out.SetComposite( bComposite );
 	
 	if( !bComposite )
 	{

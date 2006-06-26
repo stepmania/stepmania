@@ -30,8 +30,6 @@ private:
 	// There's no point in inserting empty notes into the map.
 	// Any blank space in the map is defined to be empty.
 	vector<TrackMap>	m_TapNotes;
-	// This NoteData comprises multiple NoteDatas.
-	bool			m_bComposite;
 
 public:
 	NoteData();
@@ -40,8 +38,7 @@ public:
 	
 	int GetNumTracks() const { return m_TapNotes.size(); }
 	void SetNumTracks( int iNewNumTracks );
-	bool IsComposite() const { return m_bComposite; }
-	void SetComposite( bool b ) { m_bComposite = b; }
+	bool IsComposite() const;
 
 	/* Return the note at the given track and row.  Row may be out of
 	 * range; pretend the song goes on with TAP_EMPTYs indefinitely. */

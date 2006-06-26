@@ -225,11 +225,11 @@ void Steps::Decompress() const
 	else
 	{
 		// load from compressed
+		bool bComposite = m_StepsType == STEPS_TYPE_DANCE_ROUTINE;
 		m_bNoteDataIsFilled = true;
 		m_pNoteData->SetNumTracks( GameManager::StepsTypeToNumTracks(m_StepsType) );
-		m_pNoteData->SetComposite( m_StepsType == STEPS_TYPE_DANCE_ROUTINE );
 
-		NoteDataUtil::LoadFromSMNoteDataString( *m_pNoteData, m_sNoteDataCompressed );
+		NoteDataUtil::LoadFromSMNoteDataString( *m_pNoteData, m_sNoteDataCompressed, bComposite );
 	}
 }
 
