@@ -176,6 +176,12 @@ inline int RandomInt( int nLow, int nHigh )
 	return int( RandomFloat() * (nHigh - nLow + 1) + nLow );
 }
 
+// Returns an integer between 0 and n-1 inclusive (replacement for rand() % n).
+inline int RandomInt( int n )
+{
+	return RandomInt( 0, n-1 );
+}
+
 /* Alternative: */
 class RandomGen
 {

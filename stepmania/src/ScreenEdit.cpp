@@ -604,7 +604,7 @@ static RString GetOneBakedRandomFile( Song *pSong, bool bTryGenre = true )
 		vsNamesOut,
 		bTryGenre );
 	if( !vsNamesOut.empty() )
-		return vsNamesOut[rand()%vsNamesOut.size()];
+		return vsNamesOut[RandomInt(vsNamesOut.size())];
 	else
 		return RString();
 }

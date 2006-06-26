@@ -270,7 +270,7 @@ static void DoPlayOnceFromDir( RString sPath )
 	if( arraySoundFiles.empty() )
 		return;
 
-	int index = rand() % arraySoundFiles.size();
+	int index = RandomInt( arraySoundFiles.size( ));
 	SOUNDMAN->PlayOnce( sPath + arraySoundFiles[index] );
 }
 

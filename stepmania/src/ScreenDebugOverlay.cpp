@@ -650,8 +650,8 @@ static HighScore MakeRandomHighScore( float fPercentDP )
 {
 	HighScore hs;
 	hs.SetName( "FAKE" );
-	hs.SetGrade( (Grade)SCALE( rand()%5, 0, 4, Grade_Tier01, Grade_Tier05 ) );
-	hs.SetScore( rand()%100*1000 );
+	hs.SetGrade( (Grade)SCALE( RandomInt(5), 0, 4, Grade_Tier01, Grade_Tier05 ) );
+	hs.SetScore( RandomInt(100*1000) );
 	hs.SetPercentDP( fPercentDP );
 	hs.SetSurviveSeconds( randomf(30.0f, 100.0f) );
 	PlayerOptions po;
@@ -660,11 +660,11 @@ static HighScore MakeRandomHighScore( float fPercentDP )
 	hs.SetDateTime( DateTime::GetNowDateTime() );
 	hs.SetPlayerGuid( Profile::MakeGuid() );
 	hs.SetMachineGuid( Profile::MakeGuid() );
-	hs.SetProductID( rand()%10 );
+	hs.SetProductID( RandomInt(10) );
 	FOREACH_TapNoteScore( tns )
-		hs.SetTapNoteScore( tns, rand() % 100 );
+		hs.SetTapNoteScore( tns, RandomInt(100) );
 	FOREACH_HoldNoteScore( hns )
-		hs.SetHoldNoteScore( hns, rand() % 100 );
+		hs.SetHoldNoteScore( hns, RandomInt(100) );
 	RadarValues rv;
 	FOREACH_RadarCategory( rc )
 		rv.m_Values.f[rc] = randomf( 0, 1 );

@@ -53,9 +53,9 @@ ScreenEnding::ScreenEnding() : ScreenAttract( false/*dont reset GAMESTATE*/ )
 			STATSMAN->m_CurStageStats.m_player[PLAYER_2].SetLifeRecordAt( 1-fP1, f );
 		}
 	
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iActualDancePoints = rand()%3;
+		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iActualDancePoints = RandomInt( 3 );
 		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iPossibleDancePoints = 2;
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].iActualDancePoints = rand()%2;
+		STATSMAN->m_CurStageStats.m_player[PLAYER_2].iActualDancePoints = RandomInt( 2 );
 		STATSMAN->m_CurStageStats.m_player[PLAYER_2].iPossibleDancePoints = 1;
 		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iCurCombo = 0;
 		STATSMAN->m_CurStageStats.m_player[PLAYER_1].UpdateComboList( 0, false );
@@ -66,12 +66,12 @@ ScreenEnding::ScreenEnding() : ScreenAttract( false/*dont reset GAMESTATE*/ )
 		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iCurCombo = 250;
 		STATSMAN->m_CurStageStats.m_player[PLAYER_1].UpdateComboList( 100, false );
 
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iTapNoteScores[TNS_W1] = rand()%2;
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iTapNoteScores[TNS_W2] = rand()%2;
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iTapNoteScores[TNS_W3] = rand()%2;
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].iTapNoteScores[TNS_W1] = rand()%2;
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].iTapNoteScores[TNS_W2] = rand()%2;
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].iTapNoteScores[TNS_W3] = rand()%2;
+		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iTapNoteScores[TNS_W1] = RandomInt( 2 );
+		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iTapNoteScores[TNS_W2] = RandomInt( 2 );
+		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iTapNoteScores[TNS_W3] = RandomInt( 2 );
+		STATSMAN->m_CurStageStats.m_player[PLAYER_2].iTapNoteScores[TNS_W1] = RandomInt( 2 );
+		STATSMAN->m_CurStageStats.m_player[PLAYER_2].iTapNoteScores[TNS_W2] = RandomInt( 2 );
+		STATSMAN->m_CurStageStats.m_player[PLAYER_2].iTapNoteScores[TNS_W3] = RandomInt( 2 );
 
 		STATSMAN->m_vPlayedStageStats.clear();
 	}

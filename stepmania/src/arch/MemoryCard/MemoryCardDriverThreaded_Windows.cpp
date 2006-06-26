@@ -42,7 +42,7 @@ bool MemoryCardDriverThreaded_Windows::TestWrite( UsbStorageDevice* pDevice )
 	 * the chance of corruption if the user removes the device immediately, without doing anything. */
 	for( int i = 0; i < 10; ++i )
 	{
-		HANDLE hFile = CreateFile( ssprintf( "%stmp%i", pDevice->sOsMountDir.c_str(), rand() % 100000),
+		HANDLE hFile = CreateFile( ssprintf( "%stmp%i", pDevice->sOsMountDir.c_str(), RandomInt(100000)),
 			GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE,
 			NULL, CREATE_NEW, FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE, NULL );
 

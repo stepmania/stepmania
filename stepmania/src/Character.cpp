@@ -72,7 +72,7 @@ RString GetRandomFileInDir( RString sDir )
 	if( asFiles.empty() )
 		return RString();
 	else
-		return asFiles[rand()%asFiles.size()];
+		return asFiles[RandomInt(asFiles.size())];
 }
 
 

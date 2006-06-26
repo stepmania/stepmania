@@ -106,7 +106,7 @@ ScreenEvaluation::ScreenEvaluation()
 		
 		FOREACH_PlayerNumber( p )
 		{
-			if( rand() % 2 )
+			if( RandomInt(2) )
 				GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.m_bTransforms[PlayerOptions::TRANSFORM_ECHO] = true;	// show "disqualified"
 
 			GAMESTATE->m_bSideIsJoined[p] = true;
@@ -131,9 +131,9 @@ ScreenEvaluation::ScreenEvaluation()
 		FOREACH_PlayerNumber( p )
 		{
 			float fSeconds = GAMESTATE->m_pCurSong->GetStepsSeconds();
-			STATSMAN->m_CurStageStats.m_player[p].iActualDancePoints = rand()%3;
+			STATSMAN->m_CurStageStats.m_player[p].iActualDancePoints = RandomInt( 3 );
 			STATSMAN->m_CurStageStats.m_player[p].iPossibleDancePoints = 2;
-			if( rand()%2 )
+			if( RandomInt(2) )
 				STATSMAN->m_CurStageStats.m_player[p].iCurCombo = 11000;
 			else
 				STATSMAN->m_CurStageStats.m_player[p].iCurCombo = 0;
@@ -154,13 +154,13 @@ ScreenEvaluation::ScreenEvaluation()
 			STATSMAN->m_CurStageStats.m_player[p].UpdateComboList( 0.50f * fSeconds, false );
 			STATSMAN->m_CurStageStats.m_player[p].iCurCombo = 100;
 			STATSMAN->m_CurStageStats.m_player[p].UpdateComboList( 1.00f * fSeconds, false );
-			if( rand()%5 == 0 )
+			if( RandomInt(5) == 0 )
 			{
 				STATSMAN->m_CurStageStats.m_player[p].bFailedEarlier = true;
 			}
-			STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W1] = rand()%3;
-			STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W2] = rand()%3;
-			STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W3] = rand()%3;
+			STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W1] = RandomInt( 3 );
+			STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W2] = RandomInt( 3 );
+			STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W3] = RandomInt( 3 );
 			STATSMAN->m_CurStageStats.m_player[p].iPossibleGradePoints = 4*ScoreKeeperNormal::TapNoteScoreToGradePoints(TNS_W1, false);
 			STATSMAN->m_CurStageStats.m_player[p].fLifeRemainingSeconds = randomf( 90, 580 );
 		}

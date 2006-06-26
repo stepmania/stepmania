@@ -1065,7 +1065,7 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 	if( m_WheelState == STATE_ROULETTE_SPINNING )
 	{
 		m_WheelState = STATE_ROULETTE_SLOWING_DOWN;
-		m_iSwitchesLeftInSpinDown = ROULETTE_SLOW_DOWN_SWITCHES/2+1 + rand()%(ROULETTE_SLOW_DOWN_SWITCHES/2);
+		m_iSwitchesLeftInSpinDown = ROULETTE_SLOW_DOWN_SWITCHES/2+1 + RandomInt( ROULETTE_SLOW_DOWN_SWITCHES/2 );
 		m_fTimeLeftInState = 0.1f;
 		return false;
 	}
@@ -1331,7 +1331,7 @@ Song *MusicWheel::GetPreferredSelectionForRandomOrPortal()
 		if( i == NUM_PROBES/2 )
 			vDifficultiesToRequire.clear();
 
-		int iSelection = rand() % wid.size();
+		int iSelection = RandomInt( wid.size() );
 		if( wid[iSelection].m_Type != TYPE_SONG )
 			continue;
 

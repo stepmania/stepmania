@@ -326,7 +326,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 
 	if( sHint.find("startonrandomframe") != RString::npos )
 		for( unsigned i=0; i<m_SubActors.size(); i++ )
-			m_SubActors[i]->SetState( rand()%m_SubActors[i]->GetNumStates() );
+			m_SubActors[i]->SetState( RandomInt(m_SubActors[i]->GetNumStates()) );
 
 	if( sHint.find("dontanimate") != RString::npos )
 		for( unsigned i=0; i<m_SubActors.size(); i++ )
@@ -519,7 +519,7 @@ void BGAnimationLayer::LoadFromNode( const RString& sDir, const XNode* pNode )
 	if( bStartOnRandomFrame )
 	{
 		for( unsigned i=0; i<m_SubActors.size(); i++ )
-			m_SubActors[i]->SetState( rand()%m_SubActors[i]->GetNumStates() );
+			m_SubActors[i]->SetState( RandomInt(m_SubActors[i]->GetNumStates()) );
 	}
 }
 

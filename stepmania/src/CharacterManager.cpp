@@ -61,7 +61,7 @@ Character* CharacterManager::GetRandomCharacter()
 	vector<Character*> apCharacters;
 	GetCharacters( apCharacters );
 	if( apCharacters.size() )
-		return apCharacters[rand()%apCharacters.size()];
+		return apCharacters[RandomInt(apCharacters.size())];
 	else
 		return GetDefaultCharacter();
 }

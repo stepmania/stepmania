@@ -48,7 +48,7 @@ void ScreenDemonstration::Init()
 		}
 
 		ASSERT( vStylePossible.size() > 0 );
-		const Style* pStyle = vStylePossible[ rand() % vStylePossible.size() ];
+		const Style* pStyle = vStylePossible[ RandomInt(vStylePossible.size()) ];
 		GAMESTATE->m_pCurStyle.Set( pStyle );
 	}
 

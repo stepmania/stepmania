@@ -460,9 +460,9 @@ void PlayerOptions::ChooseRandomModifiers()
 	float f;
 	f = RandomFloat(0,1);
 	if( f>0.66f )
-		m_fAccels[rand()%NUM_ACCELS] = 1;
+		m_fAccels[RandomInt(NUM_ACCELS)] = 1;
 	else if( f>0.33f )
-		m_fEffects[rand()%NUM_EFFECTS] = 1;
+		m_fEffects[RandomInt(NUM_EFFECTS)] = 1;
 	f = RandomFloat(0,1);
 	if( f>0.95f )
 		m_fAppearances[APPEARANCE_HIDDEN] = 1;

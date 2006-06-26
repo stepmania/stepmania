@@ -1068,7 +1068,7 @@ static void SuperShuffleTaps( NoteData &inout, int iStartIndex, int iEndIndex )
 			set<int> vTriedTracks;
 			for( int i=0; i<4; i++ )	// probe max 4 times
 			{
-				int t2 = rand() % inout.GetNumTracks();
+				int t2 = RandomInt( inout.GetNumTracks() );
 				if( vTriedTracks.find(t2) != vTriedTracks.end() )	// already tried this track
 					continue;	// skip
 				vTriedTracks.insert( t2 );
@@ -1941,7 +1941,7 @@ void NoteDataUtil::AddTapAttacks( NoteData &nd, Song* pSong )
 			TapNote::attack,
 			TapNote::SubType_invalid,
 			TapNote::original, 
-			szAttacks[rand()%ARRAYSIZE(szAttacks)],
+			szAttacks[RandomInt(ARRAYSIZE(szAttacks))],
 			15.0f, 
 			false,
 			0 );

@@ -92,7 +92,7 @@ int RandomSample::GetNextToPlay()
 	int iIndexToPlay = 0;
 	for( int i=0; i<5; i++ )
 	{
-		iIndexToPlay = rand() % m_pSamples.size();
+		iIndexToPlay = RandomInt( m_pSamples.size() );
 		if( iIndexToPlay != m_iIndexLastPlayed )
 			break;
 	}
