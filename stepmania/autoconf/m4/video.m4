@@ -21,26 +21,40 @@ AC_SEARCH_LIBS(guess_format, [avformat], have_libavformat=yes,  have_libavformat
 fi
 
 if test "$have_libavcodec" = "yes"; then
-  AC_MSG_CHECKING([for libavcodec >= 0.4.9])
+  AC_MSG_CHECKING([for matching libavcodec headers and libs])
   AC_TRY_RUN([
-      #include <ffmpeg/avcodec.h>
-      int main()
-      {
-	      return ( LIBAVCODEC_VERSION_INT < 0x000409 )? 1:0;
-      }
-      ],,have_libavcodec=no,)
+	#include <ffmpeg/avcodec.h>
+	int main()
+	{
+		return ( LIBAVCODEC_VERSION_INT == avcodec_version() &&
+			 LIBAVCODEC_BUILD == avcodec_build() ) ? 0:1;
+	}
+	],,have_libavcodec=no,)
   AC_MSG_RESULT($have_libavcodec)
+  if test "$have_libavcodec" = "yes"; then
+    AC_MSG_CHECKING([for libavcodec = 0.4.9-pre1])
+    AC_TRY_RUN([
+	#include <ffmpeg/avcodec.h>
+	int main()
+	{
+		return ( LIBAVCODEC_VERSION_INT == 0x000409 &&
+			 LIBAVCODEC_BUILD == 4718 ) ? 0:1;
+	}
+	],,have_libavcodec=no,)
+    AC_MSG_RESULT($have_libavcodec)
+  fi
 fi
 
 if test "$have_libavformat" = "yes"; then
-  AC_MSG_CHECKING([for libavformat >= 0.4.9])
+  AC_MSG_CHECKING([for libavformat = 0.4.9-pre1])
   AC_TRY_RUN([
-      #include <ffmpeg/avformat.h>
-      int main()
-      {
-	      return ( LIBAVFORMAT_VERSION_INT < 0x000409 )? 1:0;
-      }
-      ],,have_libavformat=no,)
+	#include <ffmpeg/avformat.h>
+	int main()
+	{
+		return ( LIBAVFORMAT_VERSION_INT == 0x000409 &&
+			 LIBAVFORMAT_BUILD == 4616 )? 0:1;
+	}
+	],,have_libavformat=no,)
   AC_MSG_RESULT($have_libavformat)
 fi
 fi
