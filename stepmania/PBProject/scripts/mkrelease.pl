@@ -71,7 +71,7 @@ $destname =~ s/\s+/-/g;
 my $destdir = tempdir;
 my $smdir = "$destdir/$id";
 my $pkg = "$root/$destname.pkg";
-my $zip = "$root/$destname.zip";
+my $zip = "$root/$destname-mac.zip";
 
 for( @filelist )
 {
@@ -84,7 +84,7 @@ mkdir "$smdir/Docs";
 copy "$srcdir/Docs/$_", "$smdir/Docs/$_" for @docs;
 
 #clean up CVS directories
-my @cvsdirs = split /\n/, `find "$smdir" -name CVS`;
+my @cvsdirs = split /\n/, `find "$smdir" -type d -name CVS`;
 rmtree \@cvsdirs;
 system 'strip', '-x', "$smdir/StepMania.app/Contents/MacOS/StepMania";
 
@@ -181,4 +181,4 @@ if( -e $zip )
 }
 chdir $root;
 system '/usr/bin/zip', '-9Tqyr', $zip, "$destname.pkg";
-print "Created $destname.zip.\n";
+print "Created $destname-mac.zip.\n";
