@@ -52,6 +52,7 @@ public:
 	virtual bool OverlayInput( const InputEventPlus &input );
 	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
+	void SetLockInputSecs( float f ) { m_fLockInputSecs = f; }
 
 	void PostScreenMessage( const ScreenMessage SM, float fDelay );
 	void ClearMessageQueue();

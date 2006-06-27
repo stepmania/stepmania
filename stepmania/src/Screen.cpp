@@ -40,8 +40,6 @@ void Screen::Init()
 {
 	ALLOW_OPERATOR_MENU_BUTTON.Load( m_sName, "AllowOperatorMenuButton" );
 
-	m_fLockInputSecs = 0;
-
 	SetFOV( 0 );
 
 	m_smSendOnPop = SM_None;
@@ -75,6 +73,8 @@ void Screen::BeginScreen()
 	 * here, so a reused screen doesn't inherit these from the last time it was used. */
 	m_sNextScreen = RString();
 	
+	m_fLockInputSecs = 0;
+
 	this->RunCommands( THEME->GetMetricA(m_sName, "ScreenOnCommand") );
 }
 
@@ -316,6 +316,7 @@ class LunaScreen: public Luna<Screen>
 public:
 	LunaScreen() { LUA->Register( Register ); }
 	static int GetNextScreen( T* p, lua_State *L ) { lua_pushstring(L, p->GetNextScreen() ); return 1; }
+	static int lockinput( T* p, lua_State *L ) { p->SetLockInputSecs(FArg(1)); return 0; }
 
 	static int PostScreenMessage( T* p, lua_State *L )
 	{
@@ -329,6 +330,7 @@ public:
 	{
 		ADD_METHOD( GetNextScreen );
 		ADD_METHOD( PostScreenMessage );
+		ADD_METHOD( lockinput );
 
 		Luna<T>::Register( L );
 	}
