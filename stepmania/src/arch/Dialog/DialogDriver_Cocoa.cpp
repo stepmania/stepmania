@@ -54,6 +54,7 @@ Dialog::Result DialogDriver_Cocoa::AbortRetryIgnore( RString sMessage, RString s
 	case kCFUserNotificationAlternateResponse:
 		return Dialog::retry;
 	case kCFUserNotificationOtherResponse:
+	case kCFUserNotificationCancelResponse:
 		return Dialog::abort;
 	default:
 		FAIL_M( ssprintf("Invalid response: %d.", int(result)) );
@@ -72,6 +73,7 @@ Dialog::Result DialogDriver_Cocoa::AbortRetry( RString sMessage, RString sID )
 	switch( result )
 	{
 	case kCFUserNotificationDefaultResponse:
+	case kCFUserNotificationCancelResponse:
 		return Dialog::abort;
 	case kCFUserNotificationAlternateResponse:
 		return Dialog::retry;
