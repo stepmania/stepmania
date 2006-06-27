@@ -43,8 +43,6 @@ protected:
 	ThemeMetric1D<float>	CURSOR_OFFSET_X_FROM_ICON;
 	ThemeMetric1D<float>	CURSOR_OFFSET_Y_FROM_ICON;
 	ThemeMetric<bool>	PER_CHOICE_ICON_ELEMENT;
-	ThemeMetric<bool>	OVERRIDE_LOCK_INPUT_SECONDS;
-	ThemeMetric<float>	LOCK_INPUT_SECONDS;
 	ThemeMetric<float>	PRE_SWITCH_PAGE_SECONDS;
 	ThemeMetric<float>	POST_SWITCH_PAGE_SECONDS;
 	ThemeMetric1D<RString>	OPTION_ORDER;

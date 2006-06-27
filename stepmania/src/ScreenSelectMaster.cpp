@@ -40,8 +40,6 @@ void ScreenSelectMaster::Init()
 	CURSOR_OFFSET_X_FROM_ICON.Load( m_sName, CURSOR_OFFSET_X_FROM_ICON_NAME, NUM_PLAYERS );
 	CURSOR_OFFSET_Y_FROM_ICON.Load( m_sName, CURSOR_OFFSET_Y_FROM_ICON_NAME, NUM_PLAYERS );
 	PER_CHOICE_ICON_ELEMENT.Load( m_sName, "PerChoiceIconElement" );
-	OVERRIDE_LOCK_INPUT_SECONDS.Load( m_sName, "OverrideLockInputSeconds" );
-	LOCK_INPUT_SECONDS.Load( m_sName, "LockInputSeconds" );
 	PRE_SWITCH_PAGE_SECONDS.Load( m_sName, "PreSwitchPageSeconds" );
 	POST_SWITCH_PAGE_SECONDS.Load( m_sName, "PostSwitchPageSeconds" );
 	OPTION_ORDER.Load( m_sName, OPTION_ORDER_NAME, NUM_MENU_DIRS );
@@ -263,11 +261,9 @@ void ScreenSelectMaster::BeginScreen()
 
 	this->UpdateSelectableChoices();
 
-	ScreenSelect::BeginScreen();
+	m_fLockInputSecs = this->GetTweenTimeLeft();
 
-	m_fLockInputSecs = (bool)OVERRIDE_LOCK_INPUT_SECONDS ? LOCK_INPUT_SECONDS : this->GetTweenTimeLeft();
-	if( m_fLockInputSecs == 0 )
-		m_fLockInputSecs = 0.0001f;	// always lock for a tiny amount of time so that we throw away any queued inputs during the load.
+	ScreenSelect::BeginScreen();
 }
 
 void ScreenSelectMaster::Update( float fDelta )

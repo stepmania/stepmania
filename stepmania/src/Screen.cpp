@@ -76,6 +76,9 @@ void Screen::BeginScreen()
 	m_fLockInputSecs = 0;
 
 	this->RunCommands( THEME->GetMetricA(m_sName, "ScreenOnCommand") );
+
+	if( m_fLockInputSecs == 0 )
+		m_fLockInputSecs = 0.0001f;     // always lock for a tiny amount of time so that we throw away any queued inputs during the load.
 }
 
 void Screen::Update( float fDeltaTime )
