@@ -372,10 +372,10 @@ float PlayerStageStats::GetLifeRecordLerpAt( float fStepsSecond ) const
 	if( earlier != fLifeRecord.begin() )
 		--earlier;
 
-	if( earlier->first == later->first )	// two samples from the same time.  Don't divide by zero in SCALE
-		return earlier->second;
-
 	if( later == fLifeRecord.end() )
+		return earlier->second;
+	
+	if( earlier->first == later->first )	// two samples from the same time.  Don't divide by zero in SCALE
 		return earlier->second;
 
 	/* earlier <= pos <= later */
