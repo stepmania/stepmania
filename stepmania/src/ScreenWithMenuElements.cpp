@@ -327,6 +327,8 @@ void ScreenWithMenuElementsSimple::MenuStart( PlayerNumber pn )
 		return;
 
 	StartTransitioningScreen( SM_GoToNextScreen );
+
+	SCREENMAN->ConcurrentlyPrepareScreen( GetNextScreen() );
 }
 
 void ScreenWithMenuElementsSimple::MenuBack( PlayerNumber pn )
@@ -337,6 +339,8 @@ void ScreenWithMenuElementsSimple::MenuBack( PlayerNumber pn )
 		return;
 
 	StartTransitioningScreen( SM_GoToPrevScreen );
+
+	SCREENMAN->ConcurrentlyPrepareScreen( GetNextScreen() );
 }
 
 // lua start
