@@ -634,15 +634,18 @@ bool ScreenManager::ActivatePreparedScreenAndBackground( const RString &sScreenN
 	//
 	// Find the prepped screen.
 	//
-	LoadedScreen ls;
-	if( !GetPreppedScreen(sScreenName, ls) )
+	if( GetTopScreen() == NULL || GetTopScreen()->GetName() != sScreenName )
 	{
-		bLoadedBoth = false;
-	}
-	else
-	{
-		LOG->Trace("... PushScreen");
-		PushLoadedScreen( ls );
+		LoadedScreen ls;
+		if( !GetPreppedScreen(sScreenName, ls) )
+		{
+			bLoadedBoth = false;
+		}
+		else
+		{
+			LOG->Trace("... PushScreen");
+			PushLoadedScreen( ls );
+		}
 	}
 
 	// Find the prepared shared background (if any), and activate it.
