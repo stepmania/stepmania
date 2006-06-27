@@ -77,8 +77,6 @@ StringToX( InputMode );
 //REGISTER_SCREEN_CLASS( ScreenOptions );	// can't be instantiated
 ScreenOptions::ScreenOptions()
 {
-	m_fLockInputSecs = 0.0001f;	// always lock for a tiny amount of time so that we throw away any queued inputs during the load.
-	
 	// These can be overridden in a derived Init().
 	m_OptionsNavigation = PREFSMAN->m_bArcadeOptionsNavigation? NAV_THREE_KEY:NAV_FIVE_KEY;
 	m_InputMode = INPUTMODE_SHARE_CURSOR;
