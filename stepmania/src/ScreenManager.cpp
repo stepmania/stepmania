@@ -512,9 +512,6 @@ Screen* ScreenManager::MakeNewScreen( const RString &sScreenName )
 
 	LOG->Trace( "Loaded '%s' ('%s') in %f", sScreenName.c_str(), sClassName.c_str(), t.GetDeltaTime() );
 
-	// Screens may not call SetNewScreen from the ctor or Init().
-	ASSERT_M( m_sDelayedScreen.empty(), m_sDelayedScreen );
-
 	return ret;
 }
 
@@ -722,6 +719,12 @@ void ScreenManager::LoadDelayedScreen()
 	if( !bLoaded )
 	{
 		PrepareScreen( sScreenName );
+
+		// Screens may not call SetNewScreen from the ctor or Init().  (We don't do this
+		// check inside PrepareScreen; that may be called from a thread for concurrent
+		// loading, and the main thread may call SetNewScreen during that time.)
+		ASSERT_M( m_sDelayedScreen.empty(), m_sDelayedScreen );
+
 		bLoaded = ActivatePreparedScreenAndBackground( sScreenName );
 		ASSERT( bLoaded );
 	}
