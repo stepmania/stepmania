@@ -91,7 +91,6 @@ protected:
 	int m_iChoice[NUM_PLAYERS];
 	bool m_bChosen[NUM_PLAYERS];
 
-	float m_fLockInputSecs;
 	MenuInput m_TrackingRepeatingInput;
 };
 

@@ -40,6 +40,8 @@ void Screen::Init()
 {
 	ALLOW_OPERATOR_MENU_BUTTON.Load( m_sName, "AllowOperatorMenuButton" );
 
+	m_fLockInputSecs = 0;
+
 	SetFOV( 0 );
 
 	m_smSendOnPop = SM_None;
@@ -79,6 +81,8 @@ void Screen::BeginScreen()
 void Screen::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
+	
+	m_fLockInputSecs = max( 0, m_fLockInputSecs-fDeltaTime );
 
 	/*
 	 * We need to ensure two things:

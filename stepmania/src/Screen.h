@@ -82,6 +82,8 @@ protected:
 	RString m_sNextScreen;
 	ScreenMessage m_smSendOnPop;
 
+	float                           m_fLockInputSecs;
+
 public:
 	RString GetNextScreen() const;
 	RString GetPrevScreen() const;

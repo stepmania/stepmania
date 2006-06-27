@@ -484,8 +484,6 @@ void ScreenOptions::Update( float fDeltaTime )
 {
 	//LOG->Trace( "ScreenOptions::Update(%f)", fDeltaTime );
 
-	m_fLockInputSecs = max( 0, m_fLockInputSecs-fDeltaTime );
-
 	ScreenWithMenuElements::Update( fDeltaTime );
 }
 

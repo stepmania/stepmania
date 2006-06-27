@@ -27,7 +27,6 @@ ScreenSelectMaster::ScreenSelectMaster()
 {
 	ZERO( m_iChoice );
 	ZERO( m_bChosen );
-	m_fLockInputSecs = 0;
 }
 
 void ScreenSelectMaster::Init()
@@ -274,7 +273,6 @@ void ScreenSelectMaster::BeginScreen()
 void ScreenSelectMaster::Update( float fDelta )
 {
 	ScreenSelect::Update( fDelta );
-	m_fLockInputSecs = max( 0, m_fLockInputSecs-fDelta );
 }
 
 void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
