@@ -308,7 +308,7 @@ static void BGBrightnessNoZero( int &sel, bool ToSel, const ConfOption *pConfOpt
 
 static void BGBrightnessOrStatic( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const float mapping[] = { 0.25f,0.25f,0.5f,0.75f };
+	const float mapping[] = { 0.5f,0.25f,0.5f,0.75f };
 	MoveMap( sel, PREFSMAN->m_fBGBrightness, ToSel, mapping, ARRAYSIZE(mapping) );
 
 	if( ToSel && !PREFSMAN->m_bSongBackgrounds )
