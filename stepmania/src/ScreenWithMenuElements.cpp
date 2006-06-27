@@ -323,6 +323,8 @@ void ScreenWithMenuElementsSimple::MenuStart( PlayerNumber pn )
 {
 	if( IsTransitioning() )
 		return;
+	if( m_fLockInputSecs > 0 )
+		return;
 
 	StartTransitioningScreen( SM_GoToNextScreen );
 }
@@ -330,6 +332,8 @@ void ScreenWithMenuElementsSimple::MenuStart( PlayerNumber pn )
 void ScreenWithMenuElementsSimple::MenuBack( PlayerNumber pn )
 {
 	if( IsTransitioning() )
+		return;
+	if( m_fLockInputSecs > 0 )
 		return;
 
 	StartTransitioningScreen( SM_GoToPrevScreen );
