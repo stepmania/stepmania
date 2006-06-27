@@ -54,7 +54,7 @@
 ;Interface Settings
 
 	!define MUI_HEADERIMAGE
-	!define MUI_HEADERIMAGE_BITMAP "Installer\header.bmp"
+	!define MUI_HEADERIMAGE_BITMAP "Installer\header-${PRODUCT_BITMAP}.bmp"
 	!define MUI_ABORTWARNING
 	!define MUI_ICON "Installer\install.ico"
 	!define MUI_UNICON "Installer\uninstall.ico"
@@ -136,7 +136,7 @@
 	;!insertmacro MUI_LANGUAGE "Kurdish"
 
 	; generate, then include installer strings
-	!delfile "nsis_strings_temp.inc"
+	;!delfile "nsis_strings_temp.inc"
 	!system '"Program\${PRODUCT_FAMILY}.exe" --ExportNsisStrings'
 	!include "nsis_strings_temp.inc"
 
@@ -177,7 +177,7 @@ Section "Main Section" SecMain
 	AllowSkipFiles off
 	SetOverwrite on
 
-!ifdef FULL_INSTALL
+!ifdef INSTALL_PROGRAM_FILES
 	WriteUninstaller "$INSTDIR\uninstall.exe"
 
 	; add registry entries
@@ -190,7 +190,7 @@ Section "Main Section" SecMain
 	; Do this copy before anything else.  It's the most likely to fail.  
 	; Possible failure reasons are: scratched CD, user tried to copy the installer but forgot the pcks.
 	CreateDirectory $INSTDIR\pcks
-	CopyFiles "$EXEDIR\${PRODUCT_ID}\${PRODUCT_ID}.app\Contents\Resources\pcks\*.pck" $INSTDIR\pcks 650000	; assume a CD full of data
+	CopyFiles "${EXTERNAL_PCK_DIR}\*.pck" $INSTDIR\pcks 650000	; assume a CD full of data
 	IfErrors do_error_pck do_no_error_pck
 	do_error_pck:
 	MessageBox MB_OK|MB_ICONSTOP "$(TEXT_IO_FATAL_ERROR_COPYING_PCK)"
@@ -305,7 +305,7 @@ Section "Main Section" SecMain
 !ifdef ASSOCIATE_SMZIP
 	Call RefreshShellIcons
 !endif
-!ifdef FULL_INSTALL
+!ifdef INSTALL_PROGRAM_FILES
 	File "Program\mfc71.dll"
 	File "Program\msvcr71.dll"
 	File "Program\msvcp71.dll"
@@ -369,25 +369,29 @@ Function ShowAutorun
 	GetDlgItem $1 $HWNDPARENT 1 ; Next button
 	ShowWindow $1 0
 	
+!ifdef AUTORUN_SHOW_ONLY_INSTALL
+	Goto show_only_install
+!endif
 	
 	StrCpy $R1 "$INSTDIR\uninst.exe"
 	StrCpy $R2 "_="
-	IfFileExists "$R1" uninstall_available
+	IfFileExists "$R1" show_play_and_reinstall
 	StrCpy $R1 "$INSTDIR\uninstall.exe"
 	StrCpy $R2 "_?="
-	IfFileExists "$R1" uninstall_available
+	IfFileExists "$R1" show_play_and_reinstall
 
+	show_only_install:
 	GetDlgItem $1 $hwnd 1201 ; Second cutom control
 	ShowWindow $1 0
 	GetDlgItem $1 $hwnd 1202 ; Third cutom control
 	ShowWindow $1 0
-	Goto uninstall_done
+	Goto done
 
-	uninstall_available:
+	show_play_and_reinstall:
 	GetDlgItem $1 $hwnd 1200 ; First cutom control
 	ShowWindow $1 0
 
-	uninstall_done:
+	done:
 
 	; Now show the dialog and wait for it to finish
 	InstallOptions::show
@@ -429,7 +433,7 @@ FunctionEnd
 
 Function PreInstall
 
-!ifdef FULL_INSTALL
+!ifdef INSTALL_PROGRAM_FILES
 		; force uninstall of previous version using NSIS
 		; We need to wait until the uninstaller finishes before continuing, since it's possible
 		; to click the next button again before the uninstaller's window appears and takes focus.
@@ -524,7 +528,7 @@ Function .onInit
 
 	WriteINIStr $PLUGINSDIR\custom.ini "Field 4" "Text" "${PRODUCT_URL}"
 	WriteINIStr $PLUGINSDIR\custom.ini "Field 4" "State" "${PRODUCT_URL}"
-	File /oname=$PLUGINSDIR\image.bmp "Installer\custom.bmp"
+	File /oname=$PLUGINSDIR\image.bmp "Installer\custom-${PRODUCT_BITMAP}.bmp"
 	WriteINIStr $PLUGINSDIR\custom.ini "Field 5" "Text" $PLUGINSDIR\image.bmp	
 !else
 
@@ -616,7 +620,7 @@ Section "Uninstall"
 	Call un.RefreshShellIcons
 !endif
 	Delete "$INSTDIR\Program\${PRODUCT_FAMILY}.vdi"
-!ifdef FULL_INSTALL
+!ifdef INSTALL_PROGRAM_FILES
 	Delete "$INSTDIR\Program\mfc71.dll"
 	Delete "$INSTDIR\Program\msvcr71.dll"
 	Delete "$INSTDIR\Program\msvcp71.dll"
