@@ -85,8 +85,7 @@ void TimingData::SetBPMAtRow( int iNoteRow, float fBPM )
 	else	// BPMSegment being modified is m_BPMSegments[i]
 	{
 		if( i > 0  &&  fabsf(m_BPMSegments[i-1].m_fBPS - fBPS) < 1e-5f )
-			m_BPMSegments.erase( m_BPMSegments.begin()+i,
-										  m_BPMSegments.begin()+i+1);
+			m_BPMSegments.erase( m_BPMSegments.begin()+i, m_BPMSegments.begin()+i+1 );
 		else
 			m_BPMSegments[i].m_fBPS = fBPS;
 	}
