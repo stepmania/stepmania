@@ -290,8 +290,8 @@ void ScreenWithMenuElements::Cancel( ScreenMessage smSendWhenDone )
 
 	if( CANCEL_TRANSITIONS_OUT )
 	{
-		SCREENMAN->PlayCancelSound();
 		StartTransitioningScreen( smSendWhenDone );
+		COMMAND( m_Out, "Cancel" );
 		return;
 	}
 
@@ -304,6 +304,7 @@ void ScreenWithMenuElements::Cancel( ScreenMessage smSendWhenDone )
 	if( m_MenuTimer )
 		m_MenuTimer->Stop();
 	m_Cancel.StartTransitioning( smSendWhenDone );
+	COMMAND( m_Cancel, "Cancel" );
 }
 
 bool ScreenWithMenuElements::IsTransitioning()
@@ -338,7 +339,7 @@ void ScreenWithMenuElementsSimple::MenuBack( PlayerNumber pn )
 	if( m_fLockInputSecs > 0 )
 		return;
 
-	StartTransitioningScreen( SM_GoToPrevScreen );
+	Cancel( SM_GoToPrevScreen );
 
 	SCREENMAN->ConcurrentlyPrepareScreen( GetNextScreen() );
 }
