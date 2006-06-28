@@ -48,7 +48,7 @@ AC_DEFUN([SM_X_WITH_OPENGL],
 	if test "$have_xrandr" = "no"; then
 		echo "*** Direct X11 support needs Xrandr libraries and headers."
 		echo "*** Couldn't find needed headers. Continuing without X11 backend."
-		$no_x = yes
+		no_x = yes
 	else
 		XLIBS="$XLIBS -lXrandr"
 	fi
