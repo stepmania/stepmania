@@ -58,7 +58,6 @@ function ScreenPlayerOptionsNext()
 end
 
 function GetGameplayScreen()
-	if GAMESTATE:IsExtraStage() or GAMESTATE:IsExtraStage2() then return "ScreenGameplay" end
 	return "ScreenGameplay"
 end
 
@@ -142,22 +141,22 @@ function GetGameplayNextScreen()
 	Trace( " IsExtraStage2 = "..tostring(GAMESTATE:IsExtraStage2()) )
 	Trace( " Event mode = "..tostring(IsEventMode()) )
 	
-	if Passed or GAMESTATE:IsCourseMode() or
-		GAMESTATE:IsExtraStage() or GAMESTATE:IsExtraStage2() or
-		GetTopScreenMetric( "ShowEvaluationOnFail" ) == "1"
-	then
-		Trace( "Go to evaluation screen" )
-		return SelectEvaluationScreen()
-	end
-
-	if IsEventMode() then
-		Trace( "Go to song selection screen" )
-		-- DeletePreparedScreens()
-		return SongSelectionScreen()
-	end
-
-	Trace( "ScreenGameOver" )
-	return "ScreenGameOver"
+	return SelectEvaluationScreen()
+--	if Passed or GAMESTATE:IsCourseMode() or
+--		GAMESTATE:IsExtraStage() or GAMESTATE:IsExtraStage2()
+--	then
+--		Trace( "Go to evaluation screen" )
+--		return SelectEvaluationScreen()
+--	end
+--
+--	if IsEventMode() then
+--		Trace( "Go to song selection screen" )
+--		-- DeletePreparedScreens()
+--		return SongSelectionScreen()
+--	end
+--
+--	Trace( "ScreenGameOver" )
+--	return "ScreenGameOver"
 end
 
 local function ShowScreenInstructions()
