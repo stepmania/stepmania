@@ -52,8 +52,8 @@ bool Alsa9Buf::SetHWParams()
 	err = dsnd_pcm_hw_params_set_access(pcm, hwparams, SND_PCM_ACCESS_MMAP_INTERLEAVED);
 	ALSA_CHECK("dsnd_pcm_hw_params_set_access");
 
-	/* Set the PCM format: signed 16bit, little endian. */
-	err = dsnd_pcm_hw_params_set_format(pcm, hwparams, SND_PCM_FORMAT_S16_LE);
+	/* Set the PCM format: signed 16bit, native endian. */
+	err = dsnd_pcm_hw_params_set_format(pcm, hwparams, SND_PCM_FORMAT_S16);
 	ALSA_CHECK("dsnd_pcm_hw_params_set_format");
 
 	/* Set the number of channels. */
