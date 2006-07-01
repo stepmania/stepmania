@@ -489,8 +489,10 @@ void ScreenManager::Input( const InputEventPlus &input )
 	if( m_sDelayedScreen != "" )
 		return;
 
-	if( !g_ScreenStack.empty() )
-		g_ScreenStack.back().m_pScreen->Input( input );
+	if( g_ScreenStack.empty() )
+		return;
+
+	g_ScreenStack.back().m_pScreen->Input( input );
 }
 
 /* Just create a new screen; don't do any associated cleanup. */
