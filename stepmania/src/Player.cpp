@@ -1521,16 +1521,15 @@ void Player::CrossedMineRow( int iNoteRow )
 			PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
 			const StyleInput StyleI( pn, t );
-			const GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( StyleI );
 			if( PREFSMAN->m_fPadStickSeconds > 0 )
 			{
-				float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI );
+				float fSecsHeld = INPUTMAPPER->GetSecsHeld( StyleI );
 				if( fSecsHeld >= PREFSMAN->m_fPadStickSeconds )
 					Step( t, now+(-PREFSMAN->m_fPadStickSeconds), true );
 			}
 			else
 			{
-				bool bIsDown = INPUTMAPPER->IsButtonDown( GameI );
+				bool bIsDown = INPUTMAPPER->IsButtonDown( StyleI );
 				if( bIsDown )
 					Step( t, now, true );
 			}
