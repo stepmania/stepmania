@@ -44,13 +44,13 @@ public:
 	void GameToMenu( const GameInput &GameI, MenuInput &MenuI );
 	void MenuToGame( const MenuInput &MenuI, GameInput GameIout[4] );
 
-	float GetSecsHeld( const GameInput &GameI );
+	float GetSecsHeld( const GameInput &GameI, MultiPlayer mp = MultiPlayer_INVALID );
 	float GetSecsHeld( const MenuInput &MenuI );
-	float GetSecsHeld( const StyleInput &StyleI );
+	float GetSecsHeld( const StyleInput &StyleI, MultiPlayer mp = MultiPlayer_INVALID );
 
-	bool IsButtonDown( const GameInput &GameI );
+	bool IsButtonDown( const GameInput &GameI, MultiPlayer mp = MultiPlayer_INVALID );
 	bool IsButtonDown( const MenuInput &MenuI );
-	bool IsButtonDown( const StyleInput &StyleI );
+	bool IsButtonDown( const StyleInput &StyleI, MultiPlayer mp = MultiPlayer_INVALID );
 
 	void ResetKeyRepeat( const GameInput &GameI );
 	void ResetKeyRepeat( const MenuInput &MenuI );

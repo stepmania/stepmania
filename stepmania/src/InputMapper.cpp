@@ -784,15 +784,19 @@ void InputMapper::MenuToGame( const MenuInput &MenuI, GameInput GameIout[4] )
 }
 
 
-bool InputMapper::IsButtonDown( const GameInput &GameI )
+bool InputMapper::IsButtonDown( const GameInput &GameI, MultiPlayer mp )
 {
 	for( int i=0; i<NUM_GAME_TO_DEVICE_SLOTS; i++ )
 	{
 		DeviceInput DeviceI;
 
 		if( GameToDevice( GameI, i, DeviceI ) )
+		{
+			if( mp != MultiPlayer_INVALID )
+				DeviceI.device = MultiPlayerToInputDevice(mp);
 			if( INPUTFILTER->IsBeingPressed( DeviceI ) )
 				return true;
+		}
 	}
 
 	return false;
@@ -809,24 +813,27 @@ bool InputMapper::IsButtonDown( const MenuInput &MenuI )
 	return false;
 }
 
-bool InputMapper::IsButtonDown( const StyleInput &StyleI )
+bool InputMapper::IsButtonDown( const StyleInput &StyleI, MultiPlayer mp )
 {
 	GameInput GameI;
 	StyleToGame( StyleI, GameI );
-	return IsButtonDown( GameI );
+	return IsButtonDown( GameI, mp );
 }
 
 
-float InputMapper::GetSecsHeld( const GameInput &GameI )
+float InputMapper::GetSecsHeld( const GameInput &GameI, MultiPlayer mp )
 {
 	float fMaxSecsHeld = 0;
 
 	for( int i=0; i<NUM_GAME_TO_DEVICE_SLOTS; i++ )
 	{
 		DeviceInput DeviceI;
-
 		if( GameToDevice( GameI, i, DeviceI ) )
+		{
+			if( mp != MultiPlayer_INVALID )
+				DeviceI.device = MultiPlayerToInputDevice(mp);
 			fMaxSecsHeld = max( fMaxSecsHeld, INPUTFILTER->GetSecsHeld(DeviceI) );
+		}
 	}
 
 	return fMaxSecsHeld;
@@ -845,11 +852,11 @@ float InputMapper::GetSecsHeld( const MenuInput &MenuI )
 	return fMaxSecsHeld;
 }
 
-float InputMapper::GetSecsHeld( const StyleInput &StyleI )
+float InputMapper::GetSecsHeld( const StyleInput &StyleI, MultiPlayer mp )
 {
 	GameInput GameI;
 	StyleToGame( StyleI, GameI );
-	return GetSecsHeld( GameI );
+	return GetSecsHeld( GameI, mp );
 }
 
 void InputMapper::ResetKeyRepeat( const GameInput &GameI )
