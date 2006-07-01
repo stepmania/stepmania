@@ -626,8 +626,7 @@ void Player::Update( float fDeltaTime )
 			else
 			{
 				const StyleInput StyleI( pn, iTrack );
-				const GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( StyleI );
-				bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI );
+				bIsHoldingButton = INPUTMAPPER->IsButtonDown( StyleI );
 			}
 
 			int iEndRow = iRow + tn.iDuration;
