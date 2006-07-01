@@ -1403,9 +1403,8 @@ void HandleInputEvents(float fDeltaTime)
 
 		input.mp = MultiPlayer_INVALID;
 		
-		if( GAMESTATE->m_bMultiplayer )
 		{
-			// Translate input and sent to the appropriate player.  Assume that all 
+			// Translate input to the appropriate MultiPlayer.  Assume that all
 			// joystick devices are mapped the same as the master player.
 			if( input.DeviceI.IsJoystick() )
 			{
