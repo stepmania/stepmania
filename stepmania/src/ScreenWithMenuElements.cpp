@@ -136,6 +136,8 @@ void ScreenWithMenuElements::Init()
 
 void ScreenWithMenuElements::BeginScreen()
 {
+	Screen::BeginScreen();
+
 	m_In.Reset();
 	m_Out.Reset();
 	m_Cancel.Reset();
@@ -146,8 +148,6 @@ void ScreenWithMenuElements::BeginScreen()
 		TweenOnScreen(); // deprecated
 	this->SortByDrawOrder();
 	m_In.StartTransitioning( SM_DoneFadingIn );
-
-	Screen::BeginScreen();
 
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sName+" intro") );
 	StartPlayingMusic();
