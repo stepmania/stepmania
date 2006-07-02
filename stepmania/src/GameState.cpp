@@ -1984,6 +1984,8 @@ public:
 		FOREACH_HumanPlayer( p )
 		{
 			const Steps* pSteps = GAMESTATE->m_pCurSteps[p];
+			if( pSteps == NULL )
+				return 0;
 			bool bAlreadyAdded = find( vpStepsToShow.begin(), vpStepsToShow.end(), pSteps ) != vpStepsToShow.end();
 			if( !bAlreadyAdded )
 				vpStepsToShow.push_back( pSteps );
