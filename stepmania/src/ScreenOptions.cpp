@@ -179,6 +179,7 @@ void ScreenOptions::Init()
 	m_sprMore->SetName( "More" );
 	SET_XY( m_sprMore );
 	m_sprMore->SetDrawOrder( 2 );
+	m_sprMore->PlayCommand( "LoseFocus" );
 	m_framePage.AddChild( m_sprMore );
 
 	m_OptionRowType.Load( m_sName );
@@ -544,7 +545,11 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 		FOREACH_HumanPlayer( p )
 			vpns.push_back( p );
 		for( unsigned r=0; r<m_pRows.size(); r++ )		// foreach row
+		{
+			if( m_pRows[r]->GetRowType() == OptionRow::RowType_Exit )
+				continue;
 			this->ExportOptions( r, vpns );
+		}
 
 		this->HandleScreenMessage( SM_GoToNextScreen );
 	}
@@ -727,6 +732,7 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 		{
 			m_bWasOnExit[p] = bExitSelected;
 			COMMAND( m_sprMore, ssprintf("Exit%sP%i", bExitSelected? "Selected":"Unselected", p+1) );
+			m_sprMore->PlayCommand( bExitSelected ? "GainFocus":"LoseFocus" );
 		}
 	}
 
