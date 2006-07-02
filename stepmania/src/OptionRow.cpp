@@ -430,7 +430,6 @@ void OptionRow::InitText()
 	FOREACH_PlayerNumber( p )
 		for( unsigned c=0; c<m_Underline[p].size(); c++ )
 			m_Frame.AddChild( m_Underline[p][c] );
-	m_Frame.SortByDrawOrder();
 
 	// This is set in OptionRow::AfterImportOptions, so if we're reused with a different
 	// song selected, SHOW_BPM_IN_SPEED_TITLE will show the new BPM.
@@ -449,6 +448,7 @@ void OptionRow::InitText()
 		break;
 	}
 
+	m_Frame.SortByDrawOrder();
 	this->SortByDrawOrder();
 }
 
