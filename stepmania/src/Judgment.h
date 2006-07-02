@@ -18,7 +18,6 @@ public:
 	void Reset();
 	void SetJudgment( TapNoteScore score, bool bEarly );
 	void HandleMessage( const RString &sMessage );
-	virtual void DrawPrimitives();
 
 	//
 	// Lua

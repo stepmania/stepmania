@@ -97,11 +97,6 @@ void Judgment::HandleMessage( const RString &sMessage )
 	ActorFrame::HandleMessage( sMessage );
 }
 
-void Judgment::DrawPrimitives()
-{
-	ActorFrame::DrawPrimitives();
-}
-
 
 // lua start
 #include "LuaBinding.h"
