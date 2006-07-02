@@ -16,15 +16,19 @@ public:
 	Difficulty m_difficulty;	// don't filter if DIFFICULTY_INVALID
 	int m_iLowMeter;		// don't filter if -1
 	int m_iHighMeter;		// don't filter if -1
+	StepsType m_st;			// don't filter if STEPS_TYPE_INVALID
+	enum Locked { Locked_Locked, Locked_Unlocked, Locked_DontCare } m_Locked;
 
 	StepsCriteria()
 	{
 		m_difficulty = DIFFICULTY_INVALID;
 		m_iLowMeter = -1;
 		m_iHighMeter = -1;
+		m_st = STEPS_TYPE_INVALID;
+		m_Locked = Locked_DontCare;
 	}
 
-	bool Matches( const Steps *p ) const;
+	bool Matches( const Song *pSong, const Steps *pSteps ) const;
 };
 
 class SongAndSteps
@@ -38,7 +42,6 @@ public:
 
 namespace StepsUtil
 {
-
 	void GetAllMatching( const SongCriteria &soc, const StepsCriteria &stc, vector<SongAndSteps> &out );	// look up in SONGMAN
 
 	bool CompareNotesPointersByRadarValues(const Steps* pSteps1, const Steps* pSteps2);

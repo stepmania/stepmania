@@ -375,58 +375,37 @@ bool Course::GetTrailSorted( StepsType st, CourseDifficulty cd, Trail &trail ) c
 }
 
 // TODO: Move Course initialization after PROFILEMAN is created
-static void CourseSortSongs( SongSort sort, vector<Song*> &vpPossibleSongs, RandomGen &rnd )
+static void CourseSortSongs( SongSort sort, vector<SongAndSteps> &vPossible, RandomGen &rnd )
 {
 	switch( sort )
 	{
-	default:
-		ASSERT(0);
+	DEFAULT_FAIL(sort);
 	case SongSort_Randomize:
-		random_shuffle( vpPossibleSongs.begin(), vpPossibleSongs.end(), rnd );
+		random_shuffle( vPossible.begin(), vPossible.end(), rnd );
 		break;
 	case SongSort_MostPlays:
-		if( PROFILEMAN )
-			SongUtil::SortSongPointerArrayByNumPlays( vpPossibleSongs, PROFILEMAN->GetMachineProfile(), true );	// descending
+		ASSERT(0);
+		// TODO: fix
+		//if( PROFILEMAN )
+		//	SongUtil::SortSongPointerArrayByNumPlays( vpPossibleSongs, PROFILEMAN->GetMachineProfile(), true );	// descending
 		break;
 	case SongSort_FewestPlays:
-		if( PROFILEMAN )
-			SongUtil::SortSongPointerArrayByNumPlays( vpPossibleSongs, PROFILEMAN->GetMachineProfile(), false );	// ascending
+		ASSERT(0);
+		// TODO: fix
+		//if( PROFILEMAN )
+		//	SongUtil::SortSongPointerArrayByNumPlays( vpPossibleSongs, PROFILEMAN->GetMachineProfile(), false );	// ascending
 		break;
 	case SongSort_TopGrades:
-		SongUtil::SortSongPointerArrayByGrades( vpPossibleSongs, true );	// descending
+		ASSERT(0);
+		// TODO: fix
+		//SongUtil::SortSongPointerArrayByGrades( vpPossibleSongs, true );	// descending
 		break;
 	case SongSort_LowestGrades:
-		SongUtil::SortSongPointerArrayByGrades( vpPossibleSongs, false );	// ascending
+		ASSERT(0);
+		// TODO: fix
+		//SongUtil::SortSongPointerArrayByGrades( vpPossibleSongs, false );	// ascending
 		break;
 	}
-}
-
-static void GetSongsValidForRandom( vector<Song*> &vpSongsOut )
-{
-	const vector<Song*> &vpAllSongs = SONGMAN->GetAllSongs();
-
-	FOREACH_CONST( Song*, vpAllSongs, song )
-	{
-		// Ignore locked songs when choosing randomly
-		// TODO: Move Course initialization after UNLOCKMAN is created
-		if( UNLOCKMAN  &&  UNLOCKMAN->SongIsLocked(*song) )
-			continue;
-
-		// Ignore boring tutorial songs
-		if( (*song)->IsTutorial() )
-			continue;
-
-		// Don't allow long songs
-		if( SONGMAN->GetNumStagesForSong(*song) > 1 )
-			continue;
-
-		vpSongsOut.push_back( *song );
-	}
-}
-
-static bool StepsIsLocked( const Song *pSong, const Steps *pSteps )
-{
-	return UNLOCKMAN->StepsIsLocked( pSong, pSteps );
 }
 
 bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail ) const
@@ -469,102 +448,72 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	bool bCourseDifficultyIsSignificant = (cd == DIFFICULTY_MEDIUM);
 
 	vector<Song*> vpAllPossibleSongs;
-	bool bHaveAllSongs = false; // true if vpAllPossibleSongs has been generated
 
 	// Resolve each entry to a Song and Steps.
 	FOREACH_CONST( CourseEntry, entries, e )
 	{
-		Song* pResolvedSong = NULL;	// fill this in
-		Steps* pResolvedSteps = NULL;	// fill this in
+		SongAndSteps resolved = { NULL, NULL };	// fill this in
 
-		//
-		// Create a list of matching songs.
-		//
 
-		// Start with all songs
-		vector<Steps*> vpPossibleSteps;
-
+		SongCriteria soc = e->songCriteria;
 		if( e->pSong )
 		{
-			if( IsAnEdit() && UNLOCKMAN->SongIsLocked(e->pSong) )
-				continue;
-			// Choose an exact song, if we have matching steps and all
-			SongUtil::GetSteps( e->pSong, vpPossibleSteps, st, e->stepsCriteria.m_difficulty, e->stepsCriteria.m_iLowMeter, e->stepsCriteria.m_iHighMeter );
-			// Remove all locked steps.
-			if( IsAnEdit() )
-				RemoveIf( vpPossibleSteps, bind1st(ptr_fun(StepsIsLocked), e->pSong) );
-			if( !vpPossibleSteps.empty() )
-				pResolvedSong = e->pSong;
-			else
-				continue;
+			soc.m_bUseSongAllowedList = true;
+			soc.m_vpSongAllowedList.push_back( e->pSong );
 		}
-		else
+		soc.m_Tutorial = SongCriteria::Tutorial_No;
+		soc.m_Locked = SongCriteria::Locked_Unlocked;
+		soc.m_Locked = SongCriteria::Locked_Unlocked;
+		if( !soc.m_bUseSongAllowedList )
+			soc.m_iStagesForSong = 1;
+
+		StepsCriteria stc = e->stepsCriteria;
+		stc.m_st = st;
+		stc.m_Locked = StepsCriteria::Locked_Unlocked;
+
+		vector<SongAndSteps> vSongAndSteps;
+		StepsUtil::GetAllMatching( soc, stc, vSongAndSteps );
+
+		// It looks bad to have the same song 2x in a row in a randomly generated course.
+		// Don't allow the same song to be played 2x in a row, unless there's only
+		// one song in vpPossibleSongs.
+		if( trail.m_vEntries.size() > 0  &&  vSongAndSteps.size() > 1 )
 		{
-			/* Generate vpAllPossibleSongs, if we havn't yet. */
-			if( !bHaveAllSongs )
+			const TrailEntry &teLast = trail.m_vEntries[trail.m_vEntries.size()-1];
+			bool bExistsDifferentSongThanLast = false;
+			FOREACH_CONST( SongAndSteps, vSongAndSteps, sas )
 			{
-				GetSongsValidForRandom( vpAllPossibleSongs );
-				bHaveAllSongs = true;
-			}
-
-			// copy over any songs that match our group filter, if one is set, and match our
-			// steps filter.
-			vector<Song*> vpPossibleSongs;
-			FOREACH( Song*, vpAllPossibleSongs, song )
-			{
-				if( !e->songCriteria.Matches( *song ) )
-					continue;
-
-				vector<Steps*> vpMatchingSteps;
-				SongUtil::GetSteps( *song, vpMatchingSteps, st, e->stepsCriteria.m_difficulty, e->stepsCriteria.m_iLowMeter, e->stepsCriteria.m_iHighMeter );
-				StepsUtil::RemoveLockedSteps( *song, vpMatchingSteps );
-
-				if( vpMatchingSteps.empty() )
-					continue;
-
-				vpPossibleSongs.push_back( *song );
-			}
-
-			// It looks bad to have the same song 2x in a row in a randomly generated course.
-			// Don't allow the same song to be played 2x in a row, unless there's only
-			// one song in vpPossibleSongs.
-			if( trail.m_vEntries.size() > 0  &&  vpPossibleSongs.size() > 1 )
-			{
-				const TrailEntry &teLast = trail.m_vEntries[trail.m_vEntries.size()-1];
-				for( int i=vpPossibleSongs.size()-1; i>=0; i-- )
+				if( sas->pSong != teLast.pSong )
 				{
-					if( vpPossibleSongs[i] == teLast.pSong )
-						vpPossibleSongs.erase( vpPossibleSongs.begin()+i );
+					bExistsDifferentSongThanLast = true;
+					break;
 				}
 			}
 
-			// if there are no songs to choose from, abort now
-			if( vpPossibleSongs.empty() )
-				continue;
-
-			CourseSortSongs( e->songSort, vpPossibleSongs, rnd );
-			
-			ASSERT( e->iChooseIndex >= 0 );
-			if( e->iChooseIndex < int(vpPossibleSongs.size()) )
-				pResolvedSong = vpPossibleSongs[e->iChooseIndex];
-			else
-				continue;
-			SongUtil::GetSteps( pResolvedSong, vpPossibleSteps, st, e->stepsCriteria.m_difficulty, e->stepsCriteria.m_iLowMeter, e->stepsCriteria.m_iHighMeter );
-			StepsUtil::RemoveLockedSteps( pResolvedSong, vpPossibleSteps );
+			for( int i=vSongAndSteps.size()-1; i>=0; i-- )
+			{
+				if( vSongAndSteps[i].pSong == teLast.pSong )
+					vSongAndSteps.erase( vSongAndSteps.begin()+i );
+			}
 		}
 
-		ASSERT( !vpPossibleSteps.empty() );	// if no steps are playable, this shouldn't be a possible song
-		random_shuffle( vpPossibleSteps.begin(), vpPossibleSteps.end(), rnd );
-		pResolvedSteps = vpPossibleSteps[0];
+		// if there are no songs to choose from, abort this CourseEntry
+		if( vSongAndSteps.empty() )
+			continue;
 
-		if( pResolvedSong == NULL || pResolvedSteps == NULL )
-			continue;	// this song entry isn't playable.  Skip.
-
+		// TODO: fixme
+		CourseSortSongs( e->songSort, vSongAndSteps, rnd );
+		
+		ASSERT( e->iChooseIndex >= 0 );
+		if( e->iChooseIndex < int(vSongAndSteps.size()) )
+			resolved = vSongAndSteps[e->iChooseIndex];
+		else
+			continue;
 
 		/* If we're not COURSE_DIFFICULTY_REGULAR, then we should be choosing steps that are 
 		 * either easier or harder than the base difficulty.  If no such steps exist, then 
 		 * just use the one we already have. */
-		Difficulty dc = pResolvedSteps->GetDifficulty();
+		Difficulty dc = resolved.pSteps->GetDifficulty();
 		int iLowMeter = e->stepsCriteria.m_iLowMeter;
 		int iHighMeter = e->stepsCriteria.m_iHighMeter;
 		if( cd != DIFFICULTY_MEDIUM  &&  !e->bNoDifficult )
@@ -575,11 +524,11 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 			bool bChangedDifficulty = false;
 			if( new_dc != dc )
 			{
-				Steps* pNewSteps = SongUtil::GetStepsByDifficulty( pResolvedSong, st, new_dc );
+				Steps* pNewSteps = SongUtil::GetStepsByDifficulty( resolved.pSong, st, new_dc );
 				if( pNewSteps )
 				{
 					dc = new_dc;
-					pResolvedSteps = pNewSteps;
+					resolved.pSteps = pNewSteps;
 					bChangedDifficulty = true;
 					bCourseDifficultyIsSignificant = true;
 				}
@@ -596,8 +545,8 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 			{
 				/* Minimum and maximum to add to make the meter range contain the actual
 				 * meter: */
-				int iMinDist = pResolvedSteps->GetMeter() - iHighMeter;
-				int iMaxDist = pResolvedSteps->GetMeter() - iLowMeter;
+				int iMinDist = resolved.pSteps->GetMeter() - iHighMeter;
+				int iMaxDist = resolved.pSteps->GetMeter() - iLowMeter;
 
 				/* Clamp the possible adjustments to try to avoid going under 1 or over
 				 * MAX_BOTTOM_RANGE. */
@@ -615,8 +564,8 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		}
 
 		TrailEntry te;
-		te.pSong = pResolvedSong;
-		te.pSteps = pResolvedSteps;
+		te.pSong = resolved.pSong;
+		te.pSteps = resolved.pSteps;
 		te.Modifiers = e->sModifiers;
 		te.Attacks = e->attacks;
 		te.bSecret = e->bSecret;

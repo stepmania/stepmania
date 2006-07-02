@@ -15,12 +15,62 @@
 #include "LocalizedString.h"
 #include "RageLog.h"
 
-bool SongCriteria::Matches( const Song *p ) const
+bool SongCriteria::Matches( const Song *pSong ) const
 {
-	if( !m_sGroupName.empty()  &&  m_sGroupName != p->m_sGroupName )
+	if( !m_sGroupName.empty()  &&  m_sGroupName != pSong->m_sGroupName )
 		return false;
-	if( !m_sGenre.empty()  &&  m_sGenre != p->m_sGenre )
+	if( !m_sGenre.empty()  &&  m_sGenre != pSong->m_sGenre )
 		return false;
+	switch( m_Selectable )
+	{
+	DEFAULT_FAIL(m_Selectable);
+	case Selectable_Yes:
+		if( pSong->m_SelectionDisplay != Song::SHOW_ALWAYS )
+			return false;
+		break;
+	case Selectable_No:
+		if( pSong->m_SelectionDisplay != Song::SHOW_NEVER )
+			return false;
+		break;
+	case Selectable_DontCare:
+		break;
+	}
+	if( m_bUseSongAllowedList )
+	{
+		if( find(m_vpSongAllowedList.begin(),m_vpSongAllowedList.end(),pSong) == m_vpSongAllowedList.end() )
+			return false;
+	}
+	if( m_iStagesForSong != -1  &&  SONGMAN->GetNumStagesForSong(pSong) != m_iStagesForSong )
+		return false;
+	switch( m_Tutorial )
+	{
+	DEFAULT_FAIL(m_Tutorial);
+	case Tutorial_Yes:
+		if( !pSong->IsTutorial() )
+			return false;
+		break;
+	case Tutorial_No:
+		if( pSong->IsTutorial() )
+			return false;
+		break;
+	case Tutorial_DontCare:
+		break;
+	}
+	switch( m_Locked )
+	{
+	DEFAULT_FAIL(m_Locked);
+	case Locked_Locked:
+		if( UNLOCKMAN  &&  !UNLOCKMAN->SongIsLocked(pSong) )
+			return false;
+		break;
+	case Locked_Unlocked:
+		if( UNLOCKMAN  &&  UNLOCKMAN->SongIsLocked(pSong) )
+			return false;
+		break;
+	case Locked_DontCare:
+		break;
+	}
+
 	return true;
 }
 
@@ -733,6 +783,17 @@ void SongUtil::GetAllSongGenres( vector<RString> &vsOut )
 	FOREACHS_CONST( RString, genres, s )
 	{
 		vsOut.push_back( *s );
+	}
+}
+
+void SongUtil::FilterSongs( const SongCriteria &sc, const vector<Song*> &in, vector<Song*> &out )
+{
+	FOREACH_CONST( Song*, in, s )
+	{
+		if( sc.Matches( *s ) )
+		{
+			out.push_back( *s );
+		}
 	}
 }
 

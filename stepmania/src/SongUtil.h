@@ -11,17 +11,27 @@ class Steps;
 class Profile;
 class XNode;
 
-
 class SongCriteria
 {
 public:
 	RString m_sGroupName;	// "" means don't match
 	RString m_sGenre;	// "" means don't match
+	enum Selectable { Selectable_Yes, Selectable_No, Selectable_DontCare } m_Selectable;
+	bool m_bUseSongAllowedList;
+	vector<Song*> m_vpSongAllowedList;
+	int m_iStagesForSong;		// don't filter if -1
+	enum Tutorial { Tutorial_Yes, Tutorial_No, Tutorial_DontCare } m_Tutorial;
+	enum Locked { Locked_Locked, Locked_Unlocked, Locked_DontCare } m_Locked;
 
 	SongCriteria()
 	{
-
+		m_Selectable = Selectable_DontCare;
+		m_bUseSongAllowedList = false;
+		m_iStagesForSong = -1;
+		m_Tutorial = Tutorial_DontCare;
+		m_Locked = Locked_DontCare;
 	}
+
 	bool Matches( const Song *p ) const;
 };
 
@@ -95,6 +105,10 @@ public:
 	bool operator<( const SongID &other ) const
 	{
 		return sDir < other.sDir;
+	}
+	bool operator==( const SongID &other ) const
+	{
+		return sDir == other.sDir;
 	}
 
 	XNode* CreateNode() const;

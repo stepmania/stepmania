@@ -11,14 +11,31 @@
 #include "SongUtil.h"
 
 
-bool StepsCriteria::Matches( const Steps *p ) const
+bool StepsCriteria::Matches( const Song *pSong, const Steps *pSteps ) const
 {
-	if( m_difficulty != DIFFICULTY_INVALID  &&  p->GetDifficulty() != m_difficulty )
+	if( m_difficulty != DIFFICULTY_INVALID  &&  pSteps->GetDifficulty() != m_difficulty )
 		return false;
-	if( m_iLowMeter != -1  &&  p->GetMeter() < m_iLowMeter )
+	if( m_iLowMeter != -1  &&  pSteps->GetMeter() < m_iLowMeter )
 		return false;
-	if( m_iHighMeter != -1  &&  p->GetMeter() > m_iHighMeter )
+	if( m_iHighMeter != -1  &&  pSteps->GetMeter() > m_iHighMeter )
 		return false;
+	if( m_st != STEPS_TYPE_INVALID  &&  pSteps->m_StepsType != m_st )
+		return false;
+	switch( m_Locked )
+	{
+	DEFAULT_FAIL(m_Locked);
+	case Locked_Locked:
+		if( UNLOCKMAN  &&  !UNLOCKMAN->StepsIsLocked(pSong,pSteps) )
+			return false;
+		break;
+	case Locked_Unlocked:
+		if( UNLOCKMAN  &&  UNLOCKMAN->StepsIsLocked(pSong,pSteps) )
+			return false;
+		break;
+	case Locked_DontCare:
+		break;
+	}
+
 	return true;
 }
 
@@ -30,9 +47,10 @@ void StepsUtil::GetAllMatching( const SongCriteria &soc, const StepsCriteria &st
 			continue;
 		FOREACH_CONST( Steps*, (*so)->GetAllSteps(), st )
 		{
-			if( !stc.Matches(*st) )
+			if( !stc.Matches(*so,*st) )
 				continue;
-
+			SongAndSteps sas = { *so, *st };
+			out.push_back( sas );
 		}
 	}
 }
