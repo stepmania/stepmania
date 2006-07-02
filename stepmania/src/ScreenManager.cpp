@@ -84,7 +84,7 @@ static Preference<bool> g_bDelayedScreenLoad( "DelayedScreenLoad", false );
 // Screen registration
 static map<RString,CreateScreenFn>	*g_pmapRegistrees = NULL;
 
-namespace
+namespace ScreenManagerUtil
 {
 	//
 	// in draw order first to last
@@ -210,6 +210,7 @@ namespace
 		AfterDeleteScreen();
 	}
 };
+using namespace ScreenManagerUtil;
 
 void RegisterScreenClass( const RString& sClassName, CreateScreenFn pfn )
 {
@@ -921,7 +922,7 @@ public:
 	}
 	static int SystemMessage( T* p, lua_State *L )		{ p->SystemMessage( SArg(1) ); return 0; }
 	static int ConcurrentlyPrepareScreen( T* p, lua_State *L )	{ p->ConcurrentlyPrepareScreen( SArg(1) ); return 0; }
-	static int ScreenIsPrepped( T* p, lua_State *L )	{ lua_pushboolean( L, ::ScreenIsPrepped( SArg(1) ) ); return 1; }
+	static int ScreenIsPrepped( T* p, lua_State *L )	{ lua_pushboolean( L, ScreenManagerUtil::ScreenIsPrepped( SArg(1) ) ); return 1; }
 
 	static void Register(lua_State *L)
 	{
