@@ -188,7 +188,7 @@ void ScreenEvaluation::Init()
 	//
 	// Figure out which statistics and songs we're going to display
 	//
-	STATSMAN->CalcAccumStageStats();
+	STATSMAN->CalcAccumPlayedStageStats();
 
 	if( SUMMARY )
 		STATSMAN->GetFinalEvalStageStats( STATSMAN->m_CurStageStats );

@@ -40,7 +40,7 @@ void ScoreDisplayCalories::LoadFromNode( const RString& sDir, const XNode* pNode
 
 void ScoreDisplayCalories::Update( float fDelta )
 {
-	// We have to set the initial text after StatsManager::CalcAccumStageStats 
+	// We have to set the initial text after StatsManager::CalcAccumPlayedStageStats 
 	// is called.
 	if( IsFirstUpdate() )
 		UpdateNumber();
@@ -61,7 +61,7 @@ void ScoreDisplayCalories::PlayCommand( const RString &sCommandName, Actor* pPar
 void ScoreDisplayCalories::UpdateNumber()
 {
 	float fCals = 
-		STATSMAN->GetAccumStageStats().m_player[m_PlayerNumber].fCaloriesBurned + 
+		STATSMAN->GetAccumPlayedStageStats().m_player[m_PlayerNumber].fCaloriesBurned + 
 		STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].fCaloriesBurned;
 	
 	SetTargetNumber( fCals );

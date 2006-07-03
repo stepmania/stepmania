@@ -19,12 +19,12 @@ void StatsManager::Reset()
 {
 	m_CurStageStats.Init();
 	m_vPlayedStageStats.clear();
-	m_AccumStageStats.Init();
+	m_AccumPlayedStageStats.Init();
 	
-	CalcAccumStageStats();
+	CalcAccumPlayedStageStats();
 }
 
-static StageStats AccumStageStats( const vector<StageStats>& vss )
+static StageStats AccumPlayedStageStats( const vector<StageStats>& vss )
 {
 	StageStats ssreturn;
 
@@ -91,13 +91,13 @@ void StatsManager::GetFinalEvalStageStats( StageStats& statsOut ) const
 		vssToCount.push_back( ss );
 	}
 
-	statsOut = AccumStageStats( vssToCount );
+	statsOut = AccumPlayedStageStats( vssToCount );
 }
 
 
-void StatsManager::CalcAccumStageStats()
+void StatsManager::CalcAccumPlayedStageStats()
 {
-	m_AccumStageStats = AccumStageStats( m_vPlayedStageStats );
+	m_AccumPlayedStageStats = AccumPlayedStageStats( m_vPlayedStageStats );
 }
 
 /* This data is added to each player profile, and to the machine profile per-player. */
@@ -205,7 +205,7 @@ public:
 	LunaStatsManager() { LUA->Register( Register ); }
 
 	static int GetCurStageStats( T* p, lua_State *L )	{ p->m_CurStageStats.PushSelf(L); return 1; }
-	static int GetAccumStageStats( T* p, lua_State *L )	{ p->GetAccumStageStats().PushSelf(L); return 1; }
+	static int GetAccumPlayedStageStats( T* p, lua_State *L )	{ p->GetAccumPlayedStageStats().PushSelf(L); return 1; }
 	static int Reset( T* p, lua_State *L )			{ p->Reset(); return 0; }
 	static int GetFinalGrade( T* p, lua_State *L )
 	{
@@ -245,7 +245,7 @@ public:
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( GetCurStageStats );
-		ADD_METHOD( GetAccumStageStats );
+		ADD_METHOD( GetAccumPlayedStageStats );
 		ADD_METHOD( Reset );
 		ADD_METHOD( GetFinalGrade );
 		ADD_METHOD( GetStagesPlayed );

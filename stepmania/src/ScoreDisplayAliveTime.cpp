@@ -52,7 +52,7 @@ void ScoreDisplayAliveTime::UpdateNumber()
 	ASSERT( m_PlayerNumber != PLAYER_INVALID );
 	if( GAMESTATE->IsPlayerEnabled(m_PlayerNumber) )
 		fSecsIntoPlay = 
-			STATSMAN->GetAccumStageStats().m_player[m_PlayerNumber].fAliveSeconds +
+			STATSMAN->GetAccumPlayedStageStats().m_player[m_PlayerNumber].fAliveSeconds +
 			STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].fAliveSeconds;
 
 	SetText( SecondsToMMSSMsMs(fSecsIntoPlay) );

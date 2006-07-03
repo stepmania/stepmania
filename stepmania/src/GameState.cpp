@@ -1756,7 +1756,7 @@ bool GameState::IsPlayerDead( const PlayerState *pPlayerState ) const
 float GameState::GetGoalPercentComplete( PlayerNumber pn )
 {
 	const Profile *pProfile = PROFILEMAN->GetProfile(pn);
-	const StageStats &ssAccum = STATSMAN->GetAccumStageStats();
+	const StageStats &ssAccum = STATSMAN->GetAccumPlayedStageStats();
 	const StageStats &ssCurrent = STATSMAN->m_CurStageStats;
 	const PlayerStageStats &pssAccum = ssAccum.m_player[pn];
 	const PlayerStageStats &pssCurrent = ssCurrent.m_player[pn];
