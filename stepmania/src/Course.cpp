@@ -375,35 +375,27 @@ bool Course::GetTrailSorted( StepsType st, CourseDifficulty cd, Trail &trail ) c
 }
 
 // TODO: Move Course initialization after PROFILEMAN is created
-static void CourseSortSongs( SongSort sort, vector<SongAndSteps> &vPossible, RandomGen &rnd )
+static void CourseSortSongs( SongSort sort, vector<Song*> &vpPossibleSongs, RandomGen &rnd )
 {
 	switch( sort )
 	{
 	DEFAULT_FAIL(sort);
 	case SongSort_Randomize:
-		random_shuffle( vPossible.begin(), vPossible.end(), rnd );
+		random_shuffle( vpPossibleSongs.begin(), vpPossibleSongs.end(), rnd );
 		break;
 	case SongSort_MostPlays:
-		ASSERT(0);
-		// TODO: fix
-		//if( PROFILEMAN )
-		//	SongUtil::SortSongPointerArrayByNumPlays( vpPossibleSongs, PROFILEMAN->GetMachineProfile(), true );	// descending
+		if( PROFILEMAN )
+			SongUtil::SortSongPointerArrayByNumPlays( vpPossibleSongs, PROFILEMAN->GetMachineProfile(), true );	// descending
 		break;
 	case SongSort_FewestPlays:
-		ASSERT(0);
-		// TODO: fix
-		//if( PROFILEMAN )
-		//	SongUtil::SortSongPointerArrayByNumPlays( vpPossibleSongs, PROFILEMAN->GetMachineProfile(), false );	// ascending
+		if( PROFILEMAN )
+			SongUtil::SortSongPointerArrayByNumPlays( vpPossibleSongs, PROFILEMAN->GetMachineProfile(), false );	// ascending
 		break;
 	case SongSort_TopGrades:
-		ASSERT(0);
-		// TODO: fix
-		//SongUtil::SortSongPointerArrayByGrades( vpPossibleSongs, true );	// descending
+		SongUtil::SortSongPointerArrayByGrades( vpPossibleSongs, true );	// descending
 		break;
 	case SongSort_LowestGrades:
-		ASSERT(0);
-		// TODO: fix
-		//SongUtil::SortSongPointerArrayByGrades( vpPossibleSongs, false );	// ascending
+		SongUtil::SortSongPointerArrayByGrades( vpPossibleSongs, false );	// ascending
 		break;
 	}
 }
@@ -501,14 +493,28 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		if( vSongAndSteps.empty() )
 			continue;
 
-		// TODO: fixme
-		CourseSortSongs( e->songSort, vSongAndSteps, rnd );
+		vector<Song*> vpSongs;
+		typedef vector<Steps*> StepsVector;
+		map<Song*,StepsVector> mapSongToSteps;
+		FOREACH_CONST( SongAndSteps, vSongAndSteps, sas )
+		{
+			mapSongToSteps[sas->pSong].push_back(sas->pSteps);
+			vpSongs.push_back( sas->pSong );
+		}
+
+		CourseSortSongs( e->songSort, vpSongs, rnd );
 		
 		ASSERT( e->iChooseIndex >= 0 );
 		if( e->iChooseIndex < int(vSongAndSteps.size()) )
-			resolved = vSongAndSteps[e->iChooseIndex];
+		{
+			resolved.pSong = vpSongs[e->iChooseIndex];
+			const vector<Steps*> &vpSongs = mapSongToSteps[resolved.pSong];
+			resolved.pSteps = vpSongs[ rand()%vpSongs.size() ];
+		}
 		else
+		{
 			continue;
+		}
 
 		/* If we're not COURSE_DIFFICULTY_REGULAR, then we should be choosing steps that are 
 		 * either easier or harder than the base difficulty.  If no such steps exist, then 
