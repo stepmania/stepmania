@@ -197,7 +197,7 @@ XToString( TapNoteScore, NUM_TapNoteScore );
 TapNoteScore StringToTapNoteScore( const RString &s )
 {
 	// new style
-	if	   ( s == "None" )		return TNS_None;
+	if     ( s == "None" )		return TNS_None;
 	else if( s == "HitMine" )	return TNS_HitMine;
 	else if( s == "AvoidMine" )	return TNS_AvoidMine;
 	else if( s == "Miss" )		return TNS_Miss;
@@ -215,6 +215,10 @@ TapNoteScore StringToTapNoteScore( const RString &s )
 	else if( s == "Marvelous" )	return TNS_W1;
 
 	return TNS_INVALID;
+}
+template<> void StringTo<TapNoteScore>( const RString &s, TapNoteScore &out )
+{
+	out = StringToTapNoteScore( s );
 }
 XToLocalizedString( TapNoteScore );
 LuaFunction( TapNoteScoreToLocalizedString, TapNoteScoreToLocalizedString((TapNoteScore) IArg(1)) );
