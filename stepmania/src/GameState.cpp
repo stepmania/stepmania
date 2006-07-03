@@ -965,6 +965,27 @@ bool GameState::HasEarnedExtraStage() const
 	
 	if( m_bBackedOutOfFinalStage )
 		return false;
+	
+	if( !IsFinalStage() && !IsExtraStage() )
+		return false;
+	
+	bool bOnePassed = false;
+	
+	FOREACH_EnabledPlayer( pn )
+	{
+		if( this->m_pCurSteps[pn]->GetDifficulty() != DIFFICULTY_HARD && 
+		    this->m_pCurSteps[pn]->GetDifficulty() != DIFFICULTY_CHALLENGE )
+			continue; /* not hard enough! */
+	
+		if( STATSMAN->m_CurStageStats.m_player[pn].GetGrade() <= Grade_Tier03 )
+		{
+			bOnePassed = true;
+			break;
+		}
+	}
+	
+	if( !bOnePassed )
+		return false;
 
 	/* If PickExtraStage, allow EX2 if the chosen song was correct. */
 	if( PREFSMAN->m_bPickExtraStage && this->IsExtraStage() )
@@ -978,19 +999,7 @@ bool GameState::HasEarnedExtraStage() const
 		return stats.vpPlayedSongs.size() && stats.vpPlayedSongs.back() == pSong;
 	}
 
-	if( (this->IsFinalStage() || this->IsExtraStage()) )
-	{
-		FOREACH_EnabledPlayer( pn )
-		{
-			if( this->m_pCurSteps[pn]->GetDifficulty() != DIFFICULTY_HARD && 
-				this->m_pCurSteps[pn]->GetDifficulty() != DIFFICULTY_CHALLENGE )
-				continue; /* not hard enough! */
-
-			if( STATSMAN->m_CurStageStats.m_player[pn].GetGrade() <= Grade_Tier03 )
-				return true;
-		}
-	}
-	return false;
+	return true;
 }
 
 PlayerNumber GameState::GetBestPlayer() const
