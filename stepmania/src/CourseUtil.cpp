@@ -10,6 +10,7 @@
 #include "Style.h"
 #include "Foreach.h"
 #include "GameState.h"
+#include "LocalizedString.h"
 
 
 //
@@ -292,6 +293,29 @@ void CourseUtil::AutogenOniFromArtist( const RString &sArtistName, RString sArti
 	}
 }
 
+static LocalizedString EDIT_NAME_CONFLICTS	( "ScreenOptionsManageCourses", "The name you chose conflicts with another edit. Please use a different name." );
+bool CourseUtil::ValidateEditCourseName( const RString &sAnswer, RString &sErrorOut )
+{
+	if( sAnswer.empty() )
+		return false;
+
+	// Course name must be unique
+	vector<Course*> v;
+	SONGMAN->GetAllCourses( v, false );
+	FOREACH_CONST( Course*, v, c )
+	{
+		if( GAMESTATE->m_pCurCourse.Get() == *c )
+			continue;	// don't compare name against ourself
+
+		if( (*c)->GetDisplayFullTitle() == sAnswer )
+		{
+			sErrorOut = EDIT_NAME_CONFLICTS;
+			return false;
+		}
+	}
+
+	return true;
+}
 
 
 //////////////////////////////////

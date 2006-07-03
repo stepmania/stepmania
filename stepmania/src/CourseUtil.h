@@ -31,6 +31,8 @@ namespace CourseUtil
 	void AutogenEndlessFromGroup( const RString &sGroupName, Difficulty dc, Course &out );
 	void AutogenNonstopFromGroup( const RString &sGroupName, Difficulty dc, Course &out );
 	void AutogenOniFromArtist( const RString &sArtistName, RString sArtistNameTranslit, vector<Song*> aSongs, Difficulty dc, Course &out );
+
+	bool ValidateEditCourseName( const RString &sAnswer, RString &sErrorOut );
 };
 
 class CourseID
