@@ -21,12 +21,12 @@ static void LifePercentChangeInit( size_t /*ScoreEvent*/ i, RString &sNameOut, f
 	sNameOut = "LifePercentChange" + ScoreEventToString( (ScoreEvent)i );
 	switch( i )
 	{
-	default:	ASSERT(0);
-	case SE_W1:			defaultValueOut = +0.008f;	break;
-	case SE_W2:			defaultValueOut = +0.008f;	break;
-	case SE_W3:			defaultValueOut = +0.004f;	break;
-	case SE_W4:			defaultValueOut = +0.000f;	break;
-	case SE_W5:			defaultValueOut = -0.040f;	break;
+	DEFAULT_FAIL( int(i) );
+	case SE_W1:		defaultValueOut = +0.008f;	break;
+	case SE_W2:		defaultValueOut = +0.008f;	break;
+	case SE_W3:		defaultValueOut = +0.004f;	break;
+	case SE_W4:		defaultValueOut = +0.000f;	break;
+	case SE_W5:		defaultValueOut = -0.040f;	break;
 	case SE_Miss:		defaultValueOut = -0.080f;	break;
 	case SE_HitMine:	defaultValueOut = -0.160f;	break;
 	case SE_Held:		defaultValueOut = +0.008f;	break;
@@ -39,8 +39,8 @@ static Preference1D<float> g_fLifePercentChange( LifePercentChangeInit, NUM_Scor
 static ThemeMetric<float> METER_WIDTH		("LifeMeterBar","MeterWidth");
 static ThemeMetric<float> METER_HEIGHT		("LifeMeterBar","MeterHeight");
 static ThemeMetric<float> DANGER_THRESHOLD	("LifeMeterBar","DangerThreshold");
-static ThemeMetric<int> NUM_CHAMBERS		("LifeMeterBar","NumChambers");
-static ThemeMetric<int> NUM_STRIPS			("LifeMeterBar","NumStrips");
+static ThemeMetric<int>   NUM_CHAMBERS		("LifeMeterBar","NumChambers");
+static ThemeMetric<int>   NUM_STRIPS		("LifeMeterBar","NumStrips");
 static ThemeMetric<float> INITIAL_VALUE		("LifeMeterBar","InitialValue");
 
 const float FAIL_THRESHOLD = 0;
@@ -144,13 +144,13 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	float fDeltaLife=0.f;
 	switch( score )
 	{
-	default:	ASSERT(0);
-	case TNS_W1:		fDeltaLife = g_fLifePercentChange[SE_W1];			break;
-	case TNS_W2:		fDeltaLife = g_fLifePercentChange[SE_W2];			break;
-	case TNS_W3:		fDeltaLife = g_fLifePercentChange[SE_W3];			break;
-	case TNS_W4:		fDeltaLife = g_fLifePercentChange[SE_W4];			break;
-	case TNS_W5:		fDeltaLife = g_fLifePercentChange[SE_W5];			break;
-	case TNS_Miss:		fDeltaLife = g_fLifePercentChange[SE_Miss];		break;
+	DEFAULT_FAIL( score );
+	case TNS_W1:		fDeltaLife = g_fLifePercentChange[SE_W1];	break;
+	case TNS_W2:		fDeltaLife = g_fLifePercentChange[SE_W2];	break;
+	case TNS_W3:		fDeltaLife = g_fLifePercentChange[SE_W3];	break;
+	case TNS_W4:		fDeltaLife = g_fLifePercentChange[SE_W4];	break;
+	case TNS_W5:		fDeltaLife = g_fLifePercentChange[SE_W5];	break;
+	case TNS_Miss:		fDeltaLife = g_fLifePercentChange[SE_Miss];	break;
 	case TNS_HitMine:	fDeltaLife = g_fLifePercentChange[SE_HitMine];	break;
 	}
 	if( IsHot()  &&  score < TNS_W4 )
@@ -158,8 +158,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 
 	switch( GAMESTATE->m_SongOptions.m_DrainType )
 	{
-	default:
-		ASSERT(0);
+	DEFAULT_FAIL( GAMESTATE->m_SongOptions.m_DrainType );
 	case SongOptions::DRAIN_NORMAL:
 		break;
 	case SongOptions::DRAIN_NO_RECOVER:
