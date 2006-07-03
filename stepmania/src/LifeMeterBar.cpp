@@ -42,6 +42,7 @@ static ThemeMetric<float> DANGER_THRESHOLD	("LifeMeterBar","DangerThreshold");
 static ThemeMetric<int>   NUM_CHAMBERS		("LifeMeterBar","NumChambers");
 static ThemeMetric<int>   NUM_STRIPS		("LifeMeterBar","NumStrips");
 static ThemeMetric<float> INITIAL_VALUE		("LifeMeterBar","InitialValue");
+static ThemeMetricEnum<TapNoteScore> MIN_STAY_ALIVE( "LifeMeterBar","MinStayAlive" );
 
 const float FAIL_THRESHOLD = 0;
 
@@ -165,7 +166,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 		fDeltaLife = min( fDeltaLife, 0 );
 		break;
 	case SongOptions::DRAIN_SUDDEN_DEATH:
-		if( fDeltaLife < 0 )
+		if( score < MIN_STAY_ALIVE )
 			fDeltaLife = -1.0f;
 		else
 			fDeltaLife = 0;
