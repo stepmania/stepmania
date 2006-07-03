@@ -107,6 +107,7 @@ void ScreenStage::MenuBack( PlayerNumber pn )
 		return;
 	
 	this->ClearMessageQueue();
+	GAMESTATE->CancelStage();
 	m_sNextScreen = GetPrevScreen();
 	m_Cancel.StartTransitioning( SM_GoToPrevScreen );
 
