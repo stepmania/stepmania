@@ -16,6 +16,10 @@
 #include "archutils/Unix/CrashHandler.h"
 #endif
 
+#if defined(HAVE_FFMPEG)
+#include <ffmpeg/avcodec.h>
+#endif
+
 static bool IsFatalSignal( int signal )
 {
 	switch( signal )
@@ -204,6 +208,10 @@ void ArchHooks_Unix::DumpDebugInfo()
 
 	LOG->Info( "Runtime library: %s", LibcVersion().c_str() );
 	LOG->Info( "Threads library: %s", ThreadsVersion().c_str() );
+#if defined(HAVE_FFMPEG)
+	LOG->Info( "libavcodec: %#x (%u)", avcodec_version(), avcodec_build() );
+	
+#endif
 }
 
 void ArchHooks_Unix::SetTime( tm newtime )
