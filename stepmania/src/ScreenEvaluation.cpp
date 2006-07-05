@@ -66,7 +66,7 @@ XToString( StatLine, NUM_StatLine );
 #define SHOW_JUDGMENT( l )		THEME->GetMetricB(m_sName,"Show"+JudgeLineToString(l))
 #define SHOW_STATS_LABELS		THEME->GetMetricB(m_sName,"ShowStatsLabels")
 
-#define SHOW_STAT( s )			THEME->GetMetricB(m_sName,"Show"+StatLineToString(l))
+#define SHOW_STAT( s )			THEME->GetMetricB(m_sName,"Show"+StatLineToString(s))
 #define SHOW_SCORE_AREA			THEME->GetMetricB(m_sName,"ShowScoreArea")
 #define SHOW_TOTAL_SCORE_AREA		THEME->GetMetricB(m_sName,"ShowTotalScoreArea")
 #define SHOW_TIME_AREA			THEME->GetMetricB(m_sName,"ShowTimeArea")
