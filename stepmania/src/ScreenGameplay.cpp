@@ -2181,6 +2181,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 	if( GAMESTATE->m_bMultiplayer )
 	{
 		if( input.mp != MultiPlayer_INVALID  &&  
+			input.type==IET_FIRST_PRESS &&
 			input.StyleI.IsValid() && 
 			GAMESTATE->IsMultiPlayerEnabled(input.mp) )
 		{
