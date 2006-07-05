@@ -28,16 +28,16 @@ public:
 
 	vector<Steps*>  vpPlayedSteps;
 	vector<Steps*>  vpPossibleSteps;
-	float	fAliveSeconds;		// how far into the music did they last before failing?  Updated by Gameplay, scaled by music rate.
+	float		fAliveSeconds; // how far into the music did they last before failing?  Updated by Gameplay, scaled by music rate.
 
 	/* Set if the player actually failed at any point during the song.  This is always
 	 * false in FAIL_OFF.  If recovery is enabled and two players are playing,
 	 * this is only set if both players were failing at the same time. */
-	bool	bFailed;
+	bool		bFailed;
 
 	/* This indicates whether the player bottomed out his bar/ran out of lives at some
 	 * point during the song.  It's set in all fail modes. */
-	bool	bFailedEarlier;
+	bool		bFailedEarlier;
 	int		iPossibleDancePoints;
 	int		iCurPossibleDancePoints;
 	int		iActualDancePoints;
@@ -52,20 +52,20 @@ public:
 	int		iMaxScore;
 	int		iBonus;  // bonus to be added on screeneval
 	RadarValues	radarPossible;	// filled in by ScreenGameplay on start of notes
-	RadarValues radarActual;
+	RadarValues	radarActual;
 	/* The number of songs played and passed, respectively. */
 	int		iSongsPassed;
 	int		iSongsPlayed;
 	int		iTotalError;
-	float	fLifeRemainingSeconds;	// used in survival
+	float		fLifeRemainingSeconds;	// used in survival
 
 	// workout
-	float	fCaloriesBurned;
+	float		fCaloriesBurned;
 
-	TapNoteScore tnsLast;
-	HoldNoteScore hnsLast;
+	TapNoteScore	tnsLast;
+	HoldNoteScore	hnsLast;
 
-	map<float,float>	fLifeRecord;
+	map<float,float> fLifeRecord;
 	void	SetLifeRecordAt( float fLife, float fStepsSecond );
 	void	GetLifeRecord( float *fLifeOut, int iNumSamples, float fStepsEndSecond ) const;
 	float	GetLifeRecordAt( float fStepsSecond ) const;
@@ -91,15 +91,15 @@ public:
 		bool IsZero() const { return fStartSecond < 0; }
 	};
 	vector<Combo_t> ComboList;
-	float fFirstSecond;
-	float fLastSecond;
+	float		fFirstSecond;
+	float		fLastSecond;
 
-	int		GetComboAtStartOfStage() const;
+	int	GetComboAtStartOfStage() const;
 	bool	FullComboOfScore( TapNoteScore tnsAllGreaterOrEqual ) const;
 	bool	FullCombo() const { return FullComboOfScore(TNS_W3); }
 	bool	SingleDigitsOfScore( TapNoteScore tnsAllGreaterOrEqual ) const;
 	bool	OneOfScore( TapNoteScore tnsAllGreaterOrEqual ) const;
-	int		GetTotalTaps() const;
+	int	GetTotalTaps() const;
 	float	GetPercentageOfTaps( TapNoteScore tns ) const;
 	void	UpdateComboList( float fSecond, bool rollover );
 	Combo_t GetMaxCombo() const;
@@ -111,10 +111,10 @@ public:
 	PerDifficultyAward m_pdaToShow;
 	PeakComboAward m_pcaToShow;
 
-	int m_iPersonalHighScoreIndex;
-	int m_iMachineHighScoreIndex;
-	RankingCategory m_rc;
-	HighScore m_HighScore;
+	int		m_iPersonalHighScoreIndex;
+	int		m_iMachineHighScoreIndex;
+	RankingCategory	m_rc;
+	HighScore	m_HighScore;
 
 	// Lua
 	void PushSelf( lua_State *L );

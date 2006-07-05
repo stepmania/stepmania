@@ -152,11 +152,11 @@ void StatsManager::CommitStatsToProfiles()
 	FOREACH_HumanPlayer( pn )
 	{
 		int iNumTapsAndHolds	= (int) m_CurStageStats.m_player[pn].radarActual[RadarCategory_TapsAndHolds];
-		int iNumJumps			= (int) m_CurStageStats.m_player[pn].radarActual[RadarCategory_Jumps];
-		int iNumHolds			= (int) m_CurStageStats.m_player[pn].radarActual[RadarCategory_Holds];
-		int iNumRolls			= (int) m_CurStageStats.m_player[pn].radarActual[RadarCategory_Rolls];
-		int iNumMines			= (int) m_CurStageStats.m_player[pn].radarActual[RadarCategory_Mines];
-		int iNumHands			= (int) m_CurStageStats.m_player[pn].radarActual[RadarCategory_Hands];
+		int iNumJumps		= (int) m_CurStageStats.m_player[pn].radarActual[RadarCategory_Jumps];
+		int iNumHolds		= (int) m_CurStageStats.m_player[pn].radarActual[RadarCategory_Holds];
+		int iNumRolls		= (int) m_CurStageStats.m_player[pn].radarActual[RadarCategory_Rolls];
+		int iNumMines		= (int) m_CurStageStats.m_player[pn].radarActual[RadarCategory_Mines];
+		int iNumHands		= (int) m_CurStageStats.m_player[pn].radarActual[RadarCategory_Hands];
 		float fCaloriesBurned	= m_CurStageStats.m_player[pn].fCaloriesBurned;
 		PROFILEMAN->AddStepTotals( pn, iNumTapsAndHolds, iNumJumps, iNumHolds, iNumRolls, iNumMines, iNumHands, fCaloriesBurned );
 	}
