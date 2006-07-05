@@ -120,6 +120,12 @@ static void MovePref( int &iSel, bool bToSel, const ConfOption *pConfOption )
 	}
 }
 
+static void MoveNop( int &iSel, bool bToSel, const ConfOption *pConfOption )
+{
+	if( bToSel )
+		iSel = 0;
+}
+
 static void GameChoices( vector<RString> &out )
 {
 	vector<const Game*> aGames;
@@ -684,6 +690,8 @@ static void InitializeConfOptions()
 
 	/* Editor options */
 	ADD( ConfOption( "EditorShowBGChangesPlay",	MovePref,		"Hide","Show") );
+
+	ADD( ConfOption( "Invalid",			MoveNop,		"|Invalid option") );
 }
 
 /* Get a mask of effects to apply if the given option changes. */

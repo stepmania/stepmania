@@ -997,7 +997,11 @@ public:
 
 		ConfOption *pConfOption = ConfOption::Find( sParam );
 		if( pConfOption == NULL )
-			RageException::Throw( "Invalid Conf type \"%s\"", sParam.c_str() );
+		{
+			LOG->Warn( "Invalid Conf type \"%s\"", sParam.c_str() );
+			pConfOption = ConfOption::Find( "Invalid" );
+			ASSERT_M( pConfOption != NULL, "ConfOption::Find(Invalid)" );
+		}
 
    		pConfOption->UpdateAvailableOptions();
 
