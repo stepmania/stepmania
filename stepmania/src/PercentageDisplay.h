@@ -41,6 +41,8 @@ private:
 	int m_LastMax;
 	BitmapText	m_textPercent;
 	BitmapText	m_textPercentRemainder;
+
+	LuaExpression m_Format;
 };
 
 #endif

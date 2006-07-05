@@ -22,6 +22,8 @@ PercentageDisplay::PercentageDisplay()
 
 	m_Last = -1;
 	m_LastMax = -1;
+
+	m_Format.SetFromExpression( THEME->GetMetric("MultiplayerEvalScoreRow","NumberOnCommandFunction") );
 }
 
 void PercentageDisplay::LoadFromNode( const RString& sDir, const XNode* pNode )
@@ -30,6 +32,9 @@ void PercentageDisplay::LoadFromNode( const RString& sDir, const XNode* pNode )
 	pNode->GetAttrValue( "PercentUseRemainder", m_bUseRemainder );
 	pNode->GetAttrValue( "ApplyScoreDisplayOptions", m_bApplyScoreDisplayOptions );
 	pNode->GetAttrValue( "AutoRefresh", m_bAutoRefresh );
+	RString sStr = "FormatPercentScore";
+	pNode->GetAttrValue( "Format", sStr );
+	m_Format.SetFromExpression( sStr );
 
 	const XNode *pChild = pNode->GetChild( "Percent" );
 	if( pChild == NULL )
@@ -67,6 +72,7 @@ void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStage
 	m_iDancePointsDigits = THEME->GetMetricI( sMetricsGroup, "DancePointsDigits" );
 	m_bUseRemainder = THEME->GetMetricB( sMetricsGroup, "PercentUseRemainder" );
 	m_bApplyScoreDisplayOptions = THEME->GetMetricB( sMetricsGroup, "ApplyScoreDisplayOptions" );
+	m_Format.SetFromExpression( THEME->GetMetric(sMetricsGroup,"Format") );
 
 
 	if( PREFSMAN->m_bDancePointsForOni )
@@ -153,7 +159,14 @@ void PercentageDisplay::Refresh()
 		}
 		else
 		{		
-			sNumToDisplay = FormatPercentScore( fPercentDancePoints );
+			Lua *L = LUA->Get();
+			m_Format.PushSelf( L );
+			ASSERT( !lua_isnil(L, -1) );
+			LuaHelpers::Push( fPercentDancePoints, L );
+			lua_call( L, 1, 1 ); // 1 args, 1 result
+			sNumToDisplay = lua_tostring( L, -1 );
+			lua_pop( L, 1 );
+			LUA->Release(L);
 			
 			// HACK: Use the last frame in the numbers texture as '-'
 			sNumToDisplay.Replace('-','x');
