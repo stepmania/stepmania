@@ -1,7 +1,7 @@
 
 PRELIMINARY - - - - - - - - 05/03/2004
-Protocol version not yet 2.  
-  But 0x02 will be its version for inter-prtocol purposes.
+Protocol version 4  
+  But 0x04 will be its version for inter-prtocol purposes.
 
 This protocol is only intended to replace current protocol.  Because current protocol
 not expanable
@@ -91,6 +91,7 @@ CLIENT to SERVER protocol:
  Payload:
     Size	Description
     MSN		Player #
+Protocol <= 2
     LSN		StepID 
 		1: Miss
 		2: W5
@@ -100,6 +101,18 @@ CLIENT to SERVER protocol:
 		6: W1
 		7: LetGo
 		8: Held
+Protocol >= 3
+    LSN		StepID
+		1: HitMine
+		2: AvoidMine  
+		3: Miss
+		4: W5
+		5: W4
+		6: W3
+		7: W2
+		8: W1
+		9: LetGo
+		10: Held
 
     MSN		Projected Grade (StepMania enum int)
     LSN		Reserved
