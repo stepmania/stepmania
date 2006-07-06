@@ -339,6 +339,10 @@ void ScoreKeeperNormal::HandleTapScore( TapNoteScore score )
 		if( !m_pPlayerStageStats->bFailed )
 			m_pPlayerStageStats->iActualDancePoints += TapNoteScoreToDancePoints( TNS_HitMine );
 		m_pPlayerStageStats->iTapNoteScores[TNS_HitMine] += 1;
+		
+		NSMAN->ReportScore( m_pPlayerState->m_PlayerNumber, score,
+			m_pPlayerStageStats->iScore,
+			m_pPlayerStageStats->iCurCombo );
 	}
 }
 
