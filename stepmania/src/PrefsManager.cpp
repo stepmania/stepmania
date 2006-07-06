@@ -159,6 +159,11 @@ void ValidateRandomBackgroundMode( PrefsManager::RandomBackgroundMode &val )
 	CLAMP((int&)val,0,PrefsManager::NUM_RandomBackgroundMode-1);
 }
 
+void ValidateCourseSortOrder( PrefsManager::CourseSortOrders &val )
+{
+	CLAMP((int&)val,0,PrefsManager::NUM_COURSE_SORT_ORDER-1);
+}
+
 
 PrefsManager::PrefsManager() :
 	m_sCurrentGame		( "CurrentGame",		"" ),
@@ -289,7 +294,7 @@ PrefsManager::PrefsManager() :
 	m_bAnisotropicFiltering		( "AnisotropicFiltering",		0 ),
 
 	m_bSignProfileData		( "SignProfileData",			false ),
-	m_CourseSortOrder		( "CourseSortOrder",			COURSE_SORT_SONGS ),
+	m_CourseSortOrder		( "CourseSortOrder",			COURSE_SORT_SONGS, ValidateCourseSortOrder ),
 	m_bSubSortByNumSteps		( "SubSortByNumSteps",			false ),
 	m_GetRankingName		( "GetRankingName",			RANKING_ON ),
 	m_ScoringType			( "ScoringType",			SCORING_NEW ),
