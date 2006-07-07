@@ -56,7 +56,6 @@ public:
 	/* The number of songs played and passed, respectively. */
 	int		iSongsPassed;
 	int		iSongsPlayed;
-	int		iTotalError;
 	float		fLifeRemainingSeconds;	// used in survival
 
 	// workout

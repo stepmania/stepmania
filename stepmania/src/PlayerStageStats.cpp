@@ -30,8 +30,6 @@ void PlayerStageStats::Init()
 	iPossibleGradePoints = 0;
 	iCurCombo = iMaxCombo = iCurMissCombo = iScore = iBonus = iMaxScore = iCurMaxScore = 0;
 	iSongsPassed = iSongsPlayed = 0;
-	iTotalError = 0;
-	iTotalError = 0;
 	fLifeRemainingSeconds = 0;
 	fCaloriesBurned = 0;
 	tnsLast = TNS_INVALID;
@@ -81,7 +79,6 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 	radarActual += other.radarActual;
 	iSongsPassed += other.iSongsPassed;
 	iSongsPlayed += other.iSongsPlayed;
-	iTotalError += other.iTotalError;
 	fCaloriesBurned += other.fCaloriesBurned;
 	fLifeRemainingSeconds = other.fLifeRemainingSeconds;	// don't accumulate
 

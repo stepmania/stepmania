@@ -147,7 +147,6 @@ protected:
 	ThemeMetric<bool>	HOLD_JUDGMENTS_UNDER_FIELD;
 	ThemeMetric<int>	START_DRAWING_AT_PIXELS;
 	ThemeMetric<int>	STOP_DRAWING_AT_PIXELS;
-	ThemeMetric<int>	MAX_PRO_TIMING_ERROR;
 	
 #define NUM_REVERSE 2
 #define NUM_CENTERED 2

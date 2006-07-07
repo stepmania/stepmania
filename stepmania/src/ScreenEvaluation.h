@@ -26,7 +26,6 @@ enum JudgeLine
 	JudgeLine_Miss, 
 	JudgeLine_Held, 
 	JudgeLine_MaxCombo, 
-	JudgeLine_Error, 
 	NUM_JudgeLine
 };
 enum StatLine

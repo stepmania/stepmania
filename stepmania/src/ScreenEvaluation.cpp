@@ -40,7 +40,7 @@ const int NUM_SCORE_DIGITS = 9;
 #define BANNER_HEIGHT			THEME->GetMetricF(m_sName,"BannerHeight")
 static const char *JudgeLineNames[] =
 {
-	"W1", "W2", "W3", "W4", "W5", "Miss", "Held", "MaxCombo", "TotalError"
+	"W1", "W2", "W3", "W4", "W5", "Miss", "Held", "MaxCombo"
 };
 XToString( JudgeLine, NUM_JudgeLine );
 #define FOREACH_JudgeLine( rc ) FOREACH_ENUM( JudgeLine, NUM_JudgeLine, rc )
@@ -194,8 +194,6 @@ void ScreenEvaluation::Init()
 		STATSMAN->GetFinalEvalStageStats( STATSMAN->m_CurStageStats );
 
 	m_bFailed = STATSMAN->m_CurStageStats.AllFailed();
-
-	LOG->Trace( "total error: %i, %i", STATSMAN->m_CurStageStats.m_player[PLAYER_1].iTotalError, STATSMAN->m_CurStageStats.m_player[PLAYER_2].iTotalError );
 
 /*
 	//
@@ -502,7 +500,6 @@ void ScreenEvaluation::Init()
 				case JudgeLine_Miss:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Miss];	break;
 				case JudgeLine_Held:		iValue = STATSMAN->m_CurStageStats.m_player[p].iHoldNoteScores[HNS_Held];	break;
 				case JudgeLine_MaxCombo:	iValue = STATSMAN->m_CurStageStats.m_player[p].GetMaxCombo().cnt;			break;
-				case JudgeLine_Error:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTotalError;					break;
 				default:	iValue = 0;	ASSERT(0);
 				}
 

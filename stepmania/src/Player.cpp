@@ -149,7 +149,6 @@ void Player::Init(
 	HOLD_JUDGMENTS_UNDER_FIELD.Load(sType,"HoldJudgmentsUnderField");
 	START_DRAWING_AT_PIXELS.Load(sType,"StartDrawingAtPixels");
 	STOP_DRAWING_AT_PIXELS.Load(sType,"StopDrawingAtPixels");
-	MAX_PRO_TIMING_ERROR.Load(sType,"MaxProTimingError");
 
 	if( m_pJudgment )
 	{
@@ -702,11 +701,6 @@ void Player::Update( float fDeltaTime )
 					MESSAGEMAN->Broadcast( enum_add2(Message_ShowHoldJudgmentMuliPlayerP1,m_pPlayerState->m_mp) );
 
 				m_vHoldJudgment[iTrack]->SetHoldJudgment( hns );
-
-				int ms_error = (hns == HNS_Held)? 0:MAX_PRO_TIMING_ERROR;
-
-				if( m_pPlayerStageStats )
-					m_pPlayerStageStats->iTotalError += ms_error;
 			}
 
 			tn.HoldResult.fLife = fLife;
@@ -1259,15 +1253,6 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 		if( score != TNS_None )
 			tn.result.fTapNoteOffset = -fNoteOffset;
 
-		if( score != TNS_None && score != TNS_Miss )
-		{
-			int ms_error = (int) roundf( fSecondsFromExact * 1000 );
-			ms_error = min( ms_error, MAX_PRO_TIMING_ERROR.GetValue() );
-
-			if( m_pPlayerStageStats )
-				m_pPlayerStageStats->iTotalError += ms_error;
-		}
-
 		//LOG->Trace("XXX: %i col %i, at %f, music at %f, step was at %f, off by %f",
 		//	score, col, fStepSeconds, fCurrentMusicSeconds, fMusicSeconds, fNoteOffset );
 //		LOG->Trace("Note offset: %f (fSecondsFromExact = %f), Score: %i", fNoteOffset, fSecondsFromExact, score);
@@ -1471,8 +1456,6 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 				// A normal note.  Penalize for not stepping on it.
 				MissedNoteOnThisRow = true;
 				tn.result.tns =	TNS_Miss;
-				if( m_pPlayerStageStats )
-					m_pPlayerStageStats->iTotalError += MAX_PRO_TIMING_ERROR;
 			}
 
 			m_NoteData.SetTapNote( t, r, tn );
