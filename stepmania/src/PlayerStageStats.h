@@ -103,7 +103,7 @@ public:
 	void	UpdateComboList( float fSecond, bool rollover );
 	Combo_t GetMaxCombo() const;
 
-	float GetSurvivalSeconds() { return fAliveSeconds + fLifeRemainingSeconds; }
+	float GetSurvivalSeconds() const { return fAliveSeconds + fLifeRemainingSeconds; }
 
 	// Final results:
 	void CalcAwards( PlayerNumber p, bool bGaveUp, bool bUsedAutoplay );
