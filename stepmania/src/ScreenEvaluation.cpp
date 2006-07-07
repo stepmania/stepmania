@@ -492,15 +492,15 @@ void ScreenEvaluation::Init()
 				int iValue;
 				switch( l )
 				{
-				case JudgeLine_W1:			iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W1];		break;
-				case JudgeLine_W2:			iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W2];		break;
-				case JudgeLine_W3:			iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W3];		break;
-				case JudgeLine_W4:			iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W4];		break;
-				case JudgeLine_W5:			iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W5];		break;
+				case JudgeLine_W1:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W1];		break;
+				case JudgeLine_W2:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W2];		break;
+				case JudgeLine_W3:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W3];		break;
+				case JudgeLine_W4:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W4];		break;
+				case JudgeLine_W5:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W5];		break;
 				case JudgeLine_Miss:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Miss];	break;
 				case JudgeLine_Held:		iValue = STATSMAN->m_CurStageStats.m_player[p].iHoldNoteScores[HNS_Held];	break;
-				case JudgeLine_MaxCombo:	iValue = STATSMAN->m_CurStageStats.m_player[p].GetMaxCombo().cnt;			break;
-				default:	iValue = 0;	ASSERT(0);
+				case JudgeLine_MaxCombo:	iValue = STATSMAN->m_CurStageStats.m_player[p].GetMaxCombo().cnt;		break;
+				DEFAULT_FAIL( l );
 				}
 
 				// UGLY... generalize this
