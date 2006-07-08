@@ -311,6 +311,8 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 			 0==stricmp(sValueName,"STARTTIME2") ||
 			 0==stricmp(sValueName,"STARTTIME3") )
 		{
+			/* TICKCOUNT, STEP, and DIFFICULTY are handled in LoadFromKSFFile.
+			 * STARTTIME[23] are expected but unnecessary. Do not warn. */
 			continue;
 		}
 		else
