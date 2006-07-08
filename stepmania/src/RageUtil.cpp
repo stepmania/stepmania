@@ -946,7 +946,7 @@ float calc_stddev( const float *pStart, const float *pEnd )
 	float fDev = 0.0f;
 	for( const float *i=pStart; i != pEnd; ++i )
 		fDev += (*i - fMean) * (*i - fMean);
-	fDev /= distance( pStart, pEnd ) - 1;
+	fDev /= distance( pStart, pEnd );
 	fDev = sqrtf( fDev );
 
 	return fDev;
