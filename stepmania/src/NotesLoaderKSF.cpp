@@ -297,6 +297,9 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 				 0==stricmp(sValueName,"STEP") ||
 				 0==stricmp(sValueName,"DIFFICULTY"))
 			; /* Handled in LoadFromKSFFile; don't warn. */
+		else if( 0==stricmp(sValueName,"STARTTIME2") ||
+			     0==stricmp(sValueName,"STARTTIME3"))
+		    continue; /* Expected value for other Pump Simulators: don't worry about it here. */
 		else
 			LOG->Trace( "Unexpected value named '%s'", sValueName.c_str() );
 	}
