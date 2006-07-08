@@ -231,6 +231,7 @@ PrefsManager::PrefsManager() :
 	m_fTimeMeterSecondsChange	( TimeMeterSecondsChangeInit,	NUM_ScoreEvent ),
 
 	m_AutoPlay			( "AutoPlay",			PC_HUMAN ),
+	m_bShowAutoPlayStatus		( "ShowAutoPlayStatus",		true ),
 	m_bDelayedBack			( "DelayedBack",		true ),
 	m_bShowInstructions		( "ShowInstructions",		true ),
 	m_bShowSelectGroup		( "ShowSelectGroup",		false ),

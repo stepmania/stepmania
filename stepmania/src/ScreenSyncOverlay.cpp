@@ -85,12 +85,15 @@ void ScreenSyncOverlay::UpdateText()
 {
 	vector<RString> vs;
 
-	switch( PREFSMAN->m_AutoPlay )
+	if( PREFSMAN->m_bShowAutoPlayStatus )
 	{
-	case PC_HUMAN:						break;
-	case PC_AUTOPLAY:	vs.push_back(AUTO_PLAY);	break;
-	case PC_CPU:		vs.push_back(AUTO_PLAY_CPU);	break;
-	default:	ASSERT(0);
+		switch( PREFSMAN->m_AutoPlay )
+		{
+		case PC_HUMAN:						break;
+		case PC_AUTOPLAY:	vs.push_back(AUTO_PLAY);	break;
+		case PC_CPU:		vs.push_back(AUTO_PLAY_CPU);	break;
+		default:	ASSERT(0);
+		}
 	}
 
 	switch( GAMESTATE->m_SongOptions.m_AutosyncType )
