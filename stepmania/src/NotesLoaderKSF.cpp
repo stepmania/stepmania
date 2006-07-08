@@ -190,14 +190,17 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 			{
 				int iEndKSFRow = r-1;
 				int iEndRow = (iEndKSFRow * ROWS_PER_BEAT) / iTickCount;
-				notedata.AddHoldNote( t, iHoldStartRow[t], iEndRow , TAP_ORIGINAL_HOLD_HEAD );
+				if( iHoldStartRow[t] == iEndRow )
+					notedata.SetTapNote( t, iHoldStartRow[t], TAP_ORIGINAL_TAP );
+				else
+					notedata.AddHoldNote( t, iHoldStartRow[t], iEndRow , TAP_ORIGINAL_HOLD_HEAD );
 				iHoldStartRow[t] = -1;
 			}
 
 			TapNote tap;
 			switch(sRowString[t])
 			{
-			case '0':	tap = TAP_EMPTY;			break;
+			case '0':	tap = TAP_EMPTY;		break;
 			case '1':	tap = TAP_ORIGINAL_TAP;		break;
 			default:
 				LOG->Warn( "File %s had an invalid row (\"%s\"); corrupt notes ignored",
