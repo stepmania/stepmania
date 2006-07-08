@@ -70,7 +70,7 @@ void LyricDisplay::Update( float fDeltaTime )
 	 * skip it. */
 	float fShowLength = clamp( fDistance - fTweenBufferTime, 0.0f, 3.0f );
 
-	// make lyrics show faster a larger song rates.
+	// Make lyrics show faster for faster song rates.
 	fShowLength /= GAMESTATE->m_SongOptions.m_fMusicRate;
 
 	for( int i=0; i<2; i++ )
