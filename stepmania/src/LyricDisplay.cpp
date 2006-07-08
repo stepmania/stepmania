@@ -55,12 +55,7 @@ void LyricDisplay::Update( float fDeltaTime )
 	if( GAMESTATE->m_fMusicSeconds < fStartTime )
 		return;
 
-	const float MaxDisplayTime = 10;
-
-	float fShowLength = MaxDisplayTime;
-
-	/* Clamp this lyric to the beginning of the next, the end of the music,
-	 * or 5 seconds. */
+	/* Clamp this lyric to the beginning of the next, the end of the music, or 3 seconds. */
 	float fEndTime;
 	if( m_iCurLyricNumber+1 < GAMESTATE->m_pCurSong->m_LyricSegments.size() )
 		fEndTime = pSong->m_LyricSegments[m_iCurLyricNumber+1].m_fStartTime;
@@ -70,13 +65,10 @@ void LyricDisplay::Update( float fDeltaTime )
 	const float fDistance = fEndTime - pSong->m_LyricSegments[m_iCurLyricNumber].m_fStartTime;
 	const float fTweenBufferTime = g_fTweenInTime + g_fTweenOutTime;
 
-	fShowLength = min( fShowLength, fDistance - fTweenBufferTime );
-	fShowLength = min( fShowLength, 3 );
-
 	/* If it's negative, two lyrics are so close together that there's no time
 	 * to tween properly.  Lyrics should never be this brief, anyway, so just
 	 * skip it. */
-	fShowLength = max( fShowLength, 0 );
+	float fShowLength = clamp( fDistance - fTweenBufferTime, 0.0f, 3.0f );
 
 	// make lyrics show faster a larger song rates.
 	fShowLength /= GAMESTATE->m_SongOptions.m_fMusicRate;
