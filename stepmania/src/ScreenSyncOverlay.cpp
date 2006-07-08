@@ -77,6 +77,8 @@ void ScreenSyncOverlay::Update( float fDeltaTime )
 	UpdateText();
 }
 
+static Preference<bool>		g_bShowAutoPlayStatus( "ShowAutoPlayStatus", true );
+
 static LocalizedString AUTO_PLAY		( "ScreenSyncOverlay", "AutoPlay" );
 static LocalizedString AUTO_PLAY_CPU		( "ScreenSyncOverlay", "AutoPlayCPU" );
 static LocalizedString AUTO_SYNC_SONG		( "ScreenSyncOverlay", "AutoSync Song" );
@@ -85,7 +87,7 @@ void ScreenSyncOverlay::UpdateText()
 {
 	vector<RString> vs;
 
-	if( PREFSMAN->m_bShowAutoPlayStatus )
+	if( g_bShowAutoPlayStatus )
 	{
 		switch( PREFSMAN->m_AutoPlay )
 		{

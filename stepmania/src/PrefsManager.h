@@ -110,7 +110,6 @@ public:
 	Preference1D<float>	m_fTimeMeterSecondsChange;
 
 	Preference<PlayerController,int> m_AutoPlay;
-	Preference<bool>	m_bShowAutoPlayStatus;
 	Preference<bool>	m_bDelayedBack;
 	Preference<bool>	m_bShowInstructions;
 	Preference<bool>	m_bShowSelectGroup;
