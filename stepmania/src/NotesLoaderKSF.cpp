@@ -79,16 +79,22 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 		if( 0==stricmp(sValueName,"TICKCOUNT") )
 		{
 			iTickCount = atoi( sParams[1] );
+			if( iTickCount <= 0 )
+			{
+				// XXX need a place for user warnings.
+				LOG->Warn( "Invalid tick count: %d", iTickCount );
+				return false;
+			}
 		}
 		else if( 0==stricmp(sValueName,"STEP") )
 		{
 			RString step = sParams[1];
-			TrimLeft(step);
+			TrimLeft( step );
 			split( step, "\n", asRows, true );
 		}
 		else if( 0==stricmp(sValueName,"DIFFICULTY") )
 		{
-			out.SetMeter( atoi(sParams[1]) );
+			out.SetMeter( max(atoi(sParams[1]), 0) );
 		}
 	}
 
