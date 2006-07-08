@@ -506,21 +506,6 @@ bool FileCopy( const RString &sSrcFile, const RString &sDstFile );
 bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bReadError = NULL );
 
 template<class T>
-bool VectorsAreEqual( const T &a, const T &b )
-{
-	if( a.size() != b.size() )
-		return false;
-	
-	for( unsigned i=0; i<a.size(); i++ )
-	{
-		if( a[i] != b[i] )
-			return false;
-	}
-	
-	return true;
-}
-
-template<class T>
 void GetAsNotInBs( const vector<T> &as, const vector<T> &bs, vector<T> &difference )
 {
 	vector<T> bsUnmatched = bs;
