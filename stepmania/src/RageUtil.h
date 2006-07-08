@@ -41,19 +41,19 @@ inline U lerp( T x, U l, U h )
 
 inline bool CLAMP( int &x, int l, int h )
 {
-	if (x > h)		{ x = h; return true; }
+	if (x > h)	{ x = h; return true; }
 	else if (x < l) { x = l; return true; }
 	return false;
 }
 inline bool CLAMP( unsigned &x, unsigned l, unsigned h )
 {
-	if (x > h)		{ x = h; return true; }
+	if (x > h)	{ x = h; return true; }
 	else if (x < l) { x = l; return true; }
 	return false;
 }
 inline bool CLAMP( float &x, float l, float h )
 {
-	if (x > h)		{ x = h; return true; }
+	if (x > h)	{ x = h; return true; }
 	else if (x < l) { x = l; return true; }
 	return false;
 }
@@ -123,14 +123,14 @@ inline void RemoveIf( Container& c, Predicate p )
 inline uint32_t Swap32( uint32_t n )
 {
 	return (n >> 24) |
-			((n >>  8) & 0x0000FF00) |
-			((n <<  8) & 0x00FF0000) |
-			(n << 24);
+		((n >>  8) & 0x0000FF00) |
+		((n <<  8) & 0x00FF0000) |
+		(n << 24);
 }
 
 inline uint32_t Swap24( uint32_t n )
 {
-	return Swap32(n) >> 8; // xx223344 -> 443322xx -> 00443322
+	return Swap32( n ) >> 8; // xx223344 -> 443322xx -> 00443322
 }
 
 inline uint16_t Swap16( uint16_t n )
