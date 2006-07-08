@@ -4,8 +4,8 @@
 #include "GameState.h"
 #include "ThemeMetric.h"
 
-static ThemeMetric<apActorCommands>	IN_COMMAND		("LyricDisplay","InCommand");
-static ThemeMetric<apActorCommands>	OUT_COMMAND		("LyricDisplay","OutCommand");
+static ThemeMetric<apActorCommands>	IN_COMMAND	("LyricDisplay","InCommand");
+static ThemeMetric<apActorCommands>	OUT_COMMAND	("LyricDisplay","OutCommand");
 static ThemeMetric<RageColor>		WIPE_DIM_FACTOR	("LyricDisplay","WipeDimFactor");
 
 static float g_fTweenInTime, g_fTweenOutTime;
