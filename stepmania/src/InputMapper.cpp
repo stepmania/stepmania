@@ -644,7 +644,7 @@ bool InputMapper::CheckForChangedInputDevicesAndRemap( RString &sMessageOut )
 	}
 
 
-	bool bJoysticksChanged = !VectorsAreEqual(vsCurrentJoysticks,vsLastSeenJoysticks);
+	bool bJoysticksChanged = vsCurrentJoysticks != vsLastSeenJoysticks;
 	if( !bJoysticksChanged )
 		return false;
 
