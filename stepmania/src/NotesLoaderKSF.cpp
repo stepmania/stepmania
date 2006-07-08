@@ -113,7 +113,7 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 			out.SetDifficulty(DIFFICULTY_MEDIUM);
 			if(!out.GetMeter()) out.SetMeter(5);
 		}
-		else if( sFName.find("easy") != string::npos )
+		else if( sFName.find("easy") != string::npos || sFName.find("normal") != string::npos )
 		{
 			out.SetDifficulty(DIFFICULTY_EASY);
 			if(!out.GetMeter()) out.SetMeter(2);
