@@ -69,10 +69,13 @@ public:
 	void SetPaused( bool bPaused ) { m_bPaused = bPaused; }
 
 	float GetMaxStepDistanceSeconds();
+	// Returns -1 if no notes are close, otherwise return the distance to a nongraded note.
+	int GetClosestNoteDistance( int col, int row ) const;
 
 	NoteData m_NoteData;
 	
 	bool HasNoteField() { return m_pNoteField != NULL; }
+	void SetSharedNoteField( Player *pPlayer );
 
 protected:
 	void HandleStep( int col, const RageTimer &tm, bool bHeld );

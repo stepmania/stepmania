@@ -443,6 +443,12 @@ void Player::Load( const NoteData& noteData )
 	}
 }
 
+void Player::SetSharedNoteField( Player *pPlayer )
+{
+	ASSERT( m_pNoteField );
+	m_pNoteField->SetSharedNoteField( pPlayer->m_pNoteField );
+}
+
 void Player::Update( float fDeltaTime )
 {
 	// Don't update if we havn't been loaded yet.
@@ -921,6 +927,16 @@ int Player::GetClosestNote( int col, int iNoteRow, int iMaxRowsAhead, int iMaxRo
 		return iPrevIndex;
 	else
 		return iNextIndex;
+}
+
+int Player::GetClosestNoteDistance( int col, int row ) const
+{
+	const int iStepSearchRows = BeatToNoteRow( StepSearchDistance * GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate );
+	int iIndexOverlappingNote = GetClosestNote( col, row, iStepSearchRows, iStepSearchRows, false );
+	
+	if( iIndexOverlappingNote <= 0 )
+		return iIndexOverlappingNote;
+	return abs( iIndexOverlappingNote - row );
 }
 
 
