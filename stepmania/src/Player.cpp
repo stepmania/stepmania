@@ -443,12 +443,6 @@ void Player::Load( const NoteData& noteData )
 	}
 }
 
-void Player::SetSharedNoteField( Player *pPlayer )
-{
-	ASSERT( m_pNoteField );
-	m_pNoteField->SetSharedNoteField( pPlayer->m_pNoteField );
-}
-
 void Player::Update( float fDeltaTime )
 {
 	// Don't update if we havn't been loaded yet.

@@ -7,20 +7,16 @@ REGISTER_SCREEN_CLASS( ScreenGameplayShared );
 
 void ScreenGameplayShared::FillPlayerInfo( vector<PlayerInfo> &vPlayerInfoOut )
 {
-	PlayerNumber mpn = GAMESTATE->m_MasterPlayerNumber;
+	//PlayerNumber mpn = GAMESTATE->m_MasterPlayerNumber;
 	
 	vPlayerInfoOut.resize( NUM_PLAYERS );
 	FOREACH_PlayerNumber( pn )
 		vPlayerInfoOut[pn].Load( pn, MultiPlayer_INVALID, true );
-	FOREACH_PlayerNumber( pn )
-	{
-		if( pn != mpn )
-			vPlayerInfoOut[pn].m_pPlayer->SetSharedNoteField( vPlayerInfoOut[mpn].m_pPlayer );
-	}
 }
 
 PlayerInfo &ScreenGameplayShared::GetPlayerInfoForInput( const InputEventPlus& iep )
 {
+#if 0
 	const float fPositionSeconds = GAMESTATE->m_fMusicSeconds - iep.DeviceI.ts.Ago();
 	const float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
 	const int row = BeatToNoteRow( fSongBeat );
@@ -39,6 +35,9 @@ PlayerInfo &ScreenGameplayShared::GetPlayerInfoForInput( const InputEventPlus& i
 		index = i;
 	}
 	return m_vPlayerInfo[index];
+#else
+	return ScreenGameplay::GetPlayerInfoForInput( iep );
+#endif
 }
 
 /*

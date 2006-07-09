@@ -75,7 +75,6 @@ public:
 	NoteData m_NoteData;
 	
 	bool HasNoteField() { return m_pNoteField != NULL; }
-	void SetSharedNoteField( Player *pPlayer );
 
 protected:
 	void HandleStep( int col, const RageTimer &tm, bool bHeld );
