@@ -1,13 +1,44 @@
 #include "global.h"
 #include "ScreenGameplayShared.h"
 #include "GameState.h"
+#include "Player.h"
 
 REGISTER_SCREEN_CLASS( ScreenGameplayShared );
 
 void ScreenGameplayShared::FillPlayerInfo( vector<PlayerInfo> &vPlayerInfoOut )
 {
-	vPlayerInfoOut.resize( 1 );
-	vPlayerInfoOut.front().Load( GAMESTATE->m_MasterPlayerNumber, MultiPlayer_INVALID, true );
+	PlayerNumber mpn = GAMESTATE->m_MasterPlayerNumber;
+	
+	vPlayerInfoOut.resize( NUM_PLAYERS );
+	FOREACH_PlayerNumber( pn )
+		vPlayerInfoOut[pn].Load( pn, MultiPlayer_INVALID, true );
+	FOREACH_PlayerNumber( pn )
+	{
+		if( pn != mpn )
+			vPlayerInfoOut[pn].m_pPlayer->SetSharedNoteField( vPlayerInfoOut[mpn].m_pPlayer );
+	}
+}
+
+PlayerInfo &ScreenGameplayShared::GetPlayerInfoForInput( const InputEventPlus& iep )
+{
+	const float fPositionSeconds = GAMESTATE->m_fMusicSeconds - iep.DeviceI.ts.Ago();
+	const float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
+	const int row = BeatToNoteRow( fSongBeat );
+	const int col = iep.StyleI.col;
+	int distance = INT_MAX;
+	size_t index = 0;
+	
+	for( size_t i = 0; i < m_vPlayerInfo.size(); ++i )
+	{
+		if( !m_vPlayerInfo[i].IsEnabled() )
+			continue;
+		int d = m_vPlayerInfo[i].m_pPlayer->GetClosestNoteDistance( col, row );
+		if( d == -1 || d >= distance)
+			continue;
+		distance = d;
+		index = i;
+	}
+	return m_vPlayerInfo[index];
 }
 
 /*
