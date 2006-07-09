@@ -47,7 +47,6 @@
 #include "Player.h"
 #include "DifficultyIcon.h"
 #include "DifficultyMeter.h"
-#include "InputEventPlus.h"
 #include "XmlFile.h"
 #include "Background.h"
 #include "Foreground.h"
@@ -2194,7 +2193,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 			
 			if( PREFSMAN->m_AutoPlay == PC_HUMAN )
 			{
-				PlayerInfo& pi = PlayerNumberToPlayerInfo( input.StyleI.player );
+				PlayerInfo& pi = GetPlayerInfoForInput( input );
 				pi.m_pPlayer->Step( input.StyleI.col, input.DeviceI.ts );
 			}
 		}

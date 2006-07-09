@@ -17,7 +17,7 @@
 #include "ThemeMetric.h"
 #include "PlayerStageStats.h"
 #include "PlayerState.h"
-#include "GameInput.h"
+#include "InputEventPlus.h"
 
 class LyricsLoader;
 class ActiveAttackList;
@@ -221,7 +221,7 @@ protected:
 
 	vector<PlayerInfo>	m_vPlayerInfo;	// filled by SGameplay derivatives in Init
 	virtual void FillPlayerInfo( vector<PlayerInfo> &vPlayerInfoOut ) = 0;
-	virtual PlayerInfo &PlayerNumberToPlayerInfo( PlayerNumber pn )  { return m_vPlayerInfo[pn]; }
+	virtual PlayerInfo &GetPlayerInfoForInput( const InputEventPlus& iep )  { return m_vPlayerInfo[iep.StyleI.player]; }
 };
 
 vector<PlayerInfo>::iterator GetNextEnabledPlayerInfo		( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &v );
