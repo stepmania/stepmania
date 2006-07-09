@@ -893,6 +893,23 @@ void NoteDataUtil::RemoveAllButOneTap( NoteData &inout, int row )
 	}
 }
 
+void NoteDataUtil::RemoveAllButPlayer( NoteData &inout, PlayerNumber pn )
+{
+	for( int track = 0; track < inout.GetNumTracks(); ++track )
+	{
+		NoteData::iterator i = inout.begin( track );
+		
+		while( i != inout.end(track) )
+		{
+			if( i->second.pn != pn && i->second.pn != PLAYER_INVALID )
+				inout.RemoveTapNote( track, i++ );
+			else
+				++i;
+		}
+	}
+}
+	
+
 static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int NumTracks, int *iTakeFromTrack )
 {
 	// Identity transform for cases not handled below.
