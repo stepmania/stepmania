@@ -39,6 +39,7 @@ public:
 	void DidHoldNote( int iCol, HoldNoteScore score, bool bBright );
 
 	const PlayerState *GetPlayerState() const { return m_pPlayerState; }
+	void SetSharedNoteField( NoteField *nf ) { m_pSharedNoteField = nf; }
 
 	int				m_iBeginMarker, m_iEndMarker;	// only used with MODE_EDIT
 
@@ -58,6 +59,7 @@ protected:
 	float GetWidth() const;
 
 	const NoteData *m_pNoteData;
+	const NoteField *m_pSharedNoteField;
 
 	float				m_fPercentFadeToFail;	// -1 if not fading to fail
 

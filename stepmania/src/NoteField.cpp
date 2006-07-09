@@ -23,6 +23,7 @@
 NoteField::NoteField()
 {	
 	m_pNoteData = NULL;
+	m_pSharedNoteField = NULL;
 	m_pCurDisplay = NULL;
 
 	m_textMeasureNumber.LoadFromFont( THEME->GetPathF("Common","normal") );
@@ -52,6 +53,7 @@ void NoteField::Unload()
 		delete it->second;
 	m_NoteDisplays.clear();
 	m_pCurDisplay = NULL;
+	m_pSharedNoteField = NULL;
 	memset( m_pDisplays, 0, sizeof(m_pDisplays) );
 }
 
@@ -214,6 +216,8 @@ float NoteField::GetWidth() const
 
 void NoteField::DrawBeatBar( const float fBeat )
 {
+	if( m_pSharedNoteField )
+		return;
 	bool bIsMeasure = fmodf( fBeat, (float)BEATS_PER_MEASURE ) == 0;
 	int iMeasureIndex = (int)fBeat / BEATS_PER_MEASURE;
 	int iMeasureNoDisplay = iMeasureIndex+1;
@@ -269,6 +273,8 @@ void NoteField::DrawBeatBar( const float fBeat )
 
 void NoteField::DrawMarkerBar( int iBeat )
 {
+	if( m_pSharedNoteField )
+		return;
 	float fBeat = NoteRowToBeat( iBeat );
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
 	const float fYPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
@@ -452,9 +458,11 @@ void NoteField::DrawPrimitives()
 	ArrowEffects::Update();
 
 	NoteDisplayCols *cur = m_pCurDisplay;
-	cur->m_ReceptorArrowRow.Draw();
+	if( !m_pSharedNoteField )
+		cur->m_ReceptorArrowRow.Draw(); // This will be handled by the shared NoteField
+	const NoteField &nf = m_pSharedNoteField ? *m_pSharedNoteField : *this;
 
-	const PlayerOptions &current_po = m_pPlayerState->m_CurrentPlayerOptions;
+	const PlayerOptions &current_po = nf.m_pPlayerState->m_CurrentPlayerOptions;
 
 	//
 	// Adjust draw range depending on some effects
@@ -712,7 +720,7 @@ void NoteField::DrawPrimitives()
 				if( m_iBeginMarker!=-1 && m_iEndMarker!=-1 )
 					bIsInSelectionRange = (m_iBeginMarker <= iStartRow && iEndRow < m_iEndMarker);
 				
-				NoteDisplayCols *displayCols = tn.pn == PLAYER_INVALID ? m_pCurDisplay : m_pDisplays[tn.pn];
+				NoteDisplayCols *displayCols = tn.pn == PLAYER_INVALID ? nf.m_pCurDisplay : nf.m_pDisplays[tn.pn];
 				displayCols->display[c].DrawHold( tn, c, iStartRow, bIsHoldingNote, bIsActive, Result, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, false, m_fYReverseOffsetPixels, (float) iFirstPixelToDraw, (float) iLastPixelToDraw );
 			}
 
@@ -773,7 +781,7 @@ void NoteField::DrawPrimitives()
 			bool bIsAddition = (tn.source == TapNote::addition);
 			bool bIsMine = (tn.type == TapNote::mine);
 			bool bIsAttack = (tn.type == TapNote::attack);
-			NoteDisplayCols *displayCols = tn.pn == PLAYER_INVALID ? m_pCurDisplay : m_pDisplays[tn.pn];
+			NoteDisplayCols *displayCols = tn.pn == PLAYER_INVALID ? nf.m_pCurDisplay : nf.m_pDisplays[tn.pn];
 			
 			if( bIsAttack )
 			{
@@ -789,7 +797,8 @@ void NoteField::DrawPrimitives()
 		}
 	}
 
-	cur->m_GhostArrowRow.Draw();
+	if( !m_pSharedNoteField )
+		cur->m_GhostArrowRow.Draw();
 }
 
 void NoteField::FadeToFail()
@@ -797,12 +806,12 @@ void NoteField::FadeToFail()
 	m_fPercentFadeToFail = max( 0.0f, m_fPercentFadeToFail );	// this will slowly increase every Update()
 		// don't fade all over again if this is called twice
 }
-
-void NoteField::Step( int iCol, TapNoteScore score ) { m_pCurDisplay->m_ReceptorArrowRow.Step( iCol, score ); }
-void NoteField::SetPressed( int iCol ) { m_pCurDisplay->m_ReceptorArrowRow.SetPressed( iCol ); }
-void NoteField::DidTapNote( int iCol, TapNoteScore score, bool bBright ) { m_pCurDisplay->m_GhostArrowRow.DidTapNote( iCol, score, bBright ); }
-void NoteField::DidHoldNote( int iCol, HoldNoteScore score, bool bBright ) { m_pCurDisplay->m_GhostArrowRow.DidHoldNote( iCol, score, bBright ); }
-
+#define nf (m_pSharedNoteField ? *m_pSharedNoteField : *this)
+void NoteField::Step( int iCol, TapNoteScore score ) { nf.m_pCurDisplay->m_ReceptorArrowRow.Step( iCol, score ); }
+void NoteField::SetPressed( int iCol ) { nf.m_pCurDisplay->m_ReceptorArrowRow.SetPressed( iCol ); }
+void NoteField::DidTapNote( int iCol, TapNoteScore score, bool bBright ) { nf.m_pCurDisplay->m_GhostArrowRow.DidTapNote( iCol, score, bBright ); }
+void NoteField::DidHoldNote( int iCol, HoldNoteScore score, bool bBright ) { nf.m_pCurDisplay->m_GhostArrowRow.DidHoldNote( iCol, score, bBright ); }
+#undef nf
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
