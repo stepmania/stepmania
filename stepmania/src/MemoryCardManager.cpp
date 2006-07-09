@@ -304,9 +304,9 @@ void MemoryCardManager::Update( float fDelta )
 	if( !g_pWorker->StorageDevicesChanged( m_vStorageDevices ) )
 		return;
 
-	MESSAGEMAN->Broadcast( Message_StorageDevicesChanged );
-
 	UpdateAssignments();
+
+	MESSAGEMAN->Broadcast( Message_StorageDevicesChanged );
 }
 
 /* Assign cards from m_vStorageDevices to m_Device. */
