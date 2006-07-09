@@ -961,7 +961,9 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 			/* Update attack bOn flags. */
 			pi->GetPlayerState()->Update(0);
 		}
-
+		
+		if( pi->m_pn != PLAYER_INVALID )
+			NoteDataUtil::RemoveAllButPlayer( ndTransformed, pi->m_pn );
 
 		// load player
 		{
