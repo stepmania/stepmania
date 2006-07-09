@@ -415,8 +415,11 @@ void NoteDataUtil::SplitCompositeNoteData( const NoteData &in, vector<NoteData> 
 			unsigned index = int( tn.pn );
 			
 			DEBUG_ASSERT( index < NUM_PlayerNumber );
-			if( out.size() <= index )
-				out.resize( index + 1 );
+			while( out.size() <= index )
+			{
+				out.push_back( NoteData() );
+				out.back().SetNumTracks( in.GetNumTracks() );
+			}
 			tn.pn = PLAYER_INVALID;
 			out[index].SetTapNote( t, row, tn );
 		}
