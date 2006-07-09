@@ -605,11 +605,11 @@ bool MemoryCardManager::MountCard( PlayerNumber pn, int iTimeout )
 
 /* Temporarily mount a specific card.  On unmount, the device will be reverted.  This is used
  * to access cards in the editor. */
-bool MemoryCardManager::MountCard( PlayerNumber pn, const UsbStorageDevice &d )
+bool MemoryCardManager::MountCard( PlayerNumber pn, const UsbStorageDevice &d, int iTimeout )
 {
 	m_Device[pn] = d;
 	CheckStateChanges();
-	return MountCard( pn );
+	return MountCard( pn, iTimeout );
 }
 
 /* Called when finished accessing a memory card.  If writes have been performed,

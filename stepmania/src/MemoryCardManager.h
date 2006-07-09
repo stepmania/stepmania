@@ -24,7 +24,7 @@ public:
 	void LockCards();	// prevent removing or changing of memory cards
 	void UnlockCards();
 	bool MountCard( PlayerNumber pn, int iTimeout = 10 );
-	bool MountCard( PlayerNumber pn, const UsbStorageDevice &d );
+	bool MountCard( PlayerNumber pn, const UsbStorageDevice &d, int iTimeout = 10 );
 	void UnmountCard( PlayerNumber pn );
 
 	bool IsMounted( PlayerNumber pn ) const { return m_bMounted[pn]; }
