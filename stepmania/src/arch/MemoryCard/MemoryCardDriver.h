@@ -48,6 +48,9 @@ struct UsbStorageDevice
 
 		/* The device is ready and usable.  sName is filled in, if available. */
 		STATE_READY,
+
+		NUM_State,
+		State_INVALID
 	};
 	State m_State;
 	RString m_sError;
