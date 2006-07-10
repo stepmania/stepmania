@@ -332,8 +332,10 @@ void ScoreKeeperNormal::AddScore( TapNoteScore score )
 	// LOG->Trace( "score: %i", iScore );
 }
 
-void ScoreKeeperNormal::HandleTapScore( TapNoteScore score )
+void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 {
+	TapNoteScore score = tn.result.tns;
+
 	if( score == TNS_HitMine )
 	{
 		if( !m_pPlayerStageStats->bFailed )
@@ -346,9 +348,10 @@ void ScoreKeeperNormal::HandleTapScore( TapNoteScore score )
 	}
 }
 
-void ScoreKeeperNormal::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow )
+void ScoreKeeperNormal::HandleTapRowScore( const TapNote &lastTN, int iNumTapsInRow )
 {
 	ASSERT( iNumTapsInRow >= 1 );
+	TapNoteScore scoreOfLastTap = lastTN.result.tns;
 
 	// Update dance points.
 	if( !m_pPlayerStageStats->bFailed )
@@ -417,8 +420,10 @@ void ScoreKeeperNormal::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNum
 }
 
 
-void ScoreKeeperNormal::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
+void ScoreKeeperNormal::HandleHoldScore( const TapNote &tn )
 {
+	HoldNoteScore holdScore = tn.HoldResult.hns;
+
 	// update dance points totals
 	if( !m_pPlayerStageStats->bFailed )
 		m_pPlayerStageStats->iActualDancePoints += HoldNoteScoreToDancePoints( holdScore );

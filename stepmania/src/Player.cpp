@@ -689,11 +689,14 @@ void Player::Update( float fDeltaTime )
 				if( m_pNoteField )
 					m_pNoteField->DidHoldNote( iTrack, HNS_Held, bBright );	// bright ghost flash
 			}
-
+			
+			tn.HoldResult.fLife = fLife;
+			tn.HoldResult.hns = hns;
+			
 			if( hns != HNS_None )
 			{
 				/* this note has been judged */
-				HandleHoldScore( hns, tns );
+				HandleHoldScore( tn );
 				
 				if( m_pPlayerStageStats != NULL )
 					m_pPlayerStageStats->hnsLast = hns;
@@ -702,9 +705,6 @@ void Player::Update( float fDeltaTime )
 
 				m_vHoldJudgment[iTrack]->SetHoldJudgment( hns );
 			}
-
-			tn.HoldResult.fLife = fLife;
-			tn.HoldResult.hns = hns;
 		}
 	}
 
@@ -1277,9 +1277,9 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 		NSMAN->ReportTiming( fNoteOffset,pn );
 		
 		if( m_pPrimaryScoreKeeper )
-			m_pPrimaryScoreKeeper->HandleTapScore( score );
+			m_pPrimaryScoreKeeper->HandleTapScore( tn );
 		if( m_pSecondaryScoreKeeper )
-			m_pSecondaryScoreKeeper->HandleTapScore( score );
+			m_pSecondaryScoreKeeper->HandleTapScore( tn );
 
 		switch( tn.type )
 		{
@@ -1569,7 +1569,8 @@ void Player::RandomizeNotes( int iNoteRow )
 
 void Player::HandleTapRowScore( unsigned row )
 {
-	TapNoteScore scoreOfLastTap = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, row ).result.tns;
+	const TapNote &lastTN = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, row );
+	TapNoteScore scoreOfLastTap = lastTN.result.tns;
 	int iNumTapsInRow = m_NoteData.GetNumTracksWithTapOrHoldHead(row);
 	ASSERT_M( iNumTapsInRow > 0, ssprintf("%d, %u",iNumTapsInRow,row) );
 
@@ -1619,9 +1620,9 @@ void Player::HandleTapRowScore( unsigned row )
 	const int iOldCombo = iCurCombo;
 
 	if( m_pPrimaryScoreKeeper != NULL )
-		m_pPrimaryScoreKeeper->HandleTapRowScore( scoreOfLastTap, iNumTapsInRow );
+		m_pPrimaryScoreKeeper->HandleTapRowScore( lastTN, iNumTapsInRow );
 	if( m_pSecondaryScoreKeeper != NULL )
-		m_pSecondaryScoreKeeper->HandleTapRowScore( scoreOfLastTap, iNumTapsInRow );
+		m_pSecondaryScoreKeeper->HandleTapRowScore( lastTN, iNumTapsInRow );
 
 	if( m_pPlayerStageStats )
 	{
@@ -1713,8 +1714,10 @@ void Player::HandleTapRowScore( unsigned row )
 }
 
 
-void Player::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
+void Player::HandleHoldScore( const TapNote &tn )
 {
+	HoldNoteScore holdScore = tn.HoldResult.hns;
+	TapNoteScore tapScore = tn.result.tns;
 	bool NoCheating = true;
 #ifdef DEBUG
 	NoCheating = false;
@@ -1726,10 +1729,10 @@ void Player::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
 	if( NoCheating && m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
 		return;
 
-	if(m_pPrimaryScoreKeeper)
-		m_pPrimaryScoreKeeper->HandleHoldScore(holdScore, tapScore );
-	if(m_pSecondaryScoreKeeper)
-		m_pSecondaryScoreKeeper->HandleHoldScore(holdScore, tapScore );
+	if( m_pPrimaryScoreKeeper )
+		m_pPrimaryScoreKeeper->HandleHoldScore( tn );
+	if( m_pSecondaryScoreKeeper )
+		m_pSecondaryScoreKeeper->HandleHoldScore( tn );
 
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;

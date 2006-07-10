@@ -82,7 +82,7 @@ protected:
 	void DisplayJudgedRow( int iIndexThatWasSteppedOn, TapNoteScore score, int iTrack );
 	void OnRowCompletelyJudged( int iStepIndex );
 	void HandleTapRowScore( unsigned row );
-	void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore );
+	void HandleHoldScore( const TapNote &tn );
 	void DrawTapJudgments();
 	void DrawHoldJudgments();
 

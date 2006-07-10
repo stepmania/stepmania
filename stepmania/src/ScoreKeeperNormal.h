@@ -52,9 +52,9 @@ public:
 	// before a song plays (called multiple times if course)
 	void OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData );
 
-	void HandleTapScore( TapNoteScore score );
-	void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow );
-	void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore );
+	void HandleTapScore( const TapNote &tn );
+	void HandleTapRowScore( const TapNote &lastTN, int iNumTapsInRow );
+	void HandleHoldScore( const TapNote &tn );
 
 	// This must be calculated using only cached radar values so that we can 
 	// do it quickly.

@@ -8,7 +8,7 @@
 #include "PrefsManager.h"
 #include "ThemeMetric.h"
 #include "PlayerState.h"
-
+#include "NoteTypes.h"
 
 ThemeMetric<float> ATTACK_DURATION_SECONDS	("ScoreKeeperRave","AttackDurationSeconds");
 
@@ -23,8 +23,9 @@ void ScoreKeeperRave::OnNextSong( int iSongInCourseIndex, const Steps* pSteps, c
 	
 }
 
-void ScoreKeeperRave::HandleTapScore( TapNoteScore score )
+void ScoreKeeperRave::HandleTapScore( const TapNote &tn )
 {
+	TapNoteScore score = tn.result.tns;
 	float fPercentToMove = 0;
 	switch( score )
 	{
@@ -36,12 +37,13 @@ void ScoreKeeperRave::HandleTapScore( TapNoteScore score )
 
 #define CROSSED( val ) (fOld < val && fNew >= val)
 #define CROSSED_ATTACK_LEVEL( level ) CROSSED(1.f/NUM_ATTACK_LEVELS*(level+1))
-void ScoreKeeperRave::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow )
+void ScoreKeeperRave::HandleTapRowScore( const TapNote &lastTN, int iNumTapsInRow )
 {
+	TapNoteScore scoreOfLastTap = lastTN.result.tns;
 	float fPercentToMove;
 	switch( scoreOfLastTap )
 	{
-	default:	ASSERT(0);
+	DEFAULT_FAIL( scoreOfLastTap );
 	case TNS_W1:	fPercentToMove = PREFSMAN->m_fSuperMeterPercentChange[SE_W1];	break;
 	case TNS_W2:	fPercentToMove = PREFSMAN->m_fSuperMeterPercentChange[SE_W2];	break;
 	case TNS_W3:	fPercentToMove = PREFSMAN->m_fSuperMeterPercentChange[SE_W3];	break;
@@ -52,8 +54,9 @@ void ScoreKeeperRave::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 	AddSuperMeterDelta( fPercentToMove );
 }
 
-void ScoreKeeperRave::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
+void ScoreKeeperRave::HandleHoldScore( const TapNote &tn )
 {
+	TapNoteScore tapScore = tn.result.tns;
 	float fPercentToMove = 0;
 	switch( tapScore )
 	{
