@@ -2211,10 +2211,10 @@ void ScreenGameplay::Input( const InputEventPlus &input )
  *    applying the modifiers the song would have been played with.  This doesn't include songs
  *    that were played but failed; that was done in #1.
  */
-void ScreenGameplay::SongFinished()
+void ScreenGameplay::SaveStats()
 {
 	float fMusicLen = GAMESTATE->m_pCurSong->m_fMusicLengthSeconds;
-	// save any statistics
+
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
 		/* Note that adding stats is only meaningful for the counters (eg. RadarCategory_Jumps),
@@ -2228,7 +2228,11 @@ void ScreenGameplay::SongFinished()
 		NoteDataWithScoring::GetActualRadarValues( pi->m_pPlayer->m_NoteData, pss, fMusicLen, rv );
 		pss.radarActual += rv;
 	}
+}
 
+void ScreenGameplay::SongFinished()
+{
+	SaveStats(); // Let subclasses save the stats.
 	/* Extremely important: if we don't remove attacks before moving on to the next
 	 * screen, they'll still be turned on eventually. */
 	GAMESTATE->RemoveAllActiveAttacks();

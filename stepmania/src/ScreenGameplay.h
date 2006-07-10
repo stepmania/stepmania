@@ -150,6 +150,7 @@ protected:
 	void UpdateSongPosition( float fDeltaTime );
 	void UpdateLyrics( float fDeltaTime );
 	void SongFinished();
+	virtual void SaveStats();
 	void StageFinished( bool bBackedOut );
 	void SaveReplay();
 
