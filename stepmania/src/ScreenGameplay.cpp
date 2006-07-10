@@ -2223,18 +2223,20 @@ void ScreenGameplay::Input( const InputEventPlus &input )
  */
 void ScreenGameplay::SongFinished()
 {
+	float fMusicLen = GAMESTATE->m_pCurSong->m_fMusicLengthSeconds;
 	// save any statistics
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
 		/* Note that adding stats is only meaningful for the counters (eg. RadarCategory_Jumps),
 		 * not for the percentages (RadarCategory_Air). */
-		RadarValues v;
+		RadarValues rv;
+		PlayerStageStats &pss = *pi->GetPlayerStageStats();
 		
-		NoteDataUtil::CalculateRadarValues( pi->m_pPlayer->m_NoteData, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds, v );
-		pi->GetPlayerStageStats()->radarPossible += v;
+		NoteDataUtil::CalculateRadarValues( pi->m_pPlayer->m_NoteData, fMusicLen, rv );
+		pss.radarPossible += rv;
 
-		NoteDataWithScoring::GetActualRadarValues( pi->m_pPlayer->m_NoteData, pi->m_pn, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds, v );
-		pi->GetPlayerStageStats()->radarActual += v;
+		NoteDataWithScoring::GetActualRadarValues( pi->m_pPlayer->m_NoteData, pss, fMusicLen, rv );
+		pss.radarActual += rv;
 	}
 
 	/* Extremely important: if we don't remove attacks before moving on to the next

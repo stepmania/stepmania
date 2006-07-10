@@ -3,20 +3,18 @@
 #ifndef NOTEDATAWITHSCORING_H
 #define NOTEDATAWITHSCORING_H
 
-#include "GameConstantsAndTypes.h"
-#include "PlayerNumber.h"
 #include "NoteTypes.h"
-#include <map>
 
 struct RadarValues;
 class NoteData;
+class PlayerStageStats;
 namespace NoteDataWithScoring
 {
 	bool IsRowCompletelyJudged( const NoteData &in, unsigned iRow );
 	TapNoteScore MinTapNoteScore( const NoteData &in, unsigned iRow );
 	TapNoteResult LastTapNoteResult( const NoteData &in, unsigned iRow );
 
-	void GetActualRadarValues( const NoteData &in, PlayerNumber pn, float fSongSeconds, RadarValues& out );
+	void GetActualRadarValues( const NoteData &in, const PlayerStageStats &pss, float fSongSeconds, RadarValues& out );
 };
 
 #endif

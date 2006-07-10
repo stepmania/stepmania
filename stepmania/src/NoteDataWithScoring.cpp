@@ -1,9 +1,7 @@
 #include "global.h"
 #include "NoteDataWithScoring.h"
 #include "NoteData.h"
-#include "StageStats.h"
-#include "StatsManager.h"
-#include <float.h>
+#include "PlayerStageStats.h"
 
 namespace
 {
@@ -193,7 +191,7 @@ bool NoteDataWithScoring::IsRowCompletelyJudged( const NoteData &in, unsigned ro
 namespace
 {
 /* Return the ratio of actual to possible Bs. */
-float GetActualStreamRadarValue( const NoteData &in, float fSongSeconds, PlayerNumber pn )
+float GetActualStreamRadarValue( const NoteData &in, float fSongSeconds )
 {
 	int iTotalSteps = in.GetNumTapNotes();
 	if( iTotalSteps == 0 )
@@ -204,19 +202,19 @@ float GetActualStreamRadarValue( const NoteData &in, float fSongSeconds, PlayerN
 }
 
 /* Return the ratio of actual combo to max combo. */
-float GetActualVoltageRadarValue( const NoteData &in, float fSongSeconds, PlayerNumber pn )
+float GetActualVoltageRadarValue( const NoteData &in, float fSongSeconds, const PlayerStageStats &pss )
 {
 	/* STATSMAN->m_CurStageStats.iMaxCombo is unrelated to GetNumTapNotes: m_bComboContinuesBetweenSongs
 	 * might be on, and the way combo is counted varies depending on the mode and score
 	 * keeper.  Instead, let's use the length of the longest recorded combo.  This is
 	 * only subtly different: it's the percent of the song the longest combo took to get. */
-	const PlayerStageStats::Combo_t MaxCombo = STATSMAN->m_CurStageStats.m_player[pn].GetMaxCombo();
-	float fComboPercent = SCALE( MaxCombo.fSizeSeconds, 0, STATSMAN->m_CurStageStats.m_player[pn].fLastSecond-STATSMAN->m_CurStageStats.m_player[pn].fFirstSecond, 0.0f, 1.0f );
+	const PlayerStageStats::Combo_t MaxCombo = pss.GetMaxCombo();
+	float fComboPercent = SCALE( MaxCombo.fSizeSeconds, 0, pss.fLastSecond-pss.fFirstSecond, 0.0f, 1.0f );
 	return clamp( fComboPercent, 0.0f, 1.0f );
 }
 
 /* Return the ratio of actual to possible W2s on jumps. */
-float GetActualAirRadarValue( const NoteData &in, float fSongSeconds, PlayerNumber pn )
+float GetActualAirRadarValue( const NoteData &in, float fSongSeconds )
 {
 	const int iTotalDoubles = in.GetNumJumps();
 	if( iTotalDoubles == 0 )
@@ -228,18 +226,18 @@ float GetActualAirRadarValue( const NoteData &in, float fSongSeconds, PlayerNumb
 }
 
 /* Return the ratio of actual to possible dance points. */
-float GetActualChaosRadarValue( const NoteData &in, float fSongSeconds, PlayerNumber pn )
+float GetActualChaosRadarValue( const NoteData &in, float fSongSeconds, const PlayerStageStats &pss )
 {
-	const int iPossibleDP = STATSMAN->m_CurStageStats.m_player[pn].iPossibleDancePoints;
+	const int iPossibleDP = pss.iPossibleDancePoints;
 	if ( iPossibleDP == 0 )
 		return 1;
 
-	const int ActualDP = STATSMAN->m_CurStageStats.m_player[pn].iActualDancePoints;
+	const int ActualDP = pss.iActualDancePoints;
 	return clamp( float(ActualDP)/iPossibleDP, 0.0f, 1.0f );
 }
 
 /* Return the ratio of actual to possible successful holds. */
-float GetActualFreezeRadarValue( const NoteData &in, float fSongSeconds, PlayerNumber pn )
+float GetActualFreezeRadarValue( const NoteData &in, float fSongSeconds )
 {
 	// number of hold steps
 	const int iTotalHolds = in.GetNumHoldNotes();
@@ -255,7 +253,7 @@ float GetActualFreezeRadarValue( const NoteData &in, float fSongSeconds, PlayerN
 }
 
 
-void NoteDataWithScoring::GetActualRadarValues( const NoteData &in, PlayerNumber pn, float fSongSeconds, RadarValues& out )
+void NoteDataWithScoring::GetActualRadarValues( const NoteData &in, const PlayerStageStats &pss, float fSongSeconds, RadarValues& out )
 {
 	// The for loop and the assert are used to ensure that all fields of 
 	// RadarValue get set in here.
@@ -263,11 +261,11 @@ void NoteDataWithScoring::GetActualRadarValues( const NoteData &in, PlayerNumber
 	{
 		switch( rc )
 		{
-		case RadarCategory_Stream:		out[rc] = GetActualStreamRadarValue( in, fSongSeconds, pn );				break;
-		case RadarCategory_Voltage:		out[rc] = GetActualVoltageRadarValue( in, fSongSeconds, pn );				break;
-		case RadarCategory_Air:			out[rc] = GetActualAirRadarValue( in, fSongSeconds, pn );				break;
-		case RadarCategory_Freeze:		out[rc] = GetActualFreezeRadarValue( in, fSongSeconds, pn );				break;
-		case RadarCategory_Chaos:		out[rc] = GetActualChaosRadarValue( in, fSongSeconds, pn );				break;
+		case RadarCategory_Stream:		out[rc] = GetActualStreamRadarValue( in, fSongSeconds );				break;
+		case RadarCategory_Voltage:		out[rc] = GetActualVoltageRadarValue( in, fSongSeconds, pss );				break;
+		case RadarCategory_Air:			out[rc] = GetActualAirRadarValue( in, fSongSeconds );					break;
+		case RadarCategory_Freeze:		out[rc] = GetActualFreezeRadarValue( in, fSongSeconds );				break;
+		case RadarCategory_Chaos:		out[rc] = GetActualChaosRadarValue( in, fSongSeconds, pss );				break;
 		case RadarCategory_TapsAndHolds:	out[rc] = (float) GetNumNWithScore( in, TNS_W4, 1 );					break;
 		case RadarCategory_Jumps:		out[rc] = (float) GetNumNWithScore( in, TNS_W4, 2 );					break;
 		case RadarCategory_Holds:		out[rc] = (float) GetNumHoldNotesWithScore( in, TapNote::hold_head_hold, HNS_Held );	break;
