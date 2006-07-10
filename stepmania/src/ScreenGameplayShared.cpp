@@ -2,43 +2,50 @@
 #include "ScreenGameplayShared.h"
 #include "GameState.h"
 #include "Player.h"
+#include "NoteDataUtil.h"
+#include "NoteDataWithScoring.h"
+#include "ActiveAttackList.h"
 
 REGISTER_SCREEN_CLASS( ScreenGameplayShared );
 
 void ScreenGameplayShared::FillPlayerInfo( vector<PlayerInfo> &vPlayerInfoOut )
 {
-	//PlayerNumber mpn = GAMESTATE->m_MasterPlayerNumber;
-	
+	PlayerNumber mpn = GAMESTATE->m_MasterPlayerNumber;
 	vPlayerInfoOut.resize( NUM_PLAYERS );
 	FOREACH_PlayerNumber( pn )
-		vPlayerInfoOut[pn].Load( pn, MultiPlayer_INVALID, true );
+		vPlayerInfoOut[pn].Load( pn, MultiPlayer_INVALID, pn == mpn );
 }
 
 PlayerInfo &ScreenGameplayShared::GetPlayerInfoForInput( const InputEventPlus& iep )
 {
-#if 0
-	const float fPositionSeconds = GAMESTATE->m_fMusicSeconds - iep.DeviceI.ts.Ago();
-	const float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
-	const int row = BeatToNoteRow( fSongBeat );
-	const int col = iep.StyleI.col;
-	int distance = INT_MAX;
-	size_t index = 0;
-	
-	for( size_t i = 0; i < m_vPlayerInfo.size(); ++i )
-	{
-		if( !m_vPlayerInfo[i].IsEnabled() )
-			continue;
-		int d = m_vPlayerInfo[i].m_pPlayer->GetClosestNoteDistance( col, row );
-		if( d == -1 || d >= distance)
-			continue;
-		distance = d;
-		index = i;
-	}
-	return m_vPlayerInfo[index];
-#else
-	return ScreenGameplay::GetPlayerInfoForInput( iep );
-#endif
+	return m_vPlayerInfo[GAMESTATE->m_MasterPlayerNumber];
 }
+
+void ScreenGameplayShared::SaveStats()
+{
+	vector<NoteData> vParts;
+	PlayerNumber mpn = GAMESTATE->m_MasterPlayerNumber;
+	float fMusicLen = GAMESTATE->m_pCurSong->m_fMusicLengthSeconds;
+	
+	NoteDataUtil::SplitCompositeNoteData( m_vPlayerInfo[mpn].m_pPlayer->m_NoteData, vParts );
+	for( size_t i = 0; i < min(vParts.size(), m_vPlayerInfo.size()); ++i )
+	{
+		PlayerInfo &pi = m_vPlayerInfo[i];
+		
+		if( !pi.IsEnabled() )
+			continue;
+		NoteData &nd = vParts[i];
+		RadarValues rv;
+		PlayerStageStats &pss = *pi.GetPlayerStageStats();
+		
+		NoteDataUtil::CalculateRadarValues( nd, fMusicLen, rv );
+		pss.radarPossible += rv;
+		
+		NoteDataWithScoring::GetActualRadarValues( nd, pss, fMusicLen, rv );
+		pss.radarActual += rv;
+	}
+}
+
 
 /*
  * (c) 2006 Steve Checkoway
