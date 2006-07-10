@@ -119,7 +119,9 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 /*
   Note on NONSTOP Mode scoring
 
-  Nonstop mode requires the player to play 4 songs in succession, with the total maximum possible score for the four song set being 100,000,000. This comes from the sum of the four stages' maximum possible scores, which, regardless of song or difficulty is: 
+  Nonstop mode requires the player to play 4 songs in succession, with the total maximum possible score for
+  the four song set being 100,000,000. This comes from the sum of the four stages' maximum possible scores,
+  which, regardless of song or difficulty is: 
 
   10,000,000 for the first song
   20,000,000 for the second song
@@ -524,14 +526,14 @@ int ScoreKeeperNormal::TapNoteScoreToDancePoints( TapNoteScore tns, bool bBeginn
 	switch( tns )
 	{
 	default: FAIL_M( ssprintf("%i", tns) );
-	case TNS_None:		iWeight = 0;											break;
+	case TNS_None:		iWeight = 0;						break;
 	case TNS_HitMine:	iWeight = PREFSMAN->m_iPercentScoreWeight[SE_HitMine];	break;
-	case TNS_Miss:		iWeight = PREFSMAN->m_iPercentScoreWeight[SE_Miss];		break;
-	case TNS_W5:		iWeight = PREFSMAN->m_iPercentScoreWeight[SE_W5];		break;
-	case TNS_W4:		iWeight = PREFSMAN->m_iPercentScoreWeight[SE_W4];		break;
-	case TNS_W3:		iWeight = PREFSMAN->m_iPercentScoreWeight[SE_W3];		break;
-	case TNS_W2:		iWeight = PREFSMAN->m_iPercentScoreWeight[SE_W2];		break;
-	case TNS_W1:		iWeight = PREFSMAN->m_iPercentScoreWeight[SE_W1];		break;
+	case TNS_Miss:		iWeight = PREFSMAN->m_iPercentScoreWeight[SE_Miss];	break;
+	case TNS_W5:		iWeight = PREFSMAN->m_iPercentScoreWeight[SE_W5];	break;
+	case TNS_W4:		iWeight = PREFSMAN->m_iPercentScoreWeight[SE_W4];	break;
+	case TNS_W3:		iWeight = PREFSMAN->m_iPercentScoreWeight[SE_W3];	break;
+	case TNS_W2:		iWeight = PREFSMAN->m_iPercentScoreWeight[SE_W2];	break;
+	case TNS_W1:		iWeight = PREFSMAN->m_iPercentScoreWeight[SE_W1];	break;
 	}
 	if( bBeginner && PREFSMAN->m_bMercifulBeginner )
 		iWeight = max( 0, iWeight );
@@ -544,9 +546,9 @@ int ScoreKeeperNormal::HoldNoteScoreToDancePoints( HoldNoteScore hns, bool bBegi
 	switch( hns )
 	{
 	default: FAIL_M( ssprintf("%i", hns) );
-	case HNS_None:	iWeight = 0;											break;
+	case HNS_None:	iWeight = 0;						break;
 	case HNS_LetGo:	iWeight = PREFSMAN->m_iPercentScoreWeight[SE_LetGo];	break;
-	case HNS_Held:	iWeight = PREFSMAN->m_iPercentScoreWeight[SE_Held];		break;
+	case HNS_Held:	iWeight = PREFSMAN->m_iPercentScoreWeight[SE_Held];	break;
 	}
 	if( bBeginner && PREFSMAN->m_bMercifulBeginner )
 		iWeight = max( 0, iWeight );
@@ -564,15 +566,15 @@ int ScoreKeeperNormal::TapNoteScoreToGradePoints( TapNoteScore tns, bool bBeginn
 	switch( tns )
 	{
 	default: FAIL_M( ssprintf("%i", tns) );
-	case TNS_None:		iWeight = 0;									break;
-	case TNS_AvoidMine:	iWeight = 0;									break;
+	case TNS_None:		iWeight = 0;					break;
+	case TNS_AvoidMine:	iWeight = 0;					break;
 	case TNS_HitMine:	iWeight = PREFSMAN->m_iGradeWeight[SE_HitMine];	break;
 	case TNS_Miss:		iWeight = PREFSMAN->m_iGradeWeight[SE_Miss];	break;
-	case TNS_W5:		iWeight = PREFSMAN->m_iGradeWeight[SE_W5];		break;
-	case TNS_W4:		iWeight = PREFSMAN->m_iGradeWeight[SE_W4];		break;
-	case TNS_W3:		iWeight = PREFSMAN->m_iGradeWeight[SE_W3];		break;
-	case TNS_W2:		iWeight = PREFSMAN->m_iGradeWeight[SE_W2];		break;
-	case TNS_W1:		iWeight = PREFSMAN->m_iGradeWeight[SE_W1];		break;
+	case TNS_W5:		iWeight = PREFSMAN->m_iGradeWeight[SE_W5];	break;
+	case TNS_W4:		iWeight = PREFSMAN->m_iGradeWeight[SE_W4];	break;
+	case TNS_W3:		iWeight = PREFSMAN->m_iGradeWeight[SE_W3];	break;
+	case TNS_W2:		iWeight = PREFSMAN->m_iGradeWeight[SE_W2];	break;
+	case TNS_W1:		iWeight = PREFSMAN->m_iGradeWeight[SE_W1];	break;
 	}
 	if( bBeginner && PREFSMAN->m_bMercifulBeginner )
 		iWeight = max( 0, iWeight );
@@ -585,7 +587,7 @@ int ScoreKeeperNormal::HoldNoteScoreToGradePoints( HoldNoteScore hns, bool bBegi
 	switch( hns )
 	{
 	default: FAIL_M( ssprintf("%i", hns) );
-	case HNS_None:	iWeight = 0;									break;
+	case HNS_None:	iWeight = 0;					break;
 	case HNS_LetGo:	iWeight = PREFSMAN->m_iGradeWeight[SE_LetGo];	break;
 	case HNS_Held:	iWeight = PREFSMAN->m_iGradeWeight[SE_Held];	break;
 	}
