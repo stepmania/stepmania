@@ -283,7 +283,7 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 	if( !msd.ReadFile( sPath ) )
 		RageException::Throw( "Error opening file \"%s\": %s", sPath.c_str(), msd.GetError().c_str() );
 
-	float BPMPos2 = -1, BPM2 = -1, BPMPos3 = -1, BPM3 = -1;;
+	float SMGap1 = 0, SMGap2 = 0, BPM1 = -1, BPMPos2 = -1, BPM2 = -1, BPMPos3 = -1, BPM3 = -1;
 
 	for( unsigned i=0; i < msd.GetNumValues(); i++ )
 	{
@@ -294,7 +294,10 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 		if( 0==stricmp(sValueName,"TITLE") )
 			LoadTags(sParams[1], out);
 		else if( 0==stricmp(sValueName,"BPM") )
-			out.AddBPMSegment( BPMSegment(0, StringToFloat(sParams[1])) );
+		{
+			BPM1 = StringToFloat(sParams[1]);
+			out.AddBPMSegment( BPMSegment(0, BPM1) );
+		}
 		else if( 0==stricmp(sValueName,"BPM2") )
 			BPM2 = StringToFloat( sParams[1] );
 		else if( 0==stricmp(sValueName,"BPM3") )
@@ -304,38 +307,46 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 		else if( 0==stricmp(sValueName,"BUNKI2") )
 			BPMPos3 = StringToFloat( sParams[1] ) / 100.0f;
 		else if( 0==stricmp(sValueName,"STARTTIME") )
-			out.m_Timing.m_fBeat0OffsetInSeconds = -StringToFloat( sParams[1] )/100;		
+		{
+			SMGap1 = -StringToFloat( sParams[1] )/100;
+			out.m_Timing.m_fBeat0OffsetInSeconds = SMGap1;
+		}
+		// This is currently required for more accurate BPM changes.  
+		else if( 0==stricmp(sValueName,"STARTTIME2") )
+			SMGap2 = -StringToFloat( sParams[1] )/100;
 		else if( 0==stricmp(sValueName,"TICKCOUNT") ||
 			 0==stricmp(sValueName,"STEP") ||
 			 0==stricmp(sValueName,"DIFFICULTY") ||
-			 0==stricmp(sValueName,"STARTTIME2") ||
 			 0==stricmp(sValueName,"STARTTIME3") )
 		{
 			/* TICKCOUNT, STEP, and DIFFICULTY are handled in LoadFromKSFFile.
-			 * STARTTIME[23] are expected but unnecessary. Do not warn. */
+			 * STARTTIME3 is expected but unnecessary. Do not warn. */
 			continue;
 		}
 		else
 			LOG->Trace( "Unexpected value named '%s'", sValueName.c_str() );
 	}
 
-	/* This doesn't work yet: we also need to move the data around, I think, and
-	 * we should handle more than one BPM change. */
+	/* At this time, only KSF files that use the traditional syntax can be 
+	 * converted, and even then, not all of them will work smoothly.  The 
+	 * formulas are more accurate at this point, however.  As soon as support 
+	 * for the other Pump simulators is supported (mostly Direct Move), this 
+	 * section will be expanded. */
 	if( BPM2 > 0 && BPMPos2 > 0 )
 	{
-		const float BeatsPerSecond = out.GetBPMAtBeat(0) / 60.0f;
-		const float beat = BPMPos2 * BeatsPerSecond;
+		const float BeatsPerSecond = BPM1 / 60.0f;
+		const float beat = (BPMPos2 + SMGap1) * BeatsPerSecond;
 		LOG->Trace( "BPM %f, BPS %f, BPMPos2 %f, beat %f",
-			    out.GetBPMAtBeat(0), BeatsPerSecond, BPMPos2, beat );
+			    BPM1, BeatsPerSecond, BPMPos2, beat );
 		out.AddBPMSegment( BPMSegment(BeatToNoteRow(beat), BPM2) );
 	}
 
 	if( BPM3 > 0 && BPMPos3 > 0 )
 	{
-		const float BeatsPerSecond = out.GetBPMAtBeat(0) / 60.0f;
-		const float beat = BPMPos3 * BeatsPerSecond;
+		const float BeatsPerSecond = BPM2 / 60.0f;
+		const float beat = (BPMPos3 + SMGap2) * BeatsPerSecond;
 		LOG->Trace( "BPM %f, BPS %f, BPMPos3 %f, beat %f",
-			    out.GetBPMAtBeat(0), BeatsPerSecond, BPMPos3, beat );
+			    BPM2, BeatsPerSecond, BPMPos3, beat );
 		out.AddBPMSegment( BPMSegment(BeatToNoteRow(beat), BPM3) );
 	}
 
@@ -391,7 +402,7 @@ bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
 }
 
 /*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
+ * (c) 2001-2006 Chris Danford, Glenn Maynard, Wolfman2000
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
