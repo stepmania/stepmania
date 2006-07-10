@@ -108,8 +108,7 @@ void ScoreKeeperNormal::Load(
 			m_ComboBonusFactor[TNS_W3] = 33;
 		}
 		break;
-	default:
-		ASSERT(0);
+	DEFAULT_FAIL( int(PREFSMAN->m_ScoringType) );
 	}
 
 }
@@ -176,8 +175,7 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 		case PrefsManager::SCORING_OLD:
 			m_iMaxPossiblePoints = (iMeter * iLengthMultiplier + 1) * 5000000;
 			break;
-		default:
-			ASSERT(0);
+		DEFAULT_FAIL( int(PREFSMAN->m_ScoringType) );
 		}
 	}
 	ASSERT( m_iMaxPossiblePoints >= 0 );
@@ -525,7 +523,7 @@ int ScoreKeeperNormal::TapNoteScoreToDancePoints( TapNoteScore tns, bool bBeginn
 	int iWeight = 0;
 	switch( tns )
 	{
-	default: FAIL_M( ssprintf("%i", tns) );
+	DEFAULT_FAIL( tns );
 	case TNS_None:		iWeight = 0;						break;
 	case TNS_HitMine:	iWeight = PREFSMAN->m_iPercentScoreWeight[SE_HitMine];	break;
 	case TNS_Miss:		iWeight = PREFSMAN->m_iPercentScoreWeight[SE_Miss];	break;
@@ -545,7 +543,7 @@ int ScoreKeeperNormal::HoldNoteScoreToDancePoints( HoldNoteScore hns, bool bBegi
 	int iWeight = 0;
 	switch( hns )
 	{
-	default: FAIL_M( ssprintf("%i", hns) );
+	DEFAULT_FAIL( hns );
 	case HNS_None:	iWeight = 0;						break;
 	case HNS_LetGo:	iWeight = PREFSMAN->m_iPercentScoreWeight[SE_LetGo];	break;
 	case HNS_Held:	iWeight = PREFSMAN->m_iPercentScoreWeight[SE_Held];	break;
@@ -565,7 +563,7 @@ int ScoreKeeperNormal::TapNoteScoreToGradePoints( TapNoteScore tns, bool bBeginn
 	int iWeight = 0;
 	switch( tns )
 	{
-	default: FAIL_M( ssprintf("%i", tns) );
+	DEFAULT_FAIL( tns );
 	case TNS_None:		iWeight = 0;					break;
 	case TNS_AvoidMine:	iWeight = 0;					break;
 	case TNS_HitMine:	iWeight = PREFSMAN->m_iGradeWeight[SE_HitMine];	break;
@@ -586,7 +584,7 @@ int ScoreKeeperNormal::HoldNoteScoreToGradePoints( HoldNoteScore hns, bool bBegi
 	int iWeight = 0;
 	switch( hns )
 	{
-	default: FAIL_M( ssprintf("%i", hns) );
+	DEFAULT_FAIL( hns );
 	case HNS_None:	iWeight = 0;					break;
 	case HNS_LetGo:	iWeight = PREFSMAN->m_iGradeWeight[SE_LetGo];	break;
 	case HNS_Held:	iWeight = PREFSMAN->m_iGradeWeight[SE_Held];	break;
