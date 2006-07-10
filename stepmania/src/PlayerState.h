@@ -19,23 +19,23 @@ public:
 	// TODO: Remove use of PlayerNumber.  All data about the player should live 
 	// in PlayerState and callers should not use PlayerNumber to index into 
 	// GameState.
-	PlayerNumber m_PlayerNumber;
-	MultiPlayer m_mp;
+	PlayerNumber		m_PlayerNumber;
+	MultiPlayer		m_mp;
 	
 
-	RageTimer m_timerPlayerOptions;
-	PlayerOptions	m_CurrentPlayerOptions;    // current approaches destination
-	PlayerOptions	m_PlayerOptions;			// change this, and current will move gradually toward it
-	PlayerOptions	m_StagePlayerOptions;	// options that are in effect for this stage.  May be different from m_StoredPlayerOptions if using forced beginner or forced Survial mods
-	PlayerOptions	m_StoredPlayerOptions;	// user's choices on the PlayerOptions screen
+	RageTimer		m_timerPlayerOptions;
+	PlayerOptions		m_CurrentPlayerOptions;	// current approaches destination
+	PlayerOptions		m_PlayerOptions;	// change this, and current will move gradually toward it
+	PlayerOptions		m_StagePlayerOptions;	// options that are in effect for this stage.  May be different from m_StoredPlayerOptions if using forced beginner or forced Survial mods
+	PlayerOptions		m_StoredPlayerOptions;	// user's choices on the PlayerOptions screen
 
 	//
 	// Used in Gameplay
 	//
-	mutable float	m_fLastDrawnBeat; // Set by NoteField.  Used to push note-changing modifers back so that notes doesn't pop.
+	mutable float		m_fLastDrawnBeat;	// Set by NoteField.  Used to push note-changing modifers back so that notes doesn't pop.
 
 	enum HealthState { HOT, ALIVE, DANGER, DEAD };
-	HealthState	m_HealthState;
+	HealthState		m_HealthState;
 
 	PlayerController	m_PlayerController;
 	
@@ -47,27 +47,27 @@ public:
 	void EndActiveAttacks();
 	void RebuildPlayerOptionsFromActiveAttacks();
 	int GetSumOfActiveAttackLevels() const;
-	int		m_iCpuSkill;	// only used when m_PlayerController is PC_CPU
+	int			m_iCpuSkill;	// only used when m_PlayerController is PC_CPU
 	// Attacks take a while to transition out of use.  Account for this in PlayerAI
 	// by still penalizing it for 1 second after the player options are rebuilt.
-	int		m_iLastPositiveSumOfAttackLevels;
-	float	m_fSecondsUntilAttacksPhasedOut;	// positive means PlayerAI is still affected
-	bool	m_bAttackBeganThisUpdate;	// flag for other objects to watch (play sounds)
-	bool	m_bAttackEndedThisUpdate;	// flag for other objects to watch (play sounds)
-	AttackArray	m_ActiveAttacks;
-	vector<Attack>	m_ModsToApply;
+	int			m_iLastPositiveSumOfAttackLevels;
+	float			m_fSecondsUntilAttacksPhasedOut;// positive means PlayerAI is still affected
+	bool			m_bAttackBeganThisUpdate;	// flag for other objects to watch (play sounds)
+	bool			m_bAttackEndedThisUpdate;	// flag for other objects to watch (play sounds)
+	AttackArray		m_ActiveAttacks;
+	vector<Attack>		m_ModsToApply;
 
 	//
 	// Used in Rave
 	//
-	float	m_fSuperMeter;	// between 0 and NUM_ATTACK_LEVELS
-	float	m_fSuperMeterGrowthScale;
+	float			m_fSuperMeter;	// between 0 and NUM_ATTACK_LEVELS
+	float			m_fSuperMeterGrowthScale;
 
 	//
 	// Used in Battle
 	//
 	void RemoveAllInventory();
-	Attack	m_Inventory[NUM_INVENTORY_SLOTS];
+	Attack			m_Inventory[NUM_INVENTORY_SLOTS];
 
 	// Lua
 	void PushSelf( lua_State *L );

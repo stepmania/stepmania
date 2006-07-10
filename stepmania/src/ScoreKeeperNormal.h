@@ -22,14 +22,14 @@ class ScoreKeeperNormal: public ScoreKeeper
 	int		m_iMaxScoreSoFar; // for nonstop scoring
 	int		m_iPointBonus; // the difference to award at the end
  	int		m_iCurToastyCombo;
-	bool	m_bIsLastSongInCourse;
-	bool	m_bIsBeginner;
+	bool		m_bIsLastSongInCourse;
+	bool		m_bIsBeginner;
 
-	bool m_bComboIsPerRow;
-	TapNoteScore m_MinScoreToContinueCombo;
-	TapNoteScore m_MinScoreToMaintainCombo;
+	bool		m_bComboIsPerRow;
+	TapNoteScore	m_MinScoreToContinueCombo;
+	TapNoteScore	m_MinScoreToMaintainCombo;
 
-	vector<Steps*> m_apSteps;
+	vector<Steps*>	m_apSteps;
 
 	void AddScore( TapNoteScore score );
 
@@ -58,10 +58,10 @@ public:
 
 	// This must be calculated using only cached radar values so that we can 
 	// do it quickly.
-	static int	GetPossibleDancePoints( const RadarValues& fRadars );
-	static int	GetPossibleDancePoints( const RadarValues& fOriginalRadars, const RadarValues& fPostRadars );
-	static int	GetPossibleGradePoints( const RadarValues& fRadars );
-	static int	GetPossibleGradePoints( const RadarValues& fOriginalRadars, const RadarValues& fPostRadars );
+	static int GetPossibleDancePoints( const RadarValues& fRadars );
+	static int GetPossibleDancePoints( const RadarValues& fOriginalRadars, const RadarValues& fPostRadars );
+	static int GetPossibleGradePoints( const RadarValues& fRadars );
+	static int GetPossibleGradePoints( const RadarValues& fOriginalRadars, const RadarValues& fPostRadars );
 
 	int TapNoteScoreToDancePoints( TapNoteScore tns ) const;
 	int HoldNoteScoreToDancePoints( HoldNoteScore hns ) const;
