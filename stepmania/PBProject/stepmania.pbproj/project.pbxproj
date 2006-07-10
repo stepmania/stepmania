@@ -2562,7 +2562,6 @@
 		AAD6A713065E0FDF0042165A /* Difficulty.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Difficulty.h; path = ../src/Difficulty.h; sourceTree = "<group>"; };
 		AAD8F9320A4B97DF000311CF /* ScreenGameplayShared.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenGameplayShared.h; path = ../src/ScreenGameplayShared.h; sourceTree = "<group>"; };
 		AAD8F9330A4B97DF000311CF /* ScreenGameplayShared.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenGameplayShared.cpp; path = ../src/ScreenGameplayShared.cpp; sourceTree = "<group>"; };
-		AAD8FAE20A4CD36F000311CF /* ScreenGameplayShared.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenGameplayShared.cpp; path = ../src/ScreenGameplayShared.cpp; sourceTree = "<group>"; };
 		AADB4E7A04D4FE5D00D02EE9 /* RageSoundReader_FileReader.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageSoundReader_FileReader.h; path = ../src/RageSoundReader_FileReader.h; sourceTree = "<group>"; };
 		AADB4E8004D4FEC400D02EE9 /* ArchHooks_Win32.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ArchHooks_Win32.cpp; path = ArchHooks/ArchHooks_Win32.cpp; sourceTree = "<group>"; };
 		AADB4E8104D4FEC400D02EE9 /* ArchHooks_Win32.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ArchHooks_Win32.h; path = ArchHooks/ArchHooks_Win32.h; sourceTree = "<group>"; };
@@ -2945,7 +2944,6 @@
 				AACFBE4A08E7D893005087FC /* ScreenGameplayLesson.h */,
 				1215D7A008C6559A00B87D8B /* ScreenGameplayNormal.cpp */,
 				1215D7A108C6559A00B87D8B /* ScreenGameplayNormal.h */,
-				AAD8FAE20A4CD36F000311CF /* ScreenGameplayShared.cpp */,
 				AAD8F9330A4B97DF000311CF /* ScreenGameplayShared.cpp */,
 				AAD8F9320A4B97DF000311CF /* ScreenGameplayShared.h */,
 				AAB55EB509A7E3D3008FDC69 /* ScreenGameplaySyncMachine.cpp */,
@@ -3113,7 +3111,6 @@
 				AA75DA1F06E0A1B500EF13B5 /* NetworkSyncServer.h */,
 				AA6E010B0477128A005F316C /* NoteSkinManager.cpp */,
 				AA6E010C0477128A005F316C /* NoteSkinManager.h */,
-				AAEBC78F07A4FF5600793F0E /* PlayerState.h */,
 				AA6E010D0477128A005F316C /* PrefsManager.cpp */,
 				AA6E010E0477128A005F316C /* PrefsManager.h */,
 				AA1C6556050D234B0073A143 /* ProfileManager.cpp */,
@@ -3386,8 +3383,6 @@
 		AA6EFDC804770AF1005F316C /* DataStructures */ = {
 			isa = PBXGroup;
 			children = (
-				AAE7812B0608249E0034E65F /* ActiveAttackList.cpp */,
-				AAE7812C0608249E0034E65F /* ActiveAttackList.h */,
 				AA84B7050996F8370085EECB /* AdjustSync.cpp */,
 				AA84B7060996F8370085EECB /* AdjustSync.h */,
 				AAFF5541054E736D00D02EE9 /* Attack.cpp */,
@@ -3446,8 +3441,6 @@
 				AABBD80605D8E9FC00B44FC2 /* HighScore.cpp */,
 				AABBD80705D8E9FC00B44FC2 /* HighScore.h */,
 				AACFBE3908E7D832005087FC /* InputEventPlus.h */,
-				AA6EFDE104770C79005F316C /* Inventory.cpp */,
-				AA6EFDE204770C79005F316C /* Inventory.h */,
 				AA2FB638091212AF000FD574 /* LifeMeter.cpp */,
 				AADD1CC2095C233E0088C9DF /* LocalizedString.cpp */,
 				AADD1CC3095C233F0088C9DF /* LocalizedString.h */,
@@ -3482,8 +3475,6 @@
 				AA6EFDFC04770C79005F316C /* NoteTypes.h */,
 				AA80C75707F20D6600C99272 /* OptionRowHandler.cpp */,
 				AA80C75807F20D6600C99272 /* OptionRowHandler.h */,
-				AA6EFDFD04770C79005F316C /* Player.cpp */,
-				AA6EFDFE04770C79005F316C /* Player.h */,
 				AA6EFDFF04770C79005F316C /* PlayerAI.cpp */,
 				AA6EFE0004770C79005F316C /* PlayerAI.h */,
 				AA6EFE0104770C79005F316C /* PlayerNumber.cpp */,
@@ -3493,6 +3484,7 @@
 				AA8BD2B807C939F800EA04E1 /* PlayerStageStats.cpp */,
 				AA8BD2B907C939F800EA04E1 /* PlayerStageStats.h */,
 				AA8BD2BA07C939F800EA04E1 /* PlayerState.cpp */,
+				AAEBC78F07A4FF5600793F0E /* PlayerState.h */,
 				AA1B083B0762532800835464 /* Preference.cpp */,
 				AA54709106F559DF008EB9B2 /* Preference.h */,
 				AA50201D05D6D7B200ACEFD0 /* Profile.cpp */,
@@ -3501,14 +3493,6 @@
 				AA3D790006A275E90064B980 /* RadarValues.h */,
 				AA6E01E6047720A3005F316C /* RandomSample.cpp */,
 				AA6E01E7047720A3005F316C /* RandomSample.h */,
-				AA8BD2BB07C939F800EA04E1 /* RollingNumbers.cpp */,
-				AA8BD2BC07C939F800EA04E1 /* RollingNumbers.h */,
-				AAAFE82E0835E8B100FC43E0 /* RoomWheel.cpp */,
-				AAAFE82F0835E8B100FC43E0 /* RoomWheel.h */,
-				AA7144AF0809EEEC00545684 /* ScoreDisplayAliveTime.cpp */,
-				AA7144B00809EEEC00545684 /* ScoreDisplayAliveTime.h */,
-				AA8BD2BD07C939F800EA04E1 /* ScoreDisplayCalories.cpp */,
-				AA8BD2BE07C939F800EA04E1 /* ScoreDisplayCalories.h */,
 				AA6E01E20477205A005F316C /* Song.cpp */,
 				AA6E01E30477205A005F316C /* song.h */,
 				AA6E01DE04772005005F316C /* SongCacheIndex.cpp */,
@@ -3637,6 +3621,8 @@
 				AA6EFEAD04770E7C005F316C /* OptionsCursor.h */,
 				AAC6DDDE0569C71000B5D56F /* PaneDisplay.cpp */,
 				AAC6DDDF0569C71000B5D56F /* PaneDisplay.h */,
+				AAAFE82E0835E8B100FC43E0 /* RoomWheel.cpp */,
+				AAAFE82F0835E8B100FC43E0 /* RoomWheel.h */,
 				AA6EFEAE04770E7C005F316C /* ScrollBar.cpp */,
 				AA6EFEAF04770E7C005F316C /* ScrollBar.h */,
 				AA6EFEB004770E7C005F316C /* ScrollingList.cpp */,
@@ -3658,6 +3644,8 @@
 		AA6EFEFA04770E84005F316C /* ActorsInGameplay */ = {
 			isa = PBXGroup;
 			children = (
+				AAE7812B0608249E0034E65F /* ActiveAttackList.cpp */,
+				AAE7812C0608249E0034E65F /* ActiveAttackList.h */,
 				AA6EFEFD04770F63005F316C /* ArrowEffects.cpp */,
 				AA6EFEFE04770F63005F316C /* ArrowEffects.h */,
 				AAB005F00579B8CB000BBA58 /* AttackDisplay.cpp */,
@@ -3683,6 +3671,8 @@
 				AA6EFF0E04770F63005F316C /* GhostArrowRow.h */,
 				AA6EFF1504770F63005F316C /* HoldJudgment.cpp */,
 				AA6EFF1604770F63005F316C /* HoldJudgment.h */,
+				AA6EFDE104770C79005F316C /* Inventory.cpp */,
+				AA6EFDE204770C79005F316C /* Inventory.h */,
 				AA6EFF1704770F63005F316C /* Judgment.cpp */,
 				AA6EFF1804770F63005F316C /* Judgment.h */,
 				AA6EFF1A04770F63005F316C /* LifeMeter.h */,
@@ -3700,14 +3690,20 @@
 				AA6EFF2404770F63005F316C /* NoteField.h */,
 				AAD620A5052EC78B00D02EE9 /* PercentageDisplay.cpp */,
 				AAD620A6052EC78B00D02EE9 /* PercentageDisplay.h */,
+				AA6EFDFD04770C79005F316C /* Player.cpp */,
+				AA6EFDFE04770C79005F316C /* Player.h */,
 				AA729C4E0599B58D00779F33 /* ReceptorArrow.cpp */,
 				AA729C4F0599B58D00779F33 /* ReceptorArrow.h */,
 				AA729C500599B58D00779F33 /* ReceptorArrowRow.cpp */,
 				AA729C510599B58D00779F33 /* ReceptorArrowRow.h */,
 				AA6EFF2504770F63005F316C /* ScoreDisplay.cpp */,
 				AA6EFF2604770F63005F316C /* ScoreDisplay.h */,
+				AA7144AF0809EEEC00545684 /* ScoreDisplayAliveTime.cpp */,
+				AA7144B00809EEEC00545684 /* ScoreDisplayAliveTime.h */,
 				AA6EFF2704770F63005F316C /* ScoreDisplayBattle.cpp */,
 				AA6EFF2804770F63005F316C /* ScoreDisplayBattle.h */,
+				AA8BD2BD07C939F800EA04E1 /* ScoreDisplayCalories.cpp */,
+				AA8BD2BE07C939F800EA04E1 /* ScoreDisplayCalories.h */,
 				AA3D5E5C08214C77002AA665 /* ScoreDisplayLifeTime.cpp */,
 				AA3D5E5D08214C77002AA665 /* ScoreDisplayLifeTime.h */,
 				AA6EFF2904770F63005F316C /* ScoreDisplayNormal.cpp */,
@@ -3770,6 +3766,8 @@
 				AA6EFFC004770FFD005F316C /* ModelTypes.h */,
 				AA6E6E0907F518E800C3EBB4 /* Quad.cpp */,
 				AA6EFFC104770FFD005F316C /* Quad.h */,
+				AA8BD2BB07C939F800EA04E1 /* RollingNumbers.cpp */,
+				AA8BD2BC07C939F800EA04E1 /* RollingNumbers.h */,
 				AA6EFFC204770FFD005F316C /* Sprite.cpp */,
 				AA6EFFC304770FFD005F316C /* Sprite.h */,
 				AAC0C8C00984AE3B0075FC53 /* Tween.cpp */,
