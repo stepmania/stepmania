@@ -1362,7 +1362,7 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 
 	if( !pCurGame->m_bCountNotesSeparately )
 	{
-		TapNoteResult tnr = NoteDataWithScoring::LastTapNoteResult( m_NoteData, iIndexThatWasSteppedOn );
+		TapNoteResult tnr = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, iIndexThatWasSteppedOn ).result;
 		TapNoteScore score = tnr.tns;
 
 		ASSERT(score != TNS_None);
@@ -1569,7 +1569,7 @@ void Player::RandomizeNotes( int iNoteRow )
 
 void Player::HandleTapRowScore( unsigned row )
 {
-	TapNoteScore scoreOfLastTap = NoteDataWithScoring::LastTapNoteResult( m_NoteData, row ).tns;
+	TapNoteScore scoreOfLastTap = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, row ).result.tns;
 	int iNumTapsInRow = m_NoteData.GetNumTracksWithTapOrHoldHead(row);
 	ASSERT_M( iNumTapsInRow > 0, ssprintf("%d, %u",iNumTapsInRow,row) );
 
