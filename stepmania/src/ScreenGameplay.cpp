@@ -144,9 +144,12 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField )
 			ASSERT(0);
 		}
 	}
+	
+	PlayerState *const pPlayerState = GetPlayerState();
+	PlayerStageStats *const pPlayerStageStats = GetPlayerStageStats();
 
 	if(  m_pPrimaryScoreDisplay )
-		m_pPrimaryScoreDisplay->Init( GetPlayerState(), GetPlayerStageStats() );
+		m_pPrimaryScoreDisplay->Init( pPlayerState, pPlayerStageStats );
 
 	switch( GAMESTATE->m_PlayMode )
 	{
@@ -157,27 +160,14 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField )
 	}
 
 	if( m_pSecondaryScoreDisplay )
-	{
-		m_pSecondaryScoreDisplay->Init( GetPlayerState(), GetPlayerStageStats() );
-	}
+		m_pSecondaryScoreDisplay->Init( pPlayerState, pPlayerStageStats );
 
-	switch( PREFSMAN->m_ScoringType )
-	{
-	default: ASSERT(0);
-	case PrefsManager::SCORING_NEW:
-	case PrefsManager::SCORING_OLD:
-		m_pPrimaryScoreKeeper = new ScoreKeeperNormal( 
-			GetPlayerState(),
-			GetPlayerStageStats() );
-		break;
-	}
+	m_pPrimaryScoreKeeper = new ScoreKeeperNormal( pPlayerState, pPlayerStageStats );
 
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_RAVE:
-		m_pSecondaryScoreKeeper = new ScoreKeeperRave( 
-			GetPlayerState(),
-			GetPlayerStageStats() );
+		m_pSecondaryScoreKeeper = new ScoreKeeperRave( pPlayerState, pPlayerStageStats );
 		break;
 	}
 
@@ -190,10 +180,10 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField )
 
 	if( IsMultiPlayer() )
 	{
-		GetPlayerState()->m_CurrentPlayerOptions	= GAMESTATE->m_pPlayerState[PLAYER_1]->m_CurrentPlayerOptions;
-		GetPlayerState()->m_PlayerOptions		= GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
-		GetPlayerState()->m_StagePlayerOptions		= GAMESTATE->m_pPlayerState[PLAYER_1]->m_StagePlayerOptions;
-		GetPlayerState()->m_StoredPlayerOptions		= GAMESTATE->m_pPlayerState[PLAYER_1]->m_StoredPlayerOptions;
+		pPlayerState->m_CurrentPlayerOptions	= GAMESTATE->m_pPlayerState[PLAYER_1]->m_CurrentPlayerOptions;
+		pPlayerState->m_PlayerOptions		= GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
+		pPlayerState->m_StagePlayerOptions	= GAMESTATE->m_pPlayerState[PLAYER_1]->m_StagePlayerOptions;
+		pPlayerState->m_StoredPlayerOptions	= GAMESTATE->m_pPlayerState[PLAYER_1]->m_StoredPlayerOptions;
 	}
 }
 
