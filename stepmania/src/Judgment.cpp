@@ -22,9 +22,9 @@ Judgment::Judgment()
 	m_mpToTrack = MultiPlayer_INVALID;
 }
 
-void Judgment::LoadNormal( bool bBeginner )
+void Judgment::LoadNormal()
 {
-	m_sprJudgment.Load( THEME->GetPathG("Judgment",bBeginner?"BeginnerLabel":"label") );
+	m_sprJudgment.Load( THEME->GetPathG("Judgment","label") );
 	ASSERT( m_sprJudgment.GetNumStates() == 6  ||  m_sprJudgment.GetNumStates() == 12 );
 	m_sprJudgment.StopAnimating();
 	Reset();
@@ -83,7 +83,7 @@ void Judgment::SetJudgment( TapNoteScore score, bool bEarly )
 
 void Judgment::LoadFromMultiPlayer( MultiPlayer mp )
 {
-	LoadNormal( false );
+	LoadNormal();
 	ASSERT( m_mpToTrack == MultiPlayer_INVALID );	// assert only load once
 	m_mpToTrack = mp;
 	this->SubscribeToMessage( enum_add2(Message_ShowJudgmentMuliPlayerP1,m_mpToTrack) );

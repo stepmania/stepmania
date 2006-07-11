@@ -13,7 +13,7 @@ class Judgment : public ActorFrame
 public:
 	Judgment();
 	virtual Actor *Copy() const;
-	void LoadNormal( bool bAlternateLabel );
+	void LoadNormal();
 	void LoadFromMultiPlayer( MultiPlayer mp );
 	void Reset();
 	void SetJudgment( TapNoteScore score, bool bEarly );

@@ -300,7 +300,7 @@ void Player::Init(
 	if( m_pJudgment )
 	{
 		m_pJudgment->SetName( "Judgment" );
-		m_pJudgment->LoadNormal( IsPlayingBeginner() );
+		m_pJudgment->LoadNormal();
 		ActorUtil::OnCommand( m_pJudgment, sType );
 	}
 
