@@ -6,6 +6,7 @@
 #include "ThemeMetric.h"
 #include "ActorUtil.h"
 #include "StatsManager.h"
+#include "XmlFile.h"
 
 static ThemeMetric<apActorCommands>	HELD_COMMAND	("HoldJudgment","HeldCommand");
 static ThemeMetric<apActorCommands>	LET_GO_COMMAND	("HoldJudgment","LetGoCommand");
@@ -14,12 +15,32 @@ REGISTER_ACTOR_CLASS( HoldJudgment )
 
 HoldJudgment::HoldJudgment()
 {
-	m_sprJudgment.Load( THEME->GetPathG("HoldJudgment","label 1x2") );
+	m_mpToTrack = MultiPlayer_INVALID;
+}
+
+void HoldJudgment::Load( const RString &sPath )
+{
+	m_sprJudgment.Load( sPath );
 	m_sprJudgment->StopAnimating();
 	ResetAnimation();
 	this->AddChild( m_sprJudgment );
+}
 
-	m_mpToTrack = MultiPlayer_INVALID;
+void HoldJudgment::LoadFromNode( const RString& sDir, const XNode* pNode )
+{
+	RString sFile;
+	if( !pNode->GetAttrValue("File", sFile) )
+		RageException::Throw( ssprintf("HoldJudgment node in '%s' is missing the attribute \"File\"", sDir.c_str()) );
+	LuaHelpers::RunAtExpressionS( sFile );
+
+	if( sFile.Left(1) != "/" )
+		sFile = sDir+sFile;
+
+	CollapsePath( sFile );
+
+	Load( sFile );
+
+	ActorFrame::LoadFromNode( sDir, pNode );
 }
 
 void HoldJudgment::ResetAnimation()

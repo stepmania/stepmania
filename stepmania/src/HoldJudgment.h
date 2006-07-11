@@ -11,6 +11,8 @@ class HoldJudgment : public ActorFrame
 public:
 	HoldJudgment();
 	virtual Actor *Copy() const;
+	void Load( const RString &sPath );
+	void LoadFromNode( const RString& sDir, const XNode* pNode );
 
 	void SetHoldJudgment( HoldNoteScore hns );
 	void LoadFromMultiPlayer( MultiPlayer mp );
