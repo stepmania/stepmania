@@ -15,7 +15,8 @@ class SongCriteria
 {
 public:
 	RString m_sGroupName;	// "" means don't match
-	RString m_sGenre;	// "" means don't match
+	bool m_bUseSongGenreAllowedList;
+	vector<RString> m_vsSongGenreAllowedList;
 	enum Selectable { Selectable_Yes, Selectable_No, Selectable_DontCare } m_Selectable;
 	bool m_bUseSongAllowedList;
 	vector<Song*> m_vpSongAllowedList;
@@ -25,6 +26,7 @@ public:
 
 	SongCriteria()
 	{
+		m_bUseSongGenreAllowedList = false;
 		m_Selectable = Selectable_DontCare;
 		m_bUseSongAllowedList = false;
 		m_iStagesForSong = -1;

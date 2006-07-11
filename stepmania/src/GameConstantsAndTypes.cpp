@@ -197,7 +197,7 @@ XToString( TapNoteScore, NUM_TapNoteScore );
 TapNoteScore StringToTapNoteScore( const RString &s )
 {
 	// new style
-	if     ( s == "None" )		return TNS_None;
+	if	   ( s == "None" )		return TNS_None;
 	else if( s == "HitMine" )	return TNS_HitMine;
 	else if( s == "AvoidMine" )	return TNS_AvoidMine;
 	else if( s == "Miss" )		return TNS_Miss;
@@ -384,22 +384,12 @@ XToString( StyleType, NUM_STYLE_TYPES );
 StringToX( StyleType );
 
 
-static const char *MenuDirNames[] = {
-	"Up",
-	"Down",
-	"Left",
-	"Right",
-	"Auto",
-};
-XToString( MenuDir, NUM_MENU_DIRS );
-
-
 static const char *GoalTypeNames[] = {
 	"Calories",
 	"Time",
 	"None",
 };
-XToString( GoalType, NUM_GOAL_TYPES );
+XToString( GoalType, NUM_GoalType );
 StringToX( GoalType );
 static void LuaGoalType(lua_State* L)
 {

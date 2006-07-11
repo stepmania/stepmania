@@ -71,8 +71,8 @@ RString CourseEntry::GetTextDescription() const
 		vsEntryDescription.push_back( "Random" );
 	if( !songCriteria.m_sGroupName.empty() )
 		vsEntryDescription.push_back( songCriteria.m_sGroupName );
-	if( !songCriteria.m_sGenre.empty() )
-		vsEntryDescription.push_back( songCriteria.m_sGenre );
+	if( songCriteria.m_bUseSongGenreAllowedList )
+		vsEntryDescription.push_back( join(",",songCriteria.m_vsSongGenreAllowedList) );
 	if( stepsCriteria.m_difficulty != DIFFICULTY_INVALID  &&  stepsCriteria.m_difficulty != DIFFICULTY_MEDIUM )
 		vsEntryDescription.push_back( DifficultyToLocalizedString(stepsCriteria.m_difficulty) );
 	if( stepsCriteria.m_iLowMeter != -1 )

@@ -54,7 +54,7 @@ void GameCommand::Init()
 	m_vsScreensToPrepare.clear();
 	m_iWeightPounds = -1;
 	m_iGoalCalories = -1;
-	m_GoalType = GOAL_INVALID;
+	m_GoalType = GoalType_INVALID;
 	m_sProfileID = "";
 	m_sUrl = "";
 
@@ -129,7 +129,7 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 		return false;
 	if( m_iGoalCalories != -1 && PROFILEMAN->GetProfile(pn)->m_iGoalCalories != m_iGoalCalories )
 		return false;
-	if( m_GoalType != GOAL_INVALID && PROFILEMAN->GetProfile(pn)->m_GoalType != m_GoalType )
+	if( m_GoalType != GoalType_INVALID && PROFILEMAN->GetProfile(pn)->m_GoalType != m_GoalType )
 		return false;
 	if( !m_sProfileID.empty() && ProfileManager::m_sDefaultLocalProfileID[pn].Get() != m_sProfileID )
 		return false;
@@ -707,7 +707,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	if( m_iGoalCalories != -1 )
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 			PROFILEMAN->GetProfile(*pn)->m_iGoalCalories = m_iGoalCalories;
-	if( m_GoalType != GOAL_INVALID )
+	if( m_GoalType != GoalType_INVALID )
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 			PROFILEMAN->GetProfile(*pn)->m_GoalType = m_GoalType;
 	if( !m_sProfileID.empty() )
@@ -767,7 +767,7 @@ bool GameCommand::IsZero() const
 		m_SortOrder != SORT_INVALID ||
 		m_iWeightPounds != -1 ||
 		m_iGoalCalories != -1 ||
-		m_GoalType != GOAL_INVALID ||
+		m_GoalType != GoalType_INVALID ||
 		!m_sProfileID.empty() ||
 		!m_sUrl.empty() )
 		return false;

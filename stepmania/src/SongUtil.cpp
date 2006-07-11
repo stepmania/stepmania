@@ -19,8 +19,13 @@ bool SongCriteria::Matches( const Song *pSong ) const
 {
 	if( !m_sGroupName.empty()  &&  m_sGroupName != pSong->m_sGroupName )
 		return false;
-	if( !m_sGenre.empty()  &&  m_sGenre != pSong->m_sGenre )
-		return false;
+
+	if( m_bUseSongGenreAllowedList )
+	{
+		if( find(m_vsSongGenreAllowedList.begin(),m_vsSongGenreAllowedList.end(),pSong->m_sGenre) == m_vsSongGenreAllowedList.end() )
+			return false;
+	}
+
 	switch( m_Selectable )
 	{
 	DEFAULT_FAIL(m_Selectable);
@@ -35,13 +40,16 @@ bool SongCriteria::Matches( const Song *pSong ) const
 	case Selectable_DontCare:
 		break;
 	}
+
 	if( m_bUseSongAllowedList )
 	{
 		if( find(m_vpSongAllowedList.begin(),m_vpSongAllowedList.end(),pSong) == m_vpSongAllowedList.end() )
 			return false;
 	}
+
 	if( m_iStagesForSong != -1  &&  SONGMAN->GetNumStagesForSong(pSong) != m_iStagesForSong )
 		return false;
+
 	switch( m_Tutorial )
 	{
 	DEFAULT_FAIL(m_Tutorial);
@@ -56,6 +64,7 @@ bool SongCriteria::Matches( const Song *pSong ) const
 	case Tutorial_DontCare:
 		break;
 	}
+
 	switch( m_Locked )
 	{
 	DEFAULT_FAIL(m_Locked);

@@ -14,6 +14,15 @@
 #include "RageSoundManager.h"
 #include "InputEventPlus.h"
 
+static const char *MenuDirNames[] = {
+	"Up",
+	"Down",
+	"Left",
+	"Right",
+	"Auto",
+};
+XToString( MenuDir, NUM_MenuDir );
+
 AutoScreenMessage( SM_PlayPostSwitchPage )
 
 RString CURSOR_OFFSET_X_FROM_ICON_NAME( size_t p ) { return ssprintf("CursorP%dOffsetXFromIcon",int(p+1)); }
@@ -42,7 +51,7 @@ void ScreenSelectMaster::Init()
 	PER_CHOICE_ICON_ELEMENT.Load( m_sName, "PerChoiceIconElement" );
 	PRE_SWITCH_PAGE_SECONDS.Load( m_sName, "PreSwitchPageSeconds" );
 	POST_SWITCH_PAGE_SECONDS.Load( m_sName, "PostSwitchPageSeconds" );
-	OPTION_ORDER.Load( m_sName, OPTION_ORDER_NAME, NUM_MENU_DIRS );
+	OPTION_ORDER.Load( m_sName, OPTION_ORDER_NAME, NUM_MenuDir );
 	WRAP_CURSOR.Load( m_sName, "WrapCursor" );
 	WRAP_SCROLLER.Load( m_sName, "WrapScroller" );
 	LOOP_SCROLLER.Load( m_sName, "LoopScroller" );
@@ -202,8 +211,8 @@ void ScreenSelectMaster::Init()
 				int add;
 				switch( dir )
 				{
-				case MENU_DIR_UP:
-				case MENU_DIR_LEFT:
+				case MenuDir_Up:
+				case MenuDir_Left:
 					add = -1;
 					break;
 				default:
@@ -212,8 +221,8 @@ void ScreenSelectMaster::Init()
 				}
 
 				m_mapCurrentChoiceToNextChoice[dir][c] = c + add;
-				/* Always wrap around MENU_DIR_AUTO. */
-				if( dir == MENU_DIR_AUTO || (bool)WRAP_CURSOR )
+				/* Always wrap around MenuDir_Auto. */
+				if( dir == MenuDir_Auto || (bool)WRAP_CURSOR )
 					wrap( m_mapCurrentChoiceToNextChoice[dir][c], m_aGameCommands.size() );
 				else
 					m_mapCurrentChoiceToNextChoice[dir][c] = clamp( m_mapCurrentChoiceToNextChoice[dir][c], 0, (int)m_aGameCommands.size()-1 );
@@ -349,7 +358,7 @@ void ScreenSelectMaster::UpdateSelectableChoices()
 	 */
 	FOREACH_HumanPlayer( p )
 		if( !m_aGameCommands[m_iChoice[p]].IsPlayable() )
-			Move( p, MENU_DIR_AUTO );
+			Move( p, MenuDir_Auto );
 }
 
 bool ScreenSelectMaster::AnyOptionsArePlayable() const
@@ -399,7 +408,7 @@ void ScreenSelectMaster::MenuLeft( const InputEventPlus &input )
 		if( m_TrackingRepeatingInput != input.MenuI )
 			return;
 	}
-	if( Move(pn, MENU_DIR_LEFT) )
+	if( Move(pn, MenuDir_Left) )
 	{
 		m_TrackingRepeatingInput = input.MenuI;
 		m_soundChange.Play();
@@ -422,7 +431,7 @@ void ScreenSelectMaster::MenuRight( const InputEventPlus &input )
 		if( m_TrackingRepeatingInput != input.MenuI )
 			return;
 	}
-	if( Move(pn, MENU_DIR_RIGHT) )
+	if( Move(pn, MenuDir_Right) )
 	{
 		m_TrackingRepeatingInput = input.MenuI;
 		m_soundChange.Play();
@@ -445,7 +454,7 @@ void ScreenSelectMaster::MenuUp( const InputEventPlus &input )
 		if( m_TrackingRepeatingInput != input.MenuI )
 			return;
 	}
-	if( Move(pn, MENU_DIR_UP) )
+	if( Move(pn, MenuDir_Up) )
 	{
 		m_TrackingRepeatingInput = input.MenuI;
 		m_soundChange.Play();
@@ -468,7 +477,7 @@ void ScreenSelectMaster::MenuDown( const InputEventPlus &input )
 		if( m_TrackingRepeatingInput != input.MenuI )
 			return;
 	}
-	if( Move(pn, MENU_DIR_DOWN) )
+	if( Move(pn, MenuDir_Down) )
 	{
 		m_TrackingRepeatingInput = input.MenuI;
 		m_soundChange.Play();
@@ -607,7 +616,7 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNew
 			{
 				// HACK: We can't tell from the option orders whether or not we wrapped.
 				// For now, assume that the order is increasing left to right.
-				int iPressedDir = (dir == MENU_DIR_LEFT) ? -1 : +1;
+				int iPressedDir = (dir == MenuDir_Left) ? -1 : +1;
 				int iActualDir = (iOldChoice < iNewChoice) ? +1 : -1;
 
 				if( iPressedDir != iActualDir )	// wrapped

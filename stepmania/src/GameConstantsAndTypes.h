@@ -387,28 +387,15 @@ const RString& StyleTypeToString( StyleType s );
 StyleType StringToStyleType( const RString& s );
 
 
-enum MenuDir
-{
-	MENU_DIR_UP,
-	MENU_DIR_DOWN,
-	MENU_DIR_LEFT,
-	MENU_DIR_RIGHT,
-	MENU_DIR_AUTO, // when players join and the selection becomes invalid
-	NUM_MENU_DIRS
-};
-#define FOREACH_MenuDir( md ) FOREACH_ENUM( MenuDir, NUM_MENU_DIRS, md )
-const RString& MenuDirToString( MenuDir md );
-
-
 enum GoalType 
 {
-	GOAL_CALORIES, 
-	GOAL_TIME, 
-	GOAL_NONE,
-	NUM_GOAL_TYPES,
-	GOAL_INVALID,
+	GoalType_Calories, 
+	GoalType_Time, 
+	GoalType_None,
+	NUM_GoalType,
+	GoalType_INVALID,
 };
-#define FOREACH_GoalType( gt ) FOREACH_ENUM( GoalType, NUM_GOAL_TYPES, gt )
+#define FOREACH_GoalType( gt ) FOREACH_ENUM( GoalType, NUM_GoalType, gt )
 const RString& GoalTypeToString( GoalType gt );
 GoalType StringToGoalType( const RString& s );
 

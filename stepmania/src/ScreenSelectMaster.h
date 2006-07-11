@@ -8,6 +8,18 @@
 #include "ActorScroller.h"
 #include "MenuInput.h"
 
+enum MenuDir
+{
+	MenuDir_Up,
+	MenuDir_Down,
+	MenuDir_Left,
+	MenuDir_Right,
+	MenuDir_Auto, // when players join and the selection becomes invalid
+	NUM_MenuDir,
+};
+#define FOREACH_MenuDir( md ) FOREACH_ENUM( MenuDir, NUM_MenuDir, md )
+const RString& MenuDirToString( MenuDir md );
+
 class ScreenSelectMaster : public ScreenSelect
 {
 public:
@@ -57,7 +69,7 @@ protected:
 	ThemeMetric<int>	SCROLLER_SUBDIVISIONS;
 	ThemeMetric<RString>	DEFAULT_CHOICE;
 
-	map<int,int> m_mapCurrentChoiceToNextChoice[NUM_MENU_DIRS];
+	map<int,int> m_mapCurrentChoiceToNextChoice[NUM_MenuDir];
 
 	virtual int GetSelectionIndex( PlayerNumber pn );
 	virtual void UpdateSelectableChoices();
