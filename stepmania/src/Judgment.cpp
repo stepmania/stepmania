@@ -7,6 +7,7 @@
 #include "ThemeMetric.h"
 #include "ActorUtil.h"
 #include "StatsManager.h"
+#include "XmlFile.h"
 
 static ThemeMetric<apActorCommands>	W1_COMMAND	("Judgment","W1Command");
 static ThemeMetric<apActorCommands>	W2_COMMAND	("Judgment","W2Command");
@@ -22,9 +23,35 @@ Judgment::Judgment()
 	m_mpToTrack = MultiPlayer_INVALID;
 }
 
+void Judgment::LoadFromNode( const RString& sDir, const XNode* pNode )
+{
+	RString sFile;
+	if( pNode->GetAttrValue("File", sFile) )
+	{
+		LuaHelpers::RunAtExpressionS( sFile );
+
+		if( sFile.Left(1) != "/" )
+			sFile = sDir+sFile;
+
+		CollapsePath( sFile );
+		LoadNormal( sFile );
+	}
+	else
+	{
+		LoadNormal();
+	}
+
+	ActorFrame::LoadFromNode( sDir, pNode );
+}
+
 void Judgment::LoadNormal()
 {
-	m_sprJudgment.Load( THEME->GetPathG("Judgment","label") );
+	LoadNormal( THEME->GetPathG("Judgment","label") );
+}
+
+void Judgment::LoadNormal( const RString &sPath )
+{
+	m_sprJudgment.Load( sPath );
 	ASSERT( m_sprJudgment.GetNumStates() == 6  ||  m_sprJudgment.GetNumStates() == 12 );
 	m_sprJudgment.StopAnimating();
 	Reset();
@@ -83,7 +110,6 @@ void Judgment::SetJudgment( TapNoteScore score, bool bEarly )
 
 void Judgment::LoadFromMultiPlayer( MultiPlayer mp )
 {
-	LoadNormal();
 	ASSERT( m_mpToTrack == MultiPlayer_INVALID );	// assert only load once
 	m_mpToTrack = mp;
 	this->SubscribeToMessage( enum_add2(Message_ShowJudgmentMuliPlayerP1,m_mpToTrack) );
