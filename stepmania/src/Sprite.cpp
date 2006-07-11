@@ -122,7 +122,6 @@ retry:
 	RString sPath;
 	if( pNode->GetAttrValue( "Texture", sTextureFile ) )
 	{
-		sPath = sDir + sTextureFile;
 		LuaHelpers::RunAtExpressionS( sTextureFile );
 
 		bool bIsAbsolutePath = sTextureFile.Left(1) == "/";
