@@ -402,7 +402,7 @@ bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
 }
 
 /*
- * (c) 2001-2006 Chris Danford, Glenn Maynard
+ * (c) 2001-2006 Chris Danford, Glenn Maynard, Jason Felds
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
