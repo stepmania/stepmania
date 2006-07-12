@@ -13,6 +13,8 @@ public:
 	int64_t GetMicrosecondsSinceStart();
 
 	void MountInitialFilesystems( const RString &sDirOfExecutable );
+
+	static clockid_t GetClock();
 };
 
 #ifdef ARCH_HOOKS

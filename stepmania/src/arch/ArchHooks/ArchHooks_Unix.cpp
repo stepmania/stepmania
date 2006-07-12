@@ -126,6 +126,12 @@ namespace
 	}
 };
 
+clockid_t ArchHooks_Unix::GetClock()
+{
+	OpenGetTime();
+	return g_Clock;
+}
+
 RString ArchHooks::GetPreferredLanguage()
 {
 	return "en";
