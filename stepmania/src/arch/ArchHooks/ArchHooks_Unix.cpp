@@ -216,7 +216,6 @@ void ArchHooks_Unix::DumpDebugInfo()
 	LOG->Info( "Threads library: %s", ThreadsVersion().c_str() );
 #if defined(HAVE_FFMPEG)
 	LOG->Info( "libavcodec: %#x (%u)", avcodec_version(), avcodec_build() );
-	
 #endif
 }
 
