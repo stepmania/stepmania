@@ -308,6 +308,8 @@ void Player::Init(
 	for( int i = 0; i < GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; ++i )
 	{
 		HoldJudgment *pJudgment = new HoldJudgment;
+		
+		pJudgment->Load( THEME->GetPathG("HoldJudgment", "label 1x2") );
 		m_vHoldJudgment.push_back( pJudgment );
 		this->AddChild( m_vHoldJudgment[i] );
 	}
