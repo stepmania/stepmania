@@ -6,7 +6,7 @@
 #include "NoteDataWithScoring.h"
 #include "ActiveAttackList.h"
 #include "ScoreDisplayNormal.h"
-#include "ScoreKeeperNormal.h"
+#include "ScoreKeeperShared.h"
 
 REGISTER_SCREEN_CLASS( ScreenGameplayShared );
 
@@ -17,14 +17,12 @@ void ScreenGameplayShared::FillPlayerInfo( vector<PlayerInfo> &vPlayerInfoOut )
 	FOREACH_PlayerNumber( pn )
 	{
 		PlayerInfo &pi = vPlayerInfoOut[pn];
-		pi.m_pn = pn;
-		// Set m_pn first.
-		PlayerState *const pPlayerState = pi.GetPlayerState();
-		PlayerStageStats *const pPlayerStageStats = pi.GetPlayerStageStats();
 		
+		pi.m_pn = pn;
 		pi.m_pPrimaryScoreDisplay = new ScoreDisplayNormal;
-		pi.m_pPrimaryScoreDisplay->Init( pPlayerState, pPlayerStageStats );
-		pi.m_pPrimaryScoreKeeper = new ScoreKeeperNormal( pPlayerState, pPlayerStageStats );
+		pi.m_pPrimaryScoreDisplay->Init( pi.GetPlayerState(), GetPlayerStageStats() );
+		if( pn == mpn )
+			pi.m_pPrimaryScoreKeeper = new ScoreKeeperShared;
 		pi.m_pPlayer = new Player( pn == mpn, pn == mpn );
 	}
 }
