@@ -1535,6 +1535,10 @@
 		AAA6BFED0644AB3700AFBBC8 /* ScreenWithMenuElements.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA6BFEB0644AB3700AFBBC8 /* ScreenWithMenuElements.h */; };
 		AAA71EA105EE154E00D2E8FF /* global.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA71EA005EE154E00D2E8FF /* global.cpp */; };
 		AAA8E0030696984300FCE1F9 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA8E0020696984300FCE1F9 /* CoreAudio.framework */; };
+		AAAA11C60A662F9D00B2BD88 /* ScoreKeeperShared.h in Headers */ = {isa = PBXBuildFile; fileRef = AAAA11C40A662F9C00B2BD88 /* ScoreKeeperShared.h */; };
+		AAAA11C70A662F9D00B2BD88 /* ScoreKeeperShared.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAAA11C50A662F9C00B2BD88 /* ScoreKeeperShared.cpp */; };
+		AAAA11C80A662F9D00B2BD88 /* ScoreKeeperShared.h in Headers */ = {isa = PBXBuildFile; fileRef = AAAA11C40A662F9C00B2BD88 /* ScoreKeeperShared.h */; };
+		AAAA11C90A662F9D00B2BD88 /* ScoreKeeperShared.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAAA11C50A662F9C00B2BD88 /* ScoreKeeperShared.cpp */; };
 		AAAB2CDF072BD2EC00CD9FC9 /* AutoKeysounds.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAAB2CDD072BD2EC00CD9FC9 /* AutoKeysounds.cpp */; };
 		AAAB2CE0072BD2EC00CD9FC9 /* AutoKeysounds.h in Headers */ = {isa = PBXBuildFile; fileRef = AAAB2CDE072BD2EC00CD9FC9 /* AutoKeysounds.h */; };
 		AAAB2CE3072BD2FA00CD9FC9 /* RageSoundMixBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAAB2CE1072BD2FA00CD9FC9 /* RageSoundMixBuffer.cpp */; };
@@ -2408,6 +2412,8 @@
 		AAA71EA005EE154E00D2E8FF /* global.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = global.cpp; sourceTree = "<group>"; };
 		AAA8E0020696984300FCE1F9 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
 		AAA983CA04B9060A00D02EE9 /* ActorUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ActorUtil.cpp; path = ../src/ActorUtil.cpp; sourceTree = "<group>"; };
+		AAAA11C40A662F9C00B2BD88 /* ScoreKeeperShared.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScoreKeeperShared.h; path = ../src/ScoreKeeperShared.h; sourceTree = SOURCE_ROOT; };
+		AAAA11C50A662F9C00B2BD88 /* ScoreKeeperShared.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScoreKeeperShared.cpp; path = ../src/ScoreKeeperShared.cpp; sourceTree = SOURCE_ROOT; };
 		AAAB2CDD072BD2EC00CD9FC9 /* AutoKeysounds.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = AutoKeysounds.cpp; path = ../src/AutoKeysounds.cpp; sourceTree = "<group>"; };
 		AAAB2CDE072BD2EC00CD9FC9 /* AutoKeysounds.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = AutoKeysounds.h; path = ../src/AutoKeysounds.h; sourceTree = "<group>"; };
 		AAAB2CE1072BD2FA00CD9FC9 /* RageSoundMixBuffer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageSoundMixBuffer.cpp; path = ../src/RageSoundMixBuffer.cpp; sourceTree = "<group>"; };
@@ -3528,6 +3534,8 @@
 				AA70E3680663112800DAE1FD /* TrailUtil.h */,
 				AA07328C0954381800F396C5 /* XmlFileUtil.cpp */,
 				AA07328D0954381800F396C5 /* XmlFileUtil.h */,
+				AAAA11C40A662F9C00B2BD88 /* ScoreKeeperShared.h */,
+				AAAA11C50A662F9C00B2BD88 /* ScoreKeeperShared.cpp */,
 			);
 			name = DataStructures;
 			sourceTree = "<group>";
@@ -4394,6 +4402,7 @@
 				AAF565FD0A3BFE2B00D5A105 /* ExportNsisStrings.h in Headers */,
 				AA8CF5170A4518BE0005F1B4 /* RageSoundDriver_AU.h in Headers */,
 				AAD8F9360A4B97DF000311CF /* ScreenGameplayShared.h in Headers */,
+				AAAA11C60A662F9D00B2BD88 /* ScoreKeeperShared.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4840,6 +4849,7 @@
 				AAF565FF0A3BFE2B00D5A105 /* ExportNsisStrings.h in Headers */,
 				AA8CF5190A4518BE0005F1B4 /* RageSoundDriver_AU.h in Headers */,
 				AAD8F9340A4B97DF000311CF /* ScreenGameplayShared.h in Headers */,
+				AAAA11C80A662F9D00B2BD88 /* ScoreKeeperShared.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5392,6 +5402,7 @@
 				AAF565FC0A3BFE2B00D5A105 /* ExportNsisStrings.cpp in Sources */,
 				AA8CF5180A4518BE0005F1B4 /* RageSoundDriver_AU.cpp in Sources */,
 				AAD8F9370A4B97DF000311CF /* ScreenGameplayShared.cpp in Sources */,
+				AAAA11C70A662F9D00B2BD88 /* ScoreKeeperShared.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5796,6 +5807,7 @@
 				AAF565FE0A3BFE2B00D5A105 /* ExportNsisStrings.cpp in Sources */,
 				AA8CF51A0A4518BE0005F1B4 /* RageSoundDriver_AU.cpp in Sources */,
 				AAD8F9350A4B97DF000311CF /* ScreenGameplayShared.cpp in Sources */,
+				AAAA11C90A662F9D00B2BD88 /* ScoreKeeperShared.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
