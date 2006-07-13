@@ -214,6 +214,9 @@ MutexImpl *MakeMutex( RageMutex *pParent )
 #if defined(UNIX)
 #include <dlfcn.h>
 #include "arch/ArchHooks/ArchHooks_Unix.h"
+#else
+typedef void *clockid_t;
+static clockid_t CLOCK_REALTIME = NULL;
 #endif
 namespace
 {
