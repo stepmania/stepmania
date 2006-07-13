@@ -45,6 +45,7 @@ void HoldJudgment::LoadFromNode( const RString& sDir, const XNode* pNode )
 
 void HoldJudgment::ResetAnimation()
 {
+	ASSERT( m_sprJudgment.IsLoaded() );
 	m_sprJudgment->SetDiffuse( RageColor(1,1,1,0) );
 	m_sprJudgment->SetXY( 0, 0 );
 	m_sprJudgment->StopTweening();
