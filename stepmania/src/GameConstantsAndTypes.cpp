@@ -242,7 +242,7 @@ XToString( HoldNoteScore, NUM_HoldNoteScore );
 HoldNoteScore StringToHoldNoteScore( const RString &s )
 {
 	// for backward compatibility
-	if	   ( s == "NG" )	return HNS_LetGo;
+	if     ( s == "NG" )	return HNS_LetGo;
 	else if( s == "OK" )	return HNS_Held;
 
 	// new style
