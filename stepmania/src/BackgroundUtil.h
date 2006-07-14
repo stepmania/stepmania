@@ -66,14 +66,14 @@ namespace BackgroundUtil
 {
 	void SortBackgroundChangesArray( vector<BackgroundChange> &vBackgroundChanges );
 	
-	void GetBackgroundEffects(		const RString &sName, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut );
+	void GetBackgroundEffects(	const RString &sName, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut );
 	void GetBackgroundTransitions(	const RString &sName, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut );
 
-	void GetSongBGAnimations(		const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut );
-	void GetSongMovies(				const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut );
-	void GetSongBitmaps(			const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut );
-	void GetGlobalBGAnimations(		const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut );
-	void GetGlobalRandomMovies(		const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut, bool bTryInsideOfSongGroupAndGenreFirst = true, bool bTryInsideOfSongGroupFirst = true );
+	void GetSongBGAnimations(	const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut );
+	void GetSongMovies(		const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut );
+	void GetSongBitmaps(		const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut );
+	void GetGlobalBGAnimations(	const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut );
+	void GetGlobalRandomMovies(	const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut, bool bTryInsideOfSongGroupAndGenreFirst = true, bool bTryInsideOfSongGroupFirst = true );
 
 	void BakeAllBackgroundChanges( Song *pSong );
 };
