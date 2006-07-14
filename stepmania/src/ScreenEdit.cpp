@@ -558,8 +558,8 @@ static MenuDef g_BackgroundChange(
 	MenuRowDef( ScreenEdit::rate,						"Rate",					true,						EditMode_Full, true, false, 10, "0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%","120%","140%","160%","180%","200%" ),
 	MenuRowDef( ScreenEdit::transition,					"Force Transition",			true,						EditMode_Full, true, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::effect,						"Force Effect",				true,						EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::color1,						"Force Color 1",			true,						EditMode_Full, true, false, 0, "","1,1,1,1","0.5,0.5,0.5,1","1,1,1,0.5","0,0,0,1","1,0,0,1","0,1,0,1","0,0,1,1","1,1,0,1","0,1,1,1","1,0,1,1" ),
-	MenuRowDef( ScreenEdit::color2,						"Force Color 2",			true,						EditMode_Full, true, false, 0, "","1,1,1,1","0.5,0.5,0.5,1","1,1,1,0.5","0,0,0,1","1,0,0,1","0,1,0,1","0,0,1,1","1,1,0,1","0,1,1,1","1,0,1,1" ),
+	MenuRowDef( ScreenEdit::color1,						"Force Color 1",			true,						EditMode_Full, true, false, 0, "-","1,1,1,1","0.5,0.5,0.5,1","1,1,1,0.5","0,0,0,1","1,0,0,1","0,1,0,1","0,0,1,1","1,1,0,1","0,1,1,1","1,0,1,1" ),
+	MenuRowDef( ScreenEdit::color2,						"Force Color 2",			true,						EditMode_Full, true, false, 0, "-","1,1,1,1","0.5,0.5,0.5,1","1,1,1,0.5","0,0,0,1","1,0,0,1","0,1,0,1","0,0,1,1","1,1,0,1","0,1,1,1","1,0,1,1" ),
 	MenuRowDef( ScreenEdit::file1_type,					"File1 Type",				true,						EditMode_Full, true, true, 0, "Song BGAnimation", "Song Movie", "Song Bitmap", "Global BGAnimation", "Global Movie", "Global Movie from Song Group", "Global Movie from Song Group and Genre", "Dynamic Random", "Baked Random", "None" ),
 	MenuRowDef( ScreenEdit::file1_song_bganimation,				"File1 Song BGAnimation",		EnabledIfSet1SongBGAnimation,			EditMode_Full, true, false, 0, NULL ),
 	MenuRowDef( ScreenEdit::file1_song_movie,				"File1 Song Movie",			EnabledIfSet1SongMovie,				EditMode_Full, true, false, 0, NULL ),
@@ -1579,9 +1579,9 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 
 			menu.rows[layer].choices[0] = ssprintf("%d",g_CurrentBGChangeLayer);
 			BackgroundUtil::GetBackgroundTransitions(	"", vThrowAway, menu.rows[transition].choices );
-			g_BackgroundChange.rows[transition].choices.insert( g_BackgroundChange.rows[transition].choices.begin(), "" );	// add "no transition"
+			g_BackgroundChange.rows[transition].choices.insert( g_BackgroundChange.rows[transition].choices.begin(), "None" );	// add "no transition"
 			BackgroundUtil::GetBackgroundEffects(		"", vThrowAway, menu.rows[effect].choices );
-			menu.rows[effect].choices.insert( menu.rows[effect].choices.begin(), "" );	// add "default effect"
+			menu.rows[effect].choices.insert( menu.rows[effect].choices.begin(), "Default" );	// add "default effect"
 
 			BackgroundUtil::GetSongBGAnimations(   m_pSong, "", vThrowAway, menu.rows[file1_song_bganimation].choices );
 			BackgroundUtil::GetSongMovies(         m_pSong, "", vThrowAway, menu.rows[file1_song_movie].choices );
@@ -3248,12 +3248,12 @@ void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, const vector<int> &iAns
 		}
 	}
 
-	newChange.m_fStartBeat = GAMESTATE->m_fSongBeat;
-	newChange.m_fRate = StringToFloat( g_BackgroundChange.rows[rate].choices[iAnswers[rate]] )/100.f;
-	newChange.m_sTransition = g_BackgroundChange.rows[transition].choices[iAnswers[transition]];
-	newChange.m_def.m_sEffect = g_BackgroundChange.rows[effect].choices[iAnswers[effect]];
-	newChange.m_def.m_sColor1 = g_BackgroundChange.rows[color1].choices[iAnswers[color1]];
-	newChange.m_def.m_sColor2 = g_BackgroundChange.rows[color2].choices[iAnswers[color2]];
+	newChange.m_fStartBeat    = GAMESTATE->m_fSongBeat;
+	newChange.m_fRate         = StringToFloat( g_BackgroundChange.rows[rate].choices[iAnswers[rate]] )/100.f;
+	newChange.m_sTransition   = iAnswers[transition] ? g_BackgroundChange.rows[transition].choices[iAnswers[transition]] : EMPTY_STRING;
+	newChange.m_def.m_sEffect = iAnswers[effect]     ? g_BackgroundChange.rows[effect].choices[iAnswers[effect]]         : EMPTY_STRING;
+	newChange.m_def.m_sColor1 = iAnswers[color1]     ? g_BackgroundChange.rows[color1].choices[iAnswers[color1]]         : EMPTY_STRING;
+	newChange.m_def.m_sColor2 = iAnswers[color2]     ? g_BackgroundChange.rows[color2].choices[iAnswers[color2]]         : EMPTY_STRING;
 	switch( iAnswers[file1_type] )
 	{
 	DEFAULT_FAIL( iAnswers[file1_type] );
