@@ -4,6 +4,7 @@
 #define NOTEDATAWITHSCORING_H
 
 #include "NoteTypes.h"
+#include "PlayerNumber.h"
 
 struct RadarValues;
 class NoteData;
@@ -12,7 +13,7 @@ namespace NoteDataWithScoring
 {
 	bool IsRowCompletelyJudged( const NoteData &in, unsigned iRow );
 	TapNoteScore MinTapNoteScore( const NoteData &in, unsigned iRow );
-	const TapNote &LastTapNoteWithResult( const NoteData &in, unsigned iRow );
+	const TapNote &LastTapNoteWithResult( const NoteData &in, unsigned iRow, PlayerNumber pn = PLAYER_INVALID );
 
 	void GetActualRadarValues( const NoteData &in, const PlayerStageStats &pss, float fSongSeconds, RadarValues& out );
 };

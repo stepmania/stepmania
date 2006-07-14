@@ -129,7 +129,7 @@ int GetSuccessfulHands( const NoteData &in, int iStartIndex = 0, int iEndIndex =
 /* Return the last tap score of a row: the grade of the tap that completed
  * the row.  If the row has no tap notes, return -1.  If any tap notes aren't
  * graded (any tap is TNS_None) or are missed (TNS_Miss), return it. */
-int LastTapNoteScoreTrack( const NoteData &in, unsigned iRow )
+int LastTapNoteScoreTrack( const NoteData &in, unsigned iRow, PlayerNumber pn )
 {
 	float scoretime = -9999;
 	int best_track = -1;
@@ -138,6 +138,8 @@ int LastTapNoteScoreTrack( const NoteData &in, unsigned iRow )
 		/* Skip empty tracks and mines */
 		const TapNote &tn = in.GetTapNote( t, iRow );
 		if( tn.type == TapNote::empty || tn.type == TapNote::mine ) 
+			continue;
+		if( tn.pn != PLAYER_INVALID && tn.pn != pn && pn != PLAYER_INVALID )
 			continue;
 
 		TapNoteScore tns = tn.result.tns;
@@ -157,9 +159,9 @@ int LastTapNoteScoreTrack( const NoteData &in, unsigned iRow )
 
 }
 
-const TapNote &NoteDataWithScoring::LastTapNoteWithResult( const NoteData &in, unsigned iRow )
+const TapNote &NoteDataWithScoring::LastTapNoteWithResult( const NoteData &in, unsigned iRow, PlayerNumber pn )
 {
-	int iTrack = LastTapNoteScoreTrack( in, iRow );
+	int iTrack = LastTapNoteScoreTrack( in, iRow, pn );
 	if( iTrack == -1 )
 		return TAP_EMPTY;
 	return in.GetTapNote( iTrack, iRow );
