@@ -1349,12 +1349,15 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 					break;
 				}
 
-				int iDiff = abs(m_vpSteps[i]->GetDifficulty() - GAMESTATE->m_PreferredDifficulty[pn]);
-
-				if( iCurDifference == -1 || iDiff < iCurDifference )
+				if( GAMESTATE->m_PreferredDifficulty[pn] != DIFFICULTY_INVALID )
 				{
-					iSelection = i;
-					iCurDifference = iDiff;
+					int iDiff = abs(m_vpSteps[i]->GetDifficulty() - GAMESTATE->m_PreferredDifficulty[pn]);
+
+					if( iCurDifference == -1 || iDiff < iCurDifference )
+					{
+						iSelection = i;
+						iCurDifference = iDiff;
+					}
 				}
 			}
 
