@@ -1658,6 +1658,8 @@
 		AADBA563062007BA005D4FC2 /* arch_platform.h in Headers */ = {isa = PBXBuildFile; fileRef = AADBA562062007BA005D4FC2 /* arch_platform.h */; };
 		AADD1CC5095C233F0088C9DF /* LocalizedString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AADD1CC2095C233E0088C9DF /* LocalizedString.cpp */; };
 		AADD1CC6095C233F0088C9DF /* LocalizedString.h in Headers */ = {isa = PBXBuildFile; fileRef = AADD1CC3095C233F0088C9DF /* LocalizedString.h */; };
+		AAE2D6D40A67481E00071546 /* ScoreKeeper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE2D6D30A67481E00071546 /* ScoreKeeper.cpp */; };
+		AAE2D6D50A67481E00071546 /* ScoreKeeper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE2D6D30A67481E00071546 /* ScoreKeeper.cpp */; };
 		AAE66F740657634D002E3AD9 /* CryptMD5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE66F650657634D002E3AD9 /* CryptMD5.cpp */; };
 		AAE66F750657634D002E3AD9 /* CryptMD5.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE66F660657634D002E3AD9 /* CryptMD5.h */; };
 		AAE66F790657634D002E3AD9 /* CryptRand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE66F6A0657634D002E3AD9 /* CryptRand.cpp */; };
@@ -2412,8 +2414,8 @@
 		AAA71EA005EE154E00D2E8FF /* global.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = global.cpp; sourceTree = "<group>"; };
 		AAA8E0020696984300FCE1F9 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
 		AAA983CA04B9060A00D02EE9 /* ActorUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ActorUtil.cpp; path = ../src/ActorUtil.cpp; sourceTree = "<group>"; };
-		AAAA11C40A662F9C00B2BD88 /* ScoreKeeperShared.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScoreKeeperShared.h; path = ../src/ScoreKeeperShared.h; sourceTree = SOURCE_ROOT; };
-		AAAA11C50A662F9C00B2BD88 /* ScoreKeeperShared.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScoreKeeperShared.cpp; path = ../src/ScoreKeeperShared.cpp; sourceTree = SOURCE_ROOT; };
+		AAAA11C40A662F9C00B2BD88 /* ScoreKeeperShared.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScoreKeeperShared.h; path = ../src/ScoreKeeperShared.h; sourceTree = "<group>"; };
+		AAAA11C50A662F9C00B2BD88 /* ScoreKeeperShared.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScoreKeeperShared.cpp; path = ../src/ScoreKeeperShared.cpp; sourceTree = "<group>"; };
 		AAAB2CDD072BD2EC00CD9FC9 /* AutoKeysounds.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = AutoKeysounds.cpp; path = ../src/AutoKeysounds.cpp; sourceTree = "<group>"; };
 		AAAB2CDE072BD2EC00CD9FC9 /* AutoKeysounds.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = AutoKeysounds.h; path = ../src/AutoKeysounds.h; sourceTree = "<group>"; };
 		AAAB2CE1072BD2FA00CD9FC9 /* RageSoundMixBuffer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageSoundMixBuffer.cpp; path = ../src/RageSoundMixBuffer.cpp; sourceTree = "<group>"; };
@@ -2590,6 +2592,7 @@
 		AADBE369053DA38C00D02EE9 /* Bookkeeper.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Bookkeeper.h; path = ../src/Bookkeeper.h; sourceTree = "<group>"; };
 		AADD1CC2095C233E0088C9DF /* LocalizedString.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = LocalizedString.cpp; path = ../src/LocalizedString.cpp; sourceTree = "<group>"; };
 		AADD1CC3095C233F0088C9DF /* LocalizedString.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = LocalizedString.h; path = ../src/LocalizedString.h; sourceTree = "<group>"; };
+		AAE2D6D30A67481E00071546 /* ScoreKeeper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScoreKeeper.cpp; path = ../src/ScoreKeeper.cpp; sourceTree = "<group>"; };
 		AAE443EB04B0F9F600D02EE9 /* CombinedLifeMeterTug.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = CombinedLifeMeterTug.cpp; path = ../src/CombinedLifeMeterTug.cpp; sourceTree = "<group>"; };
 		AAE443EC04B0F9F600D02EE9 /* CombinedLifeMeterTug.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = CombinedLifeMeterTug.h; path = ../src/CombinedLifeMeterTug.h; sourceTree = "<group>"; };
 		AAE443F304B0FEB700D02EE9 /* ScoreKeeperRave.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScoreKeeperRave.cpp; path = ../src/ScoreKeeperRave.cpp; sourceTree = "<group>"; };
@@ -3499,11 +3502,14 @@
 				AA3D790006A275E90064B980 /* RadarValues.h */,
 				AA6E01E6047720A3005F316C /* RandomSample.cpp */,
 				AA6E01E7047720A3005F316C /* RandomSample.h */,
+				AAE2D6D30A67481E00071546 /* ScoreKeeper.cpp */,
 				AA6EFF3004770F63005F316C /* ScoreKeeper.h */,
 				AAF34ADC0900AEBD0006EDB7 /* ScoreKeeperNormal.cpp */,
 				AAF34ADD0900AEBD0006EDB7 /* ScoreKeeperNormal.h */,
 				AAE443F304B0FEB700D02EE9 /* ScoreKeeperRave.cpp */,
 				AAE443F404B0FEB700D02EE9 /* ScoreKeeperRave.h */,
+				AAAA11C50A662F9C00B2BD88 /* ScoreKeeperShared.cpp */,
+				AAAA11C40A662F9C00B2BD88 /* ScoreKeeperShared.h */,
 				AA6E01E20477205A005F316C /* Song.cpp */,
 				AA6E01E30477205A005F316C /* song.h */,
 				AA6E01DE04772005005F316C /* SongCacheIndex.cpp */,
@@ -3534,8 +3540,6 @@
 				AA70E3680663112800DAE1FD /* TrailUtil.h */,
 				AA07328C0954381800F396C5 /* XmlFileUtil.cpp */,
 				AA07328D0954381800F396C5 /* XmlFileUtil.h */,
-				AAAA11C40A662F9C00B2BD88 /* ScoreKeeperShared.h */,
-				AAAA11C50A662F9C00B2BD88 /* ScoreKeeperShared.cpp */,
 			);
 			name = DataStructures;
 			sourceTree = "<group>";
@@ -5403,6 +5407,7 @@
 				AA8CF5180A4518BE0005F1B4 /* RageSoundDriver_AU.cpp in Sources */,
 				AAD8F9370A4B97DF000311CF /* ScreenGameplayShared.cpp in Sources */,
 				AAAA11C70A662F9D00B2BD88 /* ScoreKeeperShared.cpp in Sources */,
+				AAE2D6D40A67481E00071546 /* ScoreKeeper.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5808,6 +5813,7 @@
 				AA8CF51A0A4518BE0005F1B4 /* RageSoundDriver_AU.cpp in Sources */,
 				AAD8F9350A4B97DF000311CF /* ScreenGameplayShared.cpp in Sources */,
 				AAAA11C90A662F9D00B2BD88 /* ScoreKeeperShared.cpp in Sources */,
+				AAE2D6D50A67481E00071546 /* ScoreKeeper.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
