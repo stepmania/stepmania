@@ -576,7 +576,7 @@ static MenuDef g_BackgroundChange(
 	MenuRowDef( ScreenEdit::file2_global_movie,				"File2 Global Movie",			EnabledIfSet2GlobalMovie,			EditMode_Full, true, false, 0, NULL ),
 	MenuRowDef( ScreenEdit::file2_global_movie_song_group,			"File2 Global Movie (Group)",		EnabledIfSet2GlobalMovieSongGroup,		EditMode_Full, true, false, 0, NULL ),
 	MenuRowDef( ScreenEdit::file2_global_movie_song_group_and_genre,	"File2 Global Movie (Group + Genre)",	EnabledIfSet2GlobalMovieSongGroupAndGenre,	EditMode_Full, true, false, 0, NULL ),
-	MenuRowDef( ScreenEdit::delete_change,					"Remove Change",			true,						EditMode_Full, true, false, 0, NULL )
+	MenuRowDef( ScreenEdit::delete_change,					"Remove Change",			true,						EditMode_Full, true, true, 0, NULL )
 );
 static bool EnabledIfSet1SongBGAnimation()		{ return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file1_type] == song_bganimation			&& !g_BackgroundChange.rows[ScreenEdit::file1_song_bganimation].choices.empty(); }
 static bool EnabledIfSet1SongMovie()			{ return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file1_type] == song_movie				&& !g_BackgroundChange.rows[ScreenEdit::file1_song_movie].choices.empty(); }
