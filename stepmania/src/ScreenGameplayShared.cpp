@@ -20,7 +20,7 @@ void ScreenGameplayShared::FillPlayerInfo( vector<PlayerInfo> &vPlayerInfoOut )
 		
 		pi.m_pn = pn;
 		pi.m_pPrimaryScoreDisplay = new ScoreDisplayNormal;
-		pi.m_pPrimaryScoreDisplay->Init( pi.GetPlayerState(), GetPlayerStageStats() );
+		pi.m_pPrimaryScoreDisplay->Init( pi.GetPlayerState(), pi.GetPlayerStageStats() );
 		if( pn == mpn )
 			pi.m_pPrimaryScoreKeeper = new ScoreKeeperShared;
 		pi.m_pPlayer = new Player( pn == mpn, pn == mpn );
