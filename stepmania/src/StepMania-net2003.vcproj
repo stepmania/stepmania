@@ -1053,6 +1053,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\RandomSample.h">
 			</File>
 			<File
+				RelativePath=".\ScoreKeeper.cpp">
+			</File>
+			<File
 				RelativePath="ScoreKeeper.h">
 			</File>
 			<File
