@@ -1366,9 +1366,9 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 		TapNoteResult tnr = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, iIndexThatWasSteppedOn ).result;
 		TapNoteScore score = tnr.tns;
 
-		ASSERT(score != TNS_None);
-		ASSERT(score != TNS_HitMine);
-		ASSERT(score != TNS_AvoidMine);
+		ASSERT( score != TNS_None );
+		ASSERT( score != TNS_HitMine );
+		ASSERT( score != TNS_AvoidMine );
 
 		/* If the whole row was hit with perfects or greats, remove the row
 		 * from the NoteField, so it disappears. */
@@ -1572,15 +1572,13 @@ void Player::HandleTapRowScore( unsigned row )
 {
 	const TapNote &lastTN = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, row );
 	TapNoteScore scoreOfLastTap = lastTN.result.tns;
-	int iNumTapsInRow = m_NoteData.GetNumTracksWithTapOrHoldHead(row);
-	ASSERT_M( iNumTapsInRow > 0, ssprintf("%d, %u",iNumTapsInRow,row) );
 
 	bool NoCheating = true;
 #ifdef DEBUG
 	NoCheating = false;
 #endif
 
-	if(GAMESTATE->m_bDemonstrationOrJukebox)
+	if( GAMESTATE->m_bDemonstrationOrJukebox )
 		NoCheating = false;
 	// don't accumulate points if AutoPlay is on.
 	if( NoCheating && m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
@@ -1621,9 +1619,9 @@ void Player::HandleTapRowScore( unsigned row )
 	const int iOldCombo = iCurCombo;
 
 	if( m_pPrimaryScoreKeeper != NULL )
-		m_pPrimaryScoreKeeper->HandleTapRowScore( lastTN, iNumTapsInRow );
+		m_pPrimaryScoreKeeper->HandleTapRowScore( m_NoteData, row );
 	if( m_pSecondaryScoreKeeper != NULL )
-		m_pSecondaryScoreKeeper->HandleTapRowScore( lastTN, iNumTapsInRow );
+		m_pSecondaryScoreKeeper->HandleTapRowScore( m_NoteData, row );
 
 	if( m_pPlayerStageStats )
 	{

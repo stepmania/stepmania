@@ -17,7 +17,7 @@ public:
 	void Update( float fDelta );
 	void OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData );
 	void HandleTapScore( const TapNote &tn );
-	void HandleTapRowScore( const TapNote &lastTN, int iNumTapsInRow );
+	void HandleTapRowScore( const NoteData &nd, int row );
 	void HandleHoldScore( const TapNote &tn );
 };
 #endif

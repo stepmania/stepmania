@@ -1,31 +1,31 @@
-/* ScoreKeeperRave - Launches attacks in PLAY_MODE_RAVE. */
-
-#ifndef ScoreKeeperRave_H
-#define ScoreKeeperRave_H
-
+#include "global.h"
 #include "ScoreKeeper.h"
-#include "GameConstantsAndTypes.h"
+#include "NoteData.h"
+#include "PlayerState.h"
+#include "NoteDataWithScoring.h"
 
-
-class ScoreKeeperRave : public ScoreKeeper
+void ScoreKeeper::GetScoreOfLastTapInRow( const NoteData &nd, int iRow,
+					  TapNoteScore &tnsOut, int &iNumTapsInRowOut )
 {
-public:
-	ScoreKeeperRave( PlayerState* pPlayerState, PlayerStageStats* pPlayerStageStats );
-	virtual ~ScoreKeeperRave() { }
-	void OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData );	// before a song plays (called multiple times if course)
-	void HandleTapScore( const TapNote &tn );
-	void HandleTapRowScore( const NoteData &nd, int iRow );
-	void HandleHoldScore( const TapNote &tn );
-
-protected:
-	void LaunchAttack( AttackLevel al );
-	void AddSuperMeterDelta( float fUnscaledPercentChange );
-};
-
-#endif
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+	int iNum = 0;
+	
+	for( int track = 0; track < nd.GetNumTracks(); ++track )
+	{
+		const TapNote &tn = nd.GetTapNote( track, iRow );
+	
+		if( tn.pn != PLAYER_INVALID && tn.pn != pn )
+			continue;
+		if( tn.type != TapNote::tap && tn.type != TapNote::hold_head )
+			continue;
+		++iNum;
+	}
+	tnsOut = NoteDataWithScoring::LastTapNoteWithResult( nd, iRow, pn ).result.tns;
+	iNumTapsInRowOut = iNum;
+}
 
 /*
- * (c) 2001-2004 Chris Danford
+ * (c) 2006 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

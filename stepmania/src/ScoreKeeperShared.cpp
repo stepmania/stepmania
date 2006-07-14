@@ -57,10 +57,9 @@ void ScoreKeeperShared::HandleTapScore( const TapNote &tn )
 		m_pScoreKeepers[tn.pn]->HandleTapScore( tn );
 }
 
-void ScoreKeeperShared::HandleTapRowScore( const TapNote &lastTN, int iNumTapsInRow )
+void ScoreKeeperShared::HandleTapRowScore( const NoteData &nd, int row )
 {
-	// XXX Each player should probaby have this for just their own notes.
-	CALL( HandleTapRowScore(lastTN, iNumTapsInRow) );
+	CALL( HandleTapRowScore(nd, row) );
 }
 
 void ScoreKeeperShared::HandleHoldScore( const TapNote &tn )

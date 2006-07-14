@@ -348,10 +348,14 @@ void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 	}
 }
 
-void ScoreKeeperNormal::HandleTapRowScore( const TapNote &lastTN, int iNumTapsInRow )
+void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 {
-	ASSERT( iNumTapsInRow >= 1 );
-	TapNoteScore scoreOfLastTap = lastTN.result.tns;
+	TapNoteScore scoreOfLastTap;
+	int iNumTapsInRow;
+	GetScoreOfLastTapInRow( nd, iRow, scoreOfLastTap, iNumTapsInRow );
+	
+	if( iNumTapsInRow <= 0 )
+		return;
 
 	// Update dance points.
 	if( !m_pPlayerStageStats->bFailed )
