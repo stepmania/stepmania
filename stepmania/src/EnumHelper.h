@@ -54,9 +54,13 @@ static const RString EMPTY_STRING;
 	{	\
 		Check##X##ToStringParamType( X##Names ); \
 		static auto_ptr<RString> as_##X##Name[CNT]; \
-		if( as_##X##Name[0].get() == NULL ) \
+		if( as_##X##Name[0].get() == NULL ) { \
 			for( unsigned i = 0; i < CNT; ++i ) \
-				as_##X##Name[i].reset( new RString(X##Names[i]) ); \
+			{ \
+				auto_ptr<RString> ap( new RString( X##Names[i] ) ); \
+				as_##X##Name[i] = ap; \
+			} \
+		} \
 		ASSERT( CNT == ARRAYSIZE(X##Names) );	\
 		if( x == CNT+1 ) 	\
 			return EMPTY_STRING;	\
@@ -68,9 +72,13 @@ static const RString EMPTY_STRING;
 	const RString &X##ToLocalizedString( X x ) \
 	{       \
 		static auto_ptr<LocalizedString> g_##X##Name[NUM_##X]; \
-		if( g_##X##Name[0].get() == NULL ) \
+		if( g_##X##Name[0].get() == NULL ) { \
 			for( unsigned i = 0; i < NUM_##X; ++i ) \
-				g_##X##Name[i].reset( new LocalizedString(#X, X##ToString((X)i)) ); \
+			{ \
+				auto_ptr<LocalizedString> ap( new LocalizedString(#X, X##ToString((X)i)) ); \
+				g_##X##Name[i] = ap; \
+			} \
+		} \
 		return g_##X##Name[x]->GetValue();  \
 	}
 
