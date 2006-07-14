@@ -1413,6 +1413,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ScoreKeeper.cpp"
+				>
+			</File>
+			<File
 				RelativePath="ScoreKeeper.h"
 				>
 			</File>
