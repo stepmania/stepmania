@@ -1437,6 +1437,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ScoreKeeperShared.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ScoreKeeperShared.h"
+				>
+			</File>
+			<File
 				RelativePath="ScreenDimensions.cpp"
 				>
 			</File>
