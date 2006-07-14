@@ -13,6 +13,21 @@
 #endif
 
 #if defined(_MSC_VER)
+#pragma warning (disable : 4201) // nonstandard extension used : nameless struct/union (Windows headers do this)
+#pragma warning (disable : 4786) // turn off broken debugger warning
+#pragma warning (disable : 4512) // assignment operator could not be generated (so?)
+/* "unreachable code".  This warning crops up in incorrect places (end of do ... while(0)
+ * blocks, try/catch blocks), and I've never found it to be useful. */
+#pragma warning (disable : 4702) // assignment operator could not be generated (so?)
+/* "unreferenced formal parameter"; we *want* that in many cases */
+#pragma warning (disable : 4100)
+/* "case 'aaa' is not a valid value for switch of enum 'bbb'
+ * Actually, this is a valid warning, but we do it all over the
+ * place, eg. with ScreenMessages.  Those should be fixed, but later. XXX */
+#pragma warning (disable : 4063)
+#pragma warning (disable : 4127)
+#pragma warning (disable : 4786) /* VC6: identifier was truncated to '255' characters in the debug information */
+
 
 /* Fix VC breakage. */
 #define PATH_MAX _MAX_PATH
@@ -32,7 +47,18 @@ template<class T, class P>
 inline const T& min(const T &a, const T &b, P Pr)	{ return Pr(b, a)? b:a; }
 
 typedef long int intptr_t;
-typedef unsigned long int uintptr_t;
+typedef unsigned int uintptr_t;
+
+// might not be defined in vc6 with an older PSDK
+#if !defined(DWORD_PTR)
+typedef unsigned long DWORD_PTR;
+#endif
+#if !defined(ULONG_PTR)
+typedef unsigned long ULONG_PTR;
+#endif
+#if !defined(LONG_PTR)
+typedef long LONG_PTR;
+#endif
 #endif
 
 // HACK: Fake correct scoping rules in VC6.
@@ -89,28 +115,6 @@ typedef unsigned int uint32_t;
 typedef __int64 int64_t;
 typedef unsigned __int64 uint64_t;
 static inline int64_t llabs( int64_t i ) { return i >= 0? i: -i; }
-
-#if _MSC_VER < 1300 /* VC6 */
-typedef unsigned int uintptr_t;
-#endif
-
-#endif
-
-#if defined(_MSC_VER)
-#pragma warning (disable : 4201) // nonstandard extension used : nameless struct/union (Windows headers do this)
-#pragma warning (disable : 4786) // turn off broken debugger warning
-#pragma warning (disable : 4512) // assignment operator could not be generated (so?)
-/* "unreachable code".  This warning crops up in incorrect places (end of do ... while(0)
- * blocks, try/catch blocks), and I've never found it to be useful. */
-#pragma warning (disable : 4702) // assignment operator could not be generated (so?)
-/* "unreferenced formal parameter"; we *want* that in many cases */
-#pragma warning (disable : 4100)
-/* "case 'aaa' is not a valid value for switch of enum 'bbb'
- * Actually, this is a valid warning, but we do it all over the
- * place, eg. with ScreenMessages.  Those should be fixed, but later. XXX */
-#pragma warning (disable : 4063)
-#pragma warning (disable : 4127)
-#pragma warning (disable : 4786) /* VC6: identifier was truncated to '255' characters in the debug information */
 #endif
 
 #undef min
