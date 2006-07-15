@@ -1348,17 +1348,8 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 {
 //	LOG->Trace( "Player::OnRowCompletelyJudged" );
 	
-	/* Find the minimum score of the row.  This will never be TNS_None, since this
+	/* Find the final score of the row.  This will never be TNS_None, since this
 	 * function is only called when a row is completed. */
-	/* Instead, use the last tap score. */
-	/* I'm not sure this is right, either.  Can you really jump a W5 and a W1
-	 * and get scored for an W1?  (That's so loose, you can gallop jumps.) -glenn */
-	/* Instead of grading individual columns, maybe set a "was pressed recently" 
-	 * countdown every time you step on a column.  When you step on the first note of 
-	 * the jump, it sets the first "was pressed recently" timer.  Then, when you do 
-	 * the 2nd step of the jump, it sets another column's timer then AND's the jump 
-	 * columns with the "was pressed recently" columns to see whether or not you hit 
-	 * all the columns of the jump.  -Chris */
 	const Game *pCurGame = GAMESTATE->m_pCurGame;
 
 	if( !pCurGame->m_bCountNotesSeparately )
