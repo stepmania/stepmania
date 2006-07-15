@@ -15,7 +15,18 @@ using namespace FontCharmaps;
  * Use M_SKIP to indicate that a glyph should be skipped, not mapped.  Do
  * this to skip control codes, for example, while keeping glyphs aligned. */
 
-/* Good old-fashioned ASCII. */
+/*
+ * ASCII:
+ *
+ (empty)
+ (empty)
+ !"#$%&'()*+,-./ 
+0123456789:;<=>? 
+@ABCDEFGHIJKLMNO 
+PQRSTUVWXYZ[\]^_ 
+`abcdefghijklmno 
+pqrstuvwxyz{|}~ 
+ */
 static const wchar_t map_ascii[] = {
 	M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP,
 	M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP,
@@ -28,7 +39,20 @@ static const wchar_t map_ascii[] = {
 	0
 };
 
-/* ISO-8859-1 (Latin1): West Europe, US, others: */
+/*
+ * ISO-8859-1 (Latin1): West Europe, US, others:
+ *
+ (empty)
+ (empty)
+ ¡¢£¤¥¦§¨©ª«¬-®¯ 
+°±²³´µ¶·¸¹º»¼½¾¿ 
+ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏ 
+ÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞß 
+àáâãäåæçèéêëìíîï 
+ðñòóôõö÷øùúûüýþÿ
+ *
+ * Non-breaking space and soft hyphen are not used.
+ */
 static const wchar_t map_iso_8859_1[] = {
 	M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP,
 	M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP,
@@ -49,7 +73,20 @@ static const wchar_t map_iso_8859_1[] = {
 	0
 };
 
-/* Windows codepage 1252; latin1 plus other stuff (including angled quotes): */
+/*
+ * Windows codepage 1252; latin1 plus other stuff (including angled quotes):
+ *
+€ ‚ƒ„…†‡ˆ‰Š‹Œ Ž 
+ ‘’“”•–—˜™š›œ žŸ 
+ ¡¢£¤¥¦§¨©ª«¬-®¯
+°±²³´µ¶·¸¹º»¼½¾¿ 
+ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏ 
+ÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞß 
+àáâãäåæçèéêëìíîï 
+ðñòóôõö÷øùúûüýþÿ
+ *
+ * Non-breaking space and soft hyphen are not used.
+ */
 static const wchar_t map_cp1252[] = {
 	M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP,
 	M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP,
@@ -70,17 +107,19 @@ static const wchar_t map_cp1252[] = {
 	0
 };
 
-/* ISO-8859-2: ISO-8859-2: (cs), Hungarian (hu), Polish (pl), Romanian (ro), Croatian (hr),
- * Slovak (sk), Slovenian (sl), Sorbian. */
+/*
+ * ISO-8859-2: Czech: (cs), Hungarian (hu), Polish (pl), Romanian (ro), Croatian (hr),
+ * Slovak (sk), Slovenian (sl), Sorbian.
+ *
+ Ą˘Ł¤ĽŚ§¨ŠŞŤŹ­ŽŻ
+°ą˛ł´ľśˇ¸šşťź˝žż 
+ŔÁÂĂÄĹĆÇČÉĘËĚÍÎĎ 
+ĐŃŇÓÔŐÖ×ŘŮÚŰÜÝŢß 
+ŕáâăäĺćçčéęëěíîď 
+đńňóôőö÷řůúűüýţ˙ 
+ */
+
 static const wchar_t map_iso_8859_2[] = {
-	M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP,
-	M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP,
-	0x0020, 0x0021, 0x0022, 0x0023, 0x0024, 0x0025, 0x0026, 0x0027, 0x0028, 0x0029, 0x002a, 0x002b, 0x002c, 0x002d, 0x002e, 0x002f,
-	0x0030, 0x0031, 0x0032, 0x0033, 0x0034, 0x0035, 0x0036, 0x0037, 0x0038, 0x0039, 0x003a, 0x003b, 0x003c, 0x003d, 0x003e, 0x003f,
-	0x0040, 0x0041, 0x0042, 0x0043, 0x0044, 0x0045, 0x0046, 0x0047, 0x0048, 0x0049, 0x004a, 0x004b, 0x004c, 0x004d, 0x004e, 0x004f,
-	0x0050, 0x0051, 0x0052, 0x0053, 0x0054, 0x0055, 0x0056, 0x0057, 0x0058, 0x0059, 0x005a, 0x005b, 0x005c, 0x005d, 0x005e, 0x005f,
-	0x0060, 0x0061, 0x0062, 0x0063, 0x0064, 0x0065, 0x0066, 0x0067, 0x0068, 0x0069, 0x006a, 0x006b, 0x006c, 0x006d, 0x006e, 0x006f,
-	0x0070, 0x0071, 0x0072, 0x0073, 0x0074, 0x0075, 0x0076, 0x0077, 0x0078, 0x0079, 0x007a, 0x007b, 0x007c, 0x007d, 0x007e, 0x007f,
 	M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP,
 	M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP, M_SKIP,
 	0x00A0, 0x0104, 0x02D8, 0x0141, 0x00A4, 0x013D, 0x015A, 0x00A7, 0x00A8, 0x0160, 0x015E, 0x0164, 0x0179, 0x00AD, 0x017D, 0x017B,
@@ -92,7 +131,27 @@ static const wchar_t map_iso_8859_2[] = {
 	0
 };
 
-/* Unicode range 30: CJK Symbols and Punctuation, Hiragana, Katakana */
+/*
+ * Unicode range 30: CJK Symbols and Punctuation, Hiragana, Katakana:
+
+　、。〃〄々〆〇〈〉《》「」『』
+【】〒〓〔〕〖〗〘〙〚〛〜〝〞〟
+〠
+〰〱〲〳〴〵〶〷
+　ぁあぃいぅうぇえぉおかがきぎく
+ぐけげこごさざしじすずせぜそぞた
+だちぢっつづてでとどなにぬねのは
+ばぱひびぴふぶぷへべぺほぼぽまみ
+むめもゃやゅゆょよらりるれろゎわ
+ゐゑをんゔ　　　　　　゛゜ゝゞ　
+　ァアィイゥウェエォオカガキギク
+グケゲコゴサザシジスズセゼソゾタ
+ダチヂッツヅテデトドナニヌネノハ
+バパヒビピフブプヘベペホボポマミ
+ムメモャヤュユョヨラリルレロヮワ
+ヰヱヲンヴヵヶヷヸヹヺ・ーヽヾ　
+
+ */
 static const wchar_t map_basic_japanese[] =
 {
 	0x3000,0x3001,0x3002,0x3003,0x3004,0x3005,0x3006,0x3007,0x3008,0x3009,0x300a,0x300b,0x300c,0x300d,0x300e,0x300f,
