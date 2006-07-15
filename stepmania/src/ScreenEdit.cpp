@@ -3553,7 +3553,6 @@ static bool IsMapped( EditButton eb, const MapEditToDI &editmap )
 	for( int s=0; s<NUM_EDIT_TO_DEVICE_SLOTS; s++ )
 	{
 		DeviceInput diPress = editmap.button[eb][s];
-		DeviceInput diHold = editmap.hold[eb][s];
 		if( diPress.IsValid() )
 			return true;
 	}
