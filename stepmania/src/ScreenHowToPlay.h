@@ -22,16 +22,15 @@ public:
 
 protected:
 	virtual void Step();
-	LifeMeterBar*	m_pLifeMeterBar;
-	Player*			m_pPlayer;
-	Model*			m_pmCharacter;
-	Model*			m_pmDancePad;
-	int				m_iW2s;
-	int				m_iNumW2s;
-
-	Song			m_Song;
-	NoteData		m_NoteData;
-	float			m_fFakeSecondsIntoSong;
+	LifeMeterBar	*m_pLifeMeterBar;
+	Player		*m_pPlayer;
+	Model		*m_pmCharacter;
+	Model		*m_pmDancePad;
+	int		m_iW2s;
+	int		m_iNumW2s;
+	Song		m_Song;
+	NoteData	m_NoteData;
+	float		m_fFakeSecondsIntoSong;
 };
 
 #endif
