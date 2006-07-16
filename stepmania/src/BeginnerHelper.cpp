@@ -93,10 +93,9 @@ void BeginnerHelper::ShowStepCircle( PlayerNumber pn, int CSTEP )
 	m_sStepCircle[pn][isc].SetZoom( 0 );
 }
 
-void BeginnerHelper::AddPlayer( PlayerNumber pn, NoteData *pSteps )
+void BeginnerHelper::AddPlayer( PlayerNumber pn, const NoteData &ns )
 {
 	ASSERT( !m_bInitialized );
-	ASSERT( pSteps != NULL );
 	ASSERT( pn >= 0 && pn < NUM_PLAYERS );
 	ASSERT( GAMESTATE->IsHumanPlayer(pn) );
 
@@ -108,7 +107,7 @@ void BeginnerHelper::AddPlayer( PlayerNumber pn, NoteData *pSteps )
 	if( !DoesFileExist(Character->GetModelPath()) )
 		return;
 
-	m_NoteData[pn].CopyAll( *pSteps );
+	m_NoteData[pn].CopyAll( ns );
 	m_bPlayerEnabled[pn] = true;
 }
 
