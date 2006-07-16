@@ -1186,7 +1186,7 @@ void ScreenGameplay::LoadNextSong()
 		{
 			Steps *pSteps = GAMESTATE->m_pCurSteps[ pi->GetStepsAndTrailIndex() ];
 			if( pSteps->GetDifficulty() == DIFFICULTY_BEGINNER )
-				m_BeginnerHelper.AddPlayer( pi->GetStepsAndTrailIndex(), &pi->m_pPlayer->m_NoteData );
+				m_BeginnerHelper.AddPlayer( pi->GetStepsAndTrailIndex(), pi->m_pPlayer->m_NoteData );
 		}
 	}
 
