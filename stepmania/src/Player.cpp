@@ -1125,7 +1125,7 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 					score = TNS_W2; /* sentinel */
 				break;
 			default:
-				if(		 fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_W1) )	score = TNS_W1;
+				if(	 fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_W1) )	score = TNS_W1;
 				else if( fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_W2) )	score = TNS_W2;
 				else if( fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_W3) )	score = TNS_W3;
 				else if( fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_W4) )	score = TNS_W4;
