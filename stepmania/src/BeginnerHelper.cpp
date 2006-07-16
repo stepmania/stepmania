@@ -80,10 +80,10 @@ void BeginnerHelper::ShowStepCircle( PlayerNumber pn, int CSTEP )
 	int	isc=0;	// Save OR issues within array boundries.. it's worth the extra few bytes of memory.
 	switch(CSTEP)
 	{
-		case ST_LEFT:	isc=0;	break;
-		case ST_RIGHT:	isc=1; 	break;
-		case ST_UP:		isc=2;	break;
-		case ST_DOWN:	isc=3;	break;
+	case ST_LEFT:	isc=0;	break;
+	case ST_RIGHT:	isc=1; 	break;
+	case ST_UP:	isc=2;	break;
+	case ST_DOWN:	isc=3;	break;
 	}
 	
 	m_sStepCircle[pn][isc].StopEffect();
