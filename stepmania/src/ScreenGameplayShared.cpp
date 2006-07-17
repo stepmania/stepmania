@@ -14,16 +14,18 @@ void ScreenGameplayShared::FillPlayerInfo( vector<PlayerInfo> &vPlayerInfoOut )
 {
 	PlayerNumber mpn = GAMESTATE->m_MasterPlayerNumber;
 	vPlayerInfoOut.resize( NUM_PLAYERS );
+	PlayerInfo &mpi = vPlayerInfoOut[mpn];
 	FOREACH_PlayerNumber( pn )
 	{
 		PlayerInfo &pi = vPlayerInfoOut[pn];
-		
 		pi.m_pn = pn;
+		PlayerState *pPlayerState = pi.GetPlayerState();
+		PlayerStageStats *pPlayerStageStats = pi.GetPlayerStageStats();
+		
 		pi.m_pPrimaryScoreDisplay = new ScoreDisplayNormal;
-		pi.m_pPrimaryScoreDisplay->Init( pi.GetPlayerState(), pi.GetPlayerStageStats() );
-		if( pn == mpn )
-			pi.m_pPrimaryScoreKeeper = new ScoreKeeperShared;
-		pi.m_pPlayer = new Player( pn == mpn, pn == mpn );
+		pi.m_pPrimaryScoreDisplay->Init( pPlayerState, pPlayerStageStats );
+		pi.m_pPrimaryScoreKeeper = new ScoreKeeperShared( pPlayerState, pPlayerStageStats );
+		pi.m_pPlayer = new Player( mpi.m_NoteData, pn == mpn, pn == mpn );
 	}
 }
 
@@ -38,7 +40,7 @@ void ScreenGameplayShared::SaveStats()
 	PlayerNumber mpn = GAMESTATE->m_MasterPlayerNumber;
 	float fMusicLen = GAMESTATE->m_pCurSong->m_fMusicLengthSeconds;
 	
-	NoteDataUtil::SplitCompositeNoteData( m_vPlayerInfo[mpn].m_pPlayer->m_NoteData, vParts );
+	NoteDataUtil::SplitCompositeNoteData( m_vPlayerInfo[mpn].m_pPlayer->GetNoteData(), vParts );
 	for( size_t i = 0; i < min(vParts.size(), m_vPlayerInfo.size()); ++i )
 	{
 		PlayerInfo &pi = m_vPlayerInfo[i];
