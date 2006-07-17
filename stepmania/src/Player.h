@@ -112,13 +112,13 @@ protected:
 	AttackDisplay		*m_pAttackDisplay;
 
 	TapNoteScore		m_LastTapNoteScore;
-	LifeMeter*		m_pLifeMeter;
-	CombinedLifeMeter*	m_pCombinedLifeMeter;
-	ScoreDisplay*		m_pScoreDisplay;
-	ScoreDisplay*		m_pSecondaryScoreDisplay;
-	ScoreKeeper*		m_pPrimaryScoreKeeper;
-	ScoreKeeper*		m_pSecondaryScoreKeeper;
-	Inventory*		m_pInventory;
+	LifeMeter		*m_pLifeMeter;
+	CombinedLifeMeter	*m_pCombinedLifeMeter;
+	ScoreDisplay		*m_pScoreDisplay;
+	ScoreDisplay		*m_pSecondaryScoreDisplay;
+	ScoreKeeper		*m_pPrimaryScoreKeeper;
+	ScoreKeeper		*m_pSecondaryScoreKeeper;
+	Inventory		*m_pInventory;
 
 	int			m_iRowLastCrossed;
 	int			m_iMineRowLastCrossed;
