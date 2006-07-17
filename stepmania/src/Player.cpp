@@ -923,17 +923,6 @@ int Player::GetClosestNote( int col, int iNoteRow, int iMaxRowsAhead, int iMaxRo
 		return iNextIndex;
 }
 
-int Player::GetClosestNoteDistance( int col, int row ) const
-{
-	const int iStepSearchRows = BeatToNoteRow( StepSearchDistance * GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate );
-	int iIndexOverlappingNote = GetClosestNote( col, row, iStepSearchRows, iStepSearchRows, false );
-	
-	if( iIndexOverlappingNote <= 0 )
-		return iIndexOverlappingNote;
-	return abs( iIndexOverlappingNote - row );
-}
-
-
 void Player::Step( int col, const RageTimer &tm, bool bHeld )
 {
 	bool bOniDead = 
