@@ -3,7 +3,7 @@
 #include "RageUtil.h"
 #include <sys/sysctl.h>
 
-#ifdef USE_VEC
+#if defined(USE_VEC)
 #if defined(__VEC__)
 #include <vecLib/vecLib.h>
 #ifndef __VECLIBTYPES__
@@ -398,9 +398,9 @@ void Vector::FastSoundRead( float *dest, const int32_t *src, unsigned size )
 			vec_ste( result, 0, dest++ );
 	}
 }
-#elif defined(__SSE__)
+#elif defined(__SSE2__)
 #include <xmmintrin.h>
-// This might even be portable to other sysems since it uses Intel's intrinsics.
+// This is portable to other sysems since it uses Intel's intrinsics.
 
 bool Vector::CheckForVector()
 {
@@ -408,25 +408,16 @@ bool Vector::CheckForVector()
 	return true;
 }
 
-void Vector::FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, short volume )
+template<typename load>
+static inline void Write( int32_t *&dest, const int16_t *&src,
+			  unsigned &size, __m128i vol ) __attribute__((always_inline));
+template<typename T>
+inline void Write( T load, int32_t *&dest, const int16_t *&src, unsigned &size, __m128i vol )
 {
-        if( size == 0 )
-                return;
- 	ASSERT_M( (intptr_t(dest) & 0x7) == 0, ssprintf("dest = %p", dest) );
-	while( (intptr_t(dest) & 0xF) && size )
+	// There are only 8 XMM registers so no 4x unrolling
+	while( size >= 8 )
         {
-                // Misaligned stores are slow.
-                *(dest++) += *(src++) * volume;
-                --size;
-        }
-	
-        // There are only 8 XMM registers so no 4x unrolling
-        __m128i vol = _mm_set1_epi16( volume );
-	
-        while( size >= 8 )
-        {
-                // Aligned stores, possibly misaligned loads.
-                __m128i data    = _mm_loadu_si128( (__m128i *)src );
+                __m128i data    = load( (__m128i *)src );
                 __m128i hi      = _mm_mulhi_epi16( data, vol );
                 __m128i low     = _mm_mullo_epi16( data, vol );
                 __m128i result1 = _mm_unpacklo_epi16( low, hi );
@@ -440,6 +431,26 @@ void Vector::FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, s
                 dest += 8;
                 size -= 8;
         }
+}	
+
+void Vector::FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, short volume )
+{
+        if( size == 0 )
+                return;
+ 	ASSERT_M( (intptr_t(dest) & 0x7) == 0, ssprintf("dest = %p", dest) );
+	while( (intptr_t(dest) & 0xF) && size )
+        {
+                // Misaligned stores are slow.
+                *(dest++) += *(src++) * volume;
+                --size;
+        }
+	
+        __m128i vol = _mm_set1_epi16( volume );
+	// Misaligned loads are slower so specialize to aligned loads when possible.
+	if( intptr_t(src) & 0xF )
+		Write( _mm_loadu_si128, dest, src, size, vol );
+	else
+		Write( _mm_load_si128, dest, src, size, vol );
         while( size-- )
                 *(dest++) += *(src++) * volume;
 }
