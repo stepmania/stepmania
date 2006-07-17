@@ -154,7 +154,7 @@ void ScreenHowToPlay::Init()
 		GAMESTATE->m_bGameplayLeadIn.Set( false );
 		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_AUTOPLAY;
 
-		m_pPlayer = new Player;
+		m_pPlayer = new PlayerPlus;
 		m_pPlayer->Init( 
 			"Player",
 			GAMESTATE->m_pPlayerState[PLAYER_1], 

@@ -793,9 +793,10 @@ void ScreenEdit::PlayTicks()
 		iRowLastCrossed = iSongRow;
 
 	int iTickRow = -1;
+	const NoteData &nd = m_Player.GetNoteData();
 	// for each index we crossed since the last update:
-	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_Player.m_NoteData, r, iRowLastCrossed+1, iSongRow+1 )
-		if( m_Player.m_NoteData.IsThereATapOrHoldHeadAtRow( r ) )
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( nd, r, iRowLastCrossed+1, iSongRow+1 )
+		if( nd.IsThereATapOrHoldHeadAtRow( r ) )
 			iTickRow = r;
 
 	iRowLastCrossed = iSongRow;
