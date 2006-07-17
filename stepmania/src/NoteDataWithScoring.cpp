@@ -28,7 +28,7 @@ int GetNumNWithScore( const NoteData &in, TapNoteScore tns, int MinTaps, int iSt
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( in, r, iStartRow, iEndRow )
 	{
 		int iNumNotesInRow = in.GetNumTracksWithTapOrHoldHead( r );
-		TapNoteScore tnsRow = NoteDataWithScoring::LastTapNoteWithResult( in, r ).result.tns;
+		TapNoteScore tnsRow = NoteDataWithScoring::LastTapNoteWithResult( in, r, PLAYER_INVALID ).result.tns;
 
 		if( iNumNotesInRow >= MinTaps && tnsRow >= tns )
 			iNumSuccessfulDoubles++;
@@ -170,14 +170,16 @@ const TapNote &NoteDataWithScoring::LastTapNoteWithResult( const NoteData &in, u
 
 /* Return the minimum tap score of a row.  If the row isn't complete (not all
  * taps have been hit), return TNS_None or TNS_Miss. */
-TapNoteScore NoteDataWithScoring::MinTapNoteScore( const NoteData &in, unsigned row )
+TapNoteScore NoteDataWithScoring::MinTapNoteScore( const NoteData &in, unsigned row, PlayerNumber pn )
 {
 	TapNoteScore score = TNS_W1;
 	for( int t=0; t<in.GetNumTracks(); t++ )
 	{
 		/* Ignore mines, or the score will always be TNS_None. */
-		const TapNote &tn = in.GetTapNote(t, row);
+		const TapNote &tn = in.GetTapNote( t, row );
 		if( tn.type == TapNote::empty || tn.type == TapNote::mine )
+			continue;
+		if( tn.pn != PLAYER_INVALID && tn.pn != pn )
 			continue;
 		score = min( score, tn.result.tns );
 	}
@@ -185,9 +187,9 @@ TapNoteScore NoteDataWithScoring::MinTapNoteScore( const NoteData &in, unsigned 
 	return score;
 }
 
-bool NoteDataWithScoring::IsRowCompletelyJudged( const NoteData &in, unsigned row )
+bool NoteDataWithScoring::IsRowCompletelyJudged( const NoteData &in, unsigned row, PlayerNumber pn )
 {
-	return MinTapNoteScore( in, row ) >= TNS_Miss;
+	return MinTapNoteScore( in, row, pn ) >= TNS_Miss;
 }
 
 namespace
