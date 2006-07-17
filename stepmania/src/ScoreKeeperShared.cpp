@@ -1,75 +1,25 @@
 #include "global.h"
 #include "ScoreKeeperShared.h"
-#include "ScoreKeeperNormal.h"
 #include "GameState.h"
 #include "StatsManager.h"
 #include "NoteDataUtil.h"
 #include "NoteData.h"
+#include "PlayerState.h"
 
-ScoreKeeperShared::ScoreKeeperShared() : ScoreKeeper( NULL, NULL )
+ScoreKeeperShared::ScoreKeeperShared( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats ) :
+	ScoreKeeperNormal( pPlayerState, pPlayerStageStats )
 {
-	FOREACH_PlayerNumber( pn )
-	{
-		PlayerState *pPS = GAMESTATE->m_pPlayerState[pn];
-		PlayerStageStats *pPSS = &STATSMAN->m_CurStageStats.m_player[pn];
-		
-		m_pScoreKeepers[pn] = new ScoreKeeperNormal( pPS, pPSS );
-	}
-}
-
-ScoreKeeperShared::~ScoreKeeperShared()
-{
-	FOREACH_PlayerNumber( pn )
-		delete m_pScoreKeepers[pn];
-}
-
-#define CALL( fun ) FOREACH_PlayerNumber( pn ) m_pScoreKeepers[pn]->fun
-void ScoreKeeperShared::Load( const vector<Song *> &apSongs, const vector<Steps *> &apSteps,
-			      const vector<AttackArray> &asModifiers )
-{
-	CALL( Load(apSongs, apSteps, asModifiers) );
-}
-
-void ScoreKeeperShared::DrawPrimitives()
-{
-	CALL( DrawPrimitives() );
-}
-
-void ScoreKeeperShared::Update( float fDelta )
-{
-	CALL( Update(fDelta) );
 }
 
 void ScoreKeeperShared::OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData )
 {
 	vector<NoteData> vParts;
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 	
 	NoteDataUtil::SplitCompositeNoteData( *pNoteData, vParts );
-	CALL( OnNextSong(iSongInCourseIndex, pSteps, &vParts[pn]) );
+	ScoreKeeperNormal::OnNextSong( iSongInCourseIndex, pSteps, &vParts[pn] );
 }
 
-void ScoreKeeperShared::HandleTapScore( const TapNote &tn )
-{
-	DEBUG_ASSERT( tn.pn != PLAYER_INVALID );
-	if( tn.pn == PLAYER_INVALID )
-		CALL( HandleTapScore(tn) );
-	else
-		m_pScoreKeepers[tn.pn]->HandleTapScore( tn );
-}
-
-void ScoreKeeperShared::HandleTapRowScore( const NoteData &nd, int row )
-{
-	CALL( HandleTapRowScore(nd, row) );
-}
-
-void ScoreKeeperShared::HandleHoldScore( const TapNote &tn )
-{
-	DEBUG_ASSERT( tn.pn != PLAYER_INVALID );
-	if( tn.pn == PLAYER_INVALID )
-		CALL( HandleHoldScore(tn) );
-	else
-		m_pScoreKeepers[tn.pn]->HandleHoldScore( tn );
-}
 #undef CALL
 
 /*

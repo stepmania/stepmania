@@ -1,24 +1,15 @@
 #ifndef SCORE_KEEPER_SHARED_H
 #define SCORE_KEEPER_SHARED_H
 
-#include "ScoreKeeper.h"
+#include "ScoreKeeperNormal.h"
 #include "PlayerNumber.h"
 
-class ScoreKeeperShared : public ScoreKeeper
+class ScoreKeeperShared : public ScoreKeeperNormal
 {
-	ScoreKeeper *m_pScoreKeepers[NUM_PLAYERS];
 public:
-	ScoreKeeperShared();
-	~ScoreKeeperShared();
+	ScoreKeeperShared( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats );
 	
-	void Load( const vector<Song *> &apSongs, const vector<Steps *> &apSteps,
-		   const vector<AttackArray> &asModifiers );
-	void DrawPrimitives();
-	void Update( float fDelta );
 	void OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData );
-	void HandleTapScore( const TapNote &tn );
-	void HandleTapRowScore( const NoteData &nd, int row );
-	void HandleHoldScore( const TapNote &tn );
 };
 #endif
 
