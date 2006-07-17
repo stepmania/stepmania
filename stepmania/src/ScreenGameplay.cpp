@@ -173,7 +173,7 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField )
 
 	m_ptextPlayerOptions = NULL;
 	m_pActiveAttackList = NULL;
-	m_pPlayer = new Player( bShowNoteField, true );
+	m_pPlayer = new Player( m_NoteData, bShowNoteField, true );
 	m_pInventory = NULL;
 	m_pDifficultyIcon = NULL;
 	m_pDifficultyMeter = NULL;
@@ -193,7 +193,7 @@ void PlayerInfo::LoadDummyP1()
 	m_bIsDummy = true;
 
 	// don't init any of the scoring objects
-	m_pPlayer = new Player( true, false );
+	m_pPlayer = new Player( m_NoteData, true, false );
 
 	m_PlayerStateDummy = *GAMESTATE->m_pPlayerState[PLAYER_1];
 	m_PlayerStateDummy.m_PlayerController = PC_AUTOPLAY;
@@ -949,14 +949,14 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 			pi->GetPlayerState()->LaunchAttack( a );
 
 			/* Update attack bOn flags. */
-			pi->GetPlayerState()->Update(0);
+			pi->GetPlayerState()->Update( 0 );
 		}
 		
 		// load player
 		{
-			NoteData nd = ndTransformed;
-			NoteDataUtil::RemoveAllTapsOfType( nd, TapNote::autoKeysound );
-			pi->m_pPlayer->Load( nd );
+			pi->m_NoteData = ndTransformed;
+			NoteDataUtil::RemoveAllTapsOfType( pi->m_NoteData, TapNote::autoKeysound );
+			pi->m_pPlayer->Load();
 		}
 
 		// load auto keysounds
@@ -981,7 +981,7 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 		}
 
 		/* Update attack bOn flags. */
-		pi->GetPlayerState()->Update(0);
+		pi->GetPlayerState()->Update( 0 );
 
 		/* Hack: Course modifiers that are set to start immediately shouldn't tween on. */
 		pi->GetPlayerState()->m_CurrentPlayerOptions = pi->GetPlayerState()->m_PlayerOptions;
@@ -1105,9 +1105,9 @@ void ScreenGameplay::LoadNextSong()
 		/* The actual note data for scoring is the base class of Player.  This includes
 		 * transforms, like Wide.  Otherwise, the scoring will operate on the wrong data. */
 		if( pi->m_pPrimaryScoreKeeper )
-			pi->m_pPrimaryScoreKeeper->OnNextSong( GAMESTATE->GetCourseSongIndex(), pSteps, &pi->m_pPlayer->m_NoteData );
+			pi->m_pPrimaryScoreKeeper->OnNextSong( GAMESTATE->GetCourseSongIndex(), pSteps, &pi->m_pPlayer->GetNoteData() );
 		if( pi->m_pSecondaryScoreKeeper )
-			pi->m_pSecondaryScoreKeeper->OnNextSong( GAMESTATE->GetCourseSongIndex(), pSteps, &pi->m_pPlayer->m_NoteData );
+			pi->m_pSecondaryScoreKeeper->OnNextSong( GAMESTATE->GetCourseSongIndex(), pSteps, &pi->m_pPlayer->GetNoteData() );
 
 		// Don't mess with the PlayerController of the Dummy player
 		if( !pi->m_bIsDummy )
@@ -1186,7 +1186,7 @@ void ScreenGameplay::LoadNextSong()
 		{
 			Steps *pSteps = GAMESTATE->m_pCurSteps[ pi->GetStepsAndTrailIndex() ];
 			if( pSteps->GetDifficulty() == DIFFICULTY_BEGINNER )
-				m_BeginnerHelper.AddPlayer( pi->GetStepsAndTrailIndex(), pi->m_pPlayer->m_NoteData );
+				m_BeginnerHelper.AddPlayer( pi->GetStepsAndTrailIndex(), pi->m_pPlayer->GetNoteData() );
 		}
 	}
 
@@ -1400,8 +1400,9 @@ void ScreenGameplay::PlayTicks()
 	int iTickRow = -1;
 	// for each index we crossed since the last update:
 	Player &player = *m_vPlayerInfo[0].m_pPlayer;
-	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( player.m_NoteData, r, iRowLastCrossed+1, iSongRow+1 )
-		if( player.m_NoteData.IsThereATapOrHoldHeadAtRow( r ) )
+	const NoteData &nd = player.GetNoteData();
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( nd, r, iRowLastCrossed+1, iSongRow+1 )
+		if( nd.IsThereATapOrHoldHeadAtRow( r ) )
 			iTickRow = r;
 
 	iRowLastCrossed = iSongRow;
@@ -1640,7 +1641,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 					// kill them!
 					SOUND->PlayOnceFromDir( THEME->GetPathS(m_sName,"oni die") );
 					pi->ShowOniGameOver();
-					pi->m_pPlayer->m_NoteData.Init();		// remove all notes and scoring
+					pi->m_NoteData.Init();		// remove all notes and scoring
 					pi->m_pPlayer->FadeToFail();	// tell the NoteField to fade to white
 				}
 			}
@@ -1752,7 +1753,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 					SOUND->PlayOnceFromDir( THEME->GetPathS(m_sName,"oni die") );
 					pi->ShowOniGameOver();
-					pi->m_pPlayer->m_NoteData.Init(); // remove all notes and scoring
+					pi->m_NoteData.Init(); // remove all notes and scoring
 					pi->m_pPlayer->FadeToFail(); // tell the NoteField to fade to white
 				}
 			}
@@ -1885,20 +1886,21 @@ void ScreenGameplay::UpdateLights()
 
 		FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
 		{
-			for( int t=0; t<pi->m_pPlayer->m_NoteData.GetNumTracks(); t++ )
+			const NoteData &nd = pi->m_pPlayer->GetNoteData();
+			for( int t=0; t<nd.GetNumTracks(); t++ )
 			{
 				bool bBlink = false;
 
 				// for each index we crossed since the last update:
-				FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( pi->m_pPlayer->m_NoteData, t, r, iRowLastCrossed+1, iSongRow+1 )
+				FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( nd, t, r, iRowLastCrossed+1, iSongRow+1 )
 				{
-					TapNote tn = pi->m_pPlayer->m_NoteData.GetTapNote(t,r);
+					const TapNote &tn = nd.GetTapNote( t, r );
 					if( tn.type != TapNote::empty && tn.type != TapNote::mine )
 						bBlink = true;
 				}
 
 				// check if a hold should be active
-				if( pi->m_pPlayer->m_NoteData.IsHoldNoteAtRow( t, iSongRow ) )
+				if( nd.IsHoldNoteAtRow( t, iSongRow ) )
 					bBlink = true;
 
 				if( bBlink )
@@ -1982,7 +1984,7 @@ void ScreenGameplay::SendCrossedMessages()
 		if( pn == PLAYER_INVALID )
 			return;
 
-		NoteData &nd = m_vPlayerInfo[pn].m_pPlayer->m_NoteData;
+		const NoteData &nd = m_vPlayerInfo[pn].m_pPlayer->GetNoteData();
 
 		static int iRowLastCrossedAll[NUM_MESSAGES_TO_SEND] = { 0, 0, 0, 0 };
 		for( int i=0; i<NUM_MESSAGES_TO_SEND; i++ )
@@ -2221,11 +2223,12 @@ void ScreenGameplay::SaveStats()
 		 * not for the percentages (RadarCategory_Air). */
 		RadarValues rv;
 		PlayerStageStats &pss = *pi->GetPlayerStageStats();
+		const NoteData &nd = pi->m_pPlayer->GetNoteData();
 		
-		NoteDataUtil::CalculateRadarValues( pi->m_pPlayer->m_NoteData, fMusicLen, rv );
+		NoteDataUtil::CalculateRadarValues( nd, fMusicLen, rv );
 		pss.radarPossible += rv;
 
-		NoteDataWithScoring::GetActualRadarValues( pi->m_pPlayer->m_NoteData, pss, fMusicLen, rv );
+		NoteDataWithScoring::GetActualRadarValues( nd, pss, fMusicLen, rv );
 		pss.radarActual += rv;
 	}
 }
@@ -2669,7 +2672,7 @@ void ScreenGameplay::SaveReplay()
 	{
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 		{
-			XNode *p = pi->m_pPlayer->m_NoteData.CreateNode();
+			XNode *p = pi->m_pPlayer->GetNoteData().CreateNode();
 			DISP_OPT opt;
 
 			//

@@ -82,6 +82,7 @@ public:
 	BitmapText		*m_ptextPlayerOptions;
 	ActiveAttackList	*m_pActiveAttackList;
 
+	NoteData		m_NoteData;
 	Player			*m_pPlayer;
 
 	// used in PLAY_MODE_BATTLE
