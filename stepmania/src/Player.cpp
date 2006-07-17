@@ -61,7 +61,7 @@ float AdjustedWindowSeconds( TimingWindow tw )
 #define ADJUSTED_WINDOW_SECONDS( tw )	AdjustedWindowSeconds( tw )
 
 
-Player::Player( bool bShowNoteField, bool bShowJudgment )
+Player::Player( NoteData &nd, bool bShowNoteField, bool bShowJudgment ) : m_NoteData(nd)
 {
 	m_bLoaded = false;
 
@@ -318,7 +318,7 @@ void Player::Init(
 		m_pNoteField->Init( m_pPlayerState, m_fNoteFieldHeight );
 }
 
-void Player::Load( const NoteData& noteData )
+void Player::Load()
 {
 	m_bLoaded = true;
 
@@ -326,16 +326,13 @@ void Player::Load( const NoteData& noteData )
 
 	m_iRowLastCrossed = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat ) - 1;	// why this?
 	m_iMineRowLastCrossed = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat ) - 1;	// why this?
+	m_iRowLastJudged = m_iRowLastCrossed;
 
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
-	// init steps
-	m_NoteData.Init();
 	bool bOniDead = GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY  &&  
 		(m_pPlayerStageStats == NULL || m_pPlayerStageStats->bFailed);
-	if( !bOniDead )
-		m_NoteData.CopyAll( noteData );
 
 	/* The editor reuses Players ... so we really need to make sure everything
 	 * is reset and not tweening.  Perhaps ActorFrame should recurse to subactors;
@@ -533,6 +530,8 @@ void Player::Update( float fDeltaTime )
 	// Check for TapNote misses
 	//
 	UpdateTapNotesMissedOlderThan( GetMaxStepDistanceSeconds() );
+	// Check for completely judged rows.
+	UpdateJudgedRows();
 
 	//
 	// update pressed flag
@@ -1227,30 +1226,6 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 			}
 		}
 
-		if( score == TNS_HitMine )
-		{
-			if( tn.bKeysound && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
-				m_vKeysounds[tn.iKeysoundIndex].Play();
-			else
-				m_soundMine.Play();
-
-			if( m_pLifeMeter )
-				m_pLifeMeter->ChangeLife( score );
-			if( m_pScoreDisplay )
-				m_pScoreDisplay->OnJudgment( score );
-			if( m_pSecondaryScoreDisplay )
-				m_pSecondaryScoreDisplay->OnJudgment( score );
-			// TODO: Remove use of PlayerNumber
-			PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-			if( m_pCombinedLifeMeter )
-				m_pCombinedLifeMeter->ChangeLife( pn, score );
-
-			tn.result.bHidden = true;
-			m_NoteData.SetTapNote( col, iIndexOverlappingNote, tn );
-			if( m_pNoteField )
-				m_pNoteField->DidTapNote( col, score, false );
-		}
-
 		if( m_pPlayerState->m_PlayerController == PC_HUMAN && score >= TNS_W3 ) 
 			AdjustSync::HandleAutosync( fNoteOffset );
 
@@ -1270,27 +1245,9 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 		
 		m_NoteData.SetTapNote( col, iIndexOverlappingNote, tn );
 
-
-		// TODO: Remove use of PlayerNumber.
-		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-
 		// Keep this here so we get the same data as Autosync
-		NSMAN->ReportTiming( fNoteOffset,pn );
+		NSMAN->ReportTiming( fNoteOffset, m_pPlayerState->m_PlayerNumber );
 		
-		if( m_pPrimaryScoreKeeper )
-			m_pPrimaryScoreKeeper->HandleTapScore( tn );
-		if( m_pSecondaryScoreKeeper )
-			m_pSecondaryScoreKeeper->HandleTapScore( tn );
-
-		switch( tn.type )
-		{
-		case TapNote::tap:
-		case TapNote::hold_head:
-			// don't judge the row if this note is a mine or tap attack
-			if( NoteDataWithScoring::IsRowCompletelyJudged( m_NoteData, iIndexOverlappingNote ) )
-				OnRowCompletelyJudged( iIndexOverlappingNote );
-		}
-
 		m_LastTapNoteScore = score;
 	}
 
@@ -1307,7 +1264,7 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 		 * backwards indefinitely, and ignore grading. */
 		if( iIndexOverlappingNote == -1 )
 			iIndexOverlappingNote = GetClosestNote( col, BeatToNoteRow(fSongBeat),
-							   iStepSearchRows, MAX_NOTE_ROW, true );
+								iStepSearchRows, MAX_NOTE_ROW, true );
 		if( iIndexOverlappingNote != -1 )
 		{
 			TapNote tn = m_NoteData.GetTapNote( col, iIndexOverlappingNote );
@@ -1319,7 +1276,7 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 
 void Player::DisplayJudgedRow( int iIndexThatWasSteppedOn, TapNoteScore score, int iTrack )
 {
-	TapNote tn = m_NoteData.GetTapNote(iTrack, iIndexThatWasSteppedOn);
+	TapNote tn = m_NoteData.GetTapNote( iTrack, iIndexThatWasSteppedOn );
 
 	// If the score is W3 or better, remove the note from the screen to 
 	// indicate success.  (Or always if blind is on.)
@@ -1331,17 +1288,10 @@ void Player::DisplayJudgedRow( int iIndexThatWasSteppedOn, TapNoteScore score, i
 
 	// show the ghost arrow for this column
 	bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
-	if (m_pPlayerState->m_PlayerOptions.m_fBlind)
-	{
-		if( m_pNoteField )
-			m_pNoteField->DidTapNote( iTrack, TNS_W1, bBright );
-	}
-	else
-	{
-		bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
-		if( m_pNoteField )
-			m_pNoteField->DidTapNote( iTrack, score, bBright );
-	}
+	
+	bBright = bBright || m_pPlayerState->m_PlayerOptions.m_fBlind;
+	if( m_pNoteField )
+		m_pNoteField->DidTapNote( iTrack, TNS_W1, bBright );
 }
 
 void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
@@ -1351,10 +1301,11 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 	/* Find the final score of the row.  This will never be TNS_None, since this
 	 * function is only called when a row is completed. */
 	const Game *pCurGame = GAMESTATE->m_pCurGame;
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
 	if( !pCurGame->m_bCountNotesSeparately )
 	{
-		TapNoteResult tnr = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, iIndexThatWasSteppedOn ).result;
+		TapNoteResult tnr = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, iIndexThatWasSteppedOn, pn ).result;
 		TapNoteScore score = tnr.tns;
 
 		ASSERT( score != TNS_None );
@@ -1366,11 +1317,12 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 
 		for( int c=0; c<m_NoteData.GetNumTracks(); c++ )	// for each column
 		{
-			TapNote tn = m_NoteData.GetTapNote(c, iIndexThatWasSteppedOn);
+			const TapNote &tn = m_NoteData.GetTapNote( c, iIndexThatWasSteppedOn );
 
 			if( tn.type == TapNote::empty )	continue; /* no note in this col */
 			if( tn.type == TapNote::mine )	continue; /* don't flash on mines b/c they're supposed to be missed */
-
+			if( tn.pn != PLAYER_INVALID && tn.pn != pn ) continue; /* Not our note. */
+			
 			DisplayJudgedRow( iIndexThatWasSteppedOn, score, c );
 		}
 
@@ -1380,12 +1332,13 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 	{
 		for( int c=0; c<m_NoteData.GetNumTracks(); c++ )	// for each column
 		{
-			TapNote tn = m_NoteData.GetTapNote(c, iIndexThatWasSteppedOn);
+			const TapNote &tn = m_NoteData.GetTapNote(c, iIndexThatWasSteppedOn);
 			TapNoteResult tnr = tn.result;
 			TapNoteScore score = tnr.tns;
 
 			if( tn.type == TapNote::empty ) continue; /* no note in this col */
 			if( tn.type == TapNote::mine ) continue; /* don't flash on mines b/c they're supposed to be missed */
+			if( tn.pn != PLAYER_INVALID && tn.pn != pn ) continue; /* Not our note. */
 
 			DisplayJudgedRow( iIndexThatWasSteppedOn, score, c );
 
@@ -1418,9 +1371,8 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		}
 	}
 
-	// Since this is being called every frame, let's not check the whole array every time.
-	// Instead, only check 1 beat back.  Even 1 is overkill.
-	const int iStartCheckingAt = max( 0, iMissIfOlderThanThisIndex-BeatToNoteRow(1) );
+	// m_iRowLastJudged has already been judged so start at the next one.
+	const int iStartCheckingAt = m_iRowLastJudged + 1;
 
 	//LOG->Trace( "iStartCheckingAt: %d   iMissIfOlderThanThisIndex:  %d", iStartCheckingAt, iMissIfOlderThanThisIndex );
 
@@ -1433,7 +1385,7 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		{
 			/* XXX: cleaner to pick the things we do want to apply misses to, instead of
 			 * the things we don't? */
-			TapNote tn = m_NoteData.GetTapNote(t, r);
+			TapNote tn = m_NoteData.GetTapNote( t, r );
 			switch( tn.type )
 			{
 			case TapNote::empty:
@@ -1441,7 +1393,9 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 				continue; /* no note here */
 			}
 			if( tn.result.tns != TNS_None ) /* note here is already hit */
-				continue; 
+				continue;
+			if( tn.pn != PLAYER_INVALID && tn.pn != m_pPlayerState->m_PlayerNumber )
+				continue;
 
 			if( tn.type == TapNote::mine )
 			{
@@ -1476,11 +1430,26 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 	}
 }
 
+void Player::UpdateJudgedRows()
+{
+	const int iRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+	
+	while( m_iRowLastJudged <= iRow )
+	{
+		if( !NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, m_iRowLastJudged+1, pn) )
+			break;
+		++m_iRowLastJudged;
+		if( NoteDataWithScoring::LastTapNoteWithResult(m_NoteData, m_iRowLastJudged, pn).result.tns == TNS_None )
+			continue;
+		OnRowCompletelyJudged( m_iRowLastJudged );
+	}
+}
 
 void Player::CrossedRow( int iNoteRow )
 {
 	// If we're doing random vanish, randomise notes on the fly.
-	if(m_pPlayerState->m_CurrentPlayerOptions.m_fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH]==1)
+	if( m_pPlayerState->m_CurrentPlayerOptions.m_fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH]==1 )
 		RandomizeNotes( iNoteRow );
 
 	// check to see if there's a note at the crossed row
@@ -1561,7 +1530,8 @@ void Player::RandomizeNotes( int iNoteRow )
 
 void Player::HandleTapRowScore( unsigned row )
 {
-	const TapNote &lastTN = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, row );
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+	const TapNote &lastTN = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, row, pn );
 	TapNoteScore scoreOfLastTap = lastTN.result.tns;
 
 	bool NoCheating = true;
@@ -1608,7 +1578,41 @@ void Player::HandleTapRowScore( unsigned row )
 
 	/* The score keeper updates the hit combo.  Remember the old combo for handling announcers. */
 	const int iOldCombo = iCurCombo;
-
+	
+	for( int track = 0; track < m_NoteData.GetNumTracks(); ++track )
+	{
+		const TapNote &tn = m_NoteData.GetTapNote( track, row );
+		if( tn.pn != PLAYER_INVALID && tn.pn != pn )
+			continue;
+		if( tn.result.tns == TNS_HitMine )
+		{
+			if( tn.bKeysound && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
+				m_vKeysounds[tn.iKeysoundIndex].Play();
+			else
+				m_soundMine.Play();
+			
+			if( m_pLifeMeter )
+				m_pLifeMeter->ChangeLife( tn.result.tns );
+			if( m_pScoreDisplay )
+				m_pScoreDisplay->OnJudgment( tn.result.tns );
+			if( m_pSecondaryScoreDisplay )
+				m_pSecondaryScoreDisplay->OnJudgment( tn.result.tns );
+			if( m_pCombinedLifeMeter )
+				m_pCombinedLifeMeter->ChangeLife( pn, tn.result.tns );
+			
+			TapNote tn2 = tn;
+			tn2.result.bHidden = true;
+			m_NoteData.SetTapNote( track, row, tn2 );
+			if( m_pNoteField )
+				m_pNoteField->DidTapNote( track, tn.result.tns, false );
+		}
+				
+		if( m_pPrimaryScoreKeeper )
+			m_pPrimaryScoreKeeper->HandleTapScore( tn );
+		if( m_pSecondaryScoreKeeper )
+			m_pSecondaryScoreKeeper->HandleTapScore( tn );
+	}		
+		
 	if( m_pPrimaryScoreKeeper != NULL )
 		m_pPrimaryScoreKeeper->HandleTapRowScore( m_NoteData, row );
 	if( m_pSecondaryScoreKeeper != NULL )
@@ -1660,9 +1664,6 @@ void Player::HandleTapRowScore( unsigned row )
 	if( m_pPlayerStageStats )
 		m_pPlayerStageStats->UpdateComboList( STATSMAN->m_CurStageStats.fStepsSeconds, false );
 
-	// TODO: Remove use of PlayerNumber.
-	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-	
 	float life = -1;
 	if( m_pLifeMeter )
 	{
@@ -1699,6 +1700,7 @@ void Player::HandleTapRowScore( unsigned row )
 	if( m_pCombinedLifeMeter )
 	{
 		m_pCombinedLifeMeter->ChangeLife( pn, scoreOfLastTap );
+		// TODO: Remove use of PlayerNumber.
 		m_pCombinedLifeMeter->OnDancePointsChange( pn );    // update oni life meter
 	}
 }

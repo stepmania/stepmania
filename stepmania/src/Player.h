@@ -39,7 +39,8 @@ AutoScreenMessage( SM_MissComboAborted );
 class Player: public ActorFrame
 {
 public:
-	Player( bool bShowNoteField = true, bool bShowJudgment = true );
+	// The passed in NoteData isn't touched until Load() is called.
+	Player( NoteData &nd, bool bShowNoteField = true, bool bShowJudgment = true );
 	~Player();
 
 	virtual void Update( float fDeltaTime );
@@ -57,7 +58,7 @@ public:
 		Inventory* pInventory, 
 		ScoreKeeper* pPrimaryScoreKeeper, 
 		ScoreKeeper* pSecondaryScoreKeeper );
-	void Load( const NoteData& noteData );
+	void Load();
 	void CrossedRow( int iNoteRow );
 	void CrossedMineRow( int iNoteRow );
 	void Step( int col, const RageTimer &tm, bool bHeld = false );
@@ -72,13 +73,13 @@ public:
 	// Returns -1 if no notes are close, otherwise return the distance to a nongraded note.
 	int GetClosestNoteDistance( int col, int row ) const;
 
-	NoteData m_NoteData;
-	
+	const NoteData &GetNoteData() const { return m_NoteData; }
 	bool HasNoteField() { return m_pNoteField != NULL; }
 
 protected:
 	void HandleStep( int col, const RageTimer &tm, bool bHeld );
 	void UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
+	void UpdateJudgedRows();
 	void DisplayJudgedRow( int iIndexThatWasSteppedOn, TapNoteScore score, int iTrack );
 	void OnRowCompletelyJudged( int iStepIndex );
 	void HandleTapRowScore( unsigned row );
@@ -96,11 +97,12 @@ protected:
 	bool			m_bLoaded;
 
 	PlayerState		*m_pPlayerState;
-	PlayerStageStats*m_pPlayerStageStats;
+	PlayerStageStats	*m_pPlayerStageStats;
 	float			m_fNoteFieldHeight;
 
 	bool			m_bPaused;
 
+	NoteData		&m_NoteData;
 	NoteField		*m_pNoteField;
 
 	vector<HoldJudgment*>	m_vHoldJudgment;
@@ -123,6 +125,7 @@ protected:
 
 	int			m_iRowLastCrossed;
 	int			m_iMineRowLastCrossed;
+	int			m_iRowLastJudged; // Everything up to and including this row has been judged.
 
 	RageSound		m_soundMine;
 	RageSound		m_soundAttackLaunch;
@@ -153,6 +156,14 @@ protected:
 #define NUM_REVERSE 2
 #define NUM_CENTERED 2
 	TweenState		m_tsJudgment[NUM_REVERSE][NUM_CENTERED];
+};
+
+class PlayerPlus : public Player
+{
+	NoteData m_NoteData;
+public:
+	PlayerPlus() : Player(m_NoteData) { }
+	void Load( const NoteData &nd ) { m_NoteData = nd; Player::Load(); }
 };
 
 #endif
