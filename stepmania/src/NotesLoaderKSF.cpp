@@ -173,8 +173,7 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 
 		if( sRowString.size() != 13 )
 		{	
-			if ((sRowString[0] == '|') && 
-				(sRowString[1] == 'T' || sRowString[1] == 'B' || sRowString[1] == 'D'))
+			if( BeginsWith(sRowString, "|T") || BeginsWith(sRowString, "|B") || BeginsWith(sRowString, "|D") )
 			{
 				LOG->Warn("File %s had Direct Move syntax %s which is currently unsupported; said part ignored",
 					sPath.c_str(), sRowString.c_str());
