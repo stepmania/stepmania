@@ -71,7 +71,7 @@ public:
 
 	float GetMaxStepDistanceSeconds();
 	const NoteData &GetNoteData() const { return m_NoteData; }
-	bool HasNoteField() { return m_pNoteField != NULL; }
+	bool HasNoteField() const { return m_pNoteField != NULL; }
 
 protected:
 	void HandleStep( int col, const RageTimer &tm, bool bHeld );
