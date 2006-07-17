@@ -172,10 +172,19 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 			break;
 
 		if( sRowString.size() != 13 )
-		{
-			LOG->Warn("File %s had a RowString with an improper length (\"%s\"); corrupt notes ignored",
-				  sPath.c_str(), sRowString.c_str());
-			return false;
+		{	
+			if ((sRowString[0] == '|') && 
+				(sRowString[1] == 'T' || sRowString[1] == 'B' || sRowString[1] == 'D'))
+			{
+				LOG->Warn("File %s had Direct Move syntax %s which is currently unsupported; said part ignored",
+					sPath.c_str(), sRowString.c_str());
+			}
+			else
+			{
+				LOG->Warn("File %s had a RowString with an improper length (\"%s\"); corrupt notes ignored",
+				    sPath.c_str(), sRowString.c_str());
+			}
+		return false;
 		}
 
 		/* Half-doubles is offset; "0011111100000". */
