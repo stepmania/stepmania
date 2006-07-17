@@ -11,6 +11,7 @@
 
 #if defined(MACOSX)
 #include "RageSoundDriver_CA.h"
+#include "RageSoundDriver_AU.h"
 #endif
 
 #ifdef HAVE_DIRECTX
