@@ -609,7 +609,7 @@ bool CheckVideoDefaultSettings()
 
 	VideoCardDefaults defaults;
 	
-	for( unsigned i=0; i<ARRAYSIZE(g_VideoCardDefaults); i++ )
+	for( unsigned i=0; i<ARRAY_SIZE(g_VideoCardDefaults); i++ )
 	{
 		defaults = g_VideoCardDefaults[i];
 

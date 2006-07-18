@@ -2636,7 +2636,7 @@ static Style g_Styles[] =
 	},
 };
 
-#define NUM_STYLES ARRAYSIZE(g_Styles)
+#define NUM_STYLES ARRAY_SIZE(g_Styles)
 
 
 GameManager::GameManager()

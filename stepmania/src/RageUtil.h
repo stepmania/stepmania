@@ -13,7 +13,8 @@ class RageFileDriver;
 
 #define ZERO(x)	memset(&(x), 0, sizeof(x))
 #define COPY(a,b) do { ASSERT(sizeof(a)==sizeof(b)); memcpy(&(a), &(b), sizeof(a)); } while( false )
-#define ARRAYSIZE(a) (sizeof(a) / sizeof((a)[0]))
+
+#define ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
 
 /* Common harmless mismatches.  All min(T,T) and max(T,T) cases are handled
  * by the generic template we get from <algorithm>. */

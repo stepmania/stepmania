@@ -45,7 +45,7 @@ static const SortOrder g_SongSortOrders[] =
 	SORT_ARTIST,
 	SORT_GENRE,
 };
-const vector<SortOrder> SONG_SORT_ORDERS( g_SongSortOrders, g_SongSortOrders + ARRAYSIZE(g_SongSortOrders) );
+const vector<SortOrder> SONG_SORT_ORDERS( g_SongSortOrders, g_SongSortOrders + ARRAY_SIZE(g_SongSortOrders) );
 	
 MusicWheel::MusicWheel()
 {
