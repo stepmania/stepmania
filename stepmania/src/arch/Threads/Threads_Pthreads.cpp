@@ -332,9 +332,7 @@ bool EventImpl_Pthreads::Wait( RageTimer *pTimeout )
 		timeval tv;
 		gettimeofday( &tv, NULL );
 
-		RageTimer timeofday;
-		timeofday.m_secs = tv.tv_sec;
-		timeofday.m_us = tv.tv_usec;
+		RageTimer timeofday( tv.tv_sec, tv.tv_usec );
 
 		float fSecondsInFuture = -pTimeout->Ago();
 		timeofday += fSecondsInFuture;
@@ -344,6 +342,7 @@ bool EventImpl_Pthreads::Wait( RageTimer *pTimeout )
 	}
 
 	int iRet = pthread_cond_timedwait( &m_Cond, &m_pParent->mutex, &abstime );
+	ASSERT( iRet != EINVAL );
 	return iRet != ETIMEDOUT;
 }
 #else
