@@ -771,10 +771,9 @@ cryptopp = [
 
 env = conf.Finish()
 
-SConscript('libresample/SConscript')
 env.Append(CPPFLAGS=' -g2', CPPPATH=['.']) # NOPORT debug symbols?
 env.Program('stepmania',
 	Screens + DataStructures + FileTypes + StepMania + Arch +\
 	ActorsInGameplayAndMenus + ActorsInMenus + ActorsInGameplay + Rage +\
-	Actors + GlobalSingletons + crypto + cryptopp + [ "libresample/libresample.a" ] )
+	Actors + GlobalSingletons + crypto + cryptopp )
 
