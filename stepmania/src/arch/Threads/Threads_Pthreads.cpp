@@ -342,7 +342,6 @@ bool EventImpl_Pthreads::Wait( RageTimer *pTimeout )
 	}
 
 	int iRet = pthread_cond_timedwait( &m_Cond, &m_pParent->mutex, &abstime );
-	ASSERT( iRet != EINVAL );
 	return iRet != ETIMEDOUT;
 }
 #else
