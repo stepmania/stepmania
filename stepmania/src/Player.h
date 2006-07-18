@@ -68,7 +68,7 @@ public:
 	{
 		if( iRow < m_iStart ) return true;
 		if( iRow >= m_iStart+m_iLen ) Resize( iRow+1-m_iStart );
-		const bool ret = m_pRows[(iRow-m_iStart+m_iOffset)%m_iLen];
+		const bool ret = m_pRows[(iRow-m_iStart+m_iOffset)%m_iLen] != 0;
 		m_pRows[(iRow-m_iStart+m_iOffset)%m_iLen] = 1;
 		while( m_pRows[m_iOffset] )
 		{
