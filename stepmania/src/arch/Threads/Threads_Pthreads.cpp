@@ -215,8 +215,9 @@ MutexImpl *MakeMutex( RageMutex *pParent )
 #include <dlfcn.h>
 #include "arch/ArchHooks/ArchHooks_Unix.h"
 #else
-typedef void *clockid_t;
-static clockid_t CLOCK_REALTIME = NULL;
+typedef int clockid_t;
+static const clockid_t CLOCK_REALTIME = 0;
+static const clockid_t CLOCK_MONOTONIC = 1;
 #endif
 namespace
 {
@@ -271,6 +272,9 @@ namespace
 			dlclose( pLib );
 		pLib = NULL;
 	}
+#elif defined(MACOSX)
+	void InitMonotonic() { bInitialized = true; }
+	clockid_t GetClock() { return CLOCK_MONOTONIC; }
 #else
 	void InitMonotonic()
 	{
