@@ -327,6 +327,7 @@ void Player::Load()
 	m_iRowLastCrossed = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat ) - 1;	// why this?
 	m_iMineRowLastCrossed = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat ) - 1;	// why this?
 	m_iRowLastJudged = m_iRowLastCrossed;
+	m_JudgedRows.Reset();
 
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
@@ -1365,7 +1366,7 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 
 	//LOG->Trace( "iStartCheckingAt: %d   iMissIfOlderThanThisIndex:  %d", iStartCheckingAt, iMissIfOlderThanThisIndex );
 
-	int iNumMissesFound = 0;
+	bool bMisses = false;
 
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_NoteData, r, iStartCheckingAt, iMissIfOlderThanThisIndex-1 )
 	{
@@ -1407,31 +1408,32 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		}
 
 		if( MissedNoteOnThisRow )
-		{
-			iNumMissesFound++;
-			HandleTapRowScore( r );
-		}
+			bMisses = true;
 	}
 
-	if( iNumMissesFound > 0 )
-	{
+	if( bMisses )
 		SetJudgment( TNS_Miss, false );
-	}
 }
 
 void Player::UpdateJudgedRows()
 {
-	const int iRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
+	const int iEndRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+	bool bAllJudged = true;
 	
-	while( m_iRowLastJudged <= iRow )
+	for( int iRow = m_iRowLastJudged+1; iRow <= iEndRow; ++iRow )
 	{
-		if( !NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, m_iRowLastJudged+1, pn) )
-			break;
-		++m_iRowLastJudged;
-		if( NoteDataWithScoring::LastTapNoteWithResult(m_NoteData, m_iRowLastJudged, pn).result.tns == TNS_None )
+		if( !NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iRow, pn) )
+		{
+			bAllJudged = false;
 			continue;
-		OnRowCompletelyJudged( m_iRowLastJudged );
+		}
+		if( bAllJudged )
+			++m_iRowLastJudged;
+		TapNoteScore tns = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, iRow, pn ).result.tns;
+		if( m_JudgedRows[iRow] || tns == TNS_None )
+			continue;
+		OnRowCompletelyJudged( iRow );
 	}
 }
 
