@@ -117,7 +117,7 @@ namespace VDDebugInfo
 
 		pctx->sRawBlock = RString();
 		pctx->pRVAHeap = NULL;
-		GetVDIPath( pctx->sFilename, ARRAYSIZE(pctx->sFilename) );
+		GetVDIPath( pctx->sFilename, ARRAY_SIZE(pctx->sFilename) );
 		pctx->sError = RString();
 
 		HANDLE h = CreateFile( pctx->sFilename, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL );
