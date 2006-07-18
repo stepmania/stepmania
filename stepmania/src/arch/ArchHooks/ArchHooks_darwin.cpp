@@ -399,7 +399,6 @@ bool ArchHooks_darwin::GoToURL( RString sUrl )
 int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 {
 	// http://developer.apple.com/qa/qa2004/qa1398.html
-	static uint64_t iStartTime = mach_absolute_time();
 	static double factor = 0.0;
 	
 	if( unlikely(factor == 0.0) )
@@ -409,7 +408,7 @@ int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 		mach_timebase_info( &timeBase );
 		factor = timeBase.numer / ( 1000.0 * timeBase.denom );
 	}
-	return int64_t( (mach_absolute_time() - iStartTime) * factor );
+	return int64_t( mach_absolute_time() * factor );
 }
 
 #include "RageFileManager.h"
