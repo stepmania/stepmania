@@ -600,9 +600,9 @@ float RageFastSin( float x )
 	if( !bInited )
 	{
 		bInited = true;
-		for( unsigned i=0; i<ARRAY_SIZE(table); i++ )
+		for( unsigned i=0; i<ARRAYSIZE(table); i++ )
 		{
-			float x = SCALE(i,0,ARRAY_SIZE(table),0.0f,PI);
+			float x = SCALE(i,0,ARRAYSIZE(table),0.0f,PI);
 			table[i] = sinf(x);
 		}
 	}
@@ -611,7 +611,7 @@ float RageFastSin( float x )
 	if( x == 0 )
 		return 0;
 
-	float fIndex = SCALE( x, 0.0f, PI*2, 0, ARRAY_SIZE(table)*2 );
+	float fIndex = SCALE( x, 0.0f, PI*2, 0, ARRAYSIZE(table)*2 );
 
 	// lerp using samples from the table
 	int iSampleIndex[2];
@@ -619,22 +619,22 @@ float RageFastSin( float x )
 	iSampleIndex[1] = iSampleIndex[0]+1;
 
 	float fRemainder = fIndex - iSampleIndex[0];
-	for( unsigned i=0; i<ARRAY_SIZE(iSampleIndex); i++ )
-		iSampleIndex[i] %= ARRAY_SIZE(table) * 2;
+	for( unsigned i=0; i<ARRAYSIZE(iSampleIndex); i++ )
+		iSampleIndex[i] %= ARRAYSIZE(table) * 2;
 
 	DEBUG_ASSERT( fRemainder>=0 && fRemainder<=1 );
 
-	float fValue[ARRAY_SIZE(iSampleIndex)];
-	for( unsigned i=0; i<ARRAY_SIZE(iSampleIndex); i++ )
+	float fValue[ARRAYSIZE(iSampleIndex)];
+	for( unsigned i=0; i<ARRAYSIZE(iSampleIndex); i++ )
 	{
 		int &iSample = iSampleIndex[i];
 		float &fVal = fValue[i];
 
-		if( iSample >= int(ARRAY_SIZE(table)) )	// PI <= iSample < 2*PI
+		if( iSample >= int(ARRAYSIZE(table)) )	// PI <= iSample < 2*PI
 		{
 			// sin(x) == -sin(PI+x)
-			iSample -= ARRAY_SIZE(table);
-			DEBUG_ASSERT( iSample>=0 && iSample<int(ARRAY_SIZE(table)) );
+			iSample -= ARRAYSIZE(table);
+			DEBUG_ASSERT( iSample>=0 && iSample<int(ARRAYSIZE(table)) );
 			fVal = -table[iSample];
 		}
 		else

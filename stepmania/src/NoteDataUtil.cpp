@@ -1823,7 +1823,7 @@ const ValidRow g_ValidRows[] =
 void NoteDataUtil::RemoveStretch( NoteData &inout, StepsType st, int iStartIndex, int iEndIndex )
 {
 	vector<const ValidRow*> vpValidRowsToCheck;
-	for( unsigned i=0; i<ARRAY_SIZE(g_ValidRows); i++ )
+	for( unsigned i=0; i<ARRAYSIZE(g_ValidRows); i++ )
 	{
 		if( g_ValidRows[i].st == st )
 			vpValidRowsToCheck.push_back( &g_ValidRows[i] );
@@ -1961,7 +1961,7 @@ void NoteDataUtil::AddTapAttacks( NoteData &nd, Song* pSong )
 			TapNote::attack,
 			TapNote::SubType_invalid,
 			TapNote::original, 
-			szAttacks[RandomInt(ARRAY_SIZE(szAttacks))],
+			szAttacks[RandomInt(ARRAYSIZE(szAttacks))],
 			15.0f, 
 			false,
 			0 );

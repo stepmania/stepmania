@@ -122,7 +122,7 @@ static Bignum rsa_privkey_op(Bignum input, const RSAKey *key)
 
 	SHA512_State ss;
 	unsigned char digest512[64];
-	unsigned digestused = ARRAY_SIZE(digest512);
+	unsigned digestused = ARRAYSIZE(digest512);
 	int hashseq = 0;
 
 	/*
@@ -158,7 +158,7 @@ static Bignum rsa_privkey_op(Bignum input, const RSAKey *key)
 				 * Conceptually the following few lines are equivalent to
 				 *    byte = random_byte();
 				 */
-				if (digestused >= ARRAY_SIZE(digest512)) {
+				if (digestused >= ARRAYSIZE(digest512)) {
 					unsigned char seqbuf[4];
 					PUT_32BIT(seqbuf, hashseq);
 					SHA512_Init(&ss);

@@ -198,7 +198,7 @@ static int g_iNumStackCounts = 0;
 Lua *LuaManager::Get()
 {
 	m_pLock->Lock();
-	if( size_t(g_iNumStackCounts) < ARRAY_SIZE(g_iStackCounts) )
+	if( size_t(g_iNumStackCounts) < ARRAYSIZE(g_iStackCounts) )
 	{
 		g_iStackCounts[g_iNumStackCounts] = lua_gettop(L);
 	}
@@ -211,7 +211,7 @@ void LuaManager::Release( Lua *&p )
 	ASSERT( p == L );
 	ASSERT( g_iNumStackCounts != 0 );
 	--g_iNumStackCounts;
-	if( size_t(g_iNumStackCounts) < ARRAY_SIZE(g_iStackCounts) )
+	if( size_t(g_iNumStackCounts) < ARRAYSIZE(g_iStackCounts) )
 	{
 		ASSERT( g_iStackCounts[g_iNumStackCounts] == lua_gettop(L) );
 	}

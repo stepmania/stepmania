@@ -1211,7 +1211,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 
 			const float fSpeeds[] = { 1.0f, 1.5f, 2.0f, 3.0f, 4.0f, 6.0f, 8.0f };
 			int iSpeed = 0;
-			for( unsigned i = 0; i < ARRAY_SIZE(fSpeeds); ++i )
+			for( unsigned i = 0; i < ARRAYSIZE(fSpeeds); ++i )
 			{
 				if( fSpeeds[i] == fScrollSpeed )
 				{
@@ -1224,7 +1224,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				--iSpeed;
 			else if( EditB == EDIT_BUTTON_SCROLL_SPEED_UP )
 				++iSpeed;
-			iSpeed = clamp( iSpeed, 0, (int) ARRAY_SIZE(fSpeeds)-1 );
+			iSpeed = clamp( iSpeed, 0, (int) ARRAYSIZE(fSpeeds)-1 );
 			
 			if( fSpeeds[iSpeed] != fScrollSpeed )
 			{
@@ -3608,7 +3608,7 @@ void ScreenEdit::DoHelp()
 {
 	g_EditHelp.rows.clear();
 
-	for( unsigned i=0; i<ARRAY_SIZE(g_EditHelpLines); ++i )
+	for( unsigned i=0; i<ARRAYSIZE(g_EditHelpLines); ++i )
 	{
 		const EditHelpLine &hl = g_EditHelpLines[i];
 		
