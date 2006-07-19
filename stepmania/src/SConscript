@@ -354,6 +354,7 @@ DataStructures = [
 	"RadarValues.cpp",
 	"RoomWheel.cpp",
 	"ScreenDimensions.cpp",
+	"ScoreKeeper.cpp",
 	"ScoreKeeperNormal.cpp",
 	"ScoreKeeperRave.cpp",
 	"Song.cpp",
