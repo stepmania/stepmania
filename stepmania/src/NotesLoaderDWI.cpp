@@ -404,8 +404,14 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 			out.m_sCDTitleFile = sParams[1];
 
 		else if( 0==stricmp(sValueName,"BPM") )
-			out.AddBPMSegment( BPMSegment(0, StringToFloat(sParams[1])) );
-
+		{
+			const float fBPM = StringToFloat( sParams[1] );
+			
+			if( fBPM > 0.0f )
+				out.AddBPMSegment( BPMSegment(0, fBPM) );
+			else
+				LOG->Trace( "Invalid BPM change at beat %f, BPM %f.", NoteRowToBeat(0), fBPM );
+		}
 		else if( 0==stricmp(sValueName,"DISPLAYBPM") )
 		{
 			// #DISPLAYBPM:[xxx..xxx]|[xxx]|[*]; 
@@ -477,10 +483,17 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 					continue;
 				}
 				
-				BPMSegment bs;
-				bs.m_iStartIndex = BeatToNoteRow( StringToFloat(arrayBPMChangeValues[0]) / 4.0f );
-				bs.SetBPM( StringToFloat( arrayBPMChangeValues[1] ) );
-				out.AddBPMSegment( bs );
+				int iStartIndex = BeatToNoteRow( StringToFloat(arrayBPMChangeValues[0]) / 4.0f );
+				float fBPM = StringToFloat( arrayBPMChangeValues[1] );
+				if( fBPM > 0.0f )
+				{
+					BPMSegment bs( iStartIndex, fBPM );
+					out.AddBPMSegment( bs );
+				}
+				else
+				{
+					LOG->Trace( "Invalid BPM change at beat %f, BPM %f.", NoteRowToBeat(iStartIndex), fBPM );
+				}
 			}
 		}
 

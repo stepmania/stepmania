@@ -118,9 +118,7 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				const float fFreezeBeat = StringToFloat( arrayFreezeValues[0] );
 				const float fFreezeSeconds = StringToFloat( arrayFreezeValues[1] );
 				
-				StopSegment new_seg;
-				new_seg.m_iStartRow = BeatToNoteRow(fFreezeBeat);
-				new_seg.m_fStopSeconds = fFreezeSeconds;
+				StopSegment new_seg( BeatToNoteRow(fFreezeBeat), fFreezeSeconds );
 
 //				LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
 
@@ -149,11 +147,10 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				const float fBeat = StringToFloat( arrayBPMChangeValues[0] );
 				const float fNewBPM = StringToFloat( arrayBPMChangeValues[1] );
 				
-				BPMSegment new_seg;
-				new_seg.m_iStartIndex = BeatToNoteRow(fBeat);
-				new_seg.SetBPM( fNewBPM );
-				
-				out.AddBPMSegment( new_seg );
+				if( fNewBPM > 0.0f )
+					out.AddBPMSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
+				else
+					LOG->Trace( "Invalid BPM change at beat %f, BPM %f.", fBeat, fNewBPM );
 			}
 		}
 	}

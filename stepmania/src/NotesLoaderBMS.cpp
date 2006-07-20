@@ -604,10 +604,18 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
 
 	if( GetTagFromMap( mapNameToData, "#bpm", sData ) )
 	{
-		BPMSegment newSeg( 0, StringToFloat(sData) );
-		out.AddBPMSegment( newSeg );
-
-		LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(newSeg.m_iStartIndex), newSeg.GetBPM() );
+		const float fBPM = StringToFloat( sData );
+		
+		if( fBPM > 0.0f )
+		{
+			BPMSegment newSeg( 0, fBPM );
+			out.AddBPMSegment( newSeg );
+			LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(0), fBPM );
+		}
+		else
+		{
+			LOG->Trace( "Invalid BPM change at beat %f, BPM %f.", NoteRowToBeat(0), fBPM );
+		}
 	}
 
 	NameToData_t::const_iterator it;
@@ -681,10 +689,18 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
 			switch( iBMSTrackNo )
 			{
 			case BMS_TRACK_BPM:
-				out.SetBPMAtBeat( fBeat, (float) iVal );
-				LOG->Trace( "Inserting new BPM change at beat %f, BPM %i", fBeat, iVal );
+				if( iVal > 0 )
+				{
+					out.SetBPMAtBeat( fBeat, (float) iVal );
+					LOG->Trace( "Inserting new BPM change at beat %f, BPM %i", fBeat, iVal );
+				}
+				else
+				{
+					// This is too loud for warn.
+					LOG->Trace( "Invalid BPM change at beat %f, BPM %d.", fBeat, iVal );
+				}
 				break;
-
+				
 			case BMS_TRACK_BPM_REF:
 			{
 				RString sTagToLookFor = ssprintf( "#bpm%02x", iVal );
@@ -693,11 +709,16 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
 				{
 					float fBPM = StringToFloat( sBPM );
 
-					BPMSegment newSeg;
-					newSeg.m_iStartIndex = BeatToNoteRow(fBeat);
-					newSeg.SetBPM( fBPM );
-					out.AddBPMSegment( newSeg );
-					LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", fBeat, newSeg.GetBPM() );
+					if( fBPM > 0.0f )
+					{
+						BPMSegment newSeg( BeatToNoteRow(fBeat), fBPM );
+						out.AddBPMSegment( newSeg );
+						LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", fBeat, newSeg.GetBPM() );
+					}
+					else
+					{
+						LOG->Trace( "Invalid BPM change at beat %f, BPM %f", fBeat, fBPM );
+					}
 				}
 				else
 					LOG->Warn( "Couldn't find tag '%s' in '%s'.", sTagToLookFor.c_str(), m_sDir.c_str() );
@@ -739,11 +760,17 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
 			{
 				float fBPM = StringToFloat( sBPM );
 
-				BPMSegment newSeg;
-				newSeg.m_iStartIndex = iStepIndex;
-				newSeg.SetBPM( fBPM );
-				out.AddBPMSegment( newSeg );
-				LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(newSeg.m_iStartIndex), newSeg.GetBPM() );
+				if( fBPM > 0.0f )
+				{
+					BPMSegment newSeg( iStepIndex, fBPM );
+					out.AddBPMSegment( newSeg );
+					LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", NoteRowToBeat(newSeg.m_iStartIndex), newSeg.GetBPM() );
+			
+				}
+				else
+				{
+					LOG->Trace( "Invalid BPM change at beat %f, BPM %f.", NoteRowToBeat(iStepIndex), fBPM );
+				}
 			}
 			else
 				LOG->Warn( "Couldn't find tag '%s' in '%s'.", sTagToLookFor.c_str(), m_sDir.c_str() );
