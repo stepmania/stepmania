@@ -326,7 +326,8 @@ void Player::Load()
 
 	m_iRowLastCrossed = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat ) - 1;	// why this?
 	m_iMineRowLastCrossed = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat ) - 1;	// why this?
-	m_iRowLastJudged = m_iRowLastCrossed;
+	m_iRowLastJudged = 0;
+	m_iMineRowLastJudged = 0;
 	m_JudgedRows.Reset();
 
 	// TODO: Remove use of PlayerNumber.
@@ -1376,8 +1377,8 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 				NSMAN->ReportScore( m_pPlayerState->m_PlayerNumber, TNS_AvoidMine,
 						    m_pPlayerStageStats->iScore,
 						    m_pPlayerStageStats->iCurCombo );
-				// Mines are counted as being judged right away so we must report this now because this
-				// row is likely to have been judged already.
+				/* The only real way to tell if a mine has been scored is if it has disappeared
+				 * but this only works for hit mines so update the scores for avoided mines here. */
 				if( m_pPrimaryScoreKeeper )
 					m_pPrimaryScoreKeeper->HandleTapScore( tn );
 				if( m_pSecondaryScoreKeeper )
@@ -1420,6 +1421,52 @@ void Player::UpdateJudgedRows()
 		if( m_JudgedRows[iRow] || tns == TNS_None )
 			continue;
 		OnRowCompletelyJudged( iRow );
+	}
+	
+	for( int iRow = m_iMineRowLastJudged+1; iRow <= iEndRow; ++iRow )
+	{
+		for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
+		{
+			const TapNote &tn = m_NoteData.GetTapNote( iTrack, iRow );
+
+			if( tn.type != TapNote::mine )
+				continue;
+			
+			switch( tn.result.tns )
+			{
+			case TNS_None:		bAllJudged = false;
+			case TNS_AvoidMine:	continue;
+			case TNS_HitMine:	break;
+			DEFAULT_FAIL( tn.result.tns );
+			}
+				
+			if( tn.result.bHidden )
+				continue;
+			if( m_pNoteField )
+				m_pNoteField->DidTapNote( iTrack, tn.result.tns, false );
+
+			if( tn.pn != PLAYER_INVALID && tn.pn != pn )
+				continue;
+			if( tn.bKeysound && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
+				m_vKeysounds[tn.iKeysoundIndex].Play();
+			else
+				m_soundMine.Play();
+			
+			if( m_pLifeMeter )
+				m_pLifeMeter->ChangeLife( tn.result.tns );
+			if( m_pScoreDisplay )
+				m_pScoreDisplay->OnJudgment( tn.result.tns );
+			if( m_pSecondaryScoreDisplay )
+				m_pSecondaryScoreDisplay->OnJudgment( tn.result.tns );
+			if( m_pCombinedLifeMeter )
+				m_pCombinedLifeMeter->ChangeLife( pn, tn.result.tns );
+			
+			TapNote tn2 = tn;
+			tn2.result.bHidden = true;
+			m_NoteData.SetTapNote( iTrack, iRow, tn2 );
+		}
+		if( bAllJudged )
+			++m_iMineRowLastJudged;
 	}
 }
 
@@ -1564,30 +1611,6 @@ void Player::HandleTapRowScore( unsigned row )
 			continue;
 		if( tn.pn != PLAYER_INVALID && tn.pn != pn )
 			continue;
-#if 0
-		if( tn.result.tns == TNS_HitMine )
-		{
-			if( tn.bKeysound && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
-				m_vKeysounds[tn.iKeysoundIndex].Play();
-			else
-				m_soundMine.Play();
-			
-			if( m_pLifeMeter )
-				m_pLifeMeter->ChangeLife( tn.result.tns );
-			if( m_pScoreDisplay )
-				m_pScoreDisplay->OnJudgment( tn.result.tns );
-			if( m_pSecondaryScoreDisplay )
-				m_pSecondaryScoreDisplay->OnJudgment( tn.result.tns );
-			if( m_pCombinedLifeMeter )
-				m_pCombinedLifeMeter->ChangeLife( pn, tn.result.tns );
-			
-			TapNote tn2 = tn;
-			tn2.result.bHidden = true;
-			m_NoteData.SetTapNote( track, row, tn2 );
-			if( m_pNoteField )
-				m_pNoteField->DidTapNote( track, tn.result.tns, false );
-		}
-#endif
 		if( m_pPrimaryScoreKeeper )
 			m_pPrimaryScoreKeeper->HandleTapScore( tn );
 		if( m_pSecondaryScoreKeeper )
@@ -1785,7 +1808,7 @@ void Player::SetJudgment( TapNoteScore tns, bool bEarly )
 }
 
 /*
- * (c) 2001-2004 Chris Danford
+ * (c) 2001-2006 Chris Danford, Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

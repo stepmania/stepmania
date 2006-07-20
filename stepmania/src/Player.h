@@ -173,6 +173,7 @@ protected:
 	int			m_iRowLastCrossed;
 	int			m_iMineRowLastCrossed;
 	int			m_iRowLastJudged; // Everything up to and including this row has been judged.
+	int			m_iMineRowLastJudged;
 	JudgedRows		m_JudgedRows;
 
 	RageSound		m_soundMine;
