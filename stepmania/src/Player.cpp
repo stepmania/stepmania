@@ -57,7 +57,7 @@ float AdjustedWindowSeconds( TimingWindow tw )
 	return fSecs;
 }
 
-
+//is this define really needed, if not I'll remove it
 #define ADJUSTED_WINDOW_SECONDS( tw )	AdjustedWindowSeconds( tw )
 
 
@@ -1426,7 +1426,7 @@ void Player::UpdateJudgedRows()
 
 			if( tn.type != TapNote::mine )
 				continue;
-			
+
 			switch( tn.result.tns )
 			{
 			case TNS_None:		bAllJudged = false;
@@ -1446,7 +1446,7 @@ void Player::UpdateJudgedRows()
 				m_vKeysounds[tn.iKeysoundIndex].Play();
 			else
 				m_soundMine.Play();
-			
+
 			if( m_pLifeMeter )
 				m_pLifeMeter->ChangeLife( tn.result.tns );
 			if( m_pScoreDisplay )
@@ -1455,6 +1455,12 @@ void Player::UpdateJudgedRows()
 				m_pSecondaryScoreDisplay->OnJudgment( tn.result.tns );
 			if( m_pCombinedLifeMeter )
 				m_pCombinedLifeMeter->ChangeLife( pn, tn.result.tns );
+
+			//Make sure hit mines affect the dance points
+			if( m_pPrimaryScoreKeeper )
+				m_pPrimaryScoreKeeper->HandleTapScore( tn );
+			if( m_pSecondaryScoreKeeper )
+				m_pSecondaryScoreKeeper->HandleTapScore( tn );
 			
 			TapNote tn2 = tn;
 			tn2.result.bHidden = true;
