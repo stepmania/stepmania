@@ -82,18 +82,6 @@ void ScreenDemonstration::HandleScreenMessage( const ScreenMessage SM )
 			m_Out.StartTransitioning( SM_GoToNextScreen );
 		return;
 	}
-	else if( SM == SM_GainFocus )
-	{
-	}
-	else if( SM == SM_LoseFocus )
-	{
-	}
-	else if( SM == SM_GoToNextScreen )
-	{
-		if( m_pSoundMusic )
-			m_pSoundMusic->Stop();
-	}
-
 	ScreenJukebox::HandleScreenMessage( SM );
 }
 
