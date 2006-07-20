@@ -4,66 +4,35 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "NoteTypes.h"
+#include "Foreach.h"
 #include <float.h>
-
-void BPMSegment::SetBPM( float f )
-{
-	m_fBPS = f / 60.0f;
-}
-
-float BPMSegment::GetBPM() const
-{
-	return m_fBPS * 60.0f;
-}
 
 TimingData::TimingData()
 {
 	m_fBeat0OffsetInSeconds = 0;
 }
 
-static int CompareBPMSegments(const BPMSegment &seg1, const BPMSegment &seg2)
-{
-	return seg1.m_iStartIndex < seg2.m_iStartIndex;
-}
-
-void SortBPMSegmentsArray( vector<BPMSegment> &arrayBPMSegments )
-{
-	sort( arrayBPMSegments.begin(), arrayBPMSegments.end(), CompareBPMSegments );
-}
-
-static int CompareStopSegments(const StopSegment &seg1, const StopSegment &seg2)
-{
-	return seg1.m_iStartRow < seg2.m_iStartRow;
-}
-
-void SortStopSegmentsArray( vector<StopSegment> &arrayStopSegments )
-{
-	sort( arrayStopSegments.begin(), arrayStopSegments.end(), CompareStopSegments );
-}
-
 void TimingData::GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut ) const
 {
 	fMinBPMOut = FLT_MAX;
 	fMaxBPMOut = 0;
-	for( unsigned i=0; i<m_BPMSegments.size(); i++ ) 
+	FOREACH_CONST( BPMSegment, m_BPMSegments, seg )
 	{
-		const BPMSegment &seg = m_BPMSegments[i];
-		fMaxBPMOut = max( seg.m_fBPS * 60.0f, fMaxBPMOut );
-		fMinBPMOut = min( seg.m_fBPS * 60.0f, fMinBPMOut );
+		const float fBPM = seg->GetBPM();
+		fMaxBPMOut = max( fBPM, fMaxBPMOut );
+		fMinBPMOut = min( fBPM, fMinBPMOut );
 	}
 }
 
 
 void TimingData::AddBPMSegment( const BPMSegment &seg )
 {
-	m_BPMSegments.push_back( seg );
-	SortBPMSegmentsArray( m_BPMSegments );
+	m_BPMSegments.insert( upper_bound(m_BPMSegments.begin(), m_BPMSegments.end(), seg), seg );
 }
 
 void TimingData::AddStopSegment( const StopSegment &seg )
 {
-	m_StopSegments.push_back( seg );
-	SortStopSegmentsArray( m_StopSegments );
+	m_StopSegments.insert( upper_bound(m_StopSegments.begin(), m_StopSegments.end(), seg), seg );
 }
 
 /* Change an existing BPM segment, merge identical segments together or insert a new one. */
@@ -187,10 +156,7 @@ BPMSegment& TimingData::GetBPMSegmentAtBeat( float fBeat )
 {
 	static BPMSegment empty;
 	if( m_BPMSegments.empty() )
-	{
-		empty = BPMSegment();
 		return empty;
-	}
 	
 	int i = GetBPMSegmentIndexAtBeat( fBeat );
 	return m_BPMSegments[i];

@@ -9,13 +9,13 @@
 
 struct BPMSegment 
 {
-	BPMSegment() { m_iStartIndex = -1; m_fBPS = -1; }
-	BPMSegment( int s, float b ) { m_iStartIndex = s; m_fBPS = b/60.0f; }
+	BPMSegment() : m_iStartIndex(-1), m_fBPS(-1.0f) { }
+	BPMSegment( int s, float b ) { m_iStartIndex = max( 0, s ); SetBPM( b ); }
 	int m_iStartIndex;
 	float m_fBPS;
 
-	void SetBPM( float f );
-	float GetBPM() const;
+	void SetBPM( float f ) { m_fBPS = f / 60.0f; }
+	float GetBPM() const { return m_fBPS * 60.0f; }
 
 	bool operator==( const BPMSegment &other ) const
 	{
@@ -24,12 +24,13 @@ struct BPMSegment
 		return true;
 	}
 	bool operator!=( const BPMSegment &other ) const { return !operator==(other); }
+	bool operator<( const BPMSegment &other ) const { return m_iStartIndex < other.m_iStartIndex; }
 };
 
 struct StopSegment 
 {
-	StopSegment() { m_fStopSeconds = -1; m_iStartRow = -1; }
-	StopSegment( int s, float f ) { m_iStartRow = s; m_fStopSeconds = f; }
+	StopSegment() : m_iStartRow(-1), m_fStopSeconds(-1.0f)  { }
+	StopSegment( int s, float f ) { m_iStartRow = max( 0, s ); m_fStopSeconds = max( 0.0f, f ); }
 	int m_iStartRow;
 	float m_fStopSeconds;
 
@@ -40,6 +41,7 @@ struct StopSegment
 		return true;
 	}
 	bool operator!=( const StopSegment &other ) const { return !operator==(other); }
+	bool operator<( const StopSegment &other ) const { return m_iStartRow < other.m_iStartRow; }
 };
 
 class TimingData
