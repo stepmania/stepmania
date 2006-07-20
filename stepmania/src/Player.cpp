@@ -1290,51 +1290,30 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 	
 	/* Find the final score of the row.  This will never be TNS_None, since this
 	 * function is only called when a row is completed. */
-	const Game *pCurGame = GAMESTATE->m_pCurGame;
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+	bool bSeparately = GAMESTATE->GetCurrentGame()->m_bCountNotesSeparately;
+	
+	const TapNoteResult &lastTNR = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, iIndexThatWasSteppedOn, pn ).result;
+	ASSERT( lastTNR.tns != TNS_None );
+	ASSERT( lastTNR.tns != TNS_HitMine );
+	ASSERT( lastTNR.tns != TNS_AvoidMine );
 
-	if( !pCurGame->m_bCountNotesSeparately )
+	for( int c = 0; c < m_NoteData.GetNumTracks(); ++c )
 	{
-		TapNoteResult tnr = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, iIndexThatWasSteppedOn, pn ).result;
-		TapNoteScore score = tnr.tns;
-
-		ASSERT( score != TNS_None );
-		ASSERT( score != TNS_HitMine );
-		ASSERT( score != TNS_AvoidMine );
-
-		/* If the whole row was hit with perfects or greats, remove the row
-		 * from the NoteField, so it disappears. */
-
-		for( int c=0; c<m_NoteData.GetNumTracks(); c++ )	// for each column
-		{
-			const TapNote &tn = m_NoteData.GetTapNote( c, iIndexThatWasSteppedOn );
-
-			if( tn.type == TapNote::empty )	continue; /* no note in this col */
-			if( tn.type == TapNote::mine )	continue; /* don't flash on mines b/c they're supposed to be missed */
-			if( tn.pn != PLAYER_INVALID && tn.pn != pn ) continue; /* Not our note. */
-			
-			DisplayJudgedRow( iIndexThatWasSteppedOn, score, c );
-		}
-
-		SetJudgment( score, tnr.fTapNoteOffset < 0 );
+		const TapNote &tn = m_NoteData.GetTapNote( c, iIndexThatWasSteppedOn );
+		
+		if( tn.type == TapNote::empty ) continue; /* no note in this col */
+		if( tn.type == TapNote::mine )  continue; /* don't flash on mines b/c they're supposed to be missed */
+		if( tn.pn != PLAYER_INVALID && tn.pn != pn ) continue; /* Not our note. */
+		
+		TapNoteScore score = bSeparately ? tn.result.tns : lastTNR.tns;
+		
+		DisplayJudgedRow( iIndexThatWasSteppedOn, score, c );
+		if( bSeparately )
+			SetJudgment( score, tn.result.fTapNoteOffset < 0.0f );
 	}
-	else
-	{
-		for( int c=0; c<m_NoteData.GetNumTracks(); c++ )	// for each column
-		{
-			const TapNote &tn = m_NoteData.GetTapNote(c, iIndexThatWasSteppedOn);
-			TapNoteResult tnr = tn.result;
-			TapNoteScore score = tnr.tns;
-
-			if( tn.type == TapNote::empty ) continue; /* no note in this col */
-			if( tn.type == TapNote::mine ) continue; /* don't flash on mines b/c they're supposed to be missed */
-			if( tn.pn != PLAYER_INVALID && tn.pn != pn ) continue; /* Not our note. */
-
-			DisplayJudgedRow( iIndexThatWasSteppedOn, score, c );
-
-			SetJudgment( score, tnr.fTapNoteOffset < 0 );
-		}
-	}
+	if( !bSeparately )
+		SetJudgment( lastTNR.tns, lastTNR.fTapNoteOffset < 0.0f );
 
 	HandleTapRowScore( iIndexThatWasSteppedOn );	// update score
 }
