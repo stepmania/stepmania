@@ -360,12 +360,11 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 	// Update dance points.
 	if( !m_pPlayerStageStats->bFailed )
 		m_pPlayerStageStats->iActualDancePoints += TapNoteScoreToDancePoints( scoreOfLastTap );
-	m_pPlayerStageStats->iCurPossibleDancePoints += TapNoteScoreToDancePoints( TNS_W1 );
+
 	// update judged row totals
 	m_pPlayerStageStats->iTapNoteScores[scoreOfLastTap] += 1;
 
 	// increment the current total possible dance score
-
 	m_pPlayerStageStats->iCurPossibleDancePoints += TapNoteScoreToDancePoints( TNS_W1 );
 
 	//
