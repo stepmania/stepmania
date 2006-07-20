@@ -103,7 +103,6 @@ public:
 
 	bool ShowW1() const;
 
-	RString				m_sLoadingMessage;		// used in loading screen
 	BroadcastOnChange<RString>	m_sPreferredSongGroup;		// GROUP_ALL denotes no preferred group
 	BroadcastOnChange<RString>	m_sPreferredCourseGroup;	// GROUP_ALL denotes no preferred group
 	bool				m_bChangedFailTypeOnScreenSongOptions;	// true if FailType was changed in the song options screen
