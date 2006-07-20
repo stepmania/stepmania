@@ -1373,9 +1373,15 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 
 				//Let the server know we avoided a mine
 				//Hit mines are sent to the server in HandleTapScore
-				NSMAN->ReportScore( m_pPlayerState->m_PlayerNumber, tn.result.tns,
-				m_pPlayerStageStats->iScore,
-				m_pPlayerStageStats->iCurCombo );
+				NSMAN->ReportScore( m_pPlayerState->m_PlayerNumber, TNS_AvoidMine,
+						    m_pPlayerStageStats->iScore,
+						    m_pPlayerStageStats->iCurCombo );
+				// Mines are counted as being judged right away so we must report this now because this
+				// row is likely to have been judged already.
+				if( m_pPrimaryScoreKeeper )
+					m_pPrimaryScoreKeeper->HandleTapScore( tn );
+				if( m_pSecondaryScoreKeeper )
+					m_pSecondaryScoreKeeper->HandleTapScore( tn );
 			}
 			else
 			{
@@ -1553,8 +1559,12 @@ void Player::HandleTapRowScore( unsigned row )
 	for( int track = 0; track < m_NoteData.GetNumTracks(); ++track )
 	{
 		const TapNote &tn = m_NoteData.GetTapNote( track, row );
+		// Mines cannot be handled here.
+		if( tn.type == TapNote::empty || tn.type == TapNote::mine )
+			continue;
 		if( tn.pn != PLAYER_INVALID && tn.pn != pn )
 			continue;
+#if 0
 		if( tn.result.tns == TNS_HitMine )
 		{
 			if( tn.bKeysound && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
@@ -1577,7 +1587,7 @@ void Player::HandleTapRowScore( unsigned row )
 			if( m_pNoteField )
 				m_pNoteField->DidTapNote( track, tn.result.tns, false );
 		}
-				
+#endif
 		if( m_pPrimaryScoreKeeper )
 			m_pPrimaryScoreKeeper->HandleTapScore( tn );
 		if( m_pSecondaryScoreKeeper )
