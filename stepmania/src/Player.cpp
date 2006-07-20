@@ -1266,26 +1266,6 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 	}
 }
 
-void Player::DisplayJudgedRow( int iIndexThatWasSteppedOn, TapNoteScore score, int iTrack )
-{
-	TapNote tn = m_NoteData.GetTapNote( iTrack, iIndexThatWasSteppedOn );
-
-	// If the score is W3 or better, remove the note from the screen to 
-	// indicate success.  (Or always if blind is on.)
-	if( score >= TNS_W3 || m_pPlayerState->m_PlayerOptions.m_fBlind )
-	{
-		tn.result.bHidden = true;
-		m_NoteData.SetTapNote( iTrack, iIndexThatWasSteppedOn, tn );
-	}
-
-	// show the ghost arrow for this column
-	bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
-	
-	bBright = bBright || m_pPlayerState->m_PlayerOptions.m_fBlind;
-	if( m_pNoteField )
-		m_pNoteField->DidTapNote( iTrack, TNS_W1, bBright );
-}
-
 void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 {
 //	LOG->Trace( "Player::OnRowCompletelyJudged" );
@@ -1299,6 +1279,12 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 	ASSERT( lastTNR.tns != TNS_None );
 	ASSERT( lastTNR.tns != TNS_HitMine );
 	ASSERT( lastTNR.tns != TNS_AvoidMine );
+	// XXX This is the wrong PlayerStageStats to use for combined note fields. Hmm.
+	bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
+	bool bBlind = m_pPlayerState->m_PlayerOptions.m_fBlind;
+	
+	bBright = bBright || bBlind;
+	
 
 	for( int c = 0; c < m_NoteData.GetNumTracks(); ++c )
 	{
@@ -1306,11 +1292,20 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 		
 		if( tn.type == TapNote::empty ) continue; /* no note in this col */
 		if( tn.type == TapNote::mine )  continue; /* don't flash on mines b/c they're supposed to be missed */
-		if( tn.pn != PLAYER_INVALID && tn.pn != pn ) continue; /* Not our note. */
 		
 		TapNoteScore score = bSeparately ? tn.result.tns : lastTNR.tns;
 		
-		DisplayJudgedRow( iIndexThatWasSteppedOn, score, c );
+		if( m_pNoteField )
+			m_pNoteField->DidTapNote( c, score, bBright );
+		if( tn.pn != PLAYER_INVALID && tn.pn != pn )
+			continue; /* Not our note. */
+		if( score >= TNS_W3 || bBlind )
+		{
+			TapNote tn2 = tn;
+			
+			tn2.result.bHidden = true;
+			m_NoteData.SetTapNote( c, iIndexThatWasSteppedOn, tn2 );
+		}
 		if( bSeparately )
 			SetJudgment( score, tn.result.fTapNoteOffset < 0.0f );
 	}

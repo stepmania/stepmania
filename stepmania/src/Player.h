@@ -127,7 +127,6 @@ protected:
 	void HandleStep( int col, const RageTimer &tm, bool bHeld );
 	void UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
 	void UpdateJudgedRows();
-	void DisplayJudgedRow( int iIndexThatWasSteppedOn, TapNoteScore score, int iTrack );
 	void OnRowCompletelyJudged( int iStepIndex );
 	void HandleTapRowScore( unsigned row );
 	void HandleHoldScore( const TapNote &tn );
