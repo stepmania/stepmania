@@ -23,7 +23,7 @@ public:
 protected:
 	virtual void Step();
 	LifeMeterBar	*m_pLifeMeterBar;
-	PlayerPlus	*m_pPlayer;
+	PlayerPlus	m_Player;
 	Model		*m_pmCharacter;
 	Model		*m_pmDancePad;
 	int		m_iW2s;

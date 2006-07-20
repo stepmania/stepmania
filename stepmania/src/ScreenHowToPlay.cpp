@@ -73,7 +73,6 @@ ScreenHowToPlay::ScreenHowToPlay()
 	m_iNumW2s = NUM_W2S;
 
 	// initialize these because they might not be used.
-	m_pPlayer = NULL;
 	m_pLifeMeterBar = NULL;
 	m_pmCharacter = NULL;
 	m_pmDancePad = NULL;
@@ -154,8 +153,7 @@ void ScreenHowToPlay::Init()
 		GAMESTATE->m_bGameplayLeadIn.Set( false );
 		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_AUTOPLAY;
 
-		m_pPlayer = new PlayerPlus;
-		m_pPlayer->Init( 
+		m_Player->Init( 
 			"Player",
 			GAMESTATE->m_pPlayerState[PLAYER_1], 
 			NULL,
@@ -166,10 +164,10 @@ void ScreenHowToPlay::Init()
 			NULL, 
 			NULL, 
 			NULL );
-		m_pPlayer->Load( m_NoteData );
-		m_pPlayer->SetName( "Player" );
-		this->AddChild( m_pPlayer );
-		SET_XY_AND_ON_COMMAND( m_pPlayer );
+		m_Player.Load( m_NoteData );
+		m_Player->SetName( "Player" );
+		this->AddChild( m_Player );
+		SET_XY_AND_ON_COMMAND( m_Player );
 
 		// Don't show judgement
 		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_fBlind = 1;
@@ -192,7 +190,6 @@ ScreenHowToPlay::~ScreenHowToPlay()
 	delete m_pLifeMeterBar;
 	delete m_pmCharacter;
 	delete m_pmDancePad;
-	delete m_pPlayer;
 }
 
 void ScreenHowToPlay::Step()
@@ -248,7 +245,7 @@ void ScreenHowToPlay::Update( float fDelta )
 
 		if(( iCurNoteRow != iLastNoteRowCounted ) &&(m_NoteData.IsThereATapAtRow( iCurNoteRow )))
 		{
-			if( m_pLifeMeterBar && !m_pPlayer )
+			if( m_pLifeMeterBar && !m_Player )
 			{
 				if ( m_iW2s < m_iNumW2s )
 					m_pLifeMeterBar->ChangeLife(TNS_W2);

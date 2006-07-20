@@ -709,10 +709,10 @@ void ScreenEdit::Init()
 	m_Undo.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
 
 
-	m_Player.Init( "Player", GAMESTATE->m_pPlayerState[PLAYER_1], NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
+	m_Player->Init( "Player", GAMESTATE->m_pPlayerState[PLAYER_1], NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
 	GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_HUMAN;
-	m_Player.SetXY( PLAYER_X, PLAYER_Y );
-	this->AddChild( &m_Player );
+	m_Player->SetXY( PLAYER_X, PLAYER_Y );
+	this->AddChild( m_Player );
 
 	this->AddChild( &m_Foreground );
 
@@ -793,7 +793,7 @@ void ScreenEdit::PlayTicks()
 		iRowLastCrossed = iSongRow;
 
 	int iTickRow = -1;
-	const NoteData &nd = m_Player.GetNoteData();
+	const NoteData &nd = m_Player->GetNoteData();
 	// for each index we crossed since the last update:
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( nd, r, iRowLastCrossed+1, iSongRow+1 )
 		if( nd.IsThereATapOrHoldHeadAtRow( r ) )
@@ -2035,7 +2035,7 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 	{
 	case PLAYER_1:	
 		if( PREFSMAN->m_AutoPlay == PC_HUMAN )
-			m_Player.Step( input.StyleI.col, input.DeviceI.ts ); 
+			m_Player->Step( input.StyleI.col, input.DeviceI.ts ); 
 		break;
 	}
 
@@ -2228,7 +2228,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 	m_SnapDisplay.SetHidden( em != STATE_EDITING );
 	m_NoteFieldEdit.SetHidden( em != STATE_EDITING );
 	m_NoteFieldRecord.SetHidden( em != STATE_RECORDING && em != STATE_RECORDING_PAUSED );
-	m_Player.SetHidden( em != STATE_PLAYING );
+	m_Player->SetHidden( em != STATE_PLAYING );
 	m_Foreground.SetHidden( !g_bEditorShowBGChangesPlay || em == STATE_EDITING );
 
 	switch( em )
@@ -2384,7 +2384,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 
 		// The options may have changed the note skin.
 		m_NoteFieldRecord.CacheAllUsedNoteSkins();
-		m_Player.CacheAllUsedNoteSkins();
+		m_Player->CacheAllUsedNoteSkins();
 
 		// stop any music that screen may have been playing
 		SOUND->StopMusic();

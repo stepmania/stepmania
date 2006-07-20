@@ -206,18 +206,24 @@ protected:
 	TweenState		m_tsJudgment[NUM_REVERSE][NUM_CENTERED];
 };
 
-class PlayerPlus : public Player
+class PlayerPlus
 {
+	Player *m_pPlayer;
 	NoteData m_NoteData;
 public:
-	PlayerPlus() : Player(m_NoteData) { }
-	void Load( const NoteData &nd ) { m_NoteData = nd; Player::Load(); }
+	PlayerPlus() { m_pPlayer = new Player(m_NoteData); }
+	~PlayerPlus() { delete m_pPlayer; }
+	void Load( const NoteData &nd ) { m_NoteData = nd; m_pPlayer->Load(); }
+	Player *operator->() { return m_pPlayer; }
+	const Player *operator->() const { return m_pPlayer; }
+	operator Player*() { return m_pPlayer; }
+	operator const Player*() const { return m_pPlayer; }
 };
 
 #endif
 
 /*
- * (c) 2001-2004 Chris Danford
+ * (c) 2001-2006 Chris Danford, Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
