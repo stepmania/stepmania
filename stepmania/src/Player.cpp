@@ -526,13 +526,11 @@ void Player::Update( float fDeltaTime )
 	// during pause.
 	if( m_bPaused )
 		return;
-
+	
 	//
 	// Check for TapNote misses
 	//
 	UpdateTapNotesMissedOlderThan( GetMaxStepDistanceSeconds() );
-	// Check for completely judged rows.
-	UpdateJudgedRows();
 
 	//
 	// update pressed flag
@@ -708,10 +706,10 @@ void Player::Update( float fDeltaTime )
 			}
 		}
 	}
-
+	
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-
+	
 	{
 		// Why was this originally "BeatToNoteRowNotRounded"?  It should be rounded.  -Chris
 		/* We want to send the crossed row message exactly when we cross the row--not
@@ -727,7 +725,7 @@ void Player::Update( float fDeltaTime )
 			m_iRowLastCrossed = iRowNow+1;
 		}
 	}
-
+	
 	{
 		// TRICKY: 
 		float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
@@ -743,6 +741,9 @@ void Player::Update( float fDeltaTime )
 			m_iMineRowLastCrossed = iRowNow+1;
 		}
 	}
+	
+	// Check for completely judged rows.
+	UpdateJudgedRows();
 
 	// process transforms that are waiting to be applied
 	ApplyWaitingTransforms();
