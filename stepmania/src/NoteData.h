@@ -36,7 +36,6 @@ public:
 	
 	typedef bool (*IteratorCond)( const TapNote& );
 	// This is ugly to make it templated but I don't want to have to write the same class twice.
-	//friend template<typename ND, typename iter, typename TN> class _all_tracks_iterator;
 	template<typename ND, typename iter, typename TN>
 	class _all_tracks_iterator
 	{
