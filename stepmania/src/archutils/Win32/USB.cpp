@@ -16,44 +16,44 @@ extern "C" {
 
 static RString GetUSBDevicePath( int iNum )
 {
-    GUID guid;
-    HidD_GetHidGuid( &guid );
+	GUID guid;
+	HidD_GetHidGuid( &guid );
 
-    HDEVINFO DeviceInfo = SetupDiGetClassDevs( &guid, NULL, NULL, (DIGCF_PRESENT | DIGCF_DEVICEINTERFACE) );
+	HDEVINFO DeviceInfo = SetupDiGetClassDevs( &guid, NULL, NULL, (DIGCF_PRESENT | DIGCF_DEVICEINTERFACE) );
 
-    SP_DEVICE_INTERFACE_DATA DeviceInterface;
-    DeviceInterface.cbSize = sizeof(SP_DEVICE_INTERFACE_DATA);
+	SP_DEVICE_INTERFACE_DATA DeviceInterface;
+	DeviceInterface.cbSize = sizeof(SP_DEVICE_INTERFACE_DATA);
 
-    if( !SetupDiEnumDeviceInterfaces (DeviceInfo,
-               NULL, &guid, iNum, &DeviceInterface) )
+	if( !SetupDiEnumDeviceInterfaces (DeviceInfo,
+		NULL, &guid, iNum, &DeviceInterface) )
 	{
-	    SetupDiDestroyDeviceInfoList( DeviceInfo );
-	    return RString();
+		SetupDiDestroyDeviceInfoList( DeviceInfo );
+		return RString();
 	}
 
-    unsigned long iSize;
-    SetupDiGetDeviceInterfaceDetail( DeviceInfo, &DeviceInterface, NULL, 0, &iSize, 0 );
+	unsigned long iSize;
+	SetupDiGetDeviceInterfaceDetail( DeviceInfo, &DeviceInterface, NULL, 0, &iSize, 0 );
 
-    PSP_INTERFACE_DEVICE_DETAIL_DATA DeviceDetail = (PSP_INTERFACE_DEVICE_DETAIL_DATA) malloc( iSize );
-    DeviceDetail->cbSize = sizeof(SP_INTERFACE_DEVICE_DETAIL_DATA);
+	PSP_INTERFACE_DEVICE_DETAIL_DATA DeviceDetail = (PSP_INTERFACE_DEVICE_DETAIL_DATA) malloc( iSize );
+	DeviceDetail->cbSize = sizeof(SP_INTERFACE_DEVICE_DETAIL_DATA);
 
-    RString sRet;
-    if( SetupDiGetDeviceInterfaceDetail(DeviceInfo, &DeviceInterface,
+	RString sRet;
+	if( SetupDiGetDeviceInterfaceDetail(DeviceInfo, &DeviceInterface,
 		DeviceDetail, iSize, &iSize, NULL) ) 
-        sRet = DeviceDetail->DevicePath;
+		sRet = DeviceDetail->DevicePath;
 	free( DeviceDetail );
 
 	SetupDiDestroyDeviceInfoList( DeviceInfo );
-    return sRet;
+	return sRet;
 }
 
 bool USBDevice::Open( int iVID, int iPID, int iBlockSize, int iNum, void (*pfnInit)(HANDLE) )
 {
-    DWORD iIndex = 0;
+	DWORD iIndex = 0;
 
-    RString path;
-    while( (path = GetUSBDevicePath(iIndex++)) != "" )
-    {
+	RString path;
+	while( (path = GetUSBDevicePath(iIndex++)) != "" )
+	{
 		HANDLE h = CreateFile( path, GENERIC_READ,
 			FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL );
 
@@ -67,8 +67,8 @@ bool USBDevice::Open( int iVID, int iPID, int iBlockSize, int iNum, void (*pfnIn
 			continue;
 		}
 
-        if( (iVID != -1 && attr.VendorID != iVID) ||
-            (iPID != -1 && attr.ProductID != iPID) )
+		if( (iVID != -1 && attr.VendorID != iVID) ||
+			(iPID != -1 && attr.ProductID != iPID) )
 		{
 			CloseHandle( h );
 			continue; /* This isn't it. */
@@ -86,10 +86,10 @@ bool USBDevice::Open( int iVID, int iPID, int iBlockSize, int iNum, void (*pfnIn
 		CloseHandle(h);
 
 		m_IO.Open( path, iBlockSize );
-        return true;
-    }
+		return true;
+	}
 
-    return false;
+	return false;
 }
 
 bool USBDevice::IsOpen() const
@@ -107,7 +107,7 @@ int USBDevice::GetPadEvent()
 	if( m_IO.read(&iBuf) <= 0 )
 		return -1;
 
-    return iBuf;
+	return iBuf;
 }
 
 WindowsFileIO::WindowsFileIO()
@@ -160,10 +160,10 @@ int WindowsFileIO::finish_read( void *p )
 	/* We do; get the result.  It'll go into the original m_pBuffer
 	 * we supplied on the original call; that's why m_pBuffer is a
 	 * member instead of a local. */
-    unsigned long iCnt;
-    int iRet = GetOverlappedResult( m_Handle, &m_Overlapped, &iCnt, FALSE );
+	unsigned long iCnt;
+	int iRet = GetOverlappedResult( m_Handle, &m_Overlapped, &iCnt, FALSE );
 
-    if( iRet == 0 && (GetLastError() == ERROR_IO_PENDING || GetLastError() == ERROR_IO_INCOMPLETE) )
+	if( iRet == 0 && (GetLastError() == ERROR_IO_PENDING || GetLastError() == ERROR_IO_INCOMPLETE) )
 		return -1;
 
 	queue_read();
@@ -171,8 +171,8 @@ int WindowsFileIO::finish_read( void *p )
 	if( iRet == 0 )
 	{
 		LOG->Warn( werr_ssprintf(GetLastError(), "Error reading USB device") );
-	    return -1;
-    }
+		return -1;
+	}
 
 	memcpy( p, m_pBuffer, iCnt );
 	return iCnt;
@@ -184,7 +184,7 @@ int WindowsFileIO::read( void *p )
 
 	/* See if we have a response for our request (which we may
 	 * have made on a previous call): */
-    if( WaitForSingleObjectEx(m_Handle, 0, TRUE) == WAIT_TIMEOUT )
+	if( WaitForSingleObjectEx(m_Handle, 0, TRUE) == WAIT_TIMEOUT )
 		return -1;
 
 	return finish_read(p);
