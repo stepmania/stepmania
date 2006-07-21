@@ -132,6 +132,7 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 				else
 				{
 					SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName,"NextScreen") );
+					m_iPlayer = 0;
 				}
 			}
 			else
