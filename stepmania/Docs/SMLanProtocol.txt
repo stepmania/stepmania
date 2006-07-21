@@ -378,6 +378,7 @@ Client SMOnline packets:
 		1: Game room (no sub rooms)
     NT		Room Title
     NT		Room Description
+    NT		Room Password (blank if no password)
 
 003: Requests Room Info
  Size:

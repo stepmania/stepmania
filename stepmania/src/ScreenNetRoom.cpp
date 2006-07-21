@@ -27,6 +27,7 @@
 AutoScreenMessage( SM_SMOnlinePack )
 AutoScreenMessage( SM_BackFromRoomName )
 AutoScreenMessage( SM_BackFromRoomDesc )
+AutoScreenMessage( SM_BackFromRoomPass );
 
 REGISTER_SCREEN_CLASS( ScreenNetRoom );
 
@@ -75,6 +76,7 @@ void ScreenNetRoom::Input( const InputEventPlus &input )
 }
 
 static LocalizedString ENTER_ROOM_DESCRIPTION ("ScreenNetRoom","Enter a description for the room:");
+static LocalizedString ENTER_ROOM_PASSWORD ("ScreenNetRoom","Enter a password for the room (blank, no password):");
 void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_GoToPrevScreen )
@@ -156,7 +158,15 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 		if ( !ScreenTextEntry::s_bCancelledLast )
 		{
 			m_newRoomDesc = ScreenTextEntry::s_sLastAnswer;
-			CreateNewRoom( m_newRoomName, m_newRoomDesc);
+			ScreenTextEntry::TextEntry( SM_BackFromRoomPass, ENTER_ROOM_PASSWORD, "", 255 );
+		}
+	}
+	else if( SM == SM_BackFromRoomPass )
+	{
+		if ( !ScreenTextEntry::s_bCancelledLast )
+		{
+			m_newRoomPass = ScreenTextEntry::s_sLastAnswer;
+			CreateNewRoom( m_newRoomName, m_newRoomDesc, m_newRoomPass);
 		}
 	}
 	ScreenNetSelectBase::HandleScreenMessage( SM );
@@ -278,12 +288,14 @@ void ScreenNetRoom::UpdateRoomsList()
 	m_RoomWheel.RebuildWheelItems();
 }
 
-void ScreenNetRoom::CreateNewRoom( const RString& rName,  const RString& rDesc ) {
+void ScreenNetRoom::CreateNewRoom( const RString& rName,  const RString& rDesc, const RString & rPass ) {
 	NSMAN->m_SMOnlinePacket.ClearPacket();
 	NSMAN->m_SMOnlinePacket.Write1((uint8_t)2); //Create room command
 	NSMAN->m_SMOnlinePacket.Write1(1);  //Type game room
 	NSMAN->m_SMOnlinePacket.WriteNT(rName);
 	NSMAN->m_SMOnlinePacket.WriteNT(rDesc);
+	if ( !rPass.empty() )
+		NSMAN->m_SMOnlinePacket.WriteNT(rPass);
 	NSMAN->SendSMOnline( );
 }
 

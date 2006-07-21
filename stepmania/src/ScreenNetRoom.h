@@ -42,7 +42,7 @@ private:
 	void UpdateRoomsList();
 	void MenuLeft( const InputEventPlus &input );
 	void MenuRight( const InputEventPlus &input );
-	void CreateNewRoom( const RString& rName,  const RString& rDesc );
+	void CreateNewRoom( const RString& rName,  const RString& rDesc, const RString& rPass );
 		
 	RageSound m_soundChangeSel;
 	
@@ -53,7 +53,7 @@ private:
 	vector < RoomData > m_Rooms;
 	int m_iRoomPlace;
 
-	RString m_newRoomName, m_newRoomDesc;
+	RString m_newRoomName, m_newRoomDesc, m_newRoomPass;
 
 	RoomWheel m_RoomWheel;
 };
