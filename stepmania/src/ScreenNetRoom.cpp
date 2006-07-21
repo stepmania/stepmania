@@ -9,7 +9,6 @@
 #include "ScreenTextEntry.h"
 #include "Command.h"
 #include "WheelItemBase.h"
-//#include "RageLog.h"
 #include "InputEventPlus.h"
 #include "LocalizedString.h"
 
@@ -27,7 +26,8 @@
 AutoScreenMessage( SM_SMOnlinePack )
 AutoScreenMessage( SM_BackFromRoomName )
 AutoScreenMessage( SM_BackFromRoomDesc )
-AutoScreenMessage( SM_BackFromRoomPass );
+AutoScreenMessage( SM_BackFromRoomPass )
+AutoScreenMessage( SM_BackFromReqPass )
 
 REGISTER_SCREEN_CLASS( ScreenNetRoom );
 
@@ -77,6 +77,7 @@ void ScreenNetRoom::Input( const InputEventPlus &input )
 
 static LocalizedString ENTER_ROOM_DESCRIPTION ("ScreenNetRoom","Enter a description for the room:");
 static LocalizedString ENTER_ROOM_PASSWORD ("ScreenNetRoom","Enter a password for the room (blank, no password):");
+static LocalizedString ENTER_ROOM_REQPASSWORD ("ScreenNetRoom","Enter Room's Password:");
 void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_GoToPrevScreen )
@@ -86,6 +87,18 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM == SM_GoToNextScreen )
 	{
 		SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName, "NextScreen") );
+	}
+	else if( SM == SM_BackFromReqPass )
+	{
+		if ( !ScreenTextEntry::s_bCancelledLast )
+		{
+			NSMAN->m_SMOnlinePacket.ClearPacket();
+			NSMAN->m_SMOnlinePacket.Write1( 1 );
+			NSMAN->m_SMOnlinePacket.Write1( 1 ); //Type (enter a room)
+			NSMAN->m_SMOnlinePacket.WriteNT( m_sLastPickedRoom );
+			NSMAN->m_SMOnlinePacket.WriteNT( ScreenTextEntry::s_sLastAnswer );
+			NSMAN->SendSMOnline( );
+		}
 	}
 	else if( SM == SM_SMOnlinePack )
 	{
@@ -121,6 +134,9 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 					//Abide by protocol and read room status
 					for (int i=0;i<numRooms;i++)
 						m_Rooms[i].SetState(NSMAN->m_SMOnlinePacket.Read1());
+
+					for (int i=0;i<numRooms;i++)
+						m_Rooms[i].SetFlags(NSMAN->m_SMOnlinePacket.Read1());
 
 					if (m_iRoomPlace<0)
 						m_iRoomPlace=0;
@@ -189,13 +205,34 @@ void ScreenNetRoom::Update( float fDeltaTime )
 
 void ScreenNetRoom::MenuStart( PlayerNumber pn )
 {
-	NSMAN->m_SMOnlinePacket.ClearPacket();
-	NSMAN->m_SMOnlinePacket.Write1( 1 );
-	NSMAN->m_SMOnlinePacket.Write1( 1 ); //Type (enter a room)
 	m_RoomWheel.Select();
 	if (m_RoomWheel.LastSelected() != NULL)
-		NSMAN->m_SMOnlinePacket.WriteNT( m_RoomWheel.LastSelected()->m_sText );
-	NSMAN->SendSMOnline( );
+	{
+		//XXX: Big yuck, we should put the flags, and state position in RoomWheelData. That way
+		//we don't have to search for it.  Realistically, this isn't going to slow us down, since at 
+		//peak time SMOnline has never had more than 55 rooms in any one section.
+
+		int iPlace;
+		for ( iPlace = 0; iPlace < m_Rooms.size(); iPlace++ )
+			if ( m_Rooms[iPlace].Name() == m_RoomWheel.LastSelected()->m_sText )
+				break;
+		if ( iPlace == m_Rooms.size() )
+			return;
+
+		if ( m_Rooms[iPlace].GetFlags() % 2 )
+		{
+			m_sLastPickedRoom = m_RoomWheel.LastSelected()->m_sText;
+			ScreenTextEntry::TextEntry( SM_BackFromReqPass, ENTER_ROOM_REQPASSWORD, "", 255 );
+		} 
+		else
+		{
+			NSMAN->m_SMOnlinePacket.ClearPacket();
+			NSMAN->m_SMOnlinePacket.Write1( 1 );
+			NSMAN->m_SMOnlinePacket.Write1( 1 ); //Type (enter a room)
+			NSMAN->m_SMOnlinePacket.WriteNT( m_RoomWheel.LastSelected()->m_sText );
+			NSMAN->SendSMOnline( );
+		}
+	}
 	ScreenNetSelectBase::MenuStart( pn );
 }
 
@@ -273,9 +310,6 @@ void ScreenNetRoom::UpdateRoomsList()
 		case 0:
 			itemData->m_color = THEME->GetMetricC( m_sName, "OpenRoomColor");
 			break;
-		case 1:
-			itemData->m_color = THEME->GetMetricC( m_sName, "PasswdRoomColor");
-			break;
 		case 2:
 			itemData->m_color = THEME->GetMetricC( m_sName, "InGameRoomColor");
 			break;
@@ -283,6 +317,9 @@ void ScreenNetRoom::UpdateRoomsList()
 			itemData->m_color = THEME->GetMetricC( m_sName, "OpenRoomColor");
 			break;
 		}
+
+		if ( m_Rooms[i].GetFlags() % 2 )
+			itemData->m_color = THEME->GetMetricC( m_sName, "PasswdRoomColor");
 	}
 
 	m_RoomWheel.RebuildWheelItems();
