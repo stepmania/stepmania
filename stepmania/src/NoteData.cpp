@@ -14,6 +14,34 @@
 #include "RageUtil_AutoPtr.h"
 REGISTER_CLASS_TRAITS( NoteData, new NoteData(*pCopy) )
 
+bool IteratorCondition::TapsHoldsAndMines( const TapNote &tn )
+{
+	switch( tn.type )
+	{
+	case TapNote::tap:
+	case TapNote::hold_head:
+	case TapNote::mine:
+		return true;
+	}
+	return false;
+}
+
+bool IteratorCondition::TapsAndHolds( const TapNote &tn )
+{
+	switch( tn.type )
+	{
+	case TapNote::tap:
+	case TapNote::hold_head:
+		return true;
+	}
+	return false;
+}
+
+bool IteratorCondition::Mines( const TapNote &tn )
+{
+	return tn.type == TapNote::mine;
+}
+
 NoteData::NoteData()
 {
 	Init();
@@ -893,21 +921,17 @@ XNode* NoteData::CreateNode() const
 {
 	XNode *p = new XNode;
 	p->m_sName = "NoteData";
-
-	FOREACH_NONEMPTY_ROW_ALL_TRACKS( *this, row )
+	
+	all_tracks_const_iterator iter = GetTapNoteRangeAllTracks( 0, GetLastRow(), IteratorCondition::All );
+	
+	for( ; !iter.IsAtEnd(); ++iter )
 	{
-		set<int> s;
-		GetTapNonEmptyTracks( row, s );
-		FOREACHS_CONST( int, s, t )
-		{
-			TapNote tn = this->GetTapNote(*t, row);
-			XNode *p2 = tn.CreateNode();
-			p2->AppendAttr( "Track", *t );
-			p2->AppendAttr( "Row", row );
-			p->AppendChild( p2 );
-		}
+		XNode *p2 = iter->CreateNode();
+		
+		p2->AppendAttr( "Track", iter.Track() );
+		p2->AppendAttr( "Row", iter.Row() );
+		p->AppendChild( p2 );
 	}
-
 	return p;
 }
 
