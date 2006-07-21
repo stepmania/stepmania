@@ -1337,25 +1337,23 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		}
 	}
 
-	// m_iRowLastJudged has already been judged so start at the next one.
-	const int iStartCheckingAt = m_iRowLastJudged + 1;
-
-	//LOG->Trace( "iStartCheckingAt: %d   iMissIfOlderThanThisIndex:  %d", iStartCheckingAt, iMissIfOlderThanThisIndex );
 
 	bool bMisses = false;
-
-	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_NoteData, r, iStartCheckingAt, iMissIfOlderThanThisIndex-1 )
+	
+	// m_iRowLastJudged has already been judged so start at the next one.
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_NoteData, r, m_iRowLastJudged+1, iMissIfOlderThanThisIndex-1 )
 	{
 		bool MissedNoteOnThisRow = false;
 		for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
 		{
 			/* XXX: cleaner to pick the things we do want to apply misses to, instead of
 			 * the things we don't? */
-			TapNote tn = m_NoteData.GetTapNote( t, r );
+			const TapNote &tn = m_NoteData.GetTapNote( t, r );
 			switch( tn.type )
 			{
 			case TapNote::empty:
 			case TapNote::attack:
+			case TapNote::mine:
 				continue; /* no note here */
 			}
 			if( tn.result.tns != TNS_None ) /* note here is already hit */
@@ -1363,38 +1361,47 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 			if( tn.pn != PLAYER_INVALID && tn.pn != m_pPlayerState->m_PlayerNumber )
 				continue;
 
-			if( tn.type == TapNote::mine )
-			{
-				tn.result.tns =	TNS_AvoidMine;
+			// A normal note.  Penalize for not stepping on it.
+			TapNote tn2 = tn;
+			MissedNoteOnThisRow = true;
+			tn2.result.tns = TNS_Miss;
 
-				//Let the server know we avoided a mine
-				//Hit mines are sent to the server in HandleTapScore
-				NSMAN->ReportScore( m_pPlayerState->m_PlayerNumber, TNS_AvoidMine,
-						    m_pPlayerStageStats->iScore,
-						    m_pPlayerStageStats->iCurCombo );
-				/* The only real way to tell if a mine has been scored is if it has disappeared
-				 * but this only works for hit mines so update the scores for avoided mines here. */
-				if( m_pPrimaryScoreKeeper )
-					m_pPrimaryScoreKeeper->HandleTapScore( tn );
-				if( m_pSecondaryScoreKeeper )
-					m_pSecondaryScoreKeeper->HandleTapScore( tn );
-			}
-			else
-			{
-				// A normal note.  Penalize for not stepping on it.
-				MissedNoteOnThisRow = true;
-				tn.result.tns =	TNS_Miss;
-			}
-
-			m_NoteData.SetTapNote( t, r, tn );
+			m_NoteData.SetTapNote( t, r, tn2 );
 		}
 
 		if( MissedNoteOnThisRow )
 			bMisses = true;
 	}
-
 	if( bMisses )
 		SetJudgment( TNS_Miss, false );
+	
+	// m_iMineRowLastJudged has been judged so start at the next one.
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_NoteData, r, m_iMineRowLastJudged+1, iMissIfOlderThanThisIndex-1 )
+	{
+		for( int t=0; t<m_NoteData.GetNumTracks(); ++t )
+		{
+			const TapNote &tn = m_NoteData.GetTapNote( t, r );
+			if( tn.type != TapNote::mine || tn.result.tns != TNS_None )
+				continue;
+			if( tn.pn != PLAYER_INVALID && tn.pn != m_pPlayerState->m_PlayerNumber )
+				continue;
+			TapNote tn2 = tn;
+			tn2.result.tns = TNS_AvoidMine;
+		
+			//Let the server know we avoided a mine
+			//Hit mines are sent to the server in HandleTapScore
+			NSMAN->ReportScore( m_pPlayerState->m_PlayerNumber, TNS_AvoidMine,
+					    m_pPlayerStageStats->iScore,
+					    m_pPlayerStageStats->iCurCombo );
+			/* The only real way to tell if a mine has been scored is if it has disappeared
+				* but this only works for hit mines so update the scores for avoided mines here. */
+			if( m_pPrimaryScoreKeeper )
+				m_pPrimaryScoreKeeper->HandleTapScore( tn2 );
+			if( m_pSecondaryScoreKeeper )
+				m_pSecondaryScoreKeeper->HandleTapScore( tn2 );
+			m_NoteData.SetTapNote( t, r, tn2 );
+		}
+	}
 }
 
 void Player::UpdateJudgedRows()
