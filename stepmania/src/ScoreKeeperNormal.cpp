@@ -334,17 +334,19 @@ void ScoreKeeperNormal::AddScore( TapNoteScore score )
 
 void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 {
-	TapNoteScore score = tn.result.tns;
-
-	if( score == TNS_HitMine )
+	if (tn.type == TapNote::mine)
 	{
-		if( !m_pPlayerStageStats->bFailed )
-			m_pPlayerStageStats->iActualDancePoints += TapNoteScoreToDancePoints( TNS_HitMine );
-		m_pPlayerStageStats->iTapNoteScores[TNS_HitMine] += 1;
-		
+		TapNoteScore score = tn.result.tns;
+		if( score == TNS_HitMine )
+		{
+			if( !m_pPlayerStageStats->bFailed )
+				m_pPlayerStageStats->iActualDancePoints += TapNoteScoreToDancePoints( TNS_HitMine );
+			m_pPlayerStageStats->iTapNoteScores[TNS_HitMine] += 1;
+		}
+
 		NSMAN->ReportScore( m_pPlayerState->m_PlayerNumber, score,
-			m_pPlayerStageStats->iScore,
-			m_pPlayerStageStats->iCurCombo );
+							m_pPlayerStageStats->iScore,
+							m_pPlayerStageStats->iCurCombo );
 	}
 }
 
