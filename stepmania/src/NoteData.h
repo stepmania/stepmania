@@ -19,12 +19,101 @@
 #define FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( nd, row, start, last ) \
 	for( int row = start-1; (nd).GetNextTapNoteRowForAllTracks(row) && row < (last); )
 
+namespace IteratorCondition
+{
+	bool TapsHoldsAndMines( const TapNote &tn );
+	bool TapsAndHolds( const TapNote &tn );
+	bool Mines( const TapNote &tn );
+	bool All( const TapNote &tn );
+}
+
 class NoteData
 {
 public:
 	typedef map<int,TapNote> TrackMap;
 	typedef map<int,TapNote>::iterator iterator;
 	typedef map<int,TapNote>::const_iterator const_iterator;
+	
+	typedef bool (*IteratorCond)( const TapNote& );
+	// This is ugly to make it templated but I don't want to have to write the same class twice.
+	//friend template<typename ND, typename iter, typename TN> class _all_tracks_iterator;
+	template<typename ND, typename iter, typename TN>
+	class _all_tracks_iterator
+	{
+		ND		&m_NoteData;
+		int		m_iTrack;
+		int		m_iRow;
+		const int	m_iStartRow;
+		const int	m_iEndRow;
+		iter		m_Iterator;
+		IteratorCond	m_Cond;
+		
+		void NextRowAllTracks()
+		{
+			int iMinRow = INT_MAX;
+			
+			for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
+			{
+				int iRow = m_iRow;
+				
+				if( m_NoteData.GetNextTapNoteRowForTrack(iTrack, iRow) )
+					iMinRow = min( iMinRow, iRow );
+			}
+			m_iRow = iMinRow;
+		}
+		void Find()
+		{
+			m_iRow = max( m_iRow, m_iStartRow );
+			while( m_iRow <= m_iEndRow )
+			{
+				while( m_iTrack < m_NoteData.GetNumTracks() )
+				{
+					m_Iterator = m_NoteData.FindTapNote( m_iTrack, m_iRow );
+				
+					if( m_Iterator != m_NoteData.end(m_iTrack) && m_Cond(m_Iterator->second) )
+						return;
+					++m_iTrack;
+				}
+				m_iTrack = 0;
+				++m_iRow;
+				int oldRow = m_iRow;
+				NextRowAllTracks();
+				ASSERT( oldRow < m_iRow );
+			}
+		}
+	public:
+		_all_tracks_iterator( ND &nd, int iStartRow, int iEndRow, IteratorCond cond ) :
+			m_NoteData(nd), m_iTrack(0), m_iRow(0), m_iStartRow(iStartRow), m_iEndRow(iEndRow), m_Cond(cond)
+		{
+				ASSERT( m_NoteData.GetNumTracks() > 0 );
+				NextRowAllTracks();
+				Find();
+		}
+		
+#define CHECK DEBUG_ASSERT( m_iRow <= m_iEndRow )
+		inline int Track() const { return m_iTrack; }
+		inline int Row() const { return m_iRow; }
+		inline bool IsAtEnd() const { return m_iRow > m_iEndRow; }
+		inline _all_tracks_iterator &operator++() // preincrement
+		{
+			CHECK;
+			++m_iTrack;
+			Find();
+			return *this;
+		}
+		inline _all_tracks_iterator operator++( int dummy ) // postincrement
+		{
+			CHECK;
+			all_tracks_iterator ret(*this);
+			operator++();
+			return ret;
+		}
+		inline TN &operator*() { CHECK; return m_Iterator->second; }
+		inline TN *operator->() { CHECK; return &m_Iterator->second; }
+#undef CHECK;
+	};
+	typedef _all_tracks_iterator<NoteData, iterator, TapNote> 			all_tracks_iterator;
+	typedef _all_tracks_iterator<const NoteData, const_iterator, const TapNote>	all_tracks_const_iterator;
 
 private:
 	// There's no point in inserting empty notes into the map.
@@ -42,7 +131,7 @@ public:
 
 	/* Return the note at the given track and row.  Row may be out of
 	 * range; pretend the song goes on with TAP_EMPTYs indefinitely. */
-	inline const TapNote &GetTapNote(unsigned track, int row) const
+	inline const TapNote &GetTapNote( unsigned track, int row ) const
 	{
 		const TrackMap &mapTrack = m_TapNotes[track];
 		TrackMap::const_iterator iter = mapTrack.find( row );
@@ -64,6 +153,17 @@ public:
 	/* Return an iterator range including exactly iStartRow to iEndRow. */
 	void GetTapNoteRange( int iTrack, int iStartRow, int iEndRow, const_iterator &begin, const_iterator &end ) const;
 	void GetTapNoteRange( int iTrack, int iStartRow, int iEndRow, TrackMap::iterator &begin, TrackMap::iterator &end );
+	all_tracks_iterator GetTapNoteRangeAllTracks( int iStartRow, int iEndRow,
+						      IteratorCond cond = IteratorCondition::TapsHoldsAndMines )
+	{
+		return all_tracks_iterator( *this, iStartRow, iEndRow, cond );
+	}
+	all_tracks_const_iterator GetTapNoteRangeAllTracks( int iStartRow, int iEndRow,
+							    IteratorCond cond = IteratorCondition::TapsHoldsAndMines ) const
+	{
+		return all_tracks_const_iterator( *this, iStartRow, iEndRow, cond );
+	}
+
 
 	/* Return an iterator range include iStartRow to iEndRow.  Extend the range to include
 	 * hold notes overlapping the boundary. */
