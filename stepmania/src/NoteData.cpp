@@ -42,6 +42,11 @@ bool IteratorCondition::Mines( const TapNote &tn )
 	return tn.type == TapNote::mine;
 }
 
+bool IteratorCondition::All( const TapNote &tn )
+{
+	return true;
+}
+
 NoteData::NoteData()
 {
 	Init();
