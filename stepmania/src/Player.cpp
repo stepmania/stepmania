@@ -1358,11 +1358,6 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		{
 			tn.result.tns = TNS_AvoidMine;
 			
-			//Let the server know we avoided a mine
-			//Hit mines are sent to the server in HandleTapScore
-			NSMAN->ReportScore( m_pPlayerState->m_PlayerNumber, TNS_AvoidMine,
-					    m_pPlayerStageStats->iScore,
-					    m_pPlayerStageStats->iCurCombo );
 			/* The only real way to tell if a mine has been scored is if it has disappeared
 			 * but this only works for hit mines so update the scores for avoided mines here. */
 			if( m_pPrimaryScoreKeeper )
