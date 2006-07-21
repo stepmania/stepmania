@@ -418,16 +418,23 @@ Server SMOnline packets:
     NT		RoomN Title
     NT		RoomN Description
 
-	    Room Status appended for reverse compatibility
-	    1		Room1 Status
-		0: Normal Room
-		1: Unused
-		2: Room in game
-		3: First stage of song selection has been done
-		4: Second stage of song selection has been done
-	    1		Room2 Status
-		...
-	    1		RoomN Status	
+    Room Status appended for reverse compatibility
+    1		Room1 Status
+	0: Normal Room
+	1: Unused
+	2: Room in game
+	3: First stage of song selection has been done
+	4: Second stage of song selection has been done
+    1		Room2 Status
+	...
+    1		RoomN Status
+
+    Room Flags appended for reverse compatibility
+    1		Room1 Flags
+			bit 0: Passworded if true
+    1		Room2 Status
+	...
+    1		RoomN Status	
 
 002:  Request general information from server.
     1		Format for stats
