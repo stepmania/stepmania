@@ -109,7 +109,7 @@ public:
 		}
 		inline TN &operator*() { CHECK; return m_Iterator->second; }
 		inline TN *operator->() { CHECK; return &m_Iterator->second; }
-#undef CHECK;
+#undef CHECK
 	};
 	typedef _all_tracks_iterator<NoteData, iterator, TapNote> 			all_tracks_iterator;
 	typedef _all_tracks_iterator<const NoteData, const_iterator, const TapNote>	all_tracks_const_iterator;
