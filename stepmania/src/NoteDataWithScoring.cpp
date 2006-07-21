@@ -62,19 +62,13 @@ int GetNumHoldNotesWithScore( const NoteData &in, TapNote::SubType subType, Hold
 	return iNumSuccessfulHolds;
 }
 
+bool AvoidedMines( const TapNote &tn ) { return tn.type == TapNote::mine && tn.result.tns == TNS_AvoidMine; }
 int GetSuccessfulMines( const NoteData &in, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW )
 {
 	int iNumSuccessfulMinesNotes = 0;
-	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( in, i, iStartIndex, iEndIndex )
-	{
-		for( int t=0; t<in.GetNumTracks(); t++ )
-		{
-			const TapNote &tn = in.GetTapNote(t,i);
-			if( tn.type == TapNote::mine  &&  tn.result.tns == TNS_AvoidMine )
-				iNumSuccessfulMinesNotes++;
-		}
-	}
-	
+	NoteData::all_tracks_const_iterator iter = in.GetTapNoteRangeAllTracks( iStartIndex, iEndIndex, AvoidedMines );
+	for( ; !iter.IsAtEnd(); ++iter )
+		++iNumSuccessfulMinesNotes;
 	return iNumSuccessfulMinesNotes;
 }
 

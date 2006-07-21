@@ -1315,6 +1315,10 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 	HandleTapRowScore( iIndexThatWasSteppedOn );	// update score
 }
 
+static bool Unjudged( const TapNote &tn )
+{
+	return IteratorCondition::TapsHoldsAndMines( tn ) && tn.result.tns == TNS_None;
+}
 
 void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 {
@@ -1342,58 +1346,44 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 	const int iStartIndex = min( m_iRowLastJudged, m_iMineRowLastJudged ) + 1;
 	bool bMisses = false;
 	
-	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_NoteData, r, iStartIndex, iMissIfOlderThanThisIndex-1 )
+	NoteData::all_tracks_iterator iter = m_NoteData.GetTapNoteRangeAllTracks( iStartIndex, iMissIfOlderThanThisIndex-1, Unjudged );
+	
+	for( ; !iter.IsAtEnd(); ++iter )
 	{
-		bool MissedNoteOnThisRow = false;
-		for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
+		TapNote &tn = *iter;
+		
+		if( tn.pn != PLAYER_INVALID && tn.pn != m_pPlayerState->m_PlayerNumber )
+			continue;
+		if( tn.type == TapNote::mine )
 		{
-			/* XXX: cleaner to pick the things we do want to apply misses to, instead of
-			 * the things we don't? */
-			const TapNote &tn = m_NoteData.GetTapNote( t, r );
-			switch( tn.type )
-			{
-			case TapNote::empty:
-			case TapNote::attack:
-				continue; /* no note here */
-			}
-			if( tn.result.tns != TNS_None ) /* note here is already hit */
-				continue;
-			if( tn.pn != PLAYER_INVALID && tn.pn != m_pPlayerState->m_PlayerNumber )
-				continue;
-
-			// A normal note.  Penalize for not stepping on it.
-			TapNote tn2 = tn;
+			tn.result.tns = TNS_AvoidMine;
 			
-			if( tn.type == TapNote::mine )
-			{
-				tn2.result.tns = TNS_AvoidMine;
-				
-				//Let the server know we avoided a mine
-				//Hit mines are sent to the server in HandleTapScore
-				NSMAN->ReportScore( m_pPlayerState->m_PlayerNumber, TNS_AvoidMine,
-						    m_pPlayerStageStats->iScore,
-						    m_pPlayerStageStats->iCurCombo );
-				/* The only real way to tell if a mine has been scored is if it has disappeared
-					* but this only works for hit mines so update the scores for avoided mines here. */
-				if( m_pPrimaryScoreKeeper )
-					m_pPrimaryScoreKeeper->HandleTapScore( tn2 );
-				if( m_pSecondaryScoreKeeper )
-					m_pSecondaryScoreKeeper->HandleTapScore( tn2 );
-			}
-			else
-			{
-				MissedNoteOnThisRow = true;
-				tn2.result.tns = TNS_Miss;
-			}
-
-			m_NoteData.SetTapNote( t, r, tn2 );
+			//Let the server know we avoided a mine
+			//Hit mines are sent to the server in HandleTapScore
+			NSMAN->ReportScore( m_pPlayerState->m_PlayerNumber, TNS_AvoidMine,
+					    m_pPlayerStageStats->iScore,
+					    m_pPlayerStageStats->iCurCombo );
+			/* The only real way to tell if a mine has been scored is if it has disappeared
+			 * but this only works for hit mines so update the scores for avoided mines here. */
+			if( m_pPrimaryScoreKeeper )
+				m_pPrimaryScoreKeeper->HandleTapScore( tn );
+			if( m_pSecondaryScoreKeeper )
+				m_pSecondaryScoreKeeper->HandleTapScore( tn );
 		}
-
-		if( MissedNoteOnThisRow )
+		else
+		{
 			bMisses = true;
+			tn.result.tns = TNS_Miss;
+		}
 	}
+		
 	if( bMisses )
 		SetJudgment( TNS_Miss, false );
+}
+
+static bool MinesNotHidden( const TapNote &tn )
+{
+	return tn.type == TapNote::mine && !tn.result.bHidden;
 }
 
 void Player::UpdateJudgedRows()
@@ -1417,57 +1407,51 @@ void Player::UpdateJudgedRows()
 		OnRowCompletelyJudged( iRow );
 	}
 	
-	for( int iRow = m_iMineRowLastJudged+1; iRow <= iEndRow; ++iRow )
+	NoteData::all_tracks_iterator iter = m_NoteData.GetTapNoteRangeAllTracks( m_iMineRowLastJudged+1, iEndRow, MinesNotHidden );
+	
+	bAllJudged = true;
+	for( ; !iter.IsAtEnd(); ++iter )
 	{
-		for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
+		TapNote &tn = *iter;
+		
+		switch( tn.result.tns )
 		{
-			const TapNote &tn = m_NoteData.GetTapNote( iTrack, iRow );
-
-			if( tn.type != TapNote::mine )
-				continue;
-
-			switch( tn.result.tns )
-			{
-			case TNS_None:		bAllJudged = false;
-			case TNS_AvoidMine:	continue;
-			case TNS_HitMine:	break;
-			DEFAULT_FAIL( tn.result.tns );
-			}
-				
-			if( tn.result.bHidden )
-				continue;
-			if( m_pNoteField )
-				m_pNoteField->DidTapNote( iTrack, tn.result.tns, false );
-
-			if( tn.pn != PLAYER_INVALID && tn.pn != pn )
-				continue;
-			if( tn.bKeysound && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
-				m_vKeysounds[tn.iKeysoundIndex].Play();
-			else
-				m_soundMine.Play();
-
-			if( m_pLifeMeter )
-				m_pLifeMeter->ChangeLife( tn.result.tns );
-			if( m_pScoreDisplay )
-				m_pScoreDisplay->OnJudgment( tn.result.tns );
-			if( m_pSecondaryScoreDisplay )
-				m_pSecondaryScoreDisplay->OnJudgment( tn.result.tns );
-			if( m_pCombinedLifeMeter )
-				m_pCombinedLifeMeter->ChangeLife( pn, tn.result.tns );
-
-			//Make sure hit mines affect the dance points
-			if( m_pPrimaryScoreKeeper )
-				m_pPrimaryScoreKeeper->HandleTapScore( tn );
-			if( m_pSecondaryScoreKeeper )
-				m_pSecondaryScoreKeeper->HandleTapScore( tn );
-			
-			TapNote tn2 = tn;
-			tn2.result.bHidden = true;
-			m_NoteData.SetTapNote( iTrack, iRow, tn2 );
+		case TNS_None:		bAllJudged = false;
+		case TNS_AvoidMine:	continue;
+		case TNS_HitMine:	break;
+		DEFAULT_FAIL( tn.result.tns );
 		}
-		if( bAllJudged )
-			++m_iMineRowLastJudged;
+		if( m_pNoteField )
+			m_pNoteField->DidTapNote( iter.Track(), tn.result.tns, false );
+		
+		if( tn.pn != PLAYER_INVALID && tn.pn != pn )
+			continue;
+		if( tn.bKeysound && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
+			m_vKeysounds[tn.iKeysoundIndex].Play();
+		else
+			m_soundMine.Play();
+		
+		if( m_pLifeMeter )
+			m_pLifeMeter->ChangeLife( tn.result.tns );
+		if( m_pScoreDisplay )
+			m_pScoreDisplay->OnJudgment( tn.result.tns );
+		if( m_pSecondaryScoreDisplay )
+			m_pSecondaryScoreDisplay->OnJudgment( tn.result.tns );
+		if( m_pCombinedLifeMeter )
+			m_pCombinedLifeMeter->ChangeLife( pn, tn.result.tns );
+		
+		//Make sure hit mines affect the dance points
+		if( m_pPrimaryScoreKeeper )
+			m_pPrimaryScoreKeeper->HandleTapScore( tn );
+		if( m_pSecondaryScoreKeeper )
+			m_pSecondaryScoreKeeper->HandleTapScore( tn );
+		tn.result.bHidden = true;
+		// Subtract one to ensure that we have actually completed the row.
+		if( bAllJudged && iter.Row() - 1 > m_iMineRowLastJudged )
+			m_iMineRowLastJudged = iter.Row() - 1;
 	}
+	if( bAllJudged )
+		m_iMineRowLastJudged = iEndRow;
 }
 
 void Player::CrossedRow( int iNoteRow )
