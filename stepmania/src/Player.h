@@ -127,7 +127,7 @@ protected:
 	void HandleStep( int col, const RageTimer &tm, bool bHeld );
 	void UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
 	void UpdateJudgedRows();
-	void OnRowCompletelyJudged( int iStepIndex );
+	void FlashGhostRow( int iRow, PlayerNumber pn );
 	void HandleTapRowScore( unsigned row );
 	void HandleHoldScore( const TapNote &tn );
 	void DrawTapJudgments();
