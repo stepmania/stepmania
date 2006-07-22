@@ -3,18 +3,19 @@
 #ifndef ROOMWHEEL_H
 #define ROOMWHEEL_H
 
-#include "Quad.h"
 #include "WheelBase.h"
 #include "WheelItemBase.h"
 #include "ThemeMetric.h"
 
 struct RoomWheelData : public WheelItemBaseData
 {
-	RoomWheelData() { WheelItemBaseData::WheelItemBaseData(); }
-	RoomWheelData( WheelItemType wit, RString title, RString SubTitle, RageColor color );
+	RoomWheelData() : m_iFlags(0) { WheelItemBaseData::WheelItemBaseData(); }
+	RoomWheelData( WheelItemType wit, const RString& sTitle, const RString& sDesc, RageColor color )
+	 : m_iFlags(0), m_sDesc(sDesc), WheelItemBaseData( wit, sTitle, color )
+	{};
 
 	RString			m_sDesc;
-	WheelNotifyIcon::Flags  m_Flags;
+	unsigned int	m_iFlags;
 };
 
 class RoomWheelItem : public WheelItemBase
@@ -95,7 +96,6 @@ public:
 	virtual unsigned int GetNumItems() const;
 	virtual void RemoveItem( int index );
 	virtual bool Select();
-	virtual void Update( float fDeltaTime );
 	virtual void Move(int n);
 
 	inline RoomWheelData* GetItem(unsigned int i) { return (RoomWheelData*)WheelBase::GetItem(i + m_offset); }

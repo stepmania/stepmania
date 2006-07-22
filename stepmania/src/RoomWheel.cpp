@@ -35,12 +35,6 @@ void RoomWheel::Load( RString sType )
 	RebuildWheelItems();
 }
 
-RoomWheelData::RoomWheelData( WheelItemType wit, RString sTitle, RString sDesc, RageColor color ):
-	WheelItemBaseData( wit, sTitle, color )
-{
-	m_sDesc = sDesc;
-}
-
 RoomWheelItem::RoomWheelItem( RString sType ):
 	WheelItemBase(sType)
 {
@@ -105,11 +99,6 @@ void RoomWheelItem::LoadFromWheelItemBaseData( WheelItemBaseData* pWID )
 	m_Desc.SetText( tmpdata->m_sDesc );
 	m_Desc.SetDiffuseColor( pWID->m_color );
 	m_text.SetDiffuseColor( pWID->m_color );
-}
-
-void RoomWheel::Update( float fDeltaTime )
-{
-	WheelBase::Update(fDeltaTime);
 }
 
 void RoomWheel::Move(int n)
