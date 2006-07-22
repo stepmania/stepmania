@@ -196,32 +196,15 @@ void ScreenNetRoom::TweenOffScreen()
 	NSMAN->ReportNSSOnOff(6);
 }
 
-/*
-void ScreenNetRoom::Update( float fDeltaTime )
-{
-	ScreenNetSelectBase::Update( fDeltaTime );
-}
-*/
-
 void ScreenNetRoom::MenuStart( PlayerNumber pn )
 {
 	m_RoomWheel.Select();
-	if (m_RoomWheel.LastSelected() != NULL)
+	RoomWheelData* rwd = (RoomWheelData*)m_RoomWheel.LastSelected(); 
+	if (rwd)
 	{
-		//XXX: Big yuck, we should put the flags, and state position in RoomWheelData. That way
-		//we don't have to search for it.  Realistically, this isn't going to slow us down, since at 
-		//peak time SMOnline has never had more than 55 rooms in any one section.
-
-		int iPlace;
-		for ( iPlace = 0; iPlace < m_Rooms.size(); iPlace++ )
-			if ( m_Rooms[iPlace].Name() == m_RoomWheel.LastSelected()->m_sText )
-				break;
-		if ( iPlace == m_Rooms.size() )
-			return;
-
-		if ( m_Rooms[iPlace].GetFlags() % 2 )
+		if ( rwd->m_iFlags % 2 )
 		{
-			m_sLastPickedRoom = m_RoomWheel.LastSelected()->m_sText;
+			m_sLastPickedRoom = rwd->m_sText;
 			ScreenTextEntry::TextEntry( SM_BackFromReqPass, ENTER_ROOM_REQPASSWORD, "", 255 );
 		} 
 		else
@@ -229,7 +212,7 @@ void ScreenNetRoom::MenuStart( PlayerNumber pn )
 			NSMAN->m_SMOnlinePacket.ClearPacket();
 			NSMAN->m_SMOnlinePacket.Write1( 1 );
 			NSMAN->m_SMOnlinePacket.Write1( 1 ); //Type (enter a room)
-			NSMAN->m_SMOnlinePacket.WriteNT( m_RoomWheel.LastSelected()->m_sText );
+			NSMAN->m_SMOnlinePacket.WriteNT( rwd->m_sText );
 			NSMAN->SendSMOnline( );
 		}
 	}
@@ -243,16 +226,6 @@ void ScreenNetRoom::MenuBack( PlayerNumber pn )
 	Cancel( SM_GoToPrevScreen );
 
 	ScreenNetSelectBase::MenuBack( pn );
-}
-
-void ScreenNetRoom::MenuUp( const InputEventPlus &input )
-{
-	ScreenNetSelectBase::MenuUp( input.MenuI.player );
-}
-
-void ScreenNetRoom::MenuDown( const InputEventPlus &input )
-{
-	ScreenNetSelectBase::MenuDown( input.MenuI.player );
 }
 
 void ScreenNetRoom::MenuLeft( const InputEventPlus &input )
@@ -304,6 +277,7 @@ void ScreenNetRoom::UpdateRoomsList()
 
 		itemData->m_sText = m_Rooms[i].Name();
 		itemData->m_sDesc = m_Rooms[i].Description();
+		itemData->m_iFlags = m_Rooms[i].GetFlags();
 
 		switch (m_Rooms[i].State())
 		{

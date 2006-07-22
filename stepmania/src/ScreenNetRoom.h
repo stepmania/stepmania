@@ -34,12 +34,9 @@ public:
 
 protected:
 	virtual void MenuStart( PlayerNumber pn );
-	virtual void MenuUp( const InputEventPlus &input );
-	virtual void MenuDown( const InputEventPlus &input );
 	virtual void MenuBack( PlayerNumber pn );
 
 	virtual void TweenOffScreen( );
-//	virtual void Update( float fDeltaTime );
 
 private:
 	void UpdateRoomsList();
@@ -65,7 +62,7 @@ private:
 #endif
 
 /*
- * (c) 2004 Charles Lohr
+ * (c) 2004 Charles Lohr, Joshua Allen
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
