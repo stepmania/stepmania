@@ -20,6 +20,16 @@ public:
 	void GetApplicableFiles( const RString &sPath, vector<RString> &out );
 	bool LoadFromDir( const RString &sDir, Song &out );
 
+private:
+	bool m_bKIUCompliant;
+	bool m_bDMRequired;
+	bool m_bBPMChangeNeeded;
+	bool m_bBPMStopNeeded;
+	bool m_bTickChangeNeeded;
+	int m_bTickCount;
+	float m_bCurBeat;
+	vector<RString> m_bNoteRows;
+
 };
 
 #endif
