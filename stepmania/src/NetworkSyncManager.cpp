@@ -16,8 +16,7 @@ void NetworkSyncManager::PostStartUp(const RString& ServerIP ) { }
 bool NetworkSyncManager::Connect(const RString& addy, unsigned short port) { return false; }
 RString NetworkSyncManager::GetServerName() { return RString(); }
 void NetworkSyncManager::ReportNSSOnOff(int i) { }
-void NetworkSyncManager::ReportTiming(float offset, int PlayerNumber) { }
-void NetworkSyncManager::ReportScore(int playerID, int step, int score, int combo) { }
+void NetworkSyncManager::ReportScore(int playerID, int step, int score, int combo, float offset) { }
 void NetworkSyncManager::ReportSongOver() { }
 void NetworkSyncManager::ReportStyle() {}
 void NetworkSyncManager::StartRequest(short position) { }
@@ -302,12 +301,7 @@ RString NetworkSyncManager::GetServerName()
 	return m_ServerName;
 }
 
-void NetworkSyncManager::ReportTiming(float offset, int PlayerNumber)
-{
-	m_lastOffset[PlayerNumber] = offset;
-}
-
-void NetworkSyncManager::ReportScore(int playerID, int step, int score, int combo)
+void NetworkSyncManager::ReportScore(int playerID, int step, int score, int combo, float offset)
 {
 	if (!useSMserver) //Make sure that we are using the network
 		return;
@@ -336,7 +330,7 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
 	//
 	//ASSUMED: No step will be more than 16 seconds off center
 	//If assumption false: read 16 seconds either direction
-	int iOffset = int((m_lastOffset[playerID]+16.384)*2000.0);
+	int iOffset = int((offset+16.384)*2000.0);
 
 	if (iOffset>65535)
 		iOffset=65535;
