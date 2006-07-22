@@ -1281,8 +1281,8 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 	ASSERT( lastTNR.tns != TNS_AvoidMine );
 	// XXX This is the wrong PlayerStageStats to use for combined note fields. Hmm.
 	bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
-	bool bBlind = m_pPlayerState->m_PlayerOptions.m_fBlind;
-	
+	bool bBlind = m_pPlayerState->m_PlayerOptions.m_fBlind ? true : false;
+
 	bBright = bBright || bBlind;
 	
 
