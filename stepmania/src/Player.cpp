@@ -1231,14 +1231,13 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 		if( score != TNS_None )
 			tn.result.fTapNoteOffset = -fNoteOffset;
 
-		//LOG->Trace("XXX: %i col %i, at %f, music at %f, step was at %f, off by %f",
-		//	score, col, fStepSeconds, fCurrentMusicSeconds, fMusicSeconds, fNoteOffset );
-//		LOG->Trace("Note offset: %f (fSecondsFromExact = %f), Score: %i", fNoteOffset, fSecondsFromExact, score);
-		
 		m_NoteData.SetTapNote( col, iIndexOverlappingNote, tn );
 
 		PlayerNumber pn = tn.pn == PLAYER_INVALID ? m_pPlayerState->m_PlayerNumber : tn.pn;
 		m_LastTapNoteScore = score;
+		/* XXX This doesn't quite work correctly for notes that are judged separately.
+		 * This waits until they've all been judged before flashing. If any are missed,
+		 * none get flashed. */
 		if( NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iIndexOverlappingNote, pn) )
 			FlashGhostRow( iIndexOverlappingNote, pn );
 	}
