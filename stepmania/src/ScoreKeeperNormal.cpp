@@ -16,6 +16,7 @@
 #include "PlayerState.h"
 #include "Style.h"
 #include "song.h"
+#include "NoteDataWithScoring.h"
 
 ScoreKeeperNormal::ScoreKeeperNormal( 
 		PlayerState* pPlayerState,
@@ -346,7 +347,8 @@ void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 
 		NSMAN->ReportScore( m_pPlayerState->m_PlayerNumber, score,
 							m_pPlayerStageStats->iScore,
-							m_pPlayerStageStats->iCurCombo );
+							m_pPlayerStageStats->iCurCombo,
+							tn.result.fTapNoteOffset );
 	}
 }
 
@@ -419,9 +421,10 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 	
 	// TODO: Remove indexing with PlayerNumber
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+	float offset = NoteDataWithScoring::LastTapNoteWithResult( nd, iRow, pn ).result.fTapNoteOffset;
 	NSMAN->ReportScore( pn, scoreOfLastTap,
 			m_pPlayerStageStats->iScore,
-			m_pPlayerStageStats->iCurCombo );
+			m_pPlayerStageStats->iCurCombo, offset );
 }
 
 
@@ -450,7 +453,8 @@ void ScoreKeeperNormal::HandleHoldScore( const TapNote &tn )
 		pn, 
 		holdScore+TNS_W1, 
 		m_pPlayerStageStats->iScore,
-		m_pPlayerStageStats->iCurCombo );
+		m_pPlayerStageStats->iCurCombo,
+		tn.result.fTapNoteOffset );
 }
 
 
