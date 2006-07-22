@@ -90,7 +90,7 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 		}
 		else if( 0==stricmp(sValueName,"STEP") )
 		{
-			continue; //This was handled in LoadGlobalData: no need to repeat.
+			continue; // This was handled in LoadGlobalData: no need to repeat.
 		}
 		else if( 0==stricmp(sValueName,"DIFFICULTY") )
 		{
@@ -116,22 +116,23 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 			sFName.find("crazydouble") != string::npos )
 		{
 			out.SetDifficulty( DIFFICULTY_HARD );
-			if( !out.GetMeter() ) out.SetMeter( 8 );
+			if( !out.GetMeter() ) out.SetMeter( 14 ); // Set the meters to the Pump scale, not DDR.
 		}
-		else if( sFName.find("hard") != string::npos || sFName.find("freestyle") != string::npos )
+		else if( sFName.find("hard") != string::npos || sFName.find("freestyle") != string::npos ||
+			sFName.find("double") != string::npos )
 		{
 			out.SetDifficulty( DIFFICULTY_MEDIUM );
-			if( !out.GetMeter() ) out.SetMeter( 5 );
+			if( !out.GetMeter() ) out.SetMeter( 8 );
 		}
 		else if( sFName.find("easy") != string::npos || sFName.find("normal") != string::npos )
 		{
 			out.SetDifficulty( DIFFICULTY_EASY );
-			if( !out.GetMeter() ) out.SetMeter( 2 );
+			if( !out.GetMeter() ) out.SetMeter( 4 );
 		}
 		else
 		{
 			out.SetDifficulty( DIFFICULTY_MEDIUM );
-			if( !out.GetMeter() ) out.SetMeter( 5 );
+			if( !out.GetMeter() ) out.SetMeter( 8 );
 		}
 
 		out.m_StepsType = STEPS_TYPE_PUMP_SINGLE;
@@ -156,9 +157,10 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 	default: FAIL_M( ssprintf("%i", out.m_StepsType) );
 	}
 
+	int t = 0;
 	int iHoldStartRow[13];
-	for( int y=0; y<13; y++ )
-		iHoldStartRow[y] = -1;
+	for( t=0; t<13; t++ )
+		iHoldStartRow[t] = -1;
 
 	m_bTickChangeNeeded = false;
 	int newTick = -1;
@@ -173,17 +175,27 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 			continue;	// skip
 
 		// All 2s indicates the end of the song.
-		/* In retrospect, we shouldn't break right away; there could be a hold
-		 * that ends right before the terminal row.  Perhaps that will be 
-		 * added in the future. */
 		if( sRowString == "2222222222222" )
+		{
+			// Finish any holds that didn't get...well, finished.
+			for( t=0; t < notedata.GetNumTracks(); t++ )
+			{
+				if( iHoldStartRow[t] != -1 )	// this ends the hold
+				{
+					if( iHoldStartRow[t] == BeatToNoteRow(prevBeat) )
+						notedata.SetTapNote( t, iHoldStartRow[t], TAP_ORIGINAL_TAP );
+					else
+						notedata.AddHoldNote( t, iHoldStartRow[t], BeatToNoteRow(prevBeat) , TAP_ORIGINAL_HOLD_HEAD );
+				}
+			}
 			break;
+		}
 
 		if( sRowString.size() != 13 )
 		{	
 			if (m_bKIUCompliant)
 			{
-				LOG->Warn("File %s had Direct Move syntax (\"%s\") which can't be in KIU complient files.",
+				LOG->Warn("File %s had illegal syntax (\"%s\") which can't be in KIU complient files.",
 					sPath.c_str(), sRowString.c_str());
 				return false;
 			}
@@ -218,15 +230,13 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 			m_bTickChangeNeeded = false;
 		}
 		
-		for( int t=0; t < notedata.GetNumTracks(); t++ )
+		for( t=0; t < notedata.GetNumTracks(); t++ )
 		{
 			if( sRowString[t] == '4' )
 			{
 				/* Remember when each hold starts; ignore the middle. */
 				if( iHoldStartRow[t] == -1 )
-					iHoldStartRow[t] = BeatToNoteRow(m_bCurBeat);
-				    //iHoldStartRow[t] = row;
-					
+					iHoldStartRow[t] = BeatToNoteRow(m_bCurBeat);					
 				continue;
 			}
 
@@ -251,12 +261,10 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 				return false;
 			}
 
-			//notedata.SetTapNote(t, row, tap);
-			notedata.SetTapNote(t, BeatToNoteRow(m_bCurBeat), tap); // More accurate for taps.
+			notedata.SetTapNote(t, BeatToNoteRow(m_bCurBeat), tap);
 		}
 		prevBeat = m_bCurBeat;
-		m_bCurBeat = prevBeat + 1.0f / m_bTickCount;
-		
+		m_bCurBeat = prevBeat + 1.0f / m_bTickCount;		
 	}
 
 	/* We need to remove holes where the BPM increases. */
@@ -378,7 +386,7 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 		}
 		else if ( 0==stricmp(sValueName,"TICKCOUNT") )
 		{
-			/* TICKCOUNT is will be used if there are DM complient BPM changes and stops.
+			/* TICKCOUNT is will be used below if there are DM complient BPM changes and stops.
 			 * It will be called again in LoadFromKSFFile for the actual steps. */
 			m_bTickCount = atoi( sParams[1] );
 			m_bTickCount = m_bTickCount > 0 ? m_bTickCount : 2;
@@ -495,18 +503,17 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 			}
 			if (m_bBPMChangeNeeded)
 			{
+				LOG->Trace( "Adding tempo change of %f BPM at beat %f", speedToChange, m_bCurBeat);
 				out.AddBPMSegment(BPMSegment(BeatToNoteRow(m_bCurBeat),speedToChange));
 				m_bBPMChangeNeeded = false;
 			}
 			if (m_bBPMStopNeeded)
 			{
+				LOG->Trace( "Adding tempo freeze of %f seconds at beat %f", timeToStop, m_bCurBeat);
 				out.AddStopSegment(StopSegment(BeatToNoteRow(m_bCurBeat),timeToStop));
 				m_bBPMStopNeeded = false;
 			}
-
 			m_bCurBeat += 1.0f / m_bTickCount;
-
-			
 		}
 	}
 
