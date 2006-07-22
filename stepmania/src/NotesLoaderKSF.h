@@ -26,9 +26,9 @@ private:
 	bool m_bBPMChangeNeeded;
 	bool m_bBPMStopNeeded;
 	bool m_bTickChangeNeeded;
-	int m_bTickCount;
-	float m_bCurBeat;
-	vector<RString> m_bNoteRows;
+	int m_iTickCount;
+	float m_fCurBeat;
+	vector<RString> m_vNoteRows;
 
 };
 

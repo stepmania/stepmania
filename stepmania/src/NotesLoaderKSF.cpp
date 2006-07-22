@@ -70,7 +70,8 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 	if( !msd.ReadFile( sPath ) )
 		RageException::Throw( "Error opening file '%s'.", sPath.c_str() );
 
-	m_bTickCount = -1;	// this is the value we read for TICKCOUNT
+	m_iTickCount = -1;	// this is the value we read for TICKCOUNT
+	m_vNoteRows.clear(); //Start from a clean slate.
 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
@@ -80,17 +81,19 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 		// handle the data
 		if( 0==stricmp(sValueName,"TICKCOUNT") )
 		{
-			m_bTickCount = atoi( sParams[1] );
-			if( m_bTickCount <= 0 )
+			m_iTickCount = atoi( sParams[1] );
+			if( m_iTickCount <= 0 )
 			{
 				// XXX need a place for user warnings.
-				LOG->Warn( "Invalid tick count: %d", m_bTickCount );
+				LOG->Warn( "Invalid tick count: %d", m_iTickCount );
 				return false;
 			}
 		}
 		else if( 0==stricmp(sValueName,"STEP") )
 		{
-			continue; // This was handled in LoadGlobalData: no need to repeat.
+			RString theSteps = sParams[1];
+			TrimLeft( theSteps );
+			split( theSteps, "\n", m_vNoteRows, true );
 		}
 		else if( 0==stricmp(sValueName,"DIFFICULTY") )
 		{
@@ -98,10 +101,10 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 		}
 	}
 
-	if( m_bTickCount == -1 )
+	if( m_iTickCount == -1 )
 	{
-		m_bTickCount = 2;
-		LOG->Warn( "\"%s\": TICKCOUNT not found; defaulting to %i", sPath.c_str(), m_bTickCount );
+		m_iTickCount = 2;
+		LOG->Warn( "\"%s\": TICKCOUNT not found; defaulting to %i", sPath.c_str(), m_iTickCount );
 	}
 
 	NoteData notedata;	// read it into here
@@ -164,11 +167,11 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 
 	m_bTickChangeNeeded = false;
 	int newTick = -1;
-	m_bCurBeat = 0.0f;
+	m_fCurBeat = 0.0f;
 	float prevBeat = 0.0f; // Used for hold tails.
-	for( unsigned r=0; r<m_bNoteRows.size(); r++ )
+	for( unsigned r=0; r<m_vNoteRows.size(); r++ )
 	{
-		RString& sRowString = m_bNoteRows[r];
+		RString& sRowString = m_vNoteRows[r];
 		StripCrnl( sRowString );
 		
 		if( sRowString == "" )
@@ -177,7 +180,7 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 		// All 2s indicates the end of the song.
 		if( sRowString == "2222222222222" )
 		{
-			// Finish any holds that didn't get...well, finished.
+			// Finish any holds that didn't get...well, finished.		
 			for( t=0; t < notedata.GetNumTracks(); t++ )
 			{
 				if( iHoldStartRow[t] != -1 )	// this ends the hold
@@ -226,7 +229,7 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 		// Update TICKCOUNT for Direct Move files.
 		if (m_bTickChangeNeeded)
 		{
-			m_bTickCount = newTick;
+			m_iTickCount = newTick;
 			m_bTickChangeNeeded = false;
 		}
 		
@@ -236,7 +239,15 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 			{
 				/* Remember when each hold starts; ignore the middle. */
 				if( iHoldStartRow[t] == -1 )
-					iHoldStartRow[t] = BeatToNoteRow(m_bCurBeat);					
+					iHoldStartRow[t] = BeatToNoteRow(m_fCurBeat);					
+				
+				/* This code doesn't work yet: this is merely conceptual for the future. */
+				/*
+				else
+				{
+					notedata.SetTapNote( t, BeatToNoteRow(m_fCurBeat), TAP_ORIGINAL_TICK_COUNT );
+				}
+				*/
 				continue;
 			}
 
@@ -261,10 +272,10 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 				return false;
 			}
 
-			notedata.SetTapNote(t, BeatToNoteRow(m_bCurBeat), tap);
+			notedata.SetTapNote(t, BeatToNoteRow(m_fCurBeat), tap);
 		}
-		prevBeat = m_bCurBeat;
-		m_bCurBeat = prevBeat + 1.0f / m_bTickCount;		
+		prevBeat = m_fCurBeat;
+		m_fCurBeat = prevBeat + 1.0f / m_iTickCount;		
 	}
 
 	/* We need to remove holes where the BPM increases. */
@@ -331,9 +342,9 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 		RageException::Throw( "Error opening file \"%s\": %s", sPath.c_str(), msd.GetError().c_str() );
 
 	float SMGap1 = 0, SMGap2 = 0, BPM1 = -1, BPMPos2 = -1, BPM2 = -1, BPMPos3 = -1, BPM3 = -1;
-	int m_bTickCount = -1;
+	m_iTickCount = -1;
 	m_bKIUCompliant = false;
-	RString theSteps;
+	m_vNoteRows.clear();
 	
 	for( unsigned i=0; i < msd.GetNumValues(); i++ )
 	{
@@ -388,16 +399,16 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 		{
 			/* TICKCOUNT is will be used below if there are DM complient BPM changes and stops.
 			 * It will be called again in LoadFromKSFFile for the actual steps. */
-			m_bTickCount = atoi( sParams[1] );
-			m_bTickCount = m_bTickCount > 0 ? m_bTickCount : 2;
+			m_iTickCount = atoi( sParams[1] );
+			m_iTickCount = m_iTickCount > 0 ? m_iTickCount : 2;
 		}
 		else if ( 0==stricmp(sValueName,"STEP") )
 		{
 			/* STEP will always be the last header in a KSF file by design.  Due to
 			 * the Direct Move syntax, it is best to get the rows of notes here. */
-			theSteps = sParams[1];
+			RString theSteps = sParams[1];
 			TrimLeft( theSteps );
-			split( theSteps, "\n", m_bNoteRows, true );
+			split( theSteps, "\n", m_vNoteRows, true );
 		}
 
 		else if( 0==stricmp(sValueName,"DIFFICULTY"))
@@ -409,12 +420,10 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 			LOG->Trace( "Unexpected value named '%s'", sValueName.c_str() );
 	}
 
-	/* The KIU BPM syntax puts all of its changes at the top, making it easier
-	 * and faster to get the right data.  Otherwise, we've got one of two situations:
-	 * a KSF file with no BPM changes whatsoever, or a KSF file with Direct Move
-	 * syntax.  Unfortunately, they will require a further scan in order to determine
-	 * whether or not there are changes, or even stops, within the file.  That will be
-	 * implemented later. */
+	/* BPM Change checks are done here.  If m_bKIUCompliant, it's short and sweet.
+	 * Otherwise, the whole file has to be processed.  Right now, this is only 
+	 * called once, for the initial file (often the Crazy steps).  Hopefully that
+	 * will end up changing soon. */
 	if (m_bKIUCompliant)
 	{
 		if( BPM2 > 0 && BPMPos2 > 0 )
@@ -439,14 +448,14 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 
 	else
 	{
-		int tickToChange = m_bTickCount;
-		m_bCurBeat = 0.0f;
+		int tickToChange = m_iTickCount;
+		m_fCurBeat = 0.0f;
 		float speedToChange = 0.0f, timeToStop = 0.0f;
 		m_bDMRequired = m_bBPMChangeNeeded = m_bBPMStopNeeded = m_bTickChangeNeeded = false;
 
-		for (unsigned i=0; i < m_bNoteRows.size(); i++)
+		for (unsigned i=0; i < m_vNoteRows.size(); i++)
 		{
-			RString& NoteRowString = m_bNoteRows[i];
+			RString& NoteRowString = m_vNoteRows[i];
 			StripCrnl( NoteRowString );
 			
 			if( NoteRowString == "" )
@@ -498,27 +507,24 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 
 			if (m_bTickChangeNeeded)
 			{
-				m_bTickCount = tickToChange;
+				m_iTickCount = tickToChange;
 				m_bTickChangeNeeded = false;
 			}
 			if (m_bBPMChangeNeeded)
 			{
-				LOG->Trace( "Adding tempo change of %f BPM at beat %f", speedToChange, m_bCurBeat);
-				out.AddBPMSegment(BPMSegment(BeatToNoteRow(m_bCurBeat),speedToChange));
+				LOG->Trace( "Adding tempo change of %f BPM at beat %f", speedToChange, m_fCurBeat);
+				out.AddBPMSegment(BPMSegment(BeatToNoteRow(m_fCurBeat),speedToChange));
 				m_bBPMChangeNeeded = false;
 			}
 			if (m_bBPMStopNeeded)
 			{
-				LOG->Trace( "Adding tempo freeze of %f seconds at beat %f", timeToStop, m_bCurBeat);
-				out.AddStopSegment(StopSegment(BeatToNoteRow(m_bCurBeat),timeToStop));
+				LOG->Trace( "Adding tempo freeze of %f seconds at beat %f", timeToStop, m_fCurBeat);
+				out.AddStopSegment(StopSegment(BeatToNoteRow(m_fCurBeat),timeToStop));
 				m_bBPMStopNeeded = false;
 			}
-			m_bCurBeat += 1.0f / m_bTickCount;
+			m_fCurBeat += 1.0f / m_iTickCount;
 		}
 	}
-
-	//if (m_bDMRequired)
-	//	LOG->Warn("%s uses the Direct Move syntax; at this point, mileage may vary.", sPath.c_str());
 
 	/* Try to fill in missing bits of information from the pathname. */
 	{
@@ -552,6 +558,9 @@ bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
 	if( arrayKSFFileNames.empty() )
 		RageException::Throw( "Couldn't find any KSF files in '%s'", sDir.c_str() );
 
+	/* If only the first file is read, it will cause problems for other simfiles with
+	 * different BPM changes and tickcounts.  This command will probably have to be
+	 * changed in the future. */
 	if( !LoadGlobalData(out.GetSongDir() + arrayKSFFileNames[0], out) )
 		return false;
 
