@@ -1237,9 +1237,6 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 		
 		m_NoteData.SetTapNote( col, iIndexOverlappingNote, tn );
 
-		// Keep this here so we get the same data as Autosync
-		NSMAN->ReportTiming( fNoteOffset, m_pPlayerState->m_PlayerNumber );
-		
 		m_LastTapNoteScore = score;
 	}
 
