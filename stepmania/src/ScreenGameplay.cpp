@@ -333,17 +333,17 @@ void ScreenGameplay::Init()
 
 void ScreenGameplay::Init( bool bUseSongBackgroundAndForeground )
 {
-	PLAYER_TYPE.Load( m_sName, "PlayerType" );
-	GIVE_UP_START_TEXT.Load( m_sName, "GiveUpStartText" );
-	GIVE_UP_BACK_TEXT.Load( m_sName, "GiveUpBackText" );
-	GIVE_UP_ABORTED_TEXT.Load( m_sName, "GiveUpAbortedText" );
-	MUSIC_FADE_OUT_SECONDS.Load( m_sName, "MusicFadeOutSeconds" );
-	START_GIVES_UP.Load( m_sName, "StartGivesUp" );
-	BACK_GIVES_UP.Load( m_sName, "BackGivesUp" );
-	GIVING_UP_GOES_TO_PREV_SCREEN.Load( m_sName, "GivingUpGoesToPrevScreen" );
-	GIVING_UP_GOES_TO_NEXT_SCREEN.Load( m_sName, "GivingUpGoesToNextScreen" );
-	FAIL_AFTER_30_MISSES.Load( m_sName, "FailAfter30Misses" );
-	ALLOW_CENTER_1_PLAYER.Load( m_sName, "AllowCenter1Player" );
+	PLAYER_TYPE.Load(			m_sName, "PlayerType" );
+	GIVE_UP_START_TEXT.Load(		m_sName, "GiveUpStartText" );
+	GIVE_UP_BACK_TEXT.Load(			m_sName, "GiveUpBackText" );
+	GIVE_UP_ABORTED_TEXT.Load(		m_sName, "GiveUpAbortedText" );
+	MUSIC_FADE_OUT_SECONDS.Load(		m_sName, "MusicFadeOutSeconds" );
+	START_GIVES_UP.Load(			m_sName, "StartGivesUp" );
+	BACK_GIVES_UP.Load(			m_sName, "BackGivesUp" );
+	GIVING_UP_GOES_TO_PREV_SCREEN.Load(	m_sName, "GivingUpGoesToPrevScreen" );
+	GIVING_UP_GOES_TO_NEXT_SCREEN.Load(	m_sName, "GivingUpGoesToNextScreen" );
+	FAIL_AFTER_30_MISSES.Load(		m_sName, "FailAfter30Misses" );
+	ALLOW_CENTER_1_PLAYER.Load(		m_sName, "AllowCenter1Player" );
 	
 	if( bUseSongBackgroundAndForeground )
 	{
