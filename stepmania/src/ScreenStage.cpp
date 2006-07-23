@@ -72,6 +72,7 @@ void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
 		this->ClearMessageQueue( SM_BeginFadingOut );
 
 		m_Out.StartTransitioning();
+		OFF_COMMAND( m_sprOverlay );
 		this->PostScreenMessage( SM_GoToNextScreen, this->GetTweenTimeLeft() );
 		return;
 	}
