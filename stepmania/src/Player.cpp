@@ -1209,7 +1209,7 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 			// remove all TapAttacks on this row
 			for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
 			{
-				const TapNote &tn = m_NoteData.GetTapNote(t, iIndexOverlappingNote);
+				const TapNote &tn = m_NoteData.GetTapNote( t, iIndexOverlappingNote );
 				if( tn.type == TapNote::attack )
 					HideNote( t, iIndexOverlappingNote );
 			}
@@ -1267,7 +1267,7 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 								iStepSearchRows, MAX_NOTE_ROW, true );
 		if( iIndexOverlappingNote != -1 )
 		{
-			TapNote tn = m_NoteData.GetTapNote( col, iIndexOverlappingNote );
+			const TapNote &tn = m_NoteData.GetTapNote( col, iIndexOverlappingNote );
 			if( tn.bKeysound && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
 				m_vKeysounds[tn.iKeysoundIndex].Play();
 		}
@@ -1460,7 +1460,7 @@ void Player::CrossedRow( int iNoteRow )
 	{
 		for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
 		{
-			TapNote tn = m_NoteData.GetTapNote(t, iNoteRow);
+			const TapNote &tn = m_NoteData.GetTapNote( t, iNoteRow );
 			if( tn.type != TapNote::empty && tn.result.tns == TNS_None )
 			{
 				Step( t, now );
@@ -1510,10 +1510,10 @@ void Player::RandomizeNotes( int iNoteRow )
 	int iNumOfTracks = m_NoteData.GetNumTracks();
 	for( int t=0; t+1 < iNumOfTracks; t++ )
 	{
-		const int iSwapWith = RandomInt( 0, iNumOfTracks-1 );
+		const int iSwapWith = RandomInt( iNumOfTracks );
 
 		/* Only swap a tap and an empty. */
-		const TapNote t1 = m_NoteData.GetTapNote(t, iNewNoteRow);
+		const TapNote t1 = m_NoteData.GetTapNote( t, iNewNoteRow );
 		if( t1.type != TapNote::tap )
 			continue;
 
