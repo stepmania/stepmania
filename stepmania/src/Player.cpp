@@ -1235,11 +1235,28 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 
 		PlayerNumber pn = tn.pn == PLAYER_INVALID ? m_pPlayerState->m_PlayerNumber : tn.pn;
 		m_LastTapNoteScore = score;
-		/* XXX This doesn't quite work correctly for notes that are judged separately.
-		 * This waits until they've all been judged before flashing. If any are missed,
-		 * none get flashed. */
-		if( NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iIndexOverlappingNote, pn) )
+		if( GAMESTATE->GetCurrentGame()->m_bCountNotesSeparately )
+		{
+			if( tn.type != TapNote::mine )
+			{
+				const bool bBlind = !!m_pPlayerState->m_PlayerOptions.m_fBlind;
+				// XXX This is the wrong combo for shared players. STATSMAN->m_CurStageStats.m_Player[pn] might work but could be wrong.
+				const bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->iCurCombo > int(BRIGHT_GHOST_COMBO_THRESHOLD) || bBlind;			
+				if( m_pNoteField )
+					m_pNoteField->DidTapNote( col, score, bBright );
+				if( score >= TNS_W3 || bBlind )
+				{
+					TapNote tn2 = tn;
+					
+					tn2.result.bHidden = true;
+					m_NoteData.SetTapNote( col, iIndexOverlappingNote, tn2 );
+				}
+			}
+		}
+		else if( NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iIndexOverlappingNote, pn) )
+		{
 			FlashGhostRow( iIndexOverlappingNote, pn );
+		}
 	}
 
 
@@ -1423,7 +1440,6 @@ void Player::FlashGhostRow( int iRow, PlayerNumber pn )
 	const bool bBlind = !!m_pPlayerState->m_PlayerOptions.m_fBlind;
 	// XXX This is the wrong combo for shared players. STATSMAN->m_CurStageStats.m_Player[pn] might work but could be wrong.
 	const bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->iCurCombo > int(BRIGHT_GHOST_COMBO_THRESHOLD) || bBlind;
-	const bool bSeparately = GAMESTATE->GetCurrentGame()->m_bCountNotesSeparately;
 		
 	for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
 	{
@@ -1433,11 +1449,9 @@ void Player::FlashGhostRow( int iRow, PlayerNumber pn )
 			continue;
 		if( tn.pn != PLAYER_INVALID && tn.pn != pn )
 			continue;
-		TapNoteScore score = bSeparately ? tn.result.tns : lastTNS;
-
 		if( m_pNoteField )
-			m_pNoteField->DidTapNote( iTrack, score, bBright );
-		if( score >= TNS_W3 || bBlind )
+			m_pNoteField->DidTapNote( iTrack, lastTNS, bBright );
+		if( lastTNS >= TNS_W3 || bBlind )
 		{
 			TapNote tn2 = tn;
 			
