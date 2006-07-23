@@ -87,7 +87,7 @@ Player::Player( NoteData &nd, bool bShowNoteField, bool bShowJudgment ) : m_Note
 	}
 
 	m_pCombo = NULL;
-	if( bShowNoteField )
+	if( bShowJudgment )
 	{
 		m_pCombo = new Combo;
 		this->AddChild( m_pCombo );
