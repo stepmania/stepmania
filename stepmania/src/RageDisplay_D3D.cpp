@@ -5,8 +5,6 @@
 #include "RageLog.h"
 #include "RageTimer.h"
 #include "RageException.h"
-#include "RageTexture.h"
-#include "RageTextureManager.h"
 #include "RageMath.h"
 #include "RageTypes.h"
 #include "RageSurface.h"
@@ -1078,7 +1076,7 @@ void RageDisplay_D3D::DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, 
 void RageDisplay_D3D::ClearAllTextures()
 {
 	FOREACH_ENUM2( TextureUnit, i )
-		SetTexture( i, NULL );
+		SetTexture( i, 0 );
 	g_currentTextureUnit = TextureUnit_1;
 }
 
@@ -1087,7 +1085,7 @@ int RageDisplay_D3D::GetNumTextureUnits()
 	return g_DeviceCaps.MaxSimultaneousTextures;
 }
 
-void RageDisplay_D3D::SetTexture( TextureUnit tu, RageTexture* pTexture )
+void RageDisplay_D3D::SetTexture( TextureUnit tu, unsigned iTexture )
 {
 	g_currentTextureUnit = tu;
 
@@ -1095,7 +1093,7 @@ void RageDisplay_D3D::SetTexture( TextureUnit tu, RageTexture* pTexture )
 	if( g_currentTextureUnit >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
 		return;
 
-	if( pTexture == NULL )
+	if( iTexture == 0 )
 	{
 		g_pd3dDevice->SetTexture( g_currentTextureUnit, NULL );
 
@@ -1105,8 +1103,7 @@ void RageDisplay_D3D::SetTexture( TextureUnit tu, RageTexture* pTexture )
 	}
 	else
 	{
-		unsigned uTexHandle = pTexture->GetTexHandle();
-		IDirect3DTexture8* pTex = (IDirect3DTexture8*)uTexHandle;
+		IDirect3DTexture8* pTex = (IDirect3DTexture8*) iTexture;
 		g_pd3dDevice->SetTexture( g_currentTextureUnit, pTex );
 		
 		// Intentionally commented out.  Don't mess with texture stage state when just setting the texture.  
@@ -1114,7 +1111,7 @@ void RageDisplay_D3D::SetTexture( TextureUnit tu, RageTexture* pTexture )
 		//g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLOROP, D3DTOP_MODULATE );
 
 		// Set palette (if any)
-		SetPalette(uTexHandle);
+		SetPalette( iTexture );
 	}
 }
 void RageDisplay_D3D::SetTextureModeModulate()

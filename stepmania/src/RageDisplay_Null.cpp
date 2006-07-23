@@ -5,8 +5,6 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageTimer.h"
-#include "RageTexture.h"
-#include "RageTextureManager.h"
 #include "RageMath.h"
 #include "RageTypes.h"
 #include "RageUtil.h"

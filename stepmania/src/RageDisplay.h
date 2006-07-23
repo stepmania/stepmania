@@ -185,7 +185,7 @@ public:
 	virtual void DeleteTexture( unsigned uTexHandle ) = 0;
 	virtual void ClearAllTextures() = 0;
 	virtual int GetNumTextureUnits() = 0;
-	virtual void SetTexture( TextureUnit tu, RageTexture* pTexture ) = 0;
+	virtual void SetTexture( TextureUnit tu, unsigned iTexture ) = 0;
 	virtual void SetTextureModeModulate() = 0;
 	virtual void SetTextureModeGlow() = 0;
 	virtual void SetTextureModeAdd() = 0;

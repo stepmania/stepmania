@@ -367,14 +367,14 @@ void Model::DrawPrimitives()
 				if( bUseMultitexture )
 				{
 					// render the diffuse texture with texture unit 1
-					DISPLAY->SetTexture( TextureUnit_1, mat.diffuse.GetCurrentTexture() );
+					DISPLAY->SetTexture( TextureUnit_1, mat.diffuse.GetCurrentTexture()->GetTexHandle() );
 					Actor::SetTextureRenderStates();	// set Actor-specified render states
 					DISPLAY->SetSphereEnvironmentMapping( mat.diffuse.m_bSphereMapped );
 					
 					// render the additive texture with texture unit 2
 					if( mat.alpha.GetCurrentTexture() )
 					{
-						DISPLAY->SetTexture( TextureUnit_2, mat.alpha.GetCurrentTexture() );
+						DISPLAY->SetTexture( TextureUnit_2, mat.alpha.GetCurrentTexture()->GetTexHandle() );
 						Actor::SetTextureRenderStates();	// set Actor-specified render states
 						DISPLAY->SetSphereEnvironmentMapping( mat.alpha.m_bSphereMapped );
 						DISPLAY->SetTextureModeAdd();
@@ -382,24 +382,24 @@ void Model::DrawPrimitives()
 					}
 					else
 					{
-						DISPLAY->SetTexture( TextureUnit_2, NULL );
+						DISPLAY->SetTexture( TextureUnit_2, 0 );
 
 						// set current texture back to 0 or else texture transform applied above 
 						// isn't used.  Why?!?
-						DISPLAY->SetTexture( TextureUnit_1, mat.diffuse.GetCurrentTexture() );
+						DISPLAY->SetTexture( TextureUnit_1, mat.diffuse.GetCurrentTexture()->GetTexHandle() );
 					}
 
 					/* go */
 					DrawMesh( i );
 
 					// Turn off Environment mapping on tex unit 0.  Is there a better way to reset?
-					DISPLAY->SetTexture( TextureUnit_1, NULL );
+					DISPLAY->SetTexture( TextureUnit_1, 0 );
 					DISPLAY->SetSphereEnvironmentMapping( 0 );
 				}
 				else
 				{
 					// render the diffuse texture
-					DISPLAY->SetTexture( TextureUnit_1, mat.diffuse.GetCurrentTexture() );
+					DISPLAY->SetTexture( TextureUnit_1, mat.diffuse.GetCurrentTexture()->GetTexHandle() );
 					Actor::SetTextureRenderStates();	// set Actor-specified render states
 					DISPLAY->SetSphereEnvironmentMapping( mat.diffuse.m_bSphereMapped );
 					DrawMesh( i );
@@ -407,7 +407,7 @@ void Model::DrawPrimitives()
 					// render the additive texture
 					if( mat.alpha.GetCurrentTexture() )
 					{
-						DISPLAY->SetTexture( TextureUnit_1, mat.alpha.GetCurrentTexture() );
+						DISPLAY->SetTexture( TextureUnit_1, mat.alpha.GetCurrentTexture()->GetTexHandle() );
 						Actor::SetTextureRenderStates();	// set Actor-specified render states
 
 						DISPLAY->SetSphereEnvironmentMapping( mat.alpha.m_bSphereMapped );
@@ -463,7 +463,7 @@ void Model::DrawPrimitives()
 			if( pMesh->nMaterialIndex != -1 )
 			{
 				msMaterial& mat = m_Materials[ pMesh->nMaterialIndex ];
-				DISPLAY->SetTexture( TextureUnit_1, mat.diffuse.GetCurrentTexture() );
+				DISPLAY->SetTexture( TextureUnit_1, mat.diffuse.GetCurrentTexture()->GetTexHandle() );
 				Actor::SetTextureRenderStates();	// set Actor-specified render states
 			}
 			else

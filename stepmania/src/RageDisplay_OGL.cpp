@@ -35,7 +35,6 @@
 #include "RageLog.h"
 #include "RageTimer.h"
 #include "RageException.h"
-#include "RageTexture.h"
 #include "RageTextureManager.h"
 #include "RageMath.h"
 #include "RageTypes.h"
@@ -1362,7 +1361,7 @@ void RageDisplay_OGL::DrawLineStripInternal( const RageSpriteVertex v[], int iNu
 void RageDisplay_OGL::ClearAllTextures()
 {
 	FOREACH_ENUM2( TextureUnit, i )
-		SetTexture( i, NULL );
+		SetTexture( i, 0 );
 
 	// HACK:  Reset the active texture to 0.
 	// TODO:  Change all texture functions to take a stage number.
@@ -1378,7 +1377,7 @@ int RageDisplay_OGL::GetNumTextureUnits()
 		return g_iMaxTextureUnits;
 }
 
-void RageDisplay_OGL::SetTexture( TextureUnit tu, RageTexture* pTexture )
+void RageDisplay_OGL::SetTexture( TextureUnit tu, unsigned iTexture )
 {
 	if( GLExt.glActiveTextureARB == NULL )
 	{
@@ -1401,10 +1400,10 @@ void RageDisplay_OGL::SetTexture( TextureUnit tu, RageTexture* pTexture )
 		}
 	}
 
-	if( pTexture )
+	if( iTexture )
 	{
 		glEnable( GL_TEXTURE_2D );
-		glBindTexture( GL_TEXTURE_2D, pTexture->GetTexHandle() );
+		glBindTexture( GL_TEXTURE_2D, iTexture );
 	}
 	else
 	{

@@ -32,7 +32,7 @@ public:
 	void DeleteTexture( unsigned uTexHandle ) { }
 	void ClearAllTextures() { }
 	int GetNumTextureUnits() { return 1; }
-	void SetTexture( TextureUnit tu, RageTexture* pTexture ) { }
+	void SetTexture( TextureUnit tu, unsigned iTexture ) { }
 	void SetTextureModeModulate() { }
 	void SetTextureModeGlow() { }
 	void SetTextureModeAdd() { }
