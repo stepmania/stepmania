@@ -49,17 +49,13 @@ RString ATTACK_DISPLAY_X_NAME( size_t p, size_t both_sides )	{ return "AttackDis
 static const float StepSearchDistance = 1.0f;
 static const float JUMP_WINDOW_SECONDS = 0.25f;
 
-float AdjustedWindowSeconds( TimingWindow tw )
+static float ADJUSTED_WINDOW_SECONDS( TimingWindow tw )
 {
 	float fSecs = PREFSMAN->m_fTimingWindowSeconds[tw];
 	fSecs *= PREFSMAN->m_fTimingWindowScale;
 	fSecs += PREFSMAN->m_fTimingWindowAdd;
 	return fSecs;
 }
-
-//is this define really needed, if not I'll remove it
-#define ADJUSTED_WINDOW_SECONDS( tw )	AdjustedWindowSeconds( tw )
-
 
 Player::Player( NoteData &nd, bool bShowNoteField, bool bShowJudgment ) : m_NoteData(nd)
 {
