@@ -22,7 +22,7 @@ PercentageDisplay::PercentageDisplay()
 
 	m_Last = -1;
 	m_LastMax = -1;
-
+	m_iDancePointsDigits = 0;
 	m_Format.SetFromExpression( THEME->GetMetric("MultiplayerEvalScoreRow","NumberOnCommandFunction") );
 }
 
