@@ -139,6 +139,12 @@ protected:
 	int GetClosestNote( int col, int iNoteRow, int iMaxRowsAhead, int iMaxRowsBehind, bool bAllowGraded ) const;
 
 	bool IsPlayingBeginner() const;
+	inline void HideNote( int col, int row )
+	{
+		NoteData::iterator iter = m_NoteData.FindTapNote( col, row );
+		if( iter != m_NoteData.end(col) )
+			iter->second.result.bHidden = true;
+	}
 
 	bool			m_bLoaded;
 

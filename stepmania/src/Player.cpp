@@ -1209,12 +1209,9 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 			// remove all TapAttacks on this row
 			for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
 			{
-				TapNote tn = m_NoteData.GetTapNote(t, iIndexOverlappingNote);
+				const TapNote &tn = m_NoteData.GetTapNote(t, iIndexOverlappingNote);
 				if( tn.type == TapNote::attack )
-				{
-					tn.result.bHidden = true;
-					m_NoteData.SetTapNote( col, iIndexOverlappingNote, tn );
-				}
+					HideNote( t, iIndexOverlappingNote );
 			}
 		}
 
@@ -1245,12 +1242,7 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 				if( m_pNoteField )
 					m_pNoteField->DidTapNote( col, score, bBright );
 				if( score >= TNS_W3 || bBlind )
-				{
-					TapNote tn2 = tn;
-					
-					tn2.result.bHidden = true;
-					m_NoteData.SetTapNote( col, iIndexOverlappingNote, tn2 );
-				}
+					HideNote( col, iIndexOverlappingNote );
 			}
 		}
 		else if( NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iIndexOverlappingNote, pn) )
@@ -1452,12 +1444,7 @@ void Player::FlashGhostRow( int iRow, PlayerNumber pn )
 		if( m_pNoteField )
 			m_pNoteField->DidTapNote( iTrack, lastTNS, bBright );
 		if( lastTNS >= TNS_W3 || bBlind )
-		{
-			TapNote tn2 = tn;
-			
-			tn2.result.bHidden = true;
-			m_NoteData.SetTapNote( iTrack, iRow, tn2 );
-		}
+			HideNote( iTrack, iRow );
 	}
 }
 
