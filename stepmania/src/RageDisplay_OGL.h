@@ -1,7 +1,7 @@
 /* RageDisplay_OGL: OpenGL renderer. */
 
-#ifndef RAGEDISPLAY_OGL_H
-#define RAGEDISPLAY_OGL_H
+#ifndef RAGE_DISPLAY_OGL_H
+#define RAGE_DISPLAY_OGL_H
 
 #include "RageDisplay.h"
 

@@ -1,5 +1,5 @@
-#ifndef STEPSUTIL_H
-#define STEPSUTIL_H
+#ifndef STEPS_UTIL_H
+#define STEPS_UTIL_H
 
 #include "GameConstantsAndTypes.h"
 #include "Difficulty.h"

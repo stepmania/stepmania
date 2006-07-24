@@ -1,7 +1,7 @@
 /* RageDisplay_D3D - Direct3D renderer. */
 
-#ifndef RAGEDISPLAY_D3D_H
-#define RAGEDISPLAY_D3D_H
+#ifndef RAGE_DISPLAY_D3D_H
+#define RAGE_DISPLAY_D3D_H
 
 class RageDisplay_D3D: public RageDisplay
 {
