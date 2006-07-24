@@ -176,7 +176,6 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 		{
 			m_Materials.resize( nNumMaterials );
 
-			// XXX: handle buffer overflow
 			char szName[256];
 
 			for( int i = 0; i < nNumMaterials; i++ )
@@ -186,8 +185,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 				// name
 				if( f.GetLine( sLine ) <= 0 )
 					THROW;
-				// XXX: handle buffer overflow
-				if( sscanf(sLine, "\"%[^\"]\"", szName) != 1 )
+				if( sscanf(sLine, "\"%256[^\"]\"", szName) != 1 )
 					THROW;
 				Material.sName = szName;
 
@@ -243,7 +241,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 				if( f.GetLine( sLine ) <= 0 )
 					THROW;
 				strcpy( szName, "" );
-				sscanf( sLine, "\"%[^\"]\"", szName );
+				sscanf( sLine, "\"%256[^\"]\"", szName );
 				RString sDiffuseTexture = szName;
 
 				if( sDiffuseTexture == "" )
@@ -270,7 +268,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 				if( f.GetLine( sLine ) <= 0 )
 					THROW;
 				strcpy( szName, "" );
-				sscanf( sLine, "\"%[^\"]\"", szName );
+				sscanf( sLine, "\"%256[^\"]\"", szName );
 				RString sAlphaTexture = szName;
 
 				if( sAlphaTexture == "" )
