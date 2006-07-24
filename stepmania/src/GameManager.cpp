@@ -65,39 +65,47 @@ const int TECHNO_VERSUS_COL_SPACING = 33;
 const int POPN5_COL_SPACING = 32; 
 const int POPN9_COL_SPACING = 32; 
 
-static struct {
+enum
+{
+	ST_FLAGS_NONE = 0,
+	ST_FLAGS_DONT_AUTOGEN = 1 << 0
+};
+
+static struct
+{
 	char *name;
 	int NumTracks;
+	uint32_t flags;
 } const StepsTypes[NUM_STEPS_TYPES] = {
-	{ "dance-single",	4 },
-	{ "dance-double",	8 },
-	{ "dance-couple",	8 },
-	{ "dance-solo",		6 },
-	{ "dance-routine",	8 },
-	{ "pump-single",	5 },
-	{ "pump-halfdouble",6 },
-	{ "pump-double",	10 },
-	{ "pump-couple",	10 },
-	{ "ez2-single",		5 },	// Single: TL,LHH,D,RHH,TR
-	{ "ez2-double",		10 },	// Double: Single x2
-	{ "ez2-real",		7 },	// Real: TL,LHH,LHL,D,RHL,RHH,TR
-	{ "para-single",	5 },
-	{ "para-versus",	10 },
-	{ "ds3ddx-single",	8 },
-	{ "bm-single5",		6 },	// called "bm" for backward compat
-	{ "bm-double5",      12 },	// called "bm" for backward compat
-	{ "bm-single7",   8 },		// called "bm" for backward compat
-	{ "bm-double7",   16 },		// called "bm" for backward compat
-	{ "maniax-single",	4 },
-	{ "maniax-double",	8 },
-	{ "techno-single4", 4 },
-	{ "techno-single5", 5 },
-	{ "techno-single8", 8 },
-	{ "techno-double4", 8 },
-	{ "techno-double5", 10 },
-	{ "pnm-five",		5 },	// called "pnm" for backward compat
-	{ "pnm-nine",		9 },	// called "pnm" for backward compat
-	{ "lights-cabinet",	NUM_CABINET_LIGHTS },
+	{ "dance-single",	4,			ST_FLAGS_NONE },
+	{ "dance-double",	8,			ST_FLAGS_NONE },
+	{ "dance-couple",	8,			ST_FLAGS_NONE },
+	{ "dance-solo",		6,			ST_FLAGS_NONE },
+	{ "dance-routine",	8,			ST_FLAGS_DONT_AUTOGEN },
+	{ "pump-single",	5,			ST_FLAGS_NONE },
+	{ "pump-halfdouble",	6,			ST_FLAGS_NONE },
+	{ "pump-double",	10,			ST_FLAGS_NONE },
+	{ "pump-couple",	10,			ST_FLAGS_NONE },
+	{ "ez2-single",		5,			ST_FLAGS_NONE },	// Single: TL,LHH,D,RHH,TR
+	{ "ez2-double",		10,			ST_FLAGS_NONE },	// Double: Single x2
+	{ "ez2-real",		7,			ST_FLAGS_NONE },	// Real: TL,LHH,LHL,D,RHL,RHH,TR
+	{ "para-single",	5,			ST_FLAGS_NONE },
+	{ "para-versus",	10,			ST_FLAGS_NONE },
+	{ "ds3ddx-single",	8,			ST_FLAGS_NONE },
+	{ "bm-single5",		6,			ST_FLAGS_NONE },	// called "bm" for backward compat
+	{ "bm-double5",		12,			ST_FLAGS_NONE },	// called "bm" for backward compat
+	{ "bm-single7",		8,			ST_FLAGS_NONE },	// called "bm" for backward compat
+	{ "bm-double7",		16,			ST_FLAGS_NONE },	// called "bm" for backward compat
+	{ "maniax-single",	4,			ST_FLAGS_NONE },
+	{ "maniax-double",	8,			ST_FLAGS_NONE },
+	{ "techno-single4",	4,			ST_FLAGS_NONE },
+	{ "techno-single5",	5,			ST_FLAGS_NONE },
+	{ "techno-single8",	8,			ST_FLAGS_NONE },
+	{ "techno-double4",	8,			ST_FLAGS_NONE },
+	{ "techno-double5",	10,			ST_FLAGS_NONE },
+	{ "pnm-five",		5,			ST_FLAGS_NONE },	// called "pnm" for backward compat
+	{ "pnm-nine",		9,			ST_FLAGS_NONE },	// called "pnm" for backward compat
+	{ "lights-cabinet",	NUM_CABINET_LIGHTS,	ST_FLAGS_DONT_AUTOGEN }, // XXX disable lights autogen for now
 };
 
 //
@@ -2764,6 +2772,12 @@ int GameManager::StepsTypeToNumTracks( StepsType st )
 {
 	ASSERT_M( st < NUM_STEPS_TYPES, ssprintf("%i", st) );
 	return StepsTypes[st].NumTracks;
+}
+
+bool GameManager::CanAutoGenStepsType( StepsType st )
+{
+	ASSERT_M( st < NUM_STEPS_TYPES, ssprintf("%d", st) );
+	return !(StepsTypes[st].flags & ST_FLAGS_DONT_AUTOGEN);
 }
 
 StepsType GameManager::StringToStepsType( RString sStepsType )

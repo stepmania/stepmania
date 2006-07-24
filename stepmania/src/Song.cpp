@@ -800,8 +800,7 @@ void Song::AddAutoGenNotes()
 		/* If m_bAutogenSteps is disabled, only autogen lights. */
 		if( !PREFSMAN->m_bAutogenSteps && stMissing != STEPS_TYPE_LIGHTS_CABINET )
 			continue;
-		/* XXX: disable lights autogen for now */
-		if( stMissing  == STEPS_TYPE_LIGHTS_CABINET )
+		if( !GameManager::CanAutoGenStepsType(stMissing) )
 			continue;
 
 		// missing Steps of this type
@@ -841,7 +840,7 @@ void Song::AutoGen( StepsType ntTo, StepsType ntFrom )
 		if( pOriginalNotes->m_StepsType == ntFrom )
 		{
 			Steps* pNewNotes = new Steps;
-			pNewNotes->AutogenFrom(pOriginalNotes, ntTo);
+			pNewNotes->AutogenFrom( pOriginalNotes, ntTo );
 			this->AddSteps( pNewNotes );
 		}
 	}

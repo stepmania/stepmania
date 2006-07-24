@@ -30,6 +30,7 @@ public:
 	const Game* GetGameFromIndex( int index ) const;
 
 	static int StepsTypeToNumTracks( StepsType st );
+	static bool CanAutoGenStepsType( StepsType st );
 	static StepsType StringToStepsType( RString sStepsType );
 	static RString StepsTypeToString( StepsType st );
 	static RString StepsTypeToLocalizedString( StepsType st );
