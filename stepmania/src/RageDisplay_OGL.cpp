@@ -634,9 +634,6 @@ bool RageDisplay_OGL::BeginFrame()
 
 void RageDisplay_OGL::EndFrame()
 {
-	// glFlush(), not glFinish(); NVIDIA_GLX's glFinish()'s behavior is
-	// nowhere near performance-friendly and uses unholy amounts of CPU for
-	// Gog-knows-what.
 	glFlush();
 
 	FrameLimitBeforeVsync( g_pWind->GetActualVideoModeParams().rate );
