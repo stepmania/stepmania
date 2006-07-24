@@ -916,7 +916,6 @@
 		AA40D32809A08D650068C0D5 /* LuaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = AAEBC78E07A4FF5600793F0E /* LuaManager.h */; };
 		AA40D32909A08D650068C0D5 /* PlayerState.h in Headers */ = {isa = PBXBuildFile; fileRef = AAEBC78F07A4FF5600793F0E /* PlayerState.h */; };
 		AA40D32A09A08D650068C0D5 /* ActorCommands.h in Headers */ = {isa = PBXBuildFile; fileRef = AACA592507B5E1E500763545 /* ActorCommands.h */; };
-		AA40D32B09A08D650068C0D5 /* RageDisplay_OGL_Extensions.h in Headers */ = {isa = PBXBuildFile; fileRef = AACA592907B5E23400763545 /* RageDisplay_OGL_Extensions.h */; };
 		AA40D32C09A08D650068C0D5 /* RageFileDriverTimeout.h in Headers */ = {isa = PBXBuildFile; fileRef = AACA592B07B5E23400763545 /* RageFileDriverTimeout.h */; };
 		AA40D32D09A08D650068C0D5 /* RageUtil_AutoPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = AACA592C07B5E23400763545 /* RageUtil_AutoPtr.h */; };
 		AA40D32E09A08D650068C0D5 /* RageUtil_WorkerThread.h in Headers */ = {isa = PBXBuildFile; fileRef = AACA592E07B5E23400763545 /* RageUtil_WorkerThread.h */; };
@@ -1307,7 +1306,6 @@
 		AA40D4C109A08D650068C0D5 /* RageSurfaceUtils_Zoom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAEBC6CA07A20AFE00793F0E /* RageSurfaceUtils_Zoom.cpp */; };
 		AA40D4C209A08D650068C0D5 /* LuaManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAEBC78D07A4FF5600793F0E /* LuaManager.cpp */; };
 		AA40D4C409A08D650068C0D5 /* ActorCommands.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACA592407B5E1E500763545 /* ActorCommands.cpp */; };
-		AA40D4C509A08D650068C0D5 /* RageDisplay_OGL_Extensions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACA592807B5E23400763545 /* RageDisplay_OGL_Extensions.cpp */; };
 		AA40D4C609A08D650068C0D5 /* RageFileDriverTimeout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACA592A07B5E23400763545 /* RageFileDriverTimeout.cpp */; };
 		AA40D4C709A08D650068C0D5 /* RageUtil_WorkerThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACA592D07B5E23400763545 /* RageUtil_WorkerThread.cpp */; };
 		AA40D4C809A08D650068C0D5 /* LuaReference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8BD2A107C9391B00EA04E1 /* LuaReference.cpp */; };
@@ -1475,6 +1473,10 @@
 		AA80C75907F20D6600C99272 /* OptionRowHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA80C75707F20D6600C99272 /* OptionRowHandler.cpp */; };
 		AA80C75A07F20D6600C99272 /* OptionRowHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = AA80C75807F20D6600C99272 /* OptionRowHandler.h */; };
 		AA80C75C07F20D8000C99272 /* ScreenMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA80C75B07F20D7F00C99272 /* ScreenMessage.cpp */; };
+		AA8122E20A7499F5002E1D1A /* RageDisplay_OGL_Helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8122E00A7499F5002E1D1A /* RageDisplay_OGL_Helpers.cpp */; };
+		AA8122E30A7499F5002E1D1A /* RageDisplay_OGL_Helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8122E10A7499F5002E1D1A /* RageDisplay_OGL_Helpers.h */; };
+		AA8122E40A7499F5002E1D1A /* RageDisplay_OGL_Helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8122E00A7499F5002E1D1A /* RageDisplay_OGL_Helpers.cpp */; };
+		AA8122E50A7499F5002E1D1A /* RageDisplay_OGL_Helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8122E10A7499F5002E1D1A /* RageDisplay_OGL_Helpers.h */; };
 		AA817E070623237A00EA44DB /* StepMania.pch in Headers */ = {isa = PBXBuildFile; fileRef = AAD64AA10603FE7300EF8CDE /* StepMania.pch */; };
 		AA84B7070996F8370085EECB /* AdjustSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA84B7050996F8370085EECB /* AdjustSync.cpp */; };
 		AA84B7080996F8370085EECB /* AdjustSync.h in Headers */ = {isa = PBXBuildFile; fileRef = AA84B7060996F8370085EECB /* AdjustSync.h */; };
@@ -1621,8 +1623,6 @@
 		AAC9F335069E22CF00D53E2C /* MemoryCardDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC9F333069E22CF00D53E2C /* MemoryCardDriver.h */; };
 		AACA592607B5E1E500763545 /* ActorCommands.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACA592407B5E1E500763545 /* ActorCommands.cpp */; };
 		AACA592707B5E1E500763545 /* ActorCommands.h in Headers */ = {isa = PBXBuildFile; fileRef = AACA592507B5E1E500763545 /* ActorCommands.h */; };
-		AACA592F07B5E23400763545 /* RageDisplay_OGL_Extensions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACA592807B5E23400763545 /* RageDisplay_OGL_Extensions.cpp */; };
-		AACA593007B5E23400763545 /* RageDisplay_OGL_Extensions.h in Headers */ = {isa = PBXBuildFile; fileRef = AACA592907B5E23400763545 /* RageDisplay_OGL_Extensions.h */; };
 		AACA593107B5E23400763545 /* RageFileDriverTimeout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACA592A07B5E23400763545 /* RageFileDriverTimeout.cpp */; };
 		AACA593207B5E23400763545 /* RageFileDriverTimeout.h in Headers */ = {isa = PBXBuildFile; fileRef = AACA592B07B5E23400763545 /* RageFileDriverTimeout.h */; };
 		AACA593307B5E23400763545 /* RageUtil_AutoPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = AACA592C07B5E23400763545 /* RageUtil_AutoPtr.h */; };
@@ -1703,7 +1703,6 @@
 		AAF4206805D63FA700056441 /* ModelManager.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF4206605D63FA700056441 /* ModelManager.h */; };
 		AAF4206B05D6400800056441 /* RageModelGeometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF4206905D6400800056441 /* RageModelGeometry.cpp */; };
 		AAF4206C05D6400800056441 /* RageModelGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF4206A05D6400800056441 /* RageModelGeometry.h */; };
-		AAF565FC0A3BFE2B00D5A105 /* ExportNsisStrings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF565FA0A3BFE2B00D5A105 /* ExportNsisStrings.cpp */; };
 		AAF565FD0A3BFE2B00D5A105 /* ExportNsisStrings.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF565FB0A3BFE2B00D5A105 /* ExportNsisStrings.h */; };
 		AAF565FE0A3BFE2B00D5A105 /* ExportNsisStrings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF565FA0A3BFE2B00D5A105 /* ExportNsisStrings.cpp */; };
 		AAF565FF0A3BFE2B00D5A105 /* ExportNsisStrings.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF565FB0A3BFE2B00D5A105 /* ExportNsisStrings.h */; };
@@ -2339,6 +2338,8 @@
 		AA80C75707F20D6600C99272 /* OptionRowHandler.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = OptionRowHandler.cpp; path = ../src/OptionRowHandler.cpp; sourceTree = "<group>"; };
 		AA80C75807F20D6600C99272 /* OptionRowHandler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = OptionRowHandler.h; path = ../src/OptionRowHandler.h; sourceTree = "<group>"; };
 		AA80C75B07F20D7F00C99272 /* ScreenMessage.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenMessage.cpp; path = ../src/ScreenMessage.cpp; sourceTree = "<group>"; };
+		AA8122E00A7499F5002E1D1A /* RageDisplay_OGL_Helpers.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RageDisplay_OGL_Helpers.cpp; path = ../src/RageDisplay_OGL_Helpers.cpp; sourceTree = SOURCE_ROOT; };
+		AA8122E10A7499F5002E1D1A /* RageDisplay_OGL_Helpers.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = RageDisplay_OGL_Helpers.h; path = ../src/RageDisplay_OGL_Helpers.h; sourceTree = SOURCE_ROOT; };
 		AA84B7050996F8370085EECB /* AdjustSync.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AdjustSync.cpp; path = ../src/AdjustSync.cpp; sourceTree = "<group>"; };
 		AA84B7060996F8370085EECB /* AdjustSync.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = AdjustSync.h; path = ../src/AdjustSync.h; sourceTree = "<group>"; };
 		AA8A3E6306EDCD11002F25AB /* DarwinThreadHelpers.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = DarwinThreadHelpers.cpp; sourceTree = "<group>"; };
@@ -2532,8 +2533,6 @@
 		AAC9F333069E22CF00D53E2C /* MemoryCardDriver.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = MemoryCardDriver.h; sourceTree = "<group>"; };
 		AACA592407B5E1E500763545 /* ActorCommands.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ActorCommands.cpp; path = ../src/ActorCommands.cpp; sourceTree = "<group>"; };
 		AACA592507B5E1E500763545 /* ActorCommands.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ActorCommands.h; path = ../src/ActorCommands.h; sourceTree = "<group>"; };
-		AACA592807B5E23400763545 /* RageDisplay_OGL_Extensions.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageDisplay_OGL_Extensions.cpp; path = ../src/RageDisplay_OGL_Extensions.cpp; sourceTree = "<group>"; };
-		AACA592907B5E23400763545 /* RageDisplay_OGL_Extensions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageDisplay_OGL_Extensions.h; path = ../src/RageDisplay_OGL_Extensions.h; sourceTree = "<group>"; };
 		AACA592A07B5E23400763545 /* RageFileDriverTimeout.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageFileDriverTimeout.cpp; path = ../src/RageFileDriverTimeout.cpp; sourceTree = "<group>"; };
 		AACA592B07B5E23400763545 /* RageFileDriverTimeout.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageFileDriverTimeout.h; path = ../src/RageFileDriverTimeout.h; sourceTree = "<group>"; };
 		AACA592C07B5E23400763545 /* RageUtil_AutoPtr.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageUtil_AutoPtr.h; path = ../src/RageUtil_AutoPtr.h; sourceTree = "<group>"; };
@@ -3275,8 +3274,8 @@
 				AAF7458F061181F700B19AD1 /* RageDisplay_Null.h */,
 				AAC23F7C0485E68D005F316C /* RageDisplay_OGL.cpp */,
 				AAC23F7D0485E68D005F316C /* RageDisplay_OGL.h */,
-				AACA592807B5E23400763545 /* RageDisplay_OGL_Extensions.cpp */,
-				AACA592907B5E23400763545 /* RageDisplay_OGL_Extensions.h */,
+				AA8122E00A7499F5002E1D1A /* RageDisplay_OGL_Helpers.cpp */,
+				AA8122E10A7499F5002E1D1A /* RageDisplay_OGL_Helpers.h */,
 				AA6EFD7204770A7C005F316C /* RageException.cpp */,
 				AA6EFD7304770A7C005F316C /* RageException.h */,
 				AA272C3004CD757100D02EE9 /* RageFile.cpp */,
@@ -4324,7 +4323,6 @@
 				AAEBC79207A4FF5600793F0E /* LuaManager.h in Headers */,
 				AAEBC79307A4FF5600793F0E /* PlayerState.h in Headers */,
 				AACA592707B5E1E500763545 /* ActorCommands.h in Headers */,
-				AACA593007B5E23400763545 /* RageDisplay_OGL_Extensions.h in Headers */,
 				AACA593207B5E23400763545 /* RageFileDriverTimeout.h in Headers */,
 				AACA593307B5E23400763545 /* RageUtil_AutoPtr.h in Headers */,
 				AACA593507B5E23400763545 /* RageUtil_WorkerThread.h in Headers */,
@@ -4407,6 +4405,7 @@
 				AA8CF5170A4518BE0005F1B4 /* RageSoundDriver_AU.h in Headers */,
 				AAD8F9360A4B97DF000311CF /* ScreenGameplayShared.h in Headers */,
 				AAAA11C60A662F9D00B2BD88 /* ScoreKeeperShared.h in Headers */,
+				AA8122E30A7499F5002E1D1A /* RageDisplay_OGL_Helpers.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4772,7 +4771,6 @@
 				AA40D32809A08D650068C0D5 /* LuaManager.h in Headers */,
 				AA40D32909A08D650068C0D5 /* PlayerState.h in Headers */,
 				AA40D32A09A08D650068C0D5 /* ActorCommands.h in Headers */,
-				AA40D32B09A08D650068C0D5 /* RageDisplay_OGL_Extensions.h in Headers */,
 				AA40D32C09A08D650068C0D5 /* RageFileDriverTimeout.h in Headers */,
 				AA40D32D09A08D650068C0D5 /* RageUtil_AutoPtr.h in Headers */,
 				AA40D32E09A08D650068C0D5 /* RageUtil_WorkerThread.h in Headers */,
@@ -4854,6 +4852,7 @@
 				AA8CF5190A4518BE0005F1B4 /* RageSoundDriver_AU.h in Headers */,
 				AAD8F9340A4B97DF000311CF /* ScreenGameplayShared.h in Headers */,
 				AAAA11C80A662F9D00B2BD88 /* ScoreKeeperShared.h in Headers */,
+				AA8122E50A7499F5002E1D1A /* RageDisplay_OGL_Helpers.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5323,7 +5322,6 @@
 				AAEBC6D007A20AFE00793F0E /* RageSurfaceUtils_Zoom.cpp in Sources */,
 				AAEBC79107A4FF5600793F0E /* LuaManager.cpp in Sources */,
 				AACA592607B5E1E500763545 /* ActorCommands.cpp in Sources */,
-				AACA592F07B5E23400763545 /* RageDisplay_OGL_Extensions.cpp in Sources */,
 				AACA593107B5E23400763545 /* RageFileDriverTimeout.cpp in Sources */,
 				AACA593407B5E23400763545 /* RageUtil_WorkerThread.cpp in Sources */,
 				AA8BD2A807C9391B00EA04E1 /* LuaReference.cpp in Sources */,
@@ -5403,11 +5401,11 @@
 				AAEDFD490A036C8B00590617 /* ArchHooks_darwin.cpp in Sources */,
 				AAEDFD690A03762B00590617 /* Crash.cpp in Sources */,
 				AA147F1B0A0F78D8006EADF6 /* VectorHelper.cpp in Sources */,
-				AAF565FC0A3BFE2B00D5A105 /* ExportNsisStrings.cpp in Sources */,
 				AA8CF5180A4518BE0005F1B4 /* RageSoundDriver_AU.cpp in Sources */,
 				AAD8F9370A4B97DF000311CF /* ScreenGameplayShared.cpp in Sources */,
 				AAAA11C70A662F9D00B2BD88 /* ScoreKeeperShared.cpp in Sources */,
 				AAE2D6D40A67481E00071546 /* ScoreKeeper.cpp in Sources */,
+				AA8122E20A7499F5002E1D1A /* RageDisplay_OGL_Helpers.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5731,7 +5729,6 @@
 				AA40D4C109A08D650068C0D5 /* RageSurfaceUtils_Zoom.cpp in Sources */,
 				AA40D4C209A08D650068C0D5 /* LuaManager.cpp in Sources */,
 				AA40D4C409A08D650068C0D5 /* ActorCommands.cpp in Sources */,
-				AA40D4C509A08D650068C0D5 /* RageDisplay_OGL_Extensions.cpp in Sources */,
 				AA40D4C609A08D650068C0D5 /* RageFileDriverTimeout.cpp in Sources */,
 				AA40D4C709A08D650068C0D5 /* RageUtil_WorkerThread.cpp in Sources */,
 				AA40D4C809A08D650068C0D5 /* LuaReference.cpp in Sources */,
@@ -5814,6 +5811,7 @@
 				AAD8F9350A4B97DF000311CF /* ScreenGameplayShared.cpp in Sources */,
 				AAAA11C90A662F9D00B2BD88 /* ScoreKeeperShared.cpp in Sources */,
 				AAE2D6D50A67481E00071546 /* ScoreKeeper.cpp in Sources */,
+				AA8122E40A7499F5002E1D1A /* RageDisplay_OGL_Helpers.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
