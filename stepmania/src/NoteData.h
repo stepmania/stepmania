@@ -257,6 +257,9 @@ public:
 	void LoadFromNode( const XNode* pNode );
 };
 
+namespace std {
+	template<> inline void swap<NoteData>( NoteData &nd1, NoteData &nd2 ) { nd1.swap( nd2 ); }
+}
 
 #endif
 
