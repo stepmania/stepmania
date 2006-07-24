@@ -21,7 +21,7 @@ end
 function JudgmentTransformSharedCommand( self, pn, mp, iEnabledPlayerIndex, iNumEnabledPlayers, bUsingBothSides, bReverse, bCentered )
 	local x = -120
 	local y = -30
-	if bReverse then y = -30 end
+	if bReverse then y = 30 end
 	if pn == 1 then x = 120 end
 	self:x( x )
 	self:y( y )
