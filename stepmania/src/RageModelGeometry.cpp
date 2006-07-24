@@ -142,7 +142,7 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 					THROW;
 
 				// mesh: name, flags, material index
-				if( sscanf (sLine, "\"%[^\"]\" %d %d",szName, &nFlags, &nIndex) != 3 )
+				if( sscanf (sLine, "\"%31[^\"]\" %d %d",szName, &nFlags, &nIndex) != 3 )
 					THROW;
 
 				mesh.sName = szName;

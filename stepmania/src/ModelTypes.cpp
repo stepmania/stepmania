@@ -264,7 +264,7 @@ bool msAnimation::LoadMilkshapeAsciiBones( RString sAniName, RString sPath )
 			// name
 			if( f.GetLine( sLine ) <= 0 )
 				THROW;
-			if (sscanf (sLine, "\"%[^\"]\"", szName) != 1)
+			if (sscanf (sLine, "\"%31[^\"]\"", szName) != 1)
 				THROW;
 			Bone.sName = szName;
 
@@ -272,7 +272,7 @@ bool msAnimation::LoadMilkshapeAsciiBones( RString sAniName, RString sPath )
 			if( f.GetLine( sLine ) <= 0 )
 				THROW;
 			strcpy (szName, "");
-			sscanf (sLine, "\"%[^\"]\"", szName);
+			sscanf (sLine, "\"%31[^\"]\"", szName);
 
 			Bone.sParentName = szName;
 
