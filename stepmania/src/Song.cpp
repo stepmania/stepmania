@@ -34,7 +34,7 @@
 #include <set>
 #include <float.h>
 
-const int FILE_CACHE_VERSION = 146;	// increment this to invalidate cache
+const int FILE_CACHE_VERSION = 147;	// increment this to invalidate cache
 
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
 

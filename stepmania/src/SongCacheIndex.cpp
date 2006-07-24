@@ -33,7 +33,12 @@ RString SongCacheIndex::GetCacheFilePath( const RString &sGroup, const RString &
 {
 	/* Don't use GetHashForFile, since we don't want to spend time
 	 * checking the file size and date. */
-	RString s = sPath;
+	RString s;
+	
+	if( sPath.size() > 2 && sPath[0] == '/' && sPath[sPath.size()-1] == '/' )
+		s.assign( sPath, 1, sPath.size() - 2 );
+	else
+		s = sPath;
 	/* Change slashes and invalid utf-8 characters to _.
 	 * http://en.wikipedia.org/wiki/UTF-8
 	 * Mac OS X doesn't support precomposed unicode characters in files names and
