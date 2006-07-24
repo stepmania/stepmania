@@ -2646,15 +2646,6 @@ static Style g_Styles[] =
 
 #define NUM_STYLES ARRAYSIZE(g_Styles)
 
-
-GameManager::GameManager()
-{
-}
-
-GameManager::~GameManager()
-{
-}
-
 void GameManager::GetStylesForGame( const Game *pGame, vector<const Style*>& aStylesAddTo, bool editor ) const
 {
 	for( unsigned s=0; s<NUM_STYLES; s++ ) 
