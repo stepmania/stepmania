@@ -19,7 +19,7 @@
 #undef __glext_h_
 #include "glext.h"
 
-#include "RageDisplay_OGL_Extensions.h"
+#include "RageDisplay_OGL_Helpers.h"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "arch/LowLevelWindow/LowLevelWindow.h"

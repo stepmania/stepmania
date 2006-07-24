@@ -316,7 +316,7 @@ RageFileDriverTimeout.cpp RageFileDriverTimeout.h
 
 Rage = $(PCRE) $(RageFile) $(RageSoundFileReaders) \
 RageBitmapTexture.cpp RageBitmapTexture.h RageDisplay.cpp RageDisplay.h RageDisplay_OGL.cpp RageDisplay_OGL.h \
-RageDisplay_OGL_Extensions.cpp RageDisplay_OGL_Extensions.h \
+RageDisplay_OGL_Helpers.cpp RageDisplay_OGL_Helpers.h \
 RageDisplay_Null.cpp RageDisplay_Null.h RageException.cpp RageException.h RageInput.cpp RageInput.h \
 RageInputDevice.cpp RageInputDevice.h RageLog.cpp RageLog.h RageMath.cpp RageMath.h \
 RageModelGeometry.cpp RageModelGeometry.h RageSound.cpp RageSound.h RageSoundManager.cpp RageSoundManager.h \

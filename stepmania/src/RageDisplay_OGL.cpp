@@ -30,7 +30,7 @@
 
 #include "RageDisplay.h"
 #include "RageDisplay_OGL.h"
-#include "RageDisplay_OGL_Extensions.h"
+#include "RageDisplay_OGL_Helpers.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageTimer.h"

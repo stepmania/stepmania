@@ -2145,10 +2145,10 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="RageDisplay_OGL.h">
 			</File>
 			<File
-				RelativePath="RageDisplay_OGL_Extensions.cpp">
+				RelativePath="RageDisplay_OGL_Helpers.cpp">
 			</File>
 			<File
-				RelativePath="RageDisplay_OGL_Extensions.h">
+				RelativePath="RageDisplay_OGL_Helpers.h">
 			</File>
 			<File
 				RelativePath="RageException.cpp">
