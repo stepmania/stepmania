@@ -144,6 +144,7 @@ public:
 	const_iterator begin( int iTrack ) const { return m_TapNotes[iTrack].begin(); }
 	iterator end( int iTrack ) { return m_TapNotes[iTrack].end(); }
 	const_iterator end( int iTrack ) const { return m_TapNotes[iTrack].end(); }
+	void swap( NoteData &nd ) { m_TapNotes.swap( nd.m_TapNotes ); }
 
 	inline iterator FindTapNote( unsigned iTrack, int iRow ) { return m_TapNotes[iTrack].find( iRow ); }
 	inline const_iterator FindTapNote( unsigned iTrack, int iRow ) const { return m_TapNotes[iTrack].find( iRow ); }
