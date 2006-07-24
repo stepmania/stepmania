@@ -35,11 +35,11 @@ public:
 		RageSurface* img,
 		bool bGenerateMipMaps );
 	void UpdateTexture( 
-		unsigned uTexHandle, 
+		unsigned iTexHandle, 
 		RageSurface* img,
 		int xoffset, int yoffset, int width, int height 
 		);
-	void DeleteTexture( unsigned uTexHandle );
+	void DeleteTexture( unsigned iTexHandle );
 	void ClearAllTextures();
 	int GetNumTextureUnits();
 	void SetTexture( TextureUnit tu, unsigned iTexture );

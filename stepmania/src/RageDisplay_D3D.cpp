@@ -1342,16 +1342,16 @@ void RageDisplay_D3D::SetCullMode( CullMode mode )
 	}
 }
 
-void RageDisplay_D3D::DeleteTexture( unsigned uTexHandle )
+void RageDisplay_D3D::DeleteTexture( unsigned iTexHandle )
 {
-	IDirect3DTexture8* pTex = (IDirect3DTexture8*) uTexHandle;
+	IDirect3DTexture8* pTex = (IDirect3DTexture8*) iTexHandle;
 	pTex->Release();
 
 	// Delete palette (if any)
-	if( g_TexResourceToPaletteIndex.find(uTexHandle) != g_TexResourceToPaletteIndex.end() )
-		g_TexResourceToPaletteIndex.erase( g_TexResourceToPaletteIndex.find(uTexHandle) );
-	if( g_TexResourceToTexturePalette.find(uTexHandle) != g_TexResourceToTexturePalette.end() )
-		g_TexResourceToTexturePalette.erase( g_TexResourceToTexturePalette.find(uTexHandle) );
+	if( g_TexResourceToPaletteIndex.find(iTexHandle) != g_TexResourceToPaletteIndex.end() )
+		g_TexResourceToPaletteIndex.erase( g_TexResourceToPaletteIndex.find(iTexHandle) );
+	if( g_TexResourceToTexturePalette.find(iTexHandle) != g_TexResourceToTexturePalette.end() )
+		g_TexResourceToTexturePalette.erase( g_TexResourceToTexturePalette.find(iTexHandle) );
 }
 
 

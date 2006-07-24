@@ -178,11 +178,11 @@ public:
 		bool bGenerateMipMaps
 		) = 0;
 	virtual void UpdateTexture( 
-		unsigned uTexHandle, 
+		unsigned iTexHandle, 
 		RageSurface* img,
 		int xoffset, int yoffset, int width, int height 
 		) = 0;
-	virtual void DeleteTexture( unsigned uTexHandle ) = 0;
+	virtual void DeleteTexture( unsigned iTexHandle ) = 0;
 	virtual void ClearAllTextures() = 0;
 	virtual int GetNumTextureUnits() = 0;
 	virtual void SetTexture( TextureUnit tu, unsigned iTexture ) = 0;

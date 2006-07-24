@@ -1715,11 +1715,11 @@ unsigned RageDisplay_OGL::CreateTexture(
 	}
 
 	// allocate OpenGL texture resource
-	unsigned int uTexHandle;
-	glGenTextures( 1, reinterpret_cast<GLuint*>(&uTexHandle) );
-	ASSERT( uTexHandle );
+	unsigned int iTexHandle;
+	glGenTextures( 1, reinterpret_cast<GLuint*>(&iTexHandle) );
+	ASSERT( iTexHandle );
 	
-	glBindTexture( GL_TEXTURE_2D, uTexHandle );
+	glBindTexture( GL_TEXTURE_2D, iTexHandle );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 	GLint iMinFilter;
 	if( bGenerateMipMaps )
@@ -1823,15 +1823,15 @@ unsigned RageDisplay_OGL::CreateTexture(
 
 	if( bFreeImg )
 		delete pImg;
-	return uTexHandle;
+	return iTexHandle;
 }
 
 void RageDisplay_OGL::UpdateTexture( 
-	unsigned uTexHandle, 
+	unsigned iTexHandle, 
 	RageSurface* pImg,
 	int iXOffset, int iYOffset, int iWidth, int iHeight )
 {
-	glBindTexture( GL_TEXTURE_2D, uTexHandle );
+	glBindTexture( GL_TEXTURE_2D, iTexHandle );
 
 	bool bFreeImg;
 	PixelFormat SurfacePixFmt = GetImgPixelFormat( pImg, bFreeImg, iWidth, iHeight, false );
