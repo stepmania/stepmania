@@ -1093,7 +1093,7 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 		const float fSecondsFromExact = fabsf( fNoteOffset );
 
 
-		TapNote tn = m_NoteData.GetTapNote( col, iIndexOverlappingNote );
+		TapNote &tn = m_NoteData.FindTapNote( col, iIndexOverlappingNote )->second;
 
 		switch( m_pPlayerState->m_PlayerController )
 		{
@@ -1223,8 +1223,6 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 
 		if( score != TNS_None )
 			tn.result.fTapNoteOffset = -fNoteOffset;
-
-		m_NoteData.SetTapNote( col, iIndexOverlappingNote, tn );
 
 		PlayerNumber pn = tn.pn == PLAYER_INVALID ? m_pPlayerState->m_PlayerNumber : tn.pn;
 		m_LastTapNoteScore = score;
@@ -1509,20 +1507,20 @@ void Player::RandomizeNotes( int iNoteRow )
 		const int iSwapWith = RandomInt( iNumOfTracks );
 
 		/* Only swap a tap and an empty. */
-		const TapNote t1 = m_NoteData.GetTapNote( t, iNewNoteRow );
-		if( t1.type != TapNote::tap )
+		NoteData::iterator iter = m_NoteData.FindTapNote( t, iNewNoteRow );
+		if( iter == m_NoteData.end(t) || iter->second.type != TapNote::tap )
 			continue;
 
-		const TapNote t2 = m_NoteData.GetTapNote( iSwapWith, iNewNoteRow );
-		if( t2.type != TapNote::empty )
+		// Make sure this is empty.
+		if( m_NoteData.FindTapNote(iSwapWith, iNewNoteRow) != m_NoteData.end(iSwapWith) )
 			continue;
 
 		/* Make sure the destination row isn't in the middle of a hold. */
 		if( m_NoteData.IsHoldNoteAtRow(iSwapWith, iNoteRow) )
 			continue;
 		
-		m_NoteData.SetTapNote( t, iNewNoteRow, t2 );
-		m_NoteData.SetTapNote( iSwapWith, iNewNoteRow, t1 );
+		m_NoteData.SetTapNote( iSwapWith, iNewNoteRow, iter->second );
+		m_NoteData.RemoveTapNote( t, iter );
 	}
 }
 
