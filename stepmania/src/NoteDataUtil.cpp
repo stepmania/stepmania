@@ -133,9 +133,7 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 					}
 					else
 					{
-						TapNote head_tap = out.GetTapNote( iTrack, iHeadRow );
-						head_tap.iDuration = iIndex - iHeadRow;
-						out.SetTapNote( iTrack, iHeadRow, head_tap );
+						out.FindTapNote( iTrack, iHeadRow )->second.iDuration = iIndex - iHeadRow;
 					}
 					
 					/* This won't write tn, but keep parsing normally anyway. */
@@ -574,7 +572,7 @@ void NoteDataUtil::LoadOverlapped( const NoteData &in, NoteData &out, int iNewNu
 			out.SetTapNote( iTrackTo, row, tnFrom );
 			if( tnFrom.type == TapNote::hold_head )
 			{
-				TapNote tnTail = in.GetTapNote( iTrackFrom, iEndIndex );
+				const TapNote &tnTail = in.GetTapNote( iTrackFrom, iEndIndex );
 				out.SetTapNote( iTrackTo, iEndIndex, tnTail );
 			}
 		}
@@ -891,8 +889,9 @@ void NoteDataUtil::RemoveAllButOneTap( NoteData &inout, int row )
 
 	for( ; track < inout.GetNumTracks(); ++track )
 	{
-		if( inout.GetTapNote(track, row).type == TapNote::tap )
-			inout.SetTapNote(track, row, TAP_EMPTY );
+		NoteData::iterator iter = inout.FindTapNote( track, row );
+		if( iter != inout.end(track) && iter->second.type == TapNote::tap )
+			inout.RemoveTapNote( track, iter );
 	}
 }
 
@@ -1064,7 +1063,7 @@ static void SuperShuffleTaps( NoteData &inout, int iStartIndex, int iEndIndex )
 	{
 		for( int t1=0; t1<inout.GetNumTracks(); t1++ )
 		{
-			const TapNote tn1 = inout.GetTapNote(t1, r);
+			const TapNote &tn1 = inout.GetTapNote( t1, r );
 			switch( tn1.type )
 			{
 			case TapNote::empty:
@@ -1080,9 +1079,7 @@ static void SuperShuffleTaps( NoteData &inout, int iStartIndex, int iEndIndex )
 				ASSERT(0);
 			}
 
-#if DEBUG
-			ASSERT_M( !inout.IsHoldNoteAtRow(t1,r), ssprintf("There is a tap.type = %d inside of a hold at row %d", tn1.type, r) );
-#endif
+			DEBUG_ASSERT_M( !inout.IsHoldNoteAtRow(t1,r), ssprintf("There is a tap.type = %d inside of a hold at row %d", tn1.type, r) );
 
 			// Probe for a spot to swap with.
 			set<int> vTriedTracks;
@@ -1097,7 +1094,7 @@ static void SuperShuffleTaps( NoteData &inout, int iStartIndex, int iEndIndex )
 				if( t1 == t2 )
 					break;	// done swapping
 
-				const TapNote tn2 = inout.GetTapNote(t2, r);
+				const TapNote &tn2 = inout.GetTapNote( t2, r );
 				switch( tn2.type )
 				{
 				case TapNote::hold_head:
@@ -1114,12 +1111,13 @@ static void SuperShuffleTaps( NoteData &inout, int iStartIndex, int iEndIndex )
 				}
 
 				// don't swap into the middle of a hold note
-				if( inout.IsHoldNoteAtRow(t2,r) )
+				if( inout.IsHoldNoteAtRow( t2,r ) )
 					continue;
 
 				// do the swap
-				inout.SetTapNote(t1, r, tn2);
-				inout.SetTapNote(t2, r, tn1);
+				const TapNote tnTemp = tn1;
+				inout.SetTapNote( t1, r, tn2 );
+				inout.SetTapNote( t2, r, tnTemp );
 				
 				break;	// done swapping
 			}
@@ -1155,15 +1153,15 @@ void NoteDataUtil::Backwards( NoteData &inout )
 			int iRowEarlier = r;
 			int iRowLater = max_row-r;
 
-			TapNote tnEarlier = inout.GetTapNote(t, iRowEarlier);
+			const TapNote &tnEarlier = inout.GetTapNote( t, iRowEarlier );
 			if( tnEarlier.type == TapNote::hold_head )
 				iRowLater -= tnEarlier.iDuration;
 
-			out.SetTapNote(t, iRowLater, tnEarlier);
+			out.SetTapNote( t, iRowLater, tnEarlier );
 		}
 	}
 
-	inout = out;
+	inout.swap( out );
 }
 
 void NoteDataUtil::SwapSides( NoteData &inout )
@@ -1750,13 +1748,14 @@ void NoteDataUtil::ClearRight( NoteData &inout )
 void NoteDataUtil::CollapseToOne( NoteData &inout )
 {
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS( inout, r )
-		for( int t=0; t<inout.GetNumTracks(); t++ )
-			if( inout.GetTapNote(t,r).type != TapNote::empty )
-			{
-				TapNote tn = inout.GetTapNote(t,r);
-				inout.SetTapNote(t, r, TAP_EMPTY);
-				inout.SetTapNote(0, r, tn);
-			}
+		for( int t=1; t<inout.GetNumTracks(); t++ )
+		{
+			NoteData::iterator iter = inout.FindTapNote( t, r );
+			if( iter == inout.end(t) )
+				continue;
+			inout.SetTapNote( 0, r, iter->second );
+			inout.RemoveTapNote( t, iter );
+		}
 }
 
 void NoteDataUtil::CollapseLeft( NoteData &inout )
@@ -2017,20 +2016,14 @@ void NoteDataUtil::ScaleRegion( NoteData &nd, float fScale, int iStartIndex, int
 
 	for( int t=0; t<temp2.GetNumTracks(); t++ )
 	{
-		FOREACH_NONEMPTY_ROW_IN_TRACK( temp2, t, r )
+		for( NoteData::const_iterator iter = nd.begin(t); iter != nd.end(t); ++iter )
 		{
-			TapNote tn = temp2.GetTapNote( t, r );
-			if( tn.type != TapNote::empty )
-			{
-				temp2.SetTapNote( t, r, TAP_EMPTY );
-
-				int new_row = int(r*fScale + iStartIndex);
-				temp1.SetTapNote( t, new_row, tn );
-			}
+			int new_row = int( iter->first*fScale + iStartIndex );
+			temp1.SetTapNote( t, new_row, iter->second );
 		}
 	}
 
-	nd.CopyAll( temp1 );
+	nd.swap( temp1 );
 }
 
 void NoteDataUtil::InsertRows( NoteData &nd, int iStartIndex, int iRowsToAdd )
@@ -2059,10 +2052,12 @@ void NoteDataUtil::RemoveAllTapsOfType( NoteData& ndInOut, TapNote::Type typeToR
 {
 	for( int t=0; t<ndInOut.GetNumTracks(); t++ )
 	{
-		FOREACH_NONEMPTY_ROW_IN_TRACK( ndInOut, t, row )
+		for( NoteData::iterator iter = ndInOut.begin(t); iter != ndInOut.end(t); )
 		{
-			if( ndInOut.GetTapNote(t, row).type == typeToRemove )
-				ndInOut.SetTapNote( t, row, TAP_EMPTY );
+			if( iter->second.type == typeToRemove )
+				ndInOut.RemoveTapNote( t, iter++ );
+			else
+				++iter;
 		}
 	}
 }
@@ -2071,10 +2066,12 @@ void NoteDataUtil::RemoveAllTapsExceptForType( NoteData& ndInOut, TapNote::Type 
 {
 	for( int t=0; t<ndInOut.GetNumTracks(); t++ )
 	{
-		FOREACH_NONEMPTY_ROW_IN_TRACK( ndInOut, t, row )
+		for( NoteData::iterator iter = ndInOut.begin(t); iter != ndInOut.end(t); )
 		{
-			if( ndInOut.GetTapNote(t, row).type != typeToKeep )
-				ndInOut.SetTapNote( t, row, TAP_EMPTY );
+			if( iter->second.type != typeToKeep )
+				ndInOut.RemoveTapNote( t, iter++ );
+			else
+				++iter;
 		}
 	}
 }
