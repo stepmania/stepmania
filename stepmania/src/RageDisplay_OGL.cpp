@@ -1595,12 +1595,10 @@ void RageDisplay_OGL::EndConcurrentRendering()
 	g_pWind->EndConcurrentRendering();
 }
 
-void RageDisplay_OGL::DeleteTexture( unsigned uTexHandle )
+void RageDisplay_OGL::DeleteTexture( unsigned iTexture )
 {
-	unsigned int uTexID = uTexHandle;
-
 	FlushGLErrors();
-	glDeleteTextures(1,reinterpret_cast<GLuint*>(&uTexID));
+	glDeleteTextures( 1, reinterpret_cast<GLuint*>(&iTexture) );
 	AssertNoGLError();
 }
 

@@ -88,7 +88,7 @@ static bool LoadAllOrNothing( struct func_t *funcs, LowLevelWindow *pWind )
 
 static void GetGLExtensions( set<string> &ext )
 {
-    const char *szBuf = (const char *) glGetString( GL_EXTENSIONS );
+	const char *szBuf = (const char *) glGetString( GL_EXTENSIONS );
 
 	vector<RString> asList;
 	split( szBuf, " ", asList );
