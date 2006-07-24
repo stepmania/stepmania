@@ -3,6 +3,8 @@
 #ifndef RAGEDISPLAY_OGL_H
 #define RAGEDISPLAY_OGL_H
 
+#include "RageDisplay.h"
+
 class RageDisplay_OGL: public RageDisplay
 {
 public:

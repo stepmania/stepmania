@@ -1,39 +1,13 @@
 #include "global.h"
 
-/* ours may be more up-to-date */
-#define __glext_h_
-
-#if defined(WIN32)
-#include <windows.h>
-#endif
-
-#if !defined(MACOSX)
-# include <GL/gl.h>
-# include <GL/glu.h>
-#else
-# include <OpenGL/gl.h>
-# include <OpenGL/glu.h>
-#endif
-
-#undef __glext_h_
-#include "glext.h"
+#include "RageDisplay_OGL.h"
+#include "RageDisplay_OGL_Helpers.h"
+using namespace RageDisplay_OGL_Helpers;
 
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
-
-/* Windows's broken gl.h defines GL_EXT_paletted_texture incompletely: */
-#ifndef GL_TEXTURE_INDEX_SIZE_EXT
-#define GL_TEXTURE_INDEX_SIZE_EXT         0x80ED
-#endif
-#include <set>
-#include <sstream>
-
-#include "RageDisplay.h"
-#include "RageDisplay_OGL.h"
-#include "RageDisplay_OGL_Helpers.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "RageTimer.h"
 #include "RageException.h"
 #include "RageTextureManager.h"
 #include "RageMath.h"
@@ -41,13 +15,15 @@
 #include "RageUtil.h"
 #include "EnumHelper.h"
 #include "Foreach.h"
-#include "ProductInfo.h"
 #include "DisplayResolutions.h"
 #include "LocalizedString.h"
 
 #include "arch/LowLevelWindow/LowLevelWindow.h"
 
 #include "arch/arch.h"
+
+#include <set>
+#include <sstream>
 
 #if defined(_MSC_VER)
 #pragma comment(lib, "opengl32.lib")
@@ -142,30 +118,6 @@ static RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PixelFormat] = {
 		  0x8000 },
 	}
 };
-
-static map<GLenum, RString> g_Strings;
-static void InitStringMap()
-{
-	static bool Initialized = false;
-	if(Initialized) return;
-	Initialized = true;
-	#define X(a) g_Strings[a] = #a;
-	X(GL_RGBA8);	X(GL_RGBA4);	X(GL_RGB5_A1);	X(GL_RGB5);	X(GL_RGBA);	X(GL_RGB);
-	X(GL_BGR);	X(GL_BGRA);
-	X(GL_COLOR_INDEX8_EXT);	X(GL_COLOR_INDEX4_EXT);	X(GL_COLOR_INDEX);
-	X(GL_UNSIGNED_BYTE);	X(GL_UNSIGNED_SHORT_4_4_4_4); X(GL_UNSIGNED_SHORT_5_5_5_1);
-	X(GL_UNSIGNED_SHORT_1_5_5_5_REV);
-	X(GL_INVALID_ENUM); X(GL_INVALID_VALUE); X(GL_INVALID_OPERATION);
-	X(GL_STACK_OVERFLOW); X(GL_STACK_UNDERFLOW); X(GL_OUT_OF_MEMORY);
-}
-
-static RString GLToString( GLenum e )
-{
-	if( g_Strings.find(e) != g_Strings.end() )
-		return g_Strings[e];
-
-	return ssprintf( "%i", int(e) );
-}
 
 /* g_GLPixFmtInfo is used for both texture formats and surface formats.  For example,
  * it's fine to ask for a PixelFormat_RGB5 texture, but to supply a surface matching
@@ -289,7 +241,7 @@ RageDisplay_OGL::RageDisplay_OGL()
 	LOG->MapLog("renderer", "Current renderer: OpenGL");
 
 	FixLittleEndian();
-	InitStringMap();
+	RageDisplay_OGL_Helpers::Init();
 
 	g_pWind = NULL;
 	g_bTextureMatrixShader = 0;

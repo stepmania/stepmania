@@ -1,10 +1,37 @@
-/* RageDisplay_OGL_Extensions - OpenGL extension helpers. */
+#ifndef RAGE_DISPLAY_OGL_HELPERS_H
+#define RAGE_DISPLAY_OGL_HELPERS_H
 
-#ifndef RAGE_DISPLAY_OGL_EXTENSIONS_H
-#define RAGE_DISPLAY_OGL_EXTENSIONS_H
+/* ours may be more up-to-date */
+#define __glext_h_
+
+#if defined(WIN32)
+#include <windows.h>
+#endif
+
+#if !defined(MACOSX)
+# include <GL/gl.h>
+# include <GL/glu.h>
+#else
+# include <OpenGL/gl.h>
+# include <OpenGL/glu.h>
+#endif
+
+#undef __glext_h_
+#include "glext.h"
+
+/* Windows defines GL_EXT_paletted_texture incompletely: */
+#ifndef GL_TEXTURE_INDEX_SIZE_EXT
+#define GL_TEXTURE_INDEX_SIZE_EXT         0x80ED
+#endif
 
 /* Not in glext.h: */
 typedef bool (APIENTRY * PWSWAPINTERVALEXTPROC) (int interval);
+
+namespace RageDisplay_OGL_Helpers
+{
+	void Init();
+	RString GLToString( GLenum e );
+};
 
 class LowLevelWindow;
 struct GLExt_t
@@ -61,7 +88,7 @@ extern GLExt_t GLExt;
 #endif
 
 /*
- * Copyright (c) 2003-2005 Glenn Maynard
+ * Copyright (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
