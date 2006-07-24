@@ -130,7 +130,7 @@ void Player::Init(
 {
 	GRAY_ARROWS_Y_STANDARD.Load(		sType, "ReceptorArrowsYStandard" );
 	GRAY_ARROWS_Y_REVERSE.Load(		sType, "ReceptorArrowsYReverse" );
-	COMBO_X.Load(				sType, COMBO_X_NAME,NUM_PLAYERS, 2 );
+	COMBO_X.Load(				sType, COMBO_X_NAME, NUM_PLAYERS, 2 );
 	COMBO_Y.Load(				sType, "ComboY" );
 	COMBO_Y_REVERSE.Load(			sType, "ComboYReverse" );
 	COMBO_CENTERED_ADDY.Load(		sType, "ComboCenteredAddY" );
@@ -396,15 +396,15 @@ void Player::Load()
 		m_pNoteField->Load( &m_NoteData, iStartDrawingAtPixels, iStopDrawingAtPixels );
 	}
 
-	const bool bReverse = m_pPlayerState->m_PlayerOptions.GetReversePercentForColumn(0) == 1;
+	const bool bReverse = m_pPlayerState->m_PlayerOptions.GetReversePercentForColumn( 0 ) == 1;
 	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->m_StyleType==ONE_PLAYER_TWO_SIDES;
 	if( m_pCombo )
 	{
-		m_pCombo->SetX( COMBO_X.GetValue(pn,bPlayerUsingBothSides) );
+		m_pCombo->SetX( COMBO_X.GetValue(pn, bPlayerUsingBothSides) );
 		m_pCombo->SetY( bReverse ? COMBO_Y_REVERSE : COMBO_Y );
 	}
 	if( m_pAttackDisplay )
-		m_pAttackDisplay->SetX( ATTACK_DISPLAY_X.GetValue(pn,bPlayerUsingBothSides) - 40 );
+		m_pAttackDisplay->SetX( ATTACK_DISPLAY_X.GetValue(pn, bPlayerUsingBothSides) - 40 );
 	// set this in Update //m_pAttackDisplay->SetY( bReverse ? ATTACK_DISPLAY_Y_REVERSE : ATTACK_DISPLAY_Y );
 
 	// set this in Update 
