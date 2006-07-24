@@ -185,7 +185,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 				// name
 				if( f.GetLine( sLine ) <= 0 )
 					THROW;
-				if( sscanf(sLine, "\"%256[^\"]\"", szName) != 1 )
+				if( sscanf(sLine, "\"%255[^\"]\"", szName) != 1 )
 					THROW;
 				Material.sName = szName;
 
@@ -241,7 +241,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 				if( f.GetLine( sLine ) <= 0 )
 					THROW;
 				strcpy( szName, "" );
-				sscanf( sLine, "\"%256[^\"]\"", szName );
+				sscanf( sLine, "\"%255[^\"]\"", szName );
 				RString sDiffuseTexture = szName;
 
 				if( sDiffuseTexture == "" )
@@ -268,7 +268,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 				if( f.GetLine( sLine ) <= 0 )
 					THROW;
 				strcpy( szName, "" );
-				sscanf( sLine, "\"%256[^\"]\"", szName );
+				sscanf( sLine, "\"%255[^\"]\"", szName );
 				RString sAlphaTexture = szName;
 
 				if( sAlphaTexture == "" )
