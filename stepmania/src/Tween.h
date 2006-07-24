@@ -1,5 +1,7 @@
-#ifndef INTERPOLATE_H
-#define INTERPOLATE_H
+/* ITween - Interface for simple interpolation. */
+
+#ifndef TWEEN_H
+#define TWEEN_H
 
 struct lua_State;
 typedef lua_State Lua;
