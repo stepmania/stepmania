@@ -38,7 +38,8 @@ public:
 	AnimatedTexture();
 	~AnimatedTexture();
 	
-	void Load( RString sTexOrIniFile );
+	void LoadBlank();
+	void Load( const RString &sTexOrIniFile );
 	void Unload();
 	void Update( float fDelta );
 	

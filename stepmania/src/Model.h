@@ -20,16 +20,16 @@ public:
 	virtual Actor *Copy() const;
 
 	void	Clear();
-	void	Load( RString sFile );
+	void	Load( const RString &sFile );
 
-	void	LoadPieces( RString sMeshesPath, RString sMaterialsPath, RString sBomesPath );
-	void	LoadMilkshapeAscii( RString sFile );
-	void 	LoadMaterialsFromMilkshapeAscii( RString sPath );
-	bool	LoadMilkshapeAsciiBones( RString sAniName, RString sPath );
+	void	LoadPieces( const RString &sMeshesPath, const RString &sMaterialsPath, const RString &sBomesPath );
+	void	LoadMilkshapeAscii( const RString &sFile );
+	void 	LoadMaterialsFromMilkshapeAscii( const RString &sPath );
+	bool	LoadMilkshapeAsciiBones( const RString &sAniName, const RString &sPath );
 
 	void LoadFromNode( const RString& sDir, const XNode* pNode );
 
-	void	PlayAnimation( RString sAniName, float fPlayRate = 1 );
+	void	PlayAnimation( const RString &sAniName, float fPlayRate = 1 );
 
 	virtual void	Update( float fDelta );
 	virtual bool	EarlyAbortDraw() const;

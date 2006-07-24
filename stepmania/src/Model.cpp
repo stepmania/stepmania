@@ -53,7 +53,7 @@ void Model::Clear()
 		DISPLAY->DeleteCompiledGeometry( m_pTempGeometry );
 }
 
-void Model::Load( RString sFile )
+void Model::Load( const RString &sFile )
 {
 	if( sFile == "" ) return;
 
@@ -65,12 +65,12 @@ void Model::Load( RString sFile )
 
 #define THROW RageException::Throw( "Parse error in \"%s\" at line %d: '%s'", sPath.c_str(), iLineNum, sLine.c_str() )
 
-void Model::LoadMilkshapeAscii( RString sPath )
+void Model::LoadMilkshapeAscii( const RString &sPath )
 {
 	LoadPieces( sPath, sPath, sPath );
 }
 
-void Model::LoadPieces( RString sMeshesPath, RString sMaterialsPath, RString sBonesPath )
+void Model::LoadPieces( const RString &sMeshesPath, const RString &sMaterialsPath, const RString &sBonesPath )
 {
 	Clear();
 
@@ -134,8 +134,10 @@ void Model::LoadFromNode( const RString& sDir, const XNode* pNode )
 }
 
 
-void Model::LoadMaterialsFromMilkshapeAscii( RString sPath )
+void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 {
+	RString sPath = _sPath;
+
 	FixSlashesInPlace(sPath);
 	const RString sDir = Dirname( sPath );
 
@@ -174,6 +176,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( RString sPath )
 		{
 			m_Materials.resize( nNumMaterials );
 
+			// XXX: handle buffer overflow
 			char szName[256];
 
 			for( int i = 0; i < nNumMaterials; i++ )
@@ -183,6 +186,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( RString sPath )
 				// name
 				if( f.GetLine( sLine ) <= 0 )
 					THROW;
+				// XXX: handle buffer overflow
 				if( sscanf(sLine, "\"%[^\"]\"", szName) != 1 )
 					THROW;
 				Material.sName = szName;
@@ -242,13 +246,19 @@ void Model::LoadMaterialsFromMilkshapeAscii( RString sPath )
 				sscanf( sLine, "\"%[^\"]\"", szName );
 				RString sDiffuseTexture = szName;
 
-				if( sDiffuseTexture != "" )
+				if( sDiffuseTexture == "" )
+				{
+					Material.diffuse.LoadBlank();
+				}
+				else
 				{
 					RString sTexturePath = sDir + sDiffuseTexture;
 					FixSlashesInPlace( sTexturePath );
 					CollapsePath( sTexturePath );
 					if( IsAFile(sTexturePath) )
+					{
 						Material.diffuse.Load( sTexturePath );
+					}
 					else
 					{
 						RString sError = ssprintf( "'%s' references a texture '%s' that does not exist", sPath.c_str(), sTexturePath.c_str() );
@@ -263,13 +273,19 @@ void Model::LoadMaterialsFromMilkshapeAscii( RString sPath )
 				sscanf( sLine, "\"%[^\"]\"", szName );
 				RString sAlphaTexture = szName;
 
-				if( sAlphaTexture != "" )
+				if( sAlphaTexture == "" )
+				{
+					Material.alpha.LoadBlank();
+				}
+				else
 				{
 					RString sTexturePath = sDir + sAlphaTexture;
 					FixSlashesInPlace( sTexturePath );
 					CollapsePath( sTexturePath );
 					if( IsAFile(sTexturePath) )
+					{
 						Material.alpha.Load( sTexturePath );
+					}
 					else
 					{
 						RString sError = ssprintf( "'%s' references a texture '%s' that does not exist", sPath.c_str(), sTexturePath.c_str() );
@@ -283,7 +299,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( RString sPath )
 	f.Close();
 }
 
-bool Model::LoadMilkshapeAsciiBones( RString sAniName, RString sPath )
+bool Model::LoadMilkshapeAsciiBones( const RString &sAniName, const RString &sPath )
 {
 	m_mapNameToAnimation[sAniName] = msAnimation();
 	msAnimation &Animation = m_mapNameToAnimation[sAniName];
@@ -367,14 +383,14 @@ void Model::DrawPrimitives()
 				if( bUseMultitexture )
 				{
 					// render the diffuse texture with texture unit 1
-					DISPLAY->SetTexture( TextureUnit_1, mat.diffuse.GetCurrentTexture()->GetTexHandle() );
+					DISPLAY->SetTexture( TextureUnit_1, mat.diffuse.GetCurrentTexture() ? mat.diffuse.GetCurrentTexture()->GetTexHandle() : 0 );
 					Actor::SetTextureRenderStates();	// set Actor-specified render states
 					DISPLAY->SetSphereEnvironmentMapping( mat.diffuse.m_bSphereMapped );
 					
 					// render the additive texture with texture unit 2
 					if( mat.alpha.GetCurrentTexture() )
 					{
-						DISPLAY->SetTexture( TextureUnit_2, mat.alpha.GetCurrentTexture()->GetTexHandle() );
+						DISPLAY->SetTexture( TextureUnit_2, mat.alpha.GetCurrentTexture() ? mat.alpha.GetCurrentTexture()->GetTexHandle() : 0 );
 						Actor::SetTextureRenderStates();	// set Actor-specified render states
 						DISPLAY->SetSphereEnvironmentMapping( mat.alpha.m_bSphereMapped );
 						DISPLAY->SetTextureModeAdd();
@@ -386,7 +402,7 @@ void Model::DrawPrimitives()
 
 						// set current texture back to 0 or else texture transform applied above 
 						// isn't used.  Why?!?
-						DISPLAY->SetTexture( TextureUnit_1, mat.diffuse.GetCurrentTexture()->GetTexHandle() );
+						DISPLAY->SetTexture( TextureUnit_1, mat.diffuse.GetCurrentTexture() ? mat.diffuse.GetCurrentTexture()->GetTexHandle() : 0 );
 					}
 
 					/* go */
@@ -399,7 +415,7 @@ void Model::DrawPrimitives()
 				else
 				{
 					// render the diffuse texture
-					DISPLAY->SetTexture( TextureUnit_1, mat.diffuse.GetCurrentTexture()->GetTexHandle() );
+					DISPLAY->SetTexture( TextureUnit_1, mat.diffuse.GetCurrentTexture() ? mat.diffuse.GetCurrentTexture()->GetTexHandle() : 0 );
 					Actor::SetTextureRenderStates();	// set Actor-specified render states
 					DISPLAY->SetSphereEnvironmentMapping( mat.diffuse.m_bSphereMapped );
 					DrawMesh( i );
@@ -407,7 +423,7 @@ void Model::DrawPrimitives()
 					// render the additive texture
 					if( mat.alpha.GetCurrentTexture() )
 					{
-						DISPLAY->SetTexture( TextureUnit_1, mat.alpha.GetCurrentTexture()->GetTexHandle() );
+						DISPLAY->SetTexture( TextureUnit_1, mat.alpha.GetCurrentTexture() ? mat.alpha.GetCurrentTexture()->GetTexHandle() : 0 );
 						Actor::SetTextureRenderStates();	// set Actor-specified render states
 
 						DISPLAY->SetSphereEnvironmentMapping( mat.alpha.m_bSphereMapped );
@@ -463,7 +479,7 @@ void Model::DrawPrimitives()
 			if( pMesh->nMaterialIndex != -1 )
 			{
 				msMaterial& mat = m_Materials[ pMesh->nMaterialIndex ];
-				DISPLAY->SetTexture( TextureUnit_1, mat.diffuse.GetCurrentTexture()->GetTexHandle() );
+				DISPLAY->SetTexture( TextureUnit_1, mat.diffuse.GetCurrentTexture() ? mat.diffuse.GetCurrentTexture()->GetTexHandle() : 0 );
 				Actor::SetTextureRenderStates();	// set Actor-specified render states
 			}
 			else
@@ -502,7 +518,7 @@ void Model::SetDefaultAnimation( RString sAnimation, float fPlayRate )
 	m_fDefaultAnimationRate = fPlayRate;
 }
 
-void Model::PlayAnimation( RString sAniName, float fPlayRate )
+void Model::PlayAnimation( const RString &sAniName, float fPlayRate )
 {
 	if( m_mapNameToAnimation.find(sAniName) == m_mapNameToAnimation.end() )
 		return;

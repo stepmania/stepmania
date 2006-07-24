@@ -27,7 +27,17 @@ AnimatedTexture::~AnimatedTexture()
 	Unload();
 }
 
-void AnimatedTexture::Load( RString sTexOrIniPath )
+void AnimatedTexture::LoadBlank()
+{
+	AnimatedTextureState state(
+		NULL,
+		1,
+		RageVector2(0,0)
+		);
+	vFrames.push_back( state );
+}
+
+void AnimatedTexture::Load( const RString &sTexOrIniPath )
 {
 	ASSERT( vFrames.empty() );	// don't load more than once
 
