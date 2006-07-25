@@ -109,8 +109,8 @@ public:
 		ScoreKeeper* pPrimaryScoreKeeper, 
 		ScoreKeeper* pSecondaryScoreKeeper );
 	void Load();
-	void CrossedRow( int iNoteRow );
-	void CrossedMineRow( int iNoteRow );
+	void CrossedRow( int iNoteRow, const RageTimer &now );
+	void CrossedMineRow( int iNoteRow, const RageTimer &now );
 	void Step( int col, const RageTimer &tm, bool bHeld = false );
 	void RandomizeNotes( int iNoteRow );
 	void FadeToFail();

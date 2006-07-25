@@ -441,6 +441,7 @@ void Player::Load()
 
 void Player::Update( float fDeltaTime )
 {
+	const RageTimer now;
 	// Don't update if we havn't been loaded yet.
 	if( !m_bLoaded )
 		return;
@@ -570,7 +571,6 @@ void Player::Update( float fDeltaTime )
 			if( tn.HoldResult.fLife >= 0.5f )
 				continue;
 
-			RageTimer now;
 			Step( iTrack, now, false );
 			if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
 				STATSMAN->m_CurStageStats.bUsedAutoplay = true;
@@ -718,7 +718,7 @@ void Player::Update( float fDeltaTime )
 			// for each index we crossed since the last update
 			if( GAMESTATE->IsPlayerEnabled(pn) )
 				FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_NoteData, r, m_iRowLastCrossed, iRowNow+1 )
-					CrossedRow( r );
+					CrossedRow( r, now );
 			m_iRowLastCrossed = iRowNow+1;
 		}
 	}
@@ -734,7 +734,7 @@ void Player::Update( float fDeltaTime )
 			// for each index we crossed since the last update
 			if( GAMESTATE->IsPlayerEnabled(pn) )
 				FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_NoteData, r, m_iMineRowLastCrossed, iRowNow+1 )
-					CrossedMineRow( r );
+					CrossedMineRow( r, now );
 			m_iMineRowLastCrossed = iRowNow+1;
 		}
 	}
@@ -1442,14 +1442,13 @@ void Player::FlashGhostRow( int iRow, PlayerNumber pn )
 	}
 }
 
-void Player::CrossedRow( int iNoteRow )
+void Player::CrossedRow( int iNoteRow, const RageTimer &now )
 {
 	// If we're doing random vanish, randomise notes on the fly.
 	if( m_pPlayerState->m_CurrentPlayerOptions.m_fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH]==1 )
 		RandomizeNotes( iNoteRow );
 
 	// check to see if there's a note at the crossed row
-	RageTimer now;
 	if( m_pPlayerState->m_PlayerController != PC_HUMAN )
 	{
 		for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
@@ -1465,10 +1464,9 @@ void Player::CrossedRow( int iNoteRow )
 	}
 }
 
-void Player::CrossedMineRow( int iNoteRow )
+void Player::CrossedMineRow( int iNoteRow, const RageTimer &now )
 {
 	// Hold the panel while crossing a mine will cause the mine to explode
-	RageTimer now;
 	for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
 	{
 		if( m_NoteData.GetTapNote(t,iNoteRow).type == TapNote::mine )
