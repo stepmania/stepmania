@@ -382,8 +382,6 @@ void UnlockManager::Load()
 
 	vector<RString> asUnlockNames;
 	split( UNLOCK_NAMES, ",", asUnlockNames );
-	if( asUnlockNames.empty() )
-		return;
 
 	for( unsigned i = 0; i < asUnlockNames.size(); ++i )
 	{
