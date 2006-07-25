@@ -329,11 +329,11 @@ protected:
 	void UpdateCentering();
 
 	// Called by the RageDisplay derivitives
-	const RageMatrix* GetCentering();
-	const RageMatrix* GetProjectionTop();
-	const RageMatrix* GetViewTop();
-	const RageMatrix* GetWorldTop();
-	const RageMatrix* GetTextureTop();
+	const RageMatrix* GetCentering() const;
+	const RageMatrix* GetProjectionTop() const;
+	const RageMatrix* GetViewTop() const;
+	const RageMatrix* GetWorldTop() const;
+	const RageMatrix* GetTextureTop() const;
 
 	//
 	// To limit the framerate, call FrameLimitBeforeVsync before waiting

@@ -355,7 +355,7 @@ public:
 	}
 
 	// Obtain the current matrix at the top of the stack
-	const RageMatrix* GetTop() { return &stack.back(); }
+	const RageMatrix* GetTop() const { return &stack.back(); }
 	void SetTop( const RageMatrix &m ) { stack.back() = m; }
 };
 
