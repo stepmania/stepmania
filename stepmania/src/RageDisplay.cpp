@@ -356,13 +356,20 @@ public:
 
 	// Obtain the current matrix at the top of the stack
 	const RageMatrix* GetTop() { return &stack.back(); }
+	void SetTop( const RageMatrix &m ) { stack.back() = m; }
 };
 
 
+static MatrixStack g_CenteringStack;
 static MatrixStack g_ProjectionStack;
 static MatrixStack g_ViewStack;
 static MatrixStack g_WorldStack;
 static MatrixStack g_TextureStack;
+
+const RageMatrix* RageDisplay::GetCentering()
+{
+	return g_CenteringStack.GetTop();
+}
 
 const RageMatrix* RageDisplay::GetProjectionTop()
 {
@@ -644,7 +651,7 @@ RageMatrix RageDisplay::GetCenteringMatrix( float fTranslateX, float fTranslateY
 
 void RageDisplay::UpdateCentering()
 {
-	m_Centering = GetCenteringMatrix( (float) g_iTranslateX, (float) g_iTranslateY, (float) g_iAddWidth, (float) g_iAddHeight );
+	g_CenteringStack.SetTop( GetCenteringMatrix( (float) g_iTranslateX, (float) g_iTranslateY, (float) g_iAddWidth, (float) g_iAddHeight ) );
 }
 
 bool RageDisplay::SaveScreenshot( RString sPath, GraphicsFileFormat format )
