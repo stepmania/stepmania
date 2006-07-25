@@ -152,7 +152,7 @@ public:
 	/* Call this when the resolution has been changed externally: */
 	virtual void ResolutionChanged();
 
-	virtual bool BeginFrame() = 0;	
+	virtual bool BeginFrame();
 	virtual void EndFrame();
 	virtual VideoModeParams GetActualVideoModeParams() const = 0;
 	bool IsWindowed() const { return this->GetActualVideoModeParams().windowed; }
@@ -167,7 +167,7 @@ public:
 	// thread before and after rendering.
 	virtual void BeginConcurrentRenderingMainThread() { }
 	virtual void EndConcurrentRenderingMainThread() { }
-	virtual void BeginConcurrentRendering() { }
+	virtual void BeginConcurrentRendering();
 	virtual void EndConcurrentRendering() { }
 
 	/* return 0 if failed or internal texture resource handle 

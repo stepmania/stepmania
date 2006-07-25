@@ -121,9 +121,21 @@ RString RageDisplay::GetStats() const
 	return s;
 }
 
+bool RageDisplay::BeginFrame()
+{
+	this->SetDefaultRenderStates();
+
+	return true;
+}
+
 void RageDisplay::EndFrame()
 {
 	ProcessStatsOnFlip();
+}
+
+void RageDisplay::BeginConcurrentRendering()
+{
+	this->SetDefaultRenderStates();
 }
 
 void RageDisplay::StatsAddVerts( int iNumVertsRendered ) { g_iVertsRenderedSinceLastCheck += iNumVertsRendered; }

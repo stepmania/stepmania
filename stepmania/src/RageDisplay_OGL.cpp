@@ -598,8 +598,6 @@ RString RageDisplay_OGL::TryVideoMode( const VideoModeParams &p, bool &bNewDevic
 		InitScalingScript();
 	}
 
-	this->SetDefaultRenderStates();
-
 	/* Set vsync the Windows way, if we can.  (What other extensions are there
 	 * to do this, for other archs?) */
 	if( GLExt.wglSwapIntervalEXT )
@@ -629,7 +627,8 @@ bool RageDisplay_OGL::BeginFrame()
 	glClearColor( 0,0,0,1 );
 	SetZWrite( true );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-	return true;
+
+	return RageDisplay::BeginFrame();
 }
 
 void RageDisplay_OGL::EndFrame()
@@ -1584,7 +1583,7 @@ void RageDisplay_OGL::EndConcurrentRenderingMainThread()
 void RageDisplay_OGL::BeginConcurrentRendering()
 {
 	g_pWind->BeginConcurrentRendering();
-	SetDefaultRenderStates();
+	RageDisplay::BeginConcurrentRendering();
 }
 
 void RageDisplay_OGL::EndConcurrentRendering()
