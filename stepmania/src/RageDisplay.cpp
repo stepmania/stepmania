@@ -612,6 +612,16 @@ void RageDisplay::ResolutionChanged()
 	UpdateCentering();
 }
 
+void RageDisplay::CenteringPushMatrix()
+{
+	g_CenteringStack.Push();
+}
+
+void RageDisplay::CenteringPopMatrix()
+{
+	g_CenteringStack.Pop();
+}
+
 void RageDisplay::ChangeCentering( int iTranslateX, int iTranslateY, int iAddWidth, int iAddHeight )
 {
 	g_iTranslateX = iTranslateX;

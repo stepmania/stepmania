@@ -310,6 +310,8 @@ public:
 	void LoadLookAt( float fov, const RageVector3 &Eye, const RageVector3 &At, const RageVector3 &Up );
 
 	/* Centering matrix */
+	void CenteringPushMatrix();
+	void CenteringPopMatrix();
 	void ChangeCentering( int trans_x, int trans_y, int add_width, int add_height );
 
 	RageSurface *CreateSurfaceFromPixfmt( PixelFormat pixfmt, void *pixels, int width, int height, int pitch );
