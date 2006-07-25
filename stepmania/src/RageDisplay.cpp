@@ -313,7 +313,7 @@ public:
 
 	// Right multiply the current matrix with the computed scale
 	// matrix. (transformation is about the current world origin)
-	void Scale( float x, float y, float z)
+	void Scale( float x, float y, float z )
  	{
 		RageMatrix m;
 		RageMatrixScaling( &m, x, y, z );
@@ -322,7 +322,7 @@ public:
 
 	// Left multiply the current matrix with the computed scale
 	// matrix. (transformation is about the local origin of the object)
-	void ScaleLocal( float x, float y, float z)
+	void ScaleLocal( float x, float y, float z )
  	{
 		RageMatrix m;
 		RageMatrixScaling( &m, x, y, z );
@@ -331,7 +331,7 @@ public:
 
 	// Right multiply the current matrix with the computed translation
 	// matrix. (transformation is about the current world origin)
-	void Translate( float x, float y, float z)
+	void Translate( float x, float y, float z )
  	{
 		RageMatrix m;
 		RageMatrixTranslation( &m, x, y, z );
@@ -340,7 +340,7 @@ public:
 
 	// Left multiply the current matrix with the computed translation
 	// matrix. (transformation is about the local origin of the object)
-	void TranslateLocal( float x, float y, float z)
+	void TranslateLocal( float x, float y, float z )
  	{
 		RageMatrix m;
 		RageMatrixTranslation( &m, x, y, z );
