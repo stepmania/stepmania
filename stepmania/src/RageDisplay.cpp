@@ -366,27 +366,27 @@ static MatrixStack g_ViewStack;
 static MatrixStack g_WorldStack;
 static MatrixStack g_TextureStack;
 
-const RageMatrix* RageDisplay::GetCentering()
+const RageMatrix* RageDisplay::GetCentering() const
 {
 	return g_CenteringStack.GetTop();
 }
 
-const RageMatrix* RageDisplay::GetProjectionTop()
+const RageMatrix* RageDisplay::GetProjectionTop() const
 {
 	return g_ProjectionStack.GetTop();
 }
 
-const RageMatrix* RageDisplay::GetViewTop()
+const RageMatrix* RageDisplay::GetViewTop() const
 {
 	return g_ViewStack.GetTop();
 }
 
-const RageMatrix* RageDisplay::GetWorldTop()
+const RageMatrix* RageDisplay::GetWorldTop() const
 {
 	return g_WorldStack.GetTop();
 }
 
-const RageMatrix* RageDisplay::GetTextureTop()
+const RageMatrix* RageDisplay::GetTextureTop() const
 {
 	return g_TextureStack.GetTop();
 }
