@@ -23,7 +23,7 @@ PercentageDisplay::PercentageDisplay()
 	m_Last = -1;
 	m_LastMax = -1;
 	m_iDancePointsDigits = 0;
-	m_Format.SetFromExpression( THEME->GetMetric("MultiplayerEvalScoreRow","NumberOnCommandFunction") );
+	m_Format.SetFromExpression( "FormatPercentScore" );
 }
 
 void PercentageDisplay::LoadFromNode( const RString& sDir, const XNode* pNode )
@@ -72,7 +72,7 @@ void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStage
 	m_iDancePointsDigits = THEME->GetMetricI( sMetricsGroup, "DancePointsDigits" );
 	m_bUseRemainder = THEME->GetMetricB( sMetricsGroup, "PercentUseRemainder" );
 	m_bApplyScoreDisplayOptions = THEME->GetMetricB( sMetricsGroup, "ApplyScoreDisplayOptions" );
-	m_Format.SetFromExpression( THEME->GetMetric(sMetricsGroup,"Format") );
+	m_Format.SetFromExpression( THEME->GetMetric(sMetricsGroup, "Format") );
 
 
 	if( PREFSMAN->m_bDancePointsForOni )
