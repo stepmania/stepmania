@@ -940,7 +940,7 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 {
 	//LOG->Trace( "Player::HandlePlayerStep()" );
 
-	ASSERT_M( col >= 0  &&  col <= m_NoteData.GetNumTracks(), ssprintf("%i, %i", col, m_NoteData.GetNumTracks()) );
+	DEBUG_ASSERT_M( col >= 0  &&  col <= m_NoteData.GetNumTracks(), ssprintf("%i, %i", col, m_NoteData.GetNumTracks()) );
 
 
 	float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
@@ -1059,8 +1059,7 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 	// Check for step on a TapNote
 	//
 	const int iStepSearchRows = BeatToNoteRow( StepSearchDistance * GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate );
-	int iIndexOverlappingNote = GetClosestNote( col, BeatToNoteRow(fSongBeat), 
-						   iStepSearchRows, iStepSearchRows, false );
+	int iIndexOverlappingNote = GetClosestNote( col, BeatToNoteRow(fSongBeat), iStepSearchRows, iStepSearchRows, false );
 	
 	// calculate TapNoteScore
 	TapNoteScore score = TNS_None;
