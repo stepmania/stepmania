@@ -49,6 +49,9 @@ public:
 	void SetTextureWrapping( bool b );
 	int GetMaxTextureSize() const;
 	void SetTextureFiltering( bool b);
+	bool SupportsRenderToTexture() const;
+	unsigned CreateRenderTarget( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut );
+	void SetRenderTarget( unsigned iHandle, bool bPreserveTexture );
 	bool IsZWriteEnabled() const;
 	bool IsZTestEnabled() const;
 	void SetZWrite( bool b );

@@ -58,7 +58,12 @@ static const GLenum RageSpriteVertexFormat = GL_T2F_C4F_N3F_V3F;
 /* If we support texture matrix scaling, a handle to the vertex program: */
 static GLhandleARB g_bTextureMatrixShader = 0;
 
+static map<unsigned, RenderTarget *> g_mapRenderTargets;
+static RenderTarget *g_pCurrentRenderTarget = NULL;
+
 static LowLevelWindow *g_pWind;
+
+static bool g_bInvertY = false;
 
 static void InvalidateAllGeometry();
 
@@ -592,6 +597,12 @@ RString RageDisplay_OGL::TryVideoMode( const VideoModeParams &p, bool &bNewDevic
 		if( TEXTUREMAN )
 			TEXTUREMAN->InvalidateTextures();
 
+		/* Delete all render targets.  They may have associated resources other than
+		 * the texture itself. */
+		FOREACHMM( unsigned, RenderTarget *, g_mapRenderTargets, rt )
+			delete rt->second;
+		g_mapRenderTargets.clear();
+
 		/* Recreate all vertex buffers. */
 		InvalidateAllGeometry();
 
@@ -722,6 +733,13 @@ void RageDisplay_OGL::SendCurrentMatrices()
 {
 	RageMatrix projection;
 	RageMatrixMultiply( &projection, GetCentering(), GetProjectionTop() );
+
+	if( g_bInvertY )
+	{
+		RageMatrix flip;
+		RageMatrixScale( &flip, +1, -1, +1 );
+		RageMatrixMultiply( &projection, &flip, &projection );
+	}
 	glMatrixMode( GL_PROJECTION );
 	glLoadMatrixf( (const float*)&projection );
 
@@ -1590,6 +1608,13 @@ void RageDisplay_OGL::EndConcurrentRendering()
 
 void RageDisplay_OGL::DeleteTexture( unsigned iTexture )
 {
+	if( g_mapRenderTargets.find(iTexture) != g_mapRenderTargets.end() )
+	{
+		delete g_mapRenderTargets[iTexture];
+		g_mapRenderTargets.erase( iTexture );
+		return;
+	}
+
 	FlushGLErrors();
 	glDeleteTextures( 1, reinterpret_cast<GLuint*>(&iTexture) );
 	AssertNoGLError();
@@ -1854,6 +1879,68 @@ void RageDisplay_OGL::UpdateTexture(
 
 	if( bFreeImg )
 		delete pImg;
+}
+
+bool RageDisplay_OGL::SupportsRenderToTexture() const
+{
+	return g_pWind->SupportsRenderToTexture();
+}
+
+/*
+ * Render-to-texture can be implemented in several ways: the generic GL_ARB_pixel_buffer_object,
+ * or platform-specifically.  PBO is not available on all hardware that supports RTT,
+ * particularly GeForce 2, but is simpler and faster when available.
+ */
+
+unsigned RageDisplay_OGL::CreateRenderTarget( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut )
+{
+	RenderTarget *pTarget = g_pWind->CreateRenderTarget( param, iTextureWidthOut, iTextureHeightOut );
+	unsigned iTexture = pTarget->GetTexture();
+
+	ASSERT( g_mapRenderTargets.find(iTexture) == g_mapRenderTargets.end() );
+	g_mapRenderTargets[iTexture] = pTarget;
+	return iTexture;
+}
+
+void RageDisplay_OGL::SetRenderTarget( unsigned iTexture, bool bPreserveTexture )
+{
+	if( iTexture == 0 )
+	{
+		g_bInvertY = false;
+		glFrontFace( GL_CCW );
+		
+		if( g_pCurrentRenderTarget )
+			g_pCurrentRenderTarget->FinishRenderingTo();
+		g_pCurrentRenderTarget = NULL;
+		return;
+	}
+
+	/* If we already had a render target, disable it. */
+	if( g_pCurrentRenderTarget != NULL )
+		SetRenderTarget( 0, true );
+
+	/* Enable the new render target. */
+	ASSERT( g_mapRenderTargets.find(iTexture) != g_mapRenderTargets.end() );
+	RenderTarget *pTarget = g_mapRenderTargets[iTexture];
+	pTarget->StartRenderingTo();
+	g_pCurrentRenderTarget = pTarget;
+
+	/* If this render target implementation flips Y, compensate.   Inverting will
+	 * switch the winding order. */
+	g_bInvertY = pTarget->InvertY();
+	if( g_bInvertY )
+		glFrontFace( GL_CW );
+
+	/* The render target may be in a different OpenGL context, so re-send
+	 * state. */
+	SetDefaultRenderStates();
+
+	/* Clear the texture, if requested.  Always set the associated state, for
+	 * consistency. */
+	glClearColor( 0,0,0,0 );
+	SetZWrite( true );
+	if( !bPreserveTexture )
+		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 }
 
 void RageDisplay_OGL::SetPolygonMode( PolygonMode pm )
