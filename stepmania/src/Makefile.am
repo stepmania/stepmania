@@ -336,6 +336,7 @@ RageSurface_Load_JPEG.cpp RageSurface_Load_JPEG.h RageSurface_Load_GIF.cpp RageS
 RageSurface_Load_BMP.cpp RageSurface_Load_BMP.h \
 RageSurface_Load_XPM.cpp RageSurface_Load_XPM.h RageTexture.cpp RageTexture.h \
 RageTexturePreloader.cpp RageTexturePreloader.h \
+RageTextureRenderTarget.cpp RageTextureRenderTarget.h \
 RageSurface_Save_BMP.cpp RageSurface_Save_BMP.h \
 RageTextureID.cpp RageTextureID.h RageTextureManager.cpp RageTextureManager.h RageThreads.cpp RageThreads.h \
 RageTimer.cpp RageTimer.h RageTypes.h RageUtil.cpp RageUtil.h RageUtil_CharConversions.cpp RageUtil_CharConversions.h \
