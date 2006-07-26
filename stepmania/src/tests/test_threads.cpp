@@ -123,7 +123,7 @@ void test_suspend_main_thread()
 }
 
 /* Run a second function, so we have two symbols to search for. */
-void TestBacktraceThreadLoop() __attribute__ ((noinline));
+void TestBacktraceThreadLoop() __attribute__ ((__noinline__));
 void TestBacktraceThreadLoop()
 {
 	g_ThreadId = GetCurrentThreadId();
@@ -131,7 +131,7 @@ void TestBacktraceThreadLoop()
 		;
 }
 
-int TestBacktraceThread( void *p ) __attribute__ ((noinline));
+int TestBacktraceThread( void *p ) __attribute__ ((__noinline__));
 int TestBacktraceThread( void *p )
 {
 	TestBacktraceThreadLoop();
