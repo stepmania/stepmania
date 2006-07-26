@@ -1881,9 +1881,114 @@ void RageDisplay_OGL::UpdateTexture(
 		delete pImg;
 }
 
+class RenderTarget_FramebufferObject: public RenderTarget
+{
+public:
+	RenderTarget_FramebufferObject();
+	~RenderTarget_FramebufferObject();
+	void Create( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut );
+	unsigned GetTexture() const { return m_iTexHandle; }
+	void StartRenderingTo();
+	void FinishRenderingTo();
+	
+private:
+	unsigned int m_iFrameBufferHandle;
+	unsigned int m_iTexHandle;
+	unsigned int m_iDepthBufferHandle;
+};
+
+RenderTarget_FramebufferObject::RenderTarget_FramebufferObject()
+{
+	m_iFrameBufferHandle = 0;
+	m_iTexHandle = 0;
+	m_iDepthBufferHandle = 0;
+}
+
+RenderTarget_FramebufferObject::~RenderTarget_FramebufferObject()
+{
+	if( m_iDepthBufferHandle )
+		GLExt.glDeleteRenderbuffersEXT( 1, reinterpret_cast<GLuint*>(&m_iDepthBufferHandle) );
+	if( m_iFrameBufferHandle )
+		GLExt.glDeleteFramebuffersEXT( 1, reinterpret_cast<GLuint*>(&m_iFrameBufferHandle) );
+	if( m_iTexHandle )
+		glDeleteTextures( 1, reinterpret_cast<GLuint*>(&m_iTexHandle) );
+}
+
+void RenderTarget_FramebufferObject::Create( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut )
+{
+	FlushGLErrors();
+	
+	// Allocate OpenGL texture resource
+	glGenTextures( 1, reinterpret_cast<GLuint*>(&m_iTexHandle) );
+	ASSERT( m_iTexHandle );
+
+	int iTextureWidth = power_of_two( param.iWidth );
+	int iTextureHeight = power_of_two( param.iHeight );
+
+	iTextureWidthOut = iTextureWidth;
+	iTextureHeightOut = iTextureHeight;
+
+	glBindTexture( GL_TEXTURE_2D, m_iTexHandle );
+	glTexImage2D( GL_TEXTURE_2D, 0, param.bWithAlpha? GL_RGBA8:GL_RGB8,
+			iTextureWidth, iTextureHeight, 0, param.bWithAlpha? GL_RGBA:GL_RGB, GL_UNSIGNED_BYTE, NULL );
+	AssertNoGLError();
+
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+
+	/* Create the framebuffer object. */
+	GLExt.glGenFramebuffersEXT( 1, reinterpret_cast<GLuint*>(&m_iFrameBufferHandle) );
+	ASSERT( m_iFrameBufferHandle );
+
+	/* Attach the texture to it. */
+	GLExt.glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, m_iFrameBufferHandle );
+        GLExt.glFramebufferTexture2DEXT( GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_iTexHandle, 0 );
+	AssertNoGLError();
+
+	/* Attach a depth buffer, if requested. */
+	if( param.bWithDepthBuffer )
+	{
+		GLExt.glGenRenderbuffersEXT( 1, reinterpret_cast<GLuint*>(&m_iDepthBufferHandle) );
+		ASSERT( m_iDepthBufferHandle );
+
+		GLExt.glRenderbufferStorageEXT( GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT16, iTextureWidth, iTextureHeight );
+		GLExt.glFramebufferRenderbufferEXT( GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_iDepthBufferHandle );
+	}
+
+	GLenum status = GLExt.glCheckFramebufferStatusEXT( GL_FRAMEBUFFER_EXT );
+	switch(status)
+	{
+	case GL_FRAMEBUFFER_COMPLETE_EXT:
+		break;
+	case GL_FRAMEBUFFER_UNSUPPORTED_EXT:
+		FAIL_M( "GL_FRAMEBUFFER_UNSUPPORTED_EXT" );
+		break;
+	case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT: FAIL_M( "GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT" ); break;
+	case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT: FAIL_M( "GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT" ); break;
+	case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT: FAIL_M( "GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT" ); break;
+	case GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT: FAIL_M( "GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT" ); break;
+	case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT: FAIL_M( "GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT" ); break;
+	case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT: FAIL_M( "GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT" ); break;
+	default:
+		ASSERT(0);
+	}
+}
+
+void RenderTarget_FramebufferObject::StartRenderingTo()
+{
+	GLExt.glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, m_iFrameBufferHandle );
+}
+
+void RenderTarget_FramebufferObject::FinishRenderingTo()
+{
+        GLExt.glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, 0 );
+}
+
 bool RageDisplay_OGL::SupportsRenderToTexture() const
 {
-	return g_pWind->SupportsRenderToTexture();
+	return GLExt.m_bGL_EXT_framebuffer_object || g_pWind->SupportsRenderToTexture();
 }
 
 /*
@@ -1894,7 +1999,18 @@ bool RageDisplay_OGL::SupportsRenderToTexture() const
 
 unsigned RageDisplay_OGL::CreateRenderTarget( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut )
 {
-	RenderTarget *pTarget = g_pWind->CreateRenderTarget( param, iTextureWidthOut, iTextureHeightOut );
+	RenderTarget *pTarget;
+	if( GLExt.m_bGL_EXT_framebuffer_object )
+	{
+		RenderTarget_FramebufferObject *pTargetFBO = new RenderTarget_FramebufferObject;
+		pTargetFBO->Create( param, iTextureWidthOut, iTextureHeightOut );
+		pTarget = pTargetFBO;
+	}
+	else
+	{
+		pTarget = g_pWind->CreateRenderTarget( param, iTextureWidthOut, iTextureHeightOut );
+	}
+
 	unsigned iTexture = pTarget->GetTexture();
 
 	ASSERT( g_mapRenderTargets.find(iTexture) == g_mapRenderTargets.end() );

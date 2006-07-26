@@ -210,6 +210,34 @@ void GLExt_t::Load( LowLevelWindow *pWind )
 			LOG->Info( "OpenGL shading language: %s", pzVersion );
 		}
 	}
+
+	m_bGL_EXT_framebuffer_object = HasExtension("GL_EXT_framebuffer_object");
+	if( m_bGL_EXT_framebuffer_object )
+	{
+		func_t funcs[] = {
+			F( glIsRenderbufferEXT ),
+			F( glBindRenderbufferEXT ),
+			F( glDeleteRenderbuffersEXT ),
+			F( glGenRenderbuffersEXT ),
+			F( glRenderbufferStorageEXT ),
+			F( glGetRenderbufferParameterivEXT ),
+			F( glIsFramebufferEXT ),
+			F( glBindFramebufferEXT ),
+			F( glDeleteFramebuffersEXT ),
+			F( glGenFramebuffersEXT ),
+			F( glCheckFramebufferStatusEXT ),
+			F( glFramebufferTexture1DEXT ),
+			F( glFramebufferTexture2DEXT ),
+			F( glFramebufferTexture3DEXT ),
+			F( glFramebufferRenderbufferEXT ),
+			F( glGetFramebufferAttachmentParameterivEXT ),
+			F( glGenerateMipmapEXT ),
+			{ NULL, NULL }
+		};
+
+		if( !LoadAllOrNothing(funcs, pWind) )
+			m_bGL_EXT_framebuffer_object = false;
+	}
 }
 
 /*
