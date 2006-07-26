@@ -624,7 +624,7 @@ bool RageDisplay_OGL::BeginFrame()
 
 	glViewport( 0, 0, fWidth, fHeight );
 
-	glClearColor( 0,0,0,1 );
+	glClearColor( 0,0,0,0 );
 	SetZWrite( true );
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
