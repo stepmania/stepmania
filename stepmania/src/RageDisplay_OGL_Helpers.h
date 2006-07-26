@@ -33,6 +33,23 @@ namespace RageDisplay_OGL_Helpers
 	RString GLToString( GLenum e );
 };
 
+class RenderTarget
+{
+public:
+	virtual ~RenderTarget() { }
+
+	virtual unsigned GetTexture() const = 0;
+
+	/* Render to this RenderTarget. */
+	virtual void StartRenderingTo() = 0;
+
+	/* Stop rendering to this RenderTarget.  Update the texture, if necessary, and
+	 * make it available. */
+	virtual void FinishRenderingTo() = 0;
+
+	virtual bool InvertY() const { return false; }
+};
+
 class LowLevelWindow;
 struct GLExt_t
 {

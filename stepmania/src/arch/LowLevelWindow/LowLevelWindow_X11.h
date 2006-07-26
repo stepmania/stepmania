@@ -22,6 +22,9 @@ public:
 	void GetDisplayResolutions( DisplayResolutions &out ) const;
 	float GetMonitorAspectRatio() const;
 
+	bool SupportsRenderToTexture() const;
+	RenderTarget *CreateRenderTarget( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut );
+
 	bool SupportsThreadedRendering();
 	void BeginConcurrentRenderingMainThread();
 	void EndConcurrentRenderingMainThread();
