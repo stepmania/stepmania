@@ -1,3 +1,5 @@
+/* RageTextureRenderTarget - RageTexture interface for creating render targets. */
+
 #ifndef RAGE_TEXTURE_RENDER_TARGET_H
 #define RAGE_TEXTURE_RENDER_TARGET_H
 
