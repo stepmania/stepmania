@@ -73,8 +73,11 @@ void InputHandler_MonkeyKeyboard::Update()
 
 	if( fSecsAgo > 0.5 )
 	{
-		// End the previous key
-		ButtonPressed( m_diLast, false );
+		if( m_diLast.IsValid() )
+		{
+			// End the previous key
+			ButtonPressed( m_diLast, false );
+		}
 
 		// Choose a new key and send it.
 		m_diLast = DeviceInput( DEVICE_KEYBOARD, GetRandomKeyboardKey() );
