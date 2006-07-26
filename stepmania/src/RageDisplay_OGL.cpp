@@ -1197,9 +1197,6 @@ void RageDisplay_OGL::DrawQuadStripInternal( const RageSpriteVertex v[], int iNu
 void RageDisplay_OGL::DrawFanInternal( const RageSpriteVertex v[], int iNumVerts )
 {
 	TurnOffHardwareVBO();
-
-	glMatrixMode( GL_PROJECTION );
-
 	SendCurrentMatrices();
 
 	SetupVertices( v, iNumVerts );
