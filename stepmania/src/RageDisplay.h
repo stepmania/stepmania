@@ -122,6 +122,23 @@ public:
 	RString sIconFile;
 };
 
+struct RenderTargetParam
+{
+	RenderTargetParam():
+		iWidth(0),
+		iHeight(0),
+		bWithDepthBuffer(false),
+		bWithAlpha(false)
+	{
+	}
+
+	/* The dimensions of the actual render target, analogous to a window size: */
+	int iWidth, iHeight;
+
+	bool bWithDepthBuffer;
+	bool bWithAlpha;
+};
+
 class RageDisplay
 {
 	friend class RageTexture;
@@ -193,6 +210,25 @@ public:
 	virtual int GetMaxTextureSize() const = 0;
 	virtual void SetTextureFiltering( bool b ) = 0;
 
+	bool SupportsRenderToTexture() const { return false; }
+	
+	/*
+	 * Create a render target, returning a texture handle.  In addition to normal
+	 * texture functions, this can be passed to SetRenderTarget.  Delete with
+	 * DeleteTexture.  (UpdateTexture is not permitted.)  Returns 0 if render-to-
+	 * texture is unsupported.
+	 */
+	virtual unsigned CreateRenderTarget( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut ) { return 0; }
+
+	/*
+	 * Set the render target, or 0 to resume rendering to the framebuffer.  An active render
+	 * target may not be used as a texture.  If bPreserveTexture is true, the contents
+	 * of the texture will be preserved from the previous call; otherwise, cleared.  If
+	 * bPreserveTexture is true the first time a render target is used, behave as if
+	 * bPreserveTexture was false.
+	 */
+	virtual void SetRenderTarget( unsigned iHandle, bool bPreserveTexture = true ) { }
+			
 	virtual bool IsZTestEnabled() const = 0;
 	virtual bool IsZWriteEnabled() const = 0;
 	virtual void SetZWrite( bool b ) = 0;
