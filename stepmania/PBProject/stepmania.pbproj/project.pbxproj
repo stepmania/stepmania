@@ -540,6 +540,10 @@
 		AA29CE3F0558741A00961A51 /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA0F7D2047ACBC9005F316C /* QuickTime.framework */; };
 		AA29CE400558741A00961A51 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA8DD84904A2E51400D02EE9 /* OpenGL.framework */; };
 		AA29CE420558741A00961A51 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAF33F2A04FF213100F93C24 /* CoreFoundation.framework */; };
+		AA2EA0010A770208003A0C11 /* ScreenSelectLanguage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA2E9FFF0A770208003A0C11 /* ScreenSelectLanguage.cpp */; };
+		AA2EA0020A770208003A0C11 /* ScreenSelectLanguage.h in Headers */ = {isa = PBXBuildFile; fileRef = AA2EA0000A770208003A0C11 /* ScreenSelectLanguage.h */; };
+		AA2EA0030A770208003A0C11 /* ScreenSelectLanguage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA2E9FFF0A770208003A0C11 /* ScreenSelectLanguage.cpp */; };
+		AA2EA0040A770208003A0C11 /* ScreenSelectLanguage.h in Headers */ = {isa = PBXBuildFile; fileRef = AA2EA0000A770208003A0C11 /* ScreenSelectLanguage.h */; };
 		AA2FB639091212B0000FD574 /* LifeMeter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA2FB638091212AF000FD574 /* LifeMeter.cpp */; };
 		AA32F97E096A255500F45B24 /* LowLevelWindow_Cocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = AAEF7D21090DD45900A1CAFC /* LowLevelWindow_Cocoa.h */; };
 		AA32F97F096A255C00F45B24 /* LowLevelWindow_Cocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = AAEF7D22090DD45900A1CAFC /* LowLevelWindow_Cocoa.mm */; };
@@ -1898,6 +1902,8 @@
 		AA28B47B058F2F5D0097C109 /* MemoryCardManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MemoryCardManager.h; path = ../src/MemoryCardManager.h; sourceTree = "<group>"; };
 		AA29CE570558741A00961A51 /* Info-StepMania.plist */ = {isa = PBXFileReference; explicitFileType = text.plist; path = "Info-StepMania.plist"; sourceTree = SOURCE_ROOT; };
 		AA29CE580558741A00961A51 /* StepMania.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StepMania.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA2E9FFF0A770208003A0C11 /* ScreenSelectLanguage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenSelectLanguage.cpp; path = ../src/ScreenSelectLanguage.cpp; sourceTree = "<group>"; };
+		AA2EA0000A770208003A0C11 /* ScreenSelectLanguage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ScreenSelectLanguage.h; path = ../src/ScreenSelectLanguage.h; sourceTree = "<group>"; };
 		AA2FB638091212AF000FD574 /* LifeMeter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = LifeMeter.cpp; path = ../src/LifeMeter.cpp; sourceTree = "<group>"; };
 		AA3A705E06AA144C006F755E /* CommonMetrics.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = CommonMetrics.h; path = ../src/CommonMetrics.h; sourceTree = "<group>"; };
 		AA3A706006AA1645006F755E /* StyleUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = StyleUtil.cpp; path = ../src/StyleUtil.cpp; sourceTree = "<group>"; };
@@ -3026,6 +3032,8 @@
 				AA6E0060047711F3005F316C /* ScreenSelectDifficulty.h */,
 				AA6E0065047711F3005F316C /* ScreenSelectGroup.cpp */,
 				AA6E0066047711F3005F316C /* ScreenSelectGroup.h */,
+				AA2E9FFF0A770208003A0C11 /* ScreenSelectLanguage.cpp */,
+				AA2EA0000A770208003A0C11 /* ScreenSelectLanguage.h */,
 				AA1DC47404A4861700D02EE9 /* ScreenSelectMaster.cpp */,
 				AA1DC47504A4861700D02EE9 /* ScreenSelectMaster.h */,
 				AA6E0067047711F3005F316C /* ScreenSelectMode.cpp */,
@@ -4406,6 +4414,7 @@
 				AAD8F9360A4B97DF000311CF /* ScreenGameplayShared.h in Headers */,
 				AAAA11C60A662F9D00B2BD88 /* ScoreKeeperShared.h in Headers */,
 				AA8122E30A7499F5002E1D1A /* RageDisplay_OGL_Helpers.h in Headers */,
+				AA2EA0020A770208003A0C11 /* ScreenSelectLanguage.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4853,6 +4862,7 @@
 				AAD8F9340A4B97DF000311CF /* ScreenGameplayShared.h in Headers */,
 				AAAA11C80A662F9D00B2BD88 /* ScoreKeeperShared.h in Headers */,
 				AA8122E50A7499F5002E1D1A /* RageDisplay_OGL_Helpers.h in Headers */,
+				AA2EA0040A770208003A0C11 /* ScreenSelectLanguage.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5406,6 +5416,7 @@
 				AAAA11C70A662F9D00B2BD88 /* ScoreKeeperShared.cpp in Sources */,
 				AAE2D6D40A67481E00071546 /* ScoreKeeper.cpp in Sources */,
 				AA8122E20A7499F5002E1D1A /* RageDisplay_OGL_Helpers.cpp in Sources */,
+				AA2EA0010A770208003A0C11 /* ScreenSelectLanguage.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5812,6 +5823,7 @@
 				AAAA11C90A662F9D00B2BD88 /* ScoreKeeperShared.cpp in Sources */,
 				AAE2D6D50A67481E00071546 /* ScoreKeeper.cpp in Sources */,
 				AA8122E40A7499F5002E1D1A /* RageDisplay_OGL_Helpers.cpp in Sources */,
+				AA2EA0030A770208003A0C11 /* ScreenSelectLanguage.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
