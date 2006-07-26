@@ -27,20 +27,6 @@
 #  include <alloca.h>
 #endif
 
-#ifndef png_jmpbuf
-#define png_jmpbuf(png) ((png)->jmpbuf)
-#endif
-
-/*
- * I prefer static over anonymous namespaces for functions; it's clearer and seems
- * to have no language drawbacks over anonymous namespaces, which are only really
- * needed when declaring things more complicated than functions.
- *
- * There's an implementation advantage, though: functions declared in anonymous
- * namespaces are still exported by gcc -rdynamic, which means the crash handler can
- * still resolve them.  static functions aren't, so we end up getting a wrong match.
- */
-
 namespace
 {
 void RageFile_png_read( png_struct *png, png_byte *p, png_size_t size )
@@ -76,7 +62,7 @@ void PNG_Error( png_struct *png, const char *error )
 	strncpy( info->err, error, 1024 );
 	info->err[1023] = 0;
 	LOG->Trace( "loading \"%s\": err: %s", info->fn, info->err );
-	longjmp( png_jmpbuf(png), 1 );
+	longjmp( png->jmpbuf, 1 );
 }
 
 void PNG_Warning( png_struct *png, const char *warning )
@@ -122,7 +108,7 @@ static RageSurface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 
 	RageSurface *volatile img = NULL;
 	CHECKPOINT;
-	if( setjmp(png_jmpbuf(png)) )
+	if( setjmp(png->jmpbuf) )
 	{
 		png_destroy_read_struct( &png, &info_ptr, NULL );
 		delete img;
