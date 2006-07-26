@@ -599,7 +599,7 @@ RString RageDisplay_OGL::TryVideoMode( const VideoModeParams &p, bool &bNewDevic
 
 		/* Delete all render targets.  They may have associated resources other than
 		 * the texture itself. */
-		FOREACHMM( unsigned, RenderTarget *, g_mapRenderTargets, rt )
+		FOREACHM( unsigned, RenderTarget *, g_mapRenderTargets, rt )
 			delete rt->second;
 		g_mapRenderTargets.clear();
 
