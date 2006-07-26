@@ -3245,6 +3245,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RageTextureRenderTarget.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\RageTextureRenderTarget.h"
+				>
+			</File>
+			<File
 				RelativePath="RageThreads.cpp"
 				>
 			</File>
