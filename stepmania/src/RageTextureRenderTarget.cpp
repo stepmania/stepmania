@@ -55,8 +55,7 @@ void RageTextureRenderTarget::BeginRenderingTo( bool bPreserveTexture )
 	DISPLAY->ChangeCentering( 0, 0, 0, 0 );
 
 	// Reset the perspective to fit the new target.
-	int iWidth = m_Param.iWidth, iHeight = m_Param.iHeight;
-	DISPLAY->LoadMenuPerspective( 0, m_iImageWidth, m_iImageHeight, m_iImageWidth/2, m_iImageHeight/2 ); // 0 FOV = ortho
+	DISPLAY->LoadMenuPerspective( 0, (float) m_iImageWidth, (float) m_iImageHeight, (float) m_iImageWidth/2, (float) m_iImageHeight/2 ); // 0 FOV = ortho
 }
 
 void RageTextureRenderTarget::FinishRenderingTo()
