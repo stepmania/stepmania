@@ -14,38 +14,38 @@ InputHandler_MonkeyKeyboard::~InputHandler_MonkeyKeyboard()
 
 void InputHandler_MonkeyKeyboard::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut )
 {
-	vDevicesOut.push_back( InputDeviceInfo(DEVICE_KEYBOARD,"MonkeyKeyboard") );
+	vDevicesOut.push_back( InputDeviceInfo(DEVICE_KEYBOARD, "MonkeyKeyboard") );
 }
 
 static const DeviceButton g_keys[] =
 {
 	// Some of the default keys for the dance game type
-	KEY_LEFT,				// DANCE_BUTTON_LEFT,
-	KEY_RIGHT,				// DANCE_BUTTON_RIGHT,
-	KEY_UP,				// DANCE_BUTTON_UP,
-	KEY_DOWN,				// DANCE_BUTTON_DOWN,
-	KEY_ENTER,			// DANCE_BUTTON_START,
-	KEY_ENTER,			// DANCE_BUTTON_START,
-	KEY_ENTER,			// DANCE_BUTTON_START,
-	KEY_DEL,			// DANCE_BUTTON_MENULEFT
-	KEY_PGDN,			// DANCE_BUTTON_MENURIGHT
-	KEY_HOME,				// DANCE_BUTTON_MENUUP
-	KEY_END,				// DANCE_BUTTON_MENUDOWN
-	KEY_F1,				// DANCE_BUTTON_COIN
-	KEY_F1,				// DANCE_BUTTON_COIN
-	KEY_KP_C4,				// DANCE_BUTTON_LEFT,
-	KEY_KP_C6,				// DANCE_BUTTON_RIGHT,
-	KEY_KP_C8,				// DANCE_BUTTON_UP,
-	KEY_KP_C2,				// DANCE_BUTTON_DOWN,
-	KEY_KP_C7,				// DANCE_BUTTON_UPLEFT,
-	KEY_KP_C9,				// DANCE_BUTTON_UPRIGHT,
-	KEY_KP_ENTER,			// DANCE_BUTTON_START,
-	KEY_KP_ENTER,			// DANCE_BUTTON_START,
-	KEY_KP_ENTER,			// DANCE_BUTTON_START,
-	KEY_KP_SLASH,			// DANCE_BUTTON_MENULEFT
-	KEY_KP_ASTERISK,		// DANCE_BUTTON_MENURIGHT
-	KEY_KP_HYPHEN,			// DANCE_BUTTON_MENUUP
-	KEY_KP_PLUS,			// DANCE_BUTTON_MENUDOWN
+	KEY_LEFT,		// DANCE_BUTTON_LEFT,
+	KEY_RIGHT,		// DANCE_BUTTON_RIGHT,
+	KEY_UP,			// DANCE_BUTTON_UP,
+	KEY_DOWN,		// DANCE_BUTTON_DOWN,
+	KEY_ENTER,		// DANCE_BUTTON_START,
+	KEY_ENTER,		// DANCE_BUTTON_START,
+	KEY_ENTER,		// DANCE_BUTTON_START,
+	KEY_DEL,		// DANCE_BUTTON_MENULEFT
+	KEY_PGDN,		// DANCE_BUTTON_MENURIGHT
+	KEY_HOME,		// DANCE_BUTTON_MENUUP
+	KEY_END,		// DANCE_BUTTON_MENUDOWN
+	KEY_F1,			// DANCE_BUTTON_COIN
+	KEY_F1,			// DANCE_BUTTON_COIN
+	KEY_KP_C4,		// DANCE_BUTTON_LEFT,
+	KEY_KP_C6,		// DANCE_BUTTON_RIGHT,
+	KEY_KP_C8,		// DANCE_BUTTON_UP,
+	KEY_KP_C2,		// DANCE_BUTTON_DOWN,
+	KEY_KP_C7,		// DANCE_BUTTON_UPLEFT,
+	KEY_KP_C9,		// DANCE_BUTTON_UPRIGHT,
+	KEY_KP_ENTER,		// DANCE_BUTTON_START,
+	KEY_KP_ENTER,		// DANCE_BUTTON_START,
+	KEY_KP_ENTER,		// DANCE_BUTTON_START,
+	KEY_KP_SLASH,		// DANCE_BUTTON_MENULEFT
+	KEY_KP_ASTERISK,	// DANCE_BUTTON_MENURIGHT
+	KEY_KP_HYPHEN,		// DANCE_BUTTON_MENUUP
+	KEY_KP_PLUS,		// DANCE_BUTTON_MENUDOWN
 };
 
 static DeviceButton GetRandomKeyboardKey()
@@ -62,7 +62,7 @@ void InputHandler_MonkeyKeyboard::Update()
 		if( m_diLast.IsValid() )
 		{
 			// End the previous key
-			ButtonPressed(m_diLast, false);
+			ButtonPressed( m_diLast, false );
 			m_diLast.MakeInvalid();
 		}
 		InputHandler::UpdateTimer();
@@ -74,11 +74,11 @@ void InputHandler_MonkeyKeyboard::Update()
 	if( fSecsAgo > 0.5 )
 	{
 		// End the previous key
-		ButtonPressed(m_diLast, false);
+		ButtonPressed( m_diLast, false );
 
 		// Choose a new key and send it.
-		m_diLast = DeviceInput(DEVICE_KEYBOARD,GetRandomKeyboardKey());
-		ButtonPressed(m_diLast, true);
+		m_diLast = DeviceInput( DEVICE_KEYBOARD, GetRandomKeyboardKey() );
+		ButtonPressed( m_diLast, true );
 
 		m_timerPressButton.Touch();
 	}
