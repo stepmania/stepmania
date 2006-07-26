@@ -3181,6 +3181,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RageSurface_Save_PNG.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\RageSurface_Save_PNG.h"
+				>
+			</File>
+			<File
 				RelativePath="RageSurfaceUtils.cpp"
 				>
 			</File>
