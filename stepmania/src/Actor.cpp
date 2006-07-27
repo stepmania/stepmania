@@ -1175,6 +1175,8 @@ void Actor::SetBlendModeString( const RString &s )
 {
 	if     (s.EqualsNoCase("normal"))	this->SetBlendMode( BLEND_NORMAL );
 	else if(s.EqualsNoCase("add"))		this->SetBlendMode( BLEND_ADD );
+	else if(s.EqualsNoCase("weightedmultiply")) this->SetBlendMode( BLEND_WEIGHTED_MULTIPLY );
+	else if(s.EqualsNoCase("invertdest")) this->SetBlendMode( BLEND_INVERT_DEST );
 	else if(s.EqualsNoCase("noeffect"))	this->SetBlendMode( BLEND_NO_EFFECT );
 	else	ASSERT(0);
 }

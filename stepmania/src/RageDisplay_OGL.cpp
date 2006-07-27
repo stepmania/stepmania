@@ -1416,6 +1416,14 @@ void RageDisplay_OGL::SetBlendMode( BlendMode mode )
 {
 	glEnable(GL_BLEND);
 
+	if( GLExt.glBlendEquation != NULL )
+	{
+		if( mode == BLEND_INVERT_DEST )
+			GLExt.glBlendEquation( GL_FUNC_SUBTRACT );
+		else
+			GLExt.glBlendEquation( GL_FUNC_ADD );
+	}
+
 	switch( mode )
 	{
 	case BLEND_NORMAL:
@@ -1423,6 +1431,16 @@ void RageDisplay_OGL::SetBlendMode( BlendMode mode )
 		break;
 	case BLEND_ADD:
 		glBlendFunc( GL_SRC_ALPHA, GL_ONE );
+		break;
+	case BLEND_WEIGHTED_MULTIPLY:
+		/* output = 2*(dst*src).  0.5,0.5,0.5 is identity; darker colors darken the image,
+		 * and brighter colors lighten the image. */
+		glBlendFunc( GL_DST_COLOR, GL_SRC_COLOR );
+
+		break;
+	case BLEND_INVERT_DEST:
+		/* out = src - dst.  The source color should almost always be #FFFFFF, to make it "1 - dst". */
+		glBlendFunc( GL_ONE, GL_ONE );
 		break;
 	case BLEND_NO_EFFECT:
 		/* XXX: Would it be faster and have the same effect to say glDisable(GL_COLOR_WRITEMASK)? */
