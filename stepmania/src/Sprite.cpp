@@ -114,8 +114,6 @@ void Sprite::Load( RageTextureID ID )
 
 void Sprite::LoadFromNode( const RString& sDir, const XNode* pNode )
 {
-retry:
-
 	RString sTextureFile;
 	RString sPath;
 	if( pNode->GetAttrValue( "Texture", sTextureFile ) )
