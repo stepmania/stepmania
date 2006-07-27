@@ -14,7 +14,6 @@
 #include "Foreach.h"
 #include "LuaBinding.h"
 #include "LuaManager.h"
-#include "RageUtil_AutoPtr.h"
 
 REGISTER_ACTOR_CLASS( Sprite )
 
