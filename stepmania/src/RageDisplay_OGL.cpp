@@ -1974,6 +1974,8 @@ void RenderTarget_FramebufferObject::Create( const RenderTargetParam &param, int
 	default:
 		ASSERT(0);
 	}
+
+	GLExt.glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, 0 );
 }
 
 void RenderTarget_FramebufferObject::StartRenderingTo()
