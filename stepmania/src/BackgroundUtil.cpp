@@ -238,7 +238,8 @@ static void GetFilterToFileNames( const RString sBaseDir, const Song *pSong, set
 void BackgroundUtil::GetGlobalBGAnimations( const Song *pSong, const RString &sMatch, vector<RString> &vsPathsOut, vector<RString> &vsNamesOut )
 {
 	vsPathsOut.clear();
-	GetDirListing( BG_ANIMS_DIR+sMatch+"*", vsPathsOut, false, true );
+	GetDirListing( BG_ANIMS_DIR+sMatch+"*", vsPathsOut, true, true );
+	GetDirListing( BG_ANIMS_DIR+sMatch+"*.xml", vsPathsOut, false, true );
 
 	vsNamesOut.clear();
 	FOREACH_CONST( RString, vsPathsOut, s )
