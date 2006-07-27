@@ -3401,6 +3401,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ActorFrameTexture.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ActorFrameTexture.h"
+				>
+			</File>
+			<File
 				RelativePath="ActorScroller.cpp"
 				>
 			</File>
