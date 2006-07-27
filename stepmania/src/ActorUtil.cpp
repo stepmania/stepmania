@@ -44,7 +44,6 @@ Actor* ActorUtil::Create( const RString& sClassName, const RString& sDir, const 
 	return (*pfn)( sDir, pNode );
 }
 
-/* Return false to retry. */
 void ActorUtil::ResolvePath( RString &sPath, const RString &sName )
 {
 	const RString sOriginalPath( sPath );
