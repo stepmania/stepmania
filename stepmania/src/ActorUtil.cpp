@@ -85,6 +85,7 @@ retry:
 		if( asPaths.size() > 1 )
 		{
 			RString sError = ssprintf( "A file in '%s' references a file '%s' which has multiple matches.", sName.c_str(), sPath.c_str() );
+			sError += "\n" + join( "\n", asPaths );
 			switch( Dialog::AbortRetryIgnore( sError, "BROKEN_FILE_REFERENCE" ) )
 			{
 			case Dialog::abort:
