@@ -147,45 +147,7 @@ retry:
 
 	if( !sPath.empty() )
 	{
-		vector<RString> asElementPaths;
-		GetDirListing( sPath + "*", asElementPaths, false, true );
-		if( asElementPaths.size() == 0 )
-		{
-			RString sMessage = ssprintf( "A xml Sprite in '%s' points to a texture '%s' which doesn't exist.", sDir.c_str(), sPath.c_str() );
-			switch( Dialog::AbortRetryIgnore(sMessage) )
-			{
-			case Dialog::abort:	
-				RageException::Throw( "Error reading value 'Texture' from %s.", m_sSpritePath.c_str() );
-			case Dialog::retry:	
-				goto retry;
-			case Dialog::ignore:
-				return;
-			default:
-				ASSERT(0);
-			}
-		}
-		if( asElementPaths.size() > 1 )
-		{
-			RString message = ssprintf( 
-				"There is more than one file that matches "
-				"'%s'.  Please remove all but one of these matches.",
-				sPath.c_str() );
-#ifdef DEBUG
-			message += "\n" + join( "\n", asElementPaths );
-#endif
-			switch( Dialog::AbortRetryIgnore(message) )
-			{
-			case Dialog::abort:
-				RageException::Throw( message );
-			case Dialog::retry:
-				goto retry;
-			case Dialog::ignore:
-				return;
-			default:
-				ASSERT(0);
-			}
-		}
-		sPath = asElementPaths[0];
+		ActorUtil::ResolvePath( sPath, sDir );
 
 		// Load the texture
 		LoadFromTexture( sPath );
