@@ -18,8 +18,8 @@
 
 UnlockManager*	UNLOCKMAN = NULL;	// global and accessable from anywhere in our program
 
-#define UNLOCK_NAMES		THEME->GetMetric ("Unlocks","UnlockNames")
-#define UNLOCK(sLineName)	THEME->GetMetric ("Unlocks",ssprintf("Unlock%s",sLineName.c_str()))
+#define UNLOCK_NAMES		THEME->GetMetric ("UnlockManager","UnlockNames")
+#define UNLOCK(sLineName)	THEME->GetMetric ("UnlockManager",ssprintf("Unlock%s",sLineName.c_str()))
 
 ThemeMetric<bool> AUTO_LOCK_CHALLENGE_STEPS( "UnlockManager", "AutoLockChallengeSteps" );
 
