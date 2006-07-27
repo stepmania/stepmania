@@ -124,8 +124,6 @@ retry:
 
 		bool bIsAbsolutePath = sTextureFile.Left(1) == "/";
 		sPath = bIsAbsolutePath ? sTextureFile : sDir+sTextureFile;
-
-		CollapsePath( sPath );
 	}
 
 	if( !sPath.empty() )
