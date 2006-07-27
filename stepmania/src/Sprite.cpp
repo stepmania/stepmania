@@ -44,7 +44,6 @@ Sprite::Sprite( const Sprite &cpy ):
 	Actor( cpy )
 {
 #define CPY(a) a = cpy.a
-	CPY( m_sSpritePath );
 	CPY( m_bDrawIfTextureNull );
 	CPY( m_States );
 	CPY( m_iCurState );
@@ -130,8 +129,8 @@ retry:
 	}
 	if( sPath == sDir )
 	{
-		RString sMessage = ssprintf( "'%s' has a texture '%s' that collapses to './'.",
-					     m_sSpritePath.c_str(), sTextureFile.c_str() );
+		RString sMessage = ssprintf( "A file in '%s' has a texture '%s' that collapses to './'.",
+					     sDir.c_str(), sTextureFile.c_str() );
 		switch( Dialog::AbortRetryIgnore(sMessage) )
 		{
 		case Dialog::abort:
@@ -167,7 +166,7 @@ retry:
 				break;
 			if( newState.iFrameIndex >= m_pTexture->GetNumFrames() )
 				RageException::Throw( "In '%s', %s is %d, but the texture %s only has %d frames.",
-					m_sSpritePath.c_str(), sFrameKey.c_str(), newState.iFrameIndex, sPath.c_str(), m_pTexture->GetNumFrames() );
+					sDir.c_str(), sFrameKey.c_str(), newState.iFrameIndex, sPath.c_str(), m_pTexture->GetNumFrames() );
 
 			if( !pNode->GetAttrValue(sDelayKey, newState.fDelay) )
 				break;

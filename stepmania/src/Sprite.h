@@ -77,7 +77,6 @@ protected:
 
 	void DrawTexture( const TweenState *state );
 
-	RString	m_sSpritePath;
 	RageTexture* m_pTexture;
 	bool	m_bDrawIfTextureNull;
 
