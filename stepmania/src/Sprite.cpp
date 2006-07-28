@@ -432,9 +432,9 @@ void Sprite::DrawTexture( const TweenState *state )
 		else
 		{
 			v[0].t = RageVector2( f[0], f[1] );	// top left
-			v[1].t = RageVector2( f[2],	f[3] );	// bottom left
-			v[2].t = RageVector2( f[4],	f[5] );	// bottom right
-			v[3].t = RageVector2( f[6],	f[7] );	// top right
+			v[1].t = RageVector2( f[2], f[3] );	// bottom left
+			v[2].t = RageVector2( f[4], f[5] );	// bottom right
+			v[3].t = RageVector2( f[6], f[7] );	// top right
 		}
 	}
 	else
@@ -498,7 +498,6 @@ RageColor scale( float x, float l1, float h1, const RageColor &a, const RageColo
 bool Sprite::EarlyAbortDraw() const
 {
 	return m_pTexture == NULL && !m_bDrawIfTextureNull;
-//	return false;
 }
 
 void Sprite::DrawPrimitives()
@@ -881,8 +880,8 @@ void Sprite::StretchTexCoords( float fX, float fY )
 	SetCustomTextureCoords( fTexCoords );
 }
 
-void Sprite::SetPosition( float f )			{ GetTexture()->SetPosition( f ); }
-void Sprite::SetLooping( bool b )			{ GetTexture()->SetLooping( b ); }
+void Sprite::SetPosition( float f )		{ GetTexture()->SetPosition( f ); }
+void Sprite::SetLooping( bool b )		{ GetTexture()->SetLooping( b ); }
 void Sprite::SetPlaybackRate( float f )		{ GetTexture()->SetPlaybackRate( f ); }
 
 
@@ -919,16 +918,16 @@ public:
 	static int texcoordvelocity( T* p, lua_State *L )	{ p->SetTexCoordVelocity( FArg(1),FArg(2) ); return 0; }
 	static int scaletoclipped( T* p, lua_State *L )		{ p->ScaleToClipped( FArg(1),FArg(2) ); return 0; }
 	static int stretchtexcoords( T* p, lua_State *L )	{ p->StretchTexCoords( FArg(1),FArg(2) ); return 0; }
-	static int setstate( T* p, lua_State *L )			{ p->SetState( IArg(1) ); return 0; }
+	static int setstate( T* p, lua_State *L )		{ p->SetState( IArg(1) ); return 0; }
 	static int GetAnimationLengthSeconds( T* p, lua_State *L ) { lua_pushnumber( L, p->GetAnimationLengthSeconds() ); return 1; }
 
 	/* Texture commands; these could be moved to RageTexture* (even though that's
 	 * not an Actor) if these are needed for other things that use textures.
 	 * We'd need to break the command helpers into a separate function; RageTexture
 	 * shouldn't depend on Actor. */
-	static int position( T* p, lua_State *L )			{ p->SetPosition( FArg(1) ); return 0; }
-	static int loop( T* p, lua_State *L )				{ p->SetLooping( !!IArg(1) ); return 0; }
-	static int rate( T* p, lua_State *L )				{ p->SetPlaybackRate( FArg(1) ); return 0; }
+	static int position( T* p, lua_State *L )		{ p->SetPosition( FArg(1) ); return 0; }
+	static int loop( T* p, lua_State *L )			{ p->SetLooping( !!IArg(1) ); return 0; }
+	static int rate( T* p, lua_State *L )			{ p->SetPlaybackRate( FArg(1) ); return 0; }
 
 	static void Register(lua_State *L) {
 		ADD_METHOD( Load );
