@@ -32,7 +32,7 @@ static RageTimer g_LastFrameEndedAt( RageZeroTimer );
 
 struct Centering
 {
-	Centering( int iTranslateX, int iTranslateY, int iAddWidth, int iAddHeight ):
+	Centering( int iTranslateX = 0, int iTranslateY = 0, int iAddWidth = 0, int iAddHeight = 0 ):
 		m_iTranslateX( iTranslateX ),
 		m_iTranslateY( iTranslateY ),
 		m_iAddWidth( iAddWidth ),
@@ -42,7 +42,14 @@ struct Centering
 	int m_iTranslateX, m_iTranslateY, m_iAddWidth, m_iAddHeight;
 };
 
-static Centering g_Centering( 0, 0, 0, 0 );
+template<typename T>
+class vector_default: public vector<T>
+{
+public:
+	vector_default( const T &def ) { this->push_back( def ); }
+};
+
+static vector_default<Centering> g_CenteringStack( Centering(0, 0, 0, 0) );
 
 RageDisplay*		DISPLAY	= NULL;
 
@@ -384,7 +391,7 @@ public:
 };
 
 
-static MatrixStack g_CenteringStack;
+static RageMatrix g_CenteringMatrix;
 static MatrixStack g_ProjectionStack;
 static MatrixStack g_ViewStack;
 static MatrixStack g_WorldStack;
@@ -392,7 +399,7 @@ static MatrixStack g_TextureStack;
 
 const RageMatrix* RageDisplay::GetCentering() const
 {
-	return g_CenteringStack.GetTop();
+	return &g_CenteringMatrix;
 }
 
 const RageMatrix* RageDisplay::GetProjectionTop() const
@@ -638,17 +645,20 @@ void RageDisplay::ResolutionChanged()
 
 void RageDisplay::CenteringPushMatrix()
 {
-	g_CenteringStack.Push();
+	g_CenteringStack.push_back( g_CenteringStack.back() );
+	ASSERT( g_CenteringStack.size() < 100 );	// overflow
 }
 
 void RageDisplay::CenteringPopMatrix()
 {
-	g_CenteringStack.Pop();
+	g_CenteringStack.pop_back();
+	ASSERT( g_CenteringStack.size() > 0 );	// underflow
+	UpdateCentering();
 }
 
 void RageDisplay::ChangeCentering( int iTranslateX, int iTranslateY, int iAddWidth, int iAddHeight )
 {
-	g_Centering = Centering( iTranslateX, iTranslateY, iAddWidth, iAddHeight );
+	g_CenteringStack.back() = Centering( Centering( iTranslateX, iTranslateY, iAddWidth, iAddHeight ) );
 
 	UpdateCentering();
 }
@@ -682,8 +692,9 @@ RageMatrix RageDisplay::GetCenteringMatrix( float fTranslateX, float fTranslateY
 
 void RageDisplay::UpdateCentering()
 {
-	g_CenteringStack.SetTop( GetCenteringMatrix( 
-		(float) g_Centering.m_iTranslateX, (float) g_Centering.m_iTranslateY, (float) g_Centering.m_iAddWidth, (float) g_Centering.m_iAddHeight ) );
+	const Centering &p = g_CenteringStack.back();
+	g_CenteringMatrix = GetCenteringMatrix( 
+		(float) p.m_iTranslateX, (float) p.m_iTranslateY, (float) p.m_iAddWidth, (float) p.m_iAddHeight );
 }
 
 bool RageDisplay::SaveScreenshot( RString sPath, GraphicsFileFormat format )
