@@ -30,7 +30,19 @@ static int			g_iFramesRenderedSinceLastCheck,
 					g_iNumChecksSinceLastReset;
 static RageTimer g_LastFrameEndedAt( RageZeroTimer );
 
-static int g_iTranslateX = 0, g_iTranslateY = 0, g_iAddWidth = 0, g_iAddHeight = 0;
+struct Centering
+{
+	Centering( int iTranslateX, int iTranslateY, int iAddWidth, int iAddHeight ):
+		m_iTranslateX( iTranslateX ),
+		m_iTranslateY( iTranslateY ),
+		m_iAddWidth( iAddWidth ),
+		m_iAddHeight( iAddHeight )
+	{ }
+
+	int m_iTranslateX, m_iTranslateY, m_iAddWidth, m_iAddHeight;
+};
+
+static Centering g_Centering( 0, 0, 0, 0 );
 
 RageDisplay*		DISPLAY	= NULL;
 
@@ -636,10 +648,7 @@ void RageDisplay::CenteringPopMatrix()
 
 void RageDisplay::ChangeCentering( int iTranslateX, int iTranslateY, int iAddWidth, int iAddHeight )
 {
-	g_iTranslateX = iTranslateX;
-	g_iTranslateY = iTranslateY;
-	g_iAddWidth = iAddWidth;
-	g_iAddHeight = iAddHeight;
+	g_Centering = Centering( iTranslateX, iTranslateY, iAddWidth, iAddHeight );
 
 	UpdateCentering();
 }
@@ -673,7 +682,8 @@ RageMatrix RageDisplay::GetCenteringMatrix( float fTranslateX, float fTranslateY
 
 void RageDisplay::UpdateCentering()
 {
-	g_CenteringStack.SetTop( GetCenteringMatrix( (float) g_iTranslateX, (float) g_iTranslateY, (float) g_iAddWidth, (float) g_iAddHeight ) );
+	g_CenteringStack.SetTop( GetCenteringMatrix( 
+		(float) g_Centering.m_iTranslateX, (float) g_Centering.m_iTranslateY, (float) g_Centering.m_iAddWidth, (float) g_Centering.m_iAddHeight ) );
 }
 
 bool RageDisplay::SaveScreenshot( RString sPath, GraphicsFileFormat format )
