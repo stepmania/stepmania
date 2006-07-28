@@ -83,8 +83,9 @@ public:
 		ADD_METHOD( position );
 		ADD_METHOD( loop );
 		ADD_METHOD( rate );
-	}
 
+		Luna<T>::Register( L );
+	}
 };
 
 LUA_REGISTER_CLASS( RageTexture )
