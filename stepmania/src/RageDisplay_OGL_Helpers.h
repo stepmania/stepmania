@@ -33,7 +33,7 @@ namespace RageDisplay_OGL_Helpers
 	RString GLToString( GLenum e );
 };
 
-class RenderTargetParam;
+struct RenderTargetParam;
 class RenderTarget
 {
 public:
