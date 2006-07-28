@@ -334,10 +334,10 @@ void Sprite::Update( float fDelta )
 
 void TexCoordArrayFromRect( float fImageCoords[8], const RectF &rect )
 {
-	fImageCoords[0] = rect.left;	fImageCoords[1] = rect.top;		// top left
+	fImageCoords[0] = rect.left;	fImageCoords[1] = rect.top;	// top left
 	fImageCoords[2] = rect.left;	fImageCoords[3] = rect.bottom;	// bottom left
 	fImageCoords[4] = rect.right;	fImageCoords[5] = rect.bottom;	// bottom right
-	fImageCoords[6] = rect.right;	fImageCoords[7] = rect.top;		// top right
+	fImageCoords[6] = rect.right;	fImageCoords[7] = rect.top;	// top right
 }
 
 void Sprite::DrawTexture( const TweenState *state )
@@ -354,17 +354,17 @@ void Sprite::DrawTexture( const TweenState *state )
 
 	switch( m_HorizAlign )
 	{
-	case align_left:	quadVerticies.left = 0;				quadVerticies.right = m_size.x;		break;
+	case align_left:	quadVerticies.left = 0;			quadVerticies.right = m_size.x;		break;
 	case align_center:	quadVerticies.left = -m_size.x/2;	quadVerticies.right = m_size.x/2;	break;
-	case align_right:	quadVerticies.left = -m_size.x;		quadVerticies.right = 0;			break;
+	case align_right:	quadVerticies.left = -m_size.x;		quadVerticies.right = 0;		break;
 	default:		ASSERT( false );
 	}
 
 	switch( m_VertAlign )
 	{
-	case align_top:		quadVerticies.top = 0;				quadVerticies.bottom = m_size.y;	break;
+	case align_top:		quadVerticies.top = 0;			quadVerticies.bottom = m_size.y;	break;
 	case align_middle:	quadVerticies.top = -m_size.y/2;	quadVerticies.bottom = m_size.y/2;	break;
-	case align_bottom:	quadVerticies.top = -m_size.y;		quadVerticies.bottom = 0;			break;
+	case align_bottom:	quadVerticies.top = -m_size.y;		quadVerticies.bottom = 0;		break;
 	default:		ASSERT(0);
 	}
 
@@ -390,10 +390,10 @@ void Sprite::DrawTexture( const TweenState *state )
 	IF_CROP_POS( bottom, top ); 
 
 	static RageSpriteVertex v[4];
-	v[0].p = RageVector3( croppedQuadVerticies.left,	croppedQuadVerticies.top,		0 );	// top left
+	v[0].p = RageVector3( croppedQuadVerticies.left,	croppedQuadVerticies.top,	0 );	// top left
 	v[1].p = RageVector3( croppedQuadVerticies.left,	croppedQuadVerticies.bottom,	0 );	// bottom left
 	v[2].p = RageVector3( croppedQuadVerticies.right,	croppedQuadVerticies.bottom,	0 );	// bottom right
-	v[3].p = RageVector3( croppedQuadVerticies.right,	croppedQuadVerticies.top,		0 );	// top right
+	v[3].p = RageVector3( croppedQuadVerticies.right,	croppedQuadVerticies.top,	0 );	// top right
 
 	DISPLAY->ClearAllTextures();
 	DISPLAY->SetTexture( TextureUnit_1, m_pTexture? m_pTexture->GetTexHandle():0 );
