@@ -171,8 +171,12 @@ RString NotesWriterSM::GetSMNotesTag( const Song &song, const Steps &in, bool bS
 	lines.push_back( ssprintf( "     %d:", in.GetMeter() ) );
 	
 	vector<RString> asRadarValues;
-	for( int r=0; r < NUM_RadarCategory; r++ )
-		asRadarValues.push_back( ssprintf("%.3f", in.GetRadarValues()[r]) );
+	FOREACH_PlayerNumber( pn )
+	{
+		const RadarValues &rv = in.GetRadarValues( pn );
+		FOREACH_RadarCategory( rc )
+			asRadarValues.push_back( ssprintf("%.3f", rv[rc]) );
+	}
 	/* Don't append a newline here; it's added in NoteDataUtil::GetSMNoteDataString.
 	 * If we add it here, then every time we write unmodified data we'll add an extra
 	 * newline and they'll accumulate. */

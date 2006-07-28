@@ -22,7 +22,7 @@ public:
 
 	void SetFromSteps( PlayerNumber pn, Steps* pSteps )	// NULL means no Song
 	{
-		m_GrooveRadarValueMap[pn].SetFromSteps( pSteps );
+		m_GrooveRadarValueMap[pn].SetFromSteps( pn, pSteps );
 	}
 
 	void TweenOnScreen();
@@ -39,7 +39,7 @@ protected:
 		virtual void Update( float fDeltaTime );
 		virtual void DrawPrimitives();
 
-		void SetFromSteps( const Steps* pSteps );	// NULL means no Song
+		void SetFromSteps( PlayerNumber pn, const Steps* pSteps );	// NULL means no Song
 
 		void SetRadius( float f ) { m_size.x = f; m_size.y = f; }
 

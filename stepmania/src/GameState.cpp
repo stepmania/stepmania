@@ -1129,17 +1129,9 @@ bool GameState::IsDisqualified( PlayerNumber pn )
 	// Check the stored player options for disqualify.  Don't disqualify because
 	// of mods that were forced.
 	if( GAMESTATE->IsCourseMode() )
-	{
-		return po.IsEasierForCourseAndTrail( 
-			GAMESTATE->m_pCurCourse, 
-			GAMESTATE->m_pCurTrail[pn] );
-	}
+		return po.IsEasierForCourseAndTrail(  GAMESTATE->m_pCurCourse, GAMESTATE->m_pCurTrail[pn] );
 	else
-	{
-		return po.IsEasierForSongAndSteps( 
-			GAMESTATE->m_pCurSong, 
-			GAMESTATE->m_pCurSteps[pn] );
-	}
+		return po.IsEasierForSongAndSteps(  GAMESTATE->m_pCurSong, GAMESTATE->m_pCurSteps[pn], pn);
 }
 
 void GameState::GetAllUsedNoteSkins( vector<RString> &out ) const

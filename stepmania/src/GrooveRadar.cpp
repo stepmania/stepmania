@@ -92,7 +92,7 @@ GrooveRadar::GrooveRadarValueMap::GrooveRadarValueMap()
 	}
 }
 
-void GrooveRadar::GrooveRadarValueMap::SetFromSteps( const Steps* pSteps )		// NULL means no song
+void GrooveRadar::GrooveRadarValueMap::SetFromSteps( PlayerNumber pn, const Steps* pSteps )	// NULL means no song
 {
 	if( pSteps != NULL )
 	{
@@ -100,7 +100,7 @@ void GrooveRadar::GrooveRadarValueMap::SetFromSteps( const Steps* pSteps )		// N
 		{
 			const float fValueCurrent = m_fValuesOld[c] * (1-m_PercentTowardNew) + m_fValuesNew[c] * m_PercentTowardNew;
 			m_fValuesOld[c] = fValueCurrent;
-			m_fValuesNew[c] = pSteps->GetRadarValues()[c];
+			m_fValuesNew[c] = pSteps->GetRadarValues( pn )[c];
 		}	
 
 		if( !m_bValuesVisible )	// the values WERE invisible

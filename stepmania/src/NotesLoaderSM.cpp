@@ -49,12 +49,13 @@ void SMLoader::LoadFromSMTokens(
 	out.SetMeter( atoi(sMeter) );
 	vector<RString> saValues;
 	split( sRadarValues, ",", saValues, true );
-	if( saValues.size() == NUM_RadarCategory )
+	if( saValues.size() == NUM_RadarCategory * NUM_PLAYERS )
 	{
-		RadarValues v;
-		FOREACH_RadarCategory( rc )
-			v[rc] = StringToFloat( saValues[rc] );
-		out.SetCachedRadarValues( v ); 
+		RadarValues v[NUM_PLAYERS];
+		FOREACH_PlayerNumber( pn )
+			FOREACH_RadarCategory( rc )
+				v[pn][rc] = StringToFloat( saValues[pn*NUM_RadarCategory + rc] );
+		out.SetCachedRadarValues( v );
 	}
     
 	out.SetSMNoteData( sNoteData );

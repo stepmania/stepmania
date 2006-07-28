@@ -657,7 +657,7 @@ void SongUtil::SortSongPointerArrayByMeter( vector<Song*> &vpSongsInOut, Difficu
 		s += ssprintf( "%c", (pSteps? pSteps->GetDifficulty():0) + '0' );
 
 		if( PREFSMAN->m_bSubSortByNumSteps )
-			s += ssprintf("%06.0f",pSteps ? pSteps->GetRadarValues()[RadarCategory_TapsAndHolds] : 0);
+			s += ssprintf("%06.0f",pSteps ? pSteps->GetRadarValues(PLAYER_1)[RadarCategory_TapsAndHolds] : 0);
 	}
 	stable_sort( vpSongsInOut.begin(), vpSongsInOut.end(), CompareSongPointersBySortValueAscending );
 }

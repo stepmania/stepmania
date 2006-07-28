@@ -87,7 +87,7 @@ RadarValues Trail::GetRadarValues() const
 			}
 			else
 			{
-				rv += pSteps->GetRadarValues();			
+				rv += pSteps->GetRadarValues( PLAYER_1 );			
 			}
 		}
 

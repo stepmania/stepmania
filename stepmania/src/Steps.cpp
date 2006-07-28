@@ -24,6 +24,8 @@
 #include "NoteDataUtil.h"
 #include "NotesLoaderSM.h"
 
+#include <algorithm>
+
 Steps::Steps()
 {
 	m_bSavedToDisk = false;
@@ -109,8 +111,9 @@ float Steps::PredictMeter() const
 		10.1f, 5.27f,-0.905f, -1.10f, 2.86f,
 		0,0,0,0,0,0
 	};
+	const RadarValues &rv = GetRadarValues( PLAYER_1 );
 	for( int r = 0; r < NUM_RadarCategory; ++r )
-		pMeter += this->GetRadarValues()[r] * RadarCoeffs[r];
+		pMeter += rv[r] * RadarCoeffs[r];
 	
 	const float DifficultyCoeffs[NUM_Difficulty] =
 	{
@@ -119,8 +122,8 @@ float Steps::PredictMeter() const
 	pMeter += DifficultyCoeffs[this->GetDifficulty()];
 	
 	// Init non-radar values
-	const float SV = this->GetRadarValues()[RadarCategory_Stream] * this->GetRadarValues()[RadarCategory_Voltage];
-	const float ChaosSquare = this->GetRadarValues()[RadarCategory_Chaos] * this->GetRadarValues()[RadarCategory_Chaos];
+	const float SV = rv[RadarCategory_Stream] * rv[RadarCategory_Voltage];
+	const float ChaosSquare = rv[RadarCategory_Chaos] * rv[RadarCategory_Chaos];
 	pMeter += -6.35f * SV;
 	pMeter += -2.58f * ChaosSquare;
 	if (pMeter < 1) pMeter = 1;	
@@ -146,12 +149,10 @@ void Steps::TidyUpData()
 
 void Steps::CalculateRadarValues( float fMusicLengthSeconds )
 {
-	m_CachedRadarValues = RadarValues();
-	
 	// If we're autogen, don't calculate values.  GetRadarValues will take from our parent.
 	if( parent != NULL )
 		return;
-
+	
 	// Do write radar values, and leave it up to the reading app whether they want to trust
 	// the cached values without recalculating them.
 	/*
@@ -162,7 +163,23 @@ void Steps::CalculateRadarValues( float fMusicLengthSeconds )
 
 	NoteData tempNoteData;
 	this->GetNoteData( tempNoteData );
-	NoteDataUtil::CalculateRadarValues( tempNoteData, fMusicLengthSeconds, m_CachedRadarValues );
+	
+	FOREACH_PlayerNumber( pn )
+		m_CachedRadarValues[pn].Zero();
+	
+	if( tempNoteData.IsComposite() )
+	{
+		vector<NoteData> vParts;
+
+		NoteDataUtil::SplitCompositeNoteData( tempNoteData, vParts );
+		for( size_t pn = 0; pn < min(vParts.size(), size_t(NUM_PLAYERS)); ++pn )
+			NoteDataUtil::CalculateRadarValues( vParts[pn], fMusicLengthSeconds, m_CachedRadarValues[pn] );
+	}
+	else
+	{
+		NoteDataUtil::CalculateRadarValues( tempNoteData, fMusicLengthSeconds, m_CachedRadarValues[0] );
+		fill_n( m_CachedRadarValues + 1, NUM_PLAYERS-1, m_CachedRadarValues[0] );
+	}
 }
 
 void Steps::Decompress() const
@@ -170,7 +187,7 @@ void Steps::Decompress() const
 	if( m_bNoteDataIsFilled )
 		return;	// already decompressed
 
-	if(parent)
+	if( parent )
 	{
 		// get autogen m_pNoteData
 		NoteData notedata;
@@ -238,7 +255,7 @@ void Steps::Compress() const
 	/* Always leave lights data uncompressed. */
 	if( this->m_StepsType == STEPS_TYPE_LIGHTS_CABINET && m_bNoteDataIsFilled )
 	{
-		m_sNoteDataCompressed = RString("");
+		m_sNoteDataCompressed = EMPTY_STRING;
 		return;
 	}
 
@@ -257,7 +274,7 @@ void Steps::Compress() const
 
 		/* Be careful; 'x = ""', m_sNoteDataCompressed.clear() and m_sNoteDataCompressed.reserve(0)
 		 * don't always free the allocated memory. */
-		m_sNoteDataCompressed = RString("");
+		m_sNoteDataCompressed = EMPTY_STRING;
 		return;
 	}
 
@@ -277,7 +294,7 @@ void Steps::Compress() const
  * to normal. (needed?) */
 void Steps::DeAutogen()
 {
-	if(!parent)
+	if( !parent )
 		return; /* OK */
 
 	Decompress();	// fills in m_pNoteData with sliding window transform
@@ -285,7 +302,7 @@ void Steps::DeAutogen()
 	m_sDescription		= Real()->m_sDescription;
 	m_Difficulty		= Real()->m_Difficulty;
 	m_iMeter		= Real()->m_iMeter;
-	m_CachedRadarValues	= Real()->m_CachedRadarValues;
+	copy( Real()->m_CachedRadarValues, Real()->m_CachedRadarValues + NUM_PLAYERS, m_CachedRadarValues );
 
 	parent = NULL;
 
@@ -357,10 +374,10 @@ void Steps::SetMeter(int meter)
 	m_iMeter = meter;
 }
 
-void Steps::SetCachedRadarValues( const RadarValues& v )
+void Steps::SetCachedRadarValues( const RadarValues v[NUM_PLAYERS] )
 {
 	DeAutogen();
-	m_CachedRadarValues = v;
+	copy( v, v + NUM_PLAYERS, m_CachedRadarValues );
 }
 
 

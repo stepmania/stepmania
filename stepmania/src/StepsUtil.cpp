@@ -118,8 +118,8 @@ bool StepsUtil::CompareNotesPointersByRadarValues(const Steps* pSteps1, const St
 	float fScore1 = 0;
 	float fScore2 = 0;
 	
-	fScore1 += pSteps1->GetRadarValues()[RadarCategory_TapsAndHolds];
-	fScore2 += pSteps2->GetRadarValues()[RadarCategory_TapsAndHolds];
+	fScore1 += pSteps1->GetRadarValues( PLAYER_1 )[RadarCategory_TapsAndHolds];
+	fScore2 += pSteps2->GetRadarValues( PLAYER_1 )[RadarCategory_TapsAndHolds];
 
 	return fScore1 < fScore2;
 }

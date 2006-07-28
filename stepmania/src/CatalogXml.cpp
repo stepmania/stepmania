@@ -206,7 +206,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 					pSongNode->AppendChild( pStepsIDNode );
 					
 					pStepsIDNode->AppendChild( "Meter", pSteps->GetMeter() );
-					pStepsIDNode->AppendChild( pSteps->GetRadarValues().CreateNode() );
+					pStepsIDNode->AppendChild( pSteps->GetRadarValues(PLAYER_1).CreateNode() );
 				}
 			}
 		}

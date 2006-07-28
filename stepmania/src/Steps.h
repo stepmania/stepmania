@@ -39,7 +39,7 @@ public:
 	RString GetDescription() const { return Real()->m_sDescription; }
 	Difficulty GetDifficulty() const { return Real()->m_Difficulty; }
 	int GetMeter() const { return Real()->m_iMeter; }
-	const RadarValues& GetRadarValues() const { return Real()->m_CachedRadarValues; }
+	const RadarValues& GetRadarValues( PlayerNumber pn ) const { return Real()->m_CachedRadarValues[pn]; }
 
 	void SetFilename( RString fn ) { m_sFilename = fn; }
 	RString GetFilename() const { return m_sFilename; }
@@ -52,7 +52,7 @@ public:
 
 	void SetLoadedFromProfile( ProfileSlot slot ) { m_LoadedFromProfile = slot; }
 	void SetMeter(int meter);
-	void SetCachedRadarValues( const RadarValues& v );
+	void SetCachedRadarValues( const RadarValues v[NUM_PLAYERS] );
 	bool IsAutogen() const;	// Was created by autogen?
 	float PredictMeter() const;
 	
@@ -92,7 +92,7 @@ protected:
 	RString		m_sDescription;		// Step author, edit name, or something meaningful
 	Difficulty	m_Difficulty;		// difficulty classification
 	int		m_iMeter;		// difficulty rating from MIN_METER to MAX_METER
-	RadarValues	m_CachedRadarValues;
+	RadarValues	m_CachedRadarValues[NUM_PLAYERS];
 };
 
 #endif

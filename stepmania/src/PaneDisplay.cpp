@@ -145,7 +145,7 @@ void PaneDisplay::SetContent( PaneContents c )
 		RadarValues rv;
 
 		if( g_Contents[c].req&NEED_NOTES )
-			rv = pSteps->GetRadarValues();
+			rv = pSteps->GetRadarValues( m_PlayerNumber );
 		else if( g_Contents[c].req&NEED_COURSE )
 			rv = pTrail->GetRadarValues();
 
