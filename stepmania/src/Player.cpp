@@ -1062,7 +1062,7 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld )
 		// compute the score for this hit
 		float fNoteOffset = 0.0f;
 		
-		if( row != -1 )
+		if( row == -1 )
 		{
 			const float fStepBeat = NoteRowToBeat( iIndexOverlappingNote );
 			const float fStepSeconds = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat(fStepBeat);
@@ -1100,7 +1100,11 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld )
 			case TapNote::mine:
 				// stepped too close to mine?
 				if( fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_Mine) )
+				{
+					// XXX: Debugging.
+					LOG->Trace( "XXX: hit the mine by %s it.", (row == -1 ? "stepping on" : "holding") );
 					score = TNS_HitMine;
+				}
 				break;
 
 			case TapNote::attack:
