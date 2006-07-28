@@ -37,6 +37,7 @@ class RenderTarget
 {
 public:
 	virtual ~RenderTarget() { }
+	virtual void Create( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut ) = 0;
 
 	virtual unsigned GetTexture() const = 0;
 
