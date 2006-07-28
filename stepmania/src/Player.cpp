@@ -1486,7 +1486,7 @@ void Player::CrossedMineRow( int iNoteRow, const RageTimer &now )
 			{
 				float fSecsHeld = INPUTMAPPER->GetSecsHeld( StyleI, m_pPlayerState->m_mp );
 				if( fSecsHeld >= PREFSMAN->m_fPadStickSeconds )
-					Step( t, iNoteRow, now+(-PREFSMAN->m_fPadStickSeconds), true );
+					Step( t, -1, now+(-PREFSMAN->m_fPadStickSeconds), true );
 			}
 			else
 			{
