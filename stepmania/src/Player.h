@@ -124,7 +124,6 @@ public:
 	bool HasNoteField() const { return m_pNoteField != NULL; }
 
 protected:
-	void HandleStep( int col, const RageTimer &tm, bool bHeld );
 	void UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
 	void UpdateJudgedRows();
 	void FlashGhostRow( int iRow, PlayerNumber pn );

@@ -930,16 +930,7 @@ void Player::Step( int col, const RageTimer &tm, bool bHeld )
 		m_pPlayerStageStats->bFailed;
 	if( bOniDead )
 		return;	// do nothing
-
-	HandleStep( col, tm, bHeld );
-
-	MESSAGEMAN->Broadcast( m_sMessageToSendOnStep );	
-}
-
-void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
-{
-	//LOG->Trace( "Player::HandlePlayerStep()" );
-
+	
 	DEBUG_ASSERT_M( col >= 0  &&  col <= m_NoteData.GetNumTracks(), ssprintf("%i, %i", col, m_NoteData.GetNumTracks()) );
 
 
@@ -1265,6 +1256,8 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 				m_vKeysounds[tn.iKeysoundIndex].Play();
 		}
 	}
+	
+	MESSAGEMAN->Broadcast( m_sMessageToSendOnStep );
 }
 
 static bool Unjudged( const TapNote &tn )
