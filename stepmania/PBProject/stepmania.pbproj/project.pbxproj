@@ -1416,6 +1416,14 @@
 		AA5C74000637A5F100AFB891 /* SongUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = AA5C73FA0637A5F000AFB891 /* SongUtil.h */; };
 		AA5C74010637A5F100AFB891 /* StepsUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA5C73FB0637A5F000AFB891 /* StepsUtil.cpp */; };
 		AA5C74020637A5F100AFB891 /* StepsUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = AA5C73FC0637A5F000AFB891 /* StepsUtil.h */; };
+		AA5D16570A79805C00F17E86 /* RageTextureRenderTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA5D16550A79805C00F17E86 /* RageTextureRenderTarget.cpp */; };
+		AA5D16580A79805C00F17E86 /* RageTextureRenderTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = AA5D16560A79805C00F17E86 /* RageTextureRenderTarget.h */; };
+		AA5D16590A79805C00F17E86 /* RageTextureRenderTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA5D16550A79805C00F17E86 /* RageTextureRenderTarget.cpp */; };
+		AA5D165A0A79805C00F17E86 /* RageTextureRenderTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = AA5D16560A79805C00F17E86 /* RageTextureRenderTarget.h */; };
+		AA5D166C0A798C0E00F17E86 /* ActorFrameTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA5D166A0A798C0E00F17E86 /* ActorFrameTexture.cpp */; };
+		AA5D166D0A798C0E00F17E86 /* ActorFrameTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = AA5D166B0A798C0E00F17E86 /* ActorFrameTexture.h */; };
+		AA5D166E0A798C0E00F17E86 /* ActorFrameTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA5D166A0A798C0E00F17E86 /* ActorFrameTexture.cpp */; };
+		AA5D166F0A798C0E00F17E86 /* ActorFrameTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = AA5D166B0A798C0E00F17E86 /* ActorFrameTexture.h */; };
 		AA60E0C1067992D7008ADC41 /* Threads.h in Headers */ = {isa = PBXBuildFile; fileRef = AA60E0BC067992D7008ADC41 /* Threads.h */; };
 		AA60E0C2067992D7008ADC41 /* Threads_Pthreads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA60E0BD067992D7008ADC41 /* Threads_Pthreads.cpp */; };
 		AA60E0C3067992D7008ADC41 /* Threads_Pthreads.h in Headers */ = {isa = PBXBuildFile; fileRef = AA60E0BE067992D7008ADC41 /* Threads_Pthreads.h */; };
@@ -1949,6 +1957,10 @@
 		AA5C73FA0637A5F000AFB891 /* SongUtil.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = SongUtil.h; path = ../src/SongUtil.h; sourceTree = "<group>"; };
 		AA5C73FB0637A5F000AFB891 /* StepsUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = StepsUtil.cpp; path = ../src/StepsUtil.cpp; sourceTree = "<group>"; };
 		AA5C73FC0637A5F000AFB891 /* StepsUtil.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = StepsUtil.h; path = ../src/StepsUtil.h; sourceTree = "<group>"; };
+		AA5D16550A79805C00F17E86 /* RageTextureRenderTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RageTextureRenderTarget.cpp; path = ../src/RageTextureRenderTarget.cpp; sourceTree = "<group>"; };
+		AA5D16560A79805C00F17E86 /* RageTextureRenderTarget.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = RageTextureRenderTarget.h; path = ../src/RageTextureRenderTarget.h; sourceTree = "<group>"; };
+		AA5D166A0A798C0E00F17E86 /* ActorFrameTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ActorFrameTexture.cpp; path = ../src/ActorFrameTexture.cpp; sourceTree = "<group>"; };
+		AA5D166B0A798C0E00F17E86 /* ActorFrameTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActorFrameTexture.h; path = ../src/ActorFrameTexture.h; sourceTree = "<group>"; };
 		AA60E0BC067992D7008ADC41 /* Threads.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = Threads.h; sourceTree = "<group>"; };
 		AA60E0BD067992D7008ADC41 /* Threads_Pthreads.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = Threads_Pthreads.cpp; sourceTree = "<group>"; };
 		AA60E0BE067992D7008ADC41 /* Threads_Pthreads.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = Threads_Pthreads.h; sourceTree = "<group>"; };
@@ -3373,6 +3385,8 @@
 				AA9EC2F1055F5126007E5098 /* RageTextureID.h */,
 				AA91ACAF0878BB2C00FB2F8F /* RageTexturePreloader.cpp */,
 				AA91ACB00878BB2C00FB2F8F /* RageTexturePreloader.h */,
+				AA5D16550A79805C00F17E86 /* RageTextureRenderTarget.cpp */,
+				AA5D16560A79805C00F17E86 /* RageTextureRenderTarget.h */,
 				AA6EFD8D04770A7C005F316C /* RageThreads.cpp */,
 				AA6EFD8E04770A7C005F316C /* RageThreads.h */,
 				AA6EFD8F04770A7C005F316C /* RageTimer.cpp */,
@@ -3765,6 +3779,8 @@
 				AACA592507B5E1E500763545 /* ActorCommands.h */,
 				AA6EFF7704770FFD005F316C /* ActorFrame.cpp */,
 				AA6EFF7804770FFD005F316C /* ActorFrame.h */,
+				AA5D166A0A798C0E00F17E86 /* ActorFrameTexture.cpp */,
+				AA5D166B0A798C0E00F17E86 /* ActorFrameTexture.h */,
 				AA6EFF7904770FFD005F316C /* ActorScroller.cpp */,
 				AA6EFF7A04770FFD005F316C /* ActorScroller.h */,
 				AACFBE2608E7D793005087FC /* ActorSound.cpp */,
@@ -4415,6 +4431,8 @@
 				AAAA11C60A662F9D00B2BD88 /* ScoreKeeperShared.h in Headers */,
 				AA8122E30A7499F5002E1D1A /* RageDisplay_OGL_Helpers.h in Headers */,
 				AA2EA0020A770208003A0C11 /* ScreenSelectLanguage.h in Headers */,
+				AA5D16580A79805C00F17E86 /* RageTextureRenderTarget.h in Headers */,
+				AA5D166D0A798C0E00F17E86 /* ActorFrameTexture.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4863,6 +4881,8 @@
 				AAAA11C80A662F9D00B2BD88 /* ScoreKeeperShared.h in Headers */,
 				AA8122E50A7499F5002E1D1A /* RageDisplay_OGL_Helpers.h in Headers */,
 				AA2EA0040A770208003A0C11 /* ScreenSelectLanguage.h in Headers */,
+				AA5D165A0A79805C00F17E86 /* RageTextureRenderTarget.h in Headers */,
+				AA5D166F0A798C0E00F17E86 /* ActorFrameTexture.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5417,6 +5437,8 @@
 				AAE2D6D40A67481E00071546 /* ScoreKeeper.cpp in Sources */,
 				AA8122E20A7499F5002E1D1A /* RageDisplay_OGL_Helpers.cpp in Sources */,
 				AA2EA0010A770208003A0C11 /* ScreenSelectLanguage.cpp in Sources */,
+				AA5D16570A79805C00F17E86 /* RageTextureRenderTarget.cpp in Sources */,
+				AA5D166C0A798C0E00F17E86 /* ActorFrameTexture.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5824,6 +5846,8 @@
 				AAE2D6D50A67481E00071546 /* ScoreKeeper.cpp in Sources */,
 				AA8122E40A7499F5002E1D1A /* RageDisplay_OGL_Helpers.cpp in Sources */,
 				AA2EA0030A770208003A0C11 /* ScreenSelectLanguage.cpp in Sources */,
+				AA5D16590A79805C00F17E86 /* RageTextureRenderTarget.cpp in Sources */,
+				AA5D166E0A798C0E00F17E86 /* ActorFrameTexture.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
