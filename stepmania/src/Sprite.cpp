@@ -114,14 +114,13 @@ void Sprite::Load( RageTextureID ID )
 
 void Sprite::LoadFromNode( const RString& sDir, const XNode* pNode )
 {
-	RString sTextureFile;
 	RString sPath;
-	if( pNode->GetAttrValue( "Texture", sTextureFile ) )
+	if( pNode->GetAttrValue( "Texture", sPath ) )
 	{
-		LuaHelpers::RunAtExpressionS( sTextureFile );
+		LuaHelpers::RunAtExpressionS( sPath );
 
-		bool bIsAbsolutePath = sTextureFile.Left(1) == "/";
-		sPath = bIsAbsolutePath ? sTextureFile : sDir+sTextureFile;
+		bool bIsAbsolutePath = sPath.Left(1) == "/";
+		sPath = bIsAbsolutePath ?  : sDir+sPath;
 	}
 
 	if( !sPath.empty() )
