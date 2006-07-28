@@ -930,14 +930,6 @@ public:
 		return 1;
 	}
 
-	/* Texture commands; these could be moved to RageTexture* (even though that's
-	 * not an Actor) if these are needed for other things that use textures.
-	 * We'd need to break the command helpers into a separate function; RageTexture
-	 * shouldn't depend on Actor. */
-	static int position( T* p, lua_State *L )		{ p->SetPosition( FArg(1) ); return 0; }
-	static int loop( T* p, lua_State *L )			{ p->SetLooping( !!IArg(1) ); return 0; }
-	static int rate( T* p, lua_State *L )			{ p->SetPlaybackRate( FArg(1) ); return 0; }
-
 	static void Register(lua_State *L) {
 		ADD_METHOD( Load );
 		ADD_METHOD( LoadBanner );
@@ -949,9 +941,6 @@ public:
 		ADD_METHOD( setstate );
 		ADD_METHOD( GetAnimationLengthSeconds );
 		ADD_METHOD( GetTexture );
-		ADD_METHOD( position );
-		ADD_METHOD( loop );
-		ADD_METHOD( rate );
 
 		Luna<T>::Register( L );
 	}
