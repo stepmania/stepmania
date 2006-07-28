@@ -114,7 +114,7 @@ void Sprite::LoadFromNode( const RString& sDir, const XNode* pNode )
 		LuaHelpers::RunAtExpressionS( sPath );
 
 		bool bIsAbsolutePath = sPath.Left(1) == "/";
-		sPath = bIsAbsolutePath ?  : sDir+sPath;
+		sPath = bIsAbsolutePath ? sPath : sDir+sPath;
 	}
 
 	if( !sPath.empty() )
