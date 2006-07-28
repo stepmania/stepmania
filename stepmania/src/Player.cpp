@@ -571,7 +571,7 @@ void Player::Update( float fDeltaTime )
 			if( tn.HoldResult.fLife >= 0.5f )
 				continue;
 
-			Step( iTrack, now, false );
+			Step( iTrack, iSongRow, now, false );
 			if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
 				STATSMAN->m_CurStageStats.bUsedAutoplay = true;
 		}
@@ -922,30 +922,25 @@ int Player::GetClosestNote( int col, int iNoteRow, int iMaxRowsAhead, int iMaxRo
 		return iNextIndex;
 }
 
-void Player::Step( int col, const RageTimer &tm, bool bHeld )
+void Player::Step( int col, int row, const RageTimer &tm, bool bHeld )
 {
-	bool bOniDead = 
-		GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY  &&  
-		m_pPlayerStageStats  && 
-		m_pPlayerStageStats->bFailed;
-	if( bOniDead )
-		return;	// do nothing
+	// If we're playing on oni and we've died, do nothing.
+	if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY && m_pPlayerStageStats  && m_pPlayerStageStats->bFailed )
+		return;
 	
 	DEBUG_ASSERT_M( col >= 0  &&  col <= m_NoteData.GetNumTracks(), ssprintf("%i, %i", col, m_NoteData.GetNumTracks()) );
 
 
-	float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
-	fPositionSeconds -= tm.Ago();
+	const float fPositionSeconds = GAMESTATE->m_fMusicSeconds - tm.Ago();
 	const float fSongBeat = GAMESTATE->m_pCurSong ? GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds ) : GAMESTATE->m_fSongBeat;
-
-
+	const int iSongRow = row == -1 ? BeatToNoteRow( fSongBeat ) : row;
+	
 
 	{
 		// Update roll life
 		// Let's not check the whole array every time.
 		// Instead, only check 1 beat back.  Even 1 is overkill.
 		// Just update the life here and let Update judge the roll.
-		const int iSongRow = BeatToNoteRow( fSongBeat );
 		const int iStartCheckingAt = max( 0, iSongRow-BeatToNoteRow(1) );
 		NoteData::iterator begin, end;
 		m_NoteData.GetTapNoteRangeInclusive( col, iStartCheckingAt, iSongRow+1, begin, end );
@@ -954,7 +949,7 @@ void Player::Step( int col, const RageTimer &tm, bool bHeld )
 			TapNote &tn = begin->second;
 			if( tn.type != TapNote::hold_head )
 				continue;
-			int iRow = begin->first;
+			const int iRow = begin->first;
 
 			HoldNoteScore hns = tn.HoldResult.hns;
 			if( hns != HNS_None )	// if this HoldNote already has a result
@@ -963,8 +958,7 @@ void Player::Step( int col, const RageTimer &tm, bool bHeld )
 			// if they got a bad score or haven't stepped on the corresponding tap yet
 			const TapNoteScore tns = tn.result.tns;
 			const bool bSteppedOnTapNote = tns != TNS_None  &&  tns != TNS_Miss;	// did they step on the start of this roll?
-
-			int iEndRow = iRow + tn.iDuration;
+			const int iEndRow = iRow + tn.iDuration;
 
 			if( bSteppedOnTapNote && tn.HoldResult.fLife != 0 )
 			{
@@ -1010,7 +1004,7 @@ void Player::Step( int col, const RageTimer &tm, bool bHeld )
 	{
 		// TODO: remove use of PlayerNumber
 		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-		Profile* pProfile = PROFILEMAN->GetProfile(pn);
+		Profile *pProfile = PROFILEMAN->GetProfile( pn );
 		if( pProfile )
 		{
 			int iNumTracksHeld = 0;
@@ -1018,7 +1012,7 @@ void Player::Step( int col, const RageTimer &tm, bool bHeld )
 			{
 				const StyleInput StyleI( pn, t );
 				const GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( StyleI );
-				float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI );
+				const float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI );
 				if( fSecsHeld > 0  && fSecsHeld < JUMP_WINDOW_SECONDS )
 					iNumTracksHeld++;
 			}
@@ -1049,8 +1043,16 @@ void Player::Step( int col, const RageTimer &tm, bool bHeld )
 	//
 	// Check for step on a TapNote
 	//
+	/* XXX: This seems wrong. If a player steps twice quickly and two notes are close together in the same column then
+	 * it is possible for the two notes to be graded out of order. Two possible fixes:
+	 * 1. Adjust the fSongBeat (or the resulting note row) backward by iStepSearchRows and search forward two iStepSearchRows
+	 * lengths, disallowing graded. This doesn't seem right because if a second note has passed, an earlier one should not
+	 * be graded.
+	 * 2. Clamp the distance searched backward to the previous row graded.
+	 * Either option would fundamentally change the grading of two quick notes "jack hammers." Hmm.
+	 */
 	const int iStepSearchRows = BeatToNoteRow( StepSearchDistance * GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate );
-	int iIndexOverlappingNote = GetClosestNote( col, BeatToNoteRow(fSongBeat), iStepSearchRows, iStepSearchRows, false );
+	int iIndexOverlappingNote = row == -1 ? GetClosestNote( col, BeatToNoteRow(fSongBeat), iStepSearchRows, iStepSearchRows, false ) : row;
 	
 	// calculate TapNoteScore
 	TapNoteScore score = TNS_None;
@@ -1058,7 +1060,9 @@ void Player::Step( int col, const RageTimer &tm, bool bHeld )
 	if( iIndexOverlappingNote != -1 )
 	{
 		// compute the score for this hit
-		float fNoteOffset;
+		float fNoteOffset = 0.0f;
+		
+		if( row != -1 )
 		{
 			const float fStepBeat = NoteRowToBeat( iIndexOverlappingNote );
 			const float fStepSeconds = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat(fStepBeat);
@@ -1082,8 +1086,10 @@ void Player::Step( int col, const RageTimer &tm, bool bHeld )
 
 		const float fSecondsFromExact = fabsf( fNoteOffset );
 
-
-		TapNote &tn = m_NoteData.FindTapNote( col, iIndexOverlappingNote )->second;
+		NoteData::iterator iter = m_NoteData.FindTapNote( col, iIndexOverlappingNote );
+		
+		DEBUG_ASSERT( iter!= m_NoteData.end(col) );
+		TapNote &tn = iter->second;
 
 		switch( m_pPlayerState->m_PlayerController )
 		{
@@ -1116,6 +1122,8 @@ void Player::Step( int col, const RageTimer &tm, bool bHeld )
 		case PC_AUTOPLAY:
 			score = PlayerAI::GetTapNoteScore( m_pPlayerState );
 
+			/* XXX: This doesn't make sense. Step should only be called in autoplay for hit notes */
+#if 0
 			// GetTapNoteScore always returns TNS_W1 in autoplay.
 			// If the step is far away, don't judge it.
 			if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY &&
@@ -1124,6 +1132,7 @@ void Player::Step( int col, const RageTimer &tm, bool bHeld )
 				score = TNS_None;
 				break;
 			}
+#endif
 
 			// TRICKY:  We're asking the AI to judge mines.  consider TNS_W4 and below
 			// as "mine was hit" and everything else as "mine was avoided"
@@ -1160,7 +1169,7 @@ void Player::Step( int col, const RageTimer &tm, bool bHeld )
 				return;
 
 			// Put some small, random amount in fNoteOffset so that demonstration 
-			// show a mix of late and early instead of always late.
+			// show a mix of late and early.
 			fNoteOffset = randomf( -0.1f, 0.1f );
 
 			break;
@@ -1246,6 +1255,12 @@ void Player::Step( int col, const RageTimer &tm, bool bHeld )
 	{
 		/* Search for keyed sounds separately.  If we can't find a nearby note, search
 		 * backwards indefinitely, and ignore grading. */
+		/* XXX: This isn't quite right. As per the above XXX for iIndexOverlappingNote, if iIndexOverlappingNote
+		 * is set to a previous note, the keysound could have changed and this would cause the wrong one to play,
+		 * in essence playing two sounds in the opposite order. Maybe this should always perform the search. Still,
+		 * even that doesn't seem quite right since it would then play the same (new) keysound twice which would
+		 * sound wrong even though the notes were judged as being correct, above. Fixing the above problem would
+		 * fix this one as well. */
 		if( iIndexOverlappingNote == -1 )
 			iIndexOverlappingNote = GetClosestNote( col, BeatToNoteRow(fSongBeat),
 								iStepSearchRows, MAX_NOTE_ROW, true );
@@ -1448,7 +1463,7 @@ void Player::CrossedRow( int iNoteRow, const RageTimer &now )
 			const TapNote &tn = m_NoteData.GetTapNote( t, iNoteRow );
 			if( tn.type != TapNote::empty && tn.result.tns == TNS_None )
 			{
-				Step( t, now );
+				Step( t, iNoteRow, now );
 				if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
 					STATSMAN->m_CurStageStats.bUsedAutoplay = true;
 			}
@@ -1471,13 +1486,13 @@ void Player::CrossedMineRow( int iNoteRow, const RageTimer &now )
 			{
 				float fSecsHeld = INPUTMAPPER->GetSecsHeld( StyleI, m_pPlayerState->m_mp );
 				if( fSecsHeld >= PREFSMAN->m_fPadStickSeconds )
-					Step( t, now+(-PREFSMAN->m_fPadStickSeconds), true );
+					Step( t, iNoteRow, now+(-PREFSMAN->m_fPadStickSeconds), true );
 			}
 			else
 			{
 				bool bIsDown = INPUTMAPPER->IsButtonDown( StyleI, m_pPlayerState->m_mp );
 				if( bIsDown )
-					Step( t, now, true );
+					Step( t, iNoteRow, now, true );
 			}
 		}
 	}

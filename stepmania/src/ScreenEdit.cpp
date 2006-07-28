@@ -2035,7 +2035,7 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 	{
 	case PLAYER_1:	
 		if( PREFSMAN->m_AutoPlay == PC_HUMAN )
-			m_Player->Step( input.StyleI.col, input.DeviceI.ts ); 
+			m_Player->Step( input.StyleI.col, -1, input.DeviceI.ts ); 
 		break;
 	}
 

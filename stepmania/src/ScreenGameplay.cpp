@@ -2168,7 +2168,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 			input.StyleI.IsValid() && 
 			GAMESTATE->IsMultiPlayerEnabled(input.mp) )
 		{
-			m_vPlayerInfo[input.mp].m_pPlayer->Step( input.StyleI.col, input.DeviceI.ts );
+			m_vPlayerInfo[input.mp].m_pPlayer->Step( input.StyleI.col, -1, input.DeviceI.ts );
 		}
 	}
 	else
@@ -2185,7 +2185,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 			if( PREFSMAN->m_AutoPlay == PC_HUMAN )
 			{
 				PlayerInfo& pi = GetPlayerInfoForInput( input );
-				pi.m_pPlayer->Step( input.StyleI.col, input.DeviceI.ts );
+				pi.m_pPlayer->Step( input.StyleI.col, -1, input.DeviceI.ts );
 			}
 		}
 	}
