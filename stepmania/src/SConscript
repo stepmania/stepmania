@@ -645,7 +645,7 @@ Rage = PCRE + RageFile + RageSoundFileReaders + [
 	"RageBitmapTexture.cpp",
 	"RageDisplay.cpp",
 	"RageDisplay_OGL.cpp", # XXX: Should we require GL on Windows?
-	"RageDisplay_OGL_Extensions.cpp",
+	"RageDisplay_OGL_Helpers.cpp",
 	"RageDisplay_Null.cpp",
 	"RageException.cpp",
 	"RageInput.cpp",
