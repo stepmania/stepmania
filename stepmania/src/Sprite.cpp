@@ -880,10 +880,6 @@ void Sprite::StretchTexCoords( float fX, float fY )
 	SetCustomTextureCoords( fTexCoords );
 }
 
-void Sprite::SetPosition( float f )		{ GetTexture()->SetPosition( f ); }
-void Sprite::SetLooping( bool b )		{ GetTexture()->SetLooping( b ); }
-void Sprite::SetPlaybackRate( float f )		{ GetTexture()->SetPlaybackRate( f ); }
-
 
 // lua start
 #include "LuaBinding.h"
