@@ -478,9 +478,7 @@ bool LowLevelWindow_X11::SupportsRenderToTexture() const
 
 RenderTarget *LowLevelWindow_X11::CreateRenderTarget( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut )
 {
-	RenderTarget_X11 *pTarget = new RenderTarget_X11( this );
-	pTarget->Create( param, iTextureWidthOut, iTextureHeightOut );
-	return pTarget;
+	return new RenderTarget_X11( this );
 }
 
 void LowLevelWindow_X11::BeginConcurrentRenderingMainThread()

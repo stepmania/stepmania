@@ -2021,15 +2021,11 @@ unsigned RageDisplay_OGL::CreateRenderTarget( const RenderTargetParam &param, in
 {
 	RenderTarget *pTarget;
 	if( GLExt.m_bGL_EXT_framebuffer_object )
-	{
-		RenderTarget_FramebufferObject *pTargetFBO = new RenderTarget_FramebufferObject;
-		pTargetFBO->Create( param, iTextureWidthOut, iTextureHeightOut );
-		pTarget = pTargetFBO;
-	}
+		pTarget = new RenderTarget_FramebufferObject;
 	else
-	{
 		pTarget = g_pWind->CreateRenderTarget( param, iTextureWidthOut, iTextureHeightOut );
-	}
+
+	pTarget->Create( param, iTextureWidthOut, iTextureHeightOut );
 
 	unsigned iTexture = pTarget->GetTexture();
 
