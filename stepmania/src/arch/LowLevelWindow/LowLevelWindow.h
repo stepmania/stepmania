@@ -33,7 +33,7 @@ public:
 	virtual const VideoModeParams &GetActualVideoModeParams() const = 0;
 
 	virtual bool SupportsRenderToTexture() const { return false; }
-	virtual RenderTarget *CreateRenderTarget( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut ) { return NULL; }
+	virtual RenderTarget *CreateRenderTarget() { return NULL; }
 
 	virtual bool SupportsThreadedRendering() { return false; }
 	virtual void BeginConcurrentRenderingMainThread() { }

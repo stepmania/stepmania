@@ -23,7 +23,7 @@ public:
 	float GetMonitorAspectRatio() const;
 
 	bool SupportsRenderToTexture() const;
-	RenderTarget *CreateRenderTarget( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut );
+	RenderTarget *CreateRenderTarget();
 
 	bool SupportsThreadedRendering();
 	void BeginConcurrentRenderingMainThread();

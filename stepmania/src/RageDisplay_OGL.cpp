@@ -2023,7 +2023,7 @@ unsigned RageDisplay_OGL::CreateRenderTarget( const RenderTargetParam &param, in
 	if( GLExt.m_bGL_EXT_framebuffer_object )
 		pTarget = new RenderTarget_FramebufferObject;
 	else
-		pTarget = g_pWind->CreateRenderTarget( param, iTextureWidthOut, iTextureHeightOut );
+		pTarget = g_pWind->CreateRenderTarget();
 
 	pTarget->Create( param, iTextureWidthOut, iTextureHeightOut );
 
