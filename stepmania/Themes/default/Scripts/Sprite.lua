@@ -16,7 +16,17 @@ function Sprite:LoadFromSongBackground(song)
 	self:LoadBackground( Path )
 end
 
+function Sprite:position( f )
+	self:GetTexture():position( f );
+end
 
+function Sprite:loop( f )
+	self:GetTexture():loop( f );
+end
+
+function Sprite:rate( f )
+	self:GetTexture():rate( f );
+end
 
 -- (c) 2005 Glenn Maynard
 -- All rights reserved.
