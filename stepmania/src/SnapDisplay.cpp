@@ -4,7 +4,7 @@
 #include "ThemeManager.h"
 #include "Style.h"
 #include "ScreenDimensions.h"
-
+#include "EnumHelper.h"
 
 SnapDisplay::SnapDisplay()
 {
@@ -32,7 +32,7 @@ bool SnapDisplay::PrevSnapMode()
 {
 	if( m_NoteType == 0 )
 		return false;
-	m_NoteType = NoteType(m_NoteType-1);
+	enum_add( m_NoteType, -1 );
 
 	SnapModeChanged();
 	return true;
@@ -42,7 +42,7 @@ bool SnapDisplay::NextSnapMode()
 {
 	if( m_NoteType == NOTE_TYPE_192ND )	// this is the smallest snap we should allow
 		return false;
-	m_NoteType = NoteType(m_NoteType+1);
+	enum_add( m_NoteType, 1 );
 
 	SnapModeChanged();
 	return true;
