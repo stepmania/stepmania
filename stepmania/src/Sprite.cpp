@@ -125,7 +125,8 @@ void Sprite::LoadFromNode( const RString& sDir, const XNode* pNode )
 
 	if( !sPath.empty() )
 	{
-		ActorUtil::ResolvePath( sPath, sDir );
+		if( !TEXTUREMAN->IsTextureRegistered( RageTextureID(sPath) ) )
+			ActorUtil::ResolvePath( sPath, sDir );
 
 		// Load the texture
 		LoadFromTexture( sPath );
