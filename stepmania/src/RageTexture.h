@@ -6,6 +6,7 @@
 #include "RageTypes.h"
 #include "RageTextureID.h"
 
+struct lua_State;
 class RageTexture
 {
 public:
@@ -58,6 +59,11 @@ public:
 	const RageTextureID &GetID() const { return m_ID; }
 
 	static void GetFrameDimensionsFromFileName( RString sPath, int* puFramesWide, int* puFramesHigh );
+
+	//
+	// Lua
+	//
+	virtual void PushSelf( lua_State *L );
 
 private:
 	/* We might change settings when loading (due to hints, hardware
