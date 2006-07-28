@@ -66,7 +66,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 			sSongBGPath = THEME->GetPathG("Common","fallback background");
 
 		Sprite* pSprite = new Sprite;
-		pSprite->LoadBG( sSongBGPath );
+		pSprite->Load( Sprite::SongBGTexture(sSongBGPath) );
 		pSprite->StretchTo( FullScreenRectF );
 		this->AddChild( pSprite );
 
@@ -162,7 +162,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 			this->AddChild( pSprite );
 			RageTextureID ID(sPath);
 			ID.bStretch = true;
-			pSprite->LoadBG( ID );
+			pSprite->Load( Sprite::SongBGTexture(ID) );
 			pSprite->StretchTo( FullScreenRectF );
 			pSprite->SetCustomTextureRect( RectF(0,0,1,1) );
 
@@ -181,7 +181,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 			m_Type = TYPE_SPRITE;
 			Sprite* pSprite = new Sprite;
 			this->AddChild( pSprite );
-			pSprite->LoadBG( sPath );
+			pSprite->Load( Sprite::SongBGTexture(sPath) );
 			const RectF StretchedFullScreenRectF(
 				FullScreenRectF.left-200,
 				FullScreenRectF.top-200,

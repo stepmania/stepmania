@@ -274,12 +274,12 @@ Actor *MakeVisualization( const RString &sVisPath )
 		(pSong && pSong->HasBackground()) ? pSong->GetBackgroundPath() : THEME->GetPathG("Common","fallback background");
 
 	Sprite* pSprite = new Sprite;
-	pSprite->LoadBG( sSongBGPath );
+	pSprite->Load( Sprite::SongBGTexture(sSongBGPath) );
 	pSprite->StretchTo( FullScreenRectF );
 	pFrame->AddChild( pSprite );
 
 	pSprite = new Sprite;
-	pSprite->LoadBG( sVisPath );
+	pSprite->Load( Sprite::SongBGTexture(sVisPath) );
 	pSprite->StretchTo( FullScreenRectF );
 	pSprite->SetBlendMode( BLEND_ADD );
 	pFrame->AddChild( pSprite );
