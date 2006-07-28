@@ -1100,11 +1100,7 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld )
 			case TapNote::mine:
 				// stepped too close to mine?
 				if( fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_Mine) )
-				{
-					// XXX: Debugging.
-					LOG->Trace( "XXX: hit the mine by %s it.", (row == -1 ? "stepping on" : "holding") );
 					score = TNS_HitMine;
-				}
 				break;
 
 			case TapNote::attack:
