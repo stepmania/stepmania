@@ -2050,6 +2050,10 @@ void NoteDataUtil::DeleteRows( NoteData &nd, int iStartIndex, int iRowsToDelete 
 
 void NoteDataUtil::RemoveAllTapsOfType( NoteData& ndInOut, TapNote::Type typeToRemove )
 {
+	/* Be very careful when deleting the tap notes. Erasing elements from maps using
+	 * iterators invalidates only the iterator that is being erased. To that end,
+	 * increment the iterator before deleting the elment of the map.
+	 */
 	for( int t=0; t<ndInOut.GetNumTracks(); t++ )
 	{
 		for( NoteData::iterator iter = ndInOut.begin(t); iter != ndInOut.end(t); )
