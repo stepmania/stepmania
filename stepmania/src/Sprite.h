@@ -30,9 +30,6 @@ public:
 	/* Adjust texture properties for song banners. */
 	static RageTextureID SongBannerTexture( RageTextureID ID );
 
-	/* Just a convenience function; load an image that'll be used in the
-	 * background. */
-	virtual void LoadBG( RageTextureID ID );
 	virtual void Load( RageTextureID ID );
 
 	void UnloadTexture();

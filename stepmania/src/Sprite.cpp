@@ -100,12 +100,6 @@ RageTextureID Sprite::SongBannerTexture( RageTextureID ID )
 	return ID;
 }
 
-/* deprecated */
-void Sprite::LoadBG( RageTextureID ID )
-{
-	Load( SongBGTexture(ID) );
-}
-
 void Sprite::Load( RageTextureID ID )
 {
 	if( !ID.filename.empty() ) 
