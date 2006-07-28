@@ -2068,6 +2068,7 @@ void NoteDataUtil::RemoveAllTapsOfType( NoteData& ndInOut, TapNote::Type typeToR
 
 void NoteDataUtil::RemoveAllTapsExceptForType( NoteData& ndInOut, TapNote::Type typeToKeep )
 {
+	/* Same as in RemoveAllTapsOfType(). */
 	for( int t=0; t<ndInOut.GetNumTracks(); t++ )
 	{
 		for( NoteData::iterator iter = ndInOut.begin(t); iter != ndInOut.end(t); )
