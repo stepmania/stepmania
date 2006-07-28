@@ -660,8 +660,10 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 		if( change.m_def.m_sFile1 != RANDOM_BACKGROUND_FILE )
 			continue;
 
-		const float fStartBeat = change.m_fStartBeat;
-		const float fEndBeat = (i+1 < mainlayer.m_aBGChanges.size())? mainlayer.m_aBGChanges[i+1].m_fStartBeat: FLT_MAX;
+		float fStartBeat = change.m_fStartBeat;
+		float fEndBeat = pSong->m_fLastBeat;
+		if( i+1 < mainlayer.m_aBGChanges.size() )
+			fEndBeat = mainlayer.m_aBGChanges[i+1].m_fStartBeat;
 
 		mainlayer.m_aBGChanges.erase( mainlayer.m_aBGChanges.begin()+i );
 		--i;
