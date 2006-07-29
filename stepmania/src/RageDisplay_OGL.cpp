@@ -1443,7 +1443,6 @@ void RageDisplay_OGL::SetBlendMode( BlendMode mode )
 		glBlendFunc( GL_ONE, GL_ONE );
 		break;
 	case BLEND_NO_EFFECT:
-		/* XXX: Would it be faster and have the same effect to say glDisable(GL_COLOR_WRITEMASK)? */
 		glBlendFunc( GL_ZERO, GL_ONE );
 		break;
 	default:
