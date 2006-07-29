@@ -52,6 +52,7 @@ public:
 	void StopUsingCustomCoords();
 	void GetActiveTextureCoords(float fTexCoordsOut[8]) const;
 	void StretchTexCoords( float fX, float fY );
+	void AddImageCoords( float fX, float fY ); // in image pixel space
 
 	void SetTexCoordVelocity(float fVelX, float fVelY);
 	// Scale the Sprite maintaining the aspect ratio so that it fits 

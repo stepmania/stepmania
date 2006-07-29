@@ -880,6 +880,20 @@ void Sprite::StretchTexCoords( float fX, float fY )
 	SetCustomTextureCoords( fTexCoords );
 }
 
+void Sprite::AddImageCoords( float fX, float fY )
+{
+	float fTexCoords[8];
+	GetActiveTextureCoords( fTexCoords );
+
+	for( int j=0; j<8; j+=2 )
+	{
+		fTexCoords[j  ] += fX / (float)m_pTexture->GetTextureWidth();
+		fTexCoords[j+1] += fY / (float)m_pTexture->GetTextureHeight();
+	}
+
+	SetCustomTextureCoords( fTexCoords );
+}
+
 
 // lua start
 #include "LuaBinding.h"
@@ -914,6 +928,7 @@ public:
 	static int texcoordvelocity( T* p, lua_State *L )	{ p->SetTexCoordVelocity( FArg(1),FArg(2) ); return 0; }
 	static int scaletoclipped( T* p, lua_State *L )		{ p->ScaleToClipped( FArg(1),FArg(2) ); return 0; }
 	static int stretchtexcoords( T* p, lua_State *L )	{ p->StretchTexCoords( FArg(1),FArg(2) ); return 0; }
+	static int addimagecoords( T* p, lua_State *L )		{ p->AddImageCoords( FArg(1),FArg(2) ); return 0; }
 	static int setstate( T* p, lua_State *L )		{ p->SetState( IArg(1) ); return 0; }
 	static int GetAnimationLengthSeconds( T* p, lua_State *L ) { lua_pushnumber( L, p->GetAnimationLengthSeconds() ); return 1; }
 	static int GetTexture( T* p, lua_State *L )
@@ -934,6 +949,7 @@ public:
 		ADD_METHOD( texcoordvelocity );
 		ADD_METHOD( scaletoclipped );
 		ADD_METHOD( stretchtexcoords );
+		ADD_METHOD( addimagecoords );
 		ADD_METHOD( setstate );
 		ADD_METHOD( GetAnimationLengthSeconds );
 		ADD_METHOD( GetTexture );
