@@ -1012,11 +1012,6 @@ void Actor::SetEffectPulse( float fPeriod, float fMinZoom, float fMaxZoom )
 }
 
 
-void Actor::SetShadowLength( float fLength )
-{
-	m_fShadowLength = fLength;
-}
-
 void Actor::AddRotationH( float rot )
 {
 	RageQuatMultiply( &DestTweenState().quat, DestTweenState().quat, RageQuatFromH(rot) );

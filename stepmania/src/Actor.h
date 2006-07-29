@@ -298,15 +298,15 @@ public:
 	bool GetHidden() const				{ return !m_bVisible; }
 	void SetVisible( bool b )			{ m_bVisible = b; }
 	void SetHidden( bool b )			{ m_bVisible = !b; }
-	void SetShadowLength( float fLength );
+	void SetShadowLength( float fLength )		{ m_fShadowLength = fLength; }
 	// TODO: Implement hibernate as a tween type?
 	void SetHibernate( float fSecs )		{ m_fHibernateSecondsLeft = fSecs; }
 	void SetDrawOrder( int iOrder )			{ m_iDrawOrder = iOrder; }
 	int GetDrawOrder() const			{ return m_iDrawOrder; }
 
 	virtual void EnableAnimation( bool b ) 		{ m_bIsAnimating = b; }	// Sprite needs to overload this
-	void StartAnimating()				{ this->EnableAnimation(true); };
-	void StopAnimating()				{ this->EnableAnimation(false); };
+	void StartAnimating()				{ this->EnableAnimation(true); }
+	void StopAnimating()				{ this->EnableAnimation(false); }
 
 
 	//
@@ -412,7 +412,8 @@ protected:
 	//
 	Effect m_Effect;
 	RString m_sEffectCommand; // effect_lua
-	float m_fSecsIntoEffect, m_fEffectDelta;
+	float m_fSecsIntoEffect;
+	float m_fEffectDelta;
 	
 	// units depend on m_EffectClock
 	float m_fEffectRampUp;
@@ -435,21 +436,21 @@ protected:
 	// other properties
 	//
 	bool		m_bVisible;
+	bool		m_bIsAnimating;
 	float		m_fHibernateSecondsLeft;
 	float		m_fShadowLength;	// 0 == no shadow
-	bool		m_bIsAnimating;
-	int		m_iDrawOrder;
+	int		m_iDrawOrder;		// lower first
 
 	//
 	// render states
 	//
-	bool		m_bTextureWrapping;
 	BlendMode	m_BlendMode;
-	bool		m_bClearZBuffer;
 	ZTestMode	m_ZTestMode;
+	CullMode	m_CullMode;
+	bool		m_bTextureWrapping;
+	bool		m_bClearZBuffer;
 	bool		m_bZWrite;
 	float		m_fZBias; // 0 = no bias; 1 = full bias
-	CullMode	m_CullMode;
 
 	//
 	// global state
