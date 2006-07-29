@@ -19,6 +19,9 @@
 #undef __glext_h_
 #include "glext.h"
 
+/* Import RageDisplay, for types.  Do not include RageDisplay_OGL.h. */
+#include "RageDisplay.h"
+
 /* Windows defines GL_EXT_paletted_texture incompletely: */
 #ifndef GL_TEXTURE_INDEX_SIZE_EXT
 #define GL_TEXTURE_INDEX_SIZE_EXT         0x80ED
@@ -33,7 +36,6 @@ namespace RageDisplay_OGL_Helpers
 	RString GLToString( GLenum e );
 };
 
-struct RenderTargetParam;
 class RenderTarget
 {
 public:
@@ -50,6 +52,11 @@ public:
 	virtual void FinishRenderingTo() = 0;
 
 	virtual bool InvertY() const { return false; }
+
+	const RenderTargetParam &GetParam() const { return m_Param; }
+
+protected:
+	RenderTargetParam m_Param;
 };
 
 class LowLevelWindow;

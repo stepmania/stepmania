@@ -1909,6 +1909,8 @@ public:
 	void StartRenderingTo();
 	void FinishRenderingTo();
 	
+	virtual bool InvertY() const { return true; }
+
 private:
 	unsigned int m_iFrameBufferHandle;
 	unsigned int m_iTexHandle;
@@ -1934,6 +1936,8 @@ RenderTarget_FramebufferObject::~RenderTarget_FramebufferObject()
 
 void RenderTarget_FramebufferObject::Create( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut )
 {
+	m_Param = param;
+
 	FlushGLErrors();
 	
 	// Allocate OpenGL texture resource
@@ -2041,6 +2045,11 @@ void RageDisplay_OGL::SetRenderTarget( unsigned iTexture, bool bPreserveTexture 
 		g_bInvertY = false;
 		glFrontFace( GL_CCW );
 		
+		/* Reset the viewport. */
+		int fWidth = g_pWind->GetActualVideoModeParams().width;
+		int fHeight = g_pWind->GetActualVideoModeParams().height;
+		glViewport( 0, 0, fWidth, fHeight );
+
 		if( g_pCurrentRenderTarget )
 			g_pCurrentRenderTarget->FinishRenderingTo();
 		g_pCurrentRenderTarget = NULL;
@@ -2056,6 +2065,9 @@ void RageDisplay_OGL::SetRenderTarget( unsigned iTexture, bool bPreserveTexture 
 	RenderTarget *pTarget = g_mapRenderTargets[iTexture];
 	pTarget->StartRenderingTo();
 	g_pCurrentRenderTarget = pTarget;
+
+	/* Set the viewport to the size of the render target. */
+	glViewport( 0, 0, pTarget->GetParam().iWidth, pTarget->GetParam().iHeight );
 
 	/* If this render target implementation flips Y, compensate.   Inverting will
 	 * switch the winding order. */
