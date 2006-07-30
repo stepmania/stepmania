@@ -293,8 +293,6 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 			}
 		}
 	}
-
-	f.Close();
 }
 
 bool Model::LoadMilkshapeAsciiBones( const RString &sAniName, const RString &sPath )
