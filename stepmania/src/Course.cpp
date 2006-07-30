@@ -420,7 +420,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	case DIFFICULTY_CHALLENGE:
 		return false;
 	}
-
+	RageTimer timer;
 	//
 	// Construct a new Trail, add it to the cache, then return it.
 	//
@@ -450,14 +450,14 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	bool bCourseDifficultyIsSignificant = (cd == DIFFICULTY_MEDIUM);
 
 	vector<Song*> vpAllPossibleSongs;
+	vector<SongAndSteps> vSongAndSteps;
 
 	// Resolve each entry to a Song and Steps.
 	FOREACH_CONST( CourseEntry, entries, e )
 	{
-		SongAndSteps resolved = { NULL, NULL };	// fill this in
-
-
+		SongAndSteps resolved;	// fill this in
 		SongCriteria soc = e->songCriteria;
+		
 		if( e->pSong )
 		{
 			soc.m_bUseSongAllowedList = true;
@@ -471,9 +471,19 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		StepsCriteria stc = e->stepsCriteria;
 		stc.m_st = st;
 		stc.m_Locked = StepsCriteria::Locked_Unlocked;
+		
+		const bool bSameSongCriteria  = e != entries.begin() && (e-1)->songCriteria == soc;
+		const bool bSameStepsCriteria = e != entries.begin() && (e-1)->stepsCriteria == stc;
 
-		vector<SongAndSteps> vSongAndSteps;
-		StepsUtil::GetAllMatching( soc, stc, vSongAndSteps );
+		if( e->pSong )
+		{
+			StepsUtil::GetAllMatching( e->pSong, stc, vSongAndSteps );
+		}
+		else if( vSongAndSteps.empty() || !(bSameSongCriteria && bSameStepsCriteria) )
+		{
+			vSongAndSteps.clear();
+			StepsUtil::GetAllMatching( soc, stc, vSongAndSteps );
+		}
 
 		// It looks bad to have the same song 2x in a row in a randomly generated course.
 		// Don't allow the same song to be played 2x in a row, unless there's only
@@ -481,15 +491,6 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		if( trail.m_vEntries.size() > 0  &&  vSongAndSteps.size() > 1 )
 		{
 			const TrailEntry &teLast = trail.m_vEntries.back();
-			bool bExistsDifferentSongThanLast = false;
-			FOREACH_CONST( SongAndSteps, vSongAndSteps, sas )
-			{
-				if( sas->pSong != teLast.pSong )
-				{
-					bExistsDifferentSongThanLast = true;
-					break;
-				}
-			}
 
 			RemoveIf( vSongAndSteps, SongIsEqual(teLast.pSong) );
 		}
@@ -503,8 +504,11 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		map<Song*,StepsVector> mapSongToSteps;
 		FOREACH_CONST( SongAndSteps, vSongAndSteps, sas )
 		{
-			mapSongToSteps[sas->pSong].push_back(sas->pSteps);
-			vpSongs.push_back( sas->pSong );
+			StepsVector &v = mapSongToSteps[sas->pSong];
+			
+			v.push_back( sas->pSteps );
+			if( v.size() == 1 )
+				vpSongs.push_back( sas->pSong );
 		}
 
 		CourseSortSongs( e->songSort, vpSongs, rnd );
@@ -514,7 +518,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		{
 			resolved.pSong = vpSongs[e->iChooseIndex];
 			const vector<Steps*> &vpSongs = mapSongToSteps[resolved.pSong];
-			resolved.pSteps = vpSongs[ rand()%vpSongs.size() ];
+			resolved.pSteps = vpSongs[ RandomInt(vpSongs.size()) ];
 		}
 		else
 		{
@@ -619,6 +623,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	if( m_iCustomMeter[cd] != -1 )
 		trail.m_iSpecifiedMeter = m_iCustomMeter[cd];
 
+	LOG->Trace( "GetTrailUnsorted() took %f seconds.", timer.Ago() );
 	/* If the course difficulty never actually changed anything, then this difficulty
 	 * is equivalent to DIFFICULTY_MEDIUM; it doesn't exist. */
 	return bCourseDifficultyIsSignificant;
