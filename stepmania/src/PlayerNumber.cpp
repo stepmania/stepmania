@@ -64,51 +64,41 @@ LuaFunction( MultiPlayerToLocalizedString, MultiPlayerToLocalizedString((MultiPl
 
 PlayerNumber GetNextHumanPlayer( PlayerNumber pn )
 {
-	for( PlayerNumber p=(PlayerNumber)(pn+1); p<NUM_PLAYERS; ((int&)p)++ )
-	{
-		if( GAMESTATE->IsHumanPlayer(p) )
-			return p;
-	}
+	for( enum_add(pn, 1); pn < NUM_PLAYERS; enum_add(pn, 1) )
+		if( GAMESTATE->IsHumanPlayer(pn) )
+			return pn;
 	return PLAYER_INVALID;
 }
 
 PlayerNumber GetNextEnabledPlayer( PlayerNumber pn )
 {
-	for( PlayerNumber p=(PlayerNumber)(pn+1); p<NUM_PLAYERS; ((int&)p)++ )
-	{
-		if( GAMESTATE->IsPlayerEnabled(p) )
-			return p;
-	}
+	for( enum_add(pn, 1); pn < NUM_PLAYERS; enum_add(pn, 1) )
+		if( GAMESTATE->IsPlayerEnabled(pn) )
+			return pn;
 	return PLAYER_INVALID;
 }
 
 PlayerNumber GetNextCpuPlayer( PlayerNumber pn )
 {
-	for( PlayerNumber p=(PlayerNumber)(pn+1); p<NUM_PLAYERS; ((int&)p)++ )
-	{
-		if( GAMESTATE->IsCpuPlayer(p) )
-			return p;
-	}
+	for( enum_add(pn, 1); pn < NUM_PLAYERS; enum_add(pn, 1) )
+		if( GAMESTATE->IsCpuPlayer(pn) )
+			return pn;
 	return PLAYER_INVALID;
 }
 
 PlayerNumber GetNextPotentialCpuPlayer( PlayerNumber pn )
 {
-	for( PlayerNumber p=(PlayerNumber)(pn+1); p<NUM_PLAYERS; ((int&)p)++ )
-	{
-		if( !GAMESTATE->IsHumanPlayer(p) )
-			return p;
-	}
+	for( enum_add(pn, 1); pn < NUM_PLAYERS; enum_add(pn, 1) )
+		if( !GAMESTATE->IsHumanPlayer(pn) )
+			return pn;
 	return PLAYER_INVALID;
 }
 
 MultiPlayer GetNextEnabledMultiPlayer( MultiPlayer mp )
 {
-	for( MultiPlayer p=(MultiPlayer)(mp+1); p<NUM_MultiPlayer; ((int&)p)++ )
-	{
-		if( GAMESTATE->IsMultiPlayerEnabled(p) )
-			return p;
-	}
+	for( enum_add(mp, 1); mp < NUM_MultiPlayer; enum_add(mp, 1) )
+		if( GAMESTATE->IsMultiPlayerEnabled(mp) )
+			return mp;
 	return MultiPlayer_INVALID;
 }
 
