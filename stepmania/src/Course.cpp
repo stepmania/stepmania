@@ -420,7 +420,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	case DIFFICULTY_CHALLENGE:
 		return false;
 	}
-	RageTimer timer;
+
 	//
 	// Construct a new Trail, add it to the cache, then return it.
 	//
@@ -623,7 +623,6 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	if( m_iCustomMeter[cd] != -1 )
 		trail.m_iSpecifiedMeter = m_iCustomMeter[cd];
 
-	LOG->Trace( "GetTrailUnsorted() took %f seconds.", timer.Ago() );
 	/* If the course difficulty never actually changed anything, then this difficulty
 	 * is equivalent to DIFFICULTY_MEDIUM; it doesn't exist. */
 	return bCourseDifficultyIsSignificant;
