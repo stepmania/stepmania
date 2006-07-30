@@ -45,14 +45,18 @@ void StepsUtil::GetAllMatching( const SongCriteria &soc, const StepsCriteria &st
 	{
 		if( !soc.Matches(*so) )
 			continue;
-		FOREACH_CONST( Steps*, (*so)->GetAllSteps(), st )
-		{
-			if( !stc.Matches(*so,*st) )
-				continue;
-			SongAndSteps sas = { *so, *st };
-			out.push_back( sas );
-		}
+		GetAllMatching( *so, stc, out );
 	}
+}
+
+void StepsUtil::GetAllMatching( Song *pSong, const StepsCriteria &stc, vector<SongAndSteps> &out )
+{
+	const vector<Steps*> &vSteps = ( stc.m_st == STEPS_TYPE_INVALID ?  pSong->GetAllSteps() :
+					 pSong->GetStepsByStepsType(stc.m_st) );
+	
+	FOREACH_CONST( Steps*, vSteps, st )
+		if( stc.Matches(pSong, *st) )
+			out.push_back( SongAndSteps(pSong, *st) );
 }
 
 
