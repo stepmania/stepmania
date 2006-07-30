@@ -278,8 +278,6 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 
 	// send the finalized vertices to the graphics card
 	m_pCompiledGeometry->Set( m_Meshes, bNeedsNormals );
-
-	f.Close();
 }
 
 /*
