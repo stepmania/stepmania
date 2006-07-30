@@ -336,14 +336,6 @@ void Steps::CreateBlank( StepsType ntTo )
 	this->SetNoteData( noteData );
 }
 
-
-const Steps *Steps::Real() const
-{
-	ASSERT( this );
-	if(parent) return parent;
-	return this;
-}
-
 bool Steps::IsAutogen() const
 {
 	return parent != NULL;
