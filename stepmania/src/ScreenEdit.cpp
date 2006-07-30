@@ -14,14 +14,12 @@
 #include "RageLog.h"
 #include "ThemeManager.h"
 #include "NoteSkinManager.h"
-#include "Steps.h"
 #include "NoteDataUtil.h"
 #include "SongUtil.h"
 #include "StepsUtil.h"
 #include "Foreach.h"
 #include "ScreenDimensions.h"
 #include "ThemeMetric.h"
-#include "PlayerState.h"
 #include "ScreenTextEntry.h"
 #include "ScreenMiniMenu.h"
 #include "ScreenPrompt.h"
@@ -646,7 +644,7 @@ void ScreenEdit::Init()
 	CopyToLastSave();
 
 	m_CurrentAction = MAIN_MENU_CHOICE_INVALID;
-
+	m_InputPlayerNumber = PLAYER_INVALID;
 	// set both players to joined so the credit message doesn't show
 	FOREACH_PlayerNumber( p )
 		GAMESTATE->m_bSideIsJoined[p] = true;
@@ -885,6 +883,7 @@ void ScreenEdit::Update( float fDeltaTime )
 			{
 				// create or extend a hold or roll note
 				TapNote tn = TAP_ORIGINAL_HOLD_HEAD;
+				tn.pn = m_InputPlayerNumber;
 				if( EditIsBeingPressed(EDIT_BUTTON_LAY_MINE_OR_ROLL) )
 					tn = TAP_ORIGINAL_ROLL_HEAD;
 				m_NoteDataRecord.AddHoldNote( t, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat), tn );
@@ -1181,7 +1180,9 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			{
 				m_soundAddNote.Play();
 				SaveUndo();
-				m_NoteDataEdit.SetTapNote(iCol, iSongIndex, TAP_ORIGINAL_MINE );
+				TapNote tn = TAP_ORIGINAL_MINE;
+				tn.pn = m_InputPlayerNumber;
+				m_NoteDataEdit.SetTapNote(iCol, iSongIndex, tn );
 				CheckNumberOfNotesAndUndo();
 			}
 			else if( EditIsBeingPressed(EDIT_BUTTON_LAY_TAP_ATTACK) )
@@ -1193,7 +1194,9 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			{
 				m_soundAddNote.Play();
 				SaveUndo();
-				m_NoteDataEdit.SetTapNote(iCol, iSongIndex, TAP_ORIGINAL_TAP );
+				TapNote tn = TAP_ORIGINAL_TAP;
+				tn.pn = m_InputPlayerNumber;
+				m_NoteDataEdit.SetTapNote(iCol, iSongIndex, tn );
 				CheckNumberOfNotesAndUndo();
 			}
 		}
@@ -1908,7 +1911,7 @@ void ScreenEdit::InputRecord( const InputEventPlus &input, EditButton EditB )
 			TapNote tn = TAP_ORIGINAL_TAP;
 			if( EditIsBeingPressed(EDIT_BUTTON_LAY_MINE_OR_ROLL) )
 				tn = TAP_ORIGINAL_MINE;
-
+			tn.pn = m_InputPlayerNumber;
 			m_NoteDataRecord.SetTapNote( iCol, iRow, tn );
 			m_NoteFieldRecord.Step( iCol, TNS_W1 );
 		}
@@ -2405,7 +2408,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			g_fLastInsertAttackDurationSeconds, 
 			false,
 			0 );
-		
+		tn.pn = m_InputPlayerNumber;
 		SaveUndo();
 		m_NoteDataEdit.SetTapNote( g_iLastInsertTapAttackTrack, row, tn );
 		CheckNumberOfNotesAndUndo();
