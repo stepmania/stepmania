@@ -400,6 +400,16 @@ static void CourseSortSongs( SongSort sort, vector<Song*> &vpPossibleSongs, Rand
 	}
 }
 
+namespace
+{
+	struct SongIsEqual
+	{
+		const Song *m_pSong;
+		SongIsEqual( const Song *pSong ) : m_pSong(pSong) { }
+		bool operator()( const SongAndSteps &sas ) const { return sas.pSong == m_pSong; }
+	};
+}
+
 bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail ) const
 {
 	trail.Init();
@@ -455,7 +465,6 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		}
 		soc.m_Tutorial = SongCriteria::Tutorial_No;
 		soc.m_Locked = SongCriteria::Locked_Unlocked;
-		soc.m_Locked = SongCriteria::Locked_Unlocked;
 		if( !soc.m_bUseSongAllowedList )
 			soc.m_iStagesForSong = 1;
 
@@ -471,7 +480,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		// one song in vpPossibleSongs.
 		if( trail.m_vEntries.size() > 0  &&  vSongAndSteps.size() > 1 )
 		{
-			const TrailEntry &teLast = trail.m_vEntries[trail.m_vEntries.size()-1];
+			const TrailEntry &teLast = trail.m_vEntries.back();
 			bool bExistsDifferentSongThanLast = false;
 			FOREACH_CONST( SongAndSteps, vSongAndSteps, sas )
 			{
@@ -482,11 +491,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 				}
 			}
 
-			for( int i=vSongAndSteps.size()-1; i>=0; i-- )
-			{
-				if( vSongAndSteps[i].pSong == teLast.pSong )
-					vSongAndSteps.erase( vSongAndSteps.begin()+i );
-			}
+			RemoveIf( vSongAndSteps, SongIsEqual(teLast.pSong) );
 		}
 
 		// if there are no songs to choose from, abort this CourseEntry
