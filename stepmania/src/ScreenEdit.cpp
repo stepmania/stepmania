@@ -3386,11 +3386,7 @@ void ScreenEdit::Undo()
 {
 	if( m_bHasUndo )
 	{
-		// swap
-		NoteData temp( m_NoteDataEdit );
-		m_NoteDataEdit.CopyAll( m_Undo );
-		m_Undo.CopyAll( temp );
-
+		swap( m_Undo, m_NoteDataEdit );
 		SCREENMAN->SystemMessage( UNDO );
 	}
 	else
