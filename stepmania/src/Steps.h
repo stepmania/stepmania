@@ -81,7 +81,7 @@ protected:
 	mutable bool m_bNoteDataIsFilled;
 	mutable RString m_sNoteDataCompressed;
 
-	inline const Steps *Real() const { return parent ?: this; }
+	inline const Steps *Real() const { return parent ? parent : this; }
 
 	RString		m_sFilename;
 	bool		m_bSavedToDisk;		// true if this was loaded from disk or has been saved to disk.
