@@ -1284,7 +1284,7 @@ static Style g_Styles[] =
 	{	// STYLE_DANCE_ROUTINE
 		&g_Games[GAME_DANCE],		// m_Game
 		true,				// m_bUsedForGameplay
-		false,				// m_bUsedForEdit XXX should it be used?
+		true,				// m_bUsedForEdit
 		false,				// m_bUsedForDemonstration
 		false,				// m_bUsedForHowToPlay
 		"routine",			// m_szName
