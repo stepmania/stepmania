@@ -253,15 +253,13 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 					RString sTexturePath = sDir + sDiffuseTexture;
 					FixSlashesInPlace( sTexturePath );
 					CollapsePath( sTexturePath );
-					if( IsAFile(sTexturePath) )
-					{
-						Material.diffuse.Load( sTexturePath );
-					}
-					else
+					if( !IsAFile(sTexturePath) )
 					{
 						RString sError = ssprintf( "'%s' references a texture '%s' that does not exist", sPath.c_str(), sTexturePath.c_str() );
 						RageException::Throw( sError );
 					}
+
+					Material.diffuse.Load( sTexturePath );
 				}
 
 				// alpha texture
@@ -280,15 +278,13 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 					RString sTexturePath = sDir + sAlphaTexture;
 					FixSlashesInPlace( sTexturePath );
 					CollapsePath( sTexturePath );
-					if( IsAFile(sTexturePath) )
-					{
-						Material.alpha.Load( sTexturePath );
-					}
-					else
+					if( !IsAFile(sTexturePath) )
 					{
 						RString sError = ssprintf( "'%s' references a texture '%s' that does not exist", sPath.c_str(), sTexturePath.c_str() );
 						RageException::Throw( sError );
 					}
+
+					Material.alpha.Load( sTexturePath );
 				}
 			}
 		}
