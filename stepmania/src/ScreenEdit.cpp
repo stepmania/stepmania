@@ -628,6 +628,20 @@ static float g_fLastInsertAttackDurationSeconds = -1;
 static float g_fLastInsertAttackPositionSeconds = -1;
 static BackgroundLayer g_CurrentBGChangeLayer = BACKGROUND_LAYER_INVALID;
 
+static void SetDefaultEditorNoteSkin( size_t num, RString &sNameOut, RString &defaultValueOut )
+{
+	sNameOut = ssprintf( "EditorNoteSkinP%d", int(num + 1) );
+	
+	switch( num )
+	{
+	case 0: defaultValueOut = "note"; return;
+	case 1: defaultValueOut = "solo"; return;
+	}
+	defaultValueOut = "note";
+}
+
+static Preference1D<RString> EDITOR_NOTE_SKINS( SetDefaultEditorNoteSkin, NUM_PLAYERS );
+
 REGISTER_SCREEN_CLASS( ScreenEdit );
 
 void ScreenEdit::Init()
@@ -672,11 +686,18 @@ void ScreenEdit::Init()
 	m_SnapDisplay.Load( PLAYER_1 );
 	m_SnapDisplay.SetZoom( 0.5f );
 	this->AddChild( &m_SnapDisplay );
+	
+	FOREACH_PlayerNumber( pn )
+	{
+		m_sOldNoteSkins[pn] = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.m_sNoteSkin;
+		const RString &sNoteSkin = EDITOR_NOTE_SKINS[pn];
+		
+		if( NOTESKIN->DoesNoteSkinExist(sNoteSkin) )
+			GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.m_sNoteSkin = sNoteSkin;
+	}
 
 	m_PlayerStateEdit.m_PlayerNumber = PLAYER_1;
 	m_PlayerStateEdit.m_PlayerOptions.m_sNoteSkin = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_sNoteSkin;
-	if( NOTESKIN->DoesNoteSkinExist("note") )
-		m_PlayerStateEdit.m_PlayerOptions.m_sNoteSkin = "note";	// change noteskin before loading all of the edit Actors
 
 	m_pSteps->GetNoteData( m_NoteDataEdit );
 	m_NoteFieldEdit.SetXY( EDIT_X, EDIT_Y );
@@ -748,6 +769,8 @@ void ScreenEdit::Init()
 
 ScreenEdit::~ScreenEdit()
 {
+	FOREACH_PlayerNumber( pn )
+		GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.m_sNoteSkin = m_sOldNoteSkins[pn];
 	// UGLY: Don't delete the Song's steps.
 	m_songLastSave.DetachSteps();
 
