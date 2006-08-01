@@ -610,7 +610,6 @@ try_element_again:
 			RageException::Throw( message ); 
 			break;
 		case Dialog::retry:
-			FlushDirCache();
 			ReloadMetrics();
 			goto try_element_again;
 		case Dialog::ignore:
@@ -654,7 +653,6 @@ try_element_again:
 
 		if( Dialog::AbortRetryIgnore(message) == Dialog::retry )
 		{
-			FlushDirCache();
 			ReloadMetrics();
 			goto try_element_again;
 		}
@@ -738,7 +736,6 @@ try_element_again:
 	switch( res )
 	{
 	case Dialog::retry:
-		FlushDirCache();
 		ReloadMetrics();
 		goto try_element_again;
 	case Dialog::ignore:
@@ -788,6 +785,8 @@ bool ThemeManager::HasString( const RString &sClassName, const RString &sValueNa
 static LocalizedString RELOADED_METRICS( "ThemeManager", "Reloaded metrics" );
 void ThemeManager::ReloadMetrics()
 {
+	FlushDirCache();
+
 	// force a reload of the metrics cache
 	LoadThemeMetrics( g_vThemes, m_sCurThemeName, m_sCurLanguage );
 
@@ -847,7 +846,6 @@ RString ThemeManager::GetMetricRaw( const IniFile &ini, const RString &sClassNam
 			case Dialog::abort:
 				break;	// fall through
 			case Dialog::retry:
-				FlushDirCache();
 				ReloadMetrics();
 				continue;
 			case Dialog::ignore:
