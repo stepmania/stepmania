@@ -2210,7 +2210,8 @@ void ScreenEdit::TransitionEditState( EditState em )
 
 		/* If we're in course display mode, set that up. */
 		SetupCourseAttacks();
-
+		
+		m_Player->CacheAllUsedNoteSkins();
 		m_Player.Load( m_NoteDataEdit );
 		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PREFSMAN->m_AutoPlay;
 
