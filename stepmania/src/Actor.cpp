@@ -1050,14 +1050,6 @@ void Actor::RunCommands( const LuaReference& cmds, Actor *pParent )
 	LUA->Release(L);
 }
 
-float Actor::GetCommandsLengthSeconds( const LuaReference& cmds )
-{
-	Actor temp;
-	temp.RunCommands(cmds);
-
-	return temp.GetTweenTimeLeft();
-}
-
 float Actor::GetTweenTimeLeft() const
 {
 	float tot = 0;

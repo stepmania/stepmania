@@ -341,9 +341,6 @@ public:
 	// If we're a leaf, then execute this command.
 	virtual void RunCommandsOnLeaves( const LuaReference& cmds, Actor *pParent = NULL ) { RunCommands(cmds,pParent); }
 
-	static float GetCommandsLengthSeconds( const LuaReference& cmds );
-	static float GetCommandsLengthSeconds( const apActorCommands& cmds ) { return GetCommandsLengthSeconds( *cmds ); }	// convenience
-
 	//
 	// Messages
 	//
