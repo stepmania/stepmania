@@ -256,18 +256,14 @@ bool MusicWheel::SelectSongOrCourse()
 
 bool MusicWheel::SelectSection( const RString & SectionName )
 {
-	unsigned int i;
-	for( i=0; i<m_CurWheelItemData.size(); i++ )
-	{
+	for( unsigned int i = 0; i < m_CurWheelItemData.size(); ++i )
 		if( m_CurWheelItemData[i]->m_sText == SectionName )
 		{
 			m_iSelection = i;		// select it
-			break;
+			return true;
 		}
-	}
-	if ( i == m_CurWheelItemData.size() )
-		return false; 
-	return true;
+
+	return false;
 }
 
 bool MusicWheel::SelectSong( Song *p )
