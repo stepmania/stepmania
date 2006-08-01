@@ -5,7 +5,7 @@
 #include "RageMath.h"
 #include "RageLog.h"
 #include "song.h"
-#include "ActorCollision.h"
+#include "ScreenDimensions.h"
 #include "Sprite.h"
 #include "RageDisplay.h"
 #include "ActorUtil.h"
@@ -24,6 +24,27 @@ const float SPIRAL_MIN_ZOOM = 0.3f;
 #define MAX_TILES_HIGH int(SCREEN_HEIGHT/32+2)
 #define MAX_SPRITES (MAX_TILES_WIDE*MAX_TILES_HIGH)
 
+inline float GetOffScreenLeft(  Actor* pActor ) { return SCREEN_LEFT  - pActor->GetZoomedWidth()/2; }
+inline float GetOffScreenRight( Actor* pActor ) { return SCREEN_RIGHT + pActor->GetZoomedWidth()/2; }
+inline float GetOffScreenTop(   Actor* pActor ) { return SCREEN_TOP   - pActor->GetZoomedHeight()/2; }
+inline float GetOffScreenBottom(Actor* pActor ) { return SCREEN_BOTTOM+ pActor->GetZoomedHeight()/2; }
+
+inline bool IsOffScreenLeft(  Actor* pActor ) { return pActor->GetX() < GetOffScreenLeft(pActor); }
+inline bool IsOffScreenRight( Actor* pActor ) { return pActor->GetX() > GetOffScreenRight(pActor); }
+inline bool IsOffScreenTop(   Actor* pActor ) { return pActor->GetY() < GetOffScreenTop(pActor); }
+inline bool IsOffScreenBottom(Actor* pActor ) { return pActor->GetY() > GetOffScreenBottom(pActor); }
+inline bool IsOffScreen(      Actor* pActor ) { return IsOffScreenLeft(pActor) || IsOffScreenRight(pActor) || IsOffScreenTop(pActor) || IsOffScreenBottom(pActor); }
+
+// guard rail is the area that keeps particles from going off screen
+inline float GetGuardRailLeft(  Actor* pActor ) { return SCREEN_LEFT  + pActor->GetZoomedWidth()/2; }
+inline float GetGuardRailRight( Actor* pActor ) { return SCREEN_RIGHT - pActor->GetZoomedWidth()/2; }
+inline float GetGuardRailTop(   Actor* pActor ) { return SCREEN_TOP   + pActor->GetZoomedHeight()/2; }
+inline float GetGuardRailBottom(Actor* pActor ) { return SCREEN_BOTTOM- pActor->GetZoomedHeight()/2; }
+
+inline bool HitGuardRailLeft(  Actor* pActor ) { return pActor->GetX() < GetGuardRailLeft(pActor); }
+inline bool HitGuardRailRight( Actor* pActor ) { return pActor->GetX() > GetGuardRailRight(pActor); }
+inline bool HitGuardRailTop(   Actor* pActor ) { return pActor->GetY() < GetGuardRailTop(pActor); }
+inline bool HitGuardRailBottom(Actor* pActor ) { return pActor->GetY() > GetGuardRailBottom(pActor); }
 
 BGAnimationLayer::BGAnimationLayer()
 {
