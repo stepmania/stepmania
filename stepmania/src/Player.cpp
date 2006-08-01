@@ -320,10 +320,10 @@ void Player::Load()
 
 	m_LastTapNoteScore = TNS_None;
 
-	m_iRowLastCrossed = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat ) - 1;	// why this?
-	m_iMineRowLastCrossed = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat ) - 1;	// why this?
-	m_iRowLastJudged = 0;
-	m_iMineRowLastJudged = 0;
+	m_iRowLastCrossed = -1;
+	m_iMineRowLastCrossed = -1;
+	m_iRowLastJudged = -1;
+	m_iMineRowLastJudged = -1;
 	m_JudgedRows.Reset();
 
 	// TODO: Remove use of PlayerNumber.
