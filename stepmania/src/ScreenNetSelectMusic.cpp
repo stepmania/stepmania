@@ -130,22 +130,24 @@ void ScreenNetSelectMusic::Input( const InputEventPlus &input )
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL)) ||
 		(!NSMAN->useSMserver);	//If we are disconnected, assume no chatting
 
-	wchar_t c = INPUTMAN->DeviceInputToChar(input.DeviceI,true);
+	wchar_t c = INPUTMAN->DeviceInputToChar(input.DeviceI,false);
 	MakeUpper( &c, 1 );
 
 	if ( bHoldingCtrl && ( c >= 'A' ) && ( c <= 'Z' ) )
 	{
-		SortOrder so = GAMESTATE->m_PreferredSortOrder;
-		
+		SortOrder so = GAMESTATE->m_SortOrder;
 		if ( ( so != SORT_TITLE ) && ( so != SORT_ARTIST ) )
+		{
 			so = SORT_TITLE;
 
-		GAMESTATE->m_PreferredSortOrder = so;
-		GAMESTATE->m_SortOrder.Set( so );
+			GAMESTATE->m_PreferredSortOrder = so;
+			GAMESTATE->m_SortOrder.Set( so );
+			//Odd, changing the sort order requires us to call SetOpenGroup more than once
+			m_MusicWheel.SetOpenGroup( ssprintf("%c", c ), so );
+		}
 		m_MusicWheel.SelectSection( ssprintf("%c", c ) );
 		m_MusicWheel.SetOpenGroup( ssprintf("%c", c ), so );
-		m_MusicWheel.Move( +1 );
-		//m_MusicWheel.Move( -1 );
+		m_MusicWheel.Move(+1);
 	}
 
 	ScreenNetSelectBase::Input( input );
