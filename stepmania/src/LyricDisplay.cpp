@@ -6,9 +6,9 @@
 
 static ThemeMetric<apActorCommands>	IN_COMMAND	("LyricDisplay","InCommand");
 static ThemeMetric<apActorCommands>	OUT_COMMAND	("LyricDisplay","OutCommand");
+static ThemeMetric<float>		IN_LENGTH	("LyricDisplay","InLength");
+static ThemeMetric<float>		OUT_LENGTH	("LyricDisplay","OutLength");
 static ThemeMetric<RageColor>		WIPE_DIM_FACTOR	("LyricDisplay","WipeDimFactor");
-
-static float g_fTweenInTime, g_fTweenOutTime;
 
 LyricDisplay::LyricDisplay()
 {
@@ -28,9 +28,6 @@ void LyricDisplay::Init()
 		m_textLyrics[i].SetText("");
 	m_iCurLyricNumber = 0;
 
-	/* Update global cache: */
-	g_fTweenInTime = Actor::GetCommandsLengthSeconds( IN_COMMAND );
-	g_fTweenOutTime = Actor::GetCommandsLengthSeconds( OUT_COMMAND );
 	m_fLastSecond = -500;
 }
 
@@ -50,7 +47,7 @@ void LyricDisplay::Update( float fDeltaTime )
 		return;
 
 	const Song *pSong = GAMESTATE->m_pCurSong;
-	const float fStartTime = (pSong->m_LyricSegments[m_iCurLyricNumber].m_fStartTime) - g_fTweenInTime;
+	const float fStartTime = (pSong->m_LyricSegments[m_iCurLyricNumber].m_fStartTime) - IN_LENGTH.GetValue();
 
 	if( GAMESTATE->m_fMusicSeconds < fStartTime )
 		return;
@@ -63,7 +60,7 @@ void LyricDisplay::Update( float fDeltaTime )
 		fEndTime = pSong->GetElapsedTimeFromBeat( pSong->m_fLastBeat );
 
 	const float fDistance = fEndTime - pSong->m_LyricSegments[m_iCurLyricNumber].m_fStartTime;
-	const float fTweenBufferTime = g_fTweenInTime + g_fTweenOutTime;
+	const float fTweenBufferTime = IN_LENGTH.GetValue() + OUT_LENGTH.GetValue();
 
 	/* If it's negative, two lyrics are so close together that there's no time
 	 * to tween properly.  Lyrics should never be this brief, anyway, so just
