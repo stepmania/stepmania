@@ -1261,14 +1261,6 @@
 				>
 			</File>
 			<File
-				RelativePath="NoteFieldPositioning.cpp"
-				>
-			</File>
-			<File
-				RelativePath="NoteFieldPositioning.h"
-				>
-			</File>
-			<File
 				RelativePath="NotesLoader.cpp"
 				>
 			</File>
@@ -3386,10 +3378,6 @@
 			</File>
 			<File
 				RelativePath=".\Actor.h"
-				>
-			</File>
-			<File
-				RelativePath="ActorCollision.h"
 				>
 			</File>
 			<File
