@@ -1599,10 +1599,9 @@ void Player::HandleTapRowScore( unsigned row )
 	if( m_pSecondaryScoreKeeper != NULL )
 		m_pSecondaryScoreKeeper->HandleTapRowScore( m_NoteData, row );
 
-	if( m_pPlayerStageStats )
+	if( m_pPlayerStageStats && m_pCombo )
 	{
-		if( m_pCombo )
-			m_pCombo->SetCombo( m_pPlayerStageStats->iCurCombo, m_pPlayerStageStats->iCurMissCombo );
+		m_pCombo->SetCombo( iCurCombo, iCurMissCombo );
 	}
 
 #define CROSSED( x ) (iOldCombo<x && iCurCombo>=x)
