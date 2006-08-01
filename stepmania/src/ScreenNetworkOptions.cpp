@@ -76,8 +76,8 @@ void ScreenNetworkOptions::Init()
 		pHand->m_Def.m_bAllowThemeItems = false;
 		pHand->m_Def.m_bOneChoiceForAllPlayers = true;
 		pHand->m_Def.m_sName = "Server";
-		pHand->m_Def.m_vsChoices.push_back(SERVER_START);
 		pHand->m_Def.m_vsChoices.push_back(SERVER_STOP);
+		pHand->m_Def.m_vsChoices.push_back(SERVER_START);
 	}
 	{
 		OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
