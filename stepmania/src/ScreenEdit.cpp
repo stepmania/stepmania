@@ -275,6 +275,9 @@ void ScreenEdit::InitEditMappings()
 	
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_UNDO][1] = DeviceInput(DEVICE_KEYBOARD, KEY_Cu);
 	
+	// Switch players, if it makes sense to do so.
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_SWITCH_PLAYERS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_SLASH);
+	
 	m_PlayMappingsDeviceInput.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
 	m_PlayMappingsMenuButton.button[EDIT_BUTTON_RETURN_TO_EDIT][1] = MENU_BUTTON_BACK;
 	m_PlayMappingsDeviceInput.button[EDIT_BUTTON_TOGGLE_ASSIST_TICK][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F4);
@@ -307,7 +310,7 @@ bool ScreenEdit::DeviceToEdit( const DeviceInput &DeviceI, EditButton &button ) 
 	const MapEditToDI *pCurrentMap = GetCurrentDeviceInputMap();
 
 	/* First, search to see if a key that requires a modifier is pressed. */
-	FOREACH_EditButton(e)
+	FOREACH_EditButton( e )
 	{
 		for( int slot = 0; slot < NUM_EDIT_TO_DEVICE_SLOTS; ++slot )
 		{
@@ -658,7 +661,10 @@ void ScreenEdit::Init()
 	CopyToLastSave();
 
 	m_CurrentAction = MAIN_MENU_CHOICE_INVALID;
-	m_InputPlayerNumber = PLAYER_INVALID;
+	if( GAMESTATE->m_pCurSteps[0]->m_StepsType == STEPS_TYPE_DANCE_ROUTINE )
+		m_InputPlayerNumber = PLAYER_1;
+	else
+		m_InputPlayerNumber = PLAYER_INVALID;
 	// set both players to joined so the credit message doesn't show
 	FOREACH_PlayerNumber( p )
 		GAMESTATE->m_bSideIsJoined[p] = true;
@@ -905,10 +911,9 @@ void ScreenEdit::Update( float fDeltaTime )
 			else if( fSecsHeld > RECORD_HOLD_SECONDS )
 			{
 				// create or extend a hold or roll note
-				TapNote tn = TAP_ORIGINAL_HOLD_HEAD;
+				TapNote tn = EditIsBeingPressed(EDIT_BUTTON_LAY_MINE_OR_ROLL) ? TAP_ORIGINAL_ROLL_HEAD: TAP_ORIGINAL_HOLD_HEAD;
+
 				tn.pn = m_InputPlayerNumber;
-				if( EditIsBeingPressed(EDIT_BUTTON_LAY_MINE_OR_ROLL) )
-					tn = TAP_ORIGINAL_ROLL_HEAD;
 				m_NoteDataRecord.AddHoldNote( t, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat), tn );
 			}
 		}
@@ -1887,6 +1892,15 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 	case EDIT_BUTTON_UNDO:
 		Undo();
 		break;
+		
+	case EDIT_BUTTON_SWITCH_PLAYERS:
+		if( m_InputPlayerNumber != PLAYER_INVALID )
+		{
+			enum_add( m_InputPlayerNumber, 1 );
+			if( m_InputPlayerNumber == NUM_PLAYERS )
+				m_InputPlayerNumber = PLAYER_1;
+		}
+		break;
 	}
 }
 
@@ -2305,10 +2319,10 @@ void ScreenEdit::ScrollTo( float fDestinationBeat )
 		// Don't SaveUndo.  We want to undo the whole hold, not just the last segment
 		// that the user made.  Dragging the hold bigger can only absorb and remove
 		// other taps, so dragging won't cause us to exceed the note limit.
-		if( EditIsBeingPressed(EDIT_BUTTON_LAY_MINE_OR_ROLL) )
-			m_NoteDataEdit.AddHoldNote( iCol, iStartRow, iEndRow, TAP_ORIGINAL_ROLL_HEAD );
-		else
-			m_NoteDataEdit.AddHoldNote( iCol, iStartRow, iEndRow, TAP_ORIGINAL_HOLD_HEAD );
+		TapNote tn = EditIsBeingPressed(EDIT_BUTTON_LAY_MINE_OR_ROLL) ? TAP_ORIGINAL_ROLL_HEAD : TAP_ORIGINAL_HOLD_HEAD;
+		
+		tn.pn = m_InputPlayerNumber;
+		m_NoteDataEdit.AddHoldNote( iCol, iStartRow, iEndRow, tn );
 	}
 
 	if( EditIsBeingPressed(EDIT_BUTTON_SCROLL_SELECT) )
