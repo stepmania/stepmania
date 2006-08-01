@@ -76,7 +76,7 @@ public:
 	}
 	void PushValue( lua_State *L ) const
 	{
-		PrefPushValue( L, (BasicType &)m_currentValue );
+		PrefPushValue<BasicType>( L, m_currentValue );
 	}
 
 	void LoadDefault()
