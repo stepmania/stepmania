@@ -5,7 +5,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include <sstream>
-#include "LuaBinding.h"
+#include "LuaManager.h"
 
 ActorCommands::ActorCommands( const RString &sCommands )
 {
