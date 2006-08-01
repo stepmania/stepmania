@@ -12,6 +12,7 @@
 #include "AttackDisplay.h"
 #include "NoteData.h"
 #include "ScreenMessage.h"
+//#include "RageLog.h"
 
 class ScoreDisplay;
 class LifeMeter;
@@ -48,6 +49,7 @@ class JudgedRows
 	{
 		char *p = m_pRows;
 		int newSize = max( m_iLen*2, iMin );
+		//LOG->Trace( "Old size %d, new size %d.", m_iLen, newSize );
 		m_pRows = new char[newSize];
 		int i = 0;
 		if( p )
@@ -77,9 +79,10 @@ public:
 		}
 		return ret;
 	}
-	void Reset()
+	void Reset( int iStart )
 	{
-		m_iStart = m_iOffset = 0;
+		m_iStart = iStart;
+		m_iOffset = 0;
 		memset( m_pRows, 0, m_iLen );
 	}
 };

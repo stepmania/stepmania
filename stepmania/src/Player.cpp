@@ -319,12 +319,13 @@ void Player::Load()
 	m_bLoaded = true;
 
 	m_LastTapNoteScore = TNS_None;
-
-	m_iRowLastCrossed = -1;
-	m_iMineRowLastCrossed = -1;
-	m_iRowLastJudged = -1;
-	m_iMineRowLastJudged = -1;
-	m_JudgedRows.Reset();
+	// The editor can start playing in the middle of the song.
+	const int iNoteRow = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat );
+	m_iRowLastCrossed     = iNoteRow - 1;
+	m_iMineRowLastCrossed = iNoteRow - 1;
+	m_iRowLastJudged      = iNoteRow - 1;
+	m_iMineRowLastJudged  = iNoteRow - 1;
+	m_JudgedRows.Reset( iNoteRow );
 
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
