@@ -956,9 +956,12 @@ void Actor::SetEffectGlowShift( float fEffectPeriodSeconds, RageColor c1, RageCo
 
 void Actor::SetEffectRainbow( float fEffectPeriodSeconds )
 {
-	m_Effect = rainbow;
+	if( m_Effect != rainbow )
+	{
+		m_Effect = rainbow;
+		m_fSecsIntoEffect = 0;
+	}
 	SetEffectPeriod( fEffectPeriodSeconds );
-	m_fSecsIntoEffect = 0;
 }
 
 void Actor::SetEffectWag( float fPeriod, RageVector3 vect )
