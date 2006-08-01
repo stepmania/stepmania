@@ -2550,9 +2550,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\Actor.h">
 			</File>
 			<File
-				RelativePath="ActorCollision.h">
-			</File>
-			<File
 				RelativePath=".\ActorFrame.cpp">
 			</File>
 			<File

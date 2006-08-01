@@ -346,7 +346,7 @@ RageUtil_AutoPtr.h \
 RageUtil_WorkerThread.cpp RageUtil_WorkerThread.h
 
 Actors = \
-Actor.cpp Actor.h ActorCollision.h ActorFrame.cpp ActorFrame.h \
+Actor.cpp Actor.h ActorFrame.cpp ActorFrame.h \
 ActorScroller.cpp ActorScroller.h ActorUtil.cpp ActorUtil.h \
 ActorSound.cpp ActorSound.h \
 AutoActor.cpp AutoActor.h \
