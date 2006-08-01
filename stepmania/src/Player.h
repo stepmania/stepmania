@@ -59,7 +59,6 @@ class JudgedRows
 		m_iOffset = 0;
 		m_iLen = newSize;
 		memset( m_pRows + i, 0, newSize - i );
-		//LOG->Trace( "New size %d.", newSize );
 	}
 public:
 	JudgedRows() : m_pRows(NULL), m_iStart(0), m_iOffset(0), m_iLen(0) { Resize( 32 ); }
