@@ -899,9 +899,9 @@ void Actor::SetEffectDiffuseBlink( float fEffectPeriodSeconds, RageColor c1, Rag
 	if( m_Effect != diffuse_blink )
 	{
 		m_Effect = diffuse_blink;
-		SetEffectPeriod( fEffectPeriodSeconds );
 		m_fSecsIntoEffect = 0;
 	}
+	SetEffectPeriod( fEffectPeriodSeconds );
 	m_effectColor1 = c1;
 	m_effectColor2 = c2;
 }
@@ -911,9 +911,9 @@ void Actor::SetEffectDiffuseShift( float fEffectPeriodSeconds, RageColor c1, Rag
 	if( m_Effect != diffuse_shift )
 	{
 		m_Effect = diffuse_shift;
-		SetEffectPeriod( fEffectPeriodSeconds );
 		m_fSecsIntoEffect = 0;
 	}
+	SetEffectPeriod( fEffectPeriodSeconds );
 	m_effectColor1 = c1;
 	m_effectColor2 = c2;
 }
@@ -923,9 +923,9 @@ void Actor::SetEffectDiffuseRamp( float fEffectPeriodSeconds, RageColor c1, Rage
 	if( m_Effect != diffuse_ramp )
 	{
 		m_Effect = diffuse_ramp;
-		SetEffectPeriod( fEffectPeriodSeconds );
 		m_fSecsIntoEffect = 0;
 	}
+	SetEffectPeriod( fEffectPeriodSeconds );
 	m_effectColor1 = c1;
 	m_effectColor2 = c2;
 }
@@ -935,9 +935,9 @@ void Actor::SetEffectGlowBlink( float fEffectPeriodSeconds, RageColor c1, RageCo
 	if( m_Effect != glow_blink )
 	{
 		m_Effect = glow_blink;
-		SetEffectPeriod( fEffectPeriodSeconds );
 		m_fSecsIntoEffect = 0;
 	}
+	SetEffectPeriod( fEffectPeriodSeconds );
 	m_effectColor1 = c1;
 	m_effectColor2 = c2;
 }
@@ -947,9 +947,9 @@ void Actor::SetEffectGlowShift( float fEffectPeriodSeconds, RageColor c1, RageCo
 	if( m_Effect != glow_shift )
 	{
 		m_Effect = glow_shift;
-		SetEffectPeriod( fEffectPeriodSeconds );
 		m_fSecsIntoEffect = 0;
 	}
+	SetEffectPeriod( fEffectPeriodSeconds );
 	m_effectColor1 = c1;
 	m_effectColor2 = c2;
 }
