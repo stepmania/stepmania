@@ -721,11 +721,11 @@ void Model::UpdateTempGeometry()
 		vector<RageModelVertex> &tempVertices = tempMesh.Vertices;
 		for( unsigned j = 0; j < origVertices.size(); j++ )
 		{
-			RageVector3& tempPos =				tempVertices[j].p;
-			RageVector3& tempNormal =			tempVertices[j].n;
-			const RageVector3& originalPos =	origVertices[j].p;
-			const RageVector3& originalNormal =	origVertices[j].n;
-			int8_t bone =						origVertices[j].bone;
+			RageVector3 &tempPos =			tempVertices[j].p;
+			RageVector3 &tempNormal =		tempVertices[j].n;
+			const RageVector3 &originalPos =	origVertices[j].p;
+			const RageVector3 &originalNormal =	origVertices[j].n;
+			int8_t bone =				origVertices[j].bone;
 
 			if( bone == -1 )
 			{
