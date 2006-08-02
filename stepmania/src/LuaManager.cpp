@@ -86,20 +86,6 @@ void LuaManager::SetGlobal( const RString &sName, const RString &val )
 	LUA->Release(L);
 }
 
-void LuaManager::SetGlobalFromExpression( const RString &sName, const RString &expr )
-{
-	Lua *L = LUA->Get();
-	if( !LuaHelpers::RunScript(L, "return " + expr, "", 1) )
-	{
-		LUA->Release(L);
-		return;
-	}
-
-	lua_setglobal( L, sName );
-
-	LUA->Release(L);
-}
-
 void LuaManager::UnsetGlobal( const RString &sName )
 {
 	Lua *L = LUA->Get();

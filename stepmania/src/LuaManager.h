@@ -35,7 +35,6 @@ public:
 	void SetGlobal( const RString &sName, float val );
 	void SetGlobal( const RString &sName, bool val );
 	void SetGlobal( const RString &sName, const RString &val );
-	void SetGlobalFromExpression( const RString &sName, const RString &expr );
 	void UnsetGlobal( const RString &sName );
 
 private:
