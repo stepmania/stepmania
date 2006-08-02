@@ -19,8 +19,6 @@ int LuaFunc_##func( lua_State *L ) { \
 } \
 static LuaFunctionList g_##func( #func, LuaFunc_##func ); /* register it */
 
-#define LuaFunction_NoArgs LuaFunction /* compat */
-
 #endif
 
 /*
