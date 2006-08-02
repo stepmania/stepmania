@@ -275,9 +275,9 @@ LUA_REGISTER_CLASS( StatsManager )
 //
 
 #include "LuaFunctions.h"
-LuaFunction_NoArgs( OnePassed,				STATSMAN->m_CurStageStats.OnePassed() );
-LuaFunction_NoArgs( AllFailed,				STATSMAN->m_CurStageStats.AllFailed() );
-LuaFunction( Grade,							StringToGrade( SArg(1) ) );
+LuaFunction( OnePassed,				STATSMAN->m_CurStageStats.OnePassed() );
+LuaFunction( AllFailed,				STATSMAN->m_CurStageStats.AllFailed() );
+LuaFunction( Grade,				StringToGrade( SArg(1) ) );
 
 const StageStats *GetStageStatsN( int n )
 {
@@ -313,7 +313,7 @@ Grade GetBestFinalGrade()
 	}
 	return top_grade;
 }
-LuaFunction_NoArgs( GetBestFinalGrade, GetBestFinalGrade() );
+LuaFunction( GetBestFinalGrade, GetBestFinalGrade() );
 
 
 /*

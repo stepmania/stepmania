@@ -66,8 +66,8 @@ void ScreenDimensions::ReloadScreenDimensions()
 	LUA->SetGlobal( "SCREEN_CENTER_Y", (int) SCREEN_CENTER_Y );
 }
 
-LuaFunction_NoArgs( GetScreenAspectRatio,	PREFSMAN->m_fDisplayAspectRatio );
-LuaFunction_NoArgs( GetThemeAspectRatio,	ScreenDimensions::GetThemeAspectRatio() );
+LuaFunction( GetScreenAspectRatio,	PREFSMAN->m_fDisplayAspectRatio );
+LuaFunction( GetThemeAspectRatio,	ScreenDimensions::GetThemeAspectRatio() );
 
 
 /*

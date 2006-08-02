@@ -948,10 +948,10 @@ LuaFunction( ConnectToServer, 				ConnectToServer( ( RString(SArg(1)).length()==
 
 static bool ReportStyle() { NSMAN->ReportStyle(); return true; }
 
-LuaFunction( IsSMOnlineLoggedIn,			NSMAN->isSMOLoggedIn[IArg(1)] )
-LuaFunction_NoArgs( IsNetConnected,			NSMAN->useSMserver )
-LuaFunction_NoArgs( IsNetSMOnline,			NSMAN->isSMOnline )
-LuaFunction_NoArgs( ReportStyle,			ReportStyle() )
+LuaFunction( IsSMOnlineLoggedIn,		NSMAN->isSMOLoggedIn[IArg(1)] )
+LuaFunction( IsNetConnected,			NSMAN->useSMserver )
+LuaFunction( IsNetSMOnline,			NSMAN->isSMOnline )
+LuaFunction( ReportStyle,			ReportStyle() )
 
 /*
  * (c) 2003-2004 Charles Lohr, Joshua Allen
