@@ -4,7 +4,6 @@
 #include "Preference.h"
 #include "LuaManager.h"
 #include "LuaFunctions.h"
-#include "ThemeManager.h"
 #include "ThemeMetric.h"
 #include "RageDisplay.h"
 
