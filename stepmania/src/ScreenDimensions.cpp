@@ -5,7 +5,6 @@
 #include "LuaManager.h"
 #include "LuaFunctions.h"
 #include "ThemeMetric.h"
-#include "RageDisplay.h"
 
 static ThemeMetric<float> THEME_SCREEN_WIDTH("Common","ScreenWidth");
 static ThemeMetric<float> THEME_SCREEN_HEIGHT("Common","ScreenHeight");
