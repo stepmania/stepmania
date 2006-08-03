@@ -4,6 +4,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageDisplay.h"
+#include "LocalizedString.h"
 
 #include <GL/gl.h>
 
@@ -264,14 +265,21 @@ void LowLevelWindow_Win32::EndConcurrentRendering()
 	wglMakeCurrent( NULL, NULL );
 }
 
+static LocalizedString OPENGL_NOT_AVAILABLE( "LowLevelWindow_Win32", "OpenGL hardware acceleration is not available." );
 bool LowLevelWindow_Win32::IsSoftwareRenderer( RString &sError )
 {
-	if( strcmp((const char*)glGetString(GL_VENDOR),"Microsoft Corporation") &&
-		strcmp((const char*)glGetString(GL_RENDERER),"GDI Generic") )
-		return false;
+	RString sVendor = (const char*)glGetString(GL_VENDOR);
+	RString sRenderer = (const char*)glGetString(GL_RENDERER);
 
-	sError = "OpenGL hardware acceleration is not available.";
-	return true;
+	LOG->Trace( "LowLevelWindow_Win32::IsSoftwareRenderer '%s', '%s'", sVendor.c_str(), sRenderer.c_str() );
+
+	if( sVendor == "Microsoft Corporation"  &&  sRenderer == "GDI Generic" )
+	{
+		sError = OPENGL_NOT_AVAILABLE;
+		return true;
+	}
+	
+	return false;
 }
 
 void LowLevelWindow_Win32::SwapBuffers()
