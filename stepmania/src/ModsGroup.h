@@ -3,6 +3,8 @@
 #ifndef ModLevel_H
 #define ModLevel_H
 
+#include "EnumHelper.h"
+
 enum ModsLevel
 {
 	ModsLevel_Preferred,	// user-chosen player options.  Does not include any forced mods.
@@ -11,25 +13,22 @@ enum ModsLevel
 	NUM_ModsLevel,
 };
 
-#define MODS_GROUP_ASSIGN( modsGroup, modsLevel, assignment ) \
-	{ \
-	for( int i=(ModsLevel)(modsLevel); i<NUM_ModsLevel; i++ ) \
-		(modsGroup).m_[i] assignment; \
-	if( modsLevel != ModsLevel_Song ) \
-		(modsGroup).m_current assignment; \
-	}
+#define MODS_GROUP_ASSIGN( group, level, member, val ) \
+	(group).Assign( (level), &(group).GroupType::member, (val) )
+#define MODS_GROUP_CALL( group, level, fun ) (group).Call( (level), &(group).GroupType::fun )
+#define MODS_GROUP_TOGGLE( group, level, member ) (group).Call( (level), &(group).GroupType::member )
 
 template<class T>
 struct ModsGroup
 {
+	typedef T GroupType;
 	T m_[NUM_ModsLevel];
 	RageTimer		m_timer;
 	T m_current;		// approaches ModsLevel_Song
 
 	void Init()
 	{
-		MODS_GROUP_ASSIGN( *this, (ModsLevel)0, .Init() );
-		m_current.Init();
+		Call( ModsLevel_Preferred, &T::Init );
 	}
 
 	void Update( float fDelta )
@@ -38,6 +37,48 @@ struct ModsGroup
 		// TODO: Find a more elegant way of handling this.
 		fDelta = m_timer.GetDeltaTime();
 		m_current.Approach( m_[ModsLevel_Song], fDelta );
+	}
+	
+	template<typename U>
+	void Assign( ModsLevel level, U T::*member, const U &val )
+	{
+		if( level != ModsLevel_Song )
+			m_current.*member = val;
+		for( ; level < NUM_ModsLevel; enum_add(level, 1) )
+			m_[level].*member = val;
+	}
+	
+	void Assign( ModsLevel level, const T &val )
+	{
+		if( level != ModsLevel_Song )
+			m_current = val;
+		for( ; level < NUM_ModsLevel; enum_add(level, 1) )
+			m_[level] = val;
+	}
+	
+	void Call( ModsLevel level, void (T::*fun)() )
+	{
+		if( level != ModsLevel_Song )
+			(m_current.*fun)();
+		for( ; level < NUM_ModsLevel; enum_add(level, 1) )
+			(m_[level].*fun)();
+	}
+	
+	void FromString( ModsLevel level, const RString &str )
+	{
+		if( level != ModsLevel_Song )
+			m_current.FromString( str );
+		for( ; level < NUM_ModsLevel; enum_add(level, 1) )
+			m_[level].FromString( str );
+	}
+	
+	// This seems like a very strange thing to do.
+	void Toggle( ModsLevel level, bool T::*member )
+	{
+		if( level != ModsLevel_Song )
+			m_current.*member ^= 1;
+		for( ; level < NUM_ModsLevel; enum_add(level, 1) )
+			m_[level].*member ^= 1;
 	}
 
 	const T &GetPreferred() const	{ return m_[ModsLevel_Preferred]; }
