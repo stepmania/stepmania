@@ -39,7 +39,7 @@ bool HIDDevice::Open( io_object_t device )
 	CFTypeRef object;
 	
 	result = IORegistryEntryCreateCFProperties( device, &properties, kCFAllocatorDefault, kNilOptions );
-	if ( result != KERN_SUCCESS || !properties )
+	if( result != KERN_SUCCESS || !properties )
 	{
 		LOG->Warn( "Couldn't get properties." );
 		return false;
@@ -51,9 +51,9 @@ bool HIDDevice::Open( io_object_t device )
 	CFTypeRef pidRef = CFDictionaryGetValue( properties, CFSTR(kIOHIDProductIDKey) );
 	int vid, pid;
 	
-	if( vidRef && !IntValue(vidRef, vid) )
+	if( !IntValue(vidRef, vid) )
 		vid = 0;
-	if( pidRef && !IntValue(pidRef, pid) )
+	if( !IntValue(pidRef, pid) )
 		pid = 0;
 	
 	if( !SupportsVidPid(vid, pid) )
@@ -186,16 +186,15 @@ void HIDDevice::AddLogicalDevice( const void *value, void *context )
 	HIDDevice *This = (HIDDevice *)context;
 	CFTypeRef object;
 	int usage, usagePage;
-	CFTypeID numID = CFNumberGetTypeID();
 	
 	// Get usage page
 	object = CFDictionaryGetValue( properties, CFSTR(kIOHIDElementUsagePageKey) );
-	if( !object || CFGetTypeID(object) != numID || !IntValue(object, usagePage) )
+	if( !IntValue(object, usagePage) )
 		return;
 	
 	// Get usage
 	object = CFDictionaryGetValue( properties, CFSTR(kIOHIDElementUsageKey) );
-	if( !object || CFGetTypeID(object) != numID || !IntValue(object, usage) )
+	if( !IntValue(object, usage) )
 		return;
 	
 	object = CFDictionaryGetValue( properties, CFSTR(kIOHIDElementKey) );
@@ -219,7 +218,6 @@ void HIDDevice::AddElement( const void *value, void *context )
 	CFDictionaryRef properties = CFDictionaryRef( value );
 	HIDDevice *This = (HIDDevice *)context;
 	CFTypeRef object;
-	CFTypeID numID = CFNumberGetTypeID();
 	int cookie, usage, usagePage;
 	
 	// Recursively add elements
@@ -234,18 +232,18 @@ void HIDDevice::AddElement( const void *value, void *context )
 	
 	// Get usage page
 	object = CFDictionaryGetValue( properties, CFSTR(kIOHIDElementUsagePageKey) );
-	if( !object || CFGetTypeID(object) != numID || !IntValue(object, usagePage) )
+	if( !IntValue(object, usagePage) )
 		return;
 	
 	// Get usage
 	object = CFDictionaryGetValue( properties, CFSTR(kIOHIDElementUsageKey) );
-	if( !object || CFGetTypeID(object) != numID || !IntValue(object, usage) )
+	if( !IntValue(object, usage) )
 		return;
 	
 	
 	// Get cookie
 	object = CFDictionaryGetValue( properties, CFSTR(kIOHIDElementCookieKey) );
-	if( !object || CFGetTypeID(object) != numID || !IntValue(object, cookie) )
+	if( !IntValue(object, cookie) )
 		return;
 	This->AddElement( usagePage, usage, cookie, properties );
 }
