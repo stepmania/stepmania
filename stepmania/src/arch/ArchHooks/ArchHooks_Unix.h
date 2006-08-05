@@ -6,7 +6,7 @@ class ArchHooks_Unix: public ArchHooks
 {
 public:
 	ArchHooks_Unix();
-	RString GetArchName() { return "Unix"; }
+	RString GetArchName() const { return "Unix"; }
 	void DumpDebugInfo();
 
 	void SetTime( tm newtime );

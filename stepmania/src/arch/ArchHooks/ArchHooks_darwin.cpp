@@ -133,7 +133,7 @@ ArchHooks_darwin::~ArchHooks_darwin()
 #endif
 }
 
-RString ArchHooks_darwin::GetMachineId()
+RString ArchHooks_darwin::GetMachineId() const
 {
 	RString ret;
 	CFMutableDictionaryRef dict = IOServiceMatching( "IOPlatformExpertDevice" );

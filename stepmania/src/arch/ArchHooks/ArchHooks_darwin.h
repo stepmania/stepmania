@@ -9,8 +9,8 @@ class ArchHooks_darwin : public ArchHooks
 public:
 	ArchHooks_darwin();
 	~ArchHooks_darwin();
-	RString GetArchName() { return "OS X"; }
-	RString GetMachineId();
+	RString GetArchName() const { return "OS X"; }
+	RString GetMachineId() const;
 	void DumpDebugInfo();
 	RString GetPreferredLanguage();
 	void EnterTimeCriticalSection();

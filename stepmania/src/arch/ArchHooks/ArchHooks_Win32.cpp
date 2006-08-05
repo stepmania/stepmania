@@ -75,7 +75,7 @@ static BOOL CALLBACK GetEnabledPopup( HWND hWnd, LPARAM lParam )
 
 static const RString CURRENT_VERSION_KEY = "HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion";
 
-RString ArchHooks_Win32::GetMachineId()
+RString ArchHooks_Win32::GetMachineId() const
 {
 	RString s;
 	if( RegistryAccess::GetRegValue( CURRENT_VERSION_KEY, "ProductID", s ) )

@@ -7,9 +7,9 @@ public:
 	virtual ~ArchHooks() { }
 
 	/*
-	 * Return the general name of the architecture, eg. "Windows", "OSX", "Unix".
+	 * Return the general name of the architecture, eg. "Windows", "OS X", "Unix".
 	 */
-	virtual RString GetArchName() { return "generic"; }
+	virtual RString GetArchName() const { return "generic"; }
 
 	/* This is called as soon as the loading window is shown, and we can
 	 * safely log. */
@@ -27,7 +27,7 @@ public:
 	/*
 	 * A string that uniquely identifies the machine in some way
 	 */
-	virtual RString GetMachineId() { return RString(); }
+	virtual RString GetMachineId() const { return RString(); }
 
 	/*
 	 * If this is a second instance, return true.  Optionally, give focus to the existing

@@ -9,10 +9,10 @@ class ArchHooks_Win32: public ArchHooks
 public:
 	ArchHooks_Win32();
 	~ArchHooks_Win32();
-	RString GetArchName() { return "Windows"; }
+	RString GetArchName() const { return "Windows"; }
 	void DumpDebugInfo();
 	void RestartProgram();
-	RString GetMachineId();
+	RString GetMachineId() const;
 	bool CheckForMultipleInstances();
 
 	int OldThreadPriority;
