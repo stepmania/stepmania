@@ -1,5 +1,5 @@
 #include <bits/c++config.h>
-#include <string>
+#include <cstring>
 #include <sys/cdefs.h>
 
 // This is very annoying. The 10.2.8 SDK uses GLIBCPP but the 10.4u SDK uses GLIBCXX
