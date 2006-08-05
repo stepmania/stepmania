@@ -1,6 +1,5 @@
 #include "global.h"
 #include "PumpDevice.h"
-#include "EnumHelper.h"
 
 void PumpDevice::Open()
 {
@@ -68,7 +67,7 @@ int PumpDevice::AssignIDs( InputDevice startID )
 
 void PumpDevice::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevices ) const
 {
-	vDevices.push_back( InputDeviceInfo(m_Id,"Pump USB") );
+	vDevices.push_back( InputDeviceInfo(m_Id, "Pump USB") );
 }
 
 /*
