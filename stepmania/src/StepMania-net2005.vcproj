@@ -2677,6 +2677,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ModsGroup.h"
+				>
+			</File>
+			<File
 				RelativePath="NoteDisplay.cpp"
 				>
 			</File>
