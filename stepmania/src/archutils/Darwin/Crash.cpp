@@ -91,8 +91,8 @@ bool CrashHandler::IsDebuggerPresent()
 	info.kp_proc.p_flag = 0;
 	
 	// Call sysctl.
-	size = sizeof(info);
-	ret = sysctl(mib, sizeof(mib) / sizeof(*mib), &info, &size, NULL, 0);
+	size = sizeof( info );
+	ret = sysctl( mib, sizeof(mib)/sizeof(*mib), &info, &size, NULL, 0 );
 	
 	// We're being debugged if the P_TRACED flag is set.
 	
