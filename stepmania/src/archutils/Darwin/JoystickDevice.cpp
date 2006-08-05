@@ -1,7 +1,5 @@
 #include "global.h"
 #include "JoystickDevice.h"
-#include "Foreach.h"
-#include "EnumHelper.h"
 #include "RageUtil.h"
 
 using namespace std;
@@ -77,8 +75,6 @@ void JoystickDevice::AddElement( int usagePage, int usage, int cookie, const CFD
 		case kHIDUsage_GD_DPadLeft:
 			js.mapping[cookie] = JOY_LEFT;
 			break;
-		default:
-			return;
 		}
 		break;
 	}
@@ -92,8 +88,6 @@ void JoystickDevice::AddElement( int usagePage, int usage, int cookie, const CFD
 			js.mapping[cookie] = buttonID;
 		break;
 	}
-	default:
-		return;
 	} // end switch (usagePage)
 }
 
@@ -195,9 +189,7 @@ int JoystickDevice::AssignIDs( InputDevice startID )
 void JoystickDevice::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevices ) const
 {
 	FOREACH_CONST( Joystick, m_vSticks, i )
-	{
 		vDevices.push_back( InputDeviceInfo(i->id,GetDescription()) );
-	}
 }
 
 /*
