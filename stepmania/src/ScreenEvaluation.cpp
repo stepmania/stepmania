@@ -107,7 +107,7 @@ ScreenEvaluation::ScreenEvaluation()
 		FOREACH_PlayerNumber( p )
 		{
 			if( RandomInt(2) )
-				GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.m_bTransforms[PlayerOptions::TRANSFORM_ECHO] = true;	// show "disqualified"
+				MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, .m_bTransforms[PlayerOptions::TRANSFORM_ECHO] = true );	// show "disqualified"
 
 			GAMESTATE->m_bSideIsJoined[p] = true;
 			GAMESTATE->m_pCurSteps[p].Set( GAMESTATE->m_pCurSong->GetAllSteps()[0] );
@@ -117,8 +117,10 @@ ScreenEvaluation::ScreenEvaluation()
 				GAMESTATE->m_pCurTrail[p].Set( apTrails[0] );
 			STATSMAN->m_CurStageStats.m_player[p].vpPlayedSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
 			STATSMAN->m_CurStageStats.m_player[p].vpPossibleSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
-			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.m_fScrollSpeed = 2;
-			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.ChooseRandomModifiers();
+			
+			
+			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, .m_fScrollSpeed = 2 );
+			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, .ChooseRandomModifiers() );
 		}
 
 		for( float f = 0; f < 100.0f; f += 1.0f )
@@ -328,7 +330,7 @@ void ScreenEvaluation::Init()
 				m_textPlayerOptions[p].SetName( ssprintf("PlayerOptionsP%d",p+1) );
 				SET_XY_AND_ON_COMMAND( m_textPlayerOptions[p] );
 				vector<RString> v;
-				GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetLocalizedMods( v );
+				GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetStage().GetLocalizedMods( v );
 				RString sPO = join( PLAYER_OPTIONS_SEPARATOR, v );
 				m_textPlayerOptions[p].SetText( sPO );
 				this->AddChild( &m_textPlayerOptions[p] );

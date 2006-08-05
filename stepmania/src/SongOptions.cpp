@@ -12,8 +12,27 @@ void SongOptions::Init()
 	m_FailType = FAIL_IMMEDIATE;
 	m_bAssistTick = false;
 	m_fMusicRate = 1.0f;
+	m_SpeedfMusicRate = 1.0f;
 	m_AutosyncType = AUTOSYNC_OFF;
 	m_bSaveScore = true;
+}
+
+void SongOptions::Approach( const SongOptions& other, float fDeltaSeconds )
+{
+#define APPROACH( opt ) \
+	fapproach( m_ ## opt, other.m_ ## opt, fDeltaSeconds * other.m_Speed ## opt );
+#define DO_COPY( x ) \
+	x = other.x;
+
+	DO_COPY( m_LifeType );
+	DO_COPY( m_DrainType );
+	DO_COPY( m_iBatteryLives );
+	APPROACH( fMusicRate );
+	DO_COPY( m_bAssistTick );
+	DO_COPY( m_AutosyncType );
+	DO_COPY( m_bSaveScore );
+#undef APPROACH
+#undef DO_COPY
 }
 
 void SongOptions::GetMods( vector<RString> &AddTo ) const

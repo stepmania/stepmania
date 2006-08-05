@@ -59,7 +59,7 @@ void Foreground::LoadFromSong( const Song *pSong )
 void Foreground::Update( float fDeltaTime )
 {
 	/* Calls to Update() should *not* be scaled by music rate. Undo it. */
-	const float fRate = GAMESTATE->m_SongOptions.m_fMusicRate;
+	const float fRate = GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
 
 	for( unsigned i=0; i < m_BGAnimations.size(); ++i )
 	{

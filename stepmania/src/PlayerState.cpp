@@ -12,10 +12,7 @@ PlayerState::PlayerState()
 
 void PlayerState::Reset()
 {
-	m_CurrentPlayerOptions.Init();
 	m_PlayerOptions.Init();
-	m_StagePlayerOptions.Init();
-	m_StoredPlayerOptions.Init();
 
 	m_fLastDrawnBeat = -100;
 
@@ -41,10 +38,7 @@ void PlayerState::Reset()
 
 void PlayerState::Update( float fDelta )
 {
-	// Don't let the mod approach speed be affected by Tab.
-	// TODO: Find a more elegant way of handling this.
-	float fRealDelta = m_timerPlayerOptions.GetDeltaTime();
-	m_CurrentPlayerOptions.Approach( m_PlayerOptions, fRealDelta );
+	m_PlayerOptions.Update( fDelta );
 
 	// TRICKY: GAMESTATE->Update is run before any of the Screen update's,
 	// so we'll clear these flags here and let them get turned on later
@@ -138,14 +132,14 @@ void PlayerState::RemoveAllInventory()
 void PlayerState::RebuildPlayerOptionsFromActiveAttacks()
 {
 	// rebuild player options
-	PlayerOptions po = m_StagePlayerOptions;
+	PlayerOptions po = m_PlayerOptions.GetStage();
 	for( unsigned s=0; s<m_ActiveAttacks.size(); s++ )
 	{
 		if( !m_ActiveAttacks[s].bOn )
 			continue; /* hasn't started yet */
 		po.FromString( m_ActiveAttacks[s].sModifiers );
 	}
-	m_PlayerOptions = po;
+	MODS_GROUP_ASSIGN( m_PlayerOptions, ModsLevel_Song, = po );
 
 
 	int iSumOfAttackLevels = GetSumOfActiveAttackLevels();

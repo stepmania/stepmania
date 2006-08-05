@@ -330,7 +330,7 @@ void Player::Load()
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
-	bool bOniDead = GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY  &&  
+	bool bOniDead = GAMESTATE->m_SongOptions.GetStage().m_LifeType == SongOptions::LIFE_BATTERY  &&  
 		(m_pPlayerStageStats == NULL || m_pPlayerStageStats->bFailed);
 
 	/* The editor reuses Players ... so we really need to make sure everything
@@ -355,7 +355,7 @@ void Player::Load()
 //		m_pScore->Init( pn );
 
 	/* Apply transforms. */
-	NoteDataUtil::TransformNoteData( m_NoteData, m_pPlayerState->m_PlayerOptions, GAMESTATE->GetCurrentStyle()->m_StepsType );
+	NoteDataUtil::TransformNoteData( m_NoteData, m_pPlayerState->m_PlayerOptions.GetStage(), GAMESTATE->GetCurrentStyle()->m_StepsType );
 	
 	switch( GAMESTATE->m_PlayMode )
 	{
@@ -363,7 +363,7 @@ void Player::Load()
 	case PLAY_MODE_BATTLE:
 		{
 			// ugly, ugly, ugly.  Works only w/ dance.
-			NoteDataUtil::TransformNoteData( m_NoteData, m_pPlayerState->m_PlayerOptions, GAMESTATE->GetCurrentStyle()->m_StepsType );
+			NoteDataUtil::TransformNoteData( m_NoteData, m_pPlayerState->m_PlayerOptions.GetStage(), GAMESTATE->GetCurrentStyle()->m_StepsType );
 			
 			// shuffle either p1 or p2
 			static int count = 0;
@@ -397,7 +397,7 @@ void Player::Load()
 		m_pNoteField->Load( &m_NoteData, iStartDrawingAtPixels, iStopDrawingAtPixels );
 	}
 
-	const bool bReverse = m_pPlayerState->m_PlayerOptions.GetReversePercentForColumn( 0 ) == 1;
+	const bool bReverse = m_pPlayerState->m_PlayerOptions.GetStage().GetReversePercentForColumn( 0 ) == 1;
 	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->m_StyleType==ONE_PLAYER_TWO_SIDES;
 	if( m_pCombo )
 	{
@@ -466,8 +466,8 @@ void Player::Update( float fDeltaTime )
 	if( m_pNoteField )
 		m_pNoteField->Update( fDeltaTime );
 
-	float fMiniPercent = m_pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_MINI];
-	float fTinyPercent = m_pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_TINY];
+	float fMiniPercent = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_MINI];
+	float fTinyPercent = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_TINY];
 	float fJudgmentZoom = min( powf(0.5f, fMiniPercent+fTinyPercent), 1.0f );
 	
 	//
@@ -476,7 +476,7 @@ void Player::Update( float fDeltaTime )
 	{
 		for( int c=0; c<GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; c++ )
 		{
-			float fPercentReverse = m_pPlayerState->m_CurrentPlayerOptions.GetReversePercentForColumn(c);
+			float fPercentReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(c);
 			float fHoldJudgeYPos = SCALE( fPercentReverse, 0.f, 1.f, HOLD_JUDGMENT_Y_STANDARD, HOLD_JUDGMENT_Y_REVERSE );
 //			float fGrayYPos = SCALE( fPercentReverse, 0.f, 1.f, GRAY_ARROWS_Y_STANDARD, GRAY_ARROWS_Y_REVERSE );
 
@@ -494,8 +494,8 @@ void Player::Update( float fDeltaTime )
 	//if( m_pNoteField )
 	//	m_pNoteField->SetY( fGrayYPos );
 
-	const bool bReverse = m_pPlayerState->m_PlayerOptions.GetReversePercentForColumn(0) == 1;
-	float fPercentCentered = m_pPlayerState->m_CurrentPlayerOptions.m_fScrolls[PlayerOptions::SCROLL_CENTERED];
+	const bool bReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(0) == 1;
+	float fPercentCentered = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fScrolls[PlayerOptions::SCROLL_CENTERED];
 	if( m_pCombo )
 	{
 		m_pCombo->SetY( 
@@ -787,7 +787,7 @@ void Player::DrawPrimitives()
 
 
 	// Draw these below everything else.
-	if( m_pPlayerState->m_PlayerOptions.m_fBlind == 0 )
+	if( m_pPlayerState->m_PlayerOptions.GetCurrent().m_fBlind == 0 )
 	{
 		if( m_pCombo )
 			m_pCombo->Draw();
@@ -802,9 +802,9 @@ void Player::DrawPrimitives()
 	if( HOLD_JUDGMENTS_UNDER_FIELD )
 		DrawHoldJudgments();
 
-	float fTilt = m_pPlayerState->m_CurrentPlayerOptions.m_fPerspectiveTilt;
-	float fSkew = m_pPlayerState->m_CurrentPlayerOptions.m_fSkew;
-	bool bReverse = m_pPlayerState->m_CurrentPlayerOptions.GetReversePercentForColumn(0)>0.5;
+	float fTilt = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fPerspectiveTilt;
+	float fSkew = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fSkew;
+	bool bReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(0)>0.5;
 
 
 	DISPLAY->CameraPushMatrix();
@@ -820,7 +820,7 @@ void Player::DrawPrimitives()
 
 		float fTiltDegrees = SCALE(fTilt,-1.f,+1.f,+30,-30) * (bReverse?-1:1);
 
-		float fZoom = SCALE( m_pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_TINY], 0.f, 1.f, 1.f, 0.5f );
+		float fZoom = SCALE( m_pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_TINY], 0.f, 1.f, 1.f, 0.5f );
 		if( fTilt > 0 )
 			fZoom *= SCALE( fTilt, 0.f, 1.f, 1.f, 0.9f );
 		else
@@ -853,7 +853,7 @@ void Player::DrawPrimitives()
 
 void Player::DrawTapJudgments()
 {
-	if( m_pPlayerState->m_PlayerOptions.m_fBlind > 0 )
+	if( m_pPlayerState->m_PlayerOptions.GetCurrent().m_fBlind > 0 )
 		return;
 
 	if( m_sprJudgmentFrame.IsLoaded() )
@@ -864,7 +864,7 @@ void Player::DrawTapJudgments()
 
 void Player::DrawHoldJudgments()
 {
-	if( m_pPlayerState->m_PlayerOptions.m_fBlind > 0 )
+	if( m_pPlayerState->m_PlayerOptions.GetCurrent().m_fBlind > 0 )
 		return;
 
 	for( int c=0; c<m_NoteData.GetNumTracks(); c++ )
@@ -926,7 +926,7 @@ int Player::GetClosestNote( int col, int iNoteRow, int iMaxRowsAhead, int iMaxRo
 void Player::Step( int col, int row, const RageTimer &tm, bool bHeld )
 {
 	// If we're playing on oni and we've died, do nothing.
-	if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY && m_pPlayerStageStats  && m_pPlayerStageStats->bFailed )
+	if( GAMESTATE->m_SongOptions.GetCurrent().m_LifeType == SongOptions::LIFE_BATTERY && m_pPlayerStageStats  && m_pPlayerStageStats->bFailed )
 		return;
 	
 	DEBUG_ASSERT_M( col >= 0  &&  col <= m_NoteData.GetNumTracks(), ssprintf("%i, %i", col, m_NoteData.GetNumTracks()) );
@@ -1052,7 +1052,7 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld )
 	 * 2. Clamp the distance searched backward to the previous row graded.
 	 * Either option would fundamentally change the grading of two quick notes "jack hammers." Hmm.
 	 */
-	const int iStepSearchRows = BeatToNoteRow( StepSearchDistance * GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate );
+	const int iStepSearchRows = BeatToNoteRow( StepSearchDistance * GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate );
 	int iIndexOverlappingNote = row == -1 ? GetClosestNote( col, BeatToNoteRow(fSongBeat), iStepSearchRows, iStepSearchRows, false ) : row;
 	
 	// calculate TapNoteScore
@@ -1073,13 +1073,13 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld )
 
 			/* GAMESTATE->m_fMusicSeconds is the music time as of GAMESTATE->m_LastBeatUpdate. Figure
 			 * out what the music time is as of now. */
-			const float fCurrentMusicSeconds = GAMESTATE->m_fMusicSeconds + (GAMESTATE->m_LastBeatUpdate.Ago()*GAMESTATE->m_SongOptions.m_fMusicRate);
+			const float fCurrentMusicSeconds = GAMESTATE->m_fMusicSeconds + (GAMESTATE->m_LastBeatUpdate.Ago()*GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate);
 
 			/* ... which means it happened at this point in the music: */
-			const float fMusicSeconds = fCurrentMusicSeconds - fTimeSinceStep * GAMESTATE->m_SongOptions.m_fMusicRate;
+			const float fMusicSeconds = fCurrentMusicSeconds - fTimeSinceStep * GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
 
 			// The offset from the actual step in seconds:
-			fNoteOffset = (fStepSeconds - fMusicSeconds) / GAMESTATE->m_SongOptions.m_fMusicRate;	// account for music rate
+			fNoteOffset = (fStepSeconds - fMusicSeconds) / GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;	// account for music rate
 //			LOG->Trace("step was %.3f ago, music is off by %f: %f vs %f, step was %f off", 
 //				fTimeSinceStep, GAMESTATE->m_LastBeatUpdate.Ago()/GAMESTATE->m_SongOptions.m_fMusicRate,
 //				fStepSeconds, fMusicSeconds, fNoteOffset );
@@ -1230,7 +1230,7 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld )
 		{
 			if( tn.type != TapNote::mine )
 			{
-				const bool bBlind = !!m_pPlayerState->m_PlayerOptions.m_fBlind;
+				const bool bBlind = (m_pPlayerState->m_PlayerOptions.GetCurrent().m_fBlind != 0);
 				// XXX This is the wrong combo for shared players. STATSMAN->m_CurStageStats.m_Player[pn] might work but could be wrong.
 				const bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->iCurCombo > int(BRIGHT_GHOST_COMBO_THRESHOLD) || bBlind;			
 				if( m_pNoteField )
@@ -1431,7 +1431,7 @@ void Player::UpdateJudgedRows()
 void Player::FlashGhostRow( int iRow, PlayerNumber pn )
 {
 	TapNoteScore lastTNS = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, iRow, pn ).result.tns;
-	const bool bBlind = !!m_pPlayerState->m_PlayerOptions.m_fBlind;
+	const bool bBlind = (m_pPlayerState->m_PlayerOptions.GetCurrent().m_fBlind != 0);
 	// XXX This is the wrong combo for shared players. STATSMAN->m_CurStageStats.m_Player[pn] might work but could be wrong.
 	const bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->iCurCombo > int(BRIGHT_GHOST_COMBO_THRESHOLD) || bBlind;
 		
@@ -1453,7 +1453,7 @@ void Player::FlashGhostRow( int iRow, PlayerNumber pn )
 void Player::CrossedRow( int iNoteRow, const RageTimer &now )
 {
 	// If we're doing random vanish, randomise notes on the fly.
-	if( m_pPlayerState->m_CurrentPlayerOptions.m_fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH]==1 )
+	if( m_pPlayerState->m_PlayerOptions.GetCurrent().m_fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH]==1 )
 		RandomizeNotes( iNoteRow );
 
 	// check to see if there's a note at the crossed row
@@ -1505,7 +1505,7 @@ void Player::RandomizeNotes( int iNoteRow )
 	/* This is incorrect: if m_fScrollSpeed is 0.5, we'll never change
 	 * any odd rows, and if it's 2, we'll shuffle each row twice. */
 	int iNewNoteRow = iNoteRow + ROWS_PER_BEAT*2;
-	iNewNoteRow = int( iNewNoteRow / m_pPlayerState->m_PlayerOptions.m_fScrollSpeed );
+	iNewNoteRow = int( iNewNoteRow / m_pPlayerState->m_PlayerOptions.GetCurrent().m_fScrollSpeed );
 
 	int iNumOfTracks = m_NoteData.GetNumTracks();
 	for( int t=0; t+1 < iNumOfTracks; t++ )
@@ -1737,7 +1737,7 @@ void Player::HandleHoldScore( const TapNote &tn )
 
 float Player::GetMaxStepDistanceSeconds()
 {
-	return GAMESTATE->m_SongOptions.m_fMusicRate * ADJUSTED_WINDOW_SECONDS(TW_W5);
+	return GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate * ADJUSTED_WINDOW_SECONDS(TW_W5);
 }
 
 void Player::FadeToFail()

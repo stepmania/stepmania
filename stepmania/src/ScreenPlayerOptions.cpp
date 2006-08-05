@@ -99,7 +99,9 @@ void ScreenPlayerOptions::Input( const InputEventPlus &input )
 	if( GAMESTATE->IsHumanPlayer(pn) && CodeDetector::EnteredCode(input.GameI.controller,CODE_CANCEL_ALL_PLAYER_OPTIONS) )
 	{
 		// apply the game default mods, but not the Profile saved mods
-		GAMESTATE->GetDefaultPlayerOptions( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions );
+		PlayerOptions po;
+		GAMESTATE->GetDefaultPlayerOptions( po );
+		MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Preferred, = po );
 		
 		MESSAGEMAN->Broadcast( ssprintf("CancelAllP%i", pn+1) );
 
@@ -152,15 +154,14 @@ void ScreenPlayerOptions::UpdateDisqualified( int row, PlayerNumber pn )
 	ASSERT( GAMESTATE->IsHumanPlayer(pn) );
 
 	// save original player options 
-	PlayerOptions poOrig = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions;
+	PlayerOptions poOrig = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetPreferred();
 
 	// Find out if the current row when exprorted causes disqualification.
 	// Exporting the row will fill GAMESTATE->m_PlayerOptions.
-	GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions = PlayerOptions();
+	MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Preferred, = PlayerOptions() );
 	vector<PlayerNumber> v;
 	v.push_back( pn );
 	ExportOptions( row, v );
-	GAMESTATE->StoreSelectedOptions();
 	bool bRowCausesDisqualified = GAMESTATE->IsDisqualified( pn );
 	m_bRowCausesDisqualified[pn][row] = bRowCausesDisqualified;
 
@@ -177,7 +178,7 @@ void ScreenPlayerOptions::UpdateDisqualified( int row, PlayerNumber pn )
 	m_sprDisqualify[pn]->SetHidden( !bDisqualified );
 
 	// restore previous player options in case the user escapes back after this
-	GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions = poOrig;
+	MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Preferred, = poOrig );
 }
 
 // lua start

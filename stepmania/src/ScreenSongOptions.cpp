@@ -22,11 +22,11 @@ void ScreenSongOptions::Init()
 
 void ScreenSongOptions::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
-	const SongOptions::FailType ft = GAMESTATE->m_SongOptions.m_FailType;
+	const SongOptions::FailType ft = GAMESTATE->m_SongOptions.GetPreferred().m_FailType;
 
 	ScreenOptionsMaster::ExportOptions( iRow, vpns );
 
-	if( ft != GAMESTATE->m_SongOptions.m_FailType )
+	if( ft != GAMESTATE->m_SongOptions.GetPreferred().m_FailType )
 		GAMESTATE->m_bChangedFailTypeOnScreenSongOptions = true;
 }
 

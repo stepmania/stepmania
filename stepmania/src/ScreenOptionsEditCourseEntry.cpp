@@ -312,7 +312,7 @@ void ScreenOptionsEditCourseEntry::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_BackFromCoursePlayerOptions )
 	{
-		const PlayerOptions &po = GAMESTATE->m_pPlayerState[GAMESTATE->m_MasterPlayerNumber]->m_PlayerOptions;
+		const PlayerOptions &po = GAMESTATE->m_pPlayerState[GAMESTATE->m_MasterPlayerNumber]->m_PlayerOptions.GetPreferred();
 		CourseEntry &ce = pCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
 		
 		ce.sModifiers = po.GetString();

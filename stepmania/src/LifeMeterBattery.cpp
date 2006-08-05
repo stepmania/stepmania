@@ -16,7 +16,7 @@ const float BATTERY_BLINK_TIME		= 1.2f;
 
 LifeMeterBattery::LifeMeterBattery()
 {
-	m_iLivesLeft = GAMESTATE->m_SongOptions.m_iBatteryLives;
+	m_iLivesLeft = GAMESTATE->m_SongOptions.GetStage().m_iBatteryLives;
 	m_iTrailingLivesLeft = m_iLivesLeft;
 
 	m_fBatteryBlinkTime = 0;
@@ -67,12 +67,12 @@ void LifeMeterBattery::OnSongEnded()
 	if( m_pPlayerStageStats->bFailedEarlier )
 		return;
 
-	if( m_iLivesLeft < GAMESTATE->m_SongOptions.m_iBatteryLives )
+	if( m_iLivesLeft < GAMESTATE->m_SongOptions.GetSong().m_iBatteryLives )
 	{
 		m_iTrailingLivesLeft = m_iLivesLeft;
 		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 		m_iLivesLeft += ( GAMESTATE->m_pCurSteps[pn]->GetMeter()>=8 ? 2 : 1 );
-		m_iLivesLeft = min( m_iLivesLeft, GAMESTATE->m_SongOptions.m_iBatteryLives );
+		m_iLivesLeft = min( m_iLivesLeft, GAMESTATE->m_SongOptions.GetSong().m_iBatteryLives );
 		m_soundGainLife.Play();
 	}
 
@@ -153,10 +153,10 @@ bool LifeMeterBattery::IsFailing() const
 
 float LifeMeterBattery::GetLife() const
 {
-	if( !GAMESTATE->m_SongOptions.m_iBatteryLives )
+	if( !GAMESTATE->m_SongOptions.GetSong().m_iBatteryLives )
 		return 1;
 
-	return float(m_iLivesLeft) / GAMESTATE->m_SongOptions.m_iBatteryLives;
+	return float(m_iLivesLeft) / GAMESTATE->m_SongOptions.GetSong().m_iBatteryLives;
 }
 
 void LifeMeterBattery::ForceFail()

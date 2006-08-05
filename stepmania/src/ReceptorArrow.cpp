@@ -23,7 +23,7 @@ void ReceptorArrow::Load( const PlayerState* pPlayerState, int iColNo )
 	m_pReceptor.Load( NOTESKIN->GetPath(sButton,"receptor") );
 	this->AddChild( m_pReceptor );
 
-	bool bReverse = m_pPlayerState->m_PlayerOptions.GetReversePercentForColumn(m_iColNo) > 0.5f;
+	bool bReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(m_iColNo) > 0.5f;
 	m_pReceptor->PlayCommand( bReverse? "ReverseOn":"ReverseOff" );
 	m_bWasReverse = bReverse;
 }
@@ -32,7 +32,7 @@ void ReceptorArrow::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
 
-	bool bReverse = m_pPlayerState->m_PlayerOptions.GetReversePercentForColumn(m_iColNo) > 0.5f;
+	bool bReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(m_iColNo) > 0.5f;
 	if( bReverse != m_bWasReverse )
 	{
 		m_pReceptor->PlayCommand( bReverse? "ReverseOn":"ReverseOff" );

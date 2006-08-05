@@ -18,7 +18,7 @@ const float ARROW_SPACING	= ARROW_SIZE;// + 2;
 
 static float GetNoteFieldHeight( const PlayerState* pPlayerState )
 {
-	return SCREEN_HEIGHT + fabsf(pPlayerState->m_CurrentPlayerOptions.m_fPerspectiveTilt)*200;
+	return SCREEN_HEIGHT + fabsf(pPlayerState->m_PlayerOptions.GetCurrent().m_fPerspectiveTilt)*200;
 }
 
 namespace
@@ -180,31 +180,31 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 
 	/* Usually, fTimeSpacing is 0 or 1, in which case we use entirely beat spacing or
 	 * entirely time spacing (respectively).  Occasionally, we tween between them. */
-	if( pPlayerState->m_CurrentPlayerOptions.m_fTimeSpacing != 1.0f )
+	if( pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing != 1.0f )
 	{
 		float fSongBeat = GAMESTATE->m_fSongBeat;
 		float fBeatsUntilStep = fNoteBeat - fSongBeat;
 		float fYOffsetBeatSpacing = fBeatsUntilStep * ARROW_SPACING;
-		fYOffset += fYOffsetBeatSpacing * (1-pPlayerState->m_CurrentPlayerOptions.m_fTimeSpacing);
+		fYOffset += fYOffsetBeatSpacing * (1-pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing);
 	}
 
-	if( pPlayerState->m_CurrentPlayerOptions.m_fTimeSpacing != 0.0f )
+	if( pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing != 0.0f )
 	{
 		float fSongSeconds = GAMESTATE->m_fMusicSeconds;
 		float fNoteSeconds = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat(fNoteBeat);
 		float fSecondsUntilStep = fNoteSeconds - fSongSeconds;
-		float fBPM = pPlayerState->m_CurrentPlayerOptions.m_fScrollBPM;
+		float fBPM = pPlayerState->m_PlayerOptions.GetCurrent().m_fScrollBPM;
 		float fBPS = fBPM/60.f;
 		float fYOffsetTimeSpacing = fSecondsUntilStep * fBPS * ARROW_SPACING;
-		fYOffset += fYOffsetTimeSpacing * pPlayerState->m_CurrentPlayerOptions.m_fTimeSpacing;
+		fYOffset += fYOffsetTimeSpacing * pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing;
 	}
 
 	// don't mess with the arrows after they've crossed 0
 	if( fYOffset < 0 )
-		return fYOffset * pPlayerState->m_CurrentPlayerOptions.m_fScrollSpeed;
+		return fYOffset * pPlayerState->m_PlayerOptions.GetCurrent().m_fScrollSpeed;
 
-	const float* fAccels = pPlayerState->m_CurrentPlayerOptions.m_fAccels;
-	//const float* fEffects = pPlayerState->m_CurrentPlayerOptions.m_fEffects;
+	const float* fAccels = pPlayerState->m_PlayerOptions.GetCurrent().m_fAccels;
+	//const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
 
 
 	float fYAdjust = 0;	// fill this in depending on PlayerOptions
@@ -248,8 +248,8 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	//
 	// Factor in scroll speed
 	//
-	float fScrollSpeed = pPlayerState->m_CurrentPlayerOptions.m_fScrollSpeed;
-	if( pPlayerState->m_CurrentPlayerOptions.m_fRandomSpeed > 0 && !bAbsolute )
+	float fScrollSpeed = pPlayerState->m_PlayerOptions.GetCurrent().m_fScrollSpeed;
+	if( pPlayerState->m_PlayerOptions.GetCurrent().m_fRandomSpeed > 0 && !bAbsolute )
 	{
 		int seed = GAMESTATE->m_iStageSeed + ( BeatToNoteRow( fNoteBeat ) << 8 ) + (iCol * 100);
 
@@ -263,7 +263,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		fScrollSpeed *=
 				SCALE( fRandom,
 						0.0f, 1.0f,
-						1.0f, pPlayerState->m_CurrentPlayerOptions.m_fRandomSpeed + 1.0f );
+						1.0f, pPlayerState->m_PlayerOptions.GetCurrent().m_fRandomSpeed + 1.0f );
 	}	
 
 
@@ -282,16 +282,16 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 static void ArrowGetReverseShiftAndScale( const PlayerState* pPlayerState, int iCol, float fYReverseOffsetPixels, float &fShiftOut, float &fScaleOut )
 {
 	/* XXX: Hack: we need to scale the reverse shift by the zoom. */
-	float fTinyPercent = pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_TINY];
+	float fTinyPercent = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_TINY];
 	float fZoom = 1 - fTinyPercent*0.5f;
 	
 	// don't divide by 0
 	if( fabsf(fZoom) < 0.01 )
 		fZoom = 0.01f;
 
-	float fPercentReverse = pPlayerState->m_CurrentPlayerOptions.GetReversePercentForColumn(iCol);
+	float fPercentReverse = pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(iCol);
 	fShiftOut = SCALE( fPercentReverse, 0.f, 1.f, -fYReverseOffsetPixels/fZoom/2, fYReverseOffsetPixels/fZoom/2 );
-	float fPercentCentered = pPlayerState->m_CurrentPlayerOptions.m_fScrolls[PlayerOptions::SCROLL_CENTERED];
+	float fPercentCentered = pPlayerState->m_PlayerOptions.GetCurrent().m_fScrolls[PlayerOptions::SCROLL_CENTERED];
 	fShiftOut = SCALE( fPercentCentered, 0.f, 1.f, fShiftOut, 0.0f );
 
 	fScaleOut = SCALE( fPercentReverse, 0.f, 1.f, 1.f, -1.f );
@@ -310,7 +310,7 @@ float ArrowEffects::GetYPos( const PlayerState* pPlayerState, int iCol, float fY
 		f += fShift;
 	}
 
-	const float* fEffects = pPlayerState->m_CurrentPlayerOptions.m_fEffects;
+	const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
 
 	if( fEffects[PlayerOptions::EFFECT_TIPSY] != 0 )
 		f += fEffects[PlayerOptions::EFFECT_TIPSY] * ( RageFastCos( RageTimer::GetTimeSinceStartFast()*1.2f + iCol*1.8f) * ARROW_SIZE*0.4f );
@@ -321,7 +321,7 @@ float ArrowEffects::GetYOffsetFromYPos( const PlayerState* pPlayerState, int iCo
 {
 	float f = YPos;
 
-	const float* fEffects = pPlayerState->m_CurrentPlayerOptions.m_fEffects;
+	const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
 	if( fEffects[PlayerOptions::EFFECT_TIPSY] != 0 )
 		f -= fEffects[PlayerOptions::EFFECT_TIPSY] * ( RageFastCos( RageTimer::GetTimeSinceStartFast()*1.2f + iCol*2.f) * ARROW_SIZE*0.4f );
 
@@ -340,7 +340,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 	float fPixelOffsetFromCenter = 0;	// fill this in below
 	
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();
-	const float* fEffects = pPlayerState->m_CurrentPlayerOptions.m_fEffects;
+	const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
 
 	// TODO: Don't index by PlayerNumber.
 	const Style::ColumnInfo* pCols = pStyle->m_ColumnInfo[pPlayerState->m_PlayerNumber];
@@ -394,11 +394,11 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 
 float ArrowEffects::GetRotation( const PlayerState* pPlayerState, float fNoteBeat ) 
 {
-	if( pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_DIZZY] != 0 )
+	if( pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_DIZZY] != 0 )
 	{
 		const float fSongBeat = GAMESTATE->m_fSongBeat;
 		float fDizzyRotation = fNoteBeat - fSongBeat;
-		fDizzyRotation *= pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_DIZZY];
+		fDizzyRotation *= pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_DIZZY];
 		fDizzyRotation = fmodf( fDizzyRotation, 2*PI );
 		fDizzyRotation *= 180/PI;
 		return fDizzyRotation;
@@ -415,14 +415,14 @@ static float GetCenterLine( const PlayerState* pPlayerState )
 {
 	/* Another mini hack: if EFFECT_MINI is on, then our center line is at eg. 320, 
 	 * not 160. */
-	const float fMiniPercent = pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_TINY];
+	const float fMiniPercent = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_TINY];
 	const float fZoom = 1 - fMiniPercent*0.5f;
 	return CENTER_LINE_Y / fZoom;
 }
 
 static float GetHiddenSudden( const PlayerState* pPlayerState ) 
 {
-	const float* fAppearances = pPlayerState->m_CurrentPlayerOptions.m_fAppearances;
+	const float* fAppearances = pPlayerState->m_PlayerOptions.GetCurrent().m_fAppearances;
 	return fAppearances[PlayerOptions::APPEARANCE_HIDDEN] *
 		fAppearances[PlayerOptions::APPEARANCE_SUDDEN];
 }
@@ -443,28 +443,28 @@ static float GetHiddenEndLine( const PlayerState* pPlayerState )
 {
 	return GetCenterLine( pPlayerState ) + 
 		FADE_DIST_Y * SCALE( GetHiddenSudden(pPlayerState), 0.f, 1.f, -1.0f, -1.25f ) + 
-		GetCenterLine( pPlayerState ) * pPlayerState->m_CurrentPlayerOptions.m_fAppearances[PlayerOptions::APPEARANCE_HIDDEN_OFFSET];
+		GetCenterLine( pPlayerState ) * pPlayerState->m_PlayerOptions.GetCurrent().m_fAppearances[PlayerOptions::APPEARANCE_HIDDEN_OFFSET];
 }
 
 static float GetHiddenStartLine( const PlayerState* pPlayerState )
 {
 	return GetCenterLine( pPlayerState ) + 
 		FADE_DIST_Y * SCALE( GetHiddenSudden(pPlayerState), 0.f, 1.f, +0.0f, -0.25f ) + 
-		GetCenterLine( pPlayerState ) * pPlayerState->m_CurrentPlayerOptions.m_fAppearances[PlayerOptions::APPEARANCE_HIDDEN_OFFSET];
+		GetCenterLine( pPlayerState ) * pPlayerState->m_PlayerOptions.GetCurrent().m_fAppearances[PlayerOptions::APPEARANCE_HIDDEN_OFFSET];
 }
 
 static float GetSuddenEndLine( const PlayerState* pPlayerState )
 {
 	return GetCenterLine( pPlayerState ) + 
 		FADE_DIST_Y * SCALE( GetHiddenSudden(pPlayerState), 0.f, 1.f, -0.0f, +0.25f ) + 
-		GetCenterLine( pPlayerState ) * pPlayerState->m_CurrentPlayerOptions.m_fAppearances[PlayerOptions::APPEARANCE_SUDDEN_OFFSET];
+		GetCenterLine( pPlayerState ) * pPlayerState->m_PlayerOptions.GetCurrent().m_fAppearances[PlayerOptions::APPEARANCE_SUDDEN_OFFSET];
 }
 
 static float GetSuddenStartLine( const PlayerState* pPlayerState )
 {
 	return GetCenterLine( pPlayerState ) + 
 		FADE_DIST_Y * SCALE( GetHiddenSudden(pPlayerState), 0.f, 1.f, +1.0f, +1.25f ) + 
-		GetCenterLine( pPlayerState ) * pPlayerState->m_CurrentPlayerOptions.m_fAppearances[PlayerOptions::APPEARANCE_SUDDEN_OFFSET];
+		GetCenterLine( pPlayerState ) * pPlayerState->m_PlayerOptions.GetCurrent().m_fAppearances[PlayerOptions::APPEARANCE_SUDDEN_OFFSET];
 }
 
 // used by ArrowGetAlpha and ArrowGetGlow below
@@ -478,7 +478,7 @@ float ArrowGetPercentVisible( const PlayerState* pPlayerState, int iCol, float f
 	if( fYPos < 0 )	// past Gray Arrows
 		return 1;	// totally visible
 
-	const float* fAppearances = pPlayerState->m_CurrentPlayerOptions.m_fAppearances;
+	const float* fAppearances = pPlayerState->m_PlayerOptions.GetCurrent().m_fAppearances;
 
 	float fVisibleAdjust = 0;
 
@@ -551,7 +551,7 @@ float ArrowEffects::GetBrightness( const PlayerState* pPlayerState, float fNoteB
 float ArrowEffects::GetZPos( const PlayerState* pPlayerState, int iCol, float fYOffset )
 {
 	float fZPos=0;
-	const float* fEffects = pPlayerState->m_CurrentPlayerOptions.m_fEffects;
+	const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
 
 	if( fEffects[PlayerOptions::EFFECT_BUMPY] != 0 )
 		fZPos += fEffects[PlayerOptions::EFFECT_BUMPY] * 40*RageFastSin( fYOffset/16.0f );
@@ -561,7 +561,7 @@ float ArrowEffects::GetZPos( const PlayerState* pPlayerState, int iCol, float fY
 
 bool ArrowEffects::NeedZBuffer( const PlayerState* pPlayerState )
 {
-	const float* fEffects = pPlayerState->m_CurrentPlayerOptions.m_fEffects;
+	const float* fEffects = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects;
 	if( fEffects[PlayerOptions::EFFECT_BUMPY] != 0 )
 		return true;
 
@@ -576,7 +576,7 @@ float ArrowEffects::GetZoom( const PlayerState* pPlayerState )
 		(GAMESTATE->GetNumSidesJoined()==2 || GAMESTATE->AnyPlayersAreCpu()) )
 		fZoom *= 0.6f;
 
-	float fMiniPercent = pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_MINI];
+	float fMiniPercent = pPlayerState->m_PlayerOptions.GetCurrent().m_fEffects[PlayerOptions::EFFECT_MINI];
 	if( fMiniPercent != 0 )
 	{
 		fMiniPercent = powf( 0.5f, fMiniPercent );

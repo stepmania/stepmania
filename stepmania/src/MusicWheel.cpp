@@ -121,10 +121,10 @@ void MusicWheel::Load( RString sType )
 		FOREACH_HumanPlayer( p )
 		{
 			GAMESTATE->m_pCurSteps[p].Set( pSteps );
-			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions = po;
+			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, = po);
 			GAMESTATE->m_PreferredDifficulty[p].Set( pSteps->GetDifficulty() );
 		}
-		GAMESTATE->m_SongOptions = so;
+		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, = so );
 	}
 
 	/* Update for SORT_MOST_PLAYED. */

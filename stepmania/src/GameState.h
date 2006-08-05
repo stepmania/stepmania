@@ -11,6 +11,7 @@
 #include "Difficulty.h"
 #include "MessageManager.h"
 #include "SongOptions.h"
+#include "ModsGroup.h"
 
 #include <map>
 #include <deque>
@@ -117,22 +118,22 @@ public:
 	int				m_iNumStagesOfThisSong;
 	int				m_iCurrentStageIndex;
 
-	int				GetStageIndex() const;
-	void				BeginStage();
-	void				CancelStage();
-	void				CommitStageStats();
-	void				FinishStage();
-	int				GetNumStagesLeft() const;
-	bool				IsFinalStage() const;
-	bool				IsExtraStage() const;
-	bool				IsExtraStage2() const;
-	Stage				GetCurrentStage() const;
-	bool				IsStagePossible( Stage s ) const;
-	int				GetCourseSongIndex() const;
-	RString				GetPlayerDisplayName( PlayerNumber pn ) const;
+	int		GetStageIndex() const;
+	void		BeginStage();
+	void		CancelStage();
+	void		CommitStageStats();
+	void		FinishStage();
+	int		GetNumStagesLeft() const;
+	bool		IsFinalStage() const;
+	bool		IsExtraStage() const;
+	bool		IsExtraStage2() const;
+	Stage		GetCurrentStage() const;
+	bool		IsStagePossible( Stage s ) const;
+	int		GetCourseSongIndex() const;
+	RString		GetPlayerDisplayName( PlayerNumber pn ) const;
 
-	bool				m_bLoadingNextSong;
-	int				GetLoadingCourseSongIndex() const;
+	bool		m_bLoadingNextSong;
+	int		GetLoadingCourseSongIndex() const;
 
 	//
 	// State Info used during gameplay
@@ -204,17 +205,13 @@ public:
 	// Options stuff
 	//
 
-	SongOptions		m_SongOptions;
-	SongOptions		m_StoredSongOptions;
+	ModsGroup<SongOptions>	m_SongOptions;
 
 	void GetDefaultPlayerOptions( PlayerOptions &po );
 	void GetDefaultSongOptions( SongOptions &so );
-	void ApplyModifiers( PlayerNumber pn, RString sModifiers );
-	void StoreSelectedOptions();
-	void StoreStageOptions();
-	void RestoreSelectedOptions();
-	void RestoreStageOptions();
-	void ResetCurrentOptions();
+	void ApplyPreferredModifiers( PlayerNumber pn, RString sModifiers );
+	void ApplyStageModifiers( PlayerNumber pn, RString sModifiers );
+	void ResetOptions();
 
 	bool IsDisqualified( PlayerNumber pn );
 	bool PlayerIsUsingModifier( PlayerNumber pn, const RString &sModifier );

@@ -60,7 +60,8 @@ public:
 	Difficulty	m_dc;
 	CourseDifficulty	m_CourseDifficulty;
 	RString		m_sAnnouncer;
-	RString		m_sModifiers;
+	RString		m_sPreferredModifiers;
+	RString		m_sStageModifiers;
 	RString		m_sScreen;
 	LuaExpression	m_LuaFunction;
 	Song*		m_pSong;

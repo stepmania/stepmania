@@ -215,9 +215,6 @@ bool CodeDetector::EnteredModeMenu( GameController controller )
 #define  INCREMENT_SCROLL_SPEED(s)	(s==0.5f) ? s=0.75f : (s==0.75f) ? s=1.0f : (s==1.0f) ? s=1.5f : (s==1.5f) ? s=2.0f : (s==2.0f) ? s=3.0f : (s==3.0f) ? s=4.0f : (s==4.0f) ? s=5.0f : (s==5.0f) ? s=8.0f : s=0.5f;
 #define  DECREMENT_SCROLL_SPEED(s)	(s==0.75f) ? s=0.5f : (s==1.0f) ? s=0.75f : (s==1.5f) ? s=1.0f : (s==2.0f) ? s=1.5f : (s==3.0f) ? s=2.0f : (s==4.0f) ? s=3.0f : (s==5.0f) ? s=4.0f : (s==8.0f) ? s=4.0f : s=8.0f;
 
-#define  TOGGLE_HIDDEN ZERO(GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.m_fAppearances); GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.m_fAppearances[PlayerOptions::APPEARANCE_HIDDEN] = 1; 
-#define  TOGGLE_RANDOMVANISH ZERO(GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.m_fAppearances); GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.m_fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH] = 1;
-
 bool CodeDetector::DetectAndAdjustMusicOptions( GameController controller )
 {
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();
@@ -227,7 +224,7 @@ bool CodeDetector::DetectAndAdjustMusicOptions( GameController controller )
 	{
 		Code code = (Code)c;
 		
-		PlayerOptions& po = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions;
+		PlayerOptions po = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetPreferred();
 
 		if( EnteredCode(controller,code) )
 		{
@@ -250,10 +247,20 @@ bool CodeDetector::DetectAndAdjustMusicOptions( GameController controller )
 			case CODE_MINES:			TOGGLE( po.m_bTransforms[PlayerOptions::TRANSFORM_NOMINES], true, false );	break;
 			case CODE_DARK:				FLOAT_TOGGLE( po.m_fDark );				break;
 			case CODE_CANCEL_ALL:			GAMESTATE->GetDefaultPlayerOptions( po );		break;
-			case CODE_HIDDEN:			TOGGLE_HIDDEN;						break;
-			case CODE_RANDOMVANISH:			TOGGLE_RANDOMVANISH;					break;
+			case CODE_HIDDEN:
+				ZERO(po.m_fAppearances);
+				po.m_fAppearances[PlayerOptions::APPEARANCE_HIDDEN] = 1;
+				break;
+			case CODE_RANDOMVANISH:
+				ZERO(po.m_fAppearances);
+				po.m_fAppearances[PlayerOptions::APPEARANCE_RANDOMVANISH] = 1;
+				break;
 			default:	break;
 			}
+
+			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Preferred, = po );
+
+
 			return true;	// don't check any more
 		}
 	}

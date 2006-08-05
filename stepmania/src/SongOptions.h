@@ -27,7 +27,7 @@ public:
 		FAIL_END_OF_SONG,			// fail on end of song if life touched 0
 		FAIL_OFF };					// never fail
 	FailType m_FailType;
-	float m_fMusicRate;
+	float m_fMusicRate,	m_SpeedfMusicRate;
 	bool m_bAssistTick;
 	enum AutosyncType { 
 		AUTOSYNC_OFF,
@@ -38,8 +38,10 @@ public:
 	AutosyncType m_AutosyncType;
 	bool m_bSaveScore;
 
+
 	SongOptions() { Init(); };
 	void Init();
+	void Approach( const SongOptions& other, float fDeltaSeconds );
 	void GetMods( vector<RString> &AddTo ) const;
 	void GetLocalizedMods( vector<RString> &AddTo ) const;
 	RString GetString() const;

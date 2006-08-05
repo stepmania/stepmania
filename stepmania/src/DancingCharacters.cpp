@@ -179,7 +179,7 @@ void DancingCharacters::Update( float fDelta )
 
 		/* It's OK for the animation to go slower than natural when we're
 		 * at a very low music rate. */
-		fUpdateScale *= GAMESTATE->m_SongOptions.m_fMusicRate;
+		fUpdateScale *= GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
 
 		FOREACH_PlayerNumber( p )
 		{

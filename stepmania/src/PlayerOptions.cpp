@@ -42,27 +42,28 @@ void PlayerOptions::Init()
 
 void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 {
-#define APP( opt ) \
+#define APPROACH( opt ) \
 	fapproach( m_ ## opt, other.m_ ## opt, fDeltaSeconds * other.m_Speed ## opt );
 
-	APP( fTimeSpacing );
-	APP( fScrollSpeed );
+	APPROACH( fTimeSpacing );
+	APPROACH( fScrollSpeed );
 	fapproach( m_fScrollBPM, other.m_fScrollBPM, fDeltaSeconds * other.m_SpeedfScrollBPM*150 );
 	for( int i=0; i<NUM_ACCELS; i++ )
-		APP( fAccels[i] );
+		APPROACH( fAccels[i] );
 	for( int i=0; i<NUM_EFFECTS; i++ )
-		APP( fEffects[i] );
+		APPROACH( fEffects[i] );
 	for( int i=0; i<NUM_APPEARANCES; i++ )
-		APP( fAppearances[i] );
+		APPROACH( fAppearances[i] );
 	for( int i=0; i<NUM_SCROLLS; i++ )
-		APP( fScrolls[i] );
-	APP( fDark );
-	APP( fBlind );
-	APP( fCover );
-	APP( fPerspectiveTilt );
-	APP( fSkew );
-	APP( fPassmark );
-	APP( fRandomSpeed );
+		APPROACH( fScrolls[i] );
+	APPROACH( fDark );
+	APPROACH( fBlind );
+	APPROACH( fCover );
+	APPROACH( fPerspectiveTilt );
+	APPROACH( fSkew );
+	APPROACH( fPassmark );
+	APPROACH( fRandomSpeed );
+#undef APPROACH
 }
 
 static void AddPart( vector<RString> &AddTo, float level, RString name )

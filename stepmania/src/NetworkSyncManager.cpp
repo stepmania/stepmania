@@ -442,13 +442,13 @@ void NetworkSyncManager::StartRequest(short position)
 		m_packet.WriteNT(RString(""));
 
 	//Send Player (and song) Options
-	m_packet.WriteNT(GAMESTATE->m_SongOptions.GetString());
+	m_packet.WriteNT( GAMESTATE->m_SongOptions.GetCurrent().GetString() );
 
 	int players=0;
 	FOREACH_PlayerNumber (p)
 	{
 		++players;
-		m_packet.WriteNT(GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetString());
+		m_packet.WriteNT(GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetCurrent().GetString());
 	}
 	for (int i=0; i<2-players; ++i)
 		m_packet.WriteNT("");	//Write a NULL if no player
@@ -785,7 +785,7 @@ void NetworkSyncManager::ReportPlayerOptions()
 	m_packet.ClearPacket();
 	m_packet.Write1( NSCUPOpts );
 	FOREACH_PlayerNumber (pn)
-		m_packet.WriteNT( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetString() );
+		m_packet.WriteNT( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().GetString() );
 	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
 }
 

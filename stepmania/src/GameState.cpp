@@ -215,6 +215,8 @@ void GameState::Reset()
 	FOREACH_MultiPlayer( p )
 		m_pMultiPlayerState[p]->Reset();
 
+	m_SongOptions.Init();
+
 	ResetMusicStatistics();
 	ResetStageStatistics();
 
@@ -230,7 +232,9 @@ void GameState::Reset()
 
 	STATSMAN->Reset();
 
-	GAMESTATE->GetDefaultSongOptions( m_SongOptions );
+	SongOptions so;
+	GAMESTATE->GetDefaultSongOptions( so );
+	MODS_GROUP_ASSIGN( m_SongOptions, ModsLevel_Preferred, = so );
 	
 	FOREACH_PlayerNumber(p)
 	{
@@ -242,7 +246,9 @@ void GameState::Reset()
 		// could be done in the title menu GameCommand, but then it wouldn't
 		// affect demo, and other non-gameplay things ...) -glenn
 		
-		GAMESTATE->GetDefaultPlayerOptions( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions );
+		PlayerOptions po;
+		GAMESTATE->GetDefaultPlayerOptions( po );
+		MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Preferred, = po );
 	}
 
 	FOREACH_PlayerNumber(p)
@@ -363,8 +369,8 @@ void GameState::PlayersFinalized()
 			 * sets a default of "reverse", and the player turns it off, we should
 			 * set it off.  However, don't reset modifiers that aren't saved by the
 			 * profile, so we don't ignore unsaved modifiers when a profile is in use. */
-			GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.ResetSavedPrefs();
-			GAMESTATE->ApplyModifiers( pn, sModifiers );
+			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Preferred, .ResetSavedPrefs() );
+			GAMESTATE->ApplyPreferredModifiers( pn, sModifiers );
 		}
 		// Only set the sort order if it wasn't already set by a GameCommand (or by an earlier profile)
 		if( m_PreferredSortOrder == SORT_INVALID && pProfile->m_SortOrder != SORT_INVALID )
@@ -380,7 +386,7 @@ void GameState::PlayersFinalized()
 	}
 
 	FOREACH_PotentialCpuPlayer( pn )
-		ApplyModifiers( pn, CommonMetrics::DEFAULT_CPU_MODIFIERS );
+		ApplyPreferredModifiers( pn, CommonMetrics::DEFAULT_CPU_MODIFIERS );
 }
 
 void GameState::EndGame()
@@ -478,6 +484,10 @@ void GameState::BeginStage()
 
 	GAMESTATE->ResetStageStatistics();
 
+	FOREACH_PlayerNumber( p )
+		MODS_GROUP_ASSIGN( m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, = m_pPlayerState[p]->m_PlayerOptions.GetPreferred() );
+	MODS_GROUP_ASSIGN( m_SongOptions, ModsLevel_Stage, = m_SongOptions.GetPreferred() );
+
 	m_iNumStagesOfThisSong = GetNumStagesForCurrentSong();
 	ASSERT( m_iNumStagesOfThisSong != -1 );
 }
@@ -510,8 +520,6 @@ void GameState::FinishStage()
 	/* If we havn't committed stats yet, do so. */
 	if( !m_bMultiplayer )	// no saved stats in multiplayer
 		CommitStageStats();
-
-	RestoreSelectedOptions();
 
 	m_bStatsCommitted = false;
 
@@ -548,7 +556,7 @@ void GameState::SaveCurrentSettingsToProfile( PlayerNumber pn )
 
 	Profile* pProfile = PROFILEMAN->GetProfile(pn);
 
-	pProfile->SetDefaultModifiers( this->m_pCurGame, m_pPlayerState[pn]->m_PlayerOptions.GetSavedPrefsString() );
+	pProfile->SetDefaultModifiers( this->m_pCurGame, m_pPlayerState[pn]->m_PlayerOptions.GetPreferred().GetSavedPrefsString() );
 	if( IsSongSort(m_PreferredSortOrder) )
 		pProfile->m_SortOrder = m_PreferredSortOrder;
 	if( m_PreferredDifficulty[pn] != DIFFICULTY_INVALID )
@@ -563,6 +571,8 @@ void GameState::SaveCurrentSettingsToProfile( PlayerNumber pn )
 
 void GameState::Update( float fDelta )
 {
+	m_SongOptions.Update( fDelta );
+
 	FOREACH_PlayerNumber( p )
 	{
 		m_pPlayerState[p]->Update( fDelta );
@@ -1061,51 +1071,29 @@ void GameState::GetDefaultSongOptions( SongOptions &so )
 	so.FromString( CommonMetrics::DEFAULT_MODIFIERS );
 }
 
-void GameState::ApplyModifiers( PlayerNumber pn, RString sModifiers )
+void GameState::ApplyPreferredModifiers( PlayerNumber pn, RString sModifiers )
 {
-	m_pPlayerState[pn]->m_PlayerOptions.FromString( sModifiers );
-	m_SongOptions.FromString( sModifiers );
+	MODS_GROUP_ASSIGN( m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Preferred, .FromString(sModifiers) );
+	MODS_GROUP_ASSIGN( m_SongOptions, ModsLevel_Preferred, .FromString(sModifiers) );
 }
 
-/* Store the player's preferred options.  This is called at the very beginning
- * of gameplay. */
-void GameState::StoreSelectedOptions()
+void GameState::ApplyStageModifiers( PlayerNumber pn, RString sModifiers )
 {
-	FOREACH_PlayerNumber( pn )
-		m_pPlayerState[pn]->m_StoredPlayerOptions = m_pPlayerState[pn]->m_PlayerOptions;
-	m_StoredSongOptions = m_SongOptions;
+	MODS_GROUP_ASSIGN( m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Stage, .FromString(sModifiers) );
+	MODS_GROUP_ASSIGN( m_SongOptions, ModsLevel_Stage, .FromString(sModifiers) );
 }
 
-void GameState::StoreStageOptions()
-{
-	FOREACH_PlayerNumber( pn )
-		m_pPlayerState[pn]->m_StagePlayerOptions = m_pPlayerState[pn]->m_PlayerOptions;
-	m_StoredSongOptions = m_SongOptions;
-}
-
-/* Restore the preferred options.  This is called after a song ends, before
- * setting new course options, so options from one song don't carry into the
- * next and we default back to the preferred options.  This is also called
- * at the end of gameplay to restore options. */
-void GameState::RestoreSelectedOptions()
-{
-	FOREACH_PlayerNumber( pn )
-		m_pPlayerState[pn]->m_PlayerOptions = m_pPlayerState[pn]->m_StoredPlayerOptions;
-	m_SongOptions = m_StoredSongOptions;
-}
-
-void GameState::RestoreStageOptions()
-{
-	FOREACH_PlayerNumber( pn )
-		m_pPlayerState[pn]->m_PlayerOptions = m_pPlayerState[pn]->m_StagePlayerOptions;
-	m_SongOptions = m_StoredSongOptions;
-}
-
-void GameState::ResetCurrentOptions()
+void GameState::ResetOptions()
 {
 	FOREACH_PlayerNumber( p )
-		GetDefaultPlayerOptions( m_pPlayerState[p]->m_PlayerOptions );
-	GetDefaultSongOptions( m_SongOptions );
+	{
+		PlayerOptions po;
+		GetDefaultPlayerOptions( po );
+		MODS_GROUP_ASSIGN( m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Preferred, = po );
+	}
+	SongOptions so;
+	GetDefaultSongOptions( so );
+	MODS_GROUP_ASSIGN( m_SongOptions, ModsLevel_Preferred, = so );
 }
 
 bool GameState::IsDisqualified( PlayerNumber pn )
@@ -1124,7 +1112,7 @@ bool GameState::IsDisqualified( PlayerNumber pn )
 		return true;
 #endif //DEBUG
 
-	const PlayerOptions &po = GAMESTATE->m_pPlayerState[pn]->m_StoredPlayerOptions;
+	const PlayerOptions &po = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetPreferred();
 
 	// Check the stored player options for disqualify.  Don't disqualify because
 	// of mods that were forced.
@@ -1138,7 +1126,7 @@ void GameState::GetAllUsedNoteSkins( vector<RString> &out ) const
 {
 	FOREACH_EnabledPlayer( pn )
 	{
-		out.push_back( m_pPlayerState[pn]->m_PlayerOptions.m_sNoteSkin );
+		out.push_back( m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().m_sNoteSkin );
 
 		/* Add note skins that are used in courses. */
 		if( this->IsCourseMode() )
@@ -1182,7 +1170,7 @@ void setmax( T &a, const T &b )
 SongOptions::FailType GameState::GetPlayerFailType( const PlayerState *pPlayerState ) const
 {
 	PlayerNumber pn = pPlayerState->m_PlayerNumber;
-	SongOptions::FailType ft = m_SongOptions.m_FailType;
+	SongOptions::FailType ft = m_SongOptions.GetCurrent().m_FailType;
 
 	/* If the player changed the fail mode explicitly, leave it alone. */
 	if( this->m_bChangedFailTypeOnScreenSongOptions )
@@ -1787,12 +1775,12 @@ float GameState::GetGoalPercentComplete( PlayerNumber pn )
 
 bool GameState::PlayerIsUsingModifier( PlayerNumber pn, const RString &sModifier )
 {
-	PlayerOptions po = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions;
-	SongOptions so = GAMESTATE->m_SongOptions;
+	PlayerOptions po = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetCurrent();
+	SongOptions so = GAMESTATE->m_SongOptions.GetCurrent();
 	po.FromString( sModifier );
 	so.FromString( sModifier );
 
-	return po == GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions && so == GAMESTATE->m_SongOptions;
+	return po == GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetCurrent()  &&  so == GAMESTATE->m_SongOptions.GetCurrent();
 }
 
 Profile* GameState::GetEditLocalProfile()
@@ -1946,7 +1934,7 @@ public:
 	static int GetNumSidesJoined( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetNumSidesJoined() ); return 1; }
 	static int GetCoinMode( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetCoinMode() ); return 1; }
 	static int GetPremium( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetPremium() ); return 1; }
-	static int GetSongOptionsString( T* p, lua_State *L )		{ lua_pushstring(L, p->m_SongOptions.GetString() ); return 1; }
+	static int GetSongOptionsString( T* p, lua_State *L )		{ lua_pushstring(L, p->m_SongOptions.GetCurrent().GetString() ); return 1; }
 	static int IsWinner( T* p, lua_State *L )
 	{
 		PlayerNumber pn = (PlayerNumber)IArg(1);

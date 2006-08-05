@@ -753,7 +753,7 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 	pSong->m_Timing.GetBeatAndBPSFromElapsedTime( fCurrentTime, fBeat, fBPS, bFreeze );
 
 	/* Calls to Update() should *not* be scaled by music rate; fCurrentTime is. Undo it. */
-	const float fRate = GAMESTATE->m_SongOptions.m_fMusicRate;
+	const float fRate = GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
 
 	// Find the BGSegment we're in
 	const int i = FindBGSegmentForBeat( fBeat );
@@ -989,8 +989,8 @@ void BrightnessOverlay::Update( float fDeltaTime )
 
 void BrightnessOverlay::SetActualBrightness()
 {
-	float fLeftBrightness = 1-GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_fCover;
-	float fRightBrightness = 1-GAMESTATE->m_pPlayerState[PLAYER_2]->m_PlayerOptions.m_fCover;
+	float fLeftBrightness = 1-GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetCurrent().m_fCover;
+	float fRightBrightness = 1-GAMESTATE->m_pPlayerState[PLAYER_2]->m_PlayerOptions.GetCurrent().m_fCover;
 
 	float fBaseBGBrightness = PREFSMAN->m_fBGBrightness;
 

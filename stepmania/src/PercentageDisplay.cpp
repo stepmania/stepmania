@@ -130,7 +130,7 @@ void PercentageDisplay::Refresh()
 		
 		if( m_bApplyScoreDisplayOptions )
 		{
-			switch( m_pPlayerState->m_CurrentPlayerOptions.m_ScoreDisplay )
+			switch( m_pPlayerState->m_PlayerOptions.GetCurrent().m_ScoreDisplay )
 			{
 			case PlayerOptions::SCORING_ADD:
 				// nothing to do

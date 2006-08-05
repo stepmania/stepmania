@@ -114,16 +114,16 @@ public:
 	float	m_fTimeSpacing,			m_SpeedfTimeSpacing;	// instead of Beat spacing
 	float	m_fScrollSpeed,			m_SpeedfScrollSpeed;	// used if !m_bTimeSpacing
 	float	m_fScrollBPM,			m_SpeedfScrollBPM;		// used if m_bTimeSpacing
-	float	m_fAccels[NUM_ACCELS],	m_SpeedfAccels[NUM_ACCELS];
-	float	m_fEffects[NUM_EFFECTS],m_SpeedfEffects[NUM_EFFECTS];
+	float	m_fAccels[NUM_ACCELS],		m_SpeedfAccels[NUM_ACCELS];
+	float	m_fEffects[NUM_EFFECTS],	m_SpeedfEffects[NUM_EFFECTS];
 	float	m_fAppearances[NUM_APPEARANCES],m_SpeedfAppearances[NUM_APPEARANCES];
-	float	m_fScrolls[NUM_SCROLLS],m_SpeedfScrolls[NUM_SCROLLS];
-	float	m_fDark,				m_SpeedfDark;
-	float	m_fBlind,				m_SpeedfBlind;
-	float	m_fCover,				m_SpeedfCover;	// hide the background per-player--can't think of a good name
+	float	m_fScrolls[NUM_SCROLLS],	m_SpeedfScrolls[NUM_SCROLLS];
+	float	m_fDark,			m_SpeedfDark;
+	float	m_fBlind,			m_SpeedfBlind;
+	float	m_fCover,			m_SpeedfCover;	// hide the background per-player--can't think of a good name
 	bool	m_bSetTiltOrSkew;				// true if the tilt or skew was set by FromString
 	float	m_fPerspectiveTilt,		m_SpeedfPerspectiveTilt;		// -1 = near, 0 = overhead, +1 = space
-	float	m_fSkew,				m_SpeedfSkew;		// 0 = vanish point is in center of player, 1 = vanish point is in center of screen
+	float	m_fSkew,			m_SpeedfSkew;		// 0 = vanish point is in center of player, 1 = vanish point is in center of screen
 
 	float	m_fRandomSpeed,			m_SpeedfRandomSpeed;
 

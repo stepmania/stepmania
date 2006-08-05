@@ -92,7 +92,7 @@ void NoteField::CacheAllUsedNoteSkins()
 	 * play, so we don't have to load them later (such as between course songs). */
 	vector<RString> asSkins;
 	GAMESTATE->GetAllUsedNoteSkins( asSkins );
-	asSkins.push_back( m_pPlayerState->m_PlayerOptions.m_sNoteSkin );
+	asSkins.push_back( m_pPlayerState->m_PlayerOptions.GetStage().m_sNoteSkin );
 
 	for( unsigned i=0; i < asSkins.size(); ++i )
 		CacheNoteSkin( asSkins[i] );
@@ -108,13 +108,13 @@ void NoteField::CacheAllUsedNoteSkins()
 	FOREACHS( RString, setNoteSkinsToUnload, s )
 		UncacheNoteSkin( *s );
 
-	map<RString, NoteDisplayCols *>::iterator it = m_NoteDisplays.find( m_pPlayerState->m_PlayerOptions.m_sNoteSkin );
-	ASSERT_M( it != m_NoteDisplays.end(), m_pPlayerState->m_PlayerOptions.m_sNoteSkin );
+	map<RString, NoteDisplayCols *>::iterator it = m_NoteDisplays.find( m_pPlayerState->m_PlayerOptions.GetCurrent().m_sNoteSkin );
+	ASSERT_M( it != m_NoteDisplays.end(), m_pPlayerState->m_PlayerOptions.GetCurrent().m_sNoteSkin );
 	m_pCurDisplay = it->second;
 	memset( m_pDisplays, 0, sizeof(m_pDisplays) );
 	FOREACH_EnabledPlayer( pn )
 	{
-		const RString& sNoteSkin = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.m_sNoteSkin;
+		const RString& sNoteSkin = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().m_sNoteSkin;
 		it = m_NoteDisplays.find( sNoteSkin );
 		ASSERT_M( it != m_NoteDisplays.end(), sNoteSkin );
 		m_pDisplays[pn] = it->second;
@@ -147,13 +147,13 @@ void NoteField::Load(
 		ssprintf("%d = %d",m_pNoteData->GetNumTracks(), GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer) );
 
 	// The note skin may have changed at the beginning of a new course song.
-	map<RString, NoteDisplayCols *>::iterator it = m_NoteDisplays.find( m_pPlayerState->m_PlayerOptions.m_sNoteSkin );
-	ASSERT_M( it != m_NoteDisplays.end(), m_pPlayerState->m_PlayerOptions.m_sNoteSkin );
+	map<RString, NoteDisplayCols *>::iterator it = m_NoteDisplays.find( m_pPlayerState->m_PlayerOptions.GetCurrent().m_sNoteSkin );
+	ASSERT_M( it != m_NoteDisplays.end(), m_pPlayerState->m_PlayerOptions.GetCurrent().m_sNoteSkin );
 	m_pCurDisplay = it->second;
 	memset( m_pDisplays, 0, sizeof(m_pDisplays) );
 	FOREACH_EnabledPlayer( pn )
 	{
-		const RString& sNoteSkin = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.m_sNoteSkin;
+		const RString& sNoteSkin = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().m_sNoteSkin;
 		it = m_NoteDisplays.find( sNoteSkin );
 		ASSERT_M( it != m_NoteDisplays.end(), sNoteSkin );
 		m_pDisplays[pn] = it->second;
@@ -233,7 +233,7 @@ void NoteField::DrawBeatBar( const float fBeat )
 	}
 	else
 	{
-		float fScrollSpeed = m_pPlayerState->m_CurrentPlayerOptions.m_fScrollSpeed;
+		float fScrollSpeed = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fScrollSpeed;
 		switch( nt )
 		{
 		default:	ASSERT(0);
@@ -370,7 +370,7 @@ float FindFirstDisplayedBeat( const PlayerState* pPlayerState, int iFirstPixelTo
 	 * of the stream. */
 	bool bBoomerang;
 	{
-		const float* fAccels = pPlayerState->m_CurrentPlayerOptions.m_fAccels;
+		const float* fAccels = pPlayerState->m_PlayerOptions.GetCurrent().m_fAccels;
 		bBoomerang = (fAccels[PlayerOptions::ACCEL_BOOMERANG] != 0);
 	}
 
@@ -405,7 +405,7 @@ float FindLastDisplayedBeat( const PlayerState* pPlayerState, int iLastPixelToDr
 
 	bool bBoomerang;
 	{
-		const float* fAccels = pPlayerState->m_CurrentPlayerOptions.m_fAccels;
+		const float* fAccels = pPlayerState->m_PlayerOptions.GetCurrent().m_fAccels;
 		bBoomerang = (fAccels[PlayerOptions::ACCEL_BOOMERANG] != 0);
 	}
 
@@ -454,7 +454,7 @@ void NoteField::DrawPrimitives()
 	NoteDisplayCols *cur = m_pCurDisplay;
 	cur->m_ReceptorArrowRow.Draw();
 
-	const PlayerOptions &current_po = m_pPlayerState->m_CurrentPlayerOptions;
+	const PlayerOptions &current_po = m_pPlayerState->m_PlayerOptions.GetCurrent();
 
 	//
 	// Adjust draw range depending on some effects

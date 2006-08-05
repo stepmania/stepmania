@@ -64,7 +64,7 @@ static LocalizedString AUTOSYNC_SONG			( "AdjustSync", "Autosync Song" );
 static LocalizedString AUTOSYNC_MACHINE			( "AdjustSync", "Autosync Machine" );
 void AdjustSync::HandleAutosync( float fNoteOffBySeconds )
 {
-	if( GAMESTATE->m_SongOptions.m_AutosyncType == SongOptions::AUTOSYNC_OFF )
+	if( GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType == SongOptions::AUTOSYNC_OFF )
 		return;
 
 	s_fAutosyncOffset[s_iAutosyncOffsetSample] = fNoteOffBySeconds;
@@ -77,7 +77,7 @@ void AdjustSync::HandleAutosync( float fNoteOffBySeconds )
 	const float stddev = calc_stddev( s_fAutosyncOffset, s_fAutosyncOffset+SAMPLE_COUNT );
 
 	RString sAutosyncType;
-	switch( GAMESTATE->m_SongOptions.m_AutosyncType )
+	switch( GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType )
 	{
 	case SongOptions::AUTOSYNC_SONG:
 		sAutosyncType = AUTOSYNC_SONG;
@@ -91,7 +91,7 @@ void AdjustSync::HandleAutosync( float fNoteOffBySeconds )
 
 	if( stddev < .03 )  // If they stepped with less than .03 error
 	{
-		switch( GAMESTATE->m_SongOptions.m_AutosyncType )
+		switch( GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType )
 		{
 		case SongOptions::AUTOSYNC_SONG:
 			GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds += mean;

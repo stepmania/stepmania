@@ -49,7 +49,7 @@ const float FAIL_THRESHOLD = 0;
 
 LifeMeterBar::LifeMeterBar()
 {
-	switch( GAMESTATE->m_SongOptions.m_DrainType )
+	switch( GAMESTATE->m_SongOptions.GetStage().m_DrainType )
 	{
 	case SongOptions::DRAIN_NORMAL:
 		m_fLifePercentage = INITIAL_VALUE;
@@ -157,9 +157,9 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	if( IsHot()  &&  score < TNS_W4 )
 		fDeltaLife = -0.10f;		// make it take a while to get back to "hot"
 
-	switch( GAMESTATE->m_SongOptions.m_DrainType )
+	switch( GAMESTATE->m_SongOptions.GetSong().m_DrainType )
 	{
-	DEFAULT_FAIL( GAMESTATE->m_SongOptions.m_DrainType );
+	DEFAULT_FAIL( GAMESTATE->m_SongOptions.GetSong().m_DrainType );
 	case SongOptions::DRAIN_NORMAL:
 		break;
 	case SongOptions::DRAIN_NO_RECOVER:
@@ -179,7 +179,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 {
 	float fDeltaLife=0.f;
-	switch( GAMESTATE->m_SongOptions.m_DrainType )
+	switch( GAMESTATE->m_SongOptions.GetSong().m_DrainType )
 	{
 	case SongOptions::DRAIN_NORMAL:
 		switch( score )
@@ -247,7 +247,7 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 	if( m_pPlayerStageStats->bFailed )
 		fDeltaLife = 0;
 
-	switch( GAMESTATE->m_SongOptions.m_DrainType )
+	switch( GAMESTATE->m_SongOptions.GetSong().m_DrainType )
 	{
 	case SongOptions::DRAIN_NORMAL:
 	case SongOptions::DRAIN_NO_RECOVER:
@@ -283,8 +283,8 @@ void LifeMeterBar::AfterLifeChanged()
 
 bool LifeMeterBar::IsPastPassmark() const
 {
-	if( m_pPlayerState->m_PlayerOptions.m_fPassmark > 0 )
-		return m_fLifePercentage >= m_pPlayerState->m_PlayerOptions.m_fPassmark;
+	if( m_pPlayerState->m_PlayerOptions.GetSong().m_fPassmark > 0 )
+		return m_fLifePercentage >= m_pPlayerState->m_PlayerOptions.GetSong().m_fPassmark;
 	else
 		return false;
 }

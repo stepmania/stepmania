@@ -39,7 +39,8 @@ void GameCommand::Init()
 	m_pm = PLAY_MODE_INVALID;
 	m_dc = DIFFICULTY_INVALID;
 	m_CourseDifficulty = DIFFICULTY_INVALID;
-	m_sModifiers = "";
+	m_sPreferredModifiers = "";
+	m_sStageModifiers = "";
 	m_sAnnouncer = "";
 	m_sScreen = "";
 	m_LuaFunction.Unset();
@@ -97,17 +98,28 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 	if( m_sAnnouncer != "" && m_sAnnouncer != ANNOUNCER->GetCurAnnouncerName() )
 		return false;
 
-	if( m_sModifiers != "" )
+	if( m_sPreferredModifiers != "" )
 	{
-		/* Apply modifiers. */
-		PlayerOptions po = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions;
-		SongOptions so = GAMESTATE->m_SongOptions;
-		po.FromString( m_sModifiers );
-		so.FromString( m_sModifiers );
+		PlayerOptions po = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetPreferred();
+		SongOptions so = GAMESTATE->m_SongOptions.GetPreferred();
+		po.FromString( m_sPreferredModifiers );
+		so.FromString( m_sPreferredModifiers );
 
-		if( po != GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions )
+		if( po != GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetPreferred() )
 			return false;
-		if( so != GAMESTATE->m_SongOptions )
+		if( so != GAMESTATE->m_SongOptions.GetPreferred() )
+			return false;
+	}
+	if( m_sStageModifiers != "" )
+	{
+		PlayerOptions po = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetStage();
+		SongOptions so = GAMESTATE->m_SongOptions.GetStage();
+		po.FromString( m_sStageModifiers );
+		so.FromString( m_sStageModifiers );
+
+		if( po != GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetStage() )
+			return false;
+		if( so != GAMESTATE->m_SongOptions.GetStage() )
 			return false;
 	}
 
@@ -214,9 +226,16 @@ void GameCommand::LoadOne( const Command& cmd )
 
 	else if( sName == "mod" )
 	{
-		if( m_sModifiers != "" )
-			m_sModifiers += ",";
-		m_sModifiers += sValue;
+		if( m_sPreferredModifiers != "" )
+			m_sPreferredModifiers += ",";
+		m_sPreferredModifiers += sValue;
+	}
+
+	else if( sName == "stagemod" )
+	{
+		if( m_sStageModifiers != "" )
+			m_sStageModifiers += ",";
+		m_sStageModifiers += sValue;
 	}
 	
 	else if( sName == "lua" )
@@ -540,10 +559,20 @@ bool GameCommand::IsPlayable( RString *why ) const
 		}
 	}
 
-	if( !m_sModifiers.empty() )
+	if( !m_sPreferredModifiers.empty() )
 	{
 		// TODO: Split this and check each modifier individually
-		if( UNLOCKMAN->ModifierIsLocked(m_sModifiers) )
+		if( UNLOCKMAN->ModifierIsLocked(m_sPreferredModifiers) )
+		{	if( why )
+				*why = "Modifier is locked";
+			return false;
+		}
+	}
+
+	if( !m_sStageModifiers.empty() )
+	{
+		// TODO: Split this and check each modifier individually
+		if( UNLOCKMAN->ModifierIsLocked(m_sStageModifiers) )
 		{	if( why )
 				*why = "Modifier is locked";
 			return false;
@@ -643,9 +672,12 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 			GAMESTATE->ChangePreferredDifficulty( *pn, m_dc );
 	if( m_sAnnouncer != "" )
 		ANNOUNCER->SwitchAnnouncer( m_sAnnouncer );
-	if( m_sModifiers != "" )
+	if( m_sPreferredModifiers != "" )
 		FOREACH_CONST( PlayerNumber, vpns, pn )
-			GAMESTATE->ApplyModifiers( *pn, m_sModifiers );
+			GAMESTATE->ApplyPreferredModifiers( *pn, m_sPreferredModifiers );
+	if( m_sStageModifiers != "" )
+		FOREACH_CONST( PlayerNumber, vpns, pn )
+			GAMESTATE->ApplyStageModifiers( *pn, m_sStageModifiers );
 	if( m_LuaFunction.IsSet() )
 	{
 		Lua *L = LUA->Get();
@@ -735,17 +767,25 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	}
 	if( m_bApplyDefaultOptions )
 	{
+		// applying options affects only the current stage
 		FOREACH_PlayerNumber( p )
-			GAMESTATE->GetDefaultPlayerOptions( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions );
-		GAMESTATE->GetDefaultSongOptions( GAMESTATE->m_SongOptions );
+		{
+			PlayerOptions po;
+			GAMESTATE->GetDefaultPlayerOptions( po );
+			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, = po );
+		}
+
+		SongOptions so;
+		GAMESTATE->GetDefaultSongOptions( so );
+		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, = so );
 	}
 	// HACK:  Set life type to BATTERY just once here so it happens once and 
 	// we don't override the user's changes if they back out.
 	if( GAMESTATE->m_PlayMode == PLAY_MODE_ONI && 
 		GAMESTATE->m_PlayMode != OldPlayMode &&
-		GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BAR )
+		GAMESTATE->m_SongOptions.GetStage().m_LifeType == SongOptions::LIFE_BAR )
 	{
-		GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LIFE_BATTERY;
+		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, .m_LifeType = SongOptions::LIFE_BATTERY );
 	}
 }
 
@@ -756,7 +796,8 @@ bool GameCommand::IsZero() const
 		m_pStyle != NULL ||
 		m_dc != DIFFICULTY_INVALID ||
 		m_sAnnouncer != "" ||
-		m_sModifiers != "" ||
+		m_sPreferredModifiers != "" ||
+		m_sStageModifiers != "" ||
 		m_pSong != NULL || 
 		m_pSteps != NULL || 
 		m_pCourse != NULL || 

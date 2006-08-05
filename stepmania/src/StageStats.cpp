@@ -151,7 +151,7 @@ void StageStats::CommitScores( bool bSummary )
 	}
 
 	// don't save scores if the player chose not to
-	if( !GAMESTATE->m_SongOptions.m_bSaveScore )
+	if( !GAMESTATE->m_SongOptions.GetCurrent().m_bSaveScore )
 		return;
 
 	LOG->Trace( "saving stats and high scores" );
@@ -172,7 +172,7 @@ void StageStats::CommitScores( bool bSummary )
 		hs.SetScore( m_player[p].iScore );
 		hs.SetPercentDP( m_player[p].GetPercentDancePoints() );
 		hs.SetSurviveSeconds( m_player[p].fAliveSeconds );
-		hs.SetModifiers( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetString() );
+		hs.SetModifiers( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetStage().GetString() );
 		hs.SetDateTime( DateTime::GetNowDateTime() );
 		hs.SetPlayerGuid( PROFILEMAN->IsPersistentProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : RString("") );
 		hs.SetMachineGuid( PROFILEMAN->GetMachineProfile()->m_sGuid );

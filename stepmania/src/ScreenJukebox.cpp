@@ -200,13 +200,13 @@ void ScreenJukebox::Init()
 		{
 			/* Lots and lots of arrows.  This might even bias to arrows a little
 			 * too much. */
-			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions = PlayerOptions();
-			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.m_fScrollSpeed = .25f;
-			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.m_fPerspectiveTilt = -1;
-			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.m_fEffects[ PlayerOptions::EFFECT_MINI ] = 1;
+			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, = PlayerOptions() );
+			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, .m_fScrollSpeed = .25f );
+			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, .m_fPerspectiveTilt = -1 );
+			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, .m_fEffects[ PlayerOptions::EFFECT_MINI ] = 1 );
 		}
-		GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LIFE_BATTERY;
-		GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_OFF;
+		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, .m_LifeType = SongOptions::LIFE_BATTERY );
+		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, .m_FailType = SongOptions::FAIL_OFF );
 	}
 
 	FOREACH_EnabledPlayer( p )
@@ -216,14 +216,18 @@ void ScreenJukebox::Init()
 
 		if( GAMESTATE->m_bJukeboxUsesModifiers )
 		{
-			GAMESTATE->GetDefaultPlayerOptions( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions );
-			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.ChooseRandomModifiers();
+			PlayerOptions po;
+			GAMESTATE->GetDefaultPlayerOptions( po );
+			po.ChooseRandomModifiers();
+			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, = po );
 		}
 	}
 
-	GAMESTATE->GetDefaultSongOptions( GAMESTATE->m_SongOptions );
+	SongOptions so;
+	GAMESTATE->GetDefaultSongOptions( so );
+	MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, = so );
 
-	GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_OFF;
+	MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, .m_FailType = SongOptions::FAIL_OFF );
 
 	GAMESTATE->m_bDemonstrationOrJukebox = true;
 

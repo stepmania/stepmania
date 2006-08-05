@@ -48,7 +48,7 @@ void ScoreDisplayNormal::SetScore( int iNewScore )
 	int iMaxScore = STATSMAN->m_CurStageStats.m_player[pn].iMaxScore;
 	int iCurMaxScore = STATSMAN->m_CurStageStats.m_player[pn].iCurMaxScore;
 
-	switch( m_pPlayerState->m_CurrentPlayerOptions.m_ScoreDisplay )
+	switch( m_pPlayerState->m_PlayerOptions.GetCurrent().m_ScoreDisplay )
 	{
 	case PlayerOptions::SCORING_ADD:
 		// nothing to do

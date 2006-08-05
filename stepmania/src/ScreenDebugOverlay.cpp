@@ -477,12 +477,11 @@ class DebugLineAssistTick : public IDebugLine
 	virtual RString GetDescription() { return ASSIST_TICK.GetValue(); }
 	virtual RString GetValue() { return IsEnabled() ? ON.GetValue():OFF.GetValue(); }
 	virtual Type GetType() const { return gameplay_only; }
-	virtual bool IsEnabled() { return GAMESTATE->m_SongOptions.m_bAssistTick; }
+	virtual bool IsEnabled() { return GAMESTATE->m_SongOptions.GetSong().m_bAssistTick; }
 	virtual void Do( RString &sMessageOut )
 	{
-		GAMESTATE->m_SongOptions.m_bAssistTick = !GAMESTATE->m_SongOptions.m_bAssistTick;
-		// Store this change, so it sticks if we change songs
-		GAMESTATE->m_StoredSongOptions.m_bAssistTick = GAMESTATE->m_SongOptions.m_bAssistTick;
+		bool bAssistTick = !GAMESTATE->m_SongOptions.GetSong().m_bAssistTick;
+		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Song, .m_bAssistTick = bAssistTick );
 		MESSAGEMAN->Broadcast( Message_AssistTickChanged );
 		IDebugLine::Do( sMessageOut );
 	}
@@ -493,7 +492,7 @@ class DebugLineAutosync : public IDebugLine
 	virtual RString GetDescription() { return AUTOSYNC.GetValue(); }
 	virtual RString GetValue()
 	{ 
-		switch( GAMESTATE->m_SongOptions.m_AutosyncType )
+		switch( GAMESTATE->m_SongOptions.GetSong().m_AutosyncType )
 		{
 		case SongOptions::AUTOSYNC_OFF:		return OFF.GetValue();		break;
 		case SongOptions::AUTOSYNC_SONG:	return SONG.GetValue();		break;
@@ -502,12 +501,12 @@ class DebugLineAutosync : public IDebugLine
 		}
 	}
 	virtual Type GetType() const { return IDebugLine::gameplay_only; }
-	virtual bool IsEnabled() { return GAMESTATE->m_SongOptions.m_AutosyncType!=SongOptions::AUTOSYNC_OFF; }
+	virtual bool IsEnabled() { return GAMESTATE->m_SongOptions.GetSong().m_AutosyncType!=SongOptions::AUTOSYNC_OFF; }
 	virtual void Do( RString &sMessageOut )
 	{
-		SongOptions::AutosyncType as = (SongOptions::AutosyncType)(GAMESTATE->m_SongOptions.m_AutosyncType+1);
+		SongOptions::AutosyncType as = enum_add2( GAMESTATE->m_SongOptions.GetSong().m_AutosyncType, 1 );
 		wrap( (int&)as, SongOptions::NUM_AUTOSYNC_TYPES );
-		GAMESTATE->m_SongOptions.m_AutosyncType = as;
+		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Song, .m_AutosyncType = as );
 		MESSAGEMAN->Broadcast( Message_AutosyncChanged );
 		IDebugLine::Do( sMessageOut );
 	}

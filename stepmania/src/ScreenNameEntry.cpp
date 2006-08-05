@@ -111,15 +111,11 @@ void ScreenNameEntry::Init()
 	g_iNumCharsToDrawTotal = NUM_CHARS_TO_DRAW_TOTAL;
 	g_fFakeBeatsPerSec = FAKE_BEATS_PER_SEC;
 
-	/* Save options.  We'll reset them to display letters, and we must put them
-	 * back when we're done. */
-	GAMESTATE->StoreSelectedOptions();
-
 	// reset Player and Song Options
 	{
 		FOREACH_PlayerNumber( p )
-			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions = PlayerOptions();
-		GAMESTATE->m_SongOptions = SongOptions();
+			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, = PlayerOptions() );
+		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, = SongOptions() );
 	}
 
 	vector<GameState::RankingFeat> aFeats[NUM_PLAYERS];
@@ -169,14 +165,16 @@ void ScreenNameEntry::Init()
 			continue;	// skip
 
 		// remove modifiers that may have been on the last song
-		GAMESTATE->GetDefaultPlayerOptions( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions );
+		PlayerOptions po;
+		GAMESTATE->GetDefaultPlayerOptions( po );
+		MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, = po );
 
 		ASSERT( GAMESTATE->IsHumanPlayer(p) );	// they better be enabled if they made a high score!
 
 		float fPlayerX = PLAYER_X(p,GAMESTATE->GetCurrentStyle()->m_StyleType);
 
 		{
-			LockNoteSkin l( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.m_sNoteSkin );
+			LockNoteSkin l( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetCurrent().m_sNoteSkin );
 
 			m_ReceptorArrowRow[p].Load( GAMESTATE->m_pPlayerState[p], 0 );
 			m_ReceptorArrowRow[p].SetX( fPlayerX );
@@ -376,8 +374,6 @@ void ScreenNameEntry::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_GoToNextScreen )
 	{
-		GAMESTATE->RestoreSelectedOptions();
-
 		// There shouldn't be NameEntry in event mode.  -Chris
 //		/* Hack: go back to the select course screen in event mode. */
 //		if( GAMESTATE->GetEventMode() && GAMESTATE->IsCourseMode() )

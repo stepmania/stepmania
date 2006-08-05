@@ -135,7 +135,7 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField )
 			break;
 		case PLAY_MODE_ONI:
 		case PLAY_MODE_ENDLESS:
-			if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_TIME )
+			if( GAMESTATE->m_SongOptions.GetStage().m_LifeType == SongOptions::LIFE_TIME )
 				m_pPrimaryScoreDisplay = new ScoreDisplayLifeTime;
 			else
 				m_pPrimaryScoreDisplay = new ScoreDisplayOni;
@@ -180,10 +180,7 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField )
 
 	if( IsMultiPlayer() )
 	{
-		pPlayerState->m_CurrentPlayerOptions	= GAMESTATE->m_pPlayerState[PLAYER_1]->m_CurrentPlayerOptions;
-		pPlayerState->m_PlayerOptions		= GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
-		pPlayerState->m_StagePlayerOptions	= GAMESTATE->m_pPlayerState[PLAYER_1]->m_StagePlayerOptions;
-		pPlayerState->m_StoredPlayerOptions	= GAMESTATE->m_pPlayerState[PLAYER_1]->m_StoredPlayerOptions;
+		pPlayerState->m_PlayerOptions	= GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
 	}
 }
 
@@ -351,16 +348,10 @@ void ScreenGameplay::Init( bool bUseSongBackgroundAndForeground )
 		m_pSongForeground = new Foreground;
 	}
 
-	/* Save selected options before we change them in ScreenInitCommand. */
-	GAMESTATE->StoreSelectedOptions();
-
 	ScreenWithMenuElements::Init();
 
 	this->FillPlayerInfo( m_vPlayerInfo );
 	ASSERT_M( !m_vPlayerInfo.empty(), "m_vPlayerInfo must be filled by FillPlayerInfo" );
-
-	/* Save selected stage options now that we've changed them in ScreenInitCommand. */
-	GAMESTATE->StoreStageOptions();
 
 	/* Pause MEMCARDMAN.  If a memory card is removed, we don't want to interrupt the
 	 * player by making a noise until the game finishes. */
@@ -491,7 +482,7 @@ void ScreenGameplay::Init( bool bUseSongBackgroundAndForeground )
 	this->AddChild( &m_SongFinished );
 
 
-	bool bBattery = GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BATTERY;
+	bool bBattery = GAMESTATE->m_SongOptions.GetStage().m_LifeType==SongOptions::LIFE_BATTERY;
 
 	//
 	// Add LifeFrame
@@ -548,7 +539,7 @@ void ScreenGameplay::Init( bool bUseSongBackgroundAndForeground )
 			if( !GAMESTATE->IsPlayerEnabled(pi->m_pn) && !SHOW_LIFE_METER_FOR_DISABLED_PLAYERS )
 				continue;	// skip
 
-			pi->m_pLifeMeter = LifeMeter::MakeLifeMeter( GAMESTATE->m_SongOptions.m_LifeType );
+			pi->m_pLifeMeter = LifeMeter::MakeLifeMeter( GAMESTATE->m_SongOptions.GetStage().m_LifeType );
 			pi->m_pLifeMeter->Load( pi->GetPlayerState(), pi->GetPlayerStageStats() );
 			pi->m_pLifeMeter->SetName( ssprintf("Life%s",pi->GetName().c_str()) );
 			SET_XY( pi->m_pLifeMeter );
@@ -682,7 +673,7 @@ void ScreenGameplay::Init( bool bUseSongBackgroundAndForeground )
 	m_textSongOptions.SetShadowLength( 0 );
 	m_textSongOptions.SetName( "SongOptions" );
 	SET_XY( m_textSongOptions );
-	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetLocalizedString() );
+	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetStage().GetLocalizedString() );
 	this->AddChild( &m_textSongOptions );
 
 	FOREACH_VisiblePlayerInfo( m_vPlayerInfo, pi )
@@ -846,7 +837,7 @@ void ScreenGameplay::InitSongQueues()
 			// In a survival course, override stored mods
 			if( pCourse->GetCourseType() == COURSE_TYPE_SURVIVAL )
 			{
-				pi->GetPlayerState()->m_StagePlayerOptions.FromString( "clearall,"+CommonMetrics::DEFAULT_MODIFIERS.GetValue() );
+				MODS_GROUP_ASSIGN( pi->GetPlayerState()->m_PlayerOptions, ModsLevel_Stage, .FromString("clearall,"+CommonMetrics::DEFAULT_MODIFIERS.GetValue()) );
 				pi->GetPlayerState()->RebuildPlayerOptionsFromActiveAttacks();
 			}
 		}
@@ -977,14 +968,14 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 				a.fStartSecond = -1;	// now
 			
 			pi->GetPlayerState()->LaunchAttack( a );
-			GAMESTATE->m_SongOptions.FromString( a.sModifiers );
+			MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Song, .FromString(a.sModifiers) );
 		}
 
 		/* Update attack bOn flags. */
 		pi->GetPlayerState()->Update( 0 );
 
 		/* Hack: Course modifiers that are set to start immediately shouldn't tween on. */
-		pi->GetPlayerState()->m_CurrentPlayerOptions = pi->GetPlayerState()->m_PlayerOptions;
+		pi->GetPlayerState()->m_PlayerOptions.m_current = pi->GetPlayerState()->m_PlayerOptions.GetStage();
 	}
 }
 
@@ -1033,14 +1024,12 @@ void ScreenGameplay::LoadNextSong()
 	// No need to do this here.  We do it in SongFinished().
 	//GAMESTATE->RemoveAllActiveAttacks();
 
-	GAMESTATE->RestoreStageOptions();
-
 	/* If we're in battery mode, force FailImmediate.  We assume in PlayerMinus::Step that
 	 * failed players can't step. */
-	if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY )
-		GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_IMMEDIATE;
+	if( GAMESTATE->m_SongOptions.GetCurrent().m_LifeType == SongOptions::LIFE_BATTERY )
+		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Song, .m_FailType = SongOptions::FAIL_IMMEDIATE );
 
-	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetString() );
+	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetCurrent().GetString() );
 
 	SetupSong( iPlaySongIndex );
 
@@ -1063,17 +1052,17 @@ void ScreenGameplay::LoadNextSong()
 		}
 
 		if( pi->m_ptextPlayerOptions )
-			pi->m_ptextPlayerOptions->SetText( pi->GetPlayerState()->m_PlayerOptions.GetString() );
+			pi->m_ptextPlayerOptions->SetText( pi->GetPlayerState()->m_PlayerOptions.GetCurrent().GetString() );
 		if( pi->m_pActiveAttackList )
 			pi->m_pActiveAttackList->Refresh();
 
 		// reset oni game over graphic
 		SET_XY_AND_ON_COMMAND( pi->m_sprOniGameOver );
 
-		if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BATTERY && pi->GetPlayerStageStats()->bFailed )	// already failed
+		if( GAMESTATE->m_SongOptions.GetCurrent().m_LifeType==SongOptions::LIFE_BATTERY && pi->GetPlayerStageStats()->bFailed )	// already failed
 			pi->ShowOniGameOver();
 
-		if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BAR && 
+		if( GAMESTATE->m_SongOptions.GetCurrent().m_LifeType==SongOptions::LIFE_BAR && 
 			GAMESTATE->m_PlayMode == PLAY_MODE_REGULAR && 
 			!GAMESTATE->IsEventMode() && 
 			!GAMESTATE->m_bDemonstrationOrJukebox )
@@ -1084,7 +1073,7 @@ void ScreenGameplay::LoadNextSong()
 					PREFSMAN->m_iSongsPerPlay, 
 					PREFSMAN->m_iProgressiveStageLifebar);
 		}
-		if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BAR && GAMESTATE->m_PlayMode == PLAY_MODE_NONSTOP )
+		if( GAMESTATE->m_SongOptions.GetCurrent().m_LifeType==SongOptions::LIFE_BAR && GAMESTATE->m_PlayMode == PLAY_MODE_NONSTOP )
 		{
 			if( pi->m_pLifeMeter )
 				pi->m_pLifeMeter->UpdateNonstopLifebar(
@@ -1137,7 +1126,7 @@ void ScreenGameplay::LoadNextSong()
 	bool bAtLeastOneReverse = false;
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
-		if( pi->GetPlayerState()->m_PlayerOptions.m_fScrolls[PlayerOptions::SCROLL_REVERSE] == 1 )
+		if( pi->GetPlayerState()->m_PlayerOptions.GetCurrent().m_fScrolls[PlayerOptions::SCROLL_REVERSE] == 1 )
 			bAtLeastOneReverse = true;
 		else
 			bAllReverse = false;
@@ -1145,7 +1134,7 @@ void ScreenGameplay::LoadNextSong()
 
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
-		bool bReverse = pi->GetPlayerState()->m_PlayerOptions.m_fScrolls[PlayerOptions::SCROLL_REVERSE] == 1;
+		bool bReverse = pi->GetPlayerState()->m_PlayerOptions.GetCurrent().m_fScrolls[PlayerOptions::SCROLL_REVERSE] == 1;
 
 		if( pi->m_pDifficultyIcon )
 		{
@@ -1329,7 +1318,7 @@ float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusi
 	
 	RageSoundParams p;
 	p.m_bAccurateSync = true;
-	p.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
+	p.SetPlaybackRate( GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate );
 	p.StopMode = RageSoundParams::M_CONTINUE;
 	p.m_StartSecond = fStartSecond;
 
@@ -1381,7 +1370,7 @@ void ScreenGameplay::PauseGame( bool bPause, GameController gc )
 // play assist ticks
 void ScreenGameplay::PlayTicks()
 {
-	if( !GAMESTATE->m_SongOptions.m_bAssistTick )
+	if( !GAMESTATE->m_SongOptions.GetCurrent().m_bAssistTick )
 		return;
 
 	/* Sound cards have a latency between when a sample is Play()ed and when the sound
@@ -1412,7 +1401,7 @@ void ScreenGameplay::PlayTicks()
 		const float fTickBeat = NoteRowToBeat( iTickRow );
 		const float fTickSecond = GAMESTATE->m_pCurSong->m_Timing.GetElapsedTimeFromBeatNoOffset( fTickBeat );
 		float fSecondsUntil = fTickSecond - GAMESTATE->m_fMusicSeconds;
-		fSecondsUntil /= GAMESTATE->m_SongOptions.m_fMusicRate; /* 2x music rate means the time until the tick is halved */
+		fSecondsUntil /= GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate; /* 2x music rate means the time until the tick is halved */
 
 		RageSoundParams p;
 		p.m_StartTime = GAMESTATE->m_LastBeatUpdate + (fSecondsUntil - (float)CommonMetrics::TICK_EARLY_SECONDS);
@@ -1602,7 +1591,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			PlayerNumber pn = pi->GetStepsAndTrailIndex();
 
 			SongOptions::FailType ft = GAMESTATE->GetPlayerFailType( pi->GetPlayerState() );
-			SongOptions::LifeType lt = GAMESTATE->m_SongOptions.m_LifeType;
+			SongOptions::LifeType lt = GAMESTATE->m_SongOptions.GetCurrent().m_LifeType;
 
 			if( ft == SongOptions::FAIL_OFF )
 				continue;
@@ -1676,7 +1665,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		//
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 			if( !pi->GetPlayerStageStats()->bFailed )
-				pi->GetPlayerStageStats()->fAliveSeconds += fDeltaTime * GAMESTATE->m_SongOptions.m_fMusicRate;
+				pi->GetPlayerStageStats()->fAliveSeconds += fDeltaTime * GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
 
 		// update fGameplaySeconds
 		STATSMAN->m_CurStageStats.fGameplaySeconds += fDeltaTime;
@@ -2262,12 +2251,6 @@ void ScreenGameplay::StageFinished( bool bBackedOut )
 	// save current stage stats
 	if( !bBackedOut )
 		STATSMAN->m_vPlayedStageStats.push_back( STATSMAN->m_CurStageStats );
-
-	/* Reset options. */
-	if( bBackedOut )
-		GAMESTATE->RestoreSelectedOptions();
-	else
-		GAMESTATE->RestoreStageOptions();
 }
 
 void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
@@ -2302,12 +2285,12 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 		{
 			/* If either player's passmark is enabled, check it. */
-			if( pi->GetPlayerState()->m_PlayerOptions.m_fPassmark > 0 &&
+			if( pi->GetPlayerState()->m_PlayerOptions.GetCurrent().m_fPassmark > 0 &&
 				pi->m_pLifeMeter &&
-				pi->m_pLifeMeter->GetLife() < pi->GetPlayerState()->m_PlayerOptions.m_fPassmark )
+				pi->m_pLifeMeter->GetLife() < pi->GetPlayerState()->m_PlayerOptions.GetCurrent().m_fPassmark )
 			{
 				LOG->Trace("Player %i failed: life %f is under %f",
-					pi->GetPlayerStateAndStageStatsIndex()+1, pi->m_pLifeMeter->GetLife(), pi->GetPlayerState()->m_PlayerOptions.m_fPassmark );
+					pi->GetPlayerStateAndStageStatsIndex()+1, pi->m_pLifeMeter->GetLife(), pi->GetPlayerState()->m_PlayerOptions.GetCurrent().m_fPassmark );
 				pi->GetPlayerStageStats()->bFailed = true;
 			}
 

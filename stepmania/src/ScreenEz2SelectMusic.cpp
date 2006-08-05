@@ -315,7 +315,7 @@ void ScreenEz2SelectMusic::Input( const InputEventPlus &input )
 
 void ScreenEz2SelectMusic::UpdateOptions(PlayerNumber pn, int nosound)
 {
-	sOptions = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetString();
+	sOptions = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetPreferred().GetString();
 
 	LOG->Trace( "DEBUG: " + sOptions );
 

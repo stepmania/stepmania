@@ -98,7 +98,7 @@ void ScreenSyncOverlay::UpdateText()
 		}
 	}
 
-	switch( GAMESTATE->m_SongOptions.m_AutosyncType )
+	switch( GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType )
 	{
 	case SongOptions::AUTOSYNC_OFF:							break;
 	case SongOptions::AUTOSYNC_SONG:	vs.push_back(AUTO_SYNC_SONG);		break;

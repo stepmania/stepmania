@@ -248,7 +248,7 @@ public:
 	virtual void GetIconTextAndGameCommand( int iFirstSelection, RString &sIconTextOut, GameCommand &gcOut ) const
 	{
 		sIconTextOut = m_bUseModNameForIcon ?
-			m_aListEntries[iFirstSelection].m_sModifiers :
+			m_aListEntries[iFirstSelection].m_sPreferredModifiers :
 			m_Def.m_vsChoices[iFirstSelection];
 
 		gcOut = m_aListEntries[iFirstSelection];
@@ -282,7 +282,7 @@ class OptionRowHandlerListNoteSkins : public OptionRowHandlerList
 		for( unsigned skin=0; skin<arraySkinNames.size(); skin++ )
 		{
 			GameCommand mc;
-			mc.m_sModifiers = arraySkinNames[skin];
+			mc.m_sPreferredModifiers = arraySkinNames[skin];
 			m_aListEntries.push_back( mc );
 			m_Def.m_vsChoices.push_back( arraySkinNames[skin] );
 		}

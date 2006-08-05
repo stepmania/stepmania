@@ -680,8 +680,6 @@ void ScreenEdit::Init()
 	GAMESTATE->m_fSongBeat = 0;
 	m_fTrailingBeat = GAMESTATE->m_fSongBeat;
 
-	GAMESTATE->StoreSelectedOptions();
-
 	m_iShiftAnchor = -1;
 	m_iStartPlayingAt = -1;
 	m_iStopPlayingAt = -1;
@@ -695,15 +693,15 @@ void ScreenEdit::Init()
 	
 	FOREACH_PlayerNumber( pn )
 	{
-		m_sOldNoteSkins[pn] = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.m_sNoteSkin;
+		m_sOldNoteSkins[pn] = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetStage().m_sNoteSkin;
 		const RString &sNoteSkin = EDITOR_NOTE_SKINS[pn];
 		
 		if( NOTESKIN->DoesNoteSkinExist(sNoteSkin) )
-			GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.m_sNoteSkin = sNoteSkin;
+			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Stage, .m_sNoteSkin = sNoteSkin );
 	}
 
 	m_PlayerStateEdit.m_PlayerNumber = PLAYER_1;
-	m_PlayerStateEdit.m_PlayerOptions.m_sNoteSkin = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_sNoteSkin;
+	MODS_GROUP_ASSIGN( m_PlayerStateEdit.m_PlayerOptions, ModsLevel_Stage, .m_sNoteSkin = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetStage().m_sNoteSkin );
 
 	m_pSteps->GetNoteData( m_NoteDataEdit );
 	m_NoteFieldEdit.SetXY( EDIT_X, EDIT_Y );
@@ -776,7 +774,7 @@ void ScreenEdit::Init()
 ScreenEdit::~ScreenEdit()
 {
 	FOREACH_PlayerNumber( pn )
-		GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.m_sNoteSkin = m_sOldNoteSkins[pn];
+		MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Stage, .m_sNoteSkin = m_sOldNoteSkins[pn] );
 	// UGLY: Don't delete the Song's steps.
 	m_songLastSave.DetachSteps();
 
@@ -798,7 +796,7 @@ void ScreenEdit::EndScreen()
 // play assist ticks
 void ScreenEdit::PlayTicks()
 {
-	if( !GAMESTATE->m_SongOptions.m_bAssistTick || m_EditState != STATE_PLAYING )
+	if( !GAMESTATE->m_SongOptions.GetStage().m_bAssistTick  ||  m_EditState != STATE_PLAYING )
 		return;
 			
 	/* Sound cards have a latency between when a sample is Play()ed and when the sound
@@ -962,7 +960,7 @@ void ScreenEdit::Update( float fDeltaTime )
 	float fDelta = GAMESTATE->m_fSongBeat - m_fTrailingBeat;
 	if( fabsf(fDelta) < 10 )
 		fapproach( m_fTrailingBeat, GAMESTATE->m_fSongBeat,
-			fDeltaTime*40 / m_NoteFieldEdit.GetPlayerState()->m_CurrentPlayerOptions.m_fScrollSpeed );
+			fDeltaTime*40 / m_NoteFieldEdit.GetPlayerState()->m_PlayerOptions.GetCurrent().m_fScrollSpeed );
 	else
 		fapproach( m_fTrailingBeat, GAMESTATE->m_fSongBeat,
 			fabsf(fDelta) * fDeltaTime*5 );
@@ -1233,7 +1231,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 	case EDIT_BUTTON_SCROLL_SPEED_DOWN:
 		{
 			PlayerState *pPlayerState = const_cast<PlayerState *> (m_NoteFieldEdit.GetPlayerState());
-			float& fScrollSpeed = pPlayerState->m_PlayerOptions.m_fScrollSpeed;
+			float fScrollSpeed = pPlayerState->m_PlayerOptions.GetStage().m_fScrollSpeed;
 
 			const float fSpeeds[] = { 1.0f, 1.5f, 2.0f, 3.0f, 4.0f, 6.0f, 8.0f };
 			int iSpeed = 0;
@@ -1258,6 +1256,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				fScrollSpeed = fSpeeds[iSpeed];
 			}
 
+			MODS_GROUP_ASSIGN( pPlayerState->m_PlayerOptions, ModsLevel_Stage, .m_fScrollSpeed = fScrollSpeed );
 			break;
 		}
 
@@ -1389,7 +1388,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		DoHelp();
 		break;
 	case EDIT_BUTTON_TOGGLE_ASSIST_TICK:
-		GAMESTATE->m_SongOptions.m_bAssistTick ^= 1;
+		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, .m_bAssistTick ^= 1 );
 		break;
 	case EDIT_BUTTON_OPEN_NEXT_STEPS:
 	case EDIT_BUTTON_OPEN_PREV_STEPS:
@@ -1784,7 +1783,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			}
 			g_fLastInsertAttackPositionSeconds = fStart;
 			g_fLastInsertAttackDurationSeconds = fEnd - fStart;
-			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions = po;
+			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions, ModsLevel_Stage, = po );
 			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertCourseAttackPlayerOptions );
 			
 		}
@@ -2028,7 +2027,7 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 		TransitionEditState( STATE_EDITING );
 		break;
 	case EDIT_BUTTON_TOGGLE_ASSIST_TICK:
-		GAMESTATE->m_SongOptions.m_bAssistTick ^= 1;
+		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, .m_bAssistTick ^= 1 );
 		break;
 	case EDIT_BUTTON_TOGGLE_AUTOPLAY:
 		{
@@ -2151,12 +2150,13 @@ void ScreenEdit::TransitionEditState( EditState em )
 		{
 		case STATE_RECORDING:
 		case STATE_RECORDING_PAUSED:
-			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_fScrolls[PlayerOptions::SCROLL_CENTERED] = 1.0f;
+			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions, ModsLevel_Stage, .m_fScrolls[PlayerOptions::SCROLL_CENTERED] = 1.0f );
 			break;
 		}
 
 		/* Snap to current options. */
-		GAMESTATE->m_pPlayerState[PLAYER_1]->m_CurrentPlayerOptions = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
+
+		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_current = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetStage();
 	}
 
 	switch( em )
@@ -2205,9 +2205,6 @@ void ScreenEdit::TransitionEditState( EditState em )
 	switch( em )
 	{
 	case STATE_PLAYING:
-		GAMESTATE->RestoreSelectedOptions();
-		GAMESTATE->StoreStageOptions();
-
 		/* If we're in course display mode, set that up. */
 		SetupCourseAttacks();
 		
@@ -2275,7 +2272,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 		LOG->Trace( "Starting playback at %f", fStartSeconds );
 
 		RageSoundParams p;
-		p.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
+		p.SetPlaybackRate( GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate );
 		p.m_StartSecond = fStartSeconds;
 		p.m_bAccurateSync = true;
 		p.StopMode = RageSoundParams::M_CONTINUE;
@@ -2415,9 +2412,6 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_BackFromOptions )
 	{
-		// Store the new options, so they stick when we RebuildPlayerOptionsFromActiveAttacks.
-		GAMESTATE->StoreSelectedOptions();
-
 		// The options may have changed the note skin.
 		m_NoteFieldRecord.CacheAllUsedNoteSkins();
 		m_Player->CacheAllUsedNoteSkins();
@@ -2434,7 +2428,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_BackFromInsertTapAttackPlayerOptions )
 	{
-		PlayerOptions poChosen = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
+		PlayerOptions poChosen = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetPreferred();
 		RString sMods = poChosen.GetString();
 		const int row = BeatToNoteRow( GAMESTATE->m_fSongBeat );
 		
@@ -2474,13 +2468,13 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			if( iAttack >= 0 )
 				po.FromString( ce.attacks[iAttack].sModifiers );
 
-			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions = po;
+			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions, ModsLevel_Preferred, = po );
 			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertCourseAttackPlayerOptions );
 		}
 	}
 	else if( SM == SM_BackFromInsertCourseAttackPlayerOptions )
 	{
-		PlayerOptions poChosen = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
+		PlayerOptions poChosen = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetPreferred();
 		RString sMods = poChosen.GetString();
 
 		Course *pCourse = GAMESTATE->m_pCurCourse;
