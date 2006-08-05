@@ -1410,6 +1410,8 @@
 		AA50201F05D6D7B200ACEFD0 /* Profile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA50201D05D6D7B200ACEFD0 /* Profile.cpp */; };
 		AA50202005D6D7B200ACEFD0 /* Profile.h in Headers */ = {isa = PBXBuildFile; fileRef = AA50201E05D6D7B200ACEFD0 /* Profile.h */; };
 		AA54709206F559DF008EB9B2 /* Preference.h in Headers */ = {isa = PBXBuildFile; fileRef = AA54709106F559DF008EB9B2 /* Preference.h */; };
+		AA5A51F30A8441AA006DBB92 /* ModsGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = AA5A51F20A8441AA006DBB92 /* ModsGroup.h */; };
+		AA5A51F40A8441AA006DBB92 /* ModsGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = AA5A51F20A8441AA006DBB92 /* ModsGroup.h */; };
 		AA5C73FD0637A5F100AFB891 /* CourseUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA5C73F70637A5F000AFB891 /* CourseUtil.cpp */; };
 		AA5C73FE0637A5F100AFB891 /* CourseUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = AA5C73F80637A5F000AFB891 /* CourseUtil.h */; };
 		AA5C73FF0637A5F100AFB891 /* SongUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA5C73F90637A5F000AFB891 /* SongUtil.cpp */; };
@@ -1951,6 +1953,7 @@
 		AA53D28805277DAF00D02EE9 /* ScreenReloadSongs.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenReloadSongs.cpp; path = ../src/ScreenReloadSongs.cpp; sourceTree = "<group>"; };
 		AA53D28905277DAF00D02EE9 /* ScreenReloadSongs.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenReloadSongs.h; path = ../src/ScreenReloadSongs.h; sourceTree = "<group>"; };
 		AA54709106F559DF008EB9B2 /* Preference.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Preference.h; path = ../src/Preference.h; sourceTree = "<group>"; };
+		AA5A51F20A8441AA006DBB92 /* ModsGroup.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ModsGroup.h; path = ../src/ModsGroup.h; sourceTree = "<group>"; };
 		AA5C73F70637A5F000AFB891 /* CourseUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = CourseUtil.cpp; path = ../src/CourseUtil.cpp; sourceTree = "<group>"; };
 		AA5C73F80637A5F000AFB891 /* CourseUtil.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = CourseUtil.h; path = ../src/CourseUtil.h; sourceTree = "<group>"; };
 		AA5C73F90637A5F000AFB891 /* SongUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = SongUtil.cpp; path = ../src/SongUtil.cpp; sourceTree = "<group>"; };
@@ -3413,6 +3416,7 @@
 		AA6EFDC804770AF1005F316C /* DataStructures */ = {
 			isa = PBXGroup;
 			children = (
+				AA5A51F20A8441AA006DBB92 /* ModsGroup.h */,
 				AA84B7050996F8370085EECB /* AdjustSync.cpp */,
 				AA84B7060996F8370085EECB /* AdjustSync.h */,
 				AAFF5541054E736D00D02EE9 /* Attack.cpp */,
@@ -4433,6 +4437,7 @@
 				AA2EA0020A770208003A0C11 /* ScreenSelectLanguage.h in Headers */,
 				AA5D16580A79805C00F17E86 /* RageTextureRenderTarget.h in Headers */,
 				AA5D166D0A798C0E00F17E86 /* ActorFrameTexture.h in Headers */,
+				AA5A51F30A8441AA006DBB92 /* ModsGroup.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4883,6 +4888,7 @@
 				AA2EA0040A770208003A0C11 /* ScreenSelectLanguage.h in Headers */,
 				AA5D165A0A79805C00F17E86 /* RageTextureRenderTarget.h in Headers */,
 				AA5D166F0A798C0E00F17E86 /* ActorFrameTexture.h in Headers */,
+				AA5A51F40A8441AA006DBB92 /* ModsGroup.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
