@@ -1389,7 +1389,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		DoHelp();
 		break;
 	case EDIT_BUTTON_TOGGLE_ASSIST_TICK:
-		MODS_GROUP_TOGGLE( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_bAssistTick );
+		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_bAssistTick, !GAMESTATE->m_SongOptions.GetStage().m_bAssistTick );
 		break;
 	case EDIT_BUTTON_OPEN_NEXT_STEPS:
 	case EDIT_BUTTON_OPEN_PREV_STEPS:
@@ -2028,7 +2028,7 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 		TransitionEditState( STATE_EDITING );
 		break;
 	case EDIT_BUTTON_TOGGLE_ASSIST_TICK:
-		MODS_GROUP_TOGGLE( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_bAssistTick );
+		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_bAssistTick, !GAMESTATE->m_SongOptions.GetStage().m_bAssistTick );
 		break;
 	case EDIT_BUTTON_TOGGLE_AUTOPLAY:
 		{
@@ -2156,8 +2156,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 		}
 
 		/* Snap to current options. */
-
-		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_current = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetStage();
+		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.SetCurrentToLevel( ModsLevel_Stage );
 	}
 
 	switch( em )

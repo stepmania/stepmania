@@ -16,15 +16,16 @@ enum ModsLevel
 #define MODS_GROUP_ASSIGN( group, level, member, val ) \
 	(group).Assign( (level), &(group).GroupType::member, (val) )
 #define MODS_GROUP_CALL( group, level, fun ) (group).Call( (level), &(group).GroupType::fun )
-#define MODS_GROUP_TOGGLE( group, level, member ) (group).Call( (level), &(group).GroupType::member )
 
 template<class T>
-struct ModsGroup
+class ModsGroup
 {
-	typedef T GroupType;
 	T m_[NUM_ModsLevel];
-	RageTimer		m_timer;
-	T m_current;		// approaches ModsLevel_Song
+	RageTimer		m_Timer;
+	T m_Current;		// approaches ModsLevel_Song
+
+public:
+	typedef T GroupType;
 
 	void Init()
 	{
@@ -35,15 +36,15 @@ struct ModsGroup
 	{
 		// Don't let the mod approach speed be affected by Tab.
 		// TODO: Find a more elegant way of handling this.
-		fDelta = m_timer.GetDeltaTime();
-		m_current.Approach( m_[ModsLevel_Song], fDelta );
+		fDelta = m_Timer.GetDeltaTime();
+		m_Current.Approach( m_[ModsLevel_Song], fDelta );
 	}
 	
 	template<typename U>
 	void Assign( ModsLevel level, U T::*member, const U &val )
 	{
 		if( level != ModsLevel_Song )
-			m_current.*member = val;
+			m_Current.*member = val;
 		for( ; level < NUM_ModsLevel; enum_add(level, 1) )
 			m_[level].*member = val;
 	}
@@ -51,7 +52,7 @@ struct ModsGroup
 	void Assign( ModsLevel level, const T &val )
 	{
 		if( level != ModsLevel_Song )
-			m_current = val;
+			m_Current = val;
 		for( ; level < NUM_ModsLevel; enum_add(level, 1) )
 			m_[level] = val;
 	}
@@ -59,7 +60,7 @@ struct ModsGroup
 	void Call( ModsLevel level, void (T::*fun)() )
 	{
 		if( level != ModsLevel_Song )
-			(m_current.*fun)();
+			(m_Current.*fun)();
 		for( ; level < NUM_ModsLevel; enum_add(level, 1) )
 			(m_[level].*fun)();
 	}
@@ -67,24 +68,20 @@ struct ModsGroup
 	void FromString( ModsLevel level, const RString &str )
 	{
 		if( level != ModsLevel_Song )
-			m_current.FromString( str );
+			m_Current.FromString( str );
 		for( ; level < NUM_ModsLevel; enum_add(level, 1) )
 			m_[level].FromString( str );
 	}
 	
-	// This seems like a very strange thing to do.
-	void Toggle( ModsLevel level, bool T::*member )
+	void SetCurrentToLevel( ModsLevel level )
 	{
-		if( level != ModsLevel_Song )
-			m_current.*member ^= 1;
-		for( ; level < NUM_ModsLevel; enum_add(level, 1) )
-			m_[level].*member ^= 1;
+		m_Current = m_[level];
 	}
 
 	const T &GetPreferred() const	{ return m_[ModsLevel_Preferred]; }
 	const T &GetStage() const	{ return m_[ModsLevel_Stage]; }
 	const T &GetSong() const	{ return m_[ModsLevel_Song]; }
-	const T &GetCurrent() const	{ return m_current; }
+	const T &GetCurrent() const	{ return m_Current; }
 };
 
 #endif

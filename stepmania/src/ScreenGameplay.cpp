@@ -975,7 +975,7 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 		pi->GetPlayerState()->Update( 0 );
 
 		/* Hack: Course modifiers that are set to start immediately shouldn't tween on. */
-		pi->GetPlayerState()->m_PlayerOptions.m_current = pi->GetPlayerState()->m_PlayerOptions.GetStage();
+		pi->GetPlayerState()->m_PlayerOptions.SetCurrentToLevel( ModsLevel_Stage );
 	}
 }
 
