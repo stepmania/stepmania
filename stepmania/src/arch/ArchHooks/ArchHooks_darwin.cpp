@@ -133,6 +133,18 @@ ArchHooks_darwin::~ArchHooks_darwin()
 #endif
 }
 
+RString ArchHooks_darwin::GetArchName() const
+{
+#if defined(__ppc__)
+	return "Mac OS X (ppc)";
+#elif defined(__i386__)
+	return "Mac OS X (i386)";
+#else
+#error What arch?
+#endif
+}
+
+
 RString ArchHooks_darwin::GetMachineId() const
 {
 	RString ret;
