@@ -3416,7 +3416,6 @@
 		AA6EFDC804770AF1005F316C /* DataStructures */ = {
 			isa = PBXGroup;
 			children = (
-				AA5A51F20A8441AA006DBB92 /* ModsGroup.h */,
 				AA84B7050996F8370085EECB /* AdjustSync.cpp */,
 				AA84B7060996F8370085EECB /* AdjustSync.h */,
 				AAFF5541054E736D00D02EE9 /* Attack.cpp */,
@@ -3485,6 +3484,7 @@
 				AA6EFDE404770C79005F316C /* LyricsLoader.h */,
 				AA8E4BC609787C9400765149 /* MenuInput.cpp */,
 				AA1DCB6304A4872700D02EE9 /* MenuInput.h */,
+				AA5A51F20A8441AA006DBB92 /* ModsGroup.h */,
 				AA6EFDE504770C79005F316C /* NoteData.cpp */,
 				AA6EFDE604770C79005F316C /* NoteData.h */,
 				AA4F38C004E2D0B700D02EE9 /* NoteDataUtil.cpp */,
