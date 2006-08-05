@@ -112,8 +112,8 @@ RString GetLastErrorString()
 static LocalizedString MUSIC_FILE				( "MainMenuDlg", "Music file" );
 static LocalizedString THE_SONG_DIRECTORY_ALREADY_EXISTS	( "MainMenuDlg", "The song directory '%s' already exists.  You cannot override an existing song." );
 static LocalizedString FAILED_TO_COPY_MUSIC_FILE		( "MainMenuDlg", "Failed to copy music file '%s' to '%s': %s" );
-static LocalizedString FAILED_TO_CREATE_THE_SONG_FILE		( "MainMenuDlg", "Failed to create the song file '%s'" );
-static LocalizedString SUCCESS_CREATED_THE_SONG			( "MainMenuDlg", "Success.  Created the song '%s'" );
+static LocalizedString FAILED_TO_CREATE_THE_SONG_FILE		( "MainMenuDlg", "Failed to create the song file '%s'." );
+static LocalizedString SUCCESS_CREATED_THE_SONG			( "MainMenuDlg", "Success.  Created the song '%s'." );
 void MainMenuDlg::OnCreateSong() 
 {
 	// TODO: Add your control notification handler code here
