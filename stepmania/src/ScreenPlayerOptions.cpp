@@ -101,7 +101,7 @@ void ScreenPlayerOptions::Input( const InputEventPlus &input )
 		// apply the game default mods, but not the Profile saved mods
 		PlayerOptions po;
 		GAMESTATE->GetDefaultPlayerOptions( po );
-		MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Preferred, = po );
+		GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.Assign( ModsLevel_Preferred, po );
 		
 		MESSAGEMAN->Broadcast( ssprintf("CancelAllP%i", pn+1) );
 
@@ -158,7 +158,7 @@ void ScreenPlayerOptions::UpdateDisqualified( int row, PlayerNumber pn )
 
 	// Find out if the current row when exprorted causes disqualification.
 	// Exporting the row will fill GAMESTATE->m_PlayerOptions.
-	MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Preferred, = PlayerOptions() );
+	MODS_GROUP_CALL( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Preferred, Init );
 	vector<PlayerNumber> v;
 	v.push_back( pn );
 	ExportOptions( row, v );
@@ -178,7 +178,7 @@ void ScreenPlayerOptions::UpdateDisqualified( int row, PlayerNumber pn )
 	m_sprDisqualify[pn]->SetHidden( !bDisqualified );
 
 	// restore previous player options in case the user escapes back after this
-	MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Preferred, = poOrig );
+	GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.Assign( ModsLevel_Preferred, poOrig );
 }
 
 // lua start

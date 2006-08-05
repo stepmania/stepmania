@@ -837,7 +837,7 @@ void ScreenGameplay::InitSongQueues()
 			// In a survival course, override stored mods
 			if( pCourse->GetCourseType() == COURSE_TYPE_SURVIVAL )
 			{
-				MODS_GROUP_ASSIGN( pi->GetPlayerState()->m_PlayerOptions, ModsLevel_Stage, .FromString("clearall,"+CommonMetrics::DEFAULT_MODIFIERS.GetValue()) );
+				pi->GetPlayerState()->m_PlayerOptions.FromString( ModsLevel_Stage, "clearall,"+CommonMetrics::DEFAULT_MODIFIERS.GetValue() );
 				pi->GetPlayerState()->RebuildPlayerOptionsFromActiveAttacks();
 			}
 		}
@@ -968,7 +968,7 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 				a.fStartSecond = -1;	// now
 			
 			pi->GetPlayerState()->LaunchAttack( a );
-			MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Song, .FromString(a.sModifiers) );
+			GAMESTATE->m_SongOptions.FromString( ModsLevel_Song, a.sModifiers );
 		}
 
 		/* Update attack bOn flags. */
@@ -1027,7 +1027,7 @@ void ScreenGameplay::LoadNextSong()
 	/* If we're in battery mode, force FailImmediate.  We assume in PlayerMinus::Step that
 	 * failed players can't step. */
 	if( GAMESTATE->m_SongOptions.GetCurrent().m_LifeType == SongOptions::LIFE_BATTERY )
-		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Song, .m_FailType = SongOptions::FAIL_IMMEDIATE );
+		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Song, m_FailType, SongOptions::FAIL_IMMEDIATE );
 
 	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetCurrent().GetString() );
 

@@ -772,12 +772,12 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 		{
 			PlayerOptions po;
 			GAMESTATE->GetDefaultPlayerOptions( po );
-			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, = po );
+			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.Assign( ModsLevel_Stage, po );
 		}
 
 		SongOptions so;
 		GAMESTATE->GetDefaultSongOptions( so );
-		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, = so );
+		GAMESTATE->m_SongOptions.Assign( ModsLevel_Stage, so );
 	}
 	// HACK:  Set life type to BATTERY just once here so it happens once and 
 	// we don't override the user's changes if they back out.
@@ -785,7 +785,8 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 		GAMESTATE->m_PlayMode != OldPlayMode &&
 		GAMESTATE->m_SongOptions.GetStage().m_LifeType == SongOptions::LIFE_BAR )
 	{
-		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, .m_LifeType = SongOptions::LIFE_BATTERY );
+		//MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, .m_LifeType = SongOptions::LIFE_BATTERY );
+		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_LifeType, SongOptions::LIFE_BATTERY );
 	}
 }
 

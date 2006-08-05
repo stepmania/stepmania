@@ -1170,8 +1170,8 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 			// apply #LIVES
 			if( pCourse->m_iLives != -1 )
 			{
-				MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, .m_LifeType = SongOptions::LIFE_BATTERY );
-				MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, .m_iBatteryLives = pCourse->m_iLives );
+				MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_LifeType, SongOptions::LIFE_BATTERY );
+				MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_iBatteryLives, pCourse->m_iLives );
 			}
 
 			m_bMadeChoice = true;

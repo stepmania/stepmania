@@ -114,8 +114,8 @@ void ScreenNameEntry::Init()
 	// reset Player and Song Options
 	{
 		FOREACH_PlayerNumber( p )
-			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, = PlayerOptions() );
-		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, = SongOptions() );
+			MODS_GROUP_CALL( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, Init );
+		MODS_GROUP_CALL( GAMESTATE->m_SongOptions, ModsLevel_Stage, Init );
 	}
 
 	vector<GameState::RankingFeat> aFeats[NUM_PLAYERS];
@@ -167,7 +167,7 @@ void ScreenNameEntry::Init()
 		// remove modifiers that may have been on the last song
 		PlayerOptions po;
 		GAMESTATE->GetDefaultPlayerOptions( po );
-		MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, = po );
+		GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.Assign( ModsLevel_Stage, po );
 
 		ASSERT( GAMESTATE->IsHumanPlayer(p) );	// they better be enabled if they made a high score!
 

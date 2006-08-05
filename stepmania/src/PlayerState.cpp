@@ -139,7 +139,7 @@ void PlayerState::RebuildPlayerOptionsFromActiveAttacks()
 			continue; /* hasn't started yet */
 		po.FromString( m_ActiveAttacks[s].sModifiers );
 	}
-	MODS_GROUP_ASSIGN( m_PlayerOptions, ModsLevel_Song, = po );
+	m_PlayerOptions.Assign( ModsLevel_Song, po );
 
 
 	int iSumOfAttackLevels = GetSumOfActiveAttackLevels();

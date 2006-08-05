@@ -258,7 +258,7 @@ bool CodeDetector::DetectAndAdjustMusicOptions( GameController controller )
 			default:	break;
 			}
 
-			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Preferred, = po );
+			GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.Assign( ModsLevel_Preferred, po );
 
 
 			return true;	// don't check any more

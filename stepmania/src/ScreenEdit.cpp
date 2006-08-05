@@ -697,11 +697,11 @@ void ScreenEdit::Init()
 		const RString &sNoteSkin = EDITOR_NOTE_SKINS[pn];
 		
 		if( NOTESKIN->DoesNoteSkinExist(sNoteSkin) )
-			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Stage, .m_sNoteSkin = sNoteSkin );
+			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Stage, m_sNoteSkin, sNoteSkin );
 	}
 
 	m_PlayerStateEdit.m_PlayerNumber = PLAYER_1;
-	MODS_GROUP_ASSIGN( m_PlayerStateEdit.m_PlayerOptions, ModsLevel_Stage, .m_sNoteSkin = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetStage().m_sNoteSkin );
+	MODS_GROUP_ASSIGN( m_PlayerStateEdit.m_PlayerOptions, ModsLevel_Stage, m_sNoteSkin, GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetStage().m_sNoteSkin );
 
 	m_pSteps->GetNoteData( m_NoteDataEdit );
 	m_NoteFieldEdit.SetXY( EDIT_X, EDIT_Y );
@@ -728,6 +728,7 @@ void ScreenEdit::Init()
 
 
 	m_Player->Init( "Player", GAMESTATE->m_pPlayerState[PLAYER_1], NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
+	m_Player->CacheAllUsedNoteSkins();
 	GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_HUMAN;
 	m_Player->SetXY( PLAYER_X, PLAYER_Y );
 	this->AddChild( m_Player );
@@ -774,7 +775,7 @@ void ScreenEdit::Init()
 ScreenEdit::~ScreenEdit()
 {
 	FOREACH_PlayerNumber( pn )
-		MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Stage, .m_sNoteSkin = m_sOldNoteSkins[pn] );
+		MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Stage, m_sNoteSkin, m_sOldNoteSkins[pn] );
 	// UGLY: Don't delete the Song's steps.
 	m_songLastSave.DetachSteps();
 
@@ -1256,7 +1257,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				fScrollSpeed = fSpeeds[iSpeed];
 			}
 
-			MODS_GROUP_ASSIGN( pPlayerState->m_PlayerOptions, ModsLevel_Stage, .m_fScrollSpeed = fScrollSpeed );
+			MODS_GROUP_ASSIGN( pPlayerState->m_PlayerOptions, ModsLevel_Stage, m_fScrollSpeed, fScrollSpeed );
 			break;
 		}
 
@@ -1388,7 +1389,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		DoHelp();
 		break;
 	case EDIT_BUTTON_TOGGLE_ASSIST_TICK:
-		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, .m_bAssistTick ^= 1 );
+		MODS_GROUP_TOGGLE( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_bAssistTick );
 		break;
 	case EDIT_BUTTON_OPEN_NEXT_STEPS:
 	case EDIT_BUTTON_OPEN_PREV_STEPS:
@@ -1783,7 +1784,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			}
 			g_fLastInsertAttackPositionSeconds = fStart;
 			g_fLastInsertAttackDurationSeconds = fEnd - fStart;
-			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions, ModsLevel_Stage, = po );
+			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.Assign( ModsLevel_Stage, po );
 			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertCourseAttackPlayerOptions );
 			
 		}
@@ -2027,7 +2028,7 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 		TransitionEditState( STATE_EDITING );
 		break;
 	case EDIT_BUTTON_TOGGLE_ASSIST_TICK:
-		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, .m_bAssistTick ^= 1 );
+		MODS_GROUP_TOGGLE( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_bAssistTick );
 		break;
 	case EDIT_BUTTON_TOGGLE_AUTOPLAY:
 		{
@@ -2150,7 +2151,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 		{
 		case STATE_RECORDING:
 		case STATE_RECORDING_PAUSED:
-			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions, ModsLevel_Stage, .m_fScrolls[PlayerOptions::SCROLL_CENTERED] = 1.0f );
+			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions, ModsLevel_Stage, m_fScrolls[PlayerOptions::SCROLL_CENTERED], 1.0f );
 			break;
 		}
 
@@ -2208,7 +2209,6 @@ void ScreenEdit::TransitionEditState( EditState em )
 		/* If we're in course display mode, set that up. */
 		SetupCourseAttacks();
 		
-		m_Player->CacheAllUsedNoteSkins();
 		m_Player.Load( m_NoteDataEdit );
 		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PREFSMAN->m_AutoPlay;
 
@@ -2468,7 +2468,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			if( iAttack >= 0 )
 				po.FromString( ce.attacks[iAttack].sModifiers );
 
-			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions, ModsLevel_Preferred, = po );
+			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.Assign( ModsLevel_Preferred, po );
 			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromInsertCourseAttackPlayerOptions );
 		}
 	}

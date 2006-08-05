@@ -192,7 +192,7 @@ void ScreenJukebox::Init()
 
 	// choose some cool options
 	int Benchmark = 0;
-	if(Benchmark)
+	if( Benchmark )
 	{
 		/* Note that you also need to make sure you benchmark with the
 		 * same notes.  I use a copy of MaxU with only heavy notes included. */
@@ -200,13 +200,13 @@ void ScreenJukebox::Init()
 		{
 			/* Lots and lots of arrows.  This might even bias to arrows a little
 			 * too much. */
-			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, = PlayerOptions() );
-			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, .m_fScrollSpeed = .25f );
-			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, .m_fPerspectiveTilt = -1 );
-			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, .m_fEffects[ PlayerOptions::EFFECT_MINI ] = 1 );
+			MODS_GROUP_CALL( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, Init );
+			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_fScrollSpeed, .25f );
+			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_fPerspectiveTilt, -1.0f );
+			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_fEffects[ PlayerOptions::EFFECT_MINI ], 1.0f );
 		}
-		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, .m_LifeType = SongOptions::LIFE_BATTERY );
-		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, .m_FailType = SongOptions::FAIL_OFF );
+		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_LifeType, SongOptions::LIFE_BATTERY );
+		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_FailType, SongOptions::FAIL_OFF );
 	}
 
 	FOREACH_EnabledPlayer( p )
@@ -219,15 +219,15 @@ void ScreenJukebox::Init()
 			PlayerOptions po;
 			GAMESTATE->GetDefaultPlayerOptions( po );
 			po.ChooseRandomModifiers();
-			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, = po );
+			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.Assign( ModsLevel_Stage, po );
 		}
 	}
 
 	SongOptions so;
 	GAMESTATE->GetDefaultSongOptions( so );
-	MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, = so );
+	GAMESTATE->m_SongOptions.Assign( ModsLevel_Stage, so );
 
-	MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, .m_FailType = SongOptions::FAIL_OFF );
+	MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_FailType, SongOptions::FAIL_OFF );
 
 	GAMESTATE->m_bDemonstrationOrJukebox = true;
 

@@ -107,7 +107,7 @@ ScreenEvaluation::ScreenEvaluation()
 		FOREACH_PlayerNumber( p )
 		{
 			if( RandomInt(2) )
-				MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, .m_bTransforms[PlayerOptions::TRANSFORM_ECHO] = true );	// show "disqualified"
+				MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_bTransforms[PlayerOptions::TRANSFORM_ECHO], true );	// show "disqualified"
 
 			GAMESTATE->m_bSideIsJoined[p] = true;
 			GAMESTATE->m_pCurSteps[p].Set( GAMESTATE->m_pCurSong->GetAllSteps()[0] );
@@ -119,8 +119,8 @@ ScreenEvaluation::ScreenEvaluation()
 			STATSMAN->m_CurStageStats.m_player[p].vpPossibleSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
 			
 			
-			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, .m_fScrollSpeed = 2 );
-			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, .ChooseRandomModifiers() );
+			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_fScrollSpeed, 2.0f );
+			MODS_GROUP_CALL( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, ChooseRandomModifiers );
 		}
 
 		for( float f = 0; f < 100.0f; f += 1.0f )

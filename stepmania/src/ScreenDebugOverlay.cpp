@@ -481,7 +481,7 @@ class DebugLineAssistTick : public IDebugLine
 	virtual void Do( RString &sMessageOut )
 	{
 		bool bAssistTick = !GAMESTATE->m_SongOptions.GetSong().m_bAssistTick;
-		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Song, .m_bAssistTick = bAssistTick );
+		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Song, m_bAssistTick, bAssistTick );
 		MESSAGEMAN->Broadcast( Message_AssistTickChanged );
 		IDebugLine::Do( sMessageOut );
 	}
@@ -506,7 +506,7 @@ class DebugLineAutosync : public IDebugLine
 	{
 		SongOptions::AutosyncType as = enum_add2( GAMESTATE->m_SongOptions.GetSong().m_AutosyncType, 1 );
 		wrap( (int&)as, SongOptions::NUM_AUTOSYNC_TYPES );
-		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Song, .m_AutosyncType = as );
+		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Song, m_AutosyncType, as );
 		MESSAGEMAN->Broadcast( Message_AutosyncChanged );
 		IDebugLine::Do( sMessageOut );
 	}
