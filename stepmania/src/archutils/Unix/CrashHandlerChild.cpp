@@ -15,6 +15,7 @@
 #include "CrashHandlerInternal.h"
 #include "RageLog.h" /* for RageLog::GetAdditionalLog, etc. only */
 #include "ProductInfo.h"
+#include "ArchHooks.h"
 
 #if defined(MACOSX)
 #include "archutils/Darwin/Crash.h"
@@ -22,6 +23,7 @@
 
 #if defined(HAVE_VERSION_INFO)
 extern const unsigned version_num;
+extern const char *version_time;
 #endif
 
 const char *g_pCrashHandlerArgv0 = NULL;
@@ -146,7 +148,7 @@ static void child_process()
 	delete[] temp;
 	
 	/* Wait for the child to either finish cleaning up or die.  XXX:
-		* This should time out, in case something deadlocks. */
+	 * This should time out, in case something deadlocks. */
 	
 	char x;
 	int ret = read( 3, &x, sizeof(x) );
@@ -181,7 +183,7 @@ static void child_process()
 	
 	fprintf( CrashDump, "%s crash report", PRODUCT_ID_VER );
 #if defined(HAVE_VERSION_INFO)
-	fprintf( CrashDump, " (build %u)", version_num);
+	fprintf( CrashDump, " (build %u, %s)", version_num, version_time );
 #endif
 	fprintf( CrashDump, "\n" );
 	fprintf( CrashDump, "--------------------------------------\n" );
@@ -218,7 +220,8 @@ static void child_process()
 		break;
 	}
 	
-	fprintf( CrashDump, "Crash reason: %s\n", reason.c_str() );
+	fprintf( CrashDump, "Architecture:   %s\n", HOOKS->GetArchName().c_str() );
+	fprintf( CrashDump, "Crash reason:   %s\n", reason.c_str() );
 	fprintf( CrashDump, "Crashed thread: %s\n\n", CrashedThread.c_str() );
 	
 	fprintf(CrashDump, "Checkpoints:\n");
