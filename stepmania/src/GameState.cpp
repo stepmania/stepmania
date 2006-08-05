@@ -369,7 +369,7 @@ void GameState::PlayersFinalized()
 			 * sets a default of "reverse", and the player turns it off, we should
 			 * set it off.  However, don't reset modifiers that aren't saved by the
 			 * profile, so we don't ignore unsaved modifiers when a profile is in use. */
-			MODS_GROUP_CALL( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Preferred, ResetSavedPrefs );
+			PO_GROUP_CALL( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Preferred, ResetSavedPrefs );
 			GAMESTATE->ApplyPreferredModifiers( pn, sModifiers );
 		}
 		// Only set the sort order if it wasn't already set by a GameCommand (or by an earlier profile)

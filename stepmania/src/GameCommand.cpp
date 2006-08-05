@@ -785,8 +785,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 		GAMESTATE->m_PlayMode != OldPlayMode &&
 		GAMESTATE->m_SongOptions.GetStage().m_LifeType == SongOptions::LIFE_BAR )
 	{
-		//MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, .m_LifeType = SongOptions::LIFE_BATTERY );
-		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_LifeType, SongOptions::LIFE_BATTERY );
+		SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_LifeType, SongOptions::LIFE_BATTERY );
 	}
 }
 

@@ -200,13 +200,13 @@ void ScreenJukebox::Init()
 		{
 			/* Lots and lots of arrows.  This might even bias to arrows a little
 			 * too much. */
-			MODS_GROUP_CALL( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, Init );
-			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_fScrollSpeed, .25f );
-			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_fPerspectiveTilt, -1.0f );
-			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_fEffects[ PlayerOptions::EFFECT_MINI ], 1.0f );
+			PO_GROUP_CALL( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, Init );
+			PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_fScrollSpeed, .25f );
+			PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_fPerspectiveTilt, -1.0f );
+			PO_GROUP_ASSIGN_N( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_fEffects, PlayerOptions::EFFECT_MINI, 1.0f );
 		}
-		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_LifeType, SongOptions::LIFE_BATTERY );
-		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_FailType, SongOptions::FAIL_OFF );
+		SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_LifeType, SongOptions::LIFE_BATTERY );
+		SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_FailType, SongOptions::FAIL_OFF );
 	}
 
 	FOREACH_EnabledPlayer( p )
@@ -227,7 +227,7 @@ void ScreenJukebox::Init()
 	GAMESTATE->GetDefaultSongOptions( so );
 	GAMESTATE->m_SongOptions.Assign( ModsLevel_Stage, so );
 
-	MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_FailType, SongOptions::FAIL_OFF );
+	SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_FailType, SongOptions::FAIL_OFF );
 
 	GAMESTATE->m_bDemonstrationOrJukebox = true;
 

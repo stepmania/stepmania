@@ -158,7 +158,7 @@ void ScreenPlayerOptions::UpdateDisqualified( int row, PlayerNumber pn )
 
 	// Find out if the current row when exprorted causes disqualification.
 	// Exporting the row will fill GAMESTATE->m_PlayerOptions.
-	MODS_GROUP_CALL( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Preferred, Init );
+	PO_GROUP_CALL( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Preferred, Init );
 	vector<PlayerNumber> v;
 	v.push_back( pn );
 	ExportOptions( row, v );

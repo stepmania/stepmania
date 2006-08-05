@@ -697,11 +697,11 @@ void ScreenEdit::Init()
 		const RString &sNoteSkin = EDITOR_NOTE_SKINS[pn];
 		
 		if( NOTESKIN->DoesNoteSkinExist(sNoteSkin) )
-			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Stage, m_sNoteSkin, sNoteSkin );
+			PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Stage, m_sNoteSkin, sNoteSkin );
 	}
 
 	m_PlayerStateEdit.m_PlayerNumber = PLAYER_1;
-	MODS_GROUP_ASSIGN( m_PlayerStateEdit.m_PlayerOptions, ModsLevel_Stage, m_sNoteSkin, GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetStage().m_sNoteSkin );
+	PO_GROUP_ASSIGN( m_PlayerStateEdit.m_PlayerOptions, ModsLevel_Stage, m_sNoteSkin, GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetStage().m_sNoteSkin );
 
 	m_pSteps->GetNoteData( m_NoteDataEdit );
 	m_NoteFieldEdit.SetXY( EDIT_X, EDIT_Y );
@@ -775,7 +775,7 @@ void ScreenEdit::Init()
 ScreenEdit::~ScreenEdit()
 {
 	FOREACH_PlayerNumber( pn )
-		MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Stage, m_sNoteSkin, m_sOldNoteSkins[pn] );
+		PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Stage, m_sNoteSkin, m_sOldNoteSkins[pn] );
 	// UGLY: Don't delete the Song's steps.
 	m_songLastSave.DetachSteps();
 
@@ -1257,7 +1257,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				fScrollSpeed = fSpeeds[iSpeed];
 			}
 
-			MODS_GROUP_ASSIGN( pPlayerState->m_PlayerOptions, ModsLevel_Stage, m_fScrollSpeed, fScrollSpeed );
+			PO_GROUP_ASSIGN( pPlayerState->m_PlayerOptions, ModsLevel_Stage, m_fScrollSpeed, fScrollSpeed );
 			break;
 		}
 
@@ -1389,7 +1389,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		DoHelp();
 		break;
 	case EDIT_BUTTON_TOGGLE_ASSIST_TICK:
-		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_bAssistTick, !GAMESTATE->m_SongOptions.GetStage().m_bAssistTick );
+		SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_bAssistTick, !GAMESTATE->m_SongOptions.GetStage().m_bAssistTick );
 		break;
 	case EDIT_BUTTON_OPEN_NEXT_STEPS:
 	case EDIT_BUTTON_OPEN_PREV_STEPS:
@@ -2028,7 +2028,7 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 		TransitionEditState( STATE_EDITING );
 		break;
 	case EDIT_BUTTON_TOGGLE_ASSIST_TICK:
-		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_bAssistTick, !GAMESTATE->m_SongOptions.GetStage().m_bAssistTick );
+		SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_bAssistTick, !GAMESTATE->m_SongOptions.GetStage().m_bAssistTick );
 		break;
 	case EDIT_BUTTON_TOGGLE_AUTOPLAY:
 		{
@@ -2151,7 +2151,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 		{
 		case STATE_RECORDING:
 		case STATE_RECORDING_PAUSED:
-			MODS_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions, ModsLevel_Stage, m_fScrolls[PlayerOptions::SCROLL_CENTERED], 1.0f );
+			PO_GROUP_ASSIGN_N( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions, ModsLevel_Stage, m_fScrolls, PlayerOptions::SCROLL_CENTERED, 1.0f );
 			break;
 		}
 

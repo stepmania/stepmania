@@ -28,7 +28,7 @@ void ScreenGameplaySyncMachine::Init()
 	ASSERT( pSteps );
 	GAMESTATE->m_pCurSteps[0].Set( pSteps );
 
-	MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_AutosyncType, SongOptions::AUTOSYNC_MACHINE );
+	SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_AutosyncType, SongOptions::AUTOSYNC_MACHINE );
 	PREFSMAN->m_AutoPlay.Set( PC_HUMAN );
 
 	ScreenGameplayNormal::Init( false );

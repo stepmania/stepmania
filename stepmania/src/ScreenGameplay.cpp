@@ -1027,7 +1027,7 @@ void ScreenGameplay::LoadNextSong()
 	/* If we're in battery mode, force FailImmediate.  We assume in PlayerMinus::Step that
 	 * failed players can't step. */
 	if( GAMESTATE->m_SongOptions.GetCurrent().m_LifeType == SongOptions::LIFE_BATTERY )
-		MODS_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Song, m_FailType, SongOptions::FAIL_IMMEDIATE );
+		SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Song, m_FailType, SongOptions::FAIL_IMMEDIATE );
 
 	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetCurrent().GetString() );
 

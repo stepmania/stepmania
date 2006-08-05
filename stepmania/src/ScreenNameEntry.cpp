@@ -114,8 +114,8 @@ void ScreenNameEntry::Init()
 	// reset Player and Song Options
 	{
 		FOREACH_PlayerNumber( p )
-			MODS_GROUP_CALL( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, Init );
-		MODS_GROUP_CALL( GAMESTATE->m_SongOptions, ModsLevel_Stage, Init );
+			PO_GROUP_CALL( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, Init );
+		SO_GROUP_CALL( GAMESTATE->m_SongOptions, ModsLevel_Stage, Init );
 	}
 
 	vector<GameState::RankingFeat> aFeats[NUM_PLAYERS];

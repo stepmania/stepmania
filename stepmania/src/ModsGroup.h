@@ -13,9 +13,16 @@ enum ModsLevel
 	NUM_ModsLevel,
 };
 
-#define MODS_GROUP_ASSIGN( group, level, member, val ) \
-	(group).Assign( (level), &(group).GroupType::member, (val) )
-#define MODS_GROUP_CALL( group, level, fun ) (group).Call( (level), &(group).GroupType::fun )
+#define MODS_GROUP_ASSIGN( group, level, member, val )		(group).Assign( (level), member, (val) )
+#define MODS_GROUP_ASSIGN_N( group, level, member, n, val )	(group).Assign_n( (level), member, (n), (val) )
+#define MODS_GROUP_CALL( group, level, fun )			(group).Call( (level), fun )
+
+#define PO_GROUP_ASSIGN( group, level, member, val )		MODS_GROUP_ASSIGN( (group), (level), &PlayerOptions::member, (val) )
+#define PO_GROUP_ASSIGN_N( group, level, member, n, val )	MODS_GROUP_ASSIGN_N( (group), (level), &PlayerOptions::member, (n), (val) )
+#define PO_GROUP_CALL( group, level, fun )			MODS_GROUP_CALL( (group), (level), &PlayerOptions::fun )
+#define SO_GROUP_ASSIGN( group, level, member, val )		MODS_GROUP_ASSIGN( (group), (level), &SongOptions::member, (val) )
+#define SO_GROUP_ASSIGN_N( group, level, member, n, val )	MODS_GROUP_ASSIGN_N( (group), (level), &SongOptions::member, (n), (val) )
+#define SO_GROUP_CALL( group, level, fun )			MODS_GROUP_CALL( (group), (level), &SongOptions::fun )
 
 template<class T>
 class ModsGroup
@@ -25,8 +32,6 @@ class ModsGroup
 	T m_Current;		// approaches ModsLevel_Song
 
 public:
-	typedef T GroupType;
-
 	void Init()
 	{
 		Call( ModsLevel_Preferred, &T::Init );
@@ -48,6 +53,16 @@ public:
 		for( ; level < NUM_ModsLevel; enum_add(level, 1) )
 			m_[level].*member = val;
 	}
+	
+	// XXX U T::*member doesn't work, U T::*member[] doesn't work, U (T::*member)[] doesn't work. What is V?
+	template<typename U, typename V>
+	void Assign_n( ModsLevel level, V member, size_t index, const U &val )
+	{
+			if( level != ModsLevel_Song )
+				(m_Current.*member)[index] = val;
+			for( ; level < NUM_ModsLevel; enum_add(level, 1) )
+				(m_[level].*member)[index] = val;
+	}	
 	
 	void Assign( ModsLevel level, const T &val )
 	{
