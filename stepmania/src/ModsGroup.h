@@ -14,9 +14,9 @@ enum ModsLevel
 #define MODS_GROUP_ASSIGN( modsGroup, modsLevel, assignment ) \
 	{ \
 	for( int i=(ModsLevel)(modsLevel); i<NUM_ModsLevel; i++ ) \
-		(modsGroup).m_[i]##assignment; \
+		(modsGroup).m_[i] assignment; \
 	if( modsLevel != ModsLevel_Song ) \
-		(modsGroup).m_current##assignment; \
+		(modsGroup).m_current assignment; \
 	}
 
 template<class T>
