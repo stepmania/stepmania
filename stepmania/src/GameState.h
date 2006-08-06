@@ -62,7 +62,7 @@ public:
 	int					m_iCoins;			// not "credits"
 	PlayerNumber				m_MasterPlayerNumber;		// used in Styles where one player controls both sides
 	bool					m_bMultiplayer;
-	bool DifficultiesLocked();
+	bool DifficultiesLocked() const;
 	bool ChangePreferredDifficulty( PlayerNumber pn, Difficulty dc );
 	bool ChangePreferredDifficulty( PlayerNumber pn, int dir );
 	bool ChangePreferredCourseDifficulty( PlayerNumber pn, CourseDifficulty cd );

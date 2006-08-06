@@ -1588,7 +1588,7 @@ void GameState::VisitAttractScreen( const RString sScreenName )
 		m_iNumTimesThroughAttract++;
 }
 
-bool GameState::DifficultiesLocked()
+bool GameState::DifficultiesLocked() const
 {
  	if( m_PlayMode == PLAY_MODE_RAVE )
 		return true;
