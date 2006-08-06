@@ -1024,7 +1024,7 @@ void ScreenGameplay::LoadNextSong()
 	// No need to do this here.  We do it in SongFinished().
 	//GAMESTATE->RemoveAllActiveAttacks();
 
-	/* If we're in battery mode, force FailImmediate.  We assume in PlayerMinus::Step that
+	/* If we're in battery mode, force FailImmediate.  We assume in Player::Step that
 	 * failed players can't step. */
 	if( GAMESTATE->m_SongOptions.GetCurrent().m_LifeType == SongOptions::LIFE_BATTERY )
 		SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Song, m_FailType, SongOptions::FAIL_IMMEDIATE );
