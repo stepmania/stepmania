@@ -125,6 +125,7 @@ public:
 	void		FinishStage();
 	int		GetNumStagesLeft() const;
 	bool		IsFinalStage() const;
+	bool		IsAnExtraStage() const;
 	bool		IsExtraStage() const;
 	bool		IsExtraStage2() const;
 	Stage		GetCurrentStage() const;

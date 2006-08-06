@@ -688,7 +688,7 @@ int GameState::GetStageIndex() const
 
 int GameState::GetNumStagesLeft() const
 {
-	if( IsExtraStage() || IsExtraStage2() )
+	if( IsAnExtraStage() )
 		return 1;
 	if( GAMESTATE->IsEventMode() )
 		return 999;
@@ -710,18 +710,19 @@ bool GameState::IsFinalStage() const
 	return m_iCurrentStageIndex + iPredictedStageForCurSong == PREFSMAN->m_iSongsPerPlay;
 }
 
+bool GameState::IsAnExtraStage() const
+{
+	return !IsEventMode() && m_iCurrentStageIndex >= PREFSMAN->m_iSongsPerPlay;
+}
+
 bool GameState::IsExtraStage() const
 {
-	if( GAMESTATE->IsEventMode() )
-		return false;
-	return m_iCurrentStageIndex == PREFSMAN->m_iSongsPerPlay;
+	return !IsEventMode() && m_iCurrentStageIndex == PREFSMAN->m_iSongsPerPlay;
 }
 
 bool GameState::IsExtraStage2() const
 {
-	if( GAMESTATE->IsEventMode() )
-		return false;
-	return m_iCurrentStageIndex == PREFSMAN->m_iSongsPerPlay+1;
+	return !IsEventMode() && m_iCurrentStageIndex == PREFSMAN->m_iSongsPerPlay+1;
 }
 
 Stage GameState::GetCurrentStage() const
@@ -1916,6 +1917,7 @@ public:
 	static int GetCourseSongIndex( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetCourseSongIndex() ); return 1; }
 	static int GetLoadingCourseSongIndex( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetLoadingCourseSongIndex() ); return 1; }
 	static int IsFinalStage( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsFinalStage() ); return 1; }
+	static int IsAnExtraStage( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsAnExtraStage() ); return 1; }
 	static int IsExtraStage( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsExtraStage() ); return 1; }
 	static int IsExtraStage2( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsExtraStage2() ); return 1; }
 	static int GetCurrentStage( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetCurrentStage() ); return 1; }
@@ -2035,6 +2037,7 @@ public:
 		ADD_METHOD( GetCourseSongIndex );
 		ADD_METHOD( GetLoadingCourseSongIndex );
 		ADD_METHOD( IsFinalStage );
+		ADD_METHOD( IsAnExtraStage );
 		ADD_METHOD( IsExtraStage );
 		ADD_METHOD( IsExtraStage2 );
 		ADD_METHOD( GetCurrentStage );
