@@ -26,25 +26,25 @@ class MusicWheel : public WheelBase
 
 public:
 	MusicWheel();
-	~MusicWheel();
+	virtual ~MusicWheel();
 	virtual void Load( RString sType );
 	void BeginScreen();
 
 	virtual void DrawItem( int index );
 
-	bool ChangeSort( SortOrder new_so );	// return true if change successful
-	bool NextSort();		// return true if change successful
+	bool ChangeSort( SortOrder new_so );		// return true if change successful
+	bool NextSort();				// return true if change successful
 	void StartRoulette();
 	void StartRandom();
 	bool IsRouletting() const;
 
 	void NotesOrTrailChanged( PlayerNumber pn );	// update grade graphics and top score
 
-	virtual bool Select();	// return true if this selection ends the screen
+	virtual bool Select();				// return true if this selection ends the screen
 	WheelItemType	GetSelectedType()	{ return m_CurWheelItemData[m_iSelection]->m_Type; }
-	Song*			GetSelectedSong();
-	Course*			GetSelectedCourse()	{ return m_CurWheelItemData[m_iSelection]->m_pCourse; }
-	RString			GetSelectedSection(){ return m_CurWheelItemData[m_iSelection]->m_sText; }
+	Song		*GetSelectedSong();
+	Course		*GetSelectedCourse()	{ return m_CurWheelItemData[m_iSelection]->m_pCourse; }
+	RString		GetSelectedSection()	{ return m_CurWheelItemData[m_iSelection]->m_sText; }
 
 	void RebuildAllMusicWheelItems();
 	void RebuildMusicWheelItems( int dist );
@@ -53,51 +53,50 @@ public:
 
 	bool SelectSong( Song *p );
 	bool SelectSection( const RString & SectionName );
-	void SetOpenGroup(RString group, SortOrder so = SORT_INVALID);
+	void SetOpenGroup( RString group, SortOrder so = SORT_INVALID);
 	SortOrder GetSortOrder() const { return m_SortOrder; }
-	virtual void ChangeMusic(int dist); /* +1 or -1 */ //CHECK THIS
+	virtual void ChangeMusic( int dist ); /* +1 or -1 */ //CHECK THIS
 	void FinishChangingSorts();
 
 protected:
 	virtual void LoadFromMetrics( RString sType );
-	virtual bool MoveSpecific(int n);
-	void GetSongList(vector<Song*> &arraySongs, SortOrder so, const RString &sPreferredGroup );
+	virtual bool MoveSpecific( int n );
+	void GetSongList( vector<Song*> &arraySongs, SortOrder so, const RString &sPreferredGroup );
 	void BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItems, SortOrder so );
 	bool SelectSongOrCourse();
 	bool SelectCourse( Course *p );
 	bool SelectModeMenuItem();
-	virtual void TweenOnScreenUpdateItems(bool changing_sort);
-	virtual void TweenOffScreenUpdateItems(bool changing_sort);
+	virtual void TweenOnScreenUpdateItems( bool changing_sort );
+	virtual void TweenOffScreenUpdateItems( bool changing_sort );
 
-	virtual void UpdateItems(float fDeltaTime );
+	virtual void UpdateItems( float fDeltaTime );
 	virtual void UpdateSwitch();
 
-	virtual void UpdateScrollbar() { WheelBase::UpdateScrollbar(m_CurWheelItemData.size()); }
+	virtual void UpdateScrollbar() { WheelBase::UpdateScrollbar( m_CurWheelItemData.size() ); }
 
-	vector<WheelItemData> m_WheelItemDatas[NUM_SORT_ORDERS];
-	vector<WheelItemData *> m_CurWheelItemData;
-	vector<MusicWheelItem *> m_MusicWheelItems;
+	vector<WheelItemData>		m_WheelItemDatas[NUM_SORT_ORDERS];
+	vector<WheelItemData *>		m_CurWheelItemData;
+	vector<MusicWheelItem *>	m_MusicWheelItems;
 	
 	RString				m_sLastModeMenuItem;
-	SortOrder m_SortOrder;
-
-	RageSound m_soundChangeSort;
+	SortOrder			m_SortOrder;
+	RageSound			m_soundChangeSort;
 
 	bool WheelItemIsVisible(int n);
 
-	ThemeMetric<float> ROULETTE_SWITCH_SECONDS;
-	ThemeMetric<int> ROULETTE_SLOW_DOWN_SWITCHES;
-	ThemeMetric<int> NUM_SECTION_COLORS;
-	ThemeMetric<RageColor> SONG_REAL_EXTRA_COLOR;
-	ThemeMetric<RageColor> SORT_MENU_COLOR;
-	ThemeMetric<bool> SHOW_ROULETTE;
-	ThemeMetric<bool> SHOW_RANDOM;
-	ThemeMetric<bool> SHOW_PORTAL;
-	ThemeMetric<bool> RANDOM_PICKS_LOCKED_SONGS;
-	ThemeMetric<int> MOST_PLAYED_SONGS_TO_SHOW;
-	ThemeMetric<RString> MODE_MENU_CHOICE_NAMES;
-	ThemeMetricMap<RString> CHOICE;
-	ThemeMetric1D<RageColor> SECTION_COLORS;
+	ThemeMetric<float>		ROULETTE_SWITCH_SECONDS;
+	ThemeMetric<int>		ROULETTE_SLOW_DOWN_SWITCHES;
+	ThemeMetric<int>		NUM_SECTION_COLORS;
+	ThemeMetric<RageColor>		SONG_REAL_EXTRA_COLOR;
+	ThemeMetric<RageColor>		SORT_MENU_COLOR;
+	ThemeMetric<bool>		SHOW_ROULETTE;
+	ThemeMetric<bool>		SHOW_RANDOM;
+	ThemeMetric<bool>		SHOW_PORTAL;
+	ThemeMetric<bool>		RANDOM_PICKS_LOCKED_SONGS;
+	ThemeMetric<int>		MOST_PLAYED_SONGS_TO_SHOW;
+	ThemeMetric<RString>		MODE_MENU_CHOICE_NAMES;
+	ThemeMetricMap<RString>		CHOICE;
+	ThemeMetric1D<RageColor>	SECTION_COLORS;
 };
 
 #endif
