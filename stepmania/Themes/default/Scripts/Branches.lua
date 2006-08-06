@@ -58,6 +58,8 @@ function ScreenPlayerOptionsNext()
 end
 
 function GetGameplayScreen()
+	local st = GAMESTATE:GetCurrentStyleType()
+	if st == "TwoPlayersSharedSides" then return "ScreenGameplayShared" end
 	return "ScreenGameplay"
 end
 
@@ -86,7 +88,7 @@ function GetEvaluationNextScreen( sNextScreen, sFailedScreen, sEndScreen )
 		return sNextScreen
 	end
 	
-	local bIsExtraStage = GAMESTATE:IsExtraStage() or GAMESTATE:IsExtraStage2()
+	local bIsExtraStage = GAMESTATE:IsAnExtraStage()
 	-- Not in event mode.  If failed, go to the game over screen.
 	if STATSMAN:GetCurStageStats():AllFailed() and not bIsExtraStage then
 		Trace( "Failed" )
@@ -191,7 +193,7 @@ function GetScreenInstructions()
 end
 
 function OptionsMenuAvailable()
-	if GAMESTATE:IsExtraStage() or GAMESTATE:IsExtraStage2() then return false end
+	if GAMESTATE:IsAnExtraStage() then return false end
 	return true
 end
 
