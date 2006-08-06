@@ -727,16 +727,16 @@ bool GameState::IsExtraStage2() const
 
 Stage GameState::GetCurrentStage() const
 {
-	if( m_bDemonstrationOrJukebox )				return STAGE_DEMO;
+	if( m_bDemonstrationOrJukebox )			return STAGE_DEMO;
 	// "event" has precedence
-	else if( GAMESTATE->IsEventMode() )			return STAGE_EVENT;
+	else if( GAMESTATE->IsEventMode() )		return STAGE_EVENT;
 	else if( m_PlayMode == PLAY_MODE_ONI )		return STAGE_ONI;
 	else if( m_PlayMode == PLAY_MODE_NONSTOP )	return STAGE_NONSTOP;
 	else if( m_PlayMode == PLAY_MODE_ENDLESS )	return STAGE_ENDLESS;
-	else if( IsFinalStage() )					return STAGE_FINAL;
-	else if( IsExtraStage() )					return STAGE_EXTRA1;
-	else if( IsExtraStage2() )					return STAGE_EXTRA2;
-	else										return (Stage)(STAGE_1+m_iCurrentStageIndex);
+	else if( IsFinalStage() )			return STAGE_FINAL;
+	else if( IsExtraStage() )			return STAGE_EXTRA1;
+	else if( IsExtraStage2() )			return STAGE_EXTRA2;
+	else						return (Stage)(STAGE_1+m_iCurrentStageIndex);
 }
 
 // Return true if it's possible for GetCurrentStage() to return the given stage.

@@ -330,13 +330,12 @@ void LifeMeterBar::DrawPrimitives()
 	ActorFrame::DrawPrimitives();
 }
 #include "RageLog.h"
-void LifeMeterBar::UpdateNonstopLifebar(const int cleared, 
-		const int total, int ProgressiveLifebarDifficulty)
+void LifeMeterBar::UpdateNonstopLifebar( const int cleared, const int total, int ProgressiveLifebarDifficulty )
 {
 //	if (cleared > total) cleared = total; // clear/total <= 1
 //	if (total == 0) total = 1;  // no division by 0
 
-	if (GAMESTATE->IsAnExtraStage())
+	if( GAMESTATE->IsAnExtraStage() )
 	{   // extra stage is its own thing, should not be progressive
 	    // and it should be as difficult as life 4
 		// (e.g. it should not depend on life settings)
@@ -356,12 +355,13 @@ void LifeMeterBar::UpdateNonstopLifebar(const int cleared,
 		return;
 	} */
 
-	if (total > 1)
+	if( total > 1 )
 		m_fLifeDifficulty = m_fBaseLifeDifficulty - 0.2f * (int)(ProgressiveLifebarDifficulty * cleared / (total - 1));
 	else
 		m_fLifeDifficulty = m_fBaseLifeDifficulty - 0.2f * ProgressiveLifebarDifficulty;
 
-	if (m_fLifeDifficulty >= 0.4) return;
+	if( m_fLifeDifficulty >= 0.4f )
+		return;
 
 	/*
 	 * Approximate deductions for a miss
@@ -393,13 +393,13 @@ void LifeMeterBar::UpdateNonstopLifebar(const int cleared,
 	// about 20% of your lifebar); at 0.2 it would be 40%, which
 	// is too harsh at one difficulty level higher.  Override.
 
-	int m_iLifeDifficulty = int((1.8f - m_fLifeDifficulty)/0.2f);
+	int m_iLifeDifficulty = int( (1.8f - m_fLifeDifficulty)/0.2f );
 	
 	// first eight values don't matter
 	float DifficultyValues[16] = {0,0,0,0,0,0,0,0, 
 		0.3f, 0.25f, 0.2f, 0.16f, 0.14f, 0.12f, 0.10f, 0.08f};
 
-	if (m_iLifeDifficulty >= 16)
+	if( m_iLifeDifficulty >= 16 )
 	{
 		// judge 16 or higher
 		m_fLifeDifficulty = 0.04f;
@@ -410,7 +410,7 @@ void LifeMeterBar::UpdateNonstopLifebar(const int cleared,
 	return;
 }
 
-void LifeMeterBar::FillForHowToPlay(int NumW2s, int NumMisses)
+void LifeMeterBar::FillForHowToPlay( int NumW2s, int NumMisses )
 {
 	m_iProgressiveLifebar = 0;  // disable progressive lifebar
 
