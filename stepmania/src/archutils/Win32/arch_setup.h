@@ -28,6 +28,12 @@
 #pragma warning (disable : 4127)
 #pragma warning (disable : 4786) /* VC6: identifier was truncated to '255' characters in the debug information */
 
+#if _MSC_VER == 1400 // VC8 specific warnings
+#pragma warning (disable : 4996) // deprecated functions vs "ISO C++ conformant names". (stricmp vs _stricmp)
+#pragma warning (disable : 4505) // removed unferenced local function from integer.cpp & algebra.h
+#pragma warning (disable : 4005) // macro redefinitions (ARRAYSIZE)
+#pragma warning (disable : 4244) // converting of data = possible data loss.  (is this VC8 specific?)
+#endif
 
 /* Fix VC breakage. */
 #define PATH_MAX _MAX_PATH
