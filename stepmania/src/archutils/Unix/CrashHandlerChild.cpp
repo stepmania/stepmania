@@ -17,7 +17,6 @@
 #include "RageLog.h" /* for RageLog::GetAdditionalLog, etc. only */
 #include "ProductInfo.h"
 #include "ArchHooks.h"
-#include "RageTimer.h"
 
 #if defined(MACOSX)
 #include "archutils/Darwin/Crash.h"
