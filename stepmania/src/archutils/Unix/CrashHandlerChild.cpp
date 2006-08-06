@@ -6,6 +6,7 @@
 #include <cerrno>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/select.h>
 
 #include "Backtrace.h"
 #include "BacktraceNames.h"
@@ -16,6 +17,7 @@
 #include "RageLog.h" /* for RageLog::GetAdditionalLog, etc. only */
 #include "ProductInfo.h"
 #include "ArchHooks.h"
+#include "RageTimer.h"
 
 #if defined(MACOSX)
 #include "archutils/Darwin/Crash.h"
@@ -147,23 +149,42 @@ static void child_process()
 	const RString CrashedThread(temp);
 	delete[] temp;
 	
-	/* Wait for the child to either finish cleaning up or die.  XXX:
-	 * This should time out, in case something deadlocks. */
+	/* Wait for the child to either finish cleaning up or die. */
+	fd_set rs;
+	struct timeval timeout = { 5, 0 }; // 5 seconds
 	
-	char x;
-	int ret = read( 3, &x, sizeof(x) );
-	if( ret > 0 )
-	{
-		fprintf( stderr, "Unexpected child read() result: %i\n", ret );
-		/* keep going */
-	}
-	else if( (ret == -1 && errno != EPIPE) || ret != 0 )
-	{
-		/* We expect an EOF or EPIPE.  What happened? */
-		fprintf( stderr, "Unexpected child read() result: %i (%s)\n", ret, strerror(errno) );
-		/* keep going */
-	}
+	FD_ZERO( &rs );
+	FD_SET( 3, &rs );
+	int ret = select( 4, &rs, NULL, NULL, &timeout );
 	
+	if( ret == 0 )
+	{
+		fputs( "Timeout exceeded.\n", stderr );
+	}
+	else if( (ret == -1 && errno != EPIPE) || ret != 1 )
+	{
+		fprintf( stderr, "Unexpected return from select() result: %d (%s)\n", ret, strerror(errno) );
+		// Keep going.
+	}
+	else
+	{		
+		char x;
+		
+		// No need to check FD_ISSET( 3, &rs ) because it was the only descriptor in the set. 
+		ret = read( 3, &x, sizeof(x) );
+		if( ret > 0 )
+		{
+			fprintf( stderr, "Unexpected child read() result: %i\n", ret );
+			/* keep going */
+		}
+		else if( (ret == -1 && errno != EPIPE) || ret != 0 )
+		{
+			/* We expect an EOF or EPIPE.  What happened? */
+			fprintf( stderr, "Unexpected child read() result: %i (%s)\n", ret, strerror(errno) );
+			/* keep going */
+		}
+	}
+		
 	RString sCrashInfoPath = "/tmp";
 #if defined(MACOSX)
 	sCrashInfoPath = CrashHandler::GetLogsDirectory();
@@ -215,12 +236,13 @@ static void child_process()
 		}
 	}
 	case CrashData::FORCE_CRASH:
-		crash.reason[ sizeof(crash.reason)-1] = 0;
+		crash.reason[sizeof(crash.reason)-1] = 0;
 		reason = crash.reason;
 		break;
 	}
 	
-	fprintf( CrashDump, "Architecture:   %s\n", HOOKS->GetArchName().c_str() );
+	// XXX: HOOKS isn't set when this is called.
+	//fprintf( CrashDump, "Architecture:   %s\n", HOOKS->GetArchName().c_str() );
 	fprintf( CrashDump, "Crash reason:   %s\n", reason.c_str() );
 	fprintf( CrashDump, "Crashed thread: %s\n\n", CrashedThread.c_str() );
 	
@@ -252,7 +274,7 @@ static void child_process()
 	CrashHandler::InformUserOfCrash( sCrashInfoPath );
 #else
 	/* stdout may have been inadvertently closed by the crash in the parent;
-	* write to /dev/tty instead. */
+	 * write to /dev/tty instead. */
 	FILE *tty = fopen( "/dev/tty", "w" );
 	if( tty == NULL )
 		tty = stderr;
