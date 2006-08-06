@@ -102,31 +102,6 @@ void MusicWheel::Load( RString sType )
 	m_soundChangeSort.Load(	THEME->GetPathS(sType,"sort") );
 	m_soundExpand.Load(	THEME->GetPathS(sType,"expand"), true );
 
-	if( GAMESTATE->IsAnExtraStage() )
-	{
-		// make the preferred group the group of the last song played.
-		if( GAMESTATE->m_sPreferredSongGroup == GROUP_ALL  &&  !PREFSMAN->m_bPickExtraStage )
-		{
-			ASSERT(GAMESTATE->m_pCurSong);
-			GAMESTATE->m_sPreferredSongGroup.Set( GAMESTATE->m_pCurSong->m_sGroupName );
-		}
-
-		Song* pSong;
-		Steps* pSteps;
-		PlayerOptions po;
-		SongOptions so;
-		SONGMAN->GetExtraStageInfo( GAMESTATE->IsExtraStage2(), GAMESTATE->GetCurrentStyle(), pSong, pSteps, &po, &so );
-		GAMESTATE->m_pCurSong.Set( pSong );
-		GAMESTATE->m_pPreferredSong = pSong;
-		FOREACH_HumanPlayer( p )
-		{
-			GAMESTATE->m_pCurSteps[p].Set( pSteps );
-			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.Assign( ModsLevel_Stage, po );
-			GAMESTATE->m_PreferredDifficulty[p].Set( pSteps->GetDifficulty() );
-		}
-		GAMESTATE->m_SongOptions.Assign( ModsLevel_Stage, so );
-	}
-
 	/* Update for SORT_MOST_PLAYED. */
 	SONGMAN->UpdatePopular();
 
@@ -185,7 +160,7 @@ void MusicWheel::BeginScreen()
 	if( GAMESTATE->m_pCurSong != NULL && 
 		SongManager::GetNumStagesForSong( GAMESTATE->m_pCurSong ) + GAMESTATE->m_iCurrentStageIndex > PREFSMAN->m_iSongsPerPlay
 		&& !GAMESTATE->IsEventMode()
-		&& !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() )
+		&& !GAMESTATE->IsAnExtraStage() )
 	{
 		GAMESTATE->m_pCurSong.Set( NULL );
 	}
