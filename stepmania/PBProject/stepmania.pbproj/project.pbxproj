@@ -282,7 +282,6 @@
 		AA29CCF50558741A00961A51 /* DifficultyDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8F118304A04F9B00D02EE9 /* DifficultyDisplay.h */; };
 		AA29CCF60558741A00961A51 /* ActorUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1DC47204A485E900D02EE9 /* ActorUtil.h */; };
 		AA29CCF70558741A00961A51 /* ScreenSelectMaster.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1DC47504A4861700D02EE9 /* ScreenSelectMaster.h */; };
-		AA29CCF80558741A00961A51 /* ActorCollision.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1DC47804A4866B00D02EE9 /* ActorCollision.h */; };
 		AA29CCFA0558741A00961A51 /* glext.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1DCB6104A4872700D02EE9 /* glext.h */; };
 		AA29CCFB0558741A00961A51 /* MenuInput.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1DCB6304A4872700D02EE9 /* MenuInput.h */; };
 		AA29CCFE0558741A00961A51 /* CombinedLifeMeterTug.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE443EC04B0F9F600D02EE9 /* CombinedLifeMeterTug.h */; };
@@ -736,7 +735,6 @@
 		AA40D26509A08D650068C0D5 /* DifficultyDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8F118304A04F9B00D02EE9 /* DifficultyDisplay.h */; };
 		AA40D26609A08D650068C0D5 /* ActorUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1DC47204A485E900D02EE9 /* ActorUtil.h */; };
 		AA40D26709A08D650068C0D5 /* ScreenSelectMaster.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1DC47504A4861700D02EE9 /* ScreenSelectMaster.h */; };
-		AA40D26809A08D650068C0D5 /* ActorCollision.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1DC47804A4866B00D02EE9 /* ActorCollision.h */; };
 		AA40D26909A08D650068C0D5 /* glext.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1DCB6104A4872700D02EE9 /* glext.h */; };
 		AA40D26A09A08D650068C0D5 /* MenuInput.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1DCB6304A4872700D02EE9 /* MenuInput.h */; };
 		AA40D26B09A08D650068C0D5 /* CombinedLifeMeterTug.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE443EC04B0F9F600D02EE9 /* CombinedLifeMeterTug.h */; };
@@ -1887,7 +1885,6 @@
 		AA1DC47204A485E900D02EE9 /* ActorUtil.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ActorUtil.h; path = ../src/ActorUtil.h; sourceTree = "<group>"; };
 		AA1DC47404A4861700D02EE9 /* ScreenSelectMaster.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenSelectMaster.cpp; path = ../src/ScreenSelectMaster.cpp; sourceTree = "<group>"; };
 		AA1DC47504A4861700D02EE9 /* ScreenSelectMaster.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenSelectMaster.h; path = ../src/ScreenSelectMaster.h; sourceTree = "<group>"; };
-		AA1DC47804A4866B00D02EE9 /* ActorCollision.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ActorCollision.h; path = ../src/ActorCollision.h; sourceTree = "<group>"; };
 		AA1DCB6104A4872700D02EE9 /* glext.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = glext.h; path = ../src/glext.h; sourceTree = "<group>"; };
 		AA1DCB6304A4872700D02EE9 /* MenuInput.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MenuInput.h; path = ../src/MenuInput.h; sourceTree = "<group>"; };
 		AA1F9C4509AF1BF5002C15A8 /* PumpDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PumpDevice.h; sourceTree = "<group>"; };
@@ -3778,7 +3775,6 @@
 			children = (
 				AA6EFF7504770FFD005F316C /* Actor.cpp */,
 				AA6EFF7604770FFD005F316C /* Actor.h */,
-				AA1DC47804A4866B00D02EE9 /* ActorCollision.h */,
 				AACA592407B5E1E500763545 /* ActorCommands.cpp */,
 				AACA592507B5E1E500763545 /* ActorCommands.h */,
 				AA6EFF7704770FFD005F316C /* ActorFrame.cpp */,
@@ -4165,7 +4161,6 @@
 				AA29CCF50558741A00961A51 /* DifficultyDisplay.h in Headers */,
 				AA29CCF60558741A00961A51 /* ActorUtil.h in Headers */,
 				AA29CCF70558741A00961A51 /* ScreenSelectMaster.h in Headers */,
-				AA29CCF80558741A00961A51 /* ActorCollision.h in Headers */,
 				AA29CCFA0558741A00961A51 /* glext.h in Headers */,
 				AA29CCFB0558741A00961A51 /* MenuInput.h in Headers */,
 				AA29CCFE0558741A00961A51 /* CombinedLifeMeterTug.h in Headers */,
@@ -4619,7 +4614,6 @@
 				AA40D26509A08D650068C0D5 /* DifficultyDisplay.h in Headers */,
 				AA40D26609A08D650068C0D5 /* ActorUtil.h in Headers */,
 				AA40D26709A08D650068C0D5 /* ScreenSelectMaster.h in Headers */,
-				AA40D26809A08D650068C0D5 /* ActorCollision.h in Headers */,
 				AA40D26909A08D650068C0D5 /* glext.h in Headers */,
 				AA40D26A09A08D650068C0D5 /* MenuInput.h in Headers */,
 				AA40D26B09A08D650068C0D5 /* CombinedLifeMeterTug.h in Headers */,
