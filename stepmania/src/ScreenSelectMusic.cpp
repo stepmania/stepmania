@@ -32,10 +32,10 @@
 
 const int NUM_SCORE_DIGITS	=	9;
 
-#define SCORE_SORT_CHANGE_COMMAND(i) 		THEME->GetMetricA(m_sName,ssprintf("ScoreP%iSortChangeCommand", i+1))
-#define SCORE_FRAME_SORT_CHANGE_COMMAND(i)	THEME->GetMetricA(m_sName,ssprintf("ScoreFrameP%iSortChangeCommand", i+1))
-#define METER_TYPE							THEME->GetMetric (m_sName,"MeterType")
-#define SHOW_OPTIONS_MESSAGE_SECONDS		THEME->GetMetricF(m_sName,"ShowOptionsMessageSeconds")
+#define SCORE_SORT_CHANGE_COMMAND(i) 		THEME->GetMetricA( m_sName, ssprintf("ScoreP%iSortChangeCommand", i+1) )
+#define SCORE_FRAME_SORT_CHANGE_COMMAND(i)	THEME->GetMetricA( m_sName, ssprintf("ScoreFrameP%iSortChangeCommand", i+1) )
+#define METER_TYPE				THEME->GetMetric ( m_sName, "MeterType" )
+#define SHOW_OPTIONS_MESSAGE_SECONDS		THEME->GetMetricF( m_sName, "ShowOptionsMessageSeconds" )
 
 AutoScreenMessage( SM_AllowOptionsMenuRepeat )
 AutoScreenMessage( SM_SongChanged )
