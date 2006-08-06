@@ -108,7 +108,6 @@ protected:
 	DifficultyIcon			m_DifficultyIcon[NUM_PLAYERS];
 	Sprite				m_AutoGenIcon[NUM_PLAYERS];
 	GrooveRadar			m_GrooveRadar;
-	BitmapText			m_textSongOptions;
 	BitmapText			m_textNumSongs;
 	BitmapText			m_textTotalTime;
 	Sprite				m_sprMeterFrame[NUM_PLAYERS];
