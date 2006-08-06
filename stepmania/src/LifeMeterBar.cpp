@@ -93,7 +93,7 @@ LifeMeterBar::LifeMeterBar()
 	this->AddChild( &m_quadDangerGlow );
 
 	m_pStream = new StreamDisplay;
-	bool bExtra = GAMESTATE->IsExtraStage()||GAMESTATE->IsExtraStage2();
+	bool bExtra = GAMESTATE->IsAnExtraStage();
 	RString sExtra = bExtra ? "extra " : "";
 	m_pStream->Load(
 		METER_WIDTH,
@@ -336,7 +336,7 @@ void LifeMeterBar::UpdateNonstopLifebar(const int cleared,
 //	if (cleared > total) cleared = total; // clear/total <= 1
 //	if (total == 0) total = 1;  // no division by 0
 
-	if (GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2())
+	if (GAMESTATE->IsAnExtraStage())
 	{   // extra stage is its own thing, should not be progressive
 	    // and it should be as difficult as life 4
 		// (e.g. it should not depend on life settings)

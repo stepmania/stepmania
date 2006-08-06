@@ -720,7 +720,7 @@ void ScreenGameplay::Init( bool bUseSongBackgroundAndForeground )
 
 		m_soundAssistTick.Load(	THEME->GetPathS(m_sName,"assist tick"), true );
 
-		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )	// only load if we're going to use it
+		if( GAMESTATE->IsAnExtraStage() )	// only load if we're going to use it
 		{
 			m_textSurviveTime.LoadFromFont( THEME->GetPathF(m_sName,"survive time") );
 			m_textSurviveTime.SetShadowLength( 0 );
@@ -2036,7 +2036,7 @@ void ScreenGameplay::BeginBackingOutFromGameplay()
 	if( GAMESTATE->IsFinalStage() )
 		GAMESTATE->m_bBackedOutOfFinalStage = true;
 	// Disallow backing out of extra stage
-	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+	if( GAMESTATE->IsAnExtraStage() )
 		SCREENMAN->PostMessageToTopScreen( SM_BeginFailed, 0 );
 	else
 		m_Cancel.StartTransitioning( SM_DoPrevScreen );
@@ -2263,7 +2263,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_PlayGo )
 	{
-		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+		if( GAMESTATE->IsAnExtraStage() )
 			SOUND->PlayOnceFromAnnouncer( "gameplay here we go extra" );
 		else if( GAMESTATE->IsFinalStage() )
 			SOUND->PlayOnceFromAnnouncer( "gameplay here we go final" );
@@ -2512,7 +2512,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		m_Failed.StartTransitioning( SM_DoNextScreen );
 
 		// show the survive time if extra stage
-		if( GAMESTATE->IsExtraStage()  ||  GAMESTATE->IsExtraStage2() )
+		if( GAMESTATE->IsAnExtraStage() )
 		{
 			float fMaxSurviveSeconds = 0;
 			FOREACH_EnabledPlayer(p)

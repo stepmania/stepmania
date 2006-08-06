@@ -850,7 +850,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	{
 		if( CodeDetector::EnteredEasierDifficulty(input.GameI.controller) )
 		{
-			if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+			if( GAMESTATE->IsAnExtraStage() )
 				m_soundLocked.Play();
 			else
 				ChangeDifficulty( pn, -1 );
@@ -858,7 +858,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		}
 		if( CodeDetector::EnteredHarderDifficulty(input.GameI.controller) )
 		{
-			if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+			if( GAMESTATE->IsAnExtraStage() )
 				m_soundLocked.Play();
 			else
 				ChangeDifficulty( pn, +1 );
@@ -1531,7 +1531,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			if ( PREFSMAN->m_bShowBanners )
 				g_sBannerPath = pSong->GetBannerPath();
 
-			if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+			if( GAMESTATE->IsAnExtraStage() )
 			{
 				m_BPMDisplay.CycleRandomly();				
 			}

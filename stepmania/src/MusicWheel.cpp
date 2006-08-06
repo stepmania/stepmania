@@ -102,7 +102,7 @@ void MusicWheel::Load( RString sType )
 	m_soundChangeSort.Load(	THEME->GetPathS(sType,"sort") );
 	m_soundExpand.Load(	THEME->GetPathS(sType,"expand"), true );
 
-	if( GAMESTATE->IsExtraStage() ||  GAMESTATE->IsExtraStage2() )
+	if( GAMESTATE->IsAnExtraStage() )
 	{
 		// make the preferred group the group of the last song played.
 		if( GAMESTATE->m_sPreferredSongGroup == GROUP_ALL  &&  !PREFSMAN->m_bPickExtraStage )
@@ -400,7 +400,7 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, SortOrder so, const RStr
 
 	/* Hack: Add extra stage item if it was eliminated for any reason (eg. it's a long
 	 * song). */
-	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+	if( GAMESTATE->IsAnExtraStage() )
 	{
 		Song* pSong;
 		Steps* pSteps;
@@ -593,7 +593,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 					arrayWheelItemDatas.push_back( WheelItemData(TYPE_PORTAL, NULL, "", NULL, RageColor(1,0,0,1)) );
 			}
 
-			if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+			if( GAMESTATE->IsAnExtraStage() )
 			{
 				Song* pSong;
 				Steps* pSteps;

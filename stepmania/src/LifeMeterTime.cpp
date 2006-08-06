@@ -45,7 +45,7 @@ void LifeMeterTime::Load( const PlayerState *pPlayerState, PlayerStageStats *pPl
 	this->AddChild( &m_quadDangerGlow );
 
 	m_pStream = new StreamDisplay;
-	bool bExtra = GAMESTATE->IsExtraStage()||GAMESTATE->IsExtraStage2();
+	bool bExtra = GAMESTATE->IsAnExtraStage();
 	RString sExtra = bExtra ? "extra " : "";
 	m_pStream->Load(
 		METER_WIDTH,

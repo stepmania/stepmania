@@ -141,7 +141,7 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 	m_sprLabel->StopTweening();
 	m_textBPM.BeginTweening(0.5f);
 	m_sprLabel->BeginTweening(0.5f);
-	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+	if( GAMESTATE->IsAnExtraStage() )
 	{
 		m_textBPM.SetDiffuse( EXTRA_COLOR );
 		m_sprLabel->SetDiffuse( EXTRA_COLOR );		
