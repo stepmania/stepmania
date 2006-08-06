@@ -550,10 +550,10 @@ static bool EnabledIfSet2GlobalMovieSongGroup();
 static bool EnabledIfSet2GlobalMovieSongGroupAndGenre();
 static MenuDef g_BackgroundChange(
 	"ScreenMiniMenuBackgroundChange",
-	MenuRowDef( ScreenEdit::layer,						"Layer",				false,						EditMode_Full, true, true, 0, "" ),
+	MenuRowDef( ScreenEdit::layer,						"Layer",				false,						EditMode_Full, true, false, 0, "" ),
 	MenuRowDef( ScreenEdit::rate,						"Rate",					true,						EditMode_Full, true, false, 10, "0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%","120%","140%","160%","180%","200%" ),
-	MenuRowDef( ScreenEdit::transition,					"Force Transition",			true,						EditMode_Full, true, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::effect,						"Force Effect",				true,						EditMode_Full, true, true, 0, NULL ),
+	MenuRowDef( ScreenEdit::transition,					"Force Transition",			true,						EditMode_Full, true, false, 0, NULL ),
+	MenuRowDef( ScreenEdit::effect,						"Force Effect",				true,						EditMode_Full, true, false, 0, NULL ),
 	MenuRowDef( ScreenEdit::color1,						"Force Color 1",			true,						EditMode_Full, true, false, 0, "-","1,1,1,1","0.5,0.5,0.5,1","1,1,1,0.5","0,0,0,1","1,0,0,1","0,1,0,1","0,0,1,1","1,1,0,1","0,1,1,1","1,0,1,1" ),
 	MenuRowDef( ScreenEdit::color2,						"Force Color 2",			true,						EditMode_Full, true, false, 0, "-","1,1,1,1","0.5,0.5,0.5,1","1,1,1,0.5","0,0,0,1","1,0,0,1","0,1,0,1","0,0,1,1","1,1,0,1","0,1,1,1","1,0,1,1" ),
 	MenuRowDef( ScreenEdit::file1_type,					"File1 Type",				true,						EditMode_Full, true, true, 0, "Song BGAnimation", "Song Movie", "Song Bitmap", "Global BGAnimation", "Global Movie", "Global Movie from Song Group", "Global Movie from Song Group and Genre", "Dynamic Random", "Baked Random", "None" ),
