@@ -150,7 +150,7 @@ void GameState::ApplyCmdline()
 		if( !IsAnInt( sPlayer ) || pn < 0 || pn >= NUM_PLAYERS )
 			RageException::Throw( "Invalid argument \"--player=%s\"", sPlayer.c_str() );
 
-		this->JoinPlayer( (PlayerNumber) pn );
+		JoinPlayer( (PlayerNumber) pn );
 	}
 
 	RString sMode;
@@ -196,7 +196,7 @@ void GameState::Reset()
 	m_iNumStagesOfThisSong = 0;
 	m_bLoadingNextSong = false;
 
-	NOTESKIN->RefreshNoteSkinData( this->m_pCurGame );
+	NOTESKIN->RefreshNoteSkinData( m_pCurGame );
 
 	m_iGameSeed = rand();
 	m_iStageSeed = rand();
@@ -233,7 +233,7 @@ void GameState::Reset()
 	STATSMAN->Reset();
 
 	SongOptions so;
-	GAMESTATE->GetDefaultSongOptions( so );
+	GetDefaultSongOptions( so );
 	m_SongOptions.Assign( ModsLevel_Preferred, so );
 	
 	FOREACH_PlayerNumber(p)
@@ -247,8 +247,8 @@ void GameState::Reset()
 		// affect demo, and other non-gameplay things ...) -glenn
 		
 		PlayerOptions po;
-		GAMESTATE->GetDefaultPlayerOptions( po );
-		GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.Assign( ModsLevel_Preferred, po );
+		GetDefaultPlayerOptions( po );
+		m_pPlayerState[p]->m_PlayerOptions.Assign( ModsLevel_Preferred, po );
 	}
 
 	FOREACH_PlayerNumber(p)
@@ -278,27 +278,27 @@ void GameState::Reset()
 
 void GameState::JoinPlayer( PlayerNumber pn )
 {
-	this->m_bSideIsJoined[pn] = true;
+	m_bSideIsJoined[pn] = true;
 	MESSAGEMAN->Broadcast( (Message)(Message_SideJoinedP1+pn) );
 
-	if( this->m_MasterPlayerNumber == PLAYER_INVALID )
-		this->m_MasterPlayerNumber = pn;
+	if( m_MasterPlayerNumber == PLAYER_INVALID )
+		m_MasterPlayerNumber = pn;
 
 	// if first player to join, set start time
-	if( this->GetNumSidesJoined() == 1 )
-		this->BeginGame();
+	if( GetNumSidesJoined() == 1 )
+		BeginGame();
 }
 
 int GameState::GetCoinsNeededToJoin() const
 {
 	int iCoinsToCharge = 0;
 
-	if( GAMESTATE->GetCoinMode() == COIN_MODE_PAY )
+	if( GetCoinMode() == COIN_MODE_PAY )
 		iCoinsToCharge = PREFSMAN->m_iCoinsPerCredit;
 
 	// If joint premium don't take away a credit for the 2nd join.
-	if( GAMESTATE->GetPremium() == PREMIUM_JOINT  &&  
-		GAMESTATE->GetNumSidesJoined() == 1 )
+	if( GetPremium() == PREMIUM_JOINT  &&  
+		GetNumSidesJoined() == 1 )
 		iCoinsToCharge = 0;
 
 	return iCoinsToCharge;
@@ -363,14 +363,14 @@ void GameState::PlayersFinalized()
 		Profile* pProfile = PROFILEMAN->GetProfile(pn);
 
 		RString sModifiers;
-		if( pProfile->GetDefaultModifiers( this->m_pCurGame, sModifiers ) )
+		if( pProfile->GetDefaultModifiers( m_pCurGame, sModifiers ) )
 		{
 			/* We don't save negative preferences (eg. "no reverse").  If the theme
 			 * sets a default of "reverse", and the player turns it off, we should
 			 * set it off.  However, don't reset modifiers that aren't saved by the
 			 * profile, so we don't ignore unsaved modifiers when a profile is in use. */
-			PO_GROUP_CALL( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Preferred, ResetSavedPrefs );
-			GAMESTATE->ApplyPreferredModifiers( pn, sModifiers );
+			PO_GROUP_CALL( m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Preferred, ResetSavedPrefs );
+			ApplyPreferredModifiers( pn, sModifiers );
 		}
 		// Only set the sort order if it wasn't already set by a GameCommand (or by an earlier profile)
 		if( m_PreferredSortOrder == SORT_INVALID && pProfile->m_SortOrder != SORT_INVALID )
@@ -482,7 +482,7 @@ void GameState::BeginStage()
 	 * have, for some reason, gone from gameplay to evaluation straight back to gameplay.) */
 	FinishStage();
 
-	GAMESTATE->ResetStageStatistics();
+	ResetStageStatistics();
 
 	FOREACH_PlayerNumber( p )
 		m_pPlayerState[p]->m_PlayerOptions.Assign( ModsLevel_Stage, m_pPlayerState[p]->m_PlayerOptions.GetPreferred() );
@@ -495,7 +495,7 @@ void GameState::BeginStage()
 void GameState::CancelStage()
 {
 	m_iNumStagesOfThisSong = 0;
-	GAMESTATE->ResetStageStatistics();
+	ResetStageStatistics();
 }
 
 void GameState::CommitStageStats()
@@ -531,12 +531,12 @@ void GameState::FinishStage()
 	m_iNumStagesOfThisSong = 0;
 
 	// necessary so that bGaveUp is reset
-	GAMESTATE->ResetStageStatistics();
+	ResetStageStatistics();
 
 	if( m_bDemonstrationOrJukebox )
 		return;
 
-	if( GAMESTATE->IsEventMode() )
+	if( IsEventMode() )
 	{
 		const int iSaveProfileEvery = 3;
 		if( iOldStageIndex/iSaveProfileEvery < m_iCurrentStageIndex/iSaveProfileEvery )
@@ -556,7 +556,7 @@ void GameState::SaveCurrentSettingsToProfile( PlayerNumber pn )
 
 	Profile* pProfile = PROFILEMAN->GetProfile(pn);
 
-	pProfile->SetDefaultModifiers( this->m_pCurGame, m_pPlayerState[pn]->m_PlayerOptions.GetPreferred().GetSavedPrefsString() );
+	pProfile->SetDefaultModifiers( m_pCurGame, m_pPlayerState[pn]->m_PlayerOptions.GetPreferred().GetSavedPrefsString() );
 	if( IsSongSort(m_PreferredSortOrder) )
 		pProfile->m_SortOrder = m_PreferredSortOrder;
 	if( m_PreferredDifficulty[pn] != DIFFICULTY_INVALID )
@@ -652,7 +652,7 @@ void GameState::ResetStageStatistics()
 
 	// Reset the round seed.  Do this here and not in FinishStage so that players
 	// get new shuffle patterns if they Back out of gameplay and play again.
-	GAMESTATE->m_iStageSeed = rand();
+	m_iStageSeed = rand();
 
 	AdjustSync::ResetOriginalSyncData();
 }
@@ -690,17 +690,17 @@ int GameState::GetNumStagesLeft() const
 {
 	if( IsAnExtraStage() )
 		return 1;
-	if( GAMESTATE->IsEventMode() )
+	if( IsEventMode() )
 		return 999;
 	return PREFSMAN->m_iSongsPerPlay - m_iCurrentStageIndex;
 }
 
 bool GameState::IsFinalStage() const
 {
-	if( GAMESTATE->IsEventMode() )
+	if( IsEventMode() )
 		return false;
 
-	if( this->IsCourseMode() )
+	if( IsCourseMode() )
 		return true;
 
 	/* This changes dynamically on ScreenSelectMusic as the wheel turns. */
@@ -729,7 +729,7 @@ Stage GameState::GetCurrentStage() const
 {
 	if( m_bDemonstrationOrJukebox )			return STAGE_DEMO;
 	// "event" has precedence
-	else if( GAMESTATE->IsEventMode() )		return STAGE_EVENT;
+	else if( IsEventMode() )			return STAGE_EVENT;
 	else if( m_PlayMode == PLAY_MODE_ONI )		return STAGE_ONI;
 	else if( m_PlayMode == PLAY_MODE_NONSTOP )	return STAGE_NONSTOP;
 	else if( m_PlayMode == PLAY_MODE_ENDLESS )	return STAGE_ENDLESS;
@@ -744,9 +744,10 @@ bool GameState::IsStagePossible( Stage s ) const
 {
 	/* HACK: Find out what the stage would be without long or marathon.
 	 * This should never change during a screen. */
-	Song *pSong = GAMESTATE->m_pCurSong;
+	Song *pSong = m_pCurSong;
+	// XXX: Using GAMESTATE to get around const is potentially dangerous.
 	GAMESTATE->m_pCurSong.SetWithoutBroadcast( NULL );
-	Stage actual = GetCurrentStage();
+	Stage actual = GAMESTATE->GetCurrentStage();
 	GAMESTATE->m_pCurSong.SetWithoutBroadcast( pSong );
 
 	/* Check long/marathon, which can change the stage to FINAL. */
@@ -806,7 +807,7 @@ RString GameState::GetPlayerDisplayName( PlayerNumber pn ) const
 
 bool GameState::PlayersCanJoin() const
 {
-	return GetNumSidesJoined() == 0 || this->m_pCurStyle == NULL;	// selecting a style finalizes the players
+	return GetNumSidesJoined() == 0 || m_pCurStyle == NULL;	// selecting a style finalizes the players
 }
 
 int GameState::GetNumSidesJoined() const
@@ -867,7 +868,7 @@ int	GameState::GetNumPlayersEnabled() const
 
 bool GameState::PlayerUsingBothSides() const
 {
-	ASSERT( this->GetCurrentStyle() != NULL );
+	ASSERT( GetCurrentStyle() != NULL );
 	switch( GetCurrentStyle()->m_StyleType )
 	{
 	case ONE_PLAYER_TWO_SIDES:
@@ -882,7 +883,7 @@ bool GameState::IsHumanPlayer( PlayerNumber pn ) const
 {
 	if( m_pCurStyle == NULL )	// no style chosen
 	{
-		if( this->PlayersCanJoin() )	
+		if( PlayersCanJoin() )	
 			return m_bSideIsJoined[pn];	// only allow input from sides that have already joined
 		else
 			return true;	// if we can't join, then we're on a screen like MusicScroll or GameOver
@@ -954,7 +955,7 @@ bool GameState::IsCourseMode() const
 
 bool GameState::IsBattleMode() const
 {
-	switch( this->m_PlayMode )
+	switch( m_PlayMode )
 	{
 	case PLAY_MODE_BATTLE:
 		return true;
@@ -965,13 +966,13 @@ bool GameState::IsBattleMode() const
 
 bool GameState::HasEarnedExtraStage() const
 {
-	if( GAMESTATE->IsEventMode() )
+	if( IsEventMode() )
 		return false;
 
 	if( !PREFSMAN->m_bAllowExtraStage )
 		return false;
 
-	if( this->m_PlayMode != PLAY_MODE_REGULAR )
+	if( m_PlayMode != PLAY_MODE_REGULAR )
 		return false;
 	
 	if( m_bBackedOutOfFinalStage )
@@ -984,8 +985,8 @@ bool GameState::HasEarnedExtraStage() const
 	
 	FOREACH_EnabledPlayer( pn )
 	{
-		if( this->m_pCurSteps[pn]->GetDifficulty() != DIFFICULTY_HARD && 
-		    this->m_pCurSteps[pn]->GetDifficulty() != DIFFICULTY_CHALLENGE )
+		if( m_pCurSteps[pn]->GetDifficulty() != DIFFICULTY_HARD && 
+		    m_pCurSteps[pn]->GetDifficulty() != DIFFICULTY_CHALLENGE )
 			continue; /* not hard enough! */
 	
 		if( STATSMAN->m_CurStageStats.m_player[pn].GetGrade() <= Grade_Tier03 )
@@ -999,11 +1000,11 @@ bool GameState::HasEarnedExtraStage() const
 		return false;
 
 	/* If PickExtraStage, allow EX2 if the chosen song was correct. */
-	if( PREFSMAN->m_bPickExtraStage && this->IsExtraStage() )
+	if( PREFSMAN->m_bPickExtraStage && IsExtraStage() )
 	{
 		Song* pSong;
 		Steps* pSteps;
-		SONGMAN->GetExtraStageInfo( false, GAMESTATE->GetCurrentStyle(), pSong, pSteps, NULL, NULL );
+		SONGMAN->GetExtraStageInfo( false, GetCurrentStyle(), pSong, pSteps, NULL, NULL );
 		ASSERT(pSong);
 
 		const StageStats &stats = STATSMAN->m_CurStageStats;
@@ -1023,7 +1024,7 @@ PlayerNumber GameState::GetBestPlayer() const
 
 StageResult GameState::GetStageResult( PlayerNumber pn ) const
 {
-	switch( this->m_PlayMode )
+	switch( m_PlayMode )
 	{
 	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
@@ -1102,7 +1103,7 @@ bool GameState::IsDisqualified( PlayerNumber pn )
 	if( !PREFSMAN->m_bDisqualification )
 		return false;
 
-	if( !GAMESTATE->IsHumanPlayer(pn) )
+	if( !IsHumanPlayer(pn) )
 		return false;
 
 	if( STATSMAN->m_CurStageStats.bGaveUp )
@@ -1113,14 +1114,14 @@ bool GameState::IsDisqualified( PlayerNumber pn )
 		return true;
 #endif //DEBUG
 
-	const PlayerOptions &po = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetPreferred();
+	const PlayerOptions &po = m_pPlayerState[pn]->m_PlayerOptions.GetPreferred();
 
 	// Check the stored player options for disqualify.  Don't disqualify because
 	// of mods that were forced.
-	if( GAMESTATE->IsCourseMode() )
-		return po.IsEasierForCourseAndTrail(  GAMESTATE->m_pCurCourse, GAMESTATE->m_pCurTrail[pn] );
+	if( IsCourseMode() )
+		return po.IsEasierForCourseAndTrail(  m_pCurCourse, m_pCurTrail[pn] );
 	else
-		return po.IsEasierForSongAndSteps(  GAMESTATE->m_pCurSong, GAMESTATE->m_pCurSteps[pn], pn);
+		return po.IsEasierForSongAndSteps(  m_pCurSong, m_pCurSteps[pn], pn);
 }
 
 void GameState::GetAllUsedNoteSkins( vector<RString> &out ) const
@@ -1130,9 +1131,9 @@ void GameState::GetAllUsedNoteSkins( vector<RString> &out ) const
 		out.push_back( m_pPlayerState[pn]->m_PlayerOptions.GetCurrent().m_sNoteSkin );
 
 		/* Add note skins that are used in courses. */
-		if( this->IsCourseMode() )
+		if( IsCourseMode() )
 		{
-			const Trail *pTrail = this->m_pCurTrail[pn];
+			const Trail *pTrail = m_pCurTrail[pn];
 			ASSERT( pTrail );
 
 			FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
@@ -1174,12 +1175,12 @@ SongOptions::FailType GameState::GetPlayerFailType( const PlayerState *pPlayerSt
 	SongOptions::FailType ft = m_SongOptions.GetCurrent().m_FailType;
 
 	/* If the player changed the fail mode explicitly, leave it alone. */
-	if( this->m_bChangedFailTypeOnScreenSongOptions )
+	if( m_bChangedFailTypeOnScreenSongOptions )
 		return ft;
 
-	if( GAMESTATE->IsCourseMode() )
+	if( IsCourseMode() )
 	{
-		if( PREFSMAN->m_bMinimum1FullSongInCourses && GAMESTATE->GetCourseSongIndex()==0 )
+		if( PREFSMAN->m_bMinimum1FullSongInCourses && GetCourseSongIndex()==0 )
 			ft = max( ft, SongOptions::FAIL_END_OF_SONG );	// take the least harsh of the two FailTypes
 	}
 	else
@@ -1188,7 +1189,7 @@ SongOptions::FailType GameState::GetPlayerFailType( const PlayerState *pPlayerSt
 		if( m_pCurSteps[pn] )
 			dc = m_pCurSteps[pn]->GetDifficulty();
 
-		bool bFirstStage = !GAMESTATE->IsEventMode() && m_iCurrentStageIndex == 0;
+		bool bFirstStage = !IsEventMode() && m_iCurrentStageIndex == 0;
 
 		/* Easy and beginner are never harder than FAIL_END_OF_SONG. */
 		if( dc <= DIFFICULTY_EASY )
@@ -1229,8 +1230,8 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 
 	// Check for feats even if the PlayMode is rave or battle because the player may have
 	// made high scores then switched modes.
-	CHECKPOINT_M(ssprintf("PlayMode %i", int(this->m_PlayMode)));
-	switch( this->m_PlayMode )
+	CHECKPOINT_M( ssprintf("PlayMode %i", int(m_PlayMode)) );
+	switch( m_PlayMode )
 	{
 	case PLAY_MODE_REGULAR:
 	case PLAY_MODE_BATTLE:
@@ -1238,7 +1239,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 		{
 			CHECKPOINT;
 
-			StepsType st = this->GetCurrentStyle()->m_StepsType;
+			StepsType st = GetCurrentStyle()->m_StepsType;
 
 			//
 			// Find unique Song and Steps combinations that were played.
@@ -1589,11 +1590,11 @@ void GameState::VisitAttractScreen( const RString sScreenName )
 
 bool GameState::DifficultiesLocked()
 {
- 	if( GAMESTATE->m_PlayMode == PLAY_MODE_RAVE )
+ 	if( m_PlayMode == PLAY_MODE_RAVE )
 		return true;
 	if( IsCourseMode() )
 		return PREFSMAN->m_bLockCourseDifficulties;
- 	if( GAMESTATE->GetCurrentStyle()->m_bLockDifficulties )
+ 	if( GetCurrentStyle()->m_bLockDifficulties )
 		return true;
 	return false;
 }
@@ -1616,7 +1617,7 @@ bool GameState::ChangePreferredDifficulty( PlayerNumber pn, int dir )
 {
 	const vector<Difficulty> &v = CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue();
 
-	Difficulty d = GAMESTATE->GetClosestShownDifficulty(pn);
+	Difficulty d = GetClosestShownDifficulty(pn);
 	while( 1 )
 	{
 		d = (Difficulty)(d+dir);
@@ -1666,7 +1667,7 @@ bool GameState::ChangePreferredCourseDifficulty( PlayerNumber pn, CourseDifficul
 bool GameState::ChangePreferredCourseDifficulty( PlayerNumber pn, int dir )
 {
 	/* If we have a course selected, only choose among difficulties available in the course. */
-	const Course *pCourse = this->m_pCurCourse;
+	const Course *pCourse = m_pCurCourse;
 
 	const vector<CourseDifficulty> &v = CommonMetrics::COURSE_DIFFICULTIES_TO_SHOW.GetValue();
 
@@ -1678,7 +1679,7 @@ bool GameState::ChangePreferredCourseDifficulty( PlayerNumber pn, int dir )
 			return false;
 		if( find(v.begin(),v.end(),cd) == v.end() )
 			continue; /* not available */
-		if( !pCourse || pCourse->GetTrail( GAMESTATE->GetCurrentStyle()->m_StepsType, cd ) )
+		if( !pCourse || pCourse->GetTrail( GetCurrentStyle()->m_StepsType, cd ) )
 			break;
 	}
 
@@ -1696,12 +1697,12 @@ Difficulty GameState::GetEasiestStepsDifficulty() const
 	Difficulty dc = DIFFICULTY_INVALID;
 	FOREACH_HumanPlayer( p )
 	{
-		if( this->m_pCurSteps[p] == NULL )
+		if( m_pCurSteps[p] == NULL )
 		{
 			LOG->Warn( "GetEasiestNotesDifficulty called but p%i hasn't chosen notes", p+1 );
 			continue;
 		}
-		dc = min( dc, this->m_pCurSteps[p]->GetDifficulty() );
+		dc = min( dc, m_pCurSteps[p]->GetDifficulty() );
 	}
 	return dc;
 }
@@ -1711,7 +1712,7 @@ bool GameState::IsEventMode() const
 	return m_bTemporaryEventMode || PREFSMAN->m_bEventMode; 
 }
 
-CoinMode GameState::GetCoinMode()
+CoinMode GameState::GetCoinMode() const
 {
 	if( IsEventMode() && PREFSMAN->m_CoinMode == COIN_MODE_PAY )
 		return COIN_MODE_FREE; 
@@ -1719,7 +1720,7 @@ CoinMode GameState::GetCoinMode()
 		return PREFSMAN->m_CoinMode; 
 }
 
-Premium	GameState::GetPremium() 
+Premium	GameState::GetPremium() const
 { 
 	if( IsEventMode() ) 
 		return PREMIUM_NONE; 
@@ -1729,7 +1730,7 @@ Premium	GameState::GetPremium()
 
 bool GameState::IsPlayerInDanger( const PlayerState *pPlayerState ) const
 {
-	if( GAMESTATE->GetPlayerFailType(pPlayerState) == SongOptions::FAIL_OFF )
+	if( GetPlayerFailType(pPlayerState) == SongOptions::FAIL_OFF )
 		return false;
 	if( !PREFSMAN->m_bShowDanger )
 		return false;
@@ -1738,7 +1739,7 @@ bool GameState::IsPlayerInDanger( const PlayerState *pPlayerState ) const
 
 bool GameState::IsPlayerDead( const PlayerState *pPlayerState ) const
 {
-	if( GAMESTATE->GetPlayerFailType(pPlayerState) == SongOptions::FAIL_OFF )
+	if( GetPlayerFailType(pPlayerState) == SongOptions::FAIL_OFF )
 		return false;
 	return pPlayerState->m_HealthState == PlayerState::DEAD;
 }
@@ -1776,12 +1777,12 @@ float GameState::GetGoalPercentComplete( PlayerNumber pn )
 
 bool GameState::PlayerIsUsingModifier( PlayerNumber pn, const RString &sModifier )
 {
-	PlayerOptions po = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetCurrent();
-	SongOptions so = GAMESTATE->m_SongOptions.GetCurrent();
+	PlayerOptions po = m_pPlayerState[pn]->m_PlayerOptions.GetCurrent();
+	SongOptions so = m_SongOptions.GetCurrent();
 	po.FromString( sModifier );
 	so.FromString( sModifier );
 
-	return po == GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetCurrent()  &&  so == GAMESTATE->m_SongOptions.GetCurrent();
+	return po == m_pPlayerState[pn]->m_PlayerOptions.GetCurrent()  &&  so == m_SongOptions.GetCurrent();
 }
 
 Profile* GameState::GetEditLocalProfile()
