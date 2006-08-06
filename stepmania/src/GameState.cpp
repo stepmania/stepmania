@@ -1906,38 +1906,38 @@ public:
 		else		 { lua_pushnil(L); }
 		return 1;
 	}
-	static int GetPreferredDifficulty( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_PreferredDifficulty[IArg(1)] ); return 1; }
-	static int AnyPlayerHasRankingFeats( T* p, lua_State *L )	{ lua_pushboolean(L, p->AnyPlayerHasRankingFeats() ); return 1; }
-	static int IsCourseMode( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsCourseMode() ); return 1; }
-	static int IsDemonstration( T* p, lua_State *L )		{ lua_pushboolean(L, p->m_bDemonstrationOrJukebox ); return 1; }
-	static int GetPlayMode( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_PlayMode ); return 1; }
-	static int GetSortOrder( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_SortOrder ); return 1; }
-	static int StageIndex( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetStageIndex() ); return 1; }
-	static int IsGoalComplete( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsGoalComplete((PlayerNumber)IArg(1)) ); return 1; }
-	static int PlayerIsUsingModifier( T* p, lua_State *L )		{ lua_pushboolean(L, p->PlayerIsUsingModifier((PlayerNumber)IArg(1),SArg(2)) ); return 1; }
-	static int GetCourseSongIndex( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetCourseSongIndex() ); return 1; }
-	static int GetLoadingCourseSongIndex( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetLoadingCourseSongIndex() ); return 1; }
-	static int IsFinalStage( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsFinalStage() ); return 1; }
-	static int IsAnExtraStage( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsAnExtraStage() ); return 1; }
-	static int IsExtraStage( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsExtraStage() ); return 1; }
-	static int IsExtraStage2( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsExtraStage2() ); return 1; }
-	static int GetCurrentStage( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetCurrentStage() ); return 1; }
-	static int IsStagePossible( T* p, lua_State *L )		{ lua_pushboolean(L, p->IsStagePossible((Stage)IArg(1)) ); return 1; }
-	static int HasEarnedExtraStage( T* p, lua_State *L )		{ lua_pushboolean(L, p->HasEarnedExtraStage() ); return 1; }
-	static int GetEasiestStepsDifficulty( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetEasiestStepsDifficulty() ); return 1; }
-	static int IsEventMode( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsEventMode() ); return 1; }
-	static int GetNumPlayersEnabled( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetNumPlayersEnabled() ); return 1; }
-	static int GetSongBeat( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_fSongBeat ); return 1; }
-	static int GetGameplayLeadIn( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_bGameplayLeadIn ); return 1; }
-	static int PlayerUsingBothSides( T* p, lua_State *L )		{ lua_pushboolean(L, p->PlayerUsingBothSides() ); return 1; }
-	static int GetCoins( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_iCoins ); return 1; }
-	static int IsSideJoined( T* p, lua_State *L )			{ lua_pushboolean(L, p->m_bSideIsJoined[(PlayerNumber)IArg(1)] ); return 1; }
-	static int GetCoinsNeededToJoin( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetCoinsNeededToJoin() ); return 1; }
-	static int PlayersCanJoin( T* p, lua_State *L )			{ lua_pushboolean(L, p->PlayersCanJoin() ); return 1; }
-	static int GetNumSidesJoined( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetNumSidesJoined() ); return 1; }
-	static int GetCoinMode( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetCoinMode() ); return 1; }
-	static int GetPremium( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetPremium() ); return 1; }
-	static int GetSongOptionsString( T* p, lua_State *L )		{ lua_pushstring(L, p->m_SongOptions.GetCurrent().GetString() ); return 1; }
+	DEFINE_METHOD( GetPreferredDifficulty,		m_PreferredDifficulty[IArg(1)] )
+	DEFINE_METHOD( AnyPlayerHasRankingFeats,	AnyPlayerHasRankingFeats() )
+	DEFINE_METHOD( IsCourseMode,			IsCourseMode() )
+	DEFINE_METHOD( IsDemonstration,			m_bDemonstrationOrJukebox )
+	DEFINE_METHOD( GetPlayMode,			m_PlayMode )
+	DEFINE_METHOD( GetSortOrder,			m_SortOrder )
+	DEFINE_METHOD( StageIndex,			GetStageIndex() )
+	DEFINE_METHOD( IsGoalComplete,			IsGoalComplete((PlayerNumber)IArg(1)) )
+	DEFINE_METHOD( PlayerIsUsingModifier,		PlayerIsUsingModifier((PlayerNumber)IArg(1),SArg(2)) )
+	DEFINE_METHOD( GetCourseSongIndex,		GetCourseSongIndex() )
+	DEFINE_METHOD( GetLoadingCourseSongIndex,	GetLoadingCourseSongIndex() )
+	DEFINE_METHOD( IsFinalStage,			IsFinalStage() )
+	DEFINE_METHOD( IsAnExtraStage,			IsAnExtraStage() )
+	DEFINE_METHOD( IsExtraStage,			IsExtraStage() )
+	DEFINE_METHOD( IsExtraStage2,			IsExtraStage2() )
+	DEFINE_METHOD( GetCurrentStage,			GetCurrentStage() )
+	DEFINE_METHOD( IsStagePossible,			IsStagePossible((Stage)IArg(1)) )
+	DEFINE_METHOD( HasEarnedExtraStage,		HasEarnedExtraStage() )
+	DEFINE_METHOD( GetEasiestStepsDifficulty,	GetEasiestStepsDifficulty() )
+	DEFINE_METHOD( IsEventMode,			IsEventMode() )
+	DEFINE_METHOD( GetNumPlayersEnabled,		GetNumPlayersEnabled() )
+	DEFINE_METHOD( GetSongBeat,			m_fSongBeat )
+	DEFINE_METHOD( GetGameplayLeadIn,		m_bGameplayLeadIn )
+	DEFINE_METHOD( PlayerUsingBothSides,		PlayerUsingBothSides() )
+	DEFINE_METHOD( GetCoins,			m_iCoins )
+	DEFINE_METHOD( IsSideJoined,			m_bSideIsJoined[(PlayerNumber)IArg(1)] )
+	DEFINE_METHOD( GetCoinsNeededToJoin,		GetCoinsNeededToJoin() )
+	DEFINE_METHOD( PlayersCanJoin,			PlayersCanJoin() )
+	DEFINE_METHOD( GetNumSidesJoined,		GetNumSidesJoined() )
+	DEFINE_METHOD( GetCoinMode,			GetCoinMode() )
+	DEFINE_METHOD( GetPremium,			GetPremium() )
+	DEFINE_METHOD( GetSongOptionsString,		m_SongOptions.GetCurrent().GetString() )
 	static int IsWinner( T* p, lua_State *L )
 	{
 		PlayerNumber pn = (PlayerNumber)IArg(1);
@@ -1953,8 +1953,8 @@ public:
 		lua_pushboolean(L, p->IsDisqualified(pn)); return 1;
 	}
 	static int GetCurrentGame( T* p, lua_State *L )			{ const_cast<Game*>(p->GetCurrentGame())->PushSelf( L ); return 1; }
-	static int GetEditCourseEntryIndex( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_iEditCourseEntryIndex ); return 1; }
-	static int GetEditLocalProfileID( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sEditLocalProfileID.Get() ); return 1; }
+	DEFINE_METHOD( GetEditCourseEntryIndex,		m_iEditCourseEntryIndex )
+	DEFINE_METHOD( GetEditLocalProfileID,		m_sEditLocalProfileID.Get() )
 	static int GetEditLocalProfile( T* p, lua_State *L )
 	{
 		Profile *pProfile = p->GetEditLocalProfile();
