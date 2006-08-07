@@ -38,18 +38,13 @@ float NoteTypeToBeat( NoteType nt )
 	{
 	case NOTE_TYPE_4TH:	return 1.0f;	// quarter notes
 	case NOTE_TYPE_8TH:	return 1.0f/2;	// eighth notes
-	case NOTE_TYPE_12TH:	return 1.0f/3;	// triplets
+	case NOTE_TYPE_12TH:	return 1.0f/3;	// quarter note triplets
 	case NOTE_TYPE_16TH:	return 1.0f/4;	// sixteenth notes
-	case NOTE_TYPE_24TH:	return 1.0f/6;	// twenty-forth notes
+	case NOTE_TYPE_24TH:	return 1.0f/6;	// eighth note triplets
 	case NOTE_TYPE_32ND:	return 1.0f/8;	// thirty-second notes
-	case NOTE_TYPE_48TH:	return 1.0f/12;
-	case NOTE_TYPE_64TH:	return 1.0f/16;
-	// MD 11/03/03 - NOTE_TYPE_INVALID should be treated as equivalent to
-	//               NOTE_TYPE_192ND; NOTE_TYPE_96TH should not exist.
-	// MD 11/12/03 - And, really, since NOTE_TYPE_192ND had to be added, we'll
-	//				 keep the behavior of NOTE_TYPE_INVALID being the same, but
-	//				 it shouldn't ever come up anyway.
-	case NOTE_TYPE_192ND:	return 1.0f/48;
+	case NOTE_TYPE_48TH:	return 1.0f/12; // sixteenth note triplets
+	case NOTE_TYPE_64TH:	return 1.0f/16; // sixty-fourth notes
+	case NOTE_TYPE_192ND:	return 1.0f/48; // thirty-second note triplets
 	default:	ASSERT(0); // and fall through
 	case NOTE_TYPE_INVALID:	return 1.0f/48;
 	}
