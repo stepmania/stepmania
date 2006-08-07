@@ -50,6 +50,10 @@ static const ThemeMetric<bool>		USE_PREFERRED_SORT_COLOR	( "SongManager", "UsePr
 static const ThemeMetric<bool>		USE_UNLOCK_COLOR		( "SongManager", "UseUnlockColor" );
 static const ThemeMetric<RageColor>	UNLOCK_COLOR			( "SongManager", "UnlockColor" );
 static const ThemeMetric<bool>		MOVE_UNLOCKS_TO_BOTTOM_OF_PREFERRED_SORT	( "SongManager", "MoveUnlocksToBottomOfPreferredSort" );
+static const ThemeMetric<RString>	EXTRA_STAGE_PLAYER_OPTIONS	( "SongManager", "ExtraStagePlayerOptions" );
+static const ThemeMetric<RString>	EXTRA_STAGE_SONG_OPTIONS	( "SongManager", "ExtraStageSongOptions" );
+static const ThemeMetric<RString>	EXTRA_STAGE2_PLAYER_OPTIONS	( "SongManager", "ExtraStage2PlayerOptions" );
+static const ThemeMetric<RString>	EXTRA_STAGE2_SONG_OPTIONS	( "SongManager", "ExtraStage2SongOptions" );
 
 
 RString SONG_GROUP_COLOR_NAME( size_t i )   { return ssprintf( "SongGroupColor%i", (int) i+1 ); }
@@ -1218,15 +1222,13 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSong
 	{
 		pPlayerOptionsOut->Init();
 		pPlayerOptionsOut->m_sNoteSkin = NOTESKIN->GAME_BASE_NOTESKIN_NAME;
-		pPlayerOptionsOut->m_fScrolls[PlayerOptions::SCROLL_REVERSE] = 1;
-		pPlayerOptionsOut->m_fScrollSpeed = 1.5f;
-		pPlayerOptionsOut->m_fDark = 1;
+		pPlayerOptionsOut->FromString( bExtra2 ? EXTRA_STAGE2_PLAYER_OPTIONS : EXTRA_STAGE_PLAYER_OPTIONS, true );
 	}
 
 	if( pSongOptionsOut != NULL )
 	{
 		pSongOptionsOut->Init();
-		pSongOptionsOut->m_DrainType = (bExtra2 ? SongOptions::DRAIN_SUDDEN_DEATH : SongOptions::DRAIN_NO_RECOVER);
+		pSongOptionsOut->FromString( bExtra2 ? EXTRA_STAGE2_SONG_OPTIONS : EXTRA_STAGE_SONG_OPTIONS );
 	}
 }
 
