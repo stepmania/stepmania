@@ -302,7 +302,7 @@ void LanguagesDlg::OnBnClickedButtonExport()
 				continue;
 
 			bool bAlreadyTranslated = !tl.sCurrentLanguage.empty();
-			if( bAlreadyTranslated || bExportAlreadyTranslated )
+			if( !bAlreadyTranslated || bExportAlreadyTranslated )
 			{
 				vector<RString> vs;
 				vs.push_back( tl.sSection );
