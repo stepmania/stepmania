@@ -44,23 +44,24 @@ const RString ADDITIONAL_SONGS_DIR	= "/AdditionalSongs/";
 const RString COURSES_DIR		= "/Courses/";
 const RString EDIT_SUBDIR		= "Edits/";
 
-static const ThemeMetric<RageColor>	EXTRA_COLOR			("SongManager","ExtraColor");
-static const ThemeMetric<int>		EXTRA_COLOR_METER		("SongManager","ExtraColorMeter");
-static const ThemeMetric<bool>		USE_PREFERRED_SORT_COLOR	("SongManager","UsePreferredSortColor");
-static const ThemeMetric<bool>		USE_UNLOCK_COLOR		("SongManager","UseUnlockColor");
-static const ThemeMetric<RageColor>	UNLOCK_COLOR			("SongManager","UnlockColor");
-static const ThemeMetric<bool>		MOVE_UNLOCKS_TO_BOTTOM_OF_PREFERRED_SORT	("SongManager","MoveUnlocksToBottomOfPreferredSort");
+static const ThemeMetric<RageColor>	EXTRA_COLOR			( "SongManager", "ExtraColor" );
+static const ThemeMetric<int>		EXTRA_COLOR_METER		( "SongManager", "ExtraColorMeter" );
+static const ThemeMetric<bool>		USE_PREFERRED_SORT_COLOR	( "SongManager", "UsePreferredSortColor" );
+static const ThemeMetric<bool>		USE_UNLOCK_COLOR		( "SongManager", "UseUnlockColor" );
+static const ThemeMetric<RageColor>	UNLOCK_COLOR			( "SongManager", "UnlockColor" );
+static const ThemeMetric<bool>		MOVE_UNLOCKS_TO_BOTTOM_OF_PREFERRED_SORT	( "SongManager", "MoveUnlocksToBottomOfPreferredSort" );
 
-RString SONG_GROUP_COLOR_NAME( size_t i )   { return ssprintf("SongGroupColor%i",(int) i+1); }
-RString COURSE_GROUP_COLOR_NAME( size_t i ) { return ssprintf("CourseGroupColor%i",(int) i+1); }
+
+RString SONG_GROUP_COLOR_NAME( size_t i )   { return ssprintf( "SongGroupColor%i", (int) i+1 ); }
+RString COURSE_GROUP_COLOR_NAME( size_t i ) { return ssprintf( "CourseGroupColor%i", (int) i+1 ); }
 
 
 SongManager::SongManager()
 {
-	NUM_SONG_GROUP_COLORS	.Load("SongManager","NumSongGroupColors");
-	SONG_GROUP_COLOR	.Load("SongManager",SONG_GROUP_COLOR_NAME,NUM_SONG_GROUP_COLORS);
-	NUM_COURSE_GROUP_COLORS	.Load("SongManager","NumCourseGroupColors");
-	COURSE_GROUP_COLOR	.Load("SongManager",COURSE_GROUP_COLOR_NAME,NUM_COURSE_GROUP_COLORS);
+	NUM_SONG_GROUP_COLORS	.Load( "SongManager", "NumSongGroupColors" );
+	SONG_GROUP_COLOR	.Load( "SongManager", SONG_GROUP_COLOR_NAME, NUM_SONG_GROUP_COLORS );
+	NUM_COURSE_GROUP_COLORS	.Load( "SongManager", "NumCourseGroupColors" );
+	COURSE_GROUP_COLOR	.Load( "SongManager", COURSE_GROUP_COLOR_NAME, NUM_COURSE_GROUP_COLORS );
 }
 
 SongManager::~SongManager()
