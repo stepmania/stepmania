@@ -484,9 +484,13 @@ void GameState::BeginStage()
 
 	ResetStageStatistics();
 
-	FOREACH_PlayerNumber( p )
-		m_pPlayerState[p]->m_PlayerOptions.Assign( ModsLevel_Stage, m_pPlayerState[p]->m_PlayerOptions.GetPreferred() );
-	m_SongOptions.Assign( ModsLevel_Stage, m_SongOptions.GetPreferred() );
+	// Stage mods for extra stage have already been set. Don't overwrite preferred.
+	if( !IsAnExtraStage() )
+	{
+		FOREACH_PlayerNumber( p )
+			m_pPlayerState[p]->m_PlayerOptions.Assign( ModsLevel_Stage, m_pPlayerState[p]->m_PlayerOptions.GetPreferred() );
+		m_SongOptions.Assign( ModsLevel_Stage, m_SongOptions.GetPreferred() );
+	}
 
 	m_iNumStagesOfThisSong = GetNumStagesForCurrentSong();
 	ASSERT( m_iNumStagesOfThisSong != -1 );
@@ -712,17 +716,17 @@ bool GameState::IsFinalStage() const
 
 bool GameState::IsAnExtraStage() const
 {
-	return !IsEventMode() && m_iCurrentStageIndex >= PREFSMAN->m_iSongsPerPlay;
+	return !IsEventMode() && !IsCourseMode() && m_iCurrentStageIndex >= PREFSMAN->m_iSongsPerPlay;
 }
 
 bool GameState::IsExtraStage() const
 {
-	return !IsEventMode() && m_iCurrentStageIndex == PREFSMAN->m_iSongsPerPlay;
+	return !IsEventMode() && !IsCourseMode() && m_iCurrentStageIndex == PREFSMAN->m_iSongsPerPlay;
 }
 
 bool GameState::IsExtraStage2() const
 {
-	return !IsEventMode() && m_iCurrentStageIndex == PREFSMAN->m_iSongsPerPlay+1;
+	return !IsEventMode() && !IsCourseMode() && m_iCurrentStageIndex == PREFSMAN->m_iSongsPerPlay+1;
 }
 
 Stage GameState::GetCurrentStage() const
