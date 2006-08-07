@@ -214,7 +214,6 @@ protected:
 	NoteField		m_NoteFieldEdit;
 	NoteData		m_NoteDataEdit;
 	SnapDisplay		m_SnapDisplay;
-	RString			m_sOldNoteSkins[NUM_PLAYERS];
 
 	BitmapText		m_textInputTips;
 

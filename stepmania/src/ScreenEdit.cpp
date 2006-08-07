@@ -693,7 +693,6 @@ void ScreenEdit::Init()
 	
 	FOREACH_PlayerNumber( pn )
 	{
-		m_sOldNoteSkins[pn] = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetStage().m_sNoteSkin;
 		const RString &sNoteSkin = EDITOR_NOTE_SKINS[pn];
 		
 		if( NOTESKIN->DoesNoteSkinExist(sNoteSkin) )
@@ -774,8 +773,6 @@ void ScreenEdit::Init()
 
 ScreenEdit::~ScreenEdit()
 {
-	FOREACH_PlayerNumber( pn )
-		PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Stage, m_sNoteSkin, m_sOldNoteSkins[pn] );
 	// UGLY: Don't delete the Song's steps.
 	m_songLastSave.DetachSteps();
 
