@@ -185,19 +185,13 @@ enum NoteType
 { 
 	NOTE_TYPE_4TH,	// quarter note
 	NOTE_TYPE_8TH,	// eighth note
-	NOTE_TYPE_12TH,	// triplet
+	NOTE_TYPE_12TH,	// quarter note triplet
 	NOTE_TYPE_16TH,	// sixteenth note
-	NOTE_TYPE_24TH,	// twenty-fourth note
+	NOTE_TYPE_24TH,	// eighth note triplet
 	NOTE_TYPE_32ND,	// thirty-second note
-
-	// Why is this high of resolution needed?  It's breaking NoteSkins
-	// with note-coloring, and the extra resolution will take up more 
-	// memory.  Does any game actually use this?  -Chris
-
-	// MD 11/02/03 - added finer divisions
-	NOTE_TYPE_48TH, // forty-eighth note
+	NOTE_TYPE_48TH, // sixteenth note triplet
 	NOTE_TYPE_64TH,	// sixty-fourth note
-	NOTE_TYPE_192ND,
+	NOTE_TYPE_192ND,// sixty-fourth note triplet
 	NUM_NoteType,
 	NOTE_TYPE_INVALID
 };
