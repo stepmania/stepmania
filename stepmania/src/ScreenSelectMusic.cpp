@@ -713,11 +713,12 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 
 	// Check for "Press START again for options" button press
 	if( m_bMadeChoice  &&
-		input.MenuI.IsValid()  &&
-		input.MenuI.button == MENU_BUTTON_START  &&
-		input.type != IET_RELEASE  &&
-		input.type != IET_LEVEL_CHANGED &&
-		OPTIONS_MENU_AVAILABLE.GetValue() )
+	    input.MenuI.IsValid()  &&
+	    input.MenuI.button == MENU_BUTTON_START  &&
+	    input.type != IET_RELEASE  &&
+	    input.type != IET_LEVEL_CHANGED &&
+	    OPTIONS_MENU_AVAILABLE.GetValue() &&
+	    !GAMESTATE->IsAnExtraStage() )
 	{
 		if( m_bGoToOptions )
 			return; /* got it already */
@@ -725,8 +726,10 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			return; /* not allowed */
 
 		if( !m_bAllowOptionsMenuRepeat &&
-			(input.type == IET_SLOW_REPEAT || input.type == IET_FAST_REPEAT ))
+		    (input.type == IET_SLOW_REPEAT || input.type == IET_FAST_REPEAT ))
+		{
 			return; /* not allowed yet */
+		}
 		
 		m_bGoToOptions = true;
 		SCREENMAN->PlayStartSound();
@@ -1219,7 +1222,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 	{
 		SCREENMAN->PlayStartSound();
 
-		if( OPTIONS_MENU_AVAILABLE )
+		if( OPTIONS_MENU_AVAILABLE && !GAMESTATE->IsAnExtraStage() )
 		{
 			// show "hold START for options"
 			this->PlayCommand( "ShowPressStartForOptions" );
