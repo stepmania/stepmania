@@ -11,7 +11,6 @@ struct LuaFunctionList
 	lua_CFunction func;
 	LuaFunctionList *next;
 };
-extern LuaFunctionList *g_LuaFunctionList;
 
 #define LuaFunction( func, expr ) \
 int LuaFunc_##func( lua_State *L ) { \
