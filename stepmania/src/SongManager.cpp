@@ -1100,7 +1100,11 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, RString sPreferredG
 
 	/* Couldn't find course in DWI path or alternative song folders */
 	if( !DoesFileExist(sCoursePath) )
-		return false;
+	{
+		sCoursePath = ADDITIONAL_SONGS_DIR + sCourseSuffix;
+		if( !DoesFileExist(sCoursePath) )
+			return false;
+	}
 
 	Course course;
 	CourseLoaderCRS::LoadFromCRSFile( sCoursePath, course );
