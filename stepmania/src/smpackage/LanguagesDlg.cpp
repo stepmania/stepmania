@@ -294,7 +294,11 @@ void LanguagesDlg::OnBnClickedButtonExport()
 			tl.sBaseLanguage = value->second;
 			ini2.GetValue( tl.sSection, tl.sID, tl.sCurrentLanguage );
 
-			if( tl.sCurrentLanguage.empty() || bExportAlreadyTranslated )
+			RString sCurrentLanguageTrimmed = tl.sCurrentLanguage;
+			TrimLeft( sCurrentLanguageTrimmed, " " );
+			TrimRight( sCurrentLanguageTrimmed, " " );
+
+			if( sCurrentLanguageTrimmed.empty() || bExportAlreadyTranslated )
 			{
 				vector<RString> vs;
 				vs.push_back( tl.sSection );
