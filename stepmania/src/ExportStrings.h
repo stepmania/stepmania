@@ -4,7 +4,7 @@
 namespace ExportStrings
 {
 	void Nsis();
-	void LuaFunctions();
+	void LuaInformation();
 }
 
 #endif

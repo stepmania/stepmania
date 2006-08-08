@@ -42,10 +42,12 @@ void ExportStrings::Nsis()
 	}
 }
 
-void ExportStrings::LuaFunctions()
+void ExportStrings::LuaInformation()
 {
 	XNode *pNode = LUA->GetLuaInformation();
 	DISP_OPT disp;
+	
+	disp.stylesheet = "Lua.xsl";
 	
 	pNode->SaveToFile( "Lua.xml", disp );
 	delete pNode;
