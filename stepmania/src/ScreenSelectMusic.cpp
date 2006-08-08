@@ -717,8 +717,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	    input.MenuI.button == MENU_BUTTON_START  &&
 	    input.type != IET_RELEASE  &&
 	    input.type != IET_LEVEL_CHANGED &&
-	    OPTIONS_MENU_AVAILABLE.GetValue() &&
-	    !GAMESTATE->IsAnExtraStage() )
+	    OPTIONS_MENU_AVAILABLE.GetValue() )
 	{
 		if( m_bGoToOptions )
 			return; /* got it already */
@@ -1222,7 +1221,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 	{
 		SCREENMAN->PlayStartSound();
 
-		if( OPTIONS_MENU_AVAILABLE && !GAMESTATE->IsAnExtraStage() )
+		if( OPTIONS_MENU_AVAILABLE )
 		{
 			// show "hold START for options"
 			this->PlayCommand( "ShowPressStartForOptions" );
