@@ -1,47 +1,16 @@
-#include "global.h"
-#include "ExportNsisStrings.h"
-#include "RageFile.h"
-#include "RageUtil.h"
-#include "IniFile.h"
+#ifndef ExportStrings_H
+#define ExportStrings_H
 
-const RString INSTALLER_LANGUAGES_DIR = "Themes/_Installer/Languages/";
-
-void ExportNsisStrings::Do()
+namespace ExportStrings
 {
-	RageFile out;
-	if( !out.Open( "nsis_strings_temp.inc", RageFile::WRITE ) )
-		RageException::Throw("Error opening file for write.");
-
-	vector<RString> vs;
-	GetDirListing( INSTALLER_LANGUAGES_DIR + "*.ini", vs, false, false );
-	FOREACH_CONST( RString, vs, s )
-	{
-		RString sThrowAway, sLangCode;
-		splitpath( *s, sThrowAway, sLangCode, sThrowAway );
-		const LanguageInfo *pLI = GetLanguageInfo( sLangCode );
-		
-		RString sLangNameUpper = pLI->szEnglishName;
-		sLangNameUpper.MakeUpper();
-
-		IniFile ini;
-		if( !ini.ReadFile( INSTALLER_LANGUAGES_DIR + *s ) )
-			RageException::Throw("Error opening file for read.");
-		FOREACH_CONST_Child( &ini, child )
-		{
-			FOREACH_CONST_Attr( child, attr )
-			{
-				RString sName = attr->first;
-				RString sValue = attr->second;
-				sValue.Replace( "\\n", "$\\n" );
-				RString sLine = ssprintf( "LangString %s ${LANG_%s} \"%s\"", sName.c_str(), sLangNameUpper.c_str(), sValue.c_str() );
-				out.PutLine( sLine );
-			}
-		}
-	}
+	void Nsis();
+	void LuaFunctions();
 }
 
+#endif
+
 /*
- * (c) 2006 Chris Danford
+ * (c) 2006 Chris Danford, Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
@@ -64,3 +33,4 @@ void ExportNsisStrings::Do()
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+

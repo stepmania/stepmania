@@ -38,7 +38,7 @@
 #include "RageSurface_Load.h"
 #include "arch/arch.h"
 #include "CatalogXml.h"
-#include "ExportNsisStrings.h"
+#include "ExportStrings.h"
 
 //
 // StepMania global classes
@@ -1115,15 +1115,14 @@ int main(int argc, char* argv[])
 		NSMAN->DisplayStartupStatus();	// If we're using networking show what happened
 
 	/* Run the main loop. */
-#if defined(WIN32)
+	
 	if( GetCommandlineArgument("ExportNsisStrings") )
 		// XXX Nullsoft Scriptable Installation System?
-		ExportNsisStrings::Do();
+		ExportStrings::Nsis();
+	else if( GetCommandlineArgument("ExportLuaFunctions") )
+		ExportStrings::LuaFunctions();
 	else
 		GameLoop::RunGameLoop();
-#else
-	GameLoop::RunGameLoop();
-#endif
 
 	/* If we ended mid-game, finish up. */
 	GAMESTATE->EndGame();

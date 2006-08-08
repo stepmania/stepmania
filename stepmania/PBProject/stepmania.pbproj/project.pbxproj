@@ -1410,6 +1410,10 @@
 		AA54709206F559DF008EB9B2 /* Preference.h in Headers */ = {isa = PBXBuildFile; fileRef = AA54709106F559DF008EB9B2 /* Preference.h */; };
 		AA5A51F30A8441AA006DBB92 /* ModsGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = AA5A51F20A8441AA006DBB92 /* ModsGroup.h */; };
 		AA5A51F40A8441AA006DBB92 /* ModsGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = AA5A51F20A8441AA006DBB92 /* ModsGroup.h */; };
+		AA5A56E60A875DA3006DBB92 /* ExportStrings.h in Headers */ = {isa = PBXBuildFile; fileRef = AA5A56E40A875DA3006DBB92 /* ExportStrings.h */; };
+		AA5A56E70A875DA3006DBB92 /* ExportStrings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA5A56E50A875DA3006DBB92 /* ExportStrings.cpp */; };
+		AA5A56E80A875DA3006DBB92 /* ExportStrings.h in Headers */ = {isa = PBXBuildFile; fileRef = AA5A56E40A875DA3006DBB92 /* ExportStrings.h */; };
+		AA5A56E90A875DA3006DBB92 /* ExportStrings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA5A56E50A875DA3006DBB92 /* ExportStrings.cpp */; };
 		AA5C73FD0637A5F100AFB891 /* CourseUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA5C73F70637A5F000AFB891 /* CourseUtil.cpp */; };
 		AA5C73FE0637A5F100AFB891 /* CourseUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = AA5C73F80637A5F000AFB891 /* CourseUtil.h */; };
 		AA5C73FF0637A5F100AFB891 /* SongUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA5C73F90637A5F000AFB891 /* SongUtil.cpp */; };
@@ -1715,9 +1719,6 @@
 		AAF4206805D63FA700056441 /* ModelManager.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF4206605D63FA700056441 /* ModelManager.h */; };
 		AAF4206B05D6400800056441 /* RageModelGeometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF4206905D6400800056441 /* RageModelGeometry.cpp */; };
 		AAF4206C05D6400800056441 /* RageModelGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF4206A05D6400800056441 /* RageModelGeometry.h */; };
-		AAF565FD0A3BFE2B00D5A105 /* ExportNsisStrings.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF565FB0A3BFE2B00D5A105 /* ExportNsisStrings.h */; };
-		AAF565FE0A3BFE2B00D5A105 /* ExportNsisStrings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF565FA0A3BFE2B00D5A105 /* ExportNsisStrings.cpp */; };
-		AAF565FF0A3BFE2B00D5A105 /* ExportNsisStrings.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF565FB0A3BFE2B00D5A105 /* ExportNsisStrings.h */; };
 		AAF6A2F909B695BA00D5C614 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AAF6A2F709B695BA00D5C614 /* Localizable.strings */; };
 		AAF6A2FA09B695BA00D5C614 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AAF6A2F709B695BA00D5C614 /* Localizable.strings */; };
 		AAF7435B06110E8D00B19AD1 /* ScreenTestLights.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF7435906110E8D00B19AD1 /* ScreenTestLights.cpp */; };
@@ -1951,6 +1952,8 @@
 		AA53D28905277DAF00D02EE9 /* ScreenReloadSongs.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenReloadSongs.h; path = ../src/ScreenReloadSongs.h; sourceTree = "<group>"; };
 		AA54709106F559DF008EB9B2 /* Preference.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Preference.h; path = ../src/Preference.h; sourceTree = "<group>"; };
 		AA5A51F20A8441AA006DBB92 /* ModsGroup.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ModsGroup.h; path = ../src/ModsGroup.h; sourceTree = "<group>"; };
+		AA5A56E40A875DA3006DBB92 /* ExportStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExportStrings.h; sourceTree = "<group>"; };
+		AA5A56E50A875DA3006DBB92 /* ExportStrings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExportStrings.cpp; sourceTree = "<group>"; };
 		AA5C73F70637A5F000AFB891 /* CourseUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = CourseUtil.cpp; path = ../src/CourseUtil.cpp; sourceTree = "<group>"; };
 		AA5C73F80637A5F000AFB891 /* CourseUtil.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = CourseUtil.h; path = ../src/CourseUtil.h; sourceTree = "<group>"; };
 		AA5C73F90637A5F000AFB891 /* SongUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = SongUtil.cpp; path = ../src/SongUtil.cpp; sourceTree = "<group>"; };
@@ -2671,8 +2674,6 @@
 		AAF4206A05D6400800056441 /* RageModelGeometry.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageModelGeometry.h; path = ../src/RageModelGeometry.h; sourceTree = "<group>"; };
 		AAF430FD04DC98BC00D02EE9 /* Steps.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = Steps.cpp; path = ../src/Steps.cpp; sourceTree = "<group>"; };
 		AAF430FE04DC98BC00D02EE9 /* Steps.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Steps.h; path = ../src/Steps.h; sourceTree = "<group>"; };
-		AAF565FA0A3BFE2B00D5A105 /* ExportNsisStrings.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ExportNsisStrings.cpp; sourceTree = "<group>"; };
-		AAF565FB0A3BFE2B00D5A105 /* ExportNsisStrings.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ExportNsisStrings.h; sourceTree = "<group>"; };
 		AAF580A704B3E2DC00D02EE9 /* RageUtil_FileDB.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageUtil_FileDB.cpp; path = ../src/RageUtil_FileDB.cpp; sourceTree = "<group>"; };
 		AAF580A804B3E2DC00D02EE9 /* RageUtil_FileDB.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageUtil_FileDB.h; path = ../src/RageUtil_FileDB.h; sourceTree = "<group>"; };
 		AAF6A33109B69C7700D5C614 /* it */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -2840,9 +2841,9 @@
 			children = (
 				AA082E9D0653C7E6001A3A80 /* CryptHelpers.cpp */,
 				AA082E9E0653C7E6001A3A80 /* CryptHelpers.h */,
-				AAF565FA0A3BFE2B00D5A105 /* ExportNsisStrings.cpp */,
-				AAF565FB0A3BFE2B00D5A105 /* ExportNsisStrings.h */,
 				AA70E3640663112800DAE1FD /* Foreach.h */,
+				AA5A56E40A875DA3006DBB92 /* ExportStrings.h */,
+				AA5A56E50A875DA3006DBB92 /* ExportStrings.cpp */,
 			);
 			name = "Other Source";
 			path = ../src;
@@ -4424,7 +4425,6 @@
 				AAB55EC009A7E3D3008FDC69 /* ScreenUnlockCelebrate.h in Headers */,
 				AA1F9C4709AF1BF5002C15A8 /* PumpDevice.h in Headers */,
 				AA147F1A0A0F78D8006EADF6 /* VectorHelper.h in Headers */,
-				AAF565FD0A3BFE2B00D5A105 /* ExportNsisStrings.h in Headers */,
 				AA8CF5170A4518BE0005F1B4 /* RageSoundDriver_AU.h in Headers */,
 				AAD8F9360A4B97DF000311CF /* ScreenGameplayShared.h in Headers */,
 				AAAA11C60A662F9D00B2BD88 /* ScoreKeeperShared.h in Headers */,
@@ -4433,6 +4433,7 @@
 				AA5D16580A79805C00F17E86 /* RageTextureRenderTarget.h in Headers */,
 				AA5D166D0A798C0E00F17E86 /* ActorFrameTexture.h in Headers */,
 				AA5A51F30A8441AA006DBB92 /* ModsGroup.h in Headers */,
+				AA5A56E80A875DA3006DBB92 /* ExportStrings.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4874,7 +4875,6 @@
 				AA1F9C4909AF1BF5002C15A8 /* PumpDevice.h in Headers */,
 				F4BC045509E6B582003F770B /* ScreenGameplaySyncMachine.h in Headers */,
 				AA147F1C0A0F78D8006EADF6 /* VectorHelper.h in Headers */,
-				AAF565FF0A3BFE2B00D5A105 /* ExportNsisStrings.h in Headers */,
 				AA8CF5190A4518BE0005F1B4 /* RageSoundDriver_AU.h in Headers */,
 				AAD8F9340A4B97DF000311CF /* ScreenGameplayShared.h in Headers */,
 				AAAA11C80A662F9D00B2BD88 /* ScoreKeeperShared.h in Headers */,
@@ -4883,6 +4883,7 @@
 				AA5D165A0A79805C00F17E86 /* RageTextureRenderTarget.h in Headers */,
 				AA5D166F0A798C0E00F17E86 /* ActorFrameTexture.h in Headers */,
 				AA5A51F40A8441AA006DBB92 /* ModsGroup.h in Headers */,
+				AA5A56E60A875DA3006DBB92 /* ExportStrings.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5439,6 +5440,7 @@
 				AA2EA0010A770208003A0C11 /* ScreenSelectLanguage.cpp in Sources */,
 				AA5D16570A79805C00F17E86 /* RageTextureRenderTarget.cpp in Sources */,
 				AA5D166C0A798C0E00F17E86 /* ActorFrameTexture.cpp in Sources */,
+				AA5A56E90A875DA3006DBB92 /* ExportStrings.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5839,7 +5841,6 @@
 				F4BC045409E6B578003F770B /* ScreenGameplaySyncMachine.cpp in Sources */,
 				AAEDFD6A0A03762B00590617 /* Crash.cpp in Sources */,
 				AA147F1D0A0F78D8006EADF6 /* VectorHelper.cpp in Sources */,
-				AAF565FE0A3BFE2B00D5A105 /* ExportNsisStrings.cpp in Sources */,
 				AA8CF51A0A4518BE0005F1B4 /* RageSoundDriver_AU.cpp in Sources */,
 				AAD8F9350A4B97DF000311CF /* ScreenGameplayShared.cpp in Sources */,
 				AAAA11C90A662F9D00B2BD88 /* ScoreKeeperShared.cpp in Sources */,
@@ -5848,6 +5849,7 @@
 				AA2EA0030A770208003A0C11 /* ScreenSelectLanguage.cpp in Sources */,
 				AA5D16590A79805C00F17E86 /* RageTextureRenderTarget.cpp in Sources */,
 				AA5D166E0A798C0E00F17E86 /* ActorFrameTexture.cpp in Sources */,
+				AA5A56E70A875DA3006DBB92 /* ExportStrings.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
