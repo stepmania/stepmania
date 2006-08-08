@@ -5,6 +5,7 @@
 #include "IniFile.h"
 #include "XmlFile.h"
 #include "LuaManager.h"
+#include "ProductInfo.h"
 
 const RString INSTALLER_LANGUAGES_DIR = "Themes/_Installer/Languages/";
 
@@ -45,8 +46,12 @@ void ExportStrings::Nsis()
 void ExportStrings::LuaInformation()
 {
 	XNode *pNode = LUA->GetLuaInformation();
+	XNode *pDateNode = new XNode;
 	DISP_OPT disp;
 	
+	pDateNode->m_sName = "Version";
+	pDateNode->m_sValue = PRODUCT_ID_VER;
+	pNode->AppendChild( pDateNode );
 	disp.stylesheet = "Lua.xsl";
 	
 	pNode->SaveToFile( "Lua.xml", disp );
