@@ -309,7 +309,7 @@ static void DefaultNoteSkin( int &sel, bool ToSel, const ConfOption *pConfOption
 static void WheelSections( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const PrefsManager::MusicWheelUsesSections mapping[] = { PrefsManager::NEVER, PrefsManager::ALWAYS, PrefsManager::ABC_ONLY };
-	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
 /* Background options */
@@ -317,19 +317,19 @@ static void WheelSections( int &sel, bool ToSel, const ConfOption *pConfOption )
 static void BGBrightness( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const float mapping[] = { 0.0f,0.1f,0.2f,0.3f,0.4f,0.5f,0.6f,0.7f,0.8f,0.9f,1.0f };
-	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
 static void BGBrightnessNoZero( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const float mapping[] = { 0.1f,0.2f,0.3f,0.4f,0.5f,0.6f,0.7f,0.8f,0.9f,1.0f };
-	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
 static void BGBrightnessOrStatic( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const float mapping[] = { 0.5f,0.25f,0.5f,0.75f };
-	MoveMap( sel, PREFSMAN->m_fBGBrightness, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_fBGBrightness, ToSel, mapping, ARRAYLEN(mapping) );
 
 	if( ToSel && !PREFSMAN->m_bSongBackgrounds )
 		sel = 0;
@@ -340,57 +340,57 @@ static void BGBrightnessOrStatic( int &sel, bool ToSel, const ConfOption *pConfO
 static void NumBackgrounds( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 5,10,15,20 };
-	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
 /* Input options */
 static void MusicWheelSwitchSpeed( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 5, 10, 15, 25 };
-	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
 /* Gameplay options */
 static void AllowW1( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const PrefsManager::AllowW1 mapping[] = { PrefsManager::ALLOW_W1_NEVER, PrefsManager::ALLOW_W1_COURSES_ONLY, PrefsManager::ALLOW_W1_EVERYWHERE };
-	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
 static void CoinModeM( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const CoinMode mapping[] = { COIN_MODE_HOME, COIN_MODE_PAY, COIN_MODE_FREE };
-	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
 static void CoinModeNoHome( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const CoinMode mapping[] = { COIN_MODE_PAY, COIN_MODE_FREE };
-	MoveMap( sel, PREFSMAN->m_CoinMode, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_CoinMode, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
 static void CoinsPerCredit( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16 };
-	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
 static void PremiumM( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const Premium mapping[] = { PREMIUM_NONE, PREMIUM_DOUBLE, PREMIUM_JOINT };
-	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
 static void SongsPerPlay( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 1,2,3,4,5 };
-	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
 static void SongsPerPlayOrEventMode( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 1,2,3,4,5,6 };
-	MoveMap( sel, PREFSMAN->m_iSongsPerPlay, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_iSongsPerPlay, ToSel, mapping, ARRAYLEN(mapping) );
 
 	if( ToSel && PREFSMAN->m_bEventMode )
 		sel = 5;
@@ -403,13 +403,13 @@ static void SongsPerPlayOrEventMode( int &sel, bool ToSel, const ConfOption *pCo
 static void TimingWindowScale( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const float mapping[] = { 1.50f,1.33f,1.16f,1.00f,0.84f,0.66f,0.50f,0.33f,0.20f };
-	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
 static void LifeDifficulty( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const float mapping[] = { 1.60f,1.40f,1.20f,1.00f,0.80f,0.60f,0.40f };
-	MoveMap( sel, PREFSMAN->m_fLifeDifficultyScale, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_fLifeDifficultyScale, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
 static int GetLifeDifficulty()
@@ -425,13 +425,13 @@ LuaFunction( GetLifeDifficulty, GetLifeDifficulty() );
 static void ShowSongOptions( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const PrefsManager::Maybe mapping[] = { PrefsManager::NO,PrefsManager::YES,PrefsManager::ASK };
-	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
 static void GetRankingName( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const PrefsManager::GetRankingName mapping[] = { PrefsManager::RANKING_OFF, PrefsManager::RANKING_ON, PrefsManager::RANKING_LIST };
-	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
 static void DefaultFailType( int &sel, bool ToSel, const ConfOption *pConfOption )
@@ -508,37 +508,37 @@ static void DisplayResolutionM( int &sel, bool ToSel, const ConfOption *pConfOpt
 static void DisplayColorDepth( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 16,32 };
-	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
 static void MaxTextureResolution( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 256,512,1024,2048 };
-	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
 static void TextureColorDepth( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 16,32 };
-	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
 static void MovieColorDepth( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 16,32 };
-	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
 static void RefreshRate( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { (int) REFRESH_DEFAULT,60,70,72,75,80,85,90,100,120,150 };
-	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
 static void DisplayAspectRatio( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const float mapping[] = { 3/4.f,1,4/3.0f,16/10.0f,16/9.f, 8/3.f };
-	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
 /* Simpler DisplayAspectRatio setting, which only offers "on" and "off".  "On" can be 16:9
@@ -549,7 +549,7 @@ static void WideScreen16_10( int &sel, bool ToSel, const ConfOption *pConfOption
 	ASSERT_M( pPref != NULL, pConfOption->name );
 
 	const float mapping[] = { 4/3.0f, 16/10.0f };
-	MoveMap( sel, *pPref, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, *pPref, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
 static void WideScreen16_9( int &sel, bool ToSel, const ConfOption *pConfOption )
@@ -558,7 +558,7 @@ static void WideScreen16_9( int &sel, bool ToSel, const ConfOption *pConfOption 
 	ASSERT_M( pPref != NULL, pConfOption->name );
 
 	const float mapping[] = { 4/3.0f, 16/9.0f };
-	MoveMap( sel, *pPref, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, *pPref, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
 /* Sound options */
@@ -566,7 +566,7 @@ static void WideScreen16_9( int &sel, bool ToSel, const ConfOption *pConfOption 
 static void SoundVolume( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const float mapping[] = { 0.0f,0.1f,0.2f,0.3f,0.4f,0.5f,0.6f,0.7f,0.8f,0.9f,1.0f };
-	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
 static void GlobalOffsetSeconds( int &sel, bool ToSel, const ConfOption *pConfOption )
@@ -575,7 +575,7 @@ static void GlobalOffsetSeconds( int &sel, bool ToSel, const ConfOption *pConfOp
 	for( int i = 0; i < 41; ++i )
 		mapping[i] = SCALE( i, 0.0f, 40.0f, -0.1f, +0.1f );
 	
-	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
 static vector<ConfOption> g_ConfOptions;
