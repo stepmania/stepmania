@@ -291,7 +291,7 @@ XNode *LuaManager::GetLuaInformation() const
 	
 	// Tricky. We have to get the classes from lua.
 	map<RString, LClass> mClasses;
-	vector<RString> vSingletons;
+	map<RString, RString> mSingletons;
 	map<RString, int> mConstants;
 	
 	lua_pushnil( L ); // initial key
@@ -340,11 +340,37 @@ XNode *LuaManager::GetLuaInformation() const
 				lua_pop( L, 1 ); // pop value
 				c.m_vMethods.push_back( lua_tostring(L, -1) );
 			}
+			sort( c.m_vMethods.begin(), c.m_vMethods.end() );
 		}
-		case LUA_TLIGHTUSERDATA:
 		case LUA_TUSERDATA:
 		{
-			vSingletons.push_back( lua_tostring(L, -2) );
+			/* Tricky. The singletons have a metatable but it doesn't have a type key-value pair.
+			 * Instead, we need to get the methods using the __index key and then get the
+			 * metatable of the methods table. */
+			if( !lua_getmetatable(L, -1) )
+				break;
+			lua_pushliteral( L, "__index" );
+			lua_gettable( L, -2 );
+			if( !lua_istable(L, -1) || !lua_getmetatable(L, -1) )
+			{
+				lua_pop( L, 2 ); // pop method table and metatable
+				break;
+			}
+			lua_pushliteral( L, "type" );
+			lua_gettable( L, -2 );
+			
+			/* The stack now looks like:
+			 * -1: type
+			 * -2: method metatable
+			 * -3: method table
+			 * -4: metatable
+			 * -5: user data
+			 * -6: key (object's name) */
+			const char *type = lua_tostring( L, -1 );
+			
+			if( type )
+				mSingletons[lua_tostring(L, -6)] = type;
+			lua_pop( L, 4 ); // pop type, method metatable, method table, and metatable
 			break;
 		}
 		case LUA_TNUMBER:
@@ -358,8 +384,6 @@ XNode *LuaManager::GetLuaInformation() const
 		}
 		lua_pop( L, 1 ); // pop value
 	}
-	
-	sort( vSingletons.begin(), vSingletons.end() );
 			
 	FOREACHM_CONST( RString, LClass, mClasses, c )
 	{
@@ -380,14 +404,15 @@ XNode *LuaManager::GetLuaInformation() const
 		pClassesNode->AppendChild( pClassNode );
 	}
 	
-	FOREACH_CONST( RString, vSingletons, s )
+	FOREACHM_CONST( RString, RString, mSingletons, s )
 	{
-		if( mClasses.find(*s) != mClasses.end() )
+		if( mClasses.find(s->first) != mClasses.end() )
 			continue;
 		XNode *pSingletonNode = new XNode;
 		
 		pSingletonNode->m_sName = "Singleton";
-		pSingletonNode->AppendAttr( "name", *s );
+		pSingletonNode->AppendAttr( "name", s->first );
+		pSingletonNode->AppendAttr( "class", s->second );
 		pSingletonsNode->AppendChild( pSingletonNode );
 	}
 	
