@@ -1053,7 +1053,8 @@ int main(int argc, char* argv[])
 	
 	/* depends on SONGINDEX: */
 	SONGMAN		= new SongManager();
-	SONGMAN->InitAll( loading_window );		// this takes a long time
+	if( !GetCommandlineArgument("ExportNsisStrings") && !GetCommandlineArgument("ExportLuaInformation") )
+		SONGMAN->InitAll( loading_window );	// this takes a long time
 	CRYPTMAN	= new CryptManager;		// need to do this before ProfileMan
 	MEMCARDMAN	= new MemoryCardManager;
 	CHARMAN		= new CharacterManager;
