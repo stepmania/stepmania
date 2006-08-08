@@ -59,6 +59,13 @@ inline bool CLAMP( float &x, float l, float h )
 	else if (x < l) { x = l; return true; }
 	return false;
 }
+template<class T>
+inline bool ENUM_CLAMP( T &x, T l, T h )
+{
+	if (x > h)	{ x = h; return true; }
+	else if (x < l) { x = l; return true; }
+	return false;
+}
 
 inline void wrap( int &x, int n )
 {

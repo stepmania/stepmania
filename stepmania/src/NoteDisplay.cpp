@@ -5,7 +5,6 @@
 #include "ArrowEffects.h"
 #include "RageLog.h"
 #include "RageDisplay.h"
-#include "NoteTypes.h"
 #include "ActorUtil.h"
 #include "Game.h"
 #include "PlayerState.h"
@@ -27,6 +26,11 @@ static const char *NotePartNames[] = {
 XToString( NotePart, NUM_NotePart );
 
 static const RageVector2 g_emptyVector = RageVector2( 0, 0 );
+
+// Don't require that NoteSkins have more than 8 colors.  Using 9 colors to display 192nd notes
+// would double the number of texture memory needed for many NoteSkin graphics versus just having
+// 8 colors.
+static const NoteType MAX_DISPLAY_NOTE_TYPE = (NoteType)7;
 
 // cache
 struct NoteMetricCache_t
@@ -738,15 +742,15 @@ void NoteDisplay::DrawHoldTail( const TapNote& tn, int iCol, int iRow, bool bIsB
 
 	pSprTail->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 
-	const float fY				= fYTail;
-	const float fYOffset			= ArrowEffects::GetYOffsetFromYPos( m_pPlayerState, iCol, fY, m_fYReverseOffsetPixels );
+	const float fY			= fYTail;
+	const float fYOffset		= ArrowEffects::GetYOffsetFromYPos( m_pPlayerState, iCol, fY, m_fYReverseOffsetPixels );
 	if( fYOffset < fYStartOffset || fYOffset > fYEndOffset )
 			return;
-	const float fX				= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset );
-	const float fZ				= ArrowEffects::GetZPos( m_pPlayerState, iCol, fYOffset );
-	const float fAlpha			= ArrowEffects::GetAlpha( m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
-	const float fGlow			= ArrowEffects::GetGlow( m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
-	const RageColor colorDiffuse= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
+	const float fX			= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset );
+	const float fZ			= ArrowEffects::GetZPos( m_pPlayerState, iCol, fYOffset );
+	const float fAlpha		= ArrowEffects::GetAlpha( m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
+	const float fGlow		= ArrowEffects::GetGlow( m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
+	const RageColor colorDiffuse	= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 	const RageColor colorGlow	= RageColor(1,1,1,fGlow);
 
 	pSprTail->SetXY( fX, fY );
@@ -756,6 +760,7 @@ void NoteDisplay::DrawHoldTail( const TapNote& tn, int iCol, int iRow, bool bIsB
 	{
 		DISPLAY->TexturePushMatrix();
 		NoteType nt = GetNoteType( iRow );
+		ENUM_CLAMP( nt, (NoteType)0, MAX_DISPLAY_NOTE_TYPE );
 		DISPLAY->TextureTranslate( cache->m_fNoteColorTextureCoordSpacing[NotePart_HoldTail]*(float)nt );
 	}
 
@@ -824,6 +829,7 @@ void NoteDisplay::DrawHoldHead( const TapNote& tn, int iCol, int iRow, bool bIsB
 	{
 		DISPLAY->TexturePushMatrix();
 		NoteType nt = GetNoteType( iRow );
+		ENUM_CLAMP( nt, (NoteType)0, MAX_DISPLAY_NOTE_TYPE );
 		DISPLAY->TextureTranslate( cache->m_fNoteColorTextureCoordSpacing[NotePart_HoldHead]*(float)nt );
 	}
 
@@ -963,6 +969,7 @@ void NoteDisplay::DrawActor( Actor* pActor, int iCol, float fBeat, float fPercen
 	{
 		DISPLAY->TexturePushMatrix();
 		NoteType nt = BeatToNoteType( fBeat );
+		ENUM_CLAMP( nt, (NoteType)0, MAX_DISPLAY_NOTE_TYPE );
 		DISPLAY->TextureTranslate( cache->m_fNoteColorTextureCoordSpacing[part]*(float)nt );
 	}
 
