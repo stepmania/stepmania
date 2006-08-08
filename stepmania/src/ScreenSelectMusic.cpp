@@ -76,7 +76,6 @@ void ScreenSelectMusic::Init()
 	ALIGN_MUSIC_BEATS.Load( m_sName, "AlignMusicBeat" );
 	CODES.Load( m_sName, "Codes" );
 	MUSIC_WHEEL_TYPE.Load( m_sName, "MusicWheelType" );
-	OPTIONS_MENU_AVAILABLE.Load( m_sName, "OptionsMenuAvailable" );
 	SELECT_MENU_AVAILABLE.Load( m_sName, "SelectMenuAvailable" );
 	MODE_MENU_AVAILABLE.Load( m_sName, "ModeMenuAvailable" );
 
@@ -288,7 +287,8 @@ void ScreenSelectMusic::Init()
 void ScreenSelectMusic::BeginScreen()
 {
 	ScreenWithMenuElements::BeginScreen();
-	
+	OPTIONS_MENU_AVAILABLE.Load( m_sName, "OptionsMenuAvailable" );
+
 	// Set up extra stage mods.
 	if( GAMESTATE->IsAnExtraStage() )
 	{
