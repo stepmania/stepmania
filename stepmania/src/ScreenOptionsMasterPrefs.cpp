@@ -16,6 +16,8 @@
 #include "GameConstantsAndTypes.h"
 #include "DisplayResolutions.h"
 #include "LocalizedString.h"
+#include "SpecialFiles.h"
+#include "RageLog.h"
 
 static void GetPrefsDefaultModifiers( PlayerOptions &po, SongOptions &so )
 {
@@ -181,10 +183,22 @@ static void Language( int &sel, bool ToSel, const ConfOption *pConfOption )
 
 	if( ToSel )
 	{
-		sel = 0;
-		for( unsigned i=1; i<vs.size(); i++ )
+		sel = -1;
+		for( unsigned i=0; sel == -1 && i < vs.size(); ++i )
 			if( !stricmp(vs[i], THEME->GetCurLanguage()) )
 				sel = i;
+
+		/* If the current language doesn't exist, we'll show BASE_LANGUAGE, so select that. */
+		for( unsigned i=0; sel == -1 && i < vs.size(); ++i )
+			if( !stricmp(vs[i], SpecialFiles::BASE_LANGUAGE) )
+				sel = i;
+
+		if( sel == -1 )
+		{
+			LOG->Warn( "Couldn't find language \"%s\" or fallback \"%s\"; using \"%s\"",
+				THEME->GetCurLanguage().c_str(), SpecialFiles::BASE_LANGUAGE.c_str(), vs[0].c_str() );
+			sel = 0;
+		}
 	} else {
 		const RString &sNewLanguage = vs[sel];
 		
