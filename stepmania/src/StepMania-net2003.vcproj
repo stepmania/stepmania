@@ -927,6 +927,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\MenuInput.h">
 			</File>
 			<File
+				RelativePath=".\ModsGroup.h">
+			</File>
+			<File
 				RelativePath="NoteData.cpp">
 			</File>
 			<File
