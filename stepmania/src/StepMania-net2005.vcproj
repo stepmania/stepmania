@@ -3533,11 +3533,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ExportNsisStrings.cpp"
+				RelativePath=".\ExportStrings.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ExportNsisStrings.h"
+				RelativePath=".\ExportStrings.h"
 				>
 			</File>
 			<File
