@@ -8,6 +8,7 @@
 #include "RageThreads.h"
 #include "Foreach.h"
 #include "arch/Dialog/Dialog.h"
+#include "XmlFile.h"
 
 #include <csetjmp>
 #include <cassert>
@@ -249,6 +250,164 @@ void LuaManager::ResetState()
 
 	m_pLock->Unlock();
 }
+
+namespace
+{
+	struct LClass
+	{
+		RString m_sBaseName;
+		vector<RString> m_vMethods;
+	};
+}	
+
+XNode *LuaManager::GetLuaInformation() const
+{
+	XNode *pLuaNode = new XNode;
+	XNode *pGlobalsNode = new XNode;
+	XNode *pClassesNode = new XNode;
+	XNode *pSingletonsNode = new XNode;
+	XNode *pConstantsNode = new XNode;
+	
+	pLuaNode->m_sName = "Lua";
+	pGlobalsNode->m_sName = "GlobalFunctions";
+	pClassesNode->m_sName = "Classes";
+	pSingletonsNode->m_sName = "Singletons";
+	pConstantsNode->m_sName = "Constants";
+	
+	vector<RString> vFunctions;
+	for( const LuaFunctionList *p = g_LuaFunctions; p; p = p->next )
+		vFunctions.push_back( p->name );
+	
+	sort( vFunctions.begin(), vFunctions.end() );
+	
+	FOREACH_CONST( RString, vFunctions, func )
+	{
+		XNode *pFunctionNode = new XNode;
+		
+		pFunctionNode->m_sName = "Function";
+		pFunctionNode->AppendAttr( "name", *func );
+		pGlobalsNode->AppendChild( pFunctionNode );
+	}
+	
+	// Tricky. We have to get the classes from lua.
+	map<RString, LClass> mClasses;
+	vector<RString> vSingletons;
+	map<RString, int> mConstants;
+	
+	lua_pushnil( L ); // initial key
+	while( lua_next(L, LUA_GLOBALSINDEX) )
+	{
+		// key is at -2, value is at -1
+		switch( lua_type(L, -1) )
+		{
+		case LUA_TTABLE:
+		{
+			// Check for the metatable.
+			if( !lua_getmetatable(L, -1) )
+				break;
+			lua_pushliteral( L, "type" );
+			lua_gettable( L, -2 );
+			
+			const char *name = lua_tostring( L, -1 );
+			
+			if( !name )
+			{
+				lua_pop( L, 2 ); // pop nil and metatable
+				break;
+			}
+			LClass &c = mClasses[name];
+			lua_pop( L, 1 ); // pop name
+			
+			// Get base class.
+			lua_pushliteral( L, "__index" );
+			lua_gettable( L, -2 );
+			if( lua_istable(L, -1) && lua_getmetatable(L, -1) )
+			{
+				lua_pushliteral( L, "type" );
+				lua_gettable( L, -2 );
+				name = lua_tostring( L, -1 );
+				
+				if( name )
+					c.m_sBaseName = name;
+				lua_pop( L, 2 ); // pop name and metatable
+			}
+			lua_pop( L, 2 ); // pop (table or other) and metatable
+			
+			// Get methods.
+			lua_pushnil( L ); // initial key
+			while( lua_next(L, -2) )
+			{
+				lua_pop( L, 1 ); // pop value
+				c.m_vMethods.push_back( lua_tostring(L, -1) );
+			}
+		}
+		case LUA_TLIGHTUSERDATA:
+		case LUA_TUSERDATA:
+		{
+			vSingletons.push_back( lua_tostring(L, -2) );
+			break;
+		}
+		case LUA_TNUMBER:
+		{
+			float fNum = lua_tonumber( L, -1 );
+			
+			if( fNum == truncf(fNum) )
+				mConstants[lua_tostring(L, -2)] = int( fNum );
+			break;
+		}
+		}
+		lua_pop( L, 1 ); // pop value
+	}
+	
+	sort( vSingletons.begin(), vSingletons.end() );
+			
+	FOREACHM_CONST( RString, LClass, mClasses, c )
+	{
+		XNode *pClassNode = new XNode;
+		
+		pClassNode->m_sName = "Class";
+		pClassNode->AppendAttr( "name", c->first );
+		if( !c->second.m_sBaseName.empty() )
+			pClassNode->AppendAttr( "base", c->second.m_sBaseName );
+		FOREACH_CONST( RString, c->second.m_vMethods, m )
+		{
+			XNode *pMethodNode = new XNode;
+			
+			pMethodNode->m_sName = "Function";
+			pMethodNode->AppendAttr( "name", *m );
+			pClassNode->AppendChild( pMethodNode );
+		}
+		pClassesNode->AppendChild( pClassNode );
+	}
+	
+	FOREACH_CONST( RString, vSingletons, s )
+	{
+		if( mClasses.find(*s) != mClasses.end() )
+			continue;
+		XNode *pSingletonNode = new XNode;
+		
+		pSingletonNode->m_sName = "Singleton";
+		pSingletonNode->AppendAttr( "name", *s );
+		pSingletonsNode->AppendChild( pSingletonNode );
+	}
+	
+	FOREACHM_CONST( RString, int, mConstants, c )
+	{
+		XNode *pConstantNode = new XNode;
+		
+		pConstantNode->m_sName = "Constant";
+		pConstantNode->AppendAttr( "name", c->first );
+		pConstantNode->AppendAttr( "value", c->second );
+		pConstantsNode->AppendChild( pConstantNode );
+	}
+		
+	pLuaNode->AppendChild( pGlobalsNode );
+	pLuaNode->AppendChild( pClassesNode );
+	pLuaNode->AppendChild( pSingletonsNode );
+	pLuaNode->AppendChild( pConstantsNode );
+	return pLuaNode;
+}
+	
 
 void LuaHelpers::PrepareExpression( RString &sInOut )
 {
@@ -507,7 +666,7 @@ int LuaFunc_color( lua_State *L )
 static LuaFunctionList g_color( "color", LuaFunc_color ); /* register it */
 
 /*
- * (c) 2004 Glenn Maynard
+ * (c) 2004-2006 Glenn Maynard, Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

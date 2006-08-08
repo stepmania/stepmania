@@ -5,6 +5,7 @@ struct lua_State;
 typedef lua_State Lua;
 typedef void (*RegisterWithLuaFn)(lua_State*);
 class RageMutex;
+class XNode;
 
 extern "C"
 {
@@ -36,6 +37,7 @@ public:
 	void SetGlobal( const RString &sName, bool val );
 	void SetGlobal( const RString &sName, const RString &val );
 	void UnsetGlobal( const RString &sName );
+	XNode *GetLuaInformation() const;
 
 private:
 	lua_State *L;
