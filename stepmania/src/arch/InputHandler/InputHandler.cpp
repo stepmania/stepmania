@@ -129,7 +129,7 @@ RString InputHandler::GetDeviceSpecificInputString( const DeviceInput &di )
 
 	RString s = DeviceButtonToString(di.button);
 	if( di.device != DEVICE_KEYBOARD )
-		InputDeviceToString(di.device) + " " + s;
+		s = InputDeviceToString(di.device) + " " + s;
 	return s;
 }
 
