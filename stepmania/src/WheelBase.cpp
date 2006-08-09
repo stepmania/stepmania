@@ -69,7 +69,6 @@ void WheelBase::LoadFromMetrics( RString sType )
 	CIRCLE_PERCENT			.Load(sType,"CirclePercent");
 	USE_3D				.Load(sType,"Use3D");
 	NUM_WHEEL_ITEMS_TO_DRAW		.Load(sType,"NumWheelItems");
-	WHEEL_ITEM_ON_DELAY_CENTER	.Load(sType,"WheelItemOnDelayCenter");
 	WHEEL_ITEM_ON_DELAY_OFFSET	.Load(sType,"WheelItemOnDelayOffset");
 	WHEEL_ITEM_OFF_DELAY_CENTER	.Load(sType,"WheelItemOffDelayCenter");
 	WHEEL_ITEM_OFF_DELAY_OFFSET	.Load(sType,"WheelItemOffDelayOffset");
@@ -413,7 +412,7 @@ void WheelBase::TweenOnScreen( bool bChangingSort )
 	COMMAND( m_sprHighlight, "StartOn");
 	if( bChangingSort )
 	{
-		const float delay = fabsf(NUM_WHEEL_ITEMS/2-WHEEL_ITEM_ON_DELAY_CENTER) * WHEEL_ITEM_ON_DELAY_OFFSET;
+		const float delay = fabsf(NUM_WHEEL_ITEMS/2.0f) * WHEEL_ITEM_ON_DELAY_OFFSET;
 		m_sprHighlight->BeginTweening( delay ); // sleep
 		COMMAND( m_sprHighlight, "FinishOnSort");
 	}
@@ -448,7 +447,7 @@ void WheelBase::TweenOnScreenUpdateItems( bool bChangingSort )
 		SetItemPosition( *display, fThisBannerPositionOffsetFromSelection );
 
 		COMMAND( display, "StartOn");
-		const float delay = fabsf(i-WHEEL_ITEM_ON_DELAY_CENTER) * WHEEL_ITEM_ON_DELAY_OFFSET;
+		const float delay = fabsf((float)i) * WHEEL_ITEM_ON_DELAY_OFFSET;
 		display->BeginTweening( delay ); // sleep
 		COMMAND( display, "FinishOn");
 		if( bChangingSort )
@@ -467,7 +466,7 @@ void WheelBase::TweenOffScreen( bool bChangingSort )
 	{
 		/* When changing sort, tween the overlay with the item in the center;
 		 * having it separate looks messy when we're moving fast. */
-		const float delay = fabsf(NUM_WHEEL_ITEMS/2-WHEEL_ITEM_ON_DELAY_CENTER) * WHEEL_ITEM_ON_DELAY_OFFSET;
+		const float delay = fabsf(NUM_WHEEL_ITEMS/2.0f) * WHEEL_ITEM_ON_DELAY_OFFSET;
 		m_sprHighlight->BeginTweening( delay ); // sleep
 		COMMAND( m_sprHighlight, "FinishOffSort");
 	} 
