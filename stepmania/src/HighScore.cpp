@@ -373,6 +373,29 @@ void Screenshot::LoadFromNode( const XNode* pNode )
 		highScore.LoadFromNode( pHighScore );
 }
 
+// lua start
+#include "LuaBinding.h"
+
+class LunaHighScore: public Luna<HighScore>
+{
+public:
+	LunaHighScore() { LUA->Register( Register ); }
+
+	static int GetName( T* p, lua_State *L )			{ lua_pushstring(L, p->GetName() ); return 1; }
+	static int GetScore( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetScore() ); return 1; }
+
+	static void Register(lua_State *L)
+	{
+		ADD_METHOD( GetName );
+		ADD_METHOD( GetScore );
+
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_CLASS( HighScore )
+// lua end
+
 /*
  * (c) 2004 Chris Danford
  * All rights reserved.

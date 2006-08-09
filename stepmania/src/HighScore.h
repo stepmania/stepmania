@@ -10,6 +10,7 @@
 #include "RageUtil_AutoPtr.h"
 
 class XNode;
+struct lua_State;
 
 struct HighScoreImpl;
 struct HighScore
@@ -59,6 +60,9 @@ struct HighScore
 	void LoadFromNode( const XNode* pNode );
 
 	RString GetDisplayName() const;
+
+	// Lua
+	void PushSelf( lua_State *L );
 private:
 	HiddenPtr<HighScoreImpl> m_Impl;
 };
