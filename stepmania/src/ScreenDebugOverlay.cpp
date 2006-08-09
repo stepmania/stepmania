@@ -745,13 +745,16 @@ class DebugLineSendNotesEnded : public IDebugLine
 class DebugLineReloadCurrentScreen : public IDebugLine
 {
 	virtual RString GetDescription() { return RELOAD.GetValue(); }
-	virtual RString GetValue() { return SCREENMAN ? SCREENMAN->GetTopScreen()->GetName() : RString(); }
+	virtual RString GetValue() { return SCREENMAN && SCREENMAN->GetTopScreen()? SCREENMAN->GetTopScreen()->GetName() : RString(); }
 	virtual bool IsEnabled() { return true; }
 	virtual void Do( RString &sMessageOut )
 	{
 		SOUND->StopMusic();
 		StepMania::ResetGame();
-		SCREENMAN->SetNewScreen( SCREENMAN->GetTopScreen()->GetName() );
+
+		RString sScreenName = SCREENMAN->GetTopScreen()->GetName();
+		SCREENMAN->PopAllScreens();
+		SCREENMAN->SetNewScreen( sScreenName );
 		IDebugLine::Do( sMessageOut );
 		sMessageOut = "";
 	}
