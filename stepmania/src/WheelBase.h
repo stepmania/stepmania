@@ -122,7 +122,6 @@ protected:
 	ThemeMetric<bool>	USE_3D;
 	ThemeMetric<float>	NUM_WHEEL_ITEMS_TO_DRAW;
 	ThemeMetric<float>	WHEEL_ITEM_ON_DELAY_OFFSET;
-	ThemeMetric<float>	WHEEL_ITEM_OFF_DELAY_CENTER;
 	ThemeMetric<float>	WHEEL_ITEM_OFF_DELAY_OFFSET;
 	ThemeMetric<RageColor>	WHEEL_ITEM_LOCKED_COLOR;
 };

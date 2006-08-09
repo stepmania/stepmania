@@ -70,7 +70,6 @@ void WheelBase::LoadFromMetrics( RString sType )
 	USE_3D				.Load(sType,"Use3D");
 	NUM_WHEEL_ITEMS_TO_DRAW		.Load(sType,"NumWheelItems");
 	WHEEL_ITEM_ON_DELAY_OFFSET	.Load(sType,"WheelItemOnDelayOffset");
-	WHEEL_ITEM_OFF_DELAY_CENTER	.Load(sType,"WheelItemOffDelayCenter");
 	WHEEL_ITEM_OFF_DELAY_OFFSET	.Load(sType,"WheelItemOffDelayOffset");
 	WHEEL_ITEM_LOCKED_COLOR		.Load(sType,"WheelItemLockedColor");
 
@@ -496,7 +495,7 @@ void WheelBase::TweenOffScreenUpdateItems( bool bChangingSort )
 		SetItemPosition( *display, fThisBannerPositionOffsetFromSelection );
 
 		COMMAND( display, "StartOff");
-		const float delay = fabsf(i-WHEEL_ITEM_OFF_DELAY_CENTER) * WHEEL_ITEM_OFF_DELAY_OFFSET;
+		const float delay = fabsf((float)i) * WHEEL_ITEM_OFF_DELAY_OFFSET;
 		display->BeginTweening( delay );	// sleep
 		COMMAND( display, "FinishOff");
 		if( bChangingSort )
