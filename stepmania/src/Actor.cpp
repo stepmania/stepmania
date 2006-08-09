@@ -113,6 +113,17 @@ static bool GetMessageNameFromCommandName( const RString &sCommandName, RString 
 Actor::Actor()
 {
 	m_pLuaInstance = new LuaClass;
+	Lua *L = LUA->Get();
+		m_pLuaInstance->PushSelf( L );
+		lua_pushstring( L, "ctx" );
+		lua_newtable( L );
+		lua_pushvalue( L, -1 );
+		lua_setmetatable( L, -2 );
+		lua_settable( L, -3 );
+		lua_pop( L, 1 );
+	LUA->Release( L );
+
+
 	m_size = RageVector2( 1, 1 );
 	InitDefaults();
 	m_bFirstUpdate = true;
@@ -1249,6 +1260,29 @@ void Actor::PlayCommand( const RString &sCommandName, Actor *pParent )
 	const apActorCommands *pCmd = GetCommand( sCommandName );
 	if( pCmd != NULL )
 		RunCommands( *pCmd );
+}
+
+void Actor::PushContext( lua_State *L )
+{
+	// self.ctx should already exist
+	m_pLuaInstance->PushSelf( L );
+	lua_pushstring( L, "ctx" );
+	lua_gettable( L, -2 );
+	lua_replace( L, -2 );
+}
+
+void Actor::SetParent( Actor *pParent )
+{
+	Lua *L = LUA->Get();
+		int iTop = lua_gettop( L );
+
+		this->PushContext( L );
+		lua_pushstring( L, "__index" );
+		pParent->PushContext( L );
+		lua_settable( L, -3 );
+
+		lua_settop( L, iTop );
+	LUA->Release( L );
 }
 
 void Actor::HandleMessage( const RString& sMessage )

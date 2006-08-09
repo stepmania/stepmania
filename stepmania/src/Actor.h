@@ -328,6 +328,7 @@ public:
 	// Lua
 	//
 	virtual void PushSelf( lua_State *L );
+	virtual void PushContext( lua_State *L );
 
 	//
 	// Commands
@@ -340,6 +341,8 @@ public:
 	void RunCommands( const apActorCommands& cmds, Actor *pParent = NULL ) { this->RunCommands( *cmds, pParent ); }	// convenience
 	// If we're a leaf, then execute this command.
 	virtual void RunCommandsOnLeaves( const LuaReference& cmds, Actor *pParent = NULL ) { RunCommands(cmds,pParent); }
+
+	void SetParent( Actor *pParent );
 
 	//
 	// Messages
