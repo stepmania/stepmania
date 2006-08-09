@@ -1191,7 +1191,7 @@ void MusicWheel::TweenOnScreenUpdateItems(bool changing_sort) {
 		SetItemPosition( *display, fThisBannerPositionOffsetFromSelection );
 
 		COMMAND( display, "StartOn");
-		const float delay = fabsf(i-WHEEL_ITEM_ON_DELAY_CENTER) * WHEEL_ITEM_ON_DELAY_OFFSET;
+		const float delay = fabsf((float)i) * WHEEL_ITEM_ON_DELAY_OFFSET;
 		display->BeginTweening( delay ); // sleep
 		COMMAND( display, "FinishOn");
 		if( changing_sort )
@@ -1207,7 +1207,7 @@ void MusicWheel::TweenOffScreenUpdateItems(bool changing_sort) {
 		SetItemPosition( *display, fThisBannerPositionOffsetFromSelection );
 
 		COMMAND( display, "StartOff");
-		const float delay = fabsf(i-WHEEL_ITEM_OFF_DELAY_CENTER) * WHEEL_ITEM_OFF_DELAY_OFFSET;
+		const float delay = fabsf((float)i) * WHEEL_ITEM_OFF_DELAY_OFFSET;
 		display->BeginTweening( delay );	// sleep
 		COMMAND( display, "FinishOff");
 		if( changing_sort )
