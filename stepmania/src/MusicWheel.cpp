@@ -1183,8 +1183,9 @@ bool MusicWheel::IsRouletting() const
 		   m_WheelState == STATE_RANDOM_SPINNING;
 }
 
-void MusicWheel::TweenOnScreenUpdateItems(bool changing_sort) {
-		for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
+void MusicWheel::TweenOnScreenUpdateItems( bool bChangingSort )
+{
+	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 	{
 		MusicWheelItem *display = m_MusicWheelItems[i];
 		float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
@@ -1194,12 +1195,13 @@ void MusicWheel::TweenOnScreenUpdateItems(bool changing_sort) {
 		const float delay = fabsf((float)i) * WHEEL_ITEM_ON_DELAY_OFFSET;
 		display->BeginTweening( delay ); // sleep
 		COMMAND( display, "FinishOn");
-		if( changing_sort )
+		if( bChangingSort )
 			display->HurryTweening( 0.25f );
 	}
 }
 
-void MusicWheel::TweenOffScreenUpdateItems(bool changing_sort) {
+void MusicWheel::TweenOffScreenUpdateItems( bool bChangingSort )
+{
 	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 	{
 		MusicWheelItem *display = m_MusicWheelItems[i];
@@ -1210,7 +1212,7 @@ void MusicWheel::TweenOffScreenUpdateItems(bool changing_sort) {
 		const float delay = fabsf((float)i) * WHEEL_ITEM_OFF_DELAY_OFFSET;
 		display->BeginTweening( delay );	// sleep
 		COMMAND( display, "FinishOff");
-		if( changing_sort )
+		if( bChangingSort )
 			display->HurryTweening( 0.25f );
 	}
 }
