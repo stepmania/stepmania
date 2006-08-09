@@ -357,22 +357,22 @@ const char *RageLog::GetAdditionalLog()
 	return g_AdditionalLogStr;
 }
 
-void RageLog::MapLog(const RString &key, const char *fmt, ...)
+void RageLog::MapLog( const RString &key, const char *fmt, ... )
 {
 	RString s;
 
 	va_list	va;
-	va_start(va, fmt);
+	va_start( va, fmt );
 	s += vssprintf( fmt, va );
-	va_end(va);
+	va_end( va );
 
 	LogMaps[key] = s;
 	UpdateMappedLog();
 }
 
-void RageLog::UnmapLog(const RString &key)
+void RageLog::UnmapLog( const RString &key )
 {
-	LogMaps.erase(key);
+	LogMaps.erase( key );
 	UpdateMappedLog();
 }
 
