@@ -132,6 +132,8 @@ void ActorFrame::AddChild( Actor* pActor )
 	ASSERT( pActor );
 	ASSERT( (void*)pActor != (void*)0xC0000005 );
 	m_SubActors.push_back( pActor );
+
+	pActor->SetParent( this );
 }
 
 void ActorFrame::RemoveChild( Actor* pActor )
