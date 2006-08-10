@@ -31,6 +31,7 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="global.h"
 				PrecompiledHeaderFile="$(IntDir)/StepMania.pch"
 				AssemblerListingLocation=".\../Debug/"
 				ObjectFile=".\../Debug/"
@@ -190,6 +191,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="global.h"
 				PrecompiledHeaderFile="$(IntDir)/StepMania.pch"
 				AssemblerListingLocation=".\../FastDebug/"
 				ObjectFile=".\../FastDebug/"
@@ -1205,10 +1207,10 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			Name="StepMania"
 			Filter="">
 			<File
-				RelativePath=".\ExportNsisStrings.cpp">
+				RelativePath=".\ExportStrings.cpp">
 			</File>
 			<File
-				RelativePath=".\ExportNsisStrings.h">
+				RelativePath=".\ExportStrings.h">
 			</File>
 			<File
 				RelativePath=".\GameLoop.cpp">
