@@ -1253,16 +1253,11 @@ void ScreenSelectMusic::AfterStepsChange( const vector<PlayerNumber> &vpns )
 		m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
 		
 		m_DifficultyIcon[pn].SetFromSteps( pn, pSteps );
+		m_AutoGenIcon[pn].StopEffect();
 		if( pSteps && pSteps->IsAutogen() )
-		{
-			m_AutoGenIcon[pn].StopEffect();
 			m_AutoGenIcon[pn].SetDiffuse( RageColor(1,1,1,1) );
-		}
 		else
-		{
-			m_AutoGenIcon[pn].StopEffect();
 			m_AutoGenIcon[pn].SetDiffuse( RageColor(1,1,1,0) );
-		}
 		m_DifficultyMeter[pn].SetFromGameState( pn );
 		m_GrooveRadar.SetFromSteps( pn, pSteps );
 		m_MusicWheel.NotesOrTrailChanged( pn );
