@@ -636,7 +636,7 @@ void ScreenNameEntryTraditional::UpdateSelectionText( int pn )
 
 void ScreenNameEntryTraditional::MenuStart( PlayerNumber pn )
 {
-	HandleStart( input.MenuI.player );
+	HandleStart( pn );
 }
 
 void ScreenNameEntryTraditional::HandleStart( PlayerNumber pn )
