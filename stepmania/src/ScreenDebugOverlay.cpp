@@ -421,6 +421,7 @@ static LocalizedString CLEAR_MACHINE_STATS	( "ScreenDebugOverlay", "Clear Machin
 static LocalizedString FILL_MACHINE_STATS	( "ScreenDebugOverlay", "Fill Machine Stats" );
 static LocalizedString SEND_NOTES_ENDED		( "ScreenDebugOverlay", "Send Notes Ended" );
 static LocalizedString RELOAD			( "ScreenDebugOverlay", "Reload" );
+static LocalizedString RESTART			( "ScreenDebugOverlay", "Restart" );
 static LocalizedString RELOAD_THEME_AND_TEXTURES( "ScreenDebugOverlay", "Reload Theme and Textures" );
 static LocalizedString WRITE_PROFILES		( "ScreenDebugOverlay", "Write Profiles" );
 static LocalizedString WRITE_PREFERENCES	( "ScreenDebugOverlay", "Write Preferences" );
@@ -760,6 +761,19 @@ class DebugLineReloadCurrentScreen : public IDebugLine
 	}
 };
 
+class DebugLineRestartCurrentScreen : public IDebugLine
+{
+	virtual RString GetDescription() { return RESTART.GetValue(); }
+	virtual RString GetValue() { return SCREENMAN && SCREENMAN->GetTopScreen()? SCREENMAN->GetTopScreen()->GetName() : RString(); }
+	virtual bool IsEnabled() { return true; }
+	virtual void Do( RString &sMessageOut )
+	{
+		SCREENMAN->GetTopScreen()->BeginScreen();
+		IDebugLine::Do( sMessageOut );
+		sMessageOut = "";
+	}
+};
+
 class DebugLineReloadTheme : public IDebugLine
 {
 	virtual RString GetDescription() { return RELOAD_THEME_AND_TEXTURES.GetValue(); }
@@ -917,6 +931,7 @@ DECLARE_ONE( DebugLineClearMachineStats );
 DECLARE_ONE( DebugLineFillMachineStats );
 DECLARE_ONE( DebugLineSendNotesEnded );
 DECLARE_ONE( DebugLineReloadCurrentScreen );
+DECLARE_ONE( DebugLineRestartCurrentScreen );
 DECLARE_ONE( DebugLineReloadTheme );
 DECLARE_ONE( DebugLineWriteProfiles );
 DECLARE_ONE( DebugLineWritePreferences );
