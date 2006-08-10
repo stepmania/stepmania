@@ -73,31 +73,12 @@ void WheelBase::Load( RString sType )
 	this->AddChild( m_sprHighlight );
 	ActorUtil::LoadAllCommands( *m_sprHighlight, m_sName );
 
+	m_ScrollBar.SetName( "ScrollBar" );
 	m_ScrollBar.SetBarHeight( SCROLL_BAR_HEIGHT ); 
 	this->AddChild( &m_ScrollBar );
 	ActorUtil::LoadAllCommands( m_ScrollBar, m_sName );
 
-	{
-		Lua *L = LUA->Get();
-		m_sprHighlight->PushContext(L);
-		lua_pushstring( L, "WheelIndex" );
-		lua_pushnumber( L, NUM_WHEEL_ITEMS/2.0f );
-		lua_settable( L, -3 );
-		lua_pop( L, 1 );
-		LUA->Release( L );
-	}
-
-	Lua *L = LUA->Get();
-	for( int i=0; i < (int) m_WheelBaseItems.size(); i++ )
-	{
-		m_WheelBaseItems[i]->PushContext(L);
-		lua_pushstring( L, "WheelIndex" );
-		lua_pushnumber( L, i );
-		lua_settable( L, -3 );
-		lua_pop( L, 1 );
-	}
-	LUA->Release( L );
-
+	SetPositions();
 }
 
 void WheelBase::BeginScreen()
@@ -182,33 +163,32 @@ bool WheelBase::IsSettled() const
 	return true;
 }
 
-
-void WheelBase::Update( float fDeltaTime )
+void WheelBase::SetPositions()
 {
-	ActorFrame::Update( fDeltaTime );
-
 	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 	{
 		WheelItemBase *pDisplay = m_WheelBaseItems[i];
 		const float fOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
 		if( fabsf(fOffsetFromSelection) > NUM_WHEEL_ITEMS_TO_DRAW/2 )
-		{
 			pDisplay->SetHidden( true );
-			continue;
-		}
-		pDisplay->SetHidden( false );
+		else
+			pDisplay->SetHidden( false );
 
-		switch( m_WheelState )
-		{
-		case STATE_SELECTING:
-		case STATE_LOCKED:
-		case STATE_ROULETTE_SPINNING:
-		case STATE_ROULETTE_SLOWING_DOWN:
-		case STATE_RANDOM_SPINNING:
-			SetItemPosition( *pDisplay, fOffsetFromSelection );
-			break;
-		}
+		SetItemPosition( *pDisplay, fOffsetFromSelection );
+	}
+}
 
+void WheelBase::Update( float fDeltaTime )
+{
+	ActorFrame::Update( fDeltaTime );
+
+	/* If tweens aren't controlling the position of the wheel, set positions. */
+	if( !GetTweenTimeLeft() )
+		SetPositions();
+
+	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
+	{
+		WheelItemBase *pDisplay = m_WheelBaseItems[i];
 		if( m_WheelState == STATE_LOCKED  &&  i != NUM_WHEEL_ITEMS/2 )
 			pDisplay->m_colorLocked = WHEEL_ITEM_LOCKED_COLOR.GetValue();
 		else
@@ -228,9 +208,7 @@ void WheelBase::Update( float fDeltaTime )
 	// update wheel state
 	m_fTimeLeftInState -= fDeltaTime;
 	if( m_fTimeLeftInState <= 0 )	// time to go to a new state
-	{
 		UpdateSwitch();
-	}
 
 	if( m_WheelState == STATE_LOCKED )
 	{
@@ -313,27 +291,8 @@ void WheelBase::UpdateSwitch()
 {
 	switch( m_WheelState )
 	{
-	case STATE_TWEENING_ON_SCREEN:
-		m_fTimeLeftInState = 0;
-		if( (GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage) || GAMESTATE->IsExtraStage2() )
-		{
-			m_WheelState = STATE_LOCKED;
-			SCREENMAN->PlayStartSound();
-			m_fLockedWheelVelocity = 0;
-		}
-		else
-		{
-			m_WheelState = STATE_SELECTING;
-		}
-		break;
-	case STATE_TWEENING_OFF_SCREEN:
-		m_WheelState = STATE_WAITING_OFF_SCREEN;
-		m_fTimeLeftInState = 0;
-		break;
 	case STATE_SELECTING:
 		m_fTimeLeftInState = 0;
-		break;
-	case STATE_WAITING_OFF_SCREEN:
 		break;
 	case STATE_LOCKED:
 		break;
@@ -391,20 +350,26 @@ int WheelBase::IsMoving() const
 
 void WheelBase::TweenOnScreenForSort()
 {
-	m_WheelState = STATE_TWEENING_ON_SCREEN;
+	m_fPositionOffsetFromSelection = 0;
+
+	/* Before we send SortOn, position items back to their destinations, so commands
+	 * can use this as a reference point. */
+	SetPositions();
+
+	m_WheelState = STATE_FLYING_ON_AFTER_NEXT_SORT;
 
 	COMMAND( this, "SortOn" );
 
-	m_fTimeLeftInState = GetTweenTimeLeft() + 0.100f;
+	m_fTimeLeftInState = GetTweenTimeLeft();
 }
 
 void WheelBase::TweenOffScreenForSort()
 {
-	m_WheelState = STATE_TWEENING_OFF_SCREEN;
+	m_WheelState = STATE_FLYING_OFF_BEFORE_NEXT_SORT;
 
 	COMMAND( this, "SortOff" );
 
-	m_fTimeLeftInState = GetTweenTimeLeft() + 0.100f;
+	m_fTimeLeftInState = GetTweenTimeLeft();
 }
 
 void WheelBase::ChangeMusicUnlessLocked( int n )
@@ -532,6 +497,17 @@ void WheelBase::RebuildWheelItems( int iDist )
 		else if( iDist < 0 )
 			iLast = -iDist-1;
 	}
+
+	Lua *L = LUA->Get();
+	for( int i=0; i < (int) m_WheelBaseItems.size(); i++ )
+	{
+		m_WheelBaseItems[i]->PushContext(L);
+		lua_pushstring( L, "WheelIndex" );
+		lua_pushnumber( L, i );
+		lua_settable( L, -3 );
+		lua_pop( L, 1 );
+	}
+	LUA->Release( L );
 
 	for( int i=iFirst; i <= iLast; i++ )
 	{

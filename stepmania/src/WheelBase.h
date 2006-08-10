@@ -53,6 +53,7 @@ protected:
 	virtual WheelItemBase *MakeItem() = 0;
 	virtual void UpdateSwitch();
 	virtual bool MoveSpecific(int n);
+	void SetPositions();
 
 	int FirstVisibleIndex();
 
@@ -79,9 +80,6 @@ protected:
 		STATE_SELECTING,
 		STATE_FLYING_OFF_BEFORE_NEXT_SORT, 
 		STATE_FLYING_ON_AFTER_NEXT_SORT, 
-		STATE_TWEENING_ON_SCREEN, 
-		STATE_TWEENING_OFF_SCREEN, 
-		STATE_WAITING_OFF_SCREEN,
 		STATE_ROULETTE_SPINNING,
 		STATE_ROULETTE_SLOWING_DOWN,
 		STATE_RANDOM_SPINNING,

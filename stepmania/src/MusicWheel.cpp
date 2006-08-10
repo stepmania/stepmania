@@ -136,6 +136,13 @@ void MusicWheel::BeginScreen()
 {
 	WheelBase::BeginScreen();
 
+	if( (GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage) || GAMESTATE->IsExtraStage2() )
+	{
+		m_WheelState = STATE_LOCKED;
+		SCREENMAN->PlayStartSound();
+		m_fLockedWheelVelocity = 0;
+	}
+
 	GAMESTATE->m_SortOrder.Set( GAMESTATE->m_PreferredSortOrder );
 
 	/* Never start in the mode menu; some elements may not initialize correctly. */
@@ -748,7 +755,6 @@ void MusicWheel::UpdateSwitch()
 			SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
 			RebuildWheelItems();
 			TweenOnScreenForSort();
-			m_WheelState = STATE_FLYING_ON_AFTER_NEXT_SORT;
 
 			SCREENMAN->ZeroNextUpdate();
 		}
@@ -758,30 +764,11 @@ void MusicWheel::UpdateSwitch()
 		m_WheelState = STATE_SELECTING;	// now, wait for input
 		break;
 
-	case STATE_TWEENING_ON_SCREEN:
-		m_fTimeLeftInState = 0;
-		if( (GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage) || GAMESTATE->IsExtraStage2() )
-		{
-			m_WheelState = STATE_LOCKED;
-			SCREENMAN->PlayStartSound();
-			m_fLockedWheelVelocity = 0;
-		}
-		else
-		{
-			m_WheelState = STATE_SELECTING;
-		}
-		break;
-	case STATE_TWEENING_OFF_SCREEN:
-		m_WheelState = STATE_WAITING_OFF_SCREEN;
-		m_fTimeLeftInState = 0;
-		break;
 	case STATE_SELECTING:
 		m_fTimeLeftInState = 0;
 		break;
 	case STATE_ROULETTE_SPINNING:
 	case STATE_RANDOM_SPINNING:
-		break;
-	case STATE_WAITING_OFF_SCREEN:
 		break;
 	case STATE_LOCKED:
 		break;
@@ -864,7 +851,6 @@ bool MusicWheel::ChangeSort( SortOrder new_so )	// return true if change success
 		GAMESTATE->m_PreferredSortOrder = new_so;
 	GAMESTATE->m_SortOrder.Set( new_so );
 	
-	m_WheelState = STATE_FLYING_OFF_BEFORE_NEXT_SORT;
 	return true;
 }
 
