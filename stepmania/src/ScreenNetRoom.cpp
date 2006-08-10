@@ -58,7 +58,7 @@ void ScreenNetRoom::Init()
 	m_RoomWheel.Load("RoomWheel");
 	m_RoomWheel.SetName( "RoomWheel" );
 	SET_XY( m_RoomWheel );
-	m_RoomWheel.TweenOnScreen();
+	ON_COMMAND( m_RoomWheel );
 	m_RoomWheel.SetDrawOrder(1);
 	this->AddChild( &m_RoomWheel );
 	this->MoveToHead( &m_RoomWheel );

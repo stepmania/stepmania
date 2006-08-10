@@ -76,8 +76,8 @@ void ScreenNetSelectMusic::Init()
 	m_MusicWheel.Load( "MusicWheel" );
 	m_MusicWheel.SetName( "MusicWheel" );
 	SET_XY( m_MusicWheel );
-	m_MusicWheel.TweenOnScreen();
 	m_MusicWheel.BeginScreen();
+	ON_COMMAND( m_MusicWheel );
 	this->AddChild( &m_MusicWheel );
 	this->MoveToHead( &m_MusicWheel );
 
@@ -458,7 +458,6 @@ void ScreenNetSelectMusic::TweenOffScreen()
 		OFF_COMMAND( m_OptionIconRow[pn] );
 	}
 
-	m_MusicWheel.TweenOffScreen();
 	OFF_COMMAND( m_MusicWheel );
 
 	NSMAN->ReportNSSOnOff(0);
