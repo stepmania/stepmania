@@ -25,33 +25,6 @@ void ScreenUnlockCelebrate::Init()
 	ScreenUnlockBrowse::Init();
 }
 
-void ScreenUnlockCelebrate::MenuLeft( const InputEventPlus &input )
-{
-}
-
-void ScreenUnlockCelebrate::MenuRight( const InputEventPlus &input )
-{
-}
-
-void ScreenUnlockCelebrate::MenuUp( const InputEventPlus &input )
-{
-}
-
-void ScreenUnlockCelebrate::MenuDown( const InputEventPlus &input )
-{
-}
-
-void ScreenUnlockCelebrate::MenuStart( PlayerNumber pn )
-{
-	ScreenUnlockBrowse::MenuStart( pn );
-}
-
-void ScreenUnlockCelebrate::MenuBack( PlayerNumber pn )
-{
-	this->MenuStart(pn);
-}
-
-
 /*
  * (c) 2006 Chris Danford
  * All rights reserved.

@@ -7,12 +7,11 @@ class ScreenUnlockCelebrate : public ScreenUnlockBrowse
 {
 public:
 	virtual void Init();
-	virtual void MenuLeft( const InputEventPlus &input );
-	virtual void MenuRight( const InputEventPlus &input );
-	virtual void MenuUp( const InputEventPlus &input );
-	virtual void MenuDown( const InputEventPlus &input );
-	virtual void MenuStart( PlayerNumber pn );
-	virtual void MenuBack( PlayerNumber pn );
+	virtual void MenuLeft( const InputEventPlus &input ) { }
+	virtual void MenuRight( const InputEventPlus &input ) { }
+	virtual void MenuUp( const InputEventPlus &input ) { }
+	virtual void MenuDown( const InputEventPlus &input ) { }
+	virtual void MenuBack( PlayerNumber pn ) { MenuStart( pn ); }
 protected:
 };
 
