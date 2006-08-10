@@ -9,7 +9,7 @@ public:
 	virtual void Init();
 	virtual void HandleScreenMessage(const ScreenMessage SM);
 	virtual void MenuStart( const InputEventPlus &input );
-	void SendLogin(RString sPassword);
+	void SendLogin( RString sPassword );
 
 private:
 	void ImportOptions( int iRow, const vector<PlayerNumber> &vpns );

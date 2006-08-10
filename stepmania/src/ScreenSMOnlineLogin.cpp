@@ -191,9 +191,9 @@ RString ScreenSMOnlineLogin::GetSelectedProfileID()
 	return vsProfiles[ Selection-1 ];
 }
 
-void ScreenSMOnlineLogin::SendLogin(RString sPassword)
+void ScreenSMOnlineLogin::SendLogin( RString sPassword )
 {
-	RString PlayerName = GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer);
+	RString PlayerName = GAMESTATE->GetPlayerDisplayName( (PlayerNumber) m_iPlayer );
 
 	RString HashedName = NSMAN->MD5Hex( sPassword );
 
@@ -201,16 +201,16 @@ void ScreenSMOnlineLogin::SendLogin(RString sPassword)
 	if ( NSMAN->GetSMOnlineSalt() != 0 )
 	{
 		authMethod = 1;
-		HashedName = NSMAN->MD5Hex( HashedName + ssprintf( "%d", NSMAN->GetSMOnlineSalt() ) );
+		HashedName = NSMAN->MD5Hex( HashedName + ssprintf("%d", NSMAN->GetSMOnlineSalt()) );
 	}
 
 	NSMAN->m_SMOnlinePacket.ClearPacket();
-	NSMAN->m_SMOnlinePacket.Write1((uint8_t)0);			//Login command
-	NSMAN->m_SMOnlinePacket.Write1((uint8_t)m_iPlayer);	//Player
-	NSMAN->m_SMOnlinePacket.Write1((uint8_t)authMethod);			//MD5 hash style
-	NSMAN->m_SMOnlinePacket.WriteNT(PlayerName);
-	NSMAN->m_SMOnlinePacket.WriteNT(HashedName);
-	NSMAN->SendSMOnline( );
+	NSMAN->m_SMOnlinePacket.Write1( (uint8_t)0 );		//Login command
+	NSMAN->m_SMOnlinePacket.Write1( (uint8_t)m_iPlayer );	//Player
+	NSMAN->m_SMOnlinePacket.Write1( (uint8_t)authMethod );	//MD5 hash style
+	NSMAN->m_SMOnlinePacket.WriteNT( PlayerName );
+	NSMAN->m_SMOnlinePacket.WriteNT( HashedName );
+	NSMAN->SendSMOnline();
 }
 
 #endif
