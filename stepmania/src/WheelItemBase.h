@@ -29,18 +29,21 @@ public:
 	WheelItemBase( RString sType = "WheelItemBase" );
 	WheelItemBase( const WheelItemBase &cpy );
 	virtual void DrawPrimitives();
+	virtual Actor *Copy() const { return new WheelItemBase(*this); }
 	
 	void Load( RString sType );
 	void DrawGrayBar( Actor& bar );
+	void SetExpanded( bool bExpanded ) { m_bExpanded = bExpanded; }
 
-	virtual void LoadFromWheelItemBaseData( WheelItemBaseData* pWID );
+	virtual void LoadFromWheelItemData( const WheelItemBaseData* pWID );
 
 	RageColor	m_colorLocked;
 
 protected:
 	void SetGrayBar( Actor *pBar ) { m_pBar = pBar; }
 
-	WheelItemBaseData* data;
+	const WheelItemBaseData* data;
+	bool m_bExpanded;	// if TYPE_SECTION, whether this section is expanded
 
 	Actor	*m_pBar;
 	Sprite	m_sprBar;

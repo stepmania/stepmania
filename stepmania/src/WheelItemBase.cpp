@@ -14,7 +14,8 @@ WheelItemBase::WheelItemBase( const WheelItemBase &cpy ):
 	m_sprBar( cpy.m_sprBar ),
 	m_text( cpy.m_text ),
 	m_Type( cpy.m_Type ),
-	m_color( cpy.m_color )
+	m_color( cpy.m_color ),
+	m_bExpanded( cpy.m_bExpanded )
 {
 	if( cpy.m_pBar == const_cast<Sprite *> (&cpy.m_sprBar) )
 		m_pBar = &m_sprBar;
@@ -28,6 +29,7 @@ WheelItemBase::WheelItemBase( const WheelItemBase &cpy ):
 
 WheelItemBase::WheelItemBase(RString sType)
 {
+	m_bExpanded = false;
 	SetName( sType );
 	m_pBar = NULL;
 	Load(sType);
@@ -53,7 +55,7 @@ void WheelItemBase::Load( RString sType )
 	this->AddChild( &m_text );
 }
 
-void WheelItemBase::LoadFromWheelItemBaseData( WheelItemBaseData* pWID )
+void WheelItemBase::LoadFromWheelItemData( const WheelItemBaseData* pWID )
 {
 	ASSERT( pWID != NULL );
 	
