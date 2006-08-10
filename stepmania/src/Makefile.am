@@ -139,7 +139,7 @@ MsdFile.cpp MsdFile.h \
 XmlFile.cpp XmlFile.h \
 XmlFileUtil.cpp XmlFileUtil.h
 
-StepMania = ExportNsisStrings.cpp ExportNsisStrings.h \
+StepMania = ExportStrings.h ExportStrings.cpp \
 StdString.h \
 StepMania.cpp StepMania.h \
 GameLoop.cpp GameLoop.h \
