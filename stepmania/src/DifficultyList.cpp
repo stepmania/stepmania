@@ -14,8 +14,11 @@
 #include "Command.h"
 #include "Foreach.h"
 #include "SongUtil.h"
+#include "XmlFile.h"
 
 #define MAX_METERS NUM_Difficulty + MAX_EDITS_PER_SONG
+
+REGISTER_ACTOR_CLASS( DifficultyList )
 
 DifficultyList::DifficultyList()
 {
@@ -26,25 +29,24 @@ DifficultyList::~DifficultyList()
 {
 }
 
-void DifficultyList::SetName( const RString &sName )
+void DifficultyList::LoadFromNode( const RString& sDir, const XNode* pNode )
 {
-	ActorFrame::SetName( sName );
+	ActorFrame::LoadFromNode( sDir, pNode );
 
 	ITEMS_SPACING_Y.Load( m_sName, "ItemsSpacingY" );
 	NUM_SHOWN_ITEMS.Load( m_sName, "NumShownItems" );
 	CAPITALIZE_DIFFICULTY_NAMES.Load( m_sName, "CapitalizeDifficultyNames" );
 	MOVE_COMMAND.Load( m_sName, "MoveCommand" );
-}
 
-void DifficultyList::Load()
-{
 	m_Lines.resize( MAX_METERS );
 	m_CurSong = NULL;
 
 	FOREACH_HumanPlayer( pn )
 	{
-		m_Cursors[pn].Load( THEME->GetPathG(m_sName,ssprintf("cursor p%i",pn+1)) );
-		m_Cursors[pn]->SetName( ssprintf("CursorP%i",pn+1) );
+		const XNode *pChild = pNode->GetChild( ssprintf("CursorP%i",pn+1) );
+		if( pChild == NULL )
+			RageException::Throw( ssprintf("ComboGraph in \"%s\" is missing the node \"%s\"", sDir.c_str(), ssprintf("CursorP%i",pn+1).c_str()) );
+		m_Cursors[pn].LoadFromNode( sDir, pChild );
 
 		/* Hack: we need to tween cursors both up to down (cursor motion) and visible to
 		 * invisible (fading).  Cursor motion needs to stoptweening, so multiple motions
@@ -52,8 +54,10 @@ void DifficultyList::Load()
 		 * resulting in the cursor remaining invisible or partially invisible.  So, do them
 		 * in separate tweening stacks.  This means the Cursor command can't change diffuse
 		 * colors; I think we do need a diffuse color stack ... */
-		m_CursorFrames[pn].SetName( ssprintf("CursorP%i",pn+1) );
-		ActorUtil::LoadCommand( m_CursorFrames[pn], m_sName,  "Change" );
+		pChild = pNode->GetChild( ssprintf("CursorP%iFrame",pn+1) );
+		if( pChild == NULL )
+			RageException::Throw( ssprintf("ComboGraph in \"%s\" is missing the node \"%s\"", sDir.c_str(), ssprintf("CursorP%iFrame",pn+1).c_str()) );
+		m_CursorFrames[pn].LoadFromNode( sDir, pChild );
 		m_CursorFrames[pn].AddChild( m_Cursors[pn] );
 		this->AddChild( &m_CursorFrames[pn] );
 	}
@@ -239,7 +243,7 @@ void DifficultyList::PositionItems()
 
 void DifficultyList::SetFromGameState()
 {
-	Song *pSong = GAMESTATE->m_pCurSong;
+	const Song *pSong = GAMESTATE->m_pCurSong;
 
 	const bool bSongChanged = (pSong != m_CurSong);
 
@@ -368,6 +372,27 @@ void DifficultyList::Hide()
 	FOREACH_HumanPlayer( pn )
 		COMMAND( m_Cursors[pn], "Hide" );
 }
+
+// lua start
+#include "LuaBinding.h"
+
+class LunaDifficultyList: public Luna<DifficultyList>
+{
+public:
+	LunaDifficultyList() { LUA->Register( Register ); }
+
+	static int setfromgamestate( T* p, lua_State *L )		{ p->SetFromGameState(); return 0; }
+
+	static void Register(lua_State *L)
+	{
+		ADD_METHOD( setfromgamestate );
+
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( DifficultyList, ActorFrame )
+// lua end
 
 /*
  * (c) 2003-2004 Glenn Maynard

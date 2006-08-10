@@ -16,14 +16,17 @@ class DifficultyList: public ActorFrame
 public:
 	DifficultyList();
 	virtual ~DifficultyList();
-	virtual void SetName( const RString &sName );
+	virtual Actor *Copy() const;
+	virtual void LoadFromNode( const RString& sDir, const XNode* pNode );
 
-	void Load();
 	void SetFromGameState();
 	void TweenOnScreen();
 	void TweenOffScreen();
 	void Hide();
 	void Show();
+
+	// Lua
+	void PushSelf( lua_State *L );
 
 private:
 	void UpdatePositions();
@@ -45,7 +48,7 @@ private:
 	};
 	vector<Line>	m_Lines;
 
-	Song			*m_CurSong;
+	const Song		*m_CurSong;
 	bool			m_bShown;
 
 	struct Row

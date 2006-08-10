@@ -15,7 +15,6 @@
 #include "DifficultyIcon.h"
 #include "DifficultyMeter.h"
 #include "DifficultyDisplay.h"
-#include "DifficultyList.h"
 #include "CourseContentsList.h"
 #include "HelpDisplay.h"
 #include "PaneDisplay.h"
@@ -82,7 +81,6 @@ protected:
 	ThemeMetric<float> SAMPLE_MUSIC_DELAY;
 	ThemeMetric<bool> SHOW_RADAR;
 	ThemeMetric<bool> SHOW_PANES;
-	ThemeMetric<bool> SHOW_DIFFICULTY_LIST;
 	ThemeMetric<bool> SHOW_COURSE_CONTENTS;
 	ThemeMetric<bool> DO_ROULETTE_ON_MENU_TIMER;
 	ThemeMetric<bool> ALIGN_MUSIC_BEATS;
@@ -120,7 +118,6 @@ protected:
 	AutoActor			m_sprMarathonBalloon;
 	AutoActor			m_sprCourseHasMods;
 	DifficultyDisplay		m_DifficultyDisplay;
-	DifficultyList			m_DifficultyList;
 	CourseContentsList		m_CourseContents;
 	HelpDisplay			m_Artist;
 	BitmapText			m_MachineRank;

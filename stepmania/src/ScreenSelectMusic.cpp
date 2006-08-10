@@ -70,7 +70,6 @@ void ScreenSelectMusic::Init()
 	SAMPLE_MUSIC_DELAY.Load( m_sName, "SampleMusicDelay" );
 	SHOW_RADAR.Load( m_sName, "ShowRadar" );
 	SHOW_PANES.Load( m_sName, "ShowPanes" );
-	SHOW_DIFFICULTY_LIST.Load( m_sName, "ShowDifficultyList" );
 	SHOW_COURSE_CONTENTS.Load( m_sName, "ShowCourseContents" );
 	DO_ROULETTE_ON_MENU_TIMER.Load( m_sName, "DoRouletteOnMenuTimer" );
 	ALIGN_MUSIC_BEATS.Load( m_sName, "AlignMusicBeat" );
@@ -120,14 +119,13 @@ void ScreenSelectMusic::Init()
 	/* Load low-res banners, if needed. */
 	BANNERCACHE->Demand();
 
-	m_MusicWheel.Load( MUSIC_WHEEL_TYPE );
-
 	m_MusicWheelUnder.Load( THEME->GetPathG(m_sName,"wheel under") );
 	m_MusicWheelUnder->SetName( "WheelUnder" );
 	SET_XY( m_MusicWheelUnder );
 	this->AddChild( m_MusicWheelUnder );
 
 	m_MusicWheel.SetName( "MusicWheel" );
+	m_MusicWheel.Load( MUSIC_WHEEL_TYPE );
 	SET_XY( m_MusicWheel );
 	this->AddChild( &m_MusicWheel );
 
@@ -196,14 +194,6 @@ void ScreenSelectMusic::Init()
 	m_MachineRank.LoadFromFont( THEME->GetPathF(m_sName,"rank") );
 	SET_XY( m_MachineRank );
 	this->AddChild( &m_MachineRank );
-
-	if( SHOW_DIFFICULTY_LIST )
-	{
-		m_DifficultyList.SetName( "DifficultyList" );
-		m_DifficultyList.Load();
-		SET_XY( m_DifficultyList );
-		this->AddChild( &m_DifficultyList );
-	}
 
 	if( SHOW_COURSE_CONTENTS )
 	{
@@ -332,9 +322,6 @@ void ScreenSelectMusic::BeginScreen()
 		ON_COMMAND( m_DifficultyMeter[p] );
 	}
 
-	if( SHOW_DIFFICULTY_LIST )
-		ON_COMMAND( m_DifficultyList );
-
 	TweenSongPartsOnScreen( true );
 	TweenCoursePartsOnScreen( true );
 
@@ -394,13 +381,6 @@ void ScreenSelectMusic::TweenSongPartsOnScreen( bool Initial )
 {
 	m_GrooveRadar.StopTweening();
 	m_GrooveRadar.TweenOnScreen();
-	if( SHOW_DIFFICULTY_LIST )
-	{
-		if( Initial )
-			m_DifficultyList.TweenOnScreen();
-//		else // do this after SM_SortOrderChanged
-//			m_DifficultyList.Show();
-	}
 
 	{
 		FOREACH_HumanPlayer( p )
@@ -416,16 +396,6 @@ void ScreenSelectMusic::TweenSongPartsOnScreen( bool Initial )
 void ScreenSelectMusic::TweenSongPartsOffScreen( bool Final )
 {
 	m_GrooveRadar.TweenOffScreen();
-	if( SHOW_DIFFICULTY_LIST )
-	{
-		if( Final )
-		{
-			OFF_COMMAND( m_DifficultyList );
-			m_DifficultyList.TweenOffScreen();
-		}
-		else
-			m_DifficultyList.Hide();
-	}
 
 	{
 		FOREACH_HumanPlayer( p )
@@ -469,8 +439,6 @@ void ScreenSelectMusic::TweenCoursePartsOffScreen( bool Final )
 void ScreenSelectMusic::SkipSongPartTweens()
 {
 	m_GrooveRadar.FinishTweening();
-	if( SHOW_DIFFICULTY_LIST )
-		m_DifficultyList.FinishTweening();
 
 	FOREACH_HumanPlayer( p )
 	{		
@@ -1301,9 +1269,6 @@ void ScreenSelectMusic::AfterStepsChange( const vector<PlayerNumber> &vpns )
 		if( SHOW_PANES )
 			m_PaneDisplay[pn].SetFromGameState( GAMESTATE->m_SortOrder );
 	}
-
-	if( SHOW_DIFFICULTY_LIST )
-		m_DifficultyList.SetFromGameState();
 }
 
 void ScreenSelectMusic::AfterTrailChange( const vector<PlayerNumber> &vpns )
@@ -1355,9 +1320,6 @@ void ScreenSelectMusic::AfterTrailChange( const vector<PlayerNumber> &vpns )
 		if( SHOW_PANES )
 			m_PaneDisplay[pn].SetFromGameState( GAMESTATE->m_SortOrder );
 	}
-
-	if( SHOW_DIFFICULTY_LIST )
-		m_DifficultyList.SetFromGameState();
 }
 
 void ScreenSelectMusic::SwitchToPreferredDifficulty()
@@ -1818,8 +1780,6 @@ void ScreenSelectMusic::SortOrderChanged()
 		// do nothing
 		break;
 	default:
-		if( SHOW_DIFFICULTY_LIST )
-			m_DifficultyList.Show();
 		break;
 	}
 }
