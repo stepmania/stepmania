@@ -375,7 +375,8 @@ XNode *LuaManager::GetLuaInformation() const
 		}
 		case LUA_TNUMBER:
 		{
-			float fNum = lua_tonumber( L, -1 );
+			// lua_Number is most likely a double unless LUA_NUMBER was defined to be float.
+			float fNum = float( lua_tonumber(L, -1) );
 			
 			if( fNum == truncf(fNum) )
 				mConstants[lua_tostring(L, -2)] = int( fNum );
