@@ -26,6 +26,7 @@ using namespace RageDisplay_OGL_Helpers;
 static GLXContext g_pContext = NULL;
 static GLXContext g_pBackgroundContext = NULL;
 static Window g_AltWindow = 0;
+static PWSWAPINTERVALEXTPROC glSwapInterval = NULL;
 
 static LocalizedString FAILED_CONNECTION_XSERVER( "LowLevelWindow_X11", "Failed to establish a connection with the X server" );
 LowLevelWindow_X11::LowLevelWindow_X11()
@@ -49,6 +50,7 @@ LowLevelWindow_X11::LowLevelWindow_X11()
 	LOG->Info( "Client GLX vendor: %s [%s]", glXGetClientString( X11Helper::Dpy, GLX_VENDOR ), glXGetClientString( X11Helper::Dpy, GLX_VERSION ) );
 	
 	m_bWasWindowed = true;
+	glSwapInterval = (PWSWAPINTERVALEXTPROC)GetProcAddress( "glXSwapIntervalSGI" );
 }
 
 LowLevelWindow_X11::~LowLevelWindow_X11()
@@ -75,7 +77,7 @@ void *LowLevelWindow_X11::GetProcAddress( RString s )
 
 RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut )
 {
-#if defined(LINUX)
+#if defined(LINUX) && 0
 	/*
 	 * nVidia cards:
 	 *
@@ -240,6 +242,8 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 	// Do this even if we just created the window -- works around Ion2 not
 	// catching WM normal hints changes in mapped windows.
 	XResizeWindow( X11Helper::Dpy, X11Helper::Win, p.width, p.height );
+	if( glSwapInterval )
+		glSwapInterval( p.vsync );
 
 	CurrentParams = p;
 	CurrentParams.rate = rate;
