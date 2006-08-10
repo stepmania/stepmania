@@ -694,7 +694,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		if( input.type != IET_FIRST_PRESS ) 
 			return;
 		PREFSMAN->m_bShowNativeLanguage.Set( !PREFSMAN->m_bShowNativeLanguage );
-		m_MusicWheel.RebuildAllMusicWheelItems();
+		m_MusicWheel.RebuildWheelItems();
 		if( SHOW_COURSE_CONTENTS )
 			m_CourseContents.SetFromGameState();
 		return;
@@ -1138,11 +1138,8 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 {
-	// this needs to check whether valid Steps are selected!
-	bool bResult = m_MusicWheel.Select();
-
 	/* If false, we don't have a selection just yet. */
-	if( !bResult )
+	if( !m_MusicWheel.Select() )
 		return;
 
 	// a song was selected
@@ -1212,6 +1209,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 	case TYPE_ROULETTE:
 	case TYPE_RANDOM:
 	case TYPE_SORT:
+		/* We havn't made a selection yet. */
 		break;
 	default:
 		ASSERT(0);
