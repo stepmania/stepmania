@@ -23,11 +23,12 @@ public:
 	MusicWheelItem(RString sType = "MusicWheelItem");
 	MusicWheelItem( const MusicWheelItem &cpy );
 	virtual ~MusicWheelItem();
+	virtual Actor *Copy() const { return new MusicWheelItem(*this); }
 
-	virtual void LoadFromWheelItemData( WheelItemData* pWID, bool bExpanded );
+	virtual void LoadFromWheelItemData( const WheelItemBaseData* pWID );
 	void RefreshGrades();
 
-	WheelItemData *data;
+	const WheelItemData *data;
 
 private:
 	Sprite			m_sprSongBar;

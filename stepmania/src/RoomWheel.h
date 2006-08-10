@@ -24,7 +24,7 @@ public:
 	RoomWheelItem(RString sType = "RoomWheelItem");
 	RoomWheelData* data;
 	void Load( RString sType );
-	virtual void LoadFromWheelItemBaseData(WheelItemBaseData* pWID);
+	virtual void LoadFromWheelItemData( const WheelItemBaseData* pWID );
 
 	BitmapText m_Desc;
 
@@ -89,12 +89,13 @@ private:
 	ThemeMetric<float>	PLAYERLISTOFFSETY;
 };
 
-class RoomWheel : public WheelBase {
+class RoomWheel : public WheelBase
+{
 public:
+	virtual ~RoomWheel();
 	virtual void Load( RString sType );
 	virtual void BuildWheelItemsData( vector<WheelItemBaseData*> &arrayWheelItemDatas );
 	virtual unsigned int GetNumItems() const;
-	virtual void RemoveItem( int index );
 	virtual bool Select();
 	virtual void Move(int n);
 
@@ -102,7 +103,12 @@ public:
 	void AddPerminateItem(RoomWheelData* itemdata);
 	int GetCurrentIndex() const { return m_iSelection; }
 	inline void SetRoomInfo( const RoomInfo& info) { m_roomInfo.SetRoomInfo(info); }
+	void AddItem( WheelItemBaseData* itemdata );
+	void RemoveItem( int index );
+
 private:
+	WheelItemBase *MakeItem();
+	vector<WheelItemBaseData*> m_WheelBaseItemsData;
 	int m_offset;
 
 	RoomInfoDisplay m_roomInfo;

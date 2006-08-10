@@ -8,31 +8,33 @@
 
 AutoScreenMessage( SM_BackFromRoomName )
 
+RoomWheel::~RoomWheel()
+{
+	FOREACH( WheelItemBaseData*, m_WheelBaseItemsData, i )
+		SAFE_DELETE( *i );
+	m_WheelBaseItemsData.clear();
+}
+
 void RoomWheel::Load( RString sType ) 
 {
+	WheelBase::Load( sType );
+
 	SetName( sType );
 	m_offset = 0;
 	LOG->Trace( "RoomWheel::Load('%s')", sType.c_str() );
 
-	LoadFromMetrics( sType );
-	LoadVariables();
-
-	FOREACH( WheelItemBase*, m_WheelBaseItems, i )
-		SAFE_DELETE( *i );
-
-	m_WheelBaseItems.clear();
-	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
-		m_WheelBaseItems.push_back( new RoomWheelItem );
-
 	m_roomInfo.Load("RoomInfoDisplay");
 	this->AddChild(&m_roomInfo);
-
-	m_WheelState = STATE_SELECTING;
 
 	AddPerminateItem( new RoomWheelData(TYPE_GENERIC, "Create Room", "Create a new game room", THEME->GetMetricC( m_sName, "CreateRoomColor")) );
 
 	BuildWheelItemsData( m_WheelBaseItemsData );
 	RebuildWheelItems();
+}
+
+WheelItemBase *RoomWheel::MakeItem()
+{
+	return new RoomWheelItem;
 }
 
 RoomWheelItem::RoomWheelItem( RString sType ):
@@ -77,6 +79,53 @@ void RoomWheel::AddPerminateItem(RoomWheelData* itemdata)
 	AddItem( itemdata );
 }
 
+void RoomWheel::AddItem( WheelItemBaseData* pItemData )
+{
+	m_WheelBaseItemsData.push_back( pItemData );
+	int iVisible = FirstVisibleIndex();
+	int iIndex = m_WheelBaseItemsData.size();
+
+	if( m_bEmpty )
+	{
+		m_bEmpty = false;
+		// Remove the - Empty - field when we add an object from an empty state.
+		RemoveItem(0);
+	}
+
+	// If the item was shown in the wheel, rebuild the wheel
+	if( 0 <= iIndex - iVisible && iIndex - iVisible < NUM_WHEEL_ITEMS )
+	{
+		RebuildWheelItems();
+	}
+}
+
+void RoomWheel::RemoveItem( int index )
+{
+	index += m_offset;
+
+	if( m_bEmpty || index >= (int)m_WheelBaseItemsData.size() )
+		return;
+
+	vector<WheelItemBaseData *>::iterator i = m_WheelBaseItemsData.begin();
+	i += index;
+
+	// If this item's data happened to be last selected, make it NULL.
+	if( m_LastSelection == *i )
+		m_LastSelection = NULL;
+
+	SAFE_DELETE( *i );
+	m_WheelBaseItemsData.erase(i);
+
+	if( m_WheelBaseItemsData.size() < 1 )
+	{
+		m_bEmpty = true;
+		m_WheelBaseItemsData.push_back( new WheelItemBaseData(TYPE_GENERIC, "- EMPTY -", RageColor(1,0,0,1)) );
+	}
+
+	RebuildWheelItems();
+}
+
+
 static LocalizedString ENTER_ROOM_NAME( "RoomWheel", "Enter room name" );
 bool RoomWheel::Select()
 {
@@ -92,10 +141,10 @@ bool RoomWheel::Select()
 	return false;
 }
 
-void RoomWheelItem::LoadFromWheelItemBaseData( WheelItemBaseData* pWID )
+void RoomWheelItem::LoadFromWheelItemData( const WheelItemBaseData* pWID )
 {
-	RoomWheelData* tmpdata = (RoomWheelData*) pWID;
-	WheelItemBase::LoadFromWheelItemBaseData( pWID );
+	const RoomWheelData* tmpdata = (RoomWheelData*) pWID;
+	WheelItemBase::LoadFromWheelItemData( pWID );
 	m_Desc.SetText( tmpdata->m_sDesc );
 	m_Desc.SetDiffuseColor( pWID->m_color );
 	m_text.SetDiffuseColor( pWID->m_color );
@@ -118,11 +167,6 @@ void RoomWheel::Move(int n)
 unsigned int RoomWheel::GetNumItems() const
 {
 	return m_WheelBaseItemsData.size() - m_offset;
-}
-
-void RoomWheel::RemoveItem( int index )
-{
-	WheelBase::RemoveItem(index + m_offset);
 }
 
 RoomInfoDisplay::~RoomInfoDisplay()

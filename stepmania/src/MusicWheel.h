@@ -25,12 +25,9 @@ class MusicWheel : public WheelBase
 	friend struct CompareSongPointerArrayBySectionName;
 
 public:
-	MusicWheel();
 	virtual ~MusicWheel();
 	virtual void Load( RString sType );
 	void BeginScreen();
-
-	virtual void DrawItem( int index );
 
 	bool ChangeSort( SortOrder new_so );		// return true if change successful
 	bool NextSort();				// return true if change successful
@@ -41,42 +38,34 @@ public:
 	void NotesOrTrailChanged( PlayerNumber pn );	// update grade graphics and top score
 
 	virtual bool Select();				// return true if this selection ends the screen
-	WheelItemType	GetSelectedType()	{ return m_CurWheelItemData[m_iSelection]->m_Type; }
+	WheelItemType	GetSelectedType()	{ return GetCurWheelItemData(m_iSelection)->m_Type; }
 	Song		*GetSelectedSong();
-	Course		*GetSelectedCourse()	{ return m_CurWheelItemData[m_iSelection]->m_pCourse; }
-	RString		GetSelectedSection()	{ return m_CurWheelItemData[m_iSelection]->m_sText; }
-
-	void RebuildAllMusicWheelItems();
-	void RebuildMusicWheelItems( int dist );
+	Course		*GetSelectedCourse()	{ return GetCurWheelItemData(m_iSelection)->m_pCourse; }
+	RString		GetSelectedSection()	{ return GetCurWheelItemData(m_iSelection)->m_sText; }
 
 	Song *GetPreferredSelectionForRandomOrPortal();
 
-	bool SelectSong( Song *p );
+	bool SelectSong( const Song *p );
 	bool SelectSection( const RString & SectionName );
-	void SetOpenGroup( RString group, SortOrder so = SORT_INVALID);
+	void SetOpenGroup( RString group );
 	SortOrder GetSortOrder() const { return m_SortOrder; }
 	virtual void ChangeMusic( int dist ); /* +1 or -1 */ //CHECK THIS
 	void FinishChangingSorts();
 
 protected:
-	virtual void LoadFromMetrics( RString sType );
-	virtual bool MoveSpecific( int n );
-	void GetSongList( vector<Song*> &arraySongs, SortOrder so, const RString &sPreferredGroup );
-	void BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItems, SortOrder so );
-	bool SelectSongOrCourse();
-	bool SelectCourse( Course *p );
-	bool SelectModeMenuItem();
-	virtual void TweenOnScreenUpdateItems( bool changing_sort );
-	virtual void TweenOffScreenUpdateItems( bool changing_sort );
+	WheelItemBase *MakeItem();
 
-	virtual void UpdateItems( float fDeltaTime );
+	virtual void LoadFromMetrics( RString sType );
+	void GetSongList( vector<Song*> &arraySongs, SortOrder so, const RString &sPreferredGroup );
+	void BuildWheelItemDatas( vector<WheelItemData *> &arrayWheelItems, SortOrder so );
+	bool SelectSongOrCourse();
+	bool SelectCourse( const Course *p );
+	bool SelectModeMenuItem();
+
 	virtual void UpdateSwitch();
 
-	virtual void UpdateScrollbar() { WheelBase::UpdateScrollbar( m_CurWheelItemData.size() ); }
-
-	vector<WheelItemData>		m_WheelItemDatas[NUM_SORT_ORDERS];
-	vector<WheelItemData *>		m_CurWheelItemData;
-	vector<MusicWheelItem *>	m_MusicWheelItems;
+	vector<WheelItemData *>		m_WheelItemDatas[NUM_SORT_ORDERS];
+	const WheelItemData *GetCurWheelItemData( int i ) { return (const WheelItemData *) m_CurWheelItemData[i]; }
 	
 	RString				m_sLastModeMenuItem;
 	SortOrder			m_SortOrder;

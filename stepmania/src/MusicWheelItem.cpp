@@ -145,8 +145,10 @@ MusicWheelItem::~MusicWheelItem()
 		delete m_pGradeDisplay[p];
 }
 
-void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID, bool bExpanded )
+void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pWIBD )
 {
+	const WheelItemData *pWID = (const WheelItemData *) pWIBD; // XXX: ugly cast
+	
 	ASSERT( pWID != NULL );
 	data = pWID;
 
@@ -243,7 +245,7 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID, bool bExpanded 
 	case TYPE_ROULETTE:
 	case TYPE_RANDOM:
 	case TYPE_PORTAL:
-		if( bExpanded )
+		if( m_bExpanded )
 			m_sprExpandedBar.SetHidden( false );
 		else
 			m_sprSectionBar.SetHidden( false );
