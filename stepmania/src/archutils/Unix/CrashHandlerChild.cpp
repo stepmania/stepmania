@@ -16,7 +16,7 @@
 #include "CrashHandlerInternal.h"
 #include "RageLog.h" /* for RageLog::GetAdditionalLog, etc. only */
 #include "ProductInfo.h"
-#include "ArchHooks.h"
+#include "arch/ArchHooks/ArchHooks.h"
 
 #if defined(MACOSX)
 #include "archutils/Darwin/Crash.h"
