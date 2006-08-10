@@ -301,16 +301,13 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out )
 		 * these, so make sure we always calculate it ourself. */
 		else if( sValueName=="FIRSTBEAT" )
 		{
-			if(!FromCache)
-				continue;
-			out.m_fFirstBeat = StringToFloat( sParams[1] );
+			if( FromCache )
+				out.m_fFirstBeat = StringToFloat( sParams[1] );
 		}
-
 		else if( sValueName=="LASTBEAT" )
 		{
-			if(!FromCache)
-				LOG->Trace("Ignored #LASTBEAT (cache only)");
-			out.m_fLastBeat = StringToFloat( sParams[1] );
+			if( FromCache )
+				out.m_fLastBeat = StringToFloat( sParams[1] );
 		}
 		else if( sValueName=="SONGFILENAME" )
 		{
