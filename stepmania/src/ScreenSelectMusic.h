@@ -17,7 +17,6 @@
 #include "DifficultyDisplay.h"
 #include "CourseContentsList.h"
 #include "HelpDisplay.h"
-#include "PaneDisplay.h"
 #include "RageUtil_BackgroundLoader.h"
 #include "ThemeMetric.h"
 #include "ActorCommands.h"
@@ -68,7 +67,6 @@ protected:
 	void AfterTrailChange( const vector<PlayerNumber> &vpns );
 	void SwitchToPreferredDifficulty();
 	void AfterMusicChange();
-	void SortOrderChanged();
 
 	void CheckBackgroundRequests( bool bForce );
 
@@ -80,7 +78,6 @@ protected:
 	ThemeMetric<float> BANNER_HEIGHT;
 	ThemeMetric<float> SAMPLE_MUSIC_DELAY;
 	ThemeMetric<bool> SHOW_RADAR;
-	ThemeMetric<bool> SHOW_PANES;
 	ThemeMetric<bool> SHOW_COURSE_CONTENTS;
 	ThemeMetric<bool> DO_ROULETTE_ON_MENU_TIMER;
 	ThemeMetric<bool> ALIGN_MUSIC_BEATS;
@@ -121,7 +118,6 @@ protected:
 	CourseContentsList		m_CourseContents;
 	HelpDisplay			m_Artist;
 	BitmapText			m_MachineRank;
-	PaneDisplay			m_PaneDisplay[NUM_PLAYERS];
 
 	bool				m_bMadeChoice;
 	bool				m_bGoToOptions;

@@ -69,7 +69,6 @@ void ScreenSelectMusic::Init()
 	BANNER_HEIGHT.Load( m_sName, "BannerHeight" );
 	SAMPLE_MUSIC_DELAY.Load( m_sName, "SampleMusicDelay" );
 	SHOW_RADAR.Load( m_sName, "ShowRadar" );
-	SHOW_PANES.Load( m_sName, "ShowPanes" );
 	SHOW_COURSE_CONTENTS.Load( m_sName, "ShowCourseContents" );
 	DO_ROULETTE_ON_MENU_TIMER.Load( m_sName, "DoRouletteOnMenuTimer" );
 	ALIGN_MUSIC_BEATS.Load( m_sName, "AlignMusicBeat" );
@@ -225,14 +224,6 @@ void ScreenSelectMusic::Init()
 		SET_XY( m_sprMeterFrame[p] );
 		this->AddChild( &m_sprMeterFrame[p] );
 
-		if( SHOW_PANES )
-		{
-			m_PaneDisplay[p].SetName( ssprintf("PaneDisplayP%d",p+1) );
-			m_PaneDisplay[p].Load( "PaneDisplay", p );
-			SET_XY( m_PaneDisplay[p] );
-			this->AddChild( &m_PaneDisplay[p] );
-		}
-
 		m_DifficultyMeter[p].SetName( ssprintf("MeterP%d",p+1) );
 		m_DifficultyMeter[p].Load( METER_TYPE );
 		SET_XY( m_DifficultyMeter[p] );
@@ -363,8 +354,6 @@ void ScreenSelectMusic::BeginScreen()
 	{		
 		ON_COMMAND( m_sprHighScoreFrame[p] );
 		ON_COMMAND( m_textHighScore[p] );
-		if( SHOW_PANES )
-			ON_COMMAND( m_PaneDisplay[p] );
 	}
 
 	SOUND->PlayOnceFromAnnouncer( "select music intro" );
@@ -495,8 +484,6 @@ void ScreenSelectMusic::TweenOffScreen()
 	{		
 		OFF_COMMAND( m_sprHighScoreFrame[p] );
 		OFF_COMMAND( m_textHighScore[p] );
-		if( SHOW_PANES )
-			OFF_COMMAND( m_PaneDisplay[p] );
 		OFF_COMMAND( m_DifficultyMeter[p] );
 	}
 }
@@ -1088,10 +1075,6 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	{
 		TweenScoreOnAndOffAfterChangeSort();
 	}
-	else if( SM == SM_SortOrderChanged ) /* happens after the wheel is off and the new song is selected */
-	{
-		SortOrderChanged();
-	}
 	else if( SM == SM_GainFocus )
 	{
 		CodeDetector::RefreshCacheItems( CODES );
@@ -1261,8 +1244,6 @@ void ScreenSelectMusic::AfterStepsChange( const vector<PlayerNumber> &vpns )
 		m_DifficultyMeter[pn].SetFromGameState( pn );
 		m_GrooveRadar.SetFromSteps( pn, pSteps );
 		m_MusicWheel.NotesOrTrailChanged( pn );
-		if( SHOW_PANES )
-			m_PaneDisplay[pn].SetFromGameState();
 	}
 }
 
@@ -1312,8 +1293,6 @@ void ScreenSelectMusic::AfterTrailChange( const vector<PlayerNumber> &vpns )
 		m_DifficultyMeter[pn].SetFromGameState( pn );
 		m_GrooveRadar.SetEmpty( pn );
 		m_MusicWheel.NotesOrTrailChanged( pn );
-		if( SHOW_PANES )
-			m_PaneDisplay[pn].SetFromGameState();
 	}
 }
 
@@ -1756,14 +1735,6 @@ void ScreenSelectMusic::AfterMusicChange()
 			m_CourseContents.TweenInAfterChangedCourse();
 		break;
 	}
-}
-
-
-void ScreenSelectMusic::SortOrderChanged()
-{
-	if( SHOW_PANES )
-		FOREACH_HumanPlayer(pn)
-			m_PaneDisplay[pn].SetFromGameState();
 }
 
 // lua start
