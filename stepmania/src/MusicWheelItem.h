@@ -1,7 +1,7 @@
 /* MusicWheelItem - An item on the music wheel. */
 
-#ifndef MUSICWHEELITEM_H
-#define MUSICWHEELITEM_H
+#ifndef MUSIC_WHEEL_ITEM_H
+#define MUSIC_WHEEL_ITEM_H
 
 #include "ActorFrame.h"
 #include "GradeDisplay.h"
@@ -30,17 +30,17 @@ public:
 	WheelItemData *data;
 
 private:
-	Sprite				m_sprSongBar;
-	Sprite				m_sprSectionBar;
-	Sprite				m_sprExpandedBar;
-	Sprite				m_sprModeBar;
-	Sprite				m_sprSortBar;
+	Sprite			m_sprSongBar;
+	Sprite			m_sprSectionBar;
+	Sprite			m_sprExpandedBar;
+	Sprite			m_sprModeBar;
+	Sprite			m_sprSortBar;
 	WheelNotifyIcon		m_WheelNotifyIcon;
-	TextBanner			m_TextBanner;
-	BitmapText			m_textSection;
-	BitmapText			m_textRoulette;
-	BitmapText			m_textCourse;
-	BitmapText			m_textSort;
+	TextBanner		m_TextBanner;
+	BitmapText		m_textSection;
+	BitmapText		m_textRoulette;
+	BitmapText		m_textCourse;
+	BitmapText		m_textSort;
 	GradeDisplay		*m_pGradeDisplay[NUM_PLAYERS];
 };
 
