@@ -1769,19 +1769,6 @@ void ScreenSelectMusic::SortOrderChanged()
 	if( SHOW_PANES )
 		FOREACH_HumanPlayer(pn)
 			m_PaneDisplay[pn].SetFromGameState();
-
-	switch( GAMESTATE->m_SortOrder )
-	{
-	case SORT_ALL_COURSES:
-	case SORT_NONSTOP_COURSES:
-	case SORT_ONI_COURSES:
-	case SORT_ENDLESS_COURSES:
-	case SORT_MODE_MENU:
-		// do nothing
-		break;
-	default:
-		break;
-	}
 }
 
 // lua start
