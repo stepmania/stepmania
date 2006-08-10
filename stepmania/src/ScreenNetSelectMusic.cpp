@@ -318,34 +318,28 @@ done:
 	ScreenNetSelectBase::HandleScreenMessage( SM );
 }
 
-void ScreenNetSelectMusic::MenuLeft( const InputEventPlus &input )
+void ScreenNetSelectMusic::MenuLeft( PlayerNumber pn )
 {
-	bool bLeftPressed = INPUTMAPPER->IsButtonDown( MenuInput(input.MenuI.player, MENU_BUTTON_LEFT) );
-	bool bRightPressed = INPUTMAPPER->IsButtonDown( MenuInput(input.MenuI.player, MENU_BUTTON_RIGHT) );
+	bool bLeftPressed = INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_LEFT) );
+	bool bRightPressed = INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_RIGHT) );
 	bool bLeftAndRightPressed = bLeftPressed && bRightPressed;
 
-	if( input.type == IET_FIRST_PRESS )
-	{
-		if ( bLeftAndRightPressed )
-			m_MusicWheel.ChangeSort( SORT_MODE_MENU );		
-		else
-			m_MusicWheel.Move( -1 );
-	}
+	if ( bLeftAndRightPressed )
+		m_MusicWheel.ChangeSort( SORT_MODE_MENU );		
+	else
+		m_MusicWheel.Move( -1 );
 }
 
-void ScreenNetSelectMusic::MenuRight( const InputEventPlus &input )
+void ScreenNetSelectMusic::MenuRight( PlayerNumber pn )
 {
-	bool bLeftPressed = INPUTMAPPER->IsButtonDown( MenuInput (input.MenuI.player, MENU_BUTTON_LEFT) );
-	bool bRightPressed = INPUTMAPPER->IsButtonDown( MenuInput(input.MenuI.player, MENU_BUTTON_RIGHT) ) ;
+	bool bLeftPressed = INPUTMAPPER->IsButtonDown( MenuInput (pn, MENU_BUTTON_LEFT) );
+	bool bRightPressed = INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_RIGHT) ) ;
 	bool bLeftAndRightPressed = bLeftPressed && bRightPressed;
 
-	if( input.type == IET_FIRST_PRESS )
-	{
-		if ( bLeftAndRightPressed )
-			m_MusicWheel.ChangeSort( SORT_MODE_MENU );		
-		else
-			m_MusicWheel.Move( +1 );
-	}
+	if ( bLeftAndRightPressed )
+		m_MusicWheel.ChangeSort( SORT_MODE_MENU );		
+	else
+		m_MusicWheel.Move( +1 );
 }
 
 void ScreenNetSelectMusic::MenuUp( const InputEventPlus &input )

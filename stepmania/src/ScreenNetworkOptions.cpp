@@ -145,8 +145,6 @@ void ScreenNetworkOptions::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenNetworkOptions::MenuStart( const InputEventPlus &input )
 {
-#if defined( WITHOUT_NETWORKING )
-#else
 	switch( GetCurrentRow() )
 	{
 	case PO_CONNECTION:
@@ -201,7 +199,6 @@ void ScreenNetworkOptions::MenuStart( const InputEventPlus &input )
 	default:
 		ScreenOptions::MenuStart( input );
 	}
-#endif
 }
 
 void ScreenNetworkOptions::ImportOptions( int iRow, const vector<PlayerNumber> &vpns ) { }

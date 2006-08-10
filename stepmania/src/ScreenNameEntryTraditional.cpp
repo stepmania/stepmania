@@ -634,11 +634,8 @@ void ScreenNameEntryTraditional::UpdateSelectionText( int pn )
 	m_textSelection[pn].SetText( WStringToRString(text) );
 }
 
-void ScreenNameEntryTraditional::MenuStart( const InputEventPlus &input )
+void ScreenNameEntryTraditional::MenuStart( PlayerNumber pn )
 {
-	if( input.type != IET_FIRST_PRESS )
-		return;		// ignore
-
 	HandleStart( input.MenuI.player );
 }
 
@@ -686,15 +683,10 @@ void ScreenNameEntryTraditional::HandleStart( PlayerNumber pn )
 	}
 }
 
-void ScreenNameEntryTraditional::MenuSelect( const InputEventPlus &input )
+void ScreenNameEntryTraditional::MenuSelect( PlayerNumber pn )
 {
-	PlayerNumber pn = input.MenuI.player;
-
 	if( !m_bStillEnteringName[pn] )
 		return;	// ignore
-	if( input.type != IET_FIRST_PRESS )
-		return;		// ignore
-
 	Backspace( pn );
 }
 
