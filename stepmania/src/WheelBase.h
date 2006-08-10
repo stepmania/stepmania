@@ -18,14 +18,13 @@
 class WheelBase : public ActorFrame
 {
 public:
-	WheelBase();
 	virtual ~WheelBase();
 	virtual void Load( RString sType );
+	void BeginScreen();
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
-	virtual void DrawItem( int i );
-	virtual void DrawItem( int i, WheelItemBase *display, const float fThisBannerPositionOffsetFromSelection);
+	void DrawItem( int i );
 
 	void TweenOnScreen(bool changing_sort);
 	void TweenOffScreen(bool changing_sort);
@@ -35,10 +34,11 @@ public:
 	virtual void Move(int n);
 	void ChangeMusicUnlessLocked( int n ); /* +1 or -1 */
 	virtual void ChangeMusic(int dist); /* +1 or -1 */
+	virtual void SetOpenGroup( RString group ) { }
 
 	/* Return true if we're moving fast automatically. */
 	int IsMoving() const;
-	virtual bool IsSettled() const;
+	bool IsSettled() const;
 
 	void GetItemPosition( float fPosOffsetsFromMiddle, float& fX_out, float& fY_out, float& fZ_out, float& fRotationX_out );
 	void SetItemPosition( Actor &item, float fPosOffsetsFromMiddle );
@@ -46,35 +46,32 @@ public:
 	virtual bool Select();	// return true if this selection ends the screen
 
 	bool WheelIsLocked() { return (m_WheelState == STATE_LOCKED ? true : false); }
-	virtual void RebuildWheelItems( int dist = INT_MAX );	// INT_MAX = refresh all
+	void RebuildWheelItems( int dist = INT_MAX );	// INT_MAX = refresh all
 
-	void AddItem( WheelItemBaseData* itemdata );
-	virtual void RemoveItem( int index );
-	virtual inline unsigned int GetNumItems() const { return m_WheelBaseItemsData.size(); }
-	inline bool IsEmpty() { return m_isEmpty; }
+	virtual unsigned int GetNumItems() const { return m_CurWheelItemData.size(); }
+	bool IsEmpty() { return m_bEmpty; }
 	WheelItemBaseData* GetItem(unsigned int index);
 	WheelItemBaseData* LastSelected();
 
 protected:
-	void LoadFromMetrics( RString sType );
-	void LoadVariables();
+	virtual WheelItemBase *MakeItem() = 0;
+	virtual void LoadFromMetrics( RString sType );
 	virtual void UpdateSwitch();
-	virtual void UpdateItems(float fDeltaTime);
-	virtual void TweenOnScreenUpdateItems(bool changing_sort);
-	virtual void TweenOffScreenUpdateItems(bool changing_sort);
+	void UpdateItems(float fDeltaTime);
+	void TweenOnScreenUpdateItems(bool changing_sort);
+	void TweenOffScreenUpdateItems(bool changing_sort);
 	virtual bool MoveSpecific(int n);
 
-	virtual void BuildWheelItemsData( vector<WheelItemBaseData *> &arrayWheelItemDatas );
 	int FirstVisibleIndex();
 
 	ScrollBar	m_ScrollBar;
 	AutoActor	m_sprHighlight;
 
-	vector<WheelItemBaseData *> m_WheelBaseItemsData;
+	vector<WheelItemBaseData *> m_CurWheelItemData;
 	vector<WheelItemBase *> m_WheelBaseItems;
 	WheelItemBaseData* m_LastSelection;
 	
-	bool		m_isEmpty;
+	bool		m_bEmpty;
 	int		m_iSelection;		// index into m_CurWheelItemBaseData
 	RString		m_sExpandedSectionName;
 
@@ -107,8 +104,7 @@ protected:
 	RageSound m_soundLocked;
 
 //	bool WheelItemIsVisible(int n);
-	virtual void UpdateScrollbar() { UpdateScrollbar(m_WheelBaseItemsData.size()); }
-	void UpdateScrollbar(unsigned int size);
+	void UpdateScrollbar();
 
 	ThemeMetric<float>	SWITCH_SECONDS;
 	ThemeMetric<float>	LOCKED_INITIAL_VELOCITY;

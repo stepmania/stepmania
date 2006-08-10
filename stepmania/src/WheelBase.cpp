@@ -18,20 +18,13 @@
 
 
 const int MAX_WHEEL_SOUND_SPEED = 15;
-
-WheelBase::WheelBase()
-{
-}
+AutoScreenMessage( SM_SongChanged )          // TODO: Replace this with a Message and MESSAGEMAN
 
 WheelBase::~WheelBase()
 {
 	FOREACH( WheelItemBase*, m_WheelBaseItems, i )
 		SAFE_DELETE( *i );
 	m_WheelBaseItems.clear();
-	FOREACH( WheelItemBaseData*, m_WheelBaseItemsData, i )
-		SAFE_DELETE( *i );
-	m_WheelBaseItems.clear();
-	m_WheelBaseItemsData.clear();
 	m_LastSelection = NULL;
 }
 
@@ -39,21 +32,30 @@ void WheelBase::Load( RString sType )
 {
 	LOG->Trace( "WheelBase::Load('%s')", sType.c_str() );
 
+	m_bEmpty = true;
+	m_LastSelection = NULL;
+	m_iSelection = 0;
+	m_fTimeLeftInState = 0;
+	m_fPositionOffsetFromSelection = 0;
+	m_iSwitchesLeftInSpinDown = 0;
+	m_Moving = 0;
+
 	LoadFromMetrics( sType );
-	LoadVariables();
 
 	FOREACH( WheelItemBase*, m_WheelBaseItems, i )
 		SAFE_DELETE( *i );
 	m_WheelBaseItems.clear();
+	WheelItemBase *pTempl = MakeItem();
 	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 	{
-		m_WheelBaseItems.push_back( new WheelItemBase );
+		m_WheelBaseItems.push_back( (WheelItemBase *) pTempl->Copy() ); // XXX: ugly cast
 	}
+	SAFE_DELETE( pTempl );
+}
 
+void WheelBase::BeginScreen()
+{
 	m_WheelState = STATE_SELECTING;
-
-	BuildWheelItemsData(m_WheelBaseItemsData);
-	RebuildWheelItems();
 }
 
 void WheelBase::LoadFromMetrics( RString sType )
@@ -84,17 +86,6 @@ void WheelBase::LoadFromMetrics( RString sType )
 	m_ScrollBar.SetX( SCROLL_BAR_X ); 
 	m_ScrollBar.SetBarHeight( SCROLL_BAR_HEIGHT ); 
 	this->AddChild( &m_ScrollBar );
-}
-
-void WheelBase::LoadVariables()
-{
-	m_isEmpty = true;
-	m_LastSelection = NULL;
-	m_iSelection = 0;
-	m_fTimeLeftInState = 0;
-	m_fPositionOffsetFromSelection = 0;
-	m_iSwitchesLeftInSpinDown = 0;
-	m_Moving = 0;
 }
 
 void WheelBase::GetItemPosition( float fPosOffsetsFromMiddle, float& fX_out, float& fY_out, float& fZ_out, float& fRotationX_out )
@@ -156,21 +147,19 @@ void WheelBase::DrawPrimitives()
 
 void WheelBase::DrawItem( int i )
 {
-	DrawItem( i, m_WheelBaseItems[i], i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection );
-}
-
-void WheelBase::DrawItem( int i, WheelItemBase *display, const float fThisBannerPositionOffsetFromSelection)
-{
+	const float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
 	if( fabsf(fThisBannerPositionOffsetFromSelection) > NUM_WHEEL_ITEMS_TO_DRAW/2 )
 		return;
 
+	WheelItemBase *display = m_WheelBaseItems[i];
 	switch( m_WheelState )
 	{
 	case STATE_SELECTING:
 	case STATE_LOCKED:
-		{
-			SetItemPosition( *display, fThisBannerPositionOffsetFromSelection );
-		}
+	case STATE_ROULETTE_SPINNING:
+	case STATE_ROULETTE_SLOWING_DOWN:
+	case STATE_RANDOM_SPINNING:
+		SetItemPosition( *display, fThisBannerPositionOffsetFromSelection );
 		break;
 	}
 
@@ -182,9 +171,9 @@ void WheelBase::DrawItem( int i, WheelItemBase *display, const float fThisBanner
 	display->Draw();
 }
 
-void WheelBase::UpdateScrollbar( unsigned int iSize )
+void WheelBase::UpdateScrollbar()
 {
-	int iTotalNumItems = iSize;
+	int iTotalNumItems = m_CurWheelItemData.size();
 	float fItemAt = m_iSelection - m_fPositionOffsetFromSelection;
 
 	if( NUM_WHEEL_ITEMS >= iTotalNumItems )
@@ -356,26 +345,26 @@ void WheelBase::UpdateSwitch()
 	}
 }
 
-bool WheelBase::Select()	// return true if this selection ends the screen
+bool WheelBase::Select()	// return true if this selection can end the screen
 {
 	LOG->Trace( "WheelBase::Select()" );
 
 	m_Moving = 0;
 
-	if( !m_isEmpty )
+	if( !m_bEmpty )
 	{
-		switch( m_WheelBaseItemsData[m_iSelection]->m_Type )
+		switch( m_CurWheelItemData[m_iSelection]->m_Type )
 		{
 		case TYPE_GENERIC:
-			m_LastSelection = m_WheelBaseItemsData[m_iSelection];
+			m_LastSelection = m_CurWheelItemData[m_iSelection];
 			return false;
 		case TYPE_SECTION:
 			{
-				RString sThisItemSectionName = m_WheelBaseItemsData[m_iSelection]->m_sText;
+				RString sThisItemSectionName = m_CurWheelItemData[m_iSelection]->m_sText;
 				if( m_sExpandedSectionName == sThisItemSectionName )	// already expanded
-					m_sExpandedSectionName = "";		// collapse it
-				else				// already collapsed
-					m_sExpandedSectionName = sThisItemSectionName;	// expand it
+					SetOpenGroup( "" );				// collapse it
+				else							// already collapsed
+					SetOpenGroup( sThisItemSectionName );		// expand it
 
 				m_soundExpand.Play();
 			}
@@ -391,8 +380,8 @@ bool WheelBase::Select()	// return true if this selection ends the screen
 // return true if this selection ends the screen
 WheelItemBaseData* WheelBase::GetItem( unsigned int iIndex )
 {
-	if( !m_isEmpty && iIndex < m_WheelBaseItemsData.size() )
-		return m_WheelBaseItemsData[iIndex];
+	if( !m_bEmpty && iIndex < m_CurWheelItemData.size() )
+		return m_CurWheelItemData[iIndex];
 
 	return NULL;
 }
@@ -453,7 +442,24 @@ void WheelBase::TweenOnScreenUpdateItems( bool bChangingSort )
 			display->HurryTweening( 0.25f );
 	}
 }
-						   
+
+void WheelBase::TweenOffScreenUpdateItems( bool bChangingSort )
+{
+	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
+	{
+		WheelItemBase *display = m_WheelBaseItems[i];
+		float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
+		SetItemPosition( *display, fThisBannerPositionOffsetFromSelection );
+
+		COMMAND( display, "StartOff");
+		const float delay = fabsf((float)i) * WHEEL_ITEM_OFF_DELAY_OFFSET;
+		display->BeginTweening( delay );	// sleep
+		COMMAND( display, "FinishOff");
+		if( bChangingSort )
+			display->HurryTweening( 0.25f );
+	}
+}
+
 void WheelBase::TweenOffScreen( bool bChangingSort )
 {
 	m_WheelState = STATE_TWEENING_OFF_SCREEN;
@@ -484,23 +490,6 @@ void WheelBase::TweenOffScreen( bool bChangingSort )
 		HurryTweening( 0.25f );
 
 	m_fTimeLeftInState = GetTweenTimeLeft() + 0.100f;
-}
-
-void WheelBase::TweenOffScreenUpdateItems( bool bChangingSort )
-{
-	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
-	{
-		WheelItemBase *display = m_WheelBaseItems[i];
-		float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
-		SetItemPosition( *display, fThisBannerPositionOffsetFromSelection );
-
-		COMMAND( display, "StartOff");
-		const float delay = fabsf((float)i) * WHEEL_ITEM_OFF_DELAY_OFFSET;
-		display->BeginTweening( delay );	// sleep
-		COMMAND( display, "FinishOff");
-		if( bChangingSort )
-			display->HurryTweening( 0.25f );
-	}
 }
 
 void WheelBase::ChangeMusicUnlessLocked( int n )
@@ -566,7 +555,7 @@ bool WheelBase::MoveSpecific( int n )
 		return false;	// don't continue
 	}
 
-	if(m_Moving != 0 && n == 0 && m_TimeBeforeMovingBegins == 0)
+	if( m_Moving != 0 && n == 0 && m_TimeBeforeMovingBegins == 0 )
 	{
 		/* We were moving, and now we're stopping.  If we're really close to
 		 * the selection, move to the next one, so we have a chance to spin down
@@ -576,36 +565,16 @@ bool WheelBase::MoveSpecific( int n )
 
 		/* Make sure the user always gets an SM_SongChanged when
 		 * Moving() is 0, so the final banner, etc. always gets set. */
-//		SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
+		SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
 	}
 
 	return true;
 }
 
-void WheelBase::AddItem( WheelItemBaseData* pItemData )
-{
-	m_WheelBaseItemsData.push_back( pItemData );
-	int iVisible = FirstVisibleIndex();
-	int iIndex = m_WheelBaseItemsData.size();
-
-	if( m_isEmpty )
-	{
-		m_isEmpty = false;
-		// Remove the - Empty - field when we add an object from an empty state.
-		RemoveItem(0);
-	}
-
-	// If the item was shown in the wheel, rebuild the wheel
-	if( 0 <= iIndex - iVisible && iIndex - iVisible < NUM_WHEEL_ITEMS )
-	{
-		RebuildWheelItems();
-	}
-}
-
 void WheelBase::ChangeMusic( int iDist )
 {
 	m_iSelection += iDist;
-	wrap( m_iSelection, m_WheelBaseItemsData.size() );
+	wrap( m_iSelection, m_CurWheelItemData.size() );
 
 	RebuildWheelItems( iDist );
 
@@ -618,17 +587,9 @@ void WheelBase::ChangeMusic( int iDist )
 		m_soundChangeMusic.Play();
 }
 
-void WheelBase::BuildWheelItemsData( vector<WheelItemBaseData*> &arrayWheelItemDatas )
-{
-	if( arrayWheelItemDatas.empty() )
-	{
-		arrayWheelItemDatas.push_back( new WheelItemBaseData(TYPE_GENERIC, "- EMPTY -", RageColor(1,0,0,1)) );
-	}
-}
-
 void WheelBase::RebuildWheelItems( int iDist )
 {
-	const vector<WheelItemBaseData *> &data = m_WheelBaseItemsData;
+	const vector<WheelItemBaseData *> &data = m_CurWheelItemData;
 	vector<WheelItemBase *> &items = m_WheelBaseItems;
 
 	// rewind to first index that will be displayed;
@@ -644,96 +605,51 @@ void WheelBase::RebuildWheelItems( int iDist )
 
 	// iIndex is now the index of the lowest WheelItem to draw
 
-	if( iDist == INT_MAX )
-	{
-		// Refresh all
-		for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
-		{
-			int iIndex = iFirstVisibleIndex + i;
-			wrap( iIndex, data.size() );
+	int iFirst = 0;
+	int iLast = NUM_WHEEL_ITEMS-1;
 
-			WheelItemBaseData *pData    = data[iIndex];
-			WheelItemBase     *pDisplay = items[i];
-
-			pDisplay->LoadFromWheelItemBaseData( pData );
-		}
-	}
-	else
+	if( iDist != INT_MAX )
 	{
 		// Shift items and refresh only those that have changed.
 		CircularShift( items, iDist );
 		if( iDist > 0 )
-		{
-			for( int i=NUM_WHEEL_ITEMS-iDist; i<NUM_WHEEL_ITEMS; i++ )
-			{
-				int iIndex = iFirstVisibleIndex + i;
-				wrap( iIndex, data.size() );
-
-				WheelItemBaseData *pData    = data[iIndex];
-				WheelItemBase     *pDisplay = items[i];
-
-				pDisplay->LoadFromWheelItemBaseData( pData );
-			}
-		}
+			iFirst = NUM_WHEEL_ITEMS-iDist;
 		else if( iDist < 0 )
-		{
-			for( int i=0; i < -iDist; i++ )
-			{
-				int iIndex = iFirstVisibleIndex + i;
-				wrap( iIndex, data.size() );
+			iLast = -iDist-1;
+	}
 
-				WheelItemBaseData *pData    = data[iIndex];
-				WheelItemBase     *pDisplay = items[i];
+	for( int i=iFirst; i <= iLast; i++ )
+	{
+		int iIndex = iFirstVisibleIndex + i;
+		wrap( iIndex, data.size() );
 
-				pDisplay->LoadFromWheelItemBaseData( pData );
-			}
-		}
+		const WheelItemBaseData *pData = data[iIndex];
+		WheelItemBase *pDisplay = items[i];
+
+		pDisplay->SetExpanded( pData->m_Type == TYPE_SECTION && pData->m_sText == m_sExpandedSectionName );
+		pDisplay->LoadFromWheelItemData( pData );
 	}
 }
 
 WheelItemBaseData* WheelBase::LastSelected( )
 {
-	if (m_isEmpty)
+	if( m_bEmpty )
 		return NULL;
 	else
 		return m_LastSelection;
-}
-
-void WheelBase::RemoveItem( int index )
-{
-	if( m_isEmpty || index >= (int)m_WheelBaseItemsData.size() )
-		return;
-
-	vector<WheelItemBaseData *>::iterator i = m_WheelBaseItemsData.begin();
-	i += index;
-
-	// If this item's data happened to be last selected, make it NULL.
-	if( m_LastSelection == *i )
-		m_LastSelection = NULL;
-
-	SAFE_DELETE( *i );
-	m_WheelBaseItemsData.erase(i);
-
-	if( m_WheelBaseItemsData.size() < 1 )
-	{
-		m_isEmpty = true;
-		BuildWheelItemsData(m_WheelBaseItemsData);
-	}
-
-	RebuildWheelItems();
 }
 
 int WheelBase::FirstVisibleIndex()
 {
 	// rewind to first index that will be displayed;
 	int iFirstVisibleIndex = m_iSelection;
-	if( m_iSelection > int(m_WheelBaseItemsData.size()-1) )
+	if( m_iSelection > int(m_CurWheelItemData.size()-1) )
 		m_iSelection = 0;
 	
 	// find the first wheel item shown
 	iFirstVisibleIndex -= NUM_WHEEL_ITEMS/2;
 
-	wrap( iFirstVisibleIndex, m_WheelBaseItemsData.size() );
+	wrap( iFirstVisibleIndex, m_CurWheelItemData.size() );
 	return iFirstVisibleIndex;
 }
 
