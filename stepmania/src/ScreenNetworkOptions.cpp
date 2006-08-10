@@ -14,22 +14,23 @@
 #include "LocalizedString.h"
 #include "OptionRowHandler.h"
 
-static LocalizedString CLIENT_CONNECT	( "ScreenNetworkOptions", "Connect" );
+static LocalizedString CLIENT_CONNECT		( "ScreenNetworkOptions", "Connect" );
 static LocalizedString CLIENT_DISCONNECT	( "ScreenNetworkOptions", "Disconnect" );
-static LocalizedString SERVER_START	( "ScreenNetworkOptions", "Start" );
-static LocalizedString SERVER_STOP	( "ScreenNetworkOptions", "Stop" );
-static LocalizedString SCORE_ON	( "ScreenNetworkOptions", "ScoreOn" );
-static LocalizedString SCORE_OFF	( "ScreenNetworkOptions", "ScoreOff" );
-static LocalizedString SERVER_STARTED	( "ScreenNetworkOptions", "Server started." );
-static LocalizedString SERVER_FAILED	( "ScreenNetworkOptions", "Server failed: %s Code:%d" );
+static LocalizedString SERVER_START		( "ScreenNetworkOptions", "Start" );
+static LocalizedString SERVER_STOP		( "ScreenNetworkOptions", "Stop" );
+static LocalizedString SCORE_ON			( "ScreenNetworkOptions", "ScoreOn" );
+static LocalizedString SCORE_OFF		( "ScreenNetworkOptions", "ScoreOff" );
+static LocalizedString SERVER_STARTED		( "ScreenNetworkOptions", "Server started." );
+static LocalizedString SERVER_FAILED		( "ScreenNetworkOptions", "Server failed: %s Code:%d" );
 
-static LocalizedString DISCONNECTED				( "ScreenNetworkOptions", "Disconnected from server." );
-static LocalizedString SERVER_STOPPED			( "ScreenNetworkOptions", "Server stopped." );
-static LocalizedString ENTER_NETWORK_ADDRESS	("ScreenNetworkOptions","Enter a network address.");
-static LocalizedString CONNECT_TO_YOURSELF		("ScreenNetworkOptions","Use 127.0.0.1 to connect to yourself.");
-static LocalizedString ENTER_A_SERVER_NAME		("ScreenNetworkOptions","Enter a server name.");
+static LocalizedString DISCONNECTED		( "ScreenNetworkOptions", "Disconnected from server." );
+static LocalizedString SERVER_STOPPED		( "ScreenNetworkOptions", "Server stopped." );
+static LocalizedString ENTER_NETWORK_ADDRESS	( "ScreenNetworkOptions", "Enter a network address." );
+static LocalizedString CONNECT_TO_YOURSELF	( "ScreenNetworkOptions", "Use 127.0.0.1 to connect to yourself." );
+static LocalizedString ENTER_A_SERVER_NAME	( "ScreenNetworkOptions", "Enter a server name." );
 
-enum {
+enum
+{
 	PO_CONNECTION,
 	PO_SERVER,
 	PO_SCOREBOARD,
@@ -37,7 +38,8 @@ enum {
 	NUM_NETWORK_OPTIONS_LINES
 };
 
-enum {
+enum
+{
 	NO_STOP_SERVER=0,
 	NO_START_SERVER
 };
