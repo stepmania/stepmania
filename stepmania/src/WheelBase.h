@@ -23,13 +23,6 @@ public:
 	void BeginScreen();
 
 	virtual void Update( float fDeltaTime );
-	virtual void DrawPrimitives();
-	void DrawItem( int i );
-
-	void TweenOnScreen(bool changing_sort);
-	void TweenOffScreen(bool changing_sort);
-	void TweenOnScreen() { TweenOnScreen(false); }
-	void TweenOffScreen() { TweenOffScreen(false); }
 
 	virtual void Move(int n);
 	void ChangeMusicUnlessLocked( int n ); /* +1 or -1 */
@@ -43,7 +36,7 @@ public:
 	void GetItemPosition( float fPosOffsetsFromMiddle, float& fX_out, float& fY_out, float& fZ_out, float& fRotationX_out );
 	void SetItemPosition( Actor &item, float fPosOffsetsFromMiddle );
 
-	virtual bool Select();	// return true if this selection ends the screen
+	virtual bool Select();	// return true if this selection can end the screen
 
 	bool WheelIsLocked() { return (m_WheelState == STATE_LOCKED ? true : false); }
 	void RebuildWheelItems( int dist = INT_MAX );	// INT_MAX = refresh all
@@ -54,12 +47,11 @@ public:
 	WheelItemBaseData* LastSelected();
 
 protected:
+	void TweenOnScreenForSort();
+	void TweenOffScreenForSort();
+
 	virtual WheelItemBase *MakeItem() = 0;
-	virtual void LoadFromMetrics( RString sType );
 	virtual void UpdateSwitch();
-	void UpdateItems(float fDeltaTime);
-	void TweenOnScreenUpdateItems(bool changing_sort);
-	void TweenOffScreenUpdateItems(bool changing_sort);
 	virtual bool MoveSpecific(int n);
 
 	int FirstVisibleIndex();
@@ -108,7 +100,6 @@ protected:
 
 	ThemeMetric<float>	SWITCH_SECONDS;
 	ThemeMetric<float>	LOCKED_INITIAL_VELOCITY;
-	ThemeMetric<float>	SCROLL_BAR_X;
 	ThemeMetric<int>	SCROLL_BAR_HEIGHT;
 	ThemeMetric<float>	ITEM_CURVE_X;
 	ThemeMetric<bool>	USE_LINEAR_WHEEL;
@@ -117,8 +108,6 @@ protected:
 	ThemeMetric<float>	CIRCLE_PERCENT;
 	ThemeMetric<bool>	USE_3D;
 	ThemeMetric<float>	NUM_WHEEL_ITEMS_TO_DRAW;
-	ThemeMetric<float>	WHEEL_ITEM_ON_DELAY_OFFSET;
-	ThemeMetric<float>	WHEEL_ITEM_OFF_DELAY_OFFSET;
 	ThemeMetric<RageColor>	WHEEL_ITEM_LOCKED_COLOR;
 };
 

@@ -75,6 +75,22 @@ WheelItemBase *MusicWheel::MakeItem()
 
 void MusicWheel::Load( RString sType ) 
 {
+	ROULETTE_SWITCH_SECONDS		.Load(sType,"RouletteSwitchSeconds");
+	ROULETTE_SLOW_DOWN_SWITCHES	.Load(sType,"RouletteSlowDownSwitches");
+	NUM_SECTION_COLORS		.Load(sType,"NumSectionColors");
+	SONG_REAL_EXTRA_COLOR		.Load(sType,"SongRealExtraColor");
+	SORT_MENU_COLOR			.Load(sType,"SortMenuColor");
+	SHOW_ROULETTE			.Load(sType,"ShowRoulette");
+	SHOW_RANDOM			.Load(sType,"ShowRandom");
+	SHOW_PORTAL			.Load(sType,"ShowPortal");
+	RANDOM_PICKS_LOCKED_SONGS	.Load(sType,"RandomPicksLockedSongs");
+	MOST_PLAYED_SONGS_TO_SHOW	.Load(sType,"MostPlayedSongsToShow");
+	MODE_MENU_CHOICE_NAMES		.Load(sType,"ModeMenuChoiceNames");
+	vector<RString> vsModeChoiceNames;
+	split( MODE_MENU_CHOICE_NAMES, ",", vsModeChoiceNames );
+	CHOICE				.Load(sType,CHOICE_NAME,vsModeChoiceNames);
+	SECTION_COLORS			.Load(sType,SECTION_COLORS_NAME,NUM_SECTION_COLORS);
+
 	WheelBase::Load( sType );
 
 	SONGMAN->UpdateRankingCourses();
@@ -151,27 +167,6 @@ void MusicWheel::BeginScreen()
 
 	// rebuild the WheelItems that appear on screen
 	RebuildWheelItems();
-}
-
-void MusicWheel::LoadFromMetrics( RString sType )
-{
-	WheelBase::LoadFromMetrics(sType);
-
-	ROULETTE_SWITCH_SECONDS		.Load(sType,"RouletteSwitchSeconds");
-	ROULETTE_SLOW_DOWN_SWITCHES	.Load(sType,"RouletteSlowDownSwitches");
-	NUM_SECTION_COLORS		.Load(sType,"NumSectionColors");
-	SONG_REAL_EXTRA_COLOR		.Load(sType,"SongRealExtraColor");
-	SORT_MENU_COLOR			.Load(sType,"SortMenuColor");
-	SHOW_ROULETTE			.Load(sType,"ShowRoulette");
-	SHOW_RANDOM			.Load(sType,"ShowRandom");
-	SHOW_PORTAL			.Load(sType,"ShowPortal");
-	RANDOM_PICKS_LOCKED_SONGS	.Load(sType,"RandomPicksLockedSongs");
-	MOST_PLAYED_SONGS_TO_SHOW	.Load(sType,"MostPlayedSongsToShow");
-	MODE_MENU_CHOICE_NAMES		.Load(sType,"ModeMenuChoiceNames");
-	vector<RString> vsModeChoiceNames;
-	split( MODE_MENU_CHOICE_NAMES, ",", vsModeChoiceNames );
-	CHOICE				.Load(sType,CHOICE_NAME,vsModeChoiceNames);
-	SECTION_COLORS			.Load(sType,SECTION_COLORS_NAME,NUM_SECTION_COLORS);
 }
 
 MusicWheel::~MusicWheel()
@@ -752,7 +747,7 @@ void MusicWheel::UpdateSwitch()
 
 			SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
 			RebuildWheelItems();
-			TweenOnScreen(true);
+			TweenOnScreenForSort();
 			m_WheelState = STATE_FLYING_ON_AFTER_NEXT_SORT;
 
 			SCREENMAN->ZeroNextUpdate();
@@ -862,7 +857,7 @@ bool MusicWheel::ChangeSort( SortOrder new_so )	// return true if change success
 
 	m_soundChangeSort.Play();
 
-	TweenOffScreen(true);
+	TweenOffScreenForSort();
 
 	/* Save the new preference. */
 	if( IsSongSort(new_so) )
@@ -904,8 +899,6 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 		return false;
 	}
 
-	m_Moving = 0;
-
 	if( m_WheelState == STATE_ROULETTE_SPINNING )
 	{
 		m_WheelState = STATE_ROULETTE_SLOWING_DOWN;
@@ -924,6 +917,9 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 		SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
 		return false;
 	}
+
+	if( !WheelBase::Select() )
+		return false;
 
 	switch( m_CurWheelItemData[m_iSelection]->m_Type )
 	{
@@ -946,7 +942,7 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 		m_sLastModeMenuItem = GetCurWheelItemData(m_iSelection)->m_Action.m_sName;
 		break;
 	default:
-		return WheelBase::Select();
+		break;
 	}
 	return true;
 }
@@ -993,6 +989,7 @@ void MusicWheel::StartRandom()
 
 void MusicWheel::SetOpenGroup( RString group )
 {
+	LOG->Trace( "SetOpenGroup %s", group.c_str() );
 	m_sExpandedSectionName = group;
 
 	const WheelItemData *old = NULL;
