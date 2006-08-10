@@ -54,7 +54,7 @@ public:
 	virtual Actor *Copy() const;
 
 	void Load( const RString &sMetricsGroup, PlayerNumber pn );
-	void SetFromGameState( SortOrder so );
+	void SetFromGameState();
 
 	void LoadFromNode( const RString &sDir, const XNode *pNode );
 

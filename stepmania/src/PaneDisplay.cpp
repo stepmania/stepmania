@@ -258,9 +258,9 @@ done:
 	LUA->Release(L);
 }
 
-void PaneDisplay::SetFromGameState( SortOrder so )
+void PaneDisplay::SetFromGameState()
 {
-	m_SortOrder = so;
+	m_SortOrder = GAMESTATE->m_SortOrder;
 	SetFocus( GetPane() );
 
 	/* Don't update text that doesn't apply to the current mode.  It's still tweening off. */
@@ -320,7 +320,7 @@ class LunaPaneDisplay: public Luna<PaneDisplay>
 public:
 	LunaPaneDisplay() { LUA->Register( Register ); }
 
-	static int SetFromGameState( T* p, lua_State *L )	{ p->SetFromGameState(SORT_PREFERRED); return 0; }
+	static int SetFromGameState( T* p, lua_State *L )	{ p->SetFromGameState(); return 0; }
 
 	static void Register(lua_State *L) 
 	{

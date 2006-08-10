@@ -1267,7 +1267,7 @@ void ScreenSelectMusic::AfterStepsChange( const vector<PlayerNumber> &vpns )
 		m_GrooveRadar.SetFromSteps( pn, pSteps );
 		m_MusicWheel.NotesOrTrailChanged( pn );
 		if( SHOW_PANES )
-			m_PaneDisplay[pn].SetFromGameState( GAMESTATE->m_SortOrder );
+			m_PaneDisplay[pn].SetFromGameState();
 	}
 }
 
@@ -1318,7 +1318,7 @@ void ScreenSelectMusic::AfterTrailChange( const vector<PlayerNumber> &vpns )
 		m_GrooveRadar.SetEmpty( pn );
 		m_MusicWheel.NotesOrTrailChanged( pn );
 		if( SHOW_PANES )
-			m_PaneDisplay[pn].SetFromGameState( GAMESTATE->m_SortOrder );
+			m_PaneDisplay[pn].SetFromGameState();
 	}
 }
 
@@ -1768,7 +1768,7 @@ void ScreenSelectMusic::SortOrderChanged()
 {
 	if( SHOW_PANES )
 		FOREACH_HumanPlayer(pn)
-			m_PaneDisplay[pn].SetFromGameState( GAMESTATE->m_SortOrder );
+			m_PaneDisplay[pn].SetFromGameState();
 
 	switch( GAMESTATE->m_SortOrder )
 	{
