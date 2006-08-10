@@ -76,11 +76,13 @@ void PaneDisplay::Load( const RString &sMetricsGroup, PlayerNumber pn )
 
 		m_textContents[p].LoadFromFont( THEME->GetPathF(sMetricsGroup,"text") );
 		m_textContents[p].SetName( ssprintf("%sText", g_Contents[p].name) );
+		ActorUtil::LoadAllCommands( m_textContents[p], sMetricsGroup );
 		ActorUtil::SetXYAndOnCommand( m_textContents[p], sMetricsGroup, this );
 		m_ContentsFrame.AddChild( &m_textContents[p] );
 
 		m_Labels[p].Load( THEME->GetPathG(sMetricsGroup,RString(g_Contents[p].name)+" label") );
 		m_Labels[p]->SetName( ssprintf("%sLabel", g_Contents[p].name) );
+		ActorUtil::LoadAllCommands( *m_Labels[p], sMetricsGroup );
 		ActorUtil::SetXYAndOnCommand( m_Labels[p], sMetricsGroup, this );
 		m_ContentsFrame.AddChild( m_Labels[p] );
 
@@ -92,8 +94,8 @@ void PaneDisplay::Load( const RString &sMetricsGroup, PlayerNumber pn )
 
 	for( unsigned i = 0; i < NUM_PANE_CONTENTS; ++i )
 	{
-		COMMAND( m_textContents[i], "LoseFocus"  );
-		COMMAND( m_Labels[i], "LoseFocus"  );
+		m_textContents[i].PlayCommand( "LoseFocus", this );
+		m_Labels[i]->PlayCommand( "LoseFocus", this );
 		m_textContents[i].FinishTweening();
 		m_Labels[i]->FinishTweening();
 	}
@@ -103,8 +105,6 @@ void PaneDisplay::Load( const RString &sMetricsGroup, PlayerNumber pn )
 
 void PaneDisplay::LoadFromNode( const RString &sDir, const XNode *pNode )
 {
-	ActorFrame::LoadFromNode( sDir, pNode );
-
 	bool b;
 
 	RString sMetricsGroup;
@@ -117,6 +117,8 @@ void PaneDisplay::LoadFromNode( const RString &sDir, const XNode *pNode )
 	PlayerNumber pn = (PlayerNumber) LuaHelpers::RunExpressionI(sPlayerNumber);
 
 	Load( sMetricsGroup, pn );
+
+	ActorFrame::LoadFromNode( sDir, pNode );
 }
 
 void PaneDisplay::SetContent( PaneContents c )
