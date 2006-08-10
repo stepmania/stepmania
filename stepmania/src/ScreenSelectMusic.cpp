@@ -364,7 +364,7 @@ void ScreenSelectMusic::BeginScreen()
 	ON_COMMAND( m_textNumSongs );
 	ON_COMMAND( m_textTotalTime );
 	ON_COMMAND( m_MusicWheelUnder );
-	m_MusicWheel.TweenOnScreen();
+	ON_COMMAND( m_MusicWheel );
 	ON_COMMAND( m_sprLongBalloon );
 	ON_COMMAND( m_sprMarathonBalloon );
 	ON_COMMAND( m_sprCourseHasMods );
@@ -514,7 +514,7 @@ void ScreenSelectMusic::TweenOffScreen()
 	OFF_COMMAND( m_GrooveRadar );
 	OFF_COMMAND( m_textNumSongs );
 	OFF_COMMAND( m_textTotalTime );
-	m_MusicWheel.TweenOffScreen();
+	OFF_COMMAND( m_MusicWheel );
 	OFF_COMMAND( m_MusicWheelUnder );
 	OFF_COMMAND( m_MusicWheel );
 	OFF_COMMAND( m_sprLongBalloon );
