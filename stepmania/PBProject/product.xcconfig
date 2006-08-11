@@ -1,1 +1,2 @@
 PRODUCT_NAME = StepMania
+SYMROOT = $(SRCROOT)/..
