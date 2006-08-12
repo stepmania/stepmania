@@ -123,7 +123,7 @@ static const Sint8 Handled_SDL_Events[] = {
 	SDL_KEYDOWN, SDL_KEYUP, SDL_JOYBUTTONDOWN, SDL_JOYBUTTONUP,
 	SDL_JOYAXISMOTION, SDL_JOYHATMOTION, -1
 };
-static int SDL_EventMask;
+static int g_iSDL_EventMask;
 
 InputHandler_SDL::InputHandler_SDL()
 {
@@ -173,7 +173,7 @@ InputHandler_SDL::InputHandler_SDL()
 	for(i = 0; Handled_SDL_Events[i] != -1; ++i)
 	{
 		mySDL_EventState(Handled_SDL_Events[i], SDL_ENABLE);
-		SDL_EventMask |= SDL_EVENTMASK(Handled_SDL_Events[i]);
+		g_iSDL_EventMask |= SDL_EVENTMASK(Handled_SDL_Events[i]);
 	}
 }
 
@@ -192,7 +192,7 @@ InputHandler_SDL::~InputHandler_SDL()
 void InputHandler_SDL::Update(float fDeltaTime)
 {
 	SDL_Event event;
-	while(SDL_GetEvent(event, SDL_EventMask))
+	while(SDL_GetEvent(event, g_iSDL_EventMask))
 	{
 		switch(event.type)
 		{
