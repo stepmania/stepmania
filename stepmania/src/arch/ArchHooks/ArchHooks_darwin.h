@@ -7,7 +7,7 @@ class RageMutex;
 class ArchHooks_darwin : public ArchHooks
 {
 public:
-	ArchHooks_darwin();
+	void Init();
 	~ArchHooks_darwin();
 	RString GetArchName() const;
 	RString GetMachineId() const;

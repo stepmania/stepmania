@@ -161,7 +161,7 @@ int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 }
 #endif
 
-ArchHooks_Unix::ArchHooks_Unix()
+void ArchHooks_Unix::Init()
 {
 	/* First, handle non-fatal termination signals. */
 	SignalHandler::OnClose( DoCleanShutdown );
