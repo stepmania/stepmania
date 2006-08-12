@@ -37,6 +37,9 @@ static float g_fImageScaleDestination = 1;
 // self-registering debug lines
 // We don't use SubscriptionManager, because we want to keep the line order.
 //
+static LocalizedString ON			( "ScreenDebugOverlay", "on" );
+static LocalizedString OFF			( "ScreenDebugOverlay", "off" );
+
 class IDebugLine;
 static vector<IDebugLine*> *g_pvpSubscribers = NULL;
 class IDebugLine
@@ -52,7 +55,7 @@ public:
 	enum Type { all_screens, gameplay_only };
 	virtual Type GetType() const { return all_screens; }
 	virtual RString GetDescription() = 0;
-	virtual RString GetValue() = 0;
+	virtual RString GetValue() { return IsEnabled() ? ON.GetValue():OFF.GetValue(); }
 	virtual bool IsEnabled() = 0;
 	virtual void Do( RString &sMessageOut )
 	{
@@ -434,8 +437,6 @@ static LocalizedString VOLUME_DOWN		( "ScreenDebugOverlay", "Volume Down" );
 static LocalizedString UPTIME			( "ScreenDebugOverlay", "Uptime" );
 static LocalizedString FORCE_CRASH		( "ScreenDebugOverlay", "Force Crash" );
 static LocalizedString SLOW			( "ScreenDebugOverlay", "Slow" );
-static LocalizedString ON			( "ScreenDebugOverlay", "on" );
-static LocalizedString OFF			( "ScreenDebugOverlay", "off" );
 static LocalizedString CPU			( "ScreenDebugOverlay", "CPU" );
 static LocalizedString SONG			( "ScreenDebugOverlay", "Song" );
 static LocalizedString MACHINE			( "ScreenDebugOverlay", "Machine" );
@@ -477,7 +478,6 @@ class DebugLineAutoplay : public IDebugLine
 class DebugLineAssistTick : public IDebugLine
 {
 	virtual RString GetDescription() { return ASSIST_TICK.GetValue(); }
-	virtual RString GetValue() { return IsEnabled() ? ON.GetValue():OFF.GetValue(); }
 	virtual Type GetType() const { return gameplay_only; }
 	virtual bool IsEnabled() { return GAMESTATE->m_SongOptions.GetSong().m_bAssistTick; }
 	virtual void Do( RString &sMessageOut )
@@ -532,7 +532,6 @@ class DebugLineCoinMode : public IDebugLine
 class DebugLineSlow : public IDebugLine
 {
 	virtual RString GetDescription() { return SLOW.GetValue(); }
-	virtual RString GetValue() { return IsEnabled() ? ON.GetValue():OFF.GetValue(); }
 	virtual bool IsEnabled() { return g_bIsSlow; }
 	virtual void Do( RString &sMessageOut )
 	{
@@ -545,7 +544,6 @@ class DebugLineSlow : public IDebugLine
 class DebugLineHalt : public IDebugLine
 {
 	virtual RString GetDescription() { return HALT.GetValue(); }
-	virtual RString GetValue() { return IsEnabled() ? ON.GetValue():OFF.GetValue(); }
 	virtual bool IsEnabled() { return g_bIsHalt; }
 	virtual void Do( RString &sMessageOut )
 	{
@@ -559,7 +557,6 @@ class DebugLineHalt : public IDebugLine
 class DebugLineLightsDebug : public IDebugLine
 {
 	virtual RString GetDescription() { return LIGHTS_DEBUG.GetValue(); }
-	virtual RString GetValue() { return IsEnabled() ? ON.GetValue():OFF.GetValue(); }
 	virtual bool IsEnabled() { return PREFSMAN->m_bDebugLights.Get(); }
 	virtual void Do( RString &sMessageOut )
 	{
@@ -571,7 +568,6 @@ class DebugLineLightsDebug : public IDebugLine
 class DebugLineMonkeyInput : public IDebugLine
 {
 	virtual RString GetDescription() { return MONKEY_INPUT.GetValue(); }
-	virtual RString GetValue() { return IsEnabled() ? ON.GetValue():OFF.GetValue(); }
 	virtual bool IsEnabled() { return PREFSMAN->m_bMonkeyInput.Get(); }
 	virtual void Do( RString &sMessageOut )
 	{
@@ -583,7 +579,6 @@ class DebugLineMonkeyInput : public IDebugLine
 class DebugLineStats : public IDebugLine
 {
 	virtual RString GetDescription() { return RENDERING_STATS.GetValue(); }
-	virtual RString GetValue() { return IsEnabled() ? ON.GetValue():OFF.GetValue(); }
 	virtual bool IsEnabled() { return PREFSMAN->m_bShowStats.Get(); }
 	virtual void Do( RString &sMessageOut )
 	{
@@ -595,7 +590,6 @@ class DebugLineStats : public IDebugLine
 class DebugLineVsync : public IDebugLine
 {
 	virtual RString GetDescription() { return VSYNC.GetValue(); }
-	virtual RString GetValue() { return IsEnabled() ? ON.GetValue():OFF.GetValue(); }
 	virtual bool IsEnabled() { return PREFSMAN->m_bVsync.Get(); }
 	virtual void Do( RString &sMessageOut )
 	{
@@ -608,7 +602,6 @@ class DebugLineVsync : public IDebugLine
 class DebugLineAllowMultitexture : public IDebugLine
 {
 	virtual RString GetDescription() { return MULTITEXTURE.GetValue(); }
-	virtual RString GetValue() { return IsEnabled() ? ON.GetValue():OFF.GetValue(); }
 	virtual bool IsEnabled() { return PREFSMAN->m_bAllowMultitexture.Get(); }
 	virtual void Do( RString &sMessageOut )
 	{
@@ -620,7 +613,6 @@ class DebugLineAllowMultitexture : public IDebugLine
 class DebugLineScreenTestMode : public IDebugLine
 {
 	virtual RString GetDescription() { return SCREEN_TEST_MODE.GetValue(); }
-	virtual RString GetValue() { return IsEnabled() ? ON.GetValue():OFF.GetValue(); }
 	virtual bool IsEnabled() { return PREFSMAN->m_bScreenTestMode.Get(); }
 	virtual void Do( RString &sMessageOut )
 	{
