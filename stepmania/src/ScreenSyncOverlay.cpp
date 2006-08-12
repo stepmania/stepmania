@@ -163,6 +163,11 @@ bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
 	switch( a )
 	{
 	case RevertSyncChanges:
+		switch( input.type )
+		{
+		case IET_FIRST_PRESS:	break;
+		default:	return false;
+		}
 		SCREENMAN->SystemMessage( SYNC_CHANGES_REVERTED );
 		AdjustSync::RevertSyncChanges();
 		break;
