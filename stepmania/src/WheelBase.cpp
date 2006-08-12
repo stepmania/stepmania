@@ -59,7 +59,12 @@ void WheelBase::Load( RString sType )
 	WheelItemBase *pTempl = MakeItem();
 	ActorUtil::LoadAllCommands( *pTempl, m_sName );
 	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
-		m_WheelBaseItems.push_back( (WheelItemBase *) pTempl->Copy() ); // XXX: ugly cast
+	{
+		Actor *pActor = pTempl->Copy();
+		WheelItemBase *pItem = dynamic_cast<WheelItemBase *>( pActor );
+		DEBUG_ASSERT( pItem );
+		m_WheelBaseItems.push_back( pItem );
+	}
 	SAFE_DELETE( pTempl );
 
 	// draw outside->inside
