@@ -5,7 +5,7 @@ class ArchHooks
 {
 public:
 	virtual ~ArchHooks() { }
-
+	virtual void Init() { }
 	/*
 	 * Return the general name of the architecture, eg. "Windows", "OS X", "Unix".
 	 */

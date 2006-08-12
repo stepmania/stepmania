@@ -917,7 +917,7 @@ int main(int argc, char* argv[])
 
 	/* Set up arch hooks first.  This may set up crash handling. */
 	HOOKS = MakeArchHooks();
-
+	HOOKS->Init();
 #if !defined(DEBUG)
 	/* Tricky: for other exceptions, we want a backtrace.  To do this in Windows,
 	 * we need to catch the exception and force a crash.  The call stack is still
