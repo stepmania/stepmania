@@ -240,8 +240,7 @@ static void child_process()
 		break;
 	}
 	
-	// XXX: HOOKS isn't set when this is called.
-	//fprintf( CrashDump, "Architecture:   %s\n", HOOKS->GetArchName().c_str() );
+	fprintf( CrashDump, "Architecture:   %s\n", HOOKS->GetArchName().c_str() );
 	fprintf( CrashDump, "Crash reason:   %s\n", reason.c_str() );
 	fprintf( CrashDump, "Crashed thread: %s\n\n", CrashedThread.c_str() );
 	
