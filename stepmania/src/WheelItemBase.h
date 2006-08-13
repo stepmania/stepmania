@@ -1,7 +1,7 @@
 /* WheelItemBase - An item on the wheel. */
 
-#ifndef WHEELITEMBASE_H
-#define WHEELITEMBASE_H
+#ifndef WHEEL_ITEM_BASE_H
+#define WHEEL_ITEM_BASE_H
 
 #include "ActorFrame.h"
 #include "BitmapText.h"
@@ -37,7 +37,7 @@ public:
 
 	virtual void LoadFromWheelItemData( const WheelItemBaseData* pWID );
 
-	RageColor	m_colorLocked;
+	RageColor			m_colorLocked;
 
 protected:
 	void SetGrayBar( Actor *pBar ) { m_pBar = pBar; }
@@ -51,9 +51,9 @@ protected:
 	WheelItemType m_Type;
 	RageColor m_color;
 
-	ThemeMetric<float>				TEXT_X;
-	ThemeMetric<float>				TEXT_Y;
-	ThemeMetric<float>				TEXT_WIDTH;
+	ThemeMetric<float>		TEXT_X;
+	ThemeMetric<float>		TEXT_Y;
+	ThemeMetric<float>		TEXT_WIDTH;
 	ThemeMetric<apActorCommands>	TEXT_ON_COMMAND;
 };
 
@@ -62,7 +62,7 @@ struct WheelItemBaseData
 	WheelItemBaseData() {}
 	WheelItemBaseData( WheelItemType wit, RString sText, RageColor color );
 
-	WheelItemType	m_Type;
+	WheelItemType		m_Type;
 	RString			m_sText;
 	RageColor		m_color;	// either text color or section background color
 	WheelNotifyIcon::Flags  m_Flags;
@@ -71,7 +71,7 @@ struct WheelItemBaseData
 #endif
 
 /*
- * (c) 2001-2004 Chris Danford, Chris Gomez, Glenn Maynard, Josh Allen
+ * (c) 2001-2006 Chris Danford, Chris Gomez, Glenn Maynard, Josh Allen
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
