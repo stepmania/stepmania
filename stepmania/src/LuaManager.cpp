@@ -154,7 +154,7 @@ static int LuaPanic( lua_State *L )
 		const char *name;
 		vector<RString> vArgs;
 		
-		for( int i = 1; i <= ar.nups && (name = lua_getupvalue(L, -1, i)); ++i )
+		for( int i = 1; i <= ar.nups && (name = lua_getupvalue(L, -1, i)) != NULL; ++i )
 		{
 			// XXX: do we need to do local variables for lua functions instead?
 			vArgs.push_back( ssprintf("%s = %s", name, lua_tostring(L, -1)) );
