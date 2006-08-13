@@ -2,6 +2,7 @@
 
 // Thanks to Leonard Janke for the suggestion for AutoSeededRandomPool.
 
+#include "global.h"
 #include "pch.h"
 #include "osrng.h"
 

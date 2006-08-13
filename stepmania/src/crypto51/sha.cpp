@@ -3,6 +3,7 @@
 // Steve Reid implemented SHA-1. Wei Dai implemented SHA-2.
 // Both are in the public domain.
 
+#include "global.h"
 #include "pch.h"
 #include "sha.h"
 #include "misc.h"

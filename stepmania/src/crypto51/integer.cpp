@@ -1,6 +1,7 @@
 // integer.cpp - written and placed in the public domain by Wei Dai
 // contains public domain code contributed by Alister Lee and Leonard Janke
 
+#include "global.h"
 #include "pch.h"
 #include "integer.h"
 #include "modarith.h"
