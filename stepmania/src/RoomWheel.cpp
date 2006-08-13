@@ -10,9 +10,9 @@ AutoScreenMessage( SM_BackFromRoomName )
 
 RoomWheel::~RoomWheel()
 {
-	FOREACH( WheelItemBaseData*, m_WheelBaseItemsData, i )
+	FOREACH( WheelItemBaseData*, m_CurWheelItemData, i )
 		SAFE_DELETE( *i );
-	m_WheelBaseItemsData.clear();
+	m_CurWheelItemData.clear();
 }
 
 void RoomWheel::Load( RString sType ) 
@@ -28,7 +28,7 @@ void RoomWheel::Load( RString sType )
 
 	AddPerminateItem( new RoomWheelData(TYPE_GENERIC, "Create Room", "Create a new game room", THEME->GetMetricC( m_sName, "CreateRoomColor")) );
 
-	BuildWheelItemsData( m_WheelBaseItemsData );
+	BuildWheelItemsData( m_CurWheelItemData );
 	RebuildWheelItems();
 }
 
@@ -81,9 +81,9 @@ void RoomWheel::AddPerminateItem(RoomWheelData* itemdata)
 
 void RoomWheel::AddItem( WheelItemBaseData* pItemData )
 {
-	m_WheelBaseItemsData.push_back( pItemData );
+	m_CurWheelItemData.push_back( pItemData );
 	int iVisible = FirstVisibleIndex();
-	int iIndex = m_WheelBaseItemsData.size();
+	int iIndex = m_CurWheelItemData.size();
 
 	if( m_bEmpty )
 	{
@@ -103,10 +103,10 @@ void RoomWheel::RemoveItem( int index )
 {
 	index += m_offset;
 
-	if( m_bEmpty || index >= (int)m_WheelBaseItemsData.size() )
+	if( m_bEmpty || index >= (int)m_CurWheelItemData.size() )
 		return;
 
-	vector<WheelItemBaseData *>::iterator i = m_WheelBaseItemsData.begin();
+	vector<WheelItemBaseData *>::iterator i = m_CurWheelItemData.begin();
 	i += index;
 
 	// If this item's data happened to be last selected, make it NULL.
@@ -114,12 +114,12 @@ void RoomWheel::RemoveItem( int index )
 		m_LastSelection = NULL;
 
 	SAFE_DELETE( *i );
-	m_WheelBaseItemsData.erase(i);
+	m_CurWheelItemData.erase(i);
 
-	if( m_WheelBaseItemsData.size() < 1 )
+	if( m_CurWheelItemData.size() < 1 )
 	{
 		m_bEmpty = true;
-		m_WheelBaseItemsData.push_back( new WheelItemBaseData(TYPE_GENERIC, "- EMPTY -", RageColor(1,0,0,1)) );
+		m_CurWheelItemData.push_back( new WheelItemBaseData(TYPE_GENERIC, "- EMPTY -", RageColor(1,0,0,1)) );
 	}
 
 	RebuildWheelItems();
@@ -166,7 +166,7 @@ void RoomWheel::Move(int n)
 
 unsigned int RoomWheel::GetNumItems() const
 {
-	return m_WheelBaseItemsData.size() - m_offset;
+	return m_CurWheelItemData.size() - m_offset;
 }
 
 RoomInfoDisplay::~RoomInfoDisplay()
