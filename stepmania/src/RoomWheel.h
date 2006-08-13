@@ -107,8 +107,7 @@ public:
 	void RemoveItem( int index );
 
 private:
-	WheelItemBase *MakeItem();
-	vector<WheelItemBaseData*> m_WheelBaseItemsData;
+	virtual WheelItemBase *MakeItem();
 	int m_offset;
 
 	RoomInfoDisplay m_roomInfo;
