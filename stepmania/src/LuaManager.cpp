@@ -141,11 +141,34 @@ static int LuaPanic( lua_State *L )
 {
 	RString sErr;
 	LuaHelpers::PopStack( sErr, L );
+	
+	lua_Debug ar;
+	int level = 0;
+	
+	while( lua_getstack(L, level++, &ar) )
+	{
+		if( !lua_getinfo(L, "nSluf", &ar) )
+			break;
+		// The function is now on the top of the stack.
+		const char *file = ar.source[0] == '@' ? ar.source + 1 : ar.short_src;
+		const char *name;
+		vector<RString> vArgs;
+		
+		for( int i = 1; i <= ar.nups && (name = lua_getupvalue(L, -1, i)); ++i )
+		{
+			// XXX: do we need to do local variables for lua functions instead?
+			vArgs.push_back( ssprintf("%s = %s", name, lua_tostring(L, -1)) );
+			lua_pop( L, 1 ); // pop value
+		}
+		lua_pop( L, 1 ); // pop function
+		
+		name = ar.name ? ar.name : "[UNKNOWN]";
+		sErr += ssprintf( "\n%s %s %s( %s ) %s:%d", ar.namewhat, ar.what, name,
+				  join(",", vArgs).c_str(), file, ar.currentline );
+	}		
 
 	RageException::Throw( "%s", sErr.c_str() );
 }
-
-
 
 // Actor registration
 static vector<RegisterWithLuaFn>	*g_vRegisterActorTypes = NULL;
