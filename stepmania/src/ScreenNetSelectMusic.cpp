@@ -73,8 +73,8 @@ void ScreenNetSelectMusic::Init()
 		this->AddChild( &m_DifficultyMeters[p] );
 	}
 
-	m_MusicWheel.Load( "MusicWheel" );
 	m_MusicWheel.SetName( "MusicWheel" );
+	m_MusicWheel.Load( "MusicWheel" );
 	SET_XY( m_MusicWheel );
 	m_MusicWheel.BeginScreen();
 	ON_COMMAND( m_MusicWheel );

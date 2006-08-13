@@ -17,9 +17,10 @@ RoomWheel::~RoomWheel()
 
 void RoomWheel::Load( RString sType ) 
 {
+	SetName( sType );
+
 	WheelBase::Load( sType );
 
-	SetName( sType );
 	m_offset = 0;
 	LOG->Trace( "RoomWheel::Load('%s')", sType.c_str() );
 
