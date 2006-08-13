@@ -1,5 +1,5 @@
-#if !defined(WITHOUT_NETWORKING)
 #include "global.h"
+#if !defined(WITHOUT_NETWORKING)
 #include "ScreenSMOnlineLogin.h"
 #include "RageLog.h"
 #include "ProfileManager.h"
