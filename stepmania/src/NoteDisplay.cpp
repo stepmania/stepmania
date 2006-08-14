@@ -85,7 +85,7 @@ void NoteMetricCache_t::Load( const RString &sButton )
 
 struct NoteSkinAndPath
 {
-	NoteSkinAndPath( const RString sNoteSkin_, const RString sPath_ ) { sNoteSkin = sNoteSkin_; sPath = sPath_; }
+	NoteSkinAndPath( const RString sNoteSkin_, const RString sPath_ ) : sNoteSkin(sNoteSkin_), sPath(sPath_) { }
 	RString sNoteSkin;
 	RString sPath;
 	bool operator<( const NoteSkinAndPath &other ) const
@@ -326,122 +326,25 @@ void NoteDisplay::SetActiveFrame( float fNoteBeat, Actor &actorToSet, float fAni
 	actorToSet.SetSecondsIntoAnimation( fPercentIntoAnimation*fLengthSeconds );
 }
 
-Actor * NoteDisplay::GetTapNoteActor( float fNoteBeat )
+Actor *NoteDisplay::GetTapActor( NoteColorActor &nca, NotePart part, float fNoteBeat )
 {
-	Actor *pActorOut = m_TapNote.Get();
-
-	SetActiveFrame( 
-		fNoteBeat, 
-		*pActorOut,
-		cache->m_fAnimationLengthInBeats[NotePart_Tap],
-		cache->m_bAnimationIsVivid[NotePart_Tap] );
-
-	return pActorOut;
-}
-
-Actor * NoteDisplay::GetTapAdditionActor( float fNoteBeat )
-{
-	Actor *pActorOut = m_TapAddition.Get();
-
-	SetActiveFrame( 
-		fNoteBeat, 
-		*pActorOut,
-		cache->m_fAnimationLengthInBeats[NotePart_Addition],
-		cache->m_bAnimationIsVivid[NotePart_Addition] );
-
-	return pActorOut;
-}
-
-Actor * NoteDisplay::GetTapMineActor( float fNoteBeat )
-{
-	Actor *pActorOut = m_TapMine.Get();
-
-	SetActiveFrame( 
-		fNoteBeat, 
-		*pActorOut,
-		cache->m_fAnimationLengthInBeats[NotePart_Mine], 
-		cache->m_bAnimationIsVivid[NotePart_Mine] );
-
-	return pActorOut;
-}
-
-Actor * NoteDisplay::GetTapLiftActor( float fNoteBeat )
-{
-	Actor *pActorOut = m_TapLift.Get();
+	Actor *pActorOut = nca.Get();
 	
-	SetActiveFrame(
-		fNoteBeat,
-		*pActorOut,
-		cache->m_fAnimationLengthInBeats[NotePart_Lift],
-		cache->m_bAnimationIsVivid[NotePart_Mine] );
+	SetActiveFrame( fNoteBeat, *pActorOut, cache->m_fAnimationLengthInBeats[part], cache->m_bAnimationIsVivid[part] );
+	return pActorOut;
+}
+
+Actor *NoteDisplay::GetHoldActor( NoteColorActor nca[NUM_HOLD_TYPES][NUM_ACTIVE_TYPES], NotePart part, float fNoteBeat, bool bIsRoll, bool bIsBeingHeld )
+{
+	return GetTapActor( nca[bIsRoll ? roll:hold][bIsBeingHeld ? active:inactive], part, fNoteBeat );
+}
+
+Sprite *NoteDisplay::GetHoldSprite( NoteColorSprite ncs[NUM_HOLD_TYPES][NUM_ACTIVE_TYPES], NotePart part, float fNoteBeat, bool bIsRoll, bool bIsBeingHeld )
+{
+	Sprite *pSpriteOut = ncs[bIsRoll ? roll:hold][bIsBeingHeld ? active:inactive].Get();
 	
-	return pActorOut;
-}
-
-Sprite * NoteDisplay::GetHoldTopCapSprite( float fNoteBeat, bool bIsRoll, bool bIsBeingHeld )
-{
-	Sprite *pSpriteOut = m_HoldTopCap[bIsRoll ? roll:hold][bIsBeingHeld ? active:inactive].Get();
-
-	SetActiveFrame( 
-		fNoteBeat, 
-		*pSpriteOut, 
-		cache->m_fAnimationLengthInBeats[NotePart_HoldTopCap],
-		cache->m_bAnimationIsVivid[NotePart_HoldTopCap] );
-
+	SetActiveFrame( fNoteBeat, *pSpriteOut, cache->m_fAnimationLengthInBeats[part], cache->m_bAnimationIsVivid[part] );
 	return pSpriteOut;
-}
-
-Sprite * NoteDisplay::GetHoldBottomCapSprite( float fNoteBeat, bool bIsRoll, bool bIsBeingHeld )
-{
-	Sprite *pSpriteOut = m_HoldBottomCap[bIsRoll ? roll:hold][bIsBeingHeld ? active:inactive].Get();
-
-	SetActiveFrame( 
-		fNoteBeat, 
-		*pSpriteOut, 
-		cache->m_fAnimationLengthInBeats[NotePart_HoldBottomCap],
-		cache->m_bAnimationIsVivid[NotePart_HoldBottomCap] );
-
-	return pSpriteOut;
-}
-
-
-Actor* NoteDisplay::GetHoldHeadActor( float fNoteBeat, bool bIsRoll, bool bIsBeingHeld )
-{
-	Actor *pActorOut = m_HoldHead[bIsRoll ? roll:hold][bIsBeingHeld ? active:inactive].Get();
-
-	SetActiveFrame( 
-		fNoteBeat, 
-		*pActorOut, 
-		cache->m_fAnimationLengthInBeats[NotePart_HoldHead],
-		cache->m_bAnimationIsVivid[NotePart_HoldHead] );
-
-	return pActorOut;
-}
-
-Sprite *NoteDisplay::GetHoldBodySprite( float fNoteBeat, bool bIsRoll, bool bIsBeingHeld )
-{
-	Sprite *pSpriteOut = m_HoldBody[bIsRoll ? roll:hold][bIsBeingHeld ? active:inactive].Get();
-
-	SetActiveFrame( 
-		fNoteBeat, 
-		*pSpriteOut, 
-		cache->m_fAnimationLengthInBeats[NotePart_HoldBody],
-		cache->m_bAnimationIsVivid[NotePart_HoldBody] );
-
-	return pSpriteOut;
-}
-
-Actor* NoteDisplay::GetHoldTailActor( float fNoteBeat, bool bIsRoll, bool bIsBeingHeld )
-{
-	Actor *pActorOut = m_HoldTail[bIsRoll ? roll:hold][bIsBeingHeld ? active:inactive].Get();
-
-	SetActiveFrame( 
-		fNoteBeat, 
-		*pActorOut, 
-		cache->m_fAnimationLengthInBeats[NotePart_HoldTail], 
-		cache->m_bAnimationIsVivid[NotePart_HoldTail] );
-
-	return pActorOut;
 }
 
 static float ArrowGetAlphaOrGlow( bool bGlow, const PlayerState* pPlayerState, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels )
@@ -486,7 +389,7 @@ void NoteDisplay::DrawHoldTopCap( const TapNote& tn, int iCol, int iRow, bool bI
 	//
 	StripBuffer queue;
 
-	Sprite* pSprTopCap = GetHoldTopCapSprite( NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
+	Sprite *pSprTopCap = GetHoldSprite( m_HoldTopCap, NotePart_HoldTopCap, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
 
 	pSprTopCap->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 
@@ -575,7 +478,7 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, int iRow, bool bIsB
 	//
 	StripBuffer queue;
 
-	Sprite* pSprBody = GetHoldBodySprite( NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
+	Sprite *pSprBody = GetHoldSprite( m_HoldBody, NotePart_HoldBody, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
 
 	pSprBody->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 
@@ -673,7 +576,7 @@ void NoteDisplay::DrawHoldBottomCap( const TapNote& tn, int iCol, int iRow, bool
 	//
 	StripBuffer queue;
 
-	Sprite* pBottomCap = GetHoldBottomCapSprite( NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
+	Sprite* pBottomCap = GetHoldSprite( m_HoldBottomCap, NotePart_HoldBottomCap, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
 
 	pBottomCap->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 
@@ -755,7 +658,7 @@ void NoteDisplay::DrawHoldTail( const TapNote& tn, int iCol, int iRow, bool bIsB
 	//
 	// Draw the tail
 	//
-	Actor* pSprTail = GetHoldTailActor( NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
+	Actor* pSprTail = GetHoldActor( m_HoldTail, NotePart_HoldTail, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
 
 	pSprTail->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 
@@ -822,7 +725,7 @@ void NoteDisplay::DrawHoldHead( const TapNote& tn, int iCol, int iRow, bool bIsB
 	//
 	// Draw the head
 	//
-	Actor* pActor = GetHoldHeadActor( NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
+	Actor *pActor = GetHoldActor( m_HoldHead, NotePart_HoldHead, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
 
 	pActor->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 
@@ -1023,29 +926,29 @@ void NoteDisplay::DrawTap( int iCol, float fBeat, bool bOnSameRowAsHoldStart, bo
 	
 	if( bIsLift )
 	{
-		pActor = GetTapLiftActor( fBeat );
+		pActor = GetTapActor( m_TapLift, NotePart_Lift, fBeat );
 		bUseLighting = cache->m_bTapLiftUseLighting;
 		part = NotePart_Lift;
 	}
 	else if( bIsMine )
 	{
-		pActor = GetTapMineActor( fBeat );
+		pActor = GetTapActor( m_TapMine, NotePart_Mine, fBeat );
 		bUseLighting = cache->m_bTapMineUseLighting;
 		part = NotePart_Mine;
 	}
 	else if( bIsAddition )
 	{
-		pActor = GetTapAdditionActor( fBeat );
+		pActor = GetTapActor( m_TapAddition, NotePart_Addition, fBeat );
 		bUseLighting = cache->m_bTapAdditionUseLighting;
 	}
 	else if( bOnSameRowAsHoldStart  &&  cache->m_bDrawHoldHeadForTapsOnSameRow )
 	{
-		pActor = GetHoldHeadActor( fBeat, false, false );
+		pActor = GetHoldActor( m_HoldHead, NotePart_HoldHead, fBeat, false, false );
 		bUseLighting = cache->m_bHoldHeadUseLighting;
 	}
 	else	
 	{
-		pActor = GetTapNoteActor( fBeat );
+		pActor = GetTapActor( m_TapNote, NotePart_Tap, fBeat );
 		bUseLighting = cache->m_bTapNoteUseLighting;
 	}
 
@@ -1053,7 +956,7 @@ void NoteDisplay::DrawTap( int iCol, float fBeat, bool bOnSameRowAsHoldStart, bo
 }
 
 /*
- * (c) 2001-2004 Brian Bugh, Ben Nordstrom, Chris Danford
+ * (c) 2001-2006 Brian Bugh, Ben Nordstrom, Chris Danford, Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

@@ -30,9 +30,9 @@ struct NoteColorActor
 	NoteColorActor();
 	~NoteColorActor();
 	void Load( const RString &sButton, const RString &sElement );
-	Actor* Get() { return m_p; }
+	Actor *Get() { return m_p; }
 private:
-	Actor* m_p;
+	Actor *m_p;
 };
 
 struct NoteColorSprite
@@ -80,17 +80,11 @@ public:
 	
 	bool DrawHoldHeadForTapsOnSameRow() const;
 
-protected:
+private:
 	void SetActiveFrame( float fNoteBeat, Actor &actorToSet, float fAnimationLengthInBeats, bool bVivid );
-	Actor *GetTapNoteActor( float fNoteBeat );
-	Actor *GetTapAdditionActor( float fNoteBeat );
-	Actor *GetTapMineActor( float fNoteBeat );
-	Actor *GetTapLiftActor( float fNoteBeat );
-	Actor *GetHoldHeadActor( float fNoteBeat, bool bIsRoll, bool bIsBeingHeld );
-	Actor *GetHoldTailActor( float fNoteBeat, bool bIsRoll, bool bIsBeingHeld );
-	Sprite *GetHoldTopCapSprite( float fNoteBeat, bool bIsRoll, bool bIsBeingHeld );
-	Sprite *GetHoldBodySprite( float fNoteBeat, bool bIsRoll, bool bIsBeingHeld );
-	Sprite *GetHoldBottomCapSprite( float fNoteBeat, bool bIsRoll, bool bIsBeingHeld );
+	Actor *GetTapActor( NoteColorActor &nca, NotePart part, float fNoteBeat );
+	Actor *GetHoldActor( NoteColorActor nca[NUM_HOLD_TYPES][NUM_ACTIVE_TYPES], NotePart part, float fNoteBeat, bool bIsRoll, bool bIsBeingHeld );
+	Sprite *GetHoldSprite( NoteColorSprite ncs[NUM_HOLD_TYPES][NUM_ACTIVE_TYPES], NotePart part, float fNoteBeat, bool bIsRoll, bool bIsBeingHeld );
 
 	void DrawHoldBottomCap( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, float fYHead, float fYTail, int	fYStep, float fPercentFadeToFail, float fColorScale, bool bGlow, float fYStartOffset, float fYEndOffset );
 	void DrawHoldTopCap( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, float fPercentFadeToFail, float fColorScale, bool bGlow, float fYStartOffset, float fYEndOffset );
@@ -98,9 +92,8 @@ protected:
 	void DrawHoldTail( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, float fYTail, float fPercentFadeToFail, float fColorScale, bool bGlow, float fYStartOffset, float fYEndOffset );
 	void DrawHoldHead( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, float fYHead, float fPercentFadeToFail, float fColorScale, bool bGlow, float fYStartOffset, float fYEndOffset );
 
-	const PlayerState* m_pPlayerState;	// to look up PlayerOptions
-
-	struct NoteMetricCache_t *cache;
+	const PlayerState	*m_pPlayerState;	// to look up PlayerOptions
+	NoteMetricCache_t	*cache;
 
 	NoteColorActor		m_TapNote;
 	NoteColorActor		m_TapAddition;
@@ -117,7 +110,7 @@ protected:
 #endif
 
 /*
- * (c) 2001-2004 Brian Bugh, Ben Nordstrom, Chris Danford
+ * (c) 2001-2006 Brian Bugh, Ben Nordstrom, Chris Danford, Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
