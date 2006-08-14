@@ -8,20 +8,17 @@ class XNode;
 
 struct TapNoteResult
 {
-	TapNoteResult()
-	{
-		tns = TNS_None;
-		fTapNoteOffset = 0;
-	}
-	TapNoteScore tns;
+	TapNoteResult() : tns(TNS_None), fTapNoteOffset(0.f), bHidden(false) { }
+	
+	TapNoteScore	tns;
 
 	/* Offset, in seconds, for a tap grade.  Negative numbers mean the note
 	 * was hit early; positive numbers mean it was hit late.  These values are
 	 * only meaningful for graded taps (tns >= TNS_W5). */
-	float fTapNoteOffset;
+	float		fTapNoteOffset;
 
 	/* If the whole row has been judged, all taps on the row will be set to hidden. */
-	bool bHidden;
+	bool		bHidden;
 
 	// XML
 	XNode* CreateNode() const;
@@ -30,30 +27,22 @@ struct TapNoteResult
 
 struct HoldNoteResult
 {
-	HoldNoteScore hns;
+	HoldNoteResult() : hns(HNS_None), fLife(1.f), iLastHeldRow(0), bHeld(false), bActive(false) { }
+	float GetLastHeldBeat() const;
+	
+	HoldNoteScore	hns;
 
 	/* 1.0 means this HoldNote has full life.
 	 * 0.0 means this HoldNote is dead
 	 * When this value hits 0.0 for the first time, m_HoldScore becomes HSS_NG.
 	 * If the life is > 0.0 when the HoldNote ends, then m_HoldScore becomes HSS_OK. */
-	float fLife;
+	float		fLife;
 
 	/* Last index where fLife was greater than 0.  If the tap was missed, this will
 	 * be the first index of the hold. */
-	int iLastHeldRow;
-
-	HoldNoteResult()
-	{
-		hns = HNS_None;
-		fLife = 1.0f;
-		iLastHeldRow = 0;
-		bHeld = bActive = false;
-	}
-
-	float GetLastHeldBeat() const;
-
-	bool bHeld;
-	bool bActive;
+	int		iLastHeldRow;
+	bool		bHeld;
+	bool		bActive;
 
 	// XML
 	XNode* CreateNode() const;
@@ -72,13 +61,13 @@ struct TapNote
 		mine,		// don't step!
 		attack,
 		autoKeysound,
- 	} type;
+ 	};
 	enum SubType
 	{
 		hold_head_hold,
 		hold_head_roll,
 		SubType_invalid
-	} subType;	// only used if type == hold_head
+	};
 	enum Source
 	{
 		original,	// part of the original NoteData
@@ -88,37 +77,43 @@ struct TapNote
 				// step.  Also used for when we implement auto-scratch,
 				// and for if/when we do a "reduce" modifier that cancels out
 				// all but N keys on a line [useful for beat->dance autogen, too].
+		
+				/* XXX: this makes no sense. If we've replaced the hold with a tap then we
+				 * cannot have a removed hold here. Is it supposed to be that if you have
+				 * a positive duration then you just draw the tap? If so, a new source type
+				 * should be created rather than overloading removed. */
+		
 				// Removed hold body (...why?) - acts as follows:
 				// 1 - if we're using a sustained-sound gametype [Keyboardmania], and
 				//     we've already hit the start of the sound (?? we put Holds Off on?)
 				//     then this is triggered automatically to keep the sound going
 				// 2 - if we're NOT [anything else], we ignore this.
 				// Equivalent to all 4s aside from the first one.
-	} source;
-
-	// Only valid if type == attack.
-	RString sAttackModifiers;
-	float fAttackDurationSeconds;
-
-	int iKeysoundIndex;	// index into Song's vector of keysound files.  
-				// Only valid if nonnegative.
-
-	/* hold_head only: */
-	int iDuration;
-
-	TapNoteResult result;
-
-	/* hold_head only: */
-	HoldNoteResult HoldResult;
+	};
 	
-	PlayerNumber pn;
+	Type		type;
+	SubType		subType; // Only used if type is hold_head.
+	Source		source;
+	TapNoteResult	result;
+	PlayerNumber	pn;
+	
+	// attack only
+	RString		sAttackModifiers;
+	float		fAttackDurationSeconds;
 
+	// Index into Song's vector of keysound files if nonnegative.
+	int		iKeysoundIndex;
+
+	// hold_head only
+	int		iDuration;
+	HoldNoteResult	HoldResult;
+	
 	// XML
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
 
-	TapNote() : type(empty), subType(SubType_invalid), source(original), fAttackDurationSeconds(0.f),
-		iKeysoundIndex(-1), iDuration(0), pn(PLAYER_INVALID) { }
+	TapNote() : type(empty), subType(SubType_invalid), source(original), pn(PLAYER_INVALID),
+		fAttackDurationSeconds(0.f), iKeysoundIndex(-1), iDuration(0)  { }
 	TapNote( 
 		Type type_,
 		SubType subType_,
@@ -138,7 +133,7 @@ struct TapNote
 	}
 	bool operator==( const TapNote &other ) const
 	{
-#define COMPARE(x)	if(x!=other.x) return false;
+#define COMPARE(x)	if(x!=other.x) return false
 		COMPARE(type);
 		COMPARE(subType);
 		COMPARE(source);
