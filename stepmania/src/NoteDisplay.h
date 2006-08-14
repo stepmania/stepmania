@@ -40,9 +40,9 @@ struct NoteColorSprite
 	NoteColorSprite();
 	~NoteColorSprite();
 	void Load( const RString &sButton, const RString &sElement );
-	Sprite* Get() { return m_p; }
+	Sprite *Get() { return m_p; }
 private:
-	Sprite*	m_p;
+	Sprite *m_p;
 };
 
 enum HoldType 
