@@ -447,7 +447,6 @@ void ScreenSelectMusic::TweenOffScreen()
 	OFF_COMMAND( m_textNumSongs );
 	OFF_COMMAND( m_textTotalTime );
 	OFF_COMMAND( m_MusicWheel );
-	OFF_COMMAND( m_MusicWheel );
 	OFF_COMMAND( m_sprLongBalloon );
 	OFF_COMMAND( m_sprMarathonBalloon );
 	OFF_COMMAND( m_sprCourseHasMods );
