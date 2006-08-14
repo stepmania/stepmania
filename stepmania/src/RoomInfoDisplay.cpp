@@ -19,7 +19,7 @@ void RoomInfoDisplay::DeployInfoBox()
 {
 	if (m_state == CLOSED)
 	{
-		SET_XY_AND_ON_COMMAND( this );
+		ON_COMMAND( this );
 		m_state = OPEN;
 	}
 }
@@ -34,72 +34,71 @@ void RoomInfoDisplay::RetractInfoBox()
 
 void RoomInfoDisplay::Load( RString sType )
 {
-	DEPLOY_DELAY.Load(sType, "DeployDelay");
-	RETRACT_DELAY.Load(sType, "RetractDelay");
-	PLAYERLISTX.Load(sType, "PlayerListElementX");
-	PLAYERLISTY.Load(sType, "PlayerListElementY");
-	PLAYERLISTOFFSETX.Load(sType, "PlayerListElementOffsetX");
-	PLAYERLISTOFFSETY.Load(sType, "PlayerListElementOffsetY");
-
-	m_state = LOCKED;
+	DEPLOY_DELAY.Load( sType, "DeployDelay" );
+	RETRACT_DELAY.Load( sType, "RetractDelay" );
+	PLAYERLISTX.Load( sType, "PlayerListElementX" );
+	PLAYERLISTY.Load( sType, "PlayerListElementY" );
+	PLAYERLISTOFFSETX.Load( sType, "PlayerListElementOffsetX" );
+	PLAYERLISTOFFSETY.Load( sType, "PlayerListElementOffsetY" );
 
 	m_bg.Load( THEME->GetPathG(m_sName,"Background") );
-	m_bg->SetName("Background");
-	this->AddChild(m_bg);
+	m_bg->SetName( "Background" );
+	this->AddChild( m_bg );
 
 	m_Title.LoadFromFont( THEME->GetPathF(sType,"text") );
-	m_Title.SetName("RoomTitle");
+	m_Title.SetName( "RoomTitle" );
 	m_Title.SetShadowLength( 0 );
 	m_Title.SetHorizAlign( align_left );
-	SET_XY_AND_ON_COMMAND(m_Title);
-	this->AddChild(&m_Title);
+	ON_COMMAND( m_Title );
+	this->AddChild( &m_Title );
 
 	m_Desc.LoadFromFont( THEME->GetPathF(sType,"text") );
-	m_Desc.SetName("RoomDesc");
+	m_Desc.SetName( "RoomDesc" );
 	m_Desc.SetShadowLength( 0 );
 	m_Desc.SetHorizAlign( align_left );
-	SET_XY_AND_ON_COMMAND(m_Desc);
-	this->AddChild(&m_Desc);
+	ON_COMMAND( m_Desc );
+	this->AddChild( &m_Desc );
 
 	m_lastRound.LoadFromFont( THEME->GetPathF(sType,"text") );
-	m_lastRound.SetName("LastRound");
-	m_lastRound.SetText("Last Round Info:");
+	m_lastRound.SetName( "LastRound" );
+	m_lastRound.SetText( "Last Round Info:" );
 	m_lastRound.SetShadowLength( 0 );
 	m_lastRound.SetHorizAlign( align_left );
-	SET_XY_AND_ON_COMMAND(m_lastRound);
-	this->AddChild(&m_lastRound);
+	ON_COMMAND( m_lastRound );
+	this->AddChild( &m_lastRound );
 
 	m_songTitle.LoadFromFont( THEME->GetPathF(sType,"text") );
-	m_songTitle.SetName("SongTitle");
+	m_songTitle.SetName( "SongTitle" );
 	m_songTitle.SetShadowLength( 0 );
 	m_songTitle.SetHorizAlign( align_left );
-	SET_XY_AND_ON_COMMAND(m_songTitle);
-	this->AddChild(&m_songTitle);
+	ON_COMMAND( m_songTitle );
+	this->AddChild( &m_songTitle );
 
 	m_songSub.LoadFromFont( THEME->GetPathF(sType,"text") );
-	m_songSub.SetName("SongSubTitle");
+	m_songSub.SetName( "SongSubTitle" );
 	m_songSub.SetShadowLength( 0 );
 	m_songSub.SetHorizAlign( align_left );
-	SET_XY_AND_ON_COMMAND(m_songSub);
-	this->AddChild(&m_songSub);
+	ON_COMMAND( m_songSub );
+	this->AddChild( &m_songSub );
 
 	m_songArtist.LoadFromFont( THEME->GetPathF(sType,"text") );
-	m_songArtist.SetName("SongArtist");
+	m_songArtist.SetName( "SongArtist" );
 	m_songArtist.SetShadowLength( 0 );
 	m_songArtist.SetHorizAlign( align_left );
-	SET_XY_AND_ON_COMMAND(m_songArtist);
-	this->AddChild(&m_songArtist);
+	ON_COMMAND( m_songArtist );
+	this->AddChild( &m_songArtist );
 
 	m_players.LoadFromFont( THEME->GetPathF(sType,"text") );
-	m_players.SetName("Players");
+	m_players.SetName( "Players" );
 	m_players.SetShadowLength( 0 );
 	m_players.SetHorizAlign( align_left );
-	SET_XY_AND_ON_COMMAND(m_players);
-	this->AddChild(&m_players);
+	ON_COMMAND( m_players );
+	this->AddChild( &m_players );
 
-	SET_XY_AND_ON_COMMAND( this );
-	OFF_COMMAND(this);
-	StopTweening();
+	OFF_COMMAND( this );
+	FinishTweening();
+
+	m_state = LOCKED;
 }
 
 void RoomInfoDisplay::SetRoom( const RoomWheelData* roomData )
