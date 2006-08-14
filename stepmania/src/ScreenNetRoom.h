@@ -58,6 +58,7 @@ private:
 	RString m_newRoomName, m_newRoomDesc, m_newRoomPass;
 
 	RoomWheel m_RoomWheel;
+	RoomInfoDisplay m_roomInfo;
 };
 #endif
 

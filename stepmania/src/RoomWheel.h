@@ -7,6 +7,9 @@
 #include "WheelItemBase.h"
 #include "ThemeMetric.h"
 
+AutoScreenMessage( SM_RoomInfoRetract )
+AutoScreenMessage( SM_RoomInfoDeploy )
+
 struct RoomWheelData : public WheelItemBaseData
 {
 	RoomWheelData() : m_iFlags(0) { WheelItemBaseData::WheelItemBaseData(); }
@@ -99,15 +102,13 @@ public:
 	inline RoomWheelData* GetItem(unsigned int i) { return (RoomWheelData*)WheelBase::GetItem(i + m_offset); }
 	void AddPerminateItem(RoomWheelData* itemdata);
 	int GetCurrentIndex() const { return m_iSelection; }
-	inline void SetRoomInfo( const RoomInfo& info) { m_roomInfo.SetRoomInfo(info); }
+	int GetPerminateOffset() const { return m_offset; }
 	void AddItem( WheelItemBaseData* itemdata );
 	void RemoveItem( int index );
 
 private:
 	virtual WheelItemBase *MakeItem();
 	int m_offset;
-
-	RoomInfoDisplay m_roomInfo;
 };
 
 #endif

@@ -5,6 +5,7 @@
 #include "ScreenTextEntry.h"
 #include "LocalizedString.h"
 #include "NetworkSyncManager.h"
+#include "ScreenManager.h"
 
 AutoScreenMessage( SM_BackFromRoomName )
 
@@ -28,9 +29,6 @@ void RoomWheel::Load( RString sType )
 
 	m_offset = 0;
 	LOG->Trace( "RoomWheel::Load('%s')", sType.c_str() );
-
-	m_roomInfo.Load("RoomInfoDisplay");
-	this->AddChild(&m_roomInfo);
 
 	AddPerminateItem( new RoomWheelData(TYPE_GENERIC, "Create Room", "Create a new game room", THEME->GetMetricC( m_sName, "CreateRoomColor")) );
 
@@ -140,7 +138,8 @@ void RoomWheel::RemoveItem( int index )
 static LocalizedString ENTER_ROOM_NAME( "RoomWheel", "Enter room name" );
 bool RoomWheel::Select()
 {
-	m_roomInfo.RetractInfoBox();
+	SCREENMAN->PostMessageToTopScreen( SM_RoomInfoRetract, 0 );
+
 	if( m_iSelection > 0 )
 		return WheelBase::Select();
 	else if( m_iSelection == 0 )
@@ -167,10 +166,10 @@ void RoomWheel::Move(int n)
 	{
 		const RoomWheelData* data = GetItem(m_iSelection-m_offset);
 		if (data != NULL)
-			m_roomInfo.SetRoom( data );
+			SCREENMAN->PostMessageToTopScreen( SM_RoomInfoDeploy, 0 );
 	}
 	else
-		m_roomInfo.RetractInfoBox();
+		SCREENMAN->PostMessageToTopScreen( SM_RoomInfoRetract, 0 );
 
 	WheelBase::Move(n);
 }
@@ -203,7 +202,7 @@ void RoomInfoDisplay::RetractInfoBox()
 {
 	if (m_state == OPEN)
 		OFF_COMMAND( this );
-	
+
 	m_state = LOCKED;
 }
 

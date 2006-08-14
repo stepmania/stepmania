@@ -59,12 +59,14 @@ void ScreenNetRoom::Init()
 	m_RoomWheel.SetName( "RoomWheel" );
 	m_RoomWheel.BeginScreen();
 	SET_XY( m_RoomWheel );
-	ON_COMMAND( m_RoomWheel );
-	m_RoomWheel.SetDrawOrder(1);
 	this->AddChild( &m_RoomWheel );
-	this->MoveToHead( &m_RoomWheel );
 	ON_COMMAND( m_RoomWheel );
 
+	m_roomInfo.Load("RoomInfoDisplay");
+	m_roomInfo.SetDrawOrder(1);
+	this->AddChild( &m_roomInfo );
+
+	this->SortByDrawOrder();
 	NSMAN->ReportNSSOnOff(7);
 }
 
@@ -158,7 +160,7 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 			for (int i = 0; i < info.numPlayers; i++)
 				info.players[i] = NSMAN->m_SMOnlinePacket.ReadNT();
 
-			m_RoomWheel.SetRoomInfo(info);
+			m_roomInfo.SetRoomInfo(info);
 			break;
 		}
 	}
@@ -186,6 +188,18 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 			CreateNewRoom( m_newRoomName, m_newRoomDesc, m_newRoomPass);
 		}
 	}
+	else if ( SM == SM_RoomInfoRetract )
+	{
+		m_roomInfo.RetractInfoBox();
+	}
+	else if ( SM == SM_RoomInfoDeploy )
+	{
+		int i = m_RoomWheel.GetCurrentIndex() - m_RoomWheel.GetPerminateOffset();
+		const RoomWheelData* data = m_RoomWheel.GetItem(i);
+		if (data != NULL)
+			m_roomInfo.SetRoom(data);
+	}
+
 	ScreenNetSelectBase::HandleScreenMessage( SM );
 }
 
