@@ -978,7 +978,7 @@ void MusicWheel::SetOpenGroup( RString group )
 	LOG->Trace( "SetOpenGroup %s", group.c_str() );
 	m_sExpandedSectionName = group;
 
-	const WheelItemData *old = NULL;
+	const WheelItemBaseData *old = NULL;
 	if( !m_CurWheelItemData.empty() )
 		old = GetCurWheelItemData(m_iSelection);
 
