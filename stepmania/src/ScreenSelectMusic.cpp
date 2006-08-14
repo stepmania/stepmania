@@ -116,11 +116,6 @@ void ScreenSelectMusic::Init()
 	/* Load low-res banners, if needed. */
 	BANNERCACHE->Demand();
 
-	m_MusicWheelUnder.Load( THEME->GetPathG(m_sName,"wheel under") );
-	m_MusicWheelUnder->SetName( "WheelUnder" );
-	SET_XY( m_MusicWheelUnder );
-	this->AddChild( m_MusicWheelUnder );
-
 	m_MusicWheel.SetName( "MusicWheel" );
 	m_MusicWheel.Load( MUSIC_WHEEL_TYPE );
 	SET_XY( m_MusicWheel );
@@ -324,7 +319,6 @@ void ScreenSelectMusic::BeginScreen()
 	ON_COMMAND( m_GrooveRadar );
 	ON_COMMAND( m_textNumSongs );
 	ON_COMMAND( m_textTotalTime );
-	ON_COMMAND( m_MusicWheelUnder );
 	ON_COMMAND( m_MusicWheel );
 	ON_COMMAND( m_sprLongBalloon );
 	ON_COMMAND( m_sprMarathonBalloon );
@@ -453,7 +447,6 @@ void ScreenSelectMusic::TweenOffScreen()
 	OFF_COMMAND( m_textNumSongs );
 	OFF_COMMAND( m_textTotalTime );
 	OFF_COMMAND( m_MusicWheel );
-	OFF_COMMAND( m_MusicWheelUnder );
 	OFF_COMMAND( m_MusicWheel );
 	OFF_COMMAND( m_sprLongBalloon );
 	OFF_COMMAND( m_sprMarathonBalloon );

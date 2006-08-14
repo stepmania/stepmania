@@ -106,7 +106,6 @@ protected:
 	Sprite				m_sprHighScoreFrame[NUM_PLAYERS];
 	BitmapText			m_textHighScore[NUM_PLAYERS];
 	MusicWheel			m_MusicWheel;
-	AutoActor			m_MusicWheelUnder;
 	AutoActor			m_sprLongBalloon;
 	AutoActor			m_sprMarathonBalloon;
 	AutoActor			m_sprCourseHasMods;
