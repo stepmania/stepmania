@@ -22,17 +22,14 @@ class RoomWheelItem : public WheelItemBase
 {
 public:
 	RoomWheelItem(RString sType = "RoomWheelItem");
-	RoomWheelData* data;
+	RoomWheelItem( const RoomWheelItem &cpy );
+
 	void Load( RString sType );
 	virtual void LoadFromWheelItemData( const WheelItemBaseData* pWID );
-
-	BitmapText m_Desc;
+	virtual Actor *Copy() const { return new RoomWheelItem(*this); }
 
 private:
-	ThemeMetric<float>				DESC_X;
-	ThemeMetric<float>				DESC_Y;
-	ThemeMetric<float>				DESC_WIDTH;
-	ThemeMetric<apActorCommands>	DESC_ON_COMMAND;
+	BitmapText m_Desc;
 };
 
 struct RoomInfo

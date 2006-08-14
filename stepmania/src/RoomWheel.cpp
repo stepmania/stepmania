@@ -8,6 +8,11 @@
 
 AutoScreenMessage( SM_BackFromRoomName )
 
+ThemeMetric<float>				DESC_X;
+ThemeMetric<float>				DESC_Y;
+ThemeMetric<float>				DESC_WIDTH;
+ThemeMetric<apActorCommands>	DESC_ON_COMMAND;
+
 RoomWheel::~RoomWheel()
 {
 	FOREACH( WheelItemBaseData*, m_CurWheelItemData, i )
@@ -38,23 +43,28 @@ WheelItemBase *RoomWheel::MakeItem()
 	return new RoomWheelItem;
 }
 
-RoomWheelItem::RoomWheelItem( RString sType ):
-	WheelItemBase(sType)
+RoomWheelItem::RoomWheelItem( RString sType )
+	:WheelItemBase( sType )
 {
-	SetName( sType );
 	Load( sType );
 }
 
-void RoomWheelItem::Load(RString sType)
+RoomWheelItem::RoomWheelItem( const RoomWheelItem &cpy ):
+	WheelItemBase( cpy ),
+	m_Desc( cpy.m_Desc )
+{
+	this->AddChild( &m_Desc );
+}
+
+void RoomWheelItem::Load( RString sType )
 {
 	DESC_X				.Load(sType,"DescX");
 	DESC_Y				.Load(sType,"DescY");
 	DESC_WIDTH			.Load(sType,"DescWidth");
 	DESC_ON_COMMAND		.Load(sType,"DescOnCommand");
-
+	TEXT_WIDTH			.Load(sType,"TextWidth");
 
 	m_text.SetHorizAlignString("left");
-	TEXT_WIDTH		.Load(sType,"TextWidth");
 	m_text.SetMaxWidth(TEXT_WIDTH);
 
 	m_Desc.LoadFromFont( THEME->GetPathF("RoomWheel","text") );
