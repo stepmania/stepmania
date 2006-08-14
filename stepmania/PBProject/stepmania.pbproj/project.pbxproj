@@ -5996,6 +5996,7 @@
 				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
 				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_STYLE = "non-global";
+				SYMROOT = "$(SRCROOT)/..";
 				WARNING_CFLAGS = "";
 				WRAPPER_EXTENSION = app;
 			};
@@ -6405,6 +6406,7 @@
 				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
 				STRIP_INSTALLED_PRODUCT = YES;
 				STRIP_STYLE = "non-global";
+				SYMROOT = "$(SRCROOT)/..";
 				WARNING_CFLAGS = "";
 				WRAPPER_EXTENSION = app;
 			};
@@ -6551,6 +6553,7 @@
 				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
 				STRIP_INSTALLED_PRODUCT = YES;
 				STRIP_STYLE = "non-global";
+				SYMROOT = "$(SRCROOT)/..";
 				WARNING_CFLAGS = "";
 				WRAPPER_EXTENSION = app;
 			};
