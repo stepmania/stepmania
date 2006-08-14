@@ -1267,7 +1267,7 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 		if( iIndexOverlappingNote != -1 )
 		{
 			const TapNote &tn = m_NoteData.GetTapNote( col, iIndexOverlappingNote );
-			if( tn.bKeysound && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
+			if( tn.iKeysoundIndex >= 0 && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
 				m_vKeysounds[tn.iKeysoundIndex].Play();
 		}
 	}
@@ -1404,7 +1404,7 @@ void Player::UpdateJudgedRows()
 		
 		if( tn.pn != PLAYER_INVALID && tn.pn != pn )
 			continue;
-		if( tn.bKeysound && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
+		if( tn.iKeysoundIndex >= 0 && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
 			m_vKeysounds[tn.iKeysoundIndex].Play();
 		else
 			m_soundMine.Play();

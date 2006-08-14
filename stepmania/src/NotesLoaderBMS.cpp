@@ -311,10 +311,7 @@ bool BMSLoader::LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNa
 				TapNote tn = TAP_ORIGINAL_TAP;
 				map<RString,int>::const_iterator it = m_mapWavIdToKeysoundIndex.find(sNoteId);
 				if( it != m_mapWavIdToKeysoundIndex.end() )
-				{
-					tn.bKeysound = true;
 					tn.iKeysoundIndex = it->second;
-				}
 				vTapNotes.push_back( tn );
 			}
 			else

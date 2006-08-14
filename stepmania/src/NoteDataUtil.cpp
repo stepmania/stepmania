@@ -187,10 +187,7 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 					p++;
 					int iKeysoundIndex = 0;
 					if( 1 == sscanf( p, "%d]", &iKeysoundIndex ) )	// not fatal if this fails due to malformed data
-					{
-						tn.bKeysound = true;
 		 				tn.iKeysoundIndex = iKeysoundIndex;
-					}
 					
 					// skip past the ']'
 					while( p < endLine )
@@ -386,7 +383,7 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 						sRet.append( ssprintf("{%s:%.2f}", tn.sAttackModifiers.c_str(),
 								      tn.fAttackDurationSeconds) );
 					}
-					if( tn.bKeysound )
+					if( tn.iKeysoundIndex >= 0 )
 						sRet.append( ssprintf("[%d]",tn.iKeysoundIndex) );
 				}
 				
@@ -1962,8 +1959,7 @@ void NoteDataUtil::AddTapAttacks( NoteData &nd, Song* pSong )
 			TapNote::original, 
 			szAttacks[RandomInt(ARRAYSIZE(szAttacks))],
 			15.0f, 
-			false,
-			0 );
+			-1 );
 		nd.SetTapNote( iTrack, BeatToNoteRow(fBeat), tn );
 	}
 }

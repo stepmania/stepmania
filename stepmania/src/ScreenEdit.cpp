@@ -2438,8 +2438,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			TapNote::original, 
 			sMods,
 			g_fLastInsertAttackDurationSeconds, 
-			false,
-			0 );
+			-1 );
 		tn.pn = m_InputPlayerNumber;
 		SaveUndo();
 		m_NoteDataEdit.SetTapNote( g_iLastInsertTapAttackTrack, row, tn );

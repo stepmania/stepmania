@@ -100,10 +100,8 @@ struct TapNote
 	RString sAttackModifiers;
 	float fAttackDurationSeconds;
 
-	bool bKeysound;		// true if this note plays a keysound when hit
-
 	int iKeysoundIndex;	// index into Song's vector of keysound files.  
-				// Only valid if bKeysound.
+				// Only valid if nonnegative.
 
 	/* hold_head only: */
 	int iDuration;
@@ -119,15 +117,14 @@ struct TapNote
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
 
-	
-	TapNote() {}
+	TapNote() : type(empty), subType(SubType_invalid), source(original), fAttackDurationSeconds(0.f),
+		iKeysoundIndex(-1), iDuration(0), pn(PLAYER_INVALID) { }
 	TapNote( 
 		Type type_,
 		SubType subType_,
 		Source source_, 
 		RString sAttackModifiers_,
 		float fAttackDurationSeconds_,
-		bool bKeysound_,
 		int iKeysoundIndex_ )
 	{
 		type = type_;
@@ -135,7 +132,6 @@ struct TapNote
 		source = source_;
 		sAttackModifiers = sAttackModifiers_;
 		fAttackDurationSeconds = fAttackDurationSeconds_;
-		bKeysound = bKeysound_;
 		iKeysoundIndex = iKeysoundIndex_;
 		iDuration = 0;
 		pn = PLAYER_INVALID;
@@ -148,13 +144,13 @@ struct TapNote
 		COMPARE(source);
 		COMPARE(sAttackModifiers);
 		COMPARE(fAttackDurationSeconds);
-		COMPARE(bKeysound);
 		COMPARE(iKeysoundIndex);
 		COMPARE(iDuration);
 		COMPARE(pn);
 #undef COMPARE
 		return true;
 	}
+	bool operator!=( const TapNote &other ) const { return !operator==( other ); }
 };
 
 extern TapNote TAP_EMPTY;			// '0'

@@ -91,11 +91,11 @@ void AutoKeysounds::FinishLoading()
 			bool bSoundIsGlobal = true;
 			{
 				PlayerNumber pn = GetNextEnabledPlayer((PlayerNumber)-1);
-				const TapNote t = tn[pn];
+				const TapNote &t = tn[pn];
 				pn = GetNextEnabledPlayer(pn);
 				while( pn != PLAYER_INVALID )
 				{
-					if( tn[pn].type != TapNote::autoKeysound || tn[pn].bKeysound != t.bKeysound )
+					if( tn[pn].type != TapNote::autoKeysound || tn[pn].iKeysoundIndex != t.iKeysoundIndex )
 						bSoundIsGlobal = false;
 					pn = GetNextEnabledPlayer(pn);
 				}
@@ -107,7 +107,7 @@ void AutoKeysounds::FinishLoading()
 					continue;
 
 				ASSERT( tn[pn].type == TapNote::autoKeysound );
-				if( tn[pn].bKeysound )
+				if( tn[pn].iKeysoundIndex >= 0 )
 				{
 					RString sKeysoundFilePath = sSongDir + pSong->m_vsKeysoundFile[tn[pn].iKeysoundIndex];
 					float fSeconds = pSong->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(iRow) );
