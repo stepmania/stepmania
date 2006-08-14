@@ -3409,6 +3409,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ActorProxy.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ActorProxy.h"
+				>
+			</File>
+			<File
 				RelativePath="ActorScroller.cpp"
 				>
 			</File>
