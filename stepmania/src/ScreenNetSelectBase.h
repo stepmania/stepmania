@@ -1,7 +1,7 @@
 /* ScreenNetSelectBase - Base screen containing chat room & user list */
 
-#ifndef SCREENNETSELECTBASE_H
-#define SCREENNETSELECTBASE_H
+#ifndef SCREEN_NET_SELECT_BASE_H
+#define SCREEN_NET_SELECT_BASE_H
 
 #include "ScreenWithMenuElements.h"
 #include "Sprite.h"
