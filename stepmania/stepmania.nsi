@@ -55,6 +55,7 @@
 
 	!define MUI_HEADERIMAGE
 	!define MUI_HEADERIMAGE_BITMAP "Installer\header-${PRODUCT_BITMAP}.bmp"
+	!define MUI_WELCOMEFINISHPAGE_BITMAP "Installer\welcome-${PRODUCT_BITMAP}.bmp"
 	!define MUI_ABORTWARNING
 	!define MUI_ICON "Installer\install.ico"
 	!define MUI_UNICON "Installer\uninstall.ico"
@@ -74,10 +75,18 @@
 	Page custom ShowAutorun LeaveAutorun
 !endif
 
+	!insertmacro MUI_PAGE_WELCOME
 	;!insertmacro MUI_PAGE_LICENSE "${NSISDIR}\Docs\Modern UI\License.txt"
 	;!insertmacro MUI_PAGE_COMPONENTS
 	!insertmacro MUI_PAGE_DIRECTORY
 	!insertmacro MUI_PAGE_INSTFILES
+
+		# These indented statements modify settings for MUI_PAGE_FINISH
+		!define MUI_FINISHPAGE_NOAUTOCLOSE
+		!define MUI_FINISHPAGE_RUN "$INSTDIR\Program\${PRODUCT_FAMILY}.exe"
+		!define MUI_FINISHPAGE_RUN_NOTCHECKED
+		!define MUI_FINISHPAGE_RUN_TEXT "Lanch ${PRODUCT_DISPLAY}"
+	!insertmacro MUI_PAGE_FINISH
 
 	!insertmacro MUI_UNPAGE_CONFIRM
 	!insertmacro MUI_UNPAGE_INSTFILES
@@ -347,8 +356,6 @@ Section "Main Section" SecMain
 	MessageBox MB_OK|MB_ICONSTOP "$(TEXT_IO_FATAL_ERROR_INSTALL)"
 	Quit
 	do_no_error:
-
-	Exec '$WINDIR\explorer.exe "$SMPROGRAMS\${PRODUCT_ID}\"'
 
 SectionEnd
 
