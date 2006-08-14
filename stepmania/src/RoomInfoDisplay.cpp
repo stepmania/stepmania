@@ -2,9 +2,18 @@
 #include "RoomInfoDisplay.h"
 #include "ActorUtil.h"
 #include "NetworkSyncManager.h"
+#include "LocalizedString.h"
 
 AutoScreenMessage( SM_RoomInfoRetract )
 AutoScreenMessage( SM_RoomInfoDeploy )
+
+static LocalizedString LAST_ROUND_INFO ( "RoomInfoDisplay", "Last Round Info:" );
+static LocalizedString ROOM_NAME ( "RoomInfoDisplay", "Room Name:" );
+static LocalizedString ROOM_DESC ( "RoomInfoDisplay", "Room Description:" );
+static LocalizedString SONG_TITLE( "RoomInfoDisplay", "Song Title:" );
+static LocalizedString SONG_SUB_TITLE( "RoomInfoDisplay", "Song Subtitle:" );
+static LocalizedString SONG_ARTIST( "RoomInfoDisplay", "Song Artist:" );
+static LocalizedString PLAYERS( "RoomInfoDisplay", "Players" );
 
 RoomInfoDisplay::~RoomInfoDisplay()
 {
@@ -61,7 +70,7 @@ void RoomInfoDisplay::Load( RString sType )
 
 	m_lastRound.LoadFromFont( THEME->GetPathF(sType,"text") );
 	m_lastRound.SetName( "LastRound" );
-	m_lastRound.SetText( "Last Round Info:" );
+	m_lastRound.SetText( LAST_ROUND_INFO.GetValue() );
 	m_lastRound.SetShadowLength( 0 );
 	m_lastRound.SetHorizAlign( align_left );
 	ON_COMMAND( m_lastRound );
@@ -105,8 +114,8 @@ void RoomInfoDisplay::SetRoom( const RoomWheelData* roomData )
 {
 	RequestRoomInfo(roomData->m_sText);
 
-	m_Title.SetText(ssprintf("Name: %s", roomData->m_sText.c_str()));
-	m_Desc.SetText(ssprintf("Description: %s", roomData->m_sDesc.c_str()));
+	m_Title.SetText( ROOM_NAME.GetValue() + roomData->m_sText );
+	m_Desc.SetText( ROOM_DESC.GetValue() + roomData->m_sDesc );
 }
 
 void RoomInfoDisplay::Update( float fDeltaTime )
@@ -129,10 +138,10 @@ void RoomInfoDisplay::RequestRoomInfo(const RString& name)
 
 void RoomInfoDisplay::SetRoomInfo( const RoomInfo& info)
 {
-	m_songTitle.SetText(ssprintf("Title: %s", info.songTitle.c_str()));
-	m_songSub.SetText(ssprintf("Subtitle: %s", info.songSubTitle.c_str()));
-	m_songArtist.SetText(ssprintf("Artist: %s", info.songArtist.c_str()));
-	m_players.SetText(ssprintf("Players (%d/%d):", info.numPlayers, info.maxPlayers));
+	m_songTitle.SetText( SONG_TITLE.GetValue() + info.songTitle );
+	m_songSub.SetText( SONG_SUB_TITLE.GetValue() + info.songSubTitle );
+	m_songArtist.SetText( SONG_ARTIST.GetValue() + info.songArtist );
+	m_players.SetText(ssprintf("%s (%d/%d):", PLAYERS.GetValue().c_str(), info.numPlayers, info.maxPlayers));
 
 	if (m_playerList.size() > info.players.size())
 	{
