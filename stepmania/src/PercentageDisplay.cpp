@@ -73,7 +73,12 @@ void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStage
 	m_bUseRemainder = THEME->GetMetricB( sMetricsGroup, "PercentUseRemainder" );
 	m_bApplyScoreDisplayOptions = THEME->GetMetricB( sMetricsGroup, "ApplyScoreDisplayOptions" );
 	m_Format.SetFromExpression( THEME->GetMetric(sMetricsGroup, "Format") );
-
+	
+	if( m_Format.IsNil() )
+	{
+		LOG->Trace( "Format is nil in [%s]. Defaulting to 'FormatPercentScore'.", sMetricsGroup.c_str() );
+		m_Format.SetFromExpression( "FormatPercentScore" );
+	}
 
 	if( PREFSMAN->m_bDancePointsForOni )
 		m_textPercent.SetName( "DancePoints" + PlayerNumberToString(m_pPlayerState->m_PlayerNumber) );
