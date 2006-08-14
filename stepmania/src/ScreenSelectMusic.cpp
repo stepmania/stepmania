@@ -1468,9 +1468,7 @@ void ScreenSelectMusic::AfterMusicChange()
 				ASSERT(0);
 			}
 
-			m_sprLongBalloon->StopTweening();
 			COMMAND( m_sprLongBalloon, "Hide" );
-			m_sprMarathonBalloon->StopTweening();
 			COMMAND( m_sprMarathonBalloon, "Hide" );
 			
 			COMMAND( m_sprCourseHasMods, "Hide" );
@@ -1521,28 +1519,19 @@ void ScreenSelectMusic::AfterMusicChange()
 			 * like the effect with a lot of delay. */
 			if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fMarathonVerSongSeconds )
 			{
-				m_sprMarathonBalloon->StopTweening();
 				SET_XY( m_sprMarathonBalloon );
 				COMMAND( m_sprMarathonBalloon, "Show" );
-
-				m_sprLongBalloon->StopTweening();
 				COMMAND( m_sprLongBalloon, "Hide" );
 			}
 			else if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fLongVerSongSeconds )
 			{
-				m_sprLongBalloon->StopTweening();
 				SET_XY( m_sprLongBalloon );
 				COMMAND( m_sprLongBalloon, "Show" );
-				
-				m_sprMarathonBalloon->StopTweening();
 				COMMAND( m_sprMarathonBalloon, "Hide" );
 			}
 			else
 			{
-				m_sprLongBalloon->StopTweening();
 				COMMAND( m_sprLongBalloon, "Hide" );
-
-				m_sprMarathonBalloon->StopTweening();
 				COMMAND( m_sprMarathonBalloon, "Hide" );
 			}
 
@@ -1583,11 +1572,8 @@ void ScreenSelectMusic::AfterMusicChange()
 			ASSERT(0);
 		}
 
-		m_sprLongBalloon->StopTweening();
 		COMMAND( m_sprLongBalloon, "Hide" );
-		m_sprMarathonBalloon->StopTweening();
 		COMMAND( m_sprMarathonBalloon, "Hide" );
-		
 		COMMAND( m_sprCourseHasMods, "Hide" );
 		
 		break;
@@ -1646,9 +1632,7 @@ void ScreenSelectMusic::AfterMusicChange()
 
 
 
-		m_sprLongBalloon->StopTweening();
 		COMMAND( m_sprLongBalloon, "Hide" );
-		m_sprMarathonBalloon->StopTweening();
 		COMMAND( m_sprMarathonBalloon, "Hide" );
 
 		if( pCourse->HasMods() )
