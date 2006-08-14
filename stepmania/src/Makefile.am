@@ -347,6 +347,7 @@ RageUtil_WorkerThread.cpp RageUtil_WorkerThread.h
 
 Actors = \
 Actor.cpp Actor.h ActorFrame.cpp ActorFrame.h \
+ActorProxy.cpp ActorProxy.h \
 ActorScroller.cpp ActorScroller.h ActorUtil.cpp ActorUtil.h \
 ActorSound.cpp ActorSound.h \
 AutoActor.cpp AutoActor.h \
