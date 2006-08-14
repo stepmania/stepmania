@@ -44,7 +44,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MD /W3 /Gm /GX /ZI /Od /I "." /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "DEBUG" /Fr /YX"global.h" /FD /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "." /I "vorbis" /I "libjpeg" /I "lua-5.0\include" /I "ffmpeg\include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "WINDOWS" /D "_MBCS" /D "DEBUG" /FR /YX"global.h" /FD /c
+# ADD CPP /nologo /MDd /W3 /Gm /GR /GX /ZI /Od /I "." /I "vorbis" /I "libjpeg" /I "lua-5.0\include" /I "ffmpeg\include" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "WINDOWS" /D "_MBCS" /D "DEBUG" /FR /YX"global.h" /FD /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
@@ -62,7 +62,7 @@ IntDir=.\../Debug6
 TargetDir=\cvs\stepmania\Program
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc  	cl   /Zl   /nologo   /c   verstub.cpp   /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc   	cl    /Zl    /nologo    /c    verstub.cpp    /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -81,7 +81,7 @@ PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MD /W3 /GX /Zi /O2 /Ob2 /I "." /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /FR /YX /FD /c
-# ADD CPP /nologo /MD /W3 /GX /O2 /Ob2 /I "." /I "vorbis" /I "libjpeg" /I "lua-5.0\include" /I "ffmpeg\include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "WINDOWS" /D "_MBCS" /FR /YX /FD /c
+# ADD CPP /nologo /MD /W3 /GR /GX /O2 /Ob2 /I "." /I "vorbis" /I "libjpeg" /I "lua-5.0\include" /I "ffmpeg\include" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "WINDOWS" /D "_MBCS" /FR /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -99,7 +99,7 @@ IntDir=.\../Release6
 TargetDir=\cvs\stepmania\Program
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc  	cl   /Zl   /nologo   /c   verstub.cpp   /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc   	cl    /Zl    /nologo    /c    verstub.cpp    /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -945,6 +945,10 @@ SOURCE=.\MenuInput.cpp
 # Begin Source File
 
 SOURCE=.\MenuInput.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ModsGroup.h
 # End Source File
 # Begin Source File
 
@@ -1844,11 +1848,11 @@ SOURCE=.\archutils\Win32\WindowsResources.rc
 # End Group
 # Begin Source File
 
-SOURCE=.\ExportNsisStrings.cpp
+SOURCE=.\ExportStrings.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\ExportNsisStrings.h
+SOURCE=.\ExportStrings.h
 # End Source File
 # Begin Source File
 
@@ -3077,6 +3081,14 @@ SOURCE=.\ScreenSelectGroup.cpp
 # Begin Source File
 
 SOURCE=.\ScreenSelectGroup.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectLanguage.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectLanguage.h
 # End Source File
 # Begin Source File
 
