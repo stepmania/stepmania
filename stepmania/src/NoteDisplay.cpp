@@ -8,6 +8,8 @@
 #include "ActorUtil.h"
 #include "Game.h"
 #include "PlayerState.h"
+#include "Sprite.h"
+#include "NoteTypes.h"
 #include "LuaBinding.h"
 
 const RString& NoteNotePartToString( NotePart i );

@@ -1,15 +1,15 @@
 /* NoteDisplay - Draws TapNotes and HoldNotes. */
 
-#ifndef NOTEDISPLAY_H
-#define NOTEDISPLAY_H
+#ifndef NOTE_DISPLAY_H
+#define NOTE_DISPLAY_H
 
-#include "Sprite.h"
+class Actor;
+class Sprite;
 class Model;
-#include "NoteTypes.h"
-
+class PlayerState;
+struct TapNote;
 struct HoldNoteResult;
 struct NoteMetricCache_t;
-class PlayerState;
 
 enum NotePart
 {
