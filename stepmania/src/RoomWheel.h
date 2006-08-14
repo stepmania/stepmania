@@ -1,14 +1,11 @@
 /* RoomWheel - A wheel containing data about rooms. */
 
-#ifndef ROOMWHEEL_H
-#define ROOMWHEEL_H
+#ifndef ROOM_WHEEL_H
+#define ROOM_WHEEL_H
 
 #include "WheelBase.h"
 #include "WheelItemBase.h"
 #include "ThemeMetric.h"
-
-AutoScreenMessage( SM_RoomInfoRetract )
-AutoScreenMessage( SM_RoomInfoDeploy )
 
 struct RoomWheelData : public WheelItemBaseData
 {
@@ -43,50 +40,6 @@ struct RoomInfo
 	int numPlayers;
 	int maxPlayers;
 	vector<RString> players;
-};
-
-class RoomInfoDisplay : public ActorFrame
-{
-public:
-	~RoomInfoDisplay();
-	virtual void Load( RString sType );
-	virtual void Update( float fDeltaTime );
-	void SetRoom( const RoomWheelData* roomData );
-	void SetRoomInfo( const RoomInfo& info);
-	void DeployInfoBox();
-	void RetractInfoBox();
-private:
-	void RequestRoomInfo(const RString& name);
-	enum RoomInfoDisplayState
-	{
-		OPEN = 0,
-		CLOSED,
-		LOCKED
-	};
-
-	RoomInfoDisplayState m_state;
-	AutoActor m_bg;
-	BitmapText m_Title;
-	BitmapText m_Desc;
-
-	BitmapText m_lastRound;
-	BitmapText m_songTitle;
-	BitmapText m_songSub;
-	BitmapText m_songArtist;
-
-	BitmapText m_players;
-	vector<BitmapText*> m_playerList;
-
-	RageTimer m_deployDelay;
-
-	ThemeMetric<float>	X;
-	ThemeMetric<float>	Y;
-	ThemeMetric<float>	DEPLOY_DELAY;
-	ThemeMetric<float>	RETRACT_DELAY;
-	ThemeMetric<float>	PLAYERLISTX;
-	ThemeMetric<float>	PLAYERLISTY;
-	ThemeMetric<float>	PLAYERLISTOFFSETX;
-	ThemeMetric<float>	PLAYERLISTOFFSETY;
 };
 
 class RoomWheel : public WheelBase
