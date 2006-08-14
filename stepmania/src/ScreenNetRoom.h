@@ -1,12 +1,13 @@
 /* ScreenNetSelectMusic - A method for Online/Net song selection */
 
-#ifndef SCREENNETROOM_H
-#define SCREENNETROOM_H
+#ifndef SCREEN_NET_ROOM_H
+#define SCREEN_NET_ROOM_H
 
 #include "ScreenWithMenuElements.h"
 #include "ScreenNetSelectBase.h"
 #include <vector>
 #include "RoomWheel.h"
+#include "RoomInfoDisplay.h"
 
 class RoomData {
 public:
