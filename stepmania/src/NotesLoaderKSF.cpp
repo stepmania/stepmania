@@ -240,14 +240,6 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 				/* Remember when each hold starts; ignore the middle. */
 				if( iHoldStartRow[t] == -1 )
 					iHoldStartRow[t] = BeatToNoteRow(m_fCurBeat);					
-				
-				/* This code doesn't work yet: this is merely conceptual for the future. */
-				/*
-				else
-				{
-					notedata.SetTapNote( t, BeatToNoteRow(m_fCurBeat), TAP_ORIGINAL_TICK_COUNT );
-				}
-				*/
 				continue;
 			}
 
@@ -257,7 +249,10 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 				if( iHoldStartRow[t] == iEndRow )
 					notedata.SetTapNote( t, iHoldStartRow[t], TAP_ORIGINAL_TAP );
 				else
+				{
+					//notedata.AddHoldNote( t, iHoldStartRow[t], iEndRow , TAP_ORIGINAL_PUMP_HEAD );
 					notedata.AddHoldNote( t, iHoldStartRow[t], iEndRow , TAP_ORIGINAL_HOLD_HEAD );
+				}
 				iHoldStartRow[t] = -1;
 			}
 
