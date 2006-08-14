@@ -66,9 +66,9 @@ struct TapNote
 	enum Type
 	{ 
 		empty, 		// no note here
-		tap, 
-		hold_head,	// graded like a TAP_TAP if
-		hold_tail,	/* In 2sand3s mode, holds are deleted and TAP_HOLD_END is added: */
+		tap,		// step on this
+		hold_head,	// graded like a tap
+		hold_tail,	// in 2sand3s mode, holds are deleted and hold_tail is added
 		mine,		// don't step!
 		attack,
 		autoKeysound,

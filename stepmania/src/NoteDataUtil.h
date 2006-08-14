@@ -72,7 +72,7 @@ namespace NoteDataUtil
 	void Twister( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	void ConvertTapsToHolds( NoteData &inout, int iSimultaneousHolds, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 
-	// change all TAP_ADDITIONs to TAP_TAPs
+	// Change all TAP_ADDITION_TAPs to TAP_ORIGINAL_TAPs.
 	void ConvertAdditionsToRegular( NoteData &inout );
 
 	void Backwards( NoteData &inout );
