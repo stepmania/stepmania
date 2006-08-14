@@ -925,9 +925,6 @@ int Player::GetClosestNote( int col, int iNoteRow, int iMaxRowsAhead, int iMaxRo
 
 void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease )
 {
-	// XXX: Ignore for now.
-	if( bRelease )
-		return;
 	// If we're playing on oni and we've died, do nothing.
 	if( GAMESTATE->m_SongOptions.GetCurrent().m_LifeType == SongOptions::LIFE_BATTERY && m_pPlayerStageStats  && m_pPlayerStageStats->bFailed )
 		return;
@@ -939,7 +936,7 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 	const float fSongBeat = GAMESTATE->m_pCurSong ? GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds ) : GAMESTATE->m_fSongBeat;
 	const int iSongRow = row == -1 ? BeatToNoteRow( fSongBeat ) : row;
 	
-
+	if( !bRelease )
 	{
 		// Update roll life
 		// Let's not check the whole array every time.
@@ -1002,9 +999,9 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 
 	//
 	// Count calories for this step, unless we're being called because a button is
-	// held over a mine.
+	// held over a mine or being released.
 	//
-	if( m_pPlayerStageStats && m_pPlayerState && !bHeld )
+	if( m_pPlayerStageStats && m_pPlayerState && !bHeld && !bRelease )
 	{
 		// TODO: remove use of PlayerNumber
 		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
@@ -1098,27 +1095,33 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 		switch( m_pPlayerState->m_PlayerController )
 		{
 		case PC_HUMAN:
-
-			switch( tn.type )
+			if( !bRelease )
 			{
-			case TapNote::mine:
-				// stepped too close to mine?
-				if( fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_Mine) )
-					score = TNS_HitMine;
-				break;
-
-			case TapNote::attack:
-				if( fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_Attack) && !tn.result.bHidden )
-					score = TNS_W2; /* sentinel */
-				break;
-			default:
-				if(	 fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_W1) )	score = TNS_W1;
-				else if( fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_W2) )	score = TNS_W2;
-				else if( fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_W3) )	score = TNS_W3;
-				else if( fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_W4) )	score = TNS_W4;
-				else if( fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_W5) )	score = TNS_W5;
-				else	score = TNS_None;
-				break;
+				switch( tn.type )
+				{
+				case TapNote::mine:
+					// stepped too close to mine?
+					if( fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_Mine) )
+						score = TNS_HitMine;
+					break;
+					
+				case TapNote::attack:
+					if( fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_Attack) && !tn.result.bHidden )
+						score = TNS_W2; /* sentinel */
+					break;
+				default:
+					if(	 fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_W1) )	score = TNS_W1;
+					else if( fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_W2) )	score = TNS_W2;
+					else if( fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_W3) )	score = TNS_W3;
+					else if( fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_W4) )	score = TNS_W4;
+					else if( fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_W5) )	score = TNS_W5;
+					else	score = TNS_None;
+					break;
+				}
+			}
+			else
+			{
+				// XXX:
 			}
 			break;
 		
@@ -1248,14 +1251,7 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 		}
 	}
 
-
-
-	if( m_pNoteField )
-		m_pNoteField->Step( col, score );
-
-	bool bSteppedOnATap = score != TNS_None;
-
-	if( bSteppedOnATap )
+	if( score != TNS_None )
 	{
 		/* Search for keyed sounds separately.  If we can't find a nearby note, search
 		 * backwards indefinitely, and ignore grading. */
@@ -1275,8 +1271,13 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 				m_vKeysounds[tn.iKeysoundIndex].Play();
 		}
 	}
-	
-	MESSAGEMAN->Broadcast( m_sMessageToSendOnStep );
+	// XXX:
+	if( !bRelease )
+	{
+		if( m_pNoteField )
+			m_pNoteField->Step( col, score );
+		MESSAGEMAN->Broadcast( m_sMessageToSendOnStep );
+	}
 }
 
 static bool Unjudged( const TapNote &tn )
