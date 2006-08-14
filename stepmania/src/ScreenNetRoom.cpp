@@ -28,6 +28,12 @@ AutoScreenMessage( SM_BackFromRoomName )
 AutoScreenMessage( SM_BackFromRoomDesc )
 AutoScreenMessage( SM_BackFromRoomPass )
 AutoScreenMessage( SM_BackFromReqPass )
+AutoScreenMessage( SM_RoomInfoRetract )
+AutoScreenMessage( SM_RoomInfoDeploy )
+
+static LocalizedString ENTER_ROOM_DESCRIPTION ("ScreenNetRoom","Enter a description for the room:");
+static LocalizedString ENTER_ROOM_PASSWORD ("ScreenNetRoom","Enter a password for the room (blank, no password):");
+static LocalizedString ENTER_ROOM_REQPASSWORD ("ScreenNetRoom","Enter Room's Password:");
 
 REGISTER_SCREEN_CLASS( ScreenNetRoom );
 
@@ -55,15 +61,15 @@ void ScreenNetRoom::Init()
 	SET_XY_AND_ON_COMMAND( m_textTitle );
 	this->AddChild( &m_textTitle);
 
-	m_RoomWheel.Load("RoomWheel");
 	m_RoomWheel.SetName( "RoomWheel" );
+	m_RoomWheel.Load( "RoomWheel" );
 	m_RoomWheel.BeginScreen();
-	SET_XY( m_RoomWheel );
+	SET_XY_AND_ON_COMMAND( m_RoomWheel );
 	this->AddChild( &m_RoomWheel );
-	ON_COMMAND( m_RoomWheel );
 
-	m_roomInfo.Load("RoomInfoDisplay");
-	m_roomInfo.SetDrawOrder(1);
+	m_roomInfo.SetName( "RoomInfoDisplay" );
+	m_roomInfo.Load( "RoomInfoDisplay" );
+	m_roomInfo.SetDrawOrder( 1 );
 	this->AddChild( &m_roomInfo );
 
 	this->SortByDrawOrder();
@@ -78,9 +84,6 @@ void ScreenNetRoom::Input( const InputEventPlus &input )
 	ScreenNetSelectBase::Input( input );
 }
 
-static LocalizedString ENTER_ROOM_DESCRIPTION ("ScreenNetRoom","Enter a description for the room:");
-static LocalizedString ENTER_ROOM_PASSWORD ("ScreenNetRoom","Enter a password for the room (blank, no password):");
-static LocalizedString ENTER_ROOM_REQPASSWORD ("ScreenNetRoom","Enter Room's Password:");
 void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_GoToPrevScreen )
@@ -254,9 +257,7 @@ void ScreenNetRoom::MenuLeft( const InputEventPlus &input )
 void ScreenNetRoom::MenuRight( const InputEventPlus &input )
 {
 	if( input.type == IET_FIRST_PRESS )
-	{
 		m_RoomWheel.Move(1);
-	}
 
 	ScreenNetSelectBase::MenuRight( input.MenuI.player );
 }
