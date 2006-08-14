@@ -130,17 +130,6 @@ void Banner::LoadIconFromCharacter( Character* pCharacter )
 	m_bScrolling = false;
 }
 
-void Banner::LoadTABreakFromCharacter( Character* pCharacter )
-{
-	if( pCharacter == NULL )
-		Load( THEME->GetPathG("Common","fallback takingabreak") );
-	else 
-	{
-		Load( pCharacter->GetTakingABreakPath() );
-		m_bScrolling = false;
-	}
-}
-
 void Banner::LoadBannerFromUnlockEntry( const UnlockEntry* pUE )
 {
 	if( pUE == NULL )
