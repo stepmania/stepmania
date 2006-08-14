@@ -1409,6 +1409,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RoomInfoDisplay.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\RoomInfoDisplay.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ScoreKeeper.cpp"
 				>
 			</File>
