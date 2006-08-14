@@ -98,34 +98,34 @@ void Banner::LoadMode()
 void Banner::LoadFromSongGroup( RString sSongGroup )
 {
 	RString sGroupBannerPath = SONGMAN->GetSongGroupBannerPath( sSongGroup );
-	if( sGroupBannerPath != "" )	Load( sGroupBannerPath );
-	else							LoadFallback();
+	if( sGroupBannerPath != "" )			Load( sGroupBannerPath );
+	else						LoadFallback();
 	m_bScrolling = false;
 }
 
 void Banner::LoadFromCourse( Course* pCourse )		// NULL means no course
 {
-	if( pCourse == NULL )						LoadFallback();
+	if( pCourse == NULL )				LoadFallback();
 	else if( pCourse->m_sBannerPath != "" )		Load( pCourse->m_sBannerPath );
-	else										LoadCourseFallback();
+	else						LoadCourseFallback();
 
 	m_bScrolling = false;
 }
 
 void Banner::LoadCardFromCharacter( Character* pCharacter )	
 {
-	if( pCharacter == NULL )					LoadFallback();
+	if( pCharacter == NULL )			LoadFallback();
 	else if( pCharacter->GetCardPath() != "" )	Load( pCharacter->GetCardPath() );
-	else										LoadFallback();
+	else						LoadFallback();
 
 	m_bScrolling = false;
 }
 
 void Banner::LoadIconFromCharacter( Character* pCharacter )	
 {
-	if( pCharacter == NULL )					LoadFallbackCharacterIcon();
+	if( pCharacter == NULL )			LoadFallbackCharacterIcon();
 	else if( pCharacter->GetIconPath() != "" )	Load( pCharacter->GetIconPath(), false );
-	else										LoadFallbackCharacterIcon();
+	else						LoadFallbackCharacterIcon();
 
 	m_bScrolling = false;
 }
