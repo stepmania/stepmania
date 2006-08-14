@@ -21,6 +21,12 @@ end
 
 function SongSelectionScreen()
 	local pm = GAMESTATE:GetPlayMode()
+
+	if pm~=PLAY_MODE_REGULAR and IsNetConnected()	then
+		SCREENMAN:SystemMessage( THEME:GetString("NetworkSyncManager","Not Supported") )
+		return "ScreenSelectDifficulty"
+	end
+
 	if pm==PLAY_MODE_NONSTOP	then return "ScreenSelectCourseNonstop" end
 	if pm==PLAY_MODE_ONI		then return "ScreenSelectCourseOni" end
 	if pm==PLAY_MODE_ENDLESS	then return "ScreenSelectCourseEndless" end
