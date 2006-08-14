@@ -103,7 +103,7 @@ void Banner::LoadFromSongGroup( RString sSongGroup )
 	m_bScrolling = false;
 }
 
-void Banner::LoadFromCourse( Course* pCourse )		// NULL means no course
+void Banner::LoadFromCourse( const Course *pCourse )		// NULL means no course
 {
 	if( pCourse == NULL )				LoadFallback();
 	else if( pCourse->m_sBannerPath != "" )		Load( pCourse->m_sBannerPath );
@@ -112,7 +112,7 @@ void Banner::LoadFromCourse( Course* pCourse )		// NULL means no course
 	m_bScrolling = false;
 }
 
-void Banner::LoadCardFromCharacter( Character* pCharacter )	
+void Banner::LoadCardFromCharacter( const Character *pCharacter )
 {
 	if( pCharacter == NULL )			LoadFallback();
 	else if( pCharacter->GetCardPath() != "" )	Load( pCharacter->GetCardPath() );
@@ -121,7 +121,7 @@ void Banner::LoadCardFromCharacter( Character* pCharacter )
 	m_bScrolling = false;
 }
 
-void Banner::LoadIconFromCharacter( Character* pCharacter )	
+void Banner::LoadIconFromCharacter( const Character *pCharacter )
 {
 	if( pCharacter == NULL )			LoadFallbackCharacterIcon();
 	else if( pCharacter->GetIconPath() != "" )	Load( pCharacter->GetIconPath(), false );

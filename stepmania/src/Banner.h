@@ -25,10 +25,9 @@ public:
 	void LoadAllMusic();
 	void LoadMode();
 	void LoadFromSongGroup( RString sSongGroup );
-	void LoadFromCourse( Course* pCourse );
-	void LoadCardFromCharacter( Character* pCharacter );
-	void LoadIconFromCharacter( Character* pCharacter );
-	void LoadTABreakFromCharacter( Character* pCharacter );
+	void LoadFromCourse( const Course *pCourse );
+	void LoadCardFromCharacter( const Character *pCharacter );
+	void LoadIconFromCharacter( const Character *pCharacter );
 	void LoadBannerFromUnlockEntry( const UnlockEntry* pUE );
 	void LoadBackgroundFromUnlockEntry( const UnlockEntry* pUE );
 	void LoadRoulette();
