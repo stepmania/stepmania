@@ -556,27 +556,25 @@ void ScreenSelectMusic::CheckBackgroundRequests( bool bForce )
 	{
 		/* The CDTitle is normally very small, so we don't bother waiting to display it. */
 		RString sPath;
-		if( m_BackgroundLoader.IsCacheFileFinished(g_sCDTitlePath, sPath) )
-		{
-			g_bCDTitleWaiting = false;
-
-			RString sCDTitlePath = sPath;
-
-			if( sCDTitlePath.empty() || !IsAFile(sCDTitlePath) )
-				sCDTitlePath = g_bWantFallbackCdTitle? m_sFallbackCDTitlePath:RString("");
-
-			if( !sCDTitlePath.empty() )
-			{
-				TEXTUREMAN->DisableOddDimensionWarning();
-				m_sprCDTitleFront.Load( sCDTitlePath );
-				m_sprCDTitleBack.Load( sCDTitlePath );
-				TEXTUREMAN->EnableOddDimensionWarning();
-			}
-
-			m_BackgroundLoader.FinishedWithCachedFile( g_sCDTitlePath );
-		}
-		else
+		if( !m_BackgroundLoader.IsCacheFileFinished(g_sCDTitlePath, sPath) )
 			return;
+
+		g_bCDTitleWaiting = false;
+
+		RString sCDTitlePath = sPath;
+
+		if( sCDTitlePath.empty() || !IsAFile(sCDTitlePath) )
+			sCDTitlePath = g_bWantFallbackCdTitle? m_sFallbackCDTitlePath:RString("");
+
+		if( !sCDTitlePath.empty() )
+		{
+			TEXTUREMAN->DisableOddDimensionWarning();
+			m_sprCDTitleFront.Load( sCDTitlePath );
+			m_sprCDTitleBack.Load( sCDTitlePath );
+			TEXTUREMAN->EnableOddDimensionWarning();
+		}
+
+		m_BackgroundLoader.FinishedWithCachedFile( g_sCDTitlePath );
 	}
 
 	/* Loading the rest can cause small skips, so don't do it until the wheel settles. 
