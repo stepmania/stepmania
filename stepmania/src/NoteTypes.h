@@ -59,6 +59,7 @@ struct TapNote
 		hold_head,	// graded like a tap
 		hold_tail,	// in 2sand3s mode, holds are deleted and hold_tail is added
 		mine,		// don't step!
+		lift,		// up
 		attack,
 		autoKeysound,
  	};
@@ -153,6 +154,7 @@ extern TapNote TAP_ORIGINAL_TAP;		// '1'
 extern TapNote TAP_ORIGINAL_HOLD_HEAD;		// '2'
 extern TapNote TAP_ORIGINAL_ROLL_HEAD;		// '4'
 extern TapNote TAP_ORIGINAL_MINE;		// 'M'
+extern TapNote TAP_ORIGINAL_LIFT;		// 'L'
 extern TapNote TAP_ORIGINAL_ATTACK;		// 'A'
 extern TapNote TAP_ORIGINAL_AUTO_KEYSOUND;	// 'K'
 extern TapNote TAP_ADDITION_TAP;

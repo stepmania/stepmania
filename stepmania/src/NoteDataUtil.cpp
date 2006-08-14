@@ -111,12 +111,7 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 				case '1': tn = TAP_ORIGINAL_TAP;			break;
 				case '2':
 				case '4':
-					switch( ch )
-					{
-					case '2':	tn = TAP_ORIGINAL_HOLD_HEAD;	break;
-					case '4':	tn = TAP_ORIGINAL_ROLL_HEAD;	break;
-					default:	ASSERT(0);
-					}
+					tn = ch == '2' ? TAP_ORIGINAL_HOLD_HEAD : TAP_ORIGINAL_ROLL_HEAD;
 						
 					/* Set the hold note to have infinite length.  We'll clamp it when
 					 * we hit the tail. */
@@ -145,6 +140,7 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 				case 'M': tn = TAP_ORIGINAL_MINE;			break;
 				// case 'A': tn = TAP_ORIGINAL_ATTACK;			break;
 				case 'K': tn = TAP_ORIGINAL_AUTO_KEYSOUND;		break;
+				case 'L': tn = TAP_ORIGINAL_LIFT;			break;
 				default: 
 					/* Invalid data.  We don't want to assert, since there might
 					 * simply be invalid data in an .SM, and we don't want to die
@@ -373,6 +369,7 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 					case TapNote::mine:			c = 'M'; break;
 					case TapNote::attack:			c = 'A'; break;
 					case TapNote::autoKeysound:		c = 'K'; break;
+					case TapNote::lift:			c = 'L'; break;
 					default: 
 						FAIL_M( ssprintf("tn %i", tn.type) );	// invalid enum value
 					}

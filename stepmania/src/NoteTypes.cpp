@@ -8,6 +8,7 @@
 
 TapNote TAP_EMPTY			( TapNote::empty,	TapNote::SubType_invalid,	TapNote::original, "", 0, -1 );
 TapNote TAP_ORIGINAL_TAP		( TapNote::tap,		TapNote::SubType_invalid,	TapNote::original, "", 0, -1 );
+TapNote TAP_ORIGINAL_LIFT		( TapNote::lift,	TapNote::SubType_invalid,	TapNote::original, "", 0, -1 );
 TapNote TAP_ORIGINAL_HOLD_HEAD		( TapNote::hold_head,	TapNote::hold_head_hold,	TapNote::original, "", 0, -1 );
 TapNote TAP_ORIGINAL_ROLL_HEAD		( TapNote::hold_head,	TapNote::hold_head_roll,	TapNote::original, "", 0, -1 );
 TapNote TAP_ORIGINAL_MINE		( TapNote::mine,	TapNote::SubType_invalid,	TapNote::original, "", 0, -1 );

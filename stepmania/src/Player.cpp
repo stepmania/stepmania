@@ -1095,33 +1095,29 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 		switch( m_pPlayerState->m_PlayerController )
 		{
 		case PC_HUMAN:
-			if( !bRelease )
+			switch( tn.type )
 			{
-				switch( tn.type )
+			case TapNote::mine:
+				// Stepped too close to mine?
+				if( !bRelease && fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_Mine) )
+					score = TNS_HitMine;
+				break;
+
+			case TapNote::attack:
+				if( !bRelease && fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_Attack) && !tn.result.bHidden )
+					score = TNS_W2; /* sentinel */
+				break;
+
+			default:
+				if( (tn.type == TapNote::lift) == bRelease )
 				{
-				case TapNote::mine:
-					// stepped too close to mine?
-					if( fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_Mine) )
-						score = TNS_HitMine;
-					break;
-					
-				case TapNote::attack:
-					if( fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_Attack) && !tn.result.bHidden )
-						score = TNS_W2; /* sentinel */
-					break;
-				default:
 					if(	 fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_W1) )	score = TNS_W1;
 					else if( fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_W2) )	score = TNS_W2;
 					else if( fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_W3) )	score = TNS_W3;
 					else if( fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_W4) )	score = TNS_W4;
 					else if( fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_W5) )	score = TNS_W5;
-					else	score = TNS_None;
-					break;
 				}
-			}
-			else
-			{
-				// XXX:
+				break;
 			}
 			break;
 		
@@ -1418,7 +1414,7 @@ void Player::UpdateJudgedRows()
 		if( m_pCombinedLifeMeter )
 			m_pCombinedLifeMeter->ChangeLife( pn, tn.result.tns );
 		
-		//Make sure hit mines affect the dance points
+		// Make sure hit mines affect the dance points.
 		if( m_pPrimaryScoreKeeper )
 			m_pPrimaryScoreKeeper->HandleTapScore( tn );
 		if( m_pSecondaryScoreKeeper )

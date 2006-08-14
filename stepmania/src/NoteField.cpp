@@ -773,6 +773,7 @@ void NoteField::DrawPrimitives()
 			bool bIsAddition = (tn.source == TapNote::addition);
 			bool bIsMine = (tn.type == TapNote::mine);
 			bool bIsAttack = (tn.type == TapNote::attack);
+			bool bIsLift = (tn.type == TapNote::lift);
 			NoteDisplayCols *displayCols = tn.pn == PLAYER_INVALID ? m_pCurDisplay : m_pDisplays[tn.pn];
 			
 			if( bIsAttack )
@@ -784,7 +785,7 @@ void NoteField::DrawPrimitives()
 			}
 			else
 			{
-				displayCols->display[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bIsAddition, bIsMine, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels );
+				displayCols->display[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bIsAddition, bIsMine, bIsLift, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels );
 			}
 		}
 	}

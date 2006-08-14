@@ -16,6 +16,7 @@ enum NotePart
 	NotePart_Tap,
 	NotePart_Addition,
 	NotePart_Mine,
+	NotePart_Lift,
 	NotePart_HoldHead,
 	NotePart_HoldTail,
 	NotePart_HoldTopCap,
@@ -74,7 +75,7 @@ public:
 	static void Update( float fDeltaTime );
 
 	void DrawActor( Actor* pActor, int iCol, float fBeat, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels, bool bUseLighting, NotePart part );
-	void DrawTap( int iCol, float fBeat, bool bOnSameRowAsHoldStart, bool bIsAddition, bool bIsMine, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels );
+	void DrawTap( int iCol, float fBeat, bool bOnSameRowAsHoldStart, bool bIsAddition, bool bIsMine, bool bIsLift, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels );
 	void DrawHold( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, bool bIsActive, const HoldNoteResult &Result, float fPercentFadeToFail, bool bDrawGlowOnly, float fReverseOffsetPixels, float fYStartOffset, float fYEndOffset );
 	
 	bool DrawHoldHeadForTapsOnSameRow() const;
@@ -84,6 +85,7 @@ protected:
 	Actor *GetTapNoteActor( float fNoteBeat );
 	Actor *GetTapAdditionActor( float fNoteBeat );
 	Actor *GetTapMineActor( float fNoteBeat );
+	Actor *GetTapLiftActor( float fNoteBeat );
 	Actor *GetHoldHeadActor( float fNoteBeat, bool bIsRoll, bool bIsBeingHeld );
 	Actor *GetHoldTailActor( float fNoteBeat, bool bIsRoll, bool bIsBeingHeld );
 	Sprite *GetHoldTopCapSprite( float fNoteBeat, bool bIsRoll, bool bIsBeingHeld );
@@ -103,12 +105,13 @@ protected:
 	NoteColorActor		m_TapNote;
 	NoteColorActor		m_TapAddition;
 	NoteColorActor		m_TapMine;
+	NoteColorActor		m_TapLift;
 	NoteColorActor		m_HoldHead[NUM_HOLD_TYPES][NUM_ACTIVE_TYPES];
 	NoteColorSprite		m_HoldTopCap[NUM_HOLD_TYPES][NUM_ACTIVE_TYPES];
 	NoteColorSprite		m_HoldBody[NUM_HOLD_TYPES][NUM_ACTIVE_TYPES];
 	NoteColorSprite		m_HoldBottomCap[NUM_HOLD_TYPES][NUM_ACTIVE_TYPES];
 	NoteColorActor		m_HoldTail[NUM_HOLD_TYPES][NUM_ACTIVE_TYPES];
-	float		m_fYReverseOffsetPixels;
+	float			m_fYReverseOffsetPixels;
 };
 
 #endif

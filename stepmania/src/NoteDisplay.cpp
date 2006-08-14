@@ -17,6 +17,7 @@ static const char *NotePartNames[] = {
 	"TapNote",
 	"TapAddition",
 	"TapMine",
+	"TapLift",
 	"HoldHead",
 	"HoldTopCap",
 	"HoldBody",
@@ -48,6 +49,7 @@ struct NoteMetricCache_t
 	bool m_bTapNoteUseLighting;
 	bool m_bTapAdditionUseLighting;
 	bool m_bTapMineUseLighting;
+	bool m_bTapLiftUseLighting;
 	bool m_bHoldHeadUseLighting;
 	bool m_bHoldTailUseLighting;
 	bool m_bFlipHeadAndTailWhenReverse;
@@ -60,7 +62,7 @@ void NoteMetricCache_t::Load( const RString &sButton )
 	m_bDrawHoldHeadForTapsOnSameRow = NOTESKIN->GetMetricB(sButton,"DrawHoldHeadForTapsOnSameRow");
 	FOREACH_NotePart( p )
 	{
-		const RString s = NotePartToString(p);
+		const RString &s = NotePartToString(p);
 		m_fAnimationLengthInBeats[p] = NOTESKIN->GetMetricF(sButton,s+"AnimationLengthInBeats");
 		m_bAnimationIsVivid[p] = NOTESKIN->GetMetricB(sButton,s+"AnimationIsVivid");
 		m_fNoteColorTextureCoordSpacing[p].x = NOTESKIN->GetMetricF(sButton,s+"NoteColorTextureCoordSpacingX");
@@ -74,6 +76,7 @@ void NoteMetricCache_t::Load( const RString &sButton )
 	m_bTapNoteUseLighting =			NOTESKIN->GetMetricB(sButton,"TapNoteUseLighting");
 	m_bTapAdditionUseLighting =		NOTESKIN->GetMetricB(sButton,"TapAdditionUseLighting");
 	m_bTapMineUseLighting =			NOTESKIN->GetMetricB(sButton,"TapMineUseLighting");
+	m_bTapLiftUseLighting =			NOTESKIN->GetMetricB(sButton,"TapLiftUseLighting");
 	m_bHoldHeadUseLighting =		NOTESKIN->GetMetricB(sButton,"HoldHeadUseLighting");
 	m_bHoldTailUseLighting =		NOTESKIN->GetMetricB(sButton,"HoldTailUseLighting");
 	m_bFlipHeadAndTailWhenReverse =		NOTESKIN->GetMetricB(sButton,"FlipHeadAndTailWhenReverse");
@@ -261,6 +264,7 @@ void NoteDisplay::Load( int iColNum, const PlayerState* pPlayerState, float fYRe
 	m_TapNote.Load(		sButton, "tap note" );
 	m_TapAddition.Load(	sButton, "tap addition" );
 	m_TapMine.Load(		sButton, "tap mine" );
+	m_TapLift.Load(		sButton, "tap lift" );
 	
 	FOREACH_HoldType( ht )
 	{
@@ -358,6 +362,19 @@ Actor * NoteDisplay::GetTapMineActor( float fNoteBeat )
 		cache->m_fAnimationLengthInBeats[NotePart_Mine], 
 		cache->m_bAnimationIsVivid[NotePart_Mine] );
 
+	return pActorOut;
+}
+
+Actor * NoteDisplay::GetTapLiftActor( float fNoteBeat )
+{
+	Actor *pActorOut = m_TapLift.Get();
+	
+	SetActiveFrame(
+		fNoteBeat,
+		*pActorOut,
+		cache->m_fAnimationLengthInBeats[NotePart_Lift],
+		cache->m_bAnimationIsVivid[NotePart_Mine] );
+	
 	return pActorOut;
 }
 
@@ -998,14 +1015,23 @@ void NoteDisplay::DrawActor( Actor* pActor, int iCol, float fBeat, float fPercen
 	}
 }
 
-void NoteDisplay::DrawTap( int iCol, float fBeat, bool bOnSameRowAsHoldStart, bool bIsAddition, bool bIsMine, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels )
+void NoteDisplay::DrawTap( int iCol, float fBeat, bool bOnSameRowAsHoldStart, bool bIsAddition, bool bIsMine, bool bIsLift, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels )
 {
 	Actor* pActor = NULL;
 	bool bUseLighting = false;
-	if( bIsMine )
+	NotePart part = NotePart_Tap;
+	
+	if( bIsLift )
+	{
+		pActor = GetTapLiftActor( fBeat );
+		bUseLighting = cache->m_bTapLiftUseLighting;
+		part = NotePart_Lift;
+	}
+	else if( bIsMine )
 	{
 		pActor = GetTapMineActor( fBeat );
 		bUseLighting = cache->m_bTapMineUseLighting;
+		part = NotePart_Mine;
 	}
 	else if( bIsAddition )
 	{
@@ -1023,7 +1049,7 @@ void NoteDisplay::DrawTap( int iCol, float fBeat, bool bOnSameRowAsHoldStart, bo
 		bUseLighting = cache->m_bTapNoteUseLighting;
 	}
 
-	DrawActor( pActor, iCol, fBeat, fPercentFadeToFail, fLife, fReverseOffsetPixels, bUseLighting, bIsMine ? NotePart_Mine : NotePart_Tap );
+	DrawActor( pActor, iCol, fBeat, fPercentFadeToFail, fLife, fReverseOffsetPixels, bUseLighting, part );
 }
 
 /*
