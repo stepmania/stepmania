@@ -65,8 +65,6 @@ ScreenSelectMusic::ScreenSelectMusic()
 
 void ScreenSelectMusic::Init()
 {
-	BANNER_WIDTH.Load( m_sName, "BannerWidth" );
-	BANNER_HEIGHT.Load( m_sName, "BannerHeight" );
 	SAMPLE_MUSIC_DELAY.Load( m_sName, "SampleMusicDelay" );
 	SHOW_RADAR.Load( m_sName, "ShowRadar" );
 	SHOW_COURSE_CONTENTS.Load( m_sName, "ShowCourseContents" );
@@ -128,24 +126,11 @@ void ScreenSelectMusic::Init()
 	SET_XY( m_MusicWheel );
 	this->AddChild( &m_MusicWheel );
 
-	m_sprBannerMask.SetName( "BannerMask" );
-	m_sprBannerMask.Load( THEME->GetPathG(m_sName,"banner mask") );
-	m_sprBannerMask.SetBlendMode( BLEND_NO_EFFECT );	// don't draw to color buffer
-	m_sprBannerMask.SetZWrite( true );	// do draw to the zbuffer
-	SET_XY( m_sprBannerMask );
-	this->AddChild( &m_sprBannerMask );
-
 	// this is loaded SetSong and TweenToSong
 	m_Banner.SetName( "Banner" );
 	m_Banner.SetZTestMode( ZTEST_WRITE_ON_PASS );	// do have to pass the z test
-	m_Banner.ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
 	SET_XY( m_Banner );
 	this->AddChild( &m_Banner );
-
-	m_sprBannerFrame.Load( THEME->GetPathG(m_sName,"banner frame") );
-	m_sprBannerFrame->SetName( "BannerFrame" );
-	SET_XY( m_sprBannerFrame );
-	this->AddChild( m_sprBannerFrame );
 
 	m_BPMDisplay.SetName( "BPMDisplay" );
 	m_BPMDisplay.Load();
@@ -331,9 +316,7 @@ void ScreenSelectMusic::BeginScreen()
 		break;
 	}
 
-	ON_COMMAND( m_sprBannerMask );
 	ON_COMMAND( m_Banner );
-	ON_COMMAND( m_sprBannerFrame );
 	ON_COMMAND( m_BPMDisplay );
 	ON_COMMAND( m_DifficultyDisplay );
 	ON_COMMAND( m_sprCDTitleFront );
@@ -461,9 +444,7 @@ void ScreenSelectMusic::TweenOffScreen()
 		break;
 	}
 
-	OFF_COMMAND( m_sprBannerMask );
 	OFF_COMMAND( m_Banner );
-	OFF_COMMAND( m_sprBannerFrame );
 	OFF_COMMAND( m_BPMDisplay );
 	OFF_COMMAND( m_DifficultyDisplay );
 	OFF_COMMAND( m_sprCDTitleFront );

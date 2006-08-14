@@ -74,8 +74,6 @@ protected:
 	vector<Trail*>			m_vpTrails;
 	int				m_iSelection[NUM_PLAYERS];
 
-	ThemeMetric<float> BANNER_WIDTH;
-	ThemeMetric<float> BANNER_HEIGHT;
 	ThemeMetric<float> SAMPLE_MUSIC_DELAY;
 	ThemeMetric<bool> SHOW_RADAR;
 	ThemeMetric<bool> SHOW_COURSE_CONTENTS;
@@ -94,9 +92,7 @@ protected:
 	RString m_sCourseMusicPath;
 	RString m_sFallbackCDTitlePath;
 
-	Sprite				m_sprBannerMask;
 	FadingBanner			m_Banner;
-	AutoActor			m_sprBannerFrame;
 	BPMDisplay			m_BPMDisplay;
 	Sprite				m_sprCDTitleFront, m_sprCDTitleBack;
 	Sprite				m_sprDifficultyFrame[NUM_PLAYERS];
