@@ -128,7 +128,7 @@ void ScreenSelectMusic::Init()
 	SET_XY( m_MusicWheel );
 	this->AddChild( &m_MusicWheel );
 
-	m_sprBannerMask.SetName( "Banner" );	// use the same metrics and animation as Banner
+	m_sprBannerMask.SetName( "BannerMask" );
 	m_sprBannerMask.Load( THEME->GetPathG(m_sName,"banner mask") );
 	m_sprBannerMask.SetBlendMode( BLEND_NO_EFFECT );	// don't draw to color buffer
 	m_sprBannerMask.SetZWrite( true );	// do draw to the zbuffer
