@@ -83,10 +83,15 @@ void ArchHooks_darwin::Init()
 	
 	CFBundleRef bundle = CFBundleGetMainBundle();
 	CFStringRef appID = CFBundleGetIdentifier( bundle );
+	if( appID == NULL )
+	{
+		// We were probably launched through a symlink. Don't bother hunting down the real path.
+		return;
+	}
 	CFStringRef version = CFStringRef( CFBundleGetValueForInfoDictionaryKey(bundle, kCFBundleVersionKey) );
+	CFPropertyListRef old = CFPreferencesCopyAppValue( key, appID );
 	CFURLRef path = CFBundleCopyBundleURL( bundle );
 	CFPropertyListRef value = CFURLCopyFileSystemPath( path, kCFURLPOSIXPathStyle );
-	CFPropertyListRef old = CFPreferencesCopyAppValue( key, appID );
 	CFMutableDictionaryRef newDict = NULL;
 	
 	if( old && CFGetTypeID(old) != CFDictionaryGetTypeID() )
@@ -437,16 +442,9 @@ static void PathForFolderType( char dir[PATH_MAX], OSType folderType )
 
 void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 {
-	CFBundleRef bundle = CFBundleGetMainBundle();
-	CFURLRef bundleURL = CFBundleCopyBundleURL( bundle );
-	CFURLRef dirURL = CFURLCreateCopyDeletingLastPathComponent( kCFAllocatorDefault, bundleURL );
 	char dir[PATH_MAX];
 	
-	if( !CFURLGetFileSystemRepresentation(dirURL, true, (UInt8 *)dir, sizeof(dir)) )
-		FAIL_M( "CFURLGetFileSystemRepresentation() failed." );
-	CFRelease( bundleURL );
-	CFRelease( dirURL );
-	FILEMAN->Mount( "dir", dir, "/" );
+	FILEMAN->Mount( "dir", sDirOfExecutable, "/" );
 	
 	// /Save -> ~/Library/Application Support/PRODUCT_ID
 	PathForFolderType( dir, kPreferencesFolderType );
