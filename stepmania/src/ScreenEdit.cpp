@@ -2014,37 +2014,36 @@ void ScreenEdit::InputRecordPaused( const InputEventPlus &input, EditButton Edit
 
 void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 {
-	if( input.type != IET_FIRST_PRESS )
-		return;
-
-	switch( EditB )
+	if( input.type == IET_FIRST_PRESS )
 	{
-	case EDIT_BUTTON_RETURN_TO_EDIT:
-		/* When exiting play mode manually, leave the cursor where it is. */
-		m_fBeatToReturnTo = GAMESTATE->m_fSongBeat;
-		TransitionEditState( STATE_EDITING );
-		break;
-	case EDIT_BUTTON_TOGGLE_ASSIST_TICK:
-		SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_bAssistTick, !GAMESTATE->m_SongOptions.GetStage().m_bAssistTick );
-		break;
-	case EDIT_BUTTON_TOGGLE_AUTOPLAY:
+		switch( EditB )
+		{
+		case EDIT_BUTTON_RETURN_TO_EDIT:
+			/* When exiting play mode manually, leave the cursor where it is. */
+			m_fBeatToReturnTo = GAMESTATE->m_fSongBeat;
+			TransitionEditState( STATE_EDITING );
+			break;
+		case EDIT_BUTTON_TOGGLE_ASSIST_TICK:
+			SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_bAssistTick, !GAMESTATE->m_SongOptions.GetStage().m_bAssistTick );
+			break;
+		case EDIT_BUTTON_TOGGLE_AUTOPLAY:
 		{
 			PREFSMAN->m_AutoPlay.Set( PREFSMAN->m_AutoPlay!=PC_HUMAN ? PC_HUMAN:PC_AUTOPLAY );
 			FOREACH_HumanPlayer( p )
 				GAMESTATE->m_pPlayerState[p]->m_PlayerController = PREFSMAN->m_AutoPlay;
 		}
-		break;
-	case EDIT_BUTTON_OFFSET_UP:
-	case EDIT_BUTTON_OFFSET_DOWN:
+			break;
+		case EDIT_BUTTON_OFFSET_UP:
+		case EDIT_BUTTON_OFFSET_DOWN:
 		{
 			float fOffsetDelta;
 			switch( EditB )
 			{
-			DEFAULT_FAIL( EditB );
-			case EDIT_BUTTON_OFFSET_DOWN:	fOffsetDelta = -0.020f;		break;
-			case EDIT_BUTTON_OFFSET_UP:	fOffsetDelta = +0.020f;		break;
+				DEFAULT_FAIL( EditB );
+				case EDIT_BUTTON_OFFSET_DOWN:	fOffsetDelta = -0.020f;		break;
+				case EDIT_BUTTON_OFFSET_UP:	fOffsetDelta = +0.020f;		break;
 			}
-
+			
 			if( EditIsBeingPressed( EDIT_BUTTON_ADJUST_FINE ) )
 			{
 				fOffsetDelta /= 20; /* 1ms */
@@ -2053,21 +2052,26 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 			{
 				switch( input.type )
 				{
-				case IET_SLOW_REPEAT:	fOffsetDelta *= 10;	break;
-				case IET_FAST_REPEAT:	fOffsetDelta *= 40;	break;
+					case IET_SLOW_REPEAT:	fOffsetDelta *= 10;	break;
+					case IET_FAST_REPEAT:	fOffsetDelta *= 40;	break;
 				}
 			}
-
+			
 			m_pSong->m_Timing.m_fBeat0OffsetInSeconds += fOffsetDelta;
 		}
-		break;
+			break;
+		}
 	}
-
+	else if( input.type != IET_RELEASE )
+	{
+		return;
+	}
+		
 	switch( input.StyleI.player )
 	{
 	case PLAYER_1:	
 		if( PREFSMAN->m_AutoPlay == PC_HUMAN )
-			m_Player->Step( input.StyleI.col, -1, input.DeviceI.ts ); 
+			m_Player->Step( input.StyleI.col, -1, input.DeviceI.ts, false, input.type == IET_RELEASE ); 
 		break;
 	}
 

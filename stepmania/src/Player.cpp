@@ -572,7 +572,7 @@ void Player::Update( float fDeltaTime )
 			if( tn.HoldResult.fLife >= 0.5f )
 				continue;
 
-			Step( iTrack, iSongRow, now, false );
+			Step( iTrack, iSongRow, now, false, false );
 			if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
 				STATSMAN->m_CurStageStats.bUsedAutoplay = true;
 		}
@@ -923,8 +923,11 @@ int Player::GetClosestNote( int col, int iNoteRow, int iMaxRowsAhead, int iMaxRo
 		return iNextIndex;
 }
 
-void Player::Step( int col, int row, const RageTimer &tm, bool bHeld )
+void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease )
 {
+	// XXX: Ignore for now.
+	if( bRelease )
+		return;
 	// If we're playing on oni and we've died, do nothing.
 	if( GAMESTATE->m_SongOptions.GetCurrent().m_LifeType == SongOptions::LIFE_BATTERY && m_pPlayerStageStats  && m_pPlayerStageStats->bFailed )
 		return;
@@ -1464,7 +1467,7 @@ void Player::CrossedRow( int iNoteRow, const RageTimer &now )
 			const TapNote &tn = m_NoteData.GetTapNote( t, iNoteRow );
 			if( tn.type != TapNote::empty && tn.result.tns == TNS_None )
 			{
-				Step( t, iNoteRow, now );
+				Step( t, iNoteRow, now, false, false );
 				if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
 					STATSMAN->m_CurStageStats.bUsedAutoplay = true;
 			}
@@ -1487,13 +1490,13 @@ void Player::CrossedMineRow( int iNoteRow, const RageTimer &now )
 			{
 				float fSecsHeld = INPUTMAPPER->GetSecsHeld( StyleI, m_pPlayerState->m_mp );
 				if( fSecsHeld >= PREFSMAN->m_fPadStickSeconds )
-					Step( t, -1, now+(-PREFSMAN->m_fPadStickSeconds), true );
+					Step( t, -1, now+(-PREFSMAN->m_fPadStickSeconds), true, false );
 			}
 			else
 			{
 				bool bIsDown = INPUTMAPPER->IsButtonDown( StyleI, m_pPlayerState->m_mp );
 				if( bIsDown )
-					Step( t, iNoteRow, now, true );
+					Step( t, iNoteRow, now, true, false );
 			}
 		}
 	}
