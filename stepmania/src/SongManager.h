@@ -91,6 +91,7 @@ public:
 	int GetNumAdditionalSongs() const;
 	int GetNumSongGroups() const;
 	int GetNumCourses() const;
+	int GetNumAdditionalCourses() const;
 	int GetNumCourseGroups() const;
 	int GetNumEditCourses( ProfileSlot slot ) const;
 	Song* GetRandomSong();
@@ -100,6 +101,7 @@ public:
 	Song *GetSongFromSteps( Steps *pSteps );
 	void DeleteSteps( Steps *pSteps );	// transfers ownership of pSteps
 	bool WasLoadedFromAdditionalSongs( const Song *pSong ) const;
+	bool WasLoadedFromAdditionalCourses( const Course *pCourse ) const;
 
 	void GetAllCourses( vector<Course*> &AddTo, bool bIncludeAutogen );
 	void GetCourses( CourseType ct, vector<Course*> &AddTo, bool bIncludeAutogen ) const;

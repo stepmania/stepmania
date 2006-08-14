@@ -42,6 +42,7 @@ SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our progr
 const RString SONGS_DIR			= "/Songs/";
 const RString ADDITIONAL_SONGS_DIR	= "/AdditionalSongs/";
 const RString COURSES_DIR		= "/Courses/";
+const RString ADDITIONAL_COURSES_DIR	= "/AdditionalCourses/";
 const RString EDIT_SUBDIR		= "Edits/";
 
 static const ThemeMetric<RageColor>	EXTRA_COLOR			( "SongManager", "ExtraColor" );
@@ -608,6 +609,17 @@ int SongManager::GetNumCourses() const
 	return m_pCourses.size();
 }
 
+int SongManager::GetNumAdditionalCourses() const
+{
+	int num = 0;
+	FOREACH_CONST( Course*, m_pCourses, i )
+	{
+		if( SONGMAN->WasLoadedFromAdditionalCourses( *i ) )
+			num++;
+	}
+	return num;
+}
+
 int SongManager::GetNumCourseGroups() const
 {
 	return m_mapCourseGroupToInfo.size();
@@ -674,18 +686,37 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 	}
 
 
-	// Find all group directories in Courses dir
+	vector<RString> vsCourseDirs;
+	vsCourseDirs.push_back( COURSES_DIR );
+	vsCourseDirs.push_back( ADDITIONAL_COURSES_DIR );
+
+	FOREACH_CONST( RString, vsCourseDirs, sDir )
 	{
+		// Find all group directories in Courses dir
 		vector<RString> vsCourseGroupNames;
-		GetDirListing( COURSES_DIR+"*", vsCourseGroupNames, true );
+		GetDirListing( *sDir + "*", vsCourseGroupNames, true );
 		StripCvs( vsCourseGroupNames );
 		SortRStringArray( vsCourseGroupNames );
 		
-		FOREACH( RString, vsCourseGroupNames, sCourseGroup )	// for each dir in /Courses/
+		FOREACH_CONST( RString, vsCourseGroupNames, sCourseGroup )	// for each dir in /Courses/
 		{
+
+#if defined(ITG)
+			if( !ALLOW_ITG_NAMES_IN_ADDITIONAL_FOLDERS )
+			{
+				// Don't load any folders containing "Marathon" so that they don't conflict with the official courses.
+				if( *sDir == ADDITIONAL_COURSES_DIR  &&  BeginsWith(*sCourseGroup, "Marathon") )
+					continue;
+				if( *sDir == ADDITIONAL_COURSES_DIR  &&  BeginsWith(*sCourseGroup, "Survival") )
+					continue;
+				if( *sDir == ADDITIONAL_COURSES_DIR  &&  BeginsWith(*sCourseGroup, "Workout") )
+					continue;
+			}
+#endif
+
 			// Find all CRS files in this group directory
 			vector<RString> vsCoursePaths;
-			GetDirListing( COURSES_DIR + *sCourseGroup + "/*.crs", vsCoursePaths, false, true );
+			GetDirListing( *sDir + *sCourseGroup + "/*.crs", vsCoursePaths, false, true );
 			SortRStringArray( vsCoursePaths );
 
 			FOREACH_CONST( RString, vsCoursePaths, sCoursePath )
@@ -1067,6 +1098,12 @@ bool SongManager::WasLoadedFromAdditionalSongs( const Song *pSong ) const
 {
 	RString sDir = pSong->GetSongDir();
 	return BeginsWith( sDir, ADDITIONAL_SONGS_DIR );
+}
+
+bool SongManager::WasLoadedFromAdditionalCourses( const Course *pCourse ) const
+{
+	RString sDir = pCourse->m_sPath;
+	return BeginsWith( sDir, ADDITIONAL_COURSES_DIR );
 }
 
 void SongManager::GetAllCourses( vector<Course*> &AddTo, bool bIncludeAutogen )
@@ -1776,6 +1813,7 @@ public:
 	static int GetNumAdditionalSongs( T* p, lua_State *L )  { lua_pushnumber( L, p->GetNumAdditionalSongs() ); return 1; }
 	static int GetNumSongGroups( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetNumSongGroups() ); return 1; }
 	static int GetNumCourses( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumCourses() ); return 1; }
+	static int GetNumAdditionalCourses( T* p, lua_State *L ){ lua_pushnumber( L, p->GetNumAdditionalCourses() ); return 1; }
 	static int GetNumCourseGroups( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetNumCourseGroups() ); return 1; }
 	static int GetSongFromSteps( T* p, lua_State *L )
 	{
@@ -1801,6 +1839,7 @@ public:
 		ADD_METHOD( GetNumAdditionalSongs );
 		ADD_METHOD( GetNumSongGroups );
 		ADD_METHOD( GetNumCourses );
+		ADD_METHOD( GetNumAdditionalCourses );
 		ADD_METHOD( GetNumCourseGroups );
 		ADD_METHOD( GetSongFromSteps );
 

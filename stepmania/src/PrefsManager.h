@@ -201,6 +201,7 @@ public:
 	Preference<ScoringType,int>	m_ScoringType;
 
 	Preference<RString>	m_sAdditionalSongFolders;
+	Preference<RString>	m_sAdditionalCourseFolders;
 	Preference<RString>	m_sAdditionalFolders;
 
 	Preference<RString>	m_sLastSeenVideoDriver;

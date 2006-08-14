@@ -978,6 +978,14 @@ int main(int argc, char* argv[])
 		for( unsigned i=0; i < dirs.size(); i++)
 			FILEMAN->Mount( "dir", dirs[i], "/AdditionalSongs" );
 	}
+	if( PREFSMAN->m_sAdditionalCourseFolders.Get() != "" )
+	{
+		vector<RString> dirs;
+		split( PREFSMAN->m_sAdditionalCourseFolders, ",", dirs, true );
+		for( unsigned i=0; i < dirs.size(); i++)
+			FILEMAN->Mount( "dir", dirs[i], "/AdditionalCourses" );
+	}
+
 	MountTreeOfZips( ZIPS_DIR );
 
 	/* One of the above filesystems might contain files that affect preferences, eg Data/Static.ini.

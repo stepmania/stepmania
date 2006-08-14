@@ -299,6 +299,7 @@ PrefsManager::PrefsManager() :
 	m_GetRankingName		( "GetRankingName",			RANKING_ON ),
 	m_ScoringType			( "ScoringType",			SCORING_NEW ),
 	m_sAdditionalSongFolders	( "AdditionalSongFolders",		"" ),
+	m_sAdditionalCourseFolders	( "AdditionalCourseFolders",		"" ),
 	m_sAdditionalFolders		( "AdditionalFolders",			"" ),
 	m_sLastSeenVideoDriver		( "LastSeenVideoDriver",		"" ),
 	m_sVideoRenderers		( "VideoRenderers",			"" ),	// StepMania.cpp sets these on first run:
