@@ -67,13 +67,6 @@ ActorFrame::ActorFrame( const ActorFrame &cpy ):
 	}
 }
 
-void ActorFrame::InitDefaults()
-{
-	FOREACH( Actor*, m_SubActors, a )
-		(*a)->InitDefaults();
-	Actor::InitDefaults();
-}
-
 void ActorFrame::InitState()
 {
 	FOREACH( Actor*, m_SubActors, a )

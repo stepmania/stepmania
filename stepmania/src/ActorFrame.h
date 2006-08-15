@@ -12,7 +12,6 @@ public:
 	ActorFrame( const ActorFrame &cpy );
 	virtual ~ActorFrame();
 
-	virtual void InitDefaults();
 	virtual void InitState();
 	void LoadFromNode( const RString& sDir, const XNode* pNode );
 	virtual Actor *Copy() const;
