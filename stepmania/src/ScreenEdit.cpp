@@ -620,7 +620,7 @@ static MenuDef g_InsertCourseAttack(
 
 static MenuDef g_CourseMode(
 	"ScreenMiniMenuCourseDisplay",
-	MenuRowDef( -1, "Play mods from course",	true, EditMode_Practice, true, true, 0, NULL )
+	MenuRowDef( -1, "Play mods from course",	true, EditMode_Practice, true, false, 0, NULL )
 );
 
 // HACK: need to remember the track we're inserting on so
@@ -1692,7 +1692,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 	case EDIT_BUTTON_OPEN_COURSE_MENU:
 		{
 			g_CourseMode.rows[0].choices.clear();
-			g_CourseMode.rows[0].choices.push_back( "OFF" );
+			g_CourseMode.rows[0].choices.push_back( CommonMetrics::LocalizeOptionItem("Off",false) );
 			g_CourseMode.rows[0].iDefaultChoice = 0;
 
 			vector<Course*> courses;
