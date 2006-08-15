@@ -29,7 +29,6 @@ public:
 	Actor( const Actor &cpy );
 	virtual ~Actor();
 	virtual Actor *Copy() const;
-	virtual void InitDefaults();
 	virtual void InitState();
 	virtual void LoadFromNode( const RString& sDir, const XNode* pNode );
 	bool IsType( const RString &sType );

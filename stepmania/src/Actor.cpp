@@ -46,13 +46,6 @@ void Actor::SetBGMLight( int iLightNumber, float fCabinetLights )
 	g_fCabinetLights[iLightNumber] = fCabinetLights;
 }
 
-void Actor::InitDefaults()
-{
-	InitState();
-
-	UnsubscribeAll();
-}
-
 void Actor::InitState()
 {
 	StopTweening();
@@ -125,7 +118,7 @@ Actor::Actor()
 
 
 	m_size = RageVector2( 1, 1 );
-	InitDefaults();
+	InitState();
 	m_pParent = NULL;
 	m_bFirstUpdate = true;
 }
