@@ -743,11 +743,12 @@ class DebugLineReloadCurrentScreen : public IDebugLine
 	virtual bool IsEnabled() { return true; }
 	virtual void Do( RString &sMessageOut )
 	{
+		RString sScreenName = SCREENMAN->GetTopScreen()->GetName();
+		SCREENMAN->PopAllScreens();
+
 		SOUND->StopMusic();
 		StepMania::ResetGame();
 
-		RString sScreenName = SCREENMAN->GetTopScreen()->GetName();
-		SCREENMAN->PopAllScreens();
 		SCREENMAN->SetNewScreen( sScreenName );
 		IDebugLine::Do( sMessageOut );
 		sMessageOut = "";
