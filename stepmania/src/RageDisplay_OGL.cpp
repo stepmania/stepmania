@@ -2082,8 +2082,16 @@ void RageDisplay_OGL::SetRenderTarget( unsigned iTexture, bool bPreserveTexture 
 	 * consistency. */
 	glClearColor( 0,0,0,0 );
 	SetZWrite( true );
+
+	/* If bPreserveTexture is false, clear the render target.  Only clear the depth
+	 * buffer if the target has one; otherwise we're clearing the real depth buffer. */
 	if( !bPreserveTexture )
-		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	{
+		int iBit = GL_COLOR_BUFFER_BIT;
+		if( pTarget->GetParam().bWithDepthBuffer )
+			iBit |= GL_DEPTH_BUFFER_BIT;
+		glClear( iBit );
+	}
 }
 
 void RageDisplay_OGL::SetPolygonMode( PolygonMode pm )
