@@ -74,17 +74,17 @@ void PaneDisplay::Load( const RString &sMetricsGroup, PlayerNumber pn )
 		if( g_Contents[p].type == NUM_PANES )
 			continue; /* skip, disabled */
 
+		m_ContentsFrame.AddChild( &m_textContents[p] );
 		m_textContents[p].LoadFromFont( THEME->GetPathF(sMetricsGroup,"text") );
 		m_textContents[p].SetName( ssprintf("%sText", g_Contents[p].name) );
 		ActorUtil::LoadAllCommands( m_textContents[p], sMetricsGroup );
-		ActorUtil::SetXYAndOnCommand( m_textContents[p], sMetricsGroup, this );
-		m_ContentsFrame.AddChild( &m_textContents[p] );
+		ActorUtil::SetXYAndOnCommand( m_textContents[p], sMetricsGroup );
 
+		m_ContentsFrame.AddChild( m_Labels[p] );
 		m_Labels[p].Load( THEME->GetPathG(sMetricsGroup,RString(g_Contents[p].name)+" label") );
 		m_Labels[p]->SetName( ssprintf("%sLabel", g_Contents[p].name) );
 		ActorUtil::LoadAllCommands( *m_Labels[p], sMetricsGroup );
-		ActorUtil::SetXYAndOnCommand( m_Labels[p], sMetricsGroup, this );
-		m_ContentsFrame.AddChild( m_Labels[p] );
+		ActorUtil::SetXYAndOnCommand( m_Labels[p], sMetricsGroup );
 
 		ActorUtil::LoadAllCommandsFromName( m_textContents[p], sMetricsGroup, g_Contents[p].name );
 	}
@@ -94,8 +94,8 @@ void PaneDisplay::Load( const RString &sMetricsGroup, PlayerNumber pn )
 
 	for( unsigned i = 0; i < NUM_PANE_CONTENTS; ++i )
 	{
-		m_textContents[i].PlayCommand( "LoseFocus", this );
-		m_Labels[i]->PlayCommand( "LoseFocus", this );
+		m_textContents[i].PlayCommand( "LoseFocus" );
+		m_Labels[i]->PlayCommand( "LoseFocus" );
 		m_textContents[i].FinishTweening();
 		m_Labels[i]->FinishTweening();
 	}

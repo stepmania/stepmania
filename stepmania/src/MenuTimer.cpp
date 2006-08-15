@@ -91,7 +91,7 @@ void MenuTimer::Update( float fDeltaTime )
 		if( iCrossed <= WARNING_START )
 		{
 			for( int i=0; i<NUM_MENU_TIMER_TEXTS; i++ )
-				m_text[i].RunCommands( WARNING_COMMAND.GetValue(iCrossed), this );
+				m_text[i].RunCommands( WARNING_COMMAND.GetValue(iCrossed) );
 		}
 		
 		if( iCrossed <= WARNING_BEEP_START && m_soundBeep.IsLoaded() )
