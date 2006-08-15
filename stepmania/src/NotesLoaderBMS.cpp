@@ -800,7 +800,7 @@ void BMSLoader::ReadTimeSigs( const NameToData_t &mapNameToData, MeasureToTimeSi
 		int iMeasureNo	= atoi( sName.substr(1, 3).c_str() );
 		int iBMSTrackNo	= atoi( sName.substr(4, 2).c_str() );
 		if( iBMSTrackNo == BMS_TRACK_TIME_SIG )
-			out[iMeasureNo] = (float) atof(sData);
+			out[iMeasureNo] = StringToFloat( sData );
 	}
 }
 
