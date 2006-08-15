@@ -570,23 +570,35 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData *> &arrayWheelItemDat
 	case SORT_ONI_COURSES:
 	case SORT_ENDLESS_COURSES:
 		{
-			vector<Course*> apCourses;
+			bool bOnlyPreferred = PREFSMAN->m_CourseSortOrder == PrefsManager::COURSE_SOFT_PREFERRED;
+
+			vector<CourseType> vct;
 			switch( so )
 			{
 			case SORT_NONSTOP_COURSES:
-				SONGMAN->GetPreferredSortCourses( COURSE_TYPE_NONSTOP,	apCourses, PREFSMAN->m_bAutogenGroupCourses );
+				vct.push_back( COURSE_TYPE_NONSTOP );
 				break;
 			case SORT_ONI_COURSES:
-				SONGMAN->GetPreferredSortCourses( COURSE_TYPE_ONI,	apCourses, PREFSMAN->m_bAutogenGroupCourses );
-				SONGMAN->GetPreferredSortCourses( COURSE_TYPE_SURVIVAL,	apCourses, PREFSMAN->m_bAutogenGroupCourses );
+				vct.push_back( COURSE_TYPE_ONI );
+				vct.push_back( COURSE_TYPE_SURVIVAL );
 				break;
 			case SORT_ENDLESS_COURSES:
-				SONGMAN->GetPreferredSortCourses( COURSE_TYPE_ENDLESS,	apCourses, PREFSMAN->m_bAutogenGroupCourses );
+				vct.push_back( COURSE_TYPE_ENDLESS );
 				break;
 			case SORT_ALL_COURSES:
-				SONGMAN->GetAllCourses( apCourses, PREFSMAN->m_bAutogenGroupCourses );
+				FOREACH_ENUM2( CourseType, i )
+					vct.push_back( i );
 				break;
 			default: ASSERT(0); break;
+			}
+
+			vector<Course*> apCourses;
+			FOREACH_CONST( CourseType, vct, ct )
+			{
+				if( bOnlyPreferred )
+					SONGMAN->GetPreferredSortCourses( *ct, apCourses, PREFSMAN->m_bAutogenGroupCourses );
+				else
+					SONGMAN->GetCourses( *ct, apCourses, PREFSMAN->m_bAutogenGroupCourses );
 			}
 
 			if( PREFSMAN->m_CourseSortOrder == PrefsManager::COURSE_SORT_SONGS )
