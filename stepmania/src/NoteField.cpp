@@ -542,6 +542,8 @@ void NoteField::DrawPrimitives()
 		const Course *pCourse = GAMESTATE->m_pCurCourse;
 		if( pCourse )
 		{
+			ASSERT_M( GAMESTATE->m_iEditCourseEntryIndex > 0  &&  GAMESTATE->m_iEditCourseEntryIndex < (int)pCourse->m_vEntries.size(), 
+				ssprintf("%i",GAMESTATE->m_iEditCourseEntryIndex.Get()) );
 			const CourseEntry &ce = pCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
 			FOREACH_CONST( Attack, ce.attacks, a )
 			{

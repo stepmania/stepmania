@@ -2406,7 +2406,18 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		{
 			const RString name = g_CourseMode.rows[0].choices[num];
 			Course *pCourse = SONGMAN->FindCourse( name );
+
+			int iCourseEntryIndex = -1;
+			FOREACH_CONST( CourseEntry, pCourse->m_vEntries, i )
+			{
+				if( i->pSong == GAMESTATE->m_pCurSong.Get() )
+					iCourseEntryIndex = i - pCourse->m_vEntries.begin();
+			}
+
+			ASSERT( iCourseEntryIndex != -1 );
+
 			GAMESTATE->m_pCurCourse.Set( pCourse );
+			GAMESTATE->m_iEditCourseEntryIndex.Set( iCourseEntryIndex );
 			ASSERT( GAMESTATE->m_pCurCourse );
 		}
 	}
