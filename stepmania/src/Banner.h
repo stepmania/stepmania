@@ -36,7 +36,7 @@ public:
 	void LoadCourseFallback();
 	void LoadFallbackCharacterIcon();
 
-	void SetScrolling( bool bScroll, float Percent = 0);
+	void SetScrolling( bool bScroll, float Percent = 0 );
 	float ScrollingPercent() const { return m_fPercentScrolling; }
 
 	// Lua
