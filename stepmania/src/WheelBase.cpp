@@ -61,7 +61,7 @@ void WheelBase::Load( RString sType )
 	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 	{
 		Actor *pActor = pTempl->Copy();
-		WheelItemBase *pItem = dynamic_cast<WheelItemBase *>( pActor );
+		WheelItemBase *pItem = dynamic_cast<WheelItemBase *>( pActor ); // XXX: ugly cast
 		DEBUG_ASSERT( pItem );
 		m_WheelBaseItems.push_back( pItem );
 	}
