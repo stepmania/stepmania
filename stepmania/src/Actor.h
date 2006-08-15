@@ -91,6 +91,7 @@ public:
 
 	const RString &GetName() const			{ return m_sName; }
 	virtual void SetName( const RString &sName )	{ m_sName = sName; }
+	void SetParent( Actor *pParent );
 
 	float GetX() const				{ return m_current.pos.x; };
 	float GetY() const				{ return m_current.pos.y; };
@@ -340,8 +341,6 @@ public:
 	void RunCommands( const apActorCommands& cmds ) { this->RunCommands( *cmds ); }	// convenience
 	// If we're a leaf, then execute this command.
 	virtual void RunCommandsOnLeaves( const LuaReference& cmds ) { RunCommands(cmds); }
-
-	void SetParent( Actor *pParent );
 
 	//
 	// Messages
