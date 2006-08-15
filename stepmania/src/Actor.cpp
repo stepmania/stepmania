@@ -1048,8 +1048,8 @@ void Actor::RunCommands( const LuaReference& cmds, Actor *pParent )
 	this->PushSelf( L );
 	
 	// 2nd parameter
-	if( pParent )
-		pParent->PushSelf( L );
+	if( m_pParent )
+		m_pParent->PushSelf( L );
 	else
 		lua_pushnil( L );
 
