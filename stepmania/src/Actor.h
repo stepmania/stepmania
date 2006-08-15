@@ -335,11 +335,11 @@ public:
 	void AddCommand( const RString &sCmdName, apActorCommands apac );
 	bool HasCommand( const RString &sCmdName );
 	const apActorCommands *GetCommand( const RString &sCommandName ) const;
-	virtual void PlayCommand( const RString &sCommandName, Actor *pParent = NULL );
-	virtual void RunCommands( const LuaReference& cmds, Actor *pParent = NULL );
-	void RunCommands( const apActorCommands& cmds, Actor *pParent = NULL ) { this->RunCommands( *cmds, pParent ); }	// convenience
+	virtual void PlayCommand( const RString &sCommandName );
+	virtual void RunCommands( const LuaReference& cmds );
+	void RunCommands( const apActorCommands& cmds ) { this->RunCommands( *cmds ); }	// convenience
 	// If we're a leaf, then execute this command.
-	virtual void RunCommandsOnLeaves( const LuaReference& cmds, Actor *pParent = NULL ) { RunCommands(cmds,pParent); }
+	virtual void RunCommandsOnLeaves( const LuaReference& cmds ) { RunCommands(cmds); }
 
 	void SetParent( Actor *pParent );
 

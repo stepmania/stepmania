@@ -252,13 +252,13 @@ void ActorFrame::PlayCommandOnLeaves( const RString &sCommandName )
 void ActorFrame::RunCommandsOnChildren( const LuaReference& cmds )
 {
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->RunCommands( cmds, this );
+		m_SubActors[i]->RunCommands( cmds );
 }
 
-void ActorFrame::RunCommandsOnLeaves( const LuaReference& cmds, Actor* pParent )
+void ActorFrame::RunCommandsOnLeaves( const LuaReference& cmds )
 {
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->RunCommandsOnLeaves( cmds, this );
+		m_SubActors[i]->RunCommandsOnLeaves( cmds );
 }
 
 void ActorFrame::UpdateInternal( float fDeltaTime )
@@ -350,12 +350,12 @@ void ActorFrame::DeleteAllChildren()
 	m_SubActors.clear();
 }
 
-void ActorFrame::RunCommands( const LuaReference& cmds, Actor* pParent )
+void ActorFrame::RunCommands( const LuaReference& cmds )
 {
 	if( m_bPropagateCommands )
 		RunCommandsOnChildren( cmds );
 	else
-		Actor::RunCommands( cmds, pParent );
+		Actor::RunCommands( cmds );
 }
 
 void ActorFrame::SetPropagateCommands( bool b )
@@ -363,9 +363,9 @@ void ActorFrame::SetPropagateCommands( bool b )
 	m_bPropagateCommands = b;
 }
 
-void ActorFrame::PlayCommand( const RString &sCommandName, Actor* pParent )
+void ActorFrame::PlayCommand( const RString &sCommandName )
 {
-	Actor::PlayCommand( sCommandName, pParent );
+	Actor::PlayCommand( sCommandName );
 
 	// HACK: Don't propogate Init.  It gets called once for every Actor when the 
 	// Actor is loaded, and we don't want to call it again.
@@ -375,7 +375,7 @@ void ActorFrame::PlayCommand( const RString &sCommandName, Actor* pParent )
 	for( unsigned i=0; i<m_SubActors.size(); i++ ) 
 	{
 		Actor* pActor = m_SubActors[i];
-		pActor->PlayCommand( sCommandName, this );
+		pActor->PlayCommand( sCommandName );
 	}
 }
 

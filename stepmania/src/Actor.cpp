@@ -1036,7 +1036,7 @@ void Actor::AddRotationR( float rot )
 	RageQuatMultiply( &DestTweenState().quat, DestTweenState().quat, RageQuatFromR(rot) );
 }
 
-void Actor::RunCommands( const LuaReference& cmds, Actor *pParent )
+void Actor::RunCommands( const LuaReference& cmds )
 {
 	Lua *L = LUA->Get();
 
@@ -1250,7 +1250,7 @@ const apActorCommands *Actor::GetCommand( const RString &sCommandName ) const
 	return &it->second;
 }
 
-void Actor::PlayCommand( const RString &sCommandName, Actor *pParent )
+void Actor::PlayCommand( const RString &sCommandName )
 {
 	const apActorCommands *pCmd = GetCommand( sCommandName );
 	if( pCmd != NULL )
@@ -1432,7 +1432,7 @@ public:
 	static int hidden( T* p, lua_State *L )			{ p->SetHidden(!!IArg(1)); return 0; }
 	static int hibernate( T* p, lua_State *L )		{ p->SetHibernate(FArg(1)); return 0; }
 	static int draworder( T* p, lua_State *L )		{ p->SetDrawOrder(IArg(1)); return 0; }
-	static int playcommand( T* p, lua_State *L )		{ p->PlayCommand(SArg(1),NULL); return 0; }
+	static int playcommand( T* p, lua_State *L )		{ p->PlayCommand(SArg(1)); return 0; }
 	static int queuecommand( T* p, lua_State *L )		{ p->QueueCommand(SArg(1)); return 0; }
 	static int queuemessage( T* p, lua_State *L )		{ p->QueueMessage(SArg(1)); return 0; }
 	static int addcommand( T* p, lua_State *L )

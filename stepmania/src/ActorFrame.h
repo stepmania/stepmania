@@ -39,7 +39,7 @@ public:
 	void PlayCommandOnLeaves( const RString &sCommandName );
 	virtual void RunCommandsOnChildren( const LuaReference& cmds ); /* but not on self */
 	void RunCommandsOnChildren( const apActorCommands& cmds ) { this->RunCommandsOnChildren( *cmds ); }	// convenience
-	virtual void RunCommandsOnLeaves( const LuaReference& cmds, Actor* pParent=NULL ); /* but not on self */
+	virtual void RunCommandsOnLeaves( const LuaReference& cmds ); /* but not on self */
 
 	virtual void UpdateInternal( float fDeltaTime );
 	virtual void ProcessMessages( float fDeltaTime );
@@ -63,9 +63,9 @@ public:
 	/* Amount of time until all tweens (and all children's tweens) have stopped: */
 	virtual float GetTweenTimeLeft() const;
 
-	virtual void PlayCommand( const RString &sCommandName, Actor* pParent = NULL );
-	virtual void RunCommands( const LuaReference& cmds, Actor* pParent = NULL );
-	void RunCommands( const apActorCommands& cmds, Actor *pParent = NULL ) { this->RunCommands( *cmds, pParent ); }	// convenience
+	virtual void PlayCommand( const RString &sCommandName );
+	virtual void RunCommands( const LuaReference& cmds );
+	void RunCommands( const apActorCommands& cmds ) { this->RunCommands( *cmds ); }	// convenience
 
 protected:
 	void LoadChildrenFromNode( const RString& sDir, const XNode* pNode );

@@ -18,7 +18,7 @@ public:
 	void LoadFromNode( const RString& sDir, const XNode* pNode );
 	virtual Actor *Copy() const;
 
-	void PlayCommand( const RString &sCommandName, Actor* pParent );
+	void PlayCommand( const RString &sCommandName );
 
 	void UpdateNumber();
 

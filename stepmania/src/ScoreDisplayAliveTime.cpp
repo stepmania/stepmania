@@ -39,11 +39,11 @@ void ScoreDisplayAliveTime::Update( float fDelta )
 	BitmapText::Update( fDelta );
 }
 
-void ScoreDisplayAliveTime::PlayCommand( const RString &sCommandName, Actor* pParent )
+void ScoreDisplayAliveTime::PlayCommand( const RString &sCommandName )
 {
 	// TODO: Add handling of GoalComplete message
 	
-	BitmapText::PlayCommand( sCommandName, pParent );
+	BitmapText::PlayCommand( sCommandName );
 }
 
 void ScoreDisplayAliveTime::UpdateNumber()

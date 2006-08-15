@@ -148,7 +148,7 @@ GenreDisplay::~GenreDisplay()
 {
 }
 
-void GenreDisplay::PlayCommand( const RString &sCommandName, Actor* pParent )
+void GenreDisplay::PlayCommand( const RString &sCommandName )
 {
 	if( sCommandName == MessageToString(Message_CurrentSongChanged) )
 	{
@@ -189,7 +189,7 @@ void GenreDisplay::PlayCommand( const RString &sCommandName, Actor* pParent )
 	}
 	else
 	{
-		Actor::PlayCommand( sCommandName, pParent );
+		Actor::PlayCommand( sCommandName );
 	}
 }
 
