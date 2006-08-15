@@ -570,7 +570,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData *> &arrayWheelItemDat
 	case SORT_ONI_COURSES:
 	case SORT_ENDLESS_COURSES:
 		{
-			bool bOnlyPreferred = PREFSMAN->m_CourseSortOrder == PrefsManager::COURSE_SOFT_PREFERRED;
+			bool bOnlyPreferred = PREFSMAN->m_CourseSortOrder == PrefsManager::COURSE_SORT_PREFERRED;
 
 			vector<CourseType> vct;
 			switch( so )
