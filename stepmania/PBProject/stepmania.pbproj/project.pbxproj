@@ -1743,6 +1743,18 @@
 		AAFBEEF0094D807E000029DE /* ScreenServiceAction.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFBEEEA094D807E000029DE /* ScreenServiceAction.h */; };
 		AAFC6CF1072A30440053AAD3 /* InputHandler_MonkeyKeyboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFC6CEF072A30440053AAD3 /* InputHandler_MonkeyKeyboard.cpp */; };
 		AAFC6CF2072A30440053AAD3 /* InputHandler_MonkeyKeyboard.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFC6CF0072A30440053AAD3 /* InputHandler_MonkeyKeyboard.h */; };
+		AAFE710B0A91ADE6005F2290 /* ActorProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFE71090A91ADE6005F2290 /* ActorProxy.cpp */; };
+		AAFE710C0A91ADE6005F2290 /* ActorProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFE710A0A91ADE6005F2290 /* ActorProxy.h */; };
+		AAFE710D0A91ADE6005F2290 /* ActorProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFE71090A91ADE6005F2290 /* ActorProxy.cpp */; };
+		AAFE710E0A91ADE6005F2290 /* ActorProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFE710A0A91ADE6005F2290 /* ActorProxy.h */; };
+		AAFE711F0A91B551005F2290 /* RageSurface_Save_PNG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFE711C0A91B551005F2290 /* RageSurface_Save_PNG.cpp */; };
+		AAFE71200A91B551005F2290 /* RoomInfoDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFE711D0A91B551005F2290 /* RoomInfoDisplay.cpp */; };
+		AAFE71210A91B551005F2290 /* RoomInfoDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFE711E0A91B551005F2290 /* RoomInfoDisplay.h */; };
+		AAFE71220A91B551005F2290 /* RageSurface_Save_PNG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFE711C0A91B551005F2290 /* RageSurface_Save_PNG.cpp */; };
+		AAFE71230A91B551005F2290 /* RoomInfoDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFE711D0A91B551005F2290 /* RoomInfoDisplay.cpp */; };
+		AAFE71240A91B551005F2290 /* RoomInfoDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFE711E0A91B551005F2290 /* RoomInfoDisplay.h */; };
+		AAFE71290A91B58F005F2290 /* RageSurface_Save_PNG.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFE71280A91B58F005F2290 /* RageSurface_Save_PNG.h */; };
+		AAFE712A0A91B58F005F2290 /* RageSurface_Save_PNG.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFE71280A91B58F005F2290 /* RageSurface_Save_PNG.h */; };
 		F4BC045409E6B578003F770B /* ScreenGameplaySyncMachine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB55EB509A7E3D3008FDC69 /* ScreenGameplaySyncMachine.cpp */; };
 		F4BC045509E6B582003F770B /* ScreenGameplaySyncMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB55EB609A7E3D3008FDC69 /* ScreenGameplaySyncMachine.h */; };
 /* End PBXBuildFile section */
@@ -2707,6 +2719,12 @@
 		AAFC7FF00513A67700D02EE9 /* RageSoundReader_FileReader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageSoundReader_FileReader.cpp; path = ../src/RageSoundReader_FileReader.cpp; sourceTree = "<group>"; };
 		AAFC7FF10513A67700D02EE9 /* RageSoundReader_MP3.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageSoundReader_MP3.cpp; path = ../src/RageSoundReader_MP3.cpp; sourceTree = "<group>"; };
 		AAFC7FF20513A67700D02EE9 /* RageSoundReader_MP3.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageSoundReader_MP3.h; path = ../src/RageSoundReader_MP3.h; sourceTree = "<group>"; };
+		AAFE71090A91ADE6005F2290 /* ActorProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ActorProxy.cpp; path = ../src/ActorProxy.cpp; sourceTree = "<group>"; };
+		AAFE710A0A91ADE6005F2290 /* ActorProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActorProxy.h; path = ../src/ActorProxy.h; sourceTree = "<group>"; };
+		AAFE711C0A91B551005F2290 /* RageSurface_Save_PNG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RageSurface_Save_PNG.cpp; path = ../src/RageSurface_Save_PNG.cpp; sourceTree = "<group>"; };
+		AAFE711D0A91B551005F2290 /* RoomInfoDisplay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RoomInfoDisplay.cpp; path = ../src/RoomInfoDisplay.cpp; sourceTree = "<group>"; };
+		AAFE711E0A91B551005F2290 /* RoomInfoDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RoomInfoDisplay.h; path = ../src/RoomInfoDisplay.h; sourceTree = "<group>"; };
+		AAFE71280A91B58F005F2290 /* RageSurface_Save_PNG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RageSurface_Save_PNG.h; path = ../src/RageSurface_Save_PNG.h; sourceTree = "<group>"; };
 		AAFF551D0549F39700D02EE9 /* GraphDisplay.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = GraphDisplay.cpp; path = ../src/GraphDisplay.cpp; sourceTree = "<group>"; };
 		AAFF551E0549F39700D02EE9 /* GraphDisplay.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = GraphDisplay.h; path = ../src/GraphDisplay.h; sourceTree = "<group>"; };
 		AAFF55210549F43A00D02EE9 /* ComboGraph.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ComboGraph.cpp; path = ../src/ComboGraph.cpp; sourceTree = "<group>"; };
@@ -3372,6 +3390,8 @@
 				AA9091A4067ED46400C1FCFF /* RageSurface_Save_BMP.h */,
 				AAEBC6C607A20AFE00793F0E /* RageSurface_Save_JPEG.cpp */,
 				AAEBC6C707A20AFE00793F0E /* RageSurface_Save_JPEG.h */,
+				AAFE711C0A91B551005F2290 /* RageSurface_Save_PNG.cpp */,
+				AAFE71280A91B58F005F2290 /* RageSurface_Save_PNG.h */,
 				AAB9C8AD06EAF64400AD97CD /* RageSurfaceUtils.cpp */,
 				AAB9C8AE06EAF64400AD97CD /* RageSurfaceUtils.h */,
 				AAEBC6C807A20AFE00793F0E /* RageSurfaceUtils_Dither.cpp */,
@@ -3661,6 +3681,8 @@
 				AA6EFEAD04770E7C005F316C /* OptionsCursor.h */,
 				AAC6DDDE0569C71000B5D56F /* PaneDisplay.cpp */,
 				AAC6DDDF0569C71000B5D56F /* PaneDisplay.h */,
+				AAFE711D0A91B551005F2290 /* RoomInfoDisplay.cpp */,
+				AAFE711E0A91B551005F2290 /* RoomInfoDisplay.h */,
 				AAAFE82E0835E8B100FC43E0 /* RoomWheel.cpp */,
 				AAAFE82F0835E8B100FC43E0 /* RoomWheel.h */,
 				AA6EFEAE04770E7C005F316C /* ScrollBar.cpp */,
@@ -3782,6 +3804,8 @@
 				AA6EFF7804770FFD005F316C /* ActorFrame.h */,
 				AA5D166A0A798C0E00F17E86 /* ActorFrameTexture.cpp */,
 				AA5D166B0A798C0E00F17E86 /* ActorFrameTexture.h */,
+				AAFE71090A91ADE6005F2290 /* ActorProxy.cpp */,
+				AAFE710A0A91ADE6005F2290 /* ActorProxy.h */,
 				AA6EFF7904770FFD005F316C /* ActorScroller.cpp */,
 				AA6EFF7A04770FFD005F316C /* ActorScroller.h */,
 				AACFBE2608E7D793005087FC /* ActorSound.cpp */,
@@ -4434,6 +4458,9 @@
 				AA5D166D0A798C0E00F17E86 /* ActorFrameTexture.h in Headers */,
 				AA5A51F30A8441AA006DBB92 /* ModsGroup.h in Headers */,
 				AA5A56E80A875DA3006DBB92 /* ExportStrings.h in Headers */,
+				AAFE710C0A91ADE6005F2290 /* ActorProxy.h in Headers */,
+				AAFE71210A91B551005F2290 /* RoomInfoDisplay.h in Headers */,
+				AAFE71290A91B58F005F2290 /* RageSurface_Save_PNG.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4884,6 +4911,9 @@
 				AA5D166F0A798C0E00F17E86 /* ActorFrameTexture.h in Headers */,
 				AA5A51F40A8441AA006DBB92 /* ModsGroup.h in Headers */,
 				AA5A56E60A875DA3006DBB92 /* ExportStrings.h in Headers */,
+				AAFE710E0A91ADE6005F2290 /* ActorProxy.h in Headers */,
+				AAFE71240A91B551005F2290 /* RoomInfoDisplay.h in Headers */,
+				AAFE712A0A91B58F005F2290 /* RageSurface_Save_PNG.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5441,6 +5471,9 @@
 				AA5D16570A79805C00F17E86 /* RageTextureRenderTarget.cpp in Sources */,
 				AA5D166C0A798C0E00F17E86 /* ActorFrameTexture.cpp in Sources */,
 				AA5A56E90A875DA3006DBB92 /* ExportStrings.cpp in Sources */,
+				AAFE710B0A91ADE6005F2290 /* ActorProxy.cpp in Sources */,
+				AAFE711F0A91B551005F2290 /* RageSurface_Save_PNG.cpp in Sources */,
+				AAFE71200A91B551005F2290 /* RoomInfoDisplay.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5850,6 +5883,9 @@
 				AA5D16590A79805C00F17E86 /* RageTextureRenderTarget.cpp in Sources */,
 				AA5D166E0A798C0E00F17E86 /* ActorFrameTexture.cpp in Sources */,
 				AA5A56E70A875DA3006DBB92 /* ExportStrings.cpp in Sources */,
+				AAFE710D0A91ADE6005F2290 /* ActorProxy.cpp in Sources */,
+				AAFE71220A91B551005F2290 /* RageSurface_Save_PNG.cpp in Sources */,
+				AAFE71230A91B551005F2290 /* RoomInfoDisplay.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
