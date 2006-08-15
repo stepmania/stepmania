@@ -35,13 +35,13 @@ void ActorUtil::Register( const RString& sClassName, CreateActorFn pfn )
 	(*g_pmapRegistrees)[sClassName] = pfn;
 }
 
-Actor* ActorUtil::Create( const RString& sClassName, const RString& sDir, const XNode* pNode )
+Actor* ActorUtil::Create( const RString& sClassName, const RString& sDir, const XNode* pNode, Actor *pParentActor )
 {
 	map<RString,CreateActorFn>::iterator iter = g_pmapRegistrees->find( sClassName );
 	ASSERT_M( iter != g_pmapRegistrees->end(), ssprintf("Actor '%s' is not registered.",sClassName.c_str()) );
 
 	CreateActorFn pfn = iter->second;
-	return (*pfn)( sDir, pNode );
+	return (*pfn)( sDir, pNode, pParentActor );
 }
 
 void ActorUtil::ResolvePath( RString &sPath, const RString &sName )
@@ -173,7 +173,7 @@ void ActorUtil::GetParam( Lua *L, const RString &sName )
 	}
 }
 
-Actor* ActorUtil::LoadFromNode( const RString& sDir, const XNode* pNode )
+Actor* ActorUtil::LoadFromNode( const RString& sDir, const XNode* pNode, Actor *pParentActor )
 {
 	ASSERT( pNode );
 
@@ -241,7 +241,7 @@ Actor* ActorUtil::LoadFromNode( const RString& sDir, const XNode* pNode )
 
 	if( IsRegistered(sClass) )
 	{
-		pReturn = ActorUtil::Create( sClass, sDir, pNode );
+		pReturn = ActorUtil::Create( sClass, sDir, pNode, pParentActor );
 	}
 	else // sClass is empty or garbage (e.g. "1" or "0 // 0==Sprite")
 	{
@@ -268,7 +268,7 @@ Actor* ActorUtil::LoadFromNode( const RString& sDir, const XNode* pNode )
 
 		ActorUtil::ResolvePath( sNewPath, sDir );
 
-		pReturn = ActorUtil::MakeActor( sNewPath, pNode );
+		pReturn = ActorUtil::MakeActor( sNewPath, pNode, pParentActor );
 		if( pReturn == NULL )
 			goto all_done;
 	}
@@ -333,7 +333,7 @@ static void MergeActorXML( XNode *pChild, const XNode *pParent )
  * If pParent is non-NULL, it's the parent node when nesting XML, which is
  * used only by ActorUtil::LoadFromNode.
  */
-Actor* ActorUtil::MakeActor( const RString &sPath_, const XNode *pParent )
+Actor* ActorUtil::MakeActor( const RString &sPath_, const XNode *pParent, Actor *pParentActor )
 {
 	static const XNode dummy;
 	if( pParent == NULL )
@@ -383,7 +383,7 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, const XNode *pParent )
 			XNode xml( *pParent );
 			xml.AppendAttr( "Texture", sPath );
 
-			return ActorUtil::Create( "Sprite", sDir, &xml );
+			return ActorUtil::Create( "Sprite", sDir, &xml, pParentActor );
 		}
 	case FT_Model:
 		{
@@ -392,7 +392,7 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, const XNode *pParent )
 			xml.AppendAttr( "Materials", sPath );
 			xml.AppendAttr( "Bones", sPath );
 
-			return ActorUtil::Create( "Model", sDir, &xml );
+			return ActorUtil::Create( "Model", sDir, &xml, pParentActor );
 		}
 	default:
 		RageException::Throw("File \"%s\" has unknown type, \"%s\"",
