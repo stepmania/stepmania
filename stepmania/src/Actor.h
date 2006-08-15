@@ -227,11 +227,11 @@ public:
 	//
 	enum HorizAlign { align_left, align_center, align_right };
 	virtual void SetHorizAlign( HorizAlign ha ) { m_HorizAlign = ha; }
-	virtual void SetHorizAlignString( const RString &s );	// convenience
+	void SetHorizAlignString( const RString &s );	// convenience
 
 	enum VertAlign { align_top, align_middle, align_bottom };
 	virtual void SetVertAlign( VertAlign va ) { m_VertAlign = va; }
-	virtual void SetVertAlignString( const RString &s );	// convenience
+	void SetVertAlignString( const RString &s );	// convenience
 
 
 	//
