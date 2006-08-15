@@ -126,6 +126,7 @@ Actor::Actor()
 
 	m_size = RageVector2( 1, 1 );
 	InitDefaults();
+	m_pParent = NULL;
 	m_bFirstUpdate = true;
 }
 
@@ -144,6 +145,7 @@ Actor::Actor( const Actor &cpy ):
 
 #define CPY(x) x = cpy.x
 	CPY( m_sName );
+	CPY( m_pParent );
 	CPY( m_pLuaInstance );
 
 	CPY( m_baseRotation );
@@ -1273,6 +1275,8 @@ void Actor::PushContext( lua_State *L )
 
 void Actor::SetParent( Actor *pParent )
 {
+	m_pParent = pParent;
+
 	Lua *L = LUA->Get();
 		int iTop = lua_gettop( L );
 

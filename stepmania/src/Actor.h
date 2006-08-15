@@ -362,6 +362,7 @@ public:
 
 protected:
 	RString m_sName;
+	Actor *m_pParent;
 
 	struct TweenInfo
 	{
