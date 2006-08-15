@@ -662,31 +662,8 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 {
 	LOG->Trace( "Loading courses." );
 
-
-	//
-	// Load courses from in Courses dir
-	//
-	{
-		vector<RString> saCourseFiles;
-		GetDirListing( COURSES_DIR+"*.crs", saCourseFiles, false, true );
-		for( unsigned i=0; i<saCourseFiles.size(); i++ )
-		{
-			Course* pCourse = new Course;
-			CourseLoaderCRS::LoadFromCRSFile( saCourseFiles[i], *pCourse );
-			m_pCourses.push_back( pCourse );
-
-			if( ld )
-			{
-				ld->SetText( LOADING_COURSES.GetValue()+ssprintf("\n%s\n%s",
-					"Courses",
-					Basename(saCourseFiles[i]).c_str()));
-				ld->Paint();
-			}
-		}
-	}
-
-
 	vector<RString> vsCourseDirs;
+	vsCourseDirs.push_back( "" );
 	vsCourseDirs.push_back( COURSES_DIR );
 	vsCourseDirs.push_back( ADDITIONAL_COURSES_DIR );
 
