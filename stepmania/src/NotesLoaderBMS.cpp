@@ -325,10 +325,10 @@ bool BMSLoader::LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNa
 			}
 		}
 
-		const unsigned uNumNotesInThisMeasure = vTapNotes.size();
-		for( unsigned j=0; j<uNumNotesInThisMeasure; j++ )
+		const unsigned iNumNotesInThisMeasure = vTapNotes.size();
+		for( unsigned j=0; j<iNumNotesInThisMeasure; j++ )
 		{
-			float fPercentThroughMeasure = (float)j/(float)uNumNotesInThisMeasure;
+			float fPercentThroughMeasure = (float)j/(float)iNumNotesInThisMeasure;
 			
 			int row = iRowNo + lrintf( fPercentThroughMeasure * fBeatsPerMeasure * ROWS_PER_BEAT );
 			
@@ -340,7 +340,7 @@ bool BMSLoader::LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNa
 			bool bIsHold;
 			if( ConvertRawTrackToTapNote(iRawTrackNum, bmsTrack, bIsHold) )
 			{
-				TapNote tn = vTapNotes[j];
+				TapNote &tn = vTapNotes[j];
 				if( tn.type != TapNote::empty )
 				{
 					if( bmsTrack == BMS_AUTO_KEYSOUND_1 )
