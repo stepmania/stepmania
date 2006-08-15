@@ -285,6 +285,15 @@ bool BMSLoader::LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNa
 	MeasureToTimeSig_t mapMeasureToTimeSig;
 	ReadTimeSigs( mapNameToData, mapMeasureToTimeSig );
 
+	int iHoldStarts[NUM_BMS_TRACKS];
+	int iHoldPrevs[NUM_BMS_TRACKS];
+	
+	for( int i = 0; i < NUM_BMS_TRACKS; ++i )
+	{
+		iHoldStarts[i] = -1;
+		iHoldPrevs[i] = -1;
+	}
+	
 	NameToData_t::const_iterator it;
 	for( it = mapNameToData.lower_bound("#00000"); it != mapNameToData.end(); ++it )
 	{
@@ -305,11 +314,10 @@ bool BMSLoader::LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNa
 			RString sNoteId = sNoteData.substr( i, 2 );
 			if( sNoteId != "00" )
 			{
-				TapNote tn = TAP_ORIGINAL_TAP;
+				vTapNotes.push_back( TAP_ORIGINAL_TAP );
 				map<RString,int>::const_iterator it = m_mapWavIdToKeysoundIndex.find( sNoteId );
 				if( it != m_mapWavIdToKeysoundIndex.end() )
-					tn.iKeysoundIndex = it->second;
-				vTapNotes.push_back( tn );
+					vTapNotes.back().iKeysoundIndex = it->second;
 			}
 			else
 			{
@@ -320,30 +328,29 @@ bool BMSLoader::LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNa
 		const unsigned uNumNotesInThisMeasure = vTapNotes.size();
 		for( unsigned j=0; j<uNumNotesInThisMeasure; j++ )
 		{
-			if( vTapNotes[j].type != TapNote::empty )
+			float fPercentThroughMeasure = (float)j/(float)uNumNotesInThisMeasure;
+			
+			int row = iRowNo + lrintf( fPercentThroughMeasure * fBeatsPerMeasure * ROWS_PER_BEAT );
+			
+			// some BMS files seem to have funky alignment, causing us to write gigantic cache files.
+			// Try to correct for this by quantizing.
+			row = Quantize( row, ROWS_PER_MEASURE/64 );
+			
+			BmsTrack bmsTrack;
+			bool bIsHold;
+			if( ConvertRawTrackToTapNote(iRawTrackNum, bmsTrack, bIsHold) )
 			{
-				float fPercentThroughMeasure = (float)j/(float)uNumNotesInThisMeasure;
-
-				int row = iRowNo + lrintf( fPercentThroughMeasure * fBeatsPerMeasure * ROWS_PER_BEAT );
-
-				// some BMS files seem to have funky alignment, causing us to write gigantic cache files.
-				// Try to correct for this by quantizing.
-				row = Quantize( row, ROWS_PER_MEASURE/64 );
-					
-				BmsTrack bmsTrack;
-				bool bIsHold;
-				if( ConvertRawTrackToTapNote(iRawTrackNum, bmsTrack, bIsHold) )
+				TapNote tn = vTapNotes[j];
+				if( tn.type != TapNote::empty )
 				{
-					TapNote tn = vTapNotes[j];
 					if( bmsTrack == BMS_AUTO_KEYSOUND_1 )
 					{
-						tn.type = TapNote::autoKeysound;
-
 						// shift the auto keysound as far right as possible
 						int iLastEmptyTrack = -1;
 						if( ndNotes.GetTapLastEmptyTrack(row, iLastEmptyTrack)  &&
-							iLastEmptyTrack >= BMS_AUTO_KEYSOUND_1 )
+						    iLastEmptyTrack >= BMS_AUTO_KEYSOUND_1 )
 						{
+							tn.type = TapNote::autoKeysound;
 							bmsTrack = (BmsTrack)iLastEmptyTrack;
 						}
 						else
@@ -354,20 +361,53 @@ bool BMSLoader::LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNa
 					}
 					else if( bIsHold )
 					{
-						tn.type = TapNote::hold_head;
+						if( iHoldStarts[bmsTrack] == -1 )
+						{
+							// Start of a hold.
+							iHoldStarts[bmsTrack] = row;
+							iHoldPrevs[bmsTrack] = row;
+						}
+						else
+						{
+							// We're continuing a hold.
+							iHoldPrevs[bmsTrack] = row;
+						}
+						continue;
 					}
-					else
-					{
-						tn.type = TapNote::tap;
-					}
-
-					ndNotes.SetTapNote( bmsTrack, row, tn );
 				}
+				if( iHoldStarts[bmsTrack] != -1 )
+				{
+					// This is ending a hold.
+					const int iBegin = iHoldStarts[bmsTrack];
+					const int iEnd = iHoldPrevs[bmsTrack];
+					
+					if( iBegin < iEnd )
+						ndNotes.AddHoldNote( bmsTrack, iBegin, iEnd, TAP_ORIGINAL_HOLD_HEAD );
+					else
+						ndNotes.SetTapNote( bmsTrack, iBegin, TAP_ORIGINAL_TAP );
+					iHoldStarts[bmsTrack] = -1;
+					iHoldPrevs[bmsTrack] = -1;
+				}
+				// Don't bother inserting empty taps.
+				if( tn.type != TapNote::empty )
+					ndNotes.SetTapNote( bmsTrack, row, tn );
 			}
 		}
 	}
 
-	// we're done reading in all of the BMS values
+	// We're done reading in all of the BMS values. Time to check for any unfinished holds.
+	for( int iTrack = 0; iTrack < NUM_BMS_TRACKS; ++iTrack )
+	{
+		const int iBegin = iHoldStarts[iTrack];
+		const int iEnd = iHoldPrevs[iTrack];
+				
+		if( iBegin == -1 )
+			continue;
+		if( iBegin < iEnd )
+			ndNotes.AddHoldNote( iTrack, iBegin, iEnd, TAP_ORIGINAL_HOLD_HEAD );
+		else
+			ndNotes.SetTapNote( iTrack, iBegin, TAP_ORIGINAL_TAP );
+	}		
 
 	out.m_StepsType = DetermineStepsType( iPlayer, ndNotes );
 	if( out.m_StepsType == STEPS_TYPE_INVALID )
