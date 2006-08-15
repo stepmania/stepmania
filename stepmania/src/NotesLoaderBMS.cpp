@@ -261,21 +261,6 @@ bool BMSLoader::LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNa
 		iPlayer = atoi(sData);
 	if( GetTagFromMap( mapNameToData, "#playlevel", sData ) )
 		out.SetMeter( atoi(sData) );
-	if( GetTagFromMap( mapNameToData, "#title", sData ) )
-	{
-		/* Hack: guess at 6-panel. */
-
-		// extract the Steps description (looks like 'Music <BASIC>')
-		size_t iOpenBracket = sData.find_first_of( "<(" );
-		size_t iCloseBracket = sData.find_first_of( ">)" );
-
-		if( iOpenBracket != string::npos && iCloseBracket != string::npos && iCloseBracket > iOpenBracket )
-			sData = sData.substr( iOpenBracket+1, iCloseBracket-iOpenBracket-1 );
-
-		// if there's a 6 in the description, it's probably part of "6panel" or "6-panel"
-		if( sData.find("6") != string::npos )
-			out.m_StepsType = STEPS_TYPE_DANCE_SOLO;
-	}
 
 	NoteData ndNotes;
 	ndNotes.SetNumTracks( NUM_BMS_TRACKS );
@@ -410,6 +395,19 @@ bool BMSLoader::LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNa
 	}		
 
 	out.m_StepsType = DetermineStepsType( iPlayer, ndNotes );
+	if( out.m_StepsType == STEPS_TYPE_BEAT_SINGLE5 && GetTagFromMap( mapNameToData, "#title", sData ) )
+	{
+		/* Hack: guess at 6-panel. */
+		
+		// extract the Steps description (looks like 'Music <BASIC>')
+		const size_t iOpenBracket = sData.find_first_of( "<(" );
+		const size_t iCloseBracket = sData.find_first_of( ">)", iOpenBracket );
+		
+		// if there's a 6 in the description, it's probably part of "6panel" or "6-panel"		
+		if( sData.find('6', iOpenBracket) < iCloseBracket )
+			out.m_StepsType = STEPS_TYPE_DANCE_SOLO;
+	}
+	
 	if( out.m_StepsType == STEPS_TYPE_INVALID )
 	{
 		LOG->Warn( "Couldn't determine note type of file '%s'", sPath.c_str() );
