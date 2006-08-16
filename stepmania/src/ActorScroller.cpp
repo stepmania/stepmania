@@ -120,27 +120,29 @@ void ActorScroller::LoadFromNode( const RString &sDir, const XNode *pNode )
 		Dialog::OK( sError ); \
 	}
 
-	float fSecondsPerItem = 0;
 	float fNumItemsToDraw = 0;
-	RString sTransformFunction;
-	int iSubdivisions = 1;
-
-	GET_VALUE( "SecondsPerItem", fSecondsPerItem );
 	GET_VALUE( "NumItemsToDraw", fNumItemsToDraw );
-	GET_VALUE( "TransformFunction", sTransformFunction );
-	pNode->GetAttrValue( "Subdivisions", iSubdivisions );
-#undef GET_VALUE
 
-	bool bUseMask = false;
-	pNode->GetAttrValue( "UseMask", bUseMask );
+#undef GET_VALUE
 
 	Load2( 
 		fNumItemsToDraw,
 		false );
-	ActorScroller::SetTransformFromExpression( sTransformFunction );
-	ActorScroller::SetSecondsPerItem( fSecondsPerItem );
-	ActorScroller::SetNumSubdivisions( iSubdivisions );
 
+	float fSecondsPerItem = 0;
+	if( pNode->GetAttrValue("SecondsPerItem", fSecondsPerItem) )
+		ActorScroller::SetSecondsPerItem( fSecondsPerItem );
+
+	RString sTransformFunction;
+	if( pNode->GetAttrValue("TransformFunction", sTransformFunction) )
+		ActorScroller::SetTransformFromExpression( sTransformFunction );
+
+	int iSubdivisions = 1;
+	if( pNode->GetAttrValue("Subdivisions", iSubdivisions) )
+		ActorScroller::SetNumSubdivisions( iSubdivisions );
+
+	bool bUseMask = false;
+	pNode->GetAttrValue( "UseMask", bUseMask );
 	if( bUseMask )
 		EnableMask( 10, 10 ); // XXX
 
