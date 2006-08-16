@@ -6,6 +6,7 @@
 #include "PlayerOptions.h"
 #include "NoteData.h"
 #include "NoteDataUtil.h"
+#include "CommonMetrics.h"
 
 void TrailEntry::GetAttackArray( AttackArray &out ) const
 {
@@ -200,12 +201,42 @@ public:
 		rv.PushSelf(L);
 		return 1;
 	}
+	static int GetArtists( T* p, lua_State *L )
+	{
+		vector<RString> asArtists, asAltArtists;
+		FOREACH_CONST( TrailEntry, p->m_vEntries, e )
+		{
+			if( e->bSecret )
+			{
+				asArtists.push_back( "???" );
+				asAltArtists.push_back( "???" );
+			}
+			else
+			{
+				asArtists.push_back( e->pSong->GetDisplayArtist() );
+				asAltArtists.push_back( e->pSong->GetTranslitArtist() );
+			}
+		}
+
+		if( (int) asArtists.size() > CommonMetrics::MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
+		{
+			asArtists.clear();
+			asAltArtists.clear();
+			asArtists.push_back( "Various Artists" );
+			asAltArtists.push_back( "Various Artists" );
+		}
+
+		LuaHelpers::CreateTableFromArray( asArtists, L );
+		LuaHelpers::CreateTableFromArray( asAltArtists, L );
+		return 2;
+	}
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( GetCourseDifficulty );
 		ADD_METHOD( GetStepsType );
 		ADD_METHOD( GetRadarValues );
+		ADD_METHOD( GetArtists );
 
 		Luna<T>::Register( L );
 	}
