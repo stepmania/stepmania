@@ -175,11 +175,6 @@ void ScreenSelectMusic::Init()
 		SET_XY( m_DifficultyIcon[p] );
 		this->AddChild( &m_DifficultyIcon[p] );
 
-		m_AutoGenIcon[p].SetName( ssprintf("AutogenIconP%d",p+1) );
-		m_AutoGenIcon[p].Load( THEME->GetPathG(m_sName,"autogen") );
-		SET_XY( m_AutoGenIcon[p] );
-		this->AddChild( &m_AutoGenIcon[p] );
-
 		m_sprMeterFrame[p].SetName( ssprintf("MeterFrameP%d",p+1) );
 		m_sprMeterFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("meter frame p%d",p+1)) );
 		SET_XY( m_sprMeterFrame[p] );
@@ -286,7 +281,6 @@ void ScreenSelectMusic::TweenSongPartsOnScreen( bool Initial )
 			ON_COMMAND( m_sprDifficultyFrame[p] );
 			ON_COMMAND( m_sprMeterFrame[p] );
 			ON_COMMAND( m_DifficultyIcon[p] );
-			ON_COMMAND( m_AutoGenIcon[p] );
 		}
 	}
 }
@@ -301,7 +295,6 @@ void ScreenSelectMusic::TweenSongPartsOffScreen( bool Final )
 			OFF_COMMAND( m_sprDifficultyFrame[p] );
 			OFF_COMMAND( m_sprMeterFrame[p] );
 			OFF_COMMAND( m_DifficultyIcon[p] );
-			OFF_COMMAND( m_AutoGenIcon[p] );
 		}
 	}
 }
@@ -315,7 +308,6 @@ void ScreenSelectMusic::SkipSongPartTweens()
 		m_sprDifficultyFrame[p].FinishTweening();
 		m_sprMeterFrame[p].FinishTweening();
 		m_DifficultyIcon[p].FinishTweening();
-		m_AutoGenIcon[p].FinishTweening();
 	}
 }
 
@@ -1141,11 +1133,6 @@ void ScreenSelectMusic::AfterStepsChange( const vector<PlayerNumber> &vpns )
 		m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
 		
 		m_DifficultyIcon[pn].SetFromSteps( pn, pSteps );
-		m_AutoGenIcon[pn].StopEffect();
-		if( pSteps && pSteps->IsAutogen() )
-			m_AutoGenIcon[pn].SetDiffuse( RageColor(1,1,1,1) );
-		else
-			m_AutoGenIcon[pn].SetDiffuse( RageColor(1,1,1,0) );
 		m_DifficultyMeter[pn].SetFromGameState( pn );
 		m_GrooveRadar.SetFromSteps( pn, pSteps );
 		m_MusicWheel.NotesOrTrailChanged( pn );
@@ -1177,16 +1164,6 @@ void ScreenSelectMusic::AfterTrailChange( const vector<PlayerNumber> &vpns )
 		m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
 		
 		m_DifficultyIcon[pn].SetFromTrail( pn, pTrail );
-		//if( pTrail && pTrail->IsAutogen() )
-		//{
-		//	m_AutoGenIcon[pn].SetEffectDiffuseShift();
-		//}
-		//else
-		//{
-		//	m_AutoGenIcon[pn].SetEffectNone();
-		//	m_AutoGenIcon[pn].SetDiffuse( RageColor(1,1,1,0) );
-		//}
-
 		m_DifficultyMeter[pn].SetFromGameState( pn );
 		m_GrooveRadar.SetEmpty( pn );
 		m_MusicWheel.NotesOrTrailChanged( pn );
