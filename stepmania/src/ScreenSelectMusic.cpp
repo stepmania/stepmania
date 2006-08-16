@@ -164,11 +164,6 @@ void ScreenSelectMusic::Init()
 	SET_XY( m_textTotalTime );
 	this->AddChild( &m_textTotalTime );
 
-	m_Artist.SetName( "ArtistDisplay" );
-	m_Artist.Load( "ArtistDisplay" );
-	SET_XY( m_Artist );
-	this->AddChild( &m_Artist );
-		
 	m_MachineRank.SetName( "MachineRank" );
 	m_MachineRank.LoadFromFont( THEME->GetPathF(m_sName,"rank") );
 	SET_XY( m_MachineRank );
@@ -324,7 +319,6 @@ void ScreenSelectMusic::BeginScreen()
 	ON_COMMAND( m_sprMarathonBalloon );
 	ON_COMMAND( m_sprCourseHasMods );
 	ON_COMMAND( m_MusicWheel );
-	ON_COMMAND( m_Artist );
 	ON_COMMAND( m_MachineRank );
 
 	FOREACH_HumanPlayer( p )
@@ -450,7 +444,6 @@ void ScreenSelectMusic::TweenOffScreen()
 	OFF_COMMAND( m_sprLongBalloon );
 	OFF_COMMAND( m_sprMarathonBalloon );
 	OFF_COMMAND( m_sprCourseHasMods );
-	OFF_COMMAND( m_Artist );
 	OFF_COMMAND( m_MachineRank );
 
 	FOREACH_HumanPlayer( p )
@@ -1509,9 +1502,6 @@ void ScreenSelectMusic::AfterMusicChange()
 			}
 
 			COMMAND( m_sprCourseHasMods, "Hide" );
-
-			m_Artists.push_back( pSong->GetDisplayArtist() );
-			m_AltArtists.push_back( pSong->GetTranslitArtist() );
 		}
 		break;
 	case TYPE_ROULETTE:
@@ -1583,20 +1573,6 @@ void ScreenSelectMusic::AfterMusicChange()
 
 		SwitchToPreferredDifficulty();
 
-		FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
-		{
-			if( e->bSecret )
-			{
-				m_Artists.push_back( "???" );
-				m_AltArtists.push_back( "???" );
-			}
-			else
-			{
-				m_Artists.push_back( e->pSong->GetDisplayArtist() );
-				m_AltArtists.push_back( e->pSong->GetTranslitArtist() );
-			}
-		}
-
 		CourseType ct = PlayModeToCourseType( GAMESTATE->m_PlayMode );
 		const vector<Course*> best = SONGMAN->GetPopularCourses( ct, ProfileSlot_Machine );
 		const int index = FindCourseIndexOfSameMode( best.begin(), best.end(), pCourse );
@@ -1663,16 +1639,6 @@ void ScreenSelectMusic::AfterMusicChange()
 	}
 
 	g_StartedLoadingAt.Touch();
-
-	if( (int) m_Artists.size() > CommonMetrics::MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
-	{
-		m_Artists.clear();
-		m_AltArtists.clear();
-		m_Artists.push_back( "Various Artists" );
-		m_AltArtists.push_back( "Various Artists" );
-	}
-
-	m_Artist.SetTips( m_Artists, m_AltArtists );
 
 	vector<PlayerNumber> vpns;
 	FOREACH_HumanPlayer( p )

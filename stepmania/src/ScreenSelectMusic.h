@@ -16,7 +16,6 @@
 #include "DifficultyMeter.h"
 #include "DifficultyDisplay.h"
 #include "CourseContentsList.h"
-#include "HelpDisplay.h"
 #include "RageUtil_BackgroundLoader.h"
 #include "ThemeMetric.h"
 #include "ActorCommands.h"
@@ -111,7 +110,6 @@ protected:
 	AutoActor			m_sprCourseHasMods;
 	DifficultyDisplay		m_DifficultyDisplay;
 	CourseContentsList		m_CourseContents;
-	HelpDisplay			m_Artist;
 	BitmapText			m_MachineRank;
 
 	bool				m_bMadeChoice;
