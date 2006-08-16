@@ -4,7 +4,6 @@
 #define HELP_DISPLAY_H
 
 #include "BitmapText.h"
-#include "ThemeMetric.h"
 #include "MessageManager.h"
 
 struct lua_State;
@@ -15,12 +14,12 @@ public:
 	HelpDisplay();
 	void Load( const RString &sType );
 
-	void LoadFromNode( const RString& sDir, const XNode* pNode );
 	virtual Actor *Copy() const;
 
 	void SetTips( const vector<RString> &arrayTips ) { SetTips( arrayTips, arrayTips ); }
 	void SetTips( const vector<RString> &arrayTips, const vector<RString> &arrayTipsAlt );
 	void GetTips( vector<RString> &arrayTipsOut, vector<RString> &arrayTipsAltOut ) const { arrayTipsOut = m_arrayTips; arrayTipsAltOut = m_arrayTipsAlt; }
+	void SetSecsBetweenSwitches( float fSeconds ) { m_fSecsBetweenSwitches = m_fSecsUntilSwitch = fSeconds; }
 
 	virtual void Update( float fDeltaTime );
 
@@ -28,11 +27,10 @@ public:
 	virtual void PushSelf( lua_State *L );
 
 protected:
-	ThemeMetric<float> TIP_SHOW_TIME;
-
 	vector<RString> m_arrayTips, m_arrayTipsAlt;
 	int m_iCurTipIndex;
 	
+	float m_fSecsBetweenSwitches;
 	float m_fSecsUntilSwitch;
 };
 

@@ -98,6 +98,7 @@ void ScreenWithMenuElements::Init()
 
 	m_textHelp->SetName( "Help" );
 	m_textHelp->Load( "HelpDisplay" );
+	m_textHelp->LoadFromFont( THEME->GetPathF("HelpDisplay","text") );
 	SET_XY( m_textHelp );
 	LoadHelpText();
 	this->AddChild( m_textHelp );

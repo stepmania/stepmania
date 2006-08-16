@@ -11,24 +11,13 @@ HelpDisplay::HelpDisplay()
 {
 	m_iCurTipIndex = 0;
 	m_fSecsUntilSwitch = 0;
+	m_fSecsBetweenSwitches = 1;
 }
 
 void HelpDisplay::Load( const RString &sType )
 {
-	TIP_SHOW_TIME.Load( sType, "TipShowTime" );
-
 	RunCommands( THEME->GetMetricA(sType,"TipOnCommand") );
-
-	LoadFromFont( THEME->GetPathF(sType,"text") );
-	
-	m_fSecsUntilSwitch = TIP_SHOW_TIME;
-}
-
-void HelpDisplay::LoadFromNode( const RString& sDir, const XNode* pNode )
-{
-	BitmapText::LoadFromNode( sDir, pNode );
-
-	Load( m_sName );
+	m_fSecsUntilSwitch = THEME->GetMetricF(sType,"TipShowTime");
 }
 
 void HelpDisplay::SetTips( const vector<RString> &arrayTips, const vector<RString> &arrayTipsAlt )
@@ -63,7 +52,7 @@ void HelpDisplay::Update( float fDeltaTime )
 		return;
 
 	// time to switch states
-	m_fSecsUntilSwitch = TIP_SHOW_TIME;
+	m_fSecsUntilSwitch = m_fSecsBetweenSwitches;
 	SetText( m_arrayTips[m_iCurTipIndex], m_arrayTipsAlt[m_iCurTipIndex] );
 	m_iCurTipIndex++;
 	m_iCurTipIndex = m_iCurTipIndex % m_arrayTips.size();
@@ -114,11 +103,12 @@ public:
 
 		return 2;
 	}
-
+	static int setsecsbetweenswitches( T* p, lua_State *L ) { p->SetSecsBetweenSwitches( FArg(1) ); return 0; }
 	static void Register(lua_State *L) 
 	{
 		ADD_METHOD( settips );
 		ADD_METHOD( gettips );
+		ADD_METHOD( setsecsbetweenswitches );
 
 		Luna<T>::Register( L );
 	}
