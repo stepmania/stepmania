@@ -14,7 +14,6 @@
 #include "DifficultyIcon.h"
 #include "DifficultyMeter.h"
 #include "DifficultyDisplay.h"
-#include "CourseContentsList.h"
 #include "RageUtil_BackgroundLoader.h"
 #include "ThemeMetric.h"
 #include "ActorCommands.h"
@@ -53,10 +52,7 @@ protected:
 	void SwitchDisplayMode( DisplayMode dm );
 	void TweenSongPartsOnScreen( bool Initial );
 	void TweenSongPartsOffScreen( bool Final );
-	void TweenCoursePartsOnScreen( bool Initial );
-	void TweenCoursePartsOffScreen( bool Final );
 	void SkipSongPartTweens();
-	void SkipCoursePartTweens();
 	void UpdateSelectButton();
 
 	void ChangeDifficulty( PlayerNumber pn, int dir );
@@ -74,7 +70,6 @@ protected:
 
 	ThemeMetric<float> SAMPLE_MUSIC_DELAY;
 	ThemeMetric<bool> SHOW_RADAR;
-	ThemeMetric<bool> SHOW_COURSE_CONTENTS;
 	ThemeMetric<bool> DO_ROULETTE_ON_MENU_TIMER;
 	ThemeMetric<bool> ALIGN_MUSIC_BEATS;
 	ThemeMetric<RString> CODES;
@@ -106,7 +101,6 @@ protected:
 	AutoActor			m_sprLongBalloon;
 	AutoActor			m_sprMarathonBalloon;
 	DifficultyDisplay		m_DifficultyDisplay;
-	CourseContentsList		m_CourseContents;
 	BitmapText			m_MachineRank;
 
 	bool				m_bMadeChoice;
