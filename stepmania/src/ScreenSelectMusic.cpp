@@ -247,58 +247,6 @@ ScreenSelectMusic::~ScreenSelectMusic()
 
 }
 
-void ScreenSelectMusic::TweenOnScreen()
-{
-	ScreenWithMenuElements::TweenOnScreen();
-
-	FOREACH_HumanPlayer( p )
-	{
-		ON_COMMAND( m_DifficultyMeter[p] );
-	}
-
-	ON_COMMAND( m_Banner );
-	ON_COMMAND( m_DifficultyDisplay );
-	ON_COMMAND( m_sprCDTitleFront );
-	ON_COMMAND( m_sprCDTitleBack );
-	ON_COMMAND( m_textNumSongs );
-	ON_COMMAND( m_textTotalTime );
-	ON_COMMAND( m_MusicWheel );
-	ON_COMMAND( m_sprLongBalloon );
-	ON_COMMAND( m_sprMarathonBalloon );
-	ON_COMMAND( m_MusicWheel );
-	ON_COMMAND( m_MachineRank );
-
-	FOREACH_HumanPlayer( p )
-	{		
-		ON_COMMAND( m_sprHighScoreFrame[p] );
-		ON_COMMAND( m_textHighScore[p] );
-	}
-}
-
-void ScreenSelectMusic::TweenOffScreen()
-{
-	ScreenWithMenuElements::TweenOffScreen();
-
-	OFF_COMMAND( m_Banner );
-	OFF_COMMAND( m_DifficultyDisplay );
-	OFF_COMMAND( m_sprCDTitleFront );
-	OFF_COMMAND( m_sprCDTitleBack );
-	OFF_COMMAND( m_textNumSongs );
-	OFF_COMMAND( m_textTotalTime );
-	OFF_COMMAND( m_MusicWheel );
-	OFF_COMMAND( m_sprLongBalloon );
-	OFF_COMMAND( m_sprMarathonBalloon );
-	OFF_COMMAND( m_MachineRank );
-
-	FOREACH_HumanPlayer( p )
-	{		
-		OFF_COMMAND( m_sprHighScoreFrame[p] );
-		OFF_COMMAND( m_textHighScore[p] );
-		OFF_COMMAND( m_DifficultyMeter[p] );
-	}
-}
-
-
 void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
 {
 	FOREACH_HumanPlayer( p )

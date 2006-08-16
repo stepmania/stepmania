@@ -44,8 +44,8 @@ public:
 	virtual void PushSelf( lua_State *L );
 
 protected:
-	void TweenOnScreen();
-	void TweenOffScreen();
+	virtual bool GenericTweenOn() const { return true; }
+	virtual bool GenericTweenOff() const { return true; }
 	void TweenScoreOnAndOffAfterChangeSort();
 	void UpdateSelectButton();
 
