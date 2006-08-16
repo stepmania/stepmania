@@ -4,7 +4,6 @@
 #define HELP_DISPLAY_H
 
 #include "BitmapText.h"
-#include "MessageManager.h"
 
 struct lua_State;
 

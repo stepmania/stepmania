@@ -6,7 +6,6 @@
 #include "GameManager.h"
 #include "ThemeManager.h"
 #include "RageDisplay.h"
-#include "HelpDisplay.h"
 #include "ScreenDimensions.h"
 #include "InputEventPlus.h"
 #include "LocalizedString.h"
