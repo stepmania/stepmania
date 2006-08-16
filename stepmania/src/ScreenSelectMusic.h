@@ -107,7 +107,6 @@ protected:
 	MusicWheel			m_MusicWheel;
 	AutoActor			m_sprLongBalloon;
 	AutoActor			m_sprMarathonBalloon;
-	AutoActor			m_sprCourseHasMods;
 	DifficultyDisplay		m_DifficultyDisplay;
 	CourseContentsList		m_CourseContents;
 	BitmapText			m_MachineRank;

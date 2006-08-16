@@ -227,10 +227,6 @@ void ScreenSelectMusic::Init()
 	m_sprMarathonBalloon->SetHidden( 1 );
 	this->AddChild( m_sprMarathonBalloon );
 
-	m_sprCourseHasMods.LoadAndSetName( m_sName, "CourseHasMods" );
-	SET_XY( m_sprCourseHasMods );
-	this->AddChild( m_sprCourseHasMods );
-
 	m_soundDifficultyEasier.Load( THEME->GetPathS(m_sName,"difficulty easier") );
 	m_soundDifficultyHarder.Load( THEME->GetPathS(m_sName,"difficulty harder") );
 	m_soundOptionsChange.Load( THEME->GetPathS(m_sName,"options") );
@@ -317,7 +313,6 @@ void ScreenSelectMusic::BeginScreen()
 	ON_COMMAND( m_MusicWheel );
 	ON_COMMAND( m_sprLongBalloon );
 	ON_COMMAND( m_sprMarathonBalloon );
-	ON_COMMAND( m_sprCourseHasMods );
 	ON_COMMAND( m_MusicWheel );
 	ON_COMMAND( m_MachineRank );
 
@@ -443,7 +438,6 @@ void ScreenSelectMusic::TweenOffScreen()
 	OFF_COMMAND( m_MusicWheel );
 	OFF_COMMAND( m_sprLongBalloon );
 	OFF_COMMAND( m_sprMarathonBalloon );
-	OFF_COMMAND( m_sprCourseHasMods );
 	OFF_COMMAND( m_MachineRank );
 
 	FOREACH_HumanPlayer( p )
@@ -1436,8 +1430,6 @@ void ScreenSelectMusic::AfterMusicChange()
 
 			COMMAND( m_sprLongBalloon, "Hide" );
 			COMMAND( m_sprMarathonBalloon, "Hide" );
-			
-			COMMAND( m_sprCourseHasMods, "Hide" );
 		}
 		break;
 	case TYPE_SONG:
@@ -1500,8 +1492,6 @@ void ScreenSelectMusic::AfterMusicChange()
 				COMMAND( m_sprLongBalloon, "Hide" );
 				COMMAND( m_sprMarathonBalloon, "Hide" );
 			}
-
-			COMMAND( m_sprCourseHasMods, "Hide" );
 		}
 		break;
 	case TYPE_ROULETTE:
@@ -1537,7 +1527,6 @@ void ScreenSelectMusic::AfterMusicChange()
 
 		COMMAND( m_sprLongBalloon, "Hide" );
 		COMMAND( m_sprMarathonBalloon, "Hide" );
-		COMMAND( m_sprCourseHasMods, "Hide" );
 		
 		break;
 	case TYPE_COURSE:
@@ -1583,15 +1572,6 @@ void ScreenSelectMusic::AfterMusicChange()
 
 		COMMAND( m_sprLongBalloon, "Hide" );
 		COMMAND( m_sprMarathonBalloon, "Hide" );
-
-		if( pCourse->HasMods() )
-		{
-			COMMAND( m_sprCourseHasMods, "Show" );
-		}
-		else
-		{
-			COMMAND( m_sprCourseHasMods, "Hide" );
-		}
 
 		break;
 	}
