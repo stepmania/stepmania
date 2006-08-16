@@ -170,11 +170,6 @@ void ScreenSelectMusic::Init()
 		SET_XY( m_DifficultyIcon[p] );
 		this->AddChild( &m_DifficultyIcon[p] );
 
-		m_sprMeterFrame[p].SetName( ssprintf("MeterFrameP%d",p+1) );
-		m_sprMeterFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("meter frame p%d",p+1)) );
-		SET_XY( m_sprMeterFrame[p] );
-		this->AddChild( &m_sprMeterFrame[p] );
-
 		m_DifficultyMeter[p].SetName( ssprintf("MeterP%d",p+1) );
 		m_DifficultyMeter[p].Load( METER_TYPE );
 		SET_XY( m_DifficultyMeter[p] );
@@ -273,7 +268,6 @@ void ScreenSelectMusic::TweenSongPartsOnScreen()
 	{
 		FOREACH_HumanPlayer( p )
 		{
-			ON_COMMAND( m_sprMeterFrame[p] );
 			ON_COMMAND( m_DifficultyIcon[p] );
 		}
 	}
@@ -286,7 +280,6 @@ void ScreenSelectMusic::TweenSongPartsOffScreen()
 	{
 		FOREACH_HumanPlayer( p )
 		{
-			OFF_COMMAND( m_sprMeterFrame[p] );
 			OFF_COMMAND( m_DifficultyIcon[p] );
 		}
 	}
@@ -298,7 +291,6 @@ void ScreenSelectMusic::SkipSongPartTweens()
 
 	FOREACH_HumanPlayer( p )
 	{		
-		m_sprMeterFrame[p].FinishTweening();
 		m_DifficultyIcon[p].FinishTweening();
 	}
 }

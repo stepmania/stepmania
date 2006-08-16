@@ -92,7 +92,6 @@ protected:
 	GrooveRadar			m_GrooveRadar;
 	BitmapText			m_textNumSongs;
 	BitmapText			m_textTotalTime;
-	Sprite				m_sprMeterFrame[NUM_PLAYERS];
 	DifficultyMeter			m_DifficultyMeter[NUM_PLAYERS];
 	Sprite				m_sprHighScoreFrame[NUM_PLAYERS];
 	BitmapText			m_textHighScore[NUM_PLAYERS];
