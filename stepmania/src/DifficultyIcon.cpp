@@ -17,6 +17,7 @@ REGISTER_ACTOR_CLASS(DifficultyIcon)
 DifficultyIcon::DifficultyIcon()
 {
 	m_bBlank = false;
+	m_PlayerNumber = PLAYER_1;
 }
 
 bool DifficultyIcon::Load( RString sPath )
@@ -59,30 +60,42 @@ void DifficultyIcon::LoadFromNode( const RString& sDir, const XNode* pNode )
 	Actor::LoadFromNode( sDir, pNode );
 }
 
+void DifficultyIcon::SetPlayer( PlayerNumber pn )
+{
+	m_PlayerNumber = pn;
+}
+
 void DifficultyIcon::SetFromSteps( PlayerNumber pn, const Steps* pSteps )
 {
+	SetPlayer( pn );
 	if( pSteps == NULL )
-		m_bBlank = true;
+		Unset();
 	else
-		SetFromDifficulty( pn, pSteps->GetDifficulty() );
+		SetFromDifficulty( pSteps->GetDifficulty() );
 }
 
 void DifficultyIcon::SetFromTrail( PlayerNumber pn, const Trail* pTrail )
 {
+	SetPlayer( pn );
 	if( pTrail == NULL )
-		m_bBlank = true;
+		Unset();
 	else
-		SetFromDifficulty( pn, pTrail->m_CourseDifficulty );
+		SetFromDifficulty( pTrail->m_CourseDifficulty );
 }
 
-void DifficultyIcon::SetFromDifficulty( PlayerNumber pn, Difficulty dc )
+void DifficultyIcon::Unset()
+{
+	m_bBlank = true;
+}
+
+void DifficultyIcon::SetFromDifficulty( Difficulty dc )
 {
 	m_bBlank = false;
 	switch( GetNumStates() )
 	{
-	case NUM_Difficulty:		SetState( dc );			break;
-	case NUM_Difficulty*2:	SetState( dc*2+pn );	break;
-	default:					m_bBlank = true;		break;
+	case NUM_Difficulty:		SetState( dc );				break;
+	case NUM_Difficulty*2:		SetState( dc*2+m_PlayerNumber );	break;
+	default:			m_bBlank = true;			break;
 	}	
 }
 
@@ -98,7 +111,7 @@ public:
 	{ 
 		if( lua_isnil(L,1) )
 		{
-			p->SetFromSteps( PLAYER_1, NULL );
+			p->Unset();
 		}
 		else
 		{
@@ -111,7 +124,7 @@ public:
 	{ 
 		if( lua_isnil(L,1) )
 		{
-			p->SetFromTrail( PLAYER_1, NULL );
+			p->Unset();
 		}
 		else
 		{
@@ -120,10 +133,14 @@ public:
 		}
 		return 0;
 	}
-	static int SetFromDifficulty( T* p, lua_State *L )		{ p->SetFromDifficulty( PLAYER_1, (Difficulty)IArg(1) ); return 0; }
+	static int Unset( T* p, lua_State *L )				{ p->Unset(); return 0; }
+	static int SetPlayer( T* p, lua_State *L )			{ p->SetPlayer( (PlayerNumber)IArg(1) ); return 0; }
+	static int SetFromDifficulty( T* p, lua_State *L )		{ p->SetFromDifficulty( (Difficulty)IArg(1) ); return 0; }
 
 	static void Register(lua_State *L) 
 	{
+		ADD_METHOD( Unset );
+		ADD_METHOD( SetPlayer );
 		ADD_METHOD( SetFromSteps );
 		ADD_METHOD( SetFromTrail );
 		ADD_METHOD( SetFromDifficulty );

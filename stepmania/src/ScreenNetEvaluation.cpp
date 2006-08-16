@@ -190,7 +190,10 @@ void ScreenNetEvaluation::UpdateStats()
 
 	//Values greater than 6 will cause crash
 	if ( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].difficulty < 6 )
-		m_DifficultyIcon[m_pActivePlayer].SetFromDifficulty( m_pActivePlayer, NSMAN->m_EvalPlayerData[m_iCurrentPlayer].difficulty );
+	{
+		m_DifficultyIcon[m_pActivePlayer].SetPlayer( m_pActivePlayer );
+		m_DifficultyIcon[m_pActivePlayer].SetFromDifficulty( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].difficulty );
+	}
 
 	for (int j=0; j<NETNUMTAPSCORES; ++j)
 	{

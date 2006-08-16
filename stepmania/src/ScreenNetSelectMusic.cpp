@@ -494,8 +494,11 @@ void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )
 		m_DifficultyIcon[pn].SetFromSteps( pn, NULL );	//It will blank it out 
 		return;
 	}
-	if ( ( m_DC[pn] < DIFFICULTY_EDIT ) && ( m_DC[pn] >= DIFFICULTY_BEGINNER ) )
-		m_DifficultyIcon[pn].SetFromDifficulty( pn, m_DC[pn] );
+	if ( m_DC[pn] < DIFFICULTY_EDIT && m_DC[pn] >= DIFFICULTY_BEGINNER )
+	{
+		m_DifficultyIcon[pn].SetPlayer( pn );
+		m_DifficultyIcon[pn].SetFromDifficulty( m_DC[pn] );
+	}
 	else
 		m_DifficultyIcon[pn].SetFromSteps( pn, NULL );	//It will blank it out 
 

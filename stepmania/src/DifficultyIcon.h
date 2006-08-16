@@ -21,15 +21,18 @@ public:
 	virtual void LoadFromNode( const RString& sDir, const XNode* pNode );
 	virtual Actor *Copy() const;
 
+	void SetPlayer( PlayerNumber pn );
+	void Unset();
 	void SetFromSteps( PlayerNumber pn, const Steps* pSteps );
 	void SetFromTrail( PlayerNumber pn, const Trail* pTrail );
-	void SetFromDifficulty( PlayerNumber pn, Difficulty dc );
+	void SetFromDifficulty( Difficulty dc );
 
 	// Lua
 	void PushSelf( lua_State *L );
 
 protected:
 	bool m_bBlank;
+	PlayerNumber m_PlayerNumber;
 };
 
 #endif
