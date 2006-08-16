@@ -22,6 +22,7 @@ CourseContentsList::CourseContentsList()
 {
 	for( int i=0; i<MAX_ITEMS; i++ )
 		m_vpDisplay.push_back( new CourseEntryDisplay );
+	this->SetNumItemsToDraw( (float)MAX_VISIBLE_ITEMS );
 }
 
 CourseContentsList::~CourseContentsList()
@@ -73,7 +74,6 @@ void CourseContentsList::SetFromGameState()
 	bool bLoop = pMasterTrail->m_vEntries.size() > uNumEntriesToShow;
 
 	this->SetLoop( bLoop );
-	this->SetNumItemsToDraw( (float)MAX_VISIBLE_ITEMS );
 	this->Load2();
 	this->SetTransformFromHeight( m_vpDisplay[0]->GetUnzoomedHeight() );
 	this->SetSecondsPerItem( 0.7f );
