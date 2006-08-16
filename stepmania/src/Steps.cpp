@@ -386,6 +386,15 @@ public:
 	static int GetDescription( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDescription() ); return 1; }
 	static int GetMeter( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetMeter() ); return 1; }
 	static int GetFilename( T* p, lua_State *L )	{ lua_pushstring(L, p->GetFilename() ); return 1; }
+	static int IsAutogen( T* p, lua_State *L )	{ lua_pushboolean(L, p->IsAutogen() ); return 1; }
+	
+	static int GetRadarValues( T* p, lua_State *L )
+	{
+		PlayerNumber pn = (PlayerNumber) IArg(1);
+		RadarValues &rv = const_cast<RadarValues &>(p->GetRadarValues(pn));
+		rv.PushSelf(L);
+		return 1;
+	}
 
 	static void Register(lua_State *L)
 	{
@@ -394,6 +403,8 @@ public:
 		ADD_METHOD( GetDescription );
 		ADD_METHOD( GetMeter );
 		ADD_METHOD( GetFilename );
+		ADD_METHOD( GetRadarValues );
+		ADD_METHOD( IsAutogen );
 
 		Luna<T>::Register( L );
 	}
