@@ -72,6 +72,7 @@ void CourseContentsList::SetFromGameState()
 
 	bool bLoop = pMasterTrail->m_vEntries.size() > uNumEntriesToShow;
 
+	this->SetLoop( bLoop );
 	this->Load2( 
 		(float)MAX_VISIBLE_ITEMS,
 		bLoop );
