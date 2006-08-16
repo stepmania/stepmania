@@ -27,11 +27,8 @@ void HelpDisplay::Load( const RString &sType )
 void HelpDisplay::LoadFromNode( const RString& sDir, const XNode* pNode )
 {
 	BitmapText::LoadFromNode( sDir, pNode );
-}
 
-void HelpDisplay::SetName( const RString &sName )
-{
-	BitmapText::SetName( sName );
+	Load( m_sName );
 }
 
 void HelpDisplay::SetTips( const vector<RString> &arrayTips, const vector<RString> &arrayTipsAlt )
@@ -141,7 +138,7 @@ REGISTER_ACTOR_CLASS( GenreDisplay )
 GenreDisplay::GenreDisplay()
 {
 	this->SubscribeToMessage( Message_CurrentSongChanged );
-	this->SubscribeToMessage( Message_CurrentCourseChanged);
+	this->SubscribeToMessage( Message_CurrentCourseChanged );
 }
 
 GenreDisplay::~GenreDisplay()

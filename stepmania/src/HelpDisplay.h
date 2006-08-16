@@ -23,7 +23,6 @@ public:
 	void GetTips( vector<RString> &arrayTipsOut, vector<RString> &arrayTipsAltOut ) const { arrayTipsOut = m_arrayTips; arrayTipsAltOut = m_arrayTipsAlt; }
 
 	virtual void Update( float fDeltaTime );
-	virtual void SetName( const RString &sName );
 
 	// Lua
 	virtual void PushSelf( lua_State *L );
