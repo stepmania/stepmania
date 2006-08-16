@@ -30,17 +30,17 @@ public:
 	virtual Actor *Copy() const;
 	
 	void SetLoop( bool bLoop )					{ m_bLoop = bLoop; }
-	void SetDestinationItem( float fItemIndex )				{ m_fDestinationItem = fItemIndex; }
-	void SetCurrentAndDestinationItem( float fItemIndex )	{ m_fCurrentItem = m_fDestinationItem = fItemIndex; }
-	float GetCurrentItem() const							{ return m_fCurrentItem; }
-	float GetDestinationItem() const						{ return m_fDestinationItem; }
+	void SetDestinationItem( float fItemIndex )			{ m_fDestinationItem = fItemIndex; }
+	void SetCurrentAndDestinationItem( float fItemIndex )		{ m_fCurrentItem = m_fDestinationItem = fItemIndex; }
+	float GetCurrentItem() const					{ return m_fCurrentItem; }
+	float GetDestinationItem() const				{ return m_fDestinationItem; }
 	void ScrollThroughAllItems();
 	void ScrollWithPadding( float fItemPaddingStart, float fItemPaddingEnd );
 	void SetPauseCountdownSeconds( float fSecs )			{ m_fPauseCountdownSeconds = fSecs; }
-	void SetFastCatchup( bool bOn ) { m_bFastCatchup = bOn; }
-	void SetSecondsPerItem( float fSeconds ) { m_fSecondsPerItem = fSeconds; }
-	void SetSecondsPauseBetweenItems( float fSeconds ) { m_fSecondsPauseBetweenItems = fSeconds; }
-	void SetNumSubdivisions( int iNumSubdivisions ) { m_exprTransformFunction.SetNumSubdivisions( iNumSubdivisions ); }
+	void SetFastCatchup( bool bOn )					{ m_bFastCatchup = bOn; }
+	void SetSecondsPerItem( float fSeconds )			{ m_fSecondsPerItem = fSeconds; }
+	void SetSecondsPauseBetweenItems( float fSeconds )		{ m_fSecondsPauseBetweenItems = fSeconds; }
+	void SetNumSubdivisions( int iNumSubdivisions )			{ m_exprTransformFunction.SetNumSubdivisions( iNumSubdivisions ); }
 	float GetSecondsForCompleteScrollThrough() const;
 	float GetSecondsToDestination() const;
 
