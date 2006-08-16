@@ -23,12 +23,7 @@ public:
 	void PushSelf( lua_State *L );
 
 protected:
-
-	Quad		m_quad;
-
 	vector<CourseEntryDisplay*>		m_vpDisplay;
-
-	float m_fTimeUntilScroll;
 };
 
 #endif
