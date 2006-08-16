@@ -931,6 +931,7 @@ public:
 		return 1;
 	}
 	static int GetGroupName( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sGroupName ); return 1; }
+	static int IsAutogen( T* p, lua_State *L )		{ lua_pushboolean(L, p->m_bIsAutogen ); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -942,6 +943,7 @@ public:
 		ADD_METHOD( GetCourseEntry );
 		ADD_METHOD( GetAllTrails );
 		ADD_METHOD( GetGroupName );
+		ADD_METHOD( IsAutogen );
 
 		Luna<T>::Register( L );
 	}
