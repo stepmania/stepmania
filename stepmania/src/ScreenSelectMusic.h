@@ -10,7 +10,6 @@
 #include "MusicWheel.h"
 #include "Banner.h"
 #include "FadingBanner.h"
-#include "DifficultyMeter.h"
 #include "DifficultyDisplay.h"
 #include "RageUtil_BackgroundLoader.h"
 #include "ThemeMetric.h"
@@ -81,7 +80,6 @@ protected:
 	Sprite				m_sprCDTitleFront, m_sprCDTitleBack;
 	BitmapText			m_textNumSongs;
 	BitmapText			m_textTotalTime;
-	DifficultyMeter			m_DifficultyMeter[NUM_PLAYERS];
 	Sprite				m_sprHighScoreFrame[NUM_PLAYERS];
 	BitmapText			m_textHighScore[NUM_PLAYERS];
 	MusicWheel			m_MusicWheel;

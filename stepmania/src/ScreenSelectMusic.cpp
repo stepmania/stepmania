@@ -32,7 +32,6 @@
 
 const int NUM_SCORE_DIGITS	=	9;
 
-#define METER_TYPE				THEME->GetMetric ( m_sName, "MeterType" )
 #define SHOW_OPTIONS_MESSAGE_SECONDS		THEME->GetMetricF( m_sName, "ShowOptionsMessageSeconds" )
 
 AutoScreenMessage( SM_AllowOptionsMenuRepeat )
@@ -155,11 +154,6 @@ void ScreenSelectMusic::Init()
 
 	FOREACH_HumanPlayer( p )
 	{
-		m_DifficultyMeter[p].SetName( ssprintf("MeterP%d",p+1) );
-		m_DifficultyMeter[p].Load( METER_TYPE );
-		SET_XY( m_DifficultyMeter[p] );
-		this->AddChild( &m_DifficultyMeter[p] );
-
 		m_sprHighScoreFrame[p].SetName( ssprintf("ScoreFrameP%d",p+1) );
 		m_sprHighScoreFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("score frame p%d",p+1)) );
 		SET_XY( m_sprHighScoreFrame[p] );
@@ -926,8 +920,6 @@ void ScreenSelectMusic::AfterStepsChange( const vector<PlayerNumber> &vpns )
 		}
 
 		m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
-		
-		m_DifficultyMeter[pn].SetFromGameState( pn );
 	}
 }
 
@@ -954,8 +946,6 @@ void ScreenSelectMusic::AfterTrailChange( const vector<PlayerNumber> &vpns )
 		}
 
 		m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
-		
-		m_DifficultyMeter[pn].SetFromGameState( pn );
 	}
 }
 
