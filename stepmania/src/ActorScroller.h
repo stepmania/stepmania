@@ -16,7 +16,7 @@ public:
 	void SetTransformFromExpression( const RString &sTransformFunction );
 	void SetTransformFromHeight( float fItemHeight );
 
-	void Load2( float fNumItemsToDraw );
+	void Load2( float fNumItemsToDraw = -1 );
 
 	void EnableMask( float fWidth, float fHeight );
 	void DisableMask();
@@ -30,6 +30,7 @@ public:
 	virtual Actor *Copy() const;
 	
 	void SetLoop( bool bLoop )					{ m_bLoop = bLoop; }
+	void SetNumItemsToDraw( float fNumItemsToDraw )			{ m_fNumItemsToDraw = fNumItemsToDraw; }
 	void SetDestinationItem( float fItemIndex )			{ m_fDestinationItem = fItemIndex; }
 	void SetCurrentAndDestinationItem( float fItemIndex )		{ m_fCurrentItem = m_fDestinationItem = fItemIndex; }
 	float GetCurrentItem() const					{ return m_fCurrentItem; }

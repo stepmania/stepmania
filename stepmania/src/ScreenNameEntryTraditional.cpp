@@ -116,7 +116,8 @@ void HighScoreWheel::Load( const HighScoreList& hsl, int iIndexToFocus )
 		"	self:y(math.sin(radians)*90); "
 		"	self:z(math.cos(radians)*90); "
 		"end";
-	ActorScroller::Load2( 10.5 );
+	ActorScroller::SetNumItemsToDraw( 10.5f );
+	ActorScroller::Load2();
 	ActorScroller::SetTransformFromExpression( sTransformFunction );
 	ActorScroller::SetSecondsPerItem( 0.2f );
 	Scroll();

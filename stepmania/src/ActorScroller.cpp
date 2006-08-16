@@ -41,7 +41,8 @@ ActorScroller::ActorScroller()
 
 void ActorScroller::Load2( float fNumItemsToDraw )
 {
-	m_fNumItemsToDraw = fNumItemsToDraw;
+	if( fNumItemsToDraw != -1 )
+		m_fNumItemsToDraw = fNumItemsToDraw;
 	m_iNumItems = m_SubActors.size();
 
 	Lua *L = LUA->Get();
@@ -121,7 +122,8 @@ void ActorScroller::LoadFromNode( const RString &sDir, const XNode *pNode )
 
 #undef GET_VALUE
 
-	Load2( fNumItemsToDraw );
+	SetNumItemsToDraw( fNumItemsToDraw );
+	Load2();
 
 	float fSecondsPerItem = 0;
 	if( pNode->GetAttrValue("SecondsPerItem", fSecondsPerItem) )
