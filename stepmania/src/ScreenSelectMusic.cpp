@@ -32,8 +32,6 @@
 
 const int NUM_SCORE_DIGITS	=	9;
 
-#define SCORE_SORT_CHANGE_COMMAND(i) 		THEME->GetMetricA( m_sName, ssprintf("ScoreP%iSortChangeCommand", i+1) )
-#define SCORE_FRAME_SORT_CHANGE_COMMAND(i)	THEME->GetMetricA( m_sName, ssprintf("ScoreFrameP%iSortChangeCommand", i+1) )
 #define METER_TYPE				THEME->GetMetric ( m_sName, "MeterType" )
 #define SHOW_OPTIONS_MESSAGE_SECONDS		THEME->GetMetricF( m_sName, "ShowOptionsMessageSeconds" )
 
@@ -245,15 +243,6 @@ ScreenSelectMusic::~ScreenSelectMusic()
 	LOG->Trace( "ScreenSelectMusic::~ScreenSelectMusic()" );
 	BANNERCACHE->Undemand();
 
-}
-
-void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
-{
-	FOREACH_HumanPlayer( p )
-	{
-		m_textHighScore[p].RunCommands( SCORE_SORT_CHANGE_COMMAND(p) );
-		m_sprHighScoreFrame[p].RunCommands( SCORE_FRAME_SORT_CHANGE_COMMAND(p) );
-	}
 }
 
 /* If bForce is true, the next request will be started even if it might cause a skip. */
@@ -776,7 +765,7 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_SortOrderChanging ) /* happens immediately */
 	{
-		TweenScoreOnAndOffAfterChangeSort();
+		this->PlayCommand( "SortChange" );
 	}
 	else if( SM == SM_GainFocus )
 	{

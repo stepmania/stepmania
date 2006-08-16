@@ -46,7 +46,6 @@ public:
 protected:
 	virtual bool GenericTweenOn() const { return true; }
 	virtual bool GenericTweenOff() const { return true; }
-	void TweenScoreOnAndOffAfterChangeSort();
 	void UpdateSelectButton();
 
 	void ChangeDifficulty( PlayerNumber pn, int dir );
