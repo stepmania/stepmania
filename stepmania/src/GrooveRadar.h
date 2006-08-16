@@ -8,25 +8,24 @@
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
 class Steps;
-
+struct RadarValues;
 
 class GrooveRadar : public ActorFrame
 {
 public:
 	GrooveRadar();
+	virtual Actor *Copy() const;
+	virtual void LoadFromNode( const RString& sDir, const XNode* pNode );
 
-	void SetEmpty( PlayerNumber pn )
-	{
-		SetFromSteps( pn, NULL );
-	}
-
-	void SetFromSteps( PlayerNumber pn, Steps* pSteps )	// NULL means no Song
-	{
-		m_GrooveRadarValueMap[pn].SetFromSteps( pn, pSteps );
-	}
+	void SetEmpty( PlayerNumber pn );
+	void SetFromRadarValues( PlayerNumber pn, const RadarValues &rv );
+	void SetFromSteps( PlayerNumber pn, Steps* pSteps );	// NULL means no Steps
 
 	void TweenOnScreen();
 	void TweenOffScreen();
+
+	// Lua
+	void PushSelf( lua_State *L );
 
 protected:
 
@@ -39,7 +38,8 @@ protected:
 		virtual void Update( float fDeltaTime );
 		virtual void DrawPrimitives();
 
-		void SetFromSteps( PlayerNumber pn, const Steps* pSteps );	// NULL means no Song
+		void SetEmpty();
+		void SetFromSteps( const RadarValues &rv );
 
 		void SetRadius( float f ) { m_size.x = f; m_size.y = f; }
 

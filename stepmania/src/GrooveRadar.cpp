@@ -9,6 +9,9 @@
 #include "RageMath.h"
 #include "ThemeMetric.h"
 #include "CommonMetrics.h"
+#include "ActorUtil.h"
+
+REGISTER_ACTOR_CLASS(GrooveRadar)
 
 #define		LABEL_OFFSET_X( i )		THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetX",i+1))
 #define 	LABEL_OFFSET_Y( i )		THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetY",i+1))
@@ -47,6 +50,11 @@ GrooveRadar::GrooveRadar()
 	}
 }
 
+void GrooveRadar::LoadFromNode( const RString& sDir, const XNode* pNode )
+{
+	ActorFrame::LoadFromNode( sDir, pNode );
+}
+
 void GrooveRadar::TweenOnScreen()
 {
 	for( int c=0; c<NUM_SHOWN_RADAR_CATEGORIES; c++ )
@@ -82,6 +90,29 @@ void GrooveRadar::TweenOffScreen()
 	m_Frame.SetZoom( 0 );
 }
 
+void GrooveRadar::SetEmpty( PlayerNumber pn )
+{
+	SetFromSteps( pn, NULL );
+}
+
+void GrooveRadar::SetFromRadarValues( PlayerNumber pn, const RadarValues &rv )
+{
+	m_GrooveRadarValueMap[pn].SetFromSteps( rv );
+}
+
+void GrooveRadar::SetFromSteps( PlayerNumber pn, Steps* pSteps )	// NULL means no Song
+{
+	if( pSteps == NULL )
+	{
+		m_GrooveRadarValueMap[pn].SetEmpty();
+		return;
+	}
+
+	const RadarValues &rv = pSteps->GetRadarValues( pn );
+	m_GrooveRadarValueMap[pn].SetFromSteps( rv );
+}
+
+
 GrooveRadar::GrooveRadarValueMap::GrooveRadarValueMap()
 {
 	m_bValuesVisible = false;
@@ -94,28 +125,25 @@ GrooveRadar::GrooveRadarValueMap::GrooveRadarValueMap()
 	}
 }
 
-void GrooveRadar::GrooveRadarValueMap::SetFromSteps( PlayerNumber pn, const Steps* pSteps )	// NULL means no song
+void GrooveRadar::GrooveRadarValueMap::SetEmpty()
 {
-	if( pSteps != NULL )
-	{
-		for( int c=0; c<NUM_SHOWN_RADAR_CATEGORIES; c++ )
-		{
-			const float fValueCurrent = m_fValuesOld[c] * (1-m_PercentTowardNew) + m_fValuesNew[c] * m_PercentTowardNew;
-			m_fValuesOld[c] = fValueCurrent;
-			m_fValuesNew[c] = pSteps->GetRadarValues( pn )[c];
-		}	
+	m_bValuesVisible = false;
+}
 
-		if( !m_bValuesVisible )	// the values WERE invisible
-			m_PercentTowardNew = 1;
-		else
-			m_PercentTowardNew = 0;	
-
-		m_bValuesVisible = true;
-	}
-	else	// pSteps == NULL
+void GrooveRadar::GrooveRadarValueMap::SetFromSteps( const RadarValues &rv )
+{
+	m_bValuesVisible = true;
+	for( int c=0; c<NUM_SHOWN_RADAR_CATEGORIES; c++ )
 	{
-		m_bValuesVisible = false;
-	}
+		const float fValueCurrent = m_fValuesOld[c] * (1-m_PercentTowardNew) + m_fValuesNew[c] * m_PercentTowardNew;
+		m_fValuesOld[c] = fValueCurrent;
+		m_fValuesNew[c] = rv[c];
+	}	
+
+	if( !m_bValuesVisible )	// the values WERE invisible
+		m_PercentTowardNew = 1;
+	else
+		m_PercentTowardNew = 0;	
 }
 
 void GrooveRadar::GrooveRadarValueMap::Update( float fDeltaTime )
@@ -189,6 +217,46 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 //	break;
 //	}
 }
+
+// lua start
+#include "LuaBinding.h"
+
+class LunaGrooveRadar: public Luna<GrooveRadar>
+{
+public:
+	LunaGrooveRadar() { LUA->Register( Register ); }
+
+	static int SetFromRadarValues( T* p, lua_State *L )
+	{ 
+		PlayerNumber pn = (PlayerNumber)IArg(1);
+		if( lua_isnil(L,2) )
+		{
+			p->SetEmpty( pn );
+		}
+		else
+		{
+			RadarValues *pRV = Luna<RadarValues>::check(L,2);
+			p->SetFromRadarValues( pn, *pRV );
+		}
+		return 0;
+	}
+	static int SetEmpty( T* p, lua_State *L )		{ p->SetEmpty( (PlayerNumber)IArg(1) ); return 0; }
+	static int tweenonscreen( T* p, lua_State *L )		{ p->TweenOnScreen(); return 0; }
+	static int tweenoffscreen( T* p, lua_State *L )		{ p->TweenOffScreen(); return 0; }
+
+	static void Register(lua_State *L) 
+	{
+		ADD_METHOD( SetFromRadarValues );
+		ADD_METHOD( SetEmpty );
+		ADD_METHOD( tweenonscreen );
+		ADD_METHOD( tweenoffscreen );
+
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( GrooveRadar, ActorFrame )
+// lua end
 
 /*
  * (c) 2001-2004 Chris Danford
