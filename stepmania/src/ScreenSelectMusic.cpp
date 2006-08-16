@@ -1236,10 +1236,7 @@ void ScreenSelectMusic::AfterTrailChange( const vector<PlayerNumber> &vpns )
 		/* Update the trail list, but don't actually start the tween; only do that when
 		* the actual course changes (AfterMusicChange). */
 		if( SHOW_COURSE_CONTENTS )
-		{
 			m_CourseContents.SetFromGameState();
-			// m_CourseContents.TweenInAfterChangedCourse();
-		}
 
 		m_DifficultyMeter[pn].SetFromGameState( pn );
 		m_GrooveRadar.SetEmpty( pn );
@@ -1605,14 +1602,6 @@ void ScreenSelectMusic::AfterMusicChange()
 		AfterTrailChange( vpns );
 	else
 		AfterStepsChange( vpns );
-
-	switch( m_MusicWheel.GetSelectedType() )
-	{
-	case TYPE_COURSE:
-		if( SHOW_COURSE_CONTENTS )
-			m_CourseContents.TweenInAfterChangedCourse();
-		break;
-	}
 }
 
 // lua start

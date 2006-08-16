@@ -17,7 +17,6 @@ public:
 	void LoadFromNode( const RString& sDir, const XNode* pNode );
 
 	void SetFromGameState();
-	void TweenInAfterChangedCourse();
 
 	// Lua
 	void PushSelf( lua_State *L );

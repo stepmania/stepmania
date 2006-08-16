@@ -89,22 +89,6 @@ void CourseContentsList::SetFromGameState()
 	}
 }
 
-void CourseContentsList::TweenInAfterChangedCourse()
-{
-	/*
-	for( int i=0; i<m_fItemAtPosition0InList; i++ )
-	{
-		CourseEntryDisplay& display = m_CourseContentDisplays[i];
-
-		display.StopTweening();
-		display.SetXY( 0, -((MAX_VISIBLE_CONTENTS-1)/2) * float(CONTENTS_BAR_HEIGHT) );
-		display.BeginTweening( i*0.1f );
-		display.SetY( (-(MAX_VISIBLE_CONTENTS-1)/2 + i) * float(CONTENTS_BAR_HEIGHT) );
-	}
-	*/
-}
-
-
 // lua start
 #include "LuaBinding.h"
 
