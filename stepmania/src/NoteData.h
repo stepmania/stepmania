@@ -50,6 +50,8 @@ public:
 		inline bool IsAtEnd() const { return m_iRow > m_iEndRow; }
 		inline TN &operator*() { DEBUG_ASSERT( m_iRow <= m_iEndRow ); return m_Iterator->second; }
 		inline TN *operator->() { DEBUG_ASSERT( m_iRow <= m_iEndRow ); return &m_Iterator->second; }
+		inline const TN &operator*() const { DEBUG_ASSERT( m_iRow <= m_iEndRow ); return m_Iterator->second; }
+		inline const TN *operator->() const { DEBUG_ASSERT( m_iRow <= m_iEndRow ); return &m_Iterator->second; }
 	};
 	typedef _all_tracks_iterator<NoteData, iterator, TapNote> 			all_tracks_iterator;
 	typedef _all_tracks_iterator<const NoteData, const_iterator, const TapNote>	all_tracks_const_iterator;
