@@ -108,20 +108,11 @@ void ActorScroller::LoadFromNode( const RString &sDir, const XNode *pNode )
 {
 	ActorFrame::LoadFromNode( sDir, pNode );
 
-#define GET_VALUE( szName, valueOut ) \
-	if( !pNode->GetAttrValue( szName, valueOut ) ) { \
-		RString sError = ssprintf("ActorScroller in '%s' is missing the value Scroller::%s", sDir.c_str(), szName); \
-		LOG->Warn( sError ); \
-		Dialog::OK( sError ); \
-	}
+	Load2();
 
 	float fNumItemsToDraw = 0;
-	GET_VALUE( "NumItemsToDraw", fNumItemsToDraw );
-
-#undef GET_VALUE
-
-	SetNumItemsToDraw( fNumItemsToDraw );
-	Load2();
+	if( pNode->GetAttrValue("NumItemsToDraw", fNumItemsToDraw) )
+		SetNumItemsToDraw( fNumItemsToDraw );
 
 	float fSecondsPerItem = 0;
 	if( pNode->GetAttrValue("SecondsPerItem", fSecondsPerItem) )
