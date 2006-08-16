@@ -14,39 +14,6 @@
 #include "RageUtil_AutoPtr.h"
 REGISTER_CLASS_TRAITS( NoteData, new NoteData(*pCopy) )
 
-bool IteratorCondition::TapsHoldsAndMines( const TapNote &tn )
-{
-	switch( tn.type )
-	{
-	case TapNote::tap:
-	case TapNote::hold_head:
-	case TapNote::mine:
-		return true;
-	}
-	return false;
-}
-
-bool IteratorCondition::TapsAndHolds( const TapNote &tn )
-{
-	switch( tn.type )
-	{
-	case TapNote::tap:
-	case TapNote::hold_head:
-		return true;
-	}
-	return false;
-}
-
-bool IteratorCondition::Mines( const TapNote &tn )
-{
-	return tn.type == TapNote::mine;
-}
-
-bool IteratorCondition::All( const TapNote &tn )
-{
-	return true;
-}
-
 NoteData::NoteData()
 {
 	Init();
@@ -927,7 +894,7 @@ XNode* NoteData::CreateNode() const
 	XNode *p = new XNode;
 	p->m_sName = "NoteData";
 	
-	all_tracks_const_iterator iter = GetTapNoteRangeAllTracks( 0, GetLastRow(), IteratorCondition::All );
+	all_tracks_const_iterator iter = GetTapNoteRangeAllTracks( 0, GetLastRow() );
 	
 	for( ; !iter.IsAtEnd(); ++iter )
 	{
@@ -970,7 +937,7 @@ void NoteData::_all_tracks_iterator<ND, iter, TN>::Find()
 		{
 			m_Iterator = m_NoteData.FindTapNote( m_iTrack, m_iRow );
 			
-			if( m_Iterator != m_NoteData.end(m_iTrack) && m_Cond(m_Iterator->second) )
+			if( m_Iterator != m_NoteData.end(m_iTrack) && (!m_Cond || m_Cond(m_Iterator->second)) )
 				return;
 			++m_iTrack;
 		}

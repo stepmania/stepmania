@@ -19,14 +19,6 @@
 #define FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( nd, row, start, last ) \
 	for( int row = start-1; (nd).GetNextTapNoteRowForAllTracks(row) && row < (last); )
 
-namespace IteratorCondition
-{
-	bool TapsHoldsAndMines( const TapNote &tn );
-	bool TapsAndHolds( const TapNote &tn );
-	bool Mines( const TapNote &tn );
-	bool All( const TapNote &tn );
-}
-
 class NoteData
 {
 public:
@@ -101,13 +93,11 @@ public:
 	/* Return an iterator range including exactly iStartRow to iEndRow. */
 	void GetTapNoteRange( int iTrack, int iStartRow, int iEndRow, const_iterator &begin, const_iterator &end ) const;
 	void GetTapNoteRange( int iTrack, int iStartRow, int iEndRow, TrackMap::iterator &begin, TrackMap::iterator &end );
-	all_tracks_iterator GetTapNoteRangeAllTracks( int iStartRow, int iEndRow,
-						      IteratorCond cond = IteratorCondition::TapsHoldsAndMines )
+	all_tracks_iterator GetTapNoteRangeAllTracks( int iStartRow, int iEndRow, IteratorCond cond = NULL )
 	{
 		return all_tracks_iterator( *this, iStartRow, iEndRow, cond );
 	}
-	all_tracks_const_iterator GetTapNoteRangeAllTracks( int iStartRow, int iEndRow,
-							    IteratorCond cond = IteratorCondition::TapsHoldsAndMines ) const
+	all_tracks_const_iterator GetTapNoteRangeAllTracks( int iStartRow, int iEndRow, IteratorCond cond = NULL) const
 	{
 		return all_tracks_const_iterator( *this, iStartRow, iEndRow, cond );
 	}
