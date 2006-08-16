@@ -10,7 +10,6 @@
 #include "MusicWheel.h"
 #include "Banner.h"
 #include "FadingBanner.h"
-#include "GrooveRadar.h"
 #include "DifficultyMeter.h"
 #include "DifficultyDisplay.h"
 #include "RageUtil_BackgroundLoader.h"
@@ -48,11 +47,6 @@ protected:
 	void TweenOnScreen();
 	void TweenOffScreen();
 	void TweenScoreOnAndOffAfterChangeSort();
-	enum DisplayMode { DISPLAY_SONGS, DISPLAY_COURSES, DISPLAY_MODES } m_DisplayMode;
-	void SwitchDisplayMode( DisplayMode dm );
-	void TweenSongPartsOnScreen();
-	void TweenSongPartsOffScreen();
-	void SkipSongPartTweens();
 	void UpdateSelectButton();
 
 	void ChangeDifficulty( PlayerNumber pn, int dir );
@@ -69,7 +63,6 @@ protected:
 	int				m_iSelection[NUM_PLAYERS];
 
 	ThemeMetric<float> SAMPLE_MUSIC_DELAY;
-	ThemeMetric<bool> SHOW_RADAR;
 	ThemeMetric<bool> DO_ROULETTE_ON_MENU_TIMER;
 	ThemeMetric<bool> ALIGN_MUSIC_BEATS;
 	ThemeMetric<RString> CODES;
@@ -87,7 +80,6 @@ protected:
 
 	FadingBanner			m_Banner;
 	Sprite				m_sprCDTitleFront, m_sprCDTitleBack;
-	GrooveRadar			m_GrooveRadar;
 	BitmapText			m_textNumSongs;
 	BitmapText			m_textTotalTime;
 	DifficultyMeter			m_DifficultyMeter[NUM_PLAYERS];

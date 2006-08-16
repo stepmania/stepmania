@@ -66,7 +66,6 @@ ScreenSelectMusic::ScreenSelectMusic()
 void ScreenSelectMusic::Init()
 {
 	SAMPLE_MUSIC_DELAY.Load( m_sName, "SampleMusicDelay" );
-	SHOW_RADAR.Load( m_sName, "ShowRadar" );
 	DO_ROULETTE_ON_MENU_TIMER.Load( m_sName, "DoRouletteOnMenuTimer" );
 	ALIGN_MUSIC_BEATS.Load( m_sName, "AlignMusicBeat" );
 	CODES.Load( m_sName, "Codes" );
@@ -83,8 +82,6 @@ void ScreenSelectMusic::Init()
 	m_bSelectIsDown = false; // used by UpdateSelectButton
 
 	ScreenWithMenuElements::Init();
-
-	m_DisplayMode = GAMESTATE->IsCourseMode() ? DISPLAY_COURSES : DISPLAY_SONGS;
 
 	/* Cache: */
 	m_sSectionMusicPath = THEME->GetPathS(m_sName,"section music");
@@ -142,11 +139,6 @@ void ScreenSelectMusic::Init()
 	SET_XY( m_sprCDTitleBack );
 	COMMAND( m_sprCDTitleBack, "Back" );
 	this->AddChild( &m_sprCDTitleBack );
-
-	m_GrooveRadar.SetName( "Radar" );
-	SET_XY( m_GrooveRadar );
-	if( SHOW_RADAR )
-		this->AddChild( &m_GrooveRadar );
 
 	m_textNumSongs.SetName( "NumSongs" );
 	m_textNumSongs.LoadFromFont( THEME->GetPathF(m_sName,"num songs") );
@@ -255,22 +247,6 @@ ScreenSelectMusic::~ScreenSelectMusic()
 
 }
 
-void ScreenSelectMusic::TweenSongPartsOnScreen()
-{
-	m_GrooveRadar.StopTweening();
-	m_GrooveRadar.TweenOnScreen();
-}
-
-void ScreenSelectMusic::TweenSongPartsOffScreen()
-{
-	m_GrooveRadar.TweenOffScreen();
-}
-
-void ScreenSelectMusic::SkipSongPartTweens()
-{
-	m_GrooveRadar.FinishTweening();
-}
-
 void ScreenSelectMusic::TweenOnScreen()
 {
 	ScreenWithMenuElements::TweenOnScreen();
@@ -280,26 +256,10 @@ void ScreenSelectMusic::TweenOnScreen()
 		ON_COMMAND( m_DifficultyMeter[p] );
 	}
 
-	TweenSongPartsOnScreen();
-
-	switch( GAMESTATE->m_SortOrder )
-	{
-	case SORT_ALL_COURSES:
-	case SORT_NONSTOP_COURSES:
-	case SORT_ONI_COURSES:
-	case SORT_ENDLESS_COURSES:
-		TweenSongPartsOffScreen();
-		SkipSongPartTweens();
-		break;
-	default:
-		break;
-	}
-
 	ON_COMMAND( m_Banner );
 	ON_COMMAND( m_DifficultyDisplay );
 	ON_COMMAND( m_sprCDTitleFront );
 	ON_COMMAND( m_sprCDTitleBack );
-	ON_COMMAND( m_GrooveRadar );
 	ON_COMMAND( m_textNumSongs );
 	ON_COMMAND( m_textTotalTime );
 	ON_COMMAND( m_MusicWheel );
@@ -319,23 +279,10 @@ void ScreenSelectMusic::TweenOffScreen()
 {
 	ScreenWithMenuElements::TweenOffScreen();
 
-	switch( GAMESTATE->m_SortOrder )
-	{
-	case SORT_ALL_COURSES:
-	case SORT_NONSTOP_COURSES:
-	case SORT_ONI_COURSES:
-	case SORT_ENDLESS_COURSES:
-		break;
-	default:
-		TweenSongPartsOffScreen();
-		break;
-	}
-
 	OFF_COMMAND( m_Banner );
 	OFF_COMMAND( m_DifficultyDisplay );
 	OFF_COMMAND( m_sprCDTitleFront );
 	OFF_COMMAND( m_sprCDTitleBack );
-	OFF_COMMAND( m_GrooveRadar );
 	OFF_COMMAND( m_textNumSongs );
 	OFF_COMMAND( m_textTotalTime );
 	OFF_COMMAND( m_MusicWheel );
@@ -352,61 +299,12 @@ void ScreenSelectMusic::TweenOffScreen()
 }
 
 
-/* This hides elements that are only relevant when displaying a single song,
- * and shows elements for course display.  XXX: Allow different tween commands. */
-void ScreenSelectMusic::SwitchDisplayMode( DisplayMode dm )
-{
-	if( m_DisplayMode == dm )
-		return;
-
-	// tween off
-	switch( m_DisplayMode )
-	{
-	case DISPLAY_SONGS:
-		TweenSongPartsOffScreen();
-		break;
-	case DISPLAY_COURSES:
-		break;
-	case DISPLAY_MODES:
-		break;
-	}
-
-	// tween on
-	m_DisplayMode = dm;
-	switch( m_DisplayMode )
-	{
-	case DISPLAY_SONGS:
-		TweenSongPartsOnScreen();
-		break;
-	case DISPLAY_COURSES:
-		break;
-	case DISPLAY_MODES:
-		break;
-	}
-}
-
 void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
 {
 	FOREACH_HumanPlayer( p )
 	{
 		m_textHighScore[p].RunCommands( SCORE_SORT_CHANGE_COMMAND(p) );
 		m_sprHighScoreFrame[p].RunCommands( SCORE_FRAME_SORT_CHANGE_COMMAND(p) );
-	}
-
-	switch( GAMESTATE->m_SortOrder )
-	{
-	case SORT_ALL_COURSES:
-	case SORT_NONSTOP_COURSES:
-	case SORT_ONI_COURSES:
-	case SORT_ENDLESS_COURSES:
-		SwitchDisplayMode( DISPLAY_COURSES );
-		break;
-	case SORT_MODE_MENU:
-		SwitchDisplayMode( DISPLAY_MODES );
-		break;
-	default:
-		SwitchDisplayMode( DISPLAY_SONGS );
-		break;
 	}
 }
 
@@ -1093,7 +991,6 @@ void ScreenSelectMusic::AfterStepsChange( const vector<PlayerNumber> &vpns )
 		m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
 		
 		m_DifficultyMeter[pn].SetFromGameState( pn );
-		m_GrooveRadar.SetFromSteps( pn, pSteps );
 		m_MusicWheel.NotesOrTrailChanged( pn );
 	}
 }
@@ -1123,7 +1020,6 @@ void ScreenSelectMusic::AfterTrailChange( const vector<PlayerNumber> &vpns )
 		m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
 		
 		m_DifficultyMeter[pn].SetFromGameState( pn );
-		m_GrooveRadar.SetEmpty( pn );
 		m_MusicWheel.NotesOrTrailChanged( pn );
 	}
 }
