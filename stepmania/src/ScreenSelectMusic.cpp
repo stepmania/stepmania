@@ -270,7 +270,7 @@ ScreenSelectMusic::~ScreenSelectMusic()
 
 }
 
-void ScreenSelectMusic::TweenSongPartsOnScreen( bool Initial )
+void ScreenSelectMusic::TweenSongPartsOnScreen()
 {
 	m_GrooveRadar.StopTweening();
 	m_GrooveRadar.TweenOnScreen();
@@ -285,7 +285,7 @@ void ScreenSelectMusic::TweenSongPartsOnScreen( bool Initial )
 	}
 }
 
-void ScreenSelectMusic::TweenSongPartsOffScreen( bool Final )
+void ScreenSelectMusic::TweenSongPartsOffScreen()
 {
 	m_GrooveRadar.TweenOffScreen();
 
@@ -320,7 +320,7 @@ void ScreenSelectMusic::TweenOnScreen()
 		ON_COMMAND( m_DifficultyMeter[p] );
 	}
 
-	TweenSongPartsOnScreen( true );
+	TweenSongPartsOnScreen();
 
 	switch( GAMESTATE->m_SortOrder )
 	{
@@ -328,7 +328,7 @@ void ScreenSelectMusic::TweenOnScreen()
 	case SORT_NONSTOP_COURSES:
 	case SORT_ONI_COURSES:
 	case SORT_ENDLESS_COURSES:
-		TweenSongPartsOffScreen( false );
+		TweenSongPartsOffScreen();
 		SkipSongPartTweens();
 		break;
 	default:
@@ -367,7 +367,7 @@ void ScreenSelectMusic::TweenOffScreen()
 	case SORT_ENDLESS_COURSES:
 		break;
 	default:
-		TweenSongPartsOffScreen( true );
+		TweenSongPartsOffScreen();
 		break;
 	}
 
@@ -403,7 +403,7 @@ void ScreenSelectMusic::SwitchDisplayMode( DisplayMode dm )
 	switch( m_DisplayMode )
 	{
 	case DISPLAY_SONGS:
-		TweenSongPartsOffScreen( false );
+		TweenSongPartsOffScreen();
 		break;
 	case DISPLAY_COURSES:
 		break;
@@ -416,7 +416,7 @@ void ScreenSelectMusic::SwitchDisplayMode( DisplayMode dm )
 	switch( m_DisplayMode )
 	{
 	case DISPLAY_SONGS:
-		TweenSongPartsOnScreen( false );
+		TweenSongPartsOnScreen();
 		break;
 	case DISPLAY_COURSES:
 		break;

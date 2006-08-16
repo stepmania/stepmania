@@ -51,8 +51,8 @@ protected:
 	void TweenScoreOnAndOffAfterChangeSort();
 	enum DisplayMode { DISPLAY_SONGS, DISPLAY_COURSES, DISPLAY_MODES } m_DisplayMode;
 	void SwitchDisplayMode( DisplayMode dm );
-	void TweenSongPartsOnScreen( bool Initial );
-	void TweenSongPartsOffScreen( bool Final );
+	void TweenSongPartsOnScreen();
+	void TweenSongPartsOffScreen();
 	void SkipSongPartTweens();
 	void UpdateSelectButton();
 
