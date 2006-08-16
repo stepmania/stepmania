@@ -8,6 +8,7 @@
 #define RADAR_VAL_UNKNOWN -1
 
 class XNode;
+struct lua_State;
 
 struct RadarValues
 {
@@ -63,6 +64,9 @@ struct RadarValues
 
 	RString ToString( int iMaxValues = -1 ) const; // default = all
 	void FromString( RString sValues );
+
+	// Lua
+	void PushSelf( lua_State *L );
 };
 
 
