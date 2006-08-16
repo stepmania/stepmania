@@ -287,6 +287,12 @@ public:
 		}
 		return 0;
 	}
+	static int SetFromGameState( T* p, lua_State *L )
+	{
+		PlayerNumber pn = (PlayerNumber)IArg(1);
+		p->SetFromGameState( pn );
+		return 0;
+	}
 
 	static void Register(lua_State *L) 
 	{
@@ -294,6 +300,7 @@ public:
 		ADD_METHOD( SetFromMeterAndDifficulty );
 		ADD_METHOD( SetFromSteps );
 		ADD_METHOD( SetFromTrail );
+		ADD_METHOD( SetFromGameState );
 
 		Luna<T>::Register( L );
 	}
