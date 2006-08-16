@@ -34,15 +34,6 @@ protected:
 	float m_fSecsUntilSwitch;
 };
 
-class GenreDisplay : public HelpDisplay
-{
-public:
-	GenreDisplay();
-	~GenreDisplay();
-	void PlayCommand( const RString &sCommandName );
-	virtual Actor *Copy() const;
-};
-
 #endif
 
 /*
