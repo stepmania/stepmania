@@ -10,7 +10,6 @@
 #include "MusicWheel.h"
 #include "Banner.h"
 #include "FadingBanner.h"
-#include "BPMDisplay.h"
 #include "GrooveRadar.h"
 #include "DifficultyIcon.h"
 #include "DifficultyMeter.h"
@@ -92,7 +91,6 @@ protected:
 	RString m_sFallbackCDTitlePath;
 
 	FadingBanner			m_Banner;
-	BPMDisplay			m_BPMDisplay;
 	Sprite				m_sprCDTitleFront, m_sprCDTitleBack;
 	Sprite				m_sprDifficultyFrame[NUM_PLAYERS];
 	DifficultyIcon			m_DifficultyIcon[NUM_PLAYERS];

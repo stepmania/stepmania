@@ -127,11 +127,6 @@ void ScreenSelectMusic::Init()
 	SET_XY( m_Banner );
 	this->AddChild( &m_Banner );
 
-	m_BPMDisplay.SetName( "BPMDisplay" );
-	m_BPMDisplay.Load();
-	SET_XY( m_BPMDisplay );
-	this->AddChild( &m_BPMDisplay );
-
 	m_DifficultyDisplay.SetName( "DifficultyDisplay" );
 	m_DifficultyDisplay.SetShadowLength( 0 );
 	SET_XY( m_DifficultyDisplay );
@@ -303,7 +298,6 @@ void ScreenSelectMusic::BeginScreen()
 	}
 
 	ON_COMMAND( m_Banner );
-	ON_COMMAND( m_BPMDisplay );
 	ON_COMMAND( m_DifficultyDisplay );
 	ON_COMMAND( m_sprCDTitleFront );
 	ON_COMMAND( m_sprCDTitleBack );
@@ -428,7 +422,6 @@ void ScreenSelectMusic::TweenOffScreen()
 	}
 
 	OFF_COMMAND( m_Banner );
-	OFF_COMMAND( m_BPMDisplay );
 	OFF_COMMAND( m_DifficultyDisplay );
 	OFF_COMMAND( m_sprCDTitleFront );
 	OFF_COMMAND( m_sprCDTitleBack );
@@ -1398,7 +1391,6 @@ void ScreenSelectMusic::AfterMusicChange()
 			FOREACH_PlayerNumber( p )
 				m_iSelection[p] = -1;
 
-			m_BPMDisplay.NoBPM();
 			g_sCDTitlePath = ""; // none
 			m_DifficultyDisplay.UnsetDifficulties();
 
@@ -1450,15 +1442,6 @@ void ScreenSelectMusic::AfterMusicChange()
 			if ( PREFSMAN->m_bShowBanners )
 				g_sBannerPath = pSong->GetBannerPath();
 
-			if( GAMESTATE->IsAnExtraStage() )
-			{
-				m_BPMDisplay.CycleRandomly();				
-			}
-			else
-			{
-				m_BPMDisplay.SetBpmFromSong( pSong );
-			}
-
 			g_sCDTitlePath = pSong->GetCDTitlePath();
 			g_bWantFallbackCdTitle = true;
 
@@ -1503,7 +1486,6 @@ void ScreenSelectMusic::AfterMusicChange()
 		case TYPE_RANDOM: 	m_Banner.LoadRandom();		break;
 		default: ASSERT(0);
 		}
-		m_BPMDisplay.NoBPM();
 		g_sCDTitlePath = ""; // none
 		m_DifficultyDisplay.UnsetDifficulties();
 
@@ -1552,11 +1534,6 @@ void ScreenSelectMusic::AfterMusicChange()
 		g_sBannerPath = pCourse->m_sBannerPath;
 		if( g_sBannerPath.empty() )
 			m_Banner.LoadFallback();
-
-		if( (int)pTrail->m_vEntries.size() > CommonMetrics::MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
-			m_BPMDisplay.SetVarious();
-		else
-			m_BPMDisplay.SetBpmFromCourse( pCourse );
 
 		m_DifficultyDisplay.UnsetDifficulties();
 
