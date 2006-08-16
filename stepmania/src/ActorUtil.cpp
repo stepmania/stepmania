@@ -196,26 +196,18 @@ Actor* ActorUtil::LoadFromNode( const RString& sDir, const XNode* pNode, Actor *
 			{
 				RString sName;
 				if( !pChild->GetAttrValue( "Name", sName ) )
-				{
 					Dialog::OK( ssprintf("Param node in '%s' is missing the attribute \"Name\"", sDir.c_str()), "MISSING_ATTRIBUTE_WARNING" );
-				}
 
 				LuaHelpers::RunAtExpressionS( sName );
 
 				RString s;
-				if( pChild->GetAttrValue( "Value", s ) )
-				{
-					Lua *L = LUA->Get();
-					LuaHelpers::RunScript( L, "return " + s, "", 1 );
-
-					
-					SetParamFromStack( L, sName, &setOldParams[sName] );
-					LUA->Release(L);
-				}
-				else
-				{
+				if( !pChild->GetAttrValue( "Value", s ) )
 					Dialog::OK( ssprintf("Param node in '%s' is missing the attribute \"Value\"", sDir.c_str()), "MISSING_ATTRIBUTE_WARNING" );
-				}
+				Lua *L = LUA->Get();
+				LuaHelpers::RunScript( L, "return " + s, "", 1 );
+
+				SetParamFromStack( L, sName, &setOldParams[sName] );
+				LUA->Release(L);
 			}
 		}
 	}
