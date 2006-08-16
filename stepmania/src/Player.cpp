@@ -1278,7 +1278,17 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 
 static bool Unjudged( const TapNote &tn )
 {
-	return IteratorCondition::TapsHoldsAndMines( tn ) && tn.result.tns == TNS_None;
+	if( tn.result.tns != TNS_None )
+		return false;
+	switch( tn.type )
+	{
+	case TapNote::tap:
+	case TapNote::hold_head:
+	case TapNote::mine:
+	case TapNote::lift:
+		return true;
+	}
+	return false;
 }
 
 void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
