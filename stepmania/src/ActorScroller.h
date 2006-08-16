@@ -18,7 +18,7 @@ public:
 
 	void Load2(
 		float fNumItemsToDraw, 
-		bool bLoop );
+		bool bLoop = false );
 
 	void EnableMask( float fWidth, float fHeight );
 	void DisableMask();
