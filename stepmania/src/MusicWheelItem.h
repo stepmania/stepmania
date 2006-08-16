@@ -26,6 +26,7 @@ public:
 	virtual Actor *Copy() const { return new MusicWheelItem(*this); }
 
 	virtual void LoadFromWheelItemData( const WheelItemBaseData* pWID );
+	virtual void HandleMessage( const RString& sMessage );
 	void RefreshGrades();
 
 	const WheelItemData *data;

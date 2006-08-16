@@ -511,8 +511,6 @@ void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )
 		m_DifficultyMeters[pn].SetFromSteps( pSteps );
 	else
 		m_DifficultyMeters[pn].SetFromMeterAndDifficulty( 0, DIFFICULTY_BEGINNER ); 
-
-	m_MusicWheel.NotesOrTrailChanged( pn );
 }
 
 void ScreenNetSelectMusic::MusicChanged()

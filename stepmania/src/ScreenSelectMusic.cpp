@@ -928,7 +928,6 @@ void ScreenSelectMusic::AfterStepsChange( const vector<PlayerNumber> &vpns )
 		m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
 		
 		m_DifficultyMeter[pn].SetFromGameState( pn );
-		m_MusicWheel.NotesOrTrailChanged( pn );
 	}
 }
 
@@ -957,7 +956,6 @@ void ScreenSelectMusic::AfterTrailChange( const vector<PlayerNumber> &vpns )
 		m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
 		
 		m_DifficultyMeter[pn].SetFromGameState( pn );
-		m_MusicWheel.NotesOrTrailChanged( pn );
 	}
 }
 

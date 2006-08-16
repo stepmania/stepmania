@@ -35,8 +35,6 @@ public:
 	void StartRandom();
 	bool IsRouletting() const;
 
-	void NotesOrTrailChanged( PlayerNumber pn );	// update grade graphics and top score
-
 	virtual bool Select();				// return true if this selection ends the screen
 	WheelItemType	GetSelectedType()	{ return GetCurWheelItemData(m_iSelection)->m_Type; }
 	Song		*GetSelectedSong();

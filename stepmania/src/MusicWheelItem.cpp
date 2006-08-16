@@ -102,6 +102,13 @@ MusicWheelItem::MusicWheelItem( RString sType ):
 		m_pGradeDisplay[p]->SetXY( GRADE_X.GetValue(p), 0 );
 		this->AddChild( m_pGradeDisplay[p] );
 	}
+
+	this->SubscribeToMessage( Message_CurrentStepsP1Changed );
+	this->SubscribeToMessage( Message_CurrentStepsP2Changed );
+	this->SubscribeToMessage( Message_CurrentTrailP1Changed );
+	this->SubscribeToMessage( Message_CurrentTrailP2Changed );
+	this->SubscribeToMessage( Message_PreferredDifficultyP1Changed );
+	this->SubscribeToMessage( Message_PreferredDifficultyP2Changed );
 }
 
 MusicWheelItem::MusicWheelItem( const MusicWheelItem &cpy ):
@@ -297,6 +304,19 @@ void MusicWheelItem::RefreshGrades()
 		PROFILEMAN->GetHighScoreForDifficulty( data->m_pSong, GAMESTATE->GetCurrentStyle(), ps, dc, hs );
 		m_pGradeDisplay[p]->SetGrade( p, hs.GetGrade() );
 	}
+}
+
+void MusicWheelItem::HandleMessage( const RString& sMessage )
+{
+	if( sMessage == MessageToString(Message_CurrentStepsP1Changed) ||
+		sMessage == MessageToString(Message_CurrentStepsP2Changed) ||
+		sMessage == MessageToString(Message_CurrentTrailP1Changed) ||
+		sMessage == MessageToString(Message_CurrentTrailP2Changed) ||
+		sMessage == MessageToString(Message_PreferredDifficultyP1Changed) ||
+		sMessage == MessageToString(Message_PreferredDifficultyP2Changed) )
+		RefreshGrades();
+
+	Actor::HandleMessage( sMessage );
 }
 
 /*

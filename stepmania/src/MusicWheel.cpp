@@ -708,16 +708,6 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData *> &arrayWheelItemDat
 	}
 }
 
-void MusicWheel::NotesOrTrailChanged( PlayerNumber pn )	// update grade graphics and top score
-{
-	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
-	{
-		MusicWheelItem *display = (MusicWheelItem *) m_WheelBaseItems[i]; // XXX: ugly cast
-
-		display->RefreshGrades();
-	}
-}
-
 void MusicWheel::UpdateSwitch()
 {
 	switch( m_WheelState )
