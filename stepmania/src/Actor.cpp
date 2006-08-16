@@ -715,7 +715,7 @@ void Actor::BeginTweening( float time, ITween *pTween )
 	// recursing ActorCommand.
 	if( m_Tweens.size() > 50 )
 	{
-		RString sError = ssprintf( "Tween overflow: size = %u.  infinitely recursing ActorCommand?", unsigned(m_Tweens.size()) );
+		RString sError = ssprintf( "Tween overflow: name = \"%s\"; infinitely recursing ActorCommand?", this->m_sName.c_str() );
 		LOG->Warn( sError );
 		Dialog::OK( sError );
 		FinishTweening();
