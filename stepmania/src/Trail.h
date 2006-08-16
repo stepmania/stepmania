@@ -63,7 +63,7 @@ public:
 		m_bRadarValuesCached = false;
 	}
 
-	RadarValues GetRadarValues() const;
+	const RadarValues &GetRadarValues() const;
 	void SetRadarValues( const RadarValues &rv ); // for pre-populating cache
 	int GetMeter() const;
 	int GetTotalMeter() const;

@@ -46,17 +46,18 @@ void Trail::SetRadarValues( const RadarValues &rv )
 	m_bRadarValuesCached = true;
 }
 
-RadarValues Trail::GetRadarValues() const
+const RadarValues &Trail::GetRadarValues() const
 {
+	if( m_bRadarValuesCached )
+	{
+		return m_CachedRadarValues;
+	}
 	if( IsSecret() )
 	{
 		// Don't calculate RadarValues for a non-fixed Course.  They values are 
 		// worthless because they'll change every time this Trail is 
 		// regenerated.
-		return RadarValues();
-	}
-	else if( m_bRadarValuesCached )
-	{
+		m_CachedRadarValues = RadarValues();
 		return m_CachedRadarValues;
 	}
 	else
@@ -193,11 +194,18 @@ public:
 
 	static int GetCourseDifficulty( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_CourseDifficulty ); return 1; }
 	static int GetStepsType( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_StepsType ); return 1; }
+	static int GetRadarValues( T* p, lua_State *L )
+	{
+		RadarValues &rv = const_cast<RadarValues &>(p->GetRadarValues());
+		rv.PushSelf(L);
+		return 1;
+	}
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( GetCourseDifficulty );
 		ADD_METHOD( GetStepsType );
+		ADD_METHOD( GetRadarValues );
 
 		Luna<T>::Register( L );
 	}
