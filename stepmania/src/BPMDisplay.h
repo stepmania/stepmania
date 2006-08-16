@@ -3,9 +3,7 @@
 #ifndef BPM_DISPLAY_H
 #define BPM_DISPLAY_H
 
-#include "ActorFrame.h"
 #include "BitmapText.h"
-#include "Quad.h"
 #include "AutoActor.h"
 #include "ThemeMetric.h"
 #include "LocalizedString.h"
@@ -13,7 +11,7 @@ class Song;
 class Course;
 struct DisplayBpms;
 
-class BPMDisplay : public ActorFrame
+class BPMDisplay : public BitmapText
 {
 public:
 	BPMDisplay();
@@ -44,8 +42,6 @@ protected:
 	ThemeMetric<RString> SEPARATOR;
 	ThemeMetric<RString> NO_BPM_TEXT;
 	
-	BitmapText m_textBPM;
-
 	float m_fBPMFrom, m_fBPMTo;
 	int m_iCurrentBPM;
 	vector<float> m_BPMS;

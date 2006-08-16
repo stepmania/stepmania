@@ -31,16 +31,12 @@ void BPMDisplay::Load()
 	SEPARATOR.Load( m_sName, "Separator" );
 	NO_BPM_TEXT.Load( m_sName, "NoBPMText" );
 
-	m_textBPM.SetName( "Text" );
-	m_textBPM.LoadFromFont( THEME->GetPathF(m_sName,"bpm") );
-	SET_XY_AND_ON_COMMAND( m_textBPM );
-	m_textBPM.SetDiffuse( NORMAL_COLOR );
-	this->AddChild( &m_textBPM );
+	SetDiffuse( NORMAL_COLOR );
 }
 
 void BPMDisplay::LoadFromNode( const RString &sDir, const XNode *pNode )
 {
-	ActorFrame::LoadFromNode( sDir, pNode );
+	BitmapText::LoadFromNode( sDir, pNode );
 	Load();
 }
 
@@ -51,7 +47,7 @@ float BPMDisplay::GetActiveBPM() const
 
 void BPMDisplay::Update( float fDeltaTime ) 
 { 
-	ActorFrame::Update( fDeltaTime ); 
+	BitmapText::Update( fDeltaTime ); 
 
 	if( !(bool)CYCLE )
 		return;
@@ -71,7 +67,7 @@ void BPMDisplay::Update( float fDeltaTime )
 		if(m_fBPMTo == -1)
 		{
 			m_fBPMFrom = -1;
-			m_textBPM.SetText( (RandomFloat(0,1)>0.90f) ? RString("xxx") : ssprintf("%03.0f",RandomFloat(0,600)) ); 
+			SetText( (RandomFloat(0,1)>0.90f) ? RString("xxx") : ssprintf("%03.0f",RandomFloat(0,600)) ); 
 		}
 		else if(m_fBPMFrom == -1)
 		{
@@ -79,11 +75,10 @@ void BPMDisplay::Update( float fDeltaTime )
 		}
 	}
 
-	// update m_textBPM
 	if( m_fBPMTo != -1)
 	{
 		const float fActualBPM = GetActiveBPM();
-		m_textBPM.SetText( ssprintf("%03.0f", fActualBPM) );
+		SetText( ssprintf("%03.0f", fActualBPM) );
 	}
 }
 
@@ -115,13 +110,13 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 		if( MinBPM == MaxBPM )
 		{
 			if( MinBPM == -1 )
-				m_textBPM.SetText( "..." ); // random
+				SetText( "..." ); // random
 			else
-				m_textBPM.SetText( ssprintf("%i", MinBPM) );
+				SetText( ssprintf("%i", MinBPM) );
 		}
 		else
 		{
-			m_textBPM.SetText( ssprintf("%i%s%i", MinBPM, SEPARATOR.GetValue().c_str(), MaxBPM) );
+			SetText( ssprintf("%i%s%i", MinBPM, SEPARATOR.GetValue().c_str(), MaxBPM) );
 		}
 	}
 	else
@@ -139,14 +134,14 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 		m_fPercentInState = 1;
 	}
 
-	m_textBPM.StopTweening();
-	m_textBPM.BeginTweening(0.5f);
+	StopTweening();
+	BeginTweening(0.5f);
 	if( GAMESTATE->IsAnExtraStage() )
-		m_textBPM.SetDiffuse( EXTRA_COLOR );
+		SetDiffuse( EXTRA_COLOR );
 	else if( !AllIdentical )
-		m_textBPM.SetDiffuse( CHANGE_COLOR );
+		SetDiffuse( CHANGE_COLOR );
 	else
-		m_textBPM.SetDiffuse( NORMAL_COLOR );
+		SetDiffuse( NORMAL_COLOR );
 }
 
 void BPMDisplay::CycleRandomly()
@@ -161,9 +156,8 @@ void BPMDisplay::CycleRandomly()
 void BPMDisplay::NoBPM()
 {
 	m_BPMS.clear();
-	m_textBPM.SetText( NO_BPM_TEXT ); 
-
-	m_textBPM.SetDiffuse( NORMAL_COLOR );
+	SetText( NO_BPM_TEXT ); 
+	SetDiffuse( NORMAL_COLOR );
 }
 
 void BPMDisplay::SetBpmFromSong( const Song* pSong )
@@ -220,7 +214,7 @@ void BPMDisplay::SetVarious()
 {
 	m_BPMS.clear();
 	m_BPMS.push_back( -1 );
-	m_textBPM.SetText( "Various" );
+	SetText( "Various" );
 }
 
 void BPMDisplay::SetFromGameState()
@@ -258,7 +252,7 @@ public:
 	}
 };
 
-LUA_REGISTER_DERIVED_CLASS( BPMDisplay, ActorFrame )
+LUA_REGISTER_DERIVED_CLASS( BPMDisplay, BitmapText )
 
 /*
  * (c) 2001-2002 Chris Danford
