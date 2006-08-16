@@ -88,7 +88,6 @@ protected:
 
 	FadingBanner			m_Banner;
 	Sprite				m_sprCDTitleFront, m_sprCDTitleBack;
-	Sprite				m_sprDifficultyFrame[NUM_PLAYERS];
 	DifficultyIcon			m_DifficultyIcon[NUM_PLAYERS];
 	GrooveRadar			m_GrooveRadar;
 	BitmapText			m_textNumSongs;
