@@ -45,7 +45,6 @@ protected:
 	ThemeMetric<RString> NO_BPM_TEXT;
 	
 	BitmapText m_textBPM;
-	AutoActor m_sprLabel;
 
 	float m_fBPMFrom, m_fBPMTo;
 	int m_iCurrentBPM;

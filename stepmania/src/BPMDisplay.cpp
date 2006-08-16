@@ -36,12 +36,6 @@ void BPMDisplay::Load()
 	SET_XY_AND_ON_COMMAND( m_textBPM );
 	m_textBPM.SetDiffuse( NORMAL_COLOR );
 	this->AddChild( &m_textBPM );
-
-	m_sprLabel.Load( THEME->GetPathG(m_sName,"label") );
-	m_sprLabel->SetName( "Label" );
-	SET_XY_AND_ON_COMMAND( m_sprLabel );
-	m_sprLabel->SetDiffuse( NORMAL_COLOR );
-	this->AddChild( m_sprLabel );
 }
 
 void BPMDisplay::LoadFromNode( const RString &sDir, const XNode *pNode )
@@ -146,24 +140,13 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 	}
 
 	m_textBPM.StopTweening();
-	m_sprLabel->StopTweening();
 	m_textBPM.BeginTweening(0.5f);
-	m_sprLabel->BeginTweening(0.5f);
 	if( GAMESTATE->IsAnExtraStage() )
-	{
 		m_textBPM.SetDiffuse( EXTRA_COLOR );
-		m_sprLabel->SetDiffuse( EXTRA_COLOR );		
-	}
 	else if( !AllIdentical )
-	{
 		m_textBPM.SetDiffuse( CHANGE_COLOR );
-		m_sprLabel->SetDiffuse( CHANGE_COLOR );
-	}
 	else
-	{
 		m_textBPM.SetDiffuse( NORMAL_COLOR );
-		m_sprLabel->SetDiffuse( NORMAL_COLOR );
-	}
 }
 
 void BPMDisplay::CycleRandomly()
@@ -181,7 +164,6 @@ void BPMDisplay::NoBPM()
 	m_textBPM.SetText( NO_BPM_TEXT ); 
 
 	m_textBPM.SetDiffuse( NORMAL_COLOR );
-	m_sprLabel->SetDiffuse( NORMAL_COLOR );
 }
 
 void BPMDisplay::SetBpmFromSong( const Song* pSong )
