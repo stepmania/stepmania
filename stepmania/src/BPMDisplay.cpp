@@ -11,6 +11,8 @@
 
 #include <limits.h>
 
+REGISTER_ACTOR_CLASS( BPMDisplay )
+
 BPMDisplay::BPMDisplay()
 {
 	m_fBPMFrom = m_fBPMTo = 0;
@@ -40,6 +42,12 @@ void BPMDisplay::Load()
 	SET_XY_AND_ON_COMMAND( m_sprLabel );
 	m_sprLabel->SetDiffuse( NORMAL_COLOR );
 	this->AddChild( m_sprLabel );
+}
+
+void BPMDisplay::LoadFromNode( const RString &sDir, const XNode *pNode )
+{
+	ActorFrame::LoadFromNode( sDir, pNode );
+	Load();
 }
 
 float BPMDisplay::GetActiveBPM() const
@@ -206,11 +214,17 @@ void BPMDisplay::SetBpmFromCourse( const Course* pCourse )
 	Trail *pTrail = pCourse->GetTrail( st );
 	ASSERT( pTrail );
 
+	m_fCycleTime = 0.2f;
+
+	if( (int)pTrail->m_vEntries.size() > CommonMetrics::MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
+	{
+		SetVarious();
+		return;
+	}
+
 	DisplayBpms bpms;
 	pTrail->GetDisplayBpms( bpms );
-	
 	SetBPMRange( bpms );
-	m_fCycleTime = 0.2f;
 }
 
 void BPMDisplay::SetConstantBpm( float fBPM )
@@ -226,6 +240,43 @@ void BPMDisplay::SetVarious()
 	m_BPMS.push_back( -1 );
 	m_textBPM.SetText( "Various" );
 }
+
+void BPMDisplay::SetFromGameState()
+{
+	if( GAMESTATE->m_pCurSong.Get() )
+	{
+		if( GAMESTATE->IsAnExtraStage() )
+			CycleRandomly();				
+		else
+			SetBpmFromSong( GAMESTATE->m_pCurSong );
+		return;
+	}
+	if( GAMESTATE->m_pCurCourse.Get() )
+	{
+		SetBpmFromCourse( GAMESTATE->m_pCurCourse );
+
+		return;
+	}
+
+	NoBPM();
+}
+
+#include "LuaBinding.h"
+class LunaBPMDisplay: public Luna<BPMDisplay>
+{
+public:
+	LunaBPMDisplay() { LUA->Register( Register ); }
+
+	static int SetFromGameState( T* p, lua_State *L ) { p->SetFromGameState(); return 0; }
+	static void Register(lua_State *L) 
+	{
+		ADD_METHOD( SetFromGameState );
+
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( BPMDisplay, ActorFrame )
 
 /*
  * (c) 2001-2002 Chris Danford

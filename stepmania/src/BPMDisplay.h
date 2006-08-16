@@ -17,8 +17,10 @@ class BPMDisplay : public ActorFrame
 {
 public:
 	BPMDisplay();
+	virtual Actor *Copy() const;
 	void Load();
 	virtual void Update( float fDeltaTime ); 
+	void LoadFromNode( const RString &sDir, const XNode *pNode );
 
 	void SetBpmFromSong( const Song* pSong );
 	void SetBpmFromCourse( const Course* pCourse );
@@ -26,6 +28,10 @@ public:
 	void CycleRandomly();
 	void NoBPM();
 	void SetVarious();
+	void SetFromGameState();
+
+	// Lua
+	virtual void PushSelf( lua_State *L );
 
 protected:
 	float GetActiveBPM() const;
