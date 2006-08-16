@@ -1,7 +1,4 @@
 function HelpDisplay:setfromsongorcourse()
-	local Selection = GAMESTATE:GetCurrentSong() or GAMESTATE:GetCurrentCourse()
-	if not Selection then return end
-
 	local Artists = {}
 	local AltArtists = {}
 
