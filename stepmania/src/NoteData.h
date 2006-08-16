@@ -43,8 +43,8 @@ public:
 		void Find();
 public:
 		_all_tracks_iterator( ND &nd, int iStartRow, int iEndRow, IteratorCond cond );
-		_all_tracks_iterator operator++( int dummy ); // Preincrement.
-		_all_tracks_iterator &operator++(); // Postincrement.
+		_all_tracks_iterator &operator++();		// preincrement
+		_all_tracks_iterator operator++( int dummy );	// postincrement
 		inline int Track() const { return m_iTrack; }
 		inline int Row() const { return m_iRow; }
 		inline bool IsAtEnd() const { return m_iRow > m_iEndRow; }
