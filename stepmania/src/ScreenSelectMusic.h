@@ -11,7 +11,6 @@
 #include "Banner.h"
 #include "FadingBanner.h"
 #include "GrooveRadar.h"
-#include "DifficultyIcon.h"
 #include "DifficultyMeter.h"
 #include "DifficultyDisplay.h"
 #include "RageUtil_BackgroundLoader.h"
@@ -88,7 +87,6 @@ protected:
 
 	FadingBanner			m_Banner;
 	Sprite				m_sprCDTitleFront, m_sprCDTitleBack;
-	DifficultyIcon			m_DifficultyIcon[NUM_PLAYERS];
 	GrooveRadar			m_GrooveRadar;
 	BitmapText			m_textNumSongs;
 	BitmapText			m_textTotalTime;

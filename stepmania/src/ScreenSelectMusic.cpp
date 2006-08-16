@@ -165,11 +165,6 @@ void ScreenSelectMusic::Init()
 
 	FOREACH_HumanPlayer( p )
 	{
-		m_DifficultyIcon[p].SetName( ssprintf("DifficultyIconP%d",p+1) );
-		m_DifficultyIcon[p].Load( THEME->GetPathG(m_sName,ssprintf("difficulty icons 1x%d",NUM_Difficulty)) );
-		SET_XY( m_DifficultyIcon[p] );
-		this->AddChild( &m_DifficultyIcon[p] );
-
 		m_DifficultyMeter[p].SetName( ssprintf("MeterP%d",p+1) );
 		m_DifficultyMeter[p].Load( METER_TYPE );
 		SET_XY( m_DifficultyMeter[p] );
@@ -264,35 +259,16 @@ void ScreenSelectMusic::TweenSongPartsOnScreen()
 {
 	m_GrooveRadar.StopTweening();
 	m_GrooveRadar.TweenOnScreen();
-
-	{
-		FOREACH_HumanPlayer( p )
-		{
-			ON_COMMAND( m_DifficultyIcon[p] );
-		}
-	}
 }
 
 void ScreenSelectMusic::TweenSongPartsOffScreen()
 {
 	m_GrooveRadar.TweenOffScreen();
-
-	{
-		FOREACH_HumanPlayer( p )
-		{
-			OFF_COMMAND( m_DifficultyIcon[p] );
-		}
-	}
 }
 
 void ScreenSelectMusic::SkipSongPartTweens()
 {
 	m_GrooveRadar.FinishTweening();
-
-	FOREACH_HumanPlayer( p )
-	{		
-		m_DifficultyIcon[p].FinishTweening();
-	}
 }
 
 void ScreenSelectMusic::TweenOnScreen()
@@ -1116,7 +1092,6 @@ void ScreenSelectMusic::AfterStepsChange( const vector<PlayerNumber> &vpns )
 
 		m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
 		
-		m_DifficultyIcon[pn].SetFromSteps( pn, pSteps );
 		m_DifficultyMeter[pn].SetFromGameState( pn );
 		m_GrooveRadar.SetFromSteps( pn, pSteps );
 		m_MusicWheel.NotesOrTrailChanged( pn );
@@ -1147,7 +1122,6 @@ void ScreenSelectMusic::AfterTrailChange( const vector<PlayerNumber> &vpns )
 
 		m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
 		
-		m_DifficultyIcon[pn].SetFromTrail( pn, pTrail );
 		m_DifficultyMeter[pn].SetFromGameState( pn );
 		m_GrooveRadar.SetEmpty( pn );
 		m_MusicWheel.NotesOrTrailChanged( pn );
