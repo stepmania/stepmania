@@ -977,8 +977,8 @@ NoteData::_all_tracks_iterator<ND, iter, TN> NoteData::_all_tracks_iterator<ND, 
 }
 
 // Explicit instantiation.
-template class NoteData::all_tracks_iterator;
-template class NoteData::all_tracks_const_iterator;
+template class NoteData::_all_tracks_iterator<NoteData, NoteData::iterator, TapNote>;
+template class NoteData::_all_tracks_iterator<const NoteData, NoteData::const_iterator, const TapNote>;
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
