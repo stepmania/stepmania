@@ -29,7 +29,6 @@ protected:
 	vector<CourseEntryDisplay*>		m_vpDisplay;
 
 	float m_fTimeUntilScroll;
-	float m_fItemAtPosition0InList;	// 0 <= val < m_vpDisplay.size()
 };
 
 #endif
