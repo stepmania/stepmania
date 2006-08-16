@@ -389,7 +389,7 @@ void ScoreScroller::Load(
 	for( int i=0; i<iNumCopies; ++i )
 		this->AddChild( new ScoreRowItem(ItemTemplate) );
 
-	DynamicActorScroller::Load2( (float) m_metricSongScoreRowsToDraw, false );
+	DynamicActorScroller::Load2( (float) m_metricSongScoreRowsToDraw );
 	DynamicActorScroller::SetTransformFromHeight( fItemHeight );
 	DynamicActorScroller::SetSecondsPerItem( SONG_SCORE_SECONDS_PER_ROW );
 	DynamicActorScroller::EnableMask( SCREEN_WIDTH, fItemHeight );

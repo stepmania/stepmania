@@ -16,9 +16,7 @@ public:
 	void SetTransformFromExpression( const RString &sTransformFunction );
 	void SetTransformFromHeight( float fItemHeight );
 
-	void Load2(
-		float fNumItemsToDraw, 
-		bool bLoop = false );
+	void Load2( float fNumItemsToDraw );
 
 	void EnableMask( float fWidth, float fHeight );
 	void DisableMask();

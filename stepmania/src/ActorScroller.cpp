@@ -39,10 +39,7 @@ ActorScroller::ActorScroller()
 	DisableMask();
 }
 
-void ActorScroller::Load2(
-	float fNumItemsToDraw, 
-	bool bLoop
-	)
+void ActorScroller::Load2( float fNumItemsToDraw )
 {
 	m_fNumItemsToDraw = fNumItemsToDraw;
 	m_iNumItems = m_SubActors.size();
@@ -124,9 +121,7 @@ void ActorScroller::LoadFromNode( const RString &sDir, const XNode *pNode )
 
 #undef GET_VALUE
 
-	Load2( 
-		fNumItemsToDraw,
-		false );
+	Load2( fNumItemsToDraw );
 
 	float fSecondsPerItem = 0;
 	if( pNode->GetAttrValue("SecondsPerItem", fSecondsPerItem) )
