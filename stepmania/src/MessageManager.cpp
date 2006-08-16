@@ -261,7 +261,8 @@ void IMessageSubscriber::ProcessMessages( float fDeltaTime )
 MessageSubscriber::MessageSubscriber( const MessageSubscriber &cpy ):
 	IMessageSubscriber(cpy)
 {
-	m_vsSubscribedTo = cpy.m_vsSubscribedTo;
+	FOREACH_CONST( RString, cpy.m_vsSubscribedTo, msg )
+		this->SubscribeToMessage( *msg );
 }
 
 void MessageSubscriber::SubscribeToMessage( const RString &sMessageName )
