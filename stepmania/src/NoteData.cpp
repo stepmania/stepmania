@@ -945,6 +945,73 @@ void NoteData::LoadFromNode( const XNode* pNode )
 	ASSERT(0);
 }
 
+template<typename ND, typename iter, typename TN>
+void NoteData::_all_tracks_iterator<ND, iter, TN>::NextRowAllTracks()
+{
+	int iMinRow = INT_MAX;
+	
+	for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
+	{
+		int iRow = m_iRow;
+		
+		if( m_NoteData.GetNextTapNoteRowForTrack(iTrack, iRow) )
+			iMinRow = min( iMinRow, iRow );
+	}
+	m_iRow = iMinRow;
+}
+
+template<typename ND, typename iter, typename TN>
+void NoteData::_all_tracks_iterator<ND, iter, TN>::Find()
+{
+	m_iRow = max( m_iRow, m_iStartRow );
+	while( m_iRow <= m_iEndRow )
+	{
+		while( m_iTrack < m_NoteData.GetNumTracks() )
+		{
+			m_Iterator = m_NoteData.FindTapNote( m_iTrack, m_iRow );
+			
+			if( m_Iterator != m_NoteData.end(m_iTrack) && m_Cond(m_Iterator->second) )
+				return;
+			++m_iTrack;
+		}
+		m_iTrack = 0;
+		++m_iRow;
+		int oldRow = m_iRow;
+		NextRowAllTracks();
+		ASSERT( oldRow < m_iRow );
+	}
+}
+
+template<typename ND, typename iter, typename TN>
+NoteData::_all_tracks_iterator<ND, iter, TN>::_all_tracks_iterator( ND &nd, int iStartRow, int iEndRow, NoteData::IteratorCond cond ) :
+	m_NoteData(nd), m_iTrack(0), m_iRow(0), m_iStartRow(iStartRow), m_iEndRow(iEndRow), m_Cond(cond)
+{
+	ASSERT( m_NoteData.GetNumTracks() > 0 );
+	NextRowAllTracks();
+	Find();
+}
+
+template<typename ND, typename iter, typename TN>
+NoteData::_all_tracks_iterator<ND, iter, TN> &NoteData::_all_tracks_iterator<ND, iter, TN>::operator++() // preincrement
+{
+	DEBUG_ASSERT( m_iRow <= m_iEndRow );
+	++m_iTrack;
+	Find();
+	return *this;
+}
+
+template<typename ND, typename iter, typename TN>
+NoteData::_all_tracks_iterator<ND, iter, TN> NoteData::_all_tracks_iterator<ND, iter, TN>::operator++( int dummy ) // postincrement
+{
+	DEBUG_ASSERT( m_iRow <= m_iEndRow );
+	_all_tracks_iterator<ND, iter, TN> ret(*this);
+	operator++();
+	return ret;
+}
+
+// Explicit instantiation.
+template class NoteData::all_tracks_iterator;
+template class NoteData::all_tracks_const_iterator;
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard

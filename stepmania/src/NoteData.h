@@ -47,69 +47,17 @@ public:
 		iter		m_Iterator;
 		IteratorCond	m_Cond;
 		
-		void NextRowAllTracks()
-		{
-			int iMinRow = INT_MAX;
-			
-			for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
-			{
-				int iRow = m_iRow;
-				
-				if( m_NoteData.GetNextTapNoteRowForTrack(iTrack, iRow) )
-					iMinRow = min( iMinRow, iRow );
-			}
-			m_iRow = iMinRow;
-		}
-		void Find()
-		{
-			m_iRow = max( m_iRow, m_iStartRow );
-			while( m_iRow <= m_iEndRow )
-			{
-				while( m_iTrack < m_NoteData.GetNumTracks() )
-				{
-					m_Iterator = m_NoteData.FindTapNote( m_iTrack, m_iRow );
-				
-					if( m_Iterator != m_NoteData.end(m_iTrack) && m_Cond(m_Iterator->second) )
-						return;
-					++m_iTrack;
-				}
-				m_iTrack = 0;
-				++m_iRow;
-				int oldRow = m_iRow;
-				NextRowAllTracks();
-				ASSERT( oldRow < m_iRow );
-			}
-		}
-	public:
-		_all_tracks_iterator( ND &nd, int iStartRow, int iEndRow, IteratorCond cond ) :
-			m_NoteData(nd), m_iTrack(0), m_iRow(0), m_iStartRow(iStartRow), m_iEndRow(iEndRow), m_Cond(cond)
-		{
-				ASSERT( m_NoteData.GetNumTracks() > 0 );
-				NextRowAllTracks();
-				Find();
-		}
-		
-#define CHECK DEBUG_ASSERT( m_iRow <= m_iEndRow )
+		void NextRowAllTracks();
+		void Find();
+public:
+		_all_tracks_iterator( ND &nd, int iStartRow, int iEndRow, IteratorCond cond );
+		_all_tracks_iterator operator++( int dummy ); // Preincrement.
+		_all_tracks_iterator &operator++(); // Postincrement.
 		inline int Track() const { return m_iTrack; }
 		inline int Row() const { return m_iRow; }
 		inline bool IsAtEnd() const { return m_iRow > m_iEndRow; }
-		inline _all_tracks_iterator &operator++() // preincrement
-		{
-			CHECK;
-			++m_iTrack;
-			Find();
-			return *this;
-		}
-		inline _all_tracks_iterator operator++( int dummy ) // postincrement
-		{
-			CHECK;
-			all_tracks_iterator ret(*this);
-			operator++();
-			return ret;
-		}
-		inline TN &operator*() { CHECK; return m_Iterator->second; }
-		inline TN *operator->() { CHECK; return &m_Iterator->second; }
-#undef CHECK
+		inline TN &operator*() { DEBUG_ASSERT( m_iRow <= m_iEndRow ); return m_Iterator->second; }
+		inline TN *operator->() { DEBUG_ASSERT( m_iRow <= m_iEndRow ); return &m_Iterator->second; }
 	};
 	typedef _all_tracks_iterator<NoteData, iterator, TapNote> 			all_tracks_iterator;
 	typedef _all_tracks_iterator<const NoteData, const_iterator, const TapNote>	all_tracks_const_iterator;
