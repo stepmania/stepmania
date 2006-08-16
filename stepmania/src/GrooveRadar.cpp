@@ -25,6 +25,7 @@ GrooveRadar::GrooveRadar()
 {
 	m_sprRadarBase.Load( THEME->GetPathG("GrooveRadar","base") );
 	m_Frame.AddChild( &m_sprRadarBase );
+	m_Frame.SetName( "RadarFrame" );
 
 	FOREACH_PlayerNumber( p )
 	{
@@ -37,6 +38,7 @@ GrooveRadar::GrooveRadar()
 
 	for( int c=0; c<NUM_SHOWN_RADAR_CATEGORIES; c++ )
 	{
+		m_sprRadarLabels[c].SetName( "RadarLabel" );
 		m_sprRadarLabels[c].Load( THEME->GetPathG("GrooveRadar","labels 1x5") );
 		m_sprRadarLabels[c].StopAnimating();
 		m_sprRadarLabels[c].SetState( c );
