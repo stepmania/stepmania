@@ -45,7 +45,6 @@ void ActorScroller::Load2(
 	)
 {
 	m_fNumItemsToDraw = fNumItemsToDraw;
-	m_bLoop = bLoop;
 	m_iNumItems = m_SubActors.size();
 
 	Lua *L = LUA->Get();

@@ -31,6 +31,7 @@ public:
 	void LoadFromNode( const RString &sDir, const XNode *pNode );
 	virtual Actor *Copy() const;
 	
+	void SetLoop( bool bLoop )					{ m_bLoop = bLoop; }
 	void SetDestinationItem( float fItemIndex )				{ m_fDestinationItem = fItemIndex; }
 	void SetCurrentAndDestinationItem( float fItemIndex )	{ m_fCurrentItem = m_fDestinationItem = fItemIndex; }
 	float GetCurrentItem() const							{ return m_fCurrentItem; }
