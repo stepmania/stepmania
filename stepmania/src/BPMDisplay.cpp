@@ -134,8 +134,6 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 		m_fPercentInState = 1;
 	}
 
-	StopTweening();
-	BeginTweening(0.5f);
 	if( GAMESTATE->IsAnExtraStage() )
 		SetDiffuse( EXTRA_COLOR );
 	else if( !AllIdentical )
