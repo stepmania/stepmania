@@ -39,10 +39,8 @@ ActorScroller::ActorScroller()
 	DisableMask();
 }
 
-void ActorScroller::Load2( float fNumItemsToDraw )
+void ActorScroller::Load2()
 {
-	if( fNumItemsToDraw != -1 )
-		m_fNumItemsToDraw = fNumItemsToDraw;
 	m_iNumItems = m_SubActors.size();
 
 	Lua *L = LUA->Get();
