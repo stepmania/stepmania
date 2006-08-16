@@ -695,6 +695,7 @@ void ScreenGameplay::Init( bool bUseSongBackgroundAndForeground )
 	
 
 	m_BPMDisplay.SetName( "BPMDisplay" );
+	m_BPMDisplay.LoadFromFont( THEME->GetPathF("BPMDisplay","bpm") );
 	m_BPMDisplay.Load();
 	SET_XY( m_BPMDisplay );
 	this->AddChild( &m_BPMDisplay );

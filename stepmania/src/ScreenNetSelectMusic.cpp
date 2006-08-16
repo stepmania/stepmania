@@ -84,6 +84,7 @@ void ScreenNetSelectMusic::Init()
 	ON_COMMAND( m_MusicWheel );	
 	
 	m_BPMDisplay.SetName( "BPMDisplay" );
+	m_BPMDisplay.LoadFromFont( THEME->GetPathF("BPMDisplay","bpm") );
 	m_BPMDisplay.Load();
 	SET_XY_AND_ON_COMMAND( m_BPMDisplay );
 	this->AddChild( &m_BPMDisplay );
