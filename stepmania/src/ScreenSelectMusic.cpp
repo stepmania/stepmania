@@ -265,45 +265,6 @@ void ScreenSelectMusic::BeginScreen()
 
 	AfterMusicChange();
 
-	FOREACH_HumanPlayer( p )
-	{
-		ON_COMMAND( m_DifficultyMeter[p] );
-	}
-
-	TweenSongPartsOnScreen( true );
-
-	switch( GAMESTATE->m_SortOrder )
-	{
-	case SORT_ALL_COURSES:
-	case SORT_NONSTOP_COURSES:
-	case SORT_ONI_COURSES:
-	case SORT_ENDLESS_COURSES:
-		TweenSongPartsOffScreen( false );
-		SkipSongPartTweens();
-		break;
-	default:
-		break;
-	}
-
-	ON_COMMAND( m_Banner );
-	ON_COMMAND( m_DifficultyDisplay );
-	ON_COMMAND( m_sprCDTitleFront );
-	ON_COMMAND( m_sprCDTitleBack );
-	ON_COMMAND( m_GrooveRadar );
-	ON_COMMAND( m_textNumSongs );
-	ON_COMMAND( m_textTotalTime );
-	ON_COMMAND( m_MusicWheel );
-	ON_COMMAND( m_sprLongBalloon );
-	ON_COMMAND( m_sprMarathonBalloon );
-	ON_COMMAND( m_MusicWheel );
-	ON_COMMAND( m_MachineRank );
-
-	FOREACH_HumanPlayer( p )
-	{		
-		ON_COMMAND( m_sprHighScoreFrame[p] );
-		ON_COMMAND( m_textHighScore[p] );
-	}
-
 	SOUND->PlayOnceFromAnnouncer( "select music intro" );
 }
 
@@ -355,6 +316,50 @@ void ScreenSelectMusic::SkipSongPartTweens()
 		m_sprMeterFrame[p].FinishTweening();
 		m_DifficultyIcon[p].FinishTweening();
 		m_AutoGenIcon[p].FinishTweening();
+	}
+}
+
+void ScreenSelectMusic::TweenOnScreen()
+{
+	ScreenWithMenuElements::TweenOnScreen();
+
+	FOREACH_HumanPlayer( p )
+	{
+		ON_COMMAND( m_DifficultyMeter[p] );
+	}
+
+	TweenSongPartsOnScreen( true );
+
+	switch( GAMESTATE->m_SortOrder )
+	{
+	case SORT_ALL_COURSES:
+	case SORT_NONSTOP_COURSES:
+	case SORT_ONI_COURSES:
+	case SORT_ENDLESS_COURSES:
+		TweenSongPartsOffScreen( false );
+		SkipSongPartTweens();
+		break;
+	default:
+		break;
+	}
+
+	ON_COMMAND( m_Banner );
+	ON_COMMAND( m_DifficultyDisplay );
+	ON_COMMAND( m_sprCDTitleFront );
+	ON_COMMAND( m_sprCDTitleBack );
+	ON_COMMAND( m_GrooveRadar );
+	ON_COMMAND( m_textNumSongs );
+	ON_COMMAND( m_textTotalTime );
+	ON_COMMAND( m_MusicWheel );
+	ON_COMMAND( m_sprLongBalloon );
+	ON_COMMAND( m_sprMarathonBalloon );
+	ON_COMMAND( m_MusicWheel );
+	ON_COMMAND( m_MachineRank );
+
+	FOREACH_HumanPlayer( p )
+	{		
+		ON_COMMAND( m_sprHighScoreFrame[p] );
+		ON_COMMAND( m_textHighScore[p] );
 	}
 }
 

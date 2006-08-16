@@ -46,6 +46,7 @@ public:
 	virtual void PushSelf( lua_State *L );
 
 protected:
+	void TweenOnScreen();
 	void TweenOffScreen();
 	void TweenScoreOnAndOffAfterChangeSort();
 	enum DisplayMode { DISPLAY_SONGS, DISPLAY_COURSES, DISPLAY_MODES } m_DisplayMode;
