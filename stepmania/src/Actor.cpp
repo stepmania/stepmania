@@ -1493,6 +1493,15 @@ public:
 	static int GetDiffuseAlpha( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetDiffuseAlpha() ); return 1; }
 
 	static int GetName( T* p, lua_State *L )		{ lua_pushstring( L, p->GetName() ); return 1; }
+	static int GetParent( T* p, lua_State *L )
+	{
+		Actor *pParent = p->GetParent();
+		if( pParent == NULL )
+			lua_pushnil( L );
+		else
+			pParent->PushSelf(L);
+		return 1;
+	}
 
 	static void Register(lua_State *L) {
   		ADD_METHOD( sleep );
@@ -1625,6 +1634,7 @@ public:
 		ADD_METHOD( GetDiffuseAlpha );
 
 		ADD_METHOD( GetName );
+		ADD_METHOD( GetParent );
 
 		Luna<T>::Register( L );
 	}
