@@ -133,8 +133,6 @@ public:
 	Preference<bool>	m_bDelayedCreditsReconcile;
 	Preference<bool>	m_bPickExtraStage;
 	Preference<bool>	m_bComboContinuesBetweenSongs;
-	Preference<float>	m_fLongVerSongSeconds;
-	Preference<float>	m_fMarathonVerSongSeconds;
 	enum Maybe { ASK = -1, NO = 0, YES = 1 };
 	Preference<Maybe,int>		m_ShowSongOptions;
 	Preference<bool>	m_bDancePointsForOni;

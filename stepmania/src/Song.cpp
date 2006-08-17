@@ -38,6 +38,8 @@ const int FILE_CACHE_VERSION = 148;	// increment this to invalidate cache
 
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
 
+static Preference<float>	g_fLongVerSongSeconds( "LongVerSongSeconds",		60*2.5f );
+static Preference<float>	g_fMarathonVerSongSeconds( "MarathonVerSongSeconds",	60*5.f );
 
 Song::Song()
 {
@@ -1215,12 +1217,12 @@ float Song::GetStepsSeconds() const
 
 bool Song::IsLong() const
 {
-	return !IsMarathon() && m_fMusicLengthSeconds > PREFSMAN->m_fLongVerSongSeconds;
+	return !IsMarathon() && m_fMusicLengthSeconds > g_fLongVerSongSeconds;
 }
 
 bool Song::IsMarathon() const
 {
-	return m_fMusicLengthSeconds >= PREFSMAN->m_fMarathonVerSongSeconds;
+	return m_fMusicLengthSeconds >= g_fMarathonVerSongSeconds;
 }
 
 // lua start
