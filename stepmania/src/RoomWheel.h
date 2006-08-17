@@ -11,7 +11,7 @@ struct RoomWheelData : public WheelItemBaseData
 {
 	RoomWheelData() : m_iFlags(0) { WheelItemBaseData::WheelItemBaseData(); }
 	RoomWheelData( WheelItemType wit, const RString& sTitle, const RString& sDesc, RageColor color )
-	 : m_iFlags(0), m_sDesc(sDesc), WheelItemBaseData( wit, sTitle, color )
+	 : WheelItemBaseData( wit, sTitle, color ), m_sDesc(sDesc), m_iFlags(0)
 	{};
 
 	RString			m_sDesc;
