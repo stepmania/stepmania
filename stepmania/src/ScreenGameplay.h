@@ -1,7 +1,7 @@
 /* ScreenGameplay - The music plays, the notes scroll, and the Player is pressing buttons. */
 
-#ifndef ScreenGameplay_H
-#define ScreenGameplay_H
+#ifndef SCREEN_GAMEPLAY_H
+#define SCREEN_GAMEPLAY_H
 
 #include "ScreenWithMenuElements.h"
 #include "Sprite.h"
