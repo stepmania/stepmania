@@ -606,13 +606,13 @@ void ScreenEz2SelectMusic::MusicChanged()
 	m_CurrentSubTitle.SetText( pSong->m_sSubTitle, "");
 	m_CurrentArtist.SetText( pSong->m_sArtist, "");
 
-	if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fMarathonVerSongSeconds )
+	if( pSong->IsMarathon() )
 	{
 		m_sprBalloon.StopTweening();
 		m_sprBalloon.Load( THEME->GetPathG("ScreenSelectMusic","balloon marathon") );
 		SET_XY_AND_ON_COMMAND( m_sprBalloon );
 	}
-	else if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fLongVerSongSeconds )
+	else if( pSong->IsLong() )
 	{
 		m_sprBalloon.StopTweening();
 		m_sprBalloon.Load( THEME->GetPathG("ScreenSelectMusic","balloon long") );

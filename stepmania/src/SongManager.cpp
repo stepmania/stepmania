@@ -649,9 +649,9 @@ RString SongManager::ShortenGroupName( RString sLongGroupName )
 int SongManager::GetNumStagesForSong( const Song* pSong )
 {
 	ASSERT( pSong );
-	if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fMarathonVerSongSeconds )
+	if( pSong->IsMarathon() )
 		return 3;
-	if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fLongVerSongSeconds )
+	if( pSong->IsLong() )
 		return 2;
 	else
 		return 1;
