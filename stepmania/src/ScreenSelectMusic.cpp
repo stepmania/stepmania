@@ -204,7 +204,6 @@ void ScreenSelectMusic::BeginScreen()
 		MESSAGEMAN->Broadcast( "SongOptionsChanged" );
 	}
 	
-	// XXX BeginScreen?
 	m_MusicWheel.BeginScreen();
 		
 	m_bMadeChoice = false;
