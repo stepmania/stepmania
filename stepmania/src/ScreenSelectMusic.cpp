@@ -782,13 +782,10 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 	case TYPE_RANDOM:
 	case TYPE_SORT:
 		/* We havn't made a selection yet. */
-		break;
+		return;
 	default:
 		ASSERT(0);
 	}
-
-	if( !m_bMadeChoice )
-		return;
 
 	SCREENMAN->PlayStartSound();
 
