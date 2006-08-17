@@ -990,6 +990,8 @@ void ScreenSelectMusic::AfterMusicChange()
 	{
 	case TYPE_SECTION:
 	case TYPE_SORT:
+	case TYPE_ROULETTE:
+	case TYPE_RANDOM:
 		FOREACH_PlayerNumber( p )
 			m_iSelection[p] = -1;
 
@@ -1012,6 +1014,16 @@ void ScreenSelectMusic::AfterMusicChange()
 			bWantBanner = false; /* we load it ourself */
 			m_Banner.LoadMode();
 			m_sSampleMusicToPlay = m_sSortMusicPath;
+			break;
+		case TYPE_ROULETTE:
+			bWantBanner = false; /* we load it ourself */
+			m_Banner.LoadRoulette();
+			m_sSampleMusicToPlay = m_sRouletteMusicPath;
+			break;
+		case TYPE_RANDOM:
+			bWantBanner = false; /* we load it ourself */
+			m_Banner.LoadRandom();
+			m_sSampleMusicToPlay = m_sRandomMusicPath;
 			break;
 		default:
 			ASSERT(0);
@@ -1042,33 +1054,6 @@ void ScreenSelectMusic::AfterMusicChange()
 
 			SwitchToPreferredDifficulty();
 		}
-		break;
-	case TYPE_ROULETTE:
-	case TYPE_RANDOM:
-		g_sCDTitlePath = ""; // none
-		m_DifficultyDisplay.UnsetDifficulties();
-
-		m_fSampleStartSeconds = 0;
-		m_fSampleLengthSeconds = -1;
-
-		m_textNumSongs.SetText( "" );
-		m_textTotalTime.SetText( "" );
-
-		bWantBanner = false; /* we load it ourself */
-		switch( m_MusicWheel.GetSelectedType() )
-		{
-		case TYPE_ROULETTE:
-			m_sSampleMusicToPlay = m_sRouletteMusicPath;
-			m_Banner.LoadRoulette();
-			break;
-		case TYPE_RANDOM:
-			m_sSampleMusicToPlay = m_sRandomMusicPath;
-			m_Banner.LoadRandom();
-			break;
-		default:
-			ASSERT(0);
-		}
-
 		break;
 	case TYPE_COURSE:
 	{
