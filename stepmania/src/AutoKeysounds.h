@@ -1,7 +1,7 @@
 /* AutoKeysounds - handle playback of auto keysounds notes. */
 
-#ifndef AutoKeysounds_H
-#define AutoKeysounds_H
+#ifndef AUTO_KEYSOUNDS_H
+#define AUTO_KEYSOUNDS_H
 
 #include "NoteData.h"
 #include "PlayerNumber.h"
@@ -16,9 +16,9 @@ public:
 	RageSound *GetSound() { return &m_sSound; }
 
 protected:	
-	NoteData	m_ndAutoKeysoundsOnly[NUM_PLAYERS];
-	vector<RageSound> m_vKeysounds;
-	RageSound m_sSound;
+	NoteData		m_ndAutoKeysoundsOnly[NUM_PLAYERS];
+	vector<RageSound>	m_vKeysounds;
+	RageSound		m_sSound;
 };
 
 #endif
