@@ -44,7 +44,7 @@ public:
 		_all_tracks_iterator operator++( int dummy );	// postincrement
 		inline int Track() const { return m_iTrack; }
 		inline int Row() const { return m_vIters[m_iTrack]->first; }
-		inline bool IsAtEnd() const { return m_vIters[m_iTrack] == m_NoteData.end( m_iTrack ) || Row() > m_iEndRow; }
+		inline bool IsAtEnd() const { return m_iTrack == -1; }
 		inline TN &operator*()  { DEBUG_ASSERT( !IsAtEnd() ); return m_vIters[m_iTrack]->second; }
 		inline TN *operator->()	{ DEBUG_ASSERT( !IsAtEnd() ); return &m_vIters[m_iTrack]->second; }
 		inline const TN &operator*() const  { DEBUG_ASSERT( !IsAtEnd() ); return m_vIters[m_iTrack]->second; }

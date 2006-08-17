@@ -917,6 +917,8 @@ void NoteData::_all_tracks_iterator<ND, iter, TN>::Find()
 {
 	int iMinRow = m_iEndRow+1;
 	
+	// If no notes can be found in the range, m_iTrack will stay -1 and IsAtEnd() will return true.
+	m_iTrack = -1;
 	for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
 	{
 		iter &i = m_vIters[iTrack];
