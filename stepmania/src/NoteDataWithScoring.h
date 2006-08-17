@@ -1,14 +1,17 @@
 /* NoteDataWithScoring - NoteData with scores for each TapNote and HoldNote. */
 
-#ifndef NOTEDATAWITHSCORING_H
-#define NOTEDATAWITHSCORING_H
+#ifndef NOTE_DATA_WITH_SCORING_H
+#define NOTE_DATA_WITH_SCORING_H
 
-#include "NoteTypes.h"
 #include "PlayerNumber.h"
+#include "GameConstantsAndTypes.h"
 
 struct RadarValues;
 class NoteData;
 class PlayerStageStats;
+class NoteData;
+struct TapNote;
+
 namespace NoteDataWithScoring
 {
 	bool IsRowCompletelyJudged( const NoteData &in, unsigned iRow, PlayerNumber pn );

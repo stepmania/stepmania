@@ -6,7 +6,6 @@
 #include "ReceptorArrow.h"
 #include "ActorFrame.h"
 #include "GameConstantsAndTypes.h"
-#include "NoteTypes.h"
 
 class PlayerState;
 
