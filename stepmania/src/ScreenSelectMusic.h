@@ -83,7 +83,6 @@ protected:
 	BitmapText			m_textHighScore[NUM_PLAYERS];
 	MusicWheel			m_MusicWheel;
 	DifficultyDisplay		m_DifficultyDisplay;
-	BitmapText			m_MachineRank;
 
 	bool				m_bMadeChoice;
 	bool				m_bGoToOptions;

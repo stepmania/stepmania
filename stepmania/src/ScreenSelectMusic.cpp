@@ -147,11 +147,6 @@ void ScreenSelectMusic::Init()
 	SET_XY( m_textTotalTime );
 	this->AddChild( &m_textTotalTime );
 
-	m_MachineRank.SetName( "MachineRank" );
-	m_MachineRank.LoadFromFont( THEME->GetPathF(m_sName,"rank") );
-	SET_XY( m_MachineRank );
-	this->AddChild( &m_MachineRank );
-
 	FOREACH_HumanPlayer( p )
 	{
 		m_sprHighScoreFrame[p].SetName( ssprintf("ScoreFrameP%d",p+1) );
@@ -955,29 +950,6 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 	}
 }
 
-template<class T>
-int FindCourseIndexOfSameMode( T begin, T end, const Course *p )
-{
-	const PlayMode pm = p->GetPlayMode();
-	
-	int n = 0;
-	for( T it = begin; it != end; ++it )
-	{
-		if( *it == p )
-			return n;
-
-		/* If it's not playable in this mode, don't increment.  It might result in 
-		 * different output in different modes, but that's better than having holes. */
-		if( !(*it)->IsPlayableIn( GAMESTATE->GetCurrentStyle()->m_StepsType ) )
-			continue;
-		if( (*it)->GetPlayMode() != pm )
-			continue;
-		++n;
-	}
-
-	return -1;
-}
-
 void ScreenSelectMusic::AfterMusicChange()
 {
 	if( !m_MusicWheel.IsRouletting() )
@@ -999,8 +971,6 @@ void ScreenSelectMusic::AfterMusicChange()
 	m_Banner.SetMovingFast( !!m_MusicWheel.IsMoving() );
 
 	vector<RString> m_Artists, m_AltArtists;
-
-	m_MachineRank.SetText( "" );
 
 	m_sSampleMusicToPlay = "";
 	m_pSampleMusicTimingData = NULL;
@@ -1071,11 +1041,6 @@ void ScreenSelectMusic::AfterMusicChange()
 			g_sCDTitlePath = pSong->GetCDTitlePath();
 			g_bWantFallbackCdTitle = true;
 
-			const vector<Song*> best = SONGMAN->GetPopularSongs( ProfileSlot_Machine );
-			const int index = FindIndex( best.begin(), best.end(), pSong );
-			if( index != -1 )
-				m_MachineRank.SetText( FormatNumberAndSuffix( index+1 ) );
-
 			m_DifficultyDisplay.SetDifficulties( pSong, GAMESTATE->GetCurrentStyle()->m_StepsType );
 
 			SwitchToPreferredDifficulty();
@@ -1139,13 +1104,6 @@ void ScreenSelectMusic::AfterMusicChange()
 		m_DifficultyDisplay.UnsetDifficulties();
 
 		SwitchToPreferredDifficulty();
-
-		CourseType ct = PlayModeToCourseType( GAMESTATE->m_PlayMode );
-		const vector<Course*> best = SONGMAN->GetPopularCourses( ct, ProfileSlot_Machine );
-		const int index = FindCourseIndexOfSameMode( best.begin(), best.end(), pCourse );
-		if( index != -1 )
-			m_MachineRank.SetText( FormatNumberAndSuffix( index+1 ) );
-
 		break;
 	}
 	default:
