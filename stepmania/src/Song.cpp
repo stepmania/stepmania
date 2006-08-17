@@ -1213,6 +1213,15 @@ float Song::GetStepsSeconds() const
 	return GetElapsedTimeFromBeat( m_fLastBeat ) - GetElapsedTimeFromBeat( m_fFirstBeat );
 }
 
+bool Song::IsLong() const
+{
+	return !IsMarathon() && m_fMusicLengthSeconds > PREFSMAN->m_fLongVerSongSeconds;
+}
+
+bool Song::IsMarathon() const
+{
+	return m_fMusicLengthSeconds >= PREFSMAN->m_fMarathonVerSongSeconds;
+}
 
 // lua start
 #include "LuaBinding.h"
@@ -1247,6 +1256,9 @@ public:
 	static int GetBackgroundPath( T* p, lua_State *L )	{ if( !p->HasBackground() ) lua_pushnil(L); else lua_pushstring(L, p->GetBackgroundPath()); return 1; }
 	static int IsTutorial( T* p, lua_State *L )		{ lua_pushboolean(L, p->IsTutorial()); return 1; }
 	static int GetGroupName( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sGroupName); return 1; }
+	static int MusicLengthSeconds( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_fMusicLengthSeconds); return 1; }
+	static int IsLong( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsLong()); return 1; }
+	static int IsMarathon( T* p, lua_State *L )		{ lua_pushboolean(L, p->IsMarathon()); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -1264,6 +1276,9 @@ public:
 		ADD_METHOD( GetBackgroundPath );
 		ADD_METHOD( IsTutorial );
 		ADD_METHOD( GetGroupName );
+		ADD_METHOD( MusicLengthSeconds );
+		ADD_METHOD( IsLong );
+		ADD_METHOD( IsMarathon );
 
 		Luna<T>::Register( L );
 	}
