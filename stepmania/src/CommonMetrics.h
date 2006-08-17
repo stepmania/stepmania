@@ -50,17 +50,17 @@ private:
 //
 namespace CommonMetrics
 {
-	extern ThemeMetric<RString>					INITIAL_SCREEN;
-	extern ThemeMetric<RString>					FIRST_ATTRACT_SCREEN;
-	extern ThemeMetric<RString>					DEFAULT_MODIFIERS;
-	extern ThemeMetric<RString>					DEFAULT_CPU_MODIFIERS;
+	extern ThemeMetric<RString>			INITIAL_SCREEN;
+	extern ThemeMetric<RString>			FIRST_ATTRACT_SCREEN;
+	extern ThemeMetric<RString>			DEFAULT_MODIFIERS;
+	extern ThemeMetric<RString>			DEFAULT_CPU_MODIFIERS;
 	extern ThemeMetric1D<apActorCommands>		PLAYER_COLOR;
-	extern LocalizedString						WINDOW_TITLE;
-	extern ThemeMetric<int>						MAX_COURSE_ENTRIES_BEFORE_VARIOUS;
-	extern ThemeMetric<float>					TICK_EARLY_SECONDS;
+	extern LocalizedString				WINDOW_TITLE;
+	extern ThemeMetric<int>				MAX_COURSE_ENTRIES_BEFORE_VARIOUS;
+	extern ThemeMetric<float>			TICK_EARLY_SECONDS;
 	extern ThemeMetricDifficultiesToShow		DIFFICULTIES_TO_SHOW;
 	extern ThemeMetricCourseDifficultiesToShow	COURSE_DIFFICULTIES_TO_SHOW;
-	extern ThemeMetricStepsTypesToShow			STEPS_TYPES_TO_SHOW;
+	extern ThemeMetricStepsTypesToShow		STEPS_TYPES_TO_SHOW;
 
 	RString LocalizeOptionItem( const RString &s, bool bOptional );
 };
