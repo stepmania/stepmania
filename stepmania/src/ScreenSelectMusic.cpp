@@ -796,15 +796,15 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 
 		m_bAllowOptionsMenu = true;
 		/* Don't accept a held START for a little while, so it's not
-			* hit accidentally.  Accept an initial START right away, though,
-			* so we don't ignore deliberate fast presses (which would be
-			* annoying). */
+		 * hit accidentally.  Accept an initial START right away, though,
+		 * so we don't ignore deliberate fast presses (which would be
+		 * annoying). */
 		this->PostScreenMessage( SM_AllowOptionsMenuRepeat, 0.5f );
 	}
 
 	/* If we're currently waiting on song assets, abort all except the music and
-		* start the music, so if we make a choice quickly before background requests
-		* come through, the music will still start. */
+	 * start the music, so if we make a choice quickly before background requests
+	 * come through, the music will still start. */
 	g_bCDTitleWaiting = g_bBannerWaiting = false;
 	m_BackgroundLoader.Abort();
 	CheckBackgroundRequests( true );
