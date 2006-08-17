@@ -2,7 +2,6 @@
 #define LYRIC_DISPLAY_H
 
 #include "ActorFrame.h"
-#include "song.h"
 #include "BitmapText.h"
 
 class LyricDisplay: public ActorFrame

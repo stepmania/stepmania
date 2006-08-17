@@ -3,6 +3,7 @@
 #include "ScreenDimensions.h"
 #include "GameState.h"
 #include "ThemeMetric.h"
+#include "song.h"
 
 static ThemeMetric<apActorCommands>	IN_COMMAND	("LyricDisplay","InCommand");
 static ThemeMetric<apActorCommands>	OUT_COMMAND	("LyricDisplay","OutCommand");

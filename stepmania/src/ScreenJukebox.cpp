@@ -21,6 +21,7 @@
 #include "InputEventPlus.h"
 #include "AdjustSync.h"
 #include "SongUtil.h"
+#include "song.h"
 
 #define SHOW_COURSE_MODIFIERS_PROBABILITY	THEME->GetMetricF(m_sName,"ShowCourseModifiersProbability")
 

@@ -53,6 +53,7 @@
 #include "ScreenSaveSync.h"
 #include "AdjustSync.h"
 #include "SongUtil.h"
+#include "song.h"
 
 //
 // Defines

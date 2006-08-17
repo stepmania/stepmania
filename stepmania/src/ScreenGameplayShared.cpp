@@ -7,6 +7,7 @@
 #include "ActiveAttackList.h"
 #include "ScoreDisplayNormal.h"
 #include "ScoreKeeperShared.h"
+#include "song.h"
 
 REGISTER_SCREEN_CLASS( ScreenGameplayShared );
 

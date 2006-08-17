@@ -1,17 +1,19 @@
-#ifndef MUSICLIST_H
-#define MUSICLIST_H
+#ifndef MUSIC_LIST_H
+#define MUSIC_LIST_H
 
 #include "ActorFrame.h"
 #include "BitmapText.h"
-#include "song.h"
 
 const int MAX_MLIST_COLUMNS = 5;
+
+class Song;
 
 class MusicList : public ActorFrame
 {
 	BitmapText		m_textTitles[MAX_MLIST_COLUMNS];
 	
-	struct group {
+	struct group
+	{
 		RString ContentsText[MAX_MLIST_COLUMNS];
 		int m_iNumSongsInGroup;
 	};
