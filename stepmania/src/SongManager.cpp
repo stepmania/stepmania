@@ -1801,6 +1801,14 @@ public:
 		else lua_pushnil(L);
 		return 1;
 	}
+	static int GetSongRank( T* p, lua_State *L )
+	{
+		Song *pSong = Luna<Song>::check(L,1);
+		const vector<Song*> apBest = p->GetPopularSongs( ProfileSlot_Machine );
+		int iIndex = FindIndex( apBest.begin(), apBest.end(), pSong );
+		lua_pushnumber( L, iIndex );
+		return 1;
+	}
 
 	static void Register(lua_State *L)
 	{
@@ -1819,6 +1827,7 @@ public:
 		ADD_METHOD( GetNumAdditionalCourses );
 		ADD_METHOD( GetNumCourseGroups );
 		ADD_METHOD( GetSongFromSteps );
+		ADD_METHOD( GetSongRank );
 
 		Luna<T>::Register( L );
 
