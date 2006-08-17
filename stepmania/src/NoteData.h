@@ -6,7 +6,6 @@
 #include "NoteTypes.h"
 #include <map>
 #include <set>
-#include "Attack.h"
 
 #define FOREACH_NONEMPTY_ROW_IN_TRACK( nd, track, row ) \
 	for( int row = -1; (nd).GetNextTapNoteRowForTrack(track,row); )

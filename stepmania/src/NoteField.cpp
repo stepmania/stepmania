@@ -19,6 +19,7 @@
 #include <float.h>
 #include "BackgroundUtil.h"
 #include "Course.h"
+#include "NoteData.h"
 
 NoteField::NoteField()
 {	

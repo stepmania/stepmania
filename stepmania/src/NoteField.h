@@ -7,10 +7,12 @@
 #include "ActorFrame.h"
 #include "BitmapText.h"
 #include "Quad.h"
-#include "NoteData.h"
 #include "NoteDisplay.h"
 #include "ReceptorArrowRow.h"
 #include "GhostArrowRow.h"
+
+class Attack;
+class NoteData;
 
 class NoteField : public ActorFrame
 {
