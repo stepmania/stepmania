@@ -377,9 +377,8 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 	const int iComboCountIfHit = m_bComboIsPerRow? 1: iNumTapsInRow;
 	if( scoreOfLastTap >= m_MinScoreToContinueCombo )
 		m_pPlayerStageStats->iCurCombo += iComboCountIfHit;
-	else
-		if( scoreOfLastTap < m_MinScoreToMaintainCombo )
-			m_pPlayerStageStats->iCurCombo = 0;
+	else if( scoreOfLastTap < m_MinScoreToMaintainCombo )
+		m_pPlayerStageStats->iCurCombo = 0;
 
 	AddScore( scoreOfLastTap );		// only score once per row
 
