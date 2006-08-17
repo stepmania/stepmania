@@ -913,56 +913,39 @@ void NoteData::LoadFromNode( const XNode* pNode )
 }
 
 template<typename ND, typename iter, typename TN>
-void NoteData::_all_tracks_iterator<ND, iter, TN>::NextRowAllTracks()
+void NoteData::_all_tracks_iterator<ND, iter, TN>::Find()
 {
-	int iMinRow = INT_MAX;
+	int iMinRow = m_iEndRow+1;
 	
 	for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
 	{
-		int iRow = m_iRow;
+		iter &i = m_vIters[iTrack];
+		if( m_Cond )
+			while( i != m_NoteData.end(iTrack) && i->first < iMinRow && !m_Cond(i->second) )
+				++i;
 		
-		if( m_NoteData.GetNextTapNoteRowForTrack(iTrack, iRow) )
-			iMinRow = min( iMinRow, iRow );
-	}
-	m_iRow = iMinRow;
-}
-
-template<typename ND, typename iter, typename TN>
-void NoteData::_all_tracks_iterator<ND, iter, TN>::Find()
-{
-	m_iRow = max( m_iRow, m_iStartRow );
-	while( m_iRow <= m_iEndRow )
-	{
-		while( m_iTrack < m_NoteData.GetNumTracks() )
+		if( i != m_NoteData.end(iTrack) && i->first < iMinRow )
 		{
-			m_Iterator = m_NoteData.FindTapNote( m_iTrack, m_iRow );
-			
-			if( m_Iterator != m_NoteData.end(m_iTrack) && (!m_Cond || m_Cond(m_Iterator->second)) )
-				return;
-			++m_iTrack;
+			iMinRow = i->first;
+			m_iTrack = iTrack;
 		}
-		m_iTrack = 0;
-		++m_iRow;
-		int oldRow = m_iRow;
-		NextRowAllTracks();
-		ASSERT( oldRow < m_iRow );
 	}
 }
 
 template<typename ND, typename iter, typename TN>
 NoteData::_all_tracks_iterator<ND, iter, TN>::_all_tracks_iterator( ND &nd, int iStartRow, int iEndRow, NoteData::IteratorCond cond ) :
-	m_NoteData(nd), m_iTrack(0), m_iRow(0), m_iStartRow(iStartRow), m_iEndRow(iEndRow), m_Cond(cond)
+	m_NoteData(nd), m_iTrack(0), m_iEndRow(iEndRow), m_Cond(cond)
 {
 	ASSERT( m_NoteData.GetNumTracks() > 0 );
-	NextRowAllTracks();
+	for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
+		m_vIters.push_back( m_NoteData.lower_bound(iTrack, iStartRow) );
 	Find();
 }
 
 template<typename ND, typename iter, typename TN>
 NoteData::_all_tracks_iterator<ND, iter, TN> &NoteData::_all_tracks_iterator<ND, iter, TN>::operator++() // preincrement
 {
-	DEBUG_ASSERT( m_iRow <= m_iEndRow );
-	++m_iTrack;
+	++m_vIters[m_iTrack];
 	Find();
 	return *this;
 }
@@ -970,7 +953,6 @@ NoteData::_all_tracks_iterator<ND, iter, TN> &NoteData::_all_tracks_iterator<ND,
 template<typename ND, typename iter, typename TN>
 NoteData::_all_tracks_iterator<ND, iter, TN> NoteData::_all_tracks_iterator<ND, iter, TN>::operator++( int dummy ) // postincrement
 {
-	DEBUG_ASSERT( m_iRow <= m_iEndRow );
 	_all_tracks_iterator<ND, iter, TN> ret(*this);
 	operator++();
 	return ret;

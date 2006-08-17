@@ -32,26 +32,23 @@ public:
 	class _all_tracks_iterator
 	{
 		ND		&m_NoteData;
+		vector<iter>	m_vIters;
 		int		m_iTrack;
-		int		m_iRow;
-		const int	m_iStartRow;
 		const int	m_iEndRow;
-		iter		m_Iterator;
 		IteratorCond	m_Cond;
 		
-		void NextRowAllTracks();
 		void Find();
 public:
 		_all_tracks_iterator( ND &nd, int iStartRow, int iEndRow, IteratorCond cond );
 		_all_tracks_iterator &operator++();		// preincrement
 		_all_tracks_iterator operator++( int dummy );	// postincrement
 		inline int Track() const { return m_iTrack; }
-		inline int Row() const { return m_iRow; }
-		inline bool IsAtEnd() const { return m_iRow > m_iEndRow; }
-		inline TN &operator*() { DEBUG_ASSERT( m_iRow <= m_iEndRow ); return m_Iterator->second; }
-		inline TN *operator->() { DEBUG_ASSERT( m_iRow <= m_iEndRow ); return &m_Iterator->second; }
-		inline const TN &operator*() const { DEBUG_ASSERT( m_iRow <= m_iEndRow ); return m_Iterator->second; }
-		inline const TN *operator->() const { DEBUG_ASSERT( m_iRow <= m_iEndRow ); return &m_Iterator->second; }
+		inline int Row() const { return m_vIters[m_iTrack]->first; }
+		inline bool IsAtEnd() const { return m_vIters[m_iTrack] == m_NoteData.end( m_iTrack ) || Row() > m_iEndRow; }
+		inline TN &operator*()  { DEBUG_ASSERT( !IsAtEnd() ); return m_vIters[m_iTrack]->second; }
+		inline TN *operator->()	{ DEBUG_ASSERT( !IsAtEnd() ); return &m_vIters[m_iTrack]->second; }
+		inline const TN &operator*() const  { DEBUG_ASSERT( !IsAtEnd() ); return m_vIters[m_iTrack]->second; }
+		inline const TN *operator->() const { DEBUG_ASSERT( !IsAtEnd() ); return &m_vIters[m_iTrack]->second; }
 	};
 	typedef _all_tracks_iterator<NoteData, iterator, TapNote> 			all_tracks_iterator;
 	typedef _all_tracks_iterator<const NoteData, const_iterator, const TapNote>	all_tracks_const_iterator;
@@ -86,6 +83,8 @@ public:
 	const_iterator begin( int iTrack ) const { return m_TapNotes[iTrack].begin(); }
 	iterator end( int iTrack ) { return m_TapNotes[iTrack].end(); }
 	const_iterator end( int iTrack ) const { return m_TapNotes[iTrack].end(); }
+	iterator lower_bound( int iTrack, int iRow ) { return m_TapNotes[iTrack].lower_bound( iRow ); }
+	const_iterator lower_bound( int iTrack, int iRow ) const { return m_TapNotes[iTrack].lower_bound( iRow ); }
 	void swap( NoteData &nd ) { m_TapNotes.swap( nd.m_TapNotes ); }
 
 	inline iterator FindTapNote( unsigned iTrack, int iRow ) { return m_TapNotes[iTrack].find( iRow ); }
