@@ -585,42 +585,28 @@ void ScreenSelectMusic::ChangeDifficulty( PlayerNumber pn, int dir )
 
 	ASSERT( GAMESTATE->IsHumanPlayer(pn) );
 
-	switch( m_MusicWheel.GetSelectedType() )
+	if( GAMESTATE->m_pCurSong )
 	{
-	case TYPE_SONG:
-	case TYPE_PORTAL:
 		m_iSelection[pn] += dir;
 		if( CLAMP(m_iSelection[pn],0,m_vpSteps.size()-1) )
 			return;
 		
 		// the user explicity switched difficulties.  Update the preferred difficulty
 		GAMESTATE->ChangePreferredDifficulty( pn, m_vpSteps[ m_iSelection[pn] ]->GetDifficulty() );
-		break;
-
-	case TYPE_COURSE:
+	}
+	else if( GAMESTATE->m_pCurCourse )
+	{
 		m_iSelection[pn] += dir;
 		if( CLAMP(m_iSelection[pn],0,m_vpTrails.size()-1) )
 			return;
 
 		// the user explicity switched difficulties.  Update the preferred difficulty
 		GAMESTATE->ChangePreferredCourseDifficulty( pn, m_vpTrails[ m_iSelection[pn] ]->m_CourseDifficulty );
-		break;
-
-	case TYPE_RANDOM:
-	case TYPE_ROULETTE:
-	case TYPE_SECTION:
-		/* XXX: We could be on a music or course sort, or even one with both; we don't
-		 * really know which difficulty to change.  Maybe the two difficulties should be
-		 * linked ... */
+	}
+	else
+	{
 		if( !GAMESTATE->ChangePreferredDifficulty( pn, dir ) )
 			return;
-		break;
-
-	case TYPE_SORT:
-		return;
-	default:
-		WARN( ssprintf("%i", m_MusicWheel.GetSelectedType()) );
-		break;
 	}
 
 	vector<PlayerNumber> vpns;
