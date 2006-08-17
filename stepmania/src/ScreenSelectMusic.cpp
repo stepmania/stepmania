@@ -589,47 +589,21 @@ void ScreenSelectMusic::ChangeDifficulty( PlayerNumber pn, int dir )
 	{
 	case TYPE_SONG:
 	case TYPE_PORTAL:
-		{
-			m_iSelection[pn] += dir;
-			if( CLAMP(m_iSelection[pn],0,m_vpSteps.size()-1) )
-				return;
-			
-			// the user explicity switched difficulties.  Update the preferred difficulty
-			GAMESTATE->ChangePreferredDifficulty( pn, m_vpSteps[ m_iSelection[pn] ]->GetDifficulty() );
-
-			vector<PlayerNumber> vpns;
-			FOREACH_HumanPlayer( p )
-			{
-				if( pn == p || GAMESTATE->DifficultiesLocked() )
-				{
-					m_iSelection[p] = m_iSelection[pn];
-					vpns.push_back( p );
-				}
-			}
-			AfterStepsOrTrailChange( vpns );
-		}
+		m_iSelection[pn] += dir;
+		if( CLAMP(m_iSelection[pn],0,m_vpSteps.size()-1) )
+			return;
+		
+		// the user explicity switched difficulties.  Update the preferred difficulty
+		GAMESTATE->ChangePreferredDifficulty( pn, m_vpSteps[ m_iSelection[pn] ]->GetDifficulty() );
 		break;
 
 	case TYPE_COURSE:
-		{
-			m_iSelection[pn] += dir;
-			if( CLAMP(m_iSelection[pn],0,m_vpTrails.size()-1) )
-				return;
+		m_iSelection[pn] += dir;
+		if( CLAMP(m_iSelection[pn],0,m_vpTrails.size()-1) )
+			return;
 
-			// the user explicity switched difficulties.  Update the preferred difficulty
-			GAMESTATE->ChangePreferredCourseDifficulty( pn, m_vpTrails[ m_iSelection[pn] ]->m_CourseDifficulty );
-
-			vector<PlayerNumber> vpns;
-			FOREACH_HumanPlayer( p )
-			{
-				if( pn == p || GAMESTATE->DifficultiesLocked() )
-				{
-					m_iSelection[p] = m_iSelection[pn];
-					vpns.push_back( p );
-				}
-			}
-			AfterStepsOrTrailChange( vpns );
-		}
+		// the user explicity switched difficulties.  Update the preferred difficulty
+		GAMESTATE->ChangePreferredCourseDifficulty( pn, m_vpTrails[ m_iSelection[pn] ]->m_CourseDifficulty );
 		break;
 
 	case TYPE_RANDOM:
@@ -638,28 +612,27 @@ void ScreenSelectMusic::ChangeDifficulty( PlayerNumber pn, int dir )
 		/* XXX: We could be on a music or course sort, or even one with both; we don't
 		 * really know which difficulty to change.  Maybe the two difficulties should be
 		 * linked ... */
-		{
-			if( !GAMESTATE->ChangePreferredDifficulty( pn, dir ) )
-				return;
+		if( !GAMESTATE->ChangePreferredDifficulty( pn, dir ) )
+			return;
+		break;
 
-			vector<PlayerNumber> vpns;
-			FOREACH_HumanPlayer( p )
-			{
-				if( pn == p || GAMESTATE->DifficultiesLocked() )
-				{
-					m_iSelection[p] = m_iSelection[pn];
-					vpns.push_back( p );
-				}
-			}
-			AfterStepsOrTrailChange( vpns );
-			break;
-		}
 	case TYPE_SORT:
 		return;
 	default:
 		WARN( ssprintf("%i", m_MusicWheel.GetSelectedType()) );
 		break;
 	}
+
+	vector<PlayerNumber> vpns;
+	FOREACH_HumanPlayer( p )
+	{
+		if( pn == p || GAMESTATE->DifficultiesLocked() )
+		{
+			m_iSelection[p] = m_iSelection[pn];
+			vpns.push_back( p );
+		}
+	}
+	AfterStepsOrTrailChange( vpns );
 
 	if( dir < 0 )
 		m_soundDifficultyEasier.Play();
