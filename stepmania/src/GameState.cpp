@@ -758,10 +758,9 @@ bool GameState::IsStagePossible( Stage s ) const
 	if( s == STAGE_FINAL && actual >= STAGE_1 && actual <= STAGE_FINAL )
 	{
 		Stage max_actual = actual;
-		if( PREFSMAN->m_fMarathonVerSongSeconds < 9999 )
-			enum_add( max_actual, +2 );
-		else if( PREFSMAN->m_fLongVerSongSeconds < 9999 )
-			enum_add( max_actual, +1 );
+
+		// For long/marathon songs:
+		enum_add( max_actual, +2 );
 
 		if( max_actual >= STAGE_FINAL )
 			return true;
