@@ -167,16 +167,6 @@ void ScreenSelectMusic::Init()
 		this->AddChild( &m_textHighScore[p] );
 	}	
 
-	m_sprLongBalloon.Load( THEME->GetPathG(m_sName,"balloon long") );
-	m_sprLongBalloon->SetName( "Balloon" );
-	m_sprLongBalloon->SetHidden( 1 );
-	this->AddChild( m_sprLongBalloon );
-
-	m_sprMarathonBalloon.Load( THEME->GetPathG(m_sName,"balloon marathon") );
-	m_sprMarathonBalloon->SetName( "Balloon" );
-	m_sprMarathonBalloon->SetHidden( 1 );
-	this->AddChild( m_sprMarathonBalloon );
-
 	m_soundDifficultyEasier.Load( THEME->GetPathS(m_sName,"difficulty easier") );
 	m_soundDifficultyHarder.Load( THEME->GetPathS(m_sName,"difficulty harder") );
 	m_soundOptionsChange.Load( THEME->GetPathS(m_sName,"options") );
@@ -915,7 +905,7 @@ void ScreenSelectMusic::AfterStepsChange( const vector<PlayerNumber> &vpns )
 		int iScore = 0;
 		if( pSteps )
 		{
-			Profile* pProfile = PROFILEMAN->IsPersistentProfile(pn) ? PROFILEMAN->GetProfile(pn) : PROFILEMAN->GetMachineProfile();
+			const Profile *pProfile = PROFILEMAN->IsPersistentProfile(pn) ? PROFILEMAN->GetProfile(pn) : PROFILEMAN->GetMachineProfile();
 			iScore = pProfile->GetStepsHighScoreList(pSong,pSteps).GetTopScore().GetScore();
 		}
 
@@ -941,7 +931,7 @@ void ScreenSelectMusic::AfterTrailChange( const vector<PlayerNumber> &vpns )
 		int iScore = 0;
 		if( pTrail )
 		{
-			Profile* pProfile = PROFILEMAN->IsPersistentProfile(pn) ? PROFILEMAN->GetProfile(pn) : PROFILEMAN->GetMachineProfile();
+			const Profile *pProfile = PROFILEMAN->IsPersistentProfile(pn) ? PROFILEMAN->GetProfile(pn) : PROFILEMAN->GetMachineProfile();
 			iScore = pProfile->GetCourseHighScoreList(pCourse,pTrail).GetTopScore().GetScore();
 		}
 
@@ -1121,9 +1111,6 @@ void ScreenSelectMusic::AfterMusicChange()
 			default:
 				ASSERT(0);
 			}
-
-			COMMAND( m_sprLongBalloon, "Hide" );
-			COMMAND( m_sprMarathonBalloon, "Hide" );
 		}
 		break;
 	case TYPE_SONG:
@@ -1155,28 +1142,6 @@ void ScreenSelectMusic::AfterMusicChange()
 			m_DifficultyDisplay.SetDifficulties( pSong, GAMESTATE->GetCurrentStyle()->m_StepsType );
 
 			SwitchToPreferredDifficulty();
-
-			/* Short delay before actually showing these, so they don't show
-			 * up when scrolling fast.  It'll still show up in "slow" scrolling,
-			 * but it doesn't look at weird as it does in "fast", and I don't
-			 * like the effect with a lot of delay. */
-			if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fMarathonVerSongSeconds )
-			{
-				SET_XY( m_sprMarathonBalloon );
-				COMMAND( m_sprMarathonBalloon, "Show" );
-				COMMAND( m_sprLongBalloon, "Hide" );
-			}
-			else if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fLongVerSongSeconds )
-			{
-				SET_XY( m_sprLongBalloon );
-				COMMAND( m_sprLongBalloon, "Show" );
-				COMMAND( m_sprMarathonBalloon, "Hide" );
-			}
-			else
-			{
-				COMMAND( m_sprLongBalloon, "Hide" );
-				COMMAND( m_sprMarathonBalloon, "Hide" );
-			}
 		}
 		break;
 	case TYPE_ROULETTE:
@@ -1209,9 +1174,6 @@ void ScreenSelectMusic::AfterMusicChange()
 			ASSERT(0);
 		}
 
-		COMMAND( m_sprLongBalloon, "Hide" );
-		COMMAND( m_sprMarathonBalloon, "Hide" );
-		
 		break;
 	case TYPE_COURSE:
 	{
@@ -1246,11 +1208,6 @@ void ScreenSelectMusic::AfterMusicChange()
 		const int index = FindCourseIndexOfSameMode( best.begin(), best.end(), pCourse );
 		if( index != -1 )
 			m_MachineRank.SetText( FormatNumberAndSuffix( index+1 ) );
-
-
-
-		COMMAND( m_sprLongBalloon, "Hide" );
-		COMMAND( m_sprMarathonBalloon, "Hide" );
 
 		break;
 	}

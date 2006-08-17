@@ -83,8 +83,6 @@ protected:
 	Sprite				m_sprHighScoreFrame[NUM_PLAYERS];
 	BitmapText			m_textHighScore[NUM_PLAYERS];
 	MusicWheel			m_MusicWheel;
-	AutoActor			m_sprLongBalloon;
-	AutoActor			m_sprMarathonBalloon;
 	DifficultyDisplay		m_DifficultyDisplay;
 	BitmapText			m_MachineRank;
 
