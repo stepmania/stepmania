@@ -1739,6 +1739,10 @@ void SongManager::FreeAllLoadedFromProfile( ProfileSlot slot )
 
 	// After freeing some Steps pointers, the cache will be invalid.
 	StepsID::ClearCache();
+
+	// Best and Shuffled may refer to courses that we just freed.
+//	UpdateBest();
+//	UpdateShuffled();
 }
 
 int SongManager::GetNumStepsLoadedFromProfile()
@@ -1756,6 +1760,29 @@ int SongManager::GetNumStepsLoadedFromProfile()
 	}	
 
 	return iCount;
+}
+
+template<class T>
+int FindCourseIndexOfSameMode( T begin, T end, const Course *p )
+{
+	const PlayMode pm = p->GetPlayMode();
+	
+	int n = 0;
+	for( T it = begin; it != end; ++it )
+	{
+		if( *it == p )
+			return n;
+
+		/* If it's not playable in this mode, don't increment.  It might result in 
+		 * different output in different modes, but that's better than having holes. */
+		if( !(*it)->IsPlayableIn( GAMESTATE->GetCurrentStyle()->m_StepsType ) )
+			continue;
+		if( (*it)->GetPlayMode() != pm )
+			continue;
+		++n;
+	}
+
+	return -1;
 }
 
 
@@ -1809,6 +1836,15 @@ public:
 		lua_pushnumber( L, iIndex );
 		return 1;
 	}
+	static int GetCourseRank( T* p, lua_State *L )
+	{
+		Course *pCourse = Luna<Course>::check(L,1);
+		CourseType ct = PlayModeToCourseType( GAMESTATE->m_PlayMode );
+		const vector<Course*> best = SONGMAN->GetPopularCourses( ct, ProfileSlot_Machine );
+		int iIndex = FindCourseIndexOfSameMode( best.begin(), best.end(), pCourse );
+		lua_pushnumber( L, iIndex );
+		return 1;
+	}
 
 	static void Register(lua_State *L)
 	{
@@ -1828,6 +1864,7 @@ public:
 		ADD_METHOD( GetNumCourseGroups );
 		ADD_METHOD( GetSongFromSteps );
 		ADD_METHOD( GetSongRank );
+		ADD_METHOD( GetCourseRank );
 
 		Luna<T>::Register( L );
 
