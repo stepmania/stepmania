@@ -1048,13 +1048,6 @@ void ScreenSelectMusic::AfterMusicChange()
 		break;
 	case TYPE_ROULETTE:
 	case TYPE_RANDOM:
-		bWantBanner = false; /* we load it ourself */
-		switch(m_MusicWheel.GetSelectedType())
-		{
-		case TYPE_ROULETTE:	m_Banner.LoadRoulette();	break;
-		case TYPE_RANDOM: 	m_Banner.LoadRandom();		break;
-		default: ASSERT(0);
-		}
 		g_sCDTitlePath = ""; // none
 		m_DifficultyDisplay.UnsetDifficulties();
 
@@ -1064,13 +1057,16 @@ void ScreenSelectMusic::AfterMusicChange()
 		m_textNumSongs.SetText( "" );
 		m_textTotalTime.SetText( "" );
 
+		bWantBanner = false; /* we load it ourself */
 		switch( m_MusicWheel.GetSelectedType() )
 		{
 		case TYPE_ROULETTE:
 			m_sSampleMusicToPlay = m_sRouletteMusicPath;
+			m_Banner.LoadRoulette();
 			break;
 		case TYPE_RANDOM:
 			m_sSampleMusicToPlay = m_sRandomMusicPath;
+			m_Banner.LoadRandom();
 			break;
 		default:
 			ASSERT(0);
