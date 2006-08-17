@@ -5,6 +5,7 @@
 #include "ThemeManager.h"
 #include "XmlFile.h"
 #include "Foreach.h"
+#include "RadarValues.h"
 
 #define EMPTY_NAME			THEME->GetMetric ("HighScore","EmptyName")
 

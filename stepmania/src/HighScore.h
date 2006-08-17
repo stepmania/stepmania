@@ -1,15 +1,15 @@
 /* HighScore - Player scoring data that persists between sessions. */
 
-#ifndef HighScore_H
-#define HighScore_H
+#ifndef HIGH_SCORE_H
+#define HIGH_SCORE_H
 
 #include "Grade.h"
 #include "GameConstantsAndTypes.h"
-#include "RadarValues.h"
 #include "DateTime.h"
 #include "RageUtil_AutoPtr.h"
 
 class XNode;
+class RadarValues;
 struct lua_State;
 
 struct HighScoreImpl;
