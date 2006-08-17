@@ -948,7 +948,6 @@
 		AA40D34709A08D650068C0D5 /* WheelItemBase.h in Headers */ = {isa = PBXBuildFile; fileRef = AAAFE81F0835E7FF00FC43E0 /* WheelItemBase.h */; };
 		AA40D34909A08D650068C0D5 /* ScreenDebugOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA07A5560843E72B00E33D21 /* ScreenDebugOverlay.h */; };
 		AA40D34B09A08D650068C0D5 /* ScreenSaveSync.h in Headers */ = {isa = PBXBuildFile; fileRef = AA07A55A0843E72B00E33D21 /* ScreenSaveSync.h */; };
-		AA40D34C09A08D650068C0D5 /* ScreenSMOnlineLogin.h in Headers */ = {isa = PBXBuildFile; fileRef = AA07A55C0843E72B00E33D21 /* ScreenSMOnlineLogin.h */; };
 		AA40D34D09A08D650068C0D5 /* ScreenSyncOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA07A55E0843E72B00E33D21 /* ScreenSyncOverlay.h */; };
 		AA40D34E09A08D650068C0D5 /* BackgroundUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = AA7DA2F0085760E90057F1EA /* BackgroundUtil.h */; };
 		AA40D34F09A08D650068C0D5 /* ScreenSplash.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB6B476085761B700CEE7BA /* ScreenSplash.h */; };
@@ -1332,7 +1331,6 @@
 		AA40D4DB09A08D650068C0D5 /* WheelItemBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAAFE81E0835E7FF00FC43E0 /* WheelItemBase.cpp */; };
 		AA40D4DD09A08D650068C0D5 /* ScreenDebugOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA07A5550843E72B00E33D21 /* ScreenDebugOverlay.cpp */; };
 		AA40D4DF09A08D650068C0D5 /* ScreenSaveSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA07A5590843E72B00E33D21 /* ScreenSaveSync.cpp */; };
-		AA40D4E009A08D650068C0D5 /* ScreenSMOnlineLogin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA07A55B0843E72B00E33D21 /* ScreenSMOnlineLogin.cpp */; };
 		AA40D4E109A08D650068C0D5 /* ScreenSyncOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA07A55D0843E72B00E33D21 /* ScreenSyncOverlay.cpp */; };
 		AA40D4E209A08D650068C0D5 /* BackgroundUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA7DA2EF085760E90057F1EA /* BackgroundUtil.cpp */; };
 		AA40D4E309A08D650068C0D5 /* ScreenSplash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB6B475085761B700CEE7BA /* ScreenSplash.cpp */; };
@@ -1751,8 +1749,6 @@
 		AAFE71200A91B551005F2290 /* RoomInfoDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFE711D0A91B551005F2290 /* RoomInfoDisplay.cpp */; };
 		AAFE71210A91B551005F2290 /* RoomInfoDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFE711E0A91B551005F2290 /* RoomInfoDisplay.h */; };
 		AAFE71220A91B551005F2290 /* RageSurface_Save_PNG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFE711C0A91B551005F2290 /* RageSurface_Save_PNG.cpp */; };
-		AAFE71230A91B551005F2290 /* RoomInfoDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFE711D0A91B551005F2290 /* RoomInfoDisplay.cpp */; };
-		AAFE71240A91B551005F2290 /* RoomInfoDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFE711E0A91B551005F2290 /* RoomInfoDisplay.h */; };
 		AAFE71290A91B58F005F2290 /* RageSurface_Save_PNG.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFE71280A91B58F005F2290 /* RageSurface_Save_PNG.h */; };
 		AAFE712A0A91B58F005F2290 /* RageSurface_Save_PNG.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFE71280A91B58F005F2290 /* RageSurface_Save_PNG.h */; };
 		F4BC045409E6B578003F770B /* ScreenGameplaySyncMachine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB55EB509A7E3D3008FDC69 /* ScreenGameplaySyncMachine.cpp */; };
@@ -4855,7 +4851,6 @@
 				AA40D34709A08D650068C0D5 /* WheelItemBase.h in Headers */,
 				AA40D34909A08D650068C0D5 /* ScreenDebugOverlay.h in Headers */,
 				AA40D34B09A08D650068C0D5 /* ScreenSaveSync.h in Headers */,
-				AA40D34C09A08D650068C0D5 /* ScreenSMOnlineLogin.h in Headers */,
 				AA40D34D09A08D650068C0D5 /* ScreenSyncOverlay.h in Headers */,
 				AA40D34E09A08D650068C0D5 /* BackgroundUtil.h in Headers */,
 				AA40D34F09A08D650068C0D5 /* ScreenSplash.h in Headers */,
@@ -4912,7 +4907,6 @@
 				AA5A51F40A8441AA006DBB92 /* ModsGroup.h in Headers */,
 				AA5A56E60A875DA3006DBB92 /* ExportStrings.h in Headers */,
 				AAFE710E0A91ADE6005F2290 /* ActorProxy.h in Headers */,
-				AAFE71240A91B551005F2290 /* RoomInfoDisplay.h in Headers */,
 				AAFE712A0A91B58F005F2290 /* RageSurface_Save_PNG.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5821,7 +5815,6 @@
 				AA40D4DB09A08D650068C0D5 /* WheelItemBase.cpp in Sources */,
 				AA40D4DD09A08D650068C0D5 /* ScreenDebugOverlay.cpp in Sources */,
 				AA40D4DF09A08D650068C0D5 /* ScreenSaveSync.cpp in Sources */,
-				AA40D4E009A08D650068C0D5 /* ScreenSMOnlineLogin.cpp in Sources */,
 				AA40D4E109A08D650068C0D5 /* ScreenSyncOverlay.cpp in Sources */,
 				AA40D4E209A08D650068C0D5 /* BackgroundUtil.cpp in Sources */,
 				AA40D4E309A08D650068C0D5 /* ScreenSplash.cpp in Sources */,
@@ -5885,7 +5878,6 @@
 				AA5A56E70A875DA3006DBB92 /* ExportStrings.cpp in Sources */,
 				AAFE710D0A91ADE6005F2290 /* ActorProxy.cpp in Sources */,
 				AAFE71220A91B551005F2290 /* RageSurface_Save_PNG.cpp in Sources */,
-				AAFE71230A91B551005F2290 /* RoomInfoDisplay.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
