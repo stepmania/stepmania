@@ -991,7 +991,6 @@ void ScreenSelectMusic::AfterMusicChange()
 	case TYPE_SECTION:
 	case TYPE_SORT:
 		{	
-			RString sGroup = m_MusicWheel.GetSelectedSection();
 			FOREACH_PlayerNumber( p )
 				m_iSelection[p] = -1;
 
@@ -1007,7 +1006,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			switch( m_MusicWheel.GetSelectedType() )
 			{
 			case TYPE_SECTION:
-				g_sBannerPath = SONGMAN->GetSongGroupBannerPath( sGroup );
+				g_sBannerPath = SONGMAN->GetSongGroupBannerPath( m_MusicWheel.GetSelectedSection() );
 				m_sSampleMusicToPlay = m_sSectionMusicPath;
 				break;
 			case TYPE_SORT:
