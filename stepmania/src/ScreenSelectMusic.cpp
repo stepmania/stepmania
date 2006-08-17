@@ -990,33 +990,31 @@ void ScreenSelectMusic::AfterMusicChange()
 	{
 	case TYPE_SECTION:
 	case TYPE_SORT:
-		{	
-			FOREACH_PlayerNumber( p )
-				m_iSelection[p] = -1;
+		FOREACH_PlayerNumber( p )
+			m_iSelection[p] = -1;
 
-			g_sCDTitlePath = ""; // none
-			m_DifficultyDisplay.UnsetDifficulties();
+		g_sCDTitlePath = ""; // none
+		m_DifficultyDisplay.UnsetDifficulties();
 
-			m_fSampleStartSeconds = 0;
-			m_fSampleLengthSeconds = -1;
+		m_fSampleStartSeconds = 0;
+		m_fSampleLengthSeconds = -1;
 
-			m_textNumSongs.SetText( "" );
-			m_textTotalTime.SetText( "" );
-			
-			switch( m_MusicWheel.GetSelectedType() )
-			{
-			case TYPE_SECTION:
-				g_sBannerPath = SONGMAN->GetSongGroupBannerPath( m_MusicWheel.GetSelectedSection() );
-				m_sSampleMusicToPlay = m_sSectionMusicPath;
-				break;
-			case TYPE_SORT:
-				bWantBanner = false; /* we load it ourself */
-				m_Banner.LoadMode();
-				m_sSampleMusicToPlay = m_sSortMusicPath;
-				break;
-			default:
-				ASSERT(0);
-			}
+		m_textNumSongs.SetText( "" );
+		m_textTotalTime.SetText( "" );
+		
+		switch( m_MusicWheel.GetSelectedType() )
+		{
+		case TYPE_SECTION:
+			g_sBannerPath = SONGMAN->GetSongGroupBannerPath( m_MusicWheel.GetSelectedSection() );
+			m_sSampleMusicToPlay = m_sSectionMusicPath;
+			break;
+		case TYPE_SORT:
+			bWantBanner = false; /* we load it ourself */
+			m_Banner.LoadMode();
+			m_sSampleMusicToPlay = m_sSortMusicPath;
+			break;
+		default:
+			ASSERT(0);
 		}
 		break;
 	case TYPE_SONG:
