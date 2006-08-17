@@ -98,11 +98,12 @@ function GetRandomSongBackground()
 end
 
 function GetSongBackground()
-	local Path = GAMESTATE:GetCurrentSong():GetBackgroundPath()
-	if not Path then
-		return THEME:GetPathG("Common","fallback background")
+	local song = GAMESTATE:GetCurrentSong()
+	if song then
+		local path = song:GetBackgroundPath()
+		if path then return path end
 	end
-	return Path
+	return THEME:GetPathG("Common","fallback background")
 end
 
 -- (c) 2005 Glenn Maynard, Chris Danford
