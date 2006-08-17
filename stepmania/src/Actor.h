@@ -92,6 +92,7 @@ public:
 	const RString &GetName() const			{ return m_sName; }
 	virtual void SetName( const RString &sName )	{ m_sName = sName; }
 	void SetParent( Actor *pParent );
+	Actor *GetParent() { return m_pParent; }
 
 	float GetX() const				{ return m_current.pos.x; };
 	float GetY() const				{ return m_current.pos.y; };
