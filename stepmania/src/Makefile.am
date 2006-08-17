@@ -284,6 +284,10 @@ ScrollingList.cpp ScrollingList.h SnapDisplay.cpp SnapDisplay.h \
 TextBanner.cpp TextBanner.h WheelBase.cpp WheelBase.h WheelItemBase.cpp WheelItemBase.h \
 WheelNotifyIcon.cpp WheelNotifyIcon.h
 
+if !WITHOUT_NETWORKING
+ActorsInMenus += RoomInfoDisplay.cpp RoomInfoDisplay.h
+endif
+
 ActorsInGameplay = \
 ArrowEffects.cpp ArrowEffects.h AttackDisplay.cpp AttackDisplay.h \
 Background.cpp Background.h BeginnerHelper.cpp BeginnerHelper.h CombinedLifeMeterTug.cpp CombinedLifeMeterTug.h \
