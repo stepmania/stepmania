@@ -739,8 +739,6 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 		else
 			SOUND->PlayOnceFromAnnouncer( "select music comment general" );
 
-		m_bMadeChoice = true;
-
 		/* If we're in event mode, we may have just played a course (putting us
 		 * in course mode).  Make sure we're in a single song mode. */
 		if( GAMESTATE->IsCourseMode() )
@@ -760,14 +758,14 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 			SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_LifeType, SongOptions::LIFE_BATTERY );
 			SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_iBatteryLives, pCourse->m_iLives );
 		}
-
-		m_bMadeChoice = true;
 	}
 	else
 	{
 		/* We havn't made a selection yet. */
 		return;
 	}
+
+	m_bMadeChoice = true;
 
 	SCREENMAN->PlayStartSound();
 
