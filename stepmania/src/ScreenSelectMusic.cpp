@@ -961,6 +961,12 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 			CLAMP( iSelection, 0, m_vpTrails.size()-1 );
 		}
 	}
+
+	if( GAMESTATE->DifficultiesLocked() )
+	{
+		FOREACH_HumanPlayer( p )
+			m_iSelection[p] = m_iSelection[GAMESTATE->m_MasterPlayerNumber];
+	}
 }
 
 template<class T>
@@ -990,17 +996,6 @@ void ScreenSelectMusic::AfterMusicChange()
 {
 	if( !m_MusicWheel.IsRouletting() )
 		m_MenuTimer->Stall();
-
-	// lock difficulties.  When switching from arcade to rave, we need to 
-	// enforce that all players are at the same difficulty.
-	if( GAMESTATE->DifficultiesLocked() )
-	{
-		FOREACH_HumanPlayer( p )
-		{
-			m_iSelection[p] = m_iSelection[0];
-			GAMESTATE->m_PreferredDifficulty[p] = GAMESTATE->m_PreferredDifficulty[0];
-		}
-	}
 
 	Song* pSong = m_MusicWheel.GetSelectedSong();
 	GAMESTATE->m_pCurSong.Set( pSong );
