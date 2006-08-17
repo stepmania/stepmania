@@ -4,20 +4,18 @@
 #define SCREEN_EDIT_H
 
 #include "ScreenWithMenuElements.h"
-#include "Sprite.h"
 #include "BitmapText.h"
 #include "Player.h"
 #include "RageSound.h"
 #include "SnapDisplay.h"
 #include "Background.h"
 #include "Foreground.h"
-#include "Course.h"
 #include "NoteField.h"
 #include "song.h"
 #include "Steps.h"
 #include "ThemeMetric.h"
 #include "PlayerState.h"
-#include "ScreenMiniMenu.h"
+#include "MenuInput.h"
 
 const int NUM_EDIT_BUTTON_COLUMNS = 10;
 struct MenuDef;
