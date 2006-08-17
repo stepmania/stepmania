@@ -1031,30 +1031,29 @@ void ScreenSelectMusic::AfterMusicChange()
 		break;
 	case TYPE_SONG:
 	case TYPE_PORTAL:
-		{
-			m_sSampleMusicToPlay = pSong->GetMusicPath();
-			m_pSampleMusicTimingData = &pSong->m_Timing;
-			m_fSampleStartSeconds = pSong->m_fMusicSampleStartSeconds;
-			m_fSampleLengthSeconds = pSong->m_fMusicSampleLengthSeconds;
+		m_sSampleMusicToPlay = pSong->GetMusicPath();
+		m_pSampleMusicTimingData = &pSong->m_Timing;
+		m_fSampleStartSeconds = pSong->m_fMusicSampleStartSeconds;
+		m_fSampleLengthSeconds = pSong->m_fMusicSampleLengthSeconds;
 
-			m_textNumSongs.SetText( ssprintf("%d", SongManager::GetNumStagesForSong(pSong) ) );
-			m_textTotalTime.SetText( SecondsToMMSSMsMs(pSong->m_fMusicLengthSeconds) );
+		m_textNumSongs.SetText( ssprintf("%d", SongManager::GetNumStagesForSong(pSong) ) );
+		m_textTotalTime.SetText( SecondsToMMSSMsMs(pSong->m_fMusicLengthSeconds) );
 
-			SongUtil::GetSteps( pSong, m_vpSteps, GAMESTATE->GetCurrentStyle()->m_StepsType );
-			StepsUtil::RemoveLockedSteps( pSong, m_vpSteps );
-			StepsUtil::SortNotesArrayByDifficulty( m_vpSteps );
+		SongUtil::GetSteps( pSong, m_vpSteps, GAMESTATE->GetCurrentStyle()->m_StepsType );
+		StepsUtil::RemoveLockedSteps( pSong, m_vpSteps );
+		StepsUtil::SortNotesArrayByDifficulty( m_vpSteps );
 
-			if ( PREFSMAN->m_bShowBanners )
-				g_sBannerPath = pSong->GetBannerPath();
+		if ( PREFSMAN->m_bShowBanners )
+			g_sBannerPath = pSong->GetBannerPath();
 
-			g_sCDTitlePath = pSong->GetCDTitlePath();
-			g_bWantFallbackCdTitle = true;
+		g_sCDTitlePath = pSong->GetCDTitlePath();
+		g_bWantFallbackCdTitle = true;
 
-			m_DifficultyDisplay.SetDifficulties( pSong, GAMESTATE->GetCurrentStyle()->m_StepsType );
+		m_DifficultyDisplay.SetDifficulties( pSong, GAMESTATE->GetCurrentStyle()->m_StepsType );
 
-			SwitchToPreferredDifficulty();
-		}
+		SwitchToPreferredDifficulty();
 		break;
+
 	case TYPE_COURSE:
 	{
 		Course* pCourse = m_MusicWheel.GetSelectedCourse();
