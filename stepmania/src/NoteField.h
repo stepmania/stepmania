@@ -11,7 +11,7 @@
 #include "ReceptorArrowRow.h"
 #include "GhostArrowRow.h"
 
-class Attack;
+struct Attack;
 class NoteData;
 
 class NoteField : public ActorFrame
