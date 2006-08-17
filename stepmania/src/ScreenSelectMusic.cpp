@@ -787,40 +787,40 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 		ASSERT(0);
 	}
 
-	if( m_bMadeChoice )
+	if( !m_bMadeChoice )
+		return;
+
+	SCREENMAN->PlayStartSound();
+
+	if( OPTIONS_MENU_AVAILABLE )
 	{
-		SCREENMAN->PlayStartSound();
+		// show "hold START for options"
+		this->PlayCommand( "ShowPressStartForOptions" );
 
-		if( OPTIONS_MENU_AVAILABLE )
-		{
-			// show "hold START for options"
-			this->PlayCommand( "ShowPressStartForOptions" );
+		m_bAllowOptionsMenu = true;
+		/* Don't accept a held START for a little while, so it's not
+			* hit accidentally.  Accept an initial START right away, though,
+			* so we don't ignore deliberate fast presses (which would be
+			* annoying). */
+		this->PostScreenMessage( SM_AllowOptionsMenuRepeat, 0.5f );
+	}
 
-			m_bAllowOptionsMenu = true;
-			/* Don't accept a held START for a little while, so it's not
-			 * hit accidentally.  Accept an initial START right away, though,
-			 * so we don't ignore deliberate fast presses (which would be
-			 * annoying). */
-			this->PostScreenMessage( SM_AllowOptionsMenuRepeat, 0.5f );
-		}
+	/* If we're currently waiting on song assets, abort all except the music and
+		* start the music, so if we make a choice quickly before background requests
+		* come through, the music will still start. */
+	g_bCDTitleWaiting = g_bBannerWaiting = false;
+	m_BackgroundLoader.Abort();
+	CheckBackgroundRequests( true );
 
-		/* If we're currently waiting on song assets, abort all except the music and
-		 * start the music, so if we make a choice quickly before background requests
-		 * come through, the music will still start. */
-		g_bCDTitleWaiting = g_bBannerWaiting = false;
-		m_BackgroundLoader.Abort();
-		CheckBackgroundRequests( true );
-
-		if( OPTIONS_MENU_AVAILABLE )
-		{
-			StartTransitioningScreen( SM_None );
-			float fTime = max( SHOW_OPTIONS_MESSAGE_SECONDS, this->GetTweenTimeLeft() );
-			this->PostScreenMessage( SM_BeginFadingOut, fTime );
-		}
-		else
-		{
-			StartTransitioningScreen( SM_BeginFadingOut );
-		}
+	if( OPTIONS_MENU_AVAILABLE )
+	{
+		StartTransitioningScreen( SM_None );
+		float fTime = max( SHOW_OPTIONS_MESSAGE_SECONDS, this->GetTweenTimeLeft() );
+		this->PostScreenMessage( SM_BeginFadingOut, fTime );
+	}
+	else
+	{
+		StartTransitioningScreen( SM_BeginFadingOut );
 	}
 }
 
