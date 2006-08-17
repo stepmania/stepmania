@@ -1739,10 +1739,6 @@ void SongManager::FreeAllLoadedFromProfile( ProfileSlot slot )
 
 	// After freeing some Steps pointers, the cache will be invalid.
 	StepsID::ClearCache();
-
-	// Best and Shuffled may refer to courses that we just freed.
-//	UpdateBest();
-//	UpdateShuffled();
 }
 
 int SongManager::GetNumStepsLoadedFromProfile()
