@@ -1042,12 +1042,7 @@ void ScreenSelectMusic::AfterMusicChange()
 				break;
 			case TYPE_SORT:
 				bWantBanner = false; /* we load it ourself */
-				switch( GAMESTATE->m_SortOrder )
-				{
-				case SORT_MODE_MENU:
-					m_Banner.LoadMode();
-					break;
-				}
+				m_Banner.LoadMode();
 				m_sSampleMusicToPlay = m_sSortMusicPath;
 				break;
 			default:
