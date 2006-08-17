@@ -9,7 +9,7 @@
 #include "RageUtil_AutoPtr.h"
 
 class XNode;
-class RadarValues;
+struct RadarValues;
 struct lua_State;
 
 struct HighScoreImpl;
