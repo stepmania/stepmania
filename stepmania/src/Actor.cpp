@@ -220,6 +220,28 @@ void Actor::LoadFromNode( const RString& sDir, const XNode* pNode )
 			lua_pop( L, 1 );
 			LUA->Release( L );
 		}
+
+		if( pChild->m_sName == "Context" )
+		{
+			RString sName;
+			if( !pChild->GetAttrValue( "Name", sName ) )
+				Dialog::OK( ssprintf("Context node in '%s' is missing the attribute \"Name\"", sDir.c_str()), "MISSING_ATTRIBUTE" );
+
+			LuaHelpers::RunAtExpressionS( sName );
+
+			RString s;
+			if( !pChild->GetAttrValue( "Value", s ) )
+				Dialog::OK( ssprintf("Context node in '%s' is missing the attribute \"Value\"", sDir.c_str()), "MISSING_ATTRIBUTE" );
+			Lua *L = LUA->Get();
+
+			this->PushContext(L);
+			lua_pushstring(L, sName );
+			LuaHelpers::RunScript( L, "return " + s, "", 1 );
+			lua_settable( L, -3 );
+			lua_pop( L, 1 );
+
+			LUA->Release(L);
+		}
 	}
 
 	FOREACH_CONST_Attr( pNode, pAttr )
