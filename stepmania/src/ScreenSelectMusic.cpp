@@ -606,7 +606,7 @@ void ScreenSelectMusic::ChangeDifficulty( PlayerNumber pn, int dir )
 					vpns.push_back( p );
 				}
 			}
-			AfterStepsChange( vpns );
+			AfterStepsOrTrailChange( vpns );
 		}
 		break;
 
@@ -628,7 +628,7 @@ void ScreenSelectMusic::ChangeDifficulty( PlayerNumber pn, int dir )
 					vpns.push_back( p );
 				}
 			}
-			AfterTrailChange( vpns );
+			AfterStepsOrTrailChange( vpns );
 		}
 		break;
 
@@ -651,7 +651,7 @@ void ScreenSelectMusic::ChangeDifficulty( PlayerNumber pn, int dir )
 					vpns.push_back( p );
 				}
 			}
-			AfterStepsChange( vpns );
+			AfterStepsOrTrailChange( vpns );
 			break;
 		}
 	case TYPE_SORT:
@@ -879,55 +879,51 @@ void ScreenSelectMusic::MenuBack( PlayerNumber pn )
 	Cancel( SM_GoToPrevScreen );
 }
 
-void ScreenSelectMusic::AfterStepsChange( const vector<PlayerNumber> &vpns )
+void ScreenSelectMusic::AfterStepsOrTrailChange( const vector<PlayerNumber> &vpns )
 {
 	FOREACH_CONST( PlayerNumber, vpns, p )
 	{
 		PlayerNumber pn = *p;
 		ASSERT( GAMESTATE->IsHumanPlayer(pn) );
 		
-		CLAMP( m_iSelection[pn], 0, m_vpSteps.size()-1 );
-
-		Song* pSong = GAMESTATE->m_pCurSong;
-		Steps* pSteps = m_vpSteps.empty()? NULL: m_vpSteps[m_iSelection[pn]];
-
-		GAMESTATE->m_pCurSteps[pn].Set( pSteps );
-		GAMESTATE->m_pCurTrail[pn].Set( NULL );
-
-		int iScore = 0;
-		if( pSteps )
+		if( GAMESTATE->m_pCurSong )
 		{
-			const Profile *pProfile = PROFILEMAN->IsPersistentProfile(pn) ? PROFILEMAN->GetProfile(pn) : PROFILEMAN->GetMachineProfile();
-			iScore = pProfile->GetStepsHighScoreList(pSong,pSteps).GetTopScore().GetScore();
+			CLAMP( m_iSelection[pn], 0, m_vpSteps.size()-1 );
+
+			Song* pSong = GAMESTATE->m_pCurSong;
+			Steps* pSteps = m_vpSteps.empty()? NULL: m_vpSteps[m_iSelection[pn]];
+
+			GAMESTATE->m_pCurSteps[pn].Set( pSteps );
+			GAMESTATE->m_pCurTrail[pn].Set( NULL );
+
+			int iScore = 0;
+			if( pSteps )
+			{
+				const Profile *pProfile = PROFILEMAN->IsPersistentProfile(pn) ? PROFILEMAN->GetProfile(pn) : PROFILEMAN->GetMachineProfile();
+				iScore = pProfile->GetStepsHighScoreList(pSong,pSteps).GetTopScore().GetScore();
+			}
+
+			m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
 		}
+		else
+			{
+			CLAMP( m_iSelection[pn], 0, m_vpTrails.size()-1 );
 
-		m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
-	}
-}
+			Course* pCourse = GAMESTATE->m_pCurCourse;
+			Trail* pTrail = m_vpTrails.empty()? NULL: m_vpTrails[m_iSelection[pn]];
 
-void ScreenSelectMusic::AfterTrailChange( const vector<PlayerNumber> &vpns )
-{
-	FOREACH_CONST( PlayerNumber, vpns, p )
-	{
-		PlayerNumber pn = *p;
-		ASSERT( GAMESTATE->IsHumanPlayer(pn) );
-		
-		CLAMP( m_iSelection[pn], 0, m_vpTrails.size()-1 );
+			GAMESTATE->m_pCurSteps[pn].Set( NULL );
+			GAMESTATE->m_pCurTrail[pn].Set( pTrail );
 
-		Course* pCourse = GAMESTATE->m_pCurCourse;
-		Trail* pTrail = m_vpTrails.empty()? NULL: m_vpTrails[m_iSelection[pn]];
+			int iScore = 0;
+			if( pTrail )
+			{
+				const Profile *pProfile = PROFILEMAN->IsPersistentProfile(pn) ? PROFILEMAN->GetProfile(pn) : PROFILEMAN->GetMachineProfile();
+				iScore = pProfile->GetCourseHighScoreList(pCourse,pTrail).GetTopScore().GetScore();
+			}
 
-		GAMESTATE->m_pCurSteps[pn].Set( NULL );
-		GAMESTATE->m_pCurTrail[pn].Set( pTrail );
-
-		int iScore = 0;
-		if( pTrail )
-		{
-			const Profile *pProfile = PROFILEMAN->IsPersistentProfile(pn) ? PROFILEMAN->GetProfile(pn) : PROFILEMAN->GetMachineProfile();
-			iScore = pProfile->GetCourseHighScoreList(pCourse,pTrail).GetTopScore().GetScore();
+			m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
 		}
-
-		m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
 	}
 }
 
@@ -1252,10 +1248,7 @@ void ScreenSelectMusic::AfterMusicChange()
 	FOREACH_HumanPlayer( p )
 		vpns.push_back( p );
 
-	if( GAMESTATE->m_pCurCourse )
-		AfterTrailChange( vpns );
-	else
-		AfterStepsChange( vpns );
+	AfterStepsOrTrailChange( vpns );
 }
 
 // lua start
