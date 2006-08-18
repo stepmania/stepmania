@@ -16,10 +16,10 @@ public:
 	PlayerOptions() { Init(); };
 	void Init();
 	void Approach( const PlayerOptions& other, float fDeltaSeconds );
-	RString GetString() const;
+	RString GetString( bool bForceNoteSkin = false ) const;
 	RString GetSavedPrefsString() const;	// only the basic options that players would want for every song
 	void ResetSavedPrefs();
-	void GetMods( vector<RString> &AddTo ) const;
+	void GetMods( vector<RString> &AddTo, bool bForceNoteSkin = false ) const;
 	void GetLocalizedMods( vector<RString> &AddTo ) const;
 	void FromString( const RString &sOptions, bool bWarnOnInvalid = false );
 	void ChooseRandomModifiers();

@@ -76,14 +76,14 @@ static void AddPart( vector<RString> &AddTo, float level, RString name )
 	AddTo.push_back( LevelStr + name );
 }
 
-RString PlayerOptions::GetString() const
+RString PlayerOptions::GetString( bool bForceNoteSkin ) const
 {
 	vector<RString> v;
-	GetMods( v );
+	GetMods( v, bForceNoteSkin );
 	return join( ", ", v );
 }
 
-void PlayerOptions::GetMods( vector<RString> &AddTo ) const
+void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 {
 	RString sReturn;
 
@@ -195,8 +195,8 @@ void PlayerOptions::GetMods( vector<RString> &AddTo ) const
 		AddPart( AddTo, m_fSkew, "Incoming" );
 	}
 
-	// Don't display a string if using the default NoteSkin.
-	if( !m_sNoteSkin.empty() && m_sNoteSkin != NOTESKIN->GAME_BASE_NOTESKIN_NAME.GetValue() )
+	// Don't display a string if using the default NoteSkin unless we force it.
+	if( bForceNoteSkin || (!m_sNoteSkin.empty() && m_sNoteSkin != NOTESKIN->GAME_BASE_NOTESKIN_NAME.GetValue()) )
 	{
 		RString s = m_sNoteSkin;
 		Capitalize( s );
