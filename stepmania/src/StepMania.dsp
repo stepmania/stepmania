@@ -2582,6 +2582,14 @@ SOURCE=.\PaneDisplay.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\RoomInfoDisplay.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RoomInfoDisplay.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\RoomWheel.cpp
 # End Source File
 # Begin Source File
