@@ -508,6 +508,9 @@ class DebugLineAutosync : public IDebugLine
 	virtual void Do( RString &sMessageOut )
 	{
 		SongOptions::AutosyncType as = enum_add2( GAMESTATE->m_SongOptions.GetSong().m_AutosyncType, 1 );
+		bool bAllowSongAutosync = !GAMESTATE->IsCourseMode();
+		if( !bAllowSongAutosync  &&  as == SongOptions::AUTOSYNC_SONG )
+			as = SongOptions::AUTOSYNC_MACHINE;
 		wrap( (int&)as, SongOptions::NUM_AUTOSYNC_TYPES );
 		SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Song, m_AutosyncType, as );
 		MESSAGEMAN->Broadcast( Message_AutosyncChanged );
