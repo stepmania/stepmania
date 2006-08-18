@@ -183,6 +183,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 	EditMenuAction action	= m_Selector.GetSelectedAction();
 
 	GAMESTATE->m_pCurSong.Set( pSong );
+	GAMESTATE->m_pCurCourse.Set( NULL );
 	GAMESTATE->m_pCurStyle.Set( GAMEMAN->GetEditorStyleForStepsType(st) );
 	GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );
 
@@ -270,6 +271,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 
 			GAMESTATE->m_pCurSong.Set( pSong );
 			GAMESTATE->m_pCurSteps[0].Set( pSteps );
+			GAMESTATE->m_pCurCourse.Set( NULL );
 		}
 		break;
 	default:
