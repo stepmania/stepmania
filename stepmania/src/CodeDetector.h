@@ -60,8 +60,8 @@ private:
 	enum Type
 	{ 
 		sequence,		// press the buttons in sequence
-		hold_and_press,	// hold the first iNumButtons-1 buttons, then press the last
-		tap				// press all buttons simultaneously
+		hold_and_press,		// hold the first iNumButtons-1 buttons, then press the last
+		tap			// press all buttons simultaneously
 	};
 	Type m_Type;
 	float fMaxSecondsBack;
