@@ -94,9 +94,9 @@ namespace ActorUtil
 
 #define SET_XY( actor )			ActorUtil::SetXY( actor, m_sName )
 #define ON_COMMAND( actor )		ActorUtil::OnCommand( actor, m_sName )
-#define OFF_COMMAND( actor )	ActorUtil::OffCommand( actor, m_sName )
-#define SET_XY_AND_ON_COMMAND( actor )		ActorUtil::SetXYAndOnCommand( actor, m_sName )
-#define COMMAND( actor, command_name )		ActorUtil::LoadAndPlayCommand( actor, m_sName, command_name )
+#define OFF_COMMAND( actor )		ActorUtil::OffCommand( actor, m_sName )
+#define SET_XY_AND_ON_COMMAND( actor )	ActorUtil::SetXYAndOnCommand( actor, m_sName )
+#define COMMAND( actor, command_name )	ActorUtil::LoadAndPlayCommand( actor, m_sName, command_name )
 
 
 #endif
