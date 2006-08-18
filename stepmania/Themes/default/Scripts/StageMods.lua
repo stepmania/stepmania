@@ -1,31 +1,34 @@
-function SetupStageMods()
-	if GAMESTATE:IsAnExtraStage() then
-		if GAMESTATE:GetPreferredSongGroup() == "---Group All---" and
-		   not PREFSMAN:GetPreference("PickExtraStage") then
-			local song = GAMESTATE:GetCurrentSong()
-			GAMESTATE:SetPreferredSongGroup( song:GetGroupName() )
-		end
+function AreStageModsForced()
+	if GAMESTATE:IsAnExtraStage() then return true end
+	return false
+end
 
-		local bExtra2 = GAMESTATE:IsExtraStage2()
-		local style = GAMESTATE:GetCurrentStyle()
-		local song, steps, po, so = SONGMAN:GetExtraStageInfo( bExtra2, style )
-		local difficulty = steps:GetDifficulty()
-		
-		GAMESTATE:SetCurrentSong( song )
-		GAMESTATE:SetPreferredSong( song )
-
-		local fun = function( dummy, pn )
-			GAMESTATE:SetCurrentSteps( pn, steps )
-			GAMESTATE:GetPlayerState(pn):SetPlayerOptions( ModsLevel_Stage, po )
-			GAMESTATE:SetPreferredDifficulty( pn, difficulty )
-			MESSAGEMAN:Broadcast( "PlayerOptionsChangedP" .. (pn+1) )
-		end
-
-		table.foreach( GAMESTATE:GetHumanPlayers(), fun )
-		GAMESTATE:SetSongOptions( ModsLevel_Stage, so )
-		MESSAGEMAN:Broadcast( "SongOptionsChanged" )
-		return
+function ScreenSelectMusic:setupstagemods()
+	if not GAMESTATE:IsAnExtraStage() then return end
+	if GAMESTATE:GetPreferredSongGroup() == "---Group All---" and
+	   not PREFSMAN:GetPreference("PickExtraStage") then
+		local song = GAMESTATE:GetCurrentSong()
+		GAMESTATE:SetPreferredSongGroup( song:GetGroupName() )
 	end
+
+	local bExtra2 = GAMESTATE:IsExtraStage2()
+	local style = GAMESTATE:GetCurrentStyle()
+	local song, steps, po, so = SONGMAN:GetExtraStageInfo( bExtra2, style )
+	local difficulty = steps:GetDifficulty()
+	
+	GAMESTATE:SetCurrentSong( song )
+	GAMESTATE:SetPreferredSong( song )
+
+	local fun = function( dummy, pn )
+		GAMESTATE:SetCurrentSteps( pn, steps )
+		GAMESTATE:GetPlayerState(pn):SetPlayerOptions( ModsLevel_Stage, po )
+		GAMESTATE:SetPreferredDifficulty( pn, difficulty )
+		MESSAGEMAN:Broadcast( "PlayerOptionsChangedP" .. (pn+1) )
+	end
+
+	table.foreach( GAMESTATE:GetHumanPlayers(), fun )
+	GAMESTATE:SetSongOptions( ModsLevel_Stage, so )
+	MESSAGEMAN:Broadcast( "SongOptionsChanged" )
 end
 -- 
 -- (c) 2006 Steve Checkoway
