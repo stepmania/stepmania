@@ -309,7 +309,7 @@ static void MergeActorXML( XNode *pChild, const XNode *pParent )
 		if( pChild->GetChildValue(p->first, sOld) )
 		{
 			RString sWarning = 
-					ssprintf( "Overriding \"%s\" (\"%s\") in XML node \"%s\" with \"%s\" in XML node \"%s\"",
+				ssprintf( "Overriding \"%s\" (\"%s\") in XML node \"%s\" with \"%s\" in XML node \"%s\"",
 				p->first.c_str(),
 				p->second.c_str(),
 				pChild->m_sName.c_str(),
