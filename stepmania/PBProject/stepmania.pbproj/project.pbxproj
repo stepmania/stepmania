@@ -1620,6 +1620,8 @@
 		AABE787A0591287100E8BF50 /* MemoryCardDriver_Null.h in Headers */ = {isa = PBXBuildFile; fileRef = AABE78760591287100E8BF50 /* MemoryCardDriver_Null.h */; };
 		AABE788D05912B0600E8BF50 /* DualScrollBar.h in Headers */ = {isa = PBXBuildFile; fileRef = AABE788B05912B0600E8BF50 /* DualScrollBar.h */; };
 		AABE788E05912B0600E8BF50 /* DualScrollBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AABE788C05912B0600E8BF50 /* DualScrollBar.cpp */; };
+		AABE830E0A9524D400001678 /* ModsGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AABE830D0A9524D400001678 /* ModsGroup.cpp */; };
+		AABE830F0A9524D400001678 /* ModsGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AABE830D0A9524D400001678 /* ModsGroup.cpp */; };
 		AAC0C8C20984AE3B0075FC53 /* Tween.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC0C8C00984AE3B0075FC53 /* Tween.cpp */; };
 		AAC0C8C30984AE3B0075FC53 /* Tween.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC0C8C10984AE3B0075FC53 /* Tween.h */; };
 		AAC6889C05D7F3C800964E6D /* XmlFile.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC6889A05D7F3C800964E6D /* XmlFile.h */; };
@@ -2532,6 +2534,7 @@
 		AABE78760591287100E8BF50 /* MemoryCardDriver_Null.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = MemoryCardDriver_Null.h; sourceTree = "<group>"; };
 		AABE788B05912B0600E8BF50 /* DualScrollBar.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = DualScrollBar.h; path = ../src/DualScrollBar.h; sourceTree = "<group>"; };
 		AABE788C05912B0600E8BF50 /* DualScrollBar.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = DualScrollBar.cpp; path = ../src/DualScrollBar.cpp; sourceTree = "<group>"; };
+		AABE830D0A9524D400001678 /* ModsGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModsGroup.cpp; sourceTree = "<group>"; };
 		AAC0C8C00984AE3B0075FC53 /* Tween.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Tween.cpp; path = ../src/Tween.cpp; sourceTree = "<group>"; };
 		AAC0C8C10984AE3B0075FC53 /* Tween.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Tween.h; path = ../src/Tween.h; sourceTree = "<group>"; };
 		AAC23F7C0485E68D005F316C /* RageDisplay_OGL.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageDisplay_OGL.cpp; path = ../src/RageDisplay_OGL.cpp; sourceTree = "<group>"; };
@@ -3579,6 +3582,7 @@
 				AA70E3680663112800DAE1FD /* TrailUtil.h */,
 				AA07328C0954381800F396C5 /* XmlFileUtil.cpp */,
 				AA07328D0954381800F396C5 /* XmlFileUtil.h */,
+				AABE830D0A9524D400001678 /* ModsGroup.cpp */,
 			);
 			name = DataStructures;
 			sourceTree = "<group>";
@@ -5468,6 +5472,7 @@
 				AAFE710B0A91ADE6005F2290 /* ActorProxy.cpp in Sources */,
 				AAFE711F0A91B551005F2290 /* RageSurface_Save_PNG.cpp in Sources */,
 				AAFE71200A91B551005F2290 /* RoomInfoDisplay.cpp in Sources */,
+				AABE830E0A9524D400001678 /* ModsGroup.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5878,6 +5883,7 @@
 				AA5A56E70A875DA3006DBB92 /* ExportStrings.cpp in Sources */,
 				AAFE710D0A91ADE6005F2290 /* ActorProxy.cpp in Sources */,
 				AAFE71220A91B551005F2290 /* RageSurface_Save_PNG.cpp in Sources */,
+				AABE830F0A9524D400001678 /* ModsGroup.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
