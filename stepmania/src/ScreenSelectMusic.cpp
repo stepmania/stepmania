@@ -175,14 +175,9 @@ void ScreenSelectMusic::BeginScreen()
 {
 	ScreenWithMenuElements::BeginScreen();
 	OPTIONS_MENU_AVAILABLE.Load( m_sName, "OptionsMenuAvailable" );
-
-	// Set up stage mods.
-	Lua *L = LUA->Get();
-	LuaHelpers::Call( L, "SetupStageMods" );
-	LUA->Release( L );
 	
 	m_MusicWheel.BeginScreen();
-		
+	
 	m_bMadeChoice = false;
 	m_bGoToOptions = false;
 	m_bAllowOptionsMenu = m_bAllowOptionsMenuRepeat = false;
