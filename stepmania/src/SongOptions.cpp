@@ -144,7 +144,7 @@ void SongOptions::FromString( const RString &sOptions )
 				on = false;
 		}
 
-		if(	 sBit == "norecover" )	m_DrainType = DRAIN_NO_RECOVER;
+		if(	 sBit == "norecover" )		m_DrainType = DRAIN_NO_RECOVER;
 		else if( sBit == "suddendeath" )	m_DrainType = DRAIN_SUDDEN_DEATH;
 		else if( sBit == "power-drop" )		m_DrainType = DRAIN_NO_RECOVER;
 		else if( sBit == "death" )		m_DrainType = DRAIN_SUDDEN_DEATH;
