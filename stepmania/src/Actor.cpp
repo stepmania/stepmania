@@ -1191,28 +1191,28 @@ void Actor::TweenState::MakeWeightedAverage( TweenState& average_out, const Twee
 
 void Actor::SetBlendModeString( const RString &s )
 {
-	if     (s.EqualsNoCase("normal"))	this->SetBlendMode( BLEND_NORMAL );
-	else if(s.EqualsNoCase("add"))		this->SetBlendMode( BLEND_ADD );
-	else if(s.EqualsNoCase("weightedmultiply")) this->SetBlendMode( BLEND_WEIGHTED_MULTIPLY );
-	else if(s.EqualsNoCase("invertdest")) this->SetBlendMode( BLEND_INVERT_DEST );
-	else if(s.EqualsNoCase("noeffect"))	this->SetBlendMode( BLEND_NO_EFFECT );
+	if     (s.EqualsNoCase("normal"))		this->SetBlendMode( BLEND_NORMAL );
+	else if(s.EqualsNoCase("add"))			this->SetBlendMode( BLEND_ADD );
+	else if(s.EqualsNoCase("weightedmultiply"))	this->SetBlendMode( BLEND_WEIGHTED_MULTIPLY );
+	else if(s.EqualsNoCase("invertdest"))		this->SetBlendMode( BLEND_INVERT_DEST );
+	else if(s.EqualsNoCase("noeffect"))		this->SetBlendMode( BLEND_NO_EFFECT );
 	else	ASSERT(0);
 }
 
 void Actor::SetCullModeString( const RString &s )
 {
-	if     (s.EqualsNoCase("back"))		this->SetCullMode( CULL_BACK );
-	else if(s.EqualsNoCase("front"))	this->SetCullMode( CULL_FRONT );
-	else if(s.EqualsNoCase("none"))		this->SetCullMode( CULL_NONE );
+	if     (s.EqualsNoCase("back"))			this->SetCullMode( CULL_BACK );
+	else if(s.EqualsNoCase("front"))		this->SetCullMode( CULL_FRONT );
+	else if(s.EqualsNoCase("none"))			this->SetCullMode( CULL_NONE );
 	else	ASSERT(0);
 }
 
 void Actor::SetZTestModeString( const RString &s )
 {
 	// for metrics backward compatibility
-	if(s.EqualsNoCase("off"))		this->SetZTestMode( ZTEST_OFF );
-	else if(s.EqualsNoCase("writeonpass"))	this->SetZTestMode( ZTEST_WRITE_ON_PASS );
-	else if(s.EqualsNoCase("writeonfail"))	this->SetZTestMode( ZTEST_WRITE_ON_FAIL );
+	if(s.EqualsNoCase("off"))			this->SetZTestMode( ZTEST_OFF );
+	else if(s.EqualsNoCase("writeonpass"))		this->SetZTestMode( ZTEST_WRITE_ON_PASS );
+	else if(s.EqualsNoCase("writeonfail"))		this->SetZTestMode( ZTEST_WRITE_ON_FAIL );
 	else	ASSERT(0);
 }
 
