@@ -335,7 +335,7 @@ void ScoreKeeperNormal::AddScore( TapNoteScore score )
 
 void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 {
-	if (tn.type == TapNote::mine)
+	if( tn.type == TapNote::mine )
 	{
 		TapNoteScore score = tn.result.tns;
 		if( score == TNS_HitMine )
@@ -346,9 +346,9 @@ void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 		}
 
 		NSMAN->ReportScore( m_pPlayerState->m_PlayerNumber, score,
-							m_pPlayerStageStats->iScore,
-							m_pPlayerStageStats->iCurCombo,
-							tn.result.fTapNoteOffset );
+				    m_pPlayerStageStats->iScore,
+				    m_pPlayerStageStats->iCurCombo,
+				    tn.result.fTapNoteOffset );
 	}
 }
 
