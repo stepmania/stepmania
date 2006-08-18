@@ -38,9 +38,16 @@ public:
 	bool operator==( const SongCriteria &other ) const
 	{
 #define X(x) (x == other.x)
-		return X(m_sGroupName) && X(m_bUseSongGenreAllowedList) && X(m_vsSongGenreAllowedList) &&
-			X(m_Selectable) && X(m_bUseSongAllowedList) && X(m_vpSongAllowedList) &&
-			X(m_iStagesForSong) && X(m_Tutorial) && X(m_Locked);
+		return 
+			X(m_sGroupName) && 
+			X(m_bUseSongGenreAllowedList) && 
+			X(m_vsSongGenreAllowedList) &&
+			X(m_Selectable) && 
+			X(m_bUseSongAllowedList) && 
+			X(m_vpSongAllowedList) &&
+			X(m_iStagesForSong) && 
+			X(m_Tutorial) && 
+			X(m_Locked);
 #undef X
 	}
 	bool operator!=( const SongCriteria &other ) const { return !operator==( other ); }
