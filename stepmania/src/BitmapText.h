@@ -83,7 +83,7 @@ protected:
 	struct ColorChange
 	{
 		RageColor c;	//Color to change to
-		int l;			//Change Location
+		int l;		//Change Location
 	};
 	vector<ColorChange> m_vColors;
 };

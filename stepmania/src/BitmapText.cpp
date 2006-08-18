@@ -854,7 +854,7 @@ class LunaBitmapText: public Luna<BitmapText>
 public:
 	LunaBitmapText() { LUA->Register( Register ); }
 
-	static int wrapwidthpixels( T* p, lua_State *L )	{ p->SetWrapWidthPixels( IArg(1) ); return 0; }
+	static int wrapwidthpixels( T* p, lua_State *L )		{ p->SetWrapWidthPixels( IArg(1) ); return 0; }
 	static int maxwidth( T* p, lua_State *L )			{ p->SetMaxWidth( FArg(1) ); return 0; }
 	static int maxheight( T* p, lua_State *L )			{ p->SetMaxHeight( FArg(1) ); return 0; }
 	static int vertspacing( T* p, lua_State *L )			{ p->SetVertSpacing( IArg(1) ); return 0; }

@@ -554,10 +554,10 @@ void Sprite::DrawPrimitives()
 			ts.crop.top += FadeDist.top;		// lop off the corner if fading both x and y
 			ts.crop.bottom += FadeDist.bottom;
 
-			ts.diffuse[0] = m_pTempState->diffuse[0]; // top left -> top left
-			ts.diffuse[2] = m_pTempState->diffuse[2]; // bottom left -> bottom left
-			ts.diffuse[3] = m_pTempState->diffuse[2]; // bottom left -> bottom right
-			ts.diffuse[1] = m_pTempState->diffuse[0]; // top left -> top right
+			ts.diffuse[0] = m_pTempState->diffuse[0];	// top left -> top left
+			ts.diffuse[2] = m_pTempState->diffuse[2];	// bottom left -> bottom left
+			ts.diffuse[3] = m_pTempState->diffuse[2];	// bottom left -> bottom right
+			ts.diffuse[1] = m_pTempState->diffuse[0];	// top left -> top right
 			ts.diffuse[0].a = 0;				// top left
 			ts.diffuse[2].a = 0;				// bottom left
 			ts.diffuse[3].a *= LeftAlpha;			// bottom right
@@ -573,14 +573,14 @@ void Sprite::DrawPrimitives()
 			ts.crop.top += FadeDist.top;
 			ts.crop.bottom += FadeDist.bottom;
 
-			ts.diffuse[0] = m_pTempState->diffuse[1]; // top right -> top left
-			ts.diffuse[2] = m_pTempState->diffuse[3]; // bottom right -> bottom left
-			ts.diffuse[3] = m_pTempState->diffuse[3]; // bottom right -> bottom right
-			ts.diffuse[1] = m_pTempState->diffuse[1]; // top right -> top right
-			ts.diffuse[0].a *= RightAlpha;		// top left
-			ts.diffuse[2].a *= RightAlpha;		// bottom left
-			ts.diffuse[3].a = 0;			// bottom right
-			ts.diffuse[1].a = 0;			// top right
+			ts.diffuse[0] = m_pTempState->diffuse[1];	// top right -> top left
+			ts.diffuse[2] = m_pTempState->diffuse[3];	// bottom right -> bottom left
+			ts.diffuse[3] = m_pTempState->diffuse[3];	// bottom right -> bottom right
+			ts.diffuse[1] = m_pTempState->diffuse[1];	// top right -> top right
+			ts.diffuse[0].a *= RightAlpha;			// top left
+			ts.diffuse[2].a *= RightAlpha;			// bottom left
+			ts.diffuse[3].a = 0;				// bottom right
+			ts.diffuse[1].a = 0;				// top right
 
 			DrawTexture( &ts );
 		}
@@ -593,10 +593,10 @@ void Sprite::DrawPrimitives()
 			ts.crop.left += FadeDist.left;
 			ts.crop.right += FadeDist.right;
 
-			ts.diffuse[0] = m_pTempState->diffuse[0]; // top left -> top left
-			ts.diffuse[2] = m_pTempState->diffuse[0]; // top left -> bottom left
-			ts.diffuse[3] = m_pTempState->diffuse[1]; // top right -> bottom right
-			ts.diffuse[1] = m_pTempState->diffuse[1]; // top right -> top right
+			ts.diffuse[0] = m_pTempState->diffuse[0];	// top left -> top left
+			ts.diffuse[2] = m_pTempState->diffuse[0];	// top left -> bottom left
+			ts.diffuse[3] = m_pTempState->diffuse[1];	// top right -> bottom right
+			ts.diffuse[1] = m_pTempState->diffuse[1];	// top right -> top right
 			ts.diffuse[0].a = 0;				// top left
 			ts.diffuse[2].a *= TopAlpha;			// bottom left
 			ts.diffuse[3].a *= TopAlpha;			// bottom right
@@ -613,14 +613,14 @@ void Sprite::DrawPrimitives()
 			ts.crop.left += FadeDist.left;
 			ts.crop.right += FadeDist.right;
 
-			ts.diffuse[0] = m_pTempState->diffuse[2]; // bottom left -> top left
-			ts.diffuse[2] = m_pTempState->diffuse[2]; // bottom left -> bottom left
-			ts.diffuse[3] = m_pTempState->diffuse[3]; // bottom right -> bottom right
-			ts.diffuse[1] = m_pTempState->diffuse[3]; // bottom right -> top right
-			ts.diffuse[0].a *= BottomAlpha;		// top left
-			ts.diffuse[2].a = 0;			// bottom left
-			ts.diffuse[3].a = 0;			// bottom right
-			ts.diffuse[1].a *= BottomAlpha;		// top right
+			ts.diffuse[0] = m_pTempState->diffuse[2];	// bottom left -> top left
+			ts.diffuse[2] = m_pTempState->diffuse[2];	// bottom left -> bottom left
+			ts.diffuse[3] = m_pTempState->diffuse[3];	// bottom right -> bottom right
+			ts.diffuse[1] = m_pTempState->diffuse[3];	// bottom right -> top right
+			ts.diffuse[0].a *= BottomAlpha;			// top left
+			ts.diffuse[2].a = 0;				// bottom left
+			ts.diffuse[3].a = 0;				// bottom right
+			ts.diffuse[1].a *= BottomAlpha;			// top right
 			DrawTexture( &ts );
 		}
 	}
