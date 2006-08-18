@@ -3,7 +3,7 @@
 #ifndef ModLevel_H
 #define ModLevel_H
 
-#include "EnumHelper.h"
+#include "RageTimer.h"
 
 enum ModsLevel
 {
