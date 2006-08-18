@@ -26,7 +26,7 @@ const int MAX_EDIT_COURSE_TITLE_LENGTH = 12;
 enum CourseType
 {
 	COURSE_TYPE_NONSTOP,	// if life meter type is BAR
-	COURSE_TYPE_ONI,		// if life meter type is BATTERY
+	COURSE_TYPE_ONI,	// if life meter type is BATTERY
 	COURSE_TYPE_ENDLESS,	// if set to REPEAT
 	COURSE_TYPE_SURVIVAL,	// if life meter type is TIME
 	NUM_CourseType,
@@ -163,8 +163,8 @@ public:
 	void Init();
 
 	// sorting values
-	int		m_SortOrder_TotalDifficulty;
-	int		m_SortOrder_Ranking;
+	int	m_SortOrder_TotalDifficulty;
+	int	m_SortOrder_Ranking;
 	bool	IsRanking() const;
 
 	void UpdateCourseStats( StepsType st );
