@@ -230,7 +230,7 @@
 		<Configuration
 			Name="FastDebug|Win32"
 			OutputDirectory="$(TargetDir)"
-			IntermediateDirectory="FastDebug"
+			IntermediateDirectory="./../FastDebug"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
