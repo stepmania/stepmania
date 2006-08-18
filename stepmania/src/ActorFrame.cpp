@@ -397,9 +397,9 @@ public:
 	static int playcommandonleaves( T* p, lua_State *L )		{ p->PlayCommandOnLeaves(SArg(1)); return 0; }
 	static int propagate( T* p, lua_State *L )			{ p->SetPropagateCommands( !!IArg(1) ); return 0; }
 	static int fov( T* p, lua_State *L )				{ p->SetFOV( FArg(1) ); return 0; }
-	static int SetUpdateRate( T* p, lua_State *L )		{ p->SetUpdateRate( FArg(1) ); return 0; }
+	static int SetUpdateRate( T* p, lua_State *L )			{ p->SetUpdateRate( FArg(1) ); return 0; }
 	static int SetFOV( T* p, lua_State *L )				{ p->SetFOV( FArg(1) ); return 0; }
-	static int vanishpoint( T* p, lua_State *L )		{ p->SetVanishPoint( FArg(1), FArg(2) ); return 0; }
+	static int vanishpoint( T* p, lua_State *L )			{ p->SetVanishPoint( FArg(1), FArg(2) ); return 0; }
 	static int GetChild( T* p, lua_State *L )
 	{
 		Actor *pChild = p->GetChild( SArg(1) );

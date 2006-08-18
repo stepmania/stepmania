@@ -291,14 +291,14 @@ public:
 
 	static int PositionItems( T* p, lua_State *L )	{ p->PositionItems(); return 0; }
 	static int SetTransformFromExpression( T* p, lua_State *L )	{ p->SetTransformFromExpression(SArg(1)); return 0; }
-	static int SetTransformFromHeight( T* p, lua_State *L )	{ p->SetTransformFromHeight(FArg(1)); return 0; }
+	static int SetTransformFromHeight( T* p, lua_State *L )		{ p->SetTransformFromHeight(FArg(1)); return 0; }
 	static int SetCurrentAndDestinationItem( T* p, lua_State *L )	{ p->SetCurrentAndDestinationItem( FArg(1) ); return 0; }
-	static int getsecondtodestination( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetSecondsToDestination() ); return 1; }
-	static int setsecondsperitem( T* p, lua_State *L )	{ p->SetSecondsPerItem(FArg(1)); return 0; }
-	static int setnumsubdivisions( T* p, lua_State *L )	{ p->SetNumSubdivisions(IArg(1)); return 0; }
-	static int scrollthroughallitems( T* p, lua_State *L )	{ p->ScrollThroughAllItems(); return 0; }
-	static int scrollwithpadding( T* p, lua_State *L )	{ p->ScrollWithPadding(FArg(1),FArg(2)); return 0; }
-	static int setfastcatchup( T* p, lua_State *L )	{ p->SetFastCatchup(BArg(1)); return 0; }
+	static int getsecondtodestination( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetSecondsToDestination() ); return 1; }
+	static int setsecondsperitem( T* p, lua_State *L )		{ p->SetSecondsPerItem(FArg(1)); return 0; }
+	static int setnumsubdivisions( T* p, lua_State *L )		{ p->SetNumSubdivisions(IArg(1)); return 0; }
+	static int scrollthroughallitems( T* p, lua_State *L )		{ p->ScrollThroughAllItems(); return 0; }
+	static int scrollwithpadding( T* p, lua_State *L )		{ p->ScrollWithPadding(FArg(1),FArg(2)); return 0; }
+	static int setfastcatchup( T* p, lua_State *L )			{ p->SetFastCatchup(BArg(1)); return 0; }
 
 	static void Register(lua_State *L) 
 	{
