@@ -1841,6 +1841,24 @@ public:
 		lua_pushnumber( L, iIndex );
 		return 1;
 	}
+	
+	static int GetExtraStageInfo( T* p, lua_State *L )
+	{
+		bool bExtra2 = BArg( 1 );
+		const Style *pStyle = Luna<Style>::check( L, 2 );
+		Song *pSong;
+		Steps *pSteps;
+		PlayerOptions po;
+		SongOptions so;
+		
+		p->GetExtraStageInfo( bExtra2, pStyle, pSong, pSteps, &po, &so );
+		pSong->PushSelf( L );
+		pSteps->PushSelf( L );
+		LuaHelpers::Push( po.GetString(), L );
+		LuaHelpers::Push( so.GetString(), L );
+		
+		return 4;
+	}
 
 	static void Register(lua_State *L)
 	{
@@ -1861,6 +1879,7 @@ public:
 		ADD_METHOD( GetSongFromSteps );
 		ADD_METHOD( GetSongRank );
 		ADD_METHOD( GetCourseRank );
+		ADD_METHOD( GetExtraStageInfo );
 
 		Luna<T>::Register( L );
 

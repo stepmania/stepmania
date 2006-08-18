@@ -1909,6 +1909,11 @@ public:
 		else		 { lua_pushnil(L); }
 		return 1;
 	}
+	static int SetPreferredDifficulty( T* p, lua_State *L )
+	{
+		p->m_PreferredDifficulty[IArg(1)].Set( Difficulty(IArg(2)) );
+		return 0;
+	}
 	DEFINE_METHOD( GetPreferredDifficulty,		m_PreferredDifficulty[IArg(1)] )
 	DEFINE_METHOD( AnyPlayerHasRankingFeats,	AnyPlayerHasRankingFeats() )
 	DEFINE_METHOD( IsCourseMode,			IsCourseMode() )
@@ -2002,8 +2007,32 @@ public:
 		lua_pushstring( L, StyleTypeToString(p->GetCurrentStyle()->m_StyleType) );
 		return 1;
 	}
-
-
+	
+	static int SetPreferredSongGroup( T* p, lua_State *L ) { p->m_sPreferredSongGroup.Set( SArg(1) ); return 0; }
+	DEFINE_METHOD( GetPreferredSongGroup, m_sPreferredSongGroup.Get() );
+	static int GetHumanPlayers( T* p, lua_State *L )
+	{
+		vector<int> vHP;
+		FOREACH_HumanPlayer( pn )
+			vHP.push_back( pn );
+		LuaHelpers::CreateTableFromArray( vHP, L );
+		return 1;
+	}
+	static int SetSongOptions( T* p, lua_State *L )
+	{
+		SongOptions so;
+		
+		so.FromString( SArg(2) );
+		p->m_SongOptions.Assign( ModsLevel(IArg(1)), so );
+		return 0;
+	}
+	static int GetCurrentStyle( T* p, lua_State *L )
+	{
+		// XXX: Ugly cast.
+		LuaHelpers::Push( const_cast<Style *>(p->GetCurrentStyle()), L );
+		return 1;
+	}
+		
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( IsPlayerEnabled );
@@ -2029,6 +2058,7 @@ public:
 		ADD_METHOD( SetEnv );
 		ADD_METHOD( GetEnv );
 		ADD_METHOD( GetEditSourceSteps );
+		ADD_METHOD( SetPreferredDifficulty );
 		ADD_METHOD( GetPreferredDifficulty );
 		ADD_METHOD( AnyPlayerHasRankingFeats );
 		ADD_METHOD( IsCourseMode );
@@ -2070,6 +2100,11 @@ public:
 		ADD_METHOD( GetEditLocalProfile );
 		ADD_METHOD( GetCurrentStepsCredits );
 		ADD_METHOD( GetCurrentStyleType );
+		ADD_METHOD( SetPreferredSongGroup );
+		ADD_METHOD( GetPreferredSongGroup );
+		ADD_METHOD( GetHumanPlayers );
+		ADD_METHOD( SetSongOptions );
+		ADD_METHOD( GetCurrentStyle );
 
 		Luna<T>::Register( L );
 

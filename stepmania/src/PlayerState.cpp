@@ -171,11 +171,20 @@ int PlayerState::GetSumOfActiveAttackLevels() const
 
 class LunaPlayerState: public Luna<PlayerState>
 {
+	static int SetPlayerOptions( T* p, lua_State *L )
+	{
+		PlayerOptions po;
+		
+		po.FromString( SArg(2) );
+		p->m_PlayerOptions.Assign( ModsLevel(IArg(1)), po );
+		return 0;
+	}
 public:
 	LunaPlayerState() { LUA->Register( Register ); }
 
 	static void Register(lua_State *L)
 	{
+		ADD_METHOD( SetPlayerOptions );
 		Luna<T>::Register( L );
 	}
 };

@@ -14,6 +14,7 @@ const int MAX_COLS_PER_PLAYER = MAX_NOTE_TRACKS;
 
 class NoteData;
 class Game;
+struct lua_State;
 
 class Style
 {
@@ -62,6 +63,9 @@ public:
 	bool MatchesStepsType( StepsType type ) const;
 
 	void GetMinAndMaxColX( PlayerNumber pn, float& fMixXOut, float& fMaxXOut ) const;
+	
+	// Lua
+	void PushSelf( lua_State *L );
 };
 
 
