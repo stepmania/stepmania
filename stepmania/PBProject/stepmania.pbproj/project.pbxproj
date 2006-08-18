@@ -2534,7 +2534,7 @@
 		AABE78760591287100E8BF50 /* MemoryCardDriver_Null.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = MemoryCardDriver_Null.h; sourceTree = "<group>"; };
 		AABE788B05912B0600E8BF50 /* DualScrollBar.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = DualScrollBar.h; path = ../src/DualScrollBar.h; sourceTree = "<group>"; };
 		AABE788C05912B0600E8BF50 /* DualScrollBar.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = DualScrollBar.cpp; path = ../src/DualScrollBar.cpp; sourceTree = "<group>"; };
-		AABE830D0A9524D400001678 /* ModsGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModsGroup.cpp; sourceTree = "<group>"; };
+		AABE830D0A9524D400001678 /* ModsGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ModsGroup.cpp; path = ../src/ModsGroup.cpp; sourceTree = "<group>"; };
 		AAC0C8C00984AE3B0075FC53 /* Tween.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Tween.cpp; path = ../src/Tween.cpp; sourceTree = "<group>"; };
 		AAC0C8C10984AE3B0075FC53 /* Tween.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Tween.h; path = ../src/Tween.h; sourceTree = "<group>"; };
 		AAC23F7C0485E68D005F316C /* RageDisplay_OGL.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageDisplay_OGL.cpp; path = ../src/RageDisplay_OGL.cpp; sourceTree = "<group>"; };
@@ -3501,6 +3501,7 @@
 				AA6EFDE404770C79005F316C /* LyricsLoader.h */,
 				AA8E4BC609787C9400765149 /* MenuInput.cpp */,
 				AA1DCB6304A4872700D02EE9 /* MenuInput.h */,
+				AABE830D0A9524D400001678 /* ModsGroup.cpp */,
 				AA5A51F20A8441AA006DBB92 /* ModsGroup.h */,
 				AA6EFDE504770C79005F316C /* NoteData.cpp */,
 				AA6EFDE604770C79005F316C /* NoteData.h */,
@@ -3582,7 +3583,6 @@
 				AA70E3680663112800DAE1FD /* TrailUtil.h */,
 				AA07328C0954381800F396C5 /* XmlFileUtil.cpp */,
 				AA07328D0954381800F396C5 /* XmlFileUtil.h */,
-				AABE830D0A9524D400001678 /* ModsGroup.cpp */,
 			);
 			name = DataStructures;
 			sourceTree = "<group>";
