@@ -176,33 +176,10 @@ void ScreenSelectMusic::BeginScreen()
 	ScreenWithMenuElements::BeginScreen();
 	OPTIONS_MENU_AVAILABLE.Load( m_sName, "OptionsMenuAvailable" );
 
-	// Set up extra stage mods.
-	if( GAMESTATE->IsAnExtraStage() )
-	{
-		// make the preferred group the group of the last song played.
-		if( GAMESTATE->m_sPreferredSongGroup == GROUP_ALL  &&  !PREFSMAN->m_bPickExtraStage )
-		{
-			ASSERT( GAMESTATE->m_pCurSong );
-			GAMESTATE->m_sPreferredSongGroup.Set( GAMESTATE->m_pCurSong->m_sGroupName );
-		}
-		
-		Song* pSong;
-		Steps* pSteps;
-		PlayerOptions po;
-		SongOptions so;
-		SONGMAN->GetExtraStageInfo( GAMESTATE->IsExtraStage2(), GAMESTATE->GetCurrentStyle(), pSong, pSteps, &po, &so );
-		GAMESTATE->m_pCurSong.Set( pSong );
-		GAMESTATE->m_pPreferredSong = pSong;
-		FOREACH_HumanPlayer( pn )
-		{
-			GAMESTATE->m_pCurSteps[pn].Set( pSteps );
-			GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.Assign( ModsLevel_Stage, po );
-			GAMESTATE->m_PreferredDifficulty[pn].Set( pSteps->GetDifficulty() );
-			MESSAGEMAN->Broadcast( ssprintf("PlayerOptionsChangedP%i", pn+1) );
-		}
-		GAMESTATE->m_SongOptions.Assign( ModsLevel_Stage, so );
-		MESSAGEMAN->Broadcast( "SongOptionsChanged" );
-	}
+	// Set up stage mods.
+	Lua *L = LUA->Get();
+	LuaHelpers::Call( L, "SetupStageMods" );
+	LUA->Release( L );
 	
 	m_MusicWheel.BeginScreen();
 		
