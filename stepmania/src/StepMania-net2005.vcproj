@@ -1237,6 +1237,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ModsGroup.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ModsGroup.h"
 				>
 			</File>
