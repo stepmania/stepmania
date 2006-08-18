@@ -60,6 +60,8 @@ Song* GameState::GetDefaultSong() const
 	return sid.ToSong();
 }
 
+static DynamicThemeMetric<bool> ARE_STAGE_MODS_FORCED( "GameState","AreStageModsForced" );
+
 
 GameState::GameState() :
 	m_pCurGame(			Message_CurrentGameChanged ),
@@ -484,8 +486,7 @@ void GameState::BeginStage()
 
 	ResetStageStatistics();
 
-	// Stage mods for extra stage have already been set. Don't overwrite preferred.
-	if( !IsAnExtraStage() )
+	if( !ARE_STAGE_MODS_FORCED )
 	{
 		FOREACH_PlayerNumber( p )
 			m_pPlayerState[p]->m_PlayerOptions.Assign( ModsLevel_Stage, m_pPlayerState[p]->m_PlayerOptions.GetPreferred() );
