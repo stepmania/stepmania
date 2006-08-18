@@ -201,7 +201,7 @@ void MainMenuDlg::OnBnClickedClearKeymaps()
 	if( !FILEMAN->Remove(SpecialFiles::KEYMAPS_PATH) )
 		Dialog::OK( ssprintf(FAILED_TO_DELETE_FILE.GetValue(), SpecialFiles::KEYMAPS_PATH.c_str()) );
 
-	Dialog::OK( ssprintf(CLEARED.GetValue(),SpecialFiles::PREFERENCES_INI_PATH.c_str()) );
+	Dialog::OK( ssprintf(CLEARED.GetValue(),SpecialFiles::KEYMAPS_PATH.c_str()) );
 }
 
 void MainMenuDlg::OnBnClickedChangePreferences()
