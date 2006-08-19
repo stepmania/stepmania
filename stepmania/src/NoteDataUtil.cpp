@@ -1068,7 +1068,7 @@ static void SuperShuffleTaps( NoteData &inout, int iStartIndex, int iEndIndex )
 			case TapNote::tap:
 			case TapNote::mine:
 			case TapNote::attack:
-			case TapNote::lift;
+			case TapNote::lift:
 				break;	// shuffle this
 			DEFAULT_FAIL( tn1.type );
 			}
@@ -1099,7 +1099,7 @@ static void SuperShuffleTaps( NoteData &inout, int iStartIndex, int iEndIndex )
 				case TapNote::tap:
 				case TapNote::mine:
 				case TapNote::attack:
-				case TapNote::lift;
+				case TapNote::lift:
 					break;	// ok to swap with this
 				DEFAULT_FAIL( tn2.type );
 				}
