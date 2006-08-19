@@ -726,6 +726,8 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 			SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_LifeType, SongOptions::LIFE_BATTERY );
 			SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_iBatteryLives, pCourse->m_iLives );
 		}
+		if( pCourse->GetCourseType() == COURSE_TYPE_SURVIVAL)
+			SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_LifeType, SongOptions::LIFE_TIME );
 	}
 	else
 	{
