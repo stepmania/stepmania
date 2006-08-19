@@ -200,6 +200,7 @@ end
 
 function OptionsMenuAvailable()
 	if GAMESTATE:IsAnExtraStage() then return false end
+	if GAMESTATE:GetPlayMode() == PLAY_MODE_ONI then return false end
 	return true
 end
 
