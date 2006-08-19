@@ -234,6 +234,8 @@ void ScreenEdit::InitEditMappings()
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_RIGHT_SIDE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RALT);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_LAY_MINE_OR_ROLL][0]   = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
 	// m_EditMappingsDeviceInput.button[EDIT_BUTTON_LAY_TAP_ATTACK][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_LAY_LIFT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_LAY_LIFT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
 
 	m_EditMappingsDeviceInput.button    [EDIT_BUTTON_SCROLL_SPEED_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_UP);
 	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SCROLL_SPEED_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
@@ -285,6 +287,8 @@ void ScreenEdit::InitEditMappings()
 
 	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_LAY_MINE_OR_ROLL][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
 	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_LAY_MINE_OR_ROLL][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
+	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_LAY_LIFT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
+	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_LAY_LIFT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
 	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_REMOVE_NOTE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LALT);
 	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_REMOVE_NOTE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RALT);
 	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
@@ -1206,13 +1210,22 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				SaveUndo();
 				TapNote tn = TAP_ORIGINAL_MINE;
 				tn.pn = m_InputPlayerNumber;
-				m_NoteDataEdit.SetTapNote(iCol, iSongIndex, tn );
+				m_NoteDataEdit.SetTapNote( iCol, iSongIndex, tn );
 				CheckNumberOfNotesAndUndo();
 			}
 			else if( EditIsBeingPressed(EDIT_BUTTON_LAY_TAP_ATTACK) )
 			{
 				g_iLastInsertTapAttackTrack = iCol;
 				EditMiniMenu( &g_InsertTapAttack, SM_BackFromInsertTapAttack );
+			}
+			else if( EditIsBeingPressed(EDIT_BUTTON_LAY_LIFT) )
+			{
+				m_soundAddNote.Play();
+				SaveUndo();
+				TapNote tn = TAP_ORIGINAL_LIFT;
+				tn.pn = m_InputPlayerNumber;
+				m_NoteDataEdit.SetTapNote( iCol, iSongIndex, tn );
+				CheckNumberOfNotesAndUndo();
 			}
 			else
 			{
@@ -1945,6 +1958,8 @@ void ScreenEdit::InputRecord( const InputEventPlus &input, EditButton EditB )
 			TapNote tn = TAP_ORIGINAL_TAP;
 			if( EditIsBeingPressed(EDIT_BUTTON_LAY_MINE_OR_ROLL) )
 				tn = TAP_ORIGINAL_MINE;
+			else if( EditIsBeingPressed(EDIT_BUTTON_LAY_LIFT) )
+				tn = TAP_ORIGINAL_LIFT;
 			tn.pn = m_InputPlayerNumber;
 			m_NoteDataRecord.SetTapNote( iCol, iRow, tn );
 			m_NoteFieldRecord.Step( iCol, TNS_W1 );
@@ -3582,6 +3597,7 @@ static const EditHelpLine g_EditHelpLines[] =
 	EditHelpLine( "Delete beat and shift up",			EDIT_BUTTON_DELETE ),
 	EditHelpLine( "Shift BPM changes and stops up one beat",	EDIT_BUTTON_DELETE_SHIFT_PAUSES ),
 	EditHelpLine( "Lay mine",					EDIT_BUTTON_LAY_MINE_OR_ROLL ),
+	EditHelpLine( "Lay lift",					EDIT_BUTTON_LAY_LIFT ),
 	EditHelpLine( "Add to/remove from right half",			EDIT_BUTTON_RIGHT_SIDE ),
 };
 
