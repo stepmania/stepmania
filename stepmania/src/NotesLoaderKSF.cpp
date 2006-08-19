@@ -296,13 +296,14 @@ void KSFLoader::LoadTags( const RString &str, Song &out )
 	vector<RString> asBits;
 	split( str, " - ", asBits, false );
 	/* Ignore the difficulty, since we get that elsewhere. */
-	if( asBits.size() == 3 &&
-	    (!stricmp(asBits[2], "double") ||
-	     !stricmp(asBits[2], "easy") ||
-	     !stricmp(asBits[2], "normal") ||
-	     !stricmp(asBits[2], "hard") ||
-	     !stricmp(asBits[2], "crazy") ||
-		 !stricmp(asBits[2], "nightmare")) )
+	if( asBits.size() == 3 && (
+		!stricmp(asBits[2], "double") ||
+		!stricmp(asBits[2], "easy") ||
+		!stricmp(asBits[2], "normal") ||
+		!stricmp(asBits[2], "hard") ||
+		!stricmp(asBits[2], "crazy") ||
+		!stricmp(asBits[2], "nightmare")) 
+		)
 	{
 		asBits.erase( asBits.begin()+2, asBits.begin()+3 );
 	}
