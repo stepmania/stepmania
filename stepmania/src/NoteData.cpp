@@ -389,7 +389,7 @@ bool NoteData::IsHoldNoteAtRow( int iTrack, int iRow, int *pHeadRow ) const
 		case TapNote::tap:
 		case TapNote::mine:
 		case TapNote::attack:
-		case TapNote::lift;
+		case TapNote::lift:
 			return false;
 
 		case TapNote::empty:
