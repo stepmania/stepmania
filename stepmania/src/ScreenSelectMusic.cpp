@@ -450,6 +450,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	// codes.  Do default processing of Start AFTER detecting codes.  This gives us a 
 	// change to return if Start is part of a code because we don't want to process 
 	// Start as "move to the next screen" if it was just part of a code.
+	// XXX: Why are we doing this here? Menu(Up|Down|Left|Right) don't do anything. -- Steve
 	switch( input.MenuI.button )
 	{
 	case MENU_BUTTON_UP:	this->MenuUp( input );		break;
