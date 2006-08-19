@@ -2,29 +2,20 @@
 #include "Course.h"
 #include "PrefsManager.h"
 #include "song.h"
-#include "GameManager.h"
-#include "SongManager.h"
-#include "SongUtil.h"
-#include "GameState.h"
-#include "RageException.h"
-#include "RageLog.h"
-#include "PlayerOptions.h"
-#include "SongOptions.h"
 #include "SongCacheIndex.h"
-#include "RageUtil.h"
-#include "TitleSubstitution.h"
+#include "GameManager.h"
+#include "GameState.h"
+#include "RageLog.h"
 #include "Steps.h"
-#include "BannerCache.h"
 #include "ThemeManager.h"
 #include "ProfileManager.h"
 #include "Foreach.h"
 #include "UnlockManager.h"
-#include <limits.h>
 #include "CourseLoaderCRS.h"
 #include "LuaFunctions.h"
 #include "LocalizedString.h"
-#include "StepsUtil.h"
 #include "Preference.h"
+#include <limits.h>
 
 static Preference<int> MAX_SONGS_IN_EDIT_COURSE( "MaxSongsInEditCourse", -1 );
 

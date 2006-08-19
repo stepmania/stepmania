@@ -3,22 +3,16 @@
 #ifndef COURSE_H
 #define COURSE_H
 
-#include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
 #include "Attack.h"
-#include <map>
-#include "Trail.h"
-#include <set>
 #include "EnumHelper.h"
+#include "Trail.h"
 #include "RageTypes.h"
 #include "SongUtil.h"
 #include "StepsUtil.h"
+#include <map>
+#include <set>
 
-class PlayerOptions;
-class SongOptions;
-class Song;
-class Steps;
-class Profile;
 struct lua_State;
 
 const int MAX_EDIT_COURSE_TITLE_LENGTH = 12;
