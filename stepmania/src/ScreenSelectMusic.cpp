@@ -137,11 +137,6 @@ void ScreenSelectMusic::Init()
 	COMMAND( m_sprCDTitleBack, "Back" );
 	this->AddChild( &m_sprCDTitleBack );
 
-	m_textNumSongs.SetName( "NumSongs" );
-	m_textNumSongs.LoadFromFont( THEME->GetPathF(m_sName,"num songs") );
-	SET_XY( m_textNumSongs );
-	this->AddChild( &m_textNumSongs );
-
 	m_textTotalTime.SetName( "TotalTime" );
 	m_textTotalTime.LoadFromFont( THEME->GetPathF(m_sName,"total time") );
 	SET_XY( m_textTotalTime );
@@ -949,7 +944,6 @@ void ScreenSelectMusic::AfterMusicChange()
 		m_fSampleStartSeconds = 0;
 		m_fSampleLengthSeconds = -1;
 
-		m_textNumSongs.SetText( "" );
 		m_textTotalTime.SetText( "" );
 		
 		switch( m_MusicWheel.GetSelectedType() )
@@ -984,7 +978,6 @@ void ScreenSelectMusic::AfterMusicChange()
 		m_fSampleStartSeconds = pSong->m_fMusicSampleStartSeconds;
 		m_fSampleLengthSeconds = pSong->m_fMusicSampleLengthSeconds;
 
-		m_textNumSongs.SetText( ssprintf("%d", SongManager::GetNumStagesForSong(pSong) ) );
 		m_textTotalTime.SetText( SecondsToMMSSMsMs(pSong->m_fMusicLengthSeconds) );
 
 		SongUtil::GetSteps( pSong, m_vpSteps, GAMESTATE->GetCurrentStyle()->m_StepsType );
@@ -1015,7 +1008,6 @@ void ScreenSelectMusic::AfterMusicChange()
 		m_fSampleStartSeconds = 0;
 		m_fSampleLengthSeconds = -1;
 
-		m_textNumSongs.SetText( ssprintf("%d", pCourse->GetEstimatedNumStages()) );
 		float fTotalSeconds;
 		if( pCourse->GetTotalSeconds(st,fTotalSeconds) )
 			m_textTotalTime.SetText( SecondsToMMSSMsMs(fTotalSeconds) );

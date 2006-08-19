@@ -77,7 +77,6 @@ protected:
 
 	FadingBanner			m_Banner;
 	Sprite				m_sprCDTitleFront, m_sprCDTitleBack;
-	BitmapText			m_textNumSongs;
 	BitmapText			m_textTotalTime;
 	Sprite				m_sprHighScoreFrame[NUM_PLAYERS];
 	BitmapText			m_textHighScore[NUM_PLAYERS];
