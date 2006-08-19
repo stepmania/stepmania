@@ -360,7 +360,12 @@ void SortRStringArray( vector<RString> &asAddTo, const bool bSortAscending = tru
 
 /* Find the mean and standard deviation of all numbers in [start,end). */
 float calc_mean( const float *pStart, const float *pEnd );
-float calc_stddev( const float *pStart, const float *pEnd );
+/* When bSample is true, it calculates the square root of an unbiased estimator for the population
+ * variance. Note that this is not an unbiased estimator for the population standard deviation but
+ * it is close and an unbiased estimator is complicated (apparently).
+ * When the entire population is known, bSample should be false to calculate the exact standard
+ * deviation. */
+float calc_stddev( const float *pStart, const float *pEnd, bool bSample = false );
 
 template<class T1, class T2>
 int FindIndex( T1 begin, T1 end, const T2 *p )

@@ -933,7 +933,7 @@ float calc_mean( const float *pStart, const float *pEnd )
 	return accumulate( pStart, pEnd, 0.f ) / distance( pStart, pEnd );
 }
 
-float calc_stddev( const float *pStart, const float *pEnd )
+float calc_stddev( const float *pStart, const float *pEnd, bool bSample )
 {
 	/* Calculate the mean. */
 	float fMean = calc_mean( pStart, pEnd );
@@ -942,7 +942,7 @@ float calc_stddev( const float *pStart, const float *pEnd )
 	float fDev = 0.0f;
 	for( const float *i=pStart; i != pEnd; ++i )
 		fDev += (*i - fMean) * (*i - fMean);
-	fDev /= distance( pStart, pEnd );
+	fDev /= distance( pStart, pEnd ) - (bSample ? 1 : 0);
 	fDev = sqrtf( fDev );
 
 	return fDev;
