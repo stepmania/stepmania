@@ -1068,9 +1068,9 @@ static void SuperShuffleTaps( NoteData &inout, int iStartIndex, int iEndIndex )
 			case TapNote::tap:
 			case TapNote::mine:
 			case TapNote::attack:
+			case TapNote::lift;
 				break;	// shuffle this
-			default:
-				ASSERT(0);
+			DEFAULT_FAIL( tn1.type );
 			}
 
 			DEBUG_ASSERT_M( !inout.IsHoldNoteAtRow(t1,r), ssprintf("There is a tap.type = %d inside of a hold at row %d", tn1.type, r) );
@@ -1099,9 +1099,9 @@ static void SuperShuffleTaps( NoteData &inout, int iStartIndex, int iEndIndex )
 				case TapNote::tap:
 				case TapNote::mine:
 				case TapNote::attack:
+				case TapNote::lift;
 					break;	// ok to swap with this
-				default:
-					ASSERT(0);
+				DEFAULT_FAIL( tn2.type );
 				}
 
 				// don't swap into the middle of a hold note
