@@ -1,9 +1,12 @@
 function AreStageModsForced()
-	if GAMESTATE:IsAnExtraStage() then return true end
-	return false
+	local bExtraStage = GAMESTATE:IsAnExtraStage()
+	local bOni = GAMESTATE:GetPlayMode() == PLAY_MODE_ONI
+	Trace( "bExtraStage = " .. tostring(bExtraStage) )
+	Trace( "bOni        = " .. tostring(bOni) )
+	return bExtraStage or bOni
 end
 
-function ScreenSelectMusic:setupstagemods()
+function ScreenSelectMusic:setupmusicstagemods()
 	if not GAMESTATE:IsAnExtraStage() then return end
 	if GAMESTATE:GetPreferredSongGroup() == "---Group All---" and
 	   not PREFSMAN:GetPreference("PickExtraStage") then
@@ -30,6 +33,26 @@ function ScreenSelectMusic:setupstagemods()
 	GAMESTATE:SetSongOptions( ModsLevel_Stage, so )
 	MESSAGEMAN:Broadcast( "SongOptionsChanged" )
 end
+
+function ScreenSelectMusic:setupcoursestagemods()
+	local mode = GAMESTATE:GetPlayMode()
+	
+	if mode == PLAY_MODE_ONI then
+		local po = "clearall," .. NOTESKIN:GetGameBaseNoteSkinName()
+		-- Let SSMusic set battery.
+		-- local so = "failimmediate,battery"
+		local so = "failimmediate"
+		local fun = function( dummy, pn )
+			GAMESTATE:GetPlayerState(pn):SetPlayerOptions( ModsLevel_Stage, po )
+			MESSAGEMAN:Broadcast( "PlayerOptionsChangedP" .. (pn+1) )
+		end
+
+		table.foreach( GAMESTATE:GetHumanPlayers(), fun )
+		GAMESTATE:SetSongOptions( ModsLevel_Stage, so )
+		MESSAGEMAN:Broadcast( "SongOptionsChanged" )
+	end
+end
+
 -- 
 -- (c) 2006 Steve Checkoway
 -- All rights reserved.
