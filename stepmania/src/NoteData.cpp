@@ -389,14 +389,14 @@ bool NoteData::IsHoldNoteAtRow( int iTrack, int iRow, int *pHeadRow ) const
 		case TapNote::tap:
 		case TapNote::mine:
 		case TapNote::attack:
+		case TapNote::lift;
 			return false;
 
 		case TapNote::empty:
 		case TapNote::autoKeysound:
 			/* ignore */
 			continue;
-		default:
-			FAIL_M( ssprintf("%i", tn.type) );
+		DEFAULT_FAIL( tn.type );
 		}
 
 		if( bFoundHead )
