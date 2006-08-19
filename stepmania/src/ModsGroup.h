@@ -58,10 +58,10 @@ public:
 	template<typename U, typename V>
 	void Assign_n( ModsLevel level, V member, size_t index, const U &val )
 	{
-			if( level != ModsLevel_Song )
-				(m_Current.*member)[index] = val;
-			for( ; level < NUM_ModsLevel; enum_add(level, 1) )
-				(m_[level].*member)[index] = val;
+		if( level != ModsLevel_Song )
+			(m_Current.*member)[index] = val;
+		for( ; level < NUM_ModsLevel; enum_add(level, 1) )
+			(m_[level].*member)[index] = val;
 	}	
 	
 	void Assign( ModsLevel level, const T &val )
