@@ -1886,7 +1886,7 @@ void ScreenGameplay::UpdateLights()
 				FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( nd, t, r, iRowLastCrossed+1, iSongRow+1 )
 				{
 					const TapNote &tn = nd.GetTapNote( t, r );
-					if( tn.type != TapNote::empty && tn.type != TapNote::mine )
+					if( tn.type != TapNote::mine )
 						bBlink = true;
 				}
 
