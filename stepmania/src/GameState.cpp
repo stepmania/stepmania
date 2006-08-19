@@ -486,6 +486,7 @@ void GameState::BeginStage()
 
 	ResetStageStatistics();
 
+	ARE_STAGE_MODS_FORCED.Read(); // XXX: where does this belong?
 	if( !ARE_STAGE_MODS_FORCED )
 	{
 		FOREACH_PlayerNumber( p )
