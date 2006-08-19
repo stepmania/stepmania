@@ -1,8 +1,6 @@
 function AreStageModsForced()
 	local bExtraStage = GAMESTATE:IsAnExtraStage()
 	local bOni = GAMESTATE:GetPlayMode() == PLAY_MODE_ONI
-	Trace( "bExtraStage = " .. tostring(bExtraStage) )
-	Trace( "bOni        = " .. tostring(bOni) )
 	return bExtraStage or bOni
 end
 
