@@ -98,6 +98,18 @@
 		AA1F9C4A09AF1BF5002C15A8 /* PumpDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA1F9C4609AF1BF5002C15A8 /* PumpDevice.cpp */; };
 		AA21D59D0712ADE4008B825F /* ScreenDimensions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA21D59C0712ADE4008B825F /* ScreenDimensions.cpp */; };
 		AA21D5A20712AE16008B825F /* ThemeMetric.h in Headers */ = {isa = PBXBuildFile; fileRef = AA21D5A10712AE16008B825F /* ThemeMetric.h */; };
+		AA21E4790A9826CD00684CEA /* libjpeg_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA21E4730A9826CD00684CEA /* libjpeg_link.a */; };
+		AA21E47A0A9826CD00684CEA /* liblua_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA21E4740A9826CD00684CEA /* liblua_link.a */; };
+		AA21E47B0A9826CD00684CEA /* libogg_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA21E4750A9826CD00684CEA /* libogg_link.a */; };
+		AA21E47C0A9826CD00684CEA /* libpng_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA21E4760A9826CD00684CEA /* libpng_link.a */; };
+		AA21E47D0A9826CD00684CEA /* libtheora_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA21E4770A9826CD00684CEA /* libtheora_link.a */; };
+		AA21E47E0A9826CD00684CEA /* libvorbis_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA21E4780A9826CD00684CEA /* libvorbis_link.a */; };
+		AA21E47F0A9826CD00684CEA /* libjpeg_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA21E4730A9826CD00684CEA /* libjpeg_link.a */; };
+		AA21E4800A9826CD00684CEA /* liblua_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA21E4740A9826CD00684CEA /* liblua_link.a */; };
+		AA21E4810A9826CD00684CEA /* libogg_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA21E4750A9826CD00684CEA /* libogg_link.a */; };
+		AA21E4820A9826CD00684CEA /* libpng_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA21E4760A9826CD00684CEA /* libpng_link.a */; };
+		AA21E4830A9826CD00684CEA /* libtheora_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA21E4770A9826CD00684CEA /* libtheora_link.a */; };
+		AA21E4840A9826CD00684CEA /* libvorbis_link.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA21E4780A9826CD00684CEA /* libvorbis_link.a */; };
 		AA22CBA506DE909C0083BA97 /* ScreenNetSelectMusic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA22CBA306DE909C0083BA97 /* ScreenNetSelectMusic.cpp */; };
 		AA22CBA606DE909C0083BA97 /* ScreenNetSelectMusic.h in Headers */ = {isa = PBXBuildFile; fileRef = AA22CBA406DE909C0083BA97 /* ScreenNetSelectMusic.h */; };
 		AA230EB006043704002672F3 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA230EAE06043704002672F3 /* AudioToolbox.framework */; };
@@ -1383,12 +1395,6 @@
 		AA40D51D09A08D650068C0D5 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA230EAF06043704002672F3 /* AudioUnit.framework */; };
 		AA40D51E09A08D650068C0D5 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA8E0020696984300FCE1F9 /* CoreAudio.framework */; };
 		AA40D51F09A08D650068C0D5 /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA77E8A108B6ABD500FA24CA /* vecLib.framework */; };
-		AA40D52009A08D650068C0D5 /* libjpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA3789309099AE100141131 /* libjpeg.a */; };
-		AA40D52109A08D650068C0D5 /* liblua.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA3789409099AE100141131 /* liblua.a */; };
-		AA40D52209A08D650068C0D5 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA378E909099AE100141131 /* libpng.a */; };
-		AA40D52309A08D650068C0D5 /* libtheora.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA3791309099AE200141131 /* libtheora.a */; };
-		AA40D52409A08D650068C0D5 /* libvorbis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA3791409099AE200141131 /* libvorbis.a */; };
-		AA40D52509A08D650068C0D5 /* libogg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA378E809099AE100141131 /* libogg.a */; };
 		AA42F5E8067068D30013509E /* ScreenNetworkOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA42F5E6067068D30013509E /* ScreenNetworkOptions.cpp */; };
 		AA42F5E9067068D30013509E /* ScreenNetworkOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = AA42F5E7067068D30013509E /* ScreenNetworkOptions.h */; };
 		AA44705409846B0800983E82 /* HIDDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = AA44705209846B0800983E82 /* HIDDevice.h */; };
@@ -1518,8 +1524,6 @@
 		AA8CF5190A4518BE0005F1B4 /* RageSoundDriver_AU.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8CF5150A4518BE0005F1B4 /* RageSoundDriver_AU.h */; };
 		AA8CF51A0A4518BE0005F1B4 /* RageSoundDriver_AU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8CF5160A4518BE0005F1B4 /* RageSoundDriver_AU.cpp */; };
 		AA8E4BC909787C9500765149 /* MenuInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8E4BC609787C9400765149 /* MenuInput.cpp */; };
-		AA8E55AD090B7F3C00D8CD2D /* libvorbis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA3791409099AE200141131 /* libvorbis.a */; };
-		AA8E55AE090B7F4000D8CD2D /* libogg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA378E809099AE100141131 /* libogg.a */; };
 		AA8EE0760866E266002C51A7 /* LuaBinding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8EE0750866E266002C51A7 /* LuaBinding.cpp */; };
 		AA8F13710624BAB200C6A467 /* EnumHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8F136F0624BAB200C6A467 /* EnumHelper.h */; };
 		AA9091A1067ED43000C1FCFF /* RageSurface_Load_BMP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA90919F067ED43000C1FCFF /* RageSurface_Load_BMP.cpp */; };
@@ -1539,10 +1543,6 @@
 		AAA372D50909934500141131 /* MovieTexture_Generic.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA372D10909934500141131 /* MovieTexture_Generic.h */; };
 		AAA372D60909934500141131 /* MovieTexture_Theora.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA372D20909934500141131 /* MovieTexture_Theora.cpp */; };
 		AAA372D70909934500141131 /* MovieTexture_Theora.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA372D30909934500141131 /* MovieTexture_Theora.h */; };
-		AAA3833809099AEC00141131 /* libjpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA3789309099AE100141131 /* libjpeg.a */; };
-		AAA3833909099AEC00141131 /* liblua.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA3789409099AE100141131 /* liblua.a */; };
-		AAA3838B09099AEC00141131 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA378E909099AE100141131 /* libpng.a */; };
-		AAA383AA09099AEC00141131 /* libtheora.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA3791309099AE200141131 /* libtheora.a */; };
 		AAA6BFEC0644AB3700AFBBC8 /* ScreenWithMenuElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA6BFEA0644AB3700AFBBC8 /* ScreenWithMenuElements.cpp */; };
 		AAA6BFED0644AB3700AFBBC8 /* ScreenWithMenuElements.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA6BFEB0644AB3700AFBBC8 /* ScreenWithMenuElements.h */; };
 		AAA71EA105EE154E00D2E8FF /* global.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA71EA005EE154E00D2E8FF /* global.cpp */; };
@@ -1898,6 +1898,12 @@
 		AA1F9C4609AF1BF5002C15A8 /* PumpDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PumpDevice.cpp; sourceTree = "<group>"; };
 		AA21D59C0712ADE4008B825F /* ScreenDimensions.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenDimensions.cpp; path = ../src/ScreenDimensions.cpp; sourceTree = "<group>"; };
 		AA21D5A10712AE16008B825F /* ThemeMetric.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ThemeMetric.h; path = ../src/ThemeMetric.h; sourceTree = "<group>"; };
+		AA21E4730A9826CD00684CEA /* libjpeg_link.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libjpeg_link.a; sourceTree = "<group>"; };
+		AA21E4740A9826CD00684CEA /* liblua_link.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = liblua_link.a; sourceTree = "<group>"; };
+		AA21E4750A9826CD00684CEA /* libogg_link.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libogg_link.a; sourceTree = "<group>"; };
+		AA21E4760A9826CD00684CEA /* libpng_link.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libpng_link.a; sourceTree = "<group>"; };
+		AA21E4770A9826CD00684CEA /* libtheora_link.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libtheora_link.a; sourceTree = "<group>"; };
+		AA21E4780A9826CD00684CEA /* libvorbis_link.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libvorbis_link.a; sourceTree = "<group>"; };
 		AA22CBA306DE909C0083BA97 /* ScreenNetSelectMusic.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenNetSelectMusic.cpp; path = ../src/ScreenNetSelectMusic.cpp; sourceTree = "<group>"; };
 		AA22CBA406DE909C0083BA97 /* ScreenNetSelectMusic.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenNetSelectMusic.h; path = ../src/ScreenNetSelectMusic.h; sourceTree = "<group>"; };
 		AA230EAE06043704002672F3 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
@@ -2429,12 +2435,6 @@
 		AAA372D10909934500141131 /* MovieTexture_Generic.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MovieTexture_Generic.h; path = MovieTexture/MovieTexture_Generic.h; sourceTree = "<group>"; };
 		AAA372D20909934500141131 /* MovieTexture_Theora.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MovieTexture_Theora.cpp; path = MovieTexture/MovieTexture_Theora.cpp; sourceTree = "<group>"; };
 		AAA372D30909934500141131 /* MovieTexture_Theora.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MovieTexture_Theora.h; path = MovieTexture/MovieTexture_Theora.h; sourceTree = "<group>"; };
-		AAA3789309099AE100141131 /* libjpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libjpeg.a; sourceTree = "<group>"; };
-		AAA3789409099AE100141131 /* liblua.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = liblua.a; sourceTree = "<group>"; };
-		AAA378E809099AE100141131 /* libogg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libogg.a; sourceTree = "<group>"; };
-		AAA378E909099AE100141131 /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libpng.a; sourceTree = "<group>"; };
-		AAA3791309099AE200141131 /* libtheora.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libtheora.a; sourceTree = "<group>"; };
-		AAA3791409099AE200141131 /* libvorbis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libvorbis.a; sourceTree = "<group>"; };
 		AAA6BFEA0644AB3700AFBBC8 /* ScreenWithMenuElements.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenWithMenuElements.cpp; path = ../src/ScreenWithMenuElements.cpp; sourceTree = "<group>"; };
 		AAA6BFEB0644AB3700AFBBC8 /* ScreenWithMenuElements.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenWithMenuElements.h; path = ../src/ScreenWithMenuElements.h; sourceTree = "<group>"; };
 		AAA71EA005EE154E00D2E8FF /* global.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = global.cpp; sourceTree = "<group>"; };
@@ -2742,13 +2742,13 @@
 				AA230EB106043704002672F3 /* AudioUnit.framework in Frameworks */,
 				AAA8E0030696984300FCE1F9 /* CoreAudio.framework in Frameworks */,
 				AA77E8B108B6ABD500FA24CA /* vecLib.framework in Frameworks */,
-				AAA3833809099AEC00141131 /* libjpeg.a in Frameworks */,
-				AAA3833909099AEC00141131 /* liblua.a in Frameworks */,
-				AAA3838B09099AEC00141131 /* libpng.a in Frameworks */,
-				AAA383AA09099AEC00141131 /* libtheora.a in Frameworks */,
-				AA8E55AD090B7F3C00D8CD2D /* libvorbis.a in Frameworks */,
-				AA8E55AE090B7F4000D8CD2D /* libogg.a in Frameworks */,
 				AABAAE96097A82C1009D1ED3 /* mad.framework in Frameworks */,
+				AA21E4790A9826CD00684CEA /* libjpeg_link.a in Frameworks */,
+				AA21E47A0A9826CD00684CEA /* liblua_link.a in Frameworks */,
+				AA21E47B0A9826CD00684CEA /* libogg_link.a in Frameworks */,
+				AA21E47C0A9826CD00684CEA /* libpng_link.a in Frameworks */,
+				AA21E47D0A9826CD00684CEA /* libtheora_link.a in Frameworks */,
+				AA21E47E0A9826CD00684CEA /* libvorbis_link.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2767,12 +2767,12 @@
 				AA40D51D09A08D650068C0D5 /* AudioUnit.framework in Frameworks */,
 				AA40D51E09A08D650068C0D5 /* CoreAudio.framework in Frameworks */,
 				AA40D51F09A08D650068C0D5 /* vecLib.framework in Frameworks */,
-				AA40D52009A08D650068C0D5 /* libjpeg.a in Frameworks */,
-				AA40D52109A08D650068C0D5 /* liblua.a in Frameworks */,
-				AA40D52209A08D650068C0D5 /* libpng.a in Frameworks */,
-				AA40D52309A08D650068C0D5 /* libtheora.a in Frameworks */,
-				AA40D52409A08D650068C0D5 /* libvorbis.a in Frameworks */,
-				AA40D52509A08D650068C0D5 /* libogg.a in Frameworks */,
+				AA21E47F0A9826CD00684CEA /* libjpeg_link.a in Frameworks */,
+				AA21E4800A9826CD00684CEA /* liblua_link.a in Frameworks */,
+				AA21E4810A9826CD00684CEA /* libogg_link.a in Frameworks */,
+				AA21E4820A9826CD00684CEA /* libpng_link.a in Frameworks */,
+				AA21E4830A9826CD00684CEA /* libtheora_link.a in Frameworks */,
+				AA21E4840A9826CD00684CEA /* libvorbis_link.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3846,12 +3846,12 @@
 		AAA3741C09099ADA00141131 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				AAA3789309099AE100141131 /* libjpeg.a */,
-				AAA3789409099AE100141131 /* liblua.a */,
-				AAA378E809099AE100141131 /* libogg.a */,
-				AAA378E909099AE100141131 /* libpng.a */,
-				AAA3791309099AE200141131 /* libtheora.a */,
-				AAA3791409099AE200141131 /* libvorbis.a */,
+				AA21E4730A9826CD00684CEA /* libjpeg_link.a */,
+				AA21E4740A9826CD00684CEA /* liblua_link.a */,
+				AA21E4750A9826CD00684CEA /* libogg_link.a */,
+				AA21E4760A9826CD00684CEA /* libpng_link.a */,
+				AA21E4770A9826CD00684CEA /* libtheora_link.a */,
+				AA21E4780A9826CD00684CEA /* libvorbis_link.a */,
 			);
 			path = Libraries;
 			sourceTree = "<group>";
@@ -4951,6 +4951,7 @@
 			buildConfigurationList = AA40D52709A08D650068C0D5 /* Build configuration list for PBXNativeTarget "stepmania-bare" */;
 			buildPhases = (
 				AA40D1B709A08D650068C0D5 /* ShellScript */,
+				AA21E4880A98289F00684CEA /* ShellScript */,
 				AA40D1B809A08D650068C0D5 /* Headers */,
 				AA40D37B09A08D650068C0D5 /* Resources */,
 				AA40D37D09A08D650068C0D5 /* CopyFiles */,
@@ -5019,6 +5020,31 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		AA21E4880A98289F00684CEA /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 12;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Libraries/libpng.a",
+				"$(SRCROOT)/Libraries/libogg.a",
+				"$(SRCROOT)/Libraries/liblua.a",
+				"$(SRCROOT)/Libraries/libjpeg.a",
+				"$(SRCROOT)/Libraries/libvorbis.a",
+				"$(SRCROOT)/Libraries/libtheora.a",
+			);
+			outputPaths = (
+				"$(SRCROOT)/Libraries/libpng_link.a",
+				"$(SRCROOT)/Libraries/libogg_link.a",
+				"$(SRCROOT)/Libraries/liblua_link.a",
+				"$(SRCROOT)/Libraries/libjpeg_link.a",
+				"$(SRCROOT)/Libraries/libvorbis_link.a",
+				"$(SRCROOT)/Libraries/libtheora_link.a",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "for i in theora vorbis jpeg lua ogg png; do\n\tcp \"$SRCROOT\"/Libraries/lib${i}.a \"$SRCROOT\"/Libraries/lib${i}_link.a\n\tranlib \"$SRCROOT\"/Libraries/lib${i}_link.a\ndone";
+		};
 		AA40D1B709A08D650068C0D5 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -5031,7 +5057,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "ranlib Libraries/*.a\nrm -rf \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/mad.framework\"\n";
+			shellScript = "rm -rf \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Frameworks/mad.framework\"\n";
 		};
 		AAA74CCF090CE268003F9A36 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -5040,12 +5066,24 @@
 			files = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/Libraries/libvorbis.a",
+				"$(SRCROOT)/Libraries/libtheora.a",
+				"$(SRCROOT)/Libraries/libpng.a",
+				"$(SRCROOT)/Libraries/libogg.a",
+				"$(SRCROOT)/Libraries/liblua.a",
+				"$(SRCROOT)/Libraries/libjpeg.a",
 			);
 			outputPaths = (
+				"$(SRCROOT)/Libraries/libvorbis_link.a",
+				"$(SRCROOT)/Libraries/libtheora_link.a",
+				"$(SRCROOT)/Libraries/libpng_link.a",
+				"$(SRCROOT)/Libraries/libogg_link.a",
+				"$(SRCROOT)/Libraries/libjpeg_link.a",
+				"$(SRCROOT)/Libraries/liblua_link.a",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "ranlib Libraries/*.a";
+			shellScript = "for i in theora vorbis jpeg lua ogg png; do\n\tcp \"$SRCROOT\"/Libraries/lib${i}.a \"$SRCROOT\"/Libraries/lib${i}_link.a\n\tranlib \"$SRCROOT\"/Libraries/lib${i}_link.a\ndone";
 		};
 /* End PBXShellScriptBuildPhase section */
 
