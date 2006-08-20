@@ -6,7 +6,6 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "PlayerState.h"
-#include "Command.h"
 
 #define ITEM_X( i )				THEME->GetMetricF("ScoreDisplayBattle",ssprintf("Item%dX",i+1))
 #define ITEM_Y( i )				THEME->GetMetricF("ScoreDisplayBattle",ssprintf("Item%dY",i+1))

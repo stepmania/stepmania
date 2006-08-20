@@ -8,7 +8,6 @@
 #include "ThemeManager.h"
 #include "GameCommand.h"
 #include "LightsManager.h"
-#include "Command.h"
 #include "InputEventPlus.h"
 
 #define CHOICE_NAMES		THEME->GetMetric (m_sName,"ChoiceNames")

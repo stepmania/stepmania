@@ -11,7 +11,6 @@
 #include "ThemeManager.h"
 #include "StepsUtil.h"
 #include "CommonMetrics.h"
-#include "Command.h"
 #include "Foreach.h"
 #include "SongUtil.h"
 #include "XmlFile.h"

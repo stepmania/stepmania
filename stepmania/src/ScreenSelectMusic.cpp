@@ -24,7 +24,6 @@
 #include "Foreach.h"
 #include "Style.h"
 #include "PlayerState.h"
-#include "Command.h"
 #include "CommonMetrics.h"
 #include "BannerCache.h"
 #include "song.h"

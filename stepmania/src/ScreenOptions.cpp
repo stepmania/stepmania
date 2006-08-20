@@ -10,7 +10,6 @@
 #include "InputMapper.h"
 #include "ActorUtil.h"
 #include "ScreenDimensions.h"
-#include "Command.h"
 #include "GameCommand.h"
 #include "OptionRowHandler.h"
 #include "LuaBinding.h"

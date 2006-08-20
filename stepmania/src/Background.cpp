@@ -16,7 +16,6 @@
 #include "ScreenDimensions.h"
 #include "ThemeMetric.h"
 #include "PlayerState.h"
-#include "Command.h"
 #include "ActorUtil.h"
 #include <set>
 #include <float.h>

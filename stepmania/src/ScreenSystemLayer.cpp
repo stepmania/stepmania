@@ -10,7 +10,6 @@
 #include "ProfileManager.h"
 #include "RageDisplay.h"
 #include "RageLog.h"
-#include "Command.h"
 #include "ScreenDimensions.h"
 
 

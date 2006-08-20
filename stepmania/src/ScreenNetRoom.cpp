@@ -7,7 +7,6 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "ScreenTextEntry.h"
-#include "Command.h"
 #include "WheelItemBase.h"
 #include "InputEventPlus.h"
 #include "LocalizedString.h"

@@ -10,7 +10,6 @@
 #include "ThemeManager.h"
 #include "Game.h"
 #include "ScreenDimensions.h"
-#include "Command.h"
 #include "InputEventPlus.h"
 #include "LocalizedString.h"
 

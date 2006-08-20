@@ -19,7 +19,6 @@
 #include "ScreenDimensions.h"
 #include "ScreenPrompt.h"
 #include "PlayerState.h"
-#include "Command.h"
 #include "RageLog.h"
 #include "song.h"
 #include "InputEventPlus.h"

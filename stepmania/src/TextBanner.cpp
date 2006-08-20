@@ -7,7 +7,6 @@
 #include "RageTextureManager.h"
 #include "ActorUtil.h"
 #include "ThemeMetric.h"
-#include "Command.h"
 
 
 void TextBanner::Load( RString sType )

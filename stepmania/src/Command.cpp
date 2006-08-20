@@ -7,14 +7,6 @@
 #include "Foreach.h"
 
 
-void IncorrectNumberArgsWarning( const Command &command, int iMaxIndexAccessed )
-{
-	const RString sError = ssprintf( "Actor::HandleCommand: Wrong number of arguments in command '%s'.  Expected %d but there are %u.",
-		command.GetOriginalCommandString().c_str(), iMaxIndexAccessed+1, unsigned(command.m_vsArgs.size()) );
-	LOG->Warn( sError );
-	Dialog::OK( sError );
-}
-
 RString Command::GetName() const 
 {
 	if( m_vsArgs.empty() )

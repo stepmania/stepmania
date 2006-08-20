@@ -27,7 +27,6 @@
 #include "Style.h"
 #include "MemoryCardManager.h"
 #include "PlayerState.h"
-#include "Command.h"
 #include "CommonMetrics.h"
 #include "ScoreKeeperNormal.h"
 #include "InputEventPlus.h"

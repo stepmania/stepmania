@@ -5,7 +5,6 @@
 #include "RageUtil.h"
 #include "ActorUtil.h"
 #include "Foreach.h"
-#include "Command.h"
 #include "LuaManager.h"
 
 BGAnimation::BGAnimation()

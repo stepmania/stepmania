@@ -45,23 +45,6 @@ public:
 void ParseCommands( const RString &sCmds, Commands &vCmdsOut );
 Commands ParseCommands( const RString &sCmds );
 
-
-#define BeginHandleArgs int iMaxIndexAccessed = 0;
-#define GET_ARG(type,i) iMaxIndexAccessed = max( i, iMaxIndexAccessed ); command.GetArg##type( i );
-#define sArg(i) GetArg<RString>(command,i,iMaxIndexAccessed)
-#define fArg(i) GetArg<float>(command,i,iMaxIndexAccessed)
-#define iArg(i) GetArg<int>(command,i,iMaxIndexAccessed)
-#define bArg(i) GetArg<bool>(command,i,iMaxIndexAccessed)
-#define EndHandleArgs if( iMaxIndexAccessed != (int)command.m_vsArgs.size()-1 ) { IncorrectNumberArgsWarning( command, iMaxIndexAccessed ); }
-void IncorrectNumberArgsWarning( const Command& command, int iMaxIndexAccessed );
-
-template<class T>
-inline T GetArg( const Command& command, int iIndex, int& iMaxIndexAccessedOut )
-{
-	iMaxIndexAccessedOut = max( iIndex, iMaxIndexAccessedOut );
-	return (T)command.GetArg(iIndex);
-}
-
 #endif
 
 /*

@@ -9,7 +9,6 @@
 #include "Profile.h"
 #include "Course.h"
 #include "Style.h"
-#include "Command.h"
 #include "ActorUtil.h"
 #include "Foreach.h"
 #include "PercentageDisplay.h"

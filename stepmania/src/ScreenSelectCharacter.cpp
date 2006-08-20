@@ -10,7 +10,6 @@
 #include "Character.h"
 #include "PrefsManager.h"
 #include "RageTextureManager.h"
-#include "Command.h"
 #include "CharacterManager.h"
 
 
