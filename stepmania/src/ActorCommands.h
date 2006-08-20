@@ -4,7 +4,6 @@
 #define ActorCommands_H
 
 #include "RageUtil_AutoPtr.h"
-#include "Command.h"
 #include "LuaReference.h"
 
 
