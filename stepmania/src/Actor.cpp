@@ -9,7 +9,6 @@
 #include "Foreach.h"
 #include "XmlFile.h"
 #include "LuaBinding.h"
-#include "Command.h"
 #include "ActorCommands.h"
 #include "ThemeManager.h"
 #include "LuaReference.h"
@@ -253,11 +252,6 @@ void Actor::LoadFromNode( const RString& sDir, const XNode* pNode )
 		{
 			m_sName = sValue;
 		}
-		
-		// TODO: Remove these
-		else if( sKeyName == "BaseRotationXDegrees" )	SetBaseRotationX( StringToFloat(sValue) );
-		else if( sKeyName == "BaseRotationYDegrees" )	SetBaseRotationY( StringToFloat(sValue) );
-		else if( sKeyName == "BaseRotationZDegrees" )	SetBaseRotationZ( StringToFloat(sValue) );
 		
 		else if( sKeyName == "BaseRotationX" )		SetBaseRotationX( StringToFloat(sValue) );
 		else if( sKeyName == "BaseRotationY" )		SetBaseRotationY( StringToFloat(sValue) );
