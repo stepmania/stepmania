@@ -120,11 +120,6 @@ void ScreenSelectMusic::Init()
 	SET_XY( m_Banner );
 	this->AddChild( &m_Banner );
 
-	m_DifficultyDisplay.SetName( "DifficultyDisplay" );
-	m_DifficultyDisplay.SetShadowLength( 0 );
-	SET_XY( m_DifficultyDisplay );
-	this->AddChild( &m_DifficultyDisplay );
-
 	m_sprCDTitleFront.SetName( "CDTitle" );
 	m_sprCDTitleFront.Load( THEME->GetPathG(m_sName,"fallback cdtitle") );
 	SET_XY( m_sprCDTitleFront );
@@ -942,7 +937,6 @@ void ScreenSelectMusic::AfterMusicChange()
 			m_iSelection[p] = -1;
 
 		g_sCDTitlePath = ""; // none
-		m_DifficultyDisplay.UnsetDifficulties();
 
 		m_fSampleStartSeconds = 0;
 		m_fSampleLengthSeconds = -1;
@@ -993,8 +987,6 @@ void ScreenSelectMusic::AfterMusicChange()
 		g_sCDTitlePath = pSong->GetCDTitlePath();
 		g_bWantFallbackCdTitle = true;
 
-		m_DifficultyDisplay.SetDifficulties( pSong, GAMESTATE->GetCurrentStyle()->m_StepsType );
-
 		SwitchToPreferredDifficulty();
 		break;
 
@@ -1020,8 +1012,6 @@ void ScreenSelectMusic::AfterMusicChange()
 		g_sBannerPath = pCourse->m_sBannerPath;
 		if( g_sBannerPath.empty() )
 			m_Banner.LoadFallback();
-
-		m_DifficultyDisplay.UnsetDifficulties();
 
 		SwitchToPreferredDifficulty();
 		break;
