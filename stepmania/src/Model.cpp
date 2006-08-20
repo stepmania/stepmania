@@ -790,26 +790,6 @@ void Model::SetSecondsIntoAnimation( float fSeconds )
 	}
 }
 
-/*
-void Model::HandleCommand( const Command &command )
-{
-	BeginHandleArgs;
-
-	const RString& sName = command.GetName();
-	if( sName=="play" )
-	{
-		PlayAnimation( sArg(1),fArg(2) );
-	}
-	else
-	{
-		Actor::HandleCommand( command );
-		return;
-	}
-
-	EndHandleArgs;
-}
-*/
-
 bool Model::MaterialsNeedNormals() const
 {
 	FOREACH_CONST( msMaterial, m_Materials, m )
