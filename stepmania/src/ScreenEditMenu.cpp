@@ -231,8 +231,6 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 	case EditMenuAction_Create:
 		ASSERT( !pSteps );
 		{
-			// Yuck.  Doing the memory allocation doesn't seem right since
-			// Song allocates all of the other Steps.
 			pSteps = new Steps;
 			
 			switch( m_Selector.EDIT_MODE )
