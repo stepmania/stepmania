@@ -113,10 +113,21 @@ void Style::GetMinAndMaxColX( PlayerNumber pn, float& fMixXOut, float& fMaxXOut 
 // Lua bindings
 #include "LuaBinding.h"
 
-class LunaStyle : public Luna<Style>
+class LunaStyle: public Luna<Style>
 {
 public:
-	LunaStyle() { LUA->Register( Luna<Style>::Register ); }
+	LunaStyle() { LUA->Register( Register ); }
+
+	DEFINE_METHOD( GetStyleType,		m_StyleType )
+	DEFINE_METHOD( GetStepsType,		m_StepsType )
+
+	static void Register(lua_State *L)
+	{
+		ADD_METHOD( GetStyleType );
+		ADD_METHOD( GetStepsType );
+
+		Luna<T>::Register( L );
+	}
 };
 
 LUA_REGISTER_CLASS( Style )
