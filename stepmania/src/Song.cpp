@@ -11,7 +11,6 @@
 #include "GameManager.h"
 #include "PrefsManager.h"
 #include "Style.h"
-#include "GameState.h"
 #include "FontCharAliases.h"
 #include "TitleSubstitution.h"
 #include "BannerCache.h"
