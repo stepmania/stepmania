@@ -55,7 +55,7 @@ static const ThemeMetric<RString>	EXTRA_STAGE_PLAYER_OPTIONS	( "SongManager", "E
 static const ThemeMetric<RString>	EXTRA_STAGE_SONG_OPTIONS	( "SongManager", "ExtraStageSongOptions" );
 static const ThemeMetric<RString>	EXTRA_STAGE2_PLAYER_OPTIONS	( "SongManager", "ExtraStage2PlayerOptions" );
 static const ThemeMetric<RString>	EXTRA_STAGE2_SONG_OPTIONS	( "SongManager", "ExtraStage2SongOptions" );
-
+static const ThemeMetric<int>		EXTRA_STAGE2_DIFFICULTY_MAX	( "SongManager", "ExtraStage2DifficultyMax" );
 
 RString SONG_GROUP_COLOR_NAME( size_t i )   { return ssprintf( "SongGroupColor%i", (int) i+1 ); }
 RString COURSE_GROUP_COLOR_NAME( size_t i ) { return ssprintf( "CourseGroupColor%i", (int) i+1 ); }
@@ -1210,8 +1210,8 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSong
 				pExtra1Notes = pSteps;
 			}
 
-			// for extra 2, we don't want to choose the hardest notes possible.  So, we'll disgard Steps with meter > 8
-			if(	bExtra2  &&  pSteps->GetMeter() > 8 )	
+			// for extra 2, we don't want to choose the hardest notes possible.  So, we'll disgard Steps with meter > 8 (assuming dance)
+			if( bExtra2 && pSteps->GetMeter() > EXTRA_STAGE2_DIFFICULTY_MAX )	
 				continue;	// skip
 			if( pExtra2Notes == NULL  ||  CompareNotesPointersForExtra(pExtra2Notes,pSteps) )	// pSteps is harder than pHardestNotes
 			{
