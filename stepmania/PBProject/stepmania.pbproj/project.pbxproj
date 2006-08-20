@@ -279,7 +279,6 @@
 		AA29CCF00558741A00961A51 /* arch.h in Headers */ = {isa = PBXBuildFile; fileRef = AABE36F80497CE16005F316C /* arch.h */; };
 		AA29CCF10558741A00961A51 /* ArchHooks.h in Headers */ = {isa = PBXBuildFile; fileRef = AABE36FC0497CE44005F316C /* ArchHooks.h */; };
 		AA29CCF30558741A00961A51 /* RageSoundDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = AABE37030497CF85005F316C /* RageSoundDriver.h */; };
-		AA29CCF50558741A00961A51 /* DifficultyDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8F118304A04F9B00D02EE9 /* DifficultyDisplay.h */; };
 		AA29CCF60558741A00961A51 /* ActorUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1DC47204A485E900D02EE9 /* ActorUtil.h */; };
 		AA29CCF70558741A00961A51 /* ScreenSelectMaster.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1DC47504A4861700D02EE9 /* ScreenSelectMaster.h */; };
 		AA29CCFA0558741A00961A51 /* glext.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1DCB6104A4872700D02EE9 /* glext.h */; };
@@ -487,7 +486,6 @@
 		AA29CDFA0558741A00961A51 /* RageUtil_CharConversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC23F7E0485E68D005F316C /* RageUtil_CharConversions.cpp */; };
 		AA29CDFB0558741A00961A51 /* BannerCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AABE35EB04967E25005F316C /* BannerCache.cpp */; };
 		AA29CDFC0558741A00961A51 /* ModeSwitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AABE35EF04967E6F005F316C /* ModeSwitcher.cpp */; };
-		AA29CDFD0558741A00961A51 /* DifficultyDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8F118204A04F9B00D02EE9 /* DifficultyDisplay.cpp */; };
 		AA29CDFE0558741A00961A51 /* ScreenSelectMaster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA1DC47404A4861700D02EE9 /* ScreenSelectMaster.cpp */; };
 		AA29CE000558741A00961A51 /* CombinedLifeMeterTug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE443EB04B0F9F600D02EE9 /* CombinedLifeMeterTug.cpp */; };
 		AA29CE010558741A00961A51 /* ScoreKeeperRave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE443F304B0FEB700D02EE9 /* ScoreKeeperRave.cpp */; };
@@ -732,7 +730,6 @@
 		AA40D26209A08D650068C0D5 /* arch.h in Headers */ = {isa = PBXBuildFile; fileRef = AABE36F80497CE16005F316C /* arch.h */; };
 		AA40D26309A08D650068C0D5 /* ArchHooks.h in Headers */ = {isa = PBXBuildFile; fileRef = AABE36FC0497CE44005F316C /* ArchHooks.h */; };
 		AA40D26409A08D650068C0D5 /* RageSoundDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = AABE37030497CF85005F316C /* RageSoundDriver.h */; };
-		AA40D26509A08D650068C0D5 /* DifficultyDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8F118304A04F9B00D02EE9 /* DifficultyDisplay.h */; };
 		AA40D26609A08D650068C0D5 /* ActorUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1DC47204A485E900D02EE9 /* ActorUtil.h */; };
 		AA40D26709A08D650068C0D5 /* ScreenSelectMaster.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1DC47504A4861700D02EE9 /* ScreenSelectMaster.h */; };
 		AA40D26909A08D650068C0D5 /* glext.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1DCB6104A4872700D02EE9 /* glext.h */; };
@@ -1148,7 +1145,6 @@
 		AA40D41C09A08D650068C0D5 /* RageUtil_CharConversions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC23F7E0485E68D005F316C /* RageUtil_CharConversions.cpp */; };
 		AA40D41D09A08D650068C0D5 /* BannerCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AABE35EB04967E25005F316C /* BannerCache.cpp */; };
 		AA40D41E09A08D650068C0D5 /* ModeSwitcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AABE35EF04967E6F005F316C /* ModeSwitcher.cpp */; };
-		AA40D41F09A08D650068C0D5 /* DifficultyDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8F118204A04F9B00D02EE9 /* DifficultyDisplay.cpp */; };
 		AA40D42009A08D650068C0D5 /* ScreenSelectMaster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA1DC47404A4861700D02EE9 /* ScreenSelectMaster.cpp */; };
 		AA40D42109A08D650068C0D5 /* CombinedLifeMeterTug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE443EB04B0F9F600D02EE9 /* CombinedLifeMeterTug.cpp */; };
 		AA40D42209A08D650068C0D5 /* ScoreKeeperRave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE443F304B0FEB700D02EE9 /* ScoreKeeperRave.cpp */; };
@@ -2411,8 +2407,6 @@
 		AA8DD84904A2E51400D02EE9 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		AA8E4BC609787C9400765149 /* MenuInput.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MenuInput.cpp; path = ../src/MenuInput.cpp; sourceTree = "<group>"; };
 		AA8EE0750866E266002C51A7 /* LuaBinding.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = LuaBinding.cpp; path = ../src/LuaBinding.cpp; sourceTree = "<group>"; };
-		AA8F118204A04F9B00D02EE9 /* DifficultyDisplay.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = DifficultyDisplay.cpp; path = ../src/DifficultyDisplay.cpp; sourceTree = "<group>"; };
-		AA8F118304A04F9B00D02EE9 /* DifficultyDisplay.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = DifficultyDisplay.h; path = ../src/DifficultyDisplay.h; sourceTree = "<group>"; };
 		AA8F136E0624BAB200C6A467 /* EnumHelper.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = EnumHelper.cpp; path = ../src/EnumHelper.cpp; sourceTree = "<group>"; };
 		AA8F136F0624BAB200C6A467 /* EnumHelper.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = EnumHelper.h; path = ../src/EnumHelper.h; sourceTree = "<group>"; };
 		AA90919F067ED43000C1FCFF /* RageSurface_Load_BMP.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageSurface_Load_BMP.cpp; path = ../src/RageSurface_Load_BMP.cpp; sourceTree = "<group>"; };
@@ -3816,8 +3810,6 @@
 				AA8BD2B007C9395400EA04E1 /* AutoActor.h */,
 				AA6EFFB904770FFD005F316C /* BitmapText.cpp */,
 				AA6EFFBA04770FFD005F316C /* BitmapText.h */,
-				AA8F118204A04F9B00D02EE9 /* DifficultyDisplay.cpp */,
-				AA8F118304A04F9B00D02EE9 /* DifficultyDisplay.h */,
 				AAF3442908F1C36A0006EDB7 /* DynamicActorScroller.cpp */,
 				AAF3442A08F1C36A0006EDB7 /* DynamicActorScroller.h */,
 				AA6EFFBD04770FFD005F316C /* Model.cpp */,
@@ -4183,7 +4175,6 @@
 				AA29CCF00558741A00961A51 /* arch.h in Headers */,
 				AA29CCF10558741A00961A51 /* ArchHooks.h in Headers */,
 				AA29CCF30558741A00961A51 /* RageSoundDriver.h in Headers */,
-				AA29CCF50558741A00961A51 /* DifficultyDisplay.h in Headers */,
 				AA29CCF60558741A00961A51 /* ActorUtil.h in Headers */,
 				AA29CCF70558741A00961A51 /* ScreenSelectMaster.h in Headers */,
 				AA29CCFA0558741A00961A51 /* glext.h in Headers */,
@@ -4639,7 +4630,6 @@
 				AA40D26209A08D650068C0D5 /* arch.h in Headers */,
 				AA40D26309A08D650068C0D5 /* ArchHooks.h in Headers */,
 				AA40D26409A08D650068C0D5 /* RageSoundDriver.h in Headers */,
-				AA40D26509A08D650068C0D5 /* DifficultyDisplay.h in Headers */,
 				AA40D26609A08D650068C0D5 /* ActorUtil.h in Headers */,
 				AA40D26709A08D650068C0D5 /* ScreenSelectMaster.h in Headers */,
 				AA40D26909A08D650068C0D5 /* glext.h in Headers */,
@@ -5221,7 +5211,6 @@
 				AA29CDFA0558741A00961A51 /* RageUtil_CharConversions.cpp in Sources */,
 				AA29CDFB0558741A00961A51 /* BannerCache.cpp in Sources */,
 				AA29CDFC0558741A00961A51 /* ModeSwitcher.cpp in Sources */,
-				AA29CDFD0558741A00961A51 /* DifficultyDisplay.cpp in Sources */,
 				AA29CDFE0558741A00961A51 /* ScreenSelectMaster.cpp in Sources */,
 				AA29CE000558741A00961A51 /* CombinedLifeMeterTug.cpp in Sources */,
 				AA29CE010558741A00961A51 /* ScoreKeeperRave.cpp in Sources */,
@@ -5637,7 +5626,6 @@
 				AA40D41C09A08D650068C0D5 /* RageUtil_CharConversions.cpp in Sources */,
 				AA40D41D09A08D650068C0D5 /* BannerCache.cpp in Sources */,
 				AA40D41E09A08D650068C0D5 /* ModeSwitcher.cpp in Sources */,
-				AA40D41F09A08D650068C0D5 /* DifficultyDisplay.cpp in Sources */,
 				AA40D42009A08D650068C0D5 /* ScreenSelectMaster.cpp in Sources */,
 				AA40D42109A08D650068C0D5 /* CombinedLifeMeterTug.cpp in Sources */,
 				AA40D42209A08D650068C0D5 /* ScoreKeeperRave.cpp in Sources */,
