@@ -2030,8 +2030,8 @@ public:
 	}
 	static int GetCurrentStyle( T* p, lua_State *L )
 	{
-		// XXX: Ugly cast.
-		LuaHelpers::Push( const_cast<Style *>(p->GetCurrentStyle()), L );
+		Style *pStyle = const_cast<Style *> (p->GetCurrentStyle());
+		pStyle->PushSelf( L );
 		return 1;
 	}
 		
