@@ -1260,6 +1260,14 @@ public:
 	static int MusicLengthSeconds( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_fMusicLengthSeconds); return 1; }
 	static int IsLong( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsLong()); return 1; }
 	static int IsMarathon( T* p, lua_State *L )		{ lua_pushboolean(L, p->IsMarathon()); return 1; }
+	static int HasStepsTypeAndDifficulty( T* p, lua_State *L )
+	{
+		StepsType st = (StepsType)IArg(1);
+		Difficulty dc = (Difficulty)IArg(2);
+
+		lua_pushboolean( L, p->HasStepsTypeAndDifficulty(st, dc) );
+		return 1;
+	}
 
 	static void Register(lua_State *L)
 	{
@@ -1280,6 +1288,7 @@ public:
 		ADD_METHOD( MusicLengthSeconds );
 		ADD_METHOD( IsLong );
 		ADD_METHOD( IsMarathon );
+		ADD_METHOD( HasStepsTypeAndDifficulty );
 
 		Luna<T>::Register( L );
 	}
