@@ -654,7 +654,7 @@ REGISTER_SCREEN_CLASS( ScreenEdit );
 void ScreenEdit::Init()
 {
 	ASSERT( GAMESTATE->m_pCurSong );
-	ASSERT( GAMESTATE->m_pCurSteps[0] );
+	ASSERT( GAMESTATE->m_pCurSteps[PLAYER_1] );
 
 	EDIT_MODE.Load( m_sName, "EditMode" );
 	ScreenWithMenuElements::Init();
