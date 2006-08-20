@@ -68,7 +68,6 @@ public:
 	RString GetPathO( const RString &sClassName, const RString &sElement, bool bOptional=false ) { return GetPath(EC_OTHER,sClassName,sElement,bOptional); };
 	void ClearThemePathCache();
 
-	// TODO: Make these return values const refs.
 	bool		HasMetric( const RString &sClassName, const RString &sValueName );
 	RString		GetMetricRaw( const IniFile &ini, const RString &sClassName, const RString &sValueName );
 	RString		GetMetric( const RString &sClassName, const RString &sValueName );
