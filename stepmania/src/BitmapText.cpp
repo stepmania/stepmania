@@ -9,7 +9,7 @@
 #include "ThemeManager.h"
 #include "GameConstantsAndTypes.h"
 #include "Font.h"
-#include "ActorUtil.h"	// for BeginHandleArgs
+#include "ActorUtil.h"
 #include "LuaBinding.h"
 #include "Foreach.h"
 
