@@ -132,11 +132,6 @@ void ScreenSelectMusic::Init()
 	COMMAND( m_sprCDTitleBack, "Back" );
 	this->AddChild( &m_sprCDTitleBack );
 
-	m_textTotalTime.SetName( "TotalTime" );
-	m_textTotalTime.LoadFromFont( THEME->GetPathF(m_sName,"total time") );
-	SET_XY( m_textTotalTime );
-	this->AddChild( &m_textTotalTime );
-
 	FOREACH_HumanPlayer( p )
 	{
 		m_sprHighScoreFrame[p].SetName( ssprintf("ScoreFrameP%d",p+1) );
@@ -941,8 +936,6 @@ void ScreenSelectMusic::AfterMusicChange()
 		m_fSampleStartSeconds = 0;
 		m_fSampleLengthSeconds = -1;
 
-		m_textTotalTime.SetText( "" );
-		
 		switch( m_MusicWheel.GetSelectedType() )
 		{
 		case TYPE_SECTION:
@@ -975,8 +968,6 @@ void ScreenSelectMusic::AfterMusicChange()
 		m_fSampleStartSeconds = pSong->m_fMusicSampleStartSeconds;
 		m_fSampleLengthSeconds = pSong->m_fMusicSampleLengthSeconds;
 
-		m_textTotalTime.SetText( SecondsToMMSSMsMs(pSong->m_fMusicLengthSeconds) );
-
 		SongUtil::GetSteps( pSong, m_vpSteps, GAMESTATE->GetCurrentStyle()->m_StepsType );
 		StepsUtil::RemoveLockedSteps( pSong, m_vpSteps );
 		StepsUtil::SortNotesArrayByDifficulty( m_vpSteps );
@@ -1002,12 +993,6 @@ void ScreenSelectMusic::AfterMusicChange()
 		m_sSampleMusicToPlay = m_sCourseMusicPath;
 		m_fSampleStartSeconds = 0;
 		m_fSampleLengthSeconds = -1;
-
-		float fTotalSeconds;
-		if( pCourse->GetTotalSeconds(st,fTotalSeconds) )
-			m_textTotalTime.SetText( SecondsToMMSSMsMs(fTotalSeconds) );
-		else
-			m_textTotalTime.SetText( "xx:xx.xx" );	// The numbers format doesn't have a '?'.  Is there a better solution?
 
 		g_sBannerPath = pCourse->m_sBannerPath;
 		if( g_sBannerPath.empty() )
