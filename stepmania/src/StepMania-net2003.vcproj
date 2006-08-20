@@ -1740,12 +1740,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="CourseEntryDisplay.h">
 			</File>
 			<File
-				RelativePath="DifficultyDisplay.cpp">
-			</File>
-			<File
-				RelativePath="DifficultyDisplay.h">
-			</File>
-			<File
 				RelativePath="DifficultyList.cpp">
 			</File>
 			<File

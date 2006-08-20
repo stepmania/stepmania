@@ -268,7 +268,7 @@ ActorsInMenus = \
 ActiveAttackList.cpp ActiveAttackList.h BPMDisplay.cpp BPMDisplay.h ComboGraph.cpp ComboGraph.h \
 CourseContentsList.cpp CourseContentsList.h \
 CourseEntryDisplay.cpp CourseEntryDisplay.h \
-DifficultyDisplay.cpp DifficultyDisplay.h DifficultyList.cpp DifficultyList.h \
+DifficultyList.cpp DifficultyList.h \
 DifficultyMeter.cpp DifficultyMeter.h DifficultyRating.cpp DifficultyRating.h \
 DualScrollBar.cpp DualScrollBar.h \
 EditMenu.cpp EditMenu.h FadingBanner.cpp FadingBanner.h \
