@@ -2285,14 +2285,6 @@
 				>
 			</File>
 			<File
-				RelativePath="DifficultyDisplay.cpp"
-				>
-			</File>
-			<File
-				RelativePath="DifficultyDisplay.h"
-				>
-			</File>
-			<File
 				RelativePath="DifficultyList.cpp"
 				>
 			</File>
