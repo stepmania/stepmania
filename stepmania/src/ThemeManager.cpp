@@ -935,12 +935,6 @@ RageColor ThemeManager::GetMetricC( const RString &sClassName, const RString &sV
 	return ret;
 }
 
-Commands ThemeManager::GetMetricM( const RString &sClassName, const RString &sValueName )
-{
-	RString sValue = GetMetric( sClassName, sValueName );	// Use non-raw so that Lua expressions are allowed
-	return ParseCommands( sValue );
-}
-
 #if !defined(SMPACKAGE)
 apActorCommands ThemeManager::GetMetricA( const RString &sClassName, const RString &sValueName )
 {
