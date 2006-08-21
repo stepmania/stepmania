@@ -8,9 +8,6 @@
 #include "StatsManager.h"
 #include "XmlFile.h"
 
-static ThemeMetric<apActorCommands>	HELD_COMMAND	("HoldJudgment","HeldCommand");
-static ThemeMetric<apActorCommands>	LET_GO_COMMAND	("HoldJudgment","LetGoCommand");
-
 REGISTER_ACTOR_CLASS( HoldJudgment )
 
 HoldJudgment::HoldJudgment()
@@ -22,6 +19,8 @@ void HoldJudgment::Load( const RString &sPath )
 {
 	m_sprJudgment.Load( sPath );
 	m_sprJudgment->StopAnimating();
+	m_sprJudgment->SetName( "HoldJudgment" );
+	ActorUtil::LoadAllCommands( *m_sprJudgment, "HoldJudgment" );
 	ResetAnimation();
 	this->AddChild( m_sprJudgment );
 }
@@ -64,11 +63,11 @@ void HoldJudgment::SetHoldJudgment( HoldNoteScore hns )
 		ASSERT(0);
 	case HNS_Held:
 		m_sprJudgment->SetState( 0 );
-		m_sprJudgment->RunCommands( HELD_COMMAND );
+		m_sprJudgment->PlayCommand( "Held" );
 		break;
 	case HNS_LetGo:
 		m_sprJudgment->SetState( 1 );
-		m_sprJudgment->RunCommands( LET_GO_COMMAND );
+		m_sprJudgment->PlayCommand( "LetGo" );
 		break;
 	default:
 		ASSERT(0);

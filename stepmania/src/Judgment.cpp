@@ -9,13 +9,6 @@
 #include "StatsManager.h"
 #include "XmlFile.h"
 
-static ThemeMetric<apActorCommands>	W1_COMMAND	("Judgment","W1Command");
-static ThemeMetric<apActorCommands>	W2_COMMAND	("Judgment","W2Command");
-static ThemeMetric<apActorCommands>	W3_COMMAND	("Judgment","W3Command");
-static ThemeMetric<apActorCommands>	W4_COMMAND	("Judgment","W4Command");
-static ThemeMetric<apActorCommands>	W5_COMMAND	("Judgment","W5Command");
-static ThemeMetric<apActorCommands>	MISS_COMMAND	("Judgment","MissCommand");
-
 REGISTER_ACTOR_CLASS( Judgment )
 
 Judgment::Judgment()
@@ -54,6 +47,8 @@ void Judgment::LoadNormal( const RString &sPath )
 	m_sprJudgment.Load( sPath );
 	ASSERT( m_sprJudgment.GetNumStates() == 6  ||  m_sprJudgment.GetNumStates() == 12 );
 	m_sprJudgment.StopAnimating();
+	m_sprJudgment.SetName( "Judgment" );
+	ActorUtil::LoadAllCommands( m_sprJudgment, "Judgment" );
 	Reset();
 	this->AddChild( &m_sprJudgment );
 }
@@ -81,27 +76,27 @@ void Judgment::SetJudgment( TapNoteScore score, bool bEarly )
 	{
 	case TNS_W1:
 		m_sprJudgment.SetState( 0 * iStateMult + iStateAdd );
-		m_sprJudgment.RunCommands( W1_COMMAND );
+		m_sprJudgment.PlayCommand( "W1" );
 		break;
 	case TNS_W2:
 		m_sprJudgment.SetState( 1 * iStateMult + iStateAdd );
-		m_sprJudgment.RunCommands( W2_COMMAND );
+		m_sprJudgment.PlayCommand( "W2" );
 		break;
 	case TNS_W3:
 		m_sprJudgment.SetState( 2 * iStateMult + iStateAdd );
-		m_sprJudgment.RunCommands( W3_COMMAND );
+		m_sprJudgment.PlayCommand( "W3" );
 		break;
 	case TNS_W4:
 		m_sprJudgment.SetState( 3 * iStateMult + iStateAdd );
-		m_sprJudgment.RunCommands( W4_COMMAND );
+		m_sprJudgment.PlayCommand( "W4" );
 		break;
 	case TNS_W5:
 		m_sprJudgment.SetState( 4 * iStateMult + iStateAdd );
-		m_sprJudgment.RunCommands( W5_COMMAND );
+		m_sprJudgment.PlayCommand( "W5" );
 		break;
 	case TNS_Miss:
 		m_sprJudgment.SetState( 5 * iStateMult + iStateAdd );
-		m_sprJudgment.RunCommands( MISS_COMMAND );
+		m_sprJudgment.PlayCommand( "Miss" );
 		break;
 	default:
 		ASSERT(0);
