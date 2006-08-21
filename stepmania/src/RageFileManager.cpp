@@ -448,7 +448,11 @@ bool RageFileManager::Mount( const RString &sType, const RString &sRoot_, const 
 
 	ASSERT( !sRoot.empty() );
 
-	CHECKPOINT_M( ssprintf("\"%s\", \"%s\", \"%s\"", sType.c_str(), sRoot.c_str(), sMountPoint.c_str() ) );
+	const RString &sPaths = ssprintf( "\"%s\", \"%s\", \"%s\"", sType.c_str(), sRoot.c_str(), sMountPoint.c_str() );
+	CHECKPOINT_M( sPaths );
+#if defined(DEBUG)
+	puts( sPaths );
+#endif
 
 	// Unmount anything that was previously mounted here.
 	Unmount( sType, sRoot, sMountPoint );
