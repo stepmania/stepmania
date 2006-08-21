@@ -37,6 +37,8 @@ RString SongCacheIndex::GetCacheFilePath( const RString &sGroup, const RString &
 	
 	if( sPath.size() > 2 && sPath[0] == '/' && sPath[sPath.size()-1] == '/' )
 		s.assign( sPath, 1, sPath.size() - 2 );
+	else if( sPath.size() > 1 && sPath[0] == '/' )
+		s.assign( sPath, 1, sPath.size() - 1 );
 	else
 		s = sPath;
 	/* Change slashes and invalid utf-8 characters to _.
