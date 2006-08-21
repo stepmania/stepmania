@@ -244,9 +244,11 @@ ScreenManager::~ScreenManager()
 		if( g_ScreenStack[i].m_bDeleteWhenDone )
 			SAFE_DELETE( g_ScreenStack[i].m_pScreen );
 	}
+	g_ScreenStack.clear();
 	DeletePreparedScreens();
 	for( unsigned i=0; i<g_OverlayScreens.size(); i++ )
 		SAFE_DELETE( g_OverlayScreens[i] );
+	g_OverlayScreens.clear();
 }
 
 /* This is called when we start up, and when the theme changes or is reloaded. */
@@ -261,11 +263,12 @@ void ScreenManager::ThemeChanged()
 	m_soundInvalid.Load( THEME->GetPathS("Common","invalid") );
 	m_soundScreenshot.Load( THEME->GetPathS("Common","screenshot") );
 
-	// reload overlay screens
+	// unload overlay screens
 	for( unsigned i=0; i<g_OverlayScreens.size(); i++ )
 		SAFE_DELETE( g_OverlayScreens[i] );
 	g_OverlayScreens.clear();
 
+	// reload overlay screens
 	RString sOverlays = THEME->GetMetric( "Common","OverlayScreens" );
 	vector<RString> asOverlays;
 	split( sOverlays, ",", asOverlays );
