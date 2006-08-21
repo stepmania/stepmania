@@ -351,7 +351,7 @@ void GameSoundManager::Flush()
 	/* The thread won't actually delete the sound, waiting for SOUNDMAN to do it in
 	 * the main thread.  Update it now, to make sure that the sound is actually deleted
 	 * before returning. */
-	SOUNDMAN->Update(0);
+	SOUNDMAN->Update();
 }
 
 int MusicThread_start( void *p )
