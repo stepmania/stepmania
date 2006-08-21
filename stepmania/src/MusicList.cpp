@@ -4,6 +4,7 @@
 #include "ThemeMetric.h"
 #include "RageUtil.h"
 #include "song.h"
+#include "ActorUtil.h"
 
 /* If this actor is used anywhere other than SelectGroup, we
  * can add a setting that changes which metric group we pull
@@ -14,7 +15,6 @@ static const ThemeMetric<float>			START_X			("MusicList","StartX");
 static const ThemeMetric<float>			START_Y			("MusicList","StartY");
 static const ThemeMetric<float>			SPACING_X		("MusicList","SpacingX");
 static const ThemeMetric<float>			CROP_WIDTH		("MusicList","CropWidth");
-static const ThemeMetric<apActorCommands> INIT_COMMAND	("MusicList","InitCommand");
 
 MusicList::MusicList()
 {
@@ -25,9 +25,11 @@ void MusicList::Load()
 {
 	for( int i=0; i<NUM_COLUMNS; i++ )
 	{
+		m_textTitles[i].SetName( "Title" );
+		ActorUtil::LoadAllCommands( m_textTitles[i], "MusicList" );
 		m_textTitles[i].LoadFromFont( THEME->GetPathF("MusicList","titles") );
 		m_textTitles[i].SetXY( START_X + i*SPACING_X, START_Y );
-		m_textTitles[i].RunCommands( INIT_COMMAND );
+		m_textTitles[i].PlayCommand( "Init" );
 		this->AddChild( &m_textTitles[i] );
 	}
 }

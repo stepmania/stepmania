@@ -32,7 +32,6 @@ static ThemeMetric<float> BOTTOM_EDGE					("Background","BottomEdge");
 #define RECT_BACKGROUND RectF					(LEFT_EDGE,TOP_EDGE,RIGHT_EDGE,BOTTOM_EDGE)
 static ThemeMetric<bool> BLINK_DANGER_ALL				("Background","BlinkDangerAll");
 static ThemeMetric<bool> DANGER_ALL_IS_OPAQUE			("Background","DangerAllIsOpaque");
-static ThemeMetric<apActorCommands> BRIGHTNESS_FADE_COMMAND	("Background","BrightnessFadeCommand");
 static ThemeMetric<float> CLAMP_OUTPUT_PERCENT			("Background","ClampOutputPercent");
 
 // Width of the region separating the left and right brightness areas:
@@ -970,8 +969,16 @@ BrightnessOverlay::BrightnessOverlay()
 	m_quadBGBrightnessFade.StretchTo( RectF(LEFT_EDGE+fQuadWidth,TOP_EDGE,RIGHT_EDGE-fQuadWidth,BOTTOM_EDGE) );
 	m_quadBGBrightness[1].StretchTo( RectF(RIGHT_EDGE-fQuadWidth,TOP_EDGE,RIGHT_EDGE,BOTTOM_EDGE) );
 
+	m_quadBGBrightness[0].SetName( "BrightnessOverlay" );
+	ActorUtil::LoadAllCommands( m_quadBGBrightness[0], "Background" );
 	this->AddChild( &m_quadBGBrightness[0] );
+
+	m_quadBGBrightness[1].SetName( "BrightnessOverlay" );
+	ActorUtil::LoadAllCommands( m_quadBGBrightness[1], "Background" );
 	this->AddChild( &m_quadBGBrightness[1] );
+
+	m_quadBGBrightnessFade.SetName( "BrightnessOverlay" );
+	ActorUtil::LoadAllCommands( m_quadBGBrightnessFade, "Background" );
 	this->AddChild( &m_quadBGBrightnessFade );
 
 	SetActualBrightness();
@@ -1025,7 +1032,7 @@ void BrightnessOverlay::Set( float fBrightness )
 
 void BrightnessOverlay::FadeToActualBrightness()
 {
-	this->RunCommandsOnChildren( BRIGHTNESS_FADE_COMMAND );
+	this->PlayCommand( "Fade" );
 	SetActualBrightness();
 }
 

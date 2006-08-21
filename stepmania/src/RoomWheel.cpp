@@ -14,7 +14,6 @@ AutoScreenMessage( SM_RoomInfoDeploy )
 ThemeMetric<float>				DESC_X;
 ThemeMetric<float>				DESC_Y;
 ThemeMetric<float>				DESC_WIDTH;
-ThemeMetric<apActorCommands>	DESC_ON_COMMAND;
 
 RoomWheel::~RoomWheel()
 {
@@ -59,18 +58,19 @@ void RoomWheelItem::Load( RString sType )
 	DESC_X				.Load(sType,"DescX");
 	DESC_Y				.Load(sType,"DescY");
 	DESC_WIDTH			.Load(sType,"DescWidth");
-	DESC_ON_COMMAND		.Load(sType,"DescOnCommand");
 	TEXT_WIDTH			.Load(sType,"TextWidth");
 
 	m_text.SetHorizAlignString("left");
 	m_text.SetMaxWidth(TEXT_WIDTH);
 
+	m_Desc.SetName( "Desc" );
+	ActorUtil::LoadAllCommands( m_Desc, "RoomWheelItem" );
 	m_Desc.LoadFromFont( THEME->GetPathF("RoomWheel","text") );
 	m_Desc.SetHorizAlignString("left");
 	m_Desc.SetShadowLength( 0 );
 	m_Desc.SetMaxWidth( DESC_WIDTH );
 	m_Desc.SetXY( DESC_X, DESC_Y);
-	m_Desc.RunCommands( DESC_ON_COMMAND );
+	m_Desc.PlayCommand( "On" );
 	this->AddChild( &m_Desc );
 }
 
