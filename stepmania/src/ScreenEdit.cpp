@@ -2791,23 +2791,20 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				m_CurrentAction = c;
 
 				// copy edit into current Steps
-				Song* pSong = GAMESTATE->m_pCurSong;
-				Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
-				ASSERT( pSteps );
-
-				pSteps->SetNoteData( m_NoteDataEdit );
-				pSteps->CalculateRadarValues( pSong->m_fMusicLengthSeconds );
+				m_pSteps->SetNoteData( m_NoteDataEdit );
 
 				switch( EDIT_MODE.GetValue() )
 				{
 				DEFAULT_FAIL( EDIT_MODE.GetValue() );
 				case EditMode_Home:
 					{
-						ASSERT( pSteps->IsAnEdit() );
+						ASSERT( m_pSteps->IsAnEdit() );
 
 						NotesWriterSM w;
 						RString sError;
-						if( !w.WriteEditFileToMachine(pSong,pSteps,sError) )
+						
+						m_pSteps->CalculateRadarValues( m_pSong->m_fMusicLengthSeconds );
+						if( !w.WriteEditFileToMachine(m_pSong, m_pSteps, sError) )
 						{
 							ScreenPrompt::Prompt( SM_None, sError );
 							break;
@@ -2836,7 +2833,8 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 					break;
 				case EditMode_Full: 
 					{
-						pSong->Save();
+						// This will recalculate radar values.
+						m_pSong->Save();
 						SCREENMAN->ZeroNextUpdate();
 
 						HandleScreenMessage( SM_SaveSuccessful );
