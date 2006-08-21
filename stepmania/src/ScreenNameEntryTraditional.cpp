@@ -21,15 +21,12 @@
 #include "Foreach.h"
 #include "Style.h"
 #include "ScreenDimensions.h"
-#include "Command.h"
 #include "InputEventPlus.h"
 #include "RageInput.h"
 
 //
 // Defines specific to ScreenNameEntryTraditional
 //
-static const ThemeMetric<apActorCommands>	ALPHABET_INIT_COMMMAND	("ScreenNameEntryTraditional","AlphabetInitCommand");	// TODO: remove hard coded name
-static const ThemeMetric<apActorCommands>	OK_INIT_COMMMAND	("ScreenNameEntryTraditional","OKInitCommand");	// TODO: remove hard coded name
 
 #define COMMAND_OPTIONAL( actor, command_name ) \
 	if( !(actor).GetName().empty() ) \
@@ -232,47 +229,53 @@ void ScreenNameEntryTraditional::Init()
 			/* Add letters to m_Keyboard. */
 			const RString sFontPath = THEME->GetPathF(m_sName,"letters");
 			const wstring sChars = RStringToWstring(KEYBOARD_LETTERS);
+
+			BitmapText *pLetterTemplate = new BitmapText;
+			pLetterTemplate->SetName( "Letter" );
+			pLetterTemplate->LoadFromFont( sFontPath );
+			ActorUtil::LoadAllCommands( *pLetterTemplate, m_sName );
+			pLetterTemplate->PlayCommand( "AlphabetInit" );
 			for( unsigned ch = 0; ch < sChars.size(); ++ch )
 			{
-				BitmapText *pLetter = new BitmapText;
-				pLetter->SetName( ssprintf("LetterP%i",p+1) );
-				pLetter->LoadFromFont( sFontPath );
+				BitmapText *pLetter = new BitmapText( *pLetterTemplate );
 				pLetter->SetText( ssprintf("%lc", sChars[ch]) );
 				m_textAlphabet[p].push_back( pLetter );
 				m_Keyboard[p].AddChild( pLetter );
-				pLetter->RunCommands( ALPHABET_INIT_COMMMAND );
 
 				m_AlphabetLetter[p].push_back( sChars[ch] );
 			}
+			delete pLetterTemplate;
 
 			/* Add "<-". */
 			{
 				BitmapText *pLetter = new BitmapText;
 				pLetter->SetName( ssprintf("LetterP%i",p+1) );
+				ActorUtil::LoadAllCommands( *pLetter, m_sName );
 				pLetter->LoadFromFont( sFontPath );
 				RString sText = "&leftarrow;";
 				FontCharAliases::ReplaceMarkers( sText );
 				pLetter->SetText( sText );
+				pLetter->PlayCommand( "OKInit" );
 				m_textAlphabet[p].push_back( pLetter );
 				m_Keyboard[p].AddChild( pLetter );
 
 				m_AlphabetLetter[p].push_back( CHAR_BACK );
-				pLetter->RunCommands( OK_INIT_COMMMAND );
 			}
 
 			/* Add "OK". */
 			{
 				BitmapText *pLetter = new BitmapText;
 				pLetter->SetName( ssprintf("LetterP%i",p+1) );
+				ActorUtil::LoadAllCommands( *pLetter, m_sName );
 				pLetter->LoadFromFont( sFontPath );
 				RString sText = "&ok;";
 				FontCharAliases::ReplaceMarkers( sText );
 				pLetter->SetText( sText );
+				pLetter->PlayCommand( "OKInit" );
 				m_textAlphabet[p].push_back( pLetter );
 				m_Keyboard[p].AddChild( pLetter );
 
 				m_AlphabetLetter[p].push_back( CHAR_OK );
-				pLetter->RunCommands( OK_INIT_COMMMAND );
 			}
 
 			m_sprCursor[p].SetName( ssprintf("CursorP%i",p+1) );
