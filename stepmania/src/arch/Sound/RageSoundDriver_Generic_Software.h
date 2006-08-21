@@ -10,7 +10,7 @@ static const int samples_per_block = 512;
 class RageSound_Generic_Software: public RageSoundDriver
 {
 public:
-	virtual void Update(float delta);
+	virtual void Update();
 
 	void StartMixing( RageSoundBase *snd );		/* used by RageSound */
 	void StopMixing( RageSoundBase *snd );		/* used by RageSound */

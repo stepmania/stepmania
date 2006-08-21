@@ -100,7 +100,7 @@ void RageSound_DSound::MixerThread()
 			stream_pool[i]->pcm->Stop();
 }
 
-void RageSound_DSound::Update(float delta)
+void RageSound_DSound::Update()
 {
 	/* SoundStopped might erase sounds out from under us, so make a copy
 	 * of the sound list. */

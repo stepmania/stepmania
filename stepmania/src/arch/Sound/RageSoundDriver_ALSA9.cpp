@@ -203,7 +203,7 @@ void RageSound_ALSA9::StartMixing(RageSoundBase *snd)
 		stream_pool[i]->state = stream_pool[i]->PLAYING;
 }
 
-void RageSound_ALSA9::Update(float delta)
+void RageSound_ALSA9::Update()
 {
 	for(unsigned i = 0; i < stream_pool.size(); ++i)
 	{

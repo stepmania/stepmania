@@ -37,7 +37,7 @@ public:
 	 * call RageSoundBase::SoundIsFinishedPlaying(). */
 
 	/* Optional, if needed:  */
-	virtual void Update(float delta) { }
+	virtual void Update() { }
 
 	/* Sound startup latency--delay between Play() being called and actually
 	 * hearing it.  (This isn't necessarily the same as the buffer latency.) */

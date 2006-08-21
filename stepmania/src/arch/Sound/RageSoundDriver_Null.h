@@ -9,7 +9,7 @@ public:
 	RageSound_Null();
 	int64_t GetPosition( const RageSoundBase *snd ) const;
 	int GetSampleRate( int iRate ) const;
-	void Update( float fDeltaTime );
+	void Update();
 
 private:
 	int64_t m_iLastCursorPos;

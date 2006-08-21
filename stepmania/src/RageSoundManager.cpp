@@ -158,7 +158,7 @@ void RageSoundManager::Update( float fDeltaTime )
 		delete *it;
 
 	if( m_pDriver != NULL )
-		m_pDriver->Update( fDeltaTime );
+		m_pDriver->Update();
 }
 
 /* Register the given sound, and return a unique ID. */

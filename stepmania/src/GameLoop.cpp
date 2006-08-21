@@ -149,7 +149,7 @@ void GameLoop::RunGameLoop()
 		CheckFocus();
 
 		/* Update SOUNDMAN early (before any RageSound::GetPosition calls), to flush position data. */
-		SOUNDMAN->Update( fDeltaTime );
+		SOUNDMAN->Update();
 
 		/* Update song beat information -before- calling update on all the classes that
 		 * depend on it.  If you don't do this first, the classes are all acting on old 

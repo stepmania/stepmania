@@ -17,7 +17,7 @@ public:
 	int64_t GetPosition( const RageSoundBase *snd ) const;
 	int GetSampleRate( int rate ) const;
 
-	void Update(float delta);
+	void Update();
 
 	RageSound_ALSA9();
 	RString Init();

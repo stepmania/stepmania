@@ -6,7 +6,7 @@
 
 const int channels = 2;
 
-void RageSound_Null::Update( float fDeltaTime )
+void RageSound_Null::Update()
 {
 	/* "Play" frames. */
 	while( m_iLastCursorPos < GetPosition(NULL)+1024*4 )
@@ -16,7 +16,7 @@ void RageSound_Null::Update( float fDeltaTime )
 		m_iLastCursorPos += 256;
 	}
 
-	RageSound_Generic_Software::Update( fDeltaTime );
+	RageSound_Generic_Software::Update();
 }
 
 int64_t RageSound_Null::GetPosition( const RageSoundBase *snd ) const

@@ -258,7 +258,7 @@ int RageSound_Generic_Software::GetDataForSound( sound &s )
 }
 
 
-void RageSound_Generic_Software::Update(float delta)
+void RageSound_Generic_Software::Update()
 {
 	/* We must not lock here, since the decoder thread might hold the lock for a
 	 * while at a time.  This is threadsafe, because once a sound is in STOPPING,

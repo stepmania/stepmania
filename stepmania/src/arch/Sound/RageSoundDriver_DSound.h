@@ -65,7 +65,7 @@ private:
 	void StopMixing( RageSoundBase *snd );		/* used by RageSound */
 	bool PauseMixing( RageSoundBase *snd, bool bStop );
 	int64_t GetPosition( const RageSoundBase *snd ) const;
-	void Update(float delta);
+	void Update();
 
 	int GetSampleRate( int rate ) const { return rate; }
 };
