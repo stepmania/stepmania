@@ -49,7 +49,14 @@ void Steps::SetNoteData( const NoteData& noteDataNew )
 {
 	ASSERT( noteDataNew.GetNumTracks() == GameManager::StepsTypeToNumTracks(m_StepsType) );
 
-	DeAutogen();
+	if( parent )
+	{
+		copy( parent->m_CachedRadarValues, parent->m_CachedRadarValues + NUM_PLAYERS, m_CachedRadarValues );
+		m_sDescription	= parent->m_sDescription;
+		m_Difficulty	= parent->m_Difficulty;
+		m_iMeter	= parent->m_iMeter;
+		parent		= NULL;
+	}
 
 	*m_pNoteData = noteDataNew;
 	m_bNoteDataIsFilled = true;
