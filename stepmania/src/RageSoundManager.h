@@ -33,7 +33,7 @@ public:
 	bool GetPlayOnlyCriticalSounds() const { return m_bPlayOnlyCriticalSounds; }
 	void SetPlayOnlyCriticalSounds( bool bPlayOnlyCriticalSounds );
 
-	void Update( float fDeltaTime );
+	void Update();
 	void StartMixing( RageSoundBase *snd );	/* used by RageSound */
 	void StopMixing( RageSoundBase *snd );	/* used by RageSound */
 	bool Pause( RageSoundBase *snd, bool bPause );	/* used by RageSound */

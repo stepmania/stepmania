@@ -112,7 +112,7 @@ int64_t RageSoundManager::GetPosition( const RageSoundBase *pSound ) const
 	return m_pDriver->GetPosition( pSound );
 }
 
-void RageSoundManager::Update( float fDeltaTime )
+void RageSoundManager::Update()
 {
 	FlushPosMapQueue();
 
