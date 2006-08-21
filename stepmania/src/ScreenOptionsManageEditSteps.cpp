@@ -60,7 +60,7 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 	SONGMAN->FreeAllLoadedFromProfile( ProfileSlot_Machine );
 	SONGMAN->LoadAllFromProfileDir( PROFILEMAN->GetProfileDir(ProfileSlot_Machine), ProfileSlot_Machine );
 	GAMESTATE->m_pCurSong.Set( NULL );
-	GAMESTATE->m_pCurSteps[0].Set( NULL );
+	GAMESTATE->m_pCurSteps[PLAYER_1].Set( NULL );
 
 	vector<OptionRowHandler*> vHands;
 
