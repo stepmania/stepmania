@@ -18,18 +18,6 @@
 static RString GRADE_X_NAME( size_t p ) { return ssprintf("GradeP%dX",int(p+1)); }
 static RString GRADE_Y_NAME( size_t p ) { return ssprintf("GradeP%dY",int(p+1)); }
 
-static ThemeMetric<float>		ICON_X			("MusicWheelItem","IconX");
-static ThemeMetric<float>		ICON_Y			("MusicWheelItem","IconY");
-static ThemeMetric<apActorCommands>	ICON_ON_COMMAND		("MusicWheelItem","IconOnCommand");
-static ThemeMetric<float>		SONG_NAME_X		("MusicWheelItem","SongNameX");
-static ThemeMetric<float>		SONG_NAME_Y		("MusicWheelItem","SongNameY");
-static ThemeMetric<apActorCommands>	SONG_NAME_ON_COMMAND	("MusicWheelItem","SongNameOnCommand");
-static ThemeMetric<float>		SECTION_X		("MusicWheelItem","SectionX");
-static ThemeMetric<float>		SECTION_Y		("MusicWheelItem","SectionY");
-static ThemeMetric<apActorCommands>	SECTION_ON_COMMAND	("MusicWheelItem","SectionOnCommand");
-static ThemeMetric<float>		ROULETTE_X		("MusicWheelItem","RouletteX");
-static ThemeMetric<float>		ROULETTE_Y		("MusicWheelItem","RouletteY");
-static ThemeMetric<apActorCommands>	ROULETTE_ON_COMMAND	("MusicWheelItem","RouletteOnCommand");
 static ThemeMetric1D<float>		GRADE_X			("MusicWheelItem",GRADE_X_NAME,NUM_PLAYERS);
 static ThemeMetric1D<float>		GRADE_Y			("MusicWheelItem",GRADE_Y_NAME,NUM_PLAYERS);
 
@@ -62,26 +50,34 @@ MusicWheelItem::MusicWheelItem( RString sType ):
 	m_sprSortBar.Load( THEME->GetPathG(sType,"sort") );
 	this->AddChild( &m_sprSortBar );
 
-	m_WheelNotifyIcon.SetXY( ICON_X, ICON_Y );
-	m_WheelNotifyIcon.RunCommands( ICON_ON_COMMAND );
+	m_WheelNotifyIcon.SetName( "Icon" );
+	ActorUtil::LoadAllCommands( m_WheelNotifyIcon, "MusicWheelItem" );
+	ActorUtil::SetXY( m_WheelNotifyIcon, "MusicWheelItem" );
+	m_WheelNotifyIcon.PlayCommand( "On" );
 	this->AddChild( &m_WheelNotifyIcon );
 	
+	m_TextBanner.SetName( "SongName" );
+	ActorUtil::LoadAllCommands( m_TextBanner, "MusicWheelItem" );
 	m_TextBanner.Load( "TextBanner" );
-	m_TextBanner.SetXY( SONG_NAME_X, SONG_NAME_Y );
-	m_TextBanner.RunCommands( SONG_NAME_ON_COMMAND );
+	ActorUtil::SetXY( m_WheelNotifyIcon, "MusicWheelItem" );
+	m_TextBanner.PlayCommand( "On" );
 	this->AddChild( &m_TextBanner );
 
+	m_textSection.SetName( "Section" );
+	ActorUtil::LoadAllCommands( m_textSection, "MusicWheelItem" );
 	m_textSection.LoadFromFont( THEME->GetPathF(sType,"section") );
+	ActorUtil::SetXY( m_textSection, "MusicWheelItem" );
 	m_textSection.SetShadowLength( 0 );
-	m_textSection.SetXY( SECTION_X, SECTION_Y );
-	m_textSection.RunCommands( SECTION_ON_COMMAND );
+	m_textSection.PlayCommand( "On" );
 	this->AddChild( &m_textSection );
 
+	m_textRoulette.SetName( "Roulette" );
+	ActorUtil::LoadAllCommands( m_textRoulette, "MusicWheelItem" );
 	m_textRoulette.LoadFromFont( THEME->GetPathF(sType,"roulette") );
+	ActorUtil::SetXY( m_textRoulette, "MusicWheelItem" );
 	m_textRoulette.SetShadowLength( 0 );
 	m_textRoulette.TurnRainbowOn();
-	m_textRoulette.SetXY( ROULETTE_X, ROULETTE_Y );
-	m_textRoulette.RunCommands( ROULETTE_ON_COMMAND );
+	m_textRoulette.PlayCommand( "On" );
 	this->AddChild( &m_textRoulette );
 
 	m_textCourse.SetName( "CourseName" );
