@@ -4,9 +4,8 @@
 #include "GameState.h"
 #include "ThemeMetric.h"
 #include "song.h"
+#include "ActorUtil.h"
 
-static ThemeMetric<apActorCommands>	IN_COMMAND	("LyricDisplay","InCommand");
-static ThemeMetric<apActorCommands>	OUT_COMMAND	("LyricDisplay","OutCommand");
 static ThemeMetric<float>		IN_LENGTH	("LyricDisplay","InLength");
 static ThemeMetric<float>		OUT_LENGTH	("LyricDisplay","OutLength");
 static ThemeMetric<RageColor>		WIPE_DIM_FACTOR	("LyricDisplay","WipeDimFactor");
@@ -15,6 +14,8 @@ LyricDisplay::LyricDisplay()
 {
 	for( int i=0; i<2; i++ )
 	{
+		m_textLyrics[i].SetName( "Lyric" );
+		ActorUtil::LoadAllCommands( m_textLyrics[i], "LyricDisplay" );
 		m_textLyrics[i].LoadFromFont( THEME->GetPathF("LyricDisplay","text") );
 		m_textLyrics[i].SetDiffuse( RageColor(1,1,1,1) );
 		this->AddChild( &m_textLyrics[i] );
@@ -100,14 +101,14 @@ void LyricDisplay::Update( float fDeltaTime )
 			m_textLyrics[i].SetCropLeft(0);
 		if( i==1 )
 			m_textLyrics[i].SetCropRight(1);
-		m_textLyrics[i].RunCommands( IN_COMMAND );
+		m_textLyrics[i].PlayCommand( "In" );
 		m_textLyrics[i].BeginTweening( fShowLength * 0.75f ); /* sleep */
 		if( i==0 )
 			m_textLyrics[i].SetCropLeft(1);
 		if( i==1 )
 			m_textLyrics[i].SetCropRight(0);
 		m_textLyrics[i].BeginTweening( fShowLength * 0.25f ); /* sleep */
-		m_textLyrics[i].RunCommands( OUT_COMMAND );
+		m_textLyrics[i].PlayCommand( "Out" );
 	}
 
 	m_iCurLyricNumber++;

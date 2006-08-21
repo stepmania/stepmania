@@ -4,6 +4,7 @@
 #include "SongManager.h"
 #include "RageLog.h"
 #include "ThemeMetric.h"
+#include "ActorUtil.h"
 
 /* If this actor is used anywhere other than SelectGroup, we
  * can add a setting that changes which metric group we pull
@@ -12,13 +13,6 @@ static const ThemeMetric<float>			START_X						("GroupList","StartX");
 static const ThemeMetric<float>			START_Y						("GroupList","StartY");
 static const ThemeMetric<float>			SPACING_X					("GroupList","SpacingX");
 static const ThemeMetric<float>			SPACING_Y					("GroupList","SpacingY");
-static const ThemeMetric<apActorCommands>	SCROLL_TWEEN_COMMAND		("GroupList","ScrollTweenCommand");
-static const ThemeMetric<apActorCommands>	GAIN_FOCUS_ITEM_COMMAND		("GroupList","GainFocusItemCommand");
-static const ThemeMetric<apActorCommands>	LOSE_FOCUS_ITEM_COMMAND		("GroupList","LoseFocusItemCommand");
-static const ThemeMetric<apActorCommands>	GAIN_FOCUS_GROUP_COMMAND	("GroupList","GainFocusGroupCommand");
-static const ThemeMetric<apActorCommands>	LOSE_FOCUS_GROUP_COMMAND	("GroupList","LoseFocusGroupCommand");
-static const ThemeMetric<apActorCommands>	HIDE_ITEM_COMMAND			("GroupList","HideItemCommand");
-static const ThemeMetric<apActorCommands>	SHOW_ITEM_COMMAND			("GroupList","ShowItemCommand");
 
 const int MAX_GROUPS_ONSCREEN = 7;
 
@@ -48,13 +42,23 @@ void GroupList::Load( const vector<RString>& asGroupNames )
 {
 	m_asLabels = asGroupNames;
 
+	m_Frame.SetName( "Frame" );
 	this->AddChild( &m_Frame );
+	ActorUtil::LoadAllCommands( m_Frame, "GroupList" );
 
 	for( unsigned i=0; i < m_asLabels.size(); i++ )
 	{
 		Sprite *button = new Sprite;
+		button->SetName( "Button" );
+		ActorUtil::LoadAllCommands( *button, "GroupList" );
+
 		BitmapText *label = new BitmapText;
+		label->SetName( "Label" );
+		ActorUtil::LoadAllCommands( *label, "GroupList" );
+
 		ActorFrame *frame = new ActorFrame;
+		frame->SetName( "ButtonFrame" );
+		ActorUtil::LoadAllCommands( *frame, "GroupList" );
 
 		m_sprButtons.push_back( button );
 		m_textLabels.push_back( label );
@@ -105,16 +109,14 @@ void GroupList::ResetTextSize( int i )
 
 void GroupList::BeforeChange()
 {
-	m_sprButtons[m_iSelection]->RunCommands( LOSE_FOCUS_ITEM_COMMAND );
-	m_textLabels[m_iSelection]->RunCommands( LOSE_FOCUS_ITEM_COMMAND );
-	m_ButtonFrames[m_iSelection]->RunCommands( LOSE_FOCUS_GROUP_COMMAND );
+	m_ButtonFrames[m_iSelection]->PlayCommand( "LoseFocus" );
 }
 
 
 void GroupList::AfterChange()
 {
 	m_Frame.StopTweening();
-	m_Frame.RunCommands( SCROLL_TWEEN_COMMAND );
+	m_Frame.PlayCommand( "ScrollTween" );
 	m_Frame.SetY( -m_iTop*SPACING_Y );
 
 	for( int i=0; i < (int) m_asLabels.size(); i++ )
@@ -124,22 +126,18 @@ void GroupList::AfterChange()
 
 		if( IsHidden && !WasHidden )
 		{
-			m_sprButtons[i]->RunCommands( HIDE_ITEM_COMMAND );
-			m_textLabels[i]->RunCommands( HIDE_ITEM_COMMAND );
+			m_ButtonFrames[i]->PlayCommand( "HideItem" );
 		}
 		else if( !IsHidden && WasHidden )
 		{
-			m_sprButtons[i]->RunCommands( SHOW_ITEM_COMMAND );
-			m_textLabels[i]->RunCommands( SHOW_ITEM_COMMAND );
+			m_ButtonFrames[i]->PlayCommand( "ShowItem" );
 			ResetTextSize( i );
 		}
 
 		m_bHidden[i] = IsHidden;
 	}
 
-	m_sprButtons[m_iSelection]->RunCommands( GAIN_FOCUS_ITEM_COMMAND );
-	m_textLabels[m_iSelection]->RunCommands( GAIN_FOCUS_ITEM_COMMAND );
-	m_ButtonFrames[m_iSelection]->RunCommands( GAIN_FOCUS_GROUP_COMMAND );
+	m_ButtonFrames[m_iSelection]->PlayCommand( "GainFocus" );
 }
 
 void GroupList::Up()
@@ -206,8 +204,7 @@ void GroupList::TweenOnScreen()
 		/* If this item isn't visible, hide it and skip tweens. */
 		if( !ItemIsOnScreen(i) )
 		{
-			m_sprButtons[i]->RunCommands( HIDE_ITEM_COMMAND );
-			m_textLabels[i]->RunCommands( HIDE_ITEM_COMMAND );
+			m_ButtonFrames[i]->PlayCommand( "HideItem" );
 			
 			m_sprButtons[i]->FinishTweening();
 			m_textLabels[i]->FinishTweening();
