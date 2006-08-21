@@ -145,9 +145,9 @@ void SongOptions::FromString( const RString &sOptions )
 		}
 
 		if(	 sBit == "norecover" )		m_DrainType = DRAIN_NO_RECOVER;
-		else if( sBit == "suddendeath" )	m_DrainType = DRAIN_SUDDEN_DEATH;
+		else if( sBit == "suddendeath" ||
+			 sBit == "death" )		m_DrainType = DRAIN_SUDDEN_DEATH;
 		else if( sBit == "power-drop" )		m_DrainType = DRAIN_NO_RECOVER;
-		else if( sBit == "death" )		m_DrainType = DRAIN_SUDDEN_DEATH;
 		else if( sBit == "normal-drain" )	m_DrainType = DRAIN_NORMAL;
 		else if( sBit == "failarcade" || 
 			 sBit == "failimmediate" )	m_FailType = FAIL_IMMEDIATE;
