@@ -15,9 +15,7 @@ REGISTER_ACTOR_CLASS(GrooveRadar)
 
 #define		LABEL_OFFSET_X( i )		THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetX",i+1))
 #define 	LABEL_OFFSET_Y( i )		THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetY",i+1))
-static const ThemeMetric<apActorCommands>	LABEL_ON_COMMAND			("GrooveRadar","LabelOnCommand");
 static const ThemeMetric<float>			LABEL_ON_DELAY				("GrooveRadar","LabelOnDelay");
-static const ThemeMetric<apActorCommands>	LABEL_ON_COMMAND_POST_DELAY ("GrooveRadar","LabelOnCommandPostDelay");
 
 static float RADAR_VALUE_ROTATION( int iValueIndex ) {	return PI/2 + PI*2 / 5.0f * iValueIndex; }
 
@@ -41,11 +39,12 @@ GrooveRadar::GrooveRadar()
 
 	for( int c=0; c<NUM_SHOWN_RADAR_CATEGORIES; c++ )
 	{
-		m_sprRadarLabels[c].SetName( "RadarLabel" );
+		m_sprRadarLabels[c].SetName( "Label" );
 		m_sprRadarLabels[c].Load( THEME->GetPathG("GrooveRadar","labels 1x5") );
 		m_sprRadarLabels[c].StopAnimating();
 		m_sprRadarLabels[c].SetState( c );
 		m_sprRadarLabels[c].SetXY( LABEL_OFFSET_X(c), LABEL_OFFSET_Y(c) );
+		ActorUtil::LoadAllCommands( m_sprRadarLabels[c], "GrooveRadar" );
 		this->AddChild( &m_sprRadarLabels[c] );
 	}
 }
@@ -60,9 +59,9 @@ void GrooveRadar::TweenOnScreen()
 	for( int c=0; c<NUM_SHOWN_RADAR_CATEGORIES; c++ )
 	{
 		m_sprRadarLabels[c].SetX( LABEL_OFFSET_X(c) );
-		m_sprRadarLabels[c].RunCommands( LABEL_ON_COMMAND );
+		m_sprRadarLabels[c].PlayCommand( "PreDelayOn" );
 		m_sprRadarLabels[c].BeginTweening( LABEL_ON_DELAY*c );	// sleep
-		m_sprRadarLabels[c].RunCommands( LABEL_ON_COMMAND_POST_DELAY );
+		m_sprRadarLabels[c].PlayCommand( "PostDelayOn" );
 	}
 
 	m_Frame.SetZoom( 0.5f );
