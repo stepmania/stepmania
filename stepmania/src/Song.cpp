@@ -757,13 +757,16 @@ void Song::SaveToSMFile( RString sPath, bool bSavingCache )
 		FileCopy( sPath, sPath + ".old" );
 
 	NotesWriterSM wr;
-	wr.Write(sPath, *this, bSavingCache);
+	wr.Write( sPath, *this, bSavingCache );
 }
 
 void Song::SaveToCacheFile()
 {
 	SONGINDEX->AddCacheIndex(m_sSongDir, GetHashForDirectory(m_sSongDir));
-	SaveToSMFile( GetCacheFilePath(), true );
+	const RString sPath = GetCacheFilePath();
+	SaveToSMFile( sPath, true );
+	FOREACH( Steps*, m_vpSteps, pSteps )
+		(*pSteps)->SetFilename( sPath );
 }
 
 void Song::SaveToDWIFile()
