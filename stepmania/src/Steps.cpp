@@ -343,11 +343,6 @@ void Steps::CreateBlank( StepsType ntTo )
 	this->SetNoteData( noteData );
 }
 
-bool Steps::IsAutogen() const
-{
-	return parent != NULL;
-}
-
 void Steps::SetDifficultyAndDescription( Difficulty dc, RString sDescription )
 {
 	DeAutogen();
@@ -403,7 +398,7 @@ public:
 		return 1;
 	}
 
-	static void Register(lua_State *L)
+	static void Register( lua_State *L )
 	{
 		ADD_METHOD( GetStepsType );
 		ADD_METHOD( GetDifficulty );
