@@ -191,7 +191,7 @@ RString NotesWriterSM::GetSMNotesTag( const Song &song, const Steps &in, bool bS
 	return JoinLineList( lines );
 }
 
-bool NotesWriterSM::Write(RString sPath, const Song &out, bool bSavingCache)
+bool NotesWriterSM::Write( RString sPath, const Song &out, bool bSavingCache )
 {
 	/* Flush dir cache when writing steps, so the old size isn't cached. */
 	FILEMAN->FlushDirCache( Dirname(sPath) );
