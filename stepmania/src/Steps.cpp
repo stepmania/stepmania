@@ -383,12 +383,12 @@ class LunaSteps: public Luna<Steps>
 public:
 	LunaSteps() { LUA->Register( Register ); }
 
-	static int GetStepsType( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_StepsType ); return 1; }
-	static int GetDifficulty( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetDifficulty() ); return 1; }
-	static int GetDescription( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDescription() ); return 1; }
-	static int GetMeter( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetMeter() ); return 1; }
-	static int GetFilename( T* p, lua_State *L )	{ lua_pushstring(L, p->GetFilename() ); return 1; }
-	static int IsAutogen( T* p, lua_State *L )	{ lua_pushboolean(L, p->IsAutogen() ); return 1; }
+	DEFINE_METHOD( GetStepsType,	m_StepsType )
+	DEFINE_METHOD( GetDifficulty,	GetDifficulty() )
+	DEFINE_METHOD( GetDescription,	GetDescription() )
+	DEFINE_METHOD( GetMeter,	GetMeter() )
+	DEFINE_METHOD( GetFilename,	GetFilename() )
+	DEFINE_METHOD( IsAutogen,	IsAutogen() )
 	
 	static int GetRadarValues( T* p, lua_State *L )
 	{
