@@ -31,7 +31,7 @@ Steps::Steps()
 	m_bSavedToDisk = false;
 	m_StepsType = STEPS_TYPE_INVALID;
 	m_LoadedFromProfile = ProfileSlot_INVALID;
-	m_uHash = 0;
+	m_iHash = 0;
 	m_Difficulty = DIFFICULTY_INVALID;
 	m_iMeter = 0;
 
@@ -49,16 +49,16 @@ unsigned Steps::GetHash() const
 {
 	if( parent )
 		return parent->GetHash();
-	if( m_uHash )
-		return m_uHash;
+	if( m_iHash )
+		return m_iHash;
 	if( m_sNoteDataCompressed.empty() )
 	{
 		if( !m_bNoteDataIsFilled )
 			return 0; // No data, no hash.
 		NoteDataUtil::GetSMNoteDataString( *m_pNoteData, m_sNoteDataCompressed );
 	}
-	m_uHash = GetHashForString( m_sNoteDataCompressed );
-	return m_uHash;
+	m_iHash = GetHashForString( m_sNoteDataCompressed );
+	return m_iHash;
 }		
 
 void Steps::SetNoteData( const NoteData& noteDataNew )
@@ -78,7 +78,7 @@ void Steps::SetNoteData( const NoteData& noteDataNew )
 	m_bNoteDataIsFilled = true;
 	
 	m_sNoteDataCompressed = EMPTY_STRING;
-	m_uHash = 0;
+	m_iHash = 0;
 	m_sFilename = EMPTY_STRING; // We can no longer read from the file because it has changed in memory.
 }
 
@@ -103,7 +103,7 @@ void Steps::SetSMNoteData( const RString &notes_comp_ )
 	m_bNoteDataIsFilled = false;
 
 	m_sNoteDataCompressed = notes_comp_;
-	m_uHash = 0;
+	m_iHash = 0;
 	m_sFilename = EMPTY_STRING; // We can no longer read from the file because it has changed in memory.
 }
 

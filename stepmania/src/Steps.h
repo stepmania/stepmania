@@ -87,7 +87,7 @@ private:
 	ProfileSlot			m_LoadedFromProfile;	// ProfileSlot_INVALID if wasn't loaded from a profile
 
 	/* These values are pulled from the autogen source first, if there is one. */
-	mutable unsigned		m_uHash;		// only used if m_Difficulty == DIFFICULTY_EDIT
+	mutable unsigned		m_iHash;		// only used if m_Difficulty == DIFFICULTY_EDIT
 	RString				m_sDescription;		// Step author, edit name, or something meaningful
 	Difficulty			m_Difficulty;		// difficulty classification
 	int				m_iMeter;		// difficulty rating from MIN_METER to MAX_METER
