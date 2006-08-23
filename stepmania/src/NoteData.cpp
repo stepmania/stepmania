@@ -178,11 +178,7 @@ void NoteData::CopyRange( const NoteData& from, int rowFromBegin, int rowFromEnd
 
 void NoteData::CopyAll( const NoteData& from )
 {
-	SetNumTracks( from.GetNumTracks() );
-	ClearAll();
-
-	for( int c=0; c<GetNumTracks(); c++ )
-		m_TapNotes[c] = from.m_TapNotes[c];
+	*this = from;
 }
 
 bool NoteData::IsRowEmpty( int row ) const
