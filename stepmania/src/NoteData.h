@@ -58,13 +58,13 @@ private:
 	vector<TrackMap>	m_TapNotes;
 
 public:
-	NoteData();
-	~NoteData();
 	void Init();
 	
 	int GetNumTracks() const { return m_TapNotes.size(); }
 	void SetNumTracks( int iNewNumTracks );
 	bool IsComposite() const;
+	bool operator==( const NoteData &nd ) const { return m_TapNotes == nd.m_TapNotes; }
+	bool operator!=( const NoteData &nd ) const { return m_TapNotes != nd.m_TapNotes; }
 
 	/* Return the note at the given track and row.  Row may be out of
 	 * range; pretend the song goes on with TAP_EMPTYs indefinitely. */
@@ -195,7 +195,8 @@ public:
 	void LoadFromNode( const XNode* pNode );
 };
 
-namespace std {
+namespace std
+{
 	template<> inline void swap<NoteData>( NoteData &nd1, NoteData &nd2 ) { nd1.swap( nd2 ); }
 }
 

@@ -14,19 +14,9 @@
 #include "RageUtil_AutoPtr.h"
 REGISTER_CLASS_TRAITS( NoteData, new NoteData(*pCopy) )
 
-NoteData::NoteData()
-{
-	Init();
-}
-
 void NoteData::Init()
 {
-	ClearAll();
 	m_TapNotes = vector<TrackMap>();	// ensure that the memory is freed
-}
-
-NoteData::~NoteData()
-{
 }
 
 void NoteData::SetNumTracks( int iNewNumTracks )
