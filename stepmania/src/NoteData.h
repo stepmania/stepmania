@@ -1,7 +1,7 @@
 /* NoteData - Holds data about the notes that the player is supposed to hit. */
 
-#ifndef NOTEDATA_H
-#define NOTEDATA_H
+#ifndef NOTE_DATA_H
+#define NOTE_DATA_H
 
 #include "NoteTypes.h"
 #include <map>
