@@ -41,13 +41,13 @@ public:
 		_all_tracks_iterator( ND &nd, int iStartRow, int iEndRow, IteratorCond cond );
 		_all_tracks_iterator &operator++();		// preincrement
 		_all_tracks_iterator operator++( int dummy );	// postincrement
-		inline int Track() const { return m_iTrack; }
-		inline int Row() const { return m_vIters[m_iTrack]->first; }
-		inline bool IsAtEnd() const { return m_iTrack == -1; }
-		inline TN &operator*()  { DEBUG_ASSERT( !IsAtEnd() ); return m_vIters[m_iTrack]->second; }
-		inline TN *operator->()	{ DEBUG_ASSERT( !IsAtEnd() ); return &m_vIters[m_iTrack]->second; }
-		inline const TN &operator*() const  { DEBUG_ASSERT( !IsAtEnd() ); return m_vIters[m_iTrack]->second; }
-		inline const TN *operator->() const { DEBUG_ASSERT( !IsAtEnd() ); return &m_vIters[m_iTrack]->second; }
+		inline int Track() const		{ return m_iTrack; }
+		inline int Row() const			{ return m_vIters[m_iTrack]->first; }
+		inline bool IsAtEnd() const		{ return m_iTrack == -1; }
+		inline TN &operator*()			{ DEBUG_ASSERT( !IsAtEnd() ); return m_vIters[m_iTrack]->second; }
+		inline TN *operator->()			{ DEBUG_ASSERT( !IsAtEnd() ); return &m_vIters[m_iTrack]->second; }
+		inline const TN &operator*() const	{ DEBUG_ASSERT( !IsAtEnd() ); return m_vIters[m_iTrack]->second; }
+		inline const TN *operator->() const	{ DEBUG_ASSERT( !IsAtEnd() ); return &m_vIters[m_iTrack]->second; }
 	};
 	typedef _all_tracks_iterator<NoteData, iterator, TapNote> 			all_tracks_iterator;
 	typedef _all_tracks_iterator<const NoteData, const_iterator, const TapNote>	all_tracks_const_iterator;
@@ -63,8 +63,8 @@ public:
 	int GetNumTracks() const { return m_TapNotes.size(); }
 	void SetNumTracks( int iNewNumTracks );
 	bool IsComposite() const;
-	bool operator==( const NoteData &nd ) const { return m_TapNotes == nd.m_TapNotes; }
-	bool operator!=( const NoteData &nd ) const { return m_TapNotes != nd.m_TapNotes; }
+	bool operator==( const NoteData &nd ) const			{ return m_TapNotes == nd.m_TapNotes; }
+	bool operator!=( const NoteData &nd ) const			{ return m_TapNotes != nd.m_TapNotes; }
 
 	/* Return the note at the given track and row.  Row may be out of
 	 * range; pretend the song goes on with TAP_EMPTYs indefinitely. */
@@ -78,17 +78,17 @@ public:
 			return TAP_EMPTY;
 	}
 
-	iterator begin( int iTrack ) { return m_TapNotes[iTrack].begin(); }
-	const_iterator begin( int iTrack ) const { return m_TapNotes[iTrack].begin(); }
-	iterator end( int iTrack ) { return m_TapNotes[iTrack].end(); }
-	const_iterator end( int iTrack ) const { return m_TapNotes[iTrack].end(); }
-	iterator lower_bound( int iTrack, int iRow ) { return m_TapNotes[iTrack].lower_bound( iRow ); }
-	const_iterator lower_bound( int iTrack, int iRow ) const { return m_TapNotes[iTrack].lower_bound( iRow ); }
-	void swap( NoteData &nd ) { m_TapNotes.swap( nd.m_TapNotes ); }
+	iterator begin( int iTrack )					{ return m_TapNotes[iTrack].begin(); }
+	const_iterator begin( int iTrack ) const			{ return m_TapNotes[iTrack].begin(); }
+	iterator end( int iTrack )					{ return m_TapNotes[iTrack].end(); }
+	const_iterator end( int iTrack ) const				{ return m_TapNotes[iTrack].end(); }
+	iterator lower_bound( int iTrack, int iRow )			{ return m_TapNotes[iTrack].lower_bound( iRow ); }
+	const_iterator lower_bound( int iTrack, int iRow ) const	{ return m_TapNotes[iTrack].lower_bound( iRow ); }
+	void swap( NoteData &nd )					{ m_TapNotes.swap( nd.m_TapNotes ); }
 
-	inline iterator FindTapNote( unsigned iTrack, int iRow ) { return m_TapNotes[iTrack].find( iRow ); }
+	inline iterator FindTapNote( unsigned iTrack, int iRow )	{ return m_TapNotes[iTrack].find( iRow ); }
 	inline const_iterator FindTapNote( unsigned iTrack, int iRow ) const { return m_TapNotes[iTrack].find( iRow ); }
-	void RemoveTapNote( unsigned iTrack, iterator it ) { m_TapNotes[iTrack].erase( it ); }
+	void RemoveTapNote( unsigned iTrack, iterator it )		{ m_TapNotes[iTrack].erase( it ); }
 
 	/* Return an iterator range including exactly iStartRow to iEndRow. */
 	void GetTapNoteRange( int iTrack, int iStartRow, int iEndRow, const_iterator &begin, const_iterator &end ) const;
@@ -134,22 +134,16 @@ public:
 	bool IsRangeEmpty( int track, int rowBegin, int rowEnd ) const;
 	int GetNumTapNonEmptyTracks( int row ) const;
 	void GetTapNonEmptyTracks( int row, set<int>& addTo ) const;
-	bool GetTapFirstNonEmptyTrack( int row, int &iNonEmptyTrackOut ) const;		// return false if no non-empty tracks at row
-	bool GetTapFirstEmptyTrack( int row, int &iEmptyTrackOut ) const;		// return false if no non-empty tracks at row
-	bool GetTapLastEmptyTrack( int row, int &iEmptyTrackOut ) const;		// return false if no empty tracks at row
+	bool GetTapFirstNonEmptyTrack( int row, int &iNonEmptyTrackOut ) const;	// return false if no non-empty tracks at row
+	bool GetTapFirstEmptyTrack( int row, int &iEmptyTrackOut ) const;	// return false if no non-empty tracks at row
+	bool GetTapLastEmptyTrack( int row, int &iEmptyTrackOut ) const;	// return false if no empty tracks at row
 	int GetNumTracksWithTap( int row ) const;
 	int GetNumTracksWithTapOrHoldHead( int row ) const;
 	int GetFirstTrackWithTap( int row ) const;
 	int GetFirstTrackWithTapOrHoldHead( int row ) const;
 
-	inline bool IsThereATapAtRow( int row ) const
-	{
-		return GetFirstTrackWithTap( row ) != -1;
-	}
-	inline bool IsThereATapOrHoldHeadAtRow( int row ) const
-	{
-		return GetFirstTrackWithTapOrHoldHead( row ) != -1;
-	}
+	inline bool IsThereATapAtRow( int row ) const			{ return GetFirstTrackWithTap( row ) != -1; }
+	inline bool IsThereATapOrHoldHeadAtRow( int row ) const		{ return GetFirstTrackWithTapOrHoldHead( row ) != -1; }
 	void GetTracksHeldAtRow( int row, set<int>& addTo );
 	int GetNumTracksHeldAtRow( int row );
 
@@ -160,21 +154,21 @@ public:
 	// statistics
 	//
 	bool IsEmpty() const;
-	int GetFirstRow() const;	// return the beat number of the first note
-	float GetFirstBeat() const { return NoteRowToBeat( GetFirstRow() ); }
-	int GetLastRow() const;	// return the beat number of the last note
-	float GetLastBeat() const { return NoteRowToBeat( GetLastRow() ); }
+	int GetFirstRow() const; // return the beat number of the first note
+	int GetLastRow() const;	 // return the beat number of the last note
+	float GetFirstBeat() const					{ return NoteRowToBeat( GetFirstRow() ); }
+	float GetLastBeat() const					{ return NoteRowToBeat( GetLastRow() ); }
 	int GetNumTapNotes( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
 	int GetNumMines( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
 	int GetNumRowsWithTap( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
 	int GetNumRowsWithTapOrHoldHead( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
-	/* optimization: for the default of start to end, use the second (faster) */
+	/* Optimization: for the default of start to end, use the second (faster). XXX: Second what? -- Steve */
 	int GetNumHoldNotes( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
 	int GetNumRolls( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
 
 	// Count rows that contain iMinTaps or more taps.
 	int GetNumRowsWithSimultaneousTaps( int iMinTaps, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
-	int GetNumJumps( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const { return GetNumRowsWithSimultaneousTaps(2,iStartIndex,iEndIndex); }
+	int GetNumJumps( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const { return GetNumRowsWithSimultaneousTaps( 2, iStartIndex, iEndIndex ); }
 
 	// This row needs at least iMinSimultaneousPresses either tapped or held.
 	bool RowNeedsAtLeastSimultaneousPresses( int iMinSimultaneousPresses, int row ) const;
@@ -182,8 +176,8 @@ public:
 
 	// Count rows that need iMinSimultaneousPresses either tapped or held.
 	int GetNumRowsWithSimultaneousPresses( int iMinSimultaneousPresses, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
-	int GetNumHands( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const { return GetNumRowsWithSimultaneousPresses(3,iStartIndex,iEndIndex); }
-	int GetNumQuads( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const { return GetNumRowsWithSimultaneousPresses(4,iStartIndex,iEndIndex); }
+	int GetNumHands( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const { return GetNumRowsWithSimultaneousPresses( 3, iStartIndex, iEndIndex ); }
+	int GetNumQuads( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const { return GetNumRowsWithSimultaneousPresses( 4, iStartIndex, iEndIndex ); }
 
 	// Transformations
 	void LoadTransformed( const NoteData& original, int iNewNumTracks, const int iOriginalTrackToTakeFrom[] );	// -1 for iOriginalTracksToTakeFrom means no track
