@@ -343,7 +343,8 @@ void Steps::CopyFrom( Steps* pSource, StepsType ntTo, float fMusicLengthSeconds 
 	m_StepsType = ntTo;
 	NoteData noteData;
 	pSource->GetNoteData( noteData );
-	noteData.SetNumTracks( GameManager::StepsTypeToNumTracks(ntTo) ); 
+	noteData.SetNumTracks( GameManager::StepsTypeToNumTracks(ntTo) );
+	parent = NULL;
 	this->SetNoteData( noteData );
 	this->SetDescription( pSource->GetDescription() );
 	this->SetDifficulty( pSource->GetDifficulty() );
