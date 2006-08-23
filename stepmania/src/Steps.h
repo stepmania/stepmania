@@ -36,7 +36,6 @@ public:
 	bool IsAPlayerEdit() const			{ return IsAnEdit() && GetLoadedFromProfileSlot() < ProfileSlot_Machine; }
 	bool WasLoadedFromProfile() const		{ return m_LoadedFromProfile != ProfileSlot_INVALID; }
 	ProfileSlot GetLoadedFromProfileSlot() const	{ return m_LoadedFromProfile; }
-	unsigned GetHash() const			{ return Real()->m_uHash; }
 	RString GetDescription() const			{ return Real()->m_sDescription; }
 	Difficulty GetDifficulty() const		{ return Real()->m_Difficulty; }
 	int GetMeter() const				{ return Real()->m_iMeter; }
@@ -56,6 +55,7 @@ public:
 	void SetCachedRadarValues( const RadarValues v[NUM_PLAYERS] );
 	float PredictMeter() const;
 	
+	unsigned GetHash() const;
 	void GetNoteData( NoteData& noteDataOut ) const;
 	void SetNoteData( const NoteData& noteDataNew );
 	void SetSMNoteData( const RString &notes_comp );
@@ -87,7 +87,7 @@ private:
 	ProfileSlot			m_LoadedFromProfile;	// ProfileSlot_INVALID if wasn't loaded from a profile
 
 	/* These values are pulled from the autogen source first, if there is one. */
-	unsigned			m_uHash;		// only used if m_Difficulty == DIFFICULTY_EDIT
+	mutable unsigned		m_uHash;		// only used if m_Difficulty == DIFFICULTY_EDIT
 	RString				m_sDescription;		// Step author, edit name, or something meaningful
 	Difficulty			m_Difficulty;		// difficulty classification
 	int				m_iMeter;		// difficulty rating from MIN_METER to MAX_METER

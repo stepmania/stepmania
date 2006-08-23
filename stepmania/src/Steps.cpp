@@ -45,6 +45,22 @@ Steps::~Steps()
 {
 }
 
+unsigned Steps::GetHash() const
+{
+	if( parent )
+		return parent->GetHash();
+	if( m_uHash )
+		return m_uHash;
+	if( m_sNoteDataCompressed.empty() )
+	{
+		if( !m_bNoteDataIsFilled )
+			return 0; // No data, no hash.
+		NoteDataUtil::GetSMNoteDataString( *m_pNoteData, m_sNoteDataCompressed );
+	}
+	m_uHash = GetHashForString( m_sNoteDataCompressed );
+	return m_uHash;
+}		
+
 void Steps::SetNoteData( const NoteData& noteDataNew )
 {
 	ASSERT( noteDataNew.GetNumTracks() == GameManager::StepsTypeToNumTracks(m_StepsType) );
@@ -61,8 +77,8 @@ void Steps::SetNoteData( const NoteData& noteDataNew )
 	*m_pNoteData = noteDataNew;
 	m_bNoteDataIsFilled = true;
 	
-	NoteDataUtil::GetSMNoteDataString( *m_pNoteData, m_sNoteDataCompressed );
-	m_uHash = GetHashForString( m_sNoteDataCompressed );
+	m_sNoteDataCompressed = EMPTY_STRING;
+	m_uHash = 0;
 	m_sFilename = EMPTY_STRING; // We can no longer read from the file because it has changed in memory.
 }
 
@@ -87,7 +103,7 @@ void Steps::SetSMNoteData( const RString &notes_comp_ )
 	m_bNoteDataIsFilled = false;
 
 	m_sNoteDataCompressed = notes_comp_;
-	m_uHash = GetHashForString( m_sNoteDataCompressed );
+	m_uHash = 0;
 	m_sFilename = EMPTY_STRING; // We can no longer read from the file because it has changed in memory.
 }
 
