@@ -114,9 +114,7 @@ public:
 	void GetTapNoteRangeExclusive( int iTrack, int iStartRow, int iEndRow, iterator &begin, iterator &end );
 
 
-	// Use this to iterate over notes.
-	// Returns the row index of the first TapNote on the track that has a row
-	// index > afterRow.
+	/* Returns the row of the first TapNote on the track that has a row greater than rowInOut. */
 	bool GetNextTapNoteRowForTrack( int track, int &rowInOut ) const;
 	bool GetNextTapNoteRowForAllTracks( int &rowInOut ) const;
 	bool GetPrevTapNoteRowForTrack( int track, int &rowInOut ) const;
