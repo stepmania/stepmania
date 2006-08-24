@@ -2390,14 +2390,6 @@ SOURCE=.\CourseEntryDisplay.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\DifficultyDisplay.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\DifficultyDisplay.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\DifficultyList.cpp
 # End Source File
 # Begin Source File
