@@ -123,8 +123,6 @@ struct msBone
 
 struct msAnimation
 {
-	vector<msBone>		Bones;
-
 	int FindBoneByName( const RString &sName ) const
 	{
 		for( unsigned i=0; i<Bones.size(); i++ )
@@ -135,6 +133,7 @@ struct msAnimation
 
 	bool LoadMilkshapeAsciiBones( RString sAniName, RString sPath );
 
+	vector<msBone>		Bones;
 	int			nTotalFrames;
 };
 
