@@ -30,11 +30,11 @@ void RageModelGeometry::OptimizeBones()
 		// check to see if all vertices have the same bone index
 		bool bAllVertsUseSameBone = true;
 		
-		char nBoneIndex	= mesh.Vertices[0].bone;
+		char iBoneIndex	= mesh.Vertices[0].bone;
 
 		for (unsigned j = 1; j < mesh.Vertices.size(); j++)
 		{
-			if( mesh.Vertices[j].bone != nBoneIndex )
+			if( mesh.Vertices[j].bone != iBoneIndex )
 			{
 				bAllVertsUseSameBone = false;
 				break;
@@ -43,7 +43,7 @@ void RageModelGeometry::OptimizeBones()
 
 		if( bAllVertsUseSameBone )
 		{
-			mesh.nBoneIndex = nBoneIndex;
+			mesh.m_iBoneIndex = iBoneIndex;
 
 			// clear all vertex/bone associations;
 			for (unsigned j = 0; j < mesh.Vertices.size(); j++)
@@ -149,7 +149,7 @@ void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNo
 				// mesh.nFlags = nFlags;
 				mesh.nMaterialIndex = (uint8_t) nIndex;
 
-				mesh.nBoneIndex = -1;
+				mesh.m_iBoneIndex = -1;
 
 				//
 				// vertices

@@ -21,7 +21,7 @@ struct msMesh
 	// OPTIMIZATION: If all verts in a mesh are transformed by the same bone, 
 	// then send the transform to the graphics card for the whole mesh instead
 	// of transforming each vertex on the CPU;
-	char			nBoneIndex;	// -1 = no bone
+	char			m_iBoneIndex;	// -1 = no bone
 
 	vector<msTriangle>	Triangles;
 };

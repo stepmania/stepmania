@@ -488,11 +488,11 @@ void Model::DrawMesh( int i ) const
 	const msMesh *pMesh = &m_pGeometry->m_Meshes[i];
 
 	// apply mesh-specific bone (if any)
-	if( pMesh->nBoneIndex != -1 )
+	if( pMesh->m_iBoneIndex != -1 )
 	{
 		DISPLAY->PushMatrix();
 
-		const RageMatrix &mat = m_vpBones[pMesh->nBoneIndex].m_Final;
+		const RageMatrix &mat = m_vpBones[pMesh->m_iBoneIndex].m_Final;
 		DISPLAY->PreMultMatrix( mat );
 	}
 
@@ -500,7 +500,7 @@ void Model::DrawMesh( int i ) const
 	const RageCompiledGeometry* TempGeometry = m_pTempGeometry ? m_pTempGeometry : m_pGeometry->m_pCompiledGeometry;
 	DISPLAY->DrawCompiledGeometry( TempGeometry, i, m_pGeometry->m_Meshes );
 
-	if( pMesh->nBoneIndex != -1 )
+	if( pMesh->m_iBoneIndex != -1 )
 		DISPLAY->PopMatrix();
 }
 
@@ -561,7 +561,7 @@ void Model::PlayAnimation( const RString &sAniName, float fPlayRate )
 		vector<RageModelVertex> &Vertices = pMesh->Vertices;
 		for( unsigned j = 0; j < Vertices.size(); j++ )
 		{
-//			int nBoneIndex = (pMesh->nBoneIndex!=-1) ? pMesh->nBoneIndex : bone;
+//			int iBoneIndex = (pMesh->m_iBoneIndex!=-1) ? pMesh->m_iBoneIndex : bone;
 			RageVector3 &pos = Vertices[j].p;
 			int8_t bone = Vertices[j].bone;
 			if( bone != -1 )
