@@ -292,6 +292,13 @@ Screen *ScreenManager::GetTopScreen()
 	return g_ScreenStack[g_ScreenStack.size()-1].m_pScreen;
 }
 
+Screen *ScreenManager::GetScreen( int iPosition )
+{
+	if( iPosition >= (int) g_ScreenStack.size() )
+		return NULL;
+	return g_ScreenStack[iPosition].m_pScreen;
+}
+
 bool ScreenManager::AllowOperatorMenuButton() const
 {
 	FOREACH( LoadedScreen, g_ScreenStack, s )
