@@ -90,7 +90,6 @@ struct msMaterial
 	RageColor	Emissive;
 	float		fShininess;
 	float		fTransparency;
-	int		nName;	// not used in SM.  What is this for anyway?
 
 	AnimatedTexture	diffuse;
 	AnimatedTexture	alpha;
@@ -119,9 +118,6 @@ struct msBone
 	RageVector3		Rotation;
 
 	vector<msPositionKey>	PositionKeys;
-
-	int			nNumRotationKeys;
-	int			nNumAllocedRotationKeys;
 	vector<msRotationKey>	RotationKeys;
 };
 
