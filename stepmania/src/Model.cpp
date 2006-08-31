@@ -543,14 +543,12 @@ void Model::PlayAnimation( const RString &sAniName, float fPlayRate )
 		if( nParentBone != -1 )
 		{
 			RageMatrixMultiply( &m_vpBones[i].m_Absolute, &m_vpBones[nParentBone].m_Absolute, &m_vpBones[i].m_Relative );
-
-			m_vpBones[i].m_Final = m_vpBones[i].m_Absolute;
 		}
 		else
 		{
 			m_vpBones[i].m_Absolute = m_vpBones[i].m_Relative;
-			m_vpBones[i].m_Final = m_vpBones[i].m_Relative;
 		}
+		m_vpBones[i].m_Final = m_vpBones[i].m_Absolute;
 	}
 
 	// subtract out the bone's resting position
