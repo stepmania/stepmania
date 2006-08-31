@@ -625,82 +625,81 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 		if( nPositionKeyCount == 0 && nRotationKeyCount == 0 )
 		{
 			vpBones[i].mFinal = vpBones[i].mAbsolute;
+			continue;
 		}
-		else
+
+		RageVector3 vPos;
+		RageVector3 vRot;
+
+		//
+		// search for the adjacent position keys
+		//
+		const msPositionKey *pLastPositionKey = NULL, *pThisPositionKey = NULL;
+		for( int j = 0; j < nPositionKeyCount; j++ )
 		{
-			RageVector3 vPos;
-			RageVector3 vRot;
-
-			//
-			// search for the adjacent position keys
-			//
-			const msPositionKey *pLastPositionKey = NULL, *pThisPositionKey = NULL;
-			for( int j = 0; j < nPositionKeyCount; j++ )
+			const msPositionKey *pPositionKey = &pBone->PositionKeys[j];
+			if( pPositionKey->fTime >= fFrame )
 			{
-				const msPositionKey *pPositionKey = &pBone->PositionKeys[j];
-				if( pPositionKey->fTime >= fFrame )
-				{
-					pThisPositionKey = pPositionKey;
-					break;
-				}
-				pLastPositionKey = pPositionKey;
+				pThisPositionKey = pPositionKey;
+				break;
 			}
-			if( pLastPositionKey != NULL && pThisPositionKey != NULL )
-			{
-				float d = pThisPositionKey->fTime - pLastPositionKey->fTime;
-				float s = (fFrame - pLastPositionKey->fTime) / d;
-				vPos = pLastPositionKey->Position + (pThisPositionKey->Position - pLastPositionKey->Position) * s;
-			}
-			else if( pLastPositionKey == NULL )
-				vPos = pThisPositionKey->Position;
-			else if( pThisPositionKey == NULL )
-				vPos = pLastPositionKey->Position;
-
-			//
-			// search for the adjacent rotation keys
-			//
-			RageMatrix m;
-			RageMatrixIdentity( &m );
-			const msRotationKey *pLastRotationKey = NULL, *pThisRotationKey = NULL;
-			for( int j = 0; j < nRotationKeyCount; j++ )
-			{
-				const msRotationKey *pRotationKey = &pBone->RotationKeys[j];
-				if( pRotationKey->fTime >= fFrame )
-				{
-					pThisRotationKey = pRotationKey;
-					break;
-				}
-				pLastRotationKey = pRotationKey;
-			}
-			if( pLastRotationKey != 0 && pThisRotationKey != 0 )
-			{
-				const float s = SCALE( fFrame, pLastRotationKey->fTime, pThisRotationKey->fTime, 0, 1 );
-
-				RageVector4 q;
-				RageQuatSlerp( &q, pLastRotationKey->Rotation, pThisRotationKey->Rotation, s );
-
-				RageMatrixFromQuat( &m, q );
-			}
-			else if( pLastRotationKey == 0 )
-			{
-				RageMatrixFromQuat( &m, pThisRotationKey->Rotation );
-			}
-			else if( pThisRotationKey == 0 )
-			{
-				RageMatrixFromQuat( &m, pLastRotationKey->Rotation );
-			}
-			m.m[3][0] = vPos[0];
-			m.m[3][1] = vPos[1];
-			m.m[3][2] = vPos[2];
-
-			RageMatrixMultiply( &vpBones[i].mRelativeFinal, &vpBones[i].mRelative, &m );
-
-			int nParentBone = pAnimation->FindBoneByName( pBone->sParentName );
-			if( nParentBone == -1 )
-				vpBones[i].mFinal = vpBones[i].mRelativeFinal;
-			else
-				RageMatrixMultiply( &vpBones[i].mFinal, &vpBones[nParentBone].mFinal, &vpBones[i].mRelativeFinal );
+			pLastPositionKey = pPositionKey;
 		}
+		if( pLastPositionKey != NULL && pThisPositionKey != NULL )
+		{
+			float d = pThisPositionKey->fTime - pLastPositionKey->fTime;
+			float s = (fFrame - pLastPositionKey->fTime) / d;
+			vPos = pLastPositionKey->Position + (pThisPositionKey->Position - pLastPositionKey->Position) * s;
+		}
+		else if( pLastPositionKey == NULL )
+			vPos = pThisPositionKey->Position;
+		else if( pThisPositionKey == NULL )
+			vPos = pLastPositionKey->Position;
+
+		//
+		// search for the adjacent rotation keys
+		//
+		RageMatrix m;
+		RageMatrixIdentity( &m );
+		const msRotationKey *pLastRotationKey = NULL, *pThisRotationKey = NULL;
+		for( int j = 0; j < nRotationKeyCount; j++ )
+		{
+			const msRotationKey *pRotationKey = &pBone->RotationKeys[j];
+			if( pRotationKey->fTime >= fFrame )
+			{
+				pThisRotationKey = pRotationKey;
+				break;
+			}
+			pLastRotationKey = pRotationKey;
+		}
+		if( pLastRotationKey != 0 && pThisRotationKey != 0 )
+		{
+			const float s = SCALE( fFrame, pLastRotationKey->fTime, pThisRotationKey->fTime, 0, 1 );
+
+			RageVector4 q;
+			RageQuatSlerp( &q, pLastRotationKey->Rotation, pThisRotationKey->Rotation, s );
+
+			RageMatrixFromQuat( &m, q );
+		}
+		else if( pLastRotationKey == 0 )
+		{
+			RageMatrixFromQuat( &m, pThisRotationKey->Rotation );
+		}
+		else if( pThisRotationKey == 0 )
+		{
+			RageMatrixFromQuat( &m, pLastRotationKey->Rotation );
+		}
+		m.m[3][0] = vPos[0];
+		m.m[3][1] = vPos[1];
+		m.m[3][2] = vPos[2];
+
+		RageMatrixMultiply( &vpBones[i].mRelativeFinal, &vpBones[i].mRelative, &m );
+
+		int nParentBone = pAnimation->FindBoneByName( pBone->sParentName );
+		if( nParentBone == -1 )
+			vpBones[i].mFinal = vpBones[i].mRelativeFinal;
+		else
+			RageMatrixMultiply( &vpBones[i].mFinal, &vpBones[nParentBone].mFinal, &vpBones[i].mRelativeFinal );
 	}
 }
 
