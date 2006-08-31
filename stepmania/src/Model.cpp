@@ -671,16 +671,16 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 		}
 
 		RageVector4 vRot;
-		if( pLastRotationKey != 0 && pThisRotationKey != 0 )
+		if( pLastRotationKey != NULL && pThisRotationKey != NULL )
 		{
 			const float s = SCALE( fFrame, pLastRotationKey->fTime, pThisRotationKey->fTime, 0, 1 );
 			RageQuatSlerp( &vRot, pLastRotationKey->Rotation, pThisRotationKey->Rotation, s );
 		}
-		else if( pLastRotationKey == 0 )
+		else if( pLastRotationKey == NULL )
 		{
 			vRot = pThisRotationKey->Rotation;
 		}
-		else if( pThisRotationKey == 0 )
+		else if( pThisRotationKey == NULL )
 		{
 			vRot = pLastRotationKey->Rotation;
 		}
