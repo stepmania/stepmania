@@ -363,7 +363,7 @@ void WheelBase::TweenOnScreenForSort()
 
 	m_WheelState = STATE_FLYING_ON_AFTER_NEXT_SORT;
 
-	COMMAND( this, "SortOn" );
+	this->PlayCommand( "SortOn" );
 
 	m_fTimeLeftInState = GetTweenTimeLeft();
 }
@@ -372,7 +372,7 @@ void WheelBase::TweenOffScreenForSort()
 {
 	m_WheelState = STATE_FLYING_OFF_BEFORE_NEXT_SORT;
 
-	COMMAND( this, "SortOff" );
+	this->PlayCommand( "SortOff" );
 
 	m_fTimeLeftInState = GetTweenTimeLeft();
 }
