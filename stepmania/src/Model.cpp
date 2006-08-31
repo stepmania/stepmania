@@ -492,7 +492,7 @@ void Model::DrawMesh( int i ) const
 	{
 		DISPLAY->PushMatrix();
 
-		const RageMatrix &mat = m_vpBones[pMesh->nBoneIndex].mFinal;
+		const RageMatrix &mat = m_vpBones[pMesh->nBoneIndex].m_Final;
 		DISPLAY->PreMultMatrix( mat );
 	}
 
@@ -534,23 +534,23 @@ void Model::PlayAnimation( const RString &sAniName, float fPlayRate )
 		const msBone *pBone = &m_pCurAnimation->Bones[i];
 		const RageVector3 &vRot = pBone->Rotation;
 
-		RageMatrixAngles( &m_vpBones[i].mRelative, vRot );
+		RageMatrixAngles( &m_vpBones[i].m_Relative, vRot );
 		
-		m_vpBones[i].mRelative.m[3][0] = pBone->Position[0];
-		m_vpBones[i].mRelative.m[3][1] = pBone->Position[1];
-		m_vpBones[i].mRelative.m[3][2] = pBone->Position[2];
+		m_vpBones[i].m_Relative.m[3][0] = pBone->Position[0];
+		m_vpBones[i].m_Relative.m[3][1] = pBone->Position[1];
+		m_vpBones[i].m_Relative.m[3][2] = pBone->Position[2];
 		
 		int nParentBone = m_pCurAnimation->FindBoneByName( pBone->sParentName );
 		if( nParentBone != -1 )
 		{
-			RageMatrixMultiply( &m_vpBones[i].mAbsolute, &m_vpBones[nParentBone].mAbsolute, &m_vpBones[i].mRelative );
+			RageMatrixMultiply( &m_vpBones[i].m_Absolute, &m_vpBones[nParentBone].m_Absolute, &m_vpBones[i].m_Relative );
 
-			m_vpBones[i].mFinal = m_vpBones[i].mAbsolute;
+			m_vpBones[i].m_Final = m_vpBones[i].m_Absolute;
 		}
 		else
 		{
-			m_vpBones[i].mAbsolute = m_vpBones[i].mRelative;
-			m_vpBones[i].mFinal = m_vpBones[i].mRelative;
+			m_vpBones[i].m_Absolute = m_vpBones[i].m_Relative;
+			m_vpBones[i].m_Final = m_vpBones[i].m_Relative;
 		}
 	}
 
@@ -566,14 +566,14 @@ void Model::PlayAnimation( const RString &sAniName, float fPlayRate )
 			int8_t bone = Vertices[j].bone;
 			if( bone != -1 )
 			{
-				pos[0] -= m_vpBones[bone].mAbsolute.m[3][0];
-				pos[1] -= m_vpBones[bone].mAbsolute.m[3][1];
-				pos[2] -= m_vpBones[bone].mAbsolute.m[3][2];
+				pos[0] -= m_vpBones[bone].m_Absolute.m[3][0];
+				pos[1] -= m_vpBones[bone].m_Absolute.m[3][1];
+				pos[2] -= m_vpBones[bone].m_Absolute.m[3][2];
 
 				RageVector3 vTmp;
 
 				RageMatrix inverse;
-				RageMatrixTranspose( &inverse, &m_vpBones[bone].mAbsolute );	// transpose = inverse for rotation matrices
+				RageMatrixTranspose( &inverse, &m_vpBones[bone].m_Absolute );	// transpose = inverse for rotation matrices
 				RageVec3TransformNormal( &vTmp, &pos, &inverse );
 				
 				pos = vTmp;
@@ -621,7 +621,7 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 		const msBone *pBone = &pAnimation->Bones[i];
 		if( pBone->PositionKeys.size() == 0 && pBone->RotationKeys.size() == 0 )
 		{
-			vpBones[i].mFinal = vpBones[i].mAbsolute;
+			vpBones[i].m_Final = vpBones[i].m_Absolute;
 			continue;
 		}
 
@@ -688,13 +688,13 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 		m.m[3][1] = vPos[1];
 		m.m[3][2] = vPos[2];
 
-		RageMatrixMultiply( &vpBones[i].mRelativeFinal, &vpBones[i].mRelative, &m );
+		RageMatrixMultiply( &vpBones[i].m_RelativeFinal, &vpBones[i].m_Relative, &m );
 
 		int iParentBone = pAnimation->FindBoneByName( pBone->sParentName );
 		if( iParentBone == -1 )
-			vpBones[i].mFinal = vpBones[i].mRelativeFinal;
+			vpBones[i].m_Final = vpBones[i].m_RelativeFinal;
 		else
-			RageMatrixMultiply( &vpBones[i].mFinal, &vpBones[iParentBone].mFinal, &vpBones[i].mRelativeFinal );
+			RageMatrixMultiply( &vpBones[i].m_Final, &vpBones[iParentBone].m_Final, &vpBones[i].m_RelativeFinal );
 	}
 }
 
@@ -724,8 +724,8 @@ void Model::UpdateTempGeometry()
 			}
 			else
 			{
-				RageVec3TransformNormal( &tempNormal, &originalNormal, &m_vpBones[bone].mFinal );
-				RageVec3TransformCoord( &tempPos, &originalPos, &m_vpBones[bone].mFinal );
+				RageVec3TransformNormal( &tempNormal, &originalNormal, &m_vpBones[bone].m_Final );
+				RageVec3TransformCoord( &tempPos, &originalPos, &m_vpBones[bone].m_Final );
 			}
 		}
 	}

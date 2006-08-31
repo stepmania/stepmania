@@ -150,10 +150,10 @@ struct msAnimation
 
 struct myBone_t
 {
-	RageMatrix		mRelative;
-	RageMatrix		mAbsolute;
-	RageMatrix		mRelativeFinal;
-	RageMatrix		mFinal;
+	RageMatrix		m_Relative;
+	RageMatrix		m_Absolute;
+	RageMatrix		m_RelativeFinal;
+	RageMatrix		m_Final;
 };
 
 #endif
