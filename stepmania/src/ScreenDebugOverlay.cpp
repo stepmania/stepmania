@@ -747,7 +747,7 @@ class DebugLineReloadCurrentScreen : public IDebugLine
 	virtual bool IsEnabled() { return true; }
 	virtual void Do( RString &sMessageOut )
 	{
-		RString sScreenName = SCREENMAN->GetTopScreen()->GetName();
+		RString sScreenName = SCREENMAN->GetScreen(0)->GetName();
 		SCREENMAN->PopAllScreens();
 
 		SOUND->StopMusic();
