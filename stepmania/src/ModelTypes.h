@@ -136,9 +136,6 @@ struct msAnimation
 	bool LoadMilkshapeAsciiBones( RString sAniName, RString sPath );
 
 	int			nTotalFrames;
-
-	RageVector3		Position;
-	RageVector3		Rotation;
 };
 
 struct myBone_t
