@@ -806,10 +806,19 @@ RageFileBasic *RageFileManager::OpenForWriting( const RString &sPath, int mode, 
 
 	stable_sort( Values.begin(), Values.end(), SortBySecond );
 
+	/* Only write files if they'll be read.  If a file exists in any driver, don't
+	 * create or write files in any driver mounted after it, because when we later
+	 * try to read it, we'll get that file and not the one we wrote. */
+	int iMaximumDriver = apDriverList.size();
+	if( Values.size() > 0 && Values[0].second == 0 )
+		iMaximumDriver = Values[0].first;
+
 	iError = 0;
 	for( unsigned i = 0; i < Values.size(); ++i )
 	{
 		const int iDriver = Values[i].first;
+		if( iDriver > iMaximumDriver )
+			continue;
 		LoadedDriver &ld = *apDriverList[iDriver];
 		const RString sDriverPath = ld.GetPath( sPath );
 		ASSERT( !sDriverPath.empty() );
