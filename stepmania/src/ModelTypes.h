@@ -145,7 +145,6 @@ struct myBone_t
 {
 	RageMatrix		m_Relative;
 	RageMatrix		m_Absolute;
-	RageMatrix		m_RelativeFinal;
 	RageMatrix		m_Final;
 };
 

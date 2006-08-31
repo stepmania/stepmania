@@ -685,13 +685,14 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 		m.m[3][1] = vPos[1];
 		m.m[3][2] = vPos[2];
 
-		RageMatrixMultiply( &vpBones[i].m_RelativeFinal, &vpBones[i].m_Relative, &m );
+		RageMatrix RelativeFinal;
+		RageMatrixMultiply( &RelativeFinal, &vpBones[i].m_Relative, &m );
 
 		int iParentBone = pAnimation->FindBoneByName( pBone->sParentName );
 		if( iParentBone == -1 )
-			vpBones[i].m_Final = vpBones[i].m_RelativeFinal;
+			vpBones[i].m_Final = RelativeFinal;
 		else
-			RageMatrixMultiply( &vpBones[i].m_Final, &vpBones[iParentBone].m_Final, &vpBones[i].m_RelativeFinal );
+			RageMatrixMultiply( &vpBones[i].m_Final, &vpBones[iParentBone].m_Final, &RelativeFinal );
 	}
 }
 
