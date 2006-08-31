@@ -526,10 +526,9 @@ void Model::PlayAnimation( const RString &sAniName, float fPlayRate )
 	m_pCurAnimation = pNewAnimation;
 
 	// setup bones
-	unsigned nBoneCount = m_pCurAnimation->Bones.size();
-	m_vpBones.resize( nBoneCount );
+	m_vpBones.resize( m_pCurAnimation->Bones.size() );
 
-	for( unsigned i = 0; i < nBoneCount; i++ )
+	for( unsigned i = 0; i < m_pCurAnimation->Bones.size(); i++ )
 	{
 		const msBone *pBone = &m_pCurAnimation->Bones[i];
 		const RageVector3 &vRot = pBone->Rotation;
