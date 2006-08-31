@@ -32,7 +32,7 @@ public:
 		m_cmds = cmds;
 		this->LoadInternal( cmds );
 	}
-	virtual void LoadInternal( const Commands &cmds ) = 0;
+	virtual void LoadInternal( const Commands &cmds ) { }
 
 	/*
 	 * We may re-use OptionRowHandlers.  This is called before each
@@ -49,9 +49,9 @@ public:
 	enum ReloadChanged { RELOAD_CHANGED_NONE, RELOAD_CHANGED_ENABLED, RELOAD_CHANGED_ALL };
 	virtual ReloadChanged Reload() { return RELOAD_CHANGED_NONE; }
 
-	virtual void ImportOption( const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const = 0;
+	virtual void ImportOption( const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const { }
 	/* Returns an OPT mask. */
-	virtual int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const = 0;
+	virtual int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const { return 0; }
 	virtual void GetIconTextAndGameCommand( int iFirstSelection, RString &sIconTextOut, GameCommand &gcOut ) const;
 	virtual RString GetScreen( int iChoice ) const { return RString(); }
 };

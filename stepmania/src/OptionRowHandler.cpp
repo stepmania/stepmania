@@ -1198,16 +1198,6 @@ class OptionRowHandlerNull: public OptionRowHandler
 {
 public:
 	OptionRowHandlerNull() { Init(); }
-	virtual void LoadInternal( const Commands &cmds )
-	{
-	}
-	virtual void ImportOption( const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
-	{
-	}
-	virtual int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
-	{
-		return 0;
-	}
 };
 
 
