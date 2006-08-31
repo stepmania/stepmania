@@ -616,13 +616,10 @@ void Model::AdvanceFrame( float fDeltaTime )
 
 void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone_t> &vpBones )
 {
-	unsigned nBoneCount = pAnimation->Bones.size();
-	for( unsigned i = 0; i < nBoneCount; i++ )
+	for( size_t i = 0; i < pAnimation->Bones.size(); ++i )
 	{
 		const msBone *pBone = &pAnimation->Bones[i];
-		int nPositionKeyCount = pBone->PositionKeys.size();
-		int nRotationKeyCount = pBone->RotationKeys.size();
-		if( nPositionKeyCount == 0 && nRotationKeyCount == 0 )
+		if( pBone->PositionKeys.size() == 0 && pBone->RotationKeys.size() == 0 )
 		{
 			vpBones[i].mFinal = vpBones[i].mAbsolute;
 			continue;
@@ -632,7 +629,7 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 		// search for the adjacent position keys
 		//
 		const msPositionKey *pLastPositionKey = NULL, *pThisPositionKey = NULL;
-		for( int j = 0; j < nPositionKeyCount; j++ )
+		for( size_t j = 0; j < pBone->PositionKeys.size(); ++j )
 		{
 			const msPositionKey *pPositionKey = &pBone->PositionKeys[j];
 			if( pPositionKey->fTime >= fFrame )
@@ -659,7 +656,7 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 		// search for the adjacent rotation keys
 		//
 		const msRotationKey *pLastRotationKey = NULL, *pThisRotationKey = NULL;
-		for( int j = 0; j < nRotationKeyCount; j++ )
+		for( size_t j = 0; j < pBone->RotationKeys.size(); ++j )
 		{
 			const msRotationKey *pRotationKey = &pBone->RotationKeys[j];
 			if( pRotationKey->fTime >= fFrame )
@@ -694,11 +691,11 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 
 		RageMatrixMultiply( &vpBones[i].mRelativeFinal, &vpBones[i].mRelative, &m );
 
-		int nParentBone = pAnimation->FindBoneByName( pBone->sParentName );
-		if( nParentBone == -1 )
+		int iParentBone = pAnimation->FindBoneByName( pBone->sParentName );
+		if( iParentBone == -1 )
 			vpBones[i].mFinal = vpBones[i].mRelativeFinal;
 		else
-			RageMatrixMultiply( &vpBones[i].mFinal, &vpBones[nParentBone].mFinal, &vpBones[i].mRelativeFinal );
+			RageMatrixMultiply( &vpBones[i].mFinal, &vpBones[iParentBone].mFinal, &vpBones[i].mRelativeFinal );
 	}
 }
 
