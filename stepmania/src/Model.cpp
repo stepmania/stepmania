@@ -628,9 +628,6 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 			continue;
 		}
 
-		RageVector3 vPos;
-		RageVector3 vRot;
-
 		//
 		// search for the adjacent position keys
 		//
@@ -645,6 +642,8 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 			}
 			pLastPositionKey = pPositionKey;
 		}
+
+		RageVector3 vPos;
 		if( pLastPositionKey != NULL && pThisPositionKey != NULL )
 		{
 			float d = pThisPositionKey->fTime - pLastPositionKey->fTime;
@@ -659,8 +658,6 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 		//
 		// search for the adjacent rotation keys
 		//
-		RageMatrix m;
-		RageMatrixIdentity( &m );
 		const msRotationKey *pLastRotationKey = NULL, *pThisRotationKey = NULL;
 		for( int j = 0; j < nRotationKeyCount; j++ )
 		{
@@ -672,23 +669,25 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 			}
 			pLastRotationKey = pRotationKey;
 		}
+
+		RageVector4 vRot;
 		if( pLastRotationKey != 0 && pThisRotationKey != 0 )
 		{
 			const float s = SCALE( fFrame, pLastRotationKey->fTime, pThisRotationKey->fTime, 0, 1 );
-
-			RageVector4 q;
-			RageQuatSlerp( &q, pLastRotationKey->Rotation, pThisRotationKey->Rotation, s );
-
-			RageMatrixFromQuat( &m, q );
+			RageQuatSlerp( &vRot, pLastRotationKey->Rotation, pThisRotationKey->Rotation, s );
 		}
 		else if( pLastRotationKey == 0 )
 		{
-			RageMatrixFromQuat( &m, pThisRotationKey->Rotation );
+			vRot = pThisRotationKey->Rotation;
 		}
 		else if( pThisRotationKey == 0 )
 		{
-			RageMatrixFromQuat( &m, pLastRotationKey->Rotation );
+			vRot = pLastRotationKey->Rotation;
 		}
+
+		RageMatrix m;
+		RageMatrixIdentity( &m );
+		RageMatrixFromQuat( &m, vRot );
 		m.m[3][0] = vPos[0];
 		m.m[3][1] = vPos[1];
 		m.m[3][2] = vPos[2];
