@@ -108,6 +108,7 @@ void DifficultyList::UpdatePositions()
 	int first_start, first_end, second_start, second_end;
 
 	/* Choices for each player.  If only one player is active, it's the same for both. */
+	ASSERT( GAMESTATE->IsHumanPlayer(PLAYER_1) || GAMESTATE->IsHumanPlayer(PLAYER_2) );
 	int P1Choice = GAMESTATE->IsHumanPlayer(PLAYER_1)? iCurrentRow[PLAYER_1]: iCurrentRow[PLAYER_2];
 	int P2Choice = GAMESTATE->IsHumanPlayer(PLAYER_2)? iCurrentRow[PLAYER_2]: iCurrentRow[PLAYER_1];
 
