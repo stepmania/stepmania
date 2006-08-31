@@ -676,22 +676,18 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 			{
 				const float s = SCALE( fFrame, pLastRotationKey->fTime, pThisRotationKey->fTime, 0, 1 );
 
-				RageVector4 q1, q2, q;
-				RageQuatFromHPR( &q1, pLastRotationKey->Rotation );
-				RageQuatFromHPR( &q2, pThisRotationKey->Rotation );
-				RageQuatSlerp( &q, q1, q2, s );
+				RageVector4 q;
+				RageQuatSlerp( &q, pLastRotationKey->Rotation, pThisRotationKey->Rotation, s );
 
 				RageMatrixFromQuat( &m, q );
 			}
 			else if( pLastRotationKey == 0 )
 			{
-				vRot = pThisRotationKey->Rotation;
-				RageMatrixAngles( &m, vRot );
+				RageMatrixFromQuat( &m, pThisRotationKey->Rotation );
 			}
 			else if( pThisRotationKey == 0 )
 			{
-				vRot = pLastRotationKey->Rotation;
-				RageMatrixAngles( &m, vRot );
+				RageMatrixFromQuat( &m, pLastRotationKey->Rotation );
 			}
 			m.m[3][0] = vPos[0];
 			m.m[3][1] = vPos[1];

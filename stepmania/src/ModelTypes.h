@@ -110,7 +110,7 @@ struct msPositionKey
 struct msRotationKey
 {
 	float fTime;
-	RageVector3 Rotation;
+	RageVector4 Rotation;
 };
 
 struct msBone

@@ -340,7 +340,8 @@ bool msAnimation::LoadMilkshapeAsciiBones( RString sAniName, RString sPath )
 
 				msRotationKey key;
 				key.fTime = fTime;
-				key.Rotation = RageVector3( Rotation[0], Rotation[1], Rotation[2] );
+				RageVector3 Rotation = RageVector3( Rotation[0], Rotation[1], Rotation[2] );
+				RageQuatFromHPR( &key.Rotation, Rotation );
 				Bone.RotationKeys[j] = key;
 			}
 		}
