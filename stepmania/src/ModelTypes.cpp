@@ -214,14 +214,6 @@ RageVector2 AnimatedTexture::GetTextureTranslate()
 	return v;
 }
 
-msMesh::msMesh()
-{
-}
-
-msMesh::~msMesh()
-{
-}
-
 #define THROW RageException::Throw( "Parse error in \"%s\" at line %d: '%s'", sPath.c_str(), iLineNum, sLine.c_str() )
 
 bool msAnimation::LoadMilkshapeAsciiBones( RString sAniName, RString sPath )

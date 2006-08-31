@@ -13,9 +13,6 @@ struct msTriangle
 
 struct msMesh
 {
-	msMesh();
-	~msMesh();
-
 	RString			sName;
 	char			nMaterialIndex;
 
