@@ -643,8 +643,7 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 		RageVector3 vPos;
 		if( pLastPositionKey != NULL && pThisPositionKey != NULL )
 		{
-			float d = pThisPositionKey->fTime - pLastPositionKey->fTime;
-			float s = (fFrame - pLastPositionKey->fTime) / d;
+			const float s = SCALE( fFrame, pLastPositionKey->fTime, pThisPositionKey->fTime, 0, 1 );
 			vPos = pLastPositionKey->Position + (pThisPositionKey->Position - pLastPositionKey->Position) * s;
 		}
 		else if( pLastPositionKey == NULL )
