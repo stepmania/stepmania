@@ -924,6 +924,15 @@ public:
 	static int GetGroupName( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sGroupName ); return 1; }
 	static int IsAutogen( T* p, lua_State *L )		{ lua_pushboolean(L, p->m_bIsAutogen ); return 1; }
 	static int GetEstimatedNumStages( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetEstimatedNumStages() ); return 1; }
+	static int GetTotalSeconds( T* p, lua_State *L )
+	{
+		StepsType st = StepsType( IArg(1) );
+		float fOut = 0.0f;
+		
+		p->GetTotalSeconds( st, fOut );
+		lua_pushnumber( L, fOut );
+		return 1;
+	}
 
 	static void Register(lua_State *L)
 	{
@@ -937,6 +946,7 @@ public:
 		ADD_METHOD( GetGroupName );
 		ADD_METHOD( IsAutogen );
 		ADD_METHOD( GetEstimatedNumStages );
+		ADD_METHOD( GetTotalSeconds );
 
 		Luna<T>::Register( L );
 	}
