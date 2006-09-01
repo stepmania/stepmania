@@ -115,7 +115,7 @@ public:
 	unsigned GetTextItemsSize() const { return m_textItems.size(); }
 	bool GetFirstItemGoesDown() const { return m_bFirstItemGoesDown; }
 
-	void PrepareItemText( RString &s ) const;
+	RString GetThemedItemText( int iChoice ) const;
 
 	void SetExitText( RString sExitText );
 

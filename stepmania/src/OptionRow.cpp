@@ -14,10 +14,11 @@
 const RString NEXT_ROW_NAME = "NextRow";
 const RString EXIT_NAME = "Exit";
 
-void OptionRow::PrepareItemText( RString &s ) const
+RString OptionRow::GetThemedItemText( int iChoice ) const
 {
+	RString s = m_pHand->m_Def.m_vsChoices[iChoice];
 	if( s == "" )
-		return;
+		return "";
 	bool bTheme = false;
 	
 	// HACK: Always theme the NEXT_ROW and EXIT items.
@@ -38,6 +39,7 @@ void OptionRow::PrepareItemText( RString &s ) const
 		s = CommonMetrics::LocalizeOptionItem( s, false ); 
 	if( m_pParentType->CAPITALIZE_ALL_OPTION_NAMES )
 		s.MakeUpper(); 
+	return s;
 }
 
 RString ITEMS_LONG_ROW_X_NAME( size_t p )		{ return ssprintf("ItemsLongRowP%dX",int(p+1)); }
@@ -288,8 +290,7 @@ void OptionRow::InitText()
 		float fWidth = 0;
 		for( unsigned c=0; c<m_pHand->m_Def.m_vsChoices.size(); c++ )
 		{
-			RString sText = m_pHand->m_Def.m_vsChoices[c];
-			PrepareItemText( sText );
+			RString sText = GetThemedItemText( c );
 			bt.SetText( sText );
 			
 			fWidth += bt.GetZoomedWidth();
@@ -361,8 +362,7 @@ void OptionRow::InitText()
 				// init text
 				BitmapText *bt = new BitmapText( m_pParentType->m_textItemParent );
 				m_textItems.push_back( bt );
-				RString sText = m_pHand->m_Def.m_vsChoices[c];
-				PrepareItemText( sText );
+				RString sText = GetThemedItemText( c );
 				bt->SetText( sText );
 				bt->SetBaseZoomX( fBaseZoom );
 				bt->RunCommands( m_pParentType->ITEMS_ON_COMMAND );
@@ -534,8 +534,7 @@ void OptionRow::UpdateText( PlayerNumber p )
 			if( iChoiceWithFocus == -1 )
 				break;
 
-			RString sText = m_pHand->m_Def.m_vsChoices[iChoiceWithFocus];
-			PrepareItemText( sText );
+			RString sText = GetThemedItemText( iChoiceWithFocus );
 
 			// If player_no is 2 and there is no player 1:
 			int index = min( pn, m_textItems.size()-1 );
