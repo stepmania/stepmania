@@ -104,6 +104,7 @@ public:
 		this->LoadInternal( cmds );
 	}
 	RString OptionTitle() const;
+	RString GetThemedItemText( int iChoice ) const;
 
 	virtual void LoadInternal( const Commands &cmds ) { }
 

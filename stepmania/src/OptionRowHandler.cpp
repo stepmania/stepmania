@@ -58,6 +58,29 @@ RString OptionRowHandler::OptionTitle() const
 	return bTheme ? THEME->GetString("OptionTitles",s) : s;
 }
 
+RString OptionRowHandler::GetThemedItemText( int iChoice ) const
+{
+	RString s = m_Def.m_vsChoices[iChoice];
+	if( s == "" )
+		return "";
+	bool bTheme = false;
+	
+	if( m_Def.m_bAllowThemeItems )	bTheme = true;
+
+	// Items beginning with a pipe mean "don't theme".
+	// This allows us to disable theming on a per-choice basis for choice names that are just a number
+	// and don't need to be localized.
+	if( s[0] == '|' )
+	{
+		s.erase( s.begin() );
+		bTheme = false;
+	}
+
+	if( bTheme ) 
+		s = CommonMetrics::LocalizeOptionItem( s, false ); 
+	return s;
+}
+
 void OptionRowHandler::GetIconTextAndGameCommand( int iFirstSelection, RString &sIconTextOut, GameCommand &gcOut ) const
 {
 	sIconTextOut = "";

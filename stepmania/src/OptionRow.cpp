@@ -16,27 +16,14 @@ const RString EXIT_NAME = "Exit";
 
 RString OptionRow::GetThemedItemText( int iChoice ) const
 {
-	RString s = m_pHand->m_Def.m_vsChoices[iChoice];
-	if( s == "" )
-		return "";
-	bool bTheme = false;
+	RString s = m_pHand->GetThemedItemText( iChoice );
 	
 	// HACK: Always theme the NEXT_ROW and EXIT items.
-	if( s == NEXT_ROW_NAME )			bTheme = true;
-	if( s == EXIT_NAME )				bTheme = true;
-	if( m_pHand->m_Def.m_bAllowThemeItems )	bTheme = true;
+	if( m_bFirstItemGoesDown && iChoice == 0 )
+		s = CommonMetrics::LocalizeOptionItem( NEXT_ROW_NAME, false ); 
+	else if( m_RowType == OptionRow::RowType_Exit )
+		s = CommonMetrics::LocalizeOptionItem( EXIT_NAME, false ); 
 
-	// Items beginning with a pipe mean "don't theme".
-	// This allows us to disable theming on a per-choice basis for choice names that are just a number
-	// and don't need to be localized.
-	if( s[0] == '|' )
-	{
-		s.erase( s.begin() );
-		bTheme = false;
-	}
-
-	if( bTheme ) 
-		s = CommonMetrics::LocalizeOptionItem( s, false ); 
 	if( m_pParentType->CAPITALIZE_ALL_OPTION_NAMES )
 		s.MakeUpper(); 
 	return s;
