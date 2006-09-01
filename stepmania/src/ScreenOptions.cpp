@@ -182,6 +182,7 @@ void ScreenOptions::Init()
 	m_framePage.AddChild( m_sprMore );
 
 	m_OptionRowType.Load( m_sName );
+	m_bFirstTime = true;
 }
 
 void ScreenOptions::InitMenu( const vector<OptionRowHandler*> &vHands )
@@ -300,7 +301,11 @@ void ScreenOptions::BeginScreen()
 {
 	ScreenWithMenuElements::BeginScreen();
 
-	RestartOptions();
+	if( m_bFirstTime )
+	{
+		RestartOptions();
+		m_bFirstTime = false;
+	}
 
 	FOREACH_PlayerNumber( p )
 		m_bGotAtLeastOneStartPressed[p] = false;
