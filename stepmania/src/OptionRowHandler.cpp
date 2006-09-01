@@ -28,6 +28,21 @@
 #define ENTRY_MODE(s,i)		THEME->GetMetric ("ScreenOptionsMaster",ssprintf("%s,%i",(s).c_str(),(i+1)))
 #define ENTRY_DEFAULT(s)	THEME->GetMetric ("ScreenOptionsMaster",(s) + "Default")
 
+RString OptionRowHandler::OptionTitle() const
+{
+	bool bTheme = false;
+	
+	// HACK: Always theme the NEXT_ROW and EXIT items, even if metrics says not to theme.
+	if( m_Def.m_bAllowThemeTitle )
+		bTheme = true;
+
+	RString s = m_Def.m_sName;
+	if( s.empty() )
+		return s;
+
+	return bTheme ? THEME->GetString("OptionTitles",s) : s;
+}
+
 void OptionRowHandler::GetIconTextAndGameCommand( int iFirstSelection, RString &sIconTextOut, GameCommand &gcOut ) const
 {
 	sIconTextOut = "";
@@ -1268,7 +1283,7 @@ OptionRowHandler* OptionRowHandlerUtil::MakeSimple( const MenuRowDef &mr )
 	pHand->m_Def.m_bOneChoiceForAllPlayers = true;
 	pHand->m_Def.m_selectType = SELECT_ONE;
 	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
-	pHand->m_Def.m_bExportOnChange = false;
+	pHand->m_Def.m_bExportOnChange = false;//true;
 		
 	pHand->m_Def.m_vsChoices = mr.choices;
 

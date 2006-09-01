@@ -55,20 +55,6 @@ void OptionRow::PrepareItemText( RString &s ) const
 		s.MakeUpper(); 
 }
 
-RString OptionRow::OptionTitle( RString s ) const
-{
-	bool bTheme = false;
-	
-	// HACK: Always theme the NEXT_ROW and EXIT items, even if metrics says not to theme.
-	if( m_pHand->m_Def.m_bAllowThemeTitle )
-		bTheme = true;
-
-	if( s.empty() )
-		return s;
-
-	return bTheme ? THEME->GetString("OptionTitles",s) : s;
-}
-
 RString ITEMS_LONG_ROW_X_NAME( size_t p )		{ return ssprintf("ItemsLongRowP%dX",int(p+1)); }
 RString ICONS_X_NAME( size_t p )				{ return ssprintf("IconsP%dX",int(p+1)); }
 
@@ -222,11 +208,10 @@ void OptionRow::ChoicesChanged()
 
 RString OptionRow::GetRowTitle() const
 {
-	RString sLineName = m_pHand->m_Def.m_sName;
-	RString sTitle = OptionTitle(sLineName);
+	RString sTitle = m_pHand->OptionTitle();
 
 	// HACK: tack the BPM onto the name of the speed line
-	if( sLineName.CompareNoCase("speed")==0 )
+	if( m_pHand->m_Def.m_sName.CompareNoCase("speed")==0 )
 	{
 		bool bShowBpmInSpeedTitle = m_pParentType->SHOW_BPM_IN_SPEED_TITLE;
 

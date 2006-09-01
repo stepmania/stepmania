@@ -32,6 +32,8 @@ public:
 		m_cmds = cmds;
 		this->LoadInternal( cmds );
 	}
+	RString OptionTitle() const;
+
 	virtual void LoadInternal( const Commands &cmds ) { }
 
 	/*

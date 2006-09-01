@@ -186,7 +186,6 @@ public:
 	bool GetFirstItemGoesDown() const { return m_bFirstItemGoesDown; }
 
 	void PrepareItemText( RString &s ) const;
-	RString OptionTitle( RString s ) const;
 
 	void SetExitText( RString sExitText );
 
