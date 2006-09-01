@@ -11,21 +11,6 @@
 #include "Style.h"
 #include "ActorUtil.h"
 
-static const char *SelectTypeNames[] = {
-	"SelectOne",
-	"SelectMultiple",
-	"SelectNone",
-};
-XToString( SelectType, NUM_SELECT_TYPES );
-StringToX( SelectType );
-
-static const char *LayoutTypeNames[] = {
-	"ShowAllInRow",
-	"ShowOneInRow",
-};
-XToString( LayoutType, NUM_LAYOUT_TYPES );
-StringToX( LayoutType );
-
 const RString NEXT_ROW_NAME = "NextRow";
 const RString EXIT_NAME = "Exit";
 
@@ -804,6 +789,7 @@ void OptionRow::SetChoiceInRowWithFocus( PlayerNumber pn, int iChoice )
 	m_iChoiceInRowWithFocus[pn] = iChoice;
 
 	UpdateText( pn );
+	//PositionUnderlines( pn );
 }
 
 void OptionRow::ResetFocusFromSelection( PlayerNumber pn )

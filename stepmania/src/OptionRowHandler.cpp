@@ -28,6 +28,21 @@
 #define ENTRY_MODE(s,i)		THEME->GetMetric ("ScreenOptionsMaster",ssprintf("%s,%i",(s).c_str(),(i+1)))
 #define ENTRY_DEFAULT(s)	THEME->GetMetric ("ScreenOptionsMaster",(s) + "Default")
 
+static const char *SelectTypeNames[] = {
+	"SelectOne",
+	"SelectMultiple",
+	"SelectNone",
+};
+XToString( SelectType, NUM_SELECT_TYPES );
+StringToX( SelectType );
+
+static const char *LayoutTypeNames[] = {
+	"ShowAllInRow",
+	"ShowOneInRow",
+};
+XToString( LayoutType, NUM_LAYOUT_TYPES );
+StringToX( LayoutType );
+
 RString OptionRowHandler::OptionTitle() const
 {
 	bool bTheme = false;

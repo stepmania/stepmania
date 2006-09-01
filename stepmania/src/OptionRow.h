@@ -12,77 +12,7 @@
 
 class OptionRowHandler;
 class GameCommand;
-
-enum SelectType
-{
-	SELECT_ONE,
-	SELECT_MULTIPLE,
-	SELECT_NONE,
-	NUM_SELECT_TYPES,
-	SELECT_INVALID
-};
-const RString& SelectTypeToString( SelectType pm );
-SelectType StringToSelectType( const RString& s );
-
-enum LayoutType
-{
-	LAYOUT_SHOW_ALL_IN_ROW,
-	LAYOUT_SHOW_ONE_IN_ROW,
-	NUM_LAYOUT_TYPES,
-	LAYOUT_INVALID
-};
-const RString& LayoutTypeToString( LayoutType pm );
-LayoutType StringToLayoutType( const RString& s );
-
-struct OptionRowDefinition
-{
-	RString m_sName;
-	RString m_sExplanationName;
-	bool m_bOneChoiceForAllPlayers;
-	SelectType m_selectType;
-	LayoutType m_layoutType;
-	vector<RString> m_vsChoices;
-	set<PlayerNumber> m_vEnabledForPlayers;	// only players in this set may change focus to this row
-	bool	m_bExportOnChange;
-	bool	m_bAllowThemeItems;	// Should be true for dynamic strings.
-	bool	m_bAllowThemeTitle;	// Should be true for dynamic strings.
-	bool	m_bAllowExplanation;	// if false, ignores ScreenOptions::SHOW_EXPLANATIONS.  Should be true for dynamic strings.
-	bool	m_bShowChoicesListOnSelect;
-
-	bool IsEnabledForPlayer( PlayerNumber pn ) const 
-	{
-		return m_vEnabledForPlayers.find(pn) != m_vEnabledForPlayers.end(); 
-	}
-
-	OptionRowDefinition() { Init(); }
-	void Init()
-	{
-		m_sName = "";
-		m_sExplanationName = "";
-		m_bOneChoiceForAllPlayers = false;
-		m_selectType = SELECT_ONE;
-		m_layoutType = LAYOUT_SHOW_ALL_IN_ROW;
-		m_vsChoices.clear();
-		m_vEnabledForPlayers.clear();
-		FOREACH_PlayerNumber( pn )
-			m_vEnabledForPlayers.insert( pn );
-		m_bExportOnChange = false;
-		m_bAllowThemeItems = true;
-		m_bAllowThemeTitle = true;
-		m_bAllowExplanation = true;
-		m_bShowChoicesListOnSelect = false;
-	}
-
-	OptionRowDefinition( const char *n, bool b, const char *c0=NULL, const char *c1=NULL, const char *c2=NULL, const char *c3=NULL, const char *c4=NULL, const char *c5=NULL, const char *c6=NULL, const char *c7=NULL, const char *c8=NULL, const char *c9=NULL, const char *c10=NULL, const char *c11=NULL, const char *c12=NULL, const char *c13=NULL, const char *c14=NULL, const char *c15=NULL, const char *c16=NULL, const char *c17=NULL, const char *c18=NULL, const char *c19=NULL )
-	{
-		Init();
-		m_sName=n;
-		m_bOneChoiceForAllPlayers=b;
-#define PUSH( c )	if(c) m_vsChoices.push_back(c);
-		PUSH(c0);PUSH(c1);PUSH(c2);PUSH(c3);PUSH(c4);PUSH(c5);PUSH(c6);PUSH(c7);PUSH(c8);PUSH(c9);PUSH(c10);PUSH(c11);PUSH(c12);PUSH(c13);PUSH(c14);PUSH(c15);PUSH(c16);PUSH(c17);PUSH(c18);PUSH(c19);
-#undef PUSH
-	}
-};
+struct OptionRowDefinition;
 
 class OptionRowType
 {
