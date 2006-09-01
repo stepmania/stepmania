@@ -22,7 +22,7 @@ public:
 	void StopTweening();
 	void BeginTweening( float fSecs );
 	void SetBarWidth( int iWidth );
-	int GetBarWidth();
+	int GetBarWidth() const;
 
 protected:
 

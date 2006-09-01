@@ -141,7 +141,7 @@ void OptionsCursorPlus::SetBarWidth( int iWidth )
 	m_sprCanGoRight->SetX( m_sprRight.GetDestX() );
 }
 
-int OptionsCursor::GetBarWidth()
+int OptionsCursor::GetBarWidth() const
 {
 	float fWidth = m_sprLeft.GetZoomX() * m_sprLeft.GetUnzoomedWidth();
 	return (int)fWidth;
