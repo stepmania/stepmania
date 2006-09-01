@@ -62,5 +62,5 @@ TIME=35.545:END=49.066:MODS=*5 no Alternate,*5 Split:
 TIME=49.066:END=76.108:MODS=*5 no Split,*5 Alternate,*5 Reverse:
 TIME=76.108:END=89.629:MODS=*5 no Alternate,*5 Split,*5 Reverse:
 TIME=89.629:LEN=1:MODS=*5 no Split,*5 no Reverse:
-TIME=103.152:END=118.366:MODS=*.125 125% Centered,*.125 1x,*.075 Stealth:;
+TIME=103.152:END=118.366:MODS=*.125 125% Centered,*.125 1x,*.075 Stealth,*.075 Dark:;
 #SONG:StepMix 1.0/Oceans of Time:EXPERT:;
