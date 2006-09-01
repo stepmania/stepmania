@@ -8,6 +8,7 @@
 #include "RageSound.h"
 #include "ThemeMetric.h"
 
+class LuaClass;
 
 class MenuTimer : public ActorFrame
 {
@@ -24,6 +25,11 @@ public:
 	void Disable();		// set to "99" and pause
 	void Stall();		// pause countdown for a sec
 	void EnableStealth( bool bStealth );	// make timer invisible and silent
+
+	//
+	// Lua
+	//
+	virtual void PushSelf( lua_State *L );
 
 protected:
 	float m_fSecondsLeft;

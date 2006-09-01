@@ -179,6 +179,27 @@ void MenuTimer::SetText( float fSeconds )
 	LUA->Release(L);
 }
 
+// lua start
+#include "LuaBinding.h"
+
+class LunaMenuTimer: public Luna<MenuTimer>
+{
+public:
+	LunaMenuTimer() { LUA->Register( Register ); }
+
+	static int setseconds( T* p, lua_State *L )		{ p->SetSeconds(FArg(1)); return 0; }
+	static int pause( T* p, lua_State *L )			{ p->Pause(); return 0; }
+	static void Register(lua_State *L) {
+  		ADD_METHOD( setseconds );
+  		ADD_METHOD( pause );
+
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( MenuTimer, ActorFrame )
+// lua end
+
 /*
  * (c) 2002-2004 Chris Danford
  * All rights reserved.
