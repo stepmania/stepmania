@@ -1,9 +1,8 @@
-/* ModLevel -  */
-
-#ifndef ModLevel_H
-#define ModLevel_H
+#ifndef MODS_GROUP_H
+#define MODS_GROUP_H
 
 #include "RageTimer.h"
+#include "EnumHelper.h"
 
 enum ModsLevel
 {
