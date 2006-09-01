@@ -1,5 +1,5 @@
-#ifndef EnumHelper_H
-#define EnumHelper_H
+#ifndef ENUM_HELPER_H
+#define ENUM_HELPER_H
 
 /*
  * Safely add an integer to an enum.
