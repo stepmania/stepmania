@@ -103,7 +103,6 @@ protected:	// derived classes need access to these
 
 	int			m_iFocusX[NUM_PLAYERS];
 	bool			m_bWasOnExit[NUM_PLAYERS];
-	bool			m_bFirstTime;
 
 	// TRICKY: People hold Start to get to PlayerOptions, then 
 	// the repeat events cause them to zip to the bottom.  So, ignore
