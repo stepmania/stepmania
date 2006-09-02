@@ -113,7 +113,7 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 		{
 			f.Write( ssprintf( "#SONG:%s/*", entry.songCriteria.m_sGroupName.c_str() ) );
 		}
-		else 
+		else
 		{
 			f.Write( "#SONG:*" );
 		}
@@ -140,6 +140,14 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 				sModifiers += ",";
 			sModifiers += "nodifficult";
 		}
+
+		if( entry.iGainLives > -1 )
+		{
+			if( !sModifiers.empty() )
+				sModifiers += ',';
+			sModifiers += ssprintf( "award%d", entry.iGainLives );
+		}
+		
 		f.Write( sModifiers );
 
 		f.PutLine( ";" );
