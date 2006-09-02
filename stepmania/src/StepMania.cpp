@@ -1371,7 +1371,6 @@ void HandleInputEvents(float fDeltaTime)
 		return;
 
 	static InputEventArray ieArray;
-	ieArray.clear();	// empty the array
 	INPUTFILTER->GetInputEvents( ieArray );
 
 	/* If we don't have focus, discard input. */
