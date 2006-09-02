@@ -35,12 +35,12 @@ GameButton StringToGameButton( const Game* pGame, const RString& s )
 }
 
 
-RString GameInput::toString( const Game* pGame ) 
+RString GameInput::ToString( const Game* pGame ) const
 {
 	return GameControllerToString(controller) + RString("_") + GameButtonToString(pGame,button);
 }
 
-bool GameInput::fromString( const Game* pGame, RString s )
+bool GameInput::FromString( const Game* pGame, const RString &s )
 { 
 	char szController[32] = "";
 	char szButton[32] = "";

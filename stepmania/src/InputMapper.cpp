@@ -559,7 +559,7 @@ void InputMapper::ReadMappingsFromDisk()
 			const RString &value = i->second;
 
 			GameInput GameI;
-			GameI.fromString( pGame, name );
+			GameI.FromString( pGame, name );
 
 			vector<RString> sDeviceInputStrings;
 			split( value, DEVICE_INPUT_SEPARATOR, sDeviceInputStrings, false );
@@ -593,7 +593,7 @@ void InputMapper::SaveMappingsToDisk()
 		for( int j=0; j<pGame->m_iButtonsPerController; j++ )
 		{
 			GameInput GameI( i, (GameButton)j );
-			RString sNameString = GameI.toString( pGame );
+			RString sNameString = GameI.ToString( pGame );
 			
 			vector<RString> asValues;
 			for( int slot = 0; slot < NUM_USER_GAME_TO_DEVICE_SLOTS; ++slot )	// don't save data from the last (keyboard automap) slot
