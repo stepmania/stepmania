@@ -291,9 +291,9 @@ void InputFilter::ResetKeyRepeat( const DeviceInput &di )
 
 void InputFilter::GetInputEvents( InputEventArray &array )
 {
+	array.clear();
 	LockMut(*queuemutex);
-	array = queue;
-	queue.clear();
+	array.swap( queue );
 }
 
 void InputFilter::GetPressedButtons( vector<DeviceInput> &array )
