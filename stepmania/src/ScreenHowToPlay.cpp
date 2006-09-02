@@ -178,6 +178,10 @@ void ScreenHowToPlay::Init()
 	// deferred until after the player, so the notes go under it
 	if( m_pLifeMeterBar )
 		this->AddChild( m_pLifeMeterBar );
+	if( m_pmDancePad )
+		this->AddChild( m_pmDancePad );
+	if( m_pmCharacter )
+		this->AddChild( m_pmCharacter );
 
 	m_fFakeSecondsIntoSong = 0;
 
