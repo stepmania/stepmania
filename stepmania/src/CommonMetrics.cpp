@@ -51,7 +51,7 @@ void ThemeMetricDifficultiesToShow::Read()
 		m_v.push_back( d );
 	}
 }
-const vector<Difficulty>& ThemeMetricDifficultiesToShow::GetValue() { return m_v; }
+const vector<Difficulty>& ThemeMetricDifficultiesToShow::GetValue() const { return m_v; }
 
 
 ThemeMetricCourseDifficultiesToShow::ThemeMetricCourseDifficultiesToShow( const RString& sGroup, const RString& sName ) : 
@@ -81,7 +81,7 @@ void ThemeMetricCourseDifficultiesToShow::Read()
 		m_v.push_back( d );
 	}
 }
-const vector<CourseDifficulty>& ThemeMetricCourseDifficultiesToShow::GetValue() { return m_v; }
+const vector<CourseDifficulty>& ThemeMetricCourseDifficultiesToShow::GetValue() const { return m_v; }
 
 
 static void RemoveStepsTypes( vector<StepsType>& inout, RString sStepsTypesToRemove )
@@ -120,7 +120,7 @@ void ThemeMetricStepsTypesToShow::Read()
 
 	RemoveStepsTypes( m_v, ThemeMetric<RString>::GetValue() );
 }
-const vector<StepsType>& ThemeMetricStepsTypesToShow::GetValue() { return m_v; }
+const vector<StepsType>& ThemeMetricStepsTypesToShow::GetValue() const { return m_v; }
 
 
 RString CommonMetrics::LocalizeOptionItem( const RString &s, bool bOptional )

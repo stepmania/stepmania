@@ -19,7 +19,7 @@ public:
 	ThemeMetricDifficultiesToShow() { }
 	ThemeMetricDifficultiesToShow( const RString& sGroup, const RString& sName );
 	void Read();
-	const vector<Difficulty> &GetValue();
+	const vector<Difficulty> &GetValue() const;
 private:
 	vector<Difficulty> m_v;
 };
@@ -29,7 +29,7 @@ public:
 	ThemeMetricCourseDifficultiesToShow() { }
 	ThemeMetricCourseDifficultiesToShow( const RString& sGroup, const RString& sName );
 	void Read();
-	const vector<CourseDifficulty> &GetValue();
+	const vector<CourseDifficulty> &GetValue() const;
 private:
 	vector<CourseDifficulty> m_v;
 };
@@ -39,7 +39,7 @@ public:
 	ThemeMetricStepsTypesToShow() { }
 	ThemeMetricStepsTypesToShow( const RString& sGroup, const RString& sName );
 	void Read();
-	const vector<StepsType> &GetValue();
+	const vector<StepsType> &GetValue() const;
 private:
 	vector<StepsType> m_v;
 };
