@@ -4,7 +4,7 @@
 #include "ThemeManager.h"
 #include "Steps.h"
 #include "PlayerState.h"
-
+#include "Course.h"
 
 const float	BATTERY_X[NUM_PLAYERS]	=	{ -92, +92 };
 
@@ -71,9 +71,15 @@ void LifeMeterBattery::OnSongEnded()
 	{
 		m_iTrailingLivesLeft = m_iLivesLeft;
 		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-		m_iLivesLeft += ( GAMESTATE->m_pCurSteps[pn]->GetMeter()>=8 ? 2 : 1 );
+		const Course *pCourse = GAMESTATE->m_pCurCourse;
+		
+		if( pCourse && pCourse->m_vEntries[GAMESTATE->m_iCurrentStageIndex].iGainLives > -1 )
+			m_iLivesLeft += pCourse->m_vEntries[GAMESTATE->m_iCurrentStageIndex].iGainLives;
+		else
+			m_iLivesLeft += ( GAMESTATE->m_pCurSteps[pn]->GetMeter()>=8 ? 2 : 1 );
 		m_iLivesLeft = min( m_iLivesLeft, GAMESTATE->m_SongOptions.GetSong().m_iBatteryLives );
-		m_soundGainLife.Play();
+		if( m_iTrailingLivesLeft < m_iLivesLeft )
+			m_soundGainLife.Play();
 	}
 
 	Refresh();

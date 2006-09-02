@@ -241,9 +241,11 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 						new_entry.bSecret = true;
 					else if( !sMod.CompareNoCase("nodifficult") )
 						new_entry.bNoDifficult = true;
-					else 
+					else if( sMod.length() > 5 && !sMod.Left(5).CompareNoCase("award") )
+						new_entry.iGainLives = atoi( sMod.substr(5).c_str() );
+					else
 						continue;
-					mods.erase(mods.begin() + j);
+					mods.erase( mods.begin() + j );
 				}
 				new_entry.sModifiers = join( ",", mods );
 			}
