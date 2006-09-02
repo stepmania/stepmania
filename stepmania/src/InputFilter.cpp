@@ -33,9 +33,9 @@ namespace
 	 * by queuemutex. */
 	typedef map<DeviceInput, ButtonState> ButtonStateMap;
 	ButtonStateMap g_ButtonStates;
-	ButtonState &GetButtonState( InputDevice device, DeviceButton button )
+	ButtonState &GetButtonState( const DeviceInput &di )
 	{
-		return g_ButtonStates[ DeviceInput(device, button) ];
+		return g_ButtonStates[di];
 	}
 }
 
@@ -118,7 +118,7 @@ void InputFilter::ButtonPressed( const DeviceInput &di, bool Down )
 	ASSERT_M( di.device < NUM_INPUT_DEVICES, ssprintf("%i", di.device) );
 	ASSERT_M( di.button < NUM_DeviceButton, ssprintf("%i", di.button) );
 
-	ButtonState &bs = GetButtonState( di.device, di.button );
+	ButtonState &bs = GetButtonState( di );
 
 	bs.m_Level = di.level;
 
@@ -139,7 +139,7 @@ void InputFilter::ButtonPressed( const DeviceInput &di, bool Down )
 void InputFilter::SetButtonComment( const DeviceInput &di, const RString &sComment )
 {
 	LockMut(*queuemutex);
-	ButtonState &bs = GetButtonState( di.device, di.button );
+	ButtonState &bs = GetButtonState( di );
 	bs.m_sComment = sComment;
 }
 
@@ -268,25 +268,25 @@ void InputFilter::Update( float fDeltaTime )
 bool InputFilter::IsBeingPressed( const DeviceInput &di )
 {
 	LockMut(*queuemutex);
-	return GetButtonState(di.device, di.button).m_bLastReportedHeld;
+	return GetButtonState( di ).m_bLastReportedHeld;
 }
 
 float InputFilter::GetSecsHeld( const DeviceInput &di )
 {
 	LockMut(*queuemutex);
-	return GetButtonState(di.device, di.button).m_fSecsHeld;
+	return GetButtonState( di ).m_fSecsHeld;
 }
 
 RString InputFilter::GetButtonComment( const DeviceInput &di ) const
 {
 	LockMut(*queuemutex);
-	return GetButtonState(di.device, di.button).m_sComment;
+	return GetButtonState( di ).m_sComment;
 }
 
 void InputFilter::ResetKeyRepeat( const DeviceInput &di )
 {
 	LockMut(*queuemutex);
-	GetButtonState(di.device, di.button).m_fSecsHeld = 0;
+	GetButtonState( di ).m_fSecsHeld = 0;
 }
 
 void InputFilter::GetInputEvents( InputEventArray &array )
