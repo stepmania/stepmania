@@ -1,7 +1,7 @@
 /* MenuInput - An input event specific to a menu navigation.  This is generated based on a Game. */
 
-#ifndef MENUINPUT_H
-#define MENUINPUT_H
+#ifndef MENU_INPUT_H
+#define MENU_INPUT_H
 
 #include "PlayerNumber.h"
 
@@ -30,7 +30,7 @@ struct MenuInput
 	MenuInput( PlayerNumber pn, MenuButton b ) { player = pn; button = b; };
 
 	PlayerNumber	player;
-	MenuButton		button;
+	MenuButton	button;
 
 	bool operator==( const MenuInput &other ) const { return player == other.player && button == other.button; };
 	bool operator!=( const MenuInput &other ) const { return !operator==(other); };

@@ -1,7 +1,7 @@
 /* InputMapper - Holds user-chosen input preferences and saves it between sessions. */
 
-#ifndef INPUTMAPPER_H
-#define INPUTMAPPER_H
+#ifndef INPUT_MAPPER_H
+#define INPUT_MAPPER_H
 
 #include "RageInputDevice.h"
 #include "GameInput.h"

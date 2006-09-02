@@ -1,5 +1,5 @@
-#ifndef STEPMANIA_H
-#define STEPMANIA_H
+#ifndef STEP_MANIA_H
+#define STEP_MANIA_H
 
 class Game;
 class RageTimer;

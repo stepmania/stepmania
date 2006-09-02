@@ -1,7 +1,7 @@
 /* StyleInput - An input event specific to a style that is defined by a player number and the player's note column. */
 
-#ifndef STYLEINPUT_H
-#define STYLEINPUT_H
+#ifndef STYLE_INPUT_H
+#define STYLE_INPUT_H
 
 #include "PlayerNumber.h"
 

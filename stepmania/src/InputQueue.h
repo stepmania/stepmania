@@ -1,7 +1,7 @@
 /* InputQueue - Stores a list of the most recently pressed MenuInputs for each player. */
 
-#ifndef INPUTQUEUE_H
-#define INPUTQUEUE_H
+#ifndef INPUT_QUEUE_H
+#define INPUT_QUEUE_H
 
 #include "GameConstantsAndTypes.h"
 #include "GameInput.h"

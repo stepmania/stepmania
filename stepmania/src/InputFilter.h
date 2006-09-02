@@ -1,7 +1,7 @@
 /* InputFilter - Checks RageInput and generates a list of InputEvents, representing button presses, releases, and repeats. */
 
-#ifndef INPUTFILTER_H
-#define INPUTFILTER_H
+#ifndef INPUT_FILTER_H
+#define INPUT_FILTER_H
 
 #include "RageInputDevice.h"
 

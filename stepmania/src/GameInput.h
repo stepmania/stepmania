@@ -1,7 +1,7 @@
 /* GameInput - An input event specific to a Game definied by an instrument and a button space. */
 
-#ifndef GAMEINPUT_H
-#define GAMEINPUT_H
+#ifndef GAME_INPUT_H
+#define GAME_INPUT_H
 
 #include "EnumHelper.h"
 
@@ -245,7 +245,7 @@ struct GameInput
 	GameInput( GameController c, GameButton b ): controller(c), button(b) { }
 
 	GameController	controller;
-	GameButton		button;
+	GameButton	button;
 
 	bool operator==( const GameInput &other ) const { return controller == other.controller && button == other.button; };
 	bool operator<( const GameInput &other ) const
