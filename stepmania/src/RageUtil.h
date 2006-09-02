@@ -310,6 +310,7 @@ void MakeLower( char *p, size_t iLen );
 void MakeUpper( wchar_t *p, size_t iLen );
 void MakeLower( wchar_t *p, size_t iLen );
 float StringToFloat( const RString &sString );
+bool StringToFloat( const RString &sString, float &fOut );
 
 RString WStringToRString( const wstring &sString );
 RString WcharToUTF8( wchar_t c );

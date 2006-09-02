@@ -1509,6 +1509,15 @@ float StringToFloat( const RString &sString )
 	return ret;
 }
 
+bool StringToFloat( const RString &sString, float &fOut )
+{
+	char *endPtr;
+	
+	fOut = strtof( sString, &endPtr );
+	return sString.size() && *endPtr == '\0' && isfinite( fOut );
+}
+	
+	
 const wchar_t INVALID_CHAR = 0xFFFD; /* U+FFFD REPLACEMENT CHARACTER */
 
 wstring RStringToWstring( const RString &s )
