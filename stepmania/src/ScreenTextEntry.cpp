@@ -11,6 +11,7 @@
 #include "ActorUtil.h"
 #include "InputEventPlus.h"
 #include "RageInput.h"
+#include "LocalizedString.h"
 
 static const char* g_szKeys[NUM_KEYBOARD_ROWS][KEYS_PER_ROW] =
 {
@@ -86,6 +87,16 @@ void ScreenTextEntry::TextEntry(
 	g_pFormatAnswerForDisplay = FormatAnswerForDisplay;
 
 	SCREENMAN->AddNewScreenToTop( "ScreenTextEntry", smSendOnPop );
+}
+
+static LocalizedString INVALID_FLOAT( "ScreenTextEntry", "\"%s\" is an invalid floating point value." );
+bool ScreenTextEntry::FloatValidate( const RString &sAnswer, RString &sErrorOut )
+{
+	float f;
+	if( StringToFloat(sAnswer, f) )
+		return true;
+	sErrorOut = ssprintf( INVALID_FLOAT.GetValue(), sAnswer.c_str() );
+	return false;
 }
 
 bool ScreenTextEntry::s_bCancelledLast = false;
@@ -313,7 +324,7 @@ void ScreenTextEntryVisual::Init()
 			for( int x=0; x<KEYS_PER_ROW; ++x )
 			{
 				BitmapText *&pbt = m_ptextKeys[r][x];
-				pbt = static_cast<BitmapText *>( text.Copy() ); // XXX: Copy() should be covariant
+				pbt = dynamic_cast<BitmapText *>( text.Copy() ); // XXX: Copy() should be covariant
 				this->AddChild( pbt );
 
 				RString s = g_szKeys[r][x];

@@ -55,6 +55,8 @@ public:
 	{
 		TextEntry( smSendOnPop, sQuestion, "", 255, NULL, OnOK, OnCanel, true );
 	}
+	
+	static bool FloatValidate( const RString &sAnswer, RString &sErrorOut );
 
 	virtual void Init();
 	virtual void BeginScreen();
