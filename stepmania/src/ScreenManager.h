@@ -1,7 +1,7 @@
 /* ScreenManager - Manager/container for Screens. */
 
-#ifndef ScreenManager_H
-#define ScreenManager_H
+#ifndef SCREEN_MANAGER_H
+#define SCREEN_MANAGER_H
 
 #include "RageInputDevice.h"
 #include "ScreenMessage.h"

@@ -110,8 +110,8 @@ namespace ScreenManagerUtil
 	Actor                   *g_pSharedBGA;  // BGA object that's persistent between screens
 	vector<LoadedScreen>    g_ScreenStack;  // bottommost to topmost
 	vector<Screen*>         g_OverlayScreens;
-	set<RString>			g_setGroupedScreens;
-	set<RString>			g_setPersistantScreens;
+	set<RString>		g_setGroupedScreens;
+	set<RString>		g_setPersistantScreens;
 
 	vector<LoadedScreen>    g_vPreparedScreens;
 	vector<Actor*>          g_vPreparedBackgrounds;
