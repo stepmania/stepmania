@@ -1322,7 +1322,7 @@ Actor::TweenInfo::TweenInfo( const TweenInfo &cpy )
 Actor::TweenInfo &Actor::TweenInfo::operator=( const TweenInfo &rhs )
 {
 	delete m_pTween;
-	m_pTween = (rhs.m_pTween? m_pTween->Copy():NULL);
+	m_pTween = (rhs.m_pTween? rhs.m_pTween->Copy():NULL);
 	m_fTimeLeftInTween = rhs.m_fTimeLeftInTween;
 	m_fTweenTime = rhs.m_fTweenTime;
 	m_sCommandName = rhs.m_sCommandName;
