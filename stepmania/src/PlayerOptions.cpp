@@ -287,75 +287,75 @@ void PlayerOptions::FromString( const RString &sOptions, bool bWarnOnInvalid )
 			SET_FLOAT( fTimeSpacing )
 			m_fTimeSpacing = 1;
 		}
-		else if( sBit == "clearall" )		Init();
-		else if( sBit == "boost" )		SET_FLOAT( fAccels[ACCEL_BOOST] )
-		else if( sBit == "brake" || sBit == "land" ) SET_FLOAT( fAccels[ACCEL_BRAKE] )
-		else if( sBit == "wave" )		SET_FLOAT( fAccels[ACCEL_WAVE] )
-		else if( sBit == "expand" )		SET_FLOAT( fAccels[ACCEL_EXPAND] )
-		else if( sBit == "boomerang" )		SET_FLOAT( fAccels[ACCEL_BOOMERANG] )
-		else if( sBit == "drunk" )		SET_FLOAT( fEffects[EFFECT_DRUNK] )
-		else if( sBit == "dizzy" )		SET_FLOAT( fEffects[EFFECT_DIZZY] )
-		else if( sBit == "mini" )		SET_FLOAT( fEffects[EFFECT_MINI] )
-		else if( sBit == "tiny" )		SET_FLOAT( fEffects[EFFECT_TINY] )
-		else if( sBit == "flip" )		SET_FLOAT( fEffects[EFFECT_FLIP] )
-		else if( sBit == "invert" )		SET_FLOAT( fEffects[EFFECT_INVERT] )
-		else if( sBit == "tornado" )		SET_FLOAT( fEffects[EFFECT_TORNADO] )
-		else if( sBit == "tipsy" )		SET_FLOAT( fEffects[EFFECT_TIPSY] )
-		else if( sBit == "bumpy" )		SET_FLOAT( fEffects[EFFECT_BUMPY] )
-		else if( sBit == "beat" )		SET_FLOAT( fEffects[EFFECT_BEAT] )
-		else if( sBit == "hidden" )		SET_FLOAT( fAppearances[APPEARANCE_HIDDEN] )
-		else if( sBit == "hiddenoffset" )	SET_FLOAT( fAppearances[APPEARANCE_HIDDEN_OFFSET] )
-		else if( sBit == "sudden" )		SET_FLOAT( fAppearances[APPEARANCE_SUDDEN] )
-		else if( sBit == "suddenoffset" )	SET_FLOAT( fAppearances[APPEARANCE_SUDDEN_OFFSET] )
-		else if( sBit == "stealth" )		SET_FLOAT( fAppearances[APPEARANCE_STEALTH] )
-		else if( sBit == "blink" )		SET_FLOAT( fAppearances[APPEARANCE_BLINK] )
-		else if( sBit == "randomvanish" )	SET_FLOAT( fAppearances[APPEARANCE_RANDOMVANISH] )
-		else if( sBit == "turn" && !on )	ZERO( m_bTurns ); /* "no turn" */
-		else if( sBit == "mirror" )		m_bTurns[TURN_MIRROR] = on;
-		else if( sBit == "left" )		m_bTurns[TURN_LEFT] = on;
-		else if( sBit == "right" )		m_bTurns[TURN_RIGHT] = on;
-		else if( sBit == "shuffle" )		m_bTurns[TURN_SHUFFLE] = on;
-		else if( sBit == "supershuffle" )	m_bTurns[TURN_SUPER_SHUFFLE] = on;
-		else if( sBit == "little" )		m_bTransforms[TRANSFORM_LITTLE] = on;
-		else if( sBit == "wide" )		m_bTransforms[TRANSFORM_WIDE] = on;
-		else if( sBit == "big" )		m_bTransforms[TRANSFORM_BIG] = on;
-		else if( sBit == "quick" )		m_bTransforms[TRANSFORM_QUICK] = on;
-		else if( sBit == "bmrize" )		m_bTransforms[TRANSFORM_BMRIZE] = on;
-		else if( sBit == "skippy" )		m_bTransforms[TRANSFORM_SKIPPY] = on;
-		else if( sBit == "mines" )		m_bTransforms[TRANSFORM_MINES] = on;
-		else if( sBit == "echo" )		m_bTransforms[TRANSFORM_ECHO] = on;
-		else if( sBit == "stomp" )		m_bTransforms[TRANSFORM_STOMP] = on;
-		else if( sBit == "planted" )		m_bTransforms[TRANSFORM_PLANTED] = on;
-		else if( sBit == "floored" )		m_bTransforms[TRANSFORM_FLOORED] = on;
-		else if( sBit == "twister" )		m_bTransforms[TRANSFORM_TWISTER] = on;
-		else if( sBit == "nojumps" )		m_bTransforms[TRANSFORM_NOJUMPS] = on;
-		else if( sBit == "nohands" )		m_bTransforms[TRANSFORM_NOHANDS] = on;
-		else if( sBit == "noquads" )		m_bTransforms[TRANSFORM_NOQUADS] = on;
-		else if( sBit == "reverse" )		SET_FLOAT( fScrolls[SCROLL_REVERSE] )
-		else if( sBit == "split" )		SET_FLOAT( fScrolls[SCROLL_SPLIT] )
-		else if( sBit == "alternate" )		SET_FLOAT( fScrolls[SCROLL_ALTERNATE] )
-		else if( sBit == "cross" )		SET_FLOAT( fScrolls[SCROLL_CROSS] )
-		else if( sBit == "centered" || sBit == "converge" )	SET_FLOAT( fScrolls[SCROLL_CENTERED] )
-		else if( sBit == "noholds" || sBit == "nofreeze" )	m_bTransforms[TRANSFORM_NOHOLDS] = on;
-		else if( sBit == "norolls" )		m_bTransforms[TRANSFORM_NOROLLS] = on;
-		else if( sBit == "nomines" )		m_bTransforms[TRANSFORM_NOMINES] = on;
-		else if( sBit == "nostretch" )		m_bTransforms[TRANSFORM_NOSTRETCH] = on;
-		else if( sBit == "dark" )		SET_FLOAT( fDark )
-		else if( sBit == "blind" )		SET_FLOAT( fBlind )
-		else if( sBit == "cover" )		SET_FLOAT( fCover )
-		else if( sBit == "passmark" )		SET_FLOAT( fPassmark )
-		else if( sBit == "overhead" )		{ m_bSetTiltOrSkew = true; m_fSkew = 0;		m_fPerspectiveTilt = 0;		m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
-		else if( sBit == "incoming" )		{ m_bSetTiltOrSkew = true; m_fSkew = level;	m_fPerspectiveTilt = -level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
-		else if( sBit == "space" )		{ m_bSetTiltOrSkew = true; m_fSkew = level;	m_fPerspectiveTilt = +level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
-		else if( sBit == "hallway" )		{ m_bSetTiltOrSkew = true; m_fSkew = 0;		m_fPerspectiveTilt = -level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
-		else if( sBit == "distant" )		{ m_bSetTiltOrSkew = true; m_fSkew = 0;		m_fPerspectiveTilt = +level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
+		else if( sBit == "clearall" )				Init();
+		else if( sBit == "boost" )				SET_FLOAT( fAccels[ACCEL_BOOST] )
+		else if( sBit == "brake" || sBit == "land" )		SET_FLOAT( fAccels[ACCEL_BRAKE] )
+		else if( sBit == "wave" )				SET_FLOAT( fAccels[ACCEL_WAVE] )
+		else if( sBit == "expand" || sBit == "dwiwave" )	SET_FLOAT( fAccels[ACCEL_EXPAND] )
+		else if( sBit == "boomerang" )				SET_FLOAT( fAccels[ACCEL_BOOMERANG] )
+		else if( sBit == "drunk" )				SET_FLOAT( fEffects[EFFECT_DRUNK] )
+		else if( sBit == "dizzy" )				SET_FLOAT( fEffects[EFFECT_DIZZY] )
+		else if( sBit == "mini" )				SET_FLOAT( fEffects[EFFECT_MINI] )
+		else if( sBit == "tiny" )				SET_FLOAT( fEffects[EFFECT_TINY] )
+		else if( sBit == "flip" )				SET_FLOAT( fEffects[EFFECT_FLIP] )
+		else if( sBit == "invert" )				SET_FLOAT( fEffects[EFFECT_INVERT] )
+		else if( sBit == "tornado" )				SET_FLOAT( fEffects[EFFECT_TORNADO] )
+		else if( sBit == "tipsy" )				SET_FLOAT( fEffects[EFFECT_TIPSY] )
+		else if( sBit == "bumpy" )				SET_FLOAT( fEffects[EFFECT_BUMPY] )
+		else if( sBit == "beat" )				SET_FLOAT( fEffects[EFFECT_BEAT] )
+		else if( sBit == "hidden" )				SET_FLOAT( fAppearances[APPEARANCE_HIDDEN] )
+		else if( sBit == "hiddenoffset" )			SET_FLOAT( fAppearances[APPEARANCE_HIDDEN_OFFSET] )
+		else if( sBit == "sudden" )				SET_FLOAT( fAppearances[APPEARANCE_SUDDEN] )
+		else if( sBit == "suddenoffset" )			SET_FLOAT( fAppearances[APPEARANCE_SUDDEN_OFFSET] )
+		else if( sBit == "stealth" )				SET_FLOAT( fAppearances[APPEARANCE_STEALTH] )
+		else if( sBit == "blink" )				SET_FLOAT( fAppearances[APPEARANCE_BLINK] )
+		else if( sBit == "randomvanish" )			SET_FLOAT( fAppearances[APPEARANCE_RANDOMVANISH] )
+		else if( sBit == "turn" && !on )			ZERO( m_bTurns ); /* "no turn" */
+		else if( sBit == "mirror" )				m_bTurns[TURN_MIRROR] = on;
+		else if( sBit == "left" )				m_bTurns[TURN_LEFT] = on;
+		else if( sBit == "right" )				m_bTurns[TURN_RIGHT] = on;
+		else if( sBit == "shuffle" )				m_bTurns[TURN_SHUFFLE] = on;
+		else if( sBit == "supershuffle" )			m_bTurns[TURN_SUPER_SHUFFLE] = on;
+		else if( sBit == "little" )				m_bTransforms[TRANSFORM_LITTLE] = on;
+		else if( sBit == "wide" )				m_bTransforms[TRANSFORM_WIDE] = on;
+		else if( sBit == "big" )				m_bTransforms[TRANSFORM_BIG] = on;
+		else if( sBit == "quick" )				m_bTransforms[TRANSFORM_QUICK] = on;
+		else if( sBit == "bmrize" )				m_bTransforms[TRANSFORM_BMRIZE] = on;
+		else if( sBit == "skippy" )				m_bTransforms[TRANSFORM_SKIPPY] = on;
+		else if( sBit == "mines" )				m_bTransforms[TRANSFORM_MINES] = on;
+		else if( sBit == "echo" )				m_bTransforms[TRANSFORM_ECHO] = on;
+		else if( sBit == "stomp" )				m_bTransforms[TRANSFORM_STOMP] = on;
+		else if( sBit == "planted" )				m_bTransforms[TRANSFORM_PLANTED] = on;
+		else if( sBit == "floored" )				m_bTransforms[TRANSFORM_FLOORED] = on;
+		else if( sBit == "twister" )				m_bTransforms[TRANSFORM_TWISTER] = on;
+		else if( sBit == "nojumps" )				m_bTransforms[TRANSFORM_NOJUMPS] = on;
+		else if( sBit == "nohands" )				m_bTransforms[TRANSFORM_NOHANDS] = on;
+		else if( sBit == "noquads" )				m_bTransforms[TRANSFORM_NOQUADS] = on;
+		else if( sBit == "reverse" )				SET_FLOAT( fScrolls[SCROLL_REVERSE] )
+		else if( sBit == "split" )				SET_FLOAT( fScrolls[SCROLL_SPLIT] )
+		else if( sBit == "alternate" )				SET_FLOAT( fScrolls[SCROLL_ALTERNATE] )
+		else if( sBit == "cross" )				SET_FLOAT( fScrolls[SCROLL_CROSS] )
+		else if( sBit == "centered" )				SET_FLOAT( fScrolls[SCROLL_CENTERED] )
+		else if( sBit == "noholds" )				m_bTransforms[TRANSFORM_NOHOLDS] = on;
+		else if( sBit == "norolls" )				m_bTransforms[TRANSFORM_NOROLLS] = on;
+		else if( sBit == "nomines" )				m_bTransforms[TRANSFORM_NOMINES] = on;
+		else if( sBit == "nostretch" )				m_bTransforms[TRANSFORM_NOSTRETCH] = on;
+		else if( sBit == "dark" )				SET_FLOAT( fDark )
+		else if( sBit == "blind" )				SET_FLOAT( fBlind )
+		else if( sBit == "cover" )				SET_FLOAT( fCover )
+		else if( sBit == "passmark" )				SET_FLOAT( fPassmark )
+		else if( sBit == "overhead" )				{ m_bSetTiltOrSkew = true; m_fSkew = 0;		m_fPerspectiveTilt = 0;		m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
+		else if( sBit == "incoming" )				{ m_bSetTiltOrSkew = true; m_fSkew = level;	m_fPerspectiveTilt = -level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
+		else if( sBit == "space" )				{ m_bSetTiltOrSkew = true; m_fSkew = level;	m_fPerspectiveTilt = +level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
+		else if( sBit == "hallway" )				{ m_bSetTiltOrSkew = true; m_fSkew = 0;		m_fPerspectiveTilt = -level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
+		else if( sBit == "distant" )				{ m_bSetTiltOrSkew = true; m_fSkew = 0;		m_fPerspectiveTilt = +level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
 		else if( NOTESKIN && NOTESKIN->DoesNoteSkinExist(sBit) )	m_sNoteSkin = sBit;
 		else if( sBit == "noteskin" && !on ) /* "no noteskin" */	m_sNoteSkin = NOTESKIN->GAME_BASE_NOTESKIN_NAME;
-		else if( sBit == "randomspeed" ) 	SET_FLOAT( fRandomSpeed )
-		else if( sBit == "addscore" )		m_ScoreDisplay = SCORING_ADD;
-		else if( sBit == "subtractscore" )	m_ScoreDisplay = SCORING_SUBTRACT;
-		else if( sBit == "averagescore" )	m_ScoreDisplay = SCORING_AVERAGE;
-		else if( sBit == "random" )		ChooseRandomModifiers();
+		else if( sBit == "randomspeed" ) 			SET_FLOAT( fRandomSpeed )
+		else if( sBit == "addscore" )				m_ScoreDisplay = SCORING_ADD;
+		else if( sBit == "subtractscore" )			m_ScoreDisplay = SCORING_SUBTRACT;
+		else if( sBit == "averagescore" )			m_ScoreDisplay = SCORING_AVERAGE;
+		else if( sBit == "random" )				ChooseRandomModifiers();
 		else
 		{
 			if( bWarnOnInvalid )
