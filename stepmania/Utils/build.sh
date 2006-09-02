@@ -89,7 +89,9 @@ while [ $# -gt 0 ]; do
 done
 url=http://stepmania.sf.net
 ffmpeg=ffmpeg-0.4.9-pre1
-patchfile=ffmpeg-0.4.9-pre1-sm.patch
+patch1=ffmpeg-0.4.9-pre1-sm.patch
+patch2=ffmpeg-0.4.9-pre1-gcc4-1.patch
+patch3=ffmpeg-0.4.9-pre1-altivec.patch
 if [ ! -d $ffmpeg ]; then
 	if [ ! -f $ffmpeg.tar.gz ]; then
 		message 'Downloading ffmpeg'
@@ -100,12 +102,17 @@ if [ ! -d $ffmpeg ]; then
 		else
 			failure
 		fi
-		call $dl $url/$ffmpeg.tar.gz $url/$patchfile
+		call $dl $url/$ffmpeg.tar.gz $url/$patch1 \
+			$url/$patch2 $url/$patch3
 	fi
 	message 'Decompressing ffmpeg'
 	call tar zxf $ffmpeg.tar.gz
-	message 'Patching ffmpeg'
-	call patch -p0 "<$patchfile"
+	message 'Patching ffmpeg[1]'
+	call patch -p0 "<$patch1"
+	message 'Patching ffmpeg[2]'
+	call patch -p0 "<$patch2"
+	message 'Patching ffmpeg[3]'
+	call patch -p0 "<$patch3"
 fi
 
 if [ -n "$s_download" ]; then exit 0; fi
