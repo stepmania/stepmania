@@ -121,7 +121,7 @@ public:
 	void ApplyWaitingTransforms();
 	void SetPaused( bool bPaused ) { m_bPaused = bPaused; }
 
-	float GetMaxStepDistanceSeconds();
+	static float GetMaxStepDistanceSeconds();
 	const NoteData &GetNoteData() const { return m_NoteData; }
 	bool HasNoteField() const { return m_pNoteField != NULL; }
 
