@@ -117,6 +117,7 @@ public:
 	float	m_fMusicLengthSeconds;
 	float	m_fFirstBeat;	// beat of first note
 	float	m_fLastBeat;	// beat of last note
+	float	m_fSpecifiedLastBeat;	// specified last beat of the song
 	float	m_fMusicSampleStartSeconds;
 	float	m_fMusicSampleLengthSeconds;
 	enum { DISPLAY_ACTUAL, DISPLAY_SPECIFIED, DISPLAY_RANDOM } m_DisplayBPMType;

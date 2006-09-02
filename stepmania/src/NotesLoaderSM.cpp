@@ -293,6 +293,9 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out )
 				continue;
 			out.m_fMusicLengthSeconds = StringToFloat( sParams[1] );
 		}
+		
+		else if( sValueName=="LASTBEATHINT" )
+			out.m_fSpecifiedLastBeat = StringToFloat( sParams[1] );
 
 		else if( sValueName=="MUSICBYTES" )
 			; /* ignore */

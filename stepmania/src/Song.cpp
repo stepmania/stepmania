@@ -33,7 +33,7 @@
 #include <set>
 #include <float.h>
 
-const int FILE_CACHE_VERSION = 150;	// increment this to invalidate cache
+const int FILE_CACHE_VERSION = 151;	// increment this to invalidate cache
 
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
 
@@ -53,6 +53,7 @@ Song::Song()
 	m_fMusicLengthSeconds = 0;
 	m_fFirstBeat = -1;
 	m_fLastBeat = -1;
+	m_fSpecifiedLastBeat = -1;
 	m_SelectionDisplay = SHOW_ALWAYS;
 	m_DisplayBPMType = DISPLAY_ACTUAL;
 	m_fSpecifiedBPMMin = 0;
@@ -657,7 +658,7 @@ void Song::TranslateTitles()
 void Song::ReCalculateRadarValuesAndLastBeat()
 {
 	float fFirstBeat = FLT_MAX; /* inf */
-	float fLastBeat = 0;
+	float fLastBeat = m_fSpecifiedLastBeat; // Make sure we're at least as long as the specified amount.
 
 	for( unsigned i=0; i<m_vpSteps.size(); i++ )
 	{
