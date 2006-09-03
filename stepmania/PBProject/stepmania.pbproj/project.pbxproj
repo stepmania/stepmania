@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		1215D7A208C6559A00B87D8B /* ScreenGameplayNormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1215D7A008C6559A00B87D8B /* ScreenGameplayNormal.cpp */; };
 		1215D7A308C6559A00B87D8B /* ScreenGameplayNormal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1215D7A108C6559A00B87D8B /* ScreenGameplayNormal.h */; };
-		AA0732730954358100F396C5 /* ArchHooksUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA0732720954358100F396C5 /* ArchHooksUtil.cpp */; };
 		AA07328F0954381800F396C5 /* DisplayResolutions.h in Headers */ = {isa = PBXBuildFile; fileRef = AA07328B0954381800F396C5 /* DisplayResolutions.h */; };
 		AA0732900954381800F396C5 /* XmlFileUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA07328C0954381800F396C5 /* XmlFileUtil.cpp */; };
 		AA0732910954381800F396C5 /* XmlFileUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = AA07328D0954381800F396C5 /* XmlFileUtil.h */; };
@@ -1370,7 +1369,6 @@
 		AA40D50209A08D650068C0D5 /* ScreenOptionsManageEditSteps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFBEEE5094D807E000029DE /* ScreenOptionsManageEditSteps.cpp */; };
 		AA40D50309A08D650068C0D5 /* ScreenOptionsMemoryCard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFBEEE7094D807E000029DE /* ScreenOptionsMemoryCard.cpp */; };
 		AA40D50409A08D650068C0D5 /* ScreenServiceAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFBEEE9094D807E000029DE /* ScreenServiceAction.cpp */; };
-		AA40D50509A08D650068C0D5 /* ArchHooksUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA0732720954358100F396C5 /* ArchHooksUtil.cpp */; };
 		AA40D50609A08D650068C0D5 /* XmlFileUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA07328C0954381800F396C5 /* XmlFileUtil.cpp */; };
 		AA40D50709A08D650068C0D5 /* XmlFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC6889905D7F3C800964E6D /* XmlFile.cpp */; };
 		AA40D50809A08D650068C0D5 /* LocalizedString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AADD1CC2095C233E0088C9DF /* LocalizedString.cpp */; };
@@ -1800,7 +1798,6 @@
 		1215D7A108C6559A00B87D8B /* ScreenGameplayNormal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenGameplayNormal.h; path = ../src/ScreenGameplayNormal.h; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
-		AA0732720954358100F396C5 /* ArchHooksUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ArchHooksUtil.cpp; path = ArchHooks/ArchHooksUtil.cpp; sourceTree = "<group>"; };
 		AA07328B0954381800F396C5 /* DisplayResolutions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = DisplayResolutions.h; path = ../src/DisplayResolutions.h; sourceTree = "<group>"; };
 		AA07328C0954381800F396C5 /* XmlFileUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = XmlFileUtil.cpp; path = ../src/XmlFileUtil.cpp; sourceTree = "<group>"; };
 		AA07328D0954381800F396C5 /* XmlFileUtil.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = XmlFileUtil.h; path = ../src/XmlFileUtil.h; sourceTree = "<group>"; };
@@ -1912,10 +1909,6 @@
 		AA251B7505841FCE00027ACB /* RageFileDriverZip.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageFileDriverZip.cpp; path = ../src/RageFileDriverZip.cpp; sourceTree = "<group>"; };
 		AA251B7605841FCE00027ACB /* RageFileDriverZip.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageFileDriverZip.h; path = ../src/RageFileDriverZip.h; sourceTree = "<group>"; };
 		AA25200D0587225500027ACB /* Style.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Style.h; path = ../src/Style.h; sourceTree = "<group>"; };
-		AA272BF704C7B37A00D02EE9 /* InputHandler_DirectInput.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = InputHandler_DirectInput.cpp; sourceTree = "<group>"; };
-		AA272BF804C7B37A00D02EE9 /* InputHandler_DirectInput.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = InputHandler_DirectInput.h; sourceTree = "<group>"; };
-		AA272BF904C7B37A00D02EE9 /* InputHandler_DirectInputHelper.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = InputHandler_DirectInputHelper.cpp; sourceTree = "<group>"; };
-		AA272BFA04C7B37A00D02EE9 /* InputHandler_DirectInputHelper.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = InputHandler_DirectInputHelper.h; sourceTree = "<group>"; };
 		AA272C3004CD757100D02EE9 /* RageFile.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageFile.cpp; path = ../src/RageFile.cpp; sourceTree = "<group>"; };
 		AA272C3104CD757100D02EE9 /* RageFile.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageFile.h; path = ../src/RageFile.h; sourceTree = "<group>"; };
 		AA28B47A058F2F5D0097C109 /* MemoryCardManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MemoryCardManager.cpp; path = ../src/MemoryCardManager.cpp; sourceTree = "<group>"; };
@@ -1979,8 +1972,6 @@
 		AA60E0BC067992D7008ADC41 /* Threads.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = Threads.h; sourceTree = "<group>"; };
 		AA60E0BD067992D7008ADC41 /* Threads_Pthreads.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = Threads_Pthreads.cpp; sourceTree = "<group>"; };
 		AA60E0BE067992D7008ADC41 /* Threads_Pthreads.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = Threads_Pthreads.h; sourceTree = "<group>"; };
-		AA60E0BF067992D7008ADC41 /* Threads_Win32.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = Threads_Win32.cpp; sourceTree = "<group>"; };
-		AA60E0C0067992D7008ADC41 /* Threads_Win32.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = Threads_Win32.h; sourceTree = "<group>"; };
 		AA64218606EC606F00C21584 /* RageFileDriverMemory.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageFileDriverMemory.cpp; path = ../src/RageFileDriverMemory.cpp; sourceTree = "<group>"; };
 		AA64218706EC606F00C21584 /* RageFileDriverMemory.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageFileDriverMemory.h; path = ../src/RageFileDriverMemory.h; sourceTree = "<group>"; };
 		AA658779098C322800CE55CC /* ScreenUnlockStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenUnlockStatus.cpp; path = ../src/ScreenUnlockStatus.cpp; sourceTree = "<group>"; };
@@ -2085,11 +2076,7 @@
 		AA6E012E047712BE005F316C /* RageSoundDriver_Null.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = RageSoundDriver_Null.cpp; sourceTree = "<group>"; };
 		AA6E012F047712BE005F316C /* RageSoundDriver_Null.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = RageSoundDriver_Null.h; sourceTree = "<group>"; };
 		AA6E01410477136A005F316C /* arch.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = arch.cpp; sourceTree = "<group>"; };
-		AA6E01560477136A005F316C /* InputHandler_SDL.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = InputHandler_SDL.cpp; sourceTree = "<group>"; };
-		AA6E01570477136A005F316C /* InputHandler_SDL.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = InputHandler_SDL.h; sourceTree = "<group>"; };
 		AA6E01630477136A005F316C /* LowLevelWindow.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = LowLevelWindow.h; sourceTree = "<group>"; };
-		AA6E01640477136A005F316C /* LowLevelWindow_SDL.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = LowLevelWindow_SDL.cpp; sourceTree = "<group>"; };
-		AA6E01650477136A005F316C /* LowLevelWindow_SDL.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = LowLevelWindow_SDL.h; sourceTree = "<group>"; };
 		AA6E01DB04771F11005F316C /* MovieTexture.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MovieTexture.cpp; path = MovieTexture/MovieTexture.cpp; sourceTree = "<group>"; };
 		AA6E01DE04772005005F316C /* SongCacheIndex.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = SongCacheIndex.cpp; path = ../src/SongCacheIndex.cpp; sourceTree = "<group>"; };
 		AA6E01DF04772005005F316C /* SongCacheIndex.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = SongCacheIndex.h; path = ../src/SongCacheIndex.h; sourceTree = "<group>"; };
@@ -2132,8 +2119,6 @@
 		AA6EFD9104770A7C005F316C /* RageTypes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageTypes.h; path = ../src/RageTypes.h; sourceTree = "<group>"; };
 		AA6EFD9204770A7C005F316C /* RageUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageUtil.cpp; path = ../src/RageUtil.cpp; sourceTree = "<group>"; };
 		AA6EFD9304770A7C005F316C /* RageUtil.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageUtil.h; path = ../src/RageUtil.h; sourceTree = "<group>"; };
-		AA6EFDC004770AEA005F316C /* SDL_utils.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = SDL_utils.cpp; path = ../src/SDL_utils.cpp; sourceTree = "<group>"; };
-		AA6EFDC104770AEA005F316C /* SDL_utils.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = SDL_utils.h; path = ../src/SDL_utils.h; sourceTree = "<group>"; };
 		AA6EFDCB04770C79005F316C /* Character.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = Character.cpp; path = ../src/Character.cpp; sourceTree = "<group>"; };
 		AA6EFDCC04770C79005F316C /* Character.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Character.h; path = ../src/Character.h; sourceTree = "<group>"; };
 		AA6EFDCD04770C79005F316C /* CodeDetector.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = CodeDetector.cpp; path = ../src/CodeDetector.cpp; sourceTree = "<group>"; };
@@ -2332,7 +2317,6 @@
 		AA729C510599B58D00779F33 /* ReceptorArrowRow.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ReceptorArrowRow.h; path = ../src/ReceptorArrowRow.h; sourceTree = "<group>"; };
 		AA75DA1E06E0A1B500EF13B5 /* NetworkSyncServer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = NetworkSyncServer.cpp; path = ../src/NetworkSyncServer.cpp; sourceTree = "<group>"; };
 		AA75DA1F06E0A1B500EF13B5 /* NetworkSyncServer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = NetworkSyncServer.h; path = ../src/NetworkSyncServer.h; sourceTree = "<group>"; };
-		AA76432A04DBC4BF00D02EE9 /* arch_setup.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = arch_setup.h; path = Win32/arch_setup.h; sourceTree = "<group>"; };
 		AA76D15404D9D2D200D02EE9 /* CrashHandler.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = CrashHandler.cpp; sourceTree = "<group>"; };
 		AA76D15504D9D2D200D02EE9 /* CrashHandlerChild.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = CrashHandlerChild.cpp; sourceTree = "<group>"; };
 		AA77E74508B64B1400FA24CA /* CharacterManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = CharacterManager.cpp; path = ../src/CharacterManager.cpp; sourceTree = "<group>"; };
@@ -2377,8 +2361,6 @@
 		AA84B7060996F8370085EECB /* AdjustSync.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = AdjustSync.h; path = ../src/AdjustSync.h; sourceTree = "<group>"; };
 		AA8A3E6306EDCD11002F25AB /* DarwinThreadHelpers.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = DarwinThreadHelpers.cpp; sourceTree = "<group>"; };
 		AA8A3EC806EDDAE4002F25AB /* DarwinThreadHelpers.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = DarwinThreadHelpers.h; sourceTree = "<group>"; };
-		AA8A3F0106EDE6BF002F25AB /* LinuxThreadHelpers.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = LinuxThreadHelpers.cpp; sourceTree = "<group>"; };
-		AA8A3F0206EDE6BF002F25AB /* LinuxThreadHelpers.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = LinuxThreadHelpers.h; sourceTree = "<group>"; };
 		AA8A404F06EEFF72002F25AB /* RageUtil_BackgroundLoader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageUtil_BackgroundLoader.cpp; path = ../src/RageUtil_BackgroundLoader.cpp; sourceTree = "<group>"; };
 		AA8A405006EEFF72002F25AB /* RageUtil_BackgroundLoader.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageUtil_BackgroundLoader.h; path = ../src/RageUtil_BackgroundLoader.h; sourceTree = "<group>"; };
 		AA8B6C7904AFD87300D02EE9 /* chartables.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; path = chartables.c; sourceTree = "<group>"; };
@@ -2413,7 +2395,6 @@
 		AA8DD84904A2E51400D02EE9 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		AA8E4BC609787C9400765149 /* MenuInput.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MenuInput.cpp; path = ../src/MenuInput.cpp; sourceTree = "<group>"; };
 		AA8EE0750866E266002C51A7 /* LuaBinding.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = LuaBinding.cpp; path = ../src/LuaBinding.cpp; sourceTree = "<group>"; };
-		AA8F136E0624BAB200C6A467 /* EnumHelper.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = EnumHelper.cpp; path = ../src/EnumHelper.cpp; sourceTree = "<group>"; };
 		AA8F136F0624BAB200C6A467 /* EnumHelper.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = EnumHelper.h; path = ../src/EnumHelper.h; sourceTree = "<group>"; };
 		AA90919F067ED43000C1FCFF /* RageSurface_Load_BMP.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageSurface_Load_BMP.cpp; path = ../src/RageSurface_Load_BMP.cpp; sourceTree = "<group>"; };
 		AA9091A0067ED43000C1FCFF /* RageSurface_Load_BMP.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageSurface_Load_BMP.h; path = ../src/RageSurface_Load_BMP.h; sourceTree = "<group>"; };
@@ -2472,10 +2453,6 @@
 		AAB3B37704C38BF600D02EE9 /* MovieTexture.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MovieTexture.h; path = MovieTexture/MovieTexture.h; sourceTree = "<group>"; };
 		AAB3B37F04C3F48700D02EE9 /* ArchHooks_darwin.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ArchHooks_darwin.h; path = ArchHooks/ArchHooks_darwin.h; sourceTree = "<group>"; };
 		AAB3B38004C3F48700D02EE9 /* ArchHooks_darwin.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ArchHooks_darwin.cpp; path = ArchHooks/ArchHooks_darwin.cpp; sourceTree = "<group>"; };
-		AAB3B38504C5701D00D02EE9 /* MovieTexture_DShow.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MovieTexture_DShow.cpp; path = MovieTexture/MovieTexture_DShow.cpp; sourceTree = "<group>"; };
-		AAB3B38604C5701D00D02EE9 /* MovieTexture_DShow.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MovieTexture_DShow.h; path = MovieTexture/MovieTexture_DShow.h; sourceTree = "<group>"; };
-		AAB3B38704C5701D00D02EE9 /* MovieTexture_DShowHelper.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MovieTexture_DShowHelper.cpp; path = MovieTexture/MovieTexture_DShowHelper.cpp; sourceTree = "<group>"; };
-		AAB3B38804C5701D00D02EE9 /* MovieTexture_DShowHelper.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MovieTexture_DShowHelper.h; path = MovieTexture/MovieTexture_DShowHelper.h; sourceTree = "<group>"; };
 		AAB3B39004C5921800D02EE9 /* MovieTexture_Null.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MovieTexture_Null.cpp; path = MovieTexture/MovieTexture_Null.cpp; sourceTree = "<group>"; };
 		AAB3B39104C5921800D02EE9 /* MovieTexture_Null.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MovieTexture_Null.h; path = MovieTexture/MovieTexture_Null.h; sourceTree = "<group>"; };
 		AAB55EB509A7E3D3008FDC69 /* ScreenGameplaySyncMachine.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenGameplaySyncMachine.cpp; path = ../src/ScreenGameplaySyncMachine.cpp; sourceTree = "<group>"; };
@@ -2547,8 +2524,6 @@
 		AAC6DCE40567660A00B5D56F /* LightsManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = LightsManager.h; path = ../src/LightsManager.h; sourceTree = "<group>"; };
 		AAC6DCEE0567663800B5D56F /* LightsDriver.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = LightsDriver.h; sourceTree = "<group>"; };
 		AAC6DCEF0567663800B5D56F /* LightsDriver_Null.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = LightsDriver_Null.h; sourceTree = "<group>"; };
-		AAC6DCF00567663800B5D56F /* LightsDriver_Win32Parallel.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = LightsDriver_Win32Parallel.cpp; sourceTree = "<group>"; };
-		AAC6DCF10567663800B5D56F /* LightsDriver_Win32Parallel.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = LightsDriver_Win32Parallel.h; sourceTree = "<group>"; };
 		AAC6DDDE0569C71000B5D56F /* PaneDisplay.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = PaneDisplay.cpp; path = ../src/PaneDisplay.cpp; sourceTree = "<group>"; };
 		AAC6DDDF0569C71000B5D56F /* PaneDisplay.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = PaneDisplay.h; path = ../src/PaneDisplay.h; sourceTree = "<group>"; };
 		AAC6DDE60569C80900B5D56F /* DifficultyList.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = DifficultyList.cpp; path = ../src/DifficultyList.cpp; sourceTree = "<group>"; };
@@ -2564,8 +2539,6 @@
 		AACA592C07B5E23400763545 /* RageUtil_AutoPtr.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageUtil_AutoPtr.h; path = ../src/RageUtil_AutoPtr.h; sourceTree = "<group>"; };
 		AACA592D07B5E23400763545 /* RageUtil_WorkerThread.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageUtil_WorkerThread.cpp; path = ../src/RageUtil_WorkerThread.cpp; sourceTree = "<group>"; };
 		AACA592E07B5E23400763545 /* RageUtil_WorkerThread.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageUtil_WorkerThread.h; path = ../src/RageUtil_WorkerThread.h; sourceTree = "<group>"; };
-		AACF47910949978E0011B9F3 /* MemoryCardDriverThreaded_Windows.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = MemoryCardDriverThreaded_Windows.cpp; sourceTree = "<group>"; };
-		AACF4793094998870011B9F3 /* MemoryCardDriverThreaded_Linux.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = MemoryCardDriverThreaded_Linux.cpp; sourceTree = "<group>"; };
 		AACF47B10949A24F0011B9F3 /* Selector_MemoryCardDriver.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = Selector_MemoryCardDriver.h; sourceTree = "<group>"; };
 		AACF47B7094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = MemoryCardDriverThreaded_OSX.h; sourceTree = "<group>"; };
 		AACF47B8094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = MemoryCardDriverThreaded_OSX.cpp; sourceTree = "<group>"; };
@@ -2587,8 +2560,6 @@
 		AAD675F106795175006002B0 /* DialogDriver.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = DialogDriver.h; sourceTree = "<group>"; };
 		AAD675F206795175006002B0 /* DialogDriver_Cocoa.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = DialogDriver_Cocoa.cpp; sourceTree = "<group>"; };
 		AAD675F306795175006002B0 /* DialogDriver_Cocoa.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = DialogDriver_Cocoa.h; sourceTree = "<group>"; };
-		AAD675F406795175006002B0 /* DialogDriver_Win32.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = DialogDriver_Win32.cpp; sourceTree = "<group>"; };
-		AAD675F506795175006002B0 /* DialogDriver_Win32.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = DialogDriver_Win32.h; sourceTree = "<group>"; };
 		AAD6A6DE065E0A8D0042165A /* CatalogXml.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = CatalogXml.cpp; path = ../src/CatalogXml.cpp; sourceTree = "<group>"; };
 		AAD6A6DF065E0A8D0042165A /* CatalogXml.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = CatalogXml.h; path = ../src/CatalogXml.h; sourceTree = "<group>"; };
 		AAD6A712065E0FDF0042165A /* Difficulty.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = Difficulty.cpp; path = ../src/Difficulty.cpp; sourceTree = "<group>"; };
@@ -2596,17 +2567,11 @@
 		AAD8F9320A4B97DF000311CF /* ScreenGameplayShared.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenGameplayShared.h; path = ../src/ScreenGameplayShared.h; sourceTree = "<group>"; };
 		AAD8F9330A4B97DF000311CF /* ScreenGameplayShared.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenGameplayShared.cpp; path = ../src/ScreenGameplayShared.cpp; sourceTree = "<group>"; };
 		AADB4E7A04D4FE5D00D02EE9 /* RageSoundReader_FileReader.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageSoundReader_FileReader.h; path = ../src/RageSoundReader_FileReader.h; sourceTree = "<group>"; };
-		AADB4E8004D4FEC400D02EE9 /* ArchHooks_Win32.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ArchHooks_Win32.cpp; path = ArchHooks/ArchHooks_Win32.cpp; sourceTree = "<group>"; };
-		AADB4E8104D4FEC400D02EE9 /* ArchHooks_Win32.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ArchHooks_Win32.h; path = ArchHooks/ArchHooks_Win32.h; sourceTree = "<group>"; };
-		AADB4E8204D4FF9B00D02EE9 /* Crash.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = Crash.cpp; path = Win32/Crash.cpp; sourceTree = "<group>"; };
-		AADB4E8304D4FF9B00D02EE9 /* Crash.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = Crash.h; path = Win32/Crash.h; sourceTree = "<group>"; };
 		AADB4E8804D50FB900D02EE9 /* CrashHandler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = CrashHandler.h; sourceTree = "<group>"; };
 		AADB4E8A04D50FB900D02EE9 /* CrashHandlerInternal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = CrashHandlerInternal.h; sourceTree = "<group>"; };
 		AADB4E8B04D50FB900D02EE9 /* SignalHandler.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = SignalHandler.cpp; sourceTree = "<group>"; };
 		AADB4E8C04D50FB900D02EE9 /* SignalHandler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = SignalHandler.h; sourceTree = "<group>"; };
 		AADB4E8F04D5263200D02EE9 /* arch_setup.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = arch_setup.h; sourceTree = "<group>"; };
-		AADB4E9104D5288400D02EE9 /* ArchHooks_Unix.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ArchHooks_Unix.cpp; path = ArchHooks/ArchHooks_Unix.cpp; sourceTree = "<group>"; };
-		AADB4E9204D5288400D02EE9 /* ArchHooks_Unix.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ArchHooks_Unix.h; path = ArchHooks/ArchHooks_Unix.h; sourceTree = "<group>"; };
 		AADB4F5904D9220700D02EE9 /* Crash.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = Crash.h; sourceTree = "<group>"; };
 		AADBA562062007BA005D4FC2 /* arch_platform.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = arch_platform.h; sourceTree = "<group>"; };
 		AADBE360053D5F8A00D02EE9 /* ScreenBookkeeping.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenBookkeeping.cpp; path = ../src/ScreenBookkeeping.cpp; sourceTree = "<group>"; };
@@ -2627,14 +2592,8 @@
 		AAE66F650657634D002E3AD9 /* CryptMD5.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = CryptMD5.cpp; sourceTree = "<group>"; };
 		AAE66F660657634D002E3AD9 /* CryptMD5.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = CryptMD5.h; sourceTree = "<group>"; };
 		AAE66F670657634D002E3AD9 /* CryptNoise.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = CryptNoise.cpp; sourceTree = "<group>"; };
-		AAE66F680657634D002E3AD9 /* CryptPrime.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = CryptPrime.cpp; sourceTree = "<group>"; };
-		AAE66F690657634D002E3AD9 /* CryptPrime.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = CryptPrime.h; sourceTree = "<group>"; };
 		AAE66F6A0657634D002E3AD9 /* CryptRand.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = CryptRand.cpp; sourceTree = "<group>"; };
 		AAE66F6B0657634D002E3AD9 /* CryptRand.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = CryptRand.h; sourceTree = "<group>"; };
-		AAE66F6C0657634D002E3AD9 /* CryptRSA.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = CryptRSA.cpp; sourceTree = "<group>"; };
-		AAE66F6D0657634D002E3AD9 /* CryptRSA.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = CryptRSA.h; sourceTree = "<group>"; };
-		AAE66F6E0657634D002E3AD9 /* CryptSH512.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = CryptSH512.cpp; sourceTree = "<group>"; };
-		AAE66F6F0657634D002E3AD9 /* CryptSH512.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = CryptSH512.h; sourceTree = "<group>"; };
 		AAE66F700657634D002E3AD9 /* CryptSHA.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = CryptSHA.cpp; sourceTree = "<group>"; };
 		AAE66F710657634D002E3AD9 /* CryptSHA.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = CryptSHA.h; sourceTree = "<group>"; };
 		AAE78049060814AC0034E65F /* NetworkSyncManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = NetworkSyncManager.cpp; path = ../src/NetworkSyncManager.cpp; sourceTree = "<group>"; };
@@ -2937,8 +2896,6 @@
 				AA60E0BC067992D7008ADC41 /* Threads.h */,
 				AA60E0BD067992D7008ADC41 /* Threads_Pthreads.cpp */,
 				AA60E0BE067992D7008ADC41 /* Threads_Pthreads.h */,
-				AA60E0BF067992D7008ADC41 /* Threads_Win32.cpp */,
-				AA60E0C0067992D7008ADC41 /* Threads_Win32.h */,
 			);
 			path = Threads;
 			sourceTree = "<group>";
@@ -3226,14 +3183,8 @@
 				AAB3B36C04C38B4600D02EE9 /* InputHandler.h */,
 				AA69675106840991007802A5 /* InputHandler_Carbon.cpp */,
 				AA69675006840991007802A5 /* InputHandler_Carbon.h */,
-				AA272BF704C7B37A00D02EE9 /* InputHandler_DirectInput.cpp */,
-				AA272BF804C7B37A00D02EE9 /* InputHandler_DirectInput.h */,
-				AA272BF904C7B37A00D02EE9 /* InputHandler_DirectInputHelper.cpp */,
-				AA272BFA04C7B37A00D02EE9 /* InputHandler_DirectInputHelper.h */,
 				AAFC6CEF072A30440053AAD3 /* InputHandler_MonkeyKeyboard.cpp */,
 				AAFC6CF0072A30440053AAD3 /* InputHandler_MonkeyKeyboard.h */,
-				AA6E01560477136A005F316C /* InputHandler_SDL.cpp */,
-				AA6E01570477136A005F316C /* InputHandler_SDL.h */,
 				AA80C71407F2066300C99272 /* Selector_InputHandler.h */,
 			);
 			path = InputHandler;
@@ -3254,8 +3205,6 @@
 			isa = PBXGroup;
 			children = (
 				AA6E01630477136A005F316C /* LowLevelWindow.h */,
-				AA6E01640477136A005F316C /* LowLevelWindow_SDL.cpp */,
-				AA6E01650477136A005F316C /* LowLevelWindow_SDL.h */,
 				AA80C72307F2076E00C99272 /* Selector_LowLevelWindow.h */,
 				AAEF7D21090DD45900A1CAFC /* LowLevelWindow_Cocoa.h */,
 				AAEF7D22090DD45900A1CAFC /* LowLevelWindow_Cocoa.mm */,
@@ -3268,7 +3217,6 @@
 			children = (
 				AADB4E8E04D5263200D02EE9 /* Darwin */,
 				AADB4E8604D50FB900D02EE9 /* Unix */,
-				AADB4E8D04D5261C00D02EE9 /* Win32 */,
 			);
 			name = archutils;
 			path = ../src/archutils;
@@ -3279,10 +3227,6 @@
 			children = (
 				AA6E01DB04771F11005F316C /* MovieTexture.cpp */,
 				AAB3B37704C38BF600D02EE9 /* MovieTexture.h */,
-				AAB3B38504C5701D00D02EE9 /* MovieTexture_DShow.cpp */,
-				AAB3B38604C5701D00D02EE9 /* MovieTexture_DShow.h */,
-				AAB3B38704C5701D00D02EE9 /* MovieTexture_DShowHelper.cpp */,
-				AAB3B38804C5701D00D02EE9 /* MovieTexture_DShowHelper.h */,
 				AA14ED0F0509F40000E3FAD7 /* MovieTexture_FFMpeg.cpp */,
 				AA14ED100509F40000E3FAD7 /* MovieTexture_FFMpeg.h */,
 				AAA372D00909934500141131 /* MovieTexture_Generic.cpp */,
@@ -3418,8 +3362,6 @@
 				AAF580A804B3E2DC00D02EE9 /* RageUtil_FileDB.h */,
 				AACA592D07B5E23400763545 /* RageUtil_WorkerThread.cpp */,
 				AACA592E07B5E23400763545 /* RageUtil_WorkerThread.h */,
-				AA6EFDC004770AEA005F316C /* SDL_utils.cpp */,
-				AA6EFDC104770AEA005F316C /* SDL_utils.h */,
 			);
 			name = Rage;
 			sourceTree = "<group>";
@@ -3460,7 +3402,6 @@
 				AAD6A712065E0FDF0042165A /* Difficulty.cpp */,
 				AAD6A713065E0FDF0042165A /* Difficulty.h */,
 				AA07328B0954381800F396C5 /* DisplayResolutions.h */,
-				AA8F136E0624BAB200C6A467 /* EnumHelper.cpp */,
 				AA8F136F0624BAB200C6A467 /* EnumHelper.h */,
 				AAE7808506081A000034E65F /* ezsockets.cpp */,
 				AAE7808606081A000034E65F /* ezsockets.h */,
@@ -3863,11 +3804,6 @@
 				AABE36FC0497CE44005F316C /* ArchHooks.h */,
 				AAB3B38004C3F48700D02EE9 /* ArchHooks_darwin.cpp */,
 				AAB3B37F04C3F48700D02EE9 /* ArchHooks_darwin.h */,
-				AADB4E9104D5288400D02EE9 /* ArchHooks_Unix.cpp */,
-				AADB4E9204D5288400D02EE9 /* ArchHooks_Unix.h */,
-				AADB4E8004D4FEC400D02EE9 /* ArchHooks_Win32.cpp */,
-				AADB4E8104D4FEC400D02EE9 /* ArchHooks_Win32.h */,
-				AA0732720954358100F396C5 /* ArchHooksUtil.cpp */,
 				AA80C70A07F2047200C99272 /* Selector_ArchHooks.h */,
 			);
 			name = ArchHooks;
@@ -3879,10 +3815,8 @@
 				AAC9F332069E22CF00D53E2C /* MemoryCardDriver.cpp */,
 				AAC9F333069E22CF00D53E2C /* MemoryCardDriver.h */,
 				AABE78760591287100E8BF50 /* MemoryCardDriver_Null.h */,
-				AACF4793094998870011B9F3 /* MemoryCardDriverThreaded_Linux.cpp */,
 				AACF47B8094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.cpp */,
 				AACF47B7094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.h */,
-				AACF47910949978E0011B9F3 /* MemoryCardDriverThreaded_Windows.cpp */,
 				AACF47B10949A24F0011B9F3 /* Selector_MemoryCardDriver.h */,
 			);
 			path = MemoryCard;
@@ -3895,8 +3829,6 @@
 				AAC6DCEF0567663800B5D56F /* LightsDriver_Null.h */,
 				AAB691F205704FA50078BED4 /* LightsDriver_SystemMessage.cpp */,
 				AAB691F305704FA50078BED4 /* LightsDriver_SystemMessage.h */,
-				AAC6DCF00567663800B5D56F /* LightsDriver_Win32Parallel.cpp */,
-				AAC6DCF10567663800B5D56F /* LightsDriver_Win32Parallel.h */,
 				AA80C71707F2068800C99272 /* Selector_LightsDriver.h */,
 			);
 			path = Lights;
@@ -3910,8 +3842,6 @@
 				AAD675F106795175006002B0 /* DialogDriver.h */,
 				AAD675F206795175006002B0 /* DialogDriver_Cocoa.cpp */,
 				AAD675F306795175006002B0 /* DialogDriver_Cocoa.h */,
-				AAD675F406795175006002B0 /* DialogDriver_Win32.cpp */,
-				AAD675F506795175006002B0 /* DialogDriver_Win32.h */,
 				AA80C71107F2063C00C99272 /* Selector_Dialog.h */,
 			);
 			path = Dialog;
@@ -3920,8 +3850,6 @@
 		AADB4E8604D50FB900D02EE9 /* Unix */ = {
 			isa = PBXGroup;
 			children = (
-				AA8A3F0106EDE6BF002F25AB /* LinuxThreadHelpers.cpp */,
-				AA8A3F0206EDE6BF002F25AB /* LinuxThreadHelpers.h */,
 				AAED6F280601C528002D2DEE /* Backtrace.cpp */,
 				AAED6F290601C528002D2DEE /* Backtrace.h */,
 				AAED6F2A0601C528002D2DEE /* BacktraceNames.cpp */,
@@ -3935,16 +3863,6 @@
 				AA3E3DF009D96A1400A259C7 /* CrashHandlerInternal.cpp */,
 			);
 			path = Unix;
-			sourceTree = "<group>";
-		};
-		AADB4E8D04D5261C00D02EE9 /* Win32 */ = {
-			isa = PBXGroup;
-			children = (
-				AADB4E8204D4FF9B00D02EE9 /* Crash.cpp */,
-				AADB4E8304D4FF9B00D02EE9 /* Crash.h */,
-				AA76432A04DBC4BF00D02EE9 /* arch_setup.h */,
-			);
-			name = Win32;
 			sourceTree = "<group>";
 		};
 		AADB4E8E04D5263200D02EE9 /* Darwin */ = {
@@ -3982,14 +3900,8 @@
 				AAE66F650657634D002E3AD9 /* CryptMD5.cpp */,
 				AAE66F660657634D002E3AD9 /* CryptMD5.h */,
 				AAE66F670657634D002E3AD9 /* CryptNoise.cpp */,
-				AAE66F680657634D002E3AD9 /* CryptPrime.cpp */,
-				AAE66F690657634D002E3AD9 /* CryptPrime.h */,
 				AAE66F6A0657634D002E3AD9 /* CryptRand.cpp */,
 				AAE66F6B0657634D002E3AD9 /* CryptRand.h */,
-				AAE66F6C0657634D002E3AD9 /* CryptRSA.cpp */,
-				AAE66F6D0657634D002E3AD9 /* CryptRSA.h */,
-				AAE66F6E0657634D002E3AD9 /* CryptSH512.cpp */,
-				AAE66F6F0657634D002E3AD9 /* CryptSH512.h */,
 				AAE66F700657634D002E3AD9 /* CryptSHA.cpp */,
 				AAE66F710657634D002E3AD9 /* CryptSHA.h */,
 			);
@@ -5465,7 +5377,6 @@
 				AAFBEEEB094D807E000029DE /* ScreenOptionsManageEditSteps.cpp in Sources */,
 				AAFBEEED094D807E000029DE /* ScreenOptionsMemoryCard.cpp in Sources */,
 				AAFBEEEF094D807E000029DE /* ScreenServiceAction.cpp in Sources */,
-				AA0732730954358100F396C5 /* ArchHooksUtil.cpp in Sources */,
 				AA0732900954381800F396C5 /* XmlFileUtil.cpp in Sources */,
 				AAD5219C095513DA00073D86 /* XmlFile.cpp in Sources */,
 				AADD1CC5095C233F0088C9DF /* LocalizedString.cpp in Sources */,
@@ -5877,7 +5788,6 @@
 				AA40D50209A08D650068C0D5 /* ScreenOptionsManageEditSteps.cpp in Sources */,
 				AA40D50309A08D650068C0D5 /* ScreenOptionsMemoryCard.cpp in Sources */,
 				AA40D50409A08D650068C0D5 /* ScreenServiceAction.cpp in Sources */,
-				AA40D50509A08D650068C0D5 /* ArchHooksUtil.cpp in Sources */,
 				AA40D50609A08D650068C0D5 /* XmlFileUtil.cpp in Sources */,
 				AA40D50709A08D650068C0D5 /* XmlFile.cpp in Sources */,
 				AA40D50809A08D650068C0D5 /* LocalizedString.cpp in Sources */,
