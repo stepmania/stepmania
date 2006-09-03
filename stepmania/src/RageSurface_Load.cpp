@@ -105,10 +105,10 @@ RageSurface *RageSurfaceUtils::LoadFile( const RString &sPath, RString &error, b
 
 	for( set<RString>::iterator it = FileTypes.begin(); bKeepTrying && it != FileTypes.end(); ++it )
 	{
-	    RageSurface *ret = TryOpenFile( sPath, bHeaderOnly, error, *it, bKeepTrying );
+		RageSurface *ret = TryOpenFile( sPath, bHeaderOnly, error, *it, bKeepTrying );
 		if( ret )
 		{
-			LOG->Warn("File \"%s\" is really %s", sPath.c_str(), it->c_str());
+			LOG->UserLog( "File \"%s\" is really %s", sPath.c_str(), it->c_str() );
 			return ret;
 		}
 	}

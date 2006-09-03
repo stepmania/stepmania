@@ -73,7 +73,7 @@ bool SMLoader::LoadTimingFromFile( const RString &fn, TimingData &out )
 	MsdFile msd;
 	if( !msd.ReadFile( fn ) )
 	{
-		LOG->Warn( "Couldn't load %s, \"%s\"", fn.c_str(), msd.GetError().c_str() );
+		LOG->UserLog( "Couldn't load %s, \"%s\"", fn.c_str(), msd.GetError().c_str() );
 		return false;
 	}
 
@@ -107,12 +107,11 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 			{
 				vector<RString> arrayFreezeValues;
 				split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
-				/* XXX: Once we have a way to display warnings that the user actually
-				 * cares about (unlike most warnings), this should be one of them. */
 				if( arrayFreezeValues.size() != 2 )
 				{
-					LOG->Warn( "Invalid #%s value \"%s\" (must have exactly one '='), ignored",
-						sValueName.c_str(), arrayFreezeExpressions[f].c_str() );
+					// XXX: Hard to tell which file caused this.
+					LOG->UserLog( "Invalid #%s value \"%s\" (must have exactly one '='), ignored",
+						      sValueName.c_str(), arrayFreezeExpressions[f].c_str() );
 					continue;
 				}
 
@@ -136,12 +135,11 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 			{
 				vector<RString> arrayBPMChangeValues;
 				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
-				/* XXX: Once we have a way to display warnings that the user actually
-				 * cares about (unlike most warnings), this should be one of them. */
-				if(arrayBPMChangeValues.size() != 2)
+				// XXX: Hard to tell which file caused this.
+				if( arrayBPMChangeValues.size() != 2 )
 				{
-					LOG->Warn( "Invalid #%s value \"%s\" (must have exactly one '='), ignored",
-						sValueName.c_str(), arrayBPMChangeExpressions[b].c_str() );
+					LOG->UserLog( "Invalid #%s value \"%s\" (must have exactly one '='), ignored",
+						      sValueName.c_str(), arrayBPMChangeExpressions[b].c_str() );
 					continue;
 				}
 
@@ -151,7 +149,7 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				if( fNewBPM > 0.0f )
 					out.AddBPMSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
 				else
-					LOG->Trace( "Invalid BPM change at beat %f, BPM %f.", fBeat, fNewBPM );
+					LOG->UserLog( "Invalid BPM change at beat %f, BPM %f.", fBeat, fNewBPM );
 			}
 		}
 	}
@@ -230,7 +228,7 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out )
 	MsdFile msd;
 	if( !msd.ReadFile( sPath ) )
 	{
-		LOG->Warn( "Error opening file \"%s\": %s", sPath.c_str(), msd.GetError().c_str() );
+		LOG->UserLog( "Error opening file \"%s\": %s", sPath.c_str(), msd.GetError().c_str() );
 		return false;
 	}
 
@@ -359,7 +357,7 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out )
 			else if(!stricmp(sParams[1],"ROULETTE"))
 				out.m_SelectionDisplay = out.SHOW_ROULETTE;
 			else
-				LOG->Warn( "The song file '%s' has an unknown #SELECTABLE value, '%s'; ignored.", sPath.c_str(), sParams[1].c_str());
+				LOG->UserLog( "The song file '%s' has an unknown #SELECTABLE value, '%s'; ignored.", sPath.c_str(), sParams[1].c_str());
 		}
 
 		else if( sValueName.Left(strlen("BGCHANGES"))=="BGCHANGES" || sValueName=="ANIMATIONS" )
@@ -371,7 +369,7 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out )
 			bool bValid = iLayer>=0 && iLayer<NUM_BackgroundLayer;
 			if( !bValid )
 			{
-				LOG->Warn( "The song file '%s' has a BGCHANGES tag '%s' that is out of range.", sPath.c_str(), sValueName.c_str() );
+				LOG->UserLog( "The song file '%s' has a BGCHANGES tag '%s' that is out of range.", sPath.c_str(), sValueName.c_str() );
 			}
 			else
 			{
@@ -409,7 +407,7 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out )
 		{
 			if( iNumParams < 7 )
 			{
-				LOG->Trace( "The song file '%s' is has %d fields in a #NOTES tag, but should have at least %d.", sPath.c_str(), iNumParams, 7 );
+				LOG->UserLog( "The song file '%s' is has %d fields in a #NOTES tag, but should have at least %d.", sPath.c_str(), iNumParams, 7 );
 				continue;
 			}
 
@@ -425,11 +423,10 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out )
 
 			out.AddSteps( pNewNotes );
 		}
-		else if( sValueName=="OFFSET" || sValueName=="BPMS" ||
-				 sValueName=="STOPS" || sValueName=="FREEZES" )
+		else if( sValueName=="OFFSET" || sValueName=="BPMS" || sValueName=="STOPS" || sValueName=="FREEZES" )
 				 ;
 		else
-			LOG->Trace( "Unexpected value named '%s'", sValueName.c_str() );
+			LOG->UserLog( "The song file \"%s\" has an unexpected value named '%s'", sPath.c_str(), sValueName.c_str() );
 	}
 
 	return true;
@@ -443,7 +440,7 @@ bool SMLoader::LoadFromDir( const RString &sPath, Song &out )
 
 	if( aFileNames.size() > 1 )
 	{
-		LOG->Warn( "There is more than one SM file in '%s'.  There should be only one!", sPath.c_str() );
+		LOG->UserLog( "There is more than one SM file in '%s'.  There should be only one!", sPath.c_str() );
 		return false;
 	}
 
@@ -461,14 +458,14 @@ bool SMLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool b
 	int iBytes = FILEMAN->GetFileSizeInBytes( sEditFilePath );
 	if( iBytes > MAX_EDIT_STEPS_SIZE_BYTES )
 	{
-		LOG->Warn( "The edit '%s' is unreasonably large.  It won't be loaded.", sEditFilePath.c_str() );
+		LOG->UserLog( "The edit '%s' is unreasonably large.  It won't be loaded.", sEditFilePath.c_str() );
 		return false;
 	}
 
 	MsdFile msd;
 	if( !msd.ReadFile( sEditFilePath ) )
 	{
-		LOG->Warn( "Error opening edit file \"%s\": %s", sEditFilePath.c_str(), msd.GetError().c_str() );
+		LOG->UserLog( "Error opening edit file \"%s\": %s", sEditFilePath.c_str(), msd.GetError().c_str() );
 		return false;
 	}
 
@@ -498,7 +495,7 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 		{
 			if( pSong )
 			{
-				LOG->Warn( "The edit file '%s' has more than one #SONG tag.", sEditFilePath.c_str() );
+				LOG->UserLog( "The edit file '%s' has more than one #SONG tag.", sEditFilePath.c_str() );
 				return false;
 			}
 
@@ -508,13 +505,13 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 			pSong = SONGMAN->FindSong( sSongFullTitle );
 			if( pSong == NULL )
 			{
-				LOG->Warn( "The edit file '%s' required a song '%s' that isn't present.", sEditFilePath.c_str(), sSongFullTitle.c_str() );
+				LOG->UserLog( "The edit file '%s' required a song '%s' that isn't present.", sEditFilePath.c_str(), sSongFullTitle.c_str() );
 				return false;
 			}
 
 			if( pSong->GetNumStepsLoadedFromProfile(slot) >= MAX_EDITS_PER_SONG_PER_PROFILE )
 			{
-				LOG->Warn( "The song '%s' already has the maximum number of edits allowed for ProfileSlotP%d.", sSongFullTitle.c_str(), slot+1 );
+				LOG->UserLog( "The song '%s' already has the maximum number of edits allowed for ProfileSlotP%d.", sSongFullTitle.c_str(), slot+1 );
 				return false;
 			}
 		}
@@ -523,13 +520,13 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 		{
 			if( pSong == NULL )
 			{
-				LOG->Warn( "The edit file '%s' has doesn't have a #SONG tag preceeding the first #NOTES tag.", sEditFilePath.c_str() );
+				LOG->UserLog( "The edit file '%s' has doesn't have a #SONG tag preceeding the first #NOTES tag.", sEditFilePath.c_str() );
 				return false;
 			}
 
 			if( iNumParams < 7 )
 			{
-				LOG->Trace( "The song file '%s' is has %d fields in a #NOTES tag, but should have at least %d.", sEditFilePath.c_str(), iNumParams, 7 );
+				LOG->UserLog( "The edit file '%s' is has %d fields in a #NOTES tag, but should have at least %d.", sEditFilePath.c_str(), iNumParams, 7 );
 				continue;
 			}
 
@@ -547,7 +544,7 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 
 			if( pSong->IsEditAlreadyLoaded(pNewNotes) )
 			{
-				LOG->Warn( "The edit file '%s' is a duplicate of another edit that was already loaded.", sEditFilePath.c_str() );
+				LOG->UserLog( "The edit file '%s' is a duplicate of another edit that was already loaded.", sEditFilePath.c_str() );
 				SAFE_DELETE( pNewNotes );
 				return false;
 			}
@@ -557,7 +554,7 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 		}
 		else
 		{
-			LOG->Trace( "Unexpected value named '%s'", sValueName.c_str() );
+			LOG->UserLog( "The edit file \"%s\" has an unexpected value named '%s'", sEditFilePath.c_str(), sValueName.c_str() );
 		}
 	}
 

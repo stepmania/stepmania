@@ -123,7 +123,7 @@ void BannerCache::LoadBanner( RString BannerPath )
 		RageSurface *img = RageSurfaceUtils::LoadSurface( CachePath );
 		if( img == NULL )
 		{
-			if(tries == 0)
+			if( tries == 0 )
 			{
 				/* The file doesn't exist.  It's possible that the banner cache file is
 				 * missing, so try to create it.  Don't do this first, for efficiency. */
@@ -216,7 +216,7 @@ struct BannerTexture: public RageTexture
 		if( img->w > DISPLAY->GetMaxTextureSize() || 
 			img->h > DISPLAY->GetMaxTextureSize() )
 		{
-			LOG->Warn("Converted %s at runtime", GetID().filename.c_str() );
+			LOG->Warn( "Converted %s at runtime", GetID().filename.c_str() );
 			int width = min( img->w, DISPLAY->GetMaxTextureSize() );
 			int height = min( img->h, DISPLAY->GetMaxTextureSize() );
 			RageSurfaceUtils::Zoom( img, width, height );
@@ -270,7 +270,7 @@ RageTextureID BannerCache::LoadCachedBanner( RString BannerPath )
 	if( BannerPath == "" )
 		return ID;
 
-	LOG->Trace("BannerCache::LoadCachedBanner(%s): %s", BannerPath.c_str(), ID.filename.c_str() );
+	LOG->Trace( "BannerCache::LoadCachedBanner(%s): %s", BannerPath.c_str(), ID.filename.c_str() );
 
 	/* Hack: make sure Banner::Load doesn't change our return value and end up
 	 * reloading. */
@@ -297,7 +297,7 @@ RageTextureID BannerCache::LoadCachedBanner( RString BannerPath )
 	BannerData.GetValue( BannerPath, "Rotated", WasRotatedBanner );
 	if(src_width == 0 || src_height == 0)
 	{
-		LOG->Warn("Couldn't load '%s'", BannerPath.c_str() );
+		LOG->UserLog( "Couldn't load '%s'", BannerPath.c_str() );
 		return ID;
 	}
 
@@ -312,8 +312,8 @@ RageTextureID BannerCache::LoadCachedBanner( RString BannerPath )
 	if( TEXTUREMAN->IsTextureRegistered(ID) )
 		return ID; /* It's all set. */
 
-	LOG->Trace("Loading banner texture %s; src %ix%i; image %ix%i",
-		ID.filename.c_str(), src_width, src_height, img->w, img->h );
+	LOG->Trace( "Loading banner texture %s; src %ix%i; image %ix%i",
+		    ID.filename.c_str(), src_width, src_height, img->w, img->h );
 	RageTexture *pTexture = new BannerTexture( ID, img, src_width, src_height );
 
 	ID.Policy = RageTextureID::TEX_VOLATILE;
@@ -377,7 +377,7 @@ void BannerCache::CacheBannerInternal( RString BannerPath )
 	RageSurface *img = RageSurfaceUtils::LoadFile( BannerPath, error );
 	if( img == NULL )
 	{
-		LOG->Warn( "BannerCache::CacheBanner: Couldn't load %s: %s", BannerPath.c_str(), error.c_str() );
+		LOG->UserLog( "BannerCache::CacheBanner: Couldn't load %s: %s", BannerPath.c_str(), error.c_str() );
 		return;
 	}
 

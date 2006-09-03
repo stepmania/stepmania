@@ -68,7 +68,10 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 
 	MsdFile msd;
 	if( !msd.ReadFile( sPath ) )
-		RageException::Throw( "Error opening file '%s'.", sPath.c_str() );
+	{
+		LOG->UserLog( "Error opening file '%s'.", sPath.c_str() );
+		return false;
+	}
 
 	m_iTickCount = -1;	// this is the value we read for TICKCOUNT
 	m_vNoteRows.clear(); //Start from a clean slate.
@@ -84,8 +87,7 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 			m_iTickCount = atoi( sParams[1] );
 			if( m_iTickCount <= 0 )
 			{
-				// XXX need a place for user warnings.
-				LOG->Warn( "Invalid tick count: %d", m_iTickCount );
+				LOG->UserLog( "KSF file \"%s\" has an invalid tick count: %d", sPath.c_str(), m_iTickCount );
 				return false;
 			}
 		}
@@ -104,7 +106,7 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 	if( m_iTickCount == -1 )
 	{
 		m_iTickCount = 2;
-		LOG->Warn( "\"%s\": TICKCOUNT not found; defaulting to %i", sPath.c_str(), m_iTickCount );
+		LOG->UserLog( "\"%s\": TICKCOUNT not found; defaulting to %i", sPath.c_str(), m_iTickCount );
 	}
 
 	NoteData notedata;	// read it into here
@@ -196,10 +198,10 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 
 		if( sRowString.size() != 13 )
 		{	
-			if (m_bKIUCompliant)
+			if( m_bKIUCompliant )
 			{
-				LOG->Warn("File %s had illegal syntax (\"%s\") which can't be in KIU complient files.",
-					sPath.c_str(), sRowString.c_str());
+				LOG->UserLog( "File \"%s\" had illegal syntax (\"%s\") which can't be in KIU complient files.",
+					      sPath.c_str(), sRowString.c_str() );
 				return false;
 			}
 			if( BeginsWith(sRowString, "|B") || BeginsWith(sRowString, "|D") )
@@ -216,8 +218,8 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 			}
 			else
 			{
-				LOG->Warn("File %s had a RowString with an improper length (\"%s\"); corrupt notes ignored",
-				    sPath.c_str(), sRowString.c_str());
+				LOG->UserLog( "File %s had a RowString with an improper length (\"%s\"); corrupt notes ignored",
+					      sPath.c_str(), sRowString.c_str() );
 				return false;
 			}
 		}
@@ -227,7 +229,7 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 			sRowString.erase( 0, 2 );
 
 		// Update TICKCOUNT for Direct Move files.
-		if (m_bTickChangeNeeded)
+		if( m_bTickChangeNeeded )
 		{
 			m_iTickCount = newTick;
 			m_bTickChangeNeeded = false;
@@ -262,8 +264,8 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 			case '0':	tap = TAP_EMPTY;		break;
 			case '1':	tap = TAP_ORIGINAL_TAP;		break;
 			default:
-				LOG->Warn( "File %s had an invalid row (\"%s\"); corrupt notes ignored",
-					sPath.c_str(), sRowString.c_str() );
+				LOG->UserLog( "File %s had an invalid row (\"%s\"); corrupt notes ignored",
+					      sPath.c_str(), sRowString.c_str() );
 				return false;
 			}
 
@@ -335,7 +337,10 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 {
 	MsdFile msd;
 	if( !msd.ReadFile( sPath ) )
-		RageException::Throw( "Error opening file \"%s\": %s", sPath.c_str(), msd.GetError().c_str() );
+	{
+		LOG->UserLog( "Error opening file \"%s\": %s", sPath.c_str(), msd.GetError().c_str() );
+		return false;
+	}
 
 	float SMGap1 = 0, SMGap2 = 0, BPM1 = -1, BPMPos2 = -1, BPM2 = -1, BPMPos3 = -1, BPM3 = -1;
 	m_iTickCount = -1;
@@ -413,21 +418,24 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 			continue;
 		}
 		else
-			LOG->Trace( "Unexpected value named '%s'", sValueName.c_str() );
+		{
+			LOG->UserLog( "In KSF file \"%s\", there was an unexpected value named '%s'",
+				      sPath.c_str(), sValueName.c_str() );
+		}
 	}
 
 	/* BPM Change checks are done here.  If m_bKIUCompliant, it's short and sweet.
 	 * Otherwise, the whole file has to be processed.  Right now, this is only 
 	 * called once, for the initial file (often the Crazy steps).  Hopefully that
 	 * will end up changing soon. */
-	if (m_bKIUCompliant)
+	if( m_bKIUCompliant )
 	{
 		if( BPM2 > 0 && BPMPos2 > 0 )
 		{
 			const float BeatsPerSecond = BPM1 / 60.0f;
 			const float beat = (BPMPos2 + SMGap1) * BeatsPerSecond;
 			LOG->Trace( "BPM %f, BPS %f, BPMPos2 %f, beat %f",
-			    BPM1, BeatsPerSecond, BPMPos2, beat );
+				    BPM1, BeatsPerSecond, BPMPos2, beat );
 			out.AddBPMSegment( BPMSegment(BeatToNoteRow(beat), BPM2) );
 		}
 		
@@ -495,27 +503,27 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 				else
 				{
 					/* Quit while we're ahead if any bad syntax is spotted. */
-					LOG->Warn("File %s has a RowString which matches no known syntax rules (\"%s\"); bad file",
-						sPath.c_str(), NoteRowString.c_str());
+					LOG->UserLog( "File %s has a RowString which matches no known syntax rules (\"%s\"); bad file",
+						      sPath.c_str(), NoteRowString.c_str() );
 					return false;
 				}
 			}
 
-			if (m_bTickChangeNeeded)
+			if( m_bTickChangeNeeded )
 			{
 				m_iTickCount = tickToChange;
 				m_bTickChangeNeeded = false;
 			}
-			if (m_bBPMChangeNeeded)
+			if( m_bBPMChangeNeeded )
 			{
-				LOG->Trace( "Adding tempo change of %f BPM at beat %f", speedToChange, m_fCurBeat);
-				out.AddBPMSegment(BPMSegment(BeatToNoteRow(m_fCurBeat),speedToChange));
+				LOG->Trace( "Adding tempo change of %f BPM at beat %f", speedToChange, m_fCurBeat );
+				out.AddBPMSegment( BPMSegment(BeatToNoteRow(m_fCurBeat), speedToChange) );
 				m_bBPMChangeNeeded = false;
 			}
-			if (m_bBPMStopNeeded)
+			if( m_bBPMStopNeeded )
 			{
-				LOG->Trace( "Adding tempo freeze of %f seconds at beat %f", timeToStop, m_fCurBeat);
-				out.AddStopSegment(StopSegment(BeatToNoteRow(m_fCurBeat),timeToStop));
+				LOG->Trace( "Adding tempo freeze of %f seconds at beat %f", timeToStop, m_fCurBeat );
+				out.AddStopSegment( StopSegment(BeatToNoteRow(m_fCurBeat),timeToStop) );
 				m_bBPMStopNeeded = false;
 			}
 			m_fCurBeat += 1.0f / m_iTickCount;
@@ -552,7 +560,10 @@ bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
 
 	/* We shouldn't have been called to begin with if there were no KSFs. */
 	if( arrayKSFFileNames.empty() )
-		RageException::Throw( "Couldn't find any KSF files in '%s'", sDir.c_str() );
+	{
+		LOG->UserLog( "Couldn't find any KSF files in '%s'", sDir.c_str() );
+		return false;
+	}
 
 	/* If only the first file is read, it will cause problems for other simfiles with
 	 * different BPM changes and tickcounts.  This command will probably have to be

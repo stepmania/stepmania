@@ -60,7 +60,7 @@ void DWILoader::DWIcharToNote( char c, GameController i, int &note1Out, int &not
 		case 'L':	note1Out = DANCE_NOTE_PAD1_UPRIGHT;	note2Out = DANCE_NOTE_PAD1_RIGHT;	break;
 		case 'M':	note1Out = DANCE_NOTE_PAD1_UPLEFT;	note2Out = DANCE_NOTE_PAD1_UPRIGHT;	break;
 		default:	
-			LOG->Warn( "Encountered invalid DWI note character '%c' in '%s'", c, m_sLoadingFile.c_str() );
+			LOG->UserLog( "Encountered invalid DWI note character '%c' in '%s'", c, m_sLoadingFile.c_str() );
 			note1Out = DANCE_NOTE_NONE;			note2Out = DANCE_NOTE_NONE;			break;
 	}
 
@@ -234,7 +234,7 @@ bool DWILoader::LoadFromDWITokens(
 			{
 				if( c == '!' )
 				{
-					LOG->Warn( "Unexpected character in '%s': '!'", m_sLoadingFile.c_str() );
+					LOG->UserLog( "Unexpected character in '%s': '!'", m_sLoadingFile.c_str() );
 					continue;
 				}
 
@@ -316,10 +316,8 @@ bool DWILoader::LoadFromDWITokens(
 			if( !bFound )
 			{
 				/* The hold was never closed.  */
-				LOG->Warn( "File \"%s\":\"%s\" failed to close a hold note on track %i", 
-					m_sLoadingFile.c_str(),
-					sDescription.c_str(),
-					t );
+				LOG->UserLog( "File \"%s\":\"%s\" failed to close a hold note on track %i", 
+					      m_sLoadingFile.c_str(), sDescription.c_str(), t );
 
 				newNoteData.SetTapNote( t, iHeadRow, TAP_EMPTY );
 			}
@@ -366,7 +364,10 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 
 	MsdFile msd;
 	if( !msd.ReadFile( sPath ) )
-		RageException::Throw( "Error opening file \"%s\": %s", sPath.c_str(), msd.GetError().c_str() );
+	{
+		LOG->UserLog( "Error opening file \"%s\": %s", sPath.c_str(), msd.GetError().c_str() );
+		return false;
+	}
 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
@@ -376,7 +377,7 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 
 		if(iNumParams < 1)
 		{
-			LOG->Warn("Got \"%s\" tag with no parameters in '%s'", sValueName.c_str(), m_sLoadingFile.c_str() );
+			LOG->UserLog( "Got \"%s\" tag with no parameters in '%s'", sValueName.c_str(), m_sLoadingFile.c_str() );
 			continue;
 		}
 
@@ -410,7 +411,8 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 			if( fBPM > 0.0f )
 				out.AddBPMSegment( BPMSegment(0, fBPM) );
 			else
-				LOG->Trace( "Invalid BPM change at beat %f, BPM %f.", NoteRowToBeat(0), fBPM );
+				LOG->UserLog( "Invalid BPM change at beat %f, BPM %f in \"%s\".",
+					      NoteRowToBeat(0), fBPM, sPath.c_str() );
 		}
 		else if( 0==stricmp(sValueName,"DISPLAYBPM") )
 		{
@@ -457,7 +459,7 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 				split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
 				if( arrayFreezeValues.size() != 2 )
 				{
-					LOG->Warn( "Invalid FREEZE in '%s': '%s'", m_sLoadingFile.c_str(), arrayFreezeExpressions[f].c_str() );
+					LOG->UserLog( "Invalid FREEZE in '%s': '%s'", m_sLoadingFile.c_str(), arrayFreezeExpressions[f].c_str() );
 					continue;
 				}
 				int iFreezeRow = BeatToNoteRow( StringToFloat(arrayFreezeValues[0]) / 4.0f );
@@ -479,7 +481,7 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
 				if( arrayBPMChangeValues.size() != 2 )
 				{
-					LOG->Warn( "Invalid CHANGEBPM in '%s': '%s'", m_sLoadingFile.c_str(), arrayBPMChangeExpressions[b].c_str() );
+					LOG->UserLog( "Invalid CHANGEBPM in '%s': '%s'", m_sLoadingFile.c_str(), arrayBPMChangeExpressions[b].c_str() );
 					continue;
 				}
 				
@@ -492,7 +494,8 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 				}
 				else
 				{
-					LOG->Trace( "Invalid BPM change at beat %f, BPM %f.", NoteRowToBeat(iStartIndex), fBPM );
+					LOG->UserLog( "Invalid BPM change at beat %f, BPM %f in \"%s\".",
+						      NoteRowToBeat(iStartIndex), fBPM, m_sLoadingFile.c_str() );
 				}
 			}
 		}
@@ -561,7 +564,10 @@ bool DWILoader::LoadFromDir( const RString &sPath, Song &out )
 	GetApplicableFiles( sPath, aFileNames );
 
 	if( aFileNames.size() > 1 )
-		RageException::Throw( "There is more than one DWI file in '%s'.  There should be only one!", sPath.c_str() );
+	{
+		LOG->UserLog( "There is more than one DWI file in '%s'.  There should be only one!", sPath.c_str() );
+		return false;
+	}
 
 	/* We should have exactly one; if we had none, we shouldn't have been
 	 * called to begin with. */

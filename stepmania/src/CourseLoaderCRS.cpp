@@ -75,7 +75,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				const CourseDifficulty cd = StringToCourseDifficulty( sParams[1] );
 				if( cd == DIFFICULTY_INVALID )
 				{
-					LOG->Warn( "Course file '%s' contains an invalid #METER string: \"%s\"",
+					LOG->UserLog( "Course file '%s' contains an invalid #METER string: \"%s\"",
 						   sPath.c_str(), sParams[1].c_str() );
 					continue;
 				}
@@ -114,7 +114,8 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 
 					if( attack.fSecsRemaining <= 0.0f)
 					{
-						LOG->Warn( "Attack has nonpositive length: %s", sBits[1].c_str() );
+						LOG->UserLog( "Course file \"%s\" has an attack with a nonpositive length: %s",
+							      sPath.c_str(), sBits[1].c_str() );
 						attack.fSecsRemaining = 0.0f;
 					}
 					
@@ -126,7 +127,8 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				}
 				else
 				{
-					LOG->Warn( "Unexpected value named '%s'", sBits[0].c_str() );
+					LOG->UserLog( "Course file \"%s\" has an unexpected value named '%s'",
+						      sPath.c_str(), sBits[0].c_str() );
 				}
 			}
 
@@ -166,18 +168,16 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				}
 				else
 				{
-					LOG->Warn( "Course file '%s' contains a random_within_group entry '%s' that is invalid. "
-						   "Song should be in the format '<group>/*'.",
-						    sPath.c_str(), sSong.c_str() );
+					LOG->UserLog( "Course file '%s' contains a random_within_group entry '%s' that is invalid. "
+						      "Song should be in the format '<group>/*'.",
+						       sPath.c_str(), sSong.c_str() );
 				}
 
 				if( !SONGMAN->DoesSongGroupExist(new_entry.songCriteria.m_sGroupName) )
 				{
-					/* XXX: We need a place to put "user warnings".  This is too loud for info.txt--
-					 * it obscures important warnings--and regular users never look there, anyway. */
-					LOG->Trace( "Course file '%s' random_within_group entry '%s' specifies a group that doesn't exist. "
-						    "This entry will be ignored.",
-						    sPath.c_str(), sSong.c_str() );
+					LOG->UserLog( "Course file '%s' random_within_group entry '%s' specifies a group that doesn't exist. "
+						      "This entry will be ignored.",
+						      sPath.c_str(), sSong.c_str() );
 					continue; // skip this #SONG
 				}
 			}
@@ -200,11 +200,9 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 
 				if( new_entry.pSong == NULL )
 				{
-					/* XXX: We need a place to put "user warnings".  This is too loud for info.txt--
-					 * it obscures important warnings--and regular users never look there, anyway. */
-					LOG->Trace( "Course file '%s' contains a fixed song entry '%s' that does not exist. "
-						    "This entry will be ignored.",
-						    sPath.c_str(), sSong.c_str());
+					LOG->UserLog( "Course file '%s' contains a fixed song entry '%s' that does not exist. "
+						      "This entry will be ignored.",
+						      sPath.c_str(), sSong.c_str());
 					continue; // skip this #SONG
 				}
 			}
@@ -217,8 +215,8 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 					new_entry.stepsCriteria.m_iHighMeter = new_entry.stepsCriteria.m_iLowMeter;
 				else if( retval != 2 )
 				{
-					LOG->Warn( "Course file '%s' contains an invalid difficulty setting: \"%s\", 3..6 used instead",
-						   sPath.c_str(), sParams[2].c_str() );
+					LOG->UserLog( "Course file '%s' contains an invalid difficulty setting: \"%s\", 3..6 used instead",
+						      sPath.c_str(), sParams[2].c_str() );
 					new_entry.stepsCriteria.m_iLowMeter = 3;
 					new_entry.stepsCriteria.m_iHighMeter = 6;
 				}
@@ -273,7 +271,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 		}
 		else
 		{
-			LOG->Warn( "Unexpected value named '%s'", sValueName.c_str() );
+			LOG->UserLog( "Unexpected value named '%s'", sValueName.c_str() );
 		}
 	}
 	static TitleSubst tsub("Courses");
@@ -344,7 +342,7 @@ bool CourseLoaderCRS::LoadFromCRSFile( const RString &_sPath, Course &out )
 	if( !msd.ReadFile(sPath) )
 	{
 		
-		LOG->Trace( "Error opening CRS file '%s': %s.", sPath.c_str(), msd.GetError().c_str() );
+		LOG->UserLog( "Error opening CRS file '%s': %s.", sPath.c_str(), msd.GetError().c_str() );
 		return false;
 	}
 	
@@ -373,14 +371,14 @@ bool CourseLoaderCRS::LoadEditFromFile( const RString &sEditFilePath, ProfileSlo
 	int iBytes = FILEMAN->GetFileSizeInBytes( sEditFilePath );
 	if( iBytes > MAX_EDIT_COURSE_SIZE_BYTES )
 	{
-		LOG->Warn( "The edit '%s' is unreasonably large.  It won't be loaded.", sEditFilePath.c_str() );
+		LOG->UserLog( "The edit '%s' is unreasonably large.  It won't be loaded.", sEditFilePath.c_str() );
 		return false;
 	}
 
 	MsdFile msd;
 	if( !msd.ReadFile( sEditFilePath ) )
 	{
-		LOG->Warn( "Error opening edit file \"%s\": %s", sEditFilePath.c_str(), msd.GetError().c_str() );
+		LOG->UserLog( "Error opening edit file \"%s\": %s", sEditFilePath.c_str(), msd.GetError().c_str() );
 		return false;
 	}
 	Course *pCourse = new Course;
