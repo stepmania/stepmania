@@ -220,9 +220,9 @@ void RageLog::Info( const char *fmt, ... )
 void RageLog::Warn( const char *fmt, ... )
 {
 	va_list	va;
-	va_start(va, fmt);
+	va_start( va, fmt );
 	RString sBuff = vssprintf( fmt, va );
-	va_end(va);
+	va_end( va );
 
 	Write( WRITE_TO_INFO | WRITE_LOUD, sBuff );
 }
@@ -248,7 +248,7 @@ void RageLog::Write( int where, const RString &line )
 	if( where & WRITE_LOUD )
 		printf( "/////////////////////////////////////////\n" );
 
-	RString sTimestamp = SecondsToMMSSMsMsMs(RageTimer::GetTimeSinceStart()) + ": ";
+	RString sTimestamp = SecondsToMMSSMsMsMs( RageTimer::GetTimeSinceStart() ) + ": ";
 	RString sWarning;
 	if( where & WRITE_LOUD )
 		sWarning = "WARNING: ";
@@ -307,7 +307,7 @@ void RageLog::AddToInfo( const RString &str )
 	if( limit_reached )
 		return;
 	
-	unsigned len = str.size() + strlen(NEWLINE);
+	unsigned len = str.size() + strlen( NEWLINE );
 	if( staticlog_size + len > sizeof(staticlog) )
 	{
 		const RString txt( NEWLINE "Staticlog limit reached" NEWLINE );
@@ -321,7 +321,7 @@ void RageLog::AddToInfo( const RString &str )
 	memcpy( staticlog+staticlog_size, str.data(), str.size() );
 	staticlog_size += str.size();
 	memcpy( staticlog+staticlog_size, NEWLINE, strlen(NEWLINE) );
-	staticlog_size += strlen(NEWLINE);
+	staticlog_size += strlen( NEWLINE );
 }
 
 const char *RageLog::GetInfo()
@@ -336,14 +336,14 @@ static int backlog_start=0, backlog_cnt=0;
 void RageLog::AddToRecentLogs( const RString &str )
 {
 	unsigned len = str.size();
-	if(len > sizeof(backlog[backlog_start])-1)
+	if( len > sizeof(backlog[backlog_start])-1 )
 		len = sizeof(backlog[backlog_start])-1;
 
-	strncpy(backlog[backlog_start], str, len);
+	strncpy( backlog[backlog_start], str, len );
 	backlog[backlog_start] [ len ] = 0;
 
 	backlog_start++;
-	if(backlog_start > backlog_cnt)
+	if( backlog_start > backlog_cnt )
 		backlog_cnt=backlog_start;
 	backlog_start %= BACKLOG_LINES;
 }
@@ -371,8 +371,8 @@ static int g_AdditionalLogSize = 0;
 void RageLog::UpdateMappedLog()
 {
 	RString str;
-	for(map<RString, RString>::const_iterator i = LogMaps.begin(); i != LogMaps.end(); ++i)
-		str += ssprintf("%s" NEWLINE, i->second.c_str());
+	for( map<RString, RString>::const_iterator i = LogMaps.begin(); i != LogMaps.end(); ++i )
+		str += ssprintf( "%s" NEWLINE, i->second.c_str() );
 
 	g_AdditionalLogSize = min( sizeof(g_AdditionalLogStr), str.size()+1 );
 	memcpy( g_AdditionalLogStr, str.c_str(), g_AdditionalLogSize );
