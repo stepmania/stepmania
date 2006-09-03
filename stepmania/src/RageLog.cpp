@@ -241,12 +241,13 @@ void RageLog::Write( int where, const RString &line )
 {
 	LockMut( *g_Mutex );
 
+	const char *const sWarningSeparator = "/////////////////////////////////////////";
 	vector<RString> lines;
 	split( line, "\n", lines, false );
 	if( m_bLogToDisk && g_fileLog->IsOpen() && (where & WRITE_LOUD) )
-		g_fileLog->PutLine( "/////////////////////////////////////////" );
+		g_fileLog->PutLine( sWarningSeparator );
 	if( where & WRITE_LOUD )
-		printf( "/////////////////////////////////////////\n" );
+		puts( sWarningSeparator );
 
 	RString sTimestamp = SecondsToMMSSMsMsMs( RageTimer::GetTimeSinceStart() ) + ": ";
 	RString sWarning;
@@ -280,9 +281,9 @@ void RageLog::Write( int where, const RString &line )
 	}
 
 	if( m_bLogToDisk && g_fileLog->IsOpen() && (where & WRITE_LOUD) )
-		g_fileLog->PutLine( "/////////////////////////////////////////" );
+		g_fileLog->PutLine( sWarningSeparator );
 	if( where & WRITE_LOUD )
-		printf( "/////////////////////////////////////////\n" );
+		puts( sWarningSeparator );
 
 	if( m_bFlush || (where & WRITE_TO_INFO) )
 		Flush();
@@ -371,7 +372,7 @@ static int g_AdditionalLogSize = 0;
 void RageLog::UpdateMappedLog()
 {
 	RString str;
-	for( map<RString, RString>::const_iterator i = LogMaps.begin(); i != LogMaps.end(); ++i )
+	FOREACHM_CONST( RString, RString, LogMaps, i )
 		str += ssprintf( "%s" NEWLINE, i->second.c_str() );
 
 	g_AdditionalLogSize = min( sizeof(g_AdditionalLogStr), str.size()+1 );
