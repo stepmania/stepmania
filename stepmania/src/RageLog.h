@@ -1,7 +1,7 @@
 /* RageLog - Manages logging. */
 
-#ifndef RAGELOG_H
-#define RAGELOG_H
+#ifndef RAGE_LOG_H
+#define RAGE_LOG_H
 
 class RageLog
 {
@@ -9,9 +9,10 @@ public:
 	RageLog();
 	~RageLog();
 
-	void Trace( const char *fmt, ...) PRINTF(2,3);
-	void Warn( const char *fmt, ...) PRINTF(2,3);
-	void Info( const char *fmt, ...) PRINTF(2,3);
+	void Trace( const char *fmt, ... ) PRINTF(2,3);
+	void Warn( const char *fmt, ... ) PRINTF(2,3);
+	void Info( const char *fmt, ... ) PRINTF(2,3);
+	void UserLog( const char *fmt, ... ) PRINTF(2,3);
 	void Flush();
 
 	void MapLog( const RString &key, const char *fmt, ... ) PRINTF(3,4);
@@ -25,11 +26,13 @@ public:
 	void SetShowLogOutput( bool show ); // enable or disable logging to stdout
 	void SetLogToDisk( bool b );	// enable or disable logging to file
 	void SetInfoToDisk( bool b );	// enable or disable logging info.txt to file
+	void SetUserLogToDisk( bool b);	// enable or disable logging user.txt to file
 	void SetFlushing( bool b );	// enable or disable flushing
 
 private:
 	bool m_bLogToDisk;
 	bool m_bInfoToDisk;
+	bool m_bUserLogToDisk;
 	bool m_bFlush;
 	bool m_bShowLogOutput;
 	void Write( int, const RString &str );

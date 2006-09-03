@@ -55,8 +55,9 @@ static map<RString, RString> LogMaps;
 
 #define LOG_PATH	"/Logs/log.txt"
 #define INFO_PATH	"/Logs/info.txt"
+#define USER_PATH	"/Logs/userlog.txt"
 
-static RageFile *g_fileLog, *g_fileInfo;
+static RageFile *g_fileLog, *g_fileInfo, *g_fileUserLog;
 
 /* Mutex writes to the files.  Writing to files is not thread-aware, and this is the
  * only place we write to the same file from multiple threads. */
@@ -64,23 +65,29 @@ static RageMutex *g_Mutex;
 
 /* staticlog gets info.txt
  * crashlog gets log.txt */
-enum {
+enum
+{
 	/* If this is set, the message will also be written to info.txt. (info and warnings) */
 	WRITE_TO_INFO = 0x01,
-	
+
+	/* If this is set, the message will also be written to userlog.txt. (user warnings only) */
+	WRITE_TO_USER_LOG = 0x02,
+
 	/* Whether this line should be loud when written to log.txt (warnings). */
-	WRITE_LOUD = 0x02
+	WRITE_LOUD = 0x04
 };
 
 RageLog::RageLog()
 {
 	g_fileLog = new RageFile;
 	g_fileInfo = new RageFile;
+	g_fileUserLog = new RageFile;
 	
 	g_Mutex = new RageMutex("Log");
 
 	m_bLogToDisk = false;
 	m_bInfoToDisk = false;
+	m_bUserLogToDisk = false;
 	m_bFlush = false;
 	m_bShowLogOutput = false;
 }
@@ -102,14 +109,12 @@ RageLog::~RageLog()
 	SetShowLogOutput( false );
 	g_fileLog->Close();
 	g_fileInfo->Close();
+	g_fileUserLog->Close();
 
-	delete g_Mutex;
-	g_Mutex = NULL;
-
-	delete g_fileLog;
-	g_fileLog = NULL;
-	delete g_fileInfo;
-	g_fileInfo = NULL;
+	SAFE_DELETE( g_Mutex );
+	SAFE_DELETE( g_fileLog );
+	SAFE_DELETE( g_fileInfo );
+	SAFE_DELETE( g_fileUserLog );
 }
 
 void RageLog::SetLogToDisk( bool b )
@@ -148,6 +153,23 @@ void RageLog::SetInfoToDisk( bool b )
 		fprintf( stderr, "Couldn't open %s: %s\n", INFO_PATH, g_fileInfo->GetError().c_str() );
 }
 
+void RageLog::SetUserLogToDisk( bool b )
+{
+	if( m_bUserLogToDisk == b )
+		return;
+	
+	m_bUserLogToDisk = b;
+	
+	if( !m_bUserLogToDisk )
+	{
+		if( g_fileUserLog->IsOpen() )
+			g_fileUserLog->Close();
+		return;
+	}
+	if( !g_fileUserLog->Open(USER_PATH, RageFile::WRITE|RageFile::STREAMED) )
+		fprintf( stderr, "Couldn't open %s: %s\n", USER_PATH, g_fileUserLog->GetError().c_str() );
+}
+
 void RageLog::SetFlushing( bool b )
 {
 	m_bFlush = b;
@@ -173,19 +195,19 @@ void RageLog::SetShowLogOutput( bool show )
 #endif
 }
 
-void RageLog::Trace( const char *fmt, ...)
+void RageLog::Trace( const char *fmt, ... )
 {
 	va_list	va;
 	va_start( va, fmt );
 	RString sBuff = vssprintf( fmt, va );
-	va_end( va);
+	va_end( va );
 
-	Write(0, sBuff );
+	Write( 0, sBuff );
 }
 
 /* Use this for more important information; it'll always be included
  * in crash dumps. */
-void RageLog::Info( const char *fmt, ...)
+void RageLog::Info( const char *fmt, ... )
 {
 	va_list	va;
 	va_start( va, fmt );
@@ -195,7 +217,7 @@ void RageLog::Info( const char *fmt, ...)
 	Write( WRITE_TO_INFO, sBuff );
 }
 
-void RageLog::Warn( const char *fmt, ...)
+void RageLog::Warn( const char *fmt, ... )
 {
 	va_list	va;
 	va_start(va, fmt);
@@ -203,6 +225,16 @@ void RageLog::Warn( const char *fmt, ...)
 	va_end(va);
 
 	Write( WRITE_TO_INFO | WRITE_LOUD, sBuff );
+}
+
+void RageLog::UserLog( const char *fmt, ... )
+{
+	va_list va;
+	va_start( va, fmt );
+	RString sBuf = vssprintf( fmt, va );
+	va_end( va );
+	
+	Write( WRITE_TO_USER_LOG, sBuf );
 }
 
 void RageLog::Write( int where, const RString &line )
@@ -232,8 +264,10 @@ void RageLog::Write( int where, const RString &line )
 			printf("%s\n", str.c_str() );
 		if( where & WRITE_TO_INFO )
 			AddToInfo( str );
-		if( m_bLogToDisk && where&WRITE_TO_INFO && g_fileInfo->IsOpen() )
+		if( m_bLogToDisk && (where&WRITE_TO_INFO) && g_fileInfo->IsOpen() )
 			g_fileInfo->PutLine( str );
+		if( m_bUserLogToDisk && (where&WRITE_TO_USER_LOG) && g_fileUserLog->IsOpen() )
+			g_fileUserLog->PutLine( str );
 
 		/* Add a timestamp to log.txt and RecentLogs, but not the rest of info.txt
 		 * and stdout. */
@@ -259,6 +293,7 @@ void RageLog::Flush()
 {
 	g_fileLog->Flush();
 	g_fileInfo->Flush();
+	g_fileUserLog->Flush();
 }
 
 
