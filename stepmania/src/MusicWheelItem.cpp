@@ -150,7 +150,7 @@ MusicWheelItem::~MusicWheelItem()
 
 void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pWIBD )
 {
-	const WheelItemData *pWID = (const WheelItemData *) pWIBD; // XXX: ugly cast
+	const WheelItemData *pWID = dynamic_cast<const WheelItemData*>( pWIBD ); // XXX: ugly cast
 	
 	ASSERT( pWID != NULL );
 	data = pWID;
