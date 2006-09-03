@@ -4,7 +4,6 @@
 #include "RageTimer.h"
 #include "RageFile.h"
 #include "RageThreads.h"
-#include "arch/ArchHooks/ArchHooks.h"
 
 #include <ctime>
 #if defined(_WINDOWS)
@@ -66,8 +65,7 @@ static RageMutex *g_Mutex;
 /* staticlog gets info.txt
  * crashlog gets log.txt */
 enum {
-	/* If this is set, the message will also be written to info.txt and
-	 * will be flagged "important" when sent to HOOKS->Log. (info and warnings) */
+	/* If this is set, the message will also be written to info.txt. (info and warnings) */
 	WRITE_TO_INFO = 0x01,
 	
 	/* Whether this line should be loud when written to log.txt (warnings). */
