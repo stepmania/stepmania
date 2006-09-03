@@ -61,7 +61,7 @@ struct WheelItemBaseData
 {
 	WheelItemBaseData() {}
 	WheelItemBaseData( WheelItemType wit, RString sText, RageColor color );
-
+	virtual ~WheelItemBaseData() {}
 	WheelItemType		m_Type;
 	RString			m_sText;
 	RageColor		m_color;	// either text color or section background color
