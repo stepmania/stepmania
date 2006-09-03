@@ -426,7 +426,9 @@ void SongUtil::SortSongPointerArrayByGrades( vector<Song*> &vpSongsInOut, bool b
 
 		int iCounts[NUM_Grade];
 		const Profile *pProfile = PROFILEMAN->GetMachineProfile();
+		ASSERT( pProfile ); // XXX: Debugging.
 		const Style *pStyle = GAMESTATE->GetCurrentStyle();
+		ASSERT( pStyle );   // XXX: Debugging.
 		StepsType st = pStyle->m_StepsType;
 		pProfile->GetGrades( pSong, st, iCounts );
 
