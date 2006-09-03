@@ -1417,13 +1417,18 @@ void HandleInputEvents(float fDeltaTime)
 			{
 				DeviceInput diTemp = input.DeviceI;
 				diTemp.device = DEVICE_JOY1;
+				GameInput gi;
 
 				//LOG->Trace( "device %d, %d", diTemp.device, diTemp.button );
-				if( INPUTMAPPER->DeviceToGame(diTemp, input.GameI) )
+				if( INPUTMAPPER->DeviceToGame(diTemp, gi) )
 				{
-					//LOG->Trace( "game %d %d", input.GameI.controller, input.GameI.button );
-					INPUTMAPPER->GameToStyle( input.GameI, input.StyleI );
-					INPUTMAPPER->GameToMenu( input.GameI, input.MenuI );
+					if( GAMESTATE->m_bMultiplayer )
+					{
+						input.GameI = gi;
+						//LOG->Trace( "game %d %d", input.GameI.controller, input.GameI.button );
+						INPUTMAPPER->GameToStyle( input.GameI, input.StyleI );
+						INPUTMAPPER->GameToMenu( input.GameI, input.MenuI );
+					}
 
 					//LOG->Trace( "style %d %d", input.StyleI.player, input.StyleI.col );
 					//LOG->Trace( "menu %d %d", input.MenuI.player, input.MenuI.button );
