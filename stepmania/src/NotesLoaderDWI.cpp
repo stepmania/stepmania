@@ -60,7 +60,7 @@ void DWILoader::DWIcharToNote( char c, GameController i, int &note1Out, int &not
 	case 'L':	note1Out = DANCE_NOTE_PAD1_UPRIGHT;	note2Out = DANCE_NOTE_PAD1_RIGHT;	break;
 	case 'M':	note1Out = DANCE_NOTE_PAD1_UPLEFT;	note2Out = DANCE_NOTE_PAD1_UPRIGHT;	break;
 	default:	
-			LOG->UserLog( "Encountered invalid DWI note character '%c' in '%s'", c, m_sLoadingFile.c_str() );
+			LOG->UserLog( RageLog::LogType_SongFile, m_sLoadingFile, "has an invalid DWI note character '%c'.", c );
 			note1Out = DANCE_NOTE_NONE;		note2Out = DANCE_NOTE_NONE;		break;
 	}
 
@@ -232,7 +232,7 @@ bool DWILoader::LoadFromDWITokens(
 			{
 				if( c == '!' )
 				{
-					LOG->UserLog( "Unexpected character in '%s': '!'", m_sLoadingFile.c_str() );
+					LOG->UserLog( RageLog::LogType_SongFile, m_sLoadingFile, "has an unexpected character: '!'." );
 					continue;
 				}
 
@@ -314,8 +314,8 @@ bool DWILoader::LoadFromDWITokens(
 			if( !bFound )
 			{
 				/* The hold was never closed.  */
-				LOG->UserLog( "File \"%s\":\"%s\" failed to close a hold note on track %i", 
-					      m_sLoadingFile.c_str(), sDescription.c_str(), t );
+				LOG->UserLog( RageLog::LogType_SongFile, m_sLoadingFile, "failed to close a hold note in \"%s\" on track %i", 
+					      sDescription.c_str(), t );
 
 				newNoteData.SetTapNote( t, iHeadRow, TAP_EMPTY );
 			}
@@ -364,7 +364,7 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 	MsdFile msd;
 	if( !msd.ReadFile( sPath ) )
 	{
-		LOG->UserLog( "Error opening file \"%s\": %s", sPath.c_str(), msd.GetError().c_str() );
+		LOG->UserLog( RageLog::LogType_SongFile, sPath, "couldn't be opened: %s", msd.GetError().c_str() );
 		return false;
 	}
 
@@ -376,7 +376,7 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 
 		if( iNumParams < 1 )
 		{
-			LOG->UserLog( "Got \"%s\" tag with no parameters in '%s'", sValueName.c_str(), m_sLoadingFile.c_str() );
+			LOG->UserLog( RageLog::LogType_SongFile, sPath, "has tag \"%s\" with no parameters.", sValueName.c_str() );
 			continue;
 		}
 
@@ -410,8 +410,8 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 			if( fBPM > 0.0f )
 				out.AddBPMSegment( BPMSegment(0, fBPM) );
 			else
-				LOG->UserLog( "Invalid BPM change at beat %f, BPM %f in \"%s\".",
-					      NoteRowToBeat(0), fBPM, sPath.c_str() );
+				LOG->UserLog( RageLog::LogType_SongFile, sPath, "has an invalid BPM change at beat %f, BPM %f.",
+					      NoteRowToBeat(0), fBPM );
 		}
 		else if( 0==stricmp(sValueName,"DISPLAYBPM") )
 		{
@@ -458,7 +458,7 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 				split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
 				if( arrayFreezeValues.size() != 2 )
 				{
-					LOG->UserLog( "Invalid FREEZE in '%s': '%s'", m_sLoadingFile.c_str(), arrayFreezeExpressions[f].c_str() );
+					LOG->UserLog( RageLog::LogType_SongFile, sPath, "has an invalid FREEZE: '%s'.", arrayFreezeExpressions[f].c_str() );
 					continue;
 				}
 				int iFreezeRow = BeatToNoteRow( StringToFloat(arrayFreezeValues[0]) / 4.0f );
@@ -480,7 +480,7 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
 				if( arrayBPMChangeValues.size() != 2 )
 				{
-					LOG->UserLog( "Invalid CHANGEBPM in '%s': '%s'", m_sLoadingFile.c_str(), arrayBPMChangeExpressions[b].c_str() );
+					LOG->UserLog( RageLog::LogType_SongFile, m_sLoadingFile, "has an invalid CHANGEBPM: '%s'.", arrayBPMChangeExpressions[b].c_str() );
 					continue;
 				}
 				
@@ -493,16 +493,16 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 				}
 				else
 				{
-					LOG->UserLog( "Invalid BPM change at beat %f, BPM %f in \"%s\".",
-						      NoteRowToBeat(iStartIndex), fBPM, m_sLoadingFile.c_str() );
+					LOG->UserLog( RageLog::LogType_SongFile, m_sLoadingFile, "has an invalid BPM change at beat %f, BPM %f.",
+						      NoteRowToBeat(iStartIndex), fBPM );
 				}
 			}
 		}
 
 		else if( 0==stricmp(sValueName,"SINGLE")  || 
-			     0==stricmp(sValueName,"DOUBLE")  ||
-				 0==stricmp(sValueName,"COUPLE")  || 
-				 0==stricmp(sValueName,"SOLO"))
+			 0==stricmp(sValueName,"DOUBLE")  ||
+			 0==stricmp(sValueName,"COUPLE")  || 
+			 0==stricmp(sValueName,"SOLO") )
 		{
 			Steps* pNewNotes = new Steps;
 			LoadFromDWITokens( 
@@ -564,7 +564,7 @@ bool DWILoader::LoadFromDir( const RString &sPath, Song &out )
 
 	if( aFileNames.size() > 1 )
 	{
-		LOG->UserLog( "There is more than one DWI file in '%s'.  There should be only one!", sPath.c_str() );
+		LOG->UserLog( RageLog::LogType_Song, sPath, "has more than one DWI file. There should be only one!" );
 		return false;
 	}
 

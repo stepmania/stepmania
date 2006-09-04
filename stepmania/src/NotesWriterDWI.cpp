@@ -348,7 +348,7 @@ bool NotesWriterDWI::Write( RString sPath, const Song &out )
 	RageFile f;
 	if( !f.Open( sPath, RageFile::WRITE ) )
 	{
-		LOG->UserLog( "Error opening song file \"%s\" for writing: \"%s\"", sPath.c_str(), f.GetError().c_str() );
+		LOG->UserLog( RageLog::LogType_SongFile, sPath, "couldn't be opened for writing: %s", f.GetError().c_str() );
 		return false;
 	}
 

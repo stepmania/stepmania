@@ -108,7 +108,7 @@ RageSurface *RageSurfaceUtils::LoadFile( const RString &sPath, RString &error, b
 		RageSurface *ret = TryOpenFile( sPath, bHeaderOnly, error, *it, bKeepTrying );
 		if( ret )
 		{
-			LOG->UserLog( "File \"%s\" is really %s", sPath.c_str(), it->c_str() );
+			LOG->UserLog( RageLog::LogType_GraphicFile, sPath, "is really %s", it->c_str() );
 			return ret;
 		}
 	}
