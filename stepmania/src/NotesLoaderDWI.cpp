@@ -35,33 +35,33 @@ enum
 void DWILoader::DWIcharToNote( char c, GameController i, int &note1Out, int &note2Out )
 {
 	switch( c )
-		{
-		case '0':	note1Out = DANCE_NOTE_NONE;			note2Out = DANCE_NOTE_NONE;			break;
-		case '1':	note1Out = DANCE_NOTE_PAD1_DOWN;	note2Out = DANCE_NOTE_PAD1_LEFT;	break;
-		case '2':	note1Out = DANCE_NOTE_PAD1_DOWN;	note2Out = DANCE_NOTE_NONE;			break;
-		case '3':	note1Out = DANCE_NOTE_PAD1_DOWN;	note2Out = DANCE_NOTE_PAD1_RIGHT;	break;
-		case '4':	note1Out = DANCE_NOTE_PAD1_LEFT;	note2Out = DANCE_NOTE_NONE;			break;
-		case '5':	note1Out = DANCE_NOTE_NONE;			note2Out = DANCE_NOTE_NONE;			break;
-		case '6':	note1Out = DANCE_NOTE_PAD1_RIGHT;	note2Out = DANCE_NOTE_NONE;			break;
-		case '7':	note1Out = DANCE_NOTE_PAD1_UP;		note2Out = DANCE_NOTE_PAD1_LEFT;	break;
-		case '8':	note1Out = DANCE_NOTE_PAD1_UP;		note2Out = DANCE_NOTE_NONE;			break;
-		case '9':	note1Out = DANCE_NOTE_PAD1_UP;		note2Out = DANCE_NOTE_PAD1_RIGHT;	break;
-		case 'A':	note1Out = DANCE_NOTE_PAD1_UP;		note2Out = DANCE_NOTE_PAD1_DOWN;	break;
-		case 'B':	note1Out = DANCE_NOTE_PAD1_LEFT;	note2Out = DANCE_NOTE_PAD1_RIGHT;	break;
-		case 'C':	note1Out = DANCE_NOTE_PAD1_UPLEFT;	note2Out = DANCE_NOTE_NONE;			break;
-		case 'D':	note1Out = DANCE_NOTE_PAD1_UPRIGHT;	note2Out = DANCE_NOTE_NONE;			break;
-		case 'E':	note1Out = DANCE_NOTE_PAD1_LEFT;	note2Out = DANCE_NOTE_PAD1_UPLEFT;	break;
-		case 'F':	note1Out = DANCE_NOTE_PAD1_UPLEFT;	note2Out = DANCE_NOTE_PAD1_DOWN;	break;
-		case 'G':	note1Out = DANCE_NOTE_PAD1_UPLEFT;	note2Out = DANCE_NOTE_PAD1_UP;		break;
-		case 'H':	note1Out = DANCE_NOTE_PAD1_UPLEFT;	note2Out = DANCE_NOTE_PAD1_RIGHT;	break;
-		case 'I':	note1Out = DANCE_NOTE_PAD1_LEFT;	note2Out = DANCE_NOTE_PAD1_UPRIGHT;	break;
-		case 'J':	note1Out = DANCE_NOTE_PAD1_DOWN;	note2Out = DANCE_NOTE_PAD1_UPRIGHT;	break;
-		case 'K':	note1Out = DANCE_NOTE_PAD1_UP;		note2Out = DANCE_NOTE_PAD1_UPRIGHT;	break;
-		case 'L':	note1Out = DANCE_NOTE_PAD1_UPRIGHT;	note2Out = DANCE_NOTE_PAD1_RIGHT;	break;
-		case 'M':	note1Out = DANCE_NOTE_PAD1_UPLEFT;	note2Out = DANCE_NOTE_PAD1_UPRIGHT;	break;
-		default:	
+	{
+	case '0':	note1Out = DANCE_NOTE_NONE;		note2Out = DANCE_NOTE_NONE;		break;
+	case '1':	note1Out = DANCE_NOTE_PAD1_DOWN;	note2Out = DANCE_NOTE_PAD1_LEFT;	break;
+	case '2':	note1Out = DANCE_NOTE_PAD1_DOWN;	note2Out = DANCE_NOTE_NONE;		break;
+	case '3':	note1Out = DANCE_NOTE_PAD1_DOWN;	note2Out = DANCE_NOTE_PAD1_RIGHT;	break;
+	case '4':	note1Out = DANCE_NOTE_PAD1_LEFT;	note2Out = DANCE_NOTE_NONE;		break;
+	case '5':	note1Out = DANCE_NOTE_NONE;		note2Out = DANCE_NOTE_NONE;		break;
+	case '6':	note1Out = DANCE_NOTE_PAD1_RIGHT;	note2Out = DANCE_NOTE_NONE;		break;
+	case '7':	note1Out = DANCE_NOTE_PAD1_UP;		note2Out = DANCE_NOTE_PAD1_LEFT;	break;
+	case '8':	note1Out = DANCE_NOTE_PAD1_UP;		note2Out = DANCE_NOTE_NONE;		break;
+	case '9':	note1Out = DANCE_NOTE_PAD1_UP;		note2Out = DANCE_NOTE_PAD1_RIGHT;	break;
+	case 'A':	note1Out = DANCE_NOTE_PAD1_UP;		note2Out = DANCE_NOTE_PAD1_DOWN;	break;
+	case 'B':	note1Out = DANCE_NOTE_PAD1_LEFT;	note2Out = DANCE_NOTE_PAD1_RIGHT;	break;
+	case 'C':	note1Out = DANCE_NOTE_PAD1_UPLEFT;	note2Out = DANCE_NOTE_NONE;		break;
+	case 'D':	note1Out = DANCE_NOTE_PAD1_UPRIGHT;	note2Out = DANCE_NOTE_NONE;		break;
+	case 'E':	note1Out = DANCE_NOTE_PAD1_LEFT;	note2Out = DANCE_NOTE_PAD1_UPLEFT;	break;
+	case 'F':	note1Out = DANCE_NOTE_PAD1_UPLEFT;	note2Out = DANCE_NOTE_PAD1_DOWN;	break;
+	case 'G':	note1Out = DANCE_NOTE_PAD1_UPLEFT;	note2Out = DANCE_NOTE_PAD1_UP;		break;
+	case 'H':	note1Out = DANCE_NOTE_PAD1_UPLEFT;	note2Out = DANCE_NOTE_PAD1_RIGHT;	break;
+	case 'I':	note1Out = DANCE_NOTE_PAD1_LEFT;	note2Out = DANCE_NOTE_PAD1_UPRIGHT;	break;
+	case 'J':	note1Out = DANCE_NOTE_PAD1_DOWN;	note2Out = DANCE_NOTE_PAD1_UPRIGHT;	break;
+	case 'K':	note1Out = DANCE_NOTE_PAD1_UP;		note2Out = DANCE_NOTE_PAD1_UPRIGHT;	break;
+	case 'L':	note1Out = DANCE_NOTE_PAD1_UPRIGHT;	note2Out = DANCE_NOTE_PAD1_RIGHT;	break;
+	case 'M':	note1Out = DANCE_NOTE_PAD1_UPLEFT;	note2Out = DANCE_NOTE_PAD1_UPRIGHT;	break;
+	default:	
 			LOG->UserLog( "Encountered invalid DWI note character '%c' in '%s'", c, m_sLoadingFile.c_str() );
-			note1Out = DANCE_NOTE_NONE;			note2Out = DANCE_NOTE_NONE;			break;
+			note1Out = DANCE_NOTE_NONE;		note2Out = DANCE_NOTE_NONE;		break;
 	}
 
 	switch( i )
@@ -127,8 +127,8 @@ bool DWILoader::LoadFromDWITokens(
 	out.m_StepsType = STEPS_TYPE_INVALID;
 
 	if(		 sMode == "SINGLE" )	out.m_StepsType = STEPS_TYPE_DANCE_SINGLE;
-	else if( sMode == "DOUBLE" )	out.m_StepsType = STEPS_TYPE_DANCE_DOUBLE;
-	else if( sMode == "COUPLE" )	out.m_StepsType = STEPS_TYPE_DANCE_COUPLE;
+	else if( sMode == "DOUBLE" )		out.m_StepsType = STEPS_TYPE_DANCE_DOUBLE;
+	else if( sMode == "COUPLE" )		out.m_StepsType = STEPS_TYPE_DANCE_COUPLE;
 	else if( sMode == "SOLO" )		out.m_StepsType = STEPS_TYPE_DANCE_SOLO;
 	else	
 	{
@@ -165,8 +165,7 @@ bool DWILoader::LoadFromDWITokens(
 		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UPRIGHT] = 4;
 		g_mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_RIGHT] = 5;
 		break;
-	default:
-		ASSERT(0);
+	DEFAULT_FAIL( out.m_StepsType );
 	}
 
 	int iNumFeet = atoi(sNumFeet);
@@ -190,8 +189,7 @@ bool DWILoader::LoadFromDWITokens(
 				continue;	// skip
 			sStepData = sStepData2;
 			break;
-		default:
-			ASSERT( false );
+		DEFAULT_FAIL( pad );
 		}
 
 		sStepData.Replace("\n", "");
@@ -337,20 +335,21 @@ bool DWILoader::LoadFromDWITokens(
  * or milliseconds. */
 float DWILoader::ParseBrokenDWITimestamp(const RString &arg1, const RString &arg2, const RString &arg3)
 {
-	if(arg1.empty()) return 0;
+	if( arg1.empty() )
+		return 0;
 
 	/* 1+ args */
-	if(arg2.empty())
+	if( arg2.empty() )
 	{
 		/* If the value contains a period, treat it as seconds; otherwise ms. */
-		if(arg1.find_first_of(".") != arg1.npos)
+		if( arg1.find_first_of(".") != arg1.npos )
 			return StringToFloat( arg1 );
 		else
 			return StringToFloat( arg1 ) / 1000.f;
 	}
 
 	/* 2+ args */
-	if(arg3.empty())
+	if( arg3.empty() )
 		return HHMMSSToSeconds( arg1+":"+arg2 );
 
 	/* 3+ args */
@@ -375,7 +374,7 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 		const MsdFile::value_t &sParams = msd.GetValue(i);
 		RString sValueName = sParams[0];
 
-		if(iNumParams < 1)
+		if( iNumParams < 1 )
 		{
 			LOG->UserLog( "Got \"%s\" tag with no parameters in '%s'", sValueName.c_str(), m_sLoadingFile.c_str() );
 			continue;
