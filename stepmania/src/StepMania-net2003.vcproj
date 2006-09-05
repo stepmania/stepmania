@@ -577,6 +577,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenSelectGroup.h">
 			</File>
 			<File
+				RelativePath=".\ScreenSelectLanguage.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenSelectLanguage.h">
+			</File>
+			<File
 				RelativePath="ScreenSelectMaster.cpp">
 			</File>
 			<File
