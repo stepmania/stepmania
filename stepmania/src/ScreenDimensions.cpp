@@ -23,7 +23,6 @@ static ThemeMetric<float> THEME_SCREEN_HEIGHT("Common","ScreenHeight");
  * aspect ratio of the physical display); we don't care about the PAR (pixel
  * aspect ratio: the aspect ratio of a pixel).
  */
-#define THEME_NATIVE_ASPECT (THEME_SCREEN_WIDTH/THEME_SCREEN_HEIGHT)
 
 float ScreenDimensions::GetThemeAspectRatio()
 {
@@ -64,6 +63,8 @@ void ScreenDimensions::ReloadScreenDimensions()
 	LUA->SetGlobal( "SCREEN_BOTTOM", (int) SCREEN_BOTTOM );
 	LUA->SetGlobal( "SCREEN_CENTER_X", (int) SCREEN_CENTER_X );
 	LUA->SetGlobal( "SCREEN_CENTER_Y", (int) SCREEN_CENTER_Y );
+
+	LUA->SetGlobal( "ASPECT_SCALE_FACTOR", (int) ASPECT_SCALE_FACTOR );
 }
 
 LuaFunction( GetScreenAspectRatio,	PREFSMAN->m_fDisplayAspectRatio );
