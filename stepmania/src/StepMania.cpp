@@ -1371,7 +1371,7 @@ void HandleInputEvents(float fDeltaTime)
 	if( SCREENMAN->GetTopScreen()->IsFirstUpdate() )
 		return;
 
-	static InputEventArray ieArray;
+	vector<InputEvent> ieArray;
 	INPUTFILTER->GetInputEvents( ieArray );
 
 	/* If we don't have focus, discard input. */
