@@ -926,11 +926,12 @@ public:
 	static int GetEstimatedNumStages( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetEstimatedNumStages() ); return 1; }
 	static int GetTotalSeconds( T* p, lua_State *L )
 	{
-		StepsType st = StepsType( IArg(1) );
-		float fOut = 0.0f;
-		
-		p->GetTotalSeconds( st, fOut );
-		lua_pushnumber( L, fOut );
+		StepsType st = (StepsType) IArg(1);
+		float fTotalSeconds;
+		if( !p->GetTotalSeconds(st, fTotalSeconds) )
+			lua_pushnil( L );
+		else
+			lua_pushnumber( L, fTotalSeconds );
 		return 1;
 	}
 
