@@ -92,11 +92,6 @@ ITween *ITween::CreateFromType( TweenType tt )
 	case TWEEN_LINEAR: return new TweenLinear;
 	case TWEEN_ACCELERATE: return new TweenAccelerate;
 	case TWEEN_DECELERATE: return new TweenDecelerate;
-
-	/*
-	 * These may actually be faster than InterpolateBounceBegin/InterpolateBounceEnd, since
-	 * they don't use RageFastSin/RageFastCos.
-	 */
 	case TWEEN_SPRING: return new TweenSpring;
 	default: ASSERT(0);
 	}
