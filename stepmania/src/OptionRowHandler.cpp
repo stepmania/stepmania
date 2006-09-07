@@ -1260,6 +1260,9 @@ OptionRowHandler* OptionRowHandlerUtil::Make( const Commands &cmds )
 {
 	OptionRowHandler* pHand = NULL;
 
+	if( cmds.v.size() == 0 )
+		return NULL;
+
 	const RString &name = cmds.v[0].GetName();
 
 #define MAKE( type )	{ type *p = new type; p->Load( cmds ); pHand = p; }
@@ -1267,11 +1270,10 @@ OptionRowHandler* OptionRowHandlerUtil::Make( const Commands &cmds )
 	// XXX: merge these, and merge "Steps" and "list,Steps"
 	if( name == "list" )
 	{
-		ASSERT( cmds.v.size() == 1 );
 		const Command &command = cmds.v[0];
 		RString sParam = command.GetArg(1);
-		ASSERT( command.m_vsArgs.size() == 2 );
-		ASSERT( sParam.size() );
+		if( command.m_vsArgs.size() != 2 || !sParam.size() )
+			return NULL;
 
 		if(	 sParam.CompareNoCase("NoteSkins")==0 )		MAKE( OptionRowHandlerListNoteSkins )
 		else if( sParam.CompareNoCase("Steps")==0 )		MAKE( OptionRowHandlerListSteps )
