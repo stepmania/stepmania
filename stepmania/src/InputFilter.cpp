@@ -289,7 +289,7 @@ void InputFilter::ResetKeyRepeat( const DeviceInput &di )
 	GetButtonState( di ).m_fSecsHeld = 0;
 }
 
-void InputFilter::GetInputEvents( InputEventArray &array )
+void InputFilter::GetInputEvents( vector<InputEvent> &array )
 {
 	array.clear();
 	LockMut(*queuemutex);

@@ -35,8 +35,6 @@ struct InputEvent : public DeviceInput
 	InputEventType type;
 };
 
-typedef vector<InputEvent> InputEventArray;
-
 class RageMutex;
 struct ButtonState;
 class InputFilter
@@ -59,13 +57,13 @@ public:
 	float GetSecsHeld( const DeviceInput &di );
 	RString GetButtonComment( const DeviceInput &di ) const;
 	
-	void GetInputEvents( InputEventArray &array );
+	void GetInputEvents( vector<InputEvent> &aEventOut );
 	void GetPressedButtons( vector<DeviceInput> &array );
 
 private:
 	void CheckButtonChange( ButtonState &bs, DeviceInput di, const RageTimer &now );
 
-	InputEventArray queue;
+	vector<InputEvent> queue;
 	RageMutex *queuemutex;
 };
 
