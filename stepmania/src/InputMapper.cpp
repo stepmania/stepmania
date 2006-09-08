@@ -802,7 +802,7 @@ void InputMapper::MenuToGame( const MenuInput &MenuI, GameInput GameIout[4] )
 }
 
 
-bool InputMapper::IsBeingPressed( const GameInput &GameI, MultiPlayer mp )
+bool InputMapper::IsBeingPressed( const GameInput &GameI, MultiPlayer mp, const DeviceInputList *pButtonState )
 {
 	for( int i=0; i<NUM_GAME_TO_DEVICE_SLOTS; i++ )
 	{
@@ -812,7 +812,7 @@ bool InputMapper::IsBeingPressed( const GameInput &GameI, MultiPlayer mp )
 		{
 			if( mp != MultiPlayer_INVALID )
 				DeviceI.device = MultiPlayerToInputDevice(mp);
-			if( INPUTFILTER->IsBeingPressed( DeviceI ) )
+			if( INPUTFILTER->IsBeingPressed(DeviceI, pButtonState) )
 				return true;
 		}
 	}

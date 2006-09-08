@@ -48,7 +48,7 @@ public:
 	float GetSecsHeld( const MenuInput &MenuI );
 	float GetSecsHeld( const StyleInput &StyleI, MultiPlayer mp = MultiPlayer_INVALID );
 
-	bool IsBeingPressed( const GameInput &GameI, MultiPlayer mp = MultiPlayer_INVALID );
+	bool IsBeingPressed( const GameInput &GameI, MultiPlayer mp = MultiPlayer_INVALID, const DeviceInputList *pButtonState = NULL );
 	bool IsBeingPressed( const MenuInput &MenuI );
 	bool IsBeingPressed( const StyleInput &StyleI, MultiPlayer mp = MultiPlayer_INVALID );
 
