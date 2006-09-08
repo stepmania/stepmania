@@ -14,9 +14,13 @@ static CFOptionFlags ShowAlert( CFOptionFlags flags, const RString& sMessage, CF
 	
 	CFUserNotificationDisplayAlert( 0.0, flags, NULL, NULL, NULL, CFSTR(PRODUCT_FAMILY),
 					text, OK, alt, other, &result );
-	// Flush all input that's accumulated while the dialog box was up.
-	INPUTFILTER->Reset();
 	CFRelease( text );
+
+	// Flush all input that's accumulated while the dialog box was up.
+	vector<InputEvent> dummy;
+	INPUTFILTER->Reset();
+	INPUTFILTER->GetInputEvents( dummy );
+
 	return result;
 }
 
