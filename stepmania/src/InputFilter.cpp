@@ -153,13 +153,12 @@ void InputFilter::ResetDevice( InputDevice device )
 	LockMut(*queuemutex);
 	RageTimer now;
 
-	vector<DeviceInput> DeviceInputs;
-	GetPressedButtons( DeviceInputs );
-
-	FOREACH( DeviceInput, DeviceInputs, di )
+	const ButtonStateMap g_ButtonStates( g_ButtonStates );
+	FOREACHM_CONST( DeviceInput, ButtonState, g_ButtonStates, b )
 	{
-		if( di->device == device )
-			ButtonPressed( DeviceInput(device, di->button, -1, now), false );
+		const DeviceInput &di = b->first;
+		if( di.device == device )
+			ButtonPressed( DeviceInput(device, di.button, -1, now), false );
 	}
 }
 
