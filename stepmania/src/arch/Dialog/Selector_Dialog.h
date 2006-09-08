@@ -1,5 +1,5 @@
-#ifndef SELECTOR_DIALOG
-#define SELECTOR_DIALOG
+#ifndef SELECTOR_DIALOG_H
+#define SELECTOR_DIALOG_H
 
 #include "arch/arch_platform.h"
 
