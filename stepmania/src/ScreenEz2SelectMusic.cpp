@@ -238,7 +238,7 @@ void ScreenEz2SelectMusic::Input( const InputEventPlus &input )
 
 	if(i_ErrorDetected) return; // don't let the user do anything if theres an error
 
-	if( input.type == IET_RELEASE || input.type == IET_LEVEL_CHANGED )	return;		// don't care
+	if( input.type == IET_RELEASE )	return;		// don't care
 
 	if( IsTransitioning() )	return;		// ignore
 

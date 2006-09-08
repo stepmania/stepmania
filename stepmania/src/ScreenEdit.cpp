@@ -1149,9 +1149,6 @@ static LocalizedString SWITCHED_TO		( "ScreenEdit", "Switched to" );
 static LocalizedString NO_BACKGROUNDS_AVAILABLE	( "ScreenEdit", "No backgrounds available" );
 void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 {
-	if( input.type == IET_LEVEL_CHANGED )
-		return;		// don't care
-
 	if( input.type == IET_RELEASE )
 	{
 		if( EditPressed( EDIT_BUTTON_SCROLL_SELECT, input.DeviceI ) )
@@ -1969,7 +1966,6 @@ void ScreenEdit::InputRecord( const InputEventPlus &input, EditButton EditB )
 	case IET_SLOW_REPEAT:
 	case IET_FAST_REPEAT:
 	case IET_RELEASE:
-	case IET_LEVEL_CHANGED:
 		// don't add or extend holds here; we do it in Update()
 		break;
 	}

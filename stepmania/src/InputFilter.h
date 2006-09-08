@@ -18,12 +18,6 @@ enum InputEventType
 	/* The device is no longer pressed.  Exactly one IET_RELEASE event will be sent
 	 * for each IET_FIRST_PRESS. */
 	IET_RELEASE,
-
-	/* The depression level of a button has changed.  Read di.level to find the new
-	 * value.  This can be sent outside of a IET_FIRST_PRESS/IET_RELEASE pair, since
-	 * a button/axis can have a non-zero level (eg. outside the axis dead zone) without
-	 * being high enough to count as a press. */
-	IET_LEVEL_CHANGED
 };
 
 struct InputEvent

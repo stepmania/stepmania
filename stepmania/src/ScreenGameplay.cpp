@@ -2063,9 +2063,6 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 {
 	//LOG->Trace( "ScreenGameplay::Input()" );
 
-	if( input.type == IET_LEVEL_CHANGED )
-		return;
-
 	if( m_bPaused )
 	{
 		/* If we're paused, only accept MENU_BUTTON_START to unpause. */
