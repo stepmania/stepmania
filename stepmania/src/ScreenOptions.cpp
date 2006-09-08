@@ -794,8 +794,8 @@ void ScreenOptions::MenuStart( const InputEventPlus &input )
 	case NAV_TOGGLE_THREE_KEY:
 		{
 			bool bHoldingLeftAndRight = 
-				INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_RIGHT) ) &&
-				INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_LEFT) );
+				INPUTMAPPER->IsBeingPressed( MenuInput(pn, MENU_BUTTON_RIGHT) ) &&
+				INPUTMAPPER->IsBeingPressed( MenuInput(pn, MENU_BUTTON_LEFT) );
 			if( bHoldingLeftAndRight )
 			{
 				if( MoveRowRelative(pn, -1, input.type != IET_FIRST_PRESS) )
@@ -1223,14 +1223,14 @@ void ScreenOptions::MenuUpDown( const InputEventPlus &input, int iDir )
 		 * holding both up and down from toggling repeatedly in-place. */
 		if( iDir == +1 )
 		{
-			if( INPUTMAPPER->IsButtonDown(MenuInput(pn, MENU_BUTTON_UP)) ||
-				INPUTMAPPER->IsButtonDown(MenuInput(pn, MENU_BUTTON_SELECT)) )
+			if( INPUTMAPPER->IsBeingPressed(MenuInput(pn, MENU_BUTTON_UP)) ||
+				INPUTMAPPER->IsBeingPressed(MenuInput(pn, MENU_BUTTON_SELECT)) )
 				return;
 		}
 		else
 		{
-			if( INPUTMAPPER->IsButtonDown(MenuInput(pn, MENU_BUTTON_DOWN)) ||
-				INPUTMAPPER->IsButtonDown(MenuInput(pn, MENU_BUTTON_START)) )
+			if( INPUTMAPPER->IsBeingPressed(MenuInput(pn, MENU_BUTTON_DOWN)) ||
+				INPUTMAPPER->IsBeingPressed(MenuInput(pn, MENU_BUTTON_START)) )
 				return;
 		}
 	}

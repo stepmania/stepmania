@@ -74,7 +74,7 @@ bool CodeItem::EnteredCode( GameController controller ) const
 			for( unsigned i=0; i<buttons.size()-1; i++ )
 			{
 				GameInput gi( controller, buttons[i] );
-				if( !INPUTMAPPER->IsButtonDown(gi) )
+				if( !INPUTMAPPER->IsBeingPressed(gi) )
 					return false;
 			}
 			// just pressed the last button

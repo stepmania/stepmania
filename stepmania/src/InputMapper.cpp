@@ -802,7 +802,7 @@ void InputMapper::MenuToGame( const MenuInput &MenuI, GameInput GameIout[4] )
 }
 
 
-bool InputMapper::IsButtonDown( const GameInput &GameI, MultiPlayer mp )
+bool InputMapper::IsBeingPressed( const GameInput &GameI, MultiPlayer mp )
 {
 	for( int i=0; i<NUM_GAME_TO_DEVICE_SLOTS; i++ )
 	{
@@ -820,22 +820,22 @@ bool InputMapper::IsButtonDown( const GameInput &GameI, MultiPlayer mp )
 	return false;
 }
 
-bool InputMapper::IsButtonDown( const MenuInput &MenuI )
+bool InputMapper::IsBeingPressed( const MenuInput &MenuI )
 {
 	GameInput GameI[4];
 	MenuToGame( MenuI, GameI );
 	for( int i=0; i<4; i++ )
-		if( GameI[i].IsValid()  &&  IsButtonDown(GameI[i]) )
+		if( GameI[i].IsValid()  &&  IsBeingPressed(GameI[i]) )
 			return true;
 
 	return false;
 }
 
-bool InputMapper::IsButtonDown( const StyleInput &StyleI, MultiPlayer mp )
+bool InputMapper::IsBeingPressed( const StyleInput &StyleI, MultiPlayer mp )
 {
 	GameInput GameI;
 	StyleToGame( StyleI, GameI );
-	return IsButtonDown( GameI, mp );
+	return IsBeingPressed( GameI, mp );
 }
 
 

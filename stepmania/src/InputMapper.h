@@ -13,6 +13,9 @@ const int NUM_GAME_TO_DEVICE_SLOTS	= 5;	// five device inputs may map to one gam
 const int NUM_SHOWN_GAME_TO_DEVICE_SLOTS = 3;
 const int NUM_USER_GAME_TO_DEVICE_SLOTS = 2;
 
+// transition:
+#define IsButtonDown IsBeingPressed
+
 class InputMapper
 {
 public:
@@ -48,9 +51,9 @@ public:
 	float GetSecsHeld( const MenuInput &MenuI );
 	float GetSecsHeld( const StyleInput &StyleI, MultiPlayer mp = MultiPlayer_INVALID );
 
-	bool IsButtonDown( const GameInput &GameI, MultiPlayer mp = MultiPlayer_INVALID );
-	bool IsButtonDown( const MenuInput &MenuI );
-	bool IsButtonDown( const StyleInput &StyleI, MultiPlayer mp = MultiPlayer_INVALID );
+	bool IsBeingPressed( const GameInput &GameI, MultiPlayer mp = MultiPlayer_INVALID );
+	bool IsBeingPressed( const MenuInput &MenuI );
+	bool IsBeingPressed( const StyleInput &StyleI, MultiPlayer mp = MultiPlayer_INVALID );
 
 	void ResetKeyRepeat( const GameInput &GameI );
 	void ResetKeyRepeat( const MenuInput &MenuI );

@@ -544,7 +544,7 @@ void Player::Update( float fDeltaTime )
 		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
 		const StyleInput StyleI( pn, col );
-		bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( StyleI );
+		bool bIsHoldingButton = INPUTMAPPER->IsBeingPressed( StyleI );
 		// TODO: Make this work for non-human-controlled players
 		if( bIsHoldingButton && !GAMESTATE->m_bDemonstrationOrJukebox && m_pPlayerState->m_PlayerController==PC_HUMAN )
 			if( m_pNoteField )
@@ -622,7 +622,7 @@ void Player::Update( float fDeltaTime )
 			else
 			{
 				const StyleInput StyleI( pn, iTrack );
-				bIsHoldingButton = INPUTMAPPER->IsButtonDown( StyleI, m_pPlayerState->m_mp );
+				bIsHoldingButton = INPUTMAPPER->IsBeingPressed( StyleI, m_pPlayerState->m_mp );
 			}
 
 			int iEndRow = iRow + tn.iDuration;
@@ -1501,7 +1501,7 @@ void Player::CrossedMineRow( int iNoteRow, const RageTimer &now )
 			}
 			else
 			{
-				bool bIsDown = INPUTMAPPER->IsButtonDown( StyleI, m_pPlayerState->m_mp );
+				bool bIsDown = INPUTMAPPER->IsBeingPressed( StyleI, m_pPlayerState->m_mp );
 				if( bIsDown )
 					Step( t, iNoteRow, now, true, false );
 			}

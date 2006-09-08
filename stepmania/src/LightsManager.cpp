@@ -356,7 +356,7 @@ void LightsManager::Update( float fDeltaTime )
 
 					FOREACH_GameButton( gb )
 					{
-						bool bOn = INPUTMAPPER->IsButtonDown( GameInput(gc,gb) );
+						bool bOn = INPUTMAPPER->IsBeingPressed( GameInput(gc,gb) );
 						m_LightsState.m_bGameButtonLights[gc][gb] = bOn;
 					}
 				}
