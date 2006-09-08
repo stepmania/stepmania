@@ -1294,8 +1294,8 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 #if !defined(MACOSX)
 	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F4) )
 	{
-		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RALT)) ||
-			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LALT)) )
+		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RALT), &input.InputList) ||
+			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LALT), &input.InputList) )
 		{
 			// pressed Alt+F4
 			ArchHooks::SetUserQuit();
@@ -1304,8 +1304,8 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 	}
 #else
 	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_Cq) &&
-	    (INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LMETA) ) ||
-	     INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RMETA) )) )
+	    (INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LMETA), &input.InputList ) ||
+	     INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RMETA), &input.InputList )) )
 	{
 		/* The user quit is handled by the menu item so we don't need to set it here;
 		 * however, we do want to return that it has been handled since this will happen
@@ -1320,8 +1320,8 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 		input.DeviceI == DeviceInput( DEVICE_KEYBOARD, KEY_PRTSC ) ||
 		input.DeviceI == DeviceInput( DEVICE_KEYBOARD, KEY_F13 ) ||
 		( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F12) && 
-		  (INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LMETA)) ||
-		   INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RMETA))) );
+		  (INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LMETA), &input.InputList) ||
+		   INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RMETA), &input.InputList)) );
 
 #else
 	/* The default Windows message handler will capture the desktop window upon
@@ -1330,8 +1330,8 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 	 * ourself by dumping the frame buffer.  */
 	// "if pressing PrintScreen and not pressing Alt"
 		input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_PRTSC) && 
-		!INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LALT)) &&
-		!INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RALT));
+		!INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LALT), &input.InputList) &&
+		!INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RALT), &input.InputList);
 #endif
 	if( bDoScreenshot )
 	{
@@ -1342,8 +1342,8 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 	}
 	
 	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_ENTER) &&
-		(INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RALT)) ||
-		 INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LALT))) )
+		(INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RALT), &input.InputList) ||
+		 INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LALT), &input.InputList)) )
 	{
 		/* alt-enter */
 		/* In OS X, this is a menu item and will be handled as such. This will happen
