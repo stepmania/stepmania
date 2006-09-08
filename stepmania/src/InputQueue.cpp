@@ -30,14 +30,15 @@ bool InputQueue::MatchesSequence( GameController c, const MenuButton* button_seq
 	if( fMaxSecondsBack == -1 )
 		fMaxSecondsBack = 0.4f + iNumButtons*0.15f;
 
-	float fOldestTimeAllowed = RageTimer::GetTimeSinceStart() - fMaxSecondsBack;
+	RageTimer OldestTimeAllowed;
+	OldestTimeAllowed += -fMaxSecondsBack;
 
 	int sequence_index = iNumButtons-1;	// count down
 	for( int queue_index=m_aQueue[c].size()-1; queue_index>=0; queue_index-- )	// iterate newest to oldest
 	{
 		const InputEventPlus &iep = m_aQueue[c][queue_index];
 		if( iep.MenuI.button != button_sequence[sequence_index]  ||
-			iep.DeviceI.ts.Ago() > fOldestTimeAllowed )
+			iep.DeviceI.ts < OldestTimeAllowed )
 		{
 			return false;
 		}
@@ -59,14 +60,15 @@ bool InputQueue::MatchesSequence( GameController c, const GameButton* button_seq
 	if( fMaxSecondsBack == -1 )
 		fMaxSecondsBack = 0.4f + iNumButtons*0.15f;
 
-	float fOldestTimeAllowed = RageTimer::GetTimeSinceStart() - fMaxSecondsBack;
+	RageTimer OldestTimeAllowed;
+	OldestTimeAllowed += -fMaxSecondsBack;
 
 	int sequence_index = iNumButtons-1;	// count down
 	for( int queue_index=m_aQueue[c].size()-1; queue_index>=0; queue_index-- )	// iterate newest to oldest
 	{
 		const InputEventPlus &iep = m_aQueue[c][queue_index];
 		if( iep.GameI.button != button_sequence[sequence_index]  ||
-			iep.DeviceI.ts.Ago() > fOldestTimeAllowed )
+			iep.DeviceI.ts < OldestTimeAllowed )
 		{
 			return false;
 		}
@@ -82,7 +84,8 @@ bool InputQueue::MatchesSequence( GameController c, const GameButton* button_seq
 
 bool InputQueue::AllWerePressedRecently( GameController c, const GameButton* buttons, int iNumButtons, float fMaxSecondsBack )
 {
-	float fOldestTimeAllowed = RageTimer::GetTimeSinceStart() - fMaxSecondsBack;
+	RageTimer OldestTimeAllowed;
+	OldestTimeAllowed += -fMaxSecondsBack;
 
 	for( int b=0; b<iNumButtons; b++ )
 	{
@@ -91,7 +94,7 @@ bool InputQueue::AllWerePressedRecently( GameController c, const GameButton* but
 		for( int queue_index=m_aQueue[c].size()-1; queue_index>=0; queue_index-- )	// iterate newest to oldest
 		{
 			const InputEventPlus &iep = m_aQueue[c][queue_index];
-			if( iep.DeviceI.ts.Ago() > fOldestTimeAllowed )	// buttons are too old.  Stop searching because we're not going to find a match
+			if( iep.DeviceI.ts < OldestTimeAllowed )	// buttons are too old.  Stop searching because we're not going to find a match
 				return false;
 
 			if( iep.GameI.button == button )
