@@ -315,7 +315,7 @@ const T *FindItemBinarySearch( IT begin, IT end, const T &i )
 	return &*it;
 }
 
-bool InputFilter::IsBeingPressed( const DeviceInput &di, const DeviceInputList *pButtonState )
+bool InputFilter::IsBeingPressed( const DeviceInput &di, const DeviceInputList *pButtonState ) const
 {
 	LockMut(*queuemutex);
 	if( pButtonState == NULL )
@@ -324,7 +324,7 @@ bool InputFilter::IsBeingPressed( const DeviceInput &di, const DeviceInputList *
 	return pDI != NULL;
 }
 
-float InputFilter::GetSecsHeld( const DeviceInput &di, const DeviceInputList *pButtonState )
+float InputFilter::GetSecsHeld( const DeviceInput &di, const DeviceInputList *pButtonState ) const
 {
 	LockMut(*queuemutex);
 	if( pButtonState == NULL )
@@ -367,15 +367,7 @@ void InputFilter::FlushInputEvents()
 void InputFilter::GetPressedButtons( vector<DeviceInput> &array )
 {
 	LockMut(*queuemutex);
-	FOREACHM( DeviceInput, ButtonState, g_ButtonStates, b )
-	{
-		if( b->second.m_BeingHeld )
-		{
-			DeviceInput di = b->first;
-			di.level = b->second.m_Level;
-			array.push_back( di );
-		}
-	}
+	array = g_CurrentState;
 }
 
 /*

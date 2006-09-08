@@ -56,8 +56,8 @@ public:
 	void ResetKeyRepeat( const DeviceInput &di );
 
 	// If aButtonState is NULL, use the last reported state.
-	bool IsBeingPressed( const DeviceInput &di, const DeviceInputList *pButtonState = NULL );
-	float GetSecsHeld( const DeviceInput &di, const DeviceInputList *pButtonState = NULL );
+	bool IsBeingPressed( const DeviceInput &di, const DeviceInputList *pButtonState = NULL ) const;
+	float GetSecsHeld( const DeviceInput &di, const DeviceInputList *pButtonState = NULL ) const;
 	RString GetButtonComment( const DeviceInput &di ) const;
 	
 	void GetInputEvents( vector<InputEvent> &aEventOut );
