@@ -29,10 +29,14 @@ public:
 
 	/* Add (or subtract) a duration from a timestamp.  The result is another timestamp. */
 	RageTimer operator+( float tm ) const;
+	RageTimer operator-( float tm ) const { return *this + -tm; }
 	void operator+=( float tm ) { *this = *this + tm; }
+	void operator-=( float tm ) { *this = *this + -tm; }
 
 	/* Find the amount of time between two timestamps.  The result is a duration. */
 	float operator-( const RageTimer &rhs ) const;
+
+	bool operator<( const RageTimer &rhs ) const;
 
 	/* "float" is bad for a "time since start" RageTimer.  If the game is running for
 	 * several days, we'll lose a lot of resolution.  I don't want to use double

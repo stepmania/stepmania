@@ -105,6 +105,13 @@ float RageTimer::operator-(const RageTimer &rhs) const
 	return Difference(*this, rhs);
 }
 
+bool RageTimer::operator<( const RageTimer &rhs ) const
+{
+	if( m_secs != rhs.m_secs ) return m_secs < rhs.m_secs;
+	return m_us < rhs.m_us;
+
+}
+
 RageTimer RageTimer::Sum(const RageTimer &lhs, float tm)
 {
 	/* tm == 5.25  -> secs =  5, us = 5.25  - ( 5) = .25
