@@ -354,6 +354,16 @@ void InputFilter::GetInputEvents( vector<InputEvent> &array )
 	array.swap( queue );
 }
 
+void InputFilter::FlushInputEvents()
+{
+	/* Calling clear() will delete each InputEvent while holding the lock.
+	 * This way, the LockMutex will be deleted before array which will unlock
+	 * the mutex before deleting each InputEvent. */
+	vector<InputEvent> array;
+	LockMut(*queuemutex);
+	array.swap( queue );
+}
+
 void InputFilter::GetPressedButtons( vector<DeviceInput> &array )
 {
 	LockMut(*queuemutex);

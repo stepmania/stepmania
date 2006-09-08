@@ -61,6 +61,7 @@ public:
 	RString GetButtonComment( const DeviceInput &di ) const;
 	
 	void GetInputEvents( vector<InputEvent> &aEventOut );
+	void FlushInputEvents();
 	void GetPressedButtons( vector<DeviceInput> &array );
 
 private:
