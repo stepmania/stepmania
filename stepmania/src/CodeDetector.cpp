@@ -10,6 +10,7 @@
 #include "Style.h"
 #include "RageUtil.h"
 #include "PlayerState.h"
+#include "InputEventPlus.h"
 
 const char *CodeNames[] = {
 	"Easier1",
@@ -70,15 +71,19 @@ bool CodeItem::EnteredCode( GameController controller ) const
 		return INPUTQUEUE->MatchesSequence( controller, &buttons[0], buttons.size(), fMaxSecondsBack );
 	case hold_and_press:
 		{
-			// check that all but the last are being held
+			RageTimer OldestTimeAllowed = RageTimer() - 0.05f;
+			InputEventPlus iep;
+			if( !INPUTQUEUE->WasPressedRecently(controller, buttons[buttons.size()-1], OldestTimeAllowed, &iep) )
+				return false;
+
+			// Check that all but the last were being held when the last button was pressed.
 			for( unsigned i=0; i<buttons.size()-1; i++ )
 			{
 				GameInput gi( controller, buttons[i] );
-				if( !INPUTMAPPER->IsBeingPressed(gi) )
+				if( !INPUTMAPPER->IsBeingPressed(gi, MultiPlayer_INVALID, &iep.InputList) )
 					return false;
 			}
-			// just pressed the last button
-			return INPUTQUEUE->MatchesSequence( controller, &buttons[buttons.size()-1], 1, 0.05f );
+			return true;
 		}
 		break;
 	case tap:
