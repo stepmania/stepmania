@@ -32,6 +32,9 @@ struct InputEvent
 
 	DeviceInput di;
 	InputEventType type;
+
+	/* A list of all buttons that were pressed at the time of this event: */
+	DeviceInputList m_ButtonState;
 };
 
 class RageMutex;
@@ -52,8 +55,9 @@ public:
 	void ResetRepeatRate();
 	void ResetKeyRepeat( const DeviceInput &di );
 
-	bool IsBeingPressed( const DeviceInput &di );
-	float GetSecsHeld( const DeviceInput &di );
+	// If aButtonState is NULL, use the last reported state.
+	bool IsBeingPressed( const DeviceInput &di, const DeviceInputList *pButtonState = NULL );
+	float GetSecsHeld( const DeviceInput &di, const DeviceInputList *pButtonState = NULL );
 	RString GetButtonComment( const DeviceInput &di ) const;
 	
 	void GetInputEvents( vector<InputEvent> &aEventOut );
@@ -62,6 +66,7 @@ public:
 private:
 	void CheckButtonChange( ButtonState &bs, DeviceInput di, const RageTimer &now );
 	void ReportButtonChange( const DeviceInput &di, InputEventType t );
+	void MakeButtonStateList( vector<DeviceInput> &aInputOut ) const;
 
 	vector<InputEvent> queue;
 	RageMutex *queuemutex;

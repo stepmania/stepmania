@@ -1383,6 +1383,7 @@ void HandleInputEvents(float fDeltaTime)
 		InputEventPlus input;
 		input.DeviceI = ieArray[i].di;
 		input.type = ieArray[i].type;
+		swap( input.InputList, ieArray[i].m_ButtonState );
 
 		// hack for testing with only one joytick
 		if( input.DeviceI.IsJoystick() )

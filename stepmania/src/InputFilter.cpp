@@ -42,6 +42,8 @@ namespace
 	{
 		return g_ButtonStates[di];
 	}
+
+	DeviceInputList g_CurrentState;
 }
 
 /*
@@ -190,6 +192,30 @@ void InputFilter::ReportButtonChange( const DeviceInput &di, InputEventType t )
 	InputEvent &ie = queue.back();
 	ie.type = t;
 	ie.di = di;
+
+	/*
+	 * Include a list of all buttons that were pressed at the time of this event.  We
+	 * can create this efficiently using g_ButtonStates.  Use a vector and not a
+	 * map, for efficiency; most code will not use this information.  Iterating over
+	 * g_ButtonStates will be in DeviceInput order, so users can binary search this
+	 * list (eg. std::lower_bound).
+	 */
+	MakeButtonStateList( ie.m_ButtonState );
+	g_CurrentState = ie.m_ButtonState;
+}
+
+void InputFilter::MakeButtonStateList( vector<DeviceInput> &aInputOut ) const
+{
+	aInputOut.reserve( g_ButtonStates.size() );
+	for( ButtonStateMap::const_iterator it = g_ButtonStates.begin(); it != g_ButtonStates.end(); ++it )
+	{
+		const DeviceInput &di = it->first;
+		const ButtonState &bs = it->second;
+		if( !bs.m_bLastReportedHeld )
+			continue;
+		aInputOut.push_back( di );
+		aInputOut.back().ts = bs.m_LastInputTime;
+	}
 }
 
 void InputFilter::Update( float fDeltaTime )
@@ -279,16 +305,34 @@ void InputFilter::Update( float fDeltaTime )
 		g_ButtonStates.erase( *it );
 }
 
-bool InputFilter::IsBeingPressed( const DeviceInput &di )
+template<typename T, typename IT>
+const T *FindItemBinarySearch( IT begin, IT end, const T &i )
 {
-	LockMut(*queuemutex);
-	return GetButtonState( di ).m_bLastReportedHeld;
+	IT it = lower_bound( begin, end, i );
+	if( it == end || *it != i )
+		return NULL;
+
+	return &*it;
 }
 
-float InputFilter::GetSecsHeld( const DeviceInput &di )
+bool InputFilter::IsBeingPressed( const DeviceInput &di, const DeviceInputList *pButtonState )
 {
 	LockMut(*queuemutex);
-	return GetButtonState( di ).m_LastInputTime.Ago();
+	if( pButtonState == NULL )
+		pButtonState = &g_CurrentState;
+	const DeviceInput *pDI = FindItemBinarySearch( pButtonState->begin(), pButtonState->end(), di );
+	return pDI != NULL;
+}
+
+float InputFilter::GetSecsHeld( const DeviceInput &di, const DeviceInputList *pButtonState )
+{
+	LockMut(*queuemutex);
+	if( pButtonState == NULL )
+		pButtonState = &g_CurrentState;
+	const DeviceInput *pDI = FindItemBinarySearch( pButtonState->begin(), pButtonState->end(), di );
+	if( pDI == NULL )
+		return 0;
+	return pDI->ts.Ago();
 }
 
 RString InputFilter::GetButtonComment( const DeviceInput &di ) const

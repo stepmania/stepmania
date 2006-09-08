@@ -17,6 +17,7 @@ public:
 	MenuInput MenuI;
 	StyleInput StyleI;
 	MultiPlayer mp;
+	DeviceInputList InputList;
 };
 
 #endif
