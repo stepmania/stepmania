@@ -14,7 +14,7 @@ class InputQueue
 public:
 	InputQueue();
 
-	void RememberInput( GameInput );
+	void RememberInput( GameInput gi );
 	bool MatchesSequence( GameController c, const GameButton* button_sequence, int iNumButtons, float fMaxSecondsBack );
 	bool MatchesSequence( GameController c, const MenuButton* button_sequence, int iNumButtons, float fMaxSecondsBack );
 	bool AllWerePressedRecently( GameController c, const GameButton* buttons, int iNumButtons, float fMaxSecondsBack );
