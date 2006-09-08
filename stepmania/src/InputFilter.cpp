@@ -288,7 +288,7 @@ bool InputFilter::IsBeingPressed( const DeviceInput &di )
 float InputFilter::GetSecsHeld( const DeviceInput &di )
 {
 	LockMut(*queuemutex);
-	return GetButtonState( di ).m_fSecsHeld;
+	return GetButtonState( di ).m_LastInputTime.Ago();
 }
 
 RString InputFilter::GetButtonComment( const DeviceInput &di ) const
