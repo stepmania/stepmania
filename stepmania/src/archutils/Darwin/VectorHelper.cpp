@@ -544,6 +544,7 @@ void Vector::FastSoundRead( float *dest, const int32_t *src, unsigned size )
 #define X(x) (-(size >= (x)))
 		__m128i storeMask = _mm_set_epi8( 0, 0, 0, 0, X(3), X(3), X(3), X(3),
 						  X(2), X(2), X(2), X(2), -1, -1, -1, -1 );
+#undef X
 		__m128i data = _mm_sub_epi32( _mm_load_si128((__m128i *)src), l1 );
 		__m128 result = _mm_cvtepi32_ps( data );
 		
