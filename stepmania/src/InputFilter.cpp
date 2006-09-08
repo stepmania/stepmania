@@ -22,6 +22,11 @@ struct ButtonState
 
 	// The time that we actually reported the last event (used for debouncing).
 	RageTimer m_LastReportTime;
+
+	// The timestamp of the last reported change.  Unlike m_BeingHeldTime, this
+	// value is debounced along with the input state.  (This is the same as
+	// m_fSecsHeld, except this isn't affected by Update scaling.)
+	RageTimer m_LastInputTime;
 };
 
 namespace
@@ -173,6 +178,7 @@ void InputFilter::CheckButtonChange( ButtonState &bs, DeviceInput di, const Rage
 	bs.m_LastReportTime = now;
 	bs.m_bLastReportedHeld = bs.m_BeingHeld;
 	bs.m_fSecsHeld = 0;
+	bs.m_LastInputTime = bs.m_BeingHeldTime;
 
 	di.ts = bs.m_BeingHeldTime;
 	ReportButtonChange( di, bs.m_bLastReportedHeld? IET_FIRST_PRESS:IET_RELEASE );
@@ -263,7 +269,7 @@ void InputFilter::Update( float fDeltaTime )
 			/* Set the timestamp to the exact time of the repeat.  This way,
 			 * as long as tab/` aren't being used, the timestamp will always
 			 * increase steadily during repeats. */
-			di.ts = bs.m_BeingHeldTime + fRepeatTime;
+			di.ts = bs.m_LastInputTime + fRepeatTime;
 
 			ReportButtonChange( di, iet );
 		}
