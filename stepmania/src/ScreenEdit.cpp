@@ -2082,15 +2082,19 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 	{
 		return;
 	}
-		
+	
+	if( PREFSMAN->m_AutoPlay != PC_HUMAN )
+		return;
+	
 	switch( input.StyleI.player )
 	{
 	case PLAYER_1:	
-		if( PREFSMAN->m_AutoPlay == PC_HUMAN )
-			m_Player->Step( input.StyleI.col, -1, input.DeviceI.ts, false, input.type == IET_RELEASE ); 
+		m_Player->Step( input.StyleI.col, -1, input.DeviceI.ts, false, input.type == IET_RELEASE ); 
 		break;
+	case PLAYER_2:
+		if( GAMESTATE->GetCurrentStyle()->m_StyleType == TWO_PLAYERS_SHARED_SIDES )
+			m_Player->Step( input.StyleI.col, -1, input.DeviceI.ts, false, input.type == IET_RELEASE );
 	}
-
 }
 
 void ScreenEdit::TransitionEditState( EditState em )
