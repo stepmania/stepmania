@@ -3,6 +3,7 @@
 #include "DialogDriver_Cocoa.h"
 #include "RageThreads.h"
 #include "ProductInfo.h"
+#include "InputFilter.h"
 #include <Carbon/Carbon.h>
 
 static CFOptionFlags ShowAlert( CFOptionFlags flags, const RString& sMessage, CFStringRef OK,
@@ -13,6 +14,8 @@ static CFOptionFlags ShowAlert( CFOptionFlags flags, const RString& sMessage, CF
 	
 	CFUserNotificationDisplayAlert( 0.0, flags, NULL, NULL, NULL, CFSTR(PRODUCT_FAMILY),
 					text, OK, alt, other, &result );
+	// Flush all input that's accumulated while the dialog box was up.
+	INPUTFILTER->FlushInputEvents();
 	CFRelease( text );
 	return result;
 }
