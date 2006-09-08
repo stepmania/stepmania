@@ -1381,7 +1381,7 @@ void HandleInputEvents(float fDeltaTime)
 	for( unsigned i=0; i<ieArray.size(); i++ )
 	{
 		InputEventPlus input;
-		input.DeviceI = (DeviceInput)ieArray[i];
+		input.DeviceI = ieArray[i].di;
 		input.type = ieArray[i].type;
 
 		// hack for testing with only one joytick

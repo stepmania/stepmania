@@ -26,12 +26,11 @@ enum InputEventType
 	IET_LEVEL_CHANGED
 };
 
-struct InputEvent : public DeviceInput
+struct InputEvent
 {
 	InputEvent() { type=IET_FIRST_PRESS; };
-	InputEvent( InputDevice d, DeviceButton b, InputEventType t ): DeviceInput(d, b) { type=t; };
-	InputEvent( DeviceInput di, InputEventType t ): DeviceInput(di) { type=t; };
 
+	DeviceInput di;
 	InputEventType type;
 };
 
@@ -62,6 +61,7 @@ public:
 
 private:
 	void CheckButtonChange( ButtonState &bs, DeviceInput di, const RageTimer &now );
+	void ReportButtonChange( const DeviceInput &di, InputEventType t );
 
 	vector<InputEvent> queue;
 	RageMutex *queuemutex;
