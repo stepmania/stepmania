@@ -48,7 +48,7 @@ public:
 	InputFilter();
 	~InputFilter();
 	void Reset();
-	void Update(float fDeltaTime);
+	void Update( float fDeltaTime );
 
 	void SetRepeatRate( float fSlowDelay, float fFastDelay, float fRepeatRate );
 	void ResetRepeatRate();
