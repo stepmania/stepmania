@@ -332,7 +332,7 @@ void InputFilter::GetInputEvents( vector<InputEvent> &array )
 	array.swap( queue );
 }
 
-void InputFilter::GetPressedButtons( vector<DeviceInput> &array )
+void InputFilter::GetPressedButtons( vector<DeviceInput> &array ) const
 {
 	LockMut(*queuemutex);
 	array = g_CurrentState;

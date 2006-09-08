@@ -54,7 +54,7 @@ public:
 	RString GetButtonComment( const DeviceInput &di ) const;
 	
 	void GetInputEvents( vector<InputEvent> &aEventOut );
-	void GetPressedButtons( vector<DeviceInput> &array );
+	void GetPressedButtons( vector<DeviceInput> &array ) const;
 
 private:
 	void CheckButtonChange( ButtonState &bs, DeviceInput di, const RageTimer &now );
