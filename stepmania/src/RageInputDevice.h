@@ -339,6 +339,8 @@ public:
 	bool IsJoystick() const { return ::IsJoystick(device); }
 };
 
+typedef vector<DeviceInput> DeviceInputList;
+
 #endif
 /*
  * Copyright (c) 2001-2002 Chris Danford
