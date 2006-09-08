@@ -3,12 +3,7 @@
 #ifndef SCREEN_MANAGER_H
 #define SCREEN_MANAGER_H
 
-#include "RageInputDevice.h"
 #include "ScreenMessage.h"
-#include "InputFilter.h"
-#include "GameInput.h"
-#include "MenuInput.h"
-#include "StyleInput.h"
 #include "RageSound.h"
 
 class Actor;
