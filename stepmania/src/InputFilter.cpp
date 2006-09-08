@@ -15,7 +15,6 @@ struct ButtonState
 	bool m_bLastReportedHeld; // last state reported by Update()
 	RString m_sComment;
 	float m_fSecsHeld;
-	float m_Level, m_LastLevel;
 
 	// Timestamp of m_BeingHeld changing.
 	RageTimer m_BeingHeldTime;
@@ -117,7 +116,7 @@ ButtonState::ButtonState():
 {
 	m_BeingHeld = false;
 	m_bLastReportedHeld = false;
-	m_fSecsHeld = m_Level = m_LastLevel = 0;
+	m_fSecsHeld = 0;
 }
 
 void InputFilter::ButtonPressed( const DeviceInput &di, bool Down )
@@ -131,8 +130,6 @@ void InputFilter::ButtonPressed( const DeviceInput &di, bool Down )
 	ASSERT_M( di.button < NUM_DeviceButton, ssprintf("%i", di.button) );
 
 	ButtonState &bs = GetButtonState( di );
-
-	bs.m_Level = di.level;
 
 	if( bs.m_BeingHeld != Down )
 	{
@@ -226,17 +223,9 @@ void InputFilter::Update( float fDeltaTime )
 		di.device = b->first.device;
 		di.button = b->first.button;
 		ButtonState &bs = b->second;
-		di.level = bs.m_Level;
 
 		/* Generate IET_FIRST_PRESS and IET_RELEASE events that were delayed. */
 		CheckButtonChange( bs, di, now );
-
-		/* Generate IET_LEVEL_CHANGED events. */
-		if( bs.m_LastLevel != bs.m_Level && bs.m_Level != -1 )
-		{
-			ReportButtonChange( di, IET_LEVEL_CHANGED );
-			bs.m_LastLevel = bs.m_Level;
-		}
 
 		/* Generate IET_FAST_REPEAT and IET_SLOW_REPEAT events. */
 		if( !bs.m_bLastReportedHeld )
