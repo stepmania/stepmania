@@ -765,6 +765,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ScreenSelectLanguage.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ScreenSelectLanguage.h"
+				>
+			</File>
+			<File
 				RelativePath="ScreenSelectMaster.cpp"
 				>
 			</File>
