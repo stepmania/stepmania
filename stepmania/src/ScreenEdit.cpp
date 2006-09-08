@@ -235,7 +235,7 @@ void ScreenEdit::InitEditMappings()
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_LAY_MINE_OR_ROLL][0]   = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
 	// m_EditMappingsDeviceInput.button[EDIT_BUTTON_LAY_TAP_ATTACK][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
 	m_EditMappingsDeviceInput.button[EDIT_BUTTON_LAY_LIFT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
-	m_EditMappingsDeviceInput.button[EDIT_BUTTON_LAY_LIFT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	m_EditMappingsDeviceInput.button[EDIT_BUTTON_LAY_LIFT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
 
 	m_EditMappingsDeviceInput.button    [EDIT_BUTTON_SCROLL_SPEED_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_UP);
 	m_EditMappingsDeviceInput.hold[EDIT_BUTTON_SCROLL_SPEED_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
