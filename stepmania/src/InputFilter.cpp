@@ -89,13 +89,8 @@ InputFilter::~InputFilter()
 
 void InputFilter::Reset()
 {
-	LockMut(*queuemutex);
-	RageTimer now;
-	DeviceInputList vDeviceInputs;
-	
-	GetPressedButtons( vDeviceInputs );
-	FOREACH_CONST( DeviceInput, vDeviceInputs, di )
-		ButtonPressed( DeviceInput(di->device, di->button, -1, now), false );
+	for( int i=0; i<NUM_INPUT_DEVICES; i++ )
+		ResetDevice( InputDevice(i) );
 }
 
 void InputFilter::SetRepeatRate( float fSlowDelay, float fFastDelay, float fRepeatRate )
@@ -150,6 +145,22 @@ void InputFilter::SetButtonComment( const DeviceInput &di, const RString &sComme
 	LockMut(*queuemutex);
 	ButtonState &bs = GetButtonState( di );
 	bs.m_sComment = sComment;
+}
+
+/* Release all buttons on the given device. */
+void InputFilter::ResetDevice( InputDevice device )
+{
+	LockMut(*queuemutex);
+	RageTimer now;
+
+	vector<DeviceInput> DeviceInputs;
+	GetPressedButtons( DeviceInputs );
+
+	FOREACH( DeviceInput, DeviceInputs, di )
+	{
+		if( di->device == device )
+			ButtonPressed( DeviceInput(device, di->button, -1, now), false );
+	}
 }
 
 /* Check for reportable presses. */
