@@ -3205,9 +3205,9 @@
 			isa = PBXGroup;
 			children = (
 				AA6E01630477136A005F316C /* LowLevelWindow.h */,
-				AA80C72307F2076E00C99272 /* Selector_LowLevelWindow.h */,
 				AAEF7D21090DD45900A1CAFC /* LowLevelWindow_Cocoa.h */,
 				AAEF7D22090DD45900A1CAFC /* LowLevelWindow_Cocoa.mm */,
+				AA80C72307F2076E00C99272 /* Selector_LowLevelWindow.h */,
 			);
 			path = LowLevelWindow;
 			sourceTree = "<group>";
