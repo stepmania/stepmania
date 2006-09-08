@@ -8,26 +8,20 @@
 #include "MenuInput.h"
 
 const unsigned MAX_INPUT_QUEUE_LENGTH = 16;
+class InputEventPlus;
 
 class InputQueue
 {
 public:
 	InputQueue();
 
-	void RememberInput( GameInput gi );
+	void RememberInput( const InputEventPlus &gi );
 	bool MatchesSequence( GameController c, const GameButton* button_sequence, int iNumButtons, float fMaxSecondsBack );
 	bool MatchesSequence( GameController c, const MenuButton* button_sequence, int iNumButtons, float fMaxSecondsBack );
 	bool AllWerePressedRecently( GameController c, const GameButton* buttons, int iNumButtons, float fMaxSecondsBack );
 
 protected:
-	struct GameButtonAndTime
-	{
-		GameButtonAndTime() {}
-		GameButtonAndTime( GameButton b, float t ) { button = b; fTime = t; };
-		GameButton	button;
-		float		fTime;
-	};
-	vector<GameButtonAndTime> m_aQueue[MAX_GAME_CONTROLLERS];
+	vector<InputEventPlus> m_aQueue[MAX_GAME_CONTROLLERS];
 };
 
 

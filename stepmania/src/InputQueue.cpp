@@ -4,6 +4,7 @@
 #include "RageException.h"
 #include "RageTimer.h"
 #include "InputMapper.h"
+#include "InputEventPlus.h"
 
 
 InputQueue*	INPUTQUEUE = NULL;	// global and accessable from anywhere in our program
@@ -12,15 +13,15 @@ InputQueue*	INPUTQUEUE = NULL;	// global and accessable from anywhere in our pro
 InputQueue::InputQueue()
 {
 	FOREACH_GameController ( gc )
-		m_aQueue[gc].insert(m_aQueue[gc].begin(), MAX_INPUT_QUEUE_LENGTH, GameButtonAndTime() );
+		m_aQueue[gc].resize( MAX_INPUT_QUEUE_LENGTH );
 }
 
-void InputQueue::RememberInput( const GameInput GameI )
+void InputQueue::RememberInput( const InputEventPlus &iep )
 {
-	int c = GameI.controller;
+	int c = iep.GameI.controller;
 	if( m_aQueue[c].size() >= MAX_INPUT_QUEUE_LENGTH )	// full
 		m_aQueue[c].erase( m_aQueue[c].begin(), m_aQueue[c].begin() + (m_aQueue[c].size()-MAX_INPUT_QUEUE_LENGTH+1) );
-	m_aQueue[c].push_back( GameButtonAndTime(GameI.button,RageTimer::GetTimeSinceStart()) );
+	m_aQueue[c].push_back( iep );
 }
 
 bool InputQueue::MatchesSequence( GameController c, const MenuButton* button_sequence, const int iNumButtons, float fMaxSecondsBack )
@@ -36,12 +37,9 @@ bool InputQueue::MatchesSequence( GameController c, const MenuButton* button_seq
 	int sequence_index = iNumButtons-1;	// count down
 	for( int queue_index=m_aQueue[c].size()-1; queue_index>=0; queue_index-- )	// iterate newest to oldest
 	{
-		GameButtonAndTime BandT = m_aQueue[c][queue_index];
-		GameInput GameI( c, BandT.button );
-		MenuInput MenuI;
-		INPUTMAPPER->GameToMenu( GameI, MenuI );
-		if( MenuI.button != button_sequence[sequence_index]  ||
-			BandT.fTime < fOldestTimeAllowed )
+		const InputEventPlus &iep = m_aQueue[c][queue_index];
+		if( iep.MenuI.button != button_sequence[sequence_index]  ||
+			iep.DeviceI.ts.Ago() > fOldestTimeAllowed )
 		{
 			return false;
 		}
@@ -68,9 +66,9 @@ bool InputQueue::MatchesSequence( GameController c, const GameButton* button_seq
 	int sequence_index = iNumButtons-1;	// count down
 	for( int queue_index=m_aQueue[c].size()-1; queue_index>=0; queue_index-- )	// iterate newest to oldest
 	{
-		GameButtonAndTime BandT = m_aQueue[c][queue_index];
-		if( BandT.button != button_sequence[sequence_index]  ||
-			BandT.fTime < fOldestTimeAllowed )
+		const InputEventPlus &iep = m_aQueue[c][queue_index];
+		if( iep.GameI.button != button_sequence[sequence_index]  ||
+			iep.DeviceI.ts.Ago() > fOldestTimeAllowed )
 		{
 			return false;
 		}
@@ -94,11 +92,11 @@ bool InputQueue::AllWerePressedRecently( GameController c, const GameButton* but
 
 		for( int queue_index=m_aQueue[c].size()-1; queue_index>=0; queue_index-- )	// iterate newest to oldest
 		{
-			GameButtonAndTime BandT = m_aQueue[c][queue_index];
-			if( BandT.fTime < fOldestTimeAllowed )	// buttons are too old.  Stop searching because we're not going to find a match
+			const InputEventPlus &iep = m_aQueue[c][queue_index];
+			if( iep.DeviceI.ts.Ago() > fOldestTimeAllowed )	// buttons are too old.  Stop searching because we're not going to find a match
 				return false;
 
-			if( BandT.button == button )
+			if( iep.GameI.button == button )
 				goto found_button;
 		}
 		return false;	// didn't find the button
