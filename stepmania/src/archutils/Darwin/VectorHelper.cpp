@@ -408,8 +408,8 @@ bool Vector::CheckForVector()
 	return true;
 }
 
-template<typename load>
-static inline void Write( int32_t *&dest, const int16_t *&src,
+template<typename T>
+static inline void Write( T load, int32_t *&dest, const int16_t *&src,
 			  unsigned &size, __m128i vol ) __attribute__((always_inline));
 template<typename T>
 inline void Write( T load, int32_t *&dest, const int16_t *&src, unsigned &size, __m128i vol )
