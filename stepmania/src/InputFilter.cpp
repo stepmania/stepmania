@@ -175,7 +175,15 @@ void InputFilter::CheckButtonChange( ButtonState &bs, DeviceInput di, const Rage
 	bs.m_fSecsHeld = 0;
 
 	di.ts = bs.m_BeingHeldTime;
-	queue.push_back( InputEvent(di,bs.m_bLastReportedHeld? IET_FIRST_PRESS:IET_RELEASE) );
+	ReportButtonChange( di, bs.m_bLastReportedHeld? IET_FIRST_PRESS:IET_RELEASE );
+}
+
+void InputFilter::ReportButtonChange( const DeviceInput &di, InputEventType t )
+{
+	queue.push_back( InputEvent() );
+	InputEvent &ie = queue.back();
+	ie.type = t;
+	ie.di = di;
 }
 
 void InputFilter::Update( float fDeltaTime )
@@ -205,7 +213,7 @@ void InputFilter::Update( float fDeltaTime )
 		/* Generate IET_LEVEL_CHANGED events. */
 		if( bs.m_LastLevel != bs.m_Level && bs.m_Level != -1 )
 		{
-			queue.push_back( InputEvent(di,IET_LEVEL_CHANGED) );
+			ReportButtonChange( di, IET_LEVEL_CHANGED );
 			bs.m_LastLevel = bs.m_Level;
 		}
 
@@ -257,7 +265,7 @@ void InputFilter::Update( float fDeltaTime )
 			 * increase steadily during repeats. */
 			di.ts = bs.m_BeingHeldTime + fRepeatTime;
 
-			queue.push_back( InputEvent(di,iet) );
+			ReportButtonChange( di, iet );
 		}
 	}
 
