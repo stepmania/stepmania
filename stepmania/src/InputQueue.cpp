@@ -82,6 +82,26 @@ bool InputQueue::MatchesSequence( GameController c, const GameButton* button_seq
 	return false;
 }
 
+bool InputQueue::WasPressedRecently( GameController c, const GameButton button, const RageTimer &OldestTimeAllowed, InputEventPlus *pIEP )
+{
+	for( int queue_index=m_aQueue[c].size()-1; queue_index>=0; queue_index-- )	// iterate newest to oldest
+	{
+		const InputEventPlus &iep = m_aQueue[c][queue_index];
+		if( iep.DeviceI.ts < OldestTimeAllowed )	// buttons are too old.  Stop searching because we're not going to find a match
+			return false;
+
+		if( iep.GameI.button != button )
+			continue;
+
+		if( pIEP != NULL )
+			*pIEP = iep;
+
+		return true;
+	}
+
+	return false;	// didn't find the button
+}
+
 bool InputQueue::AllWerePressedRecently( GameController c, const GameButton* buttons, int iNumButtons, float fMaxSecondsBack )
 {
 	RageTimer OldestTimeAllowed;
@@ -89,20 +109,8 @@ bool InputQueue::AllWerePressedRecently( GameController c, const GameButton* but
 
 	for( int b=0; b<iNumButtons; b++ )
 	{
-		GameButton button = buttons[b];
-
-		for( int queue_index=m_aQueue[c].size()-1; queue_index>=0; queue_index-- )	// iterate newest to oldest
-		{
-			const InputEventPlus &iep = m_aQueue[c][queue_index];
-			if( iep.DeviceI.ts < OldestTimeAllowed )	// buttons are too old.  Stop searching because we're not going to find a match
-				return false;
-
-			if( iep.GameI.button == button )
-				goto found_button;
-		}
-		return false;	// didn't find the button
-found_button:
-		;	// hush VC6
+		if( !WasPressedRecently(c, buttons[b], OldestTimeAllowed) )
+			return false;	// didn't find the button
 	}
 
 	m_aQueue[c].clear();	// empty the queue so we don't match on it again

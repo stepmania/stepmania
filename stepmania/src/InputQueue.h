@@ -9,6 +9,7 @@
 
 const unsigned MAX_INPUT_QUEUE_LENGTH = 16;
 class InputEventPlus;
+class RageTimer;
 
 class InputQueue
 {
@@ -18,6 +19,7 @@ public:
 	void RememberInput( const InputEventPlus &gi );
 	bool MatchesSequence( GameController c, const GameButton* button_sequence, int iNumButtons, float fMaxSecondsBack );
 	bool MatchesSequence( GameController c, const MenuButton* button_sequence, int iNumButtons, float fMaxSecondsBack );
+	bool WasPressedRecently( GameController c, const GameButton button, const RageTimer &OldestTimeAllowed, InputEventPlus *pIEP = NULL );
 	bool AllWerePressedRecently( GameController c, const GameButton* buttons, int iNumButtons, float fMaxSecondsBack );
 
 protected:
