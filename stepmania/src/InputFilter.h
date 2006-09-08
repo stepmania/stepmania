@@ -44,7 +44,6 @@ class InputFilter
 public:
 	void ButtonPressed( const DeviceInput &di, bool Down );
 	void SetButtonComment( const DeviceInput &di, const RString &sComment = "" );
-	void ResetDevice( InputDevice dev );
 
 	InputFilter();
 	~InputFilter();
