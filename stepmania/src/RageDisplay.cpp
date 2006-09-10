@@ -250,7 +250,6 @@ void RageDisplay::SetDefaultRenderStates()
 	SetTextureFiltering( true );
 	SetZBias( 0 );
 	LoadMenuPerspective( 0, 640, 480, 320, 240 ); // 0 FOV = ortho
-	ChangeCentering(0,0,0,0);
 }
 
 
