@@ -7,7 +7,8 @@
 #include <vector>
 using namespace std;
 
-/* Coordinate 0x0 represents the exact top-left corner of a bitmap.  .5x.5
+/*
+ * Coordinate 0x0 represents the exact top-left corner of a bitmap.  .5x.5
  * represents the center of the top-left pixel; 1x1 is the center of the top
  * square of pixels.  
  *
@@ -167,7 +168,7 @@ void RageSurfaceUtils::Zoom( RageSurface *&src, int dstwidth, int dstheight )
 					src->format->Rmask, src->format->Gmask,
 					src->format->Bmask, src->format->Amask);
 
-	    ZoomSurface( src, dst );
+		ZoomSurface( src, dst );
 
 		delete src;
 
