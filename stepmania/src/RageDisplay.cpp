@@ -668,7 +668,7 @@ void RageDisplay::CenteringPopMatrix()
 
 void RageDisplay::ChangeCentering( int iTranslateX, int iTranslateY, int iAddWidth, int iAddHeight )
 {
-	g_CenteringStack.back() = Centering( Centering( iTranslateX, iTranslateY, iAddWidth, iAddHeight ) );
+	g_CenteringStack.back() = Centering( iTranslateX, iTranslateY, iAddWidth, iAddHeight );
 
 	UpdateCentering();
 }
