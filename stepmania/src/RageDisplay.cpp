@@ -407,6 +407,16 @@ static MatrixStack g_ViewStack;
 static MatrixStack g_WorldStack;
 static MatrixStack g_TextureStack;
 
+
+RageDisplay::RageDisplay()
+{
+	RageMatrixIdentity( &g_CenteringMatrix );
+	g_ProjectionStack = MatrixStack();
+	g_ViewStack = MatrixStack();
+	g_WorldStack = MatrixStack();
+	g_TextureStack = MatrixStack();
+}
+
 const RageMatrix* RageDisplay::GetCentering() const
 {
 	return &g_CenteringMatrix;

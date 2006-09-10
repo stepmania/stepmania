@@ -152,7 +152,7 @@ public:
 
 	virtual const PixelFormatDesc *GetPixelFormatDesc( PixelFormat pf ) const = 0;
 
-	/* This is needed or the overridden classes' dtors will not be called. */
+	RageDisplay();
 	virtual ~RageDisplay() { }
 
 	virtual RString Init( const VideoModeParams &p, bool bAllowUnacceleratedRenderer ) = 0;
