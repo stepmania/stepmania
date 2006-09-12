@@ -2162,7 +2162,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 		//
 		if( input.type==IET_FIRST_PRESS && 
 			input.StyleI.IsValid() &&
-			GAMESTATE->IsHumanPlayer( input.StyleI.player ) )
+			GAMESTATE->IsHumanPlayer( input.MenuI.player ) )
 		{
 			AbortGiveUp( true );
 			

@@ -1920,7 +1920,7 @@ void ScreenEdit::InputRecord( const InputEventPlus &input, EditButton EditB )
 		return;
 	}	
 
-	if( input.StyleI.player != PLAYER_1 )
+	if( input.MenuI.player != PLAYER_1 )
 		return;		// ignore
 
 	const int iCol = input.StyleI.col;
@@ -2082,7 +2082,7 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 	if( PREFSMAN->m_AutoPlay != PC_HUMAN )
 		return;
 	
-	switch( input.StyleI.player )
+	switch( input.MenuI.player )
 	{
 	case PLAYER_1:	
 		m_Player->Step( input.StyleI.col, -1, input.DeviceI.ts, false, input.type == IET_RELEASE ); 

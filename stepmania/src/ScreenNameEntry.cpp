@@ -346,16 +346,16 @@ void ScreenNameEntry::Input( const InputEventPlus &input )
 	if( input.type != IET_FIRST_PRESS )
 		return;		// ignore
 
-	if( input.StyleI.IsValid() && m_bStillEnteringName[input.StyleI.player])
+	if( input.StyleI.IsValid() && m_bStillEnteringName[input.MenuI.player])
 	{
-		int iStringIndex = m_ColToStringIndex[input.StyleI.player][input.StyleI.col];
+		int iStringIndex = m_ColToStringIndex[input.MenuI.player][input.StyleI.col];
 		if( iStringIndex != -1 )
 		{
-			m_ReceptorArrowRow[input.StyleI.player].Step( input.StyleI.col, TNS_W1 );
+			m_ReceptorArrowRow[input.MenuI.player].Step( input.StyleI.col, TNS_W1 );
 			m_soundStep.Play();
 			char c = NAME_CHARS[GetClosestCharIndex(m_fFakeBeat)];
-			m_textSelectedChars[input.StyleI.player][input.StyleI.col].SetText( ssprintf("%c",c) );
-			m_sSelectedName[input.StyleI.player][iStringIndex] = c;
+			m_textSelectedChars[input.MenuI.player][input.StyleI.col].SetText( ssprintf("%c",c) );
+			m_sSelectedName[input.MenuI.player][iStringIndex] = c;
 		}
 	}
 
