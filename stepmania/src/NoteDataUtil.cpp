@@ -241,11 +241,11 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, const RString &sSMNo
 	const char *p = sSMNoteData_.data();
 	
 	sSMNoteData.reserve( origSize );
-	while( (iIndexCommentStart = sSMNoteData.find("//", iIndexCommentEnd)) != RString::npos )
+	while( (iIndexCommentStart = sSMNoteData_.find("//", iIndexCommentEnd)) != RString::npos )
 	{
 		sSMNoteData.append( p, iIndexCommentStart - iIndexCommentEnd );
 		p += iIndexCommentStart - iIndexCommentEnd;
-		iIndexCommentEnd = sSMNoteData.find( "\n", iIndexCommentStart );
+		iIndexCommentEnd = sSMNoteData_.find( "\n", iIndexCommentStart );
 		iIndexCommentEnd = (iIndexCommentEnd == RString::npos ? origSize : iIndexCommentEnd+1);
 		p += iIndexCommentEnd - iIndexCommentStart;
 	}
