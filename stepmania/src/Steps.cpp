@@ -379,7 +379,7 @@ bool Steps::MakeValidEditDescription( RString &sPreferredDescription )
 	return false;
 }
 
-void Steps::SetMeter(int meter)
+void Steps::SetMeter( int meter )
 {
 	DeAutogen();
 	m_iMeter = meter;
