@@ -285,10 +285,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		return;		// don't care
 
 
-	/* XXX: What's the difference between this and StyleI.player? */
-	/* StyleI won't be valid if it's a menu button that's pressed.  
-	 * There's got to be a better way of doing this.  -Chris */
-	PlayerNumber pn = GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber( input.GameI.controller );
+	PlayerNumber pn = input.MenuI.player;
 	if( !GAMESTATE->IsHumanPlayer(pn) )
 		return;
 
