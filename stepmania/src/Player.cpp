@@ -705,9 +705,6 @@ void Player::Update( float fDeltaTime )
 		}
 	}
 	
-	// TODO: Remove use of PlayerNumber.
-	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-	
 	{
 		// Why was this originally "BeatToNoteRowNotRounded"?  It should be rounded.  -Chris
 		/* We want to send the crossed row message exactly when we cross the row--not
@@ -717,7 +714,7 @@ void Player::Update( float fDeltaTime )
 		if( iRowNow >= 0 )
 		{
 			// for each index we crossed since the last update
-			if( GAMESTATE->IsPlayerEnabled(pn) )
+			if( GAMESTATE->IsPlayerEnabled(m_pPlayerState) )
 				FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_NoteData, r, m_iRowLastCrossed, iRowNow+1 )
 					CrossedRow( r, now );
 			m_iRowLastCrossed = iRowNow+1;
@@ -733,7 +730,7 @@ void Player::Update( float fDeltaTime )
 		if( iRowNow >= 0 )
 		{
 			// for each index we crossed since the last update
-			if( GAMESTATE->IsPlayerEnabled(pn) )
+			if( GAMESTATE->IsPlayerEnabled(m_pPlayerState) )
 				FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_NoteData, r, m_iMineRowLastCrossed, iRowNow+1 )
 					CrossedMineRow( r, now );
 			m_iMineRowLastCrossed = iRowNow+1;
