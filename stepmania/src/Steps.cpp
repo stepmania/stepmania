@@ -218,7 +218,7 @@ void Steps::Decompress() const
 
 		m_bNoteDataIsFilled = true;
 
-		int iNewTracks = GameManager::StepsTypeToNumTracks(m_StepsType);
+		int iNewTracks = GameManager::StepsTypeToNumTracks( m_StepsType );
 
 		if( this->m_StepsType == STEPS_TYPE_LIGHTS_CABINET )
 		{
