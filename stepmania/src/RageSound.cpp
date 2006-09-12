@@ -703,7 +703,7 @@ int64_t RageSound::GetPositionSecondsInternal( bool *bApproximate ) const
 	 * so guess what we think the real time is. */
 	if( m_PositionMapping.IsEmpty() )
 	{
-		LOG->Trace( "no data yet; %i", m_iStoppedPosition );
+		// LOG->Trace( "no data yet; %i", m_iStoppedPosition );
 		if( bApproximate )
 			*bApproximate = true;
 		return m_iStoppedPosition;
