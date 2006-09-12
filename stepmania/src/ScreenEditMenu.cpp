@@ -211,6 +211,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		}
 
 		file.Close();
+		FILEMAN->FlushDirCache( sDir );
 		FILEMAN->Remove( sTempFile );
 		break;
 	}
@@ -268,7 +269,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			SCREENMAN->PlayStartSound();
 
 			GAMESTATE->m_pCurSong.Set( pSong );
-			GAMESTATE->m_pCurSteps[0].Set( pSteps );
+			GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );
 			GAMESTATE->m_pCurCourse.Set( NULL );
 		}
 		break;
