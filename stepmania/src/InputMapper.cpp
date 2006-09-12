@@ -896,13 +896,6 @@ void InputMapper::ResetKeyRepeat( const MenuInput &MenuI )
 			ResetKeyRepeat( GameI[i] );
 }
 
-void InputMapper::ResetKeyRepeat( const StyleInput &StyleI )
-{
-	GameInput GameI;
-	StyleToGame( StyleI, GameI );
-	ResetKeyRepeat( GameI );
-}
-
 InputDevice InputMapper::MultiPlayerToInputDevice( MultiPlayer mp )
 {
 	if( mp == MultiPlayer_INVALID )
