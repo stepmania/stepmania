@@ -11,6 +11,7 @@
 class InputEventPlus
 {
 public:
+	InputEventPlus() { StyleI = StyleInput_INVALID; mp = MultiPlayer_INVALID; }
 	DeviceInput DeviceI;
 	InputEventType type;
 	GameInput GameI;
