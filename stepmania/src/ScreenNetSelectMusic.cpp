@@ -357,7 +357,7 @@ void ScreenNetSelectMusic::MenuDown( const InputEventPlus &input )
 	  their difficulty. */
 	/* Why?  Nothing else allows that. */
 
-	PlayerNumber pn = input.MenuI.player;
+	PlayerNumber pn = input.pn;
 	if ( GAMESTATE->IsPlayerEnabled( PLAYER_2 ) && 
 		!GAMESTATE->IsPlayerEnabled( PLAYER_1 ) )
 		pn = PLAYER_2;

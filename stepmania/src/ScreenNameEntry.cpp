@@ -346,16 +346,16 @@ void ScreenNameEntry::Input( const InputEventPlus &input )
 		return;		// ignore
 
 	const int iCol = GAMESTATE->m_pCurStyle->GameInputToColumn( input.GameI );
-	if( iCol != Column_INVALID && m_bStillEnteringName[input.MenuI.player])
+	if( iCol != Column_INVALID && m_bStillEnteringName[input.pn] )
 	{
-		int iStringIndex = m_ColToStringIndex[input.MenuI.player][iCol];
+		int iStringIndex = m_ColToStringIndex[input.pn][iCol];
 		if( iStringIndex != -1 )
 		{
-			m_ReceptorArrowRow[input.MenuI.player].Step( iCol, TNS_W1 );
+			m_ReceptorArrowRow[input.pn].Step( iCol, TNS_W1 );
 			m_soundStep.Play();
 			char c = NAME_CHARS[GetClosestCharIndex(m_fFakeBeat)];
-			m_textSelectedChars[input.MenuI.player][iCol].SetText( ssprintf("%c",c) );
-			m_sSelectedName[input.MenuI.player][iStringIndex] = c;
+			m_textSelectedChars[input.pn][iCol].SetText( ssprintf("%c",c) );
+			m_sSelectedName[input.pn][iStringIndex] = c;
 		}
 	}
 

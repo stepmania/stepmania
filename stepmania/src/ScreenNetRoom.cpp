@@ -250,7 +250,7 @@ void ScreenNetRoom::MenuLeft( const InputEventPlus &input )
 	if( input.type == IET_FIRST_PRESS )
 		m_RoomWheel.Move(-1);
 
-	ScreenNetSelectBase::MenuLeft( input.MenuI.player );
+	ScreenNetSelectBase::MenuLeft( input.pn );
 }
 
 void ScreenNetRoom::MenuRight( const InputEventPlus &input )
@@ -258,7 +258,7 @@ void ScreenNetRoom::MenuRight( const InputEventPlus &input )
 	if( input.type == IET_FIRST_PRESS )
 		m_RoomWheel.Move(1);
 
-	ScreenNetSelectBase::MenuRight( input.MenuI.player );
+	ScreenNetSelectBase::MenuRight( input.pn );
 }
 
 void ScreenNetRoom::UpdateRoomsList()

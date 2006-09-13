@@ -492,7 +492,7 @@ void ScreenOptions::Input( const InputEventPlus &input )
 	if( m_Cancel.IsTransitioning() || m_Out.IsTransitioning() || m_fLockInputSecs > 0 )
 		return;
 
-	if( !GAMESTATE->IsHumanPlayer(input.MenuI.player) )
+	if( !GAMESTATE->IsHumanPlayer(input.pn) )
 		return;
 
 	if( input.type == IET_RELEASE )
@@ -503,9 +503,9 @@ void ScreenOptions::Input( const InputEventPlus &input )
 		case MENU_BUTTON_SELECT:
 		case MENU_BUTTON_RIGHT:
 		case MENU_BUTTON_LEFT:
-			INPUTMAPPER->ResetKeyRepeat( MenuInput(input.MenuI.player, MENU_BUTTON_START) );
-			INPUTMAPPER->ResetKeyRepeat( MenuInput(input.MenuI.player, MENU_BUTTON_RIGHT) );
-			INPUTMAPPER->ResetKeyRepeat( MenuInput(input.MenuI.player, MENU_BUTTON_LEFT) );
+			INPUTMAPPER->ResetKeyRepeat( MenuInput(input.pn, MENU_BUTTON_START) );
+			INPUTMAPPER->ResetKeyRepeat( MenuInput(input.pn, MENU_BUTTON_RIGHT) );
+			INPUTMAPPER->ResetKeyRepeat( MenuInput(input.pn, MENU_BUTTON_LEFT) );
 		}
 	}
 
@@ -772,7 +772,7 @@ bool ScreenOptions::AllAreOnLastRow() const
 
 void ScreenOptions::MenuStart( const InputEventPlus &input )
 {
-	PlayerNumber pn = input.MenuI.player;
+	PlayerNumber pn = input.pn;
 	switch( input.type )
 	{
 	case IET_FIRST_PRESS:
@@ -810,7 +810,7 @@ void ScreenOptions::MenuStart( const InputEventPlus &input )
 
 void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
 {
-	PlayerNumber pn = input.MenuI.player;
+	PlayerNumber pn = input.pn;
 	int iCurRow = m_iCurrentRow[pn];
 	OptionRow &row = *m_pRows[iCurRow];
 
@@ -818,11 +818,11 @@ void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
 	{
 		/* In NAV_THREE_KEY_MENU mode, if a row doesn't set a screen, it does
 		 * something.  Apply it now, and don't go to the next screen. */
-		RString sScreen = GetNextScreenForSelection( input.MenuI.player );
+		RString sScreen = GetNextScreenForSelection( input.pn );
 		if( sScreen.empty() )
 		{
 			vector<PlayerNumber> vpns;
-			vpns.push_back( input.MenuI.player );
+			vpns.push_back( input.pn );
 			ExportOptions( iCurRow, vpns );
 			return;
 		}
@@ -1215,7 +1215,7 @@ void ScreenOptions::MenuSelect( const InputEventPlus &input )
 void ScreenOptions::MenuUpDown( const InputEventPlus &input, int iDir )
 {
 	ASSERT( iDir == -1 || iDir == +1 );
-	PlayerNumber pn = input.MenuI.player;
+	PlayerNumber pn = input.pn;
 
 	if( input.type == IET_REPEAT )
 	{
