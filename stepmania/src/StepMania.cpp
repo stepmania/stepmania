@@ -1433,10 +1433,7 @@ void HandleInputEvents(float fDeltaTime)
 		}
 
 		if( input.GameI.IsValid() )
-		{
 			INPUTMAPPER->GameToMenu( input.GameI, input.MenuI );
-			input.StyleI = INPUTMAPPER->GameToStyle( input.GameI );
-		}
 
 		if( HandleGlobalInputs(input) )
 			continue;	// skip

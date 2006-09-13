@@ -6,17 +6,15 @@
 #include "InputFilter.h"
 #include "GameInput.h"
 #include "MenuInput.h"
-#include "StyleInput.h"
 
 class InputEventPlus
 {
 public:
-	InputEventPlus() { StyleI = StyleInput_INVALID; mp = MultiPlayer_INVALID; }
+	InputEventPlus() { mp = MultiPlayer_INVALID; }
 	DeviceInput DeviceI;
 	InputEventType type;
 	GameInput GameI;
 	MenuInput MenuI;
-	StyleInput StyleI;
 	MultiPlayer mp;
 	DeviceInputList InputList;
 };
