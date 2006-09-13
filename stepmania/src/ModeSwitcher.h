@@ -1,32 +1,26 @@
 /* ModeSwitcher - A ModeSwitcher for ScreenSelectMode. */
 
-#ifndef MODESWITCHER_H
-#define MODESWITCHER_H
+#ifndef MODE_SWITCHER_H
+#define MODE_SWITCHER_H
 
 #include "ActorFrame.h"
-#include "Banner.h"
 #include "Sprite.h"
-#include "ScrollingList.h"
-#include "SongManager.h"
 #include "BitmapText.h"
-#include "SongManager.h"
-#include "PlayerOptions.h"
-#include "SongOptions.h"
-#include "BitmapText.h"
+#include "PlayerNumber.h"
 
 class ModeSwitcher : public ActorFrame
 {
 public:
 	ModeSwitcher();
 	~ModeSwitcher();
-	void ChangeMode(PlayerNumber pn, int dir);
+	void ChangeMode( PlayerNumber pn, int dir );
 
 private:
 	BitmapText	m_Stylename;
-	BitmapText m_Nextmode;
-	BitmapText m_Prevmode;
-	Sprite			m_NextIcon;
-	Sprite			m_PrevIcon;
+	BitmapText	m_Nextmode;
+	BitmapText	m_Prevmode;
+	Sprite		m_NextIcon;
+	Sprite		m_PrevIcon;
 	RString GetStyleName();
 	RString GetNextStyleName();
 	RString GetPrevStyleName();
