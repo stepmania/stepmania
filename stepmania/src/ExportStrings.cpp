@@ -6,6 +6,7 @@
 #include "XmlFile.h"
 #include "LuaManager.h"
 #include "ProductInfo.h"
+#include "DateTime.h"
 
 const RString INSTALLER_LANGUAGES_DIR = "Themes/_Installer/Languages/";
 
@@ -46,11 +47,15 @@ void ExportStrings::Nsis()
 void ExportStrings::LuaInformation()
 {
 	XNode *pNode = LUA->GetLuaInformation();
+	XNode *pVersionNode = new XNode;
 	XNode *pDateNode = new XNode;
 	DISP_OPT disp;
 	
-	pDateNode->m_sName = "Version";
-	pDateNode->m_sValue = PRODUCT_ID_VER;
+	pVersionNode->m_sName = "Version";
+	pVersionNode->m_sValue = PRODUCT_ID_VER;
+	pNode->AppendChild( pVersionNode );
+	pDateNode->m_sName = "Date";
+	pDateNode->m_sValue = DateTime::GetNowDate().GetString();
 	pNode->AppendChild( pDateNode );
 	disp.stylesheet = "Lua.xsl";
 	
