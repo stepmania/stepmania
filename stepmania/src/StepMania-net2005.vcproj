@@ -1533,10 +1533,6 @@
 				>
 			</File>
 			<File
-				RelativePath="StyleInput.h"
-				>
-			</File>
-			<File
 				RelativePath="StyleUtil.cpp"
 				>
 			</File>
