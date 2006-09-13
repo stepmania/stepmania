@@ -104,7 +104,7 @@ void ScreenTestInput::Input( const InputEventPlus &input )
 		MESSAGEMAN->Broadcast( sMessage );
 	}
 
-	if( input.type != IET_FIRST_PRESS && input.type != IET_SLOW_REPEAT )
+	if( input.type != IET_FIRST_PRESS && input.type != IET_REPEAT )
 		return;	// ignore
 
 	Screen::Input( input );	// default handler

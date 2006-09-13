@@ -301,7 +301,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		if( !m_bAllowOptionsMenu )
 			return; /* not allowed */
 
-		if( !m_bAllowOptionsMenuRepeat && input.type == IET_SLOW_REPEAT )
+		if( !m_bAllowOptionsMenuRepeat && input.type == IET_REPEAT )
 		{
 			return; /* not allowed yet */
 		}

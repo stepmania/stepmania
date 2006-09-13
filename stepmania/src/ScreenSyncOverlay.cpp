@@ -182,7 +182,7 @@ bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
 			switch( input.type )
 			{
 			case IET_RELEASE:	fDelta *= 0;	break;
-			case IET_SLOW_REPEAT:
+			case IET_REPEAT:
 				if( INPUTFILTER->GetSecsHeld(input.DeviceI) < 1.0f )
 					fDelta *= 0;
 				else
@@ -207,7 +207,7 @@ bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
 			switch( input.type )
 			{
 			case IET_RELEASE:	fDelta *= 0;	break;
-			case IET_SLOW_REPEAT:
+			case IET_REPEAT:
 				if( INPUTFILTER->GetSecsHeld(input.DeviceI) < 1.0f )
 					fDelta *= 0;
 				else

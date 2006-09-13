@@ -186,7 +186,7 @@ void ScreenTextEntry::Input( const InputEventPlus &input )
 		switch( input.type )
 		{
 		case IET_FIRST_PRESS:
-		case IET_SLOW_REPEAT:
+		case IET_REPEAT:
 			BackspaceInAnswer();
 			break;
 		}

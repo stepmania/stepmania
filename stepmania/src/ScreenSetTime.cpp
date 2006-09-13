@@ -105,7 +105,7 @@ void ScreenSetTime::Update( float fDelta )
 
 void ScreenSetTime::Input( const InputEventPlus &input )
 {
-	if( input.type != IET_FIRST_PRESS && input.type != IET_SLOW_REPEAT )
+	if( input.type != IET_FIRST_PRESS && input.type != IET_REPEAT )
 		return;	// ignore
 
 	if( IsTransitioning() )

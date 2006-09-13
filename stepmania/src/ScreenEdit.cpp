@@ -1474,7 +1474,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			{
 				fDelta /= 20;	// .001 bpm
 			}
-			else if( input.type == IET_SLOW_REPEAT )
+			else if( input.type == IET_REPEAT )
 			{
 				if( INPUTFILTER->GetSecsHeld(input.DeviceI) < 1.0f )
 					fDelta *= 10;
@@ -1501,7 +1501,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			{
 				fDelta /= 20; /* 1ms */
 			}
-			else if( input.type == IET_SLOW_REPEAT )
+			else if( input.type == IET_REPEAT )
 			{
 				if( INPUTFILTER->GetSecsHeld(input.DeviceI) < 1.0f )
 					fDelta *= 10;
@@ -1545,7 +1545,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			{
 				fDelta /= 20; /* 1ms */
 			}
-			else if( input.type == IET_SLOW_REPEAT )
+			else if( input.type == IET_REPEAT )
 			{
 				if( INPUTFILTER->GetSecsHeld(input.DeviceI) < 1.0f )
 					fDelta *= 10;
@@ -1571,7 +1571,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			case EDIT_BUTTON_SAMPLE_LENGTH_UP:		fDelta = +0.02f;	break;
 			}
 			
-			if( input.type == IET_SLOW_REPEAT )
+			if( input.type == IET_REPEAT )
 			{
 				if( INPUTFILTER->GetSecsHeld(input.DeviceI) < 1.0f )
 					fDelta *= 10;
@@ -1963,7 +1963,7 @@ void ScreenEdit::InputRecord( const InputEventPlus &input, EditButton EditB )
 			m_NoteFieldRecord.Step( iCol, TNS_W1 );
 		}
 		break;
-	case IET_SLOW_REPEAT:
+	case IET_REPEAT:
 	case IET_RELEASE:
 		// don't add or extend holds here; we do it in Update()
 		break;
@@ -2059,7 +2059,7 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 			{
 				fOffsetDelta /= 20; /* 1ms */
 			}
-			else if( input.type == IET_SLOW_REPEAT )
+			else if( input.type == IET_REPEAT )
 			{
 				if( INPUTFILTER->GetSecsHeld(input.DeviceI) < 1.0f )
 					fOffsetDelta *= 10;

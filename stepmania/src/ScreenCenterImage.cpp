@@ -131,7 +131,7 @@ void ScreenCenterImage::Input( const InputEventPlus &input )
 
 	if( input.DeviceI.level < 0 )
 	{
-		if( input.type == IET_SLOW_REPEAT )
+		if( input.type == IET_REPEAT )
 		{
 			if( INPUTFILTER->GetSecsHeld(input.DeviceI) < 1.0f )
 				fScale *= 10;

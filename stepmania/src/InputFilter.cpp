@@ -65,7 +65,7 @@ static Preference<float> g_fInputDebounceTime( "InputDebounceTime", 0 );
 
 InputFilter*	INPUTFILTER = NULL;	// global and accessable from anywhere in our program
 
-static const float TIME_BEFORE_SLOW_REPEATS = 0.375f;
+static const float TIME_BEFORE_REPEATS = 0.375f;
 
 static const float REPEATS_PER_SEC = 8;
 
@@ -100,7 +100,7 @@ void InputFilter::SetRepeatRate( float fDelay, float fFastDelay, float fRepeatRa
 
 void InputFilter::ResetRepeatRate()
 {
-	SetRepeatRate( TIME_BEFORE_SLOW_REPEATS, 0, REPEATS_PER_SEC );
+	SetRepeatRate( TIME_BEFORE_REPEATS, 0, REPEATS_PER_SEC );
 }
 
 ButtonState::ButtonState():
@@ -235,7 +235,7 @@ void InputFilter::Update( float fDeltaTime )
 		/* Generate IET_FIRST_PRESS and IET_RELEASE events that were delayed. */
 		CheckButtonChange( bs, di, now );
 
-		/* Generate IET_SLOW_REPEAT events. */
+		/* Generate IET_REPEAT events. */
 		if( !bs.m_bLastReportedHeld )
 		{
 			// If the key isn't pressed, and hasn't been pressed for a while (so debouncing
@@ -252,7 +252,7 @@ void InputFilter::Update( float fDeltaTime )
 		InputEventType iet;
 		if( fNewHoldTime > g_fTimeBeforeRepeats )
 		{
-			iet = IET_SLOW_REPEAT;
+			iet = IET_REPEAT;
 
 			float fRepeatTime;
 			if( fOldHoldTime < g_fTimeBeforeRepeats )

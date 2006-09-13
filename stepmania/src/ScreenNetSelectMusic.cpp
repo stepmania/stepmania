@@ -123,7 +123,7 @@ void ScreenNetSelectMusic::Input( const InputEventPlus &input )
 		return;
 	}
 
-	if( input.type != IET_FIRST_PRESS && input.type != IET_SLOW_REPEAT )
+	if( input.type != IET_FIRST_PRESS && input.type != IET_REPEAT )
 		return;
 
 	bool bHoldingCtrl = 
