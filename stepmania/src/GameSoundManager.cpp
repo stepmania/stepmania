@@ -395,7 +395,7 @@ GameSoundManager::GameSoundManager()
 	g_UpdatingTimer = true;
 
 	g_Shutdown = false;
-	MusicThread.SetName( "MusicThread" );
+	MusicThread.SetName( "Music thread" );
 	MusicThread.Create( MusicThread_start, this );
 }
 
