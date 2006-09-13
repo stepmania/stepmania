@@ -755,9 +755,9 @@ bool InputMapper::DeviceToGame( const DeviceInput &DeviceI, GameInput& GameI ) /
 	return GameI.controller != GAME_CONTROLLER_INVALID;
 }
 
-bool InputMapper::GameToDevice( const GameInput &GameI, int iSoltNum, DeviceInput& DeviceI )	// return true if there is a mapping from pad to device
+bool InputMapper::GameToDevice( const GameInput &GameI, int iSlotNum, DeviceInput& DeviceI )	// return true if there is a mapping from pad to device
 {
-	DeviceI = m_GItoDI[GameI.controller][GameI.button][iSoltNum];
+	DeviceI = m_GItoDI[GameI.controller][GameI.button][iSlotNum];
 	return DeviceI.device != DEVICE_NONE;
 }
 
