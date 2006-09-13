@@ -46,7 +46,10 @@
 - (id) initWithArgc:(int)argc argv:(char **)argv
 {
 	[super init];
-	m_iArgc = argc;
+	if( argc == 2 && !strncmp(argv[1], "-psn_", 4) )
+		m_iArgc = 1;
+	else
+		m_iArgc = argc;
 	m_pArgv = argv;
 	return self;
 }
