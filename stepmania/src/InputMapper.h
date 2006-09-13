@@ -32,7 +32,6 @@ public:
 	bool CheckForChangedInputDevicesAndRemap( RString &sMessageOut );
 
 	bool IsMapped( const DeviceInput &DeviceI );
-	bool IsMapped( const GameInput &GameI );
 	
 	bool DeviceToGame( const DeviceInput &DeviceI, GameInput& GameI );	// return true if there is a mapping from device to pad
 	bool GameToDevice( const GameInput &GameI, int iSoltNum, DeviceInput& DeviceI );	// return true if there is a mapping from pad to device

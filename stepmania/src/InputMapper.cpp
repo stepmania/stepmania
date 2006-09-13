@@ -729,16 +729,6 @@ bool InputMapper::IsMapped( const DeviceInput &DeviceI )
 	return g_tempDItoGI.find(DeviceI) != g_tempDItoGI.end();
 }
 
-bool InputMapper::IsMapped( const GameInput &GameI )
-{
-	for( int i=0; i<NUM_GAME_TO_DEVICE_SLOTS; i++ )
-		if( m_GItoDI[GameI.controller][GameI.button][i].IsValid() )
-			return true;
-
-	return false;
-}
-
-
 void InputMapper::UpdateTempDItoGI()
 {
 	// repopulate g_tempDItoGI
