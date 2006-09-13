@@ -3,7 +3,6 @@
 #ifndef STYLE_H
 #define STYLE_H
 
-#include "StyleInput.h"
 #include "GameInput.h"
 #include "NoteTypes.h"
 #include "PlayerNumber.h"
