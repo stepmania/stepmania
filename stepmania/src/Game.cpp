@@ -87,14 +87,14 @@ void Game::MenuInputToGameInput( MenuInput MenuI, GameInput GameIout[4] ) const
 	}
 }
 
-RString Game::ColToButtonName( int col ) const
+RString Game::ColToButtonName( int iCol ) const
 {
 	const Style *pStyle = GAMESTATE->GetCurrentStyle();
-	const char *pzColumnName = pStyle->m_ColumnInfo[PLAYER_1][col].pzName;
+	const char *pzColumnName = pStyle->m_ColumnInfo[PLAYER_1][iCol].pzName;
 	if( pzColumnName != NULL )
 		return pzColumnName;
 
-	GameInput GI = pStyle->StyleInputToGameInput( col, PLAYER_1 );
+	GameInput GI = pStyle->StyleInputToGameInput( iCol, PLAYER_1 );
 
 	return m_szButtonNames[GI.button];
 }
