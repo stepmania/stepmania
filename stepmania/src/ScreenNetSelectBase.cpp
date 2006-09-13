@@ -92,7 +92,7 @@ void ScreenNetSelectBase::Input( const InputEventPlus &input )
 	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
 		return;
 
-	if( (input.type != IET_FIRST_PRESS) && (input.type != IET_SLOW_REPEAT) && (input.type != IET_FAST_REPEAT ) )
+	if( input.type != IET_FIRST_PRESS && input.type != IET_SLOW_REPEAT )
 		return;
 
 	bool bHoldingCtrl = 

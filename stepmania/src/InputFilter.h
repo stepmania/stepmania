@@ -10,10 +10,9 @@ enum InputEventType
 	/* The device was just pressed. */
 	IET_FIRST_PRESS,
 
-	/* The device is auto-repeating.  These events are guaranteed to be sent only between
+	/* The device is auto-repeating.  This event is guaranteed to be sent only between
 	 * IET_FIRST_PRESS and IET_RELEASE pairs. */
 	IET_SLOW_REPEAT,
-	IET_FAST_REPEAT,
 
 	/* The device is no longer pressed.  Exactly one IET_RELEASE event will be sent
 	 * for each IET_FIRST_PRESS. */

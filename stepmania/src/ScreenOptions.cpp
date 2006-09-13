@@ -1217,7 +1217,7 @@ void ScreenOptions::MenuUpDown( const InputEventPlus &input, int iDir )
 	ASSERT( iDir == -1 || iDir == +1 );
 	PlayerNumber pn = input.MenuI.player;
 
-	if( input.type == IET_SLOW_REPEAT || input.type == IET_FAST_REPEAT )
+	if( input.type == IET_SLOW_REPEAT )
 	{
 		/* If down is pressed, don't allow up to repeat, and vice versa.  This prevents
 		 * holding both up and down from toggling repeatedly in-place. */

@@ -162,7 +162,7 @@ void Screen::MenuSelect( const InputEventPlus &input )	{ if(input.type==IET_FIRS
 
 void Screen::MenuBack( const InputEventPlus &input )
 {
-	if(!PREFSMAN->m_bDelayedBack || input.type==IET_SLOW_REPEAT || input.type==IET_FAST_REPEAT)
+	if(!PREFSMAN->m_bDelayedBack || input.type==IET_SLOW_REPEAT )
 		MenuBack( input.MenuI.player) ; 
 }
 
@@ -184,7 +184,6 @@ void Screen::Input( const InputEventPlus &input )
 	{
 	case IET_FIRST_PRESS:
 	case IET_SLOW_REPEAT:
-	case IET_FAST_REPEAT:
 		break; /* OK */
 	default:
 		return; // don't care

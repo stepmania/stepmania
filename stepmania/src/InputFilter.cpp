@@ -235,7 +235,7 @@ void InputFilter::Update( float fDeltaTime )
 		/* Generate IET_FIRST_PRESS and IET_RELEASE events that were delayed. */
 		CheckButtonChange( bs, di, now );
 
-		/* Generate IET_FAST_REPEAT and IET_SLOW_REPEAT events. */
+		/* Generate IET_SLOW_REPEAT events. */
 		if( !bs.m_bLastReportedHeld )
 		{
 			// If the key isn't pressed, and hasn't been pressed for a while (so debouncing
