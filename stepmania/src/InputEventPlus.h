@@ -1,7 +1,7 @@
-/* InputEventPlus - Holds about an input plus Game/Style translations. */
+/* InputEventPlus - Holds a device input plus Game/Menu translations. */
 
-#ifndef InputEventPlus_H
-#define InputEventPlus_H
+#ifndef INPUT_EVENT_PLUS_H
+#define INPUT_EVENT_PLUS_H
 
 #include "InputFilter.h"
 #include "GameInput.h"
@@ -10,7 +10,7 @@
 class InputEventPlus
 {
 public:
-	InputEventPlus() { mp = MultiPlayer_INVALID; }
+	InputEventPlus() : pn(PLAYER_INVALID), mp(MultiPlayer_INVALID) { }
 	DeviceInput DeviceI;
 	InputEventType type;
 	GameInput GameI;
