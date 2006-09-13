@@ -249,29 +249,29 @@ void InputFilter::Update( float fDeltaTime )
 		bs.m_fSecsHeld += fDeltaTime;
 		const float fNewHoldTime = bs.m_fSecsHeld;
 
-		if( fNewHoldTime > g_fTimeBeforeRepeats )
+		if( fNewHoldTime <= g_fTimeBeforeRepeats )
+			continue;
+
+		float fRepeatTime;
+		if( fOldHoldTime < g_fTimeBeforeRepeats )
 		{
-			float fRepeatTime;
-			if( fOldHoldTime < g_fTimeBeforeRepeats )
-			{
-				fRepeatTime = g_fTimeBeforeRepeats;
-			}
-			else
-			{
-				float fAdjustedOldHoldTime = fOldHoldTime - g_fTimeBeforeRepeats;
-				float fAdjustedNewHoldTime = fNewHoldTime - g_fTimeBeforeRepeats;
-				if( int(fAdjustedOldHoldTime/g_fTimeBetweenRepeats) == int(fAdjustedNewHoldTime/g_fTimeBetweenRepeats) )
-					continue;
-				fRepeatTime = ftruncf( fNewHoldTime, g_fTimeBetweenRepeats );
-			}
-
-			/* Set the timestamp to the exact time of the repeat.  This way,
-			 * as long as tab/` aren't being used, the timestamp will always
-			 * increase steadily during repeats. */
-			di.ts = bs.m_LastInputTime + fRepeatTime;
-
-			ReportButtonChange( di, IET_REPEAT );
+			fRepeatTime = g_fTimeBeforeRepeats;
 		}
+		else
+		{
+			float fAdjustedOldHoldTime = fOldHoldTime - g_fTimeBeforeRepeats;
+			float fAdjustedNewHoldTime = fNewHoldTime - g_fTimeBeforeRepeats;
+			if( int(fAdjustedOldHoldTime/g_fTimeBetweenRepeats) == int(fAdjustedNewHoldTime/g_fTimeBetweenRepeats) )
+				continue;
+			fRepeatTime = ftruncf( fNewHoldTime, g_fTimeBetweenRepeats );
+		}
+
+		/* Set the timestamp to the exact time of the repeat.  This way,
+		 * as long as tab/` aren't being used, the timestamp will always
+		 * increase steadily during repeats. */
+		di.ts = bs.m_LastInputTime + fRepeatTime;
+
+		ReportButtonChange( di, IET_REPEAT );
 	}
 
 	FOREACH( ButtonStateMap::iterator, ButtonsToErase, it )
