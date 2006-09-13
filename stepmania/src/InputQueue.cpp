@@ -1,7 +1,6 @@
 #include "global.h"
 #include "InputQueue.h"
 #include "RageTimer.h"
-#include "InputMapper.h"
 #include "InputEventPlus.h"
 
 
