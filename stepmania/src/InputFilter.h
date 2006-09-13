@@ -18,7 +18,6 @@ enum InputEventType
 	 * for each IET_FIRST_PRESS. */
 	IET_RELEASE,
 };
-#define IET_SLOW_REPEAT IET_REPEAT
 
 struct InputEvent
 {
