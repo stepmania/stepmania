@@ -2863,8 +2863,8 @@ MenuButton GameManager::GetMenuButtonSecondaryFunction( const Game *pGame, GameB
 		const Style *pStyle = aStyles[i];
 		FOREACH_GameController(gc)
 		{
-			const StyleInput si = pStyle->GameInputToStyleInput( GameInput(gc,gb) );
-			if( si != StyleInput_INVALID )
+			int iCol = pStyle->GameInputToStyleInput( GameInput(gc,gb) );
+			if( iCol != StyleInput_INVALID )
 				bUsedInGameplay = true;
 		}
 	}
