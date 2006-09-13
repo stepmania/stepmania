@@ -11,7 +11,6 @@
 #include "Steps.h"
 #include "RageTimer.h"
 #include "ActorUtil.h"
-#include "Actor.h"
 #include "AnnouncerManager.h"
 #include "MenuTimer.h"
 #include "NetworkSyncManager.h"
@@ -24,6 +23,7 @@
 #include "InputEventPlus.h"
 #include "SongUtil.h"
 #include "RageInput.h"
+#include "SongManager.h"
 
 AutoScreenMessage( SM_NoSongs )
 AutoScreenMessage( SM_ChangeSong )

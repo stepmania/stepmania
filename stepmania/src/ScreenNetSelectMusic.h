@@ -1,16 +1,11 @@
 /* ScreenNetSelectMusic - A method for Online/Net song selection */
 
-#ifndef SCREENNETSELECTMUSIC_H
-#define SCREENNETSELECTMUSIC_H
+#ifndef SCREEN_NET_SELECT_MUSIC_H
+#define SCREEN_NET_SELECT_MUSIC_H
 
 #include "ScreenNetSelectBase.h"
 #include "ScreenWithMenuElements.h"
 #include "Sprite.h"
-#include "Quad.h"
-#include "BitmapText.h"
-//#include "MusicBannerWheel.h"
-#include "DifficultyRating.h"
-#include "ModeSwitcher.h"
 #include "DifficultyIcon.h"
 #include "Difficulty.h"
 #include "DifficultyMeter.h"
