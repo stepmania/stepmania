@@ -4,7 +4,6 @@
 #include "RageException.h"
 #include "GameState.h"
 #include "Game.h"
-#include "StyleInput.h"
 #include "Style.h"
 #include "RageUtil.h"
 #include "RageDisplay.h"
