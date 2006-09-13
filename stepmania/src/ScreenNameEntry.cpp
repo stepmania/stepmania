@@ -346,7 +346,7 @@ void ScreenNameEntry::Input( const InputEventPlus &input )
 		return;		// ignore
 
 	const int iCol = GAMESTATE->m_pCurStyle->GameInputToStyleInput( input.GameI );
-	if( iCol != StyleInput_INVALID && m_bStillEnteringName[input.MenuI.player])
+	if( iCol != Column_INVALID && m_bStillEnteringName[input.MenuI.player])
 	{
 		int iStringIndex = m_ColToStringIndex[input.MenuI.player][iCol];
 		if( iStringIndex != -1 )

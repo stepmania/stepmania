@@ -2086,7 +2086,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 		 * However, if this is also a style button, don't do this. (pump center = start)
 		 */
 		bool bHoldingGiveUp = false;
-		if( GAMESTATE->m_pCurStyle->GameInputToStyleInput(input.GameI) == StyleInput_INVALID )
+		if( GAMESTATE->m_pCurStyle->GameInputToStyleInput(input.GameI) == Column_INVALID )
 		{
 			bHoldingGiveUp |= ( START_GIVES_UP && input.MenuI.button == MENU_BUTTON_START );
 			bHoldingGiveUp |= ( BACK_GIVES_UP && input.MenuI.button == MENU_BUTTON_BACK );
@@ -2151,7 +2151,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 	{
 		if( input.mp != MultiPlayer_INVALID  &&  
 			input.type==IET_FIRST_PRESS &&
-			iCol != StyleInput_INVALID && 
+			iCol != Column_INVALID && 
 			GAMESTATE->IsMultiPlayerEnabled(input.mp) )
 		{
 			m_vPlayerInfo[input.mp].m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
@@ -2163,7 +2163,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 		// handle a step or battle item activate
 		//
 		if( input.type==IET_FIRST_PRESS && 
-			iCol != StyleInput_INVALID &&
+			iCol != Column_INVALID &&
 			GAMESTATE->IsHumanPlayer( input.MenuI.player ) )
 		{
 			AbortGiveUp( true );
