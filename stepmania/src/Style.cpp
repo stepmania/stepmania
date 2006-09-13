@@ -87,13 +87,6 @@ PlayerNumber Style::ControllerToPlayerNumber( GameController controller ) const
 	}
 }
 
-bool Style::MatchesStepsType( StepsType type ) const
-{
-	if(type == m_StepsType) return true;
-
-	return false;
-}
-
 void Style::GetMinAndMaxColX( PlayerNumber pn, float& fMixXOut, float& fMaxXOut ) const
 {
 	ASSERT( pn != PLAYER_INVALID );

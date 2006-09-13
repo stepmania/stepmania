@@ -60,8 +60,6 @@ public:
 
 	void GetTransformedNoteDataForStyle( PlayerNumber pn, const NoteData& original, NoteData& noteDataOut ) const;
 
-	bool MatchesStepsType( StepsType type ) const;
-
 	void GetMinAndMaxColX( PlayerNumber pn, float& fMixXOut, float& fMaxXOut ) const;
 	
 	// Lua
