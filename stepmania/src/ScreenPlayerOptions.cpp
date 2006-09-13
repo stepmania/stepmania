@@ -10,7 +10,6 @@
 #include "PrefsManager.h"
 #include "CodeDetector.h"
 #include "ScreenDimensions.h"
-#include "Style.h"
 #include "PlayerState.h"
 #include "Foreach.h"
 #include "InputEventPlus.h"
@@ -95,7 +94,7 @@ void ScreenPlayerOptions::Input( const InputEventPlus &input )
 		}
 	}
 
-	PlayerNumber pn = GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber( input.GameI.controller );
+	PlayerNumber pn = input.pn;
 	if( GAMESTATE->IsHumanPlayer(pn) && CodeDetector::EnteredCode(input.GameI.controller,CODE_CANCEL_ALL_PLAYER_OPTIONS) )
 	{
 		// apply the game default mods, but not the Profile saved mods

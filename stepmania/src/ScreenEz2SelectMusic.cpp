@@ -254,7 +254,7 @@ void ScreenEz2SelectMusic::Input( const InputEventPlus &input )
 	if( m_bMadeChoice )
 		return;
 
-	PlayerNumber pn = GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber( input.GameI.controller );
+	PlayerNumber pn = input.pn;
 
 	if( CodeDetector::EnteredEasierDifficulty(input.GameI.controller) )
 	{

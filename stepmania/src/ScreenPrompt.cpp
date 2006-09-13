@@ -4,7 +4,6 @@
 #include "GameSoundManager.h"
 #include "GameConstantsAndTypes.h"
 #include "GameState.h"
-#include "Style.h"
 #include "ThemeManager.h"
 #include "ScreenDimensions.h"
 #include "ActorUtil.h"
@@ -113,18 +112,13 @@ void ScreenPrompt::Input( const InputEventPlus &input )
 
 	if( input.DeviceI.device==DEVICE_KEYBOARD && input.type==IET_FIRST_PRESS )
 	{
-		PlayerNumber pn;
-		if( GAMESTATE->GetCurrentStyle() == NULL )
-			pn = (PlayerNumber)input.GameI.controller;
-		else
-			pn = GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber( input.GameI.controller );
 		switch( input.DeviceI.button )
 		{
 		case KEY_LEFT:
-			this->MenuLeft( pn );
+			this->MenuLeft( input.pn );
 			return;
 		case KEY_RIGHT:
-			this->MenuRight( pn );
+			this->MenuRight( input.pn );
 			return;
 		}
 	}

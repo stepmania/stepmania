@@ -24,7 +24,6 @@
 #include "RageDisplay.h"
 #include "StepMania.h"
 #include "CryptManager.h"
-#include "Style.h"
 #include "MemoryCardManager.h"
 #include "PlayerState.h"
 #include "CommonMetrics.h"
@@ -851,7 +850,7 @@ void ScreenEvaluation::Input( const InputEventPlus &input )
 		if( CodeDetector::EnteredCode(input.GameI.controller, CODE_SAVE_SCREENSHOT1) ||
 			CodeDetector::EnteredCode(input.GameI.controller, CODE_SAVE_SCREENSHOT2) )
 		{
-			PlayerNumber pn = GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber( input.GameI.controller );
+			PlayerNumber pn = input.pn;
 			if( !m_bSavedScreenshot[pn]  &&	// only allow one screenshot
 				PROFILEMAN->IsPersistentProfile(pn) )
 			{
