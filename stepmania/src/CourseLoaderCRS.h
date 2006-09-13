@@ -1,21 +1,20 @@
 /* CourseLoaderCRS - Reads a Course from an .CRS file. */
 
-#ifndef CourseLoaderCRS_H
-#define CourseLoaderCRS_H
+#ifndef COURSE_LOADER_CRS_H
+#define COURSE_LOADER_CRS_H
 
 #include "GameConstantsAndTypes.h"
 class Course;
 class MsdFile;
 
-class CourseLoaderCRS
+namespace CourseLoaderCRS
 {
-public:
-	static bool LoadFromCRSFile( const RString &sPath, Course &out );
-	static bool LoadFromMsd( const RString &sPath, const MsdFile &msd, Course &out, bool bFromCache );
-	static bool LoadFromBuffer( const RString &sPath, const RString &sBuffer, Course &out );
-	static bool LoadEditFromFile( const RString &sEditFilePath, ProfileSlot slot );
-	static bool LoadEditFromBuffer( const RString &sBuffer, const RString &sPath, ProfileSlot slot );
-};
+	bool LoadFromCRSFile( const RString &sPath, Course &out );
+	bool LoadFromMsd( const RString &sPath, const MsdFile &msd, Course &out, bool bFromCache );
+	bool LoadFromBuffer( const RString &sPath, const RString &sBuffer, Course &out );
+	bool LoadEditFromFile( const RString &sEditFilePath, ProfileSlot slot );
+	bool LoadEditFromBuffer( const RString &sBuffer, const RString &sPath, ProfileSlot slot );
+}
 
 #endif
 

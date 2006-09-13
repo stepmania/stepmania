@@ -1,19 +1,18 @@
 /* CourseWriterCRS - Writes a Course to an .CRS file. */
 
-#ifndef CourseWriterCRS_H
-#define CourseWriterCRS_H
+#ifndef COURSE_WRITER_CRS_H
+#define COURSE_WRITER_CRS_H
 
 class Course;
 class RageFileBasic;
 
-class CourseWriterCRS
+namespace CourseWriterCRS
 {
-public:
-	static bool Write( const Course &course, RageFileBasic &f, bool bSavingCache );
-	static bool Write( const Course &course, const RString &sPath, bool bSavingCache );
-	static void GetEditFileContents( const Course *pCourse, RString &sOut );
-	static void WriteEditFileToMachine( const Course *pCourse );
-};
+	bool Write( const Course &course, RageFileBasic &f, bool bSavingCache );
+	bool Write( const Course &course, const RString &sPath, bool bSavingCache );
+	void GetEditFileContents( const Course *pCourse, RString &sOut );
+	void WriteEditFileToMachine( const Course *pCourse );
+}
 
 #endif
 
