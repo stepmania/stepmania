@@ -44,7 +44,7 @@ public:
 	void Reset();
 	void Update( float fDeltaTime );
 
-	void SetRepeatRate( float fSlowDelay, float fFastDelay, float fRepeatRate );
+	void SetRepeatRate( float fDelay, float fRepeatRate );
 	void ResetRepeatRate();
 	void ResetKeyRepeat( const DeviceInput &di );
 
