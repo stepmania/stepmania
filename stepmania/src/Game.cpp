@@ -3,9 +3,7 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "Style.h"
-#include "RageException.h"
 #include "GameState.h"
-#include "InputMapper.h"
 #include "PrefsManager.h"
 
 int	Game::GetNumGameplayButtons() const

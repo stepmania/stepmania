@@ -22,36 +22,6 @@ void InputQueue::RememberInput( const InputEventPlus &iep )
 	m_aQueue[c].push_back( iep );
 }
 
-bool InputQueue::MatchesSequence( GameController c, const MenuButton* button_sequence, const int iNumButtons, float fMaxSecondsBack )
-{
-	if( c == GAME_CONTROLLER_INVALID )
-		return false;
-
-	if( fMaxSecondsBack == -1 )
-		fMaxSecondsBack = 0.4f + iNumButtons*0.15f;
-
-	RageTimer OldestTimeAllowed;
-	OldestTimeAllowed += -fMaxSecondsBack;
-
-	int sequence_index = iNumButtons-1;	// count down
-	for( int queue_index=m_aQueue[c].size()-1; queue_index>=0; queue_index-- )	// iterate newest to oldest
-	{
-		const InputEventPlus &iep = m_aQueue[c][queue_index];
-		if( iep.MenuI.button != button_sequence[sequence_index]  ||
-			iep.DeviceI.ts < OldestTimeAllowed )
-		{
-			return false;
-		}
-		if( sequence_index == 0 )		// we matched the whole pattern
-		{
-			m_aQueue[c].clear();	// empty the queue so we don't match on it again
-			return true;
-		}
-		sequence_index--;
-	}
-	return false;
-}
-
 bool InputQueue::MatchesSequence( GameController c, const GameButton* button_sequence, const int iNumButtons, float fMaxSecondsBack )
 {
 	if( c == GAME_CONTROLLER_INVALID )
