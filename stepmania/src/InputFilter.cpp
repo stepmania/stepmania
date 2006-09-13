@@ -249,11 +249,8 @@ void InputFilter::Update( float fDeltaTime )
 		bs.m_fSecsHeld += fDeltaTime;
 		const float fNewHoldTime = bs.m_fSecsHeld;
 
-		InputEventType iet;
 		if( fNewHoldTime > g_fTimeBeforeRepeats )
 		{
-			iet = IET_REPEAT;
-
 			float fRepeatTime;
 			if( fOldHoldTime < g_fTimeBeforeRepeats )
 			{
@@ -273,7 +270,7 @@ void InputFilter::Update( float fDeltaTime )
 			 * increase steadily during repeats. */
 			di.ts = bs.m_LastInputTime + fRepeatTime;
 
-			ReportButtonChange( di, iet );
+			ReportButtonChange( di, IET_REPEAT );
 		}
 	}
 
