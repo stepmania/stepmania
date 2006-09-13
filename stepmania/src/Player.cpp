@@ -1007,7 +1007,7 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 			for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
 			{
 				const GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( t, pn );
-				const float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI );
+				const float fSecsHeld = INPUTMAPPER->GetSecsHeld( t, pn );
 				if( fSecsHeld > 0  && fSecsHeld < JUMP_WINDOW_SECONDS )
 					iNumTracksHeld++;
 			}
