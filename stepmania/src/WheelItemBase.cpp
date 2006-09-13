@@ -11,11 +11,11 @@ WheelItemBaseData::WheelItemBaseData( WheelItemType wit, RString sText, RageColo
 
 WheelItemBase::WheelItemBase( const WheelItemBase &cpy ):
 	ActorFrame( cpy ),
+	m_bExpanded( cpy.m_bExpanded ),
 	m_sprBar( cpy.m_sprBar ),
 	m_text( cpy.m_text ),
 	m_Type( cpy.m_Type ),
-	m_color( cpy.m_color ),
-	m_bExpanded( cpy.m_bExpanded )
+	m_color( cpy.m_color )
 {
 	if( cpy.m_pBar == const_cast<Sprite *> (&cpy.m_sprBar) )
 		m_pBar = &m_sprBar;
