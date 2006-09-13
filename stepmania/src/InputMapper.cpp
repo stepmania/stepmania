@@ -834,8 +834,8 @@ bool InputMapper::IsBeingPressed( const MenuInput &MenuI )
 bool InputMapper::IsBeingPressed( const StyleInput &StyleI, PlayerNumber pn, MultiPlayer mp )
 {
 	GameInput GameI;
-	StyleToGame( StyleI, GameI );
-	return IsBeingPressed( GameI, pn, mp );
+	StyleToGame( StyleI, pn, GameI );
+	return IsBeingPressed( GameI, mp );
 }
 
 
@@ -873,8 +873,8 @@ float InputMapper::GetSecsHeld( const MenuInput &MenuI )
 float InputMapper::GetSecsHeld( const StyleInput &StyleI, PlayerNumber pn, MultiPlayer mp )
 {
 	GameInput GameI;
-	StyleToGame( StyleI, GameI );
-	return GetSecsHeld( GameI, pn, mp );
+	StyleToGame( StyleI, pn, GameI );
+	return GetSecsHeld( GameI, mp );
 }
 
 void InputMapper::ResetKeyRepeat( const GameInput &GameI )
