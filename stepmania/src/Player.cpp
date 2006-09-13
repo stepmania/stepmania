@@ -541,10 +541,9 @@ void Player::Update( float fDeltaTime )
 		ASSERT( m_pPlayerState );
 
 		// TODO: Remove use of PlayerNumber.
-		GameInput GameI;
-		INPUTMAPPER->StyleToGame( col, m_pPlayerState->m_PlayerNumber, GameI );
+		GameInput GameI = GAMESTATE->m_pCurStyle->StyleInputToGameInput( col, m_pPlayerState->m_PlayerNumber );
 
-		bool bIsHoldingButton = INPUTMAPPER->IsBeingPressed( col, pn );
+		bool bIsHoldingButton = INPUTMAPPER->IsBeingPressed( GameI );
 		// TODO: Make this work for non-human-controlled players
 		if( bIsHoldingButton && !GAMESTATE->m_bDemonstrationOrJukebox && m_pPlayerState->m_PlayerController==PC_HUMAN )
 			if( m_pNoteField )
@@ -621,8 +620,7 @@ void Player::Update( float fDeltaTime )
 			}
 			else
 			{
-				GameInput GameI;
-				INPUTMAPPER->StyleToGame( iTrack, pn, GameI );
+				GameInput GameI = GAMESTATE->m_pCurStyle->StyleInputToGameInput( iTrack, pn );
 				bIsHoldingButton = INPUTMAPPER->IsBeingPressed( GameI, m_pPlayerState->m_mp );
 			}
 
@@ -1009,8 +1007,7 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 			int iNumTracksHeld = 0;
 			for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
 			{
-				GameInput GameI;
-				INPUTMAPPER->StyleToGame( t, pn, GameI );
+				GameInput GameI = GAMESTATE->m_pCurStyle->StyleInputToGameInput( t, pn );
 				const float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI );
 				if( fSecsHeld > 0  && fSecsHeld < JUMP_WINDOW_SECONDS )
 					iNumTracksHeld++;
@@ -1490,18 +1487,14 @@ void Player::CrossedMineRow( int iNoteRow, const RageTimer &now )
 			// TODO: Remove use of PlayerNumber.
 			PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
+			GameInput GameI = GAMESTATE->m_pCurStyle->StyleInputToGameInput( t, pn );
 			if( PREFSMAN->m_fPadStickSeconds > 0 )
 			{
-				GameInput GameI;
-				INPUTMAPPER->StyleToGame( t, pn, GameI );
-				float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI, m_pPlayerState->m_mp );
 				if( fSecsHeld >= PREFSMAN->m_fPadStickSeconds )
 					Step( t, -1, now+(-PREFSMAN->m_fPadStickSeconds), true, false );
 			}
 			else
 			{
-				GameInput GameI;
-				INPUTMAPPER->StyleToGame( t, pn, GameI );
 				bool bIsDown = INPUTMAPPER->IsBeingPressed( GameI, m_pPlayerState->m_mp );
 				if( bIsDown )
 					Step( t, iNoteRow, now, true, false );

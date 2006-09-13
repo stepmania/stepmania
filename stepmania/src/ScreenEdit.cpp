@@ -886,8 +886,7 @@ void ScreenEdit::Update( float fDeltaTime )
 	{
 		for( int t=0; t<GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; t++ )	// for each track
 		{
-			GameInput GameI;
-			INPUTMAPPER->StyleToGame( t, PLAYER_1, GameI );
+			GameInput GameI = GAMESTATE->m_pCurStyle->StyleInputToGameInput( t, PLAYER_1 );
 			float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI );
 			fSecsHeld = min( fSecsHeld, m_RemoveNoteButtonLastChanged.Ago() );
 			if( fSecsHeld == 0 )
@@ -935,8 +934,7 @@ void ScreenEdit::Update( float fDeltaTime )
 		bool bButtonIsBeingPressed = false;
 		for( int t=0; t<GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; t++ )	// for each track
 		{
-			GameInput GameI;
-			INPUTMAPPER->StyleToGame( t, PLAYER_1, GameI );
+			GameInput GameI = GAMESTATE->m_pCurStyle->StyleInputToGameInput( t, PLAYER_1 );
 			if( INPUTMAPPER->IsBeingPressed(GameI) )
 				bButtonIsBeingPressed = true;
 		}
