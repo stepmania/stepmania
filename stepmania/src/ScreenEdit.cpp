@@ -886,7 +886,9 @@ void ScreenEdit::Update( float fDeltaTime )
 	{
 		for( int t=0; t<GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; t++ )	// for each track
 		{
-			float fSecsHeld = INPUTMAPPER->GetSecsHeld( t, PLAYER_1 );
+			GameInput GameI;
+			INPUTMAPPER->StyleToGame( t, PLAYER_1, GameI );
+			float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI );
 			fSecsHeld = min( fSecsHeld, m_RemoveNoteButtonLastChanged.Ago() );
 			if( fSecsHeld == 0 )
 				continue;

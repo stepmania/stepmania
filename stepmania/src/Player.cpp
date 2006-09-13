@@ -1006,7 +1006,9 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 			int iNumTracksHeld = 0;
 			for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
 			{
-				const float fSecsHeld = INPUTMAPPER->GetSecsHeld( t, pn );
+				GameInput GameI;
+				INPUTMAPPER->StyleToGame( t, pn, GameI );
+				const float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI );
 				if( fSecsHeld > 0  && fSecsHeld < JUMP_WINDOW_SECONDS )
 					iNumTracksHeld++;
 			}
@@ -1487,7 +1489,9 @@ void Player::CrossedMineRow( int iNoteRow, const RageTimer &now )
 
 			if( PREFSMAN->m_fPadStickSeconds > 0 )
 			{
-				float fSecsHeld = INPUTMAPPER->GetSecsHeld( t, pn, m_pPlayerState->m_mp );
+				GameInput GameI;
+				INPUTMAPPER->StyleToGame( t, pn, GameI );
+				float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI, m_pPlayerState->m_mp );
 				if( fSecsHeld >= PREFSMAN->m_fPadStickSeconds )
 					Step( t, -1, now+(-PREFSMAN->m_fPadStickSeconds), true, false );
 			}

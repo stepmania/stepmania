@@ -859,13 +859,6 @@ float InputMapper::GetSecsHeld( const MenuInput &MenuI )
 	return fMaxSecsHeld;
 }
 
-float InputMapper::GetSecsHeld( const StyleInput &StyleI, PlayerNumber pn, MultiPlayer mp )
-{
-	GameInput GameI;
-	StyleToGame( StyleI, pn, GameI );
-	return GetSecsHeld( GameI, mp );
-}
-
 void InputMapper::ResetKeyRepeat( const GameInput &GameI )
 {
 	for( int i=0; i<NUM_GAME_TO_DEVICE_SLOTS; i++ )
