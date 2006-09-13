@@ -771,14 +771,6 @@ bool InputMapper::GameToDevice( const GameInput &GameI, int iSoltNum, DeviceInpu
 	return DeviceI.device != DEVICE_NONE;
 }
 
-StyleInput InputMapper::GameToStyle( const GameInput &GameI )
-{
-	if( GAMESTATE->m_pCurStyle == NULL )
-		return StyleInput_INVALID;
-
-	return GAMESTATE->m_pCurStyle->GameInputToStyleInput( GameI );
-}
-
 void InputMapper::GameToMenu( const GameInput &GameI, MenuInput &MenuI )
 {
 	const Game* pGame = GAMESTATE->GetCurrentGame();
