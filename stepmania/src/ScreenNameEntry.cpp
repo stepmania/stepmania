@@ -345,15 +345,15 @@ void ScreenNameEntry::Input( const InputEventPlus &input )
 	if( input.type != IET_FIRST_PRESS )
 		return;		// ignore
 
-	if( input.StyleI.IsValid() && m_bStillEnteringName[input.MenuI.player])
+	if( input.StyleI != StyleInput_INVALID && m_bStillEnteringName[input.MenuI.player])
 	{
-		int iStringIndex = m_ColToStringIndex[input.MenuI.player][input.StyleI.col];
+		int iStringIndex = m_ColToStringIndex[input.MenuI.player][input.StyleI];
 		if( iStringIndex != -1 )
 		{
-			m_ReceptorArrowRow[input.MenuI.player].Step( input.StyleI.col, TNS_W1 );
+			m_ReceptorArrowRow[input.MenuI.player].Step( input.StyleI, TNS_W1 );
 			m_soundStep.Play();
 			char c = NAME_CHARS[GetClosestCharIndex(m_fFakeBeat)];
-			m_textSelectedChars[input.MenuI.player][input.StyleI.col].SetText( ssprintf("%c",c) );
+			m_textSelectedChars[input.MenuI.player][input.StyleI].SetText( ssprintf("%c",c) );
 			m_sSelectedName[input.MenuI.player][iStringIndex] = c;
 		}
 	}

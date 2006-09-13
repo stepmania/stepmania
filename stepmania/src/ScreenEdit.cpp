@@ -1921,7 +1921,7 @@ void ScreenEdit::InputRecord( const InputEventPlus &input, EditButton EditB )
 	if( input.MenuI.player != PLAYER_1 )
 		return;		// ignore
 
-	const int iCol = input.StyleI.col;
+	const int iCol = input.StyleI;
 
 	switch( input.type )
 	{
@@ -2077,17 +2077,17 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 		return;
 	}
 	
-	if( PREFSMAN->m_AutoPlay != PC_HUMAN )
+	if( PREFSMAN->m_AutoPlay != PC_HUMAN || input.StyleI == -1 )
 		return;
 	
 	switch( input.MenuI.player )
 	{
 	case PLAYER_1:	
-		m_Player->Step( input.StyleI.col, -1, input.DeviceI.ts, false, input.type == IET_RELEASE ); 
+		m_Player->Step( input.StyleI, -1, input.DeviceI.ts, false, input.type == IET_RELEASE ); 
 		break;
 	case PLAYER_2:
 		if( GAMESTATE->GetCurrentStyle()->m_StyleType == TWO_PLAYERS_SHARED_SIDES )
-			m_Player->Step( input.StyleI.col, -1, input.DeviceI.ts, false, input.type == IET_RELEASE );
+			m_Player->Step( input.StyleI, -1, input.DeviceI.ts, false, input.type == IET_RELEASE );
 	}
 }
 
@@ -3647,9 +3647,9 @@ static RString GetDeviceButtonsLocalized( const vector<EditButton> &veb, const M
 			DeviceInput diPress = editmap.button[*eb][s];
 			DeviceInput diHold = editmap.hold[*eb][s];
 			if( diPress.IsValid() )
-				vsPress.push_back( INPUTMAN->GetLocalizedInputString(diPress) );
+				vsPress.push_back( Capitalize(INPUTMAN->GetLocalizedInputString(diPress)) );
 			if( diHold.IsValid() )
-				vsHold.push_back( INPUTMAN->GetLocalizedInputString(diHold) );
+				vsHold.push_back( Capitalize(INPUTMAN->GetLocalizedInputString(diHold)) );
 		}
 	}
 

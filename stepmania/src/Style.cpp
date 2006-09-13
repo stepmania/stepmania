@@ -40,8 +40,8 @@ void Style::GetTransformedNoteDataForStyle( PlayerNumber pn, const NoteData& ori
 
 GameInput Style::StyleInputToGameInput( const StyleInput& StyleI, PlayerNumber pn ) const
 {
-	ASSERT_M( pn < NUM_PLAYERS  &&  StyleI.col < MAX_COLS_PER_PLAYER,
-		ssprintf("P%i C%i", pn, StyleI.col) );
+	ASSERT_M( pn < NUM_PLAYERS  &&  StyleI < MAX_COLS_PER_PLAYER,
+		ssprintf("P%i C%i", pn, StyleI) );
 	bool bUsingOneSide = m_StyleType != ONE_PLAYER_TWO_SIDES && m_StyleType != TWO_PLAYERS_SHARED_SIDES;
 
 	FOREACH_GameController(gc)
@@ -50,26 +50,23 @@ GameInput Style::StyleInputToGameInput( const StyleInput& StyleI, PlayerNumber p
 			continue;
 
 		for( int i = 0; i < m_pGame->m_iButtonsPerController && m_iInputColumn[gc][i] != END_MAPPING; ++i )
-			if( m_iInputColumn[gc][i] == StyleI.col )
+			if( m_iInputColumn[gc][i] == StyleI )
 				return GameInput( gc, i );
 	}
 
-	FAIL_M( ssprintf("Unknown StyleInput %i,%i", pn, StyleI.col) );
+	FAIL_M( ssprintf("Unknown StyleInput %i,%i", pn, StyleI) );
 };
 
 StyleInput Style::GameInputToStyleInput( const GameInput &GameI ) const
 {
-	StyleInput SI;
-
 	if( m_iInputColumn[GameI.controller][GameI.button] == NO_MAPPING )
-		return SI; // Return invalid.
+		return StyleInput_INVALID;
 
 	for( int i = 0; i <= GameI.button; ++i )
 		if( m_iInputColumn[GameI.controller][i] == END_MAPPING )
-			return SI;	// Return invalid.
+			return StyleInput_INVALID;
 
-	SI = StyleInput( m_iInputColumn[GameI.controller][GameI.button] );
-
+	StyleInput SI = (StyleInput) m_iInputColumn[GameI.controller][GameI.button];
 	return SI;
 }
 

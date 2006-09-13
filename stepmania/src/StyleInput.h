@@ -3,17 +3,8 @@
 #ifndef STYLE_INPUT_H
 #define STYLE_INPUT_H
 
-struct StyleInput
-{
-	int		col;
-
-	StyleInput() { MakeInvalid(); };
-	StyleInput( int c ) { col = c; }
-	bool operator==( const StyleInput &other ) { return col == other.col; }
-
-	bool IsValid() const { return col != -1; }
-	void MakeInvalid() { col = -1; }
-};
+typedef int StyleInput;
+static const int StyleInput_INVALID = -1;
 
 #endif
 
