@@ -165,7 +165,6 @@
 		AA29CC590558741A00961A51 /* PlayerOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE0404770C79005F316C /* PlayerOptions.h */; };
 		AA29CC5A0558741A00961A51 /* SongOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE0804770C79005F316C /* SongOptions.h */; };
 		AA29CC5B0558741A00961A51 /* StageStats.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE0A04770C79005F316C /* StageStats.h */; };
-		AA29CC5D0558741A00961A51 /* StyleInput.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE0D04770C79005F316C /* StyleInput.h */; };
 		AA29CC5E0558741A00961A51 /* TitleSubstitution.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE0F04770C79005F316C /* TitleSubstitution.h */; };
 		AA29CC5F0558741A00961A51 /* IniFile.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE5904770CAA005F316C /* IniFile.h */; };
 		AA29CC600558741A00961A51 /* MsdFile.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE5B04770CAA005F316C /* MsdFile.h */; };
@@ -616,7 +615,6 @@
 		AA40D1E509A08D650068C0D5 /* PlayerOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE0404770C79005F316C /* PlayerOptions.h */; };
 		AA40D1E609A08D650068C0D5 /* SongOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE0804770C79005F316C /* SongOptions.h */; };
 		AA40D1E709A08D650068C0D5 /* StageStats.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE0A04770C79005F316C /* StageStats.h */; };
-		AA40D1E809A08D650068C0D5 /* StyleInput.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE0D04770C79005F316C /* StyleInput.h */; };
 		AA40D1E909A08D650068C0D5 /* TitleSubstitution.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE0F04770C79005F316C /* TitleSubstitution.h */; };
 		AA40D1EA09A08D650068C0D5 /* IniFile.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE5904770CAA005F316C /* IniFile.h */; };
 		AA40D1EB09A08D650068C0D5 /* MsdFile.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE5B04770CAA005F316C /* MsdFile.h */; };
@@ -2175,7 +2173,6 @@
 		AA6EFE0804770C79005F316C /* SongOptions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = SongOptions.h; path = ../src/SongOptions.h; sourceTree = "<group>"; };
 		AA6EFE0904770C79005F316C /* StageStats.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = StageStats.cpp; path = ../src/StageStats.cpp; sourceTree = "<group>"; };
 		AA6EFE0A04770C79005F316C /* StageStats.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = StageStats.h; path = ../src/StageStats.h; sourceTree = "<group>"; };
-		AA6EFE0D04770C79005F316C /* StyleInput.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = StyleInput.h; path = ../src/StyleInput.h; sourceTree = "<group>"; };
 		AA6EFE0E04770C79005F316C /* TitleSubstitution.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = TitleSubstitution.cpp; path = ../src/TitleSubstitution.cpp; sourceTree = "<group>"; };
 		AA6EFE0F04770C79005F316C /* TitleSubstitution.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = TitleSubstitution.h; path = ../src/TitleSubstitution.h; sourceTree = "<group>"; };
 		AA6EFE5804770CAA005F316C /* IniFile.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = IniFile.cpp; path = ../src/IniFile.cpp; sourceTree = "<group>"; };
@@ -3503,7 +3500,6 @@
 				AA5C73FC0637A5F000AFB891 /* StepsUtil.h */,
 				AA139C4606923EBE00C1F6ED /* Style.cpp */,
 				AA25200D0587225500027ACB /* Style.h */,
-				AA6EFE0D04770C79005F316C /* StyleInput.h */,
 				AA3A706006AA1645006F755E /* StyleUtil.cpp */,
 				AA3A706106AA1645006F755E /* StyleUtil.h */,
 				AA21D5A10712AE16008B825F /* ThemeMetric.h */,
@@ -3954,7 +3950,6 @@
 				AA29CC590558741A00961A51 /* PlayerOptions.h in Headers */,
 				AA29CC5A0558741A00961A51 /* SongOptions.h in Headers */,
 				AA29CC5B0558741A00961A51 /* StageStats.h in Headers */,
-				AA29CC5D0558741A00961A51 /* StyleInput.h in Headers */,
 				AA29CC5E0558741A00961A51 /* TitleSubstitution.h in Headers */,
 				AA29CC5F0558741A00961A51 /* IniFile.h in Headers */,
 				AA29CC600558741A00961A51 /* MsdFile.h in Headers */,
@@ -4409,7 +4404,6 @@
 				AA40D1E509A08D650068C0D5 /* PlayerOptions.h in Headers */,
 				AA40D1E609A08D650068C0D5 /* SongOptions.h in Headers */,
 				AA40D1E709A08D650068C0D5 /* StageStats.h in Headers */,
-				AA40D1E809A08D650068C0D5 /* StyleInput.h in Headers */,
 				AA40D1E909A08D650068C0D5 /* TitleSubstitution.h in Headers */,
 				AA40D1EA09A08D650068C0D5 /* IniFile.h in Headers */,
 				AA40D1EB09A08D650068C0D5 /* MsdFile.h in Headers */,
