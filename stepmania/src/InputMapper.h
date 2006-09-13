@@ -34,7 +34,7 @@ public:
 	bool IsMapped( const DeviceInput &DeviceI );
 	
 	bool DeviceToGame( const DeviceInput &DeviceI, GameInput& GameI );	// return true if there is a mapping from device to pad
-	bool GameToDevice( const GameInput &GameI, int iSoltNum, DeviceInput& DeviceI );	// return true if there is a mapping from pad to device
+	bool GameToDevice( const GameInput &GameI, int iSlotNum, DeviceInput& DeviceI );	// return true if there is a mapping from pad to device
 
 	void GameToMenu( const GameInput &GameI, MenuInput &MenuI );
 	void MenuToGame( const MenuInput &MenuI, GameInput GameIout[4] );
