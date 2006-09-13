@@ -761,6 +761,14 @@ bool InputMapper::GameToDevice( const GameInput &GameI, int iSlotNum, DeviceInpu
 	return DeviceI.device != DEVICE_NONE;
 }
 
+PlayerNumber InputMapper::ControllerToPlayerNumber( GameController controller )
+{
+	if( GAMESTATE->GetCurrentStyle() )
+		return GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber(controller);
+	else
+		return (PlayerNumber) controller;
+}
+
 void InputMapper::GameToMenu( const GameInput &GameI, MenuInput &MenuI )
 {
 	const Game* pGame = GAMESTATE->GetCurrentGame();

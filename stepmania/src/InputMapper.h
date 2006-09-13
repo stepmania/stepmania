@@ -38,6 +38,7 @@ public:
 
 	void GameToMenu( const GameInput &GameI, MenuInput &MenuI );
 	void MenuToGame( const MenuInput &MenuI, GameInput GameIout[4] );
+	PlayerNumber ControllerToPlayerNumber( GameController controller );
 
 	float GetSecsHeld( const GameInput &GameI, MultiPlayer mp = MultiPlayer_INVALID );
 	float GetSecsHeld( const MenuInput &MenuI );

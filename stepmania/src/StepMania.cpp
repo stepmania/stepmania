@@ -1433,7 +1433,10 @@ void HandleInputEvents(float fDeltaTime)
 		}
 
 		if( input.GameI.IsValid() )
+		{
 			INPUTMAPPER->GameToMenu( input.GameI, input.MenuI );
+			input.pn = INPUTMAPPER->ControllerToPlayerNumber( input.GameI.controller );
+		}
 
 		if( HandleGlobalInputs(input) )
 			continue;	// skip
