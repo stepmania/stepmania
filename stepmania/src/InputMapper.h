@@ -48,7 +48,6 @@ public:
 
 	bool IsBeingPressed( const GameInput &GameI, MultiPlayer mp = MultiPlayer_INVALID, const DeviceInputList *pButtonState = NULL );
 	bool IsBeingPressed( const MenuInput &MenuI );
-	bool IsBeingPressed( const StyleInput &StyleI, PlayerNumber pn, MultiPlayer mp = MultiPlayer_INVALID );
 
 	void ResetKeyRepeat( const GameInput &GameI );
 	void ResetKeyRepeat( const MenuInput &MenuI );

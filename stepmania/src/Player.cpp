@@ -542,6 +542,8 @@ void Player::Update( float fDeltaTime )
 
 		// TODO: Remove use of PlayerNumber.
 		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+		GameInput GameI;
+		INPUTMAPPER->StyleToGame( col, m_pPlayerState->m_PlayerNumber, GameI );
 
 		bool bIsHoldingButton = INPUTMAPPER->IsBeingPressed( col, pn );
 		// TODO: Make this work for non-human-controlled players
@@ -620,7 +622,9 @@ void Player::Update( float fDeltaTime )
 			}
 			else
 			{
-				bIsHoldingButton = INPUTMAPPER->IsBeingPressed( iTrack, pn, m_pPlayerState->m_mp );
+				GameInput GameI;
+				INPUTMAPPER->StyleToGame( iTrack, pn, GameI );
+				bIsHoldingButton = INPUTMAPPER->IsBeingPressed( GameI, m_pPlayerState->m_mp );
 			}
 
 			int iEndRow = iRow + tn.iDuration;
@@ -1497,7 +1501,9 @@ void Player::CrossedMineRow( int iNoteRow, const RageTimer &now )
 			}
 			else
 			{
-				bool bIsDown = INPUTMAPPER->IsBeingPressed( t, pn, m_pPlayerState->m_mp );
+				GameInput GameI;
+				INPUTMAPPER->StyleToGame( t, pn, GameI );
+				bool bIsDown = INPUTMAPPER->IsBeingPressed( GameI, m_pPlayerState->m_mp );
 				if( bIsDown )
 					Step( t, iNoteRow, now, true, false );
 			}

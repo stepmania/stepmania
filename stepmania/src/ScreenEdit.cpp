@@ -935,7 +935,9 @@ void ScreenEdit::Update( float fDeltaTime )
 		bool bButtonIsBeingPressed = false;
 		for( int t=0; t<GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; t++ )	// for each track
 		{
-			if( INPUTMAPPER->IsBeingPressed(t, PLAYER_1) )
+			GameInput GameI;
+			INPUTMAPPER->StyleToGame( t, PLAYER_1, GameI );
+			if( INPUTMAPPER->IsBeingPressed(GameI) )
 				bButtonIsBeingPressed = true;
 		}
 
