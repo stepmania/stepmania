@@ -541,7 +541,6 @@ void Player::Update( float fDeltaTime )
 		ASSERT( m_pPlayerState );
 
 		// TODO: Remove use of PlayerNumber.
-		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 		GameInput GameI;
 		INPUTMAPPER->StyleToGame( col, m_pPlayerState->m_PlayerNumber, GameI );
 
