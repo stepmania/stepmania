@@ -2794,7 +2794,6 @@
 				AA6EFDBB04770A83005F316C /* Rage */,
 				AA6EFE6A04770D01005F316C /* StepMania */,
 				AA6E00090477103E005F316C /* Screens */,
-				AA6EFF6F04770F6A005F316C /* Transitions */,
 				AA52E9BD04DBBCF400D02EE9 /* ver.cpp */,
 				AA29CE570558741A00961A51 /* Info-StepMania.plist */,
 				AAA3741C09099ADA00141131 /* Libraries */,
@@ -3596,6 +3595,8 @@
 				AA6EFE9B04770E7C005F316C /* MenuTimer.h */,
 				AA6EFE9C04770E7C005F316C /* MeterDisplay.cpp */,
 				AA6EFE9D04770E7C005F316C /* MeterDisplay.h */,
+				AABE35EF04967E6F005F316C /* ModeSwitcher.cpp */,
+				AABE35F004967E6F005F316C /* ModeSwitcher.h */,
 				AA6EFE9E04770E7C005F316C /* MusicBannerWheel.cpp */,
 				AA6EFE9F04770E7C005F316C /* MusicBannerWheel.h */,
 				AA6EFEA004770E7C005F316C /* MusicList.cpp */,
@@ -3628,6 +3629,8 @@
 				AA6EFEB304770E7C005F316C /* SnapDisplay.h */,
 				AA6EFEB404770E7C005F316C /* TextBanner.cpp */,
 				AA6EFEB504770E7C005F316C /* TextBanner.h */,
+				AA6EFF7004770F86005F316C /* Transition.cpp */,
+				AA6EFF7104770F86005F316C /* Transition.h */,
 				AAAFE81C0835E7FF00FC43E0 /* WheelBase.cpp */,
 				AAAFE81D0835E7FF00FC43E0 /* WheelBase.h */,
 				AAAFE81E0835E7FF00FC43E0 /* WheelItemBase.cpp */,
@@ -3715,17 +3718,6 @@
 				AA3D5E90082152B6002AA665 /* StreamDisplay.h */,
 			);
 			name = ActorsInGameplay;
-			sourceTree = "<group>";
-		};
-		AA6EFF6F04770F6A005F316C /* Transitions */ = {
-			isa = PBXGroup;
-			children = (
-				AABE35EF04967E6F005F316C /* ModeSwitcher.cpp */,
-				AABE35F004967E6F005F316C /* ModeSwitcher.h */,
-				AA6EFF7004770F86005F316C /* Transition.cpp */,
-				AA6EFF7104770F86005F316C /* Transition.h */,
-			);
-			name = Transitions;
 			sourceTree = "<group>";
 		};
 		AA6EFF7404770F8B005F316C /* Actors */ = {
