@@ -48,20 +48,22 @@ public:
 	void ResetKeyRepeat( const GameInput &GameI );
 	void ResetKeyRepeat( const MenuInput &MenuI );
 
-	struct Mapping {
+	struct Mapping
+	{
 		bool IsEndMarker() const { return iSlotIndex==-1; }
 
 		int iSlotIndex;	// -1 == end marker
 		DeviceButton deviceButton;
 		GameButton gb;
-		/* If this is true, this is an auxilliary mapping assigned to the second
-		* player.  If two of the same device are found, and the device has secondary
-		* entries, the later entries take precedence.  This way, if a Pump pad is
-		* found, it'll map P1 to the primary pad and P2 to the secondary pad.
-		* (We can't tell if a slave pad is actually there.)  Then, if a second primary
-		* is found (DEVICE_PUMP2), 2P will be mapped to it. 
-		*
-		* This isn't well-tested; I only have one Pump pad. */
+
+		/*
+		 * If this is true, this is an auxilliary mapping assigned to the second
+		 * player.  If two of the same device are found, and the device has secondary
+		 * entries, the later entries take precedence.  This way, if a Pump pad is
+		 * found, it'll map P1 to the primary pad and P2 to the secondary pad.
+		 * (We can't tell if a slave pad is actually there.)  Then, if a second primary
+		 * is found (DEVICE_PUMP2), 2P will be mapped to it. 
+		 */
 		bool SecondController;
 	};
 
