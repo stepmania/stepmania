@@ -11,6 +11,7 @@
 
 
 const int MAX_COLS_PER_PLAYER = MAX_NOTE_TRACKS;
+static const int Column_INVALID = -1;
 
 class NoteData;
 class Game;
@@ -53,8 +54,8 @@ public:
 	bool		m_bCanUseBeginnerHelper;
 	bool		m_bLockDifficulties;		// used in couple Styles
 
-	GameInput StyleInputToGameInput( const StyleInput& StyleI, PlayerNumber pn ) const;
-	StyleInput GameInputToStyleInput( const GameInput &GameI ) const;
+	GameInput StyleInputToGameInput( int iCol, PlayerNumber pn ) const;
+	int GameInputToStyleInput( const GameInput &GameI ) const;
 
 	PlayerNumber ControllerToPlayerNumber( GameController controller ) const;
 
