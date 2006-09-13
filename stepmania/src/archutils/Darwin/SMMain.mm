@@ -11,13 +11,13 @@
 @end
 
 @interface SMApplication : NSApplication
-- (void)fullscreen:(id)sender;
+- (void) fullscreen:(id)sender;
 @end
 
 @interface SMMain : NSObject
 {
-	int mArgc;
-	char **mArgv;
+	int	m_iArgc;
+	char	**m_pArgv;
 }
 - (id) initWithArgc:(int)argc argv:(char **)argv;
 - (void) startGame:(id)sender;
@@ -46,19 +46,19 @@
 - (id) initWithArgc:(int)argc argv:(char **)argv
 {
 	[super init];
-	mArgc = argc;
-	mArgv = argv;
+	m_iArgc = argc;
+	m_pArgv = argv;
 	return self;
 }
 
 - (void) startGame:(id)sender
 {
 	// Hand off to main application code.
-	exit( SM_main(mArgc, mArgv) );
+	exit( SM_main(m_iArgc, m_pArgv) );
 }
 
 // Called when the internal event loop has just started running.
-- (void) applicationDidFinishLaunching: (NSNotification *) note
+- (void) applicationDidFinishLaunching:(NSNotification *)note
 {
 	[NSThread detachNewThreadSelector:@selector(startGame:) toTarget:self withObject:nil];
 }
