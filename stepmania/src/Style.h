@@ -53,7 +53,7 @@ public:
 	bool		m_bCanUseBeginnerHelper;
 	bool		m_bLockDifficulties;		// used in couple Styles
 
-	GameInput StyleInputToGameInput( const StyleInput& StyleI ) const;
+	GameInput StyleInputToGameInput( const StyleInput& StyleI, PlayerNumber pn ) const;
 	StyleInput GameInputToStyleInput( const GameInput &GameI ) const;
 
 	PlayerNumber ControllerToPlayerNumber( GameController controller ) const;

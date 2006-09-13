@@ -791,7 +791,7 @@ void InputMapper::GameToMenu( const GameInput &GameI, MenuInput &MenuI )
 void InputMapper::StyleToGame( const StyleInput &StyleI, PlayerNumber pn, GameInput &GameI )
 {
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();
-	GameI = pStyle->StyleInputToGameInput( StyleI );
+	GameI = pStyle->StyleInputToGameInput( StyleI, pn );
 }
 
 

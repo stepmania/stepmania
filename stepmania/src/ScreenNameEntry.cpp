@@ -195,7 +195,7 @@ void ScreenNameEntry::Init()
 
 			/* Find out if this column is associated with the START menu button. */
 			StyleInput si(p, t);
-			GameInput gi=GAMESTATE->GetCurrentStyle()->StyleInputToGameInput(si);
+			GameInput gi=GAMESTATE->GetCurrentStyle()->StyleInputToGameInput(si, p);
 			MenuInput m=GAMESTATE->GetCurrentGame()->GameInputToMenuInput(gi);
 			if(m.button == MENU_BUTTON_START)
 				continue;

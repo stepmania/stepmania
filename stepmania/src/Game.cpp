@@ -97,7 +97,7 @@ RString Game::ColToButtonName( int col ) const
 		return pzColumnName;
 
 	StyleInput SI( PLAYER_1, col );
-	GameInput GI = pStyle->StyleInputToGameInput( SI );
+	GameInput GI = pStyle->StyleInputToGameInput( SI, PLAYER_1 );
 
 	return m_szButtonNames[GI.button];
 }

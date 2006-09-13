@@ -38,15 +38,15 @@ void Style::GetTransformedNoteDataForStyle( PlayerNumber pn, const NoteData& ori
 	noteDataOut.LoadTransformed( original, m_iColsPerPlayer, iNewToOriginalTrack );
 }
 
-GameInput Style::StyleInputToGameInput( const StyleInput& StyleI ) const
+GameInput Style::StyleInputToGameInput( const StyleInput& StyleI, PlayerNumber pn ) const
 {
-	ASSERT_M( StyleI.player < NUM_PLAYERS  &&  StyleI.col < MAX_COLS_PER_PLAYER,
-		ssprintf("P%i C%i", StyleI.player, StyleI.col) );
+	ASSERT_M( pn < NUM_PLAYERS  &&  StyleI.col < MAX_COLS_PER_PLAYER,
+		ssprintf("P%i C%i", pn, StyleI.col) );
 	bool bUsingOneSide = m_StyleType != ONE_PLAYER_TWO_SIDES && m_StyleType != TWO_PLAYERS_SHARED_SIDES;
 
 	FOREACH_GameController(gc)
 	{
-		if( bUsingOneSide && gc != (int) StyleI.player )
+		if( bUsingOneSide && gc != (int) pn )
 			continue;
 
 		for( int i = 0; i < m_pGame->m_iButtonsPerController && m_iInputColumn[gc][i] != END_MAPPING; ++i )
@@ -54,7 +54,7 @@ GameInput Style::StyleInputToGameInput( const StyleInput& StyleI ) const
 				return GameInput( gc, i );
 	}
 
-	FAIL_M( ssprintf("Unknown StyleInput %i,%i", StyleI.player, StyleI.col) );
+	FAIL_M( ssprintf("Unknown StyleInput %i,%i", pn, StyleI.col) );
 };
 
 StyleInput Style::GameInputToStyleInput( const GameInput &GameI ) const
