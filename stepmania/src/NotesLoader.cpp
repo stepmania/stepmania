@@ -20,7 +20,7 @@ void NotesLoader::GetMainAndSubTitlesFromFullTitle( const RString &sFullTitle, R
 {
 	const RString sLeftSeps[]  = { " -", " ~", " (", " [", "\t" };
 
-	for( unsigned i=0; i<ARRAYSIZE(sLeftSeps); i++ )
+	for( unsigned i=0; i<ARRAYLEN(sLeftSeps); i++ )
 	{
 		size_t iBeginIndex = sFullTitle.find( sLeftSeps[i] );
 		if( iBeginIndex == string::npos )

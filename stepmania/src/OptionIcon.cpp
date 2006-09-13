@@ -54,7 +54,7 @@ void OptionIcon::Set( PlayerNumber pn, const RString &_sText, bool bHeader )
 		"OFF",
 	};
 	
-	for( unsigned i=0; i<ARRAYSIZE(sStopWords); i++ )
+	for( unsigned i=0; i<ARRAYLEN(sStopWords); i++ )
 		if( 0==stricmp(sText,sStopWords[i]) )
 			sText = "";
 

@@ -216,7 +216,7 @@ void ScreenEvaluation::Init()
 		{
 			const int ScoreBonuses[] = { 10000000, 10000000, 1000000, 100000, 10000, 1000, 100 };
 			Grade g = STATSMAN->m_CurStageStats.m_player[p].GetGrade();
-			if( g < (int) ARRAYSIZE(ScoreBonuses) )
+			if( g < (int) ARRAYLEN(ScoreBonuses) )
 			{
 				STATSMAN->m_CurStageStats.m_player[p].iBonus += ScoreBonuses[(int)g];
 				STATSMAN->m_CurStageStats.m_player[p].iBonus += ScoreBonuses[(int)g];

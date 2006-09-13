@@ -882,7 +882,7 @@ void BMSLoader::SetTimeSigAdjustments( const MeasureToTimeSig_t &sigs, Song *pOu
 		};
 
 		bool bValidTimeSignature = false;
-		for( unsigned i = 0; i < ARRAYSIZE(ValidFactors); ++i )
+		for( unsigned i = 0; i < ARRAYLEN(ValidFactors); ++i )
 			if( fabsf(fFactor-ValidFactors[i]) < 0.001 )
 				bValidTimeSignature = true;
 

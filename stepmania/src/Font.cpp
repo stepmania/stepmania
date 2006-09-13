@@ -275,7 +275,7 @@ const glyph &Font::GetGlyph( wchar_t c ) const
 	ASSERT(c >= 0 && c <= 0xFFFFFF);
 
 	/* Fast path: */
-	if( c < (int) ARRAYSIZE(m_iCharToGlyphCache) && m_iCharToGlyphCache[c] )
+	if( c < (int) ARRAYLEN(m_iCharToGlyphCache) && m_iCharToGlyphCache[c] )
 		return *m_iCharToGlyphCache[c];
 
 	/* Try the regular character. */
@@ -767,7 +767,7 @@ void Font::Load( const RString &sIniPath, RString sChars )
 		ZERO( m_iCharToGlyphCache );
 		map<longchar,glyph*>::iterator it;
 		for( it = m_iCharToGlyph.begin(); it != m_iCharToGlyph.end(); ++it )
-			if( it->first < (int) ARRAYSIZE(m_iCharToGlyphCache) )
+			if( it->first < (int) ARRAYLEN(m_iCharToGlyphCache) )
 				m_iCharToGlyphCache[it->first] = it->second;
 	}
 }

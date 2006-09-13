@@ -130,7 +130,7 @@ public:
 		Actor::SetTextureRenderStates();
 
 		DISPLAY->SetTextureModeModulate();
-		DISPLAY->DrawQuadStrip( m_Slices, ARRAYSIZE(m_Slices) );
+		DISPLAY->DrawQuadStrip( m_Slices, ARRAYLEN(m_Slices) );
 	}
 
 	RageSpriteVertex m_Slices[2*VALUE_RESOLUTION];
@@ -192,7 +192,7 @@ void GraphDisplay::LoadFromStageStats( const StageStats &ss, const PlayerStageSt
 
 	m_Values.resize( VALUE_RESOLUTION );
 	pss.GetLifeRecord( &m_Values[0], VALUE_RESOLUTION, ss.GetTotalPossibleStepsSeconds() );
-	for( unsigned i=0; i<ARRAYSIZE(m_Values); i++ )
+	for( unsigned i=0; i<ARRAYLEN(m_Values); i++ )
 		CLAMP( m_Values[i], 0.f, 1.f );
 
 	//

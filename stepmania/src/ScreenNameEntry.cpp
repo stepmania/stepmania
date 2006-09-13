@@ -57,7 +57,7 @@ const char NAME_CHARS[] =
 {
 	' ',' ',' ',' ','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'
 };
-#define NUM_NAME_CHARS (ARRAYSIZE(NAME_CHARS))
+#define NUM_NAME_CHARS (ARRAYLEN(NAME_CHARS))
 #define HEIGHT_OF_ALL_CHARS		(NUM_NAME_CHARS * g_fCharsSpacingY)
 
 

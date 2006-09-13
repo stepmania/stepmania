@@ -2644,7 +2644,7 @@ static Style g_Styles[] =
 	},
 };
 
-#define NUM_STYLES ARRAYSIZE(g_Styles)
+#define NUM_STYLES ARRAYLEN(g_Styles)
 
 void GameManager::GetStylesForGame( const Game *pGame, vector<const Style*>& aStylesAddTo, bool editor ) const
 {

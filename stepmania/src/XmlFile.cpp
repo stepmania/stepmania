@@ -49,7 +49,7 @@ static void InitEntities()
 		{ '>',  "gt", } 
 	};
 
-	for( unsigned i = 0; i < ARRAYSIZE(EntityTable); ++i )
+	for( unsigned i = 0; i < ARRAYLEN(EntityTable); ++i )
 	{
 		const Entity &ent = EntityTable[i];
 		g_mapEntitiesToChars[ent.pEntity] = RString(1, ent.c);

@@ -61,7 +61,7 @@ static const RString EMPTY_STRING;
 				as_##X##Name[i] = ap; \
 			} \
 		} \
-		ASSERT( CNT == ARRAYSIZE(X##Names) );	\
+		ASSERT( CNT == ARRAYLEN(X##Names) );	\
 		if( x == CNT+1 ) 	\
 			return EMPTY_STRING;	\
 		ASSERT( x < CNT );	\
@@ -88,7 +88,7 @@ static const RString EMPTY_STRING;
 		RString s2 = s;	\
 		s2.MakeLower();	\
 		unsigned i; \
-		for( i = 0; i < ARRAYSIZE(X##Names); ++i )	\
+		for( i = 0; i < ARRAYLEN(X##Names); ++i )	\
 			if( !s2.CompareNoCase(X##Names[i]) )	\
 				return (X)i;	\
 		return (X)(i+1); /*invalid*/	\

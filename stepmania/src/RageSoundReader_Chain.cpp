@@ -275,7 +275,7 @@ int RageSoundReader_Chain::ReadBlock( int16_t *pBuffer, int iFrames )
 		{
 			ActiveSound &s = m_apActiveSounds[i];
 			SoundReader *pSound = s.pSound;
-			int iSamples = min( iFramesToRead * pSound->GetNumChannels(), ARRAYSIZE(Buffer) );
+			int iSamples = min( iFramesToRead * pSound->GetNumChannels(), ARRAYLEN(Buffer) );
 			int iBytesRead = pSound->Read( (char *) Buffer, iSamples*sizeof(int16_t) );
 			if( iBytesRead == -1 || iBytesRead == 0 )
 			{
