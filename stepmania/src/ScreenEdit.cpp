@@ -1923,7 +1923,7 @@ void ScreenEdit::InputRecord( const InputEventPlus &input, EditButton EditB )
 	if( input.MenuI.player != PLAYER_1 )
 		return;		// ignore
 
-	const int iCol = GAMESTATE->m_pCurStyle->GameInputToStyleInput( input.GameI );
+	const int iCol = GAMESTATE->m_pCurStyle->GameInputToColumn( input.GameI );
 
 	switch( input.type )
 	{
@@ -2077,7 +2077,7 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 		return;
 	}
 	
-	const int iCol = GAMESTATE->m_pCurStyle->GameInputToStyleInput( input.GameI );
+	const int iCol = GAMESTATE->m_pCurStyle->GameInputToColumn( input.GameI );
 
 	if( PREFSMAN->m_AutoPlay != PC_HUMAN || iCol == -1 )
 		return;

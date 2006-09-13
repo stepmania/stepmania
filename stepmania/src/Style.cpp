@@ -57,7 +57,7 @@ GameInput Style::StyleInputToGameInput( int iCol, PlayerNumber pn ) const
 	FAIL_M( ssprintf("Invalid column %i,%i", pn, iCol) );
 };
 
-int Style::GameInputToStyleInput( const GameInput &GameI ) const
+int Style::GameInputToColumn( const GameInput &GameI ) const
 {
 	if( m_iInputColumn[GameI.controller][GameI.button] == NO_MAPPING )
 		return Column_INVALID;

@@ -2086,7 +2086,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 		 * However, if this is also a style button, don't do this. (pump center = start)
 		 */
 		bool bHoldingGiveUp = false;
-		if( GAMESTATE->m_pCurStyle->GameInputToStyleInput(input.GameI) == Column_INVALID )
+		if( GAMESTATE->m_pCurStyle->GameInputToColumn(input.GameI) == Column_INVALID )
 		{
 			bHoldingGiveUp |= ( START_GIVES_UP && input.MenuI.button == MENU_BUTTON_START );
 			bHoldingGiveUp |= ( BACK_GIVES_UP && input.MenuI.button == MENU_BUTTON_BACK );
@@ -2145,7 +2145,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 	}
 	
 	bool bRelease = input.type == IET_RELEASE;
-	const int iCol = GAMESTATE->m_pCurStyle->GameInputToStyleInput( input.GameI );
+	const int iCol = GAMESTATE->m_pCurStyle->GameInputToColumn( input.GameI );
 
 	if( GAMESTATE->m_bMultiplayer )
 	{

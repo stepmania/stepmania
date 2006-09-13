@@ -54,7 +54,7 @@ public:
 	bool		m_bLockDifficulties;		// used in couple Styles
 
 	GameInput StyleInputToGameInput( int iCol, PlayerNumber pn ) const;
-	int GameInputToStyleInput( const GameInput &GameI ) const;
+	int GameInputToColumn( const GameInput &GameI ) const;
 
 	PlayerNumber ControllerToPlayerNumber( GameController controller ) const;
 
