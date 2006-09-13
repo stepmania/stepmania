@@ -1,22 +1,18 @@
-/* StyleInput - An input event specific to a style that is defined by a player number and the player's note column. */
+/* StyleInput - An input event specific to a style that is defined by the note column. */
 
 #ifndef STYLE_INPUT_H
 #define STYLE_INPUT_H
 
-#include "PlayerNumber.h"
-
-
 struct StyleInput
 {
-	PlayerNumber	player;
 	int		col;
 
 	StyleInput() { MakeInvalid(); };
-	StyleInput( PlayerNumber pn, int c ) { player = pn; col = c; };
-	bool operator==( const StyleInput &other ) { return player == other.player && col == other.col; };
+	StyleInput( int c ) { col = c; }
+	bool operator==( const StyleInput &other ) { return col == other.col; }
 
-	inline bool IsValid() const { return player != PLAYER_INVALID; };
-	inline void MakeInvalid() { player = PLAYER_INVALID; col = -1; };
+	bool IsValid() const { return col != -1; }
+	void MakeInvalid() { col = -1; }
 };
 
 #endif

@@ -68,7 +68,7 @@ StyleInput Style::GameInputToStyleInput( const GameInput &GameI ) const
 		if( m_iInputColumn[GameI.controller][i] == END_MAPPING )
 			return SI;	// Return invalid.
 
-	SI = StyleInput( ControllerToPlayerNumber(GameI.controller), m_iInputColumn[GameI.controller][GameI.button] );
+	SI = StyleInput( m_iInputColumn[GameI.controller][GameI.button] );
 
 	return SI;
 }

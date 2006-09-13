@@ -65,8 +65,7 @@ static void GetUsedGameInputs( vector<GameInput> &vGameInputsOut )
 		{
 			for( int i=0; i<(*style)->m_iColsPerPlayer; i++ )
 			{
-				StyleInput si( pn, i );
-				GameInput gi = (*style)->StyleInputToGameInput( si, pn );
+				GameInput gi = (*style)->StyleInputToGameInput( i, pn );
 				if( gi.IsValid() )
 				{
 					vGIs.insert( gi );

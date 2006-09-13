@@ -1895,8 +1895,7 @@ void ScreenGameplay::UpdateLights()
 
 				if( bBlink )
 				{
-					StyleInput si( pi->m_pn, t );
-					GameInput gi = pStyle->StyleInputToGameInput( si, pi->m_pn );
+					GameInput gi = pStyle->StyleInputToGameInput( t, pi->m_pn );
 					bBlinkGameButton[gi.controller][gi.button] = true;
 				}
 			}

@@ -543,8 +543,7 @@ void Player::Update( float fDeltaTime )
 		// TODO: Remove use of PlayerNumber.
 		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
-		const StyleInput StyleI( pn, col );
-		bool bIsHoldingButton = INPUTMAPPER->IsBeingPressed( StyleI, pn );
+		bool bIsHoldingButton = INPUTMAPPER->IsBeingPressed( col, pn );
 		// TODO: Make this work for non-human-controlled players
 		if( bIsHoldingButton && !GAMESTATE->m_bDemonstrationOrJukebox && m_pPlayerState->m_PlayerController==PC_HUMAN )
 			if( m_pNoteField )
@@ -621,8 +620,7 @@ void Player::Update( float fDeltaTime )
 			}
 			else
 			{
-				const StyleInput StyleI( pn, iTrack );
-				bIsHoldingButton = INPUTMAPPER->IsBeingPressed( StyleI, pn, m_pPlayerState->m_mp );
+				bIsHoldingButton = INPUTMAPPER->IsBeingPressed( iTrack, pn, m_pPlayerState->m_mp );
 			}
 
 			int iEndRow = iRow + tn.iDuration;
@@ -1008,8 +1006,7 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 			int iNumTracksHeld = 0;
 			for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
 			{
-				const StyleInput StyleI( pn, t );
-				const GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( StyleI );
+				const GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( t, pn );
 				const float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI );
 				if( fSecsHeld > 0  && fSecsHeld < JUMP_WINDOW_SECONDS )
 					iNumTracksHeld++;
@@ -1489,16 +1486,15 @@ void Player::CrossedMineRow( int iNoteRow, const RageTimer &now )
 			// TODO: Remove use of PlayerNumber.
 			PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
-			const StyleInput StyleI( pn, t );
 			if( PREFSMAN->m_fPadStickSeconds > 0 )
 			{
-				float fSecsHeld = INPUTMAPPER->GetSecsHeld( StyleI, pn, m_pPlayerState->m_mp );
+				float fSecsHeld = INPUTMAPPER->GetSecsHeld( t, pn, m_pPlayerState->m_mp );
 				if( fSecsHeld >= PREFSMAN->m_fPadStickSeconds )
 					Step( t, -1, now+(-PREFSMAN->m_fPadStickSeconds), true, false );
 			}
 			else
 			{
-				bool bIsDown = INPUTMAPPER->IsBeingPressed( StyleI, pn, m_pPlayerState->m_mp );
+				bool bIsDown = INPUTMAPPER->IsBeingPressed( t, pn, m_pPlayerState->m_mp );
 				if( bIsDown )
 					Step( t, iNoteRow, now, true, false );
 			}
