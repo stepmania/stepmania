@@ -831,7 +831,7 @@ bool InputMapper::IsBeingPressed( const MenuInput &MenuI )
 	return false;
 }
 
-bool InputMapper::IsBeingPressed( const StyleInput &StyleI, MultiPlayer mp )
+bool InputMapper::IsBeingPressed( const StyleInput &StyleI, PlayerNumber pn, MultiPlayer mp )
 {
 	GameInput GameI;
 	StyleToGame( StyleI, GameI );
@@ -870,7 +870,7 @@ float InputMapper::GetSecsHeld( const MenuInput &MenuI )
 	return fMaxSecsHeld;
 }
 
-float InputMapper::GetSecsHeld( const StyleInput &StyleI, MultiPlayer mp )
+float InputMapper::GetSecsHeld( const StyleInput &StyleI, PlayerNumber pn, MultiPlayer mp )
 {
 	GameInput GameI;
 	StyleToGame( StyleI, GameI );
