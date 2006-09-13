@@ -788,7 +788,7 @@ void InputMapper::GameToMenu( const GameInput &GameI, MenuInput &MenuI )
 	MenuI = pGame->GameInputToMenuInput( GameI );
 }
 
-void InputMapper::StyleToGame( const StyleInput &StyleI, GameInput &GameI )
+void InputMapper::StyleToGame( const StyleInput &StyleI, PlayerNumber pn, GameInput &GameI )
 {
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 	GameI = pStyle->StyleInputToGameInput( StyleI );
@@ -835,7 +835,7 @@ bool InputMapper::IsBeingPressed( const StyleInput &StyleI, PlayerNumber pn, Mul
 {
 	GameInput GameI;
 	StyleToGame( StyleI, GameI );
-	return IsBeingPressed( GameI, mp );
+	return IsBeingPressed( GameI, pn, mp );
 }
 
 
@@ -874,7 +874,7 @@ float InputMapper::GetSecsHeld( const StyleInput &StyleI, PlayerNumber pn, Multi
 {
 	GameInput GameI;
 	StyleToGame( StyleI, GameI );
-	return GetSecsHeld( GameI, mp );
+	return GetSecsHeld( GameI, pn, mp );
 }
 
 void InputMapper::ResetKeyRepeat( const GameInput &GameI )
