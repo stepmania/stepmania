@@ -66,11 +66,10 @@ static Preference<float> g_fInputDebounceTime( "InputDebounceTime", 0 );
 InputFilter*	INPUTFILTER = NULL;	// global and accessable from anywhere in our program
 
 static const float TIME_BEFORE_SLOW_REPEATS = 0.375f;
-static const float TIME_BEFORE_FAST_REPEATS = 1.5f;
 
 static const float REPEATS_PER_SEC = 8;
 
-static float g_fTimeBeforeSlow, g_fTimeBeforeFast, g_fTimeBetweenRepeats;
+static float g_fTimeBeforeRepeats, g_fTimeBetweenRepeats;
 
 
 InputFilter::InputFilter()
@@ -93,16 +92,15 @@ void InputFilter::Reset()
 		ResetDevice( InputDevice(i) );
 }
 
-void InputFilter::SetRepeatRate( float fSlowDelay, float fFastDelay, float fRepeatRate )
+void InputFilter::SetRepeatRate( float fDelay, float fFastDelay, float fRepeatRate )
 {
-	g_fTimeBeforeSlow = fSlowDelay;
-	g_fTimeBeforeFast = fFastDelay;
+	g_fTimeBeforeRepeats = fDelay;
 	g_fTimeBetweenRepeats = 1/fRepeatRate;
 }
 
 void InputFilter::ResetRepeatRate()
 {
-	SetRepeatRate( TIME_BEFORE_SLOW_REPEATS, TIME_BEFORE_FAST_REPEATS, REPEATS_PER_SEC );
+	SetRepeatRate( TIME_BEFORE_SLOW_REPEATS, 0, REPEATS_PER_SEC );
 }
 
 ButtonState::ButtonState():
@@ -251,30 +249,20 @@ void InputFilter::Update( float fDeltaTime )
 		bs.m_fSecsHeld += fDeltaTime;
 		const float fNewHoldTime = bs.m_fSecsHeld;
 
-		float fTimeBeforeRepeats;
 		InputEventType iet;
-		if( fNewHoldTime > g_fTimeBeforeSlow )
+		if( fNewHoldTime > g_fTimeBeforeRepeats )
 		{
-			if( fNewHoldTime > g_fTimeBeforeFast )
-			{
-				fTimeBeforeRepeats = g_fTimeBeforeFast;
-				iet = IET_FAST_REPEAT;
-			}
-			else
-			{
-				fTimeBeforeRepeats = g_fTimeBeforeSlow;
-				iet = IET_SLOW_REPEAT;
-			}
+			iet = IET_SLOW_REPEAT;
 
 			float fRepeatTime;
-			if( fOldHoldTime < fTimeBeforeRepeats )
+			if( fOldHoldTime < g_fTimeBeforeRepeats )
 			{
-				fRepeatTime = fTimeBeforeRepeats;
+				fRepeatTime = g_fTimeBeforeRepeats;
 			}
 			else
 			{
-				float fAdjustedOldHoldTime = fOldHoldTime - fTimeBeforeRepeats;
-				float fAdjustedNewHoldTime = fNewHoldTime - fTimeBeforeRepeats;
+				float fAdjustedOldHoldTime = fOldHoldTime - g_fTimeBeforeRepeats;
+				float fAdjustedNewHoldTime = fNewHoldTime - g_fTimeBeforeRepeats;
 				if( int(fAdjustedOldHoldTime/g_fTimeBetweenRepeats) == int(fAdjustedNewHoldTime/g_fTimeBetweenRepeats) )
 					continue;
 				fRepeatTime = ftruncf( fNewHoldTime, g_fTimeBetweenRepeats );
