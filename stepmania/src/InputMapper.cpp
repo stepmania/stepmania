@@ -771,15 +771,12 @@ bool InputMapper::GameToDevice( const GameInput &GameI, int iSoltNum, DeviceInpu
 	return DeviceI.device != DEVICE_NONE;
 }
 
-void InputMapper::GameToStyle( const GameInput &GameI, StyleInput &StyleI )
+StyleInput InputMapper::GameToStyle( const GameInput &GameI )
 {
 	if( GAMESTATE->m_pCurStyle == NULL )
-	{
-		StyleI.MakeInvalid();
-		return;
-	}
+		return StyleInput_INVALID;
 
-	StyleI = GAMESTATE->m_pCurStyle->GameInputToStyleInput( GameI );
+	return GAMESTATE->m_pCurStyle->GameInputToStyleInput( GameI );
 }
 
 void InputMapper::GameToMenu( const GameInput &GameI, MenuInput &MenuI )

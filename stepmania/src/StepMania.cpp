@@ -1404,11 +1404,6 @@ void HandleInputEvents(float fDeltaTime)
 		
 		if( input.GameI.IsValid()  &&  input.type == IET_FIRST_PRESS )
 			INPUTQUEUE->RememberInput( input );
-		if( input.GameI.IsValid() )
-		{
-			INPUTMAPPER->GameToMenu( input.GameI, input.MenuI );
-			INPUTMAPPER->GameToStyle( input.GameI, input.StyleI );
-		}
 
 		input.mp = MultiPlayer_INVALID;
 		
@@ -1428,18 +1423,19 @@ void HandleInputEvents(float fDeltaTime)
 					{
 						input.GameI = gi;
 						//LOG->Trace( "game %d %d", input.GameI.controller, input.GameI.button );
-						INPUTMAPPER->GameToStyle( input.GameI, input.StyleI );
-						INPUTMAPPER->GameToMenu( input.GameI, input.MenuI );
 					}
-
-					//LOG->Trace( "style %d %d", input.StyleI.player, input.StyleI.col );
-					//LOG->Trace( "menu %d %d", input.MenuI.player, input.MenuI.button );
 
 					input.mp = InputMapper::InputDeviceToMultiPlayer( input.DeviceI.device );
 					//LOG->Trace( "multiplayer %d", input.mp );
 					ASSERT( input.mp >= 0 && input.mp < NUM_MultiPlayer );					
 				}
 			}
+		}
+
+		if( input.GameI.IsValid() )
+		{
+			INPUTMAPPER->GameToMenu( input.GameI, input.MenuI );
+			INPUTMAPPER->GameToStyle( input.GameI, input.StyleI );
 		}
 
 		if( HandleGlobalInputs(input) )
