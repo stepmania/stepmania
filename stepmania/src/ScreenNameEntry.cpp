@@ -188,34 +188,34 @@ void ScreenNameEntry::Init()
 		m_ColToStringIndex[p].insert(m_ColToStringIndex[p].begin(), pStyle->m_iColsPerPlayer, -1);
 		int CurrentStringIndex = 0;
 
-		for( int t=0; t<pStyle->m_iColsPerPlayer; t++ )
+		for( int iCol=0; iCol<pStyle->m_iColsPerPlayer; iCol++ )
 		{
 			if(CurrentStringIndex == MAX_RANKING_NAME_LENGTH)
 				continue; /* We have enough columns. */
 
 			/* Find out if this column is associated with the START menu button. */
-			GameInput gi=GAMESTATE->GetCurrentStyle()->StyleInputToGameInput(t, p);
+			GameInput gi = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iCol, p );
 			MenuInput m=GAMESTATE->GetCurrentGame()->GameInputToMenuInput(gi);
 			if(m.button == MENU_BUTTON_START)
 				continue;
-			m_ColToStringIndex[p][t] = CurrentStringIndex++;
+			m_ColToStringIndex[p][iCol] = CurrentStringIndex++;
 
-			float ColX = fPlayerX + pStyle->m_ColumnInfo[p][t].fXOffset;
+			float ColX = fPlayerX + pStyle->m_ColumnInfo[p][iCol].fXOffset;
 
-			m_textSelectedChars[p][t].LoadFromFont( THEME->GetPathF("ScreenNameEntry","letters") );
-			m_textSelectedChars[p][t].SetX( ColX );
-			m_textSelectedChars[p][t].SetY( GRAY_ARROWS_Y );
-			m_textSelectedChars[p][t].RunCommands( SELECTED_CHARS_COMMAND );
-			m_textSelectedChars[p][t].SetZoom( CHARS_ZOOM_LARGE );
-			if( t < (int)m_sSelectedName[p].length() )
-				m_textSelectedChars[p][t].SetText( m_sSelectedName[p].substr(t,1) );
-			this->AddChild( &m_textSelectedChars[p][t] );		// draw these manually
+			m_textSelectedChars[p][iCol].LoadFromFont( THEME->GetPathF("ScreenNameEntry","letters") );
+			m_textSelectedChars[p][iCol].SetX( ColX );
+			m_textSelectedChars[p][iCol].SetY( GRAY_ARROWS_Y );
+			m_textSelectedChars[p][iCol].RunCommands( SELECTED_CHARS_COMMAND );
+			m_textSelectedChars[p][iCol].SetZoom( CHARS_ZOOM_LARGE );
+			if( iCol < (int)m_sSelectedName[p].length() )
+				m_textSelectedChars[p][iCol].SetText( m_sSelectedName[p].substr(iCol,1) );
+			this->AddChild( &m_textSelectedChars[p][iCol] );		// draw these manually
 			
-			m_textScrollingChars[p][t].LoadFromFont( THEME->GetPathF("ScreenNameEntry","letters") );
-			m_textScrollingChars[p][t].SetX( ColX );
-			m_textScrollingChars[p][t].SetY( GRAY_ARROWS_Y );
-			m_textScrollingChars[p][t].RunCommands( SCROLLING_CHARS_COMMAND );
-			//this->AddChild( &m_textScrollingChars[p][t] );	// draw these manually
+			m_textScrollingChars[p][iCol].LoadFromFont( THEME->GetPathF("ScreenNameEntry","letters") );
+			m_textScrollingChars[p][iCol].SetX( ColX );
+			m_textScrollingChars[p][iCol].SetY( GRAY_ARROWS_Y );
+			m_textScrollingChars[p][iCol].RunCommands( SCROLLING_CHARS_COMMAND );
+			//this->AddChild( &m_textScrollingChars[p][iCol] );	// draw these manually
 		}
 
 		m_textCategory[p].LoadFromFont( THEME->GetPathF("ScreenNameEntry","category") );
