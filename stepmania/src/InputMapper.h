@@ -6,7 +6,6 @@
 #include "RageInputDevice.h"
 #include "GameInput.h"
 #include "MenuInput.h"
-#include "StyleInput.h"
 #include "GameConstantsAndTypes.h"
 
 const int NUM_GAME_TO_DEVICE_SLOTS	= 5;	// five device inputs may map to one game input
@@ -37,8 +36,6 @@ public:
 	
 	bool DeviceToGame( const DeviceInput &DeviceI, GameInput& GameI );	// return true if there is a mapping from device to pad
 	bool GameToDevice( const GameInput &GameI, int iSoltNum, DeviceInput& DeviceI );	// return true if there is a mapping from pad to device
-
-	void StyleToGame( const StyleInput &StyleI, PlayerNumber pn, GameInput &GameI );
 
 	void GameToMenu( const GameInput &GameI, MenuInput &MenuI );
 	void MenuToGame( const MenuInput &MenuI, GameInput GameIout[4] );
