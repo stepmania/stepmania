@@ -2086,8 +2086,11 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 		 * However, if this is also a style button, don't do this. (pump center = start)
 		 */
 		bool bHoldingGiveUp = false;
-		bHoldingGiveUp |= ( START_GIVES_UP && input.MenuI.button == MENU_BUTTON_START && input.StyleI == StyleInput_INVALID );
-		bHoldingGiveUp |= ( BACK_GIVES_UP && input.MenuI.button == MENU_BUTTON_BACK && input.StyleI == StyleInput_INVALID );
+		if( GAMESTATE->m_pCurStyle->GameInputToStyleInput(input.GameI) == StyleInput_INVALID )
+		{
+			bHoldingGiveUp |= ( START_GIVES_UP && input.MenuI.button == MENU_BUTTON_START );
+			bHoldingGiveUp |= ( BACK_GIVES_UP && input.MenuI.button == MENU_BUTTON_BACK );
+		}
 		
 		if( bHoldingGiveUp )
 		{
@@ -2142,15 +2145,16 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 	}
 	
 	bool bRelease = input.type == IET_RELEASE;
+	const int iCol = GAMESTATE->m_pCurStyle->GameInputToStyleInput( input.GameI );
 
 	if( GAMESTATE->m_bMultiplayer )
 	{
 		if( input.mp != MultiPlayer_INVALID  &&  
 			input.type==IET_FIRST_PRESS &&
-			input.StyleI != StyleInput_INVALID && 
+			iCol != StyleInput_INVALID && 
 			GAMESTATE->IsMultiPlayerEnabled(input.mp) )
 		{
-			m_vPlayerInfo[input.mp].m_pPlayer->Step( input.StyleI, -1, input.DeviceI.ts, false, bRelease );
+			m_vPlayerInfo[input.mp].m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
 		}
 	}
 	else
@@ -2159,7 +2163,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 		// handle a step or battle item activate
 		//
 		if( input.type==IET_FIRST_PRESS && 
-			input.StyleI != StyleInput_INVALID &&
+			iCol != StyleInput_INVALID &&
 			GAMESTATE->IsHumanPlayer( input.MenuI.player ) )
 		{
 			AbortGiveUp( true );
@@ -2167,7 +2171,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 			if( PREFSMAN->m_AutoPlay == PC_HUMAN )
 			{
 				PlayerInfo& pi = GetPlayerInfoForInput( input );
-				pi.m_pPlayer->Step( input.StyleI, -1, input.DeviceI.ts, false, bRelease );
+				pi.m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
 			}
 		}
 	}
