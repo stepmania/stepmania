@@ -182,8 +182,13 @@ bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
 			switch( input.type )
 			{
 			case IET_RELEASE:	fDelta *= 0;	break;
-			case IET_SLOW_REPEAT:	fDelta *= 0;	break;
-			case IET_FAST_REPEAT:	fDelta *= 10;	break;
+			case IET_SLOW_REPEAT:
+			case IET_FAST_REPEAT:
+				if( INPUTFILTER->GetSecsHeld(input.DeviceI) < 1.0f )
+					fDelta *= 0;
+				else
+					fDelta *= 10;
+				fDelta *= 10;	break;
 			}
 			if( GAMESTATE->m_pCurSong != NULL )
 			{

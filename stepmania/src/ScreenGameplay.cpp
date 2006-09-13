@@ -2119,7 +2119,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 		{
 			if( ((!PREFSMAN->m_bDelayedBack && input.type==IET_FIRST_PRESS) ||
 				(input.DeviceI.device==DEVICE_KEYBOARD && (input.type==IET_SLOW_REPEAT||input.type==IET_FAST_REPEAT)) ||
-				(input.DeviceI.device!=DEVICE_KEYBOARD && input.type==IET_FAST_REPEAT)) )
+				(input.DeviceI.device!=DEVICE_KEYBOARD && INPUTFILTER->GetSecsHeld(input.DeviceI) >= 1.0f)) )
 			{
 				LOG->Trace("Player %i went back", input.MenuI.player+1);
 				BeginBackingOutFromGameplay();

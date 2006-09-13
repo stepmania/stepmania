@@ -1474,13 +1474,12 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			{
 				fDelta /= 20;	// .001 bpm
 			}
-			else 
+			else if( input.type == IET_SLOW_REPEAT || input.type == IET_FAST_REPEAT )
 			{
-				switch( input.type )
-				{
-				case IET_SLOW_REPEAT:	fDelta *= 10;	break;
-				case IET_FAST_REPEAT:	fDelta *= 40;	break;
-				}
+				if( INPUTFILTER->GetSecsHeld(input.DeviceI) < 1.0f )
+					fDelta *= 10;
+				else
+					fDelta *= 40;
 			}
 			
 			float fNewBPM = fBPM + fDelta;
@@ -1502,13 +1501,12 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			{
 				fDelta /= 20; /* 1ms */
 			}
-			else 
+			else if( input.type == IET_SLOW_REPEAT || input.type == IET_FAST_REPEAT )
 			{
-				switch( input.type )
-				{
-				case IET_SLOW_REPEAT:	fDelta *= 10;	break;
-				case IET_FAST_REPEAT:	fDelta *= 40;	break;
-				}
+				if( INPUTFILTER->GetSecsHeld(input.DeviceI) < 1.0f )
+					fDelta *= 10;
+				else
+					fDelta *= 40;
 			}
 			unsigned i;
 			for( i=0; i<m_pSong->m_Timing.m_StopSegments.size(); i++ )
@@ -1547,13 +1545,12 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			{
 				fDelta /= 20; /* 1ms */
 			}
-			else 
+			else if( input.type == IET_SLOW_REPEAT || input.type == IET_FAST_REPEAT )
 			{
-				switch( input.type )
-				{
-				case IET_SLOW_REPEAT:	fDelta *= 10;	break;
-				case IET_FAST_REPEAT:	fDelta *= 40;	break;
-				}
+				if( INPUTFILTER->GetSecsHeld(input.DeviceI) < 1.0f )
+					fDelta *= 10;
+				else
+					fDelta *= 40;
 			}
 			m_pSong->m_Timing.m_fBeat0OffsetInSeconds += fDelta;
 			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
@@ -1573,10 +1570,13 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			case EDIT_BUTTON_SAMPLE_LENGTH_DOWN:		fDelta = -0.02f;	break;
 			case EDIT_BUTTON_SAMPLE_LENGTH_UP:		fDelta = +0.02f;	break;
 			}
-			switch( input.type )
+			
+			if( input.type == IET_SLOW_REPEAT || input.type == IET_FAST_REPEAT )
 			{
-			case IET_SLOW_REPEAT:	fDelta *= 10;	break;
-			case IET_FAST_REPEAT:	fDelta *= 40;	break;
+				if( INPUTFILTER->GetSecsHeld(input.DeviceI) < 1.0f )
+					fDelta *= 10;
+				else
+					fDelta *= 40;
 			}
 
 			if( EditB == EDIT_BUTTON_SAMPLE_LENGTH_DOWN || EditB == EDIT_BUTTON_SAMPLE_LENGTH_UP )
@@ -2060,13 +2060,12 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 			{
 				fOffsetDelta /= 20; /* 1ms */
 			}
-			else 
+			else if( input.type == IET_SLOW_REPEAT || input.type == IET_FAST_REPEAT )
 			{
-				switch( input.type )
-				{
-					case IET_SLOW_REPEAT:	fOffsetDelta *= 10;	break;
-					case IET_FAST_REPEAT:	fOffsetDelta *= 40;	break;
-				}
+				if( INPUTFILTER->GetSecsHeld(input.DeviceI) < 1.0f )
+					fOffsetDelta *= 10;
+				else
+					fOffsetDelta *= 40;
 			}
 			
 			m_pSong->m_Timing.m_fBeat0OffsetInSeconds += fOffsetDelta;

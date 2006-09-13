@@ -131,10 +131,12 @@ void ScreenCenterImage::Input( const InputEventPlus &input )
 
 	if( input.DeviceI.level < 0 )
 	{
-		switch( input.type )
+		if( input.type == IET_SLOW_REPEAT || input.type == IET_FAST_REPEAT )
 		{
-		case IET_SLOW_REPEAT:	fScale *= 4;	break;
-		case IET_FAST_REPEAT:	fScale *= 16;	break;
+			if( INPUTFILTER->GetSecsHeld(input.DeviceI) < 1.0f )
+				fScale *= 10;
+			else
+				fScale *= 40;
 		}
 
 		if( !bIncrease )
