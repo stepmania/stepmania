@@ -241,9 +241,6 @@ bool Screen::JoinInput( const InputEventPlus &input )
 	if( !GAMESTATE->PlayersCanJoin() )
 		return false;
 
-	if( input.MenuI != MENU_BUTTON_START )
-		return false;
-
 	/* If this side is already in, don't re-join (and re-pay!). */
 	if(GAMESTATE->m_bSideIsJoined[input.pn])
 		return false;
