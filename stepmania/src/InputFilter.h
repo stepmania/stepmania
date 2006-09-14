@@ -47,6 +47,7 @@ public:
 	void SetRepeatRate( float fDelay, float fRepeatRate );
 	void ResetRepeatRate();
 	void ResetKeyRepeat( const DeviceInput &di );
+	void RepeatStopKey( const DeviceInput &di );
 
 	// If aButtonState is NULL, use the last reported state.
 	bool IsBeingPressed( const DeviceInput &di, const DeviceInputList *pButtonState = NULL ) const;

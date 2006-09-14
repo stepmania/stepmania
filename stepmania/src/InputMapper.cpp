@@ -811,6 +811,26 @@ bool InputMapper::IsBeingPressed( const MenuInput &MenuI, PlayerNumber pn )
 	return false;
 }
 
+void InputMapper::RepeatStopKey( const GameInput &GameI )
+{
+	for( int i=0; i<NUM_GAME_TO_DEVICE_SLOTS; i++ )
+	{
+		DeviceInput DeviceI;
+
+		if( GameToDevice( GameI, i, DeviceI ) )
+			INPUTFILTER->RepeatStopKey( DeviceI );
+	}
+}
+
+void InputMapper::RepeatStopKey( MenuButton MenuI, PlayerNumber pn )
+{
+	GameInput GameI[4];
+	MenuToGame( MenuI, pn, GameI );
+	for( int i=0; i<4; i++ )
+		if( GameI[i].IsValid() )
+			RepeatStopKey( GameI[i] );
+}
+
 float InputMapper::GetSecsHeld( const GameInput &GameI, MultiPlayer mp )
 {
 	float fMaxSecsHeld = 0;

@@ -49,6 +49,9 @@ public:
 	void ResetKeyRepeat( const GameInput &GameI );
 	void ResetKeyRepeat( const MenuInput &MenuI, PlayerNumber pn );
 
+	void RepeatStopKey( const GameInput &GameI );
+	void RepeatStopKey( MenuButton MenuI, PlayerNumber pn );
+
 	struct Mapping
 	{
 		bool IsEndMarker() const { return iSlotIndex==-1; }
