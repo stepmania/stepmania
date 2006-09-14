@@ -236,13 +236,13 @@ RString Screen::GetPrevScreen() const
 }
 
 
-bool Screen::JoinInput( const InputEventPlus &input )
+bool Screen::JoinInput( PlayerNumber pn )
 {
 	if( !GAMESTATE->PlayersCanJoin() )
 		return false;
 
 	/* If this side is already in, don't re-join (and re-pay!). */
-	if(GAMESTATE->m_bSideIsJoined[input.pn])
+	if(GAMESTATE->m_bSideIsJoined[pn])
 		return false;
 
 	/* subtract coins */
@@ -259,7 +259,7 @@ bool Screen::JoinInput( const InputEventPlus &input )
 	if( GAMESTATE->GetNumSidesJoined() > 0 )
 		SCREENMAN->PlayStartSound();
 
-	GAMESTATE->JoinPlayer( input.pn );
+	GAMESTATE->JoinPlayer( pn );
 
 	// don't load memory card profiles here.  It's slow and can cause a big skip.
 	/* Don't load the local profile, either.  It causes a 150+ms skip on my A64 3000+,

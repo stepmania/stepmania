@@ -61,7 +61,7 @@ public:
 	virtual ScreenType GetScreenType() const { return ALLOW_OPERATOR_MENU_BUTTON ? game_menu : system_menu; }
 	bool AllowOperatorMenuButton() const { return ALLOW_OPERATOR_MENU_BUTTON; }
 
-	static bool JoinInput( const InputEventPlus &input );	// return true if a player joined
+	static bool JoinInput( PlayerNumber pn );	// return true if player joined
 
 	//
 	// Lua

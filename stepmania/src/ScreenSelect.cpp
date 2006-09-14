@@ -150,7 +150,7 @@ void ScreenSelect::Input( const InputEventPlus &input )
 	bool bAllowJoinInput = !ALLOW_DISABLED_PLAYER_INPUT;
 
 	if( input.MenuI == MENU_BUTTON_COIN ||
-		(bAllowJoinInput && input.MenuI == MENU_BUTTON_START && Screen::JoinInput(input)) )
+		(bAllowJoinInput && input.MenuI == MENU_BUTTON_START && Screen::JoinInput(input.pn)) )
 	{
 		if( input.type == IET_FIRST_PRESS )
 			this->UpdateSelectableChoices();
