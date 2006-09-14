@@ -38,7 +38,7 @@ MenuButton Game::GameInputToMenuButton( GameInput GameI ) const
 	return MenuButton_INVALID;	// invalid GameInput
 }
 
-void Game::MenuInputToGameInput( MenuButton MenuI, PlayerNumber pn, GameInput GameIout[4] ) const
+void Game::MenuButtonToGameInputs( MenuButton MenuI, PlayerNumber pn, GameInput GameIout[4] ) const
 {
 	ASSERT( MenuI != MenuButton_INVALID );
 

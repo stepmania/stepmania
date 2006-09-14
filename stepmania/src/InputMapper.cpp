@@ -778,7 +778,7 @@ MenuButton InputMapper::GameToMenu( const GameInput &GameI )
 void InputMapper::MenuToGame( MenuButton MenuI, PlayerNumber pn, GameInput GameIout[4] )
 {
 	const Game* pGame = GAMESTATE->GetCurrentGame();
-	pGame->MenuInputToGameInput( MenuI, pn, GameIout );
+	pGame->MenuButtonToGameInputs( MenuI, pn, GameIout );
 }
 
 
