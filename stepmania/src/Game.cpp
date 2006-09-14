@@ -22,27 +22,23 @@ GameButton Game::ButtonNameToIndex( const RString &sButtonName ) const
 	return GAME_BUTTON_INVALID;
 }
 
-MenuInput Game::GameInputToMenuInput( GameInput GameI ) const
+MenuButton Game::GameInputToMenuButton( GameInput GameI ) const
 {
-	PlayerNumber pn = (PlayerNumber) GameI.controller;
-	if( GAMESTATE->GetCurrentStyle() )
-		pn = GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber(GameI.controller);
-
 	FOREACH_MenuButton(i)
 		if( m_DedicatedMenuButton[i] == GameI.button )
-			return MenuInput( pn, i );
+			return i;
 
 	if( !PREFSMAN->m_bOnlyDedicatedMenuButtons )
 	{
 		FOREACH_MenuButton(i)
 			if( m_SecondaryMenuButton[i] == GameI.button )
-				return MenuInput( pn, i );
+				return i;
 	}
 
-	return MenuInput();	// invalid GameInput
+	return MenuButton_INVALID;	// invalid GameInput
 }
 
-void Game::MenuInputToGameInput( MenuInput MenuI, GameInput GameIout[4] ) const
+void Game::MenuInputToGameInput( MenuInput MenuI, PlayerNumber pn, GameInput GameIout[4] ) const
 {
 	ASSERT( MenuI.IsValid() );
 
@@ -61,7 +57,7 @@ void Game::MenuInputToGameInput( MenuInput MenuI, GameInput GameIout[4] ) const
 	{
 	case ONE_PLAYER_ONE_SIDE:
 	case TWO_PLAYERS_TWO_SIDES:
-		controller[0] = (GameController)MenuI.player;
+		controller[0] = (GameController)pn;
 		iNumSidesUsing = 1;
 		break;
 	case ONE_PLAYER_TWO_SIDES:
