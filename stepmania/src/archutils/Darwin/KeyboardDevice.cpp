@@ -184,24 +184,6 @@ void KeyboardDevice::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevice
 }
 
 
-static bool DeviceButtonToUsbKey( DeviceButton button, UInt8 &iUsbKeyOut )
-{
-	for( int i=0; i<256; i++ )
-	{
-		UInt8 iUsbKey = (UInt8)i;
-		DeviceButton button2;
-		if( !UsbKeyToDeviceButton(iUsbKey,button2) )
-			continue;
-		if( button == button2 )
-		{
-			iUsbKeyOut = iUsbKey;
-			return true;
-		}
-	}
-	
-	return false;
-}
-
 // http://lists.apple.com/archives/carbon-dev/2005/Feb/msg00071.html
 // index represents USB keyboard usage value, content is Mac virtual keycode
 static UInt8 g_iUsbKeyToMacVirtualKey[256] = 
@@ -480,23 +462,25 @@ static UInt8 g_iUsbKeyToMacVirtualKey[256] =
 	0xFF,	/* FF no event */
 };
 
-static bool UsbKeyToMacVirtualKey( UInt8 iUsbKey, UInt8 &iMacVirtualKeyOut )
-{
-	// iUsbKey is always < ARRAYSIZE(g_iUsbKeyToMacVirtualKey)
-	iMacVirtualKeyOut = g_iUsbKeyToMacVirtualKey[iUsbKey];
-	return iMacVirtualKeyOut != 0xFF;
-}
+static UInt8 g_iDeviceButtonToMacVirtualKey[KEY_OTHER_0];
 
 bool KeyboardDevice::DeviceButtonToMacVirtualKey( DeviceButton button, UInt8 &iMacVKOut )
 {
-	UInt8 iUsbKey = 0;
-	if( !DeviceButtonToUsbKey(button,iUsbKey) )
-		return false;
-
-	if( !UsbKeyToMacVirtualKey(iUsbKey, iMacVKOut) )
-		return false;
-		
-	return true;
+	static bool bInited = false;
+	
+	if( !bInited )
+	{
+		memset( g_iDeviceButtonToMacVirtualKey, 0xFF, sizeof(g_iDeviceButtonToMacVirtualKey) );
+		for( int iUsbKey = 0; iUsbKey < 256; ++iUsbKey )
+		{
+			DeviceButton button2;
+			if( UsbKeyToDeviceButton(iUsbKey, button2) && size_t(button2) < sizeof(g_iDeviceButtonToMacVirtualKey) )
+				g_iDeviceButtonToMacVirtualKey[button2] = g_iUsbKeyToMacVirtualKey[iUsbKey];
+		}
+		bInited = true;
+	}
+	iMacVKOut = g_iDeviceButtonToMacVirtualKey[button];
+	return iMacVKOut != 0xFF;
 }
 
 		
