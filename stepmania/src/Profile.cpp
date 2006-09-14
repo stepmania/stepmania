@@ -1747,9 +1747,13 @@ XNode* Profile::SaveRecentSongScoresCreateNode() const
 
 void Profile::AddStepsRecentScore( const Song* pSong, const Steps* pSteps, HighScore hs )
 {
+	ASSERT( pSong );
+	ASSERT( pSteps );
 	HighScoreForASongAndSteps h;
 	h.songID.FromSong( pSong );
+	ASSERT( h.songID.IsValid() );
 	h.stepsID.FromSteps( pSteps );
+	ASSERT( h.stepsID.IsValid() );
 	h.hs = hs;
 	m_vRecentStepsScores.push_back( h );
 
