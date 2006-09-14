@@ -89,23 +89,14 @@ public:
 	RString GetPrevScreen() const;
 
 	// let subclass override if they want
-	virtual void MenuUp(	const InputEventPlus &input );
-	virtual void MenuDown(	const InputEventPlus &input );
-	virtual void MenuLeft(	const InputEventPlus &input );
-	virtual void MenuRight( const InputEventPlus &input );
-	virtual void MenuStart( const InputEventPlus &input );
-	virtual void MenuSelect( const InputEventPlus &input );
-	virtual void MenuBack(	const InputEventPlus &input );
-	virtual void MenuCoin(	const InputEventPlus &input );
-
-	virtual void MenuUp(	PlayerNumber pn )	{}
-	virtual void MenuDown(	PlayerNumber pn )	{}
-	virtual void MenuLeft(	PlayerNumber pn )	{}
-	virtual void MenuRight( PlayerNumber pn )	{}
-	virtual void MenuStart( PlayerNumber pn )	{}
-	virtual void MenuSelect( PlayerNumber pn )	{}
-	virtual void MenuBack(	PlayerNumber pn )	{}
-	virtual void MenuCoin(	PlayerNumber pn );
+	virtual void MenuUp(	const InputEventPlus &input ) { }
+	virtual void MenuDown(	const InputEventPlus &input ) { }
+	virtual void MenuLeft(	const InputEventPlus &input ) { }
+	virtual void MenuRight( const InputEventPlus &input ) { }
+	virtual void MenuStart( const InputEventPlus &input ) { }
+	virtual void MenuSelect( const InputEventPlus &input ) { }
+	virtual void MenuBack(	const InputEventPlus &input ) { }
+	virtual void MenuCoin(	const InputEventPlus &input ) { }
 };
 
 #endif

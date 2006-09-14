@@ -153,22 +153,6 @@ void Screen::Update( float fDeltaTime )
 	}
 }
 
-void Screen::MenuUp(	const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MenuUp(input.pn); }
-void Screen::MenuDown(	const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MenuDown(input.pn); }
-void Screen::MenuLeft(	const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MenuLeft(input.pn); }
-void Screen::MenuRight( const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MenuRight(input.pn); }
-void Screen::MenuStart( const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MenuStart(input.pn); }
-void Screen::MenuSelect( const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MenuSelect(input.pn); }
-
-void Screen::MenuBack( const InputEventPlus &input )
-{
-	/* Don't make the user hold the back button if they're pressing escape and escape is the back button. */
-	if( !PREFSMAN->m_bDelayedBack || input.type==IET_REPEAT || (input.DeviceI.device == DEVICE_KEYBOARD && input.DeviceI.button == KEY_ESC) )
-		MenuBack( input.pn ); 
-}
-
-void Screen::MenuCoin(	const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MenuCoin(input.pn); }
-
 /* ScreenManager sends input here first.  Overlay screens can use it to get a first
  * pass at input.  Return true if the input was handled and should not be passed
  * to lower screens, or false if not handled.  If true is returned, Input() will
@@ -197,7 +181,11 @@ void Screen::Input( const InputEventPlus &input )
 	case MENU_BUTTON_DOWN:	this->MenuDown	( input );	return;
 	case MENU_BUTTON_LEFT:	this->MenuLeft	( input );	return;
 	case MENU_BUTTON_RIGHT:	this->MenuRight	( input );	return;
-	case MENU_BUTTON_BACK:	this->MenuBack	( input );	return;
+	case MENU_BUTTON_BACK:	
+		/* Don't make the user hold the back button if they're pressing escape and escape is the back button. */
+		if( !PREFSMAN->m_bDelayedBack || input.type==IET_REPEAT || (input.DeviceI.device == DEVICE_KEYBOARD && input.DeviceI.button == KEY_ESC) )
+			this->MenuBack( input );
+		return;
 	case MENU_BUTTON_START:	this->MenuStart	( input );	return;
 	case MENU_BUTTON_SELECT:this->MenuSelect( input );	return;
 	case MENU_BUTTON_COIN:	this->MenuCoin	( input );	return;
@@ -209,7 +197,11 @@ void Screen::HandleScreenMessage( const ScreenMessage SM )
 	if( SM == SM_MenuTimer )
 	{
 		FOREACH_HumanPlayer(p)
-			MenuStart( p );
+		{
+			InputEventPlus iep;
+			iep.pn = p;
+			MenuStart( iep );
+		}
 	}
 	else if( SM == SM_GoToNextScreen || SM == SM_GoToPrevScreen )
 	{
@@ -268,12 +260,6 @@ bool Screen::JoinInput( PlayerNumber pn )
 	SCREENMAN->RefreshCreditsMessages();
 
 	return true;
-}
-
-
-void Screen::MenuCoin( PlayerNumber pn )
-{
-	// This is now handled globally by Stepmania.cpp  --  Miryokuteki
 }
 
 void Screen::PostScreenMessage( const ScreenMessage SM, float fDelay )
