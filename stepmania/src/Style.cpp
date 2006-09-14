@@ -80,9 +80,7 @@ PlayerNumber Style::ControllerToPlayerNumber( GameController controller ) const
 		return (PlayerNumber)controller;
 	case ONE_PLAYER_TWO_SIDES:
 		return GAMESTATE->m_MasterPlayerNumber;
-	default:
-		ASSERT(0);
-		return PLAYER_INVALID;
+	DEFAULT_FAIL( m_StyleType );
 	}
 }
 
