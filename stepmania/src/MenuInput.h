@@ -27,16 +27,15 @@ const RString &MenuButtonToLocalizedString( MenuButton mb );
 struct MenuInput
 {
 	MenuInput() { MakeInvalid(); };
-	MenuInput( PlayerNumber pn, MenuButton b ) { player = pn; button = b; };
+	MenuInput( PlayerNumber pn, MenuButton b ) { button = b; };
 
-	PlayerNumber	player;
 	MenuButton	button;
 
-	bool operator==( const MenuInput &other ) const { return player == other.player && button == other.button; };
+	bool operator==( const MenuInput &other ) const { return button == other.button; };
 	bool operator!=( const MenuInput &other ) const { return !operator==(other); };
 
-	inline bool IsValid() const { return player != PLAYER_INVALID; };
-	inline void MakeInvalid() { player = PLAYER_INVALID; button = MenuButton_INVALID; };
+	inline bool IsValid() const { return button != MenuButton_INVALID; };
+	inline void MakeInvalid() { button = MenuButton_INVALID; };
 };
 
 #endif
