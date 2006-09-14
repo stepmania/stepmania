@@ -162,8 +162,9 @@ void Screen::MenuSelect( const InputEventPlus &input )	{ if(input.type==IET_FIRS
 
 void Screen::MenuBack( const InputEventPlus &input )
 {
-	if(!PREFSMAN->m_bDelayedBack || input.type==IET_REPEAT )
-		MenuBack( input.pn) ; 
+	/* Don't make the user hold the back button if they're pressing escape and escape is the back button. */
+	if( !PREFSMAN->m_bDelayedBack || input.type==IET_REPEAT || (input.DeviceI.device == DEVICE_KEYBOARD && input.DeviceI.button == KEY_ESC) )
+		MenuBack( input.pn ); 
 }
 
 void Screen::MenuCoin(	const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MenuCoin(input.pn); }
@@ -187,13 +188,6 @@ void Screen::Input( const InputEventPlus &input )
 		break; /* OK */
 	default:
 		return; // don't care
-	}
-
-	/* Don't make the user hold the back button if they're pressing escape and escape is the back button. */
-	if( input.MenuI == MENU_BUTTON_BACK && input.DeviceI.device == DEVICE_KEYBOARD  &&  input.DeviceI.button == KEY_ESC )
-	{
-		this->MenuBack( input.pn );
-		return;
 	}
 
 	// default input handler used by most menus
