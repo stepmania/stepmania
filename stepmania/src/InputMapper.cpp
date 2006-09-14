@@ -775,7 +775,7 @@ MenuButton InputMapper::GameToMenu( const GameInput &GameI )
 	return pGame->GameInputToMenuButton( GameI );
 }
 
-void InputMapper::MenuToGame( const MenuInput &MenuI, PlayerNumber pn, GameInput GameIout[4] )
+void InputMapper::MenuToGame( MenuButton MenuI, PlayerNumber pn, GameInput GameIout[4] )
 {
 	const Game* pGame = GAMESTATE->GetCurrentGame();
 	pGame->MenuInputToGameInput( MenuI, pn, GameIout );
@@ -800,7 +800,7 @@ bool InputMapper::IsBeingPressed( const GameInput &GameI, MultiPlayer mp, const 
 	return false;
 }
 
-bool InputMapper::IsBeingPressed( const MenuInput &MenuI, PlayerNumber pn )
+bool InputMapper::IsBeingPressed( MenuButton MenuI, PlayerNumber pn )
 {
 	GameInput GameI[4];
 	MenuToGame( MenuI, pn, GameI );
@@ -849,7 +849,7 @@ float InputMapper::GetSecsHeld( const GameInput &GameI, MultiPlayer mp )
 	return fMaxSecsHeld;
 }
 
-float InputMapper::GetSecsHeld( const MenuInput &MenuI, PlayerNumber pn )
+float InputMapper::GetSecsHeld( MenuButton MenuI, PlayerNumber pn )
 {
 	float fMaxSecsHeld = 0;
 
@@ -872,7 +872,7 @@ void InputMapper::ResetKeyRepeat( const GameInput &GameI )
 	}
 }
 
-void InputMapper::ResetKeyRepeat( const MenuInput &MenuI, PlayerNumber pn )
+void InputMapper::ResetKeyRepeat( MenuButton MenuI, PlayerNumber pn )
 {
 	GameInput GameI[4];
 	MenuToGame( MenuI, pn, GameI );

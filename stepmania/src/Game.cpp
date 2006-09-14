@@ -38,7 +38,7 @@ MenuButton Game::GameInputToMenuButton( GameInput GameI ) const
 	return MenuButton_INVALID;	// invalid GameInput
 }
 
-void Game::MenuInputToGameInput( MenuInput MenuI, PlayerNumber pn, GameInput GameIout[4] ) const
+void Game::MenuInputToGameInput( MenuButton MenuI, PlayerNumber pn, GameInput GameIout[4] ) const
 {
 	ASSERT( MenuI != MenuButton_INVALID );
 
@@ -70,7 +70,7 @@ void Game::MenuInputToGameInput( MenuInput MenuI, PlayerNumber pn, GameInput Gam
 		ASSERT(0);	// invalid m_StyleType
 	};
 
-	GameButton button[2] = { m_DedicatedMenuButton[MenuI.button], m_SecondaryMenuButton[MenuI.button] };
+	GameButton button[2] = { m_DedicatedMenuButton[MenuI], m_SecondaryMenuButton[MenuI] };
 	int iNumButtonsUsing = PREFSMAN->m_bOnlyDedicatedMenuButtons ? 1 : 2;
 
 	for( int i=0; i<iNumSidesUsing; i++ )

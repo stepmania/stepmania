@@ -37,17 +37,17 @@ public:
 	bool GameToDevice( const GameInput &GameI, int iSlotNum, DeviceInput& DeviceI );	// return true if there is a mapping from pad to device
 
 	MenuButton GameToMenu( const GameInput &GameI );
-	void MenuToGame( const MenuInput &MenuI, PlayerNumber pn, GameInput GameIout[4] );
+	void MenuToGame( MenuButton MenuI, PlayerNumber pn, GameInput GameIout[4] );
 	PlayerNumber ControllerToPlayerNumber( GameController controller );
 
 	float GetSecsHeld( const GameInput &GameI, MultiPlayer mp = MultiPlayer_INVALID );
-	float GetSecsHeld( const MenuInput &MenuI, PlayerNumber pn );
+	float GetSecsHeld( MenuButton MenuI, PlayerNumber pn );
 
 	bool IsBeingPressed( const GameInput &GameI, MultiPlayer mp = MultiPlayer_INVALID, const DeviceInputList *pButtonState = NULL );
-	bool IsBeingPressed( const MenuInput &MenuI, PlayerNumber pn );
+	bool IsBeingPressed( MenuButton MenuI, PlayerNumber pn );
 
 	void ResetKeyRepeat( const GameInput &GameI );
-	void ResetKeyRepeat( const MenuInput &MenuI, PlayerNumber pn );
+	void ResetKeyRepeat( MenuButton MenuI, PlayerNumber pn );
 
 	void RepeatStopKey( const GameInput &GameI );
 	void RepeatStopKey( MenuButton MenuI, PlayerNumber pn );
