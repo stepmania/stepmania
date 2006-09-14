@@ -31,8 +31,6 @@ struct MenuInput
 
 	bool operator==( const MenuInput &other ) const { return button == other.button; };
 	bool operator!=( const MenuInput &other ) const { return !operator==(other); };
-
-	inline bool IsValid() const { return button != MenuButton_INVALID; };
 };
 
 #endif
