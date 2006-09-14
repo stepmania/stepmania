@@ -771,8 +771,15 @@ PlayerNumber InputMapper::ControllerToPlayerNumber( GameController controller )
 
 void InputMapper::GameToMenu( const GameInput &GameI, MenuInput &MenuI )
 {
+	MenuI = MenuInput();	// invalid GameInput
+
 	const Game* pGame = GAMESTATE->GetCurrentGame();
-	MenuI = pGame->GameInputToMenuInput( GameI );
+
+	MenuButton mb = pGame->GameInputToMenuButton( GameI );
+	if( mb == MenuButton_INVALID )
+		return;
+
+	MenuI.button = mb;
 }
 
 void InputMapper::MenuToGame( const MenuInput &MenuI, PlayerNumber pn, GameInput GameIout[4] )
