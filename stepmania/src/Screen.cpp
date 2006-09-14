@@ -252,8 +252,8 @@ bool Screen::JoinInput( const InputEventPlus &input )
 
 		if( GAMESTATE->m_iCoins < iCoinsNeededToJoin )
 			return false;	// not enough coins
-		else
-			GAMESTATE->m_iCoins -= iCoinsNeededToJoin;
+
+		GAMESTATE->m_iCoins -= iCoinsNeededToJoin;
 
 		// HACK: Only play start sound for the 2nd player who joins.  The 
 		// start sound for the 1st player will be played by ScreenTitleMenu 
