@@ -1402,9 +1402,6 @@ void HandleInputEvents(float fDeltaTime)
 
 		INPUTMAPPER->DeviceToGame( input.DeviceI, input.GameI );
 		
-		if( input.GameI.IsValid()  &&  input.type == IET_FIRST_PRESS )
-			INPUTQUEUE->RememberInput( input );
-
 		input.mp = MultiPlayer_INVALID;
 		
 		{
@@ -1437,6 +1434,9 @@ void HandleInputEvents(float fDeltaTime)
 			INPUTMAPPER->GameToMenu( input.GameI, input.MenuI );
 			input.pn = INPUTMAPPER->ControllerToPlayerNumber( input.GameI.controller );
 		}
+
+		if( input.GameI.IsValid()  &&  input.type == IET_FIRST_PRESS )
+			INPUTQUEUE->RememberInput( input );
 
 		if( HandleGlobalInputs(input) )
 			continue;	// skip
