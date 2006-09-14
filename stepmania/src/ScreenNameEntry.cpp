@@ -195,8 +195,8 @@ void ScreenNameEntry::Init()
 
 			/* Find out if this column is associated with the START menu button. */
 			GameInput gi = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iCol, p );
-			MenuInput m=GAMESTATE->GetCurrentGame()->GameInputToMenuInput(gi);
-			if(m.button == MENU_BUTTON_START)
+			MenuButton mb = GAMESTATE->GetCurrentGame()->GameInputToMenuButton( gi );
+			if( mb == MENU_BUTTON_START )
 				continue;
 			m_ColToStringIndex[p][iCol] = CurrentStringIndex++;
 
