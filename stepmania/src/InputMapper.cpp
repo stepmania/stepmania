@@ -778,8 +778,6 @@ void InputMapper::GameToMenu( const GameInput &GameI, MenuInput &MenuI )
 void InputMapper::MenuToGame( const MenuInput &MenuI, PlayerNumber pn, GameInput GameIout[4] )
 {
 	const Game* pGame = GAMESTATE->GetCurrentGame();
-	if( pn == PLAYER_INVALID )
-		pn = MenuI.button;
 	pGame->MenuInputToGameInput( MenuI, pn, GameIout );
 }
 

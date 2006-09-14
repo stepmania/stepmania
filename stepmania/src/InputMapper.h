@@ -41,13 +41,13 @@ public:
 	PlayerNumber ControllerToPlayerNumber( GameController controller );
 
 	float GetSecsHeld( const GameInput &GameI, MultiPlayer mp = MultiPlayer_INVALID );
-	float GetSecsHeld( const MenuInput &MenuI, PlayerNumber pn = PLAYER_INVALID );
+	float GetSecsHeld( const MenuInput &MenuI, PlayerNumber pn );
 
 	bool IsBeingPressed( const GameInput &GameI, MultiPlayer mp = MultiPlayer_INVALID, const DeviceInputList *pButtonState = NULL );
-	bool IsBeingPressed( const MenuInput &MenuI, PlayerNumber pn = PLAYER_INVALID );
+	bool IsBeingPressed( const MenuInput &MenuI, PlayerNumber pn );
 
 	void ResetKeyRepeat( const GameInput &GameI );
-	void ResetKeyRepeat( const MenuInput &MenuI, PlayerNumber pn = PLAYER_INVALID );
+	void ResetKeyRepeat( const MenuInput &MenuI, PlayerNumber pn );
 
 	struct Mapping
 	{
