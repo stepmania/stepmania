@@ -649,7 +649,7 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		CodeDetector::RefreshCacheItems(); /* reset for other screens */
 	}
 
-	Screen::HandleScreenMessage( SM );
+	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
 void ScreenSelectMusic::MenuStart( PlayerNumber pn )
