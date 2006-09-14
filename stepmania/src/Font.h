@@ -46,7 +46,7 @@ struct FontPageSettings
 	float m_fScaleAllWidthsBy;
 	RString m_sTextureHints;
 
-	map<longchar,int> CharToGlyphNo;
+	map<wchar_t,int> CharToGlyphNo;
 	/* If a value is missing, the width of the texture frame is used. */
 	map<int,int> m_mapGlyphWidths;
 
@@ -92,7 +92,7 @@ public:
 	/* All glyphs in this list will point to m_pTexture. */
 	vector<glyph> m_aGlyphs;
 
-	map<longchar,int> m_iCharToGlyphNo;
+	map<wchar_t,int> m_iCharToGlyphNo;
 
 private:
 	void SetExtraPixels( int iDrawExtraPixelsLeft, int DrawExtraPixelsRight );
@@ -145,7 +145,7 @@ private:
 	FontPage *m_pDefault;
 
 	/* Map from characters to glyphs.  (Each glyph* is part of one of pages[].) */
-	map<longchar,glyph*> m_iCharToGlyph;
+	map<wchar_t,glyph*> m_iCharToGlyph;
 	glyph *m_iCharToGlyphCache[128];
 
 	// True for Hebrew, Arabic, Urdu fonts.

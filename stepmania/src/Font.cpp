@@ -243,7 +243,7 @@ void Font::AddPage( FontPage *m_pPage )
 {
 	m_apPages.push_back( m_pPage );
 
-	for( map<longchar,int>::const_iterator it = m_pPage->m_iCharToGlyphNo.begin();
+	for( map<wchar_t,int>::const_iterator it = m_pPage->m_iCharToGlyphNo.begin();
 		it != m_pPage->m_iCharToGlyphNo.end(); ++it )
 	{
 		m_iCharToGlyph[it->first] = &m_pPage->m_aGlyphs[it->second];
@@ -259,7 +259,7 @@ void Font::MergeFont(Font &f)
 	if( m_pDefault == NULL )
 		m_pDefault = f.m_pDefault;
 
-	for(map<longchar,glyph*>::iterator it = f.m_iCharToGlyph.begin();
+	for(map<wchar_t,glyph*>::iterator it = f.m_iCharToGlyph.begin();
 		it != f.m_iCharToGlyph.end(); ++it)
 	{
 		m_iCharToGlyph[it->first] = it->second;
@@ -279,7 +279,7 @@ const glyph &Font::GetGlyph( wchar_t c ) const
 		return *m_iCharToGlyphCache[c];
 
 	/* Try the regular character. */
-	map<longchar,glyph*>::const_iterator it = m_iCharToGlyph.find(c);
+	map<wchar_t,glyph*>::const_iterator it = m_iCharToGlyph.find(c);
 
 	/* If that's missing, use the default glyph. */
 	if(it == m_iCharToGlyph.end()) 
@@ -293,7 +293,7 @@ const glyph &Font::GetGlyph( wchar_t c ) const
 
 bool Font::FontCompleteForString( const wstring &str ) const
 {
-	map<longchar,glyph*>::const_iterator m_pDefault = m_iCharToGlyph.find( FONT_DEFAULT_GLYPH );
+	map<wchar_t,glyph*>::const_iterator m_pDefault = m_iCharToGlyph.find( FONT_DEFAULT_GLYPH );
 	if( m_pDefault == m_iCharToGlyph.end() )
 		RageException::Throw( "The default glyph is missing from the font '%s'", path.c_str() );
 
@@ -313,7 +313,7 @@ void Font::CapsOnly()
 	 * a lowercase one. */
 	for( char c = 'A'; c <= 'Z'; ++c )
 	{
-		map<longchar,glyph*>::const_iterator it = m_iCharToGlyph.find(c);
+		map<wchar_t,glyph*>::const_iterator it = m_iCharToGlyph.find(c);
 
 		if(it == m_iCharToGlyph.end())
 			continue;
@@ -732,7 +732,7 @@ void Font::Load( const RString &sIniPath, RString sChars )
 		/* Expect at least as many frames as we have premapped characters. */
 		/* Make sure that we don't map characters to frames we don't actually
 		 * have.  This can happen if the font is too small for an sChars. */
-		for( map<longchar,int>::const_iterator it = pPage->m_iCharToGlyphNo.begin();
+		for( map<wchar_t,int>::const_iterator it = pPage->m_iCharToGlyphNo.begin();
 			it != pPage->m_iCharToGlyphNo.end(); ++it )
 		{
 			if( it->second < pPage->m_pTexture->GetNumFrames() )
@@ -765,7 +765,7 @@ void Font::Load( const RString &sIniPath, RString sChars )
 	{
 		/* Cache ASCII glyphs. */
 		ZERO( m_iCharToGlyphCache );
-		map<longchar,glyph*>::iterator it;
+		map<wchar_t,glyph*>::iterator it;
 		for( it = m_iCharToGlyph.begin(); it != m_iCharToGlyph.end(); ++it )
 			if( it->first < (int) ARRAYLEN(m_iCharToGlyphCache) )
 				m_iCharToGlyphCache[it->first] = it->second;
