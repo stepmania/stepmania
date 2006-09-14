@@ -886,6 +886,9 @@ bool GameState::PlayerUsingBothSides() const
 
 bool GameState::IsHumanPlayer( PlayerNumber pn ) const
 {
+	if( pn == PLAYER_INVALID )
+		return false;
+
 	if( m_pCurStyle == NULL )	// no style chosen
 	{
 		if( PlayersCanJoin() )	
