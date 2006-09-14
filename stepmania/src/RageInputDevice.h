@@ -53,6 +53,7 @@ enum InputDevice
 const RString& InputDeviceToString( InputDevice i );
 InputDevice StringToInputDevice( const RString& s );
 inline bool IsJoystick( InputDevice id ) { return DEVICE_JOY1 <= id && id < DEVICE_JOY1+NUM_JOYSTICKS; }
+inline bool IsPump( InputDevice id ) { return DEVICE_PUMP1 <= id && id < DEVICE_PUMP1+NUM_PUMPS; }
 
 
 struct InputDeviceInfo
@@ -316,7 +317,7 @@ public:
 		/* Return true if we represent the same button on the same device.  Don't
 		 * compare level or ts. */
 		return device == other.device  &&  button == other.button;
-	};
+	}
 	bool operator!=( const DeviceInput &other ) const
 	{
 		return ! operator==( other );
@@ -328,7 +329,7 @@ public:
 		if( device != other.device )
 			return device < other.device;
 		return button < other.button;
-	};
+	}
 	
 	RString ToString() const;
 	bool FromString( const RString &s );
