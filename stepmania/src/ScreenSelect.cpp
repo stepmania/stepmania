@@ -160,7 +160,7 @@ void ScreenSelect::Input( const InputEventPlus &input )
 	}
 
 	// block input of disabled players
-	if( !ALLOW_DISABLED_PLAYER_INPUT && !GAMESTATE->IsPlayerEnabled(input.MenuI.player) )
+	if( !ALLOW_DISABLED_PLAYER_INPUT && !GAMESTATE->IsPlayerEnabled(input.pn) )
 		return;
 
 	if( IsTransitioning() )
@@ -172,7 +172,7 @@ void ScreenSelect::Input( const InputEventPlus &input )
 			continue;
 
 		LOG->Trace("entered code for index %d", i);
-		m_aCodeChoices[i].Apply( input.MenuI.player );
+		m_aCodeChoices[i].Apply( input.pn );
 	}
 	Screen::Input( input );	// default input handler
 }

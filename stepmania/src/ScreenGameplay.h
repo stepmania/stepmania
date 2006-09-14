@@ -223,7 +223,7 @@ protected:
 
 	vector<PlayerInfo>	m_vPlayerInfo;	// filled by SGameplay derivatives in Init
 	virtual void FillPlayerInfo( vector<PlayerInfo> &vPlayerInfoOut ) = 0;
-	virtual PlayerInfo &GetPlayerInfoForInput( const InputEventPlus& iep )  { return m_vPlayerInfo[iep.MenuI.player]; }
+	virtual PlayerInfo &GetPlayerInfoForInput( const InputEventPlus& iep )  { return m_vPlayerInfo[iep.pn]; }
 };
 
 vector<PlayerInfo>::iterator GetNextEnabledPlayerInfo		( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &v );

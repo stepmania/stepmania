@@ -153,20 +153,20 @@ void Screen::Update( float fDeltaTime )
 	}
 }
 
-void Screen::MenuUp(	const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MenuUp(input.MenuI.player); }
-void Screen::MenuDown(	const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MenuDown(input.MenuI.player); }
-void Screen::MenuLeft(	const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MenuLeft(input.MenuI.player); }
-void Screen::MenuRight( const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MenuRight(input.MenuI.player); }
-void Screen::MenuStart( const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MenuStart(input.MenuI.player); }
-void Screen::MenuSelect( const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MenuSelect(input.MenuI.player); }
+void Screen::MenuUp(	const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MenuUp(input.pn); }
+void Screen::MenuDown(	const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MenuDown(input.pn); }
+void Screen::MenuLeft(	const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MenuLeft(input.pn); }
+void Screen::MenuRight( const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MenuRight(input.pn); }
+void Screen::MenuStart( const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MenuStart(input.pn); }
+void Screen::MenuSelect( const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MenuSelect(input.pn); }
 
 void Screen::MenuBack( const InputEventPlus &input )
 {
 	if(!PREFSMAN->m_bDelayedBack || input.type==IET_REPEAT )
-		MenuBack( input.MenuI.player) ; 
+		MenuBack( input.pn) ; 
 }
 
-void Screen::MenuCoin(	const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MenuCoin(input.MenuI.player); }
+void Screen::MenuCoin(	const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MenuCoin(input.pn); }
 
 /* ScreenManager sends input here first.  Overlay screens can use it to get a first
  * pass at input.  Return true if the input was handled and should not be passed
@@ -192,7 +192,7 @@ void Screen::Input( const InputEventPlus &input )
 	/* Don't make the user hold the back button if they're pressing escape and escape is the back button. */
 	if( input.MenuI.button == MENU_BUTTON_BACK && input.DeviceI.device == DEVICE_KEYBOARD  &&  input.DeviceI.button == KEY_ESC )
 	{
-		this->MenuBack( input.MenuI.player );
+		this->MenuBack( input.pn );
 		return;
 	}
 
@@ -250,7 +250,7 @@ bool Screen::JoinInput( const MenuInput &MenuI )
 	if( MenuI.IsValid()  &&  MenuI.button==MENU_BUTTON_START )
 	{
 		/* If this side is already in, don't re-join (and re-pay!). */
-		if(GAMESTATE->m_bSideIsJoined[MenuI.player])
+		if(GAMESTATE->m_bSideIsJoined[pn])
 			return false;
 
 		/* subtract coins */
@@ -267,7 +267,7 @@ bool Screen::JoinInput( const MenuInput &MenuI )
 		if( GAMESTATE->GetNumSidesJoined() > 0 )
 			SCREENMAN->PlayStartSound();
 
-		GAMESTATE->JoinPlayer( MenuI.player );
+		GAMESTATE->JoinPlayer( pn );
 
 		// don't load memory card profiles here.  It's slow and can cause a big skip.
 		/* Don't load the local profile, either.  It causes a 150+ms skip on my A64 3000+,
@@ -275,7 +275,7 @@ bool Screen::JoinInput( const MenuInput &MenuI )
 		 * anyway: leave it unloaded and display "INSERT CARD" until the normal time, and
 		 * load the local profile at the time we would have loaded the memory card if none
 		 * was inserted (via LoadFirstAvailableProfile). */
-//		PROFILEMAN->LoadLocalProfileFromMachine( MenuI.player );
+//		PROFILEMAN->LoadLocalProfileFromMachine( pn );
 		SCREENMAN->RefreshCreditsMessages();
 
 		return true;

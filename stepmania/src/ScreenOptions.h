@@ -77,8 +77,8 @@ protected:
 	virtual void MenuBack( PlayerNumber pn );
 	virtual void MenuStart( const InputEventPlus &input );
 	virtual void ProcessMenuStart( const InputEventPlus &input );
-	virtual void MenuLeft( const InputEventPlus &input )		{ ChangeValueInRowRelative(m_iCurrentRow[input.MenuI.player],input.MenuI.player,-1, input.type != IET_FIRST_PRESS); }
-	virtual void MenuRight( const InputEventPlus &input )	{ ChangeValueInRowRelative(m_iCurrentRow[input.MenuI.player], input.MenuI.player,+1, input.type != IET_FIRST_PRESS); }
+	virtual void MenuLeft( const InputEventPlus &input )		{ ChangeValueInRowRelative(m_iCurrentRow[input.pn],input.pn,-1, input.type != IET_FIRST_PRESS); }
+	virtual void MenuRight( const InputEventPlus &input )	{ ChangeValueInRowRelative(m_iCurrentRow[input.pn], input.pn,+1, input.type != IET_FIRST_PRESS); }
 	virtual void MenuUp( const InputEventPlus &input );
 	virtual void MenuDown( const InputEventPlus &input );
 	virtual void MenuSelect( const InputEventPlus &input );

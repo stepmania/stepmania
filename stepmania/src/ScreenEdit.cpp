@@ -1920,7 +1920,7 @@ void ScreenEdit::InputRecord( const InputEventPlus &input, EditButton EditB )
 		return;
 	}	
 
-	if( input.MenuI.player != PLAYER_1 )
+	if( input.pn != PLAYER_1 )
 		return;		// ignore
 
 	const int iCol = GAMESTATE->m_pCurStyle->GameInputToColumn( input.GameI );
@@ -2082,7 +2082,7 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 	if( PREFSMAN->m_AutoPlay != PC_HUMAN || iCol == -1 )
 		return;
 	
-	switch( input.MenuI.player )
+	switch( input.pn )
 	{
 	case PLAYER_1:	
 		m_Player->Step( iCol, -1, input.DeviceI.ts, false, input.type == IET_RELEASE ); 

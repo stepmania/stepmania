@@ -63,10 +63,8 @@ void ScreenGameplaySyncMachine::Input( const InputEventPlus &input )
 
 	if( _input.GameI.controller != GAME_CONTROLLER_INVALID )
 		_input.GameI.controller = GAME_CONTROLLER_1;
-	if( _input.MenuI.player != PLAYER_INVALID )
-		_input.MenuI.player = PLAYER_1;
-	if( _input.MenuI.player != PLAYER_INVALID )
-		_input.MenuI.player = PLAYER_1;
+	if( _input.pn != PLAYER_INVALID )
+		_input.pn = PLAYER_1;
 
 	ScreenGameplay::Input( _input );
 }

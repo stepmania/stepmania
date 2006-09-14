@@ -396,7 +396,7 @@ try_again:
 
 void ScreenSelectMaster::MenuLeft( const InputEventPlus &input )
 {
-	PlayerNumber pn = input.MenuI.player;
+	PlayerNumber pn = input.pn;
 	if( m_fLockInputSecs > 0 || m_bChosen[pn] )
 		return;
 	if( input.type == IET_RELEASE )
@@ -419,7 +419,7 @@ void ScreenSelectMaster::MenuLeft( const InputEventPlus &input )
 
 void ScreenSelectMaster::MenuRight( const InputEventPlus &input )
 {
-	PlayerNumber pn = input.MenuI.player;
+	PlayerNumber pn = input.pn;
 	if( m_fLockInputSecs > 0 || m_bChosen[pn] )
 		return;
 	if( input.type == IET_RELEASE )
@@ -442,7 +442,7 @@ void ScreenSelectMaster::MenuRight( const InputEventPlus &input )
 
 void ScreenSelectMaster::MenuUp( const InputEventPlus &input )
 {
-	PlayerNumber pn = input.MenuI.player;
+	PlayerNumber pn = input.pn;
 	if( m_fLockInputSecs > 0 || m_bChosen[pn] )
 		return;
 	if( input.type == IET_RELEASE )
@@ -465,7 +465,7 @@ void ScreenSelectMaster::MenuUp( const InputEventPlus &input )
 
 void ScreenSelectMaster::MenuDown( const InputEventPlus &input )
 {
-	PlayerNumber pn = input.MenuI.player;
+	PlayerNumber pn = input.pn;
 	if( m_fLockInputSecs > 0 || m_bChosen[pn] )
 		return;
 	if( input.type == IET_RELEASE )
