@@ -74,7 +74,7 @@ void ScreenAttract::AttractInput( const InputEventPlus &input, ScreenWithMenuEle
 				LOG->Trace("ScreenAttract::AttractInput: begin fading to START_SCREEN" );
 
 				/* HandleGlobalInputs() already played the coin sound.  Don't play it again. */
-				if( input.MenuI.button != MENU_BUTTON_COIN )
+				if( input.MenuI != MENU_BUTTON_COIN )
 					SCREENMAN->PlayCoinSound();
 				
 				SOUNDMAN->SetPlayOnlyCriticalSounds( false );	// unmute attract sounds

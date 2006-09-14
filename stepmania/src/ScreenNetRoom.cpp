@@ -77,7 +77,7 @@ void ScreenNetRoom::Init()
 
 void ScreenNetRoom::Input( const InputEventPlus &input )
 {
-	if (((input.MenuI.button == MENU_BUTTON_LEFT) || (input.MenuI.button == MENU_BUTTON_RIGHT)) && (input.type == IET_RELEASE))
+	if ((input.MenuI == MENU_BUTTON_LEFT || input.MenuI == MENU_BUTTON_RIGHT) && input.type == IET_RELEASE)
 		m_RoomWheel.Move(0);
 		
 	ScreenNetSelectBase::Input( input );

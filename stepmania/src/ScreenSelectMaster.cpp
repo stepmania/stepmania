@@ -714,7 +714,7 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 	// Allow a player to join even if input is locked or someone has already already chosen.
 	InputEventPlus input;
 	input.pn = pn;
-	input.MenuI.button = MENU_BUTTON_START;
+	input.MenuI = MENU_BUTTON_START;
 	Screen::JoinInput( input );
 
 	if( m_fLockInputSecs > 0 )

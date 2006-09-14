@@ -149,7 +149,7 @@ void ScreenSelect::Input( const InputEventPlus &input )
 	// user will still be on the title menu.
 	bool bAllowJoinInput = !ALLOW_DISABLED_PLAYER_INPUT;
 
-	if( input.MenuI.button == MENU_BUTTON_COIN ||
+	if( input.MenuI == MENU_BUTTON_COIN ||
 		(bAllowJoinInput && Screen::JoinInput(input)) )
 	{
 		if( input.type == IET_FIRST_PRESS )

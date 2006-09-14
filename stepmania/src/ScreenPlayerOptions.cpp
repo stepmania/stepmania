@@ -84,7 +84,7 @@ void ScreenPlayerOptions::Input( const InputEventPlus &input )
 		input.type == IET_FIRST_PRESS  &&
 		!m_In.IsTransitioning()  &&
 		input.MenuI.IsValid()  &&
-		input.MenuI.button == MENU_BUTTON_START )
+		input.MenuI == MENU_BUTTON_START )
 	{
 		if( m_bAcceptedChoices  &&  !m_bGoToOptions )
 		{
@@ -119,7 +119,7 @@ void ScreenPlayerOptions::Input( const InputEventPlus &input )
 	ScreenOptionsMaster::Input( input );
 
 	// UGLY: Update m_Disqualified whenever Start is pressed
-	if( GAMESTATE->IsHumanPlayer(pn) && input.MenuI.IsValid() && input.MenuI.button == MENU_BUTTON_START )
+	if( GAMESTATE->IsHumanPlayer(pn) && input.MenuI.IsValid() && input.MenuI == MENU_BUTTON_START )
 	{
 		int row = m_iCurrentRow[pn];
 		UpdateDisqualified( row, pn );

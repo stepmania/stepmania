@@ -190,7 +190,7 @@ void Screen::Input( const InputEventPlus &input )
 	}
 
 	/* Don't make the user hold the back button if they're pressing escape and escape is the back button. */
-	if( input.MenuI.button == MENU_BUTTON_BACK && input.DeviceI.device == DEVICE_KEYBOARD  &&  input.DeviceI.button == KEY_ESC )
+	if( input.MenuI == MENU_BUTTON_BACK && input.DeviceI.device == DEVICE_KEYBOARD  &&  input.DeviceI.button == KEY_ESC )
 	{
 		this->MenuBack( input.pn );
 		return;
@@ -247,7 +247,7 @@ bool Screen::JoinInput( const InputEventPlus &input )
 	if( !GAMESTATE->PlayersCanJoin() )
 		return false;
 
-	if( input.MenuI.IsValid()  &&  input.MenuI.button==MENU_BUTTON_START )
+	if( input.MenuI.IsValid() && input.MenuI == MENU_BUTTON_START )
 	{
 		/* If this side is already in, don't re-join (and re-pay!). */
 		if(GAMESTATE->m_bSideIsJoined[input.pn])
