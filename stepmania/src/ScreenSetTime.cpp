@@ -184,8 +184,8 @@ void ScreenSetTime::MenuRight( PlayerNumber pn )
 void ScreenSetTime::MenuStart( PlayerNumber pn )
 {
 	bool bHoldingLeftAndRight = 
-		INPUTMAPPER->IsBeingPressed( MenuInput(pn, MENU_BUTTON_RIGHT) ) &&
-		INPUTMAPPER->IsBeingPressed( MenuInput(pn, MENU_BUTTON_LEFT) );
+		INPUTMAPPER->IsBeingPressed( MenuInput(pn, MENU_BUTTON_RIGHT), pn ) &&
+		INPUTMAPPER->IsBeingPressed( MenuInput(pn, MENU_BUTTON_LEFT), pn );
 
 	if( bHoldingLeftAndRight )
 		ChangeSelection( -1 );

@@ -285,7 +285,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		return;		// don't care
 
 
-	PlayerNumber pn = input.MenuI.player;
+	PlayerNumber pn = input.pn;
 	if( !GAMESTATE->IsHumanPlayer(pn) )
 		return;
 
@@ -334,7 +334,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		return;
 	}
 
-	if( SELECT_MENU_AVAILABLE && INPUTMAPPER->IsBeingPressed( MenuInput(pn, MENU_BUTTON_SELECT) ) )
+	if( SELECT_MENU_AVAILABLE && INPUTMAPPER->IsBeingPressed( MenuInput(pn, MENU_BUTTON_SELECT), pn ) )
 	{
 		if( input.type == IET_FIRST_PRESS )
 		{
@@ -370,8 +370,8 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			bool bRightIsDown = false;
 			FOREACH_EnabledPlayer( p )
 			{
-				bLeftIsDown |= INPUTMAPPER->IsBeingPressed( MenuInput(p, MENU_BUTTON_LEFT) );
-				bRightIsDown |= INPUTMAPPER->IsBeingPressed( MenuInput(p, MENU_BUTTON_RIGHT) );
+				bLeftIsDown |= INPUTMAPPER->IsBeingPressed( MenuInput(p, MENU_BUTTON_LEFT), p );
+				bRightIsDown |= INPUTMAPPER->IsBeingPressed( MenuInput(p, MENU_BUTTON_RIGHT), p );
 			}
 			
 			bool bBothDown = bLeftIsDown && bRightIsDown;
@@ -422,8 +422,8 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			{
 				FOREACH_HumanPlayer( p )
 				{
-					INPUTMAPPER->ResetKeyRepeat( MenuInput(p, MENU_BUTTON_LEFT) );
-					INPUTMAPPER->ResetKeyRepeat( MenuInput(p, MENU_BUTTON_RIGHT) );
+					INPUTMAPPER->ResetKeyRepeat( MenuInput(p, MENU_BUTTON_LEFT), p );
+					INPUTMAPPER->ResetKeyRepeat( MenuInput(p, MENU_BUTTON_RIGHT), p );
 				}
 			}
 		}
@@ -444,7 +444,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	case MENU_BUTTON_BACK:
 		/* Don't make the user hold the back button if they're pressing escape and escape is the back button. */
 		if( input.DeviceI.device == DEVICE_KEYBOARD  &&  input.DeviceI.button == KEY_ESC )
-			this->MenuBack( input.MenuI.player );
+			this->MenuBack( input.pn );
 		else
 			Screen::MenuBack( input );
 		break;
@@ -506,8 +506,8 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 void ScreenSelectMusic::UpdateSelectButton()
 {
 	bool bSelectIsDown = false;
-	FOREACH_EnabledPlayer( p )
-		bSelectIsDown |= INPUTMAPPER->IsBeingPressed( MenuInput(p, MENU_BUTTON_SELECT) );
+	FOREACH_EnabledPlayer( pn )
+		bSelectIsDown |= INPUTMAPPER->IsBeingPressed( MenuInput(pn, MENU_BUTTON_SELECT), pn );
 	if( !SELECT_MENU_AVAILABLE )
 		bSelectIsDown = false;
 
