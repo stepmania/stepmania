@@ -334,7 +334,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		return;
 	}
 
-	if( SELECT_MENU_AVAILABLE && INPUTMAPPER->IsBeingPressed( MenuInput(pn, MENU_BUTTON_SELECT), pn ) )
+	if( SELECT_MENU_AVAILABLE && INPUTMAPPER->IsBeingPressed( MENU_BUTTON_SELECT, pn ) )
 	{
 		if( input.type == IET_FIRST_PRESS )
 		{
@@ -370,8 +370,8 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			bool bRightIsDown = false;
 			FOREACH_EnabledPlayer( p )
 			{
-				bLeftIsDown |= INPUTMAPPER->IsBeingPressed( MenuInput(p, MENU_BUTTON_LEFT), p );
-				bRightIsDown |= INPUTMAPPER->IsBeingPressed( MenuInput(p, MENU_BUTTON_RIGHT), p );
+				bLeftIsDown |= INPUTMAPPER->IsBeingPressed( MENU_BUTTON_LEFT, p );
+				bRightIsDown |= INPUTMAPPER->IsBeingPressed( MENU_BUTTON_RIGHT, p );
 			}
 			
 			bool bBothDown = bLeftIsDown && bRightIsDown;
@@ -422,8 +422,8 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			{
 				FOREACH_HumanPlayer( p )
 				{
-					INPUTMAPPER->ResetKeyRepeat( MenuInput(p, MENU_BUTTON_LEFT), p );
-					INPUTMAPPER->ResetKeyRepeat( MenuInput(p, MENU_BUTTON_RIGHT), p );
+					INPUTMAPPER->ResetKeyRepeat( MENU_BUTTON_LEFT, p );
+					INPUTMAPPER->ResetKeyRepeat( MENU_BUTTON_RIGHT, p );
 				}
 			}
 		}
@@ -507,7 +507,7 @@ void ScreenSelectMusic::UpdateSelectButton()
 {
 	bool bSelectIsDown = false;
 	FOREACH_EnabledPlayer( pn )
-		bSelectIsDown |= INPUTMAPPER->IsBeingPressed( MenuInput(pn, MENU_BUTTON_SELECT), pn );
+		bSelectIsDown |= INPUTMAPPER->IsBeingPressed( MENU_BUTTON_SELECT, pn );
 	if( !SELECT_MENU_AVAILABLE )
 		bSelectIsDown = false;
 
