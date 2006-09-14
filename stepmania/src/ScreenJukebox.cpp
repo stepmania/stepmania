@@ -255,15 +255,12 @@ void ScreenJukebox::Input( const InputEventPlus &input )
 	if( input.type != IET_FIRST_PRESS )
 		return; /* ignore */
 
-	if( input.MenuI.IsValid() )
+	switch( input.MenuI.button )
 	{
-		switch( input.MenuI.button )
-		{
-		case MENU_BUTTON_LEFT:
-		case MENU_BUTTON_RIGHT:
-			SCREENMAN->PostMessageToTopScreen( SM_NotesEnded, 0 );
-			return;
-		}
+	case MENU_BUTTON_LEFT:
+	case MENU_BUTTON_RIGHT:
+		SCREENMAN->PostMessageToTopScreen( SM_NotesEnded, 0 );
+		return;
 	}
 
 	ScreenAttract::AttractInput( input, this );

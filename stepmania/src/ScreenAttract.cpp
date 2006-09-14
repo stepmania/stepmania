@@ -49,57 +49,51 @@ void ScreenAttract::AttractInput( const InputEventPlus &input, ScreenWithMenuEle
 	if( input.type != IET_FIRST_PRESS ) 
 		return; // don't care
 
-	if( input.MenuI.IsValid() )
+	switch( input.MenuI.button )
 	{
-		switch( input.MenuI.button )
-		{
-		case MENU_BUTTON_BACK:
-			if( !(bool)BACK_GOES_TO_START_SCREEN )
-				break;
-			// fall through
-		case MENU_BUTTON_START:
-		case MENU_BUTTON_COIN:
-			switch( GAMESTATE->GetCoinMode() )
-			{
-			case COIN_MODE_PAY:
-				LOG->Trace("ScreenAttract::AttractInput: COIN_PAY (%i/%i)", GAMESTATE->m_iCoins, PREFSMAN->m_iCoinsPerCredit.Get() );
-				if( GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
-					break;	// don't fall through
-				// fall through
-			case COIN_MODE_HOME:
-			case COIN_MODE_FREE:
-				if( pScreen->IsTransitioning() )
-					return;
-
-				LOG->Trace("ScreenAttract::AttractInput: begin fading to START_SCREEN" );
-
-				/* HandleGlobalInputs() already played the coin sound.  Don't play it again. */
-				if( input.MenuI != MENU_BUTTON_COIN )
-					SCREENMAN->PlayCoinSound();
-				
-				SOUNDMAN->SetPlayOnlyCriticalSounds( false );	// unmute attract sounds
-				pScreen->Cancel( SM_GoToStartScreen );
-				break;
-			default:
-				ASSERT(0);
-			}
+	case MENU_BUTTON_BACK:
+		if( !(bool)BACK_GOES_TO_START_SCREEN )
 			break;
+		// fall through
+	case MENU_BUTTON_START:
+	case MENU_BUTTON_COIN:
+		switch( GAMESTATE->GetCoinMode() )
+		{
+		case COIN_MODE_PAY:
+			LOG->Trace("ScreenAttract::AttractInput: COIN_PAY (%i/%i)", GAMESTATE->m_iCoins, PREFSMAN->m_iCoinsPerCredit.Get() );
+			if( GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
+				break;	// don't fall through
+			// fall through
+		case COIN_MODE_HOME:
+		case COIN_MODE_FREE:
+			if( pScreen->IsTransitioning() )
+				return;
+
+			LOG->Trace("ScreenAttract::AttractInput: begin fading to START_SCREEN" );
+
+			/* HandleGlobalInputs() already played the coin sound.  Don't play it again. */
+			if( input.MenuI != MENU_BUTTON_COIN )
+				SCREENMAN->PlayCoinSound();
+			
+			SOUNDMAN->SetPlayOnlyCriticalSounds( false );	// unmute attract sounds
+			pScreen->Cancel( SM_GoToStartScreen );
+			break;
+		default:
+			ASSERT(0);
 		}
+		break;
 	}
 
 	if( pScreen->IsTransitioning() )
 		return;
 
-	if( input.MenuI.IsValid() )
+	switch( input.MenuI.button )
 	{
-		switch( input.MenuI.button )
-		{
-		case MENU_BUTTON_LEFT:
-		case MENU_BUTTON_RIGHT:
-			SCREENMAN->PostMessageToTopScreen( SM_BeginFadingOut, 0 );
-			break;
-		}
-	}	
+	case MENU_BUTTON_LEFT:
+	case MENU_BUTTON_RIGHT:
+		SCREENMAN->PostMessageToTopScreen( SM_BeginFadingOut, 0 );
+		break;
+	}
 
 //	Screen::Input( input );
 }

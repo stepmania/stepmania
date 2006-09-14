@@ -291,7 +291,6 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 
 	// Check for "Press START again for options" button press
 	if( m_bMadeChoice  &&
-	    input.MenuI.IsValid()  &&
 	    input.MenuI.button == MENU_BUTTON_START  &&
 	    input.type != IET_RELEASE  &&
 	    OPTIONS_MENU_AVAILABLE.GetValue() )

@@ -191,9 +191,6 @@ void Screen::Input( const InputEventPlus &input )
 	}
 
 	// default input handler used by most menus
-	if( !input.MenuI.IsValid() )
-		return;
-
 	switch( input.MenuI.button )
 	{
 	case MENU_BUTTON_UP:	this->MenuUp	( input );	return;

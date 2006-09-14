@@ -40,7 +40,7 @@ MenuButton Game::GameInputToMenuButton( GameInput GameI ) const
 
 void Game::MenuInputToGameInput( MenuInput MenuI, PlayerNumber pn, GameInput GameIout[4] ) const
 {
-	ASSERT( MenuI.IsValid() );
+	ASSERT( MenuI != MenuButton_INVALID );
 
 	GameIout[0].MakeInvalid();	// initialize
 	GameIout[1].MakeInvalid();	
