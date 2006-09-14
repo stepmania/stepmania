@@ -16,12 +16,12 @@ public:
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	virtual void MenuStart( PlayerNumber pn );
+	virtual void MenuStart( const InputEventPlus &input );
 	virtual void MenuUp( const InputEventPlus &input );
 	virtual void MenuDown( const InputEventPlus &input );
 	virtual void MenuLeft( const InputEventPlus &input );
 	virtual void MenuRight( const InputEventPlus &input );
-	virtual void MenuBack( PlayerNumber pn );
+	virtual void MenuBack( const InputEventPlus &input );
 
 	virtual void TweenOffScreen( );
 	virtual void Update(float f);

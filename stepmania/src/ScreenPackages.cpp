@@ -153,7 +153,7 @@ void ScreenPackages::Update( float fDeltaTime )
 }
 
 static LocalizedString ENTER_URL ("ScreenPackages","Enter URL");
-void ScreenPackages::MenuStart( PlayerNumber pn )
+void ScreenPackages::MenuStart( const InputEventPlus &input )
 {
 	if ( m_iDLorLST == 1 )
 	{
@@ -162,7 +162,7 @@ void ScreenPackages::MenuStart( PlayerNumber pn )
 		else
 			EnterURL( m_Links[m_iLinksPos] );
 	}
-	ScreenWithMenuElements::MenuStart( pn );
+	ScreenWithMenuElements::MenuStart( input );
 }
 
 void ScreenPackages::MenuUp( const InputEventPlus &input )
@@ -248,7 +248,7 @@ void ScreenPackages::MenuRight( const InputEventPlus &input )
 }
 
 static LocalizedString DOWNLOAD_CANCELLED( "ScreenPackages", "Download cancelled." );
-void ScreenPackages::MenuBack( PlayerNumber pn )
+void ScreenPackages::MenuBack( const InputEventPlus &input )
 {
 	if ( m_bIsDownloading )
 	{
@@ -259,7 +259,7 @@ void ScreenPackages::MenuBack( PlayerNumber pn )
 
 	TweenOffScreen();
 	Cancel( SM_GoToPrevScreen );
-	ScreenWithMenuElements::MenuBack( pn );
+	ScreenWithMenuElements::MenuBack( input );
 }
 
 void ScreenPackages::TweenOffScreen( )

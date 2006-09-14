@@ -213,7 +213,7 @@ void ScreenNetRoom::TweenOffScreen()
 	NSMAN->ReportNSSOnOff(6);
 }
 
-void ScreenNetRoom::MenuStart( PlayerNumber pn )
+void ScreenNetRoom::MenuStart( const InputEventPlus &input )
 {
 	m_RoomWheel.Select();
 	RoomWheelData* rwd = (RoomWheelData*)m_RoomWheel.LastSelected(); 
@@ -233,16 +233,16 @@ void ScreenNetRoom::MenuStart( PlayerNumber pn )
 			NSMAN->SendSMOnline( );
 		}
 	}
-	ScreenNetSelectBase::MenuStart( pn );
+	ScreenNetSelectBase::MenuStart( input );
 }
 
-void ScreenNetRoom::MenuBack( PlayerNumber pn )
+void ScreenNetRoom::MenuBack( const InputEventPlus &input )
 {
 	TweenOffScreen();
 
 	Cancel( SM_GoToPrevScreen );
 
-	ScreenNetSelectBase::MenuBack( pn );
+	ScreenNetSelectBase::MenuBack( input );
 }
 
 void ScreenNetRoom::MenuLeft( const InputEventPlus &input )
@@ -250,7 +250,7 @@ void ScreenNetRoom::MenuLeft( const InputEventPlus &input )
 	if( input.type == IET_FIRST_PRESS )
 		m_RoomWheel.Move(-1);
 
-	ScreenNetSelectBase::MenuLeft( input.pn );
+	ScreenNetSelectBase::MenuLeft( input );
 }
 
 void ScreenNetRoom::MenuRight( const InputEventPlus &input )
@@ -258,7 +258,7 @@ void ScreenNetRoom::MenuRight( const InputEventPlus &input )
 	if( input.type == IET_FIRST_PRESS )
 		m_RoomWheel.Move(1);
 
-	ScreenNetSelectBase::MenuRight( input.pn );
+	ScreenNetSelectBase::MenuRight( input );
 }
 
 void ScreenNetRoom::UpdateRoomsList()

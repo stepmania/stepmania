@@ -61,21 +61,21 @@ void ScreenBookkeeping::Input( const InputEventPlus &input )
 	Screen::Input( input );	// default handler
 }
 
-void ScreenBookkeeping::MenuLeft( PlayerNumber pn )
+void ScreenBookkeeping::MenuLeft( const InputEventPlus &input )
 {
 	m_View = (View)(m_View-1);
 	CLAMP( (int&)m_View, 0, NUM_VIEWS-1 );
 	ChangeView( m_View );
 }
 
-void ScreenBookkeeping::MenuRight( PlayerNumber pn )
+void ScreenBookkeeping::MenuRight( const InputEventPlus &input )
 {
 	m_View = (View)(m_View+1);
 	CLAMP( (int&)m_View, 0, NUM_VIEWS-1 );
 	ChangeView( m_View );
 }
 
-void ScreenBookkeeping::MenuStart( PlayerNumber pn )
+void ScreenBookkeeping::MenuStart( const InputEventPlus &input )
 {
 	if( !IsTransitioning() )
 	{
@@ -84,7 +84,7 @@ void ScreenBookkeeping::MenuStart( PlayerNumber pn )
 	}
 }
 
-void ScreenBookkeeping::MenuBack( PlayerNumber pn )
+void ScreenBookkeeping::MenuBack( const InputEventPlus &input )
 {
 	if(!IsTransitioning())
 	{
@@ -93,11 +93,11 @@ void ScreenBookkeeping::MenuBack( PlayerNumber pn )
 	}
 }
 
-void ScreenBookkeeping::MenuCoin( PlayerNumber pn )
+void ScreenBookkeeping::MenuCoin( const InputEventPlus &input )
 {
 	ChangeView( m_View );
 
-	Screen::MenuCoin( pn );
+	Screen::MenuCoin( input );
 }
 
 static LocalizedString ALL_TIME		( "ScreenBookkeeping", "All-time Total:" );
