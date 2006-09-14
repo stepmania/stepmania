@@ -9,6 +9,7 @@
 #include "GameCommand.h"
 #include "ActorUtil.h"
 #include "ScreenDimensions.h"
+#include "InputEventPlus.h"
 
 #define NUM_CHOICES_ON_PAGE_1			THEME->GetMetricI(m_sName,"NumChoicesOnPage1")
 #define LOCK_INPUT_SECONDS			THEME->GetMetricF(m_sName,"LockInputSeconds")
@@ -211,8 +212,9 @@ static bool BothPlayersGameCommand( const GameCommand &mc )
 	return false;
 }
 
-void ScreenSelectDifficulty::MenuLeft( PlayerNumber pn )
+void ScreenSelectDifficulty::MenuLeft( const InputEventPlus &input )
 {
+	PlayerNumber pn = input.pn;
 //	if( m_fLockInputTime > 0 )
 //		return;
 	if( m_bChosen[pn] )
@@ -247,8 +249,9 @@ void ScreenSelectDifficulty::MenuLeft( PlayerNumber pn )
 }
 
 
-void ScreenSelectDifficulty::MenuRight( PlayerNumber pn )
+void ScreenSelectDifficulty::MenuRight( const InputEventPlus &input )
 {
+	PlayerNumber pn = input.pn;
 //	if( m_fLockInputTime > 0 )
 //		return;
 	if( m_bChosen[pn] )
@@ -377,7 +380,12 @@ bool ScreenSelectDifficulty::ChangeWithinPage( PlayerNumber pn, int iNewChoice, 
 	return bAnyChanged;
 }
 
-void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
+void ScreenSelectDifficulty::MenuStart( const InputEventPlus &input )
+{
+	MakeSelection( input.pn );
+}
+
+void ScreenSelectDifficulty::MakeSelection( PlayerNumber pn )
 {
 	if( m_fLockInputTime > 0 )
 		return;
@@ -409,7 +417,7 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 			// move all cursors to the oni/nonstop selection so it graphically looks as if all players selected the same option.
 			ChangeWithinPage( p, m_iChoiceOnPage[pn], false );
 			bPlaySelect = false;
-			MenuStart( p ); // agree everyone
+			MakeSelection( p ); // agree everyone
 			bPlaySelect = true;
 		}
 	}
@@ -485,7 +493,7 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 				continue;
 		
 			bPlaySelect = false;
-			MenuStart( p );
+			MakeSelection( p );
 			bPlaySelect = true;
 		}
 	}

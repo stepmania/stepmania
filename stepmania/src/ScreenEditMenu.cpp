@@ -100,7 +100,7 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 	
-void ScreenEditMenu::MenuUp( PlayerNumber pn )
+void ScreenEditMenu::MenuUp( const InputEventPlus &input )
 {
 	if( m_Selector.CanGoUp() )
 	{
@@ -109,7 +109,7 @@ void ScreenEditMenu::MenuUp( PlayerNumber pn )
 	}
 }
 
-void ScreenEditMenu::MenuDown( PlayerNumber pn )
+void ScreenEditMenu::MenuDown( const InputEventPlus &input )
 {
 	if( m_Selector.CanGoDown() )
 	{
@@ -161,7 +161,7 @@ static LocalizedString STEPS_WILL_BE_LOST	( "ScreenEditMenu", "These steps will 
 static LocalizedString CONTINUE_WITH_DELETE	( "ScreenEditMenu", "Continue with delete?" );
 static LocalizedString BLANK			( "ScreenEditMenu", "Blank" );
 static LocalizedString ENTER_EDIT_DESCRIPTION	( "ScreenEditMenu", "Enter a description for this edit.");
-void ScreenEditMenu::MenuStart( PlayerNumber pn )
+void ScreenEditMenu::MenuStart( const InputEventPlus &input )
 {
 	if( IsTransitioning() )
 		return;
@@ -316,7 +316,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 	}
 }
 
-void ScreenEditMenu::MenuBack( PlayerNumber pn )
+void ScreenEditMenu::MenuBack( const InputEventPlus &input )
 {	
 	Cancel( SM_GoToPrevScreen );
 

@@ -12,6 +12,7 @@
 #include "ThemeManager.h"
 #include "ActorUtil.h"
 #include "CharacterManager.h"
+#include "InputEventPlus.h"
 
 /* Constants */
 
@@ -134,7 +135,7 @@ ScreenSelectMode::~ScreenSelectMode()
 	LOG->Trace( "ScreenSelectMode::~ScreenSelectMode()" );
 }
 
-void ScreenSelectMode::MenuLeft( PlayerNumber pn )
+void ScreenSelectMode::MenuLeft( const InputEventPlus &input )
 {
 	if(m_bSelected && USECONFIRM == 1)
 	{
@@ -167,7 +168,7 @@ void ScreenSelectMode::ChangeBGA()
 	}*/
 }
 
-void ScreenSelectMode::MenuRight( PlayerNumber pn )
+void ScreenSelectMode::MenuRight( const InputEventPlus &input )
 {
 	if(m_bSelected && USECONFIRM == 1)
 	{
@@ -286,7 +287,7 @@ void ScreenSelectMode::SetCharacters()
 	}
 }
 
-void ScreenSelectMode::MenuStart( PlayerNumber pn )
+void ScreenSelectMode::MenuStart( const InputEventPlus &input )
 {
 	if(!m_bSelected && USECONFIRM == 1)
 	{
@@ -351,7 +352,7 @@ void ScreenSelectMode::DrawPrimitives()
 
 // todo: optimize the following - Frieza
 
-void ScreenSelectMode::MenuUp(PlayerNumber pn)
+void ScreenSelectMode::MenuUp(const InputEventPlus &input)
 {
 	vector<Character*> vpCharactersToUse;
 	if(ENABLE_CHAR_SELECT && m_bCharsAvailable)
@@ -377,6 +378,7 @@ void ScreenSelectMode::MenuUp(PlayerNumber pn)
 		}
 	}
 
+	PlayerNumber pn = input.pn;
 	m_CurChar[pn].UnloadTexture();
 	if(ENABLE_CHAR_SELECT && m_bCharsAvailable)
 	{
@@ -397,7 +399,7 @@ void ScreenSelectMode::MenuUp(PlayerNumber pn)
 	}	
 }
 
-void ScreenSelectMode::MenuDown(PlayerNumber pn)
+void ScreenSelectMode::MenuDown(const InputEventPlus &input)
 {
 	vector<Character*> vpCharactersToUse;
 	if(ENABLE_CHAR_SELECT && m_bCharsAvailable)
@@ -423,6 +425,7 @@ void ScreenSelectMode::MenuDown(PlayerNumber pn)
 		}
 	}
 
+	PlayerNumber pn = input.pn;
 	m_CurChar[pn].UnloadTexture();
 	if(ENABLE_CHAR_SELECT && m_bCharsAvailable)
 	{

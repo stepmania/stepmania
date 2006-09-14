@@ -163,17 +163,17 @@ void ScreenSelectGroup::AfterChange()
 }
 
 
-void ScreenSelectGroup::MenuLeft( PlayerNumber pn )
+void ScreenSelectGroup::MenuLeft( const InputEventPlus &input )
 {
-	MenuUp( pn );
+	MenuUp( input );
 }
 
-void ScreenSelectGroup::MenuRight( PlayerNumber pn )
+void ScreenSelectGroup::MenuRight( const InputEventPlus &input )
 {
-	MenuDown( pn );
+	MenuDown( input );
 }
 
-void ScreenSelectGroup::MenuUp( PlayerNumber pn )
+void ScreenSelectGroup::MenuUp( const InputEventPlus &input )
 {
 	if( m_bChosen )
 		return;
@@ -186,7 +186,7 @@ void ScreenSelectGroup::MenuUp( PlayerNumber pn )
 }
 
 
-void ScreenSelectGroup::MenuDown( PlayerNumber pn )
+void ScreenSelectGroup::MenuDown( const InputEventPlus &input )
 {
 	if( m_bChosen )
 		return;
@@ -198,7 +198,7 @@ void ScreenSelectGroup::MenuDown( PlayerNumber pn )
 	m_soundChange.Play();
 }
 
-void ScreenSelectGroup::MenuStart( PlayerNumber pn )
+void ScreenSelectGroup::MenuStart( const InputEventPlus &input )
 {
 	if( m_bChosen )
 		return;
@@ -218,7 +218,7 @@ void ScreenSelectGroup::MenuStart( PlayerNumber pn )
 	this->PostScreenMessage( SM_BeginFadingOut, 0 );
 }
 
-void ScreenSelectGroup::MenuBack( PlayerNumber pn )
+void ScreenSelectGroup::MenuBack( const InputEventPlus &input )
 {
 	Cancel( SM_GoToPrevScreen );
 }

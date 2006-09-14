@@ -22,12 +22,12 @@ public:
 	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	void MenuLeft( PlayerNumber pn );
-	void MenuRight( PlayerNumber pn );
-	void MenuUp( PlayerNumber pn );
-	void MenuDown( PlayerNumber pn );
-	void MenuStart( PlayerNumber pn );
-	void MenuBack( PlayerNumber pn );
+	void MenuLeft( const InputEventPlus &input );
+	void MenuRight( const InputEventPlus &input );
+	void MenuUp( const InputEventPlus &input );
+	void MenuDown( const InputEventPlus &input );
+	void MenuStart( const InputEventPlus &input );
+	void MenuBack( const InputEventPlus &input );
 
 	void TweenOffScreen();
 
@@ -41,6 +41,7 @@ private:
 	void AfterValueChange( PlayerNumber pn );
 	void Move( PlayerNumber pn, int deltaValue );
 	bool AllAreFinishedChoosing() const;
+	void MakeSelection( PlayerNumber pn );
 
 	int	m_iSelectedCharacter[NUM_PLAYERS];
 	enum { 

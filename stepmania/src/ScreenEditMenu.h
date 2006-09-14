@@ -14,12 +14,12 @@ public:
 
 private:
 
-	void MenuUp( PlayerNumber pn );
-	void MenuDown( PlayerNumber pn );
+	void MenuUp( const InputEventPlus &input );
+	void MenuDown( const InputEventPlus &input );
 	void MenuLeft( const InputEventPlus &input );
 	void MenuRight( const InputEventPlus &input );
-	void MenuBack( PlayerNumber pn );
-	void MenuStart( PlayerNumber pn );
+	void MenuBack( const InputEventPlus &input );
+	void MenuStart( const InputEventPlus &input );
 
 	void RefreshExplanationText();
 	void RefreshNumStepsLoadedFromProfile();

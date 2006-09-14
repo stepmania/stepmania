@@ -161,31 +161,31 @@ void ScreenSetTime::ChangeSelection( int iDirection )
 		SOUND->PlayOnce( THEME->GetPathS("ScreenSetTime","ChangeSelection") );
 }
 
-void ScreenSetTime::MenuUp( PlayerNumber pn )
+void ScreenSetTime::MenuUp( const InputEventPlus &input )
 {
 	ChangeSelection( -1 );
 }
 
-void ScreenSetTime::MenuDown( PlayerNumber pn )
+void ScreenSetTime::MenuDown( const InputEventPlus &input )
 {
 	ChangeSelection( +1 );
 }
 
-void ScreenSetTime::MenuLeft( PlayerNumber pn )
+void ScreenSetTime::MenuLeft( const InputEventPlus &input )
 {
 	ChangeValue( -1 );
 }
 
-void ScreenSetTime::MenuRight( PlayerNumber pn )
+void ScreenSetTime::MenuRight( const InputEventPlus &input )
 {
 	ChangeValue( +1 );
 }
 
-void ScreenSetTime::MenuStart( PlayerNumber pn )
+void ScreenSetTime::MenuStart( const InputEventPlus &input )
 {
 	bool bHoldingLeftAndRight = 
-		INPUTMAPPER->IsBeingPressed( MENU_BUTTON_RIGHT, pn ) &&
-		INPUTMAPPER->IsBeingPressed( MENU_BUTTON_LEFT, pn );
+		INPUTMAPPER->IsBeingPressed( MENU_BUTTON_RIGHT, input.pn ) &&
+		INPUTMAPPER->IsBeingPressed( MENU_BUTTON_LEFT, input.pn );
 
 	if( bHoldingLeftAndRight )
 		ChangeSelection( -1 );
@@ -222,12 +222,12 @@ void ScreenSetTime::MenuStart( PlayerNumber pn )
 		ChangeSelection( +1 );
 }
 
-void ScreenSetTime::MenuSelect( PlayerNumber pn )
+void ScreenSetTime::MenuSelect( const InputEventPlus &input )
 {
 	ChangeSelection( -1 );
 }
 
-void ScreenSetTime::MenuBack( PlayerNumber pn )
+void ScreenSetTime::MenuBack( const InputEventPlus &input )
 {
 	StartTransitioningScreen( SM_GoToPrevScreen );
 }

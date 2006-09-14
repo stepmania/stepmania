@@ -11,6 +11,7 @@
 #include "PrefsManager.h"
 #include "RageTextureManager.h"
 #include "CharacterManager.h"
+#include "InputEventPlus.h"
 
 
 #define TITLE_ON_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",ssprintf("TitleP%dOnCommand",p+1))
@@ -177,7 +178,7 @@ void ScreenSelectCharacter::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_MenuTimer )
 	{
-		MenuStart(PLAYER_1);
+		MakeSelection(PLAYER_1);
 		if( !AllAreFinishedChoosing() )
 			ResetTimer();
 	}
@@ -273,25 +274,25 @@ void ScreenSelectCharacter::AfterValueChange( PlayerNumber pn )
 }
 
 
-void ScreenSelectCharacter::MenuLeft( PlayerNumber pn )
+void ScreenSelectCharacter::MenuLeft( const InputEventPlus &input )
 {
-	MenuUp( pn );
+	MenuUp( input );
 }
 
-void ScreenSelectCharacter::MenuRight( PlayerNumber pn )
+void ScreenSelectCharacter::MenuRight( const InputEventPlus &input )
 {
-	MenuDown( pn );
+	MenuDown( input );
 }
 
-void ScreenSelectCharacter::MenuUp( PlayerNumber pn )
+void ScreenSelectCharacter::MenuUp( const InputEventPlus &input )
 {
-	Move( pn, -1 );
+	Move( input.pn, -1 );
 }
 
 
-void ScreenSelectCharacter::MenuDown( PlayerNumber pn )
+void ScreenSelectCharacter::MenuDown( const InputEventPlus &input )
 {
-	Move( pn, +1 );
+	Move( input.pn, +1 );
 }
 
 void ScreenSelectCharacter::Move( PlayerNumber pn, int deltaValue )
@@ -319,7 +320,12 @@ bool ScreenSelectCharacter::AllAreFinishedChoosing() const
 	return true;
 }
 
-void ScreenSelectCharacter::MenuStart( PlayerNumber pn )
+void ScreenSelectCharacter::MenuStart( const InputEventPlus &input )
+{
+	MakeSelection( input.pn );
+}
+
+void ScreenSelectCharacter::MakeSelection( PlayerNumber pn )
 {
 	if( m_SelectionRow[pn] == FINISHED_CHOOSING )
 		return;
@@ -355,7 +361,7 @@ void ScreenSelectCharacter::MenuStart( PlayerNumber pn )
 	}
 }
 
-void ScreenSelectCharacter::MenuBack( PlayerNumber pn )
+void ScreenSelectCharacter::MenuBack( const InputEventPlus &input )
 {
 	Cancel( SM_GoToPrevScreen );
 }

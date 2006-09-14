@@ -24,11 +24,11 @@ class ScreenSelectMode : public ScreenSelect
 public:
 	virtual void Init();
 	virtual ~ScreenSelectMode(); // Destructor
-	virtual void MenuLeft( PlayerNumber pn );
-	virtual void MenuRight( PlayerNumber pn );
-	virtual void MenuUp(PlayerNumber pn );
-	virtual void MenuDown(PlayerNumber pn);
-	virtual void MenuStart( PlayerNumber pn );
+	virtual void MenuLeft( const InputEventPlus &input );
+	virtual void MenuRight( const InputEventPlus &input );
+	virtual void MenuUp(const InputEventPlus &input );
+	virtual void MenuDown(const InputEventPlus &input);
+	virtual void MenuStart( const InputEventPlus &input );
 	virtual void Update( float fDelta );
 	virtual void DrawPrimitives();
 	virtual void HandleScreenMessage( const ScreenMessage SM );

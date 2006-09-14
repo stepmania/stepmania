@@ -19,11 +19,9 @@ public:
 
 	virtual void Update( float fDelta );
 
-	virtual void MenuLeft( PlayerNumber pn );
-	virtual void MenuRight( PlayerNumber pn );
-	virtual void MenuUp( PlayerNumber pn ) {};
-	virtual void MenuDown( PlayerNumber pn ) {};
-	virtual void MenuStart( PlayerNumber pn );
+	virtual void MenuLeft( const InputEventPlus &input );
+	virtual void MenuRight( const InputEventPlus &input );
+	virtual void MenuStart( const InputEventPlus &input );
 //	virtual void MenuBack( PlayerNumber pn );
 	virtual void TweenOffScreen();
 
@@ -37,6 +35,7 @@ protected:
 	float GetCursorY( PlayerNumber pn );
 	bool ChangeWithinPage( PlayerNumber pn, int iNewChoice, bool bChangingPages );
 	void ChangePage( Page newPage );
+	void MakeSelection( PlayerNumber pn );
 
 	ActorFrame	m_framePages;	// to hold the 2 pages
 
