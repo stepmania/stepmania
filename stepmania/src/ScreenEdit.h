@@ -456,8 +456,8 @@ public:
 	};
 
 	void InitEditMappings();
-	bool DeviceToEdit( const DeviceInput &DeviceI, EditButton &button ) const;
-	bool MenuButtonToEditButton( MenuButton MenuI, EditButton &button ) const;
+	EditButton DeviceToEdit( const DeviceInput &DeviceI ) const;
+	EditButton MenuButtonToEditButton( MenuButton MenuI ) const;
 	bool EditToDevice( EditButton button, int iSlotNum, DeviceInput &DeviceI ) const;
 	bool EditPressed( EditButton button, const DeviceInput &DeviceI );
 	bool EditIsBeingPressed( EditButton button ) const;

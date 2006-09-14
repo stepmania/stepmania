@@ -307,7 +307,7 @@ void ScreenEdit::InitEditMappings()
 #endif
 
 /* Given a DeviceInput that was just depressed, return an active edit function. */
-bool ScreenEdit::DeviceToEdit( const DeviceInput &DeviceI, EditButton &button ) const
+EditButton ScreenEdit::DeviceToEdit( const DeviceInput &DeviceI ) const
 {
 	ASSERT( DeviceI.IsValid() );
 
@@ -320,15 +320,12 @@ bool ScreenEdit::DeviceToEdit( const DeviceInput &DeviceI, EditButton &button ) 
 		{
 			if( pCurrentMap->button[e][slot] == DeviceI && pCurrentMap->hold[e][0].IsValid() )
 			{
-				/* The button maps to this function. */
-				button = e;
-
-				/* This function has one or more shift modifier attached. */
+				/* The button maps to this function, and has one or more shift modifiers attached. */
 				for( int holdslot = 0; holdslot < NUM_EDIT_TO_DEVICE_SLOTS; ++holdslot )
 				{
 					DeviceInput hDI = pCurrentMap->hold[e][holdslot];
 					if( hDI.IsValid() && INPUTFILTER->IsBeingPressed(hDI) )
-						return true;
+						return e;
 				}
 			}
 		}
@@ -342,19 +339,16 @@ bool ScreenEdit::DeviceToEdit( const DeviceInput &DeviceI, EditButton &button ) 
 			if( pCurrentMap->button[e][slot] == DeviceI && !pCurrentMap->hold[e][0].IsValid() )
 			{
 				/* The button maps to this function. */
-				button = e;
-				return true;
+				return e;
 			}
 		}
 	}
 
-	button = EDIT_BUTTON_INVALID;
-
-	return false;
+	return EDIT_BUTTON_INVALID;
 }
 
 /* Given a DeviceInput that was just depressed, return an active edit function. */
-bool ScreenEdit::MenuButtonToEditButton( MenuButton MenuI, EditButton &button ) const
+EditButton ScreenEdit::MenuButtonToEditButton( MenuButton MenuI ) const
 {
 	const MapEditButtonToMenuButton *pCurrentMap = GetCurrentMenuButtonMap();
 
@@ -365,15 +359,12 @@ bool ScreenEdit::MenuButtonToEditButton( MenuButton MenuI, EditButton &button ) 
 			if( pCurrentMap->button[e][slot] == MenuI )
 			{
 				/* The button maps to this function. */
-				button = e;
-				return true;
+				return e;
 			}
 		}
 	}
 
-	button = EDIT_BUTTON_INVALID;
-
-	return false;
+	return EDIT_BUTTON_INVALID;
 }
 
 /* If DeviceI was just pressed, return true if button is triggered.  (More than one
@@ -1084,9 +1075,9 @@ void ScreenEdit::Input( const InputEventPlus &input )
 	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
 		return;
 
-	EditButton EditB;
-	if( !DeviceToEdit( input.DeviceI, EditB ) )
-		MenuButtonToEditButton( input.MenuI, EditB );
+	EditButton EditB = DeviceToEdit( input.DeviceI );
+	if( EditB == EDIT_BUTTON_INVALID )
+		EditB = MenuButtonToEditButton( input.MenuI );
 		
 
 	if( EditB == EDIT_BUTTON_REMOVE_NOTE )
