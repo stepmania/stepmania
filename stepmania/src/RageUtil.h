@@ -295,7 +295,6 @@ RString GetExtension( const RString &sPath );
 RString GetFileNameWithoutExtension( const RString &sPath );
 void MakeValidFilename( RString &sName );
 
-typedef int longchar;
 extern const wchar_t INVALID_CHAR;
 
 int utf8_get_char_len( char p );
