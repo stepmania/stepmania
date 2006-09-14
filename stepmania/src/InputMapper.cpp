@@ -769,10 +769,10 @@ PlayerNumber InputMapper::ControllerToPlayerNumber( GameController controller )
 		return (PlayerNumber) controller;
 }
 
-void InputMapper::GameToMenu( const GameInput &GameI, MenuInput &MenuI )
+MenuButton InputMapper::GameToMenu( const GameInput &GameI )
 {
 	const Game* pGame = GAMESTATE->GetCurrentGame();
-	MenuI.button = pGame->GameInputToMenuButton( GameI );
+	return pGame->GameInputToMenuButton( GameI );
 }
 
 void InputMapper::MenuToGame( const MenuInput &MenuI, PlayerNumber pn, GameInput GameIout[4] )
