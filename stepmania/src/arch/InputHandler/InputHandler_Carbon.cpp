@@ -344,7 +344,7 @@ wchar_t InputHandler_Carbon::DeviceButtonToChar( DeviceButton button, bool bUseC
 	{
 		default:
 			if( (button >= KEY_F1 && button <= KEY_F16) )
-				return '\0';
+				return L'\0';
 			break;
 		case KEY_UP:
 		case KEY_DOWN:
@@ -363,7 +363,7 @@ wchar_t InputHandler_Carbon::DeviceButtonToChar( DeviceButton button, bool bUseC
 		case KEY_PGDN:
 		case KEY_NUMLOCK:
 		case KEY_KP_ENTER:
-			return '\0';		
+			return L'\0';		
 	}
 
 	// Find the USB key code for this DeviceButton
@@ -375,7 +375,7 @@ wchar_t InputHandler_Carbon::DeviceButtonToChar( DeviceButton button, bool bUseC
 			modifiers = GetCurrentKeyModifiers();
 		
 		static unsigned long state = 0;
-		static Ptr keymap = nil;
+		static Ptr keymap = NULL;
 		Ptr new_keymap;
 	
 		new_keymap = (Ptr)GetScriptManagerVariable(smKCHRCache);
