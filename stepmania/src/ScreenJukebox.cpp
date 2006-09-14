@@ -255,7 +255,7 @@ void ScreenJukebox::Input( const InputEventPlus &input )
 	if( input.type != IET_FIRST_PRESS )
 		return; /* ignore */
 
-	switch( input.MenuI.button )
+	switch( input.MenuI )
 	{
 	case MENU_BUTTON_LEFT:
 	case MENU_BUTTON_RIGHT:

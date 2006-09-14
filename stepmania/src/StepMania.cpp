@@ -1264,7 +1264,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 	if( input.type != IET_FIRST_PRESS ) 
 		return false;
 
-	switch( input.MenuI.button )
+	switch( input.MenuI )
 	{
 	case MENU_BUTTON_OPERATOR:
 
@@ -1446,7 +1446,7 @@ void HandleInputEvents(float fDeltaTime)
 			CodeDetector::EnteredCode(input.GameI.controller,CODE_BACK_IN_EVENT_MODE) )
 		{
 			input.pn = PLAYER_1;
-			input.MenuI.button = MENU_BUTTON_BACK;
+			input.MenuI = MENU_BUTTON_BACK;
 		}
 
 		SCREENMAN->Input( input );

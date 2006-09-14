@@ -49,7 +49,7 @@ void ScreenAttract::AttractInput( const InputEventPlus &input, ScreenWithMenuEle
 	if( input.type != IET_FIRST_PRESS ) 
 		return; // don't care
 
-	switch( input.MenuI.button )
+	switch( input.MenuI )
 	{
 	case MENU_BUTTON_BACK:
 		if( !(bool)BACK_GOES_TO_START_SCREEN )
@@ -87,7 +87,7 @@ void ScreenAttract::AttractInput( const InputEventPlus &input, ScreenWithMenuEle
 	if( pScreen->IsTransitioning() )
 		return;
 
-	switch( input.MenuI.button )
+	switch( input.MenuI )
 	{
 	case MENU_BUTTON_LEFT:
 	case MENU_BUTTON_RIGHT:

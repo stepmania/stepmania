@@ -244,7 +244,7 @@ void ScreenEz2SelectMusic::Input( const InputEventPlus &input )
 
 	if( !input.GameI.IsValid() )		return;		// don't care
 
-	if( m_bMadeChoice && !m_bGoToOptions && input.MenuI.button == MENU_BUTTON_START )
+	if( m_bMadeChoice && !m_bGoToOptions && input.MenuI == MENU_BUTTON_START )
 	{
 		SCREENMAN->PlayStartSound();
 		m_bGoToOptions = true;

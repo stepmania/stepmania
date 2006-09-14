@@ -191,7 +191,7 @@ void Screen::Input( const InputEventPlus &input )
 	}
 
 	// default input handler used by most menus
-	switch( input.MenuI.button )
+	switch( input.MenuI )
 	{
 	case MENU_BUTTON_UP:	this->MenuUp	( input );	return;
 	case MENU_BUTTON_DOWN:	this->MenuDown	( input );	return;

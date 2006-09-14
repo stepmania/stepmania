@@ -14,7 +14,7 @@ public:
 	DeviceInput DeviceI;
 	InputEventType type;
 	GameInput GameI;
-	MenuInput MenuI;
+	MenuButton MenuI;
 	PlayerNumber pn;
 	MultiPlayer mp;
 	DeviceInputList InputList;

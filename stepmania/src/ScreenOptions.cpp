@@ -497,7 +497,7 @@ void ScreenOptions::Input( const InputEventPlus &input )
 
 	if( input.type == IET_RELEASE )
 	{
-		switch( input.MenuI.button )
+		switch( input.MenuI )
 		{
 		case MENU_BUTTON_START:
 		case MENU_BUTTON_SELECT:

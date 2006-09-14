@@ -121,7 +121,7 @@ void ScreenEnding::Input( const InputEventPlus &input )
 {
 	if( !IsTransitioning() )
 	{
-		switch( input.MenuI.button )
+		switch( input.MenuI )
 		{
 		case MENU_BUTTON_START:
 			SCREENMAN->PostMessageToTopScreen( SM_BeginFadingOut, 0 );

@@ -61,7 +61,7 @@ void ScreenCenterImage::Input( const InputEventPlus &input )
 			return;
 		}
 
-		switch( input.MenuI.button )
+		switch( input.MenuI )
 		{
 		case MENU_BUTTON_START:
 			SCREENMAN->PlayStartSound();
@@ -80,7 +80,7 @@ void ScreenCenterImage::Input( const InputEventPlus &input )
 	bool bIncrease = false;
 
 	Axis axis = NUM_AXES;
-	switch( input.MenuI.button )
+	switch( input.MenuI )
 	{
 	case MENU_BUTTON_UP:	axis = AXIS_TRANS_Y; bIncrease = false;	break;
 	case MENU_BUTTON_DOWN:	axis = AXIS_TRANS_Y; bIncrease = true;	break;

@@ -1086,7 +1086,7 @@ void ScreenEdit::Input( const InputEventPlus &input )
 
 	EditButton EditB;
 	if( !DeviceToEdit( input.DeviceI, EditB ) )
-		MenuInputToEditButton( input.MenuI.button, EditB );
+		MenuInputToEditButton( input.MenuI, EditB );
 		
 
 	if( EditB == EDIT_BUTTON_REMOVE_NOTE )

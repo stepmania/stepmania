@@ -291,7 +291,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 
 	// Check for "Press START again for options" button press
 	if( m_bMadeChoice  &&
-	    input.MenuI.button == MENU_BUTTON_START  &&
+	    input.MenuI == MENU_BUTTON_START  &&
 	    input.type != IET_RELEASE  &&
 	    OPTIONS_MENU_AVAILABLE.GetValue() )
 	{
@@ -325,7 +325,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 
 	UpdateSelectButton();
 
-	if( input.MenuI.button == MENU_BUTTON_SELECT )
+	if( input.MenuI == MENU_BUTTON_SELECT )
 	{
 		if( input.type == IET_FIRST_PRESS )
 			m_MusicWheel.Move( 0 );
@@ -337,7 +337,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	{
 		if( input.type == IET_FIRST_PRESS )
 		{
-			switch( input.MenuI.button )
+			switch( input.MenuI )
 			{
 			case MENU_BUTTON_LEFT:
 				ChangeDifficulty( pn, -1 );
@@ -356,7 +356,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		return;
 	}
 
-	switch( input.MenuI.button )
+	switch( input.MenuI )
 	{
 	case MENU_BUTTON_RIGHT:
 	case MENU_BUTTON_LEFT:
@@ -387,7 +387,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 				m_MusicWheel.Move( 0 );
 				if( input.type == IET_FIRST_PRESS )
 				{
-					switch( input.MenuI.button )
+					switch( input.MenuI )
 					{
 					case MENU_BUTTON_LEFT:
 						m_MusicWheel.ChangeMusicUnlessLocked( -1 );
@@ -434,7 +434,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	// change to return if Start is part of a code because we don't want to process 
 	// Start as "move to the next screen" if it was just part of a code.
 	// XXX: Why are we doing this here? Menu(Up|Down|Left|Right) don't do anything. -- Steve
-	switch( input.MenuI.button )
+	switch( input.MenuI )
 	{
 	case MENU_BUTTON_UP:	this->MenuUp( input );		break;
 	case MENU_BUTTON_DOWN:	this->MenuDown( input );	break;
@@ -496,7 +496,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		}
 	}
 
-	switch( input.MenuI.button )
+	switch( input.MenuI )
 	{
 	case MENU_BUTTON_START:	Screen::MenuStart( input ); break;
 	}
