@@ -158,9 +158,9 @@ static HIDDevice *MakeDevice( InputDevice id )
 {
 	if( id == DEVICE_KEYBOARD )
 		return new KeyboardDevice;
-	if( id <= DEVICE_JOY16 )
+	if( IsJoystick(id) )
 		return new JoystickDevice;
-	if( id <= DEVICE_PUMP2 )
+	if( IsPump(id) )
 		return new PumpDevice;
 	return NULL;
 }
