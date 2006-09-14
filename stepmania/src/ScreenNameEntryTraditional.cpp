@@ -723,7 +723,7 @@ void ScreenNameEntryTraditional::Backspace( PlayerNumber pn )
 
 void ScreenNameEntryTraditional::MenuLeft( const InputEventPlus &input )
 {
-	PlayerNumber pn = input.MenuI.player;
+	PlayerNumber pn = input.pn;
 	if( !m_bStillEnteringName[pn] || IsTransitioning()  )
 		return;
 
@@ -735,7 +735,7 @@ void ScreenNameEntryTraditional::MenuLeft( const InputEventPlus &input )
 
 void ScreenNameEntryTraditional::MenuRight( const InputEventPlus &input )
 {
-	PlayerNumber pn = input.MenuI.player;
+	PlayerNumber pn = input.pn;
 	if( !m_bStillEnteringName[pn] || IsTransitioning()  )
 		return;
 

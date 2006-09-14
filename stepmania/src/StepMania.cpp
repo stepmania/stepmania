@@ -1445,7 +1445,7 @@ void HandleInputEvents(float fDeltaTime)
 		if( GAMESTATE->IsEventMode() &&
 			CodeDetector::EnteredCode(input.GameI.controller,CODE_BACK_IN_EVENT_MODE) )
 		{
-			input.MenuI.player = PLAYER_1;
+			input.pn = PLAYER_1;
 			input.MenuI.button = MENU_BUTTON_BACK;
 		}
 
