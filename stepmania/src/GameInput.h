@@ -254,13 +254,8 @@ struct GameInput
 			return true;
 		else if( controller > other.controller )
 			return false;
-		if( button < other.button )
-			return true;
-		else if( button > other.button )
-			return false;
-
-		return false;
-	};
+		return button < other.button;
+	}
 
 	inline bool IsValid() const { return controller != GAME_CONTROLLER_INVALID; };
 	inline void MakeInvalid() { controller = GAME_CONTROLLER_INVALID; button = GAME_BUTTON_INVALID; };
