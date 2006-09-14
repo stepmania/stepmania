@@ -2064,7 +2064,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 	if( m_bPaused )
 	{
 		/* If we're paused, only accept MENU_BUTTON_START to unpause. */
-		if( input.MenuI.IsValid() && GAMESTATE->IsHumanPlayer(input.MenuI.player) && input.MenuI.button == MENU_BUTTON_START && input.type == IET_FIRST_PRESS )
+		if( input.MenuI.IsValid() && GAMESTATE->IsHumanPlayer(input.pn) && input.MenuI.button == MENU_BUTTON_START && input.type == IET_FIRST_PRESS )
 		{
 			if( m_PauseController == GAME_CONTROLLER_INVALID || m_PauseController == input.GameI.controller )
 				this->PauseGame( false );
@@ -2074,7 +2074,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 
 	if( input.MenuI.IsValid()  &&  
 		m_DancingState != STATE_OUTRO  &&
-		GAMESTATE->IsHumanPlayer(input.MenuI.player)  &&
+		GAMESTATE->IsHumanPlayer(input.pn)  &&
 		(!GAMESTATE->m_bMultiplayer || input.mp == MultiPlayer_1)  &&
 		!m_Cancel.IsTransitioning() )
 	{
@@ -2121,7 +2121,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 				(input.DeviceI.device==DEVICE_KEYBOARD && input.type==IET_REPEAT) ||
 				(input.DeviceI.device!=DEVICE_KEYBOARD && INPUTFILTER->GetSecsHeld(input.DeviceI) >= 1.0f)) )
 			{
-				LOG->Trace("Player %i went back", input.MenuI.player+1);
+				LOG->Trace("Player %i went back", input.pn+1);
 				BeginBackingOutFromGameplay();
 			}
 			else if( PREFSMAN->m_bDelayedBack && input.type==IET_FIRST_PRESS )
@@ -2164,7 +2164,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 		//
 		if( input.type==IET_FIRST_PRESS && 
 			iCol != Column_INVALID &&
-			GAMESTATE->IsHumanPlayer( input.MenuI.player ) )
+			GAMESTATE->IsHumanPlayer( input.pn ) )
 		{
 			AbortGiveUp( true );
 			
