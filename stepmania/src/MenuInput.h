@@ -28,6 +28,7 @@ struct MenuInput
 {
 	MenuInput() { MakeInvalid(); };
 	MenuInput( PlayerNumber pn, MenuButton b ) { button = b; };
+	MenuInput( MenuButton b ) { button = b; }
 
 	MenuButton	button;
 
