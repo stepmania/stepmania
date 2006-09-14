@@ -354,7 +354,7 @@ bool ScreenEdit::DeviceToEdit( const DeviceInput &DeviceI, EditButton &button ) 
 }
 
 /* Given a DeviceInput that was just depressed, return an active edit function. */
-bool ScreenEdit::MenuInputToEditButton( MenuButton MenuI, EditButton &button ) const
+bool ScreenEdit::MenuButtonToEditButton( MenuButton MenuI, EditButton &button ) const
 {
 	const MapEditButtonToMenuButton *pCurrentMap = GetCurrentMenuButtonMap();
 
@@ -1086,7 +1086,7 @@ void ScreenEdit::Input( const InputEventPlus &input )
 
 	EditButton EditB;
 	if( !DeviceToEdit( input.DeviceI, EditB ) )
-		MenuInputToEditButton( input.MenuI, EditB );
+		MenuButtonToEditButton( input.MenuI, EditB );
 		
 
 	if( EditB == EDIT_BUTTON_REMOVE_NOTE )
