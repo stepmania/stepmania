@@ -37,17 +37,17 @@ public:
 	bool GameToDevice( const GameInput &GameI, int iSlotNum, DeviceInput& DeviceI );	// return true if there is a mapping from pad to device
 
 	void GameToMenu( const GameInput &GameI, MenuInput &MenuI );
-	void MenuToGame( const MenuInput &MenuI, GameInput GameIout[4] );
+	void MenuToGame( const MenuInput &MenuI, PlayerNumber pn, GameInput GameIout[4] );
 	PlayerNumber ControllerToPlayerNumber( GameController controller );
 
 	float GetSecsHeld( const GameInput &GameI, MultiPlayer mp = MultiPlayer_INVALID );
-	float GetSecsHeld( const MenuInput &MenuI );
+	float GetSecsHeld( const MenuInput &MenuI, PlayerNumber pn = PLAYER_INVALID );
 
 	bool IsBeingPressed( const GameInput &GameI, MultiPlayer mp = MultiPlayer_INVALID, const DeviceInputList *pButtonState = NULL );
-	bool IsBeingPressed( const MenuInput &MenuI );
+	bool IsBeingPressed( const MenuInput &MenuI, PlayerNumber pn = PLAYER_INVALID );
 
 	void ResetKeyRepeat( const GameInput &GameI );
-	void ResetKeyRepeat( const MenuInput &MenuI );
+	void ResetKeyRepeat( const MenuInput &MenuI, PlayerNumber pn = PLAYER_INVALID );
 
 	struct Mapping
 	{
