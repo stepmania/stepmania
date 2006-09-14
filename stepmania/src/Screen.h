@@ -10,7 +10,6 @@
 #include "PlayerNumber.h"
 
 class InputEventPlus;
-struct MenuInput;
 class Screen;
 typedef Screen* (*CreateScreenFn)(const RString& sClassName);
 void RegisterScreenClass( const RString& sClassName, CreateScreenFn pfn );

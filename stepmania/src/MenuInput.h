@@ -22,17 +22,6 @@ enum MenuButton
 const RString &MenuButtonToString( MenuButton mb );
 const RString &MenuButtonToLocalizedString( MenuButton mb );
 
-struct MenuInput
-{
-	MenuInput() { button = MenuButton_INVALID; }
-	MenuInput( MenuButton b ) { button = b; }
-
-	MenuButton	button;
-
-	bool operator==( const MenuInput &other ) const { return button == other.button; };
-	bool operator!=( const MenuInput &other ) const { return !operator==(other); };
-};
-
 #endif
 
 /*
