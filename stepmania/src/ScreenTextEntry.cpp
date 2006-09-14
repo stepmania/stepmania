@@ -240,9 +240,10 @@ void ScreenTextEntry::BackspaceInAnswer()
 	UpdateAnswerText();
 }
 
-void ScreenTextEntry::MenuStart( PlayerNumber pn )
+void ScreenTextEntry::MenuStart( const InputEventPlus &input )
 {
-	End( false );
+	if( input.type==IET_FIRST_PRESS )
+		End( false );
 }
 
 void ScreenTextEntry::TweenOffScreen()
@@ -292,9 +293,10 @@ void ScreenTextEntry::End( bool bCancelled )
 	s_sLastAnswer = bCancelled ? RString("") : WStringToRString(m_sAnswer);
 }
 
-void ScreenTextEntry::MenuBack( PlayerNumber pn )
+void ScreenTextEntry::MenuBack( const InputEventPlus &input )
 {
-	End( true );
+	if( input.type == IET_FIRST_PRESS )
+		End( true );
 }
 
 void ScreenTextEntryVisual::Init()
@@ -430,8 +432,10 @@ void ScreenTextEntryVisual::MoveY( int iDir )
 	PositionCursor();
 }
 
-void ScreenTextEntryVisual::MenuStart( PlayerNumber pn )
+void ScreenTextEntryVisual::MenuStart( const InputEventPlus &input )
 {
+	if( input.type != IET_FIRST_PRESS )
+		return;
 	if( m_iFocusY == KEYBOARD_ROW_SPECIAL )
 	{
 		switch( m_iFocusX )

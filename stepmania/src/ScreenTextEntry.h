@@ -7,6 +7,7 @@
 #include "BitmapText.h"
 #include "RageSound.h"
 #include "ThemeMetric.h"
+#include "InputEventPlus.h"
 
 enum KeyboardRow
 {
@@ -76,8 +77,8 @@ protected:
 	virtual void End( bool bCancelled );
 
 private:
-	virtual void MenuStart( PlayerNumber pn );
-	virtual void MenuBack( PlayerNumber pn );
+	virtual void MenuStart( const InputEventPlus &input );
+	virtual void MenuBack( const InputEventPlus &input );
 
 	void UpdateAnswerText();
 
@@ -108,12 +109,12 @@ protected:
 
 	virtual void TextEnteredDirectly();
 	
-	virtual void MenuLeft( PlayerNumber pn )	{ MoveX(-1); }
-	virtual void MenuRight( PlayerNumber pn )	{ MoveX(+1); }
-	virtual void MenuUp( PlayerNumber pn )		{ MoveY(-1); }
-	virtual void MenuDown( PlayerNumber pn )	{ MoveY(+1); }
+	virtual void MenuLeft( const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MoveX(-1); }
+	virtual void MenuRight( const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MoveX(+1); }
+	virtual void MenuUp( const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MoveY(-1); }
+	virtual void MenuDown( const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MoveY(+1); }
 
-	virtual void MenuStart( PlayerNumber pn );
+	virtual void MenuStart( const InputEventPlus &input );
 
 	int			m_iFocusX;
 	KeyboardRow		m_iFocusY;
