@@ -24,7 +24,7 @@ const RString &MenuButtonToLocalizedString( MenuButton mb );
 
 struct MenuInput
 {
-	MenuInput() { MakeInvalid(); };
+	MenuInput() { button = MenuButton_INVALID; }
 	MenuInput( MenuButton b ) { button = b; }
 
 	MenuButton	button;
@@ -33,7 +33,6 @@ struct MenuInput
 	bool operator!=( const MenuInput &other ) const { return !operator==(other); };
 
 	inline bool IsValid() const { return button != MenuButton_INVALID; };
-	inline void MakeInvalid() { button = MenuButton_INVALID; };
 };
 
 #endif
