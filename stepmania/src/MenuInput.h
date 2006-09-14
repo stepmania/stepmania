@@ -3,8 +3,6 @@
 #ifndef MENU_INPUT_H
 #define MENU_INPUT_H
 
-#include "PlayerNumber.h"
-
 enum MenuButton
 {
 	MENU_BUTTON_LEFT = 0,
@@ -27,7 +25,6 @@ const RString &MenuButtonToLocalizedString( MenuButton mb );
 struct MenuInput
 {
 	MenuInput() { MakeInvalid(); };
-	MenuInput( PlayerNumber pn, MenuButton b ) { button = b; };
 	MenuInput( MenuButton b ) { button = b; }
 
 	MenuButton	button;
