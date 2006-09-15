@@ -53,6 +53,7 @@ protected:
 	void AfterMusicChange();
 
 	void CheckBackgroundRequests( bool bForce );
+	bool DetectCodes( const InputEventPlus &input );
 
 	vector<Steps*>			m_vpSteps;
 	vector<Trail*>			m_vpTrails;

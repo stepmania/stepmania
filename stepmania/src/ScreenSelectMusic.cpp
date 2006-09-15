@@ -429,71 +429,54 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		break;
 	}
 
-	// TRICKY:  Do default processing of MenuLeft and MenuRight before detecting 
-	// codes.  Do default processing of Start AFTER detecting codes.  This gives us a 
-	// change to return if Start is part of a code because we don't want to process 
-	// Start as "move to the next screen" if it was just part of a code.
-	// XXX: Why are we doing this here? Menu(Up|Down|Left|Right) don't do anything. -- Steve
-	switch( input.MenuI )
-	{
-	case MENU_BUTTON_UP:	this->MenuUp( input );		break;
-	case MENU_BUTTON_DOWN:	this->MenuDown( input );	break;
-	case MENU_BUTTON_LEFT:	this->MenuLeft( input );	break;
-	case MENU_BUTTON_RIGHT:	this->MenuRight( input );	break;
-	// Screen contains the delayed back logic.
-	case MENU_BUTTON_BACK:	Screen::Input( input );		break;
-	// Do the default handler for Start after detecting codes.
-//	case MENU_BUTTON_START:	this->MenuStart( input );	break;
-	case MENU_BUTTON_COIN:	this->MenuCoin( input );	break;
-	}
-
-
-	if( input.type != IET_FIRST_PRESS )
+	if( input.type == IET_FIRST_PRESS && DetectCodes(input) )
 		return;
 
+	Screen::Input( input );
+}
+
+bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
+{
 	if( CodeDetector::EnteredEasierDifficulty(input.GameI.controller) )
 	{
 		if( GAMESTATE->IsAnExtraStage() )
 			m_soundLocked.Play();
 		else
-			ChangeDifficulty( pn, -1 );
-		return;
+			ChangeDifficulty( input.pn, -1 );
 	}
-	if( CodeDetector::EnteredHarderDifficulty(input.GameI.controller) )
+	else if( CodeDetector::EnteredHarderDifficulty(input.GameI.controller) )
 	{
 		if( GAMESTATE->IsAnExtraStage() )
 			m_soundLocked.Play();
 		else
-			ChangeDifficulty( pn, +1 );
-		return;
+			ChangeDifficulty( input.pn, +1 );
 	}
-	if( CodeDetector::EnteredModeMenu(input.GameI.controller) )
+	else if( CodeDetector::EnteredModeMenu(input.GameI.controller) )
 	{
 		if( MODE_MENU_AVAILABLE )
 			m_MusicWheel.ChangeSort( SORT_MODE_MENU );
 		else
 			m_soundLocked.Play();
-		return;
 	}
-	if( CodeDetector::EnteredNextSort(input.GameI.controller) )
+	else if( CodeDetector::EnteredNextSort(input.GameI.controller) )
 	{
 		if( ( GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage ) || GAMESTATE->IsExtraStage2() )
 			m_soundLocked.Play();
 		else
 			m_MusicWheel.NextSort();
-		return;
 	}
-	if( !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() && CodeDetector::DetectAndAdjustMusicOptions(input.GameI.controller) )
+	else if( !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() && CodeDetector::DetectAndAdjustMusicOptions(input.GameI.controller) )
 	{
 		m_soundOptionsChange.Play();
-		MESSAGEMAN->Broadcast( ssprintf("PlayerOptionsChangedP%i", pn+1) );
+		MESSAGEMAN->Broadcast( ssprintf("PlayerOptionsChangedP%i", input.pn+1) );
 		MESSAGEMAN->Broadcast( "SongOptionsChanged" );
-		return;
 	}
-
-	if( input.MenuI == MENU_BUTTON_START )
-		MenuStart( input );
-}
+	else
+	{
+		return false;
+	}
+	return true;
+}	
 
 void ScreenSelectMusic::UpdateSelectButton()
 {
@@ -646,6 +629,8 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 {
+	if( input.type != IET_FIRST_PRESS )
+		return;
 	/* If false, we don't have a selection just yet. */
 	if( !m_MusicWheel.Select() )
 		return;
