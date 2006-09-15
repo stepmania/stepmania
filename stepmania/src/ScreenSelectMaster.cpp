@@ -708,8 +708,12 @@ float ScreenSelectMaster::DoMenuStart( PlayerNumber pn )
 	return fSecs;
 }
 
-void ScreenSelectMaster::MenuStart( PlayerNumber pn )
+void ScreenSelectMaster::MenuStart( const InputEventPlus &input )
 {
+	if( input.type != IET_FIRST_PRESS )
+		return;
+	PlayerNumber pn = input.pn;
+	
 	// If the player isn't already joined, try to join them.
 	// Allow a player to join even if input is locked or someone has already already chosen.
 	Screen::JoinInput( pn );
