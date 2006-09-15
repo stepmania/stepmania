@@ -114,7 +114,7 @@ static void CheckFocus()
 
 	if( ChangeAppPri() )
 	{
-		if( bHasFocus )
+		if( HOOKS->AppHasFocus() )
 			HOOKS->BoostPriority();
 		else
 			HOOKS->UnBoostPriority();
