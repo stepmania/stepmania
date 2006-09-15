@@ -24,12 +24,12 @@ void InputHandler_Carbon::QueueCallBack( void *target, int result, void *refcon,
 	IOHIDEventStruct event;
 	AbsoluteTime zeroTime = { 0, 0 };
 	HIDDevice *dev = This->m_vDevices[int( refcon )];
-	vector<pair<DeviceInput, bool> > vPresses;
+	vector<DeviceInput> vPresses;
 	
 	while( (result = CALL(queue, getNextEvent, &event, zeroTime, 0)) == kIOReturnSuccess )
 		dev->GetButtonPresses( vPresses, int(event.elementCookie), int(event.value), now );
-	for( vector<pair<DeviceInput, bool> >::const_iterator i = vPresses.begin(); i != vPresses.end(); ++i )
-		This->ButtonPressed( i->first, i->second );
+	FOREACH_CONST( DeviceInput, vPresses, i )
+		This->ButtonPressed( *i, i->level > 0.5f );
 }
 
 static void RunLoopStarted( CFRunLoopObserverRef o, CFRunLoopActivity a, void *sem )

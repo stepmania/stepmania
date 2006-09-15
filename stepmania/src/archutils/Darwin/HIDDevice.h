@@ -103,8 +103,7 @@ public:
 	 * The value of the element is passed to determine if this is a push or a release. The time
 	 * is provided as an optimization.
 	 */
-	virtual void GetButtonPresses( vector<pair<DeviceInput, bool> >& vPresses, int cookie,
-				       int value, const RageTimer& now ) const = 0;
+	virtual void GetButtonPresses( vector<DeviceInput>& vPresses, int cookie, int value, const RageTimer& now ) const = 0;
 	
 	/*
 	 * Returns the number of IDs assigned starting from startID. This is not meaningful for devices like

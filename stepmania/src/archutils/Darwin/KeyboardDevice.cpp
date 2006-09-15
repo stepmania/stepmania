@@ -166,13 +166,12 @@ void KeyboardDevice::Open()
 		AddElementToQueue( i->first );
 }
 
-void KeyboardDevice::GetButtonPresses( vector<pair<DeviceInput, bool> >& vPresses, int cookie,
-				       int value, const RageTimer& now ) const
+void KeyboardDevice::GetButtonPresses( vector<DeviceInput>& vPresses, int cookie, int value, const RageTimer& now ) const
 {
 	hash_map<int, DeviceButton>::const_iterator iter = m_Mapping.find( cookie );
 	
 	if( iter != m_Mapping.end() )
-		vPresses.push_back( pair<DeviceInput, bool>(DeviceInput(DEVICE_KEYBOARD, iter->second, value, now), value) );
+		vPresses.push_back( DeviceInput(DEVICE_KEYBOARD, iter->second, value, now) );
 	
 }
 	

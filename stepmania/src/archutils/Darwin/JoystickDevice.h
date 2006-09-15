@@ -31,8 +31,7 @@ protected:
 	bool SupportsVidPid( int vid, int pid );
 	
 public:
-	void GetButtonPresses( vector<pair<DeviceInput, bool> >& vPresses, int cookie,
-			       int value, const RageTimer& now ) const;
+	void GetButtonPresses( vector<DeviceInput>& vPresses, int cookie, int value, const RageTimer& now ) const;
 	int AssignIDs( InputDevice startID );
 	void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevices ) const;
 };

@@ -11,8 +11,7 @@ void PumpDevice::Open()
 	AddElementToQueue( 8 );
 }
 
-void PumpDevice::GetButtonPresses( vector<pair<DeviceInput, bool> >& vPresses, int cookie,
-				   int value, const RageTimer& now ) const
+void PumpDevice::GetButtonPresses( vector<DeviceInput>& vPresses, int cookie, int value, const RageTimer& now ) const
 {
 	DeviceButton db1 = DeviceButton_Invalid;
 	DeviceButton db2 = DeviceButton_Invalid;
@@ -46,15 +45,9 @@ void PumpDevice::GetButtonPresses( vector<pair<DeviceInput, bool> >& vPresses, i
 		break;
 	}
 	if( db1 != DeviceButton_Invalid )
-	{
-		DeviceInput di( m_Id, db1, pressed1 ? 1.0f : 0.0f , now );
-		vPresses.push_back( pair<DeviceInput, bool>(di, pressed1) );
-	}
+		vPresses.push_back( DeviceInput(m_Id, db1, pressed1 ? 1.0f : 0.0f , now) );
 	if( db2 != DeviceButton_Invalid )
-	{
-		DeviceInput di( m_Id, db2, pressed2 ? 1.0f : 0.0f , now );
-		vPresses.push_back( pair<DeviceInput, bool>(di, pressed2) );
-	}
+		vPresses.push_back( DeviceInput(m_Id, db2, pressed2 ? 1.0f : 0.0f , now) );
 }
 
 int PumpDevice::AssignIDs( InputDevice startID )
