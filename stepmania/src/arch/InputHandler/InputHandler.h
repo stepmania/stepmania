@@ -22,11 +22,6 @@
  */
 #include "RageInputDevice.h"	// for InputDevice
 
-// Macro override. Defined in the Xbox's winnt.h
-#ifdef _XBOX
-#undef DELETE
-#endif
-
 class InputHandler
 {
 public:

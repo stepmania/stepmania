@@ -110,7 +110,7 @@ static LocalizedString SHIFT	( "DeviceButton", "Shift" );
 static LocalizedString CTRL	( "DeviceButton", "Ctrl" );
 static LocalizedString ALT	( "DeviceButton", "Alt" );
 static LocalizedString INSERT	( "DeviceButton", "Insert" );
-static LocalizedString DELETE	( "DeviceButton", "Delete" );
+static LocalizedString DEL	( "DeviceButton", "Delete" );
 static LocalizedString PGUP	( "DeviceButton", "PgUp" );
 static LocalizedString PGDN	( "DeviceButton", "PgDn" );
 static LocalizedString BACKSLASH	( "DeviceButton", "Backslash" );
@@ -146,7 +146,7 @@ RString InputHandler::GetLocalizedInputString( const DeviceInput &di )
 	case KEY_LCTRL:	 case KEY_RCTRL:	return CTRL.GetValue();
 	case KEY_LALT:	 case KEY_RALT:		return ALT.GetValue();
 	case KEY_INSERT:	return INSERT.GetValue();
-	case KEY_DEL:		return DELETE.GetValue();
+	case KEY_DEL:		return DEL.GetValue();
 	case KEY_PGUP:		return PGUP.GetValue();
 	case KEY_PGDN:		return PGDN.GetValue();
 	case KEY_BACKSLASH:	return BACKSLASH.GetValue();
