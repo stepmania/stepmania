@@ -60,8 +60,8 @@ Song* GameState::GetDefaultSong() const
 	return sid.ToSong();
 }
 
-static const ThemeMetric<int> GRADE_TIER_FOR_EXTRA_1 ("GameState","GradeTierForExtra1");
-static const ThemeMetric<int> GRADE_TIER_FOR_EXTRA_2 ("GameState","GradeTierForExtra2");
+static const ThemeMetricEnum<Grade> GRADE_TIER_FOR_EXTRA_1 ("GameState","GradeTierForExtra1");
+static const ThemeMetricEnum<Grade> GRADE_TIER_FOR_EXTRA_2 ("GameState","GradeTierForExtra2");
 
 static DynamicThemeMetric<bool> ARE_STAGE_MODS_FORCED( "GameState","AreStageModsForced" );
 
@@ -1000,9 +1000,8 @@ bool GameState::HasEarnedExtraStage() const
 		    m_pCurSteps[pn]->GetDifficulty() != DIFFICULTY_CHALLENGE )
 			continue; /* not hard enough! */
 
-		// Grading tiers start with 1 on metrics, but 0 on enums.  That is why you must subtract 1.  --Jason Felds
-		if (	( IsFinalStage() && STATSMAN->m_CurStageStats.m_player[pn].GetGrade() <= GRADE_TIER_FOR_EXTRA_1 - 1 ) || 
-			( IsExtraStage() && STATSMAN->m_CurStageStats.m_player[pn].GetGrade() <= GRADE_TIER_FOR_EXTRA_2 - 1 ) )
+		if( (IsFinalStage() && STATSMAN->m_CurStageStats.m_player[pn].GetGrade() <= GRADE_TIER_FOR_EXTRA_1) || 
+		    (IsExtraStage() && STATSMAN->m_CurStageStats.m_player[pn].GetGrade() <= GRADE_TIER_FOR_EXTRA_2) )
 		{
 			bOnePassed = true;
 			break;

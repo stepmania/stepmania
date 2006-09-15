@@ -31,7 +31,7 @@ RString GradeToOldString( Grade g )
 	case Grade_Tier07:	return "D";
 	case Grade_Failed:	return "E";
 	case Grade_NoData:	return "N";
-	default:			return "N";
+	default:		return "N";
 	}
 };
 
@@ -42,13 +42,17 @@ Grade StringToGrade( const RString &sGrade )
 
 	// new style
 	int iTier;
-	if( sscanf(sGrade.c_str(),"Tier%02d",&iTier) == 1 )		return (Grade)(iTier-1);
-	else if( s == "FAILED" )	return Grade_Failed;
-	else if( s == "NODATA" )	return Grade_NoData;
+	if( sscanf(sGrade.c_str(),"TIER%02d",&iTier) == 1 && iTier >= 0 && iTier < NUM_Grade)
+		return (Grade)(iTier-1);
+	else if( s == "FAILED" )
+		return Grade_Failed;
+	else if( s == "NODATA" )
+		return Grade_NoData;
 
 	LOG->Warn( "Invalid grade: %s", sGrade.c_str() );
 	return Grade_NoData;
 };
+template<> void StringTo<Grade>( const RString& s, Grade &out ) { out = StringToGrade( s ); }
 
 static void LuaGrade(lua_State* L)
 {
