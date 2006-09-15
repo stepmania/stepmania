@@ -106,12 +106,8 @@ static bool ChangeAppPri()
 
 static void CheckFocus()
 {
-	static bool bHasFocus = true;
-	
-	bool bHasFocusNow = HOOKS->AppHasFocus();
-	if( bHasFocus == bHasFocusNow )
+	if( !HOOKS->AppFocusChanged() )
 		return;
-	bHasFocus = bHasFocusNow;
 
 	/* If we lose focus, we may lose input events, especially key releases. */
 	INPUTFILTER->Reset();
