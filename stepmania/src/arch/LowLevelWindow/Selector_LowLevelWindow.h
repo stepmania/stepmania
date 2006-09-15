@@ -8,8 +8,6 @@
 #include "LowLevelWindow_X11.h"
 #elif defined(MACOSX)
 #include "LowLevelWindow_Cocoa.h"
-#elif defined(HAVE_SDL)
-#include "LowLevelWindow_SDL.h"
 #else
 #error "No suitable LowLevelWindow available."
 #endif

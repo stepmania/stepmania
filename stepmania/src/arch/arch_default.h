@@ -10,7 +10,7 @@
  #define DEFAULT_INPUT_DRIVER_LIST "Xbox"
 #elif defined(HAVE_DIRECTX)
  #define DEFAULT_INPUT_DRIVER_LIST "DirectInput,Pump,Para"
-#elif defined(HAVE_X11) // Prefer X11 over SDL
+#elif defined(HAVE_X11)
  #define DEFAULT_INPUT_DRIVER_LIST "X11,Joystick"
 #elif defined(MACOSX)
 # define DEFAULT_INPUT_DRIVER_LIST "Carbon"

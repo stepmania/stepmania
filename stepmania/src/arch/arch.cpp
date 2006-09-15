@@ -37,9 +37,6 @@ void MakeInputHandlers( const RString &drivers, vector<InputHandler *> &Add )
 #ifdef USE_INPUT_HANDLER_LINUX_TTY
 		if( !s->CompareNoCase("tty") )		ret = new InputHandler_Linux_tty;
 #endif
-#ifdef USE_INPUT_HANDLER_SDL
-		if( !s->CompareNoCase("SDL") )		ret = new InputHandler_SDL;
-#endif
 #ifdef USE_INPUT_HANDLER_WIN32_PARA
 		if( !s->CompareNoCase("Para") )		ret = new InputHandler_Win32_Para;
 #endif
