@@ -57,8 +57,8 @@ public:
 	/*
 	 * Returns true if the user wants to quit (eg. ^C, or clicked a "close window" button).
 	 */
-	static bool UserQuit() { return s_bQuitting; }
-	static void SetUserQuit() { s_bQuitting = true; }
+	static bool UserQuit() { return g_bQuitting; }
+	static void SetUserQuit() { g_bQuitting = true; }
 	
 	/*
 	 * Returns true if the user wants to toggle windowed mode and atomically clears
@@ -119,8 +119,9 @@ private:
 	static int64_t FixupTimeIfLooped( int64_t usecs );
 	static int64_t FixupTimeIfBackwards( int64_t usecs );
 
-	static bool s_bQuitting;
-	static bool s_bToggleWindowed;
+	static bool g_bQuitting;
+	static bool g_bToggleWindowed;
+	static bool g_bHasFocus;
 };
 
 #endif

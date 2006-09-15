@@ -3,9 +3,9 @@
 #include "RageLog.h"
 #include "RageThreads.h"
 
-bool ArchHooks::s_bQuitting = false;
-bool ArchHooks::s_bToggleWindowed = false;
-static bool g_bHasFocus = true;
+bool ArchHooks::g_bQuitting = false;
+bool ArchHooks::g_bToggleWindowed = false;
+bool ArchHooks::g_bHasFocus = true;
 // Keep from pulling RageThreads.h into ArchHooks.h
 static RageMutex g_Mutex( "ArchHooks" );
 ArchHooks *HOOKS = NULL;
@@ -13,16 +13,16 @@ ArchHooks *HOOKS = NULL;
 bool ArchHooks::GetAndClearToggleWindowed()
 {
 	LockMut( g_Mutex );
-	bool bToggle = s_bToggleWindowed;
+	bool bToggle = g_bToggleWindowed;
 	
-	s_bToggleWindowed = false;
+	g_bToggleWindowed = false;
 	return bToggle;
 }
 
 void ArchHooks::SetToggleWindowed()
 {
 	LockMut( g_Mutex );
-	s_bToggleWindowed = true;
+	g_bToggleWindowed = true;
 }
 
 #include "Selector_ArchHooks.h"
