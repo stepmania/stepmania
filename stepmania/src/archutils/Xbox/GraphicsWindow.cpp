@@ -12,7 +12,7 @@ static bool g_bResolutionChanged = false;
 static bool g_bHasFocus = true;
 static bool g_bLastHasFocus = true;
 static bool m_bWideWindowClass;
-void isPALSystem();
+bool isPALSystem();
 void setScreenResolutionValues();
 
 void GraphicsWindow::SetVideoModeParams( const VideoModeParams &params )
@@ -63,9 +63,11 @@ bool isPALSystem()
 			g_CurrentParams.rate = 50;
 
 		g_CurrentParams.PAL = true;
+		return true;
 	}
 	g_CurrentParams.rate = 60;
 	g_CurrentParams.PAL = false;
+	return false;
 }
 void setScreenResolutionValues()
 {
