@@ -7,6 +7,10 @@
 
 #if defined(_WINDOWS) && defined(DEBUG)
 #include <windows.h>
+#elif defined(MACOSX)
+#include "archutils/Darwin/Crash.h"
+using CrashHandler::IsDebuggerPresent;
+using CrashHandler::DebugBreak;
 #endif
 
 static void (*g_CleanupHandler)( const RString &sError ) = NULL;
@@ -48,7 +52,7 @@ void RageException::Throw( const char *sFmt, ... )
 		fflush( stdout );
 	}
 
-#if (defined(WINDOWS) && defined(DEBUG)) || defined(_XDBG)
+#if (defined(WINDOWS) && defined(DEBUG)) || defined(_XDBG) || defined(MACOSX)
 	if( IsDebuggerPresent() )
 		DebugBreak();
 #endif
