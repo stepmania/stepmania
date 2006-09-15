@@ -1245,7 +1245,6 @@ void StepMania::InsertCoin( int iNum, const RageTimer *pTime )
 	GAMESTATE->m_iCoins += iNum;
 	LOG->Trace("%i coins inserted, %i needed to play", GAMESTATE->m_iCoins, PREFSMAN->m_iCoinsPerCredit.Get() );
 	BOOKKEEPER->CoinInserted();
-	SCREENMAN->RefreshCreditsMessages();
 	SCREENMAN->PlayCoinSound();
 	MESSAGEMAN->Broadcast( Message_CoinInserted );
 }

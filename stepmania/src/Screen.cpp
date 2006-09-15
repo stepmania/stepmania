@@ -249,7 +249,6 @@ bool Screen::JoinInput( PlayerNumber pn )
 		SCREENMAN->PlayStartSound();
 
 	GAMESTATE->JoinPlayer( pn );
-	SCREENMAN->RefreshCreditsMessages();
 
 	return true;
 }

@@ -662,7 +662,6 @@ void ScreenEdit::Init()
 	// set both players to joined so the credit message doesn't show
 	FOREACH_PlayerNumber( p )
 		GAMESTATE->JoinPlayer( p );
-	SCREENMAN->RefreshCreditsMessages();
 
 	m_pSong = GAMESTATE->m_pCurSong;
 	m_pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];

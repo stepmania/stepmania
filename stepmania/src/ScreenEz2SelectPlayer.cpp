@@ -167,7 +167,6 @@ void ScreenEz2SelectPlayer::MenuStart( const InputEventPlus &input )
 		return;	// ignore
 
 	GAMESTATE->JoinPlayer( pn );
-	SCREENMAN->RefreshCreditsMessages();
 	SCREENMAN->PlayStartSound();
 	m_sprJoinMessage[pn].SetState( pn+NUM_PLAYERS );
 
