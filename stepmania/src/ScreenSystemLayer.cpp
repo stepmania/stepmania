@@ -17,9 +17,12 @@ REGISTER_SCREEN_CLASS( ScreenSystemLayer );
 void ScreenSystemLayer::Init()
 {
 	SubscribeToMessage( "RefreshCreditText" );
+	SubscribeToMessage( "CoinInserted" );
 	SubscribeToMessage( "SystemMessage" );
 	SubscribeToMessage( "SystemMessageNoAnimate" );
 	SubscribeToMessage( "HideSystemMessage" );
+	FOREACH_PlayerNumber( pn )
+		SubscribeToMessage( enum_add2(Message_SideJoinedP1, pn) );
 
 	CREDITS_PRESS_START		.Load(m_sName,"CreditsPressStart");
 	CREDITS_INSERT_CARD		.Load(m_sName,"CreditsInsertCard");
@@ -175,7 +178,12 @@ RString ScreenSystemLayer::GetCreditsMessage( PlayerNumber pn ) const
 
 void ScreenSystemLayer::HandleMessage( const RString &sMessage )
 {
-	if( sMessage == "RefreshCreditText" )
+	bool bJoinedMessage = false;
+	FOREACH_PlayerNumber( pn )
+		if( MessageToString(enum_add2(Message_SideJoinedP1, pn)) == sMessage )
+			bJoinedMessage = true;
+
+	if( sMessage == "RefreshCreditText" || sMessage == "CoinInserted" || bJoinedMessage )
 	{
 		// update joined
 		FOREACH_PlayerNumber( pn )
