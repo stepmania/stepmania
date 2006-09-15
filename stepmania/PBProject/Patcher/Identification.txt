@@ -1,0 +1,11 @@
+# The format of this file is:
+# Application name
+# Bundle ID
+# version1
+# version2
+# ...
+# The version key -ALL- or no version keys matches all versions.
+
+StepMania
+com.StepMania
+-ALL-

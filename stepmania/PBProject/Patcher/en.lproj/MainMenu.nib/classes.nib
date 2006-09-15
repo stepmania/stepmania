@@ -1,0 +1,23 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {chooseFile = id; upgrade = id; }; 
+            CLASS = Upgrader; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                "m_Choose" = NSButton; 
+                "m_Okay" = NSButton; 
+                "m_Panel" = NSPanel; 
+                "m_PatchingText" = NSTextField; 
+                "m_ProgressBar" = NSProgressIndicator; 
+                "m_Searching" = NSProgressIndicator; 
+                "m_SelectionText" = NSTextField; 
+                "m_StatusText" = NSTextField; 
+                "m_Window" = NSWindow; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }
+    ); 
+    IBVersion = 1; 
+}
