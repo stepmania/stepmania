@@ -355,6 +355,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenDemonstration.h">
 			</File>
 			<File
+				RelativePath=".\ScoreKeeperShared.cpp">
+			</File>
+			<File
+				RelativePath=".\ScoreKeeperShared.h">
+			</File>
+			<File
 				RelativePath="ScreenDimensions.cpp">
 			</File>
 			<File
@@ -419,6 +425,18 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ScreenGameplayNormal.h">
+			</File>
+			<File
+				RelativePath=".\ScreenGameplayShared.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenGameplayShared.h">
+			</File>
+			<File
+				RelativePath=".\ScreenGameplaySyncMachine.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenGameplaySyncMachine.h">
 			</File>
 			<File
 				RelativePath="ScreenHowToPlay.cpp">
@@ -629,6 +647,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ScreenSelectGroup.h">
+			</File>
+			<File
+				RelativePath="ScreenSelectLanguage.cpp">
+			</File>
+			<File
+				RelativePath="ScreenSelectLanguage.h">
 			</File>
 			<File
 				RelativePath="ScreenSelectMaster.cpp">
@@ -959,6 +983,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="MenuInput.h">
 			</File>
 			<File
+				RelativePath="ModsGroup.cpp">
+			</File>
+			<File
+				RelativePath="ModsGroup.h">
+			</File>
+			<File
 				RelativePath="NoteData.cpp">
 			</File>
 			<File
@@ -1088,6 +1118,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScoreKeeper.h">
 			</File>
 			<File
+				RelativePath="ScoreKeeper.cpp">
+			</File>
+			<File
 				RelativePath=".\ScoreKeeperNormal.cpp">
 			</File>
 			<File
@@ -1146,9 +1179,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="Style.h">
-			</File>
-			<File
-				RelativePath="StyleInput.h">
 			</File>
 			<File
 				RelativePath="StyleUtil.cpp">
@@ -1457,6 +1487,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					RelativePath="archutils\Xbox\custom_launch_params.h">
 				</File>
 				<File
+					RelativePath=".\ExportStrings.cpp">
+				</File>
+				<File
+					RelativePath=".\ExportStrings.h">
+				</File>
+				<File
 					RelativePath="GameLoop.cpp">
 				</File>
 				<File
@@ -1585,12 +1621,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="CourseEntryDisplay.h">
-			</File>
-			<File
-				RelativePath="DifficultyDisplay.cpp">
-			</File>
-			<File
-				RelativePath="DifficultyDisplay.h">
 			</File>
 			<File
 				RelativePath="DifficultyList.cpp">
@@ -1735,6 +1765,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="PaneDisplay.h">
+			</File>
+			<File
+				RelativePath="RoomInfoDisplay.cpp">
+			</File>
+			<File
+				RelativePath="RoomInfoDisplay.h">
 			</File>
 			<File
 				RelativePath="RoomWheel.cpp">
@@ -2249,6 +2285,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\RageSurface_Save_JPEG.h">
 			</File>
 			<File
+				RelativePath="RageSurface_Save_PNG.cpp">
+			</File>
+			<File
+				RelativePath="RageSurface_Save_PNG.h">
+			</File>
+			<File
 				RelativePath="RageSurfaceUtils.cpp">
 			</File>
 			<File
@@ -2295,6 +2337,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="RageTexturePreloader.h">
+			</File>
+			<File
+				RelativePath=".\RageTextureRenderTarget.cpp">
+			</File>
+			<File
+				RelativePath=".\RageTextureRenderTarget.h">
 			</File>
 			<File
 				RelativePath="RageThreads.cpp">
@@ -2363,6 +2411,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					Name="pcre"
 					Filter="">
 					<File
+						RelativePath=".\pcre\chartables.c">
+					</File>
+					<File
 						RelativePath="pcre\get.c">
 					</File>
 					<File
@@ -2393,13 +2444,22 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\Actor.h">
 			</File>
 			<File
-				RelativePath="ActorCollision.h">
-			</File>
-			<File
 				RelativePath=".\ActorFrame.cpp">
 			</File>
 			<File
 				RelativePath=".\ActorFrame.h">
+			</File>
+			<File
+				RelativePath="ActorFrameTexture.cpp">
+			</File>
+			<File
+				RelativePath="ActorFrameTexture.h">
+			</File>
+			<File
+				RelativePath="ActorProxy.cpp">
+			</File>
+			<File
+				RelativePath="ActorProxy.h">
 			</File>
 			<File
 				RelativePath="ActorScroller.cpp">
