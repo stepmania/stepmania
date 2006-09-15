@@ -660,7 +660,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 		case TWO_PLAYERS_SHARED_SIDES:
 			{
 				FOREACH_PlayerNumber( p )
-					GAMESTATE->m_bSideIsJoined[p] = true;
+					GAMESTATE->JoinPlayer( p );
 			}
 			break;
 		default:

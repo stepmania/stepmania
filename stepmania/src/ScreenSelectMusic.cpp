@@ -53,7 +53,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 	{
 		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 		GAMESTATE->m_pCurStyle.Set( GAMEMAN->GameAndStringToStyle(GAMEMAN->GetDefaultGame(),"versus") );
-		GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
+		GAMESTATE->JoinPlayer( PLAYER_1 );
 		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 	}
 }

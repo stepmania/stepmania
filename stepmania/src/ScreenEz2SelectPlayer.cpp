@@ -166,7 +166,7 @@ void ScreenEz2SelectPlayer::MenuStart( const InputEventPlus &input )
 	if( GAMESTATE->m_bSideIsJoined[pn] )	// already joined
 		return;	// ignore
 
-	GAMESTATE->m_bSideIsJoined[pn] = true;
+	GAMESTATE->JoinPlayer( pn );
 	SCREENMAN->RefreshCreditsMessages();
 	SCREENMAN->PlayStartSound();
 	m_sprJoinMessage[pn].SetState( pn+NUM_PLAYERS );

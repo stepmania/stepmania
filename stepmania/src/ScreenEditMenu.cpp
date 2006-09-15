@@ -33,7 +33,7 @@ void ScreenEditMenu::Init()
 {
 	/* Enable all players. */
 	FOREACH_PlayerNumber( pn )
-		GAMESTATE->m_bSideIsJoined[pn] = true;
+		GAMESTATE->JoinPlayer( pn );
 
 	ScreenWithMenuElements::Init();
 

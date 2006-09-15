@@ -38,7 +38,7 @@ void ScreenPackages::Init()
 	m_iDownloaded = 0;
 
 	FOREACH_PlayerNumber( pn )
-		GAMESTATE->m_bSideIsJoined[pn] = true;
+		GAMESTATE->JoinPlayer( pn );
 
 	m_sprExistingBG.SetName( "PackagesBG" );
 	m_sprExistingBG.Load( THEME->GetPathG( m_sName, "PackagesBG" ) );

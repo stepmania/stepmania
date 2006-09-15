@@ -31,9 +31,8 @@ ScreenEnding::ScreenEnding() : ScreenAttract( false/*dont reset GAMESTATE*/ )
 
 		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 		GAMESTATE->m_pCurStyle.Set( GAMEMAN->GameAndStringToStyle( GAMEMAN->GetDefaultGame(),"versus") );
-		GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
-		GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;
-		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+		GAMESTATE->JoinPlayer( PLAYER_1 );
+		GAMESTATE->JoinPlayer( PLAYER_2 );
 		GAMESTATE->m_pCurSong.Set( SONGMAN->GetRandomSong() );
 		GAMESTATE->m_pCurCourse.Set( SONGMAN->GetRandomCourse() );
 		GAMESTATE->m_pCurSteps[PLAYER_1].Set( GAMESTATE->m_pCurSong->GetAllSteps()[0] );

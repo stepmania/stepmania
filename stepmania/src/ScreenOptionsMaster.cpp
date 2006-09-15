@@ -35,8 +35,7 @@ void ScreenOptionsMaster::Init()
 	if( FORCE_ALL_PLAYERS )
 	{
 		FOREACH_PlayerNumber( pn )
-			GAMESTATE->m_bSideIsJoined[pn] = true;
-		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+			GAMESTATE->JoinPlayer( pn );
 	}
 
 	if( NAVIGATION_MODE == "toggle" )

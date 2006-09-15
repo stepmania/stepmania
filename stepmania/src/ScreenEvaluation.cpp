@@ -107,7 +107,7 @@ ScreenEvaluation::ScreenEvaluation()
 			if( RandomInt(2) )
 				PO_GROUP_ASSIGN_N( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_bTransforms, PlayerOptions::TRANSFORM_ECHO, true );	// show "disqualified"
 
-			GAMESTATE->m_bSideIsJoined[p] = true;
+			GAMESTATE->JoinPlayer( p );
 			GAMESTATE->m_pCurSteps[p].Set( GAMESTATE->m_pCurSong->GetAllSteps()[0] );
 			vector<Trail*> apTrails;
 			GAMESTATE->m_pCurCourse->GetAllTrails( apTrails );

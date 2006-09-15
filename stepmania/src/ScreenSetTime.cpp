@@ -46,7 +46,7 @@ void ScreenSetTime::Init()
 	m_Selection = hour;
 
 	FOREACH_PlayerNumber( pn )
-		GAMESTATE->m_bSideIsJoined[pn] = true;
+		GAMESTATE->JoinPlayer( pn );
 
 	FOREACH_SetTimeSelection( s )
 	{
