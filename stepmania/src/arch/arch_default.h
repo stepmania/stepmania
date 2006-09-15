@@ -3,10 +3,7 @@
 
 #include "arch/arch_platform.h"
 
-/* Define the default driver sets. It's okay to have in the sets drivers that
- * might not be available, just as long as you don't mind if they're used when
- * they are available. (For example, if we're using X11, we don't want
- * InputHandler_SDL to be used.) */
+/* Define the default driver sets. */
 
 /* InputHandler drivers */
 #if defined (HAVE_XDK)
@@ -17,8 +14,6 @@
  #define DEFAULT_INPUT_DRIVER_LIST "X11,Joystick"
 #elif defined(MACOSX)
 # define DEFAULT_INPUT_DRIVER_LIST "Carbon"
-#elif defined(HAVE_SDL)
- #define DEFAULT_INPUT_DRIVER_LIST "SDL"
 #elif defined(LINUX)
  #define DEFAULT_INPUT_DRIVER_LIST "Joystick"
 #else

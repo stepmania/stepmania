@@ -24,10 +24,6 @@
 
 #include "ProductInfo.h"
 
-#if defined(HAVE_SDL)
-#include "SDL_utils.h"
-#endif
-
 #include "Screen.h"
 #include "InputEventPlus.h"
 #include "ScreenDimensions.h"
@@ -994,10 +990,6 @@ int main(int argc, char* argv[])
 	PREFSMAN->ReadPrefsFromDisk();
 	ApplyLogPreferences();
 	
-#if defined(HAVE_SDL)
-	SetupSDL();
-#endif
-
 	/* This needs PREFSMAN. */
 	Dialog::Init();
 
