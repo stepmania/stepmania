@@ -313,6 +313,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			Name="Screens"
 			Filter="">
 			<File
+				RelativePath=".\ScoreKeeperShared.cpp">
+			</File>
+			<File
+				RelativePath=".\ScoreKeeperShared.h">
+			</File>
+			<File
 				RelativePath="Screen.cpp">
 			</File>
 			<File
@@ -353,12 +359,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ScreenDemonstration.h">
-			</File>
-			<File
-				RelativePath=".\ScoreKeeperShared.cpp">
-			</File>
-			<File
-				RelativePath=".\ScoreKeeperShared.h">
 			</File>
 			<File
 				RelativePath="ScreenDimensions.cpp">
@@ -785,6 +785,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\ActorCommands.h">
 			</File>
 			<File
+				RelativePath=".\AdjustSync.cpp">
+			</File>
+			<File
+				RelativePath=".\AdjustSync.h">
+			</File>
+			<File
 				RelativePath="Attack.cpp">
 			</File>
 			<File
@@ -1115,10 +1121,10 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\RandomSample.h">
 			</File>
 			<File
-				RelativePath="ScoreKeeper.h">
+				RelativePath="ScoreKeeper.cpp">
 			</File>
 			<File
-				RelativePath="ScoreKeeper.cpp">
+				RelativePath="ScoreKeeper.h">
 			</File>
 			<File
 				RelativePath=".\ScoreKeeperNormal.cpp">
@@ -1476,6 +1482,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				Filter="">
 				<File
 					RelativePath=".\archutils\Xbox\arch_setup.cpp">
+					<FileConfiguration
+						Name="Debug|Xbox">
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="0"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\archutils\Xbox\arch_setup.h">
