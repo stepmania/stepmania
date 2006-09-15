@@ -1,7 +1,6 @@
 #include "global.h"
 #include "GameManager.h"
 #include "GameConstantsAndTypes.h"
-#include "GameState.h"
 #include "GameInput.h"	// for GameButton constants
 #include "RageLog.h"
 #include "RageUtil.h"
@@ -2891,10 +2890,12 @@ public:
 	LunaGameManager() { LUA->Register( Register ); }
 
 	static int StepsTypeToLocalizedString( T* p, lua_State *L )	{ lua_pushstring(L, p->StepsTypeToLocalizedString((StepsType)IArg(1)) ); return 1; }
-	static int GetFirstStepsTypeForCurrentGame( T* p, lua_State *L )
+	static int GetFirstStepsTypeForGame( T* p, lua_State *L )
 	{
+		Game *pGame = Luna<Game>::check( L, 1 );
+
 		vector<StepsType> vstAddTo;
-		p->GetStepsTypesForGame( GAMESTATE->m_pCurGame, vstAddTo );
+		p->GetStepsTypesForGame( pGame, vstAddTo );
 		ASSERT( !vstAddTo.empty() );
 		StepsType st = vstAddTo[0];
 		lua_pushnumber(L, st);
@@ -2904,7 +2905,7 @@ public:
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( StepsTypeToLocalizedString );
-		ADD_METHOD( GetFirstStepsTypeForCurrentGame );
+		ADD_METHOD( GetFirstStepsTypeForGame );
 
 		Luna<T>::Register( L );
 
