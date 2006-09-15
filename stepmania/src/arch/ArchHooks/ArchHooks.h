@@ -4,6 +4,7 @@
 class ArchHooks
 {
 public:
+	ArchHooks(): m_bHasFocus(true) { }
 	virtual ~ArchHooks() { }
 	virtual void Init() { }
 	/*
@@ -106,7 +107,7 @@ public:
 	/*
 	 * Return true if the application has input focus.
 	 */
-	bool AppHasFocus();
+	bool AppHasFocus() const { return m_bHasFocus; }
 
 	/*
 	 * Open a URL in the default web browser
@@ -121,7 +122,7 @@ private:
 
 	static bool g_bQuitting;
 	static bool g_bToggleWindowed;
-	static bool g_bHasFocus;
+	bool m_bHasFocus;
 };
 
 #endif

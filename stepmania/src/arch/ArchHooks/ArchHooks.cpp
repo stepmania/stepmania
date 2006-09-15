@@ -5,7 +5,6 @@
 
 bool ArchHooks::g_bQuitting = false;
 bool ArchHooks::g_bToggleWindowed = false;
-bool ArchHooks::g_bHasFocus = true;
 // Keep from pulling RageThreads.h into ArchHooks.h
 static RageMutex g_Mutex( "ArchHooks" );
 ArchHooks *HOOKS = NULL;
@@ -33,16 +32,11 @@ ArchHooks *MakeArchHooks()
 
 void ArchHooks::SetHasFocus( bool bHasFocus )
 {
-	if( bHasFocus == g_bHasFocus )
+	if( bHasFocus == m_bHasFocus )
 		return;
-	g_bHasFocus = bHasFocus;
+	m_bHasFocus = bHasFocus;
 
 	LOG->Trace( "App %s focus", bHasFocus? "has":"doesn't have" );
-}
-
-bool ArchHooks::AppHasFocus()
-{
-	return g_bHasFocus;
 }
 
 bool ArchHooks::GoToURL( RString sUrl )
