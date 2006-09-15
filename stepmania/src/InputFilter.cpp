@@ -157,7 +157,7 @@ void InputFilter::ResetDevice( InputDevice device )
 	{
 		const DeviceInput &di = b->first;
 		if( di.device == device )
-			ButtonPressed( DeviceInput(device, di.button, -1, now), false );
+			ButtonPressed( DeviceInput(device, di.button, 0, now), false );
 	}
 }
 
