@@ -86,9 +86,9 @@ LowLevelWindow_Cocoa::LowLevelWindow_Cocoa() : m_Context(nil), m_BGContext(nil),
 	SMMainThread *mt = [[SMMainThread alloc] init];
 	
 	m_Window = [[NSWindow alloc] initWithContentRect:rect
-					      styleMask:g_iStyleMask
-						backing:NSBackingStoreBuffered
-						  defer:YES];
+					       styleMask:g_iStyleMask
+						 backing:NSBackingStoreBuffered
+						   defer:YES];
 	
 	ADD_ACTIONb( mt, m_Window, setExcludedFromWindowsMenu:, YES );
 	ADD_ACTIONb( mt, m_Window, useOptimizedDrawing:, YES );
