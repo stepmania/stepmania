@@ -249,14 +249,6 @@ bool Screen::JoinInput( PlayerNumber pn )
 		SCREENMAN->PlayStartSound();
 
 	GAMESTATE->JoinPlayer( pn );
-
-	// don't load memory card profiles here.  It's slow and can cause a big skip.
-	/* Don't load the local profile, either.  It causes a 150+ms skip on my A64 3000+,
-	 * so it probably causes a skip for everyone.  We probably shouldn't load this here,
-	 * anyway: leave it unloaded and display "INSERT CARD" until the normal time, and
-	 * load the local profile at the time we would have loaded the memory card if none
-	 * was inserted (via LoadFirstAvailableProfile). */
-//	PROFILEMAN->LoadLocalProfileFromMachine( pn );
 	SCREENMAN->RefreshCreditsMessages();
 
 	return true;
