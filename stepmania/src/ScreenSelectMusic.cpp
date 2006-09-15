@@ -453,53 +453,51 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	}
 
 
-	if( input.type == IET_FIRST_PRESS )
+	if( input.type != IET_FIRST_PRESS )
+		return;
+
+	if( CodeDetector::EnteredEasierDifficulty(input.GameI.controller) )
 	{
-		if( CodeDetector::EnteredEasierDifficulty(input.GameI.controller) )
-		{
-			if( GAMESTATE->IsAnExtraStage() )
-				m_soundLocked.Play();
-			else
-				ChangeDifficulty( pn, -1 );
-			return;
-		}
-		if( CodeDetector::EnteredHarderDifficulty(input.GameI.controller) )
-		{
-			if( GAMESTATE->IsAnExtraStage() )
-				m_soundLocked.Play();
-			else
-				ChangeDifficulty( pn, +1 );
-			return;
-		}
-		if( CodeDetector::EnteredModeMenu(input.GameI.controller) )
-		{
-			if( MODE_MENU_AVAILABLE )
-				m_MusicWheel.ChangeSort( SORT_MODE_MENU );
-			else
-				m_soundLocked.Play();
-			return;
-		}
-		if( CodeDetector::EnteredNextSort(input.GameI.controller) )
-		{
-			if( ( GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage ) || GAMESTATE->IsExtraStage2() )
-				m_soundLocked.Play();
-			else
-				m_MusicWheel.NextSort();
-			return;
-		}
-		if( !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() && CodeDetector::DetectAndAdjustMusicOptions(input.GameI.controller) )
-		{
-			m_soundOptionsChange.Play();
-			MESSAGEMAN->Broadcast( ssprintf("PlayerOptionsChangedP%i", pn+1) );
-			MESSAGEMAN->Broadcast( "SongOptionsChanged" );
-			return;
-		}
+		if( GAMESTATE->IsAnExtraStage() )
+			m_soundLocked.Play();
+		else
+			ChangeDifficulty( pn, -1 );
+		return;
+	}
+	if( CodeDetector::EnteredHarderDifficulty(input.GameI.controller) )
+	{
+		if( GAMESTATE->IsAnExtraStage() )
+			m_soundLocked.Play();
+		else
+			ChangeDifficulty( pn, +1 );
+		return;
+	}
+	if( CodeDetector::EnteredModeMenu(input.GameI.controller) )
+	{
+		if( MODE_MENU_AVAILABLE )
+			m_MusicWheel.ChangeSort( SORT_MODE_MENU );
+		else
+			m_soundLocked.Play();
+		return;
+	}
+	if( CodeDetector::EnteredNextSort(input.GameI.controller) )
+	{
+		if( ( GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage ) || GAMESTATE->IsExtraStage2() )
+			m_soundLocked.Play();
+		else
+			m_MusicWheel.NextSort();
+		return;
+	}
+	if( !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() && CodeDetector::DetectAndAdjustMusicOptions(input.GameI.controller) )
+	{
+		m_soundOptionsChange.Play();
+		MESSAGEMAN->Broadcast( ssprintf("PlayerOptionsChangedP%i", pn+1) );
+		MESSAGEMAN->Broadcast( "SongOptionsChanged" );
+		return;
 	}
 
-	switch( input.MenuI )
-	{
-	case MENU_BUTTON_START:	MenuStart( input ); break;
-	}
+	if( input.MenuI == MENU_BUTTON_START )
+		MenuStart( input );
 }
 
 void ScreenSelectMusic::UpdateSelectButton()
