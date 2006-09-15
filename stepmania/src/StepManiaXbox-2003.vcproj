@@ -148,6 +148,8 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				IncludeDebugInfo="TRUE"
 				LimitAvailableMemoryTo64MB="TRUE"
 				SuppressStartupBanner="TRUE"
+				TitleID="0x33342530"
+				AltID="0x30253433"
 				XboxGameRating="5"
 				TitleInfo=""
 				TitleName="StepmaniaX"
