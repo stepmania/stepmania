@@ -733,17 +733,17 @@ void InputMapper::UpdateTempDItoGI()
 {
 	// repopulate g_tempDItoGI
 	g_tempDItoGI.clear();
-	for( int n=0; n<MAX_GAME_CONTROLLERS; n++ )
+	FOREACH_GameController( n )
 	{
-		for( int b=0; b<MAX_GAME_BUTTONS; b++ )
+		FOREACH_GameButton( b )
 		{
 			for( int s=0; s<NUM_GAME_TO_DEVICE_SLOTS; s++ )
 			{
-				GameInput GameI( (GameController)n, (GameButton)b );
-				DeviceInput DeviceI = m_GItoDI[n][b][s];
+				const DeviceInput &DeviceI = m_GItoDI[n][b][s];
+				if( !DeviceI.IsValid() )
+					continue;
 
-				if( DeviceI.IsValid() )
-					g_tempDItoGI[DeviceI] = GameI;
+				g_tempDItoGI[DeviceI] = GameInput( n, b );
 			}
 		}
 	}
