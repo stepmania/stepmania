@@ -440,13 +440,8 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	case MENU_BUTTON_DOWN:	this->MenuDown( input );	break;
 	case MENU_BUTTON_LEFT:	this->MenuLeft( input );	break;
 	case MENU_BUTTON_RIGHT:	this->MenuRight( input );	break;
-	case MENU_BUTTON_BACK:
-		/* Don't make the user hold the back button if they're pressing escape and escape is the back button. */
-		if( input.DeviceI.device == DEVICE_KEYBOARD  &&  input.DeviceI.button == KEY_ESC )
-			this->MenuBack( input );
-		else
-			ScreenWithMenuElements::MenuBack( input );
-		break;
+	// Screen contains the delayed back logic.
+	case MENU_BUTTON_BACK:	Screen::Input( input );		break;
 	// Do the default handler for Start after detecting codes.
 //	case MENU_BUTTON_START:	this->MenuStart( input );	break;
 	case MENU_BUTTON_COIN:	this->MenuCoin( input );	break;
