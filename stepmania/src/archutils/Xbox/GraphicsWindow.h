@@ -1,4 +1,3 @@
-/* Dummy Xbox version. Performs no actions other than storing the video mode params */
 #if !defined(GRAPHICS_WINDOW_H)
 #define GRAPHICS_WINDOW_H
 

@@ -12,6 +12,8 @@ static bool g_bResolutionChanged = false;
 static bool g_bHasFocus = true;
 static bool g_bLastHasFocus = true;
 static bool m_bWideWindowClass;
+void isPALSystem();
+void setScreenResolutionValues();
 
 void GraphicsWindow::SetVideoModeParams( const VideoModeParams &params )
 {
@@ -33,7 +35,87 @@ void GraphicsWindow::Update()
 	}
 }
 
-void GraphicsWindow::Initialize( bool bD3D ) { }
+void GraphicsWindow::Initialize( bool bD3D )
+{
+	/* We do the parameters initialisation here. No need to use the INI,
+	   because if we changed resolutions, it wouldn't keep up. */
+
+	g_CurrentParams.bpp = 32;
+	g_CurrentParams.windowed=false;
+	
+	isPALSystem();
+	setScreenResolutionValues();
+}
+
+bool isPALSystem()
+{
+	if(XGetVideoStandard() == XC_VIDEO_STANDARD_PAL_I)
+	{
+		g_CurrentParams.interlaced=true;
+
+		/* Get supported video flags. */
+		DWORD VideoFlags = XGetVideoFlags();
+
+		/* Set pal60 if available. */
+		if( VideoFlags & XC_VIDEO_FLAGS_PAL_60Hz )
+			g_CurrentParams.rate = 60;
+		else
+			g_CurrentParams.rate = 50;
+
+		g_CurrentParams.PAL = true;
+	}
+	g_CurrentParams.rate = 60;
+	g_CurrentParams.PAL = false;
+}
+void setScreenResolutionValues()
+{
+	DWORD CurrentVideoFlags = XGetVideoFlags();
+	int heightStandards;
+
+	// Preventive definition. Changed only if needed.
+	g_CurrentParams.interlaced=false;
+
+	switch(isPALSystem()){
+		case true:
+			heightStandards = 576;
+			break;
+		case false:
+			heightStandards = 480;
+			g_CurrentParams.interlaced=false;
+			break;
+	}
+
+	switch (CurrentVideoFlags){
+
+		case XC_VIDEO_FLAGS_HDTV_480p:
+			g_CurrentParams.width=720;
+			g_CurrentParams.height=480;
+			break;
+
+		case XC_VIDEO_FLAGS_HDTV_720p:
+			g_CurrentParams.width=1280;
+			g_CurrentParams.height=720;
+			break;
+
+		case XC_VIDEO_FLAGS_HDTV_1080i:
+			g_CurrentParams.width=1920;
+			g_CurrentParams.height=1080;
+			g_CurrentParams.interlaced=true;
+			break;
+
+		case XC_VIDEO_FLAGS_WIDESCREEN:
+			g_CurrentParams.width=720;
+			g_CurrentParams.height=heightStandards;
+			break;
+
+		case XC_VIDEO_FLAGS_LETTERBOX:
+		default:
+			g_CurrentParams.width=640;
+			g_CurrentParams.height=heightStandards;
+			break;
+	}
+}
+
 void GraphicsWindow::Shutdown() { }
 RString GraphicsWindow::SetScreenMode( const VideoModeParams &p ) { return ""; }
 void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p ) { }
@@ -42,7 +124,7 @@ void GraphicsWindow::DestroyGraphicsWindow() { }
 void GraphicsWindow::ConfigureGraphicsWindow( const VideoModeParams &p ) { }
 
 /*
- * (c) 2004 Glenn Maynard
+ * (c) 2004 Glenn Maynard, Renaud Lepage
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
