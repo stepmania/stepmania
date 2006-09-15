@@ -9,42 +9,42 @@
 #include "windows.h"
 
 /* Convert from the given codepage to UTF-8.  Return true if successful. */
-static bool CodePageConvert(RString &txt, int cp)
+static bool CodePageConvert( RString &sText, int iCodePage )
 {
-	if( txt.size() == 0 )
+	if( sText.size() == 0 )
 		return true;
 
-	int size = MultiByteToWideChar(cp, MB_ERR_INVALID_CHARS, txt.data(), txt.size(), NULL, 0);
-	if( size == 0 )
+	int iSize = MultiByteToWideChar( iCodePage, MB_ERR_INVALID_CHARS, sText.data(), sText.size(), NULL, 0 );
+	if( iSize == 0 )
 	{
-		LOG->Trace("%s\n", werr_ssprintf(GetLastError(), "err: ").c_str());
+		LOG->Trace( "%s\n", werr_ssprintf(GetLastError(), "err: ").c_str() );
 		return false; /* error */
 	}
 
-	wstring out;
-	out.append(size, ' ');
+	wstring sOut;
+	sOut.append( iSize, ' ' );
 	/* Nonportable: */
-	size = MultiByteToWideChar(cp, MB_ERR_INVALID_CHARS, txt.data(), txt.size(), (wchar_t *) out.data(), size);
-	ASSERT( size != 0 );
+	iSize = MultiByteToWideChar( iCodePage, MB_ERR_INVALID_CHARS, sText.data(), sText.size(), (wchar_t *) sOut.data(), iSize );
+	ASSERT( iSize != 0 );
 
-	txt = WStringToRString(out);
+	sText = WStringToRString( sOut );
 	return true;
 }
 
-static bool AttemptEnglishConversion( RString &txt ) { return CodePageConvert( txt, 1252 ); }
-static bool AttemptKoreanConversion( RString &txt ) { return CodePageConvert( txt, 949 ); }
-static bool AttemptJapaneseConversion( RString &txt ) { return CodePageConvert( txt, 932 ); }
+static bool AttemptEnglishConversion( RString &sText ) { return CodePageConvert( sText, 1252 ); }
+static bool AttemptKoreanConversion( RString &sText ) { return CodePageConvert( sText, 949 ); }
+static bool AttemptJapaneseConversion( RString &sText ) { return CodePageConvert( sText, 932 ); }
 
 #elif defined(HAVE_ICONV)
 #include <errno.h>
 #include <iconv.h>
 
-static bool ConvertFromCharset( RString &txt, const char *charset )
+static bool ConvertFromCharset( RString &sText, const char *szCharset )
 {
-	if ( txt.size() == 0 )
+	if( sText.size() == 0 )
 		return true;
 
-	iconv_t converter = iconv_open( "UTF-8", charset );
+	iconv_t converter = iconv_open( "UTF-8", szCharset );
 	if( converter == (iconv_t) -1 )
 	{
 		LOG->MapLog( ssprintf("conv %s", charset), "iconv_open(%s): %s", charset, strerror(errno) );
@@ -52,16 +52,16 @@ static bool ConvertFromCharset( RString &txt, const char *charset )
 	}
 
 	/* Copy the string into a char* for iconv */
-	ICONV_CONST char *txtin = const_cast<ICONV_CONST char*>( txt.data() );
-	size_t inleft = txt.size();
+	ICONV_CONST char *szTextIn = const_cast<ICONV_CONST char*>( sText.data() );
+	size_t iInLeft = sText.size();
 
 	/* Create a new string with enough room for the new conversion */
-	RString buf;
-	buf.resize( txt.size() * 5 );
+	RString sBuf;
+	sBuf.resize( sText.size() * 5 );
 
-	char *txtout = const_cast<char*>( buf.data() );
-	size_t outleft = buf.size();
-	size_t size = iconv( converter, &txtin, &inleft, &txtout, &outleft );
+	char *sTextOut = const_cast<char*>( sBuf.data() );
+	size_t iOutLeft = sBuf.size();
+	size_t size = iconv( converter, &szTextIn, &iInLeft, &sTextOut, &iOutLeft );
 
 	iconv_close( converter );
 
@@ -71,36 +71,36 @@ static bool ConvertFromCharset( RString &txt, const char *charset )
 		return false; /* Returned an error */
 	}
 
-	if( inleft != 0 )
+	if( iInLeft != 0 )
 	{
-		LOG->Warn( "iconv(UTF-8,%s) for \"%s\": whole buffer not converted (%i left)", charset, txt.c_str(), int(inleft) );
+		LOG->Warn( "iconv(UTF-8,%s) for \"%s\": whole buffer not converted (%i left)", charset, sText.c_str(), int(iInLeft) );
 		return false;
 	}
 
-	if( buf.size() == outleft )
+	if( sBuf.size() == iOutLeft )
 		return false; /* Conversion failed */
 
-	buf.resize( buf.size()-outleft );
+	sBuf.resize( sBuf.size()-iOutLeft );
 
-	txt = buf;
+	sText = sBuf;
 	return true;
 }
 
-static bool AttemptEnglishConversion( RString &txt ) { return ConvertFromCharset( txt, "CP1252" ); }
-static bool AttemptKoreanConversion( RString &txt ) { return ConvertFromCharset( txt, "CP949" ); }
-static bool AttemptJapaneseConversion( RString &txt ) { return ConvertFromCharset( txt, "CP932" ); }
+static bool AttemptEnglishConversion( RString &sText ) { return ConvertFromCharset( sText, "CP1252" ); }
+static bool AttemptKoreanConversion( RString &sText ) { return ConvertFromCharset( sText, "CP949" ); }
+static bool AttemptJapaneseConversion( RString &sText ) { return ConvertFromCharset( sText, "CP932" ); }
 
 #elif defined(MACOSX)
 #include <CoreFoundation/CoreFoundation.h>
 
-static bool ConvertFromCP( RString &txt, int cp )
+static bool ConvertFromCP( RString &sText, int iCodePage )
 {
-	CFStringEncoding encoding = CFStringConvertWindowsCodepageToEncoding( cp );
+	CFStringEncoding encoding = CFStringConvertWindowsCodepageToEncoding( iCodePage );
 	
 	if( encoding == kCFStringEncodingInvalidId )
 		return false;
 	
-	CFStringRef old = CFStringCreateWithCString( kCFAllocatorDefault, txt, encoding );
+	CFStringRef old = CFStringCreateWithCString( kCFAllocatorDefault, sText, encoding );
 	
 	if( old == NULL )
 		return false;
@@ -112,21 +112,21 @@ static bool ConvertFromCP( RString &txt, int cp )
 		delete[] buf;
 		return false;
 	}
-	txt = buf;
+	sText = buf;
 	delete[] buf;
 	return true;
 }
 
-static bool AttemptEnglishConversion( RString &txt ) { return ConvertFromCP( txt, 1252 ); }
-static bool AttemptKoreanConversion( RString &txt ) { return ConvertFromCP( txt, 949 ); }
-static bool AttemptJapaneseConversion( RString &txt ) { return ConvertFromCP( txt, 932 ); }
+static bool AttemptEnglishConversion( RString &sText ) { return ConvertFromCP( sText, 1252 ); }
+static bool AttemptKoreanConversion( RString &sText ) { return ConvertFromCP( sText, 949 ); }
+static bool AttemptJapaneseConversion( RString &sText ) { return ConvertFromCP( sText, 932 ); }
 
 #else
 
 /* No converters are available, so all fail--we only accept UTF-8. */
-static bool AttemptEnglishConversion( RString &txt ) { return false; }
-static bool AttemptKoreanConversion( RString &txt ) { return false; }
-static bool AttemptJapaneseConversion( RString &txt ) { return false; }
+static bool AttemptEnglishConversion( RString &sText ) { return false; }
+static bool AttemptKoreanConversion( RString &sText ) { return false; }
+static bool AttemptJapaneseConversion( RString &sText ) { return false; }
 
 #endif
 
