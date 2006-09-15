@@ -6,11 +6,12 @@ using namespace std;
 using __gnu_cxx::hash_map;
 
 Joystick::Joystick() :	id( DEVICE_NONE ),
-			x_axis( DeviceButton_Invalid ),
-			y_axis( DeviceButton_Invalid ),
-			z_axis( DeviceButton_Invalid ),
-			x_min( 0 ), y_min( 0 ), z_min( 0 ),
-			x_max( 0 ), y_max( 0 ), z_max( 0 )
+			x_axis( 0 ), x_min( 0 ), x_max( 0 ),
+			y_axis( 0 ), y_min( 0 ), y_max( 0 ),
+			z_axis( 0 ), z_min( 0 ), z_max( 0 ),
+			x_rot( 0 ), rx_min( 0 ), rx_max( 0 ),
+			y_rot( 0 ), ry_min( 0 ), ry_max( 0 ),
+			z_rot( 0 ), rz_min( 0 ), rz_max( 0 )
 {
 }
 
@@ -63,6 +64,21 @@ void JoystickDevice::AddElement( int usagePage, int usage, int cookie, const CFD
 			js.z_min = iMin;
 			js.z_max = iMax;
 			break;
+		case kHIDUsage_GD_Rx:
+			js.x_rot = cookie;
+			js.rx_min = iMin;
+			js.rx_max = iMax;
+			break;
+		case kHIDUsage_GD_Ry:
+			js.y_rot = cookie;
+			js.ry_min = iMin;
+			js.ry_max = iMax;
+			break;
+		case kHIDUsage_GD_Rz:
+			js.z_rot = cookie;
+			js.rz_min = iMin;
+			js.rz_max = iMax;
+			break;
 		case kHIDUsage_GD_DPadUp:
 			js.mapping[cookie] = JOY_UP;
 			break;
@@ -80,9 +96,7 @@ void JoystickDevice::AddElement( int usagePage, int usage, int cookie, const CFD
 	}
 	case kHIDPage_Button:
 	{
-		// button n has usage = n, subtract 1 to ensure 
-		// button 1 = JOY_BUTTON_1
-		const DeviceButton buttonID = enum_add2( JOY_BUTTON_1, usage - 1 );
+		const DeviceButton buttonID = enum_add2( JOY_BUTTON_1, usage - kHIDUsage_Button_1 );
 	
 		if( buttonID <= JOY_BUTTON_32 )
 			js.mapping[cookie] = buttonID;
@@ -97,14 +111,10 @@ void JoystickDevice::Open()
 	FOREACH_CONST( Joystick, m_vSticks, i )
 	{
 		const Joystick& js = *i;
-		
-		if( js.x_axis )
-			AddElementToQueue( js.x_axis );
-		if( js.y_axis )
-			AddElementToQueue( js.y_axis );
-		if( js.z_axis )
-			AddElementToQueue( js.z_axis );
-		
+#define ADD(x) if( js.x ) AddElementToQueue( js.x )
+		ADD( x_axis );	ADD( y_axis );	ADD( z_axis );
+		ADD( x_rot );	ADD( y_rot );	ADD( z_rot );
+#undef ADD		
 		for( hash_map<int,DeviceButton>::const_iterator j = js.mapping.begin(); j != js.mapping.end(); ++j )
 			AddElementToQueue( j->first );
 	}
@@ -125,7 +135,6 @@ bool JoystickDevice::SupportsVidPid( int vid, int pid )
 void JoystickDevice::GetButtonPresses( vector<pair<DeviceInput, bool> >& vPresses, int cookie,
 				       int value, const RageTimer& now ) const
 {
-	typedef pair<DeviceInput, bool> dib;
 	FOREACH_CONST( Joystick, m_vSticks, i )
 	{
 		const Joystick& js = *i;
@@ -134,24 +143,48 @@ void JoystickDevice::GetButtonPresses( vector<pair<DeviceInput, bool> >& vPresse
 		{
 			float level = SCALE( value, js.x_min, js.x_max, -1.0f, 1.0f );
 			
-			vPresses.push_back( dib(DeviceInput(js.id, JOY_LEFT, max(-level, 0.0f), now), level < -0.5f) );
-			vPresses.push_back( dib(DeviceInput(js.id, JOY_RIGHT, max(level, 0.0f), now), level > 0.5f) );
+			vPresses.push_back( make_pair(DeviceInput(js.id, JOY_LEFT, max(-level, 0.0f), now), level < -0.5f) );
+			vPresses.push_back( make_pair(DeviceInput(js.id, JOY_RIGHT, max(level, 0.0f), now), level > 0.5f) );
 			break;
 		}
 		else if( js.y_axis == cookie )
 		{
 			float level = SCALE( value, js.y_min, js.y_max, -1.0f, 1.0f );
 			
-			vPresses.push_back( dib(DeviceInput(js.id, JOY_UP, max(-level, 0.0f), now), level < -0.5f) );
-			vPresses.push_back( dib(DeviceInput(js.id, JOY_DOWN, max(level, 0.0f), now), level > 0.5f) );
+			vPresses.push_back( make_pair(DeviceInput(js.id, JOY_UP, max(-level, 0.0f), now), level < -0.5f) );
+			vPresses.push_back( make_pair(DeviceInput(js.id, JOY_DOWN, max(level, 0.0f), now), level > 0.5f) );
 			break;
 		}
 		else if( js.z_axis == cookie )
 		{
 			float level = SCALE( value, js.z_min, js.z_max, -1.0f, 1.0f );
 			
-			vPresses.push_back( dib(DeviceInput(js.id, JOY_Z_UP, max(-level, 0.0f), now), level < -0.5f) );
-			vPresses.push_back( dib(DeviceInput(js.id, JOY_Z_DOWN, max(level, 0.0f), now), level > 0.5f) );
+			vPresses.push_back( make_pair(DeviceInput(js.id, JOY_Z_UP, max(-level, 0.0f), now), level < -0.5f) );
+			vPresses.push_back( make_pair(DeviceInput(js.id, JOY_Z_DOWN, max(level, 0.0f), now), level > 0.5f) );
+			break;
+		}
+		else if( js.x_rot == cookie )
+		{
+			float level = SCALE( value, js.rx_min, js.rx_max, -1.0f, 1.0f );
+			
+			vPresses.push_back( make_pair(DeviceInput(js.id, JOY_ROT_LEFT, max(-level, 0.0f), now), level < -0.5f) );
+			vPresses.push_back( make_pair(DeviceInput(js.id, JOY_ROT_RIGHT, max(level, 0.0f), now), level > 0.5f) );
+			break;
+		}
+		else if( js.y_rot == cookie )
+		{
+			float level = SCALE( value, js.ry_min, js.ry_max, -1.0f, 1.0f );
+			
+			vPresses.push_back( make_pair(DeviceInput(js.id, JOY_ROT_UP, max(-level, 0.0f), now), level < -0.5f) );
+			vPresses.push_back( make_pair(DeviceInput(js.id, JOY_ROT_DOWN, max(level, 0.0f), now), level > 0.5f) );
+			break;
+		}
+		else if( js.z_rot == cookie )
+		{
+			float level = SCALE( value, js.rz_min, js.rz_max, -1.0f, 1.0f );
+			
+			vPresses.push_back( make_pair(DeviceInput(js.id, JOY_ROT_Z_UP, max(-level, 0.0f), now), level < -0.5f) );
+			vPresses.push_back( make_pair(DeviceInput(js.id, JOY_ROT_Z_DOWN, max(level, 0.0f), now), level > 0.5f) );
 			break;
 		}
 		else
@@ -162,7 +195,7 @@ void JoystickDevice::GetButtonPresses( vector<pair<DeviceInput, bool> >& vPresse
 			iter = js.mapping.find( cookie );
 			if( iter != js.mapping.end() )
 			{
-				vPresses.push_back( dib(DeviceInput(js.id, iter->second, value, now), value) );
+				vPresses.push_back( make_pair(DeviceInput(js.id, iter->second, value, now), value) );
 				break;
 			}
 		}

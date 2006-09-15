@@ -9,9 +9,12 @@ struct Joystick
 	InputDevice id;
 	// map cookie to button
 	__gnu_cxx::hash_map<int, DeviceButton> mapping;
-	int x_axis, y_axis, z_axis;
-	int x_min, y_min, z_min;
-	int x_max, y_max, z_max;
+	int x_axis, x_min, x_max;
+	int y_axis, y_min, y_max;
+	int z_axis, z_min, z_max;
+	int x_rot, rx_min, rx_max;
+	int y_rot, ry_min, ry_max;
+	int z_rot, rz_min, rz_max;
 	
 	Joystick();
 };
