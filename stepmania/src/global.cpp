@@ -10,7 +10,7 @@
 #  include "archutils/Darwin/Crash.h"
 using CrashHandler::IsDebuggerPresent;
 using CrashHandler::DebugBreak;
-#elif defined(_XBOX)
+#elif defined(_XDBG)
 #else
 #  include <unistd.h>
 #endif
@@ -21,7 +21,7 @@ using CrashHandler::DebugBreak;
 
 void NORETURN sm_crash( const char *reason )
 {
-#if ( defined(_WINDOWS) && defined(CRASH_HANDLER) ) || defined(MACOSX)
+#if ( defined(_WINDOWS) && defined(CRASH_HANDLER) ) || defined(MACOSX) || defined(_XDBG)
 	/* If we're being debugged, throw a debug break so it'll suspend the process. */
 	if( IsDebuggerPresent() )
 	{

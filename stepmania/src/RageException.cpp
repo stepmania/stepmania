@@ -48,7 +48,7 @@ void RageException::Throw( const char *sFmt, ... )
 		fflush( stdout );
 	}
 
-#if defined(WINDOWS) && defined(DEBUG)
+#if (defined(WINDOWS) && defined(DEBUG)) || defined(_XDBG)
 	if( IsDebuggerPresent() )
 		DebugBreak();
 #endif

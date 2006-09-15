@@ -5,6 +5,11 @@
 #include <xgraphics.h>
 #include <stdio.h>
 
+#if defined(_XDBG)
+#include <xbdm.h>
+#define IsDebuggerPresent() DmIsDebuggerPresent()
+#endif
+
 // Xbox base path
 #define SYS_BASE_PATH "D:\\"
 
