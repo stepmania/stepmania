@@ -498,7 +498,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 
 	switch( input.MenuI )
 	{
-	case MENU_BUTTON_START:	Screen::MenuStart( input ); break;
+	case MENU_BUTTON_START:	MenuStart( input ); break;
 	}
 }
 
