@@ -152,8 +152,8 @@ void InputFilter::ResetDevice( InputDevice device )
 	LockMut(*queuemutex);
 	RageTimer now;
 
-	const ButtonStateMap g_ButtonStates( g_ButtonStates );
-	FOREACHM_CONST( DeviceInput, ButtonState, g_ButtonStates, b )
+	const ButtonStateMap ButtonStates( g_ButtonStates );
+	FOREACHM_CONST( DeviceInput, ButtonState, ButtonStates, b )
 	{
 		const DeviceInput &di = b->first;
 		if( di.device == device )
