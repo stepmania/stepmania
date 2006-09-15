@@ -30,9 +30,7 @@ void Style::GetTransformedNoteDataForStyle( PlayerNumber pn, const NoteData& ori
 	for( int col=0; col<m_iColsPerPlayer; col++ )
 	{
 		ColumnInfo colInfo = m_ColumnInfo[pn][col];
-		int originalTrack = colInfo.track;
-		
-		iNewToOriginalTrack[col] = originalTrack;
+		iNewToOriginalTrack[col] = colInfo.track;
 	}
 	
 	noteDataOut.LoadTransformed( original, m_iColsPerPlayer, iNewToOriginalTrack );
