@@ -37,6 +37,17 @@ void ArchHooks::SetHasFocus( bool bHasFocus )
 	m_bHasFocus = bHasFocus;
 
 	LOG->Trace( "App %s focus", bHasFocus? "has":"doesn't have" );
+	LockMut( g_Mutex );
+	m_bFocusChanged = true;
+}
+
+bool ArchHooks::AppFocusChanged()
+{
+	LockMut( g_Mutex );
+	bool bFocusChanged = m_bFocusChanged;
+	
+	m_bFocusChanged = false;
+	return bFocusChanged;
 }
 
 bool ArchHooks::GoToURL( RString sUrl )
