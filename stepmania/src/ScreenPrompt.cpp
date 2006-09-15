@@ -110,7 +110,7 @@ void ScreenPrompt::Input( const InputEventPlus &input )
 	if( IsTransitioning() )
 		return;
 
-	if( input.DeviceI.device==DEVICE_KEYBOARD && input.type==IET_FIRST_PRESS )
+	if( input.DeviceI.device==DEVICE_KEYBOARD )
 	{
 		switch( input.DeviceI.button )
 		{
