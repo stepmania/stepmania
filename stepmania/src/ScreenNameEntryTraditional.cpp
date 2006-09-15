@@ -636,9 +636,9 @@ void ScreenNameEntryTraditional::UpdateSelectionText( int pn )
 	m_textSelection[pn].SetText( WStringToRString(text) );
 }
 
-void ScreenNameEntryTraditional::MenuStart( PlayerNumber pn )
+void ScreenNameEntryTraditional::MenuStart( const InputEventPlus &input )
 {
-	HandleStart( pn );
+	HandleStart( input.pn );
 }
 
 void ScreenNameEntryTraditional::HandleStart( PlayerNumber pn )
@@ -685,11 +685,11 @@ void ScreenNameEntryTraditional::HandleStart( PlayerNumber pn )
 	}
 }
 
-void ScreenNameEntryTraditional::MenuSelect( PlayerNumber pn )
+void ScreenNameEntryTraditional::MenuSelect( const InputEventPlus &input )
 {
-	if( !m_bStillEnteringName[pn] )
+	if( !m_bStillEnteringName[input.pn] )
 		return;	// ignore
-	Backspace( pn );
+	Backspace( input.pn );
 }
 
 bool ScreenNameEntryTraditional::SelectChar( PlayerNumber pn, int c, bool bOptional )

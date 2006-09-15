@@ -2,7 +2,7 @@
 #include "ScreenSelectLanguage.h"
 #include "PrefsManager.h"
 #include "arch/ArchHooks/ArchHooks.h"
-
+#include "InputEventPlus.h"
 
 REGISTER_SCREEN_CLASS( ScreenSelectLanguage );
 
@@ -45,9 +45,9 @@ void ScreenSelectLanguage::BeginScreen()
 		this->HandleScreenMessage( SM_GoToNextScreen );
 }
 
-void ScreenSelectLanguage::MenuStart( PlayerNumber pn )
+void ScreenSelectLanguage::MenuStart( const InputEventPlus &input )
 {
-	int iIndex = this->GetSelectionIndex( pn );
+	int iIndex = this->GetSelectionIndex( input.pn );
 	RString sLangCode = m_aGameCommands[iIndex].m_sName;
 	PREFSMAN->m_sLanguage.Set( sLangCode );
 	PREFSMAN->SavePrefsToDisk();
@@ -57,7 +57,7 @@ void ScreenSelectLanguage::MenuStart( PlayerNumber pn )
 	this->PostScreenMessage( SM_BeginFadingOut, 0 );
 }
 
-void ScreenSelectLanguage::MenuBack( PlayerNumber pn )
+void ScreenSelectLanguage::MenuBack( const InputEventPlus &input )
 {
 	return;	// ignore the press
 }

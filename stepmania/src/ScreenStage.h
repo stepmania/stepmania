@@ -15,7 +15,7 @@ public:
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	virtual void Update( float fDeltaTime );
-	virtual void MenuBack( PlayerNumber pn );
+	virtual void MenuBack( const InputEventPlus &input );
 
 private:
 	ThemeMetric<bool>	ALLOW_BACK;

@@ -110,12 +110,12 @@ void ScreenTestInput::Input( const InputEventPlus &input )
 	Screen::Input( input );	// default handler
 }
 
-void ScreenTestInput::MenuStart( PlayerNumber pn )
+void ScreenTestInput::MenuStart( const InputEventPlus &input )
 {
-	MenuBack(pn);
+	MenuBack( input );
 }
 
-void ScreenTestInput::MenuBack( PlayerNumber pn )
+void ScreenTestInput::MenuBack( const InputEventPlus &input )
 {
 	if( !IsTransitioning() )
 	{

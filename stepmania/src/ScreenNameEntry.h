@@ -22,7 +22,7 @@ public:
 	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	virtual void MenuStart( PlayerNumber pn );
+	virtual void MenuStart( const InputEventPlus &input );
 
 	enum { ABS_MAX_RANKING_NAME_LENGTH = 10 };
 private:

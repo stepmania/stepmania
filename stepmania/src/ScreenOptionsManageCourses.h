@@ -15,7 +15,7 @@ public:
 	virtual void Init();
 	
 protected:
-	virtual void MenuSelect( PlayerNumber pn );
+	virtual void MenuSelect( const InputEventPlus &input );
 	void WriteCourse();
 };
 

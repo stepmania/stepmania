@@ -102,34 +102,34 @@ void ScreenTestLights::HandleScreenMessage( const ScreenMessage SM )
 		LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 }
 
-void ScreenTestLights::MenuLeft( PlayerNumber pn )
+void ScreenTestLights::MenuLeft( const InputEventPlus &input )
 {
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_TEST_MANUAL_CYCLE );
-	if( pn == PLAYER_1 )
+	if( input.pn == PLAYER_1 )
 		LIGHTSMAN->PrevTestCabinetLight();
 	else
 		LIGHTSMAN->PrevTestGameButtonLight();
 	m_timerBackToAutoCycle.Touch();
 }
 
-void ScreenTestLights::MenuRight( PlayerNumber pn )
+void ScreenTestLights::MenuRight( const InputEventPlus &input )
 {
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_TEST_MANUAL_CYCLE );
-	if( pn == PLAYER_1 )
+	if( input.pn == PLAYER_1 )
 		LIGHTSMAN->NextTestCabinetLight();
 	else
 		LIGHTSMAN->NextTestGameButtonLight();
 	m_timerBackToAutoCycle.Touch();
 }
 
-void ScreenTestLights::MenuStart( PlayerNumber pn )
+void ScreenTestLights::MenuStart( const InputEventPlus &input )
 {
-	MenuBack(pn);
+	MenuBack( input );
 }
 
-void ScreenTestLights::MenuBack( PlayerNumber pn )
+void ScreenTestLights::MenuBack( const InputEventPlus &input )
 {
-	if(!IsTransitioning())
+	if( !IsTransitioning() )
 	{
 		SCREENMAN->PlayStartSound();
 		OFF_COMMAND( m_textInputs );

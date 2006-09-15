@@ -42,8 +42,8 @@ public:
 	virtual void BeginScreen();
 
 	virtual void Input( const InputEventPlus &input );
-	virtual void MenuStart( PlayerNumber pn );
-	virtual void MenuBack( PlayerNumber pn );
+	virtual void MenuStart( const InputEventPlus &input );
+	virtual void MenuBack( const InputEventPlus &input );
 
 	void HandleScreenMessage( const ScreenMessage SM );
 

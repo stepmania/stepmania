@@ -400,7 +400,7 @@ void ScreenEz2SelectMusic::MenuRight( const InputEventPlus &input )
 	MusicChanged();
 }
 
-void ScreenEz2SelectMusic::MenuBack( PlayerNumber pn )
+void ScreenEz2SelectMusic::MenuBack( const InputEventPlus &input )
 {
 	SOUND->StopMusic();
 
@@ -446,7 +446,7 @@ void ScreenEz2SelectMusic::MenuLeft( const InputEventPlus &input )
 }
 
 static LocalizedString DOES_NOT_HAVE_MUSIC_FILE( "ScreenEz2SelectMusic", "This song does not have a music file and cannot be played." );
-void ScreenEz2SelectMusic::MenuStart( PlayerNumber pn )
+void ScreenEz2SelectMusic::MenuStart( const InputEventPlus &input )
 {
 	if( !m_MusicBannerWheel.GetSelectedSong()->HasMusic() )
 	{
@@ -456,7 +456,7 @@ void ScreenEz2SelectMusic::MenuStart( PlayerNumber pn )
 
 	SCREENMAN->PlayStartSound();
 
-	if((PREVIEWMUSICMODE == 1 || PREVIEWMUSICMODE == 3) && iConfirmSelection == 0)
+	if( (PREVIEWMUSICMODE == 1 || PREVIEWMUSICMODE == 3) && iConfirmSelection == 0 )
 	{
 		iConfirmSelection = 1;
 		m_MusicBannerWheel.StartBouncing();

@@ -443,9 +443,9 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	case MENU_BUTTON_BACK:
 		/* Don't make the user hold the back button if they're pressing escape and escape is the back button. */
 		if( input.DeviceI.device == DEVICE_KEYBOARD  &&  input.DeviceI.button == KEY_ESC )
-			this->MenuBack( input.pn );
+			this->MenuBack( input );
 		else
-			Screen::MenuBack( input );
+			ScreenWithMenuElements::MenuBack( input );
 		break;
 	// Do the default handler for Start after detecting codes.
 //	case MENU_BUTTON_START:	this->MenuStart( input );	break;
@@ -582,7 +582,7 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	{
 		if( m_MusicWheel.IsRouletting() )
 		{
-			MenuStart(PLAYER_INVALID);
+			MenuStart( InputEventPlus() );
 			m_MenuTimer->SetSeconds( 15 );
 			m_MenuTimer->Start();
 		}
@@ -596,7 +596,7 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			}
 			else
 			{
-				MenuStart(PLAYER_INVALID);
+				MenuStart( InputEventPlus() );
 			}
 		}
 		else
@@ -607,7 +607,7 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			if( m_MusicWheel.GetSelectedSong() == NULL && m_MusicWheel.GetSelectedCourse() == NULL )
 				m_MusicWheel.StartRandom();
 
-			MenuStart(PLAYER_INVALID);
+			MenuStart( InputEventPlus() );
 		}
 		return;
 	}
@@ -651,7 +651,7 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
-void ScreenSelectMusic::MenuStart( PlayerNumber pn )
+void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 {
 	/* If false, we don't have a selection just yet. */
 	if( !m_MusicWheel.Select() )
@@ -753,7 +753,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 }
 
 
-void ScreenSelectMusic::MenuBack( PlayerNumber pn )
+void ScreenSelectMusic::MenuBack( const InputEventPlus &input )
 {
 	m_BackgroundLoader.Abort();
 

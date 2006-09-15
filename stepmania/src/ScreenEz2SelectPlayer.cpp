@@ -12,6 +12,7 @@
 #include "ThemeManager.h"
 #include "MenuTimer.h"
 #include "ScreenDimensions.h"
+#include "InputEventPlus.h"
 
 /* Constants */
 #define JOIN_FRAME_X( p )		THEME->GetMetricF("ScreenEz2SelectPlayer",ssprintf("JoinFrameP%dX",p+1))
@@ -117,7 +118,9 @@ void ScreenEz2SelectPlayer::HandleScreenMessage( const ScreenMessage SM )
 	{
 		if( GAMESTATE->GetNumSidesJoined() == 0 )
 		{
-			MenuStart(PLAYER_1);
+			InputEventPlus iep;
+			iep.pn = PLAYER_1;
+			MenuStart(iep);
 		}
 
 		StartTransitioningScreen( SM_GoToNextScreen );
@@ -133,7 +136,7 @@ Desc: Actions performed when a player
 presses the button bound to back
 ************************************/
 
-void ScreenEz2SelectPlayer::MenuBack( PlayerNumber pn )
+void ScreenEz2SelectPlayer::MenuBack( const InputEventPlus &input )
 {
 	SOUND->StopMusic();
 
@@ -146,9 +149,9 @@ MenuDown
 Desc: Actions performed when a player 
 presses the button bound to down
 ************************************/
-void ScreenEz2SelectPlayer::MenuDown( PlayerNumber pn )
+void ScreenEz2SelectPlayer::MenuDown( const InputEventPlus &input )
 {
-	MenuStart( pn );
+	MenuStart( input );
 }
 
 /************************************
@@ -156,8 +159,10 @@ MenuStart
 Desc: Actions performed when a player 
 presses the button bound to start
 ************************************/
-void ScreenEz2SelectPlayer::MenuStart( PlayerNumber pn )
+void ScreenEz2SelectPlayer::MenuStart( const InputEventPlus &input )
 {
+	PlayerNumber pn = input.pn;
+	
 	if( GAMESTATE->m_bSideIsJoined[pn] )	// already joined
 		return;	// ignore
 

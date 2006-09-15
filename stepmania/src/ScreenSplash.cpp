@@ -44,14 +44,14 @@ void ScreenSplash::HandleScreenMessage( const ScreenMessage SM )
 	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
-void ScreenSplash::MenuBack( PlayerNumber pn )
+void ScreenSplash::MenuBack( const InputEventPlus &input )
 {
 	if( IsTransitioning() )
 		return;
 	Cancel( SM_GoToPrevScreen );
 }
 
-void ScreenSplash::MenuStart( PlayerNumber pn )
+void ScreenSplash::MenuStart( const InputEventPlus &input )
 {
 	if( IsTransitioning() )
 		return;

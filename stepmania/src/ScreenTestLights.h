@@ -15,10 +15,10 @@ public:
 	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	virtual void MenuLeft( PlayerNumber pn );
-	virtual void MenuRight( PlayerNumber pn );
-	virtual void MenuStart( PlayerNumber pn );
-	virtual void MenuBack( PlayerNumber pn );
+	virtual void MenuLeft( const InputEventPlus &input );
+	virtual void MenuRight( const InputEventPlus &input );
+	virtual void MenuStart( const InputEventPlus &input );
+	virtual void MenuBack( const InputEventPlus &input );
 
 private:
 	BitmapText	m_textInputs;

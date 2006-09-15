@@ -321,7 +321,7 @@ void ScreenWithMenuElements::StopTimer()
 
 REGISTER_SCREEN_CLASS( ScreenWithMenuElementsSimple );
 
-void ScreenWithMenuElementsSimple::MenuStart( PlayerNumber pn )
+void ScreenWithMenuElementsSimple::MenuStart( const InputEventPlus &input )
 {
 	if( IsTransitioning() )
 		return;
@@ -333,7 +333,7 @@ void ScreenWithMenuElementsSimple::MenuStart( PlayerNumber pn )
 	SCREENMAN->ConcurrentlyPrepareScreen( GetNextScreen() );
 }
 
-void ScreenWithMenuElementsSimple::MenuBack( PlayerNumber pn )
+void ScreenWithMenuElementsSimple::MenuBack( const InputEventPlus &input )
 {
 	if( IsTransitioning() )
 		return;

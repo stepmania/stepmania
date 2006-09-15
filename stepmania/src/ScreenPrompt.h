@@ -39,10 +39,10 @@ protected:
 	bool CanGoLeft() { return m_Answer > 0; }
 	bool CanGoRight();
 	void Change( int dir );
-	void MenuLeft( PlayerNumber pn );
-	void MenuRight( PlayerNumber pn );
-	void MenuBack( PlayerNumber pn );
-	void MenuStart( PlayerNumber pn );
+	void MenuLeft( const InputEventPlus &input );
+	void MenuRight( const InputEventPlus &input );
+	void MenuBack( const InputEventPlus &input );
+	void MenuStart( const InputEventPlus &input );
 
 	virtual void End( bool bCancelled );
 	void PositionCursor();

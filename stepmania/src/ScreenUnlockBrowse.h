@@ -9,7 +9,7 @@ class ScreenUnlockBrowse : public ScreenSelectMaster
 public:
 	virtual void Init();
 	virtual void BeginScreen();
-	virtual void MenuStart( PlayerNumber pn );
+	virtual void MenuStart( const InputEventPlus &input );
 
 	virtual void TweenOnScreen();
 	virtual void TweenOffScreen();

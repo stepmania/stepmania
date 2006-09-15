@@ -920,12 +920,12 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
-void ScreenEvaluation::MenuBack( PlayerNumber pn )
+void ScreenEvaluation::MenuBack( const InputEventPlus &input )
 {
-	MenuStart( pn );
+	MenuStart( input );
 }
 
-void ScreenEvaluation::MenuStart( PlayerNumber pn )
+void ScreenEvaluation::MenuStart( const InputEventPlus &input )
 {
 	m_soundStart.Play();
 

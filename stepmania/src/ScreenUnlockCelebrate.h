@@ -11,7 +11,7 @@ public:
 	virtual void MenuRight( const InputEventPlus &input ) { }
 	virtual void MenuUp( const InputEventPlus &input ) { }
 	virtual void MenuDown( const InputEventPlus &input ) { }
-	virtual void MenuBack( PlayerNumber pn ) { MenuStart( pn ); }
+	virtual void MenuBack( const InputEventPlus &input ) { MenuStart( input ); }
 protected:
 };
 

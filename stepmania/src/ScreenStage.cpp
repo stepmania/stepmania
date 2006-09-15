@@ -99,7 +99,7 @@ void ScreenStage::Update( float fDeltaTime )
 	Screen::Update( fDeltaTime );
 }
 
-void ScreenStage::MenuBack( PlayerNumber pn )
+void ScreenStage::MenuBack( const InputEventPlus &input )
 {
 	if( m_In.IsTransitioning() || m_Out.IsTransitioning() || m_Cancel.IsTransitioning() )
 		return;

@@ -151,14 +151,14 @@ void ScreenRanking::Input( const InputEventPlus &input )
 		ScreenAttract::Input( input );
 }
 
-void ScreenRanking::MenuStart( PlayerNumber pn )
+void ScreenRanking::MenuStart( const InputEventPlus &input )
 {
 	if( !IsTransitioning() )
 		StartTransitioningScreen( SM_GoToNextScreen );
 	SCREENMAN->PlayStartSound();
 }
 
-void ScreenRanking::MenuBack( PlayerNumber pn )
+void ScreenRanking::MenuBack( const InputEventPlus &input )
 {
 	if( !IsTransitioning() )
 		StartTransitioningScreen( SM_GoToNextScreen );

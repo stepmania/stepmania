@@ -74,7 +74,7 @@ protected:
 	virtual void AfterChangeRow( PlayerNumber pn );	// override this to detect when the row has changed
 	virtual void AfterChangeValueOrRow( PlayerNumber pn );
 
-	virtual void MenuBack( PlayerNumber pn );
+	virtual void MenuBack( const InputEventPlus &input );
 	virtual void MenuStart( const InputEventPlus &input );
 	virtual void ProcessMenuStart( const InputEventPlus &input );
 	virtual void MenuLeft( const InputEventPlus &input )		{ ChangeValueInRowRelative(m_iCurrentRow[input.pn],input.pn,-1, input.type != IET_FIRST_PRESS); }

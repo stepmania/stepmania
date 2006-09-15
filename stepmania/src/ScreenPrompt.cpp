@@ -115,10 +115,10 @@ void ScreenPrompt::Input( const InputEventPlus &input )
 		switch( input.DeviceI.button )
 		{
 		case KEY_LEFT:
-			this->MenuLeft( input.pn );
+			this->MenuLeft( input );
 			return;
 		case KEY_RIGHT:
-			this->MenuRight( input.pn );
+			this->MenuRight( input );
 			return;
 		}
 	}
@@ -153,19 +153,19 @@ void ScreenPrompt::Change( int dir )
 	m_sndChange.Play();
 }
 
-void ScreenPrompt::MenuLeft( PlayerNumber pn )
+void ScreenPrompt::MenuLeft( const InputEventPlus &input )
 {
 	if( CanGoLeft() )
 		Change( -1 );
 }
 
-void ScreenPrompt::MenuRight( PlayerNumber pn )
+void ScreenPrompt::MenuRight( const InputEventPlus &input )
 {
 	if( CanGoRight() )
 		Change( +1 );
 }
 
-void ScreenPrompt::MenuStart( PlayerNumber pn )
+void ScreenPrompt::MenuStart( const InputEventPlus &input )
 {
 	if( m_Out.IsTransitioning() || m_Cancel.IsTransitioning() )
 		return;
@@ -173,7 +173,7 @@ void ScreenPrompt::MenuStart( PlayerNumber pn )
 	End( false );
 }
 
-void ScreenPrompt::MenuBack( PlayerNumber pn )
+void ScreenPrompt::MenuBack( const InputEventPlus &input )
 {
 	if( m_Out.IsTransitioning() || m_Cancel.IsTransitioning() )
 		return;

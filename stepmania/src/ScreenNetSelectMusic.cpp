@@ -319,8 +319,10 @@ done:
 	ScreenNetSelectBase::HandleScreenMessage( SM );
 }
 
-void ScreenNetSelectMusic::MenuLeft( PlayerNumber pn )
+void ScreenNetSelectMusic::MenuLeft( const InputEventPlus &input )
 {
+	PlayerNumber pn = input.pn;
+	
 	bool bLeftPressed = INPUTMAPPER->IsBeingPressed( MENU_BUTTON_LEFT, pn );
 	bool bRightPressed = INPUTMAPPER->IsBeingPressed( MENU_BUTTON_RIGHT, pn );
 	bool bLeftAndRightPressed = bLeftPressed && bRightPressed;
@@ -331,8 +333,10 @@ void ScreenNetSelectMusic::MenuLeft( PlayerNumber pn )
 		m_MusicWheel.Move( -1 );
 }
 
-void ScreenNetSelectMusic::MenuRight( PlayerNumber pn )
+void ScreenNetSelectMusic::MenuRight( const InputEventPlus &input )
 {
+	PlayerNumber pn = input.pn;
+	
 	bool bLeftPressed = INPUTMAPPER->IsBeingPressed( MENU_BUTTON_LEFT, pn );
 	bool bRightPressed = INPUTMAPPER->IsBeingPressed( MENU_BUTTON_RIGHT, pn );
 	bool bLeftAndRightPressed = bLeftPressed && bRightPressed;
@@ -403,7 +407,7 @@ void ScreenNetSelectMusic::MenuDown( const InputEventPlus &input )
 	GAMESTATE->m_PreferredDifficulty[pn].Set( m_DC[pn] );
 }
 
-void ScreenNetSelectMusic::MenuStart( PlayerNumber pn )
+void ScreenNetSelectMusic::MenuStart( const InputEventPlus &input )
 {
 	bool bResult = m_MusicWheel.Select();
 
@@ -433,7 +437,7 @@ void ScreenNetSelectMusic::MenuStart( PlayerNumber pn )
 		StartSelectedSong();
 }
 
-void ScreenNetSelectMusic::MenuBack( PlayerNumber pn )
+void ScreenNetSelectMusic::MenuBack( const InputEventPlus &input )
 {
 	SOUND->StopMusic();
 	TweenOffScreen();

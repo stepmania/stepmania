@@ -51,8 +51,8 @@ public:
 	void HandleScreenMessage( const ScreenMessage SM );
 	void Input( const InputEventPlus &input );
 
-	void MenuStart( PlayerNumber pn );
-	void MenuSelect( PlayerNumber pn );
+	void MenuStart( const InputEventPlus &input );
+	void MenuSelect( const InputEventPlus &input );
 	void MenuLeft( const InputEventPlus &input );
 	void MenuRight( const InputEventPlus &input );
 

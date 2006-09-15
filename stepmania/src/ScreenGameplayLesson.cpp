@@ -133,15 +133,17 @@ void ScreenGameplayLesson::HandleScreenMessage( const ScreenMessage SM )
 	ScreenGameplay::HandleScreenMessage( SM );
 }
 
-void ScreenGameplayLesson::MenuStart( PlayerNumber pn )
+void ScreenGameplayLesson::MenuStart( const InputEventPlus &input )
 {
+	// XXX: Allow repeats?
 	if( m_iCurrentPageIndex == -1 )
 		return;
 	ChangeLessonPage( +1 );
 }
 
-void ScreenGameplayLesson::MenuBack( PlayerNumber pn )
+void ScreenGameplayLesson::MenuBack( const InputEventPlus &input )
 {
+	// XXX: Allow repeats?
 	if( m_iCurrentPageIndex == 0 )
 	{
 		BeginBackingOutFromGameplay();

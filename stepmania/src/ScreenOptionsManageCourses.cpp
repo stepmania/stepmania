@@ -72,8 +72,10 @@ void ScreenOptionsEditCourseSubMenu::Init()
 	ScreenOptions::Init();
 }
 
-void ScreenOptionsEditCourseSubMenu::MenuSelect( PlayerNumber pn )
+void ScreenOptionsEditCourseSubMenu::MenuSelect( const InputEventPlus &input )
 {
+	if( input.type != IET_FIRST_PRESS )
+		return;
 	SetNextCombination();
 	m_soundDifficultyChanged.Play();
 

@@ -46,12 +46,12 @@ private:
 	NetScreenSelectModes m_SelectMode;
 
 protected:
-	virtual void MenuStart( PlayerNumber pn );
-	virtual void MenuLeft( PlayerNumber pn );
+	virtual void MenuStart( const InputEventPlus &input );
+	virtual void MenuLeft( const InputEventPlus &input );
 	virtual void MenuUp( const InputEventPlus &input );
 	virtual void MenuDown( const InputEventPlus &input );
-	virtual void MenuRight( PlayerNumber pn );
-	virtual void MenuBack( PlayerNumber pn );
+	virtual void MenuRight( const InputEventPlus &input );
+	virtual void MenuBack( const InputEventPlus &input );
 
 	virtual void Update( float fDeltaTime );
 

@@ -755,7 +755,7 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 }
 
 
-void ScreenOptions::MenuBack( PlayerNumber pn )
+void ScreenOptions::MenuBack( const InputEventPlus &input )
 {
 	Cancel( SM_GoToPrevScreen );
 }

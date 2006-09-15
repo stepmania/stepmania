@@ -258,7 +258,7 @@ void ScreenSelect::HandleMessage( const RString &sMessage )
 	Screen::HandleMessage( sMessage );
 }
 
-void ScreenSelect::MenuBack( PlayerNumber pn )
+void ScreenSelect::MenuBack( const InputEventPlus &input )
 {
 	Cancel( SM_GoToPrevScreen );
 }

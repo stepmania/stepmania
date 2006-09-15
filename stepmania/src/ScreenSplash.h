@@ -12,8 +12,8 @@ public:
 	virtual void Init();
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
-	virtual void MenuBack( PlayerNumber pn );
-	virtual void MenuStart( PlayerNumber pn );
+	virtual void MenuBack( const InputEventPlus &input );
+	virtual void MenuStart( const InputEventPlus &input );
 
 protected:
 	ThemeMetric<bool> ALLOW_START_TO_SKIP;

@@ -20,12 +20,12 @@ void ScreenInstructions::Input( const InputEventPlus &input )
 	Screen::Input( input );
 }
 
-void ScreenInstructions::MenuBack( PlayerNumber pn )
+void ScreenInstructions::MenuBack( const InputEventPlus &input )
 {
 	Cancel( SM_GoToPrevScreen );
 }
 
-void ScreenInstructions::MenuStart( PlayerNumber pn )
+void ScreenInstructions::MenuStart( const InputEventPlus &input )
 {
 	StartTransitioningScreen( SM_GoToNextScreen );
 }

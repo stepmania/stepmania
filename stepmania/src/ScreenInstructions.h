@@ -10,8 +10,8 @@ public:
 
 	virtual void Input( const InputEventPlus &input );
 
-	virtual void MenuBack( PlayerNumber pn );
-	virtual void MenuStart( PlayerNumber pn );
+	virtual void MenuBack( const InputEventPlus &input );
+	virtual void MenuStart( const InputEventPlus &input );
 };
 
 

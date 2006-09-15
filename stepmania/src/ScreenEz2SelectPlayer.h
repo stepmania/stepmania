@@ -18,9 +18,9 @@ public:
 	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	virtual void MenuDown( PlayerNumber pn );
-	virtual void MenuStart( PlayerNumber pn );
-	virtual void MenuBack( PlayerNumber pn );
+	virtual void MenuDown( const InputEventPlus &input );
+	virtual void MenuStart( const InputEventPlus &input );
+	virtual void MenuBack( const InputEventPlus &input );
 private:
 	void TweenOffScreen();
 	void TweenOnScreen();

@@ -21,7 +21,7 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	virtual void HandleMessage( const RString &sMessage );
 	
-	virtual void MenuBack( PlayerNumber pn );
+	virtual void MenuBack( const InputEventPlus &input );
 
 protected:
 	virtual int GetSelectionIndex( PlayerNumber pn ) = 0;

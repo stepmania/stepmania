@@ -11,7 +11,7 @@
 #include "LightsManager.h"
 #include "CommonMetrics.h"
 #include "LocalizedString.h"
-
+#include "InputEventPlus.h"
 
 #define ICON_GAIN_FOCUS_COMMAND		THEME->GetMetricA(m_sName,"IconGainFocusCommand")
 #define ICON_LOSE_FOCUS_COMMAND		THEME->GetMetricA(m_sName,"IconLoseFocusCommand")
@@ -151,7 +151,7 @@ void ScreenSelectStyle::BeginScreen()
 	ScreenSelect::BeginScreen();
 }
 
-void ScreenSelectStyle::MenuLeft( PlayerNumber pn )
+void ScreenSelectStyle::MenuLeft( const InputEventPlus &input )
 {
 	int iSwitchToIndex = -1;	// -1 means none found
 	for( int i=m_iSelection-1; i>=0; i-- )
@@ -172,7 +172,7 @@ void ScreenSelectStyle::MenuLeft( PlayerNumber pn )
 	AfterChange();
 }
 
-void ScreenSelectStyle::MenuRight( PlayerNumber pn )
+void ScreenSelectStyle::MenuRight( const InputEventPlus &input )
 {
 	int iSwitchToIndex = -1;	// -1 means none found
 	for( unsigned i=m_iSelection+1; i<m_aGameCommands.size(); i++ )	
@@ -193,7 +193,7 @@ void ScreenSelectStyle::MenuRight( PlayerNumber pn )
 	AfterChange();
 }
 
-void ScreenSelectStyle::MenuStart( PlayerNumber pn )
+void ScreenSelectStyle::MenuStart( const InputEventPlus &input )
 {
 	/* Stop all tweens where they are, since we might have selected before
 	 * we finished tweening in. */
@@ -203,7 +203,7 @@ void ScreenSelectStyle::MenuStart( PlayerNumber pn )
 	SCREENMAN->PlayStartSound();
 	SCREENMAN->SendMessageToTopScreen( SM_BeginFadingOut );
 
-	const GameCommand& mc = m_aGameCommands[GetSelectionIndex(pn)];
+	const GameCommand& mc = m_aGameCommands[GetSelectionIndex(input.pn)];
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("%s comment %s",m_sName.c_str(),mc.m_sName.c_str())) );
 
 	//

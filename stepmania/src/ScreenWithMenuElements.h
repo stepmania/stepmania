@@ -71,8 +71,8 @@ private:
 class ScreenWithMenuElementsSimple: public ScreenWithMenuElements
 {
 public:
-	void MenuStart( PlayerNumber pn );
-	void MenuBack( PlayerNumber pn );
+	void MenuStart( const InputEventPlus &input );
+	void MenuBack( const InputEventPlus &input );
 
 	//
 	// Lua

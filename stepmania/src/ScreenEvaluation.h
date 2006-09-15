@@ -47,8 +47,8 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 	virtual void TweenOffScreen();
-	virtual void MenuBack( PlayerNumber pn );
-	virtual void MenuStart( PlayerNumber pn );
+	virtual void MenuBack( const InputEventPlus &input );
+	virtual void MenuStart( const InputEventPlus &input );
 
 protected:
 	void EndScreen();

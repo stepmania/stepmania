@@ -368,8 +368,12 @@ void ScreenNameEntry::HandleScreenMessage( const ScreenMessage SM )
 	{
 		if( !m_Out.IsTransitioning() )
 		{
+			InputEventPlus iep;
 			FOREACH_PlayerNumber( p )
-				this->MenuStart( p );
+			{
+				iep.pn = p;
+				this->MenuStart( iep );
+			}
 		}
 	}
 	else if( SM == SM_GoToNextScreen )
@@ -387,8 +391,10 @@ void ScreenNameEntry::HandleScreenMessage( const ScreenMessage SM )
 }
 
 
-void ScreenNameEntry::MenuStart( PlayerNumber pn )
+void ScreenNameEntry::MenuStart( const InputEventPlus &input )
 {
+	PlayerNumber pn = input.pn;
+	
 	if( !m_bStillEnteringName[pn] )
 		return;
 	m_bStillEnteringName[pn] = false;

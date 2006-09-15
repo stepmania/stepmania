@@ -16,9 +16,9 @@ public:
 	virtual void Init();
 	virtual void BeginScreen();
 
-	virtual void MenuLeft( PlayerNumber pn );
-	virtual void MenuRight( PlayerNumber pn );
-	virtual void MenuStart( PlayerNumber pn );
+	virtual void MenuLeft( const InputEventPlus &input );
+	virtual void MenuRight( const InputEventPlus &input );
+	virtual void MenuStart( const InputEventPlus &input );
 
 protected:
 	virtual int GetSelectionIndex( PlayerNumber pn );
