@@ -718,7 +718,7 @@ void RageDisplay::UpdateCentering()
 
 bool RageDisplay::SaveScreenshot( RString sPath, GraphicsFileFormat format )
 {
-	RageSurface* surface = this->CreateScreenshot();
+	RageSurface *surface = this->CreateScreenshot();
 
 	/* Unless we're in lossless, resize the image to 640x480.  If we're saving lossy,
 	 * there's no sense in saving 1280x960 screenshots, and we don't want to output
@@ -736,6 +736,7 @@ bool RageDisplay::SaveScreenshot( RString sPath, GraphicsFileFormat format )
 	if( !out.Open( sPath, RageFile::WRITE ) )
 	{
 		LOG->Trace("Couldn't write %s: %s", sPath.c_str(), out.GetError().c_str() );
+		SAFE_DELETE( surface );
 		return false;
 	}
 
@@ -751,13 +752,10 @@ bool RageDisplay::SaveScreenshot( RString sPath, GraphicsFileFormat format )
 	case SAVE_LOSSY_HIGH_QUAL:
 		bSuccess = RageSurfaceUtils::SaveJPEG( surface, out, true );
 		break;
-	default:
-		ASSERT(0);
-		return false;
+	DEFAULT_FAIL( format );
 	}
 
-	delete surface;
-	surface = NULL;
+	SAFE_DELETE( surface );
 
 	if( !bSuccess )
 	{
