@@ -1150,7 +1150,7 @@ RString StepMania::SaveScreenshot( RString sDir, bool bSaveCompressed, bool bMak
 	//
 	// Find a file name for the screenshot
 	//
-	FlushDirCache();
+	FILEMAN->FlushDirCache( sDir );
 
 	vector<RString> files;
 	GetDirListing( sDir + "screen*", files, false, false );
