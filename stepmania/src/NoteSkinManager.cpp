@@ -1,5 +1,6 @@
 #include "global.h"
 #include "NoteSkinManager.h"
+#include "RageFileManager.h"
 #include "RageLog.h"
 #include "RageException.h"
 #include "GameState.h"
@@ -236,7 +237,8 @@ try_again:
 
 		if( Dialog::AbortRetryIgnore(message) == Dialog::retry )
 		{
-			FlushDirCache();
+			FILEMAN->FlushDirCache( GetNoteSkinDir(m_sCurrentNoteSkin) );
+			FILEMAN->FlushDirCache( GAME_BASE_NOTESKIN_NAME );
 			g_PathCache.clear();
 			goto try_again;
 		}
@@ -270,7 +272,8 @@ try_again:
 
 			if( Dialog::AbortRetryIgnore(message) == Dialog::retry )
 			{
-				FlushDirCache();
+				FILEMAN->FlushDirCache( GetNoteSkinDir(m_sCurrentNoteSkin) );
+				FILEMAN->FlushDirCache( GAME_BASE_NOTESKIN_NAME );
 				g_PathCache.clear();
 				goto try_again;
 			}
