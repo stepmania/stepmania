@@ -4,6 +4,7 @@
 #include "NoteData.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "RageFileManager.h"
 #include "RageFile.h"
 #include "NoteDataUtil.h"
 #include "RageFile.h"
@@ -316,7 +317,7 @@ bool NotesWriterDWI::WriteDWINotesTag( RageFile &f, const Steps &out )
 		return false;	// not supported by DWI
 
 	/* Flush dir cache when writing steps, so the old size isn't cached. */
-	FlushDirCache();
+	FILEMAN->FlushDirCache( Dirname(f.GetRealPath()) );
 
 	LOG->Trace( "Steps::WriteDWINotesTag" );
 
