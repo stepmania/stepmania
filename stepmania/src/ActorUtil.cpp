@@ -68,6 +68,7 @@ retry:
 				RageException::Throw( sError ); 
 				break;
 			case Dialog::retry:
+				// XXX: Do we need to flush everything?
 				FlushDirCache();
 				goto retry;
 			case Dialog::ignore:
@@ -92,6 +93,7 @@ retry:
 				RageException::Throw( sError ); 
 				break;
 			case Dialog::retry:
+				// XXX: Do we need to flush everything?
 				FlushDirCache();
 				goto retry;
 			case Dialog::ignore:
