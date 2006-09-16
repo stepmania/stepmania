@@ -61,7 +61,7 @@ void LifeMeterBattery::Load( const PlayerState *pPlayerState, PlayerStageStats *
 
 	Refresh();
 }
-#include "RageLog.h"
+
 void LifeMeterBattery::OnSongEnded()
 {
 	if( m_pPlayerStageStats->bFailedEarlier )
@@ -74,10 +74,11 @@ void LifeMeterBattery::OnSongEnded()
 		const Course *pCourse = GAMESTATE->m_pCurCourse;
 		
 		if( pCourse && pCourse->m_vEntries[GAMESTATE->GetCourseSongIndex()].iGainLives > -1 )
-			m_iLivesLeft += pCourse->m_vEntries[GAMESTATE->m_iCurrentStageIndex].iGainLives;
+			m_iLivesLeft += pCourse->m_vEntries[GAMESTATE->GetCourseSongIndex()].iGainLives;
 		else
 			m_iLivesLeft += ( GAMESTATE->m_pCurSteps[pn]->GetMeter()>=8 ? 2 : 1 );
 		m_iLivesLeft = min( m_iLivesLeft, GAMESTATE->m_SongOptions.GetSong().m_iBatteryLives );
+
 		if( m_iTrailingLivesLeft < m_iLivesLeft )
 			m_soundGainLife.Play();
 	}
