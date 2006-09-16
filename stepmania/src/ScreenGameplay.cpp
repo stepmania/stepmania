@@ -2660,10 +2660,10 @@ void ScreenGameplay::SaveReplay()
 			FlushDirCache();
 
 			vector<RString> files;
-			GetDirListing( "Save/reply*", files, false, false );
+			GetDirListing( "Save/replay*", files, false, false );
 			sort( files.begin(), files.end() );
 
-			/* Files should be of the form "reply######.xxx". */
+			/* Files should be of the form "replay#####.xxx". */
 			int iIndex = 0;
 
 			for( int i = files.size()-1; i >= 0; --i )
