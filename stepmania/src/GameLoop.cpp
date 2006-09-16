@@ -22,7 +22,6 @@
 #include "RageTimer.h"
 #include "RageInput.h"
 
-static bool g_bQuitting = false;
 static RageTimer g_GameplayTimer;
 
 enum BoostAppPriority { BOOST_NO, BOOST_YES, BOOST_AUTO };	/* auto = do whatever is appropriate for the arch. */
@@ -31,11 +30,6 @@ static Preference<BoostAppPriority,int> g_BoostAppPriority( "BoostAppPriority", 
 /* experimental: force a specific update rate.  This prevents big 
  * animation jumps on frame skips.  0 to disable. */
 static Preference<float> g_fConstantUpdateDeltaSeconds( "ConstantUpdateDeltaSeconds", 0 );
-
-static bool UserQuit()
-{
-	return g_bQuitting || ArchHooks::UserQuit();
-}
 
 void HandleInputEvents( float fDeltaTime );
 
@@ -128,7 +122,7 @@ void GameLoop::RunGameLoop()
 	if( ChangeAppPri() )
 		HOOKS->BoostPriority();
 
-	while( !UserQuit() )
+	while( !ArchHooks::UserQuit() )
 	{
 		/*
 		 * Update
