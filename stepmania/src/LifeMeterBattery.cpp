@@ -61,7 +61,7 @@ void LifeMeterBattery::Load( const PlayerState *pPlayerState, PlayerStageStats *
 
 	Refresh();
 }
-
+#include "RageLog.h"
 void LifeMeterBattery::OnSongEnded()
 {
 	if( m_pPlayerStageStats->bFailedEarlier )
@@ -73,7 +73,7 @@ void LifeMeterBattery::OnSongEnded()
 		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 		const Course *pCourse = GAMESTATE->m_pCurCourse;
 		
-		if( pCourse && pCourse->m_vEntries[GAMESTATE->m_iCurrentStageIndex].iGainLives > -1 )
+		if( pCourse && pCourse->m_vEntries[GAMESTATE->GetCourseSongIndex()].iGainLives > -1 )
 			m_iLivesLeft += pCourse->m_vEntries[GAMESTATE->m_iCurrentStageIndex].iGainLives;
 		else
 			m_iLivesLeft += ( GAMESTATE->m_pCurSteps[pn]->GetMeter()>=8 ? 2 : 1 );
