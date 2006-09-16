@@ -87,7 +87,11 @@ void SongManager::InitAll( LoadingWindow *ld )
 static LocalizedString RELOADING ( "SongManager", "Reloading..." );
 void SongManager::Reload( bool bAllowFastLoad, LoadingWindow *ld )
 {
-	FlushDirCache();
+	FILEMAN->FlushDirCache( SONGS_DIR );
+	FILEMAN->FlushDirCache( ADDITIONAL_SONGS_DIR );
+	FILEMAN->FlushDirCache( COURSES_DIR );
+	FILEMAN->FlushDirCache( ADDITIONAL_COURSES_DIR );
+	FILEMAN->FlushDirCache( EDIT_SUBDIR );
 
 	if( ld )
 		ld->SetText( RELOADING );
