@@ -75,8 +75,7 @@ void LifeMeterTime::OnLoadSong()
 
 	Course* pCourse = GAMESTATE->m_pCurCourse;
 	ASSERT( pCourse );
-	const CourseEntry *pEntry = &pCourse->m_vEntries[GAMESTATE->GetCourseSongIndex()];
-	m_fLifeTotalGainedSeconds += pEntry->fGainSeconds;
+	m_fLifeTotalGainedSeconds += pCourse->m_vEntries[GAMESTATE->GetCourseSongIndex()].fGainSeconds;
 
 	m_soundGainLife.Play();
 }
@@ -91,11 +90,11 @@ void LifeMeterTime::ChangeLife( TapNoteScore tns )
 	switch( tns )
 	{
 	default:	ASSERT(0);
-	case TNS_W1:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_W1];		break;
-	case TNS_W2:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_W2];		break;
-	case TNS_W3:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_W3];		break;
-	case TNS_W4:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_W4];		break;
-	case TNS_W5:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_W5];		break;
+	case TNS_W1:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_W1];	break;
+	case TNS_W2:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_W2];	break;
+	case TNS_W3:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_W3];	break;
+	case TNS_W4:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_W4];	break;
+	case TNS_W5:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_W5];	break;
 	case TNS_Miss:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_Miss];	break;
 	case TNS_HitMine:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_HitMine];	break;
 	}
