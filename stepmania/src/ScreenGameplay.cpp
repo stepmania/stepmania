@@ -5,6 +5,7 @@
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "GameManager.h"
+#include "RageFileManager.h"
 #include "Steps.h"
 #include "RageLog.h"
 #include "LifeMeter.h"
@@ -2657,7 +2658,7 @@ void ScreenGameplay::SaveReplay()
 			//
 			// Find a file name for the screenshot
 			//
-			FlushDirCache();
+			FILEMAN->FlushDirCache( "Save/" );
 
 			vector<RString> files;
 			GetDirListing( "Save/replay*", files, false, false );
