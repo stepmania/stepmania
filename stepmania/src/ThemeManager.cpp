@@ -1,5 +1,6 @@
 #include "global.h"
 #include "ThemeManager.h"
+#include "RageFileManager.h"
 #include "RageLog.h"
 #include "RageException.h"
 #include "RageTimer.h"
@@ -596,7 +597,10 @@ try_element_again:
 
 	if( asElementPaths.size() > 1 )
 	{
-		FlushDirCache();
+		/* Why do we flush here? Aborting ends, retrying calls ReloadMetrics which will flush
+		 * and ignoring doesn't do anything further, nothing that would seem to require
+		 * flushing the cache. -- Steve */
+		FILEMAN->FlushDirCache( GetThemeDirFromName(sThemeName) );
 		g_ThemePathCache[category].clear();
 
 		RString message = ssprintf( 
@@ -785,7 +789,7 @@ bool ThemeManager::HasString( const RString &sClassName, const RString &sValueNa
 static LocalizedString RELOADED_METRICS( "ThemeManager", "Reloaded metrics" );
 void ThemeManager::ReloadMetrics()
 {
-	FlushDirCache();
+	FILEMAN->FlushDirCache( GetCurThemeDir() );
 
 	// force a reload of the metrics cache
 	LoadThemeMetrics( g_vThemes, m_sCurThemeName, m_sCurLanguage );
