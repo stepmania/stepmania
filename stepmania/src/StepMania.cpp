@@ -1156,7 +1156,7 @@ RString StepMania::SaveScreenshot( RString sDir, bool bSaveCompressed, bool bMak
 	GetDirListing( sDir + "screen*", files, false, false );
 	sort( files.begin(), files.end() );
 
-	/* Files should be of the form "screen######.xxx".  Ignore the extension; find
+	/* Files should be of the form "screen#####.xxx".  Ignore the extension; find
 	 * the last file of this form, and use the next number.  This way, we don't
 	 * write the same screenshot number for different formats (screen00011.bmp,
 	 * screen00011.jpg), and we always increase from the end, so if screen00003.jpg
