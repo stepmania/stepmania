@@ -235,6 +235,8 @@ static const char *const LogTypeNames[] = {
 	"Graphic file",
 	"Cache file",
 	"Song",
+	"Theme element",
+	"Theme metric",
 	NULL, // General, not used.
 };
 
@@ -254,6 +256,8 @@ void RageLog::UserLog( LogType lt, const RString &sPath, const char *fmt, ... )
 	case LogType_GraphicFile:
 	case LogType_CacheFile:
 	case LogType_Song:
+	case LogType_ThemeElement:
+	case LogType_ThemeMetric:
 		sBuf = ssprintf( "%s \"%s\" %s", LogTypeNames[lt], sPath.c_str(), sBuf.c_str() );
 		break;
 	case LogType_General:

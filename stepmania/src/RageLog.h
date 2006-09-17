@@ -18,6 +18,8 @@ public:
 		LogType_GraphicFile,	// Refers to a .jpg, .png, etc. file.
 		LogType_CacheFile,	// Refers to any cache file.
 		LogType_Song,		// Refers to an actual song (directory).
+		LogType_ThemeElement,	// Refers to a theme element.
+		LogType_ThemeMetric,	// Refers to a theme metric.
 		LogType_General,	// Any other type of user log message. Ignores sPath.
 		NUM_LogType
 	};
