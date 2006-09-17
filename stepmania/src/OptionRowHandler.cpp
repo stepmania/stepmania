@@ -147,7 +147,7 @@ public:
 			/* Parse the basic configuration metric. */
 			Commands cmds = ParseCommands( ENTRY(sParam) );
 			if( cmds.v.size() < 1 )
-				RageException::Throw( "Parse error in ScreenOptionsMaster::%s.", sParam.c_str() );
+				RageException::Throw( "Parse error in \"ScreenOptionsMaster::%s\".", sParam.c_str() );
 
 			m_Def.m_bOneChoiceForAllPlayers = false;
 			const int NumCols = atoi( cmds.v[0].m_vsArgs[0] );

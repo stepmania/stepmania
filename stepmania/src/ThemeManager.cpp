@@ -827,7 +827,7 @@ bool ThemeManager::GetMetricRawRecursive( const IniFile &ini, const RString &sCl
 		sClassName = sFallback;
 	}
 
-	RageException::Throw( "Infinite recursion looking up theme metric \"%s : %s\".", sClassName.c_str(), sValueName.c_str() );
+	RageException::Throw( "Infinite recursion looking up theme metric \"%s::%s\".", sClassName.c_str(), sValueName.c_str() );
 }
 
 RString ThemeManager::GetMetricRaw( const IniFile &ini, const RString &sClassName_, const RString &sValueName_ )
@@ -845,12 +845,12 @@ RString ThemeManager::GetMetricRaw( const IniFile &ini, const RString &sClassNam
 		
 		RString sCurMetricPath = GetMetricsIniPath( m_sCurThemeName );
 		RString sDefaultMetricPath = GetMetricsIniPath( SpecialFiles::BASE_THEME_NAME );
-		RString sMessage = ssprintf( "The theme metric \"%s : %s\" is missing.  Correct this and click Retry, or Cancel to break.",
+		RString sMessage = ssprintf( "The theme metric \"%s::%s\" is missing.  Correct this and click Retry, or Cancel to break.",
 					     sClassName.c_str(), sValueName.c_str() );
 		switch( Dialog::AbortRetryIgnore(sMessage) )
 		{
 			case Dialog::abort:
-				RageException::Throw( "Theme metric \"%s : %s\" could not be found in \"%s\"' or \"%s\".", 
+				RageException::Throw( "Theme metric \"%s::%s\" could not be found in \"%s\"' or \"%s\".", 
 						      sClassName.c_str(), sValueName.c_str(), sCurMetricPath.c_str(), 
 						      sDefaultMetricPath.c_str() );
 			case Dialog::retry:
@@ -931,7 +931,7 @@ RageColor ThemeManager::GetMetricC( const RString &sClassName, const RString &sV
 
 	RageColor ret(1,1,1,1);
 	if( !ret.FromString(sValue) )
-		LOG->UserLog( RageLog::LogType_ThemeMetric, sClassName + " : " + sValueName,
+		LOG->UserLog( RageLog::LogType_ThemeMetric, sClassName + "::" + sValueName,
 			      "has an invalid color value \"%s\".", sValue.c_str() );
 	return ret;
 }
