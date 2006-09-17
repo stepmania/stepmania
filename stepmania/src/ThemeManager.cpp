@@ -350,7 +350,7 @@ void ThemeManager::LoadThemeMetrics( deque<Theme> &theme, const RString &sThemeN
 		Regex re( "^([^=]+)::([^=]+)=(.*)$" );
 		vector<RString> sBits;
 		if( !re.Compare( sMetric, sBits ) )
-			RageException::Throw( "Invalid argument \"--metric=%s\"", sMetric.c_str() );
+			RageException::Throw( "Invalid argument \"--metric=%s\".", sMetric.c_str() );
 
 		g_pLoadedThemeData->iniMetrics.SetValue( sBits[0], sBits[1], sBits[2] );
 	}
@@ -611,7 +611,7 @@ try_element_again:
 		switch( Dialog::AbortRetryIgnore(message) )
 		{
 		case Dialog::abort:
-			RageException::Throw( message ); 
+			RageException::Throw( "%s", message.c_str() ); 
 			break;
 		case Dialog::retry:
 			ReloadMetrics();
@@ -734,37 +734,37 @@ try_element_again:
 	RString sMessage = "The theme element \"" + sCategory + "/" + sFileName +"\" is missing.";
 	Dialog::Result res;
 	if( category != EC_OTHER )
-		res = Dialog::AbortRetryIgnore(sMessage, "MissingThemeElement");
+		res = Dialog::AbortRetryIgnore( sMessage, "MissingThemeElement" );
 	else
-		res = Dialog::AbortRetry(sMessage, "MissingThemeElement");
+		res = Dialog::AbortRetry( sMessage, "MissingThemeElement" );
 	switch( res )
 	{
 	case Dialog::retry:
 		ReloadMetrics();
 		goto try_element_again;
 	case Dialog::ignore:
-		LOG->Warn( 
-			"Theme element '%s/%s' could not be found in '%s' or '%s'.", 
-			sCategory.c_str(),
-			sFileName.c_str(), 
-			GetThemeDirFromName(m_sCurThemeName).c_str(), 
-			GetThemeDirFromName(SpecialFiles::BASE_THEME_NAME).c_str() );
+		LOG->UserLog( RageLog::LogType_ThemeElement, sCategory + '/' + sFileName,
+			      "could not be found in \"%s\" or \"%s\".",
+			      GetThemeDirFromName(m_sCurThemeName).c_str(), 
+			      GetThemeDirFromName(SpecialFiles::BASE_THEME_NAME).c_str() );
 
 		/* Err? */
-		if(sFileName == "_missing")
-			RageException::Throw("'_missing' isn't present in '%s%s'", GetThemeDirFromName(SpecialFiles::BASE_THEME_NAME).c_str(), sCategory.c_str() );
+		if( sFileName == "_missing" )
+			RageException::Throw( "\"_missing\" isn't present in \"%s%s\".", GetThemeDirFromName(SpecialFiles::BASE_THEME_NAME).c_str(), sCategory.c_str() );
 
 		Cache[sFileName] = GetPath( category, "", "_missing" );
 		return Cache[sFileName];
 	case Dialog::abort:
-		RageException::Throw( "Theme element '%s/%s' could not be found in '%s' or '%s'.", 
+		LOG->UserLog( RageLog::LogType_ThemeElement, sCategory + '/' + sFileName,
+			      "could not be found in \"%s\" or \"%s\".",
+			      GetThemeDirFromName(m_sCurThemeName).c_str(), 
+			      GetThemeDirFromName(SpecialFiles::BASE_THEME_NAME).c_str() );
+		RageException::Throw( "Theme element \"%s/%s\" could not be found in \"%s\" or \"%s\".", 
 			sCategory.c_str(),
 			sFileName.c_str(), 
 			GetThemeDirFromName(m_sCurThemeName).c_str(), 
 			GetThemeDirFromName(SpecialFiles::BASE_THEME_NAME).c_str() );
-	default:
-		ASSERT(0);
-		return NULL;
+	DEFAULT_FAIL( res );
 	}
 }
 
@@ -827,7 +827,7 @@ bool ThemeManager::GetMetricRawRecursive( const IniFile &ini, const RString &sCl
 		sClassName = sFallback;
 	}
 
-	RageException::Throw( "Infinite recursion looking up theme metric \"%s::%s\"", sClassName.c_str(), sValueName.c_str() );
+	RageException::Throw( "Infinite recursion looking up theme metric \"%s : %s\".", sClassName.c_str(), sValueName.c_str() );
 }
 
 RString ThemeManager::GetMetricRaw( const IniFile &ini, const RString &sClassName_, const RString &sValueName_ )
@@ -843,31 +843,27 @@ RString ThemeManager::GetMetricRaw( const IniFile &ini, const RString &sClassNam
 		if( ThemeManager::GetMetricRawRecursive( ini, sClassName, sValueName, ret ) )
 			return ret;
 		
-		
-		RString sMessage = ssprintf( "The theme metric '%s' - '%s' is missing.  Correct this and click Retry, or Cancel to break.",sClassName.c_str(),sValueName.c_str() );
+		RString sCurMetricPath = GetMetricsIniPath( m_sCurThemeName );
+		RString sDefaultMetricPath = GetMetricsIniPath( SpecialFiles::BASE_THEME_NAME );
+		RString sMessage = ssprintf( "The theme metric \"%s : %s\" is missing.  Correct this and click Retry, or Cancel to break.",
+					     sClassName.c_str(), sValueName.c_str() );
 		switch( Dialog::AbortRetryIgnore(sMessage) )
 		{
 			case Dialog::abort:
-				break;	// fall through
+				RageException::Throw( "Theme metric \"%s : %s\" could not be found in \"%s\"' or \"%s\".", 
+						      sClassName.c_str(), sValueName.c_str(), sCurMetricPath.c_str(), 
+						      sDefaultMetricPath.c_str() );
 			case Dialog::retry:
 				ReloadMetrics();
 				continue;
 			case Dialog::ignore:
+				LOG->UserLog( RageLog::LogType_ThemeMetric, sClassName + " : " + sValueName,
+					      "could not be found in \"%s\" or \"%s\".",
+					      sCurMetricPath.c_str(), sDefaultMetricPath.c_str() );
 				return NULL;
 			default:
 				ASSERT(0);
 		}
-		
-		RString sCurMetricPath = GetMetricsIniPath(m_sCurThemeName);
-		RString sDefaultMetricPath = GetMetricsIniPath(SpecialFiles::BASE_THEME_NAME);
-		
-		RString sError = ssprintf( "Theme metric '%s : %s' could not be found in '%s' or '%s'.", 
-					   sClassName.c_str(),
-					   sValueName.c_str(),
-					   sCurMetricPath.c_str(), 
-					   sDefaultMetricPath.c_str()
-					   );
-		RageException::Throw( sError );
 	}
 }
 
@@ -935,7 +931,8 @@ RageColor ThemeManager::GetMetricC( const RString &sClassName, const RString &sV
 
 	RageColor ret(1,1,1,1);
 	if( !ret.FromString(sValue) )
-		LOG->Warn( "The color value '%s' for metric '%s : %s' is invalid.", sValue.c_str(), sClassName.c_str(), sValueName.c_str() );
+		LOG->UserLog( RageLog::LogType_ThemeMetric, sClassName + " : " + sValueName,
+			      "has an invalid color value \"%s\".", sValue.c_str() );
 	return ret;
 }
 
@@ -1021,7 +1018,7 @@ static RString PseudoLocalize( RString s )
 	s.Replace( "N", "Ñ" );
 	s.Replace( "c", "ç" );
 	s.Replace( "C", "Ç" );
-	// transformations that helpexpose punctuation assumptions
+	// transformations that help expose punctuation assumptions
 	//s.Replace( ":", " :" );	// this messes up "::" help text tip separator markers
 	s.Replace( "?", " ?" );
 	s.Replace( "!", " !" );
