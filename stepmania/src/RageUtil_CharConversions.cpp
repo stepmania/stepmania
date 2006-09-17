@@ -47,7 +47,7 @@ static bool ConvertFromCharset( RString &sText, const char *szCharset )
 	iconv_t converter = iconv_open( "UTF-8", szCharset );
 	if( converter == (iconv_t) -1 )
 	{
-		LOG->MapLog( ssprintf("conv %s", charset), "iconv_open(%s): %s", charset, strerror(errno) );
+		LOG->MapLog( ssprintf("conv %s", szCharset), "iconv_open(%s): %s", szCharset, strerror(errno) );
 		return false;
 	}
 
@@ -73,7 +73,7 @@ static bool ConvertFromCharset( RString &sText, const char *szCharset )
 
 	if( iInLeft != 0 )
 	{
-		LOG->Warn( "iconv(UTF-8,%s) for \"%s\": whole buffer not converted (%i left)", charset, sText.c_str(), int(iInLeft) );
+		LOG->Warn( "iconv(UTF-8,%s) for \"%s\": whole buffer not converted (%i left)", szCharset, sText.c_str(), int(iInLeft) );
 		return false;
 	}
 
