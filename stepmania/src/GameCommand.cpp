@@ -269,7 +269,7 @@ void GameCommand::LoadOne( const Command& cmd )
 			Song *pSong = (m_pSong != NULL)? m_pSong:GAMESTATE->m_pCurSong;
 			const Style *pStyle = m_pStyle ? m_pStyle : GAMESTATE->m_pCurStyle;
 			if( pSong == NULL || pStyle == NULL )
-				RageException::Throw( "Must set Song and Style to set Steps" );
+				RageException::Throw( "Must set Song and Style to set Steps." );
 
 			Difficulty dc = StringToDifficulty( sSteps );
 			if( dc != DIFFICULTY_EDIT )
@@ -304,7 +304,7 @@ void GameCommand::LoadOne( const Command& cmd )
 			Course *pCourse = (m_pCourse != NULL)? m_pCourse:GAMESTATE->m_pCurCourse;
 			const Style *pStyle = m_pStyle ? m_pStyle : GAMESTATE->m_pCurStyle;
 			if( pCourse == NULL || pStyle == NULL )
-				RageException::Throw( "Must set Course and Style to set Steps" );
+				RageException::Throw( "Must set Course and Style to set Steps." );
 
 			const CourseDifficulty cd = StringToCourseDifficulty( sTrail );
 			ASSERT_M( cd != DIFFICULTY_INVALID, ssprintf("Invalid difficulty '%s'", sTrail.c_str()) );

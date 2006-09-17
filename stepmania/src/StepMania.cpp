@@ -188,7 +188,7 @@ void StepMania::ApplyGraphicOptions()
 	GetPreferredVideoModeParams( params );
 	RString sError = DISPLAY->SetVideoMode( params, bNeedReload );
 	if( sError != "" )
-		RageException::Throw( sError );
+		RageException::Throw( "%s", sError.c_str() );
 
 	DISPLAY->ChangeCentering(
 		PREFSMAN->m_iCenterImageTranslateX, 
@@ -704,7 +704,7 @@ RageDisplay *CreateDisplay()
 	split( PREFSMAN->m_sVideoRenderers, ",", asRenderers, true );
 
 	if( asRenderers.empty() )
-		RageException::Throw( ERROR_NO_VIDEO_RENDERERS.GetValue() );
+		RageException::Throw( "%s", ERROR_NO_VIDEO_RENDERERS.GetValue().c_str() );
 
 	RageDisplay *pRet = NULL;
 	for( unsigned i=0; i<asRenderers.size(); i++ )
@@ -748,7 +748,7 @@ RageDisplay *CreateDisplay()
 	}
 
 	if( pRet == NULL)
-		RageException::Throw( error );
+		RageException::Throw( "%s", error.c_str() );
 
 	return pRet;
 }
@@ -1003,7 +1003,7 @@ int main(int argc, char* argv[])
 	/* This requires PREFSMAN, for PREFSMAN->m_bShowLoadingWindow. */
 	LoadingWindow *loading_window = MakeLoadingWindow();
 	if( loading_window == NULL )
-		RageException::Throw( COULDNT_OPEN_LOADING_WINDOW.GetValue() );
+		RageException::Throw( "%s", COULDNT_OPEN_LOADING_WINDOW.GetValue().c_str() );
 
 	srand( time(NULL) );	// seed number generator	
 	

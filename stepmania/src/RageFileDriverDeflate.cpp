@@ -35,7 +35,7 @@ RageFileObjInflate::RageFileObjInflate( RageFileBasic *pFile, int iUncompressedS
 
 	int err = inflateInit2( m_pInflate, -MAX_WBITS );
 	if( err == Z_MEM_ERROR )
-		RageException::Throw( "inflateInit2( %i ): out of memory", -MAX_WBITS );
+		RageException::Throw( "inflateInit2( %i ): out of memory.", -MAX_WBITS );
 	if( err != Z_OK )
 		LOG->Trace( "Huh? inflateInit2() err = %i", err );
 
@@ -65,7 +65,7 @@ RageFileObjInflate::RageFileObjInflate( const RageFileObjInflate &cpy ):
 
 RageFileBasic *RageFileObjInflate::Copy() const
 {
-	RageException::Throw( "Loading ZIPs from deflated ZIPs is currently disabled; see RageFileObjInflate" );
+	RageException::Throw( "Loading ZIPs from deflated ZIPs is currently disabled; see RageFileObjInflate." );
 
 	// return new RageFileObjInflate( *this, p );
 }
@@ -208,7 +208,7 @@ RageFileObjDeflate::RageFileObjDeflate( RageFileBasic *pFile )
 				Z_DEFAULT_STRATEGY );
 
 	if( err == Z_MEM_ERROR )
-		RageException::Throw( "inflateInit2( %i ): out of memory", -MAX_WBITS );
+		RageException::Throw( "inflateInit2( %i ): out of memory.", -MAX_WBITS );
 	if( err != Z_OK )
 		LOG->Trace( "Huh? inflateInit2() err = %i", err );
 

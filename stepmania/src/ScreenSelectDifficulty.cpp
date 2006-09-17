@@ -331,7 +331,7 @@ void ScreenSelectDifficulty::ChangePage( Page newPage )
 		}
 	}
 	if( iSwitchToIndex == -1 )
-		RageException::Throw( "%s has no selectable choices on page %i", m_sName.c_str(), newPage);
+		RageException::Throw( "\"%s\" has no selectable choices on page %i.", m_sName.c_str(), newPage);
 
 	// change both players
 	FOREACH_PlayerNumber( p )

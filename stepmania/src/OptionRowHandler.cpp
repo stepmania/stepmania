@@ -147,7 +147,7 @@ public:
 			/* Parse the basic configuration metric. */
 			Commands cmds = ParseCommands( ENTRY(sParam) );
 			if( cmds.v.size() < 1 )
-				RageException::Throw( "Parse error in ScreenOptionsMaster::%s", sParam.c_str() );
+				RageException::Throw( "Parse error in ScreenOptionsMaster::%s.", sParam.c_str() );
 
 			m_Def.m_bOneChoiceForAllPlayers = false;
 			const int NumCols = atoi( cmds.v[0].m_vsArgs[0] );
@@ -183,7 +183,7 @@ public:
 					for( unsigned i=1; i<cmd.m_vsArgs.size(); i++ )
 						m_vsBroadcastOnExport.push_back( cmd.m_vsArgs[i] );
 				}
-				else	RageException::Throw( "Unkown row flag \"%s\"", sName.c_str() );
+				else	RageException::Throw( "Unkown row flag \"%s\".", sName.c_str() );
 			}
 
 			for( int col = 0; col < NumCols; ++col )
@@ -196,7 +196,7 @@ public:
 				if( mc.m_sName == "" && NumCols == 1 )
 					mc.m_sName = sParam;
 				if( mc.m_sName == "" )
-					RageException::Throw( "List \"%s\", col %i has no name", sParam.c_str(), col );
+					RageException::Throw( "List \"%s\", col %i has no name.", sParam.c_str(), col );
 
 				if( !mc.IsPlayable() )
 				{
@@ -465,7 +465,7 @@ public:
 		}
 		else
 		{
-			RageException::Throw( "invalid StepsType param \"%s\"", sParam.c_str() );
+			RageException::Throw( "Invalid StepsType param \"%s\".", sParam.c_str() );
 		}
 		
 		m_Def.m_sName = sParam;
@@ -754,7 +754,7 @@ public:
 		
 		lua_call( L, 1, 1 ); // call function with 1 argument and 1 result
 		if( !lua_istable(L, -1) )
-			RageException::Throw( "\"EnabledForPlayers\" did not return a table" );
+			RageException::Throw( "\"EnabledForPlayers\" did not return a table." );
 
 		m_Def.m_vEnabledForPlayers.clear();	// and fill in with supplied PlayerNumbers below
 
@@ -789,7 +789,7 @@ public:
 		m_pLuaTable->SetFromExpression( sLuaFunction );
 
 		if( m_pLuaTable->GetLuaType() != LUA_TTABLE )
-			RageException::Throw( "Result of \"%s\" is not a table", sLuaFunction.c_str() );
+			RageException::Throw( "Result of \"%s\" is not a table.", sLuaFunction.c_str() );
 
 		m_pLuaTable->PushSelf( L );
 
@@ -797,7 +797,7 @@ public:
 		lua_gettable( L, -2 );
 		const char *pStr = lua_tostring( L, -1 );
 		if( pStr == NULL )
-			RageException::Throw( "\"%s\" \"Name\" entry is not a string", sLuaFunction.c_str() );
+			RageException::Throw( "\"%s\" \"Name\" entry is not a string.", sLuaFunction.c_str() );
 		m_Def.m_sName = pStr;
 		lua_pop( L, 1 );
 
@@ -818,7 +818,7 @@ public:
 		lua_gettable( L, -2 );
 		pStr = lua_tostring( L, -1 );
 		if( pStr == NULL )
-			RageException::Throw( "\"%s\" \"LayoutType\" entry is not a string", sLuaFunction.c_str() );
+			RageException::Throw( "\"%s\" \"LayoutType\" entry is not a string.", sLuaFunction.c_str() );
 		m_Def.m_layoutType = StringToLayoutType( pStr );
 		ASSERT( m_Def.m_layoutType != LAYOUT_INVALID );
 		lua_pop( L, 1 );
@@ -828,7 +828,7 @@ public:
 		lua_gettable( L, -2 );
 		pStr = lua_tostring( L, -1 );
 		if( pStr == NULL )
-			RageException::Throw( "\"%s\" \"SelectType\" entry is not a string", sLuaFunction.c_str() );
+			RageException::Throw( "\"%s\" \"SelectType\" entry is not a string.", sLuaFunction.c_str() );
 		m_Def.m_selectType = StringToSelectType( pStr );
 		ASSERT( m_Def.m_selectType != SELECT_INVALID );
 		lua_pop( L, 1 );
@@ -838,7 +838,7 @@ public:
 		lua_pushstring( L, "Choices" );
 		lua_gettable( L, -2 );
 		if( !lua_istable( L, -1 ) )
-			RageException::Throw( "\"%s\" \"Choices\" is not a table", sLuaFunction.c_str() );
+			RageException::Throw( "\"%s\" \"Choices\" is not a table.", sLuaFunction.c_str() );
 
 		lua_pushnil( L );
 		while( lua_next(L, -2) != 0 )
@@ -846,7 +846,7 @@ public:
 			/* `key' is at index -2 and `value' at index -1 */
 			const char *pValue = lua_tostring( L, -1 );
 			if( pValue == NULL )
-				RageException::Throw( "\"%s\" Column entry is not a string", sLuaFunction.c_str() );
+				RageException::Throw( "\"%s\" Column entry is not a string.", sLuaFunction.c_str() );
 //				LOG->Trace( "'%s'", pValue);
 
 			m_Def.m_vsChoices.push_back( pValue );
@@ -861,7 +861,7 @@ public:
 		lua_pushstring( L, "EnabledForPlayers" );
 		lua_gettable( L, -2 );
 		if( !lua_isfunction( L, -1 ) && !lua_isnil( L, -1 ) )
-			RageException::Throw( "\"%s\" \"EnabledForPlayers\" is not a table", sLuaFunction.c_str() );
+			RageException::Throw( "\"%s\" \"EnabledForPlayers\" is not a table.", sLuaFunction.c_str() );
 		m_EnabledForPlayersFunc.SetFromStack( L );
 		SetEnabledForPlayers();
 		
@@ -871,7 +871,7 @@ public:
 		if( !lua_isnil( L, -1 ) )
 		{
 			if( !lua_istable( L, -1 ) )
-				RageException::Throw( "\"%s\" \"ReloadRowMessages\" is not a table", sLuaFunction.c_str() );
+				RageException::Throw( "\"%s\" \"ReloadRowMessages\" is not a table.", sLuaFunction.c_str() );
 
 			lua_pushnil( L );
 			while( lua_next(L, -2) != 0 )
@@ -879,7 +879,7 @@ public:
 				/* `key' is at index -2 and `value' at index -1 */
 				const char *pValue = lua_tostring( L, -1 );
 				if( pValue == NULL )
-					RageException::Throw( "\"%s\" Column entry is not a string", sLuaFunction.c_str() );
+					RageException::Throw( "\"%s\" Column entry is not a string.", sLuaFunction.c_str() );
 				LOG->Trace( "Found ReloadRowMessage '%s'", pValue);
 
 				m_vsReloadRowMessages.push_back( pValue );
@@ -941,7 +941,7 @@ public:
 			lua_pushstring( L, "LoadSelections" );
 			lua_gettable( L, -2 );
 			if( !lua_isfunction( L, -1 ) )
-				RageException::Throw( "\"%s\" \"LoadSelections\" entry is not a function", m_Def.m_sName.c_str() );
+				RageException::Throw( "\"%s\" \"LoadSelections\" entry is not a function.", m_Def.m_sName.c_str() );
 
 			/* Argument 1 (self): */
 			m_pLuaTable->PushSelf( L );
@@ -995,7 +995,7 @@ public:
 			lua_pushstring( L, "SaveSelections" );
 			lua_gettable( L, -2 );
 			if( !lua_isfunction( L, -1 ) )
-				RageException::Throw( "\"%s\" \"SaveSelections\" entry is not a function", m_Def.m_sName.c_str() );
+				RageException::Throw( "\"%s\" \"SaveSelections\" entry is not a function.", m_Def.m_sName.c_str() );
 
 			/* Argument 1 (self): */
 			m_pLuaTable->PushSelf( L );
@@ -1141,7 +1141,7 @@ public:
 		}
 		else
 		{
-			RageException::Throw( "invalid StepsType param \"%s\"", sParam.c_str() );
+			RageException::Throw( "Invalid StepsType param \"%s\".", sParam.c_str() );
 		}
 
 		m_Def.m_sName = sParam;

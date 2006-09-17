@@ -133,7 +133,7 @@ void SongManager::InitSongsFromDisk( LoadingWindow *ld )
 }
 
 
-static LocalizedString FOLDER_CONTAINS_MUSIC_FILES( "SongManager", "The folder '%s' appears to be a song folder.  All song folders must reside in a group folder.  For example, 'Songs/Originals/My Song'." );
+static LocalizedString FOLDER_CONTAINS_MUSIC_FILES( "SongManager", "The folder \"%s\" appears to be a song folder.  All song folders must reside in a group folder.  For example, \"Songs/Originals/My Song\"." );
 void SongManager::SanityCheckGroupDir( RString sDir ) const
 {
 	// Check to see if they put a song directly inside the group folder.

@@ -139,7 +139,7 @@ void Sprite::LoadFromNode( const RString& sDir, const XNode* pNode )
 			if( !pNode->GetAttrValue(sFrameKey, newState.iFrameIndex) )
 				break;
 			if( newState.iFrameIndex >= m_pTexture->GetNumFrames() )
-				RageException::Throw( "In '%s', %s is %d, but the texture %s only has %d frames.",
+				RageException::Throw( "In \"%s\", %s is %d, but the texture \"%s\" only has %d frames.",
 					sDir.c_str(), sFrameKey.c_str(), newState.iFrameIndex, sPath.c_str(), m_pTexture->GetNumFrames() );
 
 			if( !pNode->GetAttrValue(sDelayKey, newState.fDelay) )

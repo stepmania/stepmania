@@ -44,7 +44,7 @@ void DifficultyList::LoadFromNode( const RString& sDir, const XNode* pNode )
 	{
 		const XNode *pChild = pNode->GetChild( ssprintf("CursorP%i",pn+1) );
 		if( pChild == NULL )
-			RageException::Throw( ssprintf("ComboGraph in \"%s\" is missing the node \"%s\"", sDir.c_str(), ssprintf("CursorP%i",pn+1).c_str()) );
+			RageException::Throw( "ComboGraph in \"%s\" is missing the node \"CursorP%d\".", sDir.c_str(), pn+1 );
 		m_Cursors[pn].LoadFromNode( sDir, pChild );
 
 		/* Hack: we need to tween cursors both up to down (cursor motion) and visible to
@@ -55,7 +55,7 @@ void DifficultyList::LoadFromNode( const RString& sDir, const XNode* pNode )
 		 * colors; I think we do need a diffuse color stack ... */
 		pChild = pNode->GetChild( ssprintf("CursorP%iFrame",pn+1) );
 		if( pChild == NULL )
-			RageException::Throw( ssprintf("ComboGraph in \"%s\" is missing the node \"%s\"", sDir.c_str(), ssprintf("CursorP%iFrame",pn+1).c_str()) );
+			RageException::Throw( "ComboGraph in \"%s\" is missing the node \"CursorP%dFrame\".", sDir.c_str(), pn+1 );
 		m_CursorFrames[pn].LoadFromNode( sDir, pChild );
 		m_CursorFrames[pn].AddChild( m_Cursors[pn] );
 		this->AddChild( &m_CursorFrames[pn] );

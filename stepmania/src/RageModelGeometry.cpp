@@ -88,7 +88,7 @@ bool RageModelGeometry::HasAnyPerVertexBones() const
 	return false;
 }
 
-#define THROW RageException::Throw( "Parse error in \"%s\" at line %d: '%s'", sPath.c_str(), iLineNum, sLine.c_str() )
+#define THROW RageException::Throw( "Parse error in \"%s\" at line %d: \"%s\".", sPath.c_str(), iLineNum, sLine.c_str() )
 
 void RageModelGeometry::LoadMilkshapeAscii( const RString& _sPath, bool bNeedsNormals )
 {

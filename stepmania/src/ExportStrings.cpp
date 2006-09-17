@@ -14,7 +14,7 @@ void ExportStrings::Nsis()
 {
 	RageFile out;
 	if( !out.Open( "nsis_strings_temp.inc", RageFile::WRITE ) )
-		RageException::Throw("Error opening file for write.");
+		RageException::Throw( "Error opening file for write." );
 	
 	vector<RString> vs;
 	GetDirListing( INSTALLER_LANGUAGES_DIR + "*.ini", vs, false, false );
@@ -29,7 +29,7 @@ void ExportStrings::Nsis()
 		
 		IniFile ini;
 		if( !ini.ReadFile( INSTALLER_LANGUAGES_DIR + *s ) )
-			RageException::Throw("Error opening file for read.");
+			RageException::Throw( "Error opening file for read." );
 		FOREACH_CONST_Child( &ini, child )
 		{
 			FOREACH_CONST_Attr( child, attr )

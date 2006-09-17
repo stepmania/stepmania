@@ -286,7 +286,7 @@ const glyph &Font::GetGlyph( wchar_t c ) const
 		it = m_iCharToGlyph.find(FONT_DEFAULT_GLYPH);
 
 	if(it == m_iCharToGlyph.end()) 
-		RageException::Throw( "The default glyph is missing from the font '%s'", path.c_str() );
+		RageException::Throw( "The default glyph is missing from the font \"%s\".", path.c_str() );
 	
 	return *it->second;
 }
@@ -295,7 +295,7 @@ bool Font::FontCompleteForString( const wstring &str ) const
 {
 	map<wchar_t,glyph*>::const_iterator m_pDefault = m_iCharToGlyph.find( FONT_DEFAULT_GLYPH );
 	if( m_pDefault == m_iCharToGlyph.end() )
-		RageException::Throw( "The default glyph is missing from the font '%s'", path.c_str() );
+		RageException::Throw( "The default glyph is missing from the font \"%s\".", path.c_str() );
 
 	for( unsigned i = 0; i < str.size(); ++i )
 	{
@@ -491,7 +491,7 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RStr
 				ASSERT( asMatches.size() == 4 ); /* 4 parens */
 
 				if( !bMatch || asMatches[0].empty() )
-					RageException::Throw("Font definition '%s' has an invalid range '%s': parse error",
+					RageException::Throw( "Font definition \"%s\" has an invalid range \"%s\": parse error.",
 						ini.GetPath().c_str(), sName.c_str() );
 				
 				/* We must have either 1 match (just the codeset) or 4 (the whole thing). */
@@ -504,15 +504,15 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RStr
 					int iLast;
 					sscanf( asMatches[3].c_str(), "%x", &iLast );
 					if( iLast < iFirst )
-						RageException::Throw("Font definition '%s' has an invalid range '%s': %i < %i.",
-							ini.GetPath().c_str(), sName.c_str(), iLast < iFirst );
+						RageException::Throw( "Font definition \"%s\" has an invalid range \"%s\": %i < %i.",
+							ini.GetPath().c_str(), sName.c_str(), iLast, iFirst );
 
 					iCount = iLast - iFirst + 1;
 				}
 
 				RString sRet = cfg.MapRange( asMatches[0], iFirst, atoi(sValue), iCount );
 				if( !sRet.empty() )
-					RageException::Throw( "Font definition '%s' has an invalid range '%s': %s.",
+					RageException::Throw( "Font definition \"%s\" has an invalid range \"%s\": %s.",
 						ini.GetPath().c_str(), sName.c_str(), sRet.c_str() );
 
 				continue;
@@ -532,15 +532,15 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RStr
 				const int iFirstFrame = iRow * iNumFramesWide;
 
 				if( iRow > iNumFramesHigh )
-					RageException::Throw( "The font definition \"%s\" tries to assign line %i, but the font is only %i characters high",
+					RageException::Throw( "The font definition \"%s\" tries to assign line %i, but the font is only %i characters high.",
 						ini.GetPath().c_str(), iFirstFrame, iNumFramesHigh );
 
 				/* Decode the string. */
 				const wstring wdata( RStringToWstring(sValue) );
 
 				if( int(wdata.size()) > iNumFramesWide )
-					RageException::Throw( "The font definition \"%s\" assigns %i characters to row %i (\"%ls\"), but the font only has %i characters wide",
-						ini.GetPath().c_str(), wdata.size(), iRow, wdata.c_str(), iNumFramesWide );
+					RageException::Throw( "The font definition \"%s\" assigns %i characters to row %i (\"%ls\"), but the font is only %i characters wide.",
+						ini.GetPath().c_str(), (int)wdata.size(), iRow, wdata.c_str(), iNumFramesWide );
 
 				for( unsigned i = 0; i < wdata.size(); ++i )
 					cfg.CharToGlyphNo[wdata[i]] = iFirstFrame+i;
@@ -657,7 +657,7 @@ void Font::Load( const RString &sIniPath, RString sChars )
 		{
 			RString str = join("\n", LoadStack);
 			str += "\n" + sIniPath;
-			RageException::Throw("Font import recursion detected\n%s", str.c_str());
+			RageException::Throw( "Font import recursion detected\n%s", str.c_str() );
 		}
 	}
 	LoadStack.push_back( sIniPath );
@@ -737,9 +737,8 @@ void Font::Load( const RString &sIniPath, RString sChars )
 		{
 			if( it->second < pPage->m_pTexture->GetNumFrames() )
 				continue; /* OK */
-			RString sError = ssprintf( "The font '%s' maps %s to frame %i, but the font only has %i frames.",
-				sTexturePath.c_str(), WcharDisplayText(wchar_t(it->first)).c_str(), it->second, pPage->m_pTexture->GetNumFrames() );
-			RageException::Throw( sError );
+			RageException::Throw( "The font \"%s\" maps \"%s\" to frame %i, but the font only has %i frames.",
+					      sTexturePath.c_str(), WcharDisplayText(wchar_t(it->first)).c_str(), it->second, pPage->m_pTexture->GetNumFrames() );
 		}
 
 //		LOG->Trace( "Adding page %s (%s) to %s; %i glyphs",

@@ -1040,14 +1040,14 @@ RString DerefRedir( const RString &_path )
 		GetDirListing( sPath2, matches, false, true );
 
 		if( matches.empty() )
-			RageException::Throw( "The redirect '%s' references a file '%s' which doesn't exist.", sPath.c_str(), sPath2.c_str() );
+			RageException::Throw( "The redirect \"%s\" references a file \"%s\" which doesn't exist.", sPath.c_str(), sPath2.c_str() );
 		else if( matches.size() > 1 )
-			RageException::Throw( "The redirect '%s' references a file '%s' with multiple matches.", sPath.c_str(), sPath2.c_str() );
+			RageException::Throw( "The redirect \"%s\" references a file \"%s\" with multiple matches.", sPath.c_str(), sPath2.c_str() );
 
 		sPath = matches[0];
 	}
 
-	RageException::Throw( "Circular redirect '%s'", sPath.c_str() );
+	RageException::Throw( "Circular redirect \"%s\".", sPath.c_str() );
 }
 
 bool GetFileContents( const RString &sPath, RString &sOut, bool bOneLine )
@@ -1091,7 +1091,7 @@ void Regex::Compile()
 	m_pReg = pcre_compile( m_sPattern.c_str(), PCRE_CASELESS, &error, &offset, NULL );
 
 	if( m_pReg == NULL )
-		RageException::Throw( "Invalid regex: \"%s\" (%s)", m_sPattern.c_str(), error );
+		RageException::Throw( "Invalid regex: \"%s\" (%s).", m_sPattern.c_str(), error );
 
 	int iRet = pcre_fullinfo( (pcre *) m_pReg, NULL, PCRE_INFO_CAPTURECOUNT, &m_iBackrefs );
 	ASSERT( iRet >= 0 );
@@ -1144,7 +1144,7 @@ bool Regex::Compare( const RString &sStr )
 	int iRet = pcre_exec( (pcre *) m_pReg, NULL, sStr.data(), sStr.size(), 0, 0, iMat, 128*3 );
 
 	if( iRet < -1 )
-		RageException::Throw( "Unexpected return from pcre_exec('%s'): %i", m_sPattern.c_str(), iRet );
+		RageException::Throw( "Unexpected return from pcre_exec('%s'): %i.", m_sPattern.c_str(), iRet );
 
 	return iRet >= 0;
 }
@@ -1157,7 +1157,7 @@ bool Regex::Compare( const RString &sStr, vector<RString> &asMatches )
 	int iRet = pcre_exec( (pcre *) m_pReg, NULL, sStr.data(), sStr.size(), 0, 0, iMat, 128*3 );
 
 	if( iRet < -1 )
-		RageException::Throw( "Unexpected return from pcre_exec('%s'): %i", m_sPattern.c_str(), iRet );
+		RageException::Throw( "Unexpected return from pcre_exec('%s'): %i.", m_sPattern.c_str(), iRet );
 
 	if( iRet == -1 )
 		return false;

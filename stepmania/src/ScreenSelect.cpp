@@ -81,7 +81,7 @@ void ScreenSelect::Init()
 	}
 
 	if( !m_aGameCommands.size() )
-		RageException::Throw( "Screen \"%s\" does not set any choices", m_sName.c_str() );
+		RageException::Throw( "Screen \"%s\" does not set any choices.", m_sName.c_str() );
 }
 
 void ScreenSelect::BeginScreen()

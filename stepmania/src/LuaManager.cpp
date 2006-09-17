@@ -578,7 +578,7 @@ bool LuaHelpers::RunExpressionB( const RString &str )
 
 	/* Don't accept a function as a return value. */
 	if( lua_isfunction( L, -1 ) )
-		RageException::Throw( "result is a function; did you forget \"()\"?" );
+		RageException::Throw( "Result is a function; did you forget \"()\"?" );
 
 	bool result = !!lua_toboolean( L, -1 );
 	lua_pop( L, 1 );
@@ -598,7 +598,7 @@ float LuaHelpers::RunExpressionF( const RString &str )
 
 	/* Don't accept a function as a return value. */
 	if( lua_isfunction( L, -1 ) )
-		RageException::Throw( "result is a function; did you forget \"()\"?" );
+		RageException::Throw( "Result is a function; did you forget \"()\"?" );
 
 	float result = (float) lua_tonumber( L, -1 );
 	lua_pop( L, 1 );
@@ -623,7 +623,7 @@ bool LuaHelpers::RunExpressionS( const RString &str, RString &sOut )
 
 	/* Don't accept a function as a return value. */
 	if( lua_isfunction( L, -1 ) )
-		RageException::Throw( "result is a function; did you forget \"()\"?" );
+		RageException::Throw( "Result is a function; did you forget \"()\"?" );
 
 	sOut = lua_tostring( L, -1 );
 	lua_pop( L, 1 );

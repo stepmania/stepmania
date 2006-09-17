@@ -165,7 +165,7 @@ bool ConvertString(RString &str, const RString &encodings)
 			continue;
 		}
 
-		RageException::Throw( "Unexpected conversion string \"%s\" (string \"%s\")",
+		RageException::Throw( "Unexpected conversion string \"%s\" (string \"%s\").",
 						lst[i].c_str(), str.c_str() );
 	}
 

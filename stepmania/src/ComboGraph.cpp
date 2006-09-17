@@ -25,17 +25,17 @@ void ComboGraph::LoadFromNode( const RString& sDir, const XNode* pNode )
 
 	m_pMaxComboText = (BitmapText *) this->GetChild( "MaxComboText" );
 	if( m_pMaxComboText == NULL )
-		RageException::Throw( ssprintf("ComboGraph in \"%s\" must have a child named \"MaxComboText\"", sDir.c_str()) );
+		RageException::Throw( "ComboGraph in \"%s\" must have a child named \"MaxComboText\".", sDir.c_str() );
 	if( !m_pMaxComboText->IsType("BitmapText") )
-		RageException::Throw( ssprintf("ComboGraph in \"%s\" has a child named \"MaxComboText\" that is not a BitmapText", sDir.c_str()) );
+		RageException::Throw( "ComboGraph in \"%s\" has a child named \"MaxComboText\" that is not a BitmapText.", sDir.c_str() );
 
 	m_pNormalCombo = this->GetChild( "NormalCombo" );
 	if( m_pNormalCombo == NULL )
-		RageException::Throw( ssprintf("ComboGraph in \"%s\" must have a child named \"NormalCombo\"", sDir.c_str()) );
+		RageException::Throw( "ComboGraph in \"%s\" must have a child named \"NormalCombo\".", sDir.c_str() );
 
 	m_pMaxCombo = this->GetChild( "MaxCombo" );
 	if( m_pMaxCombo == NULL )
-		RageException::Throw( ssprintf("ComboGraph in \"%s\" must have a child named \"MaxCombo\"", sDir.c_str()) );
+		RageException::Throw( "ComboGraph in \"%s\" must have a child named \"MaxCombo\".", sDir.c_str() );
 }
 
 void ComboGraph::Load( const StageStats &s, const PlayerStageStats &pss )

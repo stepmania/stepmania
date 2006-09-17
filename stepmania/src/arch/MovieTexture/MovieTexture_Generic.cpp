@@ -189,7 +189,7 @@ bool MovieTexture_Generic::DecodeFrame()
 			m_pDecoder->Close();
 			RString sError = m_pDecoder->Open( GetID().filename );
 			if( sError != "" )
-				RageException::Throw( "Error rewinding stream %s: %s", GetID().filename.c_str(), sError.c_str() );
+				RageException::Throw( "Error rewinding stream \"%s\": %s", GetID().filename.c_str(), sError.c_str() );
 
 			m_fClock = -fDelay;
 		}

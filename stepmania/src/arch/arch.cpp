@@ -20,7 +20,7 @@ void MakeInputHandlers( const RString &drivers, vector<InputHandler *> &Add )
 	split( drivers, ",", DriversToTry, true );
 
 	if( DriversToTry.empty() )
-		RageException::Throw( INPUT_HANDLERS_EMPTY.GetValue() );
+		RageException::Throw( "%s", INPUT_HANDLERS_EMPTY.GetValue().c_str() );
 
 	RString Driver;
 
@@ -190,7 +190,7 @@ RageMovieTexture *MakeRageMovieTexture( RageTextureID ID )
 	split( sDrivers, ",", DriversToTry, true );
 	
 	if( DriversToTry.empty() )
-		RageException::Throw( MOVIE_DRIVERS_EMPTY.GetValue() );
+		RageException::Throw( "%s", MOVIE_DRIVERS_EMPTY.GetValue().c_str() );
 
 	RString Driver;
 	RageMovieTexture *ret = NULL;
@@ -225,7 +225,7 @@ RageMovieTexture *MakeRageMovieTexture( RageTextureID ID )
 		}
 	}
 	if ( !ret )
-		RageException::Throw( COULDNT_CREATE_MOVIE_DRIVER.GetValue() );
+		RageException::Throw( "%s", COULDNT_CREATE_MOVIE_DRIVER.GetValue().c_str() );
 
 	LOG->Trace( "Created movie texture \"%s\" with driver \"%s\"",
 		    ID.filename.c_str(), Driver.c_str() );
@@ -240,7 +240,7 @@ RageSoundDriver *MakeRageSoundDriver( const RString &drivers )
 	split( drivers, ",", DriversToTry, true );
 
 	if( DriversToTry.empty() )
-		RageException::Throw( SOUND_DRIVERS_CANNOT_EMPTY.GetValue() );
+		RageException::Throw( "%s", SOUND_DRIVERS_CANNOT_EMPTY.GetValue().c_str() );
 
 	RString Driver;
 	RageSoundDriver *ret = NULL;

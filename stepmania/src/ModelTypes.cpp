@@ -51,11 +51,11 @@ void AnimatedTexture::Load( const RString &sTexOrIniPath )
 	{
 		IniFile ini;
 		if( !ini.ReadFile( sTexOrIniPath ) )
-			RageException::Throw( "Error reading %s: %s", sTexOrIniPath.c_str(), ini.GetError().c_str() );
+			RageException::Throw( "Error reading \"%s\": %s", sTexOrIniPath.c_str(), ini.GetError().c_str() );
 
 		const XNode* pAnimatedTexture = ini.GetChild("AnimatedTexture");
 		if( pAnimatedTexture == NULL )
-			RageException::Throw( "The animated texture file '%s' doesn't contain a section called 'AnimatedTexture'.", sTexOrIniPath.c_str() );
+			RageException::Throw( "The animated texture file \"%s\" doesn't contain a section called \"AnimatedTexture\".", sTexOrIniPath.c_str() );
 		
 		pAnimatedTexture->GetAttrValue( "TexVelocityX", m_vTexVelocity.x );
 		pAnimatedTexture->GetAttrValue( "TexVelocityY", m_vTexVelocity.y );
@@ -214,7 +214,7 @@ RageVector2 AnimatedTexture::GetTextureTranslate()
 	return v;
 }
 
-#define THROW RageException::Throw( "Parse error in \"%s\" at line %d: '%s'", sPath.c_str(), iLineNum, sLine.c_str() )
+#define THROW RageException::Throw( "Parse error in \"%s\" at line %d: \"%s\".", sPath.c_str(), iLineNum, sLine.c_str() )
 
 bool msAnimation::LoadMilkshapeAsciiBones( RString sAniName, RString sPath )
 {

@@ -19,7 +19,7 @@ void DynamicActorScroller::LoadFromNode( const RString &sDir, const XNode *pNode
 	 * Make one extra copy if masking is enabled.
 	 */
 	if( m_SubActors.size() != 1 )
-		RageException::Throw( "DynamicActorScroller in \"%s\" loaded %i nodes; require exactly one", sDir.c_str(), m_SubActors.size() );
+		RageException::Throw( "DynamicActorScroller in \"%s\" loaded %i nodes; require exactly one.", sDir.c_str(), (int)m_SubActors.size() );
 
 	int iNumCopies = (int) m_fNumItemsToDraw;
 	if( !m_quadMask.GetHidden() )

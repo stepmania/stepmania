@@ -172,12 +172,8 @@ RString NoteSkinManager::GetMetric( const RString &sButtonName, const RString &s
 	if( data.metrics.GetValue( sButtonName, sValue, sReturn ) )
 		return sReturn;
 	if( !data.metrics.GetValue( "NoteDisplay", sValue, sReturn ) )
-	{
-		RString sError = ssprintf(
-			"Could not read metric '[%s] %s' or '[NoteDisplay] %s' in '%s'",
-			sButtonName.c_str(), sValue.c_str(), sValue.c_str(), sNoteSkinName.c_str() );
-		RageException::Throw( sError );
-	}
+		RageException::Throw( "Could not read metric \"%s : %s\" or \"NoteDisplay : %s\" in \"%s\".",
+				      sButtonName.c_str(), sValue.c_str(), sValue.c_str(), sNoteSkinName.c_str() );
 	return sReturn;
 }
 
@@ -229,7 +225,7 @@ try_again:
 	if( sPath.empty() )
 	{
 		RString message = ssprintf(
-			"The NoteSkin element '%s %s' could not be found in '%s', '%s', or '%s'.", 
+			"The NoteSkin element \"%s %s\" could not be found in \"%s\", \"%s\", or \"%s\".", 
 			sButtonName.c_str(), sElement.c_str(), 
 			GetNoteSkinDir(m_sCurrentNoteSkin).c_str(),
 			GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME).c_str(),
@@ -243,7 +239,7 @@ try_again:
 			goto try_again;
 		}
 		
-		RageException::Throw( message ); 
+		RageException::Throw( "%s", message.c_str() ); 
 	}
 
 	int iLevel = 0;
@@ -266,7 +262,7 @@ try_again:
 		if( sRealPath == "" )
 		{
 			RString message = ssprintf(
-					"NoteSkinManager:  The redirect '%s' points to the file '%s', which does not exist. "
+					"NoteSkinManager:  The redirect \"%s\" points to the file \"%s\", which does not exist. "
 					"Verify that this redirect is correct.",
 					sPath.c_str(), sNewFileName.c_str());
 
@@ -278,7 +274,7 @@ try_again:
 				goto try_again;
 			}
 
-			RageException::Throw( message ); 
+			RageException::Throw( "%s", message.c_str() ); 
 		}
 		
 		sPath = sRealPath;

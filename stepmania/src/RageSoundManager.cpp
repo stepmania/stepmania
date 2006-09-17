@@ -55,7 +55,7 @@ void RageSoundManager::Init()
 
 	m_pDriver = MakeRageSoundDriver( sDrivers );
 	if( m_pDriver == NULL )
-		RageException::Throw( COULDNT_FIND_SOUND_DRIVER.GetValue() );
+		RageException::Throw( "%s", COULDNT_FIND_SOUND_DRIVER.GetValue().c_str() );
 }
 
 RageSoundManager::~RageSoundManager()

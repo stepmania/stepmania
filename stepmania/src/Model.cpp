@@ -63,7 +63,7 @@ void Model::Load( const RString &sFile )
 		LoadMilkshapeAscii( sFile );
 }
 
-#define THROW RageException::Throw( "Parse error in \"%s\" at line %d: '%s'", sPath.c_str(), iLineNum, sLine.c_str() )
+#define THROW RageException::Throw( "Parse error in \"%s\" at line %d: \"%s\".", sPath.c_str(), iLineNum, sLine.c_str() )
 
 void Model::LoadMilkshapeAscii( const RString &sPath )
 {
@@ -87,8 +87,8 @@ void Model::LoadPieces( const RString &sMeshesPath, const RString &sMaterialsPat
 		const msMesh *pMesh = &m_pGeometry->m_Meshes[i];
 		
 		if( pMesh->nMaterialIndex >= (int) m_Materials.size() )
-			RageException::Throw( "Model \"%s\" mesh \"%s\" references material index %i, but there are only %i materials",
-				sMeshesPath.c_str(), pMesh->sName.c_str(), pMesh->nMaterialIndex, m_Materials.size() );
+			RageException::Throw( "Model \"%s\" mesh \"%s\" references material index %i, but there are only %i materials.",
+				sMeshesPath.c_str(), pMesh->sName.c_str(), pMesh->nMaterialIndex, (int)m_Materials.size() );
 	}
 
 	if( LoadMilkshapeAsciiBones( DEFAULT_ANIMATION_NAME, sBonesPath ) )
@@ -254,10 +254,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 					FixSlashesInPlace( sTexturePath );
 					CollapsePath( sTexturePath );
 					if( !IsAFile(sTexturePath) )
-					{
-						RString sError = ssprintf( "'%s' references a texture '%s' that does not exist", sPath.c_str(), sTexturePath.c_str() );
-						RageException::Throw( sError );
-					}
+						RageException::Throw( "\"%s\" references a texture \"%s\" that does not exist.", sPath.c_str(), sTexturePath.c_str() );
 
 					Material.diffuse.Load( sTexturePath );
 				}
@@ -279,10 +276,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( const RString &_sPath )
 					FixSlashesInPlace( sTexturePath );
 					CollapsePath( sTexturePath );
 					if( !IsAFile(sTexturePath) )
-					{
-						RString sError = ssprintf( "'%s' references a texture '%s' that does not exist", sPath.c_str(), sTexturePath.c_str() );
-						RageException::Throw( sError );
-					}
+						RageException::Throw( "\"%s\" references a texture \"%s\" that does not exist.", sPath.c_str(), sTexturePath.c_str() );
 
 					Material.alpha.Load( sTexturePath );
 				}

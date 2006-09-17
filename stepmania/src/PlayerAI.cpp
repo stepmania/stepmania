@@ -44,7 +44,7 @@ void PlayerAI::InitFromDisk()
 		RString sKey = ssprintf("Skill%d", i);
 		XNode* pNode = ini.GetChild(sKey);
 		if( pNode == NULL )
-			RageException::Throw( "AI.ini: '%s' doesn't exist.", sKey.c_str() );
+			RageException::Throw( "AI.ini: \"%s\" doesn't exist.", sKey.c_str() );
 
 		TapScoreDistribution& dist = g_Distributions[i];
 		dist.fPercent[TNS_None] = 0;

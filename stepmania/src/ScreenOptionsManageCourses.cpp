@@ -195,7 +195,7 @@ void ScreenOptionsManageCourses::BeginScreen()
 	switch( EDIT_MODE.GetValue() )
 	{
 		default:
-			RageException::Throw( "ScreenOptionsManageCourses: Invalid edit mode:",
+			RageException::Throw( "ScreenOptionsManageCourses: Invalid edit mode: %s.",
 					      EditModeToString(EDIT_MODE.GetValue()).c_str() );
 		case EditMode_Practice:
 		case EditMode_Home:

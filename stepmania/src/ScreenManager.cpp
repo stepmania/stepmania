@@ -516,7 +516,7 @@ Screen* ScreenManager::MakeNewScreen( const RString &sScreenName )
 	
 	map<RString,CreateScreenFn>::iterator iter = g_pmapRegistrees->find( sClassName );
 	if( iter == g_pmapRegistrees->end() )
-		RageException::Throw( "Screen '%s' has an invalid class '%s'", sScreenName.c_str(), sClassName.c_str() );
+		RageException::Throw( "Screen \"%s\" has an invalid class \"%s\".", sScreenName.c_str(), sClassName.c_str() );
 
 	this->ZeroNextUpdate();
 

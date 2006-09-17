@@ -65,7 +65,7 @@ retry:
 			switch( Dialog::AbortRetryIgnore( sError, "BROKEN_FILE_REFERENCE" ) )
 			{
 			case Dialog::abort:
-				RageException::Throw( sError ); 
+				RageException::Throw( "%s", sError.c_str() ); 
 				break;
 			case Dialog::retry:
 				// XXX: Do we need to flush everything?
@@ -90,7 +90,7 @@ retry:
 			switch( Dialog::AbortRetryIgnore( sError, "BROKEN_FILE_REFERENCE" ) )
 			{
 			case Dialog::abort:
-				RageException::Throw( sError ); 
+				RageException::Throw( "%s", sError.c_str() ); 
 				break;
 			case Dialog::retry:
 				// XXX: Do we need to flush everything?
@@ -389,8 +389,8 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, const XNode *pParent, Actor 
 			return ActorUtil::Create( "Model", sDir, &xml, pParentActor );
 		}
 	default:
-		RageException::Throw("File \"%s\" has unknown type, \"%s\"",
-			sPath.c_str(), FileTypeToString(ft).c_str() );
+		RageException::Throw("File \"%s\" has unknown type, \"%s\".",
+				     sPath.c_str(), FileTypeToString(ft).c_str() );
 	}
 }
 

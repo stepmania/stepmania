@@ -47,7 +47,7 @@ void ThemeMetricDifficultiesToShow::Read()
 	{
 		Difficulty d = StringToDifficulty( *i );
 		if( d == DIFFICULTY_INVALID )
-			RageException::Throw( "Unknown difficulty \"%s\" in CourseDifficultiesToShow", i->c_str() );
+			RageException::Throw( "Unknown difficulty \"%s\" in CourseDifficultiesToShow.", i->c_str() );
 		m_v.push_back( d );
 	}
 }
@@ -77,7 +77,7 @@ void ThemeMetricCourseDifficultiesToShow::Read()
 	{
 		CourseDifficulty d = StringToCourseDifficulty( *i );
 		if( d == DIFFICULTY_INVALID )
-			RageException::Throw( "Unknown CourseDifficulty \"%s\" in CourseDifficultiesToShow", i->c_str() );
+			RageException::Throw( "Unknown CourseDifficulty \"%s\" in CourseDifficultiesToShow.", i->c_str() );
 		m_v.push_back( d );
 	}
 }

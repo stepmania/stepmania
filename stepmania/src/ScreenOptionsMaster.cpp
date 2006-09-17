@@ -30,7 +30,7 @@ void ScreenOptionsMaster::Init()
 	vector<RString> asLineNames;
 	split( LINE_NAMES, ",", asLineNames );
 	if( asLineNames.empty() )
-		RageException::Throw( "%s::LineNames is empty.", m_sName.c_str() );
+		RageException::Throw( "\"%s : LineNames\" is empty.", m_sName.c_str() );
 
 	if( FORCE_ALL_PLAYERS )
 	{
@@ -59,7 +59,7 @@ void ScreenOptionsMaster::Init()
 
 		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( cmds );
 		if( pHand == NULL )
-			RageException::Throw( "Invalid OptionRowHandler '%s' in %s::Line%i", cmds.GetOriginalCommandString().c_str(), m_sName.c_str(), i );
+			RageException::Throw( "Invalid OptionRowHandler \"%s\" in \"%s : Line%i\".", cmds.GetOriginalCommandString().c_str(), m_sName.c_str(), i );
 		OptionRowHandlers.push_back( pHand );
 	}
 

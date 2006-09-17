@@ -133,7 +133,7 @@ int RageSoundReader_Vorbisfile::GetLength() const
 	int len = int(ov_time_total(vf, -1) * 1000);
 #endif
 	if( len == OV_EINVAL )
-		RageException::Throw("RageSoundReader_Vorbisfile::GetLength: ov_time_total returned OV_EINVAL");
+		RageException::Throw( "RageSoundReader_Vorbisfile::GetLength: ov_time_total returned OV_EINVAL." );
 
 	return len; 
 }
@@ -215,7 +215,8 @@ int RageSoundReader_Vorbisfile::Read(char *buf, unsigned len)
 				ASSERT( vi != NULL );
 
 				if( (unsigned) vi->channels != channels )
-					RageException::Throw( "File \"%s\" changes channel count from %i to %i; not supported", channels, vi->channels );
+					RageException::Throw( "File \"%s\" changes channel count from %i to %i; not supported.",
+							      filename.c_str(), channels, (int)vi->channels );
 			}
 
 

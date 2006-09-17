@@ -153,7 +153,7 @@ void GameState::ApplyCmdline()
 	{
 		int pn = atoi( sPlayer )-1;
 		if( !IsAnInt( sPlayer ) || pn < 0 || pn >= NUM_PLAYERS )
-			RageException::Throw( "Invalid argument \"--player=%s\"", sPlayer.c_str() );
+			RageException::Throw( "Invalid argument \"--player=%s\".", sPlayer.c_str() );
 
 		JoinPlayer( (PlayerNumber) pn );
 	}
