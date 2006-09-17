@@ -106,15 +106,13 @@ static bool ConvertFromCP( RString &sText, int iCodePage )
 		return false;
 	const size_t size = CFStringGetMaximumSizeForEncoding( CFStringGetLength(old), kCFStringEncodingUTF8 );
 	
-	char *buf = new char[size];
-	if( !CFStringGetCString(old, buf, size, kCFStringEncodingUTF8) )
-	{
-		delete[] buf;
-		return false;
-	}
+	char *buf = new char[size+1];
+	buf[0] = '\0';
+	bool result = CFStringGetCString( old, buf, size, kCFStringEncodingUTF8 );
 	sText = buf;
 	delete[] buf;
-	return true;
+	CFRelease( old );
+	return result;
 }
 
 static bool AttemptEnglishConversion( RString &sText ) { return ConvertFromCP( sText, 1252 ); }
