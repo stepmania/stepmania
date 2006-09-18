@@ -266,28 +266,7 @@ RString vssprintf( const char *fmt, va_list argList )
 #  include <D3DX8Core.h>
 #else
 #  include <windows.h>
-#  include <dxerr8.h>
-#  if defined(_MSC_VER)
-#    pragma comment(lib, "dxerr8.lib")
-#  endif
 #endif
-
-RString hr_ssprintf( int hr, const char *fmt, ...)
-{
-	va_list	va;
-	va_start(va, fmt);
-	RString s = vssprintf( fmt, va );
-	va_end(va);
-
-#ifdef _XBOX
-	char szError[1024] = "";
-	D3DXGetErrorString( hr, szError, sizeof(szError) );
-#else	
-	const char *szError = DXGetErrorString8( hr );
-#endif
-
-	return s + ssprintf( " (%s)", szError );
-}
 
 RString werr_ssprintf( int err, const char *fmt, ...)
 {
