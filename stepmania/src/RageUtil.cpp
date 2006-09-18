@@ -323,7 +323,7 @@ RString ConvertWstringToCodepage( wstring s, int iCodePage )
 	RString ret;
 	WideCharToMultiByte( CP_ACP, 0, s.data(), s.size(), 
 					ret.GetBuffer( iBytes ), iBytes, NULL, FALSE );
-	ret.RelBuf( iBytes );
+	ret.ReleaseBuffer( iBytes );
 
 	return ret;
 }
