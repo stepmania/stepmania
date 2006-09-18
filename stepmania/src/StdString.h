@@ -861,22 +861,18 @@ typedef CStdStr<char>		CStdStringA;	// a better std::string
 //		CStdString objects.  This is useful for maps in which the key may be the
 //		 proper string but in the wrong case.
 // -----------------------------------------------------------------------------
-#define StdStringLessNoCaseW		SSLNCW	// avoid VC compiler warning 4786
-#define StdStringEqualsNoCaseW		SSENCW		
-#define StdStringLessNoCaseA		SSLNCA		
-#define StdStringEqualsNoCaseA		SSENCA		
 
-#define StdStringLessNoCase			SSLNCA
+#define StdStringLessNoCase		SSLNCA
 #define StdStringEqualsNoCase		SSENCA
 
-struct StdStringLessNoCaseA
+struct StdStringLessNoCase
 	: std::binary_function<CStdStringA, CStdStringA, bool>
 {
 	inline
 	bool operator()(const CStdStringA& sLeft, const CStdStringA& sRight) const
 	{ return ssicmp(sLeft.c_str(), sRight.c_str()) < 0; }
 };
-struct StdStringEqualsNoCaseA
+struct StdStringEqualsNoCase
 	: std::binary_function<CStdStringA, CStdStringA, bool>
 {
 	inline
