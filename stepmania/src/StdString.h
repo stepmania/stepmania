@@ -303,19 +303,10 @@ inline void	ssadd(std::string& sDst, PCSTR pA)
 	{
 		MakeUpper( pT, nLen );
 	}
-// -----------------------------------------------------------------------------
-//  vsprintf/vswprintf or _vsnprintf/_vsnwprintf equivalents.  In standard
-//  builds we can't use _vsnprintf/_vsnwsprintf because they're MS extensions.
-// -----------------------------------------------------------------------------
-	inline int ssvsprintf(PSTR pA, size_t nCount, PCSTR pFmtA, va_list vl)
-	{
-#if defined(WIN32)
-		return _vsnprintf(pA, nCount, pFmtA, vl);
-#else
-		return vsnprintf(pA, nCount, pFmtA, vl);
-#endif
-	}
 
+#if defined(WIN32)
+#define vsnprintf _vsnprintf
+#endif
 
 //			Now we can define the template (finally!)
 // =============================================================================
@@ -741,7 +732,7 @@ public:
 
 			nChars			+= ((nTry+1) * FMT_BLOCK_SIZE);
 			pBuf			= reinterpret_cast<CT*>(_alloca(sizeof(CT)*nChars));
-			nUsed			= ssvsprintf(pBuf, nChars-1, szFormat, argList);
+			nUsed			= vsnprintf(pBuf, nChars-1, szFormat, argList);
 
 			// Ensure proper NULL termination.
 
@@ -770,11 +761,11 @@ public:
 			va_list tmp;
 			va_copy( tmp, argList );
 			char ignore;
-			int iNeeded = ssvsprintf( &ignore, 0, szFormat, tmp );
+			int iNeeded = vsnprintf( &ignore, 0, szFormat, tmp );
 			va_end(tmp);
 
 			char *buf = GetBuffer( iNeeded+1 );
-			ssvsprintf( buf, iNeeded+1, szFormat, argList );
+			vsnprintf( buf, iNeeded+1, szFormat, argList );
 			ReleaseBuffer( iNeeded );
 			return;
 		}
@@ -785,7 +776,7 @@ public:
 		{
 			// Grow more than linearly (e.g. 512, 1536, 3072, etc)
 			char *buf = GetBuffer(nChars);
-			int nUsed = ssvsprintf(buf, nChars-1, szFormat, argList);
+			int nUsed = vsnprintf(buf, nChars-1, szFormat, argList);
 
 			if(nUsed == -1)
 			{
@@ -832,11 +823,6 @@ public:
 
 		nCount = max(0, min(nCount, static_cast<int>(this->size())));
 		return this->substr(0, static_cast<MYSIZE>(nCount)); 
-	}
-
-	void MakeReverse()
-	{
-		std::reverse(this->begin(), this->end());
 	}
 
 	void ReleaseBuffer(int nNewLen=-1)
@@ -932,16 +918,7 @@ public:
 //	Now typedef our class names based upon this humongous template
 
 typedef CStdStr<char>		CStdStringA;	// a better std::string
-
-// Define friendly names for some of these functions
-
-	#define CStdString				CStdStringA
-
-// ...and some shorter names for the space-efficient
-
-#define WUFmtA						WUFormatA
-#define	WUFmtW						WUFormatW
-#define WUFmt						WUFormat
+#define CStdString				CStdStringA
 
 
 // -----------------------------------------------------------------------------
