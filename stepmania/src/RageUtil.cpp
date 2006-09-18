@@ -296,10 +296,10 @@ RString vssprintf( const char *szFormat, va_list argList )
 		int iNeeded = vsnprintf( &ignore, 0, szFormat, tmp );
 		va_end(tmp);
 
-		char *buf = GetBuffer( iNeeded+1 );
+		char *buf = sStr.GetBuffer( iNeeded+1 );
 		vsnprintf( buf, iNeeded+1, szFormat, argList );
-		ReleaseBuffer( iNeeded );
-		return;
+		sStr.ReleaseBuffer( iNeeded );
+		return sStr;
 	}
 
 	int iChars = FMT_BLOCK_SIZE;
@@ -307,13 +307,13 @@ RString vssprintf( const char *szFormat, va_list argList )
 	while( 1 )
 	{
 		// Grow more than linearly (e.g. 512, 1536, 3072, etc)
-		char *buf = GetBuffer(iChars);
+		char *buf = sStr.GetBuffer(iChars);
 		int iUsed = vsnprintf(buf, iChars-1, szFormat, argList);
 
 		if( iUsed == -1 )
 		{
 			iChars += ((iTry+1) * FMT_BLOCK_SIZE);
-			ReleaseBuffer();
+			sStr.ReleaseBuffer();
 			++iTry;
 			continue;
 		}
