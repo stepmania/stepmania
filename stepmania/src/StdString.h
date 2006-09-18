@@ -188,18 +188,11 @@ inline void	ssasn(std::string& sDst, const std::string& sSrc)
 }
 inline void	ssasn(std::string& sDst, PCSTR pA)
 {
-	// Watch out for NULLs, as always.
-
-	if ( 0 == pA )
-	{
-		sDst.erase();
-	}
-
 #if defined(HAVE_ASSIGN_FIX)
 	// If pA actually points to part of sDst, we must NOT erase(), but
 	// rather take a substring
 
-	else if ( pA >= sDst.c_str() && pA <= sDst.c_str() + sDst.size() )
+	if ( pA >= sDst.c_str() && pA <= sDst.c_str() + sDst.size() )
 	{
 		sDst =sDst.substr(static_cast<SS_SIZETYPE>(pA-sDst.c_str()));
 	}
@@ -212,8 +205,8 @@ inline void	ssasn(std::string& sDst, PCSTR pA)
 		Q172398(sDst);
 		sDst.assign(pA);
 	}
-#else
 	else
+#else
 		sDst.assign(pA);
 #endif
 }
@@ -395,9 +388,8 @@ public:
 	{
 	}
 
-	CStdStr(const std::string& str)
+	CStdStr(const std::string& str): MYBASE(str)
 	{
-		ssasn(*this, str);
 	}
 
 	CStdStr(PCMYSTR pT, MYSIZE n) : MYBASE(pT, n)
