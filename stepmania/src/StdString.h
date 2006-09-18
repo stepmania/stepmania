@@ -229,31 +229,25 @@ inline void ssasn(std::string& sDst, const int nNull)
 // -----------------------------------------------------------------------------
 inline void	ssadd(std::string& sDst, const std::string& sSrc)
 {
-	if ( &sDst == &sSrc )
-		sDst.reserve(2*sDst.size());
-
 	sDst.append(sSrc.c_str());
 }
 inline void	ssadd(std::string& sDst, PCSTR pA)
 {
-	if ( pA )
-	{
-		// If the string being added is our internal string or a part of our
-		// internal string, then we must NOT do any reallocation without
-		// first copying that string to another object (since we're using a
-		// direct pointer)
+	// If the string being added is our internal string or a part of our
+	// internal string, then we must NOT do any reallocation without
+	// first copying that string to another object (since we're using a
+	// direct pointer)
 
-		if ( pA >= sDst.c_str() && pA <= sDst.c_str()+sDst.length())
-		{
-			if ( sDst.capacity() <= sDst.size()+sslen(pA) )
-				sDst.append(std::string(pA));
-			else
-				sDst.append(pA);
-		}
+	if ( pA >= sDst.c_str() && pA <= sDst.c_str()+sDst.length())
+	{
+		if ( sDst.capacity() <= sDst.size()+sslen(pA) )
+			sDst.append(std::string(pA));
 		else
-		{
-			sDst.append(pA); 
-		}
+			sDst.append(pA);
+	}
+	else
+	{
+		sDst.append(pA); 
 	}
 }
 
