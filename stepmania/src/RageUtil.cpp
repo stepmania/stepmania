@@ -252,11 +252,81 @@ RString ssprintf( const char *fmt, ...)
 	return vssprintf(fmt, va);
 }
 
+#define MAX_FMT_TRIES		5	 // #of times we try 
+#define FMT_BLOCK_SIZE		2048 // # of bytes to increment per try
 
-RString vssprintf( const char *fmt, va_list argList )
+RString vssprintf( const char *szFormat, va_list argList )
 {
 	RString sStr;
-	sStr.FormatV( fmt, argList );
+
+#if defined(WIN32) && !defined(__MINGW32__)
+	char *pBuf = NULL;
+	int iChars = 1;
+	int iUsed = 0;
+	size_t iActual = 0;
+	int iTry = 0;
+
+	do	
+	{
+		// Grow more than linearly (e.g. 512, 1536, 3072, etc)
+		iChars += (iTry+1) * FMT_BLOCK_SIZE;
+		pBuf = (char*) _alloca( sizeof(char)*iChars );
+		iUsed = vsnprintf( pBuf, iChars-1, szFormat, argList );
+
+		// Ensure proper NULL termination.
+		iActual = iUsed == -1 ? iChars-1 : min(iUsed, iChars-1);
+		pBuf[iActual+1]= '\0';
+	} while ( iUsed < 0 && iTry++ < MAX_FMT_TRIES );
+
+	// assign whatever we managed to format
+	sStr.assign( pBuf, iActual );
+#else
+	static bool bExactSizeSupported;
+	static bool bInitialized = false;
+	if( !bInitialized )
+	{
+		/* Some systems return the actual size required when snprintf
+		 * doesn't have enough space.  This lets us avoid wasting time
+		 * iterating, and wasting memory. */
+		bInitialized = true;
+		char ignore;
+		bExactSizeSupported = ( snprintf( &ignore, 0, "Hello World" ) == 11 );
+	}
+
+	if( bExactSizeSupported )
+	{
+		va_list tmp;
+		va_copy( tmp, argList );
+		char ignore;
+		int iNeeded = vsnprintf( &ignore, 0, szFormat, tmp );
+		va_end(tmp);
+
+		char *buf = GetBuffer( iNeeded+1 );
+		vsnprintf( buf, iNeeded+1, szFormat, argList );
+		ReleaseBuffer( iNeeded );
+		return;
+	}
+
+	int iChars = FMT_BLOCK_SIZE;
+	int iTry = 1;
+	do	
+	{
+		// Grow more than linearly (e.g. 512, 1536, 3072, etc)
+		char *buf = GetBuffer(iChars);
+		int iUsed = vsnprintf(buf, iChars-1, szFormat, argList);
+
+		if( iUsed == -1 )
+		{
+			iChars += ((iTry+1) * FMT_BLOCK_SIZE);
+			ReleaseBuffer();
+			continue;
+		}
+
+		/* OK */
+		sStr.ReleaseBuffer(iUsed);
+		break;
+	} while ( iTry++ < MAX_FMT_TRIES );
+#endif
 	return sStr;
 }
 
