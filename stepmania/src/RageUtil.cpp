@@ -252,7 +252,6 @@ RString ssprintf( const char *fmt, ...)
 	return vssprintf(fmt, va);
 }
 
-#define MAX_FMT_TRIES		5	 // #of times we try 
 #define FMT_BLOCK_SIZE		2048 // # of bytes to increment per try
 
 RString vssprintf( const char *szFormat, va_list argList )
@@ -271,12 +270,11 @@ RString vssprintf( const char *szFormat, va_list argList )
 		iChars += iTry * FMT_BLOCK_SIZE;
 		pBuf = (char*) _alloca( sizeof(char)*iChars );
 		iUsed = vsnprintf( pBuf, iChars-1, szFormat, argList );
-	} while ( iUsed < 0 && iTry++ < MAX_FMT_TRIES );
-
-	int iActual = min( iUsed, iChars-1 );
+		++iTry;
+	} while( iUsed < 0 );
 
 	// assign whatever we managed to format
-	sStr.assign( pBuf, iActual );
+	sStr.assign( pBuf, iUsed );
 #else
 	static bool bExactSizeSupported;
 	static bool bInitialized = false;
@@ -306,7 +304,7 @@ RString vssprintf( const char *szFormat, va_list argList )
 
 	int iChars = FMT_BLOCK_SIZE;
 	int iTry = 1;
-	do	
+	while( 1 )
 	{
 		// Grow more than linearly (e.g. 512, 1536, 3072, etc)
 		char *buf = GetBuffer(iChars);
@@ -316,13 +314,14 @@ RString vssprintf( const char *szFormat, va_list argList )
 		{
 			iChars += ((iTry+1) * FMT_BLOCK_SIZE);
 			ReleaseBuffer();
+			++iTry;
 			continue;
 		}
 
 		/* OK */
 		sStr.ReleaseBuffer(iUsed);
 		break;
-	} while ( iTry++ < MAX_FMT_TRIES );
+	}
 #endif
 	return sStr;
 }
