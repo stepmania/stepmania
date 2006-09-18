@@ -662,38 +662,6 @@ public:
 		this->resize(static_cast<MYSIZE>(nNewLen > -1 ? nNewLen : sslen(this->c_str())));
 	}
 
-	// -------------------------------------------------------------------------
-	// FUNCTION:  CStdStr::Format
-	//		void _cdecl Formst(CStdStringA& PCSTR szFormat, ...)
-	//		void _cdecl Format(PCSTR szFormat);
-	//           
-	// DESCRIPTION:
-	//		This function does sprintf/wsprintf style formatting on CStdStringA
-	//		objects.  It looks a lot like MFC's RString::Format.  Some people
-	//		might even call this identical.  Fortunately, these people are now
-	//		dead.
-	//
-	// PARAMETERS: 
-	//		nId - ID of string resource holding the format string
-	//		szFormat - a PCSTR holding the format specifiers
-	//		argList - a va_list holding the arguments for the format specifiers.
-	//
-	// RETURN VALUE:  None.
-	// -------------------------------------------------------------------------
-	// formatting (using wsprintf style formatting)
-
-	// If they want a Format() function that safely handles string objects
-	// without casting
- 
-
-	void Format(const CT* szFmt, ...)
-	{
-		va_list argList;
-		va_start(argList, szFmt);
-		FormatV(szFmt, argList);
-		va_end(argList);
-	}
-
 	#define MAX_FMT_TRIES		5	 // #of times we try 
 	#define FMT_BLOCK_SIZE		2048 // # of bytes to increment per try
 	#define BUFSIZE_1ST	256
