@@ -263,20 +263,17 @@ RString vssprintf( const char *szFormat, va_list argList )
 	char *pBuf = NULL;
 	int iChars = 1;
 	int iUsed = 0;
-	size_t iActual = 0;
 	int iTry = 0;
 
 	do	
 	{
 		// Grow more than linearly (e.g. 512, 1536, 3072, etc)
-		iChars += (iTry+1) * FMT_BLOCK_SIZE;
+		iChars += iTry * FMT_BLOCK_SIZE;
 		pBuf = (char*) _alloca( sizeof(char)*iChars );
 		iUsed = vsnprintf( pBuf, iChars-1, szFormat, argList );
-
-		// Ensure proper NULL termination.
-		iActual = iUsed == -1 ? iChars-1 : min(iUsed, iChars-1);
-		pBuf[iActual+1]= '\0';
 	} while ( iUsed < 0 && iTry++ < MAX_FMT_TRIES );
+
+	int iActual = min( iUsed, iChars-1 );
 
 	// assign whatever we managed to format
 	sStr.assign( pBuf, iActual );
