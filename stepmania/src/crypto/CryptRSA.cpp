@@ -158,7 +158,7 @@ static Bignum rsa_privkey_op(Bignum input, const RSAKey *key)
 				 * Conceptually the following few lines are equivalent to
 				 *    byte = random_byte();
 				 */
-				if (digestused >= ARRAYSIZE(digest512)) {
+				if (digestused >= ARRAYLEN(digest512)) {
 					unsigned char seqbuf[4];
 					PUT_32BIT(seqbuf, hashseq);
 					SHA512_Init(&ss);

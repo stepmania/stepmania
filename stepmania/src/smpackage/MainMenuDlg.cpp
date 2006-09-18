@@ -177,7 +177,7 @@ BOOL MainMenuDlg::OnInitDialog()
 	//DialogUtil::SetDlgItemHeader( *this, IDC_STATIC_HEADER_TEXT, "header" );
 
 	TCHAR szCurDir[MAX_PATH];
-	GetCurrentDirectory( ARRAYSIZE(szCurDir), szCurDir );
+	GetCurrentDirectory( ARRAYLEN(szCurDir), szCurDir );
 	GetDlgItem( IDC_EDIT_INSTALLATION )->SetWindowText( szCurDir );
 
 	return TRUE;  // return TRUE unless you set the focus to a control
