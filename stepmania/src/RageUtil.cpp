@@ -322,7 +322,7 @@ RString ConvertWstringToCodepage( wstring s, int iCodePage )
 
 	RString ret;
 	WideCharToMultiByte( CP_ACP, 0, s.data(), s.size(), 
-					ret.GetBuf( iBytes ), iBytes, NULL, FALSE );
+					ret.GetBuffer( iBytes ), iBytes, NULL, FALSE );
 	ret.RelBuf( iBytes );
 
 	return ret;
@@ -1777,7 +1777,7 @@ RString Capitalize( const RString &s )
 		return RString();
 
 	RString s2 = s;
-	char *pBuf = s2.GetBuf();
+	char *pBuf = s2.GetBuffer();
 	UnicodeDoUpper( pBuf, s2.size(), g_UpperCase );
 	s2.ReleaseBuffer();
 
