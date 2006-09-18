@@ -591,7 +591,7 @@ try_element_again:
 	
 
 	if( asElementPaths.size() == 0 )
-		return NULL;	// This isn't fatal.
+		return RString();	// This isn't fatal.
 
 	FilterFileLanguages( asElementPaths );
 
@@ -725,7 +725,7 @@ try_element_again:
 	if( bOptional )
 	{
 		Cache[sFileName] = "";
-		return NULL;
+		return RString();
 	}
 
 	const RString &sCategory = ElementCategoryToString(category);
@@ -840,7 +840,7 @@ RString ThemeManager::GetMetricRaw( const IniFile &ini, const RString &sClassNam
 	while( true )
 	{
 		RString ret;
-		if( ThemeManager::GetMetricRawRecursive( ini, sClassName, sValueName, ret ) )
+		if( ThemeManager::GetMetricRawRecursive(ini, sClassName, sValueName, ret) )
 			return ret;
 		
 		RString sCurMetricPath = GetMetricsIniPath( m_sCurThemeName );
@@ -860,7 +860,7 @@ RString ThemeManager::GetMetricRaw( const IniFile &ini, const RString &sClassNam
 				LOG->UserLog( RageLog::LogType_ThemeMetric, sClassName + " : " + sValueName,
 					      "could not be found in \"%s\" or \"%s\".",
 					      sCurMetricPath.c_str(), sDefaultMetricPath.c_str() );
-				return NULL;
+				return RString();
 			default:
 				ASSERT(0);
 		}
@@ -870,7 +870,7 @@ RString ThemeManager::GetMetricRaw( const IniFile &ini, const RString &sClassNam
 /* Get a string metric. */
 RString ThemeManager::GetMetric( const RString &sClassName, const RString &sValueName )
 {
-	RString sValue = GetMetricRaw(g_pLoadedThemeData->iniMetrics,sClassName,sValueName);
+	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName);
 
 	EvaluateString( sValue );
 
@@ -1037,7 +1037,7 @@ RString ThemeManager::GetString( const RString &sClassName, const RString &sValu
 	sValueName.Replace( "\r\n", "\\n" );
 	sValueName.Replace( "\n", "\\n" );
 
-	RString s = GetMetricRaw(g_pLoadedThemeData->iniStrings,sClassName,sValueName);
+	RString s = GetMetricRaw( g_pLoadedThemeData->iniStrings, sClassName, sValueName );
 	FontCharAliases::ReplaceMarkers( s );
 
 	// Don't EvalulateString.  Strings are raw and shouldn't allow Lua.
