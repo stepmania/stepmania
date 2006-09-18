@@ -301,7 +301,7 @@ static RString CheckMixingBlacklist()
 		/* ALSA Driver: 0: Aureal Vortex au8830 [au8830], device 0: AU88x0 ADB [adb], 32/32 subdevices avail
 		 * ALSA segfaults after creating about ten subdevices. */
 		"au8830",
-	}, *blacklist_end = blacklist+ARRAYSIZE(blacklist);
+	}, *blacklist_end = blacklist+ARRAYLEN(blacklist);
 	
 	if( find( &blacklist[0], blacklist_end, sID ) != blacklist_end )
 		return ssprintf( "ALSA driver \"%s\" not using hardware mixing", sID.c_str() );

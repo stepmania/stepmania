@@ -96,7 +96,7 @@ void InputHandler_Xbox::Update()
 		XInputGetState( joysticks[i], &xis );
 			
 		// check buttons
-		for(int j = 0; j < ARRAYSIZE(buttonMasks); j++)
+		for(int j = 0; j < ARRAYLEN(buttonMasks); j++)
 		{
 			DWORD nowPressed = xis.Gamepad.wButtons & buttonMasks[j];
 			DWORD wasPressed = lastState[i].wButtons & buttonMasks[j];
@@ -116,7 +116,7 @@ void InputHandler_Xbox::Update()
 		}
 		
 		// check analog buttons
-		for(int j = 0; j < ARRAYSIZE(xis.Gamepad.bAnalogButtons); j++)
+		for(int j = 0; j < ARRAYLEN(xis.Gamepad.bAnalogButtons); j++)
 		{
 			bool nowPressed = xis.Gamepad.bAnalogButtons[j] > XINPUT_GAMEPAD_MAX_CROSSTALK;
 			bool wasPressed = lastState[i].bAnalogButtons[j] > XINPUT_GAMEPAD_MAX_CROSSTALK;
@@ -138,7 +138,7 @@ void InputHandler_Xbox::Update()
 		// check thumbsticks
 		SHORT axes[] = { xis.Gamepad.sThumbLX, xis.Gamepad.sThumbLY, xis.Gamepad.sThumbRX, xis.Gamepad.sThumbRY};
 
-		for(int j = 0; j < ARRAYSIZE(axes); j++)
+		for(int j = 0; j < ARRAYLEN(axes); j++)
 		{
 			if(axes[j] != 0)
 			{

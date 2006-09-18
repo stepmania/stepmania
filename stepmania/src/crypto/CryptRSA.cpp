@@ -122,7 +122,7 @@ static Bignum rsa_privkey_op(Bignum input, const RSAKey *key)
 
 	SHA512_State ss;
 	unsigned char digest512[64];
-	unsigned digestused = ARRAYSIZE(digest512);
+	unsigned digestused = ARRAYLEN(digest512);
 	int hashseq = 0;
 
 	/*

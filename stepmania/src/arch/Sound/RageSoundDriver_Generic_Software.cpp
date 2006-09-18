@@ -63,7 +63,7 @@ void RageSound_Generic_Software::Mix( int16_t *buf, int frames, int64_t frameno,
 
 	static RageSoundMixBuffer mix;
 
-	for( unsigned i = 0; i < ARRAYSIZE(sounds); ++i )
+	for( unsigned i = 0; i < ARRAYLEN(sounds); ++i )
 	{
 		/* s.snd can not safely be accessed from here. */
 		sound &s = sounds[i];
@@ -174,7 +174,7 @@ void RageSound_Generic_Software::DecodeThread()
 		LockMut( m_Mutex );
 //		LOG->Trace("begin mix");
 
-		for( unsigned i = 0; i < ARRAYSIZE(sounds); ++i )
+		for( unsigned i = 0; i < ARRAYLEN(sounds); ++i )
 		{
 			/* The volume can change while the sound is playing; update it. */
 			/* XXX: We can't access snd when in STOPPING; it doesn't exist anymore. */
@@ -195,7 +195,7 @@ void RageSound_Generic_Software::DecodeThread()
 		 * causing major CPU bursts when the stream starts or underruns.  (Filling 32k
 		 * takes more CPU than filling 4k frames, and may cause a gameplay skip.)
 		 */
-		for( unsigned i = 0; i < ARRAYSIZE(sounds); ++i )
+		for( unsigned i = 0; i < ARRAYLEN(sounds); ++i )
 		{
 			if( sounds[i].state != sound::PLAYING )
 				continue;
@@ -245,7 +245,7 @@ int RageSound_Generic_Software::GetDataForSound( sound &s )
 	ASSERT( psize[0] > 0 );
 
 	sound_block *b = p[0];
-	int size = ARRAYSIZE(b->buf)/channels;
+	int size = ARRAYLEN(b->buf)/channels;
 	bool eof = !s.snd->GetDataToPlay( b->buf, size, b->position, b->frames_in_buffer );
 	b->p = b->buf;
 
@@ -263,7 +263,7 @@ void RageSound_Generic_Software::Update()
 	/* We must not lock here, since the decoder thread might hold the lock for a
 	 * while at a time.  This is threadsafe, because once a sound is in STOPPING,
 	 * this is the only place it'll be changed (to STOPPED). */
-	for( unsigned i = 0; i < ARRAYSIZE(sounds); ++i )
+	for( unsigned i = 0; i < ARRAYLEN(sounds); ++i )
 	{
 		switch( sounds[i].state )
 		{
@@ -316,10 +316,10 @@ void RageSound_Generic_Software::StartMixing( RageSoundBase *snd )
 	m_SoundListMutex.Lock();
 
 	unsigned i;
-	for( i = 0; i < ARRAYSIZE(sounds); ++i )
+	for( i = 0; i < ARRAYLEN(sounds); ++i )
 		if( sounds[i].state == sound::AVAILABLE )
 			break;
-	if( i == ARRAYSIZE(sounds) )
+	if( i == ARRAYLEN(sounds) )
 	{
 		m_SoundListMutex.Unlock();
 		return;
@@ -381,10 +381,10 @@ void RageSound_Generic_Software::StopMixing( RageSoundBase *snd )
 
 	/* Find the sound. */
 	unsigned i;
-	for( i = 0; i < ARRAYSIZE(sounds); ++i )
+	for( i = 0; i < ARRAYLEN(sounds); ++i )
 		if( sounds[i].state != sound::AVAILABLE && sounds[i].snd == snd )
 			break;
-	if( i == ARRAYSIZE(sounds) )
+	if( i == ARRAYLEN(sounds) )
 	{
 		LOG->Trace( "not stopping a sound because it's not playing" );
 		return;
@@ -416,14 +416,14 @@ bool RageSound_Generic_Software::PauseMixing( RageSoundBase *snd, bool bStop )
 
 	/* Find the sound. */
 	unsigned i;
-	for( i = 0; i < ARRAYSIZE(sounds); ++i )
+	for( i = 0; i < ARRAYLEN(sounds); ++i )
 		if( sounds[i].state != sound::AVAILABLE && sounds[i].snd == snd )
 			break;
 
 	/* A sound can be paused in PLAYING or STOPPING.  (STOPPING means the sound
 	 * has been decoded to the end, and we're waiting for that data to finish, so
 	 * externally it looks and acts like PLAYING.) */
-	if( i == ARRAYSIZE(sounds) ||
+	if( i == ARRAYLEN(sounds) ||
 		(sounds[i].state != sound::PLAYING && sounds[i].state != sound::STOPPING) )
 	{
 		LOG->Trace( "not pausing a sound because it's not playing" );

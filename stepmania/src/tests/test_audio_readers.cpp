@@ -344,7 +344,7 @@ bool RunTests( SoundReader *snd, const TestFile &tf )
 		if( !Identical )
 		{
 			LOG->Trace("Expected data:");
-			dump( tf.initial, ARRAYSIZE(tf.initial) );
+			dump( tf.initial, ARRAYLEN(tf.initial) );
 			LOG->Trace(" ");
 			Failed = true;
 		}
@@ -362,7 +362,7 @@ bool RunTests( SoundReader *snd, const TestFile &tf )
 		if( !Identical )
 		{
 			LOG->Trace("Expected half second data:");
-                        dump( tf.later, ARRAYSIZE(tf.later) );
+                        dump( tf.later, ARRAYLEN(tf.later) );
 			LOG->Trace("Got half second data:");
 			dump( LaterData, 16 );
 			Failed = true;

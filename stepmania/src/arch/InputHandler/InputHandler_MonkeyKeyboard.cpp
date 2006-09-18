@@ -50,7 +50,7 @@ static const DeviceButton g_keys[] =
 
 static DeviceButton GetRandomKeyboardKey()
 {
-	int index = RandomInt( ARRAYSIZE(g_keys) );
+	int index = RandomInt( ARRAYLEN(g_keys) );
 	return g_keys[index];
 }
 

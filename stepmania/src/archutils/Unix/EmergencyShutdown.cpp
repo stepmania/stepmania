@@ -8,7 +8,7 @@ static unsigned g_iNumEmergencyFuncs = 0;
 
 void RegisterEmergencyShutdownCallback( void (*pFunc)() )
 {
-	ASSERT( g_iNumEmergencyFuncs+1 < ARRAYSIZE(g_pEmergencyFunc) );
+	ASSERT( g_iNumEmergencyFuncs+1 < ARRAYLEN(g_pEmergencyFunc) );
 	g_pEmergencyFunc[ g_iNumEmergencyFuncs++ ] = pFunc;
 }
 
