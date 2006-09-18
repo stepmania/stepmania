@@ -1,6 +1,7 @@
 #include "global.h"
 #include "LowLevelWindow_Win32.h"
 #include "archutils/Win32/DirectXHelpers.h"
+#include "archutils/Win32/ErrorStrings.h"
 #include "archutils/Win32/GraphicsWindow.h"
 #include "RageUtil.h"
 #include "RageLog.h"

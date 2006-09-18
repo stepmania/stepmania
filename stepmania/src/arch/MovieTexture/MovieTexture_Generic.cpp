@@ -8,6 +8,7 @@
 #include "RageUtil.h"
 
 #if defined(WIN32) && !defined(XBOX)
+#include "archutils/Win32/ErrorStrings.h"
 #include <windows.h>
 #endif
 

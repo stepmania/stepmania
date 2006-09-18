@@ -13,6 +13,7 @@
 #include "arch/Arch.h"
 #include "archutils/Win32/WindowsResources.h"
 #include "archutils/Win32/DialogUtil.h"
+#include "archutils/Win32/ErrorStrings.h"
 #include "archutils/Win32/GotoURL.h"
 #include "archutils/Win32/RestartProgram.h"
 #include "archutils/Win32/CrashHandlerNetworking.h"

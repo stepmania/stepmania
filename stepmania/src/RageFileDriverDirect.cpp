@@ -15,6 +15,7 @@
 #include <dirent.h>
 #include <fcntl.h>
 #else
+#include "archutils/Win32/ErrorStrings.h"
 #if !defined(_XBOX)
 #include <windows.h>
 #endif

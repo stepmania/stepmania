@@ -6,6 +6,7 @@
 #include "RageUtil.h"
 #include "RageSoundManager.h"
 #include "PrefsManager.h"
+#include "archutils/Win32/ErrorStrings.h"
 
 static const int channels = 2;
 static const int bytes_per_frame = channels*2; /* 16-bit */

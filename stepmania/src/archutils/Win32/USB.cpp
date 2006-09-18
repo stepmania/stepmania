@@ -2,6 +2,7 @@
 #include "USB.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "archutils/Win32/ErrorStrings.h"
 
 #if defined(_MSC_VER)
 #pragma comment(lib, "archutils/Win32/ddk/setupapi.lib") 

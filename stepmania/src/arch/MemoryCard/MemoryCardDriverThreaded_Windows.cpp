@@ -2,6 +2,7 @@
 #include "MemoryCardDriverThreaded_Windows.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "archutils/Win32/ErrorStrings.h"
 
 MemoryCardDriverThreaded_Windows::MemoryCardDriverThreaded_Windows()
 {

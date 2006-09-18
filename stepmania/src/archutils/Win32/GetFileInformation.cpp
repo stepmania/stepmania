@@ -2,6 +2,7 @@
 #include "GetFileInformation.h"
 
 #include "RageUtil.h"
+#include "archutils/Win32/ErrorStrings.h"
 #include <sys/stat.h>
 #include <windows.h>
 #include <tlhelp32.h>

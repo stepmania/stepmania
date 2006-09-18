@@ -5,6 +5,7 @@
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
 #include "RageSurface_Load.h"
+#include "archutils/Win32/ErrorStrings.h"
 
 #include <wingdi.h>
 

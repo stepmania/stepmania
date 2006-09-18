@@ -11,6 +11,7 @@
 #include "RageUtil.h"
 #include "RageSoundManager.h"
 #include "PrefsManager.h"
+#include "archutils/Win32/ErrorStrings.h"
 
 const int channels = 2;
 const int bytes_per_frame = channels*2;		/* 16-bit */

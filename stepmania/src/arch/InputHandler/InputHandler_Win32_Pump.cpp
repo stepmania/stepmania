@@ -5,6 +5,7 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "RageInputDevice.h"
+#include "archutils/Win32/ErrorStrings.h"
 #include "archutils/Win32/USB.h"
 
 InputHandler_Win32_Pump::InputHandler_Win32_Pump()

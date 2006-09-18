@@ -8,6 +8,7 @@
 #include "ProductInfo.h"
 
 #include "archutils/win32/AppInstance.h"
+#include "archutils/win32/ErrorStrings.h"
 #include "archutils/win32/GotoURL.h"
 #include "archutils/win32/RestartProgram.h"
 #if !defined(SMPACKAGE)

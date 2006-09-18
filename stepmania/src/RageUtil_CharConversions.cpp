@@ -1,12 +1,12 @@
 #include "global.h"
 #include "RageUtil_CharConversions.h"
-
 #include "RageUtil.h"
 #include "RageLog.h"
 
 #if defined(_WINDOWS)
 
-#include "windows.h"
+#include "archutils/Win32/ErrorStrings.h"
+#include <windows.h>
 
 /* Convert from the given codepage to UTF-8.  Return true if successful. */
 static bool CodePageConvert( RString &sText, int iCodePage )

@@ -7,6 +7,7 @@
 #include "archutils/win32/AppInstance.h"
 #include "archutils/win32/crash.h"
 #include "archutils/win32/DebugInfoHunt.h"
+#include "archutils/win32/ErrorStrings.h"
 #include "archutils/win32/RestartProgram.h"
 #include "archutils/win32/GotoURL.h"
 #include "archutils/Win32/RegistryAccess.h"

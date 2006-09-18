@@ -3,6 +3,7 @@
 #include "RageUtil.h"
 #include "RageThreads.h"
 #include "RageTimer.h"
+#include "archutils/Win32/ErrorStrings.h"
 
 const int MAX_THREADS=128;
 

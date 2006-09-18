@@ -2,6 +2,7 @@
 #include "MessageWindow.h"
 #include "RageUtil.h"
 #include "AppInstance.h"
+#include "archutils/Win32/ErrorStrings.h"
 
 MessageWindow::MessageWindow( const RString &sClassName )
 {
