@@ -488,9 +488,8 @@ bool IsADirectory( const RString &sPath );
 unsigned GetFileSizeInBytes( const RString &sFilePath );
 void FlushDirCache();
 
-// call FixSlashes on any path that came from the user
+// call FixSlashesInPlace on any path that came from the user
 void FixSlashesInPlace( RString &sPath );
-RString FixSlashes( RString sPath );
 void CollapsePath( RString &sPath, bool bRemoveLeadingDot=false );
 
 bool FromString( const RString &sValue, int &out );

@@ -1831,12 +1831,6 @@ void FixSlashesInPlace( RString &sPath )
 			sPath[i] = '/';
 }
 
-RString FixSlashes( RString sPath )
-{
-	FixSlashesInPlace( sPath );
-	return sPath;
-}
-
 /*
  * Keep trailing slashes, since that can be used to illustrate that a path always
  * represents a directory.
