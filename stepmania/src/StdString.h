@@ -605,39 +605,18 @@ public:
 	// -------------------------------------------------------------------------
 	// Case changing functions
 	// -------------------------------------------------------------------------
-	// -------------------------------------------------------------------------
 	MYTYPE& MakeUpper()
 	{
-		//  Strictly speaking, this would be about the most portable way
-
-		//	std::transform(begin(),
-		//				   end(),
-		//				   begin(),
-		//				   std::bind2nd(SSToUpper<CT>(), std::locale()));
-
-		// But practically speaking, this works faster
-
 		if ( !this->empty() )
-			ssupr(GetBuf(), this->size());
+			ssupr(GetBuffer(), this->size());
 
 		return *this;
 	}
 
-
-
 	MYTYPE& MakeLower()
 	{
-		//  Strictly speaking, this would be about the most portable way
-
-		//	std::transform(begin(),
-		//				   end(),
-		//				   begin(),
-		//				   std::bind2nd(SSToLower<CT>(), std::locale()));
-
-		// But practically speaking, this works faster
-
 		if ( !this->empty() )
-			sslwr(GetBuf(), this->size());
+			sslwr(GetBuffer(), this->size());
 
 		return *this;
 	}
@@ -649,7 +628,7 @@ public:
 	// the at() function that we use here also calls _Freeze() providing us some
 	// protection from multithreading problems associated with ref-counting.
 	// -------------------------------------------------------------------------
-	CT* GetBuf(int nMinLen=-1)
+	CT* GetBuffer(int nMinLen=-1)
 	{
 		if ( static_cast<int>(this->size()) < nMinLen )
 			this->resize(static_cast<MYSIZE>(nMinLen));
@@ -657,16 +636,13 @@ public:
 		return this->empty() ? const_cast<CT*>(this->data()) : &(this->at(0));
 	}
 
-	void RelBuf(int nNewLen=-1)
+	void ReleaseBuffer(int nNewLen=-1)
 	{
 		this->resize(static_cast<MYSIZE>(nNewLen > -1 ? nNewLen : sslen(this->c_str())));
 	}
 
 	#define MAX_FMT_TRIES		5	 // #of times we try 
 	#define FMT_BLOCK_SIZE		2048 // # of bytes to increment per try
-	#define BUFSIZE_1ST	256
-	#define BUFSIZE_2ND 512
-	#define STD_BUF_SIZE		1024
 
 	// -------------------------------------------------------------------------
 	// FUNCTION:  FormatV
@@ -777,25 +753,12 @@ public:
 		return CompareNoCase(szThat) == 0;
 	}
 
-	// -------------------------------------------------------------------------
-	// GetXXXX -- Direct access to character buffer
-	// -------------------------------------------------------------------------
-	CT* GetBuffer(int nMinLen=-1)
-	{
-		return GetBuf(nMinLen);
-	}
-
 	MYTYPE Left(int nCount) const
 	{
 		// Range check the count.
 
 		nCount = max(0, min(nCount, static_cast<int>(this->size())));
 		return this->substr(0, static_cast<MYSIZE>(nCount)); 
-	}
-
-	void ReleaseBuffer(int nNewLen=-1)
-	{
-		RelBuf(nNewLen);
 	}
 
 	int Replace(CT chOld, CT chNew)
