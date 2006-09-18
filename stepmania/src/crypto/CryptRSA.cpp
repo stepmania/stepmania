@@ -337,7 +337,7 @@ void RSAKey::Fingerprint( char *str, int len ) const
 	strncpy(str, buffer, len);
 	str[len - 1] = '\0';
 	slen = strlen(str);
-	if (this->comment && slen < len - 1)
+	if (!this->comment.empty() && slen < len - 1)
 	{
 		str[slen] = ' ';
 		strncpy(str + slen + 1, this->comment, len - slen - 1);
