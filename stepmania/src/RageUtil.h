@@ -274,15 +274,6 @@ struct tm GetLocalTime();
 RString ssprintf( const char *fmt, ...) PRINTF(1,2);
 RString vssprintf( const char *fmt, va_list argList );
 
-#ifdef WIN32
-RString hr_ssprintf( int hr, const char *fmt, ...);
-RString werr_ssprintf( int err, const char *fmt, ...);
-RString ConvertWstringToCodepage( wstring s, int iCodePage );
-RString ConvertUTF8ToACP( const RString &s );
-wstring ConvertCodepageToWString( RString s, int iCodePage );
-RString ConvertACPToUTF8( const RString &s );
-#endif
-
 /*
  * Splits a Path into 4 parts (Directory, Drive, Filename, Extention).  Supports UNC path names.
  * If Path is a directory (eg. c:\games\stepmania"), append a slash so the last
