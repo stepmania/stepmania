@@ -4,6 +4,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "archutils/Win32/AppInstance.h"
+#include "archutils/Win32/DirectXHelpers.h"
 #include "archutils/Win32/GraphicsWindow.h"
 #include "archutils/Win32/RegistryAccess.h"
 #include "InputFilter.h"

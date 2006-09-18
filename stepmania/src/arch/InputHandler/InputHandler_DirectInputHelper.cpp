@@ -2,6 +2,7 @@
 #include "InputHandler_DirectInputHelper.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "archutils/Win32/DirectXHelpers.h"
 #include "archutils/Win32/GraphicsWindow.h"
 
 #if defined(_MSC_VER)

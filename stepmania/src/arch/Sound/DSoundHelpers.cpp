@@ -2,6 +2,7 @@
 #include "DSoundHelpers.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "archutils/Win32/DirectXHelpers.h"
 #include "archutils/Win32/GetFileInformation.h"
 
 #if defined(_WINDOWS)

@@ -22,6 +22,7 @@
 #include "RageException.h"
 #include "RageSurface.h"
 #include "arch/Dialog/Dialog.h"
+#include "archutils/Win32/DirectXHelpers.h"
 
 #include <vfw.h> /* for GetVideoCodecDebugInfo */
 #if defined(_MSC_VER)
