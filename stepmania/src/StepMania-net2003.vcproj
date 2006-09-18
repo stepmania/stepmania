@@ -1595,6 +1595,18 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				<File
 					RelativePath=".\archutils\Win32\DialogUtil.h">
 				</File>
+ 				<File
+					RelativePath=".\archutils\Win32\DirectXHelpers.cpp">
+				</File>
+				<File
+					RelativePath=".\archutils\Win32\DirectXHelpers.h">
+				</File>
+				<File
+					RelativePath=".\archutils\Win32\ErrorStrings.cpp">
+				</File>
+				<File
+					RelativePath=".\archutils\Win32\ErrorStrings.h">
+				</File>
 				<File
 					RelativePath="archutils\Win32\GetFileInformation.cpp">
 				</File>
