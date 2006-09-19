@@ -753,8 +753,6 @@ RageDisplay *CreateDisplay()
 	return pRet;
 }
 
-extern const RString STATIC_INI_PATH;
-
 void StepMania::ChangeCurrentGame( const Game* g )
 {
 	ASSERT( g );
