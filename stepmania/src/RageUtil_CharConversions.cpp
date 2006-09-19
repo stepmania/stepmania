@@ -128,10 +128,10 @@ static bool AttemptJapaneseConversion( RString &sText ) { return false; }
 
 #endif
 
-bool ConvertString(RString &str, const RString &encodings)
+bool ConvertString( RString &str, const RString &encodings )
 {
 	vector<RString> lst;
-	split(encodings, ",", lst);
+	split( encodings, ",", lst );
 
 	for(unsigned i = 0; i < lst.size(); ++i)
 	{
@@ -144,27 +144,27 @@ bool ConvertString(RString &str, const RString &encodings)
 		}
 		if( lst[i] == "english" )
 		{
-			if(AttemptEnglishConversion(str))
+			if( AttemptEnglishConversion(str) )
 				return true;
 			continue;
 		}
 
 		if( lst[i] == "japanese" )
 		{
-			if(AttemptJapaneseConversion(str))
+			if( AttemptJapaneseConversion(str) )
 				return true;
 			continue;
 		}
 
 		if( lst[i] == "korean" )
 		{
-			if(AttemptKoreanConversion(str))
+			if( AttemptKoreanConversion(str) )
 				return true;
 			continue;
 		}
 
 		RageException::Throw( "Unexpected conversion string \"%s\" (string \"%s\").",
-						lst[i].c_str(), str.c_str() );
+				      lst[i].c_str(), str.c_str() );
 	}
 
 	return false;
