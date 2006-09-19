@@ -84,7 +84,7 @@ static const char *aliases[][2] = {
 RString AnnouncerManager::GetPathTo( RString sAnnouncerName, RString sFolderName )
 {
 	if(sAnnouncerName == "")
-		return NULL; /* announcer disabled */
+		return RString(); /* announcer disabled */
 
 	const RString AnnouncerPath = GetAnnouncerDirFromName(sAnnouncerName);
 
@@ -112,7 +112,7 @@ RString AnnouncerManager::GetPathTo( RString sAnnouncerName, RString sFolderName
 	temp.Open( AnnouncerPath+sFolderName + "/announcer files go here.txt", RageFile::WRITE );
 #endif
 	
-	return NULL;
+	return RString();
 }
 
 RString AnnouncerManager::GetPathTo( RString sFolderName )
