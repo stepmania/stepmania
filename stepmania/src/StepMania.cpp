@@ -80,8 +80,6 @@
 
 static Preference<bool> g_bAllowMultipleInstances( "AllowMultipleInstances", false );
 
-void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame );
-
 
 void StepMania::GetPreferredVideoModeParams( VideoModeParams &paramsOut )
 {
@@ -766,7 +764,7 @@ void StepMania::ChangeCurrentGame( const Game* g )
 	INPUTMAPPER->ReadMappingsFromDisk();
 }
 
-void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame )
+static void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame )
 {
 	ASSERT( GAMESTATE );
 	ASSERT( ANNOUNCER );
