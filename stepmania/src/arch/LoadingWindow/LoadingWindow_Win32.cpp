@@ -5,6 +5,7 @@
 #include "RageFileManager.h"
 #include "archutils/win32/WindowsResources.h"
 #include "archutils/win32/WindowIcon.h"
+#include "archutils/win32/ErrorStrings.h"
 #include <windows.h>
 #include "RageSurface_Load.h"
 #include "RageSurface.h"
