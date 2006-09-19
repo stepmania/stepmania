@@ -1560,6 +1560,18 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					<File
 						RelativePath=".\archutils\Win32\arch_time.cpp">
 					</File>
+					<File
+						RelativePath=".\archutils\Win32\DirectXHelpers.cpp">
+					</File>
+					<File
+						RelativePath=".\archutils\Win32\DirectXHelpers.h">
+					</File>
+					<File
+						RelativePath=".\archutils\Win32\ErrorStrings.cpp">
+					</File>
+					<File
+						RelativePath=".\archutils\Win32\ErrorStrings.h">
+					</File>
 				</Filter>
 			</Filter>
 		</Filter>
