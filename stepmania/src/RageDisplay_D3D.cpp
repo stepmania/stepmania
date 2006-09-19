@@ -629,7 +629,8 @@ void RageDisplay_D3D::ResolutionChanged()
 	//LOG->Warn( "RageDisplay_D3D::ResolutionChanged" );
 
 #if defined(XBOX)
-	D3DVIEWPORT8 viewData = { 0,0,640,480, 0.f, 1.f };
+	VideoModeParams p = GetActualVideoModeParams();
+	D3DVIEWPORT8 viewData = { 0, 0, p.width, p.height, 0.f, 1.f };
 	g_pd3dDevice->SetViewport( &viewData );
 	g_pd3dDevice->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER,
 						 D3DCOLOR_XRGB(0,0,0), 1.0f, 0x00000000 );
