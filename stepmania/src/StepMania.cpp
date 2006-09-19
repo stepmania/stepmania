@@ -1208,28 +1208,8 @@ RString StepMania::SaveScreenshot( RString sDir, bool bSaveCompressed, bool bMak
 	return sFileName;
 }
 
-static Preference<float> g_iCoinSettleTime( "CoinSettleTime", 0.03f );
-
 void StepMania::InsertCoin( int iNum, const RageTimer *pTime )
 {
-	if( pTime != NULL )
-	{
-		/* If a time is supplied for the button press, don't allow coin inserts
-		 * in very rapid succession, to be sure one insert signal isn't counted
-		 * as two coins.  Use pTime, and never the current time, or we'll drop
-		 * coins if multiple coins are inserted during a screen load. */
-		static RageTimer LastCoin( RageZeroTimer );
-
-		float fAgo = *pTime - LastCoin;
-		if( !LastCoin.IsZero() && fAgo < g_iCoinSettleTime.Get() )
-		{
-			LOG->Trace("Ignored coin input (%f since last accepted)", fAgo );
-			return;
-		}
-
-		LastCoin = *pTime;
-	}
-
 	GAMESTATE->m_iCoins += iNum;
 	LOG->Trace("%i coins inserted, %i needed to play", GAMESTATE->m_iCoins, PREFSMAN->m_iCoinsPerCredit.Get() );
 	BOOKKEEPER->CoinInserted();
