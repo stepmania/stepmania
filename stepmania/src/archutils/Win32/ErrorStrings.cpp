@@ -2,7 +2,9 @@
 #include "ErrorStrings.h"
 #include "RageUtil.h"
 
+#if !defined(XBOX)
 #include <windows.h>
+#endif
 
 RString werr_ssprintf( int err, const char *fmt, ... )
 {
