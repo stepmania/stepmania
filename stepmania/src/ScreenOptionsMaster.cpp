@@ -15,6 +15,7 @@
 #include "OptionRowHandler.h"
 #include "ScreenOptionsMasterPrefs.h"
 #include "CommonMetrics.h"
+#include "GameLoop.h"
 
 #define LINE_NAMES				THEME->GetMetric (m_sName,"LineNames")
 #define LINE(sLineName)				THEME->GetMetric (m_sName,ssprintf("Line%s",sLineName.c_str()))
@@ -123,6 +124,8 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 			(m_iChangeMask & OPT_APPLY_GRAPHICS) ||
 			(m_iChangeMask & OPT_APPLY_ASPECT_RATIO) )
 		{
+			RString sNewTheme = PREFSMAN->m_sTheme.Get();
+			GameLoop::ChangeTheme( sNewTheme, this->GetNextScreen() );
 			StepMania::ApplyGraphicOptions();
 		}
 

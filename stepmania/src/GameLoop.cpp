@@ -115,6 +115,44 @@ static void CheckFocus()
 	}
 }
 
+/* On the next update, change themes, and load sNewScreen. */
+static RString g_sNewTheme;
+static RString g_sNewScreen;
+void GameLoop::ChangeTheme( const RString &sNewTheme, const RString &sNewScreen )
+{
+	g_sNewTheme = sNewTheme;
+	g_sNewScreen = sNewScreen;
+}
+
+#include "StepMania.h" // XXX
+namespace
+{
+	void DoChangeTheme()
+	{
+		SAFE_DELETE( SCREENMAN );
+		TEXTUREMAN->DoDelayedDelete();
+
+		/* Clear theme metrics, so ThemeMetric<apActorCommand>s are cleared. */
+		THEME->ClearSubscribers();
+
+		THEME->SwitchThemeAndLanguage( g_sNewTheme, THEME->GetCurLanguage(), PREFSMAN->m_bPseudoLocalize );
+		PREFSMAN->m_sTheme.Set( g_sNewTheme );
+
+		/* Apply the new window title, icon and aspect ratio. */
+		StepMania::ApplyGraphicOptions();
+
+		SCREENMAN = new ScreenManager();
+
+		StepMania::ResetGame();
+		SCREENMAN->ThemeChanged();
+		SCREENMAN->SetNewScreen( g_sNewScreen );
+
+		g_sNewTheme = RString();
+		g_sNewScreen = RString();
+	}
+
+}
+
 void GameLoop::RunGameLoop()
 {
 	/* People may want to do something else while songs are loading, so do
@@ -124,6 +162,9 @@ void GameLoop::RunGameLoop()
 
 	while( !ArchHooks::UserQuit() )
 	{
+		if( !g_sNewTheme.empty() )
+			DoChangeTheme();
+
 		/*
 		 * Update
 		 */

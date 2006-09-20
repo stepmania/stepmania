@@ -7,6 +7,7 @@ namespace GameLoop
 {
 	void RunGameLoop();
 	void SetUpdateRate( float fUpdateRate );
+	void ChangeTheme( const RString &sNewTheme, const RString &sNewScreen );
 	void StartConcurrentRendering();
 	void FinishConcurrentRendering();
 };

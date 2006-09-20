@@ -2,7 +2,6 @@
 #include "ScreenTitleMenu.h"
 #include "ScreenManager.h"
 #include "RageUtil.h"
-#include "StepMania.h"
 #include "PrefsManager.h"
 #include "RageLog.h"
 #include "AnnouncerManager.h"
@@ -11,7 +10,6 @@
 #include "ThemeManager.h"
 #include "GameSoundManager.h"
 #include "CodeDetector.h"
-#include "RageTextureManager.h"
 #include "LightsManager.h"
 #include "Game.h"
 #include "InputMapper.h"
@@ -19,6 +17,7 @@
 #include "CharacterManager.h"
 #include "InputEventPlus.h"
 #include "LocalizedString.h"
+#include "GameLoop.h"
 
 #define COIN_MODE_CHANGE_SCREEN		THEME->GetMetric (m_sName,"CoinModeChangeScreen")
 
@@ -74,11 +73,7 @@ void ScreenTitleMenu::Input( const InputEventPlus &input )
 		if( CodeDetector::EnteredCode(input.GameI.controller,CODE_NEXT_THEME) ||
 			CodeDetector::EnteredCode(input.GameI.controller,CODE_NEXT_THEME2) )
 		{
-			THEME->SwitchThemeAndLanguage( THEME->GetNextTheme(), THEME->GetCurLanguage(), PREFSMAN->m_bPseudoLocalize );
-			StepMania::ApplyGraphicOptions();	// update window title and icon
-			SCREENMAN->SystemMessage( THEME_.GetValue()+": "+THEME->GetCurThemeName() );
-			SCREENMAN->SetNewScreen( m_sName );
-			TEXTUREMAN->DoDelayedDelete();
+			GameLoop::ChangeTheme( THEME->GetNextTheme(), m_sName );
 		}
 		if( CodeDetector::EnteredCode(input.GameI.controller,CODE_NEXT_ANNOUNCER) ||
 			CodeDetector::EnteredCode(input.GameI.controller,CODE_NEXT_ANNOUNCER2) )

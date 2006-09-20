@@ -460,10 +460,7 @@ void ThemeManager::RunLuaScripts( const RString &sMask )
 
 void ThemeManager::UpdateLuaGlobals()
 {
-	/* Ugly: we need Serialize.lua to be loaded in order to be able to ResetState,
-	 * but everything else should be able to depend on globals being set. */
-	RunLuaScripts( "Serialize.lua" );
-	LUA->ResetState();
+	LUA->RegisterTypes();
 
 #if !defined(SMPACKAGE)
 	/* explicitly refresh cached metrics that we use. */
