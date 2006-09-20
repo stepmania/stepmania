@@ -32,6 +32,9 @@ public:
 	/* Reset the environment, freeing any globals left over by previously executed scripts. */
 	void ResetState();
 
+	/* Register all subscribing types.  There's no harm in registering when already registered. */
+	void RegisterTypes();
+
 	void SetGlobal( const RString &sName, int val );
 	void SetGlobal( const RString &sName, float val );
 	void SetGlobal( const RString &sName, bool val );
@@ -43,9 +46,6 @@ private:
 	lua_State *L;
 
 	RageMutex *m_pLock;
-
-	/* Register all subscribing types.  There's no harm in registering when already registered. */
-	void RegisterTypes();
 };
 
 
