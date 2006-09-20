@@ -11,6 +11,7 @@ class LuaExpressionTransform
 {
 public:
 	LuaExpressionTransform();
+	~LuaExpressionTransform();
 
 	void SetFromExpression( const RString &sExpression );
 	void SetNumSubdivisions( int iNumSubdivisions ) { ASSERT( iNumSubdivisions > 0 ); m_iNumSubdivisions = iNumSubdivisions; }
