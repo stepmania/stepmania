@@ -192,7 +192,31 @@ LuaManager::LuaManager()
 	L = NULL;
 	m_pLock = new RageMutex( "Lua" );
 
-	ResetState();
+	m_pLock->Lock();
+
+	if( L != NULL )
+	{
+		LuaReference::BeforeResetAll();
+
+		lua_close( L );
+	}
+
+	L = lua_open();
+	ASSERT( L );
+
+	lua_atpanic( L, LuaPanic );
+
+	luaopen_base( L );
+	luaopen_math( L );
+	luaopen_string( L );
+	luaopen_table( L );
+	lua_settop(L, 0); // luaopen_* pushes stuff onto the stack that we don't need
+
+	RegisterTypes();
+
+	LuaReference::AfterResetAll();
+
+	m_pLock->Unlock();
 }
 
 LuaManager::~LuaManager()
@@ -245,34 +269,6 @@ void LuaManager::RegisterTypes()
 	}
 }
 
-void LuaManager::ResetState()
-{
-	m_pLock->Lock();
-
-	if( L != NULL )
-	{
-		LuaReference::BeforeResetAll();
-
-		lua_close( L );
-	}
-
-	L = lua_open();
-	ASSERT( L );
-
-	lua_atpanic( L, LuaPanic );
-
-	luaopen_base( L );
-	luaopen_math( L );
-	luaopen_string( L );
-	luaopen_table( L );
-	lua_settop(L, 0); // luaopen_* pushes stuff onto the stack that we don't need
-
-	RegisterTypes();
-
-	LuaReference::AfterResetAll();
-
-	m_pLock->Unlock();
-}
 
 namespace
 {

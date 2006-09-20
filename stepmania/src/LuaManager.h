@@ -29,9 +29,6 @@ public:
 	Lua *Get();
 	void Release( Lua *&p );
 
-	/* Reset the environment, freeing any globals left over by previously executed scripts. */
-	void ResetState();
-
 	/* Register all subscribing types.  There's no harm in registering when already registered. */
 	void RegisterTypes();
 
