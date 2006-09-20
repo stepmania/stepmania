@@ -14,6 +14,7 @@ class IThemeMetric
 public:
 	virtual ~IThemeMetric() { }
 	virtual void Read() = 0;
+	virtual void Clear() = 0;
 };
 
 template <class T>
@@ -83,6 +84,13 @@ public:
 		}
 	}
 
+	void Clear()
+	{
+		m_currentValue = T();
+		m_bIsLoaded = false;
+	}
+
+
 	const T& GetName() const { return m_sName; }
 	const T& GetGroup() const { return m_sGroup; }
 	const T& GetValue() const
@@ -141,6 +149,11 @@ public:
 		for( unsigned i=0; i<m_metric.size(); i++ )
 			m_metric[i].Read();
 	}
+	void Clear()
+	{
+		for( unsigned i=0; i<m_metric.size(); i++ )
+			m_metric[i].Clear();
+	}
 	const T& GetValue( size_t i ) const
 	{
 		return m_metric[i].GetValue();
@@ -177,6 +190,12 @@ public:
 			for( unsigned j=0; j<m_metric[i].size(); j++ )
 				m_metric[i][j].Read();
 	}
+	void Clear()
+	{
+		for( unsigned i=0; i<m_metric.size(); i++ )
+			for( unsigned j=0; j<m_metric[i].size(); j++ )
+				m_metric[i][j].Clear();
+	}
 	const T& GetValue( size_t i, size_t j ) const
 	{
 		return m_metric[i][j].GetValue();
@@ -208,6 +227,11 @@ public:
 		// I don't know why.
 		for( typename map<RString,ThemeMetric<T> >::iterator m = m_metric.begin(); m != m_metric.end(); ++m )
 			m->second.Read();
+	}
+	void Clear()
+	{
+		for( typename map<RString,ThemeMetric<T> >::iterator m = m_metric.begin(); m != m_metric.end(); ++m )
+			m->second.Clear();
 	}
 	const T& GetValue( RString s ) const
 	{
@@ -323,6 +347,11 @@ public:
 
 			m_bIsLoaded = true;
 		}
+	}
+	void Clear()
+	{
+		m_Value.Unset();
+		m_bIsLoaded = false;
 	}
 
 	const T& GetValue() const
