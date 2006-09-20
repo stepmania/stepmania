@@ -136,11 +136,6 @@ void Profile::InitGeneralData()
 	m_iNumTotalSongsPlayed = 0;
 	ZERO( m_iNumStagesPassedByPlayMode );
 	ZERO( m_iNumStagesPassedByGrade );
-
-	Lua *L = LUA->Get();
-	lua_newtable( L );
-	m_SavedLuaData.SetFromStack( L );
-	LUA->Release( L );
 }
 
 void Profile::InitSongScores()
@@ -1025,7 +1020,6 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	pGeneralDataNode->AppendChild( "TotalRolls",			m_iTotalRolls );
 	pGeneralDataNode->AppendChild( "TotalMines",			m_iTotalMines );
 	pGeneralDataNode->AppendChild( "TotalHands",			m_iTotalHands );
-	pGeneralDataNode->AppendChild( "Data",				m_SavedLuaData.Serialize() );
 
 	// Keep declared variables in a very local scope so they aren't 
 	// accidentally used where they're not intended.  There's a lot of
@@ -1188,22 +1182,6 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	pNode->GetChildValue( "TotalRolls",				m_iTotalRolls );
 	pNode->GetChildValue( "TotalMines",				m_iTotalMines );
 	pNode->GetChildValue( "TotalHands",				m_iTotalHands );
-
-	{
-		RString sData;
-		if( pNode->GetChildValue( "Data", sData ) )
-		{
-			m_SavedLuaData.LoadFromString( sData );
-			if( m_SavedLuaData.GetLuaType() != LUA_TTABLE )
-			{
-				LOG->Warn( "Profile data did not evaluate to a table" );
-				Lua *L = LUA->Get();
-				lua_newtable( L );
-				m_SavedLuaData.SetFromStack( L );
-				LUA->Release( L );
-			}
-		}
-	}
 
 	{
 		const XNode* pDefaultModifiers = pNode->GetChild("DefaultModifiers");
@@ -1944,7 +1922,6 @@ public:
 	static int GetGoalSeconds( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_iGoalSeconds ); return 1; }
 	static int SetGoalSeconds( T* p, lua_State *L )			{ p->m_iGoalSeconds = IArg(1); return 0; }
 	static int GetCaloriesBurnedToday( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetCaloriesBurnedToday() ); return 1; }
-	static int GetSaved( T* p, lua_State *L )			{ p->m_SavedLuaData.PushSelf(L); return 1; }
 	static int GetTotalNumSongsPlayed( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_iNumTotalSongsPlayed ); return 1; }
 	static int IsCodeUnlocked( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsCodeUnlocked(SArg(1)) ); return 1; }
 	static int GetSongsActual( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetSongsActual((StepsType)IArg(1),(Difficulty)IArg(2)) ); return 1; }
@@ -2006,7 +1983,6 @@ public:
 		ADD_METHOD( GetGoalSeconds );
 		ADD_METHOD( SetGoalSeconds );
 		ADD_METHOD( GetCaloriesBurnedToday );
-		ADD_METHOD( GetSaved );
 		ADD_METHOD( GetTotalNumSongsPlayed );
 		ADD_METHOD( IsCodeUnlocked );
 		ADD_METHOD( GetSongsActual );
