@@ -189,15 +189,7 @@ LuaManager::LuaManager()
 {
 	LUA = this;	// so that LUA is available when we call the Register functions
 
-	L = NULL;
 	m_pLock = new RageMutex( "Lua" );
-
-	if( L != NULL )
-	{
-		LuaReference::BeforeResetAll();
-
-		lua_close( L );
-	}
 
 	L = lua_open();
 	ASSERT( L );
@@ -211,8 +203,6 @@ LuaManager::LuaManager()
 	lua_settop(L, 0); // luaopen_* pushes stuff onto the stack that we don't need
 
 	RegisterTypes();
-
-	LuaReference::AfterResetAll();
 }
 
 LuaManager::~LuaManager()
