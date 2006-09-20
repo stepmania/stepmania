@@ -19,7 +19,6 @@
 #include "SubscriptionManager.h"
 #include "LuaManager.h"
 #include "ScreenDimensions.h"
-#include "Command.h"
 #include "LocalizedString.h"
 #include "SpecialFiles.h"
 #include "EnumHelper.h"
