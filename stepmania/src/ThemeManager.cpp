@@ -429,6 +429,15 @@ void ThemeManager::ReloadSubscribers()
 	}
 }
 
+void ThemeManager::ClearSubscribers()
+{
+	if( g_Subscribers.m_pSubscribers )
+	{
+		FOREACHS_CONST( IThemeMetric*, *g_Subscribers.m_pSubscribers, p )
+			(*p)->Clear();
+	}
+}
+
 void ThemeManager::RunLuaScripts( const RString &sMask )
 {
 	/* Run all script files with the given mask in Lua for all themes.  Start

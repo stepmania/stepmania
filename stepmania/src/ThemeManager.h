@@ -53,6 +53,7 @@ public:
 	void NextTheme();
 	void ReloadMetrics();
 	void ReloadSubscribers();
+	void ClearSubscribers();
 	void GetOptionNames( vector<RString>& AddTo );
 
 	static void EvaluateString( RString &sText );
