@@ -21,6 +21,7 @@ public:
 	Actor *operator->()		{ return m_pActor; }
 	void Unload();
 	bool IsLoaded() const		{ return m_pActor != NULL; }
+	void Load( Actor *pActor );
 	void Load( const RString &sPath );
 	void LoadFromNode( const RString &sDir, const XNode* pNode );
 	void LoadAndSetName( const RString &sScreenName, const RString &sActorName );

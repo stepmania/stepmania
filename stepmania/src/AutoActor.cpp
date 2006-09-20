@@ -27,6 +27,12 @@ AutoActor &AutoActor::operator=( const AutoActor &cpy )
 	return *this;
 }
 
+void AutoActor::Load( Actor *pActor )
+{
+	Unload();
+	m_pActor = pActor;
+}
+
 void AutoActor::Load( const RString &sPath )
 {
 	Unload();
