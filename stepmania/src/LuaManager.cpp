@@ -192,8 +192,6 @@ LuaManager::LuaManager()
 	L = NULL;
 	m_pLock = new RageMutex( "Lua" );
 
-	m_pLock->Lock();
-
 	if( L != NULL )
 	{
 		LuaReference::BeforeResetAll();
@@ -215,8 +213,6 @@ LuaManager::LuaManager()
 	RegisterTypes();
 
 	LuaReference::AfterResetAll();
-
-	m_pLock->Unlock();
 }
 
 LuaManager::~LuaManager()
