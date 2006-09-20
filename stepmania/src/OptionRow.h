@@ -24,7 +24,7 @@ private:
 
 	BitmapText			m_textItemParent;
 	OptionsCursor			m_UnderlineParent;
-	Actor				*m_sprBullet;
+	AutoActor			m_sprBullet;
 	BitmapText			m_textTitle;
 	OptionIcon			m_OptionIcon;
 
