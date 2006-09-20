@@ -8,8 +8,6 @@
 #include "RageSound.h"
 #include "ThemeMetric.h"
 
-class LuaClass;
-
 class MenuTimer : public ActorFrame
 {
 public:
