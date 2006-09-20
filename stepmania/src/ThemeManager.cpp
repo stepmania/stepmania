@@ -952,7 +952,7 @@ apActorCommands ThemeManager::GetMetricA( const RString &sClassName, const RStri
 }
 #endif
 
-void ThemeManager::NextTheme()
+RString ThemeManager::GetNextTheme()
 {
 	vector<RString> as;
 	GetThemeNames( as );
@@ -961,7 +961,7 @@ void ThemeManager::NextTheme()
 		if( as[i].CompareNoCase(m_sCurThemeName)==0 )
 			break;
 	int iNewIndex = (i+1)%as.size();
-	SwitchThemeAndLanguage( as[iNewIndex], m_sCurLanguage, m_bPseudoLocalize );
+	return as[iNewIndex];
 }
 
 void ThemeManager::GetLanguagesForTheme( const RString &sThemeName, vector<RString>& asLanguagesOut )

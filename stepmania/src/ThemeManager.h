@@ -50,7 +50,7 @@ public:
 	bool IsThemeLoaded() const { return !m_sCurThemeName.empty(); };
 	RString GetCurLanguage() const { return m_sCurLanguage; };
 	RString GetCurThemeDir() const { return GetThemeDirFromName(m_sCurThemeName); };
-	void NextTheme();
+	RString GetNextTheme();
 	void ReloadMetrics();
 	void ReloadSubscribers();
 	void ClearSubscribers();

@@ -74,7 +74,7 @@ void ScreenTitleMenu::Input( const InputEventPlus &input )
 		if( CodeDetector::EnteredCode(input.GameI.controller,CODE_NEXT_THEME) ||
 			CodeDetector::EnteredCode(input.GameI.controller,CODE_NEXT_THEME2) )
 		{
-			THEME->NextTheme();
+			THEME->SwitchThemeAndLanguage( THEME->GetNextTheme(), THEME->GetCurLanguage(), PREFSMAN->m_bPseudoLocalize );
 			StepMania::ApplyGraphicOptions();	// update window title and icon
 			SCREENMAN->SystemMessage( THEME_.GetValue()+": "+THEME->GetCurThemeName() );
 			SCREENMAN->SetNewScreen( m_sName );
