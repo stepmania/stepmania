@@ -344,7 +344,7 @@ RageTextureRenderTarget.cpp RageTextureRenderTarget.h \
 RageSurface_Save_BMP.cpp RageSurface_Save_BMP.h \
 RageSurface_Save_PNG.cpp RageSurface_Save_PNG.h \
 RageTextureID.cpp RageTextureID.h RageTextureManager.cpp RageTextureManager.h RageThreads.cpp RageThreads.h \
-RageTimer.cpp RageTimer.h RageTypes.h RageUtil.cpp RageUtil.h RageUtil_CharConversions.cpp RageUtil_CharConversions.h \
+RageTimer.cpp RageTimer.h RageTypes.cpp RageTypes.h RageUtil.cpp RageUtil.h RageUtil_CharConversions.cpp RageUtil_CharConversions.h \
 RageUtil_BackgroundLoader.cpp RageUtil_BackgroundLoader.h RageUtil_FileDB.cpp RageUtil_FileDB.h RageUtil_CircularBuffer.h \
 RageUtil_AutoPtr.h \
 RageUtil_WorkerThread.cpp RageUtil_WorkerThread.h

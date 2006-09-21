@@ -2504,6 +2504,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="RageTimer.h">
 			</File>
 			<File
+				RelativePath="RageTypes.cpp">
+			</File>
+			<File
 				RelativePath="RageTypes.h">
 			</File>
 			<File
