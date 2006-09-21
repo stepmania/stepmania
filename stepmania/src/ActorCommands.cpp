@@ -7,7 +7,7 @@
 #include <sstream>
 #include "LuaManager.h"
 
-ActorCommands::ActorCommands( const RString &sCommands )
+apActorCommands ActorCommands( const RString &sCommands )
 {
 	RString sLuaFunction;
 	if( sCommands.size() > 0 && sCommands[0] == '\033' )
@@ -89,6 +89,8 @@ ActorCommands::ActorCommands( const RString &sCommands )
 
 	Lua *L = LUA->Get();
 
+	LuaReference *pRet = new LuaReference;
+
 	RString sError;
 	if( !LuaHelpers::RunScript( L, sLuaFunction, "in", sError, 1 ) )
 	{
@@ -96,12 +98,14 @@ ActorCommands::ActorCommands( const RString &sCommands )
 	}
 
 	/* The function is now on the stack. */
-	this->SetFromStack( L );
+	pRet->SetFromStack( L );
 	LUA->Release( L );
 
-	ASSERT_M( !this->IsNil(), sLuaFunction.c_str() );
+	ASSERT_M( !pRet->IsNil(), sLuaFunction.c_str() );
 
-	SetName( sLuaFunction );
+	pRet->SetName( sLuaFunction );
+
+	return apActorCommands( pRet );
 }
 
 

@@ -945,7 +945,7 @@ RageColor ThemeManager::GetMetricC( const RString &sClassName, const RString &sV
 apActorCommands ThemeManager::GetMetricA( const RString &sClassName, const RString &sValueName )
 {
 	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName );
-	return apActorCommands( new ActorCommands( sValue ) );
+	return ActorCommands( sValue );
 }
 #endif
 

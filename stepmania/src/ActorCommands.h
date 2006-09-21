@@ -7,13 +7,8 @@
 #include "LuaReference.h"
 
 
-class ActorCommands: public LuaReference
-{
-public:
-	ActorCommands( const RString &sCommands );
-};
-
 typedef AutoPtrCopyOnWrite<LuaReference> apActorCommands;
+apActorCommands ActorCommands( const RString &sCommands );
 
 #endif
 

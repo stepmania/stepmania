@@ -57,7 +57,7 @@ void ScoreDisplayBattle::Update( float fDelta )
 				// TODO:  Cache all of the icon graphics so we don't load them dynamically from disk.
 				m_ItemIcon[s].Load( THEME->GetPathG("ScoreDisplayBattle","icon "+sNewModifier) );
 				m_ItemIcon[s].StopTweening();
-				ActorCommands acmds(
+				apActorCommands acmds = ActorCommands(
 					"diffuse,1,1,1,1;zoom,1;"
 					"sleep,0.1;linear,0;diffusealpha,0;"
 					"sleep,0.1;linear,0;diffusealpha,1;"

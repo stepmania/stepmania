@@ -103,7 +103,7 @@ void ScreenEnding::Init()
 			break;
 		}
 		SET_XY_AND_ON_COMMAND( m_sprRemoveMemoryCard[p] );
-		m_sprRemoveMemoryCard[p].AddCommand( ssprintf("CardRemovedP%dMessage",p+1), apActorCommands(new ActorCommands("hidden,1")) );
+		m_sprRemoveMemoryCard[p].AddCommand( ssprintf("CardRemovedP%dMessage",p+1), ActorCommands("hidden,1") );
 		this->AddChild( &m_sprRemoveMemoryCard[p] );
 	}
 

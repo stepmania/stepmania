@@ -187,12 +187,12 @@ void BackgroundImpl::Init()
 			RString sCmdLeaves;
 			bool bSuccess = xml.GetAttrValue( "LeavesCommand", sCmdLeaves );
 			ASSERT( bSuccess );
-			bgt.cmdLeaves = apActorCommands( new ActorCommands(sCmdLeaves) );
+			bgt.cmdLeaves = ActorCommands( sCmdLeaves );
 
 			RString sCmdRoot;
 			bSuccess = xml.GetAttrValue( "RootCommand", sCmdRoot );
 			ASSERT( bSuccess );
-			bgt.cmdRoot = apActorCommands( new ActorCommands(sCmdRoot) );
+			bgt.cmdRoot = ActorCommands( sCmdRoot );
 		}
 	}
 
@@ -715,8 +715,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 		 * may look something like "BGAnimation, BGAnimationLayer, Sprite" or it
 		 * may be deeper, like "BGAnimation, BGAnimationLayer, BGAnimation,
 		 * BGAnimationLayer, Sprite". */
-		ActorCommands acmds( "effectclock,music" );
-		pBGA->RunCommands( acmds );
+		pBGA->RunCommands( ActorCommands("effectclock,music") );
 	}
 }
 

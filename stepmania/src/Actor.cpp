@@ -261,7 +261,7 @@ void Actor::LoadFromNode( const RString& sDir, const XNode* pNode )
 		else if( sKeyName == "BaseZoomZ" )		SetBaseZoomZ( StringToFloat(sValue) );
 		else if( EndsWith(sKeyName,"Command") )
 		{
-			apActorCommands apac( new ActorCommands( sValue ) );
+			apActorCommands apac = ActorCommands( sValue );
 
 			RString sCmdName = sKeyName.Left( sKeyName.size()-7 );
 			AddCommand( sCmdName, apac );
@@ -284,7 +284,7 @@ void Actor::LoadFromNode( const RString& sDir, const XNode* pNode )
 		c->GetAttrValue( "Value", sValue );
 
 		LuaHelpers::RunAtExpressionS( sName );
-		apActorCommands apac( new ActorCommands( sValue ) );
+		apActorCommands apac = ActorCommands( sValue );
 
 		AddCommand( sName, apac );
 	}

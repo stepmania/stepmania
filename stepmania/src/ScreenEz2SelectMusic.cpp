@@ -410,10 +410,10 @@ void ScreenEz2SelectMusic::MenuBack( const InputEventPlus &input )
 
 void ScreenEz2SelectMusic::TweenOffScreen()
 {
-	ActorCommands cmds( "linear,0.5;zoomy,0" );
+	apActorCommands cmds = ActorCommands( "linear,0.5;zoomy,0" );
 	m_MusicBannerWheel.RunCommands(		 cmds );
 
-	ActorCommands cmds2( "Linear,1;DiffuseAlpha,0" );
+	apActorCommands cmds2 = ActorCommands( "Linear,1;DiffuseAlpha,0" );
 	m_PumpDifficultyCircle.RunCommands( cmds2 );
 	m_Guide.RunCommands(				cmds2 );
 	m_PumpDifficultyRating.RunCommands( cmds2 );
