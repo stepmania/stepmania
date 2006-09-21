@@ -70,7 +70,6 @@ public:
 	void ClearThemePathCache();
 
 	bool		HasMetric( const RString &sClassName, const RString &sValueName );
-	RString		GetMetricRaw( const IniFile &ini, const RString &sClassName, const RString &sValueName );
 	RString		GetMetric( const RString &sClassName, const RString &sValueName );
 	int		GetMetricI( const RString &sClassName, const RString &sValueName );
 	float		GetMetricF( const RString &sClassName, const RString &sValueName );
@@ -111,6 +110,7 @@ public:
 protected:
 	void RunLuaScripts( const RString &sMask );
 	void LoadThemeMetrics( deque<Theme> &theme, const RString &sThemeName, const RString &sLanguage_ );
+	RString GetMetricRaw( const IniFile &ini, const RString &sClassName, const RString &sValueName );
 	bool GetMetricRawRecursive( const IniFile &ini, const RString &sClassName, const RString &sValueName, RString &sRet );
 	RString GetPathToAndFallback( ElementCategory category, const RString &sClassName, const RString &sFile );
 	RString GetPathToRaw( const RString &sThemeName, ElementCategory category, const RString &sClassName, const RString &sFile );
