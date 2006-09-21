@@ -725,12 +725,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			Name="Data Structures"
 			Filter="">
 			<File
-				RelativePath="ActorCommands.cpp">
-			</File>
-			<File
-				RelativePath="ActorCommands.h">
-			</File>
-			<File
 				RelativePath=".\AdjustSync.cpp">
 			</File>
 			<File
