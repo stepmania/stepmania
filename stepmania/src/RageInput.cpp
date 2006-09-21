@@ -21,7 +21,7 @@ RageInput::RageInput()
 	{
 		Lua *L = LUA->Get();
 		lua_pushstring( L, "INPUTMAN" );
-		INPUTMAN->PushSelf( L );
+		this->PushSelf( L );
 		lua_settable( L, LUA_GLOBALSINDEX );
 		LUA->Release( L );
 	}

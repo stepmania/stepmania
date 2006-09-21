@@ -15,7 +15,7 @@ CharacterManager::CharacterManager()
 	{
 		Lua *L = LUA->Get();
 		lua_pushstring( L, "CHARMAN" );
-		CHARMAN->PushSelf( L );
+		this->PushSelf( L );
 		lua_settable( L, LUA_GLOBALSINDEX );
 		LUA->Release( L );
 	}
