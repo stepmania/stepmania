@@ -9,15 +9,16 @@
 
 ActorCommands::ActorCommands( const RString &sCommands )
 {
+	RString sLuaFunction;
 	if( sCommands.size() > 0 && sCommands[0] == '\033' )
 	{
 		/* This is a compiled Lua chunk.  Just pass it on directly. */
-		m_sLuaFunction = sCommands;
+		sLuaFunction = sCommands;
 	}
 	else if( sCommands.size() > 0 && sCommands[0] == '%' )
 	{
-		m_sLuaFunction = "return ";
-		m_sLuaFunction.append( sCommands.begin()+1, sCommands.end() );
+		sLuaFunction = "return ";
+		sLuaFunction.append( sCommands.begin()+1, sCommands.end() );
 	}
 	else
 	{
@@ -83,27 +84,24 @@ ActorCommands::ActorCommands( const RString &sCommands )
 
 		s << "end\n";
 
-		m_sLuaFunction = s.str();
+		sLuaFunction = s.str();
 	}
 
-	Register();
-
-	ASSERT_M( !this->IsNil(), m_sLuaFunction.c_str() );
-}
-
-void ActorCommands::Register()
-{
 	Lua *L = LUA->Get();
 
 	RString sError;
-	if( !LuaHelpers::RunScript( L, m_sLuaFunction, "in", sError, 1 ) )
+	if( !LuaHelpers::RunScript( L, sLuaFunction, "in", sError, 1 ) )
 	{
-		FAIL_M( ssprintf("Compiling \"%s\": %s", m_sLuaFunction.c_str(), sError.c_str()) );
+		FAIL_M( ssprintf("Compiling \"%s\": %s", sLuaFunction.c_str(), sError.c_str()) );
 	}
 
 	/* The function is now on the stack. */
 	this->SetFromStack( L );
 	LUA->Release( L );
+
+	ASSERT_M( !this->IsNil(), sLuaFunction.c_str() );
+
+	SetName( sLuaFunction );
 }
 
 

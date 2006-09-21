@@ -11,10 +11,6 @@ class ActorCommands: public LuaReference
 {
 public:
 	ActorCommands( const RString &sCommands );
-
-private:
-	void Register();
-	RString m_sLuaFunction;
 };
 
 typedef AutoPtrCopyOnWrite<LuaReference> apActorCommands;

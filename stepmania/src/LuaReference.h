@@ -35,19 +35,15 @@ public:
 	/* Return the referenced type, or LUA_TNONE if not set. */
 	int GetLuaType() const;
 
-protected:
-	/* If this object needs to store state to recreate itself, overload this. */
-	virtual void BeforeReset() { }
-
-	/* If this object is able to recreate itself, overload this, and ReRegisterAll
-	 * will work; the reference will still exist after a theme change.  If not
-	 * implemented, the reference will be unset after ReRegister. */
-	virtual void Register() { }
+	void SetName( const RString &sName );
+	RString GetName() const { return m_sName; }
 
 private:
 	void Unregister();
-	void ReRegister();
 	int m_iReference;
+
+	/* This string can identify the reference.  This is only used for debugging. */
+	RString m_sName;
 };
 
 /* Evaluate an expression that returns an object; store the object in a reference.
@@ -57,12 +53,6 @@ class LuaExpression: public LuaReference
 public:
 	LuaExpression( const RString &sExpression = "" ) { if( sExpression != "" ) SetFromExpression( sExpression ); }
 	void SetFromExpression( const RString &sExpression );
-
-protected:
-	virtual void Register();
-
-private:
-	RString m_sExpression;
 };
 
 /* Reference a trivially restorable Lua object (any object that Serialize can handle).
@@ -72,13 +62,6 @@ class LuaData: public LuaReference
 public:
 	virtual RString Serialize() const;
 	virtual void LoadFromString( const RString &s );
-
-protected:
-	virtual void BeforeReset();
-	virtual void Register();
-
-	RString m_sSerializedData;
-	bool m_bWasSet;
 };
 
 class LuaTable: public LuaData

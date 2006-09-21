@@ -121,6 +121,12 @@ int LuaReference::GetLuaType() const
 	return iRet;
 }
 
+/* This is used only for debugging. */
+void LuaReference::SetName( const RString &sName )
+{
+	m_sName = sName;
+}
+
 void LuaReference::Unregister()
 {
 	if( LUA == NULL )
@@ -132,28 +138,14 @@ void LuaReference::Unregister()
 	m_iReference = LUA_NOREF;
 }
 
-void LuaReference::ReRegister()
-{
-	/* When this is called, the Lua state has been wiped.  Don't try to unregister our
-	 * old function reference, since it's already gone (and the number may point
-	 * somewhere else). */
-	m_iReference = LUA_NOREF;
-
-	Register();
-}
-
-
 void LuaExpression::SetFromExpression( const RString &sExpression )
 {
-	m_sExpression = "return " + sExpression;
-	Register();
-}
+	RString sFullExpression = "return " + sExpression;
+	SetName( sFullExpression );
 
-void LuaExpression::Register()
-{
 	Lua *L = LUA->Get();
 
-	if( !LuaHelpers::RunScript(L, m_sExpression, "expression", 1) )
+	if( !LuaHelpers::RunScript(L, sFullExpression, "expression", 1) )
 	{
 		this->SetFromNil();
 		LUA->Release( L );
@@ -208,24 +200,6 @@ void LuaData::LoadFromString( const RString &s )
 
 	this->SetFromStack( L );
 	LUA->Release( L );
-}
-
-void LuaData::BeforeReset()
-{
-	/* If we're unset, Register() should leave us unset, not set us to LUA_REFNIL. */
-	m_bWasSet = IsSet();
-
-	if( m_bWasSet )
-		m_sSerializedData = Serialize();
-}
-
-void LuaData::Register()
-{
-	if( !m_bWasSet )
-		return;
-
-	LoadFromString( m_sSerializedData );
-	m_sSerializedData.erase( m_sSerializedData.begin(), m_sSerializedData.end() );
 }
 
 LuaTable::LuaTable()
