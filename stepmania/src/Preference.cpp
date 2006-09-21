@@ -85,11 +85,11 @@ void IPreference::SetFromStack( lua_State *L )
 	} \
 	template<> void PrefSetFromStack( lua_State *L, type &v ) \
 	{ \
-		LuaHelpers::PopStack( v, L ); \
+		LuaHelpers::Pop( v, L ); \
 	} \
 	template<> void PrefPushValue( lua_State *L, const type &v ) \
 	{ \
-		LuaHelpers::PushStack( v, L ); \
+		LuaHelpers::Push( v, L ); \
 	}
 
 READFROM_AND_WRITETO( int )

@@ -58,7 +58,7 @@ static const char *ChunkReaderString( lua_State *L, void *ptr, size_t *size )
 void LuaManager::SetGlobal( const RString &sName, int val )
 {
 	Lua *L = LUA->Get();
-	LuaHelpers::PushStack( val, L );
+	LuaHelpers::Push( val, L );
 	lua_setglobal( L, sName );
 	LUA->Release(L);
 }
@@ -66,7 +66,7 @@ void LuaManager::SetGlobal( const RString &sName, int val )
 void LuaManager::SetGlobal( const RString &sName, float val )
 {
 	Lua *L = LUA->Get();
-	LuaHelpers::PushStack( val, L );
+	LuaHelpers::Push( val, L );
 	lua_setglobal( L, sName );
 	LUA->Release(L);
 }
@@ -74,7 +74,7 @@ void LuaManager::SetGlobal( const RString &sName, float val )
 void LuaManager::SetGlobal( const RString &sName, bool val )
 {
 	Lua *L = LUA->Get();
-	LuaHelpers::PushStack( val, L );
+	LuaHelpers::Push( val, L );
 	lua_setglobal( L, sName );
 	LUA->Release(L);
 }
@@ -82,7 +82,7 @@ void LuaManager::SetGlobal( const RString &sName, bool val )
 void LuaManager::SetGlobal( const RString &sName, const RString &val )
 {
 	Lua *L = LUA->Get();
-	LuaHelpers::PushStack( val, L );
+	LuaHelpers::Push( val, L );
 	lua_setglobal( L, sName );
 	LUA->Release(L);
 }
@@ -140,7 +140,7 @@ void LuaHelpers::ReadArrayFromTableB( Lua *L, vector<bool> &aOut )
 static int LuaPanic( lua_State *L )
 {
 	RString sErr;
-	LuaHelpers::PopStack( sErr, L );
+	LuaHelpers::Pop( sErr, L );
 	
 	lua_Debug ar;
 	int level = 0;
@@ -501,7 +501,7 @@ bool LuaHelpers::Call( Lua *L, const RString &sFunction, int iArgs, int iResults
 		return true;
 	
 	RString sError;
-	LuaHelpers::PopStack( sError, L );
+	LuaHelpers::Pop( sError, L );
 	Dialog::OK( ssprintf("Lua runtime error calling functin \"%s\": %s", sFunction.c_str(), sError.c_str()), "LUA_ERROR" );
 	return false;
 }
@@ -516,7 +516,7 @@ bool LuaHelpers::RunScript( Lua *L, const RString &sScript, const RString &sName
 
 		if( ret )
 		{
-			LuaHelpers::PopStack( sError, L );
+			LuaHelpers::Pop( sError, L );
 			return false;
 		}
 	}
@@ -526,7 +526,7 @@ bool LuaHelpers::RunScript( Lua *L, const RString &sScript, const RString &sName
 		int ret = lua_pcall( L, 0, iReturnValues, 0 );
 		if( ret )
 		{
-			LuaHelpers::PopStack( sError, L );
+			LuaHelpers::Pop( sError, L );
 			return false;
 		}
 	}

@@ -111,12 +111,7 @@ namespace LuaHelpers
 		}
 	}
 	template<class T>
-	void PushStack( const T &val, lua_State *L )
-	{
-		LuaHelpers::Push( val, L );
-	}
-	template<class T>
-	bool PopStack( T &val, lua_State *L )
+	bool Pop( T &val, lua_State *L )
 	{
 		bool bRet = LuaHelpers::FromStack( val, -1, L );
 		lua_pop( L, 1 );

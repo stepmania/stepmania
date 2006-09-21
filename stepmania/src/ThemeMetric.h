@@ -340,7 +340,7 @@ public:
 			else
 			{
 				m_Value.Unset();
-				LuaHelpers::PopStack( m_currentValue, L );
+				LuaHelpers::Pop( m_currentValue, L );
 			}
 
 			LUA->Release(L);
@@ -368,7 +368,7 @@ public:
 			m_Value.PushSelf( L );
 			lua_call(L, 0, 1); 
 			ASSERT( !lua_isnil(L, -1) );
-			LuaHelpers::PopStack( m_currentValue, L );
+			LuaHelpers::Pop( m_currentValue, L );
 			LUA->Release(L);
 		}
 
