@@ -226,6 +226,15 @@ void RegisterScreenClass( const RString& sClassName, CreateScreenFn pfn )
 
 ScreenManager::ScreenManager()
 {
+	// Register with Lua.
+	{
+		Lua *L = LUA->Get();
+		lua_pushstring( L, "SCREENMAN" );
+		this->PushSelf( L );
+		lua_settable( L, LUA_GLOBALSINDEX );
+		LUA->Release( L );
+	}
+
 	g_pSharedBGA = new Actor;
 
 	m_bZeroNextUpdate = false;
@@ -249,6 +258,9 @@ ScreenManager::~ScreenManager()
 	for( unsigned i=0; i<g_OverlayScreens.size(); i++ )
 		SAFE_DELETE( g_OverlayScreens[i] );
 	g_OverlayScreens.clear();
+
+	// Unregister with Lua.
+	LUA->UnsetGlobal( "SCREENMAN" );
 }
 
 /* This is called when we start up, and when the theme changes or is reloaded. */
@@ -942,16 +954,6 @@ public:
 		ADD_METHOD( ScreenIsPrepped );
 
 		Luna<T>::Register( L );
-
-		// Add global singleton if constructed already.  If it's not constructed yet,
-		// then we'll register it later when we reinit Lua just before 
-		// initializing the display.
-		if( SCREENMAN )
-		{
-			lua_pushstring(L, "SCREENMAN");
-			SCREENMAN->PushSelf( L );
-			lua_settable(L, LUA_GLOBALSINDEX);
-		}
 	}
 };
 

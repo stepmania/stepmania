@@ -149,6 +149,15 @@ ThemeManager::ThemeManager()
 {
 	THEME = this;	// so that we can Register THEME on construction
 
+	// Register with Lua.
+	{
+		Lua *L = LUA->Get();
+		lua_pushstring(L, "THEME");
+		this->PushSelf( L );
+		lua_settable( L, LUA_GLOBALSINDEX );
+		LUA->Release( L );
+	}
+
 	/* We don't have any theme loaded until SwitchThemeAndLanguage is called. */
 	m_sCurThemeName = "";
 	m_bPseudoLocalize = false;
@@ -161,6 +170,9 @@ ThemeManager::~ThemeManager()
 {
 	g_vThemes.clear();
 	SAFE_DELETE( g_pLoadedThemeData );
+
+	// Unregister with Lua.
+	LUA->UnsetGlobal( "THEME" );
 }
 
 void ThemeManager::GetThemeNames( vector<RString>& AddTo )
@@ -1150,16 +1162,6 @@ public:
 		ADD_METHOD( GetNumSelectableThemes );
 
 		Luna<T>::Register( L );
-
-		// Add global singleton if constructed already.  If it's not constructed yet,
-		// then we'll register it later when we reinit Lua just before 
-		// initializing the display.
-		if( THEME )
-		{
-			lua_pushstring(L, "THEME");
-			THEME->PushSelf( L );
-			lua_settable(L, LUA_GLOBALSINDEX);
-		}
 	}
 };
 

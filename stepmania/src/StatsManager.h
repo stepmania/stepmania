@@ -9,6 +9,7 @@ class StatsManager
 {
 public:
 	StatsManager();
+	~StatsManager();
 
 	void Reset();
 
