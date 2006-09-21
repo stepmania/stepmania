@@ -93,6 +93,7 @@ class UnlockManager
 
 public:
 	UnlockManager();
+	~UnlockManager();
 	void Reload();
 
 	// returns # of points till next unlock - used for ScreenUnlock

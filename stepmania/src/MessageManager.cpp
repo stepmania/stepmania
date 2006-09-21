@@ -4,6 +4,7 @@
 #include "RageUtil.h"
 #include "RageThreads.h"
 #include "EnumHelper.h"
+#include "LuaManager.h"
 
 #include <set>
 #include <map>
@@ -141,10 +142,20 @@ static map<RString,SubscribersSet> g_MessageToSubscribers;
 
 MessageManager::MessageManager()
 {
+	// Register with Lua.
+	{
+		Lua *L = LUA->Get();
+		lua_pushstring( L, "MESSAGEMAN" );
+		this->PushSelf( L );
+		lua_settable( L, LUA_GLOBALSINDEX );
+		LUA->Release( L );
+	}
 }
 
 MessageManager::~MessageManager()
 {
+	// Unregister with Lua.
+	LUA->UnsetGlobal( "MESSAGEMAN" );
 }
 
 void MessageManager::Subscribe( IMessageSubscriber* pSubscriber, const RString& sMessage )
@@ -304,16 +315,6 @@ public:
 		ADD_METHOD( Broadcast );
 
 		Luna<T>::Register( L );
-
-		// Add global singleton if constructed already.  If it's not constructed yet,
-		// then we'll register it later when we reinit Lua just before 
-		// initializing the display.
-		if( MESSAGEMAN )
-		{
-			lua_pushstring(L, "MESSAGEMAN");
-			MESSAGEMAN->PushSelf( L );
-			lua_settable(L, LUA_GLOBALSINDEX);
-		}
 	}
 };
 

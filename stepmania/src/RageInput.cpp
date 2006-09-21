@@ -7,6 +7,7 @@
 #include "arch/arch_default.h"
 #include "Foreach.h"
 #include "Preference.h"
+#include "LuaManager.h"
 
 RageInput*		INPUTMAN	= NULL;		// globally accessable input device
 
@@ -15,6 +16,15 @@ static Preference<RString> g_sInputDrivers( "InputDrivers", "" ); // "" == DEFAU
 RageInput::RageInput()
 {
 	LOG->Trace( "RageInput::RageInput()" );
+
+	// Register with Lua.
+	{
+		Lua *L = LUA->Get();
+		lua_pushstring( L, "INPUTMAN" );
+		INPUTMAN->PushSelf( L );
+		lua_settable( L, LUA_GLOBALSINDEX );
+		LUA->Release( L );
+	}
 
 	m_sDriverList = g_sInputDrivers;
 	if( m_sDriverList.empty() )
@@ -28,6 +38,9 @@ RageInput::~RageInput()
 	/* Delete optional devices. */
 	for( unsigned i = 0; i < m_pDevices.size(); ++i )
 		delete m_pDevices[i];
+
+	// Unregister with Lua.
+	LUA->UnsetGlobal( "INPUTMAN" );
 }
 
 void RageInput::LoadDrivers()
@@ -189,16 +202,6 @@ public:
 		ADD_METHOD( GetDescriptions );
 
 		Luna<T>::Register( L );
-
-		// Add global singleton if constructed already.  If it's not constructed yet,
-		// then we'll register it later when we reinit Lua just before 
-		// initializing the display.
-		if( INPUTMAN )
-		{
-			lua_pushstring(L, "INPUTMAN");
-			INPUTMAN->PushSelf( L );
-			lua_settable(L, LUA_GLOBALSINDEX);
-		}
 	}
 };
 

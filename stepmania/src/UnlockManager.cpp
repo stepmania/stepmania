@@ -50,9 +50,24 @@ LuaFunction( UnlockRewardTypeToLocalizedString, UnlockRewardTypeToLocalizedStrin
 
 UnlockManager::UnlockManager()
 {
+	// Register with Lua.
+	{
+		Lua *L = LUA->Get();
+		lua_pushstring( L, "UNLOCKMAN" );
+		this->PushSelf( L );
+		lua_settable( L, LUA_GLOBALSINDEX );
+		LUA->Release( L );
+	}
+
 	UNLOCKMAN = this;
 
 	Load();
+}
+
+UnlockManager::~UnlockManager()
+{
+	// Unregister with Lua.
+	LUA->UnsetGlobal( "UNLOCKMAN" );
 }
 
 void UnlockManager::UnlockSong( const Song *song )
@@ -750,16 +765,6 @@ public:
 		ADD_METHOD( GetStepsUnlockedByEntryID );
 
 		Luna<T>::Register( L );
-
-		// Add global singleton if constructed already.  If it's not constructed yet,
-		// then we'll register it later when we reinit Lua just before 
-		// initializing the display.
-		if( UNLOCKMAN )
-		{
-			lua_pushstring(L, "UNLOCKMAN");
-			UNLOCKMAN->PushSelf( L );
-			lua_settable(L, LUA_GLOBALSINDEX);
-		}
 	}
 };
 

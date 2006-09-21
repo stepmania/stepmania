@@ -3,6 +3,7 @@
 #include "Character.h"
 #include "GameState.h"
 #include "Foreach.h"
+#include "LuaManager.h"
 
 #define CHARACTERS_DIR "/Characters/"
 
@@ -10,6 +11,15 @@ CharacterManager*	CHARMAN = NULL;	// global object accessable from anywhere in t
 
 CharacterManager::CharacterManager()
 {
+	// Register with Lua.
+	{
+		Lua *L = LUA->Get();
+		lua_pushstring( L, "CHARMAN" );
+		CHARMAN->PushSelf( L );
+		lua_settable( L, LUA_GLOBALSINDEX );
+		LUA->Release( L );
+	}
+
 	for( unsigned i=0; i<m_pCharacters.size(); i++ )
 		SAFE_DELETE( m_pCharacters[i] );
 	m_pCharacters.clear();
@@ -47,6 +57,9 @@ CharacterManager::~CharacterManager()
 {
 	for( unsigned i=0; i<m_pCharacters.size(); i++ )
 		SAFE_DELETE( m_pCharacters[i] );
+
+	// Unregister with Lua.
+	LUA->UnsetGlobal( "CHARMAN" );
 }
 
 void CharacterManager::GetCharacters( vector<Character*> &apCharactersOut )
@@ -127,16 +140,6 @@ public:
 		ADD_METHOD( GetCharacter );
 
 		Luna<T>::Register( L );
-
-		// Add global singleton if constructed already.  If it's not constructed yet,
-		// then we'll register it later when we reinit Lua just before 
-		// initializing the display.
-		if( CHARMAN )
-		{
-			lua_pushstring(L, "CHARMAN");
-			CHARMAN->PushSelf( L );
-			lua_settable(L, LUA_GLOBALSINDEX);
-		}
 	}
 };
 
