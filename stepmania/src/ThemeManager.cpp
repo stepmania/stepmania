@@ -473,8 +473,6 @@ void ThemeManager::RunLuaScripts( const RString &sMask )
 
 void ThemeManager::UpdateLuaGlobals()
 {
-	LUA->RegisterTypes();
-
 #if !defined(SMPACKAGE)
 	/* explicitly refresh cached metrics that we use. */
 	ScreenDimensions::ReloadScreenDimensions();

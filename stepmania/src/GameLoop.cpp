@@ -135,6 +135,9 @@ namespace
 		/* Clear theme metrics, so ThemeMetric<apActorCommand>s are cleared. */
 		THEME->ClearSubscribers();
 
+		/* In case the previous theme overloaded class bindings, reinitialize them. */
+		LUA->RegisterTypes();
+
 		THEME->SwitchThemeAndLanguage( g_sNewTheme, THEME->GetCurLanguage(), PREFSMAN->m_bPseudoLocalize );
 		PREFSMAN->m_sTheme.Set( g_sNewTheme );
 
