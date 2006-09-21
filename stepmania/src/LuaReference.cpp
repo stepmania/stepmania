@@ -140,11 +140,9 @@ void LuaReference::Unregister()
 
 bool LuaReference::SetFromExpression( const RString &sExpression )
 {
+	RString sFullExpression = "return " + sExpression;
 	if( GetName().empty() )
-	{
-		RString sFullExpression = "return " + sExpression;
 		SetName( sFullExpression );
-	}
 
 	Lua *L = LUA->Get();
 
