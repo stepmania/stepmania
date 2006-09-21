@@ -998,8 +998,8 @@ int main(int argc, char* argv[])
 	GAMESTATE	= new GameState;
 
 	/* This requires PREFSMAN, for PREFSMAN->m_bShowLoadingWindow. */
-	LoadingWindow *loading_window = MakeLoadingWindow();
-	if( loading_window == NULL )
+	LoadingWindow *pLoadingWindow = MakeLoadingWindow();
+	if( pLoadingWindow == NULL )
 		RageException::Throw( "%s", COULDNT_OPEN_LOADING_WINDOW.GetValue().c_str() );
 
 	srand( time(NULL) );	// seed number generator	
@@ -1030,7 +1030,7 @@ int main(int argc, char* argv[])
 		RString sError;
 		RageSurface *pIcon = RageSurfaceUtils::LoadFile( THEME->GetPathG( "Common", "window icon" ), sError );
 		if( pIcon )
-			loading_window->SetIcon( pIcon );
+			pLoadingWindow->SetIcon( pIcon );
 		delete pIcon;
 	}
 
@@ -1052,7 +1052,7 @@ int main(int argc, char* argv[])
 	/* depends on SONGINDEX: */
 	SONGMAN		= new SongManager();
 	if( !GetCommandlineArgument("ExportNsisStrings") && !GetCommandlineArgument("ExportLuaInformation") )
-		SONGMAN->InitAll( loading_window );	// this takes a long time
+		SONGMAN->InitAll( pLoadingWindow );	// this takes a long time
 	CRYPTMAN	= new CryptManager;		// need to do this before ProfileMan
 	MEMCARDMAN	= new MemoryCardManager;
 	CHARMAN		= new CharacterManager;
@@ -1064,13 +1064,13 @@ int main(int argc, char* argv[])
 
 	/* This shouldn't need to be here; if it's taking long enough that this is
 	 * even visible, we should be fixing it, not showing a progress display. */
-	CatalogXml::Save( loading_window );
+	CatalogXml::Save( pLoadingWindow );
 	
-	NSMAN 		= new NetworkSyncManager( loading_window ); 
+	NSMAN 		= new NetworkSyncManager( pLoadingWindow ); 
 	MESSAGEMAN	= new MessageManager;
 	STATSMAN	= new StatsManager;
 
-	SAFE_DELETE( loading_window );		// destroy this before init'ing Display
+	SAFE_DELETE( pLoadingWindow );		// destroy this before init'ing Display
 
 	StartDisplay();
 
