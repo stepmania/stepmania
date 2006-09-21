@@ -1086,9 +1086,6 @@ int main(int argc, char* argv[])
 	FONT		= new FontManager;
 	SCREENMAN	= new ScreenManager;
 
-	// UGLY: Now that all global singletons are constructed, let them all register with Lua.
-	LUA->RegisterTypes();
-
 	StepMania::ResetGame();
 
 	/* Now that GAMESTATE is reset, tell SCREENMAN to update the theme (load
