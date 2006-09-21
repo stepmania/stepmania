@@ -52,11 +52,6 @@ private:
 	RString m_sName;
 };
 
-class LuaExpression: public LuaReference
-{
-public:
-};
-
 class LuaTable: public LuaReference
 {
 public:
