@@ -11,6 +11,7 @@
 #include "arch/Dialog/Dialog.h"
 #include "PrefsManager.h"
 #include "Foreach.h"
+#include "ActorUtil.h"
 
 
 NoteSkinManager*	NOTESKIN = NULL;	// global object accessable from anywhere in the program

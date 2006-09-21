@@ -4,7 +4,7 @@
 #define PANE_DISPLAY_H
 
 #include "ActorFrame.h"
-#include "ActorCommands.h"
+#include "ActorUtil.h"
 #include "PlayerNumber.h"
 #include "BitmapText.h"
 #include "AutoActor.h"

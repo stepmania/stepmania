@@ -12,7 +12,6 @@
 #include "FadingBanner.h"
 #include "RageUtil_BackgroundLoader.h"
 #include "ThemeMetric.h"
-#include "ActorCommands.h"
 #include "RageTexturePreloader.h"
 #include "TimingData.h"
 

@@ -9,7 +9,6 @@
 #include "Foreach.h"
 #include "XmlFile.h"
 #include "LuaBinding.h"
-#include "ActorCommands.h"
 #include "ThemeManager.h"
 #include "LuaReference.h"
 #include "MessageManager.h"
