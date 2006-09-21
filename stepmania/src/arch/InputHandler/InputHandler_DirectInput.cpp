@@ -485,7 +485,7 @@ void InputHandler_DInput::PollAndAcquireDevices( bool bBuffered )
 		if( Devices[i].buffered != bBuffered )
 			continue;
 
-		HRESULT hr = IDirectInputDevice2_Poll( Devices[i].Device );
+		HRESULT hr = Devices[i].Device->Poll();
 		if( hr == DIERR_INPUTLOST || hr == DIERR_NOTACQUIRED )
 		{
 			INPUTFILTER->ResetDevice( Devices[i].dev );
