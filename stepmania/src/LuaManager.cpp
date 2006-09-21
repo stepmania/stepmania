@@ -588,8 +588,7 @@ bool LuaHelpers::RunExpressionS( const RString &str, RString &sOut )
 	if( lua_isfunction( L, -1 ) )
 		RageException::Throw( "Result is a function; did you forget \"()\"?" );
 
-	sOut = lua_tostring( L, -1 );
-	lua_pop( L, 1 );
+	LuaHelpers::Pop( sOut, L );
 
 	LUA->Release( L );
 	return true;
