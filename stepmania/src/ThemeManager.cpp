@@ -907,8 +907,6 @@ int ThemeManager::GetMetricI( const RString &sClassName, const RString &sValueNa
 {
 	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName );
 
-	LuaHelpers::RunAtExpressionS( sValue );
-
 	LuaHelpers::PrepareExpression( sValue );
 
 	return LuaHelpers::RunExpressionI( sValue );
@@ -917,8 +915,6 @@ int ThemeManager::GetMetricI( const RString &sClassName, const RString &sValueNa
 float ThemeManager::GetMetricF( const RString &sClassName, const RString &sValueName )
 {
 	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName );
-
-	LuaHelpers::RunAtExpressionS( sValue );
 
 	LuaHelpers::PrepareExpression( sValue );
 
@@ -929,8 +925,6 @@ float ThemeManager::GetMetricF( const RString &sClassName, const RString &sValue
 bool ThemeManager::GetMetricB( const RString &sClassName, const RString &sValueName )
 {
 	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName );
-
-	LuaHelpers::RunAtExpressionS( sValue );
 
 	if( sValue.Left(1) == "0" || sValue.Left(1) == "1" )
 		RageException::Throw( "Theme metric %s::%s: boolean value \"%s\" should be true or false",
