@@ -3289,6 +3289,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RageTypes.cpp"
+				>
+			</File>
+			<File
 				RelativePath="RageTypes.h"
 				>
 			</File>
