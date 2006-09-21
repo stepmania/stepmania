@@ -909,7 +909,6 @@ bool Profile::SaveAllToDir( RString sDir, bool bSignData ) const
 	FILEMAN->CreateDir( sDir + EDIT_COURSES_SUBDIR );
 	FILEMAN->CreateDir( sDir + SCREENSHOTS_SUBDIR );
 
-	// XXX: Why do we need to flush here?
 	FILEMAN->FlushDirCache( sDir );
 
 	return bSaved;
