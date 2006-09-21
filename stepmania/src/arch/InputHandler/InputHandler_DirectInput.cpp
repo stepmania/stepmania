@@ -652,16 +652,39 @@ static wchar_t ScancodeAndKeysToChar( DWORD scancode, unsigned char keys[256] )
 	static HKL layout = GetKeyboardLayout(0);	// 0 == current thread
 	UINT vk = MapVirtualKeyEx( scancode, 1, layout );
 	
+	static bool bInitialized = false;
+
+	typedef int (WINAPI TOUNICODEEX)( IN UINT wVirtKey, IN UINT wScanCode, IN CONST BYTE *lpKeyState, OUT LPWSTR pwszBuff, IN int cchBuff, IN UINT wFlags, IN HKL dwhkl );
+	static TOUNICODEEX *pToUnicodeEx;
+
+	if( !bInitialized )
+	{
+		bInitialized = true;
+		HMODULE hModule = GetModuleHandle( "user32.dll" );
+		pToUnicodeEx = (TOUNICODEEX *) GetProcAddress( hModule, "ToUnicodeEx" );
+	}
+
+
 	unsigned short result[2];	// ToAscii writes a max of 2 chars
 	ZERO( result );
-	// TODO: Use ToUnicodeEx
-	int iNum = ToAsciiEx( vk, scancode, keys, result, 0, layout );
-	// iNum == 2 will happen only for dead keys.  See MSDN for ToAsciiEx.
-	if( iNum == 1 )
+
+	if( pToUnicodeEx != NULL )
 	{
-		RString s = RString()+(char)result[0];
-		return ConvertCodepageToWString( s, CP_ACP )[0];
+		int iNum = pToUnicodeEx( vk, scancode, keys, result, 2, 0, layout );
+		if( iNum == 1 )
+			return result[0];
 	}
+	else
+	{
+		int iNum = ToAsciiEx( vk, scancode, keys, result, 0, layout );
+		// iNum == 2 will happen only for dead keys.  See MSDN for ToAsciiEx.
+		if( iNum == 1 )
+		{
+			RString s = RString()+(char)result[0];
+			return ConvertCodepageToWString( s, CP_ACP )[0];
+		}
+	}
+
 	return '\0';
 }
 
