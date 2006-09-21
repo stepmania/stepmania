@@ -138,23 +138,20 @@ void LuaReference::Unregister()
 	m_iReference = LUA_NOREF;
 }
 
-void LuaReference::SetFromExpression( const RString &sExpression )
+bool LuaReference::SetFromExpression( const RString &sExpression )
 {
 	RString sFullExpression = "return " + sExpression;
 	SetName( sFullExpression );
 
 	Lua *L = LUA->Get();
 
-	if( !LuaHelpers::RunScript(L, sFullExpression, "expression", 1) )
-	{
+	bool bSuccess = LuaHelpers::RunScript(L, sFullExpression, "expression", 1);
+	if( !bSuccess )
 		this->SetFromNil();
-		LUA->Release( L );
-		return;
-	}
-
-	/* Store the result. */
-	this->SetFromStack( L );
+	else
+		this->SetFromStack( L );
 	LUA->Release( L );
+	return bSuccess;
 }
 
 RString LuaReference::Serialize() const

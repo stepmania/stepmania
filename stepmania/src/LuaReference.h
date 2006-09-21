@@ -22,8 +22,9 @@ public:
 	void SetFromNil();
 
 	/* Evaluate an expression that returns an object; store the object in a reference.
-	 * For example, evaluating "{ 1, 2, 3 }" will result in a reference to a table. */
-	void SetFromExpression( const RString &sExpression );
+	 * For example, evaluating "{ 1, 2, 3 }" will result in a reference to a table.
+	 * On success, return true.  On error, set to nil and return false. */
+	bool SetFromExpression( const RString &sExpression );
 
 	/* Deep-copy tables, detaching this reference from any others. */
 	void DeepCopy();
