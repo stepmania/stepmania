@@ -224,6 +224,8 @@ protected:
 	vector<PlayerInfo>	m_vPlayerInfo;	// filled by SGameplay derivatives in Init
 	virtual void FillPlayerInfo( vector<PlayerInfo> &vPlayerInfoOut ) = 0;
 	virtual PlayerInfo &GetPlayerInfoForInput( const InputEventPlus& iep )  { return m_vPlayerInfo[iep.pn]; }
+
+	RageTimer		m_timerGameplaySeconds;
 };
 
 vector<PlayerInfo>::iterator GetNextEnabledPlayerInfo		( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &v );

@@ -1666,14 +1666,18 @@ void ScreenGameplay::Update( float fDeltaTime )
 		//
 		// Update living players' alive time
 		//
+		// HACK: Don't scale alive time when ussing tab/tilde.  Instead of accumulating time from a timer, 
+		// this time should instead be tied to the music position.
+		float fUnscaledDeltaTime = m_timerGameplaySeconds.GetDeltaTime();
+
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 			if( !pi->GetPlayerStageStats()->bFailed )
-				pi->GetPlayerStageStats()->fAliveSeconds += fDeltaTime * GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
+				pi->GetPlayerStageStats()->fAliveSeconds += fUnscaledDeltaTime * GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
 
 		// update fGameplaySeconds
-		STATSMAN->m_CurStageStats.fGameplaySeconds += fDeltaTime;
+		STATSMAN->m_CurStageStats.fGameplaySeconds += fUnscaledDeltaTime;
 		if( GAMESTATE->m_fSongBeat >= GAMESTATE->m_pCurSong->m_fFirstBeat && GAMESTATE->m_fSongBeat < GAMESTATE->m_pCurSong->m_fLastBeat )
-			STATSMAN->m_CurStageStats.fStepsSeconds += fDeltaTime;
+			STATSMAN->m_CurStageStats.fStepsSeconds += fUnscaledDeltaTime;
 
 		//
 		// Check for end of song
