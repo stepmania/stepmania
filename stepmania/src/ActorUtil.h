@@ -5,7 +5,6 @@
 
 #include "Actor.h"
 #include "RageTexture.h"
-#include "ActorCommands.h"
 
 class XNode;
 
