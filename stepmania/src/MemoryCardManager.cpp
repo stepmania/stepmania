@@ -12,6 +12,7 @@
 #include "RageUtil_WorkerThread.h"
 #include "arch/arch.h"
 #include "arch/MemoryCard/MemoryCardDriver_Null.h"
+#include "LuaManager.h"
 
 MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -259,6 +260,15 @@ MemoryCardManager::MemoryCardManager()
 {
 	ASSERT( g_pWorker == NULL );
 
+	// Register with Lua.
+	{
+		Lua *L = LUA->Get();
+		lua_pushstring( L, "MEMCARDMAN" );
+		this->PushSelf( L );
+		lua_settable( L, LUA_GLOBALSINDEX );
+		LUA->Release( L );
+	}
+
 	g_pWorker = new ThreadedMemoryCardWorker;
 
 	m_bCardsLocked = false;
@@ -286,6 +296,9 @@ MemoryCardManager::MemoryCardManager()
 
 MemoryCardManager::~MemoryCardManager()
 {
+	// Unregister with Lua.
+	LUA->UnsetGlobal( "MESSAGEMAN" );
+
 	ASSERT( g_pWorker != NULL );
 	SAFE_DELETE(g_pWorker);
 
@@ -715,16 +728,6 @@ public:
 		ADD_METHOD( IsAnyPlayerUsingMemoryCard );
 
 		Luna<T>::Register( L );
-
-		// Add global singleton if constructed already.  If it's not constructed yet,
-		// then we'll register it later when we reinit Lua just before 
-		// initializing the display.
-		if( MEMCARDMAN )
-		{
-			lua_pushstring(L, "MEMCARDMAN");
-			MEMCARDMAN->PushSelf( L );
-			lua_settable(L, LUA_GLOBALSINDEX);
-		}
 	}
 };
 

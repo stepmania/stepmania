@@ -25,10 +25,21 @@ NoteSkinManager::NoteSkinManager()
 {
 	GAME_BASE_NOTESKIN_NAME.Load( "NoteSkinManager", "GameBaseNoteSkin" );
 	m_pCurGame = NULL;
+
+	// Register with Lua.
+	{
+		Lua *L = LUA->Get();
+		lua_pushstring( L, "NOTESKIN" );
+		this->PushSelf( L );
+		lua_settable( L, LUA_GLOBALSINDEX );
+		LUA->Release( L );
+	}
 }
 
 NoteSkinManager::~NoteSkinManager()
 {
+	// Unregister with Lua.
+	LUA->UnsetGlobal( "NOTESKIN" );
 }
 
 void NoteSkinManager::RefreshNoteSkinData( const Game* pGame )
@@ -322,16 +333,6 @@ public:
 		ADD_METHOD( GetGameBaseNoteSkinName );
 
 		Luna<T>::Register( L );
-
-		// Add global singleton if constructed already.  If it's not constructed yet,
-		// then we'll register it later when we reinit Lua just before 
-		// initializing the display.
-		if( NOTESKIN )
-		{
-			lua_pushstring(L, "NOTESKIN");
-			NOTESKIN->PushSelf( L );
-			lua_settable(L, LUA_GLOBALSINDEX);
-		}
 	}
 };
 

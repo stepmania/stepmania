@@ -63,6 +63,15 @@ RString COURSE_GROUP_COLOR_NAME( size_t i ) { return ssprintf( "CourseGroupColor
 
 SongManager::SongManager()
 {
+	// Register with Lua.
+	{
+		Lua *L = LUA->Get();
+		lua_pushstring( L, "SONGMAN" );
+		this->PushSelf( L );
+		lua_settable( L, LUA_GLOBALSINDEX );
+		LUA->Release( L );
+	}
+
 	NUM_SONG_GROUP_COLORS	.Load( "SongManager", "NumSongGroupColors" );
 	SONG_GROUP_COLOR	.Load( "SongManager", SONG_GROUP_COLOR_NAME, NUM_SONG_GROUP_COLORS );
 	NUM_COURSE_GROUP_COLORS	.Load( "SongManager", "NumCourseGroupColors" );
@@ -71,6 +80,9 @@ SongManager::SongManager()
 
 SongManager::~SongManager()
 {
+	// Unregister with Lua.
+	LUA->UnsetGlobal( "SONGMAN" );
+
 	// Courses depend on Songs and Songs don't depend on Courses.
 	// So, delete the Courses first.
 	FreeCourses();
@@ -1886,16 +1898,6 @@ public:
 		ADD_METHOD( GetExtraStageInfo );
 
 		Luna<T>::Register( L );
-
-		// Add global singleton if constructed already.  If it's not constructed yet,
-		// then we'll register it later when we reinit Lua just before 
-		// initializing the display.
-		if( SONGMAN )
-		{
-			lua_pushstring(L, "SONGMAN");
-			SONGMAN->PushSelf( L );
-			lua_settable(L, LUA_GLOBALSINDEX);
-		}
 	}
 };
 

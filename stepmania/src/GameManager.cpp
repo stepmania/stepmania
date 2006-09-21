@@ -2645,6 +2645,25 @@ static Style g_Styles[] =
 
 #define NUM_STYLES ARRAYLEN(g_Styles)
 
+
+GameManager::GameManager()
+{
+	// Register with Lua.
+	{
+		Lua *L = LUA->Get();
+		lua_pushstring( L, "GAMEMAN" );
+		this->PushSelf( L );
+		lua_settable( L, LUA_GLOBALSINDEX );
+		LUA->Release( L );
+	}
+}
+
+GameManager::~GameManager()
+{
+	// Unregister with Lua.
+	LUA->UnsetGlobal( "GAMEMAN" );
+}
+
 void GameManager::GetStylesForGame( const Game *pGame, vector<const Style*>& aStylesAddTo, bool editor ) const
 {
 	for( unsigned s=0; s<NUM_STYLES; s++ ) 
@@ -2908,16 +2927,6 @@ public:
 		ADD_METHOD( GetFirstStepsTypeForGame );
 
 		Luna<T>::Register( L );
-
-		// Add global singleton if constructed already.  If it's not constructed yet,
-		// then we'll register it later when we reinit Lua just before 
-		// initializing the display.
-		if( GAMEMAN )
-		{
-			lua_pushstring(L, "GAMEMAN");
-			GAMEMAN->PushSelf( L );
-			lua_settable(L, LUA_GLOBALSINDEX);
-		}
 	}
 };
 

@@ -15,6 +15,7 @@
 #include "Steps.h"
 #include "LightsManager.h"
 #include "SongUtil.h"
+#include "LuaManager.h"
 
 GameSoundManager *SOUND = NULL;
 
@@ -397,10 +398,22 @@ GameSoundManager::GameSoundManager()
 	g_Shutdown = false;
 	MusicThread.SetName( "Music thread" );
 	MusicThread.Create( MusicThread_start, this );
+
+	// Register with Lua.
+	{
+		Lua *L = LUA->Get();
+		lua_pushstring( L, "SOUND" );
+		this->PushSelf( L );
+		lua_settable( L, LUA_GLOBALSINDEX );
+		LUA->Release( L );
+	}
 }
 
 GameSoundManager::~GameSoundManager()
 {
+	// Unregister with Lua.
+	LUA->UnsetGlobal( "SOUND" );
+
 	/* Signal the mixing thread to quit. */
 	LOG->Trace("Shutting down music start thread ...");
 	g_Mutex->Lock();
@@ -744,16 +757,6 @@ public:
 		ADD_METHOD( PlayOnce );
 
 		Luna<T>::Register( L );
-
-		// Add global singleton if constructed already.  If it's not constructed yet,
-		// then we'll register it later when we reinit Lua just before 
-		// initializing the display.
-		if( SOUND )
-		{
-			lua_pushstring(L, "SOUND");
-			SOUND->PushSelf( L );
-			lua_settable(L, LUA_GLOBALSINDEX);
-		}
 	}
 };
 

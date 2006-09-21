@@ -9,6 +9,7 @@
 #include "Preference.h"
 #include "RageLog.h"
 #include "SpecialFiles.h"
+#include "LuaManager.h"
 
 //DEFAULTS_INI_PATH	= "Data/Defaults.ini";		// these can be overridden
 //PREFERENCES_INI_PATH	// overlay on Defaults.ini, contains the user's choices
@@ -333,6 +334,15 @@ PrefsManager::PrefsManager() :
 {
 	Init();
 	ReadPrefsFromDisk();
+
+	// Register with Lua.
+	{
+		Lua *L = LUA->Get();
+		lua_pushstring( L, "PREFSMAN" );
+		this->PushSelf( L );
+		lua_settable( L, LUA_GLOBALSINDEX );
+		LUA->Release( L );
+	}
 }
 #undef TRUE_IF_DEBUG
 
@@ -345,6 +355,8 @@ void PrefsManager::Init()
 
 PrefsManager::~PrefsManager()
 {
+	// Unregister with Lua.
+	LUA->UnsetGlobal( "PREFSMAN" );
 }
 
 void PrefsManager::SetCurrentGame( const RString &sGame )
@@ -598,16 +610,6 @@ public:
 		ADD_METHOD( SetPreferenceToDefault );
 
 		Luna<T>::Register( L );
-
-		// Add global singleton if constructed already.  If it's not constructed yet,
-		// then we'll register it later when we reinit Lua just before 
-		// initializing the display.
-		if( PREFSMAN )
-		{
-			lua_pushstring(L, "PREFSMAN");
-			PREFSMAN->PushSelf( L );
-			lua_settable(L, LUA_GLOBALSINDEX);
-		}
 	}
 };
 
