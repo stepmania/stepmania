@@ -343,7 +343,9 @@ XNode *LuaManager::GetLuaInformation() const
 			while( lua_next(L, -2) )
 			{
 				lua_pop( L, 1 ); // pop value
-				c.m_vMethods.push_back( lua_tostring(L, -1) );
+				RString sKey;
+				if( LuaHelpers::FromStack(sKey, -1, L) )
+					c.m_vMethods.push_back( sKey );
 			}
 			sort( c.m_vMethods.begin(), c.m_vMethods.end() );
 		}
@@ -374,7 +376,11 @@ XNode *LuaManager::GetLuaInformation() const
 			const char *type = lua_tostring( L, -1 );
 			
 			if( type )
-				mSingletons[lua_tostring(L, -6)] = type;
+			{
+				RString sKey;
+				if( LuaHelpers::FromStack(sKey, -6, L) )
+					mSingletons[sKey] = type;
+			}
 			lua_pop( L, 4 ); // pop type, method metatable, method table, and metatable
 			break;
 		}
@@ -384,7 +390,11 @@ XNode *LuaManager::GetLuaInformation() const
 			float fNum = float( lua_tonumber(L, -1) );
 			
 			if( fNum == truncf(fNum) )
-				mConstants[lua_tostring(L, -2)] = int( fNum );
+			{
+				RString sKey;
+				if( LuaHelpers::FromStack(sKey, -2, L) )
+					mConstants[sKey] = int( fNum );
+			}
 			break;
 		}
 		}
@@ -625,7 +635,8 @@ RString GetLuaBindingType( Lua *L, int iArgNo )
 	int iMetatable = lua_gettop( L );
 	lua_pushstring( L, "type" );
 	lua_rawget( L, iMetatable );
-	RString sActualType = lua_tostring( L, -1 );
+	RString sActualType;
+	LuaHelpers::FromStack( sActualType, -1, L );
 
 	lua_settop( L, iTop );
 	return sActualType;
