@@ -132,22 +132,6 @@ void LuaReference::Unregister()
 	m_iReference = LUA_NOREF;
 }
 
-void LuaReference::BeforeResetAll()
-{
-	if( g_Subscribers.m_pSubscribers == NULL )
-		return;
-	FOREACHS( LuaReference*, *g_Subscribers.m_pSubscribers, p )
-		(*p)->BeforeReset();
-}
-
-void LuaReference::AfterResetAll()
-{
-	if( g_Subscribers.m_pSubscribers == NULL )
-		return;
-	FOREACHS( LuaReference*, *g_Subscribers.m_pSubscribers, p )
-		(*p)->ReRegister();
-}
-
 void LuaReference::ReRegister()
 {
 	/* When this is called, the Lua state has been wiped.  Don't try to unregister our
