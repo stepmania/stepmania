@@ -1087,10 +1087,7 @@ int main(int argc, char* argv[])
 	SCREENMAN	= new ScreenManager;
 
 	// UGLY: Now that all global singletons are constructed, let them all register with Lua.
-	//
-	// ResetState wipes out method tables.   We need to call UpdateLuaGlobals, so
-	// we re-run scripts that may add to them.
-	THEME->UpdateLuaGlobals();
+	LUA->RegisterTypes();
 
 	StepMania::ResetGame();
 
