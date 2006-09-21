@@ -60,7 +60,7 @@ void LuaManager::SetGlobal( const RString &sName, int val )
 	Lua *L = LUA->Get();
 	LuaHelpers::Push( val, L );
 	lua_setglobal( L, sName );
-	LUA->Release(L);
+	LUA->Release( L );
 }
 
 void LuaManager::SetGlobal( const RString &sName, float val )
@@ -68,7 +68,7 @@ void LuaManager::SetGlobal( const RString &sName, float val )
 	Lua *L = LUA->Get();
 	LuaHelpers::Push( val, L );
 	lua_setglobal( L, sName );
-	LUA->Release(L);
+	LUA->Release( L );
 }
 
 void LuaManager::SetGlobal( const RString &sName, bool val )
@@ -76,7 +76,7 @@ void LuaManager::SetGlobal( const RString &sName, bool val )
 	Lua *L = LUA->Get();
 	LuaHelpers::Push( val, L );
 	lua_setglobal( L, sName );
-	LUA->Release(L);
+	LUA->Release( L );
 }
 
 void LuaManager::SetGlobal( const RString &sName, const RString &val )
@@ -84,7 +84,7 @@ void LuaManager::SetGlobal( const RString &sName, const RString &val )
 	Lua *L = LUA->Get();
 	LuaHelpers::Push( val, L );
 	lua_setglobal( L, sName );
-	LUA->Release(L);
+	LUA->Release( L );
 }
 
 void LuaManager::UnsetGlobal( const RString &sName )
@@ -92,7 +92,7 @@ void LuaManager::UnsetGlobal( const RString &sName )
 	Lua *L = LUA->Get();
 	lua_pushnil( L );
 	lua_setglobal( L, sName );
-	LUA->Release(L);
+	LUA->Release( L );
 }
 
 
@@ -220,7 +220,7 @@ Lua *LuaManager::Get()
 	m_pLock->Lock();
 	if( size_t(g_iNumStackCounts) < ARRAYLEN(g_iStackCounts) )
 	{
-		g_iStackCounts[g_iNumStackCounts] = lua_gettop(L);
+		g_iStackCounts[g_iNumStackCounts] = lua_gettop( L );
 	}
 	++g_iNumStackCounts;
 	return L;
@@ -476,12 +476,12 @@ bool LuaHelpers::RunScriptFile( const RString &sFile )
 	RString sError;
 	if( !LuaHelpers::RunScript( L, sScript, sFile, sError, 0 ) )
 	{
-		LUA->Release(L);
+		LUA->Release( L );
 		sError = ssprintf( "Lua runtime error: %s", sError.c_str() );
 		Dialog::OK( sError, "LUA_ERROR" );
 		return false;
 	}
-	LUA->Release(L);
+	LUA->Release( L );
 
 	return true;
 }
@@ -535,7 +535,7 @@ bool LuaHelpers::RunExpressionB( const RString &str )
 
 	if( !LuaHelpers::RunScript(L, "return " + str, "", 1) )
 	{
-		LUA->Release(L);
+		LUA->Release( L );
 		return false;
 	}
 
@@ -545,7 +545,7 @@ bool LuaHelpers::RunExpressionB( const RString &str )
 
 	bool result = !!lua_toboolean( L, -1 );
 	lua_pop( L, 1 );
-	LUA->Release(L);
+	LUA->Release( L );
 
 	return result;
 }
@@ -555,7 +555,7 @@ float LuaHelpers::RunExpressionF( const RString &str )
 	Lua *L = LUA->Get();
 	if( !LuaHelpers::RunScript(L, "return " + str, "", 1) )
 	{
-		LUA->Release(L);
+		LUA->Release( L );
 		return 0;
 	}
 
@@ -566,7 +566,7 @@ float LuaHelpers::RunExpressionF( const RString &str )
 	float result = (float) lua_tonumber( L, -1 );
 	lua_pop( L, 1 );
 
-	LUA->Release(L);
+	LUA->Release( L );
 	return result;
 }
 
@@ -580,7 +580,7 @@ bool LuaHelpers::RunExpressionS( const RString &str, RString &sOut )
 	Lua *L = LUA->Get();
 	if( !LuaHelpers::RunScript(L, "return " + str, "", 1) )
 	{
-		LUA->Release(L);
+		LUA->Release( L );
 		return false;
 	}
 
@@ -591,7 +591,7 @@ bool LuaHelpers::RunExpressionS( const RString &str, RString &sOut )
 	sOut = lua_tostring( L, -1 );
 	lua_pop( L, 1 );
 
-	LUA->Release(L);
+	LUA->Release( L );
 	return true;
 }
 
@@ -616,14 +616,14 @@ RString GetLuaBindingType( Lua *L, int iArgNo )
 	if( lua_isnil(L, iArgNo) )
 		return "nil";
 
-	int iTop = lua_gettop(L);
+	int iTop = lua_gettop( L );
 	if( !lua_getmetatable(L, iArgNo) )
 	{
 		lua_settop( L, iTop );
 		return ssprintf( "non-bound %s", lua_typename(L, lua_type(L, iArgNo)) );
 	}
 
-	int iMetatable = lua_gettop(L);
+	int iMetatable = lua_gettop( L );
 	lua_pushstring( L, "type" );
 	lua_rawget( L, iMetatable );
 	RString sActualType = lua_tostring( L, -1 );

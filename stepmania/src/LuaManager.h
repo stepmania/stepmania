@@ -134,8 +134,8 @@ namespace LuaHelpers
 
 inline bool MyLua_checkboolean (lua_State *L, int numArg)
 {
-	luaL_checktype(L,numArg,LUA_TBOOLEAN);
-	return !!lua_toboolean(L,numArg);
+	luaL_checktype( L, numArg, LUA_TBOOLEAN );
+	return !!lua_toboolean( L, numArg );
 }
 
 #define SArg(n) (luaL_checkstring(L,n))
