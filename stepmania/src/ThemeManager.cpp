@@ -905,7 +905,9 @@ void ThemeManager::EvaluateString( RString &sText )
 
 int ThemeManager::GetMetricI( const RString &sClassName, const RString &sValueName )
 {
-	RString sValue = GetMetric( sClassName, sValueName );	// Use non-raw so that Lua expressions are allowed
+	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName );
+
+	LuaHelpers::RunAtExpressionS( sValue );
 
 	LuaHelpers::PrepareExpression( sValue );
 
@@ -914,7 +916,9 @@ int ThemeManager::GetMetricI( const RString &sClassName, const RString &sValueNa
 
 float ThemeManager::GetMetricF( const RString &sClassName, const RString &sValueName )
 {
-	RString sValue = GetMetric( sClassName, sValueName );	// Use non-raw so that Lua expressions are allowed
+	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName );
+
+	LuaHelpers::RunAtExpressionS( sValue );
 
 	LuaHelpers::PrepareExpression( sValue );
 
@@ -924,7 +928,9 @@ float ThemeManager::GetMetricF( const RString &sClassName, const RString &sValue
 // #include "LuaManager.h"
 bool ThemeManager::GetMetricB( const RString &sClassName, const RString &sValueName )
 {
-	RString sValue = GetMetric( sClassName, sValueName );	// Use non-raw so that Lua expressions are allowed
+	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName );
+
+	LuaHelpers::RunAtExpressionS( sValue );
 
 	/* Watch out: "0" and "1" are not false and true in Lua (all string values are
 	 * true).  Make sure that we catch all values that are supposed to be simple
@@ -943,7 +949,9 @@ bool ThemeManager::GetMetricB( const RString &sClassName, const RString &sValueN
 
 RageColor ThemeManager::GetMetricC( const RString &sClassName, const RString &sValueName )
 {
-	RString sValue = GetMetric( sClassName, sValueName );	// Use non-raw so that Lua expressions are allowed
+	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName );
+
+	LuaHelpers::RunAtExpressionS( sValue );
 
 	RageColor ret(1,1,1,1);
 	if( !ret.FromString(sValue) )
