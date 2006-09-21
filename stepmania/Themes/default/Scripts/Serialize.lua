@@ -75,7 +75,10 @@ function DeepCopy(t, already_copied)
 	already_copied[t] = { }
 	local ret = already_copied[t]
 
-	table.foreach(t, function(a,b) ret[a] = DeepCopy(b, already_copied) end)
+	for a, b in pairs(t) do
+		ret[a] = DeepCopy( b, already_copied )
+	end
+
 	return ret
 end
 

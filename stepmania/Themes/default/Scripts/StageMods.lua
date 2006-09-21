@@ -20,14 +20,13 @@ function ScreenSelectMusic:setupmusicstagemods()
 	GAMESTATE:SetCurrentSong( song )
 	GAMESTATE:SetPreferredSong( song )
 
-	local fun = function( dummy, pn )
+	for dummy, pn in ipairs(GAMESTATE:GetHumanPlayers()) do
 		GAMESTATE:SetCurrentSteps( pn, steps )
 		GAMESTATE:GetPlayerState(pn):SetPlayerOptions( ModsLevel_Stage, po )
 		GAMESTATE:SetPreferredDifficulty( pn, difficulty )
 		MESSAGEMAN:Broadcast( "PlayerOptionsChangedP" .. (pn+1) )
 	end
-
-	table.foreach( GAMESTATE:GetHumanPlayers(), fun )
+	
 	GAMESTATE:SetSongOptions( ModsLevel_Stage, so )
 	MESSAGEMAN:Broadcast( "SongOptionsChanged" )
 end
@@ -40,12 +39,12 @@ function ScreenSelectMusic:setupcoursestagemods()
 		-- Let SSMusic set battery.
 		-- local so = "failimmediate,battery"
 		local so = "failimmediate"
-		local fun = function( dummy, pn )
+
+		for dummy, pn in ipairs(GAMESTATE:GetHumanPlayers()) do
 			GAMESTATE:GetPlayerState(pn):SetPlayerOptions( ModsLevel_Stage, po )
 			MESSAGEMAN:Broadcast( "PlayerOptionsChangedP" .. (pn+1) )
 		end
 
-		table.foreach( GAMESTATE:GetHumanPlayers(), fun )
 		GAMESTATE:SetSongOptions( ModsLevel_Stage, so )
 		MESSAGEMAN:Broadcast( "SongOptionsChanged" )
 	end
