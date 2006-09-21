@@ -214,7 +214,8 @@ void StepMania::ApplyGraphicOptions()
 		TEXTUREMAN->ReloadAll();
 
 	StoreActualGraphicOptions();
-	SCREENMAN->SystemMessage( GetActualGraphicOptionsString() );
+	if( SCREENMAN )
+		SCREENMAN->SystemMessage( GetActualGraphicOptionsString() );
 
 	/* Give the input handlers a chance to re-open devices as necessary. */
 	INPUTMAN->WindowReset();
