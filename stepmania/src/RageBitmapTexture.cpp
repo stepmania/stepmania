@@ -82,10 +82,10 @@ void RageBitmapTexture::Create()
 	{
 		/* Do this after setting the color key for paletted images; it'll also return
 		 * TRAIT_NO_TRANSPARENCY if the color key is never used. */
-		int traits = RageSurfaceUtils::FindSurfaceTraits( pImg );
-		if( traits & RageSurfaceUtils::TRAIT_NO_TRANSPARENCY )
+		int iTraits = RageSurfaceUtils::FindSurfaceTraits( pImg );
+		if( iTraits & RageSurfaceUtils::TRAIT_NO_TRANSPARENCY )
 			actualID.iAlphaBits = 0;
-		else if( traits & RageSurfaceUtils::TRAIT_BOOL_TRANSPARENCY )
+		else if( iTraits & RageSurfaceUtils::TRAIT_BOOL_TRANSPARENCY )
 			actualID.iAlphaBits = 1;
 	}
 
@@ -94,7 +94,7 @@ void RageBitmapTexture::Create()
 	sHintString.MakeLower();
 
 	if( sHintString.find("32bpp") != string::npos )			actualID.iColorDepth = 32;
-	else if( sHintString.find("16bpp") != string::npos )	actualID.iColorDepth = 16;
+	else if( sHintString.find("16bpp") != string::npos )		actualID.iColorDepth = 16;
 	if( sHintString.find("dither") != string::npos )		actualID.bDither = true;
 	if( sHintString.find("stretch") != string::npos )		actualID.bStretch = true;
 	if( sHintString.find("mipmaps") != string::npos )		actualID.bMipMaps = true;
@@ -107,7 +107,7 @@ void RageBitmapTexture::Create()
 
 	/* This indicates that the only component in the texture is alpha; assume all
 	 * color is white. */
-	if( sHintString.find("alphamap") != string::npos )			actualID.iGrayscaleBits = 0;
+	if( sHintString.find("alphamap") != string::npos )		actualID.iGrayscaleBits = 0;
 
 	/* No iGrayscaleBits for images that are already paletted.  We don't support
 	 * that; and that hint is intended for use on images that are already grayscale,
