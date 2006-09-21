@@ -211,18 +211,10 @@ private:
 class LuaClass: public LuaTable
 {
 public:
-	LuaClass();
+	LuaClass() { }
 	LuaClass( const LuaClass &cpy );
 	virtual ~LuaClass();
 	LuaClass &operator=( const LuaClass &cpy );
-
-protected:
-	virtual void BeforeReset();
-	virtual void Register();
-
-	void *m_pSelf;
-
-	RString m_sClassName;
 };
 
 /* Only a base class has to indicate that it's instanced (has a per-object

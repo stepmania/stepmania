@@ -142,11 +142,6 @@ void LuaBinding::ApplyDerivedType( Lua *L, const RString &sClassName, void *pSel
 #include "RageUtil_AutoPtr.h"
 REGISTER_CLASS_TRAITS( LuaClass, new LuaClass(*pCopy) )
 
-LuaClass::LuaClass()
-{
-	m_pSelf = NULL;
-}
-
 void *LuaBinding::GetUserdataFromGlobalTable( Lua *L, const char *szType, int iArg )
 {
 	if( !GetGlobalTable(L, false) )
@@ -210,60 +205,6 @@ LuaClass::~LuaClass()
 	lua_settop( L, iTop );
 
 	LUA->Release( L );
-}
-
-void LuaClass::BeforeReset()
-{
-	LuaTable::BeforeReset();
-
-	/* Read pSelf the name of the class, so we can use them to restore in Register(). */
-	Lua *L = LUA->Get();
-
-	if( !GetGlobalTable(L, false) )
-	{
-		LUA->Release( L );
-		return;
-	}
-
-	this->PushSelf( L );
-	lua_rawget( L, -2 );
-	if( lua_isnil(L, -1) )
-	{
-		/* This table hasn't been pushed yet. */
-		lua_pop( L, 2 );
-		LUA->Release( L );
-		return;
-	}
-
-	m_pSelf = lua_touserdata( L, -1 );
-	lua_pop( L, 2 );
-
-	this->PushSelf( L );
-	lua_getmetatable( L, -1 );
-	lua_rawget( L, LUA_REGISTRYINDEX );
-	ASSERT( !lua_isnil(L, -1) );
-	m_sClassName = lua_tostring( L, -1 );
-	lua_pop( L, 2 );
-
-	LUA->Release( L );
-}
-
-void LuaClass::Register()
-{
-	LuaTable::Register();
-
-	if( m_pSelf != NULL )
-	{
-		Lua *L = LUA->Get();
-		this->PushSelf(L);
-		LuaBinding::ApplyDerivedType( L, m_sClassName, m_pSelf );
-		lua_pop( L, 1 );
-		LUA->Release( L );
-
-		/* To conserve memory, clear the class name.  We only need it while restoring. */
-		m_sClassName = RString();
-		m_pSelf = NULL;
-	}
 }
 
 /*
