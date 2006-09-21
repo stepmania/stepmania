@@ -8,18 +8,18 @@
 
 static ThemeMetric<float>		IN_LENGTH	("LyricDisplay","InLength");
 static ThemeMetric<float>		OUT_LENGTH	("LyricDisplay","OutLength");
-static ThemeMetric<RageColor>		WIPE_DIM_FACTOR	("LyricDisplay","WipeDimFactor");
 
 LyricDisplay::LyricDisplay()
 {
-	for( int i=0; i<2; i++ )
-	{
-		m_textLyrics[i].SetName( "Lyric" );
-		ActorUtil::LoadAllCommands( m_textLyrics[i], "LyricDisplay" );
-		m_textLyrics[i].LoadFromFont( THEME->GetPathF("LyricDisplay","text") );
-		m_textLyrics[i].SetDiffuse( RageColor(1,1,1,1) );
-		this->AddChild( &m_textLyrics[i] );
-	}
+	m_textLyrics[0].SetName( "LyricBack" );
+	ActorUtil::LoadAllCommands( m_textLyrics[0], "LyricDisplay" );
+	m_textLyrics[0].LoadFromFont( THEME->GetPathF("LyricDisplay","text") );
+	this->AddChild( &m_textLyrics[0] );
+
+	m_textLyrics[1].SetName( "LyricFront" );
+	ActorUtil::LoadAllCommands( m_textLyrics[1], "LyricDisplay" );
+	m_textLyrics[1].LoadFromFont( THEME->GetPathF("LyricDisplay","text") );
+	this->AddChild( &m_textLyrics[1] );
 
 	Init();
 }
@@ -72,44 +72,30 @@ void LyricDisplay::Update( float fDeltaTime )
 	// Make lyrics show faster for faster song rates.
 	fShowLength /= GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
 
+	Lua *L = LUA->Get();
 	for( int i=0; i<2; i++ )
 	{
-		m_textLyrics[i].SetText( GAMESTATE->m_pCurSong->m_LyricSegments[m_iCurLyricNumber].m_sLyric );
+		const LyricSegment &seg = GAMESTATE->m_pCurSong->m_LyricSegments[m_iCurLyricNumber];
 
-		/*
-		 * This really needs a way to define a custom theme command here, so themes
-		 * can do things like:
-		 * 
-		 * "Diffuse=1,1,1,0;linear,.2;Diffuse=1,1,1,1;linear,.2;LyricDiffuse"
-		 */
+		m_textLyrics[i].PushContext(L);
 
-		const float fZoom = min( 1.0f, float(SCREEN_WIDTH)/(m_textLyrics[i].GetZoomedWidth()+1) );
+		lua_pushstring( L, "LyricText" );
+		lua_pushstring( L, seg.m_sLyric );
+		lua_settable( L, -3 );
 
-		m_textLyrics[i].StopTweening();
-		m_textLyrics[i].SetZoomX( fZoom );
+		lua_pushstring( L, "LyricDuration" );
+		lua_pushnumber( L, fShowLength );
+		lua_settable( L, -3 );
 
-		RageColor color = GAMESTATE->m_pCurSong->m_LyricSegments[m_iCurLyricNumber].m_Color;
-		
-		if( i==0 )
-			color *= WIPE_DIM_FACTOR;
+		lua_pushstring( L, "LyricColor" );
+		seg.m_Color.PushTable( L );
+		lua_settable( L, -3 );
 
-		m_textLyrics[i].SetDiffuse( color );
-
-		/* Crop the bottom layer of text away as we crop the top layer on.  That
-		 * prevents overdraw, which reduces AA quality. */
-		if( i==0 )
-			m_textLyrics[i].SetCropLeft(0);
-		if( i==1 )
-			m_textLyrics[i].SetCropRight(1);
-		m_textLyrics[i].PlayCommand( "In" );
-		m_textLyrics[i].BeginTweening( fShowLength * 0.75f ); /* sleep */
-		if( i==0 )
-			m_textLyrics[i].SetCropLeft(1);
-		if( i==1 )
-			m_textLyrics[i].SetCropRight(0);
-		m_textLyrics[i].BeginTweening( fShowLength * 0.25f ); /* sleep */
-		m_textLyrics[i].PlayCommand( "Out" );
+		lua_pop( L, 1 );
 	}
+	LUA->Release( L );
+
+	PlayCommand( "Changed" );
 
 	m_iCurLyricNumber++;
 }
