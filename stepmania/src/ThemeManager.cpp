@@ -932,15 +932,9 @@ bool ThemeManager::GetMetricB( const RString &sClassName, const RString &sValueN
 
 	LuaHelpers::RunAtExpressionS( sValue );
 
-	/* Watch out: "0" and "1" are not false and true in Lua (all string values are
-	 * true).  Make sure that we catch all values that are supposed to be simple
-	 * booleans. */
-	TrimLeft( sValue );
-	TrimRight( sValue );
-	if( sValue.Left(1) == "0" )
-		return false; /* optimization */
-	if( sValue.Left(1) == "1" )
-		return true; /* optimization */
+	if( sValue.Left(1) == "0" || sValue.Left(1) == "1" )
+		RageException::Throw( "Theme metric %s::%s: boolean value \"%s\" should be true or false",
+			sClassName.c_str(), sValueName.c_str(), sValue.c_str() );
 
 	LuaHelpers::PrepareExpression( sValue );
 	
