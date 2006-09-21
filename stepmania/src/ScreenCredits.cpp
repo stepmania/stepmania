@@ -6,9 +6,9 @@
 
 REGISTER_SCREEN_CLASS( ScreenCredits );
 
-void ScreenCredits::Init()
+void ScreenCredits::BeginScreen()
 {
-	ScreenAttract::Init();
+	ScreenAttract::BeginScreen();
 
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("credits") );
 }

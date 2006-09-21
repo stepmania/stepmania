@@ -9,7 +9,7 @@
 class ScreenCredits : public ScreenAttract
 {
 public:
-	virtual void Init();
+	virtual void BeginScreen();
 };
 
 #endif
