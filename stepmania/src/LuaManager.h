@@ -95,11 +95,6 @@ namespace LuaHelpers
 	bool FromStack( RString &Object, int iOffset, Lua *L );
 
 	template<class T>
-	void PushStack( const T &val, Lua *L );
-	template<class T>
-	bool PopStack( T &val, Lua *L );
-
-	template<class T>
 	void ReadArrayFromTable( vector<T> &aOut, lua_State *L )
 	{
 		luaL_checktype( L, -1, LUA_TTABLE );
