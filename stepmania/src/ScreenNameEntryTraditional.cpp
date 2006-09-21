@@ -129,8 +129,7 @@ float HighScoreWheel::Scroll()
 }
 
 REGISTER_SCREEN_CLASS( ScreenNameEntryTraditional );
-ScreenNameEntryTraditional::ScreenNameEntryTraditional():
-	CHANGE_COMMAND("stoptweening;decelerate,.12")
+ScreenNameEntryTraditional::ScreenNameEntryTraditional()
 {
 	if( PREFSMAN->m_bScreenTestMode )
 	{
@@ -471,7 +470,7 @@ void ScreenNameEntryTraditional::PositionCharsAndCursor( int pn )
 		const bool bHidden = ( iPos < iFirst || iPos > iLast );
 		const int iActualPos = clamp( iPos, iFirst-1, iLast+1 );
 
-		bt->RunCommands( CHANGE_COMMAND );
+		bt->PlayCommand( "Change" );
 		bt->SetX( iActualPos * ALPHABET_GAP_X );
 		bt->SetDiffuseAlpha( bHidden? 0.0f:1.0f );
 	}
