@@ -5,10 +5,10 @@
 
 #include "RageTypes.h"
 #include "RageUtil_AutoPtr.h"
+#include "LuaReference.h"
 #include <map>
 class XNode;
 struct lua_State;
-class LuaReference;
 class LuaClass;
 #include "MessageManager.h"
 #include "Tween.h"
