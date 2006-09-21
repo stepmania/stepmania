@@ -157,7 +157,7 @@ void LuaExpression::SetFromExpression( const RString &sExpression )
 	LUA->Release( L );
 }
 
-RString LuaData::Serialize() const
+RString LuaReference::Serialize() const
 {
 	/* Call Serialize(t), where t is our referenced object. */
 	Lua *L = LUA->Get();
@@ -182,24 +182,6 @@ RString LuaData::Serialize() const
 	LUA->Release( L );
 
 	return sRet;
-}
-
-void LuaData::LoadFromString( const RString &s )
-{
-	Lua *L = LUA->Get();
-
-	/* Restore the serialized data by evaluating it. */
-	RString sError;
-	if( !LuaHelpers::RunScript( L, s, "serialization", sError, 1 ) )
-	{
-		/* Serialize() should never return an invalid script.  Drop the failed
-		 * script into the log (it may be too big to pass to FAIL_M) and fail. */
-		LOG->Warn( "Unserialization of \"%s\" failed: %s", s.c_str(), sError.c_str() );
-		FAIL_M( "Unserialization failed" );
-	}
-
-	this->SetFromStack( L );
-	LUA->Release( L );
 }
 
 LuaTable::LuaTable()

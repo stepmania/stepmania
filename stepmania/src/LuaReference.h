@@ -38,6 +38,8 @@ public:
 	void SetName( const RString &sName );
 	RString GetName() const { return m_sName; }
 
+	RString Serialize() const;
+
 private:
 	void Unregister();
 	int m_iReference;
@@ -53,15 +55,6 @@ class LuaExpression: public LuaReference
 public:
 	LuaExpression( const RString &sExpression = "" ) { if( sExpression != "" ) SetFromExpression( sExpression ); }
 	void SetFromExpression( const RString &sExpression );
-};
-
-/* Reference a trivially restorable Lua object (any object that Serialize can handle).
- * The object will be saved and restored across Lua resets. */
-class LuaData: public LuaReference
-{
-public:
-	virtual RString Serialize() const;
-	virtual void LoadFromString( const RString &s );
 };
 
 class LuaTable: public LuaReference
