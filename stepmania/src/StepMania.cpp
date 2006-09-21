@@ -1117,9 +1117,6 @@ int main(int argc, char* argv[])
 	else
 		GameLoop::RunGameLoop();
 
-	/* If we ended mid-game, finish up. */
-	GAMESTATE->EndGame();
-
 	PREFSMAN->SavePrefsToDisk();
 
 	ShutdownGame();

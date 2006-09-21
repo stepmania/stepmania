@@ -215,6 +215,9 @@ void GameLoop::RunGameLoop()
 		SCREENMAN->Draw();
 	}
 
+	/* If we ended mid-game, finish up. */
+	GAMESTATE->EndGame();
+
 	if( ChangeAppPri() )
 		HOOKS->UnBoostPriority();
 }
