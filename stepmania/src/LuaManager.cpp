@@ -24,7 +24,7 @@ static LuaFunctionList *g_LuaFunctions = NULL;
 	#pragma comment(lib, "lua-5.0/lib/LibLuaXbox.lib")
 	#pragma comment(lib, "lua-5.0/lib/LibLuaLibXbox.lib")
 #endif
-#elif !defined(_XBOX) && defined(_MSC_VER)
+#elif defined(_MSC_VER)
 	#pragma comment(lib, "lua-5.0/lib/LibLua.lib")
 	#pragma comment(lib, "lua-5.0/lib/LibLuaLib.lib")
 #endif
