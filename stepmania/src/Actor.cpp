@@ -1376,7 +1376,20 @@ public:
 	static int fadetop( T* p, lua_State *L )		{ p->SetFadeTop(FArg(1)); return 0; }
 	static int faderight( T* p, lua_State *L )		{ p->SetFadeRight(FArg(1)); return 0; }
 	static int fadebottom( T* p, lua_State *L )		{ p->SetFadeBottom(FArg(1)); return 0; }
-	static int diffuse( T* p, lua_State *L )		{ p->SetDiffuse( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
+	static int diffuse( T* p, lua_State *L )
+	{
+		if( lua_type(L,1) == LUA_TTABLE )
+		{
+			RageColor c;
+			c.FromStack( L, 1 );
+			p->SetDiffuse( c );
+		}
+		else
+		{
+			p->SetDiffuse( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) );
+		}
+		return 0;
+	}
 	static int diffuseupperleft( T* p, lua_State *L )	{ p->SetDiffuseUpperLeft( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
 	static int diffuseupperright( T* p, lua_State *L )	{ p->SetDiffuseUpperRight( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
 	static int diffuselowerleft( T* p, lua_State *L )	{ p->SetDiffuseLowerLeft( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
