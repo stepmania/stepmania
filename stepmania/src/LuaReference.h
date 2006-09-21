@@ -64,7 +64,7 @@ public:
 	virtual void LoadFromString( const RString &s );
 };
 
-class LuaTable: public LuaData
+class LuaTable: public LuaReference
 {
 public:
 	LuaTable();
