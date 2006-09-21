@@ -923,6 +923,7 @@ int main(int argc, char* argv[])
 #endif
 
 #endif
+	LUA		= new LuaManager;
 
 	/* Almost everything uses this to read and write files.  Load this early. */
 	FILEMAN = new RageFileManager( argv[0] );
@@ -993,7 +994,6 @@ int main(int argc, char* argv[])
 	// Create game objects
 	//
 
-	LUA		= new LuaManager;
 	GAMESTATE	= new GameState;
 
 	/* This requires PREFSMAN, for PREFSMAN->m_bShowLoadingWindow. */
