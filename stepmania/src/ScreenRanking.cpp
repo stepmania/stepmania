@@ -109,7 +109,7 @@ void ScreenRanking::Init()
 	SECONDS_PER_PAGE.Load             ( m_sName,"SecondsPerPage" );
 	PAGE_FADE_SECONDS.Load            ( m_sName,"PageFadeSeconds" );
 	NO_SCORE_NAME.Load                ( m_sName,"NoScoreName" );
-	MANUAL_SCROLLING.Load             ( m_sName, "ManualScroling" );
+	MANUAL_SCROLLING.Load             ( m_sName, "ManualScrolling" );
 
 	ScreenAttract::Init();
 
