@@ -961,14 +961,6 @@
 			Name="Data Structures"
 			>
 			<File
-				RelativePath="ActorCommands.cpp"
-				>
-			</File>
-			<File
-				RelativePath="ActorCommands.h"
-				>
-			</File>
-			<File
 				RelativePath=".\AdjustSync.cpp"
 				>
 			</File>
