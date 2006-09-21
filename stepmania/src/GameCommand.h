@@ -63,7 +63,7 @@ public:
 	RString		m_sPreferredModifiers;
 	RString		m_sStageModifiers;
 	RString		m_sScreen;
-	LuaExpression	m_LuaFunction;
+	LuaReference	m_LuaFunction;
 	Song*		m_pSong;
 	Steps*		m_pSteps;
 	Course*		m_pCourse;

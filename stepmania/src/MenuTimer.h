@@ -40,7 +40,7 @@ protected:
 
 	BitmapText		m_text[NUM_MENU_TIMER_TEXTS];
 
-	LuaExpression	m_exprFormatText[NUM_MENU_TIMER_TEXTS];
+	LuaReference	m_exprFormatText[NUM_MENU_TIMER_TEXTS];
 
 	RageSound	m_soundBeep;
 

@@ -151,7 +151,7 @@ void Player::Init(
 		//
 		// Init judgment positions
 		//
-		LuaExpression expr;
+		LuaReference expr;
 		expr.SetFromExpression( THEME->GetMetric(sType,"JudgmentTransformCommandFunction") );
 
 		bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->m_StyleType==ONE_PLAYER_TWO_SIDES;

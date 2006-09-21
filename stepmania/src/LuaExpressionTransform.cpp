@@ -6,7 +6,7 @@
 
 LuaExpressionTransform::LuaExpressionTransform()
 {
-	m_pexprTransformFunction = new LuaExpression;
+	m_pexprTransformFunction = new LuaReference;
 	m_iNumSubdivisions = 1;
 }
 

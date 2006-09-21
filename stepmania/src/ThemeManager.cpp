@@ -1001,7 +1001,7 @@ void ThemeManager::GetMetric( const RString &sClassName, const RString &sValueNa
 }
 #endif
 
-void ThemeManager::GetMetric( const RString &sClassName, const RString &sValueName, LuaExpression &valueOut )
+void ThemeManager::GetMetric( const RString &sClassName, const RString &sValueName, LuaReference &valueOut )
 {
 	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName );
 	valueOut.SetFromExpression( "function(self) " + sValue + "end" );

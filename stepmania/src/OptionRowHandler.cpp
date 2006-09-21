@@ -726,10 +726,10 @@ class OptionRowHandlerListSongsInCurrentSongGroup: public OptionRowHandlerList
 class OptionRowHandlerLua : public OptionRowHandler
 {
 public:
-	LuaExpression *m_pLuaTable;
+	LuaReference *m_pLuaTable;
 	LuaReference m_EnabledForPlayersFunc;
 
-	OptionRowHandlerLua() { m_pLuaTable = new LuaExpression; Init(); }
+	OptionRowHandlerLua() { m_pLuaTable = new LuaReference; Init(); }
 	virtual ~OptionRowHandlerLua() { delete m_pLuaTable; }
 	void Init()
 	{

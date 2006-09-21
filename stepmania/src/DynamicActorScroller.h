@@ -16,7 +16,7 @@ protected:
 	virtual void ShiftSubActors( int iDist );
 	virtual void ConfigureActor( Actor *pActor, int iItem );
 
-	LuaExpression m_LoadFunction;
+	LuaReference m_LoadFunction;
 };
 
 class DynamicActorScrollerAutoDeleteChildren: public DynamicActorScroller 

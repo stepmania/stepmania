@@ -4,7 +4,7 @@
 #define LuaExpressionTransform_H
 
 #include "Actor.h"
-class LuaExpression;
+class LuaReference;
 #include <map>
 
 class LuaExpressionTransform
@@ -22,7 +22,7 @@ public:
 
 protected:
 
-	LuaExpression *m_pexprTransformFunction;	// params: self,offset,itemIndex,numItems
+	LuaReference *m_pexprTransformFunction;	// params: self,offset,itemIndex,numItems
 	int m_iNumSubdivisions;	// 1 == one evaluation per position
 	struct PositionOffsetAndItemIndex
 	{

@@ -85,7 +85,7 @@ public:
 	void	GetMetric( const RString &sClassName, const RString &sValueName, float &valueOut )			{ valueOut = GetMetricF( sClassName, sValueName ); }
 	void	GetMetric( const RString &sClassName, const RString &sValueName, bool &valueOut )			{ valueOut = GetMetricB( sClassName, sValueName ); }
 	void	GetMetric( const RString &sClassName, const RString &sValueName, RageColor &valueOut )		{ valueOut = GetMetricC( sClassName, sValueName ); }
-	void	GetMetric( const RString &sClassName, const RString &sValueName, LuaExpression &valueOut );
+	void	GetMetric( const RString &sClassName, const RString &sValueName, LuaReference &valueOut );
 #if !defined(SMPACKAGE)
 	void	GetMetric( const RString &sClassName, const RString &sValueName, apActorCommands &valueOut );
 #endif
