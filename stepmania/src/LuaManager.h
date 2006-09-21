@@ -95,6 +95,14 @@ namespace LuaHelpers
 	bool FromStack( RString &Object, int iOffset, Lua *L );
 
 	template<class T>
+	bool Pop( T &val, lua_State *L )
+	{
+			bool bRet = LuaHelpers::FromStack( val, -1, L );
+			lua_pop( L, 1 );
+			return bRet;
+	}
+	
+	template<class T>
 	void ReadArrayFromTable( vector<T> &aOut, lua_State *L )
 	{
 		luaL_checktype( L, -1, LUA_TTABLE );
@@ -105,17 +113,9 @@ namespace LuaHelpers
 		{
 			lua_rawgeti( L, -1, i+1 );
 			T value = T();
-			LuaHelpers::FromStack( value, -1, L );
+			LuaHelpers::Pop( value, L );
 			aOut.push_back( value );
-			lua_pop( L, 1 );
 		}
-	}
-	template<class T>
-	bool Pop( T &val, lua_State *L )
-	{
-		bool bRet = LuaHelpers::FromStack( val, -1, L );
-		lua_pop( L, 1 );
-		return bRet;
 	}
 	template<class T>
 	void CreateTableFromArray( const vector<T> &aIn, lua_State *L )
