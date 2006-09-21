@@ -21,6 +21,10 @@ public:
 	void SetFromStack( Lua *L );
 	void SetFromNil();
 
+	/* Evaluate an expression that returns an object; store the object in a reference.
+	 * For example, evaluating "{ 1, 2, 3 }" will result in a reference to a table. */
+	void SetFromExpression( const RString &sExpression );
+
 	/* Deep-copy tables, detaching this reference from any others. */
 	void DeepCopy();
 
@@ -48,13 +52,9 @@ private:
 	RString m_sName;
 };
 
-/* Evaluate an expression that returns an object; store the object in a reference.
- * For example, evaluating "{ 1, 2, 3 }" will result in a reference to a table. */
 class LuaExpression: public LuaReference
 {
 public:
-	LuaExpression( const RString &sExpression = "" ) { if( sExpression != "" ) SetFromExpression( sExpression ); }
-	void SetFromExpression( const RString &sExpression );
 };
 
 class LuaTable: public LuaReference

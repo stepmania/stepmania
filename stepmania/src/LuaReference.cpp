@@ -138,7 +138,7 @@ void LuaReference::Unregister()
 	m_iReference = LUA_NOREF;
 }
 
-void LuaExpression::SetFromExpression( const RString &sExpression )
+void LuaReference::SetFromExpression( const RString &sExpression )
 {
 	RString sFullExpression = "return " + sExpression;
 	SetName( sFullExpression );
