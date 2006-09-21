@@ -923,7 +923,6 @@
 		AA40D32709A08D650068C0D5 /* LuaBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = AAEBC78C07A4FF5600793F0E /* LuaBinding.h */; };
 		AA40D32809A08D650068C0D5 /* LuaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = AAEBC78E07A4FF5600793F0E /* LuaManager.h */; };
 		AA40D32909A08D650068C0D5 /* PlayerState.h in Headers */ = {isa = PBXBuildFile; fileRef = AAEBC78F07A4FF5600793F0E /* PlayerState.h */; };
-		AA40D32A09A08D650068C0D5 /* ActorCommands.h in Headers */ = {isa = PBXBuildFile; fileRef = AACA592507B5E1E500763545 /* ActorCommands.h */; };
 		AA40D32C09A08D650068C0D5 /* RageFileDriverTimeout.h in Headers */ = {isa = PBXBuildFile; fileRef = AACA592B07B5E23400763545 /* RageFileDriverTimeout.h */; };
 		AA40D32D09A08D650068C0D5 /* RageUtil_AutoPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = AACA592C07B5E23400763545 /* RageUtil_AutoPtr.h */; };
 		AA40D32E09A08D650068C0D5 /* RageUtil_WorkerThread.h in Headers */ = {isa = PBXBuildFile; fileRef = AACA592E07B5E23400763545 /* RageUtil_WorkerThread.h */; };
@@ -1311,7 +1310,6 @@
 		AA40D4C009A08D650068C0D5 /* RageSurfaceUtils_Dither.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAEBC6C807A20AFE00793F0E /* RageSurfaceUtils_Dither.cpp */; };
 		AA40D4C109A08D650068C0D5 /* RageSurfaceUtils_Zoom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAEBC6CA07A20AFE00793F0E /* RageSurfaceUtils_Zoom.cpp */; };
 		AA40D4C209A08D650068C0D5 /* LuaManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAEBC78D07A4FF5600793F0E /* LuaManager.cpp */; };
-		AA40D4C409A08D650068C0D5 /* ActorCommands.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACA592407B5E1E500763545 /* ActorCommands.cpp */; };
 		AA40D4C609A08D650068C0D5 /* RageFileDriverTimeout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACA592A07B5E23400763545 /* RageFileDriverTimeout.cpp */; };
 		AA40D4C709A08D650068C0D5 /* RageUtil_WorkerThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACA592D07B5E23400763545 /* RageUtil_WorkerThread.cpp */; };
 		AA40D4C809A08D650068C0D5 /* LuaReference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8BD2A107C9391B00EA04E1 /* LuaReference.cpp */; };
@@ -1629,8 +1627,6 @@
 		AAC9F331069E22BB00D53E2C /* GameSoundManager.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC9F32F069E22BB00D53E2C /* GameSoundManager.h */; };
 		AAC9F334069E22CF00D53E2C /* MemoryCardDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC9F332069E22CF00D53E2C /* MemoryCardDriver.cpp */; };
 		AAC9F335069E22CF00D53E2C /* MemoryCardDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC9F333069E22CF00D53E2C /* MemoryCardDriver.h */; };
-		AACA592607B5E1E500763545 /* ActorCommands.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACA592407B5E1E500763545 /* ActorCommands.cpp */; };
-		AACA592707B5E1E500763545 /* ActorCommands.h in Headers */ = {isa = PBXBuildFile; fileRef = AACA592507B5E1E500763545 /* ActorCommands.h */; };
 		AACA593107B5E23400763545 /* RageFileDriverTimeout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACA592A07B5E23400763545 /* RageFileDriverTimeout.cpp */; };
 		AACA593207B5E23400763545 /* RageFileDriverTimeout.h in Headers */ = {isa = PBXBuildFile; fileRef = AACA592B07B5E23400763545 /* RageFileDriverTimeout.h */; };
 		AACA593307B5E23400763545 /* RageUtil_AutoPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = AACA592C07B5E23400763545 /* RageUtil_AutoPtr.h */; };
@@ -2529,8 +2525,6 @@
 		AAC9F32F069E22BB00D53E2C /* GameSoundManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = GameSoundManager.h; path = ../src/GameSoundManager.h; sourceTree = "<group>"; };
 		AAC9F332069E22CF00D53E2C /* MemoryCardDriver.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = MemoryCardDriver.cpp; sourceTree = "<group>"; };
 		AAC9F333069E22CF00D53E2C /* MemoryCardDriver.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = MemoryCardDriver.h; sourceTree = "<group>"; };
-		AACA592407B5E1E500763545 /* ActorCommands.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ActorCommands.cpp; path = ../src/ActorCommands.cpp; sourceTree = "<group>"; };
-		AACA592507B5E1E500763545 /* ActorCommands.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ActorCommands.h; path = ../src/ActorCommands.h; sourceTree = "<group>"; };
 		AACA592A07B5E23400763545 /* RageFileDriverTimeout.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageFileDriverTimeout.cpp; path = ../src/RageFileDriverTimeout.cpp; sourceTree = "<group>"; };
 		AACA592B07B5E23400763545 /* RageFileDriverTimeout.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageFileDriverTimeout.h; path = ../src/RageFileDriverTimeout.h; sourceTree = "<group>"; };
 		AACA592C07B5E23400763545 /* RageUtil_AutoPtr.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageUtil_AutoPtr.h; path = ../src/RageUtil_AutoPtr.h; sourceTree = "<group>"; };
@@ -3721,8 +3715,6 @@
 			children = (
 				AA6EFF7504770FFD005F316C /* Actor.cpp */,
 				AA6EFF7604770FFD005F316C /* Actor.h */,
-				AACA592407B5E1E500763545 /* ActorCommands.cpp */,
-				AACA592507B5E1E500763545 /* ActorCommands.h */,
 				AA6EFF7704770FFD005F316C /* ActorFrame.cpp */,
 				AA6EFF7804770FFD005F316C /* ActorFrame.h */,
 				AA5D166A0A798C0E00F17E86 /* ActorFrameTexture.cpp */,
@@ -4260,7 +4252,6 @@
 				AAEBC79007A4FF5600793F0E /* LuaBinding.h in Headers */,
 				AAEBC79207A4FF5600793F0E /* LuaManager.h in Headers */,
 				AAEBC79307A4FF5600793F0E /* PlayerState.h in Headers */,
-				AACA592707B5E1E500763545 /* ActorCommands.h in Headers */,
 				AACA593207B5E23400763545 /* RageFileDriverTimeout.h in Headers */,
 				AACA593307B5E23400763545 /* RageUtil_AutoPtr.h in Headers */,
 				AACA593507B5E23400763545 /* RageUtil_WorkerThread.h in Headers */,
@@ -4712,7 +4703,6 @@
 				AA40D32709A08D650068C0D5 /* LuaBinding.h in Headers */,
 				AA40D32809A08D650068C0D5 /* LuaManager.h in Headers */,
 				AA40D32909A08D650068C0D5 /* PlayerState.h in Headers */,
-				AA40D32A09A08D650068C0D5 /* ActorCommands.h in Headers */,
 				AA40D32C09A08D650068C0D5 /* RageFileDriverTimeout.h in Headers */,
 				AA40D32D09A08D650068C0D5 /* RageUtil_AutoPtr.h in Headers */,
 				AA40D32E09A08D650068C0D5 /* RageUtil_WorkerThread.h in Headers */,
@@ -5305,7 +5295,6 @@
 				AAEBC6CE07A20AFE00793F0E /* RageSurfaceUtils_Dither.cpp in Sources */,
 				AAEBC6D007A20AFE00793F0E /* RageSurfaceUtils_Zoom.cpp in Sources */,
 				AAEBC79107A4FF5600793F0E /* LuaManager.cpp in Sources */,
-				AACA592607B5E1E500763545 /* ActorCommands.cpp in Sources */,
 				AACA593107B5E23400763545 /* RageFileDriverTimeout.cpp in Sources */,
 				AACA593407B5E23400763545 /* RageUtil_WorkerThread.cpp in Sources */,
 				AA8BD2A807C9391B00EA04E1 /* LuaReference.cpp in Sources */,
@@ -5718,7 +5707,6 @@
 				AA40D4C009A08D650068C0D5 /* RageSurfaceUtils_Dither.cpp in Sources */,
 				AA40D4C109A08D650068C0D5 /* RageSurfaceUtils_Zoom.cpp in Sources */,
 				AA40D4C209A08D650068C0D5 /* LuaManager.cpp in Sources */,
-				AA40D4C409A08D650068C0D5 /* ActorCommands.cpp in Sources */,
 				AA40D4C609A08D650068C0D5 /* RageFileDriverTimeout.cpp in Sources */,
 				AA40D4C709A08D650068C0D5 /* RageUtil_WorkerThread.cpp in Sources */,
 				AA40D4C809A08D650068C0D5 /* LuaReference.cpp in Sources */,
