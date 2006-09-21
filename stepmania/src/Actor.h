@@ -5,7 +5,6 @@
 
 #include "RageTypes.h"
 #include "RageUtil_AutoPtr.h"
-#include "ActorCommands.h"
 #include <map>
 class XNode;
 struct lua_State;
