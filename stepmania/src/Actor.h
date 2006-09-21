@@ -14,6 +14,7 @@ class LuaClass;
 #include "MessageManager.h"
 #include "Tween.h"
 
+typedef AutoPtrCopyOnWrite<LuaReference> apActorCommands;
 
 #define DRAW_ORDER_BEFORE_EVERYTHING		-200
 #define DRAW_ORDER_UNDERLAY			-100
