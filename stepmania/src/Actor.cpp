@@ -261,7 +261,7 @@ void Actor::LoadFromNode( const RString& sDir, const XNode* pNode )
 		else if( sKeyName == "BaseZoomZ" )		SetBaseZoomZ( StringToFloat(sValue) );
 		else if( EndsWith(sKeyName,"Command") )
 		{
-			apActorCommands apac = ActorCommands( sValue );
+			apActorCommands apac = ActorUtil::ParseActorCommands( sValue );
 
 			RString sCmdName = sKeyName.Left( sKeyName.size()-7 );
 			AddCommand( sCmdName, apac );

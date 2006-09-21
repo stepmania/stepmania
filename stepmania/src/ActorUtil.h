@@ -5,6 +5,7 @@
 
 #include "Actor.h"
 #include "RageTexture.h"
+#include "ActorCommands.h"
 
 class XNode;
 
@@ -45,7 +46,7 @@ namespace ActorUtil
 	void Register( const RString& sClassName, CreateActorFn pfn );
 	Actor* Create( const RString& sClassName, const RString& sDir, const XNode* pNode, Actor *pParentActor );
 
-
+	apActorCommands ParseActorCommands( const RString &sCommands );
 	void SetXY( Actor& actor, const RString &sType );
 	void LoadCommand( Actor& actor, const RString &sType, const RString &sCommandName );
 	void LoadCommandFromName( Actor& actor, const RString &sType, const RString &sCommandName, const RString &sName );

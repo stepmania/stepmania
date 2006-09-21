@@ -394,6 +394,11 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, const XNode *pParent, Actor 
 	}
 }
 
+apActorCommands ActorUtil::ParseActorCommands( const RString &sCommands )
+{
+	return ActorCommands( sCommands );
+}
+
 void ActorUtil::SetXY( Actor& actor, const RString &sType )
 {
 	ASSERT( !actor.GetName().empty() );

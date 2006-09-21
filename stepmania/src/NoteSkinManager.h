@@ -4,6 +4,7 @@
 #define NOTE_SKIN_MANAGER_H
 
 #include "ActorCommands.h"
+#include "ActorUtil.h"
 #include "RageTypes.h"
 #include "PlayerNumber.h"
 #include "IniFile.h"

@@ -23,6 +23,7 @@
 #include "SpecialFiles.h"
 #include "EnumHelper.h"
 #include "PrefsManager.h"
+#include "ActorUtil.h"
 
 ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the program
 
@@ -945,7 +946,7 @@ RageColor ThemeManager::GetMetricC( const RString &sClassName, const RString &sV
 apActorCommands ThemeManager::GetMetricA( const RString &sClassName, const RString &sValueName )
 {
 	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName );
-	return ActorCommands( sValue );
+	return ActorUtil::ParseActorCommands( sValue );
 }
 #endif
 

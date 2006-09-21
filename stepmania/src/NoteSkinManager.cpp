@@ -194,7 +194,7 @@ bool NoteSkinManager::GetMetricB( const RString &sButtonName, const RString &sVa
 
 apActorCommands NoteSkinManager::GetMetricA( const RString &sButtonName, const RString &sValueName )
 {
-	return ActorCommands( GetMetric(sButtonName,sValueName) );
+	return ActorUtil::ParseActorCommands( GetMetric(sButtonName,sValueName) );
 }
 
 RString NoteSkinManager::GetPath( const RString &sButtonName, const RString &sElement )
