@@ -41,7 +41,7 @@ struct ChunkReaderData
 	ChunkReaderData() { buf = NULL; done = false; }
 };
 
-const char *ChunkReaderString( lua_State *L, void *ptr, size_t *size )
+static const char *ChunkReaderString( lua_State *L, void *ptr, size_t *size )
 {
 	ChunkReaderData *data = (ChunkReaderData *) ptr;
 	if( data->done )
