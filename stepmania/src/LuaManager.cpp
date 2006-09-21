@@ -486,25 +486,6 @@ bool LuaHelpers::RunScriptFile( const RString &sFile )
 	return true;
 }
 
-bool LuaHelpers::Call( Lua *L, const RString &sFunction, int iArgs, int iResults )
-{
-	LuaHelpers::Push( sFunction, L );
-	lua_gettable( L, LUA_GLOBALSINDEX );
-	
-	if( lua_isnil(L, -1) )
-	{
-		lua_pop( L, 1 );
-		Dialog::OK( ssprintf("Unknown Lua function \"%s\".", sFunction.c_str()), "LUA_ERROR" );
-		return false;
-	}
-	if( !lua_pcall(L, iArgs, iResults, 0) )
-		return true;
-	
-	RString sError;
-	LuaHelpers::Pop( sError, L );
-	Dialog::OK( ssprintf("Lua runtime error calling functin \"%s\": %s", sFunction.c_str(), sError.c_str()), "LUA_ERROR" );
-	return false;
-}
 
 bool LuaHelpers::RunScript( Lua *L, const RString &sScript, const RString &sName, RString &sError, int iReturnValues )
 {

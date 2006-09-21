@@ -48,10 +48,6 @@ private:
 
 namespace LuaHelpers
 {
-	/* Call a Lua function with args on the stack and the results will left on the stack. 
-	 * Returns false on error. */
-	bool Call( Lua *L, const RString &sFunction, int iArgs = 0, int iResults = 0 );
-	
 	/* Run a script with the given name.  Return values are left on the Lua stack.
 	 * Returns false on error, with sError set. */
 	bool RunScript( Lua *L, const RString &sScript, const RString &sName, RString &sError, int iReturnValues = 0 );
