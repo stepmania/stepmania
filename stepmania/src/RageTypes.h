@@ -8,6 +8,7 @@ enum CullMode { CULL_BACK, CULL_FRONT, CULL_NONE };
 enum ZTestMode { ZTEST_OFF, ZTEST_WRITE_ON_PASS, ZTEST_WRITE_ON_FAIL };
 enum PolygonMode { POLYGON_FILL, POLYGON_LINE };
 
+struct lua_State;
 
 struct RageVector2
 {
@@ -154,6 +155,10 @@ public:
 		r=1; b=1; g=1; a=1;
 		return false;
 	}
+
+	void PushTable( lua_State *L ) const;
+	void FromStack( lua_State *L, int iPos );
+
 	float r, g, b, a;
 } SM_ALIGN(16);
 
