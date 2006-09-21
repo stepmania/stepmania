@@ -284,7 +284,7 @@ void Actor::LoadFromNode( const RString& sDir, const XNode* pNode )
 		c->GetAttrValue( "Value", sValue );
 
 		LuaHelpers::RunAtExpressionS( sName );
-		apActorCommands apac = ActorCommands( sValue );
+		apActorCommands apac = ActorUtil::ParseActorCommands( sValue );
 
 		AddCommand( sName, apac );
 	}

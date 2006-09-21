@@ -82,7 +82,7 @@ void HighScoreWheelItem::LoadBlank( int iRankIndex )
 
 void HighScoreWheelItem::ShowFocus()
 {
-	apActorCommands c = ActorCommands( "diffuseshift;EffectColor1,1,1,0,1;EffectColor2,0,1,1,1" );
+	apActorCommands c = ActorUtil::ParseActorCommands( "diffuseshift;EffectColor1,1,1,0,1;EffectColor2,0,1,1,1" );
 	m_textRank.RunCommands( c );
 	m_textName.RunCommands( c );
 	m_textScore.RunCommands( c );
