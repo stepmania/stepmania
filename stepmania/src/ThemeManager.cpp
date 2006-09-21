@@ -13,6 +13,7 @@
 #include "RageFile.h"
 #if !defined(SMPACKAGE)
 #include "ScreenManager.h"
+#include "ActorUtil.h"
 #endif
 #include "Foreach.h"
 #include "ThemeMetric.h"
@@ -23,7 +24,6 @@
 #include "SpecialFiles.h"
 #include "EnumHelper.h"
 #include "PrefsManager.h"
-#include "ActorUtil.h"
 
 ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the program
 

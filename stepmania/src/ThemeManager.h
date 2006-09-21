@@ -7,7 +7,7 @@
 #include <set>
 #include <deque>
 #if !defined(SMPACKAGE)
-#include "ActorCommands.h"
+#include "Actor.h"
 #endif
 #include "LuaReference.h"
 
