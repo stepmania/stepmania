@@ -327,13 +327,10 @@ public:
 	{
 		if( m_sName != ""  &&  THEME  &&   THEME->IsThemeLoaded() )
 		{
-			RString sExpression;
-			THEME->GetMetric( m_sGroup, m_sName, sExpression );
-
 			Lua *L = LUA->Get();
 
-			m_Value.SetName( ssprintf("%s:%s", m_sGroup.c_str(), m_sName.c_str()) );
-			m_Value.SetFromExpression( sExpression );
+			THEME->GetMetric( m_sGroup, m_sName, m_Value );
+
 			m_Value.PushSelf( L );
 			if( lua_type(L, -1) == LUA_TFUNCTION )
 			{
