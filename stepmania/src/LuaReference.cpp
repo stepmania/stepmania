@@ -4,30 +4,23 @@
 #include "LuaBinding.h"
 #include "Foreach.h"
 #include "RageLog.h"
-#include "SubscriptionManager.h"
 #include "RageUtil_AutoPtr.h"
 
 REGISTER_CLASS_TRAITS( LuaReference, new LuaReference(*pCopy) )
 
-static SubscriptionManager<LuaReference> g_Subscribers;
-
 LuaReference::LuaReference()
 {
 	m_iReference = LUA_NOREF;
-	g_Subscribers.Subscribe( this );
 }
 
 LuaReference::~LuaReference()
 {
 	Unregister();
-	g_Subscribers.Unsubscribe( this );
 }
 
 LuaReference::LuaReference( const LuaReference &cpy )
 {
 	m_sName = cpy.m_sName;
-
-	g_Subscribers.Subscribe( this );
 
 	if( cpy.m_iReference == LUA_NOREF )
 		m_iReference = LUA_NOREF;
