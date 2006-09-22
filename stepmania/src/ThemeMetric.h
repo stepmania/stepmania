@@ -26,21 +26,15 @@ protected:
 	T		m_currentValue;
 	bool		m_bIsLoaded;
 
-	/* HACK: If true, reload the metric each time it's read.  This is like DynamicThemeMetric,
-	 * but works transparently for strings.  This is very slow, and should be removed once
-	 * metrics are refactored to fix DynamicThemeMetric. */
-	bool		m_bAlwaysReload;
-
 public:
 	/* Initializing with no group and name is allowed; if you do this, you must
 	 * call Load() to set them.  This is done to allow initializing cached metrics
 	 * in one place for classes that don't receive their m_sName in the constructor
 	 * (everything except screens). */
-	ThemeMetric( const RString& sGroup = "", const RString& sName = "", bool bAlwaysReload = false ):
+	ThemeMetric( const RString& sGroup = "", const RString& sName = "" ):
 		m_sGroup( sGroup ),
 		m_sName( sName ),
-		m_bIsLoaded( false ),
-		m_bAlwaysReload( bAlwaysReload )
+		m_bIsLoaded( false )
 	{
 		m_currentValue = T();
 		ThemeManager::Subscribe( this );
@@ -51,8 +45,7 @@ public:
 		m_sGroup( cpy.m_sGroup ),
 		m_sName( cpy.m_sName ),
 		m_currentValue( cpy.m_currentValue ),
-		m_bIsLoaded( cpy.m_bIsLoaded ),
-		m_bAlwaysReload( cpy.m_bAlwaysReload )
+		m_bIsLoaded( cpy.m_bIsLoaded )
 	{
 		ThemeManager::Subscribe( this );
 	}
@@ -97,13 +90,6 @@ public:
 	{
 		ASSERT( m_sName != "" );
 		ASSERT_M( m_bIsLoaded, m_sGroup + " " + m_sName );
-
-		if( m_bAlwaysReload )
-		{
-			ThemeMetric<T> *p = const_cast<ThemeMetric<T> *>(this);
-			p->Read();
-		 }
-
 		return m_currentValue;
 	}
 	
