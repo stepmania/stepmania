@@ -543,11 +543,13 @@ bool LuaHelpers::RunExpressionB( const RString &str )
 {
 	Lua *L = LUA->Get();
 
-	if( !LuaHelpers::RunScript(L, "return " + str, "", 1) )
+	LuaReference val;
+	if( !val.SetFromExpression(str) )
 	{
 		LUA->Release( L );
 		return false;
 	}
+	val.PushSelf( L );
 
 	/* Don't accept a function as a return value. */
 	if( lua_isfunction( L, -1 ) )
@@ -563,11 +565,15 @@ bool LuaHelpers::RunExpressionB( const RString &str )
 float LuaHelpers::RunExpressionF( const RString &str )
 {
 	Lua *L = LUA->Get();
-	if( !LuaHelpers::RunScript(L, "return " + str, "", 1) )
+
+	LuaReference val;
+	if( !val.SetFromExpression(str) )
 	{
 		LUA->Release( L );
 		return 0;
 	}
+
+	val.PushSelf( L );
 
 	/* Don't accept a function as a return value. */
 	if( lua_isfunction( L, -1 ) )
@@ -588,11 +594,15 @@ int LuaHelpers::RunExpressionI( const RString &str )
 bool LuaHelpers::RunExpressionS( const RString &str, RString &sOut )
 {
 	Lua *L = LUA->Get();
-	if( !LuaHelpers::RunScript(L, "return " + str, "", 1) )
+
+	LuaReference val;
+	if( !val.SetFromExpression(str) )
 	{
 		LUA->Release( L );
+		sOut = "";
 		return false;
 	}
+	val.PushSelf( L );
 
 	/* Don't accept a function as a return value. */
 	if( lua_isfunction( L, -1 ) )
