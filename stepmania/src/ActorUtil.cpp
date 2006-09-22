@@ -481,7 +481,7 @@ apActorCommands ActorUtil::ParseActorCommands( const RString &sCommands )
 	LuaReference *pRet = new LuaReference;
 
 	RString sError;
-	if( !LuaHelpers::RunScript( L, sLuaFunction, "in", sError, 1 ) )
+	if( !LuaHelpers::RunScript( L, sLuaFunction, "", sError, 1 ) )
 	{
 		FAIL_M( ssprintf("Compiling \"%s\": %s", sLuaFunction.c_str(), sError.c_str()) );
 	}

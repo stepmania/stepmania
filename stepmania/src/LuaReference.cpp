@@ -146,7 +146,7 @@ bool LuaReference::SetFromExpression( const RString &sExpression )
 
 	Lua *L = LUA->Get();
 
-	bool bSuccess = LuaHelpers::RunScript(L, sFullExpression, "expression", 1);
+	bool bSuccess = LuaHelpers::RunScript(L, sFullExpression, "", 1);
 	if( !bSuccess )
 		this->SetFromNil();
 	else
