@@ -100,7 +100,7 @@ void ScreenOptions::Init()
 	CURSOR_TWEEN_SECONDS.Load( m_sName, "CursorTweenSeconds" );
 	WRAP_VALUE_IN_ROW.Load( m_sName, "WrapValueInRow" );
 
-	m_exprRowPositionTransformFunction.SetFromExpression( THEME->GetMetric(m_sName,"RowPositionTransformFunction") );
+	m_exprRowPositionTransformFunction.SetFromReference( THEME->GetMetricR(m_sName,"RowPositionTransformFunction") );
 
 	ScreenWithMenuElements::Init();
 

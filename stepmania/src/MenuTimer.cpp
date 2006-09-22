@@ -15,8 +15,6 @@ RString WARNING_COMMAND_NAME( size_t i ) { return ssprintf("WarningCommand%d",in
 static const ThemeMetric<int>		WARNING_START		("MenuTimer","WarningStart");
 static const ThemeMetric<int>		WARNING_BEEP_START	("MenuTimer","WarningBeepStart");
 static const ThemeMetric<float>		MAX_STALL_SECONDS	("MenuTimer","MaxStallSeconds");
-static const ThemeMetric<RString>	TEXT1_FORMAT_FUNCTION ("MenuTimer","Text1FormatFunction");
-static const ThemeMetric<RString>	TEXT2_FORMAT_FUNCTION ("MenuTimer","Text2FormatFunction");
 
 static const float TIMER_PAUSE_SECONDS = 99.99f;
 
@@ -36,9 +34,10 @@ void MenuTimer::Load()
 		m_text[i].SetName( ssprintf("Text%d",i+1) );
 		ActorUtil::OnCommand( m_text[i], "MenuTimer" );
 		this->AddChild( &m_text[i] );
-
-		m_exprFormatText[i].SetFromExpression( i==0 ? TEXT1_FORMAT_FUNCTION : TEXT2_FORMAT_FUNCTION );
 	}
+
+	m_exprFormatText[0] = THEME->GetMetricR("MenuTimer", "Text1FormatFunction");
+	m_exprFormatText[1] = THEME->GetMetricR("MenuTimer", "Text2FormatFunction");
 
 	SetSeconds( TIMER_PAUSE_SECONDS );
 
