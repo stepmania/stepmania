@@ -6,9 +6,6 @@
 #include "RageTypes.h"
 #include <set>
 #include <deque>
-#if !defined(SMPACKAGE)
-#include "Actor.h"
-#endif
 #include "LuaReference.h"
 
 class IThemeMetric;
