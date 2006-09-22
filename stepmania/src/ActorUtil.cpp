@@ -478,8 +478,6 @@ apActorCommands ActorUtil::ParseActorCommands( const RString &sCommands )
 
 	Lua *L = LUA->Get();
 
-	LuaReference *pRet = new LuaReference;
-
 	RString sError;
 	if( !LuaHelpers::RunScript( L, sLuaFunction, "", sError, 1 ) )
 	{
@@ -487,12 +485,14 @@ apActorCommands ActorUtil::ParseActorCommands( const RString &sCommands )
 	}
 
 	/* The function is now on the stack. */
+	LuaReference *pRet = new LuaReference;
 	pRet->SetFromStack( L );
 	LUA->Release( L );
 
 	ASSERT_M( !pRet->IsNil(), sLuaFunction.c_str() );
 
-	pRet->SetName( sLuaFunction );
+	if( sCommands.size() > 0 && sCommands[0] != '\033' ) // not a binary chunk
+		pRet->SetName( sLuaFunction );
 
 	return apActorCommands( pRet );
 }
