@@ -891,79 +891,52 @@ RString ThemeManager::GetMetricRaw( const IniFile &ini, const RString &sClassNam
 	}
 }
 
+template<typename T>
+void GetAndConvertMetric( const RString &sClassName, const RString &sValueName, T &out )
+{
+	Lua *L = LUA->Get();
+
+	THEME->PushMetric( L, sClassName, sValueName );
+	LuaHelpers::FromStack( L, out, -1 );
+	lua_pop( L, 1 );
+
+	LUA->Release(L);
+}
+
 /* Get a string metric. */
 RString ThemeManager::GetMetric( const RString &sClassName, const RString &sValueName )
 {
-	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName);
-
 	RString sRet;
-	LuaHelpers::RunExpressionS( sValue, sRet );
+	GetAndConvertMetric( sClassName, sValueName, sRet );
 	return sRet;
 }
 
 int ThemeManager::GetMetricI( const RString &sClassName, const RString &sValueName )
 {
-	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName );
-
-	LuaHelpers::PrepareExpression( sValue );
-
-	return LuaHelpers::RunExpressionI( sValue );
+	int iRet = 0;
+	GetAndConvertMetric( sClassName, sValueName, iRet );
+	return iRet;
 }
 
 float ThemeManager::GetMetricF( const RString &sClassName, const RString &sValueName )
 {
-	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName );
-
-	LuaHelpers::PrepareExpression( sValue );
-
-	return LuaHelpers::RunExpressionF( sValue );
+	float fRet = 0;
+	GetAndConvertMetric( sClassName, sValueName, fRet );
+	return fRet;
 }
 
-// #include "LuaManager.h"
 bool ThemeManager::GetMetricB( const RString &sClassName, const RString &sValueName )
 {
-	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName );
-
-	if( sValue.Left(1) == "0" || sValue.Left(1) == "1" )
-		RageException::Throw( "Theme metric %s::%s: boolean value \"%s\" should be true or false",
-			sClassName.c_str(), sValueName.c_str(), sValue.c_str() );
-
-	LuaHelpers::PrepareExpression( sValue );
-	
-	return LuaHelpers::RunExpressionB( sValue );
-}
-
-static RageColor RunExpressionC( const RString &sExpr )
-{
-	Lua *L = LUA->Get();
-
-	LuaReference val;
-	if( !val.SetFromExpression(sExpr) )
-	{
-		LUA->Release( L );
-		return RageColor();
-	}
-
-	val.PushSelf( L );
-
-	if( lua_type(L, -1) != LUA_TTABLE )
-		RageException::Throw( "Color expression: \"%s\" did not return a table", sExpr.c_str() );
-
-	RageColor result;
-	result.FromStack( L, -1 );
-	lua_pop( L, 1 );
-
-	LUA->Release(L);
-	return result;
+	bool bRet = 0;
+	GetAndConvertMetric( sClassName, sValueName, bRet );
+	return bRet;
 }
 
 RageColor ThemeManager::GetMetricC( const RString &sClassName, const RString &sValueName )
 {
-	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName );
-
-	LuaHelpers::PrepareExpression( sValue );
-
-	return RunExpressionC( sValue );
+	RageColor ret;
+	GetAndConvertMetric( sClassName, sValueName, ret );
+	return ret;
 }
 
 LuaReference ThemeManager::GetMetricR( const RString &sClassName, const RString &sValueName )
