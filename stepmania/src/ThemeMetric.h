@@ -251,10 +251,6 @@ public:
  * return a function instead of a value.
  *
  * This is just as fast as ThemeMetric when the value is not a function.
- *
- * This differs from ThemeMetric: the value of the metric must be a valid Lua
- * expression; strings must be enclosed in quotes.  (This is probably how
- * all metrics will eventually behave.)
  */
 template <class T>
 class DynamicThemeMetric : public IThemeMetric
