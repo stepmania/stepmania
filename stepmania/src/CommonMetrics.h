@@ -50,7 +50,7 @@ private:
 //
 namespace CommonMetrics
 {
-	extern ThemeMetric<RString>			INITIAL_SCREEN;
+	extern DynamicThemeMetric<RString>		INITIAL_SCREEN;
 	extern ThemeMetric<RString>			FIRST_ATTRACT_SCREEN;
 	extern ThemeMetric<RString>			DEFAULT_MODIFIERS;
 	extern ThemeMetric<RString>			DEFAULT_CPU_MODIFIERS;
