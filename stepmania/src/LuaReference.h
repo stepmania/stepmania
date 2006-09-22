@@ -3,6 +3,8 @@
 #ifndef LUA_REFERENCE_H
 #define LUA_REFERENCE_H
 
+#include "RageUtil_AutoPtr.h"
+
 struct lua_State;
 typedef lua_State Lua;
 
@@ -46,6 +48,14 @@ private:
 	void Unregister();
 	int m_iReference;
 };
+
+typedef AutoPtrCopyOnWrite<LuaReference> apActorCommands;
+
+namespace LuaHelpers
+{
+	bool FromStack( lua_State *L, LuaReference &Object, int iOffset );
+	bool FromStack( lua_State *L, apActorCommands &Object, int iOffset );
+}
 
 class LuaTable: public LuaReference
 {
