@@ -303,8 +303,7 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 					titleSub += NSMAN->m_SMOnlinePacket.ReadNT();
 					if ( NSMAN->m_SMOnlinePacket.Read1() != 1 )
 					{
-						RString SMOnlineSelectScreen;
-						THEME->GetMetric( m_sName, "RoomSelectScreen", SMOnlineSelectScreen );
+						RString SMOnlineSelectScreen = THEME->GetMetric( m_sName, "RoomSelectScreen" );
 						SCREENMAN->SetNewScreen( SMOnlineSelectScreen );
 					}
 				}

@@ -120,8 +120,7 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 					m_textTitle.SetText( titleSub );
 					if ( NSMAN->m_SMOnlinePacket.Read1() != 0 )
 					{
-						RString SMOnlineSelectScreen;
-						THEME->GetMetric( m_sName, "MusicSelectScreen", SMOnlineSelectScreen );
+						RString SMOnlineSelectScreen = THEME->GetMetric( m_sName, "MusicSelectScreen" );
 						SCREENMAN->SetNewScreen( SMOnlineSelectScreen );
 					}
 				}
