@@ -935,17 +935,39 @@ bool ThemeManager::GetMetricB( const RString &sClassName, const RString &sValueN
 	return LuaHelpers::RunExpressionB( sValue );
 }
 
+static RageColor RunExpressionC( const RString &sExpr )
+{
+	Lua *L = LUA->Get();
+
+	LuaReference val;
+	if( !val.SetFromExpression(sExpr) )
+	{
+		LUA->Release( L );
+		return RageColor();
+	}
+
+	val.PushSelf( L );
+
+	if( lua_type(L, -1) != LUA_TTABLE )
+		RageException::Throw( "Color expression: \"%s\" did not return a table", sExpr.c_str() );
+
+	RageColor result;
+	result.FromStack( L, -1 );
+	lua_pop( L, 1 );
+
+	LUA->Release(L);
+	return result;
+}
+
 RageColor ThemeManager::GetMetricC( const RString &sClassName, const RString &sValueName )
 {
 	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName );
 
 	LuaHelpers::RunAtExpressionS( sValue );
 
-	RageColor ret(1,1,1,1);
-	if( !ret.FromString(sValue) )
-		LOG->UserLog( RageLog::LogType_ThemeMetric, sClassName + "::" + sValueName,
-			      "has an invalid color value \"%s\".", sValue.c_str() );
-	return ret;
+	LuaHelpers::PrepareExpression( sValue );
+
+	return RunExpressionC( sValue );
 }
 
 #if !defined(SMPACKAGE)
