@@ -169,7 +169,7 @@ void PercentageDisplay::Refresh()
 			ASSERT( !lua_isnil(L, -1) );
 			LuaHelpers::Push( fPercentDancePoints, L );
 			lua_call( L, 1, 1 ); // 1 args, 1 result
-			LuaHelpers::Pop( sNumToDisplay, L );
+			LuaHelpers::Pop( L, sNumToDisplay );
 			LUA->Release(L);
 			
 			// HACK: Use the last frame in the numbers texture as '-'

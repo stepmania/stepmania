@@ -140,7 +140,7 @@ void LuaHelpers::ReadArrayFromTableB( Lua *L, vector<bool> &aOut )
 static int LuaPanic( lua_State *L )
 {
 	RString sErr;
-	LuaHelpers::Pop( sErr, L );
+	LuaHelpers::Pop( L, sErr );
 	
 	lua_Debug ar;
 	int level = 0;
@@ -507,7 +507,7 @@ bool LuaHelpers::RunScript( Lua *L, const RString &sScript, const RString &sName
 
 		if( ret )
 		{
-			LuaHelpers::Pop( sError, L );
+			LuaHelpers::Pop( L, sError );
 			return false;
 		}
 	}
@@ -517,7 +517,7 @@ bool LuaHelpers::RunScript( Lua *L, const RString &sScript, const RString &sName
 		int ret = lua_pcall( L, 0, iReturnValues, 0 );
 		if( ret )
 		{
-			LuaHelpers::Pop( sError, L );
+			LuaHelpers::Pop( L, sError );
 			return false;
 		}
 	}
@@ -608,7 +608,7 @@ bool LuaHelpers::RunExpressionS( const RString &str, RString &sOut )
 	if( lua_isfunction( L, -1 ) )
 		RageException::Throw( "Result is a function; did you forget \"()\"?" );
 
-	LuaHelpers::Pop( sOut, L );
+	LuaHelpers::Pop( L, sOut );
 
 	LUA->Release( L );
 	return true;

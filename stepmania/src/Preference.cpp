@@ -85,7 +85,7 @@ void IPreference::SetFromStack( lua_State *L )
 	} \
 	template<> void PrefSetFromStack( lua_State *L, type &v ) \
 	{ \
-		LuaHelpers::Pop( v, L ); \
+		LuaHelpers::Pop( L, v ); \
 	} \
 	template<> void PrefPushValue( lua_State *L, const type &v ) \
 	{ \

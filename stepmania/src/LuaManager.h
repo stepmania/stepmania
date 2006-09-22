@@ -91,7 +91,7 @@ namespace LuaHelpers
 	bool FromStack( Lua *L, RString &Object, int iOffset );
 
 	template<class T>
-	bool Pop( T &val, lua_State *L )
+	bool Pop( lua_State *L, T &val )
 	{
 		bool bRet = LuaHelpers::FromStack( L, val, -1 );
 		lua_pop( L, 1 );
@@ -109,7 +109,7 @@ namespace LuaHelpers
 		{
 			lua_rawgeti( L, -1, i+1 );
 			T value = T();
-			LuaHelpers::Pop( value, L );
+			LuaHelpers::Pop( L, value );
 			aOut.push_back( value );
 		}
 	}

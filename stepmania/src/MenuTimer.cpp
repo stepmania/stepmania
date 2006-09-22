@@ -170,7 +170,7 @@ void MenuTimer::SetText( float fSeconds )
 		lua_call(L, 1, 1); 
 
 		RString sText;
-		LuaHelpers::Pop( sText, L );
+		LuaHelpers::Pop( L, sText );
 		
 		m_text[i].SetText( sText );
 	}
