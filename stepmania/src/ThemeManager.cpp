@@ -968,6 +968,17 @@ RageColor ThemeManager::GetMetricC( const RString &sClassName, const RString &sV
 	return RunExpressionC( sValue );
 }
 
+LuaReference ThemeManager::GetMetricR( const RString &sClassName, const RString &sValueName )
+{
+	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName );
+
+	LuaHelpers::PrepareExpression( sValue );
+
+	LuaReference ref;
+	ref.SetFromExpression( sValue );
+	return ref;
+}
+
 #if !defined(SMPACKAGE)
 apActorCommands ThemeManager::GetMetricA( const RString &sClassName, const RString &sValueName )
 {

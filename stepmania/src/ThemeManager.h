@@ -75,6 +75,7 @@ public:
 	float		GetMetricF( const RString &sClassName, const RString &sValueName );
 	bool		GetMetricB( const RString &sClassName, const RString &sValueName );
 	RageColor	GetMetricC( const RString &sClassName, const RString &sValueName );
+	LuaReference	GetMetricR( const RString &sClassName, const RString &sValueName );
 #if !defined(SMPACKAGE)
 	apActorCommands	GetMetricA( const RString &sClassName, const RString &sValueName );
 #endif
@@ -84,6 +85,7 @@ public:
 	void	GetMetric( const RString &sClassName, const RString &sValueName, float &valueOut )			{ valueOut = GetMetricF( sClassName, sValueName ); }
 	void	GetMetric( const RString &sClassName, const RString &sValueName, bool &valueOut )			{ valueOut = GetMetricB( sClassName, sValueName ); }
 	void	GetMetric( const RString &sClassName, const RString &sValueName, RageColor &valueOut )		{ valueOut = GetMetricC( sClassName, sValueName ); }
+	void	GetMetric( const RString &sClassName, const RString &sValueName, LuaReference &valueOut )	{ valueOut = GetMetricR( sClassName, sValueName ); }
 #if !defined(SMPACKAGE)
 	void	GetMetric( const RString &sClassName, const RString &sValueName, apActorCommands &valueOut );
 #endif
