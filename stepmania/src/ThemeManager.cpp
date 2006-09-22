@@ -1033,13 +1033,6 @@ void ThemeManager::GetOptionNames( vector<RString>& AddTo )
 	}
 }
 
-#if !defined(SMPACKAGE)
-void ThemeManager::GetMetric( const RString &sClassName, const RString &sValueName, apActorCommands &valueOut )
-{
-	valueOut = GetMetricA( sClassName, sValueName ); 
-}
-#endif
-
 static RString PseudoLocalize( RString s )
 {
 	s.Replace( "a", "àá" );

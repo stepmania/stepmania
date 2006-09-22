@@ -78,15 +78,7 @@ public:
 	apActorCommands	GetMetricA( const RString &sClassName, const RString &sValueName );
 #endif
 
-	void	GetMetric( const RString &sClassName, const RString &sValueName, RString &valueOut )		{ valueOut = GetMetric( sClassName, sValueName ); }
-	void	GetMetric( const RString &sClassName, const RString &sValueName, int &valueOut )		{ valueOut = GetMetricI( sClassName, sValueName ); }
-	void	GetMetric( const RString &sClassName, const RString &sValueName, float &valueOut )		{ valueOut = GetMetricF( sClassName, sValueName ); }
-	void	GetMetric( const RString &sClassName, const RString &sValueName, bool &valueOut )		{ valueOut = GetMetricB( sClassName, sValueName ); }
-	void	GetMetric( const RString &sClassName, const RString &sValueName, RageColor &valueOut )		{ valueOut = GetMetricC( sClassName, sValueName ); }
 	void	GetMetric( const RString &sClassName, const RString &sValueName, LuaReference &valueOut );
-#if !defined(SMPACKAGE)
-	void	GetMetric( const RString &sClassName, const RString &sValueName, apActorCommands &valueOut );
-#endif
 
 	// Languages
 	bool	HasString( const RString &sClassName, const RString &sValueName );
