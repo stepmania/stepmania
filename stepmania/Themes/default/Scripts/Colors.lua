@@ -1,7 +1,7 @@
 function PlayerColor( pn )
 	if pn == PLAYER_1 then return color("0.4,1.0,0.8,1") end	-- sea green
 	if pn == PLAYER_2 then return color("1.0,0.5,0.2,1") end	-- orange
-	return "1,1,1,1"
+	return color("1,1,1,1")
 end
 
 function DifficultyColor( dc )
@@ -11,7 +11,7 @@ function DifficultyColor( dc )
 	if dc == DIFFICULTY_HARD		then return color("0.2,1.0,0.2,1") end	-- light green
 	if dc == DIFFICULTY_CHALLENGE	then return color("0.2,0.6,1.0,1") end	-- blue
 	if dc == DIFFICULTY_EDIT		then return color("0.8,0.8,0.8,1") end	-- gray
-	return "1,1,1,1"
+	return color("1,1,1,1")
 end
 
 
