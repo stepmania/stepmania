@@ -52,15 +52,21 @@ void ActorScroller::Load2()
 	LUA->Release( L );
 }
 
-void ActorScroller::SetTransformFromExpression( const RString &sTransformFunction )
+void ActorScroller::SetTransformFromReference( const LuaReference &ref )
 {
-	m_exprTransformFunction.SetFromExpression( sTransformFunction );
-	
+	m_exprTransformFunction.SetFromReference( ref );
+
 	// Probe to find which of the parameters are used.
 #define GP(a,b)	m_exprTransformFunction.GetPosition( a, b, 2 )
 	m_bFunctionDependsOnPositionOffset = (GP(0,0) != GP(1,0)) && (GP(0,1) != GP(1,1));
 	m_bFunctionDependsOnItemIndex = (GP(0,0) != GP(0,1)) && (GP(1,0) != GP(1,1));
 	m_exprTransformFunction.ClearCache();
+}
+
+void ActorScroller::SetTransformFromExpression( const RString &sTransformFunction )
+{
+	LuaReference ref;
+	ref.SetFromExpression( sTransformFunction );
 }
 
 void ActorScroller::SetTransformFromHeight( float fItemHeight )

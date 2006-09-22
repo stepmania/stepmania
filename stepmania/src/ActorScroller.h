@@ -13,6 +13,7 @@ class ActorScroller : public ActorFrame
 public:
 	ActorScroller();
 
+	void SetTransformFromReference( const LuaReference &ref );
 	void SetTransformFromExpression( const RString &sTransformFunction );
 	void SetTransformFromHeight( float fItemHeight );
 
