@@ -396,7 +396,7 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, const XNode *pParent, Actor 
 	}
 }
 
-apActorCommands ActorUtil::ParseActorCommands( const RString &sCommands )
+void ActorUtil::ParseActorCommands( Lua *L, const RString &sCommands )
 {
 	RString sLuaFunction;
 	if( sCommands.size() > 0 && sCommands[0] == '\033' )
@@ -476,8 +476,6 @@ apActorCommands ActorUtil::ParseActorCommands( const RString &sCommands )
 		sLuaFunction = s.str();
 	}
 
-	Lua *L = LUA->Get();
-
 	RString sError;
 	if( !LuaHelpers::RunScript( L, sLuaFunction, "", sError, 1 ) )
 	{
@@ -486,6 +484,12 @@ apActorCommands ActorUtil::ParseActorCommands( const RString &sCommands )
 	}
 
 	/* The function is now on the stack. */
+}
+
+apActorCommands ActorUtil::ParseActorCommands( const RString &sCommands )
+{
+	Lua *L = LUA->Get();
+	ParseActorCommands( L, sCommands );
 	LuaReference *pRet = new LuaReference;
 	pRet->SetFromStack( L );
 	LUA->Release( L );
