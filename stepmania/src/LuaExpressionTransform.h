@@ -13,6 +13,7 @@ public:
 	LuaExpressionTransform();
 	~LuaExpressionTransform();
 
+	void SetFromReference( const LuaReference &ref );
 	void SetFromExpression( const RString &sExpression );
 	void SetNumSubdivisions( int iNumSubdivisions ) { ASSERT( iNumSubdivisions > 0 ); m_iNumSubdivisions = iNumSubdivisions; }
 

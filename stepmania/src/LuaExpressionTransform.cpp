@@ -15,6 +15,11 @@ LuaExpressionTransform::~LuaExpressionTransform()
 	delete m_pexprTransformFunction;
 }
 
+void LuaExpressionTransform::SetFromReference( const LuaReference &ref )
+{
+	*m_pexprTransformFunction = ref;
+}
+
 void LuaExpressionTransform::SetFromExpression( const RString &sExpression )
 {
 	m_pexprTransformFunction->SetFromExpression( sExpression );
