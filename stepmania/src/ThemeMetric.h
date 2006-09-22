@@ -331,11 +331,13 @@ public:
 			THEME->GetMetric( m_sGroup, m_sName, sExpression );
 
 			Lua *L = LUA->Get();
-			LuaHelpers::RunScript( L, "return " + sExpression, ssprintf("%s:%s", m_sGroup.c_str(), m_sName.c_str()), 1 );
 
+			m_Value.SetName( ssprintf("%s:%s", m_sGroup.c_str(), m_sName.c_str()) );
+			m_Value.SetFromExpression( sExpression );
+			m_Value.PushSelf( L );
 			if( lua_type(L, -1) == LUA_TFUNCTION )
 			{
-				m_Value.SetFromStack( L );
+				lua_pop( L, 1 );
 			}
 			else
 			{
