@@ -19,15 +19,18 @@ void RageColor::PushTable( lua_State *L ) const
 
 void RageColor::FromStack( lua_State *L, int iPos )
 {
-	lua_rawgeti( L, iPos, 1 );
+	lua_pushvalue( L, iPos );
+	int iFrom = lua_gettop( L );
+
+	lua_rawgeti( L, iFrom, 1 );
 	r = lua_tonumber( L, -1 );
-	lua_rawgeti( L, iPos, 2 );
+	lua_rawgeti( L, iFrom, 2 );
 	g = lua_tonumber( L, -1 );
-	lua_rawgeti( L, iPos, 3 );
+	lua_rawgeti( L, iFrom, 3 );
 	b = lua_tonumber( L, -1 );
-	lua_rawgeti( L, iPos, 4 );
+	lua_rawgeti( L, iFrom, 4 );
 	a = lua_tonumber( L, -1 );
-	lua_pop( L, 4 );
+	lua_pop( L, 5 );
 }
 
 /*
