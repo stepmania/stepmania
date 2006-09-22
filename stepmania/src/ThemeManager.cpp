@@ -700,10 +700,9 @@ RString ThemeManager::GetPathToAndFallback( ElementCategory category, const RStr
 			return RString();
 
 		// search fallback name (if any)
-		RString sFallback;
-		if( !GetMetricRawRecursive( g_pLoadedThemeData->iniMetrics, sClassName, "Fallback", sFallback) )
+		sClassName = GetClassFallback( sClassName );
+		if( sClassName.empty() )
 			return RString();
-		sClassName = sFallback;
 	}
 
 	RageException::Throw( "Infinite recursion looking up theme element \"%s\"",
@@ -819,6 +818,16 @@ void ThemeManager::ReloadMetrics()
 }
 
 
+RString ThemeManager::GetClassFallback( const RString &sClassName )
+{
+	// always look in iniMetrics for "Fallback"
+	RString sFallback;
+	if( !GetMetricRawRecursive(g_pLoadedThemeData->iniMetrics,sClassName,"Fallback",sFallback) )
+		return RString();
+
+	return sFallback;
+}
+
 bool ThemeManager::GetMetricRawRecursive( const IniFile &ini, const RString &sClassName_, const RString &sValueName, RString &sOut )
 {
 	ASSERT( sValueName != "" );
@@ -835,12 +844,9 @@ bool ThemeManager::GetMetricRawRecursive( const IniFile &ini, const RString &sCl
 		if( !sValueName.compare("Fallback") )
 			return false;
 
-		RString sFallback;
-		// always look in iniMetrics for "Fallback"
-		if( !GetMetricRawRecursive(g_pLoadedThemeData->iniMetrics,sClassName,"Fallback",sFallback) )
+		sClassName = GetClassFallback( sClassName );
+		if( sClassName.empty() )
 			return false;
-
-		sClassName = sFallback;
 	}
 
 	RageException::Throw( "Infinite recursion looking up theme metric \"%s::%s\".", sClassName.c_str(), sValueName.c_str() );
@@ -1154,11 +1160,7 @@ void ThemeManager::GetMetricsThatBeginWith( const RString &sClassName_, const RS
 		}
 
 		// put the fallback (if any) in sClassName
-		RString sFallback;
-		if( GetMetricRawRecursive( g_pLoadedThemeData->iniMetrics, sClassName, "Fallback", sFallback ) )
-			sClassName = sFallback;
-		else
-			sClassName = "";
+		sClassName = GetClassFallback( sClassName );
 	}
 }
 
