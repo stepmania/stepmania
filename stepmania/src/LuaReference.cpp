@@ -127,15 +127,11 @@ void LuaReference::Unregister()
 
 bool LuaReference::SetFromExpression( const RString &sExpression )
 {
-	RString sFullExpression = "return " + sExpression;
-
 	Lua *L = LUA->Get();
 
-	bool bSuccess = LuaHelpers::RunScript(L, sFullExpression, "", 1);
-	if( !bSuccess )
-		this->SetFromNil();
-	else
-		this->SetFromStack( L );
+	bool bSuccess = LuaHelpers::RunExpression( L, sExpression );
+	this->SetFromStack( L );
+
 	LUA->Release( L );
 	return bSuccess;
 }
