@@ -1671,6 +1671,8 @@
 		AAE66F810657638E002E3AD9 /* CryptSHA.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE66F710657634D002E3AD9 /* CryptSHA.h */; };
 		AAE66F820657638F002E3AD9 /* CryptSHA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE66F700657634D002E3AD9 /* CryptSHA.cpp */; };
 		AAE66F83065763AD002E3AD9 /* CryptNoise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE66F670657634D002E3AD9 /* CryptNoise.cpp */; };
+		AAE77F580AC3B52500AEFC64 /* RageTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE77F570AC3B52500AEFC64 /* RageTypes.cpp */; };
+		AAE77F590AC3B52500AEFC64 /* RageTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE77F570AC3B52500AEFC64 /* RageTypes.cpp */; };
 		AAE7804B060814AC0034E65F /* NetworkSyncManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE78049060814AC0034E65F /* NetworkSyncManager.cpp */; };
 		AAE7804C060814AC0034E65F /* NetworkSyncManager.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE7804A060814AC0034E65F /* NetworkSyncManager.h */; };
 		AAE7808706081A000034E65F /* ezsockets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE7808506081A000034E65F /* ezsockets.cpp */; };
@@ -2587,6 +2589,7 @@
 		AAE66F6B0657634D002E3AD9 /* CryptRand.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = CryptRand.h; sourceTree = "<group>"; };
 		AAE66F700657634D002E3AD9 /* CryptSHA.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = CryptSHA.cpp; sourceTree = "<group>"; };
 		AAE66F710657634D002E3AD9 /* CryptSHA.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = CryptSHA.h; sourceTree = "<group>"; };
+		AAE77F570AC3B52500AEFC64 /* RageTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RageTypes.cpp; path = ../src/RageTypes.cpp; sourceTree = "<group>"; };
 		AAE78049060814AC0034E65F /* NetworkSyncManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = NetworkSyncManager.cpp; path = ../src/NetworkSyncManager.cpp; sourceTree = "<group>"; };
 		AAE7804A060814AC0034E65F /* NetworkSyncManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = NetworkSyncManager.h; path = ../src/NetworkSyncManager.h; sourceTree = "<group>"; };
 		AAE7808506081A000034E65F /* ezsockets.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ezsockets.cpp; path = ../src/ezsockets.cpp; sourceTree = "<group>"; };
@@ -3339,6 +3342,7 @@
 				AA6EFD8E04770A7C005F316C /* RageThreads.h */,
 				AA6EFD8F04770A7C005F316C /* RageTimer.cpp */,
 				AA6EFD9004770A7C005F316C /* RageTimer.h */,
+				AAE77F570AC3B52500AEFC64 /* RageTypes.cpp */,
 				AA6EFD9104770A7C005F316C /* RageTypes.h */,
 				AA6EFD9204770A7C005F316C /* RageUtil.cpp */,
 				AA6EFD9304770A7C005F316C /* RageUtil.h */,
@@ -5386,6 +5390,7 @@
 				AAFE711F0A91B551005F2290 /* RageSurface_Save_PNG.cpp in Sources */,
 				AAFE71200A91B551005F2290 /* RoomInfoDisplay.cpp in Sources */,
 				AABE830E0A9524D400001678 /* ModsGroup.cpp in Sources */,
+				AAE77F580AC3B52500AEFC64 /* RageTypes.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5794,6 +5799,7 @@
 				AAFE710D0A91ADE6005F2290 /* ActorProxy.cpp in Sources */,
 				AAFE71220A91B551005F2290 /* RageSurface_Save_PNG.cpp in Sources */,
 				AABE830F0A9524D400001678 /* ModsGroup.cpp in Sources */,
+				AAE77F590AC3B52500AEFC64 /* RageTypes.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
