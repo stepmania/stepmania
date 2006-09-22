@@ -20,8 +20,6 @@ LuaReference::~LuaReference()
 
 LuaReference::LuaReference( const LuaReference &cpy )
 {
-	m_sName = cpy.m_sName;
-
 	if( cpy.m_iReference == LUA_NOREF )
 		m_iReference = LUA_NOREF;
 	else
@@ -40,8 +38,6 @@ LuaReference &LuaReference::operator=( const LuaReference &cpy )
 		return *this;
 
 	Unregister();
-
-	m_sName = cpy.m_sName;
 
 	if( cpy.m_iReference == LUA_NOREF )
 	{
@@ -118,12 +114,6 @@ int LuaReference::GetLuaType() const
 	return iRet;
 }
 
-/* This is used only for debugging. */
-void LuaReference::SetName( const RString &sName )
-{
-	m_sName = sName;
-}
-
 void LuaReference::Unregister()
 {
 	if( LUA == NULL )
@@ -138,8 +128,6 @@ void LuaReference::Unregister()
 bool LuaReference::SetFromExpression( const RString &sExpression )
 {
 	RString sFullExpression = "return " + sExpression;
-	if( GetName().empty() )
-		SetName( sFullExpression );
 
 	Lua *L = LUA->Get();
 

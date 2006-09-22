@@ -40,17 +40,11 @@ public:
 	/* Return the referenced type, or LUA_TNONE if not set. */
 	int GetLuaType() const;
 
-	void SetName( const RString &sName );
-	RString GetName() const { return m_sName; }
-
 	RString Serialize() const;
 
 private:
 	void Unregister();
 	int m_iReference;
-
-	/* This string can identify the reference.  This is only used for debugging. */
-	RString m_sName;
 };
 
 class LuaTable: public LuaReference
