@@ -989,15 +989,23 @@ void ThemeManager::GetMetric( const RString &sClassName, const RString &sValueNa
 {
 	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName );
 
-	LuaHelpers::PrepareExpression( sValue );
-	valueOut.SetFromExpression( sValue );
+	if( EndsWith(sValueName, "Command") )
+	{
+		ActorUtil::ParseActorCommands( sValue, valueOut );
+	}
+	else
+	{
+		LuaHelpers::PrepareExpression( sValue );
+		valueOut.SetFromExpression( sValue );
+	}
 }
 
 #if !defined(SMPACKAGE)
 apActorCommands ThemeManager::GetMetricA( const RString &sClassName, const RString &sValueName )
 {
-	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName );
-	return ActorUtil::ParseActorCommands( sValue );
+	LuaReference *pRef = new LuaReference;
+	GetMetric( sClassName, sValueName, *pRef );
+	return apActorCommands( pRef );
 }
 #endif
 
