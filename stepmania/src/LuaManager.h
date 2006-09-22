@@ -85,15 +85,15 @@ namespace LuaHelpers
 	void Push( const int &Object, Lua *L );
 	void Push( const RString &Object, Lua *L );
 
-	bool FromStack( bool &Object, int iOffset, Lua *L );
-	bool FromStack( float &Object, int iOffset, Lua *L );
-	bool FromStack( int &Object, int iOffset, Lua *L );
-	bool FromStack( RString &Object, int iOffset, Lua *L );
+	bool FromStack( Lua *L, bool &Object, int iOffset );
+	bool FromStack( Lua *L, float &Object, int iOffset );
+	bool FromStack( Lua *L, int &Object, int iOffset );
+	bool FromStack( Lua *L, RString &Object, int iOffset );
 
 	template<class T>
 	bool Pop( T &val, lua_State *L )
 	{
-		bool bRet = LuaHelpers::FromStack( val, -1, L );
+		bool bRet = LuaHelpers::FromStack( L, val, -1 );
 		lua_pop( L, 1 );
 		return bRet;
 	}

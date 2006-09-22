@@ -101,10 +101,10 @@ void LuaHelpers::Push( const float &Object, lua_State *L ) { lua_pushnumber( L, 
 void LuaHelpers::Push( const int &Object, lua_State *L ) { lua_pushnumber( L, Object ); }
 void LuaHelpers::Push( const RString &Object, lua_State *L ) { lua_pushlstring( L, Object.data(), Object.size() ); }
 
-bool LuaHelpers::FromStack( bool &Object, int iOffset, lua_State *L ) { Object = !!lua_toboolean( L, iOffset ); return true; }
-bool LuaHelpers::FromStack( float &Object, int iOffset, lua_State *L ) { Object = (float)lua_tonumber( L, iOffset ); return true; }
-bool LuaHelpers::FromStack( int &Object, int iOffset, lua_State *L ) { Object = (int) lua_tonumber( L, iOffset ); return true; }
-bool LuaHelpers::FromStack( RString &Object, int iOffset, lua_State *L )
+bool LuaHelpers::FromStack( Lua *L, bool &Object, int iOffset ) { Object = !!lua_toboolean( L, iOffset ); return true; }
+bool LuaHelpers::FromStack( Lua *L, float &Object, int iOffset ) { Object = (float)lua_tonumber( L, iOffset ); return true; }
+bool LuaHelpers::FromStack( Lua *L, int &Object, int iOffset ) { Object = (int) lua_tonumber( L, iOffset ); return true; }
+bool LuaHelpers::FromStack( Lua *L, RString &Object, int iOffset )
 {
 	const char *pStr = lua_tostring( L, iOffset );
 	if( pStr != NULL )
@@ -344,7 +344,7 @@ XNode *LuaManager::GetLuaInformation() const
 			{
 				lua_pop( L, 1 ); // pop value
 				RString sKey;
-				if( LuaHelpers::FromStack(sKey, -1, L) )
+				if( LuaHelpers::FromStack(L, sKey, -1) )
 					c.m_vMethods.push_back( sKey );
 			}
 			sort( c.m_vMethods.begin(), c.m_vMethods.end() );
@@ -378,7 +378,7 @@ XNode *LuaManager::GetLuaInformation() const
 			if( type )
 			{
 				RString sKey;
-				if( LuaHelpers::FromStack(sKey, -6, L) )
+				if( LuaHelpers::FromStack(L, sKey, -6) )
 					mSingletons[sKey] = type;
 			}
 			lua_pop( L, 4 ); // pop type, method metatable, method table, and metatable
@@ -392,7 +392,7 @@ XNode *LuaManager::GetLuaInformation() const
 			if( fNum == truncf(fNum) )
 			{
 				RString sKey;
-				if( LuaHelpers::FromStack(sKey, -2, L) )
+				if( LuaHelpers::FromStack(L, sKey, -2) )
 					mConstants[sKey] = int( fNum );
 			}
 			break;
@@ -646,7 +646,7 @@ RString GetLuaBindingType( Lua *L, int iArgNo )
 	lua_pushstring( L, "type" );
 	lua_rawget( L, iMetatable );
 	RString sActualType;
-	LuaHelpers::FromStack( sActualType, -1, L );
+	LuaHelpers::FromStack( L, sActualType, -1 );
 
 	lua_settop( L, iTop );
 	return sActualType;
