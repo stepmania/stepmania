@@ -25,6 +25,8 @@ LuaReference::~LuaReference()
 
 LuaReference::LuaReference( const LuaReference &cpy )
 {
+	m_sName = cpy.m_sName;
+
 	g_Subscribers.Subscribe( this );
 
 	if( cpy.m_iReference == LUA_NOREF )
@@ -45,6 +47,8 @@ LuaReference &LuaReference::operator=( const LuaReference &cpy )
 		return *this;
 
 	Unregister();
+
+	m_sName = cpy.m_sName;
 
 	if( cpy.m_iReference == LUA_NOREF )
 	{
