@@ -256,12 +256,17 @@ Screens = [
 	"ScreenOptions.cpp",
 	"ScreenOptionsEditCourse.cpp",
 	"ScreenOptionsEditCourseEntry.cpp",
+	"ScreenOptionsEditPlaylist.cpp",
 	"ScreenOptionsEditProfile.cpp",
+	"ScreenOptionsEditWorkout.cpp",
 	"ScreenOptionsManageCourses.cpp",
 	"ScreenOptionsManageEditSteps.cpp",
 	"ScreenOptionsManageProfiles.cpp",
+	"ScreenOptionsManageWorkouts.cpp",
 	"ScreenOptionsMaster.cpp",
 	"ScreenOptionsMasterPrefs.cpp",
+	"ScreenOptionsMemoryCard.cpp",
+	"ScreenOptionsReviewWorkout.cpp",
 	"ScreenPackages.cpp",
 	"ScreenPlayerOptions.cpp",
 	"ScreenNetworkOptions.cpp",
@@ -371,6 +376,7 @@ DataStructures = [
 	"TrailUtil.cpp",
 	"TitleSubstitution.cpp",
 	"Tween.cpp",
+	"Workout.cpp",
 ]
 
 FileTypes = [
@@ -583,6 +589,7 @@ ActorsInMenus = [
 	"WheelBase.cpp",
 	"WheelItemBase.cpp",
 	"WheelNotifyIcon.cpp",
+	"WorkoutGraph.cpp",
 ]
 
 ActorsInGameplay = [
@@ -737,6 +744,7 @@ GlobalSingletons = [
 	"StatsManager.cpp",
 	"ThemeManager.cpp",
 	"UnlockManager.cpp",
+	"WorkoutManager.cpp",
 ]
 
 # XXX: This wouldn't be included if WITHOUT_NETWORKING, but I don't have that setting implemented (yet)
