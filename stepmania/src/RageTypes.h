@@ -100,7 +100,7 @@ struct RageColor
 {
 public:
 	RageColor() : r(0), g(0), b(0), a(0) {}
-	RageColor( const float * f )				{ r=f[0]; g=f[1]; b=f[2]; a=f[3]; }
+	explicit RageColor( const float * f )			{ r=f[0]; g=f[1]; b=f[2]; a=f[3]; }
 	RageColor( float r1, float g1, float b1, float a1 )	{ r=r1; g=g1; b=b1; a=a1; }
 	
 	// casting
