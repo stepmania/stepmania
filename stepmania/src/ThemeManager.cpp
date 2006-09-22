@@ -825,7 +825,9 @@ RString ThemeManager::GetClassFallback( const RString &sClassName )
 	if( !GetMetricRawRecursive(g_pLoadedThemeData->iniMetrics,sClassName,"Fallback",sFallback) )
 		return RString();
 
-	return sFallback;
+	RString sRet;
+	LuaHelpers::RunExpressionS( sFallback, sRet );
+	return sRet;
 }
 
 bool ThemeManager::GetMetricRawRecursive( const IniFile &ini, const RString &sClassName_, const RString &sValueName, RString &sOut )
