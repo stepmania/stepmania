@@ -93,9 +93,9 @@ namespace LuaHelpers
 	template<class T>
 	bool Pop( T &val, lua_State *L )
 	{
-			bool bRet = LuaHelpers::FromStack( val, -1, L );
-			lua_pop( L, 1 );
-			return bRet;
+		bool bRet = LuaHelpers::FromStack( val, -1, L );
+		lua_pop( L, 1 );
+		return bRet;
 	}
 	
 	template<class T>
