@@ -481,7 +481,8 @@ apActorCommands ActorUtil::ParseActorCommands( const RString &sCommands )
 	RString sError;
 	if( !LuaHelpers::RunScript( L, sLuaFunction, "", sError, 1 ) )
 	{
-		FAIL_M( ssprintf("Compiling \"%s\": %s", sLuaFunction.c_str(), sError.c_str()) );
+		LOG->Warn( "Compiling \"%s\": %s", sLuaFunction.c_str(), sError.c_str() );
+		lua_pushnil( L );
 	}
 
 	/* The function is now on the stack. */
@@ -489,7 +490,6 @@ apActorCommands ActorUtil::ParseActorCommands( const RString &sCommands )
 	pRet->SetFromStack( L );
 	LUA->Release( L );
 
-	ASSERT_M( !pRet->IsNil(), sLuaFunction.c_str() );
 	return apActorCommands( pRet );
 }
 
