@@ -708,12 +708,8 @@ int LuaFunc_color( lua_State *L )
 	RString sColor = SArg(1);
 	RageColor c;
 	c.FromString( sColor );
-
-	LuaHelpers::Push( c.r, L );
-	LuaHelpers::Push( c.g, L );
-	LuaHelpers::Push( c.b, L );
-	LuaHelpers::Push( c.a, L );
-	return 4;
+	c.PushTable( L );
+	return 1;
 }
 static LuaFunctionList g_color( "color", LuaFunc_color ); /* register it */
 
