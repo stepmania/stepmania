@@ -19,6 +19,9 @@ void RageColor::PushTable( lua_State *L ) const
 
 void RageColor::FromStack( lua_State *L, int iPos )
 {
+	if( lua_type(L, iPos) != LUA_TTABLE )
+		return;
+
 	lua_pushvalue( L, iPos );
 	int iFrom = lua_gettop( L );
 
