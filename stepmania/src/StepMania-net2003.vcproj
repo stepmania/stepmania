@@ -469,10 +469,22 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\ScreenOptionsEditCourseEntry.h">
 			</File>
 			<File
+				RelativePath=".\ScreenOptionsEditPlaylist.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenOptionsEditPlaylist.h">
+			</File>
+			<File
 				RelativePath=".\ScreenOptionsEditProfile.cpp">
 			</File>
 			<File
 				RelativePath=".\ScreenOptionsEditProfile.h">
+			</File>
+			<File
+				RelativePath=".\ScreenOptionsEditWorkout.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenOptionsEditWorkout.h">
 			</File>
 			<File
 				RelativePath=".\ScreenOptionsManageCourses.cpp">
@@ -493,6 +505,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\ScreenOptionsManageProfiles.h">
 			</File>
 			<File
+				RelativePath=".\ScreenOptionsManageWorkouts.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenOptionsManageWorkouts.h">
+			</File>
+			<File
 				RelativePath="ScreenOptionsMaster.cpp">
 			</File>
 			<File
@@ -509,6 +527,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath=".\ScreenOptionsMemoryCard.h">
+			</File>
+			<File
+				RelativePath=".\ScreenOptionsReviewWorkout.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenOptionsReviewWorkout.h">
 			</File>
 			<File
 				RelativePath="ScreenPackages.cpp">
@@ -1177,6 +1201,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<File
 				RelativePath=".\Tween.h">
 			</File>
+			<File
+				RelativePath=".\Workout.cpp">
+			</File>
+			<File
+				RelativePath=".\Workout.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="File Types"
@@ -1589,7 +1619,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				<File
 					RelativePath=".\archutils\Win32\DialogUtil.h">
 				</File>
- 				<File
+				<File
 					RelativePath=".\archutils\Win32\DirectXHelpers.cpp">
 				</File>
 				<File
@@ -1948,6 +1978,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="WheelNotifyIcon.h">
+			</File>
+			<File
+				RelativePath=".\WorkoutGraph.cpp">
+			</File>
+			<File
+				RelativePath=".\WorkoutGraph.h">
 			</File>
 		</Filter>
 		<Filter
@@ -2899,6 +2935,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="UnlockManager.h">
+			</File>
+			<File
+				RelativePath=".\WorkoutManager.cpp">
+			</File>
+			<File
+				RelativePath=".\WorkoutManager.h">
 			</File>
 		</Filter>
 		<Filter
