@@ -963,8 +963,6 @@ RageColor ThemeManager::GetMetricC( const RString &sClassName, const RString &sV
 {
 	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName );
 
-	LuaHelpers::RunAtExpressionS( sValue );
-
 	LuaHelpers::PrepareExpression( sValue );
 
 	return RunExpressionC( sValue );
