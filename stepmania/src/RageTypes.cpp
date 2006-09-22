@@ -33,6 +33,12 @@ void RageColor::FromStack( lua_State *L, int iPos )
 	lua_pop( L, 5 );
 }
 
+bool LuaHelpers::FromStack( lua_State *L, RageColor &Object, int iOffset )
+{
+	Object.FromStack( L, iOffset );
+	return true;
+}
+
 /*
  * Copyright (c) 2006 Glenn Maynard
  * All rights reserved.
