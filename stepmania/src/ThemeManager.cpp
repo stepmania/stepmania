@@ -898,8 +898,6 @@ RString ThemeManager::GetMetric( const RString &sClassName, const RString &sValu
 
 	RString sRet;
 	LuaHelpers::RunExpressionS( sValue, sRet );
-
-	FontCharAliases::ReplaceMarkers( sRet );
 	return sRet;
 }
 
