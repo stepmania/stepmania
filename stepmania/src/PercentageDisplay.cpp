@@ -72,7 +72,7 @@ void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStage
 	m_iDancePointsDigits = THEME->GetMetricI( sMetricsGroup, "DancePointsDigits" );
 	m_bUseRemainder = THEME->GetMetricB( sMetricsGroup, "PercentUseRemainder" );
 	m_bApplyScoreDisplayOptions = THEME->GetMetricB( sMetricsGroup, "ApplyScoreDisplayOptions" );
-	m_Format.SetFromExpression( THEME->GetMetric(sMetricsGroup, "Format") );
+	m_Format = THEME->GetMetricR( sMetricsGroup, "Format" );
 	
 	if( m_Format.IsNil() )
 	{
