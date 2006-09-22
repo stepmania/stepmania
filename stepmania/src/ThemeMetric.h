@@ -72,7 +72,13 @@ public:
 	{
 		if( m_sName != ""  &&  THEME  &&   THEME->IsThemeLoaded() )
 		{
-			THEME->GetMetric( m_sGroup, m_sName, m_currentValue );
+			Lua *L = LUA->Get();
+			THEME->PushMetric( L, m_sGroup, m_sName );
+			if( !LuaHelpers::FromStack(L, m_currentValue, -1) )
+				m_currentValue = T();
+			lua_pop( L, 1 );
+			LUA->Release(L);
+
 			m_bIsLoaded = true;
 		}
 	}
