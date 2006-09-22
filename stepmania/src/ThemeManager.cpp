@@ -888,9 +888,11 @@ RString ThemeManager::GetMetric( const RString &sClassName, const RString &sValu
 {
 	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName);
 
-	EvaluateString( sValue );
+	RString sRet;
+	LuaHelpers::RunExpressionS( sValue, sRet );
 
-	return sValue;
+	FontCharAliases::ReplaceMarkers( sRet );
+	return sRet;
 }
 
 void ThemeManager::EvaluateString( RString &sText )
