@@ -113,9 +113,12 @@ void HighScoreWheel::Load( const HighScoreList& hsl, int iIndexToFocus )
 		"	self:y(math.sin(radians)*90); "
 		"	self:z(math.cos(radians)*90); "
 		"end";
+	LuaReference ref;
+	ref.SetFromExpression( sTransformFunction );
+
 	ActorScroller::SetNumItemsToDraw( 10.5f );
 	ActorScroller::Load2();
-	ActorScroller::SetTransformFromExpression( sTransformFunction );
+	ActorScroller::SetTransformFromReference( ref );
 	ActorScroller::SetSecondsPerItem( 0.2f );
 	Scroll();
 }
