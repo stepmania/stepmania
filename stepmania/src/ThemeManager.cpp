@@ -979,15 +979,20 @@ void ThemeManager::GetMetric( const RString &sClassName, const RString &sValueNa
 {
 	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName );
 
+	Lua *L = LUA->Get();
+	
 	if( EndsWith(sValueName, "Command") )
 	{
-		ActorUtil::ParseActorCommands( sValue, valueOut );
+		ActorUtil::ParseActorCommands( L, sValue );
 	}
 	else
 	{
 		LuaHelpers::PrepareExpression( sValue );
-		valueOut.SetFromExpression( sValue );
+		LuaHelpers::RunExpression( L, sValue );
 	}
+
+	valueOut.SetFromStack( L );
+	LUA->Release( L );
 }
 
 #if !defined(SMPACKAGE)
