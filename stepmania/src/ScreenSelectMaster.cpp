@@ -155,7 +155,7 @@ void ScreenSelectMaster::Init()
 			m_Scroller[*p].SetLoop( LOOP_SCROLLER );
 			m_Scroller[*p].SetNumItemsToDraw( SCROLLER_NUM_ITEMS_TO_DRAW );
 			m_Scroller[*p].Load2();
-			m_Scroller[*p].SetTransformFromExpression( SCROLLER_TRANSFORM );
+			m_Scroller[*p].SetTransformFromReference( SCROLLER_TRANSFORM );
 			m_Scroller[*p].SetSecondsPerItem( SCROLLER_SECONDS_PER_ITEM );
 			m_Scroller[*p].SetNumSubdivisions( SCROLLER_SUBDIVISIONS );
 			m_Scroller[*p].SetName( "Scroller"+PLAYER_APPEND_NO_SPACE(*p) );

@@ -65,7 +65,7 @@ protected:
 	ThemeMetric<bool>	ALLOW_REPEATING_INPUT;
 	ThemeMetric<float>	SCROLLER_SECONDS_PER_ITEM;
 	ThemeMetric<float>	SCROLLER_NUM_ITEMS_TO_DRAW;
-	ThemeMetric<RString>	SCROLLER_TRANSFORM;
+	ThemeMetric<LuaReference> SCROLLER_TRANSFORM;
 	ThemeMetric<int>	SCROLLER_SUBDIVISIONS;
 	ThemeMetric<RString>	DEFAULT_CHOICE;
 
