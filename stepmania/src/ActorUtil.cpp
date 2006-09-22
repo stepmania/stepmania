@@ -490,10 +490,6 @@ apActorCommands ActorUtil::ParseActorCommands( const RString &sCommands )
 	LUA->Release( L );
 
 	ASSERT_M( !pRet->IsNil(), sLuaFunction.c_str() );
-
-	if( sCommands.size() > 0 && sCommands[0] != '\033' ) // not a binary chunk
-		pRet->SetName( sLuaFunction );
-
 	return apActorCommands( pRet );
 }
 
