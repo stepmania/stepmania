@@ -56,6 +56,10 @@ namespace LuaHelpers
 	 * The return value is left on the Lua stack. */
 	bool RunScript( Lua *L, const RString &sExpression, const RString &sName = "", int iReturnValues = 0 );
 
+	/* Run the given expression, returning a single value, and leave the return value on the
+	 * stack.  On error, push nil. */
+	bool RunExpression( Lua *L, const RString &sExpression );
+
 	bool RunScriptFile( const RString &sFile );
 
 	/* Strip "//" comments and "+". */
