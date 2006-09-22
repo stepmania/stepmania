@@ -972,13 +972,17 @@ RageColor ThemeManager::GetMetricC( const RString &sClassName, const RString &sV
 
 LuaReference ThemeManager::GetMetricR( const RString &sClassName, const RString &sValueName )
 {
+	LuaReference ref;
+	GetMetric( sClassName, sValueName, ref );
+	return ref;
+}
+
+void ThemeManager::GetMetric( const RString &sClassName, const RString &sValueName, LuaReference &valueOut )
+{
 	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName );
 
 	LuaHelpers::PrepareExpression( sValue );
-
-	LuaReference ref;
-	ref.SetFromExpression( sValue );
-	return ref;
+	valueOut.SetFromExpression( sValue );
 }
 
 #if !defined(SMPACKAGE)
