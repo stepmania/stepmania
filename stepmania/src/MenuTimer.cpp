@@ -10,7 +10,7 @@
 #include "ThemeMetric.h"
 #include "ActorUtil.h"
 
-RString WARNING_COMMAND_NAME( size_t i ) { return ssprintf("WarningCommand%d",int(i)); }
+RString WARNING_COMMAND_NAME( size_t i ) { return ssprintf("Warning%dCommand",int(i)); }
 
 static const ThemeMetric<int>		WARNING_START		("MenuTimer","WarningStart");
 static const ThemeMetric<int>		WARNING_BEEP_START	("MenuTimer","WarningBeepStart");
