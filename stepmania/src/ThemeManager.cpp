@@ -903,16 +903,6 @@ RString ThemeManager::GetMetric( const RString &sClassName, const RString &sValu
 	return sRet;
 }
 
-void ThemeManager::EvaluateString( RString &sText )
-{
-	/* If the string begins with an @, then this is a Lua expression
-	 * that should be evaluated immediately.
-	 * Still do font aliases on the resulting string. */
-	LuaHelpers::RunAtExpressionS( sText );
-
-	FontCharAliases::ReplaceMarkers( sText );
-}
-
 int ThemeManager::GetMetricI( const RString &sClassName, const RString &sValueName )
 {
 	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName );
@@ -1008,6 +998,16 @@ apActorCommands ThemeManager::GetMetricA( const RString &sClassName, const RStri
 	return apActorCommands( pRef );
 }
 #endif
+
+void ThemeManager::EvaluateString( RString &sText )
+{
+	/* If the string begins with an @, then this is a Lua expression
+	 * that should be evaluated immediately.
+	 * Still do font aliases on the resulting string. */
+	LuaHelpers::RunAtExpressionS( sText );
+
+	FontCharAliases::ReplaceMarkers( sText );
+}
 
 RString ThemeManager::GetNextTheme()
 {
