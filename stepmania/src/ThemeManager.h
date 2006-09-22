@@ -70,6 +70,7 @@ public:
 	void ClearThemePathCache();
 
 	bool		HasMetric( const RString &sClassName, const RString &sValueName );
+	void		PushMetric( Lua *L, const RString &sClassName, const RString &sValueName );
 	RString		GetMetric( const RString &sClassName, const RString &sValueName );
 	int		GetMetricI( const RString &sClassName, const RString &sValueName );
 	float		GetMetricF( const RString &sClassName, const RString &sValueName );

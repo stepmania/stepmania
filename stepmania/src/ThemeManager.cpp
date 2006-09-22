@@ -975,12 +975,10 @@ LuaReference ThemeManager::GetMetricR( const RString &sClassName, const RString 
 	return ref;
 }
 
-void ThemeManager::GetMetric( const RString &sClassName, const RString &sValueName, LuaReference &valueOut )
+void ThemeManager::PushMetric( Lua *L, const RString &sClassName, const RString &sValueName )
 {
 	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName );
 
-	Lua *L = LUA->Get();
-	
 	if( EndsWith(sValueName, "Command") )
 	{
 		ActorUtil::ParseActorCommands( L, sValue );
@@ -990,7 +988,12 @@ void ThemeManager::GetMetric( const RString &sClassName, const RString &sValueNa
 		LuaHelpers::PrepareExpression( sValue );
 		LuaHelpers::RunExpression( L, sValue );
 	}
+}
 
+void ThemeManager::GetMetric( const RString &sClassName, const RString &sValueName, LuaReference &valueOut )
+{
+	Lua *L = LUA->Get();
+	PushMetric( L, sClassName, sValueName );
 	valueOut.SetFromStack( L );
 	LUA->Release( L );
 }
