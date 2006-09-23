@@ -661,24 +661,23 @@ try_element_again:
 	RString sNewPath = GetPath(category, sNewClassName, sNewFile, true);
 
 	if( !sNewPath.empty() )
-	{
 		return sNewPath;
-	}
-	else
+
+	RString sMessage = ssprintf(
+			"ThemeManager:  The redirect '%s' points to the file '%s', which does not exist. "
+			"Verify that this redirect is correct.",
+			sPath.c_str(), sNewFileName.c_str());
+
+	switch( Dialog::AbortRetryIgnore(sMessage) )
 	{
-		RString message = ssprintf(
-				"ThemeManager:  The redirect '%s' points to the file '%s', which does not exist. "
-				"Verify that this redirect is correct.",
-				sPath.c_str(), sNewFileName.c_str());
-
-		if( Dialog::AbortRetryIgnore(message) == Dialog::retry )
-		{
-			ReloadMetrics();
-			goto try_element_again;
-		}
-
-		RageException::Throw( "%s", message.c_str() ); 
+	case Dialog::retry:
+		ReloadMetrics();
+		goto try_element_again;
+	case Dialog::ignore:
+		return GetPath( category, "", "_missing" );
 	}
+
+	RageException::Throw( "%s", sMessage.c_str() ); 
 }
 
 RString ThemeManager::GetPathToAndFallback( ElementCategory category, const RString &sClassName_, const RString &sElement ) 
