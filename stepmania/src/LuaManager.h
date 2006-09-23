@@ -58,7 +58,7 @@ namespace LuaHelpers
 
 	/* Run the given expression, returning a single value, and leave the return value on the
 	 * stack.  On error, push nil. */
-	bool RunExpression( Lua *L, const RString &sExpression );
+	bool RunExpression( Lua *L, const RString &sExpression, const RString &sName = "" );
 
 	bool RunScriptFile( const RString &sFile );
 

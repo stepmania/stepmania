@@ -539,11 +539,11 @@ bool LuaHelpers::RunScript( Lua *L, const RString &sExpression, const RString &s
 	return true;
 }
 
-bool LuaHelpers::RunExpression( Lua *L, const RString &sExpression )
+bool LuaHelpers::RunExpression( Lua *L, const RString &sExpression, const RString &sName )
 {
 	RString sFullExpression = "return " + sExpression;
 
-	bool bSuccess = LuaHelpers::RunScript( L, sFullExpression, "", 1 );
+	bool bSuccess = LuaHelpers::RunScript( L, sFullExpression, sName, 1 );
 	if( !bSuccess )
 		lua_pushnil( L );
 
