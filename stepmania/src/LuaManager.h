@@ -76,7 +76,7 @@ namespace LuaHelpers
 	bool RunExpressionB( const RString &str );
 	float RunExpressionF( const RString &str );
 	int RunExpressionI( const RString &str );
-	bool RunExpressionS( const RString &str, RString &sOut );
+	void RunExpressionS( const RString &str, RString &sOut );
 
 	/* If sStr begins with @, evaluate the rest as an expression and store the result over sStr. */
 	bool RunAtExpressionS( RString &sStr );

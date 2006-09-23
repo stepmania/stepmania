@@ -554,22 +554,12 @@ bool LuaHelpers::RunExpressionB( const RString &str )
 {
 	Lua *L = LUA->Get();
 
-	LuaReference val;
-	if( !val.SetFromExpression(str) )
-	{
-		LUA->Release( L );
-		return false;
-	}
-	val.PushSelf( L );
+	RunExpression( L, str );
 
-	/* Don't accept a function as a return value. */
-	if( lua_isfunction( L, -1 ) )
-		RageException::Throw( "Result is a function; did you forget \"()\"?" );
+	bool result;
+	LuaHelpers::Pop( L, result );
 
-	bool result = !!lua_toboolean( L, -1 );
-	lua_pop( L, 1 );
 	LUA->Release( L );
-
 	return result;
 }
 
@@ -577,21 +567,10 @@ float LuaHelpers::RunExpressionF( const RString &str )
 {
 	Lua *L = LUA->Get();
 
-	LuaReference val;
-	if( !val.SetFromExpression(str) )
-	{
-		LUA->Release( L );
-		return 0;
-	}
+	RunExpression( L, str );
 
-	val.PushSelf( L );
-
-	/* Don't accept a function as a return value. */
-	if( lua_isfunction( L, -1 ) )
-		RageException::Throw( "Result is a function; did you forget \"()\"?" );
-
-	float result = (float) lua_tonumber( L, -1 );
-	lua_pop( L, 1 );
+	float result;
+	LuaHelpers::Pop( L, result );
 
 	LUA->Release( L );
 	return result;
@@ -602,27 +581,15 @@ int LuaHelpers::RunExpressionI( const RString &str )
 	return (int) LuaHelpers::RunExpressionF(str);
 }
 
-bool LuaHelpers::RunExpressionS( const RString &str, RString &sOut )
+void LuaHelpers::RunExpressionS( const RString &str, RString &sOut )
 {
 	Lua *L = LUA->Get();
 
-	LuaReference val;
-	if( !val.SetFromExpression(str) )
-	{
-		LUA->Release( L );
-		sOut = "";
-		return false;
-	}
-	val.PushSelf( L );
-
-	/* Don't accept a function as a return value. */
-	if( lua_isfunction( L, -1 ) )
-		RageException::Throw( "Result is a function; did you forget \"()\"?" );
+	RunExpression( L, str );
 
 	LuaHelpers::Pop( L, sOut );
 
 	LUA->Release( L );
-	return true;
 }
 
 bool LuaHelpers::RunAtExpressionS( RString &sStr )
