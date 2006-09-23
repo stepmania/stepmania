@@ -34,25 +34,27 @@ static LuaFunctionList *g_LuaFunctions = NULL;
 	#pragma warning (disable : 4611)
 #endif
 
-struct ChunkReaderData
+struct ChunkReaderString
 {
-	const RString *buf;
-	bool done;
-	ChunkReaderData() { buf = NULL; done = false; }
+	ChunkReaderString( const RString &sBuf ): m_sBuf(sBuf) { m_bDone = false; }
+	static const char *Reader( lua_State *L, void *ptr, size_t *size );
+
+	const RString m_sBuf;
+	bool m_bDone;
 };
 
-static const char *ChunkReaderString( lua_State *L, void *ptr, size_t *size )
+const char *ChunkReaderString::Reader( lua_State *L, void *pPtr, size_t *pSize )
 {
-	ChunkReaderData *data = (ChunkReaderData *) ptr;
-	if( data->done )
+	ChunkReaderString *pData = (ChunkReaderString *) pPtr;
+	if( pData->m_bDone )
 		return NULL;
 
-	data->done = true;
+	pData->m_bDone = true;
 
-	*size = data->buf->size();
-	const char *ret = data->buf->data();
+	*pSize = pData->m_sBuf.size();
+	const char *pRet = pData->m_sBuf.data();
 	
-	return ret;
+	return pRet;
 }
 
 void LuaManager::SetGlobal( const RString &sName, int val )
@@ -501,9 +503,8 @@ bool LuaHelpers::RunScript( Lua *L, const RString &sScript, const RString &sName
 {
 	// load string
 	{
-		ChunkReaderData data;
-		data.buf = &sScript;
-		int ret = lua_load( L, ChunkReaderString, &data, sName );
+		ChunkReaderString data( sScript );
+		int ret = lua_load( L, ChunkReaderString::Reader, &data, sName );
 
 		if( ret )
 		{
