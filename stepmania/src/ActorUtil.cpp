@@ -207,9 +207,9 @@ Actor* ActorUtil::LoadFromNode( const RString& sDir, const XNode* pNode, Actor *
 				RString s;
 				if( !pChild->GetAttrValue( "Value", s ) )
 					Dialog::OK( ssprintf("Param node in '%s' is missing the attribute \"Value\"", sDir.c_str()), "MISSING_ATTRIBUTE" );
-				Lua *L = LUA->Get();
-				LuaHelpers::RunScript( L, "return " + s, "", 1 );
 
+				Lua *L = LUA->Get();
+				LuaHelpers::RunExpression( L, s, sDir );
 				SetParamFromStack( L, sName, &setOldParams[sName] );
 				LUA->Release(L);
 			}
