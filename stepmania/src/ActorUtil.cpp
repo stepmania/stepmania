@@ -478,10 +478,7 @@ void ActorUtil::ParseActorCommands( Lua *L, const RString &sCommands )
 
 	RString sError;
 	if( !LuaHelpers::RunScript( L, sLuaFunction, "", sError, 1 ) )
-	{
 		LOG->Warn( "Compiling \"%s\": %s", sLuaFunction.c_str(), sError.c_str() );
-		lua_pushnil( L );
-	}
 
 	/* The function is now on the stack. */
 }
