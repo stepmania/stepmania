@@ -717,6 +717,7 @@ void ScreenGameplay::Init( bool bUseSongBackgroundAndForeground )
 
 		m_textDebug.LoadFromFont( THEME->GetPathF("Common","normal") );
 		m_textDebug.SetName( "Debug" );
+		ActorUtil::LoadAllCommands( m_textDebug, m_sName );
 		SET_XY( m_textDebug );
 		m_textDebug.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 );	// just under transitions, over the foreground
 		this->AddChild( &m_textDebug );
@@ -2635,9 +2636,7 @@ void ScreenGameplay::TweenOffScreen()
 		FOREACH_NSScoreBoardColumn( sc )
 			OFF_COMMAND( m_Scoreboard[sc] );
 
-	m_textDebug.StopTweening();
-	m_textDebug.BeginTweening( 1/8.f );
-	m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
+	OFF_COMMAND( m_textDebug );
 }
 
 Song *ScreenGameplay::GetNextCourseSong() const
