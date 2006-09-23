@@ -509,6 +509,8 @@ bool LuaHelpers::RunScript( Lua *L, const RString &sScript, const RString &sName
 		if( ret )
 		{
 			LuaHelpers::Pop( L, sError );
+			for( int i = 0; i < iReturnValues; ++i )
+				lua_pushnil( L );
 			return false;
 		}
 	}
@@ -519,6 +521,8 @@ bool LuaHelpers::RunScript( Lua *L, const RString &sScript, const RString &sName
 		if( ret )
 		{
 			LuaHelpers::Pop( L, sError );
+			for( int i = 0; i < iReturnValues; ++i )
+				lua_pushnil( L );
 			return false;
 		}
 	}
@@ -544,11 +548,7 @@ bool LuaHelpers::RunExpression( Lua *L, const RString &sExpression, const RStrin
 {
 	RString sFullExpression = "return " + sExpression;
 
-	bool bSuccess = LuaHelpers::RunScript( L, sFullExpression, sName, 1 );
-	if( !bSuccess )
-		lua_pushnil( L );
-
-	return bSuccess;
+	return LuaHelpers::RunScript( L, sFullExpression, sName, 1 );
 }
 
 bool LuaHelpers::RunExpressionB( const RString &str )
