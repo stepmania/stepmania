@@ -46,11 +46,13 @@ public:
 	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	virtual void TweenOffScreen();
 	virtual void MenuBack( const InputEventPlus &input );
 	virtual void MenuStart( const InputEventPlus &input );
 
 protected:
+	virtual bool GenericTweenOn() const { return true; }
+	virtual bool GenericTweenOff() const { return true; }
+
 	void EndScreen();
 
 	bool			m_bSummary;
