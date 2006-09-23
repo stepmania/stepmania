@@ -18,7 +18,7 @@ StatsManager::StatsManager()
 	{
 		Lua *L = LUA->Get();
 		lua_pushstring( L, "STATSMAN" );
-		STATSMAN->PushSelf( L );
+		this->PushSelf( L );
 		lua_settable(L, LUA_GLOBALSINDEX);
 		LUA->Release( L );
 	}
