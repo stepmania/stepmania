@@ -538,6 +538,18 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ScreenOptionsEditCourseEntry.cpp">
+			</File>			
+			<File
+				RelativePath=".\ScreenOptionsEditWorkout.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenOptionsEditWorkout.h">
+			</File>
+			<File
+				RelativePath=".\ScreenOptionsEditPlaylist.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenOptionsEditPlaylist.h">
 			</File>
 			<File
 				RelativePath="ScreenOptionsEditCourseEntry.h">
@@ -567,6 +579,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenOptionsManageProfiles.h">
 			</File>
 			<File
+				RelativePath=".\ScreenOptionsManageWorkouts.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenOptionsManageWorkouts.h">
+			</File>
+			<File
 				RelativePath="ScreenOptionsMaster.cpp">
 			</File>
 			<File
@@ -583,6 +601,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath=".\ScreenOptionsMemoryCard.h">
+			</File>
+			<File
+				RelativePath=".\ScreenOptionsReviewWorkout.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenOptionsReviewWorkout.h">
 			</File>
 			<File
 				RelativePath="ScreenPackages.cpp">
@@ -780,12 +804,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 		<Filter
 			Name="Data Structures"
 			Filter="">
-			<File
-				RelativePath=".\ActorCommands.cpp">
-			</File>
-			<File
-				RelativePath=".\ActorCommands.h">
-			</File>
 			<File
 				RelativePath=".\AdjustSync.cpp">
 			</File>
@@ -1229,6 +1247,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath=".\Tween.h">
+			</File>
+			<File
+				RelativePath=".\Workout.cpp">
+			</File>
+			<File
+				RelativePath=".\Workout.h">
 			</File>
 		</Filter>
 		<Filter
@@ -1846,6 +1870,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			<File
 				RelativePath="WheelNotifyIcon.h">
 			</File>
+			<File
+				RelativePath="WorkoutGraph.cpp">
+			</File>
+			<File
+				RelativePath="WorkoutGraph.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="Actors used in Gameplay"
@@ -2383,6 +2413,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="RageTimer.h">
 			</File>
 			<File
+				RelativePath="RageTypes.cpp">
+			</File>
+			<File
 				RelativePath="RageTypes.h">
 			</File>
 			<File
@@ -2718,6 +2751,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath=".\UnlockManager.h">
+			</File>
+			<File
+				RelativePath=".\WorkoutManager.cpp">
+			</File>
+			<File
+				RelativePath=".\WorkoutManager.h">
 			</File>
 		</Filter>
 		<Filter
