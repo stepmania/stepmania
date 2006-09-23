@@ -42,7 +42,7 @@ void ScreenGameplaySyncMachine::Init()
 
 	m_textSyncInfo.SetName( "SyncInfo" );
 	m_textSyncInfo.LoadFromFont( THEME->GetPathF("Common","normal") );
-	ON_COMMAND( m_textSyncInfo );
+	ActorUtil::LoadAllCommands( m_textSyncInfo, m_sName );
 	this->AddChild( &m_textSyncInfo );
 
 	this->SubscribeToMessage( Message_AutosyncChanged );

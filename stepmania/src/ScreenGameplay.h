@@ -119,6 +119,9 @@ public:
 	Song *GetNextCourseSong() const;
 
 protected:
+	virtual bool GenericTweenOn() const { return true; }
+	virtual bool GenericTweenOff() const { return true; }
+
 	ThemeMetric<RString> PLAYER_TYPE;
 	LocalizedString GIVE_UP_START_TEXT;
 	LocalizedString GIVE_UP_BACK_TEXT;
@@ -130,9 +133,6 @@ protected:
 	ThemeMetric<bool> GIVING_UP_GOES_TO_NEXT_SCREEN;
 	ThemeMetric<bool> FAIL_AFTER_30_MISSES;
 	ThemeMetric<bool> ALLOW_CENTER_1_PLAYER;
-
-	void TweenOnScreen();
-	void TweenOffScreen();
 
 	bool IsLastSong();
 	void SetupSong( int iSongIndex );
