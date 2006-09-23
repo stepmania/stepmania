@@ -1373,7 +1373,7 @@ unsigned RageDisplay_D3D::CreateTexture(
 	{
 		if(!vmem_Manager.DecommitLRU())
 			break;
-		hr = g_pd3dDevice->CreateTexture( img->w, img->h, 1, 0, D3DFORMATS[pixfmt], D3DPOOL_MANAGED, &pTex );
+		hr = g_pd3dDevice->CreateTexture( img->w, img->h, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &pTex );
 	}
 #endif
 
@@ -1383,6 +1383,8 @@ unsigned RageDisplay_D3D::CreateTexture(
 
 	unsigned uTexHandle = (unsigned)pTex;
 
+// No palletized textures for the Xbox console
+#if !defined(XBOX)
 	if( pixfmt == PixelFormat_PAL )
 	{
 		// Save palette
@@ -1400,7 +1402,7 @@ unsigned RageDisplay_D3D::CreateTexture(
 		ASSERT( g_TexResourceToTexturePalette.find(uTexHandle) == g_TexResourceToTexturePalette.end() );
 		g_TexResourceToTexturePalette[uTexHandle] = pal;
 	}
-
+#endif
 	UpdateTexture( uTexHandle, img, 0, 0, img->w, img->h );
 
 	return uTexHandle;
@@ -1432,16 +1434,24 @@ void RageDisplay_D3D::UpdateTexture(
 	// Copy bits
 	//
 #if defined(XBOX)
+	RageSurface *Texture = CreateSurface( width, height, 32,
+			Swap32BE( 0x0000FF00 ),
+			Swap32BE( 0x00FF0000 ),
+			Swap32BE( 0xFF000000 ),
+			Swap32BE( 0x000000FF ) );
+	
+	RageSurfaceUtils::Blit( img, Texture, width, height );
+	
 	// Xbox textures need to be swizzled
 	XGSwizzleRect(
-		img->pixels,	// pSource, 
-		img->pitch,		// Pitch,
+		Texture->pixels,	// pSource, 
+		Texture->pitch,		// Pitch,
 		NULL,	// pRect,
 		lr.pBits,	// pDest,
-		img->w,	// Width,
-		img->h,	// Height,
+		Texture->w,	// Width,
+		Texture->h,	// Height,
 		NULL,	// pPoint,
-		img->format->BytesPerPixel ); //BytesPerPixel
+		Texture->format->BytesPerPixel ); //BytesPerPixel
 #else
 	int texpixfmt;
 	for(texpixfmt = 0; texpixfmt < NUM_PixelFormat; ++texpixfmt)
