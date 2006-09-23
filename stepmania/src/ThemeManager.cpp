@@ -956,7 +956,7 @@ void ThemeManager::PushMetric( Lua *L, const RString &sClassName, const RString 
 	else
 	{
 		LuaHelpers::PrepareExpression( sValue );
-		LuaHelpers::RunExpression( L, sValue );
+		LuaHelpers::RunExpression( L, sValue, ssprintf("%s::%s", sClassName.c_str(), sValueName.c_str()) );
 	}
 }
 
