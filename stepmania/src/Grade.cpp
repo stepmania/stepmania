@@ -52,7 +52,6 @@ Grade StringToGrade( const RString &sGrade )
 	LOG->Warn( "Invalid grade: %s", sGrade.c_str() );
 	return Grade_NoData;
 };
-template<> void StringTo<Grade>( const RString& s, Grade &out ) { out = StringToGrade( s ); }
 
 static void LuaGrade(lua_State* L)
 {

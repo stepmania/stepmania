@@ -92,10 +92,7 @@ static const RString EMPTY_STRING;
 			if( !s2.CompareNoCase(X##Names[i]) )	\
 				return (X)i;	\
 		return (X)(i+1); /*invalid*/	\
-	} \
-	template<> void StringTo<X>( const RString& s, X &out ) { out = StringTo##X( s ); }
-// VC6 hack: even templated functions can't differ by only return value.  Move return value to a reference parameter.
-template<class T> void StringTo( const RString& s, T &out );
+	}
 
 #define LuaXToString(X)	\
 LuaFunction( X##ToString, X##ToString( (X) IArg(1) ) );

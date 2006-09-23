@@ -235,21 +235,6 @@ public:
 	}
 };
 
-// VC 6 hack: even templated functions can't differ by only return value.  Move return value to a reference parameter.
-template<class T> void StringTo( const RString& s, T &out );
-template<class T>
-class ThemeMetricEnum : public ThemeMetric<RString>
-{
-	T m_Value;
-public:
-	ThemeMetricEnum() : ThemeMetric<RString>() {}
-	ThemeMetricEnum( const RString& sGroup, const RString& sName ) :
-	ThemeMetric<RString>( sGroup, sName ) {}
-	void Read() { ThemeMetric<RString>::Read(); StringTo<T>(m_currentValue,m_Value); }
-	const T &GetValue() const { ASSERT( !m_sName.empty() && m_bIsLoaded ); return m_Value; }
-	operator const T& () const { return GetValue(); }
-};
-
 
 /*
  * Like ThemeMetric, but allows evaluating Lua expressions each time.  This is

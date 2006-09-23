@@ -272,7 +272,7 @@ protected:
 	RageSound		m_soundMusic;
 	RageSound		m_soundAssistTick;
 
-	ThemeMetricEnum<EditMode> EDIT_MODE;
+	ThemeMetric<int> EDIT_MODE;
 
 public:
 	enum MainMenuChoice

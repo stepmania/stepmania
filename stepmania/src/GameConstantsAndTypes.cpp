@@ -216,10 +216,6 @@ TapNoteScore StringToTapNoteScore( const RString &s )
 
 	return TNS_INVALID;
 }
-template<> void StringTo<TapNoteScore>( const RString &s, TapNoteScore &out )
-{
-	out = StringToTapNoteScore( s );
-}
 XToLocalizedString( TapNoteScore );
 LuaFunction( TapNoteScoreToLocalizedString, TapNoteScoreToLocalizedString((TapNoteScore) IArg(1)) );
 static void LuaTapNoteScores( lua_State* L )
@@ -408,8 +404,9 @@ static const char *EditModeNames[] = {
 	"Home",
 	"Full"
 };
-XToString( EditMode, EditMode_INVALID );
+XToString( EditMode, NUM_EditMode );
 StringToX( EditMode );
+LuaXType( EditMode, NUM_EditMode, "EditMode_", false );
 
 static const char *StageNames[] = {
 	"1",

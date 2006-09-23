@@ -669,7 +669,7 @@ void ScreenEdit::Init()
 	m_fBeatToReturnTo = 0;
 
 	GAMESTATE->m_bGameplayLeadIn.Set( true );
-	GAMESTATE->m_EditMode = EDIT_MODE.GetValue();
+	GAMESTATE->m_EditMode = (EditMode)EDIT_MODE.GetValue();
 	GAMESTATE->m_fSongBeat = 0;
 	m_fTrailingBeat = GAMESTATE->m_fSongBeat;
 
