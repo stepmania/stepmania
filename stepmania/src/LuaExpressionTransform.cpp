@@ -1,23 +1,20 @@
 #include "global.h"
 #include "LuaExpressionTransform.h"
-#include "LuaReference.h"
 #include "LuaManager.h"
 #include "RageUtil.h"
 
 LuaExpressionTransform::LuaExpressionTransform()
 {
-	m_pexprTransformFunction = new LuaReference;
 	m_iNumSubdivisions = 1;
 }
 
 LuaExpressionTransform::~LuaExpressionTransform()
 {
-	delete m_pexprTransformFunction;
 }
 
 void LuaExpressionTransform::SetFromReference( const LuaReference &ref )
 {
-	*m_pexprTransformFunction = ref;
+	m_exprTransformFunction = ref;
 }
 
 const Actor::TweenState &LuaExpressionTransform::GetPosition( float fPositionOffsetFromCenter, int iItemIndex, int iNumItems ) const
@@ -31,7 +28,7 @@ const Actor::TweenState &LuaExpressionTransform::GetPosition( float fPositionOff
 	Actor a;
 
 	Lua *L = LUA->Get();
-	m_pexprTransformFunction->PushSelf( L );
+	m_exprTransformFunction.PushSelf( L );
 	ASSERT( !lua_isnil(L, -1) );
 	a.PushSelf( L );
 	LuaHelpers::Push( fPositionOffsetFromCenter, L );
