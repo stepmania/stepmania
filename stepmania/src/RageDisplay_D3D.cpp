@@ -1373,7 +1373,7 @@ unsigned RageDisplay_D3D::CreateTexture(
 	{
 		if(!vmem_Manager.DecommitLRU())
 			break;
-		hr = g_pd3dDevice->CreateTexture( img->w, img->h, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &pTex );
+		hr = g_pd3dDevice->CreateTexture( img->w, img->h, 1, 0, D3DFORMATS[pixfmt], D3DPOOL_MANAGED, &pTex );
 	}
 #endif
 
@@ -1383,8 +1383,6 @@ unsigned RageDisplay_D3D::CreateTexture(
 
 	unsigned uTexHandle = (unsigned)pTex;
 
-// No palletized textures for the Xbox console
-#if !defined(XBOX)
 	if( pixfmt == PixelFormat_PAL )
 	{
 		// Save palette
@@ -1402,7 +1400,7 @@ unsigned RageDisplay_D3D::CreateTexture(
 		ASSERT( g_TexResourceToTexturePalette.find(uTexHandle) == g_TexResourceToTexturePalette.end() );
 		g_TexResourceToTexturePalette[uTexHandle] = pal;
 	}
-#endif
+
 	UpdateTexture( uTexHandle, img, 0, 0, img->w, img->h );
 
 	return uTexHandle;
