@@ -297,7 +297,7 @@ RageTextureID BannerCache::LoadCachedBanner( RString BannerPath )
 	BannerData.GetValue( BannerPath, "Rotated", WasRotatedBanner );
 	if(src_width == 0 || src_height == 0)
 	{
-		LOG->UserLog( RageLog::LogType_CacheFile, BannerPath, "couldn't be loaded." );
+		LOG->UserLog( "Cache file", BannerPath, "couldn't be loaded." );
 		return ID;
 	}
 
@@ -377,7 +377,7 @@ void BannerCache::CacheBannerInternal( RString BannerPath )
 	RageSurface *img = RageSurfaceUtils::LoadFile( BannerPath, error );
 	if( img == NULL )
 	{
-		LOG->UserLog( RageLog::LogType_CacheFile, BannerPath, "couldn't be loaded: %s", error.c_str() );
+		LOG->UserLog( "Cache file", BannerPath, "couldn't be loaded: %s", error.c_str() );
 		return;
 	}
 

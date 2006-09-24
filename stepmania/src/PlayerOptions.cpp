@@ -245,7 +245,7 @@ void PlayerOptions::FromString( const RString &sOptions, bool bWarnOnInvalid )
 				{
 					if( bWarnOnInvalid )
 					{
-						LOG->UserLog( RageLog::LogType_General, "", "Invalid player options \"%s\"; did you mean '*%d'?",
+						LOG->UserLog( "", "", "Invalid player options \"%s\"; did you mean '*%d'?",
 							      s->c_str(), atoi(*s) );
 					}
 					// XXX We know what they want, is there any reason not to handle it?
@@ -361,7 +361,7 @@ void PlayerOptions::FromString( const RString &sOptions, bool bWarnOnInvalid )
 			if( bWarnOnInvalid )
 			{
 				RString sWarning = ssprintf( "The options string \"%s\" contains an invalid mod name \"%s\".", sOptions.c_str(), sBit.c_str() );
-				LOG->UserLog( RageLog::LogType_General, "", "%s", sWarning.c_str() );
+				LOG->UserLog( "", "", "%s", sWarning.c_str() );
 				Dialog::OK( sWarning, "INVALID_PLAYER_OPTION_WARNING" );
 			}
 		}

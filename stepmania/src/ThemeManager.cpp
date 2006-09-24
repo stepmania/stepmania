@@ -757,7 +757,7 @@ try_element_again:
 		ReloadMetrics();
 		goto try_element_again;
 	case Dialog::ignore:
-		LOG->UserLog( RageLog::LogType_ThemeElement, sCategory + '/' + sFileName,
+		LOG->UserLog( "Theme element", sCategory + '/' + sFileName,
 			      "could not be found in \"%s\" or \"%s\".",
 			      GetThemeDirFromName(m_sCurThemeName).c_str(), 
 			      GetThemeDirFromName(SpecialFiles::BASE_THEME_NAME).c_str() );
@@ -769,7 +769,7 @@ try_element_again:
 		Cache[sFileName] = GetPath( category, "", "_missing" );
 		return Cache[sFileName];
 	case Dialog::abort:
-		LOG->UserLog( RageLog::LogType_ThemeElement, sCategory + '/' + sFileName,
+		LOG->UserLog( "Theme element", sCategory + '/' + sFileName,
 			      "could not be found in \"%s\" or \"%s\".",
 			      GetThemeDirFromName(m_sCurThemeName).c_str(), 
 			      GetThemeDirFromName(SpecialFiles::BASE_THEME_NAME).c_str() );
@@ -880,7 +880,7 @@ RString ThemeManager::GetMetricRaw( const IniFile &ini, const RString &sClassNam
 				ReloadMetrics();
 				continue;
 			case Dialog::ignore:
-				LOG->UserLog( RageLog::LogType_ThemeMetric, sClassName + " : " + sValueName,
+				LOG->UserLog( "Theme metric", sClassName + " : " + sValueName,
 					      "could not be found in \"%s\" or \"%s\".",
 					      sCurMetricPath.c_str(), sDefaultMetricPath.c_str() );
 				return RString();

@@ -219,7 +219,7 @@ static void LoadFromSMNoteDataStringWithPlayer( NoteData& out, const RString &sS
 			if( tn.type == TapNote::hold_head && tn.iDuration == MAX_NOTE_ROW )
 			{
 				int iRow = begin->first;
-				LOG->UserLog( RageLog::LogType_General, "", "While loading SM note data, there was an unmatched 2 at beat %f", NoteRowToBeat(iRow) );
+				LOG->UserLog( "", "", "While loading SM note data, there was an unmatched 2 at beat %f", NoteRowToBeat(iRow) );
 				out.RemoveTapNote( t, begin );
 			}
 			
