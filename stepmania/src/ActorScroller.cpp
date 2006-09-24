@@ -297,7 +297,13 @@ public:
 	LunaActorScroller() { LUA->Register( Register ); }
 
 	static int PositionItems( T* p, lua_State *L )	{ p->PositionItems(); return 0; }
-	static int SetTransformFromExpression( T* p, lua_State *L )	{ p->SetTransformFromExpression(SArg(1)); return 0; }
+	static int SetTransformFromFunction( T* p, lua_State *L )
+	{
+		LuaReference ref;
+		LuaHelpers::FromStack( L, ref, 1 );
+		p->SetTransformFromReference( ref );
+		return 0;
+	}
 	static int SetTransformFromHeight( T* p, lua_State *L )		{ p->SetTransformFromHeight(FArg(1)); return 0; }
 	static int SetCurrentAndDestinationItem( T* p, lua_State *L )	{ p->SetCurrentAndDestinationItem( FArg(1) ); return 0; }
 	static int getsecondtodestination( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetSecondsToDestination() ); return 1; }
@@ -310,7 +316,7 @@ public:
 	static void Register(lua_State *L) 
 	{
 		ADD_METHOD( PositionItems );
-		ADD_METHOD( SetTransformFromExpression );
+		ADD_METHOD( SetTransformFromFunction );
 		ADD_METHOD( SetTransformFromHeight );
 		ADD_METHOD( SetCurrentAndDestinationItem );
 		ADD_METHOD( getsecondtodestination );
