@@ -227,43 +227,15 @@ void RageLog::Warn( const char *fmt, ... )
 	Write( WRITE_TO_INFO | WRITE_LOUD, sBuff );
 }
 
-static const char *const LogTypeNames[] = {
-	"Song file",
-	"Course file",
-	"Edit file",
-	"Sound file",
-	"Graphic file",
-	"Cache file",
-	"Song",
-	"Theme element",
-	"Theme metric",
-	NULL, // General, not used.
-};
-
-void RageLog::UserLog( LogType lt, const RString &sPath, const char *fmt, ... )
+void RageLog::UserLog( const RString &sType, const RString &sElement, const char *fmt, ... )
 {
 	va_list va;
 	va_start( va, fmt );
 	RString sBuf = vssprintf( fmt, va );
 	va_end( va );
 	
-	switch( lt )
-	{
-	case LogType_SongFile:
-	case LogType_CourseFile:
-	case LogType_EditFile:
-	case LogType_SoundFile:
-	case LogType_GraphicFile:
-	case LogType_CacheFile:
-	case LogType_Song:
-	case LogType_ThemeElement:
-	case LogType_ThemeMetric:
-		sBuf = ssprintf( "%s \"%s\" %s", LogTypeNames[lt], sPath.c_str(), sBuf.c_str() );
-		break;
-	case LogType_General:
-		break;
-	DEFAULT_FAIL( lt );
-	}
+	if( !sType.empty() )
+		sBuf = ssprintf( "%s \"%s\" %s", sType.c_str(), sElement.c_str(), sBuf.c_str() );
 	
 	Write( WRITE_TO_USER_LOG, sBuf );
 }

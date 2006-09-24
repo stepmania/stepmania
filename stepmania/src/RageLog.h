@@ -9,25 +9,10 @@ public:
 	RageLog();
 	~RageLog();
 	
-	enum LogType
-	{
-		LogType_SongFile,	// Refers to a sm, dwi, ksf, etc. file.
-		LogType_CourseFile,	// Refers to a crs file.
-		LogType_EditFile,	// Refers to an edit file.
-		LogType_SoundFile,	// Refers to a .ogg, .mp3, .wav, etc. file.
-		LogType_GraphicFile,	// Refers to a .jpg, .png, etc. file.
-		LogType_CacheFile,	// Refers to any cache file.
-		LogType_Song,		// Refers to an actual song (directory).
-		LogType_ThemeElement,	// Refers to a theme element.
-		LogType_ThemeMetric,	// Refers to a theme metric.
-		LogType_General,	// Any other type of user log message. Ignores sPath.
-		NUM_LogType
-	};
-
 	void Trace( const char *fmt, ... ) PRINTF(2,3);
 	void Warn( const char *fmt, ... ) PRINTF(2,3);
 	void Info( const char *fmt, ... ) PRINTF(2,3);
-	void UserLog( LogType lt, const RString &sPath, const char *fmt, ... ) PRINTF(4,5);
+	void UserLog( const RString &sType, const RString &sElement, const char *fmt, ... ) PRINTF(4,5);
 	void Flush();
 
 	void MapLog( const RString &key, const char *fmt, ... ) PRINTF(3,4);
