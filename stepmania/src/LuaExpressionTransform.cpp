@@ -20,11 +20,6 @@ void LuaExpressionTransform::SetFromReference( const LuaReference &ref )
 	*m_pexprTransformFunction = ref;
 }
 
-void LuaExpressionTransform::SetFromExpression( const RString &sExpression )
-{
-	m_pexprTransformFunction->SetFromExpression( sExpression );
-}
-
 const Actor::TweenState &LuaExpressionTransform::GetPosition( float fPositionOffsetFromCenter, int iItemIndex, int iNumItems ) const
 {
 	PositionOffsetAndItemIndex key = { fPositionOffsetFromCenter, iItemIndex };
