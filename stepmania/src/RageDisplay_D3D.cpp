@@ -1450,6 +1450,7 @@ void RageDisplay_D3D::UpdateTexture(
 		Texture->h,	// Height,
 		NULL,	// pPoint,
 		Texture->format->BytesPerPixel ); //BytesPerPixel
+	delete Texture;
 #else
 	int texpixfmt;
 	for(texpixfmt = 0; texpixfmt < NUM_PixelFormat; ++texpixfmt)
