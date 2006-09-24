@@ -117,7 +117,7 @@ cl                                                                              
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 /FIXED:NO /FORCE:MULTIPLE"
-				AdditionalDependencies="xbdm.lib xapilibd.lib d3d8d.lib d3dx8d.lib xgraphicsd.lib dsoundd.lib dmusicd.lib xnetd.lib xboxkrnl.lib debug\verstub.obj"
+				AdditionalDependencies="libpng/lib/xboxlibpng.lib xbdm.lib xapilibd.lib d3d8d.lib d3dx8d.lib xgraphicsd.lib dsoundd.lib dmusicd.lib xnetd.lib xboxkrnl.lib debug\verstub.obj"
 				OutputFile="../StepManiaXbox-debug.exe"
 				LinkIncremental="0"
 				SuppressStartupBanner="TRUE"
@@ -270,7 +270,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 /FIXED:NO /FORCE:MULTIPLE"
-				AdditionalDependencies="$(intdir)\verstub.obj xapilib.lib d3d8.lib d3dx8.lib xgraphics.lib dsound.lib dmusic.lib xnet.lib xboxkrnl.lib libcmt.lib"
+				AdditionalDependencies="$(intdir)\verstub.obj libpng/lib/xboxlibpng.lib xapilib.lib d3d8.lib d3dx8.lib xgraphics.lib dsound.lib dmusic.lib xnet.lib xboxkrnl.lib libcmt.lib"
 				OutputFile="../StepMania.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -538,12 +538,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ScreenOptionsEditCourseEntry.cpp">
-			</File>			
-			<File
-				RelativePath=".\ScreenOptionsEditWorkout.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenOptionsEditWorkout.h">
+				RelativePath="ScreenOptionsEditCourseEntry.h">
 			</File>
 			<File
 				RelativePath=".\ScreenOptionsEditPlaylist.cpp">
@@ -552,13 +549,16 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\ScreenOptionsEditPlaylist.h">
 			</File>
 			<File
-				RelativePath="ScreenOptionsEditCourseEntry.h">
-			</File>
-			<File
 				RelativePath="ScreenOptionsEditProfile.cpp">
 			</File>
 			<File
 				RelativePath="ScreenOptionsEditProfile.h">
+			</File>
+			<File
+				RelativePath=".\ScreenOptionsEditWorkout.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenOptionsEditWorkout.h">
 			</File>
 			<File
 				RelativePath="ScreenOptionsManageCourses.cpp">
