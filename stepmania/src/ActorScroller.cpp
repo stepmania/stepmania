@@ -67,6 +67,7 @@ void ActorScroller::SetTransformFromExpression( const RString &sTransformFunctio
 {
 	LuaReference ref;
 	ref.SetFromExpression( sTransformFunction );
+	SetTransformFromReference( ref );
 }
 
 void ActorScroller::SetTransformFromHeight( float fItemHeight )
