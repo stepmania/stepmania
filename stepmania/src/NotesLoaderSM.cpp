@@ -73,7 +73,7 @@ bool SMLoader::LoadTimingFromFile( const RString &fn, TimingData &out )
 	MsdFile msd;
 	if( !msd.ReadFile( fn ) )
 	{
-		LOG->UserLog( RageLog::LogType_SongFile, fn, "couldn't be loaded: %s", msd.GetError().c_str() );
+		LOG->UserLog( "Song file", fn, "couldn't be loaded: %s", msd.GetError().c_str() );
 		return false;
 	}
 
@@ -110,7 +110,7 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				if( arrayFreezeValues.size() != 2 )
 				{
 					// XXX: Hard to tell which file caused this.
-					LOG->UserLog( RageLog::LogType_SongFile, "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
+					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
 						      sValueName.c_str(), arrayFreezeExpressions[f].c_str() );
 					continue;
 				}
@@ -138,7 +138,7 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				// XXX: Hard to tell which file caused this.
 				if( arrayBPMChangeValues.size() != 2 )
 				{
-					LOG->UserLog( RageLog::LogType_SongFile, "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
+					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid #%s value \"%s\" (must have exactly one '='), ignored.",
 						      sValueName.c_str(), arrayBPMChangeExpressions[b].c_str() );
 					continue;
 				}
@@ -149,7 +149,7 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 				if( fNewBPM > 0.0f )
 					out.AddBPMSegment( BPMSegment(BeatToNoteRow(fBeat), fNewBPM) );
 				else
-					LOG->UserLog( RageLog::LogType_SongFile, "(UNKNOWN)", "has an invalid BPM change at beat %f, BPM %f.", fBeat, fNewBPM );
+					LOG->UserLog( "Song file", "(UNKNOWN)", "has an invalid BPM change at beat %f, BPM %f.", fBeat, fNewBPM );
 			}
 		}
 	}
@@ -228,7 +228,7 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out )
 	MsdFile msd;
 	if( !msd.ReadFile( sPath ) )
 	{
-		LOG->UserLog( RageLog::LogType_SongFile, sPath, "couldn't be opened: %s", msd.GetError().c_str() );
+		LOG->UserLog( "Song file", sPath, "couldn't be opened: %s", msd.GetError().c_str() );
 		return false;
 	}
 
@@ -357,7 +357,7 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out )
 			else if(!stricmp(sParams[1],"ROULETTE"))
 				out.m_SelectionDisplay = out.SHOW_ROULETTE;
 			else
-				LOG->UserLog( RageLog::LogType_SongFile, sPath, "has an unknown #SELECTABLE value, \"%s\"; ignored.", sParams[1].c_str() );
+				LOG->UserLog( "Song file", sPath, "has an unknown #SELECTABLE value, \"%s\"; ignored.", sParams[1].c_str() );
 		}
 
 		else if( sValueName.Left(strlen("BGCHANGES"))=="BGCHANGES" || sValueName=="ANIMATIONS" )
@@ -369,7 +369,7 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out )
 			bool bValid = iLayer>=0 && iLayer<NUM_BackgroundLayer;
 			if( !bValid )
 			{
-				LOG->UserLog( RageLog::LogType_SongFile, sPath, "has a #BGCHANGES tag \"%s\" that is out of range.", sValueName.c_str() );
+				LOG->UserLog( "Song file", sPath, "has a #BGCHANGES tag \"%s\" that is out of range.", sValueName.c_str() );
 			}
 			else
 			{
@@ -407,7 +407,7 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out )
 		{
 			if( iNumParams < 7 )
 			{
-				LOG->UserLog( RageLog::LogType_SongFile, sPath, "has %d fields in a #NOTES tag, but should have at least 7.", iNumParams );
+				LOG->UserLog( "Song file", sPath, "has %d fields in a #NOTES tag, but should have at least 7.", iNumParams );
 				continue;
 			}
 
@@ -426,7 +426,7 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out )
 		else if( sValueName=="OFFSET" || sValueName=="BPMS" || sValueName=="STOPS" || sValueName=="FREEZES" )
 				 ;
 		else
-			LOG->UserLog( RageLog::LogType_SongFile, sPath, "has an unexpected value named \"%s\".", sValueName.c_str() );
+			LOG->UserLog( "Song file", sPath, "has an unexpected value named \"%s\".", sValueName.c_str() );
 	}
 
 	return true;
@@ -440,7 +440,7 @@ bool SMLoader::LoadFromDir( const RString &sPath, Song &out )
 
 	if( aFileNames.size() > 1 )
 	{
-		LOG->UserLog( RageLog::LogType_Song, sPath, "has more than one SM file. There should be only one!" );
+		LOG->UserLog( "Song", sPath, "has more than one SM file. There should be only one!" );
 		return false;
 	}
 
@@ -458,14 +458,14 @@ bool SMLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool b
 	int iBytes = FILEMAN->GetFileSizeInBytes( sEditFilePath );
 	if( iBytes > MAX_EDIT_STEPS_SIZE_BYTES )
 	{
-		LOG->UserLog( RageLog::LogType_EditFile, sEditFilePath, "is unreasonably large. It won't be loaded." );
+		LOG->UserLog( "Edit file", sEditFilePath, "is unreasonably large. It won't be loaded." );
 		return false;
 	}
 
 	MsdFile msd;
 	if( !msd.ReadFile( sEditFilePath ) )
 	{
-		LOG->UserLog( RageLog::LogType_EditFile, sEditFilePath, "couldn't be opened: %s", msd.GetError().c_str() );
+		LOG->UserLog( "Edit file", sEditFilePath, "couldn't be opened: %s", msd.GetError().c_str() );
 		return false;
 	}
 
@@ -495,7 +495,7 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 		{
 			if( pSong )
 			{
-				LOG->UserLog( RageLog::LogType_EditFile, sEditFilePath, "has more than one #SONG tag." );
+				LOG->UserLog( "Edit file", sEditFilePath, "has more than one #SONG tag." );
 				return false;
 			}
 
@@ -505,13 +505,13 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 			pSong = SONGMAN->FindSong( sSongFullTitle );
 			if( pSong == NULL )
 			{
-				LOG->UserLog( RageLog::LogType_EditFile, sEditFilePath, "requires a song \"%s\" that isn't present.", sSongFullTitle.c_str() );
+				LOG->UserLog( "Edit file", sEditFilePath, "requires a song \"%s\" that isn't present.", sSongFullTitle.c_str() );
 				return false;
 			}
 
 			if( pSong->GetNumStepsLoadedFromProfile(slot) >= MAX_EDITS_PER_SONG_PER_PROFILE )
 			{
-				LOG->UserLog( RageLog::LogType_SongFile, sSongFullTitle, "already has the maximum number of edits allowed for ProfileSlotP%d.", slot+1 );
+				LOG->UserLog( "Song file", sSongFullTitle, "already has the maximum number of edits allowed for ProfileSlotP%d.", slot+1 );
 				return false;
 			}
 		}
@@ -520,13 +520,13 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 		{
 			if( pSong == NULL )
 			{
-				LOG->UserLog( RageLog::LogType_EditFile, sEditFilePath, "doesn't have a #SONG tag preceeding the first #NOTES tag." );
+				LOG->UserLog( "Edit file", sEditFilePath, "doesn't have a #SONG tag preceeding the first #NOTES tag." );
 				return false;
 			}
 
 			if( iNumParams < 7 )
 			{
-				LOG->UserLog( RageLog::LogType_EditFile, sEditFilePath, "has %d fields in a #NOTES tag, but should have at least 7.", iNumParams );
+				LOG->UserLog( "Edit file", sEditFilePath, "has %d fields in a #NOTES tag, but should have at least 7.", iNumParams );
 				continue;
 			}
 
@@ -544,7 +544,7 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 
 			if( pSong->IsEditAlreadyLoaded(pNewNotes) )
 			{
-				LOG->UserLog( RageLog::LogType_EditFile, sEditFilePath, "is a duplicate of another edit that was already loaded." );
+				LOG->UserLog( "Edit file", sEditFilePath, "is a duplicate of another edit that was already loaded." );
 				SAFE_DELETE( pNewNotes );
 				return false;
 			}
@@ -554,7 +554,7 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 		}
 		else
 		{
-			LOG->UserLog( RageLog::LogType_EditFile, sEditFilePath, "has an unexpected value \"%s\".", sValueName.c_str() );
+			LOG->UserLog( "Edit file", sEditFilePath, "has an unexpected value \"%s\".", sValueName.c_str() );
 		}
 	}
 

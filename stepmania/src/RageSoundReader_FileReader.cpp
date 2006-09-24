@@ -119,7 +119,7 @@ SoundReader *SoundReader_FileReader::OpenFile( RString filename, RString &error 
 	    SoundReader_FileReader *NewSample = TryOpenFile( filename, error, *it, bKeepTrying );
 		if( NewSample )
 		{
-			LOG->UserLog( RageLog::LogType_SoundFile, filename, "is really %s.", it->c_str() );
+			LOG->UserLog( "Sound file", filename, "is really %s.", it->c_str() );
 			return NewSample;
 		}
 	}

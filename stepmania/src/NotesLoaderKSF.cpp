@@ -69,7 +69,7 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 	MsdFile msd;
 	if( !msd.ReadFile( sPath ) )
 	{
-		LOG->UserLog( RageLog::LogType_SongFile, sPath, "couldn't be opened: %s", msd.GetError().c_str() );
+		LOG->UserLog( "Song file", sPath, "couldn't be opened: %s", msd.GetError().c_str() );
 		return false;
 	}
 
@@ -87,7 +87,7 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 			m_iTickCount = atoi( sParams[1] );
 			if( m_iTickCount <= 0 )
 			{
-				LOG->UserLog( RageLog::LogType_SongFile, sPath, "has an invalid tick count: %d.", m_iTickCount );
+				LOG->UserLog( "Song file", sPath, "has an invalid tick count: %d.", m_iTickCount );
 				return false;
 			}
 		}
@@ -106,7 +106,7 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 	if( m_iTickCount == -1 )
 	{
 		m_iTickCount = 2;
-		LOG->UserLog( RageLog::LogType_SongFile, sPath, "doesn't have a TICKCOUNT. Defaulting to %i.", m_iTickCount );
+		LOG->UserLog( "Song file", sPath, "doesn't have a TICKCOUNT. Defaulting to %i.", m_iTickCount );
 	}
 
 	NoteData notedata;	// read it into here
@@ -200,7 +200,7 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 		{	
 			if( m_bKIUCompliant )
 			{
-				LOG->UserLog( RageLog::LogType_SongFile, sPath, "has illegal syntax \"%s\" which can't be in KIU complient files.",
+				LOG->UserLog( "Song file", sPath, "has illegal syntax \"%s\" which can't be in KIU complient files.",
 					      sRowString.c_str() );
 				return false;
 			}
@@ -218,7 +218,7 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 			}
 			else
 			{
-				LOG->UserLog( RageLog::LogType_SongFile, sPath, "has a RowString with an improper length \"%s\"; corrupt notes ignored.",
+				LOG->UserLog( "Song file", sPath, "has a RowString with an improper length \"%s\"; corrupt notes ignored.",
 					      sRowString.c_str() );
 				return false;
 			}
@@ -264,7 +264,7 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 			case '0':	tap = TAP_EMPTY;		break;
 			case '1':	tap = TAP_ORIGINAL_TAP;		break;
 			default:
-				LOG->UserLog( RageLog::LogType_SongFile, sPath, "has an invalid row \"%s\"; corrupt notes ignored.",
+				LOG->UserLog( "Song file", sPath, "has an invalid row \"%s\"; corrupt notes ignored.",
 					      sRowString.c_str() );
 				return false;
 			}
@@ -338,7 +338,7 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 	MsdFile msd;
 	if( !msd.ReadFile( sPath ) )
 	{
-		LOG->UserLog( RageLog::LogType_SongFile, sPath, "couldn't be opened: %s", msd.GetError().c_str() );
+		LOG->UserLog( "Song file", sPath, "couldn't be opened: %s", msd.GetError().c_str() );
 		return false;
 	}
 
@@ -419,7 +419,7 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 		}
 		else
 		{
-			LOG->UserLog( RageLog::LogType_SongFile, sPath, "has an unexpected value named \"%s\".",
+			LOG->UserLog( "Song file", sPath, "has an unexpected value named \"%s\".",
 				      sValueName.c_str() );
 		}
 	}
@@ -503,7 +503,7 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 				else
 				{
 					/* Quit while we're ahead if any bad syntax is spotted. */
-					LOG->UserLog( RageLog::LogType_SongFile, sPath, "has an invalid RowString \"%s\".",
+					LOG->UserLog( "Song file", sPath, "has an invalid RowString \"%s\".",
 						      NoteRowString.c_str() );
 					return false;
 				}

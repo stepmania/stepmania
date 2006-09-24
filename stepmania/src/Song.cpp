@@ -236,7 +236,7 @@ bool Song::LoadFromSongDir( RString sDir )
 		}
 		else
 		{
-			LOG->UserLog( RageLog::LogType_Song, sDir, "has no SM, DWI, BMS, or KSF files." );
+			LOG->UserLog( "Song", sDir, "has no SM, DWI, BMS, or KSF files." );
 
 			vector<RString> vs;
 			GetDirListing( sDir + "*.mp3", vs, false, false ); 
@@ -245,7 +245,7 @@ bool Song::LoadFromSongDir( RString sDir )
 
 			if( !bHasMusic )
 			{
-				LOG->UserLog( RageLog::LogType_Song, sDir, "has no music file either. Ignoring this song directory." );
+				LOG->UserLog( "Song", sDir, "has no music file either. Ignoring this song directory." );
 				return false;
 			}
 
@@ -277,7 +277,7 @@ bool Song::LoadFromSongDir( RString sDir )
 
 	if( !m_bHasMusic )
 	{
-		LOG->UserLog( RageLog::LogType_Song, sDir, "has no music; ignored." );
+		LOG->UserLog( "Song", sDir, "has no music; ignored." );
 		return false;	// don't load this song
 	}
 
@@ -349,7 +349,7 @@ void Song::TidyUpData()
 		 * (which have no music file, per se) but it's something of a hack. */
 		if( Sample == NULL && m_sMusicFile != "" )
 		{
-			LOG->UserLog( RageLog::LogType_SoundFile, GetMusicPath(), "couldn't be opened: %s", error.c_str() );
+			LOG->UserLog( "Sound file", GetMusicPath(), "couldn't be opened: %s", error.c_str() );
 
 			/* Don't use this file. */
 			m_sMusicFile = "";
@@ -366,19 +366,19 @@ void Song::TidyUpData()
 			}
 			else if( m_fMusicLengthSeconds == 0 )
 			{
-				LOG->UserLog( RageLog::LogType_SoundFile, GetMusicPath(), "is empty." );
+				LOG->UserLog( "Sound file", GetMusicPath(), "is empty." );
 			}
 		}
 	}
 	else	// ! HasMusic()
 	{
 		m_fMusicLengthSeconds = 100;		// guess
-		LOG->UserLog( RageLog::LogType_Song, GetSongDir(), "has no music file; guessing at %f seconds", m_fMusicLengthSeconds );
+		LOG->UserLog( "Song", GetSongDir(), "has no music file; guessing at %f seconds", m_fMusicLengthSeconds );
 	}
 
 	if( m_fMusicLengthSeconds < 0 )
 	{
-		LOG->UserLog( RageLog::LogType_SoundFile, GetMusicPath(), "has a negative length %f.", m_fMusicLengthSeconds );
+		LOG->UserLog( "Sound file", GetMusicPath(), "has a negative length %f.", m_fMusicLengthSeconds );
 		m_fMusicLengthSeconds = 0;
 	}
 
@@ -403,7 +403,7 @@ void Song::TidyUpData()
 
 	if( m_Timing.m_BPMSegments.empty() )
 	{
-		LOG->UserLog( RageLog::LogType_SongFile, m_sSongDir + m_sSongFileName, "hs no BPM segments, default provided." );
+		LOG->UserLog( "Song file", m_sSongDir + m_sSongFileName, "hs no BPM segments, default provided." );
 
 		m_Timing.AddBPMSegment( BPMSegment(0, 60) );
 	}
@@ -526,7 +526,7 @@ void Song::TidyUpData()
 		RageSurface *img = RageSurfaceUtils::LoadFile( sPath, error, true );
 		if( !img )
 		{
-			LOG->UserLog( RageLog::LogType_GraphicFile, sPath, "couldn't be loaded: %s", error.c_str() );
+			LOG->UserLog( "Graphic file", sPath, "couldn't be loaded: %s", error.c_str() );
 			continue;
 		}
 
@@ -738,7 +738,7 @@ void Song::Save()
 
 		if( !FileCopy( sOldPath, sNewPath ) )
 		{
-			LOG->UserLog( RageLog::LogType_SongFile, sOldPath, "couldn't be backed up." );
+			LOG->UserLog( "Song file", sOldPath, "couldn't be backed up." );
 			/* Don't remove. */
 		}
 		else

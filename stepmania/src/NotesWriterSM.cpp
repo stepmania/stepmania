@@ -209,7 +209,7 @@ bool NotesWriterSM::Write( RString sPath, const Song &out, bool bSavingCache )
 	RageFile f;
 	if( !f.Open( sPath, flags ) )
 	{
-		LOG->UserLog( RageLog::LogType_SongFile, sPath, "couldn't be opened for writing: %s", f.GetError().c_str() );
+		LOG->UserLog( "Song file", sPath, "couldn't be opened for writing: %s", f.GetError().c_str() );
 		return false;
 	}
 

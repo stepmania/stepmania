@@ -13,7 +13,7 @@ bool CourseWriterCRS::Write( const Course &course, const RString &sPath, bool bS
 	RageFile f;
 	if( !f.Open( sPath, RageFile::WRITE ) )
 	{
-		LOG->UserLog( RageLog::LogType_CourseFile, sPath, "couldn't be written: %s", f.GetError().c_str() );
+		LOG->UserLog( "Course file", sPath, "couldn't be written: %s", f.GetError().c_str() );
 		return false;
 	}
 

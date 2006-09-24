@@ -75,7 +75,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				const CourseDifficulty cd = StringToCourseDifficulty( sParams[1] );
 				if( cd == DIFFICULTY_INVALID )
 				{
-					LOG->UserLog( RageLog::LogType_CourseFile, sPath, "contains an invalid #METER string: \"%s\"", sParams[1].c_str() );
+					LOG->UserLog( "Course file", sPath, "contains an invalid #METER string: \"%s\"", sParams[1].c_str() );
 					continue;
 				}
 				out.m_iCustomMeter[cd] = max( atoi(sParams[2]), 0 );
@@ -113,7 +113,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 
 					if( attack.fSecsRemaining <= 0.0f)
 					{
-						LOG->UserLog( RageLog::LogType_CourseFile, sPath, "has an attack with a nonpositive length: %s", sBits[1].c_str() );
+						LOG->UserLog( "Course file", sPath, "has an attack with a nonpositive length: %s", sBits[1].c_str() );
 						attack.fSecsRemaining = 0.0f;
 					}
 					
@@ -125,7 +125,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				}
 				else
 				{
-					LOG->UserLog( RageLog::LogType_CourseFile, sPath, "has an unexpected value named '%s'", sBits[0].c_str() );
+					LOG->UserLog( "Course file", sPath, "has an unexpected value named '%s'", sBits[0].c_str() );
 				}
 			}
 
@@ -165,13 +165,13 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 				}
 				else
 				{
-					LOG->UserLog( RageLog::LogType_CourseFile, sPath, "contains a random_within_group entry \"%s\" that is invalid. "
+					LOG->UserLog( "Course file", sPath, "contains a random_within_group entry \"%s\" that is invalid. "
 						      "Song should be in the format \"<group>/*\".", sSong.c_str() );
 				}
 
 				if( !SONGMAN->DoesSongGroupExist(new_entry.songCriteria.m_sGroupName) )
 				{
-					LOG->UserLog( RageLog::LogType_CourseFile, sPath, "random_within_group entry \"%s\" specifies a group that doesn't exist. "
+					LOG->UserLog( "Course file", sPath, "random_within_group entry \"%s\" specifies a group that doesn't exist. "
 						      "This entry will be ignored.", sSong.c_str() );
 					continue; // skip this #SONG
 				}
@@ -195,7 +195,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 
 				if( new_entry.pSong == NULL )
 				{
-					LOG->UserLog( RageLog::LogType_CourseFile, sPath, "contains a fixed song entry \"%s\" that does not exist. "
+					LOG->UserLog( "Course file", sPath, "contains a fixed song entry \"%s\" that does not exist. "
 						      "This entry will be ignored.", sSong.c_str());
 					continue; // skip this #SONG
 				}
@@ -209,7 +209,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 					new_entry.stepsCriteria.m_iHighMeter = new_entry.stepsCriteria.m_iLowMeter;
 				else if( retval != 2 )
 				{
-					LOG->UserLog( RageLog::LogType_CourseFile, sPath, "contains an invalid difficulty setting: \"%s\", 3..6 used instead",
+					LOG->UserLog( "Course file", sPath, "contains an invalid difficulty setting: \"%s\", 3..6 used instead",
 						      sParams[2].c_str() );
 					new_entry.stepsCriteria.m_iLowMeter = 3;
 					new_entry.stepsCriteria.m_iHighMeter = 6;
@@ -265,7 +265,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 		}
 		else
 		{
-			LOG->UserLog( RageLog::LogType_CourseFile, sPath, "contains an unexpected value named \"%s\"", sValueName.c_str() );
+			LOG->UserLog( "Course file", sPath, "contains an unexpected value named \"%s\"", sValueName.c_str() );
 		}
 	}
 	static TitleSubst tsub("Courses");
@@ -336,7 +336,7 @@ bool CourseLoaderCRS::LoadFromCRSFile( const RString &_sPath, Course &out )
 	if( !msd.ReadFile(sPath) )
 	{
 		
-		LOG->UserLog( RageLog::LogType_CourseFile, sPath, "couldn't be opened: %s.", msd.GetError().c_str() );
+		LOG->UserLog( "Course file", sPath, "couldn't be opened: %s.", msd.GetError().c_str() );
 		return false;
 	}
 	
@@ -365,14 +365,14 @@ bool CourseLoaderCRS::LoadEditFromFile( const RString &sEditFilePath, ProfileSlo
 	int iBytes = FILEMAN->GetFileSizeInBytes( sEditFilePath );
 	if( iBytes > MAX_EDIT_COURSE_SIZE_BYTES )
 	{
-		LOG->UserLog( RageLog::LogType_EditFile, sEditFilePath, "is unreasonably large. It won't be loaded." );
+		LOG->UserLog( "Edit file", sEditFilePath, "is unreasonably large. It won't be loaded." );
 		return false;
 	}
 
 	MsdFile msd;
 	if( !msd.ReadFile( sEditFilePath ) )
 	{
-		LOG->UserLog( RageLog::LogType_EditFile, sEditFilePath, "couldn't be opened: %s", msd.GetError().c_str() );
+		LOG->UserLog( "Edit file", sEditFilePath, "couldn't be opened: %s", msd.GetError().c_str() );
 		return false;
 	}
 	Course *pCourse = new Course;

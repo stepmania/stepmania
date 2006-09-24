@@ -197,7 +197,7 @@ static StepsType DetermineStepsType( int iPlayer, const NoteData &nd, const RStr
 		default:	return STEPS_TYPE_INVALID;
 		}
 	default:
-		LOG->UserLog( RageLog::LogType_SongFile, sPath, "has an invalid #PLAYER value %d.", iPlayer );
+		LOG->UserLog( "Song file", sPath, "has an invalid #PLAYER value %d.", iPlayer );
 		return STEPS_TYPE_INVALID;
 	}
 }
@@ -410,7 +410,7 @@ bool BMSLoader::LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNa
 	
 	if( out.m_StepsType == STEPS_TYPE_INVALID )
 	{
-		LOG->UserLog( RageLog::LogType_SongFile, sPath, "has an unknown steps type" );
+		LOG->UserLog( "Song file", sPath, "has an unknown steps type" );
 		return false;
 	}
 
@@ -429,7 +429,7 @@ bool BMSLoader::LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNa
 			}
 			else
 			{
-				LOG->UserLog( RageLog::LogType_SongFile, sPath, "has no room to shift the autokeysound tracks." );
+				LOG->UserLog( "Song file", sPath, "has no room to shift the autokeysound tracks." );
 			}
 		}
 	}
@@ -556,7 +556,7 @@ bool BMSLoader::ReadBMSFile( const RString &sPath, NameToData_t &mapNameToData )
 	RageFile file;
 	if( !file.Open(sPath) )
 	{
-		LOG->UserLog( RageLog::LogType_SongFile, sPath, "couldn't be opened: %s", file.GetError().c_str() );
+		LOG->UserLog( "Song file", sPath, "couldn't be opened: %s", file.GetError().c_str() );
 		return false;
 	}
 
@@ -565,7 +565,7 @@ bool BMSLoader::ReadBMSFile( const RString &sPath, NameToData_t &mapNameToData )
 		RString line;
 		if( file.GetLine(line) == -1 )
 		{
-			LOG->UserLog( RageLog::LogType_SongFile, sPath, "had a read error: %s", file.GetError().c_str() );
+			LOG->UserLog( "Song file", sPath, "had a read error: %s", file.GetError().c_str() );
 			return false;
 		}
 
@@ -652,7 +652,7 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
 		}
 		else
 		{
-			LOG->UserLog( RageLog::LogType_SongFile, m_sDir, "has an invalid BPM change at beat %f, BPM %f.",
+			LOG->UserLog( "Song file", m_sDir, "has an invalid BPM change at beat %f, BPM %f.",
 				      NoteRowToBeat(0), fBPM );
 		}
 	}
@@ -687,7 +687,7 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
 			}
 		}
 		if( !IsAFile(out.GetSongDir()+sData) )
-			LOG->UserLog( RageLog::LogType_SongFile, m_sDir, "references key \"%s\" that can't be found", sData.c_str() );
+			LOG->UserLog( "Song file", m_sDir, "references key \"%s\" that can't be found", sData.c_str() );
 
 		sWavID.MakeUpper();		// HACK: undo the MakeLower()
 		out.m_vsKeysoundFile.push_back( sData );
@@ -734,7 +734,7 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
 				}
 				else
 				{
-					LOG->UserLog( RageLog::LogType_SongFile, m_sDir, "has an invalid BPM change at beat %f, BPM %d.",
+					LOG->UserLog( "Song file", m_sDir, "has an invalid BPM change at beat %f, BPM %d.",
 						      fBeat, iVal );
 				}
 				break;
@@ -755,13 +755,13 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
 					}
 					else
 					{
-						LOG->UserLog( RageLog::LogType_SongFile, m_sDir, "has an invalid BPM change at beat %f, BPM %f",
+						LOG->UserLog( "Song file", m_sDir, "has an invalid BPM change at beat %f, BPM %f",
 							      fBeat, fBPM );
 					}
 				}
 				else
 				{
-					LOG->UserLog( RageLog::LogType_SongFile, m_sDir, "has tag \"%s\" which cannot be found.", sTagToLookFor.c_str() );
+					LOG->UserLog( "Song file", m_sDir, "has tag \"%s\" which cannot be found.", sTagToLookFor.c_str() );
 				}
 				break;
 			}
@@ -782,7 +782,7 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
 				}
 				else
 				{
-					LOG->UserLog( RageLog::LogType_SongFile, m_sDir, "has tag \"%s\" which cannot be found.", sTagToLookFor.c_str() );
+					LOG->UserLog( "Song file", m_sDir, "has tag \"%s\" which cannot be found.", sTagToLookFor.c_str() );
 				}
 				break;
 			}
@@ -812,13 +812,13 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
 				}
 				else
 				{
-					LOG->UserLog( RageLog::LogType_SongFile, m_sDir, "has an invalid BPM change at beat %f, BPM %f.",
+					LOG->UserLog( "Song file", m_sDir, "has an invalid BPM change at beat %f, BPM %f.",
 						      NoteRowToBeat(iStepIndex), fBPM );
 				}
 			}
 			else
 			{
-				LOG->UserLog( RageLog::LogType_SongFile, m_sDir, "has tag \"%s\" which cannot be found.", sTagToLookFor.c_str() );
+				LOG->UserLog( "Song file", m_sDir, "has tag \"%s\" which cannot be found.", sTagToLookFor.c_str() );
 			}
 
 			break;
@@ -948,7 +948,7 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 	{
 		// All bets are off; the titles don't match at all.
 		// At this rate we're lucky if we even get the title right.
-		LOG->UserLog( RageLog::LogType_Song, sDir, "has BMS files with inconsistent titles." );
+		LOG->UserLog( "Song", sDir, "has BMS files with inconsistent titles." );
 	}
 
 	/* Create a Steps for each. */
