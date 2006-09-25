@@ -144,7 +144,6 @@ if test "$with_network" = "no"; then
 fi
 AM_CONDITIONAL(WITHOUT_NETWORKING, test "$with_network" = "no")
 
-SM_LUA
 SM_ZLIB
 SM_AUDIO
 SM_VIDEO
