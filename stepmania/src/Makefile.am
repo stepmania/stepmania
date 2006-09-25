@@ -15,7 +15,7 @@ AM_CXXFLAGS += -finline-limit=300
 
 AM_CXXFLAGS += $(XCFLAGS)
 
-LIBS += $(LUA_LIBS)
+LIBS += 
 LIBS += -lpthread -lrt
 
 Screens = \
@@ -309,6 +309,17 @@ ScoreDisplayPercentage.cpp ScoreDisplayPercentage.h ScoreDisplayRave.cpp ScoreDi
 
 PCRE = pcre/chartables.c pcre/get.c pcre/internal.h pcre/maketables.c pcre/pcre.c pcre/pcre.h pcre/study.c
 
+Lua = lua-5.1/src/lapi.c lua-5.1/src/lauxlib.c lua-5.1/src/lbaselib.c lua-5.1/src/lcode.c lua-5.1/src/ldblib.c \
+lua-5.1/src/ldebug.c lua-5.1/src/ldo.c lua-5.1/src/ldump.c lua-5.1/src/lfunc.c lua-5.1/src/lgc.c lua-5.1/src/linit.c \
+lua-5.1/src/liolib.c lua-5.1/src/llex.c lua-5.1/src/lmathlib.c lua-5.1/src/lmem.c lua-5.1/src/loadlib.c \
+lua-5.1/src/lobject.c lua-5.1/src/lopcodes.c lua-5.1/src/loslib.c lua-5.1/src/lparser.c lua-5.1/src/lstate.c \
+lua-5.1/src/lstring.c lua-5.1/src/lstrlib.c lua-5.1/src/ltable.c lua-5.1/src/ltablib.c lua-5.1/src/ltm.c \
+lua-5.1/src/lundump.c lua-5.1/src/lvm.c lua-5.1/src/lzio.c lua-5.1/src/lapi.h lua-5.1/src/lauxlib.h lua-5.1/src/lcode.h \
+lua-5.1/src/ldebug.h lua-5.1/src/ldo.h lua-5.1/src/lfunc.h lua-5.1/src/lgc.h lua-5.1/src/llex.h lua-5.1/src/llimits.h \
+lua-5.1/src/lmem.h lua-5.1/src/lobject.h lua-5.1/src/lopcodes.h lua-5.1/src/lparser.h lua-5.1/src/lstate.h \
+lua-5.1/src/lstring.h lua-5.1/src/ltable.h lua-5.1/src/ltm.h lua-5.1/src/luaconf.h lua-5.1/src/lua.h lua-5.1/src/lualib.h \
+lua-5.1/src/lundump.h lua-5.1/src/lvm.h lua-5.1/src/lzio.h
+
 RageFile = \
 RageFileBasic.cpp RageFileBasic.h \
 RageFile.cpp RageFile.h RageFileDriver.cpp RageFileDriver.h RageFileManager.cpp RageFileManager.h \
@@ -318,7 +329,7 @@ RageFileDriverDeflate.cpp RageFileDriverDeflate.h \
 RageFileDriverSlice.cpp RageFileDriverSlice.h \
 RageFileDriverTimeout.cpp RageFileDriverTimeout.h
 
-Rage = $(PCRE) $(RageFile) $(RageSoundFileReaders) \
+Rage = $(PCRE) $(Lua) $(RageFile) $(RageSoundFileReaders) \
 RageBitmapTexture.cpp RageBitmapTexture.h RageDisplay.cpp RageDisplay.h RageDisplay_OGL.cpp RageDisplay_OGL.h \
 RageDisplay_OGL_Helpers.cpp RageDisplay_OGL_Helpers.h \
 RageDisplay_Null.cpp RageDisplay_Null.h RageException.cpp RageException.h RageInput.cpp RageInput.h \
@@ -512,4 +523,4 @@ test_threads_SOURCES = \
 		$(all_test_SOURCES) \
 		tests/test_threads.cpp
 
-INCLUDES = $(LUA_CFLAGS)
+INCLUDES = 
