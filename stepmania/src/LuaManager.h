@@ -33,8 +33,6 @@ public:
 	void RegisterTypes();
 
 	void SetGlobal( const RString &sName, int val );
-	void SetGlobal( const RString &sName, float val );
-	void SetGlobal( const RString &sName, bool val );
 	void SetGlobal( const RString &sName, const RString &val );
 	void UnsetGlobal( const RString &sName );
 	XNode *GetLuaInformation() const;

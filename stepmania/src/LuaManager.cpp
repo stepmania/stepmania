@@ -65,22 +65,6 @@ void LuaManager::SetGlobal( const RString &sName, int val )
 	LUA->Release( L );
 }
 
-void LuaManager::SetGlobal( const RString &sName, float val )
-{
-	Lua *L = LUA->Get();
-	LuaHelpers::Push( val, L );
-	lua_setglobal( L, sName );
-	LUA->Release( L );
-}
-
-void LuaManager::SetGlobal( const RString &sName, bool val )
-{
-	Lua *L = LUA->Get();
-	LuaHelpers::Push( val, L );
-	lua_setglobal( L, sName );
-	LUA->Release( L );
-}
-
 void LuaManager::SetGlobal( const RString &sName, const RString &val )
 {
 	Lua *L = LUA->Get();
