@@ -670,9 +670,13 @@ static wchar_t ScancodeAndKeysToChar( DWORD scancode, unsigned char keys[256] )
 
 	if( pToUnicodeEx != NULL )
 	{
+#if _MSC_VER == 1400
+		return ConvertCodepageToWString( RString()+(char)result[0], CP_ACP )[0];
+#else		
 		int iNum = pToUnicodeEx( vk, scancode, keys, result, 2, 0, layout );
 		if( iNum == 1 )
 			return result[0];
+#endif
 	}
 	else
 	{
