@@ -16,18 +16,6 @@
 LuaManager *LUA = NULL;
 static LuaFunctionList *g_LuaFunctions = NULL;
 
-#if defined(_XBOX)
-#if defined(_XDBG)
-	#pragma comment(lib, "lua-5.0/lib/LibLuaXboxD.lib")
-	#pragma comment(lib, "lua-5.0/lib/LibLuaLibXboxD.lib")
-#else
-	#pragma comment(lib, "lua-5.0/lib/LibLuaXbox.lib")
-	#pragma comment(lib, "lua-5.0/lib/LibLuaLibXbox.lib")
-#endif
-#elif defined(_MSC_VER)
-	#pragma comment(lib, "lua-5.0/lib/LibLua.lib")
-	#pragma comment(lib, "lua-5.0/lib/LibLuaLib.lib")
-#endif
 #if defined(_MSC_VER) || defined (_XBOX)
 	/* "interaction between '_setjmp' and C++ object destruction is non-portable"
 	 * We don't care; we'll throw a fatal exception immediately anyway. */
