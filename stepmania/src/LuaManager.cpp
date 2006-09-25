@@ -72,12 +72,12 @@ void LuaManager::UnsetGlobal( const RString &sName )
 
 void LuaHelpers::Push( const bool &Object, lua_State *L ) { lua_pushboolean( L, Object ); }
 void LuaHelpers::Push( const float &Object, lua_State *L ) { lua_pushnumber( L, Object ); }
-void LuaHelpers::Push( const int &Object, lua_State *L ) { lua_pushnumber( L, Object ); }
+void LuaHelpers::Push( const int &Object, lua_State *L ) { lua_pushinteger( L, Object ); }
 void LuaHelpers::Push( const RString &Object, lua_State *L ) { lua_pushlstring( L, Object.data(), Object.size() ); }
 
 bool LuaHelpers::FromStack( Lua *L, bool &Object, int iOffset ) { Object = !!lua_toboolean( L, iOffset ); return true; }
 bool LuaHelpers::FromStack( Lua *L, float &Object, int iOffset ) { Object = (float)lua_tonumber( L, iOffset ); return true; }
-bool LuaHelpers::FromStack( Lua *L, int &Object, int iOffset ) { Object = (int) lua_tonumber( L, iOffset ); return true; }
+bool LuaHelpers::FromStack( Lua *L, int &Object, int iOffset ) { Object = lua_tointeger( L, iOffset ); return true; }
 bool LuaHelpers::FromStack( Lua *L, RString &Object, int iOffset )
 {
 	size_t iLen;
