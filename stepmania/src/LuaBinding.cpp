@@ -1,5 +1,6 @@
 #include "global.h"
 #include "LuaBinding.h"
+#include "LuaReference.h"
 #include "RageUtil.h"
 
 // If defined, type checks for functions will be skipped.  These add
@@ -79,19 +80,14 @@ bool LuaBinding::CheckLuaObjectType( lua_State *L, int narg, const char *szType,
 
 static void GetGlobalTable( Lua *L )
 {
-	lua_pushstring( L, "userdatas" );
-	lua_rawget( L, LUA_REGISTRYINDEX );
-	if( !lua_isnil(L, -1) )
-		return;
+	static LuaReference UserDataTable;
+	if( !UserDataTable.IsSet() )
+	{
+		lua_newtable( L );
+		UserDataTable.SetFromStack( L );
+	}
 
-	lua_pop( L, 1 );
-
-	/* Save it. */
-	lua_newtable( L );
-	lua_pushstring( L, "userdatas" );
-	lua_pushvalue( L, -2 );
-	lua_rawset( L, LUA_REGISTRYINDEX );
-	return;
+	UserDataTable.PushSelf( L );
 }
 
 /* The object is on the stack.  It's either a table or a userdata.
