@@ -80,9 +80,10 @@ bool LuaHelpers::FromStack( Lua *L, float &Object, int iOffset ) { Object = (flo
 bool LuaHelpers::FromStack( Lua *L, int &Object, int iOffset ) { Object = (int) lua_tonumber( L, iOffset ); return true; }
 bool LuaHelpers::FromStack( Lua *L, RString &Object, int iOffset )
 {
-	const char *pStr = lua_tostring( L, iOffset );
+	size_t iLen;
+	const char *pStr = lua_tolstring( L, iOffset, &iLen );
 	if( pStr != NULL )
-		Object = pStr;
+		Object.assign( pStr, iLen );
 
 	return pStr != NULL;
 }
