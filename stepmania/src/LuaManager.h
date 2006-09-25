@@ -9,9 +9,9 @@ class XNode;
 
 extern "C"
 {
-#include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
+#include "lua-5.1/src/lua.h"
+#include "lua-5.1/src/lualib.h"
+#include "lua-5.1/src/lauxlib.h"
 }
 
 class LuaManager;
