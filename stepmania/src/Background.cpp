@@ -300,7 +300,7 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 	{
 		const RString &sToResolve = vsToResolve[i];
 	
-		LUA->SetGlobal( ssprintf("File%d",i+1), RString() );	// clear
+		LUA->UnsetGlobal( ssprintf("File%d",i+1) );	// clear
 		
 		if( sToResolve.empty() )
 		{
@@ -404,7 +404,7 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 	m_BGAnimations[bd] = pActor;
 
 	for( unsigned i=0; i<vsResolved.size(); i++ )
-		LUA->SetGlobal( ssprintf("File%d",i+1), RString() );
+		LUA->UnsetGlobal( ssprintf("File%d",i+1) );
 	LUA->UnsetGlobal( "Color1" );
 	LUA->UnsetGlobal( "Color2" );
 
