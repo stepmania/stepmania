@@ -77,23 +77,21 @@ bool LuaBinding::CheckLuaObjectType( lua_State *L, int narg, const char *szType,
 	}
 }
 
-static bool GetGlobalTable( Lua *L, bool bCreate )
+static void GetGlobalTable( Lua *L )
 {
 	lua_pushstring( L, "userdatas" );
 	lua_rawget( L, LUA_REGISTRYINDEX );
 	if( !lua_isnil(L, -1) )
-		return true;
+		return;
 
 	lua_pop( L, 1 );
-	if( !bCreate )
-		return false;
 
 	/* Save it. */
 	lua_newtable( L );
 	lua_pushstring( L, "userdatas" );
 	lua_pushvalue( L, -2 );
 	lua_rawset( L, LUA_REGISTRYINDEX );
-	return true;
+	return;
 }
 
 /* The object is on the stack.  It's either a table or a userdata.
@@ -109,7 +107,7 @@ void LuaBinding::ApplyDerivedType( Lua *L, const RString &sClassName, void *pSel
 
 	if( iType == LUA_TTABLE )
 	{
-		GetGlobalTable( L, true );
+		GetGlobalTable( L );
 		int iGlobalTable = lua_gettop( L );
 
 		/* If the table is already in the userdata table, then everything
@@ -144,8 +142,7 @@ REGISTER_CLASS_TRAITS( LuaClass, new LuaClass(*pCopy) )
 
 void *LuaBinding::GetUserdataFromGlobalTable( Lua *L, const char *szType, int iArg )
 {
-	if( !GetGlobalTable(L, false) )
-		luaL_error( L, "stale %s referenced (object used but no longer exists)", szType );
+	GetGlobalTable( L );
 
 	lua_pushvalue( L, iArg );
 	lua_rawget( L, -2 );
@@ -195,12 +192,10 @@ LuaClass::~LuaClass()
 	int iTop = lua_gettop( L );
 
 	/* If we're registered in the global table, unregister. */
-	if( GetGlobalTable(L, false) )
-	{
-		this->PushSelf( L );
-		lua_pushnil( L );
-		lua_rawset( L, -3 );
-	}
+	GetGlobalTable( L );
+	this->PushSelf( L );
+	lua_pushnil( L );
+	lua_rawset( L, -3 );
 
 	lua_settop( L, iTop );
 
