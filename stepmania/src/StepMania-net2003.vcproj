@@ -2705,6 +2705,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\ActorFrame.h">
 			</File>
 			<File
+				RelativePath=".\ActorFrameTexture.cpp">
+			</File>
+			<File
+				RelativePath=".\ActorFrameTexture.h">
+			</File>
+			<File
 				RelativePath=".\ActorProxy.cpp">
 			</File>
 			<File
