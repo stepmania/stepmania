@@ -157,9 +157,6 @@ void LuaManager::Register( RegisterWithLuaFn pfn )
 }
 
 
-
-
-
 LuaManager::LuaManager()
 {
 	LUA = this;	// so that LUA is available when we call the Register functions
@@ -246,12 +243,14 @@ XNode *LuaManager::GetLuaInformation() const
 	XNode *pGlobalsNode = new XNode;
 	XNode *pClassesNode = new XNode;
 	XNode *pSingletonsNode = new XNode;
+	XNode *pEnumsNode = new XNode;
 	XNode *pConstantsNode = new XNode;
 	
 	pLuaNode->m_sName = "Lua";
 	pGlobalsNode->m_sName = "GlobalFunctions";
 	pClassesNode->m_sName = "Classes";
 	pSingletonsNode->m_sName = "Singletons";
+	pEnumsNode->m_sName = "Enums";
 	pConstantsNode->m_sName = "Constants";
 	
 	vector<RString> vFunctions;
@@ -272,21 +271,49 @@ XNode *LuaManager::GetLuaInformation() const
 	// Tricky. We have to get the classes from lua.
 	map<RString, LClass> mClasses;
 	map<RString, RString> mSingletons;
-	map<RString, int> mConstants;
+	map<RString, float> mConstants;
+	map<RString, RString> mStringConstants;
+	map<RString, vector<RString> > mEnums;
 	
 	lua_pushnil( L ); // initial key
 	while( lua_next(L, LUA_GLOBALSINDEX) )
 	{
 		// key is at -2, value is at -1
+		
+		/* Tricky. FromStack() calls lua_tolstring() which changes the underlying cell
+		 * if it is not a string. This confuses lua_next(). Copy the value first.
+		 * http://www.lua.org/manual/5.1/manual.html#lua_tolstring */
+		
+		RString sKey;
+		
+		lua_pushvalue( L, -2 );
+		LuaHelpers::Pop( L, sKey );
+		
 		switch( lua_type(L, -1) )
 		{
 		case LUA_TTABLE:
 		{
 			// Check for the metatable.
 			if( !lua_getmetatable(L, -1) )
+			{
+				/* If the key ends in "Index", check for the non "Index" version.
+				 * If both exist, then we have found an enum. */
+				if( !EndsWith(sKey, "Index") || sKey.size() <= 5 )
+					break;
+				sKey = sKey.substr( 0, sKey.size() - 5 );
+				LuaHelpers::Push( L, sKey );
+				lua_rawget( L, LUA_GLOBALSINDEX );
+				if( lua_istable(L, -1) )
+				{
+					vector<RString> &vEnum = mEnums[sKey];
+					LuaHelpers::ReadArrayFromTable( vEnum, L );
+				}
+				lua_pop( L, 2 ); // pop table and key
 				break;
+			}
+
 			lua_pushliteral( L, "type" );
-			lua_gettable( L, -2 );
+			lua_rawget( L, -2 );
 			
 			const char *name = lua_tostring( L, -1 );
 			
@@ -300,7 +327,7 @@ XNode *LuaManager::GetLuaInformation() const
 			
 			// Get base class.
 			lua_pushliteral( L, "__index" );
-			lua_gettable( L, -2 );
+			lua_rawget( L, -2 );
 			if( lua_istable(L, -1) && lua_getmetatable(L, -1) )
 			{
 				lua_pushliteral( L, "type" );
@@ -317,12 +344,15 @@ XNode *LuaManager::GetLuaInformation() const
 			lua_pushnil( L ); // initial key
 			while( lua_next(L, -2) )
 			{
+				// Again, be careful about reading the key as a string.
 				lua_pop( L, 1 ); // pop value
-				RString sKey;
-				if( LuaHelpers::FromStack(L, sKey, -1) )
-					c.m_vMethods.push_back( sKey );
+				lua_pushvalue( L, -1 );
+				RString sMethod;
+				if( LuaHelpers::Pop(L, sMethod) )
+					c.m_vMethods.push_back( sMethod );
 			}
 			sort( c.m_vMethods.begin(), c.m_vMethods.end() );
+			break;
 		}
 		case LUA_TUSERDATA:
 		{
@@ -332,14 +362,14 @@ XNode *LuaManager::GetLuaInformation() const
 			if( !lua_getmetatable(L, -1) )
 				break;
 			lua_pushliteral( L, "__index" );
-			lua_gettable( L, -2 );
+			lua_rawget( L, -2 );
 			if( !lua_istable(L, -1) || !lua_getmetatable(L, -1) )
 			{
 				lua_pop( L, 2 ); // pop method table and metatable
 				break;
 			}
 			lua_pushliteral( L, "type" );
-			lua_gettable( L, -2 );
+			lua_rawget( L, -2 );
 			
 			/* The stack now looks like:
 			 * -1: type
@@ -351,27 +381,22 @@ XNode *LuaManager::GetLuaInformation() const
 			const char *type = lua_tostring( L, -1 );
 			
 			if( type )
-			{
-				RString sKey;
-				if( LuaHelpers::FromStack(L, sKey, -6) )
-					mSingletons[sKey] = type;
-			}
+				mSingletons[sKey] = type;
 			lua_pop( L, 4 ); // pop type, method metatable, method table, and metatable
 			break;
 		}
 		case LUA_TNUMBER:
 		{
-			// lua_Number is most likely a double unless LUA_NUMBER was defined to be float.
-			float fNum = float( lua_tonumber(L, -1) );
-			
-			if( fNum == truncf(fNum) )
-			{
-				RString sKey;
-				if( LuaHelpers::FromStack(L, sKey, -2) )
-					mConstants[sKey] = int( fNum );
-			}
+			float fNum;
+			LuaHelpers::FromStack( L, fNum, -1 );
+			mConstants[sKey] = fNum;
 			break;
 		}
+		case LUA_TSTRING:
+			RString sValue;
+			LuaHelpers::FromStack( L, sValue, -1 );
+			mStringConstants[sKey] = sValue;
+			break;
 		}
 		lua_pop( L, 1 ); // pop value
 	}
@@ -406,20 +431,53 @@ XNode *LuaManager::GetLuaInformation() const
 		pSingletonNode->AppendAttr( "class", s->second );
 		pSingletonsNode->AppendChild( pSingletonNode );
 	}
-	
-	FOREACHM_CONST( RString, int, mConstants, c )
+
+	for( map<RString, vector<RString> >::const_iterator iter = mEnums.begin(); iter != mEnums.end(); ++iter )
+	{
+		XNode *pEnumNode = new XNode;
+		const vector<RString> &vEnum = iter->second;
+		
+		pEnumNode->m_sName = "Enum";
+		pEnumNode->AppendAttr( "name", iter->first );
+		
+		for( unsigned i = 0; i < vEnum.size(); ++i )
+		{
+			XNode *pEnumValueNode = new XNode;
+			
+			pEnumValueNode->m_sName = "EnumValue";
+			pEnumValueNode->AppendAttr( "name", vEnum[i] );
+			pEnumValueNode->AppendAttr( "value", i );
+			pEnumNode->AppendChild( pEnumValueNode );
+		}
+		pEnumsNode->AppendChild( pEnumNode );
+	}
+
+	FOREACHM_CONST( RString, float, mConstants, c )
 	{
 		XNode *pConstantNode = new XNode;
 		
 		pConstantNode->m_sName = "Constant";
 		pConstantNode->AppendAttr( "name", c->first );
-		pConstantNode->AppendAttr( "value", c->second );
+		if( c->second == truncf(c->second) )
+			pConstantNode->AppendAttr( "value", int(c->second) );
+		else
+			pConstantNode->AppendAttr( "value", c->second );
+		pConstantsNode->AppendChild( pConstantNode );
+	}
+	FOREACHM_CONST( RString, RString, mStringConstants, s )
+	{
+		XNode *pConstantNode = new XNode;
+		
+		pConstantNode->m_sName = "Constant";
+		pConstantNode->AppendAttr( "name", s->first );
+		pConstantNode->AppendAttr( "value", s->second );
 		pConstantsNode->AppendChild( pConstantNode );
 	}
 		
 	pLuaNode->AppendChild( pGlobalsNode );
 	pLuaNode->AppendChild( pClassesNode );
 	pLuaNode->AppendChild( pSingletonsNode );
+	pLuaNode->AppendChild( pEnumsNode );
 	pLuaNode->AppendChild( pConstantsNode );
 	return pLuaNode;
 }
