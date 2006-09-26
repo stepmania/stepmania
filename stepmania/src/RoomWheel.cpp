@@ -60,13 +60,13 @@ void RoomWheelItem::Load( RString sType )
 	DESC_WIDTH			.Load(sType,"DescWidth");
 	TEXT_WIDTH			.Load(sType,"TextWidth");
 
-	m_text.SetHorizAlignString("left");
+	m_text.SetHorizAlign( align_left );
 	m_text.SetMaxWidth(TEXT_WIDTH);
 
 	m_Desc.SetName( "Desc" );
 	ActorUtil::LoadAllCommands( m_Desc, "RoomWheelItem" );
 	m_Desc.LoadFromFont( THEME->GetPathF("RoomWheel","text") );
-	m_Desc.SetHorizAlignString("left");
+	m_Desc.SetHorizAlign( align_left );
 	m_Desc.SetShadowLength( 0 );
 	m_Desc.SetMaxWidth( DESC_WIDTH );
 	m_Desc.SetXY( DESC_X, DESC_Y);
