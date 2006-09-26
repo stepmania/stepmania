@@ -29,11 +29,13 @@ enum RadarCategory
 	RadarCategory_Mines,
 	RadarCategory_Hands,
 	RadarCategory_Rolls,
-	NUM_RadarCategory	// leave this at the end
+	NUM_RadarCategory,	// leave this at the end
+	RadarCategory_Invalid
 };
 #define FOREACH_RadarCategory( rc ) FOREACH_ENUM( RadarCategory, NUM_RadarCategory, rc )
 const RString& RadarCategoryToString( RadarCategory cat );
 const RString& RadarCategoryToLocalizedString( RadarCategory cat );
+LuaDeclareType( RadarCategory );
 
 
 enum StepsType
@@ -122,6 +124,7 @@ const SortOrder MAX_SELECTABLE_SORT = (SortOrder)(SORT_ROULETTE-1);
 #define FOREACH_SortOrder( so ) FOREACH_ENUM( SortOrder, NUM_SortOrder, so )
 const RString& SortOrderToString( SortOrder so );
 SortOrder StringToSortOrder( const RString& str );
+LuaDeclareType( SortOrder );
 
 inline bool IsSongSort( SortOrder so ) { return so >= SORT_PREFERRED && so <= SORT_CHALLENGE_METER; }
 
@@ -300,10 +303,12 @@ enum CoinMode
 	COIN_MODE_HOME, 
 	COIN_MODE_PAY, 
 	COIN_MODE_FREE, 
-	NUM_COIN_MODES 
+	NUM_CoinMode,
+	CoinMode_Invalid
 };
-#define FOREACH_CoinMode( i ) FOREACH_ENUM( CoinMode, NUM_COIN_MODES, i )
+#define FOREACH_CoinMode( i ) FOREACH_ENUM( CoinMode, NUM_CoinMode, i )
 const RString& CoinModeToString( CoinMode cm );
+LuaDeclareType( CoinMode );
 
 
 //

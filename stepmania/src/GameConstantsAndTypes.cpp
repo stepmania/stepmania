@@ -31,17 +31,8 @@ static const char *RadarCategoryNames[] = {
 };
 XToString( RadarCategory, NUM_RadarCategory );
 XToLocalizedString( RadarCategory );
-LuaFunction( RadarCategoryToLocalizedString, RadarCategoryToLocalizedString((RadarCategory) IArg(1)) );
-
-static void LuaRadarCategory(lua_State* L)
-{
-	FOREACH_RadarCategory( rc )
-	{
-		RString s = RadarCategoryToString( rc );
-		LUA->SetGlobal( "RadarCategory_"+s, rc );
-	}
-}
-REGISTER_WITH_LUA_FUNCTION( LuaRadarCategory );
+LuaFunction( RadarCategoryToLocalizedString, RadarCategoryToLocalizedString(Enum::Check<RadarCategory>(L, 1)) );
+LuaXType( RadarCategory );
 
 static void LuaStepsType(lua_State* L)
 {
@@ -100,21 +91,12 @@ XToLocalizedString( PlayerController );
 
 
 static const char *CoinModeNames[] = {
-	"home",
-	"pay",
-	"free",
+	"Home",
+	"Pay",
+	"Free",
 };
-XToString( CoinMode, NUM_COIN_MODES );
-static void LuaCoinMode(lua_State* L)
-{
-	FOREACH_CoinMode( i )
-	{
-		RString s = CoinModeNames[i];
-		s.MakeUpper();
-		LUA->SetGlobal( "COIN_MODE_"+s, i );
-	}
-}
-REGISTER_WITH_LUA_FUNCTION( LuaCoinMode );
+XToString( CoinMode, NUM_CoinMode );
+LuaXType( CoinMode );
 
 
 static const char *PremiumNames[] = {
@@ -148,28 +130,7 @@ static const char *SortOrderNames[] = {
 };
 XToString( SortOrder, NUM_SortOrder );
 StringToX( SortOrder );
-
-static void LuaSortOrder(lua_State* L)
-{
-	FOREACH_SortOrder( so )
-	{
-		RString s = SortOrderToString( so );
-		
-		// [uppercase] -> _[uppercase]
-		for( unsigned i=0; i<s.size(); i++ )
-		{
-			if( isupper(s[i]) )
-			{
-				s.insert( s.begin()+i, '_' );
-				i++;
-			}
-		}
-
-		s.MakeUpper();
-		LUA->SetGlobal( "SORT"+s, so );
-	}
-}
-REGISTER_WITH_LUA_FUNCTION( LuaSortOrder );
+LuaXType( SortOrder );
 
 
 static const char *TapNoteScoreNames[] = {
