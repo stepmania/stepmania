@@ -179,7 +179,7 @@ static void Lua2##X(lua_State* L) \
 		lua_rawset( L, -3 ); \
 	} \
 	EnumTraits<X>::StringToEnum.PushSelf( L ); \
-	lua_setglobal( L, #X##"Index" ); \
+	lua_setglobal( L, #X "Index" ); \
 	EnumTraits<X>::StringToEnum.SetFromStack( L ); \
 } \
 REGISTER_WITH_LUA_FUNCTION( Lua2##X ); \
