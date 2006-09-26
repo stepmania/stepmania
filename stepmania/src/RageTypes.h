@@ -3,10 +3,43 @@
 #ifndef RAGETYPES_H
 #define RAGETYPES_H
 
-enum BlendMode { BLEND_NORMAL, BLEND_ADD, BLEND_WEIGHTED_MULTIPLY, BLEND_INVERT_DEST, BLEND_NO_EFFECT, BLEND_INVALID };
-enum CullMode { CULL_BACK, CULL_FRONT, CULL_NONE };
-enum ZTestMode { ZTEST_OFF, ZTEST_WRITE_ON_PASS, ZTEST_WRITE_ON_FAIL };
-enum PolygonMode { POLYGON_FILL, POLYGON_LINE };
+enum BlendMode
+{
+	BLEND_NORMAL,
+	BLEND_ADD,
+	BLEND_WEIGHTED_MULTIPLY,
+	BLEND_INVERT_DEST,
+	BLEND_NO_EFFECT,
+	BLEND_INVALID,
+	NUM_BlendMode,
+	BlendMode_Invalid
+};
+
+enum CullMode
+{
+	CULL_BACK,
+	CULL_FRONT,
+	CULL_NONE,
+	NUM_CullMode,
+	CullMode_Invalid
+};
+
+enum ZTestMode
+{
+	ZTEST_OFF,
+	ZTEST_WRITE_ON_PASS,
+	ZTEST_WRITE_ON_FAIL,
+	NUM_ZTestMode,
+	ZTestMode_Invalid
+};
+
+enum PolygonMode
+{
+	POLYGON_FILL,
+	POLYGON_LINE,
+	NUM_PolygonMode,
+	PolygonMode_Invalid
+};
 
 struct lua_State;
 
