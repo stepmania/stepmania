@@ -11,16 +11,8 @@ static const char *PlayerNumberNames[] = {
 };
 XToString( PlayerNumber, NUM_PlayerNumber );
 XToLocalizedString( PlayerNumber );
-LuaFunction( PlayerNumberToString, PlayerNumberToString((PlayerNumber) IArg(1)) );
-
-void LuaPlayerNumber(lua_State* L)
-{
-	FOREACH_PlayerNumber( pn )
-		LUA->SetGlobal( ssprintf("PLAYER_%d",pn+1), pn );
-	LUA->SetGlobal( "NUM_PLAYERS", NUM_PLAYERS );
-}
-REGISTER_WITH_LUA_FUNCTION( LuaPlayerNumber );
-
+LuaFunction( PlayerNumberToString, PlayerNumberToString(Enum::Check<PlayerNumber>(L, 1)) );
+LuaXType( PlayerNumber );
 
 static const char *MultiPlayerNames[] = {
 	"P1",

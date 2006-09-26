@@ -19,6 +19,7 @@ enum PlayerNumber
 const int NUM_PLAYERS = NUM_PlayerNumber;
 const RString& PlayerNumberToString( PlayerNumber pn );
 const RString& PlayerNumberToLocalizedString( PlayerNumber pn );
+LuaDeclareType( PlayerNumber );
 
 #define FOREACH_PlayerNumber( pn ) FOREACH_ENUM( PlayerNumber, NUM_PLAYERS, pn )
 #define FOREACH_HumanPlayer( pn ) for( PlayerNumber pn=GetNextHumanPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID; pn=GetNextHumanPlayer(pn) )
