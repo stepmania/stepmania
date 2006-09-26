@@ -130,7 +130,8 @@ function ScreenBranchNetAfterEval()
 end	
 
 function SelectEndingScreen()
-	if GetBestFinalGrade() >= Grade_Tier03 then return "ScreenMusicScroll" end
+	local grade = GetBestFinalGrade()
+	if GradeIndex[grade] >= GradeIndex("Grade_Tier03") then return "ScreenMusicScroll" end
 	return "ScreenCredits"
 end	
 
