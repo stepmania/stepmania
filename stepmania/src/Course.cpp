@@ -27,7 +27,7 @@ static const char *CourseTypeNames[] = {
 };
 XToString( CourseType, NUM_CourseType );
 XToLocalizedString( CourseType );
-LuaXType2( CourseType, NUM_CourseType, "CourseType_" );
+LuaXType( CourseType, NUM_CourseType, "CourseType_" );
 LuaFunction( CourseTypeToLocalizedString, CourseTypeToLocalizedString( Enum::Check<CourseType>( L, 1 ) ) );
 
 

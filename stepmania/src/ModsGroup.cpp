@@ -8,7 +8,7 @@ static const char *ModsLevelNames[] = {
 	"Stage",
 	"Song",
 };
-LuaXType2( ModsLevel, NUM_ModsLevel, "ModsLevel_" )
+LuaXType( ModsLevel, NUM_ModsLevel, "ModsLevel_" )
 
 /*
  * (c) 2006 Steve Checkoway

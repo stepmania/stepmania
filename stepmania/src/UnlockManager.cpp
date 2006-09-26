@@ -36,7 +36,7 @@ static const char *UnlockRequirementNames[] =
 };
 XToString( UnlockRequirement, NUM_UnlockRequirement );
 StringToX( UnlockRequirement );
-LuaXType2( UnlockRequirement, NUM_UnlockRequirement, "UnlockRequirement_" );
+LuaXType( UnlockRequirement, NUM_UnlockRequirement, "UnlockRequirement_" );
 
 static const char *UnlockRewardTypeNames[] =
 {

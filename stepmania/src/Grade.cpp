@@ -30,7 +30,7 @@ static const char *GradeNames[] = {
 	"Tier20",
 	"Failed",
 };
-LuaXType2( Grade, NUM_Grade, "Grade_" );
+LuaXType( Grade, NUM_Grade, "Grade_" );
 
 RString GradeToLocalizedString( Grade g )
 {
