@@ -1803,6 +1803,8 @@
 		AAFAB5C20889098600767BF7 /* ScreenOptionsEditProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFAB5BC0889098600767BF7 /* ScreenOptionsEditProfile.h */; };
 		AAFAB5CD08890B5200767BF7 /* GameLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFAB5CB08890B5200767BF7 /* GameLoop.cpp */; };
 		AAFAB5CE08890B5200767BF7 /* GameLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFAB5CC08890B5200767BF7 /* GameLoop.h */; };
+		AAFAFC8F0AC8DB9F00427A6E /* EnumHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFAFC8E0AC8DB9F00427A6E /* EnumHelper.cpp */; };
+		AAFAFC900AC8DB9F00427A6E /* EnumHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFAFC8E0AC8DB9F00427A6E /* EnumHelper.cpp */; };
 		AAFBEED1094D7FCB000029DE /* SpecialFiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFBEECF094D7FCB000029DE /* SpecialFiles.cpp */; };
 		AAFBEED2094D7FCB000029DE /* SpecialFiles.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFBEED0094D7FCB000029DE /* SpecialFiles.h */; };
 		AAFBEEEB094D807E000029DE /* ScreenOptionsManageEditSteps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFBEEE5094D807E000029DE /* ScreenOptionsManageEditSteps.cpp */; };
@@ -1846,14 +1848,14 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = AAE7817D0AC7E37B00AEFC64 /* lua-5.1 */;
+			remoteGlobalIDString = AAE7817D0AC7E37B00AEFC64;
 			remoteInfo = "lua-5.1";
 		};
 		AAE782010AC7E63100AEFC64 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = AAE7817D0AC7E37B00AEFC64 /* lua-5.1 */;
+			remoteGlobalIDString = AAE7817D0AC7E37B00AEFC64;
 			remoteInfo = "lua-5.1";
 		};
 /* End PBXContainerItemProxy section */
@@ -2812,6 +2814,7 @@
 		AAFAB5BC0889098600767BF7 /* ScreenOptionsEditProfile.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenOptionsEditProfile.h; path = ../src/ScreenOptionsEditProfile.h; sourceTree = "<group>"; };
 		AAFAB5CB08890B5200767BF7 /* GameLoop.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = GameLoop.cpp; sourceTree = "<group>"; };
 		AAFAB5CC08890B5200767BF7 /* GameLoop.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = GameLoop.h; sourceTree = "<group>"; };
+		AAFAFC8E0AC8DB9F00427A6E /* EnumHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = EnumHelper.cpp; path = ../src/EnumHelper.cpp; sourceTree = "<group>"; };
 		AAFBEECF094D7FCB000029DE /* SpecialFiles.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = SpecialFiles.cpp; sourceTree = "<group>"; };
 		AAFBEED0094D7FCB000029DE /* SpecialFiles.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = SpecialFiles.h; sourceTree = "<group>"; };
 		AAFBEEE5094D807E000029DE /* ScreenOptionsManageEditSteps.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenOptionsManageEditSteps.cpp; path = ../src/ScreenOptionsManageEditSteps.cpp; sourceTree = "<group>"; };
@@ -3542,8 +3545,6 @@
 		AA6EFDC804770AF1005F316C /* DataStructures */ = {
 			isa = PBXGroup;
 			children = (
-				AAE7803A0AC76A1200AEFC64 /* Workout.cpp */,
-				AAE7803B0AC76A1200AEFC64 /* Workout.h */,
 				AA84B7050996F8370085EECB /* AdjustSync.cpp */,
 				AA84B7060996F8370085EECB /* AdjustSync.h */,
 				AAFF5541054E736D00D02EE9 /* Attack.cpp */,
@@ -3577,6 +3578,7 @@
 				AAD6A712065E0FDF0042165A /* Difficulty.cpp */,
 				AAD6A713065E0FDF0042165A /* Difficulty.h */,
 				AA07328B0954381800F396C5 /* DisplayResolutions.h */,
+				AAFAFC8E0AC8DB9F00427A6E /* EnumHelper.cpp */,
 				AA8F136F0624BAB200C6A467 /* EnumHelper.h */,
 				AAE7808506081A000034E65F /* ezsockets.cpp */,
 				AAE7808606081A000034E65F /* ezsockets.h */,
@@ -3690,6 +3692,8 @@
 				AA70E3660663112800DAE1FD /* Trail.h */,
 				AA70E3670663112800DAE1FD /* TrailUtil.cpp */,
 				AA70E3680663112800DAE1FD /* TrailUtil.h */,
+				AAE7803A0AC76A1200AEFC64 /* Workout.cpp */,
+				AAE7803B0AC76A1200AEFC64 /* Workout.h */,
 				AA07328C0954381800F396C5 /* XmlFileUtil.cpp */,
 				AA07328D0954381800F396C5 /* XmlFileUtil.h */,
 			);
@@ -5700,6 +5704,7 @@
 				AAE780340AC769AF00AEFC64 /* WorkoutManager.cpp in Sources */,
 				AAE7803E0AC76A1200AEFC64 /* Workout.cpp in Sources */,
 				AAE780400AC76A1200AEFC64 /* WorkoutGraph.cpp in Sources */,
+				AAFAFC900AC8DB9F00427A6E /* EnumHelper.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6116,6 +6121,7 @@
 				AAE780360AC769AF00AEFC64 /* WorkoutManager.cpp in Sources */,
 				AAE780420AC76A1200AEFC64 /* Workout.cpp in Sources */,
 				AAE780440AC76A1200AEFC64 /* WorkoutGraph.cpp in Sources */,
+				AAFAFC8F0AC8DB9F00427A6E /* EnumHelper.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
