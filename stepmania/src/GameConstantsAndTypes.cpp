@@ -422,7 +422,6 @@ static const char *StageNames[] = {
 	"Demo",
 };
 XToString( Stage, NUM_Stage );
-LuaXToString( Stage );
 LuaXType( Stage, NUM_Stage, "Stage_" );
 
 
