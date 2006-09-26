@@ -22,6 +22,30 @@ typedef AutoPtrCopyOnWrite<LuaReference> apActorCommands;
 #define DRAW_ORDER_TRANSITIONS			+110
 #define DRAW_ORDER_AFTER_EVERYTHING		+200
 
+enum HorizAlign
+{
+	HorizAlign_Left,
+	HorizAlign_Center,
+	HorizAlign_Right,
+	NUM_HorizAlign,
+	HorizAlign_Invalid
+};
+
+enum VertAlign
+{
+	VertAlign_Top,
+	VertAlign_Middle,
+	VertAlign_Bottom,
+	NUM_VertAlign,
+	VertAlign_Invalid
+};
+#define align_left HorizAlign_Left
+#define align_center HorizAlign_Center
+#define align_right HorizAlign_Right
+#define align_top VertAlign_Top
+#define align_middle VertAlign_Middle
+#define align_bottom VertAlign_Bottom
+
 class Actor : public MessageSubscriber
 {
 public:
@@ -226,11 +250,9 @@ public:
 	//
 	// Alignment settings.  These need to be virtual for BitmapText
 	//
-	enum HorizAlign { align_left, align_center, align_right };
 	virtual void SetHorizAlign( HorizAlign ha ) { m_HorizAlign = ha; }
 	void SetHorizAlignString( const RString &s );	// convenience
 
-	enum VertAlign { align_top, align_middle, align_bottom };
 	virtual void SetVertAlign( VertAlign va ) { m_VertAlign = va; }
 	void SetVertAlignString( const RString &s );	// convenience
 

@@ -57,8 +57,8 @@ void Actor::InitState()
 	m_start.Init();
 	m_current.Init();
 
-	m_HorizAlign = align_center;
-	m_VertAlign = align_middle;
+	m_HorizAlign = HorizAlign_Center;
+	m_VertAlign = VertAlign_Middle;
 
 	m_Effect =  no_effect;
 	m_fSecsIntoEffect = 0;
@@ -814,16 +814,16 @@ void Actor::ScaleTo( const RectF &rect, StretchType st )
 
 	switch( m_HorizAlign )
 	{
-	case align_left: SetX( rect.left ); break;
-	case align_center: SetX( rect.left + rect_width/2 ); break;
-	case align_right: SetX( rect.left + rect_width ); break;
+	case HorizAlign_Left: SetX( rect.left ); break;
+	case HorizAlign_Center: SetX( rect.left + rect_width/2 ); break;
+	case HorizAlign_Right: SetX( rect.left + rect_width ); break;
 	}
 
 	switch( m_VertAlign )
 	{
-	case align_top: SetY( rect.top ); break;
-	case align_middle: SetY( rect.top + rect_height/2 ); break;
-	case align_bottom: SetY( rect.top + rect_height ); break;
+	case VertAlign_Top: SetY( rect.top ); break;
+	case VertAlign_Middle: SetY( rect.top + rect_height/2 ); break;
+	case VertAlign_Bottom: SetY( rect.top + rect_height ); break;
 	}
 
 	SetZoom( fNewZoom );
@@ -831,17 +831,17 @@ void Actor::ScaleTo( const RectF &rect, StretchType st )
 
 void Actor::SetHorizAlignString( const RString &s )
 {
-	if     (s.EqualsNoCase("left"))		this->SetHorizAlign( align_left ); /* call derived */
-	else if(s.EqualsNoCase("center"))	this->SetHorizAlign( align_center );
-	else if(s.EqualsNoCase("right"))	this->SetHorizAlign( align_right );
+	if     (s.EqualsNoCase("left"))		this->SetHorizAlign( HorizAlign_Left ); /* call derived */
+	else if(s.EqualsNoCase("center"))	this->SetHorizAlign( HorizAlign_Center );
+	else if(s.EqualsNoCase("right"))	this->SetHorizAlign( HorizAlign_Right );
 	else	ASSERT(0);
 }
 
 void Actor::SetVertAlignString( const RString &s )
 {
-	if     (s.EqualsNoCase("top"))		this->SetVertAlign( align_top ); /* call derived */
-	else if(s.EqualsNoCase("middle"))	this->SetVertAlign( align_middle );
-	else if(s.EqualsNoCase("bottom"))	this->SetVertAlign( align_bottom );
+	if     (s.EqualsNoCase("top"))		this->SetVertAlign( VertAlign_Top ); /* call derived */
+	else if(s.EqualsNoCase("middle"))	this->SetVertAlign( VertAlign_Middle );
+	else if(s.EqualsNoCase("bottom"))	this->SetVertAlign( VertAlign_Bottom );
 	else	ASSERT(0);
 }
 
