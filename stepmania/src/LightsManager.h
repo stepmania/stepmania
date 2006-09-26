@@ -39,7 +39,8 @@ enum LightsMode
 	LIGHTSMODE_ALL_CLEARED,
 	LIGHTSMODE_TEST_AUTO_CYCLE,
 	LIGHTSMODE_TEST_MANUAL_CYCLE,
-	NUM_LIGHTS_MODES
+	NUM_LightsMode,
+	LightsMode_Invalid
 };
 const RString& LightsModeToString( LightsMode lm );
 

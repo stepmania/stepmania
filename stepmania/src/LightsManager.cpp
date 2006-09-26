@@ -47,7 +47,7 @@ static const char *LightsModeNames[] = {
 	"TestAutoCycle",
 	"TestManualCycle",
 };
-XToString( LightsMode, NUM_LIGHTS_MODES );
+XToString( LightsMode, NUM_LightsMode );
 
 static void GetUsedGameInputs( vector<GameInput> &vGameInputsOut )
 {
