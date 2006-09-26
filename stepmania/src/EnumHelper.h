@@ -135,7 +135,7 @@ namespace LuaHelpers { bool FromStack( lua_State *L, X &Object, int iOffset ); }
 namespace LuaHelpers { void Push( const X &Object, lua_State *L ); }
 
 #define LuaXType(X, CNT, Prefix)	\
-static void Lua2##X(lua_State* L) \
+static void Lua##X(lua_State* L) \
 { \
 	EnumTraits<X>::Invalid = enum_add2( CNT, 1 ); \
 	/* Create the EnumToString table: { "UnlockEntry_ArcadePoints", "UnlockEntry_DancePoints" } */ \
@@ -162,7 +162,7 @@ static void Lua2##X(lua_State* L) \
 	EnumTraits<X>::StringToEnum.PushSelf( L ); \
 	lua_setglobal( L, #X "Index" ); \
 } \
-REGISTER_WITH_LUA_FUNCTION( Lua2##X ); \
+REGISTER_WITH_LUA_FUNCTION( Lua##X ); \
 LuaReference EnumTraits<X>::StringToEnum; \
 LuaReference EnumTraits<X>::EnumToString; \
 X EnumTraits<X>::Invalid; \
