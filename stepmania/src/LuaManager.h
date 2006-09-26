@@ -138,10 +138,10 @@ inline bool MyLua_checkboolean (lua_State *L, int numArg)
 	return !!lua_toboolean( L, numArg );
 }
 
-#define SArg(n) (luaL_checkstring(L,n))
-#define IArg(n) (luaL_checkint(L,n))
-#define BArg(n) (MyLua_checkboolean(L,n))
-#define FArg(n) ((float) luaL_checknumber(L,n))
+#define SArg(n) (luaL_checkstring(L,(n)))
+#define IArg(n) (luaL_checkint(L,(n)))
+#define BArg(n) (MyLua_checkboolean(L,(n)))
+#define FArg(n) ((float) luaL_checknumber(L,(n)))
 
 #endif
 
