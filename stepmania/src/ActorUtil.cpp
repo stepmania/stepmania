@@ -433,9 +433,6 @@ void ActorUtil::ParseActorCommands( Lua *L, const RString &sCommands )
 				sName == "horizalign" ||
 				sName == "vertalign" ||
 				sName == "effectclock" ||
-				sName == "blend" ||
-				sName == "ztestmode" ||
-				sName == "cullmode" ||
 				sName == "playcommand" ||
 				sName == "queuecommand" ||
 				sName == "queuemessage";
