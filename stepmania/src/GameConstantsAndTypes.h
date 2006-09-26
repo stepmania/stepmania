@@ -86,7 +86,7 @@ enum PlayMode
 	PLAY_MODE_BATTLE,	// manually launched attacks
 	PLAY_MODE_RAVE,		// automatically launched attacks
 	NUM_PlayMode,
-	PLAY_MODE_INVALID
+	PlayMode_Invalid
 };
 #define FOREACH_PlayMode( pm ) FOREACH_ENUM( PlayMode, NUM_PlayMode, pm )
 const RString& PlayModeToString( PlayMode pm );

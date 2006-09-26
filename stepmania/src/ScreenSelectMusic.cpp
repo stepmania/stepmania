@@ -102,7 +102,7 @@ void ScreenSelectMusic::Init()
 	if( GAMESTATE->m_pCurStyle == NULL )
 		RageException::Throw( "The Style has not been set.  A theme must set the Style before loading ScreenSelectMusic." );
 
-	if( GAMESTATE->m_PlayMode == PLAY_MODE_INVALID )
+	if( GAMESTATE->m_PlayMode == PlayMode_Invalid )
 		RageException::Throw( "The PlayMode has not been set.  A theme must set the PlayMode before loading ScreenSelectMusic." );
 
 	/* Load low-res banners, if needed. */

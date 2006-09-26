@@ -97,7 +97,7 @@ GameState::GameState() :
 	m_iNumTimesThroughAttract = -1;	// initial screen will bump this up to 0
 	m_iStageSeed = m_iGameSeed = 0;
 
-	m_PlayMode.Set( PLAY_MODE_INVALID ); // used by IsPlayerEnabled before the first screen
+	m_PlayMode.Set( PlayMode_Invalid ); // used by IsPlayerEnabled before the first screen
 	FOREACH_PlayerNumber( p )
 		m_bSideIsJoined[p] = false; // used by GetNumSidesJoined before the first screen
 
@@ -204,7 +204,7 @@ void GameState::Reset()
 	}
 	m_SortOrder.Set( SortOrder_INVALID );
 	m_PreferredSortOrder = GetDefaultSort();
-	m_PlayMode.Set( PLAY_MODE_INVALID );
+	m_PlayMode.Set( PlayMode_Invalid );
 	m_EditMode = EditMode_INVALID;
 	m_bDemonstrationOrJukebox = false;
 	m_bJukeboxUsesModifiers = false;

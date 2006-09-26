@@ -36,7 +36,7 @@ void GameCommand::Init()
 	m_MultiPlayer = MultiPlayer_INVALID;
 	m_pGame = NULL;
 	m_pStyle = NULL;
-	m_pm = PLAY_MODE_INVALID;
+	m_pm = PlayMode_Invalid;
 	m_dc = DIFFICULTY_INVALID;
 	m_CourseDifficulty = DIFFICULTY_INVALID;
 	m_sPreferredModifiers = "";
@@ -80,7 +80,7 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 {
 	if( m_pGame != NULL && m_pGame != GAMESTATE->m_pCurGame.Get() )
 		return false;
-	if( m_pm != PLAY_MODE_INVALID && GAMESTATE->m_PlayMode != m_pm )
+	if( m_pm != PlayMode_Invalid && GAMESTATE->m_PlayMode != m_pm )
 		return false;
 	if( m_pStyle && GAMESTATE->m_pCurStyle.Get() != m_pStyle )
 		return false;
@@ -194,7 +194,7 @@ void GameCommand::LoadOne( const Command& cmd )
 	else if( sName == "playmode" )
 	{
 		PlayMode pm = StringToPlayMode( sValue );
-		if( pm != PLAY_MODE_INVALID )
+		if( pm != PlayMode_Invalid )
 			m_pm = pm;
 		else
 			m_bInvalid |= true;
@@ -433,7 +433,7 @@ int GetCreditsRequiredToPlayStyle( const Style *style )
 
 static bool AreStyleAndPlayModeCompatible( const Style *style, PlayMode pm )
 {
-	if( style == NULL || pm == PLAY_MODE_INVALID )
+	if( style == NULL || pm == PlayMode_Invalid )
 		return true;
 
 	switch( pm )
@@ -520,9 +520,9 @@ bool GameCommand::IsPlayable( RString *why ) const
 
 	/* Don't allow a PlayMode that's incompatible with our current Style (if set),
 	 * and vice versa. */
-	if( m_pm != PLAY_MODE_INVALID || m_pStyle != NULL )
+	if( m_pm != PlayMode_Invalid || m_pStyle != NULL )
 	{
-		const PlayMode pm = (m_pm != PLAY_MODE_INVALID) ? m_pm : GAMESTATE->m_PlayMode;
+		const PlayMode pm = (m_pm != PlayMode_Invalid) ? m_pm : GAMESTATE->m_PlayMode;
 		const Style *style = (m_pStyle != NULL)? m_pStyle: GAMESTATE->m_pCurStyle;
 		if( !AreStyleAndPlayModeCompatible( style, pm ) )
 		{
@@ -627,7 +627,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 
 	if( m_pGame != NULL )
 		GAMESTATE->SetCurGame( m_pGame );
-	if( m_pm != PLAY_MODE_INVALID )
+	if( m_pm != PlayMode_Invalid )
 		GAMESTATE->m_PlayMode.Set( m_pm );
 
 	if( m_pStyle != NULL )
@@ -792,7 +792,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 bool GameCommand::IsZero() const
 {
 	if( m_pGame != NULL ||
-		m_pm != PLAY_MODE_INVALID ||
+		m_pm != PlayMode_Invalid ||
 		m_pStyle != NULL ||
 		m_dc != DIFFICULTY_INVALID ||
 		m_sAnnouncer != "" ||

@@ -18,7 +18,7 @@
 
 StageStats::StageStats()
 {
-	playMode = PLAY_MODE_INVALID;
+	playMode = PlayMode_Invalid;
 	pStyle = NULL;
 	vpPlayedSongs.clear();
 	vpPossibleSongs.clear();

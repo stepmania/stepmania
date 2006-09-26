@@ -176,7 +176,7 @@ PlayMode Course::GetPlayMode() const
 	case COURSE_TYPE_ONI:		return PLAY_MODE_ONI;
 	case COURSE_TYPE_SURVIVAL:	return PLAY_MODE_ONI;
 	case COURSE_TYPE_NONSTOP:	return PLAY_MODE_NONSTOP;
-	default: ASSERT(0);		return PLAY_MODE_INVALID;
+	default: ASSERT(0);		return PlayMode_Invalid;
 	}
 }
 
