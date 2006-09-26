@@ -391,8 +391,8 @@ enum StyleType
 	TWO_PLAYERS_TWO_SIDES,	// e.g. versus
 	ONE_PLAYER_TWO_SIDES,	// e.g. double
 	TWO_PLAYERS_SHARED_SIDES, // e.g. routine
-	NUM_STYLE_TYPES,
-	STYLE_TYPE_INVALID
+	NUM_StyleType,
+	StyleType_Invalid
 };
 const RString& StyleTypeToString( StyleType s );
 StyleType StringToStyleType( const RString& s );
