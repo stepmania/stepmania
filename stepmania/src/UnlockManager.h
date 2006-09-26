@@ -26,6 +26,7 @@ enum UnlockRequirement
 	NUM_UnlockRequirement,
 	UnlockRequirement_INVALID,
 };
+LuaDeclareType( UnlockRequirement );
 
 
 enum UnlockRewardType {
