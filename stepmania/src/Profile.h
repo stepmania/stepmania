@@ -199,7 +199,7 @@ public:
 	//
 	// Category high scores
 	//
-	HighScoreList m_CategoryHighScores[NUM_STEPS_TYPES][NUM_RANKING_CATEGORIES];
+	HighScoreList m_CategoryHighScores[NUM_StepsType][NUM_RANKING_CATEGORIES];
 
 	void AddCategoryHighScore( StepsType st, RankingCategory rc, HighScore hs, int &iIndexOut );
 	HighScoreList& GetCategoryHighScoreList( StepsType st, RankingCategory rc );

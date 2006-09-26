@@ -784,7 +784,7 @@ void Song::SaveToDWIFile()
 
 void Song::AddAutoGenNotes()
 {
-	bool HasNotes[NUM_STEPS_TYPES];
+	bool HasNotes[NUM_StepsType];
 	memset( HasNotes, 0, sizeof(HasNotes) );
 	for( unsigned i=0; i < m_vpSteps.size(); i++ ) // foreach Steps
 	{
@@ -1074,7 +1074,7 @@ RString Song::GetTranslitFullTitle() const
 void Song::AddSteps( Steps* pSteps )
 {
 	m_vpSteps.push_back( pSteps );
-	ASSERT_M( pSteps->m_StepsType < NUM_STEPS_TYPES, ssprintf("%i", pSteps->m_StepsType) );
+	ASSERT_M( pSteps->m_StepsType < NUM_StepsType, ssprintf("%i", pSteps->m_StepsType) );
 	m_vpStepsByType[pSteps->m_StepsType].push_back( pSteps );
 }
 

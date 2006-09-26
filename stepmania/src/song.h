@@ -218,7 +218,7 @@ public:
 private:
 
 	vector<Steps*> m_vpSteps;
-	vector<Steps*> m_vpStepsByType[NUM_STEPS_TYPES];
+	vector<Steps*> m_vpStepsByType[NUM_StepsType];
 };
 
 #endif

@@ -75,7 +75,7 @@ static struct
 	char *name;
 	int NumTracks;
 	uint32_t flags;
-} const StepsTypes[NUM_STEPS_TYPES] = {
+} const StepsTypes[NUM_StepsType] = {
 	{ "dance-single",	4,			ST_FLAGS_NONE },
 	{ "dance-double",	8,			ST_FLAGS_NONE },
 	{ "dance-couple",	8,			ST_FLAGS_NONE },
@@ -2779,13 +2779,13 @@ bool GameManager::IsGameEnabled( const Game *pGame ) const
 
 int GameManager::StepsTypeToNumTracks( StepsType st )
 {
-	ASSERT_M( st < NUM_STEPS_TYPES, ssprintf("%i", st) );
+	ASSERT_M( st < NUM_StepsType, ssprintf("%i", st) );
 	return StepsTypes[st].NumTracks;
 }
 
 bool GameManager::CanAutoGenStepsType( StepsType st )
 {
-	ASSERT_M( st < NUM_STEPS_TYPES, ssprintf("%d", st) );
+	ASSERT_M( st < NUM_StepsType, ssprintf("%d", st) );
 	return !(StepsTypes[st].flags & ST_FLAGS_DONT_AUTOGEN);
 }
 
@@ -2801,7 +2801,7 @@ StepsType GameManager::StringToStepsType( RString sStepsType )
 	if( sStepsType == "para" )
 		sStepsType = "para-single";
 
-	for( int i=0; i<NUM_STEPS_TYPES; i++ )
+	for( int i=0; i<NUM_StepsType; i++ )
 		if( StepsTypes[i].name == sStepsType )
 			return StepsType(i);
 	
@@ -2812,7 +2812,7 @@ StepsType GameManager::StringToStepsType( RString sStepsType )
 
 RString GameManager::StepsTypeToString( StepsType st )
 {
-	ASSERT_M( st < NUM_STEPS_TYPES, ssprintf("%i", st) );
+	ASSERT_M( st < NUM_StepsType, ssprintf("%i", st) );
 	return StepsTypes[st].name;
 }
 
