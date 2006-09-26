@@ -146,6 +146,7 @@ enum TapNoteScore {
 const RString& TapNoteScoreToString( TapNoteScore tns );
 const RString& TapNoteScoreToLocalizedString( TapNoteScore tns );
 TapNoteScore StringToTapNoteScore( const RString& str );
+LuaDeclareType( TapNoteScore );
 
 
 enum HoldNoteScore 

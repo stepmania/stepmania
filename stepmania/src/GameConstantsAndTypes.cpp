@@ -70,7 +70,6 @@ XToLocalizedString( PlayMode );
 StringToX( PlayMode );
 LuaXToString( PlayMode );
 LuaFunction( PlayModeToLocalizedString, PlayModeToLocalizedString((PlayMode) IArg(1)) );
-LuaXType( PlayMode, NUM_PlayMode, "PLAY_MODE_", true )
 LuaXType2( PlayMode, NUM_PlayMode, "PlayMode_" )
 
 RankingCategory AverageMeterToRankingCategory( int iAverageMeter )
@@ -195,6 +194,7 @@ static const char *TapNoteScoreNames[] = {
 	"W1",
 };
 XToString( TapNoteScore, NUM_TapNoteScore );
+LuaXType2( TapNoteScore, NUM_TapNoteScore, "TapNoteScore_" );
 TapNoteScore StringToTapNoteScore( const RString &s )
 {
 	// new style
