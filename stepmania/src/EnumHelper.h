@@ -136,25 +136,11 @@ LuaFunction( X##ToString, X##ToString( (X) IArg(1) ) );
 #define LuaStringToX(X)	\
 LuaFunction( StringTo##X, (X) StringTo##X( SArg(1) ) );
 
-#define LuaXType(X, CNT, Prefix, bCapitalize)	\
-static void Lua##X(lua_State* L) \
-{ \
-	FOREACH_ENUM( X, CNT, i ) \
-	{ \
-		RString s = X##Names[i]; \
-		if( bCapitalize ) \
-			s.MakeUpper(); \
-		LUA->SetGlobal( Prefix+s, i ); \
-	} \
-	LUA->SetGlobal( Prefix "INVALID", CNT+1 ); \
-} \
-REGISTER_WITH_LUA_FUNCTION( Lua##X );
-
 #define LuaDeclareType(X) \
 namespace LuaHelpers { bool FromStack( lua_State *L, X &Object, int iOffset ); } \
 namespace LuaHelpers { void Push( const X &Object, lua_State *L ); }
 
-#define LuaXType2(X, CNT, Prefix)	\
+#define LuaXType(X, CNT, Prefix)	\
 static void Lua2##X(lua_State* L) \
 { \
 	EnumTraits<X>::Invalid = enum_add2( CNT, 1 ); \
@@ -169,7 +155,7 @@ static void Lua2##X(lua_State* L) \
 	EnumTraits<X>::EnumToString.SetFromStack( L ); \
 	EnumTraits<X>::EnumToString.PushSelf( L ); \
 	lua_setglobal( L, #X ); \
-	/* Create the StringToEnum table: { "UnlockEntry_ArcadePoints" = 0, "UnlockEntry_DancePoints" = 0 } */ \
+	/* Create the StringToEnum table: { "UnlockEntry_ArcadePoints" = 0, "UnlockEntry_DancePoints" = 1 } */ \
 	lua_newtable( L ); \
 	FOREACH_ENUM( X, CNT, i ) \
 	{ \
@@ -189,6 +175,8 @@ X EnumTraits<X>::Invalid; \
 const char *EnumTraits<X>::szName = #X; \
 namespace LuaHelpers { bool FromStack( lua_State *L, X &Object, int iOffset ) { Object = Enum::Check<X>( L, iOffset ); return true; } } \
 namespace LuaHelpers { void Push( const X &Object, lua_State *L ) { Enum::Push<X>( L, Object ); } }
+
+#define LuaXType2 LuaXType
 
 #endif
 
