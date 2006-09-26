@@ -20,7 +20,7 @@ static BOOL CALLBACK DIJoystick_EnumDevObjectsProc(LPCDIDEVICEOBJECTINSTANCE dev
 DIDevice::DIDevice()
 {
 	buttons = axes = hats = 0;
-	dev = DEVICE_NONE;
+	dev = InputDevice_Invalid;
 	buffered = true;
 	memset(&JoystickInst, 0, sizeof(JoystickInst));
 	Device = NULL;

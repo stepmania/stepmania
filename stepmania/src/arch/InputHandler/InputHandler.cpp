@@ -117,7 +117,7 @@ static LocalizedString BACKSLASH	( "DeviceButton", "Backslash" );
 
 RString InputHandler::GetDeviceSpecificInputString( const DeviceInput &di )
 {
-	if( di.device == DEVICE_NONE )
+	if( di.device == InputDevice_Invalid )
 		return RString();
 
 	if( di.device == DEVICE_KEYBOARD )
