@@ -4,6 +4,7 @@
 #define GRADE_H
 
 #include "RageUtil.h"
+#include "EnumHelper.h"
 
 #define NUM_Grade_TierS 20
 enum Grade 
