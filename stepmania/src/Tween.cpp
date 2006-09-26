@@ -12,7 +12,7 @@ static const char *TweenTypeNames[] = {
 	"Spring",
 	"Bezier"
 };
-LuaXType( TweenType, NUM_TweenType, "TweenType_" );
+LuaXType( TweenType );
 
 
 struct TweenLinear: public ITween
