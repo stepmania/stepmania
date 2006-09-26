@@ -102,11 +102,9 @@ namespace LuaHelpers
 	{
 		luaL_checktype( L, -1, LUA_TTABLE );
 
-		unsigned iCount = luaL_getn( L, -1 );
-
-		for( unsigned i = 0; i < iCount; ++i )
+		int i = 0;
+		while( lua_rawgeti(L, -1, ++i), !lua_isnil(L, -1) )
 		{
-			lua_rawgeti( L, -1, i+1 );
 			T value = T();
 			LuaHelpers::Pop( L, value );
 			aOut.push_back( value );
