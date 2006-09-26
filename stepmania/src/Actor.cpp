@@ -12,7 +12,7 @@
 #include "ThemeManager.h"
 #include "LuaReference.h"
 #include "MessageManager.h"
-#include "LightsManager.h" // for NUM_CABINET_LIGHTS
+#include "LightsManager.h" // for NUM_CabinetLight
 #include "ActorUtil.h"
 
 /* It's useful to be able to construct a basic Actor in XML, in
@@ -30,7 +30,7 @@ float Actor::g_fCurrentBGMTime = 0, Actor::g_fCurrentBGMBeat;
 
 Actor *Actor::Copy() const { return new Actor(*this); }
 
-static float g_fCabinetLights[NUM_CABINET_LIGHTS];
+static float g_fCabinetLights[NUM_CabinetLight];
 
 static const char *HorizAlignNames[] = {
 	"Left",
@@ -54,7 +54,7 @@ void Actor::SetBGMTime( float fTime, float fBeat )
 
 void Actor::SetBGMLight( int iLightNumber, float fCabinetLights )
 {
-	ASSERT( iLightNumber < NUM_CABINET_LIGHTS );
+	ASSERT( iLightNumber < NUM_CabinetLight );
 	g_fCabinetLights[iLightNumber] = fCabinetLights;
 }
 
@@ -852,7 +852,7 @@ void Actor::SetEffectClockString( const RString &s )
 	else
 	{
 		CabinetLight cl = StringToCabinetLight( s );
-		if( cl != LIGHT_INVALID )
+		if( cl != CabinetLight_Invalid )
 		{
 			this->SetEffectClock( (EffectClock) (cl + CLOCK_LIGHT_1) );
 			return;

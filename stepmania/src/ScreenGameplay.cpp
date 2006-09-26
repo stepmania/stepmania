@@ -1870,7 +1870,7 @@ void ScreenGameplay::UpdateLights()
 		return;
 
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();
-	bool bBlinkCabinetLight[NUM_CABINET_LIGHTS];
+	bool bBlinkCabinetLight[NUM_CabinetLight];
 	bool bBlinkGameButton[NUM_GameController][MAX_GAME_BUTTONS];
 	ZERO( bBlinkCabinetLight );
 	ZERO( bBlinkGameButton );

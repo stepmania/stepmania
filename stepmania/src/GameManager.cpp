@@ -7,7 +7,7 @@
 #include "NoteSkinManager.h"
 #include "RageInputDevice.h"
 #include "ThemeManager.h"
-#include "LightsManager.h"	// for NUM_CABINET_LIGHTS
+#include "LightsManager.h"	// for NUM_CabinetLight
 #include "Game.h"
 #include "Style.h"
 
@@ -104,7 +104,7 @@ static struct
 	{ "techno-double5",	10,			ST_FLAGS_NONE },
 	{ "pnm-five",		5,			ST_FLAGS_NONE },	// called "pnm" for backward compat
 	{ "pnm-nine",		9,			ST_FLAGS_NONE },	// called "pnm" for backward compat
-	{ "lights-cabinet",	NUM_CABINET_LIGHTS,	ST_FLAGS_DONT_AUTOGEN }, // XXX disable lights autogen for now
+	{ "lights-cabinet",	NUM_CabinetLight,	ST_FLAGS_DONT_AUTOGEN }, // XXX disable lights autogen for now
 };
 
 //
@@ -2607,7 +2607,7 @@ static Style g_Styles[] =
 		"cabinet",			// m_szName
 		STEPS_TYPE_LIGHTS_CABINET,	// m_StepsType
 		ONE_PLAYER_ONE_SIDE,		// m_StyleType
-		NUM_CABINET_LIGHTS,		// m_iColsPerPlayer
+		NUM_CabinetLight,		// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
 				{ TRACK_1,	-DANCE_COL_SPACING*3.5f, NULL },

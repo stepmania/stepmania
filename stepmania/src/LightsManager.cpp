@@ -33,7 +33,7 @@ static const char *CabinetLightNames[] = {
 	"BassLeft",
 	"BassRight",
 };
-XToString( CabinetLight, NUM_CABINET_LIGHTS );
+XToString( CabinetLight, NUM_CabinetLight );
 StringToX( CabinetLight );
 
 static const char *LightsModeNames[] = {
@@ -92,7 +92,7 @@ LightsManager::LightsManager()
 		sDriver = DEFAULT_LIGHTS_DRIVER;
 	MakeLightsDrivers( sDriver, m_vpDrivers );
 	m_fTestAutoCycleCurrentIndex = 0;
-	m_clTestManualCycleCurrent = LIGHT_INVALID;
+	m_clTestManualCycleCurrent = CabinetLight_Invalid;
 	m_iControllerTestManualCycleCurrent = -1;
 }
 
@@ -167,7 +167,7 @@ void LightsManager::Update( float fDeltaTime )
 	if( m_LightsMode == LIGHTSMODE_TEST_AUTO_CYCLE )
 	{
 		m_fTestAutoCycleCurrentIndex += fDeltaTime;
-		m_fTestAutoCycleCurrentIndex = fmodf( m_fTestAutoCycleCurrentIndex, NUM_CABINET_LIGHTS*100 );
+		m_fTestAutoCycleCurrentIndex = fmodf( m_fTestAutoCycleCurrentIndex, NUM_CabinetLight*100 );
 	}
 
 	switch( m_LightsMode )
@@ -266,7 +266,7 @@ void LightsManager::Update( float fDeltaTime )
 			int iSec = GetTestAutoCycleCurrentIndex();
 			FOREACH_CabinetLight( cl )
 			{
-				bool bOn = (iSec%NUM_CABINET_LIGHTS) == cl;
+				bool bOn = (iSec%NUM_CabinetLight) == cl;
 				m_LightsState.m_bCabinetLights[cl] = bOn;
 			}
 		}
@@ -426,12 +426,12 @@ void LightsManager::ChangeTestCabinetLight( int iDir )
 	m_iControllerTestManualCycleCurrent = -1;
 
 	m_clTestManualCycleCurrent = (CabinetLight)(m_clTestManualCycleCurrent+iDir);
-	wrap( (int&)m_clTestManualCycleCurrent, NUM_CABINET_LIGHTS );
+	wrap( (int&)m_clTestManualCycleCurrent, NUM_CabinetLight );
 }
 
 void LightsManager::ChangeTestGameButtonLight( int iDir )
 {
-	m_clTestManualCycleCurrent = LIGHT_INVALID;
+	m_clTestManualCycleCurrent = CabinetLight_Invalid;
 	
 	vector<GameInput> vGI;
 	GetUsedGameInputs( vGI );
@@ -447,7 +447,7 @@ CabinetLight LightsManager::GetFirstLitCabinetLight()
 		if( m_LightsState.m_bCabinetLights[cl] )
 			return cl;
 	}
-	return LIGHT_INVALID;
+	return CabinetLight_Invalid;
 }
 
 void LightsManager::GetFirstLitGameButtonLight( GameController &gcOut, GameButton &gbOut )

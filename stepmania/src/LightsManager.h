@@ -21,10 +21,10 @@ enum CabinetLight
 	LIGHT_BUTTONS_RIGHT,
 	LIGHT_BASS_LEFT,
 	LIGHT_BASS_RIGHT,
-	NUM_CABINET_LIGHTS,
-	LIGHT_INVALID
+	NUM_CabinetLight,
+	CabinetLight_Invalid
 };
-#define FOREACH_CabinetLight( i ) FOREACH_ENUM( CabinetLight, NUM_CABINET_LIGHTS, i )
+#define FOREACH_CabinetLight( i ) FOREACH_ENUM( CabinetLight, NUM_CabinetLight, i )
 const RString& CabinetLightToString( CabinetLight cl );
 CabinetLight StringToCabinetLight( const RString& s);
 
@@ -45,7 +45,7 @@ const RString& LightsModeToString( LightsMode lm );
 
 struct LightsState
 {
-	bool m_bCabinetLights[NUM_CABINET_LIGHTS];
+	bool m_bCabinetLights[NUM_CabinetLight];
 	bool m_bGameButtonLights[NUM_GameController][MAX_GAME_BUTTONS];
 };
 
@@ -80,10 +80,10 @@ private:
 	void ChangeTestCabinetLight( int iDir );
 	void ChangeTestGameButtonLight( int iDir );
 
-	float m_fSecsLeftInCabinetLightBlink[NUM_CABINET_LIGHTS];
+	float m_fSecsLeftInCabinetLightBlink[NUM_CabinetLight];
 	float m_fSecsLeftInGameButtonBlink[NUM_GameController][MAX_GAME_BUTTONS];
-	float m_fActorLights[NUM_CABINET_LIGHTS];	// current "power" of each actor light
-	float m_fSecsLeftInActorLightBlink[NUM_CABINET_LIGHTS];	// duration to "power" an actor light
+	float m_fActorLights[NUM_CabinetLight];	// current "power" of each actor light
+	float m_fSecsLeftInActorLightBlink[NUM_CabinetLight];	// duration to "power" an actor light
 
 	vector<LightsDriver*> m_vpDrivers;
 	LightsMode m_LightsMode;

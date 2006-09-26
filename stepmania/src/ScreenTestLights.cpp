@@ -68,7 +68,7 @@ void ScreenTestLights::Update( float fDeltaTime )
 		break;
 	}
 
-	if( cl == LIGHT_INVALID )
+	if( cl == CabinetLight_Invalid )
 		s += CABINET_LIGHT.GetValue()+": -----\n";
 	else
 		s += ssprintf( CABINET_LIGHT.GetValue()+": %d %s\n", cl, CabinetLightToString(cl).c_str() );
