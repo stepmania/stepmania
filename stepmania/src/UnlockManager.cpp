@@ -36,7 +36,6 @@ static const char *UnlockRequirementNames[] =
 };
 XToString( UnlockRequirement, NUM_UnlockRequirement );
 StringToX( UnlockRequirement );
-LuaXType( UnlockRequirement, NUM_UnlockRequirement, "UnlockRequirement_", false )
 LuaXType2( UnlockRequirement, NUM_UnlockRequirement, "UnlockRequirement_" );
 
 static const char *UnlockRewardTypeNames[] =
@@ -704,7 +703,7 @@ public:
 	static int IsLocked( T* p, lua_State *L )		{ lua_pushboolean(L, p->IsLocked() ); return 1; }
 	static int GetDescription( T* p, lua_State *L )		{ lua_pushstring(L, p->GetDescription() ); return 1; }
 	static int GetUnlockRewardType( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_Type ); return 1; }
-	static int GetRequirement( T* p, lua_State *L )		{ UnlockRequirement i = Enum<UnlockRequirement>::Check( L, 1 ); lua_pushnumber(L, p->m_fRequirement[i] ); return 1; }
+	static int GetRequirement( T* p, lua_State *L )		{ UnlockRequirement i = Enum::Check<UnlockRequirement>( L, 1 ); lua_pushnumber(L, p->m_fRequirement[i] ); return 1; }
 	static int GetRequirePassHardSteps( T* p, lua_State *L ){ lua_pushboolean(L, p->m_bRequirePassHardSteps); return 1; }
 
 	static void Register(lua_State *L)
