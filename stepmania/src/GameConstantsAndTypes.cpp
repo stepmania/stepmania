@@ -407,7 +407,6 @@ static const char *EditModeNames[] = {
 };
 XToString( EditMode, NUM_EditMode );
 StringToX( EditMode );
-LuaXType( EditMode, NUM_EditMode, "EditMode_", false );
 LuaXType2( EditMode, NUM_EditMode, "EditMode_" );
 
 static const char *StageNames[] = {

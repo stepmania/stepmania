@@ -30,7 +30,6 @@ static const char *NoteTypeNames[] = {
 };
 XToString( NoteType, NUM_NoteType );
 LuaXToString( NoteType )
-LuaXType( NoteType, NUM_NoteType, "NOTE_TYPE_", true )
 LuaXType2( NoteType, NUM_NoteType, "NoteType_" )
 XToLocalizedString( NoteType );
 
