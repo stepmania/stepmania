@@ -170,8 +170,6 @@ const char *EnumTraits<X>::szName = #X; \
 namespace LuaHelpers { bool FromStack( lua_State *L, X &Object, int iOffset ) { Object = Enum::Check<X>( L, iOffset ); return true; } } \
 namespace LuaHelpers { void Push( const X &Object, lua_State *L ) { Enum::Push<X>( L, Object ); } }
 
-#define LuaXType2 LuaXType
-
 #endif
 
 /*
