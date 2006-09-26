@@ -321,9 +321,6 @@ static void LuaPeakComboAward( lua_State* L )
 }
 REGISTER_WITH_LUA_FUNCTION( LuaPeakComboAward );
 
-LuaXToString( Difficulty );
-LuaStringToX( Difficulty );
-
 
 void DisplayBpms::Add( float f )
 {
