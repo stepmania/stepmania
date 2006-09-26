@@ -135,7 +135,7 @@ public:
 	}
 	static int Unset( T* p, lua_State *L )				{ p->Unset(); return 0; }
 	static int SetPlayer( T* p, lua_State *L )			{ p->SetPlayer( (PlayerNumber)IArg(1) ); return 0; }
-	static int SetFromDifficulty( T* p, lua_State *L )		{ p->SetFromDifficulty( (Difficulty)IArg(1) ); return 0; }
+	static int SetFromDifficulty( T* p, lua_State *L )		{ p->SetFromDifficulty( Enum::Check<Difficulty>(L, 1) ); return 0; }
 
 	static void Register(lua_State *L) 
 	{
