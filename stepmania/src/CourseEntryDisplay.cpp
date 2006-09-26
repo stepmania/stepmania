@@ -81,9 +81,9 @@ void CourseEntryDisplay::SetDifficulty( PlayerNumber pn, const RString &text, Di
 		return;
 
 	Lua *L = LUA->Get();
-	LuaHelpers::Push( dc, L );
+	LuaHelpers::Push( L, dc );
 	m_textDifficultyNumber[pn].m_pLuaInstance->Set( L, "Difficulty" );
-	LuaHelpers::Push( dc, L );
+	LuaHelpers::Push( L, dc );
 	m_textFoot[pn].m_pLuaInstance->Set( L, "Difficulty" );
 	LUA->Release(L);
 

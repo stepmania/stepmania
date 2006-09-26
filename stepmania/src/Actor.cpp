@@ -208,7 +208,7 @@ void Actor::LoadFromNode( const RString& sDir, const XNode* pNode )
 
 			Lua *L = LUA->Get();
 			this->PushSelf( L );
-			LuaHelpers::Push( sName, L );
+			LuaHelpers::Push( L, sName );
 			ActorUtil::GetParam( L, sName );
 
 			if( lua_isnil(L, -1) && !bOptional )

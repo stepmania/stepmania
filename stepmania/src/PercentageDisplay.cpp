@@ -167,7 +167,7 @@ void PercentageDisplay::Refresh()
 			Lua *L = LUA->Get();
 			m_Format.PushSelf( L );
 			ASSERT( !lua_isnil(L, -1) );
-			LuaHelpers::Push( fPercentDancePoints, L );
+			LuaHelpers::Push( L, fPercentDancePoints );
 			lua_call( L, 1, 1 ); // 1 args, 1 result
 			LuaHelpers::Pop( L, sNumToDisplay );
 			LUA->Release(L);

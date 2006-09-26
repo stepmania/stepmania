@@ -223,7 +223,7 @@ void ScreenOptions::InitMenu( const vector<OptionRowHandler*> &vHands )
 		int iIndex = p - m_pRows.begin();
 
 		Lua *L = LUA->Get();
-		LuaHelpers::Push( iIndex, L );
+		LuaHelpers::Push( L, iIndex );
 		(*p)->m_pLuaInstance->Set( L, "iIndex" );
 		LUA->Release( L );
 

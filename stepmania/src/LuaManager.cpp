@@ -48,7 +48,7 @@ const char *ChunkReaderString::Reader( lua_State *L, void *pPtr, size_t *pSize )
 void LuaManager::SetGlobal( const RString &sName, int val )
 {
 	Lua *L = LUA->Get();
-	LuaHelpers::Push( val, L );
+	LuaHelpers::Push( L, val );
 	lua_setglobal( L, sName );
 	LUA->Release( L );
 }
@@ -56,7 +56,7 @@ void LuaManager::SetGlobal( const RString &sName, int val )
 void LuaManager::SetGlobal( const RString &sName, const RString &val )
 {
 	Lua *L = LUA->Get();
-	LuaHelpers::Push( val, L );
+	LuaHelpers::Push( L, val );
 	lua_setglobal( L, sName );
 	LUA->Release( L );
 }
@@ -70,10 +70,10 @@ void LuaManager::UnsetGlobal( const RString &sName )
 }
 
 
-void LuaHelpers::Push( const bool &Object, lua_State *L ) { lua_pushboolean( L, Object ); }
-void LuaHelpers::Push( const float &Object, lua_State *L ) { lua_pushnumber( L, Object ); }
-void LuaHelpers::Push( const int &Object, lua_State *L ) { lua_pushinteger( L, Object ); }
-void LuaHelpers::Push( const RString &Object, lua_State *L ) { lua_pushlstring( L, Object.data(), Object.size() ); }
+void LuaHelpers::Push( lua_State *L, const bool &Object ) { lua_pushboolean( L, Object ); }
+void LuaHelpers::Push( lua_State *L, const float &Object ) { lua_pushnumber( L, Object ); }
+void LuaHelpers::Push( lua_State *L, const int &Object ) { lua_pushinteger( L, Object ); }
+void LuaHelpers::Push( lua_State *L, const RString &Object ) { lua_pushlstring( L, Object.data(), Object.size() ); }
 
 bool LuaHelpers::FromStack( Lua *L, bool &Object, int iOffset ) { Object = !!lua_toboolean( L, iOffset ); return true; }
 bool LuaHelpers::FromStack( Lua *L, float &Object, int iOffset ) { Object = (float)lua_tonumber( L, iOffset ); return true; }

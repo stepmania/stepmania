@@ -89,7 +89,7 @@ void IPreference::SetFromStack( lua_State *L )
 	} \
 	template<> void PrefPushValue( lua_State *L, const type &v ) \
 	{ \
-		LuaHelpers::Push( v, L ); \
+		LuaHelpers::Push( L, v ); \
 	}
 
 READFROM_AND_WRITETO( int )

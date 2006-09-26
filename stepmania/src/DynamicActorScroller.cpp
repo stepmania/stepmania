@@ -116,7 +116,7 @@ void DynamicActorScroller::ConfigureActor( Actor *pActor, int iItem )
 	m_LoadFunction.PushSelf( L );
 	ASSERT( !lua_isnil(L, -1) );
 	pActor->PushSelf( L );
-	LuaHelpers::Push( iItem, L );
+	LuaHelpers::Push( L, iItem );
 	lua_call( L, 2, 0 ); // 2 args, 0 results
 	LUA->Release(L);
 }

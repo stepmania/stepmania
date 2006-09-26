@@ -203,9 +203,9 @@ void DifficultyMeter::SetInternal( int iMeter, Difficulty dc, const RString &sDi
 		sNewText.insert( sNewText.end(), iNumOff, off );
 
 		Lua *L = LUA->Get();
-		LuaHelpers::Push( dc, L );
+		LuaHelpers::Push( L, dc );
 		m_textFeet.m_pLuaInstance->Set( L, "Difficulty" );
-		LuaHelpers::Push( iMeter, L );
+		LuaHelpers::Push( L, iMeter );
 		m_textFeet.m_pLuaInstance->Set( L, "Meter" );
 		LUA->Release(L);
 		m_textFeet.PlayCommand( "DifficultyChanged" );

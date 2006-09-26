@@ -132,7 +132,7 @@ static const RString EMPTY_STRING;
 
 #define LuaDeclareType(X) \
 namespace LuaHelpers { bool FromStack( lua_State *L, X &Object, int iOffset ); } \
-namespace LuaHelpers { void Push( const X &Object, lua_State *L ); }
+namespace LuaHelpers { void Push( lua_State *L, const X &Object ); }
 
 #define LuaXType(X)	\
 static void Lua##X(lua_State* L) \
@@ -168,7 +168,7 @@ LuaReference EnumTraits<X>::EnumToString; \
 X EnumTraits<X>::Invalid; \
 const char *EnumTraits<X>::szName = #X; \
 namespace LuaHelpers { bool FromStack( lua_State *L, X &Object, int iOffset ) { Object = Enum::Check<X>( L, iOffset ); return true; } } \
-namespace LuaHelpers { void Push( const X &Object, lua_State *L ) { Enum::Push<X>( L, Object ); } }
+namespace LuaHelpers { void Push( lua_State *L, const X &Object ) { Enum::Push<X>( L, Object ); } }
 
 #endif
 

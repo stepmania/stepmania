@@ -23,7 +23,7 @@ int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const 
 		lua_pushvalue( L, iPos );
 		RString sGot;
 		LuaHelpers::Pop( L, sGot );
-		LuaHelpers::Push( ssprintf("Expected %s; got \"%s\"", szType, sGot.c_str() ), L );
+		LuaHelpers::Push( L, ssprintf("Expected %s; got \"%s\"", szType, sGot.c_str() ) );
 		lua_error( L );
 	}
 	int iRet = lua_tointeger( L, -1 );

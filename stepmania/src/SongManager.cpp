@@ -1870,8 +1870,8 @@ public:
 		p->GetExtraStageInfo( bExtra2, pStyle, pSong, pSteps, &po, &so );
 		pSong->PushSelf( L );
 		pSteps->PushSelf( L );
-		LuaHelpers::Push( po.GetString(true), L );
-		LuaHelpers::Push( so.GetString(), L );
+		LuaHelpers::Push( L, po.GetString(true) );
+		LuaHelpers::Push( L, so.GetString() );
 		
 		return 4;
 	}

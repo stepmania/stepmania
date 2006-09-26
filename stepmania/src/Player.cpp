@@ -191,13 +191,13 @@ void Player::Init(
 				expr.PushSelf( L );
 				ASSERT( !lua_isnil(L, -1) );
 				temp.PushSelf( L );
-				LuaHelpers::Push( pPlayerState->m_PlayerNumber, L );
-				LuaHelpers::Push( pPlayerState->m_mp, L );
-				LuaHelpers::Push( iEnabledPlayerIndex, L );
-				LuaHelpers::Push( iNumEnabledPlayers, L );
-				LuaHelpers::Push( bPlayerUsingBothSides, L );
-				LuaHelpers::Push( !!i, L );
-				LuaHelpers::Push( !!j, L );
+				LuaHelpers::Push( L, pPlayerState->m_PlayerNumber );
+				LuaHelpers::Push( L, pPlayerState->m_mp );
+				LuaHelpers::Push( L, iEnabledPlayerIndex );
+				LuaHelpers::Push( L, iNumEnabledPlayers );
+				LuaHelpers::Push( L, bPlayerUsingBothSides );
+				LuaHelpers::Push( L, !!i );
+				LuaHelpers::Push( L, !!j );
 				lua_call( L, 8, 0 ); // 8 args, 0 results
 				LUA->Release(L);
 				
@@ -226,13 +226,13 @@ void Player::Init(
 				expr.PushSelf( L );
 				ASSERT( !lua_isnil(L, -1) );
 				m_sprJudgmentFrame->PushSelf( L );
-				LuaHelpers::Push( pPlayerState->m_PlayerNumber, L );
-				LuaHelpers::Push( pPlayerState->m_mp, L );
-				LuaHelpers::Push( iEnabledPlayerIndex, L );
-				LuaHelpers::Push( iNumEnabledPlayers, L );
-				LuaHelpers::Push( bPlayerUsingBothSides, L );
-				LuaHelpers::Push( false, L );
-				LuaHelpers::Push( false, L );
+				LuaHelpers::Push( L, pPlayerState->m_PlayerNumber );
+				LuaHelpers::Push( L, pPlayerState->m_mp );
+				LuaHelpers::Push( L, iEnabledPlayerIndex );
+				LuaHelpers::Push( L, iNumEnabledPlayers );
+				LuaHelpers::Push( L, bPlayerUsingBothSides );
+				LuaHelpers::Push( L, false );
+				LuaHelpers::Push( L, false );
 				lua_call( L, 8, 0 ); // 8 args, 0 results
 				LUA->Release( L );
 			}

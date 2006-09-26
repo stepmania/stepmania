@@ -241,10 +241,10 @@ public:
 	template<> Luna<T>::RegTypeVector* Luna<T>::s_pvMethods = NULL; \
 	static Luna##T registera##T; \
 	/* Call PushSelf, so we always call the derived Luna<T>::Push. */ \
-	namespace LuaHelpers { template<> void Push( T *pObject, lua_State *L ) { pObject->PushSelf( L ); } }
+	namespace LuaHelpers { template<> void Push( lua_State *L, T *pObject ) { pObject->PushSelf( L ); } }
 
 #define DEFINE_METHOD( method_name, expr ) \
-	static int method_name( T* p, lua_State *L ) { LuaHelpers::Push( p->expr, L ); return 1; }
+	static int method_name( T* p, lua_State *L ) { LuaHelpers::Push( L, p->expr ); return 1; }
 
 #define ADD_METHOD( method_name ) \
 	AddMethod( #method_name, method_name )

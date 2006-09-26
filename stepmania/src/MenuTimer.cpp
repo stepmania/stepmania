@@ -164,7 +164,7 @@ void MenuTimer::SetText( float fSeconds )
 		ASSERT( !lua_isnil(L, -1) );
 
 		// 1st parameter
-		LuaHelpers::Push( fSeconds, L );
+		LuaHelpers::Push( L, fSeconds );
 		
 		// call function with 1 argument and 1 result
 		lua_call(L, 1, 1); 

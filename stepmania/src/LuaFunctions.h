@@ -14,7 +14,7 @@ struct LuaFunctionList
 
 #define LuaFunction( func, expr ) \
 int LuaFunc_##func( lua_State *L ) { \
-	LuaHelpers::Push( expr, L ); return 1; \
+	LuaHelpers::Push( L, expr ); return 1; \
 } \
 static LuaFunctionList g_##func( #func, LuaFunc_##func ); /* register it */
 

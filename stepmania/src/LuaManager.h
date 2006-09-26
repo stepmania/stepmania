@@ -77,12 +77,12 @@ namespace LuaHelpers
 	bool RunAtExpressionS( RString &sStr );
 
 	template<class T>
-	void Push( T *pObject, Lua *L );
+	void Push( lua_State *L, T *pObject );
 
-	void Push( const bool &Object, Lua *L );
-	void Push( const float &Object, Lua *L );
-	void Push( const int &Object, Lua *L );
-	void Push( const RString &Object, Lua *L );
+	void Push( lua_State *L, const bool &Object );
+	void Push( lua_State *L, const float &Object );
+	void Push( lua_State *L, const int &Object );
+	void Push( lua_State *L, const RString &Object );
 
 	bool FromStack( Lua *L, bool &Object, int iOffset );
 	bool FromStack( Lua *L, float &Object, int iOffset );
@@ -118,7 +118,7 @@ namespace LuaHelpers
 		lua_newtable( L );
 		for( unsigned i = 0; i < aIn.size(); ++i )
 		{
-			LuaHelpers::Push( aIn[i], L );
+			LuaHelpers::Push( L, aIn[i] );
 			lua_rawseti( L, -2, i+1 );
 		}
 	}

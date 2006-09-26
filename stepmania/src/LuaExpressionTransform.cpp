@@ -31,9 +31,9 @@ const Actor::TweenState &LuaExpressionTransform::GetPosition( float fPositionOff
 	m_exprTransformFunction.PushSelf( L );
 	ASSERT( !lua_isnil(L, -1) );
 	a.PushSelf( L );
-	LuaHelpers::Push( fPositionOffsetFromCenter, L );
-	LuaHelpers::Push( iItemIndex, L );
-	LuaHelpers::Push( iNumItems, L );
+	LuaHelpers::Push( L, fPositionOffsetFromCenter );
+	LuaHelpers::Push( L, iItemIndex );
+	LuaHelpers::Push( L, iNumItems );
 	lua_call( L, 4, 0 ); // 4 args, 0 results
 	LUA->Release(L);
 

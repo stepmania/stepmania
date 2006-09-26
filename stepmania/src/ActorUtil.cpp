@@ -135,7 +135,7 @@ void ActorUtil::SetParamFromStack( Lua *L, RString sName, LuaReference *pOld )
 	PushParamsTable( L );
 	int iParams = lua_gettop(L);
 
-	LuaHelpers::Push( sName, L );
+	LuaHelpers::Push( L, sName );
 	int iName = lua_gettop(L);
 
 	/* Save the old value. */
@@ -165,7 +165,7 @@ void ActorUtil::GetParam( Lua *L, const RString &sName )
 {
 	/* Search the params table. */
 	PushParamsTable( L );
-	LuaHelpers::Push( sName, L );
+	LuaHelpers::Push( L, sName );
 	lua_rawget( L, -2 );
 	lua_remove( L, -2 );
 
@@ -628,7 +628,7 @@ ActorUtil::ActorParam::ActorParam( RString sName, RString sValue )
 	m_pOld = new LuaReference;
 	m_sName = sName;
 	Lua *L = LUA->Get();
-	LuaHelpers::Push( sValue, L );
+	LuaHelpers::Push( L, sValue );
 	ActorUtil::SetParamFromStack( L, m_sName, m_pOld );
 	LUA->Release( L );
 }
