@@ -1951,7 +1951,7 @@ public:
 	DEFINE_METHOD( IsExtraStage,			IsExtraStage() )
 	DEFINE_METHOD( IsExtraStage2,			IsExtraStage2() )
 	DEFINE_METHOD( GetCurrentStage,			GetCurrentStage() )
-	DEFINE_METHOD( IsStagePossible,			IsStagePossible((Stage)IArg(1)) )
+	DEFINE_METHOD( IsStagePossible,			IsStagePossible( Enum::Check<Stage>(L, 1)) )
 	DEFINE_METHOD( HasEarnedExtraStage,		HasEarnedExtraStage() )
 	DEFINE_METHOD( GetEasiestStepsDifficulty,	GetEasiestStepsDifficulty() )
 	DEFINE_METHOD( IsEventMode,			IsEventMode() )

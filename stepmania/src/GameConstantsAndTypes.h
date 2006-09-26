@@ -431,11 +431,12 @@ enum Stage
 	STAGE_ENDLESS,
 	STAGE_EVENT,
 	STAGE_DEMO,
-	NUM_STAGES,
+	NUM_Stage,
 	STAGE_INVALID,
 };
-#define FOREACH_Stage( s ) FOREACH_ENUM( Stage, NUM_STAGES, s )
+#define FOREACH_Stage( s ) FOREACH_ENUM( Stage, NUM_Stage, s )
 const RString& StageToString( Stage s );
+LuaDeclareType( Stage );
 
 
 enum ProfileLoadResult

@@ -421,18 +421,9 @@ static const char *StageNames[] = {
 	"Event",
 	"Demo",
 };
-XToString( Stage, NUM_STAGES );
-static void LuaStage(lua_State* L)
-{
-	FOREACH_Stage( st )
-	{
-		RString s = StageNames[st];
-		s.MakeUpper();
-		LUA->SetGlobal( "STAGE_"+s, st );
-	}
-}
-REGISTER_WITH_LUA_FUNCTION( LuaStage );
+XToString( Stage, NUM_Stage );
 LuaXToString( Stage );
+LuaXType( Stage, NUM_Stage, "Stage_" );
 
 
 static const char *MultiPlayerStatusNames[] = {
