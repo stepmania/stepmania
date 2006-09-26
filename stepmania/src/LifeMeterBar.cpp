@@ -42,7 +42,7 @@ static ThemeMetric<float> DANGER_THRESHOLD	("LifeMeterBar","DangerThreshold");
 static ThemeMetric<int>   NUM_CHAMBERS		("LifeMeterBar","NumChambers");
 static ThemeMetric<int>   NUM_STRIPS		("LifeMeterBar","NumStrips");
 static ThemeMetric<float> INITIAL_VALUE		("LifeMeterBar","InitialValue");
-static ThemeMetric<int>   MIN_STAY_ALIVE	("LifeMeterBar","MinStayAlive");
+static ThemeMetric<TapNoteScore>   MIN_STAY_ALIVE	("LifeMeterBar","MinStayAlive");
 
 const float FAIL_THRESHOLD = 0;
 

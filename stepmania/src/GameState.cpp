@@ -60,8 +60,8 @@ Song* GameState::GetDefaultSong() const
 	return sid.ToSong();
 }
 
-static const ThemeMetric<int> GRADE_TIER_FOR_EXTRA_1 ("GameState","GradeTierForExtra1");
-static const ThemeMetric<int> GRADE_TIER_FOR_EXTRA_2 ("GameState","GradeTierForExtra2");
+static const ThemeMetric<Grade> GRADE_TIER_FOR_EXTRA_1 ("GameState","GradeTierForExtra1");
+static const ThemeMetric<Grade> GRADE_TIER_FOR_EXTRA_2 ("GameState","GradeTierForExtra2");
 
 static DynamicThemeMetric<bool> ARE_STAGE_MODS_FORCED( "GameState","AreStageModsForced" );
 
