@@ -233,8 +233,8 @@ void Actor::LoadFromNode( const RString& sDir, const XNode* pNode )
 			Lua *L = LUA->Get();
 
 			this->PushContext(L);
-			lua_pushstring(L, sName );
-			LuaHelpers::RunScript( L, "return " + s, "", 1 );
+			lua_pushstring( L, sName );
+			LuaHelpers::RunExpression( L, s );
 			lua_settable( L, -3 );
 			lua_pop( L, 1 );
 
