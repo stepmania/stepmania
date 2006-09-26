@@ -150,8 +150,8 @@ void Profile::InitCourseScores()
 
 void Profile::InitCategoryScores()
 {
-	for( int st=0; st<NUM_STEPS_TYPES; st++ )
-		for( int rc=0; rc<NUM_RANKING_CATEGORIES; rc++ )
+	FOREACH_StepsType( st )
+		FOREACH_RankingCategory( rc )
 			m_CategoryHighScores[st][rc].Init();
 }
 
