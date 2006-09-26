@@ -73,7 +73,7 @@ void ScreenTestLights::Update( float fDeltaTime )
 	else
 		s += ssprintf( CABINET_LIGHT.GetValue()+": %d %s\n", cl, CabinetLightToString(cl).c_str() );
 
-	if( gc == GAME_CONTROLLER_INVALID )
+	if( gc == GameController_Invalid )
 	{
 		s += ssprintf( CONTROLLER_LIGHT.GetValue()+": -----\n" );
 	}

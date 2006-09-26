@@ -61,7 +61,7 @@ void ScreenGameplaySyncMachine::Input( const InputEventPlus &input )
 	// Hack to make this work from Player2's controls
 	InputEventPlus _input = input;
 
-	if( _input.GameI.controller != GAME_CONTROLLER_INVALID )
+	if( _input.GameI.controller != GameController_Invalid )
 		_input.GameI.controller = GAME_CONTROLLER_1;
 	if( _input.pn != PLAYER_INVALID )
 		_input.pn = PLAYER_1;

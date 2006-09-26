@@ -2091,7 +2091,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 		/* If we're paused, only accept MENU_BUTTON_START to unpause. */
 		if( GAMESTATE->IsHumanPlayer(input.pn) && input.MenuI == MENU_BUTTON_START && input.type == IET_FIRST_PRESS )
 		{
-			if( m_PauseController == GAME_CONTROLLER_INVALID || m_PauseController == input.GameI.controller )
+			if( m_PauseController == GameController_Invalid || m_PauseController == input.GameI.controller )
 				this->PauseGame( false );
 		}
 		return;

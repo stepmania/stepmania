@@ -23,7 +23,7 @@ void InputQueue::RememberInput( const InputEventPlus &iep )
 
 bool InputQueue::MatchesSequence( GameController c, const GameButton* button_sequence, const int iNumButtons, float fMaxSecondsBack )
 {
-	if( c == GAME_CONTROLLER_INVALID )
+	if( c == GameController_Invalid )
 		return false;
 
 	if( fMaxSecondsBack == -1 )

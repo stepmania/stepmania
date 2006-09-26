@@ -141,7 +141,7 @@ protected:
 	void LoadCourseSongNumber( int SongNumber );
 	float StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic);
 	void LoadLights();
-	void PauseGame( bool bPause, GameController gc = GAME_CONTROLLER_INVALID );
+	void PauseGame( bool bPause, GameController gc = GameController_Invalid );
 	void PlayAnnouncer( RString type, float fSeconds );
 	void UpdateLights();
 	void SendCrossedMessages();

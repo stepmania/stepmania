@@ -60,7 +60,7 @@ static CodeItem g_CodeItems[NUM_Code];
 
 bool CodeItem::EnteredCode( GameController controller ) const
 {
-	if( controller == GAME_CONTROLLER_INVALID )
+	if( controller == GameController_Invalid )
 		return false;
 	if( buttons.size() == 0 )
 		return false;

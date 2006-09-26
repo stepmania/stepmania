@@ -47,7 +47,7 @@ bool GameInput::FromString( const Game* pGame, const RString &s )
 
 	if( 2 != sscanf( s, "%31[^_]_%31[^_]", szController, szButton ) )
 	{
-		controller = GAME_CONTROLLER_INVALID;
+		controller = GameController_Invalid;
 		return false;
 	}
 

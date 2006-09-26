@@ -12,7 +12,7 @@ enum GameController
 	GAME_CONTROLLER_1 = 0,	// left controller
 	GAME_CONTROLLER_2,	// right controller
 	NUM_GameController,	// leave this at the end
-	GAME_CONTROLLER_INVALID,
+	GameController_Invalid,
 };
 #define FOREACH_GameController( gc ) FOREACH_ENUM( GameController, NUM_GameController, gc )
 
@@ -240,7 +240,7 @@ enum	// LightsButtons
 
 struct GameInput
 {
-	GameInput(): controller(GAME_CONTROLLER_INVALID), button(GAME_BUTTON_INVALID) { }
+	GameInput(): controller(GameController_Invalid), button(GAME_BUTTON_INVALID) { }
 
 	GameInput( GameController c, GameButton b ): controller(c), button(b) { }
 
@@ -257,8 +257,8 @@ struct GameInput
 		return button < other.button;
 	}
 
-	inline bool IsValid() const { return controller != GAME_CONTROLLER_INVALID; };
-	inline void MakeInvalid() { controller = GAME_CONTROLLER_INVALID; button = GAME_BUTTON_INVALID; };
+	inline bool IsValid() const { return controller != GameController_Invalid; };
+	inline void MakeInvalid() { controller = GameController_Invalid; button = GAME_BUTTON_INVALID; };
 
 	RString ToString( const Game* pGame ) const;
 	bool FromString( const Game* pGame, const RString &s );

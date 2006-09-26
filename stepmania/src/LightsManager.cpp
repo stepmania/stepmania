@@ -464,7 +464,7 @@ void LightsManager::GetFirstLitGameButtonLight( GameController &gcOut, GameButto
 			}
 		}
 	}
-	gcOut = GAME_CONTROLLER_INVALID;
+	gcOut = GameController_Invalid;
 	gbOut = GAME_BUTTON_INVALID;
 }
 
