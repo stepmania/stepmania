@@ -197,7 +197,7 @@ void ScreenDebugOverlay::Init()
 	this->AddChild( &m_Quad );
 	
 	m_textHeader.LoadFromFont( THEME->GetPathF("Common", "normal") );
-	m_textHeader.SetHorizAlign( Actor::align_left );
+	m_textHeader.SetHorizAlign( align_left );
 	m_textHeader.SetX( SCREEN_LEFT+20 );
 	m_textHeader.SetY( SCREEN_TOP+20 );
 	m_textHeader.SetZoom( 1.0f );
@@ -209,7 +209,7 @@ void ScreenDebugOverlay::Init()
 		{
 			BitmapText *pT1 = new BitmapText;
 			pT1->LoadFromFont( THEME->GetPathF("Common", "normal") );
-			pT1->SetHorizAlign( Actor::align_right );
+			pT1->SetHorizAlign( align_right );
 			pT1->SetText( "blah" );
 			pT1->SetShadowLength( 2 );
 			m_vptextButton.push_back( pT1 );
@@ -218,7 +218,7 @@ void ScreenDebugOverlay::Init()
 		{
 			BitmapText *pT2 = new BitmapText;
 			pT2->LoadFromFont( THEME->GetPathF("Common", "normal") );
-			pT2->SetHorizAlign( Actor::align_left );
+			pT2->SetHorizAlign( align_left );
 			pT2->SetText( "blah" );
 			pT2->SetShadowLength( 2 );
 			m_vptextFunction.push_back( pT2 );

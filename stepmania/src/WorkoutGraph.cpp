@@ -78,7 +78,7 @@ void WorkoutGraph::SetFromGameStateInternal( int iNumSongsToShowForCurrentStage 
 
 	float fBlockSize = min( fTotalWidth / iBlocksWide, fTotalHeight / iBlocksHigh );
 
-	m_sprEmpty.SetVertAlign( Actor::align_bottom );
+	m_sprEmpty.SetVertAlign( align_bottom );
 	m_sprEmpty.SetCustomImageRect( RectF(0,0,(float)iBlocksWide,(float)iBlocksHigh) );
 	m_sprEmpty.ZoomToWidth( iBlocksWide * fBlockSize );
 	m_sprEmpty.ZoomToHeight( iBlocksHigh * fBlockSize );
@@ -89,7 +89,7 @@ void WorkoutGraph::SetFromGameStateInternal( int iNumSongsToShowForCurrentStage 
 		float fOffsetFromCenter = iIndex - (iBlocksWide-1)/2.0f;
 		Sprite *p = new Sprite;
 		p->Load( THEME->GetPathG("WorkoutGraph","bar") );
-		p->SetVertAlign( Actor::align_bottom );
+		p->SetVertAlign( align_bottom );
 		p->ZoomToWidth( fBlockSize );
 		int iMetersToCover = (MAX_METER - *iter);
 		p->SetCustomImageRect( RectF(0,(float)iMetersToCover/(float)iBlocksHigh,1,1) );

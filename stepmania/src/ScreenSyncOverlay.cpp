@@ -27,12 +27,12 @@ void ScreenSyncOverlay::Init()
 	Screen::Init();
 	
 	m_quad.SetDiffuse( RageColor(0,0,0,0) );
-	m_quad.SetHorizAlign( Actor::align_left );
+	m_quad.SetHorizAlign( align_left );
 	m_quad.SetXY( SCREEN_CENTER_X+10, SCREEN_TOP+100 );
 	this->AddChild( &m_quad );
 
 	m_textHelp.LoadFromFont( THEME->GetPathF("Common", "normal") );
-	m_textHelp.SetHorizAlign( Actor::align_left );
+	m_textHelp.SetHorizAlign( align_left );
 	m_textHelp.SetXY( SCREEN_CENTER_X+20, SCREEN_TOP+100 );
 	m_textHelp.SetDiffuseAlpha( 0 );
 	m_textHelp.SetZoom( 0.6f );
@@ -53,7 +53,7 @@ void ScreenSyncOverlay::Init()
 	m_quad.ZoomToHeight( m_textHelp.GetZoomedHeight()+20 ); 
 
 	m_textStatus.LoadFromFont( THEME->GetPathF("Common", "normal") );
-	m_textStatus.SetHorizAlign( Actor::align_center );
+	m_textStatus.SetHorizAlign( align_center );
 	m_textStatus.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y+150 );
 	m_textStatus.SetZoom( 0.8f );
 	m_textStatus.SetShadowLength( 2 );

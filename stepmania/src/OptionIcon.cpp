@@ -37,8 +37,8 @@ void OptionIcon::Load( RString sType )
 	m_text.SetShadowLength( 0 );
 	m_text.SetZoom( TEXT_ZOOM );
 	m_text.SetXY( TEXT_OFFSET_X, TEXT_OFFSET_Y );
-	m_text.SetHorizAlign( (Actor::HorizAlign)TEXT_H_ALIGN );
-	m_text.SetVertAlign( (Actor::VertAlign)TEXT_V_ALIGN );
+	m_text.SetHorizAlign( (HorizAlign)TEXT_H_ALIGN );
+	m_text.SetVertAlign( (VertAlign)TEXT_V_ALIGN );
 	this->AddChild( &m_text );
 }
 

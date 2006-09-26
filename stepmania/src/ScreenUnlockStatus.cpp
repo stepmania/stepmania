@@ -41,7 +41,7 @@ void ScreenUnlockStatus::Init()
 	unsigned NumUnlocks = UNLOCKMAN->m_UnlockEntries.size();
 
 	PointsUntilNextUnlock.LoadFromFont( THEME->GetPathF("Common","normal") );
-	PointsUntilNextUnlock.SetHorizAlign( Actor::align_left );
+	PointsUntilNextUnlock.SetHorizAlign( align_left );
 
 	apActorCommands IconCommand = ICON_COMMAND;
 	for( unsigned i=1; i <= NumUnlocks; i++ )
@@ -97,7 +97,7 @@ void ScreenUnlockStatus::Init()
 			BitmapText* text = new BitmapText;
 
 			text->LoadFromFont( THEME->GetPathF("ScreenUnlockStatus","text") );
-			text->SetHorizAlign( Actor::align_left );
+			text->SetHorizAlign( align_left );
 			text->SetZoom(ScrollingTextZoom);
 
 			switch( entry.m_Type )
@@ -235,7 +235,7 @@ void ScreenUnlockStatus::Init()
 			BitmapText* NewText = new BitmapText;
 
 			NewText->LoadFromFont( THEME->GetPathF("ScreenUnlockStatus","text") );
-			NewText->SetHorizAlign( Actor::align_left );
+			NewText->SetHorizAlign( align_left );
 
 			RString title = pSong->GetDisplayMainTitle();
 			RString subtitle = pSong->GetDisplaySubTitle();

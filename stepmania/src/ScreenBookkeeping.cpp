@@ -139,10 +139,10 @@ void ScreenBookkeeping::ChangeView( View newView )
 			sData += ssprintf("%i\n", iTotalLast);
 			
 			m_textData[0].SetText( "" );
-			m_textData[1].SetHorizAlign( Actor::align_left );
+			m_textData[1].SetHorizAlign( align_left );
 			m_textData[1].SetText( sTitle );
 			m_textData[2].SetText( "" );
-			m_textData[3].SetHorizAlign( Actor::align_right );
+			m_textData[3].SetHorizAlign( align_right );
 			m_textData[3].SetText( sData );
 		}
 		break;
@@ -163,7 +163,7 @@ void ScreenBookkeeping::ChangeView( View newView )
 					sTemp += LastWeekToLocalizedString(week) + ssprintf(": %d",coins[week]) + "\n";
 				}
 
-				m_textData[col].SetHorizAlign( Actor::align_left );
+				m_textData[col].SetHorizAlign( align_left );
 				m_textData[col].SetText( sTemp );
 			}
 		}
@@ -183,10 +183,10 @@ void ScreenBookkeeping::ChangeView( View newView )
 			}
 			
 			m_textData[0].SetText( "" );
-			m_textData[1].SetHorizAlign( Actor::align_left );
+			m_textData[1].SetHorizAlign( align_left );
 			m_textData[1].SetText( sTitle );
 			m_textData[2].SetText( "" );
-			m_textData[3].SetHorizAlign( Actor::align_right );
+			m_textData[3].SetHorizAlign( align_right );
 			m_textData[3].SetText( sData );
 		}
 		break;
@@ -211,13 +211,13 @@ void ScreenBookkeeping::ChangeView( View newView )
 				sData2 += ssprintf("%d",coins[i]) + "\n";
 			}
 			
-			m_textData[0].SetHorizAlign( Actor::align_left );
+			m_textData[0].SetHorizAlign( align_left );
 			m_textData[0].SetText( sTitle1 );
-			m_textData[1].SetHorizAlign( Actor::align_right );
+			m_textData[1].SetHorizAlign( align_right );
 			m_textData[1].SetText( sData1 );
-			m_textData[2].SetHorizAlign( Actor::align_left );
+			m_textData[2].SetHorizAlign( align_left );
 			m_textData[2].SetText( sTitle2 );
-			m_textData[3].SetHorizAlign( Actor::align_right );
+			m_textData[3].SetHorizAlign( align_right );
 			m_textData[3].SetText( sData2 );
 		}
 		break;

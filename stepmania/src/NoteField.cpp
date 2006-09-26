@@ -261,7 +261,7 @@ void NoteField::DrawBeatBar( const float fBeat )
 	{
 		m_textMeasureNumber.SetDiffuse( RageColor(1,1,1,1) );
 		m_textMeasureNumber.SetGlow( RageColor(1,1,1,0) );
-		m_textMeasureNumber.SetHorizAlign( Actor::align_right );
+		m_textMeasureNumber.SetHorizAlign( align_right );
 		m_textMeasureNumber.SetText( ssprintf("%d", iMeasureNoDisplay) );
 		m_textMeasureNumber.SetXY( -fWidth/2, fYPos );
 		m_textMeasureNumber.Draw();
@@ -306,7 +306,7 @@ void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 	const float fZoom	= ArrowEffects::GetZoom(    m_pPlayerState );
 
 	m_textMeasureNumber.SetZoom( fZoom );
-	m_textMeasureNumber.SetHorizAlign( Actor::align_right );
+	m_textMeasureNumber.SetHorizAlign( align_right );
 	m_textMeasureNumber.SetDiffuse( RageColor(1,0,0,1) );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%.3f", fBPM) );
@@ -321,7 +321,7 @@ void NoteField::DrawFreezeText( const float fBeat, const float fSecs )
 	const float fZoom	= ArrowEffects::GetZoom(    m_pPlayerState );
 
 	m_textMeasureNumber.SetZoom( fZoom );
-	m_textMeasureNumber.SetHorizAlign( Actor::align_right );
+	m_textMeasureNumber.SetHorizAlign( align_right );
 	m_textMeasureNumber.SetDiffuse( RageColor(0.8f,0.8f,0,1) );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%.3f", fSecs) );
@@ -336,7 +336,7 @@ void NoteField::DrawAttackText( const float fBeat, const Attack &attack )
 	const float fZoom	= ArrowEffects::GetZoom(    m_pPlayerState );
 
 	m_textMeasureNumber.SetZoom( fZoom );
-	m_textMeasureNumber.SetHorizAlign( Actor::align_left );
+	m_textMeasureNumber.SetHorizAlign( align_left );
 	m_textMeasureNumber.SetDiffuse( RageColor(0,0.8f,0.8f,1) );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( attack.GetTextDescription() );
@@ -351,7 +351,7 @@ void NoteField::DrawBGChangeText( const float fBeat, const RString sNewBGName )
 	const float fZoom	= ArrowEffects::GetZoom(    m_pPlayerState );
 
 	m_textMeasureNumber.SetZoom( fZoom );
-	m_textMeasureNumber.SetHorizAlign( Actor::align_left );
+	m_textMeasureNumber.SetHorizAlign( align_left );
 	m_textMeasureNumber.SetDiffuse( RageColor(0,1,0,1) );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( sNewBGName );

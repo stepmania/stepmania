@@ -143,7 +143,7 @@ void EditMenu::Load( const RString &sType )
 		m_textLabel[r].SetXY( ROW_LABELS_X, ROW_Y.GetValue(r) );
 		m_textLabel[r].SetText( EditMenuRowToLocalizedString(r) );
 		m_textLabel[r].RunCommands( ROW_LABEL_ON_COMMAND );
-		m_textLabel[r].SetHorizAlign( Actor::align_left );
+		m_textLabel[r].SetHorizAlign( align_left );
 		this->AddChild( &m_textLabel[r] );
 
 		m_textValue[r].LoadFromFont( THEME->GetPathF(sType,"value") );

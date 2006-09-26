@@ -197,9 +197,9 @@ void StreamDisplay::DrawStrip( float fRightEdgePercent, float fStripWidthInPerce
 	m_sprStreamPassing.ZoomToHeight(	m_fMeterHeight );
 	m_sprStreamHot.ZoomToHeight(		m_fMeterHeight );
 
-	m_sprStreamNormal.SetHorizAlign(	Actor::align_right );
-	m_sprStreamPassing.SetHorizAlign(	Actor::align_right );
-	m_sprStreamHot.SetHorizAlign(		Actor::align_right );
+	m_sprStreamNormal.SetHorizAlign(	align_right );
+	m_sprStreamPassing.SetHorizAlign(	align_right );
+	m_sprStreamHot.SetHorizAlign(		align_right );
 
 	m_sprStreamNormal.SetX(		-m_fMeterWidth/2 + m_fMeterWidth*fRightEdgePercent );
 	m_sprStreamPassing.SetX(	-m_fMeterWidth/2 + m_fMeterWidth*fRightEdgePercent );
