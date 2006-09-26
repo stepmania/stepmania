@@ -118,21 +118,12 @@ REGISTER_WITH_LUA_FUNCTION( LuaCoinMode );
 
 
 static const char *PremiumNames[] = {
-	"none",
-	"double",
-	"joint",
+	"None",
+	"Double",
+	"Joint",
 };
-XToString( Premium, NUM_PREMIUMS );
-static void LuaPremium(lua_State* L)
-{
-	FOREACH_Premium( i )
-	{
-		RString s = PremiumNames[i];
-		s.MakeUpper();
-		LUA->SetGlobal( "PREMIUM_"+s, i );
-	}
-}
-REGISTER_WITH_LUA_FUNCTION( LuaPremium );
+XToString( Premium, NUM_Premium );
+LuaXType( Premium );
 
 
 static const char *SortOrderNames[] = {
@@ -286,13 +277,8 @@ static const char *PerDifficultyAwardNames[] = {
 XToString( PerDifficultyAward, NUM_PerDifficultyAward );
 XToLocalizedString( PerDifficultyAward );
 StringToX( PerDifficultyAward );
-LuaFunction( PerDifficultyAwardToLocalizedString, PerDifficultyAwardToLocalizedString((PerDifficultyAward) IArg(1)) );
-static void LuaPerDifficultyAward( lua_State* L )
-{
-	FOREACH_PerDifficultyAward( i )
-		LUA->SetGlobal( PerDifficultyAwardNames[i], i );
-}
-REGISTER_WITH_LUA_FUNCTION( LuaPerDifficultyAward );
+LuaFunction( PerDifficultyAwardToLocalizedString, PerDifficultyAwardToLocalizedString(Enum::Check<PerDifficultyAward>(L, 1)) );
+LuaXType( PerDifficultyAward );
 
 // Numbers are intentially not at the front of these strings so that the 
 // strings can be used as XML entity names.
@@ -313,13 +299,8 @@ static const char *PeakComboAwardNames[] = {
 XToString( PeakComboAward, NUM_PeakComboAward );
 XToLocalizedString( PeakComboAward );
 StringToX( PeakComboAward );
-LuaFunction( PeakComboAwardToLocalizedString, PeakComboAwardToLocalizedString((PeakComboAward) IArg(1)) );
-static void LuaPeakComboAward( lua_State* L )
-{
-	FOREACH_PeakComboAward( i )
-		LUA->SetGlobal( PeakComboAwardNames[i], i );
-}
-REGISTER_WITH_LUA_FUNCTION( LuaPeakComboAward );
+LuaFunction( PeakComboAwardToLocalizedString, PeakComboAwardToLocalizedString(Enum::Check<PeakComboAward>(L, 1)) );
+LuaXType( PeakComboAward );
 
 
 void DisplayBpms::Add( float f )

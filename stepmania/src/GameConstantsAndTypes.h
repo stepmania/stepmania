@@ -314,10 +314,12 @@ enum Premium
 	PREMIUM_NONE,
 	PREMIUM_DOUBLE,
 	PREMIUM_JOINT,
-	NUM_PREMIUMS
+	NUM_Premium,
+	Premium_Invalidz
 };
-#define FOREACH_Premium( i ) FOREACH_ENUM( Premium, NUM_PREMIUMS, i )
+#define FOREACH_Premium( i ) FOREACH_ENUM( Premium, NUM_Premium, i )
 const RString& PremiumToString( Premium p );
+LuaDeclareType( Premium );
 
 
 //
@@ -343,6 +345,7 @@ enum PerDifficultyAward
 const RString& PerDifficultyAwardToString( PerDifficultyAward pma );
 const RString& PerDifficultyAwardToLocalizedString( PerDifficultyAward pma );
 PerDifficultyAward StringToPerDifficultyAward( const RString& pma );
+LuaDeclareType( PerDifficultyAward );
 
 
 enum PeakComboAward 
@@ -364,6 +367,7 @@ enum PeakComboAward
 const RString& PeakComboAwardToString( PeakComboAward pma );
 const RString& PeakComboAwardToLocalizedString( PeakComboAward pma );
 PeakComboAward StringToPeakComboAward( const RString& pma );
+LuaDeclareType( PeakComboAward );
 
 
 struct DisplayBpms
