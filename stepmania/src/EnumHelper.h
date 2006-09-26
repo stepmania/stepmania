@@ -158,7 +158,7 @@ namespace LuaHelpers { void Push( const X &Object, lua_State *L ); }
 static void Lua2##X(lua_State* L) \
 { \
 	EnumTraits<X>::Invalid = enum_add2( CNT, 1 ); \
-	/* Create the public EnumToString table: { "UnlockEntry_ArcadePoints", "UnlockEntry_DancePoints" } */ \
+	/* Create the EnumToString table: { "UnlockEntry_ArcadePoints", "UnlockEntry_DancePoints" } */ \
 	lua_newtable( L ); \
 	FOREACH_ENUM( X, CNT, i ) \
 	{ \
@@ -169,7 +169,7 @@ static void Lua2##X(lua_State* L) \
 	EnumTraits<X>::EnumToString.SetFromStack( L ); \
 	EnumTraits<X>::EnumToString.PushSelf( L ); \
 	lua_setglobal( L, #X ); \
-	/* Create the private StringToEnum table: { "UnlockEntry_ArcadePoints" = 0, "UnlockEntry_DancePoints" = 0 } */ \
+	/* Create the StringToEnum table: { "UnlockEntry_ArcadePoints" = 0, "UnlockEntry_DancePoints" = 0 } */ \
 	lua_newtable( L ); \
 	FOREACH_ENUM( X, CNT, i ) \
 	{ \
@@ -178,6 +178,8 @@ static void Lua2##X(lua_State* L) \
 		lua_pushnumber( L, i ); /* 0-based */ \
 		lua_rawset( L, -3 ); \
 	} \
+	EnumTraits<X>::StringToEnum.PushSelf( L ); \
+	lua_setglobal( L, #X##"Index" ); \
 	EnumTraits<X>::StringToEnum.SetFromStack( L ); \
 } \
 REGISTER_WITH_LUA_FUNCTION( Lua2##X ); \
