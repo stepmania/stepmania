@@ -13,7 +13,8 @@ enum TweenType
 	TWEEN_DECELERATE, 
 	TWEEN_SPRING,
 	TWEEN_BEZIER,
-	NUM_TweenType
+	NUM_TweenType,
+	TweenType_Invalid
 };
 #define FOREACH_TweenType( tt ) FOREACH_ENUM( TweenType, NUM_TweenType, tt )
 
