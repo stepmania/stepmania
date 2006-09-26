@@ -7,7 +7,6 @@
 #include "LuaManager.h"
 #include "LuaFunctions.h"
 
-LuaFunction( GradeToString,			GradeToString((Grade)IArg(1)) )
 static const char *GradeNames[] = {
 	"Tier01",
 	"Tier02",
@@ -76,17 +75,6 @@ Grade StringToGrade( const RString &sGrade )
 	LOG->Warn( "Invalid grade: %s", sGrade.c_str() );
 	return Grade_NoData;
 };
-
-static void LuaGrade(lua_State* L)
-{
-	FOREACH_Grade( g )
-	{
-		RString s = GradeToString(g);
-		LUA->SetGlobal( "Grade_"+s, g );
-	}
-	LUA->SetGlobal( "NUM_Grade", NUM_Grade );
-}
-REGISTER_WITH_LUA_FUNCTION( LuaGrade );
 
 /*
  * (c) 2001-2004 Chris Danford
