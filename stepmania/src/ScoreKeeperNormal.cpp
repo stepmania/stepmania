@@ -36,8 +36,8 @@ void ScoreKeeperNormal::Load(
 
 	/* True if a jump is one to combo, false if combo is purely based on tap count. */
 	m_bComboIsPerRow = THEME->GetMetricB( "Gameplay", "ComboIsPerRow" );
-	m_MinScoreToContinueCombo = (TapNoteScore) THEME->GetMetricI( "Gameplay", "MinScoreToContinueCombo" );
-	m_MinScoreToMaintainCombo = (TapNoteScore) THEME->GetMetricI( "Gameplay", "MinScoreToMaintainCombo" );
+	m_MinScoreToContinueCombo.Load( "Gameplay", "MinScoreToContinueCombo" );
+	m_MinScoreToMaintainCombo.Load( "Gameplay", "MinScoreToMaintainCombo" );
 
 	//
 	// Fill in STATSMAN->m_CurStageStats, calculate multiplier

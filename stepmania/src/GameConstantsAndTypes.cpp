@@ -166,19 +166,10 @@ TapNoteScore StringToTapNoteScore( const RString &s )
 	else if( s == "Perfect" )	return TNS_W2;
 	else if( s == "Marvelous" )	return TNS_W1;
 
-	return TNS_INVALID;
+	return TNS_Invalid;
 }
 XToLocalizedString( TapNoteScore );
-LuaFunction( TapNoteScoreToLocalizedString, TapNoteScoreToLocalizedString((TapNoteScore) IArg(1)) );
-static void LuaTapNoteScores( lua_State* L )
-{
-	FOREACH_TapNoteScore( i )
-	{
-		RString s = TapNoteScoreNames[i];
-		LUA->SetGlobal( "TNS_"+s, i );
-	}
-}
-REGISTER_WITH_LUA_FUNCTION( LuaTapNoteScores );
+LuaFunction( TapNoteScoreToLocalizedString, TapNoteScoreToLocalizedString(Enum::Check<TapNoteScore>(L, 1)) );
 
 
 static const char *HoldNoteScoreNames[] = {
@@ -187,6 +178,7 @@ static const char *HoldNoteScoreNames[] = {
 	"Held",
 };
 XToString( HoldNoteScore, NUM_HoldNoteScore );
+LuaXType( HoldNoteScore );
 HoldNoteScore StringToHoldNoteScore( const RString &s )
 {
 	// for backward compatibility
@@ -198,18 +190,9 @@ HoldNoteScore StringToHoldNoteScore( const RString &s )
 	else if( s == "LetGo" )	return HNS_LetGo;
 	else if( s == "Held" )	return HNS_Held;
 
-	return HNS_INVALID;
+	return HNS_Invalid;
 }
 XToLocalizedString( HoldNoteScore );
-static void LuaHoldNoteScores( lua_State* L )
-{
-	FOREACH_HoldNoteScore( i )
-	{
-		RString s = HoldNoteScoreNames[i];
-		LUA->SetGlobal( "HNS_"+s, i );
-	}
-}
-REGISTER_WITH_LUA_FUNCTION( LuaHoldNoteScores );
 
 
 static const char *MemoryCardStateNames[] = {
@@ -326,16 +309,7 @@ static const char *GoalTypeNames[] = {
 };
 XToString( GoalType, NUM_GoalType );
 StringToX( GoalType );
-static void LuaGoalType(lua_State* L)
-{
-	FOREACH_GoalType( gt )
-	{
-		RString s = GoalTypeNames[gt];
-		s.MakeUpper();
-		LUA->SetGlobal( "GOAL_"+s, gt );
-	}
-}
-REGISTER_WITH_LUA_FUNCTION( LuaGoalType );
+LuaXType( GoalType );
 
 static const char *EditModeNames[] = {
 	"Practice",

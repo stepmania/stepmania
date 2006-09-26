@@ -6,6 +6,7 @@
 #include "ScoreKeeper.h"
 #include "Attack.h"
 #include "ScreenMessage.h"
+#include "ThemeMetric.h"
 class Steps;
 class Song;
 struct RadarValues;
@@ -26,8 +27,8 @@ class ScoreKeeperNormal: public ScoreKeeper
 	bool		m_bIsBeginner;
 
 	bool		m_bComboIsPerRow;
-	TapNoteScore	m_MinScoreToContinueCombo;
-	TapNoteScore	m_MinScoreToMaintainCombo;
+	ThemeMetric<TapNoteScore>	m_MinScoreToContinueCombo;
+	ThemeMetric<TapNoteScore>	m_MinScoreToMaintainCombo;
 
 	vector<Steps*>	m_apSteps;
 

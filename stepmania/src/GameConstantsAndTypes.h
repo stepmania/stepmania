@@ -143,7 +143,7 @@ enum TapNoteScore {
 	TNS_W2,
 	TNS_W1,
 	NUM_TapNoteScore,
-	TNS_INVALID,
+	TNS_Invalid,
 };
 #define FOREACH_TapNoteScore( tns ) FOREACH_ENUM( TapNoteScore, NUM_TapNoteScore, tns )
 const RString& TapNoteScoreToString( TapNoteScore tns );
@@ -158,7 +158,7 @@ enum HoldNoteScore
 	HNS_LetGo,		// the HoldNote has passed and they missed it
 	HNS_Held,		// the HoldNote has passed and was successfully held all the way through
 	NUM_HoldNoteScore,
-	HNS_INVALID,
+	HNS_Invalid,
 };
 #define FOREACH_HoldNoteScore( hns ) FOREACH_ENUM( HoldNoteScore, NUM_HoldNoteScore, hns )
 const RString& HoldNoteScoreToString( HoldNoteScore hns );
@@ -320,7 +320,7 @@ enum Premium
 	PREMIUM_DOUBLE,
 	PREMIUM_JOINT,
 	NUM_Premium,
-	Premium_Invalidz
+	Premium_Invalid
 };
 #define FOREACH_Premium( i ) FOREACH_ENUM( Premium, NUM_Premium, i )
 const RString& PremiumToString( Premium p );
@@ -409,6 +409,7 @@ enum GoalType
 #define FOREACH_GoalType( gt ) FOREACH_ENUM( GoalType, NUM_GoalType, gt )
 const RString& GoalTypeToString( GoalType gt );
 GoalType StringToGoalType( const RString& s );
+LuaDeclareType( GoalType );
 
 
 enum EditMode

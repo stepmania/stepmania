@@ -32,8 +32,8 @@ void PlayerStageStats::Init()
 	iSongsPassed = iSongsPlayed = 0;
 	fLifeRemainingSeconds = 0;
 	fCaloriesBurned = 0;
-	tnsLast = TNS_INVALID;
-	hnsLast = HNS_INVALID;
+	tnsLast = TNS_Invalid;
+	hnsLast = HNS_Invalid;
 
 	ZERO( iTapNoteScores );
 	ZERO( iHoldNoteScores );
