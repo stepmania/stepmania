@@ -59,7 +59,7 @@ static const char *PlayModeNames[] = {
 XToString( PlayMode, NUM_PlayMode );
 XToLocalizedString( PlayMode );
 StringToX( PlayMode );
-LuaFunction( PlayModeToLocalizedString, PlayModeToLocalizedString((PlayMode) IArg(1)) );
+LuaFunction( PlayModeToLocalizedString, PlayModeToLocalizedString(Enum::Check<PlayMode>(L, 1)) );
 LuaXType( PlayMode );
 
 RankingCategory AverageMeterToRankingCategory( int iAverageMeter )
