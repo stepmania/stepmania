@@ -124,7 +124,7 @@ bool DWILoader::LoadFromDWITokens(
 {
 	CHECKPOINT_M( "DWILoader::LoadFromDWITokens()" );
 
-	out.m_StepsType = STEPS_TYPE_INVALID;
+	out.m_StepsType = StepsType_Invalid;
 
 	if(		 sMode == "SINGLE" )	out.m_StepsType = STEPS_TYPE_DANCE_SINGLE;
 	else if( sMode == "DOUBLE" )		out.m_StepsType = STEPS_TYPE_DANCE_DOUBLE;
@@ -513,7 +513,7 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 				(iNumParams==5) ? sParams[4] : RString(""),
 				*pNewNotes
 				);
-			if(pNewNotes->m_StepsType != STEPS_TYPE_INVALID)
+			if( pNewNotes->m_StepsType != StepsType_Invalid )
 				out.AddSteps( pNewNotes );
 			else
 				delete pNewNotes;

@@ -282,9 +282,9 @@ void GameState::Reset()
 
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_ATTRACT );
 	
-	m_stEdit.Set( STEPS_TYPE_INVALID );
+	m_stEdit.Set( StepsType_Invalid );
 	m_pEditSourceSteps.Set( NULL );
-	m_stEditSource.Set( STEPS_TYPE_INVALID );
+	m_stEditSource.Set( StepsType_Invalid );
 	m_iEditCourseEntryIndex.Set( -1 );
 	m_sEditLocalProfileID.Set( "" );
 	

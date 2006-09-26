@@ -1160,7 +1160,7 @@ public:
 			m_Def.m_vsChoices.push_back( s );
 		}
 
-		if( *m_pstToFill == STEPS_TYPE_INVALID )
+		if( *m_pstToFill == StepsType_Invalid )
 			m_pstToFill->Set( m_vStepsTypesToShow[0] );
 	}
 

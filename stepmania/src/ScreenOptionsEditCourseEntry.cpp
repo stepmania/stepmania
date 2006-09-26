@@ -278,9 +278,9 @@ void ScreenOptionsEditCourseEntry::HandleScreenMessage( const ScreenMessage SM )
 				if( !pSteps )
 					pSteps = SongUtil::GetStepsByDifficulty( pSong, st, DIFFICULTY_INVALID, false );
 				if( !pSteps )
-					pSteps = SongUtil::GetStepsByDifficulty( pSong, STEPS_TYPE_INVALID, cd, false );
+					pSteps = SongUtil::GetStepsByDifficulty( pSong, StepsType_Invalid, cd, false );
 				if( !pSteps )
-					pSteps = SongUtil::GetStepsByDifficulty( pSong, STEPS_TYPE_INVALID, DIFFICULTY_INVALID, false );
+					pSteps = SongUtil::GetStepsByDifficulty( pSong, StepsType_Invalid, DIFFICULTY_INVALID, false );
 				ASSERT( pSteps );
 				
 				// Set up for ScreenEdit

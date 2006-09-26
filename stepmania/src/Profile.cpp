@@ -1525,7 +1525,7 @@ void Profile::LoadCategoryScoresFromNode( const XNode* pCategoryScores )
 		if( !pStepsType->GetAttrValue( "Type", str ) )
 			WARN_AND_CONTINUE;
 		StepsType st = GameManager::StringToStepsType( str );
-		if( st == STEPS_TYPE_INVALID )
+		if( st == StepsType_Invalid )
 			WARN_AND_CONTINUE_M( str );
 
 		FOREACH_CONST_Child( pStepsType, pRadarCategory )
@@ -1822,7 +1822,7 @@ void Profile::AddCourseRecentScore( const Course* pCourse, const Trail* pTrail, 
 StepsType Profile::GetLastPlayedStepsType() const
 {
 	if( m_vRecentStepsScores.empty() )
-		return STEPS_TYPE_INVALID;
+		return StepsType_Invalid;
 	const HighScoreForASongAndSteps &h = m_vRecentStepsScores.back();
 	return h.stepsID.GetStepsType();
 }

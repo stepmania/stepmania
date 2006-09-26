@@ -99,7 +99,7 @@ void SongUtil::GetSteps(
 	if( !iMaxToGet )
 		return;
 
-	const vector<Steps*> &vpSteps = st == STEPS_TYPE_INVALID ? pSong->GetAllSteps() : pSong->GetStepsByStepsType(st);
+	const vector<Steps*> &vpSteps = st == StepsType_Invalid ? pSong->GetAllSteps() : pSong->GetStepsByStepsType(st);
 	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
 	{
 		Steps* pSteps = vpSteps[i];
@@ -149,7 +149,7 @@ Steps* SongUtil::GetOneSteps(
 
 Steps* SongUtil::GetStepsByDifficulty( const Song *pSong, StepsType st, Difficulty dc, bool bIncludeAutoGen )
 {
-	const vector<Steps*>& vpSteps = (st == STEPS_TYPE_INVALID)? pSong->GetAllSteps() : pSong->GetStepsByStepsType(st);
+	const vector<Steps*>& vpSteps = (st == StepsType_Invalid)? pSong->GetAllSteps() : pSong->GetStepsByStepsType(st);
 	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
 	{
 		Steps* pSteps = vpSteps[i];
@@ -167,7 +167,7 @@ Steps* SongUtil::GetStepsByDifficulty( const Song *pSong, StepsType st, Difficul
 
 Steps* SongUtil::GetStepsByMeter( const Song *pSong, StepsType st, int iMeterLow, int iMeterHigh )
 {
-	const vector<Steps*>& vpSteps = (st == STEPS_TYPE_INVALID)? pSong->GetAllSteps() : pSong->GetStepsByStepsType(st);
+	const vector<Steps*>& vpSteps = (st == StepsType_Invalid)? pSong->GetAllSteps() : pSong->GetStepsByStepsType(st);
 	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
 	{
 		Steps* pSteps = vpSteps[i];
@@ -198,7 +198,7 @@ Steps* SongUtil::GetClosestNotes( const Song *pSong, StepsType st, Difficulty dc
 {
 	ASSERT( dc != DIFFICULTY_INVALID );
 
-	const vector<Steps*>& vpSteps = (st == STEPS_TYPE_INVALID)? pSong->GetAllSteps() : pSong->GetStepsByStepsType(st);
+	const vector<Steps*>& vpSteps = (st == StepsType_Invalid)? pSong->GetAllSteps() : pSong->GetStepsByStepsType(st);
 	Steps *pClosest = NULL;
 	int iClosestDistance = 999;
 	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
@@ -744,7 +744,7 @@ bool SongUtil::ValidateCurrentEditStepsDescription( const RString &sAnswer, RStr
 
 	// Steps name must be unique for this song.
 	vector<Steps*> v;
-	GetSteps( pSong, v, STEPS_TYPE_INVALID, DIFFICULTY_EDIT ); 
+	GetSteps( pSong, v, StepsType_Invalid, DIFFICULTY_EDIT ); 
 	FOREACH_CONST( Steps*, v, s )
 	{
 		if( pSteps == *s )

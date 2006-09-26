@@ -58,7 +58,7 @@ namespace SongUtil
 	void GetSteps( 
 		const Song *pSong,
 		vector<Steps*>& arrayAddTo, 
-		StepsType st = STEPS_TYPE_INVALID, 
+		StepsType st = StepsType_Invalid, 
 		Difficulty dc = DIFFICULTY_INVALID, 
 		int iMeterLow = -1, 
 		int iMeterHigh = -1, 
@@ -69,7 +69,7 @@ namespace SongUtil
 		);
 	Steps* GetOneSteps( 
 		const Song *pSong,
-		StepsType st = STEPS_TYPE_INVALID, 
+		StepsType st = StepsType_Invalid, 
 		Difficulty dc = DIFFICULTY_INVALID, 
 		int iMeterLow = -1, 
 		int iMeterHigh = -1, 

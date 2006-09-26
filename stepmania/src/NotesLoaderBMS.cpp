@@ -180,7 +180,7 @@ static StepsType DetermineStepsType( int iPlayer, const NoteData &nd, const RStr
 			return STEPS_TYPE_BEAT_SINGLE5;
 		case 8:		return STEPS_TYPE_BEAT_SINGLE7;
 		case 9:		return STEPS_TYPE_POPN_NINE;
-		default:	return STEPS_TYPE_INVALID;
+		default:	return StepsType_Invalid;
 		}
 	case 2:	// couple/battle
 		return STEPS_TYPE_DANCE_COUPLE;
@@ -194,11 +194,11 @@ static StepsType DetermineStepsType( int iPlayer, const NoteData &nd, const RStr
 		case 8:		return STEPS_TYPE_BEAT_SINGLE7;
 		case 12:	return STEPS_TYPE_BEAT_DOUBLE5;
 		case 16:	return STEPS_TYPE_BEAT_DOUBLE7;
-		default:	return STEPS_TYPE_INVALID;
+		default:	return StepsType_Invalid;
 		}
 	default:
 		LOG->UserLog( "Song file", sPath, "has an invalid #PLAYER value %d.", iPlayer );
-		return STEPS_TYPE_INVALID;
+		return StepsType_Invalid;
 	}
 }
 
@@ -252,7 +252,7 @@ bool BMSLoader::LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNa
 {
 	LOG->Trace( "Steps::LoadFromBMSFile( '%s' )", sPath.c_str() );
 
-	out.m_StepsType = STEPS_TYPE_INVALID;
+	out.m_StepsType = StepsType_Invalid;
 
 	// BMS player code.  Fill in below and use to determine StepsType.
 	int iPlayer = -1;
@@ -408,7 +408,7 @@ bool BMSLoader::LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNa
 			out.m_StepsType = STEPS_TYPE_DANCE_SOLO;
 	}
 	
-	if( out.m_StepsType == STEPS_TYPE_INVALID )
+	if( out.m_StepsType == StepsType_Invalid )
 	{
 		LOG->UserLog( "Song file", sPath, "has an unknown steps type" );
 		return false;

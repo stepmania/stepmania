@@ -94,7 +94,7 @@ static void RemoveStepsTypes( vector<StepsType>& inout, RString sStepsTypesToRem
 	FOREACH_CONST( RString, v, i )
 	{
 		StepsType st = GameManager::StringToStepsType(*i);
-		if( st == STEPS_TYPE_INVALID )
+		if( st == StepsType_Invalid )
 			LOG->Warn( "Invalid StepsType value '%s' in '%s'", i->c_str(), sStepsTypesToRemove.c_str() );
 
 		const vector<StepsType>::iterator iter = find( inout.begin(), inout.end(), st );

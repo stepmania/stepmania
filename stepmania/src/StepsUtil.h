@@ -16,7 +16,7 @@ public:
 	Difficulty m_difficulty;	// don't filter if DIFFICULTY_INVALID
 	int m_iLowMeter;		// don't filter if -1
 	int m_iHighMeter;		// don't filter if -1
-	StepsType m_st;			// don't filter if STEPS_TYPE_INVALID
+	StepsType m_st;			// don't filter if StepsType_Invalid
 	enum Locked { Locked_Locked, Locked_Unlocked, Locked_DontCare } m_Locked;
 
 	StepsCriteria()
@@ -24,7 +24,7 @@ public:
 		m_difficulty = DIFFICULTY_INVALID;
 		m_iLowMeter = -1;
 		m_iHighMeter = -1;
-		m_st = STEPS_TYPE_INVALID;
+		m_st = StepsType_Invalid;
 		m_Locked = Locked_DontCare;
 	}
 

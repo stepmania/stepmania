@@ -29,7 +29,7 @@
 Steps::Steps()
 {
 	m_bSavedToDisk = false;
-	m_StepsType = STEPS_TYPE_INVALID;
+	m_StepsType = StepsType_Invalid;
 	m_LoadedFromProfile = ProfileSlot_INVALID;
 	m_iHash = 0;
 	m_Difficulty = DIFFICULTY_INVALID;

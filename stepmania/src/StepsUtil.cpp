@@ -19,7 +19,7 @@ bool StepsCriteria::Matches( const Song *pSong, const Steps *pSteps ) const
 		return false;
 	if( m_iHighMeter != -1  &&  pSteps->GetMeter() > m_iHighMeter )
 		return false;
-	if( m_st != STEPS_TYPE_INVALID  &&  pSteps->m_StepsType != m_st )
+	if( m_st != StepsType_Invalid  &&  pSteps->m_StepsType != m_st )
 		return false;
 	switch( m_Locked )
 	{
@@ -51,7 +51,7 @@ void StepsUtil::GetAllMatching( const SongCriteria &soc, const StepsCriteria &st
 
 void StepsUtil::GetAllMatching( Song *pSong, const StepsCriteria &stc, vector<SongAndSteps> &out )
 {
-	const vector<Steps*> &vSteps = ( stc.m_st == STEPS_TYPE_INVALID ?  pSong->GetAllSteps() :
+	const vector<Steps*> &vSteps = ( stc.m_st == StepsType_Invalid ?  pSong->GetAllSteps() :
 					 pSong->GetStepsByStepsType(stc.m_st) );
 	
 	FOREACH_CONST( Steps*, vSteps, st )
@@ -190,7 +190,7 @@ void StepsID::FromSteps( const Steps *p )
 {
 	if( p == NULL )
 	{
-		st = STEPS_TYPE_INVALID;
+		st = StepsType_Invalid;
 		dc = DIFFICULTY_INVALID;
 		sDescription = "";
 		uHash = 0;
@@ -225,7 +225,7 @@ static map<SongIDAndStepsID,Steps *> g_Cache;
 
 Steps *StepsID::ToSteps( const Song *p, bool bAllowNull, bool bUseCache ) const
 {
-	if( st == STEPS_TYPE_INVALID || dc == DIFFICULTY_INVALID )
+	if( st == StepsType_Invalid || dc == DIFFICULTY_INVALID )
 		return NULL;
 
 	SongID songID;
@@ -318,7 +318,7 @@ RString StepsID::ToString() const
 
 bool StepsID::IsValid() const
 {
-	return st != STEPS_TYPE_INVALID && dc != DIFFICULTY_INVALID;
+	return st != StepsType_Invalid && dc != DIFFICULTY_INVALID;
 }
 
 bool StepsID::operator<( const StepsID &rhs ) const

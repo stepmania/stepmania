@@ -70,7 +70,7 @@ enum StepsType
 	STEPS_TYPE_POPN_NINE,
 	STEPS_TYPE_LIGHTS_CABINET,
 	NUM_StepsType,		// leave this at the end
-	STEPS_TYPE_INVALID,
+	StepsType_Invalid,
 };
 #define FOREACH_StepsType( st ) FOREACH_ENUM( StepsType, NUM_StepsType, st )
 
