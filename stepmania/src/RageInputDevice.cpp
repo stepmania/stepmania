@@ -218,7 +218,7 @@ StringToX( InputDevice );
  * localization or the keyboard language. */
 RString DeviceInput::ToString() const
 {
-	if( device == DEVICE_NONE )
+	if( device == InputDevice_Invalid )
 		return RString();
 
 	RString s = InputDeviceToString(device) + "_" + DeviceButtonToString(button);
@@ -232,7 +232,7 @@ bool DeviceInput::FromString( const RString &s )
 
 	if( 2 != sscanf( s, "%31[^_]_%31[^_]", szDevice, szButton ) )
 	{
-		device = DEVICE_NONE;
+		device = InputDevice_Invalid;
 		return false;
 	}
 

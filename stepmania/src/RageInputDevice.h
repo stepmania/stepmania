@@ -47,7 +47,7 @@ enum InputDevice
 	DEVICE_PUMP2,
 	DEVICE_MIDI,
 	NUM_InputDevice,		// leave this at the end
-	DEVICE_NONE			// means this is NULL
+	InputDevice_Invalid			// means this is NULL
 };
 #define FOREACH_InputDevice( i ) FOREACH_ENUM( InputDevice, NUM_InputDevice, i )
 const RString& InputDeviceToString( InputDevice i );
@@ -307,7 +307,7 @@ public:
 
 	RageTimer ts;
 
-	DeviceInput(): device(DEVICE_NONE), button(DeviceButton_Invalid), level(0), ts(RageZeroTimer) { }
+	DeviceInput(): device(InputDevice_Invalid), button(DeviceButton_Invalid), level(0), ts(RageZeroTimer) { }
 	DeviceInput( InputDevice d, DeviceButton b, float l=0 ): device(d), button(b), level(l), ts(RageZeroTimer) { }
 	DeviceInput( InputDevice d, DeviceButton b, float l, const RageTimer &t ):
 		device(d), button(b), level(l), ts(t) { }
@@ -334,8 +334,8 @@ public:
 	RString ToString() const;
 	bool FromString( const RString &s );
 
-	bool IsValid() const { return device != DEVICE_NONE; };
-	void MakeInvalid() { device = DEVICE_NONE; };
+	bool IsValid() const { return device != InputDevice_Invalid; };
+	void MakeInvalid() { device = InputDevice_Invalid; };
 
 	bool IsJoystick() const { return ::IsJoystick(device); }
 };

@@ -758,7 +758,7 @@ bool InputMapper::DeviceToGame( const DeviceInput &DeviceI, GameInput& GameI ) /
 bool InputMapper::GameToDevice( const GameInput &GameI, int iSlotNum, DeviceInput& DeviceI )	// return true if there is a mapping from pad to device
 {
 	DeviceI = m_GItoDI[GameI.controller][GameI.button][iSlotNum];
-	return DeviceI.device != DEVICE_NONE;
+	return DeviceI.device != InputDevice_Invalid;
 }
 
 PlayerNumber InputMapper::ControllerToPlayerNumber( GameController controller )
@@ -884,13 +884,13 @@ void InputMapper::ResetKeyRepeat( MenuButton MenuI, PlayerNumber pn )
 InputDevice InputMapper::MultiPlayerToInputDevice( MultiPlayer mp )
 {
 	if( mp == MultiPlayer_INVALID )
-		return DEVICE_NONE;
+		return InputDevice_Invalid;
 	return enum_add2( DEVICE_JOY1, mp );
 }
 
 MultiPlayer InputMapper::InputDeviceToMultiPlayer( InputDevice id )
 {
-	if( id == DEVICE_NONE )
+	if( id == InputDevice_Invalid )
 		return MultiPlayer_INVALID;
 	return enum_add2( MultiPlayer_1, id - DEVICE_JOY1 );
 }

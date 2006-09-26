@@ -226,7 +226,7 @@ void InputFilter::Update( float fDeltaTime )
 	 * things like "key pressed, key release, key repeat". */
 	LockMut(*queuemutex);
 
-	DeviceInput di( DEVICE_NONE, DeviceButton_Invalid, 1.0f, now );
+	DeviceInput di( InputDevice_Invalid, DeviceButton_Invalid, 1.0f, now );
 
 	vector<ButtonStateMap::iterator> ButtonsToErase;
 	
