@@ -526,7 +526,7 @@ class DebugLineCoinMode : public IDebugLine
 	virtual void Do( RString &sMessageOut )
 	{
 		CoinMode cm = (CoinMode)(PREFSMAN->m_CoinMode+1);
-		wrap( (int&)cm, NUM_COIN_MODES );
+		wrap( (int&)cm, NUM_CoinMode );
 		PREFSMAN->m_CoinMode.Set( cm );
 		SCREENMAN->RefreshCreditsMessages();
 		IDebugLine::Do( sMessageOut );
