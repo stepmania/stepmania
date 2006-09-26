@@ -55,7 +55,7 @@ struct InterpolateBezier1D: public ITween
 	float Tween( float f ) const;
 	ITween *Copy() const { return new InterpolateBezier1D(*this); }
 
-	RageQuadradtic m_Bezier;
+	RageQuadratic m_Bezier;
 };
 
 float InterpolateBezier1D::Tween( float f ) const

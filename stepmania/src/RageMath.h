@@ -51,7 +51,7 @@ void RageMatrixTranspose( RageMatrix* pOut, const RageMatrix* pIn );
 float RageFastSin( float x ) CONST_FUNCTION;
 float RageFastCos( float x ) CONST_FUNCTION;
 
-class RageQuadradtic
+class RageQuadratic
 {
 public:
 	void SetFromBezier( float fC1, float fC2, float fC3, float fC4 );
@@ -78,8 +78,8 @@ public:
 	float EvaluateYFromX( float fX ) const;
 
 private:
-	RageQuadradtic m_X;
-	RageQuadradtic m_Y;
+	RageQuadratic m_X;
+	RageQuadratic m_Y;
 };
 
 #endif
