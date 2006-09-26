@@ -83,7 +83,7 @@ static const char *EditStateNames[] = {
 	"RecordPaused",
 	"Playing"
 };
-XToString( EditState, NUM_EDIT_STATES );
+XToString( EditState, NUM_EditState );
 
 #if defined(XBOX)
 void ScreenEdit::InitEditMappings()
@@ -708,7 +708,7 @@ void ScreenEdit::Init()
 	m_NoteFieldRecord.Load( &m_NoteDataRecord, -(int)SCREEN_HEIGHT/2, (int)SCREEN_HEIGHT/2 );
 	this->AddChild( &m_NoteFieldRecord );
 
-	m_EditState = STATE_INVALID;
+	m_EditState = EditState_Invalid;
 	TransitionEditState( STATE_EDITING );
 	
 	m_bRemoveNoteButtonDown = false;

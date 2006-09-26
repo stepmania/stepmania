@@ -26,8 +26,8 @@ enum EditState
 	STATE_RECORDING,
 	STATE_RECORDING_PAUSED,
 	STATE_PLAYING,
-	NUM_EDIT_STATES,
-	STATE_INVALID
+	NUM_EditState,
+	EditState_Invalid
 };
 
 enum EditButton

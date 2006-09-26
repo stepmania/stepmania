@@ -19,15 +19,15 @@ static const char *SetTimeSelectionNames[] = {
 	"Minute", 
 	"Second", 
 };
-XToString( SetTimeSelection, NUM_SET_TIME_SELECTIONS );
-#define FOREACH_SetTimeSelection( s ) FOREACH_ENUM( SetTimeSelection, NUM_SET_TIME_SELECTIONS, s )
+XToString( SetTimeSelection, NUM_SetTimeSelection );
+#define FOREACH_SetTimeSelection( s ) FOREACH_ENUM( SetTimeSelection, NUM_SetTimeSelection, s )
 
-const float g_X[NUM_SET_TIME_SELECTIONS] =
+const float g_X[NUM_SetTimeSelection] =
 {
 	320, 320, 320, 320, 320, 320
 };
 
-const float g_Y[NUM_SET_TIME_SELECTIONS] =
+const float g_Y[NUM_SetTimeSelection] =
 {
 	140, 180, 220, 260, 300, 340
 };
@@ -148,7 +148,7 @@ void ScreenSetTime::ChangeSelection( int iDirection )
 	SetTimeSelection OldSelection = m_Selection;
 	enum_add<SetTimeSelection>( m_Selection, iDirection );
 
-	CLAMP( (int&)m_Selection, 0, NUM_SET_TIME_SELECTIONS-1 );
+	CLAMP( (int&)m_Selection, 0, NUM_SetTimeSelection-1 );
 	if( iDirection != 0 && m_Selection == OldSelection )
 		return; // can't move any more
 
@@ -189,7 +189,7 @@ void ScreenSetTime::MenuStart( const InputEventPlus &input )
 
 	if( bHoldingLeftAndRight )
 		ChangeSelection( -1 );
-	else if( m_Selection == NUM_SET_TIME_SELECTIONS -1 )	// last row
+	else if( m_Selection == NUM_SetTimeSelection -1 )	// last row
 	{
 		/* Save the new time. */
 		time_t iNow = time(NULL);

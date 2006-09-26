@@ -12,7 +12,8 @@ enum SetTimeSelection
 	hour, 
 	minute, 
 	second, 
-	NUM_SET_TIME_SELECTIONS 
+	NUM_SetTimeSelection,
+	SetTimeSelection_Invalid
 };
 
 class ScreenSetTime : public ScreenWithMenuElements
@@ -37,8 +38,8 @@ private:
 	void ChangeSelection( int iDirection );
 	void ChangeValue( int iDirection );
 
-	BitmapText	m_textTitle[NUM_SET_TIME_SELECTIONS];
-	BitmapText	m_textValue[NUM_SET_TIME_SELECTIONS];
+	BitmapText	m_textTitle[NUM_SetTimeSelection];
+	BitmapText	m_textValue[NUM_SetTimeSelection];
 	BitmapText	m_textDayOfWeek;
 };
 

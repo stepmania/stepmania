@@ -28,9 +28,10 @@ enum PageType
 	PageType_OniCourses,
 	PageType_SurvivalCourses,
 	PageType_AllCourses,
-	NUM_PAGE_TYPES
+	NUM_PageType,
+	PageType_Invalid
 };
-#define FOREACH_PageType( pt ) FOREACH_ENUM( PageType, NUM_PAGE_TYPES, pt )
+#define FOREACH_PageType( pt ) FOREACH_ENUM( PageType, NUM_PageType, pt )
 const RString& PageTypeToString( PageType pt );
 PageType StringToPageType( const RString& s );
 
