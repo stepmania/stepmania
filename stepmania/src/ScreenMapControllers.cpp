@@ -72,7 +72,7 @@ void ScreenMapControllers::Init()
 
 	// header row
 	{
-		for( int c=0; c<MAX_GAME_CONTROLLERS; c++ ) 
+		FOREACH_GameController( c )
 		{			
 			BitmapText &text = m_textLabel[c];
 			text.LoadFromFont( THEME->GetPathF("Common","title") );
@@ -115,7 +115,7 @@ void ScreenMapControllers::Init()
 			m_Line[iRow].AddChild( pSecondary );
 		}
 
-		for( int c=0; c<MAX_GAME_CONTROLLERS; c++ ) 
+		FOREACH_GameController( c )
 		{			
 			for( int s=0; s<NUM_SHOWN_GAME_TO_DEVICE_SLOTS; s++ ) 
 			{
