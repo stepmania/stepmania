@@ -29,6 +29,7 @@ enum CourseType
 #define FOREACH_CourseType( i ) FOREACH_ENUM( CourseType, NUM_CourseType, i )
 const RString& CourseTypeToString( CourseType i );
 const RString& CourseTypeToLocalizedString( CourseType i );
+LuaDeclareType( CourseType );
 
 inline PlayMode CourseTypeToPlayMode( CourseType ct ) { return (PlayMode)(PLAY_MODE_NONSTOP+ct); }
 inline CourseType PlayModeToCourseType( PlayMode pm ) { return (CourseType)(pm-PLAY_MODE_NONSTOP); }

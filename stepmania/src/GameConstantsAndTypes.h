@@ -90,6 +90,7 @@ enum PlayMode
 const RString& PlayModeToString( PlayMode pm );
 const RString& PlayModeToLocalizedString( PlayMode pm );
 PlayMode StringToPlayMode( const RString& s );
+LuaDeclareType( PlayMode );
 
 
 
@@ -411,6 +412,7 @@ enum EditMode
 };
 const RString& EditModeToString( EditMode em );
 EditMode StringToEditMode( const RString& s );
+LuaDeclareType( EditMode );
 
 enum Stage
 {

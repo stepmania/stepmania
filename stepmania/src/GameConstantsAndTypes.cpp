@@ -71,6 +71,7 @@ StringToX( PlayMode );
 LuaXToString( PlayMode );
 LuaFunction( PlayModeToLocalizedString, PlayModeToLocalizedString((PlayMode) IArg(1)) );
 LuaXType( PlayMode, NUM_PlayMode, "PLAY_MODE_", true )
+LuaXType2( PlayMode, NUM_PlayMode, "PlayMode_" )
 
 RankingCategory AverageMeterToRankingCategory( int iAverageMeter )
 {
@@ -407,6 +408,7 @@ static const char *EditModeNames[] = {
 XToString( EditMode, NUM_EditMode );
 StringToX( EditMode );
 LuaXType( EditMode, NUM_EditMode, "EditMode_", false );
+LuaXType2( EditMode, NUM_EditMode, "EditMode_" );
 
 static const char *StageNames[] = {
 	"1",

@@ -190,6 +190,7 @@ enum NoteType
 };
 const RString& NoteTypeToString( NoteType nt );
 const RString& NoteTypeToLocalizedString( NoteType nt );
+LuaDeclareType( NoteType );
 float NoteTypeToBeat( NoteType nt );
 NoteType GetNoteType( int row );
 NoteType BeatToNoteType( float fBeat );

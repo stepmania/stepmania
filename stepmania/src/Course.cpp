@@ -28,6 +28,7 @@ static const char *CourseTypeNames[] = {
 XToString( CourseType, NUM_CourseType );
 XToLocalizedString( CourseType );
 LuaXType( CourseType, NUM_CourseType, "COURSE_TYPE_", true );
+LuaXType2( CourseType, NUM_CourseType, "CourseType_" );
 LuaFunction( CourseTypeToLocalizedString, CourseTypeToLocalizedString((CourseType) IArg(1)) );
 
 

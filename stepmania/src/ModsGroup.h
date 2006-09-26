@@ -11,6 +11,7 @@ enum ModsLevel
 	ModsLevel_Song,		// Stage + forced attack mods
 	NUM_ModsLevel,
 };
+LuaDeclareType( ModsLevel );
 
 #define MODS_GROUP_ASSIGN( group, level, member, val )		(group).Assign( (level), member, (val) )
 #define MODS_GROUP_ASSIGN_N( group, level, member, n, val )	(group).Assign_n( (level), member, (n), (val) )
