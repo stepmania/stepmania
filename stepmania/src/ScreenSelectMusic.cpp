@@ -884,7 +884,7 @@ void ScreenSelectMusic::AfterMusicChange()
 	g_bWantFallbackCdTitle = false;
 	bool bWantBanner = true;
 
-	static SortOrder s_lastSortOrder = SORT_INVALID;
+	static SortOrder s_lastSortOrder = SortOrder_INVALID;
 	if( GAMESTATE->m_SortOrder != s_lastSortOrder )
 	{
 		// Reload to let Lua metrics have a chance to change the help text.

@@ -16,7 +16,7 @@ MusicSortDisplay::MusicSortDisplay()
 
 void MusicSortDisplay::Set( SortOrder so ) 
 { 
-	if( so == SORT_INVALID )
+	if( so == SortOrder_INVALID )
 		this->UnloadTexture();
 	else
 		Load( THEME->GetPathG("MusicSortDisplay",SortOrderToString(so)) );

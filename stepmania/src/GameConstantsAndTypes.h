@@ -115,11 +115,11 @@ enum SortOrder
 	SORT_ONI_COURSES,
 	SORT_ENDLESS_COURSES,
 	SORT_ROULETTE,
-	NUM_SORT_ORDERS,
-	SORT_INVALID
+	NUM_SortOrder,
+	SortOrder_INVALID
 };
 const SortOrder MAX_SELECTABLE_SORT = (SortOrder)(SORT_ROULETTE-1);
-#define FOREACH_SortOrder( so ) FOREACH_ENUM( SortOrder, NUM_SORT_ORDERS, so )
+#define FOREACH_SortOrder( so ) FOREACH_ENUM( SortOrder, NUM_SortOrder, so )
 const RString& SortOrderToString( SortOrder so );
 SortOrder StringToSortOrder( const RString& str );
 

@@ -61,7 +61,7 @@ protected:
 
 	virtual void UpdateSwitch();
 
-	vector<WheelItemData *>		m_WheelItemDatas[NUM_SORT_ORDERS];
+	vector<WheelItemData *>		m_WheelItemDatas[NUM_SortOrder];
 	const WheelItemData *GetCurWheelItemData( int i ) { return (const WheelItemData *) m_CurWheelItemData[i]; }
 	
 	RString				m_sLastModeMenuItem;

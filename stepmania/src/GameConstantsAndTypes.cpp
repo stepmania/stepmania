@@ -146,7 +146,7 @@ static const char *SortOrderNames[] = {
 	"Endless",
 	"Roulette",
 };
-XToString( SortOrder, NUM_SORT_ORDERS );
+XToString( SortOrder, NUM_SortOrder );
 StringToX( SortOrder );
 
 static void LuaSortOrder(lua_State* L)

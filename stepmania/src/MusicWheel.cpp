@@ -61,7 +61,7 @@ static SortOrder ForceAppropriateSort( PlayMode pm, SortOrder so )
 	case SORT_ONI_COURSES:
 	case SORT_NONSTOP_COURSES:
 	case SORT_ENDLESS_COURSES:
-		so = SORT_INVALID;
+		so = SortOrder_INVALID;
 		break;
 	}
 
@@ -147,13 +147,13 @@ void MusicWheel::BeginScreen()
 
 	/* Never start in the mode menu; some elements may not initialize correctly. */
 	if( GAMESTATE->m_SortOrder == SORT_MODE_MENU )
-		GAMESTATE->m_SortOrder.Set( SORT_INVALID );
+		GAMESTATE->m_SortOrder.Set( SortOrder_INVALID );
 
 	GAMESTATE->m_SortOrder.Set( ForceAppropriateSort(GAMESTATE->m_PlayMode, GAMESTATE->m_SortOrder) );
 
 	/* Only save the sort order if the player didn't already have one.  If he did, don't
 	 * overwrite it. */
-	if( GAMESTATE->m_PreferredSortOrder == SORT_INVALID )
+	if( GAMESTATE->m_PreferredSortOrder == SortOrder_INVALID )
 		GAMESTATE->m_PreferredSortOrder = GAMESTATE->m_SortOrder;
 
 	// HACK: invalidate currently selected song in the case that it
@@ -825,7 +825,7 @@ void MusicWheel::ChangeMusic( int iDist )
 
 bool MusicWheel::ChangeSort( SortOrder new_so )	// return true if change successful
 {
-	ASSERT( new_so < NUM_SORT_ORDERS );
+	ASSERT( new_so < NUM_SortOrder );
 	if( GAMESTATE->m_SortOrder == new_so )
 		return false;
 

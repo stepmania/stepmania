@@ -49,7 +49,7 @@ void GameCommand::Init()
 	m_pCourse = NULL;
 	m_pTrail = NULL;
 	m_pCharacter = NULL;
-	m_SortOrder = SORT_INVALID;
+	m_SortOrder = SortOrder_INVALID;
 	m_sUnlockEntryID = "";
 	m_sSoundPath = "";
 	m_vsScreensToPrepare.clear();
@@ -135,7 +135,7 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 		return false;
 	if( !m_sSongGroup.empty() && GAMESTATE->m_sPreferredSongGroup != m_sSongGroup )
 		return false;
-	if( m_SortOrder != SORT_INVALID && GAMESTATE->m_PreferredSortOrder != m_SortOrder )
+	if( m_SortOrder != SortOrder_INVALID && GAMESTATE->m_PreferredSortOrder != m_SortOrder )
 		return false;
 	if( m_iWeightPounds != -1 && PROFILEMAN->GetProfile(pn)->m_iWeightPounds != m_iWeightPounds )
 		return false;
@@ -332,7 +332,7 @@ void GameCommand::LoadOne( const Command& cmd )
 	else if( sName == "sort" )
 	{
 		m_SortOrder = StringToSortOrder( sValue );
-		if( m_SortOrder == SORT_INVALID )
+		if( m_SortOrder == SortOrder_INVALID )
 		{
 			m_sInvalidReason = ssprintf( "SortOrder \"%s\" is not valid.", sValue.c_str() );
 			m_bInvalid |= true;
@@ -727,7 +727,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	}
 	if( !m_sSongGroup.empty() )
 		GAMESTATE->m_sPreferredSongGroup.Set( m_sSongGroup );
-	if( m_SortOrder != SORT_INVALID )
+	if( m_SortOrder != SortOrder_INVALID )
 		GAMESTATE->m_PreferredSortOrder = m_SortOrder;
 	if( !m_sUnlockEntryID.empty() )
 		UNLOCKMAN->UnlockEntryID( m_sUnlockEntryID );
@@ -805,7 +805,7 @@ bool GameCommand::IsZero() const
 		m_pCharacter != NULL || 
 		m_CourseDifficulty != DIFFICULTY_INVALID ||
 		!m_sSongGroup.empty() ||
-		m_SortOrder != SORT_INVALID ||
+		m_SortOrder != SortOrder_INVALID ||
 		m_iWeightPounds != -1 ||
 		m_iGoalCalories != -1 ||
 		m_GoalType != GoalType_INVALID ||
