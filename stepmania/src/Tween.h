@@ -3,6 +3,8 @@
 #ifndef TWEEN_H
 #define TWEEN_H
 
+#include "EnumHelper.h"
+
 struct lua_State;
 typedef lua_State Lua;
 
