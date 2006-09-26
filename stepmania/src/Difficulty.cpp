@@ -61,7 +61,7 @@ XToString( CourseDifficulty, NUM_Difficulty );
 XToLocalizedString( CourseDifficulty );
 StringToX( CourseDifficulty );
 
-LuaFunction( CourseDifficultyToLocalizedString, CourseDifficultyToLocalizedString((CourseDifficulty)IArg(1)) );
+LuaFunction( CourseDifficultyToLocalizedString, CourseDifficultyToLocalizedString(Enum::Check<Difficulty>(L, 1)) );
 
 CourseDifficulty GetNextShownCourseDifficulty( CourseDifficulty cd )
 {
@@ -72,18 +72,6 @@ CourseDifficulty GetNextShownCourseDifficulty( CourseDifficulty cd )
 	}
 	return DIFFICULTY_INVALID;
 }
-
-static void LuaCourseDifficulty(lua_State* L)
-{
-	FOREACH_CourseDifficulty( d )
-	{
-		RString s = CourseDifficultyToString(d);
-		s.MakeUpper();
-		LUA->SetGlobal( "COURSE_DIFFICULTY_"+s, d );
-	}
-	LUA->SetGlobal( "NUM_CourseDifficulty", NUM_CourseDifficulty );
-}
-REGISTER_WITH_LUA_FUNCTION( LuaCourseDifficulty );
 
 /*
  * (c) 2001-2004 Chris Danford
