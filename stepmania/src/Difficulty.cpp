@@ -17,8 +17,9 @@ static const char *DifficultyNames[] = {
 };
 XToString( Difficulty, NUM_Difficulty );
 XToLocalizedString( Difficulty );
+LuaXType( Difficulty, NUM_Difficulty , "Difficulty_" );
 
-LuaFunction( DifficultyToLocalizedString, DifficultyToLocalizedString((Difficulty) IArg(1)) );
+LuaFunction( DifficultyToLocalizedString, DifficultyToLocalizedString( Enum::Check<Difficulty>(L, 1)) );
 
 /* We prefer the above names; recognize a number of others, too.  (They'l
  * get normalized when written to SMs, etc.) */
@@ -46,20 +47,6 @@ Difficulty StringToDifficulty( const RString& sDC )
 	else if( s2 == "edit" )		return DIFFICULTY_EDIT;
 	else						return DIFFICULTY_INVALID;
 }
-
-static void LuaDifficulty(lua_State* L)
-{
-	FOREACH_Difficulty( d )
-	{
-		RString s = DifficultyToString(d);
-		s.MakeUpper();
-		LUA->SetGlobal( "DIFFICULTY_"+s, d );
-	}
-	LUA->SetGlobal( "NUM_Difficulty", NUM_Difficulty );
-}
-REGISTER_WITH_LUA_FUNCTION( LuaDifficulty );
-
-
 
 static const char *CourseDifficultyNames[] =
 {

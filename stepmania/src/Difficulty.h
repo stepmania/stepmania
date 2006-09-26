@@ -21,6 +21,7 @@ enum Difficulty
 const RString& DifficultyToString( Difficulty dc );
 const RString& DifficultyToLocalizedString( Difficulty dc );
 Difficulty StringToDifficulty( const RString& sDC );
+LuaDeclareType( Difficulty );
 
 
 typedef Difficulty CourseDifficulty;
