@@ -196,7 +196,7 @@ void ScreenOptionsManageCourses::BeginScreen()
 	{
 		default:
 			RageException::Throw( "ScreenOptionsManageCourses: Invalid edit mode: %s.",
-					      EditModeToString((EditMode)EDIT_MODE.GetValue()).c_str() );
+					      EditModeToString(EDIT_MODE.GetValue()).c_str() );
 		case EditMode_Practice:
 		case EditMode_Home:
 			// Strip out non-edits.
