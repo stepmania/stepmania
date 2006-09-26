@@ -89,18 +89,18 @@ static const RString EMPTY_STRING;
 	const RString& X##ToString( X x ) \
 	{	\
 		Check##X##ToStringParamType( X##Names ); \
-		static auto_ptr<RString> as_##X##Name[CNT]; \
+		static auto_ptr<RString> as_##X##Name[NUM_##X]; \
 		if( as_##X##Name[0].get() == NULL ) { \
-			for( unsigned i = 0; i < CNT; ++i ) \
+			for( unsigned i = 0; i < NUM_##X; ++i ) \
 			{ \
 				auto_ptr<RString> ap( new RString( X##Names[i] ) ); \
 				as_##X##Name[i] = ap; \
 			} \
 		} \
-		ASSERT( CNT == ARRAYLEN(X##Names) );	\
-		if( x == CNT+1 ) 	\
+		ASSERT( NUM_##X == ARRAYLEN(X##Names) );	\
+		if( x == NUM_##X+1 ) 	\
 			return EMPTY_STRING;	\
-		ASSERT( x < CNT );	\
+		ASSERT( x < NUM_##X );	\
 		return *as_##X##Name[x];	\
 	}
 
