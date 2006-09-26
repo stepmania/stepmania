@@ -128,7 +128,7 @@ namespace LuaHelpers
 	}
 
 	int TypeError( Lua *L, int narg, const char *tname );
-	int AbsIndex( Lua *L, int i ) { if( i > 0 || i <= LUA_REGISTRYINDEX ) return i; return lua_gettop( L ) + i + 1; }
+	inline int AbsIndex( Lua *L, int i ) { if( i > 0 || i <= LUA_REGISTRYINDEX ) return i; return lua_gettop( L ) + i + 1; }
 }
 
 
