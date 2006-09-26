@@ -130,12 +130,6 @@ static const RString EMPTY_STRING;
 		return (X)(i+1); /*invalid*/	\
 	}
 
-#define LuaXToString(X)	\
-LuaFunction( X##ToString, X##ToString( (X) IArg(1) ) );
-
-#define LuaStringToX(X)	\
-LuaFunction( StringTo##X, (X) StringTo##X( SArg(1) ) );
-
 #define LuaDeclareType(X) \
 namespace LuaHelpers { bool FromStack( lua_State *L, X &Object, int iOffset ); } \
 namespace LuaHelpers { void Push( const X &Object, lua_State *L ); }
