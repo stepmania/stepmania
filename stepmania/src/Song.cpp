@@ -1265,7 +1265,8 @@ public:
 	static int HasStepsTypeAndDifficulty( T* p, lua_State *L )
 	{
 		StepsType st = (StepsType)IArg(1);
-		Difficulty dc = (Difficulty)IArg(2);
+
+		Difficulty dc = Enum::Check<Difficulty>( L, 2 );
 
 		lua_pushboolean( L, p->HasStepsTypeAndDifficulty(st, dc) );
 		return 1;
