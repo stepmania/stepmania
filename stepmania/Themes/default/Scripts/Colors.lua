@@ -4,16 +4,16 @@ function PlayerColor( pn )
 	return color("1,1,1,1")
 end
 
-function DifficultyColor( dc )
-	if dc == DIFFICULTY_BEGINNER	then return color("0.0,0.9,1.0,1") end	-- light blue
-	if dc == DIFFICULTY_EASY		then return color("0.9,0.9,0.0,1") end	-- yellow
-	if dc == DIFFICULTY_MEDIUM		then return color("1.0,0.1,0.1,1") end	-- light red
-	if dc == DIFFICULTY_HARD		then return color("0.2,1.0,0.2,1") end	-- light green
-	if dc == DIFFICULTY_CHALLENGE	then return color("0.2,0.6,1.0,1") end	-- blue
-	if dc == DIFFICULTY_EDIT		then return color("0.8,0.8,0.8,1") end	-- gray
-	return color("1,1,1,1")
-end
+local DifficultyColors = {
+	Difficulty_Beginner	= color("0.0,0.9,1.0,1"),	-- light blue
+	Difficulty_Easy		= color("0.9,0.9,0.0,1"),	-- yellow
+	Difficulty_Medium	= color("1.0,0.1,0.1,1"),	-- light red
+	Difficulty_Hard		= color("0.2,1.0,0.2,1"),	-- light green
+	Difficulty_Challenge	= color("0.2,0.6,1.0,1"),	-- blue
+	Difficulty_Edit		= color("0.8,0.8,0.8,1"),	-- gray
+}
 
+function DifficultyColor( dc ) return DifficultyColors[dc] end
 
 -- (c) 2005 Chris Danford
 -- All rights reserved.

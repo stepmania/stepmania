@@ -184,7 +184,7 @@ local function ShowScreenInstructions()
 	end
 
 	for pn = PLAYER_1,NUM_PLAYERS-1 do
-		if GAMESTATE:GetPreferredDifficulty(pn) <= DIFFICULTY_EASY then
+		if DifficultyIndex(GAMESTATE:GetPreferredDifficulty(pn)) <= DifficultyIndex("Difficulty_Easy") then
 			return true
 		end
 	end
