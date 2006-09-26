@@ -89,7 +89,7 @@ InputFilter::~InputFilter()
 
 void InputFilter::Reset()
 {
-	for( int i=0; i<NUM_INPUT_DEVICES; i++ )
+	FOREACH_InputDevice( i )
 		ResetDevice( InputDevice(i) );
 }
 
