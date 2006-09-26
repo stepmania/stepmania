@@ -42,6 +42,31 @@ bool LuaHelpers::FromStack( lua_State *L, RageColor &Object, int iOffset )
 	return true;
 }
 
+static const char *CullModeNames[] =
+{
+	"Back",
+	"Front",
+	"None"
+};
+LuaXType( CullMode );
+
+static const char *BlendModeNames[] =
+{
+	"Normal",
+	"Add",
+	"NoEffect"
+};
+LuaXType( BlendMode );
+
+
+static const char *ZTestModeNames[] =
+{
+	"Off",
+	"WriteOnPass",
+	"WriteOnFail"
+};
+LuaXType( ZTestMode );
+
 /*
  * Copyright (c) 2006 Glenn Maynard
  * All rights reserved.

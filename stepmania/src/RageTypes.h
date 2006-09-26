@@ -3,6 +3,8 @@
 #ifndef RAGETYPES_H
 #define RAGETYPES_H
 
+#include "EnumHelper.h"
+
 enum BlendMode
 {
 	BLEND_NORMAL,
@@ -14,6 +16,7 @@ enum BlendMode
 	NUM_BlendMode,
 	BlendMode_Invalid
 };
+LuaDeclareType( BlendMode );
 
 enum CullMode
 {
@@ -23,6 +26,7 @@ enum CullMode
 	NUM_CullMode,
 	CullMode_Invalid
 };
+LuaDeclareType( CullMode );
 
 enum ZTestMode
 {
@@ -32,6 +36,7 @@ enum ZTestMode
 	NUM_ZTestMode,
 	ZTestMode_Invalid
 };
+LuaDeclareType( ZTestMode );
 
 enum PolygonMode
 {
@@ -40,6 +45,7 @@ enum PolygonMode
 	NUM_PolygonMode,
 	PolygonMode_Invalid
 };
+LuaDeclareType( PolygonMode );
 
 struct lua_State;
 
