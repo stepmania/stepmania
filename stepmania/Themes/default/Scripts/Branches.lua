@@ -5,7 +5,7 @@ function ScreenTitleBranch()
 		return THEME:GetMetric( "Common", "InitialScreen" )
 	end
 
-	if GAMESTATE:GetCoinMode() == COIN_MODE_HOME then return "ScreenTitleMenu" end
+	if GAMESTATE:GetCoinMode() == "CoinMode_Home" then return "ScreenTitleMenu" end
 	return "ScreenTitleJoin"
 end
 
