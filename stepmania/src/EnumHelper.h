@@ -134,16 +134,16 @@ static const RString EMPTY_STRING;
 namespace LuaHelpers { bool FromStack( lua_State *L, X &Object, int iOffset ); } \
 namespace LuaHelpers { void Push( const X &Object, lua_State *L ); }
 
-#define LuaXType(X, CNT, Prefix)	\
+#define LuaXType(X)	\
 static void Lua##X(lua_State* L) \
 { \
-	EnumTraits<X>::Invalid = enum_add2( CNT, 1 ); \
+	EnumTraits<X>::Invalid = enum_add2( NUM_##X, 1 ); \
 	/* Create the EnumToString table: { "UnlockEntry_ArcadePoints", "UnlockEntry_DancePoints" } */ \
 	lua_newtable( L ); \
-	FOREACH_ENUM( X, CNT, i ) \
+	FOREACH_ENUM( X, NUM_##X, i ) \
 	{ \
 		RString s = X##Names[i]; \
-		lua_pushstring( L, Prefix+s ); \
+		lua_pushstring( L, (#X "_")+s ); \
 		lua_rawseti( L, -2, i+1 ); /* 1-based */ \
 	} \
 	EnumTraits<X>::EnumToString.SetFromStack( L ); \
@@ -151,10 +151,10 @@ static void Lua##X(lua_State* L) \
 	lua_setglobal( L, #X ); \
 	/* Create the StringToEnum table: { "UnlockEntry_ArcadePoints" = 0, "UnlockEntry_DancePoints" = 1 } */ \
 	lua_newtable( L ); \
-	FOREACH_ENUM( X, CNT, i ) \
+	FOREACH_ENUM( X, NUM_##X, i ) \
 	{ \
 		RString s = X##Names[i]; \
-		lua_pushstring( L, Prefix+s ); \
+		lua_pushstring( L, (#X "_")+s ); \
 		lua_pushnumber( L, i ); /* 0-based */ \
 		lua_rawset( L, -3 ); \
 	} \

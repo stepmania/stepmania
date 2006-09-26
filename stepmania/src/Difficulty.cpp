@@ -17,7 +17,7 @@ static const char *DifficultyNames[] = {
 };
 XToString( Difficulty, NUM_Difficulty );
 XToLocalizedString( Difficulty );
-LuaXType( Difficulty, NUM_Difficulty , "Difficulty_" );
+LuaXType( Difficulty );
 
 LuaFunction( DifficultyToLocalizedString, DifficultyToLocalizedString( Enum::Check<Difficulty>(L, 1)) );
 

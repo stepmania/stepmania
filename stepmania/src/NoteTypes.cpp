@@ -29,7 +29,7 @@ static const char *NoteTypeNames[] = {
 	"192nd",
 };
 XToString( NoteType, NUM_NoteType );
-LuaXType( NoteType, NUM_NoteType, "NoteType_" )
+LuaXType( NoteType )
 XToLocalizedString( NoteType );
 
 float NoteTypeToBeat( NoteType nt )
