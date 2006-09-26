@@ -1,5 +1,35 @@
 #include "global.h"
 #include "EnumHelper.h"
+#include "LuaManager.h"
+#include "RageUtil.h"
+
+int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const char *szType )
+{
+	if( lua_isnil(L, iPos) )
+		return iInvalid;
+
+	iPos = LuaHelpers::AbsIndex( L, iPos );
+
+	table.PushSelf( L );
+	lua_pushvalue( L, iPos );
+	lua_gettable( L, -2 );
+
+	// If the result is nil, then a string was passed that is not a member of this enum.  Throw
+	// an error.  To specify the invalid value, pass nil.  That way, typos will throw an error,
+	// and not silently result in nil, or an out-of-bounds value.
+	if( unlikely(lua_isnil(L, -1)) )
+	{
+		// XXX: show string if a string, otherwise the type
+		lua_pushvalue( L, iPos );
+		RString sGot;
+		LuaHelpers::Pop( L, sGot );
+		LuaHelpers::Push( ssprintf("Expected %s; got \"%s\"", szType, sGot.c_str() ), L );
+		lua_error( L );
+	}
+	int iRet = lua_tointeger( L, -1 );
+	lua_pop( L, 2 );
+	return iRet;
+}
 
 /*
  * (c) 2004 Chris Danford

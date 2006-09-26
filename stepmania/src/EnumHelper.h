@@ -1,6 +1,8 @@
 #ifndef ENUM_HELPER_H
 #define ENUM_HELPER_H
 
+#include "LuaReference.h"
+
 /*
  * Safely add an integer to an enum.
  *
@@ -42,6 +44,34 @@ static inline T enum_add2( T val, int iAmt )
 #define FOREACH_ENUM( e, max, var )	for( e var=(e)0; var<max; enum_add<e>( var, +1 ) )
 #define FOREACH_ENUM2( e, var )	for( e var=(e)0; var<NUM_##e; enum_add<e>( var, +1 ) )
 
+int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const char *szType );
+
+template<typename T>
+struct Enum
+{
+	static LuaReference StringToEnum;
+	static LuaReference EnumToString;
+	static T Invalid;
+	static const char *szName;
+	static T Check( lua_State *L, int iPos )
+	{
+		return (T) CheckEnum( L, StringToEnum, iPos, Invalid, szName );
+	}
+	static void Push( lua_State *L, T iVal )
+	{
+		/* Enum_Invalid values are nil in Lua. */
+		if( iVal == Invalid )
+		{
+			lua_pushnil( L );
+			return;
+		}
+
+		/* Look up the string value. */
+		EnumToString.PushSelf( L );
+		lua_rawgeti( L, -1, iVal + 1 );
+		lua_replace( L, -2 );
+	}
+};
 
 static const RString EMPTY_STRING;
 
@@ -123,6 +153,42 @@ static void Lua##X(lua_State* L) \
 	LUA->SetGlobal( Prefix "INVALID", CNT+1 ); \
 } \
 REGISTER_WITH_LUA_FUNCTION( Lua##X );
+
+#define LuaDeclareType(X) \
+namespace LuaHelpers { bool FromStack( lua_State *L, X &Object, int iOffset ); }
+
+#define LuaXType2(X, CNT, Prefix)	\
+static void Lua2##X(lua_State* L) \
+{ \
+	Enum<X>::Invalid = enum_add2( CNT, 1 ); \
+	/* Create the public EnumToString table: { "UnlockEntry_ArcadePoints", "UnlockEntry_DancePoints" } */ \
+	lua_newtable( L ); \
+	FOREACH_ENUM( X, CNT, i ) \
+	{ \
+		RString s = X##Names[i]; \
+		lua_pushstring( L, Prefix+s ); \
+		lua_rawseti( L, -2, i+1 ); /* 1-based */ \
+	} \
+	Enum<X>::EnumToString.SetFromStack( L ); \
+	Enum<X>::EnumToString.PushSelf( L ); \
+	lua_setglobal( L, #X ); \
+	/* Create the private StringToEnum table: { "UnlockEntry_ArcadePoints" = 0, "UnlockEntry_DancePoints" = 0 } */ \
+	lua_newtable( L ); \
+	FOREACH_ENUM( X, CNT, i ) \
+	{ \
+		RString s = X##Names[i]; \
+		lua_pushstring( L, Prefix+s ); \
+		lua_pushnumber( L, i ); /* 0-based */ \
+		lua_rawset( L, -3 ); \
+	} \
+	Enum<X>::StringToEnum.SetFromStack( L ); \
+} \
+REGISTER_WITH_LUA_FUNCTION( Lua2##X ); \
+LuaReference Enum<X>::StringToEnum; \
+LuaReference Enum<X>::EnumToString; \
+X Enum<X>::Invalid; \
+const char *Enum<X>::szName = #X; \
+namespace LuaHelpers { bool FromStack( lua_State *L, X &Object, int iOffset ) { Object = Enum<X>::Check( L, iOffset ); return true; } }
 
 #endif
 
