@@ -51,10 +51,6 @@ namespace LuaHelpers
 	 * false is returned. */
 	bool RunScript( Lua *L, const RString &sScript, const RString &sName, RString &sError, int iReturnValues = 0 );
 
-	/* Convenience: run a script with one return value, displaying an error on failure.
-	 * The return value is left on the Lua stack. */
-	bool RunScript( Lua *L, const RString &sExpression, const RString &sName = "", int iReturnValues = 0 );
-
 	/* Run the given expression, returning a single value, and leave the return value on the
 	 * stack.  On error, push nil. */
 	bool RunExpression( Lua *L, const RString &sExpression, const RString &sName = "" );

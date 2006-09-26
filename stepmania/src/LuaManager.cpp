@@ -504,25 +504,16 @@ bool LuaHelpers::RunScript( Lua *L, const RString &sScript, const RString &sName
 	return true;
 }
 
-
-bool LuaHelpers::RunScript( Lua *L, const RString &sExpression, const RString &sName, int iReturnValues )
+bool LuaHelpers::RunExpression( Lua *L, const RString &sExpression, const RString &sName )
 {
 	RString sError;
-	if( !LuaHelpers::RunScript( L, sExpression, sName.size()? sName:RString("in"), sError, iReturnValues ) )
+	if( !LuaHelpers::RunScript(L, "return " + sExpression, sName.empty() ? RString("in") : sName, sError, 1) )
 	{
-		sError = ssprintf( "Lua runtime error parsing \"%s\": %s", sName.size()? sName.c_str():sExpression.c_str(), sError.c_str() );
+		sError = ssprintf( "Lua runtime error parsing \"%s\": %s", sName.size() ? sName.c_str() : sExpression.c_str(), sError.c_str() );
 		Dialog::OK( sError, "LUA_ERROR" );
 		return false;
 	}
-
 	return true;
-}
-
-bool LuaHelpers::RunExpression( Lua *L, const RString &sExpression, const RString &sName )
-{
-	RString sFullExpression = "return " + sExpression;
-
-	return LuaHelpers::RunScript( L, sFullExpression, sName, 1 );
 }
 
 bool LuaHelpers::RunExpressionB( const RString &str )
