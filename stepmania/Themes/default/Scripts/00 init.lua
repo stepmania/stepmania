@@ -6,6 +6,10 @@ string.lower = Lowercase
 Uppercase = nil -- don't use directly
 Lowercase = nil -- don't use directly
 
+PLAYER_1 = "PlayerNumber_P1"
+PLAYER_2 = "PlayerNumber_P2"
+NUM_PLAYERS = #PlayerNumber
+
 -- (c) 2006 Glenn Maynard
 -- All rights reserved.
 --
