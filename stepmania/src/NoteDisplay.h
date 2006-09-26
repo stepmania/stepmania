@@ -49,18 +49,20 @@ enum HoldType
 {
 	hold, 
 	roll, 
-	NUM_HOLD_TYPES 
+	NUM_HoldType,
+	HoldType_Invalid
 };
-#define FOREACH_HoldType( i ) FOREACH_ENUM( HoldType, NUM_HOLD_TYPES, i )
+#define FOREACH_HoldType( i ) FOREACH_ENUM( HoldType, NUM_HoldType, i )
 const RString &HoldTypeToString( HoldType ht );
 
 enum ActiveType
 {
 	active,
 	inactive,
-	NUM_ACTIVE_TYPES
+	NUM_ActiveType,
+	ActiveType_Invalid
 };
-#define FOREACH_ActiveType( i ) FOREACH_ENUM( ActiveType, NUM_ACTIVE_TYPES, i )
+#define FOREACH_ActiveType( i ) FOREACH_ENUM( ActiveType, NUM_ActiveType, i )
 const RString &ActiveTypeToString( ActiveType at );
 
 
@@ -83,8 +85,8 @@ public:
 private:
 	void SetActiveFrame( float fNoteBeat, Actor &actorToSet, float fAnimationLengthInBeats, bool bVivid );
 	Actor *GetTapActor( NoteColorActor &nca, NotePart part, float fNoteBeat );
-	Actor *GetHoldActor( NoteColorActor nca[NUM_HOLD_TYPES][NUM_ACTIVE_TYPES], NotePart part, float fNoteBeat, bool bIsRoll, bool bIsBeingHeld );
-	Sprite *GetHoldSprite( NoteColorSprite ncs[NUM_HOLD_TYPES][NUM_ACTIVE_TYPES], NotePart part, float fNoteBeat, bool bIsRoll, bool bIsBeingHeld );
+	Actor *GetHoldActor( NoteColorActor nca[NUM_HoldType][NUM_ActiveType], NotePart part, float fNoteBeat, bool bIsRoll, bool bIsBeingHeld );
+	Sprite *GetHoldSprite( NoteColorSprite ncs[NUM_HoldType][NUM_ActiveType], NotePart part, float fNoteBeat, bool bIsRoll, bool bIsBeingHeld );
 
 	void DrawHoldBottomCap( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, float fYHead, float fYTail, int	fYStep, float fPercentFadeToFail, float fColorScale, bool bGlow, float fYStartOffset, float fYEndOffset );
 	void DrawHoldTopCap( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, float fPercentFadeToFail, float fColorScale, bool bGlow, float fYStartOffset, float fYEndOffset );
@@ -99,11 +101,11 @@ private:
 	NoteColorActor		m_TapAddition;
 	NoteColorActor		m_TapMine;
 	NoteColorActor		m_TapLift;
-	NoteColorActor		m_HoldHead[NUM_HOLD_TYPES][NUM_ACTIVE_TYPES];
-	NoteColorSprite		m_HoldTopCap[NUM_HOLD_TYPES][NUM_ACTIVE_TYPES];
-	NoteColorSprite		m_HoldBody[NUM_HOLD_TYPES][NUM_ACTIVE_TYPES];
-	NoteColorSprite		m_HoldBottomCap[NUM_HOLD_TYPES][NUM_ACTIVE_TYPES];
-	NoteColorActor		m_HoldTail[NUM_HOLD_TYPES][NUM_ACTIVE_TYPES];
+	NoteColorActor		m_HoldHead[NUM_HoldType][NUM_ActiveType];
+	NoteColorSprite		m_HoldTopCap[NUM_HoldType][NUM_ActiveType];
+	NoteColorSprite		m_HoldBody[NUM_HoldType][NUM_ActiveType];
+	NoteColorSprite		m_HoldBottomCap[NUM_HoldType][NUM_ActiveType];
+	NoteColorActor		m_HoldTail[NUM_HoldType][NUM_ActiveType];
 	float			m_fYReverseOffsetPixels;
 };
 

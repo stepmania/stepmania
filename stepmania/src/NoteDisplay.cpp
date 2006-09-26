@@ -234,13 +234,13 @@ static const char *HoldTypeNames[] = {
 	"hold",
 	"roll",
 };
-XToString( HoldType, NUM_HOLD_TYPES );
+XToString( HoldType, NUM_HoldType );
 
 static const char *ActiveTypeNames[] = {
 	"active",
 	"inactive",
 };
-XToString( ActiveType, NUM_ACTIVE_TYPES );
+XToString( ActiveType, NUM_ActiveType );
 
 
 
@@ -336,12 +336,12 @@ Actor *NoteDisplay::GetTapActor( NoteColorActor &nca, NotePart part, float fNote
 	return pActorOut;
 }
 
-Actor *NoteDisplay::GetHoldActor( NoteColorActor nca[NUM_HOLD_TYPES][NUM_ACTIVE_TYPES], NotePart part, float fNoteBeat, bool bIsRoll, bool bIsBeingHeld )
+Actor *NoteDisplay::GetHoldActor( NoteColorActor nca[NUM_HoldType][NUM_ActiveType], NotePart part, float fNoteBeat, bool bIsRoll, bool bIsBeingHeld )
 {
 	return GetTapActor( nca[bIsRoll ? roll:hold][bIsBeingHeld ? active:inactive], part, fNoteBeat );
 }
 
-Sprite *NoteDisplay::GetHoldSprite( NoteColorSprite ncs[NUM_HOLD_TYPES][NUM_ACTIVE_TYPES], NotePart part, float fNoteBeat, bool bIsRoll, bool bIsBeingHeld )
+Sprite *NoteDisplay::GetHoldSprite( NoteColorSprite ncs[NUM_HoldType][NUM_ActiveType], NotePart part, float fNoteBeat, bool bIsRoll, bool bIsBeingHeld )
 {
 	Sprite *pSpriteOut = ncs[bIsRoll ? roll:hold][bIsBeingHeld ? active:inactive].Get();
 	

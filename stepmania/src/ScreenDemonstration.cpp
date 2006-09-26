@@ -34,7 +34,7 @@ void ScreenDemonstration::Init()
 		FOREACH_CONST( RString, v, s )
 		{
 			StyleType st = StringToStyleType( *s );
-			ASSERT( st != STYLE_TYPE_INVALID );
+			ASSERT( st != StyleType_Invalid );
 			vStyleTypeAllow.push_back( st );
 		}
 
