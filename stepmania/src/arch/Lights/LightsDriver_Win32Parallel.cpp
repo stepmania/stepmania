@@ -28,7 +28,7 @@ int CabinetLightToIndex( CabinetLight cl )
 int GameControllerAndGameButtonToIndex( GameController gc, GameButton gb )
 {
 	CLAMP( (int&)gb, 0, 4 );
-	return NUM_CABINET_LIGHTS + gc*4 + gb;
+	return NUM_CabinetLight + gc*4 + gb;
 }
 
 void IndexToLptAndPin( int index, int &lpt_out, int &pin_out )
