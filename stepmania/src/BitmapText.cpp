@@ -191,9 +191,9 @@ void BitmapText::BuildChars()
 	int iY;	//	 the top position of the first row of characters
 	switch( m_VertAlign )
 	{
-	case align_top:		iY = 0;					break;
-	case align_middle:	iY = -(int)roundf(m_size.y/2.0f);	break;
-	case align_bottom:	iY = -(int)m_size.y;			break;
+	case VertAlign_Top:	iY = 0;					break;
+	case VertAlign_Middle:	iY = -(int)roundf(m_size.y/2.0f);	break;
+	case VertAlign_Bottom:	iY = -(int)m_size.y;			break;
 	default:		ASSERT( false );
 	}
 
@@ -209,9 +209,9 @@ void BitmapText::BuildChars()
 		int iX;
 		switch( m_HorizAlign )
 		{
-		case align_left:	iX = 0;					break;
-		case align_center:	iX = -(int)roundf(iLineWidth/2.0f);	break;
-		case align_right:	iX = -iLineWidth;			break;
+		case HorizAlign_Left:	iX = 0;					break;
+		case HorizAlign_Center:	iX = -(int)roundf(iLineWidth/2.0f);	break;
+		case HorizAlign_Right:	iX = -iLineWidth;			break;
 		default:		ASSERT( false );
 		}
 

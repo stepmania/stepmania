@@ -354,17 +354,17 @@ void Sprite::DrawTexture( const TweenState *state )
 
 	switch( m_HorizAlign )
 	{
-	case align_left:	quadVerticies.left = 0;			quadVerticies.right = m_size.x;		break;
-	case align_center:	quadVerticies.left = -m_size.x/2;	quadVerticies.right = m_size.x/2;	break;
-	case align_right:	quadVerticies.left = -m_size.x;		quadVerticies.right = 0;		break;
+	case HorizAlign_Left:	quadVerticies.left = 0;			quadVerticies.right = m_size.x;		break;
+	case HorizAlign_Center:	quadVerticies.left = -m_size.x/2;	quadVerticies.right = m_size.x/2;	break;
+	case HorizAlign_Right:	quadVerticies.left = -m_size.x;		quadVerticies.right = 0;		break;
 	default:		ASSERT( false );
 	}
 
 	switch( m_VertAlign )
 	{
-	case align_top:		quadVerticies.top = 0;			quadVerticies.bottom = m_size.y;	break;
-	case align_middle:	quadVerticies.top = -m_size.y/2;	quadVerticies.bottom = m_size.y/2;	break;
-	case align_bottom:	quadVerticies.top = -m_size.y;		quadVerticies.bottom = 0;		break;
+	case VertAlign_Top:	quadVerticies.top = 0;			quadVerticies.bottom = m_size.y;	break;
+	case VertAlign_Middle:	quadVerticies.top = -m_size.y/2;	quadVerticies.bottom = m_size.y/2;	break;
+	case VertAlign_Bottom:	quadVerticies.top = -m_size.y;		quadVerticies.bottom = 0;		break;
 	default:		ASSERT(0);
 	}
 
