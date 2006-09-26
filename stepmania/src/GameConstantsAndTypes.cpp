@@ -68,9 +68,8 @@ static const char *PlayModeNames[] = {
 XToString( PlayMode, NUM_PlayMode );
 XToLocalizedString( PlayMode );
 StringToX( PlayMode );
-LuaXToString( PlayMode );
 LuaFunction( PlayModeToLocalizedString, PlayModeToLocalizedString((PlayMode) IArg(1)) );
-LuaXType2( PlayMode, NUM_PlayMode, "PlayMode_" )
+LuaXType( PlayMode, NUM_PlayMode, "PlayMode_" )
 
 RankingCategory AverageMeterToRankingCategory( int iAverageMeter )
 {
@@ -194,7 +193,7 @@ static const char *TapNoteScoreNames[] = {
 	"W1",
 };
 XToString( TapNoteScore, NUM_TapNoteScore );
-LuaXType2( TapNoteScore, NUM_TapNoteScore, "TapNoteScore_" );
+LuaXType( TapNoteScore, NUM_TapNoteScore, "TapNoteScore_" );
 TapNoteScore StringToTapNoteScore( const RString &s )
 {
 	// new style
@@ -407,7 +406,7 @@ static const char *EditModeNames[] = {
 };
 XToString( EditMode, NUM_EditMode );
 StringToX( EditMode );
-LuaXType2( EditMode, NUM_EditMode, "EditMode_" );
+LuaXType( EditMode, NUM_EditMode, "EditMode_" );
 
 static const char *StageNames[] = {
 	"1",
