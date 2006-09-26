@@ -10,7 +10,6 @@
 #include "Quad.h"
 #include "ScrollingList.h"
 #include "GameConstantsAndTypes.h"
-#include "GameCommand.h"
 #include "BitmapText.h"
 #include "Character.h"
 #include "RageSound.h"
