@@ -236,10 +236,10 @@ enum RankingCategory
 	RANKING_B,	// 4-6 meter per song avg.
 	RANKING_C,	// 7-9 meter per song avg.
 	RANKING_D,	// 10+ meter per song avg.	// doesn't count extra stage!
-	NUM_RANKING_CATEGORIES,
-	RANKING_INVALID
+	NUM_RankingCategory,
+	RankingCategory_Invalid
 };
-#define FOREACH_RankingCategory( rc ) FOREACH_ENUM( RankingCategory, NUM_RANKING_CATEGORIES, rc )
+#define FOREACH_RankingCategory( rc ) FOREACH_ENUM( RankingCategory, NUM_RankingCategory, rc )
 const RString& RankingCategoryToString( RankingCategory rc );
 RankingCategory StringToRankingCategory( const RString& rc );
 

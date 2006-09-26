@@ -53,9 +53,9 @@ const char *CodeNames[] = {
 	"CancelAllPlayerOptions",
 	"BackInEventMode",
 };
-XToString( Code, NUM_CODES );
+XToString( Code, NUM_Code );
 
-static CodeItem g_CodeItems[NUM_CODES];
+static CodeItem g_CodeItems[NUM_Code];
 
 
 bool CodeItem::EnteredCode( GameController controller ) const

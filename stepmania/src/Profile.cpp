@@ -1536,7 +1536,7 @@ void Profile::LoadCategoryScoresFromNode( const XNode* pCategoryScores )
 			if( !pRadarCategory->GetAttrValue( "Type", str ) )
 				WARN_AND_CONTINUE;
 			RankingCategory rc = StringToRankingCategory( str );
-			if( rc == RANKING_INVALID )
+			if( rc == RankingCategory_Invalid )
 				WARN_AND_CONTINUE_M( str );
 
 			const XNode *pHighScoreListNode = pRadarCategory->GetChild("HighScoreList");

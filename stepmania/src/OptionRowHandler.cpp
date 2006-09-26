@@ -33,14 +33,14 @@ static const char *SelectTypeNames[] = {
 	"SelectMultiple",
 	"SelectNone",
 };
-XToString( SelectType, NUM_SELECT_TYPES );
+XToString( SelectType, NUM_SelectType );
 StringToX( SelectType );
 
 static const char *LayoutTypeNames[] = {
 	"ShowAllInRow",
 	"ShowOneInRow",
 };
-XToString( LayoutType, NUM_LAYOUT_TYPES );
+XToString( LayoutType, NUM_LayoutType );
 StringToX( LayoutType );
 
 RString OptionRowHandler::OptionTitle() const
@@ -820,7 +820,7 @@ public:
 		if( pStr == NULL )
 			RageException::Throw( "\"%s\" \"LayoutType\" entry is not a string.", sLuaFunction.c_str() );
 		m_Def.m_layoutType = StringToLayoutType( pStr );
-		ASSERT( m_Def.m_layoutType != LAYOUT_INVALID );
+		ASSERT( m_Def.m_layoutType != LayoutType_Invalid );
 		lua_pop( L, 1 );
 
 
@@ -830,7 +830,7 @@ public:
 		if( pStr == NULL )
 			RageException::Throw( "\"%s\" \"SelectType\" entry is not a string.", sLuaFunction.c_str() );
 		m_Def.m_selectType = StringToSelectType( pStr );
-		ASSERT( m_Def.m_selectType != SELECT_INVALID );
+		ASSERT( m_Def.m_selectType != SelectType_Invalid );
 		lua_pop( L, 1 );
 
 

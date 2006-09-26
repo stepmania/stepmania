@@ -543,7 +543,7 @@ void ScreenRankingLines::Init()
 
 		for( unsigned i=0; i<STEPS_TYPES_TO_SHOW.GetValue().size(); i++ )
 		{
-			for( int c=0; c<NUM_RANKING_CATEGORIES; c++ )
+			for( int c=0; c<NUM_RankingCategory; c++ )
 			{
 				PageToShow pts;
 				pts.colorIndex = i;

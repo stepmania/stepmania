@@ -16,8 +16,8 @@ enum SelectType
 	SELECT_ONE,
 	SELECT_MULTIPLE,
 	SELECT_NONE,
-	NUM_SELECT_TYPES,
-	SELECT_INVALID
+	NUM_SelectType,
+	SelectType_Invalid
 };
 const RString& SelectTypeToString( SelectType pm );
 SelectType StringToSelectType( const RString& s );
@@ -26,8 +26,8 @@ enum LayoutType
 {
 	LAYOUT_SHOW_ALL_IN_ROW,
 	LAYOUT_SHOW_ONE_IN_ROW,
-	NUM_LAYOUT_TYPES,
-	LAYOUT_INVALID
+	NUM_LayoutType,
+	LayoutType_Invalid
 };
 const RString& LayoutTypeToString( LayoutType pm );
 LayoutType StringToLayoutType( const RString& s );

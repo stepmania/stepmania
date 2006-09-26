@@ -45,9 +45,9 @@ enum Code {
 	CODE_SAVE_SCREENSHOT2,
 	CODE_CANCEL_ALL_PLAYER_OPTIONS,
 	CODE_BACK_IN_EVENT_MODE,
-	NUM_CODES	// leave this at the end
+	NUM_Code	// leave this at the end
 };
-#define FOREACH_Code( c ) FOREACH_ENUM( Code, NUM_CODES, c )
+#define FOREACH_Code( c ) FOREACH_ENUM( Code, NUM_Code, c )
 
 struct CodeItem
 {

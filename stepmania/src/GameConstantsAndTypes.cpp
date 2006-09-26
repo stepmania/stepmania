@@ -77,7 +77,7 @@ static const char *RankingCategoryNames[] = {
 	"c",
 	"d",
 };
-XToString( RankingCategory, NUM_RANKING_CATEGORIES );
+XToString( RankingCategory, NUM_RankingCategory );
 StringToX( RankingCategory );
 
 

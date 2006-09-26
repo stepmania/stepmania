@@ -47,7 +47,7 @@ void PlayerStageStats::Init()
 	m_pcaToShow = PEAK_COMBO_AWARD_INVALID;
 	m_iPersonalHighScoreIndex = -1;
 	m_iMachineHighScoreIndex = -1;
-	m_rc = RANKING_INVALID;
+	m_rc = RankingCategory_Invalid;
 	m_HighScore = HighScore();
 }
 
