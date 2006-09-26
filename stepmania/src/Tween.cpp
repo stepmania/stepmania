@@ -93,7 +93,7 @@ ITween *ITween::CreateFromStack( Lua *L, int iStackPos )
 	if( iType == TWEEN_BEZIER )
 	{
 		luaL_checktype( L, iStackPos+1, LUA_TTABLE );
-		int iArgs = luaL_getn( L, iStackPos+1 );
+		int iArgs = lua_objlen( L, iStackPos+1 );
 		if( iArgs != 4 && iArgs != 8 )
 			RageException::Throw( "CreateFromStack: table argument must have 4 or 8 entries" );
 
