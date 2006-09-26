@@ -455,6 +455,7 @@ bool LuaHelpers::RunScriptFile( const RString &sFile )
 		Dialog::OK( sError, "LUA_ERROR" );
 		return false;
 	}
+	f.Close();
 
 	Lua *L = LUA->Get();
 
