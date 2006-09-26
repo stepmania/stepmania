@@ -32,6 +32,20 @@ Actor *Actor::Copy() const { return new Actor(*this); }
 
 static float g_fCabinetLights[NUM_CABINET_LIGHTS];
 
+static const char *HorizAlignNames[] = {
+	"Left",
+	"Center",
+	"Right"
+};
+LuaXType( HorizAlign );
+
+static const char *VertAlignNames[] = {
+	"Top",
+	"Middle",
+	"Bottom"
+};
+LuaXType( VertAlign );
+
 void Actor::SetBGMTime( float fTime, float fBeat )
 {
 	g_fCurrentBGMTime = fTime;
@@ -829,22 +843,6 @@ void Actor::ScaleTo( const RectF &rect, StretchType st )
 	SetZoom( fNewZoom );
 }
 
-void Actor::SetHorizAlignString( const RString &s )
-{
-	if     (s.EqualsNoCase("left"))		this->SetHorizAlign( HorizAlign_Left ); /* call derived */
-	else if(s.EqualsNoCase("center"))	this->SetHorizAlign( HorizAlign_Center );
-	else if(s.EqualsNoCase("right"))	this->SetHorizAlign( HorizAlign_Right );
-	else	ASSERT(0);
-}
-
-void Actor::SetVertAlignString( const RString &s )
-{
-	if     (s.EqualsNoCase("top"))		this->SetVertAlign( VertAlign_Top ); /* call derived */
-	else if(s.EqualsNoCase("middle"))	this->SetVertAlign( VertAlign_Middle );
-	else if(s.EqualsNoCase("bottom"))	this->SetVertAlign( VertAlign_Bottom );
-	else	ASSERT(0);
-}
-
 void Actor::SetEffectClockString( const RString &s )
 {
 	if     (s.EqualsNoCase("timer"))	this->SetEffectClock( CLOCK_TIMER );
@@ -1388,8 +1386,8 @@ public:
 	static int pitch( T* p, lua_State *L )			{ p->AddRotationP(FArg(1)); return 0; }
 	static int roll( T* p, lua_State *L )			{ p->AddRotationR(FArg(1)); return 0; }
 	static int shadowlength( T* p, lua_State *L )		{ p->SetShadowLength(FArg(1)); return 0; }
-	static int horizalign( T* p, lua_State *L )		{ p->SetHorizAlignString(SArg(1)); return 0; }
-	static int vertalign( T* p, lua_State *L )		{ p->SetVertAlignString(SArg(1)); return 0; }
+	static int horizalign( T* p, lua_State *L )		{ p->SetHorizAlign(Enum::Check<HorizAlign>(L, 1)); return 0; }
+	static int vertalign( T* p, lua_State *L )		{ p->SetVertAlign(Enum::Check<VertAlign>(L, 1)); return 0; }
 	static int luaeffect( T* p, lua_State *L )		{ p->SetEffectLua(SArg(1)); return 0; }
 	static int diffuseblink( T* p, lua_State *L )		{ p->SetEffectDiffuseBlink(); return 0; }
 	static int diffuseshift( T* p, lua_State *L )		{ p->SetEffectDiffuseShift(); return 0; }

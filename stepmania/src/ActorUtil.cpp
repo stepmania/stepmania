@@ -430,8 +430,6 @@ void ActorUtil::ParseActorCommands( Lua *L, const RString &sCommands )
 			s << "\tself:" << sName << "(";
 
 			bool bFirstParamIsString =
-				sName == "horizalign" ||
-				sName == "vertalign" ||
 				sName == "effectclock" ||
 				sName == "playcommand" ||
 				sName == "queuecommand" ||

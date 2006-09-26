@@ -6,6 +6,7 @@
 #include "RageTypes.h"
 #include "RageUtil_AutoPtr.h"
 #include "LuaReference.h"
+#include "EnumHelper.h"
 #include <map>
 class XNode;
 struct lua_State;
@@ -30,6 +31,7 @@ enum HorizAlign
 	NUM_HorizAlign,
 	HorizAlign_Invalid
 };
+LuaDeclareType( HorizAlign );
 
 enum VertAlign
 {
@@ -39,6 +41,8 @@ enum VertAlign
 	NUM_VertAlign,
 	VertAlign_Invalid
 };
+LuaDeclareType( VertAlign );
+
 #define align_left HorizAlign_Left
 #define align_center HorizAlign_Center
 #define align_right HorizAlign_Right
@@ -251,10 +255,7 @@ public:
 	// Alignment settings.  These need to be virtual for BitmapText
 	//
 	virtual void SetHorizAlign( HorizAlign ha ) { m_HorizAlign = ha; }
-	void SetHorizAlignString( const RString &s );	// convenience
-
 	virtual void SetVertAlign( VertAlign va ) { m_VertAlign = va; }
-	void SetVertAlignString( const RString &s );	// convenience
 
 
 	//
