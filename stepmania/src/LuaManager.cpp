@@ -507,9 +507,9 @@ bool LuaHelpers::RunScript( Lua *L, const RString &sScript, const RString &sName
 bool LuaHelpers::RunExpression( Lua *L, const RString &sExpression, const RString &sName )
 {
 	RString sError;
-	if( !LuaHelpers::RunScript(L, "return " + sExpression, sName.empty() ? RString("in") : sName, sError, 1) )
+	if( !LuaHelpers::RunScript(L, "return " + sExpression, sName.empty()? RString("in"):sName, sError, 1) )
 	{
-		sError = ssprintf( "Lua runtime error parsing \"%s\": %s", sName.size() ? sName.c_str() : sExpression.c_str(), sError.c_str() );
+		sError = ssprintf( "Lua runtime error parsing \"%s\": %s", sName.size()? sName.c_str():sExpression.c_str(), sError.c_str() );
 		Dialog::OK( sError, "LUA_ERROR" );
 		return false;
 	}
@@ -574,7 +574,7 @@ bool LuaHelpers::RunAtExpressionS( RString &sStr )
 
 /* Like luaL_typerror, but without the special case for argument 1 being "self"
  * in method calls, so we give a correct error message after we remove self. */
-RString GetLuaBindingType( Lua *L, int iArgNo )
+static RString GetLuaBindingType( Lua *L, int iArgNo )
 {
 	if( lua_isnil(L, iArgNo) )
 		return "nil";
