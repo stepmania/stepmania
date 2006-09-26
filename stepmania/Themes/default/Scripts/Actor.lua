@@ -1,24 +1,24 @@
 function Actor:ease(t, fEase)
 	-- Optimizations:
-	-- fEase = -100 is equivalent to TweenAccelerate.
+	-- fEase = -100 is equivalent to TweenType_Accelerate.
 	if fEase == -100 then
 		self:accelerate(t);
 		return;
 	end
 
-	-- fEase = 0 is equivalent to TweenLinear.
+	-- fEase = 0 is equivalent to TweenType_Linear.
 	if fEase == 0 then
 		self:linear(t);
 		return;
 	end
 
-	-- fEase = +100 is equivalent to TweenDecelerate.
+	-- fEase = +100 is equivalent to TweenType_Decelerate.
 	if fEase == 100 then
 		self:decelerate(t);
 		return;
 	end
 
-	self:tween( t, TweenBezier,
+	self:tween( t, "TweenType_Bezier",
 		{
 			0,
 			scale(fEase, -100, 100, 0/3, 2/3),
@@ -36,7 +36,7 @@ local BounceBeginBezier =
 	1, 1
 }
 function Actor:bouncebegin(t)
-	self:tween( t, TweenBezier, BounceBeginBezier );
+	self:tween( t, "TweenType_Bezier", BounceBeginBezier );
 end
 
 local BounceEndBezier =
@@ -47,7 +47,7 @@ local BounceEndBezier =
 	1, 1
 }
 function Actor:bounceend(t)
-	self:tween( t, TweenBezier, BounceEndBezier );
+	self:tween( t, "TweenType_Bezier", BounceEndBezier );
 end
 
 local SmoothBezier =
@@ -55,7 +55,7 @@ local SmoothBezier =
 	0, 0, 1, 1
 }
 function Actor:smooth(t)
-	self:tween( t, TweenBezier, SmoothBezier );
+	self:tween( t, "TweenType_Bezier", SmoothBezier );
 end
 
 -- Hide if b is true, but don't unhide if b is false.

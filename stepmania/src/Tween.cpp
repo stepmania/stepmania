@@ -12,17 +12,7 @@ static const char *TweenTypeNames[] = {
 	"Spring",
 	"Bezier"
 };
-XToString( TweenType, NUM_TweenType );
-
-static void LuaTweenType(lua_State* L)
-{
-	FOREACH_TweenType( tt )
-	{
-		RString s = TweenTypeToString( tt );
-		LUA->SetGlobal( "Tween"+s, tt );
-	}
-}
-REGISTER_WITH_LUA_FUNCTION( LuaTweenType );
+LuaXType( TweenType, NUM_TweenType, "TweenType_" );
 
 
 struct TweenLinear: public ITween
@@ -99,7 +89,7 @@ ITween *ITween::CreateFromType( TweenType tt )
 
 ITween *ITween::CreateFromStack( Lua *L, int iStackPos )
 {
-	TweenType iType = (TweenType) IArg(iStackPos);
+	TweenType iType = Enum::Check<TweenType>( L, iStackPos );
 	if( iType == TWEEN_BEZIER )
 	{
 		luaL_checktype( L, iStackPos+1, LUA_TTABLE );
