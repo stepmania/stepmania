@@ -1182,33 +1182,6 @@ void Actor::TweenState::MakeWeightedAverage( TweenState& average_out, const Twee
 	average_out.aux		= lerp( fPercentBetween, ts1.aux,         ts2.aux );
 }
 
-void Actor::SetBlendModeString( const RString &s )
-{
-	if     (s.EqualsNoCase("normal"))		this->SetBlendMode( BLEND_NORMAL );
-	else if(s.EqualsNoCase("add"))			this->SetBlendMode( BLEND_ADD );
-	else if(s.EqualsNoCase("weightedmultiply"))	this->SetBlendMode( BLEND_WEIGHTED_MULTIPLY );
-	else if(s.EqualsNoCase("invertdest"))		this->SetBlendMode( BLEND_INVERT_DEST );
-	else if(s.EqualsNoCase("noeffect"))		this->SetBlendMode( BLEND_NO_EFFECT );
-	else	ASSERT(0);
-}
-
-void Actor::SetCullModeString( const RString &s )
-{
-	if     (s.EqualsNoCase("back"))			this->SetCullMode( CULL_BACK );
-	else if(s.EqualsNoCase("front"))		this->SetCullMode( CULL_FRONT );
-	else if(s.EqualsNoCase("none"))			this->SetCullMode( CULL_NONE );
-	else	ASSERT(0);
-}
-
-void Actor::SetZTestModeString( const RString &s )
-{
-	// for metrics backward compatibility
-	if(s.EqualsNoCase("off"))			this->SetZTestMode( ZTEST_OFF );
-	else if(s.EqualsNoCase("writeonpass"))		this->SetZTestMode( ZTEST_WRITE_ON_PASS );
-	else if(s.EqualsNoCase("writeonfail"))		this->SetZTestMode( ZTEST_WRITE_ON_FAIL );
-	else	ASSERT(0);
-}
-
 void Actor::Sleep( float time )
 {
 	BeginTweening( time, TWEEN_LINEAR );
@@ -1447,15 +1420,15 @@ public:
 	static int setstate( T* p, lua_State *L )		{ p->SetState(IArg(1)); return 0; }
 	static int texturewrapping( T* p, lua_State *L )	{ p->SetTextureWrapping(!!IArg(1)); return 0; }
 	static int additiveblend( T* p, lua_State *L )		{ p->SetBlendMode(!!IArg(1) ? BLEND_ADD : BLEND_NORMAL); return 0; }
-	static int blend( T* p, lua_State *L )			{ p->SetBlendModeString(SArg(1)); return 0; }
+	static int blend( T* p, lua_State *L )			{ p->SetBlendMode( Enum::Check<BlendMode>(L, 1) ); return 0; }
 	static int zbuffer( T* p, lua_State *L )		{ p->SetUseZBuffer(!!IArg(1)); return 0; }
 	static int ztest( T* p, lua_State *L )			{ p->SetZTestMode((!!IArg(1))?ZTEST_WRITE_ON_PASS:ZTEST_OFF); return 0; }
-	static int ztestmode( T* p, lua_State *L )		{ p->SetZTestModeString(SArg(1)); return 0; }
+	static int ztestmode( T* p, lua_State *L )		{ p->SetZTestMode( Enum::Check<ZTestMode>(L, 1) ); return 0; }
 	static int zwrite( T* p, lua_State *L )			{ p->SetZWrite(!!IArg(1)); return 0; }
 	static int zbias( T* p, lua_State *L )			{ p->SetZBias(FArg(1)); return 0; }
 	static int clearzbuffer( T* p, lua_State *L )		{ p->SetClearZBuffer(!!IArg(1)); return 0; }
 	static int backfacecull( T* p, lua_State *L )		{ p->SetCullMode((!!IArg(1)) ? CULL_BACK : CULL_NONE); return 0; }
-	static int cullmode( T* p, lua_State *L )		{ p->SetCullModeString(SArg(1)); return 0; }
+	static int cullmode( T* p, lua_State *L )		{ p->SetCullMode( Enum::Check<CullMode>(L, 1)); return 0; }
 	static int visible( T* p, lua_State *L )		{ p->SetVisible(!!IArg(1)); return 0; }
 	static int hidden( T* p, lua_State *L )			{ p->SetHidden(!!IArg(1)); return 0; }
 	static int hibernate( T* p, lua_State *L )		{ p->SetHibernate(FArg(1)); return 0; }

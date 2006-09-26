@@ -314,16 +314,13 @@ public:
 	// render states
 	//
 	void SetBlendMode( BlendMode mode )		{ m_BlendMode = mode; } 
-	void SetBlendModeString( const RString &s );	// convenience
 	void SetTextureWrapping( bool b ) 		{ m_bTextureWrapping = b; } 
 	void SetClearZBuffer( bool b ) 			{ m_bClearZBuffer = b; } 
 	void SetUseZBuffer( bool b ) 			{ SetZTestMode(b?ZTEST_WRITE_ON_PASS:ZTEST_OFF); SetZWrite(b); } 
 	virtual void SetZTestMode( ZTestMode mode )	{ m_ZTestMode = mode; } 
-	void SetZTestModeString( const RString &s );	// convenience
 	virtual void SetZWrite( bool b ) 		{ m_bZWrite = b; } 
 	void SetZBias( float f )			{ m_fZBias = f; }
 	virtual void SetCullMode( CullMode mode ) 	{ m_CullMode = mode; } 
-	void SetCullModeString( const RString &s );	// convenience
 
 	//
 	// Lua
