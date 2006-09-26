@@ -173,10 +173,11 @@ class LunaPlayerState: public Luna<PlayerState>
 {
 	static int SetPlayerOptions( T* p, lua_State *L )
 	{
+		ModsLevel m = Enum::Check<ModsLevel>( L, 1 );
+
 		PlayerOptions po;
-		
 		po.FromString( SArg(2) );
-		p->m_PlayerOptions.Assign( ModsLevel(IArg(1)), po );
+		p->m_PlayerOptions.Assign( m, po );
 		return 0;
 	}
 public:

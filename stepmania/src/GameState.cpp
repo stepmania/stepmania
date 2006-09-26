@@ -2041,10 +2041,12 @@ public:
 	}
 	static int SetSongOptions( T* p, lua_State *L )
 	{
+		ModsLevel m = Enum::Check<ModsLevel>( L, 1 );
+
 		SongOptions so;
 		
 		so.FromString( SArg(2) );
-		p->m_SongOptions.Assign( ModsLevel(IArg(1)), so );
+		p->m_SongOptions.Assign( m, so );
 		return 0;
 	}
 	static int GetCurrentStyle( T* p, lua_State *L )
