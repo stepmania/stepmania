@@ -1,6 +1,6 @@
 function AreStageModsForced()
 	local bExtraStage = GAMESTATE:IsAnExtraStage()
-	local bOni = GAMESTATE:GetPlayMode() == PLAY_MODE_ONI
+	local bOni = GAMESTATE:GetPlayMode() == "PlayMode_Oni"
 	return bExtraStage or bOni
 end
 
@@ -34,7 +34,7 @@ end
 function ScreenSelectMusic:setupcoursestagemods()
 	local mode = GAMESTATE:GetPlayMode()
 	
-	if mode == PLAY_MODE_ONI then
+	if mode == "PlayMode_Oni" then
 		local po = "clearall," .. NOTESKIN:GetGameBaseNoteSkinName()
 		-- Let SSMusic set battery.
 		-- local so = "failimmediate,battery"

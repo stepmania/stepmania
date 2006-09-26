@@ -22,14 +22,14 @@ end
 function SongSelectionScreen()
 	local pm = GAMESTATE:GetPlayMode()
 
-	if pm~=PLAY_MODE_REGULAR and IsNetConnected()	then
+	if pm ~= "PlayMode_Regular" and IsNetConnected()	then
 		SCREENMAN:SystemMessage( THEME:GetString("NetworkSyncManager","Not Supported") )
 		return "ScreenSelectDifficulty"
 	end
 
-	if pm==PLAY_MODE_NONSTOP	then return "ScreenSelectCourseNonstop" end
-	if pm==PLAY_MODE_ONI		then return "ScreenSelectCourseOni" end
-	if pm==PLAY_MODE_ENDLESS	then return "ScreenSelectCourseEndless" end
+	if pm == "PlayMode_Nonstop"	then return "ScreenSelectCourseNonstop" end
+	if pm == "PlayMode_Oni"		then return "ScreenSelectCourseOni" end
+	if pm == "PlayMode_Endless"	then return "ScreenSelectCourseEndless" end
 	if IsNetConnected() then ReportStyle() end
 	if IsNetSMOnline() then return SMOnlineScreen() end
 	if IsNetConnected() then return "ScreenNetSelectMusic" end
@@ -51,7 +51,8 @@ function GetSelectMusicNext()
 end
 
 function SelectFirstOptionsScreen()
-	if GAMESTATE:GetPlayMode() == PLAY_MODE_RAVE then return "ScreenRaveOptions" end
+Trace( "gar " .. GAMESTATE:GetPlayMode() );
+	if GAMESTATE:GetPlayMode() == "PlayMode_Rave" then return "ScreenRaveOptions" end
 	return "ScreenPlayerOptions"
 end
 
@@ -73,12 +74,12 @@ function SelectEvaluationScreen()
 	if IsNetConnected() then return "ScreenNetEvaluation" end
 	local pm = GAMESTATE:GetPlayMode()
 	if( GAMESTATE:GetMultiplayer() ) then return "ScreenEvaluationMultiplayer" end
-	if( pm==PLAY_MODE_REGULAR )		then return "ScreenEvaluationStage" end
-	if( pm==PLAY_MODE_NONSTOP )		then return "ScreenEvaluationNonstop" end
-	if( pm==PLAY_MODE_ONI )			then return "ScreenEvaluationOni" end
-	if( pm==PLAY_MODE_ENDLESS )		then return "ScreenEvaluationEndless" end
-	if( pm==PLAY_MODE_RAVE )		then return "ScreenEvaluationRave" end
-	if( pm==PLAY_MODE_BATTLE )		then return "ScreenEvaluationBattle" end
+	if( pm == "PlayMode_Regular" )		then return "ScreenEvaluationStage" end
+	if( pm == "PlayMode_Nonstop" )		then return "ScreenEvaluationNonstop" end
+	if( pm == "PlayMode_Oni" )			then return "ScreenEvaluationOni" end
+	if( pm == "PlayMode_Endless" )		then return "ScreenEvaluationEndless" end
+	if( pm == "PlayMode_Rave" )		then return "ScreenEvaluationRave" end
+	if( pm == "PlayMode_Battle" )		then return "ScreenEvaluationBattle" end
 end
 
 function GetTopScreenMetric( sElement )
@@ -172,12 +173,12 @@ local function ShowScreenInstructions()
 		return false
 	end
 
-	if GAMESTATE:GetPlayMode() == PLAY_MODE_INVALID then
+	if not GAMESTATE:GetPlayMode() then
 		Trace( "ShowScreenInstructions: called without PlayMode set" )
 		return true
 	end
 
-	if GAMESTATE:GetPlayMode() ~= PLAY_MODE_REGULAR then
+	if GAMESTATE:GetPlayMode() ~= "PlayMode_Regular" then
 		return true
 	end
 
@@ -200,7 +201,7 @@ end
 
 function OptionsMenuAvailable()
 	if GAMESTATE:IsAnExtraStage() then return false end
-	if GAMESTATE:GetPlayMode() == PLAY_MODE_ONI then return false end
+	if GAMESTATE:GetPlayMode() == "PlayMode_Oni" then return false end
 	return true
 end
 
