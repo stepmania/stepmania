@@ -1871,7 +1871,7 @@ void ScreenGameplay::UpdateLights()
 
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 	bool bBlinkCabinetLight[NUM_CABINET_LIGHTS];
-	bool bBlinkGameButton[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS];
+	bool bBlinkGameButton[NUM_GameController][MAX_GAME_BUTTONS];
 	ZERO( bBlinkCabinetLight );
 	ZERO( bBlinkGameButton );
 	bool bCrossedABeat = false;

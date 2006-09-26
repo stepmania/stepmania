@@ -356,7 +356,7 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 		case KEY_RIGHT:	/* Move the selection right, wrapping down. */
 			if( m_iCurButton == (int) m_KeysToMap.size() )
 				break; // on exit
-			if( m_iCurSlot == NUM_CHANGABLE_SLOTS-1 && m_iCurController == MAX_GAME_CONTROLLERS-1 )
+			if( m_iCurSlot == NUM_CHANGABLE_SLOTS-1 && m_iCurController == NUM_GameController-1 )
 				break;	// can't go right any more
 			BeforeChangeFocus();
 			m_iCurSlot++;

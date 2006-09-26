@@ -11,10 +11,10 @@ enum GameController
 {
 	GAME_CONTROLLER_1 = 0,	// left controller
 	GAME_CONTROLLER_2,	// right controller
-	MAX_GAME_CONTROLLERS,	// leave this at the end
+	NUM_GameController,	// leave this at the end
 	GAME_CONTROLLER_INVALID,
 };
-#define FOREACH_GameController( gc ) FOREACH_ENUM( GameController, MAX_GAME_CONTROLLERS, gc )
+#define FOREACH_GameController( gc ) FOREACH_ENUM( GameController, NUM_GameController, gc )
 
 typedef int GameButton;
 RString GameButtonToString( const Game* pGame, GameButton i );

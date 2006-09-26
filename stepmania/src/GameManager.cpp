@@ -1040,7 +1040,7 @@ static Style g_Styles[] =
 				{ TRACK_4,	+DANCE_COL_SPACING*1.5f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 0, 3, 2, 1, Style::END_MAPPING },
 			{ 0, 3, 2, 1, Style::END_MAPPING }
 		},
@@ -1118,7 +1118,7 @@ static Style g_Styles[] =
 				{ TRACK_8,	+DANCE_COL_SPACING*3.5f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 0, 3, 2, 1, Style::END_MAPPING },
 			{ 4, 7, 6, 5, Style::END_MAPPING }
 		},
@@ -1153,7 +1153,7 @@ static Style g_Styles[] =
 				{ TRACK_8,	+DANCE_COL_SPACING*1.5f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 0, 3, 2, 1, Style::END_MAPPING },
 			{ 0, 3, 2, 1, Style::END_MAPPING }
 		},
@@ -1192,7 +1192,7 @@ static Style g_Styles[] =
 				{ TRACK_6,	+DANCE_COL_SPACING*2.5f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 0, 5, 3, 2, 1, 4, Style::END_MAPPING },
 			{ 0, 5, 3, 2, 1, 4, Style::END_MAPPING }
 		},
@@ -1235,7 +1235,7 @@ static Style g_Styles[] =
 				{ TRACK_8,	+DANCE_COL_SPACING*4.0f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 0, 1, 2, 3, Style::END_MAPPING },
 			{ 4, 5, 6, 7, Style::END_MAPPING },
 		},
@@ -1269,7 +1269,7 @@ static Style g_Styles[] =
 				{ TRACK_6,	+DANCE_6PANEL_VERSUS_COL_SPACING*2.5f },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 0, 5, 3, 2, 1, 4, Style::END_MAPPING },
 			{ 0, 5, 3, 2, 1, 4, Style::END_MAPPING }
 		},
@@ -1312,7 +1312,7 @@ static Style g_Styles[] =
 				{ TRACK_8,	+DANCE_COL_SPACING*3.5f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 0, 3, 2, 1, Style::END_MAPPING },
 			{ 4, 7, 6, 5, Style::END_MAPPING }
 		},
@@ -1350,7 +1350,7 @@ static Style g_Styles[] =
 				{ TRACK_5,	+PUMP_COL_SPACING*2.0f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 1, 3, 2, 0, 4, Style::END_MAPPING },
 			{ 1, 3, 2, 0, 4, Style::END_MAPPING },
 		},
@@ -1387,7 +1387,7 @@ static Style g_Styles[] =
 				{ TRACK_5,	+PUMP_COL_SPACING*2.0f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 1, 3, 2, 0, 4, Style::END_MAPPING },
 			{ 1, 3, 2, 0, 4, Style::END_MAPPING },
 		},
@@ -1426,7 +1426,7 @@ static Style g_Styles[] =
 				{ TRACK_6,	+PUMP_COL_SPACING*2.5f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ Style::NO_MAPPING, 1, 0, Style::NO_MAPPING, 2, Style::END_MAPPING },
 			{ 3, Style::NO_MAPPING, 5, 4, Style::NO_MAPPING, Style::END_MAPPING }
 		},
@@ -1473,7 +1473,7 @@ static Style g_Styles[] =
 				{ TRACK_10,	+PUMP_COL_SPACING*4.5f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 1, 3, 2, 0, 4, Style::END_MAPPING },
 			{ 6, 8, 7, 5, 9, Style::END_MAPPING },
 		},
@@ -1510,7 +1510,7 @@ static Style g_Styles[] =
 				{ TRACK_10,	+PUMP_COL_SPACING*2.0f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 1, 3, 2, 0, 4, Style::END_MAPPING },
 			{ 1, 3, 2, 0, 4, Style::END_MAPPING },
 		},
@@ -1552,7 +1552,7 @@ static Style g_Styles[] =
 				{ TRACK_5,	+PUMP_COL_SPACING*2.0f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 1, 3, 2, 0, 4, 6, 8, 7, 5, 9, Style::END_MAPPING },
 			{ 1, 3, 2, 0, 4, 6, 8, 7, 5, 9, Style::END_MAPPING },
 		},
@@ -1589,7 +1589,7 @@ static Style g_Styles[] =
 				{ TRACK_5,	+EZ2_COL_SPACING*2.0f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 0, 4, 2, 1, 3, Style::END_MAPPING },
 			{ 0, 4, 2, 1, 3, Style::END_MAPPING },
 		},
@@ -1630,7 +1630,7 @@ static Style g_Styles[] =
 				{ TRACK_7,	+EZ2_REAL_COL_SPACING*3.0f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 0, 6, 3, 2, 4, 1, 5, Style::END_MAPPING },
 			{ 0, 6, 3, 2, 4, 1, 5, Style::END_MAPPING },
 		},
@@ -1667,7 +1667,7 @@ static Style g_Styles[] =
 				{ TRACK_5,	+EZ2_COL_SPACING*2.0f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 0, 4, 2, 1, 3, Style::END_MAPPING },
 			{ 0, 4, 2, 1, 3, Style::END_MAPPING },
 		},
@@ -1708,7 +1708,7 @@ static Style g_Styles[] =
 				{ TRACK_7,	+EZ2_REAL_COL_SPACING*3.0f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 0, 6, 3, 2, 4, 1, 5, Style::END_MAPPING },
 			{ 0, 6, 3, 2, 4, 1, 5, Style::END_MAPPING },
 		},
@@ -1755,7 +1755,7 @@ static Style g_Styles[] =
 				{ TRACK_10,	+EZ2_COL_SPACING*4.5f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 0, 4, 2, 1, 3, Style::END_MAPPING },
 			{ 5, 9, 7, 6, 8, Style::END_MAPPING },
 		},
@@ -1792,7 +1792,7 @@ static Style g_Styles[] =
 				{ TRACK_5,	+PARA_COL_SPACING*2.0f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 0, 1, 2, 3, 4, Style::END_MAPPING },
 			{ 0, 1, 2, 3, 4, Style::END_MAPPING },
 		},
@@ -1829,7 +1829,7 @@ static Style g_Styles[] =
 				{ TRACK_5,	+PARA_COL_SPACING*2.0f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 0, 1, 2, 3, 4, Style::END_MAPPING },
 			{ 0, 1, 2, 3, 4, Style::END_MAPPING },
 		},
@@ -1872,7 +1872,7 @@ static Style g_Styles[] =
 				{ TRACK_8,	+DS3DDX_COL_SPACING*3.0f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 0, 1, 2, 3, 4, 5, 6, 7, Style::END_MAPPING },
 			{ 0, 1, 2, 3, 4, 5, 6, 7, Style::END_MAPPING },
 		},
@@ -1911,7 +1911,7 @@ static Style g_Styles[] =
 				{ TRACK_6,	+BEAT_COL_SPACING*3.0f, "scratch" },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 0, 1, 2, 3, 4, Style::NO_MAPPING, Style::NO_MAPPING, 5, 5, Style::END_MAPPING },
 			{ 0, 1, 2, 3, 4, Style::NO_MAPPING, Style::NO_MAPPING, 5, 5, Style::END_MAPPING }
 		},
@@ -1962,7 +1962,7 @@ static Style g_Styles[] =
 				{ TRACK_12,	+BEAT_COL_SPACING*6.0f, "scratch" },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 0, 1, 2, 3, 4, Style::NO_MAPPING, Style::NO_MAPPING, 5, 5, Style::END_MAPPING },
 			{ 5, 6, 7, 8, 9, Style::NO_MAPPING, Style::NO_MAPPING, 10, 10, Style::END_MAPPING }
 		},
@@ -2005,7 +2005,7 @@ static Style g_Styles[] =
 				{ TRACK_8,	+BEAT_COL_SPACING*4.0f, "scratch" },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 1, 2, 3, 4, 5, 6, 7, 0, 0, Style::END_MAPPING },
 			{ 0, 1, 2, 3, 4, 5, 6, 7, 7, Style::END_MAPPING },
 		},
@@ -2064,7 +2064,7 @@ static Style g_Styles[] =
 				{ TRACK_16,	+BEAT_COL_SPACING*8.0f, "scratch" },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 1, 2, 3, 4, 5, 6, 7, 0, 0, Style::END_MAPPING },
 			{ 8, 9, 10, 11, 12, 13, 14, 15, 15, Style::END_MAPPING },
 		},
@@ -2099,7 +2099,7 @@ static Style g_Styles[] =
 				{ TRACK_4,	+MANIAX_COL_SPACING*1.5f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 1, 2, 0, 3, Style::END_MAPPING },
 			{ 1, 2, 0, 3, Style::END_MAPPING },
 		},
@@ -2134,7 +2134,7 @@ static Style g_Styles[] =
 				{ TRACK_4,	+MANIAX_COL_SPACING*1.5f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 1, 2, 0, 3, Style::END_MAPPING },
 			{ 1, 2, 0, 3, Style::END_MAPPING },
 		},
@@ -2177,7 +2177,7 @@ static Style g_Styles[] =
 				{ TRACK_8,	+MANIAX_COL_SPACING*3.5f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 1, 2, 0, 3, Style::END_MAPPING },
 			{ 5, 6, 4, 7, Style::END_MAPPING },
 		},
@@ -2212,7 +2212,7 @@ static Style g_Styles[] =
 				{ TRACK_4,	+TECHNO_COL_SPACING*1.5f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 0, 3, 2, 1, Style::END_MAPPING },
 			{ 0, 3, 2, 1, Style::END_MAPPING },
 		},
@@ -2249,7 +2249,7 @@ static Style g_Styles[] =
 				{ TRACK_5,	+TECHNO_COL_SPACING*2.0f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ Style::NO_MAPPING, Style::NO_MAPPING, Style::NO_MAPPING, Style::NO_MAPPING,
 				1, 3, 2, 0, 4, Style::END_MAPPING },
 			{ Style::NO_MAPPING, Style::NO_MAPPING, Style::NO_MAPPING, Style::NO_MAPPING,
@@ -2294,7 +2294,7 @@ static Style g_Styles[] =
 				{ TRACK_8,	+TECHNO_COL_SPACING*2.5f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 1, 6, 4, 3, 2, 5, Style::NO_MAPPING, 0, 7, Style::END_MAPPING },
 			{ 1, 6, 4, 3, 2, 5, Style::NO_MAPPING, 0, 7, Style::END_MAPPING },
 		},
@@ -2329,7 +2329,7 @@ static Style g_Styles[] =
 				{ TRACK_4,	+TECHNO_COL_SPACING*1.5f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 0, 3, 2, 1, Style::END_MAPPING },
 			{ 0, 3, 2, 1, Style::END_MAPPING },
 		},
@@ -2366,7 +2366,7 @@ static Style g_Styles[] =
 				{ TRACK_5,	+TECHNO_COL_SPACING*2.0f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ Style::NO_MAPPING, Style::NO_MAPPING, Style::NO_MAPPING, Style::NO_MAPPING,
 				1, 3, 2, 0, 4, Style::END_MAPPING },
 			{ Style::NO_MAPPING, Style::NO_MAPPING, Style::NO_MAPPING, Style::NO_MAPPING,
@@ -2411,7 +2411,7 @@ static Style g_Styles[] =
 				{ TRACK_8,	+TECHNO_VERSUS_COL_SPACING*3.5f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 1, 6, 4, 3, 2, 5, Style::NO_MAPPING, 0, 7, Style::END_MAPPING },
 			{ 1, 6, 4, 3, 2, 5, Style::NO_MAPPING, 0, 7, Style::END_MAPPING },
 //			{ 1, 6, 4, Style::NO_MAPPING, 2, 5, Style::NO_MAPPING, 0, 7, Style::END_MAPPING },
@@ -2456,7 +2456,7 @@ static Style g_Styles[] =
 				{ TRACK_8,	+TECHNO_COL_SPACING*3.5f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 0, 3, 2, 1, Style::END_MAPPING },
 			{ 4, 7, 6, 5, Style::END_MAPPING },
 		},
@@ -2503,7 +2503,7 @@ static Style g_Styles[] =
 				{ TRACK_10,	+TECHNO_COL_SPACING*4.5f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ Style::NO_MAPPING, Style::NO_MAPPING, Style::NO_MAPPING, Style::NO_MAPPING,
 				1, 3, 2, 0, 4, Style::END_MAPPING },
 			{ Style::NO_MAPPING, Style::NO_MAPPING, Style::NO_MAPPING, Style::NO_MAPPING,
@@ -2542,7 +2542,7 @@ static Style g_Styles[] =
 				{ TRACK_5,	+POPN5_COL_SPACING*2.0f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ Style::NO_MAPPING, Style::NO_MAPPING, 0, 1, 2, 3, 4, Style::END_MAPPING },
 			{ Style::NO_MAPPING, Style::NO_MAPPING, 0, 1, 2, 3, 4, Style::END_MAPPING },
 		},
@@ -2587,7 +2587,7 @@ static Style g_Styles[] =
 				{ TRACK_9,	+POPN9_COL_SPACING*4.0f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, Style::END_MAPPING },
 			{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, Style::END_MAPPING },
 		},
@@ -2630,7 +2630,7 @@ static Style g_Styles[] =
 				{ TRACK_8,	+DANCE_COL_SPACING*3.5f, NULL },
 			},
 		},
-		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
+		{	// m_iInputColumn[NUM_GameController][MAX_GAME_BUTTONS]
 			{ 0, 1, 2, 3, 4, 5, 6, 7, 8, Style::END_MAPPING },
 			{ 0, 1, 2, 3, 4, 5, 6, 7, 8, Style::END_MAPPING },
 		},

@@ -48,7 +48,7 @@ public:
 	char		m_szButtonNames[MAX_GAME_BUTTONS][60];	// The name used by the button graphics system.  e.g. "left", "right", "middle C", "snare"
 	GameButton	m_DedicatedMenuButton[NUM_MenuButton];
 	GameButton	m_SecondaryMenuButton[NUM_MenuButton];
-	DeviceButton	m_iDefaultKeyboardKey[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS];	// default keyboard keys only have an effect the current game is this game
+	DeviceButton	m_iDefaultKeyboardKey[NUM_GameController][MAX_GAME_BUTTONS];	// default keyboard keys only have an effect the current game is this game
 
 	GameButton ButtonNameToIndex( const RString &sButtonName ) const;
 	MenuButton GameInputToMenuButton( GameInput GameI ) const;

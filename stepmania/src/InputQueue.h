@@ -21,7 +21,7 @@ public:
 	bool AllWerePressedRecently( GameController c, const GameButton* buttons, int iNumButtons, float fMaxSecondsBack );
 
 protected:
-	vector<InputEventPlus> m_aQueue[MAX_GAME_CONTROLLERS];
+	vector<InputEventPlus> m_aQueue[NUM_GameController];
 };
 
 

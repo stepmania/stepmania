@@ -42,13 +42,13 @@ private:
 		GameButton m_GameButton;
 
 		// owned by m_Line
-		BitmapText	*m_textMappedTo[MAX_GAME_CONTROLLERS][NUM_SHOWN_GAME_TO_DEVICE_SLOTS];
+		BitmapText	*m_textMappedTo[NUM_GameController][NUM_SHOWN_GAME_TO_DEVICE_SLOTS];
 	};
 	vector<KeyToMap> m_KeysToMap;
 
 	BitmapText m_textDevices;
 
-	BitmapText m_textLabel[MAX_GAME_CONTROLLERS];
+	BitmapText m_textLabel[NUM_GameController];
 
 	AutoActor m_sprExit;
 
