@@ -37,7 +37,7 @@ private:
 	Course *GetCourseWithFocus() const;
 
 	vector<Course*> m_vpCourses;
-	ThemeMetric<int> EDIT_MODE;
+	ThemeMetric<EditMode> EDIT_MODE;
 	ThemeMetric<RString> CREATE_NEW_SCREEN;
 };
 

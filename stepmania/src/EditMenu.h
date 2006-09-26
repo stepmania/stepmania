@@ -133,7 +133,7 @@ private:
 	ThemeMetric<apActorCommands> ROW_VALUE_ON_COMMAND;
 	ThemeMetric1D<float> ROW_Y;
 public:
-	ThemeMetric<int> EDIT_MODE;
+	ThemeMetric<EditMode> EDIT_MODE;
 };
 
 #endif
