@@ -507,12 +507,12 @@ class DebugLineAutosync : public IDebugLine
 	virtual bool IsEnabled() { return GAMESTATE->m_SongOptions.GetSong().m_AutosyncType!=SongOptions::AUTOSYNC_OFF; }
 	virtual void Do( RString &sMessageOut )
 	{
-		SongOptions::AutosyncType as = enum_add2( GAMESTATE->m_SongOptions.GetSong().m_AutosyncType, 1 );
+		int as = GAMESTATE->m_SongOptions.GetSong().m_AutosyncType + 1;
 		bool bAllowSongAutosync = !GAMESTATE->IsCourseMode();
 		if( !bAllowSongAutosync  &&  as == SongOptions::AUTOSYNC_SONG )
 			as = SongOptions::AUTOSYNC_MACHINE;
-		wrap( (int&)as, SongOptions::NUM_AUTOSYNC_TYPES );
-		SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Song, m_AutosyncType, as );
+		wrap( as, SongOptions::NUM_AUTOSYNC_TYPES );
+		SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Song, m_AutosyncType, SongOptions::AutosyncType(as) );
 		MESSAGEMAN->Broadcast( Message_AutosyncChanged );
 		IDebugLine::Do( sMessageOut );
 	}
@@ -525,9 +525,9 @@ class DebugLineCoinMode : public IDebugLine
 	virtual bool IsEnabled() { return true; }
 	virtual void Do( RString &sMessageOut )
 	{
-		CoinMode cm = (CoinMode)(PREFSMAN->m_CoinMode+1);
-		wrap( (int&)cm, NUM_CoinMode );
-		PREFSMAN->m_CoinMode.Set( cm );
+		int cm = PREFSMAN->m_CoinMode+1;
+		wrap( cm, NUM_CoinMode );
+		PREFSMAN->m_CoinMode.Set( CoinMode(cm) );
 		SCREENMAN->RefreshCreditsMessages();
 		IDebugLine::Do( sMessageOut );
 	}
