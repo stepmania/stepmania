@@ -344,7 +344,7 @@ EditButton ScreenEdit::DeviceToEdit( const DeviceInput &DeviceI ) const
 		}
 	}
 
-	return EDIT_BUTTON_INVALID;
+	return EditButton_Invalid;
 }
 
 /* Given a DeviceInput that was just depressed, return an active edit function. */
@@ -364,7 +364,7 @@ EditButton ScreenEdit::MenuButtonToEditButton( MenuButton MenuI ) const
 		}
 	}
 
-	return EDIT_BUTTON_INVALID;
+	return EditButton_Invalid;
 }
 
 /* If DeviceI was just pressed, return true if button is triggered.  (More than one
@@ -1075,7 +1075,7 @@ void ScreenEdit::Input( const InputEventPlus &input )
 		return;
 
 	EditButton EditB = DeviceToEdit( input.DeviceI );
-	if( EditB == EDIT_BUTTON_INVALID )
+	if( EditB == EditButton_Invalid )
 		EditB = MenuButtonToEditButton( input.MenuI );
 		
 
@@ -3539,18 +3539,18 @@ struct EditHelpLine
 	EditHelpLine( 
 		const char *_szEnglishDescription,
 		EditButton eb0, 
-		EditButton eb1 = EDIT_BUTTON_INVALID, 
-		EditButton eb2 = EDIT_BUTTON_INVALID, 
-		EditButton eb3 = EDIT_BUTTON_INVALID, 
-		EditButton eb4 = EDIT_BUTTON_INVALID, 
-		EditButton eb5 = EDIT_BUTTON_INVALID, 
-		EditButton eb6 = EDIT_BUTTON_INVALID, 
-		EditButton eb7 = EDIT_BUTTON_INVALID, 
-		EditButton eb8 = EDIT_BUTTON_INVALID, 
-		EditButton eb9 = EDIT_BUTTON_INVALID )
+		EditButton eb1 = EditButton_Invalid, 
+		EditButton eb2 = EditButton_Invalid, 
+		EditButton eb3 = EditButton_Invalid, 
+		EditButton eb4 = EditButton_Invalid, 
+		EditButton eb5 = EditButton_Invalid, 
+		EditButton eb6 = EditButton_Invalid, 
+		EditButton eb7 = EditButton_Invalid, 
+		EditButton eb8 = EditButton_Invalid, 
+		EditButton eb9 = EditButton_Invalid )
 	{
 		szEnglishDescription = _szEnglishDescription;
-#define PUSH_IF_VALID( x ) if( x != EDIT_BUTTON_INVALID ) veb.push_back( x );
+#define PUSH_IF_VALID( x ) if( x != EditButton_Invalid ) veb.push_back( x );
 		PUSH_IF_VALID( eb0 );
 		PUSH_IF_VALID( eb1 );
 		PUSH_IF_VALID( eb2 ); 

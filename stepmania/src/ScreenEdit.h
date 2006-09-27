@@ -122,10 +122,10 @@ enum EditButton
 	
 	EDIT_BUTTON_SWITCH_PLAYERS,
 
-	NUM_EDIT_BUTTONS,		// leave this at the end
-	EDIT_BUTTON_INVALID
+	NUM_EditButton,		// leave this at the end
+	EditButton_Invalid
 };
-#define FOREACH_EditButton( e ) FOREACH_ENUM( EditButton, NUM_EDIT_BUTTONS, e )
+#define FOREACH_EditButton( e ) FOREACH_ENUM( EditButton, NUM_EditButton, e )
 const int NUM_EDIT_TO_DEVICE_SLOTS = 2;
 const int NUM_EDIT_TO_MENU_SLOTS = 2;
 
@@ -137,8 +137,8 @@ const int NUM_EDIT_TO_MENU_SLOTS = 2;
  */
 struct MapEditToDI
 {
-	DeviceInput button[NUM_EDIT_BUTTONS][NUM_EDIT_TO_DEVICE_SLOTS];
-	DeviceInput hold[NUM_EDIT_BUTTONS][NUM_EDIT_TO_DEVICE_SLOTS];
+	DeviceInput button[NUM_EditButton][NUM_EDIT_TO_DEVICE_SLOTS];
+	DeviceInput hold[NUM_EditButton][NUM_EDIT_TO_DEVICE_SLOTS];
 	void Clear()
 	{
 		FOREACH_EditButton(e)
@@ -153,7 +153,7 @@ struct MapEditToDI
 // Like MapEditToDI, but maps MenuButton instead of DeviceInput.
 struct MapEditButtonToMenuButton
 {
-	MenuButton button[NUM_EDIT_BUTTONS][NUM_EDIT_TO_MENU_SLOTS];
+	MenuButton button[NUM_EditButton][NUM_EDIT_TO_MENU_SLOTS];
 	void Clear()
 	{
 		FOREACH_EditButton(e)
