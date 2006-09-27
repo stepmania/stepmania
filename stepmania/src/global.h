@@ -119,6 +119,11 @@ void ShowWarning( const char *file, int line, const char *message ); // don't pu
 #define DEBUG_ASSERT_M(x,y)
 #endif
 
+template <bool> struct CompileAssert;
+template <> struct CompileAssert<true> { };
+template<int> struct CompileAssertDecl { };
+#define COMPILE_ASSERT(COND) typedef CompileAssertDecl< sizeof(CompileAssert<!!(COND)>) > CompileAssertInst
+
 #if defined(__GNUC__)
 /* Define a macro to tell the compiler that a function has printf() semantics, to aid warning output. */
 #define PRINTF(a,b) __attribute__((format(__printf__,a,b)))
