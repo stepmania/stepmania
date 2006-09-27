@@ -13,9 +13,10 @@ enum KeyboardRow
 {
 	R1, R2, R3, R4, R5, R6, R7,
 	KEYBOARD_ROW_SPECIAL,
-	NUM_KEYBOARD_ROWS
+	NUM_KeyboardRow,
+	KeyboardRow_Invalid
 };
-#define FOREACH_KeyboardRow( i ) FOREACH_ENUM( KeyboardRow, NUM_KEYBOARD_ROWS, i )
+#define FOREACH_KeyboardRow( i ) FOREACH_ENUM( KeyboardRow, NUM_KeyboardRow, i )
 const int KEYS_PER_ROW = 13;
 enum KeyboardRowSpecialKey
 {
@@ -120,7 +121,7 @@ protected:
 	KeyboardRow		m_iFocusY;
 	
 	AutoActor		m_sprCursor;
-	BitmapText		*m_ptextKeys[NUM_KEYBOARD_ROWS][KEYS_PER_ROW];
+	BitmapText		*m_ptextKeys[NUM_KeyboardRow][KEYS_PER_ROW];
 
 	RageSound		m_sndChange;
 

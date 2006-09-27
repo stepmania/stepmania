@@ -13,7 +13,7 @@
 #include "RageInput.h"
 #include "LocalizedString.h"
 
-static const char* g_szKeys[NUM_KEYBOARD_ROWS][KEYS_PER_ROW] =
+static const char* g_szKeys[NUM_KeyboardRow][KEYS_PER_ROW] =
 {
 	{"A","B","C","D","E","F","G","H","I","J","K","L","M"},
 	{"N","O","P","Q","R","S","T","U","V","W","X","Y","Z"},
@@ -360,7 +360,7 @@ void ScreenTextEntryVisual::BeginScreen()
 		{
 			BitmapText &bt = *m_ptextKeys[r][x];
 			float fX = roundf( SCALE( x, 0, KEYS_PER_ROW-1, ROW_START_X, ROW_END_X ) );
-			float fY = roundf( SCALE( r, 0, NUM_KEYBOARD_ROWS-1, ROW_START_Y, ROW_END_Y ) );
+			float fY = roundf( SCALE( r, 0, NUM_KeyboardRow-1, ROW_START_Y, ROW_END_Y ) );
 			bt.SetXY( fX, fY );
 		}
 	}
@@ -406,7 +406,7 @@ void ScreenTextEntryVisual::MoveY( int iDir )
 	do
 	{
 		m_iFocusY = enum_add2( m_iFocusY,  +iDir );
-		wrap( (int&)m_iFocusY, NUM_KEYBOARD_ROWS );
+		wrap( (int&)m_iFocusY, NUM_KeyboardRow );
 
 		// HACK: Round to nearest option so that we always stop 
 		// on KEYBOARD_ROW_SPECIAL.
