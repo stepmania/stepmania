@@ -409,7 +409,7 @@ public:
 	
 	static int GetRadarValues( T* p, lua_State *L )
 	{
-		PlayerNumber pn = (PlayerNumber) IArg(1);
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
 		RadarValues &rv = const_cast<RadarValues &>(p->GetRadarValues(pn));
 		rv.PushSelf(L);
 		return 1;

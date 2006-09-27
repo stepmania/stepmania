@@ -146,7 +146,7 @@ class LunaOptionIconRow: public Luna<OptionIconRow>
 {
 public:
 	LunaOptionIconRow() { LUA->Register( Register ); }
-	static int set( T* p, lua_State *L )		{ p->SetFromGameState( (PlayerNumber) IArg(1) ); return 0; }
+	static int set( T* p, lua_State *L )		{ p->SetFromGameState( Enum::Check<PlayerNumber>(L, 1) ); return 0; }
 
 	static void Register(lua_State *L) 
 	{

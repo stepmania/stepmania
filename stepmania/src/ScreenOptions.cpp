@@ -1252,7 +1252,7 @@ class LunaScreenOptions: public Luna<ScreenOptions>
 public:
 	LunaScreenOptions() { LUA->Register( Register ); }
 
-	static int GetCurrentRow( T* p, lua_State *L ) { lua_pushnumber( L, p->GetCurrentRow((PlayerNumber) IArg(1)) ); return 1; }
+	static int GetCurrentRow( T* p, lua_State *L ) { lua_pushnumber( L, p->GetCurrentRow(Enum::Check<PlayerNumber>(L, 1)) ); return 1; }
 	static void Register( Lua *L )
 	{
   		ADD_METHOD( GetCurrentRow );
