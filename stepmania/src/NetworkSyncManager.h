@@ -53,7 +53,7 @@ enum NSScoreBoardColumn
 	NUM_NSScoreBoardColumn,
 	NSScoreBoardColumn_Invalid
 };
-#define FOREACH_NSScoreBoardColumn( sc ) FOREACH_ENUM( NSScoreBoardColumn, NUM_NSScoreBoardColumn, sc )
+#define FOREACH_NSScoreBoardColumn( sc ) FOREACH_ENUM2( NSScoreBoardColumn, sc )
 
 struct NetServerInfo
 {

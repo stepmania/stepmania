@@ -126,7 +126,7 @@ static void Lua##X(lua_State* L) \
 { \
 	/* Create the EnumToString table: { "UnlockEntry_ArcadePoints", "UnlockEntry_DancePoints" } */ \
 	lua_newtable( L ); \
-	FOREACH_ENUM( X, NUM_##X, i ) \
+	FOREACH_ENUM2( X, i ) \
 	{ \
 		RString s = X##Names[i]; \
 		lua_pushstring( L, (#X "_")+s ); \
@@ -137,7 +137,7 @@ static void Lua##X(lua_State* L) \
 	lua_setglobal( L, #X ); \
 	/* Create the StringToEnum table: { "UnlockEntry_ArcadePoints" = 0, "UnlockEntry_DancePoints" = 1 } */ \
 	lua_newtable( L ); \
-	FOREACH_ENUM( X, NUM_##X, i ) \
+	FOREACH_ENUM2( X, i ) \
 	{ \
 		RString s = X##Names[i]; \
 		lua_pushstring( L, (#X "_")+s ); \
