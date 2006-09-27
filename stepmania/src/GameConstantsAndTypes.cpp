@@ -34,18 +34,21 @@ XToLocalizedString( RadarCategory );
 LuaFunction( RadarCategoryToLocalizedString, RadarCategoryToLocalizedString(Enum::Check<RadarCategory>(L, 1)) );
 LuaXType( RadarCategory );
 
-static void LuaStepsType(lua_State* L)
+RString StepsTypeToString( Stage s );
+RString StepsTypeToString( StepsType st )
 {
-	FOREACH_StepsType( st )
+	RString s = GAMEMAN->StepsTypeToString( st );
+	/* steps-type -> StepsType */
+	s.Replace('-','_');
+	for( size_t i = 0; i < s.size(); ++i )
 	{
-		RString s = GAMEMAN->StepsTypeToString( st );
-		s.MakeUpper();
-		s.Replace('-','_');
-		LUA->SetGlobal( "STEPS_TYPE_"+s, st );
+		if( i == 0 || (i > 0 && s[i-1] == '_') )
+			s[i-1] = toupper( s[i-1] );
 	}
-	LUA->SetGlobal( "STEPS_TYPE_INVALID", StepsType_Invalid );
+	return "StepsType_"+s;
 }
-REGISTER_WITH_LUA_FUNCTION( LuaStepsType );
+
+LuaXType( StepsType );
 
 
 static const char *PlayModeNames[] = {

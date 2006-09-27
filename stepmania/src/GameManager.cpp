@@ -2908,7 +2908,7 @@ class LunaGameManager: public Luna<GameManager>
 public:
 	LunaGameManager() { LUA->Register( Register ); }
 
-	static int StepsTypeToLocalizedString( T* p, lua_State *L )	{ lua_pushstring(L, p->StepsTypeToLocalizedString((StepsType)IArg(1)) ); return 1; }
+	static int StepsTypeToLocalizedString( T* p, lua_State *L )	{ lua_pushstring(L, p->StepsTypeToLocalizedString(Enum::Check<StepsType>(L, 1)) ); return 1; }
 	static int GetFirstStepsTypeForGame( T* p, lua_State *L )
 	{
 		Game *pGame = Luna<Game>::check( L, 1 );

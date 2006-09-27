@@ -1249,7 +1249,7 @@ public:
 	}
 	static int GetStepsByStepsType( T* p, lua_State *L )
 	{
-		StepsType st = (StepsType)IArg(1);
+		StepsType st = Enum::Check<StepsType>(L, 1);
 		const vector<Steps*> &v = p->GetStepsByStepsType( st );
 		LuaHelpers::CreateTableFromArray<Steps*>( v, L );
 		return 1;
@@ -1264,7 +1264,7 @@ public:
 	static int IsMarathon( T* p, lua_State *L )		{ lua_pushboolean(L, p->IsMarathon()); return 1; }
 	static int HasStepsTypeAndDifficulty( T* p, lua_State *L )
 	{
-		StepsType st = (StepsType)IArg(1);
+		StepsType st = Enum::Check<StepsType>(L, 1);
 
 		Difficulty dc = Enum::Check<Difficulty>( L, 2 );
 

@@ -73,6 +73,7 @@ enum StepsType
 	StepsType_Invalid,
 };
 #define FOREACH_StepsType( st ) FOREACH_ENUM2( StepsType, st )
+LuaDeclareType( StepsType );
 
 //
 // Play mode stuff

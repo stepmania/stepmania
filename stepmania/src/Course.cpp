@@ -926,7 +926,7 @@ public:
 	static int GetEstimatedNumStages( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetEstimatedNumStages() ); return 1; }
 	static int GetTotalSeconds( T* p, lua_State *L )
 	{
-		StepsType st = (StepsType) IArg(1);
+		StepsType st = Enum::Check<StepsType>(L, 1);
 		float fTotalSeconds;
 		if( !p->GetTotalSeconds(st, fTotalSeconds) )
 			lua_pushnil( L );

@@ -130,7 +130,7 @@ static void Lua##X(lua_State* L) \
 	lua_newtable( L ); \
 	FOREACH_ENUM2( X, i ) \
 	{ \
-		RString s = X##Names[i]; \
+		RString s = X##ToString( i ); \
 		lua_pushstring( L, (#X "_")+s ); \
 		lua_rawseti( L, -2, i+1 ); /* 1-based */ \
 	} \
@@ -141,7 +141,7 @@ static void Lua##X(lua_State* L) \
 	lua_newtable( L ); \
 	FOREACH_ENUM2( X, i ) \
 	{ \
-		RString s = X##Names[i]; \
+		RString s = X##ToString( i ); \
 		lua_pushstring( L, (#X "_")+s ); \
 		lua_pushnumber( L, i ); /* 0-based */ \
 		lua_rawset( L, -3 ); \
