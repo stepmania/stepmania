@@ -40,21 +40,17 @@ public:
 		
 		// We use the metatable to determine the type of the table, so don't
 		// allow it to be changed.
-		lua_pushliteral( L, "__metatable" );
 		lua_pushstring( L, "(hidden)" );
-		lua_settable( L, metatable );
+		lua_setfield( L, metatable, "__metatable" );
 		
-		lua_pushliteral( L, "__index" );
 		lua_pushvalue( L, methods );
-		lua_settable( L, metatable );
+		lua_setfield( L, metatable, "__index" );
 		
-		lua_pushliteral( L, "__tostring" );
 		lua_pushcfunction( L, tostring_T );
-		lua_settable( L, metatable );
+		lua_setfield( L, metatable, "__tostring" );
 		
-		lua_pushliteral( L, "__eq" );
 		lua_pushcfunction( L, equal );
-		lua_settable( L, metatable );
+		lua_setfield( L, metatable, "__eq" );
 
 		// fill method table with methods from class T
 		for( unsigned i=0; s_pvMethods && i < s_pvMethods->size(); i++ )
@@ -71,9 +67,8 @@ public:
 		int methods_metatable = lua_gettop( L );
 
 		// Hide the metatable.
-		lua_pushliteral( L, "__metatable" );
 		lua_pushstring( L, "(hidden)" );
-		lua_settable( L, methods_metatable );
+		lua_setfield( L, methods_metatable, "__metatable" );
 
 		if( strcmp(m_sBaseClassName, "none") )
 		{
@@ -81,14 +76,12 @@ public:
 			// to the base class.  If the base class doesn't exist, we probably
 			// were called before the Register() of the base class; we'll fill
 			// it in when we get to it.
-			lua_pushliteral( L, "__index" );
 			LuaBinding::CreateMethodsTable( L, m_sBaseClassName );
-			lua_settable( L, methods_metatable );
+			lua_setfield( L, methods_metatable, "__index" );
 		}
 
-		lua_pushliteral( L, "type" );
 		lua_pushstring( L, m_sClassName );
-		lua_settable( L, methods_metatable );
+		lua_setfield( L, methods_metatable, "type" );
 
 		/* Set and pop the methods metatable. */
 		lua_setmetatable( L, methods );
