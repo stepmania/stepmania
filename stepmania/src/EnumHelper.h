@@ -84,13 +84,14 @@ namespace Enum
 static const RString EMPTY_STRING;
 const RString &EnumToString( int iVal, int iMax, const char **szNameArray, auto_ptr<RString> *pNameCache ); // XToString helper
 
-#define XToString(X, CNT) \
+#define XToString2(X) \
 	COMPILE_ASSERT( NUM_##X == ARRAYLEN(X##Names) ); \
 	const RString& X##ToString( X x ) \
 	{	\
 		static auto_ptr<RString> as_##X##Name[NUM_##X+2]; \
 		return EnumToString( x, NUM_##X, X##Names, as_##X##Name ); \
 	}
+#define XToString(X, CNT) XToString2(X)
 
 #define XToLocalizedString(X)      \
 	const RString &X##ToLocalizedString( X x ) \
