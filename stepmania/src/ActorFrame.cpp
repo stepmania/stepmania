@@ -391,8 +391,6 @@ void ActorFrame::SetDrawByZPosition( bool b )
 class LunaActorFrame : public Luna<ActorFrame>
 {
 public:
-	LunaActorFrame() { LUA->Register( Register ); }
-
 	static int playcommandonchildren( T* p, lua_State *L )		{ p->PlayCommandOnChildren(SArg(1)); return 0; }
 	static int playcommandonleaves( T* p, lua_State *L )		{ p->PlayCommandOnLeaves(SArg(1)); return 0; }
 	static int propagate( T* p, lua_State *L )			{ p->SetPropagateCommands( !!IArg(1) ); return 0; }
@@ -412,8 +410,10 @@ public:
 	static int GetNumChildren( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumChildren() ); return 1; }
 	static int SetDrawByZPosition( T* p, lua_State *L )	{ p->SetDrawByZPosition( BArg(1) ); return 1; }
 
-	static void Register(lua_State *L) 
+	LunaActorFrame()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( playcommandonchildren );
 		ADD_METHOD( playcommandonleaves );
 		ADD_METHOD( propagate ); // deprecated
@@ -424,7 +424,6 @@ public:
 		ADD_METHOD( GetChild );
 		ADD_METHOD( GetNumChildren );
 		ADD_METHOD( SetDrawByZPosition );
-		Luna<T>::Register( L );
 	}
 };
 

@@ -788,15 +788,13 @@ bool Model::MaterialsNeedNormals() const
 class LunaModel: public Luna<Model>
 {
 public:
-	LunaModel() { LUA->Register( Register ); }
-
 	static int playanimation( T* p, lua_State *L )	{ p->PlayAnimation(SArg(1),FArg(2)); return 0; }
 
-	static void Register(lua_State *L) 
+	LunaModel()
 	{
-		ADD_METHOD( playanimation );
+		LUA->Register( Register );
 
-		Luna<T>::Register( L );
+		ADD_METHOD( playanimation );
 	}
 };
 

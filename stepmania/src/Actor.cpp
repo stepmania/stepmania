@@ -1305,8 +1305,6 @@ Actor::TweenInfo &Actor::TweenInfo::operator=( const TweenInfo &rhs )
 class LunaActor : public Luna<Actor>
 {
 public:
-	LunaActor() { LUA->Register( Register ); }
-
 	static int sleep( T* p, lua_State *L )			{ p->Sleep(FArg(1)); return 0; }
 	static int linear( T* p, lua_State *L )			{ p->BeginTweening(FArg(1),TWEEN_LINEAR); return 0; }
 	static int accelerate( T* p, lua_State *L )		{ p->BeginTweening(FArg(1),TWEEN_ACCELERATE); return 0; }
@@ -1480,7 +1478,10 @@ public:
 		return 1;
 	}
 
-	static void Register(lua_State *L) {
+	LunaActor()
+	{
+		LUA->Register( Register );
+
   		ADD_METHOD( sleep );
 		ADD_METHOD( linear );
 		ADD_METHOD( accelerate );
@@ -1612,8 +1613,6 @@ public:
 
 		ADD_METHOD( GetName );
 		ADD_METHOD( GetParent );
-
-		Luna<T>::Register( L );
 	}
 };
 

@@ -65,13 +65,13 @@ void RollingNumbers::UpdateText()
 class LunaRollingNumbers: public Luna<RollingNumbers>
 {
 public:
-	LunaRollingNumbers() { LUA->Register( Register ); }
 	static int targetnumber( T* p, lua_State *L )	{ p->SetTargetNumber( FArg(1) ); return 0; }
 
-	static void Register(lua_State *L) 
+	LunaRollingNumbers()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( targetnumber );
-		Luna<T>::Register( L );
 	}
 };
 

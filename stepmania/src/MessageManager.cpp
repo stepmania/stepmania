@@ -302,19 +302,17 @@ void MessageSubscriber::UnsubscribeAll()
 class LunaMessageManager: public Luna<MessageManager>
 {
 public:
-	LunaMessageManager() { LUA->Register( Register ); }
-
 	static int Broadcast( T* p, lua_State *L )
 	{
 		p->Broadcast( SArg(1) );
 		return 0;
 	}
 
-	static void Register(lua_State *L)
+	LunaMessageManager()
 	{
-		ADD_METHOD( Broadcast );
+		LUA->Register( Register );
 
-		Luna<T>::Register( L );
+		ADD_METHOD( Broadcast );
 	}
 };
 

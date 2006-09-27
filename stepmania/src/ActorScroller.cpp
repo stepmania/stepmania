@@ -294,8 +294,6 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bDrawPrimitives )
 class LunaActorScroller: public Luna<ActorScroller>
 {
 public:
-	LunaActorScroller() { LUA->Register( Register ); }
-
 	static int PositionItems( T* p, lua_State *L )	{ p->PositionItems(); return 0; }
 	static int SetTransformFromFunction( T* p, lua_State *L )
 	{
@@ -313,8 +311,10 @@ public:
 	static int scrollwithpadding( T* p, lua_State *L )		{ p->ScrollWithPadding(FArg(1),FArg(2)); return 0; }
 	static int setfastcatchup( T* p, lua_State *L )			{ p->SetFastCatchup(BArg(1)); return 0; }
 
-	static void Register(lua_State *L) 
+	LunaActorScroller()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( PositionItems );
 		ADD_METHOD( SetTransformFromFunction );
 		ADD_METHOD( SetTransformFromHeight );
@@ -325,7 +325,6 @@ public:
 		ADD_METHOD( scrollthroughallitems );
 		ADD_METHOD( scrollwithpadding );
 		ADD_METHOD( setfastcatchup );
-		Luna<T>::Register( L );
 	}
 };
 

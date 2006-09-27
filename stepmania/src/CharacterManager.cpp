@@ -122,8 +122,6 @@ Character* CharacterManager::GetCharacterFromID( RString sCharacterID )
 class LunaCharacterManager: public Luna<CharacterManager>
 {
 public:
-	LunaCharacterManager() { LUA->Register( Register ); }
-
 	static int GetCharacter( T* p, lua_State *L )
 	{
 		Character *pCharacter = p->GetCharacterFromID(SArg(1));
@@ -135,11 +133,11 @@ public:
 		return 1;
 	}
 
-	static void Register(lua_State *L)
+	LunaCharacterManager()
 	{
-		ADD_METHOD( GetCharacter );
+		LUA->Register( Register );
 
-		Luna<T>::Register( L );
+		ADD_METHOD( GetCharacter );
 	}
 };
 

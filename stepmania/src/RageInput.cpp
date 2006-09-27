@@ -184,8 +184,6 @@ RString RageInput::GetDisplayDevicesString() const
 class LunaRageInput: public Luna<RageInput>
 {
 public:
-	LunaRageInput() { LUA->Register( Register ); }
-
 	static int GetDescriptions( T* p, lua_State *L )
 	{
 		vector<InputDeviceInfo> vDevices;
@@ -197,11 +195,11 @@ public:
 		return 1;
 	}
 
-	static void Register(lua_State *L)
+	LunaRageInput()
 	{
-		ADD_METHOD( GetDescriptions );
+		LUA->Register( Register );
 
-		Luna<T>::Register( L );
+		ADD_METHOD( GetDescriptions );
 	}
 };
 

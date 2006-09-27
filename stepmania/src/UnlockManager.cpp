@@ -699,23 +699,21 @@ void UnlockManager::GetStepsUnlockedByEntryID( vector<Song *> &apSongsOut, vecto
 class LunaUnlockEntry: public Luna<UnlockEntry>
 {
 public:
-	LunaUnlockEntry() { LUA->Register( Register ); }
-
 	static int IsLocked( T* p, lua_State *L )		{ lua_pushboolean(L, p->IsLocked() ); return 1; }
 	static int GetDescription( T* p, lua_State *L )		{ lua_pushstring(L, p->GetDescription() ); return 1; }
 	static int GetUnlockRewardType( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_Type ); return 1; }
 	static int GetRequirement( T* p, lua_State *L )		{ UnlockRequirement i = Enum::Check<UnlockRequirement>( L, 1 ); lua_pushnumber(L, p->m_fRequirement[i] ); return 1; }
 	static int GetRequirePassHardSteps( T* p, lua_State *L ){ lua_pushboolean(L, p->m_bRequirePassHardSteps); return 1; }
 
-	static void Register(lua_State *L)
+	LunaUnlockEntry()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( IsLocked );
 		ADD_METHOD( GetDescription );
 		ADD_METHOD( GetUnlockRewardType );
 		ADD_METHOD( GetRequirement );
 		ADD_METHOD( GetRequirePassHardSteps );
-
-		Luna<T>::Register( L );
 	}
 };
 
@@ -724,8 +722,6 @@ LUA_REGISTER_CLASS( UnlockEntry )
 class LunaUnlockManager: public Luna<UnlockManager>
 {
 public:
-	LunaUnlockManager() { LUA->Register( Register ); }
-
 	static int FindEntryID( T* p, lua_State *L )			{ RString sName = SArg(1); RString s = p->FindEntryID(sName); if( s.empty() ) lua_pushnil(L); else lua_pushstring(L, s); return 1; }
 	static int UnlockEntryID( T* p, lua_State *L )			{ RString sUnlockEntryID = SArg(1); p->UnlockEntryID(sUnlockEntryID); return 0; }
 	static int UnlockEntryIndex( T* p, lua_State *L )		{ int iUnlockEntryID = IArg(1); p->UnlockEntryIndex(iUnlockEntryID); return 0; }
@@ -753,8 +749,10 @@ public:
 		return 2;
 	}
 
-	static void Register(lua_State *L)
+	LunaUnlockManager()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( FindEntryID );
 		ADD_METHOD( UnlockEntryID );
 		ADD_METHOD( UnlockEntryIndex );
@@ -765,8 +763,6 @@ public:
 		ADD_METHOD( GetUnlockEntry );
 		ADD_METHOD( GetSongsUnlockedByEntryID );
 		ADD_METHOD( GetStepsUnlockedByEntryID );
-
-		Luna<T>::Register( L );
 	}
 };
 

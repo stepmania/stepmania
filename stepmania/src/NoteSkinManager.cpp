@@ -320,19 +320,17 @@ RString NoteSkinManager::GetPathFromDirAndFile( const RString &sDir, const RStri
 class LunaNoteSkinManager: public Luna<NoteSkinManager>
 {
 public:
-	LunaNoteSkinManager() { LUA->Register( Register ); }
-
 	static int GetPath( T* p, lua_State *L )		{ lua_pushstring(L, p->GetPath(SArg(1),SArg(2)) ); return 1; }
 	static int GetMetricA( T* p, lua_State *L )		{ p->GetMetricA(SArg(1),SArg(2))->PushSelf(L); return 1; }
 	DEFINE_METHOD( GetGameBaseNoteSkinName, GAME_BASE_NOTESKIN_NAME.GetValue() )
 
-	static void Register(lua_State *L)
+	LunaNoteSkinManager()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( GetPath );
 		ADD_METHOD( GetMetricA );
 		ADD_METHOD( GetGameBaseNoteSkinName );
-
-		Luna<T>::Register( L );
 	}
 };
 

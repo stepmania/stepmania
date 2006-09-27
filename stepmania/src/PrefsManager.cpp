@@ -556,8 +556,6 @@ float PrefsManager::GetSoundVolume()
 class LunaPrefsManager: public Luna<PrefsManager>
 {
 public:
-	LunaPrefsManager() { LUA->Register( Register ); }
-
 	static int GetPreference( T* p, lua_State *L )
 	{
 		RString sName = SArg(1);
@@ -603,13 +601,13 @@ public:
 		return 0;
 	}
 
-	static void Register(lua_State *L)
+	LunaPrefsManager()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( GetPreference );
 		ADD_METHOD( SetPreference );
 		ADD_METHOD( SetPreferenceToDefault );
-
-		Luna<T>::Register( L );
 	}
 };
 

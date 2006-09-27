@@ -852,8 +852,6 @@ void ColorBitmapText::SetMaxLines( int iNumLines, int iDirection )
 class LunaBitmapText: public Luna<BitmapText>
 {
 public:
-	LunaBitmapText() { LUA->Register( Register ); }
-
 	static int wrapwidthpixels( T* p, lua_State *L )		{ p->SetWrapWidthPixels( IArg(1) ); return 0; }
 	static int maxwidth( T* p, lua_State *L )			{ p->SetMaxWidth( FArg(1) ); return 0; }
 	static int maxheight( T* p, lua_State *L )			{ p->SetMaxHeight( FArg(1) ); return 0; }
@@ -873,15 +871,16 @@ public:
 	}
 	static int GetText( T* p, lua_State *L )			{ lua_pushstring( L, p->GetText() ); return 1; }
 
-	static void Register(lua_State *L) 
+	LunaBitmapText()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( wrapwidthpixels );
 		ADD_METHOD( maxwidth );
 		ADD_METHOD( maxheight );
 		ADD_METHOD( vertspacing );
 		ADD_METHOD( settext );
 		ADD_METHOD( GetText );
-		Luna<T>::Register( L );
 	}
 };
 

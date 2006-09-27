@@ -926,8 +926,6 @@ void ScreenManager::PlaySharedBackgroundOffCommand()
 class LunaScreenManager: public Luna<ScreenManager>
 {
 public:
-	LunaScreenManager() { LUA->Register( Register ); }
-
 	// Note: PrepareScreen binding is not allowed; loading data inside
 	// Lua causes the Lua lock to be held for the duration of the load,
 	// which blocks concurrent rendering
@@ -945,15 +943,15 @@ public:
 	static int ConcurrentlyPrepareScreen( T* p, lua_State *L )	{ p->ConcurrentlyPrepareScreen( SArg(1) ); return 0; }
 	static int ScreenIsPrepped( T* p, lua_State *L )	{ lua_pushboolean( L, ScreenManagerUtil::ScreenIsPrepped( SArg(1) ) ); return 1; }
 
-	static void Register(lua_State *L)
+	LunaScreenManager()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( SetNewScreen );
 		ADD_METHOD( GetTopScreen );
 		ADD_METHOD( SystemMessage );
 		ADD_METHOD( ConcurrentlyPrepareScreen );
 		ADD_METHOD( ScreenIsPrepped );
-
-		Luna<T>::Register( L );
 	}
 };
 

@@ -740,8 +740,6 @@ void GameSoundManager::SetPlayerBalance( PlayerNumber pn, RageSoundParams &param
 class LunaGameSoundManager: public Luna<GameSoundManager>
 {
 public:
-	LunaGameSoundManager() { LUA->Register( Register ); }
-
 	static int DimMusic( T* p, lua_State *L )
 	{
 		float fVolume = FArg(1);
@@ -751,12 +749,12 @@ public:
 	}
 	static int PlayOnce( T* p, lua_State *L ) { RString sPath = SArg(1); p->PlayOnce( sPath ); return 0; }
 
-	static void Register(lua_State *L)
+	LunaGameSoundManager()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( DimMusic );
 		ADD_METHOD( PlayOnce );
-
-		Luna<T>::Register( L );
 	}
 };
 

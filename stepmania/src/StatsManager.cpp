@@ -217,8 +217,6 @@ void StatsManager::CommitStatsToProfiles()
 class LunaStatsManager: public Luna<StatsManager>
 {
 public:
-	LunaStatsManager() { LUA->Register( Register ); }
-
 	static int GetCurStageStats( T* p, lua_State *L )	{ p->m_CurStageStats.PushSelf(L); return 1; }
 	static int GetAccumPlayedStageStats( T* p, lua_State *L )	{ p->GetAccumPlayedStageStats().PushSelf(L); return 1; }
 	static int Reset( T* p, lua_State *L )			{ p->Reset(); return 0; }
@@ -256,9 +254,10 @@ public:
 		return 1;
 	}
 
-
-	static void Register(lua_State *L)
+	LunaStatsManager()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( GetCurStageStats );
 		ADD_METHOD( GetAccumPlayedStageStats );
 		ADD_METHOD( Reset );
@@ -266,8 +265,6 @@ public:
 		ADD_METHOD( GetStagesPlayed );
 		ADD_METHOD( GetBestGrade );
 		ADD_METHOD( GetWorstGrade );
-
-		Luna<T>::Register( L );
 	}
 };
 

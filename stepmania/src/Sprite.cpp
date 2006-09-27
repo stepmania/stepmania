@@ -901,8 +901,6 @@ void Sprite::AddImageCoords( float fX, float fY )
 class LunaSprite: public Luna<Sprite>
 {
 public:
-	LunaSprite() { LUA->Register( Register ); }
-
 	static int Load( T* p, lua_State *L )
 	{
 		RageTextureID ID( SArg(1) );
@@ -941,7 +939,10 @@ public:
 		return 1;
 	}
 
-	static void Register(lua_State *L) {
+	LunaSprite()
+	{
+		LUA->Register( Register );
+
 		ADD_METHOD( Load );
 		ADD_METHOD( LoadBanner );
 		ADD_METHOD( LoadBackground );
@@ -953,8 +954,6 @@ public:
 		ADD_METHOD( setstate );
 		ADD_METHOD( GetAnimationLengthSeconds );
 		ADD_METHOD( GetTexture );
-
-		Luna<T>::Register( L );
 	}
 };
 

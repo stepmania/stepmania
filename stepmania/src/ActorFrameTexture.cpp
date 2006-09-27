@@ -58,22 +58,21 @@ void ActorFrameTexture::DrawPrimitives()
 class LunaActorFrameTexture : public Luna<ActorFrameTexture>
 {
 public:
-	LunaActorFrameTexture() { LUA->Register( Register ); }
-
 	static int create( T* p, lua_State *L )				{ p->Create(); return 0; }
 	static int enabledepthbuffer( T* p, lua_State *L )		{ p->EnableDepthBuffer(BArg(1)); return 0; }
 	static int enablealphabuffer( T* p, lua_State *L )		{ p->EnableAlphaBuffer(BArg(1)); return 0; }
 	static int enablepreservetexture( T* p, lua_State *L )		{ p->EnablePreserveTexture(BArg(1)); return 0; }
 	static int settexturename( T* p, lua_State *L )			{ p->SetTextureName(SArg(1)); return 0; }
 	
-	static void Register(lua_State *L) 
+	LunaActorFrameTexture()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( create );
 		ADD_METHOD( enabledepthbuffer );
 		ADD_METHOD( enablealphabuffer );
 		ADD_METHOD( enablepreservetexture );
 		ADD_METHOD( settexturename );
-		Luna<T>::Register( L );
 	}
 };
 

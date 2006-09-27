@@ -1804,8 +1804,6 @@ int FindCourseIndexOfSameMode( T begin, T end, const Course *p )
 class LunaSongManager: public Luna<SongManager>
 {
 public:
-	LunaSongManager() { LUA->Register( Register ); }
-
 	static int GetAllSongs( T* p, lua_State *L )
 	{
 		const vector<Song*> &v = p->GetAllSongs();
@@ -1876,8 +1874,10 @@ public:
 		return 4;
 	}
 
-	static void Register(lua_State *L)
+	LunaSongManager()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( GetAllSongs );
 		ADD_METHOD( GetAllCourses );
 		ADD_METHOD( FindSong );
@@ -1896,8 +1896,6 @@ public:
 		ADD_METHOD( GetSongRank );
 		ADD_METHOD( GetCourseRank );
 		ADD_METHOD( GetExtraStageInfo );
-
-		Luna<T>::Register( L );
 	}
 };
 

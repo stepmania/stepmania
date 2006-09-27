@@ -2906,8 +2906,6 @@ MenuButton GameManager::GetMenuButtonSecondaryFunction( const Game *pGame, GameB
 class LunaGameManager: public Luna<GameManager>
 {
 public:
-	LunaGameManager() { LUA->Register( Register ); }
-
 	static int StepsTypeToLocalizedString( T* p, lua_State *L )	{ lua_pushstring(L, p->StepsTypeToLocalizedString(Enum::Check<StepsType>(L, 1)) ); return 1; }
 	static int GetFirstStepsTypeForGame( T* p, lua_State *L )
 	{
@@ -2921,12 +2919,12 @@ public:
 		return 1;
 	}
 
-	static void Register(lua_State *L)
+	LunaGameManager()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( StepsTypeToLocalizedString );
 		ADD_METHOD( GetFirstStepsTypeForGame );
-
-		Luna<T>::Register( L );
 	}
 };
 

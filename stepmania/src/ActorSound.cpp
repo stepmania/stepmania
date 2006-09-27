@@ -41,17 +41,15 @@ void ActorSound::LoadFromNode( const RString& sDir, const XNode* pNode )
 class LunaActorSound: public Luna<ActorSound>
 {
 public:
-	LunaActorSound() { LUA->Register( Register ); }
-
 	static int load( T* p, lua_State *L )			{ p->Load(SArg(1)); return 0; }
 	static int play( T* p, lua_State *L )			{ p->Play(); return 0; }
 
-	static void Register(lua_State *L)
+	LunaActorSound()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( load );
 		ADD_METHOD( play );
-
-		Luna<T>::Register( L );
 	}
 };
 

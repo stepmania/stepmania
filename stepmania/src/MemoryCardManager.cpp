@@ -719,15 +719,13 @@ bool IsAnyPlayerUsingMemoryCard()
 class LunaMemoryCardManager: public Luna<MemoryCardManager>
 {
 public:
-	LunaMemoryCardManager() { LUA->Register( Register ); }
-
 	static int IsAnyPlayerUsingMemoryCard( T* p, lua_State *L )	{ lua_pushboolean(L, ::IsAnyPlayerUsingMemoryCard() ); return 1; }
 
-	static void Register(lua_State *L)
+	LunaMemoryCardManager()
 	{
-		ADD_METHOD( IsAnyPlayerUsingMemoryCard );
+		LUA->Register( Register );
 
-		Luna<T>::Register( L );
+		ADD_METHOD( IsAnyPlayerUsingMemoryCard );
 	}
 };
 

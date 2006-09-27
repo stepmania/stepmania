@@ -1157,8 +1157,6 @@ RString ThemeManager::GetBlankGraphicPath()
 class LunaThemeManager: public Luna<ThemeManager>
 {
 public:
-	LunaThemeManager() { LUA->Register( Register ); }
-
 	static int GetMetric( T* p, lua_State *L )			{ p->PushMetric( L, SArg(1),SArg(2) ); return 1; }
 	static int GetString( T* p, lua_State *L )			{ lua_pushstring(L, p->GetString(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathG( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathG(SArg(1),SArg(2)) ); return 1; }
@@ -1166,16 +1164,16 @@ public:
 	static int GetPathS( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathS(SArg(1),SArg(2)) ); return 1; }
 	static int GetNumSelectableThemes( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetNumSelectableThemes() ); return 1; }
 
-	static void Register(lua_State *L)
+	LunaThemeManager()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( GetMetric );
 		ADD_METHOD( GetString );
 		ADD_METHOD( GetPathG );
 		ADD_METHOD( GetPathB );
 		ADD_METHOD( GetPathS );
 		ADD_METHOD( GetNumSelectableThemes );
-
-		Luna<T>::Register( L );
 	}
 };
 
