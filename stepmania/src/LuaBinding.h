@@ -58,7 +58,7 @@ public:
 		{
 			const RegType *l = &(*s_pvMethods)[i];
 			lua_pushstring( L, l->szName );
-			lua_pushlightuserdata( L, (void*)l );
+			lua_pushlightuserdata( L, (void*) l->mfunc );
 			lua_pushcclosure( L, thunk, 1 );
 			lua_settable( L, methods );
 		}
@@ -142,8 +142,8 @@ private:
 		T *obj = check( L, 1, true );  // get self
 		lua_remove(L, 1);  // remove self so member function args start at index 1
 		// get member function from upvalue
-		RegType *l = (RegType *) lua_touserdata( L, lua_upvalueindex(1) );
-		return (*(l->mfunc))(obj,L);  // call member function
+		binding_t *pFunc = (binding_t *) lua_touserdata( L, lua_upvalueindex(1) );
+		return pFunc( obj, L );  // call member function
 	}
 	
 	/* Two objects are equal if the underlying object is the same. */
