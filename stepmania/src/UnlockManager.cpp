@@ -47,7 +47,8 @@ static const char *UnlockRewardTypeNames[] =
 };
 XToString( UnlockRewardType, NUM_UnlockRewardType );
 XToLocalizedString( UnlockRewardType );
-LuaFunction( UnlockRewardTypeToLocalizedString, UnlockRewardTypeToLocalizedString((UnlockRewardType) IArg(1)) );
+LuaXType( UnlockRewardType );
+LuaFunction( UnlockRewardTypeToLocalizedString, UnlockRewardTypeToLocalizedString(Enum::Check<UnlockRewardType>(L, 1)) );
 
 UnlockManager::UnlockManager()
 {

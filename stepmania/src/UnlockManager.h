@@ -39,6 +39,7 @@ enum UnlockRewardType {
 };
 const RString& UnlockRewardTypeToString( UnlockRewardType i );
 const RString& UnlockRewardTypeToLocalizedString( UnlockRewardType i );
+LuaDeclareType( UnlockRewardType );
 
 enum UnlockEntryStatus {
 	UnlockEntryStatus_RequrementsNotMet, 

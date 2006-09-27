@@ -29,7 +29,8 @@ static const char *WorkoutStepsTypeNames[] = {
 XToString( WorkoutStepsType, NUM_WorkoutStepsType );
 StringToX( WorkoutStepsType );
 XToLocalizedString( WorkoutStepsType );
-LuaFunction( WorkoutStepsTypeToLocalizedString, WorkoutStepsTypeToLocalizedString((WorkoutStepsType) IArg(1)) );
+LuaXType( WorkoutStepsType );
+LuaFunction( WorkoutStepsTypeToLocalizedString, WorkoutStepsTypeToLocalizedString(Enum::Check<WorkoutStepsType>(L, 1)) );
 
 
 Workout::Workout()

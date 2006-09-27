@@ -27,6 +27,7 @@ enum WorkoutStepsType
 };
 const RString& WorkoutStepsTypeToLocalizedString( WorkoutStepsType i );
 WorkoutStepsType StringToWorkoutStepsType( const RString& str );
+LuaDeclareType( WorkoutStepsType );
 
 
 const int MIN_WORKOUT_MINUTES = 4;
