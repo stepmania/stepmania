@@ -50,8 +50,9 @@ static const char *MultiPlayerNames[] = {
 };
 XToString( MultiPlayer, NUM_MultiPlayer );
 XToLocalizedString( MultiPlayer );
-LuaFunction( MultiPlayerToString, MultiPlayerToString((MultiPlayer) IArg(1)) );
-LuaFunction( MultiPlayerToLocalizedString, MultiPlayerToLocalizedString((MultiPlayer) IArg(1)) );
+LuaFunction( MultiPlayerToString, MultiPlayerToString(Enum::Check<MultiPlayer>(L, 1)) );
+LuaFunction( MultiPlayerToLocalizedString, MultiPlayerToLocalizedString(Enum::Check<MultiPlayer>(L, 1)) );
+LuaXType( MultiPlayer );
 
 
 PlayerNumber GetNextHumanPlayer( PlayerNumber pn )

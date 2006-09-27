@@ -1839,7 +1839,7 @@ public:
 	}
 	static int GetMultiPlayerState( T* p, lua_State *L )
 	{ 
-		MultiPlayer mp = (MultiPlayer)IArg(1);
+		MultiPlayer mp = Enum::Check<MultiPlayer>(L, 1);
 		p->m_pMultiPlayerState[mp]->PushSelf(L);
 		return 1;
 	}

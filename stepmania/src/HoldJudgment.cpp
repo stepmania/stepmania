@@ -98,7 +98,7 @@ class LunaHoldJudgment: public Luna<HoldJudgment>
 public:
 	LunaHoldJudgment() { LUA->Register( Register ); }
 
-	static int LoadFromMultiPlayer( T* p, lua_State *L ) { p->LoadFromMultiPlayer( (MultiPlayer)IArg(1) ); return 0; }
+	static int LoadFromMultiPlayer( T* p, lua_State *L ) { p->LoadFromMultiPlayer( Enum::Check<MultiPlayer>(L, 1) ); return 0; }
 
 	static void Register(lua_State *L) 
 	{

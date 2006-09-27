@@ -74,6 +74,7 @@ enum MultiPlayer
 };
 const RString& MultiPlayerToString( MultiPlayer mp );
 const RString& MultiPlayerToLocalizedString( MultiPlayer mp );
+LuaDeclareType( MultiPlayer );
 
 #define FOREACH_MultiPlayer( pn ) FOREACH_ENUM2( MultiPlayer, pn )
 
