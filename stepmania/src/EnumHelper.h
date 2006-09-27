@@ -85,7 +85,6 @@ static const RString EMPTY_STRING;
 const RString &EnumToString( int iVal, int iMax, const char **szNameArray, auto_ptr<RString> *pNameCache ); // XToString helper
 
 #define XToString(X, CNT) \
-	static void Check##X##ToStringParamType( const char **p ) { } \
 	COMPILE_ASSERT( NUM_##X == ARRAYLEN(X##Names) ); \
 	const RString& X##ToString( X x ) \
 	{	\
