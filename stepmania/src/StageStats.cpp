@@ -279,8 +279,8 @@ class LunaStageStats: public Luna<StageStats>
 public:
 	LunaStageStats() { LUA->Register( Register ); }
 
-	static int GetPlayerStageStats( T* p, lua_State *L )		{ p->m_player[IArg(1)].PushSelf(L); return 1; }
-	static int GetMultiPlayerStageStats( T* p, lua_State *L )	{ p->m_multiPlayer[IArg(1)].PushSelf(L); return 1; }
+	static int GetPlayerStageStats( T* p, lua_State *L )		{ p->m_player[Enum::Check<PlayerNumber>(L, 1)].PushSelf(L); return 1; }
+	static int GetMultiPlayerStageStats( T* p, lua_State *L )	{ p->m_multiPlayer[Enum::Check<MultiPlayer>(L, 1)].PushSelf(L); return 1; }
 	static int GetGameplaySeconds( T* p, lua_State *L )		{ lua_pushnumber(L, p->fGameplaySeconds); return 1; }
 	static int OnePassed( T* p, lua_State *L )			{ lua_pushboolean(L, p->OnePassed()); return 1; }
 	static int AllFailed( T* p, lua_State *L )			{ lua_pushboolean(L, p->AllFailed()); return 1; }
