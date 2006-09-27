@@ -351,11 +351,9 @@ void ScreenWithMenuElementsSimple::MenuBack( const InputEventPlus &input )
 class LunaScreenWithMenuElements: public Luna<ScreenWithMenuElements>
 {
 public:
-	LunaScreenWithMenuElements() { LUA->Register( Register ); }
-
-	static void Register( Lua *L )
+	LunaScreenWithMenuElements()
 	{
-		Luna<T>::Register( L );
+		LUA->Register( Register );
 	}
 };
 
@@ -364,11 +362,9 @@ LUA_REGISTER_DERIVED_CLASS( ScreenWithMenuElements, Screen )
 class LunaScreenWithMenuElementsSimple: public Luna<ScreenWithMenuElementsSimple>
 {
 public:
-	LunaScreenWithMenuElementsSimple() { LUA->Register( Register ); }
-
-	static void Register( Lua *L )
+	LunaScreenWithMenuElementsSimple()
 	{
-		Luna<T>::Register( L );
+		LUA->Register( Register );
 	}
 };
 

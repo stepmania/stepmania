@@ -2634,16 +2634,15 @@ void ScreenGameplay::SaveReplay()
 class LunaScreenGameplay: public Luna<ScreenGameplay>
 {
 public:
-	LunaScreenGameplay() { LUA->Register( Register ); }
-
 	static int GetNextCourseSong( T* p, lua_State *L ) { p->GetNextCourseSong()->PushSelf(L); return 1; }
 	static int Center1Player( T* p, lua_State *L ) { lua_pushboolean( L, p->Center1Player() ); return 1; }
-	static void Register( Lua *L )
+
+	LunaScreenGameplay()
 	{
+		LUA->Register( Register );
+
   		ADD_METHOD( GetNextCourseSong );
   		ADD_METHOD( Center1Player );
-
-		Luna<T>::Register( L );
 	}
 };
 

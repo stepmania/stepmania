@@ -281,7 +281,6 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 class LunaScreen: public Luna<Screen>
 {
 public:
-	LunaScreen() { LUA->Register( Register ); }
 	static int GetNextScreen( T* p, lua_State *L ) { lua_pushstring(L, p->GetNextScreen() ); return 1; }
 	static int lockinput( T* p, lua_State *L ) { p->SetLockInputSecs(FArg(1)); return 0; }
 
@@ -293,13 +292,13 @@ public:
 		return 0;
 	}
 
-	static void Register( Lua *L )
+	LunaScreen()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( GetNextScreen );
 		ADD_METHOD( PostScreenMessage );
 		ADD_METHOD( lockinput );
-
-		Luna<T>::Register( L );
 	}
 };
 
