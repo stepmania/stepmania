@@ -1824,8 +1824,6 @@ Profile* GameState::GetEditLocalProfile()
 class LunaGameState: public Luna<GameState>
 {
 public:
-	LunaGameState() { LUA->Register( Register ); }
-
 	DEFINE_METHOD( IsPlayerEnabled,			IsPlayerEnabled(Enum::Check<PlayerNumber>(L, 1)) )
 	DEFINE_METHOD( IsHumanPlayer,			IsHumanPlayer(Enum::Check<PlayerNumber>(L, 1)) )
 	DEFINE_METHOD( GetPlayerDisplayName,		GetPlayerDisplayName(Enum::Check<PlayerNumber>(L, 1)) )
@@ -2056,8 +2054,10 @@ public:
 		return 1;
 	}
 		
-	static void Register(lua_State *L)
+	LunaGameState() 
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( IsPlayerEnabled );
 		ADD_METHOD( IsHumanPlayer );
 		ADD_METHOD( GetPlayerDisplayName );
@@ -2128,8 +2128,6 @@ public:
 		ADD_METHOD( GetHumanPlayers );
 		ADD_METHOD( SetSongOptions );
 		ADD_METHOD( GetCurrentStyle );
-
-		Luna<T>::Register( L );
 	}
 };
 
