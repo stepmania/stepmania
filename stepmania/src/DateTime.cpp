@@ -196,6 +196,7 @@ static const char *MonthNames[] =
 };
 XToString( Month, NUM_Month );
 XToLocalizedString( Month );
+LuaXType( Month );
 
 RString LastWeekToString( int iLastWeekIndex )
 {
@@ -303,8 +304,8 @@ tm GetDayInYearAndYear( int iDayInYearIndex, int iYear )
 	return when;
 }
 
-LuaFunction( MonthToString, MonthToString( (Month)IArg(1) ) );
-LuaFunction( MonthToLocalizedString, MonthToLocalizedString( (Month)IArg(1) ) );
+LuaFunction( MonthToString, MonthToString( Enum::Check<Month>(L, 1) ) );
+LuaFunction( MonthToLocalizedString, MonthToLocalizedString( Enum::Check<Month>(L, 1) ) );
 LuaFunction( MonthOfYear, GetLocalTime().tm_mon );
 LuaFunction( DayOfMonth, GetLocalTime().tm_mday );
 LuaFunction( Hour, GetLocalTime().tm_hour );

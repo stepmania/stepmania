@@ -1,6 +1,7 @@
 #ifndef DATE_TIME_H
 #define DATE_TIME_H
 
+#include "EnumHelper.h"
 #include <ctime>
 
 const int NUM_LAST_DAYS = 7;
@@ -21,6 +22,7 @@ const RString &MonthToString( Month month );
 const RString &MonthToLocalizedString( Month month );
 RString LastWeekToString( int iLastWeekIndex );
 RString LastWeekToLocalizedString( int iLastWeekIndex );
+LuaDeclareType( Month );
 
 tm AddDays( tm start, int iDaysToMove );
 tm GetYesterday( tm start );
