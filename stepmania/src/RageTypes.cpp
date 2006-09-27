@@ -54,6 +54,8 @@ static const char *BlendModeNames[] =
 {
 	"Normal",
 	"Add",
+	"WeightedMultiply",
+	"InvertDest",
 	"NoEffect"
 };
 LuaXType( BlendMode );
