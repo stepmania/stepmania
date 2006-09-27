@@ -66,10 +66,22 @@ ProfileManager::ProfileManager()
 	m_pMachineProfile = new Profile;
 	FOREACH_PlayerNumber(pn)
 		m_pMemoryCardProfile[pn] = new Profile;
+
+	// Register with Lua.
+	{
+		Lua *L = LUA->Get();
+		lua_pushstring( L, "PROFILEMAN" );
+		this->PushSelf( L );
+		lua_settable( L, LUA_GLOBALSINDEX );
+		LUA->Release( L );
+	}
 }
 
 ProfileManager::~ProfileManager()
 {
+	// Unregister with Lua.
+	LUA->UnsetGlobal( "PROFILEMAN" );
+
 	SAFE_DELETE( m_pMachineProfile );
 	FOREACH_PlayerNumber(pn)
 		SAFE_DELETE( m_pMemoryCardProfile[pn] );
@@ -821,8 +833,6 @@ int ProfileManager::GetNumLocalProfiles() const
 class LunaProfileManager: public Luna<ProfileManager>
 {
 public:
-	LunaProfileManager() { LUA->Register( Register ); }
-
 	static int IsPersistentProfile( T* p, lua_State *L )	{ lua_pushboolean(L, p->IsPersistentProfile(Enum::Check<PlayerNumber>(L, 1)) ); return 1; }
 	static int GetProfile( T* p, lua_State *L )				{ PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1); Profile* pP = p->GetProfile(pn); ASSERT(pP); pP->PushSelf(L); return 1; }
 	static int GetMachineProfile( T* p, lua_State *L )		{ p->GetMachineProfile()->PushSelf(L); return 1; }
@@ -841,8 +851,10 @@ public:
 	static int GetLocalProfileIndexFromID( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetLocalProfileIndexFromID(SArg(1)) ); return 1; }
 	static int GetNumLocalProfiles( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetNumLocalProfiles() ); return 1; }
 
-	static void Register(lua_State *L)
+	LunaProfileManager()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( IsPersistentProfile );
 		ADD_METHOD( GetProfile );
 		ADD_METHOD( GetMachineProfile );
@@ -852,18 +864,6 @@ public:
 		ADD_METHOD( GetLocalProfileIDFromIndex );
 		ADD_METHOD( GetLocalProfileIndexFromID );
 		ADD_METHOD( GetNumLocalProfiles );
-
-		Luna<T>::Register( L );
-
-		// Add global singleton if constructed already.  If it's not constructed yet,
-		// then we'll register it later when we reinit Lua just before 
-		// initializing the display.
-		if( PROFILEMAN )
-		{
-			lua_pushstring(L, "PROFILEMAN");
-			PROFILEMAN->PushSelf( L );
-			lua_settable(L, LUA_GLOBALSINDEX);
-		}
 	}
 };
 

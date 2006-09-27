@@ -17,10 +17,22 @@ WorkoutManager::WorkoutManager()
 {
 	m_pCurWorkout = NULL;
 	m_pTempCourse = new Course;
+
+	// Register with Lua.
+	{
+		Lua *L = LUA->Get();
+		lua_pushstring( L, "WORKOUTMAN" );
+		this->PushSelf( L );
+		lua_settable(L, LUA_GLOBALSINDEX);
+		LUA->Release( L );
+	}
 }
 
 WorkoutManager::~WorkoutManager()
 {
+	// Unregister with Lua.
+	LUA->UnsetGlobal( "WORKOUTMAN" );
+
 	FOREACH( Workout*, m_vpAllWorkouts, p )
 		SAFE_DELETE( *p );
 	m_vpAllWorkouts.clear();
@@ -165,29 +177,17 @@ static RString GetWorkoutSongTitleText()
 class LunaWorkoutManager: public Luna<WorkoutManager>
 {
 public:
-	LunaWorkoutManager() { LUA->Register( Register ); }
-
 	static int GetCurrentWorkout( T* p, lua_State *L )		{ if(p->m_pCurWorkout) p->m_pCurWorkout->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int GetWorkoutSongsOverview( T* p, lua_State *L )	{ lua_pushstring( L, ::GetWorkoutSongsOverview() ); return 1; }
 	static int GetWorkoutSongTitleText( T* p, lua_State *L )	{ lua_pushstring( L, ::GetWorkoutSongTitleText() ); return 1; }
 
-	static void Register(lua_State *L)
+	LunaWorkoutManager()
 	{
+		LUA->Register( Register );
+		
 		ADD_METHOD( GetCurrentWorkout );
 		ADD_METHOD( GetWorkoutSongsOverview );
 		ADD_METHOD( GetWorkoutSongTitleText );
-
-		Luna<T>::Register( L );
-
-		// Add global singleton if constructed already.  If it's not constructed yet,
-		// then we'll register it later when we reinit Lua just before 
-		// initializing the display.
-		if( true )
-		{
-			lua_pushstring(L, "WORKOUTMAN");
-			WORKOUTMAN->PushSelf( L );
-			lua_settable(L, LUA_GLOBALSINDEX);
-		}
 	}
 };
 
