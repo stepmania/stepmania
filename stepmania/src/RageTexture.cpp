@@ -73,18 +73,17 @@ const RectF *RageTexture::GetTextureCoordRect( int iFrameNo ) const
 class LunaRageTexture: public Luna<RageTexture>
 {
 public:
-	LunaRageTexture() { LUA->Register( Register ); }
-
 	static int position( T* p, lua_State *L )		{ p->SetPosition( FArg(1) ); return 0; }
 	static int loop( T* p, lua_State *L )			{ p->SetLooping( !!IArg(1) ); return 0; }
 	static int rate( T* p, lua_State *L )			{ p->SetPlaybackRate( FArg(1) ); return 0; }
 
-	static void Register(lua_State *L) {
+	LunaRageTexture()
+	{
+		LUA->Register( Register );
+
 		ADD_METHOD( position );
 		ADD_METHOD( loop );
 		ADD_METHOD( rate );
-
-		Luna<T>::Register( L );
 	}
 };
 

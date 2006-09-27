@@ -206,8 +206,6 @@ LuaFunction( FormatPercentScore,	PercentageDisplay::FormatPercentScore( FArg(1) 
 class LunaPercentageDisplay: public Luna<PercentageDisplay>
 {
 public:
-	LunaPercentageDisplay() { LUA->Register( Register ); }
-
 	static int LoadFromStats( T* p, lua_State *L )
 	{
 		const PlayerState *pStageStats = Luna<PlayerState>::check( L, 1 );
@@ -216,11 +214,11 @@ public:
 		return 0;
 	}
 
-	static void Register(lua_State *L) 
+	LunaPercentageDisplay()
 	{
-		ADD_METHOD( LoadFromStats );
+		LUA->Register( Register );
 
-		Luna<T>::Register( L );
+		ADD_METHOD( LoadFromStats );
 	}
 };
 

@@ -319,15 +319,13 @@ void PaneDisplay::SetFocus( PaneTypes NewPane )
 class LunaPaneDisplay: public Luna<PaneDisplay>
 {
 public:
-	LunaPaneDisplay() { LUA->Register( Register ); }
-
 	static int SetFromGameState( T* p, lua_State *L )	{ p->SetFromGameState(); return 0; }
 
-	static void Register(lua_State *L) 
+	LunaPaneDisplay()
 	{
-		ADD_METHOD( SetFromGameState );
+		LUA->Register( Register );
 
-		Luna<T>::Register( L );
+		ADD_METHOD( SetFromGameState );
 	}
 };
 

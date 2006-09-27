@@ -96,15 +96,13 @@ void HoldJudgment::HandleMessage( const RString &sMessage )
 class LunaHoldJudgment: public Luna<HoldJudgment>
 {
 public:
-	LunaHoldJudgment() { LUA->Register( Register ); }
-
 	static int LoadFromMultiPlayer( T* p, lua_State *L ) { p->LoadFromMultiPlayer( Enum::Check<MultiPlayer>(L, 1) ); return 0; }
 
-	static void Register(lua_State *L) 
+	LunaHoldJudgment()
 	{
-		ADD_METHOD( LoadFromMultiPlayer );
+		LUA->Register( Register );
 
-		Luna<T>::Register( L );
+		ADD_METHOD( LoadFromMultiPlayer );
 	}
 };
 

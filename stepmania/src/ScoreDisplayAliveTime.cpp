@@ -64,11 +64,9 @@ void ScoreDisplayAliveTime::UpdateNumber()
 class LunaScoreDisplayAliveTime: public Luna<ScoreDisplayAliveTime>
 {
 public:
-	LunaScoreDisplayAliveTime() { LUA->Register( Register ); }
-
-	static void Register(lua_State *L) 
+	LunaScoreDisplayAliveTime()
 	{
-		Luna<T>::Register( L );
+		LUA->Register( Register );
 	}
 };
 

@@ -73,11 +73,9 @@ void ScoreDisplayCalories::UpdateNumber()
 class LunaScoreDisplayCalories: public Luna<ScoreDisplayCalories>
 {
 public:
-	LunaScoreDisplayCalories() { LUA->Register( Register ); }
-
-	static void Register(lua_State *L) 
+	LunaScoreDisplayCalories()
 	{
-		Luna<T>::Register( L );
+		LUA->Register( Register );
 	}
 };
 

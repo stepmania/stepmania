@@ -120,17 +120,15 @@ void WorkoutGraph::SetFromGameStateAndHighlightSong( int iSongIndex )
 class LunaWorkoutGraph: public Luna<WorkoutGraph>
 {
 public:
-	LunaWorkoutGraph() { LUA->Register( Register ); }
-
 	static int SetFromGameState( T* p, lua_State *L )			{ p->SetFromGameState(); return 0; }
 	static int SetFromGameStateAndHighlightSong( T* p, lua_State *L )	{ p->SetFromGameStateAndHighlightSong(IArg(1)); return 0; }
 
-	static void Register(lua_State *L) 
+	LunaWorkoutGraph()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( SetFromGameState );
 		ADD_METHOD( SetFromGameStateAndHighlightSong );
-
-		Luna<T>::Register( L );
 	}
 };
 
