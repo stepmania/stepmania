@@ -31,6 +31,27 @@ int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const 
 	return iRet;
 }
 
+// szNameArray is of size iMax; pNameCache is of size iMax+2.
+const RString &EnumToString( int iVal, int iMax, const char **szNameArray, auto_ptr<RString> *pNameCache )
+{
+	if( unlikely(pNameCache[0].get() == NULL) )
+	{
+		for( int i = 0; i < iMax; ++i )
+		{
+			auto_ptr<RString> ap( new RString( szNameArray[i] ) );
+			pNameCache[i] = ap;
+		}
+
+		auto_ptr<RString> ap( new RString );
+		pNameCache[iMax+1] = ap;
+	}
+
+	// iMax+1 is "Invalid".  iMax+0 is the NUM_ size value, which can not be converted
+	// to a string.
+	ASSERT_M( iVal >= 0 && (iVal < iMax || iVal == iMax+1), ssprintf("%i, %i", iVal, iMax)  );
+	return *pNameCache[iVal];
+}
+
 /*
  * (c) 2004 Chris Danford
  * All rights reserved.

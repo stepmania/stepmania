@@ -80,28 +80,15 @@ namespace Enum
 };
 
 static const RString EMPTY_STRING;
+const RString &EnumToString( int iVal, int iMax, const char **szNameArray, auto_ptr<RString> *pNameCache ); // XToString helper
 
-// TypeName[] must be an array of const char *, not RString, to
-// avoid initialization order problems when calling XToString.
-// Use Check##X##ToStringParamType to enforce that.
-#define XToString(X, CNT)	\
+#define XToString(X, CNT) \
 	static void Check##X##ToStringParamType( const char **p ) { } \
+	COMPILE_ASSERT( NUM_##X == ARRAYLEN(X##Names) ); \
 	const RString& X##ToString( X x ) \
 	{	\
-		Check##X##ToStringParamType( X##Names ); \
-		static auto_ptr<RString> as_##X##Name[NUM_##X]; \
-		if( as_##X##Name[0].get() == NULL ) { \
-			for( unsigned i = 0; i < NUM_##X; ++i ) \
-			{ \
-				auto_ptr<RString> ap( new RString( X##Names[i] ) ); \
-				as_##X##Name[i] = ap; \
-			} \
-		} \
-		ASSERT( NUM_##X == ARRAYLEN(X##Names) );	\
-		if( x == NUM_##X+1 ) 	\
-			return EMPTY_STRING;	\
-		ASSERT( x < NUM_##X );	\
-		return *as_##X##Name[x];	\
+		static auto_ptr<RString> as_##X##Name[NUM_##X+2]; \
+		return EnumToString( x, NUM_##X, X##Names, as_##X##Name ); \
 	}
 
 #define XToLocalizedString(X)      \
