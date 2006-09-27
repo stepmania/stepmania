@@ -1826,14 +1826,14 @@ class LunaGameState: public Luna<GameState>
 public:
 	LunaGameState() { LUA->Register( Register ); }
 
-	DEFINE_METHOD( IsPlayerEnabled,			IsPlayerEnabled((PlayerNumber)IArg(1)) )
-	DEFINE_METHOD( IsHumanPlayer,			IsHumanPlayer((PlayerNumber)IArg(1)) )
-	DEFINE_METHOD( GetPlayerDisplayName,		GetPlayerDisplayName((PlayerNumber)IArg(1)) )
+	DEFINE_METHOD( IsPlayerEnabled,			IsPlayerEnabled(Enum::Check<PlayerNumber>(L, 1)) )
+	DEFINE_METHOD( IsHumanPlayer,			IsHumanPlayer(Enum::Check<PlayerNumber>(L, 1)) )
+	DEFINE_METHOD( GetPlayerDisplayName,		GetPlayerDisplayName(Enum::Check<PlayerNumber>(L, 1)) )
 	DEFINE_METHOD( GetMasterPlayerNumber,		m_MasterPlayerNumber )
 	DEFINE_METHOD( GetMultiplayer,			m_bMultiplayer )
 	static int GetPlayerState( T* p, lua_State *L )
 	{ 
-		PlayerNumber pn = (PlayerNumber)IArg(1);
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
 		p->m_pPlayerState[pn]->PushSelf(L);
 		return 1;
 	}
@@ -1847,7 +1847,7 @@ public:
 	{
 		PlayerNumber pn = PLAYER_INVALID;
 		if( lua_gettop(L) >= 2 && !lua_isnil(L,2) )
-			pn = (PlayerNumber)IArg(2);
+			pn = Enum::Check<PlayerNumber>(L, 2);
 		p->ApplyGameCommand(SArg(1),pn);
 		return 0;
 	}
@@ -1860,7 +1860,7 @@ public:
 	}
 	static int GetCurrentSteps( T* p, lua_State *L )
 	{
-		PlayerNumber pn = (PlayerNumber)IArg(1);
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
 		Steps *pSteps = p->m_pCurSteps[pn];  
 		if( pSteps ) { pSteps->PushSelf(L); }
 		else		 { lua_pushnil(L); }
@@ -1868,7 +1868,7 @@ public:
 	}
 	static int SetCurrentSteps( T* p, lua_State *L )
 	{ 
-		PlayerNumber pn = (PlayerNumber)IArg(1);
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
 		if( lua_isnil(L,2) )	{ p->m_pCurSteps[pn].Set( NULL ); }
 		else					{ Steps *pS = Luna<Steps>::check(L,2); p->m_pCurSteps[pn].Set( pS ); }
 		MESSAGEMAN->Broadcast( (Message)(Message_CurrentStepsP1Changed+pn) );
@@ -1883,7 +1883,7 @@ public:
 	}
 	static int GetCurrentTrail( T* p, lua_State *L )
 	{
-		PlayerNumber pn = (PlayerNumber)IArg(1);
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
 		Trail *pTrail = p->m_pCurTrail[pn];  
 		if( pTrail ) { pTrail->PushSelf(L); }
 		else		 { lua_pushnil(L); }
@@ -1891,7 +1891,7 @@ public:
 	}
 	static int SetCurrentTrail( T* p, lua_State *L )
 	{ 
-		PlayerNumber pn = (PlayerNumber)IArg(1);
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
 		if( lua_isnil(L,2) )	{ p->m_pCurTrail[pn].Set( NULL ); }
 		else					{ Trail *pS = Luna<Trail>::check(L,2); p->m_pCurTrail[pn].Set( pS ); }
 		MESSAGEMAN->Broadcast( (Message)(Message_CurrentTrailP1Changed+pn) );
@@ -1942,8 +1942,8 @@ public:
 	DEFINE_METHOD( GetPlayMode,			m_PlayMode )
 	DEFINE_METHOD( GetSortOrder,			m_SortOrder )
 	DEFINE_METHOD( StageIndex,			GetStageIndex() )
-	DEFINE_METHOD( IsGoalComplete,			IsGoalComplete((PlayerNumber)IArg(1)) )
-	DEFINE_METHOD( PlayerIsUsingModifier,		PlayerIsUsingModifier((PlayerNumber)IArg(1),SArg(2)) )
+	DEFINE_METHOD( IsGoalComplete,			IsGoalComplete(Enum::Check<PlayerNumber>(L, 1)) )
+	DEFINE_METHOD( PlayerIsUsingModifier,		PlayerIsUsingModifier(Enum::Check<PlayerNumber>(L, 1), SArg(2)) )
 	DEFINE_METHOD( GetCourseSongIndex,		GetCourseSongIndex() )
 	DEFINE_METHOD( GetLoadingCourseSongIndex,	GetLoadingCourseSongIndex() )
 	DEFINE_METHOD( IsFinalStage,			IsFinalStage() )
@@ -1960,7 +1960,7 @@ public:
 	DEFINE_METHOD( GetGameplayLeadIn,		m_bGameplayLeadIn )
 	DEFINE_METHOD( PlayerUsingBothSides,		PlayerUsingBothSides() )
 	DEFINE_METHOD( GetCoins,			m_iCoins )
-	DEFINE_METHOD( IsSideJoined,			m_bSideIsJoined[(PlayerNumber)IArg(1)] )
+	DEFINE_METHOD( IsSideJoined,			m_bSideIsJoined[Enum::Check<PlayerNumber>(L, 1)] )
 	DEFINE_METHOD( GetCoinsNeededToJoin,		GetCoinsNeededToJoin() )
 	DEFINE_METHOD( PlayersCanJoin,			PlayersCanJoin() )
 	DEFINE_METHOD( GetNumSidesJoined,		GetNumSidesJoined() )
@@ -1969,7 +1969,7 @@ public:
 	DEFINE_METHOD( GetSongOptionsString,		m_SongOptions.GetCurrent().GetString() )
 	static int IsWinner( T* p, lua_State *L )
 	{
-		PlayerNumber pn = (PlayerNumber)IArg(1);
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
 		lua_pushboolean(L, p->GetStageResult(pn)==RESULT_WIN); return 1;
 	}
 	static int IsDraw( T* p, lua_State *L )
@@ -1978,7 +1978,7 @@ public:
 	}
 	static int IsDisqualified( T* p, lua_State *L )
 	{
-		PlayerNumber pn = (PlayerNumber)IArg(1);
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
 		lua_pushboolean(L, p->IsDisqualified(pn)); return 1;
 	}
 	static int GetCurrentGame( T* p, lua_State *L )			{ const_cast<Game*>(p->GetCurrentGame())->PushSelf( L ); return 1; }

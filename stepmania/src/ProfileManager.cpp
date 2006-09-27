@@ -823,8 +823,8 @@ class LunaProfileManager: public Luna<ProfileManager>
 public:
 	LunaProfileManager() { LUA->Register( Register ); }
 
-	static int IsPersistentProfile( T* p, lua_State *L )	{ lua_pushboolean(L, p->IsPersistentProfile((PlayerNumber)IArg(1)) ); return 1; }
-	static int GetProfile( T* p, lua_State *L )				{ PlayerNumber pn = (PlayerNumber)IArg(1); Profile* pP = p->GetProfile(pn); ASSERT(pP); pP->PushSelf(L); return 1; }
+	static int IsPersistentProfile( T* p, lua_State *L )	{ lua_pushboolean(L, p->IsPersistentProfile(Enum::Check<PlayerNumber>(L, 1)) ); return 1; }
+	static int GetProfile( T* p, lua_State *L )				{ PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1); Profile* pP = p->GetProfile(pn); ASSERT(pP); pP->PushSelf(L); return 1; }
 	static int GetMachineProfile( T* p, lua_State *L )		{ p->GetMachineProfile()->PushSelf(L); return 1; }
 	static int SaveMachineProfile( T* p, lua_State *L )		{ p->SaveMachineProfile(); return 0; }
 	static int GetLocalProfile( T* p, lua_State *L )

@@ -289,7 +289,7 @@ public:
 	}
 	static int SetFromGameState( T* p, lua_State *L )
 	{
-		PlayerNumber pn = (PlayerNumber)IArg(1);
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
 		p->SetFromGameState( pn );
 		return 0;
 	}

@@ -227,7 +227,7 @@ public:
 
 	static int SetFromRadarValues( T* p, lua_State *L )
 	{ 
-		PlayerNumber pn = (PlayerNumber)IArg(1);
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
 		if( lua_isnil(L,2) )
 		{
 			p->SetEmpty( pn );
@@ -239,7 +239,7 @@ public:
 		}
 		return 0;
 	}
-	static int SetEmpty( T* p, lua_State *L )		{ p->SetEmpty( (PlayerNumber)IArg(1) ); return 0; }
+	static int SetEmpty( T* p, lua_State *L )		{ p->SetEmpty( Enum::Check<PlayerNumber>(L, 1) ); return 0; }
 	static int tweenonscreen( T* p, lua_State *L )		{ p->TweenOnScreen(); return 0; }
 	static int tweenoffscreen( T* p, lua_State *L )		{ p->TweenOffScreen(); return 0; }
 

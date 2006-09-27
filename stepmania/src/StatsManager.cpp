@@ -224,7 +224,7 @@ public:
 	static int Reset( T* p, lua_State *L )			{ p->Reset(); return 0; }
 	static int GetFinalGrade( T* p, lua_State *L )
 	{
-		PlayerNumber pn = (PlayerNumber)IArg(1);
+		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
 
 		if( !GAMESTATE->IsHumanPlayer(pn) )
 			lua_pushnumber( L, Grade_NoData );
