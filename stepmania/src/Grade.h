@@ -53,7 +53,7 @@ RString GradeToLocalizedString( Grade g );
 Grade StringToGrade( const RString &s );
 LuaDeclareType( Grade );
 #define FOREACH_Grade( g ) FOREACH_ENUM2( Grade, g )
-#define FOREACH_UsedGrade( g ) FOREACH_ENUM( Grade, THEME->GetMetricI("PlayerStageStats","NumGradeTiersUsed"), g )
+#define FOREACH_UsedGrade( g ) FOREACH_ENUM_N( Grade, THEME->GetMetricI("PlayerStageStats","NumGradeTiersUsed"), g )
 
 #endif
 
