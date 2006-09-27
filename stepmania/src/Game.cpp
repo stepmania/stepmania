@@ -9,7 +9,7 @@
 int	Game::GetNumGameplayButtons() const
 {
 	int iIndexOfStart = ButtonNameToIndex( "Start" );
-	ASSERT( iIndexOfStart != GAME_BUTTON_INVALID );
+	ASSERT( iIndexOfStart != GameButton_Invalid );
 	return iIndexOfStart;
 }
 
@@ -19,7 +19,7 @@ GameButton Game::ButtonNameToIndex( const RString &sButtonName ) const
 		if( stricmp(m_szButtonNames[i], sButtonName) == 0 )
 			return i;
 
-	return GAME_BUTTON_INVALID;
+	return GameButton_Invalid;
 }
 
 MenuButton Game::GameInputToMenuButton( GameInput GameI ) const

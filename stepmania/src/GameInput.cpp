@@ -31,7 +31,7 @@ GameButton StringToGameButton( const Game* pGame, const RString& s )
 		if( s == GameButtonToString(pGame,(GameButton)i) )
 			return (GameButton)i;
 	}
-	return GAME_BUTTON_INVALID;
+	return GameButton_Invalid;
 }
 
 

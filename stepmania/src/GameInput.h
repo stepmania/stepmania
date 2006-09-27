@@ -22,7 +22,7 @@ RString GameButtonToLocalizedString( const Game* pGame, GameButton i );
 GameButton StringToGameButton( const Game* pGame, const RString& s );
 
 const GameButton NUM_GameButton = 20;
-const GameButton GAME_BUTTON_INVALID = NUM_GameButton+1;
+const GameButton GameButton_Invalid = NUM_GameButton+1;
 #define FOREACH_GameButton( gb ) FOREACH_ENUM( GameButton, NUM_GameButton, gb )
 
 enum	// DanceButtons
@@ -240,7 +240,7 @@ enum	// LightsButtons
 
 struct GameInput
 {
-	GameInput(): controller(GameController_Invalid), button(GAME_BUTTON_INVALID) { }
+	GameInput(): controller(GameController_Invalid), button(GameButton_Invalid) { }
 
 	GameInput( GameController c, GameButton b ): controller(c), button(b) { }
 
@@ -258,7 +258,7 @@ struct GameInput
 	}
 
 	inline bool IsValid() const { return controller != GameController_Invalid; };
-	inline void MakeInvalid() { controller = GameController_Invalid; button = GAME_BUTTON_INVALID; };
+	inline void MakeInvalid() { controller = GameController_Invalid; button = GameButton_Invalid; };
 
 	RString ToString( const Game* pGame ) const;
 	bool FromString( const Game* pGame, const RString &s );

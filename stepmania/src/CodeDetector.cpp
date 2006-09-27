@@ -133,7 +133,7 @@ bool CodeItem::Load( RString sButtonsNames )
 
 		// Search for the corresponding GameButton
 		const GameButton gb = pGame->ButtonNameToIndex( sButtonName );
-		if( gb == GAME_BUTTON_INVALID )
+		if( gb == GameButton_Invalid )
 		{
 			LOG->Trace( "The code '%s' contains an unrecognized button '%s'.", sButtonsNames.c_str(), sButtonName.c_str() );
 			buttons.clear();

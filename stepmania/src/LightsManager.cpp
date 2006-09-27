@@ -465,7 +465,7 @@ void LightsManager::GetFirstLitGameButtonLight( GameController &gcOut, GameButto
 		}
 	}
 	gcOut = GameController_Invalid;
-	gbOut = GAME_BUTTON_INVALID;
+	gbOut = GameButton_Invalid;
 }
 
 bool LightsManager::IsEnabled() const

@@ -47,7 +47,7 @@ public:
 	/* This maps from game inputs to columns.  More than one button may map to a
 	 * single column. */
 	enum { NO_MAPPING = -1, END_MAPPING = -2 };
-	int		m_iInputColumn[NUM_GameController][NUM_GameButton]; // maps each input to a column, or GAME_BUTTON_INVALID
+	int		m_iInputColumn[NUM_GameController][NUM_GameButton]; // maps each input to a column, or GameButton_Invalid
 	int		m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 	bool		m_bNeedsZoomOutWith2Players;
 	bool		m_bCanUseBeginnerHelper;
