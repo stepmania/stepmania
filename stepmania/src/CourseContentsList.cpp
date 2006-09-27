@@ -95,15 +95,13 @@ void CourseContentsList::SetFromGameState()
 class LunaCourseContentsList: public Luna<CourseContentsList>
 {
 public:
-	LunaCourseContentsList() { LUA->Register( Register ); }
-
 	static int SetFromGameState( T* p, lua_State *L )			{ p->SetFromGameState(); return 0; }
 
-	static void Register(lua_State *L) 
+	LunaCourseContentsList()
 	{
-		ADD_METHOD( SetFromGameState );
+		LUA->Register( Register );
 
-		Luna<T>::Register( L );
+		ADD_METHOD( SetFromGameState );
 	}
 };
 

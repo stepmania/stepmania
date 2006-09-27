@@ -1232,8 +1232,6 @@ bool Song::IsMarathon() const
 class LunaSong: public Luna<Song>
 {
 public:
-	LunaSong() { LUA->Register( Register ); }
-
 	static int GetDisplayFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayFullTitle() ); return 1; }
 	static int GetTranslitFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitFullTitle() ); return 1; }
 	static int GetDisplayMainTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayMainTitle() ); return 1; }
@@ -1272,8 +1270,10 @@ public:
 		return 1;
 	}
 
-	static void Register(lua_State *L)
+	LunaSong()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( GetDisplayFullTitle );
 		ADD_METHOD( GetTranslitFullTitle );
 		ADD_METHOD( GetDisplayMainTitle );
@@ -1292,8 +1292,6 @@ public:
 		ADD_METHOD( IsLong );
 		ADD_METHOD( IsMarathon );
 		ADD_METHOD( HasStepsTypeAndDifficulty );
-
-		Luna<T>::Register( L );
 	}
 };
 

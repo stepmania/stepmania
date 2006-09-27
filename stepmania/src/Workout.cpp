@@ -224,21 +224,19 @@ bool Workout::SaveToFile( RString sFile )
 class LunaWorkout: public Luna<Workout>
 {
 public:
-	LunaWorkout() { LUA->Register( Register ); }
-
 	static int GetName( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sName ); return 1; }
 	static int GetMinutes( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iMinutes ); return 1; }
 	static int GetEstimatedNumSongs( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetEstimatedNumSongs() ); return 1; }
 	static int GetWorkoutStepsType( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_WorkoutStepsType ); return 1; }
 
-	static void Register(lua_State *L)
+	LunaWorkout()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( GetName );
 		ADD_METHOD( GetMinutes );
 		ADD_METHOD( GetEstimatedNumSongs );
 		ADD_METHOD( GetWorkoutStepsType );
-
-		Luna<T>::Register( L );
 	}
 };
 

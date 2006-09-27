@@ -379,15 +379,13 @@ void DifficultyList::Hide()
 class LunaDifficultyList: public Luna<DifficultyList>
 {
 public:
-	LunaDifficultyList() { LUA->Register( Register ); }
-
 	static int setfromgamestate( T* p, lua_State *L )		{ p->SetFromGameState(); return 0; }
 
-	static void Register(lua_State *L)
+	LunaDifficultyList()
 	{
-		ADD_METHOD( setfromgamestate );
+		LUA->Register( Register );
 
-		Luna<T>::Register( L );
+		ADD_METHOD( setfromgamestate );
 	}
 };
 

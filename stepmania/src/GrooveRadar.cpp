@@ -223,8 +223,6 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 class LunaGrooveRadar: public Luna<GrooveRadar>
 {
 public:
-	LunaGrooveRadar() { LUA->Register( Register ); }
-
 	static int SetFromRadarValues( T* p, lua_State *L )
 	{ 
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
@@ -243,14 +241,14 @@ public:
 	static int tweenonscreen( T* p, lua_State *L )		{ p->TweenOnScreen(); return 0; }
 	static int tweenoffscreen( T* p, lua_State *L )		{ p->TweenOffScreen(); return 0; }
 
-	static void Register(lua_State *L) 
+	LunaGrooveRadar()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( SetFromRadarValues );
 		ADD_METHOD( SetEmpty );
 		ADD_METHOD( tweenonscreen );
 		ADD_METHOD( tweenoffscreen );
-
-		Luna<T>::Register( L );
 	}
 };
 

@@ -101,17 +101,15 @@ void Style::GetMinAndMaxColX( PlayerNumber pn, float& fMixXOut, float& fMaxXOut 
 class LunaStyle: public Luna<Style>
 {
 public:
-	LunaStyle() { LUA->Register( Register ); }
-
 	DEFINE_METHOD( GetStyleType,		m_StyleType )
 	DEFINE_METHOD( GetStepsType,		m_StepsType )
 
-	static void Register(lua_State *L)
+	LunaStyle()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( GetStyleType );
 		ADD_METHOD( GetStepsType );
-
-		Luna<T>::Register( L );
 	}
 };
 

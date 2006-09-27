@@ -105,8 +105,6 @@ void DifficultyIcon::SetFromDifficulty( Difficulty dc )
 class LunaDifficultyIcon: public Luna<DifficultyIcon>
 {
 public:
-	LunaDifficultyIcon() { LUA->Register( Register ); }
-
 	static int SetFromSteps( T* p, lua_State *L )
 	{ 
 		if( lua_isnil(L,1) )
@@ -137,15 +135,15 @@ public:
 	static int SetPlayer( T* p, lua_State *L )			{ p->SetPlayer( Enum::Check<PlayerNumber>(L, 1) ); return 0; }
 	static int SetFromDifficulty( T* p, lua_State *L )		{ p->SetFromDifficulty( Enum::Check<Difficulty>(L, 1) ); return 0; }
 
-	static void Register(lua_State *L) 
+	LunaDifficultyIcon()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( Unset );
 		ADD_METHOD( SetPlayer );
 		ADD_METHOD( SetFromSteps );
 		ADD_METHOD( SetFromTrail );
 		ADD_METHOD( SetFromDifficulty );
-
-		Luna<T>::Register( L );
 	}
 };
 

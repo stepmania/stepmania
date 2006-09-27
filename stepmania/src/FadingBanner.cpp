@@ -245,8 +245,6 @@ void FadingBanner::LoadCourseFallback()
 class LunaFadingBanner: public Luna<FadingBanner>
 {
 public:
-	LunaFadingBanner() { LUA->Register( Register ); }
-
 	static int scaletoclipped( T* p, lua_State *L )			{ p->ScaleToClipped(FArg(1),FArg(2)); return 0; }
 	static int ScaleToClipped( T* p, lua_State *L )			{ p->ScaleToClipped(FArg(1),FArg(2)); return 0; }
 	static int LoadFromSong( T* p, lua_State *L )
@@ -274,16 +272,16 @@ public:
 		return 0;
 	}
 
-	static void Register(lua_State *L) 
+	LunaFadingBanner()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( scaletoclipped );
 		ADD_METHOD( ScaleToClipped );
 		ADD_METHOD( LoadFromSong );
 		ADD_METHOD( LoadFromCourse );
 		ADD_METHOD( LoadIconFromCharacter );
 		ADD_METHOD( LoadCardFromCharacter );
-
-		Luna<T>::Register( L );
 	}
 };
 

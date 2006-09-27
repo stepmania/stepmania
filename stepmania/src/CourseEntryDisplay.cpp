@@ -192,15 +192,13 @@ void CourseEntryDisplay::SetFromGameState( int iCourseEntryIndex )
 class LunaCourseEntryDisplay: public Luna<CourseEntryDisplay>
 {
 public:
-	LunaCourseEntryDisplay() { LUA->Register( Register ); }
-
 	static int SetFromGameState( T* p, lua_State *L )	{ p->SetFromGameState(IArg(1)); return 0; }
 
-	static void Register(lua_State *L) 
+	LunaCourseEntryDisplay()
 	{
-		ADD_METHOD( SetFromGameState );
+		LUA->Register( Register );
 
-		Luna<T>::Register( L );
+		ADD_METHOD( SetFromGameState );
 	}
 };
 

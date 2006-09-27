@@ -257,8 +257,6 @@ void DifficultyMeter::SetInternal( int iMeter, Difficulty dc, const RString &sDi
 class LunaDifficultyMeter: public Luna<DifficultyMeter>
 {
 public:
-	LunaDifficultyMeter() { LUA->Register( Register ); }
-
 	static int Load( T* p, lua_State *L )		{ p->Load( SArg(1) ); return 0; }
 	static int SetFromMeterAndDifficulty( T* p, lua_State *L )		{ p->SetFromMeterAndDifficulty( IArg(1), Enum::Check<Difficulty>(L, 2) ); return 0; }
 	static int SetFromSteps( T* p, lua_State *L )
@@ -294,15 +292,15 @@ public:
 		return 0;
 	}
 
-	static void Register(lua_State *L) 
+	LunaDifficultyMeter()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( Load );
 		ADD_METHOD( SetFromMeterAndDifficulty );
 		ADD_METHOD( SetFromSteps );
 		ADD_METHOD( SetFromTrail );
 		ADD_METHOD( SetFromGameState );
-
-		Luna<T>::Register( L );
 	}
 };
 

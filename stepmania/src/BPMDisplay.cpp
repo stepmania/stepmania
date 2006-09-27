@@ -239,14 +239,13 @@ void BPMDisplay::SetFromGameState()
 class LunaBPMDisplay: public Luna<BPMDisplay>
 {
 public:
-	LunaBPMDisplay() { LUA->Register( Register ); }
-
 	static int SetFromGameState( T* p, lua_State *L ) { p->SetFromGameState(); return 0; }
-	static void Register(lua_State *L) 
-	{
-		ADD_METHOD( SetFromGameState );
 
-		Luna<T>::Register( L );
+	LunaBPMDisplay()
+	{
+		LUA->Register( Register );
+
+		ADD_METHOD( SetFromGameState );
 	}
 };
 

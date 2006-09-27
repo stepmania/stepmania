@@ -110,8 +110,6 @@ void ComboGraph::Load( const StageStats &s, const PlayerStageStats &pss )
 class LunaComboGraph: public Luna<ComboGraph>
 {
 public:
-	LunaComboGraph() { LUA->Register( Register ); }
-
 	static int LoadFromStats( T* p, lua_State *L )
 	{
 		StageStats *pStageStats = Luna<StageStats>::check( L, 1 );
@@ -120,11 +118,11 @@ public:
 		return 0;
 	}
 
-	static void Register(lua_State *L) 
+	LunaComboGraph()
 	{
-		ADD_METHOD( LoadFromStats );
+		LUA->Register( Register );
 
-		Luna<T>::Register( L );
+		ADD_METHOD( LoadFromStats );
 	}
 };
 

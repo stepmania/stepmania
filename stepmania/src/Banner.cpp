@@ -191,8 +191,6 @@ void Banner::LoadRandom()
 class LunaBanner: public Luna<Banner>
 {
 public:
-	LunaBanner() { LUA->Register( Register ); }
-
 	static int scaletoclipped( T* p, lua_State *L )			{ p->ScaleToClipped(FArg(1),FArg(2)); return 0; }
 	static int ScaleToClipped( T* p, lua_State *L )			{ p->ScaleToClipped(FArg(1),FArg(2)); return 0; }
 	static int LoadFromSong( T* p, lua_State *L )
@@ -232,8 +230,10 @@ public:
 		return 0;
 	}
 
-	static void Register(lua_State *L) 
+	LunaBanner()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( scaletoclipped );
 		ADD_METHOD( ScaleToClipped );
 		ADD_METHOD( LoadFromSong );
@@ -242,8 +242,6 @@ public:
 		ADD_METHOD( LoadCardFromCharacter );
 		ADD_METHOD( LoadBannerFromUnlockEntry );
 		ADD_METHOD( LoadBackgroundFromUnlockEntry );
-
-		Luna<T>::Register( L );
 	}
 };
 

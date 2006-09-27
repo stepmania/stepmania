@@ -179,13 +179,13 @@ void GradeDisplay::SettleQuickly()
 class LunaGradeDisplay: public Luna<GradeDisplay>
 {
 public:
-	LunaGradeDisplay() { LUA->Register( Register ); }
-
 	static int scroll( T* p, lua_State *L ) { p->Scroll(); return 0; }
-	static void Register(lua_State *L) {
-		ADD_METHOD( scroll );
 
-		Luna<T>::Register( L );
+	LunaGradeDisplay()
+	{
+		LUA->Register( Register );
+
+		ADD_METHOD( scroll );
 	}
 };
 

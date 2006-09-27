@@ -64,8 +64,6 @@ void HelpDisplay::Update( float fDeltaTime )
 class LunaHelpDisplay: public Luna<HelpDisplay>
 {
 public:
-	LunaHelpDisplay() { LUA->Register( Register ); }
-
 	static int settips( T* p, lua_State *L )
 	{
 		luaL_checktype( L, 1, LUA_TTABLE );
@@ -104,13 +102,14 @@ public:
 		return 2;
 	}
 	static int setsecsbetweenswitches( T* p, lua_State *L ) { p->SetSecsBetweenSwitches( FArg(1) ); return 0; }
-	static void Register(lua_State *L) 
+
+	LunaHelpDisplay()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( settips );
 		ADD_METHOD( gettips );
 		ADD_METHOD( setsecsbetweenswitches );
-
-		Luna<T>::Register( L );
 	}
 };
 

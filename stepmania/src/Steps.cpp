@@ -398,8 +398,6 @@ void Steps::SetCachedRadarValues( const RadarValues v[NUM_PLAYERS] )
 class LunaSteps: public Luna<Steps>
 {
 public:
-	LunaSteps() { LUA->Register( Register ); }
-
 	DEFINE_METHOD( GetStepsType,	m_StepsType )
 	DEFINE_METHOD( GetDifficulty,	GetDifficulty() )
 	DEFINE_METHOD( GetDescription,	GetDescription() )
@@ -415,8 +413,10 @@ public:
 		return 1;
 	}
 
-	static void Register( lua_State *L )
+	LunaSteps()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( GetStepsType );
 		ADD_METHOD( GetDifficulty );
 		ADD_METHOD( GetDescription );
@@ -424,8 +424,6 @@ public:
 		ADD_METHOD( GetFilename );
 		ADD_METHOD( GetRadarValues );
 		ADD_METHOD( IsAutogen );
-
-		Luna<T>::Register( L );
 	}
 };
 
