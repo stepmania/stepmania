@@ -19,11 +19,12 @@ class Luna
 {
 protected:
 	typedef Type T;
+	typedef int (binding_t)(T *p, lua_State *L);
 
 	struct RegType
 	{
 		const char *szName; 
-		int (*mfunc)(T *p, lua_State *L);
+		binding_t *mfunc;
 	};
 
 public:
