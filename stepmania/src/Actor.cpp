@@ -37,6 +37,7 @@ static const char *HorizAlignNames[] = {
 	"Center",
 	"Right"
 };
+XToString( HorizAlign, NUM_HorizAlign );
 LuaXType( HorizAlign );
 
 static const char *VertAlignNames[] = {
@@ -44,6 +45,7 @@ static const char *VertAlignNames[] = {
 	"Middle",
 	"Bottom"
 };
+XToString( VertAlign, NUM_VertAlign );
 LuaXType( VertAlign );
 
 void Actor::SetBGMTime( float fTime, float fBeat )
