@@ -260,7 +260,7 @@ public:
 	LunaDifficultyMeter() { LUA->Register( Register ); }
 
 	static int Load( T* p, lua_State *L )		{ p->Load( SArg(1) ); return 0; }
-	static int SetFromMeterAndDifficulty( T* p, lua_State *L )		{ p->SetFromMeterAndDifficulty( IArg(1), (Difficulty)IArg(2) ); return 0; }
+	static int SetFromMeterAndDifficulty( T* p, lua_State *L )		{ p->SetFromMeterAndDifficulty( IArg(1), Enum::Check<Difficulty>(L, 2) ); return 0; }
 	static int SetFromSteps( T* p, lua_State *L )
 	{ 
 		if( lua_isnil(L,1) )
