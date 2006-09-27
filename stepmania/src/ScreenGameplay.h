@@ -187,7 +187,7 @@ protected:
 
 	Sprite			m_sprScoreFrame;
 	BitmapText		m_textSongOptions;
-	BitmapText		m_Scoreboard[NUM_NSSB_CATEGORIES];	// for NSMAN, so we can have a scoreboard
+	BitmapText		m_Scoreboard[NUM_NSScoreBoardColumn];	// for NSMAN, so we can have a scoreboard
 
 	bool			m_bShowScoreboard;
 

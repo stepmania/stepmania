@@ -50,9 +50,10 @@ enum NSScoreBoardColumn
 	NSSB_NAMES=0,
 	NSSB_COMBO,
 	NSSB_GRADE,
-	NUM_NSSB_CATEGORIES
+	NUM_NSScoreBoardColumn,
+	NSScoreBoardColumn_Invalid
 };
-#define FOREACH_NSScoreBoardColumn( sc ) FOREACH_ENUM( NSScoreBoardColumn, NUM_NSSB_CATEGORIES, sc )
+#define FOREACH_NSScoreBoardColumn( sc ) FOREACH_ENUM( NSScoreBoardColumn, NUM_NSScoreBoardColumn, sc )
 
 struct NetServerInfo
 {
@@ -128,7 +129,7 @@ public:
 
 	//Used togeather for 
 	bool ChangedScoreboard(int Column);	//If scoreboard changed since this function last called, then true.
-	RString m_Scoreboard[NUM_NSSB_CATEGORIES];
+	RString m_Scoreboard[NUM_NSScoreBoardColumn];
 
 	//Used for chatting
 	void SendChat(const RString& message);
@@ -171,7 +172,7 @@ private:
 	int m_startupStatus;	//Used to see if attempt was successful or not.
 	int	m_iSalt;
 
-	bool m_scoreboardchange[NUM_NSSB_CATEGORIES];
+	bool m_scoreboardchange[NUM_NSScoreBoardColumn];
 
 	RString m_ServerName;
  
