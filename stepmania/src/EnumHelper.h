@@ -2,6 +2,7 @@
 #define ENUM_HELPER_H
 
 #include "LuaReference.h"
+#include "RageUtil.h"
 
 /*
  * Safely add an integer to an enum.
