@@ -95,15 +95,13 @@ void RadarValues::FromString( RString sRadarValues )
 class LunaRadarValues: public Luna<RadarValues>
 {
 public:
-	LunaRadarValues() { LUA->Register( Register ); }
-
 	static int GetValue( T* p, lua_State *L ) { lua_pushnumber( L, (*p)[IArg(1)] ); return 1; }
 
-	static void Register(lua_State *L)
+	LunaRadarValues()
 	{
-		ADD_METHOD( GetValue );
+		LUA->Register( Register );
 
-		Luna<T>::Register( L );
+		ADD_METHOD( GetValue );
 	}
 };
 

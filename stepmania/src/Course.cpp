@@ -99,8 +99,6 @@ int CourseEntry::GetNumModChanges() const
 class LunaCourseEntry: public Luna<CourseEntry>
 {
 public:
-	LunaCourseEntry() { LUA->Register( Register ); }
-
 	static int GetSong( T* p, lua_State *L )
 	{
 		if( p->pSong )
@@ -110,11 +108,11 @@ public:
 		return 1;
 	}
 
-	static void Register( lua_State *L )
+	LunaCourseEntry()
 	{
-		ADD_METHOD( GetSong );
+		LUA->Register( Register );
 
-		Luna<T>::Register( L );
+		ADD_METHOD( GetSong );
 	}
 };
 
@@ -906,8 +904,6 @@ bool Course::Matches( RString sGroup, RString sCourse ) const
 class LunaCourse: public Luna<Course>
 {
 public:
-	LunaCourse() { LUA->Register( Register ); }
-
 	static int GetPlayMode( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetPlayMode() ); return 1; }
 	static int GetDisplayFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayFullTitle() ); return 1; }
 	static int GetTranslitFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitFullTitle() ); return 1; }
@@ -935,8 +931,10 @@ public:
 		return 1;
 	}
 
-	static void Register(lua_State *L)
+	LunaCourse()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( GetPlayMode );
 		ADD_METHOD( GetDisplayFullTitle );
 		ADD_METHOD( GetTranslitFullTitle );
@@ -948,8 +946,6 @@ public:
 		ADD_METHOD( IsAutogen );
 		ADD_METHOD( GetEstimatedNumStages );
 		ADD_METHOD( GetTotalSeconds );
-
-		Luna<T>::Register( L );
 	}
 };
 

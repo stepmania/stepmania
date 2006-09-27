@@ -823,8 +823,6 @@ bool GameCommand::IsZero() const
 class LunaGameCommand: public Luna<GameCommand>
 {
 public:
-	LunaGameCommand() { LUA->Register( Register ); }
-
 	static int GetName( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sName ); return 1; }
 	static int GetText( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sText ); return 1; }
 	static int GetIndex( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iIndex ); return 1; }
@@ -832,16 +830,16 @@ public:
 	static int GetProfileID( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sProfileID ); return 1; }
 	static int GetSong( T* p, lua_State *L )		{ if(p->m_pSong==NULL) lua_pushnil(L); else p->m_pSong->PushSelf(L); return 1; }
 
-	static void Register(lua_State *L)
+	LunaGameCommand()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( GetName );
 		ADD_METHOD( GetText );
 		ADD_METHOD( GetIndex );
 		ADD_METHOD( GetMultiPlayer );
 		ADD_METHOD( GetProfileID );
 		ADD_METHOD( GetSong );
-
-		Luna<T>::Register( L );
 	}
 };
 

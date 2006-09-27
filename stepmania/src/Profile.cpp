@@ -1908,8 +1908,6 @@ void Profile::MoveBackupToDir( RString sFromDir, RString sToDir )
 class LunaProfile: public Luna<Profile>
 {
 public:
-	LunaProfile() { LUA->Register( Register ); }
-
 	static int GetDisplayName( T* p, lua_State *L )			{ lua_pushstring(L, p->m_sDisplayName ); return 1; }
 	static int GetCharacter( T* p, lua_State *L )			{ p->GetCharacter()->PushSelf(L); return 1; }
 	static int GetWeightPounds( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iWeightPounds ); return 1; }
@@ -1969,8 +1967,10 @@ public:
 		return 1;
 	}
 
-	static void Register(lua_State *L)
+	LunaProfile()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( GetDisplayName );
 		ADD_METHOD( GetCharacter );
 		ADD_METHOD( GetWeightPounds );
@@ -2001,8 +2001,6 @@ public:
 		ADD_METHOD( GetMostPopularCourse );
 		ADD_METHOD( GetSongNumTimesPlayed );
 		ADD_METHOD( HasPassedAnyStepsInSong );
-
-		Luna<T>::Register( L );
 	}
 };
 

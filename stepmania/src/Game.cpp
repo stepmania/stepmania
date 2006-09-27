@@ -114,14 +114,13 @@ TapNoteScore Game::MapTapNoteScore( TapNoteScore tns ) const
 class LunaGame: public Luna<Game>
 {
 public:
-	LunaGame() { LUA->Register( Register ); }
-
 	static int GetName( T* p, lua_State *L )			{ lua_pushstring( L, p->m_szName ); return 1; }
-	static void Register( Lua *L )
-	{
-  		ADD_METHOD( GetName );
 
-		Luna<T>::Register( L );
+	LunaGame()
+	{
+		LUA->Register( Register );
+		
+		ADD_METHOD( GetName );
 	}
 };
 

@@ -610,8 +610,6 @@ LuaFunction( GetGradeFromPercent,	GetGradeFromPercent( FArg(1), false ) )
 class LunaPlayerStageStats: public Luna<PlayerStageStats>
 {
 public:
-	LunaPlayerStageStats() { LUA->Register( Register ); }
-
 	DEFINE_METHOD( GetCaloriesBurned,		fCaloriesBurned )
 	DEFINE_METHOD( GetLifeRemainingSeconds,		fLifeRemainingSeconds )
 	DEFINE_METHOD( GetSurvivalSeconds,		GetSurvivalSeconds() )
@@ -625,8 +623,10 @@ public:
 	DEFINE_METHOD( GetPerDifficultyAward,		m_pdaToShow )
 	DEFINE_METHOD( GetPeakComboAward,		m_pcaToShow )
 
-	static void Register(lua_State *L)
+	LunaPlayerStageStats()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( GetCaloriesBurned );
 		ADD_METHOD( GetLifeRemainingSeconds );
 		ADD_METHOD( GetSurvivalSeconds );
@@ -639,8 +639,6 @@ public:
 		ADD_METHOD( GetMachineHighScoreIndex );
 		ADD_METHOD( GetPerDifficultyAward );
 		ADD_METHOD( GetPeakComboAward );
-
-		Luna<T>::Register( L );
 	}
 };
 

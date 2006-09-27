@@ -380,17 +380,15 @@ void Screenshot::LoadFromNode( const XNode* pNode )
 class LunaHighScore: public Luna<HighScore>
 {
 public:
-	LunaHighScore() { LUA->Register( Register ); }
-
 	static int GetName( T* p, lua_State *L )			{ lua_pushstring(L, p->GetName() ); return 1; }
 	static int GetScore( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetScore() ); return 1; }
 
-	static void Register(lua_State *L)
+	LunaHighScore()
 	{
+		LUA->Register( Register );
+
 		ADD_METHOD( GetName );
 		ADD_METHOD( GetScore );
-
-		Luna<T>::Register( L );
 	}
 };
 
