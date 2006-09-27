@@ -21,9 +21,9 @@ RString GameButtonToString( const Game* pGame, GameButton i );
 RString GameButtonToLocalizedString( const Game* pGame, GameButton i );
 GameButton StringToGameButton( const Game* pGame, const RString& s );
 
-const GameButton MAX_GAME_BUTTONS = 20;
-const GameButton GAME_BUTTON_INVALID = MAX_GAME_BUTTONS+1;
-#define FOREACH_GameButton( gb ) FOREACH_ENUM( GameButton, MAX_GAME_BUTTONS, gb )
+const GameButton NUM_GameButton = 20;
+const GameButton GAME_BUTTON_INVALID = NUM_GameButton+1;
+#define FOREACH_GameButton( gb ) FOREACH_ENUM( GameButton, NUM_GameButton, gb )
 
 enum	// DanceButtons
 {

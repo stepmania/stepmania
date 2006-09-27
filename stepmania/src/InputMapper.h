@@ -79,7 +79,7 @@ public:
 
 protected:
 	// all the DeviceInputs that map to a GameInput
-	DeviceInput m_GItoDI[NUM_GameController][MAX_GAME_BUTTONS][NUM_GAME_TO_DEVICE_SLOTS];
+	DeviceInput m_GItoDI[NUM_GameController][NUM_GameButton][NUM_GAME_TO_DEVICE_SLOTS];
 
 	void UpdateTempDItoGI();
 };

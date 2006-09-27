@@ -47,7 +47,7 @@ const RString& LightsModeToString( LightsMode lm );
 struct LightsState
 {
 	bool m_bCabinetLights[NUM_CabinetLight];
-	bool m_bGameButtonLights[NUM_GameController][MAX_GAME_BUTTONS];
+	bool m_bGameButtonLights[NUM_GameController][NUM_GameButton];
 };
 
 class LightsDriver;
@@ -82,7 +82,7 @@ private:
 	void ChangeTestGameButtonLight( int iDir );
 
 	float m_fSecsLeftInCabinetLightBlink[NUM_CabinetLight];
-	float m_fSecsLeftInGameButtonBlink[NUM_GameController][MAX_GAME_BUTTONS];
+	float m_fSecsLeftInGameButtonBlink[NUM_GameController][NUM_GameButton];
 	float m_fActorLights[NUM_CabinetLight];	// current "power" of each actor light
 	float m_fSecsLeftInActorLightBlink[NUM_CabinetLight];	// duration to "power" an actor light
 

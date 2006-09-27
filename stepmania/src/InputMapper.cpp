@@ -681,8 +681,8 @@ void InputMapper::SetInputMap( const DeviceInput &DeviceI, const GameInput &Game
 	
 	ASSERT_M( GameI.controller < NUM_GameController,
 		  ssprintf("controller: %u >= %u", GameI.controller, NUM_GameController) );
-	ASSERT_M( GameI.button < MAX_GAME_BUTTONS,
-		  ssprintf("button: %u >= %u", GameI.button, MAX_GAME_BUTTONS) );
+	ASSERT_M( GameI.button < NUM_GameButton,
+		  ssprintf("button: %u >= %u", GameI.button, NUM_GameButton) );
 	ASSERT_M( iSlotIndex < NUM_GAME_TO_DEVICE_SLOTS,
 		  ssprintf("slot: %u >= %u", iSlotIndex, NUM_GAME_TO_DEVICE_SLOTS) );
 	m_GItoDI[GameI.controller][GameI.button][iSlotIndex] = DeviceI;

@@ -52,7 +52,7 @@ private:
 
 	AutoActor m_sprExit;
 
-	ActorFrame	m_Line[MAX_GAME_BUTTONS+2]; // label, normal lines, exit
+	ActorFrame	m_Line[NUM_GameButton+2]; // label, normal lines, exit
 	ActorScroller m_LineScroller;
 
 	RageSound m_soundChange;
