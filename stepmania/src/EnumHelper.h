@@ -124,7 +124,6 @@ namespace LuaHelpers { void Push( lua_State *L, const X &Object ); }
 #define LuaXType(X)	\
 static void Lua##X(lua_State* L) \
 { \
-	EnumTraits<X>::Invalid = enum_add2( NUM_##X, 1 ); \
 	/* Create the EnumToString table: { "UnlockEntry_ArcadePoints", "UnlockEntry_DancePoints" } */ \
 	lua_newtable( L ); \
 	FOREACH_ENUM( X, NUM_##X, i ) \
@@ -152,7 +151,7 @@ static void Lua##X(lua_State* L) \
 REGISTER_WITH_LUA_FUNCTION( Lua##X ); \
 LuaReference EnumTraits<X>::StringToEnum; \
 LuaReference EnumTraits<X>::EnumToString; \
-X EnumTraits<X>::Invalid; \
+X EnumTraits<X>::Invalid = enum_add2( NUM_##X, 1 ); \
 const char *EnumTraits<X>::szName = #X; \
 namespace LuaHelpers { bool FromStack( lua_State *L, X &Object, int iOffset ) { Object = Enum::Check<X>( L, iOffset ); return true; } } \
 namespace LuaHelpers { void Push( lua_State *L, const X &Object ) { Enum::Push<X>( L, Object ); } }
