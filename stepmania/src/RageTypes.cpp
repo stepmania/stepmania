@@ -48,6 +48,7 @@ static const char *CullModeNames[] =
 	"Front",
 	"None"
 };
+XToString2( CullMode );
 LuaXType( CullMode );
 
 static const char *BlendModeNames[] =
@@ -58,6 +59,7 @@ static const char *BlendModeNames[] =
 	"InvertDest",
 	"NoEffect"
 };
+XToString2( BlendMode );
 LuaXType( BlendMode );
 
 
@@ -67,6 +69,7 @@ static const char *ZTestModeNames[] =
 	"WriteOnPass",
 	"WriteOnFail"
 };
+XToString2( ZTestMode );
 LuaXType( ZTestMode );
 
 /*
