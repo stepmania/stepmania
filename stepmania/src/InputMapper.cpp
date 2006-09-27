@@ -40,7 +40,7 @@ InputMapper::~InputMapper()
 void InputMapper::ClearAllMappings()
 {
 	FOREACH_GameController( i )
-		for( int j=0; j<MAX_GAME_BUTTONS; j++ )
+		FOREACH_GameButton(j)
 			for( int k=0; k<NUM_GAME_TO_DEVICE_SLOTS; k++ )
 				m_GItoDI[i][j][k].MakeInvalid();
 }
@@ -49,7 +49,7 @@ void InputMapper::AddDefaultMappingsForCurrentGameIfUnmapped()
 {
 	// Clear default mappings.  Default mappings are in the third slot.
 	FOREACH_GameController( i )
-		for( int j=0; j<MAX_GAME_BUTTONS; j++ )
+		FOREACH_GameButton(j)
 			ClearFromInputMap( GameInput((GameController)i,(GameButton)j), 2 );
 
 	const Game* pGame = GAMESTATE->GetCurrentGame();
@@ -455,7 +455,7 @@ void InputMapper::Unmap( InputDevice id )
 {
 	FOREACH_GameController( i )
 	{
-		for( int j=0; j<MAX_GAME_BUTTONS; j++ )
+		FOREACH_GameButton(j)
 		{
 			for( int k=0; k<NUM_USER_GAME_TO_DEVICE_SLOTS; k++ )
 			{
@@ -697,7 +697,7 @@ void InputMapper::ClearFromInputMap( const DeviceInput &DeviceI )
 
 	FOREACH_GameController( p )
 	{
-		for( int b=0; b<MAX_GAME_BUTTONS; b++ )
+		FOREACH_GameButton(b)
 		{
 			for( int s=0; s<NUM_GAME_TO_DEVICE_SLOTS; s++ )
 			{
