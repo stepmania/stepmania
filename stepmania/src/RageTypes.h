@@ -12,7 +12,6 @@ enum BlendMode
 	BLEND_WEIGHTED_MULTIPLY,
 	BLEND_INVERT_DEST,
 	BLEND_NO_EFFECT,
-	BLEND_INVALID,
 	NUM_BlendMode,
 	BlendMode_Invalid
 };
