@@ -41,7 +41,7 @@ static inline T enum_add2( T val, int iAmt )
 	return val;
 }
 
-#define FOREACH_ENUM( e, max, var )	for( e var=(e)0; var<max; enum_add<e>( var, +1 ) )
+#define FOREACH_ENUM( e, max, var )	for( e var=(e)0; var<NUM_##e; enum_add<e>( var, +1 ) )
 #define FOREACH_ENUM2( e, var )	for( e var=(e)0; var<NUM_##e; enum_add<e>( var, +1 ) )
 
 int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const char *szType );
