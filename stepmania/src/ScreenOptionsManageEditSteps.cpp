@@ -37,7 +37,7 @@ static const char *StepsEditActionNames[] = {
 	"Delete",
 };
 XToString( StepsEditAction, NUM_StepsEditAction );
-#define FOREACH_StepsEditAction( i ) FOREACH_ENUM( StepsEditAction, NUM_StepsEditAction, i )
+#define FOREACH_StepsEditAction( i ) FOREACH_ENUM2( StepsEditAction, i )
 
 static MenuDef g_TempMenu(
 	"ScreenMiniMenuContext"

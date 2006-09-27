@@ -24,7 +24,7 @@ enum CabinetLight
 	NUM_CabinetLight,
 	CabinetLight_Invalid
 };
-#define FOREACH_CabinetLight( i ) FOREACH_ENUM( CabinetLight, NUM_CabinetLight, i )
+#define FOREACH_CabinetLight( i ) FOREACH_ENUM2( CabinetLight, i )
 const RString& CabinetLightToString( CabinetLight cl );
 CabinetLight StringToCabinetLight( const RString& s);
 

@@ -42,7 +42,7 @@ static const char *ProfileActionNames[] = {
 };
 XToString( ProfileAction, NUM_ProfileAction );
 XToLocalizedString( ProfileAction );
-#define FOREACH_ProfileAction( i ) FOREACH_ENUM( ProfileAction, NUM_ProfileAction, i )
+#define FOREACH_ProfileAction( i ) FOREACH_ENUM2( ProfileAction, i )
 
 static MenuDef g_TempMenu(
 	"ScreenMiniMenuContext"

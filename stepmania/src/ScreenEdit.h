@@ -125,7 +125,7 @@ enum EditButton
 	NUM_EditButton,		// leave this at the end
 	EditButton_Invalid
 };
-#define FOREACH_EditButton( e ) FOREACH_ENUM( EditButton, NUM_EditButton, e )
+#define FOREACH_EditButton( e ) FOREACH_ENUM2( EditButton, e )
 const int NUM_EDIT_TO_DEVICE_SLOTS = 2;
 const int NUM_EDIT_TO_MENU_SLOTS = 2;
 

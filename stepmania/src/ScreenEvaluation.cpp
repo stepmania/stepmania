@@ -41,14 +41,14 @@ static const char *JudgeLineNames[] =
 	"W1", "W2", "W3", "W4", "W5", "Miss", "Held", "MaxCombo"
 };
 XToString( JudgeLine, NUM_JudgeLine );
-#define FOREACH_JudgeLine( rc ) FOREACH_ENUM( JudgeLine, NUM_JudgeLine, rc )
+#define FOREACH_JudgeLine( rc ) FOREACH_ENUM2( JudgeLine, rc )
 
 static const char *StatLineNames[NUM_StatLine] =
 {
 	"Jumps", "Holds", "Mines", "Hands", "Rolls",
 };
 XToString( StatLine, NUM_StatLine );
-#define FOREACH_StatLine( rc ) FOREACH_ENUM( StatLine, NUM_StatLine, rc )
+#define FOREACH_StatLine( rc ) FOREACH_ENUM2( StatLine, rc )
 
 #define CHEER_DELAY_SECONDS		THEME->GetMetricF(m_sName,"CheerDelaySeconds")
 #define BAR_ACTUAL_MAX_COMMAND		THEME->GetMetricA(m_sName,"BarActualMaxCommand")

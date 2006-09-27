@@ -13,7 +13,7 @@
 #include "LuaBinding.h"
 
 const RString& NoteNotePartToString( NotePart i );
-#define FOREACH_NotePart( i ) FOREACH_ENUM( NotePart, NUM_NotePart, i )
+#define FOREACH_NotePart( i ) FOREACH_ENUM2( NotePart, i )
 
 static const char *NotePartNames[] = {
 	"TapNote",

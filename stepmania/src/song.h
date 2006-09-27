@@ -30,7 +30,7 @@ enum BackgroundLayer
 	NUM_BackgroundLayer,
 	BACKGROUND_LAYER_INVALID
 };
-#define FOREACH_BackgroundLayer( bl ) FOREACH_ENUM( BackgroundLayer, NUM_BackgroundLayer, bl )
+#define FOREACH_BackgroundLayer( bl ) FOREACH_ENUM2( BackgroundLayer, bl )
 
 struct LyricSegment
 {

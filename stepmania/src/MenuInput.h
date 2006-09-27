@@ -17,7 +17,7 @@ enum MenuButton
 	NUM_MenuButton,		// leave this at the end
 	MenuButton_INVALID
 };
-#define FOREACH_MenuButton( m ) FOREACH_ENUM( MenuButton, NUM_MenuButton, m )
+#define FOREACH_MenuButton( m ) FOREACH_ENUM2( MenuButton, m )
 
 const RString &MenuButtonToString( MenuButton mb );
 const RString &MenuButtonToLocalizedString( MenuButton mb );

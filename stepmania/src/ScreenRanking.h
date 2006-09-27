@@ -31,7 +31,7 @@ enum PageType
 	NUM_PageType,
 	PageType_Invalid
 };
-#define FOREACH_PageType( pt ) FOREACH_ENUM( PageType, NUM_PageType, pt )
+#define FOREACH_PageType( pt ) FOREACH_ENUM2( PageType, pt )
 const RString& PageTypeToString( PageType pt );
 PageType StringToPageType( const RString& s );
 

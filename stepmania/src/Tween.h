@@ -18,7 +18,7 @@ enum TweenType
 	NUM_TweenType,
 	TweenType_Invalid
 };
-#define FOREACH_TweenType( tt ) FOREACH_ENUM( TweenType, NUM_TweenType, tt )
+#define FOREACH_TweenType( tt ) FOREACH_ENUM2( TweenType, tt )
 LuaDeclareType( TweenType );
 
 class ITween

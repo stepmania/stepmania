@@ -21,7 +21,7 @@ enum ElementCategory
 	EC_OTHER,
 	NUM_ElementCategory
 };
-#define FOREACH_ElementCategory( ec ) FOREACH_ENUM( ElementCategory, NUM_ElementCategory, ec )
+#define FOREACH_ElementCategory( ec ) FOREACH_ENUM2( ElementCategory, ec )
 const RString& ElementCategoryToString( ElementCategory ec );
 ElementCategory StringToElementCategory( const RString& s );
 

@@ -16,7 +16,7 @@ enum KeyboardRow
 	NUM_KeyboardRow,
 	KeyboardRow_Invalid
 };
-#define FOREACH_KeyboardRow( i ) FOREACH_ENUM( KeyboardRow, NUM_KeyboardRow, i )
+#define FOREACH_KeyboardRow( i ) FOREACH_ENUM2( KeyboardRow, i )
 const int KEYS_PER_ROW = 13;
 enum KeyboardRowSpecialKey
 {
