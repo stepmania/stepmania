@@ -4,6 +4,11 @@
 #include "LuaReference.h"
 #include "RageUtil.h"
 
+extern "C"
+{
+#include "lua-5.1/src/lua.h"
+}
+
 /*
  * Safely add an integer to an enum.
  *
