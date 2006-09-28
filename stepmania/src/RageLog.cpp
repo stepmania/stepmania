@@ -247,10 +247,12 @@ void RageLog::Write( int where, const RString &line )
 	const char *const sWarningSeparator = "/////////////////////////////////////////";
 	vector<RString> lines;
 	split( line, "\n", lines, false );
-	if( m_bLogToDisk && g_fileLog->IsOpen() && (where & WRITE_LOUD) )
-		g_fileLog->PutLine( sWarningSeparator );
 	if( where & WRITE_LOUD )
+	{
+		if( m_bLogToDisk && g_fileLog->IsOpen() )
+			g_fileLog->PutLine( sWarningSeparator );
 		puts( sWarningSeparator );
+	}
 
 	RString sTimestamp = SecondsToMMSSMsMsMs( RageTimer::GetTimeSinceStart() ) + ": ";
 	RString sWarning;
@@ -283,11 +285,12 @@ void RageLog::Write( int where, const RString &line )
 			g_fileLog->PutLine( str );
 	}
 
-	if( m_bLogToDisk && g_fileLog->IsOpen() && (where & WRITE_LOUD) )
-		g_fileLog->PutLine( sWarningSeparator );
 	if( where & WRITE_LOUD )
+	{
+		if( m_bLogToDisk && g_fileLog->IsOpen() && (where & WRITE_LOUD) )
+			g_fileLog->PutLine( sWarningSeparator );
 		puts( sWarningSeparator );
-
+	}
 	if( m_bFlush || (where & WRITE_TO_INFO) )
 		Flush();
 }
