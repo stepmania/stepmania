@@ -160,7 +160,7 @@ static void StartDisplay()
 		PREFSMAN->m_fCenterImageAddWidth,
 		PREFSMAN->m_fCenterImageAddHeight );
 
-	TEXTUREMAN	= new RageTextureManager();
+	TEXTUREMAN	= new RageTextureManager;
 	TEXTUREMAN->SetPrefs( 
 		RageTextureManagerPrefs( 
 			PREFSMAN->m_iTextureColorDepth, 
@@ -726,7 +726,7 @@ RageDisplay *CreateDisplay()
 		}
 		else if( sRenderer.CompareNoCase("null")==0 )
 		{
-			return new RageDisplay_Null();
+			return new RageDisplay_Null;
 		}
 		else
 		{
@@ -1052,7 +1052,7 @@ int main(int argc, char* argv[])
 	BANNERCACHE	= new BannerCache;
 	
 	/* depends on SONGINDEX: */
-	SONGMAN		= new SongManager();
+	SONGMAN		= new SongManager;
 	WORKOUTMAN	= new WorkoutManager;
 	if( !GetCommandlineArgument("ExportNsisStrings") && !GetCommandlineArgument("ExportLuaInformation") )
 		SONGMAN->InitAll( pLoadingWindow );	// this takes a long time
