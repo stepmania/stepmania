@@ -43,6 +43,7 @@
 #include "NoteSkinManager.h"
 #include "PrefsManager.h"
 #include "SongManager.h"
+#include "WorkoutManager.h"
 #include "CharacterManager.h"
 #include "GameState.h"
 #include "AnnouncerManager.h"
@@ -258,6 +259,7 @@ void ShutdownGame()
 	SAFE_DELETE( UNLOCKMAN );
 	SAFE_DELETE( CRYPTMAN );
 	SAFE_DELETE( MEMCARDMAN );
+	SAFE_DELETE( WORKOUTMAN );
 	SAFE_DELETE( SONGMAN );
 	SAFE_DELETE( BANNERCACHE );
 	SAFE_DELETE( SONGINDEX );
@@ -1051,6 +1053,7 @@ int main(int argc, char* argv[])
 	
 	/* depends on SONGINDEX: */
 	SONGMAN		= new SongManager();
+	WORKOUTMAN	= new WorkoutManager;
 	if( !GetCommandlineArgument("ExportNsisStrings") && !GetCommandlineArgument("ExportLuaInformation") )
 		SONGMAN->InitAll( pLoadingWindow );	// this takes a long time
 	CRYPTMAN	= new CryptManager;		// need to do this before ProfileMan

@@ -11,7 +11,7 @@
 
 static const RString WORKOUTS_SUBDIR = "Workouts/";
 
-WorkoutManager*	WORKOUTMAN = new WorkoutManager;	// global and accessable from anywhere in our program
+WorkoutManager*	WORKOUTMAN = NULL;	// global and accessable from anywhere in our program
 
 WorkoutManager::WorkoutManager()
 {
