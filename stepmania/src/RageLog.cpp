@@ -240,13 +240,13 @@ void RageLog::UserLog( const RString &sType, const RString &sElement, const char
 	Write( WRITE_TO_USER_LOG, sBuf );
 }
 
-void RageLog::Write( int where, const RString &line )
+void RageLog::Write( int where, const RString &sLine )
 {
 	LockMut( *g_Mutex );
 
 	const char *const sWarningSeparator = "/////////////////////////////////////////";
-	vector<RString> lines;
-	split( line, "\n", lines, false );
+	vector<RString> asLines;
+	split( sLine, "\n", asLines, false );
 	if( where & WRITE_LOUD )
 	{
 		if( m_bLogToDisk && g_fileLog->IsOpen() )
@@ -259,30 +259,30 @@ void RageLog::Write( int where, const RString &line )
 	if( where & WRITE_LOUD )
 		sWarning = "WARNING: ";
 
-	for( unsigned i = 0; i < lines.size(); ++i )
+	for( unsigned i = 0; i < asLines.size(); ++i )
 	{
-		RString &str = lines[i];
+		RString &sStr = asLines[i];
 
 		if( sWarning.size() )
-			str.insert( 0, sWarning );
+			sStr.insert( 0, sWarning );
 
 		if( m_bShowLogOutput || where != 0 )
-			printf("%s\n", str.c_str() );
+			printf("%s\n", sStr.c_str() );
 		if( where & WRITE_TO_INFO )
-			AddToInfo( str );
+			AddToInfo( sStr );
 		if( m_bLogToDisk && (where&WRITE_TO_INFO) && g_fileInfo->IsOpen() )
-			g_fileInfo->PutLine( str );
+			g_fileInfo->PutLine( sStr );
 		if( m_bUserLogToDisk && (where&WRITE_TO_USER_LOG) && g_fileUserLog->IsOpen() )
-			g_fileUserLog->PutLine( str );
+			g_fileUserLog->PutLine( sStr );
 
 		/* Add a timestamp to log.txt and RecentLogs, but not the rest of info.txt
 		 * and stdout. */
-		str.insert( 0, sTimestamp );
+		sStr.insert( 0, sTimestamp );
 
-		AddToRecentLogs( str );
+		AddToRecentLogs( sStr );
 		
 		if( m_bLogToDisk && g_fileLog->IsOpen() )
-			g_fileLog->PutLine( str );
+			g_fileLog->PutLine( sStr );
 	}
 
 	if( where & WRITE_LOUD )
