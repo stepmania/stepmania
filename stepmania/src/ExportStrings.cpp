@@ -47,19 +47,17 @@ void ExportStrings::Nsis()
 void ExportStrings::LuaInformation()
 {
 	XNode *pNode = LUA->GetLuaInformation();
-	XNode *pVersionNode = new XNode;
-	XNode *pDateNode = new XNode;
-	DISP_OPT disp;
-	
-	pVersionNode->m_sName = "Version";
+
+	XNode *pVersionNode = pNode->AppendChild( "Version" );
 	pVersionNode->m_sValue = PRODUCT_ID_VER;
-	pNode->AppendChild( pVersionNode );
-	pDateNode->m_sName = "Date";
+
+	XNode *pDateNode = pNode->AppendChild( "Date" );
 	pDateNode->m_sValue = DateTime::GetNowDate().GetString();
-	pNode->AppendChild( pDateNode );
+
+	DISP_OPT disp;
 	disp.stylesheet = "Lua.xsl";
-	
 	pNode->SaveToFile( "Lua.xml", disp );
+
 	delete pNode;
 }
 
