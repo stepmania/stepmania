@@ -1241,10 +1241,6 @@
 				>
 			</File>
 			<File
-				RelativePath="LuaFunctions.h"
-				>
-			</File>
-			<File
 				RelativePath="LuaReference.cpp"
 				>
 			</File>
