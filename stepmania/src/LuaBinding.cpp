@@ -101,10 +101,40 @@ void LuaBinding::Register( lua_State *L )
 	{
 		lua_getfield( L, LUA_GLOBALSINDEX, GetBaseClassName() );
 		lua_setfield( L, methods_metatable, "__index" );
+
+		lua_pushstring( L, GetBaseClassName() );
+		lua_setfield( L, metatable, "base" );
 	}
 
 	lua_pushstring( L, GetClassName() );
-	lua_setfield( L, methods_metatable, "type" );
+	lua_setfield( L, methods_metatable, "class" );
+
+	lua_pushstring( L, GetClassName() );
+	lua_setfield( L, metatable, "type" );
+
+	{
+		lua_newtable( L );
+		int iHeirarchyTable = lua_gettop( L );
+
+		RString sClass = GetClassName();
+		int iIndex = 0;
+		while( !sClass.empty() )
+		{
+			lua_pushstring( L, sClass );
+			lua_pushinteger( L, iIndex );
+			lua_rawset( L, iHeirarchyTable );
+			++iIndex;
+
+			luaL_getmetatable( L, sClass );
+			ASSERT( !lua_isnil(L, -1) );
+			lua_getfield( L, -1, "base" );
+
+			LuaHelpers::FromStack( L, sClass, -1 );
+			lua_pop( L, 2 );
+		}
+
+		lua_setfield( L, metatable, "heirarchy" );
+	}
 
 	/* Set and pop the methods metatable. */
 	lua_setmetatable( L, methods );
@@ -196,48 +226,20 @@ bool LuaBinding::CheckLuaObjectType( lua_State *L, int iArg, const char *szType,
 		return true;
 #endif
 
-	ASSERT_M( iArg > 0, ssprintf("%i", iArg) ); // negative offsets not supported
-
-	int iTop = lua_gettop(L);
-	lua_pushvalue( L, iArg );
-
-	iArg = lua_gettop(L);
-	while(1)
+	/* Check that szType is in metatable.heirarchy. */
+	if( !luaL_getmetafield(L, iArg, "heirarchy") )
+		return false;
+	if( !lua_istable(L, -1) )
 	{
-		/* If the object on the stack has no metatable, it has no type; fail. */
-		if( !lua_getmetatable(L, iArg) )
-		{
-			lua_settop( L, iTop );
-			return false;
-		}
-		int iMetatable = lua_gettop(L);
-
-		/* Look up the type name. */
-		lua_pushstring( L, "type" );
-		lua_rawget( L, iMetatable );
-		const char *szActualType = lua_tostring( L, -1 );
-
-		if( szActualType != NULL && !strcmp(szActualType, szType) )
-		{
-			/* The type matches. */
-			lua_settop( L, iTop );
-			return true;
-		}
-
-		/* The type doesn't match.  Does the metatable have __index? */
-		lua_pushstring( L, "__index" );
-		lua_rawget( L, iMetatable );
-		if( lua_isnil(L, -1) )
-		{
-			/* There's no __index.  The type doesn't match. */
-			lua_settop( L, iTop );
-			return false;
-		}
-
-		/* Start over with __index. */
-		lua_replace( L, iArg );
 		lua_pop( L, 1 );
+		return false;
 	}
+
+	lua_getfield( L, -1, szType );
+	bool bRet = !lua_isnil( L, -1 );
+	lua_pop( L, 2 );
+
+	return bRet;
 }
 
 static void GetGlobalTable( Lua *L )
