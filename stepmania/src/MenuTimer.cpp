@@ -189,8 +189,6 @@ public:
 
 	LunaMenuTimer()
 	{
-		LUA->Register( Register );
-
   		ADD_METHOD( setseconds );
   		ADD_METHOD( pause );
 	}

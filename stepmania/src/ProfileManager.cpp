@@ -853,8 +853,6 @@ public:
 
 	LunaProfileManager()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( IsPersistentProfile );
 		ADD_METHOD( GetProfile );
 		ADD_METHOD( GetMachineProfile );

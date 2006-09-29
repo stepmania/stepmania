@@ -66,7 +66,6 @@ class LunaScoreDisplayAliveTime: public Luna<ScoreDisplayAliveTime>
 public:
 	LunaScoreDisplayAliveTime()
 	{
-		LUA->Register( Register );
 	}
 };
 

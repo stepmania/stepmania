@@ -46,8 +46,6 @@ public:
 
 	LunaActorSound()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( load );
 		ADD_METHOD( play );
 	}

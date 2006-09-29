@@ -1166,8 +1166,6 @@ public:
 
 	LunaThemeManager()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( GetMetric );
 		ADD_METHOD( GetString );
 		ADD_METHOD( GetPathG );

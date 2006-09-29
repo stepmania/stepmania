@@ -110,8 +110,6 @@ public:
 
 	LunaCourseEntry()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( GetSong );
 	}
 };
@@ -933,8 +931,6 @@ public:
 
 	LunaCourse()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( GetPlayMode );
 		ADD_METHOD( GetDisplayFullTitle );
 		ADD_METHOD( GetTranslitFullTitle );

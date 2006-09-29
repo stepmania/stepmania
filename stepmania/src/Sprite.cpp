@@ -941,8 +941,6 @@ public:
 
 	LunaSprite()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( Load );
 		ADD_METHOD( LoadBanner );
 		ADD_METHOD( LoadBackground );

@@ -183,8 +183,6 @@ public:
 
 	LunaGradeDisplay()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( scroll );
 	}
 };

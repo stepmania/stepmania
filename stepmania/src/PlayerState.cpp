@@ -184,8 +184,6 @@ public:
 
 	LunaPlayerState()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( SetPlayerOptions );
 	}
 };

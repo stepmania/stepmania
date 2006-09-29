@@ -294,8 +294,6 @@ public:
 
 	LunaDifficultyMeter()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( Load );
 		ADD_METHOD( SetFromMeterAndDifficulty );
 		ADD_METHOD( SetFromSteps );

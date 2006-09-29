@@ -55,8 +55,6 @@ public:
 
 	LunaActorProxy()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( SetTarget );
 		ADD_METHOD( GetTarget );
 	}

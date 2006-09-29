@@ -231,8 +231,6 @@ public:
 
 	LunaWorkout()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( GetName );
 		ADD_METHOD( GetMinutes );
 		ADD_METHOD( GetEstimatedNumSongs );

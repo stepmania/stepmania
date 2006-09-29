@@ -232,8 +232,6 @@ public:
 
 	LunaBanner()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( scaletoclipped );
 		ADD_METHOD( ScaleToClipped );
 		ADD_METHOD( LoadFromSong );

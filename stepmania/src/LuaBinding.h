@@ -28,6 +28,11 @@ protected:
 	};
 
 public:
+	Luna()
+	{
+		LUA->Register( Register );
+	}
+
 	static void Register( Lua *L )
 	{
 		/* Create the methods table, if it doesn't already exist. */

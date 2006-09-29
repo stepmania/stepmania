@@ -197,8 +197,6 @@ public:
 
 	LunaRageInput()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( GetDescriptions );
 	}
 };

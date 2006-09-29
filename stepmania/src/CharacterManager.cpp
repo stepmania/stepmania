@@ -135,8 +135,6 @@ public:
 
 	LunaCharacterManager()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( GetCharacter );
 	}
 };

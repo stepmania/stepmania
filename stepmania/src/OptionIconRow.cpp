@@ -149,8 +149,6 @@ public:
 
 	LunaOptionIconRow()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( set );
 	}
 };

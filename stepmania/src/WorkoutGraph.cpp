@@ -125,8 +125,6 @@ public:
 
 	LunaWorkoutGraph()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( SetFromGameState );
 		ADD_METHOD( SetFromGameStateAndHighlightSong );
 	}

@@ -216,8 +216,6 @@ public:
 
 	LunaPercentageDisplay()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( LoadFromStats );
 	}
 };

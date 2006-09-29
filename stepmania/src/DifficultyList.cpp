@@ -383,8 +383,6 @@ public:
 
 	LunaDifficultyList()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( setfromgamestate );
 	}
 };

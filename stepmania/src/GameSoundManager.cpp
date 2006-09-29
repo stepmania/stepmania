@@ -751,8 +751,6 @@ public:
 
 	LunaGameSoundManager()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( DimMusic );
 		ADD_METHOD( PlayOnce );
 	}

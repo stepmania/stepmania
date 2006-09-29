@@ -232,8 +232,6 @@ public:
 
 	LunaTrail()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( GetDifficulty );
 		ADD_METHOD( GetCourseDifficulty );
 		ADD_METHOD( GetStepsType );

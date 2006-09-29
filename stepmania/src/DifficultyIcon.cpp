@@ -137,8 +137,6 @@ public:
 
 	LunaDifficultyIcon()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( Unset );
 		ADD_METHOD( SetPlayer );
 		ADD_METHOD( SetFromSteps );

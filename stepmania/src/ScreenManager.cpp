@@ -945,8 +945,6 @@ public:
 
 	LunaScreenManager()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( SetNewScreen );
 		ADD_METHOD( GetTopScreen );
 		ADD_METHOD( SystemMessage );

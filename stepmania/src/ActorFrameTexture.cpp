@@ -66,8 +66,6 @@ public:
 	
 	LunaActorFrameTexture()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( create );
 		ADD_METHOD( enabledepthbuffer );
 		ADD_METHOD( enablealphabuffer );

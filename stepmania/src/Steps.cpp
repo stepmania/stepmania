@@ -415,8 +415,6 @@ public:
 
 	LunaSteps()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( GetStepsType );
 		ADD_METHOD( GetDifficulty );
 		ADD_METHOD( GetDescription );

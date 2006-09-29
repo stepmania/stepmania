@@ -1876,8 +1876,6 @@ public:
 
 	LunaSongManager()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( GetAllSongs );
 		ADD_METHOD( GetAllCourses );
 		ADD_METHOD( FindSong );

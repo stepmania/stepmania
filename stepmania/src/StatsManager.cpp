@@ -256,8 +256,6 @@ public:
 
 	LunaStatsManager()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( GetCurStageStats );
 		ADD_METHOD( GetAccumPlayedStageStats );
 		ADD_METHOD( Reset );

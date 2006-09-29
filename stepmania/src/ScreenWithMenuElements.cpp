@@ -353,7 +353,6 @@ class LunaScreenWithMenuElements: public Luna<ScreenWithMenuElements>
 public:
 	LunaScreenWithMenuElements()
 	{
-		LUA->Register( Register );
 	}
 };
 
@@ -364,7 +363,6 @@ class LunaScreenWithMenuElementsSimple: public Luna<ScreenWithMenuElementsSimple
 public:
 	LunaScreenWithMenuElementsSimple()
 	{
-		LUA->Register( Register );
 	}
 };
 

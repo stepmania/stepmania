@@ -205,8 +205,6 @@ public:
 
 	LunaCharacter()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( GetCardPath );
 		ADD_METHOD( GetIconPath );
 		ADD_METHOD( GetSongSelectIconPath );

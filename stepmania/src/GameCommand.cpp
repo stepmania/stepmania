@@ -832,8 +832,6 @@ public:
 
 	LunaGameCommand()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( GetName );
 		ADD_METHOD( GetText );
 		ADD_METHOD( GetIndex );

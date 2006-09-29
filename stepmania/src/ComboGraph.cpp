@@ -120,8 +120,6 @@ public:
 
 	LunaComboGraph()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( LoadFromStats );
 	}
 };

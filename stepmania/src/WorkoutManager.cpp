@@ -183,8 +183,6 @@ public:
 
 	LunaWorkoutManager()
 	{
-		LUA->Register( Register );
-		
 		ADD_METHOD( GetCurrentWorkout );
 		ADD_METHOD( GetWorkoutSongsOverview );
 		ADD_METHOD( GetWorkoutSongTitleText );

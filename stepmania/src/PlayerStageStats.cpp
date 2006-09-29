@@ -625,8 +625,6 @@ public:
 
 	LunaPlayerStageStats()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( GetCaloriesBurned );
 		ADD_METHOD( GetLifeRemainingSeconds );
 		ADD_METHOD( GetSurvivalSeconds );

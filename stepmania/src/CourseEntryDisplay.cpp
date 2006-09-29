@@ -196,8 +196,6 @@ public:
 
 	LunaCourseEntryDisplay()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( SetFromGameState );
 	}
 };

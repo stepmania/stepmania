@@ -1969,8 +1969,6 @@ public:
 
 	LunaProfile()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( GetDisplayName );
 		ADD_METHOD( GetCharacter );
 		ADD_METHOD( GetWeightPounds );

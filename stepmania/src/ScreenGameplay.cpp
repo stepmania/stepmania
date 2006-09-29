@@ -2639,8 +2639,6 @@ public:
 
 	LunaScreenGameplay()
 	{
-		LUA->Register( Register );
-
   		ADD_METHOD( GetNextCourseSong );
   		ADD_METHOD( Center1Player );
 	}

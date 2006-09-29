@@ -873,8 +873,6 @@ public:
 
 	LunaBitmapText()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( wrapwidthpixels );
 		ADD_METHOD( maxwidth );
 		ADD_METHOD( maxheight );

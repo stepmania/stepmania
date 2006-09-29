@@ -294,8 +294,6 @@ public:
 
 	LunaScreen()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( GetNextScreen );
 		ADD_METHOD( PostScreenMessage );
 		ADD_METHOD( lockinput );

@@ -118,8 +118,6 @@ public:
 
 	LunaGame()
 	{
-		LUA->Register( Register );
-		
 		ADD_METHOD( GetName );
 	}
 };

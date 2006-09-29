@@ -285,8 +285,6 @@ public:
 
 	LunaStageStats()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( GetPlayerStageStats );
 		ADD_METHOD( GetMultiPlayerStageStats );
 		ADD_METHOD( GetGameplaySeconds );

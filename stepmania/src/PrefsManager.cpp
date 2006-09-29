@@ -603,8 +603,6 @@ public:
 
 	LunaPrefsManager()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( GetPreference );
 		ADD_METHOD( SetPreference );
 		ADD_METHOD( SetPreferenceToDefault );

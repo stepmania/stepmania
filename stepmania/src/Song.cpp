@@ -1272,8 +1272,6 @@ public:
 
 	LunaSong()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( GetDisplayFullTitle );
 		ADD_METHOD( GetTranslitFullTitle );
 		ADD_METHOD( GetDisplayMainTitle );

@@ -2056,8 +2056,6 @@ public:
 		
 	LunaGameState() 
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( IsPlayerEnabled );
 		ADD_METHOD( IsHumanPlayer );
 		ADD_METHOD( GetPlayerDisplayName );

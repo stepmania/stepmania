@@ -99,8 +99,6 @@ public:
 
 	LunaRadarValues()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( GetValue );
 	}
 };

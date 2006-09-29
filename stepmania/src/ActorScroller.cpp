@@ -313,8 +313,6 @@ public:
 
 	LunaActorScroller()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( PositionItems );
 		ADD_METHOD( SetTransformFromFunction );
 		ADD_METHOD( SetTransformFromHeight );

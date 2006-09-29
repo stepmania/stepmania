@@ -412,8 +412,6 @@ public:
 
 	LunaActorFrame()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( playcommandonchildren );
 		ADD_METHOD( playcommandonleaves );
 		ADD_METHOD( propagate ); // deprecated

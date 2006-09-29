@@ -326,8 +326,6 @@ public:
 
 	LunaNoteSkinManager()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( GetPath );
 		ADD_METHOD( GetMetricA );
 		ADD_METHOD( GetGameBaseNoteSkinName );

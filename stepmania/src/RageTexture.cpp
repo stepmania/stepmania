@@ -79,8 +79,6 @@ public:
 
 	LunaRageTexture()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( position );
 		ADD_METHOD( loop );
 		ADD_METHOD( rate );

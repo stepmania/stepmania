@@ -129,8 +129,6 @@ public:
 
 	LunaJudgment()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( LoadFromMultiPlayer );
 	}
 };

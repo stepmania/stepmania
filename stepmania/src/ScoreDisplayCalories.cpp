@@ -75,7 +75,6 @@ class LunaScoreDisplayCalories: public Luna<ScoreDisplayCalories>
 public:
 	LunaScoreDisplayCalories()
 	{
-		LUA->Register( Register );
 	}
 };
 

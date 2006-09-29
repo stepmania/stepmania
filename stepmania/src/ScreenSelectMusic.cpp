@@ -1032,8 +1032,6 @@ public:
 
 	LunaScreenSelectMusic()
 	{
-		LUA->Register( Register );
-
   		ADD_METHOD( GetGoToOptions );
 	}
 };

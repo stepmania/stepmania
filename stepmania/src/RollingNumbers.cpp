@@ -69,8 +69,6 @@ public:
 
 	LunaRollingNumbers()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( targetnumber );
 	}
 };

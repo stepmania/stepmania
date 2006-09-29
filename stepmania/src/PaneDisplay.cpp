@@ -323,8 +323,6 @@ public:
 
 	LunaPaneDisplay()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( SetFromGameState );
 	}
 };

@@ -1482,8 +1482,6 @@ public:
 
 	LunaActor()
 	{
-		LUA->Register( Register );
-
   		ADD_METHOD( sleep );
 		ADD_METHOD( linear );
 		ADD_METHOD( accelerate );

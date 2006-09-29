@@ -189,8 +189,6 @@ public:
 
 	LunaScreenPlayerOptions()
 	{
-		LUA->Register( Register );
-
   		ADD_METHOD( GetGoToOptions );
 	}
 };

@@ -105,8 +105,6 @@ public:
 
 	LunaHelpDisplay()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( settips );
 		ADD_METHOD( gettips );
 		ADD_METHOD( setsecsbetweenswitches );

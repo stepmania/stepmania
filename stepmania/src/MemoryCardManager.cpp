@@ -723,8 +723,6 @@ public:
 
 	LunaMemoryCardManager()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( IsAnyPlayerUsingMemoryCard );
 	}
 };

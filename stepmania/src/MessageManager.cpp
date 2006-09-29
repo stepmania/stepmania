@@ -310,8 +310,6 @@ public:
 
 	LunaMessageManager()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( Broadcast );
 	}
 };

@@ -243,8 +243,6 @@ public:
 
 	LunaGrooveRadar()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( SetFromRadarValues );
 		ADD_METHOD( SetEmpty );
 		ADD_METHOD( tweenonscreen );

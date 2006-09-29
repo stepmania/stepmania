@@ -792,8 +792,6 @@ public:
 
 	LunaModel()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( playanimation );
 	}
 };

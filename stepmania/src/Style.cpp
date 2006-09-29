@@ -106,8 +106,6 @@ public:
 
 	LunaStyle()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( GetStyleType );
 		ADD_METHOD( GetStepsType );
 	}

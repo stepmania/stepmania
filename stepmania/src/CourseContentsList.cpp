@@ -99,8 +99,6 @@ public:
 
 	LunaCourseContentsList()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( SetFromGameState );
 	}
 };

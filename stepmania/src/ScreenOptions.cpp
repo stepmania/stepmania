@@ -1254,8 +1254,6 @@ public:
 
 	LunaScreenOptions()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( GetCurrentRow );
 	}
 };

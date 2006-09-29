@@ -707,8 +707,6 @@ public:
 
 	LunaUnlockEntry()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( IsLocked );
 		ADD_METHOD( GetDescription );
 		ADD_METHOD( GetUnlockRewardType );
@@ -751,8 +749,6 @@ public:
 
 	LunaUnlockManager()
 	{
-		LUA->Register( Register );
-
 		ADD_METHOD( FindEntryID );
 		ADD_METHOD( UnlockEntryID );
 		ADD_METHOD( UnlockEntryIndex );
