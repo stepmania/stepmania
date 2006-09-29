@@ -141,6 +141,21 @@ inline bool MyLua_checkboolean (lua_State *L, int numArg)
 #define BArg(n) (MyLua_checkboolean(L,(n)))
 #define FArg(n) ((float) luaL_checknumber(L,(n)))
 
+/* Linked list of functions we make available to Lua. */
+struct LuaFunctionList
+{
+	LuaFunctionList( RString name, lua_CFunction func );
+	RString name;
+	lua_CFunction func;
+	LuaFunctionList *next;
+};
+
+#define LuaFunction( func, expr ) \
+int LuaFunc_##func( lua_State *L ) { \
+	LuaHelpers::Push( L, expr ); return 1; \
+} \
+static LuaFunctionList g_##func( #func, LuaFunc_##func ); /* register it */
+
 #endif
 
 /*

@@ -3,21 +3,6 @@
 
 #include "LuaManager.h"
 
-/* Linked list of functions we make available to Lua. */
-struct LuaFunctionList
-{
-	LuaFunctionList( RString name, lua_CFunction func );
-	RString name;
-	lua_CFunction func;
-	LuaFunctionList *next;
-};
-
-#define LuaFunction( func, expr ) \
-int LuaFunc_##func( lua_State *L ) { \
-	LuaHelpers::Push( L, expr ); return 1; \
-} \
-static LuaFunctionList g_##func( #func, LuaFunc_##func ); /* register it */
-
 #endif
 
 /*
