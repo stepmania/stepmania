@@ -189,23 +189,23 @@ bool LuaBinding::Equal( lua_State *L )
  * Get a userdata, and check that it's either szType or a type
  * derived from szType, by walking the __index chain.
  */
-bool LuaBinding::CheckLuaObjectType( lua_State *L, int narg, const char *szType, bool bOptional )
+bool LuaBinding::CheckLuaObjectType( lua_State *L, int iArg, const char *szType, bool bOptional )
 {
 #if defined(FAST_LUA)
 	if( bOptional )
 		return true;
 #endif
 
-	ASSERT_M( narg > 0, ssprintf("%i", narg) ); // negative offsets not supported
+	ASSERT_M( iArg > 0, ssprintf("%i", iArg) ); // negative offsets not supported
 
 	int iTop = lua_gettop(L);
-	lua_pushvalue( L, narg );
+	lua_pushvalue( L, iArg );
 
-	narg = lua_gettop(L);
+	iArg = lua_gettop(L);
 	while(1)
 	{
 		/* If the object on the stack has no metatable, it has no type; fail. */
-		if( !lua_getmetatable(L, narg) )
+		if( !lua_getmetatable(L, iArg) )
 		{
 			lua_settop( L, iTop );
 			return false;
@@ -235,7 +235,7 @@ bool LuaBinding::CheckLuaObjectType( lua_State *L, int narg, const char *szType,
 		}
 
 		/* Start over with __index. */
-		lua_replace( L, narg );
+		lua_replace( L, iArg );
 		lua_pop( L, 1 );
 	}
 }
