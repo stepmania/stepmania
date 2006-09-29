@@ -83,6 +83,8 @@ bool LuaHelpers::FromStack( Lua *L, RString &Object, int iOffset )
 	const char *pStr = lua_tolstring( L, iOffset, &iLen );
 	if( pStr != NULL )
 		Object.assign( pStr, iLen );
+	else
+		Object.clear();
 
 	return pStr != NULL;
 }
