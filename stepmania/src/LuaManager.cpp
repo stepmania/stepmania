@@ -247,19 +247,8 @@ XNode *LuaManager::GetLuaInformation() const
 	XNode *pEnumsNode = pLuaNode->AppendChild( "Enums" );
 	XNode *pConstantsNode = pLuaNode->AppendChild( "Constants" );
 	
-	vector<RString> vFunctions;
-	for( const LuaFunctionList *p = g_LuaFunctions; p; p = p->next )
-		vFunctions.push_back( p->name );
-	
-	sort( vFunctions.begin(), vFunctions.end() );
-	
-	FOREACH_CONST( RString, vFunctions, func )
-	{
-		XNode *pFunctionNode = pGlobalsNode->AppendChild( "Function" );
-		pFunctionNode->AppendAttr( "name", *func );
-	}
-	
 	// Tricky. We have to get the classes from lua.
+	vector<RString> vFunctions;
 	map<RString, LClass> mClasses;
 	map<RString, RString> mSingletons;
 	map<RString, float> mConstants;
@@ -302,78 +291,62 @@ XNode *LuaManager::GetLuaInformation() const
 				lua_pop( L, 2 ); // pop table and key
 				break;
 			}
+			lua_pop( L, 1 ); // pop metatable
 
-			lua_pushliteral( L, "type" );
-			lua_rawget( L, -2 );
-			
-			const char *name = lua_tostring( L, -1 );
-			
-			if( !name )
+			if( luaL_getmetafield(L, -1, "class") )
 			{
-				lua_pop( L, 2 ); // pop nil and metatable
-				break;
-			}
-			LClass &c = mClasses[name];
-			lua_pop( L, 1 ); // pop name
-			
-			// Get base class.
-			lua_pushliteral( L, "__index" );
-			lua_rawget( L, -2 );
-			if( lua_istable(L, -1) && lua_getmetatable(L, -1) )
-			{
-				lua_pushliteral( L, "type" );
-				lua_gettable( L, -2 );
-				name = lua_tostring( L, -1 );
+				const char *name = lua_tostring( L, -1 );
 				
-				if( name )
-					c.m_sBaseName = name;
-				lua_pop( L, 2 ); // pop name and metatable
+				if( !name )
+				{
+					lua_pop( L, 1 ); // pop nil
+					break;
+				}
+				LClass &c = mClasses[name];
+				lua_pop( L, 1 ); // pop name
+				
+				// Get base class.
+				if( luaL_getmetafield( L, -1, "__index" ) )
+				{
+					if( luaL_getmetafield(L, -1, "class") )
+					{
+						name = lua_tostring( L, -1 );
+						
+						if( name )
+							c.m_sBaseName = name;
+						lua_pop( L, 1 ); // pop name
+					}
+					lua_pop( L, 1 ); // pop base class
+				}
+				
+				// Get methods.
+				lua_pushnil( L ); // initial key
+				while( lua_next(L, -2) )
+				{
+					// Again, be careful about reading the key as a string.
+					lua_pop( L, 1 ); // pop value
+					lua_pushvalue( L, -1 );
+					RString sMethod;
+					if( LuaHelpers::Pop(L, sMethod) )
+						c.m_vMethods.push_back( sMethod );
+				}
+				sort( c.m_vMethods.begin(), c.m_vMethods.end() );
+				break;
 			}
-			lua_pop( L, 2 ); // pop (table or other) and metatable
-			
-			// Get methods.
-			lua_pushnil( L ); // initial key
-			while( lua_next(L, -2) )
-			{
-				// Again, be careful about reading the key as a string.
-				lua_pop( L, 1 ); // pop value
-				lua_pushvalue( L, -1 );
-				RString sMethod;
-				if( LuaHelpers::Pop(L, sMethod) )
-					c.m_vMethods.push_back( sMethod );
-			}
-			sort( c.m_vMethods.begin(), c.m_vMethods.end() );
-			break;
 		}
-		case LUA_TUSERDATA:
+			// fall through
+		case LUA_TUSERDATA: // table or userdata: class instance
 		{
-			/* Tricky. The singletons have a metatable but it doesn't have a type key-value pair.
-			 * Instead, we need to get the methods using the __index key and then get the
-			 * metatable of the methods table. */
-			if( !lua_getmetatable(L, -1) )
-				break;
-			lua_pushliteral( L, "__index" );
-			lua_rawget( L, -2 );
-			if( !lua_istable(L, -1) || !lua_getmetatable(L, -1) )
+			if( luaL_getmetafield(L, -1, "type") )
 			{
-				lua_pop( L, 2 ); // pop method table and metatable
-				break;
+				const char *type = lua_tostring( L, -1 );
+				
+				if( type )
+					mSingletons[sKey] = type;
+
+				lua_pop( L, 1 ); // pop type
 			}
-			lua_pushliteral( L, "type" );
-			lua_rawget( L, -2 );
 			
-			/* The stack now looks like:
-			 * -1: type
-			 * -2: method metatable
-			 * -3: method table
-			 * -4: metatable
-			 * -5: user data
-			 * -6: key (object's name) */
-			const char *type = lua_tostring( L, -1 );
-			
-			if( type )
-				mSingletons[sKey] = type;
-			lua_pop( L, 4 ); // pop type, method metatable, method table, and metatable
 			break;
 		}
 		case LUA_TNUMBER:
@@ -382,10 +355,20 @@ XNode *LuaManager::GetLuaInformation() const
 		case LUA_TSTRING:
 			LuaHelpers::FromStack( L, mStringConstants[sKey], -1 );
 			break;
+		case LUA_TFUNCTION:
+			vFunctions.push_back( sKey );
+			break;
 		}
 		lua_pop( L, 1 ); // pop value
 	}
 			
+	sort( vFunctions.begin(), vFunctions.end() );
+	FOREACH_CONST( RString, vFunctions, func )
+	{
+		XNode *pFunctionNode = pGlobalsNode->AppendChild( "Function" );
+		pFunctionNode->AppendAttr( "name", *func );
+	}
+	
 	FOREACHM_CONST( RString, LClass, mClasses, c )
 	{
 		XNode *pClassNode = pClassesNode->AppendChild( "Class" );
@@ -395,11 +378,8 @@ XNode *LuaManager::GetLuaInformation() const
 			pClassNode->AppendAttr( "base", c->second.m_sBaseName );
 		FOREACH_CONST( RString, c->second.m_vMethods, m )
 		{
-			XNode *pMethodNode = new XNode;
-			
-			pMethodNode->m_sName = "Function";
+			XNode *pMethodNode = pClassNode->AppendChild( "Function" );
 			pMethodNode->AppendAttr( "name", *m );
-			pClassNode->AppendChild( pMethodNode );
 		}
 	}
 	
