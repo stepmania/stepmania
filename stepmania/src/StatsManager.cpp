@@ -254,6 +254,34 @@ public:
 		return 1;
 	}
 
+	static int GetBestFinalGrade( T* p, lua_State *L )
+	{
+		Grade top_grade = Grade_Failed;
+		StageStats stats;
+		p->GetFinalEvalStageStats( stats );
+		FOREACH_HumanPlayer( p )
+		{
+			// If this player failed any stage, then their final grade is an F.
+			bool bPlayerFailedOneStage = false;
+			FOREACH_CONST( StageStats, STATSMAN->m_vPlayedStageStats, ss )
+			{
+				if( ss->m_player[p].bFailed )
+				{
+					bPlayerFailedOneStage = true;
+					break;
+				}
+			}
+
+			if( bPlayerFailedOneStage )
+				continue;
+
+			top_grade = min( top_grade, stats.m_player[p].GetGrade() );
+		}
+
+		Enum::Push( L, top_grade );
+		return 1;
+	}
+
 	LunaStatsManager()
 	{
 		ADD_METHOD( GetCurStageStats );
@@ -263,57 +291,12 @@ public:
 		ADD_METHOD( GetStagesPlayed );
 		ADD_METHOD( GetBestGrade );
 		ADD_METHOD( GetWorstGrade );
+		ADD_METHOD( GetBestFinalGrade );
 	}
 };
 
 LUA_REGISTER_CLASS( StatsManager )
 // lua end
-
-
-//
-// Old Lua
-//
-
-#include "LuaFunctions.h"
-LuaFunction( OnePassed,				STATSMAN->m_CurStageStats.OnePassed() );
-LuaFunction( AllFailed,				STATSMAN->m_CurStageStats.AllFailed() );
-LuaFunction( Grade,				StringToGrade( SArg(1) ) );
-
-const StageStats *GetStageStatsN( int n )
-{
-	if( n == (int) STATSMAN->m_vPlayedStageStats.size() )
-		return &STATSMAN->m_CurStageStats;
-	if( n > (int) STATSMAN->m_vPlayedStageStats.size() )
-		return NULL;
-	return &STATSMAN->m_vPlayedStageStats[n];
-}
-
-Grade GetBestFinalGrade()
-{
-	Grade top_grade = Grade_Failed;
-	StageStats stats;
-	STATSMAN->GetFinalEvalStageStats( stats );
-	FOREACH_HumanPlayer( p )
-	{
-		// If this player failed any stage, then their final grade is an F.
-		bool bPlayerFailedOneStage = false;
-		FOREACH_CONST( StageStats, STATSMAN->m_vPlayedStageStats, ss )
-		{
-			if( ss->m_player[p].bFailed )
-			{
-				bPlayerFailedOneStage = true;
-				break;
-			}
-		}
-
-		if( bPlayerFailedOneStage )
-			continue;
-
-		top_grade = min( top_grade, stats.m_player[p].GetGrade() );
-	}
-	return top_grade;
-}
-LuaFunction( GetBestFinalGrade, GetBestFinalGrade() );
 
 
 /*
