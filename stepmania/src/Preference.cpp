@@ -2,7 +2,6 @@
 #include "Preference.h"
 #include "XmlFile.h"
 #include "RageLog.h"
-#include "LuaFunctions.h"
 #include "LuaManager.h"
 #include "MessageManager.h"
 #include "SubscriptionManager.h"

@@ -3,7 +3,6 @@
 #include "RageLog.h"
 #include "ThemeManager.h"
 #include "Foreach.h"
-#include "LuaFunctions.h"
 #include "LuaManager.h"
 #include <float.h>
 #include "GameState.h"

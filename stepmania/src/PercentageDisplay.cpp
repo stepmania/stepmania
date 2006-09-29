@@ -197,7 +197,7 @@ RString PercentageDisplay::FormatPercentScore( float fPercentDancePoints )
 }
 
 // lua start
-#include "LuaFunctions.h"
+#include "LuaManager.h"
 
 LuaFunction( FormatPercentScore,	PercentageDisplay::FormatPercentScore( FArg(1) ) )
 

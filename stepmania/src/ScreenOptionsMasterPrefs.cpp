@@ -419,7 +419,7 @@ static int GetLifeDifficulty()
 	iLifeDifficulty++;	// LifeDifficulty returns an index
 	return iLifeDifficulty;
 }
-#include "LuaFunctions.h"
+#include "LuaManager.h"
 LuaFunction( GetLifeDifficulty, GetLifeDifficulty() );
 
 static void ShowSongOptions( int &sel, bool ToSel, const ConfOption *pConfOption )

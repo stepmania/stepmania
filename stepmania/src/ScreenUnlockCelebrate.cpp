@@ -1,7 +1,7 @@
 #include "global.h"
 #include "ScreenUnlockCelebrate.h"
 #include "UnlockManager.h"
-#include "LuaFunctions.h"
+#include "LuaManager.h"
 #include "GameState.h"
 
 

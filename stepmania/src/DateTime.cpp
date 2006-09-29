@@ -2,7 +2,7 @@
 #include "DateTime.h"
 #include "RageUtil.h"
 #include "EnumHelper.h"
-#include "LuaFunctions.h"
+#include "LuaManager.h"
 #include "LocalizedString.h"
 
 DateTime::DateTime()

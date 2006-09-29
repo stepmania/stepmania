@@ -3,7 +3,6 @@
 #include "GameState.h"
 #include "LuaManager.h"
 #include "LocalizedString.h"
-#include "LuaFunctions.h"
 
 static const char *PlayerNumberNames[] = {
 	"P1",

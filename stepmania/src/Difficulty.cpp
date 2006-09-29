@@ -3,7 +3,6 @@
 #include "GameState.h"
 #include "ThemeMetric.h"
 #include "LuaManager.h"
-#include "LuaFunctions.h"
 #include "LocalizedString.h"
 
 

@@ -12,7 +12,7 @@
 #include "Foreach.h"
 #include "UnlockManager.h"
 #include "CourseLoaderCRS.h"
-#include "LuaFunctions.h"
+#include "LuaManager.h"
 #include "LocalizedString.h"
 #include "Preference.h"
 #include <limits.h>

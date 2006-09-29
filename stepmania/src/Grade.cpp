@@ -5,7 +5,6 @@
 #include "RageLog.h"
 #include "EnumHelper.h"
 #include "LuaManager.h"
-#include "LuaFunctions.h"
 
 LuaXType( Grade );
 

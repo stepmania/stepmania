@@ -14,7 +14,6 @@
 #include "Steps.h"
 #include <float.h>
 #include "CommonMetrics.h"
-#include "LuaFunctions.h"
 #include "LuaManager.h"
 
 UnlockManager*	UNLOCKMAN = NULL;	// global and accessable from anywhere in our program

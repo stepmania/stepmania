@@ -105,7 +105,6 @@ HighScore.cpp HighScore.h \
 InputEventPlus.h \
 Inventory.cpp Inventory.h \
 LocalizedString.cpp LocalizedString.h \
-LuaFunctions.h \
 LuaReference.cpp LuaReference.h \
 LuaExpressionTransform.cpp LuaExpressionTransform.h \
 LyricsLoader.cpp LyricsLoader.h \

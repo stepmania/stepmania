@@ -177,7 +177,7 @@ RString GetEditPlaylistSelectedSongGenreText( int iColumnIndex )
 	return join("\n", vs);
 }
 
-#include "LuaFunctions.h"
+#include "LuaManager.h"
 LuaFunction( GetEditPlaylistSelectedSongGenre, g_sSongGenre );
 LuaFunction( GetEditPlaylistSelectedSongGenreText, GetEditPlaylistSelectedSongGenreText(IArg(1)) );
 

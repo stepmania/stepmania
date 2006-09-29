@@ -5,7 +5,7 @@
 #include "RageFile.h"
 #include "Foreach.h"
 #include "LocalizedString.h"
-#include "LuaFunctions.h"
+#include "LuaManager.h"
 #include <float.h>
 
 #include <numeric>

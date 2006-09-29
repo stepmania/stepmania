@@ -7,10 +7,9 @@
 #include "Foreach.h"
 #include "LuaManager.h"
 #include "GameManager.h"
+#include "LocalizedString.h"
 #include <float.h>
 
-#include "LuaFunctions.h"
-#include "LocalizedString.h"
 
 const RString RANKING_TO_FILL_IN_MARKER[NUM_PLAYERS] = {"#P1#","#P2#"};
 

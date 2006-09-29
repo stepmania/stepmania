@@ -6,7 +6,7 @@
 #include "RageLog.h"
 #include "GameState.h"
 #include "ProductInfo.h"
-#include "LuaFunctions.h"
+#include "LuaManager.h"
 
 
 static RString PLAYER_COLOR_NAME( size_t p ) { return ssprintf("ColorP%dCommand",int(p+1)); }
