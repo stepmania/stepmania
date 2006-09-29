@@ -239,18 +239,13 @@ namespace
 XNode *LuaManager::GetLuaInformation() const
 {
 	XNode *pLuaNode = new XNode;
-	XNode *pGlobalsNode = new XNode;
-	XNode *pClassesNode = new XNode;
-	XNode *pSingletonsNode = new XNode;
-	XNode *pEnumsNode = new XNode;
-	XNode *pConstantsNode = new XNode;
-	
 	pLuaNode->m_sName = "Lua";
-	pGlobalsNode->m_sName = "GlobalFunctions";
-	pClassesNode->m_sName = "Classes";
-	pSingletonsNode->m_sName = "Singletons";
-	pEnumsNode->m_sName = "Enums";
-	pConstantsNode->m_sName = "Constants";
+
+	XNode *pGlobalsNode = pLuaNode->AppendChild( "GlobalFunctions" );
+	XNode *pClassesNode = pLuaNode->AppendChild( "Classes" );
+	XNode *pSingletonsNode = pLuaNode->AppendChild( "Singletons" );
+	XNode *pEnumsNode = pLuaNode->AppendChild( "Enums" );
+	XNode *pConstantsNode = pLuaNode->AppendChild( "Constants" );
 	
 	vector<RString> vFunctions;
 	for( const LuaFunctionList *p = g_LuaFunctions; p; p = p->next )
@@ -260,11 +255,8 @@ XNode *LuaManager::GetLuaInformation() const
 	
 	FOREACH_CONST( RString, vFunctions, func )
 	{
-		XNode *pFunctionNode = new XNode;
-		
-		pFunctionNode->m_sName = "Function";
+		XNode *pFunctionNode = pGlobalsNode->AppendChild( "Function" );
 		pFunctionNode->AppendAttr( "name", *func );
-		pGlobalsNode->AppendChild( pFunctionNode );
 	}
 	
 	// Tricky. We have to get the classes from lua.
@@ -402,9 +394,8 @@ XNode *LuaManager::GetLuaInformation() const
 			
 	FOREACHM_CONST( RString, LClass, mClasses, c )
 	{
-		XNode *pClassNode = new XNode;
+		XNode *pClassNode = pClassesNode->AppendChild( "Class" );
 		
-		pClassNode->m_sName = "Class";
 		pClassNode->AppendAttr( "name", c->first );
 		if( !c->second.m_sBaseName.empty() )
 			pClassNode->AppendAttr( "base", c->second.m_sBaseName );
@@ -416,68 +407,49 @@ XNode *LuaManager::GetLuaInformation() const
 			pMethodNode->AppendAttr( "name", *m );
 			pClassNode->AppendChild( pMethodNode );
 		}
-		pClassesNode->AppendChild( pClassNode );
 	}
 	
 	FOREACHM_CONST( RString, RString, mSingletons, s )
 	{
 		if( mClasses.find(s->first) != mClasses.end() )
 			continue;
-		XNode *pSingletonNode = new XNode;
-		
-		pSingletonNode->m_sName = "Singleton";
+		XNode *pSingletonNode = pSingletonsNode->AppendChild( "Singleton" );
 		pSingletonNode->AppendAttr( "name", s->first );
 		pSingletonNode->AppendAttr( "class", s->second );
-		pSingletonsNode->AppendChild( pSingletonNode );
 	}
 
 	for( map<RString, vector<RString> >::const_iterator iter = mEnums.begin(); iter != mEnums.end(); ++iter )
 	{
-		XNode *pEnumNode = new XNode;
+		XNode *pEnumNode = pEnumsNode->AppendChild( "Enum" );
+
 		const vector<RString> &vEnum = iter->second;
-		
-		pEnumNode->m_sName = "Enum";
 		pEnumNode->AppendAttr( "name", iter->first );
 		
 		for( unsigned i = 0; i < vEnum.size(); ++i )
 		{
-			XNode *pEnumValueNode = new XNode;
-			
-			pEnumValueNode->m_sName = "EnumValue";
+			XNode *pEnumValueNode = pEnumNode->AppendChild( "EnumValue" );
 			pEnumValueNode->AppendAttr( "name", vEnum[i] );
 			pEnumValueNode->AppendAttr( "value", i );
-			pEnumNode->AppendChild( pEnumValueNode );
 		}
-		pEnumsNode->AppendChild( pEnumNode );
 	}
 
 	FOREACHM_CONST( RString, float, mConstants, c )
 	{
-		XNode *pConstantNode = new XNode;
+		XNode *pConstantNode = pConstantsNode->AppendChild( "Constant" );
 		
-		pConstantNode->m_sName = "Constant";
 		pConstantNode->AppendAttr( "name", c->first );
 		if( c->second == truncf(c->second) )
 			pConstantNode->AppendAttr( "value", int(c->second) );
 		else
 			pConstantNode->AppendAttr( "value", c->second );
-		pConstantsNode->AppendChild( pConstantNode );
 	}
 	FOREACHM_CONST( RString, RString, mStringConstants, s )
 	{
-		XNode *pConstantNode = new XNode;
-		
-		pConstantNode->m_sName = "Constant";
+		XNode *pConstantNode = pConstantsNode->AppendChild( "Constant" );
 		pConstantNode->AppendAttr( "name", s->first );
 		pConstantNode->AppendAttr( "value", s->second );
-		pConstantsNode->AppendChild( pConstantNode );
 	}
 		
-	pLuaNode->AppendChild( pGlobalsNode );
-	pLuaNode->AppendChild( pClassesNode );
-	pLuaNode->AppendChild( pSingletonsNode );
-	pLuaNode->AppendChild( pEnumsNode );
-	pLuaNode->AppendChild( pConstantsNode );
 	return pLuaNode;
 }
 	
