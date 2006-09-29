@@ -703,17 +703,6 @@ LuaFunction( scale, scale(FArg(1), FArg(2), FArg(3), FArg(4), FArg(5)) );
 
 LuaFunction( clamp, clamp(FArg(1), FArg(2), FArg(3)) );
 
-#include "RageTypes.h"
-int LuaFunc_color( lua_State *L )
-{
-	RString sColor = SArg(1);
-	RageColor c;
-	c.FromString( sColor );
-	c.PushTable( L );
-	return 1;
-}
-static LuaFunctionList g_color( "color", LuaFunc_color ); /* register it */
-
 /*
  * (c) 2004-2006 Glenn Maynard, Steve Checkoway
  * All rights reserved.

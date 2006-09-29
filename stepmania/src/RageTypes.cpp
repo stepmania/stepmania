@@ -72,6 +72,16 @@ static const char *ZTestModeNames[] =
 XToString2( ZTestMode );
 LuaXType( ZTestMode );
 
+int LuaFunc_color( lua_State *L )
+{
+	RString sColor = SArg(1);
+	RageColor c;
+	c.FromString( sColor );
+	c.PushTable( L );
+	return 1;
+}
+static LuaFunctionList g_color( "color", LuaFunc_color ); /* register it */
+
 /*
  * Copyright (c) 2006 Glenn Maynard
  * All rights reserved.
