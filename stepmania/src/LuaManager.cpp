@@ -377,16 +377,10 @@ XNode *LuaManager::GetLuaInformation() const
 			break;
 		}
 		case LUA_TNUMBER:
-		{
-			float fNum;
-			LuaHelpers::FromStack( L, fNum, -1 );
-			mConstants[sKey] = fNum;
+			LuaHelpers::FromStack( L, mConstants[sKey], -1 );
 			break;
-		}
 		case LUA_TSTRING:
-			RString sValue;
-			LuaHelpers::FromStack( L, sValue, -1 );
-			mStringConstants[sKey] = sValue;
+			LuaHelpers::FromStack( L, mStringConstants[sKey], -1 );
 			break;
 		}
 		lua_pop( L, 1 ); // pop value
