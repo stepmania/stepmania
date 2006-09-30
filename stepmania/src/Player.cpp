@@ -540,7 +540,7 @@ void Player::Update( float fDeltaTime )
 		ASSERT( m_pPlayerState );
 
 		// TODO: Remove use of PlayerNumber.
-		GameInput GameI = GAMESTATE->m_pCurStyle->StyleInputToGameInput( col, m_pPlayerState->m_PlayerNumber );
+		GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( col, m_pPlayerState->m_PlayerNumber );
 
 		bool bIsHoldingButton = INPUTMAPPER->IsBeingPressed( GameI );
 		// TODO: Make this work for non-human-controlled players
@@ -619,7 +619,7 @@ void Player::Update( float fDeltaTime )
 			}
 			else
 			{
-				GameInput GameI = GAMESTATE->m_pCurStyle->StyleInputToGameInput( iTrack, pn );
+				GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iTrack, pn );
 				bIsHoldingButton = INPUTMAPPER->IsBeingPressed( GameI, m_pPlayerState->m_mp );
 			}
 
@@ -1006,7 +1006,7 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 			int iNumTracksHeld = 0;
 			for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
 			{
-				GameInput GameI = GAMESTATE->m_pCurStyle->StyleInputToGameInput( t, pn );
+				GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( t, pn );
 				const float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI );
 				if( fSecsHeld > 0  && fSecsHeld < JUMP_WINDOW_SECONDS )
 					iNumTracksHeld++;
@@ -1486,7 +1486,7 @@ void Player::CrossedMineRow( int iNoteRow, const RageTimer &now )
 			// TODO: Remove use of PlayerNumber.
 			PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
-			GameInput GameI = GAMESTATE->m_pCurStyle->StyleInputToGameInput( t, pn );
+			GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( t, pn );
 			if( PREFSMAN->m_fPadStickSeconds > 0 )
 			{
 				float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI, m_pPlayerState->m_mp );
