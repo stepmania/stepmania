@@ -1,66 +1,6 @@
 #include "global.h"
 #include "Game.h"
 #include "RageLog.h"
-#include "RageUtil.h"
-#include "PrefsManager.h"
-
-GameButton InputScheme::ButtonNameToIndex( const RString &sButtonName ) const
-{
-	for( int i=0; i<m_iButtonsPerController; i++ ) 
-		if( stricmp(m_szButtonNames[i], sButtonName) == 0 )
-			return i;
-
-	return GameButton_Invalid;
-}
-
-MenuButton InputScheme::GameInputToMenuButton( GameInput GameI ) const
-{
-	FOREACH_MenuButton(i)
-		if( m_DedicatedMenuButton[i] == GameI.button )
-			return i;
-
-	if( !PREFSMAN->m_bOnlyDedicatedMenuButtons )
-	{
-		FOREACH_MenuButton(i)
-			if( m_SecondaryMenuButton[i] == GameI.button )
-				return i;
-	}
-
-	return MenuButton_INVALID;	// invalid GameInput
-}
-
-void InputScheme::MenuButtonToGameInputs( MenuButton MenuI, PlayerNumber pn, GameInput GameIout[4] ) const
-{
-	ASSERT( MenuI != MenuButton_INVALID );
-
-	GameIout[0].MakeInvalid();	// initialize
-	GameIout[1].MakeInvalid();	
-	GameIout[2].MakeInvalid();	
-	GameIout[3].MakeInvalid();	
-
-	vector<GameController> controller;
-	if( pn == PLAYER_INVALID )
-	{
-		controller.push_back( GAME_CONTROLLER_1 );
-		controller.push_back( GAME_CONTROLLER_2 );
-	}
-	else
-	{
-		controller.push_back( (GameController)pn );
-	}
-
-	GameButton button[2] = { m_DedicatedMenuButton[MenuI], m_SecondaryMenuButton[MenuI] };
-	int iNumButtonsUsing = PREFSMAN->m_bOnlyDedicatedMenuButtons ? 1 : 2;
-
-	for( size_t i=0; i<controller.size(); i++ )
-	{
-		for( int j=0; j<iNumButtonsUsing; j++ )
-		{
-			GameIout[i*2+j].controller = controller[i];
-			GameIout[i*2+j].button = button[j];
-		}
-	}
-}
 
 TapNoteScore Game::MapTapNoteScore( TapNoteScore tns ) const
 {

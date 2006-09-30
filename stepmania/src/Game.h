@@ -3,10 +3,6 @@
 #ifndef GAMEDEF_H
 #define GAMEDEF_H
 
-#include "GameInput.h"
-#include "MenuInput.h"
-#include "GameConstantsAndTypes.h"
-#include "RageInputDevice.h"
 #include "InputMapper.h"
 
 struct lua_State;
@@ -29,8 +25,6 @@ struct lua_State;
 // Since the Left and Right GameButtons have the flag FLAG_SECONDARY_MENU_*, they will function as 
 // MenuLeft and MenuRight as long as "MenuLeft (optional)" and "MenuRight (optional)" are not mapped.
 //
-
-#define NO_DEFAULT_KEY DeviceButton_Invalid
 
 class Game
 {
