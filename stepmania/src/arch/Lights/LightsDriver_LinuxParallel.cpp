@@ -9,7 +9,7 @@
 #include <sys/io.h>
 #include "LightsDriver_LinuxParallel.h"
 #include "ScreenManager.h"
-#include "GameState.h"
+#include "InputMapper.h"
 #include "Game.h"
 
 static const int PORT_ADDRESS = 0x378;
@@ -51,7 +51,7 @@ void LightsDriver_LinuxParallel::Set( const LightsState *ls )
 	}
 	s += "\n";
 
-	int iNumGameButtonsToShow = GAMESTATE->m_pCurGame->GetNumGameplayButtons();
+	int iNumGameButtonsToShow = INPUTMAPPER->GetInputScheme()->GetNumGameplayButtons();
 	FOREACH_GameController( gc )
 	{
 		s += ssprintf("Controller%d Bits: ",gc+1);
