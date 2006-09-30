@@ -77,9 +77,9 @@ void Steps::SetNoteData( const NoteData& noteDataNew )
 	*m_pNoteData = noteDataNew;
 	m_bNoteDataIsFilled = true;
 	
-	m_sNoteDataCompressed = EMPTY_STRING;
+	m_sNoteDataCompressed = RString();
 	m_iHash = 0;
-	m_sFilename = EMPTY_STRING; // We can no longer read from the file because it has changed in memory.
+	m_sFilename = RString(); // We can no longer read from the file because it has changed in memory.
 }
 
 void Steps::GetNoteData( NoteData& noteDataOut ) const
@@ -104,7 +104,7 @@ void Steps::SetSMNoteData( const RString &notes_comp_ )
 
 	m_sNoteDataCompressed = notes_comp_;
 	m_iHash = 0;
-	m_sFilename = EMPTY_STRING; // We can no longer read from the file because it has changed in memory.
+	m_sFilename = RString(); // We can no longer read from the file because it has changed in memory.
 }
 
 /* XXX: this function should pull data from m_sFilename, like Decompress() */
@@ -278,7 +278,7 @@ void Steps::Compress() const
 	/* Always leave lights data uncompressed. */
 	if( this->m_StepsType == STEPS_TYPE_LIGHTS_CABINET && m_bNoteDataIsFilled )
 	{
-		m_sNoteDataCompressed = EMPTY_STRING;
+		m_sNoteDataCompressed = RString();
 		return;
 	}
 
@@ -297,7 +297,7 @@ void Steps::Compress() const
 
 		/* Be careful; 'x = ""', m_sNoteDataCompressed.clear() and m_sNoteDataCompressed.reserve(0)
 		 * don't always free the allocated memory. */
-		m_sNoteDataCompressed = EMPTY_STRING;
+		m_sNoteDataCompressed = RString();
 		return;
 	}
 
