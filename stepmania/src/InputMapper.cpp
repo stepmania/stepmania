@@ -777,6 +777,12 @@ MenuButton InputMapper::GameToMenu( const GameInput &GameI )
 
 void InputMapper::MenuToGame( MenuButton MenuI, PlayerNumber pn, GameInput GameIout[4] )
 {
+	if( GAMESTATE->GetCurrentStyle() )
+	{
+		if( GAMESTATE->GetCurrentStyle()->m_StyleType == ONE_PLAYER_TWO_SIDES )
+			pn = PLAYER_INVALID;
+	}
+
 	const Game* pGame = GAMESTATE->GetCurrentGame();
 	pGame->MenuButtonToGameInputs( MenuI, pn, GameIout );
 }

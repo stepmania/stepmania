@@ -2,8 +2,6 @@
 #include "Game.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-#include "Style.h"
-#include "GameState.h"
 #include "PrefsManager.h"
 
 int	Game::GetNumGameplayButtons() const
@@ -47,33 +45,21 @@ void Game::MenuButtonToGameInputs( MenuButton MenuI, PlayerNumber pn, GameInput 
 	GameIout[2].MakeInvalid();	
 	GameIout[3].MakeInvalid();	
 
-	GameController controller[2];
-	StyleType type = TWO_PLAYERS_TWO_SIDES;
-	if( GAMESTATE->GetCurrentStyle() )
-		type = GAMESTATE->GetCurrentStyle()->m_StyleType;
-
-	int iNumSidesUsing = 1;
-	switch( type )
+	vector<GameController> controller;
+	if( pn == PLAYER_INVALID )
 	{
-	case ONE_PLAYER_ONE_SIDE:
-	case TWO_PLAYERS_TWO_SIDES:
-	case TWO_PLAYERS_SHARED_SIDES:
-		controller[0] = (GameController)pn;
-		iNumSidesUsing = 1;
-		break;
-	case ONE_PLAYER_TWO_SIDES:
-		controller[0] = GAME_CONTROLLER_1;
-		controller[1] = GAME_CONTROLLER_2;
-		iNumSidesUsing = 2;
-		break;
-	default:
-		ASSERT(0);	// invalid m_StyleType
-	};
+		controller.push_back( GAME_CONTROLLER_1 );
+		controller.push_back( GAME_CONTROLLER_2 );
+	}
+	else
+	{
+		controller.push_back( (GameController)pn );
+	}
 
 	GameButton button[2] = { m_DedicatedMenuButton[MenuI], m_SecondaryMenuButton[MenuI] };
 	int iNumButtonsUsing = PREFSMAN->m_bOnlyDedicatedMenuButtons ? 1 : 2;
 
-	for( int i=0; i<iNumSidesUsing; i++ )
+	for( size_t i=0; i<controller.size(); i++ )
 	{
 		for( int j=0; j<iNumButtonsUsing; j++ )
 		{
