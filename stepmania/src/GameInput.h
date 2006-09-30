@@ -5,7 +5,7 @@
 
 #include "EnumHelper.h"
 
-class Game;
+class InputScheme;
 
 enum GameController
 {
@@ -17,9 +17,9 @@ enum GameController
 #define FOREACH_GameController( gc ) FOREACH_ENUM2( GameController, gc )
 
 typedef int GameButton;
-RString GameButtonToString( const Game* pGame, GameButton i );
-RString GameButtonToLocalizedString( const Game* pGame, GameButton i );
-GameButton StringToGameButton( const Game* pGame, const RString& s );
+RString GameButtonToString( const InputScheme* pInputs, GameButton i );
+RString GameButtonToLocalizedString( const InputScheme* pInputs, GameButton i );
+GameButton StringToGameButton( const InputScheme* pInputs, const RString& s );
 
 const GameButton NUM_GameButton = 20;
 const GameButton GameButton_Invalid = NUM_GameButton+1;
@@ -260,8 +260,8 @@ struct GameInput
 	inline bool IsValid() const { return controller != GameController_Invalid; };
 	inline void MakeInvalid() { controller = GameController_Invalid; button = GameButton_Invalid; };
 
-	RString ToString( const Game* pGame ) const;
-	bool FromString( const Game* pGame, const RString &s );
+	RString ToString( const InputScheme* pInputs ) const;
+	bool FromString( const InputScheme* pInputs, const RString &s );
 };
 
 #endif

@@ -57,7 +57,7 @@ class InputList: public BitmapText
 			GameInput gi;
 			if( INPUTMAPPER->DeviceToGame(*di,gi) )
 			{
-				RString sName = GameButtonToLocalizedString( GAMESTATE->GetCurrentGame(), gi.button );
+				RString sName = GameButtonToLocalizedString( INPUTMAPPER->GetInputScheme(), gi.button );
 				sTemp += ssprintf(" - "+CONTROLLER.GetValue()+" %d %s", gi.controller+1, sName.c_str() );
 
 				if( !PREFSMAN->m_bOnlyDedicatedMenuButtons )

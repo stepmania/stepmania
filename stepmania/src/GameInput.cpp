@@ -2,7 +2,7 @@
 #include "GameInput.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-#include "Game.h"
+#include "InputMapper.h"
 #include "ThemeManager.h"
 
 
@@ -14,33 +14,33 @@ XToString( GameController, NUM_GameController );
 StringToX( GameController );
 
 
-RString GameButtonToString( const Game* pGame, GameButton i )
+RString GameButtonToString( const InputScheme* pInputs, GameButton i )
 {
-	return pGame->m_szButtonNames[i];
+	return pInputs->m_szButtonNames[i];
 }
 
-RString GameButtonToLocalizedString( const Game* pGame, GameButton i )
+RString GameButtonToLocalizedString( const InputScheme* pInputs, GameButton i )
 {
-	return THEME->GetString( "GameButton", GameButtonToString(pGame,i) );
+	return THEME->GetString( "GameButton", GameButtonToString(pInputs,i) );
 }
 
-GameButton StringToGameButton( const Game* pGame, const RString& s )
+GameButton StringToGameButton( const InputScheme* pInputs, const RString& s )
 {
-	for( int i=0; i<pGame->m_iButtonsPerController; i++ )
+	for( int i=0; i<pInputs->m_iButtonsPerController; i++ )
 	{
-		if( s == GameButtonToString(pGame,(GameButton)i) )
+		if( s == GameButtonToString(pInputs,(GameButton)i) )
 			return (GameButton)i;
 	}
 	return GameButton_Invalid;
 }
 
 
-RString GameInput::ToString( const Game* pGame ) const
+RString GameInput::ToString( const InputScheme* pInputs ) const
 {
-	return GameControllerToString(controller) + RString("_") + GameButtonToString(pGame,button);
+	return GameControllerToString(controller) + RString("_") + GameButtonToString(pInputs,button);
 }
 
-bool GameInput::FromString( const Game* pGame, const RString &s )
+bool GameInput::FromString( const InputScheme* pInputs, const RString &s )
 { 
 	char szController[32] = "";
 	char szButton[32] = "";
@@ -52,7 +52,7 @@ bool GameInput::FromString( const Game* pGame, const RString &s )
 	}
 
 	controller = StringToGameController( szController );
-	button = StringToGameButton( pGame, szButton );
+	button = StringToGameButton( pInputs, szButton );
 	return true;
 };
 

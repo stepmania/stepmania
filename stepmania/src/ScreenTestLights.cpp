@@ -79,7 +79,7 @@ void ScreenTestLights::Update( float fDeltaTime )
 	}
 	else
 	{
-		RString sGameButton = GameButtonToLocalizedString( GAMESTATE->GetCurrentGame(), gb );
+		RString sGameButton = GameButtonToLocalizedString( INPUTMAPPER->GetInputScheme(), gb );
 		PlayerNumber pn = (PlayerNumber)(gc+1);
 		s += ssprintf( CONTROLLER_LIGHT.GetValue()+": %s %d %s\n", PlayerNumberToString(pn).c_str(), gb, sGameButton.c_str() );
 	}

@@ -1,8 +1,7 @@
 #include "global.h"
 #include "LightsDriver_SystemMessage.h"
 #include "ScreenManager.h"
-#include "GameState.h"
-#include "Game.h"
+#include "InputMapper.h"
 #include "PrefsManager.h"
 
 
@@ -30,7 +29,7 @@ void LightsDriver_SystemMessage::Set( const LightsState *ls )
 	}
 	s += "\n";
 
-	int iNumGameButtonsToShow = GAMESTATE->m_pCurGame->GetNumGameplayButtons();
+	int iNumGameButtonsToShow = INPUTMAPPER->GetInputScheme()->GetNumGameplayButtons();
 	
 	FOREACH_GameController( gc )
 	{

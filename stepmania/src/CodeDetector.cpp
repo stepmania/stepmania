@@ -97,7 +97,6 @@ bool CodeItem::Load( RString sButtonsNames )
 {
 	buttons.clear();
 
-	const Game* pGame = GAMESTATE->GetCurrentGame();
 	vector<RString> asButtonNames;
 
 	bool bHasAPlus = sButtonsNames.find( '+' ) != string::npos;
@@ -131,7 +130,7 @@ bool CodeItem::Load( RString sButtonsNames )
 		const RString sButtonName = asButtonNames[i];
 
 		// Search for the corresponding GameButton
-		const GameButton gb = pGame->ButtonNameToIndex( sButtonName );
+		const GameButton gb = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( sButtonName );
 		if( gb == GameButton_Invalid )
 		{
 			LOG->Trace( "The code '%s' contains an unrecognized button '%s'.", sButtonsNames.c_str(), sButtonName.c_str() );

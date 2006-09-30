@@ -48,7 +48,7 @@ void ScreenMapControllers::Init()
 	if( sButtons.empty() )
 	{
 		/* Map all buttons for this game. */
-		for( int b=0; b<GAMESTATE->GetCurrentGame()->m_iButtonsPerController; b++ )
+		for( int b=0; b<INPUTMAPPER->GetInputScheme()->m_iButtonsPerController; b++ )
 		{
 			KeyToMap k;
 			k.m_GameButton = (GameButton) b;
@@ -63,7 +63,7 @@ void ScreenMapControllers::Init()
 		for( unsigned i=0; i<asBits.size(); ++i )
 		{
 			KeyToMap k;
-			k.m_GameButton = StringToGameButton( GAMESTATE->GetCurrentGame(), asBits[i] );
+			k.m_GameButton = StringToGameButton( INPUTMAPPER->GetInputScheme(), asBits[i] );
 			m_KeysToMap.push_back( k );
 		}
 	}
@@ -97,7 +97,7 @@ void ScreenMapControllers::Init()
 			BitmapText *pName = new BitmapText;
 			pName->SetName( "Primary" );
 			pName->LoadFromFont( THEME->GetPathF("Common","title") );
-			RString sText = GameButtonToLocalizedString( GAMESTATE->GetCurrentGame(), pKey->m_GameButton );
+			RString sText = GameButtonToLocalizedString( INPUTMAPPER->GetInputScheme(), pKey->m_GameButton );
 			pName->SetText( sText );
 			ActorUtil::LoadAllCommands( *pName, m_sName );
 			m_Line[iRow].AddChild( pName );
