@@ -895,7 +895,7 @@ bool GameState::IsHumanPlayer( PlayerNumber pn ) const
 	if( pn == PLAYER_INVALID )
 		return false;
 
-	if( m_pCurStyle == NULL )	// no style chosen
+	if( GetCurrentStyle() == NULL )	// no style chosen
 	{
 		if( PlayersCanJoin() )	
 			return m_bSideIsJoined[pn];	// only allow input from sides that have already joined
