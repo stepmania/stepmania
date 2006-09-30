@@ -761,7 +761,8 @@ void StepMania::ChangeCurrentGame( const Game* g )
 	GAMESTATE->SetCurGame( g );
 
 	/* Load keymaps for the new game. */
-	INPUTMAPPER->ReadMappingsFromDisk();
+	if( INPUTMAPPER )
+		INPUTMAPPER->ReadMappingsFromDisk();
 }
 
 static void ReadGamePrefsFromDisk()
@@ -788,11 +789,7 @@ static void ReadGamePrefsFromDisk()
 	if( !GAMEMAN->IsGameEnabled(pGame) )
 		RageException::Throw( "Default NoteSkin for \"%s\" missing", pGame->m_szName );
 
-	GAMESTATE->SetCurGame( pGame );
-
-	/* Load keymaps for the new game. */
-	if( INPUTMAPPER )
-		INPUTMAPPER->ReadMappingsFromDisk();
+	StepMania::ChangeCurrentGame( pGame );
 
 	RString sAnnouncer = PREFSMAN->m_sAnnouncer;
 	RString sTheme = PREFSMAN->m_sTheme;
