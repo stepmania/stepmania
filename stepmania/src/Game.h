@@ -10,8 +10,6 @@
 
 struct lua_State;
 
-const int MAX_STYLES_PER_GAME = 10;
-
 //
 // PrimaryMenuButton and SecondaryMenuButton are used to support using DeviceInputs that only 
 // navigate the menus.
