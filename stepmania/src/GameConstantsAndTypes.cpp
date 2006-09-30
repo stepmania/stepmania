@@ -41,8 +41,8 @@ RString StepsTypeToString( StepsType st )
 	s.Replace('-','_');
 	for( size_t i = 0; i < s.size(); ++i )
 	{
-		if( i == 0 || (i > 0 && s[i-1] == '_') )
-			s[i-1] = toupper( s[i-1] );
+		if( i == 0 || s[i-1] == '_' )
+			s[i] = toupper( s[i] );
 	}
 	return "StepsType_"+s;
 }
