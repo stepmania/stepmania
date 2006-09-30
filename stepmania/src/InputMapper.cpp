@@ -27,6 +27,7 @@ InputMapper*	INPUTMAPPER = NULL;	// global and accessable from anywhere in our p
 
 InputMapper::InputMapper()
 {
+	m_pInputScheme = NULL;
 }
 
 
