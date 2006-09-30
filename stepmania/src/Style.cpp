@@ -16,7 +16,6 @@
 #include "Style.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-#include "Game.h"
 #include "InputMapper.h"
 #include "NoteData.h"
 #include <float.h>
@@ -47,7 +46,7 @@ GameInput Style::StyleInputToGameInput( int iCol, PlayerNumber pn ) const
 		if( bUsingOneSide && gc != (int) pn )
 			continue;
 
-		for( int i = 0; i < m_pGame->m_InputScheme.m_iButtonsPerController && m_iInputColumn[gc][i] != END_MAPPING; ++i )
+		for( int i = 0; i < INPUTMAPPER->GetInputScheme()->m_iButtonsPerController && m_iInputColumn[gc][i] != END_MAPPING; ++i )
 			if( m_iInputColumn[gc][i] == iCol )
 				return GameInput( gc, i );
 	}
