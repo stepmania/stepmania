@@ -8,7 +8,6 @@
 #include "RageException.h"
 #include "FontManager.h"
 #include "ThemeManager.h"
-#include "GameManager.h"
 #include "FontCharmaps.h"
 #include "FontCharAliases.h"
 
@@ -415,32 +414,12 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RStr
 				 * map CODEPOINT=frame. CODEPOINT can be
 				 * 1. U+hexval
 				 * 2. an alias ("oq")
-				 * 3. a game type followed by a game alias, eg "pump menuleft"
-				 * 4. a character in quotes ("X")
+				 * 3. a character in quotes ("X")
 				 *
 				 * map 1=2 is the same as
 				 * range unicode #1-1=2
 				 */
 				RString sCodepoint = sName.substr(4); /* "CODEPOINT" */
-			
-				const Game* pGame = NULL;
-
-				if( sCodepoint.find_first_of(' ') != sCodepoint.npos )
-				{
-					/* There's a space; the first word should be a game type. Split it. */
-					unsigned pos = sCodepoint.find_first_of( ' ' );
-					RString gamename = sCodepoint.substr( 0, pos );
-					sCodepoint = sCodepoint.substr( pos+1 );
-
-					pGame = GameManager::StringToGameType(gamename);
-
-					if( pGame == NULL )
-					{
-						LOG->Warn( "Font definition '%s' uses unknown game type '%s'",
-							ini.GetPath().c_str(), gamename.c_str() );
-						continue;
-					}
-				}
 
 				wchar_t c;
 				if( sCodepoint.substr(0, 2) == "U+" && IsHexVal(sCodepoint.substr(2)) )
