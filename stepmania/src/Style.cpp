@@ -68,20 +68,6 @@ int Style::GameInputToColumn( const GameInput &GameI ) const
 }
 
 
-PlayerNumber Style::ControllerToPlayerNumber( GameController controller ) const
-{
-	switch( m_StyleType )
-	{
-	case ONE_PLAYER_ONE_SIDE:
-	case TWO_PLAYERS_TWO_SIDES:
-	case TWO_PLAYERS_SHARED_SIDES:
-		return (PlayerNumber)controller;
-	case ONE_PLAYER_TWO_SIDES:
-		return GAMESTATE->m_MasterPlayerNumber;
-	DEFAULT_FAIL( m_StyleType );
-	}
-}
-
 void Style::GetMinAndMaxColX( PlayerNumber pn, float& fMixXOut, float& fMaxXOut ) const
 {
 	ASSERT( pn != PLAYER_INVALID );

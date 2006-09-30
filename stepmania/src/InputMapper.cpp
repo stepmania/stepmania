@@ -763,8 +763,8 @@ bool InputMapper::GameToDevice( const GameInput &GameI, int iSlotNum, DeviceInpu
 
 PlayerNumber InputMapper::ControllerToPlayerNumber( GameController controller )
 {
-	if( GAMESTATE->GetCurrentStyle() )
-		return GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber(controller);
+	if( GAMESTATE->GetCurrentStyle() && GAMESTATE->GetCurrentStyle()->m_StyleType == ONE_PLAYER_TWO_SIDES )
+		return GAMESTATE->m_MasterPlayerNumber;
 	else
 		return (PlayerNumber) controller;
 }
