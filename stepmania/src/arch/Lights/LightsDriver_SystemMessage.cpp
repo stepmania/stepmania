@@ -29,7 +29,9 @@ void LightsDriver_SystemMessage::Set( const LightsState *ls )
 	}
 	s += "\n";
 
-	int iNumGameButtonsToShow = INPUTMAPPER->GetInputScheme()->GetNumGameplayButtons();
+	int iNumGameButtonsToShow = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( "Start" );
+	if( iNumGameButtonsToShow == GameButton_Invalid )
+		iNumGameButtonsToShow = INPUTMAPPER->GetInputScheme()->m_iButtonsPerController;
 	
 	FOREACH_GameController( gc )
 	{
