@@ -14,7 +14,7 @@ REGISTER_SCREEN_CLASS( ScreenGameplaySyncMachine );
 void ScreenGameplaySyncMachine::Init()
 {
 	GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
-	GAMESTATE->m_pCurStyle.Set( GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame) );
+	GAMESTATE->SetCurrentStyle( GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame) );
 	AdjustSync::ResetOriginalSyncData();
 	
 	SMLoader ld;
@@ -82,7 +82,7 @@ void ScreenGameplaySyncMachine::HandleScreenMessage( const ScreenMessage SM )
 	if( SM == SM_GoToPrevScreen || SM == SM_GoToNextScreen )
 	{
 		GAMESTATE->m_PlayMode.Set( PlayMode_Invalid );
-		GAMESTATE->m_pCurStyle.Set( NULL );
+		GAMESTATE->SetCurrentStyle( NULL );
 		GAMESTATE->m_pCurSong.Set( NULL );
 	}
 }

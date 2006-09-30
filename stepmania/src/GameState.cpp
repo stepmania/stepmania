@@ -87,7 +87,7 @@ GameState::GameState() :
 	m_iEditCourseEntryIndex(	Message_EditCourseEntryIndexChanged ),
 	m_sEditLocalProfileID(		Message_EditLocalProfileIDChanged )
 {
-	m_pCurStyle.Set( NULL );
+	SetCurrentStyle( NULL );
 
 	m_pCurGame.Set( NULL );
 	m_iCoins = 0;
@@ -184,7 +184,7 @@ void GameState::Reset()
 	ASSERT( THEME );
 
 	m_timeGameStarted.SetZero();
-	m_pCurStyle.Set( NULL );
+	SetCurrentStyle( NULL );
 	FOREACH_PlayerNumber( p )
 		m_bSideIsJoined[p] = false;
 	FOREACH_MultiPlayer( p )
@@ -827,7 +827,7 @@ RString GameState::GetPlayerDisplayName( PlayerNumber pn ) const
 
 bool GameState::PlayersCanJoin() const
 {
-	return GetNumSidesJoined() == 0 || m_pCurStyle == NULL;	// selecting a style finalizes the players
+	return GetNumSidesJoined() == 0 || GetCurrentStyle() == NULL;	// selecting a style finalizes the players
 }
 
 int GameState::GetNumSidesJoined() const

@@ -113,7 +113,7 @@ void ScreenOptionsReviewWorkout::HandleScreenMessage( const ScreenMessage SM )
 
 				GAMESTATE->m_PlayMode.Set( PLAY_MODE_ENDLESS );
 				GAMESTATE->m_bSideIsJoined[0] = true;
-				GAMESTATE->m_pCurStyle.Set( GAMEMAN->GameAndStringToStyle(GAMESTATE->m_pCurGame,"single") );
+				GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle(GAMESTATE->m_pCurGame,"single") );
 
 				PROFILEMAN->GetProfile(ProfileSlot_Player1)->m_GoalType = GoalType_Time;
 				PROFILEMAN->GetProfile(ProfileSlot_Player1)->m_iGoalSeconds = pWorkout->m_iMinutes * 60;

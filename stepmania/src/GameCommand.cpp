@@ -618,7 +618,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 
 	if( m_pStyle != NULL )
 	{
-		GAMESTATE->m_pCurStyle.Set( m_pStyle );
+		GAMESTATE->SetCurrentStyle( m_pStyle );
 
 		// It's possible to choose a style that didn't have enough 
 		// players joined.  If enough players aren't joined, then 

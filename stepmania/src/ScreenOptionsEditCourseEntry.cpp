@@ -285,7 +285,7 @@ void ScreenOptionsEditCourseEntry::HandleScreenMessage( const ScreenMessage SM )
 				
 				// Set up for ScreenEdit
 				const Style *pStyle = GAMEMAN->GetEditorStyleForStepsType(pSteps->m_StepsType);
-				GAMESTATE->m_pCurStyle.Set( pStyle );
+				GAMESTATE->SetCurrentStyle( pStyle );
 				GAMESTATE->m_pCurSong.Set( pSong );
 				GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );
 				break;

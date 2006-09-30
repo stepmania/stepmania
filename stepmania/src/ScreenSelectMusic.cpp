@@ -52,7 +52,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 	if( PREFSMAN->m_bScreenTestMode )
 	{
 		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
-		GAMESTATE->m_pCurStyle.Set( GAMEMAN->GameAndStringToStyle(GAMEMAN->GetDefaultGame(),"versus") );
+		GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle(GAMEMAN->GetDefaultGame(),"versus") );
 		GAMESTATE->JoinPlayer( PLAYER_1 );
 		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 	}

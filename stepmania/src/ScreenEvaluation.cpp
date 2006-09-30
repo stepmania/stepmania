@@ -91,9 +91,9 @@ ScreenEvaluation::ScreenEvaluation()
 		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_2);
 
 		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
-		GAMESTATE->m_pCurStyle.Set( GAMEMAN->GameAndStringToStyle(GAMEMAN->GetDefaultGame(),"versus") );
+		GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle(GAMEMAN->GetDefaultGame(),"versus") );
 		STATSMAN->m_CurStageStats.playMode = GAMESTATE->m_PlayMode;
-		STATSMAN->m_CurStageStats.pStyle = GAMESTATE->m_pCurStyle;
+		STATSMAN->m_CurStageStats.pStyle = GAMESTATE->GetCurrentStyle();
 		STATSMAN->m_CurStageStats.StageType = StageStats::STAGE_NORMAL;
 		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 		GAMESTATE->m_pCurSong.Set( SONGMAN->GetRandomSong() );

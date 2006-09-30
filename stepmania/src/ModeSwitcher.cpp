@@ -309,7 +309,7 @@ void ModeSwitcher::ChangeMode(PlayerNumber pn, int dir)
 			wrap( index, vPossibleStyles.size() );
 		}
 
-		GAMESTATE->m_pCurStyle.Set( vPossibleStyles[index] );
+		GAMESTATE->SetCurrentStyle( vPossibleStyles[index] );
 	}
 	m_Stylename.SetText(GetStyleName());
 	m_Nextmode.SetText(GetNextStyleName());
