@@ -760,9 +760,6 @@ void StepMania::ChangeCurrentGame( const Game* g )
 
 	GAMESTATE->SetCurGame( g );
 
-	/* Save the newly-selected game. */
-	PREFSMAN->SavePrefsToDisk();
-
 	/* Load keymaps for the new game. */
 	INPUTMAPPER->ReadMappingsFromDisk();
 }
