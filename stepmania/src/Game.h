@@ -29,8 +29,6 @@ struct lua_State;
 // MenuLeft and MenuRight as long as "MenuLeft (optional)" and "MenuRight (optional)" are not mapped.
 //
 
-class Style;
-
 #define NO_DEFAULT_KEY DeviceButton_Invalid
 
 class Game
@@ -48,7 +46,7 @@ public:
 
 	GameButton ButtonNameToIndex( const RString &sButtonName ) const;
 	MenuButton GameInputToMenuButton( GameInput GameI ) const;
-	void MenuButtonToGameInputs( MenuButton MenuI, PlayerNumber pn, GameInput GameIout[4] ) const;	// looks up current style in GAMESTATE.  Yuck.
+	void MenuButtonToGameInputs( MenuButton MenuI, PlayerNumber pn, GameInput GameIout[4] ) const;
 
 	TapNoteScore MapTapNoteScore( TapNoteScore tns ) const;
 	TapNoteScore	m_mapW1To;
