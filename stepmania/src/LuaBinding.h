@@ -139,16 +139,16 @@ public:
  * Lua table).  Derived classes simply call the base class's Push function,
  * specifying a different class name, so they don't need to know about it. */
 #define LUA_REGISTER_INSTANCED_BASE_CLASS( T ) \
-	LUA_REGISTER_CLASS_BASIC( T, T ) \
-	template<> void Luna<T>::PushObject( Lua *L, const RString &sDerivedClassName, T* p ) { p->m_pLuaInstance->PushSelf( L ); LuaBinding::ApplyDerivedType( L, sDerivedClassName, p ); }
+	template<> void Luna<T>::PushObject( Lua *L, const RString &sDerivedClassName, T* p ) { p->m_pLuaInstance->PushSelf( L ); LuaBinding::ApplyDerivedType( L, sDerivedClassName, p ); } \
+	LUA_REGISTER_CLASS_BASIC( T, T )
 
 #define LUA_REGISTER_CLASS( T ) \
-	LUA_REGISTER_CLASS_BASIC( T, T ) \
-	template<> void Luna<T>::PushObject( Lua *L, const RString &sDerivedClassName, T* p ) { void **pData = (void **) lua_newuserdata( L, sizeof(void *) ); *pData = p; LuaBinding::ApplyDerivedType( L, sDerivedClassName, p ); }
+	template<> void Luna<T>::PushObject( Lua *L, const RString &sDerivedClassName, T* p ) { void **pData = (void **) lua_newuserdata( L, sizeof(void *) ); *pData = p; LuaBinding::ApplyDerivedType( L, sDerivedClassName, p ); } \
+	LUA_REGISTER_CLASS_BASIC( T, T )
 
 #define LUA_REGISTER_DERIVED_CLASS( T, B ) \
-	LUA_REGISTER_CLASS_BASIC( T, B ) \
-	template<> void Luna<T>::PushObject( Lua *L, const RString &sDerivedClassName, T* p ) { Luna<B>::PushObject( L, sDerivedClassName, p ); }
+	template<> void Luna<T>::PushObject( Lua *L, const RString &sDerivedClassName, T* p ) { Luna<B>::PushObject( L, sDerivedClassName, p ); } \
+	LUA_REGISTER_CLASS_BASIC( T, B )
 
 #define LUA_REGISTER_CLASS_BASIC( T, B ) \
 	template<> RString Luna<T>::m_sClassName = #T; \
