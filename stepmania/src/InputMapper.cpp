@@ -1,15 +1,12 @@
 #include "global.h"
 #include "InputMapper.h"
 #include "IniFile.h"
-#include "GameManager.h"
-#include "GameState.h"
+#include "MessageManager.h"
 #include "RageLog.h"
 #include "InputFilter.h"
 #include "RageUtil.h"
 #include "PrefsManager.h"
 #include "RageInput.h"
-#include "Game.h"
-#include "Style.h"
 #include "SpecialFiles.h"
 #include "LocalizedString.h"
 
@@ -21,12 +18,15 @@ namespace
 	// lookup for efficiency from a DeviceInput to a GameInput
 	// This is repopulated every time m_PItoDI changes by calling UpdateTempDItoPI().
 	map<DeviceInput, GameInput> g_tempDItoGI;
+
+	PlayerNumber g_JoinControllers;
 };
 
 InputMapper*	INPUTMAPPER = NULL;	// global and accessable from anywhere in our program
 
 InputMapper::InputMapper()
 {
+	g_JoinControllers = PLAYER_INVALID;
 	m_pInputScheme = NULL;
 }
 
@@ -547,8 +547,6 @@ static const RString DEVICE_INPUT_SEPARATOR = ":";	// this isn't used in any key
 
 void InputMapper::ReadMappingsFromDisk()
 {
-	ASSERT( GAMEMAN != NULL );
-
 	ClearAllMappings();
 
 	IniFile ini;
@@ -773,8 +771,8 @@ bool InputMapper::GameToDevice( const GameInput &GameI, int iSlotNum, DeviceInpu
 
 PlayerNumber InputMapper::ControllerToPlayerNumber( GameController controller )
 {
-	if( GAMESTATE->GetCurrentStyle() && GAMESTATE->GetCurrentStyle()->m_StyleType == ONE_PLAYER_TWO_SIDES )
-		return GAMESTATE->m_MasterPlayerNumber;
+	if( g_JoinControllers != PLAYER_INVALID )
+		return g_JoinControllers;
 	else
 		return (PlayerNumber) controller;
 }
@@ -784,13 +782,19 @@ MenuButton InputMapper::GameToMenu( const GameInput &GameI )
 	return m_pInputScheme->GameInputToMenuButton( GameI );
 }
 
+/* If set (not PLAYER_INVALID), inputs from both GameControllers will be mapped
+ * to the specified player.  If PLAYER_INVALID, GameControllers will be mapped
+ * individually. */
+void InputMapper::SetJoinControllers( PlayerNumber pn )
+{
+	g_JoinControllers = pn;
+}
+
+
 void InputMapper::MenuToGame( MenuButton MenuI, PlayerNumber pn, GameInput GameIout[4] )
 {
-	if( GAMESTATE->GetCurrentStyle() )
-	{
-		if( GAMESTATE->GetCurrentStyle()->m_StyleType == ONE_PLAYER_TWO_SIDES )
-			pn = PLAYER_INVALID;
-	}
+	if( g_JoinControllers != PLAYER_INVALID )
+		pn = PLAYER_INVALID;
 
 	m_pInputScheme->MenuButtonToGameInputs( MenuI, pn, GameIout );
 }

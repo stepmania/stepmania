@@ -11,6 +11,7 @@
 const int NUM_GAME_TO_DEVICE_SLOTS	= 5;	// five device inputs may map to one game input
 const int NUM_SHOWN_GAME_TO_DEVICE_SLOTS = 3;
 const int NUM_USER_GAME_TO_DEVICE_SLOTS = 2;
+#define NO_DEFAULT_KEY DeviceButton_Invalid
 
 class InputScheme
 {
@@ -36,6 +37,8 @@ public:
 
 	void SetInputScheme( const InputScheme *pInputScheme );
 	const InputScheme *GetInputScheme() const;
+	void SetJoinControllers( PlayerNumber pn );
+
 	void ReadMappingsFromDisk();
 	void SaveMappingsToDisk();
 

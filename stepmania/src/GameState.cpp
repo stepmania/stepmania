@@ -853,6 +853,13 @@ const Style* GameState::GetCurrentStyle() const
 void GameState::SetCurrentStyle( const Style *pStyle )
 {
 	m_pCurStyle.Set( pStyle );
+	if( INPUTMAPPER )
+	{
+		if( GetCurrentStyle() && GetCurrentStyle()->m_StyleType == ONE_PLAYER_TWO_SIDES )
+			INPUTMAPPER->SetJoinControllers( m_MasterPlayerNumber );
+		else
+			INPUTMAPPER->SetJoinControllers( PLAYER_INVALID );
+	}
 }
 
 bool GameState::IsPlayerEnabled( PlayerNumber pn ) const
