@@ -82,11 +82,10 @@ namespace Enum
 		/* Look up the string value. */
 		EnumTraits<T>::EnumToString.PushSelf( L );
 		lua_rawgeti( L, -1, iVal + 1 );
-		lua_replace( L, -2 );
+		lua_remove( L, -2 );
 	}
 };
 
-static const RString EMPTY_STRING;
 const RString &EnumToString( int iVal, int iMax, const char **szNameArray, auto_ptr<RString> *pNameCache ); // XToString helper
 
 #define XToString2(X) \
@@ -167,7 +166,7 @@ namespace LuaHelpers { void Push( lua_State *L, const X &Object ) { Enum::Push<X
 #endif
 
 /*
- * (c) 2004 Chris Danford
+ * (c) 2004-2006 Chris Danford, Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

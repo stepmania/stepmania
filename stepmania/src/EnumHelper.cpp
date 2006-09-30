@@ -53,7 +53,7 @@ const RString &EnumToString( int iVal, int iMax, const char **szNameArray, auto_
 }
 
 /*
- * (c) 2004 Chris Danford
+ * (c) 2006 Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
