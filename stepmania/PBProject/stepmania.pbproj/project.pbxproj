@@ -816,7 +816,6 @@
 		AA40D2B409A08D650068C0D5 /* XmlFile.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC6889A05D7F3C800964E6D /* XmlFile.h */; };
 		AA40D2B509A08D650068C0D5 /* HighScore.h in Headers */ = {isa = PBXBuildFile; fileRef = AABBD80705D8E9FC00B44FC2 /* HighScore.h */; };
 		AA40D2B609A08D650068C0D5 /* CryptManager.h in Headers */ = {isa = PBXBuildFile; fileRef = AABD0B3705DF3F22004F7929 /* CryptManager.h */; };
-		AA40D2B709A08D650068C0D5 /* LuaFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = AAEA090605E23DF900D38622 /* LuaFunctions.h */; };
 		AA40D2B809A08D650068C0D5 /* Backtrace.h in Headers */ = {isa = PBXBuildFile; fileRef = AAED6F290601C528002D2DEE /* Backtrace.h */; };
 		AA40D2B909A08D650068C0D5 /* BacktraceNames.h in Headers */ = {isa = PBXBuildFile; fileRef = AAED6F2B0601C528002D2DEE /* BacktraceNames.h */; };
 		AA40D2BA09A08D650068C0D5 /* ScreenSetTime.h in Headers */ = {isa = PBXBuildFile; fileRef = AA0A3DE7060513A00044E6B1 /* ScreenSetTime.h */; };
@@ -1763,7 +1762,6 @@
 		AAE781F20AC7E53500AEFC64 /* lzio.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE781BE0AC7E53400AEFC64 /* lzio.h */; };
 		AAE782030AC7E64D00AEFC64 /* liblua-5.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAE7817E0AC7E37B00AEFC64 /* liblua-5.1.a */; };
 		AAE782040AC7E65200AEFC64 /* liblua-5.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAE7817E0AC7E37B00AEFC64 /* liblua-5.1.a */; };
-		AAEA090905E23DF900D38622 /* LuaFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = AAEA090605E23DF900D38622 /* LuaFunctions.h */; };
 		AAEBC6CC07A20AFE00793F0E /* RageSurface_Save_JPEG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAEBC6C607A20AFE00793F0E /* RageSurface_Save_JPEG.cpp */; };
 		AAEBC6CD07A20AFE00793F0E /* RageSurface_Save_JPEG.h in Headers */ = {isa = PBXBuildFile; fileRef = AAEBC6C707A20AFE00793F0E /* RageSurface_Save_JPEG.h */; };
 		AAEBC6CE07A20AFE00793F0E /* RageSurfaceUtils_Dither.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAEBC6C807A20AFE00793F0E /* RageSurfaceUtils_Dither.cpp */; };
@@ -2764,7 +2762,6 @@
 		AAE781BC0AC7E53400AEFC64 /* lvm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = lvm.h; path = src/lvm.h; sourceTree = "<group>"; };
 		AAE781BD0AC7E53400AEFC64 /* lzio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lzio.c; path = src/lzio.c; sourceTree = "<group>"; };
 		AAE781BE0AC7E53400AEFC64 /* lzio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = lzio.h; path = src/lzio.h; sourceTree = "<group>"; };
-		AAEA090605E23DF900D38622 /* LuaFunctions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = LuaFunctions.h; path = ../src/LuaFunctions.h; sourceTree = "<group>"; };
 		AAEBC6C607A20AFE00793F0E /* RageSurface_Save_JPEG.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageSurface_Save_JPEG.cpp; path = ../src/RageSurface_Save_JPEG.cpp; sourceTree = "<group>"; };
 		AAEBC6C707A20AFE00793F0E /* RageSurface_Save_JPEG.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageSurface_Save_JPEG.h; path = ../src/RageSurface_Save_JPEG.h; sourceTree = "<group>"; };
 		AAEBC6C807A20AFE00793F0E /* RageSurfaceUtils_Dither.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageSurfaceUtils_Dither.cpp; path = ../src/RageSurfaceUtils_Dither.cpp; sourceTree = "<group>"; };
@@ -3614,7 +3611,6 @@
 				AADD1CC3095C233F0088C9DF /* LocalizedString.h */,
 				AACFBE6108E7DBA8005087FC /* LuaExpressionTransform.cpp */,
 				AACFBE6208E7DBA8005087FC /* LuaExpressionTransform.h */,
-				AAEA090605E23DF900D38622 /* LuaFunctions.h */,
 				AA6EFDE304770C79005F316C /* LyricsLoader.cpp */,
 				AA6EFDE404770C79005F316C /* LyricsLoader.h */,
 				AA8E4BC609787C9400765149 /* MenuInput.cpp */,
@@ -4404,7 +4400,6 @@
 				AAC6889C05D7F3C800964E6D /* XmlFile.h in Headers */,
 				AABBD80905D8E9FC00B44FC2 /* HighScore.h in Headers */,
 				AABD0B3B05DF3F22004F7929 /* CryptManager.h in Headers */,
-				AAEA090905E23DF900D38622 /* LuaFunctions.h in Headers */,
 				AAED6F2D0601C528002D2DEE /* Backtrace.h in Headers */,
 				AAED6F2F0601C528002D2DEE /* BacktraceNames.h in Headers */,
 				AA0A3DE9060513A00044E6B1 /* ScreenSetTime.h in Headers */,
@@ -4864,7 +4859,6 @@
 				AA40D2B409A08D650068C0D5 /* XmlFile.h in Headers */,
 				AA40D2B509A08D650068C0D5 /* HighScore.h in Headers */,
 				AA40D2B609A08D650068C0D5 /* CryptManager.h in Headers */,
-				AA40D2B709A08D650068C0D5 /* LuaFunctions.h in Headers */,
 				AA40D2B809A08D650068C0D5 /* Backtrace.h in Headers */,
 				AA40D2B909A08D650068C0D5 /* BacktraceNames.h in Headers */,
 				AA40D2BA09A08D650068C0D5 /* ScreenSetTime.h in Headers */,
