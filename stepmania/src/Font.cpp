@@ -7,7 +7,6 @@
 #include "RageLog.h"
 #include "RageException.h"
 #include "FontManager.h"
-#include "GameState.h"
 #include "ThemeManager.h"
 #include "GameManager.h"
 #include "FontCharmaps.h"
