@@ -23,7 +23,6 @@ public:
 	GameButton	m_SecondaryMenuButton[NUM_MenuButton];
 	DeviceButton	m_iDefaultKeyboardKey[NUM_GameController][NUM_GameButton];	// default keyboard keys only have an effect the current game is this game
 
-	int		GetNumGameplayButtons() const;
 	GameButton ButtonNameToIndex( const RString &sButtonName ) const;
 	MenuButton GameInputToMenuButton( GameInput GameI ) const;
 	void MenuButtonToGameInputs( MenuButton MenuI, PlayerNumber pn, GameInput GameIout[4] ) const;

@@ -4,13 +4,6 @@
 #include "RageUtil.h"
 #include "PrefsManager.h"
 
-int	InputScheme::GetNumGameplayButtons() const
-{
-	int iIndexOfStart = ButtonNameToIndex( "Start" );
-	ASSERT( iIndexOfStart != GameButton_Invalid );
-	return iIndexOfStart;
-}
-
 GameButton InputScheme::ButtonNameToIndex( const RString &sButtonName ) const
 {
 	for( int i=0; i<m_iButtonsPerController; i++ ) 
