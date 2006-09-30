@@ -4,7 +4,7 @@
 #include "NoteSkinManager.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-#include "Game.h"
+#include "Style.h"
 #include "PlayerState.h"
 
 ReceptorArrow::ReceptorArrow()
@@ -19,7 +19,7 @@ void ReceptorArrow::Load( const PlayerState* pPlayerState, int iColNo )
 	m_pPlayerState = pPlayerState;
 	m_iColNo = iColNo;
 
-	RString sButton = GAMESTATE->GetCurrentGame()->ColToButtonName( iColNo );
+	RString sButton = GAMESTATE->GetCurrentStyle()->ColToButtonName( iColNo );
 	m_pReceptor.Load( NOTESKIN->GetPath(sButton,"receptor") );
 	this->AddChild( m_pReceptor );
 
