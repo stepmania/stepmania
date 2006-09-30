@@ -54,7 +54,6 @@ public:
 	RString		m_sInvalidReason;
 	int			m_iIndex;
 	MultiPlayer	m_MultiPlayer;
-	const Game*	m_pGame;
 	const Style*	m_pStyle;
 	PlayMode	m_pm;
 	Difficulty	m_dc;

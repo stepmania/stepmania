@@ -34,7 +34,6 @@ void GameCommand::Init()
 	m_bInvalid = true;
 	m_iIndex = -1;
 	m_MultiPlayer = MultiPlayer_INVALID;
-	m_pGame = NULL;
 	m_pStyle = NULL;
 	m_pm = PlayMode_Invalid;
 	m_dc = DIFFICULTY_INVALID;
@@ -78,8 +77,6 @@ bool GameCommand::DescribesCurrentModeForAllPlayers() const
 
 bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 {
-	if( m_pGame != NULL && m_pGame != GAMESTATE->m_pCurGame.Get() )
-		return false;
 	if( m_pm != PlayMode_Invalid && GAMESTATE->m_PlayMode != m_pm )
 		return false;
 	if( m_pStyle && GAMESTATE->m_pCurStyle.Get() != m_pStyle )
@@ -173,16 +170,7 @@ void GameCommand::LoadOne( const Command& cmd )
 		sValue += (RString) cmd.GetArg(i);
 	}
 
-	if( sName == "game" )
-	{
-		const Game* pGame = GAMEMAN->StringToGameType( sValue );
-		if( pGame != NULL )
-			m_pGame = pGame;
-		else
-			m_bInvalid |= true;
-	}
-
-	else if( sName == "style" )
+	if( sName == "style" )
 	{
 		const Style* style = GAMEMAN->GameAndStringToStyle( GAMESTATE->m_pCurGame, sValue );
 		if( style )
@@ -625,8 +613,6 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 {
 	const PlayMode OldPlayMode = GAMESTATE->m_PlayMode;
 
-	if( m_pGame != NULL )
-		GAMESTATE->SetCurGame( m_pGame );
 	if( m_pm != PlayMode_Invalid )
 		GAMESTATE->m_PlayMode.Set( m_pm );
 
@@ -791,8 +777,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 
 bool GameCommand::IsZero() const
 {
-	if( m_pGame != NULL ||
-		m_pm != PlayMode_Invalid ||
+	if( 	m_pm != PlayMode_Invalid ||
 		m_pStyle != NULL ||
 		m_dc != DIFFICULTY_INVALID ||
 		m_sAnnouncer != "" ||
