@@ -39,7 +39,6 @@ class Game
 {
 public:
 	const char	*m_szName;
-	const char	*m_szDescription;
 
 	bool		m_bCountNotesSeparately;	// Count multiple notes in a row as separate notes or as one note
 	int		m_iButtonsPerController;

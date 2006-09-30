@@ -114,7 +114,6 @@ static Game g_Games[NUM_GAMES] =
 {
 	{	// GAME_DANCE
 		"dance",				// m_szName
-		"4 foot panels or 6 foot panels",	// m_szDescription
 		false,					// m_bCountNotesSeparately
 		NUM_DANCE_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
@@ -200,7 +199,6 @@ static Game g_Games[NUM_GAMES] =
 	},
 	{	// GAME_PUMP
 		"pump",					// m_szName
-		"5 foot panels",			// m_szDescription
 		false,					// m_bCountNotesSeparately
 		NUM_PUMP_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
@@ -283,7 +281,6 @@ static Game g_Games[NUM_GAMES] =
 	},
 	{
 		"ez2",					// m_szName
-		"4 hand sensors + 3 foot panels",	// m_szDescription
 		false,					// m_bCountNotesSeparately
 		NUM_EZ2_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
@@ -372,7 +369,6 @@ static Game g_Games[NUM_GAMES] =
 	},
 	{	// GAME_PARA
 		"para",					// m_szName
-		"5 hand sensors",			// m_szDescription
 		false,					// m_bCountNotesSeparately
 		NUM_PARA_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
@@ -455,7 +451,6 @@ static Game g_Games[NUM_GAMES] =
 	},
 	{	// GAME_DS3DDX
 		"ds3ddx",				// m_szName
-		"4 hand sensors + 4 foot panels",	// m_szDescription
 		false,					// m_bCountNotesSeparately
 		NUM_DS3DDX_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
@@ -547,7 +542,6 @@ static Game g_Games[NUM_GAMES] =
 	},
 	{	// GAME_BEAT
 		"beat",					// m_szName
-		"5 hand buttons or 7 hand buttons, + 1 scratch pad",	// m_szDescription
 		true,					// m_bCountNotesSeparately
 		NUM_BEAT_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
@@ -642,7 +636,6 @@ static Game g_Games[NUM_GAMES] =
 	},
 	{	// GAME_MANIAX
 		"maniax",				// m_szName
-		"4 hand sensors",			// m_szDescription
 		false,					// m_bCountNotesSeparately
 		NUM_MANIAX_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
@@ -722,7 +715,6 @@ static Game g_Games[NUM_GAMES] =
 	},
 	{	// GAME_TECHNO
 		"techno",				// m_szName
-		"4, 5, or 9 foot panels",		// m_szDescription
 		false,					// m_bCountNotesSeparately
 		NUM_TECHNO_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
@@ -817,7 +809,6 @@ static Game g_Games[NUM_GAMES] =
 	},
 	{	// GAME_POPN
 		"popn",					// m_szName
-		"5 or 9 hand buttons",			// m_szDescription
 		true,					// m_bCountNotesSeparately
 		NUM_POPN_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
@@ -912,7 +903,6 @@ static Game g_Games[NUM_GAMES] =
 	},
 	{	// GAME_LIGHTS
 		"lights",				// m_szName
-		"8 lights",				// m_szDescription
 		false,					// m_bCountNotesSeparately
 		NUM_LIGHTS_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
