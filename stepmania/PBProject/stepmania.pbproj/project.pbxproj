@@ -1428,6 +1428,10 @@
 		AA64218906EC606F00C21584 /* RageFileDriverMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = AA64218706EC606F00C21584 /* RageFileDriverMemory.h */; };
 		AA65877B098C322800CE55CC /* ScreenUnlockStatus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA658779098C322800CE55CC /* ScreenUnlockStatus.cpp */; };
 		AA65877C098C322800CE55CC /* ScreenUnlockStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = AA65877A098C322800CE55CC /* ScreenUnlockStatus.h */; };
+		AA6999610ACE1CBB000237F9 /* ControllerStateDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA69995F0ACE1CBB000237F9 /* ControllerStateDisplay.cpp */; };
+		AA6999620ACE1CBB000237F9 /* ControllerStateDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6999600ACE1CBB000237F9 /* ControllerStateDisplay.h */; };
+		AA6999630ACE1CBB000237F9 /* ControllerStateDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA69995F0ACE1CBB000237F9 /* ControllerStateDisplay.cpp */; };
+		AA6999640ACE1CBB000237F9 /* ControllerStateDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6999600ACE1CBB000237F9 /* ControllerStateDisplay.h */; };
 		AA6E6E0A07F518E800C3EBB4 /* Quad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E6E0907F518E800C3EBB4 /* Quad.cpp */; };
 		AA70E3690663112800DAE1FD /* Foreach.h in Headers */ = {isa = PBXBuildFile; fileRef = AA70E3640663112800DAE1FD /* Foreach.h */; };
 		AA70E36A0663112800DAE1FD /* Trail.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA70E3650663112800DAE1FD /* Trail.cpp */; };
@@ -2069,6 +2073,8 @@
 		AA65877A098C322800CE55CC /* ScreenUnlockStatus.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ScreenUnlockStatus.h; path = ../src/ScreenUnlockStatus.h; sourceTree = "<group>"; };
 		AA69675006840991007802A5 /* InputHandler_Carbon.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = InputHandler_Carbon.h; sourceTree = "<group>"; };
 		AA69675106840991007802A5 /* InputHandler_Carbon.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = InputHandler_Carbon.cpp; sourceTree = "<group>"; };
+		AA69995F0ACE1CBB000237F9 /* ControllerStateDisplay.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ControllerStateDisplay.cpp; path = ../src/ControllerStateDisplay.cpp; sourceTree = "<group>"; };
+		AA6999600ACE1CBB000237F9 /* ControllerStateDisplay.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ControllerStateDisplay.h; path = ../src/ControllerStateDisplay.h; sourceTree = "<group>"; };
 		AA6DAF0805300B3D00D02EE9 /* ScoreDisplayPercentage.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScoreDisplayPercentage.cpp; path = ../src/ScoreDisplayPercentage.cpp; sourceTree = "<group>"; };
 		AA6DAF0905300B3D00D02EE9 /* ScoreDisplayPercentage.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScoreDisplayPercentage.h; path = ../src/ScoreDisplayPercentage.h; sourceTree = "<group>"; };
 		AA6E000A047711F3005F316C /* Screen.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = Screen.cpp; path = ../src/Screen.cpp; sourceTree = "<group>"; };
@@ -3740,6 +3746,8 @@
 				AA6EFE7704770E7C005F316C /* BPMDisplay.h */,
 				AAFF55210549F43A00D02EE9 /* ComboGraph.cpp */,
 				AAFF55220549F43A00D02EE9 /* ComboGraph.h */,
+				AA69995F0ACE1CBB000237F9 /* ControllerStateDisplay.cpp */,
+				AA6999600ACE1CBB000237F9 /* ControllerStateDisplay.h */,
 				AA6EFE7804770E7C005F316C /* CourseContentsList.cpp */,
 				AA6EFE7904770E7C005F316C /* CourseContentsList.h */,
 				AA6EFE7A04770E7C005F316C /* CourseEntryDisplay.cpp */,
@@ -4599,6 +4607,7 @@
 				AAE780350AC769AF00AEFC64 /* WorkoutManager.h in Headers */,
 				AAE7803F0AC76A1200AEFC64 /* Workout.h in Headers */,
 				AAE780410AC76A1200AEFC64 /* WorkoutGraph.h in Headers */,
+				AA6999640ACE1CBB000237F9 /* ControllerStateDisplay.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5054,6 +5063,7 @@
 				AAE780370AC769AF00AEFC64 /* WorkoutManager.h in Headers */,
 				AAE780430AC76A1200AEFC64 /* Workout.h in Headers */,
 				AAE780450AC76A1200AEFC64 /* WorkoutGraph.h in Headers */,
+				AA6999620ACE1CBB000237F9 /* ControllerStateDisplay.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5705,6 +5715,7 @@
 				AAE7803E0AC76A1200AEFC64 /* Workout.cpp in Sources */,
 				AAE780400AC76A1200AEFC64 /* WorkoutGraph.cpp in Sources */,
 				AAFAFC900AC8DB9F00427A6E /* EnumHelper.cpp in Sources */,
+				AA6999630ACE1CBB000237F9 /* ControllerStateDisplay.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6122,6 +6133,7 @@
 				AAE780420AC76A1200AEFC64 /* Workout.cpp in Sources */,
 				AAE780440AC76A1200AEFC64 /* WorkoutGraph.cpp in Sources */,
 				AAFAFC8F0AC8DB9F00427A6E /* EnumHelper.cpp in Sources */,
+				AA6999610ACE1CBB000237F9 /* ControllerStateDisplay.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
