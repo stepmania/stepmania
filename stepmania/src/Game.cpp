@@ -4,14 +4,14 @@
 #include "RageUtil.h"
 #include "PrefsManager.h"
 
-int	Game::GetNumGameplayButtons() const
+int	InputScheme::GetNumGameplayButtons() const
 {
 	int iIndexOfStart = ButtonNameToIndex( "Start" );
 	ASSERT( iIndexOfStart != GameButton_Invalid );
 	return iIndexOfStart;
 }
 
-GameButton Game::ButtonNameToIndex( const RString &sButtonName ) const
+GameButton InputScheme::ButtonNameToIndex( const RString &sButtonName ) const
 {
 	for( int i=0; i<m_iButtonsPerController; i++ ) 
 		if( stricmp(m_szButtonNames[i], sButtonName) == 0 )
@@ -20,7 +20,7 @@ GameButton Game::ButtonNameToIndex( const RString &sButtonName ) const
 	return GameButton_Invalid;
 }
 
-MenuButton Game::GameInputToMenuButton( GameInput GameI ) const
+MenuButton InputScheme::GameInputToMenuButton( GameInput GameI ) const
 {
 	FOREACH_MenuButton(i)
 		if( m_DedicatedMenuButton[i] == GameI.button )
@@ -36,7 +36,7 @@ MenuButton Game::GameInputToMenuButton( GameInput GameI ) const
 	return MenuButton_INVALID;	// invalid GameInput
 }
 
-void Game::MenuButtonToGameInputs( MenuButton MenuI, PlayerNumber pn, GameInput GameIout[4] ) const
+void InputScheme::MenuButtonToGameInputs( MenuButton MenuI, PlayerNumber pn, GameInput GameIout[4] ) const
 {
 	ASSERT( MenuI != MenuButton_INVALID );
 

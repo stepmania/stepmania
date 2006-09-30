@@ -12,12 +12,30 @@ const int NUM_GAME_TO_DEVICE_SLOTS	= 5;	// five device inputs may map to one gam
 const int NUM_SHOWN_GAME_TO_DEVICE_SLOTS = 3;
 const int NUM_USER_GAME_TO_DEVICE_SLOTS = 2;
 
+class InputScheme
+{
+public:
+	const char	*m_szName;
+	int		m_iButtonsPerController;
+	char		m_szButtonNames[NUM_GameButton][60];	// The name used by the button graphics system.  e.g. "left", "right", "middle C", "snare"
+	GameButton	m_DedicatedMenuButton[NUM_MenuButton];
+	GameButton	m_SecondaryMenuButton[NUM_MenuButton];
+	DeviceButton	m_iDefaultKeyboardKey[NUM_GameController][NUM_GameButton];	// default keyboard keys only have an effect the current game is this game
+
+	int		GetNumGameplayButtons() const;
+	GameButton ButtonNameToIndex( const RString &sButtonName ) const;
+	MenuButton GameInputToMenuButton( GameInput GameI ) const;
+	void MenuButtonToGameInputs( MenuButton MenuI, PlayerNumber pn, GameInput GameIout[4] ) const;
+};
+
 class InputMapper
 {
 public:
 	InputMapper();
 	~InputMapper();
 
+	void SetInputScheme( const InputScheme *pInputScheme );
+	const InputScheme *GetInputScheme() const;
 	void ReadMappingsFromDisk();
 	void SaveMappingsToDisk();
 
@@ -82,6 +100,7 @@ protected:
 	DeviceInput m_GItoDI[NUM_GameController][NUM_GameButton][NUM_GAME_TO_DEVICE_SLOTS];
 
 	void UpdateTempDItoGI();
+	const InputScheme *m_pInputScheme;
 };
 
 

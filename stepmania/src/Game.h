@@ -7,6 +7,7 @@
 #include "MenuInput.h"
 #include "GameConstantsAndTypes.h"
 #include "RageInputDevice.h"
+#include "InputMapper.h"
 
 struct lua_State;
 
@@ -37,16 +38,7 @@ public:
 	const char	*m_szName;
 
 	bool		m_bCountNotesSeparately;	// Count multiple notes in a row as separate notes or as one note
-	int		m_iButtonsPerController;
-	int		GetNumGameplayButtons() const;
-	char		m_szButtonNames[NUM_GameButton][60];	// The name used by the button graphics system.  e.g. "left", "right", "middle C", "snare"
-	GameButton	m_DedicatedMenuButton[NUM_MenuButton];
-	GameButton	m_SecondaryMenuButton[NUM_MenuButton];
-	DeviceButton	m_iDefaultKeyboardKey[NUM_GameController][NUM_GameButton];	// default keyboard keys only have an effect the current game is this game
-
-	GameButton ButtonNameToIndex( const RString &sButtonName ) const;
-	MenuButton GameInputToMenuButton( GameInput GameI ) const;
-	void MenuButtonToGameInputs( MenuButton MenuI, PlayerNumber pn, GameInput GameIout[4] ) const;
+	InputScheme	m_InputScheme;
 
 	TapNoteScore MapTapNoteScore( TapNoteScore tns ) const;
 	TapNoteScore	m_mapW1To;

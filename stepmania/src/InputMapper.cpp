@@ -27,7 +27,6 @@ InputMapper*	INPUTMAPPER = NULL;	// global and accessable from anywhere in our p
 
 InputMapper::InputMapper()
 {
-	ReadMappingsFromDisk();
 }
 
 
@@ -52,12 +51,11 @@ void InputMapper::AddDefaultMappingsForCurrentGameIfUnmapped()
 		FOREACH_GameButton(j)
 			ClearFromInputMap( GameInput(i, j), 2 );
 
-	const Game* pGame = GAMESTATE->GetCurrentGame();
 	FOREACH_GameController( c )
 	{
-		for( int b=0; b<pGame->m_iButtonsPerController; b++ )
+		for( int b=0; b<m_pInputScheme->m_iButtonsPerController; b++ )
 		{
-			DeviceButton key = pGame->m_iDefaultKeyboardKey[c][b];
+			DeviceButton key = m_pInputScheme->m_iDefaultKeyboardKey[c][b];
 			if( key == NO_DEFAULT_KEY )
 				continue;
 			DeviceInput DeviceI( DEVICE_KEYBOARD, key );
@@ -498,8 +496,6 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 
 	int iNumJoysticksMapped = 0;
 
-	const Game* pGame = GAMESTATE->m_pCurGame;
-
 	for( unsigned i=0; i<vDevices.size(); i++ )
 	{
 		InputDevice id = vDevices[i].id;
@@ -508,7 +504,7 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 		{
 			const AutoJoyMapping& mapping = g_AutoJoyMappings[j];
 
-			if( pGame != GAMEMAN->StringToGameType(mapping.szGame) )
+			if( RString(m_pInputScheme->m_szName).CompareNoCase(mapping.szGame) )
 				continue;	// games don't match
 
 			RString sDriverRegex = mapping.szDriverRegex;
@@ -534,6 +530,18 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 	}
 }
 
+void InputMapper::SetInputScheme( const InputScheme *pInputScheme )
+{
+	m_pInputScheme = pInputScheme;
+
+	ReadMappingsFromDisk();
+}
+
+const InputScheme *InputMapper::GetInputScheme() const
+{
+	return m_pInputScheme;
+}
+
 static const RString DEVICE_INPUT_SEPARATOR = ":";	// this isn't used in any key names
 
 void InputMapper::ReadMappingsFromDisk()
@@ -547,9 +555,7 @@ void InputMapper::ReadMappingsFromDisk()
 		LOG->Trace( "Couldn't open mapping file \"%s\": %s.",
 					SpecialFiles::KEYMAPS_PATH.c_str(), ini.GetError().c_str() );
 
-	const Game *pGame = GAMESTATE->GetCurrentGame();
-
-	const XNode *Key = ini.GetChild( pGame->m_szName );
+	const XNode *Key = ini.GetChild( m_pInputScheme->m_szName );
 
 	if( Key  )
 	{
@@ -559,7 +565,7 @@ void InputMapper::ReadMappingsFromDisk()
 			const RString &value = i->second;
 
 			GameInput GameI;
-			GameI.FromString( pGame, name );
+			GameI.FromString( m_pInputScheme, name );
 
 			vector<RString> sDeviceInputStrings;
 			split( value, DEVICE_INPUT_SEPARATOR, sDeviceInputStrings, false );
@@ -582,18 +588,21 @@ void InputMapper::SaveMappingsToDisk()
 	IniFile ini;
 	ini.ReadFile( SpecialFiles::KEYMAPS_PATH );
 	
-	const Game* pGame = GAMESTATE->GetCurrentGame();
-
 	// erase the key so that we overwrite everything for this game
-	ini.DeleteKey( pGame->m_szName );
+	ini.DeleteKey( m_pInputScheme->m_szName );
+
+	XNode *pKey = ini.GetChild( m_pInputScheme->m_szName );
+	if( pKey != NULL )
+		ini.RemoveChild( pKey );
+	pKey = ini.AppendChild( m_pInputScheme->m_szName );
 
 	// iterate over our input map and write all mappings to the ini file
 	FOREACH_GameController( i )
 	{
-		for( int j=0; j<pGame->m_iButtonsPerController; j++ )
+		for( int j=0; j<m_pInputScheme->m_iButtonsPerController; j++ )
 		{
 			GameInput GameI( i, (GameButton)j );
-			RString sNameString = GameI.ToString( pGame );
+			RString sNameString = GameI.ToString( m_pInputScheme );
 			
 			vector<RString> asValues;
 			for( int slot = 0; slot < NUM_USER_GAME_TO_DEVICE_SLOTS; ++slot )	// don't save data from the last (keyboard automap) slot
@@ -604,7 +613,7 @@ void InputMapper::SaveMappingsToDisk()
 			
 			RString sValueString = join( DEVICE_INPUT_SEPARATOR, asValues );
 
-			ini.SetValue( pGame->m_szName, sNameString, sValueString );
+			pKey->AppendAttr( sNameString, sValueString );
 		}
 	}
 
@@ -771,8 +780,7 @@ PlayerNumber InputMapper::ControllerToPlayerNumber( GameController controller )
 
 MenuButton InputMapper::GameToMenu( const GameInput &GameI )
 {
-	const Game* pGame = GAMESTATE->GetCurrentGame();
-	return pGame->GameInputToMenuButton( GameI );
+	return m_pInputScheme->GameInputToMenuButton( GameI );
 }
 
 void InputMapper::MenuToGame( MenuButton MenuI, PlayerNumber pn, GameInput GameIout[4] )
@@ -783,8 +791,7 @@ void InputMapper::MenuToGame( MenuButton MenuI, PlayerNumber pn, GameInput GameI
 			pn = PLAYER_INVALID;
 	}
 
-	const Game* pGame = GAMESTATE->GetCurrentGame();
-	pGame->MenuButtonToGameInputs( MenuI, pn, GameIout );
+	m_pInputScheme->MenuButtonToGameInputs( MenuI, pn, GameIout );
 }
 
 
