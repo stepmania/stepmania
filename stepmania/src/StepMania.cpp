@@ -764,43 +764,35 @@ void StepMania::ChangeCurrentGame( const Game* g )
 	INPUTMAPPER->ReadMappingsFromDisk();
 }
 
-static void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame )
+static void ReadGamePrefsFromDisk()
 {
 	ASSERT( GAMESTATE );
 	ASSERT( ANNOUNCER );
 	ASSERT( THEME );
-	ASSERT( GAMESTATE );
+	ASSERT( GAMEMAN );
 
-	if( bSwitchToLastPlayedGame )
-	{
-		ASSERT( GAMEMAN != NULL );
-		RString sGame = PREFSMAN->GetCurrentGame();
-		if( !sGame.empty() )
-		{
-			const Game *pGame = GAMEMAN->StringToGameType(sGame);
-			GAMESTATE->SetCurGame( pGame );
-		}
-	}
+	const Game *pGame = GAMEMAN->StringToGameType( PREFSMAN->GetCurrentGame() );
 
 	/* If the active game type isn't actually available, revert to the default. */
-	if( GAMESTATE->m_pCurGame == NULL )
+	if( pGame == NULL )
+		pGame = GAMEMAN->GetDefaultGame();
+	
+	if( !GAMEMAN->IsGameEnabled( pGame ) && pGame != GAMEMAN->GetDefaultGame() )
 	{
-		GAMESTATE->SetCurGame( GAMEMAN->GetDefaultGame() );
-	}
-	else if( !GAMEMAN->IsGameEnabled( GAMESTATE->m_pCurGame )  &&  GAMESTATE->m_pCurGame != GAMEMAN->GetDefaultGame() )
-	{
+		pGame = GAMEMAN->GetDefaultGame();
 		LOG->Warn( "Default NoteSkin for \"%s\" missing, reverting to \"%s\"",
-			GAMESTATE->m_pCurGame->m_szName, GAMEMAN->GetDefaultGame()->m_szName );
-		GAMESTATE->SetCurGame( GAMEMAN->GetDefaultGame() );
+			pGame->m_szName, GAMEMAN->GetDefaultGame()->m_szName );
 	}
+
+	/* If the default isn't available, our default note skin is messed up. */
+	if( !GAMEMAN->IsGameEnabled(pGame) )
+		RageException::Throw( "Default NoteSkin for \"%s\" missing", pGame->m_szName );
+
+	GAMESTATE->SetCurGame( pGame );
 
 	/* Load keymaps for the new game. */
 	if( INPUTMAPPER )
 		INPUTMAPPER->ReadMappingsFromDisk();
-
-	/* If the default isn't available, our default note skin is messed up. */
-	if( !GAMEMAN->IsGameEnabled( GAMESTATE->m_pCurGame ) )
-		RageException::Throw( "Default NoteSkin for \"%s\" missing", GAMESTATE->m_pCurGame->m_szName );
 
 	RString sGameName = GAMESTATE->GetCurrentGame()->m_szName;
 	RString sAnnouncer = sGameName;
@@ -1021,7 +1013,7 @@ int main(int argc, char* argv[])
 	NOTESKIN	= new NoteSkinManager;
 
 	/* Set up the theme and announcer, and switch to the last game type. */
-	ReadGamePrefsFromDisk( true );
+	ReadGamePrefsFromDisk();
 
 	{
 		/* Now that THEME is loaded, load the icon for the current theme into the
