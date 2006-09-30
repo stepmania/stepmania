@@ -762,7 +762,10 @@ void StepMania::ChangeCurrentGame( const Game* g )
 
 	/* Load keymaps for the new game. */
 	if( INPUTMAPPER )
+	{
+		INPUTMAPPER->SetInputScheme( &g->m_InputScheme );
 		INPUTMAPPER->ReadMappingsFromDisk();
+	}
 }
 
 static void ReadGamePrefsFromDisk()
@@ -1031,6 +1034,9 @@ int main(int argc, char* argv[])
 	LIGHTSMAN	= new LightsManager;
 	INPUTFILTER	= new InputFilter;
 	INPUTMAPPER	= new InputMapper;
+
+	StepMania::ChangeCurrentGame( GAMESTATE->GetCurrentGame() );
+
 	INPUTQUEUE	= new InputQueue;
 	SONGINDEX	= new SongCacheIndex;
 	BANNERCACHE	= new BannerCache;
