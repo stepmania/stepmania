@@ -57,11 +57,11 @@ void Game::MenuButtonToGameInputs( MenuButton MenuI, PlayerNumber pn, GameInput 
 	{
 	case ONE_PLAYER_ONE_SIDE:
 	case TWO_PLAYERS_TWO_SIDES:
+	case TWO_PLAYERS_SHARED_SIDES:
 		controller[0] = (GameController)pn;
 		iNumSidesUsing = 1;
 		break;
 	case ONE_PLAYER_TWO_SIDES:
-	case TWO_PLAYERS_SHARED_SIDES:
 		controller[0] = GAME_CONTROLLER_1;
 		controller[1] = GAME_CONTROLLER_2;
 		iNumSidesUsing = 2;
