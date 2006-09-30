@@ -50,7 +50,7 @@ void InputMapper::AddDefaultMappingsForCurrentGameIfUnmapped()
 	// Clear default mappings.  Default mappings are in the third slot.
 	FOREACH_GameController( i )
 		FOREACH_GameButton(j)
-			ClearFromInputMap( GameInput((GameController)i,(GameButton)j), 2 );
+			ClearFromInputMap( GameInput(i, j), 2 );
 
 	const Game* pGame = GAMESTATE->GetCurrentGame();
 	FOREACH_GameController( c )
@@ -61,7 +61,7 @@ void InputMapper::AddDefaultMappingsForCurrentGameIfUnmapped()
 			if( key == NO_DEFAULT_KEY )
 				continue;
 			DeviceInput DeviceI( DEVICE_KEYBOARD, key );
-			GameInput GameI( (GameController)c, (GameButton)b );
+			GameInput GameI( c, (GameButton)b );
 			if( !IsMapped(DeviceI) )	// if this key isn't already being used by another user-made mapping
 				SetInputMap( DeviceI, GameI, 2 );   
 		}
