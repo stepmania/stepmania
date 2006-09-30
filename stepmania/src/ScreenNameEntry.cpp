@@ -345,7 +345,7 @@ void ScreenNameEntry::Input( const InputEventPlus &input )
 	if( input.type != IET_FIRST_PRESS )
 		return;		// ignore
 
-	const int iCol = GAMESTATE->m_pCurStyle->GameInputToColumn( input.GameI );
+	const int iCol = GAMESTATE->GetCurrentStyle()->GameInputToColumn( input.GameI );
 	if( iCol != Column_INVALID && m_bStillEnteringName[input.pn] )
 	{
 		int iStringIndex = m_ColToStringIndex[input.pn][iCol];

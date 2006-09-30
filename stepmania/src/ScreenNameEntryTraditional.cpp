@@ -146,7 +146,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional()
 		{
 			ss.vpPlayedSongs.push_back( SONGMAN->GetRandomSong() );
 			ss.vpPossibleSongs = ss.vpPlayedSongs;
-			ss.pStyle = GAMESTATE->m_pCurStyle;
+			ss.pStyle = GAMESTATE->GetCurrentStyle();
 			ss.playMode = GAMESTATE->m_PlayMode;
 			ASSERT( ss.vpPlayedSongs[0]->GetAllSteps().size() );
 			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;

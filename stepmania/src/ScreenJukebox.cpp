@@ -182,7 +182,7 @@ ScreenJukebox::ScreenJukebox()
 void ScreenJukebox::Init()
 {
 	// ScreeJukeboxMenu must set this
-	ASSERT( GAMESTATE->m_pCurStyle );
+	ASSERT( GAMESTATE->GetCurrentStyle() );
 	GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 
 	SetSong();

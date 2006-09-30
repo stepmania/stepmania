@@ -79,7 +79,7 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 {
 	if( m_pm != PlayMode_Invalid && GAMESTATE->m_PlayMode != m_pm )
 		return false;
-	if( m_pStyle && GAMESTATE->m_pCurStyle.Get() != m_pStyle )
+	if( m_pStyle && GAMESTATE->GetCurrentStyle() != m_pStyle )
 		return false;
 	// HACK: don't compare m_dc if m_pSteps is set.  This causes problems 
 	// in ScreenSelectOptionsMaster::ImportOptions if m_PreferredDifficulty 
@@ -255,7 +255,7 @@ void GameCommand::LoadOne( const Command& cmd )
 		if( !m_bInvalid )
 		{
 			Song *pSong = (m_pSong != NULL)? m_pSong:GAMESTATE->m_pCurSong;
-			const Style *pStyle = m_pStyle ? m_pStyle : GAMESTATE->m_pCurStyle;
+			const Style *pStyle = m_pStyle ? m_pStyle : GAMESTATE->GetCurrentStyle();
 			if( pSong == NULL || pStyle == NULL )
 				RageException::Throw( "Must set Song and Style to set Steps." );
 
@@ -290,7 +290,7 @@ void GameCommand::LoadOne( const Command& cmd )
 		if( !m_bInvalid )
 		{
 			Course *pCourse = (m_pCourse != NULL)? m_pCourse:GAMESTATE->m_pCurCourse;
-			const Style *pStyle = m_pStyle ? m_pStyle : GAMESTATE->m_pCurStyle;
+			const Style *pStyle = m_pStyle ? m_pStyle : GAMESTATE->GetCurrentStyle();
 			if( pCourse == NULL || pStyle == NULL )
 				RageException::Throw( "Must set Course and Style to set Steps." );
 
@@ -511,7 +511,7 @@ bool GameCommand::IsPlayable( RString *why ) const
 	if( m_pm != PlayMode_Invalid || m_pStyle != NULL )
 	{
 		const PlayMode pm = (m_pm != PlayMode_Invalid) ? m_pm : GAMESTATE->m_PlayMode;
-		const Style *style = (m_pStyle != NULL)? m_pStyle: GAMESTATE->m_pCurStyle;
+		const Style *style = (m_pStyle != NULL)? m_pStyle: GAMESTATE->GetCurrentStyle();
 		if( !AreStyleAndPlayModeCompatible( style, pm ) )
 		{
 			if( why )

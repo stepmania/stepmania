@@ -572,7 +572,7 @@ float ArrowEffects::GetZoom( const PlayerState* pPlayerState )
 {
 	float fZoom = 1.0f;
 	// FIXME: Move the zoom values into Style
-	if( GAMESTATE->m_pCurStyle->m_bNeedsZoomOutWith2Players &&
+	if( GAMESTATE->GetCurrentStyle()->m_bNeedsZoomOutWith2Players &&
 		(GAMESTATE->GetNumSidesJoined()==2 || GAMESTATE->AnyPlayersAreCpu()) )
 		fZoom *= 0.6f;
 

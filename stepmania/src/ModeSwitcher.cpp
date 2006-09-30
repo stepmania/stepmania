@@ -63,7 +63,7 @@ RString ModeSwitcher::GetStyleName()
 	RString sStyleName;
 	RString sDiff[NUM_PLAYERS];
 
-	sStyleName = GAMESTATE->m_pCurStyle->m_szName;
+	sStyleName = GAMESTATE->GetCurrentStyle()->m_szName;
 	sStyleName.MakeUpper();
 
 	FOREACH_PlayerNumber(i)
@@ -131,7 +131,7 @@ RString ModeSwitcher::GetNextStyleName()
 		{
 			if(GAMESTATE->m_PreferredDifficulty[i] != DIFFICULTY_CHALLENGE)
 			{
-				sStyleName[i] = GAMESTATE->m_pCurStyle->m_szName;
+				sStyleName[i] = GAMESTATE->GetCurrentStyle()->m_szName;
 				sStyleName[i].MakeUpper();
 
 				switch(GAMESTATE->m_PreferredDifficulty[i])
@@ -176,7 +176,7 @@ RString ModeSwitcher::GetNextStyleName()
 			}
 			else
 			{
-				sStyleName[i] = GAMESTATE->m_pCurStyle->m_szName;
+				sStyleName[i] = GAMESTATE->GetCurrentStyle()->m_szName;
 				sStyleName[i].MakeUpper();
 
 				sDiff[i] = "Beginner\n";
@@ -204,7 +204,7 @@ RString ModeSwitcher::GetPrevStyleName()
 		{
 			if(GAMESTATE->m_PreferredDifficulty[i] != DIFFICULTY_BEGINNER)
 			{
-				sStyleName[i] = GAMESTATE->m_pCurStyle->m_szName;
+				sStyleName[i] = GAMESTATE->GetCurrentStyle()->m_szName;
 				sStyleName[i].MakeUpper();
 
 				switch(GAMESTATE->m_PreferredDifficulty[i])
@@ -249,7 +249,7 @@ RString ModeSwitcher::GetPrevStyleName()
 			}
 			else
 			{
-				sStyleName[i] = GAMESTATE->m_pCurStyle->m_szName;
+				sStyleName[i] = GAMESTATE->GetCurrentStyle()->m_szName;
 				sStyleName[i].MakeUpper();
 
 				sDiff[i] = "Challenge\n";
@@ -301,7 +301,7 @@ void ModeSwitcher::ChangeMode(PlayerNumber pn, int dir)
 		ASSERT( !vPossibleStyles.empty() );
 
 		int index = 0;
-		vector<const Style*>::const_iterator iter = find(vPossibleStyles.begin(), vPossibleStyles.end(), GAMESTATE->m_pCurStyle );
+		vector<const Style*>::const_iterator iter = find(vPossibleStyles.begin(), vPossibleStyles.end(), GAMESTATE->GetCurrentStyle() );
 		if( iter != vPossibleStyles.end() )
 		{
 			index = iter - vPossibleStyles.begin();

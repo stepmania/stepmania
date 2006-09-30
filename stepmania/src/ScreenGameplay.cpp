@@ -399,7 +399,7 @@ void ScreenGameplay::Init( bool bUseSongBackgroundAndForeground )
 			PROFILEMAN->IncrementCoursePlayCount( GAMESTATE->m_pCurCourse, GAMESTATE->m_pCurTrail[p], p );
 
 	STATSMAN->m_CurStageStats.playMode = GAMESTATE->m_PlayMode;
-	STATSMAN->m_CurStageStats.pStyle = GAMESTATE->m_pCurStyle;
+	STATSMAN->m_CurStageStats.pStyle = GAMESTATE->GetCurrentStyle();
 
 	/* Record combo rollover. */
 	FOREACH_EnabledPlayerInfoNotDummy( m_vPlayerInfo, pi )
@@ -2110,7 +2110,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 		 * However, if this is also a style button, don't do this. (pump center = start)
 		 */
 		bool bHoldingGiveUp = false;
-		if( GAMESTATE->m_pCurStyle->GameInputToColumn(input.GameI) == Column_INVALID )
+		if( GAMESTATE->GetCurrentStyle()->GameInputToColumn(input.GameI) == Column_INVALID )
 		{
 			bHoldingGiveUp |= ( START_GIVES_UP && input.MenuI == MENU_BUTTON_START );
 			bHoldingGiveUp |= ( BACK_GIVES_UP && input.MenuI == MENU_BUTTON_BACK );
@@ -2169,7 +2169,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 	}
 	
 	bool bRelease = input.type == IET_RELEASE;
-	const int iCol = GAMESTATE->m_pCurStyle->GameInputToColumn( input.GameI );
+	const int iCol = GAMESTATE->GetCurrentStyle()->GameInputToColumn( input.GameI );
 
 	if( GAMESTATE->m_bMultiplayer )
 	{

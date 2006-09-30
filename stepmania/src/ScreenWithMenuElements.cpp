@@ -47,7 +47,7 @@ void ScreenWithMenuElements::Init()
 	SET_XY( m_autoHeader );
 	this->AddChild( m_autoHeader );
 
-	if( STYLE_ICON && GAMESTATE->m_pCurStyle )
+	if( STYLE_ICON && GAMESTATE->GetCurrentStyle() )
 	{
 		m_sprStyleIcon.SetName( "StyleIcon" );
 		m_sprStyleIcon.Load( THEME->GetPathG("MenuElements",RString("icon ")+GAMESTATE->GetCurrentStyle()->m_szName) );
@@ -57,7 +57,7 @@ void ScreenWithMenuElements::Init()
 		this->AddChild( &m_sprStyleIcon );
 	}
 	
-	if( SHOW_STAGE && GAMESTATE->m_pCurStyle )
+	if( SHOW_STAGE && GAMESTATE->GetCurrentStyle() )
 	{
 		m_sprStage.Load( THEME->GetPathG(m_sName,"stage") );
 		m_sprStage->SetName( "Stage" );

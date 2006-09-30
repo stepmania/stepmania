@@ -874,7 +874,7 @@ void ScreenEdit::Update( float fDeltaTime )
 	{
 		for( int t=0; t<GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; t++ )	// for each track
 		{
-			GameInput GameI = GAMESTATE->m_pCurStyle->StyleInputToGameInput( t, PLAYER_1 );
+			GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( t, PLAYER_1 );
 			float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI );
 			fSecsHeld = min( fSecsHeld, m_RemoveNoteButtonLastChanged.Ago() );
 			if( fSecsHeld == 0 )
@@ -922,7 +922,7 @@ void ScreenEdit::Update( float fDeltaTime )
 		bool bButtonIsBeingPressed = false;
 		for( int t=0; t<GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; t++ )	// for each track
 		{
-			GameInput GameI = GAMESTATE->m_pCurStyle->StyleInputToGameInput( t, PLAYER_1 );
+			GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( t, PLAYER_1 );
 			if( INPUTMAPPER->IsBeingPressed(GameI) )
 				bButtonIsBeingPressed = true;
 		}
@@ -1910,7 +1910,7 @@ void ScreenEdit::InputRecord( const InputEventPlus &input, EditButton EditB )
 	if( input.pn != PLAYER_1 )
 		return;		// ignore
 
-	const int iCol = GAMESTATE->m_pCurStyle->GameInputToColumn( input.GameI );
+	const int iCol = GAMESTATE->GetCurrentStyle()->GameInputToColumn( input.GameI );
 
 	switch( input.type )
 	{
@@ -2064,7 +2064,7 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 		return;
 	}
 	
-	const int iCol = GAMESTATE->m_pCurStyle->GameInputToColumn( input.GameI );
+	const int iCol = GAMESTATE->GetCurrentStyle()->GameInputToColumn( input.GameI );
 
 	if( PREFSMAN->m_AutoPlay != PC_HUMAN || iCol == -1 )
 		return;

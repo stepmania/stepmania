@@ -117,7 +117,7 @@ bool BeginnerHelper::CanUse()
 		if( !DoesFileExist(GetAnimPath((Animation)i)) )
 			return false;
 
-	return GAMESTATE->m_pCurStyle->m_bCanUseBeginnerHelper;
+	return GAMESTATE->GetCurrentStyle()->m_bCanUseBeginnerHelper;
 }
 
 bool BeginnerHelper::Initialize( int iDancePadType )

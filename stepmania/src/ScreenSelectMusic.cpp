@@ -99,7 +99,7 @@ void ScreenSelectMusic::Init()
 		m_TexturePreload.Load( Banner::SongBannerTexture(THEME->GetPathG("Banner","mode")) );
 	}
 
-	if( GAMESTATE->m_pCurStyle == NULL )
+	if( GAMESTATE->GetCurrentStyle() == NULL )
 		RageException::Throw( "The Style has not been set.  A theme must set the Style before loading ScreenSelectMusic." );
 
 	if( GAMESTATE->m_PlayMode == PlayMode_Invalid )
