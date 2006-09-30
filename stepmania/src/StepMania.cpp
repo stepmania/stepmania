@@ -794,15 +794,13 @@ static void ReadGamePrefsFromDisk()
 	if( INPUTMAPPER )
 		INPUTMAPPER->ReadMappingsFromDisk();
 
-	RString sGameName = GAMESTATE->GetCurrentGame()->m_szName;
-	RString sAnnouncer = sGameName;
-	RString sTheme = sGameName;
+	RString sAnnouncer = PREFSMAN->m_sAnnouncer;
+	RString sTheme = PREFSMAN->m_sTheme;
 
-	// if these calls fail, the three strings will keep the initial values set above.
-	if( !PREFSMAN->m_sAnnouncer.Get().empty() )
-		sAnnouncer = PREFSMAN->m_sAnnouncer;
-	if( !PREFSMAN->m_sTheme.Get().empty() )
-		sTheme = PREFSMAN->m_sTheme;
+	if( sAnnouncer.empty() )
+		sAnnouncer = GAMESTATE->GetCurrentGame()->m_szName;
+	if( sTheme.empty() )
+		sTheme = GAMESTATE->GetCurrentGame()->m_szName;
 
 	// it's OK to call these functions with names that don't exist.
 	ANNOUNCER->SwitchAnnouncer( sAnnouncer );
