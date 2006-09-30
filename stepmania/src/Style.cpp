@@ -17,7 +17,7 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "Game.h"
-#include "GameState.h"
+#include "InputMapper.h"
 #include "NoteData.h"
 #include <float.h>
 
@@ -47,7 +47,7 @@ GameInput Style::StyleInputToGameInput( int iCol, PlayerNumber pn ) const
 		if( bUsingOneSide && gc != (int) pn )
 			continue;
 
-		for( int i = 0; i < m_pGame->m_iButtonsPerController && m_iInputColumn[gc][i] != END_MAPPING; ++i )
+		for( int i = 0; i < m_pGame->m_InputScheme.m_iButtonsPerController && m_iInputColumn[gc][i] != END_MAPPING; ++i )
 			if( m_iInputColumn[gc][i] == iCol )
 				return GameInput( gc, i );
 	}
@@ -88,9 +88,7 @@ RString Style::ColToButtonName( int iCol ) const
 		return pzColumnName;
 
 	GameInput GI = StyleInputToGameInput( iCol, PLAYER_1 );
-
-	const Game *pGame = GAMESTATE->GetCurrentGame();
-	return pGame->m_szButtonNames[GI.button];
+	return INPUTMAPPER->GetInputScheme()->m_szButtonNames[GI.button];
 }
 
 // Lua bindings
