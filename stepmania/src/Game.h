@@ -51,7 +51,6 @@ public:
 	GameButton ButtonNameToIndex( const RString &sButtonName ) const;
 	MenuButton GameInputToMenuButton( GameInput GameI ) const;
 	void MenuButtonToGameInputs( MenuButton MenuI, PlayerNumber pn, GameInput GameIout[4] ) const;	// looks up current style in GAMESTATE.  Yuck.
-	RString ColToButtonName( int col ) const;	// looks up current style.  Yuck.
 
 	TapNoteScore MapTapNoteScore( TapNoteScore tns ) const;
 	TapNoteScore	m_mapW1To;

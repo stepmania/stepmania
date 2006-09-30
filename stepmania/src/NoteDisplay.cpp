@@ -6,7 +6,7 @@
 #include "RageLog.h"
 #include "RageDisplay.h"
 #include "ActorUtil.h"
-#include "Game.h"
+#include "Style.h"
 #include "PlayerState.h"
 #include "Sprite.h"
 #include "NoteTypes.h"
@@ -259,7 +259,7 @@ void NoteDisplay::Load( int iColNum, const PlayerState* pPlayerState, float fYRe
 	m_pPlayerState = pPlayerState;
 	m_fYReverseOffsetPixels = fYReverseOffsetPixels;
 
-	const RString &sButton = GAMESTATE->GetCurrentGame()->ColToButtonName( iColNum );
+	const RString &sButton = GAMESTATE->GetCurrentStyle()->ColToButtonName( iColNum );
 
 	cache->Load( sButton );
 

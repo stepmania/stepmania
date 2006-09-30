@@ -95,6 +95,18 @@ void Style::GetMinAndMaxColX( PlayerNumber pn, float& fMixXOut, float& fMaxXOut 
 	}
 }
 
+RString Style::ColToButtonName( int iCol ) const
+{
+	const char *pzColumnName = m_ColumnInfo[PLAYER_1][iCol].pzName;
+	if( pzColumnName != NULL )
+		return pzColumnName;
+
+	GameInput GI = StyleInputToGameInput( iCol, PLAYER_1 );
+
+	const Game *pGame = GAMESTATE->GetCurrentGame();
+	return pGame->m_szButtonNames[GI.button];
+}
+
 // Lua bindings
 #include "LuaBinding.h"
 

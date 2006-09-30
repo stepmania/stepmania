@@ -2025,8 +2025,8 @@ void ScreenGameplay::SendCrossedMessages()
 					// Send col-specific crossed
 					if( i == 0 )
 					{
-						const Game* pGame = GAMESTATE->GetCurrentGame();
-						RString sButton = pGame->ColToButtonName( t );
+						const Style *pStyle = GAMESTATE->GetCurrentStyle();
+						RString sButton = pStyle->ColToButtonName( t );
 						RString sMessageName = "NoteCrossed" + sButton;
 						MESSAGEMAN->Broadcast( sMessageName );
 					}

@@ -83,18 +83,6 @@ void Game::MenuButtonToGameInputs( MenuButton MenuI, PlayerNumber pn, GameInput 
 	}
 }
 
-RString Game::ColToButtonName( int iCol ) const
-{
-	const Style *pStyle = GAMESTATE->GetCurrentStyle();
-	const char *pzColumnName = pStyle->m_ColumnInfo[PLAYER_1][iCol].pzName;
-	if( pzColumnName != NULL )
-		return pzColumnName;
-
-	GameInput GI = pStyle->StyleInputToGameInput( iCol, PLAYER_1 );
-
-	return m_szButtonNames[GI.button];
-}
-
 TapNoteScore Game::MapTapNoteScore( TapNoteScore tns ) const
 {
 	switch( tns )

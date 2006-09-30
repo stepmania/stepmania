@@ -55,6 +55,7 @@ public:
 
 	GameInput StyleInputToGameInput( int iCol, PlayerNumber pn ) const;
 	int GameInputToColumn( const GameInput &GameI ) const;
+	RString ColToButtonName( int iCol ) const;
 
 	PlayerNumber ControllerToPlayerNumber( GameController controller ) const;
 
