@@ -78,7 +78,7 @@ void ControllerStateDisplay::Update( float fDelta )
 	{
 		Button &button = m_Buttons[ b ];
 
-		bool bVisible = INPUTMAPPER->IsButtonDown( button.gi, m_mp );
+		bool bVisible = INPUTMAPPER->IsBeingPressed( button.gi, m_mp );
 
 		button.spr->SetVisible( bVisible );
 	}
@@ -88,16 +88,13 @@ void ControllerStateDisplay::Update( float fDelta )
 class LunaControllerStateDisplay: public Luna<ControllerStateDisplay>
 {
 public:
-	LunaControllerStateDisplay() { LUA->Register( Register ); }
-
 	static int LoadGameController( T* p, lua_State *L )	{ p->LoadGameController( (GameController)IArg(1) ); return 0; }
 	static int LoadMultiPlayer( T* p, lua_State *L )	{ p->LoadMultiPlayer( (MultiPlayer)IArg(1) ); return 0; }
 
-	static void Register(lua_State *L) 
+	LunaControllerStateDisplay() 
 	{
 		ADD_METHOD( LoadGameController );
 		ADD_METHOD( LoadMultiPlayer );
-		Luna<T>::Register( L );
 	}
 };
 
