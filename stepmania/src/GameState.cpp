@@ -850,6 +850,10 @@ const Style* GameState::GetCurrentStyle() const
 	return m_pCurStyle;
 }
 
+void GameState::SetCurrentStyle( const Style *pStyle )
+{
+	m_pCurStyle.Set( pStyle );
+}
 
 bool GameState::IsPlayerEnabled( PlayerNumber pn ) const
 {
