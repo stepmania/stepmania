@@ -10,7 +10,7 @@ class LuaBinding
 {
 public:
 	LuaBinding();
-	~LuaBinding();
+	virtual ~LuaBinding();
 	void Register( lua_State *L );
 	
 	static void RegisterTypes( lua_State *L );
