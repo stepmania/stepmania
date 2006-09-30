@@ -1,4 +1,4 @@
-/* GameInput - An input event specific to a Game definied by an instrument and a button space. */
+/* GameInput - An input event specific to an InputScheme defined by a logical controller and button. */
 
 #ifndef GAME_INPUT_H
 #define GAME_INPUT_H
