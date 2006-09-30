@@ -1073,6 +1073,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ControllerStateDisplay.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ControllerStateDisplay.h"
+				>
+			</File>
+			<File
 				RelativePath="Course.cpp"
 				>
 			</File>
