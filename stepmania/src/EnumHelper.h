@@ -129,7 +129,7 @@ namespace LuaHelpers { bool FromStack( lua_State *L, X &Object, int iOffset ); }
 namespace LuaHelpers { void Push( lua_State *L, const X &Object ); }
 
 #define LuaXType(X)	\
-template class EnumTraits<X>; \
+template struct EnumTraits<X>; \
 static void Lua##X(lua_State* L) \
 { \
 	/* Create the EnumToString table: { "UnlockEntry_ArcadePoints", "UnlockEntry_DancePoints" } */ \
