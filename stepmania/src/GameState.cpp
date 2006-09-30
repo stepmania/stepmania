@@ -886,19 +886,6 @@ int	GameState::GetNumPlayersEnabled() const
 	return count;
 }
 
-bool GameState::PlayerUsingBothSides() const
-{
-	ASSERT( GetCurrentStyle() != NULL );
-	switch( GetCurrentStyle()->m_StyleType )
-	{
-	case ONE_PLAYER_TWO_SIDES:
-	case TWO_PLAYERS_SHARED_SIDES:
-		return true;
-	default:
-		return false;
-	}
-}
-
 bool GameState::IsHumanPlayer( PlayerNumber pn ) const
 {
 	if( pn == PLAYER_INVALID )
@@ -1956,7 +1943,6 @@ public:
 	DEFINE_METHOD( GetNumPlayersEnabled,		GetNumPlayersEnabled() )
 	DEFINE_METHOD( GetSongBeat,			m_fSongBeat )
 	DEFINE_METHOD( GetGameplayLeadIn,		m_bGameplayLeadIn )
-	DEFINE_METHOD( PlayerUsingBothSides,		PlayerUsingBothSides() )
 	DEFINE_METHOD( GetCoins,			m_iCoins )
 	DEFINE_METHOD( IsSideJoined,			m_bSideIsJoined[Enum::Check<PlayerNumber>(L, 1)] )
 	DEFINE_METHOD( GetCoinsNeededToJoin,		GetCoinsNeededToJoin() )
@@ -2103,7 +2089,6 @@ public:
 		ADD_METHOD( GetNumPlayersEnabled );
 		ADD_METHOD( GetSongBeat );
 		ADD_METHOD( GetGameplayLeadIn );
-		ADD_METHOD( PlayerUsingBothSides );
 		ADD_METHOD( GetCoins );
 		ADD_METHOD( IsSideJoined );
 		ADD_METHOD( GetCoinsNeededToJoin );

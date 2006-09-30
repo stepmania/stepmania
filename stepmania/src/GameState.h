@@ -89,7 +89,6 @@ public:
 	bool IsMultiPlayerEnabled( MultiPlayer mp ) const;
 	bool IsPlayerEnabled( const PlayerState* pPlayerState ) const;
 	int	GetNumPlayersEnabled() const;
-	bool PlayerUsingBothSides() const;
 
 	bool IsHumanPlayer( PlayerNumber pn ) const;
 	int GetNumHumanPlayers() const;

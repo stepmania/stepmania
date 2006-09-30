@@ -562,7 +562,7 @@ void ScreenGameplay::Init( bool bUseSongBackgroundAndForeground )
 
 #if !defined(WITHOUT_NETWORKING)
 	// Only used in SMLAN/SMOnline:
-	if( NSMAN->useSMserver && !GAMESTATE->PlayerUsingBothSides() )
+	if( NSMAN->useSMserver && GAMESTATE->GetCurrentStyle()->m_StyleType != ONE_PLAYER_TWO_SIDES )
 	{
 		m_bShowScoreboard = PREFSMAN->m_bEnableScoreboard.Get();
 		PlayerNumber pn = GAMESTATE->GetFirstDisabledPlayer();
