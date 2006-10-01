@@ -6,7 +6,6 @@
 #include "StepMania.h"
 #include "PrefsManager.h"
 #include "RageLog.h"
-#include "SongManager.h"
 #include "GameState.h"
 #include "GameManager.h"
 #include "InputMapper.h"
