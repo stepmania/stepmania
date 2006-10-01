@@ -394,8 +394,7 @@ unsigned XNode::Load( const RString &xml, RString &sErrorOut, unsigned iOffset )
 bool XNode::GetAttrXML( RageFileBasic &f, DISP_OPT &opt, const RString &sName, const RString &sValue ) const
 {
 	RString s(sValue);
-	if( opt.reference_value )
-		ReplaceEntityText( s, g_mapCharsToEntities );
+	ReplaceEntityText( s, g_mapCharsToEntities );
 	return f.Write(sName + "='" + s + "' ") != -1;
 }
 
@@ -404,15 +403,12 @@ bool XNode::GetAttrXML( RageFileBasic &f, DISP_OPT &opt, const RString &sName, c
 bool XNode::GetXML( RageFileBasic &f, DISP_OPT &opt ) const
 {
 	// tab
-	if( opt.newline )
-	{
-		if( f.Write("\r\n") == -1 )
-			return false;
-		if( opt.write_tabs )
-			for( int i = 0 ; i < opt.tab_base ; i++)
-				if( f.Write("\t") == -1 )
-					return false;
-	}
+	if( f.Write("\r\n") == -1 )
+		return false;
+	if( opt.write_tabs )
+		for( int i = 0 ; i < opt.tab_base ; i++)
+			if( f.Write("\t") == -1 )
+				return false;
 
 	// <TAG
 	if( f.Write("<" + m_sName) == -1 )
@@ -438,10 +434,8 @@ bool XNode::GetXML( RageFileBasic &f, DISP_OPT &opt ) const
 		if( f.Write(">") == -1 )
 			return false;
 			
-		if( opt.newline && !m_childs.empty() )
-		{
+		if( !m_childs.empty() )
 			opt.tab_base++;
-		}
 
 		FOREACH_CONST_Child( this, p )
 			if( !p->GetXML( f, opt ) )
@@ -450,25 +444,23 @@ bool XNode::GetXML( RageFileBasic &f, DISP_OPT &opt ) const
 		// Text Value
 		if( !m_sValue.empty() )
 		{
-			if( opt.newline && !m_childs.empty() )
+			if( !m_childs.empty() )
 			{
-				if( opt.newline )
-					if( f.Write("\r\n") == -1 )
-						return false;
+				if( f.Write("\r\n") == -1 )
+					return false;
 				if( opt.write_tabs )
 					for( int i = 0 ; i < opt.tab_base ; i++)
 						if( f.Write("\t") == -1 )
 							return false;
 			}
 			RString s( m_sValue );
-			if( opt.reference_value )
-					ReplaceEntityText( s, g_mapCharsToEntities );
+			ReplaceEntityText( s, g_mapCharsToEntities );
 			if( f.Write(s) == -1 )
 				return false;
 		}
 
 		// </TAG> CloseTag
-		if( opt.newline && !m_childs.empty() )
+		if( !m_childs.empty() )
 		{
 			if( f.Write("\r\n") == -1 )
 				return false;
@@ -480,11 +472,8 @@ bool XNode::GetXML( RageFileBasic &f, DISP_OPT &opt ) const
 		if( f.Write("</" + m_sName + ">") == -1 )
 			return false;
 
-		if( opt.newline )
-		{
-			if( !m_childs.empty() )
-				opt.tab_base--;
-		}
+		if( !m_childs.empty() )
+			opt.tab_base--;
 	}
 	return true;
 }

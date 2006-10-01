@@ -38,16 +38,12 @@ typedef multimap<RString,XNode*> XNodes;
 // display optional environment
 struct DISP_OPT
 {
-	bool newline;		// newline when new tag
-	bool reference_value;	// do convert from entity to reference ( < -> &lt; )
 	RString stylesheet;	// empty string = no stylesheet
 	bool write_tabs;	// if false, don't write tab indent characters
 
 	int tab_base;		// internal usage
 	DISP_OPT()
 	{
-		newline = true;
-		reference_value = true;
 		stylesheet = "";
 		write_tabs = true;
 		tab_base = 0;
