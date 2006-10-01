@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+ targetNamespace="http://www.stepmania.com"
+ xmlns="http://www.stepmania.com"
+ elementFormDefault="qualified">
+
+<xs:element name="Lua">
+	<xs:complexType>
+		<xs:all>
+			<xs:element name="Singletons" type="Singletons" />
+			<xs:element name="Classes" type="Classes" />
+			<xs:element name="GlobalFunctions" type="GlobalFunctions" />
+			<xs:element name="Enums" type="Enums" />
+			<xs:element name="Constants" type="Constants" />
+			<xs:element name="Date" type="xs:date" />
+			<xs:element name="Version" type="xs:string" />
+		</xs:all>
+	</xs:complexType>
+</xs:element>
+
+
+<xs:complexType name="Singletons">
+	<xs:sequence>
+		<xs:element name="Singleton" minOccurs="0" maxOccurs="unbounded">
+			<xs:complexType>
+				<xs:attribute name="name" type="xs:string" use="required" />
+				<xs:attribute name="class" type="xs:string" use="required" />
+			</xs:complexType>
+		</xs:element>
+	</xs:sequence>
+</xs:complexType>
+
+
+<xs:complexType name="Classes">
+	<xs:sequence>
+		<xs:element name="Class" minOccurs="0" maxOccurs="unbounded">
+			<xs:complexType>
+				<xs:sequence>
+					<xs:element name="Function" type="Function"
+					 minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="name" type="xs:string" use="required" />
+				<xs:attribute name="base" type="xs:string" use="optional" />
+			</xs:complexType>
+		</xs:element>
+	</xs:sequence>
+</xs:complexType>
+
+
+<xs:complexType name="GlobalFunctions">
+	<xs:sequence>
+		<xs:element name="Function" type="Function"
+		 minOccurs="0" maxOccurs="unbounded" />
+	</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="Function">
+	<xs:attribute name="name" type="xs:string" use="required" />
+</xs:complexType>
+
+<xs:complexType name="Enums">
+	<xs:sequence>
+		<xs:element name="Enum" minOccurs="0" maxOccurs="unbounded">
+			<xs:complexType>
+				<xs:sequence>
+					<xs:element name="EnumValue" type="Constant"
+					 minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:attribute name="name" type="xs:string" use="required" />
+			</xs:complexType>
+		</xs:element>
+	</xs:sequence>
+</xs:complexType>
+
+
+<xs:complexType name="Constants">
+	<xs:sequence>
+		<xs:element name="Constant" type="Constant"
+		 minOccurs="0" maxOccurs="unbounded" />
+	</xs:sequence>
+</xs:complexType>
+
+
+<xs:complexType name="Constant">
+	<xs:attribute name="name" type="xs:string" use="required" />
+	<xs:attribute name="value" type="xs:string" use="required" />
+</xs:complexType>
+</xs:schema>

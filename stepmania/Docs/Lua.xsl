@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <xsl:stylesheet version="1.0"
-xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+ xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+ xmlns:sm="http://www.stepmania.com">
 
 <xsl:template match="/">
 	<html>
@@ -56,7 +57,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 </xsl:template>
 
 
-<xsl:template match="Lua">
+<xsl:template match="sm:Lua">
 	<div>
 		<h2>StepMania LUA Information</h2>
 		<table>
@@ -69,25 +70,25 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 			</tr>
 		</table>
 	</div>
-	<xsl:apply-templates select="Singletons" />
-	<xsl:apply-templates select="Classes" />
-	<xsl:apply-templates select="GlobalFunctions" />
-	<xsl:apply-templates select="Enums" />
-	<xsl:apply-templates select="Constants" />
+	<xsl:apply-templates select="sm:Singletons" />
+	<xsl:apply-templates select="sm:Classes" />
+	<xsl:apply-templates select="sm:GlobalFunctions" />
+	<xsl:apply-templates select="sm:Enums" />
+	<xsl:apply-templates select="sm:Constants" />
 	<hr />
 	<p class="footer">
-		Generated for <xsl:value-of select="Version" /> on
-		<xsl:value-of select="Date" />.
+		Generated for <xsl:value-of select="sm:Version" /> on
+		<xsl:value-of select="sm:Date" />.
 	</p>
 </xsl:template>
 
 
-<xsl:template match="Singletons">
+<xsl:template match="sm:Singletons">
 	<div>
 		<a name="Singletons" />
 		<h3>Singletons</h3>
 		<ul>
-			<xsl:for-each select="Singleton">
+			<xsl:for-each select="sm:Singleton">
 				<xsl:sort select="@name" />
 				<li>
 					<a>
@@ -101,18 +102,18 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 </xsl:template>
 
 
-<xsl:template match="Classes">
+<xsl:template match="sm:Classes">
 	<div>
 		<a name="Classes" />
 		<h3>Classes</h3>
-		<xsl:apply-templates select="Class">
+		<xsl:apply-templates select="sm:Class">
 			<xsl:sort select="@name" />
 		</xsl:apply-templates>
 	</div>
 </xsl:template>
 
 
-<xsl:template match="Class">
+<xsl:template match="sm:Class">
 	<div>
 		<a>
 			<xsl:attribute name="name"><xsl:value-of select="@name" /></xsl:attribute>
@@ -133,7 +134,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 		</xsl:if>
 		<ul style="display: none">
 			<xsl:attribute name="id">list_<xsl:value-of select="@name" /></xsl:attribute>
-			<xsl:apply-templates select="Function">
+			<xsl:apply-templates select="sm:Function">
 				<xsl:sort select="@name" />
 			</xsl:apply-templates>
 		</ul>
@@ -141,34 +142,34 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 </xsl:template>
 
 
-<xsl:template match="GlobalFunctions">
+<xsl:template match="sm:GlobalFunctions">
 	<div>
 		<a name="GlobalFunctions" />
 		<h3>Global Functions</h3>
 		<ul>
-			<xsl:apply-templates select="Function">
+			<xsl:apply-templates select="sm:Function">
 				<xsl:sort select="@name" />
 			</xsl:apply-templates>
 		</ul>
 	</div>
 </xsl:template>
 
-<xsl:template match="Function">
+<xsl:template match="sm:Function">
 	<li><xsl:value-of select="@name" /></li>
 </xsl:template>
 
-<xsl:template match="Enums">
+<xsl:template match="sm:Enums">
 	<div>
 		<a name="Enums" />
 		<h3>Enums</h3>
-		<xsl:apply-templates select="Enum">
+		<xsl:apply-templates select="sm:Enum">
 			<xsl:sort select="@name" />
 		</xsl:apply-templates>
 	</div>
 </xsl:template>
 
 
-<xsl:template match="Enum">
+<xsl:template match="sm:Enum">
 	<div>
 		<a class="trigger">
 		<xsl:attribute name="onClick">Toggle('<xsl:value-of select="@name" />')</xsl:attribute>
@@ -182,7 +183,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 				<th>Enum</th>
 				<th>Value</th>
 			</tr>
-			<xsl:for-each select="EnumValue">
+			<xsl:for-each select="sm:EnumValue">
 				<xsl:sort data-type="number" select="@value" />
 				<tr>
 					<td><xsl:value-of select="@name" /></td>
@@ -195,7 +196,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 </xsl:template>
 
 
-<xsl:template match="Constants">
+<xsl:template match="sm:Constants">
 	<div>
 		<a name="Constants" />
 		<h3>Constants</h3>
@@ -204,7 +205,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 				<th>Constant</th>
 				<th>Value</th>
 			</tr>
-			<xsl:for-each select="Constant">
+			<xsl:for-each select="sm:Constant">
 				<xsl:sort select="@name" />
 				<tr>
 					<td><xsl:value-of select="@name" /></td>
