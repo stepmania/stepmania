@@ -75,8 +75,7 @@ bool IsNoteOfType( int row, NoteType t )
 
 XNode* TapNoteResult::CreateNode() const
 {
-	XNode *p = new XNode;
-	p->m_sName = "TapNoteResult";
+	XNode *p = new XNode( "TapNoteResult" );
 
 	p->AppendAttr( "TapNoteScore", TapNoteScoreToString(tns) );
 	p->AppendAttr( "TapNoteOffset", fTapNoteOffset );
@@ -91,10 +90,8 @@ void TapNoteResult::LoadFromNode( const XNode* pNode )
 
 XNode* HoldNoteResult::CreateNode() const
 {
-	XNode *p = new XNode;
-	p->m_sName = "HoldNoteResult";
-
-	return p;
+	// XXX: Should this do anything?
+	return new XNode( "HoldNoteResult" );
 }
 
 void HoldNoteResult::LoadFromNode( const XNode* pNode )
@@ -104,8 +101,7 @@ void HoldNoteResult::LoadFromNode( const XNode* pNode )
 
 XNode* TapNote::CreateNode() const
 {
-	XNode *p = new XNode;
-	p->m_sName = "TapNote";
+	XNode *p = new XNode( "TapNote" );
 
 	p->AppendChild( result.CreateNode() );
 	p->AppendChild( HoldResult.CreateNode() );

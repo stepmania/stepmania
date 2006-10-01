@@ -877,7 +877,7 @@ bool NoteData::GetPrevTapNoteRowForAllTracks( int &rowInOut ) const
 
 XNode* NoteData::CreateNode() const
 {
-	XNode *p = new XNode;
+	XNode *p = new XNode( "NoteData" );
 	p->m_sName = "NoteData";
 	
 	all_tracks_const_iterator iter = GetTapNoteRangeAllTracks( 0, GetLastRow() );

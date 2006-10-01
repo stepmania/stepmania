@@ -916,9 +916,8 @@ bool Profile::SaveAllToDir( RString sDir, bool bSignData ) const
 
 XNode *Profile::SaveStatsXmlCreateNode() const
 {
-	XNode *xml = new XNode;
+	XNode *xml = new XNode( "Stats" );
 
-	xml->m_sName = "Stats";
 	xml->AppendChild( SaveGeneralDataCreateNode() );
 	xml->AppendChild( SaveSongScoresCreateNode() );
 	xml->AppendChild( SaveCourseScoresCreateNode() );
@@ -977,8 +976,7 @@ void Profile::SaveEditableDataToDir( RString sDir ) const
 
 XNode* Profile::SaveGeneralDataCreateNode() const
 {
-	XNode* pGeneralDataNode = new XNode;
-	pGeneralDataNode->m_sName = "GeneralData";
+	XNode* pGeneralDataNode = new XNode( "GeneralData" );
 
 	// TRICKY: These are write-only elements that are normally never read again.
 	// This data is required by other apps (like internet ranking), but is 
@@ -1285,8 +1283,7 @@ XNode* Profile::SaveSongScoresCreateNode() const
 	const Profile* pProfile = this;
 	ASSERT( pProfile );
 
-	XNode* pNode = new XNode;
-	pNode->m_sName = "SongScores";
+	XNode* pNode = new XNode( "SongScores" );
 
 	FOREACHM_CONST( SongID, HighScoresForASong, m_SongHighScores, i )
 	{	
@@ -1367,9 +1364,7 @@ XNode* Profile::SaveCourseScoresCreateNode() const
 	const Profile* pProfile = this;
 	ASSERT( pProfile );
 
-	XNode* pNode = new XNode;
-	pNode->m_sName = "CourseScores";
-
+	XNode* pNode = new XNode( "CourseScores" );
 	
 	FOREACHM_CONST( CourseID, HighScoresForACourse, m_CourseHighScores, i )
 	{
@@ -1477,8 +1472,7 @@ XNode* Profile::SaveCategoryScoresCreateNode() const
 	const Profile* pProfile = this;
 	ASSERT( pProfile );
 
-	XNode* pNode = new XNode;
-	pNode->m_sName = "CategoryScores";
+	XNode* pNode = new XNode( "CategoryScores" );
 
 	FOREACH_StepsType( st )
 	{
@@ -1591,8 +1585,7 @@ XNode* Profile::SaveScreenshotDataCreateNode() const
 	const Profile* pProfile = this;
 	ASSERT( pProfile );
 
-	XNode* pNode = new XNode;
-	pNode->m_sName = "ScreenshotData";
+	XNode* pNode = new XNode( "ScreenshotData" );
 
 	FOREACH_CONST( Screenshot, m_vScreenshots, ss )
 	{
@@ -1634,8 +1627,7 @@ XNode* Profile::SaveCalorieDataCreateNode() const
 	const Profile* pProfile = this;
 	ASSERT( pProfile );
 
-	XNode* pNode = new XNode;
-	pNode->m_sName = "CalorieData";
+	XNode* pNode = new XNode( "CalorieData" );
 
 	FOREACHM_CONST( DateTime, Calories, m_mapDayToCaloriesBurned, i )
 	{
@@ -1659,8 +1651,7 @@ float Profile::GetCaloriesBurnedForDay( DateTime day ) const
 
 XNode* Profile::HighScoreForASongAndSteps::CreateNode() const
 {
-	XNode* pNode = new XNode;
-	pNode->m_sName = "HighScoreForASongAndSteps";
+	XNode* pNode = new XNode( "HighScoreForASongAndSteps" );
 
 	pNode->AppendChild( songID.CreateNode() );
 	pNode->AppendChild( stepsID.CreateNode() );
@@ -1711,8 +1702,7 @@ XNode* Profile::SaveRecentSongScoresCreateNode() const
 	const Profile* pProfile = this;
 	ASSERT( pProfile );
 
-	XNode* pNode = new XNode;
-	pNode->m_sName = "RecentSongScores";
+	XNode* pNode = new XNode( "RecentSongScores" );
 
 	FOREACHD_CONST( HighScoreForASongAndSteps, m_vRecentStepsScores, i )
 		pNode->AppendChild( i->CreateNode() );
@@ -1741,8 +1731,7 @@ void Profile::AddStepsRecentScore( const Song* pSong, const Steps* pSteps, HighS
 
 XNode* Profile::HighScoreForACourseAndTrail::CreateNode() const
 {
-	XNode* pNode = new XNode;
-	pNode->m_sName = "HighScoreForACourseAndTrail";
+	XNode* pNode = new XNode( "HighScoresForACourseAndTrail" );
 
 	pNode->AppendChild( courseID.CreateNode() );
 	pNode->AppendChild( trailID.CreateNode() );
@@ -1793,8 +1782,7 @@ XNode* Profile::SaveRecentCourseScoresCreateNode() const
 	const Profile* pProfile = this;
 	ASSERT( pProfile );
 
-	XNode* pNode = new XNode;
-	pNode->m_sName = "RecentCourseScores";
+	XNode* pNode = new XNode( "RecentCourseScores" );
 
 	FOREACHD_CONST( HighScoreForACourseAndTrail, m_vRecentCourseScores, i )
 		pNode->AppendChild( i->CreateNode() );
@@ -1856,8 +1844,7 @@ XNode* Profile::SaveCoinDataCreateNode() const
 	const Profile* pProfile = this;
 	ASSERT( pProfile );
 
-	XNode* pNode = new XNode;
-	pNode->m_sName = "CoinData";
+	XNode* pNode = new XNode( "CoinData" );
 
 	{
 		int coins[NUM_LAST_DAYS];

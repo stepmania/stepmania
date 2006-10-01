@@ -240,8 +240,7 @@ namespace
 
 XNode *LuaManager::GetLuaInformation() const
 {
-	XNode *pLuaNode = new XNode;
-	pLuaNode->m_sName = "Lua";
+	XNode *pLuaNode = new XNode( "Lua" );
 
 	XNode *pGlobalsNode = pLuaNode->AppendChild( "GlobalFunctions" );
 	XNode *pClassesNode = pLuaNode->AppendChild( "Classes" );

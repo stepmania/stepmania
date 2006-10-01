@@ -376,8 +376,7 @@ Course *CourseID::ToCourse() const
 
 XNode* CourseID::CreateNode() const
 {
-	XNode* pNode = new XNode;
-	pNode->m_sName = "Course";
+	XNode* pNode = new XNode( "Course" );;
 
 	if( !sPath.empty() )
 		pNode->AppendAttr( "Path", sPath );

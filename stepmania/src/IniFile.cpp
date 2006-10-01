@@ -5,9 +5,8 @@
 #include "RageFile.h"
 #include "Foreach.h"
 
-IniFile::IniFile()
+IniFile::IniFile(): XNode("IniFile")
 {
-	m_sName = "IniFile";
 }
 
 bool IniFile::ReadFile( const RString &sPath )

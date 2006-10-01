@@ -27,8 +27,7 @@ void RadarValues::Zero()
 
 XNode* RadarValues::CreateNode() const
 {
-	XNode* pNode = new XNode;
-	pNode->m_sName = "RadarValues";
+	XNode* pNode = new XNode( "RadarValues" );
 
 	// TRICKY: Don't print a remainder for the integer values.
 	FOREACH_RadarCategory( rc )

@@ -93,8 +93,7 @@ void Bookkeeper::LoadFromNode( const XNode *pNode )
 
 XNode* Bookkeeper::CreateNode() const
 {
-	XNode *xml = new XNode;
-	xml->m_sName = "Bookkeeping";
+	XNode *xml = new XNode( "Bookkeeping" );
 
 	{
 		XNode* pData = xml->AppendChild("Data");

@@ -31,8 +31,7 @@ const Style *StyleID::ToStyle() const
 
 XNode* StyleID::CreateNode() const
 {
-	XNode* pNode = new XNode;
-	pNode->m_sName = "Style";
+	XNode* pNode = new XNode( "Style" );
 
 	pNode->AppendAttr( "Game", sGame );
 	pNode->AppendAttr( "Style", sStyle );

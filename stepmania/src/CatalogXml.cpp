@@ -49,8 +49,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 
 	LOG->Trace( "Writing %s ...", fn.c_str() );
 
-	XNode xml;
-	xml.m_sName = "Catalog";
+	XNode xml( "Catalog" );
 
 	const vector<StepsType> &vStepsTypesToShow = CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue();
 	

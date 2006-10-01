@@ -260,8 +260,7 @@ Steps *StepsID::ToSteps( const Song *p, bool bAllowNull, bool bUseCache ) const
 
 XNode* StepsID::CreateNode() const
 {
-	XNode* pNode = new XNode;
-	pNode->m_sName = "Steps";
+	XNode* pNode = new XNode( "Steps" );
 
 	pNode->AppendAttr( "StepsType", GameManager::StepsTypeToString(st) );
 	pNode->AppendAttr( "Difficulty", DifficultyToString(dc) );

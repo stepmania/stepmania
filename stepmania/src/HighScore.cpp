@@ -79,8 +79,7 @@ HighScoreImpl::HighScoreImpl()
 
 XNode *HighScoreImpl::CreateNode() const
 {
-	XNode *pNode = new XNode;
-	pNode->m_sName = "HighScore";
+	XNode *pNode = new XNode( "HighScore" );
 
 	// TRICKY:  Don't write "name to fill in" markers.
 	pNode->AppendChild( "Name", IsRankingToFillIn(sName) ? RString("") : sName );
@@ -284,8 +283,7 @@ const HighScore& HighScoreList::GetTopScore() const
 
 XNode* HighScoreList::CreateNode() const
 {
-	XNode* pNode = new XNode;
-	pNode->m_sName = "HighScoreList";
+	XNode* pNode = new XNode( "HighScoreList" );
 
 	pNode->AppendChild( "NumTimesPlayed", iNumTimesPlayed );
 	pNode->AppendChild( "LastPlayed", dtLastPlayed );
@@ -352,12 +350,11 @@ void HighScoreList::ClampSize( bool bIsMachine )
 
 XNode* Screenshot::CreateNode() const
 {
-	XNode* pNode = new XNode;
-	pNode->m_sName = "Screenshot";
+	XNode* pNode = new XNode( "Screenshot" );
 
 	// TRICKY:  Don't write "name to fill in" markers.
-	pNode->AppendChild( "FileName",		sFileName );
-	pNode->AppendChild( "MD5",			sMD5 );
+	pNode->AppendChild( "FileName",	sFileName );
+	pNode->AppendChild( "MD5",	sMD5 );
 	pNode->AppendChild( highScore.CreateNode() );
 
 	return pNode;

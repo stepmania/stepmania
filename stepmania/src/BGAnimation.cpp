@@ -110,8 +110,7 @@ void BGAnimation::LoadFromAniDir( const RString &_sAniDir )
 		AddLayersFromAniDir( sAniDir, &ini );	// TODO: Check for circular load
 
 		XNode* pBGAnimation = ini.GetChild( "BGAnimation" );
-		XNode dummy;
-		dummy.m_sName = "BGAnimation";
+		XNode dummy( "BGAnimation" );
 		if( pBGAnimation == NULL )
 			pBGAnimation = &dummy;
 
