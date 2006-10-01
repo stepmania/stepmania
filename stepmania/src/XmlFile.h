@@ -1,7 +1,7 @@
 /* XmlFile - Simple XML reading and writing. */
 
-#ifndef XmlFile_H
-#define XmlFile_H
+#ifndef XML_FILE_H
+#define XML_FILE_H
 
 #include <map>
 struct DateTime;
@@ -22,17 +22,15 @@ typedef multimap<RString,XNode*> XNodes;
 		++Var )
 
 #define FOREACH_Child( pNode, Var ) \
-	XNodes::iterator Var##Iter; \
 	XNode *Var = NULL; \
-	for( Var##Iter = (pNode)->m_childs.begin(); \
+	for( XNodes::iterator Var##Iter = (pNode)->m_childs.begin(); \
 		Var = (Var##Iter != (pNode)->m_childs.end())? Var##Iter->second:NULL, \
 		Var##Iter != (pNode)->m_childs.end(); \
 		++Var##Iter )
 
 #define FOREACH_CONST_Child( pNode, Var ) \
-	XNodes::const_iterator Var##Iter; \
 	const XNode *Var = NULL; \
-	for( Var##Iter = (pNode)->m_childs.begin(); \
+	for( XNodes::const_iterator Var##Iter = (pNode)->m_childs.begin(); \
 		Var = (Var##Iter != (pNode)->m_childs.end())? Var##Iter->second:NULL, \
 		Var##Iter != (pNode)->m_childs.end(); \
 		++Var##Iter )
@@ -50,13 +48,13 @@ enum PCODE
 // Parse info.
 struct PARSEINFO
 {
-	bool		trim_value;			// [set] do trim when parse?
+	bool		trim_value;		// [set] do trim when parse?
 	bool		entity_value;		// [set] do convert from reference to entity? ( &lt; -> < )
 
-	char*		xml;				// [get] xml source
+	char*		xml;			// [get] xml source
 	bool		error_occur;		// [get] is occurance of error?
 	const char*	error_pointer;		// [get] error position of xml source
-	PCODE		error_code;			// [get] error code
+	PCODE		error_code;		// [get] error code
 	RString		error_string;		// [get] error string
 
 	PARSEINFO() { trim_value = true; entity_value = true; xml = NULL; error_occur = false; error_pointer = NULL; error_code = PIE_PARSE_WELL_FORMED; }
@@ -65,12 +63,12 @@ struct PARSEINFO
 // display optional environment
 struct DISP_OPT
 {
-	bool newline;			// newline when new tag
+	bool newline;		// newline when new tag
 	bool reference_value;	// do convert from entity to reference ( < -> &lt; )
-	RString stylesheet;		// empty string = no stylesheet
-	bool write_tabs;		// if false, don't write tab indent characters
+	RString stylesheet;	// empty string = no stylesheet
+	bool write_tabs;	// if false, don't write tab indent characters
 
-	int tab_base;			// internal usage
+	int tab_base;		// internal usage
 	DISP_OPT()
 	{
 		newline = true;
@@ -87,8 +85,8 @@ class XNode
 public:
 	RString m_sName;	// a duplicate of the m_sName in the parent's map
 	RString	m_sValue;
-	XNodes	m_childs;		// child node
-	XAttrs	m_attrs;		// attributes
+	XNodes	m_childs;	// child node
+	XAttrs	m_attrs;	// attributes
 
 	void GetValue( RString &out ) const;
 	void GetValue( int &out ) const;
