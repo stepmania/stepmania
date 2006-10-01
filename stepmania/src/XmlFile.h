@@ -38,10 +38,7 @@ typedef multimap<RString,XNode*> XNodes;
 // Parse info.
 struct PARSEINFO
 {
-	bool		error_occur;		// [get] is occurance of error?
 	RString		error_string;		// [get] error string
-
-	PARSEINFO() { error_occur = false; }
 };
 
 // display optional environment

@@ -11,19 +11,12 @@ bool XmlFileUtil::LoadFromFileShowErrors( XNode &xml, RageFileBasic &f )
 	PARSEINFO pi;
 	RString s;
 	if( f.Read( s ) == -1 )
-	{
-		pi.error_occur = true;
 		pi.error_string = f.GetError();
-		
-		goto error;
-	}
+	else
+		xml.Load( s, &pi );
+	if( pi.error_string.empty() )
+		return true;
 
-	xml.Load( s, &pi );
-	if( pi.error_occur )
-		goto error;
-	return true;
-
-error:
 	RString sWarning = ssprintf( "XML: LoadFromFile failed: %s", pi.error_string.c_str() );
 	LOG->Warn( sWarning );
 	Dialog::OK( sWarning, "XML_PARSE_ERROR" );

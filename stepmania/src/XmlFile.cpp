@@ -137,11 +137,8 @@ unsigned XNode::LoadAttributes( const RString &xml, PARSEINFO *pi, unsigned iOff
 		if( iEnd == xml.npos ) 
 		{
 			// error
-			if( !pi->error_occur ) 
-			{
-				pi->error_occur = true;
+			if( pi->error_string.empty() ) 
 				pi->error_string = ssprintf( "<%s> attribute has error ", m_sName.c_str() );
-			}
 			return string::npos;
 		}
 		
@@ -184,11 +181,8 @@ unsigned XNode::LoadAttributes( const RString &xml, PARSEINFO *pi, unsigned iOff
 			if( iEnd == xml.npos ) 
 			{
 				// error
-				if( !pi->error_occur ) 
-				{
-					pi->error_occur = true;
+				if( pi->error_string.empty() ) 
 					pi->error_string = ssprintf( "<%s> attribute text: couldn't find matching quote", sName.c_str() );
-				}
 				return string::npos;
 			}
 
@@ -237,11 +231,8 @@ unsigned XNode::Load( const RString &xml, PARSEINFO *pi, unsigned iOffset )
 		unsigned iEnd = xml.find( "-->", iOffset );
 		if( iEnd == string::npos )
 		{
-			if( !pi->error_occur ) 
-			{
-				pi->error_occur = true;
+			if( pi->error_string.empty() ) 
 				pi->error_string = "Unterminated comment";
-			}
 
 			return string::npos;
 		}
@@ -277,11 +268,8 @@ unsigned XNode::Load( const RString &xml, PARSEINFO *pi, unsigned iOffset )
 		if( iOffset == xml.size() || xml[iOffset] != chXMLTagClose )
 		{
 			// error: <TAG ... / >
-			if( !pi->error_occur ) 
-			{
-				pi->error_occur = true;
+			if( pi->error_string.empty() ) 
 				pi->error_string = "Element must be closed.";
-			}
 
 			// ill-formed tag
 			return string::npos;
@@ -308,11 +296,8 @@ unsigned XNode::Load( const RString &xml, PARSEINFO *pi, unsigned iOffset )
 		unsigned iEnd = xml.find( chXMLTagOpen, iOffset );
 		if( iEnd == string::npos )
 		{
-			if( !pi->error_occur ) 
-			{
-				pi->error_occur = true;
+			if( pi->error_string.empty() ) 
 				pi->error_string = ssprintf( "%s must be closed with </%s>", m_sName.c_str(), m_sName.c_str() );
-			}
 			// error cos not exist CloseTag </TAG>
 			return string::npos;
 		}
@@ -355,11 +340,8 @@ unsigned XNode::Load( const RString &xml, PARSEINFO *pi, unsigned iOffset )
 			unsigned iEnd = xml.find_first_of( " >", iOffset );
 			if( iEnd == string::npos )
 			{
-				if( !pi->error_occur ) 
-				{
-					pi->error_occur = true;
+				if( pi->error_string.empty() ) 
 					pi->error_string = ssprintf( "it must be closed with </%s>", m_sName.c_str() );
-				}
 				// error
 				return string::npos;
 			}
@@ -376,11 +358,8 @@ unsigned XNode::Load( const RString &xml, PARSEINFO *pi, unsigned iOffset )
 			else
 			{
 				// not welformed open/close
-				if( !pi->error_occur ) 
-				{
-					pi->error_occur = true;
+				if( pi->error_string.empty() ) 
 					pi->error_string = ssprintf( "'<%s> ... </%s>' is not well-formed.", m_sName.c_str(), closename.c_str() );
-				}
 				return string::npos;
 			}
 		}
@@ -393,11 +372,8 @@ unsigned XNode::Load( const RString &xml, PARSEINFO *pi, unsigned iOffset )
 				if( iEnd == string::npos ) 
 				{
 					// error cos not exist CloseTag </TAG>
-					if( !pi->error_occur )  
-					{
-						pi->error_occur = true;
+					if( pi->error_string.empty() )  
 						pi->error_string = ssprintf( "it must be closed with </%s>", m_sName.c_str() );
-					}
 					return string::npos;
 				}
 				
