@@ -605,6 +605,7 @@ bool XNode::SaveToFile( RageFileBasic &f, const RString &sStylesheet, bool bWrit
 	int iTabBase = 0;
 	if( !this->GetXMLInternal(f, bWriteTabs, iTabBase) )
 		return false;
+	f.PutLine( "" );
 	if( f.Flush() == -1 )
 		return false;
 	return true;
