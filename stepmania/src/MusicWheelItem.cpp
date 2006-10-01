@@ -29,7 +29,6 @@ WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, RString sSectionNa
 	m_pCourse = pCourse;
 }
 
-
 MusicWheelItem::MusicWheelItem( RString sType ):
 	WheelItemBase( sType )
 {
@@ -254,7 +253,7 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pWIBD )
 			m_sprSectionBar.SetHidden( false );
 		break;
 	case TYPE_SORT:
-		if( pWID->m_Action.m_pm != PlayMode_Invalid )
+		if( pWID->m_pAction->m_pm != PlayMode_Invalid )
 			m_sprModeBar.SetHidden( false );
 		else
 			m_sprSortBar.SetHidden( false );

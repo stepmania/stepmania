@@ -56,7 +56,7 @@ struct WheelItemData : public WheelItemBaseData
 
 	// for TYPE_SORT
 	RString			m_sLabel;
-	GameCommand		m_Action;
+	HiddenPtr<GameCommand>	m_pAction;
 };
 
 #endif

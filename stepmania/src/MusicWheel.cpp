@@ -123,9 +123,10 @@ void MusicWheel::Load( RString sType )
 		const vector<WheelItemData *> &from = m_WheelItemDatas[SORT_MODE_MENU];
 		for( unsigned i=0; i<from.size(); i++ )
 		{
-			if( from[i]->m_Action.DescribesCurrentModeForAllPlayers() )
+			ASSERT( &*from[i]->m_pAction );
+			if( from[i]->m_pAction->DescribesCurrentModeForAllPlayers() )
 			{
-				m_sLastModeMenuItem = from[i]->m_Action.m_sName;
+				m_sLastModeMenuItem = from[i]->m_pAction->m_sName;
 				break;
 			}
 		}
@@ -285,11 +286,12 @@ bool MusicWheel::SelectCourse( const Course *p )
 bool MusicWheel::SelectModeMenuItem()
 {
 	/* Select the last-chosen option. */
+	ASSERT( GAMESTATE->m_SortOrder == SORT_MODE_MENU );
 	const vector<WheelItemData *> &from = m_WheelItemDatas[GAMESTATE->m_SortOrder];
 	unsigned i;
 	for( i=0; i<from.size(); i++ )
 	{
-		const GameCommand &gc = from[i]->m_Action;
+		const GameCommand &gc = *from[i]->m_pAction;
 		if( gc.m_sName == m_sLastModeMenuItem )
 			break;
 	}
@@ -301,7 +303,7 @@ bool MusicWheel::SelectModeMenuItem()
 
 	for( i=0; i<m_CurWheelItemData.size(); i++ )
 	{
-		if( GetCurWheelItemData(i)->m_Action.m_sName != m_sLastModeMenuItem )
+		if( GetCurWheelItemData(i)->m_pAction->m_sName != m_sLastModeMenuItem )
 			continue;
 		m_iSelection = i;		// select it
 		break;
@@ -391,11 +393,12 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData *> &arrayWheelItemDat
 				}
 
 				WheelItemData wid( TYPE_SORT, NULL, "", NULL, SORT_MENU_COLOR );
-				wid.m_Action.m_sName = vsNames[i];
-				wid.m_Action.Load( i, ParseCommands(CHOICE.GetValue(vsNames[i])) );
+				wid.m_pAction = HiddenPtr<GameCommand>( new GameCommand );
+				wid.m_pAction->m_sName = vsNames[i];
+				wid.m_pAction->Load( i, ParseCommands(CHOICE.GetValue(vsNames[i])) );
 				wid.m_sLabel = WHEEL_TEXT(vsNames[i]);
 
-				if( !wid.m_Action.IsPlayable() )
+				if( !wid.m_pAction->IsPlayable() )
 					continue;
 
 				arrayWheelItemDatas.push_back( new WheelItemData(wid) );
@@ -924,10 +927,10 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 	case TYPE_SORT:
 		LOG->Trace("New sort order selected: %s - %s", 
 			GetCurWheelItemData(m_iSelection)->m_sLabel.c_str(), 
-			SortOrderToString(GetCurWheelItemData(m_iSelection)->m_Action.m_SortOrder).c_str() );
-		GetCurWheelItemData(m_iSelection)->m_Action.ApplyToAllPlayers();
+			SortOrderToString(GetCurWheelItemData(m_iSelection)->m_pAction->m_SortOrder).c_str() );
+		GetCurWheelItemData(m_iSelection)->m_pAction->ApplyToAllPlayers();
 		ChangeSort( GAMESTATE->m_PreferredSortOrder );
-		m_sLastModeMenuItem = GetCurWheelItemData(m_iSelection)->m_Action.m_sName;
+		m_sLastModeMenuItem = GetCurWheelItemData(m_iSelection)->m_pAction->m_sName;
 		break;
 	default:
 		break;
