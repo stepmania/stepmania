@@ -57,7 +57,7 @@ void ExportStrings::LuaInformation()
 	XNode *pDateNode = pNode->AppendChild( "Date" );
 	pDateNode->m_sValue = DateTime::GetNowDate().GetString();
 
-	pNode->SaveToFile( "Lua.xml", XMLDisplayOptions( "Lua.xsl") );
+	pNode->SaveToFile( "Lua.xml", "Lua.xsl" );
 
 	delete pNode;
 }

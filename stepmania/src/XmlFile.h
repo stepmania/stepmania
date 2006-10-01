@@ -35,19 +35,6 @@ typedef multimap<RString,XNode*> XNodes;
 		Var##Iter != (pNode)->m_childs.end(); \
 		++Var##Iter )
 
-// display optional environment
-struct XMLDisplayOptions
-{
-	XMLDisplayOptions( const RString &sStylesheet = "", bool bWriteTabs = true )
-	{
-		m_sStylesheet = sStylesheet;
-		m_bWriteTabs = bWriteTabs;
-	}
-
-	RString	m_sStylesheet;	// empty string = no stylesheet
-	bool	m_bWriteTabs;	// if false, don't write tab indent characters
-};
-
 // XMLNode structure
 class XNode
 {
@@ -76,8 +63,8 @@ public:
 	bool GetXML( RageFileBasic &f, bool bWriteTabs = true ) const;
 	RString GetXML() const;
 
-	bool SaveToFile( const RString &sFile, const XMLDisplayOptions &opt = XMLDisplayOptions() ) const;
-	bool SaveToFile( RageFileBasic &f, const XMLDisplayOptions &opt = XMLDisplayOptions() ) const;
+	bool SaveToFile( const RString &sFile, const RString &sStylesheet = "", bool bWriteTabs = true ) const;
+	bool SaveToFile( RageFileBasic &f, const RString &sStylesheet = "", bool bWriteTabs = true ) const;
 
 	// in own attribute list
 	const RString *GetAttr( const RString &sAttrName ) const; 

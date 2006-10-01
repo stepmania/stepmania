@@ -392,7 +392,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 	xml.AppendChild( "FooterText", FOOTER_TEXT );
 	xml.AppendChild( "FooterLink", FOOTER_LINK );
 
-	xml.SaveToFile( fn, XMLDisplayOptions(CATALOG_XSL, false) );
+	xml.SaveToFile( fn, CATALOG_XSL, false );
 
 	LOG->Trace( "Done." );
 }

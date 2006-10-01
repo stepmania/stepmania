@@ -602,20 +602,20 @@ void XNode::AppendAttr( const RString &sName, float value ){ AppendAttr(sName,ss
 void XNode::AppendAttr( const RString &sName, int value )	{ AppendAttr(sName,ssprintf("%d",value)); }
 void XNode::AppendAttr( const RString &sName, unsigned value )	{ AppendAttr(sName,ssprintf("%u",value)); }
 
-bool XNode::SaveToFile( RageFileBasic &f, const XMLDisplayOptions &opt ) const
+bool XNode::SaveToFile( RageFileBasic &f, const RString &sStylesheet, bool bWriteTabs ) const
 {
 	f.PutLine( "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" );
-	if( !opt.m_sStylesheet.empty() )
-		f.PutLine( "<?xml-stylesheet type=\"text/xsl\" href=\"" + opt.m_sStylesheet + "\"?>" );
+	if( !sStylesheet.empty() )
+		f.PutLine( "<?xml-stylesheet type=\"text/xsl\" href=\"" + sStylesheet + "\"?>" );
 	int iTabBase = 0;
-	if( !this->GetXMLInternal(f, opt.m_bWriteTabs, iTabBase) )
+	if( !this->GetXMLInternal(f, bWriteTabs, iTabBase) )
 		return false;
 	if( f.Flush() == -1 )
 		return false;
 	return true;
 }
 
-bool XNode::SaveToFile( const RString &sFile, const XMLDisplayOptions &opt ) const
+bool XNode::SaveToFile( const RString &sFile, const RString &sStylesheet, bool bWriteTabs ) const
 {
 	RageFile f;
 	if( !f.Open(sFile, RageFile::WRITE) )
@@ -624,5 +624,5 @@ bool XNode::SaveToFile( const RString &sFile, const XMLDisplayOptions &opt ) con
 		return false;
 	}
 
-	return SaveToFile( f, opt );
+	return SaveToFile( f, sStylesheet, bWriteTabs );
 }
