@@ -57,7 +57,7 @@ void ExportStrings::LuaInformation()
 	XNode *pDateNode = pNode->AppendChild( "Date" );
 	pDateNode->m_sValue = DateTime::GetNowDate().GetString();
 
-	DISP_OPT disp;
+	XMLDisplayOptions disp;
 	disp.stylesheet = "Lua.xsl";
 	pNode->SaveToFile( "Lua.xml", disp );
 

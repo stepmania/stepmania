@@ -391,7 +391,7 @@ unsigned XNode::Load( const RString &xml, RString &sErrorOut, unsigned iOffset )
 
 // Desc   : convert plain xml text from parsed xml attirbute
 // Return : converted plain string
-bool XNode::GetAttrXML( RageFileBasic &f, DISP_OPT &opt, const RString &sName, const RString &sValue ) const
+bool XNode::GetAttrXML( RageFileBasic &f, XMLDisplayOptions &opt, const RString &sName, const RString &sValue ) const
 {
 	RString s(sValue);
 	ReplaceEntityText( s, g_mapCharsToEntities );
@@ -400,7 +400,7 @@ bool XNode::GetAttrXML( RageFileBasic &f, DISP_OPT &opt, const RString &sName, c
 
 // Desc   : convert plain xml text from parsed xml node
 // Return : converted plain string
-bool XNode::GetXML( RageFileBasic &f, DISP_OPT &opt ) const
+bool XNode::GetXML( RageFileBasic &f, XMLDisplayOptions &opt ) const
 {
 	// tab
 	if( f.Write("\r\n") == -1 )
@@ -483,7 +483,7 @@ bool XNode::GetXML( RageFileBasic &f, DISP_OPT &opt ) const
 RString XNode::GetXML() const
 {
 	RageFileObjMem f;
-	DISP_OPT opt;
+	XMLDisplayOptions opt;
 	GetXML( f, opt );
 	return f.GetString();
 }
@@ -596,7 +596,7 @@ void XNode::AppendAttr( const RString &sName, float value ){ AppendAttr(sName,ss
 void XNode::AppendAttr( const RString &sName, int value )	{ AppendAttr(sName,ssprintf("%d",value)); }
 void XNode::AppendAttr( const RString &sName, unsigned value )	{ AppendAttr(sName,ssprintf("%u",value)); }
 
-bool XNode::SaveToFile( RageFileBasic &f, DISP_OPT &opt ) const
+bool XNode::SaveToFile( RageFileBasic &f, XMLDisplayOptions &opt ) const
 {
 	f.PutLine( "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" );
 	if( !opt.stylesheet.empty() )
@@ -608,7 +608,7 @@ bool XNode::SaveToFile( RageFileBasic &f, DISP_OPT &opt ) const
 	return true;
 }
 
-bool XNode::SaveToFile( const RString &sFile, DISP_OPT &opt ) const
+bool XNode::SaveToFile( const RString &sFile, XMLDisplayOptions &opt ) const
 {
 	RageFile f;
 	if( !f.Open(sFile, RageFile::WRITE) )

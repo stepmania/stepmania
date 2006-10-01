@@ -213,7 +213,7 @@ bool Workout::SaveToFile( RString sFile )
 		songGenres->AppendChild( "SongGenre", *s );
 	}
 
-	DISP_OPT opts;
+	XMLDisplayOptions opts;
 	return xml.SaveToFile( sFile, opts );
 }
 

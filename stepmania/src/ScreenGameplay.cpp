@@ -2592,7 +2592,7 @@ void ScreenGameplay::SaveReplay()
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 		{
 			XNode *p = pi->m_pPlayer->GetNoteData().CreateNode();
-			DISP_OPT opt;
+			XMLDisplayOptions opt;
 
 			//
 			// Find a file name for the screenshot

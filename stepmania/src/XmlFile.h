@@ -36,13 +36,13 @@ typedef multimap<RString,XNode*> XNodes;
 		++Var##Iter )
 
 // display optional environment
-struct DISP_OPT
+struct XMLDisplayOptions
 {
 	RString stylesheet;	// empty string = no stylesheet
 	bool write_tabs;	// if false, don't write tab indent characters
 
 	int tab_base;		// internal usage
-	DISP_OPT()
+	XMLDisplayOptions()
 	{
 		stylesheet = "";
 		write_tabs = true;
@@ -74,12 +74,12 @@ public:
 	// Load/Save XML
 	unsigned Load( const RString &sXml, RString &sErrorOut, unsigned iOffset = 0 );
 	unsigned LoadAttributes( const RString &sAttrs, RString &sErrorOut, unsigned iOffset );
-	bool GetXML( RageFileBasic &f, DISP_OPT &opt ) const;
-	bool GetAttrXML( RageFileBasic &f, DISP_OPT &opt, const RString &sName, const RString &sValue ) const;
+	bool GetXML( RageFileBasic &f, XMLDisplayOptions &opt ) const;
+	bool GetAttrXML( RageFileBasic &f, XMLDisplayOptions &opt, const RString &sName, const RString &sValue ) const;
 	RString GetXML() const;
 
-	bool SaveToFile( const RString &sFile, DISP_OPT &opt ) const;
-	bool SaveToFile( RageFileBasic &f, DISP_OPT &opt ) const;
+	bool SaveToFile( const RString &sFile, XMLDisplayOptions &opt ) const;
+	bool SaveToFile( RageFileBasic &f, XMLDisplayOptions &opt ) const;
 
 	// in own attribute list
 	const RString *GetAttr( const RString &sAttrName ) const; 
