@@ -25,8 +25,8 @@ struct AttackArray;
 class ScoreKeeper
 {
 protected:
-	PlayerState* m_pPlayerState;
-	PlayerStageStats* m_pPlayerStageStats;
+	PlayerState		*m_pPlayerState;
+	PlayerStageStats	*m_pPlayerStageStats;
 
 	/* Common toggles that this class handles directly: */
 
@@ -35,11 +35,11 @@ protected:
 //	bool Stats_DoublesCount;
 
 public:
-	ScoreKeeper(PlayerState* pPlayerState,PlayerStageStats* pPlayerStageStats) { m_pPlayerState=pPlayerState; m_pPlayerStageStats=pPlayerStageStats; }
+	ScoreKeeper( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats );
 	virtual ~ScoreKeeper() { }
 	virtual void Load(
-		const vector<Song*>& apSongs,
-		const vector<Steps*>& apSteps,
+		const vector<Song*> &apSongs,
+		const vector<Steps*> &apSteps,
 		const vector<AttackArray> &asModifiers ) { }
 
 	virtual void DrawPrimitives() { }

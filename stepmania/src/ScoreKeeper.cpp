@@ -4,6 +4,12 @@
 #include "PlayerState.h"
 #include "NoteDataWithScoring.h"
 
+ScoreKeeper::ScoreKeeper( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats )
+{
+	m_pPlayerState = pPlayerState;
+	m_pPlayerStageStats = pPlayerStageStats;
+}
+
 void ScoreKeeper::GetScoreOfLastTapInRow( const NoteData &nd, int iRow,
 					  TapNoteScore &tnsOut, int &iNumTapsInRowOut )
 {
