@@ -1,7 +1,7 @@
 /* ScoreKeeperNormal -  */
 
-#ifndef ScoreKeeperNormal_H
-#define ScoreKeeperNormal_H
+#ifndef SCORE_KEEPER_NORMAL_H
+#define SCORE_KEEPER_NORMAL_H
 
 #include "ScoreKeeper.h"
 #include "Attack.h"
@@ -40,10 +40,7 @@ class ScoreKeeperNormal: public ScoreKeeper
 	int		m_ComboBonusFactor[NUM_TapNoteScore];
 
 public:
-	ScoreKeeperNormal( 
-		PlayerState* pPlayerState,
-		PlayerStageStats* pPlayerStageStats );
-	virtual ~ScoreKeeperNormal() { }
+	ScoreKeeperNormal( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats );
 
 	void Load(
 		const vector<Song*>& apSongs,

@@ -18,10 +18,8 @@
 #include "song.h"
 #include "NoteDataWithScoring.h"
 
-ScoreKeeperNormal::ScoreKeeperNormal( 
-		PlayerState* pPlayerState,
-		PlayerStageStats* pPlayerStageStats ):
-	ScoreKeeper(pPlayerState,pPlayerStageStats)
+ScoreKeeperNormal::ScoreKeeperNormal( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats ):
+	ScoreKeeper(pPlayerState, pPlayerStageStats)
 {
 }
 
