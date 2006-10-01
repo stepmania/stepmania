@@ -391,7 +391,7 @@ unsigned XNode::Load( const RString &xml, RString &sErrorOut, unsigned iOffset )
 
 // Desc   : convert plain xml text from parsed xml attirbute
 // Return : converted plain string
-bool XNode::GetAttrXML( RageFileBasic &f, XMLDisplayOptions &opt, const RString &sName, const RString &sValue ) const
+bool XNode::GetAttrXML( RageFileBasic &f, const RString &sName, const RString &sValue ) const
 {
 	RString s(sValue);
 	ReplaceEntityText( s, g_mapCharsToEntities );
@@ -400,13 +400,13 @@ bool XNode::GetAttrXML( RageFileBasic &f, XMLDisplayOptions &opt, const RString 
 
 // Desc   : convert plain xml text from parsed xml node
 // Return : converted plain string
-bool XNode::GetXML( RageFileBasic &f, XMLDisplayOptions &opt ) const
+bool XNode::GetXMLInternal( RageFileBasic &f, bool bWriteTabs, int &iTabBase ) const
 {
 	// tab
 	if( f.Write("\r\n") == -1 )
 		return false;
-	if( opt.write_tabs )
-		for( int i = 0 ; i < opt.tab_base ; i++)
+	if( bWriteTabs )
+		for( int i = 0 ; i < iTabBase ; i++)
 			if( f.Write("\t") == -1 )
 				return false;
 
@@ -419,7 +419,7 @@ bool XNode::GetXML( RageFileBasic &f, XMLDisplayOptions &opt ) const
 		if( f.Write(" ") == -1 )
 			return false;
 	FOREACH_CONST_Attr( this, p )
-		if( !GetAttrXML(f, opt, p->first, p->second) )
+		if( !GetAttrXML(f, p->first, p->second) )
 			return false;
 	
 	if( m_childs.empty() && m_sValue.empty() )
@@ -435,10 +435,10 @@ bool XNode::GetXML( RageFileBasic &f, XMLDisplayOptions &opt ) const
 			return false;
 			
 		if( !m_childs.empty() )
-			opt.tab_base++;
+			iTabBase++;
 
 		FOREACH_CONST_Child( this, p )
-			if( !p->GetXML( f, opt ) )
+			if( !p->GetXMLInternal( f, bWriteTabs, iTabBase ) )
 				return false;
 		
 		// Text Value
@@ -448,8 +448,8 @@ bool XNode::GetXML( RageFileBasic &f, XMLDisplayOptions &opt ) const
 			{
 				if( f.Write("\r\n") == -1 )
 					return false;
-				if( opt.write_tabs )
-					for( int i = 0 ; i < opt.tab_base ; i++)
+				if( bWriteTabs )
+					for( int i = 0 ; i < iTabBase ; i++)
 						if( f.Write("\t") == -1 )
 							return false;
 			}
@@ -464,8 +464,8 @@ bool XNode::GetXML( RageFileBasic &f, XMLDisplayOptions &opt ) const
 		{
 			if( f.Write("\r\n") == -1 )
 				return false;
-			if( opt.write_tabs )
-				for( int i = 0 ; i < opt.tab_base-1 ; i++)
+			if( bWriteTabs )
+				for( int i = 0 ; i < iTabBase-1 ; i++)
 					if( f.Write("\t") == -1 )
 						return false;
 		}
@@ -473,9 +473,15 @@ bool XNode::GetXML( RageFileBasic &f, XMLDisplayOptions &opt ) const
 			return false;
 
 		if( !m_childs.empty() )
-			opt.tab_base--;
+			iTabBase--;
 	}
 	return true;
+}
+
+bool XNode::GetXML( RageFileBasic &f, bool bWriteTabs ) const
+{
+	int iTabBase = 0;
+	return GetXMLInternal( f, bWriteTabs, iTabBase );
 }
 
 // Desc   : convert plain xml text from parsed xml node
@@ -483,8 +489,8 @@ bool XNode::GetXML( RageFileBasic &f, XMLDisplayOptions &opt ) const
 RString XNode::GetXML() const
 {
 	RageFileObjMem f;
-	XMLDisplayOptions opt;
-	GetXML( f, opt );
+	int iTabBase = 0;
+	GetXMLInternal( f, true, iTabBase );
 	return f.GetString();
 }
 
@@ -596,19 +602,20 @@ void XNode::AppendAttr( const RString &sName, float value ){ AppendAttr(sName,ss
 void XNode::AppendAttr( const RString &sName, int value )	{ AppendAttr(sName,ssprintf("%d",value)); }
 void XNode::AppendAttr( const RString &sName, unsigned value )	{ AppendAttr(sName,ssprintf("%u",value)); }
 
-bool XNode::SaveToFile( RageFileBasic &f, XMLDisplayOptions &opt ) const
+bool XNode::SaveToFile( RageFileBasic &f, const XMLDisplayOptions &opt ) const
 {
 	f.PutLine( "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" );
-	if( !opt.stylesheet.empty() )
-		f.PutLine( "<?xml-stylesheet type=\"text/xsl\" href=\"" + opt.stylesheet + "\"?>" );
-	if( !this->GetXML(f, opt) )
+	if( !opt.m_sStylesheet.empty() )
+		f.PutLine( "<?xml-stylesheet type=\"text/xsl\" href=\"" + opt.m_sStylesheet + "\"?>" );
+	int iTabBase = 0;
+	if( !this->GetXMLInternal(f, opt.m_bWriteTabs, iTabBase) )
 		return false;
 	if( f.Flush() == -1 )
 		return false;
 	return true;
 }
 
-bool XNode::SaveToFile( const RString &sFile, XMLDisplayOptions &opt ) const
+bool XNode::SaveToFile( const RString &sFile, const XMLDisplayOptions &opt ) const
 {
 	RageFile f;
 	if( !f.Open(sFile, RageFile::WRITE) )

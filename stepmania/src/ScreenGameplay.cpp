@@ -2592,7 +2592,6 @@ void ScreenGameplay::SaveReplay()
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 		{
 			XNode *p = pi->m_pPlayer->GetNoteData().CreateNode();
-			XMLDisplayOptions opt;
 
 			//
 			// Find a file name for the screenshot
@@ -2620,7 +2619,7 @@ void ScreenGameplay::SaveReplay()
 
 			RString sFileName = ssprintf( "replay%05d.xml", iIndex );
 
-			p->SaveToFile( "Save/"+sFileName, opt );
+			p->SaveToFile( "Save/"+sFileName );
 			SAFE_DELETE( p );
 			return;
 		}

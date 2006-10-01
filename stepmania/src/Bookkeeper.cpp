@@ -138,9 +138,8 @@ void Bookkeeper::WriteToDisk()
 		return;
 	}
 
-	XMLDisplayOptions opt;
 	XNode *xml = CreateNode();
-	xml->SaveToFile( f, opt );
+	xml->SaveToFile( f );
 	delete xml;
 }
 

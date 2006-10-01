@@ -213,8 +213,7 @@ bool Workout::SaveToFile( RString sFile )
 		songGenres->AppendChild( "SongGenre", *s );
 	}
 
-	XMLDisplayOptions opts;
-	return xml.SaveToFile( sFile, opts );
+	return xml.SaveToFile( sFile );
 }
 
 // lua start

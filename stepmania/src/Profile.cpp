@@ -940,10 +940,7 @@ bool Profile::SaveStatsXmlToDir( RString sDir, bool bSignData ) const
 	// Save stats.xml
 	RString fn = sDir + STATS_XML;
 
-	XMLDisplayOptions opts;
-	opts.stylesheet = STATS_XSL;
-	opts.write_tabs = false;
-	bool bSaved = xml->SaveToFile( fn, opts );
+	bool bSaved = xml->SaveToFile( fn, XMLDisplayOptions(STATS_XSL, false) );
 
 	SAFE_DELETE( xml );
 	

@@ -38,16 +38,14 @@ typedef multimap<RString,XNode*> XNodes;
 // display optional environment
 struct XMLDisplayOptions
 {
-	RString stylesheet;	// empty string = no stylesheet
-	bool write_tabs;	// if false, don't write tab indent characters
-
-	int tab_base;		// internal usage
-	XMLDisplayOptions()
+	XMLDisplayOptions( const RString &sStylesheet = "", bool bWriteTabs = true )
 	{
-		stylesheet = "";
-		write_tabs = true;
-		tab_base = 0;
+		m_sStylesheet = sStylesheet;
+		m_bWriteTabs = bWriteTabs;
 	}
+
+	RString	m_sStylesheet;	// empty string = no stylesheet
+	bool	m_bWriteTabs;	// if false, don't write tab indent characters
 };
 
 // XMLNode structure
@@ -74,12 +72,12 @@ public:
 	// Load/Save XML
 	unsigned Load( const RString &sXml, RString &sErrorOut, unsigned iOffset = 0 );
 	unsigned LoadAttributes( const RString &sAttrs, RString &sErrorOut, unsigned iOffset );
-	bool GetXML( RageFileBasic &f, XMLDisplayOptions &opt ) const;
-	bool GetAttrXML( RageFileBasic &f, XMLDisplayOptions &opt, const RString &sName, const RString &sValue ) const;
+	bool GetAttrXML( RageFileBasic &f, const RString &sName, const RString &sValue ) const;
+	bool GetXML( RageFileBasic &f, bool bWriteTabs = true ) const;
 	RString GetXML() const;
 
-	bool SaveToFile( const RString &sFile, XMLDisplayOptions &opt ) const;
-	bool SaveToFile( RageFileBasic &f, XMLDisplayOptions &opt ) const;
+	bool SaveToFile( const RString &sFile, const XMLDisplayOptions &opt = XMLDisplayOptions() ) const;
+	bool SaveToFile( RageFileBasic &f, const XMLDisplayOptions &opt = XMLDisplayOptions() ) const;
 
 	// in own attribute list
 	const RString *GetAttr( const RString &sAttrName ) const; 
@@ -122,6 +120,9 @@ public:
 	~XNode();
 
 	void Clear();
+
+private:
+	bool GetXMLInternal( RageFileBasic &f, bool bWriteTabs, int &iTabBase ) const;
 };
 
 #endif
