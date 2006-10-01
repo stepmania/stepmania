@@ -223,17 +223,14 @@ void IMessageSubscriber::ClearMessages( const RString sMessage )
 	}
 
 	for( int i=m_aMessages.size()-1; i>=0; i-- )
-		if( m_aMessages[i].sMessage == sMessage )
+		if( m_aMessages[i] == sMessage )
 			m_aMessages.erase( m_aMessages.begin()+i ); 
 }
 
 void IMessageSubscriber::HandleMessageInternal( const RString& sMessage )
 {
-	QueuedMessage QM;
-	QM.sMessage = sMessage;
-
 	g_Mutex.Lock();
-	m_aMessages.push_back( QM );
+	m_aMessages.push_back( sMessage );
 	g_Mutex.Unlock();
 }
 
@@ -248,7 +245,7 @@ void IMessageSubscriber::ProcessMessages( float fDeltaTime )
 	for( unsigned i = 0; i < m_aMessages.size(); ++i )
 	{
 		/* Remove the message from the list. */
-		const RString sMessage = m_aMessages[i].sMessage;
+		const RString sMessage = m_aMessages[i];
 		m_aMessages.erase( m_aMessages.begin()+i );
 		--i;
 

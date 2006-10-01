@@ -141,12 +141,8 @@ public:
 	void ClearMessages( const RString sMessage = "" );
 
 private:
-	struct QueuedMessage
-	{
-		RString sMessage;
-	};
 	void HandleMessageInternal( const RString& sMessage );
-	vector<QueuedMessage> m_aMessages;
+	vector<RString> m_aMessages;
 
 	friend class MessageManager;
 };
