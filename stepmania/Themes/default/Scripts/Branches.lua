@@ -144,7 +144,7 @@ end
 
 function GetGameplayNextScreen()
 	Trace( "GetGameplayNextScreen: " )
-	local Passed = not AllFailed()
+	local Passed = not STATSMAN:GetCurStageStats():AllFailed()
 	Trace( " Passed = "..tostring(Passed) )
 	Trace( " IsCourseMode = "..tostring(GAMESTATE:IsCourseMode()) )
 	Trace( " IsExtraStage = "..tostring(GAMESTATE:IsExtraStage()) )
