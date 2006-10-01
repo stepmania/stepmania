@@ -144,7 +144,6 @@ private:
 	struct QueuedMessage
 	{
 		RString sMessage;
-		float fDelayRemaining;
 	};
 	void HandleMessageInternal( const RString& sMessage );
 	vector<QueuedMessage> m_aMessages;
