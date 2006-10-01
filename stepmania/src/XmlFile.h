@@ -38,13 +38,10 @@ typedef multimap<RString,XNode*> XNodes;
 // Parse info.
 struct PARSEINFO
 {
-	bool		trim_value;		// [set] do trim when parse?
-	bool		entity_value;		// [set] do convert from reference to entity? ( &lt; -> < )
-
 	bool		error_occur;		// [get] is occurance of error?
 	RString		error_string;		// [get] error string
 
-	PARSEINFO() { trim_value = true; entity_value = true; error_occur = false; }
+	PARSEINFO() { error_occur = false; }
 };
 
 // display optional environment

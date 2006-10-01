@@ -192,12 +192,10 @@ unsigned XNode::LoadAttributes( const RString &xml, PARSEINFO *pi, unsigned iOff
 				return string::npos;
 			}
 
-			bool trim = pi->trim_value;
-			SetString( xml, iOffset, iEnd, &sValue, trim );
+			SetString( xml, iOffset, iEnd, &sValue, true );
 			iOffset = iEnd;
 			// ATTRVALUE 
-			if( pi->entity_value )
-				ReplaceEntityText( sValue, g_mapEntitiesToChars );
+			ReplaceEntityText( sValue, g_mapEntitiesToChars );
 
 			if( quote == '"' || quote == '\'' )
 				++iOffset;
@@ -319,13 +317,11 @@ unsigned XNode::Load( const RString &xml, PARSEINFO *pi, unsigned iOffset )
 			return string::npos;
 		}
 		
-		bool trim = pi->trim_value;
-		SetString( xml, iOffset, iEnd, &m_sValue, trim );
+		SetString( xml, iOffset, iEnd, &m_sValue, true );
 
 		iOffset = iEnd;
 		// TEXTVALUE reference
-		if( pi->entity_value )
-			ReplaceEntityText( m_sValue, g_mapEntitiesToChars );
+		ReplaceEntityText( m_sValue, g_mapEntitiesToChars );
 	}
 
 	// generate child nodes
@@ -405,13 +401,11 @@ unsigned XNode::Load( const RString &xml, PARSEINFO *pi, unsigned iOffset )
 					return string::npos;
 				}
 				
-				bool trim = pi->trim_value;
-				SetString( xml, iOffset, iEnd, &m_sValue, trim );
+				SetString( xml, iOffset, iEnd, &m_sValue, true );
 
 				iOffset = iEnd;
 				//TEXTVALUE
-				if( pi->entity_value )
-					ReplaceEntityText( m_sValue, g_mapEntitiesToChars );
+				ReplaceEntityText( m_sValue, g_mapEntitiesToChars );
 			}
 		}
 	}
