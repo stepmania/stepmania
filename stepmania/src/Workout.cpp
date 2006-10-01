@@ -198,8 +198,7 @@ bool Workout::SaveToFile( RString sFile )
 {
 	m_sFile = sFile;
 
-	XNode xml;
-	xml.m_sName = "Workout";
+	XNode xml( "Workout" );
 	xml.AppendChild( "Name", m_sName );
 	RString s;
 	xml.AppendChild( "WorkoutProgram", WorkoutProgramToString(m_WorkoutProgram) );

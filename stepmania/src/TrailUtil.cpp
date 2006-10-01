@@ -36,8 +36,7 @@ Trail *TrailID::ToTrail( const Course *p, bool bAllowNull ) const
 
 XNode* TrailID::CreateNode() const
 {
-	XNode* pNode = new XNode;
-	pNode->m_sName = "Trail";
+	XNode* pNode = new XNode( "Trail" );
 
 	pNode->AppendAttr( "StepsType", GameManager::StepsTypeToString(st) );
 	pNode->AppendAttr( "CourseDifficulty", CourseDifficultyToString(cd) );
