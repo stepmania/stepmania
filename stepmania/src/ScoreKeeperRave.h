@@ -1,7 +1,7 @@
 /* ScoreKeeperRave - Launches attacks in PLAY_MODE_RAVE. */
 
-#ifndef ScoreKeeperRave_H
-#define ScoreKeeperRave_H
+#ifndef SCORE_KEEPER_RAVE_H
+#define SCORE_KEEPER_RAVE_H
 
 #include "ScoreKeeper.h"
 #include "GameConstantsAndTypes.h"
@@ -10,9 +10,8 @@
 class ScoreKeeperRave : public ScoreKeeper
 {
 public:
-	ScoreKeeperRave( PlayerState* pPlayerState, PlayerStageStats* pPlayerStageStats );
-	virtual ~ScoreKeeperRave() { }
-	void OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData );	// before a song plays (called multiple times if course)
+	ScoreKeeperRave( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats );
+	void OnNextSong( int iSongInCourseIndex, const Steps *pSteps, const NoteData *pNoteData ) { }
 	void HandleTapScore( const TapNote &tn );
 	void HandleTapRowScore( const NoteData &nd, int iRow );
 	void HandleHoldScore( const TapNote &tn );

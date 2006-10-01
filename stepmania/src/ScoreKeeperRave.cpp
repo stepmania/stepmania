@@ -13,14 +13,9 @@
 ThemeMetric<float> ATTACK_DURATION_SECONDS	("ScoreKeeperRave","AttackDurationSeconds");
 
 
-ScoreKeeperRave::ScoreKeeperRave( PlayerState* pPlayerState, PlayerStageStats* pPlayerStageStats ) : 
-	ScoreKeeper(pPlayerState,pPlayerStageStats)
+ScoreKeeperRave::ScoreKeeperRave( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats ) : 
+	ScoreKeeper(pPlayerState, pPlayerStageStats)
 {
-}
-
-void ScoreKeeperRave::OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData )
-{
-	
 }
 
 void ScoreKeeperRave::HandleTapScore( const TapNote &tn )
