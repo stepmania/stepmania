@@ -51,13 +51,12 @@ struct PARSEINFO
 	bool		trim_value;		// [set] do trim when parse?
 	bool		entity_value;		// [set] do convert from reference to entity? ( &lt; -> < )
 
-	char*		xml;			// [get] xml source
 	bool		error_occur;		// [get] is occurance of error?
 	const char*	error_pointer;		// [get] error position of xml source
 	PCODE		error_code;		// [get] error code
 	RString		error_string;		// [get] error string
 
-	PARSEINFO() { trim_value = true; entity_value = true; xml = NULL; error_occur = false; error_pointer = NULL; error_code = PIE_PARSE_WELL_FORMED; }
+	PARSEINFO() { trim_value = true; entity_value = true; error_occur = false; error_pointer = NULL; error_code = PIE_PARSE_WELL_FORMED; }
 };
 
 // display optional environment
