@@ -77,25 +77,19 @@ public:
 	bool GetAttrValue( const RString &sName, DateTime &out ) const;
 
 	// in one level child nodes
-	const XNode *GetChild( const RString &sName ) const; 
-	XNode *GetChild( const RString &sName ); 
-	bool GetChildValue( const RString &sName, RString &out ) const  { const XNode* pChild=GetChild(sName); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
-	bool GetChildValue( const RString &sName, int &out ) const      { const XNode* pChild=GetChild(sName); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
-	bool GetChildValue( const RString &sName, float &out ) const    { const XNode* pChild=GetChild(sName); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
-	bool GetChildValue( const RString &sName, bool &out ) const     { const XNode* pChild=GetChild(sName); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
-	bool GetChildValue( const RString &sName, unsigned &out ) const { const XNode* pChild=GetChild(sName); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
-	bool GetChildValue( const RString &sName, DateTime &out ) const { const XNode* pChild=GetChild(sName); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
+	const XNode *GetChild( const RString &sName ) const;
+	XNode *GetChild( const RString &sName );
+	template <typename T>
+	bool GetChildValue( const RString &sName, T &out ) const { const XNode *pChild=GetChild(sName); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
 
-	// modify DOM 
-	XNode *AppendChild( const RString &sName = RString(), const RString &value = RString() );
-	XNode *AppendChild( const RString &sName, float value );
-	XNode *AppendChild( const RString &sName, int value );
-	XNode *AppendChild( const RString &sName, unsigned value );
-	XNode *AppendChild( const RString &sName, const DateTime &value );
+	// modify DOM
+	template <typename T>
+	XNode *AppendChild( const RString &sName, T value )	{ XNode *p=new XNode; p->m_sName=sName; p->SetValue(value); return AppendChild(p); }
+	XNode *AppendChild( const RString &sName )		{ XNode *p=new XNode; p->m_sName=sName; return AppendChild(p); }
 	XNode *AppendChild( XNode *node );
 	bool RemoveChild( XNode *node );
 
-	void AppendAttr( const RString &sName = RString(), const RString &sValue = RString() );
+	void AppendAttr( const RString &sName, const RString &sValue = RString() );
 	void AppendAttr( const RString &sName, float value );
 	void AppendAttr( const RString &sName, int value );
 	void AppendAttr( const RString &sName, unsigned value );

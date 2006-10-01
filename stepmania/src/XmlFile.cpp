@@ -498,7 +498,7 @@ void XNode::GetValue( RString &out ) const	{ out = m_sValue; }
 void XNode::GetValue( int &out ) const		{ out = atoi(m_sValue); }
 void XNode::GetValue( float &out ) const	{ out = StringToFloat(m_sValue); }
 void XNode::GetValue( bool &out ) const		{ out = atoi(m_sValue) != 0; }
-void XNode::GetValue( unsigned &out ) const	{ out = 0; sscanf(m_sValue,"%u",&out); }
+void XNode::GetValue( unsigned &out ) const	{ out = strtoul(m_sValue,NULL,0); }
 void XNode::GetValue( DateTime &out ) const	{ out.FromString( m_sValue ); }
 
 bool XNode::GetAttrValue( const RString &sName, RString &out ) const	{ const RString* pAttr=GetAttr(sName); if(pAttr==NULL) return false; out = *pAttr; return true; }
