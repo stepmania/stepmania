@@ -50,6 +50,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 		<th><a href="#Singletons">Singletons</a></th>
 		<th><a href="#Classes">Classes</a></th>
 		<th><a href="#GlobalFunctions">Global Functions</a></th>
+		<th><a href="#Enums">Enums</a></th>
 		<th><a href="#Constants">Constants</a></th>
 		</tr></table>
 		</div>
@@ -109,6 +110,37 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 			<li><xsl:value-of select="@name" /></li>
 			</xsl:for-each>
 		</ul>
+		</div>
+
+		<div>
+		<a name="Enums" />
+		<h3>Enums</h3>
+		<xsl:for-each select="Enums/Enum">
+		<xsl:sort select="@name" />
+		<div>
+		<a class="trigger">
+		<xsl:attribute name="onClick">Toggle('<xsl:value-of select="@name" />')</xsl:attribute>
+		<img src="closed.gif">
+			<xsl:attribute name="id">img_<xsl:value-of select="@name" /></xsl:attribute>
+		</img>
+		Enum <xsl:value-of select="@name" /></a>
+		<table style="display: none">
+			<xsl:attribute name="id">list_<xsl:value-of select="@name" /></xsl:attribute>
+			<tr>
+				<th>Enum</th>
+				<th>Value</th>
+			</tr>
+			<xsl:for-each select="EnumValue">
+			<xsl:sort data-type="number" select="@value" />
+			<tr>
+				<td><xsl:value-of select="@name" /></td>
+				<td><xsl:value-of select="@value" /></td>
+			</tr>
+			</xsl:for-each>
+		</table>
+		<br />
+		</div>
+		</xsl:for-each>
 		</div>
 
 		<div>
