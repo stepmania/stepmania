@@ -51,7 +51,7 @@ public:
 	void OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData );
 
 	void HandleTapScore( const TapNote &tn );
-	void HandleTapRowScore( const NoteData &nd, int iRow );
+	void HandleTapRowScore( const NoteData &nd, int iRow, bool &bComboStopped, bool &bMissComboStopped );
 	void HandleHoldScore( const TapNote &tn );
 
 	// This must be calculated using only cached radar values so that we can 

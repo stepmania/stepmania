@@ -49,7 +49,7 @@ public:
 	virtual void OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData ) = 0;	// before a song plays (called multiple times if course)
 
 	virtual void HandleTapScore( const TapNote &tn ) = 0;
-	virtual void HandleTapRowScore( const NoteData &nd, int iRow ) = 0;
+	virtual void HandleTapRowScore( const NoteData &nd, int iRow, bool &bComboStopped, bool &bMissComboStopped ) = 0;
 	virtual void HandleHoldScore( const TapNote &tn ) = 0;
 
 protected:

@@ -1536,55 +1536,24 @@ void Player::RandomizeNotes( int iNoteRow )
 
 void Player::HandleTapRowScore( unsigned row )
 {
-	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-	const TapNote &lastTN = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, row, pn );
-	TapNoteScore scoreOfLastTap = lastTN.result.tns;
-
-	bool NoCheating = true;
+	bool bNoCheating = true;
 #ifdef DEBUG
-	NoCheating = false;
+	bNoCheating = false;
 #endif
 
 	if( GAMESTATE->m_bDemonstrationOrJukebox )
-		NoCheating = false;
+		bNoCheating = false;
 	// don't accumulate points if AutoPlay is on.
-	if( NoCheating && m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
+	if( bNoCheating && m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
 		return;
 
-	/* Update miss combo, and handle "combo stopped" messages. */
-	/* When is m_pPlayerStageStats NULL?  Would it be cleaner to pass Player a dummy
-	 * PlayerStageStats in this case, instead of having to carefully check for NULL
-	 * every time we use it? -glenn */
-	int iDummy = 0;
-	int &iCurCombo = m_pPlayerStageStats ? m_pPlayerStageStats->iCurCombo : iDummy;
-	int &iCurMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->iCurMissCombo : iDummy;
-	switch( scoreOfLastTap )
-	{
-	case TNS_W1:
-	case TNS_W2:
-	case TNS_W3:
-		iCurMissCombo = 0;
-		SCREENMAN->PostMessageToTopScreen( SM_MissComboAborted, 0 );
-		break;
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+	TapNoteScore scoreOfLastTap = NoteDataWithScoring::LastTapNoteWithResult(m_NoteData, row, pn).result.tns;
+	const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->iCurCombo : 0;
 
-	case TNS_Miss:
-		++iCurMissCombo;
+	if( scoreOfLastTap == TNS_Miss )
 		m_LastTapNoteScore = TNS_Miss;
 
-	case TNS_W4:
-	case TNS_W5:
-		if( iCurCombo > 50 )
-			SCREENMAN->PostMessageToTopScreen( SM_ComboStopped, 0 );
-		iCurCombo = 0;
-		break;
-	
-	default:
-		ASSERT( 0 );
-	}
-
-	/* The score keeper updates the hit combo.  Remember the old combo for handling announcers. */
-	const int iOldCombo = iCurCombo;
-	
 	for( int track = 0; track < m_NoteData.GetNumTracks(); ++track )
 	{
 		const TapNote &tn = m_NoteData.GetTapNote( track, row );
@@ -1598,11 +1567,21 @@ void Player::HandleTapRowScore( unsigned row )
 		if( m_pSecondaryScoreKeeper )
 			m_pSecondaryScoreKeeper->HandleTapScore( tn );
 	}		
-		
+
+	bool bComboStopped = false;
+	bool bMissComboStopped = false;
+
 	if( m_pPrimaryScoreKeeper != NULL )
-		m_pPrimaryScoreKeeper->HandleTapRowScore( m_NoteData, row );
+		m_pPrimaryScoreKeeper->HandleTapRowScore( m_NoteData, row, bComboStopped, bMissComboStopped );
+	if( bMissComboStopped )
+		SCREENMAN->PostMessageToTopScreen( SM_MissComboAborted, 0 );
+	if( bComboStopped && iOldCombo > 50 )
+		SCREENMAN->PostMessageToTopScreen( SM_ComboStopped, 0 );
 	if( m_pSecondaryScoreKeeper != NULL )
-		m_pSecondaryScoreKeeper->HandleTapRowScore( m_NoteData, row );
+		m_pSecondaryScoreKeeper->HandleTapRowScore( m_NoteData, row, bComboStopped, bMissComboStopped );
+
+	const int iCurCombo = m_pPlayerStageStats ? m_pPlayerStageStats->iCurCombo : 0;
+	const int iCurMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->iCurMissCombo : 0;
 
 	if( m_pPlayerStageStats && m_pCombo )
 	{
