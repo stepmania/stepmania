@@ -404,7 +404,7 @@ XNode *LuaManager::GetLuaInformation() const
 		for( unsigned i = 0; i < vEnum.size(); ++i )
 		{
 			XNode *pEnumValueNode = pEnumNode->AppendChild( "EnumValue" );
-			pEnumValueNode->AppendAttr( "name", vEnum[i] );
+			pEnumValueNode->AppendAttr( "name", ssprintf("'%s'", vEnum[i].c_str()) );
 			pEnumValueNode->AppendAttr( "value", i );
 		}
 	}
@@ -423,7 +423,7 @@ XNode *LuaManager::GetLuaInformation() const
 	{
 		XNode *pConstantNode = pConstantsNode->AppendChild( "Constant" );
 		pConstantNode->AppendAttr( "name", s->first );
-		pConstantNode->AppendAttr( "value", s->second );
+		pConstantNode->AppendAttr( "value", ssprintf("'%s'", s->second.c_str()) );
 	}
 		
 	return pLuaNode;
