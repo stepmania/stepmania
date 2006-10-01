@@ -84,8 +84,8 @@ public:
 
 	// modify DOM
 	template <typename T>
-	XNode *AppendChild( const RString &sName, T value )	{ XNode *p=new XNode; p->m_sName=sName; p->SetValue(value); return AppendChild(p); }
-	XNode *AppendChild( const RString &sName )		{ XNode *p=new XNode; p->m_sName=sName; return AppendChild(p); }
+	XNode *AppendChild( const RString &sName, T value )	{ XNode *p=new XNode(sName); p->SetValue(value); return AppendChild(p); }
+	XNode *AppendChild( const RString &sName )		{ XNode *p=new XNode(sName); return AppendChild(p); }
 	XNode *AppendChild( XNode *node );
 	bool RemoveChild( XNode *node );
 
@@ -97,6 +97,7 @@ public:
 	bool RemoveAttr( const RString &sName );
 
 	XNode() { }
+	explicit XNode( const RString &sName ) { m_sName = sName; }
 	XNode( const XNode &cpy );
 	~XNode();
 
