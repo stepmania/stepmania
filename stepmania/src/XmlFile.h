@@ -35,16 +35,6 @@ typedef multimap<RString,XNode*> XNodes;
 		Var##Iter != (pNode)->m_childs.end(); \
 		++Var##Iter )
 
-enum PCODE
-{
-	PIE_PARSE_WELL_FORMED = 0,
-	PIE_ALONE_NOT_CLOSED,
-	PIE_NOT_CLOSED,
-	PIE_NOT_NESTED,
-	PIE_ATTR_NO_VALUE,
-	PIE_READ_ERROR
-};
-
 // Parse info.
 struct PARSEINFO
 {
@@ -52,11 +42,9 @@ struct PARSEINFO
 	bool		entity_value;		// [set] do convert from reference to entity? ( &lt; -> < )
 
 	bool		error_occur;		// [get] is occurance of error?
-	const char*	error_pointer;		// [get] error position of xml source
-	PCODE		error_code;		// [get] error code
 	RString		error_string;		// [get] error string
 
-	PARSEINFO() { trim_value = true; entity_value = true; error_occur = false; error_pointer = NULL; error_code = PIE_PARSE_WELL_FORMED; }
+	PARSEINFO() { trim_value = true; entity_value = true; error_occur = false; }
 };
 
 // display optional environment

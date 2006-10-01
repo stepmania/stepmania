@@ -140,8 +140,6 @@ unsigned XNode::LoadAttributes( const RString &xml, PARSEINFO *pi, unsigned iOff
 			if( !pi->error_occur ) 
 			{
 				pi->error_occur = true;
-				pi->error_pointer = xml;
-				pi->error_code = PIE_ATTR_NO_VALUE;
 				pi->error_string = ssprintf( "<%s> attribute has error ", m_sName.c_str() );
 			}
 			return string::npos;
@@ -189,8 +187,6 @@ unsigned XNode::LoadAttributes( const RString &xml, PARSEINFO *pi, unsigned iOff
 				if( !pi->error_occur ) 
 				{
 					pi->error_occur = true;
-					pi->error_pointer = xml;
-					pi->error_code = PIE_ATTR_NO_VALUE;
 					pi->error_string = ssprintf( "<%s> attribute text: couldn't find matching quote", sName.c_str() );
 				}
 				return string::npos;
@@ -246,8 +242,6 @@ unsigned XNode::Load( const RString &xml, PARSEINFO *pi, unsigned iOffset )
 			if( !pi->error_occur ) 
 			{
 				pi->error_occur = true;
-				pi->error_pointer = xml;
-				pi->error_code = PIE_ALONE_NOT_CLOSED;
 				pi->error_string = "Unterminated comment";
 			}
 
@@ -288,8 +282,6 @@ unsigned XNode::Load( const RString &xml, PARSEINFO *pi, unsigned iOffset )
 			if( !pi->error_occur ) 
 			{
 				pi->error_occur = true;
-				pi->error_pointer = xml;
-				pi->error_code = PIE_ALONE_NOT_CLOSED;
 				pi->error_string = "Element must be closed.";
 			}
 
@@ -321,8 +313,6 @@ unsigned XNode::Load( const RString &xml, PARSEINFO *pi, unsigned iOffset )
 			if( !pi->error_occur ) 
 			{
 				pi->error_occur = true;
-				pi->error_pointer = xml;
-				pi->error_code = PIE_NOT_CLOSED;
 				pi->error_string = ssprintf( "%s must be closed with </%s>", m_sName.c_str(), m_sName.c_str() );
 			}
 			// error cos not exist CloseTag </TAG>
@@ -372,8 +362,6 @@ unsigned XNode::Load( const RString &xml, PARSEINFO *pi, unsigned iOffset )
 				if( !pi->error_occur ) 
 				{
 					pi->error_occur = true;
-					pi->error_pointer = xml;
-					pi->error_code = PIE_NOT_CLOSED;
 					pi->error_string = ssprintf( "it must be closed with </%s>", m_sName.c_str() );
 				}
 				// error
@@ -395,8 +383,6 @@ unsigned XNode::Load( const RString &xml, PARSEINFO *pi, unsigned iOffset )
 				if( !pi->error_occur ) 
 				{
 					pi->error_occur = true;
-					pi->error_pointer = xml;
-					pi->error_code = PIE_NOT_NESTED;
 					pi->error_string = ssprintf( "'<%s> ... </%s>' is not well-formed.", m_sName.c_str(), closename.c_str() );
 				}
 				return string::npos;
@@ -414,8 +400,6 @@ unsigned XNode::Load( const RString &xml, PARSEINFO *pi, unsigned iOffset )
 					if( !pi->error_occur )  
 					{
 						pi->error_occur = true;
-						pi->error_pointer = xml;
-						pi->error_code = PIE_NOT_CLOSED;
 						pi->error_string = ssprintf( "it must be closed with </%s>", m_sName.c_str() );
 					}
 					return string::npos;

@@ -13,8 +13,6 @@ bool XmlFileUtil::LoadFromFileShowErrors( XNode &xml, RageFileBasic &f )
 	if( f.Read( s ) == -1 )
 	{
 		pi.error_occur = true;
-		pi.error_pointer = NULL;
-		pi.error_code = PIE_READ_ERROR;
 		pi.error_string = f.GetError();
 		
 		goto error;
