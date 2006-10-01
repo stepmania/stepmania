@@ -22,10 +22,9 @@ void ScoreKeeperRave::HandleTapScore( const TapNote &tn )
 {
 	TapNoteScore score = tn.result.tns;
 	float fPercentToMove = 0;
-	switch( score )
-	{
-	case TNS_HitMine:	fPercentToMove = PREFSMAN->m_fSuperMeterPercentChange[SE_HitMine];	break;
-	}
+
+	if( score == TNS_HitMine )
+		fPercentToMove = PREFSMAN->m_fSuperMeterPercentChange[SE_HitMine];
 
 	AddSuperMeterDelta( fPercentToMove );
 }
