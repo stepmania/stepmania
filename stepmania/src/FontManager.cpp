@@ -5,7 +5,6 @@
 #include "RageLog.h"
 #include "RageException.h"
 #include <map>
-#include "GameManager.h"
 
 FontManager*	FONT	= NULL;	// global and accessable from anywhere in our program
 

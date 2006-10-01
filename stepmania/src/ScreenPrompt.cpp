@@ -3,7 +3,6 @@
 #include "ScreenManager.h"
 #include "GameSoundManager.h"
 #include "GameConstantsAndTypes.h"
-#include "GameState.h"
 #include "ThemeManager.h"
 #include "ScreenDimensions.h"
 #include "ActorUtil.h"

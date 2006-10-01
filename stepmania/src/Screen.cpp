@@ -1,13 +1,11 @@
 #include "global.h"
 #include "Screen.h"
-#include "GameManager.h"
 #include "GameState.h"
 #include "PrefsManager.h"
 #include "RageSound.h"
 #include "RageLog.h"
 #include "ThemeManager.h"
 #include "ScreenManager.h"
-#include "GameSoundManager.h"
 #include "ActorUtil.h"
 #include "InputEventPlus.h"
 

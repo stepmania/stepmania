@@ -12,7 +12,6 @@
 #include "InputMapper.h"
 #include "ThemeManager.h"
 #include "GameSoundManager.h"
-#include "CommonMetrics.h"
 #include "InputEventPlus.h"
 #include "RageSoundManager.h"
 

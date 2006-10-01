@@ -3,7 +3,6 @@
 #include "PrefsManager.h"
 #include "ScreenManager.h"
 #include "RageLog.h"
-#include "GameManager.h"
 #include "ThemeManager.h"
 #include "RageDisplay.h"
 #include "ScreenDimensions.h"
