@@ -35,12 +35,6 @@ typedef multimap<RString,XNode*> XNodes;
 		Var##Iter != (pNode)->m_childs.end(); \
 		++Var##Iter )
 
-// Parse info.
-struct PARSEINFO
-{
-	RString		error_string;		// [get] error string
-};
-
 // display optional environment
 struct DISP_OPT
 {
@@ -82,8 +76,8 @@ public:
 	void SetValue( const DateTime &v );
 
 	// Load/Save XML
-	unsigned Load( const RString &sXml, PARSEINFO *pi, unsigned iOffset = 0 );
-	unsigned LoadAttributes( const RString &sAttrs, PARSEINFO *pi, unsigned iOffset );
+	unsigned Load( const RString &sXml, RString &sErrorOut, unsigned iOffset = 0 );
+	unsigned LoadAttributes( const RString &sAttrs, RString &sErrorOut, unsigned iOffset );
 	bool GetXML( RageFileBasic &f, DISP_OPT &opt ) const;
 	bool GetAttrXML( RageFileBasic &f, DISP_OPT &opt, const RString &sName, const RString &sValue ) const;
 	RString GetXML() const;

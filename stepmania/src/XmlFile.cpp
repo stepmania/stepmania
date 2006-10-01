@@ -119,7 +119,7 @@ void XNode::Clear()
 // Param  : pszAttrs - xml of attributes
 //          pi = parser information
 // Return : advanced string pointer. (error return npos)
-unsigned XNode::LoadAttributes( const RString &xml, PARSEINFO *pi, unsigned iOffset )
+unsigned XNode::LoadAttributes( const RString &xml, RString &sErrorOut, unsigned iOffset )
 {
 	while( iOffset < xml.size() )
 	{
@@ -137,8 +137,8 @@ unsigned XNode::LoadAttributes( const RString &xml, PARSEINFO *pi, unsigned iOff
 		if( iEnd == xml.npos ) 
 		{
 			// error
-			if( pi->error_string.empty() ) 
-				pi->error_string = ssprintf( "<%s> attribute has error ", m_sName.c_str() );
+			if( sErrorOut.empty() ) 
+				sErrorOut = ssprintf( "<%s> attribute has error ", m_sName.c_str() );
 			return string::npos;
 		}
 		
@@ -181,8 +181,8 @@ unsigned XNode::LoadAttributes( const RString &xml, PARSEINFO *pi, unsigned iOff
 			if( iEnd == xml.npos ) 
 			{
 				// error
-				if( pi->error_string.empty() ) 
-					pi->error_string = ssprintf( "<%s> attribute text: couldn't find matching quote", sName.c_str() );
+				if( sErrorOut.empty() ) 
+					sErrorOut = ssprintf( "<%s> attribute text: couldn't find matching quote", sName.c_str() );
 				return string::npos;
 			}
 
@@ -209,7 +209,7 @@ unsigned XNode::LoadAttributes( const RString &xml, PARSEINFO *pi, unsigned iOff
 // Param  : pszXml - plain xml text
 //          pi = parser information
 // Return : advanced string pointer  (error return npos)
-unsigned XNode::Load( const RString &xml, PARSEINFO *pi, unsigned iOffset )
+unsigned XNode::Load( const RString &xml, RString &sErrorOut, unsigned iOffset )
 {
 	Clear();
 
@@ -231,8 +231,8 @@ unsigned XNode::Load( const RString &xml, PARSEINFO *pi, unsigned iOffset )
 		unsigned iEnd = xml.find( "-->", iOffset );
 		if( iEnd == string::npos )
 		{
-			if( pi->error_string.empty() ) 
-				pi->error_string = "Unterminated comment";
+			if( sErrorOut.empty() ) 
+				sErrorOut = "Unterminated comment";
 
 			return string::npos;
 		}
@@ -240,7 +240,7 @@ unsigned XNode::Load( const RString &xml, PARSEINFO *pi, unsigned iOffset )
 		// Skip -->.
 		iOffset = iEnd + 3;
 
-		return Load( xml, pi, iOffset );
+		return Load( xml, sErrorOut, iOffset );
 	}
 
 	// XML Node Tag Name Open
@@ -250,7 +250,7 @@ unsigned XNode::Load( const RString &xml, PARSEINFO *pi, unsigned iOffset )
 	iOffset = iTagEnd;
 
 	// Generate XML Attributte List
-	iOffset = LoadAttributes( xml, pi, iOffset );
+	iOffset = LoadAttributes( xml, sErrorOut, iOffset );
 	if( iOffset == string::npos )
 		return string::npos;
 
@@ -268,8 +268,8 @@ unsigned XNode::Load( const RString &xml, PARSEINFO *pi, unsigned iOffset )
 		if( iOffset == xml.size() || xml[iOffset] != chXMLTagClose )
 		{
 			// error: <TAG ... / >
-			if( pi->error_string.empty() ) 
-				pi->error_string = "Element must be closed.";
+			if( sErrorOut.empty() ) 
+				sErrorOut = "Element must be closed.";
 
 			// ill-formed tag
 			return string::npos;
@@ -282,7 +282,7 @@ unsigned XNode::Load( const RString &xml, PARSEINFO *pi, unsigned iOffset )
 		// just loaded is a meta tag, then Load ourself again using the rest 
 		// of the file until we reach a non-meta tag.
 		if( !m_sName.empty() && (m_sName[0] == chXMLQuestion || m_sName[0] == chXMLExclamation) )
-			iOffset = Load( xml, pi, iOffset );
+			iOffset = Load( xml, sErrorOut, iOffset );
 
 		return iOffset;
 	}
@@ -296,8 +296,8 @@ unsigned XNode::Load( const RString &xml, PARSEINFO *pi, unsigned iOffset )
 		unsigned iEnd = xml.find( chXMLTagOpen, iOffset );
 		if( iEnd == string::npos )
 		{
-			if( pi->error_string.empty() ) 
-				pi->error_string = ssprintf( "%s must be closed with </%s>", m_sName.c_str(), m_sName.c_str() );
+			if( sErrorOut.empty() ) 
+				sErrorOut = ssprintf( "%s must be closed with </%s>", m_sName.c_str(), m_sName.c_str() );
 			// error cos not exist CloseTag </TAG>
 			return string::npos;
 		}
@@ -314,7 +314,7 @@ unsigned XNode::Load( const RString &xml, PARSEINFO *pi, unsigned iOffset )
 	{
 		XNode *node = new XNode;
 		
-		iOffset = node->Load( xml, pi, iOffset );
+		iOffset = node->Load( xml, sErrorOut, iOffset );
 		if( !node->m_sName.empty() )
 		{
 			DEBUG_ASSERT( node->m_sName.size() );
@@ -340,8 +340,8 @@ unsigned XNode::Load( const RString &xml, PARSEINFO *pi, unsigned iOffset )
 			unsigned iEnd = xml.find_first_of( " >", iOffset );
 			if( iEnd == string::npos )
 			{
-				if( pi->error_string.empty() ) 
-					pi->error_string = ssprintf( "it must be closed with </%s>", m_sName.c_str() );
+				if( sErrorOut.empty() ) 
+					sErrorOut = ssprintf( "it must be closed with </%s>", m_sName.c_str() );
 				// error
 				return string::npos;
 			}
@@ -358,8 +358,8 @@ unsigned XNode::Load( const RString &xml, PARSEINFO *pi, unsigned iOffset )
 			else
 			{
 				// not welformed open/close
-				if( pi->error_string.empty() ) 
-					pi->error_string = ssprintf( "'<%s> ... </%s>' is not well-formed.", m_sName.c_str(), closename.c_str() );
+				if( sErrorOut.empty() ) 
+					sErrorOut = ssprintf( "'<%s> ... </%s>' is not well-formed.", m_sName.c_str(), closename.c_str() );
 				return string::npos;
 			}
 		}
@@ -372,8 +372,8 @@ unsigned XNode::Load( const RString &xml, PARSEINFO *pi, unsigned iOffset )
 				if( iEnd == string::npos ) 
 				{
 					// error cos not exist CloseTag </TAG>
-					if( pi->error_string.empty() )  
-						pi->error_string = ssprintf( "it must be closed with </%s>", m_sName.c_str() );
+					if( sErrorOut.empty() )  
+						sErrorOut = ssprintf( "it must be closed with </%s>", m_sName.c_str() );
 					return string::npos;
 				}
 				
