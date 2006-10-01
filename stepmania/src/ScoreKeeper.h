@@ -1,14 +1,14 @@
 /* ScoreKeeper - Abstract class to handle scorekeeping, stat-taking, etc. */
 
-#ifndef SCOREKEEPER_H
-#define SCOREKEEPER_H
+#ifndef SCORE_KEEPER_H
+#define SCORE_KEEPER_H
 
 /*
  * Stat handling is in here because that can differ between games, too; for
  * example, some games count double taps as a single note in scoring and
  * some count per-tap.
  *
- * Results are injected directly into GameState.
+ * Results are injected directly into the PlayerStageStats.
  */
 
 #include "GameConstantsAndTypes.h"
