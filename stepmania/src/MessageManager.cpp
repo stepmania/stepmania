@@ -231,7 +231,6 @@ void IMessageSubscriber::HandleMessageInternal( const RString& sMessage )
 {
 	QueuedMessage QM;
 	QM.sMessage = sMessage;
-	QM.fDelayRemaining = 0;
 
 	g_Mutex.Lock();
 	m_aMessages.push_back( QM );
@@ -246,9 +245,6 @@ void IMessageSubscriber::ProcessMessages( float fDeltaTime )
 		return;
 
 	g_Mutex.Lock();
-	for( unsigned i=0; i<m_aMessages.size(); i++ )
-		m_aMessages[i].fDelayRemaining -= fDeltaTime;
-
 	for( unsigned i = 0; i < m_aMessages.size(); ++i )
 	{
 		/* Remove the message from the list. */
