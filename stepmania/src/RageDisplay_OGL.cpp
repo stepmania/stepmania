@@ -1445,8 +1445,7 @@ void RageDisplay_OGL::SetBlendMode( BlendMode mode )
 	case BLEND_NO_EFFECT:
 		glBlendFunc( GL_ZERO, GL_ONE );
 		break;
-	default:
-		ASSERT(0);
+	DEFAULT_FAIL( mode );
 	}
 }
 
