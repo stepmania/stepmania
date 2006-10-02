@@ -60,9 +60,9 @@ void Bookkeeper::Date::Set( tm pTime )
 
 void Bookkeeper::LoadFromNode( const XNode *pNode )
 {
-	if( pNode->m_sName != "Bookkeeping" )
+	if( pNode->GetName() != "Bookkeeping" )
 	{
-		LOG->Warn( "Error loading bookkeeping: unexpected \"%s\"", pNode->m_sName.c_str() );
+		LOG->Warn( "Error loading bookkeeping: unexpected \"%s\"", pNode->GetName().c_str() );
 		return;
 	}
 

@@ -181,7 +181,7 @@ void BackgroundImpl::Init()
 
 			XNode xml;
 			XmlFileUtil::LoadFromFileShowErrors(xml, sPath);
-			ASSERT( xml.m_sName == "BackgroundTransition" );
+			ASSERT( xml.GetName() == "BackgroundTransition" );
 			BackgroundTransition &bgt = m_mapNameToTransition[sName];
 
 			RString sCmdLeaves;

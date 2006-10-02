@@ -49,7 +49,7 @@ XNode* RadarValues::CreateNode() const
 
 void RadarValues::LoadFromNode( const XNode* pNode ) 
 {
-	ASSERT( pNode->m_sName == "RadarValues" );
+	ASSERT( pNode->GetName() == "RadarValues" );
 
 	Zero();
 

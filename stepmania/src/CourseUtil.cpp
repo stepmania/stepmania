@@ -388,7 +388,7 @@ XNode* CourseID::CreateNode() const
 
 void CourseID::LoadFromNode( const XNode* pNode ) 
 {
-	ASSERT( pNode->m_sName == "Course" );
+	ASSERT( pNode->GetName() == "Course" );
 	pNode->GetAttrValue("Path", sPath);
 	pNode->GetAttrValue("FullTitle", sFullTitle);
 }

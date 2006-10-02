@@ -856,12 +856,12 @@ ProfileLoadResult Profile::LoadStatsXmlFromNode( const XNode *xml, bool bIgnoreE
 {
 	/* The placeholder stats.xml file has an <html> tag.  Don't load it, but don't
 	 * warn about it. */
-	if( xml->m_sName == "html" )
+	if( xml->GetName() == "html" )
 		return ProfileLoadResult_FailedNoProfile;
 
-	if( xml->m_sName != "Stats" )
+	if( xml->GetName() != "Stats" )
 	{
-		WARN_M( xml->m_sName );
+		WARN_M( xml->GetName() );
 		return ProfileLoadResult_FailedTampered;
 	}
 
@@ -1141,7 +1141,7 @@ ProfileLoadResult Profile::LoadEditableDataFromDir( RString sDir )
 
 void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 {
-	ASSERT( pNode->m_sName == "GeneralData" );
+	ASSERT( pNode->GetName() == "GeneralData" );
 
 	RString s;
 	const XNode* pTemp;
@@ -1183,7 +1183,7 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 		{
 			FOREACH_CONST_Child( pDefaultModifiers, game_type )
 			{
-				m_sDefaultModifiers[game_type->m_sName] = game_type->m_sValue;
+				m_sDefaultModifiers[game_type->GetName()] = game_type->GetValue();
 			}
 		}
 	}
@@ -1214,7 +1214,7 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 		{
 			FOREACH_CONST_Child( pNumSongsPlayedByStyle, style )
 			{
-				if( style->m_sName != "Style" )
+				if( style->GetName() != "Style" )
 					continue;
 
 				StyleID s;
@@ -1324,11 +1324,11 @@ void Profile::LoadSongScoresFromNode( const XNode* pSongScores )
 {
 	CHECKPOINT;
 
-	ASSERT( pSongScores->m_sName == "SongScores" );
+	ASSERT( pSongScores->GetName() == "SongScores" );
 
 	FOREACH_CONST_Child( pSongScores, pSong )
 	{
-		if( pSong->m_sName != "Song" )
+		if( pSong->GetName() != "Song" )
 			continue;
 
 		SongID songID;
@@ -1338,7 +1338,7 @@ void Profile::LoadSongScoresFromNode( const XNode* pSongScores )
 
 		FOREACH_CONST_Child( pSong, pSteps )
 		{
-			if( pSteps->m_sName != "Steps" )
+			if( pSteps->GetName() != "Steps" )
 				continue;
 
 			StepsID stepsID;
@@ -1401,14 +1401,14 @@ void Profile::LoadCourseScoresFromNode( const XNode* pCourseScores )
 {
 	CHECKPOINT;
 
-	ASSERT( pCourseScores->m_sName == "CourseScores" );
+	ASSERT( pCourseScores->GetName() == "CourseScores" );
 
 	vector<Course*> vpAllCourses;
 	SONGMAN->GetAllCourses( vpAllCourses, true );
 
 	FOREACH_CONST_Child( pCourseScores, pCourse )
 	{
-		if( pCourse->m_sName != "Course" )
+		if( pCourse->GetName() != "Course" )
 			continue;
 
 		CourseID courseID;
@@ -1447,7 +1447,7 @@ void Profile::LoadCourseScoresFromNode( const XNode* pCourseScores )
 
 		FOREACH_CONST_Child( pCourse, pTrail )
 		{
-			if( pTrail->m_sName != "Trail" )
+			if( pTrail->GetName() != "Trail" )
 				continue;
 			
 			TrailID trailID;
@@ -1505,11 +1505,11 @@ void Profile::LoadCategoryScoresFromNode( const XNode* pCategoryScores )
 {
 	CHECKPOINT;
 
-	ASSERT( pCategoryScores->m_sName == "CategoryScores" );
+	ASSERT( pCategoryScores->GetName() == "CategoryScores" );
 
 	FOREACH_CONST_Child( pCategoryScores, pStepsType )
 	{
-		if( pStepsType->m_sName != "StepsType" )
+		if( pStepsType->GetName() != "StepsType" )
 			continue;
 
 		RString str;
@@ -1521,7 +1521,7 @@ void Profile::LoadCategoryScoresFromNode( const XNode* pCategoryScores )
 
 		FOREACH_CONST_Child( pStepsType, pRadarCategory )
 		{
-			if( pRadarCategory->m_sName != "RankingCategory" )
+			if( pRadarCategory->GetName() != "RankingCategory" )
 				continue;
 
 			if( !pRadarCategory->GetAttrValue( "Type", str ) )
@@ -1565,11 +1565,11 @@ void Profile::LoadScreenshotDataFromNode( const XNode* pScreenshotData )
 {
 	CHECKPOINT;
 
-	ASSERT( pScreenshotData->m_sName == "ScreenshotData" );
+	ASSERT( pScreenshotData->GetName() == "ScreenshotData" );
 	FOREACH_CONST_Child( pScreenshotData, pScreenshot )
 	{
-		if( pScreenshot->m_sName != "Screenshot" )
-			WARN_AND_CONTINUE_M( pScreenshot->m_sName );
+		if( pScreenshot->GetName() != "Screenshot" )
+			WARN_AND_CONTINUE_M( pScreenshot->GetName() );
 
 		Screenshot ss;
 		ss.LoadFromNode( pScreenshot );
@@ -1599,11 +1599,11 @@ void Profile::LoadCalorieDataFromNode( const XNode* pCalorieData )
 {
 	CHECKPOINT;
 
-	ASSERT( pCalorieData->m_sName == "CalorieData" );
+	ASSERT( pCalorieData->GetName() == "CalorieData" );
 	FOREACH_CONST_Child( pCalorieData, pCaloriesBurned )
 	{
-		if( pCaloriesBurned->m_sName != "CaloriesBurned" )
-			WARN_AND_CONTINUE_M( pCaloriesBurned->m_sName );
+		if( pCaloriesBurned->GetName() != "CaloriesBurned" )
+			WARN_AND_CONTINUE_M( pCaloriesBurned->GetName() );
 
 		RString sDate;
 		if( !pCaloriesBurned->GetAttrValue("Date",sDate) )
@@ -1664,7 +1664,7 @@ void Profile::HighScoreForASongAndSteps::LoadFromNode( const XNode* pNode )
 {
 	Unset();
 
-	ASSERT( pNode->m_sName == "HighScoreForASongAndSteps" );
+	ASSERT( pNode->GetName() == "HighScoreForASongAndSteps" );
 	const XNode* p;
 	if( (p = pNode->GetChild("Song")) )
 		songID.LoadFromNode( p );
@@ -1678,10 +1678,10 @@ void Profile::LoadRecentSongScoresFromNode( const XNode* pRecentSongScores )
 {
 	CHECKPOINT;
 
-	ASSERT( pRecentSongScores->m_sName == "RecentSongScores" );
+	ASSERT( pRecentSongScores->GetName() == "RecentSongScores" );
 	FOREACH_CONST_Child( pRecentSongScores, p )
 	{
-		if( p->m_sName == "HighScoreForASongAndSteps" )
+		if( p->GetName() == "HighScoreForASongAndSteps" )
 		{
 			HighScoreForASongAndSteps h;
 			h.LoadFromNode( p );
@@ -1690,7 +1690,7 @@ void Profile::LoadRecentSongScoresFromNode( const XNode* pRecentSongScores )
 		}
 		else
 		{
-			WARN_AND_CONTINUE_M( p->m_sName );
+			WARN_AND_CONTINUE_M( p->GetName() );
 		}
 	}	
 }
@@ -1744,7 +1744,7 @@ void Profile::HighScoreForACourseAndTrail::LoadFromNode( const XNode* pNode )
 {
 	Unset();
 
-	ASSERT( pNode->m_sName == "HighScoreForACourseAndTrail" );
+	ASSERT( pNode->GetName() == "HighScoreForACourseAndTrail" );
 	const XNode* p;
 	if( (p = pNode->GetChild("Course")) )
 		courseID.LoadFromNode( p );
@@ -1758,10 +1758,10 @@ void Profile::LoadRecentCourseScoresFromNode( const XNode* pRecentCourseScores )
 {
 	CHECKPOINT;
 
-	ASSERT( pRecentCourseScores->m_sName == "RecentCourseScores" );
+	ASSERT( pRecentCourseScores->GetName() == "RecentCourseScores" );
 	FOREACH_CONST_Child( pRecentCourseScores, p )
 	{
-		if( p->m_sName == "HighScoreForACourseAndTrail" )
+		if( p->GetName() == "HighScoreForACourseAndTrail" )
 		{
 			HighScoreForACourseAndTrail h;
 			h.LoadFromNode( p );
@@ -1770,7 +1770,7 @@ void Profile::LoadRecentCourseScoresFromNode( const XNode* pRecentCourseScores )
 		}
 		else
 		{
-			WARN_AND_CONTINUE_M( p->m_sName );
+			WARN_AND_CONTINUE_M( p->GetName() );
 		}
 	}	
 }

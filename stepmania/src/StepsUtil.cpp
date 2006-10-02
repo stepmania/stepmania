@@ -281,7 +281,7 @@ void StepsID::ClearCache()
 
 void StepsID::LoadFromNode( const XNode* pNode ) 
 {
-	ASSERT( pNode->m_sName == "Steps" );
+	ASSERT( pNode->GetName() == "Steps" );
 
 	RString sTemp;
 

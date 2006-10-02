@@ -70,7 +70,7 @@ void BannerCache::Demand()
 
 	FOREACH_Child( &BannerData, p )
 	{
-		RString sBannerPath = p->m_sName;
+		RString sBannerPath = p->GetName();
 
 		if( g_BannerPathToImage.find(sBannerPath) != g_BannerPathToImage.end() )
 			continue; /* already loaded */

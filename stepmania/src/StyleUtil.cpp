@@ -42,7 +42,7 @@ XNode* StyleID::CreateNode() const
 void StyleID::LoadFromNode( const XNode* pNode ) 
 {
 	Unset();
-	ASSERT( pNode->m_sName == "Style" );
+	ASSERT( pNode->GetName() == "Style" );
 
 	sGame = "";
 	pNode->GetAttrValue("Game", sGame);

@@ -196,7 +196,7 @@ Actor* ActorUtil::LoadFromNode( const RString& sDir, const XNode* pNode, Actor *
 	{
 		FOREACH_CONST_Child( pNode, pChild )
 		{
-			if( pChild->m_sName == "Param" )
+			if( pChild->GetName() == "Param" )
 			{
 				RString sName;
 				if( !pChild->GetAttrValue( "Name", sName ) )
@@ -220,7 +220,7 @@ Actor* ActorUtil::LoadFromNode( const RString& sDir, const XNode* pNode, Actor *
 	// Element name is the type in XML.
 	// Type= is the name in INI.
 	// TODO: Remove the backward compat fallback
-	RString sClass = pNode->m_sName;
+	RString sClass = pNode->GetName();
 	bool bHasClass = pNode->GetAttrValue( "Class", sClass );
 	if( !bHasClass )
 		bHasClass = pNode->GetAttrValue( "Type", sClass );	// for backward compatibility
@@ -316,9 +316,9 @@ static void MergeActorXML( XNode *pChild, const XNode *pParent )
 				ssprintf( "Overriding \"%s\" (\"%s\") in XML node \"%s\" with \"%s\" in XML node \"%s\"",
 				p->first.c_str(),
 				p->second.c_str(),
-				pChild->m_sName.c_str(),
+				pChild->GetName().c_str(),
 				sOld.c_str(),
-				pParent->m_sName.c_str() );
+				pParent->GetName().c_str() );
 			Dialog::OK( sWarning, "XML_ATTRIB_OVERRIDE" );
 		}
 		pChild->AppendAttr( p->first, p->second );

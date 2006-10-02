@@ -157,7 +157,7 @@ bool Workout::LoadFromFile( RString sFile )
 {
 	XNode xml;
 	XmlFileUtil::LoadFromFileShowErrors( xml, sFile );
-	if( xml.m_sName != "Workout" )
+	if( xml.GetName() != "Workout" )
 		return false;
 
 	m_sFile = sFile;
@@ -187,8 +187,8 @@ bool Workout::LoadFromFile( RString sFile )
 	{
 		FOREACH_CONST_Child( songGenres, songGenre )
 		{
-			if( songGenre->m_sName == "SongGenre" )
-				m_vsSongGenres.push_back( songGenre->m_sValue );
+			if( songGenre->GetName() == "SongGenre" )
+				m_vsSongGenres.push_back( songGenre->GetValue() );
 		}
 	}
 	return true;

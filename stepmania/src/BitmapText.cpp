@@ -113,7 +113,7 @@ void BitmapText::LoadFromNode( const RString& sDir, const XNode* pNode )
 
 	if( sFont == "" )
 		RageException::Throw( "An object \"%s\" in \"%s\" is missing the Font attribute.",
-				      pNode->m_sName.c_str(), sDir.c_str() );
+				      pNode->GetName().c_str(), sDir.c_str() );
 
 	LoadFromFont( THEME->GetPathF( "", sFont ) );
 	SetText( sText, sAltText );

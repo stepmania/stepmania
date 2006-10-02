@@ -108,7 +108,7 @@ XNode *HighScoreImpl::CreateNode() const
 
 void HighScoreImpl::LoadFromNode( const XNode *pNode )
 {
-	ASSERT( pNode->m_sName == "HighScore" );
+	ASSERT( pNode->GetName() == "HighScore" );
 
 	RString s;
 
@@ -301,18 +301,18 @@ void HighScoreList::LoadFromNode( const XNode* pHighScoreList )
 {
 	Init();
 
-	ASSERT( pHighScoreList->m_sName == "HighScoreList" );
+	ASSERT( pHighScoreList->GetName() == "HighScoreList" );
 	FOREACH_CONST_Child( pHighScoreList, p )
 	{
-		if( p->m_sName == "NumTimesPlayed" )
+		if( p->GetName() == "NumTimesPlayed" )
 		{
 			p->GetValue( iNumTimesPlayed );
 		}
-		else if( p->m_sName == "LastPlayed" )
+		else if( p->GetName() == "LastPlayed" )
 		{
 			p->GetValue( dtLastPlayed );
 		}
-		else if( p->m_sName == "HighScore" )
+		else if( p->GetName() == "HighScore" )
 		{
 			vHighScores.resize( vHighScores.size()+1 );
 			vHighScores.back().LoadFromNode( p );
@@ -362,7 +362,7 @@ XNode* Screenshot::CreateNode() const
 
 void Screenshot::LoadFromNode( const XNode* pNode ) 
 {
-	ASSERT( pNode->m_sName == "Screenshot" );
+	ASSERT( pNode->GetName() == "Screenshot" );
 
 	pNode->GetChildValue( "FileName",	sFileName );
 	pNode->GetChildValue( "MD5",		sMD5 );

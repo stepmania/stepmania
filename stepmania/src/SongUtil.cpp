@@ -848,7 +848,7 @@ XNode* SongID::CreateNode() const
 
 void SongID::LoadFromNode( const XNode* pNode ) 
 {
-	ASSERT( pNode->m_sName == "Song" );
+	ASSERT( pNode->GetName() == "Song" );
 	pNode->GetAttrValue("Dir", sDir);
 }
 
