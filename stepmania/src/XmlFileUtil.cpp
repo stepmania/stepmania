@@ -140,7 +140,7 @@ unsigned LoadAttributes( XNode *pNode, const RString &xml, RString &sErrorOut, u
 		{
 			// error
 			if( sErrorOut.empty() ) 
-				sErrorOut = ssprintf( "<%s> attribute has error ", pNode->m_sName.c_str() );
+				sErrorOut = ssprintf( "<%s> attribute has error ", pNode->GetName().c_str() );
 			return string::npos;
 		}
 		
@@ -287,7 +287,7 @@ unsigned XmlFileUtil::Load( XNode *pNode, const RString &xml, RString &sErrorOut
 		// UGLY: We want to ignore all XML meta tags.  So, since the Node we 
 		// just loaded is a meta tag, then Load ourself again using the rest 
 		// of the file until we reach a non-meta tag.
-		if( !pNode->m_sName.empty() && (pNode->m_sName[0] == chXMLQuestion || pNode->m_sName[0] == chXMLExclamation) )
+		if( !pNode->GetName().empty() && (pNode->GetName()[0] == chXMLQuestion || pNode->GetName()[0] == chXMLExclamation) )
 			iOffset = Load( pNode, xml, sErrorOut, iOffset );
 
 		return iOffset;
@@ -303,7 +303,7 @@ unsigned XmlFileUtil::Load( XNode *pNode, const RString &xml, RString &sErrorOut
 		if( iEnd == string::npos )
 		{
 			if( sErrorOut.empty() ) 
-				sErrorOut = ssprintf( "%s must be closed with </%s>", pNode->m_sName.c_str(), pNode->m_sName.c_str() );
+				sErrorOut = ssprintf( "%s must be closed with </%s>", pNode->GetName().c_str(), pNode->GetName().c_str() );
 			// error cos not exist CloseTag </TAG>
 			return string::npos;
 		}
@@ -321,10 +321,10 @@ unsigned XmlFileUtil::Load( XNode *pNode, const RString &xml, RString &sErrorOut
 		XNode *node = new XNode;
 		
 		iOffset = Load( node, xml, sErrorOut, iOffset );
-		if( !node->m_sName.empty() )
+		if( !node->GetName().empty() )
 		{
-			DEBUG_ASSERT( node->m_sName.size() );
-			pNode->m_childs.insert( make_pair(node->m_sName, node) );
+			DEBUG_ASSERT( node->GetName().size() );
+			pNode->m_childs.insert( make_pair(node->GetName(), node) );
 		}
 		else
 		{
@@ -347,7 +347,7 @@ unsigned XmlFileUtil::Load( XNode *pNode, const RString &xml, RString &sErrorOut
 			if( iEnd == string::npos )
 			{
 				if( sErrorOut.empty() ) 
-					sErrorOut = ssprintf( "it must be closed with </%s>", pNode->m_sName.c_str() );
+					sErrorOut = ssprintf( "it must be closed with </%s>", pNode->GetName().c_str() );
 				// error
 				return string::npos;
 			}
@@ -355,7 +355,7 @@ unsigned XmlFileUtil::Load( XNode *pNode, const RString &xml, RString &sErrorOut
 			RString closename;
 			SetString( xml, iOffset, iEnd, &closename );
 			iOffset = iEnd+1;
-			if( closename == pNode->m_sName )
+			if( closename == pNode->GetName() )
 			{
 				// wel-formed open/close
 				// return '>' or ' ' after pointer
@@ -365,7 +365,7 @@ unsigned XmlFileUtil::Load( XNode *pNode, const RString &xml, RString &sErrorOut
 			{
 				// not welformed open/close
 				if( sErrorOut.empty() ) 
-					sErrorOut = ssprintf( "'<%s> ... </%s>' is not well-formed.", pNode->m_sName.c_str(), closename.c_str() );
+					sErrorOut = ssprintf( "'<%s> ... </%s>' is not well-formed.", pNode->GetName().c_str(), closename.c_str() );
 				return string::npos;
 			}
 		}
@@ -379,7 +379,7 @@ unsigned XmlFileUtil::Load( XNode *pNode, const RString &xml, RString &sErrorOut
 				{
 					// error cos not exist CloseTag </TAG>
 					if( sErrorOut.empty() )  
-						sErrorOut = ssprintf( "it must be closed with </%s>", pNode->m_sName.c_str() );
+						sErrorOut = ssprintf( "it must be closed with </%s>", pNode->GetName().c_str() );
 					return string::npos;
 				}
 				
@@ -415,7 +415,7 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 				return false;
 
 	// <TAG
-	if( f.Write("<" + pNode->m_sName) == -1 )
+	if( f.Write("<" + pNode->GetName()) == -1 )
 		return false;
 
 	// <TAG Attr1="Val1" 
@@ -473,7 +473,7 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 					if( f.Write("\t") == -1 )
 						return false;
 		}
-		if( f.Write("</" + pNode->m_sName + ">") == -1 )
+		if( f.Write("</" + pNode->GetName() + ">") == -1 )
 			return false;
 
 		if( !pNode->m_childs.empty() )
