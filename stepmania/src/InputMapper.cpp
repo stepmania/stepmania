@@ -561,7 +561,8 @@ void InputMapper::ReadMappingsFromDisk()
 		FOREACH_CONST_Attr( Key, i )
 		{
 			const RString &name = i->first;
-			const RString &value = i->second;
+			RString value;
+			i->second.GetValue( value );
 
 			GameInput GameI;
 			GameI.FromString( m_pInputScheme, name );

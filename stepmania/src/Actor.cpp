@@ -212,7 +212,7 @@ void Actor::LoadFromNode( const RString& sDir, const XNode* pNode )
 {
 	FOREACH_CONST_Child( pNode, pChild )
 	{
-		if( pChild->m_sName == "Input" )
+		if( pChild->GetName() == "Input" )
 		{
 			/* If parameters are specified here, save their values to the actor. */
 			RString sName;
@@ -235,7 +235,7 @@ void Actor::LoadFromNode( const RString& sDir, const XNode* pNode )
 			LUA->Release( L );
 		}
 
-		if( pChild->m_sName == "Context" )
+		if( pChild->GetName() == "Context" )
 		{
 			RString sName;
 			if( !pChild->GetAttrValue( "Name", sName ) )
@@ -262,17 +262,17 @@ void Actor::LoadFromNode( const RString& sDir, const XNode* pNode )
 	{
 		// Load Name, if any.
 		const RString &sKeyName = pAttr->first;
-		const RString &sValue = pAttr->second;
-		if( sKeyName == "Name" )			SetName( sValue );
-		else if( sKeyName == "BaseRotationX" )		SetBaseRotationX( StringToFloat(sValue) );
-		else if( sKeyName == "BaseRotationY" )		SetBaseRotationY( StringToFloat(sValue) );
-		else if( sKeyName == "BaseRotationZ" )		SetBaseRotationZ( StringToFloat(sValue) );
-		else if( sKeyName == "BaseZoomX" )		SetBaseZoomX( StringToFloat(sValue) );
-		else if( sKeyName == "BaseZoomY" )		SetBaseZoomY( StringToFloat(sValue) );
-		else if( sKeyName == "BaseZoomZ" )		SetBaseZoomZ( StringToFloat(sValue) );
+		const XNodeValue &sValue = pAttr->second;
+		if( sKeyName == "Name" )			SetName( sValue.GetValue<RString>() );
+		else if( sKeyName == "BaseRotationX" )		SetBaseRotationX( sValue.GetValue<float>() );
+		else if( sKeyName == "BaseRotationY" )		SetBaseRotationY( sValue.GetValue<float>() );
+		else if( sKeyName == "BaseRotationZ" )		SetBaseRotationZ( sValue.GetValue<float>() );
+		else if( sKeyName == "BaseZoomX" )		SetBaseZoomX( sValue.GetValue<float>() );
+		else if( sKeyName == "BaseZoomY" )		SetBaseZoomY( sValue.GetValue<float>() );
+		else if( sKeyName == "BaseZoomZ" )		SetBaseZoomZ( sValue.GetValue<float>() );
 		else if( EndsWith(sKeyName,"Command") )
 		{
-			apActorCommands apac = ActorUtil::ParseActorCommands( sValue );
+			apActorCommands apac = ActorUtil::ParseActorCommands( sValue.GetValue<RString>(), ssprintf("%s: %s", sDir.c_str(), sKeyName.c_str()) );
 
 			RString sCmdName = sKeyName.Left( sKeyName.size()-7 );
 			AddCommand( sCmdName, apac );
@@ -284,7 +284,7 @@ void Actor::LoadFromNode( const RString& sDir, const XNode* pNode )
 	//
 	FOREACH_CONST_Child( pNode, c )
 	{
-		RString sKeyName = c->m_sName;
+		RString sKeyName = c->GetName();
 
 		if( sKeyName != "Command" )
 			continue; /* not a command */

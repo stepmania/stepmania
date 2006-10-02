@@ -50,7 +50,7 @@ void TitleTrans::LoadFromNode( const XNode* pNode )
 		/* Surround each regex with ^(...)$, to force all comparisons to default
 		 * to being a full-line match.  (Add ".*" manually if this isn't wanted.) */
 		const RString &sKeyName = attr->first;
-		const RString &sValue = attr->second;
+		const RString &sValue = attr->second.GetValue<RString>();
 		if( sKeyName == "DontTransliterate" )		translit = false;
 		else if( sKeyName == "TitleFrom" )		TitleFrom			= "^(" + sValue + ")$";
 		else if( sKeyName == "ArtistFrom" )		ArtistFrom			= "^(" + sValue + ")$";

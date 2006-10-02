@@ -36,7 +36,7 @@ void ExportStrings::Nsis()
 			FOREACH_CONST_Attr( child, attr )
 			{
 				RString sName = attr->first;
-				RString sValue = attr->second;
+				RString sValue = attr->second.GetValue<RString>();
 				sValue.Replace( "\\n", "$\\n" );
 				RString sLine = ssprintf( "LangString %s ${LANG_%s} \"%s\"", sName.c_str(), sLangNameUpper.c_str(), sValue.c_str() );
 				out.PutLine( sLine );
