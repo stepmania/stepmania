@@ -21,6 +21,7 @@
 #include "ProductInfo.h"
 #include "RageUtil.h"
 #include "XmlFile.h"
+#include "XmlFileUtil.h"
 #include "LocalizedString.h"
 #include "RageFileDriverDeflate.h"
 
@@ -790,11 +791,11 @@ BOOL CrashDialog::HandleMessage( UINT msg, WPARAM wParam, LPARAM lParam )
 				XNode xml;
 				if( sError.empty() )
 				{
-					PARSEINFO pi;
-					xml.Load( sResult, &pi );
-					if( pi.error_occur )
+					RString sError;
+					XmlFileUtil::Load( &xml, sResult, sError );
+					if( !sError.empty() )
 					{
-						sError = ssprintf( "Error parsing response: %s", pi.error_string.c_str() );
+						sError = ssprintf( "Error parsing response: %s", sError.c_str() );
 						xml.Clear();
 					}
 				}
