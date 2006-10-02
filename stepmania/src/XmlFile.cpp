@@ -52,7 +52,6 @@ bool XNode::GetAttrValue( const RString &sName, DateTime &out ) const	{ const RS
 void XNode::SetValue( const RString &v )		{ m_sValue = v; }
 void XNode::SetValue( int v )				{ m_sValue = ssprintf("%d",v); }
 void XNode::SetValue( float v )				{ m_sValue = ssprintf("%f",v); }
-void XNode::SetValue( bool v )				{ m_sValue = ssprintf("%d",v); }
 void XNode::SetValue( unsigned v )			{ m_sValue = ssprintf("%u",v); }
 void XNode::SetValue( const DateTime &v )		{ m_sValue = v.GetString(); }
 

@@ -56,7 +56,6 @@ public:
 	void SetValue( const RString &v );
 	void SetValue( int v );
 	void SetValue( float v );
-	void SetValue( bool v );
 	void SetValue( unsigned v );
 	void SetValue( const DateTime &v );
 
