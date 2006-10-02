@@ -150,8 +150,8 @@ unsigned LoadAttributes( XNode *pNode, const RString &xml, RString &sErrorOut, u
 		
 		// add new attribute
 		DEBUG_ASSERT( sName.size() );
-		pair<XAttrs::iterator,bool> it = pNode->m_attrs.insert( make_pair(sName, RString()) );
-		RString &sValue = it.first->second;
+		pair<XAttrs::iterator,bool> it = pNode->m_attrs.insert( make_pair(sName, XNodeValue()) );
+		RString &sValue = it.first->second.m_sValue;
 		iOffset = iEnd;
 		
 		// XML Attr Value
@@ -295,7 +295,7 @@ unsigned XmlFileUtil::Load( XNode *pNode, const RString &xml, RString &sErrorOut
 
 	// open/close tag <TAG ..> ... </TAG>
 	//                        ^- current pointer
-	if( XIsEmptyString(pNode->m_sValue) )
+	if( XIsEmptyString(pNode->m_Value.m_sValue) )
 	{
 		// Text Value 
 		++iOffset;
@@ -308,11 +308,11 @@ unsigned XmlFileUtil::Load( XNode *pNode, const RString &xml, RString &sErrorOut
 			return string::npos;
 		}
 		
-		SetString( xml, iOffset, iEnd, &pNode->m_sValue, true );
+		SetString( xml, iOffset, iEnd, &pNode->m_Value.m_sValue, true );
 
 		iOffset = iEnd;
 		// TEXTVALUE reference
-		ReplaceEntityText( pNode->m_sValue, g_mapEntitiesToChars );
+		ReplaceEntityText( pNode->m_Value.m_sValue, g_mapEntitiesToChars );
 	}
 
 	// generate child nodes
@@ -371,7 +371,7 @@ unsigned XmlFileUtil::Load( XNode *pNode, const RString &xml, RString &sErrorOut
 		}
 		else	// Alone child Tag Loaded
 		{
-			if( XIsEmptyString(pNode->m_sValue) && iOffset < xml.size() && xml[iOffset] != chXMLTagOpen )
+			if( XIsEmptyString(pNode->m_Value.m_sValue) && iOffset < xml.size() && xml[iOffset] != chXMLTagOpen )
 			{
 				// Text Value 
 				unsigned iEnd = xml.find( chXMLTagOpen, iOffset );
@@ -383,11 +383,11 @@ unsigned XmlFileUtil::Load( XNode *pNode, const RString &xml, RString &sErrorOut
 					return string::npos;
 				}
 				
-				SetString( xml, iOffset, iEnd, &pNode->m_sValue, true );
+				SetString( xml, iOffset, iEnd, &pNode->m_Value.m_sValue, true );
 
 				iOffset = iEnd;
 				//TEXTVALUE
-				ReplaceEntityText( pNode->m_sValue, g_mapEntitiesToChars );
+				ReplaceEntityText( pNode->m_Value.m_sValue, g_mapEntitiesToChars );
 			}
 		}
 	}
@@ -423,10 +423,10 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 		if( f.Write(" ") == -1 )
 			return false;
 	FOREACH_CONST_Attr( pNode, p )
-		if( !GetAttrXML(f, p->first, p->second) )
+		if( !GetAttrXML(f, p->first, p->second.GetValue<RString>()) )
 			return false;
 	
-	if( pNode->m_childs.empty() && pNode->m_sValue.empty() )
+	if( pNode->m_childs.empty() && pNode->m_Value.m_sValue.empty() )
 	{
 		// <TAG Attr1="Val1"/> alone tag 
 		if( f.Write("/>") == -1 )
@@ -442,11 +442,11 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 			iTabBase++;
 
 		FOREACH_CONST_Child( pNode, p )
-			if( !GetXMLInternal( pNode, f, bWriteTabs, iTabBase ) )
+			if( !GetXMLInternal( p, f, bWriteTabs, iTabBase ) )
 				return false;
 		
 		// Text Value
-		if( !pNode->m_sValue.empty() )
+		if( !pNode->m_Value.m_sValue.empty() )
 		{
 			if( !pNode->m_childs.empty() )
 			{
@@ -457,7 +457,7 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 						if( f.Write("\t") == -1 )
 							return false;
 			}
-			RString s( pNode->m_sValue );
+			RString s( pNode->m_Value.m_sValue );
 			ReplaceEntityText( s, g_mapCharsToEntities );
 			if( f.Write(s) == -1 )
 				return false;
