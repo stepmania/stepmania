@@ -155,7 +155,7 @@ LuaDeclareType( TapNoteScore );
 
 enum HoldNoteScore 
 { 
-	HNS_None,	// this HoldNote has not been scored yet
+	HNS_None,		// this HoldNote has not been scored yet
 	HNS_LetGo,		// the HoldNote has passed and they missed it
 	HNS_Held,		// the HoldNote has passed and was successfully held all the way through
 	NUM_HoldNoteScore,
@@ -165,7 +165,7 @@ enum HoldNoteScore
 const RString& HoldNoteScoreToString( HoldNoteScore hns );
 const RString& HoldNoteScoreToLocalizedString( HoldNoteScore hns );
 HoldNoteScore StringToHoldNoteScore( const RString& str );
-
+LuaDeclareType( HoldNoteScore );
 
 enum TimingWindow
 {
