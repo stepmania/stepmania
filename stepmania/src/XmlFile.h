@@ -50,6 +50,7 @@ public:
 	void GetValue( bool &out ) const;
 	void GetValue( unsigned &out ) const;
 	void GetValue( DateTime &out ) const;
+	void SetValue( const RString &v );
 	void SetValue( int v );
 	void SetValue( float v );
 	void SetValue( bool v );

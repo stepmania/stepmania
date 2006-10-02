@@ -508,6 +508,7 @@ bool XNode::GetAttrValue( const RString &sName, bool &out ) const	{ const RStrin
 bool XNode::GetAttrValue( const RString &sName, unsigned &out ) const	{ const RString* pAttr=GetAttr(sName); if(pAttr==NULL) return false; out = 0; sscanf(*pAttr,"%u",&out); return true; }
 bool XNode::GetAttrValue( const RString &sName, DateTime &out ) const	{ const RString* pAttr=GetAttr(sName); if(pAttr==NULL) return false; out.FromString( *pAttr ); return true; }
 
+void XNode::SetValue( const RString &v )		{ m_sValue = v; }
 void XNode::SetValue( int v )				{ m_sValue = ssprintf("%d",v); }
 void XNode::SetValue( float v )				{ m_sValue = ssprintf("%f",v); }
 void XNode::SetValue( bool v )				{ m_sValue = ssprintf("%d",v); }
