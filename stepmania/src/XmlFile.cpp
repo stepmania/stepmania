@@ -14,8 +14,7 @@
 #include "Foreach.h"
 
 XNode::XNode( const XNode &cpy ):
-	m_sName( cpy.m_sName ),
-	m_sValue( cpy.m_sValue ),
+	m_Value( cpy.m_Value ),
 	m_attrs( cpy.m_attrs )
 {
 	FOREACH_CONST_Child( &cpy, c )
@@ -35,37 +34,30 @@ void XNode::Clear()
 	m_attrs.clear();
 }
 	
-void XNode::GetValue( RString &out ) const	{ out = m_sValue; }
-void XNode::GetValue( int &out ) const		{ out = atoi(m_sValue); }
-void XNode::GetValue( float &out ) const	{ out = StringToFloat(m_sValue); }
-void XNode::GetValue( bool &out ) const		{ out = atoi(m_sValue) != 0; }
-void XNode::GetValue( unsigned &out ) const	{ out = strtoul(m_sValue,NULL,0); }
-void XNode::GetValue( DateTime &out ) const	{ out.FromString( m_sValue ); }
+void XNodeValue::GetValue( RString &out ) const		{ out = m_sValue; }
+void XNodeValue::GetValue( int &out ) const		{ out = atoi(m_sValue); }
+void XNodeValue::GetValue( float &out ) const		{ out = StringToFloat(m_sValue); }
+void XNodeValue::GetValue( bool &out ) const		{ out = atoi(m_sValue) != 0; }
+void XNodeValue::GetValue( unsigned &out ) const	{ out = strtoul(m_sValue,NULL,0); }
+void XNodeValue::GetValue( DateTime &out ) const	{ out.FromString( m_sValue ); }
 
-bool XNode::GetAttrValue( const RString &sName, RString &out ) const	{ const RString* pAttr=GetAttr(sName); if(pAttr==NULL) return false; out = *pAttr; return true; }
-bool XNode::GetAttrValue( const RString &sName, int &out ) const	{ const RString* pAttr=GetAttr(sName); if(pAttr==NULL) return false; out = atoi(*pAttr); return true; }
-bool XNode::GetAttrValue( const RString &sName, float &out ) const	{ const RString* pAttr=GetAttr(sName); if(pAttr==NULL) return false; out = StringToFloat(*pAttr); return true; }
-bool XNode::GetAttrValue( const RString &sName, bool &out ) const	{ const RString* pAttr=GetAttr(sName); if(pAttr==NULL) return false; out = atoi(*pAttr) != 0; return true; }
-bool XNode::GetAttrValue( const RString &sName, unsigned &out ) const	{ const RString* pAttr=GetAttr(sName); if(pAttr==NULL) return false; out = 0; sscanf(*pAttr,"%u",&out); return true; }
-bool XNode::GetAttrValue( const RString &sName, DateTime &out ) const	{ const RString* pAttr=GetAttr(sName); if(pAttr==NULL) return false; out.FromString( *pAttr ); return true; }
+void XNodeValue::SetValue( const RString &v )		{ m_sValue = v; }
+void XNodeValue::SetValue( int v )			{ m_sValue = ssprintf("%d",v); }
+void XNodeValue::SetValue( float v )			{ m_sValue = ssprintf("%f",v); }
+void XNodeValue::SetValue( unsigned v )			{ m_sValue = ssprintf("%u",v); }
+void XNodeValue::SetValue( const DateTime &v )		{ m_sValue = v.GetString(); }
 
-void XNode::SetValue( const RString &v )		{ m_sValue = v; }
-void XNode::SetValue( int v )				{ m_sValue = ssprintf("%d",v); }
-void XNode::SetValue( float v )				{ m_sValue = ssprintf("%f",v); }
-void XNode::SetValue( unsigned v )			{ m_sValue = ssprintf("%u",v); }
-void XNode::SetValue( const DateTime &v )		{ m_sValue = v.GetString(); }
-
-const RString *XNode::GetAttr( const RString &attrname ) const
+const XNodeValue *XNode::GetAttr( const RString &attrname ) const
 {
-	map<RString, RString>::const_iterator it = m_attrs.find( attrname );
+	XAttrs::const_iterator it = m_attrs.find( attrname );
 	if( it != m_attrs.end() )
 		return &it->second;
 	return NULL;
 }
 
-RString *XNode::GetAttr( const RString &attrname )
+XNodeValue *XNode::GetAttr( const RString &attrname )
 {
-	map<RString, RString>::iterator it = m_attrs.find( attrname );
+	XAttrs::iterator it = m_attrs.find( attrname );
 	if( it != m_attrs.end() )
 		return &it->second;
 	return NULL;
@@ -122,18 +114,18 @@ bool XNode::RemoveChild( XNode *node, bool bDelete )
 // detach attribute
 bool XNode::RemoveAttr( const RString &sName )
 {
-	return m_attrs.erase(sName) > 0;
+	XAttrs::iterator begin = m_attrs.lower_bound( sName );
+	XAttrs::iterator end = m_attrs.upper_bound( sName );
+	if( begin == end )
+		return false;
+	m_attrs.erase( begin, end );
+	return true;
 }
 
-void XNode::AppendAttr( const RString &sName, const RString &sValue )
+void XNode::AppendAttr( const RString &sName, const XNodeValue &val )
 {
 	DEBUG_ASSERT( sName.size() );
-	pair<XAttrs::iterator,bool> ret = m_attrs.insert( make_pair(sName,sValue) );
+	pair<XAttrs::iterator,bool> ret = m_attrs.insert( make_pair(sName,val) );
 	if( !ret.second )
-		ret.first->second = sValue; // already existed
+		ret.first->second = val; // already existed
 }
-
-void XNode::AppendAttr( const RString &sName, float value )	{ AppendAttr(sName,ssprintf("%f",value)); }
-void XNode::AppendAttr( const RString &sName, int value )	{ AppendAttr(sName,ssprintf("%d",value)); }
-void XNode::AppendAttr( const RString &sName, unsigned value )	{ AppendAttr(sName,ssprintf("%u",value)); }
-

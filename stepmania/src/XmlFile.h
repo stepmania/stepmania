@@ -7,7 +7,29 @@
 struct DateTime;
 class RageFileBasic;
 
-typedef map<RString,RString> XAttrs;
+class XNodeValue
+{
+public:
+	RString	m_sValue;
+
+	void GetValue( RString &out ) const;
+	void GetValue( int &out ) const;
+	void GetValue( float &out ) const;
+	void GetValue( bool &out ) const;
+	void GetValue( unsigned &out ) const;
+	void GetValue( DateTime &out ) const;
+
+	template<typename T>
+	T GetValue() const { T val; GetValue(val); return val; }
+
+	void SetValue( const RString &v );
+	void SetValue( int v );
+	void SetValue( float v );
+	void SetValue( unsigned v );
+	void SetValue( const DateTime &v );
+};
+
+typedef map<RString,XNodeValue> XAttrs;
 class XNode;
 typedef multimap<RString,XNode*> XNodes;
 
@@ -40,35 +62,24 @@ class XNode
 {
 public:
 	RString m_sName;	// a duplicate of the m_sName in the parent's map
-	RString	m_sValue;
+	XNodeValue m_Value;
 	XNodes	m_childs;	// child node
 	XAttrs	m_attrs;	// attributes
 
 	void SetName( const RString &sName ) { m_sName = sName; }
-	RString GetName() const { return m_sName; }
-	RString GetValue() const { return m_sValue; }
+	const RString &GetName() const { return m_sName; }
+	const RString &GetValue() const { return m_Value.m_sValue; }
 
-	void GetValue( RString &out ) const;
-	void GetValue( int &out ) const;
-	void GetValue( float &out ) const;
-	void GetValue( bool &out ) const;
-	void GetValue( unsigned &out ) const;
-	void GetValue( DateTime &out ) const;
-	void SetValue( const RString &v );
-	void SetValue( int v );
-	void SetValue( float v );
-	void SetValue( unsigned v );
-	void SetValue( const DateTime &v );
+	template <typename T>
+	void GetValue( T &out ) const { m_Value.GetValue(out); }
+	template <typename T>
+	void SetValue( const T val ) { m_Value.SetValue(val); }
 
 	// in own attribute list
-	const RString *GetAttr( const RString &sAttrName ) const; 
-	RString *GetAttr( const RString &sAttrName ); 
-	bool GetAttrValue( const RString &sName, RString &out ) const;
-	bool GetAttrValue( const RString &sName, int &out ) const;
-	bool GetAttrValue( const RString &sName, float &out ) const;
-	bool GetAttrValue( const RString &sName, bool &out ) const;
-	bool GetAttrValue( const RString &sName, unsigned &out ) const;
-	bool GetAttrValue( const RString &sName, DateTime &out ) const;
+	const XNodeValue *GetAttr( const RString &sAttrName ) const; 
+	XNodeValue *GetAttr( const RString &sAttrName ); 
+	template <typename T>
+	bool GetAttrValue( const RString &sName, T &out ) const	{ const XNodeValue *pAttr=GetAttr(sName); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
 
 	// in one level child nodes
 	const XNode *GetChild( const RString &sName ) const;
@@ -83,11 +94,9 @@ public:
 	XNode *AppendChild( XNode *node );
 	bool RemoveChild( XNode *node, bool bDelete = true );
 
-	void AppendAttr( const RString &sName, const RString &sValue = RString() );
-	void AppendAttr( const RString &sName, float value );
-	void AppendAttr( const RString &sName, int value );
-	void AppendAttr( const RString &sName, unsigned value );
-	void AppendAttr( const RString &sName, const DateTime &value );
+	void AppendAttr( const RString &sName, const XNodeValue &val );
+	template <typename T>
+	void AppendAttr( const RString &sName, T value ) { XNodeValue val; val.SetValue( value ); AppendAttr( sName, val ); }
 	bool RemoveAttr( const RString &sName );
 
 	XNode() { }
