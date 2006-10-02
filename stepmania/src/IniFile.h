@@ -22,17 +22,22 @@ public:
 	bool WriteFile( const RString &sPath ) const;
 	bool WriteFile( RageFileBasic &sFile ) const;
 
-	bool GetValue( const RString &key, const RString &valuename, RString& value ) const;
-	bool GetValue( const RString &key, const RString &valuename, int& value ) const;
-	bool GetValue( const RString &key, const RString &valuename, unsigned& value ) const;
-	bool GetValue( const RString &key, const RString &valuename, float& value ) const;
-	bool GetValue( const RString &key, const RString &valuename, bool& value ) const;
-
-	void SetValue( const RString &key, const RString &valuename, const RString &value );
-	void SetValue( const RString &key, const RString &valuename, int value );
-	void SetValue( const RString &key, const RString &valuename, unsigned value );
-	void SetValue( const RString &key, const RString &valuename, float value );
-	void SetValue( const RString &key, const RString &valuename, bool value );
+	template <typename T>
+	bool GetValue( const RString &sKey, const RString &sValueName, T& value ) const
+	{
+		const XNode* pNode = GetChild( sKey );
+		if( pNode == NULL )
+			return false;
+		return pNode->GetAttrValue<T>( sValueName, value );
+	}
+	template <typename T>
+	void SetValue( const RString &sKey, const RString &sValueName, const T &value )
+	{
+		XNode* pNode = GetChild( sKey );
+		if( pNode == NULL )
+			pNode = AppendChild( sKey );
+		pNode->AppendAttr<T>( sValueName, value );
+	}
 
 	bool DeleteKey( const RString &keyname );
 	bool DeleteValue( const RString &keyname, const RString &valuename );

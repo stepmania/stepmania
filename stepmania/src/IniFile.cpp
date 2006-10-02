@@ -120,22 +120,6 @@ bool IniFile::WriteFile( RageFileBasic &f ) const
 	return true;
 }
 
-bool IniFile::GetValue( const RString &keyname, const RString &valuename, RString& value ) const
-{
-	const XNode* pNode = GetChild( keyname );
-	if( pNode == NULL )
-		return false;
-	return pNode->GetAttrValue( valuename, value );
-}
-
-void IniFile::SetValue( const RString &keyname, const RString &valuename, const RString &value )
-{
-	XNode* pNode = GetChild( keyname );
-	if( pNode == NULL )
-		pNode = AppendChild( keyname );
-	pNode->AppendAttr( valuename, value );
-}
-
 bool IniFile::DeleteValue(const RString &keyname, const RString &valuename)
 {
 	XNode* pNode = GetChild( keyname );
@@ -143,25 +127,6 @@ bool IniFile::DeleteValue(const RString &keyname, const RString &valuename)
 		return false;
 	return pNode->RemoveAttr( valuename );
 }
-
-
-#define TYPE(T) \
-	bool IniFile::GetValue( const RString &keyname, const RString &valuename, T &value ) const \
-	{ \
-		RString sValue; \
-		if( !GetValue(keyname,valuename,sValue) ) \
-			return false; \
-		return FromString( sValue, value ); \
-	} \
-	void IniFile::SetValue( const RString &keyname, const RString &valuename, T value ) \
-	{ \
-		SetValue( keyname, valuename, ToString(value) ); \
-	}
-
-TYPE(int);
-TYPE(unsigned);
-TYPE(float);
-TYPE(bool);
 
 
 bool IniFile::DeleteKey(const RString &keyname)
