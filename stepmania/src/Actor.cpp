@@ -1245,9 +1245,8 @@ void Actor::PushContext( lua_State *L )
 {
 	// self.ctx should already exist
 	m_pLuaInstance->PushSelf( L );
-	lua_pushstring( L, "ctx" );
-	lua_gettable( L, -2 );
-	lua_replace( L, -2 );
+	lua_getfield( L, -1, "ctx" );
+	lua_remove( L, -2 );
 }
 
 void Actor::SetParent( Actor *pParent )
