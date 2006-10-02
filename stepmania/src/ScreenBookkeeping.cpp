@@ -64,14 +64,14 @@ void ScreenBookkeeping::Input( const InputEventPlus &input )
 void ScreenBookkeeping::MenuLeft( const InputEventPlus &input )
 {
 	m_View = (View)(m_View-1);
-	CLAMP( (int&)m_View, 0, NUM_VIEWS-1 );
+	ENUM_CLAMP( m_View, View(0), View(NUM_VIEWS-1) );
 	ChangeView( m_View );
 }
 
 void ScreenBookkeeping::MenuRight( const InputEventPlus &input )
 {
 	m_View = (View)(m_View+1);
-	CLAMP( (int&)m_View, 0, NUM_VIEWS-1 );
+	ENUM_CLAMP( m_View, View(0), View(NUM_VIEWS-1) );
 	ChangeView( m_View );
 }
 
