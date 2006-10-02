@@ -175,20 +175,16 @@ bool IniFile::DeleteKey(const RString &keyname)
 bool IniFile::RenameKey(const RString &from, const RString &to)
 {
 	/* If to already exists, do nothing. */
-	XNode* pTo = GetChild( to );
-	if( pTo )
+	if( GetChild(to) != NULL )
 		return false;
 
-	multimap<RString, XNode*>::iterator it = m_childs.find( from );
-	if( it == m_childs.end() )
+	XNode* pNode = GetChild( from );
+	if( pNode == NULL )
 		return false;
 
-	XNode* pNode = it->second;
-
-	m_childs.erase( it );
-
-	pNode->m_sName = to;
-	m_childs.insert( make_pair(pNode->m_sName, pNode) );
+	RemoveChild( pNode, false );
+	pNode->SetName( to );
+	AppendChild( pNode );
 
 	return true;
 }
