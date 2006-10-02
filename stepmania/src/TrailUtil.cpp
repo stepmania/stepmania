@@ -46,7 +46,7 @@ XNode* TrailID::CreateNode() const
 
 void TrailID::LoadFromNode( const XNode* pNode ) 
 {
-	ASSERT( pNode->m_sName == "Trail" );
+	ASSERT( pNode->GetName() == "Trail" );
 
 	RString sTemp;
 

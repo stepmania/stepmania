@@ -43,7 +43,7 @@ bool TitleTrans::Matches( const TitleFields &from, TitleFields &to )
 
 void TitleTrans::LoadFromNode( const XNode* pNode )
 {
-	ASSERT( pNode->m_sName == "Translation" );
+	ASSERT( pNode->GetName() == "Translation" );
 
 	FOREACH_CONST_Attr( pNode, attr )
 	{
@@ -148,7 +148,7 @@ void TitleSubst::Load(const RString &filename, const RString &section)
 		return;
 	FOREACH_Child( pGroup, child )
 	{
-		if( child->m_sName != "Translation" )
+		if( child->GetName() != "Translation" )
 			continue;
 
 		TitleTrans tr;

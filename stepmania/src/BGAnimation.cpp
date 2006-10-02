@@ -36,8 +36,8 @@ void BGAnimation::AddLayersFromAniDir( const RString &_sAniDir, const XNode *pNo
 		vector<RString> vsLayerNames;
 		FOREACH_CONST_Child( pNode, pLayer )
 		{
-			if( strncmp(pLayer->m_sName, "Layer", 5) == 0 )
-				vsLayerNames.push_back( pLayer->m_sName );
+			if( strncmp(pLayer->GetName(), "Layer", 5) == 0 )
+				vsLayerNames.push_back( pLayer->GetName() );
 		}
 
 		sort( vsLayerNames.begin(), vsLayerNames.end(), CompareLayerNames );
