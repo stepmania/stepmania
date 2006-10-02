@@ -10,6 +10,13 @@ namespace XmlFileUtil
 {
 	bool LoadFromFileShowErrors( XNode &xml, const RString &sFile );
 	bool LoadFromFileShowErrors( XNode &xml, RageFileBasic &f );
+
+	// Load/Save XML
+	unsigned Load( XNode *pNode, const RString &sXml, RString &sErrorOut, unsigned iOffset = 0 );
+	bool GetXML( const XNode *pNode, RageFileBasic &f, bool bWriteTabs = true );
+	RString GetXML( const XNode *pNode );
+	bool SaveToFile( const XNode *pNode, const RString &sFile, const RString &sStylesheet = "", bool bWriteTabs = true );
+	bool SaveToFile( const XNode *pNode, RageFileBasic &f, const RString &sStylesheet = "", bool bWriteTabs = true );
 }
 
 #endif

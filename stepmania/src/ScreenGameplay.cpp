@@ -55,6 +55,7 @@
 #include "AdjustSync.h"
 #include "SongUtil.h"
 #include "song.h"
+#include "XmlFileUtil.h"
 
 //
 // Defines
@@ -2619,7 +2620,7 @@ void ScreenGameplay::SaveReplay()
 
 			RString sFileName = ssprintf( "replay%05d.xml", iIndex );
 
-			p->SaveToFile( "Save/"+sFileName );
+			XmlFileUtil::SaveToFile( p, "Save/"+sFileName );
 			SAFE_DELETE( p );
 			return;
 		}

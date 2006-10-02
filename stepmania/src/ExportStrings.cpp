@@ -4,6 +4,7 @@
 #include "RageUtil.h"
 #include "IniFile.h"
 #include "XmlFile.h"
+#include "XmlFileUtil.h"
 #include "LuaManager.h"
 #include "ProductInfo.h"
 #include "DateTime.h"
@@ -57,7 +58,7 @@ void ExportStrings::LuaInformation()
 	XNode *pDateNode = pNode->AppendChild( "Date" );
 	pDateNode->m_sValue = DateTime::GetNowDate().GetString();
 
-	pNode->SaveToFile( "Lua.xml", "Lua.xsl" );
+	XmlFileUtil::SaveToFile( pNode, "Lua.xml", "Lua.xsl" );
 
 	delete pNode;
 }

@@ -57,16 +57,6 @@ public:
 	void SetValue( unsigned v );
 	void SetValue( const DateTime &v );
 
-	// Load/Save XML
-	unsigned Load( const RString &sXml, RString &sErrorOut, unsigned iOffset = 0 );
-	unsigned LoadAttributes( const RString &sAttrs, RString &sErrorOut, unsigned iOffset );
-	bool GetAttrXML( RageFileBasic &f, const RString &sName, const RString &sValue ) const;
-	bool GetXML( RageFileBasic &f, bool bWriteTabs = true ) const;
-	RString GetXML() const;
-
-	bool SaveToFile( const RString &sFile, const RString &sStylesheet = "", bool bWriteTabs = true ) const;
-	bool SaveToFile( RageFileBasic &f, const RString &sStylesheet = "", bool bWriteTabs = true ) const;
-
 	// in own attribute list
 	const RString *GetAttr( const RString &sAttrName ) const; 
 	RString *GetAttr( const RString &sAttrName ); 
@@ -103,9 +93,6 @@ public:
 	~XNode();
 
 	void Clear();
-
-private:
-	bool GetXMLInternal( RageFileBasic &f, bool bWriteTabs, int &iTabBase ) const;
 };
 
 #endif

@@ -5,6 +5,7 @@
 #include "song.h"
 #include "Steps.h"
 #include "XmlFile.h"
+#include "XmlFileUtil.h"
 #include "Course.h"
 #include "SongUtil.h"
 #include "StepsUtil.h"
@@ -391,7 +392,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 	xml.AppendChild( "FooterText", FOOTER_TEXT );
 	xml.AppendChild( "FooterLink", FOOTER_LINK );
 
-	xml.SaveToFile( fn, CATALOG_XSL, false );
+	XmlFileUtil::SaveToFile( &xml, fn, CATALOG_XSL, false );
 
 	LOG->Trace( "Done." );
 }
