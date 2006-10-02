@@ -160,8 +160,8 @@ template<> LuaReference EnumTraits<X>::StringToEnum; \
 template<> LuaReference EnumTraits<X>::EnumToString; \
 template<> X EnumTraits<X>::Invalid = enum_add2( NUM_##X, 1 ); \
 template<> const char *EnumTraits<X>::szName = #X; \
-namespace LuaHelpers { bool FromStack( lua_State *L, X &Object, int iOffset ) { Object = Enum::Check<X>( L, iOffset ); return true; } } \
-namespace LuaHelpers { void Push( lua_State *L, const X &Object ) { Enum::Push<X>( L, Object ); } }
+bool LuaHelpers::FromStack( lua_State *L, X &Object, int iOffset ) { Object = Enum::Check<X>( L, iOffset ); return true; } \
+void LuaHelpers::Push( lua_State *L, const X &Object ) { Enum::Push<X>( L, Object ); }
 
 #endif
 
