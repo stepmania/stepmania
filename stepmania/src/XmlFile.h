@@ -81,7 +81,7 @@ public:
 	XNode *AppendChild( const RString &sName, T value )	{ XNode *p=new XNode(sName); p->SetValue(value); return AppendChild(p); }
 	XNode *AppendChild( const RString &sName )		{ XNode *p=new XNode(sName); return AppendChild(p); }
 	XNode *AppendChild( XNode *node );
-	bool RemoveChild( XNode *node );
+	bool RemoveChild( XNode *node, bool bDelete = true );
 
 	void AppendAttr( const RString &sName, const RString &sValue = RString() );
 	void AppendAttr( const RString &sName, float value );

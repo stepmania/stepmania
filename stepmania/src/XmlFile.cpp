@@ -103,13 +103,14 @@ XNode *XNode::AppendChild( XNode *node )
 }
 
 // detach node and delete object
-bool XNode::RemoveChild( XNode *node )
+bool XNode::RemoveChild( XNode *node, bool bDelete )
 {
 	FOREACHMM( RString, XNode*, m_childs, p )
 	{
 		if( p->second == node )
 		{
-			SAFE_DELETE( p->second );
+			if( bDelete )
+				SAFE_DELETE( p->second );
 			m_childs.erase( p );
 			return true;
 		}
