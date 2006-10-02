@@ -263,11 +263,7 @@ void Actor::LoadFromNode( const RString& sDir, const XNode* pNode )
 		// Load Name, if any.
 		const RString &sKeyName = pAttr->first;
 		const RString &sValue = pAttr->second;
-		if( sKeyName == "Name" )
-		{
-			m_sName = sValue;
-		}
-		
+		if( sKeyName == "Name" )			SetName( sValue );
 		else if( sKeyName == "BaseRotationX" )		SetBaseRotationX( StringToFloat(sValue) );
 		else if( sKeyName == "BaseRotationY" )		SetBaseRotationY( StringToFloat(sValue) );
 		else if( sKeyName == "BaseRotationZ" )		SetBaseRotationZ( StringToFloat(sValue) );
