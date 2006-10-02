@@ -44,6 +44,9 @@ public:
 	XNodes	m_childs;	// child node
 	XAttrs	m_attrs;	// attributes
 
+	RString GetName() const { return m_sName; }
+	RString GetValue() const { return m_sValue; }
+
 	void GetValue( RString &out ) const;
 	void GetValue( int &out ) const;
 	void GetValue( float &out ) const;
