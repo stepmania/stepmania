@@ -44,6 +44,7 @@ public:
 	XNodes	m_childs;	// child node
 	XAttrs	m_attrs;	// attributes
 
+	void SetName( const RString &sName ) { m_Value.m_sName = sName; }
 	RString GetName() const { return m_sName; }
 	RString GetValue() const { return m_sValue; }
 
