@@ -4,7 +4,6 @@
 #include "SongManager.h"
 #include "ScreenManager.h"
 #include "ScreenSaveSync.h"
-#include "GameConstantsAndTypes.h"
 #include "GameManager.h"
 #include "RageInput.h"
 #include "RageLog.h"
