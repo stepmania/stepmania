@@ -62,7 +62,6 @@ void NoteSkinManager::RefreshNoteSkinData( const Game* pGame )
 	{
 		RString sName = asNoteSkinNames[j];
 		sName.MakeLower();
-		m_mapNameToData[sName] = NoteSkinData();
 		LoadNoteSkinData( sName, m_mapNameToData[sName] );
 	}
 }
