@@ -102,8 +102,8 @@ void ScreenEnding::Init()
 			m_sprRemoveMemoryCard[p].SetHidden( true );
 			break;
 		}
+		ActorUtil::LoadAllCommands( m_sprRemoveMemoryCard[p], m_sName );
 		SET_XY_AND_ON_COMMAND( m_sprRemoveMemoryCard[p] );
-		m_sprRemoveMemoryCard[p].AddCommand( ssprintf("CardRemovedP%dMessage",p+1), ActorUtil::ParseActorCommands("hidden,1") );
 		this->AddChild( &m_sprRemoveMemoryCard[p] );
 	}
 
