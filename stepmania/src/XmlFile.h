@@ -104,6 +104,9 @@ public:
 	~XNode();
 
 	void Clear();
+
+private:
+	XNode &operator=( const XNode &cpy ) { } // don't use
 };
 
 #endif
