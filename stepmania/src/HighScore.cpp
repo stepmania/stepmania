@@ -88,7 +88,7 @@ XNode *HighScoreImpl::CreateNode() const
 	pNode->AppendChild( "PercentDP",		fPercentDP );
 	pNode->AppendChild( "SurviveSeconds",	fSurviveSeconds );
 	pNode->AppendChild( "Modifiers",		sModifiers );
-	pNode->AppendChild( "DateTime",			dateTime );
+	pNode->AppendChild( "DateTime",			dateTime.GetString() );
 	pNode->AppendChild( "PlayerGuid",		sPlayerGuid );
 	pNode->AppendChild( "MachineGuid",		sMachineGuid );
 	pNode->AppendChild( "ProductID",		iProductID );
@@ -119,7 +119,7 @@ void HighScoreImpl::LoadFromNode( const XNode *pNode )
 	pNode->GetChildValue( "PercentDP",		fPercentDP );
 	pNode->GetChildValue( "SurviveSeconds", fSurviveSeconds );
 	pNode->GetChildValue( "Modifiers",		sModifiers );
-	pNode->GetChildValue( "DateTime",		dateTime );
+	pNode->GetChildValue( "DateTime",		s ); dateTime.FromString( s );
 	pNode->GetChildValue( "PlayerGuid",		sPlayerGuid );
 	pNode->GetChildValue( "MachineGuid",	sMachineGuid );
 	pNode->GetChildValue( "ProductID",		iProductID );
@@ -286,7 +286,7 @@ XNode* HighScoreList::CreateNode() const
 	XNode* pNode = new XNode( "HighScoreList" );
 
 	pNode->AppendChild( "NumTimesPlayed", iNumTimesPlayed );
-	pNode->AppendChild( "LastPlayed", dtLastPlayed );
+	pNode->AppendChild( "LastPlayed", dtLastPlayed.GetString() );
 
 	for( unsigned i=0; i<vHighScores.size(); i++ )
 	{
@@ -310,7 +310,9 @@ void HighScoreList::LoadFromNode( const XNode* pHighScoreList )
 		}
 		else if( p->GetName() == "LastPlayed" )
 		{
-			p->GetValue( dtLastPlayed );
+			RString s;
+			p->GetValue( s );
+			dtLastPlayed.FromString( s );
 		}
 		else if( p->GetName() == "HighScore" )
 		{

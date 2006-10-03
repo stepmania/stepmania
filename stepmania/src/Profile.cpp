@@ -1003,7 +1003,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	pGeneralDataNode->AppendChild( "GoalCalories",			m_iGoalCalories );
 	pGeneralDataNode->AppendChild( "GoalSeconds",			m_iGoalSeconds );
 	pGeneralDataNode->AppendChild( "LastPlayedMachineGuid",		m_sLastPlayedMachineGuid );
-	pGeneralDataNode->AppendChild( "LastPlayedDate",		m_LastPlayedDate );
+	pGeneralDataNode->AppendChild( "LastPlayedDate",		m_LastPlayedDate.GetString() );
 	pGeneralDataNode->AppendChild( "TotalDancePoints",		m_iTotalDancePoints );
 	pGeneralDataNode->AppendChild( "NumExtraStagesPassed",		m_iNumExtraStagesPassed );
 	pGeneralDataNode->AppendChild( "NumExtraStagesFailed",		m_iNumExtraStagesFailed );
@@ -1165,7 +1165,7 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	pNode->GetChildValue( "GoalCalories",				m_iGoalCalories );
 	pNode->GetChildValue( "GoalSeconds",				m_iGoalSeconds );
 	pNode->GetChildValue( "LastPlayedMachineGuid",			m_sLastPlayedMachineGuid );
-	pNode->GetChildValue( "LastPlayedDate",				m_LastPlayedDate );
+	pNode->GetChildValue( "LastPlayedDate",				s ); m_LastPlayedDate.FromString( s );
 	pNode->GetChildValue( "TotalDancePoints",			m_iTotalDancePoints );
 	pNode->GetChildValue( "NumExtraStagesPassed",			m_iNumExtraStagesPassed );
 	pNode->GetChildValue( "NumExtraStagesFailed",			m_iNumExtraStagesFailed );

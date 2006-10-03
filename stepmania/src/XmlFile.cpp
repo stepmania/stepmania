@@ -41,13 +41,11 @@ void XNodeValue::GetValue( int &out ) const		{ out = atoi(m_sValue); }
 void XNodeValue::GetValue( float &out ) const		{ out = StringToFloat(m_sValue); }
 void XNodeValue::GetValue( bool &out ) const		{ out = atoi(m_sValue) != 0; }
 void XNodeValue::GetValue( unsigned &out ) const	{ out = strtoul(m_sValue,NULL,0); }
-void XNodeValue::GetValue( DateTime &out ) const	{ out.FromString( m_sValue ); }
 
 void XNodeValue::SetValue( const RString &v )		{ m_sValue = v; }
 void XNodeValue::SetValue( int v )			{ m_sValue = ssprintf("%d",v); }
 void XNodeValue::SetValue( float v )			{ m_sValue = ssprintf("%f",v); }
 void XNodeValue::SetValue( unsigned v )			{ m_sValue = ssprintf("%u",v); }
-void XNodeValue::SetValue( const DateTime &v )		{ m_sValue = v.GetString(); }
 
 const XNodeValue *XNode::GetAttr( const RString &attrname ) const
 {

@@ -17,7 +17,6 @@ public:
 	void GetValue( float &out ) const;
 	void GetValue( bool &out ) const;
 	void GetValue( unsigned &out ) const;
-	void GetValue( DateTime &out ) const;
 
 	template<typename T>
 	T GetValue() const { T val; GetValue(val); return val; }
@@ -26,7 +25,6 @@ public:
 	void SetValue( int v );
 	void SetValue( float v );
 	void SetValue( unsigned v );
-	void SetValue( const DateTime &v );
 };
 
 typedef map<RString,XNodeValue*> XAttrs;
