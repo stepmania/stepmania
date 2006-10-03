@@ -106,7 +106,7 @@ public:
 	void Clear();
 
 private:
-	XNode &operator=( const XNode &cpy ) { } // don't use
+	XNode &operator=( const XNode &cpy ); // don't use
 };
 
 #endif
