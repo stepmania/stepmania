@@ -275,17 +275,17 @@ static void MergeIniUnder( XNode *pFrom, XNode *pTo )
 		XNode *pChildNode = pTo->GetChild( it->first );
 		if( pChildNode == NULL )
 		{
-			/* We're moving the XNode without copying it, so don't use RemoveChild--it'll
-			 * delete it. */
+			pFrom->RemoveChild( it->second, false ); // don't delete
 			pTo->AppendChild( it->second );
-			pFrom->m_childs.erase( it );
 		}
 		else
 		{
-			/* map::insert will not overwrite existing nodes. */
 			XNode *pFrom = it->second;
-			FOREACHM( RString, RString, pFrom->m_attrs, it )
-				pChildNode->m_attrs.insert( *it );
+			FOREACHM( RString, XNodeValue *, pFrom->m_attrs, it )
+			{
+				/* Don't overwrite existing nodes. */
+				pChildNode->AppendAttr( it->first, it->second, false );
+			}
 		}
 
 		it = next;

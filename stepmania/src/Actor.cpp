@@ -262,17 +262,17 @@ void Actor::LoadFromNode( const RString& sDir, const XNode* pNode )
 	{
 		// Load Name, if any.
 		const RString &sKeyName = pAttr->first;
-		const XNodeValue &sValue = pAttr->second;
-		if( sKeyName == "Name" )			SetName( sValue.GetValue<RString>() );
-		else if( sKeyName == "BaseRotationX" )		SetBaseRotationX( sValue.GetValue<float>() );
-		else if( sKeyName == "BaseRotationY" )		SetBaseRotationY( sValue.GetValue<float>() );
-		else if( sKeyName == "BaseRotationZ" )		SetBaseRotationZ( sValue.GetValue<float>() );
-		else if( sKeyName == "BaseZoomX" )		SetBaseZoomX( sValue.GetValue<float>() );
-		else if( sKeyName == "BaseZoomY" )		SetBaseZoomY( sValue.GetValue<float>() );
-		else if( sKeyName == "BaseZoomZ" )		SetBaseZoomZ( sValue.GetValue<float>() );
+		const XNodeValue *pValue = pAttr->second;
+		if( sKeyName == "Name" )			SetName( pValue->GetValue<RString>() );
+		else if( sKeyName == "BaseRotationX" )		SetBaseRotationX( pValue->GetValue<float>() );
+		else if( sKeyName == "BaseRotationY" )		SetBaseRotationY( pValue->GetValue<float>() );
+		else if( sKeyName == "BaseRotationZ" )		SetBaseRotationZ( pValue->GetValue<float>() );
+		else if( sKeyName == "BaseZoomX" )		SetBaseZoomX( pValue->GetValue<float>() );
+		else if( sKeyName == "BaseZoomY" )		SetBaseZoomY( pValue->GetValue<float>() );
+		else if( sKeyName == "BaseZoomZ" )		SetBaseZoomZ( pValue->GetValue<float>() );
 		else if( EndsWith(sKeyName,"Command") )
 		{
-			apActorCommands apac = ActorUtil::ParseActorCommands( sValue.GetValue<RString>(), ssprintf("%s: %s", sDir.c_str(), sKeyName.c_str()) );
+			apActorCommands apac = ActorUtil::ParseActorCommands( pValue->GetValue<RString>(), ssprintf("%s: %s", sDir.c_str(), sKeyName.c_str()) );
 
 			RString sCmdName = sKeyName.Left( sKeyName.size()-7 );
 			AddCommand( sCmdName, apac );

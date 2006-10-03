@@ -29,7 +29,7 @@ public:
 	void SetValue( const DateTime &v );
 };
 
-typedef map<RString,XNodeValue> XAttrs;
+typedef map<RString,XNodeValue*> XAttrs;
 class XNode;
 typedef multimap<RString,XNode*> XNodes;
 
@@ -94,9 +94,10 @@ public:
 	XNode *AppendChild( XNode *node );
 	bool RemoveChild( XNode *node, bool bDelete = true );
 
-	void AppendAttr( const RString &sName, const XNodeValue &val );
+	XNodeValue *AppendAttr( const RString &sName, XNodeValue *pValue, bool bOverwrite = true );
+	XNodeValue *AppendAttr( const RString &sName );
 	template <typename T>
-	void AppendAttr( const RString &sName, T value ) { XNodeValue val; val.SetValue( value ); AppendAttr( sName, val ); }
+	XNodeValue *AppendAttr( const RString &sName, T value ) { XNodeValue *pVal = AppendAttr( sName ); pVal->SetValue( value ); return pVal; }
 	bool RemoveAttr( const RString &sName );
 
 	XNode() { }

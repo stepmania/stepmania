@@ -30,6 +30,8 @@ void XNode::Clear()
 {
 	FOREACH_Child( this, p )
 		SAFE_DELETE( p );
+	FOREACH_Attr( this, pAttr )
+		SAFE_DELETE( pAttr->second );
 	m_childs.clear();
 	m_attrs.clear();
 }
@@ -51,7 +53,7 @@ const XNodeValue *XNode::GetAttr( const RString &attrname ) const
 {
 	XAttrs::const_iterator it = m_attrs.find( attrname );
 	if( it != m_attrs.end() )
-		return &it->second;
+		return it->second;
 	return NULL;
 }
 
@@ -59,7 +61,7 @@ XNodeValue *XNode::GetAttr( const RString &attrname )
 {
 	XAttrs::iterator it = m_attrs.find( attrname );
 	if( it != m_attrs.end() )
-		return &it->second;
+		return it->second;
 	return NULL;
 }
 
@@ -122,10 +124,36 @@ bool XNode::RemoveAttr( const RString &sName )
 	return true;
 }
 
-void XNode::AppendAttr( const RString &sName, const XNodeValue &val )
+/* If bOverwrite is true and a node already exists with that name, the old value will be deleted.
+ * If bOverwrite is false and a node already exists with that name, the new value will be deleted. */
+XNodeValue *XNode::AppendAttr( const RString &sName, XNodeValue *pValue, bool bOverwrite )
 {
 	DEBUG_ASSERT( sName.size() );
-	pair<XAttrs::iterator,bool> ret = m_attrs.insert( make_pair(sName,val) );
-	if( !ret.second )
-		ret.first->second = val; // already existed
+	pair<XAttrs::iterator,bool> ret = m_attrs.insert( make_pair(sName, (XNodeValue *) NULL) );
+	if( !ret.second ) // already existed
+	{
+		if( bOverwrite )
+		{
+			delete ret.first->second;
+		}
+		else
+		{
+			delete pValue;
+			pValue = ret.first->second;
+		}
+	}
+
+	ret.first->second = pValue;
+
+	return ret.first->second;
+};
+
+XNodeValue *XNode::AppendAttr( const RString &sName )
+{
+	DEBUG_ASSERT( sName.size() );
+	pair<XAttrs::iterator,bool> ret = m_attrs.insert( make_pair(sName, (XNodeValue *) NULL) );
+	if( ret.second )
+		ret.first->second = new XNodeValue();
+	return ret.first->second; // already existed
 }
+

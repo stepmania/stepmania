@@ -98,7 +98,7 @@ bool IniFile::WriteFile( RageFileBasic &f ) const
 		FOREACH_CONST_Attr( pKey, pAttr )
 		{
 			const RString &sName = pAttr->first;
-			const RString &sValue = pAttr->second.GetValue<RString>();
+			const RString &sValue = pAttr->second->GetValue<RString>();
 
 			// TODO: Are there esacpe rules for these?
 			DEBUG_ASSERT( sName.find('\n') == sName.npos );

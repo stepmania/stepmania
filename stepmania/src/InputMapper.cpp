@@ -562,7 +562,7 @@ void InputMapper::ReadMappingsFromDisk()
 		{
 			const RString &name = i->first;
 			RString value;
-			i->second.GetValue( value );
+			i->second->GetValue( value );
 
 			GameInput GameI;
 			GameI.FromString( m_pInputScheme, name );

@@ -396,14 +396,14 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RStr
 		FOREACH_CONST_Attr( pNode, pAttr )
 		{
 			RString sName = pAttr->first;
-			const XNodeValue &sValue = pAttr->second;
+			const XNodeValue *pValue = pAttr->second;
 
 			sName.MakeUpper();
 
 			/* If val is an integer, it's a width, eg. "10=27". */
 			if( IsAnInt(sName) )
 			{
-				cfg.m_mapGlyphWidths[atoi(sName)] = sValue.GetValue<int>();
+				cfg.m_mapGlyphWidths[atoi(sName)] = pValue->GetValue<int>();
 				continue;
 			}
 
@@ -439,7 +439,7 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RStr
 					continue;
 				}
 
-				cfg.CharToGlyphNo[c] = sValue.GetValue<int>();
+				cfg.CharToGlyphNo[c] = pValue->GetValue<int>();
 
 				continue;
 			}
@@ -488,7 +488,7 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RStr
 					iCount = iLast - iFirst + 1;
 				}
 
-				RString sRet = cfg.MapRange( asMatches[0], iFirst, sValue.GetValue<int>(), iCount );
+				RString sRet = cfg.MapRange( asMatches[0], iFirst, pValue->GetValue<int>(), iCount );
 				if( !sRet.empty() )
 					RageException::Throw( "Font definition \"%s\" has an invalid range \"%s\": %s.",
 						ini.GetPath().c_str(), sName.c_str(), sRet.c_str() );
@@ -514,7 +514,7 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const RStr
 						ini.GetPath().c_str(), iFirstFrame, iNumFramesHigh );
 
 				/* Decode the string. */
-				const wstring wdata( RStringToWstring(sValue.GetValue<RString>()) );
+				const wstring wdata( RStringToWstring(pValue->GetValue<RString>()) );
 
 				if( int(wdata.size()) > iNumFramesWide )
 					RageException::Throw( "The font definition \"%s\" assigns %i characters to row %i (\"%ls\"), but the font is only %i characters wide.",

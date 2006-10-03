@@ -150,8 +150,8 @@ unsigned LoadAttributes( XNode *pNode, const RString &xml, RString &sErrorOut, u
 		
 		// add new attribute
 		DEBUG_ASSERT( sName.size() );
-		pair<XAttrs::iterator,bool> it = pNode->m_attrs.insert( make_pair(sName, XNodeValue()) );
-		RString &sValue = it.first->second.m_sValue;
+		pair<XAttrs::iterator,bool> it = pNode->m_attrs.insert( make_pair(sName, new XNodeValue()) );
+		RString &sValue = it.first->second->m_sValue;
 		iOffset = iEnd;
 		
 		// XML Attr Value
@@ -423,7 +423,7 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 		if( f.Write(" ") == -1 )
 			return false;
 	FOREACH_CONST_Attr( pNode, p )
-		if( !GetAttrXML(f, p->first, p->second.GetValue<RString>()) )
+		if( !GetAttrXML(f, p->first, p->second->GetValue<RString>()) )
 			return false;
 	
 	if( pNode->m_childs.empty() && pNode->m_Value.m_sValue.empty() )
