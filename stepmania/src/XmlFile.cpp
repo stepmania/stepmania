@@ -14,6 +14,7 @@
 #include "Foreach.h"
 
 XNode::XNode( const XNode &cpy ):
+	m_sName( cpy.m_sName ),
 	m_Value( cpy.m_Value )
 {
 	FOREACH_CONST_Attr( &cpy, pAttr )
