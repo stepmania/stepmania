@@ -14,9 +14,10 @@
 #include "Foreach.h"
 
 XNode::XNode( const XNode &cpy ):
-	m_Value( cpy.m_Value ),
-	m_attrs( cpy.m_attrs )
+	m_Value( cpy.m_Value )
 {
+	FOREACH_CONST_Attr( &cpy, pAttr )
+		this->AppendAttr( pAttr->first, new XNodeValue(*pAttr->second) );
 	FOREACH_CONST_Child( &cpy, c )
 		this->AppendChild( new XNode(*c) );
 }
