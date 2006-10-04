@@ -50,7 +50,12 @@ RString SongCacheIndex::GetCacheFilePath( const RString &sGroup, const RString &
 	for( size_t pos = s.find_first_of(invalid); pos != RString::npos; pos = s.find_first_of(invalid, pos) )
 		s[pos] = '_';
 	// CACHE_DIR ends with a /.
+#if defined(XBOX)
+	// Use CRC32 to make fatx compatible filenames.
+	return ssprintf( "%s%s/%X", SpecialFiles::CACHE_DIR.c_str(), sGroup.c_str(), GetHashForString(s));
+#else
 	return ssprintf( "%s%s/%s", SpecialFiles::CACHE_DIR.c_str(), sGroup.c_str(), s.c_str() );
+#endif
 }
 
 SongCacheIndex::SongCacheIndex()
