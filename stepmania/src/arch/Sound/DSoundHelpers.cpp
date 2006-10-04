@@ -592,7 +592,19 @@ int64_t DSoundBuf::GetPosition() const
 {
 	DWORD iCursor, iJunk;
 	HRESULT hr = m_pBuffer->GetCurrentPosition( &iCursor, &iJunk );
-	ASSERT_M( SUCCEEDED(hr), hr_ssprintf(hr, "GetCurrentPosition") );
+
+#ifndef _XBOX
+	if( hr == DSERR_BUFFERLOST )
+	{
+		m_pBuffer->Restore();
+		hr = m_pBuffer->GetCurrentPosition( &iCursor, &iJunk );
+	}
+	if( hr != DS_OK )
+	{
+		LOG->Warn( hr_ssprintf(hr, "DirectSound::GetPosition failed") );
+		iCursor = 0;
+	}
+#endif
 
 	/* This happens occasionally on "Realtek AC97 Audio". */
 	if( (int) iCursor == m_iBufferSize )
