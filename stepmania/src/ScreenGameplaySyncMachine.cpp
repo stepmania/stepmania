@@ -30,7 +30,7 @@ void ScreenGameplaySyncMachine::Init()
 
 	PREFSMAN->m_AutoPlay.Set( PC_HUMAN );
 
-	ScreenGameplayNormal::Init( false );
+	ScreenGameplayNormal::Init();
 
 	SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_AutosyncType, SongOptions::AUTOSYNC_MACHINE );
 

@@ -19,6 +19,7 @@ public:
 	void HandleScreenMessage( const ScreenMessage SM );
 	void ResetAndRestartCurrentSong();
 protected:
+	virtual bool UseSongBackgroundAndForeground() const { return false; }
 	void RefreshText();
 
 	Song		m_Song;

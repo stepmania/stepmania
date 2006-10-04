@@ -328,11 +328,6 @@ ScreenGameplay::ScreenGameplay()
 
 void ScreenGameplay::Init()
 {
-	Init( true );
-}
-
-void ScreenGameplay::Init( bool bUseSongBackgroundAndForeground )
-{
 	PLAYER_TYPE.Load(			m_sName, "PlayerType" );
 	GIVE_UP_START_TEXT.Load(		m_sName, "GiveUpStartText" );
 	GIVE_UP_BACK_TEXT.Load(			m_sName, "GiveUpBackText" );
@@ -345,7 +340,7 @@ void ScreenGameplay::Init( bool bUseSongBackgroundAndForeground )
 	FAIL_AFTER_30_MISSES.Load(		m_sName, "FailAfter30Misses" );
 	ALLOW_CENTER_1_PLAYER.Load(		m_sName, "AllowCenter1Player" );
 	
-	if( bUseSongBackgroundAndForeground )
+	if( UseSongBackgroundAndForeground() )
 	{
 		m_pSongBackground = new Background;
 		m_pSongForeground = new Foreground;

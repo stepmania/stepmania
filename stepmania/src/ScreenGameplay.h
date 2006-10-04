@@ -99,7 +99,6 @@ class ScreenGameplay : public ScreenWithMenuElements
 public:
 	ScreenGameplay();
 	virtual void Init();
-	void Init( bool bUseSongBackgroundAndForeground );
 	virtual ~ScreenGameplay();
 	virtual void BeginScreen();
 
@@ -121,6 +120,8 @@ public:
 protected:
 	virtual bool GenericTweenOn() const { return true; }
 	virtual bool GenericTweenOff() const { return true; }
+
+	virtual bool UseSongBackgroundAndForeground() const { return true; }
 
 	ThemeMetric<RString> PLAYER_TYPE;
 	LocalizedString GIVE_UP_START_TEXT;
