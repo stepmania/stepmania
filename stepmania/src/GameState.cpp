@@ -495,10 +495,6 @@ void GameState::BeginStage()
 	if( m_iNumStagesOfThisSong != 0 )
 		LOG->Warn( "XXX: m_iNumStagesOfThisSong == %i?", m_iNumStagesOfThisSong );
 
-	/* Finish the last stage (if any), if we havn't already.  (For example, we might
-	 * have, for some reason, gone from gameplay to evaluation straight back to gameplay.) */
-	FinishStage();
-
 	ResetStageStatistics();
 
 	ARE_STAGE_MODS_FORCED.Read(); // XXX: where does this belong?

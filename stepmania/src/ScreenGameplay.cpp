@@ -379,6 +379,10 @@ void ScreenGameplay::Init()
 			GAMESTATE->SaveCurrentSettingsToProfile(pn);
 	}
 
+	/* Finish the last stage, if we havn't already.  (For example, we might have
+	 * gone from gameplay to evaluation back to gameplay.) */
+	GAMESTATE->FinishStage();
+
 	/* Called once per stage (single song or single course). */
 	GAMESTATE->BeginStage();
 
