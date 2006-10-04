@@ -273,18 +273,18 @@ static void MergeIniUnder( XNode *pFrom, XNode *pTo )
 
 		/* If this node doesn't exist in pTo, just move the whole node. */
 		XNode *pChildNode = pTo->GetChild( it->first );
+		XNode *pSectionNode = it->second;
 		if( pChildNode == NULL )
 		{
-			pFrom->RemoveChild( it->second, false ); // don't delete
-			pTo->AppendChild( it->second );
+			pFrom->RemoveChild( pSectionNode, false ); // don't delete
+			pTo->AppendChild( pSectionNode );
 		}
 		else
 		{
-			XNode *pFrom = it->second;
-			FOREACHM( RString, XNodeValue *, pFrom->m_attrs, it )
+			FOREACHM( RString, XNodeValue *, pSectionNode->m_attrs, it2 )
 			{
 				/* Don't overwrite existing nodes. */
-				pChildNode->AppendAttr( it->first, it->second, false );
+				pChildNode->AppendAttr( it2->first, it2->second, false );
 			}
 		}
 
