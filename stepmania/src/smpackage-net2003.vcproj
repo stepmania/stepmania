@@ -247,10 +247,10 @@
 				RelativePath=".\smpackage\resource.h">
 			</File>
 			<File
-				RelativePath="res\smpackage.ico">
+				RelativePath="smpackage.ICO">
 			</File>
 			<File
-				RelativePath="smpackage.ICO">
+				RelativePath="res\smpackage.ico">
 			</File>
 			<File
 				RelativePath=".\smpackage\smpackage.rc">
@@ -523,6 +523,166 @@
 						RelativePath=".\pcre\study.c">
 					</File>
 				</Filter>
+				<Filter
+					Name="Lua"
+					Filter="">
+					<File
+						RelativePath=".\lua-5.1\src\lapi.c">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lapi.h">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lauxlib.c">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lauxlib.h">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lbaselib.c">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lcode.c">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lcode.h">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\ldblib.c">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\ldebug.c">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\ldebug.h">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\ldo.c">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\ldo.h">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\ldump.c">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lfunc.c">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lfunc.h">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lgc.c">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lgc.h">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\linit.c">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\liolib.c">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\llex.c">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\llex.h">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\llimits.h">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lmathlib.c">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lmem.c">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lmem.h">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\loadlib.c">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lobject.c">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lobject.h">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lopcodes.c">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lopcodes.h">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\loslib.c">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lparser.c">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lparser.h">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lstate.c">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lstate.h">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lstring.c">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lstring.h">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lstrlib.c">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\ltable.c">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\ltable.h">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\ltablib.c">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\ltm.c">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\ltm.h">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lua.h">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\luaconf.h">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lualib.h">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lundump.c">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lundump.h">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lvm.c">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lvm.h">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lzio.c">
+					</File>
+					<File
+						RelativePath=".\lua-5.1\src\lzio.h">
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter
@@ -561,6 +721,12 @@
 			</File>
 			<File
 				RelativePath=".\DateTime.h">
+			</File>
+			<File
+				RelativePath=".\EnumHelper.cpp">
+			</File>
+			<File
+				RelativePath=".\EnumHelper.h">
 			</File>
 			<File
 				RelativePath=".\FontCharAliases.cpp">
