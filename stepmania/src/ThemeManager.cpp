@@ -946,23 +946,23 @@ LuaReference ThemeManager::GetMetricR( const RString &sClassName, const RString 
 	return ref;
 }
 
-#if !defined(SMPACKAGE)
 void ThemeManager::PushMetric( Lua *L, const RString &sClassName, const RString &sValueName )
 {
 	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName );
 
 	RString sName = ssprintf( "%s::%s", sClassName.c_str(), sValueName.c_str() );
+#if !defined(SMPACKAGE)
 	if( EndsWith(sValueName, "Command") )
 	{
 		ActorUtil::ParseActorCommands( L, sValue, sName );
 	}
 	else
+#endif
 	{
 		LuaHelpers::PrepareExpression( sValue );
 		LuaHelpers::RunExpression( L, sValue, sName );
 	}
 }
-#endif
 
 void ThemeManager::GetMetric( const RString &sClassName, const RString &sValueName, LuaReference &valueOut )
 {
