@@ -239,17 +239,14 @@ static void Theme( int &sel, bool ToSel, const ConfOption *pConfOption )
 	{
 		sel = 0;
 		for( unsigned i=1; i<vsThemeNames.size(); i++ )
-			if( !stricmp(vsThemeNames[i], THEME->GetCurThemeName()) )
+			if( !stricmp(vsThemeNames[i], PREFSMAN->m_sTheme.Get()) )
 				sel = i;
 	}
 	else
 	{
 		const RString sNewTheme = vsThemeNames[sel];
-		if( THEME->GetCurThemeName() != sNewTheme )
-		{
-			THEME->SwitchThemeAndLanguage( sNewTheme, THEME->GetCurLanguage(), PREFSMAN->m_bPseudoLocalize );
-			PREFSMAN->m_sTheme.Set( sNewTheme );
-		}
+		if( PREFSMAN->m_sTheme.Get() != sNewTheme )
+			PREFSMAN->m_sTheme.Set( sNewTheme ); // OPT_APPLY_THEME will load the theme
 	}
 }
 
