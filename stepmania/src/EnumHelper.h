@@ -86,6 +86,8 @@ namespace Enum
 		lua_rawgeti( L, -1, iVal + 1 );
 		lua_remove( L, -2 );
 	}
+
+	void SetMetatable( lua_State *L, LuaReference &EnumTable, LuaReference &EnumIndexTable, const char *szName );
 };
 
 const RString &EnumToString( int iVal, int iMax, const char **szNameArray, auto_ptr<RString> *pNameCache ); // XToString helper
@@ -156,6 +158,7 @@ static void Lua##X(lua_State* L) \
 	EnumTraits<X>::StringToEnum.SetFromStack( L ); \
 	EnumTraits<X>::StringToEnum.PushSelf( L ); \
 	lua_setglobal( L, #X "Index" ); \
+	Enum::SetMetatable( L, EnumTraits<X>::EnumToString, EnumTraits<X>::StringToEnum, #X ); \
 } \
 REGISTER_WITH_LUA_FUNCTION( Lua##X ); \
 template<> X EnumTraits<X>::Invalid = enum_add2( NUM_##X, 1 ); \

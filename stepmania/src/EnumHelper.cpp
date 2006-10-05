@@ -63,6 +63,67 @@ const RString &EnumToString( int iVal, int iMax, const char **szNameArray, auto_
 	return *pNameCache[iVal];
 }
 
+namespace
+{
+	int GetName( lua_State *L )
+	{
+		luaL_checktype( L, 1, LUA_TTABLE );
+
+		/* Look up the reverse table. */
+		luaL_getmetafield( L, 1, "name" );
+
+		/* If there was no metafield, then we were called on the wrong type. */
+		if( lua_isnil(L, -1) )
+			luaL_typerror( L, 1, "enum" );
+
+		return 1;
+	}
+	
+	int Reverse( lua_State *L )
+	{
+		luaL_checktype( L, 1, LUA_TTABLE );
+
+		/* Look up the reverse table. */
+		luaL_getmetafield( L, 1, "reverse" );
+
+		/* If there was no metafield, then we were called on the wrong type. */
+		if( lua_isnil(L, -1) )
+			luaL_typerror( L, 1, "enum" );
+
+		return 1;
+	}
+}
+
+static const luaL_Reg EnumLib[] = {
+	{ "GetName", GetName },
+	{ "Reverse", Reverse },
+	{ NULL, NULL }
+};
+
+static void PushEnumMethodTable( lua_State *L )
+{
+	luaL_register( L, "Enum", EnumLib );
+}
+
+void Enum::SetMetatable( lua_State *L, LuaReference &EnumTable, LuaReference &EnumIndexTable, const char *szName )
+{
+	/* Create the EnumToString table: { "UnlockEntry_ArcadePoints", "UnlockEntry_DancePoints" } */ \
+	EnumTable.PushSelf( L );
+	{
+		lua_newtable( L );
+		EnumIndexTable.PushSelf( L );
+		lua_setfield( L, -2, "reverse" );
+
+		lua_pushstring( L, szName );
+		lua_setfield( L, -2, "name" );
+
+		PushEnumMethodTable( L );
+		lua_setfield( L, -2, "__index" );
+	}
+	lua_setmetatable( L, -2 );
+	lua_pop( L, 1 );
+}
+
 /*
  * (c) 2006 Glenn Maynard
  * All rights reserved.
