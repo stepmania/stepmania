@@ -99,7 +99,7 @@ cl                                                                              
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				OptimizeForProcessor="2"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.0/include&quot;"
+				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.1/include&quot;;baseclasses\"
 				PreprocessorDefinitions="WIN32,_XBOX,XBOX,NDEBUG,_XDBG"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="2"
@@ -865,6 +865,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\CommonMetrics.h">
 			</File>
 			<File
+				RelativePath=".\ControllerStateDisplay.cpp">
+			</File>
+			<File
+				RelativePath=".\ControllerStateDisplay.h">
+			</File>
+			<File
 				RelativePath="Course.cpp">
 			</File>
 			<File
@@ -986,9 +992,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="LuaExpressionTransform.h">
-			</File>
-			<File
-				RelativePath="LuaFunctions.h">
 			</File>
 			<File
 				RelativePath=".\LuaReference.cpp">
@@ -2952,6 +2955,175 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					RelativePath=".\crypto51\words.h">
 				</File>
 			</Filter>
+		</Filter>
+		<Filter
+			Name="LUA"
+			Filter="">
+			<File
+				RelativePath=".\lua-5.1\src\lapi.c">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lapi.h">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lauxlib.c">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lauxlib.h">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lbaselib.c">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lcode.c">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lcode.h">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\ldblib.c">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\ldebug.c">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\ldebug.h">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\ldo.c">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\ldo.h">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\ldump.c">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lfunc.c">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lfunc.h">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lgc.c">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lgc.h">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\linit.c">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\liolib.c">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\llex.c">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\llex.h">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\llimits.h">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lmathlib.c">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lmem.c">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lmem.h">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\loadlib.c">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lobject.c">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lobject.h">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lopcodes.c">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lopcodes.h">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\loslib.c">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lparser.c">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lparser.h">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lstate.c">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lstate.h">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lstring.c">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lstring.h">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lstrlib.c">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\ltable.c">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\ltable.h">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\ltablib.c">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\ltm.c">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\ltm.h">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lua.c">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lua.h">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\luac.c">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\luaconf.h">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lualib.h">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lundump.c">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lundump.h">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lvm.c">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lvm.h">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lzio.c">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\lzio.h">
+			</File>
+			<File
+				RelativePath=".\lua-5.1\src\print.c">
+			</File>
 		</Filter>
 		<File
 			RelativePath="archutils\Win32\DialogCrashHeader.bmp">
