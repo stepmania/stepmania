@@ -481,6 +481,12 @@
 				RelativePath=".\RageTimer.h">
 			</File>
 			<File
+				RelativePath=".\RageTypes.cpp">
+			</File>
+			<File
+				RelativePath=".\RageTypes.h">
+			</File>
+			<File
 				RelativePath=".\RageUtil.cpp">
 			</File>
 			<File
