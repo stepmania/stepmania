@@ -1016,7 +1016,6 @@ int main(int argc, char* argv[])
 
 	/* Switch to the last used game type, and set up the theme and announcer. */
 	SwitchToLastPlayedGame();
-	ReadGamePrefsFromDisk();
 
 	{
 		/* Now that THEME is loaded, load the icon for the current theme into the
