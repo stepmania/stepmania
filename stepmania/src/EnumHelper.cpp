@@ -19,11 +19,22 @@ int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const 
 	// and not silently result in nil, or an out-of-bounds value.
 	if( unlikely(lua_isnil(L, -1)) )
 	{
-		// XXX: show string if a string, otherwise the type
-		lua_pushvalue( L, iPos );
 		RString sGot;
-		LuaHelpers::Pop( L, sGot );
-		LuaHelpers::Push( L, ssprintf("Expected %s; got \"%s\"", szType, sGot.c_str() ) );
+		if( lua_isstring(L, iPos) )
+		{
+			/* We were given a string, but it wasn't a valid value for this enum.  Show
+			 * the string. */
+			lua_pushvalue( L, iPos );
+			LuaHelpers::Pop( L, sGot );
+			sGot = ssprintf( "\"%s\"", sGot.c_str() );
+		}
+		else
+		{
+			/* We didn't get a string.  Show the type. */
+			luaL_pushtype( L, iPos );
+			LuaHelpers::Pop( L, sGot );
+		}
+		LuaHelpers::Push( L, ssprintf("Expected %s; got %s", szType, sGot.c_str() ) );
 		lua_error( L );
 	}
 	int iRet = lua_tointeger( L, -1 );
