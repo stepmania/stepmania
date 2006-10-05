@@ -130,8 +130,8 @@ function ScreenBranchNetAfterEval()
 end	
 
 function SelectEndingScreen()
-	local grade = GetBestFinalGrade()
-	if GradeIndex[grade] >= GradeIndex("Grade_Tier03") then return "ScreenMusicScroll" end
+	local grade = STATSMAN:GetBestFinalGrade()
+	if GradeIndex[grade] >= GradeIndex["Grade_Tier03"] then return "ScreenMusicScroll" end
 	return "ScreenCredits"
 end	
 
@@ -184,7 +184,7 @@ local function ShowScreenInstructions()
 	end
 
 	for pn = PLAYER_1,NUM_PLAYERS-1 do
-		if DifficultyIndex(GAMESTATE:GetPreferredDifficulty(pn)) <= DifficultyIndex("Difficulty_Easy") then
+		if DifficultyIndex[GAMESTATE:GetPreferredDifficulty(pn)] <= DifficultyIndex["Difficulty_Easy"] then
 			return true
 		end
 	end
