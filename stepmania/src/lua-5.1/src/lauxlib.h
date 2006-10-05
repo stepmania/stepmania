@@ -107,6 +107,7 @@ LUALIB_API const char *(luaL_findtable) (lua_State *L, int idx,
 #define luaL_optlong(L,n,d)	((long)luaL_optinteger(L, (n), (d)))
 
 #define luaL_typename(L,i)	lua_typename(L, lua_type(L,(i)))
+LUALIB_API int (luaL_pushtype) (lua_State *L, int idx);
 
 #define luaL_dofile(L, fn) \
 	(luaL_loadfile(L, fn) || lua_pcall(L, 0, LUA_MULTRET, 0))

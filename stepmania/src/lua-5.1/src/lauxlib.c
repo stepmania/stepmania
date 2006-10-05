@@ -57,10 +57,18 @@ LUALIB_API int luaL_argerror (lua_State *L, int narg, const char *extramsg) {
                         narg, ar.name, extramsg);
 }
 
+LUALIB_API int luaL_pushtype (lua_State *L, int narg) {
+  if (!luaL_callmeta(L, narg, "__type"))
+    lua_pushstring (L, luaL_typename(L, narg));
+
+  return 1;
+}
 
 LUALIB_API int luaL_typerror (lua_State *L, int narg, const char *tname) {
-  const char *msg = lua_pushfstring(L, "%s expected, got %s",
-                                    tname, luaL_typename(L, narg));
+  const char *msg;
+  luaL_pushtype(L, narg);
+  msg = lua_pushfstring(L, "%s expected, got %s",
+                                    tname, lua_tostring(L, -1));
   return luaL_argerror(L, narg, msg);
 }
 
