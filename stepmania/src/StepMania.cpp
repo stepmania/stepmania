@@ -754,20 +754,6 @@ RageDisplay *CreateDisplay()
 	return pRet;
 }
 
-void StepMania::ChangeCurrentGame( const Game* g )
-{
-	ASSERT( g );
-
-	GAMESTATE->SetCurGame( g );
-
-	/* Load keymaps for the new game. */
-	if( INPUTMAPPER )
-	{
-		INPUTMAPPER->SetInputScheme( &g->m_InputScheme );
-		INPUTMAPPER->ReadMappingsFromDisk();
-	}
-}
-
 static void SwitchToLastPlayedGame()
 {
 	ASSERT( GAMEMAN );
@@ -810,6 +796,21 @@ static void ReadGamePrefsFromDisk()
 	THEME->SwitchThemeAndLanguage( sTheme, PREFSMAN->m_sLanguage, PREFSMAN->m_bPseudoLocalize );
 }
 
+void StepMania::ChangeCurrentGame( const Game* g )
+{
+	ASSERT( g );
+
+	GAMESTATE->SetCurGame( g );
+
+	ReadGamePrefsFromDisk();
+
+	/* Load keymaps for the new game. */
+	if( INPUTMAPPER )
+	{
+		INPUTMAPPER->SetInputScheme( &g->m_InputScheme );
+		INPUTMAPPER->ReadMappingsFromDisk();
+	}
+}
 
 static void MountTreeOfZips( const RString &dir )
 {
