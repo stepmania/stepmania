@@ -183,7 +183,7 @@ local function ShowScreenInstructions()
 		return true
 	end
 
-	for pn = PLAYER_1,NUM_PLAYERS-1 do
+	for _,pn in ipairs(PlayerNumber) do
 		if DifficultyIndex[GAMESTATE:GetPreferredDifficulty(pn)] <= DifficultyIndex["Difficulty_Easy"] then
 			return true
 		end
