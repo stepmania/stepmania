@@ -1927,7 +1927,7 @@ public:
 		p->m_PreferredDifficulty[IArg(1)].Set( Difficulty(IArg(2)) );
 		return 0;
 	}
-	DEFINE_METHOD( GetPreferredDifficulty,		m_PreferredDifficulty[IArg(1)] )
+	DEFINE_METHOD( GetPreferredDifficulty,		m_PreferredDifficulty[Enum::Check<PlayerNumber>(L, 1)] )
 	DEFINE_METHOD( AnyPlayerHasRankingFeats,	AnyPlayerHasRankingFeats() )
 	DEFINE_METHOD( IsCourseMode,			IsCourseMode() )
 	DEFINE_METHOD( IsDemonstration,			m_bDemonstrationOrJukebox )
