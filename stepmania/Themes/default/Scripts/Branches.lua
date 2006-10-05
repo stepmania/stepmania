@@ -131,7 +131,7 @@ end
 
 function SelectEndingScreen()
 	local grade = STATSMAN:GetBestFinalGrade()
-	if GradeIndex[grade] >= GradeIndex["Grade_Tier03"] then return "ScreenMusicScroll" end
+	if Grade:Compare( grade, "Grade_Tier03" ) >= 0 then return "ScreenMusicScroll" end
 	return "ScreenCredits"
 end	
 
@@ -184,7 +184,7 @@ local function ShowScreenInstructions()
 	end
 
 	for _,pn in ipairs(PlayerNumber) do
-		if DifficultyIndex[GAMESTATE:GetPreferredDifficulty(pn)] <= DifficultyIndex["Difficulty_Easy"] then
+		if Difficulty:Compare( GAMESTATE:GetPreferredDifficulty(pn), "Difficulty_Easy" ) <= 0 then
 			return true
 		end
 	end
