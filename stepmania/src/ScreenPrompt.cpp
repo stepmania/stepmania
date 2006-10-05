@@ -109,6 +109,9 @@ void ScreenPrompt::Input( const InputEventPlus &input )
 	if( IsTransitioning() )
 		return;
 
+	if( input.type == IET_RELEASE )
+		return;
+
 	if( input.DeviceI.device==DEVICE_KEYBOARD )
 	{
 		switch( input.DeviceI.button )
