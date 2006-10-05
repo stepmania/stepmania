@@ -157,7 +157,6 @@ static void Lua##X(lua_State* L) \
 	} \
 	EnumTraits<X>::StringToEnum.SetFromStack( L ); \
 	EnumTraits<X>::StringToEnum.PushSelf( L ); \
-	lua_setglobal( L, #X "Index" ); \
 	Enum::SetMetatable( L, EnumTraits<X>::EnumToString, EnumTraits<X>::StringToEnum, #X ); \
 } \
 REGISTER_WITH_LUA_FUNCTION( Lua##X ); \
