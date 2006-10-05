@@ -620,6 +620,24 @@ int LuaHelpers::TypeError( Lua *L, int iArgNo, const char *szName )
 	}
 }
 
+namespace
+{
+	int lua_pushvalues( lua_State *L )
+	{
+		int iArgs = lua_tointeger( L, lua_upvalueindex(1) );
+		for( int i = 0; i < iArgs; ++i )
+			lua_pushvalue( L, lua_upvalueindex(i+2) );
+		return iArgs;
+	}
+}
+
+void LuaHelpers::PushValueFunc( lua_State *L, int iArgs )
+{
+	int iTop = lua_gettop( L ) - iArgs + 1;
+	lua_pushinteger( L, iArgs );
+	lua_insert( L, iTop );
+	lua_pushcclosure( L, lua_pushvalues, iArgs+1 );
+}
 
 LuaFunctionList::LuaFunctionList( RString name_, lua_CFunction func_ )
 {
