@@ -768,13 +768,9 @@ void StepMania::ChangeCurrentGame( const Game* g )
 	}
 }
 
-static void ReadGamePrefsFromDisk()
+static void SwitchToLastPlayedGame()
 {
-	ASSERT( GAMESTATE );
-	ASSERT( ANNOUNCER );
-	ASSERT( THEME );
 	ASSERT( GAMEMAN );
-
 	const Game *pGame = GAMEMAN->StringToGameType( PREFSMAN->GetCurrentGame() );
 
 	/* If the active game type isn't actually available, revert to the default. */
@@ -793,6 +789,13 @@ static void ReadGamePrefsFromDisk()
 		RageException::Throw( "Default NoteSkin for \"%s\" missing", pGame->m_szName );
 
 	StepMania::ChangeCurrentGame( pGame );
+}
+
+static void ReadGamePrefsFromDisk()
+{
+	ASSERT( GAMESTATE );
+	ASSERT( ANNOUNCER );
+	ASSERT( THEME );
 
 	RString sAnnouncer = PREFSMAN->m_sAnnouncer;
 	RString sTheme = PREFSMAN->m_sTheme;
@@ -1010,7 +1013,8 @@ int main(int argc, char* argv[])
 	ANNOUNCER	= new AnnouncerManager;
 	NOTESKIN	= new NoteSkinManager;
 
-	/* Set up the theme and announcer, and switch to the last game type. */
+	/* Switch to the last used game type, and set up the theme and announcer. */
+	SwitchToLastPlayedGame();
 	ReadGamePrefsFromDisk();
 
 	{
