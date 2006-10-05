@@ -86,6 +86,7 @@
 		!define MUI_FINISHPAGE_RUN "$INSTDIR\Program\${PRODUCT_FAMILY}.exe"
 		!define MUI_FINISHPAGE_RUN_NOTCHECKED
 		!define MUI_FINISHPAGE_RUN_TEXT "$(TEXT_IO_LAUNCH_THE_GAME)"
+
 	!insertmacro MUI_PAGE_FINISH
 
 	!insertmacro MUI_UNPAGE_CONFIRM
@@ -186,7 +187,7 @@ Section "Main Section" SecMain
 	AllowSkipFiles off
 	SetOverwrite on
 
-!ifdef INSTALL_PROGRAM_FILES
+!ifdef INSTALL_PROGRAM_LIBRARIES
 	WriteUninstaller "$INSTDIR\uninstall.exe"
 
 	; add registry entries
@@ -304,17 +305,19 @@ Section "Main Section" SecMain
 !ifdef INSTALL_INTERNAL_PCKS
 	CreateDirectory "$INSTDIR\pcks"
 	SetOutPath "$INSTDIR\pcks"
-	File "pcks\*.*"
+	File /r "pcks\*.*"
 !endif
-
+	
 	SetOutPath "$INSTDIR\Program"
+!ifdef INSTALL_EXECUTABLES
 	File "Program\${PRODUCT_FAMILY}.exe"
 	File "Program\${PRODUCT_FAMILY}.vdi"
 	File "Program\tools.exe"
+!endif
 !ifdef ASSOCIATE_SMZIP
 	Call RefreshShellIcons
 !endif
-!ifdef INSTALL_PROGRAM_FILES
+!ifdef INSTALL_PROGRAM_LIBRARIES
 	File "Program\mfc71.dll"
 	File "Program\msvcr71.dll"
 	File "Program\msvcp71.dll"
@@ -356,7 +359,7 @@ Section "Main Section" SecMain
 	MessageBox MB_OK|MB_ICONSTOP "$(TEXT_IO_FATAL_ERROR_INSTALL)"
 	Quit
 	do_no_error:
-
+	
 SectionEnd
 
 ;--------------------------------
@@ -440,7 +443,7 @@ FunctionEnd
 
 Function PreInstall
 
-!ifdef INSTALL_PROGRAM_FILES
+!ifdef INSTALL_PROGRAM_LIBRARIES
 		; force uninstall of previous version using NSIS
 		; We need to wait until the uninstaller finishes before continuing, since it's possible
 		; to click the next button again before the uninstaller's window appears and takes focus.
@@ -620,14 +623,15 @@ Section "Uninstall"
 	RMDir "$INSTDIR\Data"
 !endif
 
+!ifdef INSTALL_EXECUTABLES
 	Delete "$INSTDIR\Program\${PRODUCT_FAMILY}.exe"
+	Delete "$INSTDIR\Program\${PRODUCT_FAMILY}.vdi"
 	Delete "$INSTDIR\Program\tools.exe"
-	Delete "$INSTDIR\Program\mfc71.dll"
+!endif
 !ifdef ASSOCIATE_SMZIP
 	Call un.RefreshShellIcons
 !endif
-	Delete "$INSTDIR\Program\${PRODUCT_FAMILY}.vdi"
-!ifdef INSTALL_PROGRAM_FILES
+!ifdef INSTALL_PROGRAM_LIBRARIES
 	Delete "$INSTDIR\Program\mfc71.dll"
 	Delete "$INSTDIR\Program\msvcr71.dll"
 	Delete "$INSTDIR\Program\msvcp71.dll"
