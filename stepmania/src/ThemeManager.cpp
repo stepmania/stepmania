@@ -946,6 +946,7 @@ LuaReference ThemeManager::GetMetricR( const RString &sClassName, const RString 
 	return ref;
 }
 
+#if !defined(SMPACKAGE)
 void ThemeManager::PushMetric( Lua *L, const RString &sClassName, const RString &sValueName )
 {
 	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName );
@@ -961,6 +962,7 @@ void ThemeManager::PushMetric( Lua *L, const RString &sClassName, const RString 
 		LuaHelpers::RunExpression( L, sValue, sName );
 	}
 }
+#endif
 
 void ThemeManager::GetMetric( const RString &sClassName, const RString &sValueName, LuaReference &valueOut )
 {

@@ -22,6 +22,7 @@
 #include "LocalizedString.h"
 #include "RageFileManager.h"
 #include "arch/Dialog/Dialog.h"
+#include "archutils/Win32/ErrorStrings.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

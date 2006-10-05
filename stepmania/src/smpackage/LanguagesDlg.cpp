@@ -22,6 +22,7 @@
 #include "arch/Dialog/Dialog.h"
 #include "archutils/Win32/SpecialDirs.h"
 #include "archutils/Win32/GotoURL.h"
+#include "archutils/Win32/ErrorStrings.h"
 
 // LanguagesDlg dialog
 
@@ -291,7 +292,7 @@ void LanguagesDlg::OnBnClickedButtonExport()
 			TranslationLine tl;
 			tl.sSection = key->m_sName;
 			tl.sID = value->first;
-			tl.sBaseLanguage = value->second;
+			tl.sBaseLanguage = value->second->GetValue<RString>();
 			ini2.GetValue( tl.sSection, tl.sID, tl.sCurrentLanguage );
 
 			// don't export empty strings
@@ -511,7 +512,7 @@ void LanguagesDlg::OnBnClickedCheckLanguage()
 			{
 				const RString &sSection = key->m_sName;
 				const RString &sID = value->first;
-				const RString &sBaseLanguage = value->second;
+				const RString &sBaseLanguage = value->second->GetValue<RString>();
 				RString sCurrentLanguage;
 				ini2.GetValue( sSection, sID, sCurrentLanguage );
 
@@ -581,7 +582,7 @@ void LanguagesDlg::OnBnClickedCheckLanguage()
 			{
 				const RString &sSection = key->m_sName;
 				const RString &sID = value->first;
-				const RString &sCurrentLanguage = value->second;
+				const RString &sCurrentLanguage = value->second->GetValue<RString>();
 				if( utf8_is_valid(sCurrentLanguage) )
 					continue;
 
@@ -628,7 +629,7 @@ void LanguagesDlg::OnBnClickedCheckLanguage()
 			FOREACH_CONST_Attr( key, value )
 			{
 				const RString &sID = value->first;
-				const RString &sBaseText = value->second;
+				const RString &sBaseText = value->second->GetValue<RString>();
 				if( sBaseText.empty() )
 					continue;
 				RString sCurrentLanguage;

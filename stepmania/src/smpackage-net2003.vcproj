@@ -247,10 +247,10 @@
 				RelativePath=".\smpackage\resource.h">
 			</File>
 			<File
-				RelativePath="smpackage.ICO">
+				RelativePath="res\smpackage.ico">
 			</File>
 			<File
-				RelativePath="res\smpackage.ico">
+				RelativePath="smpackage.ICO">
 			</File>
 			<File
 				RelativePath=".\smpackage\smpackage.rc">
@@ -305,6 +305,12 @@
 				</File>
 				<File
 					RelativePath=".\archutils\Win32\DialogUtil.h">
+				</File>
+				<File
+					RelativePath=".\archutils\Win32\ErrorStrings.cpp">
+				</File>
+				<File
+					RelativePath=".\archutils\Win32\ErrorStrings.h">
 				</File>
 				<File
 					RelativePath=".\archutils\Win32\GotoURL.cpp">

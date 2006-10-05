@@ -10,6 +10,7 @@
 #include "SMPackageUtil.h"
 #include ".\createlanguagedlg.h"
 #include "archutils/Win32/DialogUtil.h"
+#include "archutils/Win32/ErrorStrings.h"
 
 // CreateLanguageDlg dialog
 
