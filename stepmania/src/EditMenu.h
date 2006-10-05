@@ -11,8 +11,6 @@
 #include "RageSound.h"
 #include "EnumHelper.h"
 #include "ThemeMetric.h"
-#include "GameConstantsAndTypes.h"
-
 
 enum EditMenuRow 
 { 
