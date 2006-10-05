@@ -307,17 +307,13 @@ XNode *LuaManager::GetLuaInformation() const
 				lua_pop( L, 1 ); // pop name
 				
 				// Get base class.
-				if( luaL_getmetafield( L, -1, "__index" ) )
+				if( luaL_getmetafield( L, -1, "base" ) )
 				{
-					if( luaL_getmetafield(L, -1, "class") )
-					{
-						name = lua_tostring( L, -1 );
-						
-						if( name )
-							c.m_sBaseName = name;
-						lua_pop( L, 1 ); // pop name
-					}
-					lua_pop( L, 1 ); // pop base class
+					name = lua_tostring( L, -1 );
+					
+					if( name )
+						c.m_sBaseName = name;
+					lua_pop( L, 1 ); // pop name
 				}
 				
 				// Get methods.
