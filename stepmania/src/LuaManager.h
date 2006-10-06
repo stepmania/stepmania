@@ -113,6 +113,7 @@ namespace LuaHelpers
 			LuaHelpers::Pop( L, value );
 			aOut.push_back( value );
 		}
+		lua_pop( L, 1 ); // pop nil
 	}
 	template<class T>
 	void CreateTableFromArray( const vector<T> &aIn, lua_State *L )
