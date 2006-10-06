@@ -135,12 +135,13 @@ bool XNode::RemoveChild( XNode *node, bool bDelete )
 // detach attribute
 bool XNode::RemoveAttr( const RString &sName )
 {
-	XAttrs::iterator begin = m_attrs.lower_bound( sName );
-	XAttrs::iterator end = m_attrs.upper_bound( sName );
-	if( begin == end )
-		return false;
-	m_attrs.erase( begin, end );
-	return true;
+	XAttrs::iterator it = m_attrs.find( sName );
+	if( it == m_attrs.end() )
+ 		return false;
+
+	delete it->second;
+	m_attrs.erase( it );
+ 	return true;
 }
 
 /* If bOverwrite is true and a node already exists with that name, the old value will be deleted.
