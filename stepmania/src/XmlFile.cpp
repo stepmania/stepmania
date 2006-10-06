@@ -18,7 +18,7 @@ XNode::XNode( const XNode &cpy ):
 	m_Value( cpy.m_Value )
 {
 	FOREACH_CONST_Attr( &cpy, pAttr )
-		this->AppendAttr( pAttr->first, new XNodeValue(*pAttr->second) );
+		this->AppendAttr( pAttr->first, pAttr->second->Copy() );
 	FOREACH_CONST_Child( &cpy, c )
 		this->AppendChild( new XNode(*c) );
 }
@@ -38,16 +38,16 @@ void XNode::Clear()
 	m_attrs.clear();
 }
 	
-void XNodeValue::GetValue( RString &out ) const		{ out = m_sValue; }
-void XNodeValue::GetValue( int &out ) const		{ out = atoi(m_sValue); }
-void XNodeValue::GetValue( float &out ) const		{ out = StringToFloat(m_sValue); }
-void XNodeValue::GetValue( bool &out ) const		{ out = atoi(m_sValue) != 0; }
-void XNodeValue::GetValue( unsigned &out ) const	{ out = strtoul(m_sValue,NULL,0); }
+void XNodeStringValue::GetValue( RString &out ) const		{ out = m_sValue; }
+void XNodeStringValue::GetValue( int &out ) const		{ out = atoi(m_sValue); }
+void XNodeStringValue::GetValue( float &out ) const		{ out = StringToFloat(m_sValue); }
+void XNodeStringValue::GetValue( bool &out ) const		{ out = atoi(m_sValue) != 0; }
+void XNodeStringValue::GetValue( unsigned &out ) const		{ out = strtoul(m_sValue,NULL,0); }
 
-void XNodeValue::SetValue( const RString &v )		{ m_sValue = v; }
-void XNodeValue::SetValue( int v )			{ m_sValue = ssprintf("%d",v); }
-void XNodeValue::SetValue( float v )			{ m_sValue = ssprintf("%f",v); }
-void XNodeValue::SetValue( unsigned v )			{ m_sValue = ssprintf("%u",v); }
+void XNodeStringValue::SetValue( const RString &v )		{ m_sValue = v; }
+void XNodeStringValue::SetValue( int v )			{ m_sValue = ssprintf("%d",v); }
+void XNodeStringValue::SetValue( float v )			{ m_sValue = ssprintf("%f",v); }
+void XNodeStringValue::SetValue( unsigned v )			{ m_sValue = ssprintf("%u",v); }
 
 const XNodeValue *XNode::GetAttr( const RString &attrname ) const
 {
@@ -153,7 +153,7 @@ XNodeValue *XNode::AppendAttr( const RString &sName )
 	DEBUG_ASSERT( sName.size() );
 	pair<XAttrs::iterator,bool> ret = m_attrs.insert( make_pair(sName, (XNodeValue *) NULL) );
 	if( ret.second )
-		ret.first->second = new XNodeValue();
+		ret.first->second = new XNodeStringValue;
 	return ret.first->second; // already existed
 }
 

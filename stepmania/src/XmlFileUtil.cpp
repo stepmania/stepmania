@@ -150,8 +150,7 @@ unsigned LoadAttributes( XNode *pNode, const RString &xml, RString &sErrorOut, u
 		
 		// add new attribute
 		DEBUG_ASSERT( sName.size() );
-		pair<XAttrs::iterator,bool> it = pNode->m_attrs.insert( make_pair(sName, new XNodeValue()) );
-		RString &sValue = it.first->second->m_sValue;
+		XNodeValue *pAttr = pNode->AppendAttr( sName );
 		iOffset = iEnd;
 		
 		// XML Attr Value
@@ -188,9 +187,10 @@ unsigned LoadAttributes( XNode *pNode, const RString &xml, RString &sErrorOut, u
 				return string::npos;
 			}
 
+			RString sValue;
 			SetString( xml, iOffset, iEnd, &sValue, true );
+			pAttr->SetValue( sValue );
 			iOffset = iEnd;
-			// ATTRVALUE 
 			ReplaceEntityText( sValue, g_mapEntitiesToChars );
 
 			if( quote == '"' || quote == '\'' )

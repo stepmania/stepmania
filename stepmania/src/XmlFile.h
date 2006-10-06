@@ -10,7 +10,30 @@ class RageFileBasic;
 class XNodeValue
 {
 public:
+	virtual ~XNodeValue() { }
+	virtual XNodeValue *Copy() const = 0;
+
+	virtual void GetValue( RString &out ) const = 0;
+	virtual void GetValue( int &out ) const = 0;
+	virtual void GetValue( float &out ) const = 0;
+	virtual void GetValue( bool &out ) const = 0;
+	virtual void GetValue( unsigned &out ) const = 0;
+
+	template<typename T>
+	T GetValue() const { T val; GetValue(val); return val; }
+
+	virtual void SetValue( const RString &v ) = 0;
+	virtual void SetValue( int v ) = 0;
+	virtual void SetValue( float v ) = 0;
+	virtual void SetValue( unsigned v ) = 0;
+};
+
+class XNodeStringValue: public XNodeValue
+{
+public:
 	RString	m_sValue;
+
+	XNodeValue *Copy() const { return new XNodeStringValue( *this ); }
 
 	void GetValue( RString &out ) const;
 	void GetValue( int &out ) const;
@@ -60,7 +83,7 @@ class XNode
 {
 public:
 	RString m_sName;	// a duplicate of the m_sName in the parent's map
-	XNodeValue m_Value;
+	XNodeStringValue m_Value;
 	XNodes	m_childs;	// child node
 	XAttrs	m_attrs;	// attributes
 

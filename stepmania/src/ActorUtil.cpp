@@ -321,7 +321,7 @@ static void MergeActorXML( XNode *pChild, const XNode *pParent )
 				pParent->GetName().c_str() );
 			Dialog::OK( sWarning, "XML_ATTRIB_OVERRIDE" );
 		}
-		pChild->AppendAttr( p->first, new XNodeValue(*p->second) );
+		pChild->AppendAttr( p->first, p->second->Copy() );
 	}
 }
 
