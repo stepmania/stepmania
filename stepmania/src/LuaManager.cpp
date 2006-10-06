@@ -274,26 +274,6 @@ XNode *LuaManager::GetLuaInformation() const
 		{
 		case LUA_TTABLE:
 		{
-			// Check for the metatable.
-			if( !lua_getmetatable(L, -1) )
-			{
-				/* If the key ends in "Index", check for the non "Index" version.
-				 * If both exist, then we have found an enum. */
-				if( !EndsWith(sKey, "Index") || sKey.size() <= 5 )
-					break;
-				sKey = sKey.substr( 0, sKey.size() - 5 );
-				LuaHelpers::Push( L, sKey );
-				lua_rawget( L, LUA_GLOBALSINDEX );
-				if( lua_istable(L, -1) )
-				{
-					vector<RString> &vEnum = mEnums[sKey];
-					LuaHelpers::ReadArrayFromTable( vEnum, L );
-				}
-				lua_pop( L, 2 ); // pop table and key
-				break;
-			}
-			lua_pop( L, 1 ); // pop metatable
-
 			if( luaL_getmetafield(L, -1, "class") )
 			{
 				const char *name = lua_tostring( L, -1 );
@@ -334,14 +314,19 @@ XNode *LuaManager::GetLuaInformation() const
 			// fall through
 		case LUA_TUSERDATA: // table or userdata: class instance
 		{
-			if( luaL_getmetafield(L, -1, "type") )
+			if( !luaL_getmetafield(L, -1, "type") )
+				break;
+			RString sType;
+			if( !LuaHelpers::Pop(L, sType) )
+				break;
+			if( sType == "Enum" )
 			{
-				const char *type = lua_tostring( L, -1 );
-				
-				if( type )
-					mSingletons[sKey] = type;
-
-				lua_pop( L, 1 ); // pop type
+				vector<RString> &vEnum = mEnums[sKey];
+				LuaHelpers::ReadArrayFromTable( vEnum, L );
+			}
+			else
+			{
+				mSingletons[sKey] = sType;
 			}
 			
 			break;
