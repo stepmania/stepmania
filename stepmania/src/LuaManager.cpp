@@ -559,33 +559,11 @@ bool LuaHelpers::RunAtExpressionS( RString &sStr )
 
 /* Like luaL_typerror, but without the special case for argument 1 being "self"
  * in method calls, so we give a correct error message after we remove self. */
-static RString GetLuaBindingType( Lua *L, int iArgNo )
-{
-	if( lua_isnil(L, iArgNo) )
-		return "nil";
-
-	int iTop = lua_gettop( L );
-	if( !lua_getmetatable(L, iArgNo) )
-	{
-		lua_settop( L, iTop );
-		return ssprintf( "non-bound %s", lua_typename(L, lua_type(L, iArgNo)) );
-	}
-
-	int iMetatable = lua_gettop( L );
-	lua_pushstring( L, "type" );
-	lua_rawget( L, iMetatable );
-	RString sActualType;
-	LuaHelpers::FromStack( L, sActualType, -1 );
-
-	lua_settop( L, iTop );
-	return sActualType;
-}
-
-/* Like luaL_typerror, but without the special case for argument 1 being "self"
- * in method calls, so we give a correct error message after we remove self. */
 int LuaHelpers::TypeError( Lua *L, int iArgNo, const char *szName )
 {
-	RString sType = GetLuaBindingType( L, iArgNo );
+	RString sType;
+	luaL_pushtype( L, iArgNo );
+	LuaHelpers::Pop( L, sType );
 
 	lua_Debug debug;
 	if( !lua_getstack( L, 0, &debug ) )
