@@ -110,9 +110,6 @@ void LuaBinding::Register( lua_State *L )
 	lua_setfield( L, methods_metatable, "class" );
 
 	lua_pushstring( L, GetClassName() );
-	lua_setfield( L, metatable, "type" );
-
-	lua_pushstring( L, GetClassName() );
 	LuaHelpers::PushValueFunc( L, 1 );
 	lua_setfield( L, metatable, "__type" ); // for luaL_pushtype
 
