@@ -302,6 +302,7 @@ static const char *StyleTypeNames[] = {
 };
 XToString( StyleType, NUM_StyleType );
 StringToX( StyleType );
+LuaXType( StyleType );
 
 
 static const char *GoalTypeNames[] = {

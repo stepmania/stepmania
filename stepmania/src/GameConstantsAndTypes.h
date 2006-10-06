@@ -397,6 +397,7 @@ enum StyleType
 };
 const RString& StyleTypeToString( StyleType s );
 StyleType StringToStyleType( const RString& s );
+LuaDeclareType( StyleType );
 
 
 enum GoalType 
