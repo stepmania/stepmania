@@ -41,9 +41,6 @@ public:
 	void GetValue( bool &out ) const;
 	void GetValue( unsigned &out ) const;
 
-	template<typename T>
-	T GetValue() const { T val; GetValue(val); return val; }
-
 	void SetValue( const RString &v );
 	void SetValue( int v );
 	void SetValue( float v );
