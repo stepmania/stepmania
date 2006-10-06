@@ -83,18 +83,18 @@ class XNode
 {
 public:
 	RString m_sName;	// a duplicate of the m_sName in the parent's map
-	XNodeStringValue m_Value;
+	XNodeValue *m_pValue;
 	XNodes	m_childs;	// child node
 	XAttrs	m_attrs;	// attributes
 
 	void SetName( const RString &sName ) { m_sName = sName; }
 	const RString &GetName() const { return m_sName; }
-	const RString &GetValue() const { return m_Value.m_sValue; }
+	RString GetValue() const { return m_pValue->GetValue<RString>(); }
 
 	template <typename T>
-	void GetValue( T &out ) const { m_Value.GetValue(out); }
+	void GetValue( T &out ) const { m_pValue->GetValue(out); }
 	template <typename T>
-	void SetValue( const T val ) { m_Value.SetValue(val); }
+	void SetValue( const T val ) { m_pValue->SetValue(val); }
 
 	// in own attribute list
 	const XNodeValue *GetAttr( const RString &sAttrName ) const; 
@@ -121,14 +121,15 @@ public:
 	XNodeValue *AppendAttr( const RString &sName, T value ) { XNodeValue *pVal = AppendAttr( sName ); pVal->SetValue( value ); return pVal; }
 	bool RemoveAttr( const RString &sName );
 
-	XNode() { }
-	explicit XNode( const RString &sName ) { m_sName = sName; }
+	XNode();
+	explicit XNode( const RString &sName );
 	XNode( const XNode &cpy );
 	~XNode();
 
 	void Clear();
 
 private:
+	void Free();
 	XNode &operator=( const XNode &cpy ); // don't use
 };
 

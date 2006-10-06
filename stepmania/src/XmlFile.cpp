@@ -13,10 +13,21 @@
 #include "DateTime.h"
 #include "Foreach.h"
 
-XNode::XNode( const XNode &cpy ):
-	m_sName( cpy.m_sName ),
-	m_Value( cpy.m_Value )
+XNode::XNode()
 {
+	m_pValue = new XNodeStringValue;
+}
+
+XNode::XNode( const RString &sName )
+{
+	m_sName = sName;
+	m_pValue = new XNodeStringValue;
+}
+
+XNode::XNode( const XNode &cpy ):
+	m_sName( cpy.m_sName )
+{
+	m_pValue = cpy.m_pValue->Copy();
 	FOREACH_CONST_Attr( &cpy, pAttr )
 		this->AppendAttr( pAttr->first, pAttr->second->Copy() );
 	FOREACH_CONST_Child( &cpy, c )
@@ -25,10 +36,16 @@ XNode::XNode( const XNode &cpy ):
 
 XNode::~XNode()
 {
-	Clear();
+	Free();
 }
 
 void XNode::Clear()
+{
+	Free();
+	m_pValue = new XNodeStringValue;
+}
+
+void XNode::Free()
 {
 	FOREACH_Child( this, p )
 		SAFE_DELETE( p );

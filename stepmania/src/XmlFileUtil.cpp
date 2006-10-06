@@ -295,7 +295,7 @@ unsigned XmlFileUtil::Load( XNode *pNode, const RString &xml, RString &sErrorOut
 
 	// open/close tag <TAG ..> ... </TAG>
 	//                        ^- current pointer
-	if( XIsEmptyString(pNode->m_Value.m_sValue) )
+	if( XIsEmptyString(pNode->m_pValue->GetValue<RString>()) )
 	{
 		// Text Value 
 		++iOffset;
@@ -308,11 +308,13 @@ unsigned XmlFileUtil::Load( XNode *pNode, const RString &xml, RString &sErrorOut
 			return string::npos;
 		}
 		
-		SetString( xml, iOffset, iEnd, &pNode->m_Value.m_sValue, true );
+		RString sValue;
+		SetString( xml, iOffset, iEnd, &sValue, true );
 
 		iOffset = iEnd;
-		// TEXTVALUE reference
-		ReplaceEntityText( pNode->m_Value.m_sValue, g_mapEntitiesToChars );
+		ReplaceEntityText( sValue, g_mapEntitiesToChars );
+
+		pNode->m_pValue->SetValue( sValue );
 	}
 
 	// generate child nodes
@@ -371,7 +373,7 @@ unsigned XmlFileUtil::Load( XNode *pNode, const RString &xml, RString &sErrorOut
 		}
 		else	// Alone child Tag Loaded
 		{
-			if( XIsEmptyString(pNode->m_Value.m_sValue) && iOffset < xml.size() && xml[iOffset] != chXMLTagOpen )
+			if( XIsEmptyString(pNode->m_pValue->GetValue<RString>()) && iOffset < xml.size() && xml[iOffset] != chXMLTagOpen )
 			{
 				// Text Value 
 				unsigned iEnd = xml.find( chXMLTagOpen, iOffset );
@@ -383,11 +385,12 @@ unsigned XmlFileUtil::Load( XNode *pNode, const RString &xml, RString &sErrorOut
 					return string::npos;
 				}
 				
-				SetString( xml, iOffset, iEnd, &pNode->m_Value.m_sValue, true );
+				RString sValue;
+				SetString( xml, iOffset, iEnd, &sValue, true );
 
 				iOffset = iEnd;
-				//TEXTVALUE
-				ReplaceEntityText( pNode->m_Value.m_sValue, g_mapEntitiesToChars );
+				ReplaceEntityText( sValue, g_mapEntitiesToChars );
+				pNode->m_pValue->SetValue( sValue );
 			}
 		}
 	}
@@ -426,7 +429,7 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 		if( !GetAttrXML(f, p->first, p->second->GetValue<RString>()) )
 			return false;
 	
-	if( pNode->m_childs.empty() && pNode->m_Value.m_sValue.empty() )
+	if( pNode->m_childs.empty() && pNode->m_pValue->GetValue<RString>().empty() )
 	{
 		// <TAG Attr1="Val1"/> alone tag 
 		if( f.Write("/>") == -1 )
@@ -446,7 +449,7 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 				return false;
 		
 		// Text Value
-		if( !pNode->m_Value.m_sValue.empty() )
+		if( !pNode->m_pValue->GetValue<RString>().empty() )
 		{
 			if( !pNode->m_childs.empty() )
 			{
@@ -457,7 +460,8 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 						if( f.Write("\t") == -1 )
 							return false;
 			}
-			RString s( pNode->m_Value.m_sValue );
+			RString s;
+			pNode->m_pValue->GetValue( s );
 			ReplaceEntityText( s, g_mapCharsToEntities );
 			if( f.Write(s) == -1 )
 				return false;
