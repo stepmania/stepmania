@@ -112,6 +112,10 @@ void LuaBinding::Register( lua_State *L )
 	lua_pushstring( L, GetClassName() );
 	lua_setfield( L, metatable, "type" );
 
+	lua_pushstring( L, GetClassName() );
+	LuaHelpers::PushValueFunc( L, 1 );
+	lua_setfield( L, metatable, "__type" ); // for luaL_pushtype
+
 	{
 		lua_newtable( L );
 		int iHeirarchyTable = lua_gettop( L );

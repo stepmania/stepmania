@@ -314,7 +314,7 @@ XNode *LuaManager::GetLuaInformation() const
 			// fall through
 		case LUA_TUSERDATA: // table or userdata: class instance
 		{
-			if( !luaL_getmetafield(L, -1, "type") )
+			if( !luaL_callmeta(L, -1, "__type") )
 				break;
 			RString sType;
 			if( !LuaHelpers::Pop(L, sType) )

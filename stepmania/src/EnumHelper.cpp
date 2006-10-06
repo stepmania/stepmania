@@ -120,7 +120,8 @@ void Enum::SetMetatable( lua_State *L, LuaReference &EnumTable, LuaReference &En
 		lua_setfield( L, -2, "__index" );
 
 		lua_pushliteral( L, "Enum" );
-		lua_setfield( L, -2, "type" );
+		LuaHelpers::PushValueFunc( L, 1 );
+		lua_setfield( L, -2, "__type" ); // for luaL_pushtype
 	}
 	lua_setmetatable( L, -2 );
 	lua_pop( L, 1 );
