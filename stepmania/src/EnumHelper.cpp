@@ -107,7 +107,6 @@ static void PushEnumMethodTable( lua_State *L )
 
 void Enum::SetMetatable( lua_State *L, LuaReference &EnumTable, LuaReference &EnumIndexTable, const char *szName )
 {
-	/* Create the EnumToString table: { "UnlockEntry_ArcadePoints", "UnlockEntry_DancePoints" } */ \
 	EnumTable.PushSelf( L );
 	{
 		lua_newtable( L );
@@ -119,6 +118,9 @@ void Enum::SetMetatable( lua_State *L, LuaReference &EnumTable, LuaReference &En
 
 		PushEnumMethodTable( L );
 		lua_setfield( L, -2, "__index" );
+
+		lua_pushliteral( L, "Enum" );
+		lua_setfield( L, -2, "type" );
 	}
 	lua_setmetatable( L, -2 );
 	lua_pop( L, 1 );
