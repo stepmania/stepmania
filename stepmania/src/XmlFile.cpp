@@ -53,6 +53,8 @@ void XNode::Free()
 		SAFE_DELETE( pAttr->second );
 	m_childs.clear();
 	m_attrs.clear();
+
+	SAFE_DELETE( m_pValue );
 }
 	
 void XNodeStringValue::GetValue( RString &out ) const		{ out = m_sValue; }
