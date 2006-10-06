@@ -137,11 +137,11 @@ bool XNode::RemoveAttr( const RString &sName )
 {
 	XAttrs::iterator it = m_attrs.find( sName );
 	if( it == m_attrs.end() )
- 		return false;
+		return false;
 
 	delete it->second;
 	m_attrs.erase( it );
- 	return true;
+	return true;
 }
 
 /* If bOverwrite is true and a node already exists with that name, the old value will be deleted.
