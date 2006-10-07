@@ -47,20 +47,6 @@ Difficulty StringToDifficulty( const RString& sDC )
 	else						return Difficulty_Invalid;
 }
 
-static const char *CourseDifficultyNames[] =
-{
-	"Beginner",
-	"Easy",
-	"Regular",
-	"Difficult",
-	"Challenge",
-	"Edit",
-};
-const RString& CourseDifficultyToString( CourseDifficulty x )
-{
-	static auto_ptr<RString> as_CourseDifficultyName[NUM_CourseDifficulty+2];
-	return EnumToString( x, NUM_CourseDifficulty, CourseDifficultyNames, as_CourseDifficultyName );
-}
 
 const RString &CourseDifficultyToLocalizedString( CourseDifficulty x )
 {
@@ -74,16 +60,6 @@ const RString &CourseDifficultyToLocalizedString( CourseDifficulty x )
 		}
 	}
 	return g_CourseDifficultyName[x]->GetValue();
-}
-
-CourseDifficulty StringToCourseDifficulty( const RString& s )
-{
-	RString s2 = s;
-	s2.MakeLower();
-	for( unsigned i = 0; i < ARRAYLEN(CourseDifficultyNames); ++i )
-		if( !s2.CompareNoCase(CourseDifficultyNames[i]) )
-			return (CourseDifficulty)i;
-	return CourseDifficulty_Invalid;
 }
 
 LuaFunction( CourseDifficultyToLocalizedString, CourseDifficultyToLocalizedString(Enum::Check<Difficulty>(L, 1)) );

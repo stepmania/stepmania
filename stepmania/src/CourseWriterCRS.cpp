@@ -7,6 +7,12 @@
 #include "song.h"
 #include "RageFileDriverMemory.h"
 
+extern const char *g_CRSDifficultyNames[]; // in CourseLoaderCRS
+
+static RString DifficultyToCRSString( CourseDifficulty iVal )
+{
+	return g_CRSDifficultyNames[iVal];
+}
 
 bool CourseWriterCRS::Write( const Course &course, const RString &sPath, bool bSavingCache )
 {
@@ -43,7 +49,7 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 	{
 		if( course.m_iCustomMeter[cd] == -1 )
 			continue;
-		f.PutLine( ssprintf("#METER:%s:%i;", CourseDifficultyToString(cd).c_str(), course.m_iCustomMeter[cd]) );
+		f.PutLine( ssprintf("#METER:%s:%i;", DifficultyToCRSString(cd).c_str(), course.m_iCustomMeter[cd]) );
 	}
 
 	if( bSavingCache )

@@ -17,6 +17,25 @@
 
 const int MAX_EDIT_COURSE_SIZE_BYTES	= 30*1024;	// 30KB
 
+const char *g_CRSDifficultyNames[] =
+{
+	"Beginner",
+	"Easy",
+	"Regular",
+	"Difficult",
+	"Challenge",
+	"Edit",
+};
+
+static CourseDifficulty CRSStringToDifficulty( const RString& s )
+{
+	FOREACH_Difficulty(i)
+		if( !s.CompareNoCase(g_CRSDifficultyNames[i]) )
+			return i;
+	return Difficulty_Invalid;
+}
+
+
 bool CourseLoaderCRS::LoadFromBuffer( const RString &sPath, const RString &sBuffer, Course &out )
 {
 	MsdFile msd;
@@ -72,7 +91,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			}
 			else if( sParams.params.size() == 3 )
 			{
-				const CourseDifficulty cd = StringToCourseDifficulty( sParams[1] );
+				const CourseDifficulty cd = CRSStringToDifficulty( sParams[1] );
 				if( cd == Difficulty_Invalid )
 				{
 					LOG->UserLog( "Course file", sPath, "contains an invalid #METER string: \"%s\"", sParams[1].c_str() );

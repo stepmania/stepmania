@@ -30,9 +30,7 @@ typedef Difficulty CourseDifficulty;
 #define FOREACH_CourseDifficulty FOREACH_Difficulty
 #define FOREACH_ShownCourseDifficulty( cd ) for( Difficulty cd=GetNextShownCourseDifficulty((CourseDifficulty)-1); cd!=Difficulty_Invalid; cd=GetNextShownCourseDifficulty(cd) )
 
-const RString& CourseDifficultyToString( Difficulty dc );
 const RString& CourseDifficultyToLocalizedString( Difficulty dc );
-Difficulty StringToCourseDifficulty( const RString& sDC );
 
 Difficulty GetNextShownCourseDifficulty( Difficulty pn );
 
