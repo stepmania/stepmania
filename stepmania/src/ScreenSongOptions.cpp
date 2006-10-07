@@ -13,7 +13,7 @@ void ScreenSongOptions::Init()
 
 	/* Hack: If we're coming in from "press start for more options", we need a different
 	 * fade in. */
-	if(PREFSMAN->m_ShowSongOptions == PrefsManager::ASK)
+	if( PREFSMAN->m_ShowSongOptions == Maybe_ASK )
 	{
 		m_In.Load( THEME->GetPathB("ScreenSongOptions","option in") );
 		m_In.StartTransitioning();

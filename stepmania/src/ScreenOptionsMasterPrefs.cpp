@@ -305,7 +305,7 @@ static void DefaultNoteSkin( int &sel, bool ToSel, const ConfOption *pConfOption
 
 static void WheelSections( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const PrefsManager::MusicWheelUsesSections mapping[] = { PrefsManager::NEVER, PrefsManager::ALWAYS, PrefsManager::ABC_ONLY };
+	const MusicWheelUsesSections mapping[] = { MusicWheelUsesSections_NEVER, MusicWheelUsesSections_ALWAYS, MusicWheelUsesSections_ABC_ONLY };
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
@@ -348,9 +348,9 @@ static void MusicWheelSwitchSpeed( int &sel, bool ToSel, const ConfOption *pConf
 }
 
 /* Gameplay options */
-static void AllowW1( int &sel, bool ToSel, const ConfOption *pConfOption )
+static void AllowW1M( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const PrefsManager::AllowW1 mapping[] = { PrefsManager::ALLOW_W1_NEVER, PrefsManager::ALLOW_W1_COURSES_ONLY, PrefsManager::ALLOW_W1_EVERYWHERE };
+	const AllowW1 mapping[] = { ALLOW_W1_NEVER, ALLOW_W1_COURSES_ONLY, ALLOW_W1_EVERYWHERE };
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
@@ -421,13 +421,13 @@ LuaFunction( GetLifeDifficulty, GetLifeDifficulty() );
 
 static void ShowSongOptions( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const PrefsManager::Maybe mapping[] = { PrefsManager::NO,PrefsManager::YES,PrefsManager::ASK };
+	const Maybe mapping[] = { Maybe_NO, Maybe_YES, Maybe_ASK };
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
-static void GetRankingName( int &sel, bool ToSel, const ConfOption *pConfOption )
+static void GetRankingNameM( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const PrefsManager::GetRankingName mapping[] = { PrefsManager::RANKING_OFF, PrefsManager::RANKING_ON, PrefsManager::RANKING_LIST };
+	const GetRankingName mapping[] = { RANKING_OFF, RANKING_ON, RANKING_LIST };
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
@@ -632,7 +632,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "Center1Player",		MovePref,		"Off","On" ) );
 	ADD( ConfOption( "HiddenSongs",			MovePref,		"Off","On" ) );
 	ADD( ConfOption( "EasterEggs",			MovePref,		"Off","On" ) );
-	ADD( ConfOption( "AllowW1",			AllowW1,		"Never","Courses Only","Always" ) );
+	ADD( ConfOption( "AllowW1",			AllowW1M,		"Never","Courses Only","Always" ) );
 	ADD( ConfOption( "AllowExtraStage",		MovePref,		"Off","On" ) );
 	ADD( ConfOption( "PickExtraStage",		MovePref,		"Off","On" ) );
 	ADD( ConfOption( "UseUnlockSystem",		MovePref,		"Off","On" ) );
@@ -655,7 +655,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "CoinsPerCredit",		CoinsPerCredit,		"|1","|2","|3","|4","|5","|6","|7","|8","|9","|10","|11","|12","|13","|14","|15","|16" ) );
 	ADD( ConfOption( "Premium",			PremiumM,		"Off","Double for 1 Credit","Joint Premium" ) );
 	ADD( ConfOption( "ShowSongOptions",		ShowSongOptions,	"Hide","Show","Ask" ) );
-	ADD( ConfOption( "GetRankingName",		GetRankingName,		"Off", "On", "Ranking Songs" ) );
+	ADD( ConfOption( "GetRankingName",		GetRankingNameM,	"Off", "On", "Ranking Songs" ) );
 
 	/* Graphic options */
 	ADD( ConfOption( "Windowed",			MovePref,		"Full Screen", "Windowed" ) );

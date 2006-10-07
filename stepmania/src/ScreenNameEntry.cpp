@@ -138,8 +138,8 @@ void ScreenNameEntry::Init()
 	bool IsOnRanking = ( (GAMESTATE->m_PlayMode == PLAY_MODE_NONSTOP || GAMESTATE->m_PlayMode == PLAY_MODE_ONI)
 		&& !(GAMESTATE->m_pCurCourse->IsRanking()) );
 
-	if( PREFSMAN->m_GetRankingName == PrefsManager::RANKING_OFF || 
-		(PREFSMAN->m_GetRankingName == PrefsManager::RANKING_LIST && !IsOnRanking) )
+	if( PREFSMAN->m_GetRankingName == RANKING_OFF || 
+		(PREFSMAN->m_GetRankingName == RANKING_LIST && !IsOnRanking) )
 	{
 		// don't collect score due to ranking setting
 		PostScreenMessage( SM_GoToNextScreen, 0 );

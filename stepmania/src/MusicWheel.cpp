@@ -489,10 +489,10 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData *> &arrayWheelItemDat
 
 			switch( PREFSMAN->m_MusicWheelUsesSections )
 			{
-			case PrefsManager::NEVER:
+			case MusicWheelUsesSections_NEVER:
 				bUseSections = false;
 				break;
-			case PrefsManager::ABC_ONLY:
+			case MusicWheelUsesSections_ABC_ONLY:
 				if( so != SORT_TITLE && so != SORT_GROUP )
 					bUseSections = false;
 				break;

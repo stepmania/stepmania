@@ -46,6 +46,42 @@ static const char *ScoreEventNames[] = {
 XToString( ScoreEvent, NUM_ScoreEvent );
 
 
+static const char *MusicWheelUsesSectionsNames[] = {
+	"Never",
+	"Always",
+	"ABCOnly",
+};
+XToString2( MusicWheelUsesSections );
+StringToX( MusicWheelUsesSections );
+LuaXType( MusicWheelUsesSections );
+
+static const char *AllowW1Names[] = {
+	"Never",
+	"CoursesOnly",
+	"Everywhere",
+};
+XToString2( AllowW1 );
+StringToX( AllowW1 );
+LuaXType( AllowW1 );
+
+static const char *MaybeNames[] = {
+	"Ask",
+	"No",
+	"Yes",
+};
+XToString2( Maybe );
+StringToX( Maybe );
+LuaXType( Maybe );
+
+static const char *GetRankingNameNames[] = {
+	"Off",
+	"On",
+	"List",
+};
+XToString2( GetRankingName );
+StringToX( GetRankingName );
+LuaXType( GetRankingName );
+
 bool g_bAutoRestart = false;
 #ifdef DEBUG
 # define TRUE_IF_DEBUG true
@@ -238,7 +274,7 @@ PrefsManager::PrefsManager() :
 	m_bShowCaution			( "ShowCaution",		true ),
 	m_bShowNativeLanguage		( "ShowNativeLanguage",		true ),
 	m_bArcadeOptionsNavigation	( "ArcadeOptionsNavigation",	false ),
-	m_MusicWheelUsesSections	( "MusicWheelUsesSections",	ALWAYS ),
+	m_MusicWheelUsesSections	( "MusicWheelUsesSections",	MusicWheelUsesSections_ALWAYS ),
 	m_iMusicWheelSwitchSpeed	( "MusicWheelSwitchSpeed",	10 ),
 	m_AllowW1			( "AllowW1",			ALLOW_W1_EVERYWHERE ),
 	m_bEventMode			( "EventMode",			false ),
@@ -251,7 +287,7 @@ PrefsManager::PrefsManager() :
 	m_bPickExtraStage		( "PickExtraStage",		false ),
 
 	m_bComboContinuesBetweenSongs	( "ComboContinuesBetweenSongs",	false ),
-	m_ShowSongOptions		( "ShowSongOptions",		YES ),
+	m_ShowSongOptions		( "ShowSongOptions",		Maybe_YES ),
 	m_bDancePointsForOni		( "DancePointsForOni",		false ),
 	m_bPercentageScoring		( "PercentageScoring",		false ),
 	m_fMinPercentageForMachineSongHighScore		( "MinPercentageForMachineSongHighScore",	0.5f ),

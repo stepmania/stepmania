@@ -10,6 +10,11 @@ class IniFile;
 
 const int MAX_SONGS_PER_PLAY = 7;
 
+enum MusicWheelUsesSections { MusicWheelUsesSections_NEVER, MusicWheelUsesSections_ALWAYS, MusicWheelUsesSections_ABC_ONLY, NUM_MusicWheelUsesSections, MusicWheelUsesSections_Invalid };
+enum AllowW1 { ALLOW_W1_NEVER, ALLOW_W1_COURSES_ONLY, ALLOW_W1_EVERYWHERE, NUM_AllowW1, AllowW1_Invalid };
+enum Maybe { Maybe_ASK, Maybe_NO, Maybe_YES, NUM_Maybe, Maybe_Invalid };
+enum GetRankingName { RANKING_OFF, RANKING_ON, RANKING_LIST, NUM_GetRankingName, GetRankingName_Invalid };
+
 class PrefsManager
 {
 public:
@@ -116,10 +121,8 @@ public:
 	Preference<bool>	m_bShowCaution;
 	Preference<bool>	m_bShowNativeLanguage;
 	Preference<bool>	m_bArcadeOptionsNavigation;
-	enum MusicWheelUsesSections { NEVER, ALWAYS, ABC_ONLY };
 	Preference<MusicWheelUsesSections,int>		m_MusicWheelUsesSections;
 	Preference<int>		m_iMusicWheelSwitchSpeed;
-	enum AllowW1 { ALLOW_W1_NEVER, ALLOW_W1_COURSES_ONLY, ALLOW_W1_EVERYWHERE };
 	Preference<AllowW1,int>		m_AllowW1;
 	Preference<bool>	m_bEventMode;
 	Preference<int>		m_iCoinsPerCredit;
@@ -133,7 +136,6 @@ public:
 	Preference<bool>	m_bDelayedCreditsReconcile;
 	Preference<bool>	m_bPickExtraStage;
 	Preference<bool>	m_bComboContinuesBetweenSongs;
-	enum Maybe { ASK = -1, NO = 0, YES = 1 };
 	Preference<Maybe,int>		m_ShowSongOptions;
 	Preference<bool>	m_bDancePointsForOni;
 	Preference<bool>	m_bPercentageScoring;
@@ -192,7 +194,6 @@ public:
 	enum CourseSortOrders { COURSE_SORT_PREFERRED, COURSE_SORT_SONGS, COURSE_SORT_METER, COURSE_SORT_METER_SUM, COURSE_SORT_RANK, NUM_COURSE_SORT_ORDER };
 	Preference<CourseSortOrders,int>	m_CourseSortOrder;
 	Preference<bool>	m_bSubSortByNumSteps;	
-	enum GetRankingName { RANKING_OFF, RANKING_ON, RANKING_LIST };
 	Preference<GetRankingName,int>	m_GetRankingName;
 
 	enum ScoringType { SCORING_NEW, SCORING_OLD };

@@ -1232,9 +1232,9 @@ bool GameState::ShowW1() const
 {
 	switch( PREFSMAN->m_AllowW1 )
 	{
-	case PrefsManager::ALLOW_W1_NEVER:			return false;
-	case PrefsManager::ALLOW_W1_COURSES_ONLY:	return IsCourseMode();
-	case PrefsManager::ALLOW_W1_EVERYWHERE:	return true;
+	case ALLOW_W1_NEVER:		return false;
+	case ALLOW_W1_COURSES_ONLY:	return IsCourseMode();
+	case ALLOW_W1_EVERYWHERE:	return true;
 	default:	ASSERT(0);
 	}
 }
