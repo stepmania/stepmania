@@ -1767,6 +1767,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ComboGraph.h">
 			</File>
 			<File
+				RelativePath=".\ControllerStateDisplay.cpp">
+			</File>
+			<File
+				RelativePath=".\ControllerStateDisplay.h">
+			</File>
+			<File
 				RelativePath="CourseContentsList.cpp">
 			</File>
 			<File
