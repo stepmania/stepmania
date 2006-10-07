@@ -169,7 +169,7 @@ void DifficultyMeter::SetFromTrail( const Trail* pTrail )
 	}
 
 	CourseDifficulty cd = pTrail->m_CourseDifficulty;
-	SetInternal( pTrail->GetMeter(), cd, GetCourseDifficultyCommandName( cd ), RString() );
+	SetInternal( pTrail->GetMeter(), (Difficulty)cd, GetCourseDifficultyCommandName( cd ), RString() );
 }
 
 void DifficultyMeter::Unset()
@@ -184,7 +184,7 @@ void DifficultyMeter::SetFromMeterAndDifficulty( int iMeter, Difficulty dc )
 
 void DifficultyMeter::SetFromMeterAndCourseDifficulty( int iMeter, CourseDifficulty cd )
 {
-	SetInternal( 0, cd, GetCourseDifficultyCommandName(cd), RString() );
+	SetInternal( 0, (Difficulty)cd, GetCourseDifficultyCommandName(cd), RString() );
 }
 
 void DifficultyMeter::SetInternal( int iMeter, Difficulty dc, const RString &sDifficultyCommand, const RString &sDescription )

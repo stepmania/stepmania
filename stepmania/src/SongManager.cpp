@@ -748,11 +748,11 @@ void SongManager::InitAutogenCourses()
 
 		// Generate random courses from each group.
 		pCourse = new Course;
-		CourseUtil::AutogenEndlessFromGroup( sGroupName, DIFFICULTY_MEDIUM, *pCourse );
+		CourseUtil::AutogenEndlessFromGroup( sGroupName, COURSE_DIFFICULTY_REGULAR, *pCourse );
 		m_pCourses.push_back( pCourse );
 
 		pCourse = new Course;
-		CourseUtil::AutogenNonstopFromGroup( sGroupName, DIFFICULTY_MEDIUM, *pCourse );
+		CourseUtil::AutogenNonstopFromGroup( sGroupName, COURSE_DIFFICULTY_REGULAR, *pCourse );
 		m_pCourses.push_back( pCourse );
 	}
 	
@@ -760,7 +760,7 @@ void SongManager::InitAutogenCourses()
 
 	// Generate "All Songs" endless course.
 	pCourse = new Course;
-	CourseUtil::AutogenEndlessFromGroup( "", DIFFICULTY_MEDIUM, *pCourse );
+	CourseUtil::AutogenEndlessFromGroup( "", COURSE_DIFFICULTY_REGULAR, *pCourse );
 	m_pCourses.push_back( pCourse );
 
 	/* Generate Oni courses from artists.  Only create courses if we have at least

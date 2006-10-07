@@ -76,7 +76,7 @@ void ThemeMetricCourseDifficultiesToShow::Read()
 	FOREACH_CONST( RString, v, i )
 	{
 		CourseDifficulty d = StringToCourseDifficulty( *i );
-		if( d == Difficulty_Invalid )
+		if( d == CourseDifficulty_Invalid )
 			RageException::Throw( "Unknown CourseDifficulty \"%s\" in CourseDifficultiesToShow.", i->c_str() );
 		m_v.push_back( d );
 	}

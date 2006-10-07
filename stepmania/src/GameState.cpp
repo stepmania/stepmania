@@ -200,7 +200,7 @@ void GameState::Reset()
 	FOREACH_PlayerNumber( p )
 	{
 		m_PreferredDifficulty[p].Set( Difficulty_Invalid );
-		m_PreferredCourseDifficulty[p].Set( DIFFICULTY_MEDIUM );
+		m_PreferredCourseDifficulty[p].Set( COURSE_DIFFICULTY_REGULAR );
 	}
 	m_SortOrder.Set( SortOrder_Invalid );
 	m_PreferredSortOrder = GetDefaultSort();
@@ -394,7 +394,7 @@ void GameState::PlayersFinalized()
 			m_PreferredSortOrder = pProfile->m_SortOrder;
 		if( pProfile->m_LastDifficulty != Difficulty_Invalid )
 			m_PreferredDifficulty[pn].Set( pProfile->m_LastDifficulty );
-		if( pProfile->m_LastCourseDifficulty != Difficulty_Invalid )
+		if( pProfile->m_LastCourseDifficulty != CourseDifficulty_Invalid )
 			m_PreferredCourseDifficulty[pn].Set( pProfile->m_LastCourseDifficulty );
 		if( m_pPreferredSong == NULL )
 			m_pPreferredSong = pProfile->m_lastSong.ToSong();
@@ -1424,7 +1424,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 					feat.Type = RankingFeat::COURSE;
 					feat.pCourse = pCourse;
 					feat.Feat = ssprintf("MR #%d in %s", i+1, pCourse->GetDisplayFullTitle().c_str() );
-					if( cd != DIFFICULTY_MEDIUM )
+					if( cd != COURSE_DIFFICULTY_REGULAR )
 						feat.Feat += " " + CourseDifficultyToLocalizedString(cd);
 					feat.pStringToFill = hs.GetNameMutable();
 					feat.grade = Grade_NoData;
@@ -1693,7 +1693,7 @@ bool GameState::ChangePreferredCourseDifficulty( PlayerNumber pn, int dir )
 	while( 1 )
 	{
 		cd = (CourseDifficulty)(cd+dir);
-		if( cd < 0 || cd >= NUM_Difficulty )
+		if( cd < 0 || cd >= NUM_CourseDifficulty )
 			return false;
 		if( find(v.begin(),v.end(),cd) == v.end() )
 			continue; /* not available */

@@ -301,7 +301,7 @@ void ScoreScroller::ConfigureActor( Actor *pActor, int iItem )
 		{
 			BitmapText* pTextStepsScore = &item.m_textScore[*cd];
 
-			const Trail *pTrail = pCourse->GetTrail( m_StepsType, *cd );
+			const Trail *pTrail = pCourse->GetTrail( m_StepsType, (CourseDifficulty)*cd );
 			if( UNLOCKMAN->CourseIsLocked(pCourse) )
 				pTrail = NULL;
 			pTextStepsScore->SetHidden( pTrail==NULL );
@@ -417,7 +417,7 @@ void ScreenRankingScroller::Init()
 		if( m_PageType == PageType_AllSteps )
 			m_sprDifficulty[*d].Load( THEME->GetPathG(m_sName,"difficulty "+DifficultyToString(*d)) );
 		else
-			m_sprDifficulty[*d].Load( THEME->GetPathG(m_sName,"CourseDifficulty "+CourseDifficultyToString(*d)) );
+			m_sprDifficulty[*d].Load( THEME->GetPathG(m_sName,"CourseDifficulty "+CourseDifficultyToString((CourseDifficulty)*d)) );
 		m_sprDifficulty[*d]->SetName( "Difficulty"+DifficultyToString(*d) );
 		m_sprDifficulty[*d]->SetXY( DIFFICULTY_X(*d), DIFFICULTY_Y );
 		this->AddChild( m_sprDifficulty[*d] );

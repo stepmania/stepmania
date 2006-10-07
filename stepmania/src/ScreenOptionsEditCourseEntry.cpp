@@ -242,8 +242,8 @@ void ScreenOptionsEditCourseEntry::HandleScreenMessage( const ScreenMessage SM )
 				Song *pSong = ce.pSong;
 				Steps *pSteps;
 				StepsType st = GAMESTATE->m_stEdit;
-				CourseDifficulty cd = ( ce.stepsCriteria.m_difficulty == Difficulty_Invalid ?
-							GAMESTATE->m_cdEdit : ce.stepsCriteria.m_difficulty );
+				CourseDifficulty cd = CourseDifficulty( ce.stepsCriteria.m_difficulty == Difficulty_Invalid ?
+									GAMESTATE->m_cdEdit : ce.stepsCriteria.m_difficulty );
 
 				if( pSong == NULL )
 					pSong = m_pLongSong;
@@ -274,11 +274,11 @@ void ScreenOptionsEditCourseEntry::HandleScreenMessage( const ScreenMessage SM )
 				}				
 				
 				// Try to find steps first using st and cd, then st, then cd, then any.
-				pSteps = SongUtil::GetStepsByDifficulty( pSong, st, cd, false );
+				pSteps = SongUtil::GetStepsByDifficulty( pSong, st, (Difficulty)cd, false );
 				if( !pSteps )
 					pSteps = SongUtil::GetStepsByDifficulty( pSong, st, Difficulty_Invalid, false );
 				if( !pSteps )
-					pSteps = SongUtil::GetStepsByDifficulty( pSong, StepsType_Invalid, cd, false );
+					pSteps = SongUtil::GetStepsByDifficulty( pSong, StepsType_Invalid, (Difficulty)cd, false );
 				if( !pSteps )
 					pSteps = SongUtil::GetStepsByDifficulty( pSong, StepsType_Invalid, Difficulty_Invalid, false );
 				ASSERT( pSteps );
