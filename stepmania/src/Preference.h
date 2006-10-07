@@ -44,9 +44,6 @@ private:
 
 void BroadcastPreferenceChanged( const RString& sPreferenceName );
 
-template <class BasicType> RString PrefToString( const BasicType &v );
-template <class BasicType> void PrefFromString( const RString &s, BasicType &v );
-
 template <class T, class BasicType=T>
 class Preference : public IPreference
 {

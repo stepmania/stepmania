@@ -73,20 +73,6 @@ void IPreference::SetFromStack( lua_State *L )
 
 	lua_pop( L, 1 );
 }
-#define READFROM_AND_WRITETO( type ) \
-	template<> RString PrefToString( const type &v ) \
-	{ \
-		return ::ToString( v ); \
-	} \
-	template<> void PrefFromString( const RString &s, type &v ) \
-	{ \
-		::FromString( s, v ); \
-	}
-
-READFROM_AND_WRITETO( int )
-READFROM_AND_WRITETO( float )
-READFROM_AND_WRITETO( bool )
-READFROM_AND_WRITETO( RString )
 
 void IPreference::ReadFrom( const XNode* pNode, bool bIsStatic )
 {
