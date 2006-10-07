@@ -19,7 +19,8 @@ enum ElementCategory
 	EC_GRAPHICS,
 	EC_SOUNDS,
 	EC_OTHER,
-	NUM_ElementCategory
+	NUM_ElementCategory,
+	ElementCategory_Invalid
 };
 #define FOREACH_ElementCategory( ec ) FOREACH_ENUM2( ElementCategory, ec )
 const RString& ElementCategoryToString( ElementCategory ec );
