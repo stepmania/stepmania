@@ -44,7 +44,7 @@ private:
 
 void BroadcastPreferenceChanged( const RString& sPreferenceName );
 
-template <class T, class BasicType=T>
+template <class T>
 class Preference : public IPreference
 {
 public:
@@ -57,23 +57,23 @@ public:
 		LoadDefault();
 	}
 
-	RString ToString() const { return ::ToString( (const BasicType &) m_currentValue ); }
+	RString ToString() const { return ::ToString<T>( m_currentValue ); }
 	void FromString( const RString &s )
 	{
-		if( !::FromString(s, (BasicType &)m_currentValue) )
+		if( !::FromString<T>(s, m_currentValue) )
 			m_currentValue = m_defaultValue;
 		if( m_pfnValidate ) 
 			m_pfnValidate( m_currentValue );
 	}
 	void SetFromStack( lua_State *L )
 	{
-		LuaHelpers::Pop( L, (BasicType &)m_currentValue );
+		LuaHelpers::Pop<T>( L, m_currentValue );
 		if( m_pfnValidate )
 			m_pfnValidate( m_currentValue );
 	}
 	void PushValue( lua_State *L ) const
 	{
-		LuaHelpers::Push<BasicType>( L, m_currentValue );
+		LuaHelpers::Push<T>( L, m_currentValue );
 	}
 
 	void LoadDefault()
@@ -83,7 +83,7 @@ public:
 	void SetDefaultFromString( const RString &s )
 	{
 		T def = m_defaultValue;
-		if( !::FromString(s, (BasicType &)m_defaultValue) )
+		if( !::FromString<T>(s, m_defaultValue) )
 			m_defaultValue = def;
 	}
 
@@ -114,7 +114,7 @@ private:
 	void (*m_pfnValidate)(T& val);
 };
 
-namespace LuaHelpers { template<typename T, typename U> void Push( lua_State *L, const Preference<T, U> &Object ) { LuaHelpers::Push<T>( L, Object.Get() ); } }
+namespace LuaHelpers { template<typename T> void Push( lua_State *L, const Preference<T> &Object ) { LuaHelpers::Push<T>( L, Object.Get() ); } }
 
 template <class T>
 class Preference1D
