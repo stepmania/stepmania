@@ -1884,7 +1884,7 @@ void CollapsePath( RString &sPath, bool bRemoveLeadingDot )
 }
 
 
-bool FromString( const RString &sValue, int &out )
+template<> bool FromString<int>( const RString &sValue, int &out )
 {
 	if( sscanf( sValue.c_str(), "%d", &out ) == 1 )
 		return true;
@@ -1893,7 +1893,7 @@ bool FromString( const RString &sValue, int &out )
 	return false;
 }
 
-bool FromString( const RString &sValue, unsigned  &out )
+template<> bool FromString<unsigned>( const RString &sValue, unsigned  &out )
 {
 	if( sscanf( sValue.c_str(), "%u", &out ) == 1 )
 		return true;
@@ -1902,14 +1902,17 @@ bool FromString( const RString &sValue, unsigned  &out )
 	return false;
 }
 
-bool FromString( const RString &sValue, float &out )
+template<> bool FromString<float>( const RString &sValue, float &out )
 {
 	const char *endptr = sValue.data() + sValue.size();
 	out = strtof( sValue, (char **) &endptr );
-	return endptr != sValue.data() && isfinite( out );
+	if( endptr != sValue.data() && isfinite( out ) )
+		return true;
+	out = 0;
+	return false;
 }
 
-bool FromString( const RString &sValue, bool &out )
+template<> bool FromString<bool>( const RString &sValue, bool &out )
 {
 	if( sValue.size() == 0 )
 		return false;
@@ -1918,22 +1921,22 @@ bool FromString( const RString &sValue, bool &out )
 	return true;
 }
 
-RString ToString( int value )
+template<> RString ToString<int>( const int &value )
 {
 	return ssprintf( "%i", value );
 }
 
-RString ToString( unsigned value )
+template<> RString ToString<unsigned>( const unsigned &value )
 {
 	return ssprintf( "%u", value );
 }
 
-RString ToString( float value )
+template<> RString ToString<float>( const float &value )
 {
 	return ssprintf( "%f", value );
 }
 
-RString ToString( bool value )
+template<> RString ToString<bool>( const bool &value )
 {
 	return ssprintf( "%i", value );
 }

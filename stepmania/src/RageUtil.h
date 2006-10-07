@@ -483,17 +483,27 @@ void FlushDirCache();
 void FixSlashesInPlace( RString &sPath );
 void CollapsePath( RString &sPath, bool bRemoveLeadingDot=false );
 
-bool FromString( const RString &sValue, int &out );
-bool FromString( const RString &sValue, unsigned  &out );
-bool FromString( const RString &sValue, float &out );
-bool FromString( const RString &sValue, bool &out );
-inline bool FromString( const RString &sValue, RString &out ) { out = sValue; return true; }
+/* If the specified value is not a valid value for this type, and the type
+ * has a corresponding "invalid" value, out will be assigned the invalid
+ * value if bAllowInvalid is true, or a sensible default if false.  (An example
+ * "invalid" sentinels is NULL for pointers.)  In either case, false will
+ * be returned. */
+template<typename T>
+bool FromString( const RString &sValue, T &out );
 
-RString ToString( int value );
-RString ToString( unsigned value );
-RString ToString( float value );
-RString ToString( bool value );
-inline RString ToString( const RString &value ) { return value; }
+template<> bool FromString<int>( const RString &sValue, int &out );
+template<> bool FromString<unsigned>( const RString &sValue, unsigned &out );
+template<> bool FromString<float>( const RString &sValue, float &out );
+template<> bool FromString<bool>( const RString &sValue, bool &out );
+template<> inline bool FromString<RString>( const RString &sValue, RString &out ) { out = sValue; return true; }
+
+template<typename T>
+RString ToString( const T &value );
+template<> RString ToString<int>( const int &value );
+template<> RString ToString<unsigned>( const unsigned &value );
+template<> RString ToString<float>( const float &value );
+template<> RString ToString<bool>( const bool &value );
+template<> inline RString ToString<RString>( const RString &value ) { return value; }
 
 // helper file functions used by Bookkeeper and ProfileManager
 class RageFileBasic;
