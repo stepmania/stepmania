@@ -20,7 +20,7 @@ DifficultyMeter::DifficultyMeter()
 }
 
 static RString GetDifficultyCommandName( Difficulty d ) { return "Set"+DifficultyToString(d); }
-static RString GetCourseDifficultyCommandName( CourseDifficulty d ) { return "Set"+CourseDifficultyToString(d)+"Course"; }
+static RString GetCourseDifficultyCommandName( CourseDifficulty d ) { return "Set"+DifficultyToString(d)+"Course"; }
 static const RString DIFFICULTY_COMMAND_NAME_NONE = "SetNone";
 
 /* sID experiment:
