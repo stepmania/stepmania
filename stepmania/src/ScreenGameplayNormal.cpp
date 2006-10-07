@@ -8,7 +8,7 @@ void ScreenGameplayNormal::FillPlayerInfo( vector<PlayerInfo> &vPlayerInfoOut )
 {
 	vPlayerInfoOut.resize( NUM_PLAYERS );
 	FOREACH_PlayerNumber( p )
-		vPlayerInfoOut[p].Load( p, MultiPlayer_INVALID, true );
+		vPlayerInfoOut[p].Load( p, MultiPlayer_Invalid, true );
 };
 
 // lua end

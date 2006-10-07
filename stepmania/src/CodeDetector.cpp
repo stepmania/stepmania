@@ -79,7 +79,7 @@ bool CodeItem::EnteredCode( GameController controller ) const
 			for( unsigned i=0; i<buttons.size()-1; i++ )
 			{
 				GameInput gi( controller, buttons[i] );
-				if( !INPUTMAPPER->IsBeingPressed(gi, MultiPlayer_INVALID, &iep.InputList) )
+				if( !INPUTMAPPER->IsBeingPressed(gi, MultiPlayer_Invalid, &iep.InputList) )
 					return false;
 			}
 			return true;

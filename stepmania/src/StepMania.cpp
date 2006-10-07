@@ -1358,7 +1358,7 @@ void HandleInputEvents(float fDeltaTime)
 
 		INPUTMAPPER->DeviceToGame( input.DeviceI, input.GameI );
 		
-		input.mp = MultiPlayer_INVALID;
+		input.mp = MultiPlayer_Invalid;
 		
 		{
 			// Translate input to the appropriate MultiPlayer.  Assume that all

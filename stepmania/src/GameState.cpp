@@ -878,7 +878,7 @@ bool GameState::IsMultiPlayerEnabled( MultiPlayer mp ) const
 
 bool GameState::IsPlayerEnabled( const PlayerState* pPlayerState ) const
 {
-	if( pPlayerState->m_mp != MultiPlayer_INVALID )
+	if( pPlayerState->m_mp != MultiPlayer_Invalid )
 		return IsMultiPlayerEnabled( pPlayerState->m_mp );
 	if( pPlayerState->m_PlayerNumber != PLAYER_INVALID )
 		return IsPlayerEnabled( pPlayerState->m_PlayerNumber );

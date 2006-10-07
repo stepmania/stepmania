@@ -6,7 +6,7 @@
 PlayerState::PlayerState()
 {
 	m_PlayerNumber = PLAYER_INVALID;
-	m_mp = MultiPlayer_INVALID;
+	m_mp = MultiPlayer_Invalid;
 	Reset();
 }
 

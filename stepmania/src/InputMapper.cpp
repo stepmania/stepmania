@@ -809,7 +809,7 @@ bool InputMapper::IsBeingPressed( const GameInput &GameI, MultiPlayer mp, const 
 
 		if( GameToDevice( GameI, i, DeviceI ) )
 		{
-			if( mp != MultiPlayer_INVALID )
+			if( mp != MultiPlayer_Invalid )
 				DeviceI.device = MultiPlayerToInputDevice(mp);
 			if( INPUTFILTER->IsBeingPressed(DeviceI, pButtonState) )
 				return true;
@@ -859,7 +859,7 @@ float InputMapper::GetSecsHeld( const GameInput &GameI, MultiPlayer mp )
 		DeviceInput DeviceI;
 		if( GameToDevice( GameI, i, DeviceI ) )
 		{
-			if( mp != MultiPlayer_INVALID )
+			if( mp != MultiPlayer_Invalid )
 				DeviceI.device = MultiPlayerToInputDevice(mp);
 			fMaxSecsHeld = max( fMaxSecsHeld, INPUTFILTER->GetSecsHeld(DeviceI) );
 		}
@@ -902,7 +902,7 @@ void InputMapper::ResetKeyRepeat( MenuButton MenuI, PlayerNumber pn )
 
 InputDevice InputMapper::MultiPlayerToInputDevice( MultiPlayer mp )
 {
-	if( mp == MultiPlayer_INVALID )
+	if( mp == MultiPlayer_Invalid )
 		return InputDevice_Invalid;
 	return enum_add2( DEVICE_JOY1, mp );
 }
@@ -910,7 +910,7 @@ InputDevice InputMapper::MultiPlayerToInputDevice( MultiPlayer mp )
 MultiPlayer InputMapper::InputDeviceToMultiPlayer( InputDevice id )
 {
 	if( id == InputDevice_Invalid )
-		return MultiPlayer_INVALID;
+		return MultiPlayer_Invalid;
 	return enum_add2( MultiPlayer_1, id - DEVICE_JOY1 );
 }
 

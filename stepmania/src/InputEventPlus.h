@@ -14,7 +14,7 @@ public:
 		type(IET_FIRST_PRESS),
 		MenuI(MenuButton_INVALID),
 		pn(PLAYER_INVALID),
-		mp(MultiPlayer_INVALID) { }
+		mp(MultiPlayer_Invalid) { }
 	DeviceInput DeviceI;
 	GameInput GameI;
 	InputEventType type;

@@ -35,7 +35,7 @@ void GameCommand::Init()
 	m_sText = "";
 	m_bInvalid = true;
 	m_iIndex = -1;
-	m_MultiPlayer = MultiPlayer_INVALID;
+	m_MultiPlayer = MultiPlayer_Invalid;
 	m_pStyle = NULL;
 	m_pm = PlayMode_Invalid;
 	m_dc = DIFFICULTY_INVALID;

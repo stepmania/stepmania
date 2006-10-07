@@ -209,7 +209,7 @@ void Player::Init(
 		if( GAMESTATE->m_bMultiplayer  &&  !m_sprJudgmentFrame.IsLoaded() )	// only load the first time
 		{
 			GameCommand gc;
-			ASSERT( pPlayerState->m_mp != MultiPlayer_INVALID );
+			ASSERT( pPlayerState->m_mp != MultiPlayer_Invalid );
 			gc.m_MultiPlayer = pPlayerState->m_mp;
 			
 			{
@@ -695,7 +695,7 @@ void Player::Update( float fDeltaTime )
 				
 				if( m_pPlayerStageStats != NULL )
 					m_pPlayerStageStats->hnsLast = hns;
-				if( m_pPlayerState->m_mp != MultiPlayer_INVALID )
+				if( m_pPlayerState->m_mp != MultiPlayer_Invalid )
 					MESSAGEMAN->Broadcast( enum_add2(Message_ShowHoldJudgmentMuliPlayerP1,m_pPlayerState->m_mp) );
 
 				m_vHoldJudgment[iTrack]->SetHoldJudgment( hns );
@@ -1760,7 +1760,7 @@ void Player::SetJudgment( TapNoteScore tns, bool bEarly )
 {
 	if( m_pPlayerStageStats )
 		m_pPlayerStageStats->tnsLast = tns;
-	if( m_pPlayerState->m_mp != MultiPlayer_INVALID )
+	if( m_pPlayerState->m_mp != MultiPlayer_Invalid )
 		MESSAGEMAN->Broadcast( enum_add2(Message_ShowJudgmentMuliPlayerP1,m_pPlayerState->m_mp) );
 
 	if( m_pJudgment )

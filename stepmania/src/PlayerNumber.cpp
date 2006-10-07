@@ -91,7 +91,7 @@ MultiPlayer GetNextEnabledMultiPlayer( MultiPlayer mp )
 	for( enum_add(mp, 1); mp < NUM_MultiPlayer; enum_add(mp, 1) )
 		if( GAMESTATE->IsMultiPlayerEnabled(mp) )
 			return mp;
-	return MultiPlayer_INVALID;
+	return MultiPlayer_Invalid;
 }
 
 /*

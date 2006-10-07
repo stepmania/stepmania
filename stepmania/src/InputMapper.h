@@ -60,10 +60,10 @@ public:
 	void MenuToGame( MenuButton MenuI, PlayerNumber pn, GameInput GameIout[4] );
 	PlayerNumber ControllerToPlayerNumber( GameController controller );
 
-	float GetSecsHeld( const GameInput &GameI, MultiPlayer mp = MultiPlayer_INVALID );
+	float GetSecsHeld( const GameInput &GameI, MultiPlayer mp = MultiPlayer_Invalid );
 	float GetSecsHeld( MenuButton MenuI, PlayerNumber pn );
 
-	bool IsBeingPressed( const GameInput &GameI, MultiPlayer mp = MultiPlayer_INVALID, const DeviceInputList *pButtonState = NULL );
+	bool IsBeingPressed( const GameInput &GameI, MultiPlayer mp = MultiPlayer_Invalid, const DeviceInputList *pButtonState = NULL );
 	bool IsBeingPressed( MenuButton MenuI, PlayerNumber pn );
 
 	void ResetKeyRepeat( const GameInput &GameI );

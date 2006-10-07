@@ -13,7 +13,7 @@ REGISTER_ACTOR_CLASS( Judgment )
 
 Judgment::Judgment()
 {
-	m_mpToTrack = MultiPlayer_INVALID;
+	m_mpToTrack = MultiPlayer_Invalid;
 }
 
 void Judgment::LoadFromNode( const RString& sDir, const XNode* pNode )
@@ -105,14 +105,14 @@ void Judgment::SetJudgment( TapNoteScore score, bool bEarly )
 
 void Judgment::LoadFromMultiPlayer( MultiPlayer mp )
 {
-	ASSERT( m_mpToTrack == MultiPlayer_INVALID );	// assert only load once
+	ASSERT( m_mpToTrack == MultiPlayer_Invalid );	// assert only load once
 	m_mpToTrack = mp;
 	this->SubscribeToMessage( enum_add2(Message_ShowJudgmentMuliPlayerP1,m_mpToTrack) );
 }
 
 void Judgment::HandleMessage( const RString &sMessage )
 {
-	if( m_mpToTrack != MultiPlayer_INVALID  &&  sMessage == MessageToString( enum_add2(Message_ShowJudgmentMuliPlayerP1,m_mpToTrack) ) )
+	if( m_mpToTrack != MultiPlayer_Invalid  &&  sMessage == MessageToString( enum_add2(Message_ShowJudgmentMuliPlayerP1,m_mpToTrack) ) )
 		SetJudgment( STATSMAN->m_CurStageStats.m_multiPlayer[m_mpToTrack].tnsLast, false );	// FIXME: save and pass early bool?
 
 	ActorFrame::HandleMessage( sMessage );

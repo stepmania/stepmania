@@ -70,7 +70,7 @@ enum MultiPlayer
 	MultiPlayer_31,
 	MultiPlayer_32,
 	NUM_MultiPlayer,	// leave this at the end
-	MultiPlayer_INVALID
+	MultiPlayer_Invalid
 };
 const RString& MultiPlayerToString( MultiPlayer mp );
 const RString& MultiPlayerToLocalizedString( MultiPlayer mp );
@@ -78,7 +78,7 @@ LuaDeclareType( MultiPlayer );
 
 #define FOREACH_MultiPlayer( pn ) FOREACH_ENUM2( MultiPlayer, pn )
 
-#define FOREACH_EnabledMultiPlayer( mp ) for( MultiPlayer mp=GetNextEnabledMultiPlayer((MultiPlayer)-1); mp!=MultiPlayer_INVALID; mp=GetNextEnabledMultiPlayer(mp) )
+#define FOREACH_EnabledMultiPlayer( mp ) for( MultiPlayer mp=GetNextEnabledMultiPlayer((MultiPlayer)-1); mp!=MultiPlayer_Invalid; mp=GetNextEnabledMultiPlayer(mp) )
 
 MultiPlayer GetNextEnabledMultiPlayer( MultiPlayer mp );
 

@@ -97,7 +97,7 @@ static Preference<bool> g_bEasterEggs( "EasterEggs", true );
 PlayerInfo::PlayerInfo()
 {
 	m_pn = PLAYER_INVALID;
-	m_mp = MultiPlayer_INVALID;
+	m_mp = MultiPlayer_Invalid;
 	m_bIsDummy = false;
 	m_pLifeMeter = NULL;
 	m_ptextCourseSongNumber = NULL;
@@ -243,7 +243,7 @@ bool PlayerInfo::IsEnabled()
 {
 	if( m_pn != PLAYER_INVALID )
 		return GAMESTATE->IsPlayerEnabled( m_pn );
-	if( m_mp != MultiPlayer_INVALID )
+	if( m_mp != MultiPlayer_Invalid )
 		return GAMESTATE->IsMultiPlayerEnabled( m_mp );
 	else if( m_bIsDummy )
 		return true;
@@ -286,7 +286,7 @@ GetNextEnabledPlayerNumberInfo( vector<PlayerInfo>::iterator iter, vector<Player
 			continue;
 		if( !iter->IsEnabled() )
 			continue;
-		if( iter->m_mp != MultiPlayer_INVALID )
+		if( iter->m_mp != MultiPlayer_Invalid )
 			continue;
 		return iter;
 	}
@@ -2173,7 +2173,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 
 	if( GAMESTATE->m_bMultiplayer )
 	{
-		if( input.mp != MultiPlayer_INVALID  &&  
+		if( input.mp != MultiPlayer_Invalid  &&  
 			input.type==IET_FIRST_PRESS &&
 			iCol != Column_INVALID && 
 			GAMESTATE->IsMultiPlayerEnabled(input.mp) )

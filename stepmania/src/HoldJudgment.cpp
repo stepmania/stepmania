@@ -12,7 +12,7 @@ REGISTER_ACTOR_CLASS( HoldJudgment )
 
 HoldJudgment::HoldJudgment()
 {
-	m_mpToTrack = MultiPlayer_INVALID;
+	m_mpToTrack = MultiPlayer_Invalid;
 }
 
 void HoldJudgment::Load( const RString &sPath )
@@ -76,14 +76,14 @@ void HoldJudgment::SetHoldJudgment( HoldNoteScore hns )
 
 void HoldJudgment::LoadFromMultiPlayer( MultiPlayer mp )
 {
-	ASSERT( m_mpToTrack == MultiPlayer_INVALID );	// assert only load once
+	ASSERT( m_mpToTrack == MultiPlayer_Invalid );	// assert only load once
 	m_mpToTrack = mp;
 	this->SubscribeToMessage( enum_add2(Message_ShowHoldJudgmentMuliPlayerP1,m_mpToTrack) );
 }
 
 void HoldJudgment::HandleMessage( const RString &sMessage )
 {
-	ASSERT( m_mpToTrack != MultiPlayer_INVALID );
+	ASSERT( m_mpToTrack != MultiPlayer_Invalid );
 	if( sMessage == MessageToString( enum_add2(Message_ShowHoldJudgmentMuliPlayerP1,m_mpToTrack) ) )
 		SetHoldJudgment( STATSMAN->m_CurStageStats.m_multiPlayer[m_mpToTrack].hnsLast );
 
