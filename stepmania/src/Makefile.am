@@ -128,7 +128,8 @@ SubscriptionManager.h \
 TimingData.cpp TimingData.h \
 ThemeMetric.h \
 Trail.cpp Trail.h TrailUtil.cpp TrailUtil.h TitleSubstitution.cpp TitleSubstitution.h \
-Tween.cpp Tween.h
+Tween.cpp Tween.h \
+Workout.cpp Workout.h
 
 if !WITHOUT_NETWORKING
 DataStructures += RoomWheel.cpp RoomWheel.h
@@ -282,7 +283,8 @@ OptionRow.cpp OptionRow.h OptionsCursor.cpp OptionsCursor.h \
 PaneDisplay.cpp PaneDisplay.h ScrollBar.cpp ScrollBar.h \
 ScrollingList.cpp ScrollingList.h SnapDisplay.cpp SnapDisplay.h \
 TextBanner.cpp TextBanner.h WheelBase.cpp WheelBase.h WheelItemBase.cpp WheelItemBase.h \
-WheelNotifyIcon.cpp WheelNotifyIcon.h
+WheelNotifyIcon.cpp WheelNotifyIcon.h \
+WorkoutGraph.cpp WorkoutGraph.h 
 
 if !WITHOUT_NETWORKING
 ActorsInMenus += RoomInfoDisplay.cpp RoomInfoDisplay.h
@@ -391,7 +393,8 @@ PrefsManager.cpp PrefsManager.h ProfileManager.cpp ProfileManager.h ScreenManage
 ScreenManager.h SongManager.cpp SongManager.h \
 StatsManager.cpp StatsManager.h \
 ThemeManager.cpp ThemeManager.h \
-UnlockManager.cpp UnlockManager.h
+UnlockManager.cpp UnlockManager.h \
+WorkoutManager.cpp WorkoutManager.h
 
 if !WITHOUT_NETWORKING
 # Compile NetworkSyncManager even if networking is disabled; it'll stub itself.
