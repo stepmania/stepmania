@@ -33,7 +33,8 @@ enum EditMenuAction
 	EditMenuAction_Delete,
 	EditMenuAction_Create,
 	EditMenuAction_Practice,
-	NUM_EditMenuAction
+	NUM_EditMenuAction,
+	EditMenuAction_Invalid
 };
 #define FOREACH_EditMenuAction( ema ) FOREACH_ENUM2( EditMenuAction, ema )
 const RString& EditMenuActionToString( EditMenuAction ema );

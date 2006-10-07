@@ -26,6 +26,7 @@ LuaDeclareType( Difficulty );
 
 typedef Difficulty CourseDifficulty;
 #define NUM_CourseDifficulty NUM_Difficulty
+#define CourseDifficulty_Invalid Difficulty_Invalid
 #define FOREACH_CourseDifficulty FOREACH_Difficulty
 #define FOREACH_ShownCourseDifficulty( cd ) for( Difficulty cd=GetNextShownCourseDifficulty((CourseDifficulty)-1); cd!=Difficulty_Invalid; cd=GetNextShownCourseDifficulty(cd) )
 
