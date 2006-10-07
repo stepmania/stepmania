@@ -8,7 +8,6 @@
 #include "MemoryCardManager.h"
 #include "Profile.h"
 #include "ProfileManager.h"
-#include "RageDisplay.h"
 #include "RageLog.h"
 #include "ScreenDimensions.h"
 
