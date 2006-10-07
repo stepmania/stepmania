@@ -573,7 +573,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData *> &arrayWheelItemDat
 	case SORT_ONI_COURSES:
 	case SORT_ENDLESS_COURSES:
 		{
-			bool bOnlyPreferred = PREFSMAN->m_CourseSortOrder == PrefsManager::COURSE_SORT_PREFERRED;
+			bool bOnlyPreferred = PREFSMAN->m_CourseSortOrder == COURSE_SORT_PREFERRED;
 
 			vector<CourseType> vct;
 			switch( so )
@@ -604,7 +604,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData *> &arrayWheelItemDat
 					SONGMAN->GetCourses( *ct, apCourses, PREFSMAN->m_bAutogenGroupCourses );
 			}
 
-			if( PREFSMAN->m_CourseSortOrder == PrefsManager::COURSE_SORT_SONGS )
+			if( PREFSMAN->m_CourseSortOrder == COURSE_SORT_SONGS )
 			{
 				CourseUtil::SortCoursePointerArrayByDifficulty( apCourses );
 			}
@@ -612,15 +612,15 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData *> &arrayWheelItemDat
 			{
 				switch( PREFSMAN->m_CourseSortOrder )
 				{
-				case PrefsManager::COURSE_SORT_PREFERRED:
+				case COURSE_SORT_PREFERRED:
 					break;
-				case PrefsManager::COURSE_SORT_METER:
+				case COURSE_SORT_METER:
 					CourseUtil::SortCoursePointerArrayByAvgDifficulty( apCourses );
 					break;
-				case PrefsManager::COURSE_SORT_METER_SUM:
+				case COURSE_SORT_METER_SUM:
 					CourseUtil::SortCoursePointerArrayByTotalDifficulty( apCourses );
 					break;
-				case PrefsManager::COURSE_SORT_RANK:
+				case COURSE_SORT_RANK:
 					CourseUtil::SortCoursePointerArrayByRanking( apCourses );
 					break;
 				default:	ASSERT(0);

@@ -70,7 +70,7 @@ void ScreenSelectCharacter::Init()
 
 	default:
 		/* Non Rave/Battle mode, just skip this screen if disabled. */
-		if(	PREFSMAN->m_ShowDancingCharacters != PrefsManager::SDC_Select )
+		if(	PREFSMAN->m_ShowDancingCharacters != SDC_Select )
 		{
 			this->PostScreenMessage( SM_GoToNextScreen, 0 );
 			return;

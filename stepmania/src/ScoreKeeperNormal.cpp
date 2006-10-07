@@ -95,10 +95,10 @@ void ScoreKeeperNormal::Load(
 	memset( m_ComboBonusFactor, 0, sizeof(m_ComboBonusFactor) );
 	switch( PREFSMAN->m_ScoringType )
 	{
-	case PrefsManager::SCORING_NEW:
+	case SCORING_NEW:
 		m_iRoundTo = 1;
 		break;
-	case PrefsManager::SCORING_OLD:
+	case SCORING_OLD:
 		m_iRoundTo = 5;
 		if (!GAMESTATE->IsCourseMode())
 		{
@@ -168,10 +168,10 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 		int iLengthMultiplier = SongManager::GetNumStagesForSong( GAMESTATE->m_pCurSong );
 		switch( PREFSMAN->m_ScoringType )
 		{
-		case PrefsManager::SCORING_NEW:
+		case SCORING_NEW:
 			m_iMaxPossiblePoints = iMeter * 10000000 * iLengthMultiplier;
 			break;
-		case PrefsManager::SCORING_OLD:
+		case SCORING_OLD:
 			m_iMaxPossiblePoints = (iMeter * iLengthMultiplier + 1) * 5000000;
 			break;
 		DEFAULT_FAIL( int(PREFSMAN->m_ScoringType) );

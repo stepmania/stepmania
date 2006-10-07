@@ -263,7 +263,8 @@ enum PlayerController
 	PC_HUMAN,
 	PC_AUTOPLAY,
 	PC_CPU,
-	NUM_PlayerController
+	NUM_PlayerController,
+	PlayerController_Invalid
 };
 const RString& PlayerControllerToString( PlayerController pc );
 

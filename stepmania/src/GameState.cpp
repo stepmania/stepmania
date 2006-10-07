@@ -270,7 +270,7 @@ void GameState::Reset()
 
 	FOREACH_PlayerNumber(p)
 	{
-		if( PREFSMAN->m_ShowDancingCharacters == PrefsManager::SDC_Random )
+		if( PREFSMAN->m_ShowDancingCharacters == SDC_Random )
 			m_pCurCharacters[p] = CHARMAN->GetRandomCharacter();
 		else
 			m_pCurCharacters[p] = CHARMAN->GetDefaultCharacter();
@@ -1590,7 +1590,7 @@ bool GameState::IsTimeToPlayAttractSounds() const
 	if( m_iNumTimesThroughAttract == -1 )
 		return true;
 
-	if( PREFSMAN->m_AttractSoundFrequency == PrefsManager::ASF_NEVER )
+	if( PREFSMAN->m_AttractSoundFrequency == ASF_NEVER )
 		return false;
 
 	// play attract sounds once every m_iAttractSoundFrequency times through

@@ -90,7 +90,7 @@ void ScreenSelectMusic::Init()
 
 	m_TexturePreload.Load( m_sFallbackCDTitlePath );
 
-	if( PREFSMAN->m_BannerCache != PrefsManager::BNCACHE_OFF )
+	if( PREFSMAN->m_BannerCache != BNCACHE_OFF )
 	{
 		m_TexturePreload.Load( Banner::SongBannerTexture(THEME->GetPathG("Banner","all music")) );
 		m_TexturePreload.Load( Banner::SongBannerTexture(THEME->GetPathG("Common","fallback banner")) );

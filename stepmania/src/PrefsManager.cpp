@@ -82,6 +82,66 @@ XToString2( GetRankingName );
 StringToX( GetRankingName );
 LuaXType( GetRankingName );
 
+
+static const char *RandomBackgroundModeNames[] = {
+	"Off",
+	"Animations",
+	"RandomMovies",
+};
+XToString2( RandomBackgroundMode );
+StringToX( RandomBackgroundMode );
+LuaXType( RandomBackgroundMode );
+
+static const char *ShowDancingCharactersNames[] = {
+	"Off",
+	"Random",
+	"Select",
+};
+XToString2( ShowDancingCharacters );
+StringToX( ShowDancingCharacters );
+LuaXType( ShowDancingCharacters );
+
+static const char *BannerCacheModeNames[] = {
+	"Off",
+	"LowResPreload",
+	"LowResLoadOnDemand",
+	"Full"
+};
+XToString2( BannerCacheMode );
+StringToX( BannerCacheMode );
+LuaXType( BannerCacheMode );
+
+static const char *AttractSoundFrequencyNames[] = {
+	"NEver",
+	"EveryTime",
+	"Every2Times",
+	"Every3Times",
+	"Every4Times",
+	"Every5Times",
+};
+XToString2( AttractSoundFrequency );
+StringToX( AttractSoundFrequency );
+LuaXType( AttractSoundFrequency );
+
+static const char *CourseSortOrdersNames[] = {
+	"Preferred",
+	"Songs",
+	"Meter",
+	"MeterSum",
+	"MeterRank",
+};
+XToString2( CourseSortOrders );
+StringToX( CourseSortOrders );
+LuaXType( CourseSortOrders );
+
+static const char *ScoringTypeNames[] = {
+	"New",
+	"Old",
+};
+XToString2( ScoringType );
+StringToX( ScoringType );
+LuaXType( ScoringType );
+
 bool g_bAutoRestart = false;
 #ifdef DEBUG
 # define TRUE_IF_DEBUG true
@@ -191,14 +251,14 @@ void ValidateSongsPerPlay( int &val )
 	CLAMP(val,0,MAX_SONGS_PER_PLAY);
 }
 
-void ValidateRandomBackgroundMode( PrefsManager::RandomBackgroundMode &val )
+void ValidateRandomBackgroundMode( RandomBackgroundMode &val )
 {
-	CLAMP((int&)val,0,PrefsManager::NUM_RandomBackgroundMode-1);
+	CLAMP((int&)val,0,NUM_RandomBackgroundMode-1);
 }
 
-void ValidateCourseSortOrder( PrefsManager::CourseSortOrders &val )
+void ValidateCourseSortOrder( CourseSortOrders &val )
 {
-	CLAMP((int&)val,0,PrefsManager::NUM_COURSE_SORT_ORDER-1);
+	CLAMP((int&)val,0,NUM_CourseSortOrders-1);
 }
 
 

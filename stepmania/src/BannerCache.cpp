@@ -65,7 +65,7 @@ void BannerCache::Demand()
 	if( g_iDemandRefcount > 1 )
 		return;
 	
-	if( PREFSMAN->m_BannerCache != PrefsManager::BNCACHE_LOW_RES_LOAD_ON_DEMAND )
+	if( PREFSMAN->m_BannerCache != BNCACHE_LOW_RES_LOAD_ON_DEMAND )
 		return;
 
 	FOREACH_Child( &BannerData, p )
@@ -93,7 +93,7 @@ void BannerCache::Undemand()
 	if( g_iDemandRefcount != 0 )
 		return;
 	
-	if( PREFSMAN->m_BannerCache != PrefsManager::BNCACHE_LOW_RES_LOAD_ON_DEMAND )
+	if( PREFSMAN->m_BannerCache != BNCACHE_LOW_RES_LOAD_ON_DEMAND )
 		return;
 
 	UnloadAllBanners();
@@ -107,8 +107,8 @@ void BannerCache::LoadBanner( RString BannerPath )
 {
 	if( BannerPath == "" )
 		return; // nothing to do
-	if( PREFSMAN->m_BannerCache != PrefsManager::BNCACHE_LOW_RES_PRELOAD &&
-	    PREFSMAN->m_BannerCache != PrefsManager::BNCACHE_LOW_RES_LOAD_ON_DEMAND )
+	if( PREFSMAN->m_BannerCache != BNCACHE_LOW_RES_PRELOAD &&
+	    PREFSMAN->m_BannerCache != BNCACHE_LOW_RES_LOAD_ON_DEMAND )
 		return;
 
 	/* Load it. */
@@ -334,8 +334,8 @@ static inline int closest( int num, int n1, int n2 )
  * load the cache file, too.  (This is done at startup.) */
 void BannerCache::CacheBanner( RString BannerPath )
 {
-	if( PREFSMAN->m_BannerCache != PrefsManager::BNCACHE_LOW_RES_PRELOAD &&
-	    PREFSMAN->m_BannerCache != PrefsManager::BNCACHE_LOW_RES_LOAD_ON_DEMAND )
+	if( PREFSMAN->m_BannerCache != BNCACHE_LOW_RES_PRELOAD &&
+	    PREFSMAN->m_BannerCache != BNCACHE_LOW_RES_LOAD_ON_DEMAND )
 		return;
 
 	CHECKPOINT_M( BannerPath );
@@ -359,7 +359,7 @@ void BannerCache::CacheBanner( RString BannerPath )
 		if( bCacheUpToDate )
 		{
 			/* It's identical.  Just load it, if in preload. */
-			if( PREFSMAN->m_BannerCache == PrefsManager::BNCACHE_LOW_RES_PRELOAD )
+			if( PREFSMAN->m_BannerCache == BNCACHE_LOW_RES_PRELOAD )
 				LoadBanner( BannerPath );
 
 			return;
@@ -491,7 +491,7 @@ void BannerCache::CacheBannerInternal( RString BannerPath )
 		g_BannerPathToImage.erase(BannerPath);
 	}
 
-	if( PREFSMAN->m_BannerCache == PrefsManager::BNCACHE_LOW_RES_PRELOAD )
+	if( PREFSMAN->m_BannerCache == BNCACHE_LOW_RES_PRELOAD )
 	{
 		/* Keep it; we're just going to load it anyway. */
 		g_BannerPathToImage[BannerPath] = img;

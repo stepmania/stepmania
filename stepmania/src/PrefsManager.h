@@ -15,6 +15,60 @@ enum AllowW1 { ALLOW_W1_NEVER, ALLOW_W1_COURSES_ONLY, ALLOW_W1_EVERYWHERE, NUM_A
 enum Maybe { Maybe_ASK, Maybe_NO, Maybe_YES, NUM_Maybe, Maybe_Invalid };
 enum GetRankingName { RANKING_OFF, RANKING_ON, RANKING_LIST, NUM_GetRankingName, GetRankingName_Invalid };
 
+enum RandomBackgroundMode
+{
+	BGMODE_OFF,
+	BGMODE_ANIMATIONS,
+	BGMODE_RANDOMMOVIES,
+	NUM_RandomBackgroundMode,
+	RandomBackgroundMode_Invalid
+};
+enum ShowDancingCharacters
+{
+	SDC_Off,
+	SDC_Random,
+	SDC_Select,
+	NUM_ShowDancingCharacters,
+	ShowDancingCharacters_Invalid
+};
+enum BannerCacheMode
+{
+	BNCACHE_OFF,
+	BNCACHE_LOW_RES_PRELOAD, // preload low-res on start
+	BNCACHE_LOW_RES_LOAD_ON_DEMAND, // preload low-res on screen load
+	BNCACHE_FULL,
+	NUM_BannerCacheMode,
+	BannerCacheMode_Invalid
+};
+enum AttractSoundFrequency
+{
+	ASF_NEVER,
+	ASF_EVERY_TIME,
+	ASF_EVERY_2_TIMES,
+	ASF_EVERY_3_TIMES,
+	ASF_EVERY_4_TIMES,
+	ASF_EVERY_5_TIMES,
+	NUM_AttractSoundFrequency,
+	AttractSoundFrequency_Invalid
+};
+enum CourseSortOrders
+{
+	COURSE_SORT_PREFERRED,
+	COURSE_SORT_SONGS,
+	COURSE_SORT_METER,
+	COURSE_SORT_METER_SUM,
+	COURSE_SORT_RANK,
+	NUM_CourseSortOrders,
+	CourseSortOrders_Invalid
+};
+enum ScoringType
+{
+	SCORING_NEW,
+	SCORING_OLD,
+	NUM_ScoringType,
+	ScoringType_Invalid
+};
+
 class PrefsManager
 {
 public:
@@ -59,8 +113,7 @@ public:
 	Preference<bool>	m_bShowBanners;
 
 	Preference<bool>	m_bSongBackgrounds;
-	enum RandomBackgroundMode { BGMODE_OFF, BGMODE_ANIMATIONS, BGMODE_RANDOMMOVIES, NUM_RandomBackgroundMode };
-	Preference<RandomBackgroundMode,int>		m_RandomBackgroundMode;
+	Preference<RandomBackgroundMode>		m_RandomBackgroundMode;
 	Preference<int>		m_iNumBackgrounds;
 	Preference<float>	m_fBGBrightness;
 	Preference<bool>	m_bHiddenSongs;
@@ -69,12 +122,7 @@ public:
 	Preference<bool>	m_bPAL;
 	Preference<bool>	m_bDelayedTextureDelete;
 	Preference<bool>	m_bDelayedModelDelete;
-	enum BannerCache {
-		BNCACHE_OFF,
-		BNCACHE_LOW_RES_PRELOAD, // preload low-res on start
-		BNCACHE_LOW_RES_LOAD_ON_DEMAND, // preload low-res on screen load
-		BNCACHE_FULL };
-	Preference<BannerCache,int>		m_BannerCache;
+	Preference<BannerCacheMode>		m_BannerCache;
 	Preference<bool>	m_bPalettedBannerCache;
 	Preference<bool>	m_bFastLoad;
 	Preference<bool>        m_bFastLoadAdditionalSongs;
@@ -114,29 +162,29 @@ public:
 	// time meter used in survival
 	Preference1D<float>	m_fTimeMeterSecondsChange;
 
-	Preference<PlayerController,int> m_AutoPlay;
+	Preference<PlayerController> m_AutoPlay;
 	Preference<bool>	m_bDelayedBack;
 	Preference<bool>	m_bShowInstructions;
 	Preference<bool>	m_bShowSelectGroup;
 	Preference<bool>	m_bShowCaution;
 	Preference<bool>	m_bShowNativeLanguage;
 	Preference<bool>	m_bArcadeOptionsNavigation;
-	Preference<MusicWheelUsesSections,int>		m_MusicWheelUsesSections;
+	Preference<MusicWheelUsesSections>		m_MusicWheelUsesSections;
 	Preference<int>		m_iMusicWheelSwitchSpeed;
-	Preference<AllowW1,int>		m_AllowW1;
+	Preference<AllowW1>	m_AllowW1;
 	Preference<bool>	m_bEventMode;
 	Preference<int>		m_iCoinsPerCredit;
 	Preference<int>		m_iSongsPerPlay;
 
 	// These options have weird interactions depending on m_bEventMode, 
 	// so wrap them in GameState.
-	Preference<CoinMode,int>	m_CoinMode;
-	Preference<Premium,int>		m_Premium;
+	Preference<CoinMode>	m_CoinMode;
+	Preference<Premium>	m_Premium;
 
 	Preference<bool>	m_bDelayedCreditsReconcile;
 	Preference<bool>	m_bPickExtraStage;
 	Preference<bool>	m_bComboContinuesBetweenSongs;
-	Preference<Maybe,int>		m_ShowSongOptions;
+	Preference<Maybe>		m_ShowSongOptions;
 	Preference<bool>	m_bDancePointsForOni;
 	Preference<bool>	m_bPercentageScoring;
 	Preference<float>	m_fMinPercentageForMachineSongHighScore;
@@ -146,8 +194,7 @@ public:
 	Preference<bool>	m_bAutogenGroupCourses;
 	Preference<bool>	m_bBreakComboToGetItem;
 	Preference<bool>	m_bLockCourseDifficulties;
-	enum ShowDancingCharacters { SDC_Off = 0, SDC_Random = 1, SDC_Select = 2};
-	Preference<ShowDancingCharacters,int>		m_ShowDancingCharacters;
+	Preference<ShowDancingCharacters>		m_ShowDancingCharacters;
 	Preference<bool>	m_bUseUnlockSystem;
 	Preference<float>	m_fGlobalOffsetSeconds;
 	Preference<int>		m_iProgressiveLifebar;
@@ -162,8 +209,7 @@ public:
 	Preference<int>		m_iCenterImageTranslateY;
 	Preference<int>		m_fCenterImageAddWidth;
 	Preference<int>		m_fCenterImageAddHeight;
-	enum AttractSoundFrequency { ASF_NEVER, ASF_EVERY_TIME, ASF_EVERY_2_TIMES, ASF_EVERY_3_TIMES, ASF_EVERY_4_TIMES, ASF_EVERY_5_TIMES };
-	Preference<AttractSoundFrequency,int>	m_AttractSoundFrequency;
+	Preference<AttractSoundFrequency>	m_AttractSoundFrequency;
 	Preference<bool>	m_bAllowExtraStage;
 	Preference<bool>	m_bHideDefaultNoteSkin;
 	Preference<int>		m_iMaxHighScoresPerListForMachine;
@@ -191,13 +237,11 @@ public:
 	Preference<bool>	m_bSignProfileData;
 	
 	// course ranking
-	enum CourseSortOrders { COURSE_SORT_PREFERRED, COURSE_SORT_SONGS, COURSE_SORT_METER, COURSE_SORT_METER_SUM, COURSE_SORT_RANK, NUM_COURSE_SORT_ORDER };
-	Preference<CourseSortOrders,int>	m_CourseSortOrder;
+	Preference<CourseSortOrders>	m_CourseSortOrder;
 	Preference<bool>	m_bSubSortByNumSteps;	
-	Preference<GetRankingName,int>	m_GetRankingName;
+	Preference<GetRankingName>	m_GetRankingName;
 
-	enum ScoringType { SCORING_NEW, SCORING_OLD };
-	Preference<ScoringType,int>	m_ScoringType;
+	Preference<ScoringType>	m_ScoringType;
 
 	Preference<RString>	m_sAdditionalSongFolders;
 	Preference<RString>	m_sAdditionalCourseFolders;

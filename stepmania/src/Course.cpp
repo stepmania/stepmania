@@ -714,29 +714,29 @@ RageColor Course::GetColor() const
 	
 	switch( PREFSMAN->m_CourseSortOrder )
 	{
-	case PrefsManager::COURSE_SORT_PREFERRED:
+	case COURSE_SORT_PREFERRED:
 		return SORT_PREFERRED_COLOR;		//This will also be used for autogen'd courses in some cases.	
 
-	case PrefsManager::COURSE_SORT_SONGS:	
+	case COURSE_SORT_SONGS:	
 		if( m_vEntries.size() >= 7 )		return SORT_LEVEL2_COLOR;
 		else if( m_vEntries.size() >= 4 )	return SORT_LEVEL4_COLOR;
 		else					return SORT_LEVEL5_COLOR;
 
-	case PrefsManager::COURSE_SORT_METER:
+	case COURSE_SORT_METER:
 		if( !AllSongsAreFixed() )		return SORT_LEVEL1_COLOR;
 		else if( iMeter > 9 )			return SORT_LEVEL2_COLOR;
 		else if( iMeter >= 7 )			return SORT_LEVEL3_COLOR;
 		else if( iMeter >= 5 )			return SORT_LEVEL4_COLOR;
 		else 					return SORT_LEVEL5_COLOR;
 
-	case PrefsManager::COURSE_SORT_METER_SUM:
+	case COURSE_SORT_METER_SUM:
 		if( !AllSongsAreFixed() )		return SORT_LEVEL1_COLOR;
 		if( m_SortOrder_TotalDifficulty >= 40 )	return SORT_LEVEL2_COLOR;
 		if( m_SortOrder_TotalDifficulty >= 30 )	return SORT_LEVEL3_COLOR;
 		if( m_SortOrder_TotalDifficulty >= 20 )	return SORT_LEVEL4_COLOR;
 		else					return SORT_LEVEL5_COLOR;
 
-	case PrefsManager::COURSE_SORT_RANK:
+	case COURSE_SORT_RANK:
 		if( m_SortOrder_Ranking == 3 )		return SORT_LEVEL1_COLOR;
 		else if( m_SortOrder_Ranking == 2 )	return SORT_LEVEL3_COLOR;
 		else if( m_SortOrder_Ranking == 1 )	return SORT_LEVEL5_COLOR;

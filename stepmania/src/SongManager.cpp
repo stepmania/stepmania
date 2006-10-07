@@ -300,7 +300,7 @@ void SongManager::LoadGroupSymLinks(RString sDir, RString sGroupFolder)
 
 void SongManager::PreloadSongImages()
 {
-	if( PREFSMAN->m_BannerCache != PrefsManager::BNCACHE_FULL )
+	if( PREFSMAN->m_BannerCache != BNCACHE_FULL )
 		return;
 
 	/* Load textures before unloading old ones, so we don't reload textures

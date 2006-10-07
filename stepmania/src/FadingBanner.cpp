@@ -114,7 +114,7 @@ bool FadingBanner::LoadFromCachedBanner( const RString &path )
 	 * which will cause the fade-in to be further delayed. */
 
 	RageTextureID ID;
-	bool bLowRes = (PREFSMAN->m_BannerCache != PrefsManager::BNCACHE_FULL);
+	bool bLowRes = (PREFSMAN->m_BannerCache != BNCACHE_FULL);
 	if( !bLowRes )
 	{
 		ID = Sprite::SongBannerTexture( path );

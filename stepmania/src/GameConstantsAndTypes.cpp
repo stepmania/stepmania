@@ -89,7 +89,9 @@ static const char *PlayerControllerNames[] = {
 	"Cpu",
 };
 XToString( PlayerController, NUM_PlayerController );
+StringToX( PlayerController );
 XToLocalizedString( PlayerController );
+LuaXType( PlayerController );
 
 
 static const char *CoinModeNames[] = {
@@ -98,6 +100,7 @@ static const char *CoinModeNames[] = {
 	"Free",
 };
 XToString( CoinMode, NUM_CoinMode );
+StringToX( CoinMode );
 LuaXType( CoinMode );
 
 
@@ -107,6 +110,7 @@ static const char *PremiumNames[] = {
 	"Joint",
 };
 XToString( Premium, NUM_Premium );
+StringToX( Premium );
 LuaXType( Premium );
 
 
