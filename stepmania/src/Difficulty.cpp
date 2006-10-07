@@ -69,7 +69,7 @@ const RString &CourseDifficultyToLocalizedString( CourseDifficulty x )
 	{
 		for( unsigned i = 0; i < NUM_CourseDifficulty; ++i )
 		{
-			auto_ptr<LocalizedString> ap( new LocalizedString("CourseDifficulty", CourseDifficultyToString((CourseDifficulty)i)) );
+			auto_ptr<LocalizedString> ap( new LocalizedString("CourseDifficulty", DifficultyToString((CourseDifficulty)i)) );
 			g_CourseDifficultyName[i] = ap;
 		}
 	}

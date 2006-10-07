@@ -991,7 +991,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	pGeneralDataNode->AppendChild( "Guid",				m_sGuid );
 	pGeneralDataNode->AppendChild( "SortOrder",			SortOrderToString(m_SortOrder) );
 	pGeneralDataNode->AppendChild( "LastDifficulty",		DifficultyToString(m_LastDifficulty) );
-	pGeneralDataNode->AppendChild( "LastCourseDifficulty",		CourseDifficultyToString(m_LastCourseDifficulty) );
+	pGeneralDataNode->AppendChild( "LastCourseDifficulty",		DifficultyToString(m_LastCourseDifficulty) );
 	pGeneralDataNode->AppendChild( m_lastSong.CreateNode() );
 	pGeneralDataNode->AppendChild( m_lastCourse.CreateNode() );
 	pGeneralDataNode->AppendChild( "TotalPlays",			m_iTotalPlays );
@@ -1153,7 +1153,7 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	pNode->GetChildValue( "Guid",					m_sGuid );
 	pNode->GetChildValue( "SortOrder",				s );	m_SortOrder = StringToSortOrder( s );
 	pNode->GetChildValue( "LastDifficulty",				s );	m_LastDifficulty = StringToDifficulty( s );
-	pNode->GetChildValue( "LastCourseDifficulty",			s );	m_LastCourseDifficulty = StringToCourseDifficulty( s );
+	pNode->GetChildValue( "LastCourseDifficulty",			s );	m_LastCourseDifficulty = StringToDifficulty( s );
 	pTemp = pNode->GetChild( "Song" );				if( pTemp ) m_lastSong.LoadFromNode( pTemp );
 	pTemp = pNode->GetChild( "Course" );				if( pTemp ) m_lastCourse.LoadFromNode( pTemp );
 	pNode->GetChildValue( "TotalPlays",				m_iTotalPlays );

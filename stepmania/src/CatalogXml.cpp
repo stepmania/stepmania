@@ -281,7 +281,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 			XNode* pNode2 = pNode->AppendChild( "CourseDifficulty" );
 			FOREACH_CONST( CourseDifficulty, CommonMetrics::COURSE_DIFFICULTIES_TO_SHOW.GetValue(), iter )
 			{
-				XNode* pNode3 = pNode2->AppendChild( "CourseDifficulty", CourseDifficultyToString(*iter) );
+				XNode* pNode3 = pNode2->AppendChild( "CourseDifficulty", DifficultyToString(*iter) );
 				pNode3->AppendAttr( "DisplayAs", CourseDifficultyToLocalizedString(*iter) );
 			}
 		}

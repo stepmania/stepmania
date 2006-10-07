@@ -417,7 +417,7 @@ void ScreenRankingScroller::Init()
 		if( m_PageType == PageType_AllSteps )
 			m_sprDifficulty[*d].Load( THEME->GetPathG(m_sName,"difficulty "+DifficultyToString(*d)) );
 		else
-			m_sprDifficulty[*d].Load( THEME->GetPathG(m_sName,"CourseDifficulty "+CourseDifficultyToString(*d)) );
+			m_sprDifficulty[*d].Load( THEME->GetPathG(m_sName,"CourseDifficulty "+DifficultyToString(*d)) );
 		m_sprDifficulty[*d]->SetName( "Difficulty"+DifficultyToString(*d) );
 		m_sprDifficulty[*d]->SetXY( DIFFICULTY_X(*d), DIFFICULTY_Y );
 		this->AddChild( m_sprDifficulty[*d] );

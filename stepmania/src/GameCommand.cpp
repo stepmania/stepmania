@@ -296,7 +296,7 @@ void GameCommand::LoadOne( const Command& cmd )
 			if( pCourse == NULL || pStyle == NULL )
 				RageException::Throw( "Must set Course and Style to set Steps." );
 
-			const CourseDifficulty cd = StringToCourseDifficulty( sTrail );
+			const CourseDifficulty cd = StringToDifficulty( sTrail );
 			ASSERT_M( cd != Difficulty_Invalid, ssprintf("Invalid difficulty '%s'", sTrail.c_str()) );
 
 			m_pTrail = pCourse->GetTrail( pStyle->m_StepsType, cd );

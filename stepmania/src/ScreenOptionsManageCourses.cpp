@@ -61,7 +61,7 @@ static void SetNextCombination()
 	GAMESTATE->m_cdEdit.Set( curVal.cd );
 	// XXX Testing.
 	SCREENMAN->SystemMessage( ssprintf("%s, %s", GAMEMAN->StepsTypeToString(curVal.st).c_str(),
-					   CourseDifficultyToString(curVal.cd).c_str()) );
+					   DifficultyToString(curVal.cd).c_str()) );
 
 	RefreshTrail();
 }
