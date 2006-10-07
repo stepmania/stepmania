@@ -251,17 +251,6 @@ void ValidateSongsPerPlay( int &val )
 	CLAMP(val,0,MAX_SONGS_PER_PLAY);
 }
 
-void ValidateRandomBackgroundMode( RandomBackgroundMode &val )
-{
-	CLAMP((int&)val,0,NUM_RandomBackgroundMode-1);
-}
-
-void ValidateCourseSortOrder( CourseSortOrders &val )
-{
-	CLAMP((int&)val,0,NUM_CourseSortOrders-1);
-}
-
-
 PrefsManager::PrefsManager() :
 	m_sCurrentGame		( "CurrentGame",		"" ),
 
@@ -283,7 +272,7 @@ PrefsManager::PrefsManager() :
 	m_bShowBanners		( "ShowBanners",		true ),
 
 	m_bSongBackgrounds	( "SongBackgrounds",		true ),
-	m_RandomBackgroundMode	( "RandomBackgroundMode",	BGMODE_ANIMATIONS, ValidateRandomBackgroundMode ),
+	m_RandomBackgroundMode	( "RandomBackgroundMode",	BGMODE_ANIMATIONS ),
 	m_iNumBackgrounds	( "NumBackgrounds",		8 ),
 	m_fBGBrightness		( "BGBrightness",		0.7f ),
 	m_bHiddenSongs		( "HiddenSongs",		false ),
@@ -389,7 +378,7 @@ PrefsManager::PrefsManager() :
 	m_bAnisotropicFiltering		( "AnisotropicFiltering",		0 ),
 
 	m_bSignProfileData		( "SignProfileData",			false ),
-	m_CourseSortOrder		( "CourseSortOrder",			COURSE_SORT_SONGS, ValidateCourseSortOrder ),
+	m_CourseSortOrder		( "CourseSortOrder",			COURSE_SORT_SONGS ),
 	m_bSubSortByNumSteps		( "SubSortByNumSteps",			false ),
 	m_GetRankingName		( "GetRankingName",			RANKING_ON ),
 	m_ScoringType			( "ScoringType",			SCORING_NEW ),
