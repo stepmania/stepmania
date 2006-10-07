@@ -60,10 +60,11 @@ public:
 		LoadDefault();
 	}
 
-	RString ToString() const { return PrefToString( (const BasicType &) m_currentValue ); }
+	RString ToString() const { return ::ToString( (const BasicType &) m_currentValue ); }
 	void FromString( const RString &s )
 	{
-		PrefFromString( s, (BasicType &)m_currentValue );
+		if( !::FromString(s, (BasicType &)m_currentValue) )
+			m_currentValue = m_defaultValue;
 		if( m_pfnValidate ) 
 			m_pfnValidate( m_currentValue );
 	}
@@ -84,7 +85,9 @@ public:
 	}
 	void SetDefaultFromString( const RString &s )
 	{
-		PrefFromString( s, (BasicType &)m_defaultValue  );
+		T def = m_defaultValue;
+		if( !::FromString(s, (BasicType &)m_defaultValue) )
+			m_defaultValue = def;
 	}
 
 	const T &Get() const
