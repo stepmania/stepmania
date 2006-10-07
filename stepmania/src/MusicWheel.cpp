@@ -589,7 +589,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData *> &arrayWheelItemDat
 				vct.push_back( COURSE_TYPE_ENDLESS );
 				break;
 			case SORT_ALL_COURSES:
-				FOREACH_ENUM2( CourseType, i )
+				FOREACH_ENUM( CourseType, i )
 					vct.push_back( i );
 				break;
 			default: ASSERT(0); break;

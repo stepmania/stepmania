@@ -26,7 +26,7 @@ enum EditCourseEntryRow
 	ROW_DONE,
 	NUM_EditCourseEntryRow
 };
-#define FOREACH_EditCourseEntryRow( i ) FOREACH_ENUM2( EditCourseEntryRow, i )
+#define FOREACH_EditCourseEntryRow( i ) FOREACH_ENUM( EditCourseEntryRow, i )
 
 AutoScreenMessage( SM_BackFromCoursePlayerOptions );
 

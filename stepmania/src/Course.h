@@ -26,7 +26,7 @@ enum CourseType
 	NUM_CourseType,
 	CourseType_Invalid
 };
-#define FOREACH_CourseType( i ) FOREACH_ENUM2( CourseType, i )
+#define FOREACH_CourseType( i ) FOREACH_ENUM( CourseType, i )
 const RString& CourseTypeToString( CourseType i );
 const RString& CourseTypeToLocalizedString( CourseType i );
 LuaDeclareType( CourseType );
@@ -44,7 +44,7 @@ enum SongSort
 	SongSort_LowestGrades,
 	NUM_SongSort,
 };
-#define FOREACH_SongSort( i ) FOREACH_ENUM2( SongSort, i )
+#define FOREACH_SongSort( i ) FOREACH_ENUM( SongSort, i )
 const RString& SongSortToString( SongSort ss );
 const RString& SongSortToLocalizedString( SongSort ss );
 

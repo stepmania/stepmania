@@ -1323,7 +1323,7 @@ void RageDisplay_OGL::DrawLineStripInternal( const RageSpriteVertex v[], int iNu
 
 void RageDisplay_OGL::ClearAllTextures()
 {
-	FOREACH_ENUM2( TextureUnit, i )
+	FOREACH_ENUM( TextureUnit, i )
 		SetTexture( i, 0 );
 
 	// HACK:  Reset the active texture to 0.

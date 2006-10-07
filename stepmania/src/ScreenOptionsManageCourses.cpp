@@ -122,7 +122,7 @@ static const char *CourseActionNames[] = {
 	"Delete",
 };
 XToString( CourseAction, NUM_CourseAction );
-#define FOREACH_CourseAction( i ) FOREACH_ENUM2( CourseAction, i )
+#define FOREACH_CourseAction( i ) FOREACH_ENUM( CourseAction, i )
 
 static MenuDef g_TempMenu(
 	"ScreenMiniMenuContext"

@@ -17,7 +17,7 @@ enum Difficulty
 	NUM_Difficulty,
 	Difficulty_Invalid
 };
-#define FOREACH_Difficulty( dc ) FOREACH_ENUM2( Difficulty, dc )
+#define FOREACH_Difficulty( dc ) FOREACH_ENUM( Difficulty, dc )
 const RString& DifficultyToString( Difficulty dc );
 const RString& DifficultyToLocalizedString( Difficulty dc );
 Difficulty StringToDifficulty( const RString& sDC );

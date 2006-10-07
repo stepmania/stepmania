@@ -52,7 +52,7 @@ void ScreenOptionsReviewWorkout::Init()
 void ScreenOptionsReviewWorkout::BeginScreen()
 {
 	vector<OptionRowHandler*> vHands;
-	FOREACH_ENUM2( ReviewWorkoutRow, rowIndex )
+	FOREACH_ENUM( ReviewWorkoutRow, rowIndex )
 	{
 		const MenuRowDef &mr = g_MenuRows[rowIndex];
 		OptionRowHandler *pHand = OptionRowHandlerUtil::MakeSimple( mr );

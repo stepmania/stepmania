@@ -614,7 +614,7 @@ PixelFormat RageDisplay::FindPixelFormat( int iBPP, int iRmask, int iGmask, int 
 {
 	PixelFormatDesc tmp = { iBPP, { iRmask, iGmask, iBmask, iAmask } };
 
-	FOREACH_ENUM2( PixelFormat, iPixFmt )
+	FOREACH_ENUM( PixelFormat, iPixFmt )
 	{
 		const PixelFormatDesc *pf = GetPixelFormatDesc( PixelFormat(iPixFmt) );
 		if( !SupportsTextureFormat(PixelFormat(iPixFmt), bRealtime) )

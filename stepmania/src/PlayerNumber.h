@@ -22,7 +22,7 @@ const RString& PlayerNumberToString( PlayerNumber pn );
 const RString& PlayerNumberToLocalizedString( PlayerNumber pn );
 LuaDeclareType( PlayerNumber );
 
-#define FOREACH_PlayerNumber( pn ) FOREACH_ENUM2( PlayerNumber, pn )
+#define FOREACH_PlayerNumber( pn ) FOREACH_ENUM( PlayerNumber, pn )
 #define FOREACH_HumanPlayer( pn ) for( PlayerNumber pn=GetNextHumanPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID; pn=GetNextHumanPlayer(pn) )
 #define FOREACH_EnabledPlayer( pn ) for( PlayerNumber pn=GetNextEnabledPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID; pn=GetNextEnabledPlayer(pn) )
 #define FOREACH_CpuPlayer( pn ) for( PlayerNumber pn=GetNextCpuPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID; pn=GetNextCpuPlayer(pn) )
@@ -77,7 +77,7 @@ const RString& MultiPlayerToString( MultiPlayer mp );
 const RString& MultiPlayerToLocalizedString( MultiPlayer mp );
 LuaDeclareType( MultiPlayer );
 
-#define FOREACH_MultiPlayer( pn ) FOREACH_ENUM2( MultiPlayer, pn )
+#define FOREACH_MultiPlayer( pn ) FOREACH_ENUM( MultiPlayer, pn )
 
 #define FOREACH_EnabledMultiPlayer( mp ) for( MultiPlayer mp=GetNextEnabledMultiPlayer((MultiPlayer)-1); mp!=MultiPlayer_Invalid; mp=GetNextEnabledMultiPlayer(mp) )
 

@@ -45,7 +45,7 @@ enum PaneContents
 	COURSE_ROLLS,
 	NUM_PANE_CONTENTS
 };
-#define FOREACH_PaneContents( p ) FOREACH_ENUM2( PaneContents, p )
+#define FOREACH_PaneContents( p ) FOREACH_ENUM( PaneContents, p )
 
 class PaneDisplay: public ActorFrame
 {

@@ -22,7 +22,7 @@ enum ElementCategory
 	NUM_ElementCategory,
 	ElementCategory_Invalid
 };
-#define FOREACH_ElementCategory( ec ) FOREACH_ENUM2( ElementCategory, ec )
+#define FOREACH_ElementCategory( ec ) FOREACH_ENUM( ElementCategory, ec )
 const RString& ElementCategoryToString( ElementCategory ec );
 ElementCategory StringToElementCategory( const RString& s );
 

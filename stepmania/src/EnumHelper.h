@@ -11,7 +11,6 @@ extern "C"
 
 #define FOREACH_ENUM_N( e, max, var )	for( e var=(e)0; var<max; enum_add<e>( var, +1 ) )
 #define FOREACH_ENUM( e, var )	for( e var=(e)0; var<NUM_##e; enum_add<e>( var, +1 ) )
-#define FOREACH_ENUM2 FOREACH_ENUM
 
 int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const char *szType );
 
@@ -100,7 +99,7 @@ static void Lua##X(lua_State* L) \
 { \
 	/* Create the EnumToString table: { "UnlockEntry_ArcadePoints", "UnlockEntry_DancePoints" } */ \
 	lua_newtable( L ); \
-	FOREACH_ENUM2( X, i ) \
+	FOREACH_ENUM( X, i ) \
 	{ \
 		RString s = X##ToString( i ); \
 		lua_pushstring( L, (#X "_")+s ); \
@@ -111,7 +110,7 @@ static void Lua##X(lua_State* L) \
 	lua_setglobal( L, #X ); \
 	/* Create the StringToEnum table: { "UnlockEntry_ArcadePoints" = 0, "UnlockEntry_DancePoints" = 1 } */ \
 	lua_newtable( L ); \
-	FOREACH_ENUM2( X, i ) \
+	FOREACH_ENUM( X, i ) \
 	{ \
 		RString s = X##ToString( i ); \
 		lua_pushstring( L, (#X "_")+s ); \

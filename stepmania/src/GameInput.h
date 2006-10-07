@@ -14,7 +14,7 @@ enum GameController
 	NUM_GameController,	// leave this at the end
 	GameController_Invalid,
 };
-#define FOREACH_GameController( gc ) FOREACH_ENUM2( GameController, gc )
+#define FOREACH_GameController( gc ) FOREACH_ENUM( GameController, gc )
 
 typedef int GameButton;
 RString GameButtonToString( const InputScheme* pInputs, GameButton i );
@@ -23,7 +23,7 @@ GameButton StringToGameButton( const InputScheme* pInputs, const RString& s );
 
 const GameButton NUM_GameButton = 20;
 const GameButton GameButton_Invalid = NUM_GameButton+1;
-#define FOREACH_GameButton( gb ) FOREACH_ENUM2( GameButton, gb )
+#define FOREACH_GameButton( gb ) FOREACH_ENUM( GameButton, gb )
 
 enum	// DanceButtons
 {

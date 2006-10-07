@@ -49,7 +49,7 @@ enum InputDevice
 	NUM_InputDevice,		// leave this at the end
 	InputDevice_Invalid			// means this is NULL
 };
-#define FOREACH_InputDevice( i ) FOREACH_ENUM2( InputDevice, i )
+#define FOREACH_InputDevice( i ) FOREACH_ENUM( InputDevice, i )
 const RString& InputDeviceToString( InputDevice i );
 InputDevice StringToInputDevice( const RString& s );
 inline bool IsJoystick( InputDevice id ) { return DEVICE_JOY1 <= id && id < DEVICE_JOY1+NUM_JOYSTICKS; }

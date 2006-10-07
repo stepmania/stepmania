@@ -47,7 +47,7 @@ enum Code {
 	CODE_BACK_IN_EVENT_MODE,
 	NUM_Code	// leave this at the end
 };
-#define FOREACH_Code( c ) FOREACH_ENUM2( Code, c )
+#define FOREACH_Code( c ) FOREACH_ENUM( Code, c )
 
 struct CodeItem
 {

@@ -23,7 +23,7 @@ enum EditMenuRow
 	ROW_ACTION, 
 	NUM_EditMenuRow 
 };
-#define FOREACH_EditMenuRow( r ) FOREACH_ENUM2( EditMenuRow, r )
+#define FOREACH_EditMenuRow( r ) FOREACH_ENUM( EditMenuRow, r )
 const RString& EditMenuRowToString( EditMenuRow r );
 const RString& EditMenuRowToLocalizedString( EditMenuRow r );
 
@@ -36,7 +36,7 @@ enum EditMenuAction
 	NUM_EditMenuAction,
 	EditMenuAction_Invalid
 };
-#define FOREACH_EditMenuAction( ema ) FOREACH_ENUM2( EditMenuAction, ema )
+#define FOREACH_EditMenuAction( ema ) FOREACH_ENUM( EditMenuAction, ema )
 const RString& EditMenuActionToString( EditMenuAction ema );
 const RString& EditMenuActionToLocalizedString( EditMenuAction ema );
 

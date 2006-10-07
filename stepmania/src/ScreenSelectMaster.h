@@ -17,7 +17,7 @@ enum MenuDir
 	MenuDir_Auto, // when players join and the selection becomes invalid
 	NUM_MenuDir,
 };
-#define FOREACH_MenuDir( md ) FOREACH_ENUM2( MenuDir, md )
+#define FOREACH_MenuDir( md ) FOREACH_ENUM( MenuDir, md )
 const RString& MenuDirToString( MenuDir md );
 
 class ScreenSelectMaster : public ScreenSelect

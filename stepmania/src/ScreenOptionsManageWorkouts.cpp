@@ -28,7 +28,7 @@ static const char *ManageWorkoutsActionNames[] = {
 	"Delete",
 };
 XToString( ManageWorkoutsAction, NUM_ManageWorkoutsAction );
-#define FOREACH_ManageWorkoutsAction( i ) FOREACH_ENUM2( ManageWorkoutsAction, i )
+#define FOREACH_ManageWorkoutsAction( i ) FOREACH_ENUM( ManageWorkoutsAction, i )
 
 static MenuDef g_TempMenu(
 	"ScreenMiniMenuContext"

@@ -58,7 +58,7 @@ void ControllerStateDisplay::LoadInternal( MultiPlayer mp, GameController gc )
 	this->AddChild( m_sprFrame );
 
 	m_mp = mp;
-	FOREACH_ENUM2( ControllerStateButton, b )
+	FOREACH_ENUM( ControllerStateButton, b )
 	{
 		Button &button = m_Buttons[ b ];
 
@@ -74,7 +74,7 @@ void ControllerStateDisplay::Update( float fDelta )
 {
 	ActorFrame::Update( fDelta );
 
-	FOREACH_ENUM2( ControllerStateButton, b )
+	FOREACH_ENUM( ControllerStateButton, b )
 	{
 		Button &button = m_Buttons[ b ];
 

@@ -32,7 +32,7 @@ enum RadarCategory
 	NUM_RadarCategory,	// leave this at the end
 	RadarCategory_Invalid
 };
-#define FOREACH_RadarCategory( rc ) FOREACH_ENUM2( RadarCategory, rc )
+#define FOREACH_RadarCategory( rc ) FOREACH_ENUM( RadarCategory, rc )
 const RString& RadarCategoryToString( RadarCategory cat );
 const RString& RadarCategoryToLocalizedString( RadarCategory cat );
 LuaDeclareType( RadarCategory );
@@ -72,7 +72,7 @@ enum StepsType
 	NUM_StepsType,		// leave this at the end
 	StepsType_Invalid,
 };
-#define FOREACH_StepsType( st ) FOREACH_ENUM2( StepsType, st )
+#define FOREACH_StepsType( st ) FOREACH_ENUM( StepsType, st )
 LuaDeclareType( StepsType );
 
 //
@@ -89,7 +89,7 @@ enum PlayMode
 	NUM_PlayMode,
 	PlayMode_Invalid
 };
-#define FOREACH_PlayMode( pm ) FOREACH_ENUM2( PlayMode, pm )
+#define FOREACH_PlayMode( pm ) FOREACH_ENUM( PlayMode, pm )
 const RString& PlayModeToString( PlayMode pm );
 const RString& PlayModeToLocalizedString( PlayMode pm );
 PlayMode StringToPlayMode( const RString& s );
@@ -122,7 +122,7 @@ enum SortOrder
 	SortOrder_Invalid
 };
 const SortOrder MAX_SELECTABLE_SORT = (SortOrder)(SORT_ROULETTE-1);
-#define FOREACH_SortOrder( so ) FOREACH_ENUM2( SortOrder, so )
+#define FOREACH_SortOrder( so ) FOREACH_ENUM( SortOrder, so )
 const RString& SortOrderToString( SortOrder so );
 SortOrder StringToSortOrder( const RString& str );
 LuaDeclareType( SortOrder );
@@ -146,7 +146,7 @@ enum TapNoteScore {
 	NUM_TapNoteScore,
 	TapNoteScore_Invalid,
 };
-#define FOREACH_TapNoteScore( tns ) FOREACH_ENUM2( TapNoteScore, tns )
+#define FOREACH_TapNoteScore( tns ) FOREACH_ENUM( TapNoteScore, tns )
 const RString& TapNoteScoreToString( TapNoteScore tns );
 const RString& TapNoteScoreToLocalizedString( TapNoteScore tns );
 TapNoteScore StringToTapNoteScore( const RString& str );
@@ -161,7 +161,7 @@ enum HoldNoteScore
 	NUM_HoldNoteScore,
 	HoldNoteScore_Invalid,
 };
-#define FOREACH_HoldNoteScore( hns ) FOREACH_ENUM2( HoldNoteScore, hns )
+#define FOREACH_HoldNoteScore( hns ) FOREACH_ENUM( HoldNoteScore, hns )
 const RString& HoldNoteScoreToString( HoldNoteScore hns );
 const RString& HoldNoteScoreToLocalizedString( HoldNoteScore hns );
 HoldNoteScore StringToHoldNoteScore( const RString& str );
@@ -210,7 +210,7 @@ enum ProfileSlot
 	NUM_ProfileSlot,
 	ProfileSlot_Invalid
 };
-#define FOREACH_ProfileSlot( slot ) FOREACH_ENUM2( ProfileSlot, slot )
+#define FOREACH_ProfileSlot( slot ) FOREACH_ENUM( ProfileSlot, slot )
 
 
 enum MemoryCardState
@@ -240,7 +240,7 @@ enum RankingCategory
 	NUM_RankingCategory,
 	RankingCategory_Invalid
 };
-#define FOREACH_RankingCategory( rc ) FOREACH_ENUM2( RankingCategory, rc )
+#define FOREACH_RankingCategory( rc ) FOREACH_ENUM( RankingCategory, rc )
 const RString& RankingCategoryToString( RankingCategory rc );
 RankingCategory StringToRankingCategory( const RString& rc );
 
@@ -308,7 +308,7 @@ enum CoinMode
 	NUM_CoinMode,
 	CoinMode_Invalid
 };
-#define FOREACH_CoinMode( i ) FOREACH_ENUM2( CoinMode, i )
+#define FOREACH_CoinMode( i ) FOREACH_ENUM( CoinMode, i )
 const RString& CoinModeToString( CoinMode cm );
 LuaDeclareType( CoinMode );
 
@@ -324,7 +324,7 @@ enum Premium
 	NUM_Premium,
 	Premium_Invalid
 };
-#define FOREACH_Premium( i ) FOREACH_ENUM2( Premium, i )
+#define FOREACH_Premium( i ) FOREACH_ENUM( Premium, i )
 const RString& PremiumToString( Premium p );
 LuaDeclareType( Premium );
 
@@ -348,7 +348,7 @@ enum PerDifficultyAward
 	NUM_PerDifficultyAward,
 	PerDifficultyAward_Invalid,
 };
-#define FOREACH_PerDifficultyAward( pma ) FOREACH_ENUM2( PerDifficultyAward, pma )
+#define FOREACH_PerDifficultyAward( pma ) FOREACH_ENUM( PerDifficultyAward, pma )
 const RString& PerDifficultyAwardToString( PerDifficultyAward pma );
 const RString& PerDifficultyAwardToLocalizedString( PerDifficultyAward pma );
 PerDifficultyAward StringToPerDifficultyAward( const RString& pma );
@@ -370,7 +370,7 @@ enum PeakComboAward
 	NUM_PeakComboAward,
 	PeakComboAward_Invalid,
 };
-#define FOREACH_PeakComboAward( pca ) FOREACH_ENUM2( PeakComboAward, pca )
+#define FOREACH_PeakComboAward( pca ) FOREACH_ENUM( PeakComboAward, pca )
 const RString& PeakComboAwardToString( PeakComboAward pma );
 const RString& PeakComboAwardToLocalizedString( PeakComboAward pma );
 PeakComboAward StringToPeakComboAward( const RString& pma );
@@ -409,7 +409,7 @@ enum GoalType
 	NUM_GoalType,
 	GoalType_Invalid,
 };
-#define FOREACH_GoalType( gt ) FOREACH_ENUM2( GoalType, gt )
+#define FOREACH_GoalType( gt ) FOREACH_ENUM( GoalType, gt )
 const RString& GoalTypeToString( GoalType gt );
 GoalType StringToGoalType( const RString& s );
 LuaDeclareType( GoalType );
@@ -447,7 +447,7 @@ enum Stage
 	NUM_Stage,
 	Stage_Invalid,
 };
-#define FOREACH_Stage( s ) FOREACH_ENUM2( Stage, s )
+#define FOREACH_Stage( s ) FOREACH_ENUM( Stage, s )
 const RString& StageToString( Stage s );
 LuaDeclareType( Stage );
 

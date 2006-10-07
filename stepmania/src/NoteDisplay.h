@@ -52,7 +52,7 @@ enum HoldType
 	NUM_HoldType,
 	HoldType_Invalid
 };
-#define FOREACH_HoldType( i ) FOREACH_ENUM2( HoldType, i )
+#define FOREACH_HoldType( i ) FOREACH_ENUM( HoldType, i )
 const RString &HoldTypeToString( HoldType ht );
 
 enum ActiveType
@@ -62,7 +62,7 @@ enum ActiveType
 	NUM_ActiveType,
 	ActiveType_Invalid
 };
-#define FOREACH_ActiveType( i ) FOREACH_ENUM2( ActiveType, i )
+#define FOREACH_ActiveType( i ) FOREACH_ENUM( ActiveType, i )
 const RString &ActiveTypeToString( ActiveType at );
 
 

@@ -50,7 +50,7 @@ static RString MakeMeterString( int iMeter )
 void ScreenOptionsEditWorkout::BeginScreen()
 {
 	vector<OptionRowHandler*> vHands;
-	FOREACH_ENUM2( WorkoutDetailsRow, rowIndex )
+	FOREACH_ENUM( WorkoutDetailsRow, rowIndex )
 	{
 		const MenuRowDef &mr = g_MenuRows[rowIndex];
 		OptionRowHandler *pHand = OptionRowHandlerUtil::MakeSimple( mr );
@@ -62,7 +62,7 @@ void ScreenOptionsEditWorkout::BeginScreen()
 		{
 		DEFAULT_FAIL(rowIndex);
 		case WorkoutDetailsRow_WorkoutProgram:
-			FOREACH_ENUM2( WorkoutProgram, i )
+			FOREACH_ENUM( WorkoutProgram, i )
 				pHand->m_Def.m_vsChoices.push_back( WorkoutProgramToLocalizedString(i) );
 			break;
 		case WorkoutDetailsRow_Minutes:
@@ -84,7 +84,7 @@ void ScreenOptionsEditWorkout::BeginScreen()
 		//	}
 		//	break;
 		case WorkoutDetailsRow_WorkoutStepsType:
-			FOREACH_ENUM2( WorkoutStepsType, i )
+			FOREACH_ENUM( WorkoutStepsType, i )
 				pHand->m_Def.m_vsChoices.push_back( WorkoutStepsTypeToLocalizedString(i) ); 
 			break;
 		}
@@ -129,7 +129,7 @@ void ScreenOptionsEditWorkout::ImportOptions( int iRow, const vector<PlayerNumbe
 
 void ScreenOptionsEditWorkout::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
-	FOREACH_ENUM2( WorkoutDetailsRow, i )
+	FOREACH_ENUM( WorkoutDetailsRow, i )
 	{
 		iRow = i;
 		OptionRow &row = *m_pRows[iRow];

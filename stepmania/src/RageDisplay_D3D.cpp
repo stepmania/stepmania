@@ -795,7 +795,7 @@ void RageDisplay_D3D::SendCurrentMatrices()
 	g_pd3dDevice->SetTransform( D3DTS_VIEW, (D3DMATRIX*)GetViewTop() );
 	g_pd3dDevice->SetTransform( D3DTS_WORLD, (D3DMATRIX*)GetWorldTop() );
 
-	FOREACH_ENUM2( TextureUnit, tu )
+	FOREACH_ENUM( TextureUnit, tu )
 	{
 		// Optimization opportunity: Turn off texture transform if not using texture coords.
 		g_pd3dDevice->SetTextureStageState( tu, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2 );
@@ -1074,7 +1074,7 @@ void RageDisplay_D3D::DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, 
 
 void RageDisplay_D3D::ClearAllTextures()
 {
-	FOREACH_ENUM2( TextureUnit, i )
+	FOREACH_ENUM( TextureUnit, i )
 		SetTexture( i, 0 );
 	g_currentTextureUnit = TextureUnit_1;
 }

@@ -512,7 +512,7 @@ void UnlockManager::Load()
 	FOREACH_CONST( UnlockEntry, m_UnlockEntries, e )
 	{
 		RString str = ssprintf( "Unlock: %s; ", join("\n",e->m_cmd.m_vsArgs).c_str() );
-		FOREACH_ENUM2( UnlockRequirement, j )
+		FOREACH_ENUM( UnlockRequirement, j )
 			if( e->m_fRequirement[j] )
 				str += ssprintf( "%s = %f; ", UnlockRequirementToString(j).c_str(), e->m_fRequirement[j] );
 		if( e->m_bRequirePassHardSteps )
