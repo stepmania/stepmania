@@ -158,7 +158,7 @@ struct MapEditButtonToMenuButton
 	{
 		FOREACH_EditButton(e)
 			for( int slot = 0; slot < NUM_EDIT_TO_MENU_SLOTS; ++slot )
-				button[e][slot] = MenuButton_INVALID;
+				button[e][slot] = MenuButton_Invalid;
 	}
 };
 

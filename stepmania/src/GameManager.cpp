@@ -2892,7 +2892,7 @@ MenuButton GameManager::GetMenuButtonSecondaryFunction( const Game *pGame, GameB
 		FOREACH_GameController(gc)
 		{
 			int iCol = pStyle->GameInputToColumn( GameInput(gc,gb) );
-			if( iCol != Column_INVALID )
+			if( iCol != Column_Invalid )
 				bUsedInGameplay = true;
 		}
 	}
@@ -2901,12 +2901,12 @@ MenuButton GameManager::GetMenuButtonSecondaryFunction( const Game *pGame, GameB
 	FOREACH_MenuButton(m)
 	{
 		if( !bUsedInGameplay && pGame->m_InputScheme.m_DedicatedMenuButton[m] == gb )
-			return MenuButton_INVALID;
+			return MenuButton_Invalid;
 		else if( bUsedInGameplay && pGame->m_InputScheme.m_SecondaryMenuButton[m] == gb )
 			return m;
 	}
 
-	return MenuButton_INVALID; // only used in gameplay
+	return MenuButton_Invalid; // only used in gameplay
 }
 
 

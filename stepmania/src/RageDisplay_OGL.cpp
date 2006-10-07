@@ -1647,7 +1647,7 @@ PixelFormat RageDisplay_OGL::GetImgPixelFormat( RageSurface* &img, bool &bFreeIm
 	if( !bPalettedTexture && img->fmt.BytesPerPixel == 1 && !g_bColorIndexTableWorks )
 		bSupported = false;
 
-	if( pixfmt == PixelFormat_INVALID || !SupportsSurfaceFormat(pixfmt) )
+	if( pixfmt == PixelFormat_Invalid || !SupportsSurfaceFormat(pixfmt) )
 		bSupported = false;
 
 	if( !bSupported )
@@ -1717,7 +1717,7 @@ unsigned RageDisplay_OGL::CreateTexture(
 	/* Find the pixel format of the surface we've been given. */
 	bool bFreeImg;
 	PixelFormat SurfacePixFmt = GetImgPixelFormat( pImg, bFreeImg, pImg->w, pImg->h, pixfmt == PixelFormat_PAL );
-	ASSERT( SurfacePixFmt != PixelFormat_INVALID );
+	ASSERT( SurfacePixFmt != PixelFormat_Invalid );
 
 	GLenum glTexFormat = g_GLPixFmtInfo[pixfmt].internalfmt;
 	GLenum glImageFormat = g_GLPixFmtInfo[SurfacePixFmt].format;

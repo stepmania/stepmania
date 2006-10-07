@@ -57,11 +57,11 @@ GameInput Style::StyleInputToGameInput( int iCol, PlayerNumber pn ) const
 int Style::GameInputToColumn( const GameInput &GameI ) const
 {
 	if( m_iInputColumn[GameI.controller][GameI.button] == NO_MAPPING )
-		return Column_INVALID;
+		return Column_Invalid;
 
 	for( int i = 0; i <= GameI.button; ++i )
 		if( m_iInputColumn[GameI.controller][i] == END_MAPPING )
-			return Column_INVALID;
+			return Column_Invalid;
 
 	return m_iInputColumn[GameI.controller][GameI.button];
 }

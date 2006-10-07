@@ -202,10 +202,10 @@ void GameState::Reset()
 		m_PreferredDifficulty[p].Set( DIFFICULTY_Invalid );
 		m_PreferredCourseDifficulty[p].Set( DIFFICULTY_MEDIUM );
 	}
-	m_SortOrder.Set( SortOrder_INVALID );
+	m_SortOrder.Set( SortOrder_Invalid );
 	m_PreferredSortOrder = GetDefaultSort();
 	m_PlayMode.Set( PlayMode_Invalid );
-	m_EditMode = EditMode_INVALID;
+	m_EditMode = EditMode_Invalid;
 	m_bDemonstrationOrJukebox = false;
 	m_bJukeboxUsesModifiers = false;
 	m_iCurrentStageIndex = 0;
@@ -390,7 +390,7 @@ void GameState::PlayersFinalized()
 			ApplyPreferredModifiers( pn, sModifiers );
 		}
 		// Only set the sort order if it wasn't already set by a GameCommand (or by an earlier profile)
-		if( m_PreferredSortOrder == SortOrder_INVALID && pProfile->m_SortOrder != SortOrder_INVALID )
+		if( m_PreferredSortOrder == SortOrder_Invalid && pProfile->m_SortOrder != SortOrder_Invalid )
 			m_PreferredSortOrder = pProfile->m_SortOrder;
 		if( pProfile->m_LastDifficulty != DIFFICULTY_Invalid )
 			m_PreferredDifficulty[pn].Set( pProfile->m_LastDifficulty );

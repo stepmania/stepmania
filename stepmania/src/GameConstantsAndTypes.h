@@ -119,7 +119,7 @@ enum SortOrder
 	SORT_ENDLESS_COURSES,
 	SORT_ROULETTE,
 	NUM_SortOrder,
-	SortOrder_INVALID
+	SortOrder_Invalid
 };
 const SortOrder MAX_SELECTABLE_SORT = (SortOrder)(SORT_ROULETTE-1);
 #define FOREACH_SortOrder( so ) FOREACH_ENUM2( SortOrder, so )
@@ -345,7 +345,7 @@ enum PerDifficultyAward
 	AWARD_PERCENT_90_W3,
 	AWARD_PERCENT_100_W3,
 	NUM_PerDifficultyAward,
-	PER_DIFFICULTY_AWARD_INVALID,
+	PER_DIFFICULTY_AWARD_Invalid,
 };
 #define FOREACH_PerDifficultyAward( pma ) FOREACH_ENUM2( PerDifficultyAward, pma )
 const RString& PerDifficultyAwardToString( PerDifficultyAward pma );
@@ -367,7 +367,7 @@ enum PeakComboAward
 	AWARD_9000_PEAK_COMBO,
 	AWARD_10000_PEAK_COMBO,
 	NUM_PeakComboAward,
-	PEAK_COMBO_AWARD_INVALID,
+	PEAK_COMBO_AWARD_Invalid,
 };
 #define FOREACH_PeakComboAward( pca ) FOREACH_ENUM2( PeakComboAward, pca )
 const RString& PeakComboAwardToString( PeakComboAward pma );
@@ -406,7 +406,7 @@ enum GoalType
 	GoalType_Time, 
 	GoalType_None,
 	NUM_GoalType,
-	GoalType_INVALID,
+	GoalType_Invalid,
 };
 #define FOREACH_GoalType( gt ) FOREACH_ENUM2( GoalType, gt )
 const RString& GoalTypeToString( GoalType gt );
@@ -421,7 +421,7 @@ enum EditMode
 	EditMode_Home,
 	EditMode_Full,
 	NUM_EditMode,
-	EditMode_INVALID,
+	EditMode_Invalid,
 };
 const RString& EditModeToString( EditMode em );
 EditMode StringToEditMode( const RString& s );
@@ -444,7 +444,7 @@ enum Stage
 	STAGE_EVENT,
 	STAGE_DEMO,
 	NUM_Stage,
-	STAGE_INVALID,
+	STAGE_Invalid,
 };
 #define FOREACH_Stage( s ) FOREACH_ENUM2( Stage, s )
 const RString& StageToString( Stage s );
@@ -466,7 +466,7 @@ enum MultiPlayerStatus
 	MultiPlayerStatus_Unplugged,
 	MultiPlayerStatus_MissingMultitap,
 	NUM_MultiPlayerStatus,
-	MultiPlayerStatus_INVALID
+	MultiPlayerStatus_Invalid
 };
 const RString& MultiPlayerStatusToString( MultiPlayerStatus i );
 

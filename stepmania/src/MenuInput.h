@@ -15,7 +15,7 @@ enum MenuButton
 	MENU_BUTTON_COIN,
 	MENU_BUTTON_OPERATOR,
 	NUM_MenuButton,		// leave this at the end
-	MenuButton_INVALID
+	MenuButton_Invalid
 };
 #define FOREACH_MenuButton( m ) FOREACH_ENUM2( MenuButton, m )
 

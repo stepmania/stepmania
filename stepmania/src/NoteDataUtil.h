@@ -91,7 +91,7 @@ namespace NoteDataUtil
 
 	inline void SnapToNearestNoteType( NoteData &inout, NoteType nt, int iStartIndex, int iEndIndex )
 	{
-		SnapToNearestNoteType( inout, nt, NOTE_TYPE_INVALID, iStartIndex, iEndIndex );
+		SnapToNearestNoteType( inout, nt, NOTE_TYPE_Invalid, iStartIndex, iEndIndex );
 	}
 
 	// True if no notes in row that aren't true in the mask

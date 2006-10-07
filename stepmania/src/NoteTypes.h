@@ -186,7 +186,7 @@ enum NoteType
 	NOTE_TYPE_64TH,	// sixty-fourth note
 	NOTE_TYPE_192ND,// sixty-fourth note triplet
 	NUM_NoteType,
-	NOTE_TYPE_INVALID
+	NOTE_TYPE_Invalid
 };
 const RString& NoteTypeToString( NoteType nt );
 const RString& NoteTypeToLocalizedString( NoteType nt );

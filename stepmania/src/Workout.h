@@ -12,7 +12,7 @@ enum WorkoutProgram
 	WorkoutProgram_Runner,
 	WorkoutProgram_Flat,
 	NUM_WorkoutProgram,
-	WorkoutProgram_INVALID
+	WorkoutProgram_Invalid
 };
 const RString& WorkoutProgramToLocalizedString( WorkoutProgram i );
 const RString& WorkoutProgramToLocalizedString( WorkoutProgram i );
@@ -23,7 +23,7 @@ enum WorkoutStepsType
 	WorkoutStepsType_NormalSteps,
 	WorkoutStepsType_WorkoutSteps,
 	NUM_WorkoutStepsType,
-	WorkoutStepsType_INVALID
+	WorkoutStepsType_Invalid
 };
 const RString& WorkoutStepsTypeToLocalizedString( WorkoutStepsType i );
 WorkoutStepsType StringToWorkoutStepsType( const RString& str );

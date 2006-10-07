@@ -22,7 +22,7 @@ StageStats::StageStats()
 	pStyle = NULL;
 	vpPlayedSongs.clear();
 	vpPossibleSongs.clear();
-	StageType = STAGE_INVALID;
+	StageType = STAGE_Invalid;
 	bGaveUp = false;
 	bUsedAutoplay = false;
 	fGameplaySeconds = 0;
@@ -88,7 +88,7 @@ void StageStats::AddStats( const StageStats& other )
 		vpPlayedSongs.push_back( *s );
 	FOREACH_CONST( Song*, other.vpPossibleSongs, s )
 		vpPossibleSongs.push_back( *s );
-	StageType = STAGE_INVALID; // meaningless
+	StageType = STAGE_Invalid; // meaningless
 
 	bGaveUp |= other.bGaveUp;
 	bUsedAutoplay |= other.bUsedAutoplay;

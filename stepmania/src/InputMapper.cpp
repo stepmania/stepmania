@@ -936,12 +936,12 @@ MenuButton InputScheme::GameInputToMenuButton( GameInput GameI ) const
 				return i;
 	}
 
-	return MenuButton_INVALID;	// invalid GameInput
+	return MenuButton_Invalid;	// invalid GameInput
 }
 
 void InputScheme::MenuButtonToGameInputs( MenuButton MenuI, PlayerNumber pn, GameInput GameIout[4] ) const
 {
-	ASSERT( MenuI != MenuButton_INVALID );
+	ASSERT( MenuI != MenuButton_Invalid );
 
 	GameIout[0].MakeInvalid();	// initialize
 	GameIout[1].MakeInvalid();	

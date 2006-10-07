@@ -63,7 +63,7 @@ enum PixelFormat
 	PixelFormat_BGR8,
 	PixelFormat_A1BGR5,
 	NUM_PixelFormat,
-	PixelFormat_INVALID
+	PixelFormat_Invalid
 };
 const RString& PixelFormatToString( PixelFormat i );
 

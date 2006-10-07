@@ -63,7 +63,7 @@ static void GetAllCoursesToShow( vector<Course*> &vpOut, CourseType ct, bool bSh
 {
 	vpOut.clear();
 	vector<Course*> vpCourses;
-	if( ct == CourseType_INVALID )
+	if( ct == CourseType_Invalid )
 		SONGMAN->GetAllCourses( vpCourses, false );
 	else
 		SONGMAN->GetCourses( ct, vpCourses, false );
@@ -442,7 +442,7 @@ void ScreenRankingScroller::Init()
 			case PageType_NonstopCourses:	ct = COURSE_TYPE_NONSTOP;	break;
 			case PageType_OniCourses:	ct = COURSE_TYPE_ONI;		break;
 			case PageType_SurvivalCourses:	ct = COURSE_TYPE_SURVIVAL;	break;
-			case PageType_AllCourses:	ct = CourseType_INVALID;	break;
+			case PageType_AllCourses:	ct = CourseType_Invalid;	break;
 			}
 
 			m_ListScoreRowItems.LoadCourses( ct, SHOW_ONLY_MOST_RECENT_SCORES, NUM_MOST_RECENT_SCORES_TO_SHOW );

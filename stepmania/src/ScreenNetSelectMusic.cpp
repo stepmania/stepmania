@@ -278,7 +278,7 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	{
 		//XXX: HACK: This will causes ScreenSelectOptions to go back here.
 		NSMAN->ReportNSSOnOff(1);
-		GAMESTATE->m_EditMode = EditMode_INVALID;
+		GAMESTATE->m_EditMode = EditMode_Invalid;
 		NSMAN->ReportPlayerOptions();
 
 		//Update changes

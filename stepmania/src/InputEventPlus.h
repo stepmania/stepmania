@@ -12,7 +12,7 @@ class InputEventPlus
 public:
 	InputEventPlus():
 		type(IET_FIRST_PRESS),
-		MenuI(MenuButton_INVALID),
+		MenuI(MenuButton_Invalid),
 		pn(PLAYER_INVALID),
 		mp(MultiPlayer_Invalid) { }
 	DeviceInput DeviceI;

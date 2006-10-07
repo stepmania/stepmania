@@ -63,7 +63,7 @@ class InputList: public BitmapText
 				if( !PREFSMAN->m_bOnlyDedicatedMenuButtons )
 				{
 					MenuButton mb = GAMEMAN->GetMenuButtonSecondaryFunction( GAMESTATE->GetCurrentGame(), gi.button );
-					if( mb != MenuButton_INVALID )
+					if( mb != MenuButton_Invalid )
 						sTemp += ssprintf( " - (%s %s)", MenuButtonToLocalizedString(mb).c_str(), SECONDARY.GetValue().c_str() );
 				}
 			}

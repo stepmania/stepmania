@@ -622,7 +622,7 @@ static MenuDef g_CourseMode(
 static int g_iLastInsertTapAttackTrack = -1;
 static float g_fLastInsertAttackDurationSeconds = -1;
 static float g_fLastInsertAttackPositionSeconds = -1;
-static BackgroundLayer g_CurrentBGChangeLayer = BACKGROUND_LAYER_INVALID;
+static BackgroundLayer g_CurrentBGChangeLayer = BACKGROUND_LAYER_Invalid;
 
 static void SetDefaultEditorNoteSkin( size_t num, RString &sNameOut, RString &defaultValueOut )
 {
@@ -2366,7 +2366,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_GoToNextScreen )
 	{
-		GAMESTATE->m_EditMode = EditMode_INVALID;
+		GAMESTATE->m_EditMode = EditMode_Invalid;
 	}
 	else if( SM == SM_BackFromMainMenu )
 	{
@@ -3352,7 +3352,7 @@ void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, const vector<int> &iAns
 	{
 		m_pSong->AddBackgroundChange( g_CurrentBGChangeLayer, newChange );
 	}
-	g_CurrentBGChangeLayer = BACKGROUND_LAYER_INVALID;
+	g_CurrentBGChangeLayer = BACKGROUND_LAYER_Invalid;
 }
 
 void ScreenEdit::SetupCourseAttacks()

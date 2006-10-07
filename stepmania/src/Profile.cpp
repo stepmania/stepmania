@@ -99,7 +99,7 @@ void Profile::InitGeneralData()
 {
 	m_sGuid = MakeGuid();
 
-	m_SortOrder = SortOrder_INVALID;
+	m_SortOrder = SortOrder_Invalid;
 	m_LastDifficulty = DIFFICULTY_Invalid;
 	m_LastCourseDifficulty = DIFFICULTY_Invalid;
 	m_lastSong.Unset();

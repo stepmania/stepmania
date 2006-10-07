@@ -42,8 +42,8 @@ void PlayerStageStats::Init()
 	fFirstSecond = FLT_MAX;
 	fLastSecond = 0;
 
-	m_pdaToShow = PER_DIFFICULTY_AWARD_INVALID;
-	m_pcaToShow = PEAK_COMBO_AWARD_INVALID;
+	m_pdaToShow = PER_DIFFICULTY_AWARD_Invalid;
+	m_pcaToShow = PEAK_COMBO_AWARD_Invalid;
 	m_iPersonalHighScoreIndex = -1;
 	m_iMachineHighScoreIndex = -1;
 	m_rc = RankingCategory_Invalid;
@@ -528,7 +528,7 @@ void PlayerStageStats::CalcAwards( PlayerNumber p, bool bGaveUp, bool bUsedAutop
 {
 	LOG->Trace( "hand out awards" );
 	
-	m_pcaToShow = PEAK_COMBO_AWARD_INVALID;
+	m_pcaToShow = PEAK_COMBO_AWARD_Invalid;
 
 	if( bGaveUp || bUsedAutoplay )
 		return;
@@ -573,7 +573,7 @@ void PlayerStageStats::CalcAwards( PlayerNumber p, bool bGaveUp, bool bUsedAutop
 	if( !vPdas.empty() )
 		m_pdaToShow = vPdas.back();
 	else
-		m_pdaToShow = PER_DIFFICULTY_AWARD_INVALID;
+		m_pdaToShow = PER_DIFFICULTY_AWARD_Invalid;
 
 	LOG->Trace( "done with per difficulty awards" );
 
@@ -593,7 +593,7 @@ void PlayerStageStats::CalcAwards( PlayerNumber p, bool bGaveUp, bool bUsedAutop
 	if( !GAMESTATE->m_vLastPeakComboAwards[p].empty() )
 		m_pcaToShow = GAMESTATE->m_vLastPeakComboAwards[p].back();
 	else
-		m_pcaToShow = PEAK_COMBO_AWARD_INVALID;
+		m_pcaToShow = PEAK_COMBO_AWARD_Invalid;
 
 	LOG->Trace( "done with per combo awards" );
 

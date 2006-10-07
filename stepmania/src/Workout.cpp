@@ -168,7 +168,7 @@ bool Workout::LoadFromFile( RString sFile )
 	RString s;
 	xml.GetChildValue("WorkoutProgram",s);
 	m_WorkoutProgram = StringToWorkoutProgram( s );
-	if( m_WorkoutProgram == WorkoutProgram_INVALID )
+	if( m_WorkoutProgram == WorkoutProgram_Invalid )
 		m_WorkoutProgram = (WorkoutProgram)0;
 
 	xml.GetChildValue("Minutes",m_iMinutes);
@@ -179,7 +179,7 @@ bool Workout::LoadFromFile( RString sFile )
 
 	xml.GetChildValue("WorkoutStepsType",s);
 	m_WorkoutStepsType = StringToWorkoutStepsType( s );
-	if( m_WorkoutStepsType == WorkoutStepsType_INVALID )
+	if( m_WorkoutStepsType == WorkoutStepsType_Invalid )
 		m_WorkoutStepsType = (WorkoutStepsType)0;
 
 	XNode *songGenres = xml.GetChild("SongGenres");

@@ -625,7 +625,7 @@ PixelFormat RageDisplay::FindPixelFormat( int iBPP, int iRmask, int iGmask, int 
 		return iPixFmt;
 	}
 
-	return PixelFormat_INVALID;
+	return PixelFormat_Invalid;
 }
 	
 /* These convert to OpenGL's coordinate system: -1,-1 is the bottom-left, +1,+1 is the

@@ -50,13 +50,13 @@ void GameCommand::Init()
 	m_pCourse = NULL;
 	m_pTrail = NULL;
 	m_pCharacter = NULL;
-	m_SortOrder = SortOrder_INVALID;
+	m_SortOrder = SortOrder_Invalid;
 	m_sUnlockEntryID = "";
 	m_sSoundPath = "";
 	m_vsScreensToPrepare.clear();
 	m_iWeightPounds = -1;
 	m_iGoalCalories = -1;
-	m_GoalType = GoalType_INVALID;
+	m_GoalType = GoalType_Invalid;
 	m_sProfileID = "";
 	m_sUrl = "";
 
@@ -134,13 +134,13 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 		return false;
 	if( !m_sSongGroup.empty() && GAMESTATE->m_sPreferredSongGroup != m_sSongGroup )
 		return false;
-	if( m_SortOrder != SortOrder_INVALID && GAMESTATE->m_PreferredSortOrder != m_SortOrder )
+	if( m_SortOrder != SortOrder_Invalid && GAMESTATE->m_PreferredSortOrder != m_SortOrder )
 		return false;
 	if( m_iWeightPounds != -1 && PROFILEMAN->GetProfile(pn)->m_iWeightPounds != m_iWeightPounds )
 		return false;
 	if( m_iGoalCalories != -1 && PROFILEMAN->GetProfile(pn)->m_iGoalCalories != m_iGoalCalories )
 		return false;
-	if( m_GoalType != GoalType_INVALID && PROFILEMAN->GetProfile(pn)->m_GoalType != m_GoalType )
+	if( m_GoalType != GoalType_Invalid && PROFILEMAN->GetProfile(pn)->m_GoalType != m_GoalType )
 		return false;
 	if( !m_sProfileID.empty() && ProfileManager::m_sDefaultLocalProfileID[pn].Get() != m_sProfileID )
 		return false;
@@ -322,7 +322,7 @@ void GameCommand::LoadOne( const Command& cmd )
 	else if( sName == "sort" )
 	{
 		m_SortOrder = StringToSortOrder( sValue );
-		if( m_SortOrder == SortOrder_INVALID )
+		if( m_SortOrder == SortOrder_Invalid )
 		{
 			m_sInvalidReason = ssprintf( "SortOrder \"%s\" is not valid.", sValue.c_str() );
 			m_bInvalid |= true;
@@ -715,7 +715,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	}
 	if( !m_sSongGroup.empty() )
 		GAMESTATE->m_sPreferredSongGroup.Set( m_sSongGroup );
-	if( m_SortOrder != SortOrder_INVALID )
+	if( m_SortOrder != SortOrder_Invalid )
 		GAMESTATE->m_PreferredSortOrder = m_SortOrder;
 	if( !m_sUnlockEntryID.empty() )
 		UNLOCKMAN->UnlockEntryID( m_sUnlockEntryID );
@@ -727,7 +727,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	if( m_iGoalCalories != -1 )
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 			PROFILEMAN->GetProfile(*pn)->m_iGoalCalories = m_iGoalCalories;
-	if( m_GoalType != GoalType_INVALID )
+	if( m_GoalType != GoalType_Invalid )
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 			PROFILEMAN->GetProfile(*pn)->m_GoalType = m_GoalType;
 	if( !m_sProfileID.empty() )
@@ -792,10 +792,10 @@ bool GameCommand::IsZero() const
 		m_pCharacter != NULL || 
 		m_CourseDifficulty != DIFFICULTY_Invalid ||
 		!m_sSongGroup.empty() ||
-		m_SortOrder != SortOrder_INVALID ||
+		m_SortOrder != SortOrder_Invalid ||
 		m_iWeightPounds != -1 ||
 		m_iGoalCalories != -1 ||
-		m_GoalType != GoalType_INVALID ||
+		m_GoalType != GoalType_Invalid ||
 		!m_sProfileID.empty() ||
 		!m_sUrl.empty() )
 		return false;
