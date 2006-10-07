@@ -51,12 +51,6 @@ private:
 
 typedef AutoPtrCopyOnWrite<LuaReference> apActorCommands;
 
-namespace LuaHelpers
-{
-	bool FromStack( lua_State *L, LuaReference &Object, int iOffset );
-	bool FromStack( lua_State *L, apActorCommands &Object, int iOffset );
-}
-
 class LuaTable: public LuaReference
 {
 public:

@@ -127,9 +127,8 @@ const RString &EnumToString( int iVal, int iMax, const char **szNameArray, auto_
 		return (X)(i+1); /*invalid*/	\
 	}
 
-#define LuaDeclareType(X) \
-namespace LuaHelpers { bool FromStack( lua_State *L, X &Object, int iOffset ); } \
-namespace LuaHelpers { void Push( lua_State *L, const X &Object ); }
+// currently unused
+#define LuaDeclareType(X)
 
 #define LuaXType(X)	\
 template struct EnumTraits<X>; \
@@ -162,8 +161,8 @@ static void Lua##X(lua_State* L) \
 REGISTER_WITH_LUA_FUNCTION( Lua##X ); \
 template<> X EnumTraits<X>::Invalid = enum_add2( NUM_##X, 1 ); \
 template<> const char *EnumTraits<X>::szName = #X; \
-bool LuaHelpers::FromStack( lua_State *L, X &Object, int iOffset ) { Object = Enum::Check<X>( L, iOffset ); return true; } \
-void LuaHelpers::Push( lua_State *L, const X &Object ) { Enum::Push<X>( L, Object ); }
+namespace LuaHelpers { template<> bool FromStack<X>( lua_State *L, X &Object, int iOffset ) { Object = Enum::Check<X>( L, iOffset ); return true; } } \
+namespace LuaHelpers { template<> void Push<X>( lua_State *L, const X &Object ) { Enum::Push<X>( L, Object ); } }
 
 #endif
 

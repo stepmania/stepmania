@@ -21,6 +21,19 @@ static LuaFunctionList *g_LuaFunctions = NULL;
 	#pragma warning (disable : 4611)
 #endif
 
+namespace LuaHelpers
+{
+	template<> void Push<bool>( lua_State *L, const bool &Object );
+	template<> void Push<float>( lua_State *L, const float &Object );
+	template<> void Push<int>( lua_State *L, const int &Object );
+	template<> void Push<RString>( lua_State *L, const RString &Object );
+
+	template<> bool FromStack<bool>( Lua *L, bool &Object, int iOffset );
+	template<> bool FromStack<float>( Lua *L, float &Object, int iOffset );
+	template<> bool FromStack<int>( Lua *L, int &Object, int iOffset );
+	template<> bool FromStack<RString>( Lua *L, RString &Object, int iOffset );
+}
+
 struct ChunkReaderString
 {
 	ChunkReaderString( const RString &sBuf ): m_sBuf(sBuf) { m_bDone = false; }
@@ -68,25 +81,27 @@ void LuaManager::UnsetGlobal( const RString &sName )
 	LUA->Release( L );
 }
 
-
-void LuaHelpers::Push( lua_State *L, const bool &Object ) { lua_pushboolean( L, Object ); }
-void LuaHelpers::Push( lua_State *L, const float &Object ) { lua_pushnumber( L, Object ); }
-void LuaHelpers::Push( lua_State *L, const int &Object ) { lua_pushinteger( L, Object ); }
-void LuaHelpers::Push( lua_State *L, const RString &Object ) { lua_pushlstring( L, Object.data(), Object.size() ); }
-
-bool LuaHelpers::FromStack( Lua *L, bool &Object, int iOffset ) { Object = !!lua_toboolean( L, iOffset ); return true; }
-bool LuaHelpers::FromStack( Lua *L, float &Object, int iOffset ) { Object = (float)lua_tonumber( L, iOffset ); return true; }
-bool LuaHelpers::FromStack( Lua *L, int &Object, int iOffset ) { Object = lua_tointeger( L, iOffset ); return true; }
-bool LuaHelpers::FromStack( Lua *L, RString &Object, int iOffset )
+namespace LuaHelpers
 {
-	size_t iLen;
-	const char *pStr = lua_tolstring( L, iOffset, &iLen );
-	if( pStr != NULL )
-		Object.assign( pStr, iLen );
-	else
-		Object.clear();
+	template<> void Push<bool>( lua_State *L, const bool &Object ) { lua_pushboolean( L, Object ); }
+	template<> void Push<float>( lua_State *L, const float &Object ) { lua_pushnumber( L, Object ); }
+	template<> void Push<int>( lua_State *L, const int &Object ) { lua_pushinteger( L, Object ); }
+	template<> void Push<RString>( lua_State *L, const RString &Object ) { lua_pushlstring( L, Object.data(), Object.size() ); }
 
-	return pStr != NULL;
+	template<> bool FromStack<bool>( Lua *L, bool &Object, int iOffset ) { Object = !!lua_toboolean( L, iOffset ); return true; }
+	template<> bool FromStack<float>( Lua *L, float &Object, int iOffset ) { Object = (float)lua_tonumber( L, iOffset ); return true; }
+	template<> bool FromStack<int>( Lua *L, int &Object, int iOffset ) { Object = lua_tointeger( L, iOffset ); return true; }
+	template<> bool FromStack<RString>( Lua *L, RString &Object, int iOffset )
+	{
+		size_t iLen;
+		const char *pStr = lua_tolstring( L, iOffset, &iLen );
+		if( pStr != NULL )
+			Object.assign( pStr, iLen );
+		else
+			Object.clear();
+
+		return pStr != NULL;
+	}
 }
 
 void LuaHelpers::CreateTableFromArrayB( Lua *L, const vector<bool> &aIn )

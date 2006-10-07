@@ -36,10 +36,13 @@ void RageColor::FromStack( lua_State *L, int iPos )
 	lua_pop( L, 5 );
 }
 
-bool LuaHelpers::FromStack( lua_State *L, RageColor &Object, int iOffset )
+namespace LuaHelpers
 {
-	Object.FromStack( L, iOffset );
-	return true;
+	template<> bool FromStack<RageColor>( lua_State *L, RageColor &Object, int iOffset )
+	{
+		Object.FromStack( L, iOffset );
+		return true;
+	}
 }
 
 static const char *CullModeNames[] =

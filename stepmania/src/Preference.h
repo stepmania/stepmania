@@ -5,6 +5,7 @@
 
 #include "EnumHelper.h"
 #include "RageUtil.h"
+#include "LuaManager.h"
 class XNode;
 
 struct lua_State;
@@ -114,6 +115,8 @@ private:
 	T m_defaultValue;
 	void (*m_pfnValidate)(T& val);
 };
+
+namespace LuaHelpers { template<typename T, typename U> void Push( lua_State *L, const Preference<T, U> &Object ) { LuaHelpers::Push<T>( L, Object.Get() ); } }
 
 template <class T>
 class Preference1D

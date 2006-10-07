@@ -163,19 +163,22 @@ RString LuaReference::Serialize() const
 	return sRet;
 }
 
-bool LuaHelpers::FromStack( lua_State *L, LuaReference &Object, int iOffset )
+namespace LuaHelpers
 {
-	lua_pushvalue( L, iOffset );
-	Object.SetFromStack( L );
-	return true;
-}
+	template<> bool FromStack<LuaReference>( lua_State *L, LuaReference &Object, int iOffset )
+	{
+		lua_pushvalue( L, iOffset );
+		Object.SetFromStack( L );
+		return true;
+	}
 
-bool LuaHelpers::FromStack( lua_State *L, apActorCommands &Object, int iOffset )
-{
-	LuaReference *pRef = new LuaReference;
-	FromStack( L, *pRef, iOffset );
-	Object = apActorCommands( pRef );
-	return true;
+	template<> bool FromStack<apActorCommands>( lua_State *L, apActorCommands &Object, int iOffset )
+	{
+		LuaReference *pRef = new LuaReference;
+		FromStack( L, *pRef, iOffset );
+		Object = apActorCommands( pRef );
+		return true;
+	}
 }
 
 LuaTable::LuaTable()

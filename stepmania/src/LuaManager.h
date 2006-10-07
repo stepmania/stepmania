@@ -81,17 +81,10 @@ namespace LuaHelpers
 	void PushValueFunc( lua_State *L, int iArgs );
 
 	template<class T>
-	void Push( lua_State *L, T *pObject );
+	void Push( lua_State *L, const T &Object );
 
-	void Push( lua_State *L, const bool &Object );
-	void Push( lua_State *L, const float &Object );
-	void Push( lua_State *L, const int &Object );
-	void Push( lua_State *L, const RString &Object );
-
-	bool FromStack( Lua *L, bool &Object, int iOffset );
-	bool FromStack( Lua *L, float &Object, int iOffset );
-	bool FromStack( Lua *L, int &Object, int iOffset );
-	bool FromStack( Lua *L, RString &Object, int iOffset );
+	template<class T>
+	bool FromStack( lua_State *L, T &Object, int iOffset );
 
 	template<class T>
 	bool Pop( lua_State *L, T &val )

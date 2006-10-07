@@ -3,6 +3,7 @@
 #ifndef MessageManager_H
 #define MessageManager_H
 
+#include "LuaManager.h"
 struct lua_State;
 
 enum Message
@@ -200,6 +201,8 @@ public:
 	bool operator == ( const T &other ) const { return val == other; }
 	bool operator != ( const T &other ) const { return val != other; }
 };
+
+namespace LuaHelpers { template<class T> void Push( lua_State *L, const BroadcastOnChange<T> &Object ) { LuaHelpers::Push<T>( L, Object.Get() ); } }
 
 template<class T, int N>
 class BroadcastOnChange1D

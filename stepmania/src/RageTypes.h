@@ -200,11 +200,6 @@ public:
 	float r, g, b, a;
 } SM_ALIGN(16);
 
-namespace LuaHelpers
-{
-	bool FromStack( lua_State *L, RageColor &Object, int iOffset );
-}
-
 /* Convert floating-point 0..1 value to integer 0..255 value. *
  *
  * As a test case,

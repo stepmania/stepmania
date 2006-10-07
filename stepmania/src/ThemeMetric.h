@@ -72,10 +72,9 @@ public:
 	{
 		if( m_sName != ""  &&  THEME  &&   THEME->IsThemeLoaded() )
 		{
-			using namespace LuaHelpers;
 			Lua *L = LUA->Get();
 			THEME->PushMetric( L, m_sGroup, m_sName );
-			if( !FromStack(L, m_currentValue, -1) )
+			if( !LuaHelpers::FromStack(L, m_currentValue, -1) )
 				m_currentValue = T();
 			lua_pop( L, 1 );
 			LUA->Release(L);
