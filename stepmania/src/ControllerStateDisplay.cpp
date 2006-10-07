@@ -36,7 +36,7 @@ REGISTER_ACTOR_CLASS( ControllerStateDisplay )
 ControllerStateDisplay::ControllerStateDisplay()
 {
 	m_bIsLoaded = false;
-	m_mp = MultiPlayer_INVALID;
+	m_mp = MultiPlayer_Invalid;
 }
 
 void ControllerStateDisplay::LoadMultiPlayer( MultiPlayer mp )
@@ -46,7 +46,7 @@ void ControllerStateDisplay::LoadMultiPlayer( MultiPlayer mp )
 
 void ControllerStateDisplay::LoadGameController( GameController gc )
 {
-	LoadInternal( MultiPlayer_INVALID, gc );
+	LoadInternal( MultiPlayer_Invalid, gc );
 }
 
 void ControllerStateDisplay::LoadInternal( MultiPlayer mp, GameController gc )
