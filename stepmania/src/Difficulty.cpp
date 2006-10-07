@@ -40,11 +40,11 @@ Difficulty StringToDifficulty( const RString& sDC )
 	else if( s2 == "maniac" )	return DIFFICULTY_HARD;
 	else if( s2 == "heavy" )	return DIFFICULTY_HARD;
 	else if( s2 == "smaniac" )	return DIFFICULTY_CHALLENGE;
-	else if( s2 == "challenge" )return DIFFICULTY_CHALLENGE;
+	else if( s2 == "challenge" )	return DIFFICULTY_CHALLENGE;
 	else if( s2 == "expert" )	return DIFFICULTY_CHALLENGE;
 	else if( s2 == "oni" )		return DIFFICULTY_CHALLENGE;
 	else if( s2 == "edit" )		return DIFFICULTY_EDIT;
-	else						return Difficulty_Invalid;
+	else				return Difficulty_Invalid;
 }
 
 static const char *CourseDifficultyNames[] =
@@ -59,17 +59,18 @@ static const char *CourseDifficultyNames[] =
 XToString( CourseDifficulty, NUM_Difficulty );
 XToLocalizedString( CourseDifficulty );
 StringToX( CourseDifficulty );
+LuaXType( CourseDifficulty );
 
-LuaFunction( CourseDifficultyToLocalizedString, CourseDifficultyToLocalizedString(Enum::Check<Difficulty>(L, 1)) );
+LuaFunction( CourseDifficultyToLocalizedString, CourseDifficultyToLocalizedString(Enum::Check<CourseDifficulty>(L, 1)) );
 
 CourseDifficulty GetNextShownCourseDifficulty( CourseDifficulty cd )
 {
-	for( CourseDifficulty d=(CourseDifficulty)(cd+1); d<NUM_Difficulty; ((int&)d)++ )
+	for( CourseDifficulty d=enum_add2(cd,1); d<NUM_CourseDifficulty; enum_add(d, 1) )
 	{
 		if( GAMESTATE->IsCourseDifficultyShown(d) )
 			return d;
 	}
-	return Difficulty_Invalid;
+	return CourseDifficulty_Invalid;
 }
 
 /*
