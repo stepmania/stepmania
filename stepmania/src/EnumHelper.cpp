@@ -105,6 +105,7 @@ static void PushEnumMethodTable( lua_State *L )
 	luaL_register( L, "Enum", EnumLib );
 }
 
+/* Set up the enum table on the stack, and pop the table. */
 void Enum::SetMetatable( lua_State *L, LuaReference &EnumTable, LuaReference &EnumIndexTable, const char *szName )
 {
 	EnumTable.PushSelf( L );
@@ -124,7 +125,7 @@ void Enum::SetMetatable( lua_State *L, LuaReference &EnumTable, LuaReference &En
 		lua_setfield( L, -2, "__type" ); // for luaL_pushtype
 	}
 	lua_setmetatable( L, -2 );
-	lua_pop( L, 1 );
+	lua_pop( L, 2 );
 }
 
 /*
