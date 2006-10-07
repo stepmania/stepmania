@@ -46,8 +46,6 @@ void BroadcastPreferenceChanged( const RString& sPreferenceName );
 
 template <class BasicType> RString PrefToString( const BasicType &v );
 template <class BasicType> void PrefFromString( const RString &s, BasicType &v );
-template <class BasicType> void PrefSetFromStack( lua_State *L, BasicType &v );
-template <class BasicType> void PrefPushValue( lua_State *L, const BasicType &v );
 
 template <class T, class BasicType=T>
 class Preference : public IPreference
@@ -71,13 +69,13 @@ public:
 	}
 	void SetFromStack( lua_State *L )
 	{
-		PrefSetFromStack( L, (BasicType &)m_currentValue ); 
+		LuaHelpers::Pop( L, (BasicType &)m_currentValue );
 		if( m_pfnValidate )
 			m_pfnValidate( m_currentValue );
 	}
 	void PushValue( lua_State *L ) const
 	{
-		PrefPushValue<BasicType>( L, m_currentValue );
+		LuaHelpers::Push<BasicType>( L, m_currentValue );
 	}
 
 	void LoadDefault()
