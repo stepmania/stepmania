@@ -50,12 +50,12 @@ Difficulty StringToDifficulty( const RString& sDC )
 
 const RString &CourseDifficultyToLocalizedString( CourseDifficulty x )
 {
-	static auto_ptr<LocalizedString> g_CourseDifficultyName[NUM_CourseDifficulty];
+	static auto_ptr<LocalizedString> g_CourseDifficultyName[NUM_Difficulty];
 	if( g_CourseDifficultyName[0].get() == NULL )
 	{
-		for( unsigned i = 0; i < NUM_CourseDifficulty; ++i )
+		FOREACH_Difficulty(i)
 		{
-			auto_ptr<LocalizedString> ap( new LocalizedString("CourseDifficulty", DifficultyToString((CourseDifficulty)i)) );
+			auto_ptr<LocalizedString> ap( new LocalizedString("CourseDifficulty", DifficultyToString(i)) );
 			g_CourseDifficultyName[i] = ap;
 		}
 	}
