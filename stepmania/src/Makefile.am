@@ -340,7 +340,6 @@ RageModelGeometry.cpp RageModelGeometry.h RageSound.cpp RageSound.h RageSoundMan
 RageSoundUtil.cpp RageSoundUtil.h RageSoundMixBuffer.cpp RageSoundMixBuffer.h \
 RageSoundPosMap.cpp RageSoundPosMap.h RageSoundReader.h RageSoundReader_FileReader.cpp RageSoundReader_FileReader.h \
 RageSoundReader_Preload.cpp RageSoundReader_Preload.h RageSoundReader_Resample.cpp RageSoundReader_Resample.h \
-RageSoundReader_Resample_Fast.cpp RageSoundReader_Resample_Fast.h \
 RageSoundReader_Resample_Good.cpp RageSoundReader_Resample_Good.h \
 RageSoundReader_Chain.cpp RageSoundReader_Chain.h \
 RageSurface.cpp RageSurface.h RageSurfaceUtils.cpp RageSurfaceUtils.h \
