@@ -242,8 +242,14 @@ void ScreenOptionsEditCourseEntry::HandleScreenMessage( const ScreenMessage SM )
 				Song *pSong = ce.pSong;
 				Steps *pSteps;
 				StepsType st = GAMESTATE->m_stEdit;
-				CourseDifficulty cd = CourseDifficulty( ce.stepsCriteria.m_difficulty == Difficulty_Invalid ?
-									GAMESTATE->m_cdEdit : ce.stepsCriteria.m_difficulty );
+				CourseDifficulty cd;
+				if( (CourseDifficulty)ce.stepsCriteria.m_difficulty == (CourseDifficulty)Difficulty_Invalid )
+					cd = CourseDifficulty( GAMESTATE->m_cdEdit );
+				else
+					cd = CourseDifficulty( ce.stepsCriteria.m_difficulty );
+
+				//CourseDifficulty cd = CourseDifficulty( ce.stepsCriteria.m_difficulty == Difficulty_Invalid ?
+				//					GAMESTATE->m_cdEdit : ce.stepsCriteria.m_difficulty );
 
 				if( pSong == NULL )
 					pSong = m_pLongSong;
