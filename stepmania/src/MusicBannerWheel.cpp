@@ -69,7 +69,7 @@ MusicBannerWheel::MusicBannerWheel()
 		for ( unsigned i = 0; i < arraySongs.size(); i++)
 		{
 			//ONLY get non-autogenned steps
-			Steps* pSteps = SongUtil::GetStepsByDifficulty( arraySongs[i], GAMESTATE->GetCurrentStyle()->m_StepsType, DIFFICULTY_INVALID, false );
+			Steps* pSteps = SongUtil::GetStepsByDifficulty( arraySongs[i], GAMESTATE->GetCurrentStyle()->m_StepsType, DIFFICULTY_Invalid, false );
 			if ( pSteps != NULL )
 				pNotAutogen.push_back( arraySongs[i] );
 		}

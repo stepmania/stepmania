@@ -38,8 +38,8 @@ void GameCommand::Init()
 	m_MultiPlayer = MultiPlayer_Invalid;
 	m_pStyle = NULL;
 	m_pm = PlayMode_Invalid;
-	m_dc = DIFFICULTY_INVALID;
-	m_CourseDifficulty = DIFFICULTY_INVALID;
+	m_dc = DIFFICULTY_Invalid;
+	m_CourseDifficulty = DIFFICULTY_Invalid;
 	m_sPreferredModifiers = "";
 	m_sStageModifiers = "";
 	m_sAnnouncer = "";
@@ -86,7 +86,7 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 	// HACK: don't compare m_dc if m_pSteps is set.  This causes problems 
 	// in ScreenSelectOptionsMaster::ImportOptions if m_PreferredDifficulty 
 	// doesn't match the difficulty of m_pCurSteps.
-	if( m_pSteps == NULL  &&  m_dc != DIFFICULTY_INVALID )
+	if( m_pSteps == NULL  &&  m_dc != DIFFICULTY_Invalid )
 	{
 		// Why is this checking for all players?
 		FOREACH_HumanPlayer( pn )
@@ -193,7 +193,7 @@ void GameCommand::LoadOne( const Command& cmd )
 	else if( sName == "difficulty" )
 	{
 		Difficulty dc = StringToDifficulty( sValue );
-		if( dc != DIFFICULTY_INVALID )
+		if( dc != DIFFICULTY_Invalid )
 			m_dc = dc;
 		else
 			m_bInvalid |= true;
@@ -297,7 +297,7 @@ void GameCommand::LoadOne( const Command& cmd )
 				RageException::Throw( "Must set Course and Style to set Steps." );
 
 			const CourseDifficulty cd = StringToCourseDifficulty( sTrail );
-			ASSERT_M( cd != DIFFICULTY_INVALID, ssprintf("Invalid difficulty '%s'", sTrail.c_str()) );
+			ASSERT_M( cd != DIFFICULTY_Invalid, ssprintf("Invalid difficulty '%s'", sTrail.c_str()) );
 
 			m_pTrail = pCourse->GetTrail( pStyle->m_StepsType, cd );
 			if( m_pTrail == NULL )
@@ -655,7 +655,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 			ASSERT(0);
 		}
 	}
-	if( m_dc != DIFFICULTY_INVALID )
+	if( m_dc != DIFFICULTY_Invalid )
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 			GAMESTATE->ChangePreferredDifficulty( *pn, m_dc );
 	if( m_sAnnouncer != "" )
@@ -697,7 +697,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	if( m_pTrail )
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 			GAMESTATE->m_pCurTrail[*pn].Set( m_pTrail );
-	if( m_CourseDifficulty != DIFFICULTY_INVALID )
+	if( m_CourseDifficulty != DIFFICULTY_Invalid )
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 			GAMESTATE->ChangePreferredCourseDifficulty( *pn, m_CourseDifficulty );
 	if( m_pCharacter )
@@ -781,7 +781,7 @@ bool GameCommand::IsZero() const
 {
 	if( 	m_pm != PlayMode_Invalid ||
 		m_pStyle != NULL ||
-		m_dc != DIFFICULTY_INVALID ||
+		m_dc != DIFFICULTY_Invalid ||
 		m_sAnnouncer != "" ||
 		m_sPreferredModifiers != "" ||
 		m_sStageModifiers != "" ||
@@ -790,7 +790,7 @@ bool GameCommand::IsZero() const
 		m_pCourse != NULL || 
 		m_pTrail != NULL || 
 		m_pCharacter != NULL || 
-		m_CourseDifficulty != DIFFICULTY_INVALID ||
+		m_CourseDifficulty != DIFFICULTY_Invalid ||
 		!m_sSongGroup.empty() ||
 		m_SortOrder != SortOrder_INVALID ||
 		m_iWeightPounds != -1 ||

@@ -242,7 +242,7 @@ void ScreenOptionsEditCourseEntry::HandleScreenMessage( const ScreenMessage SM )
 				Song *pSong = ce.pSong;
 				Steps *pSteps;
 				StepsType st = GAMESTATE->m_stEdit;
-				CourseDifficulty cd = ( ce.stepsCriteria.m_difficulty == DIFFICULTY_INVALID ?
+				CourseDifficulty cd = ( ce.stepsCriteria.m_difficulty == DIFFICULTY_Invalid ?
 							GAMESTATE->m_cdEdit : ce.stepsCriteria.m_difficulty );
 
 				if( pSong == NULL )
@@ -276,11 +276,11 @@ void ScreenOptionsEditCourseEntry::HandleScreenMessage( const ScreenMessage SM )
 				// Try to find steps first using st and cd, then st, then cd, then any.
 				pSteps = SongUtil::GetStepsByDifficulty( pSong, st, cd, false );
 				if( !pSteps )
-					pSteps = SongUtil::GetStepsByDifficulty( pSong, st, DIFFICULTY_INVALID, false );
+					pSteps = SongUtil::GetStepsByDifficulty( pSong, st, DIFFICULTY_Invalid, false );
 				if( !pSteps )
 					pSteps = SongUtil::GetStepsByDifficulty( pSong, StepsType_Invalid, cd, false );
 				if( !pSteps )
-					pSteps = SongUtil::GetStepsByDifficulty( pSong, StepsType_Invalid, DIFFICULTY_INVALID, false );
+					pSteps = SongUtil::GetStepsByDifficulty( pSong, StepsType_Invalid, DIFFICULTY_Invalid, false );
 				ASSERT( pSteps );
 				
 				// Set up for ScreenEdit
@@ -478,7 +478,7 @@ void ScreenOptionsEditCourseEntry::ExportOptions( int iRow, const vector<PlayerN
 	{
 		if( iChoice == 0 )
 		{
-			ce.stepsCriteria.m_difficulty = DIFFICULTY_INVALID;
+			ce.stepsCriteria.m_difficulty = DIFFICULTY_Invalid;
 		}
 		else
 		{

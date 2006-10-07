@@ -804,7 +804,7 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 					break;
 				}
 
-				if( GAMESTATE->m_PreferredDifficulty[pn] != DIFFICULTY_INVALID )
+				if( GAMESTATE->m_PreferredDifficulty[pn] != DIFFICULTY_Invalid )
 				{
 					int iDiff = abs(m_vpSteps[i]->GetDifficulty() - GAMESTATE->m_PreferredDifficulty[pn]);
 

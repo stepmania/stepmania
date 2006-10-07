@@ -19,7 +19,7 @@ struct TrailEntry
 		bSecret(false),
 		iLowMeter(-1),
 		iHighMeter(-1),
-		dc(DIFFICULTY_INVALID)
+		dc(DIFFICULTY_Invalid)
 	{
 	}
 	void GetAttackArray( AttackArray &out ) const;
@@ -57,7 +57,7 @@ public:
 	void Init()
 	{
 		m_StepsType = StepsType_Invalid;
-		m_CourseDifficulty = DIFFICULTY_INVALID;
+		m_CourseDifficulty = DIFFICULTY_Invalid;
 		m_iSpecifiedMeter = -1;
 		m_vEntries.clear();
 		m_bRadarValuesCached = false;

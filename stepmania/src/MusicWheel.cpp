@@ -742,7 +742,7 @@ void MusicWheel::UpdateSwitch()
 			//
 			// Change difficulty for sorts by meter - XXX: do this with GameCommand?
 			//
-			Difficulty dc = DIFFICULTY_INVALID;
+			Difficulty dc = DIFFICULTY_Invalid;
 			switch( GAMESTATE->m_SortOrder )
 			{
 			case SORT_EASY_METER:		dc = DIFFICULTY_EASY;		break;
@@ -750,7 +750,7 @@ void MusicWheel::UpdateSwitch()
 			case SORT_HARD_METER:		dc = DIFFICULTY_HARD;		break;
 			case SORT_CHALLENGE_METER:	dc = DIFFICULTY_CHALLENGE;	break;
 			}
-			if( dc != DIFFICULTY_INVALID )
+			if( dc != DIFFICULTY_Invalid )
 			{
 				FOREACH_PlayerNumber( p )
 					if( GAMESTATE->IsPlayerEnabled(p) )
@@ -1053,7 +1053,7 @@ Song *MusicWheel::GetPreferredSelectionForRandomOrPortal()
 	vector<Difficulty> vDifficultiesToRequire;
 	FOREACH_HumanPlayer(p)
 	{
-		if( GAMESTATE->m_PreferredDifficulty[p] == DIFFICULTY_INVALID )
+		if( GAMESTATE->m_PreferredDifficulty[p] == DIFFICULTY_Invalid )
 			continue;	// skip
 
 		// TRICKY: Don't require that edits be present if perferred 

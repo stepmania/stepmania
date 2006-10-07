@@ -158,7 +158,7 @@ InputDeviceState RageInput::GetInputDeviceState( InputDevice id )
 		}
 	}
 
-	return InputDeviceState_INVALID;
+	return InputDeviceState_Invalid;
 }
 
 RString RageInput::GetDisplayDevicesString() const

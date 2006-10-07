@@ -412,7 +412,7 @@ void MemoryCardManager::CheckStateChanges()
 	{
 		const UsbStorageDevice &new_device = m_Device[p];		    
 
-		MemoryCardState state = MemoryCardState_INVALID;
+		MemoryCardState state = MemoryCardState_Invalid;
 		RString sError;
 
 		if( m_bCardsLocked )
@@ -445,7 +445,7 @@ void MemoryCardManager::CheckStateChanges()
 			}
 		}
 
-		if( state == MemoryCardState_INVALID )
+		if( state == MemoryCardState_Invalid )
 		{
 			switch( new_device.m_State )
 			{

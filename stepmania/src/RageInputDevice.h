@@ -81,7 +81,7 @@ enum InputDeviceState
 	InputDeviceState_Disconnected,
 	InputDeviceState_MissingMultitap,
 	NUM_InputDeviceState,
-	InputDeviceState_INVALID
+	InputDeviceState_Invalid
 };
 
 

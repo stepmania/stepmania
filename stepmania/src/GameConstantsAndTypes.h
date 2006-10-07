@@ -222,7 +222,7 @@ enum MemoryCardState
 	MemoryCardState_Removed,
 	MemoryCardState_NoCard,
 	NUM_MemoryCardState,
-	MemoryCardState_INVALID,
+	MemoryCardState_Invalid,
 };
 
 const RString& MemoryCardStateToString( MemoryCardState mcs );

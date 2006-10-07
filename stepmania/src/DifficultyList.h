@@ -56,7 +56,7 @@ private:
 		Row()
 		{
 			m_Steps = NULL;
-			m_dc = DIFFICULTY_INVALID;
+			m_dc = DIFFICULTY_Invalid;
 			m_fY = 0;
 			m_bHidden = false;
 		}

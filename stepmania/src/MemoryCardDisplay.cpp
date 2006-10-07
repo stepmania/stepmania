@@ -11,7 +11,7 @@ REGISTER_ACTOR_CLASS( MemoryCardDisplay )
 MemoryCardDisplay::MemoryCardDisplay()
 {
 	m_PlayerNumber = PLAYER_INVALID;
-	m_LastSeenState = MemoryCardState_INVALID;
+	m_LastSeenState = MemoryCardState_Invalid;
 }
 
 void MemoryCardDisplay::Load( PlayerNumber pn )
@@ -43,7 +43,7 @@ void MemoryCardDisplay::Update( float fDelta )
 	MemoryCardState newMcs = MEMCARDMAN->GetCardState(m_PlayerNumber);
 	if( m_LastSeenState != newMcs )
 	{
-		if( m_LastSeenState != MemoryCardState_INVALID )
+		if( m_LastSeenState != MemoryCardState_Invalid )
 			m_spr[m_LastSeenState].SetHidden( true );
 		m_LastSeenState = newMcs;
 		m_spr[m_LastSeenState].SetHidden( false );

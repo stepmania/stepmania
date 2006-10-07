@@ -13,7 +13,7 @@
 
 bool StepsCriteria::Matches( const Song *pSong, const Steps *pSteps ) const
 {
-	if( m_difficulty != DIFFICULTY_INVALID  &&  pSteps->GetDifficulty() != m_difficulty )
+	if( m_difficulty != DIFFICULTY_Invalid  &&  pSteps->GetDifficulty() != m_difficulty )
 		return false;
 	if( m_iLowMeter != -1  &&  pSteps->GetMeter() < m_iLowMeter )
 		return false;
@@ -191,7 +191,7 @@ void StepsID::FromSteps( const Steps *p )
 	if( p == NULL )
 	{
 		st = StepsType_Invalid;
-		dc = DIFFICULTY_INVALID;
+		dc = DIFFICULTY_Invalid;
 		sDescription = "";
 		uHash = 0;
 	}
@@ -225,7 +225,7 @@ static map<SongIDAndStepsID,Steps *> g_Cache;
 
 Steps *StepsID::ToSteps( const Song *p, bool bAllowNull, bool bUseCache ) const
 {
-	if( st == StepsType_Invalid || dc == DIFFICULTY_INVALID )
+	if( st == StepsType_Invalid || dc == DIFFICULTY_Invalid )
 		return NULL;
 
 	SongID songID;
@@ -317,7 +317,7 @@ RString StepsID::ToString() const
 
 bool StepsID::IsValid() const
 {
-	return st != StepsType_Invalid && dc != DIFFICULTY_INVALID;
+	return st != StepsType_Invalid && dc != DIFFICULTY_Invalid;
 }
 
 bool StepsID::operator<( const StepsID &rhs ) const

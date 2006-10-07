@@ -55,7 +55,7 @@ public:
 		m_Type = UnlockRewardType_Invalid;
 
 		m_pSong = NULL;
-		m_dc = DIFFICULTY_INVALID;
+		m_dc = DIFFICULTY_Invalid;
 		m_pCourse = NULL;
 
 		ZERO( m_fRequirement );

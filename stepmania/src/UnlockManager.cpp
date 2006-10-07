@@ -174,7 +174,7 @@ bool UnlockManager::ModifierIsLocked( const RString &sOneMod ) const
 const UnlockEntry *UnlockManager::FindSong( const Song *pSong ) const
 {
 	FOREACH_CONST( UnlockEntry, m_UnlockEntries, e )
-		if( e->m_pSong == pSong  &&  e->m_dc == DIFFICULTY_INVALID )
+		if( e->m_pSong == pSong  &&  e->m_dc == DIFFICULTY_Invalid )
 			return &(*e);
 	return NULL;
 }
@@ -294,7 +294,7 @@ bool UnlockEntry::IsValid() const
 		return m_pSong != NULL;
 
 	case UnlockRewardType_Steps:
-		return m_pSong != NULL && m_dc != DIFFICULTY_INVALID;
+		return m_pSong != NULL && m_dc != DIFFICULTY_Invalid;
 
 	case UnlockRewardType_Course:
 		return m_pCourse != NULL;
@@ -578,7 +578,7 @@ void UnlockManager::UpdateCachedPointers()
 			}
 
 			e->m_dc = StringToDifficulty( e->m_cmd.GetArg(2) );
-			if( e->m_dc == DIFFICULTY_INVALID )
+			if( e->m_dc == DIFFICULTY_Invalid )
 			{
 				LOG->Warn( "Unlock: Invalid difficulty \"%s\"", e->m_cmd.GetArg(2).s.c_str() );
 				break;

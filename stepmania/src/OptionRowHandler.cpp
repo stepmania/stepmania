@@ -675,13 +675,13 @@ class OptionRowHandlerListDifficulties: public OptionRowHandlerList
 	{
 		m_Def.m_bOneChoiceForAllPlayers = true;
 		m_Def.m_sName = "Difficulty";
-		m_Default.m_dc = DIFFICULTY_INVALID;
+		m_Default.m_dc = DIFFICULTY_Invalid;
 		m_Def.m_bAllowThemeItems = false;	// we theme the text ourself
 
 		{
 			m_Def.m_vsChoices.push_back( "AllDifficulties" );
 			GameCommand mc;
-			mc.m_dc = DIFFICULTY_INVALID;
+			mc.m_dc = DIFFICULTY_Invalid;
 			m_aListEntries.push_back( mc );
 		}
 

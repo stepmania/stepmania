@@ -73,7 +73,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			else if( sParams.params.size() == 3 )
 			{
 				const CourseDifficulty cd = StringToCourseDifficulty( sParams[1] );
-				if( cd == DIFFICULTY_INVALID )
+				if( cd == DIFFICULTY_Invalid )
 				{
 					LOG->UserLog( "Course file", sPath, "contains an invalid #METER string: \"%s\"", sParams[1].c_str() );
 					continue;
@@ -202,7 +202,7 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 			}
 
 			new_entry.stepsCriteria.m_difficulty = StringToDifficulty( sParams[2] );
-			if( new_entry.stepsCriteria.m_difficulty == DIFFICULTY_INVALID )
+			if( new_entry.stepsCriteria.m_difficulty == DIFFICULTY_Invalid )
 			{
 				int retval = sscanf( sParams[2], "%d..%d", &new_entry.stepsCriteria.m_iLowMeter, &new_entry.stepsCriteria.m_iHighMeter );
 				if( retval == 1 )
