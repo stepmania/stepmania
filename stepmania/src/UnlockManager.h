@@ -24,7 +24,7 @@ enum UnlockRequirement
 	UnlockRequirement_Toasties,
 	UnlockRequirement_StagesCleared,
 	NUM_UnlockRequirement,
-	UnlockRequirement_INVALID,
+	UnlockRequirement_Invalid,
 };
 LuaDeclareType( UnlockRequirement );
 
@@ -35,7 +35,7 @@ enum UnlockRewardType {
 	UnlockRewardType_Course, 
 	UnlockRewardType_Modifier, 
 	NUM_UnlockRewardType, 
-	UnlockRewardType_INVALID
+	UnlockRewardType_Invalid
 };
 const RString& UnlockRewardTypeToString( UnlockRewardType i );
 const RString& UnlockRewardTypeToLocalizedString( UnlockRewardType i );
@@ -52,7 +52,7 @@ class UnlockEntry
 public:
 	UnlockEntry()
 	{
-		m_Type = UnlockRewardType_INVALID;
+		m_Type = UnlockRewardType_Invalid;
 
 		m_pSong = NULL;
 		m_dc = DIFFICULTY_INVALID;

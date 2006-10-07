@@ -34,7 +34,7 @@ public:
 	// Use a special value of difficulty
 	bool IsAnEdit() const				{ return m_Difficulty == DIFFICULTY_EDIT; }
 	bool IsAPlayerEdit() const			{ return IsAnEdit() && GetLoadedFromProfileSlot() < ProfileSlot_Machine; }
-	bool WasLoadedFromProfile() const		{ return m_LoadedFromProfile != ProfileSlot_INVALID; }
+	bool WasLoadedFromProfile() const		{ return m_LoadedFromProfile != ProfileSlot_Invalid; }
 	ProfileSlot GetLoadedFromProfileSlot() const	{ return m_LoadedFromProfile; }
 	RString GetDescription() const			{ return Real()->m_sDescription; }
 	Difficulty GetDifficulty() const		{ return Real()->m_Difficulty; }
@@ -84,7 +84,7 @@ private:
 
 	RString				m_sFilename;
 	bool				m_bSavedToDisk;		// true if this was loaded from disk or has been saved to disk.
-	ProfileSlot			m_LoadedFromProfile;	// ProfileSlot_INVALID if wasn't loaded from a profile
+	ProfileSlot			m_LoadedFromProfile;	// ProfileSlot_Invalid if wasn't loaded from a profile
 
 	/* These values are pulled from the autogen source first, if there is one. */
 	mutable unsigned		m_iHash;		// only used if m_Difficulty == DIFFICULTY_EDIT

@@ -87,7 +87,7 @@ public:
 
 	RString m_sGroupName;
 
-	ProfileSlot	m_LoadedFromProfile;	// ProfileSlot_INVALID if wasn't loaded from a profile
+	ProfileSlot	m_LoadedFromProfile;	// ProfileSlot_Invalid if wasn't loaded from a profile
 	bool	m_bIsSymLink;
 
 	RString	m_sMainTitle, m_sSubTitle, m_sArtist;
@@ -199,8 +199,8 @@ public:
 	void AddSteps( Steps* pSteps );		// we are responsible for deleting the memory pointed to by pSteps!
 	void DeleteSteps( const Steps* pSteps, bool bReAutoGen = true );
 
-	void FreeAllLoadedFromProfile( ProfileSlot slot = ProfileSlot_INVALID );
-	bool WasLoadedFromProfile() const { return m_LoadedFromProfile != ProfileSlot_INVALID; }
+	void FreeAllLoadedFromProfile( ProfileSlot slot = ProfileSlot_Invalid );
+	bool WasLoadedFromProfile() const { return m_LoadedFromProfile != ProfileSlot_Invalid; }
 	void GetStepsLoadedFromProfile( ProfileSlot slot, vector<Steps*> &vpStepsOut ) const;
 	int GetNumStepsLoadedFromProfile( ProfileSlot slot ) const;
 	bool IsEditAlreadyLoaded( Steps* pSteps ) const;

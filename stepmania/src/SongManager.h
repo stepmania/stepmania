@@ -41,7 +41,7 @@ public:
 
 	void LoadAllFromProfileDir( const RString &sProfileDir, ProfileSlot slot );
 	int GetNumStepsLoadedFromProfile();
-	void FreeAllLoadedFromProfile( ProfileSlot slot = ProfileSlot_INVALID );
+	void FreeAllLoadedFromProfile( ProfileSlot slot = ProfileSlot_Invalid );
 
 	void LoadGroupSymLinks( RString sDir, RString sGroupFolder );
 

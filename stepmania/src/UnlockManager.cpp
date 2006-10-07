@@ -453,7 +453,7 @@ void UnlockManager::Load()
 			else
 			{
 				const UnlockRequirement ut = StringToUnlockRequirement( cmd.GetName() );
-				if( ut != UnlockRequirement_INVALID )
+				if( ut != UnlockRequirement_Invalid )
 					current.m_fRequirement[ut] = cmd.GetArg(1);
 			}
 		}

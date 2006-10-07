@@ -190,8 +190,8 @@ public:
 	bool GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;
 	bool GetTrailSorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;
 
-	bool IsAnEdit() const { return m_LoadedFromProfile != ProfileSlot_INVALID; }
-	ProfileSlot		m_LoadedFromProfile;	// ProfileSlot_INVALID if wasn't loaded from a profile
+	bool IsAnEdit() const { return m_LoadedFromProfile != ProfileSlot_Invalid; }
+	ProfileSlot		m_LoadedFromProfile;	// ProfileSlot_Invalid if wasn't loaded from a profile
 
 	typedef pair<StepsType,Difficulty> CacheEntry;
 	struct CacheData

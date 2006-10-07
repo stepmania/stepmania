@@ -1742,10 +1742,10 @@ void SongManager::FreeAllLoadedFromProfile( ProfileSlot slot )
 	FOREACH( Course*, m_pCourses, c )
 	{
 		Course *pCourse = *c;
-		if( pCourse->GetLoadedFromProfileSlot() == ProfileSlot_INVALID )
+		if( pCourse->GetLoadedFromProfileSlot() == ProfileSlot_Invalid )
 			continue;
 		
-		if( slot == ProfileSlot_INVALID || pCourse->GetLoadedFromProfileSlot() == slot )
+		if( slot == ProfileSlot_Invalid || pCourse->GetLoadedFromProfileSlot() == slot )
 			apToDelete.push_back( *c );
 	}
 
@@ -1766,7 +1766,7 @@ int SongManager::GetNumStepsLoadedFromProfile()
 
 		FOREACH( Steps*, vpAllSteps, ss )
 		{
-			if( (*ss)->GetLoadedFromProfileSlot() != ProfileSlot_INVALID )
+			if( (*ss)->GetLoadedFromProfileSlot() != ProfileSlot_Invalid )
 				iCount++;
 		}
 	}	

@@ -30,7 +30,7 @@ Steps::Steps()
 {
 	m_bSavedToDisk = false;
 	m_StepsType = StepsType_Invalid;
-	m_LoadedFromProfile = ProfileSlot_INVALID;
+	m_LoadedFromProfile = ProfileSlot_Invalid;
 	m_iHash = 0;
 	m_Difficulty = DIFFICULTY_INVALID;
 	m_iMeter = 0;
@@ -282,7 +282,7 @@ void Steps::Compress() const
 		return;
 	}
 
-	if( !m_sFilename.empty() && m_LoadedFromProfile == ProfileSlot_INVALID )
+	if( !m_sFilename.empty() && m_LoadedFromProfile == ProfileSlot_Invalid )
 	{
 		/*
 		 * We have a file on disk; clear all data in memory.

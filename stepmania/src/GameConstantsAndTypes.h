@@ -208,7 +208,7 @@ enum ProfileSlot
 	ProfileSlot_Player2,
 	ProfileSlot_Machine,
 	NUM_ProfileSlot,
-	ProfileSlot_INVALID
+	ProfileSlot_Invalid
 };
 #define FOREACH_ProfileSlot( slot ) FOREACH_ENUM2( ProfileSlot, slot )
 
