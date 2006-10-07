@@ -115,6 +115,55 @@ inline void RemoveIf( Container& c, Predicate p )
 	c.erase( remove_if(c.begin(), c.end(), p), c.end() );
 }
 
+/* Cast between types through a union, to avoid type-punning problems in gcc. */
+template<typename TO, typename FROM>
+TO &CastSimilarTypes( FROM &val )
+{
+        union conv_union
+        {
+                TO to;
+                FROM from;
+        };
+
+        conv_union &u = (conv_union &) val;
+        return u.to;
+}
+
+template<typename T>
+int &UnionCast( T &e )
+{
+        return CastSimilarTypes<int,T>(e);
+}
+
+/*
+ * Safely add an integer to an enum.
+ *
+ * This is illegal:
+ *
+ *  ((int&)val) += iAmt;
+ *
+ * It breaks aliasing rules; the compiler is allowed to assume that "val" doesn't
+ * change (unless it's declared volatile), and in some cases, you'll end up getting
+ * old values for "val" following the add.  (What's probably really happening is
+ * that the memory location is being added to, but the value is stored in a register,
+ * and breaking aliasing rules means the compiler doesn't know that the register
+ * value is invalid.)
+ *
+ * Always do these conversions through a union.
+ */
+template<typename T>
+static inline void enum_add( T &val, int iAmt )
+{
+	UnionCast( val ) += iAmt;
+}
+
+template<typename T>
+static inline T enum_add2( T val, int iAmt )
+{
+	enum_add( val, iAmt );
+	return val;
+}
+
 
 /*
  * We only have unsigned swaps; byte swapping a signed value doesn't make sense. 

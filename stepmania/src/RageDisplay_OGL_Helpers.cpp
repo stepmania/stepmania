@@ -55,7 +55,7 @@ bool GLExt_t::HasExtension( const RString &sExt ) const
 	return g_glExts.find(sExt) != g_glExts.end();
 }
 
-#define F(n)  { (void **) &GLExt.n , #n }
+#define F(n)  { &CastSimilarTypes<void *>(GLExt.n), #n }
 
 struct func_t
 {
