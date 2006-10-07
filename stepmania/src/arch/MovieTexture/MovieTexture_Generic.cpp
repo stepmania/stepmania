@@ -127,7 +127,7 @@ void MovieTexture_Generic::CreateTexture()
 			m_pSurface->format->Mask[2],
 			m_pSurface->format->Mask[3] );
 
-	if( pixfmt == PixelFormat_INVALID )
+	if( pixfmt == PixelFormat_Invalid )
 	{
 		/* We weren't given a natively-supported pixel format.  Pick a supported
 		 * one.  This is a fallback case, and implies a second conversion. */
