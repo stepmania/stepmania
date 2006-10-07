@@ -24,8 +24,7 @@
 
 static RageTimer g_GameplayTimer;
 
-enum BoostAppPriority { BOOST_NO, BOOST_YES, BOOST_AUTO };	/* auto = do whatever is appropriate for the arch. */
-static Preference<BoostAppPriority,int> g_BoostAppPriority( "BoostAppPriority", BOOST_AUTO );
+static Preference<bool> g_bNeverBoostAppPriority( "NeverBoostAppPriority", false );
 
 /* experimental: force a specific update rate.  This prevents big 
  * animation jumps on frame skips.  0 to disable. */
@@ -64,12 +63,11 @@ static void CheckGameLoopTimerSkips( float fDeltaTime )
 
 static bool ChangeAppPri()
 {
-	if( g_BoostAppPriority.Get() == BOOST_NO )
+	if( g_bNeverBoostAppPriority.Get() )
 		return false;
 
 	// if using NTPAD don't boost or else input is laggy
 #if defined(_WINDOWS)
-	if( g_BoostAppPriority == BOOST_AUTO )
 	{
 		vector<InputDeviceInfo> vDevices;
 
@@ -89,13 +87,12 @@ static bool ChangeAppPri()
 	}
 #endif
 
-	/* If -1 and this is a debug build, don't.  It makes the debugger sluggish. */
-#ifdef DEBUG
-	if( g_BoostAppPriority == BOOST_AUTO )
-		return false;
-#endif
-
+	/* If this is a debug build, don't.  It makes the VC debugger sluggish. */
+#if defined(WIN32) && defined(DEBUG)
+	return false;
+#else
 	return true;
+#endif
 }
 
 static void CheckFocus()
