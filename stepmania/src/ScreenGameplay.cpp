@@ -1297,7 +1297,7 @@ void ScreenGameplay::LoadLights()
 	vector<RString> asDifficulties;
 	split( sDifficulty, ",", asDifficulties );
 
-	Difficulty d1 = DIFFICULTY_Invalid;
+	Difficulty d1 = Difficulty_Invalid;
 	if( asDifficulties.size() > 0 )
 		d1 = StringToDifficulty( asDifficulties[0] );
 	pSteps = SongUtil::GetClosestNotes( GAMESTATE->m_pCurSong, GAMESTATE->GetCurrentStyle()->m_StepsType, d1 );

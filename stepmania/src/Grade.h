@@ -31,9 +31,9 @@ enum Grade
 	Grade_Tier20,
 	Grade_Failed,	// = E
 	NUM_Grade, 
-	GRADE_Invalid,
+	Grade_Invalid,
 };
-#define Grade_NoData GRADE_Invalid
+#define Grade_NoData Grade_Invalid
 
 /* This is in the header so the test sets don't require Grade.cpp (through PrefsManager),
  * since that pulls in ThemeManager. */

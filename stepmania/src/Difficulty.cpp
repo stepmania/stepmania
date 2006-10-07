@@ -44,7 +44,7 @@ Difficulty StringToDifficulty( const RString& sDC )
 	else if( s2 == "expert" )	return DIFFICULTY_CHALLENGE;
 	else if( s2 == "oni" )		return DIFFICULTY_CHALLENGE;
 	else if( s2 == "edit" )		return DIFFICULTY_EDIT;
-	else						return DIFFICULTY_Invalid;
+	else						return Difficulty_Invalid;
 }
 
 static const char *CourseDifficultyNames[] =
@@ -69,7 +69,7 @@ CourseDifficulty GetNextShownCourseDifficulty( CourseDifficulty cd )
 		if( GAMESTATE->IsCourseDifficultyShown(d) )
 			return d;
 	}
-	return DIFFICULTY_Invalid;
+	return Difficulty_Invalid;
 }
 
 /*

@@ -144,7 +144,7 @@ enum TapNoteScore {
 	TNS_W2,
 	TNS_W1,
 	NUM_TapNoteScore,
-	TNS_Invalid,
+	TapNoteScore_Invalid,
 };
 #define FOREACH_TapNoteScore( tns ) FOREACH_ENUM2( TapNoteScore, tns )
 const RString& TapNoteScoreToString( TapNoteScore tns );
@@ -159,7 +159,7 @@ enum HoldNoteScore
 	HNS_LetGo,		// the HoldNote has passed and they missed it
 	HNS_Held,		// the HoldNote has passed and was successfully held all the way through
 	NUM_HoldNoteScore,
-	HNS_Invalid,
+	HoldNoteScore_Invalid,
 };
 #define FOREACH_HoldNoteScore( hns ) FOREACH_ENUM2( HoldNoteScore, hns )
 const RString& HoldNoteScoreToString( HoldNoteScore hns );
@@ -345,7 +345,7 @@ enum PerDifficultyAward
 	AWARD_PERCENT_90_W3,
 	AWARD_PERCENT_100_W3,
 	NUM_PerDifficultyAward,
-	PER_DIFFICULTY_AWARD_Invalid,
+	PerDifficultyAward_Invalid,
 };
 #define FOREACH_PerDifficultyAward( pma ) FOREACH_ENUM2( PerDifficultyAward, pma )
 const RString& PerDifficultyAwardToString( PerDifficultyAward pma );
@@ -367,7 +367,7 @@ enum PeakComboAward
 	AWARD_9000_PEAK_COMBO,
 	AWARD_10000_PEAK_COMBO,
 	NUM_PeakComboAward,
-	PEAK_COMBO_AWARD_Invalid,
+	PeakComboAward_Invalid,
 };
 #define FOREACH_PeakComboAward( pca ) FOREACH_ENUM2( PeakComboAward, pca )
 const RString& PeakComboAwardToString( PeakComboAward pma );
@@ -444,7 +444,7 @@ enum Stage
 	STAGE_EVENT,
 	STAGE_DEMO,
 	NUM_Stage,
-	STAGE_Invalid,
+	Stage_Invalid,
 };
 #define FOREACH_Stage( s ) FOREACH_ENUM2( Stage, s )
 const RString& StageToString( Stage s );

@@ -119,7 +119,7 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 		}
 
 		f.Write( ":" );
-		if( entry.stepsCriteria.m_difficulty != DIFFICULTY_Invalid )
+		if( entry.stepsCriteria.m_difficulty != Difficulty_Invalid )
 			f.Write( DifficultyToString(entry.stepsCriteria.m_difficulty) );
 		else if( entry.stepsCriteria.m_iLowMeter != -1  &&  entry.stepsCriteria.m_iHighMeter != -1 )
 			f.Write( ssprintf( "%d..%d", entry.stepsCriteria.m_iLowMeter, entry.stepsCriteria.m_iHighMeter ) );

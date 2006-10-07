@@ -13,7 +13,7 @@ class SongCriteria;
 class StepsCriteria
 {
 public:
-	Difficulty m_difficulty;	// don't filter if DIFFICULTY_Invalid
+	Difficulty m_difficulty;	// don't filter if Difficulty_Invalid
 	int m_iLowMeter;		// don't filter if -1
 	int m_iHighMeter;		// don't filter if -1
 	StepsType m_st;			// don't filter if StepsType_Invalid
@@ -21,7 +21,7 @@ public:
 
 	StepsCriteria()
 	{
-		m_difficulty = DIFFICULTY_Invalid;
+		m_difficulty = Difficulty_Invalid;
 		m_iLowMeter = -1;
 		m_iHighMeter = -1;
 		m_st = StepsType_Invalid;

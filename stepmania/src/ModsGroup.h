@@ -10,6 +10,7 @@ enum ModsLevel
 	ModsLevel_Stage,	// Preferred + forced stage mods
 	ModsLevel_Song,		// Stage + forced attack mods
 	NUM_ModsLevel,
+	ModsLevel_Invalid
 };
 LuaDeclareType( ModsLevel );
 

@@ -32,7 +32,7 @@ Steps::Steps()
 	m_StepsType = StepsType_Invalid;
 	m_LoadedFromProfile = ProfileSlot_Invalid;
 	m_iHash = 0;
-	m_Difficulty = DIFFICULTY_Invalid;
+	m_Difficulty = Difficulty_Invalid;
 	m_iMeter = 0;
 
 	m_pNoteData = new NoteData;
@@ -155,10 +155,10 @@ float Steps::PredictMeter() const
 
 void Steps::TidyUpData()
 {
-	if( GetDifficulty() == DIFFICULTY_Invalid )
+	if( GetDifficulty() == Difficulty_Invalid )
 		SetDifficulty( StringToDifficulty(GetDescription()) );
 	
-	if( GetDifficulty() == DIFFICULTY_Invalid )
+	if( GetDifficulty() == Difficulty_Invalid )
 	{
 		if(	 GetMeter() == 1 )	SetDifficulty( DIFFICULTY_BEGINNER );
 		else if( GetMeter() <= 3 )	SetDifficulty( DIFFICULTY_EASY );

@@ -100,8 +100,8 @@ void Profile::InitGeneralData()
 	m_sGuid = MakeGuid();
 
 	m_SortOrder = SortOrder_Invalid;
-	m_LastDifficulty = DIFFICULTY_Invalid;
-	m_LastCourseDifficulty = DIFFICULTY_Invalid;
+	m_LastDifficulty = Difficulty_Invalid;
+	m_LastCourseDifficulty = Difficulty_Invalid;
 	m_lastSong.Unset();
 	m_lastCourse.Unset();
 	m_iTotalPlays = 0;

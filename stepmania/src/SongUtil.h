@@ -59,7 +59,7 @@ namespace SongUtil
 		const Song *pSong,
 		vector<Steps*>& arrayAddTo, 
 		StepsType st = StepsType_Invalid, 
-		Difficulty dc = DIFFICULTY_Invalid, 
+		Difficulty dc = Difficulty_Invalid, 
 		int iMeterLow = -1, 
 		int iMeterHigh = -1, 
 		const RString &sDescription = "", 
@@ -70,7 +70,7 @@ namespace SongUtil
 	Steps* GetOneSteps( 
 		const Song *pSong,
 		StepsType st = StepsType_Invalid, 
-		Difficulty dc = DIFFICULTY_Invalid, 
+		Difficulty dc = Difficulty_Invalid, 
 		int iMeterLow = -1, 
 		int iMeterHigh = -1, 
 		const RString &sDescription = "", 

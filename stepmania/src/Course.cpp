@@ -64,7 +64,7 @@ RString CourseEntry::GetTextDescription() const
 		vsEntryDescription.push_back( songCriteria.m_sGroupName );
 	if( songCriteria.m_bUseSongGenreAllowedList )
 		vsEntryDescription.push_back( join(",",songCriteria.m_vsSongGenreAllowedList) );
-	if( stepsCriteria.m_difficulty != DIFFICULTY_Invalid  &&  stepsCriteria.m_difficulty != DIFFICULTY_MEDIUM )
+	if( stepsCriteria.m_difficulty != Difficulty_Invalid  &&  stepsCriteria.m_difficulty != DIFFICULTY_MEDIUM )
 		vsEntryDescription.push_back( DifficultyToLocalizedString(stepsCriteria.m_difficulty) );
 	if( stepsCriteria.m_iLowMeter != -1 )
 		vsEntryDescription.push_back( ssprintf("Low meter: %d", stepsCriteria.m_iLowMeter) );
@@ -263,7 +263,7 @@ RString Course::GetTranslitFullTitle() const
  * course difficulty doesn't exist, NULL is returned. */
 Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 {
-	ASSERT( cd != DIFFICULTY_Invalid );
+	ASSERT( cd != Difficulty_Invalid );
 
 	//
 	// Check to see if the Trail cache is out of date
@@ -543,7 +543,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 			 * on the original range, bump the steps based on course difficulty, and
 			 * then retroactively tweak the low_meter/high_meter so course displays
 			 * line up. */
-			if( e->stepsCriteria.m_difficulty == DIFFICULTY_Invalid && bChangedDifficulty )
+			if( e->stepsCriteria.m_difficulty == Difficulty_Invalid && bChangedDifficulty )
 			{
 				/* Minimum and maximum to add to make the meter range contain the actual
 				 * meter: */
@@ -574,11 +574,11 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		te.iLowMeter = iLowMeter;
 		te.iHighMeter = iHighMeter;
 
-		/* If we chose based on meter (not difficulty), then store DIFFICULTY_Invalid, so
+		/* If we chose based on meter (not difficulty), then store Difficulty_Invalid, so
 		 * other classes can tell that we used meter. */
-		if( e->stepsCriteria.m_difficulty == DIFFICULTY_Invalid )
+		if( e->stepsCriteria.m_difficulty == Difficulty_Invalid )
 		{
-			te.dc = DIFFICULTY_Invalid;
+			te.dc = Difficulty_Invalid;
 		}
 		else
 		{

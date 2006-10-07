@@ -392,7 +392,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 		m_textValue[ROW_STEPS_TYPE].SetText( GAMEMAN->StepsTypeToLocalizedString(GetSelectedStepsType()) );
 
 		{
-			Difficulty dcOld = DIFFICULTY_Invalid;
+			Difficulty dcOld = Difficulty_Invalid;
 			if( !m_vpSteps.empty() )
 				dcOld = GetSelectedDifficulty();
 
@@ -506,7 +506,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 		m_textValue[ROW_SOURCE_STEPS_TYPE].SetText( GAMEMAN->StepsTypeToLocalizedString(GetSelectedSourceStepsType()) );
 
 		m_vpSourceSteps.clear();
-		m_vpSourceSteps.push_back( StepsAndDifficulty(NULL,DIFFICULTY_Invalid) );	// "blank"
+		m_vpSourceSteps.push_back( StepsAndDifficulty(NULL,Difficulty_Invalid) );	// "blank"
 		FOREACH_Difficulty( dc )
 		{
 			// fill in m_vpSourceSteps
@@ -534,14 +534,14 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			m_textValue[ROW_SOURCE_STEPS].SetHidden( GetSelectedSteps() ? true : false );
 			{
 				RString s;
-				if( GetSelectedSourceDifficulty() == DIFFICULTY_Invalid )
+				if( GetSelectedSourceDifficulty() == Difficulty_Invalid )
 					s = BLANK;
 				else
 					s = DifficultyToLocalizedString(GetSelectedSourceDifficulty());
 				m_textValue[ROW_SOURCE_STEPS].SetText( s );
 			}
 			bool bHideMeter = false;
-			if( GetSelectedSourceDifficulty() == DIFFICULTY_Invalid )
+			if( GetSelectedSourceDifficulty() == Difficulty_Invalid )
 				bHideMeter = true;
 			else if( GetSelectedSourceSteps() )
 				m_SourceMeter.SetFromSteps( GetSelectedSourceSteps() );

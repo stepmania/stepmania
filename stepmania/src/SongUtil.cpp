@@ -104,7 +104,7 @@ void SongUtil::GetSteps(
 	{
 		Steps* pSteps = vpSteps[i];
 
-		if( dc != DIFFICULTY_Invalid && dc != pSteps->GetDifficulty() )
+		if( dc != Difficulty_Invalid && dc != pSteps->GetDifficulty() )
 			continue;
 		if( iMeterLow != -1 && iMeterLow > pSteps->GetMeter() )
 			continue;
@@ -154,7 +154,7 @@ Steps* SongUtil::GetStepsByDifficulty( const Song *pSong, StepsType st, Difficul
 	{
 		Steps* pSteps = vpSteps[i];
 
-		if( dc != DIFFICULTY_Invalid && dc != pSteps->GetDifficulty() )
+		if( dc != Difficulty_Invalid && dc != pSteps->GetDifficulty() )
 			continue;
 		if( !bIncludeAutoGen && pSteps->IsAutogen() )
 			continue;
@@ -186,7 +186,7 @@ Steps* SongUtil::GetStepsByMeter( const Song *pSong, StepsType st, int iMeterLow
 Steps* SongUtil::GetStepsByDescription( const Song *pSong, StepsType st, RString sDescription )
 {
 	vector<Steps*> vNotes;
-	GetSteps( pSong, vNotes, st, DIFFICULTY_Invalid, -1, -1, sDescription );
+	GetSteps( pSong, vNotes, st, Difficulty_Invalid, -1, -1, sDescription );
 	if( vNotes.size() == 0 )
 		return NULL;
 	else 
@@ -196,7 +196,7 @@ Steps* SongUtil::GetStepsByDescription( const Song *pSong, StepsType st, RString
 
 Steps* SongUtil::GetClosestNotes( const Song *pSong, StepsType st, Difficulty dc, bool bIgnoreLocked )
 {
-	ASSERT( dc != DIFFICULTY_Invalid );
+	ASSERT( dc != Difficulty_Invalid );
 
 	const vector<Steps*>& vpSteps = (st == StepsType_Invalid)? pSong->GetAllSteps() : pSong->GetStepsByStepsType(st);
 	Steps *pClosest = NULL;

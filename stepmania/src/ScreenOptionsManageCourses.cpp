@@ -168,7 +168,7 @@ void ScreenOptionsManageCourses::Init()
 void ScreenOptionsManageCourses::BeginScreen()
 {
 	if( GAMESTATE->m_stEdit == StepsType_Invalid  ||
-	    GAMESTATE->m_cdEdit == DIFFICULTY_Invalid )
+	    GAMESTATE->m_cdEdit == Difficulty_Invalid )
 	{
 		SetNextCombination();
 	}

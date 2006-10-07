@@ -199,7 +199,7 @@ void GameState::Reset()
 	m_bChangedFailTypeOnScreenSongOptions = false;
 	FOREACH_PlayerNumber( p )
 	{
-		m_PreferredDifficulty[p].Set( DIFFICULTY_Invalid );
+		m_PreferredDifficulty[p].Set( Difficulty_Invalid );
 		m_PreferredCourseDifficulty[p].Set( DIFFICULTY_MEDIUM );
 	}
 	m_SortOrder.Set( SortOrder_Invalid );
@@ -392,9 +392,9 @@ void GameState::PlayersFinalized()
 		// Only set the sort order if it wasn't already set by a GameCommand (or by an earlier profile)
 		if( m_PreferredSortOrder == SortOrder_Invalid && pProfile->m_SortOrder != SortOrder_Invalid )
 			m_PreferredSortOrder = pProfile->m_SortOrder;
-		if( pProfile->m_LastDifficulty != DIFFICULTY_Invalid )
+		if( pProfile->m_LastDifficulty != Difficulty_Invalid )
 			m_PreferredDifficulty[pn].Set( pProfile->m_LastDifficulty );
-		if( pProfile->m_LastCourseDifficulty != DIFFICULTY_Invalid )
+		if( pProfile->m_LastCourseDifficulty != Difficulty_Invalid )
 			m_PreferredCourseDifficulty[pn].Set( pProfile->m_LastCourseDifficulty );
 		if( m_pPreferredSong == NULL )
 			m_pPreferredSong = pProfile->m_lastSong.ToSong();
@@ -576,9 +576,9 @@ void GameState::SaveCurrentSettingsToProfile( PlayerNumber pn )
 	pProfile->SetDefaultModifiers( m_pCurGame, m_pPlayerState[pn]->m_PlayerOptions.GetPreferred().GetSavedPrefsString() );
 	if( IsSongSort(m_PreferredSortOrder) )
 		pProfile->m_SortOrder = m_PreferredSortOrder;
-	if( m_PreferredDifficulty[pn] != DIFFICULTY_Invalid )
+	if( m_PreferredDifficulty[pn] != Difficulty_Invalid )
 		pProfile->m_LastDifficulty = m_PreferredDifficulty[pn];
-	if( m_PreferredCourseDifficulty[pn] != DIFFICULTY_Invalid )
+	if( m_PreferredCourseDifficulty[pn] != Difficulty_Invalid )
 		pProfile->m_LastCourseDifficulty = m_PreferredCourseDifficulty[pn];
 	if( m_pPreferredSong )
 		pProfile->m_lastSong.FromSong( m_pPreferredSong );
@@ -1203,7 +1203,7 @@ SongOptions::FailType GameState::GetPlayerFailType( const PlayerState *pPlayerSt
 	}
 	else
 	{
-		Difficulty dc = DIFFICULTY_Invalid;
+		Difficulty dc = Difficulty_Invalid;
 		if( m_pCurSteps[pn] )
 			dc = m_pCurSteps[pn]->GetDifficulty();
 
@@ -1712,7 +1712,7 @@ bool GameState::IsCourseDifficultyShown( CourseDifficulty cd )
 
 Difficulty GameState::GetEasiestStepsDifficulty() const
 {
-	Difficulty dc = DIFFICULTY_Invalid;
+	Difficulty dc = Difficulty_Invalid;
 	FOREACH_HumanPlayer( p )
 	{
 		if( m_pCurSteps[p] == NULL )

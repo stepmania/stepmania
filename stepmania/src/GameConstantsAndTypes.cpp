@@ -168,7 +168,7 @@ TapNoteScore StringToTapNoteScore( const RString &s )
 	else if( s == "Perfect" )	return TNS_W2;
 	else if( s == "Marvelous" )	return TNS_W1;
 
-	return TNS_Invalid;
+	return TapNoteScore_Invalid;
 }
 XToLocalizedString( TapNoteScore );
 LuaFunction( TapNoteScoreToLocalizedString, TapNoteScoreToLocalizedString(Enum::Check<TapNoteScore>(L, 1)) );
@@ -192,7 +192,7 @@ HoldNoteScore StringToHoldNoteScore( const RString &s )
 	else if( s == "LetGo" )	return HNS_LetGo;
 	else if( s == "Held" )	return HNS_Held;
 
-	return HNS_Invalid;
+	return HoldNoteScore_Invalid;
 }
 XToLocalizedString( HoldNoteScore );
 

@@ -57,7 +57,7 @@ void ScreenJukebox::SetSong()
 	}
 	else
 	{
-		if( GAMESTATE->m_PreferredDifficulty[PLAYER_1] != DIFFICULTY_Invalid )
+		if( GAMESTATE->m_PreferredDifficulty[PLAYER_1] != Difficulty_Invalid )
 		{
 			vDifficultiesToShow.push_back( GAMESTATE->m_PreferredDifficulty[PLAYER_1] );
 		}

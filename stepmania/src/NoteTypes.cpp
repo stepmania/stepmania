@@ -45,7 +45,7 @@ float NoteTypeToBeat( NoteType nt )
 	case NOTE_TYPE_64TH:	return 1.0f/16; // sixty-fourth notes
 	case NOTE_TYPE_192ND:	return 1.0f/48; // sixty-fourth note triplets
 	default:	ASSERT(0); // and fall through
-	case NOTE_TYPE_Invalid:	return 1.0f/48;
+	case NoteType_Invalid:	return 1.0f/48;
 	}
 }
 

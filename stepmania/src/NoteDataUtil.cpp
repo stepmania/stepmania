@@ -43,7 +43,7 @@ NoteType NoteDataUtil::GetSmallestNoteTypeForMeasure( const NoteData &n, int iMe
 	}
 
 	if( nt == NUM_NoteType )	// we didn't find one
-		return NOTE_TYPE_Invalid;	// well-formed notes created in the editor should never get here
+		return NoteType_Invalid;	// well-formed notes created in the editor should never get here
 	else
 		return nt;
 }
@@ -337,7 +337,7 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 			
 			NoteType nt = GetSmallestNoteTypeForMeasure( *nd, m );
 			int iRowSpacing;
-			if( nt == NOTE_TYPE_Invalid )
+			if( nt == NoteType_Invalid )
 				iRowSpacing = 1;
 			else
 				iRowSpacing = int(roundf( NoteTypeToBeat(nt) * ROWS_PER_BEAT ));
@@ -1644,11 +1644,11 @@ void NoteDataUtil::Stomp( NoteData &inout, StepsType st, int iStartIndex, int iE
 
 void NoteDataUtil::SnapToNearestNoteType( NoteData &inout, NoteType nt1, NoteType nt2, int iStartIndex, int iEndIndex )
 {
-	// nt2 is optional and should be NOTE_TYPE_Invalid if it is not used
+	// nt2 is optional and should be NoteType_Invalid if it is not used
 
 	float fSnapInterval1 = NoteTypeToBeat( nt1 );
 	float fSnapInterval2 = 10000; // nothing will ever snap to this.  That's what we want!
-	if( nt2 != NOTE_TYPE_Invalid )
+	if( nt2 != NoteType_Invalid )
 		fSnapInterval2 = NoteTypeToBeat( nt2 );
 
 	// iterate over all TapNotes in the interval and snap them

@@ -14,9 +14,10 @@ enum PlayerNumber
 	PLAYER_1 = 0,
 	PLAYER_2,
 	NUM_PlayerNumber,	// leave this at the end
-	PLAYER_INVALID
+	PlayerNumber_Invalid
 };
-const int NUM_PLAYERS = NUM_PlayerNumber;
+const PlayerNumber NUM_PLAYERS = NUM_PlayerNumber;
+const PlayerNumber PLAYER_INVALID = PlayerNumber_Invalid;
 const RString& PlayerNumberToString( PlayerNumber pn );
 const RString& PlayerNumberToLocalizedString( PlayerNumber pn );
 LuaDeclareType( PlayerNumber );

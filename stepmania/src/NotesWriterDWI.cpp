@@ -223,7 +223,7 @@ void NotesWriterDWI::WriteDWINotesField( RageFile &f, const Steps &out, int star
 			break;
 		case NOTE_TYPE_48TH:
 		case NOTE_TYPE_192ND:
-		case NOTE_TYPE_Invalid:
+		case NoteType_Invalid:
 			// since, for whatever reason, the only way to do
 			// 48ths is through a block of 192nds...
 			f.Write(  "`" );
@@ -300,7 +300,7 @@ void NotesWriterDWI::WriteDWINotesField( RageFile &f, const Steps &out, int star
 			break;
 		case NOTE_TYPE_48TH:
 		case NOTE_TYPE_192ND:
-		case NOTE_TYPE_Invalid:
+		case NoteType_Invalid:
 			f.Write( "'" );
 			break;
 		default:
