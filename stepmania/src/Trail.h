@@ -57,7 +57,7 @@ public:
 	void Init()
 	{
 		m_StepsType = StepsType_Invalid;
-		m_CourseDifficulty = CourseDifficulty_Invalid;
+		m_CourseDifficulty = Difficulty_Invalid;
 		m_iSpecifiedMeter = -1;
 		m_vEntries.clear();
 		m_bRadarValuesCached = false;

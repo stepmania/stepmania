@@ -80,7 +80,7 @@ void DifficultyIcon::SetFromTrail( PlayerNumber pn, const Trail* pTrail )
 	if( pTrail == NULL )
 		Unset();
 	else
-		SetFromDifficulty( (Difficulty)pTrail->m_CourseDifficulty );
+		SetFromDifficulty( pTrail->m_CourseDifficulty );
 }
 
 void DifficultyIcon::Unset()

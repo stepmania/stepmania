@@ -68,12 +68,12 @@ bool CourseLoaderCRS::LoadFromMsd( const RString &sPath, const MsdFile &msd, Cou
 		{
 			if( sParams.params.size() == 2 )
 			{
-				out.m_iCustomMeter[COURSE_DIFFICULTY_REGULAR] = max( atoi(sParams[1]), 0 ); /* compat */
+				out.m_iCustomMeter[DIFFICULTY_MEDIUM] = max( atoi(sParams[1]), 0 ); /* compat */
 			}
 			else if( sParams.params.size() == 3 )
 			{
 				const CourseDifficulty cd = StringToCourseDifficulty( sParams[1] );
-				if( cd == CourseDifficulty_Invalid )
+				if( cd == Difficulty_Invalid )
 				{
 					LOG->UserLog( "Course file", sPath, "contains an invalid #METER string: \"%s\"", sParams[1].c_str() );
 					continue;

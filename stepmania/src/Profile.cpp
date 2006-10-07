@@ -101,7 +101,7 @@ void Profile::InitGeneralData()
 
 	m_SortOrder = SortOrder_Invalid;
 	m_LastDifficulty = Difficulty_Invalid;
-	m_LastCourseDifficulty = CourseDifficulty_Invalid;
+	m_LastCourseDifficulty = Difficulty_Invalid;
 	m_lastSong.Unset();
 	m_lastCourse.Unset();
 	m_iTotalPlays = 0;
@@ -1906,13 +1906,13 @@ public:
 	static int GetTotalNumSongsPlayed( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_iNumTotalSongsPlayed ); return 1; }
 	static int IsCodeUnlocked( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsCodeUnlocked(SArg(1)) ); return 1; }
 	static int GetSongsActual( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetSongsActual(Enum::Check<StepsType>(L, 1),Enum::Check<Difficulty>(L, 2)) ); return 1; }
-	static int GetCoursesActual( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetCoursesActual(Enum::Check<StepsType>(L, 1),Enum::Check<CourseDifficulty>(L, 2)) ); return 1; }
+	static int GetCoursesActual( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetCoursesActual(Enum::Check<StepsType>(L, 1),Enum::Check<Difficulty>(L, 2)) ); return 1; }
 	static int GetSongsPossible( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetSongsPossible(Enum::Check<StepsType>(L, 1),Enum::Check<Difficulty>(L, 2)) ); return 1; }
-	static int GetCoursesPossible( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetCoursesPossible(Enum::Check<StepsType>(L, 1),Enum::Check<CourseDifficulty>(L, 2)) ); return 1; }
+	static int GetCoursesPossible( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetCoursesPossible(Enum::Check<StepsType>(L, 1),Enum::Check<Difficulty>(L, 2)) ); return 1; }
 	static int GetSongsPercentComplete( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetSongsPercentComplete(Enum::Check<StepsType>(L, 1),Enum::Check<Difficulty>(L, 2)) ); return 1; }
-	static int GetCoursesPercentComplete( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetCoursesPercentComplete(Enum::Check<StepsType>(L, 1),Enum::Check<CourseDifficulty>(L, 2)) ); return 1; }
+	static int GetCoursesPercentComplete( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetCoursesPercentComplete(Enum::Check<StepsType>(L, 1),Enum::Check<Difficulty>(L, 2)) ); return 1; }
 	static int GetTotalStepsWithTopGrade( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetTotalStepsWithTopGrade(Enum::Check<StepsType>(L, 1),Enum::Check<Difficulty>(L, 2),Enum::Check<Grade>(L, 3)) ); return 1; }
-	static int GetTotalTrailsWithTopGrade( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetTotalTrailsWithTopGrade(Enum::Check<StepsType>(L, 1),Enum::Check<CourseDifficulty>(L, 2),Enum::Check<Grade>(L, 3)) ); return 1; }
+	static int GetTotalTrailsWithTopGrade( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetTotalTrailsWithTopGrade(Enum::Check<StepsType>(L, 1),Enum::Check<Difficulty>(L, 2),Enum::Check<Grade>(L, 3)) ); return 1; }
 	static int GetNumTotalSongsPlayed( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iNumTotalSongsPlayed ); return 1; }
 	static int GetLastPlayedStepsType( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetLastPlayedStepsType() ); return 1; }
 	static int GetSongsAndCoursesPercentCompleteAllDifficulties( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetSongsAndCoursesPercentCompleteAllDifficulties(Enum::Check<StepsType>(L, 1)) ); return 1; }

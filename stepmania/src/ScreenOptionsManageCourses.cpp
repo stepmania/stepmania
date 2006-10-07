@@ -34,9 +34,9 @@ static void RefreshTrail()
 struct StepsTypeAndDifficulty
 {
 	StepsType st;
-	CourseDifficulty cd;
+	Difficulty cd;
 
-	StepsTypeAndDifficulty( const StepsType &s, const CourseDifficulty &d ) : st( s ), cd( d ) { }
+	StepsTypeAndDifficulty( const StepsType &s, const Difficulty &d ) : st( s ), cd( d ) { }
 	bool operator==( const StepsTypeAndDifficulty &stad ) const { return st == stad.st && cd == stad.cd; }
 };
 static void SetNextCombination()

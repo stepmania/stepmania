@@ -6,7 +6,7 @@
 //
 // Player number stuff
 //
-enum Difficulty
+enum Difficulty 
 {
 	DIFFICULTY_BEGINNER,
 	DIFFICULTY_EASY,
@@ -23,25 +23,18 @@ const RString& DifficultyToLocalizedString( Difficulty dc );
 Difficulty StringToDifficulty( const RString& sDC );
 LuaDeclareType( Difficulty );
 
-enum CourseDifficulty
-{
-	COURSE_DIFFICULTY_BEGINNER,
-	COURSE_DIFFICULTY_EASY,
-	COURSE_DIFFICULTY_REGULAR,
-	COURSE_DIFFICULTY_DIFFICULT,
-	COURSE_DIFFICULTY_CHALLENGE,
-	COURSE_DIFFICULTY_EDIT,
-	NUM_CourseDifficulty,
-	CourseDifficulty_Invalid
-};
-#define FOREACH_CourseDifficulty( cd ) FOREACH_ENUM( CourseDifficulty, cd )
-#define FOREACH_ShownCourseDifficulty( cd ) for( CourseDifficulty cd=GetNextShownCourseDifficulty((CourseDifficulty)-1); cd!=CourseDifficulty_Invalid; cd=GetNextShownCourseDifficulty(cd) )
 
-const RString& CourseDifficultyToString( CourseDifficulty dc );
-const RString& CourseDifficultyToLocalizedString( CourseDifficulty dc );
-CourseDifficulty StringToCourseDifficulty( const RString& sDC );
-LuaDeclareType( CourseDifficulty );
-CourseDifficulty GetNextShownCourseDifficulty( CourseDifficulty pn );
+typedef Difficulty CourseDifficulty;
+#define NUM_CourseDifficulty NUM_Difficulty
+#define CourseDifficulty_Invalid Difficulty_Invalid
+#define FOREACH_CourseDifficulty FOREACH_Difficulty
+#define FOREACH_ShownCourseDifficulty( cd ) for( Difficulty cd=GetNextShownCourseDifficulty((CourseDifficulty)-1); cd!=Difficulty_Invalid; cd=GetNextShownCourseDifficulty(cd) )
+
+const RString& CourseDifficultyToString( Difficulty dc );
+const RString& CourseDifficultyToLocalizedString( Difficulty dc );
+Difficulty StringToCourseDifficulty( const RString& sDC );
+
+Difficulty GetNextShownCourseDifficulty( Difficulty pn );
 
 #endif
 

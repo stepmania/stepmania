@@ -148,7 +148,7 @@ void CourseUtil::SortCoursePointerArrayByAvgDifficulty( vector<Course*> &vpCours
 	course_sort_val.clear();
 	for( unsigned i = 0; i < vpCoursesInOut.size(); ++i )
 	{
-		int iMeter = vpCoursesInOut[i]->GetMeter( GAMESTATE->GetCurrentStyle()->m_StepsType, COURSE_DIFFICULTY_REGULAR );
+		int iMeter = vpCoursesInOut[i]->GetMeter( GAMESTATE->GetCurrentStyle()->m_StepsType, DIFFICULTY_MEDIUM );
 		course_sort_val[vpCoursesInOut[i]] = ssprintf( "%06i", iMeter );
 	}
 	sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareCoursePointersByTitle );
@@ -200,7 +200,7 @@ void CourseUtil::MakeDefaultEditCourseEntry( CourseEntry& out )
 // Autogen
 //////////////////////////////////
 
-void CourseUtil::AutogenEndlessFromGroup( const RString &sGroupName, CourseDifficulty cd, Course &out )
+void CourseUtil::AutogenEndlessFromGroup( const RString &sGroupName, Difficulty diff, Course &out )
 {
 	out.m_bIsAutogen = true;
 	out.m_bRepeat = true;
@@ -225,7 +225,7 @@ void CourseUtil::AutogenEndlessFromGroup( const RString &sGroupName, CourseDiffi
 	// but that'd be rare.) -glenn
 	CourseEntry e;
 	e.songCriteria.m_sGroupName = sGroupName;
-	e.stepsCriteria.m_difficulty = (Difficulty)cd;
+	e.stepsCriteria.m_difficulty = diff;
 	e.bSecret = true;
 
 	vector<Song*> vSongs;
@@ -234,9 +234,9 @@ void CourseUtil::AutogenEndlessFromGroup( const RString &sGroupName, CourseDiffi
 		out.m_vEntries.push_back( e );
 }
 
-void CourseUtil::AutogenNonstopFromGroup( const RString &sGroupName, CourseDifficulty cd, Course &out )
+void CourseUtil::AutogenNonstopFromGroup( const RString &sGroupName, Difficulty diff, Course &out )
 {
-	AutogenEndlessFromGroup( sGroupName, cd, out );
+	AutogenEndlessFromGroup( sGroupName, diff, out );
 
 	out.m_bRepeat = false;
 
