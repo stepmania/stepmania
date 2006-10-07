@@ -3133,14 +3133,6 @@
 				>
 			</File>
 			<File
-				RelativePath="RageSoundReader_Resample_Fast.cpp"
-				>
-			</File>
-			<File
-				RelativePath="RageSoundReader_Resample_Fast.h"
-				>
-			</File>
-			<File
 				RelativePath="RageSoundReader_Resample_Good.cpp"
 				>
 			</File>
