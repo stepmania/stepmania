@@ -1883,64 +1883,65 @@ void CollapsePath( RString &sPath, bool bRemoveLeadingDot )
 	sOut.swap( sPath );
 }
 
-
-template<> bool FromString<int>( const RString &sValue, int &out )
+namespace StringConversion
 {
-	if( sscanf( sValue.c_str(), "%d", &out ) == 1 )
-		return true;
+	template<> bool FromString<int>( const RString &sValue, int &out )
+	{
+		if( sscanf( sValue.c_str(), "%d", &out ) == 1 )
+			return true;
 
-	out = 0;
-	return false;
-}
-
-template<> bool FromString<unsigned>( const RString &sValue, unsigned  &out )
-{
-	if( sscanf( sValue.c_str(), "%u", &out ) == 1 )
-		return true;
-
-	out = 0;
-	return false;
-}
-
-template<> bool FromString<float>( const RString &sValue, float &out )
-{
-	const char *endptr = sValue.data() + sValue.size();
-	out = strtof( sValue, (char **) &endptr );
-	if( endptr != sValue.data() && isfinite( out ) )
-		return true;
-	out = 0;
-	return false;
-}
-
-template<> bool FromString<bool>( const RString &sValue, bool &out )
-{
-	if( sValue.size() == 0 )
+		out = 0;
 		return false;
+	}
 
-	out = (atoi(sValue) != 0);
-	return true;
+	template<> bool FromString<unsigned>( const RString &sValue, unsigned  &out )
+	{
+		if( sscanf( sValue.c_str(), "%u", &out ) == 1 )
+			return true;
+
+		out = 0;
+		return false;
+	}
+
+	template<> bool FromString<float>( const RString &sValue, float &out )
+	{
+		const char *endptr = sValue.data() + sValue.size();
+		out = strtof( sValue, (char **) &endptr );
+		if( endptr != sValue.data() && isfinite( out ) )
+			return true;
+		out = 0;
+		return false;
+	}
+
+	template<> bool FromString<bool>( const RString &sValue, bool &out )
+	{
+		if( sValue.size() == 0 )
+			return false;
+
+		out = (atoi(sValue) != 0);
+		return true;
+	}
+
+	template<> RString ToString<int>( const int &value )
+	{
+		return ssprintf( "%i", value );
+	}
+
+	template<> RString ToString<unsigned>( const unsigned &value )
+	{
+		return ssprintf( "%u", value );
+	}
+
+	template<> RString ToString<float>( const float &value )
+	{
+		return ssprintf( "%f", value );
+	}
+
+	template<> RString ToString<bool>( const bool &value )
+	{
+		return ssprintf( "%i", value );
+	}
 }
-
-template<> RString ToString<int>( const int &value )
-{
-	return ssprintf( "%i", value );
-}
-
-template<> RString ToString<unsigned>( const unsigned &value )
-{
-	return ssprintf( "%u", value );
-}
-
-template<> RString ToString<float>( const float &value )
-{
-	return ssprintf( "%f", value );
-}
-
-template<> RString ToString<bool>( const bool &value )
-{
-	return ssprintf( "%i", value );
-}
-
 
 //
 // Helper function for reading/writing scores

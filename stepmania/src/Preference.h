@@ -57,10 +57,10 @@ public:
 		LoadDefault();
 	}
 
-	RString ToString() const { return ::ToString<T>( m_currentValue ); }
+	RString ToString() const { return StringConversion::ToString<T>( m_currentValue ); }
 	void FromString( const RString &s )
 	{
-		if( !::FromString<T>(s, m_currentValue) )
+		if( !StringConversion::FromString<T>(s, m_currentValue) )
 			m_currentValue = m_defaultValue;
 		if( m_pfnValidate ) 
 			m_pfnValidate( m_currentValue );
@@ -83,7 +83,7 @@ public:
 	void SetDefaultFromString( const RString &s )
 	{
 		T def = m_defaultValue;
-		if( !::FromString<T>(s, m_defaultValue) )
+		if( !StringConversion::FromString<T>(s, m_defaultValue) )
 			m_defaultValue = def;
 	}
 

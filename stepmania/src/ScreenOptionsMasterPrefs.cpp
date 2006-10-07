@@ -19,6 +19,8 @@
 #include "SpecialFiles.h"
 #include "RageLog.h"
 
+using namespace StringConversion;
+
 static void GetPrefsDefaultModifiers( PlayerOptions &po, SongOptions &so )
 {
 	po.FromString( PREFSMAN->m_sDefaultModifiers );

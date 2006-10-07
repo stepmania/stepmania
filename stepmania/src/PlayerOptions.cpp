@@ -274,7 +274,7 @@ void PlayerOptions::FromString( const RString &sOptions, bool bWarnOnInvalid )
 		vector<RString> matches;
 		if( mult.Compare(sBit, matches) )
 		{
-			::FromString( matches[0], level );
+			StringConversion::FromString( matches[0], level );
 			SET_FLOAT( fScrollSpeed )
 			SET_FLOAT( fTimeSpacing )
 			m_fTimeSpacing = 0;

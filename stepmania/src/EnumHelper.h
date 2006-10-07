@@ -61,7 +61,7 @@ const RString &EnumToString( int iVal, int iMax, const char **szNameArray, auto_
 		static auto_ptr<RString> as_##X##Name[NUM_##X+2]; \
 		return EnumToString( x, NUM_##X, X##Names, as_##X##Name ); \
 	} \
-	template<> RString ToString<X>( const X &value ) { return X##ToString(value); }
+	namespace StringConversion { template<> RString ToString<X>( const X &value ) { return X##ToString(value); } }
 #define XToString(X, CNT) XToString2(X)
 
 #define XToLocalizedString(X)      \
@@ -89,7 +89,7 @@ const RString &EnumToString( int iVal, int iMax, const char **szNameArray, auto_
 				return (X)i;	\
 		return (X)(i+1); /*invalid*/	\
 	} \
-	template<> bool FromString<X>( const RString &sValue, X &out ) { out = StringTo##X(sValue); return out != X##_Invalid; }
+	namespace StringConversion { template<> bool FromString<X>( const RString &sValue, X &out ) { out = StringTo##X(sValue); return out != X##_Invalid; } }
 
 // currently unused
 #define LuaDeclareType(X)
