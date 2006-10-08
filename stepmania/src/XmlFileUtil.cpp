@@ -54,7 +54,6 @@ static const char chXMLDash			= '-';
 static map<RString,RString> g_mapEntitiesToChars;
 static map<char,RString> g_mapCharsToEntities;
 
-// XXX not called
 static void InitEntities()
 {
 	if( !g_mapEntitiesToChars.empty() )
@@ -202,10 +201,6 @@ unsigned LoadAttributes( XNode *pNode, const RString &xml, RString &sErrorOut, u
 	return string::npos;
 }
 
-}
-
-
-
 // <TAG attr1="value1" attr2='value2' attr3=value3 >
 // </TAG>
 // or
@@ -215,7 +210,7 @@ unsigned LoadAttributes( XNode *pNode, const RString &xml, RString &sErrorOut, u
 // Param  : pszXml - plain xml text
 //          pi = parser information
 // Return : advanced string pointer  (error return npos)
-unsigned XmlFileUtil::Load( XNode *pNode, const RString &xml, RString &sErrorOut, unsigned iOffset )
+unsigned LoadInternal( XNode *pNode, const RString &xml, RString &sErrorOut, unsigned iOffset )
 {
 	pNode->Clear();
 
@@ -246,7 +241,7 @@ unsigned XmlFileUtil::Load( XNode *pNode, const RString &xml, RString &sErrorOut
 		// Skip -->.
 		iOffset = iEnd + 3;
 
-		return Load( pNode, xml, sErrorOut, iOffset );
+		return LoadInternal( pNode, xml, sErrorOut, iOffset );
 	}
 
 	// XML Node Tag Name Open
@@ -288,7 +283,7 @@ unsigned XmlFileUtil::Load( XNode *pNode, const RString &xml, RString &sErrorOut
 		// just loaded is a meta tag, then Load ourself again using the rest 
 		// of the file until we reach a non-meta tag.
 		if( !pNode->GetName().empty() && (pNode->GetName()[0] == chXMLQuestion || pNode->GetName()[0] == chXMLExclamation) )
-			iOffset = Load( pNode, xml, sErrorOut, iOffset );
+			iOffset = LoadInternal( pNode, xml, sErrorOut, iOffset );
 
 		return iOffset;
 	}
@@ -322,7 +317,7 @@ unsigned XmlFileUtil::Load( XNode *pNode, const RString &xml, RString &sErrorOut
 	{
 		XNode *node = new XNode;
 		
-		iOffset = Load( node, xml, sErrorOut, iOffset );
+		iOffset = LoadInternal( node, xml, sErrorOut, iOffset );
 		if( !node->GetName().empty() )
 		{
 			DEBUG_ASSERT( node->GetName().size() );
@@ -398,8 +393,6 @@ unsigned XmlFileUtil::Load( XNode *pNode, const RString &xml, RString &sErrorOut
 	return iOffset;
 }
 
-namespace
-{
 bool GetAttrXML( RageFileBasic &f, const RString &sName, const RString &sValue )
 {
 	RString s(sValue);
@@ -487,9 +480,16 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 }
 }
 
+void XmlFileUtil::Load( XNode *pNode, const RString &sXml, RString &sErrorOut )
+{
+	InitEntities();
+	LoadInternal( pNode, sXml, sErrorOut, 0 );
+}
+
 bool XmlFileUtil::GetXML( const XNode *pNode, RageFileBasic &f, bool bWriteTabs )
 {
 	int iTabBase = 0;
+	InitEntities();
 	return GetXMLInternal( pNode, f, bWriteTabs, iTabBase );
 }
 
@@ -497,6 +497,7 @@ RString XmlFileUtil::GetXML( const XNode *pNode )
 {
 	RageFileObjMem f;
 	int iTabBase = 0;
+	InitEntities();
 	GetXMLInternal( pNode, f, true, iTabBase );
 	return f.GetString();
 }
@@ -507,6 +508,7 @@ bool XmlFileUtil::SaveToFile( const XNode *pNode, RageFileBasic &f, const RStrin
 	if( !sStylesheet.empty() )
 		f.PutLine( "<?xml-stylesheet type=\"text/xsl\" href=\"" + sStylesheet + "\"?>" );
 	int iTabBase = 0;
+	InitEntities();
 	if( !GetXMLInternal(pNode, f, bWriteTabs, iTabBase) )
 		return false;
 	f.PutLine( "" );

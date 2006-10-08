@@ -1,7 +1,7 @@
 /* XmlFileUtil - A little graphic to the left of the song's text banner in the MusicWheel. */
 
-#ifndef XmlFileUtil_H
-#define XmlFileUtil_H
+#ifndef XML_FILE_UTIL_H
+#define XML_FILE_UTIL_H
 
 class RageFileBasic;
 class XNode;
@@ -12,7 +12,7 @@ namespace XmlFileUtil
 	bool LoadFromFileShowErrors( XNode &xml, RageFileBasic &f );
 
 	// Load/Save XML
-	unsigned Load( XNode *pNode, const RString &sXml, RString &sErrorOut, unsigned iOffset = 0 );
+	void Load( XNode *pNode, const RString &sXml, RString &sErrorOut );
 	bool GetXML( const XNode *pNode, RageFileBasic &f, bool bWriteTabs = true );
 	RString GetXML( const XNode *pNode );
 	bool SaveToFile( const XNode *pNode, const RString &sFile, const RString &sStylesheet = "", bool bWriteTabs = true );
