@@ -954,7 +954,7 @@ void ThemeManager::PushMetric( Lua *L, const RString &sClassName, const RString 
 #if !defined(SMPACKAGE)
 	if( EndsWith(sValueName, "Command") )
 	{
-		ActorUtil::ParseActorCommands( L, sValue, sName );
+		LuaHelpers::ParseCommandList( L, sValue, sName );
 	}
 	else
 #endif

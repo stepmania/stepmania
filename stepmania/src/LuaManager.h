@@ -76,6 +76,8 @@ namespace LuaHelpers
 	/* If sStr begins with @, evaluate the rest as an expression and store the result over sStr. */
 	bool RunAtExpressionS( RString &sStr );
 
+	void ParseCommandList( lua_State *L, const RString &sCommands, const RString &sName );
+
 	/* Pops the last iArgs arguments from the stack, and return a function that returns
 	 * those values. */
 	void PushValueFunc( lua_State *L, int iArgs );

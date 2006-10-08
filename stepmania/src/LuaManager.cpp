@@ -8,7 +8,9 @@
 #include "Foreach.h"
 #include "arch/Dialog/Dialog.h"
 #include "XmlFile.h"
+#include "Command.h"
 
+#include <sstream>
 #include <csetjmp>
 #include <cassert>
 
@@ -570,6 +572,88 @@ bool LuaHelpers::RunAtExpressionS( RString &sStr )
 	LuaHelpers::RunExpressionS( sStr, sOut );
 	sStr = sOut;
 	return true;
+}
+
+void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RString &sName )
+{
+	RString sLuaFunction;
+	if( sCommands.size() > 0 && sCommands[0] == '\033' )
+	{
+		/* This is a compiled Lua chunk.  Just pass it on directly. */
+		sLuaFunction = sCommands;
+	}
+	else if( sCommands.size() > 0 && sCommands[0] == '%' )
+	{
+		sLuaFunction = "return ";
+		sLuaFunction.append( sCommands.begin()+1, sCommands.end() );
+	}
+	else
+	{
+		Commands cmds;
+		ParseCommands( sCommands, cmds );
+		
+		//
+		// Convert cmds to a Lua function
+		//
+		ostringstream s;
+		
+		s << "return function(self,parent)\n";
+
+		FOREACH_CONST( Command, cmds.v, c )
+		{
+			const Command& cmd = (*c);
+			RString sName = cmd.GetName();
+			TrimLeft( sName );
+			TrimRight( sName );
+			s << "\tself:" << sName << "(";
+
+			bool bFirstParamIsString =
+				sName == "effectclock" ||
+				sName == "playcommand" ||
+				sName == "queuecommand" ||
+				sName == "queuemessage";
+
+			for( unsigned i=1; i<cmd.m_vsArgs.size(); i++ )
+			{
+				RString sArg = cmd.m_vsArgs[i];
+
+				// "+200" -> "200"
+				if( sArg[0] == '+' )
+					sArg.erase( sArg.begin() );
+
+				if( i==1 && bFirstParamIsString ) // string literal
+				{
+					sArg.Replace( "'", "\\'" );	// escape quote
+					s << "'" << sArg << "'";
+				}
+				else if( sArg[0] == '#' )	// HTML color
+				{
+					RageColor c;	// in case FromString fails
+					c.FromString( sArg );
+					// c is still valid if FromString fails
+					s << c.r << "," << c.g << "," << c.b << "," << c.a;
+				}
+				else
+				{
+					s << sArg;
+				}
+
+				if( i != cmd.m_vsArgs.size()-1 )
+					s << ",";
+			}
+			s << ")\n";
+		}
+
+		s << "end\n";
+
+		sLuaFunction = s.str();
+	}
+
+	RString sError;
+	if( !LuaHelpers::RunScript( L, sLuaFunction, sName, sError, 1 ) )
+		LOG->Warn( "Compiling \"%s\": %s", sLuaFunction.c_str(), sError.c_str() );
+
+	/* The function is now on the stack. */
 }
 
 /* Like luaL_typerror, but without the special case for argument 1 being "self"

@@ -45,7 +45,6 @@ namespace ActorUtil
 	void Register( const RString& sClassName, CreateActorFn pfn );
 	Actor* Create( const RString& sClassName, const RString& sDir, const XNode* pNode, Actor *pParentActor );
 
-	void ParseActorCommands( Lua *L, const RString &sCommands, const RString &sName = "" );
 	apActorCommands ParseActorCommands( const RString &sCommands, const RString &sName = "" );
 	void SetXY( Actor& actor, const RString &sType );
 	void LoadCommand( Actor& actor, const RString &sType, const RString &sCommandName );
