@@ -80,13 +80,10 @@ const RString &EnumToString( int iVal, int iMax, const char **szNameArray, auto_
 #define StringToX(X)	\
 	X StringTo##X( const RString& s ) \
 	{	\
-		RString s2 = s;	\
-		s2.MakeLower();	\
-		unsigned i; \
-		for( i = 0; i < ARRAYLEN(X##Names); ++i )	\
-			if( !s2.CompareNoCase(X##Names[i]) )	\
+		for( unsigned i = 0; i < ARRAYLEN(X##Names); ++i )	\
+			if( !s.CompareNoCase(X##Names[i]) )	\
 				return (X)i;	\
-		return (X)(i+1); /*invalid*/	\
+		return X##_Invalid;	\
 	} \
 	namespace StringConversion { template<> bool FromString<X>( const RString &sValue, X &out ) { out = StringTo##X(sValue); return out != X##_Invalid; } }
 
