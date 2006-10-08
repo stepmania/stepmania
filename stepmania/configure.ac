@@ -68,6 +68,7 @@ case $host_os in
 	unix=yes
 	;;
 esac
+AC_DEFINE(LUA_USE_LINUX, 1, [Linux for Lua])
 AM_CONDITIONAL(UNIX, test "$unix" = "yes" )
 AM_CONDITIONAL(LINUX, test "$linux" = "yes" )
 AM_CONDITIONAL(BSD, test "$bsd" = "yes" )
