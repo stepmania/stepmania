@@ -95,7 +95,7 @@ BitmapText &BitmapText::operator =( const BitmapText &cpy )
 	return *this;
 }
 
-void BitmapText::LoadFromNode( const RString& sDir, const XNode* pNode )
+void BitmapText::LoadFromNode( const XNode* pNode )
 {
 	RString sText;
 	pNode->GetAttrValue( "Text", sText );
@@ -117,7 +117,7 @@ void BitmapText::LoadFromNode( const RString& sDir, const XNode* pNode )
 	LoadFromFont( THEME->GetPathF( "", sFont ) );
 	SetText( sText, sAltText );
 
-	Actor::LoadFromNode( sDir, pNode );
+	Actor::LoadFromNode( pNode );
 }
 
 

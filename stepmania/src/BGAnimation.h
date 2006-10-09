@@ -14,7 +14,7 @@ public:
 	virtual ~BGAnimation();
 
 	void LoadFromAniDir( const RString &sAniDir );
-	void LoadFromNode( const RString& sDir, const XNode* pNode );
+	void LoadFromNode( const XNode* pNode );
 
 protected:
 	void AddLayersFromAniDir( const RString &_sAniDir, const XNode *pNode );

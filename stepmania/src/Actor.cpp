@@ -208,7 +208,7 @@ Actor::Actor( const Actor &cpy ):
  * initialization (eg. ActorFrame loading children).  However, it
  * also loads input variables, which should happen first.  The
  * former is more important. */
-void Actor::LoadFromNode( const RString& sDir, const XNode* pNode )
+void Actor::LoadFromNode( const XNode* pNode )
 {
 	Lua *L = LUA->Get();
 	FOREACH_CONST_Child( pNode, pChild )

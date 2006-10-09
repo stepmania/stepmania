@@ -18,7 +18,7 @@ public:
 	virtual bool EarlyAbortDraw() const { return m_bBlank || Sprite::EarlyAbortDraw(); }
 
 	bool Load( RString sFilePath );
-	virtual void LoadFromNode( const RString& sDir, const XNode* pNode );
+	virtual void LoadFromNode( const XNode* pNode );
 	virtual Actor *Copy() const;
 
 	void SetPlayer( PlayerNumber pn );

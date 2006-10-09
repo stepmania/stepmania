@@ -35,13 +35,13 @@ void ActorUtil::Register( const RString& sClassName, CreateActorFn pfn )
 	(*g_pmapRegistrees)[sClassName] = pfn;
 }
 
-Actor* ActorUtil::Create( const RString& sClassName, const RString& sDir, const XNode* pNode, Actor *pParentActor )
+Actor* ActorUtil::Create( const RString& sClassName, const XNode* pNode, Actor *pParentActor )
 {
 	map<RString,CreateActorFn>::iterator iter = g_pmapRegistrees->find( sClassName );
 	ASSERT_M( iter != g_pmapRegistrees->end(), ssprintf("Actor '%s' is not registered.",sClassName.c_str()) );
 
 	CreateActorFn pfn = iter->second;
-	return (*pfn)( sDir, pNode, pParentActor );
+	return (*pfn)( pNode, pParentActor );
 }
 
 void ActorUtil::ResolvePath( RString &sPath, const RString &sName )
@@ -175,7 +175,7 @@ void ActorUtil::GetParam( Lua *L, const RString &sName )
 	}
 }
 
-Actor* ActorUtil::LoadFromNode( const RString& sDir, const XNode* pNode, Actor *pParentActor )
+Actor* ActorUtil::LoadFromNode( const XNode* pNode, Actor *pParentActor )
 {
 	ASSERT( pNode );
 
@@ -227,7 +227,7 @@ Actor* ActorUtil::LoadFromNode( const RString& sDir, const XNode* pNode, Actor *
 
 	if( IsRegistered(sClass) )
 	{
-		pReturn = ActorUtil::Create( sClass, sDir, pNode, pParentActor );
+		pReturn = ActorUtil::Create( sClass, pNode, pParentActor );
 	}
 	else // sClass is empty or garbage (e.g. "1" or "0 // 0==Sprite")
 	{
@@ -248,7 +248,7 @@ Actor* ActorUtil::LoadFromNode( const RString& sDir, const XNode* pNode, Actor *
 			goto all_done;
 		}
 
-		ActorUtil::ResolvePath( sFile, sDir );
+		ActorUtil::ResolvePath( sFile, GetSourcePath(pNode) );
 
 		pReturn = ActorUtil::MakeActor( sFile, pNode, pParentActor );
 		if( pReturn == NULL )
@@ -422,7 +422,7 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, const XNode *pParent, Actor 
 			XmlFileUtil::CompileXNodeTree( &xml, sPath );
 			AnnotateXMLTree( &xml, sPath );
 			MergeActorXML( &xml, pParent );
-			return ActorUtil::LoadFromNode( sDir, &xml );
+			return ActorUtil::LoadFromNode( &xml );
 		}
 	case FT_Lua:
 		{
@@ -434,7 +434,7 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, const XNode *pParent, Actor 
 			}
 
 			MergeActorXML( pNode.get(), pParent );
-			Actor *pRet = ActorUtil::LoadFromNode( sDir, pNode.get() );
+			Actor *pRet = ActorUtil::LoadFromNode( pNode.get() );
 			return pRet;
 		}
 	case FT_Bitmap:
@@ -443,7 +443,7 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, const XNode *pParent, Actor 
 			XNode xml( *pParent );
 			xml.AppendAttr( "Texture", sPath );
 
-			return ActorUtil::Create( "Sprite", sDir, &xml, pParentActor );
+			return ActorUtil::Create( "Sprite", &xml, pParentActor );
 		}
 	case FT_Model:
 		{
@@ -452,7 +452,7 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, const XNode *pParent, Actor 
 			xml.AppendAttr( "Materials", sPath );
 			xml.AppendAttr( "Bones", sPath );
 
-			return ActorUtil::Create( "Model", sDir, &xml, pParentActor );
+			return ActorUtil::Create( "Model", &xml, pParentActor );
 		}
 	default:
 		RageException::Throw("File \"%s\" has unknown type, \"%s\".",

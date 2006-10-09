@@ -76,7 +76,7 @@ void BGAnimation::AddLayersFromAniDir( const RString &_sAniDir, const XNode *pNo
 			{
 				// import as a single layer
 				BGAnimationLayer* pLayer = new BGAnimationLayer;
-				pLayer->LoadFromNode( sAniDir, pKey );
+				pLayer->LoadFromNode( pKey );
 				this->AddChild( pLayer );
 			}
 		}
@@ -111,7 +111,7 @@ void BGAnimation::LoadFromAniDir( const RString &_sAniDir )
 		if( pBGAnimation == NULL )
 			pBGAnimation = &dummy;
 
-		LoadFromNode( sAniDir, pBGAnimation );
+		LoadFromNode( pBGAnimation );
 	}
 	else
 	{
@@ -142,9 +142,9 @@ void BGAnimation::LoadFromAniDir( const RString &_sAniDir )
 	}
 }
 
-void BGAnimation::LoadFromNode( const RString& sDir, const XNode* pNode )
+void BGAnimation::LoadFromNode( const XNode* pNode )
 {
-	ActorFrame::LoadFromNode( sDir, pNode );
+	ActorFrame::LoadFromNode( pNode );
 
 	/* Backwards-compatibility: if a "LengthSeconds" value is present, create a dummy
 	 * actor that sleeps for the given length of time.  This will extend GetTweenTimeLeft. */

@@ -16,7 +16,7 @@ public:
 	~BGAnimationLayer();
 
 	void LoadFromAniLayerFile( const RString& sPath );
-	void LoadFromNode( const RString& sDir, const XNode* pNode );
+	void LoadFromNode( const XNode* pNode );
 
 	void UpdateInternal( float fDeltaTime );
 	bool EarlyAbortDraw() const;

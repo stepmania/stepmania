@@ -49,9 +49,9 @@ GrooveRadar::GrooveRadar()
 	}
 }
 
-void GrooveRadar::LoadFromNode( const RString& sDir, const XNode* pNode )
+void GrooveRadar::LoadFromNode( const XNode* pNode )
 {
-	ActorFrame::LoadFromNode( sDir, pNode );
+	ActorFrame::LoadFromNode( pNode );
 }
 
 void GrooveRadar::TweenOnScreen()

@@ -111,9 +111,9 @@ float ActorScroller::GetSecondsToDestination() const
 	return fTotalItemsToMove * m_fSecondsPerItem;
 }
 
-void ActorScroller::LoadFromNode( const RString &sDir, const XNode *pNode )
+void ActorScroller::LoadFromNode( const XNode *pNode )
 {
-	ActorFrame::LoadFromNode( sDir, pNode );
+	ActorFrame::LoadFromNode( pNode );
 
 	Load2();
 

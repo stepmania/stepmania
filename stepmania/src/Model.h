@@ -27,7 +27,7 @@ public:
 	void 	LoadMaterialsFromMilkshapeAscii( const RString &sPath );
 	bool	LoadMilkshapeAsciiBones( const RString &sAniName, const RString &sPath );
 
-	void LoadFromNode( const RString& sDir, const XNode* pNode );
+	void LoadFromNode( const XNode* pNode );
 
 	void	PlayAnimation( const RString &sAniName, float fPlayRate = 1 );
 

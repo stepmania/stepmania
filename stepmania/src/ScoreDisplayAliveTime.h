@@ -16,7 +16,7 @@ public:
 
 	virtual void Update( float fDelta );
 
-	void LoadFromNode( const RString& sDir, const XNode* pNode );
+	void LoadFromNode( const XNode* pNode );
 	virtual Actor *Copy() const;
 
 	void PlayCommand( const RString &sCommandName );

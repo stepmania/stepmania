@@ -66,9 +66,9 @@ void CourseEntryDisplay::Load()
 	this->AddChild( &m_textModifiers );
 }
 
-void CourseEntryDisplay::LoadFromNode( const RString& sDir, const XNode* pNode )
+void CourseEntryDisplay::LoadFromNode( const XNode* pNode )
 {
-	ActorFrame::LoadFromNode( sDir, pNode );
+	ActorFrame::LoadFromNode( pNode );
 
 	Load();
 }

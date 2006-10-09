@@ -17,9 +17,9 @@ RollingNumbers::RollingNumbers()
 	m_fScoreVelocity = 0;
 }
 
-void RollingNumbers::LoadFromNode( const RString& sDir, const XNode* pNode )
+void RollingNumbers::LoadFromNode( const XNode* pNode )
 {
-	BitmapText::LoadFromNode( sDir, pNode );
+	BitmapText::LoadFromNode( pNode );
 
 	pNode->GetAttrValue( "Format", m_sFormat );
 	ThemeManager::EvaluateString( m_sFormat );

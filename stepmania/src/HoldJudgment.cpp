@@ -25,7 +25,7 @@ void HoldJudgment::Load( const RString &sPath )
 	this->AddChild( m_sprJudgment );
 }
 
-void HoldJudgment::LoadFromNode( const RString& sDir, const XNode* pNode )
+void HoldJudgment::LoadFromNode( const XNode* pNode )
 {
 	RString sFile;
 	if( ActorUtil::GetAttrPath(pNode, "File", sFile) )
@@ -35,7 +35,7 @@ void HoldJudgment::LoadFromNode( const RString& sDir, const XNode* pNode )
 
 	Load( sFile );
 
-	ActorFrame::LoadFromNode( sDir, pNode );
+	ActorFrame::LoadFromNode( pNode );
 }
 
 void HoldJudgment::ResetAnimation()

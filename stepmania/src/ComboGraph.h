@@ -12,7 +12,7 @@ class ComboGraph: public ActorFrame
 public:
 	ComboGraph();
 	void Load( const StageStats &s, const PlayerStageStats &pss );
-	virtual void LoadFromNode( const RString& sDir, const XNode* pNode );
+	virtual void LoadFromNode( const XNode* pNode );
 	virtual Actor *Copy() const;
 	virtual bool AutoLoadChildren() const { return true; }
 

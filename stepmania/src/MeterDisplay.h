@@ -10,7 +10,7 @@ class MeterDisplay : public ActorFrame
 public:
 	MeterDisplay();
 	void Load( RString sStreamPath, float fStreamWidth, RString sTipPath );
-	virtual void LoadFromNode( const RString& sDir, const XNode* pNode );
+	virtual void LoadFromNode( const XNode* pNode );
 	virtual Actor *Copy() const;
 
 	void SetPercent( float fPercent );

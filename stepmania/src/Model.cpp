@@ -106,9 +106,9 @@ void Model::LoadPieces( const RString &sMeshesPath, const RString &sMaterialsPat
 	}
 }
 
-void Model::LoadFromNode( const RString& sDir, const XNode* pNode )
+void Model::LoadFromNode( const XNode* pNode )
 {
-	Actor::LoadFromNode( sDir, pNode );
+	Actor::LoadFromNode( pNode );
 
 	RString s1, s2, s3;
 	ActorUtil::GetAttrPath( pNode, "Meshes", s1 );

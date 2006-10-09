@@ -74,12 +74,12 @@ void ActorFrame::InitState()
 	Actor::InitState();
 }
 
-void ActorFrame::LoadFromNode( const RString& sDir, const XNode* pNode )
+void ActorFrame::LoadFromNode( const XNode* pNode )
 {
 	if( AutoLoadChildren() )
-		LoadChildrenFromNode( sDir, pNode );
+		LoadChildrenFromNode( pNode );
 
-	Actor::LoadFromNode( sDir, pNode );
+	Actor::LoadFromNode( pNode );
 
 	pNode->GetAttrValue( "UpdateRate", m_fUpdateRate );
 	pNode->GetAttrValue( "FOV", m_fFOV );
@@ -88,7 +88,7 @@ void ActorFrame::LoadFromNode( const RString& sDir, const XNode* pNode )
 	m_bOverrideLighting = pNode->GetAttrValue( "Lighting", m_bLighting );
 }
 
-void ActorFrame::LoadChildrenFromNode( const RString& sDir, const XNode* pNode )
+void ActorFrame::LoadChildrenFromNode( const XNode* pNode )
 {
 	// Shouldn't be calling this unless we're going to delete our children.
 	ASSERT( m_bDeleteChildren );
@@ -101,7 +101,7 @@ void ActorFrame::LoadChildrenFromNode( const RString& sDir, const XNode* pNode )
 	{
 		FOREACH_CONST_Child( pChildren, pChild )
 		{
-			Actor* pChildActor = ActorUtil::LoadFromNode( sDir, pChild, this );
+			Actor* pChildActor = ActorUtil::LoadFromNode( pChild, this );
 			if( pChildActor )
 				AddChild( pChildActor );
 		}

@@ -358,7 +358,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 			m_SubActors[i]->SetBlendMode( BLEND_ADD );
 }
 
-void BGAnimationLayer::LoadFromNode( const RString& sDir, const XNode* pNode )
+void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 {
 	{
 		bool bCond;
@@ -455,7 +455,7 @@ void BGAnimationLayer::LoadFromNode( const RString& sDir, const XNode* pNode )
 	{
 	case TYPE_SPRITE:
 		{
-			Actor* pActor = ActorUtil::LoadFromNode( sDir, pNode );
+			Actor* pActor = ActorUtil::LoadFromNode( pNode );
 			this->AddChild( pActor );
 			if( bStretch )
 				pActor->StretchTo( FullScreenRectF );

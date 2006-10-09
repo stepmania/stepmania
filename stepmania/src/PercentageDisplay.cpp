@@ -26,7 +26,7 @@ PercentageDisplay::PercentageDisplay()
 	m_Format.SetFromExpression( "FormatPercentScore" );
 }
 
-void PercentageDisplay::LoadFromNode( const RString& sDir, const XNode* pNode )
+void PercentageDisplay::LoadFromNode( const XNode* pNode )
 {
 	pNode->GetAttrValue( "DancePointsDigits", m_iDancePointsDigits );
 	pNode->GetAttrValue( "PercentUseRemainder", m_bUseRemainder );
@@ -39,7 +39,7 @@ void PercentageDisplay::LoadFromNode( const RString& sDir, const XNode* pNode )
 	const XNode *pChild = pNode->GetChild( "Percent" );
 	if( pChild == NULL )
 		RageException::Throw( "%s: PercentageDisplay: missing the node \"Percent\"", ActorUtil::GetWhere(pNode).c_str() );
-	m_textPercent.LoadFromNode( sDir, pChild );
+	m_textPercent.LoadFromNode( pChild );
 	this->AddChild( &m_textPercent );
 
 	if( !PREFSMAN->m_bDancePointsForOni && m_bUseRemainder )
@@ -47,12 +47,12 @@ void PercentageDisplay::LoadFromNode( const RString& sDir, const XNode* pNode )
 		const XNode *pChild = pNode->GetChild( "PercentRemainder" );
 		if( pChild == NULL )
 			RageException::Throw( "%s: ComboGraph: missing the node \"PercentRemainder\"", ActorUtil::GetWhere(pNode).c_str() );
-		m_textPercentRemainder.LoadFromNode( sDir, pChild );
+		m_textPercentRemainder.LoadFromNode( pChild );
 		this->AddChild( &m_textPercentRemainder );
 	}
 
 	// only run the Init command after we load Fonts.
-	ActorFrame::LoadFromNode( sDir, pNode );
+	ActorFrame::LoadFromNode( pNode );
 }
 
 void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStageStats *pPlayerStageStats )

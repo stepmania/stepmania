@@ -118,9 +118,9 @@ void DifficultyMeter::Load( const RString &sType )
 	Unset();
 }
 
-void DifficultyMeter::LoadFromNode( const RString& sDir, const XNode* pNode )
+void DifficultyMeter::LoadFromNode( const XNode* pNode )
 {
-	ActorFrame::LoadFromNode( sDir, pNode );
+	ActorFrame::LoadFromNode( pNode );
 
 	RString s;
 	pNode->GetAttrValue( "Type", s );

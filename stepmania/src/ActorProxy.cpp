@@ -25,9 +25,9 @@ void ActorProxy::DrawPrimitives()
 	}
 }
 
-void ActorProxy::LoadFromNode( const RString& sDir, const XNode* pNode )
+void ActorProxy::LoadFromNode( const XNode* pNode )
 {
-	Actor::LoadFromNode( sDir, pNode );
+	Actor::LoadFromNode( pNode );
 }
 
 // lua start

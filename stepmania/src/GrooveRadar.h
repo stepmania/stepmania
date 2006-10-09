@@ -15,7 +15,7 @@ class GrooveRadar : public ActorFrame
 public:
 	GrooveRadar();
 	virtual Actor *Copy() const;
-	virtual void LoadFromNode( const RString& sDir, const XNode* pNode );
+	virtual void LoadFromNode( const XNode* pNode );
 
 	void SetEmpty( PlayerNumber pn );
 	void SetFromRadarValues( PlayerNumber pn, const RadarValues &rv );

@@ -27,7 +27,7 @@ public:
 
 	void PositionItems();
 
-	void LoadFromNode( const RString &sDir, const XNode *pNode );
+	void LoadFromNode( const XNode *pNode );
 	virtual Actor *Copy() const;
 	
 	void SetLoop( bool bLoop )					{ m_bLoop = bLoop; }

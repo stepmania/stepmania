@@ -14,7 +14,7 @@ public:
 		m_bDrawIfTextureNull = true; 
 	}	
 
-	void LoadFromNode( const RString& sDir, const XNode* pNode );
+	void LoadFromNode( const XNode* pNode );
 	virtual Actor *Copy() const;
 };
 

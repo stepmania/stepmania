@@ -106,7 +106,7 @@ void Sprite::Load( RageTextureID ID )
 		LoadFromTexture( ID );
 };
 
-void Sprite::LoadFromNode( const RString& sDir, const XNode* pNode )
+void Sprite::LoadFromNode( const XNode* pNode )
 {
 	RString sPath;
 	ActorUtil::GetAttrPath( pNode, "Texture", sPath );
@@ -114,7 +114,7 @@ void Sprite::LoadFromNode( const RString& sDir, const XNode* pNode )
 	if( !sPath.empty() )
 	{
 		if( !TEXTUREMAN->IsTextureRegistered( RageTextureID(sPath) ) )
-			ActorUtil::ResolvePath( sPath, sDir );
+			ActorUtil::ResolvePath( sPath, ActorUtil::GetWhere(pNode) );
 
 		// Load the texture
 		LoadFromTexture( sPath );
@@ -147,7 +147,7 @@ void Sprite::LoadFromNode( const RString& sDir, const XNode* pNode )
 	}
 
 
-	Actor::LoadFromNode( sDir, pNode );
+	Actor::LoadFromNode( pNode );
 }
 
 void Sprite::UnloadTexture()

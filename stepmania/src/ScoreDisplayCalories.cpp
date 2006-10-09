@@ -22,9 +22,9 @@ ScoreDisplayCalories::~ScoreDisplayCalories()
 		MESSAGEMAN->Unsubscribe( this, m_sMessageOnStep );
 }
 
-void ScoreDisplayCalories::LoadFromNode( const RString& sDir, const XNode* pNode )
+void ScoreDisplayCalories::LoadFromNode( const XNode* pNode )
 {
-	RollingNumbers::LoadFromNode( sDir, pNode );
+	RollingNumbers::LoadFromNode( pNode );
 
 	{
 		Lua *L = LUA->Get();

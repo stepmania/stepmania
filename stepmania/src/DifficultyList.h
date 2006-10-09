@@ -17,7 +17,7 @@ public:
 	DifficultyList();
 	virtual ~DifficultyList();
 	virtual Actor *Copy() const;
-	virtual void LoadFromNode( const RString& sDir, const XNode* pNode );
+	virtual void LoadFromNode( const XNode* pNode );
 
 	void SetFromGameState();
 	void TweenOnScreen();

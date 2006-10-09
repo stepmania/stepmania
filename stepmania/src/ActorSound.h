@@ -14,7 +14,7 @@ public:
 
 	void Load( const RString &sPath );
 	void Play();
-	void LoadFromNode( const RString& sDir, const XNode* pNode );
+	void LoadFromNode( const XNode* pNode );
 
 	//
 	// Lua

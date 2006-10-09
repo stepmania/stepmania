@@ -102,7 +102,7 @@ void PaneDisplay::Load( const RString &sMetricsGroup, PlayerNumber pn )
 	m_CurPane = PANE_INVALID;
 }
 
-void PaneDisplay::LoadFromNode( const RString &sDir, const XNode *pNode )
+void PaneDisplay::LoadFromNode( const XNode *pNode )
 {
 	bool b;
 
@@ -119,7 +119,7 @@ void PaneDisplay::LoadFromNode( const RString &sDir, const XNode *pNode )
 
 	Load( sMetricsGroup, pn );
 
-	ActorFrame::LoadFromNode( sDir, pNode );
+	ActorFrame::LoadFromNode( pNode );
 }
 
 void PaneDisplay::SetContent( PaneContents c )

@@ -15,7 +15,7 @@ public:
 	virtual bool EarlyAbortDraw() const;
 	virtual void DrawPrimitives();
 
-	void LoadFromNode( const RString& sDir, const XNode* pNode );
+	void LoadFromNode( const XNode* pNode );
 	virtual Actor *Copy() const;
 
 	Actor *GetTarget() { return m_pActorTarget; }

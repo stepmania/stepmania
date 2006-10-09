@@ -58,7 +58,7 @@ public:
 	virtual ~Actor();
 	virtual Actor *Copy() const;
 	virtual void InitState();
-	virtual void LoadFromNode( const RString& sDir, const XNode* pNode );
+	virtual void LoadFromNode( const XNode* pNode );
 	bool IsType( const RString &sType );
 
 	static void SetBGMTime( float fTime, float fBeat );

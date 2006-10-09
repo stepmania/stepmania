@@ -28,14 +28,14 @@ void MemoryCardDisplay::Load( PlayerNumber pn )
 	}
 }
 
-void MemoryCardDisplay::LoadFromNode( const RString& sDir, const XNode* pNode )
+void MemoryCardDisplay::LoadFromNode( const XNode* pNode )
 {
 	PlayerNumber pn;
 	pNode->GetAttrValue("PlayerNumber", (int&) pn );
 
 	Load( pn );
 
-	ActorFrame::LoadFromNode( sDir, pNode );
+	ActorFrame::LoadFromNode( pNode );
 }
 
 void MemoryCardDisplay::Update( float fDelta )

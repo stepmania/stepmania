@@ -18,7 +18,7 @@ public:
 	virtual Actor *Copy() const;
 	void Load();
 	virtual void Update( float fDeltaTime ); 
-	void LoadFromNode( const RString &sDir, const XNode *pNode );
+	void LoadFromNode( const XNode *pNode );
 
 	void SetBpmFromSong( const Song* pSong );
 	void SetBpmFromCourse( const Course* pCourse );

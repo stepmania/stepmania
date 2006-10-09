@@ -42,9 +42,9 @@ void CourseContentsList::Load()
 	}
 }
 
-void CourseContentsList::LoadFromNode( const RString& sDir, const XNode* pNode )
+void CourseContentsList::LoadFromNode( const XNode* pNode )
 {
-	ActorScroller::LoadFromNode( sDir, pNode );
+	ActorScroller::LoadFromNode( pNode );
 
 	Load();
 }

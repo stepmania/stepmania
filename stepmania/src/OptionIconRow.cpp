@@ -24,11 +24,11 @@ OptionIconRow::OptionIconRow()
 	}
 }
 
-void OptionIconRow::LoadFromNode( const RString& sDir, const XNode* pNode )
+void OptionIconRow::LoadFromNode( const XNode* pNode )
 {
 	Load();
 
-	ActorFrame::LoadFromNode( sDir, pNode );
+	ActorFrame::LoadFromNode( pNode );
 }
 
 struct OptionColumnEntry

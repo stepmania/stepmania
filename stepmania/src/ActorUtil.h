@@ -8,15 +8,15 @@
 
 class XNode;
 
-typedef Actor* (*CreateActorFn)(const RString& sDir, const XNode* pNode, Actor* pParent);
+typedef Actor* (*CreateActorFn)(const XNode* pNode, Actor* pParent);
 
 // Each Actor class should have a REGISTER_ACTOR_CLASS in its CPP file.
 #define REGISTER_ACTOR_CLASS_WITH_NAME( className, externalClassName ) \
-	Actor* Create##className(const RString& sDir, const XNode* pNode, Actor* pParent) { \
+	Actor* Create##className(const XNode* pNode, Actor* pParent) { \
 		className *pRet = new className; \
 		if( pParent ) \
 			pRet->SetParent( pParent ); \
-		pRet->LoadFromNode(sDir, pNode); \
+		pRet->LoadFromNode(pNode); \
 		return pRet; } \
 	class Register##className { \
 	public: \
@@ -44,7 +44,7 @@ namespace ActorUtil
 {
 	// Every screen should register its class at program initialization.
 	void Register( const RString& sClassName, CreateActorFn pfn );
-	Actor* Create( const RString& sClassName, const RString& sDir, const XNode* pNode, Actor *pParentActor );
+	Actor* Create( const RString& sClassName, const XNode* pNode, Actor *pParentActor );
 
 	apActorCommands ParseActorCommands( const RString &sCommands, const RString &sName = "" );
 	void SetXY( Actor& actor, const RString &sType );
@@ -69,7 +69,7 @@ namespace ActorUtil
 	inline void SetXYAndOnCommand( Actor* pActor, const RString &sType ) { if(pActor) SetXYAndOnCommand( *pActor, sType ); }
 
 	// Return a Sprite, BitmapText, or Model depending on the file type
-	Actor* LoadFromNode( const RString& sAniDir, const XNode* pNode, Actor *pParentActor = NULL );
+	Actor* LoadFromNode( const XNode* pNode, Actor *pParentActor = NULL );
 	Actor* MakeActor( const RString &sPath, const XNode *pParent = NULL, Actor *pParentActor = NULL );
 	RString GetSourcePath( const XNode *pNode );
 	RString GetWhere( const XNode *pNode );

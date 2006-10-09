@@ -43,11 +43,11 @@ void AutoActor::Load( const RString &sPath )
 		m_pActor = new Actor;
 }
 
-void AutoActor::LoadFromNode( const RString &sDir, const XNode* pNode )
+void AutoActor::LoadFromNode( const XNode* pNode )
 {
 	Unload();
 
-	m_pActor = ActorUtil::LoadFromNode( sDir, pNode );
+	m_pActor = ActorUtil::LoadFromNode( pNode );
 }
 
 void AutoActor::LoadAndSetName( const RString &sScreenName, const RString &sActorName )

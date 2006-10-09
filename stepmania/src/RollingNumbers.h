@@ -10,7 +10,7 @@ class RollingNumbers : public BitmapText
 public:
 	RollingNumbers();
 
-	void LoadFromNode( const RString& sDir, const XNode* pNode );
+	void LoadFromNode( const XNode* pNode );
 	virtual Actor *Copy() const;
 
 	virtual void Update( float fDeltaTime );

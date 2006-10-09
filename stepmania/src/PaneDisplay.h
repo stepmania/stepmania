@@ -56,7 +56,7 @@ public:
 	void Load( const RString &sMetricsGroup, PlayerNumber pn );
 	void SetFromGameState();
 
-	void LoadFromNode( const RString &sDir, const XNode *pNode );
+	void LoadFromNode( const XNode *pNode );
 
 	// Lua
 	void PushSelf( lua_State *L );

@@ -22,7 +22,7 @@ public:
 
 	void Load( const RString &sType );
 
-	void LoadFromNode( const RString& sDir, const XNode* pNode );
+	void LoadFromNode( const XNode* pNode );
 	virtual Actor *Copy() const;
 
 	void SetFromGameState( PlayerNumber pn );

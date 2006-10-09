@@ -16,7 +16,7 @@ Judgment::Judgment()
 	m_mpToTrack = MultiPlayer_Invalid;
 }
 
-void Judgment::LoadFromNode( const RString& sDir, const XNode* pNode )
+void Judgment::LoadFromNode( const XNode* pNode )
 {
 	RString sFile;
 	if( ActorUtil::GetAttrPath(pNode, "File", sFile) )
@@ -29,7 +29,7 @@ void Judgment::LoadFromNode( const RString& sDir, const XNode* pNode )
 		LoadNormal();
 	}
 
-	ActorFrame::LoadFromNode( sDir, pNode );
+	ActorFrame::LoadFromNode( pNode );
 }
 
 void Judgment::LoadNormal()

@@ -19,9 +19,9 @@ ComboGraph::ComboGraph()
 	m_pMaxComboText = NULL;
 }
 
-void ComboGraph::LoadFromNode( const RString& sDir, const XNode* pNode )
+void ComboGraph::LoadFromNode( const XNode* pNode )
 {
-	ActorFrame::LoadFromNode( sDir, pNode );
+	ActorFrame::LoadFromNode( pNode );
 
 	m_pMaxComboText = (BitmapText *) this->GetChild( "MaxComboText" );
 	if( m_pMaxComboText == NULL )

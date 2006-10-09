@@ -8,9 +8,9 @@
 
 Actor *DynamicActorScroller::Copy() const { return new DynamicActorScroller(*this); }
 
-void DynamicActorScroller::LoadFromNode( const RString &sDir, const XNode *pNode )
+void DynamicActorScroller::LoadFromNode( const XNode *pNode )
 {
-	ActorScroller::LoadFromNode( sDir, pNode );
+	ActorScroller::LoadFromNode( pNode );
 
 	/*
 	 * All of our children are identical, since they must be interchangeable.

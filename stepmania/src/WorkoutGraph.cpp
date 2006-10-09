@@ -33,9 +33,9 @@ void WorkoutGraph::Load()
 	this->AddChild( &m_sprEmpty );
 }
 
-void WorkoutGraph::LoadFromNode( const RString& sDir, const XNode* pNode )
+void WorkoutGraph::LoadFromNode( const XNode* pNode )
 {
-	ActorFrame::LoadFromNode( sDir, pNode );
+	ActorFrame::LoadFromNode( pNode );
 
 	Load();
 }

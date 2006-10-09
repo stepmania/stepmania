@@ -16,7 +16,7 @@ public:
 	void LoadNormal();
 	void LoadNormal( const RString &sPath );
 	void LoadFromMultiPlayer( MultiPlayer mp );
-	void LoadFromNode( const RString& sDir, const XNode* pNode );
+	void LoadFromNode( const XNode* pNode );
 	void Reset();
 	void SetJudgment( TapNoteScore score, bool bEarly );
 	void HandleMessage( const RString &sMessage );

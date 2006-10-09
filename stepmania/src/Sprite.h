@@ -15,7 +15,7 @@ public:
 	Sprite( const Sprite &cpy );
 	virtual ~Sprite();
 
-	void LoadFromNode( const RString& sDir, const XNode* pNode );
+	void LoadFromNode( const XNode* pNode );
 	virtual Actor *Copy() const;
 
 	virtual bool EarlyAbortDraw() const;

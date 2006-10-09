@@ -12,7 +12,7 @@ class MemoryCardDisplay : public ActorFrame
 public:
 	MemoryCardDisplay();
 	void Load( PlayerNumber pn );
-	void LoadFromNode( const RString& sDir, const XNode* pNode );
+	void LoadFromNode( const XNode* pNode );
 	virtual Actor *Copy() const;
 	void Update( float fDelta );
 

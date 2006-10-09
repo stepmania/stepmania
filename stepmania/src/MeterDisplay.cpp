@@ -29,7 +29,7 @@ void MeterDisplay::Load( RString sStreamPath, float fStreamWidth, RString sTipPa
 	SetPercent( 0.5f );
 }
 
-void MeterDisplay::LoadFromNode( const RString& sDir, const XNode* pNode )
+void MeterDisplay::LoadFromNode( const XNode* pNode )
 {
 	LOG->Trace( "MeterDisplay::LoadFromNode(%s,node)", ActorUtil::GetWhere(pNode).c_str() );
 
@@ -42,7 +42,7 @@ void MeterDisplay::LoadFromNode( const RString& sDir, const XNode* pNode )
 		if( !ActorUtil::GetAttrPath(pNode, "StreamPath", sStreamPath) )
 			RageException::Throw( "%s: MeterDisplay: missing the \"StreamPath\" attribute", ActorUtil::GetWhere(pNode).c_str() );
 
-		ActorUtil::ResolvePath( sStreamPath, sDir );
+		ActorUtil::ResolvePath( sStreamPath, ActorUtil::GetWhere(pNode) );
 
 		m_sprStream.Load( sStreamPath );
 		m_sprStream->SetZoomX( m_fStreamWidth / m_sprStream->GetUnzoomedWidth() );
@@ -52,13 +52,13 @@ void MeterDisplay::LoadFromNode( const RString& sDir, const XNode* pNode )
 	const XNode* pChild = pNode->GetChild( "Tip" );
 	if( pChild != NULL )
 	{
-		m_sprTip.LoadFromNode( sDir, pChild );
+		m_sprTip.LoadFromNode( pChild );
 		this->AddChild( m_sprTip );
 	}
 
 	SetPercent( 0.5f );
 
-	ActorFrame::LoadFromNode( sDir, pNode );
+	ActorFrame::LoadFromNode( pNode );
 }
 
 void MeterDisplay::SetPercent( float fPercent )

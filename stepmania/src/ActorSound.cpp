@@ -18,14 +18,14 @@ void ActorSound::Play()
 	SOUNDMAN->PlayCopyOfSound( m_Sound );
 }
 
-void ActorSound::LoadFromNode( const RString& sDir, const XNode* pNode )
+void ActorSound::LoadFromNode( const XNode* pNode )
 {
-	Actor::LoadFromNode( sDir, pNode );
+	Actor::LoadFromNode( pNode );
 
 	RString sFile;
 	if( ActorUtil::GetAttrPath(pNode, "File", sFile) || ActorUtil::GetAttrPath(pNode, "Path", sFile) ) /* Path deprecated */
 	{
-		ActorUtil::ResolvePath( sFile, sDir );
+		ActorUtil::ResolvePath( sFile, ActorUtil::GetWhere(pNode) );
 		Load( sFile );
 	}
 }

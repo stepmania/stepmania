@@ -34,9 +34,9 @@ void BPMDisplay::Load()
 	SetDiffuse( NORMAL_COLOR );
 }
 
-void BPMDisplay::LoadFromNode( const RString &sDir, const XNode *pNode )
+void BPMDisplay::LoadFromNode( const XNode *pNode )
 {
-	BitmapText::LoadFromNode( sDir, pNode );
+	BitmapText::LoadFromNode( pNode );
 	Load();
 }
 

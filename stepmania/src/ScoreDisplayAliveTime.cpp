@@ -20,9 +20,9 @@ ScoreDisplayAliveTime::~ScoreDisplayAliveTime()
 {
 }
 
-void ScoreDisplayAliveTime::LoadFromNode( const RString& sDir, const XNode* pNode )
+void ScoreDisplayAliveTime::LoadFromNode( const XNode* pNode )
 {
-	BitmapText::LoadFromNode( sDir, pNode );
+	BitmapText::LoadFromNode( pNode );
 
 	{
 		Lua *L = LUA->Get();

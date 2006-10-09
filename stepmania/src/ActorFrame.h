@@ -13,7 +13,7 @@ public:
 	virtual ~ActorFrame();
 
 	virtual void InitState();
-	void LoadFromNode( const RString& sDir, const XNode* pNode );
+	void LoadFromNode( const XNode* pNode );
 	virtual Actor *Copy() const;
 
 	virtual void AddChild( Actor* pActor );
@@ -68,7 +68,7 @@ public:
 	void RunCommands( const apActorCommands& cmds ) { this->RunCommands( *cmds ); }	// convenience
 
 protected:
-	void LoadChildrenFromNode( const RString& sDir, const XNode* pNode );
+	void LoadChildrenFromNode( const XNode* pNode );
 
 	vector<Actor*>	m_SubActors;
 	bool m_bPropagateCommands;
