@@ -233,9 +233,8 @@ Actor* ActorUtil::LoadFromNode( const RString& sDir, const XNode* pNode, Actor *
 	{
 		// automatically figure out the type
 		RString sFile;
-		pNode->GetAttrValue( "File", sFile );
+		ActorUtil::GetAttrPath( pNode, "File", sFile );
 
-		bool bIsAbsolutePath = sFile.Left(1) == "/";
 		FixSlashesInPlace( sFile );
 
 		/* Be careful: if sFile is "", and we don't check it, then we can end up recursively
@@ -249,11 +248,9 @@ Actor* ActorUtil::LoadFromNode( const RString& sDir, const XNode* pNode, Actor *
 			goto all_done;
 		}
 
-		RString sNewPath = bIsAbsolutePath ? sFile : sDir+sFile;
+		ActorUtil::ResolvePath( sFile, sDir );
 
-		ActorUtil::ResolvePath( sNewPath, sDir );
-
-		pReturn = ActorUtil::MakeActor( sNewPath, pNode, pParentActor );
+		pReturn = ActorUtil::MakeActor( sFile, pNode, pParentActor );
 		if( pReturn == NULL )
 			goto all_done;
 	}
