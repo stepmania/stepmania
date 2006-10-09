@@ -43,7 +43,6 @@ void MeterDisplay::LoadFromNode( const RString& sDir, const XNode* pNode )
 		if( !pNode->GetAttrValue( "StreamPath", sStreamPath ) )
 			RageException::Throw( "MeterDisplay in \"%s\" is missing the \"StreamPath\" attribute.", sDir.c_str() );
 
-		LuaHelpers::RunAtExpressionS( sStreamPath );
 		if( !sStreamPath.empty() && sStreamPath[0] != '/' )
 		{
 			sStreamPath = sDir + sStreamPath;

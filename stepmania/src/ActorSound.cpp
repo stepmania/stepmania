@@ -25,7 +25,6 @@ void ActorSound::LoadFromNode( const RString& sDir, const XNode* pNode )
 	RString sFile;
 	if( pNode->GetAttrValue("File", sFile) || pNode->GetAttrValue("Path", sFile) ) /* Path deprecated */
 	{
-		LuaHelpers::RunAtExpressionS( sFile );
 		FixSlashesInPlace( sFile );
 
 		RString sNewPath = sFile.Left(1) == "/"? sFile : sDir+sFile;

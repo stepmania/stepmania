@@ -983,11 +983,6 @@ apActorCommands ThemeManager::GetMetricA( const RString &sClassName, const RStri
 
 void ThemeManager::EvaluateString( RString &sText )
 {
-	/* If the string begins with an @, then this is a Lua expression
-	 * that should be evaluated immediately.
-	 * Still do font aliases on the resulting string. */
-	LuaHelpers::RunAtExpressionS( sText );
-
 	FontCharAliases::ReplaceMarkers( sText );
 }
 

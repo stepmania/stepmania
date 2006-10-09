@@ -21,8 +21,6 @@ void Judgment::LoadFromNode( const RString& sDir, const XNode* pNode )
 	RString sFile;
 	if( pNode->GetAttrValue("File", sFile) )
 	{
-		LuaHelpers::RunAtExpressionS( sFile );
-
 		if( sFile.Left(1) != "/" )
 			sFile = sDir+sFile;
 

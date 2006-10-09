@@ -47,7 +47,6 @@ void DifficultyIcon::LoadFromNode( const RString& sDir, const XNode* pNode )
 	if( !pNode->GetAttrValue( "File", sFile ) )
 		RageException::Throw( "MeterDisplay in \"%s\" missing \"File\" attribute.", sDir.c_str() );
 
-	LuaHelpers::RunAtExpressionS( sFile );
 	if( !sFile.empty() && sFile[0] != '/' )
 	{
 		sFile = sDir + sFile;

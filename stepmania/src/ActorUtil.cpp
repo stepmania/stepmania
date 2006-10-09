@@ -183,7 +183,6 @@ Actor* ActorUtil::LoadFromNode( const RString& sDir, const XNode* pNode, Actor *
 		RString expr;
 		if( pNode->GetAttrValue("Condition",expr) )
 		{
-			LuaHelpers::RunAtExpressionS( expr );
 			if( !LuaHelpers::RunExpressionB(expr) )
 				return NULL;
 		}
@@ -239,7 +238,6 @@ Actor* ActorUtil::LoadFromNode( const RString& sDir, const XNode* pNode, Actor *
 		RString sFile;
 		pNode->GetAttrValue( "File", sFile );
 
-		LuaHelpers::RunAtExpressionS( sFile );
 		bool bIsAbsolutePath = sFile.Left(1) == "/";
 		FixSlashesInPlace( sFile );
 

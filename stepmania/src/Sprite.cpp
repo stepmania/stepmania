@@ -111,8 +111,6 @@ void Sprite::LoadFromNode( const RString& sDir, const XNode* pNode )
 	RString sPath;
 	if( pNode->GetAttrValue( "Texture", sPath ) )
 	{
-		LuaHelpers::RunAtExpressionS( sPath );
-
 		bool bIsAbsolutePath = sPath.Left(1) == "/";
 		sPath = bIsAbsolutePath ? sPath : sDir+sPath;
 	}

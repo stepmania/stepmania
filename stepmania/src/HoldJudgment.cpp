@@ -30,7 +30,6 @@ void HoldJudgment::LoadFromNode( const RString& sDir, const XNode* pNode )
 	RString sFile;
 	if( !pNode->GetAttrValue("File", sFile) )
 		RageException::Throw( "HoldJudgment node in \"%s\" is missing the attribute \"File\"", sDir.c_str() );
-	LuaHelpers::RunAtExpressionS( sFile );
 
 	if( sFile.Left(1) != "/" )
 		sFile = sDir+sFile;
