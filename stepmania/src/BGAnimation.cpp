@@ -52,12 +52,9 @@ void BGAnimation::AddLayersFromAniDir( const RString &_sAniDir, const XNode *pNo
 			RString sImportDir;
 			if( pKey->GetAttrValue("Import", sImportDir) )
 			{
-				RString expr;
-				if( pKey->GetAttrValue("Condition",expr) )
-				{
-					if( !LuaHelpers::RunExpressionB( expr ) )
-						continue;
-				}
+				bool bCond;
+				if( pKey->GetAttrValue("Condition",bCond) && !bCond )
+					continue;
 
 				// import a whole BGAnimation
 				sImportDir = sAniDir + sImportDir;

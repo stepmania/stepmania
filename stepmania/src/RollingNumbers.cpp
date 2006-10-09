@@ -25,12 +25,9 @@ void RollingNumbers::LoadFromNode( const RString& sDir, const XNode* pNode )
 	ThemeManager::EvaluateString( m_sFormat );
 	pNode->GetAttrValue( "ApproachSeconds", m_fApproachSeconds );
 	
-	RString sTargetNumber;
-	if( pNode->GetAttrValue( "TargetNumber", sTargetNumber ) )
-	{
-		float fTargetNumber = LuaHelpers::RunExpressionF(sTargetNumber);
+	float fTargetNumber;
+	if( pNode->GetAttrValue( "TargetNumber", fTargetNumber ) )
 		SetTargetNumber( fTargetNumber );
-	}
 
 	UpdateText();
 }

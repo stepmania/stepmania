@@ -110,10 +110,12 @@ void PaneDisplay::LoadFromNode( const RString &sDir, const XNode *pNode )
 	b = pNode->GetAttrValue( "MetricsGroup", sMetricsGroup );
 	ASSERT( b );
 
-	RString sPlayerNumber;
-	b = pNode->GetAttrValue( "PlayerNumber", sPlayerNumber );
+	Lua *L = LUA->Get();
+	b = pNode->PushAttrValue( L, "PlayerNumber" );
 	ASSERT( b );
-	PlayerNumber pn = (PlayerNumber) LuaHelpers::RunExpressionI(sPlayerNumber);
+	PlayerNumber pn;
+	LuaHelpers::Pop( L, pn );
+	LUA->Release( L );
 
 	Load( sMetricsGroup, pn );
 

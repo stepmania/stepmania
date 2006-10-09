@@ -180,12 +180,9 @@ Actor* ActorUtil::LoadFromNode( const RString& sDir, const XNode* pNode, Actor *
 	ASSERT( pNode );
 
 	{
-		RString expr;
-		if( pNode->GetAttrValue("Condition",expr) )
-		{
-			if( !LuaHelpers::RunExpressionB(expr) )
-				return NULL;
-		}
+		bool bCond;
+		if( pNode->GetAttrValue("Condition", bCond) && !bCond )
+			return NULL;
 	}
 
 	// Load Params

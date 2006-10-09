@@ -370,12 +370,9 @@ void BGAnimationLayer::LoadFromNode( const RString& sDir, const XNode* pNode )
 	CHECKPOINT_M( ssprintf( "BGAnimationLayer::LoadFromIni \"%s\"", sAniDir.c_str() ) );
 
 	{
-		RString expr;
-		if( pNode->GetAttrValue("Condition", expr) )
-		{
-			if( !LuaHelpers::RunExpressionB(expr) )
-				return;
-		}
+		bool bCond;
+		if( pNode->GetAttrValue("Condition", bCond) && !bCond )
+			return;
 	}
 
 	bool bStretch = false;

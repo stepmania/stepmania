@@ -83,12 +83,8 @@ void ActorFrame::LoadFromNode( const RString& sDir, const XNode* pNode )
 
 	pNode->GetAttrValue( "UpdateRate", m_fUpdateRate );
 	pNode->GetAttrValue( "FOV", m_fFOV );
-	
-	RString s;
-	if( pNode->GetAttrValue( "VanishX", s ) )
-		m_fVanishX = LuaHelpers::RunExpressionF( s );
-	if( pNode->GetAttrValue( "VanishY", s ) )
-		m_fVanishY = LuaHelpers::RunExpressionF( s );
+	pNode->GetAttrValue( "VanishX", m_fVanishX );
+	pNode->GetAttrValue( "VanishY", m_fVanishY );
 	m_bOverrideLighting = pNode->GetAttrValue( "Lighting", m_bLighting );
 }
 

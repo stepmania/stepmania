@@ -27,10 +27,11 @@ void ScoreDisplayCalories::LoadFromNode( const RString& sDir, const XNode* pNode
 	RollingNumbers::LoadFromNode( sDir, pNode );
 
 	{
-		RString sPlayerNumber;
-		bool b = pNode->GetAttrValue( "PlayerNumber", sPlayerNumber );
+		Lua *L = LUA->Get();
+		bool b = pNode->PushAttrValue( L, "PlayerNumber" );
 		ASSERT( b );
-		m_PlayerNumber = (PlayerNumber) LuaHelpers::RunExpressionI(sPlayerNumber);
+		LuaHelpers::Pop( L, m_PlayerNumber );
+		LUA->Release( L );
 	}
 	
 	m_sMessageOnStep = ssprintf("StepP%d",m_PlayerNumber+1);

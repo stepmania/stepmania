@@ -544,11 +544,6 @@ float LuaHelpers::RunExpressionF( const RString &str )
 	return result;
 }
 
-int LuaHelpers::RunExpressionI( const RString &str )
-{
-	return (int) LuaHelpers::RunExpressionF(str);
-}
-
 void LuaHelpers::RunExpressionS( const RString &str, RString &sOut )
 {
 	Lua *L = LUA->Get();

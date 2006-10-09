@@ -25,10 +25,11 @@ void ScoreDisplayAliveTime::LoadFromNode( const RString& sDir, const XNode* pNod
 	BitmapText::LoadFromNode( sDir, pNode );
 
 	{
-		RString sPlayerNumber;
-		bool b = pNode->GetAttrValue( "PlayerNumber", sPlayerNumber );
+		Lua *L = LUA->Get();
+		bool b = pNode->PushAttrValue( L, "PlayerNumber" );
 		ASSERT( b );
-		m_PlayerNumber = (PlayerNumber) LuaHelpers::RunExpressionI(sPlayerNumber);
+		LuaHelpers::Pop( L, m_PlayerNumber );
+		LUA->Release( L );
 	}
 }
 
