@@ -108,7 +108,7 @@ setmetatable( Def, {
 			local Source = info.source;
 			t._Source = Source;
 
-			if Path:sub( 1, 1 ) == "@" then
+			if Source:sub( 1, 1 ) == "@" then
 				local Path = Source:sub( 2 );
 
 				-- Directory of caller, for relative paths:
