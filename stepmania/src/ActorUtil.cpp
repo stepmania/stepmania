@@ -316,6 +316,24 @@ static void MergeActorXML( XNode *pChild, const XNode *pParent )
 
 namespace
 {
+	void AnnotateXMLTree( XNode *pNode, const RString &sFile )
+	{
+		RString sDir = Dirname( sFile );
+
+		vector<XNode *> queue;
+		queue.push_back( pNode );
+		while( !queue.empty() )
+		{
+			pNode = queue.back();
+			queue.pop_back();
+			FOREACH_Child( pNode, pChild )
+				queue.push_back( pChild );
+
+			pNode->AppendAttr( "_Dir", sDir );
+		}
+
+	}
+
 	XNode *LoadXNodeFromLuaShowErrors( const RString &sFile )
 	{
 		RString sScript;
@@ -401,6 +419,7 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, const XNode *pParent, Actor 
 			}
 
 			XmlFileUtil::CompileXNodeTree( &xml, sPath );
+			AnnotateXMLTree( &xml, sPath );
 			MergeActorXML( &xml, pParent );
 			return ActorUtil::LoadFromNode( sDir, &xml );
 		}
@@ -438,6 +457,26 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, const XNode *pParent, Actor 
 		RageException::Throw("File \"%s\" has unknown type, \"%s\".",
 				     sPath.c_str(), FileTypeToString(ft).c_str() );
 	}
+}
+
+bool ActorUtil::GetAttrPath( const XNode *pNode, const RString &sName, RString &sOut )
+{
+	if( !pNode->GetAttrValue(sName, sOut) )
+		return false;
+
+	bool bIsRelativePath = sOut.Left(1) != "/";
+	if( bIsRelativePath )
+	{
+		RString sDir;
+		if( !pNode->GetAttrValue("_Dir", sDir) )
+		{
+			LOG->Warn( "Relative path \"%s\", but path is unknown", sOut.c_str() );
+			return false;
+		}
+		sOut = sDir+sOut;
+	}
+
+	return true;
 }
 
 apActorCommands ActorUtil::ParseActorCommands( const RString &sCommands, const RString &sName )
