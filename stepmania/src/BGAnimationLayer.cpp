@@ -360,15 +360,6 @@ void BGAnimationLayer::LoadFromAniLayerFile( const RString& sPath )
 
 void BGAnimationLayer::LoadFromNode( const RString& sDir, const XNode* pNode )
 {
-	RString sAniDir = sDir;
-
-	if( sAniDir.Right(1) != "/" )
-		sAniDir += "/";
-
-	DEBUG_ASSERT( IsADirectory(sAniDir) );
-
-	CHECKPOINT_M( ssprintf( "BGAnimationLayer::LoadFromIni \"%s\"", sAniDir.c_str() ) );
-
 	{
 		bool bCond;
 		if( pNode->GetAttrValue("Condition", bCond) && !bCond )
@@ -464,7 +455,7 @@ void BGAnimationLayer::LoadFromNode( const RString& sDir, const XNode* pNode )
 	{
 	case TYPE_SPRITE:
 		{
-			Actor* pActor = ActorUtil::LoadFromNode( sAniDir, pNode );
+			Actor* pActor = ActorUtil::LoadFromNode( sDir, pNode );
 			this->AddChild( pActor );
 			if( bStretch )
 				pActor->StretchTo( FullScreenRectF );
