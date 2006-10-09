@@ -210,6 +210,7 @@ Actor::Actor( const Actor &cpy ):
  * former is more important. */
 void Actor::LoadFromNode( const RString& sDir, const XNode* pNode )
 {
+	Lua *L = LUA->Get();
 	FOREACH_CONST_Child( pNode, pChild )
 	{
 		if( pChild->GetName() == "Input" )
@@ -222,7 +223,6 @@ void Actor::LoadFromNode( const RString& sDir, const XNode* pNode )
 			bool bOptional = false;
 			pChild->GetAttrValue( "Optional", bOptional );
 
-			Lua *L = LUA->Get();
 			this->PushSelf( L );
 			LuaHelpers::Push( L, sName );
 			ActorUtil::GetParam( L, sName );
@@ -232,7 +232,6 @@ void Actor::LoadFromNode( const RString& sDir, const XNode* pNode )
 
 			lua_settable( L, -3 );
 			lua_pop( L, 1 );
-			LUA->Release( L );
 		}
 
 		if( pChild->GetName() == "Context" )
@@ -241,24 +240,17 @@ void Actor::LoadFromNode( const RString& sDir, const XNode* pNode )
 			if( !pChild->GetAttrValue( "Name", sName ) )
 				Dialog::OK( ssprintf("Context node in '%s' is missing the attribute \"Name\"", sDir.c_str()), "MISSING_ATTRIBUTE" );
 
-			LuaHelpers::RunAtExpressionS( sName );
-
-			RString s;
-			if( !pChild->GetAttrValue( "Value", s ) )
-				Dialog::OK( ssprintf("Context node in '%s' is missing the attribute \"Value\"", sDir.c_str()), "MISSING_ATTRIBUTE" );
-			Lua *L = LUA->Get();
-
 			this->PushContext(L);
 			lua_pushstring( L, sName );
-			LuaHelpers::RunExpression( L, s );
+
+			if( !pChild->PushAttrValue( L, "Value" ) )
+				Dialog::OK( ssprintf("Context node in '%s' is missing the attribute \"Value\"", sDir.c_str()), "MISSING_ATTRIBUTE" );
+
 			lua_settable( L, -3 );
 			lua_pop( L, 1 );
-
-			LUA->Release(L);
 		}
 	}
 
-	Lua *L = LUA->Get();
 	FOREACH_CONST_Attr( pNode, pAttr )
 	{
 		// Load Name, if any.
