@@ -92,6 +92,38 @@ function Actor:scale_or_crop_background()
 	end
 end
 
+Def = {}
+setmetatable( Def, {
+	__index = function(self, Type)
+		-- t is an actor definition table.  name is the type
+		-- given to Def.  Fill in standard fields.
+		return function(t)
+			if not t.Type then
+				t.Type = Type;
+			end
+		
+			local info = debug.getinfo(2,"Sl");
+
+			-- Source file of caller:
+			local Source = info.source;
+			t._Source = Source;
+
+			if Path:sub( 1, 1 ) == "@" then
+				local Path = Source:sub( 2 );
+
+				-- Directory of caller, for relative paths:
+				local pos = Path:find_last( '/' );
+				t._Dir = string.sub( Path, 1, pos );
+			end
+
+			-- Line number of caller:
+			t._Line = info.currentline;
+
+			return t;
+		end
+	end
+});
+
 -- (c) 2006 Glenn Maynard
 -- All rights reserved.
 --
