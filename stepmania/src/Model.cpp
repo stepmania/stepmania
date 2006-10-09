@@ -111,20 +111,12 @@ void Model::LoadFromNode( const RString& sDir, const XNode* pNode )
 	Actor::LoadFromNode( sDir, pNode );
 
 	RString s1, s2, s3;
-	pNode->GetAttrValue( "Meshes", s1 );
-	pNode->GetAttrValue( "Materials", s2 );
-	pNode->GetAttrValue( "Bones", s3 );
+	ActorUtil::GetAttrPath( pNode, "Meshes", s1 );
+	ActorUtil::GetAttrPath( pNode, "Materials", s2 );
+	ActorUtil::GetAttrPath( pNode, "Bones", s3 );
 	if( !s1.empty() || !s2.empty() || !s3.empty() )
 	{
 		ASSERT( !s1.empty() && !s2.empty() && !s3.empty() );
-
-		if( s1.Left(1) != "/" )
-			s1 = sDir+s1;
-		if( s2.Left(1) != "/" )
-			s2 = sDir+s2;
-		if( s3.Left(1) != "/" )
-			s3 = sDir+s3;
-
 		LoadPieces( s1, s2, s3 );
 	}
 }

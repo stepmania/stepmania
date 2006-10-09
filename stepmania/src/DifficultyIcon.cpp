@@ -44,14 +44,10 @@ bool DifficultyIcon::Load( RString sPath )
 void DifficultyIcon::LoadFromNode( const RString& sDir, const XNode* pNode )
 {
 	RString sFile;
-	if( !pNode->GetAttrValue( "File", sFile ) )
+	if( !ActorUtil::GetAttrPath(pNode, "File", sFile) )
 		RageException::Throw( "MeterDisplay in \"%s\" missing \"File\" attribute.", sDir.c_str() );
 
-	if( !sFile.empty() && sFile[0] != '/' )
-	{
-		sFile = sDir + sFile;
-		ActorUtil::ResolvePath( sFile, sDir );
-	}
+	ActorUtil::ResolvePath( sFile, sDir );
 
 	Load( sFile );
 

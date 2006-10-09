@@ -28,11 +28,8 @@ void HoldJudgment::Load( const RString &sPath )
 void HoldJudgment::LoadFromNode( const RString& sDir, const XNode* pNode )
 {
 	RString sFile;
-	if( !pNode->GetAttrValue("File", sFile) )
+	if( ActorUtil::GetAttrPath(pNode, "File", sFile) )
 		RageException::Throw( "HoldJudgment node in \"%s\" is missing the attribute \"File\"", sDir.c_str() );
-
-	if( sFile.Left(1) != "/" )
-		sFile = sDir+sFile;
 
 	CollapsePath( sFile );
 

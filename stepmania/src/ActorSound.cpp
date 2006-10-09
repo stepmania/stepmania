@@ -23,14 +23,10 @@ void ActorSound::LoadFromNode( const RString& sDir, const XNode* pNode )
 	Actor::LoadFromNode( sDir, pNode );
 
 	RString sFile;
-	if( pNode->GetAttrValue("File", sFile) || pNode->GetAttrValue("Path", sFile) ) /* Path deprecated */
+	if( ActorUtil::GetAttrPath(pNode, "File", sFile) || ActorUtil::GetAttrPath(pNode, "Path", sFile) ) /* Path deprecated */
 	{
-		FixSlashesInPlace( sFile );
-
-		RString sNewPath = sFile.Left(1) == "/"? sFile : sDir+sFile;
-		ActorUtil::ResolvePath( sNewPath, sDir );
-
-		Load( sNewPath );
+		ActorUtil::ResolvePath( sFile, sDir );
+		Load( sFile );
 	}
 }
 

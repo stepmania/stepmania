@@ -109,11 +109,7 @@ void Sprite::Load( RageTextureID ID )
 void Sprite::LoadFromNode( const RString& sDir, const XNode* pNode )
 {
 	RString sPath;
-	if( pNode->GetAttrValue( "Texture", sPath ) )
-	{
-		bool bIsAbsolutePath = sPath.Left(1) == "/";
-		sPath = bIsAbsolutePath ? sPath : sDir+sPath;
-	}
+	ActorUtil::GetAttrPath( pNode, "Texture", sPath );
 
 	if( !sPath.empty() )
 	{

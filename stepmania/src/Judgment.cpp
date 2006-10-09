@@ -19,11 +19,8 @@ Judgment::Judgment()
 void Judgment::LoadFromNode( const RString& sDir, const XNode* pNode )
 {
 	RString sFile;
-	if( pNode->GetAttrValue("File", sFile) )
+	if( ActorUtil::GetAttrPath(pNode, "File", sFile) )
 	{
-		if( sFile.Left(1) != "/" )
-			sFile = sDir+sFile;
-
 		CollapsePath( sFile );
 		LoadNormal( sFile );
 	}
