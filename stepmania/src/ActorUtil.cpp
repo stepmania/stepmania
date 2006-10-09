@@ -334,22 +334,25 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, const XNode *pParent, Actor 
 	if( ft == FT_Directory && sPath.Right(1) != "/" )
 		sPath += '/';
 
+	if( ft == FT_Directory )
+	{
+		RString sXMLPath = sPath + "default.xml";
+		if( DoesFileExist(sXMLPath) )
+		{
+			sPath = sXMLPath;
+			ft = FT_Xml;
+		}
+	}
+
 	RString sDir = Dirname( sPath );
 	switch( ft )
 	{
 	case FT_Directory:
 		{
 			sDir = sPath;
-
-			sPath = sDir + "default.xml";
-			if( !DoesFileExist(sPath) )
-			{
-				BGAnimation *pBGA = new BGAnimation;
-				pBGA->LoadFromAniDir( sDir );
-				return pBGA;
-			}
-
-			/* fall through */
+			BGAnimation *pBGA = new BGAnimation;
+			pBGA->LoadFromAniDir( sDir );
+			return pBGA;
 		}
 	case FT_Xml:
 		{
