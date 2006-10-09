@@ -17,6 +17,8 @@ namespace XmlFileUtil
 	RString GetXML( const XNode *pNode );
 	bool SaveToFile( const XNode *pNode, const RString &sFile, const RString &sStylesheet = "", bool bWriteTabs = true );
 	bool SaveToFile( const XNode *pNode, RageFileBasic &f, const RString &sStylesheet = "", bool bWriteTabs = true );
+
+	void CompileXNodeTree( XNode *pNode, const RString &sFile );
 }
 
 #endif

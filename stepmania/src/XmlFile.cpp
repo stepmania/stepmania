@@ -12,6 +12,7 @@
 #include "RageUtil.h"
 #include "DateTime.h"
 #include "Foreach.h"
+#include "LuaManager.h"
 
 XNode::XNode()
 {
@@ -62,11 +63,19 @@ void XNodeStringValue::GetValue( int &out ) const		{ out = atoi(m_sValue); }
 void XNodeStringValue::GetValue( float &out ) const		{ out = StringToFloat(m_sValue); }
 void XNodeStringValue::GetValue( bool &out ) const		{ out = atoi(m_sValue) != 0; }
 void XNodeStringValue::GetValue( unsigned &out ) const		{ out = strtoul(m_sValue,NULL,0); }
+void XNodeStringValue::PushValue( lua_State *L ) const
+{
+	LuaHelpers::Push( L, m_sValue );
+}
 
 void XNodeStringValue::SetValue( const RString &v )		{ m_sValue = v; }
 void XNodeStringValue::SetValue( int v )			{ m_sValue = ssprintf("%d",v); }
 void XNodeStringValue::SetValue( float v )			{ m_sValue = ssprintf("%f",v); }
 void XNodeStringValue::SetValue( unsigned v )			{ m_sValue = ssprintf("%u",v); }
+void XNodeStringValue::SetValueFromStack( lua_State *L )
+{
+	LuaHelpers::Pop( L, m_sValue );
+}
 
 const XNodeValue *XNode::GetAttr( const RString &attrname ) const
 {
@@ -74,6 +83,18 @@ const XNodeValue *XNode::GetAttr( const RString &attrname ) const
 	if( it != m_attrs.end() )
 		return it->second;
 	return NULL;
+}
+
+bool XNode::PushAttrValue( lua_State *L, const RString &sName ) const
+{
+	const XNodeValue *pAttr = GetAttr(sName);
+	if( pAttr == NULL )
+	{
+		lua_pushnil( L );
+		return false;
+	}
+	pAttr->PushValue( L );
+	return true;
 }
 
 XNodeValue *XNode::GetAttr( const RString &attrname )
@@ -93,6 +114,18 @@ XNode *XNode::GetChild( const RString &sName )
 		return it->second;
 	}
 	return NULL;
+}
+
+bool XNode::PushChildValue( lua_State *L, const RString &sName ) const
+{
+	const XNode *pChild = GetChild(sName);
+	if( pChild == NULL )
+	{
+		lua_pushnil( L );
+		return false;
+	}
+	pChild->m_pValue->PushValue( L );
+	return true;
 }
 
 const XNode *XNode::GetChild( const RString &sName ) const

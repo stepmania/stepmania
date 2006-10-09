@@ -258,6 +258,7 @@ void Actor::LoadFromNode( const RString& sDir, const XNode* pNode )
 		}
 	}
 
+	Lua *L = LUA->Get();
 	FOREACH_CONST_Attr( pNode, pAttr )
 	{
 		// Load Name, if any.
@@ -272,10 +273,11 @@ void Actor::LoadFromNode( const RString& sDir, const XNode* pNode )
 		else if( sKeyName == "BaseZoomZ" )		SetBaseZoomZ( pValue->GetValue<float>() );
 		else if( EndsWith(sKeyName,"Command") )
 		{
-			apActorCommands apac = ActorUtil::ParseActorCommands( pValue->GetValue<RString>(), ssprintf("%s: %s", sDir.c_str(), sKeyName.c_str()) );
-
+			LuaReference *pRef = new LuaReference;
+			pValue->PushValue( L );
+			pRef->SetFromStack( L );
 			RString sCmdName = sKeyName.Left( sKeyName.size()-7 );
-			AddCommand( sCmdName, apac );
+			AddCommand( sCmdName, apActorCommands( pRef ) );
 		}
 	}
 
@@ -291,14 +293,13 @@ void Actor::LoadFromNode( const RString& sDir, const XNode* pNode )
 
 		RString sName;
 		c->GetAttrValue( "Name", sName );
-		RString sValue;
-		c->GetAttrValue( "Value", sValue );
+		c->PushAttrValue( L, "Value" );
 
-		LuaHelpers::RunAtExpressionS( sName );
-		apActorCommands apac = ActorUtil::ParseActorCommands( sValue, ssprintf("%s: %s", sDir.c_str(), sKeyName.c_str()) );
-
-		AddCommand( sName, apac );
+		LuaReference *pRef = new LuaReference;
+		pRef->SetFromStack( L );
+		AddCommand( sName, apActorCommands( pRef ) );
 	}
+	LUA->Release( L );
 
 	/* There's an InitCommand.  Run it now.  This can be used to eg. change Z to
 	 * modify draw order between BGAs in a Foreground. */

@@ -200,14 +200,10 @@ Actor* ActorUtil::LoadFromNode( const RString& sDir, const XNode* pNode, Actor *
 				if( !pChild->GetAttrValue( "Name", sName ) )
 					Dialog::OK( ssprintf("Param node in '%s' is missing the attribute \"Name\"", sDir.c_str()), "MISSING_ATTRIBUTE" );
 
-				LuaHelpers::RunAtExpressionS( sName );
-
-				RString s;
-				if( !pChild->GetAttrValue( "Value", s ) )
+				Lua *L = LUA->Get();
+				if( !pChild->PushAttrValue( L, "Value" ) )
 					Dialog::OK( ssprintf("Param node in '%s' is missing the attribute \"Value\"", sDir.c_str()), "MISSING_ATTRIBUTE" );
 
-				Lua *L = LUA->Get();
-				LuaHelpers::RunExpression( L, s, sDir );
 				SetParamFromStack( L, sName, &setOldParams[sName] );
 				LUA->Release(L);
 			}
@@ -368,6 +364,7 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, const XNode *pParent, Actor 
 				return new Actor;
 			}
 
+			XmlFileUtil::CompileXNodeTree( &xml, sPath );
 			MergeActorXML( &xml, pParent );
 			return ActorUtil::LoadFromNode( sDir, &xml );
 		}

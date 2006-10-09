@@ -529,6 +529,117 @@ bool XmlFileUtil::SaveToFile( const XNode *pNode, const RString &sFile, const RS
 	return SaveToFile( pNode, f, sStylesheet, bWriteTabs );
 }
 
+#include "LuaManager.h"
+#include "LuaReference.h"
+class XNodeLuaValue: public XNodeValue
+{
+public:
+	LuaReference m_Value;
+	XNodeValue *Copy() const { return new XNodeLuaValue( *this ); }
+
+	template<typename T>
+	T GetValue() const { T val; GetValue(val); return val; }
+
+	void GetValue( RString &out ) const;
+	void GetValue( int &out ) const;
+	void GetValue( float &out ) const;
+	void GetValue( bool &out ) const;
+	void GetValue( unsigned &out ) const;
+	void PushValue( lua_State *L ) const;
+
+	void SetValue( const RString &v );
+	void SetValue( int v );
+	void SetValue( float v );
+	void SetValue( unsigned v );
+	void SetValueFromStack( lua_State *L );
+};
+
+void XNodeLuaValue::PushValue( lua_State *L ) const
+{
+	m_Value.PushSelf( L );
+}
+
+void XNodeLuaValue::GetValue( RString &out ) const { Lua *L = LUA->Get(); PushValue( L ); LuaHelpers::Pop( L, out ); LUA->Release( L ); }
+void XNodeLuaValue::GetValue( int &out ) const { Lua *L = LUA->Get(); PushValue( L ); LuaHelpers::Pop( L, out ); LUA->Release( L ); }
+void XNodeLuaValue::GetValue( float &out ) const { Lua *L = LUA->Get(); PushValue( L ); LuaHelpers::Pop( L, out ); LUA->Release( L ); }
+void XNodeLuaValue::GetValue( bool &out ) const { Lua *L = LUA->Get(); PushValue( L ); LuaHelpers::Pop( L, out ); LUA->Release( L ); }
+void XNodeLuaValue::GetValue( unsigned &out ) const { Lua *L = LUA->Get(); PushValue( L ); float fVal; LuaHelpers::Pop( L, fVal ); out = fVal; LUA->Release( L ); }
+
+void XNodeLuaValue::SetValueFromStack( lua_State *L )
+{
+	m_Value.SetFromStack( L );
+}
+
+void XNodeLuaValue::SetValue( const RString &v ) { Lua *L = LUA->Get(); LuaHelpers::Push( L, v ); SetValueFromStack( L ); LUA->Release( L ); }
+void XNodeLuaValue::SetValue( int v ) { Lua *L = LUA->Get(); LuaHelpers::Push( L, v ); SetValueFromStack( L ); LUA->Release( L ); }
+void XNodeLuaValue::SetValue( float v ) { Lua *L = LUA->Get(); LuaHelpers::Push( L, v ); SetValueFromStack( L ); LUA->Release( L ); }
+void XNodeLuaValue::SetValue( unsigned v ) { Lua *L = LUA->Get(); LuaHelpers::Push( L, (float) v ); SetValueFromStack( L ); LUA->Release( L ); }
+
+namespace
+{
+	void CompileXMLNodeValue( Lua *L, const RString &sName, XNodeValue *&pValue, const RString &sFile )
+	{
+		RString sExpression;
+		pValue->GetValue( sExpression );
+
+		if( EndsWith(sName, "Command") && sExpression.size() > 0 && sExpression[0] == '%' )
+		{
+			sExpression.erase( 0, 1 );
+			if( !LuaHelpers::RunExpression(L, sExpression, sFile) )
+			{
+				/* Compiling or running failed.  An error was already logged; just push a dummy
+				 * return value. */
+				lua_pushnil( L );
+			}
+		}
+		else if( EndsWith(sName, "Command") && (sExpression.size() == 0 || sExpression[0] != '%') )
+		{
+			LuaHelpers::ParseCommandList( L, sExpression, sFile );
+		}
+		else if( sExpression.size() > 0 && sExpression[0] == '@' )
+		{
+			/* This is a raw string. */
+			sExpression.erase( 0, 1 );
+			LuaHelpers::Push( L, sExpression );
+		}
+		else
+		{
+			if( !LuaHelpers::RunExpression(L, sExpression, sFile) )
+			{
+				/* Compiling or running failed.  An error was already logged; just push a dummy
+				 * return value. */
+				lua_pushnil( L );
+			}
+		}
+
+		delete pValue;
+		pValue = new XNodeLuaValue;
+		pValue->SetValueFromStack( L );
+	}
+}
+
+void XmlFileUtil::CompileXNodeTree( XNode *pNode, const RString &sFile )
+{
+	vector<XNode *> aToCompile;
+	aToCompile.push_back( pNode );
+
+	Lua *L = LUA->Get();
+	while( aToCompile.size() )
+	{
+		pNode = aToCompile.back();
+		aToCompile.pop_back();
+		FOREACH_Child( pNode, pChild )
+			aToCompile.push_back( pChild );
+
+		CompileXMLNodeValue( L, pNode->GetName(), pNode->m_pValue, sFile );
+
+		FOREACH_Attr( pNode, pAttr )
+			CompileXMLNodeValue( L, pAttr->first, pAttr->second, sFile );
+	}
+
+	LUA->Release( L );
+}
+
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.

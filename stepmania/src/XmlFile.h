@@ -6,6 +6,7 @@
 #include <map>
 struct DateTime;
 class RageFileBasic;
+struct lua_State;
 
 class XNodeValue
 {
@@ -18,6 +19,7 @@ public:
 	virtual void GetValue( float &out ) const = 0;
 	virtual void GetValue( bool &out ) const = 0;
 	virtual void GetValue( unsigned &out ) const = 0;
+	virtual void PushValue( lua_State *L ) const = 0;
 
 	template<typename T>
 	T GetValue() const { T val; GetValue(val); return val; }
@@ -26,6 +28,7 @@ public:
 	virtual void SetValue( int v ) = 0;
 	virtual void SetValue( float v ) = 0;
 	virtual void SetValue( unsigned v ) = 0;
+	virtual void SetValueFromStack( lua_State *L ) = 0;
 };
 
 class XNodeStringValue: public XNodeValue
@@ -40,11 +43,13 @@ public:
 	void GetValue( float &out ) const;
 	void GetValue( bool &out ) const;
 	void GetValue( unsigned &out ) const;
+	void PushValue( lua_State *L ) const;
 
 	void SetValue( const RString &v );
 	void SetValue( int v );
 	void SetValue( float v );
 	void SetValue( unsigned v );
+	void SetValueFromStack( lua_State *L );
 };
 
 typedef map<RString,XNodeValue*> XAttrs;
@@ -98,12 +103,14 @@ public:
 	XNodeValue *GetAttr( const RString &sAttrName ); 
 	template <typename T>
 	bool GetAttrValue( const RString &sName, T &out ) const	{ const XNodeValue *pAttr=GetAttr(sName); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
+	bool PushAttrValue( lua_State *L, const RString &sName ) const;
 
 	// in one level child nodes
 	const XNode *GetChild( const RString &sName ) const;
 	XNode *GetChild( const RString &sName );
 	template <typename T>
 	bool GetChildValue( const RString &sName, T &out ) const { const XNode *pChild=GetChild(sName); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
+	bool PushChildValue( lua_State *L, const RString &sName ) const;
 
 	// modify DOM
 	template <typename T>
