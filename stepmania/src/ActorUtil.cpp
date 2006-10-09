@@ -194,11 +194,11 @@ Actor* ActorUtil::LoadFromNode( const RString& sDir, const XNode* pNode, Actor *
 			{
 				RString sName;
 				if( !pChild->GetAttrValue( "Name", sName ) )
-					Dialog::OK( ssprintf("Param node in '%s' is missing the attribute \"Name\"", sDir.c_str()), "MISSING_ATTRIBUTE" );
+					Dialog::OK( ssprintf("%s: Param: missing the attribute \"Name\"", ActorUtil::GetWhere(pNode).c_str()), "MISSING_ATTRIBUTE" );
 
 				Lua *L = LUA->Get();
 				if( !pChild->PushAttrValue( L, "Value" ) )
-					Dialog::OK( ssprintf("Param node in '%s' is missing the attribute \"Value\"", sDir.c_str()), "MISSING_ATTRIBUTE" );
+					Dialog::OK( ssprintf("%s: Param: missing the attribute \"Value\"", ActorUtil::GetWhere(pNode).c_str()), "MISSING_ATTRIBUTE" );
 
 				SetParamFromStack( L, sName, &setOldParams[sName] );
 				LUA->Release(L);
@@ -241,8 +241,8 @@ Actor* ActorUtil::LoadFromNode( const RString& sDir, const XNode* pNode, Actor *
 		 * loading the layer we're in. */
 		if( sFile == "" )
 		{
-			RString sError = ssprintf( "The file \"%s\" is missing the File attribute or has an invalid Class \"%s\"",
-				ActorUtil::GetSourcePath(pNode).c_str(), sClass.c_str() );
+			RString sError = ssprintf( "%s: missing the File attribute or has an invalid Class \"%s\"",
+				ActorUtil::GetWhere(pNode).c_str(), sClass.c_str() );
 			Dialog::OK( sError );
 			pReturn = new Actor;	// Return a dummy object so that we don't crash in AutoActor later.
 			goto all_done;
@@ -468,6 +468,16 @@ RString ActorUtil::GetSourcePath( const XNode *pNode )
 		sRet.erase( 0, 1 );
 
 	return sRet;
+}
+
+RString ActorUtil::GetWhere( const XNode *pNode )
+{
+	RString sPath = GetSourcePath( pNode );
+
+	int iLine;
+	if( pNode->GetAttrValue("_Line", iLine) )
+		sPath += ssprintf( ":%i", iLine );
+	return sPath;
 }
 
 bool ActorUtil::GetAttrPath( const XNode *pNode, const RString &sName, RString &sOut )

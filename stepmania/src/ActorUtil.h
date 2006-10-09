@@ -72,6 +72,7 @@ namespace ActorUtil
 	Actor* LoadFromNode( const RString& sAniDir, const XNode* pNode, Actor *pParentActor = NULL );
 	Actor* MakeActor( const RString &sPath, const XNode *pParent = NULL, Actor *pParentActor = NULL );
 	RString GetSourcePath( const XNode *pNode );
+	RString GetWhere( const XNode *pNode );
 	bool GetAttrPath( const XNode *pNode, const RString &sName, RString &sOut );
 
 	void ResolvePath( RString &sPath, const RString &sName );
