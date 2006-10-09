@@ -1,18 +1,18 @@
 <ActorFrame><children>
 	<Layer
-		Type="Sprite"
+		Type="@Sprite"
 		InitCommand="%function(self) self:LoadBackground( GAMESTATE:GetCurrentSong():GetBackgroundPath() ) end"
 		OnCommand="x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;ZoomToWidth,SCREEN_WIDTH;ZoomToHeight,SCREEN_HEIGHT;diffuse,color(self.Color1)"
 	>
-		<Input Name="Color1" />
+		<Input Name="@Color1" />
 	</Layer>
 	<Layer
-		File="@File1"
+		File="File1"
 		InitCommand="Pause"
 		OnCommand="blend,add;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;ZoomToWidth,SCREEN_WIDTH;ZoomToHeight,SCREEN_HEIGHT;diffuse,color(self.Color2)"
 		GainFocusCommand="Play"
 		LoseFocusCommand="Pause"
 	>
-		<Input Name="Color2" />
+		<Input Name="@Color2" />
 	</Layer>
 </children></ActorFrame>

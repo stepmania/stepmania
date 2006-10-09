@@ -1,11 +1,11 @@
 <!-- Align left when cropping to 4:3.  Avoid this; it's not compatible with PS2 movie pre-rendering. -->
 <ActorFrame><children>
 	<Layer
-		File="@File1" 
+		File="File1" 
 		OnCommand="horizalign,left;scaletocover,0,0,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,color(self.Color1)" 
 		GainFocusCommand="Play"
 		LoseFocusCommand="Pause"
 	>
-		<Input Name="Color1" />
+		<Input Name="@Color1" />
 	</Layer>
 </children></ActorFrame>

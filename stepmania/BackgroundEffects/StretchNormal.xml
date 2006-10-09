@@ -1,10 +1,10 @@
 <ActorFrame><children>
 	<Layer
-		File="@File1" 
+		File="File1" 
 		OnCommand="scale_or_crop_background;diffuse,color(self.Color1)" 
 		GainFocusCommand="Play"
 		LoseFocusCommand="Pause"
 	>
-		<Input Name="Color1" />
+		<Input Name="@Color1" />
 	</Layer>
 </children></ActorFrame>

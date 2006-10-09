@@ -1,6 +1,6 @@
 <ActorFrame><children>
 	<AutoActor 
-		File="@File1" 
+		File="File1" 
 		OnCommand="x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y"
 	/>
 </children></ActorFrame>
