@@ -218,7 +218,7 @@ void Actor::LoadFromNode( const RString& sDir, const XNode* pNode )
 			/* If parameters are specified here, save their values to the actor. */
 			RString sName;
 			if( !pChild->GetAttrValue( "Name", sName ) )
-				RageException::Throw( "Input node in \"%s\" is missing the attribute \"Name\".", sDir.c_str() );
+				RageException::Throw( "%s: Input: missing the attribute \"Name\"", ActorUtil::GetWhere(pNode).c_str() );
 
 			bool bOptional = false;
 			pChild->GetAttrValue( "Optional", bOptional );
@@ -228,7 +228,7 @@ void Actor::LoadFromNode( const RString& sDir, const XNode* pNode )
 			ActorUtil::GetParam( L, sName );
 
 			if( lua_isnil(L, -1) && !bOptional )
-				RageException::Throw( "Actor in \"%s\" requires parameter \"%s\" that is not set.", sDir.c_str(), sName.c_str() );
+				RageException::Throw( "%s: Actor requires parameter \"%s\" that is not set", ActorUtil::GetWhere(pNode).c_str(), sName.c_str() );
 
 			lua_settable( L, -3 );
 			lua_pop( L, 1 );
@@ -238,13 +238,13 @@ void Actor::LoadFromNode( const RString& sDir, const XNode* pNode )
 		{
 			RString sName;
 			if( !pChild->GetAttrValue( "Name", sName ) )
-				Dialog::OK( ssprintf("Context node in '%s' is missing the attribute \"Name\"", sDir.c_str()), "MISSING_ATTRIBUTE" );
+				Dialog::OK( ssprintf("Context node in '%s' is missing the attribute \"Name\"", ActorUtil::GetWhere(pNode).c_str()), "MISSING_ATTRIBUTE" );
 
 			this->PushContext(L);
 			lua_pushstring( L, sName );
 
 			if( !pChild->PushAttrValue( L, "Value" ) )
-				Dialog::OK( ssprintf("Context node in '%s' is missing the attribute \"Value\"", sDir.c_str()), "MISSING_ATTRIBUTE" );
+				Dialog::OK( ssprintf("Context node in '%s' is missing the attribute \"Value\"", ActorUtil::GetWhere(pNode).c_str()), "MISSING_ATTRIBUTE" );
 
 			lua_settable( L, -3 );
 			lua_pop( L, 1 );

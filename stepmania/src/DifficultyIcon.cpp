@@ -45,7 +45,7 @@ void DifficultyIcon::LoadFromNode( const RString& sDir, const XNode* pNode )
 {
 	RString sFile;
 	if( !ActorUtil::GetAttrPath(pNode, "File", sFile) )
-		RageException::Throw( "MeterDisplay in \"%s\" missing \"File\" attribute.", sDir.c_str() );
+		RageException::Throw( "%s: DifficultyIcon: missing the \"File\" attribute.", ActorUtil::GetWhere(pNode).c_str() );
 
 	ActorUtil::ResolvePath( sFile, sDir );
 

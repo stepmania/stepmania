@@ -38,7 +38,7 @@ void PercentageDisplay::LoadFromNode( const RString& sDir, const XNode* pNode )
 
 	const XNode *pChild = pNode->GetChild( "Percent" );
 	if( pChild == NULL )
-		RageException::Throw( "PercentageDisplay in \"%s\" is missing the node \"Percent\".", sDir.c_str() );
+		RageException::Throw( "%s: PercentageDisplay: missing the node \"Percent\"", ActorUtil::GetWhere(pNode).c_str() );
 	m_textPercent.LoadFromNode( sDir, pChild );
 	this->AddChild( &m_textPercent );
 
@@ -46,7 +46,7 @@ void PercentageDisplay::LoadFromNode( const RString& sDir, const XNode* pNode )
 	{
 		const XNode *pChild = pNode->GetChild( "PercentRemainder" );
 		if( pChild == NULL )
-			RageException::Throw( "ComboGraph in \"%s\" is missing the node \"PercentRemainder\".", sDir.c_str() );
+			RageException::Throw( "%s: ComboGraph: missing the node \"PercentRemainder\"", ActorUtil::GetWhere(pNode).c_str() );
 		m_textPercentRemainder.LoadFromNode( sDir, pChild );
 		this->AddChild( &m_textPercentRemainder );
 	}
