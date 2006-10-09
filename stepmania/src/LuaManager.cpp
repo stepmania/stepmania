@@ -190,6 +190,7 @@ LuaManager::LuaManager()
 	luaopen_math( L );
 	luaopen_string( L );
 	luaopen_table( L );
+	luaopen_debug( L );
 	lua_settop(L, 0); // luaopen_* pushes stuff onto the stack that we don't need
 
 	RegisterTypes();
