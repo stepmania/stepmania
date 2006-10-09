@@ -242,8 +242,8 @@ Actor* ActorUtil::LoadFromNode( const RString& sDir, const XNode* pNode, Actor *
 		 * loading the layer we're in. */
 		if( sFile == "" )
 		{
-			RString sError = ssprintf( "An xml file in '%s' is missing the File attribute or has an invalid Class \"%s\"",
-				sDir.c_str(), sClass.c_str() );
+			RString sError = ssprintf( "The file \"%s\" is missing the File attribute or has an invalid Class \"%s\"",
+				ActorUtil::GetSourcePath(pNode).c_str(), sClass.c_str() );
 			Dialog::OK( sError );
 			pReturn = new Actor;	// Return a dummy object so that we don't crash in AutoActor later.
 			goto all_done;
@@ -329,6 +329,10 @@ namespace
 			FOREACH_Child( pNode, pChild )
 				queue.push_back( pChild );
 
+			/* Source file, for error messages: */
+			pNode->AppendAttr( "_Source", sFile );
+
+			/* Directory of caller, for relative paths: */
 			pNode->AppendAttr( "_Dir", sDir );
 		}
 
@@ -457,6 +461,16 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, const XNode *pParent, Actor 
 		RageException::Throw("File \"%s\" has unknown type, \"%s\".",
 				     sPath.c_str(), FileTypeToString(ft).c_str() );
 	}
+}
+
+RString ActorUtil::GetSourcePath( const XNode *pNode )
+{
+	RString sRet;
+	pNode->GetAttrValue( "_Source", sRet );
+	if( sRet.substr(0, 1) == "@" )
+		sRet.erase( 0, 1 );
+
+	return sRet;
 }
 
 bool ActorUtil::GetAttrPath( const XNode *pNode, const RString &sName, RString &sOut )
