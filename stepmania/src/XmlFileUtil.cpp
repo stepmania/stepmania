@@ -563,7 +563,7 @@ void XNodeLuaValue::GetValue( RString &out ) const { Lua *L = LUA->Get(); PushVa
 void XNodeLuaValue::GetValue( int &out ) const { Lua *L = LUA->Get(); PushValue( L ); LuaHelpers::Pop( L, out ); LUA->Release( L ); }
 void XNodeLuaValue::GetValue( float &out ) const { Lua *L = LUA->Get(); PushValue( L ); LuaHelpers::Pop( L, out ); LUA->Release( L ); }
 void XNodeLuaValue::GetValue( bool &out ) const { Lua *L = LUA->Get(); PushValue( L ); LuaHelpers::Pop( L, out ); LUA->Release( L ); }
-void XNodeLuaValue::GetValue( unsigned &out ) const { Lua *L = LUA->Get(); PushValue( L ); float fVal; LuaHelpers::Pop( L, fVal ); out = fVal; LUA->Release( L ); }
+void XNodeLuaValue::GetValue( unsigned &out ) const { Lua *L = LUA->Get(); PushValue( L ); float fVal; LuaHelpers::Pop( L, fVal ); out = unsigned(fVal); LUA->Release( L ); }
 
 void XNodeLuaValue::SetValueFromStack( lua_State *L )
 {
