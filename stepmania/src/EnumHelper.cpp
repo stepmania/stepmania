@@ -83,11 +83,9 @@ namespace
 	{
 		luaL_checktype( L, 1, LUA_TTABLE );
 
-		/* Look up the reverse table. */
-		luaL_getmetafield( L, 1, "reverse" );
-
-		/* If there was no metafield, then we were called on the wrong type. */
-		if( lua_isnil(L, -1) )
+		/* Look up the reverse table.  If there is no metafield, then we were
+		 * called on the wrong type. */
+		if( !luaL_getmetafield(L, 1, "reverse") )
 			luaL_typerror( L, 1, "enum" );
 
 		return 1;
