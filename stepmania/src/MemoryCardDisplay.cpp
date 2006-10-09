@@ -30,8 +30,11 @@ void MemoryCardDisplay::Load( PlayerNumber pn )
 
 void MemoryCardDisplay::LoadFromNode( const XNode* pNode )
 {
+	Lua *L = LUA->Get();
+	pNode->PushAttrValue( L, "PlayerNumber" );
 	PlayerNumber pn;
-	pNode->GetAttrValue("PlayerNumber", (int&) pn );
+	LuaHelpers::Pop( L, pn );
+	LUA->Release(L);
 
 	Load( pn );
 
