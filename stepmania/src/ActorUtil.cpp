@@ -330,15 +330,16 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, const XNode *pParent, Actor 
 	 * evaluated them.  Make sure we don't allow double-evaluation. */
 	ASSERT_M( sPath.empty() || sPath[0] != '@', sPath );
 
-	RString sDir = Dirname( sPath );
 	FileType ft = GetFileType( sPath );
+	if( ft == FT_Directory && sPath.Right(1) != "/" )
+		sPath += '/';
+
+	RString sDir = Dirname( sPath );
 	switch( ft )
 	{
 	case FT_Directory:
 		{
 			sDir = sPath;
-			if( sDir.Right(1) != "/" )
-				sDir += '/';
 
 			sPath = sDir + "default.xml";
 			if( !DoesFileExist(sPath) )
