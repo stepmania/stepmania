@@ -43,6 +43,7 @@ void InputMapper::ClearAllMappings()
 		FOREACH_GameButton(j)
 			for( int k=0; k<NUM_GAME_TO_DEVICE_SLOTS; k++ )
 				m_GItoDI[i][j][k].MakeInvalid();
+	UpdateTempDItoGI();
 }
 
 void InputMapper::AddDefaultMappingsForCurrentGameIfUnmapped()
