@@ -473,16 +473,15 @@ void BGAnimationLayer::LoadFromNode( const RString& sDir, const XNode* pNode )
 	case TYPE_PARTICLES:
 		{
 			RString sFile;
-			pNode->GetAttrValue( "File", sFile );
+			ActorUtil::GetAttrPath( pNode, "File", sFile );
 			FixSlashesInPlace( sFile );
 			
-			RString sPath = sAniDir+sFile;
-			CollapsePath( sPath );
+			CollapsePath( sFile );
 
 
 			for( int i=0; i<iNumParticles; i++ )
 			{
-				Actor* pActor = ActorUtil::MakeActor( sPath );
+				Actor* pActor = ActorUtil::MakeActor( sFile );
 				if( pActor == NULL )
 					continue;
 				this->AddChild( pActor );
@@ -504,14 +503,13 @@ void BGAnimationLayer::LoadFromNode( const RString& sDir, const XNode* pNode )
 	case TYPE_TILES:
 		{
 			RString sFile;
-			pNode->GetAttrValue( "File", sFile );
+			ActorUtil::GetAttrPath( pNode, "File", sFile );
 			FixSlashesInPlace( sFile );
 			
-			RString sPath = sAniDir+sFile;
-			CollapsePath( sPath );
+			CollapsePath( sFile );
 
 			AutoActor s;
-			s.Load( sPath );
+			s.Load( sFile );
 			if( m_fTilesSpacingX == -1 )
 				m_fTilesSpacingX = s->GetUnzoomedWidth();
 			if( m_fTilesSpacingY == -1 )
@@ -521,7 +519,7 @@ void BGAnimationLayer::LoadFromNode( const RString& sDir, const XNode* pNode )
 			unsigned NumSprites = m_iNumTilesWide * m_iNumTilesHigh;
 			for( unsigned i=0; i<NumSprites; i++ )
 			{
-				Actor* pSprite = ActorUtil::MakeActor( sPath );
+				Actor* pSprite = ActorUtil::MakeActor( sFile );
 				this->AddChild( pSprite );
 				pSprite->SetTextureWrapping( true );		// gets rid of some "cracks"
 				pSprite->SetZoom( randomf(fZoomMin,fZoomMax) );
