@@ -314,6 +314,33 @@ static void MergeActorXML( XNode *pChild, const XNode *pParent )
 	}
 }
 
+namespace
+{
+	XNode *LoadXNodeFromLuaShowErrors( const RString &sFile )
+	{
+		RString sScript;
+		if( !GetFileContents(sFile, sScript) )
+			return NULL;
+
+		Lua *L = LUA->Get();
+
+		RString sError;
+		if( !LuaHelpers::RunScript(L, sScript, sFile, sError, 1) )
+		{
+			lua_pop( L, 1 );
+			LUA->Release( L );
+			sError = ssprintf( "Lua runtime error: %s", sError.c_str() );
+			Dialog::OK( sError, "LUA_ERROR" );
+			return NULL;
+		}
+
+		XNode *pRet = XmlFileUtil::XNodeFromTable( L );
+
+		LUA->Release( L );
+		return pRet;
+	}
+}
+
 /*
  * If pParent is non-NULL, it's the parent node when nesting XML, which is
  * used only by ActorUtil::LoadFromNode.
@@ -344,6 +371,16 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, const XNode *pParent, Actor 
 		}
 	}
 
+	if( ft == FT_Directory )
+	{
+		RString sLuaPath = sPath + "default.lua";
+		if( DoesFileExist(sLuaPath) )
+		{
+			sPath = sLuaPath;
+			ft = FT_Lua;
+		}
+	}
+
 	RString sDir = Dirname( sPath );
 	switch( ft )
 	{
@@ -366,6 +403,19 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, const XNode *pParent, Actor 
 			XmlFileUtil::CompileXNodeTree( &xml, sPath );
 			MergeActorXML( &xml, pParent );
 			return ActorUtil::LoadFromNode( sDir, &xml );
+		}
+	case FT_Lua:
+		{
+			auto_ptr<XNode> pNode( LoadXNodeFromLuaShowErrors(sPath) );
+			if( pNode.get() == NULL )
+			{
+				// XNode will warn about the error
+				return new Actor;
+			}
+
+			MergeActorXML( pNode.get(), pParent );
+			Actor *pRet = ActorUtil::LoadFromNode( sDir, pNode.get() );
+			return pRet;
 		}
 	case FT_Bitmap:
 	case FT_Movie:
@@ -503,6 +553,7 @@ static const char *FileTypeNames[] = {
 	"Movie", 
 	"Directory", 
 	"Xml", 
+	"Lua", 
 	"Model", 
 };
 XToString( FileType, NUM_FileType );
@@ -513,6 +564,7 @@ FileType ActorUtil::GetFileType( const RString &sPath )
 	sExt.MakeLower();
 	
 	if( sExt=="xml" )		return FT_Xml;
+	else if( sExt=="lua" )		return FT_Lua;
 	else if( 
 		sExt=="png" ||
 		sExt=="jpg" || 

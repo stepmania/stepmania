@@ -5,6 +5,7 @@
 
 class RageFileBasic;
 class XNode;
+struct lua_State;
 
 namespace XmlFileUtil
 {
@@ -19,6 +20,7 @@ namespace XmlFileUtil
 	bool SaveToFile( const XNode *pNode, RageFileBasic &f, const RString &sStylesheet = "", bool bWriteTabs = true );
 
 	void CompileXNodeTree( XNode *pNode, const RString &sFile );
+	XNode *XNodeFromTable( lua_State *L );
 }
 
 #endif

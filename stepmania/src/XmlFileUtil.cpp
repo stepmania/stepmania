@@ -640,8 +640,113 @@ void XmlFileUtil::CompileXNodeTree( XNode *pNode, const RString &sFile )
 	LUA->Release( L );
 }
 
+namespace
+{
+	XNode *XNodeFromTableRecursive( lua_State *L, const RString &sName, LuaReference &ProcessedTables )
+	{
+		XNode *pNode = new XNode( sName );
+
+		/* Set the value of the node to the table. */
+		{
+			XNodeLuaValue *pValue = new XNodeLuaValue;
+			lua_pushvalue( L, -1 );
+			pValue->SetValueFromStack( L );
+			pNode->SetValueFrom( pValue );
+		}
+
+		/* Iterate over the table, pulling out attributes and tables to process. */
+		map<RString, LuaReference> NodesToAdd;
+		lua_pushnil( L );
+		while( lua_next(L, -2) )
+		{
+			lua_pushvalue( L, -2 );
+			RString sName;
+			LuaHelpers::Pop( L, sName );
+
+			/* If this entry is a table, add it recursively. */
+			if( lua_istable(L, -1) )
+			{
+				NodesToAdd[sName].SetFromStack( L );
+				continue;
+			}
+
+			if( lua_isstring(L, -1) && EndsWith(sName, "Command") )
+			{
+				RString sExpression;
+				LuaHelpers::Pop( L, sExpression );
+				LuaHelpers::ParseCommandList( L, sExpression, "" /* XXX */ );
+			}
+
+			/* Otherwise, add an attribute. */
+			XNodeLuaValue *pValue = new XNodeLuaValue;
+			pValue->SetValueFromStack( L );
+			pNode->AppendAttrFrom( sName, pValue );
+		}
+		lua_pop( L, 1 ); // pop nil
+
+		/* Recursively process tables. */
+		FOREACHM( RString, LuaReference, NodesToAdd, t )
+		{
+			const RString &sNodeName = t->first;
+			LuaReference &NodeToAdd = t->second;
+
+			/* Check if the table is on the stack. */
+			ProcessedTables.PushSelf( L );
+			NodeToAdd.PushSelf( L ); // push table
+			lua_gettable( L, -2 );
+
+			bool bSawThisTableAlready = !lua_isnil(L, -1);
+			lua_pop( L, 2 ); // pop lua_gettable result, ProcessedTables
+			if( bSawThisTableAlready )
+				continue;
+
+			/* Add the table to the stack. */
+			ProcessedTables.PushSelf( L );
+			NodeToAdd.PushSelf( L );
+			lua_pushboolean( L, true );
+			lua_settable( L, -3 );
+			lua_pop( L, 1 ); // pop ProcessedTables
+
+			NodeToAdd.PushSelf( L );
+			XNode *pNewNode = XNodeFromTableRecursive( L, sNodeName, ProcessedTables );
+			if( pNewNode )
+				pNode->AppendChild( pNewNode );
+
+			/* Remove the table from the stack. */
+			ProcessedTables.PushSelf( L );
+			NodeToAdd.PushSelf( L );
+			lua_pushnil( L );
+			lua_settable( L, -3 );
+			lua_pop( L, 1 ); // pop ProcessedTables
+		}
+
+		return pNode;
+	}
+
+}
+
 /*
- * (c) 2001-2004 Chris Danford
+ * Pop a table off of the stack, and return an XNode tree referring recursively
+ * to entries in the table.
+ *
+ * The table may not contain table cycles; if a cycle is detected, only the first
+ * table seen will have a corresponding XNode.
+ *
+ * Users of the resulting XNode may access the original table via PushValue.
+ */
+XNode *XmlFileUtil::XNodeFromTable( lua_State *L )
+{
+	/* Maintain a set of references that we've created.  Tables may loop; XNode trees may
+	 * not.  If we encounter a cycle, skip creating an XNode for that node. */
+	LuaReference ProcessedTables;
+	lua_newtable( L );
+	ProcessedTables.SetFromStack( L );
+
+	return XNodeFromTableRecursive( L, "Layer", ProcessedTables );
+}
+
+/*
+ * (c) 2001-2006 Chris Danford, Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
