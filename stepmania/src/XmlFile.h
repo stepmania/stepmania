@@ -93,6 +93,7 @@ public:
 	const RString &GetName() const { return m_sName; }
 	RString GetValue() const { return m_pValue->GetValue<RString>(); }
 
+	void SetValueFrom( XNodeValue *pValue ) { delete m_pValue; m_pValue = pValue; }
 	template <typename T>
 	void GetValue( T &out ) const { m_pValue->GetValue(out); }
 	template <typename T>
@@ -119,7 +120,7 @@ public:
 	XNode *AppendChild( XNode *node );
 	bool RemoveChild( XNode *node, bool bDelete = true );
 
-	XNodeValue *AppendAttr( const RString &sName, XNodeValue *pValue, bool bOverwrite = true );
+	XNodeValue *AppendAttrFrom( const RString &sName, XNodeValue *pValue, bool bOverwrite = true );
 	XNodeValue *AppendAttr( const RString &sName );
 	template <typename T>
 	XNodeValue *AppendAttr( const RString &sName, T value ) { XNodeValue *pVal = AppendAttr( sName ); pVal->SetValue( value ); return pVal; }

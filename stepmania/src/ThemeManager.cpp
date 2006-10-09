@@ -284,7 +284,7 @@ static void MergeIniUnder( XNode *pFrom, XNode *pTo )
 			FOREACHM( RString, XNodeValue *, pSectionNode->m_attrs, it2 )
 			{
 				/* Don't overwrite existing nodes. */
-				pChildNode->AppendAttr( it2->first, it2->second->Copy(), false );
+				pChildNode->AppendAttrFrom( it2->first, it2->second->Copy(), false );
 			}
 		}
 

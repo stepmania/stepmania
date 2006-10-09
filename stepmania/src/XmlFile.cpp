@@ -30,7 +30,7 @@ XNode::XNode( const XNode &cpy ):
 {
 	m_pValue = cpy.m_pValue->Copy();
 	FOREACH_CONST_Attr( &cpy, pAttr )
-		this->AppendAttr( pAttr->first, pAttr->second->Copy() );
+		this->AppendAttrFrom( pAttr->first, pAttr->second->Copy() );
 	FOREACH_CONST_Child( &cpy, c )
 		this->AppendChild( new XNode(*c) );
 }
@@ -179,7 +179,7 @@ bool XNode::RemoveAttr( const RString &sName )
 
 /* If bOverwrite is true and a node already exists with that name, the old value will be deleted.
  * If bOverwrite is false and a node already exists with that name, the new value will be deleted. */
-XNodeValue *XNode::AppendAttr( const RString &sName, XNodeValue *pValue, bool bOverwrite )
+XNodeValue *XNode::AppendAttrFrom( const RString &sName, XNodeValue *pValue, bool bOverwrite )
 {
 	DEBUG_ASSERT( sName.size() );
 	pair<XAttrs::iterator,bool> ret = m_attrs.insert( make_pair(sName, (XNodeValue *) NULL) );
