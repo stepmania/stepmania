@@ -23,7 +23,7 @@ void ActorSound::LoadFromNode( const XNode* pNode )
 	Actor::LoadFromNode( pNode );
 
 	RString sFile;
-	if( ActorUtil::GetAttrPath(pNode, "File", sFile) || ActorUtil::GetAttrPath(pNode, "Path", sFile) ) /* Path deprecated */
+	if( ActorUtil::GetAttrPath(pNode, "File", sFile) )
 	{
 		ActorUtil::ResolvePath( sFile, ActorUtil::GetWhere(pNode) );
 		Load( sFile );
