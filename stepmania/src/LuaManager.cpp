@@ -442,22 +442,9 @@ void LuaHelpers::PrepareExpression( RString &sInOut )
 
 bool LuaHelpers::RunScriptFile( const RString &sFile )
 {
-	RageFile f;
-	if( !f.Open( sFile ) )
-	{
-		RString sError = ssprintf( "Couldn't open Lua script \"%s\": %s", sFile.c_str(), f.GetError().c_str() );
-		Dialog::OK( sError, "LUA_ERROR" );
-		return false;
-	}
-
 	RString sScript;
-	if( f.Read( sScript ) == -1 )
-	{
-		RString sError = ssprintf( "Error reading Lua script \"%s\": %s", sFile.c_str(), f.GetError().c_str() );
-		Dialog::OK( sError, "LUA_ERROR" );
+	if( !GetFileContents(sFile, sScript) )
 		return false;
-	}
-	f.Close();
 
 	Lua *L = LUA->Get();
 
