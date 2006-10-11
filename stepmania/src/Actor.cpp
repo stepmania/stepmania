@@ -122,11 +122,10 @@ Actor::Actor()
 	m_pLuaInstance = new LuaClass;
 	Lua *L = LUA->Get();
 		m_pLuaInstance->PushSelf( L );
-		lua_pushstring( L, "ctx" );
 		lua_newtable( L );
 		lua_pushvalue( L, -1 );
 		lua_setmetatable( L, -2 );
-		lua_settable( L, -3 );
+		lua_setfield( L, -2, "ctx" );
 		lua_pop( L, 1 );
 	LUA->Release( L );
 
