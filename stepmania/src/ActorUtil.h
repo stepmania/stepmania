@@ -8,19 +8,15 @@
 
 class XNode;
 
-typedef Actor* (*CreateActorFn)(const XNode* pNode, Actor* pParent);
+typedef Actor* (*CreateActorFn)();
+
+template<typename T>
+Actor *CreateActor() { return new T; }
 
 // Each Actor class should have a REGISTER_ACTOR_CLASS in its CPP file.
 #define REGISTER_ACTOR_CLASS_WITH_NAME( className, externalClassName ) \
-	Actor* Create##className(const XNode* pNode, Actor* pParent) { \
-		className *pRet = new className; \
-		if( pParent ) \
-			pRet->SetParent( pParent ); \
-		pRet->LoadFromNode(pNode); \
-		return pRet; } \
-	class Register##className { \
-	public: \
-		Register##className() { ActorUtil::Register(#externalClassName,Create##className); } \
+	struct Register##className { \
+		Register##className() { ActorUtil::Register(#externalClassName, CreateActor<className>); } \
 	}; \
 	static Register##className register##className; \
 	Actor *className::Copy() const { return new className(*this); }

@@ -40,8 +40,14 @@ Actor* ActorUtil::Create( const RString& sClassName, const XNode* pNode, Actor *
 	map<RString,CreateActorFn>::iterator iter = g_pmapRegistrees->find( sClassName );
 	ASSERT_M( iter != g_pmapRegistrees->end(), ssprintf("Actor '%s' is not registered.",sClassName.c_str()) );
 
-	CreateActorFn pfn = iter->second;
-	return (*pfn)( pNode, pParentActor );
+	const CreateActorFn &pfn = iter->second;
+	Actor *pRet = pfn();
+
+	if( pParentActor )
+		pRet->SetParent( pParentActor );
+
+	pRet->LoadFromNode( pNode );
+	return pRet;
 }
 
 void ActorUtil::ResolvePath( RString &sPath, const RString &sName )
