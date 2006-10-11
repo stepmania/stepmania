@@ -585,12 +585,7 @@ namespace
 		if( EndsWith(sName, "Command") && sExpression.size() > 0 && sExpression[0] == '%' )
 		{
 			sExpression.erase( 0, 1 );
-			if( !LuaHelpers::RunExpression(L, sExpression, sFile) )
-			{
-				/* Compiling or running failed.  An error was already logged; just push a dummy
-				 * return value. */
-				lua_pushnil( L );
-			}
+			LuaHelpers::RunExpression( L, sExpression, sFile );
 		}
 		else if( EndsWith(sName, "Command") && (sExpression.size() == 0 || sExpression[0] != '%') )
 		{
@@ -604,12 +599,7 @@ namespace
 		}
 		else
 		{
-			if( !LuaHelpers::RunExpression(L, sExpression, sFile) )
-			{
-				/* Compiling or running failed.  An error was already logged; just push a dummy
-				 * return value. */
-				lua_pushnil( L );
-			}
+			LuaHelpers::RunExpression( L, sExpression, sFile );
 		}
 
 		delete pValue;
