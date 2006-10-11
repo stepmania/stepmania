@@ -437,9 +437,6 @@ void UnlockManager::Load()
 			}
 			else if( sName == "code" )
 			{
-				// Hack: Lua only has a floating point type, and codes may be big enough
-				// that converting them from string to float to int introduces rounding
-				// error.  Convert directly to int.
 				current.m_sEntryID = (RString)cmd.GetArg(1);
 			}
 			else if( sName == "roulette" )
