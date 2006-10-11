@@ -272,7 +272,7 @@ all_done:
 }
 
 /*
- * Merge a parent and child XML.  For example,
+ * Merge commands from a parent into a child.  For example,
  *
  * parent.xml: <Layer File="child" OnCommand="x,10" />
  * child.xml:  <Layer1 File="image" OffCommand="y,10" />
@@ -281,9 +281,7 @@ all_done:
  *
  * <Layer1 File="image" OnCommand="x,10" OffCommand="y,10" />
  *
- * The result is a copy of the child, with attributes and children
- * from the parent merged, excluding the attribute "File".  Warn
- * about duplicate attributes.
+ * Warn about duplicate commands.
  */
 static void MergeActorXML( XNode *pChild, const XNode *pParent )
 {
@@ -292,19 +290,18 @@ static void MergeActorXML( XNode *pChild, const XNode *pParent )
 
 	FOREACH_CONST_Attr( pParent, p )
 	{
-		if( p->first == "File" )
+		const RString &sName = p->first;
+		if( !EndsWith(sName, "Command") )
 			continue;
 
-		RString sOld;
-		if( pChild->GetChildValue(p->first, sOld) )
+		if( pChild->GetAttr(p->first) != NULL )
 		{
 			RString sWarning = 
-				ssprintf( "Overriding \"%s\" (\"%s\") in XML node \"%s\" with \"%s\" in XML node \"%s\"",
-				p->first.c_str(),
+				ssprintf( "%s: \"%s\" overrides \"%s\" in %s",
+				ActorUtil::GetWhere(pParent).c_str(),
+				sName.c_str(),
 				p->second->GetValue<RString>().c_str(),
-				pChild->GetName().c_str(),
-				sOld.c_str(),
-				pParent->GetName().c_str() );
+				ActorUtil::GetWhere(pChild).c_str() );
 			Dialog::OK( sWarning, "XML_ATTRIB_OVERRIDE" );
 		}
 		pChild->AppendAttrFrom( p->first, p->second->Copy() );
