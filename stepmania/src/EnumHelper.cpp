@@ -3,10 +3,16 @@
 #include "LuaManager.h"
 #include "RageUtil.h"
 
-int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const char *szType )
+int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const char *szType, bool bAllowInvalid )
 {
 	if( lua_isnil(L, iPos) )
-		return iInvalid;
+	{
+		if( bAllowInvalid )
+			return iInvalid;
+
+		LuaHelpers::Push( L, ssprintf("Expected %s; got nil", szType) );
+		lua_error( L );
+	}
 
 	iPos = LuaHelpers::AbsIndex( L, iPos );
 

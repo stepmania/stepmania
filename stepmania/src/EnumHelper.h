@@ -12,7 +12,7 @@ extern "C"
 #define FOREACH_ENUM_N( e, max, var )	for( e var=(e)0; var<max; enum_add<e>( var, +1 ) )
 #define FOREACH_ENUM( e, var )	for( e var=(e)0; var<NUM_##e; enum_add<e>( var, +1 ) )
 
-int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const char *szType );
+int CheckEnum( lua_State *L, LuaReference &table, int iPos, int iInvalid, const char *szType, bool bAllowInvalid );
 
 template<typename T>
 struct EnumTraits
@@ -28,9 +28,9 @@ template<typename T> LuaReference EnumTraits<T>::EnumToString;
 namespace Enum
 {
 	template<typename T>
-	static T Check( lua_State *L, int iPos )
+	static T Check( lua_State *L, int iPos, bool bAllowInvalid = false )
 	{
-		return (T) CheckEnum( L, EnumTraits<T>::StringToEnum, iPos, EnumTraits<T>::Invalid, EnumTraits<T>::szName );
+		return (T) CheckEnum( L, EnumTraits<T>::StringToEnum, iPos, EnumTraits<T>::Invalid, EnumTraits<T>::szName, bAllowInvalid );
 	}
 	template<typename T>
 	static void Push( lua_State *L, T iVal )
