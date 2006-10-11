@@ -426,7 +426,11 @@ void LightsManager::ChangeTestCabinetLight( int iDir )
 	m_iControllerTestManualCycleCurrent = -1;
 
 	m_clTestManualCycleCurrent = (CabinetLight)(m_clTestManualCycleCurrent+iDir);
-	wrap( (int&)m_clTestManualCycleCurrent, NUM_CabinetLight );
+	{
+		int temp = m_clTestManualCycleCurrent;
+		wrap( temp, NUM_CabinetLight );
+		m_clTestManualCycleCurrent = CabinetLight( temp );
+	}
 }
 
 void LightsManager::ChangeTestGameButtonLight( int iDir )
