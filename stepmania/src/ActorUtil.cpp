@@ -297,11 +297,11 @@ static void MergeActorXML( XNode *pChild, const XNode *pParent )
 		if( pChild->GetAttr(p->first) != NULL )
 		{
 			RString sWarning = 
-				ssprintf( "%s: \"%s\" overrides \"%s\" in %s",
+				ssprintf( "%s: overriding \"%s\" in %s node \"%s\"",
 				ActorUtil::GetWhere(pParent).c_str(),
 				sName.c_str(),
-				p->second->GetValue<RString>().c_str(),
-				ActorUtil::GetWhere(pChild).c_str() );
+				ActorUtil::GetWhere(pChild).c_str(),
+				pParent->GetName().c_str() );
 			Dialog::OK( sWarning, "XML_ATTRIB_OVERRIDE" );
 		}
 		pChild->AppendAttrFrom( p->first, p->second->Copy() );
