@@ -60,6 +60,7 @@ public:
 
 		ZERO( m_fRequirement );
 		m_bRequirePassHardSteps = false;
+		m_bRoulette = false;
 		m_sEntryID = "";	// "" means not yet filled.  This will be filled in automatically if not specified.
 	}
 
@@ -74,6 +75,7 @@ public:
 
 	float	m_fRequirement[NUM_UnlockRequirement];	// unlocked if any of of these are met
 	bool	m_bRequirePassHardSteps;
+	bool	m_bRoulette;
 	RString	m_sEntryID;
 
 	bool	IsValid() const;
