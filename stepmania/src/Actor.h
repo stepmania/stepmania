@@ -59,7 +59,6 @@ public:
 	virtual Actor *Copy() const;
 	virtual void InitState();
 	virtual void LoadFromNode( const XNode* pNode );
-	bool IsType( const RString &sType );
 
 	static void SetBGMTime( float fTime, float fBeat );
 	static void SetBGMLight( int iLightNumber, float fCabinetLights );
