@@ -133,7 +133,7 @@ public:
 	{
 		ASSERT( cmds.v.size() == 1 );
 		const Command &command = cmds.v[0];
-		RString sParam = command.GetArg(1);
+		RString sParam = command.GetArg(1).s;
 		ASSERT( command.m_vsArgs.size() == 2 );
 		ASSERT( sParam.size() );
 
@@ -444,7 +444,7 @@ public:
 	{
 		ASSERT( cmds.v.size() == 1 );
 		const Command &command = cmds.v[0];
-		RString sParam = command.GetArg(1);
+		RString sParam = command.GetArg(1).s;
 		ASSERT( command.m_vsArgs.size() == 2 );
 		ASSERT( sParam.size() );
 
@@ -1039,7 +1039,7 @@ public:
 	{
 		ASSERT( cmds.v.size() == 1 );
 		const Command &command = cmds.v[0];
-		RString sParam = command.GetArg(1);
+		RString sParam = command.GetArg(1).s;
 		ASSERT( command.m_vsArgs.size() == 2 );
 		ASSERT( sParam.size() );
 
@@ -1123,7 +1123,7 @@ public:
 	{
 		ASSERT( cmds.v.size() == 1 );
 		const Command &command = cmds.v[0];
-		RString sParam = command.GetArg(1);
+		RString sParam = command.GetArg(1).s;
 		ASSERT( command.m_vsArgs.size() == 2 );
 		ASSERT( sParam.size() );
 
@@ -1271,7 +1271,7 @@ OptionRowHandler* OptionRowHandlerUtil::Make( const Commands &cmds )
 	if( name == "list" )
 	{
 		const Command &command = cmds.v[0];
-		RString sParam = command.GetArg(1);
+		RString sParam = command.GetArg(1).s;
 		if( command.m_vsArgs.size() != 2 || !sParam.size() )
 			return NULL;
 
