@@ -267,7 +267,10 @@ int MovieDecoder_Theora::GetFrame( RageSurface *pOut, float fTargetTime )
 
 RageSurface *MovieDecoder_Theora::CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor )
 {
-	return MovieTexture_FFMpeg::AVCodecCreateCompatibleSurface( iTextureWidth, iTextureHeight, bPreferHighColor, (int&) m_OutputPixFmt );
+	int temp = m_OutputPixFmt;
+	RageSurface *surface = MovieTexture_FFMpeg::AVCodecCreateCompatibleSurface( iTextureWidth, iTextureHeight, bPreferHighColor, temp );
+	m_OutputPixFmt = avcodec::PixelFormat( temp );
+	return surface;
 }
 
 void MovieDecoder_Theora::ConvertToSurface( RageSurface *pSurface ) const
@@ -604,7 +607,10 @@ int MovieDecoder_Theora::GetFrame( RageSurface *pOut, float fTargetTime )
 
 RageSurface *MovieDecoder_Theora::CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor )
 {
-	return MovieTexture_FFMpeg::AVCodecCreateCompatibleSurface( iTextureWidth, iTextureHeight, bPreferHighColor, (int&) m_OutputPixFmt );
+	int temp = m_OutputPixFmt;
+	RageSurface *surface = MovieTexture_FFMpeg::AVCodecCreateCompatibleSurface( iTextureWidth, iTextureHeight, bPreferHighColor, temp );
+	m_OutputPixFmt = avcodec::PixelFormat( temp );
+	return surface;
 }
 
 void MovieDecoder_Theora::DecodeStripeStub( void *pCtx, theora_ycbcr_buffer yuv, int yfrag0, int yfrag_end )
