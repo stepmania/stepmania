@@ -85,7 +85,6 @@ struct OptionRowDefinition
 class OptionRowHandler
 {
 public:
-	Commands m_cmds;
 	OptionRowDefinition m_Def;
 	vector<RString> m_vsReloadRowMessages;	// refresh this row on on these messages
 	
@@ -93,14 +92,12 @@ public:
 	virtual ~OptionRowHandler() { }
 	virtual void Init()
 	{
-		m_cmds.v.clear();
 		m_Def.Init();
 		m_vsReloadRowMessages.clear();
 	}
 	void Load( const Commands &cmds )
 	{
 		Init();
-		m_cmds = cmds;
 		this->LoadInternal( cmds );
 	}
 	RString OptionTitle() const;
