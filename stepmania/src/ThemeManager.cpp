@@ -951,13 +951,11 @@ void ThemeManager::PushMetric( Lua *L, const RString &sClassName, const RString 
 	RString sValue = GetMetricRaw( g_pLoadedThemeData->iniMetrics, sClassName, sValueName );
 
 	RString sName = ssprintf( "%s::%s", sClassName.c_str(), sValueName.c_str() );
-#if !defined(SMPACKAGE)
 	if( EndsWith(sValueName, "Command") )
 	{
 		LuaHelpers::ParseCommandList( L, sValue, sName );
 	}
 	else
-#endif
 	{
 		LuaHelpers::PrepareExpression( sValue );
 		LuaHelpers::RunExpression( L, sValue, sName );
