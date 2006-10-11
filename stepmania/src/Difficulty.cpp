@@ -66,7 +66,7 @@ LuaFunction( CourseDifficultyToLocalizedString, CourseDifficultyToLocalizedStrin
 
 CourseDifficulty GetNextShownCourseDifficulty( CourseDifficulty cd )
 {
-	for( CourseDifficulty d=(CourseDifficulty)(cd+1); d<NUM_Difficulty; ((int&)d)++ )
+	for( CourseDifficulty d=(CourseDifficulty)(cd+1); d<NUM_Difficulty; enum_add(d, 1) )
 	{
 		if( GAMESTATE->IsCourseDifficultyShown(d) )
 			return d;
