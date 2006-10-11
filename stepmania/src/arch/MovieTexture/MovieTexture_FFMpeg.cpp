@@ -589,10 +589,7 @@ void MovieDecoder_FFMpeg::Close()
 
 RageSurface *MovieDecoder_FFMpeg::CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor )
 {
-	int temp = m_AVTexfmt;
-	RageSurface *surface = MovieTexture_FFMpeg::AVCodecCreateCompatibleSurface( iTextureWidth, iTextureHeight, bPreferHighColor, temp );
-	m_AVTexfmt = avcodec::PixelFormat( temp );
-	return surface;
+	return MovieTexture_FFMpeg::AVCodecCreateCompatibleSurface( iTextureWidth, iTextureHeight, bPreferHighColor, UnionCast(m_AVTexfmt) );
 }
 
 MovieTexture_FFMpeg::MovieTexture_FFMpeg( RageTextureID ID ):
