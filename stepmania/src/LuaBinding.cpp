@@ -220,11 +220,10 @@ bool LuaBinding::Equal( lua_State *L )
  * Get a userdata, and check that it's either szType or a type
  * derived from szType, by walking the __index chain.
  */
-bool LuaBinding::CheckLuaObjectType( lua_State *L, int iArg, const char *szType, bool bOptional )
+bool LuaBinding::CheckLuaObjectType( lua_State *L, int iArg, const char *szType )
 {
 #if defined(FAST_LUA)
-	if( bOptional )
-		return true;
+	return true;
 #endif
 
 	/* Check that szType is in metatable.heirarchy. */

@@ -19,7 +19,7 @@ public:
 	virtual const RString &GetClassName() const = 0;
 	virtual const RString &GetBaseClassName() const = 0;
 
-	static bool CheckLuaObjectType( lua_State *L, int narg, const char *szType, bool bOptional=false );
+	static bool CheckLuaObjectType( lua_State *L, int narg, const char *szType );
 	static void ApplyDerivedType( Lua *L, const RString &sClassname, void *pSelf );
 
 protected:
@@ -70,7 +70,7 @@ public:
 	// Get userdata from the Lua stack and return a pointer to T object.
 	static T *check( lua_State *L, int narg, bool bIsSelf = false )
 	{
-		if( !LuaBinding::CheckLuaObjectType(L, narg, m_sClassName, true) )
+		if( !LuaBinding::CheckLuaObjectType(L, narg, m_sClassName) )
 		{
 			if( bIsSelf )
 				luaL_typerror( L, narg, m_sClassName );
