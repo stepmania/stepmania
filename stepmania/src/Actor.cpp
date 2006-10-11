@@ -1057,7 +1057,7 @@ void Actor::RunCommands( const LuaReference& cmds )
 	else
 		lua_pushnil( L );
 
-	// call function with 1 argument and 0 results
+	// call function with 2 arguments and 0 results
 	lua_call( L, 2, 0 ); 
 
 	LUA->Release(L);
