@@ -406,7 +406,7 @@ void ScreenTextEntryVisual::MoveY( int iDir )
 	do
 	{
 		m_iFocusY = enum_add2( m_iFocusY,  +iDir );
-		wrap( UnionCast(m_iFocusY), NUM_KeyboardRow );
+		wrap( *ConvertValue<int>(&m_iFocusY), NUM_KeyboardRow );
 
 		// HACK: Round to nearest option so that we always stop 
 		// on KEYBOARD_ROW_SPECIAL.

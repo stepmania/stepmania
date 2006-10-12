@@ -1161,7 +1161,7 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	pNode->GetChildValue( "TotalGameplaySeconds",			m_iTotalGameplaySeconds );
 	pNode->GetChildValue( "CurrentCombo",				m_iCurrentCombo );
 	pNode->GetChildValue( "TotalCaloriesBurned",			m_fTotalCaloriesBurned );
-	pNode->GetChildValue( "GoalType",				UnionCast(m_GoalType) );
+	pNode->GetChildValue( "GoalType",				*ConvertValue<int>(&m_GoalType) );
 	pNode->GetChildValue( "GoalCalories",				m_iGoalCalories );
 	pNode->GetChildValue( "GoalSeconds",				m_iGoalSeconds );
 	pNode->GetChildValue( "LastPlayedMachineGuid",			m_sLastPlayedMachineGuid );
