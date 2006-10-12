@@ -25,6 +25,7 @@ enum RESERVED {
   /* terminal symbols denoted by reserved words */
   TK_AND = FIRST_RESERVED, TK_BREAK,
   TK_DO, TK_ELSE, TK_ELSEIF, TK_END, TK_FALSE, TK_FOR, TK_FUNCTION,
+  TK_CMD, // StepMania extension
   TK_IF, TK_IN, TK_LOCAL, TK_NIL, TK_NOT, TK_OR, TK_REPEAT,
   TK_RETURN, TK_THEN, TK_TRUE, TK_UNTIL, TK_WHILE,
   /* other terminal symbols */

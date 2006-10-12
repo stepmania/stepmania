@@ -592,6 +592,86 @@ static void body (LexState *ls, expdesc *e, int needself, int line) {
   pushclosure(ls, &new_fs, e);
 }
 
+static int explist1 (LexState *ls, expdesc *v);
+static void cmd_funcargs (LexState *ls, expdesc *f) {
+  /* cmd_funcargs -> [ ',' explist1 ] */
+  FuncState *fs = ls->fs;
+  expdesc args;
+  int base, nparams;
+  int line = ls->linenumber;
+  if (ls->t.token == ')' || ls->t.token == ';')  /* arg list is empty? */
+    args.k = VVOID;
+  else if (ls->t.token == ',')
+  {
+    luaX_next(ls);
+    explist1(ls, &args);
+    luaK_setmultret(fs, &args);
+  }
+  else {
+    luaX_syntaxerror(ls, LUA_QL(")") " expected");
+    return;
+  }
+  lua_assert(f->k == VNONRELOC);
+  base = f->u.s.info;  /* base register for call */
+  if (hasmultret(args.k))
+    nparams = LUA_MULTRET;  /* open call */
+  else {
+    if (args.k != VVOID)
+      luaK_exp2nextreg(fs, &args);  /* close last argument */
+    nparams = fs->freereg - (base+1);
+  }
+  init_exp(f, VCALL, luaK_codeABC(fs, OP_CALL, base, nparams+1, 2));
+  luaK_fixline(fs, line);
+  fs->freereg = base+1;  /* call remove function and arguments and leaves
+                            (unless changed) one result */
+}
+
+static void cmd_body (LexState *ls, expdesc *e) {
+  /* cmd_body -> [ [ ';' ] Name cmd_funcargs } */
+  FuncState *fs = ls->fs;
+  while(1) {
+    switch (ls->t.token) {
+      case ')':
+        return;
+      case ';':
+        luaX_next(ls);
+	continue;
+      default: {
+        expdesc key;
+        init_exp(e, VLOCAL, 0);
+        checkname(ls, &key);
+        luaK_self(fs, e, &key);
+        cmd_funcargs(ls, e);
+        if (e->k == VCALL)  /* stat -> func */
+          SETARG_C(getcode(fs, e), 1);  /* call statement uses no results */
+      }
+    }
+  }
+}
+
+static void cmd (LexState *ls, expdesc *e, int line) {
+  /* cmd -> STRING */
+  FuncState new_fs;
+  open_func(ls, &new_fs);
+  new_fs.f->linedefined = line;
+
+  checknext(ls, '(');
+
+  new_localvarliteral(ls, "self", 0);
+  adjustlocalvars(ls, 1);
+
+  new_fs.f->is_vararg |= VARARG_ISVARARG;
+  adjustlocalvars(ls, 0);
+  new_fs.f->numparams = cast_byte(new_fs.nactvar);
+  luaK_reserveregs(&new_fs, new_fs.nactvar);  /* reserve register for parameters */
+
+  cmd_body (ls, e);
+
+  new_fs.f->lastlinedefined = ls->linenumber;
+  check_match(ls, ')', TK_CMD, line);
+  close_func(ls);
+  pushclosure(ls, &new_fs, e);
+}
 
 static int explist1 (LexState *ls, expdesc *v) {
   /* explist1 -> expr { `,' expr } */
@@ -764,6 +844,11 @@ static void simpleexp (LexState *ls, expdesc *v) {
     case TK_FUNCTION: {
       luaX_next(ls);
       body(ls, v, 0, ls->linenumber);
+      return;
+    }
+    case TK_CMD: {
+      luaX_next(ls);
+      cmd(ls, v, ls->linenumber);
       return;
     }
     default: {
