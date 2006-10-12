@@ -660,13 +660,6 @@ namespace
 				continue;
 			}
 
-			if( lua_isstring(L, -1) && EndsWith(sName, "Command") )
-			{
-				RString sExpression;
-				LuaHelpers::Pop( L, sExpression );
-				LuaHelpers::ParseCommandList( L, sExpression, "" /* XXX */ );
-			}
-
 			/* Otherwise, add an attribute. */
 			XNodeLuaValue *pValue = new XNodeLuaValue;
 			pValue->SetValueFromStack( L );
