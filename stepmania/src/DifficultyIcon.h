@@ -18,6 +18,7 @@ public:
 	virtual bool EarlyAbortDraw() const { return m_bBlank || Sprite::EarlyAbortDraw(); }
 
 	bool Load( RString sFilePath );
+	virtual void Load( RageTextureID ID ) { Load( ID.filename ); }
 	virtual void LoadFromNode( const XNode* pNode );
 	virtual Actor *Copy() const;
 
