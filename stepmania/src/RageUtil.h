@@ -115,26 +115,6 @@ inline void RemoveIf( Container& c, Predicate p )
 	c.erase( remove_if(c.begin(), c.end(), p), c.end() );
 }
 
-/* Cast between types through a union, to avoid type-punning problems in gcc. */
-template<typename TO, typename FROM>
-TO &CastSimilarTypes( FROM &val )
-{
-        union conv_union
-        {
-                TO to;
-                FROM from;
-        };
-
-        conv_union &u = (conv_union &) val;
-        return u.to;
-}
-
-template<typename T>
-int &UnionCast( T &e )
-{
-        return CastSimilarTypes<int,T>(e);
-}
-
 /* Helper for ConvertValue(). */
 template<typename TO, typename FROM>
 struct ConvertValueHelper
