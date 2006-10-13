@@ -1,6 +1,6 @@
 <ActorFrame><children>
 	<Layer
-		File="File1" 
+		File="P.File1" 
 		OnCommand="scale_or_crop_background;diffuse,color(self.Color1)" 
 		GainFocusCommand="Play"
 		LoseFocusCommand="Pause"

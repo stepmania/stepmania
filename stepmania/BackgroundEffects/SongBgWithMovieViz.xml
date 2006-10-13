@@ -7,7 +7,7 @@
 		<Input Name="@Color1" />
 	</Layer>
 	<Layer
-		File="File1"
+		File="P.File1"
 		InitCommand="Pause"
 		OnCommand="blend,add;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;ZoomToWidth,SCREEN_WIDTH;ZoomToHeight,SCREEN_HEIGHT;diffuse,color(self.Color2)"
 		GainFocusCommand="Play"
