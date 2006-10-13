@@ -33,7 +33,9 @@ void BacktraceNames::Demangle()
     free(f);
 }
 #elif defined(HAVE_CXA_DEMANGLE)
-#include <cxxabi.h>
+namespace abi {
+	extern "C" char *__cxa_demangle( const char *mangled_name, char *buf, size_t *n, int *status);
+}
 
 void BacktraceNames::Demangle()
 {
@@ -42,7 +44,7 @@ void BacktraceNames::Demangle()
 		return;
 	
 	int status = 0;
-	char *name = abi::__cxa_demangle( Symbol, 0, 0, &status );
+	char *name = abi::__cxa_demangle( Symbol, NULL, NULL, &status );
 	if( name )
 	{
 		Symbol = name;
@@ -62,7 +64,7 @@ void BacktraceNames::Demangle()
 		fprintf( stderr, "Invalid arguments.\n" );
 		break;
 	default:
-		fprintf( stderr, "Unexpected __cxa_demangle status: %i", status );
+		fprintf( stderr, "Unexpected __cxa_demangle status: %i\n", status );
 		break;
 	}
 }
