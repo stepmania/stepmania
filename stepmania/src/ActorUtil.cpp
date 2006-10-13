@@ -139,21 +139,16 @@ void ActorUtil::SetParamFromStack( Lua *L, RString sName, LuaReference *pOld )
 	PushParamsTable( L );
 	int iParams = lua_gettop(L);
 
-	LuaHelpers::Push( L, sName );
-	int iName = lua_gettop(L);
-
 	/* Save the old value. */
 	if( pOld != NULL )
 	{
-		lua_pushvalue( L, iName );
-		lua_rawget( L, iParams );
+		lua_getfield( L, iParams, sName );
 		pOld->SetFromStack( L );
 	}
 
 	/* Set the value in the table. */
-	lua_pushvalue( L, iName );
 	lua_pushvalue( L, iValue );
-	lua_rawset( L, iParams );
+	lua_setfield( L, iParams, sName );
 
 	lua_settop( L, iValue-1 );
 }
