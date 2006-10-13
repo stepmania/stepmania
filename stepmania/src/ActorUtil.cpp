@@ -150,12 +150,6 @@ void ActorUtil::SetParamFromStack( Lua *L, RString sName, LuaReference *pOld )
 		pOld->SetFromStack( L );
 	}
 
-	/* Backwards-compatibility: set the value as a global.  This is strongly
-	 * deprecated. */
-	lua_pushvalue( L, iName );
-	lua_pushvalue( L, iValue );
-	lua_rawset( L, LUA_GLOBALSINDEX );
-
 	/* Set the value in the table. */
 	lua_pushvalue( L, iName );
 	lua_pushvalue( L, iValue );
