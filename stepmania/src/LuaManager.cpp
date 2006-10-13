@@ -36,29 +36,6 @@ namespace LuaHelpers
 	template<> bool FromStack<RString>( Lua *L, RString &Object, int iOffset );
 }
 
-struct ChunkReaderString
-{
-	ChunkReaderString( const RString &sBuf ): m_sBuf(sBuf) { m_bDone = false; }
-	static const char *Reader( lua_State *L, void *ptr, size_t *size );
-
-	const RString m_sBuf;
-	bool m_bDone;
-};
-
-const char *ChunkReaderString::Reader( lua_State *L, void *pPtr, size_t *pSize )
-{
-	ChunkReaderString *pData = (ChunkReaderString *) pPtr;
-	if( pData->m_bDone )
-		return NULL;
-
-	pData->m_bDone = true;
-
-	*pSize = pData->m_sBuf.size();
-	const char *pRet = pData->m_sBuf.data();
-	
-	return pRet;
-}
-
 void LuaManager::SetGlobal( const RString &sName, int val )
 {
 	Lua *L = LUA->Get();
@@ -467,9 +444,7 @@ bool LuaHelpers::RunScript( Lua *L, const RString &sScript, const RString &sName
 {
 	// load string
 	{
-		ChunkReaderString data( sScript );
-		int ret = lua_load( L, ChunkReaderString::Reader, &data, sName );
-
+		int ret = luaL_loadbuffer( L, sScript.data(), sScript.size(), sName );
 		if( ret )
 		{
 			LuaHelpers::Pop( L, sError );
