@@ -166,13 +166,6 @@ void ActorUtil::GetParam( Lua *L, const RString &sName )
 	LuaHelpers::Push( L, sName );
 	lua_rawget( L, -2 );
 	lua_remove( L, -2 );
-
-	if( lua_isnil(L, -1) )
-	{
-		/* Deprecated: search globals. */
-		lua_pop( L, 1 );
-		lua_getglobal( L, sName );
-	}
 }
 
 Actor* ActorUtil::LoadFromNode( const XNode* pNode, Actor *pParentActor )
