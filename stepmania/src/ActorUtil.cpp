@@ -343,6 +343,15 @@ namespace
 			return NULL;
 		}
 
+		if( lua_type(L, -1) != LUA_TTABLE )
+		{
+			lua_pop( L, 1 );
+			LUA->Release( L );
+			sError = ssprintf( "%s: must return a table", sFile.c_str() );
+			Dialog::OK( sError, "LUA_ERROR" );
+			return NULL;
+		}
+
 		XNode *pRet = XmlFileUtil::XNodeFromTable( L );
 
 		LUA->Release( L );
