@@ -199,22 +199,6 @@ void LuaTable::Set( Lua *L, const RString &sKey )
 	lua_settop( L, iTop-1 ); // remove all of the above
 }
 
-void LuaTable::Unset( Lua *L, const RString &sKey )
-{
-	lua_pushnil( L );
-	Set( L, sKey );
-}
-
-void LuaTable::SetKeyAndValue( Lua *L )
-{
-	int iTop = lua_gettop( L );
-	this->PushSelf( L );
-	lua_pushvalue( L, iTop-1 ); // push the value after the table
-	lua_pushvalue( L, iTop ); // push the key after the value
-	lua_settable( L, iTop+1 );
-	lua_settop( L, iTop-1 ); // remove all of the above
-}
-
 /*
  * (c) 2005 Glenn Maynard, Chris Danford
  * All rights reserved.
