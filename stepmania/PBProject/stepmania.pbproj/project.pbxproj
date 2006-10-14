@@ -6,6 +6,21 @@
 	objectVersion = 42;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		AA7A2BB30AE09D0F0054C5BA /* all lua */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = AA7A2BBD0AE09D4E0054C5BA /* Build configuration list for PBXAggregateTarget "all lua" */;
+			buildPhases = (
+			);
+			dependencies = (
+				AA7A2BB50AE09D160054C5BA /* PBXTargetDependency */,
+				AA7A2BB70AE09D160054C5BA /* PBXTargetDependency */,
+			);
+			name = "all lua";
+			productName = "all lua";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		1215D7A208C6559A00B87D8B /* ScreenGameplayNormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1215D7A008C6559A00B87D8B /* ScreenGameplayNormal.cpp */; };
 		1215D7A308C6559A00B87D8B /* ScreenGameplayNormal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1215D7A108C6559A00B87D8B /* ScreenGameplayNormal.h */; };
@@ -1461,6 +1476,11 @@
 		AA77E76808B64B9A00FA24CA /* ScreenOptionsManageProfiles.h in Headers */ = {isa = PBXBuildFile; fileRef = AA77E75E08B64B9A00FA24CA /* ScreenOptionsManageProfiles.h */; };
 		AA77E8B108B6ABD500FA24CA /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA77E8A108B6ABD500FA24CA /* vecLib.framework */; };
 		AA77E8B808B6AC0000FA24CA /* wchar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA4B5CC40573AD81005FB5DB /* wchar.cpp */; };
+		AA7A2BA00AE09BC90054C5BA /* lua.c in Sources */ = {isa = PBXBuildFile; fileRef = AA7A2B9D0AE09BC80054C5BA /* lua.c */; };
+		AA7A2BAF0AE09CEC0054C5BA /* liblua-5.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAE7817E0AC7E37B00AEFC64 /* liblua-5.1.a */; };
+		AA7A2BB00AE09CF10054C5BA /* liblua-5.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAE7817E0AC7E37B00AEFC64 /* liblua-5.1.a */; };
+		AA7A2BB10AE09CF80054C5BA /* print.c in Sources */ = {isa = PBXBuildFile; fileRef = AA7A2B9F0AE09BC90054C5BA /* print.c */; };
+		AA7A2BB20AE09CF90054C5BA /* luac.c in Sources */ = {isa = PBXBuildFile; fileRef = AA7A2B9E0AE09BC90054C5BA /* luac.c */; };
 		AA7ADC27072CAB7F00C50A7F /* RageSoundReader_Chain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA7ADC23072CAB7F00C50A7F /* RageSoundReader_Chain.cpp */; };
 		AA7ADC28072CAB7F00C50A7F /* RageSoundReader_Chain.h in Headers */ = {isa = PBXBuildFile; fileRef = AA7ADC24072CAB7F00C50A7F /* RageSoundReader_Chain.h */; };
 		AA7ADC29072CAB7F00C50A7F /* RageSoundUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA7ADC25072CAB7F00C50A7F /* RageSoundUtil.cpp */; };
@@ -1841,6 +1861,34 @@
 			proxyType = 1;
 			remoteGlobalIDString = AA30C60F07F5E24A0066F398;
 			remoteInfo = version;
+		};
+		AA7A2BA50AE09C9B0054C5BA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AAE7817D0AC7E37B00AEFC64 /* lua-5.1 */;
+			remoteInfo = "lua-5.1";
+		};
+		AA7A2BAD0AE09CDB0054C5BA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AAE7817D0AC7E37B00AEFC64 /* lua-5.1 */;
+			remoteInfo = "lua-5.1";
+		};
+		AA7A2BB40AE09D160054C5BA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AA7A2B930AE09B520054C5BA /* lua */;
+			remoteInfo = lua;
+		};
+		AA7A2BB60AE09D160054C5BA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AA7A2BAA0AE09CD50054C5BA /* luac */;
+			remoteInfo = luac;
 		};
 		AAE781FD0AC7E61900AEFC64 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2424,6 +2472,11 @@
 		AA77E75D08B64B9A00FA24CA /* ScreenOptionsManageProfiles.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenOptionsManageProfiles.cpp; path = ../src/ScreenOptionsManageProfiles.cpp; sourceTree = "<group>"; };
 		AA77E75E08B64B9A00FA24CA /* ScreenOptionsManageProfiles.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenOptionsManageProfiles.h; path = ../src/ScreenOptionsManageProfiles.h; sourceTree = "<group>"; };
 		AA77E8A108B6ABD500FA24CA /* vecLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = vecLib.framework; path = /System/Library/Frameworks/vecLib.framework; sourceTree = "<absolute>"; };
+		AA7A2B940AE09B520054C5BA /* lua */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = lua; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA7A2B9D0AE09BC80054C5BA /* lua.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = lua.c; path = src/lua.c; sourceTree = "<group>"; };
+		AA7A2B9E0AE09BC90054C5BA /* luac.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = luac.c; path = src/luac.c; sourceTree = "<group>"; };
+		AA7A2B9F0AE09BC90054C5BA /* print.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = print.c; path = src/print.c; sourceTree = "<group>"; };
+		AA7A2BAB0AE09CD50054C5BA /* luac */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = luac; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA7ADC23072CAB7F00C50A7F /* RageSoundReader_Chain.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageSoundReader_Chain.cpp; path = ../src/RageSoundReader_Chain.cpp; sourceTree = "<group>"; };
 		AA7ADC24072CAB7F00C50A7F /* RageSoundReader_Chain.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageSoundReader_Chain.h; path = ../src/RageSoundReader_Chain.h; sourceTree = "<group>"; };
 		AA7ADC25072CAB7F00C50A7F /* RageSoundUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageSoundUtil.cpp; path = ../src/RageSoundUtil.cpp; sourceTree = "<group>"; };
@@ -2889,6 +2942,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AA7A2B920AE09B520054C5BA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA7A2BAF0AE09CEC0054C5BA /* liblua-5.1.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA7A2BA90AE09CD50054C5BA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA7A2BB00AE09CF10054C5BA /* liblua-5.1.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AAE7817C0AC7E37B00AEFC64 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2934,6 +3003,8 @@
 				AA29CE580558741A00961A51 /* StepMania.app */,
 				AA40D52B09A08D660068C0D5 /* StepMania.app */,
 				AAE7817E0AC7E37B00AEFC64 /* liblua-5.1.a */,
+				AA7A2B940AE09B520054C5BA /* lua */,
+				AA7A2BAB0AE09CD50054C5BA /* luac */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -4121,7 +4192,9 @@
 				AAE781B30AC7E53400AEFC64 /* ltablib.c */,
 				AAE781B40AC7E53400AEFC64 /* ltm.c */,
 				AAE781B50AC7E53400AEFC64 /* ltm.h */,
+				AA7A2B9D0AE09BC80054C5BA /* lua.c */,
 				AAE781B60AC7E53400AEFC64 /* lua.h */,
+				AA7A2B9E0AE09BC90054C5BA /* luac.c */,
 				AAE781B70AC7E53400AEFC64 /* luaconf.h */,
 				AAE781B80AC7E53400AEFC64 /* lualib.h */,
 				AAE781B90AC7E53400AEFC64 /* lundump.c */,
@@ -4130,6 +4203,7 @@
 				AAE781BC0AC7E53400AEFC64 /* lvm.h */,
 				AAE781BD0AC7E53400AEFC64 /* lzio.c */,
 				AAE781BE0AC7E53400AEFC64 /* lzio.h */,
+				AA7A2B9F0AE09BC90054C5BA /* print.c */,
 			);
 			name = "lua-5.1";
 			path = "../src/lua-5.1";
@@ -5147,6 +5221,40 @@
 			productReference = AA40D52B09A08D660068C0D5 /* StepMania.app */;
 			productType = "com.apple.product-type.application";
 		};
+		AA7A2B930AE09B520054C5BA /* lua */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA7A2B990AE09BA50054C5BA /* Build configuration list for PBXNativeTarget "lua" */;
+			buildPhases = (
+				AA7A2B910AE09B520054C5BA /* Sources */,
+				AA7A2B920AE09B520054C5BA /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AA7A2BA60AE09C9B0054C5BA /* PBXTargetDependency */,
+			);
+			name = lua;
+			productName = lua;
+			productReference = AA7A2B940AE09B520054C5BA /* lua */;
+			productType = "com.apple.product-type.tool";
+		};
+		AA7A2BAA0AE09CD50054C5BA /* luac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA7A2BB90AE09D4E0054C5BA /* Build configuration list for PBXNativeTarget "luac" */;
+			buildPhases = (
+				AA7A2BA80AE09CD50054C5BA /* Sources */,
+				AA7A2BA90AE09CD50054C5BA /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AA7A2BAE0AE09CDB0054C5BA /* PBXTargetDependency */,
+			);
+			name = luac;
+			productName = luac;
+			productReference = AA7A2BAB0AE09CD50054C5BA /* luac */;
+			productType = "com.apple.product-type.tool";
+		};
 		AAE7817D0AC7E37B00AEFC64 /* lua-5.1 */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = AAE7817F0AC7E3BF00AEFC64 /* Build configuration list for PBXNativeTarget "lua-5.1" */;
@@ -5190,6 +5298,9 @@
 				AA30C60F07F5E24A0066F398 /* version */,
 				AA40D1B409A08D650068C0D5 /* stepmania-bare */,
 				AAE7817D0AC7E37B00AEFC64 /* lua-5.1 */,
+				AA7A2B930AE09B520054C5BA /* lua */,
+				AA7A2BAA0AE09CD50054C5BA /* luac */,
+				AA7A2BB30AE09D0F0054C5BA /* all lua */,
 			);
 		};
 /* End PBXProject section */
@@ -6119,6 +6230,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AA7A2B910AE09B520054C5BA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA7A2BA00AE09BC90054C5BA /* lua.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA7A2BA80AE09CD50054C5BA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA7A2BB10AE09CF80054C5BA /* print.c in Sources */,
+				AA7A2BB20AE09CF90054C5BA /* luac.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AAE7817B0AC7E37B00AEFC64 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -6167,6 +6295,26 @@
 			isa = PBXTargetDependency;
 			target = AA30C60F07F5E24A0066F398 /* version */;
 			targetProxy = AA40D1B609A08D650068C0D5 /* PBXContainerItemProxy */;
+		};
+		AA7A2BA60AE09C9B0054C5BA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AAE7817D0AC7E37B00AEFC64 /* lua-5.1 */;
+			targetProxy = AA7A2BA50AE09C9B0054C5BA /* PBXContainerItemProxy */;
+		};
+		AA7A2BAE0AE09CDB0054C5BA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AAE7817D0AC7E37B00AEFC64 /* lua-5.1 */;
+			targetProxy = AA7A2BAD0AE09CDB0054C5BA /* PBXContainerItemProxy */;
+		};
+		AA7A2BB50AE09D160054C5BA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AA7A2B930AE09B520054C5BA /* lua */;
+			targetProxy = AA7A2BB40AE09D160054C5BA /* PBXContainerItemProxy */;
+		};
+		AA7A2BB70AE09D160054C5BA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AA7A2BAA0AE09CD50054C5BA /* luac */;
+			targetProxy = AA7A2BB60AE09D160054C5BA /* PBXContainerItemProxy */;
 		};
 		AAE781FE0AC7E61900AEFC64 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -6600,6 +6748,120 @@
 			};
 			name = Debug;
 		};
+		AA7A2B9A0AE09BA50054C5BA /* Native */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PREPROCESSOR_DEFINITIONS = LUA_USE_MACOSX;
+				INSTALL_PATH = "$(HOME)/bin";
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/build/$(CONFIGURATION)";
+				PREBINDING = NO;
+				PRODUCT_NAME = lua;
+			};
+			name = Native;
+		};
+		AA7A2B9B0AE09BA50054C5BA /* Universal */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PREPROCESSOR_DEFINITIONS = LUA_USE_MACOSX;
+				INSTALL_PATH = "$(HOME)/bin";
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/build/$(CONFIGURATION)";
+				PREBINDING = NO;
+				PRODUCT_NAME = lua;
+			};
+			name = Universal;
+		};
+		AA7A2B9C0AE09BA50054C5BA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = LUA_USE_MACOSX;
+				INSTALL_PATH = "$(HOME)/bin";
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/build/$(CONFIGURATION)";
+				PREBINDING = NO;
+				PRODUCT_NAME = lua;
+			};
+			name = Debug;
+		};
+		AA7A2BBA0AE09D4E0054C5BA /* Native */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PREPROCESSOR_DEFINITIONS = LUA_USE_MACOSX;
+				INSTALL_PATH = "$(HOME)/bin";
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/build/$(CONFIGURATION)";
+				PREBINDING = NO;
+				PRODUCT_NAME = luac;
+				ZERO_LINK = NO;
+			};
+			name = Native;
+		};
+		AA7A2BBB0AE09D4E0054C5BA /* Universal */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PREPROCESSOR_DEFINITIONS = LUA_USE_MACOSX;
+				INSTALL_PATH = "$(HOME)/bin";
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/build/$(CONFIGURATION)";
+				PREBINDING = NO;
+				PRODUCT_NAME = luac;
+				ZERO_LINK = NO;
+			};
+			name = Universal;
+		};
+		AA7A2BBC0AE09D4E0054C5BA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = LUA_USE_MACOSX;
+				INSTALL_PATH = "$(HOME)/bin";
+				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/build/$(CONFIGURATION)";
+				PREBINDING = NO;
+				PRODUCT_NAME = luac;
+				ZERO_LINK = NO;
+			};
+			name = Debug;
+		};
+		AA7A2BBE0AE09D4E0054C5BA /* Native */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "all lua";
+			};
+			name = Native;
+		};
+		AA7A2BBF0AE09D4E0054C5BA /* Universal */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "all lua";
+			};
+			name = Universal;
+		};
+		AA7A2BC00AE09D4E0054C5BA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = "all lua";
+			};
+			name = Debug;
+		};
 		AAC8450D0856A19700A9FEAB /* Native */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -6964,6 +7226,36 @@
 				AA40D52809A08D650068C0D5 /* Native */,
 				AA40D52909A08D650068C0D5 /* Universal */,
 				AA40D52A09A08D660068C0D5 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Native;
+		};
+		AA7A2B990AE09BA50054C5BA /* Build configuration list for PBXNativeTarget "lua" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA7A2B9A0AE09BA50054C5BA /* Native */,
+				AA7A2B9B0AE09BA50054C5BA /* Universal */,
+				AA7A2B9C0AE09BA50054C5BA /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Native;
+		};
+		AA7A2BB90AE09D4E0054C5BA /* Build configuration list for PBXNativeTarget "luac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA7A2BBA0AE09D4E0054C5BA /* Native */,
+				AA7A2BBB0AE09D4E0054C5BA /* Universal */,
+				AA7A2BBC0AE09D4E0054C5BA /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Native;
+		};
+		AA7A2BBD0AE09D4E0054C5BA /* Build configuration list for PBXAggregateTarget "all lua" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA7A2BBE0AE09D4E0054C5BA /* Native */,
+				AA7A2BBF0AE09D4E0054C5BA /* Universal */,
+				AA7A2BC00AE09D4E0054C5BA /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Native;
