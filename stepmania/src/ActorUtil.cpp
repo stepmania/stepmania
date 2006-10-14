@@ -387,7 +387,6 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, const XNode *pParent, Actor 
 		}
 	}
 
-	RString sDir = Dirname( sPath );
 	switch( ft )
 	{
 	case FT_Xml:
