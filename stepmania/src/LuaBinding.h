@@ -163,6 +163,11 @@ public:
 #define ADD_METHOD( method_name ) \
 	AddMethod( #method_name, method_name )
 
+#define LUA_REGISTER_NAMESPACE( T ) \
+	void Register##T( lua_State *L ) { luaL_register( L, #T, T##Table ); lua_pop( L, 1 ); } \
+	REGISTER_WITH_LUA_FUNCTION( Register##T );
+#define LIST_METHOD( method_name ) \
+	{ #method_name, method_name }
 
 #endif
 
