@@ -363,10 +363,6 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, const XNode *pParent, Actor 
 
 	RString sPath( sPath_ );
 
-	/* If @ expressions are allowed through this path, we've already
-	 * evaluated them.  Make sure we don't allow double-evaluation. */
-	ASSERT_M( sPath.empty() || sPath[0] != '@', sPath );
-
 	FileType ft = GetFileType( sPath );
 	if( ft == FT_Directory && sPath.Right(1) != "/" )
 		sPath += '/';
