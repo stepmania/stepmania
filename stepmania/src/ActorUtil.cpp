@@ -630,9 +630,11 @@ FileType ActorUtil::GetFileType( const RString &sPath )
 		sExt=="mpg" )		return FT_Movie;
 	else if( 
 		sExt=="txt" )		return FT_Model;
+	else if( sPath.size() > 0 && sPath[sPath.size()-1] == '/' )
+					return FT_Directory;
 	/* Do this last, to avoid the IsADirectory in most cases. */
 	else if( IsADirectory(sPath)  )	return FT_Directory;
-	else					return FT_Invalid;
+	else				return FT_Invalid;
 }
 
 /*
