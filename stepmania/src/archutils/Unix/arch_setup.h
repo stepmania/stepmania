@@ -9,7 +9,7 @@
 #include <sys/param.h>
 #undef ALIGN
 #undef MACHINE
-#if defined(__NetBSD_Version__) && __NetBSD_Version < 299000900
+#if defined(__NetBSD_Version__) && __NetBSD_Version__ < 299000900
 #define lrintf(x) ((int)rint(x))
 #endif
 #endif
