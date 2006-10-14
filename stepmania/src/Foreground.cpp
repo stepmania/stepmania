@@ -36,7 +36,7 @@ void Foreground::LoadFromSong( const Song *pSong )
 		RString sBGName = change.m_def.m_sFile1;
 		
 		LoadedBGA bga;
-		bga.m_bga = ActorUtil::MakeActor( pSong->GetSongDir() + sBGName );
+		bga.m_bga = ActorUtil::MakeActor( pSong->GetSongDir() + sBGName, this );
 		bga.m_bga->PlayCommand( "On" );
 		bga.m_fStartBeat = change.m_fStartBeat;
 		bga.m_bFinished = false;
