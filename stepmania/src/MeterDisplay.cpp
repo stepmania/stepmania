@@ -52,7 +52,7 @@ void MeterDisplay::LoadFromNode( const XNode* pNode )
 	const XNode* pChild = pNode->GetChild( "Tip" );
 	if( pChild != NULL )
 	{
-		m_sprTip.LoadFromNode( pChild );
+		m_sprTip.LoadActorFromNode( pChild, this );
 		this->AddChild( m_sprTip );
 	}
 

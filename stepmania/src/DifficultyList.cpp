@@ -45,7 +45,7 @@ void DifficultyList::LoadFromNode( const XNode* pNode )
 		const XNode *pChild = pNode->GetChild( ssprintf("CursorP%i",pn+1) );
 		if( pChild == NULL )
 			RageException::Throw( "%s: ComboGraph: missing the node \"CursorP%d\"", ActorUtil::GetWhere(pNode).c_str(), pn+1 );
-		m_Cursors[pn].LoadFromNode( pChild );
+		m_Cursors[pn].LoadActorFromNode( pChild, this );
 
 		/* Hack: we need to tween cursors both up to down (cursor motion) and visible to
 		 * invisible (fading).  Cursor motion needs to stoptweening, so multiple motions
