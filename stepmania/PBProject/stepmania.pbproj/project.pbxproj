@@ -1866,28 +1866,28 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = AAE7817D0AC7E37B00AEFC64 /* lua-5.1 */;
+			remoteGlobalIDString = AAE7817D0AC7E37B00AEFC64;
 			remoteInfo = "lua-5.1";
 		};
 		AA7A2BAD0AE09CDB0054C5BA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = AAE7817D0AC7E37B00AEFC64 /* lua-5.1 */;
+			remoteGlobalIDString = AAE7817D0AC7E37B00AEFC64;
 			remoteInfo = "lua-5.1";
 		};
 		AA7A2BB40AE09D160054C5BA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = AA7A2B930AE09B520054C5BA /* lua */;
+			remoteGlobalIDString = AA7A2B930AE09B520054C5BA;
 			remoteInfo = lua;
 		};
 		AA7A2BB60AE09D160054C5BA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = AA7A2BAA0AE09CD50054C5BA /* luac */;
+			remoteGlobalIDString = AA7A2BAA0AE09CD50054C5BA;
 			remoteInfo = luac;
 		};
 		AAE781FD0AC7E61900AEFC64 /* PBXContainerItemProxy */ = {
@@ -6753,6 +6753,7 @@
 			buildSettings = {
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
+				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = LUA_USE_MACOSX;
 				INSTALL_PATH = "$(HOME)/bin";
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/build/$(CONFIGURATION)";
@@ -6766,6 +6767,7 @@
 			buildSettings = {
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
+				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = LUA_USE_MACOSX;
 				INSTALL_PATH = "$(HOME)/bin";
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/build/$(CONFIGURATION)";
@@ -6783,6 +6785,7 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = LUA_USE_MACOSX;
 				INSTALL_PATH = "$(HOME)/bin";
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/build/$(CONFIGURATION)";
@@ -6796,6 +6799,7 @@
 			buildSettings = {
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
+				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = LUA_USE_MACOSX;
 				INSTALL_PATH = "$(HOME)/bin";
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/build/$(CONFIGURATION)";
@@ -6810,6 +6814,7 @@
 			buildSettings = {
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
+				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = LUA_USE_MACOSX;
 				INSTALL_PATH = "$(HOME)/bin";
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/build/$(CONFIGURATION)";
@@ -6828,6 +6833,7 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = LUA_USE_MACOSX;
 				INSTALL_PATH = "$(HOME)/bin";
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/build/$(CONFIGURATION)";
@@ -7167,14 +7173,15 @@
 				GCC_DEBUGGING_SYMBOLS = default;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
+				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(value)",
 					LUA_USE_MACOSX,
 				);
 				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
+				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
 				PRODUCT_NAME = "lua-5.1";
-				ZERO_LINK = NO;
 			};
 			name = Native;
 		};
@@ -7185,13 +7192,14 @@
 				GCC_DEBUGGING_SYMBOLS = default;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
+				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(value)",
 					LUA_USE_MACOSX,
 				);
 				INSTALL_PATH = /usr/local/lib;
+				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
 				PRODUCT_NAME = "lua-5.1";
-				ZERO_LINK = NO;
 			};
 			name = Universal;
 		};
@@ -7206,14 +7214,15 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(value)",
 					LUA_USE_MACOSX,
 				);
 				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
+				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
 				PRODUCT_NAME = "lua-5.1";
-				ZERO_LINK = NO;
 			};
 			name = Debug;
 		};
