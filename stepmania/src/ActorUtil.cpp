@@ -235,7 +235,7 @@ Actor* ActorUtil::LoadFromNode( const XNode* pNode, Actor *pParentActor )
 
 		ActorUtil::ResolvePath( sFile, GetSourcePath(pNode) );
 
-		pReturn = ActorUtil::MakeActor( sFile, pNode, pParentActor );
+		pReturn = ActorUtil::MakeActor( sFile, pParentActor, pNode );
 		if( pReturn == NULL )
 			goto all_done;
 	}
@@ -355,7 +355,7 @@ namespace
  * If pParent is non-NULL, it's the parent node when nesting XML, which is
  * used only by ActorUtil::LoadFromNode.
  */
-Actor* ActorUtil::MakeActor( const RString &sPath_, const XNode *pParent, Actor *pParentActor )
+Actor* ActorUtil::MakeActor( const RString &sPath_, Actor *pParentActor, const XNode *pParent )
 {
 	static const XNode dummy;
 	if( pParent == NULL )
