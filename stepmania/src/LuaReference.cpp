@@ -116,7 +116,7 @@ int LuaReference::GetLuaType() const
 
 void LuaReference::Unregister()
 {
-	if( LUA == NULL )
+	if( LUA == NULL || m_iReference == LUA_NOREF )
 		return; // nothing to do
 
 	Lua *L = LUA->Get();
