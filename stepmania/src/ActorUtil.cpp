@@ -634,7 +634,7 @@ FileType ActorUtil::GetFileType( const RString &sPath )
 					return FT_Directory;
 	/* Do this last, to avoid the IsADirectory in most cases. */
 	else if( IsADirectory(sPath)  )	return FT_Directory;
-	else				return FT_Invalid;
+	else				return FileType_Invalid;
 }
 
 /*

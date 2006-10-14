@@ -32,7 +32,7 @@ enum FileType
 	FT_Lua, 
 	FT_Model, 
 	NUM_FileType, 
-	FT_Invalid 
+	FileType_Invalid
 };
 const RString& FileTypeToString( FileType ft );
 
