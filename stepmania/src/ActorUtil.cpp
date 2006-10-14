@@ -446,8 +446,8 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, const XNode *pParent, Actor 
 			return ActorUtil::Create( "Model", &xml, pParentActor );
 		}
 	default:
-		RageException::Throw("File \"%s\" has unknown type, \"%s\".",
-				     sPath.c_str(), FileTypeToString(ft).c_str() );
+		LOG->Warn( "File \"%s\" has unknown type, \"%s\".", sPath.c_str(), FileTypeToString(ft).c_str() );
+		return new Actor;
 	}
 }
 
