@@ -1,7 +1,5 @@
 #include "global.h"
 #include "ActorUtil.h"
-#include "Sprite.h"
-#include "Model.h"
 #include "ThemeManager.h"
 #include "RageFileManager.h"
 #include "RageLog.h"
