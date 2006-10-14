@@ -15,6 +15,7 @@
 #include <cassert>
 
 LuaManager *LUA = NULL;
+static vector<lua_State *> g_FreeStateList;
 static LuaFunctionList *g_LuaFunctions = NULL;
 
 #if defined(_MSC_VER) || defined (_XBOX)
@@ -171,6 +172,10 @@ LuaManager::LuaManager()
 	luaopen_debug( L );
 	lua_settop(L, 0); // luaopen_* pushes stuff onto the stack that we don't need
 
+	/* Store the thread pool in a table on the stack, in the main thread. */
+#define THREAD_POOL 1
+	lua_newtable( L );
+
 	RegisterTypes();
 }
 
@@ -178,6 +183,7 @@ LuaManager::~LuaManager()
 {
 	lua_close( m_pLuaMain );
 	delete m_pLock;
+	g_FreeStateList.clear();
 }
 
 /* Keep track of Lua stack, and enforce that when we release Lua, the stack is
@@ -187,23 +193,31 @@ static int g_iNumStackCounts = 0;
 Lua *LuaManager::Get()
 {
 	m_pLock->Lock();
-	if( size_t(g_iNumStackCounts) < ARRAYLEN(g_iStackCounts) )
+	ASSERT( lua_gettop(m_pLuaMain) == 1 );
+
+	lua_State *pRet;
+	if( g_FreeStateList.empty() )
 	{
-		g_iStackCounts[g_iNumStackCounts] = lua_gettop( m_pLuaMain );
+		pRet = lua_newthread( m_pLuaMain );
+
+		/* Store the new thread in THREAD_POOL, so it isn't collected. */
+		int iLast = lua_objlen( m_pLuaMain, THREAD_POOL );
+		lua_rawseti( m_pLuaMain, THREAD_POOL, iLast+1 );
 	}
-	++g_iNumStackCounts;
-	return m_pLuaMain;
+	else
+	{
+		pRet = g_FreeStateList.back();
+		g_FreeStateList.pop_back();
+	}
+
+	return pRet;
 }
 
 void LuaManager::Release( Lua *&p )
 {
-	ASSERT( p == m_pLuaMain );
-	ASSERT( g_iNumStackCounts != 0 );
-	--g_iNumStackCounts;
-	if( size_t(g_iNumStackCounts) < ARRAYLEN(g_iStackCounts) )
-	{
-		ASSERT( g_iStackCounts[g_iNumStackCounts] == lua_gettop(m_pLuaMain) );
-	}
+	g_FreeStateList.push_back( p );
+
+	ASSERT( lua_gettop(p) == 0 );
 	m_pLock->Unlock();
 	p = NULL;
 }
