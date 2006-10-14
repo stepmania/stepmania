@@ -186,10 +186,6 @@ LuaManager::~LuaManager()
 	g_FreeStateList.clear();
 }
 
-/* Keep track of Lua stack, and enforce that when we release Lua, the stack is
- * back where it was when we locked it. */
-static int g_iStackCounts[32];
-static int g_iNumStackCounts = 0;
 Lua *LuaManager::Get()
 {
 	m_pLock->Lock();
