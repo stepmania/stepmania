@@ -75,7 +75,7 @@ void OptionRow::Clear()
 	ZERO( m_iChoiceInRowWithFocus );
 }
 
-void OptionRowType::Load( const RString &sType )
+void OptionRowType::Load( const RString &sType, Actor *pParent )
 {
 	m_sType = sType;
 
@@ -109,7 +109,7 @@ void OptionRowType::Load( const RString &sType )
 	if( SHOW_UNDERLINES )
 		m_UnderlineParent.Load( sType, OptionsCursor::underline );
 	m_textTitle.LoadFromFont( THEME->GetPathF(sType,"title") );
-	m_sprBullet.Load( ActorUtil::MakeActor( THEME->GetPathG(sType,"bullet") ) );
+	m_sprBullet.Load( ActorUtil::MakeActor( THEME->GetPathG(sType,"bullet"), pParent ) );
 	if( SHOW_OPTION_ICONS )
 		m_OptionIcon.Load( sType );
 }

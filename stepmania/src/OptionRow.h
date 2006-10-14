@@ -17,7 +17,7 @@ struct OptionRowDefinition;
 class OptionRowType
 {
 public:
-	void Load( const RString &sType );
+	void Load( const RString &sType, Actor *pParent );
 
 private:
 	RString				m_sType;

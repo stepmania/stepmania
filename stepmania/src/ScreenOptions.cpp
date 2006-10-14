@@ -181,7 +181,7 @@ void ScreenOptions::Init()
 	m_sprMore->PlayCommand( "LoseFocus" );
 	m_framePage.AddChild( m_sprMore );
 
-	m_OptionRowType.Load( m_sName );
+	m_OptionRowType.Load( m_sName, this );
 }
 
 void ScreenOptions::InitMenu( const vector<OptionRowHandler*> &vHands )

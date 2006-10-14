@@ -472,7 +472,7 @@ void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 
 			for( int i=0; i<iNumParticles; i++ )
 			{
-				Actor* pActor = ActorUtil::MakeActor( sFile );
+				Actor* pActor = ActorUtil::MakeActor( sFile, this );
 				if( pActor == NULL )
 					continue;
 				this->AddChild( pActor );
@@ -510,7 +510,7 @@ void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 			unsigned NumSprites = m_iNumTilesWide * m_iNumTilesHigh;
 			for( unsigned i=0; i<NumSprites; i++ )
 			{
-				Actor* pSprite = ActorUtil::MakeActor( sFile );
+				Actor* pSprite = ActorUtil::MakeActor( sFile, this );
 				this->AddChild( pSprite );
 				pSprite->SetTextureWrapping( true );		// gets rid of some "cracks"
 				pSprite->SetZoom( randomf(fZoomMin,fZoomMax) );

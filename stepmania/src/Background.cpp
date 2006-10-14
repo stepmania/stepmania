@@ -99,9 +99,9 @@ protected:
 		void Unload();
 
 		// return true if created and added to m_BGAnimations
-		bool CreateBackground( const Song *pSong, const BackgroundDef &bd );
+		bool CreateBackground( const Song *pSong, const BackgroundDef &bd, Actor *pParent );
 		// return def of the background that was created and added to m_BGAnimations. calls CreateBackground
-		BackgroundDef CreateRandomBGA( const Song *pSong, const RString &sEffect, deque<BackgroundDef> &RandomBGAnimations );
+		BackgroundDef CreateRandomBGA( const Song *pSong, const RString &sEffect, deque<BackgroundDef> &RandomBGAnimations, Actor *pParent );
 
 		int FindBGSegmentForBeat( float fBeat ) const;
 		void UpdateCurBGChange( const Song *pSong, float fLastMusicSeconds, float fCurrentTime, const map<RString,BackgroundTransition> &mapNameToTransition );
@@ -285,7 +285,7 @@ Actor *MakeVisualization( const RString &sVisPath )
 	return pFrame;
 }
 
-bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const BackgroundDef &bd )
+bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const BackgroundDef &bd, Actor *pParent )
 {
 	ASSERT( m_BGAnimations.find(bd) == m_BGAnimations.end() );
 
@@ -412,7 +412,7 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 	return true;
 }
 
-BackgroundDef BackgroundImpl::Layer::CreateRandomBGA( const Song *pSong, const RString &sEffect, deque<BackgroundDef> &RandomBGAnimations )
+BackgroundDef BackgroundImpl::Layer::CreateRandomBGA( const Song *pSong, const RString &sEffect, deque<BackgroundDef> &RandomBGAnimations, Actor *pParent )
 {
 	if( PREFSMAN->m_RandomBackgroundMode == BGMODE_OFF )
 		return BackgroundDef();
@@ -434,7 +434,7 @@ BackgroundDef BackgroundImpl::Layer::CreateRandomBGA( const Song *pSong, const R
 	// create the background if it's not already created
 	if( iter == m_BGAnimations.end() )
 	{
-		bool bSuccess = CreateBackground( pSong, bd );
+		bool bSuccess = CreateBackground( pSong, bd, pParent );
 		ASSERT( bSuccess );	// we fed it valid files, so this shouldn't fail
 	}
 	return bd;
@@ -448,7 +448,7 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const Bac
 	for( float f=fFirstBeat; f<fEndBeat; f+=BEATS_PER_MEASURE*4 )
 	{
 		// Don't fade.  It causes frame rate dip, especially on slower machines.
-		BackgroundDef bd = m_Layer[0].CreateRandomBGA( m_pSong, change.m_def.m_sEffect, m_RandomBGAnimations );
+		BackgroundDef bd = m_Layer[0].CreateRandomBGA( m_pSong, change.m_def.m_sEffect, m_RandomBGAnimations, this );
 		if( !bd.IsEmpty() )
 		{
 			BackgroundChange c = change;
@@ -473,7 +473,7 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const Bac
 		if( !bInRange )
 			continue;	// skip
 
-		BackgroundDef bd = m_Layer[0].CreateRandomBGA( m_pSong, change.m_def.m_sEffect, m_RandomBGAnimations );
+		BackgroundDef bd = m_Layer[0].CreateRandomBGA( m_pSong, change.m_def.m_sEffect, m_RandomBGAnimations, this );
 		if( !bd.IsEmpty() )
 		{
 			BackgroundChange c = change;
@@ -567,7 +567,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 
 				if( bd.m_sFile1 != RANDOM_BACKGROUND_FILE  &&  !bIsAlreadyLoaded )
 				{
-					if( layer.CreateBackground( m_pSong, bd ) )
+					if( layer.CreateBackground( m_pSong, bd, this ) )
 					{
 						;	// do nothing.  Create was successful.
 					}
@@ -576,7 +576,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 						if( i == BACKGROUND_LAYER_1 )
 						{
 							// The background was not found.  Try to use a random one instead.
-							bd = layer.CreateRandomBGA( pSong, bd.m_sEffect, m_RandomBGAnimations );
+							bd = layer.CreateRandomBGA( pSong, bd.m_sEffect, m_RandomBGAnimations, this );
 							if( bd.IsEmpty() )
 								bd = m_StaticBackgroundDef;
 						}
@@ -646,7 +646,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 		bool bIsAlreadyLoaded = mainlayer.m_BGAnimations.find(m_StaticBackgroundDef) != mainlayer.m_BGAnimations.end();
 		if( !bIsAlreadyLoaded )
 		{
-			bool bSuccess = mainlayer.CreateBackground( m_pSong, m_StaticBackgroundDef );
+			bool bSuccess = mainlayer.CreateBackground( m_pSong, m_StaticBackgroundDef, this );
 			ASSERT( bSuccess );
 		}
 	}
