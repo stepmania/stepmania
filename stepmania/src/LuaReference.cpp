@@ -193,9 +193,8 @@ void LuaTable::Set( Lua *L, const RString &sKey )
 {
 	int iTop = lua_gettop( L );
 	this->PushSelf( L );
-	lua_pushstring( L, sKey ); // push the key
 	lua_pushvalue( L, iTop ); // push the value
-	lua_settable( L, iTop+1 );
+	lua_setfield( L, -2, sKey );
 	lua_settop( L, iTop-1 ); // remove all of the above
 }
 
