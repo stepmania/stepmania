@@ -18,9 +18,10 @@
 void Screen::InitScreen( Screen *pScreen )
 {
 	/* Set the name of the loading screen. */
-	ActorUtil::ActorParam LoadingScreen( "LoadingScreen", pScreen->GetName() );
+	LUA->SetGlobal( "LoadingScreen", pScreen->GetName() );
 
 	pScreen->Init();
+	LUA->UnsetGlobal( "LoadingScreen" );
 }
 
 Screen::~Screen()

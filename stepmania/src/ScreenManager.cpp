@@ -124,10 +124,9 @@ namespace ScreenManagerUtil
 		g_ScreenStack.push_back( ls );
 
 		/* Set the name of the loading screen. */
-		ActorUtil::ActorParam LoadingScreen( "LoadingScreen", ls.m_pScreen->GetName() );
+		LUA->SetGlobal( "LoadingScreen", ls.m_pScreen->GetName() );
 		ls.m_pScreen->BeginScreen();
-
-		LoadingScreen.Release();
+		LUA->UnsetGlobal( "LoadingScreen" );
 
 		SCREENMAN->RefreshCreditsMessages();
 
