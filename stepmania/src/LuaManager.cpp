@@ -158,10 +158,11 @@ LuaManager::LuaManager()
 
 	m_pLock = new RageMutex( "Lua" );
 
-	L = lua_open();
+	lua_State *L = lua_open();
 	ASSERT( L );
 
 	lua_atpanic( L, LuaPanic );
+	m_pLuaMain = L;
 
 	luaopen_base( L );
 	luaopen_math( L );
@@ -175,7 +176,7 @@ LuaManager::LuaManager()
 
 LuaManager::~LuaManager()
 {
-	lua_close( L );
+	lua_close( m_pLuaMain );
 	delete m_pLock;
 }
 
@@ -188,20 +189,20 @@ Lua *LuaManager::Get()
 	m_pLock->Lock();
 	if( size_t(g_iNumStackCounts) < ARRAYLEN(g_iStackCounts) )
 	{
-		g_iStackCounts[g_iNumStackCounts] = lua_gettop( L );
+		g_iStackCounts[g_iNumStackCounts] = lua_gettop( m_pLuaMain );
 	}
 	++g_iNumStackCounts;
-	return L;
+	return m_pLuaMain;
 }
 
 void LuaManager::Release( Lua *&p )
 {
-	ASSERT( p == L );
+	ASSERT( p == m_pLuaMain );
 	ASSERT( g_iNumStackCounts != 0 );
 	--g_iNumStackCounts;
 	if( size_t(g_iNumStackCounts) < ARRAYLEN(g_iStackCounts) )
 	{
-		ASSERT( g_iStackCounts[g_iNumStackCounts] == lua_gettop(L) );
+		ASSERT( g_iStackCounts[g_iNumStackCounts] == lua_gettop(m_pLuaMain) );
 	}
 	m_pLock->Unlock();
 	p = NULL;

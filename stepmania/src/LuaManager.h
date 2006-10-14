@@ -38,7 +38,7 @@ public:
 	XNode *GetLuaInformation() const;
 
 private:
-	lua_State *L;
+	lua_State *m_pLuaMain;
 
 	RageMutex *m_pLock;
 };
