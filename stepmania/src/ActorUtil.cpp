@@ -2,7 +2,6 @@
 #include "ActorUtil.h"
 #include "Sprite.h"
 #include "Model.h"
-#include "BGAnimation.h"
 #include "ThemeManager.h"
 #include "RageFileManager.h"
 #include "RageLog.h"
@@ -397,13 +396,6 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, const XNode *pParent, Actor 
 	RString sDir = Dirname( sPath );
 	switch( ft )
 	{
-	case FT_Directory:
-		{
-			sDir = sPath;
-			BGAnimation *pBGA = new BGAnimation;
-			pBGA->LoadFromAniDir( sDir );
-			return pBGA;
-		}
 	case FT_Xml:
 		{
 			XNode xml;
@@ -430,6 +422,13 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, const XNode *pParent, Actor 
 			MergeActorXML( pNode.get(), pParent );
 			Actor *pRet = ActorUtil::LoadFromNode( pNode.get() );
 			return pRet;
+		}
+	case FT_Directory:
+		{
+			XNode xml;
+			xml.AppendAttr( "AniDir", sPath );
+
+			return ActorUtil::Create( "BGAnimation", &xml, pParentActor );
 		}
 	case FT_Bitmap:
 	case FT_Movie:
