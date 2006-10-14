@@ -419,7 +419,7 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, const XNode *pParent, Actor 
 		}
 	case FT_Directory:
 		{
-			XNode xml;
+			XNode xml( *pParent );
 			xml.AppendAttr( "AniDir", sPath );
 
 			return ActorUtil::Create( "BGAnimation", &xml, pParentActor );
