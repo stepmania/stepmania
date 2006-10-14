@@ -455,7 +455,7 @@ void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 	{
 	case TYPE_SPRITE:
 		{
-			Actor* pActor = ActorUtil::LoadFromNode( pNode );
+			Actor* pActor = ActorUtil::LoadFromNode( pNode, this );
 			this->AddChild( pActor );
 			if( bStretch )
 				pActor->StretchTo( FullScreenRectF );
