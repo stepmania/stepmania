@@ -235,6 +235,8 @@ namespace
 
 XNode *LuaManager::GetLuaInformation() const
 {
+	Lua *L = LUA->Get();
+
 	XNode *pLuaNode = new XNode( "Lua" );
 
 	XNode *pGlobalsNode = pLuaNode->AppendChild( "GlobalFunctions" );
@@ -401,6 +403,8 @@ XNode *LuaManager::GetLuaInformation() const
 		pConstantNode->AppendAttr( "value", ssprintf("'%s'", s->second.c_str()) );
 	}
 		
+	LUA->Release( L );
+
 	return pLuaNode;
 }
 	
