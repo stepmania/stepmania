@@ -635,35 +635,6 @@ FileType ActorUtil::GetFileType( const RString &sPath )
 	else					return FT_Invalid;
 }
 
-/* Helper: set actor parameters, and return them to their original value when released. */
-ActorUtil::ActorParam::ActorParam( RString sName, RString sValue )
-{
-	m_pOld = new LuaReference;
-	m_sName = sName;
-	Lua *L = LUA->Get();
-	LuaHelpers::Push( L, sValue );
-	ActorUtil::SetParamFromStack( L, m_sName, m_pOld );
-	LUA->Release( L );
-}
-
-ActorUtil::ActorParam::~ActorParam()
-{
-	Release();
-	delete m_pOld;
-}
-
-void ActorUtil::ActorParam::Release()
-{
-	if( !m_pOld->IsSet() )
-		return;
-	/* Restore the old value. */
-	Lua *L = LUA->Get();
-	m_pOld->PushSelf( L );
-	ActorUtil::SetParamFromStack( L, m_sName );
-	m_pOld->Unset();
-	LUA->Release( L );
-}
-
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
