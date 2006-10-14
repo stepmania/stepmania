@@ -442,8 +442,12 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, const XNode *pParent, Actor 
 			return ActorUtil::Create( "Model", &xml, pParentActor );
 		}
 	default:
-		LOG->Warn( "File \"%s\" has unknown type, \"%s\".", sPath.c_str(), FileTypeToString(ft).c_str() );
-		return new Actor;
+		{
+			LOG->Warn( "File \"%s\" has unknown type, \"%s\".", sPath.c_str(), FileTypeToString(ft).c_str() );
+
+			XNode xml( *pParent );
+			return ActorUtil::Create( "Actor", &xml, pParentActor );
+		}
 	}
 }
 
