@@ -1731,7 +1731,7 @@ void Profile::AddStepsRecentScore( const Song* pSong, const Steps* pSteps, HighS
 
 XNode* Profile::HighScoreForACourseAndTrail::CreateNode() const
 {
-	XNode* pNode = new XNode( "HighScoresForACourseAndTrail" );
+	XNode* pNode = new XNode( "HighScoreForACourseAndTrail" );
 
 	pNode->AppendChild( courseID.CreateNode() );
 	pNode->AppendChild( trailID.CreateNode() );
