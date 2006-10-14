@@ -669,8 +669,14 @@ static bool Trace( const RString &sString )
 	LOG->Trace( "%s", sString.c_str() );
 	return true;
 }
-
 LuaFunction( Trace, Trace(SArg(1)) );
+
+static bool Warn( const RString &sString )
+{
+	LOG->Warn( "%s", sString.c_str() );
+	return true;
+}
+LuaFunction( Warn, Warn(SArg(1)) );
 
 #include "ProductInfo.h"
 LuaFunction( ProductVersion, (RString) PRODUCT_VER );
