@@ -7,6 +7,8 @@
 #include "Foreach.h"
 #include "LuaManager.h"
 
+REGISTER_ACTOR_CLASS(BGAnimation)
+
 BGAnimation::BGAnimation()
 {
 }
@@ -144,6 +146,10 @@ void BGAnimation::LoadFromAniDir( const RString &_sAniDir )
 
 void BGAnimation::LoadFromNode( const XNode* pNode )
 {
+	RString sDir;
+	if( pNode->GetAttrValue("AniDir", sDir) )
+		LoadFromAniDir( sDir );
+
 	ActorFrame::LoadFromNode( pNode );
 
 	/* Backwards-compatibility: if a "LengthSeconds" value is present, create a dummy
