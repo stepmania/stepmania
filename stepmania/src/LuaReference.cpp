@@ -57,8 +57,8 @@ LuaReference &LuaReference::operator=( const LuaReference &cpy )
 
 void LuaReference::SetFromStack( Lua *L )
 {
-	Unregister();
-
+	if( m_iReference != LUA_NOREF )
+		luaL_unref( L, LUA_REGISTRYINDEX, m_iReference );
 	m_iReference = luaL_ref( L, LUA_REGISTRYINDEX );
 }
 
