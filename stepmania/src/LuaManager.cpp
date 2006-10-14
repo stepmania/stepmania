@@ -427,7 +427,7 @@ bool LuaHelpers::RunScriptFile( const RString &sFile )
 	Lua *L = LUA->Get();
 
 	RString sError;
-	if( !LuaHelpers::RunScript( L, sScript, sFile, sError, 0 ) )
+	if( !LuaHelpers::RunScript( L, sScript, "@" + sFile, sError, 0 ) )
 	{
 		LUA->Release( L );
 		sError = ssprintf( "Lua runtime error: %s", sError.c_str() );
