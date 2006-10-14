@@ -233,7 +233,7 @@ namespace
 	};
 }	
 
-XNode *LuaManager::GetLuaInformation() const
+XNode *LuaHelpers::GetLuaInformation()
 {
 	Lua *L = LUA->Get();
 

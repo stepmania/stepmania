@@ -47,7 +47,7 @@ void ExportStrings::Nsis()
 
 void ExportStrings::LuaInformation()
 {
-	XNode *pNode = LUA->GetLuaInformation();
+	XNode *pNode = LuaHelpers::GetLuaInformation();
 	pNode->AppendAttr( "xmlns", "http://www.stepmania.com" );
 	pNode->AppendAttr( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
 	pNode->AppendAttr( "xsi:schemaLocation", "http://www.stepmania.com Lua.xsd" );

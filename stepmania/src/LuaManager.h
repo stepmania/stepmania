@@ -77,6 +77,8 @@ namespace LuaHelpers
 
 	void ParseCommandList( lua_State *L, const RString &sCommands, const RString &sName );
 
+	XNode *GetLuaInformation();
+
 	/* Pops the last iArgs arguments from the stack, and return a function that returns
 	 * those values. */
 	void PushValueFunc( lua_State *L, int iArgs );
