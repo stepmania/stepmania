@@ -210,6 +210,8 @@ void LuaManager::Release( Lua *&p )
 
 void LuaManager::RegisterTypes()
 {
+	Lua *L = LUA->Get();
+
 	for( const LuaFunctionList *p = g_LuaFunctions; p; p=p->next )
 		lua_register( L, p->name, p->func );
 	
@@ -221,6 +223,8 @@ void LuaManager::RegisterTypes()
 			fn( L );
 		}
 	}
+
+	LUA->Release( L );
 }
 
 
