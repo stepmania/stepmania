@@ -633,6 +633,23 @@ FileType ActorUtil::GetFileType( const RString &sPath )
 	else				return FileType_Invalid;
 }
 
+
+// lua start
+#include "LuaBinding.h"
+
+namespace
+{
+	int GetFileType( lua_State *L )		{ Enum::Push( L, ActorUtil::GetFileType(SArg(1)) ); return 1; }
+
+	const luaL_Reg ActorUtilTable[] =
+	{
+		LIST_METHOD( GetFileType ),
+		{ NULL, NULL }
+	};
+}
+
+LUA_REGISTER_NAMESPACE( ActorUtil )
+
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
