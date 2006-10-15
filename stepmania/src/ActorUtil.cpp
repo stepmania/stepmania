@@ -401,7 +401,7 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, Actor *pParentActor, const X
 			XmlFileUtil::CompileXNodeTree( &xml, sPath );
 			AnnotateXMLTree( &xml, sPath );
 			MergeActorXML( &xml, pParent );
-			return ActorUtil::LoadFromNode( &xml );
+			return ActorUtil::LoadFromNode( &xml, pParentActor );
 		}
 	case FT_Lua:
 		{
@@ -413,7 +413,7 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, Actor *pParentActor, const X
 			}
 
 			MergeActorXML( pNode.get(), pParent );
-			Actor *pRet = ActorUtil::LoadFromNode( pNode.get() );
+			Actor *pRet = ActorUtil::LoadFromNode( pNode.get(), pParentActor );
 			return pRet;
 		}
 	case FT_Directory:
