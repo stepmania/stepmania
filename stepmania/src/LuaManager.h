@@ -145,7 +145,7 @@ namespace LuaHelpers
 #define FOREACH_LUATABLE(L,index) \
 for( const int UNIQUE_NAME(tab) = LuaHelpers::AbsIndex(L,index), \
      UNIQUE_NAME(top) = (lua_pushnil(L),lua_gettop(L)); \
-     ( lua_next(L, UNIQUE_NAME(tab)) || (lua_pop(L,1),false) ) && (lua_pushvalue(L,-2),true); \
+     lua_next(L, UNIQUE_NAME(tab)) && (lua_pushvalue(L,-2),true); \
      lua_settop(L,UNIQUE_NAME(top)) )
 
 
