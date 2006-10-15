@@ -224,6 +224,7 @@ void LuaManager::Release( Lua *&p )
 	g_FreeStateList.push_back( p );
 
 	ASSERT( lua_gettop(p) == 0 );
+	ASSERT( g_ActiveStates.find(p) != g_ActiveStates.end() );
 	bool bDoUnlock = g_ActiveStates[p];
 	g_ActiveStates.erase( p );
 
