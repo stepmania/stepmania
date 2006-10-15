@@ -71,7 +71,7 @@ namespace ActorUtil
 	RString GetWhere( const XNode *pNode );
 	bool GetAttrPath( const XNode *pNode, const RString &sName, RString &sOut );
 
-	void ResolvePath( RString &sPath, const RString &sName );
+	bool ResolvePath( RString &sPath, const RString &sName );
 
 	void SortByZPosition( vector<Actor*> &vActors );
 

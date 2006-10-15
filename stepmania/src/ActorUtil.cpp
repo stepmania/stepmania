@@ -47,7 +47,7 @@ Actor* ActorUtil::Create( const RString& sClassName, const XNode* pNode, Actor *
 	return pRet;
 }
 
-void ActorUtil::ResolvePath( RString &sPath, const RString &sName )
+bool ActorUtil::ResolvePath( RString &sPath, const RString &sName )
 {
 retry:
 	CollapsePath( sPath );
@@ -72,10 +72,7 @@ retry:
 				FlushDirCache();
 				goto retry;
 			case Dialog::ignore:
-				asPaths.push_back( sPath );
-				if( GetExtension(asPaths[0]) == "" )
-					asPaths[0] = SetExtension( asPaths[0], "png" );
-				break;
+				return false;
 			default:
 				ASSERT(0);
 			}
@@ -107,6 +104,7 @@ retry:
 	}
 
 	sPath = DerefRedir( sPath );
+	return true;
 }
 
 static void PushParamsTable( Lua *L )
