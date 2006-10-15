@@ -219,14 +219,11 @@ void Actor::LoadFromNode( const XNode* pNode )
 			if( !pChild->GetAttrValue( "Name", sName ) )
 				RageException::Throw( "%s: Input: missing the attribute \"Name\"", ActorUtil::GetWhere(pNode).c_str() );
 
-			bool bOptional = false;
-			pChild->GetAttrValue( "Optional", bOptional );
-
 			this->PushSelf( L );
 			LuaHelpers::Push( L, sName );
 			ActorUtil::GetParam( L, sName );
 
-			if( lua_isnil(L, -1) && !bOptional )
+			if( lua_isnil(L, -1) )
 				RageException::Throw( "%s: Actor requires parameter \"%s\" that is not set", ActorUtil::GetWhere(pNode).c_str(), sName.c_str() );
 
 			lua_settable( L, -3 );
