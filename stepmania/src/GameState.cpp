@@ -1847,7 +1847,7 @@ public:
 	static int SetCurrentSong( T* p, lua_State *L )
 	{ 
 		if( lua_isnil(L,1) ) { p->m_pCurSong.Set( NULL ); }
-		else { Song *pS = Luna<Song>::check(L,1); p->m_pCurSong.Set( pS ); }
+		else { Song *pS = Luna<Song>::check( L, 1, true ); p->m_pCurSong.Set( pS ); }
 		return 0;
 	}
 	static int GetCurrentSteps( T* p, lua_State *L )
