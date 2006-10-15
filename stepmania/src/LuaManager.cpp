@@ -297,7 +297,7 @@ namespace
 		RString m_sBaseName;
 		vector<RString> m_vMethods;
 	};
-}	
+}
 
 XNode *LuaHelpers::GetLuaInformation()
 {
@@ -318,19 +318,11 @@ XNode *LuaHelpers::GetLuaInformation()
 	map<RString, float> mConstants;
 	map<RString, RString> mStringConstants;
 	map<RString, vector<RString> > mEnums;
-	
-	lua_pushnil( L ); // initial key
-	while( lua_next(L, LUA_GLOBALSINDEX) )
+
+	FOREACH_LUATABLE( L, LUA_GLOBALSINDEX )
 	{
-		// key is at -2, value is at -1
-		
-		/* Tricky. FromStack() calls lua_tolstring() which changes the underlying cell
-		 * if it is not a string. This confuses lua_next(). Copy the value first.
-		 * http://www.lua.org/manual/5.1/manual.html#lua_tolstring */
-		
 		RString sKey;
 		
-		lua_pushvalue( L, -2 );
 		LuaHelpers::Pop( L, sKey );
 		
 		switch( lua_type(L, -1) )
@@ -342,10 +334,7 @@ XNode *LuaHelpers::GetLuaInformation()
 				const char *name = lua_tostring( L, -1 );
 				
 				if( !name )
-				{
-					lua_pop( L, 1 ); // pop nil
 					break;
-				}
 				LClass &c = mClasses[name];
 				lua_pop( L, 1 ); // pop name
 				
@@ -360,14 +349,10 @@ XNode *LuaHelpers::GetLuaInformation()
 				}
 				
 				// Get methods.
-				lua_pushnil( L ); // initial key
-				while( lua_next(L, -2) )
+				FOREACH_LUATABLE( L, -1 )
 				{
-					// Again, be careful about reading the key as a string.
-					lua_pop( L, 1 ); // pop value
-					lua_pushvalue( L, -1 );
 					RString sMethod;
-					if( LuaHelpers::Pop(L, sMethod) )
+					if( LuaHelpers::FromStack(L, sMethod, -1) )
 						c.m_vMethods.push_back( sMethod );
 				}
 				sort( c.m_vMethods.begin(), c.m_vMethods.end() );
@@ -404,7 +389,6 @@ XNode *LuaHelpers::GetLuaInformation()
 			vFunctions.push_back( sKey );
 			break;
 		}
-		lua_pop( L, 1 ); // pop value
 	}
 			
 	sort( vFunctions.begin(), vFunctions.end() );

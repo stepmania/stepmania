@@ -646,10 +646,8 @@ namespace
 
 		/* Iterate over the table, pulling out attributes and tables to process. */
 		map<RString, LuaReference> NodesToAdd;
-		lua_pushnil( L );
-		while( lua_next(L, -2) )
+		FOREACH_LUATABLE( L, -1 )
 		{
-			lua_pushvalue( L, -2 );
 			RString sName;
 			LuaHelpers::Pop( L, sName );
 
@@ -665,7 +663,6 @@ namespace
 			pValue->SetValueFromStack( L );
 			pNode->AppendAttrFrom( sName, pValue );
 		}
-		lua_pop( L, 1 ); // pop nil
 
 		/* Recursively process tables. */
 		FOREACHM( RString, LuaReference, NodesToAdd, t )
