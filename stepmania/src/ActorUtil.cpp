@@ -304,7 +304,6 @@ namespace
 			/* Directory of caller, for relative paths: */
 			pNode->AppendAttr( "_Dir", sDir );
 		}
-
 	}
 
 	XNode *LoadXNodeFromLuaShowErrors( const RString &sFile )
