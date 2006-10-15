@@ -157,13 +157,13 @@ void GraphDisplay::LoadFromNode( const XNode* pNode )
 
 	const XNode *pChild = pNode->GetChild( "Body" );
 	if( pChild == NULL )
-		RageException::Throw( "%s: ComboGraph: missing the node \"Body\"", ActorUtil::GetWhere(pNode).c_str() );
+		RageException::Throw( "%s: GraphDisplay: missing the node \"Body\"", ActorUtil::GetWhere(pNode).c_str() );
 	m_pGraphBody->LoadFromNode( pChild );
 	this->AddChild( m_pGraphBody );
 
 	pChild = pNode->GetChild( "Texture" );
 	if( pChild == NULL )
-		RageException::Throw( "%s: ComboGraph: missing the node \"Texture\"", ActorUtil::GetWhere(pNode).c_str() );
+		RageException::Throw( "%s: GraphDisplay: missing the node \"Texture\"", ActorUtil::GetWhere(pNode).c_str() );
 	m_sprTexture.LoadActorFromNode( pChild, this );
 	m_size.x = m_sprTexture->GetUnzoomedWidth();
 	m_size.y = m_sprTexture->GetUnzoomedHeight();
@@ -171,18 +171,18 @@ void GraphDisplay::LoadFromNode( const XNode* pNode )
 
 	pChild = pNode->GetChild( "Line" );
 	if( pChild == NULL )
-		RageException::Throw( "%s: ComboGraph: missing the node \"Line\"", ActorUtil::GetWhere(pNode).c_str() );
+		RageException::Throw( "%s: GraphDisplay: missing the node \"Line\"", ActorUtil::GetWhere(pNode).c_str() );
 	m_pGraphLine->LoadFromNode( pChild );
 	this->AddChild( m_pGraphLine );
 
 	pChild = pNode->GetChild( "SongBoundary" );
 	if( pChild == NULL )
-		RageException::Throw( "%s: ComboGraph: missing the node \"SongBoundary\"", ActorUtil::GetWhere(pNode).c_str() );
+		RageException::Throw( "%s: GraphDisplay: missing the node \"SongBoundary\"", ActorUtil::GetWhere(pNode).c_str() );
 	m_sprSongBoundary.LoadActorFromNode( pChild, this );
 
 	pChild = pNode->GetChild( "Barely" );
 	if( pChild == NULL )
-		RageException::Throw( "%s: ComboGraph: missing the node \"Barely\"", ActorUtil::GetWhere(pNode).c_str() );
+		RageException::Throw( "%s: GraphDisplay: missing the node \"Barely\"", ActorUtil::GetWhere(pNode).c_str() );
 	m_sprJustBarely.LoadActorFromNode( pChild, this );
 }
 
