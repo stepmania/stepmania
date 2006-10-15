@@ -82,7 +82,7 @@ static const char *EditStateNames[] = {
 	"RecordPaused",
 	"Playing"
 };
-XToString2( EditState );
+XToString( EditState );
 
 #if defined(XBOX)
 void ScreenEdit::InitEditMappings()

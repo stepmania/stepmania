@@ -14,7 +14,7 @@ static const char *DifficultyNames[] = {
 	"Challenge",
 	"Edit",
 };
-XToString2( Difficulty );
+XToString( Difficulty );
 XToLocalizedString( Difficulty );
 LuaXType( Difficulty );
 

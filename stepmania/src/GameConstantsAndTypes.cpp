@@ -28,7 +28,7 @@ static const char *RadarCategoryNames[] = {
 	"Hands",
 	"Rolls"
 };
-XToString2( RadarCategory );
+XToString( RadarCategory );
 XToLocalizedString( RadarCategory );
 LuaFunction( RadarCategoryToLocalizedString, RadarCategoryToLocalizedString(Enum::Check<RadarCategory>(L, 1)) );
 LuaXType( RadarCategory );
@@ -58,7 +58,7 @@ static const char *PlayModeNames[] = {
 	"Battle",
 	"Rave",
 };
-XToString2( PlayMode );
+XToString( PlayMode );
 XToLocalizedString( PlayMode );
 StringToX( PlayMode );
 LuaFunction( PlayModeToLocalizedString, PlayModeToLocalizedString(Enum::Check<PlayMode>(L, 1)) );
@@ -79,7 +79,7 @@ static const char *RankingCategoryNames[] = {
 	"c",
 	"d",
 };
-XToString2( RankingCategory );
+XToString( RankingCategory );
 StringToX( RankingCategory );
 
 
@@ -88,7 +88,7 @@ static const char *PlayerControllerNames[] = {
 	"Autoplay",
 	"Cpu",
 };
-XToString2( PlayerController );
+XToString( PlayerController );
 StringToX( PlayerController );
 XToLocalizedString( PlayerController );
 LuaXType( PlayerController );
@@ -99,7 +99,7 @@ static const char *CoinModeNames[] = {
 	"Pay",
 	"Free",
 };
-XToString2( CoinMode );
+XToString( CoinMode );
 StringToX( CoinMode );
 LuaXType( CoinMode );
 
@@ -109,7 +109,7 @@ static const char *PremiumNames[] = {
 	"Double",
 	"Joint",
 };
-XToString2( Premium );
+XToString( Premium );
 StringToX( Premium );
 LuaXType( Premium );
 
@@ -134,7 +134,7 @@ static const char *SortOrderNames[] = {
 	"Endless",
 	"Roulette",
 };
-XToString2( SortOrder );
+XToString( SortOrder );
 StringToX( SortOrder );
 LuaXType( SortOrder );
 
@@ -150,7 +150,7 @@ static const char *TapNoteScoreNames[] = {
 	"W2",
 	"W1",
 };
-XToString2( TapNoteScore );
+XToString( TapNoteScore );
 LuaXType( TapNoteScore );
 TapNoteScore StringToTapNoteScore( const RString &s )
 {
@@ -183,7 +183,7 @@ static const char *HoldNoteScoreNames[] = {
 	"LetGo",
 	"Held",
 };
-XToString2( HoldNoteScore );
+XToString( HoldNoteScore );
 LuaXType( HoldNoteScore );
 HoldNoteScore StringToHoldNoteScore( const RString &s )
 {
@@ -209,7 +209,7 @@ static const char *MemoryCardStateNames[] = {
 	"removed",
 	"none",
 };
-XToString2( MemoryCardState );
+XToString( MemoryCardState );
 
 
 static const char *PerDifficultyAwardNames[] = {
@@ -224,7 +224,7 @@ static const char *PerDifficultyAwardNames[] = {
 	"Percent90W3",
 	"Percent100W3",
 };
-XToString2( PerDifficultyAward );
+XToString( PerDifficultyAward );
 XToLocalizedString( PerDifficultyAward );
 StringToX( PerDifficultyAward );
 LuaFunction( PerDifficultyAwardToLocalizedString, PerDifficultyAwardToLocalizedString(Enum::Check<PerDifficultyAward>(L, 1)) );
@@ -246,7 +246,7 @@ static const char *PeakComboAwardNames[] = {
 	"Peak9000Combo",
 	"Peak10000Combo",
 };
-XToString2( PeakComboAward );
+XToString( PeakComboAward );
 XToLocalizedString( PeakComboAward );
 StringToX( PeakComboAward );
 LuaFunction( PeakComboAwardToLocalizedString, PeakComboAwardToLocalizedString(Enum::Check<PeakComboAward>(L, 1)) );
@@ -304,7 +304,7 @@ static const char *StyleTypeNames[] = {
 	"OnePlayerTwoSides",
 	"TwoPlayersSharedSides",
 };
-XToString2( StyleType );
+XToString( StyleType );
 StringToX( StyleType );
 LuaXType( StyleType );
 
@@ -314,7 +314,7 @@ static const char *GoalTypeNames[] = {
 	"Time",
 	"None",
 };
-XToString2( GoalType );
+XToString( GoalType );
 StringToX( GoalType );
 LuaXType( GoalType );
 
@@ -324,7 +324,7 @@ static const char *EditModeNames[] = {
 	"Home",
 	"Full"
 };
-XToString2( EditMode );
+XToString( EditMode );
 StringToX( EditMode );
 LuaXType( EditMode );
 
@@ -344,7 +344,7 @@ static const char *StageNames[] = {
 	"Event",
 	"Demo",
 };
-XToString2( Stage );
+XToString( Stage );
 LuaXType( Stage );
 
 
@@ -354,7 +354,7 @@ static const char *MultiPlayerStatusNames[] = {
 	"Unplugged",
 	"MissingMultitap",
 };
-XToString2( MultiPlayerStatus );
+XToString( MultiPlayerStatus );
 
 
 /*

@@ -33,7 +33,7 @@ static const char *CabinetLightNames[] = {
 	"BassLeft",
 	"BassRight",
 };
-XToString2( CabinetLight );
+XToString( CabinetLight );
 StringToX( CabinetLight );
 
 static const char *LightsModeNames[] = {
@@ -47,7 +47,7 @@ static const char *LightsModeNames[] = {
 	"TestAutoCycle",
 	"TestManualCycle",
 };
-XToString2( LightsMode );
+XToString( LightsMode );
 
 static void GetUsedGameInputs( vector<GameInput> &vGameInputsOut )
 {

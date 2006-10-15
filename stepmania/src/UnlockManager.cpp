@@ -33,7 +33,7 @@ static const char *UnlockRequirementNames[] =
 	"Toasties",
 	"StagesCleared"
 };
-XToString2( UnlockRequirement );
+XToString( UnlockRequirement );
 StringToX( UnlockRequirement );
 LuaXType( UnlockRequirement );
 
@@ -44,7 +44,7 @@ static const char *UnlockRewardTypeNames[] =
 	"Course",
 	"Modifier",
 };
-XToString2( UnlockRewardType );
+XToString( UnlockRewardType );
 XToLocalizedString( UnlockRewardType );
 LuaXType( UnlockRewardType );
 LuaFunction( UnlockRewardTypeToLocalizedString, UnlockRewardTypeToLocalizedString(Enum::Check<UnlockRewardType>(L, 1)) );

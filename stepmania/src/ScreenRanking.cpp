@@ -25,7 +25,7 @@ static const char *PageTypeNames[] = {
 	"SurvivalCourses",
 	"AllCourses",
 };
-XToString2( PageType );
+XToString( PageType );
 StringToX( PageType );
 
 #define TYPE						THEME->GetMetric(m_sName,"Type")

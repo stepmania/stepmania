@@ -8,7 +8,7 @@ static const char *PlayerNumberNames[] = {
 	"P1",
 	"P2",
 };
-XToString2( PlayerNumber );
+XToString( PlayerNumber );
 XToLocalizedString( PlayerNumber );
 LuaFunction( PlayerNumberToString, PlayerNumberToString(Enum::Check<PlayerNumber>(L, 1)) );
 LuaXType( PlayerNumber );
@@ -47,7 +47,7 @@ static const char *MultiPlayerNames[] = {
 	"P31",
 	"P32",
 };
-XToString2( MultiPlayer );
+XToString( MultiPlayer );
 XToLocalizedString( MultiPlayer );
 LuaFunction( MultiPlayerToString, MultiPlayerToString(Enum::Check<MultiPlayer>(L, 1)) );
 LuaFunction( MultiPlayerToLocalizedString, MultiPlayerToLocalizedString(Enum::Check<MultiPlayer>(L, 1)) );

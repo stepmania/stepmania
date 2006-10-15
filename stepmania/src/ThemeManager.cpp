@@ -36,7 +36,7 @@ static const char *ElementCategoryNames[] = {
 	"Sounds",
 	"Other"
 };
-XToString2( ElementCategory );
+XToString( ElementCategory );
 StringToX( ElementCategory );
 
 

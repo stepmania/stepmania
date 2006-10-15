@@ -36,7 +36,7 @@ static const char *StepsEditActionNames[] = {
 	"Rename",
 	"Delete",
 };
-XToString2( StepsEditAction );
+XToString( StepsEditAction );
 #define FOREACH_StepsEditAction( i ) FOREACH_ENUM( StepsEditAction, i )
 
 static MenuDef g_TempMenu(

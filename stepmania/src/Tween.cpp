@@ -12,7 +12,7 @@ static const char *TweenTypeNames[] = {
 	"Spring",
 	"Bezier"
 };
-XToString2( TweenType );
+XToString( TweenType );
 LuaXType( TweenType );
 
 

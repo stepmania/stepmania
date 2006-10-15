@@ -52,7 +52,7 @@ const char *CodeNames[] = {
 	"CancelAllPlayerOptions",
 	"BackInEventMode",
 };
-XToString2( Code );
+XToString( Code );
 
 static CodeItem g_CodeItems[NUM_Code];
 

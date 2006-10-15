@@ -16,7 +16,7 @@ static const char *MenuButtonNames[] =
 	"Coin",
 	"Operator"
 };
-XToString2( MenuButton );
+XToString( MenuButton );
 XToLocalizedString( MenuButton );
 
 

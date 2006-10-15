@@ -53,7 +53,7 @@ namespace Enum
 
 const RString &EnumToString( int iVal, int iMax, const char **szNameArray, auto_ptr<RString> *pNameCache ); // XToString helper
 
-#define XToString2(X) \
+#define XToString(X) \
 	COMPILE_ASSERT( NUM_##X == ARRAYLEN(X##Names) ); \
 	const RString& X##ToString( X x ) \
 	{	\
@@ -61,7 +61,7 @@ const RString &EnumToString( int iVal, int iMax, const char **szNameArray, auto_
 		return EnumToString( x, NUM_##X, X##Names, as_##X##Name ); \
 	} \
 	namespace StringConversion { template<> RString ToString<X>( const X &value ) { return X##ToString(value); } }
-#define XToString(X, CNT) XToString2(X)
+#define XToString2(X) XToString(X)
 
 #define XToLocalizedString(X)      \
 	const RString &X##ToLocalizedString( X x ) \

@@ -606,7 +606,7 @@ static const char *FileTypeNames[] = {
 	"Lua", 
 	"Model", 
 };
-XToString2( FileType );
+XToString( FileType );
 LuaXType( FileType );
 
 FileType ActorUtil::GetFileType( const RString &sPath )

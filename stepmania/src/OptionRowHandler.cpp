@@ -33,14 +33,14 @@ static const char *SelectTypeNames[] = {
 	"SelectMultiple",
 	"SelectNone",
 };
-XToString2( SelectType );
+XToString( SelectType );
 StringToX( SelectType );
 
 static const char *LayoutTypeNames[] = {
 	"ShowAllInRow",
 	"ShowOneInRow",
 };
-XToString2( LayoutType );
+XToString( LayoutType );
 StringToX( LayoutType );
 
 RString OptionRowHandler::OptionTitle() const

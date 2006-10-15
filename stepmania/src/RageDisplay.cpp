@@ -66,7 +66,7 @@ static const char *PixelFormatNames[] = {
 	"BGR8",
 	"A1BGR5",
 };
-XToString2( PixelFormat );
+XToString( PixelFormat );
 
 /* bNeedReloadTextures is set to true if the device was re-created and we need
  * to reload textures.  On failure, an error message is returned. 

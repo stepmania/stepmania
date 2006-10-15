@@ -29,7 +29,7 @@ static const char *TimingWindowNames[] = {
 	"Hold",
 	"Roll",
 };
-XToString2( TimingWindow );
+XToString( TimingWindow );
 
 
 static const char *ScoreEventNames[] = {
@@ -43,7 +43,7 @@ static const char *ScoreEventNames[] = {
 	"Held",
 	"LetGo",
 };
-XToString2( ScoreEvent );
+XToString( ScoreEvent );
 
 
 static const char *MusicWheelUsesSectionsNames[] = {
@@ -51,7 +51,7 @@ static const char *MusicWheelUsesSectionsNames[] = {
 	"Always",
 	"ABCOnly",
 };
-XToString2( MusicWheelUsesSections );
+XToString( MusicWheelUsesSections );
 StringToX( MusicWheelUsesSections );
 LuaXType( MusicWheelUsesSections );
 
@@ -60,7 +60,7 @@ static const char *AllowW1Names[] = {
 	"CoursesOnly",
 	"Everywhere",
 };
-XToString2( AllowW1 );
+XToString( AllowW1 );
 StringToX( AllowW1 );
 LuaXType( AllowW1 );
 
@@ -69,7 +69,7 @@ static const char *MaybeNames[] = {
 	"No",
 	"Yes",
 };
-XToString2( Maybe );
+XToString( Maybe );
 StringToX( Maybe );
 LuaXType( Maybe );
 
@@ -78,7 +78,7 @@ static const char *GetRankingNameNames[] = {
 	"On",
 	"List",
 };
-XToString2( GetRankingName );
+XToString( GetRankingName );
 StringToX( GetRankingName );
 LuaXType( GetRankingName );
 
@@ -88,7 +88,7 @@ static const char *RandomBackgroundModeNames[] = {
 	"Animations",
 	"RandomMovies",
 };
-XToString2( RandomBackgroundMode );
+XToString( RandomBackgroundMode );
 StringToX( RandomBackgroundMode );
 LuaXType( RandomBackgroundMode );
 
@@ -97,7 +97,7 @@ static const char *ShowDancingCharactersNames[] = {
 	"Random",
 	"Select",
 };
-XToString2( ShowDancingCharacters );
+XToString( ShowDancingCharacters );
 StringToX( ShowDancingCharacters );
 LuaXType( ShowDancingCharacters );
 
@@ -107,7 +107,7 @@ static const char *BannerCacheModeNames[] = {
 	"LowResLoadOnDemand",
 	"Full"
 };
-XToString2( BannerCacheMode );
+XToString( BannerCacheMode );
 StringToX( BannerCacheMode );
 LuaXType( BannerCacheMode );
 
@@ -119,7 +119,7 @@ static const char *AttractSoundFrequencyNames[] = {
 	"Every4Times",
 	"Every5Times",
 };
-XToString2( AttractSoundFrequency );
+XToString( AttractSoundFrequency );
 StringToX( AttractSoundFrequency );
 LuaXType( AttractSoundFrequency );
 
@@ -130,7 +130,7 @@ static const char *CourseSortOrdersNames[] = {
 	"MeterSum",
 	"MeterRank",
 };
-XToString2( CourseSortOrders );
+XToString( CourseSortOrders );
 StringToX( CourseSortOrders );
 LuaXType( CourseSortOrders );
 
@@ -138,7 +138,7 @@ static const char *ScoringTypeNames[] = {
 	"New",
 	"Old",
 };
-XToString2( ScoringType );
+XToString( ScoringType );
 StringToX( ScoringType );
 LuaXType( ScoringType );
 
