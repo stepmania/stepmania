@@ -467,6 +467,7 @@ bool LuaHelpers::RunScript( Lua *L, const RString &sScript, const RString &sName
 		if( ret )
 		{
 			LuaHelpers::Pop( L, sError );
+			lua_pop( L, iArgs );
 			for( int i = 0; i < iReturnValues; ++i )
 				lua_pushnil( L );
 			return false;
