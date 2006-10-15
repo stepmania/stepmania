@@ -64,7 +64,7 @@ retry:
 
 		if( asPaths.empty() )
 		{
-			RString sError = ssprintf( "A file in '%s' references a file '%s' which doesn't exist.", sName.c_str(), sPath.c_str() );
+			RString sError = ssprintf( "%s: references a file \"%s\" which doesn't exist", sName.c_str(), sPath.c_str() );
 			switch( Dialog::AbortRetryIgnore( sError, "BROKEN_FILE_REFERENCE" ) )
 			{
 			case Dialog::abort:
@@ -88,7 +88,7 @@ retry:
 
 		if( asPaths.size() > 1 )
 		{
-			RString sError = ssprintf( "A file in '%s' references a file '%s' which has multiple matches.", sName.c_str(), sPath.c_str() );
+			RString sError = ssprintf( "%s: references a file \"%s\" which has multiple matches", sName.c_str(), sPath.c_str() );
 			sError += "\n" + join( "\n", asPaths );
 			switch( Dialog::AbortRetryIgnore( sError, "BROKEN_FILE_REFERENCE" ) )
 			{
