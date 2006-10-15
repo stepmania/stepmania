@@ -16,8 +16,12 @@
 #include <map>
 
 LuaManager *LUA = NULL;
-static vector<lua_State *> g_FreeStateList;
-static map<lua_State *, bool> g_ActiveStates;
+struct Impl
+{
+	vector<lua_State *> g_FreeStateList;
+	map<lua_State *, bool> g_ActiveStates;
+};
+static Impl *pImpl = NULL;
 static LuaFunctionList *g_LuaFunctions = NULL;
 
 #if defined(_MSC_VER) || defined (_XBOX)
@@ -157,6 +161,7 @@ void LuaManager::Register( RegisterWithLuaFn pfn )
 
 LuaManager::LuaManager()
 {
+	pImpl = new Impl;
 	LUA = this;	// so that LUA is available when we call the Register functions
 
 	m_pLock = new RageMutex( "Lua" );
@@ -185,8 +190,7 @@ LuaManager::~LuaManager()
 {
 	lua_close( m_pLuaMain );
 	delete m_pLock;
-	g_FreeStateList.clear();
-	g_ActiveStates.clear();
+	SAFE_DELETE( pImpl );
 }
 
 Lua *LuaManager::Get()
@@ -201,7 +205,7 @@ Lua *LuaManager::Get()
 	ASSERT( lua_gettop(m_pLuaMain) == 1 );
 
 	lua_State *pRet;
-	if( g_FreeStateList.empty() )
+	if( pImpl->g_FreeStateList.empty() )
 	{
 		pRet = lua_newthread( m_pLuaMain );
 
@@ -211,22 +215,22 @@ Lua *LuaManager::Get()
 	}
 	else
 	{
-		pRet = g_FreeStateList.back();
-		g_FreeStateList.pop_back();
+		pRet = pImpl->g_FreeStateList.back();
+		pImpl->g_FreeStateList.pop_back();
 	}
 
-	g_ActiveStates[pRet] = bLocked;
+	pImpl->g_ActiveStates[pRet] = bLocked;
 	return pRet;
 }
 
 void LuaManager::Release( Lua *&p )
 {
-	g_FreeStateList.push_back( p );
+	pImpl->g_FreeStateList.push_back( p );
 
 	ASSERT( lua_gettop(p) == 0 );
-	ASSERT( g_ActiveStates.find(p) != g_ActiveStates.end() );
-	bool bDoUnlock = g_ActiveStates[p];
-	g_ActiveStates.erase( p );
+	ASSERT( pImpl->g_ActiveStates.find(p) != pImpl->g_ActiveStates.end() );
+	bool bDoUnlock = pImpl->g_ActiveStates[p];
+	pImpl->g_ActiveStates.erase( p );
 
 	if( bDoUnlock )
 		m_pLock->Unlock();
