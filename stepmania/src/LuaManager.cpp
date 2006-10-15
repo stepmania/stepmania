@@ -13,9 +13,11 @@
 #include <sstream>
 #include <csetjmp>
 #include <cassert>
+#include <map>
 
 LuaManager *LUA = NULL;
 static vector<lua_State *> g_FreeStateList;
+static map<lua_State *, bool> g_ActiveStates;
 static LuaFunctionList *g_LuaFunctions = NULL;
 
 #if defined(_MSC_VER) || defined (_XBOX)
@@ -184,11 +186,18 @@ LuaManager::~LuaManager()
 	lua_close( m_pLuaMain );
 	delete m_pLock;
 	g_FreeStateList.clear();
+	ASSERT( g_ActiveStates.empty() );
 }
 
 Lua *LuaManager::Get()
 {
-	m_pLock->Lock();
+	bool bLocked = false;
+	if( !m_pLock->IsLockedByThisThread() )
+	{
+		m_pLock->Lock();
+		bLocked = true;
+	}
+
 	ASSERT( lua_gettop(m_pLuaMain) == 1 );
 
 	lua_State *pRet;
@@ -206,6 +215,7 @@ Lua *LuaManager::Get()
 		g_FreeStateList.pop_back();
 	}
 
+	g_ActiveStates[pRet] = bLocked;
 	return pRet;
 }
 
@@ -214,10 +224,51 @@ void LuaManager::Release( Lua *&p )
 	g_FreeStateList.push_back( p );
 
 	ASSERT( lua_gettop(p) == 0 );
-	m_pLock->Unlock();
+	bool bDoUnlock = g_ActiveStates[p];
+	g_ActiveStates.erase( p );
+
+	if( bDoUnlock )
+		m_pLock->Unlock();
 	p = NULL;
 }
 
+/*
+ * Low-level access to Lua is always serialized through m_pLock; we never run the Lua
+ * core simultaneously from multiple threads.  However, when a thread has an acquired
+ * lua_State, it can release Lua for use by other threads.  This allows Lua bindings
+ * to process long-running actions, without blocking all other threads from using Lua
+ * until it finishes.
+ *
+ * Lua *L = LUA->Get();				// acquires L and locks Lua
+ * lua_newtable(L);				// does something with Lua
+ * LUA->YieldLua();				// unlocks Lua for lengthy operation; L is still owned, but can't be used
+ * RString s = ReadFile("/filename.txt");	// time-consuming operation; other threads may use Lua in the meantime
+ * LUA->UnyieldLua();				// relock Lua
+ * lua_pushstring( L, s );			// finish working with it
+ * LUA->Release( L );				// release L and unlock Lua
+ *
+ * YieldLua() must not be called when already yielded, or when a lua_State has not been
+ * acquired (you have nothing to yield), and always unyield before releasing the
+ * state.  Recursive handling is OK:
+ *
+ * L1 = LUA->Get();
+ * LUA->YieldLua();				// yields
+ *   L2 = LUA->Get();				// unyields
+ *   LUA->Release(L2);				// re-yields
+ * LUA->UnyieldLua();
+ * LUA->Release(L1);
+ */
+void LuaManager::YieldLua()
+{
+	ASSERT( m_pLock->IsLockedByThisThread() );
+
+	m_pLock->Unlock();
+}
+
+void LuaManager::UnyieldLua()
+{
+	m_pLock->Lock();
+}
 
 void LuaManager::RegisterTypes()
 {

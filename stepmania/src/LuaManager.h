@@ -29,6 +29,11 @@ public:
 	Lua *Get();
 	void Release( Lua *&p );
 
+	/* Explicitly lock and unlock Lua access.  This is done automatically by Get() and
+	 * Release(). */
+	void YieldLua();
+	void UnyieldLua();
+
 	/* Register all subscribing types.  There's no harm in registering when already registered. */
 	void RegisterTypes();
 
