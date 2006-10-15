@@ -487,6 +487,8 @@ bool ActorUtil::GetAttrPath( const XNode *pNode, const RString &sName, RString &
 		sOut = sDir+sOut;
 	}
 
+	ActorUtil::ResolvePath( sOut, ActorUtil::GetWhere(pNode) );
+
 	return true;
 }
 
