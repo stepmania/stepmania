@@ -693,20 +693,6 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 		
 		FOREACH_CONST( RString, vsCourseGroupNames, sCourseGroup )	// for each dir in /Courses/
 		{
-
-#if defined(ITG)
-			if( !ALLOW_ITG_NAMES_IN_ADDITIONAL_FOLDERS )
-			{
-				// Don't load any folders containing "Marathon" so that they don't conflict with the official courses.
-				if( *sDir == ADDITIONAL_COURSES_DIR  &&  BeginsWith(*sCourseGroup, "Marathon") )
-					continue;
-				if( *sDir == ADDITIONAL_COURSES_DIR  &&  BeginsWith(*sCourseGroup, "Survival") )
-					continue;
-				if( *sDir == ADDITIONAL_COURSES_DIR  &&  BeginsWith(*sCourseGroup, "Workout") )
-					continue;
-			}
-#endif
-
 			// Find all CRS files in this group directory
 			vector<RString> vsCoursePaths;
 			GetDirListing( *sDir + *sCourseGroup + "/*.crs", vsCoursePaths, false, true );
