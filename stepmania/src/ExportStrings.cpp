@@ -53,7 +53,7 @@ void ExportStrings::LuaInformation()
 	pNode->AppendAttr( "xsi:schemaLocation", "http://www.stepmania.com Lua.xsd" );
 
 	XNode *pVersionNode = pNode->AppendChild( "Version" );
-	pVersionNode->SetValue( "foo" );
+	pVersionNode->SetValue( PRODUCT_ID_VER );
 
 	XNode *pDateNode = pNode->AppendChild( "Date" );
 	pDateNode->SetValue( DateTime::GetNowDate().GetString() );
