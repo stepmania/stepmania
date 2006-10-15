@@ -302,8 +302,6 @@ namespace
 
 XNode *LuaHelpers::GetLuaInformation()
 {
-	Lua *L = LUA->Get();
-
 	XNode *pLuaNode = new XNode( "Lua" );
 
 	XNode *pGlobalsNode = pLuaNode->AppendChild( "GlobalFunctions" );
@@ -319,9 +317,11 @@ XNode *LuaHelpers::GetLuaInformation()
 	map<RString, float> mConstants;
 	map<RString, RString> mStringConstants;
 	map<RString, vector<RString> > mEnums;
-
+	
+	Lua *L = LUA->Get();
 	FOREACH_LUATABLE( L, LUA_GLOBALSINDEX )
 	{
+		ASSERT( lua_gettop(L) == 3 );
 		RString sKey;
 		
 		LuaHelpers::Pop( L, sKey );
@@ -369,15 +369,9 @@ XNode *LuaHelpers::GetLuaInformation()
 			if( !LuaHelpers::Pop(L, sType) )
 				break;
 			if( sType == "Enum" )
-			{
-				vector<RString> &vEnum = mEnums[sKey];
-				LuaHelpers::ReadArrayFromTable( vEnum, L );
-			}
+				LuaHelpers::ReadArrayFromTable( mEnums[sKey], L );
 			else
-			{
 				mSingletons[sKey] = sType;
-			}
-			
 			break;
 		}
 		case LUA_TNUMBER:
@@ -391,7 +385,8 @@ XNode *LuaHelpers::GetLuaInformation()
 			break;
 		}
 	}
-			
+	LUA->Release( L );
+
 	sort( vFunctions.begin(), vFunctions.end() );
 	FOREACH_CONST( RString, vFunctions, func )
 	{
@@ -453,8 +448,6 @@ XNode *LuaHelpers::GetLuaInformation()
 		pConstantNode->AppendAttr( "name", s->first );
 		pConstantNode->AppendAttr( "value", ssprintf("'%s'", s->second.c_str()) );
 	}
-		
-	LUA->Release( L );
 
 	return pLuaNode;
 }
