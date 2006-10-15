@@ -79,7 +79,7 @@ local function ResolvePath( path, level )
 	return path
 end
 
--- Load an actor .Lua template.  path may be a relative path.
+-- Load an actor template.
 function LoadActor( path )
 	local ResolvedPath = ResolvePath( path, 2 );
 	if not ResolvedPath then
