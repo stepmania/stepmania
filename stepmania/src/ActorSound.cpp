@@ -24,10 +24,7 @@ void ActorSound::LoadFromNode( const XNode* pNode )
 
 	RString sFile;
 	if( ActorUtil::GetAttrPath(pNode, "File", sFile) )
-	{
-		ActorUtil::ResolvePath( sFile, ActorUtil::GetWhere(pNode) );
 		Load( sFile );
-	}
 }
 
 // lua start

@@ -42,8 +42,6 @@ void MeterDisplay::LoadFromNode( const XNode* pNode )
 		if( !ActorUtil::GetAttrPath(pNode, "StreamPath", sStreamPath) )
 			RageException::Throw( "%s: MeterDisplay: missing the \"StreamPath\" attribute", ActorUtil::GetWhere(pNode).c_str() );
 
-		ActorUtil::ResolvePath( sStreamPath, ActorUtil::GetWhere(pNode) );
-
 		m_sprStream.Load( sStreamPath );
 		m_sprStream->SetZoomX( m_fStreamWidth / m_sprStream->GetUnzoomedWidth() );
 		this->AddChild( m_sprStream );

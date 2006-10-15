@@ -47,8 +47,6 @@ void DifficultyIcon::LoadFromNode( const XNode* pNode )
 	if( !ActorUtil::GetAttrPath(pNode, "File", sFile) )
 		RageException::Throw( "%s: DifficultyIcon: missing the \"File\" attribute.", ActorUtil::GetWhere(pNode).c_str() );
 
-	ActorUtil::ResolvePath( sFile, ActorUtil::GetWhere(pNode) );
-
 	Load( sFile );
 
 	// skip Sprite::LoadFromNode
