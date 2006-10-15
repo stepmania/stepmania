@@ -41,9 +41,11 @@ setmetatable( Def, {
 		-- t is an actor definition table.  name is the type
 		-- given to Def.  Fill in standard fields.
 		return function(t)
-			if not t.Type then
-				t.Type = Type;
+			if not ActorUtil.IsRegisteredType(Type) then
+				error( Type .. " is not a registered type", 2 );
 			end
+
+			t.Type = Type;
 		
 			local level = 2
 			if t._Level then
