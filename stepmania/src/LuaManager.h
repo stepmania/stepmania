@@ -49,7 +49,7 @@ namespace LuaHelpers
 	/* Run a script with the given name.  The given number of return values are left on
 	 * the Lua stack.  On error, nils are left on the stack, sError is set and 
 	 * false is returned. */
-	bool RunScript( Lua *L, const RString &sScript, const RString &sName, RString &sError, int iReturnValues = 0 );
+	bool RunScript( Lua *L, const RString &sScript, const RString &sName, RString &sError, int iArgs = 0, int iReturnValues = 0 );
 
 	/* Run the given expression, returning a single value, and leave the return value on the
 	 * stack.  On error, push nil. */

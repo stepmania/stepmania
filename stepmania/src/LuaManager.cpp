@@ -459,7 +459,7 @@ bool LuaHelpers::RunScriptFile( const RString &sFile )
 }
 
 
-bool LuaHelpers::RunScript( Lua *L, const RString &sScript, const RString &sName, RString &sError, int iReturnValues )
+bool LuaHelpers::RunScript( Lua *L, const RString &sScript, const RString &sName, RString &sError, int iArgs, int iReturnValues )
 {
 	// load string
 	{
@@ -473,9 +473,12 @@ bool LuaHelpers::RunScript( Lua *L, const RString &sScript, const RString &sName
 		}
 	}
 
+	// move the function above the params
+	lua_insert( L, lua_gettop(L) - iArgs );
+
 	// evaluate
 	{
-		int ret = lua_pcall( L, 0, iReturnValues, 0 );
+		int ret = lua_pcall( L, iArgs, iReturnValues, 0 );
 		if( ret )
 		{
 			LuaHelpers::Pop( L, sError );
@@ -491,7 +494,7 @@ bool LuaHelpers::RunScript( Lua *L, const RString &sScript, const RString &sName
 bool LuaHelpers::RunExpression( Lua *L, const RString &sExpression, const RString &sName )
 {
 	RString sError;
-	if( !LuaHelpers::RunScript(L, "return " + sExpression, sName.empty()? RString("in"):sName, sError, 1) )
+	if( !LuaHelpers::RunScript(L, "return " + sExpression, sName.empty()? RString("in"):sName, sError, 0, 1) )
 	{
 		sError = ssprintf( "Lua runtime error parsing \"%s\": %s", sName.size()? sName.c_str():sExpression.c_str(), sError.c_str() );
 		Dialog::OK( sError, "LUA_ERROR" );
@@ -627,7 +630,7 @@ void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RStri
 	}
 
 	RString sError;
-	if( !LuaHelpers::RunScript( L, sLuaFunction, sName, sError, 1 ) )
+	if( !LuaHelpers::RunScript(L, sLuaFunction, sName, sError, 0, 1) )
 		LOG->Warn( "Compiling \"%s\": %s", sLuaFunction.c_str(), sError.c_str() );
 
 	/* The function is now on the stack. */
