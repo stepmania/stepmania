@@ -271,8 +271,6 @@ void Actor::LoadFromNode( const XNode* pNode )
 
 	LUA->Release( L );
 
-	/* There's an InitCommand.  Run it now.  This can be used to eg. change Z to
-	 * modify draw order between BGAs in a Foreground. */
 	PlayCommand( "Init" );
 }
 
