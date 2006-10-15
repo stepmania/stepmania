@@ -998,8 +998,6 @@ RString DerefRedir( const RString &_path )
 		if( sNewFileName == "" )
 			return RString();
 
-		FixSlashesInPlace( sNewFileName );
-
 		RString sPath2 = Dirname(sPath) + sNewFileName;
 
 		CollapsePath( sPath2 );
