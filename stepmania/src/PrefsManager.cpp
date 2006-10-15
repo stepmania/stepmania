@@ -112,7 +112,7 @@ StringToX( BannerCacheMode );
 LuaXType( BannerCacheMode );
 
 static const char *AttractSoundFrequencyNames[] = {
-	"NEver",
+	"Never",
 	"EveryTime",
 	"Every2Times",
 	"Every3Times",
