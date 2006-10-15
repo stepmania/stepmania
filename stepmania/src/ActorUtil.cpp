@@ -233,8 +233,6 @@ Actor* ActorUtil::LoadFromNode( const XNode* pNode, Actor *pParentActor )
 			goto all_done;
 		}
 
-		ActorUtil::ResolvePath( sFile, GetSourcePath(pNode) );
-
 		pReturn = ActorUtil::MakeActor( sFile, pParentActor, pNode );
 		if( pReturn == NULL )
 			goto all_done;
