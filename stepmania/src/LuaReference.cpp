@@ -70,20 +70,19 @@ void LuaReference::SetFromNil()
 
 void LuaReference::DeepCopy()
 {
-	/* Call DeepCopy(t), where t is our referenced object. */
+	/* Call DeepCopy(t, u), where t is our referenced object and u is the new table. */
 	Lua *L = LUA->Get();
-	lua_pushstring( L, "DeepCopy" );
-	lua_gettable( L, LUA_GLOBALSINDEX );
-
-	ASSERT_M( !lua_isnil(L, -1), "DeepCopy() missing" );
-	ASSERT_M( lua_isfunction(L, -1), "DeepCopy() not a function" );
 
 	/* Arg 1 (t): */
 	this->PushSelf( L );
 
-	lua_call( L, 1, 1 );
+	/* Arg 2 (u): */
+	lua_newtable( L );
 
+	lua_pushvalue( L, -1 );
 	this->SetFromStack( L );
+
+	LuaHelpers::DeepCopy( L );
 
 	LUA->Release( L );
 }
