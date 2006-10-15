@@ -34,18 +34,18 @@ DefMetatable = {
 
 -- This is used as follows:
 --
---   t = Def.Type { table }
+--   t = Def.Class { table }
 Def = {}
 setmetatable( Def, {
-	__index = function(self, Type)
+	__index = function(self, Class)
 		-- t is an actor definition table.  name is the type
 		-- given to Def.  Fill in standard fields.
 		return function(t)
-			if not ActorUtil.IsRegisteredClass(Type) then
-				error( Type .. " is not a registered actor class", 2 );
+			if not ActorUtil.IsRegisteredClass(Class) then
+				error( Class .. " is not a registered actor class", 2 );
 			end
 
-			t.Type = Type;
+			t.Class = Class;
 		
 			local level = 2
 			if t._Level then
