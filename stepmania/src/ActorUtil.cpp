@@ -479,9 +479,7 @@ bool ActorUtil::GetAttrPath( const XNode *pNode, const RString &sName, RString &
 		sOut = sDir+sOut;
 	}
 
-	ActorUtil::ResolvePath( sOut, ActorUtil::GetWhere(pNode) );
-
-	return true;
+	return ActorUtil::ResolvePath( sOut, ActorUtil::GetWhere(pNode) );
 }
 
 apActorCommands ActorUtil::ParseActorCommands( const RString &sCommands, const RString &sName )
