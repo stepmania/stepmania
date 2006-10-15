@@ -5,7 +5,7 @@ for _, s in ipairs(Stage) do
 			InitCommand = cmd(playcommand,"Update"),
 			CurrentSongChangedMessageCommand=cmd(playcommand,"Update"),
 
-			UpdateCommand=cmd(hidden,GAMESTATE:GetCurrentStage() == s and 0 or 1)
+			UpdateCommand=cmd(visible, GAMESTATE:GetCurrentStage() == s)
 		}
 		table.insert( stages, t )
 	end
