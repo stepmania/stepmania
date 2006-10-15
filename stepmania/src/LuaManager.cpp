@@ -659,6 +659,21 @@ int LuaHelpers::TypeError( Lua *L, int iArgNo, const char *szName )
 	}
 }
 
+void LuaHelpers::DeepCopy( lua_State *L )
+{
+	luaL_checktype( L, -2, LUA_TTABLE );
+	luaL_checktype( L, -1, LUA_TTABLE );
+
+	/* Call DeepCopy(t, u), where t is our referenced object and u is the new table. */
+	lua_getglobal( L, "DeepCopy" );
+
+	ASSERT_M( !lua_isnil(L, -1), "DeepCopy() missing" );
+	ASSERT_M( lua_isfunction(L, -1), "DeepCopy() not a function" );
+	lua_insert( L, lua_gettop(L)-2 );
+
+	lua_call( L, 2, 0 );
+}
+
 namespace
 {
 	int lua_pushvalues( lua_State *L )

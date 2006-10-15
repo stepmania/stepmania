@@ -62,6 +62,10 @@ namespace LuaHelpers
 	/* Create a Lua array (a table with indices starting at 1) of the given vector,
 	 * and push it on the stack. */
 	void CreateTableFromArrayB( Lua *L, const vector<bool> &aIn );
+	
+	/* Recursively copy elements from the table at stack element -2 into the table
+	 * at stack -1.  Pop both elements from the stack. */
+	void DeepCopy( lua_State *L );
 
 	/* Read the table at the top of the stack back into a vector. */
 	void ReadArrayFromTableB( Lua *L, vector<bool> &aOut );
