@@ -415,7 +415,6 @@ void BGAnimationLayer::LoadFromNode( const XNode* pNode )
 
 	pNode->GetAttrValue( "TexCoordVelocityX", m_fTexCoordVelocityX );
 	pNode->GetAttrValue( "TexCoordVelocityY", m_fTexCoordVelocityY );
-	pNode->GetAttrValue( "DrawCond", m_sDrawCond );
 
 	// compat:
 	pNode->GetAttrValue( "StretchTexCoordVelocityX", m_fTexCoordVelocityX );
@@ -635,19 +634,6 @@ void BGAnimationLayer::UpdateInternal( float fDeltaTime )
 		ASSERT(0);
 	}
 }
-
-bool BGAnimationLayer::EarlyAbortDraw() const
-{
-	if( m_sDrawCond.empty() )
-		return false;
-
-	// TODO: Is it ok to evaluate this every frame? 
-	if( !LuaHelpers::RunExpressionB(m_sDrawCond) )
-		return true;
-
-	return false;
-}
-
 
 /*
  * (c) 2001-2004 Ben Nordstrom, Chris Danford, Glenn Maynard

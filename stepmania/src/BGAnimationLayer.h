@@ -19,7 +19,6 @@ public:
 	void LoadFromNode( const XNode* pNode );
 
 	void UpdateInternal( float fDeltaTime );
-	bool EarlyAbortDraw() const;
 
 	float GetMaxTweenTimeLeft() const;
 
@@ -33,15 +32,6 @@ protected:
 		TYPE_TILES,
 		NUM_TYPES,
 	} m_Type;
-
-
-
-	//
-	// loaded prefs
-	//
-	
-	// common stuff
-	RString m_sDrawCond;
 
 	// stretch stuff
 	float m_fTexCoordVelocityX;
