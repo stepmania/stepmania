@@ -687,7 +687,7 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 	{
 		// Find all group directories in Courses dir
 		vector<RString> vsCourseGroupNames;
-		GetDirListing( *sDir + "*", vsCourseGroupNames, true );
+		GetDirListing( *sDir + "*", vsCourseGroupNames, true, true );
 		StripCvs( vsCourseGroupNames );
 		SortRStringArray( vsCourseGroupNames );
 		
@@ -695,7 +695,7 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 		{
 			// Find all CRS files in this group directory
 			vector<RString> vsCoursePaths;
-			GetDirListing( *sDir + *sCourseGroup + "/*.crs", vsCoursePaths, false, true );
+			GetDirListing( *sCourseGroup + "/*.crs", vsCoursePaths, false, true );
 			SortRStringArray( vsCoursePaths );
 
 			FOREACH_CONST( RString, vsCoursePaths, sCoursePath )
