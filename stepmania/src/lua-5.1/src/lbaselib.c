@@ -585,10 +585,8 @@ static int luaB_costatus (lua_State *L) {
 
 
 static int luaB_corunning (lua_State *L) {
-  if (lua_pushthread(L))
-    return 0;  /* main thread is not a coroutine */
-  else
-    return 1;
+  lua_pushthread(L);
+  return 1;
 }
 
 
