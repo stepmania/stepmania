@@ -636,11 +636,18 @@ namespace
 	int ResolvePath( lua_State *L )
 	{
 		RString sPath( SArg(1) );
+		int iLevel = IArg(2);
+		luaL_where( L, iLevel );
+		RString sWhere = lua_tostring( L, -1 );
+		if( sWhere.size() > 2 && sWhere.substr(sWhere.size()-2, 2) == ": " )
+			sWhere = sWhere.substr( 0, sWhere.size()-2 ); // remove trailing ": "
 
 		LUA->YieldLua();
-		ActorUtil::ResolvePath( sPath, "" );
+		bool bRet = ActorUtil::ResolvePath( sPath, sWhere );
 		LUA->UnyieldLua();
 
+		if( !bRet )
+			return 0;
 		LuaHelpers::Push( L, sPath );
 		return 1;
 	}
