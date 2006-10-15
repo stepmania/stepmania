@@ -159,7 +159,23 @@ inline bool MyLua_checkboolean (lua_State *L, int numArg)
 	return !!lua_toboolean( L, numArg );
 }
 
+/* BIArg is like BArg, except 1 is accepted as a true value and (as a special case)
+ * 0 is accepted as a false value.  This is to help transitions where "cmd,0" is
+ * used to mean "cmd,false". */
+inline bool MyLua_checkintboolean( lua_State *L, int iArg )
+{
+	int iType = lua_type( L, iArg );
+	if( iType == LUA_TNUMBER )
+	{
+		int iValue = lua_tointeger( L, iArg );
+		return iValue != 0;
+	}
+
+	return MyLua_checkboolean( L, iArg );
+}
+
 #define SArg(n) (luaL_checkstring(L,(n)))
+#define BIArg(n) (MyLua_checkintboolean(L,(n)))
 #define IArg(n) (luaL_checkint(L,(n)))
 #define BArg(n) (MyLua_checkboolean(L,(n)))
 #define FArg(n) ((float) luaL_checknumber(L,(n)))

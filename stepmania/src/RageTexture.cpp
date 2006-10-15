@@ -74,7 +74,7 @@ class LunaRageTexture: public Luna<RageTexture>
 {
 public:
 	static int position( T* p, lua_State *L )		{ p->SetPosition( FArg(1) ); return 0; }
-	static int loop( T* p, lua_State *L )			{ p->SetLooping( !!IArg(1) ); return 0; }
+	static int loop( T* p, lua_State *L )			{ p->SetLooping( BIArg(1) ); return 0; }
 	static int rate( T* p, lua_State *L )			{ p->SetPlaybackRate( FArg(1) ); return 0; }
 
 	LunaRageTexture()
