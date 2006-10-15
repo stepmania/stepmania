@@ -21,7 +21,7 @@ static const char *MenuDirNames[] = {
 	"Right",
 	"Auto",
 };
-XToString( MenuDir, NUM_MenuDir );
+XToString2( MenuDir );
 
 AutoScreenMessage( SM_PlayPostSwitchPage )
 

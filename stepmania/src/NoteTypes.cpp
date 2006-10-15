@@ -27,7 +27,7 @@ static const char *NoteTypeNames[] = {
 	"64th",
 	"192nd",
 };
-XToString( NoteType, NUM_NoteType );
+XToString2( NoteType );
 LuaXType( NoteType )
 XToLocalizedString( NoteType );
 

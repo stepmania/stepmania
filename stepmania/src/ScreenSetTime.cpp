@@ -19,7 +19,7 @@ static const char *SetTimeSelectionNames[] = {
 	"Minute", 
 	"Second", 
 };
-XToString( SetTimeSelection, NUM_SetTimeSelection );
+XToString2( SetTimeSelection );
 #define FOREACH_SetTimeSelection( s ) FOREACH_ENUM( SetTimeSelection, s )
 
 const float g_X[NUM_SetTimeSelection] =

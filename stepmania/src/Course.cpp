@@ -25,7 +25,7 @@ static const char *CourseTypeNames[] = {
 	"Endless",
 	"Survival",
 };
-XToString( CourseType, NUM_CourseType );
+XToString2( CourseType );
 XToLocalizedString( CourseType );
 LuaXType( CourseType );
 LuaFunction( CourseTypeToLocalizedString, CourseTypeToLocalizedString( Enum::Check<CourseType>( L, 1 ) ) );
@@ -38,7 +38,7 @@ static const char *SongSortNames[] = {
 	"TopGrades",
 	"LowestGrades",
 };
-XToString( SongSort, NUM_SongSort );
+XToString2( SongSort );
 XToLocalizedString( SongSort );
 
 

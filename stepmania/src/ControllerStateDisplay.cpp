@@ -15,7 +15,7 @@ static const char *ControllerStateButtonNames[] = {
 	"Left",
 	"Right",
 };
-XToString( ControllerStateButton, NUM_ControllerStateButton );
+XToString2( ControllerStateButton );
 
 static const DeviceButton ControllerStateButtonToDeviceButton[] = {
 	JOY_UP,

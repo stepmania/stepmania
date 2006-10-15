@@ -26,7 +26,7 @@ static const char *NotePartNames[] = {
 	"HoldBottomCap",
 	"HoldTail",
 };
-XToString( NotePart, NUM_NotePart );
+XToString2( NotePart );
 
 static const RageVector2 g_emptyVector = RageVector2( 0, 0 );
 
@@ -234,13 +234,13 @@ static const char *HoldTypeNames[] = {
 	"hold",
 	"roll",
 };
-XToString( HoldType, NUM_HoldType );
+XToString2( HoldType );
 
 static const char *ActiveTypeNames[] = {
 	"active",
 	"inactive",
 };
-XToString( ActiveType, NUM_ActiveType );
+XToString2( ActiveType );
 
 
 

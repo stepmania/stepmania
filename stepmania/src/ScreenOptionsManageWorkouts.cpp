@@ -27,7 +27,7 @@ static const char *ManageWorkoutsActionNames[] = {
 	"Rename",
 	"Delete",
 };
-XToString( ManageWorkoutsAction, NUM_ManageWorkoutsAction );
+XToString2( ManageWorkoutsAction );
 #define FOREACH_ManageWorkoutsAction( i ) FOREACH_ENUM( ManageWorkoutsAction, i )
 
 static MenuDef g_TempMenu(

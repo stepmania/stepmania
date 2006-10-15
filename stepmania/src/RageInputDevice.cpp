@@ -211,7 +211,7 @@ static const char *InputDeviceNames[] = {
 	"Pump2",
 	"Midi",
 };
-XToString( InputDevice, NUM_InputDevice );
+XToString2( InputDevice );
 StringToX( InputDevice );
 
 /* Return a reversible representation of a DeviceInput.  This is not affected by InputDrivers,

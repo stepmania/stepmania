@@ -194,7 +194,7 @@ static const char *MonthNames[] =
 	"November",
 	"December",
 };
-XToString( Month, NUM_Month );
+XToString2( Month );
 XToLocalizedString( Month );
 LuaXType( Month );
 

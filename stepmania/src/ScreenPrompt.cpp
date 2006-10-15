@@ -18,7 +18,7 @@ static const char *PromptAnswerNames[] = {
 	"No",
 	"Cancel",
 };
-XToString( PromptAnswer, NUM_PromptAnswer );
+XToString2( PromptAnswer );
 
 /* Settings: */
 namespace

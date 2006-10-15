@@ -34,7 +34,7 @@ static const char *CourseEntryActionNames[] = {
 	"Insert Entry",
 	"Delete",
 };
-XToString( CourseEntryAction, NUM_CourseEntryAction );
+XToString2( CourseEntryAction );
 #define FOREACH_CourseEntryAction( i ) FOREACH_ENUM( CourseEntryAction, i )
 
 static MenuDef g_TempMenu(

@@ -133,7 +133,7 @@ static const char *MessageNames[] = {
 	"ShowHoldJudgmentMuliPlayerP31",
 	"ShowHoldJudgmentMuliPlayerP32",
 };
-XToString( Message, NUM_Message );
+XToString2( Message );
 
 static RageMutex g_Mutex( "MessageManager" );
 

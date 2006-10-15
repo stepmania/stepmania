@@ -121,7 +121,7 @@ static const char *CourseActionNames[] = {
 	"Rename",
 	"Delete",
 };
-XToString( CourseAction, NUM_CourseAction );
+XToString2( CourseAction );
 #define FOREACH_CourseAction( i ) FOREACH_ENUM( CourseAction, i )
 
 static MenuDef g_TempMenu(

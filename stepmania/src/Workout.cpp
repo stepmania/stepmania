@@ -16,7 +16,7 @@ static const char *WorkoutProgramNames[] = {
 	"Runner",
 	"Flat",
 };
-XToString( WorkoutProgram, NUM_WorkoutProgram );
+XToString2( WorkoutProgram );
 StringToX( WorkoutProgram );
 XToLocalizedString( WorkoutProgram );
 
@@ -25,7 +25,7 @@ static const char *WorkoutStepsTypeNames[] = {
 	"NormalSteps",
 	"WorkoutSteps"
 };
-XToString( WorkoutStepsType, NUM_WorkoutStepsType );
+XToString2( WorkoutStepsType );
 StringToX( WorkoutStepsType );
 XToLocalizedString( WorkoutStepsType );
 LuaXType( WorkoutStepsType );

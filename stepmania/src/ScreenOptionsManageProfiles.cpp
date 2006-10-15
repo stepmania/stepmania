@@ -40,7 +40,7 @@ static const char *ProfileActionNames[] = {
 	"Delete",
 	"Clear",
 };
-XToString( ProfileAction, NUM_ProfileAction );
+XToString2( ProfileAction );
 XToLocalizedString( ProfileAction );
 #define FOREACH_ProfileAction( i ) FOREACH_ENUM( ProfileAction, i )
 

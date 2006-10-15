@@ -10,7 +10,7 @@ static const char *GameControllerNames[] = {
 	"Controller1",
 	"Controller2",
 };
-XToString( GameController, NUM_GameController );
+XToString2( GameController );
 StringToX( GameController );
 
 

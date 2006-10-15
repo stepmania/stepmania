@@ -24,7 +24,7 @@ static const char *EditMenuRowNames[] = {
 	"SourceSteps",
 	"Action"
 };
-XToString( EditMenuRow, NUM_EditMenuRow );
+XToString2( EditMenuRow );
 XToLocalizedString( EditMenuRow );
 
 static const char *EditMenuActionNames[] = {
@@ -33,7 +33,7 @@ static const char *EditMenuActionNames[] = {
 	"Create",
 	"Practice",
 };
-XToString( EditMenuAction, NUM_EditMenuAction );
+XToString2( EditMenuAction );
 XToLocalizedString( EditMenuAction );
 StringToX( EditMenuAction );
 

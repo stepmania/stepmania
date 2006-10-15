@@ -29,7 +29,7 @@ static const char *TimingWindowNames[] = {
 	"Hold",
 	"Roll",
 };
-XToString( TimingWindow, NUM_TimingWindow );
+XToString2( TimingWindow );
 
 
 static const char *ScoreEventNames[] = {
@@ -43,7 +43,7 @@ static const char *ScoreEventNames[] = {
 	"Held",
 	"LetGo",
 };
-XToString( ScoreEvent, NUM_ScoreEvent );
+XToString2( ScoreEvent );
 
 
 static const char *MusicWheelUsesSectionsNames[] = {

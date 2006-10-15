@@ -28,7 +28,7 @@ static const char *RadarCategoryNames[] = {
 	"Hands",
 	"Rolls"
 };
-XToString( RadarCategory, NUM_RadarCategory );
+XToString2( RadarCategory );
 XToLocalizedString( RadarCategory );
 LuaFunction( RadarCategoryToLocalizedString, RadarCategoryToLocalizedString(Enum::Check<RadarCategory>(L, 1)) );
 LuaXType( RadarCategory );
@@ -58,7 +58,7 @@ static const char *PlayModeNames[] = {
 	"Battle",
 	"Rave",
 };
-XToString( PlayMode, NUM_PlayMode );
+XToString2( PlayMode );
 XToLocalizedString( PlayMode );
 StringToX( PlayMode );
 LuaFunction( PlayModeToLocalizedString, PlayModeToLocalizedString(Enum::Check<PlayMode>(L, 1)) );
@@ -79,7 +79,7 @@ static const char *RankingCategoryNames[] = {
 	"c",
 	"d",
 };
-XToString( RankingCategory, NUM_RankingCategory );
+XToString2( RankingCategory );
 StringToX( RankingCategory );
 
 
@@ -88,7 +88,7 @@ static const char *PlayerControllerNames[] = {
 	"Autoplay",
 	"Cpu",
 };
-XToString( PlayerController, NUM_PlayerController );
+XToString2( PlayerController );
 StringToX( PlayerController );
 XToLocalizedString( PlayerController );
 LuaXType( PlayerController );
@@ -99,7 +99,7 @@ static const char *CoinModeNames[] = {
 	"Pay",
 	"Free",
 };
-XToString( CoinMode, NUM_CoinMode );
+XToString2( CoinMode );
 StringToX( CoinMode );
 LuaXType( CoinMode );
 
@@ -109,7 +109,7 @@ static const char *PremiumNames[] = {
 	"Double",
 	"Joint",
 };
-XToString( Premium, NUM_Premium );
+XToString2( Premium );
 StringToX( Premium );
 LuaXType( Premium );
 
@@ -134,7 +134,7 @@ static const char *SortOrderNames[] = {
 	"Endless",
 	"Roulette",
 };
-XToString( SortOrder, NUM_SortOrder );
+XToString2( SortOrder );
 StringToX( SortOrder );
 LuaXType( SortOrder );
 
@@ -150,7 +150,7 @@ static const char *TapNoteScoreNames[] = {
 	"W2",
 	"W1",
 };
-XToString( TapNoteScore, NUM_TapNoteScore );
+XToString2( TapNoteScore );
 LuaXType( TapNoteScore );
 TapNoteScore StringToTapNoteScore( const RString &s )
 {
@@ -183,7 +183,7 @@ static const char *HoldNoteScoreNames[] = {
 	"LetGo",
 	"Held",
 };
-XToString( HoldNoteScore, NUM_HoldNoteScore );
+XToString2( HoldNoteScore );
 LuaXType( HoldNoteScore );
 HoldNoteScore StringToHoldNoteScore( const RString &s )
 {
@@ -209,7 +209,7 @@ static const char *MemoryCardStateNames[] = {
 	"removed",
 	"none",
 };
-XToString( MemoryCardState, NUM_MemoryCardState );
+XToString2( MemoryCardState );
 
 
 static const char *PerDifficultyAwardNames[] = {
@@ -224,7 +224,7 @@ static const char *PerDifficultyAwardNames[] = {
 	"Percent90W3",
 	"Percent100W3",
 };
-XToString( PerDifficultyAward, NUM_PerDifficultyAward );
+XToString2( PerDifficultyAward );
 XToLocalizedString( PerDifficultyAward );
 StringToX( PerDifficultyAward );
 LuaFunction( PerDifficultyAwardToLocalizedString, PerDifficultyAwardToLocalizedString(Enum::Check<PerDifficultyAward>(L, 1)) );
@@ -246,7 +246,7 @@ static const char *PeakComboAwardNames[] = {
 	"Peak9000Combo",
 	"Peak10000Combo",
 };
-XToString( PeakComboAward, NUM_PeakComboAward );
+XToString2( PeakComboAward );
 XToLocalizedString( PeakComboAward );
 StringToX( PeakComboAward );
 LuaFunction( PeakComboAwardToLocalizedString, PeakComboAwardToLocalizedString(Enum::Check<PeakComboAward>(L, 1)) );
@@ -304,7 +304,7 @@ static const char *StyleTypeNames[] = {
 	"OnePlayerTwoSides",
 	"TwoPlayersSharedSides",
 };
-XToString( StyleType, NUM_StyleType );
+XToString2( StyleType );
 StringToX( StyleType );
 LuaXType( StyleType );
 
@@ -314,7 +314,7 @@ static const char *GoalTypeNames[] = {
 	"Time",
 	"None",
 };
-XToString( GoalType, NUM_GoalType );
+XToString2( GoalType );
 StringToX( GoalType );
 LuaXType( GoalType );
 
@@ -324,7 +324,7 @@ static const char *EditModeNames[] = {
 	"Home",
 	"Full"
 };
-XToString( EditMode, NUM_EditMode );
+XToString2( EditMode );
 StringToX( EditMode );
 LuaXType( EditMode );
 
@@ -344,7 +344,7 @@ static const char *StageNames[] = {
 	"Event",
 	"Demo",
 };
-XToString( Stage, NUM_Stage );
+XToString2( Stage );
 LuaXType( Stage );
 
 
@@ -354,7 +354,7 @@ static const char *MultiPlayerStatusNames[] = {
 	"Unplugged",
 	"MissingMultitap",
 };
-XToString( MultiPlayerStatus, NUM_MultiPlayerStatus );
+XToString2( MultiPlayerStatus );
 
 
 /*
