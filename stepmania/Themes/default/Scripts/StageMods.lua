@@ -20,7 +20,7 @@ function ScreenSelectMusic:setupmusicstagemods()
 	GAMESTATE:SetCurrentSong( song )
 	GAMESTATE:SetPreferredSong( song )
 
-	for dummy, pn in ipairs(GAMESTATE:GetHumanPlayers()) do
+	for _, pn in ipairs(GAMESTATE:GetHumanPlayers()) do
 		GAMESTATE:SetCurrentSteps( pn, steps )
 		GAMESTATE:GetPlayerState(pn):SetPlayerOptions( "ModsLevel_Stage", po )
 		GAMESTATE:SetPreferredDifficulty( pn, difficulty )
