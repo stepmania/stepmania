@@ -74,12 +74,12 @@ function SelectEvaluationScreen()
 	if IsNetConnected() then return "ScreenNetEvaluation" end
 	local pm = GAMESTATE:GetPlayMode()
 	if( GAMESTATE:GetMultiplayer() ) then return "ScreenEvaluationMultiplayer" end
-	if( pm == "PlayMode_Regular" )		then return "ScreenEvaluationStage" end
-	if( pm == "PlayMode_Nonstop" )		then return "ScreenEvaluationNonstop" end
-	if( pm == "PlayMode_Oni" )			then return "ScreenEvaluationOni" end
-	if( pm == "PlayMode_Endless" )		then return "ScreenEvaluationEndless" end
-	if( pm == "PlayMode_Rave" )		then return "ScreenEvaluationRave" end
-	if( pm == "PlayMode_Battle" )		then return "ScreenEvaluationBattle" end
+	if( pm == "PlayMode_Regular" )	then return "ScreenEvaluationStage" end
+	if( pm == "PlayMode_Nonstop" )	then return "ScreenEvaluationNonstop" end
+	if( pm == "PlayMode_Oni" )	then return "ScreenEvaluationOni" end
+	if( pm == "PlayMode_Endless" )	then return "ScreenEvaluationEndless" end
+	if( pm == "PlayMode_Rave" )	then return "ScreenEvaluationRave" end
+	if( pm == "PlayMode_Battle" )	then return "ScreenEvaluationBattle" end
 end
 
 function GetTopScreenMetric( sElement )
@@ -106,7 +106,7 @@ function GetEvaluationNextScreen( sNextScreen, sFailedScreen, sEndScreen )
 	if sIsStage then
 		local bHasAnotherStage = GAMESTATE:HasEarnedExtraStage()
 		bHasAnotherStage = bHasAnotherStage or not
-			(GAMESTATE:IsFinalStage() or bIsExtraStage )
+			( GAMESTATE:IsFinalStage() or bIsExtraStage )
 		if bHasAnotherStage then
 			Trace( "Another" )
 			return sNextScreen
