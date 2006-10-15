@@ -214,8 +214,6 @@ Actor* ActorUtil::LoadFromNode( const XNode* pNode, Actor *pParentActor )
 		RString sFile;
 		ActorUtil::GetAttrPath( pNode, "File", sFile );
 
-		FixSlashesInPlace( sFile );
-
 		/* Be careful: if sFile is "", and we don't check it, then we can end up recursively
 		 * loading the layer we're in. */
 		if( sFile == "" )
