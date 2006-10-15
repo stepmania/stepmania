@@ -663,6 +663,7 @@ namespace
 			pValue->SetValueFromStack( L );
 			pNode->AppendAttrFrom( sName, pValue );
 		}
+		lua_pop( L, 1 );
 
 		/* Recursively process tables. */
 		FOREACHM( RString, LuaReference, NodesToAdd, t )
