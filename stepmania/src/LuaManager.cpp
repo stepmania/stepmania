@@ -321,9 +321,7 @@ XNode *LuaHelpers::GetLuaInformation()
 	Lua *L = LUA->Get();
 	FOREACH_LUATABLE( L, LUA_GLOBALSINDEX )
 	{
-		ASSERT( lua_gettop(L) == 3 );
 		RString sKey;
-		
 		LuaHelpers::Pop( L, sKey );
 		
 		switch( lua_type(L, -1) )
