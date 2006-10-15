@@ -651,7 +651,7 @@ namespace
 		LuaHelpers::Push( L, sPath );
 		return 1;
 	}
-	int IsRegisteredType( lua_State *L )
+	int IsRegisteredClass( lua_State *L )
 	{
 		lua_pushboolean( L, IsRegistered(SArg(1)) );
 		return 1;
@@ -661,7 +661,7 @@ namespace
 	{
 		LIST_METHOD( GetFileType ),
 		LIST_METHOD( ResolvePath ),
-		LIST_METHOD( IsRegisteredType ),
+		LIST_METHOD( IsRegisteredClass ),
 		{ NULL, NULL }
 	};
 }
