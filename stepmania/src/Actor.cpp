@@ -269,24 +269,6 @@ void Actor::LoadFromNode( const XNode* pNode )
 		}
 	}
 
-	//
-	// Load command elements
-	//
-	FOREACH_CONST_Child( pNode, c )
-	{
-		RString sKeyName = c->GetName();
-
-		if( sKeyName != "Command" )
-			continue; /* not a command */
-
-		RString sName;
-		c->GetAttrValue( "Name", sName );
-		c->PushAttrValue( L, "Value" );
-
-		LuaReference *pRef = new LuaReference;
-		pRef->SetFromStack( L );
-		AddCommand( sName, apActorCommands( pRef ) );
-	}
 	LUA->Release( L );
 
 	/* There's an InitCommand.  Run it now.  This can be used to eg. change Z to
