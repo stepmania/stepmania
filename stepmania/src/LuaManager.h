@@ -35,7 +35,6 @@ public:
 	void SetGlobal( const RString &sName, int val );
 	void SetGlobal( const RString &sName, const RString &val );
 	void UnsetGlobal( const RString &sName );
-	XNode *GetLuaInformation() const;
 
 private:
 	lua_State *m_pLuaMain;
