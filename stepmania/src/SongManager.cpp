@@ -683,35 +683,36 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 	vsCourseDirs.push_back( COURSES_DIR );
 	vsCourseDirs.push_back( ADDITIONAL_COURSES_DIR );
 
+	vector<RString> vsCourseGroupNames;
 	FOREACH_CONST( RString, vsCourseDirs, sDir )
 	{
 		// Find all group directories in Courses dir
-		vector<RString> vsCourseGroupNames;
 		GetDirListing( *sDir + "*", vsCourseGroupNames, true, true );
 		StripCvs( vsCourseGroupNames );
-		SortRStringArray( vsCourseGroupNames );
-		
-		FOREACH_CONST( RString, vsCourseGroupNames, sCourseGroup )	// for each dir in /Courses/
+	}
+
+	SortRStringArray( vsCourseGroupNames );
+
+	FOREACH_CONST( RString, vsCourseGroupNames, sCourseGroup )	// for each dir in /Courses/
+	{
+		// Find all CRS files in this group directory
+		vector<RString> vsCoursePaths;
+		GetDirListing( *sCourseGroup + "/*.crs", vsCoursePaths, false, true );
+		SortRStringArray( vsCoursePaths );
+
+		FOREACH_CONST( RString, vsCoursePaths, sCoursePath )
 		{
-			// Find all CRS files in this group directory
-			vector<RString> vsCoursePaths;
-			GetDirListing( *sCourseGroup + "/*.crs", vsCoursePaths, false, true );
-			SortRStringArray( vsCoursePaths );
-
-			FOREACH_CONST( RString, vsCoursePaths, sCoursePath )
+			if( ld )
 			{
-				if( ld )
-				{
-					ld->SetText( LOADING_COURSES.GetValue()+ssprintf("\n%s\n%s",
-						Basename(*sCourseGroup).c_str(),
-						Basename(*sCoursePath).c_str()));
-					ld->Paint();
-				}
-
-				Course* pCourse = new Course;
-				CourseLoaderCRS::LoadFromCRSFile( *sCoursePath, *pCourse );
-				m_pCourses.push_back( pCourse );
+				ld->SetText( LOADING_COURSES.GetValue()+ssprintf("\n%s\n%s",
+					Basename(*sCourseGroup).c_str(),
+					Basename(*sCoursePath).c_str()));
+				ld->Paint();
 			}
+
+			Course* pCourse = new Course;
+			CourseLoaderCRS::LoadFromCRSFile( *sCoursePath, *pCourse );
+			m_pCourses.push_back( pCourse );
 		}
 	}
 
