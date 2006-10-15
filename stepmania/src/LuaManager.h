@@ -134,6 +134,20 @@ namespace LuaHelpers
 	inline int AbsIndex( Lua *L, int i ) { if( i > 0 || i <= LUA_REGISTRYINDEX ) return i; return lua_gettop( L ) + i + 1; }
 }
 
+/* Iterate over all elements in the table. For safety reasons, the key is pushed onto
+ * the stack and can be read (safely) as a string and popped or altered in any way.
+ * Stack management is handled automatically. That is, you need not remove all stack
+ * elements above the key. Once the loop exits normally, the top of the stack will be
+ * where it was before. If you break out of the loop early, you need to handle that
+ * explicitly. */
+#undef UNIQUE_NAME // XXX Remove
+#define UNIQUE_NAME(x) x##_##x
+#define FOREACH_LUATABLE(L,index) \
+for( const int UNIQUE_NAME(tab) = LuaHelpers::AbsIndex(L,index), \
+     UNIQUE_NAME(top) = (lua_pushnil(L),lua_gettop(L)); \
+     ( lua_next(L, UNIQUE_NAME(tab)) || (lua_pop(L,1),false) ) && (lua_pushvalue(L,-2),true); \
+     lua_settop(L,UNIQUE_NAME(top)) )
+
 
 #define REGISTER_WITH_LUA_FUNCTION( Fn ) \
 	class Register##Fn { public: Register##Fn() { LuaManager::Register( Fn ); } }; \
