@@ -779,6 +779,42 @@ LuaFunction( scale, scale(FArg(1), FArg(2), FArg(3), FArg(4), FArg(5)) );
 
 LuaFunction( clamp, clamp(FArg(1), FArg(2), FArg(3)) );
 
+#include "LuaBinding.h"
+namespace
+{
+	static int ReadFile( lua_State *L )
+	{
+		RString sPath = SArg(1);
+
+		/* Release Lua while we call GetFileContents, so we don't it while we read from he disk. */
+		LUA->YieldLua();
+
+		RString sFileContents;
+		bool bRet = GetFileContents( sPath, sFileContents );
+
+		LUA->UnyieldLua();
+		if( !bRet )
+		{
+			lua_pushnil( L );
+			lua_pushstring( L, "error" ); // XXX
+			return 2;
+		}
+		else
+		{
+			LuaHelpers::Push( L, sFileContents );
+			return 1;
+		}
+	}
+
+	const luaL_Reg luaTable[] =
+	{
+		LIST_METHOD( ReadFile ),
+		{ NULL, NULL }
+	};
+}
+
+LUA_REGISTER_NAMESPACE( lua )
+
 /*
  * (c) 2004-2006 Glenn Maynard, Steve Checkoway
  * All rights reserved.
