@@ -643,10 +643,22 @@ FileType ActorUtil::GetFileType( const RString &sPath )
 namespace
 {
 	int GetFileType( lua_State *L )		{ Enum::Push( L, ActorUtil::GetFileType(SArg(1)) ); return 1; }
+	int ResolvePath( lua_State *L )
+	{
+		RString sPath( SArg(1) );
+
+		LUA->YieldLua();
+		ActorUtil::ResolvePath( sPath, "" );
+		LUA->UnyieldLua();
+
+		LuaHelpers::Push( L, sPath );
+		return 1;
+	}
 
 	const luaL_Reg ActorUtilTable[] =
 	{
 		LIST_METHOD( GetFileType ),
+		LIST_METHOD( ResolvePath ),
 		{ NULL, NULL }
 	};
 }
