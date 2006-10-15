@@ -2,10 +2,9 @@
 <ActorFrame><children>
 	<Layer
 		File="P.File1" 
-		OnCommand="horizalign,left;scaletocover,0,0,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,color(self.Color1)" 
+		InitCommand="%function(self) self.Color = Color1; end"
+		OnCommand="horizalign,left;scaletocover,0,0,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,color(self.Color)" 
 		GainFocusCommand="Play"
 		LoseFocusCommand="Pause"
-	>
-		<Input Name="@Color1" />
-	</Layer>
+	/>
 </children></ActorFrame>
