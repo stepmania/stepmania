@@ -49,8 +49,6 @@ Actor* ActorUtil::Create( const RString& sClassName, const XNode* pNode, Actor *
 
 void ActorUtil::ResolvePath( RString &sPath, const RString &sName )
 {
-	const RString sOriginalPath( sPath );
-
 retry:
 	CollapsePath( sPath );
 
