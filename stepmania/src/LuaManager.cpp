@@ -186,7 +186,7 @@ LuaManager::~LuaManager()
 	lua_close( m_pLuaMain );
 	delete m_pLock;
 	g_FreeStateList.clear();
-	ASSERT( g_ActiveStates.empty() );
+	g_ActiveStates.clear();
 }
 
 Lua *LuaManager::Get()
