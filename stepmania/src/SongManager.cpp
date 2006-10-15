@@ -679,7 +679,6 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 	LOG->Trace( "Loading courses." );
 
 	vector<RString> vsCourseDirs;
-	vsCourseDirs.push_back( "" );
 	vsCourseDirs.push_back( COURSES_DIR );
 	vsCourseDirs.push_back( ADDITIONAL_COURSES_DIR );
 
@@ -691,6 +690,8 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 		StripCvs( vsCourseGroupNames );
 	}
 
+	// Search for courses both in COURSES_DIR and in subdirectories
+	vsCourseGroupNames.push_back( COURSES_DIR );
 	SortRStringArray( vsCourseGroupNames );
 
 	FOREACH_CONST( RString, vsCourseGroupNames, sCourseGroup )	// for each dir in /Courses/
