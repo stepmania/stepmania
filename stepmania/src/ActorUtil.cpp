@@ -651,11 +651,17 @@ namespace
 		LuaHelpers::Push( L, sPath );
 		return 1;
 	}
+	int IsRegisteredType( lua_State *L )
+	{
+		lua_pushboolean( L, IsRegistered(SArg(1)) );
+		return 1;
+	}
 
 	const luaL_Reg ActorUtilTable[] =
 	{
 		LIST_METHOD( GetFileType ),
 		LIST_METHOD( ResolvePath ),
+		LIST_METHOD( IsRegisteredType ),
 		{ NULL, NULL }
 	};
 }
