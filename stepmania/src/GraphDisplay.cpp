@@ -102,10 +102,13 @@ public:
 
 	}
 
+	virtual Actor *Copy() const;
+
 private:
 	vector<RageSpriteVertex> m_Quads;
 	vector<RageSpriteVertex> m_pCircles;
 };
+REGISTER_ACTOR_CLASS( GraphLine )
 
 class GraphBody: public Actor
 {
@@ -133,13 +136,16 @@ public:
 		DISPLAY->DrawQuadStrip( m_Slices, ARRAYLEN(m_Slices) );
 	}
 
+	virtual Actor *Copy() const;
+
 	RageSpriteVertex m_Slices[2*VALUE_RESOLUTION];
 };
+REGISTER_ACTOR_CLASS( GraphBody )
 
 GraphDisplay::GraphDisplay()
 {
-	m_pGraphLine = new GraphLine;
-	m_pGraphBody = new GraphBody;
+	m_pGraphLine = NULL;
+	m_pGraphBody = NULL;
 }
 
 GraphDisplay::~GraphDisplay()
@@ -158,7 +164,10 @@ void GraphDisplay::LoadFromNode( const XNode* pNode )
 	const XNode *pChild = pNode->GetChild( "Body" );
 	if( pChild == NULL )
 		RageException::Throw( "%s: GraphDisplay: missing the node \"Body\"", ActorUtil::GetWhere(pNode).c_str() );
-	m_pGraphBody->LoadFromNode( pChild );
+	Actor *p = ActorUtil::LoadFromNode( pChild, this );
+	m_pGraphBody = dynamic_cast<GraphBody *>(p);
+	if( m_pGraphBody == NULL )
+		RageException::Throw( "%s: GraphDisplay: \"Body\" child is not a GraphBody", ActorUtil::GetWhere(pNode).c_str() );
 	this->AddChild( m_pGraphBody );
 
 	pChild = pNode->GetChild( "Texture" );
@@ -172,7 +181,10 @@ void GraphDisplay::LoadFromNode( const XNode* pNode )
 	pChild = pNode->GetChild( "Line" );
 	if( pChild == NULL )
 		RageException::Throw( "%s: GraphDisplay: missing the node \"Line\"", ActorUtil::GetWhere(pNode).c_str() );
-	m_pGraphLine->LoadFromNode( pChild );
+	p = ActorUtil::LoadFromNode( pChild, this );
+	m_pGraphLine = dynamic_cast<GraphLine *>(p);
+	if( m_pGraphLine == NULL )
+		RageException::Throw( "%s: GraphDisplay: \"Body\" child is not a GraphLine", ActorUtil::GetWhere(pNode).c_str() );
 	this->AddChild( m_pGraphLine );
 
 	pChild = pNode->GetChild( "SongBoundary" );
