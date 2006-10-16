@@ -191,7 +191,7 @@ void ScreenNameEntry::Init()
 		for( int iCol=0; iCol<pStyle->m_iColsPerPlayer; iCol++ )
 		{
 			if( CurrentStringIndex == MAX_RANKING_NAME_LENGTH )
-				continue; /* We have enough columns. */
+				break; /* We have enough columns. */
 
 			/* Find out if this column is associated with the START menu button. */
 			GameInput gi = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iCol, p );
