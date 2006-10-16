@@ -140,8 +140,6 @@ namespace LuaHelpers
  * elements above the key. Once the loop exits normally, the top of the stack will be
  * where it was before. If you break out of the loop early, you need to handle that
  * explicitly. */
-#undef UNIQUE_NAME // XXX Remove
-#define UNIQUE_NAME(x) x##_##x
 #define FOREACH_LUATABLE(L,index) \
 for( const int UNIQUE_NAME(tab) = LuaHelpers::AbsIndex(L,index), \
      UNIQUE_NAME(top) = (lua_pushnil(L),lua_gettop(L)); \
