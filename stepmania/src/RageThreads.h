@@ -122,7 +122,7 @@ public:
 	void Unlock();
 };
 
-#define LockMut(m) LockMutex UNIQUE_NAME(LocalLock) (m, __FUNCTION__, __LINE__)
+#define LockMut(m) LockMutex UNIQUE_NAME(LocalLock) (m, __FILE__, __LINE__)
 
 class EventImpl;
 class RageEvent: public RageMutex
