@@ -376,16 +376,6 @@ void ScreenNameEntry::HandleScreenMessage( const ScreenMessage SM )
 			}
 		}
 	}
-	else if( SM == SM_GoToNextScreen )
-	{
-		// There shouldn't be NameEntry in event mode.  -Chris
-//		/* Hack: go back to the select course screen in event mode. */
-//		if( GAMESTATE->GetEventMode() && GAMESTATE->IsCourseMode() )
-//		{
-//			SCREENMAN->SetNewScreen( "ScreenSelectCourse" );
-//			break;
-//		}
-	}
 
 	Screen::HandleScreenMessage( SM );
 }
