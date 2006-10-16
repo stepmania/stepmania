@@ -23,6 +23,8 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 	virtual void MenuStart( const InputEventPlus &input );
+	virtual void BeginScreen();
+	virtual void EndScreen();
 
 	enum { ABS_MAX_RANKING_NAME_LENGTH = 10 };
 private:
@@ -44,6 +46,7 @@ private:
 	bool			m_bStillEnteringName[NUM_PLAYERS];
 
 	vector<int>		m_ColToStringIndex[NUM_PLAYERS];
+	RString			m_sPathToMusic;
 };
 
 #endif

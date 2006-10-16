@@ -255,8 +255,18 @@ void ScreenNameEntry::Init()
 	this->SortByDrawOrder();
 
 	m_soundStep.Load( THEME->GetPathS("ScreenNameEntry","step") );
-
+	m_sPathToMusic = THEME->GetPathS( m_sName, "music" );
 	m_fFakeBeat = 0;
+}
+
+void ScreenNameEntry::BeginScreen()
+{
+	SOUND->PlayMusic( m_sPathToMusic );
+}
+
+void ScreenNameEntry::EndScreen()
+{
+	SOUND->StopMusic();
 }
 
 bool ScreenNameEntry::AnyStillEntering() const
