@@ -119,6 +119,12 @@ void ShowWarning( const char *file, int line, const char *message ); // don't pu
 #define DEBUG_ASSERT_M(x,y)
 #endif
 
+/* Use UNIQUE_NAME to get the line number concatenated to x. This is useful for
+ * generating unique identifiers in other macros.  */
+#define UNIQUE_NAME3(x,line) x##line
+#define UNIQUE_NAME2(x,line) UNIQUE_NAME3(x, line)
+#define UNIQUE_NAME(x) UNIQUE_NAME2(x, __LINE__)	
+
 template <bool> struct CompileAssert;
 template <> struct CompileAssert<true> { };
 template<int> struct CompileAssertDecl { };
