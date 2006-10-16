@@ -21,7 +21,6 @@
 #include "NoteSkinManager.h"
 #include "InputEventPlus.h"
 
-
 //
 // Defines specific to ScreenNameEntry
 //
@@ -171,7 +170,7 @@ void ScreenNameEntry::Init()
 
 		ASSERT( GAMESTATE->IsHumanPlayer(p) );	// they better be enabled if they made a high score!
 
-		float fPlayerX = PLAYER_X(p,GAMESTATE->GetCurrentStyle()->m_StyleType);
+		const float fPlayerX = PLAYER_X(p,GAMESTATE->GetCurrentStyle()->m_StyleType);
 
 		{
 			LockNoteSkin l( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetCurrent().m_sNoteSkin );
@@ -215,7 +214,7 @@ void ScreenNameEntry::Init()
 			m_textScrollingChars[p][iCol].SetX( ColX );
 			m_textScrollingChars[p][iCol].SetY( GRAY_ARROWS_Y );
 			m_textScrollingChars[p][iCol].RunCommands( SCROLLING_CHARS_COMMAND );
-			//this->AddChild( &m_textScrollingChars[p][iCol] );	// draw these manually
+			this->AddChild( &m_textScrollingChars[p][iCol] );	// draw these manually
 		}
 
 		m_textCategory[p].LoadFromFont( THEME->GetPathF("ScreenNameEntry","category") );
@@ -296,7 +295,6 @@ void ScreenNameEntry::Update( float fDelta )
 void ScreenNameEntry::DrawPrimitives()
 {
 	Screen::DrawPrimitives();
-
 	int iClosestIndex = GetClosestCharIndex( m_fFakeBeat );
 	int iStartDrawingIndex = iClosestIndex - NUM_CHARS_TO_DRAW_BEHIND;
 	iStartDrawingIndex += NUM_NAME_CHARS;	// make positive
@@ -331,16 +329,10 @@ void ScreenNameEntry::DrawPrimitives()
 				if( i==g_iNumCharsToDrawTotal-1 )
 					fAlpha *= SCALE(GetClosestCharYOffset(m_fFakeBeat),0.f,0.5f,1.f,0.f);
 				m_textScrollingChars[p][t].SetDiffuseAlpha( fAlpha  );
-				m_textScrollingChars[p][t].Draw();
+				//m_textScrollingChars[p][t].Draw();
 			}
 			fY += g_fCharsSpacingY;
 			iCharIndex = (iCharIndex+1) % NUM_NAME_CHARS;
-		}
-
-
-		for( int t=0; t<pStyle->m_iColsPerPlayer; t++ )
-		{
-			m_textSelectedChars[p][t].Draw();
 		}
 	}
 }
@@ -352,7 +344,7 @@ void ScreenNameEntry::Input( const InputEventPlus &input )
 	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
 		return;	
 
-	if( input.type != IET_FIRST_PRESS )
+	if( input.type != IET_FIRST_PRESS || !input.GameI.IsValid() )
 		return;		// ignore
 
 	const int iCol = GAMESTATE->GetCurrentStyle()->GameInputToColumn( input.GameI );
