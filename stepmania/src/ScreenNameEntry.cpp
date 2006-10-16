@@ -309,7 +309,7 @@ void ScreenNameEntry::DrawPrimitives()
 				if( m_ColToStringIndex[p][t] == -1 )
 					continue;
 
-				m_textScrollingChars[p][t].SetText( ssprintf("%c",c) );	// why doens't CStdStr have a contructor that takes a char?
+				m_textScrollingChars[p][t].SetText( RString(1, c) );
 				m_textScrollingChars[p][t].SetY( fY );
 				float fZoom = g_fCharsZoomSmall;
 				if( iCharIndex==iClosestIndex )
