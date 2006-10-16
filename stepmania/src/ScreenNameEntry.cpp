@@ -178,7 +178,7 @@ void ScreenNameEntry::Init()
 
 			m_ReceptorArrowRow[p].Load( GAMESTATE->m_pPlayerState[p], 0 );
 			m_ReceptorArrowRow[p].SetX( fPlayerX );
-			m_ReceptorArrowRow[p].SetY( SCREEN_TOP + 100 );
+			m_ReceptorArrowRow[p].SetY( GRAY_ARROWS_Y );
 			this->AddChild( &m_ReceptorArrowRow[p] );
 		}
 
