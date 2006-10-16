@@ -44,16 +44,16 @@
 
 
 // cache for frequently used metrics
-float	g_fCharsZoomSmall;
-float	g_fCharsZoomLarge; 
-float	g_fCharsSpacingY;
-float	g_fReceptorArrowsY;
-int	g_iNumCharsToDrawBehind;
-int	g_iNumCharsToDrawTotal;
-float	g_fFakeBeatsPerSec;
+static float	g_fCharsZoomSmall;
+static float	g_fCharsZoomLarge; 
+static float	g_fCharsSpacingY;
+static float	g_fReceptorArrowsY;
+static int	g_iNumCharsToDrawBehind;
+static int	g_iNumCharsToDrawTotal;
+static float	g_fFakeBeatsPerSec;
 
 
-const char NAME_CHARS[] =
+static const char NAME_CHARS[] =
 {
 	' ',' ',' ',' ','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'
 };
