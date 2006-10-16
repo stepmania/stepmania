@@ -122,33 +122,7 @@ public:
 	void Unlock();
 };
 
-
-/* Double-abstracting __LINE__ lets us append it to other text, to generate
- * locally unique variable names.  (Otherwise we get "LocalLock__LINE__".) I'm
- * not sure why this works, but it does, in both VC and GCC. */
-
-#if 0
-#ifdef DEBUG
-/* Use the debug version, which logs if something holds a lock for a long time.
- * __FUNCTION__ is nonstandard, but both GCC and VC support it; VC doesn't
- * support the standard, __func__. */
-#define LockMutL2(m, l) LockMutex LocalLock ## l (m, __FUNCTION__, __LINE__)
-#else
-#define LockMutL2(m, l) LockMutex LocalLock ## l (m)
-#endif
-
-#define LockMutL(m, l) LockMutL2(m, l)
-#define LockMut(m) LockMutL(m, __LINE__)
-#endif
-
-/* Gar.  It works in VC7, but not VC6, so for now this can only be used once
- * per function.  If you need more than that, declare LockMutexes yourself. 
- * Also, VC6 doesn't support __FUNCTION__. */
-#if _MSC_VER < 1300 /* VC6, not VC7 */
-#define LockMut(m) LockMutex LocalLock(m, __FILE__, __LINE__)
-#else
-#define LockMut(m) LockMutex LocalLock(m, __FUNCTION__, __LINE__)
-#endif
+#define LockMut(m) LockMutex UNIQUE_NAME(LocalLock) (m, __FUNCTION__, __LINE__)
 
 class EventImpl;
 class RageEvent: public RageMutex
