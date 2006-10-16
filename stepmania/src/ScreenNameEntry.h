@@ -34,8 +34,8 @@ private:
 	BitmapText		m_textCategory[NUM_PLAYERS];
 	MenuTimer		m_Timer;
 
-	Transition	m_In;
-	Transition	m_Out;
+	Transition		m_In;
+	Transition		m_Out;
 
 	RageSound		m_soundStep;
 

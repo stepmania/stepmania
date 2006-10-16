@@ -25,20 +25,20 @@
 //
 // Defines specific to ScreenNameEntry
 //
-#define TIMER_X						THEME->GetMetricF("ScreenNameEntry","TimerX")
-#define TIMER_Y						THEME->GetMetricF("ScreenNameEntry","TimerY")
-#define CATEGORY_Y					THEME->GetMetricF("ScreenNameEntry","CategoryY")
-#define CATEGORY_ZOOM				THEME->GetMetricF("ScreenNameEntry","CategoryZoom")
-#define CHARS_ZOOM_SMALL			THEME->GetMetricF("ScreenNameEntry","CharsZoomSmall")
-#define CHARS_ZOOM_LARGE			THEME->GetMetricF("ScreenNameEntry","CharsZoomLarge")
-#define CHARS_SPACING_Y				THEME->GetMetricF("ScreenNameEntry","CharsSpacingY")
+#define TIMER_X				THEME->GetMetricF("ScreenNameEntry","TimerX")
+#define TIMER_Y				THEME->GetMetricF("ScreenNameEntry","TimerY")
+#define CATEGORY_Y			THEME->GetMetricF("ScreenNameEntry","CategoryY")
+#define CATEGORY_ZOOM			THEME->GetMetricF("ScreenNameEntry","CategoryZoom")
+#define CHARS_ZOOM_SMALL		THEME->GetMetricF("ScreenNameEntry","CharsZoomSmall")
+#define CHARS_ZOOM_LARGE		THEME->GetMetricF("ScreenNameEntry","CharsZoomLarge")
+#define CHARS_SPACING_Y			THEME->GetMetricF("ScreenNameEntry","CharsSpacingY")
 #define SCROLLING_CHARS_COMMAND		THEME->GetMetricA("ScreenNameEntry","ScrollingCharsCommand")
 #define SELECTED_CHARS_COMMAND		THEME->GetMetricA("ScreenNameEntry","SelectedCharsCommand")
-#define GRAY_ARROWS_Y				THEME->GetMetricF("ScreenNameEntry","ReceptorArrowsY")
+#define GRAY_ARROWS_Y			THEME->GetMetricF("ScreenNameEntry","ReceptorArrowsY")
 #define NUM_CHARS_TO_DRAW_BEHIND	THEME->GetMetricI("ScreenNameEntry","NumCharsToDrawBehind")
 #define NUM_CHARS_TO_DRAW_TOTAL		THEME->GetMetricI("ScreenNameEntry","NumCharsToDrawTotal")
-#define FAKE_BEATS_PER_SEC			THEME->GetMetricF("ScreenNameEntry","FakeBeatsPerSec")
-#define TIMER_SECONDS				THEME->GetMetricF("ScreenNameEntry","TimerSeconds")
+#define FAKE_BEATS_PER_SEC		THEME->GetMetricF("ScreenNameEntry","FakeBeatsPerSec")
+#define TIMER_SECONDS			THEME->GetMetricF("ScreenNameEntry","TimerSeconds")
 #define MAX_RANKING_NAME_LENGTH		THEME->GetMetricI(m_sName,"MaxRankingNameLength")
 #define PLAYER_X( p, styleType )	THEME->GetMetricF(m_sName,ssprintf("PlayerP%d%sX",p+1,StyleTypeToString(styleType).c_str()))
 
@@ -48,8 +48,8 @@ float	g_fCharsZoomSmall;
 float	g_fCharsZoomLarge; 
 float	g_fCharsSpacingY;
 float	g_fReceptorArrowsY;
-int		g_iNumCharsToDrawBehind;
-int		g_iNumCharsToDrawTotal;
+int	g_iNumCharsToDrawBehind;
+int	g_iNumCharsToDrawTotal;
 float	g_fFakeBeatsPerSec;
 
 
@@ -58,7 +58,7 @@ const char NAME_CHARS[] =
 	' ',' ',' ',' ','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'
 };
 #define NUM_NAME_CHARS (ARRAYLEN(NAME_CHARS))
-#define HEIGHT_OF_ALL_CHARS		(NUM_NAME_CHARS * g_fCharsSpacingY)
+#define HEIGHT_OF_ALL_CHARS (NUM_NAME_CHARS * g_fCharsSpacingY)
 
 
 int GetClosestCharIndex( float fFakeBeat )
@@ -190,7 +190,7 @@ void ScreenNameEntry::Init()
 
 		for( int iCol=0; iCol<pStyle->m_iColsPerPlayer; iCol++ )
 		{
-			if(CurrentStringIndex == MAX_RANKING_NAME_LENGTH)
+			if( CurrentStringIndex == MAX_RANKING_NAME_LENGTH )
 				continue; /* We have enough columns. */
 
 			/* Find out if this column is associated with the START menu button. */
@@ -306,7 +306,7 @@ void ScreenNameEntry::DrawPrimitives()
 			char c = NAME_CHARS[iCharIndex];
 			for( int t=0; t<pStyle->m_iColsPerPlayer; t++ )
 			{
-				if(m_ColToStringIndex[p][t] == -1)
+				if( m_ColToStringIndex[p][t] == -1 )
 					continue;
 
 				m_textScrollingChars[p][t].SetText( ssprintf("%c",c) );	// why doens't CStdStr have a contructor that takes a char?
