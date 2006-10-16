@@ -61,7 +61,7 @@ const char NAME_CHARS[] =
 #define HEIGHT_OF_ALL_CHARS (NUM_NAME_CHARS * g_fCharsSpacingY)
 
 
-int GetClosestCharIndex( float fFakeBeat )
+static int GetClosestCharIndex( float fFakeBeat )
 {
 	int iCharIndex = (int)roundf(fFakeBeat) % NUM_NAME_CHARS;
 	ASSERT( iCharIndex >= 0 );
@@ -69,7 +69,7 @@ int GetClosestCharIndex( float fFakeBeat )
 }
 
 // return value is relative to gray arrows
-float GetClosestCharYOffset( float fFakeBeat )
+static float GetClosestCharYOffset( float fFakeBeat )
 {
 	float f = fmodf(fFakeBeat, 1.0f);
 	if( f > 0.5f )
@@ -79,7 +79,7 @@ float GetClosestCharYOffset( float fFakeBeat )
 }
 
 // return value is relative to gray arrows
-float GetClosestCharYPos( float fFakeBeat )
+static float GetClosestCharYPos( float fFakeBeat )
 {
 	return GetClosestCharYOffset(fFakeBeat)*g_fCharsSpacingY;
 }
