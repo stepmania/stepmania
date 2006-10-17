@@ -191,8 +191,7 @@ bool Trail::ContainsSong( Song* pSong ) const
 class LunaTrail: public Luna<Trail>
 {
 public:
-	static int GetDifficulty( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_CourseDifficulty ); return 1; }
-	static int GetCourseDifficulty( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_CourseDifficulty ); return 1; } // deprecated
+	static int GetDifficulty( T* p, lua_State *L )		{ LuaHelpers::Push(L, p->m_CourseDifficulty ); return 1; }
 	static int GetStepsType( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_StepsType ); return 1; }
 	static int GetRadarValues( T* p, lua_State *L )
 	{
@@ -233,7 +232,6 @@ public:
 	LunaTrail()
 	{
 		ADD_METHOD( GetDifficulty );
-		ADD_METHOD( GetCourseDifficulty );
 		ADD_METHOD( GetStepsType );
 		ADD_METHOD( GetRadarValues );
 		ADD_METHOD( GetArtists );
