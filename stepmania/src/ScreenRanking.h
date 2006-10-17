@@ -59,11 +59,11 @@ protected:
 			pTrail = NULL;
 		}
 
-		int				colorIndex;
-		StepsType		st;
+		int		colorIndex;
+		StepsType	st;
 		RankingCategory	category;
-		Course*			pCourse;
-		Trail*			pTrail;
+		Course*		pCourse;
+		Trail*		pTrail;
 	};
 
 	virtual float SetPage( const PageToShow &pts );
@@ -73,21 +73,21 @@ protected:
 	BitmapText m_textStepsType;	// for category, course, all_steps
 	AutoActor  m_sprPageType;
 
-	vector<PageToShow>	m_vPagesToShow;
-	unsigned m_iNextPageToShow;
+	vector<PageToShow>		m_vPagesToShow;
+	unsigned			m_iNextPageToShow;
 
 	// Don't use the version in CommonMetrics because we may have multiple 
 	// ranking screens that want to show different types and difficulties.
-	ThemeMetricStepsTypesToShow			STEPS_TYPES_TO_SHOW;
-	ThemeMetric<float>			ROW_SPACING_X;
-	ThemeMetric<float>			ROW_SPACING_Y;
+	ThemeMetricStepsTypesToShow	STEPS_TYPES_TO_SHOW;
+	ThemeMetric<float>		ROW_SPACING_X;
+	ThemeMetric<float>		ROW_SPACING_Y;
 	ThemeMetric1D<RageColor>	STEPS_TYPE_COLOR;
 
-	ThemeMetric<bool>			SHOW_ONLY_MOST_RECENT_SCORES;
-	ThemeMetric<float>			SECONDS_PER_PAGE;
-	ThemeMetric<float>			PAGE_FADE_SECONDS;
-	LocalizedString				NO_SCORE_NAME;
-	ThemeMetric<bool>			MANUAL_SCROLLING;
+	ThemeMetric<bool>		SHOW_ONLY_MOST_RECENT_SCORES;
+	ThemeMetric<float>		SECONDS_PER_PAGE;
+	ThemeMetric<float>		PAGE_FADE_SECONDS;
+	LocalizedString			NO_SCORE_NAME;
+	ThemeMetric<bool>		MANUAL_SCROLLING;
 };
 
 class ScoreScroller: public DynamicActorScroller
@@ -128,13 +128,13 @@ protected:
 	};
 	vector<ScoreRowItemData> m_vScoreRowItemData;
 
-	ThemeMetric<float>			SCORE_OFFSET_START_X;
-	ThemeMetric<float>			SCORE_OFFSET_Y;
-	ThemeMetric<bool>			SHOW_SURVIVAL_TIME;
-	LocalizedString				NO_SCORE_NAME;
-	ThemeMetric<float>			COL_SPACING_X;
-	ThemeMetric<float>			SONG_SCORE_SECONDS_PER_ROW;
-	ThemeMetric<int>			m_metricSongScoreRowsToDraw;
+	ThemeMetric<float>	SCORE_OFFSET_START_X;
+	ThemeMetric<float>	SCORE_OFFSET_Y;
+	ThemeMetric<bool>	SHOW_SURVIVAL_TIME;
+	LocalizedString		NO_SCORE_NAME;
+	ThemeMetric<float>	COL_SPACING_X;
+	ThemeMetric<float>	SONG_SCORE_SECONDS_PER_ROW;
+	ThemeMetric<int>	m_metricSongScoreRowsToDraw;
 };
 
 class ScreenRankingScroller: public ScreenRanking 
@@ -156,15 +156,15 @@ private:
 
 	AutoActor  m_sprDifficulty[NUM_Difficulty];	// for all_steps
 
-	ThemeMetricDifficultiesToShow		DIFFICULTIES_TO_SHOW;
-	ThemeMetric<float>			COL_SPACING_X;
-	ThemeMetric<float>			COL_SPACING_Y;
+	ThemeMetricDifficultiesToShow	DIFFICULTIES_TO_SHOW;
+	ThemeMetric<float>		COL_SPACING_X;
+	ThemeMetric<float>		COL_SPACING_Y;
 
-	ThemeMetric<float>			DIFFICULTY_START_X;
-	ThemeMetric<float>			DIFFICULTY_Y;
-	ThemeMetric<int>			NUM_MOST_RECENT_SCORES_TO_SHOW;
+	ThemeMetric<float>		DIFFICULTY_START_X;
+	ThemeMetric<float>		DIFFICULTY_Y;
+	ThemeMetric<int>		NUM_MOST_RECENT_SCORES_TO_SHOW;
 
-	RageSound	m_soundChange;
+	RageSound			m_soundChange;
 };
 
 static const int NUM_RANKING_LINES = 5;
@@ -188,16 +188,16 @@ private:
 	BitmapText m_textPoints[NUM_RANKING_LINES];	// for course
 	BitmapText m_textTime[NUM_RANKING_LINES];	// for course
 
-	ThemeMetric<float>			BULLET_START_X;
-	ThemeMetric<float>			BULLET_START_Y;
-	ThemeMetric<float>			NAME_START_X;
-	ThemeMetric<float>			NAME_START_Y;
-	ThemeMetric<float>			SCORE_START_X;
-	ThemeMetric<float>			SCORE_START_Y;
-	ThemeMetric<float>			POINTS_START_X;
-	ThemeMetric<float>			POINTS_START_Y;
-	ThemeMetric<float>			TIME_START_X;
-	ThemeMetric<float>			TIME_START_Y;
+	ThemeMetric<float>	BULLET_START_X;
+	ThemeMetric<float>	BULLET_START_Y;
+	ThemeMetric<float>	NAME_START_X;
+	ThemeMetric<float>	NAME_START_Y;
+	ThemeMetric<float>	SCORE_START_X;
+	ThemeMetric<float>	SCORE_START_Y;
+	ThemeMetric<float>	POINTS_START_X;
+	ThemeMetric<float>	POINTS_START_Y;
+	ThemeMetric<float>	TIME_START_X;
+	ThemeMetric<float>	TIME_START_Y;
 };
 
 #endif
