@@ -1924,7 +1924,9 @@ public:
 	}
 	static int SetPreferredDifficulty( T* p, lua_State *L )
 	{
-		p->m_PreferredDifficulty[IArg(1)].Set( Difficulty(IArg(2)) );
+		PlayerNumber pn = Enum::Check<PlayerNumber>( L, 1 );
+		Difficulty dc = Enum::Check<Difficulty>( L, 2 );
+		p->m_PreferredDifficulty[pn].Set( dc );
 		return 0;
 	}
 	DEFINE_METHOD( GetPreferredDifficulty,		m_PreferredDifficulty[Enum::Check<PlayerNumber>(L, 1)] )
