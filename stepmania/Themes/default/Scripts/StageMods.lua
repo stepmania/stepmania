@@ -40,7 +40,7 @@ function ScreenSelectMusic:setupcoursestagemods()
 		-- local so = "failimmediate,battery"
 		local so = "failimmediate"
 
-		for dummy, pn in ipairs(GAMESTATE:GetHumanPlayers()) do
+		for _, pn in ipairs(GAMESTATE:GetHumanPlayers()) do
 			GAMESTATE:GetPlayerState(pn):SetPlayerOptions( "ModsLevel_Stage", po )
 			MESSAGEMAN:Broadcast( "PlayerOptionsChangedP" .. (pn+1) )
 		end
