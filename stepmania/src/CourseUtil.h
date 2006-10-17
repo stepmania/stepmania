@@ -38,14 +38,11 @@ namespace CourseUtil
 class CourseID
 {
 public:
-	RString sPath;
-	RString sFullTitle;
-
-public:
 	CourseID() { Unset(); }
 	void Unset() { FromCourse(NULL); }
 	void FromCourse( const Course *p );
 	Course *ToCourse() const;
+	const RString &GetPath() const { return sPath; }
 	bool operator<( const CourseID &other ) const
 	{
 		return sPath < other.sPath || sFullTitle < other.sFullTitle;
@@ -55,6 +52,10 @@ public:
 	void LoadFromNode( const XNode* pNode );
 	RString ToString() const;
 	bool IsValid() const;
+
+private:
+	RString sPath;
+	RString sFullTitle;
 };
 
 #endif

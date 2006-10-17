@@ -1427,7 +1427,7 @@ void Profile::LoadCourseScoresFromNode( const XNode* pCourseScores )
 			if( pC == NULL )
 			{
 				RString sDir, sFName, sExt;
-				splitpath( courseID.sPath, sDir, sFName, sExt );
+				splitpath( courseID.GetPath(), sDir, sFName, sExt );
 				RString sFullFileName = sFName + sExt;
 
 				FOREACH_CONST( Course*, vpAllCourses, c )
