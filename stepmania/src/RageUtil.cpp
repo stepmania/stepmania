@@ -93,7 +93,7 @@ bool IsAnInt( const RString &s )
 	if( !s.size() )
 		return false;
 
-	for( int i=0; s[i]; i++ )
+	for( size_t i=0; i < s.size(); ++i )
 		if( s[i] < '0' || s[i] > '9' )
 			return false;
 
@@ -105,7 +105,7 @@ bool IsHexVal( const RString &s )
 	if( !s.size() )
 		return false;
 
-	for( int i=0; s[i]; i++ )
+	for( size_t i=0; i < s.size(); ++ii )
 		if( !(s[i] >= '0' && s[i] <= '9') && 
 			!(toupper(s[i]) >= 'A' && toupper(s[i]) <= 'F'))
 			return false;
