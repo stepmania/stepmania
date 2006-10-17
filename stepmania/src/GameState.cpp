@@ -2024,7 +2024,7 @@ public:
 	DEFINE_METHOD( GetPreferredSongGroup, m_sPreferredSongGroup.Get() );
 	static int GetHumanPlayers( T* p, lua_State *L )
 	{
-		vector<int> vHP;
+		vector<PlayerNumber> vHP;
 		FOREACH_HumanPlayer( pn )
 			vHP.push_back( pn );
 		LuaHelpers::CreateTableFromArray( vHP, L );
