@@ -16,6 +16,7 @@ function ScreenSelectMusic:setupmusicstagemods()
 	local style = GAMESTATE:GetCurrentStyle()
 	local song, steps, po, so = SONGMAN:GetExtraStageInfo( bExtra2, style )
 	local difficulty = steps:GetDifficulty()
+	local Reverse = PlayerNumber:Reverse()
 	
 	GAMESTATE:SetCurrentSong( song )
 	GAMESTATE:SetPreferredSong( song )
@@ -24,7 +25,7 @@ function ScreenSelectMusic:setupmusicstagemods()
 		GAMESTATE:SetCurrentSteps( pn, steps )
 		GAMESTATE:GetPlayerState(pn):SetPlayerOptions( "ModsLevel_Stage", po )
 		GAMESTATE:SetPreferredDifficulty( pn, difficulty )
-		MESSAGEMAN:Broadcast( "PlayerOptionsChangedP" .. (pn+1) )
+		MESSAGEMAN:Broadcast( "PlayerOptionsChangedP" .. (Reverse[pn]+1) )
 	end
 	
 	GAMESTATE:SetSongOptions( "ModsLevel_Stage", so )
@@ -39,10 +40,11 @@ function ScreenSelectMusic:setupcoursestagemods()
 		-- Let SSMusic set battery.
 		-- local so = "failimmediate,battery"
 		local so = "failimmediate"
+		local Reverse = PlayerNumber:Reverse()
 
 		for _, pn in ipairs(GAMESTATE:GetHumanPlayers()) do
 			GAMESTATE:GetPlayerState(pn):SetPlayerOptions( "ModsLevel_Stage", po )
-			MESSAGEMAN:Broadcast( "PlayerOptionsChangedP" .. (pn+1) )
+			MESSAGEMAN:Broadcast( "PlayerOptionsChangedP" .. (Reverse[pn]+1) )
 		end
 
 		GAMESTATE:SetSongOptions( "ModsLevel_Stage", so )
