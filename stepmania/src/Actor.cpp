@@ -1368,7 +1368,6 @@ public:
 	static int pause( T* p, lua_State *L )			{ p->EnableAnimation(false); return 0; }
 	static int setstate( T* p, lua_State *L )		{ p->SetState(IArg(1)); return 0; }
 	static int texturewrapping( T* p, lua_State *L )	{ p->SetTextureWrapping(BIArg(1)); return 0; }
-	static int additiveblend( T* p, lua_State *L )		{ p->SetBlendMode(BIArg(1) ? BLEND_ADD : BLEND_NORMAL); return 0; }
 	static int blend( T* p, lua_State *L )			{ p->SetBlendMode( Enum::Check<BlendMode>(L, 1) ); return 0; }
 	static int zbuffer( T* p, lua_State *L )		{ p->SetUseZBuffer(BIArg(1)); return 0; }
 	static int ztest( T* p, lua_State *L )			{ p->SetZTestMode((BIArg(1))?ZTEST_WRITE_ON_PASS:ZTEST_OFF); return 0; }
@@ -1525,7 +1524,6 @@ public:
 		ADD_METHOD( pause );
 		ADD_METHOD( setstate );
 		ADD_METHOD( texturewrapping );
-		ADD_METHOD( additiveblend );
 		ADD_METHOD( blend );
 		ADD_METHOD( zbuffer );
 		ADD_METHOD( ztest );
