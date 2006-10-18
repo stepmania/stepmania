@@ -227,14 +227,8 @@ inline uint32_t Swap24LE( uint32_t n ) { return Swap24( n ); }
 inline uint16_t Swap16LE( uint16_t n ) { return Swap16( n ); }
 #endif
 
-extern int randseed;
-
-float RandomFloat( int &seed );	// [0.0f,1.0f)
-
-inline float RandomFloat()
-{
-	return RandomFloat( randseed );
-}
+// [0.0f,1.0f)
+float RandomFloat();
 
 // Returns a float between dLow and dHigh inclusive
 inline float RandomFloat( float fLow, float fHigh )

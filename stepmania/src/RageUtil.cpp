@@ -18,7 +18,7 @@
 int randseed = time(NULL);
 
 // From "Numerical Recipes in C".
-float RandomFloat( int &seed )
+static float RandomFloatFromSeed( int &seed )
 {
 	const int MASK = 123459876;
 	seed ^= MASK;
@@ -41,6 +41,11 @@ float RandomFloat( int &seed )
 	return ans;
 }
 
+float RandomFloat()
+{
+	return RandomFloatFromSeed( randseed );
+}
+
 RandomGen::RandomGen( unsigned long seed_ )
 {
 	seed = seed_;
@@ -50,7 +55,7 @@ RandomGen::RandomGen( unsigned long seed_ )
 
 int RandomGen::operator() ( int n )
 {
-	float f = RandomFloat(seed) * (n);
+	float f = RandomFloatFromSeed(seed) * (n);
 	int ans = int(f);
 	return ans;
 }
