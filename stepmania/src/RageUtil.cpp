@@ -1970,65 +1970,6 @@ namespace StringConversion
 	}
 }
 
-//
-// Helper function for reading/writing scores
-//
-bool FileRead( RageFileBasic& f, RString& sOut )
-{
-	if( f.AtEOF() )
-		return false;
-	if( f.GetLine(sOut) == -1 )
-		return false;
-	return true;
-}
-
-bool FileRead( RageFileBasic& f, int& iOut )
-{
-	RString s;
-	if( !FileRead(f, s) )
-		return false;
-	iOut = atoi(s);
-	return true;
-}
-
-bool FileRead( RageFileBasic& f, unsigned& uOut )
-{
-	RString s;
-	if( !FileRead(f, s) )
-		return false;
-	uOut = atoi(s);
-	return true;
-}
-
-bool FileRead( RageFileBasic& f, float& fOut )
-{
-	RString s;
-	if( !FileRead(f, s) )
-		return false;
-	fOut = StringToFloat( s );
-	return true;
-}
-
-void FileWrite( RageFileBasic& f, const RString& sWrite )
-{
-	f.PutLine( sWrite );
-}
-
-void FileWrite( RageFileBasic& f, int iWrite )
-{
-	f.PutLine( ssprintf("%d", iWrite) );
-}
-
-void FileWrite( RageFileBasic& f, size_t uWrite )
-{
-	f.PutLine( ssprintf("%i", (int)uWrite) );
-}
-
-void FileWrite( RageFileBasic& f, float fWrite )
-{
-	f.PutLine( ssprintf("%f", fWrite) );
-}
-
 bool FileCopy( const RString &sSrcFile, const RString &sDstFile )
 {
 	if( !sSrcFile.CompareNoCase(sDstFile) )

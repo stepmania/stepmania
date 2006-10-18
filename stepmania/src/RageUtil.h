@@ -568,17 +568,7 @@ namespace StringConversion
 	template<> inline RString ToString<RString>( const RString &value ) { return value; }
 }
 
-// helper file functions used by Bookkeeper and ProfileManager
 class RageFileBasic;
-bool FileRead( RageFileBasic& f, RString& sOut );
-bool FileRead( RageFileBasic& f, int& iOut );
-bool FileRead( RageFileBasic& f, unsigned& uOut );
-bool FileRead( RageFileBasic& f, float& fOut );
-void FileWrite( RageFileBasic& f, const RString& sWrite );
-void FileWrite( RageFileBasic& f, int iWrite );
-void FileWrite( RageFileBasic& f, size_t uWrite );
-void FileWrite( RageFileBasic& f, float fWrite );
-
 bool FileCopy( const RString &sSrcFile, const RString &sDstFile );
 bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bReadError = NULL );
 
