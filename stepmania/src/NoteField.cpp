@@ -429,12 +429,12 @@ float FindLastDisplayedBeat( const PlayerState* pPlayerState, int iLastPixelToDr
 	return fLastBeatToDraw;
 }
 
-bool NoteField::IsOnScreen( float fBeat, int iFirstPixelToDraw, int iLastPixelToDraw ) const
+bool NoteField::IsOnScreen( float fBeat, int iCol, int iFirstPixelToDraw, int iLastPixelToDraw ) const
 {
 	// TRICKY: If boomerang is on, then ones in the range 
 	// [iFirstIndexToDraw,iLastIndexToDraw] aren't necessarily visible.
 	// Test to see if this beat is visible before drawing.
-	float fYOffset = ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
+	float fYOffset = ArrowEffects::GetYOffset( m_pPlayerState, iCol, fBeat );
 	if( fYOffset > iLastPixelToDraw )	// off screen
 		return false;
 	if( fYOffset < iFirstPixelToDraw )	// off screen
@@ -489,7 +489,7 @@ void NoteField::DrawPrimitives()
 //	LOG->Trace( "start = %f.1, end = %f.1", fFirstBeatToDraw-fSongBeat, fLastBeatToDraw-fSongBeat );
 //	LOG->Trace( "Drawing elements %d through %d", iFirstIndexToDraw, iLastIndexToDraw );
 
-#define IS_ON_SCREEN( fBeat )  IsOnScreen( fBeat, iFirstPixelToDraw, iLastPixelToDraw )
+#define IS_ON_SCREEN( fBeat )  IsOnScreen( fBeat, 0, iFirstPixelToDraw, iLastPixelToDraw )
 
 	if( GAMESTATE->IsEditing() )
 	{
@@ -749,7 +749,7 @@ void NoteField::DrawPrimitives()
 			// TRICKY: If boomerang is on, then all notes in the range 
 			// [iFirstIndexToDraw,iLastIndexToDraw] aren't necessarily visible.
 			// Test every note to make sure it's on screen before drawing
-			if( !IS_ON_SCREEN(NoteRowToBeat(i)) )
+			if( !IsOnScreen( NoteRowToBeat(i), c, iFirstPixelToDraw, iLastPixelToDraw ) )
 				continue;	// skip
 
 			ASSERT_M( NoteRowToBeat(i) > -2000, ssprintf("%i %i %i, %f %f", i, iLastIndexToDraw, iFirstIndexToDraw, GAMESTATE->m_fSongBeat, GAMESTATE->m_fMusicSeconds) );

@@ -48,7 +48,7 @@ protected:
 	void CacheNoteSkin( const RString &sNoteSkin );
 	void UncacheNoteSkin( const RString &sNoteSkin );
 
-	bool IsOnScreen( float fBeat, int iFirstPixelToDraw, int iLastPixelToDraw ) const;
+	bool IsOnScreen( float fBeat, int iCol, int iFirstPixelToDraw, int iLastPixelToDraw ) const;
 
 	void DrawBeatBar( const float fBeat );
 	void DrawMarkerBar( int fBeat );
