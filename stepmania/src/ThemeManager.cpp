@@ -820,6 +820,8 @@ void ThemeManager::ReloadMetrics()
 
 RString ThemeManager::GetClassFallback( const RString &sClassName )
 {
+	ASSERT( g_pLoadedThemeData );
+
 	// always look in iniMetrics for "Fallback"
 	RString sFallback;
 	if( !GetMetricRawRecursive(g_pLoadedThemeData->iniMetrics,sClassName,"Fallback",sFallback) )
@@ -834,8 +836,6 @@ bool ThemeManager::GetMetricRawRecursive( const IniFile &ini, const RString &sCl
 {
 	ASSERT( sValueName != "" );
 	RString sClassName( sClassName_ );
-
-	ASSERT( g_pLoadedThemeData );
 
 	int n = 100;
 	while( n-- )
