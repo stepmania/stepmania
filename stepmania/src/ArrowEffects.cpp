@@ -251,12 +251,12 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	float fScrollSpeed = pPlayerState->m_PlayerOptions.GetCurrent().m_fScrollSpeed;
 	if( pPlayerState->m_PlayerOptions.GetCurrent().m_fRandomSpeed > 0 && !bAbsolute )
 	{
-		int seed = GAMESTATE->m_iStageSeed + ( BeatToNoteRow( fNoteBeat ) << 8 ) + (iCol * 100);
+		/* Generate a deterministically "random" speed for each arrow. */
+		unsigned seed = GAMESTATE->m_iStageSeed + ( BeatToNoteRow( fNoteBeat ) << 8 ) + (iCol * 100);
 
-		/* Temporary hack: the first call to RandomFloat isn't "random"; it takes an extra
-		 * call to get the RNG rolling. */
-		RandomFloat( seed );
-		float fRandom = RandomFloat( seed );
+		for( int i = 0; i < 3; ++i )
+			seed = ((seed * 1664525u) + 1013904223u) & 0xFFFFFFFF;
+		float fRandom = seed / 4294967296.0f;
 
 		/* Random speed always increases speed: a random speed of 10 indicates [1,11].
 		 * This keeps it consistent with other mods: 0 means no effect. */
