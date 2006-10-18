@@ -227,8 +227,34 @@ inline uint32_t Swap24LE( uint32_t n ) { return Swap24( n ); }
 inline uint16_t Swap16LE( uint16_t n ) { return Swap16( n ); }
 #endif
 
+struct MersenneTwister
+{
+	MersenneTwister( int iSeed = 0 ); // 0 = time()
+	int operator()(); // returns [0,2^31-1]
+	int operator()( int n ) // returns [0,n)
+	{
+		return (*this)() % n;
+	}
+
+	void Reset( int iSeed );
+
+private:
+	static int Temper( int iValue );
+	void GenerateValues();
+
+	int m_Values[624];
+	int m_iNext;
+};
+typedef MersenneTwister RandomGen;
+
+extern RandomGen g_RandomNumberGenerator;
+
 // [0.0f,1.0f)
-float RandomFloat();
+inline float RandomFloat()
+{
+	return g_RandomNumberGenerator() / 2147483648.0f;
+}
+
 
 // Returns a float between dLow and dHigh inclusive
 inline float RandomFloat( float fLow, float fHigh )
@@ -239,24 +265,14 @@ inline float RandomFloat( float fLow, float fHigh )
 // Returns an integer between nLow and nHigh inclusive
 inline int RandomInt( int nLow, int nHigh )
 {
-	return int( RandomFloat() * (nHigh - nLow + 1) + nLow );
+	return int( g_RandomNumberGenerator(nHigh - nLow + 1) + nLow );
 }
 
 // Returns an integer between 0 and n-1 inclusive (replacement for rand() % n).
 inline int RandomInt( int n )
 {
-	return RandomInt( 0, n-1 );
+	return int( g_RandomNumberGenerator(n) );
 }
-
-/* Alternative: */
-class RandomGen
-{
-	int seed;
-
-public:
-	RandomGen( unsigned long seed = 0 );
-	int operator() ( int n = INT_MAX-1 );	// return number [0,n)
-};
 
 
 // Simple function for generating random numbers

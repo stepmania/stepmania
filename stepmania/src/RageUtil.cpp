@@ -15,51 +15,75 @@
 #include <sys/stat.h>
 #include <float.h>
 
-int randseed = time(NULL);
+RandomGen g_RandomNumberGenerator;
 
-// From "Numerical Recipes in C".
-static float RandomFloatFromSeed( int &seed )
+MersenneTwister::MersenneTwister( int iSeed )
 {
-	const int MASK = 123459876;
-	seed ^= MASK;
-
-	const int IA = 16807;
-	const int IM = 2147483647;
-
-	const int IQ = 127773;
-	const int IR = 2836;
-
-	long k = seed / IQ;
-	seed = IA*(seed-k*IQ)-IR*k;
-	if( seed < 0 )
-		seed += IM;
-
-	const float AM = .999999f / IM;
-	float ans = AM * seed;
-
-	seed ^= MASK;
-	return ans;
+	Reset( iSeed );
 }
 
-float RandomFloat()
+void MersenneTwister::Reset( int iSeed )
 {
-	return RandomFloatFromSeed( randseed );
+	if( iSeed == 0 )
+		iSeed = time(NULL);
+
+	m_Values[0] = iSeed;
+	m_iNext = 0;
+	for( int i = 1; i < 624; ++i )
+		m_Values[i] = ((69069 * m_Values[i-1]) + 1) & 0xFFFFFFFF;
+
+	GenerateValues();
 }
 
-RandomGen::RandomGen( unsigned long seed_ )
+void MersenneTwister::GenerateValues()
 {
-	seed = seed_;
-	if(seed == 0)
-		seed = time(NULL);
+	static const int mask[] = { 0, 0x9908B0DF };
+
+	for( int i = 0; i < 227; ++i )
+	{
+		int iVal = (m_Values[i] & 0x80000000) | (m_Values[i+1] & 0x7FFFFFFF);
+		int iNext = (i + 397);
+
+		m_Values[i] = m_Values[iNext];
+		m_Values[i] ^= (iVal >> 1);
+		m_Values[i] ^= mask[iVal&1];
+	}
+
+	for( int i = 227; i < 623; ++i )
+	{
+		int iVal = (m_Values[i] & 0x80000000) | (m_Values[i+1] & 0x7FFFFFFF);
+		int iNext = (i + 397) - 624;
+
+		m_Values[i] = m_Values[iNext];
+		m_Values[i] ^= (iVal >> 1);
+		m_Values[i] ^= mask[iVal&1];
+	}
+
+	int iVal = (m_Values[623] & 0x80000000) + (m_Values[0] & 0x7FFFFFFF);
+	int iNext = (623 + 397) - 624;
+	m_Values[623] = m_Values[iNext] ^ (iVal>>1);
+	m_Values[623] ^= mask[iVal&1];
 }
 
-int RandomGen::operator() ( int n )
+int MersenneTwister::Temper( int iVal )
 {
-	float f = RandomFloatFromSeed(seed) * (n);
-	int ans = int(f);
-	return ans;
+	iVal ^= (iVal >> 11);
+	iVal ^= (iVal << 7) & 0x9D2C5680;
+	iVal ^= (iVal << 15) & 0xEFC60000;
+	iVal ^= (iVal >> 18);
+	return iVal;
 }
 
+int MersenneTwister::operator()()
+{
+	if( m_iNext == 624 )
+	{
+		m_iNext = 0;
+		GenerateValues();
+	}
+
+	return Temper( m_Values[m_iNext++] );
+}
 
 void fapproach( float& val, float other_val, float to_move )
 {
