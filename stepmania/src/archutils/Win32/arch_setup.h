@@ -45,36 +45,6 @@
 #define _CRT_SECURE_NO_DEPRECATE
 #define _SCL_SECURE_NO_DEPRECATE 
 
-#if _MSC_VER < 1300 /* VC6, not VC7 */
-template<class T>
-inline const T& max(const T &a, const T &b)			{ return a < b? b:a; }
-template<class T, class P>
-inline const T& max(const T &a, const T &b, P Pr)	{ return Pr(a, b)? b:a; }
-template<class T>
-inline const T& min(const T &a, const T &b)			{ return b < a? b:a; }
-template<class T, class P>
-inline const T& min(const T &a, const T &b, P Pr)	{ return Pr(b, a)? b:a; }
-
-typedef long int intptr_t;
-typedef unsigned int uintptr_t;
-
-// might not be defined in vc6 with an older PSDK
-#if !defined(DWORD_PTR)
-typedef unsigned long DWORD_PTR;
-#endif
-#if !defined(ULONG_PTR)
-typedef unsigned long ULONG_PTR;
-#endif
-#if !defined(LONG_PTR)
-typedef long LONG_PTR;
-#endif
-#endif
-
-// HACK: Fake correct scoping rules in VC6.
-#if _MSC_VER == 1200 
-#define for if(0); else for
-#endif
-
 /* Don't include windows.h everywhere; when we do eventually include it, use these: */
 #define WIN32_LEAN_AND_MEAN
 #define VC_EXTRALEAN
