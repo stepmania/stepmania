@@ -17,6 +17,7 @@
 #if _MSC_VER == 1400 // VC8 specific warnings
 #pragma warning (disable : 4996) // deprecated functions vs "ISO C++ conformant names". (stricmp vs _stricmp)
 #pragma warning (disable : 4005) // macro redefinitions (ARRAYSIZE)
+#pragma warning (disable : 4652) // inconsistent compiler option 'C++ Exception Handling Unwinding'
 #endif
 
 #define snprintf _snprintf // Unsure if this goes with __MINGW32__ right now.
