@@ -45,7 +45,9 @@ public:
 	const RString &GetPath() const { return sPath; }
 	bool operator<( const CourseID &other ) const
 	{
-		return sPath < other.sPath || sFullTitle < other.sFullTitle;
+		if (sPath != other.sPath)
+			return sPath < other.sPath;
+		return sFullTitle < other.sFullTitle;
 	}
 
 	XNode* CreateNode() const;
