@@ -10,9 +10,6 @@
 #include "song.h"
 #include "Steps.h"
 
-/* Global variables aren't the best way to go about this, but this 
- * will be required to start implementing the Direct Move syntax. */
-
 #if 0
 void KSFLoader::RemoveHoles( NoteData &out, const Song &song )
 {
