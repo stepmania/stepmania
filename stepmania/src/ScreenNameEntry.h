@@ -9,7 +9,6 @@
 #include "ReceptorArrowRow.h"
 #include "MenuTimer.h"
 
-
 class ScreenNameEntry : public Screen
 {
 public:
@@ -18,7 +17,7 @@ public:
 	virtual ~ScreenNameEntry();
 
 	virtual void Update( float fDeltaTime );
-	virtual void DrawPrimitives();
+	//virtual void DrawPrimitives();
 	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
@@ -28,11 +27,30 @@ public:
 
 	enum { ABS_MAX_RANKING_NAME_LENGTH = 10 };
 private:
+	class ScrollingText : public Actor
+	{
+	public:
+		ScrollingText() : m_bDone(true) { }
+		inline void SetDone() { m_bDone = true; }
+		void Init( const RString &sName, const vector<float> &xs );
+		virtual bool EarlyAbortDraw() const { return m_bDone; }
+		virtual void DrawPrimitives();
+		char GetClosestChar( float fFakeBeat ) const;
+
+	private:
+		float GetClosestCharYOffset( float fFakeBeat ) const;
+
+		vector<float>	m_Xs;
+		bool		m_bDone;
+		BitmapText	m_Stamp;
+		static RString	g_sNameChars;
+	};
+	
+	
 	bool AnyStillEntering() const;
 
 	ReceptorArrowRow	m_ReceptorArrowRow[NUM_PLAYERS];
 	BitmapText		m_textSelectedChars[NUM_PLAYERS][ABS_MAX_RANKING_NAME_LENGTH];
-	BitmapText		m_textScrollingChars[NUM_PLAYERS][ABS_MAX_RANKING_NAME_LENGTH];
 	BitmapText		m_textCategory[NUM_PLAYERS];
 	MenuTimer		m_Timer;
 
@@ -45,6 +63,7 @@ private:
 	RString			m_sSelectedName[NUM_PLAYERS];
 	bool			m_bStillEnteringName[NUM_PLAYERS];
 
+	ScrollingText		m_Text[NUM_PLAYERS];
 	vector<int>		m_ColToStringIndex[NUM_PLAYERS];
 	RString			m_sPathToMusic;
 };
@@ -52,7 +71,7 @@ private:
 #endif
 
 /*
- * (c) 2001-2004 Chris Danford
+ * (c) 2001-2006 Chris Danford, Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

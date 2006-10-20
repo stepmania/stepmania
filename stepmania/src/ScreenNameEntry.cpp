@@ -54,24 +54,61 @@ static int	g_iNumCharsToDrawBehind;
 static int	g_iNumCharsToDrawTotal;
 static float	g_fFakeBeatsPerSec;
 
+RString ScreenNameEntry::ScrollingText::g_sNameChars = "    ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-static const char NAME_CHARS[] =
+void ScreenNameEntry::ScrollingText::Init( const RString &sName, const vector<float> &xs )
 {
-	' ',' ',' ',' ','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'
-};
-#define NUM_NAME_CHARS (ARRAYLEN(NAME_CHARS))
-#define HEIGHT_OF_ALL_CHARS (NUM_NAME_CHARS * g_fCharsSpacingY)
+	SetName( sName );
+	m_Xs = xs;
+	m_bDone = false;
+	m_Stamp.LoadFromFont( THEME->GetPathF(sName, "letters") );
+	m_Stamp.RunCommands( THEME->GetMetricA(sName, "ScrollingCharsCommand") );
+}
 
-
-static int GetClosestCharIndex( float fFakeBeat )
+void ScreenNameEntry::ScrollingText::DrawPrimitives()
 {
-	int iCharIndex = (int)roundf(fFakeBeat) % NUM_NAME_CHARS;
-	ASSERT( iCharIndex >= 0 );
-	return iCharIndex;
+	const float fFakeBeat = GAMESTATE->m_fSongBeat;
+	const size_t iClosestIndex = (int)roundf( fFakeBeat ) % g_sNameChars.size();
+	const float fClosestYOffset = GetClosestCharYOffset( fFakeBeat );
+
+	size_t iCharIndex = ( iClosestIndex - NUM_CHARS_TO_DRAW_BEHIND + g_sNameChars.size() ) % g_sNameChars.size();
+	float fY = GRAY_ARROWS_Y + ( fClosestYOffset - g_iNumCharsToDrawBehind ) * g_fCharsSpacingY;
+
+	for( int i = 0; i < NUM_CHARS_TO_DRAW_TOTAL; ++i )
+	{
+		const RString c = g_sNameChars.substr( iCharIndex, 1 );
+		float fZoom = g_fCharsZoomSmall;
+		float fAlpha = 1.f;
+
+		if( iCharIndex == iClosestIndex )
+			fZoom = SCALE( fabs(fClosestYOffset), 0, 0.5f, g_fCharsZoomLarge, g_fCharsZoomSmall );
+		if( i == 0 )
+			fAlpha *= SCALE( fClosestYOffset, -0.5f, 0.f, 0.f, 1.f );
+		if( i == g_iNumCharsToDrawTotal-1 )
+			fAlpha *= SCALE( fClosestYOffset, 0.f, 0.5f, 1.f, 0.f );
+
+		m_Stamp.SetZoom( fZoom );
+		m_Stamp.SetDiffuseAlpha( fAlpha );
+		m_Stamp.SetText( c );
+		m_Stamp.SetY( fY );
+		FOREACH_CONST( float, m_Xs, x )
+		{
+			m_Stamp.SetX( *x );
+			m_Stamp.Draw();
+		}
+		fY += g_fCharsSpacingY;
+		iCharIndex = (iCharIndex+1) % g_sNameChars.size();
+	}
+}
+
+char ScreenNameEntry::ScrollingText::GetClosestChar( float fFakeBeat ) const
+{
+	ASSERT( fFakeBeat >= 0.f );
+	return g_sNameChars[(size_t)roundf(fFakeBeat) % g_sNameChars.size()];
 }
 
 // return value is relative to gray arrows
-static float GetClosestCharYOffset( float fFakeBeat )
+float ScreenNameEntry::ScrollingText::GetClosestCharYOffset( float fFakeBeat ) const
 {
 	float f = fmodf(fFakeBeat, 1.0f);
 	if( f > 0.5f )
@@ -79,13 +116,6 @@ static float GetClosestCharYOffset( float fFakeBeat )
 	ASSERT( f>-0.5f && f<=0.5f );
 	return -f;	
 }
-
-// return value is relative to gray arrows
-static float GetClosestCharYPos( float fFakeBeat )
-{
-	return GetClosestCharYOffset(fFakeBeat)*g_fCharsSpacingY;
-}
-
 
 REGISTER_SCREEN_CLASS( ScreenNameEntry );
 ScreenNameEntry::ScreenNameEntry()
@@ -176,7 +206,7 @@ void ScreenNameEntry::Init()
 
 		ASSERT( GAMESTATE->IsHumanPlayer(p) );	// they better be enabled if they made a high score!
 
-		float fPlayerX = PLAYER_X(p,GAMESTATE->GetCurrentStyle()->m_StyleType);
+		const float fPlayerX = PLAYER_X( p, GAMESTATE->GetCurrentStyle()->m_StyleType );
 
 		{
 			LockNoteSkin l( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetCurrent().m_sNoteSkin );
@@ -192,6 +222,7 @@ void ScreenNameEntry::Init()
 
 		m_ColToStringIndex[p].insert(m_ColToStringIndex[p].begin(), pStyle->m_iColsPerPlayer, -1);
 		int CurrentStringIndex = 0;
+		vector<float> xs;
 
 		for( int iCol=0; iCol<pStyle->m_iColsPerPlayer; iCol++ )
 		{
@@ -214,14 +245,11 @@ void ScreenNameEntry::Init()
 			m_textSelectedChars[p][iCol].SetZoom( CHARS_ZOOM_LARGE );
 			if( iCol < (int)m_sSelectedName[p].length() )
 				m_textSelectedChars[p][iCol].SetText( m_sSelectedName[p].substr(iCol,1) );
-			this->AddChild( &m_textSelectedChars[p][iCol] );		// draw these manually
-			
-			m_textScrollingChars[p][iCol].LoadFromFont( THEME->GetPathF("ScreenNameEntry","letters") );
-			m_textScrollingChars[p][iCol].SetX( ColX );
-			m_textScrollingChars[p][iCol].SetY( GRAY_ARROWS_Y );
-			m_textScrollingChars[p][iCol].RunCommands( SCROLLING_CHARS_COMMAND );
-			//this->AddChild( &m_textScrollingChars[p][iCol] );	// draw these manually
+			this->AddChild( &m_textSelectedChars[p][iCol] );
+			xs.push_back( ColX );
 		}
+		m_Text[p].Init( m_sName, xs );
+		this->AddChild( &m_Text[p] );
 
 		m_textCategory[p].LoadFromFont( THEME->GetPathF("ScreenNameEntry","category") );
 		m_textCategory[p].SetX( fPlayerX );
@@ -300,55 +328,6 @@ void ScreenNameEntry::Update( float fDelta )
 	Screen::Update(fDelta);
 }
 
-void ScreenNameEntry::DrawPrimitives()
-{
-	Screen::DrawPrimitives();
-	DISPLAY->CameraPushMatrix();
-	DISPLAY->LoadMenuPerspective( m_fFOV, SCREEN_WIDTH, SCREEN_HEIGHT, m_fVanishX, m_fVanishY );
-
-	int iClosestIndex = GetClosestCharIndex( m_fFakeBeat );
-	int iStartDrawingIndex = iClosestIndex - NUM_CHARS_TO_DRAW_BEHIND;
-	iStartDrawingIndex += NUM_NAME_CHARS;	// make positive
-
-	const Style* pStyle = GAMESTATE->GetCurrentStyle();
-
-	FOREACH_PlayerNumber( p )
-	{
-		if( !m_bStillEnteringName[p] )
-			continue;	// don't draw scrolling arrows
-
-		float fY = GRAY_ARROWS_Y + GetClosestCharYPos(m_fFakeBeat) - g_iNumCharsToDrawBehind*g_fCharsSpacingY;
-		int iCharIndex = iStartDrawingIndex % NUM_NAME_CHARS;
-		
-		for( int i=0; i<NUM_CHARS_TO_DRAW_TOTAL; i++ )
-		{
-			const RString c( 1, NAME_CHARS[iCharIndex] );
-			for( int t=0; t<pStyle->m_iColsPerPlayer; t++ )
-			{
-				if( m_ColToStringIndex[p][t] == -1 )
-					continue;
-
-				m_textScrollingChars[p][t].SetText( c );
-				m_textScrollingChars[p][t].SetY( fY );
-				float fZoom = g_fCharsZoomSmall;
-				if( iCharIndex==iClosestIndex )
-					fZoom = SCALE(fabsf(GetClosestCharYOffset(m_fFakeBeat)),0,0.5f,g_fCharsZoomLarge,g_fCharsZoomSmall);
-				m_textScrollingChars[p][t].SetZoom(fZoom);
-				float fAlpha = 1;
-				if( i==0 )
-					fAlpha *= SCALE(GetClosestCharYOffset(m_fFakeBeat),-0.5f,0.f,0.f,1.f);
-				if( i==g_iNumCharsToDrawTotal-1 )
-					fAlpha *= SCALE(GetClosestCharYOffset(m_fFakeBeat),0.f,0.5f,1.f,0.f);
-				m_textScrollingChars[p][t].SetDiffuseAlpha( fAlpha  );
-				m_textScrollingChars[p][t].Draw();
-			}
-			fY += g_fCharsSpacingY;
-			iCharIndex = (iCharIndex+1) % NUM_NAME_CHARS;
-		}
-	}
-	DISPLAY->CameraPopMatrix();
-}
-
 void ScreenNameEntry::Input( const InputEventPlus &input )
 {
 	LOG->Trace( "ScreenNameEntry::Input()" );
@@ -367,8 +346,8 @@ void ScreenNameEntry::Input( const InputEventPlus &input )
 		{
 			m_ReceptorArrowRow[input.pn].Step( iCol, TNS_W1 );
 			m_soundStep.Play();
-			char c = NAME_CHARS[GetClosestCharIndex(m_fFakeBeat)];
-			m_textSelectedChars[input.pn][iCol].SetText( ssprintf("%c",c) );
+			char c = m_Text[input.pn].GetClosestChar( m_fFakeBeat );
+			m_textSelectedChars[input.pn][iCol].SetText( RString(1, c) );
 			m_sSelectedName[input.pn][iStringIndex] = c;
 		}
 	}
@@ -402,6 +381,7 @@ void ScreenNameEntry::MenuStart( const InputEventPlus &input )
 	if( !m_bStillEnteringName[pn] )
 		return;
 	m_bStillEnteringName[pn] = false;
+	m_Text[pn].SetDone();
 
 	m_soundStep.Play();
 
@@ -419,7 +399,7 @@ void ScreenNameEntry::MenuStart( const InputEventPlus &input )
 }
 
 /*
- * (c) 2001-2004 Chris Danford
+ * (c) 2001-2006 Chris Danford, Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
