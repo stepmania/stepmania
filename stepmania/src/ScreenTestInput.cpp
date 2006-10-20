@@ -104,9 +104,6 @@ void ScreenTestInput::Input( const InputEventPlus &input )
 		MESSAGEMAN->Broadcast( sMessage );
 	}
 
-	if( input.type != IET_FIRST_PRESS && input.type != IET_REPEAT )
-		return;	// ignore
-
 	Screen::Input( input );	// default handler
 }
 
@@ -117,6 +114,9 @@ void ScreenTestInput::MenuStart( const InputEventPlus &input )
 
 void ScreenTestInput::MenuBack( const InputEventPlus &input )
 {
+	if( input.type != IET_REPEAT )
+		return;	// ignore
+
 	if( !IsTransitioning() )
 	{
 		SCREENMAN->PlayStartSound();
