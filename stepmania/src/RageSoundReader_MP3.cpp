@@ -1047,12 +1047,12 @@ int RageSoundReader_MP3::GetLengthInternal( bool fast )
 
 int RageSoundReader_MP3::GetLengthConst( bool fast ) const
 {
-	RageSoundReader_MP3 *cpy = (RageSoundReader_MP3 *) Copy();
+	RageSoundReader_MP3 *pCopy = this->Copy();
 
-	int length = cpy->GetLengthInternal( fast );
+	int iLength = pCopy->GetLengthInternal( fast );
 
-	delete cpy;
-	return length;
+	delete pCopy;
+	return iLength;
 }
 
 

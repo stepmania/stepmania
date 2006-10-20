@@ -325,7 +325,7 @@ void RageSoundManager::AddLoadedSound( const RString &sPath_, RageSoundReader_Pr
 	it = m_mapPreloadedSounds.find( sPath );
 	ASSERT_M( it == m_mapPreloadedSounds.end(), sPath );
 	
-	m_mapPreloadedSounds[sPath] = (RageSoundReader_Preload *) pSound->Copy();
+	m_mapPreloadedSounds[sPath] = pSound->Copy();
 }
 
 
