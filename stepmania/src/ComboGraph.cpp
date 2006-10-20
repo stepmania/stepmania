@@ -23,10 +23,11 @@ void ComboGraph::LoadFromNode( const XNode* pNode )
 {
 	ActorFrame::LoadFromNode( pNode );
 
-	m_pMaxComboText = (BitmapText *) this->GetChild( "MaxComboText" );
-	if( m_pMaxComboText == NULL )
+	Actor *pActor = this->GetChild( "MaxComboText" );
+	if( pActor == NULL )
 		RageException::Throw( "%s: ComboGraph: must have a child named \"MaxComboText\"", ActorUtil::GetWhere(pNode).c_str() );
-	if( dynamic_cast<BitmapText *>(m_pMaxComboText) == NULL )
+	m_pMaxComboText = dynamic_cast<BitmapText *>( pActor );
+	if( m_pMaxComboText == NULL )
 		RageException::Throw( "%s: ComboGraph: \"MaxComboText\" child is not a BitmapText", ActorUtil::GetWhere(pNode).c_str() );
 
 	m_pNormalCombo = this->GetChild( "NormalCombo" );
