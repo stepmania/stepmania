@@ -27,20 +27,20 @@
 //
 // Defines specific to ScreenNameEntry
 //
-#define TIMER_X				THEME->GetMetricF("ScreenNameEntry","TimerX")
-#define TIMER_Y				THEME->GetMetricF("ScreenNameEntry","TimerY")
-#define CATEGORY_Y			THEME->GetMetricF("ScreenNameEntry","CategoryY")
-#define CATEGORY_ZOOM			THEME->GetMetricF("ScreenNameEntry","CategoryZoom")
-#define CHARS_ZOOM_SMALL		THEME->GetMetricF("ScreenNameEntry","CharsZoomSmall")
-#define CHARS_ZOOM_LARGE		THEME->GetMetricF("ScreenNameEntry","CharsZoomLarge")
-#define CHARS_SPACING_Y			THEME->GetMetricF("ScreenNameEntry","CharsSpacingY")
-#define SCROLLING_CHARS_COMMAND		THEME->GetMetricA("ScreenNameEntry","ScrollingCharsCommand")
-#define SELECTED_CHARS_COMMAND		THEME->GetMetricA("ScreenNameEntry","SelectedCharsCommand")
-#define GRAY_ARROWS_Y			THEME->GetMetricF("ScreenNameEntry","ReceptorArrowsY")
-#define NUM_CHARS_TO_DRAW_BEHIND	THEME->GetMetricI("ScreenNameEntry","NumCharsToDrawBehind")
-#define NUM_CHARS_TO_DRAW_TOTAL		THEME->GetMetricI("ScreenNameEntry","NumCharsToDrawTotal")
-#define FAKE_BEATS_PER_SEC		THEME->GetMetricF("ScreenNameEntry","FakeBeatsPerSec")
-#define TIMER_SECONDS			THEME->GetMetricF("ScreenNameEntry","TimerSeconds")
+#define TIMER_X				THEME->GetMetricF(m_sName,"TimerX")
+#define TIMER_Y				THEME->GetMetricF(m_sName,"TimerY")
+#define CATEGORY_Y			THEME->GetMetricF(m_sName,"CategoryY")
+#define CATEGORY_ZOOM			THEME->GetMetricF(m_sName,"CategoryZoom")
+#define CHARS_ZOOM_SMALL		THEME->GetMetricF(m_sName,"CharsZoomSmall")
+#define CHARS_ZOOM_LARGE		THEME->GetMetricF(m_sName,"CharsZoomLarge")
+#define CHARS_SPACING_Y			THEME->GetMetricF(m_sName,"CharsSpacingY")
+#define SCROLLING_CHARS_COMMAND		THEME->GetMetricA(m_sName,"ScrollingCharsCommand")
+#define SELECTED_CHARS_COMMAND		THEME->GetMetricA(m_sName,"SelectedCharsCommand")
+#define GRAY_ARROWS_Y			THEME->GetMetricF(m_sName,"ReceptorArrowsY")
+#define NUM_CHARS_TO_DRAW_BEHIND	THEME->GetMetricI(m_sName,"NumCharsToDrawBehind")
+#define NUM_CHARS_TO_DRAW_TOTAL		THEME->GetMetricI(m_sName,"NumCharsToDrawTotal")
+#define FAKE_BEATS_PER_SEC		THEME->GetMetricF(m_sName,"FakeBeatsPerSec")
+#define TIMER_SECONDS			THEME->GetMetricF(m_sName,"TimerSeconds")
 #define MAX_RANKING_NAME_LENGTH		THEME->GetMetricI(m_sName,"MaxRankingNameLength")
 #define PLAYER_X( p, styleType )	THEME->GetMetricF(m_sName,ssprintf("PlayerP%d%sX",p+1,StyleTypeToString(styleType).c_str()))
 
@@ -238,7 +238,7 @@ void ScreenNameEntry::Init()
 
 			float ColX = fPlayerX + pStyle->m_ColumnInfo[p][iCol].fXOffset;
 
-			m_textSelectedChars[p][iCol].LoadFromFont( THEME->GetPathF("ScreenNameEntry","letters") );
+			m_textSelectedChars[p][iCol].LoadFromFont( THEME->GetPathF(m_sName,"letters") );
 			m_textSelectedChars[p][iCol].SetX( ColX );
 			m_textSelectedChars[p][iCol].SetY( GRAY_ARROWS_Y );
 			m_textSelectedChars[p][iCol].RunCommands( SELECTED_CHARS_COMMAND );
@@ -251,7 +251,7 @@ void ScreenNameEntry::Init()
 		m_Text[p].Init( m_sName, xs );
 		this->AddChild( &m_Text[p] );
 
-		m_textCategory[p].LoadFromFont( THEME->GetPathF("ScreenNameEntry","category") );
+		m_textCategory[p].LoadFromFont( THEME->GetPathF(m_sName,"category") );
 		m_textCategory[p].SetX( fPlayerX );
 		m_textCategory[p].SetY( CATEGORY_Y );
 		m_textCategory[p].SetZoom( CATEGORY_ZOOM );
@@ -276,18 +276,18 @@ void ScreenNameEntry::Init()
 	m_Timer.SetXY( TIMER_X, TIMER_Y );
 	this->AddChild( &m_Timer );
 
-	m_In.Load( THEME->GetPathB("ScreenNameEntry","in") );
+	m_In.Load( THEME->GetPathB(m_sName,"in") );
 	m_In.StartTransitioning();
 	m_In.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_In );
 
-	m_Out.Load( THEME->GetPathB("ScreenNameEntry","out") );
+	m_Out.Load( THEME->GetPathB(m_sName,"out") );
 	m_Out.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_Out );
 
 	this->SortByDrawOrder();
 
-	m_soundStep.Load( THEME->GetPathS("ScreenNameEntry","step") );
+	m_soundStep.Load( THEME->GetPathS(m_sName,"step") );
 	m_sPathToMusic = THEME->GetPathS( m_sName, "music" );
 	m_fFakeBeat = 0;
 }
