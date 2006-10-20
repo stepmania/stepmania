@@ -117,7 +117,7 @@ float ScreenNameEntry::ScrollingText::GetClosestCharYOffset( float fFakeBeat ) c
 REGISTER_SCREEN_CLASS( ScreenNameEntry );
 ScreenNameEntry::ScreenNameEntry()
 {
-#if 1
+#if 0
 		// DEBUGGING STUFF
 	GAMESTATE->m_pCurGame.Set( GAMEMAN->GetDefaultGame() );
 	GAMESTATE->m_pCurStyle.Set( GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame) );
@@ -155,7 +155,7 @@ void ScreenNameEntry::Init()
 		GAMESTATE->GetRankingFeats( p, aFeats[p] );
 		GAMESTATE->JoinPlayer( p );
 		m_bStillEnteringName[p] = aFeats[p].size()>0;
-#if 1 // Debugging.
+#if 0 // Debugging.
 		m_bStillEnteringName[p] = p == PLAYER_1;
 #endif
 	}
