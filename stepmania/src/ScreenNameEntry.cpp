@@ -20,6 +20,9 @@
 #include "Style.h"
 #include "NoteSkinManager.h"
 #include "InputEventPlus.h"
+#include "RageSoundManager.h"
+#include "RageDisplay.h"
+
 
 //
 // Defines specific to ScreenNameEntry
@@ -87,14 +90,14 @@ static float GetClosestCharYPos( float fFakeBeat )
 REGISTER_SCREEN_CLASS( ScreenNameEntry );
 ScreenNameEntry::ScreenNameEntry()
 {
+#if 0
 		// DEBUGGING STUFF
-//	GAMESTATE->m_CurGame = GAME_DANCE;
-//	GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE;
-//	GAMESTATE->m_PlayMode = PLAY_MODE_REGULAR;
-//	GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
-//	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
-//	GAMESTATE->m_RankingCategory[PLAYER_1] = RANKING_A;
-//	GAMESTATE->m_iRankingIndex[PLAYER_1] = 0;
+	GAMESTATE->m_pCurGame.Set( GAMEMAN->GetDefaultGame() );
+	GAMESTATE->m_pCurStyle.Set( GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame) );
+	GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
+	GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
+	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+#endif
 }
 
 void ScreenNameEntry::Init()
@@ -125,6 +128,9 @@ void ScreenNameEntry::Init()
 		GAMESTATE->GetRankingFeats( p, aFeats[p] );
 		GAMESTATE->JoinPlayer( p );
 		m_bStillEnteringName[p] = aFeats[p].size()>0;
+#if 0 // Debugging.
+		m_bStillEnteringName[p] = p == PLAYER_1;
+#endif
 	}
 
 	if( !AnyStillEntering() )
@@ -170,7 +176,7 @@ void ScreenNameEntry::Init()
 
 		ASSERT( GAMESTATE->IsHumanPlayer(p) );	// they better be enabled if they made a high score!
 
-		const float fPlayerX = PLAYER_X(p,GAMESTATE->GetCurrentStyle()->m_StyleType);
+		float fPlayerX = PLAYER_X(p,GAMESTATE->GetCurrentStyle()->m_StyleType);
 
 		{
 			LockNoteSkin l( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetCurrent().m_sNoteSkin );
@@ -214,7 +220,7 @@ void ScreenNameEntry::Init()
 			m_textScrollingChars[p][iCol].SetX( ColX );
 			m_textScrollingChars[p][iCol].SetY( GRAY_ARROWS_Y );
 			m_textScrollingChars[p][iCol].RunCommands( SCROLLING_CHARS_COMMAND );
-			this->AddChild( &m_textScrollingChars[p][iCol] );	// draw these manually
+			//this->AddChild( &m_textScrollingChars[p][iCol] );	// draw these manually
 		}
 
 		m_textCategory[p].LoadFromFont( THEME->GetPathF("ScreenNameEntry","category") );
@@ -260,12 +266,14 @@ void ScreenNameEntry::Init()
 
 void ScreenNameEntry::BeginScreen()
 {
+	Screen::BeginScreen();
 	SOUND->PlayMusic( m_sPathToMusic );
 }
 
 void ScreenNameEntry::EndScreen()
 {
 	SOUND->StopMusic();
+	Screen::EndScreen();
 }
 
 bool ScreenNameEntry::AnyStillEntering() const
@@ -295,6 +303,9 @@ void ScreenNameEntry::Update( float fDelta )
 void ScreenNameEntry::DrawPrimitives()
 {
 	Screen::DrawPrimitives();
+	DISPLAY->CameraPushMatrix();
+	DISPLAY->LoadMenuPerspective( m_fFOV, SCREEN_WIDTH, SCREEN_HEIGHT, m_fVanishX, m_fVanishY );
+
 	int iClosestIndex = GetClosestCharIndex( m_fFakeBeat );
 	int iStartDrawingIndex = iClosestIndex - NUM_CHARS_TO_DRAW_BEHIND;
 	iStartDrawingIndex += NUM_NAME_CHARS;	// make positive
@@ -311,13 +322,13 @@ void ScreenNameEntry::DrawPrimitives()
 		
 		for( int i=0; i<NUM_CHARS_TO_DRAW_TOTAL; i++ )
 		{
-			char c = NAME_CHARS[iCharIndex];
+			const RString c( 1, NAME_CHARS[iCharIndex] );
 			for( int t=0; t<pStyle->m_iColsPerPlayer; t++ )
 			{
 				if( m_ColToStringIndex[p][t] == -1 )
 					continue;
 
-				m_textScrollingChars[p][t].SetText( RString(1, c) );
+				m_textScrollingChars[p][t].SetText( c );
 				m_textScrollingChars[p][t].SetY( fY );
 				float fZoom = g_fCharsZoomSmall;
 				if( iCharIndex==iClosestIndex )
@@ -329,12 +340,13 @@ void ScreenNameEntry::DrawPrimitives()
 				if( i==g_iNumCharsToDrawTotal-1 )
 					fAlpha *= SCALE(GetClosestCharYOffset(m_fFakeBeat),0.f,0.5f,1.f,0.f);
 				m_textScrollingChars[p][t].SetDiffuseAlpha( fAlpha  );
-				//m_textScrollingChars[p][t].Draw();
+				m_textScrollingChars[p][t].Draw();
 			}
 			fY += g_fCharsSpacingY;
 			iCharIndex = (iCharIndex+1) % NUM_NAME_CHARS;
 		}
 	}
+	DISPLAY->CameraPopMatrix();
 }
 
 void ScreenNameEntry::Input( const InputEventPlus &input )
