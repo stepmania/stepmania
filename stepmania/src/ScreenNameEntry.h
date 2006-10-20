@@ -5,17 +5,13 @@
 
 #include "ScreenWithMenuElements.h"
 #include "BitmapText.h"
-#include "Transition.h"
 #include "ReceptorArrowRow.h"
-#include "MenuTimer.h"
+#include "RageSound.h"
 
 class ScreenNameEntry : public ScreenWithMenuElements
 {
 public:
-	ScreenNameEntry();
-	void Init();
-	virtual ~ScreenNameEntry();
-
+	virtual void Init();
 	virtual void Update( float fDeltaTime );
 	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
@@ -24,7 +20,6 @@ public:
 
 	virtual void MenuStart( const InputEventPlus &input );
 
-	enum { ABS_MAX_RANKING_NAME_LENGTH = 10 };
 private:
 	class ScrollingText : public Actor
 	{
@@ -45,7 +40,7 @@ private:
 		static RString	g_sNameChars;
 	};
 	
-	
+	static const int ABS_MAX_RANKING_NAME_LENGTH = 10;
 	bool AnyStillEntering() const;
 
 	ReceptorArrowRow	m_ReceptorArrowRow[NUM_PLAYERS];

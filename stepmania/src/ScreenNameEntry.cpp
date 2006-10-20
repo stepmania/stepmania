@@ -1,27 +1,24 @@
 #include "global.h"
 #include "ScreenNameEntry.h"
-#include "SongManager.h"
 #include "GameConstantsAndTypes.h"
 #include "RageUtil.h"
 #include "PrefsManager.h"
 #include "GameManager.h"
 #include "RageLog.h"
-#include "GameState.h"
 #include "GameSoundManager.h"
+#include "GameState.h"
 #include "ThemeManager.h"
 #include "Course.h"
 #include "AnnouncerManager.h"
 #include "ProfileManager.h"
 #include "Profile.h"
 #include "StageStats.h"
-#include "Game.h"
 #include "ScreenDimensions.h"
 #include "PlayerState.h"
 #include "Style.h"
 #include "NoteSkinManager.h"
 #include "InputEventPlus.h"
-#include "RageSoundManager.h"
-#include "RageDisplay.h"
+#include "InputMapper.h"
 
 
 //
@@ -115,20 +112,18 @@ float ScreenNameEntry::ScrollingText::GetClosestCharYOffset( float fFakeBeat ) c
 }
 
 REGISTER_SCREEN_CLASS( ScreenNameEntry );
-ScreenNameEntry::ScreenNameEntry()
+
+void ScreenNameEntry::Init()
 {
 #if 0
-		// DEBUGGING STUFF
+	// DEBUGGING STUFF
 	GAMESTATE->m_pCurGame.Set( GAMEMAN->GetDefaultGame() );
 	GAMESTATE->m_pCurStyle.Set( GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame) );
 	GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 	GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
 	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 #endif
-}
-
-void ScreenNameEntry::Init()
-{
+	
 	ScreenWithMenuElements::Init();
 
 	// update cache
@@ -279,11 +274,6 @@ bool ScreenNameEntry::AnyStillEntering() const
 	return false;
 }
 
-ScreenNameEntry::~ScreenNameEntry()
-{
-	LOG->Trace( "ScreenNameEntry::~ScreenNameEntry()" );
-}
-
 void ScreenNameEntry::Update( float fDelta )
 {
 	if( m_bFirstUpdate )
@@ -297,8 +287,6 @@ void ScreenNameEntry::Update( float fDelta )
 
 void ScreenNameEntry::Input( const InputEventPlus &input )
 {
-	LOG->Trace( "ScreenNameEntry::Input()" );
-
 	if( IsTransitioning() )
 		return;	
 
