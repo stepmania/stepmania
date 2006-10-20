@@ -19,6 +19,8 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual bool GenericTweenOn() const { return true; }
+	virtual bool GenericTweenOff() const { return true; }
 
 	virtual void MenuStart( const InputEventPlus &input );
 
