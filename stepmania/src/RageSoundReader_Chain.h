@@ -13,7 +13,7 @@ class RageSoundReader_Chain: public SoundReader
 public:
 	RageSoundReader_Chain();
 	~RageSoundReader_Chain();
-	SoundReader *Copy() const;
+	RageSoundReader_Chain *Copy() const;
 
 	/* Set the preferred sample rate.  This will only be used if the source sounds
 	 * use different sample rates. */

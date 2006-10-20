@@ -112,7 +112,7 @@ int RageSoundReader_Preload::Read(char *buffer, unsigned len)
 	return len;
 }
 
-SoundReader *RageSoundReader_Preload::Copy() const
+RageSoundReader_Preload *RageSoundReader_Preload::Copy() const
 {
 	return new RageSoundReader_Preload(*this);
 }

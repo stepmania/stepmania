@@ -39,7 +39,7 @@ public:
 	virtual int WriteInternal( const void *pBuffer, size_t iBytes );
 	virtual int FlushInternal();
 	virtual int SeekInternal( int offset );
-	virtual RageFileBasic *Copy() const;
+	virtual RageFileObjDirect *Copy() const;
 	virtual RString GetDisplayPath() const { return m_sPath; }
 	virtual int GetFileSize() const;
 
@@ -76,7 +76,7 @@ static RString MakeTempFilename( const RString &sPath )
 	return Dirname(sPath) + "new." + Basename(sPath) + ".new";
 }
 
-RageFileObj *MakeFileObjDirect( RString sPath, int iMode, int &iError )
+RageFileObjDirect *MakeFileObjDirect( RString sPath, int iMode, int &iError )
 {
 	int iFD;
 	if( iMode & RageFile::READ )
@@ -184,10 +184,10 @@ bool RageFileDriverDirect::Remove( const RString &sPath_ )
 	}
 }
 
-RageFileBasic *RageFileObjDirect::Copy() const
+RageFileObjDirect *RageFileObjDirect::Copy() const
 {
 	int iErr;
-	RageFileObj *ret = MakeFileObjDirect( m_sPath, m_iMode, iErr );
+	RageFileObjDirect *ret = MakeFileObjDirect( m_sPath, m_iMode, iErr );
 
 	if( ret == NULL )
 		RageException::Throw( "Couldn't reopen \"%s\": %s", m_sPath.c_str(), strerror(iErr) );

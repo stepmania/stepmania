@@ -22,7 +22,7 @@ public:
 	RageSoundReader_WAV();
 	~RageSoundReader_WAV();
 	RageSoundReader_WAV( const RageSoundReader_WAV & ); /* not defined; don't use */
-	SoundReader *Copy() const;
+	RageSoundReader_WAV *Copy() const;
 
 	struct WavData
 	{

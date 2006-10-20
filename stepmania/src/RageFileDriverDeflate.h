@@ -19,7 +19,7 @@ public:
 	int WriteInternal( const void *pBuffer, size_t iBytes ) { SetError( "Not implemented" ); return -1; }
 	int SeekInternal( int iOffset );
 	int GetFileSize() const { return m_iUncompressedSize; }
-	RageFileBasic *Copy() const;
+	RageFileObjInflate *Copy() const;
 
 	void DeleteFileWhenFinished() { m_bFileOwned = true; }
 

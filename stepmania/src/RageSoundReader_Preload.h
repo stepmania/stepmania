@@ -51,7 +51,7 @@ public:
 	 * this is the last copy.) */
 	int GetReferenceCount() const;
 
-	SoundReader *Copy() const;
+	RageSoundReader_Preload *Copy() const;
 	~RageSoundReader_Preload() { }
 
 	/* Attempt to preload a sound.  pSound must be rewound. */

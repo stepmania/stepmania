@@ -26,7 +26,7 @@ RageFileDriverSlice::~RageFileDriverSlice()
 		delete m_pFile;
 }
 
-RageFileBasic *RageFileDriverSlice::Copy() const
+RageFileDriverSlice *RageFileDriverSlice::Copy() const
 {
 	RageFileDriverSlice *pRet = new RageFileDriverSlice( *this );
 	return pRet;

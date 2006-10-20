@@ -26,7 +26,7 @@ public:
 	RageFile();
 	~RageFile() { Close(); }
 	RageFile( const RageFile &cpy );
-	RageFileBasic *Copy() const;
+	RageFile *Copy() const;
 
 	/*
 	 * Use GetRealPath to get the path this file was opened with; use that if you

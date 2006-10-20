@@ -23,7 +23,7 @@ public:
 	RageSoundReader_MP3();
 	~RageSoundReader_MP3();
 	RageSoundReader_MP3( const RageSoundReader_MP3 & ); /* not defined; don't use */
-	SoundReader *Copy() const;
+	RageSoundReader_MP3 *Copy() const;
 
 private:
 	int SampleRate;

@@ -676,7 +676,7 @@ SoundReader_FileReader::OpenResult RageSoundReader_MP3::Open( RString filename_ 
 }
 
 
-SoundReader *RageSoundReader_MP3::Copy() const
+RageSoundReader_MP3 *RageSoundReader_MP3::Copy() const
 {
 	RageSoundReader_MP3 *ret = new RageSoundReader_MP3;
 

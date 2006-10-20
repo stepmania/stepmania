@@ -21,7 +21,7 @@ public:
 	int Read(char *buf, unsigned len);
 	RageSoundReader_Resample_Good();
 	virtual ~RageSoundReader_Resample_Good();
-	SoundReader *Copy() const;
+	RageSoundReader_Resample_Good *Copy() const;
 
 	/* Change the actual sample rate of a sound. */
 	void SetSampleRate( int hz );

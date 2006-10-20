@@ -36,7 +36,7 @@ RageSoundReader_Chain::~RageSoundReader_Chain()
 		delete it->second;
 }
 
-SoundReader *RageSoundReader_Chain::Copy() const
+RageSoundReader_Chain *RageSoundReader_Chain::Copy() const
 {
 	// XXX
 	FAIL_M("unimplemented");

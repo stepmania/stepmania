@@ -63,7 +63,7 @@ RageFileObjInflate::RageFileObjInflate( const RageFileObjInflate &cpy ):
 	*/
 }
 
-RageFileBasic *RageFileObjInflate::Copy() const
+RageFileObjInflate *RageFileObjInflate::Copy() const
 {
 	RageException::Throw( "Loading ZIPs from deflated ZIPs is currently disabled; see RageFileObjInflate." );
 

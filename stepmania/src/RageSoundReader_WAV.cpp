@@ -516,7 +516,7 @@ RageSoundReader_WAV::~RageSoundReader_WAV()
 	delete m_pImpl;
 }
 
-SoundReader *RageSoundReader_WAV::Copy() const
+RageSoundReader_WAV *RageSoundReader_WAV::Copy() const
 {
 	RageSoundReader_WAV *ret = new RageSoundReader_WAV;
 	ret->Open( m_sFilename );

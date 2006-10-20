@@ -619,7 +619,7 @@ int RageSoundReader_Resample_Good::Read( char *bufp, unsigned len )
 	return iFramesRead * iBytesPerFrame;
 }
 
-SoundReader *RageSoundReader_Resample_Good::Copy() const
+RageSoundReader_Resample_Good *RageSoundReader_Resample_Good::Copy() const
 {
 	SoundReader *pSource = m_pSource->Copy();
 	RageSoundReader_Resample_Good *ret = new RageSoundReader_Resample_Good;

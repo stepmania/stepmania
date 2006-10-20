@@ -12,7 +12,7 @@ public:
 	RageFileDriverSlice( RageFileBasic *pFile, int iOffset, int iFileSize );
 	RageFileDriverSlice( const RageFileDriverSlice &cpy );
 	~RageFileDriverSlice();
-	RageFileBasic *Copy() const;
+	RageFileDriverSlice *Copy() const;
 
 	void DeleteFileWhenFinished() { m_bFileOwned = true; }
 

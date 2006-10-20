@@ -92,7 +92,7 @@ RageFileObjMem::RageFileObjMem( const RageFileObjMem &cpy ):
 	RageFileObjMemFile::AddReference( m_pFile );
 }
 
-RageFileBasic *RageFileObjMem::Copy() const
+RageFileObjMem *RageFileObjMem::Copy() const
 {
 	RageFileObjMem *pRet = new RageFileObjMem( *this );
 	return pRet;

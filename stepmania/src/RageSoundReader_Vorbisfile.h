@@ -23,7 +23,7 @@ public:
 	unsigned GetNumChannels() const { return channels; }
 	RageSoundReader_Vorbisfile();
 	~RageSoundReader_Vorbisfile();
-	SoundReader *Copy() const;
+	RageSoundReader_Vorbisfile *Copy() const;
 
 private:
 	OggVorbis_File *vf;

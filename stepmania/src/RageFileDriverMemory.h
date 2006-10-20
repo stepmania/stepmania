@@ -19,7 +19,7 @@ public:
 	int WriteInternal( const void *buffer, size_t bytes );
 	int SeekInternal( int offset );
 	int GetFileSize() const;
-	RageFileBasic *Copy() const;
+	RageFileObjMem *Copy() const;
 
 	/* Retrieve the contents of this file. */
 	const RString &GetString() const;

@@ -25,7 +25,7 @@ RageFile::RageFile( const RageFile &cpy ):
 	m_Mode = cpy.m_Mode;
 }
 
-RageFileBasic *RageFile::Copy() const
+RageFile *RageFile::Copy() const
 {
 	return new RageFile( *this );
 }

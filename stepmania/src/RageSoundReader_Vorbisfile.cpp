@@ -267,7 +267,7 @@ RageSoundReader_Vorbisfile::~RageSoundReader_Vorbisfile()
 	delete vf;
 }
 
-SoundReader *RageSoundReader_Vorbisfile::Copy() const
+RageSoundReader_Vorbisfile *RageSoundReader_Vorbisfile::Copy() const
 {
 	const RageFileBasic *pFrom = (RageFileBasic *) vf->datasource;
 	RageFileBasic *pFile = pFrom->Copy();
