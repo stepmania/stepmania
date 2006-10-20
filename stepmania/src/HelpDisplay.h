@@ -13,7 +13,7 @@ public:
 	HelpDisplay();
 	void Load( const RString &sType );
 
-	virtual Actor *Copy() const;
+	virtual HelpDisplay *Copy() const;
 
 	void SetTips( const vector<RString> &arrayTips ) { SetTips( arrayTips, arrayTips ); }
 	void SetTips( const vector<RString> &arrayTips, const vector<RString> &arrayTipsAlt );

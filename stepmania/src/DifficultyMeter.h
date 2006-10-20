@@ -23,7 +23,7 @@ public:
 	void Load( const RString &sType );
 
 	void LoadFromNode( const XNode* pNode );
-	virtual Actor *Copy() const;
+	virtual DifficultyMeter *Copy() const;
 
 	void SetFromGameState( PlayerNumber pn );
 	void SetFromMeterAndDifficulty( int iMeter, Difficulty dc );

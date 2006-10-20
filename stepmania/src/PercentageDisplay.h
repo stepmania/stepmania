@@ -19,7 +19,7 @@ public:
 	void Load( const PlayerState *pPlayerState, const PlayerStageStats *pPlayerStageStats, const RString &sMetricsGroup, bool bAutoRefresh );
 	void Update( float fDeltaTime );
 	virtual void LoadFromNode( const XNode* pNode );
-	virtual Actor *Copy() const;
+	virtual PercentageDisplay *Copy() const;
 
 	static RString FormatPercentScore( float fPercentDancePoints );
 

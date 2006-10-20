@@ -16,7 +16,7 @@ class DifficultyList: public ActorFrame
 public:
 	DifficultyList();
 	virtual ~DifficultyList();
-	virtual Actor *Copy() const;
+	virtual DifficultyList *Copy() const;
 	virtual void LoadFromNode( const XNode* pNode );
 
 	void SetFromGameState();

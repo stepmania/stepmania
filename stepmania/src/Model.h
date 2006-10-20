@@ -17,7 +17,7 @@ class Model : public Actor
 public:
 	Model();
 	virtual ~Model();
-	virtual Actor *Copy() const;
+	virtual Model *Copy() const;
 
 	void	Clear();
 	void	Load( const RString &sFile );

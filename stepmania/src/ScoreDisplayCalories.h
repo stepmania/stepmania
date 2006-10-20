@@ -16,7 +16,7 @@ public:
 	virtual void Update( float fDelta );
 
 	void LoadFromNode( const XNode* pNode );
-	virtual Actor *Copy() const;
+	virtual ScoreDisplayCalories *Copy() const;
 
 	void PlayCommand( const RString &sCommandName );
 

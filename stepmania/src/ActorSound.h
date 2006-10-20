@@ -10,7 +10,7 @@ class ActorSound: public Actor
 {
 public:
 	virtual ~ActorSound() { }
-	virtual Actor *Copy() const;
+	virtual ActorSound *Copy() const;
 
 	void Load( const RString &sPath );
 	void Play();

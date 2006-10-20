@@ -15,7 +15,7 @@ class Banner : public Sprite
 public:
 	Banner();
 	virtual ~Banner() { }
-	virtual Actor *Copy() const;
+	virtual Banner *Copy() const;
 
 	void Load( RageTextureID ID, bool bIsBanner );
 	virtual void Load( RageTextureID ID ) { Load( ID, true ); }

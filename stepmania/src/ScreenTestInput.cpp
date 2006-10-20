@@ -27,7 +27,7 @@ public:
 		BitmapText::Update( fDeltaTime );
 	}
 
-	virtual Actor *Copy() const;
+	virtual DeviceList *Copy() const;
 };
 
 REGISTER_ACTOR_CLASS( DeviceList );
@@ -37,7 +37,7 @@ static LocalizedString SECONDARY	( "ScreenTestInput", "secondary" );
 static LocalizedString NOT_MAPPED	( "ScreenTestInput", "not mapped" );
 class InputList: public BitmapText
 {
-	virtual Actor *Copy() const;
+	virtual InputList *Copy() const;
 
 	void Update( float fDeltaTime )
 	{

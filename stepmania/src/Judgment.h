@@ -12,7 +12,7 @@ class Judgment : public ActorFrame
 {
 public:
 	Judgment();
-	virtual Actor *Copy() const;
+	virtual Judgment *Copy() const;
 	void LoadNormal();
 	void LoadNormal( const RString &sPath );
 	void LoadFromMultiPlayer( MultiPlayer mp );

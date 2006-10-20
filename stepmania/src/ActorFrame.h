@@ -14,7 +14,7 @@ public:
 
 	virtual void InitState();
 	void LoadFromNode( const XNode* pNode );
-	virtual Actor *Copy() const;
+	virtual ActorFrame *Copy() const;
 
 	virtual void AddChild( Actor* pActor );
 	virtual void RemoveChild( Actor* pActor );
@@ -89,7 +89,7 @@ class ActorFrameAutoDeleteChildren : public ActorFrame
 public:
 	ActorFrameAutoDeleteChildren() { DeleteChildrenWhenDone(true); }
 	virtual bool AutoLoadChildren() const { return true; }
-	virtual Actor *Copy() const;
+	virtual ActorFrameAutoDeleteChildren *Copy() const;
 };
 
 #endif

@@ -19,7 +19,7 @@ public:
 
 	void Load();
 	virtual void LoadFromNode( const XNode* pNode );
-	virtual Actor *Copy() const;
+	virtual OptionIconRow *Copy() const;
 	void SetFromGameState( PlayerNumber pn );
 
 	//

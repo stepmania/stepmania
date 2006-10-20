@@ -28,7 +28,7 @@ public:
 	void PositionItems();
 
 	void LoadFromNode( const XNode *pNode );
-	virtual Actor *Copy() const;
+	virtual ActorScroller *Copy() const;
 	
 	void SetLoop( bool bLoop )					{ m_bLoop = bLoop; }
 	void SetNumItemsToDraw( float fNumItemsToDraw )			{ m_fNumItemsToDraw = fNumItemsToDraw; }
@@ -79,7 +79,7 @@ class ActorScrollerAutoDeleteChildren : public ActorScroller
 public:
 	ActorScrollerAutoDeleteChildren() { DeleteChildrenWhenDone(true); }
 	virtual bool AutoLoadChildren() const { return true; }
-	virtual Actor *Copy() const;
+	virtual ActorScrollerAutoDeleteChildren *Copy() const;
 };
 
 #endif

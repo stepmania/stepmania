@@ -22,7 +22,7 @@ class HiddenActor: public Actor
 {
 public:
 	HiddenActor() { SetHidden(true); }
-	virtual Actor *Copy() const;
+	virtual HiddenActor *Copy() const;
 };
 REGISTER_ACTOR_CLASS_WITH_NAME( HiddenActor, Actor )
 

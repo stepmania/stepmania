@@ -16,7 +16,7 @@ public:
 	virtual void DrawPrimitives();
 
 	void LoadFromNode( const XNode* pNode );
-	virtual Actor *Copy() const;
+	virtual ActorProxy *Copy() const;
 
 	Actor *GetTarget() { return m_pActorTarget; }
 	void SetTarget( Actor *pTarget ) { m_pActorTarget = pTarget; }

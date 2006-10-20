@@ -15,7 +15,7 @@ public:
 	}	
 
 	void LoadFromNode( const XNode* pNode );
-	virtual Actor *Copy() const;
+	virtual Quad *Copy() const;
 };
 
 #endif

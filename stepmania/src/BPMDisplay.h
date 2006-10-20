@@ -15,7 +15,7 @@ class BPMDisplay : public BitmapText
 {
 public:
 	BPMDisplay();
-	virtual Actor *Copy() const;
+	virtual BPMDisplay *Copy() const;
 	void Load();
 	virtual void Update( float fDeltaTime ); 
 	void LoadFromNode( const XNode *pNode );

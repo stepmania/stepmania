@@ -102,7 +102,7 @@ public:
 
 	}
 
-	virtual Actor *Copy() const;
+	virtual GraphLine *Copy() const;
 
 private:
 	vector<RageSpriteVertex> m_Quads;
@@ -136,7 +136,7 @@ public:
 		DISPLAY->DrawQuadStrip( m_Slices, ARRAYLEN(m_Slices) );
 	}
 
-	virtual Actor *Copy() const;
+	virtual GraphBody *Copy() const;
 
 	RageSpriteVertex m_Slices[2*VALUE_RESOLUTION];
 };

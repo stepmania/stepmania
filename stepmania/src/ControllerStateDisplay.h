@@ -29,7 +29,7 @@ public:
 	virtual void Update( float fDelta );
 	bool IsLoaded() const { return m_bIsLoaded; }
 
-	virtual Actor *Copy() const;
+	virtual ControllerStateDisplay *Copy() const;
 
 	//
 	// Lua

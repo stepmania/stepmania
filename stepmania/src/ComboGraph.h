@@ -13,7 +13,7 @@ public:
 	ComboGraph();
 	void Load( const StageStats &s, const PlayerStageStats &pss );
 	virtual void LoadFromNode( const XNode* pNode );
-	virtual Actor *Copy() const;
+	virtual ComboGraph *Copy() const;
 	virtual bool AutoLoadChildren() const { return true; }
 
 	//

@@ -16,7 +16,7 @@ public:
 	void LoadFromAniDir( const RString &sAniDir );
 	void LoadFromNode( const XNode* pNode );
 
-	virtual Actor *Copy() const;
+	virtual BGAnimation *Copy() const;
 
 protected:
 	void AddLayersFromAniDir( const RString &_sAniDir, const XNode *pNode );

@@ -9,7 +9,7 @@
 class DynamicActorScroller: public ActorScroller
 {
 public:
-	virtual Actor *Copy() const;
+	virtual DynamicActorScroller *Copy() const;
 	void LoadFromNode( const XNode *pNode );
 
 protected:
@@ -24,7 +24,7 @@ class DynamicActorScrollerAutoDeleteChildren: public DynamicActorScroller
 public:
 	DynamicActorScrollerAutoDeleteChildren() { DeleteChildrenWhenDone(true); }
 	virtual bool AutoLoadChildren() const { return true; }
-	virtual Actor *Copy() const;
+	virtual DynamicActorScrollerAutoDeleteChildren *Copy() const;
 };
 
 #endif

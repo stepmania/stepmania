@@ -11,7 +11,7 @@ class FadingBanner : public ActorFrame
 {
 public:
 	FadingBanner();
-	virtual Actor *Copy() const;
+	virtual FadingBanner *Copy() const;
 
 	void ScaleToClipped( float fWidth, float fHeight );
 

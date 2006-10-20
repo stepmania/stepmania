@@ -10,7 +10,7 @@ class MusicSortDisplay : public Sprite
 {
 public:
 	MusicSortDisplay();
-	virtual Actor *Copy() const;
+	virtual MusicSortDisplay *Copy() const;
 	void Set( SortOrder so );
 	virtual void HandleMessage( const RString& sMessage );
 

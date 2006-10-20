@@ -51,7 +51,7 @@ class PaneDisplay: public ActorFrame
 {
 public:
 	PaneDisplay();
-	virtual Actor *Copy() const;
+	virtual PaneDisplay *Copy() const;
 
 	void Load( const RString &sMetricsGroup, PlayerNumber pn );
 	void SetFromGameState();

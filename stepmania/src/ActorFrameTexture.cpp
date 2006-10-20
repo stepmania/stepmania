@@ -5,7 +5,7 @@
 #include "ActorUtil.h"
 
 REGISTER_ACTOR_CLASS_WITH_NAME( ActorFrameTextureAutoDeleteChildren, ActorFrameTexture )
-Actor *ActorFrameTexture::Copy() const { return new ActorFrameTexture(*this); }
+ActorFrameTexture *ActorFrameTexture::Copy() const { return new ActorFrameTexture(*this); }
 
 ActorFrameTexture::ActorFrameTexture()
 {

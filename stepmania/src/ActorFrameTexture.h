@@ -10,7 +10,7 @@ public:
 	ActorFrameTexture();
 	ActorFrameTexture( const ActorFrameTexture &cpy );
 	virtual ~ActorFrameTexture();
-	virtual Actor *Copy() const;
+	virtual ActorFrameTexture *Copy() const;
 
 	/* Set the texture name, which can be used with RageTextureManager (and users,
 	 * eg. Sprite) to load the texture.  If no name is supplied, a unique one will
@@ -46,7 +46,7 @@ class ActorFrameTextureAutoDeleteChildren : public ActorFrameTexture
 public:
 	ActorFrameTextureAutoDeleteChildren() { DeleteChildrenWhenDone(true); }
 	virtual bool AutoLoadChildren() const { return true; }
-	virtual Actor *Copy() const;
+	virtual ActorFrameTextureAutoDeleteChildren *Copy() const;
 };
 
 #endif

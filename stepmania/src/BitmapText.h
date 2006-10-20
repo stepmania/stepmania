@@ -17,7 +17,7 @@ public:
 	virtual ~BitmapText();
 
 	virtual void LoadFromNode( const XNode* pNode );
-	virtual Actor *Copy() const;
+	virtual BitmapText *Copy() const;
 
 	bool LoadFromFont( const RString& sFontName );
 	bool LoadFromTextureAndChars( const RString& sTexturePath, const RString& sChars );

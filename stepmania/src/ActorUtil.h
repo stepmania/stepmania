@@ -19,7 +19,7 @@ Actor *CreateActor() { return new T; }
 		Register##className() { ActorUtil::Register(#externalClassName, CreateActor<className>); } \
 	}; \
 	static Register##className register##className; \
-	Actor *className::Copy() const { return new className(*this); }
+	className *className::Copy() const { return new className(*this); }
 
 #define REGISTER_ACTOR_CLASS( className ) REGISTER_ACTOR_CLASS_WITH_NAME( className, className )
 

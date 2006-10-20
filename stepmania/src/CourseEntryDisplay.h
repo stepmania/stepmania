@@ -16,7 +16,7 @@ class CourseEntryDisplay : public ActorFrame
 {
 public:
 	CourseEntryDisplay();
-	virtual Actor *Copy() const;
+	virtual CourseEntryDisplay *Copy() const;
 
 	void Load();
 	void LoadFromNode( const XNode* pNode );

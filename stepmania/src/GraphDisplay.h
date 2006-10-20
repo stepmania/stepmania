@@ -13,7 +13,7 @@ class GraphDisplay: public ActorFrame
 public:
 	GraphDisplay();
 	~GraphDisplay();
-	virtual Actor *Copy() const;
+	virtual GraphDisplay *Copy() const;
 	virtual void LoadFromNode( const XNode* pNode );
 
 	void LoadFromStageStats( const StageStats &ss, const PlayerStageStats &s );

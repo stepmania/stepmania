@@ -20,7 +20,7 @@ public:
 	bool Load( RString sFilePath );
 	virtual void Load( RageTextureID ID ) { Load( ID.filename ); }
 	virtual void LoadFromNode( const XNode* pNode );
-	virtual Actor *Copy() const;
+	virtual DifficultyIcon *Copy() const;
 
 	void SetPlayer( PlayerNumber pn );
 	void Unset();

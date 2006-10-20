@@ -16,7 +16,7 @@ public:
 	virtual ~Sprite();
 
 	void LoadFromNode( const XNode* pNode );
-	virtual Actor *Copy() const;
+	virtual Sprite *Copy() const;
 
 	virtual bool EarlyAbortDraw() const;
 	virtual void DrawPrimitives();

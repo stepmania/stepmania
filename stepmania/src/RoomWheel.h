@@ -26,7 +26,7 @@ public:
 
 	void Load( RString sType );
 	virtual void LoadFromWheelItemData( const WheelItemBaseData* pWID );
-	virtual Actor *Copy() const { return new RoomWheelItem(*this); }
+	virtual RoomWheelItem *Copy() const { return new RoomWheelItem(*this); }
 
 private:
 	BitmapText m_Desc;

@@ -23,7 +23,7 @@ public:
 	MusicWheelItem(RString sType = "MusicWheelItem");
 	MusicWheelItem( const MusicWheelItem &cpy );
 	virtual ~MusicWheelItem();
-	virtual Actor *Copy() const { return new MusicWheelItem(*this); }
+	virtual MusicWheelItem *Copy() const { return new MusicWheelItem(*this); }
 
 	virtual void LoadFromWheelItemData( const WheelItemBaseData* pWID );
 	virtual void HandleMessage( const RString& sMessage );

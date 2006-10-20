@@ -12,7 +12,7 @@ class WorkoutGraph : public ActorFrame
 public:
 	WorkoutGraph();
 	~WorkoutGraph();
-	virtual Actor *Copy() const;
+	virtual WorkoutGraph *Copy() const;
 	
 	void Load();
 	void LoadFromNode( const XNode* pNode );

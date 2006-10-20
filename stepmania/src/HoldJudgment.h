@@ -10,7 +10,7 @@ class HoldJudgment : public ActorFrame
 {
 public:
 	HoldJudgment();
-	virtual Actor *Copy() const;
+	virtual HoldJudgment *Copy() const;
 	void Load( const RString &sPath );
 	void LoadFromNode( const XNode* pNode );
 
