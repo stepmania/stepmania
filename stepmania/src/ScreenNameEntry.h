@@ -3,13 +3,13 @@
 #ifndef SCREEN_NAME_ENTRY_H
 #define SCREEN_NAME_ENTRY_H
 
-#include "Screen.h"
+#include "ScreenWithMenuElements.h"
 #include "BitmapText.h"
 #include "Transition.h"
 #include "ReceptorArrowRow.h"
 #include "MenuTimer.h"
 
-class ScreenNameEntry : public Screen
+class ScreenNameEntry : public ScreenWithMenuElements
 {
 public:
 	ScreenNameEntry();
@@ -17,13 +17,10 @@ public:
 	virtual ~ScreenNameEntry();
 
 	virtual void Update( float fDeltaTime );
-	//virtual void DrawPrimitives();
 	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 	virtual void MenuStart( const InputEventPlus &input );
-	virtual void BeginScreen();
-	virtual void EndScreen();
 
 	enum { ABS_MAX_RANKING_NAME_LENGTH = 10 };
 private:
@@ -52,11 +49,6 @@ private:
 	ReceptorArrowRow	m_ReceptorArrowRow[NUM_PLAYERS];
 	BitmapText		m_textSelectedChars[NUM_PLAYERS][ABS_MAX_RANKING_NAME_LENGTH];
 	BitmapText		m_textCategory[NUM_PLAYERS];
-	MenuTimer		m_Timer;
-
-	Transition		m_In;
-	Transition		m_Out;
-
 	RageSound		m_soundStep;
 
 	float			m_fFakeBeat;
@@ -65,7 +57,6 @@ private:
 
 	ScrollingText		m_Text[NUM_PLAYERS];
 	vector<int>		m_ColToStringIndex[NUM_PLAYERS];
-	RString			m_sPathToMusic;
 };
 
 #endif

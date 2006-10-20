@@ -27,8 +27,6 @@
 //
 // Defines specific to ScreenNameEntry
 //
-#define TIMER_X				THEME->GetMetricF(m_sName,"TimerX")
-#define TIMER_Y				THEME->GetMetricF(m_sName,"TimerY")
 #define CATEGORY_Y			THEME->GetMetricF(m_sName,"CategoryY")
 #define CATEGORY_ZOOM			THEME->GetMetricF(m_sName,"CategoryZoom")
 #define CHARS_ZOOM_SMALL		THEME->GetMetricF(m_sName,"CharsZoomSmall")
@@ -120,7 +118,7 @@ float ScreenNameEntry::ScrollingText::GetClosestCharYOffset( float fFakeBeat ) c
 REGISTER_SCREEN_CLASS( ScreenNameEntry );
 ScreenNameEntry::ScreenNameEntry()
 {
-#if 0
+#if 1
 		// DEBUGGING STUFF
 	GAMESTATE->m_pCurGame.Set( GAMEMAN->GetDefaultGame() );
 	GAMESTATE->m_pCurStyle.Set( GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame) );
@@ -132,7 +130,7 @@ ScreenNameEntry::ScreenNameEntry()
 
 void ScreenNameEntry::Init()
 {
-	Screen::Init();
+	ScreenWithMenuElements::Init();
 
 	// update cache
 	g_fCharsZoomSmall = CHARS_ZOOM_SMALL;
@@ -158,7 +156,7 @@ void ScreenNameEntry::Init()
 		GAMESTATE->GetRankingFeats( p, aFeats[p] );
 		GAMESTATE->JoinPlayer( p );
 		m_bStillEnteringName[p] = aFeats[p].size()>0;
-#if 0 // Debugging.
+#if 1 // Debugging.
 		m_bStillEnteringName[p] = p == PLAYER_1;
 #endif
 	}
@@ -268,40 +266,10 @@ void ScreenNameEntry::Init()
 	}
 
 
-	m_Timer.Load();
-	if( !PREFSMAN->m_bMenuTimer )
-		m_Timer.Disable();
-	else
-		m_Timer.SetSeconds(TIMER_SECONDS);
-	m_Timer.SetXY( TIMER_X, TIMER_Y );
-	this->AddChild( &m_Timer );
-
-	m_In.Load( THEME->GetPathB(m_sName,"in") );
-	m_In.StartTransitioning();
-	m_In.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
-	this->AddChild( &m_In );
-
-	m_Out.Load( THEME->GetPathB(m_sName,"out") );
-	m_Out.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
-	this->AddChild( &m_Out );
-
 	this->SortByDrawOrder();
 
 	m_soundStep.Load( THEME->GetPathS(m_sName,"step") );
-	m_sPathToMusic = THEME->GetPathS( m_sName, "music" );
 	m_fFakeBeat = 0;
-}
-
-void ScreenNameEntry::BeginScreen()
-{
-	Screen::BeginScreen();
-	SOUND->PlayMusic( m_sPathToMusic );
-}
-
-void ScreenNameEntry::EndScreen()
-{
-	SOUND->StopMusic();
-	Screen::EndScreen();
 }
 
 bool ScreenNameEntry::AnyStillEntering() const
@@ -325,14 +293,14 @@ void ScreenNameEntry::Update( float fDelta )
 	m_fFakeBeat += fDelta * FAKE_BEATS_PER_SEC;
 	GAMESTATE->m_fSongBeat = m_fFakeBeat;
 
-	Screen::Update(fDelta);
+	ScreenWithMenuElements::Update(fDelta);
 }
 
 void ScreenNameEntry::Input( const InputEventPlus &input )
 {
 	LOG->Trace( "ScreenNameEntry::Input()" );
 
-	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
+	if( IsTransitioning() )
 		return;	
 
 	if( input.type != IET_FIRST_PRESS || !input.GameI.IsValid() )
@@ -352,14 +320,14 @@ void ScreenNameEntry::Input( const InputEventPlus &input )
 		}
 	}
 
-	Screen::Input( input );
+	ScreenWithMenuElements::Input( input );
 }
 
 void ScreenNameEntry::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_MenuTimer )
 	{
-		if( !m_Out.IsTransitioning() )
+		if( !IsTransitioning() )
 		{
 			InputEventPlus iep;
 			FOREACH_PlayerNumber( p )
@@ -370,7 +338,7 @@ void ScreenNameEntry::HandleScreenMessage( const ScreenMessage SM )
 		}
 	}
 
-	Screen::HandleScreenMessage( SM );
+	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
 
@@ -395,7 +363,7 @@ void ScreenNameEntry::MenuStart( const InputEventPlus &input )
 	GAMESTATE->StoreRankingName( pn, m_sSelectedName[pn] );
 
 	if( !AnyStillEntering() && !m_Out.IsTransitioning() )
-		m_Out.StartTransitioning( SM_GoToNextScreen );
+		StartTransitioningScreen( SM_GoToNextScreen );
 }
 
 /*
