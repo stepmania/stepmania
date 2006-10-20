@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual C++ Express 2005
+# Visual Studio 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StepMania-net2005", "StepMania-net2005.vcproj", "{AF209DBD-24BD-4356-8DFE-41751B221195}"
 EndProject
 Global
@@ -10,8 +10,8 @@ Global
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{AF209DBD-24BD-4356-8DFE-41751B221195}.Debug|Win32.ActiveCfg = Debug|Win32
-		{AF209DBD-24BD-4356-8DFE-41751B221195}.Debug|Win32.Build.0 = Debug|Win32
+		{AF209DBD-24BD-4356-8DFE-41751B221195}.Debug|Win32.ActiveCfg = Release|Win32
+		{AF209DBD-24BD-4356-8DFE-41751B221195}.Debug|Win32.Build.0 = Release|Win32
 		{AF209DBD-24BD-4356-8DFE-41751B221195}.FastDebug|Win32.ActiveCfg = FastDebug|Win32
 		{AF209DBD-24BD-4356-8DFE-41751B221195}.FastDebug|Win32.Build.0 = FastDebug|Win32
 		{AF209DBD-24BD-4356-8DFE-41751B221195}.Release|Win32.ActiveCfg = Release|Win32
