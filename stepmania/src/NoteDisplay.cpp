@@ -138,11 +138,9 @@ static NoteResource *MakeNoteResource( const RString &sButton, const RString &sE
 		/* Make sure pActor is a Sprite (or something derived from Sprite). */
 		if( bSpriteOnly )
 		{
-			Lua *L = LUA->Get();
-			pRes->m_pActor->PushSelf( L );
-			Luna<Sprite>::check( L, lua_gettop(L) );
-			lua_pop( L, 1 );
-			LUA->Release( L );
+			Sprite *pSprite = dynamic_cast<Sprite *>( pRes->m_pActor );
+			if( pSprite == NULL )
+				RageException::Throw( "%s: must be a Sprite", nsap.sPath.c_str() );
 		}
 
 		g_NoteResource[nsap] = pRes;
@@ -193,7 +191,9 @@ Actor *MakeRefcountedActor( const RString &sButton, const RString &sElement )
 Sprite *MakeRefcountedSprite( const RString &sButton, const RString &sElement )
 {
 	NoteResource *pRes = MakeNoteResource( sButton, sElement, true );
-	return (Sprite *) pRes->m_pActor; /* XXX ick */
+	Sprite *pSprite = dynamic_cast<Sprite *>( pRes->m_pActor );
+	ASSERT( pSprite != NULL );
+	return pSprite;
 }
 
 NoteColorActor::NoteColorActor()
