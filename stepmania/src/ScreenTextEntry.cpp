@@ -325,7 +325,7 @@ void ScreenTextEntryVisual::Init()
 			for( int x=0; x<KEYS_PER_ROW; ++x )
 			{
 				BitmapText *&pbt = m_ptextKeys[r][x];
-				pbt = dynamic_cast<BitmapText *>( text.Copy() ); // XXX: Copy() should be covariant
+				pbt = text.Copy();
 				this->AddChild( pbt );
 
 				RString s = g_szKeys[r][x];

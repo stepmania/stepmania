@@ -83,7 +83,7 @@ void ComboGraph::Load( const StageStats &s, const PlayerStageStats &pss )
 		if( !bIsMax )
 			continue;
 
-		BitmapText *pText = dynamic_cast<BitmapText*>( m_pMaxComboText->Copy() ); // XXX Copy should be covariant
+		BitmapText *pText = m_pMaxComboText->Copy();
 
 		const float fStart = SCALE( combo.fStartSecond, fFirstSecond, fLastSecond, 0.0f, 1.0f );
 		const float fSize = SCALE( combo.fSizeSeconds, 0, fLastSecond-fFirstSecond, 0.0f, 1.0f );

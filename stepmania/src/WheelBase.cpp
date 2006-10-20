@@ -60,8 +60,7 @@ void WheelBase::Load( RString sType )
 	ActorUtil::LoadAllCommands( *pTempl, m_sName );
 	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 	{
-		Actor *pActor = pTempl->Copy();
-		WheelItemBase *pItem = dynamic_cast<WheelItemBase *>( pActor ); // XXX: ugly cast
+		WheelItemBase *pItem = pTempl->Copy();
 		DEBUG_ASSERT( pItem );
 		m_WheelBaseItems.push_back( pItem );
 	}
