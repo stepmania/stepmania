@@ -211,12 +211,12 @@ void ScreenNameEntry::Init()
 
 
 		const Style* pStyle = GAMESTATE->GetCurrentStyle();
-
+		const int iMaxCols = min( ABS_MAX_RANKING_NAME_LENGTH, pStyle->m_iColsPerPlayer );
 		m_ColToStringIndex[p].insert(m_ColToStringIndex[p].begin(), pStyle->m_iColsPerPlayer, -1);
 		int CurrentStringIndex = 0;
 		vector<float> xs;
 
-		for( int iCol=0; iCol<pStyle->m_iColsPerPlayer; iCol++ )
+		for( int iCol=0; iCol<iMaxCols; ++iCol )
 		{
 			if( CurrentStringIndex == MAX_RANKING_NAME_LENGTH )
 				break; /* We have enough columns. */
