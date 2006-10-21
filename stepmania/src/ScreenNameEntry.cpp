@@ -20,6 +20,11 @@
 #include "InputEventPlus.h"
 #include "InputMapper.h"
 
+// used in ScreenTestMode section
+#include "SongManager.h"
+#include "song.h"
+#include "StatsManager.h"
+
 
 //
 // Defines specific to ScreenNameEntry
@@ -112,6 +117,56 @@ float ScreenNameEntry::ScrollingText::GetClosestCharYOffset( float fFakeBeat ) c
 }
 
 REGISTER_SCREEN_CLASS( ScreenNameEntry );
+ScreenNameEntry::ScreenNameEntry()
+{
+	if( PREFSMAN->m_bScreenTestMode )
+	{
+		GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
+		GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;
+		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
+		GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle( GAMEMAN->GetDefaultGame(),"versus") );
+		StageStats ss;
+		for( int z = 0; z < 3; ++z )
+		{
+			ss.vpPlayedSongs.push_back( SONGMAN->GetRandomSong() );
+			ss.vpPossibleSongs = ss.vpPlayedSongs;
+			ss.pStyle = GAMESTATE->GetCurrentStyle();
+			ss.playMode = GAMESTATE->m_PlayMode;
+			ASSERT( ss.vpPlayedSongs[0]->GetAllSteps().size() );
+			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+
+			FOREACH_PlayerNumber( p )
+			{
+				Steps *pSteps = ss.vpPlayedSongs[0]->GetAllSteps()[0];
+				ss.m_player[p].vpPlayedSteps.push_back( pSteps );
+				GAMESTATE->m_pCurSteps[p].Set( pSteps );
+				ss.m_player[p].iPossibleDancePoints = 100;
+				ss.m_player[p].iActualDancePoints = 100;
+				ss.m_player[p].iScore = 100;
+				ss.m_player[p].iPossibleDancePoints = 1000;
+				ss.m_player[p].iActualDancePoints = 985;
+				ss.m_player[p].vpPossibleSteps.push_back( pSteps );
+
+				HighScore hs;
+				hs.SetGrade( Grade_Tier03 );
+				hs.SetPercentDP( ss.m_player[p].GetPercentDancePoints() );
+				hs.SetScore( ss.m_player[p].iScore );
+				hs.SetDateTime( DateTime::GetNowDateTime() );
+				int a, b;
+				PROFILEMAN->AddStepsScore( ss.vpPlayedSongs[0], pSteps, p, hs, a, b );
+				PROFILEMAN->AddStepsScore( ss.vpPlayedSongs[0], pSteps, p, hs, a, b );
+				PROFILEMAN->AddStepsScore( ss.vpPlayedSongs[0], pSteps, p, hs, a, b );
+				PROFILEMAN->AddStepsScore( ss.vpPlayedSongs[0], pSteps, p, hs, a, b );
+				PROFILEMAN->AddStepsScore( ss.vpPlayedSongs[0], pSteps, p, hs, a, b );
+				PROFILEMAN->AddCategoryScore( st, RANKING_A, p, hs, a, b );
+			}
+
+			STATSMAN->m_vPlayedStageStats.push_back( ss );
+		}
+
+	}
+}
 
 void ScreenNameEntry::Init()
 {
