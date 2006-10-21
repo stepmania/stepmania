@@ -11,6 +11,7 @@
 class ScreenNameEntry : public ScreenWithMenuElements
 {
 public:
+	ScreenNameEntry();
 	virtual void Init();
 	virtual void Update( float fDeltaTime );
 	virtual void Input( const InputEventPlus &input );
