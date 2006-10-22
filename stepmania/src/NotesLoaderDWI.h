@@ -29,6 +29,13 @@ public:
 	void GetApplicableFiles( const RString &sPath, vector<RString> &out );
 	bool Loadable( const RString &sPath );
 	bool LoadFromDir( const RString &sPath, Song &out );
+private:
+	RString m_sTempSMTitle;
+	RString m_sTempSMSubTitle;
+	RString m_sTempSMArtist;
+	RString m_sTempTitle;
+	RString m_sTempSubTitle;
+	RString m_sTempArtist;
 };
 
 #endif

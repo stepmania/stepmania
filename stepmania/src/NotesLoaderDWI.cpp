@@ -367,6 +367,7 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 		LOG->UserLog( "Song file", sPath, "couldn't be opened: %s", msd.GetError().c_str() );
 		return false;
 	}
+	m_sTempSMTitle = m_sTempSMSubTitle = m_sTempSMArtist = m_sTempTitle = m_sTempSubTitle = m_sTempArtist = ""; 
 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
@@ -384,20 +385,38 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 		if( 0==stricmp(sValueName,"FILE") )
 			out.m_sMusicFile = sParams[1];
 
+		/* As far as I know, there's no spec on the encoding of the texts. (I didn't
+		 * look very hard, though.)  I've seen at least one file in ISO-8859-1. */
+		
+		else if ( 0==stricmp(sValueName,"SMTITLE") )
+		{
+			m_sTempSMTitle = sParams[1];
+			ConvertString( m_sTempSMTitle, "utf-8,english" );
+		}
+
+		else if ( 0==stricmp(sValueName,"SMSUBTITLE") )
+		{
+			m_sTempSMSubTitle = sParams[1];
+			ConvertString( m_sTempSMSubTitle, "utf-8,english" );
+		}
+
+		else if ( 0==stricmp(sValueName,"SMARTIST") )
+		{
+			m_sTempSMArtist = sParams[1];
+			ConvertString( m_sTempSMArtist, "utf-8,english" );
+		}
+		
 		else if( 0==stricmp(sValueName,"TITLE") )
 		{
-			GetMainAndSubTitlesFromFullTitle( sParams[1], out.m_sMainTitle, out.m_sSubTitle );
-
-			/* As far as I know, there's no spec on the encoding of this text. (I didn't
-			 * look very hard, though.)  I've seen at least one file in ISO-8859-1. */
-			ConvertString( out.m_sMainTitle, "utf-8,english" );
-			ConvertString( out.m_sSubTitle, "utf-8,english" );
+			GetMainAndSubTitlesFromFullTitle( sParams[1], m_sTempTitle, m_sTempSubTitle );
+			ConvertString( m_sTempTitle, "utf-8,english" );
+			ConvertString( m_sTempSubTitle, "utf-8,english" );
 		}
 
 		else if( 0==stricmp(sValueName,"ARTIST") )
 		{
-			out.m_sArtist = sParams[1];
-			ConvertString( out.m_sArtist, "utf-8,english" );
+			m_sTempArtist = sParams[1];
+			ConvertString( m_sTempArtist, "utf-8,english" );
 		}
 
 		else if( 0==stricmp(sValueName,"CDTITLE") )
@@ -413,6 +432,7 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 				LOG->UserLog( "Song file", sPath, "has an invalid BPM change at beat %f, BPM %f.",
 					      NoteRowToBeat(0), fBPM );
 		}
+		
 		else if( 0==stricmp(sValueName,"DISPLAYBPM") )
 		{
 			// #DISPLAYBPM:[xxx..xxx]|[xxx]|[*]; 
@@ -548,6 +568,30 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 			// do nothing.  We don't care about this value name
 			;
 	}
+
+	if ( m_sTempSMTitle != "" )
+	{
+		out.m_sMainTitle = m_sTempSMTitle;
+		out.m_sMainTitleTranslit = m_sTempTitle;
+	}
+	else
+		out.m_sMainTitle = m_sTempTitle;
+
+	if ( m_sTempSMSubTitle != "" )
+	{
+		out.m_sSubTitle = m_sTempSMSubTitle;
+		out.m_sSubTitleTranslit = m_sTempSubTitle;
+	}
+	else
+		out.m_sSubTitle = m_sTempSubTitle;
+
+	if ( m_sTempSMArtist != "" )
+	{
+		out.m_sArtist = m_sTempSMArtist;
+		out.m_sArtistTranslit = m_sTempArtist;
+	}
+	else
+		out.m_sArtist = m_sTempArtist;
 
 	return true;
 }
