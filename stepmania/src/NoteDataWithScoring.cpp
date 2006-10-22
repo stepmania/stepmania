@@ -68,7 +68,7 @@ int GetSuccessfulMines( const NoteData &in, int iStartIndex = 0, int iEndIndex =
 	int iNumSuccessfulMinesNotes = 0;
 	NoteData::all_tracks_const_iterator iter = in.GetTapNoteRangeAllTracks( iStartIndex, iEndIndex, AvoidedMines );
 	for( ; !iter.IsAtEnd(); ++iter )
-		++iNumSuccessfulMinesNotes;
+		iNumSuccessfulMinesNotes++;
 	return iNumSuccessfulMinesNotes;
 }
 

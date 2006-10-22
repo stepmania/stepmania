@@ -24,19 +24,48 @@ public:
 	typedef map<int,TapNote> TrackMap;
 	typedef map<int,TapNote>::iterator iterator;
 	typedef map<int,TapNote>::const_iterator const_iterator;
+	typedef map<int,TapNote>::reverse_iterator reverse_iterator;
+	typedef map<int,TapNote>::const_reverse_iterator const_reverse_iterator;
 	
+	typedef iterator		(NoteData::*iterator_method_int)(int);
+	typedef const_iterator		(NoteData::*const_iterator_method_int)(int) const;
+	typedef reverse_iterator	(NoteData::*reverse_iterator_method_int)(int);
+	typedef const_reverse_iterator	(NoteData::*const_reverse_iterator_method_int)(int) const;
+	typedef iterator		(NoteData::*iterator_method_int_int)(int,int);
+	typedef const_iterator		(NoteData::*const_iterator_method_int_int)(int,int) const;
+	typedef reverse_iterator	(NoteData::*reverse_iterator_method_int_int)(int,int);
+	typedef const_reverse_iterator	(NoteData::*const_reverse_iterator_method_int_int)(int,int) const;
+
+	iterator begin( int iTrack )					{ return m_TapNotes[iTrack].begin(); }
+	const_iterator begin( int iTrack ) const			{ return m_TapNotes[iTrack].begin(); }
+	reverse_iterator rbegin( int iTrack )				{ return m_TapNotes[iTrack].rbegin(); }
+	const_reverse_iterator rbegin( int iTrack ) const		{ return m_TapNotes[iTrack].rbegin(); }
+	iterator end( int iTrack )					{ return m_TapNotes[iTrack].end(); }
+	const_iterator end( int iTrack ) const				{ return m_TapNotes[iTrack].end(); }
+	reverse_iterator rend( int iTrack )				{ return m_TapNotes[iTrack].rend(); }
+	const_reverse_iterator rend( int iTrack ) const			{ return m_TapNotes[iTrack].rend(); }
+	iterator lower_bound( int iTrack, int iRow )			{ return m_TapNotes[iTrack].lower_bound( iRow ); }
+	const_iterator lower_bound( int iTrack, int iRow ) const	{ return m_TapNotes[iTrack].lower_bound( iRow ); }
+	reverse_iterator rlower_bound( int iTrack, int iRow );
+	const_reverse_iterator rlower_bound( int iTrack, int iRow ) const;
+	void swap( NoteData &nd )					{ m_TapNotes.swap( nd.m_TapNotes ); }
+
+
+
+
 	typedef bool (*IteratorCond)( const TapNote& );
 	// This is ugly to make it templated but I don't want to have to write the same class twice.
-	template<typename ND, typename iter, typename TN>
+	template<typename ND, typename iter, typename TN, bool bReverse, typename iterMethodInt, iterMethodInt mybegin, iterMethodInt myend, typename iterMethodIntInt, iterMethodIntInt mylower_bound>
 	class _all_tracks_iterator
 	{
 		ND		&m_NoteData;
 		vector<iter>	m_vIters;
 		int		m_iTrack;
+		const int	m_iStartRow;
 		const int	m_iEndRow;
 		IteratorCond	m_Cond;
 		
-		void Find();
+		void Find();	// point m_iTrack at the iterator with the smallest row that meets mCond and is within range
 public:
 		_all_tracks_iterator( ND &nd, int iStartRow, int iEndRow, IteratorCond cond );
 		_all_tracks_iterator &operator++();		// preincrement
@@ -49,8 +78,10 @@ public:
 		inline const TN &operator*() const	{ DEBUG_ASSERT( !IsAtEnd() ); return m_vIters[m_iTrack]->second; }
 		inline const TN *operator->() const	{ DEBUG_ASSERT( !IsAtEnd() ); return &m_vIters[m_iTrack]->second; }
 	};
-	typedef _all_tracks_iterator<NoteData, iterator, TapNote> 			all_tracks_iterator;
-	typedef _all_tracks_iterator<const NoteData, const_iterator, const TapNote>	all_tracks_const_iterator;
+	typedef _all_tracks_iterator<NoteData, NoteData::iterator, TapNote, false, NoteData::iterator_method_int, NoteData::begin, NoteData::end, NoteData::iterator_method_int_int, NoteData::lower_bound> 								all_tracks_iterator;
+	typedef _all_tracks_iterator<const NoteData, NoteData::const_iterator, const TapNote, false, NoteData::const_iterator_method_int, NoteData::begin, NoteData::end, NoteData::const_iterator_method_int_int, NoteData::lower_bound>				all_tracks_const_iterator;
+	typedef _all_tracks_iterator<NoteData, NoteData::reverse_iterator, TapNote, true, NoteData::reverse_iterator_method_int, NoteData::rbegin, NoteData::rend, NoteData::reverse_iterator_method_int_int, NoteData::rlower_bound> 					all_tracks_reverse_iterator;
+	typedef _all_tracks_iterator<const NoteData, NoteData::const_reverse_iterator, const TapNote, true, NoteData::const_reverse_iterator_method_int, NoteData::rbegin, NoteData::rend, NoteData::const_reverse_iterator_method_int_int, NoteData::rlower_bound>	all_tracks_const_reverse_iterator;
 
 private:
 	// There's no point in inserting empty notes into the map.
@@ -78,13 +109,6 @@ public:
 			return TAP_EMPTY;
 	}
 
-	iterator begin( int iTrack )					{ return m_TapNotes[iTrack].begin(); }
-	const_iterator begin( int iTrack ) const			{ return m_TapNotes[iTrack].begin(); }
-	iterator end( int iTrack )					{ return m_TapNotes[iTrack].end(); }
-	const_iterator end( int iTrack ) const				{ return m_TapNotes[iTrack].end(); }
-	iterator lower_bound( int iTrack, int iRow )			{ return m_TapNotes[iTrack].lower_bound( iRow ); }
-	const_iterator lower_bound( int iTrack, int iRow ) const	{ return m_TapNotes[iTrack].lower_bound( iRow ); }
-	void swap( NoteData &nd )					{ m_TapNotes.swap( nd.m_TapNotes ); }
 
 	inline iterator FindTapNote( unsigned iTrack, int iRow )	{ return m_TapNotes[iTrack].find( iRow ); }
 	inline const_iterator FindTapNote( unsigned iTrack, int iRow ) const { return m_TapNotes[iTrack].find( iRow ); }
@@ -100,6 +124,14 @@ public:
 	all_tracks_const_iterator GetTapNoteRangeAllTracks( int iStartRow, int iEndRow, IteratorCond cond = NULL) const
 	{
 		return all_tracks_const_iterator( *this, iStartRow, iEndRow, cond );
+	}
+	all_tracks_reverse_iterator GetTapNoteRangeAllTracksReverse( int iStartRow, int iEndRow, IteratorCond cond = NULL )
+	{
+		return all_tracks_reverse_iterator( *this, iStartRow, iEndRow, cond );
+	}
+	all_tracks_const_reverse_iterator GetTapNoteRangeAllTracksReverse( int iStartRow, int iEndRow, IteratorCond cond = NULL) const
+	{
+		return all_tracks_const_reverse_iterator( *this, iStartRow, iEndRow, cond );
 	}
 
 
