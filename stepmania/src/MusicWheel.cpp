@@ -115,7 +115,7 @@ void MusicWheel::Load( RString sType )
 		BuildWheelItemDatas( m_WheelItemDatas[so], so );
 		times += ssprintf( "%i:%.3f ", so, timer.GetDeltaTime() );
 	}
-	LOG->Trace( "took: %s", times.c_str() );
+	LOG->Trace( "MusicWheel sorting took: %s", times.c_str() );
 
 	/* Set m_LastModeMenuItem to the first item that matches the current mode.  (Do this
 	 * after building wheel item data.) */
@@ -604,32 +604,28 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData *> &arrayWheelItemDat
 					SONGMAN->GetCourses( *ct, apCourses, PREFSMAN->m_bAutogenGroupCourses );
 			}
 
-			if( PREFSMAN->m_CourseSortOrder == COURSE_SORT_SONGS )
+			switch( PREFSMAN->m_CourseSortOrder )
 			{
+			case COURSE_SORT_SONGS:
 				CourseUtil::SortCoursePointerArrayByDifficulty( apCourses );
+				break;
+			case COURSE_SORT_PREFERRED:
+				break;
+			case COURSE_SORT_METER:
+				CourseUtil::SortCoursePointerArrayByAvgDifficulty( apCourses );
+				break;
+			case COURSE_SORT_METER_SUM:
+				CourseUtil::SortCoursePointerArrayByTotalDifficulty( apCourses );
+				break;
+			case COURSE_SORT_RANK:
+				CourseUtil::SortCoursePointerArrayByRanking( apCourses );
+				break;
+			default:	ASSERT(0);
 			}
-			else
-			{
-				switch( PREFSMAN->m_CourseSortOrder )
-				{
-				case COURSE_SORT_PREFERRED:
-					break;
-				case COURSE_SORT_METER:
-					CourseUtil::SortCoursePointerArrayByAvgDifficulty( apCourses );
-					break;
-				case COURSE_SORT_METER_SUM:
-					CourseUtil::SortCoursePointerArrayByTotalDifficulty( apCourses );
-					break;
-				case COURSE_SORT_RANK:
-					CourseUtil::SortCoursePointerArrayByRanking( apCourses );
-					break;
-				default:	ASSERT(0);
-				}
 
-				// since we can't agree, make it an option
-				if( g_bMoveRandomToEnd )
-					CourseUtil::MoveRandomToEnd( apCourses );
-			}
+			// since we can't agree, make it an option
+			if( PREFSMAN->m_CourseSortOrder != COURSE_SORT_SONGS && g_bMoveRandomToEnd )
+				CourseUtil::MoveRandomToEnd( apCourses );
 
 			if( so == SORT_ALL_COURSES )
 				CourseUtil::SortCoursePointerArrayByType( apCourses );
