@@ -536,32 +536,6 @@ bool LuaHelpers::RunExpression( Lua *L, const RString &sExpression, const RStrin
 	return true;
 }
 
-bool LuaHelpers::RunExpressionB( const RString &str )
-{
-	Lua *L = LUA->Get();
-
-	RunExpression( L, str );
-
-	bool result;
-	LuaHelpers::Pop( L, result );
-
-	LUA->Release( L );
-	return result;
-}
-
-float LuaHelpers::RunExpressionF( const RString &str )
-{
-	Lua *L = LUA->Get();
-
-	RunExpression( L, str );
-
-	float result;
-	LuaHelpers::Pop( L, result );
-
-	LUA->Release( L );
-	return result;
-}
-
 void LuaHelpers::RunExpressionS( const RString &str, RString &sOut )
 {
 	Lua *L = LUA->Get();

@@ -76,8 +76,6 @@ namespace LuaHelpers
 	void ReadArrayFromTableB( Lua *L, vector<bool> &aOut );
 
 	/* Run an expression in the global environment, returning the given type. */
-	bool RunExpressionB( const RString &str );
-	float RunExpressionF( const RString &str );
 	void RunExpressionS( const RString &str, RString &sOut );
 
 	/* If sStr begins with @, evaluate the rest as an expression and store the result over sStr. */
