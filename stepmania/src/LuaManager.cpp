@@ -458,12 +458,6 @@ XNode *LuaHelpers::GetLuaInformation()
 
 void LuaHelpers::PrepareExpression( RString &sInOut )
 {
-	// HACK: Many metrics have "// foo" and "# foo" comments that Lua fails to parse.
-	// Replace them with Lua-style comments.
-	// XXX: "Foo=Func('#AABBCC')" and "Text=Adjust('// subtitle') aren't comments.
-	sInOut.Replace( "//", "--" );
-	sInOut.Replace( "#", "--" );
-	
 	// Remove unary +, eg. "+50"; Lua doesn't support that.
 	if( sInOut.size() >= 1 && sInOut[0] == '+' )
 		sInOut.erase( 0, 1 );
