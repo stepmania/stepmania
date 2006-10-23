@@ -169,7 +169,7 @@ void GameCommand::LoadOne( const Command& cmd )
 	{
 		if( i > 1 )
 			sValue += ",";
-		sValue += (RString) cmd.GetArg(i);
+		sValue += cmd.m_vsArgs[i];
 	}
 
 	if( sName == "style" )
