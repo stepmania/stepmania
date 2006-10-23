@@ -574,9 +574,6 @@ void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RStri
 			TrimRight( sName );
 			s << "\tself:" << sName << "(";
 
-			bool bFirstParamIsString =
-				sName == "playcommand";
-
 			for( unsigned i=1; i<cmd.m_vsArgs.size(); i++ )
 			{
 				RString sArg = cmd.m_vsArgs[i];
@@ -585,12 +582,7 @@ void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RStri
 				if( sArg[0] == '+' )
 					sArg.erase( sArg.begin() );
 
-				if( i==1 && bFirstParamIsString ) // string literal
-				{
-					sArg.Replace( "'", "\\'" );	// escape quote
-					s << "'" << sArg << "'";
-				}
-				else if( sArg[0] == '#' )	// HTML color
+				if( sArg[0] == '#' )	// HTML color
 				{
 					RageColor c;	// in case FromString fails
 					c.FromString( sArg );
