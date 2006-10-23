@@ -183,7 +183,7 @@ local function ShowScreenInstructions()
 		return true
 	end
 
-	for _,pn in ipairs(PlayerNumber) do
+	for pn in ivalues(PlayerNumber) do
 		if Difficulty:Compare( GAMESTATE:GetPreferredDifficulty(pn), "Difficulty_Easy" ) <= 0 then
 			return true
 		end

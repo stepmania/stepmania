@@ -21,7 +21,7 @@ function ScreenSelectMusic:setupmusicstagemods()
 	GAMESTATE:SetCurrentSong( song )
 	GAMESTATE:SetPreferredSong( song )
 
-	for _, pn in ipairs(GAMESTATE:GetHumanPlayers()) do
+	for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
 		GAMESTATE:SetCurrentSteps( pn, steps )
 		GAMESTATE:GetPlayerState(pn):SetPlayerOptions( "ModsLevel_Stage", po )
 		GAMESTATE:SetPreferredDifficulty( pn, difficulty )
@@ -42,7 +42,7 @@ function ScreenSelectMusic:setupcoursestagemods()
 		local so = "failimmediate"
 		local Reverse = PlayerNumber:Reverse()
 
-		for _, pn in ipairs(GAMESTATE:GetHumanPlayers()) do
+		for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
 			GAMESTATE:GetPlayerState(pn):SetPlayerOptions( "ModsLevel_Stage", po )
 			MESSAGEMAN:Broadcast( "PlayerOptionsChangedP" .. (Reverse[pn]+1) )
 		end
