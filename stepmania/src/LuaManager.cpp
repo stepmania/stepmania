@@ -575,7 +575,6 @@ void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RStri
 			s << "\tself:" << sName << "(";
 
 			bool bFirstParamIsString =
-				sName == "effectclock" ||
 				sName == "playcommand" ||
 				sName == "queuecommand" ||
 				sName == "queuemessage";
