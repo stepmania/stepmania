@@ -21,6 +21,14 @@ RString GameButtonToString( const InputScheme* pInputs, GameButton i );
 RString GameButtonToLocalizedString( const InputScheme* pInputs, GameButton i );
 GameButton StringToGameButton( const InputScheme* pInputs, const RString& s );
 
+enum GameButtonType
+{
+	GameButtonType_Step,
+	GameButtonType_Fret,
+	GameButtonType_Strum,
+	GameButtonType_INVALID
+};
+
 const GameButton NUM_GameButton = 20;
 const GameButton GameButton_Invalid = NUM_GameButton+1;
 #define FOREACH_GameButton( gb ) FOREACH_ENUM( GameButton, gb )

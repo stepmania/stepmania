@@ -18,10 +18,15 @@ class InputScheme
 public:
 	const char	*m_szName;
 	int		m_iButtonsPerController;
-	char		m_szButtonNames[NUM_GameButton][60];	// The name used by the button graphics system.  e.g. "left", "right", "middle C", "snare"
+	struct GameButtonInfo
+	{
+		char m_szName[60];	// The name used by the button graphics system.  e.g. "left", "right", "middle C", "snare"
+		GameButtonType m_gbt;
+		DeviceButton	m_iDefaultKeyboardKey[NUM_GameController];	// default keyboard keys only effect the current game is this game
+	};
+	GameButtonInfo	m_GameButtonInfo[NUM_GameButton];
 	GameButton	m_DedicatedMenuButton[NUM_MenuButton];
 	GameButton	m_SecondaryMenuButton[NUM_MenuButton];
-	DeviceButton	m_iDefaultKeyboardKey[NUM_GameController][NUM_GameButton];	// default keyboard keys only have an effect the current game is this game
 
 	GameButton ButtonNameToIndex( const RString &sButtonName ) const;
 	MenuButton GameInputToMenuButton( GameInput GameI ) const;

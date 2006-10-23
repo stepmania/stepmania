@@ -57,7 +57,7 @@ void InputMapper::AddDefaultMappingsForCurrentGameIfUnmapped()
 	{
 		for( int b=0; b<m_pInputScheme->m_iButtonsPerController; b++ )
 		{
-			DeviceButton key = m_pInputScheme->m_iDefaultKeyboardKey[c][b];
+			DeviceButton key = m_pInputScheme->m_GameButtonInfo[b].m_iDefaultKeyboardKey[c];
 			if( key == NO_DEFAULT_KEY )
 				continue;
 			DeviceInput DeviceI( DEVICE_KEYBOARD, key );
@@ -918,7 +918,7 @@ MultiPlayer InputMapper::InputDeviceToMultiPlayer( InputDevice id )
 GameButton InputScheme::ButtonNameToIndex( const RString &sButtonName ) const
 {
 	for( int i=0; i<m_iButtonsPerController; i++ ) 
-		if( stricmp(m_szButtonNames[i], sButtonName) == 0 )
+		if( stricmp(m_GameButtonInfo[i].m_szName, sButtonName) == 0 )
 			return i;
 
 	return GameButton_Invalid;
