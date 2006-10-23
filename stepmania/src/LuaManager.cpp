@@ -609,7 +609,7 @@ void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RStri
 		//
 		ostringstream s;
 		
-		s << "return function(self,parent)\n";
+		s << "return function(self)\n";
 
 		FOREACH_CONST( Command, cmds.v, c )
 		{
