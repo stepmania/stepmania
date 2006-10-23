@@ -9,6 +9,7 @@
 #include "arch/Dialog/Dialog.h"
 #include "XmlFile.h"
 #include "Command.h"
+#include "RageTypes.h"
 
 #include <sstream>
 #include <csetjmp>

@@ -3,8 +3,6 @@
 #ifndef Commands_H
 #define Commands_H
 
-#include "RageTypes.h"
-
 class Command
 {
 public:
