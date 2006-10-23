@@ -37,7 +37,7 @@ RString StepsTypeToString( Stage s );
 RString StepsTypeToString( StepsType st )
 {
 	RString s = GAMEMAN->StepsTypeToString( st );
-	/* steps-type -> StepsType */
+	/* foo-bar -> StepsType_Foo_Bar */
 	s.Replace('-','_');
 	for( size_t i = 0; i < s.size(); ++i )
 	{
