@@ -3,7 +3,6 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "arch/Dialog/Dialog.h"
-#include "LuaManager.h"
 #include "Foreach.h"
 
 
@@ -22,13 +21,6 @@ Command::Arg Command::GetArg( unsigned index ) const
 	if( index < m_vsArgs.size() )
 		a.s = m_vsArgs[index];
 	return a;
-}
-
-Command::Arg::operator RString () const
-{
-	RString sValue = s;
-	LuaHelpers::RunAtExpressionS( sValue );
-	return sValue;
 }
 
 void Command::Load( const RString &sCommand )

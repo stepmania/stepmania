@@ -17,7 +17,6 @@ public:
 	struct Arg
 	{
 		RString s;
-		operator RString () const;
 	};
 	Arg GetArg( unsigned index ) const;
 
