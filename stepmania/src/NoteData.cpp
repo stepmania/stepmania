@@ -974,10 +974,10 @@ NoteData::_all_tracks_iterator<ND, iter, TN, bReverse, iterMethodInt, mybegin, m
 
 
 // Explicit instantiation.
-template class NoteData::_all_tracks_iterator<NoteData, NoteData::iterator, TapNote, false, NoteData::iterator_method_int, NoteData::begin, NoteData::end, NoteData::iterator_method_int_int, NoteData::lower_bound>;
-template class NoteData::_all_tracks_iterator<const NoteData, NoteData::const_iterator, const TapNote, false, NoteData::const_iterator_method_int, NoteData::begin, NoteData::end, NoteData::const_iterator_method_int_int, NoteData::lower_bound>;
-template class NoteData::_all_tracks_iterator<NoteData, NoteData::reverse_iterator, TapNote, true, NoteData::reverse_iterator_method_int, NoteData::rbegin, NoteData::rend, NoteData::reverse_iterator_method_int_int, NoteData::rlower_bound>;
-template class NoteData::_all_tracks_iterator<const NoteData, NoteData::const_reverse_iterator, const TapNote, true, NoteData::const_reverse_iterator_method_int, NoteData::rbegin, NoteData::rend, NoteData::const_reverse_iterator_method_int_int, NoteData::rlower_bound>;
+template class NoteData::_all_tracks_iterator<NoteData, NoteData::iterator, TapNote, false, NoteData::iterator_method_int, &NoteData::begin, &NoteData::end, NoteData::iterator_method_int_int, &NoteData::lower_bound>;
+template class NoteData::_all_tracks_iterator<const NoteData, NoteData::const_iterator, const TapNote, false, NoteData::const_iterator_method_int, &NoteData::begin, &NoteData::end, NoteData::const_iterator_method_int_int, &NoteData::lower_bound>;
+template class NoteData::_all_tracks_iterator<NoteData, NoteData::reverse_iterator, TapNote, true, NoteData::reverse_iterator_method_int, &NoteData::rbegin, &NoteData::rend, NoteData::reverse_iterator_method_int_int, &NoteData::rlower_bound>;
+template class NoteData::_all_tracks_iterator<const NoteData, NoteData::const_reverse_iterator, const TapNote, true, NoteData::const_reverse_iterator_method_int, &NoteData::rbegin, &NoteData::rend, NoteData::const_reverse_iterator_method_int_int, &NoteData::rlower_bound>;
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard

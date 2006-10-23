@@ -78,10 +78,10 @@ public:
 		inline const TN &operator*() const	{ DEBUG_ASSERT( !IsAtEnd() ); return m_vIters[m_iTrack]->second; }
 		inline const TN *operator->() const	{ DEBUG_ASSERT( !IsAtEnd() ); return &m_vIters[m_iTrack]->second; }
 	};
-	typedef _all_tracks_iterator<NoteData, NoteData::iterator, TapNote, false, NoteData::iterator_method_int, NoteData::begin, NoteData::end, NoteData::iterator_method_int_int, NoteData::lower_bound> 								all_tracks_iterator;
-	typedef _all_tracks_iterator<const NoteData, NoteData::const_iterator, const TapNote, false, NoteData::const_iterator_method_int, NoteData::begin, NoteData::end, NoteData::const_iterator_method_int_int, NoteData::lower_bound>				all_tracks_const_iterator;
-	typedef _all_tracks_iterator<NoteData, NoteData::reverse_iterator, TapNote, true, NoteData::reverse_iterator_method_int, NoteData::rbegin, NoteData::rend, NoteData::reverse_iterator_method_int_int, NoteData::rlower_bound> 					all_tracks_reverse_iterator;
-	typedef _all_tracks_iterator<const NoteData, NoteData::const_reverse_iterator, const TapNote, true, NoteData::const_reverse_iterator_method_int, NoteData::rbegin, NoteData::rend, NoteData::const_reverse_iterator_method_int_int, NoteData::rlower_bound>	all_tracks_const_reverse_iterator;
+	typedef _all_tracks_iterator<NoteData, NoteData::iterator, TapNote, false, NoteData::iterator_method_int, &NoteData::begin, &NoteData::end, NoteData::iterator_method_int_int, &NoteData::lower_bound> 								all_tracks_iterator;
+	typedef _all_tracks_iterator<const NoteData, NoteData::const_iterator, const TapNote, false, NoteData::const_iterator_method_int, &NoteData::begin, &NoteData::end, NoteData::const_iterator_method_int_int, &NoteData::lower_bound>				all_tracks_const_iterator;
+	typedef _all_tracks_iterator<NoteData, NoteData::reverse_iterator, TapNote, true, NoteData::reverse_iterator_method_int, &NoteData::rbegin, &NoteData::rend, NoteData::reverse_iterator_method_int_int, &NoteData::rlower_bound> 					all_tracks_reverse_iterator;
+	typedef _all_tracks_iterator<const NoteData, NoteData::const_reverse_iterator, const TapNote, true, NoteData::const_reverse_iterator_method_int, &NoteData::rbegin, &NoteData::rend, NoteData::const_reverse_iterator_method_int_int, &NoteData::rlower_bound>	all_tracks_const_reverse_iterator;
 
 private:
 	// There's no point in inserting empty notes into the map.
