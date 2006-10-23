@@ -10,8 +10,9 @@
 #include "RageLog.h"
 #include "XmlFile.h"
 #include "Foreach.h"
-
 #include "RageUtil_AutoPtr.h"
+#include <iterator>
+
 REGISTER_CLASS_TRAITS( NoteData, new NoteData(*pCopy) )
 
 void NoteData::Init()
@@ -899,21 +900,23 @@ void NoteData::LoadFromNode( const XNode* pNode )
 
 NoteData::reverse_iterator NoteData::rlower_bound( int iTrack, int iRow )
 {
-	// TODO: optimize this
-	reverse_iterator i = m_TapNotes[iTrack].rbegin();
-	for( ; i != m_TapNotes[iTrack].rend(); ++i )
-	{
-		if( i->first <= iRow )
-			return i;
-	}
-
-	return i;
+	/* This is annoyingly tricky. First, find the upper bound for iRow. The map upper bound is the first
+	 * key that is greater than iRow. If no such key exists in the map, then every key is less than or
+	 * equal to iRow so we want the first. Note that if the map is empty, rbegin() will be the same as
+	 * rend(). If the first key in the map is is greater than iRow then all are so return rend(). If i
+	 * is neither begin() nor end(), then i - 1 (which isn't defined!) is last key in the map that is
+	 * less than or equal to iRow. */
+	iterator i = m_TapNotes[iTrack].upper_bound( iRow );
+	if( i == m_TapNotes[iTrack].end() )
+		return m_TapNotes[iTrack].rbegin();
+	if( i == m_TapNotes[iTrack].begin() )
+		return m_TapNotes[iTrack].rend();
+	return reverse_iterator( --i );
 }
 
 NoteData::const_reverse_iterator NoteData::rlower_bound( int iTrack, int iRow ) const
 {
-	NoteData::reverse_iterator iter = ((NoteData*)this)->rlower_bound( iTrack, iRow );
-	return iter;
+	return const_cast<NoteData*>(this)->rlower_bound( iTrack, iRow );
 }
 
 template<typename ND, typename iter, typename TN, bool bReverse, typename iterMethodInt, iterMethodInt mybegin, iterMethodInt myend, typename iterMethodIntInt, iterMethodIntInt mylower_bound>
