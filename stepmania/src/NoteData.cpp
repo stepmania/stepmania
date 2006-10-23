@@ -903,7 +903,6 @@ NoteData::reverse_iterator NoteData::rlower_bound( int iTrack, int iRow )
 	reverse_iterator i = m_TapNotes[iTrack].rbegin();
 	for( ; i != m_TapNotes[iTrack].rend(); ++i )
 	{
-		int first = i->first;
 		if( i->first <= iRow )
 			return i;
 	}
