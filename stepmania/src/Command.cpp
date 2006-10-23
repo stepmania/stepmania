@@ -31,27 +31,6 @@ Command::Arg::operator RString () const
 	return sValue;
 }
 
-Command::Arg::operator float () const
-{
-	RString sValue = s;
-	LuaHelpers::PrepareExpression( sValue );	// strip invalid chars
-	return LuaHelpers::RunExpressionF( sValue );
-}
-
-Command::Arg::operator int () const
-{
-	RString sValue = s;
-	LuaHelpers::PrepareExpression( sValue );	// strip invalid chars
-	return (int) LuaHelpers::RunExpressionF( sValue );
-}
-
-Command::Arg::operator bool () const
-{
-	RString sValue = s;
-	LuaHelpers::PrepareExpression( sValue );	// strip invalid chars
-	return LuaHelpers::RunExpressionF( sValue ) != 0.0f;
-}
-
 void Command::Load( const RString &sCommand )
 {
 	m_vsArgs.clear();

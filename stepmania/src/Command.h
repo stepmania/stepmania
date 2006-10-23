@@ -20,9 +20,6 @@ public:
 	{
 		RString s;
 		operator RString () const;
-		operator float () const;
-		operator int () const;
-		operator bool () const;
 	};
 	Arg GetArg( unsigned index ) const;
 
