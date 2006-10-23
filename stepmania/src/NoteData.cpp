@@ -935,7 +935,7 @@ void NoteData::_all_tracks_iterator<ND, iter, TN, bReverse, iterMethodInt, mybeg
 
 		if( i != (m_NoteData.*myend)(iTrack) && (bReverse ? (i->first > iMaxRow) : (i->first < iMinRow)) )
 		{
-			bReverse ? iMaxRow : iMinRow = i->first;
+			(bReverse ? iMaxRow : iMinRow) = i->first;
 			m_iTrack = iTrack;
 		}
 	}
