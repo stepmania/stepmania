@@ -87,7 +87,7 @@ RString Style::ColToButtonName( int iCol ) const
 		return pzColumnName;
 
 	GameInput GI = StyleInputToGameInput( iCol, PLAYER_1 );
-	return INPUTMAPPER->GetInputScheme()->m_szButtonNames[GI.button];
+	return INPUTMAPPER->GetInputScheme()->m_GameButtonInfo[GI.button].m_szName;
 }
 
 // Lua bindings

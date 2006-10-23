@@ -68,6 +68,7 @@ enum StepsType
 	STEPS_TYPE_TECHNO_DOUBLE5,
 	STEPS_TYPE_POPN_FIVE,
 	STEPS_TYPE_POPN_NINE,
+	STEPS_TYPE_GUITAR_FIVE,
 	STEPS_TYPE_LIGHTS_CABINET,
 	NUM_StepsType,		// leave this at the end
 	StepsType_Invalid,
