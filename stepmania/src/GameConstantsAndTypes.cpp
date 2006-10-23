@@ -33,7 +33,6 @@ XToLocalizedString( RadarCategory );
 LuaFunction( RadarCategoryToLocalizedString, RadarCategoryToLocalizedString(Enum::Check<RadarCategory>(L, 1)) );
 LuaXType( RadarCategory );
 
-RString StepsTypeToString( Stage s );
 RString StepsTypeToString( StepsType st )
 {
 	RString s = GAMEMAN->StepsTypeToString( st );
