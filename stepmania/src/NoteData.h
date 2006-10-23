@@ -28,15 +28,6 @@ public:
 	typedef map<int,TapNote>::reverse_iterator reverse_iterator;
 	typedef map<int,TapNote>::const_reverse_iterator const_reverse_iterator;
 	
-	typedef iterator		(NoteData::*iterator_method_int)(int);
-	typedef const_iterator		(NoteData::*const_iterator_method_int)(int) const;
-	typedef reverse_iterator	(NoteData::*reverse_iterator_method_int)(int);
-	typedef const_reverse_iterator	(NoteData::*const_reverse_iterator_method_int)(int) const;
-	typedef iterator		(NoteData::*iterator_method_int_int)(int,int);
-	typedef const_iterator		(NoteData::*const_iterator_method_int_int)(int,int) const;
-	typedef reverse_iterator	(NoteData::*reverse_iterator_method_int_int)(int,int);
-	typedef const_reverse_iterator	(NoteData::*const_reverse_iterator_method_int_int)(int,int) const;
-
 	iterator begin( int iTrack )					{ return m_TapNotes[iTrack].begin(); }
 	const_iterator begin( int iTrack ) const			{ return m_TapNotes[iTrack].begin(); }
 	reverse_iterator rbegin( int iTrack )				{ return m_TapNotes[iTrack].rbegin(); }
