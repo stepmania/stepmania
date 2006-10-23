@@ -576,8 +576,7 @@ void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RStri
 
 			bool bFirstParamIsString =
 				sName == "playcommand" ||
-				sName == "queuecommand" ||
-				sName == "queuemessage";
+				sName == "queuecommand";
 
 			for( unsigned i=1; i<cmd.m_vsArgs.size(); i++ )
 			{
