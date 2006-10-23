@@ -1,6 +1,6 @@
 <ActorFrame><children>
-	<AutoActor File="P.File1" OnCommand="x,scale(1,0,4,SCREEN_LEFT,SCREEN_RIGHT);y,scale(1,0,4,SCREEN_TOP,SCREEN_BOTTOM);zoomtowidth,SCREEN_WIDTH/2;zoomtoheight,SCREEN_HEIGHT/2" />
-	<AutoActor File="P.File1" OnCommand="x,scale(3,0,4,SCREEN_LEFT,SCREEN_RIGHT);y,scale(1,0,4,SCREEN_TOP,SCREEN_BOTTOM);zoomtowidth,SCREEN_WIDTH/2;zoomtoheight,SCREEN_HEIGHT/2" />
-	<AutoActor File="P.File1" OnCommand="x,scale(1,0,4,SCREEN_LEFT,SCREEN_RIGHT);y,scale(3,0,4,SCREEN_TOP,SCREEN_BOTTOM);zoomtowidth,SCREEN_WIDTH/2;zoomtoheight,SCREEN_HEIGHT/2" />
-	<AutoActor File="P.File1" OnCommand="x,scale(3,0,4,SCREEN_LEFT,SCREEN_RIGHT);y,scale(3,0,4,SCREEN_TOP,SCREEN_BOTTOM);zoomtowidth,SCREEN_WIDTH/2;zoomtoheight,SCREEN_HEIGHT/2" />
+	<AutoActor File="File1" OnCommand="x,scale(1,0,4,SCREEN_LEFT,SCREEN_RIGHT);y,scale(1,0,4,SCREEN_TOP,SCREEN_BOTTOM);zoomtowidth,SCREEN_WIDTH/2;zoomtoheight,SCREEN_HEIGHT/2" />
+	<AutoActor File="File1" OnCommand="x,scale(3,0,4,SCREEN_LEFT,SCREEN_RIGHT);y,scale(1,0,4,SCREEN_TOP,SCREEN_BOTTOM);zoomtowidth,SCREEN_WIDTH/2;zoomtoheight,SCREEN_HEIGHT/2" />
+	<AutoActor File="File1" OnCommand="x,scale(1,0,4,SCREEN_LEFT,SCREEN_RIGHT);y,scale(3,0,4,SCREEN_TOP,SCREEN_BOTTOM);zoomtowidth,SCREEN_WIDTH/2;zoomtoheight,SCREEN_HEIGHT/2" />
+	<AutoActor File="File1" OnCommand="x,scale(3,0,4,SCREEN_LEFT,SCREEN_RIGHT);y,scale(3,0,4,SCREEN_TOP,SCREEN_BOTTOM);zoomtowidth,SCREEN_WIDTH/2;zoomtoheight,SCREEN_HEIGHT/2" />
 </children></ActorFrame>

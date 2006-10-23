@@ -1,7 +1,7 @@
 <!-- Align left when cropping to 4:3.  Avoid this; it's not compatible with PS2 movie pre-rendering. -->
 <ActorFrame><children>
 	<Layer
-		File="P.File1" 
+		File="File1" 
 		InitCommand="%function(self) self.Color = Color1; end"
 		OnCommand="horizalign,left;scaletocover,0,0,SCREEN_WIDTH,SCREEN_HEIGHT;diffuse,color(self.Color)" 
 		GainFocusCommand="Play"

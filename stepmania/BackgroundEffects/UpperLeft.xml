@@ -1,4 +1,4 @@
 <ActorFrame><children>
 	<!-- upper left corner -->
-	<AutoActor File="P.File1" />
+	<AutoActor File="File1" />
 </children></ActorFrame>
