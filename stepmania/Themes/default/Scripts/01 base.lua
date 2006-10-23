@@ -33,6 +33,15 @@ function dofile(file)
 	return chunk
 end
 
+-- Like ipairs(), but returns only values.
+function ivalues(t)
+	local n = 0
+	return function()
+		n = n + 1
+		return t[n];
+	end
+end
+
 -- (c) 2006 Glenn Maynard
 -- All rights reserved.
 --
