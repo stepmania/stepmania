@@ -11,7 +11,6 @@
 #include "XmlFile.h"
 #include "Foreach.h"
 #include "RageUtil_AutoPtr.h"
-#include <iterator>
 
 REGISTER_CLASS_TRAITS( NoteData, new NoteData(*pCopy) )
 
@@ -898,88 +897,136 @@ void NoteData::LoadFromNode( const XNode* pNode )
 	ASSERT(0);
 }
 
-NoteData::reverse_iterator NoteData::rlower_bound( int iTrack, int iRow )
+template<typename ND, typename iter, typename TN>
+void NoteData::_all_tracks_iterator<ND, iter, TN>::Find( bool bReverse )
 {
-	/* This is annoyingly tricky. First, find the upper bound for iRow. The map upper bound is the first
-	 * key that is greater than iRow. If no such key exists in the map, then every key is less than or
-	 * equal to iRow so we want the first. Note that if the map is empty, rbegin() will be the same as
-	 * rend(). If the first key in the map is is greater than iRow then all are so return rend(). If i
-	 * is neither begin() nor end(), then i - 1 (which isn't defined!) is last key in the map that is
-	 * less than or equal to iRow. */
-	iterator i = m_TapNotes[iTrack].upper_bound( iRow );
-	if( i == m_TapNotes[iTrack].end() )
-		return m_TapNotes[iTrack].rbegin();
-	if( i == m_TapNotes[iTrack].begin() )
-		return m_TapNotes[iTrack].rend();
-	return reverse_iterator( --i );
-}
-
-NoteData::const_reverse_iterator NoteData::rlower_bound( int iTrack, int iRow ) const
-{
-	return const_cast<NoteData*>(this)->rlower_bound( iTrack, iRow );
-}
-
-template<typename ND, typename iter, typename TN, bool bReverse, typename iterMethodInt, iterMethodInt mybegin, iterMethodInt myend, typename iterMethodIntInt, iterMethodIntInt mylower_bound>
-void NoteData::_all_tracks_iterator<ND, iter, TN, bReverse, iterMethodInt, mybegin, myend, iterMethodIntInt, mylower_bound>::Find()
-{
-	int iMinRow = m_iEndRow+1;
-	int iMaxRow = m_iStartRow-1;
-	
 	// If no notes can be found in the range, m_iTrack will stay -1 and IsAtEnd() will return true.
 	m_iTrack = -1;
-	for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
+	if( bReverse )
 	{
-		iter &i = m_vIters[iTrack];
-		if( m_Cond )
+		int iMaxRow = m_iStartRow - 1;
+		for( int iTrack = m_NoteData.GetNumTracks() - 1; iTrack >= 0; --iTrack )
 		{
-			while( i != (m_NoteData.*myend)(iTrack) && (bReverse ? (i->first > iMaxRow) : (i->first < iMinRow)) && !m_Cond(i->second) )
-				++i;
+			iter &i( m_vIters[iTrack] );
+			if( m_Cond )
+			{
+				while( i != m_NoteData.end(iTrack) && i->first > iMaxRow && !m_Cond(i->second) )
+				{
+					if( i == m_NoteData.begin(iTrack) )
+						i = m_NoteData.end( iTrack );
+					else
+						--i;
+				}
+			}
+			if( i != m_NoteData.end(iTrack) && i->first > iMaxRow )
+			{
+				iMaxRow = i->first;
+				m_iTrack = iTrack;
+			}
 		}
-
-		if( i != (m_NoteData.*myend)(iTrack) && (bReverse ? (i->first > iMaxRow) : (i->first < iMinRow)) )
+	}
+	else
+	{
+		int iMinRow = m_iEndRow + 1;
+		for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
 		{
-			(bReverse ? iMaxRow : iMinRow) = i->first;
-			m_iTrack = iTrack;
+			iter &i = m_vIters[iTrack];
+			if( m_Cond )
+			{
+				while( i != m_NoteData.end(iTrack) && i->first < iMinRow && !m_Cond(i->second) )
+					++i;
+			}
+			if( i != m_NoteData.end(iTrack) && i->first < iMinRow )
+			{
+				iMinRow = i->first;
+				m_iTrack = iTrack;
+			}
 		}
 	}
 }
 
-template<typename ND, typename iter, typename TN, bool bReverse, typename iterMethodInt, iterMethodInt mybegin, iterMethodInt myend, typename iterMethodIntInt, iterMethodIntInt mylower_bound>
-NoteData::_all_tracks_iterator<ND, iter, TN, bReverse, iterMethodInt, mybegin, myend, iterMethodIntInt, mylower_bound>::_all_tracks_iterator( ND &nd, int iStartRow, int iEndRow, NoteData::IteratorCond cond ) :
-	m_NoteData(nd), m_iTrack(0), m_iStartRow(iStartRow), m_iEndRow(iEndRow), m_Cond(cond)
+template<typename ND, typename iter, typename TN>
+NoteData::_all_tracks_iterator<ND, iter, TN>::_all_tracks_iterator( ND &nd, int iStartRow, int iEndRow, bool bReverse, NoteData::IteratorCond cond ) :
+	m_NoteData(nd), m_iTrack(0), m_iStartRow(iStartRow), m_iEndRow(iEndRow), m_bReverse(bReverse), m_Cond(cond)
 {
 	ASSERT( m_NoteData.GetNumTracks() > 0 );
-	for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
+	if( bReverse )
 	{
-		iter i = (m_NoteData.*mylower_bound)(iTrack, bReverse?iEndRow:iStartRow);
-		iter end = (m_NoteData.*myend)(iTrack);
-		m_vIters.push_back( i );
+		for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
+		{
+			iter i = m_NoteData.upper_bound( iTrack, iEndRow );
+			
+			if( i == m_NoteData.begin(iTrack) )
+				m_vIters.push_back( m_NoteData.end(iTrack) );
+			else
+				m_vIters.push_back( --i );
+		}
 	}
-	Find();
+	else
+	{
+		for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
+			m_vIters.push_back( m_NoteData.lower_bound(iTrack, iStartRow) );
+	}
+	Find( bReverse );
 }
 
-template<typename ND, typename iter, typename TN, bool bReverse, typename iterMethodInt, iterMethodInt mybegin, iterMethodInt myend, typename iterMethodIntInt, iterMethodIntInt mylower_bound>
-NoteData::_all_tracks_iterator<ND, iter, TN, bReverse, iterMethodInt, mybegin, myend, iterMethodIntInt, mylower_bound> &NoteData::_all_tracks_iterator<ND, iter, TN, bReverse, iterMethodInt, mybegin, myend, iterMethodIntInt, mylower_bound>::operator++() // preincrement
+template<typename ND, typename iter, typename TN>
+NoteData::_all_tracks_iterator<ND, iter, TN> &NoteData::_all_tracks_iterator<ND, iter, TN>::operator++() // preincrement
 {
-	++m_vIters[m_iTrack];
-	Find();
+	if( m_bReverse )
+	{
+		if( m_vIters[m_iTrack] == m_NoteData.begin(m_iTrack) )
+			m_vIters[m_iTrack] = m_NoteData.end( m_iTrack );
+		else
+			--m_vIters[m_iTrack];
+	}
+	else
+	{
+		++m_vIters[m_iTrack];
+	}
+	Find( m_bReverse );
 	return *this;
 }
 
-template<typename ND, typename iter, typename TN, bool bReverse, typename iterMethodInt, iterMethodInt mybegin, iterMethodInt myend, typename iterMethodIntInt, iterMethodIntInt mylower_bound>
-NoteData::_all_tracks_iterator<ND, iter, TN, bReverse, iterMethodInt, mybegin, myend, iterMethodIntInt, mylower_bound> NoteData::_all_tracks_iterator<ND, iter, TN, bReverse, iterMethodInt, mybegin, myend, iterMethodIntInt, mylower_bound>::operator++( int dummy ) // postincrement
+template<typename ND, typename iter, typename TN>
+NoteData::_all_tracks_iterator<ND, iter, TN> NoteData::_all_tracks_iterator<ND, iter, TN>::operator++( int dummy ) // postincrement
 {
-	_all_tracks_iterator<ND, iter, TN, bReverse, iterMethodInt, mybegin, myend, iterMethodIntInt, mylower_bound> ret(*this);
+	_all_tracks_iterator<ND, iter, TN> ret( *this );
 	operator++();
 	return ret;
 }
+/* XXX: This doesn't satisfy the requirements that ++iter; --iter; is a no-op so it cannot be bidirectional for now. */
+#if 0
+template<typename ND, typename iter, typename TN>
+NoteData::_all_tracks_iterator<ND, iter, TN> &NoteData::_all_tracks_iterator<ND, iter, TN>::operator--() // predecrement
+{
+	if( m_bReverse )
+	{
+		++m_vIters[m_iTrack];
+	}
+	else
+	{
+		if( m_vIters[m_iTrack] == m_NoteData.begin(m_iTrack) )
+			m_vIters[m_iTrack] = m_NoteData.end( m_iTrack );
+		else
+			--m_vIters[m_iTrack];
+	}
+	Find( !m_bReverse );
+	return *this;
+}
 
+template<typename ND, typename iter, typename TN>
+NoteData::_all_tracks_iterator<ND, iter, TN> NoteData::_all_tracks_iterator<ND, iter, TN>::operator--( int dummy ) // postdecrement
+{
+	_all_tracks_iterator<ND, iter, TN> ret( *this );
+	operator--();
+	return ret;
+}
+#endif
 
 // Explicit instantiation.
-template class NoteData::_all_tracks_iterator<NoteData, NoteData::iterator, TapNote, false, NoteData::iterator_method_int, &NoteData::begin, &NoteData::end, NoteData::iterator_method_int_int, &NoteData::lower_bound>;
-template class NoteData::_all_tracks_iterator<const NoteData, NoteData::const_iterator, const TapNote, false, NoteData::const_iterator_method_int, &NoteData::begin, &NoteData::end, NoteData::const_iterator_method_int_int, &NoteData::lower_bound>;
-template class NoteData::_all_tracks_iterator<NoteData, NoteData::reverse_iterator, TapNote, true, NoteData::reverse_iterator_method_int, &NoteData::rbegin, &NoteData::rend, NoteData::reverse_iterator_method_int_int, &NoteData::rlower_bound>;
-template class NoteData::_all_tracks_iterator<const NoteData, NoteData::const_reverse_iterator, const TapNote, true, NoteData::const_reverse_iterator_method_int, &NoteData::rbegin, &NoteData::rend, NoteData::const_reverse_iterator_method_int_int, &NoteData::rlower_bound>;
+template class NoteData::_all_tracks_iterator<NoteData, NoteData::iterator, TapNote>;
+template class NoteData::_all_tracks_iterator<const NoteData, NoteData::const_iterator, const TapNote>;
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
