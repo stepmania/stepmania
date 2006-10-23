@@ -547,20 +547,6 @@ void LuaHelpers::RunExpressionS( const RString &str, RString &sOut )
 	LUA->Release( L );
 }
 
-bool LuaHelpers::RunAtExpressionS( RString &sStr )
-{
-	if( sStr.size() == 0 || sStr[0] != '@' )
-		return false;
-
-	/* Erase "@". */
-	sStr.erase( 0, 1 );
-
-	RString sOut;
-	LuaHelpers::RunExpressionS( sStr, sOut );
-	sStr = sOut;
-	return true;
-}
-
 void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RString &sName )
 {
 	RString sLuaFunction;

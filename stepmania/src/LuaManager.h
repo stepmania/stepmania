@@ -78,9 +78,6 @@ namespace LuaHelpers
 	/* Run an expression in the global environment, returning the given type. */
 	void RunExpressionS( const RString &str, RString &sOut );
 
-	/* If sStr begins with @, evaluate the rest as an expression and store the result over sStr. */
-	bool RunAtExpressionS( RString &sStr );
-
 	void ParseCommandList( lua_State *L, const RString &sCommands, const RString &sName );
 
 	XNode *GetLuaInformation();
