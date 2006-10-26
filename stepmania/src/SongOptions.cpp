@@ -75,10 +75,11 @@ void SongOptions::GetMods( vector<RString> &AddTo ) const
 
 	switch( m_AutosyncType )
 	{
-	case AUTOSYNC_OFF:						break;
+	case AUTOSYNC_OFF:	                                	break;
 	case AUTOSYNC_SONG:	AddTo.push_back("AutosyncSong");	break;
 	case AUTOSYNC_MACHINE:	AddTo.push_back("AutosyncMachine");	break;
-	default:		ASSERT(0);
+	case AUTOSYNC_TEMPO:	AddTo.push_back("AutosyncTempo");	break;
+	default:        	ASSERT(0);
 	}
 }
 
@@ -163,9 +164,11 @@ void SongOptions::FromString( const RString &sOptions )
 
 		else if( sBit == "assisttick" )		m_bAssistTick = on;
 		else if( sBit == "autosync" || sBit == "autosyncsong" )
-							m_AutosyncType = on ? AUTOSYNC_SONG : AUTOSYNC_OFF;
+			m_AutosyncType = on ? AUTOSYNC_SONG : AUTOSYNC_OFF;
 		else if( sBit == "autosyncmachine" )	
-							m_AutosyncType = on ? AUTOSYNC_MACHINE : AUTOSYNC_OFF;
+			m_AutosyncType = on ? AUTOSYNC_MACHINE : AUTOSYNC_OFF; 
+		else if( sBit == "autosynctempo" )
+			m_AutosyncType = on ? AUTOSYNC_TEMPO : AUTOSYNC_OFF;
 		else if( sBit == "savescore" )		m_bSaveScore = on;
 		else if( sBit == "bar" )		m_LifeType = LIFE_BAR;
 		else if( sBit == "battery" )		m_LifeType = LIFE_BATTERY;

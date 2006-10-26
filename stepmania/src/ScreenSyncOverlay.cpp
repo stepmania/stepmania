@@ -83,6 +83,7 @@ static LocalizedString AUTO_PLAY		( "ScreenSyncOverlay", "AutoPlay" );
 static LocalizedString AUTO_PLAY_CPU		( "ScreenSyncOverlay", "AutoPlayCPU" );
 static LocalizedString AUTO_SYNC_SONG		( "ScreenSyncOverlay", "AutoSync Song" );
 static LocalizedString AUTO_SYNC_MACHINE	( "ScreenSyncOverlay", "AutoSync Machine" );
+static LocalizedString AUTO_SYNC_TEMPO		( "ScreenSyncOverlay", "AutoSync Tempo" );
 void ScreenSyncOverlay::UpdateText()
 {
 	vector<RString> vs;
@@ -103,6 +104,7 @@ void ScreenSyncOverlay::UpdateText()
 	case SongOptions::AUTOSYNC_OFF:							break;
 	case SongOptions::AUTOSYNC_SONG:	vs.push_back(AUTO_SYNC_SONG);		break;
 	case SongOptions::AUTOSYNC_MACHINE:	vs.push_back(AUTO_SYNC_MACHINE);	break;
+	case SongOptions::AUTOSYNC_TEMPO:	vs.push_back(AUTO_SYNC_TEMPO);		break;
 	default:	ASSERT(0);
 	}
 

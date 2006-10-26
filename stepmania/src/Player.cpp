@@ -1056,12 +1056,12 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 	{
 		// compute the score for this hit
 		float fNoteOffset = 0.0f;
-		
+		// we need this later if we are autosyncing
+		const float fStepBeat = NoteRowToBeat( iIndexOverlappingNote );
+		const float fStepSeconds = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat(fStepBeat);
+
 		if( row == -1 )
 		{
-			const float fStepBeat = NoteRowToBeat( iIndexOverlappingNote );
-			const float fStepSeconds = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat(fStepBeat);
-
 			/* We actually stepped on the note this long ago: */
 			const float fTimeSinceStep = tm.Ago();
 
@@ -1208,7 +1208,7 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 		}
 
 		if( m_pPlayerState->m_PlayerController == PC_HUMAN && score >= TNS_W3 ) 
-			AdjustSync::HandleAutosync( fNoteOffset );
+			AdjustSync::HandleAutosync( fNoteOffset, fStepSeconds );
 
 		// Do game-specific and mode-specific score mapping.
 		score = GAMESTATE->GetCurrentGame()->MapTapNoteScore( score );

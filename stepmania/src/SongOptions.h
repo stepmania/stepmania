@@ -33,6 +33,7 @@ public:
 		AUTOSYNC_OFF,
 		AUTOSYNC_SONG,
 		AUTOSYNC_MACHINE,
+		AUTOSYNC_TEMPO,
 		NUM_AUTOSYNC_TYPES
 	};
 	AutosyncType m_AutosyncType;

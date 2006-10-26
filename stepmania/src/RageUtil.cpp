@@ -947,6 +947,57 @@ float calc_stddev( const float *pStart, const float *pEnd, bool bSample )
 	return fDev;
 }
 
+bool CalcLeastSquares( const vector< pair<float, float> > &vCoordinates,
+                       float *pfSlope, float *pfIntercept, float *pfError )
+{
+	ASSERT( pfSlope != NULL );
+	ASSERT( pfIntercept != NULL );
+	int iNumSamples = vCoordinates.size();
+	float fNumSamples = static_cast<float>(iNumSamples);
+	if( iNumSamples == 0 ) 
+	{
+		return false;
+	}
+	float fSumXX = 0.0f, fSumXY = 0.0f, fSumX = 0.0f, fSumY = 0.0f;
+	for( int i = 0; i < iNumSamples; ++i ) 
+	{
+		fSumXX += vCoordinates[i].first * vCoordinates[i].first;
+		fSumXY += vCoordinates[i].first * vCoordinates[i].second;
+		fSumX += vCoordinates[i].first;
+		fSumY += vCoordinates[i].second;
+	}
+	float fDenominator = fNumSamples * fSumXX - fSumX * fSumX;
+	*pfSlope = (fNumSamples * fSumXY - fSumX * fSumY) / fDenominator;
+	*pfIntercept = (fSumXX * fSumY - fSumX * fSumXY) / fDenominator;
+
+	*pfError = 0.0f;
+	for( int i = 0; i < iNumSamples; ++i ) 
+	{
+		float fOneError = (vCoordinates[i].second - (*pfIntercept + *pfSlope * vCoordinates[i].first));
+		*pfError += fOneError * fOneError;
+	}
+	*pfError /= fNumSamples;
+	*pfError = sqrtf( *pfError );
+	return true;
+}
+
+void FilterHighErrorPoints( vector< pair<float, float> > *vCoordinates,
+                            float fSlope, float fIntercept, float fCutoff )
+{
+	unsigned int iOut = 0;
+	for( unsigned int iIn = 0; iIn < vCoordinates->size(); ++iIn )
+	{
+		float fError = ((*vCoordinates)[iIn].second - 
+		                (fIntercept + fSlope * (*vCoordinates)[iIn].first));
+		if( fabsf(fError) < fCutoff )
+		{
+			(*vCoordinates)[iOut] = (*vCoordinates)[iIn];
+			++iOut;
+		}
+	}
+	vCoordinates->resize(iOut);
+}
+
 void TrimLeft( RString &sStr, const char *s )
 {
 	int n = 0;

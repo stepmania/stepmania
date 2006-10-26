@@ -94,7 +94,7 @@ void ScreenGameplaySyncMachine::ResetAndRestartCurrentSong()
 	StartPlayingSong( 4, 0 );
 
 	// reset autosync
-	AdjustSync::s_iAutosyncOffsetSample = 0;
+	AdjustSync::ResetAutosync();
 }
 
 static LocalizedString OLD_OFFSET	( "ScreenGameplaySyncMachine", "Old offset" );
@@ -110,7 +110,7 @@ void ScreenGameplaySyncMachine::RefreshText()
 	s += OLD_OFFSET.GetValue() + ssprintf( ": %0.3f\n", fOld );
 	s += NEW_OFFSET.GetValue() + ssprintf( ": %0.3f\n", fNew );
 	s += STANDARD_DEVIATION.GetValue() + ssprintf( ": %0.3f\n", fStdDev );
-	s += COLLECTING_SAMPLE.GetValue() + ssprintf( ": %d / %d", AdjustSync::s_iAutosyncOffsetSample+1, SAMPLE_COUNT );
+	s += COLLECTING_SAMPLE.GetValue() + ssprintf( ": %d / %d", AdjustSync::s_iAutosyncOffsetSample+1, AdjustSync::OFFSET_SAMPLE_COUNT );
 
 	m_textSyncInfo.SetText( s );
 }

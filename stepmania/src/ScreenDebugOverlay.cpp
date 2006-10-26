@@ -441,6 +441,7 @@ static LocalizedString SLOW			( "ScreenDebugOverlay", "Slow" );
 static LocalizedString CPU			( "ScreenDebugOverlay", "CPU" );
 static LocalizedString SONG			( "ScreenDebugOverlay", "Song" );
 static LocalizedString MACHINE			( "ScreenDebugOverlay", "Machine" );
+static LocalizedString SYNC_TEMPO   ( "ScreenDebugOverlay", "Tempo" );
 
 
 class DebugLineAutoplay : public IDebugLine
@@ -497,9 +498,10 @@ class DebugLineAutosync : public IDebugLine
 	{ 
 		switch( GAMESTATE->m_SongOptions.GetSong().m_AutosyncType )
 		{
-		case SongOptions::AUTOSYNC_OFF:		return OFF.GetValue();		break;
-		case SongOptions::AUTOSYNC_SONG:	return SONG.GetValue();		break;
-		case SongOptions::AUTOSYNC_MACHINE:	return MACHINE.GetValue();	break;
+		case SongOptions::AUTOSYNC_OFF: 	return OFF.GetValue();  		break;
+		case SongOptions::AUTOSYNC_SONG:	return SONG.GetValue(); 		break;
+		case SongOptions::AUTOSYNC_MACHINE:	return MACHINE.GetValue(); 		break;
+		case SongOptions::AUTOSYNC_TEMPO:	return SYNC_TEMPO.GetValue();		break;
 		default:	ASSERT(0);
 		}
 	}
@@ -509,7 +511,8 @@ class DebugLineAutosync : public IDebugLine
 	{
 		int as = GAMESTATE->m_SongOptions.GetSong().m_AutosyncType + 1;
 		bool bAllowSongAutosync = !GAMESTATE->IsCourseMode();
-		if( !bAllowSongAutosync  &&  as == SongOptions::AUTOSYNC_SONG )
+		if( !bAllowSongAutosync  && 
+		  ( as == SongOptions::AUTOSYNC_SONG || as == SongOptions::AUTOSYNC_TEMPO ) )
 			as = SongOptions::AUTOSYNC_MACHINE;
 		wrap( as, SongOptions::NUM_AUTOSYNC_TYPES );
 		SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Song, m_AutosyncType, SongOptions::AutosyncType(as) );

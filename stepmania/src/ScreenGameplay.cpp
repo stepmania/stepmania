@@ -2245,6 +2245,7 @@ void ScreenGameplay::SaveStats()
 
 void ScreenGameplay::SongFinished()
 {
+	AdjustSync::HandleSongEnd();
 	SaveStats(); // Let subclasses save the stats.
 	/* Extremely important: if we don't remove attacks before moving on to the next
 	 * screen, they'll still be turned on eventually. */

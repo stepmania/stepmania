@@ -2122,6 +2122,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 			break;
 
 		case STATE_PLAYING:
+			AdjustSync::HandleSongEnd();
 			if( AdjustSync::IsSyncDataChanged() )
 				ScreenSaveSync::PromptSaveSync();
 			break;

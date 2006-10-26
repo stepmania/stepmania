@@ -236,6 +236,7 @@ void GameState::Reset()
 
 	ResetMusicStatistics();
 	ResetStageStatistics();
+	AdjustSync::ResetOriginalSyncData();
 
 	FOREACH_PlayerNumber( pn )
 		PROFILEMAN->UnloadProfile( pn );
@@ -496,6 +497,7 @@ void GameState::BeginStage()
 		LOG->Warn( "XXX: m_iNumStagesOfThisSong == %i?", m_iNumStagesOfThisSong );
 
 	ResetStageStatistics();
+	AdjustSync::ResetOriginalSyncData();
 
 	ARE_STAGE_MODS_FORCED.Read(); // XXX: where does this belong?
 	if( !ARE_STAGE_MODS_FORCED )
@@ -670,8 +672,6 @@ void GameState::ResetStageStatistics()
 	// Reset the round seed.  Do this here and not in FinishStage so that players
 	// get new shuffle patterns if they Back out of gameplay and play again.
 	m_iStageSeed = rand();
-
-	AdjustSync::ResetOriginalSyncData();
 }
 
 void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp )

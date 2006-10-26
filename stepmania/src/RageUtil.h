@@ -431,6 +431,22 @@ float calc_mean( const float *pStart, const float *pEnd );
  * deviation. */
 float calc_stddev( const float *pStart, const float *pEnd, bool bSample = false );
 
+/* 
+ * Find the slope, intercept, and error of a linear least squares regression 
+ * of the points given.  Error is returned as the sqrt of the average squared
+ * Y distance from the chosen line. 
+ * Returns true on success, false on failure. 
+ */
+bool CalcLeastSquares( const vector< pair<float, float> > &vCoordinates,
+                       float *p_fSlope, float *p_fIntercept, float *p_fError );
+
+/* 
+ * This method throws away any points that are more than fCutoff away from
+ * the line defined by fSlope and fIntercept.
+ */
+void FilterHighErrorPoints( vector< pair<float, float> > *vCoordinates,
+                            float fSlope, float fIntercept, float fCutoff );
+
 template<class T1, class T2>
 int FindIndex( T1 begin, T1 end, const T2 *p )
 {
