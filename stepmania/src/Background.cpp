@@ -716,7 +716,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 		 * may look something like "BGAnimation, BGAnimationLayer, Sprite" or it
 		 * may be deeper, like "BGAnimation, BGAnimationLayer, BGAnimation,
 		 * BGAnimationLayer, Sprite". */
-		pBGA->RunCommands( ActorUtil::ParseActorCommands("effectclock,music") );
+		pBGA->RunCommands( ActorUtil::ParseActorCommands("effectclock,'music'") );
 	}
 }
 
