@@ -43,7 +43,9 @@ public:
 
 	virtual void UpdateInternal( float fDeltaTime );
 	virtual void ProcessMessages( float fDeltaTime );
+	virtual void BeginDraw();
 	virtual void DrawPrimitives();
+	virtual void EndDraw();
 
 	// propagated commands
 	virtual void SetDiffuse( RageColor c );

@@ -103,11 +103,11 @@ public:
 
 	void Draw();						// calls, EarlyAbortDraw, BeginDraw, DrawPrimitives, EndDraw
 	virtual bool EarlyAbortDraw() const { return false; }	// return true to early abort drawing of this Actor
-	void BeginDraw();					// pushes transform onto world matrix stack
+	virtual void BeginDraw();				// pushes transform onto world matrix stack
 	virtual void SetGlobalRenderStates();			// Actor should call this at beginning of their DrawPrimitives()
 	virtual void SetTextureRenderStates();			// Actor should call this after setting a texture
 	virtual void DrawPrimitives() {};			// Derivatives should override
-	void EndDraw();						// pops transform from world matrix stack
+	virtual void EndDraw();					// pops transform from world matrix stack
 	
 	// TODO: make Update non virtual and change all classes to override UpdateInternal 
 	// instead.

@@ -173,11 +173,9 @@ void ActorFrame::MoveToHead( Actor* pActor )
 	m_SubActors.insert( m_SubActors.begin(), pActor );
 }
 
-
-void ActorFrame::DrawPrimitives()
+void ActorFrame::BeginDraw()
 {
-	ASSERT_M( !m_bClearZBuffer, "ClearZBuffer not supported on ActorFrames" );
-
+	Actor::BeginDraw();
 	if( m_fFOV != -1 )
 	{
 		DISPLAY->CameraPushMatrix();
@@ -189,14 +187,18 @@ void ActorFrame::DrawPrimitives()
 		DISPLAY->SetLighting( m_bLighting );
 		if( m_bLighting )
 			DISPLAY->SetLightDirectional( 
-				0, 
-				RageColor(1,1,1,1), 
-				RageColor(1,1,1,1),
-				RageColor(1,1,1,1),
-				RageVector3(0,0,1) );
-	}
+						      0, 
+						      RageColor(1,1,1,1), 
+						      RageColor(1,1,1,1),
+						      RageColor(1,1,1,1),
+						      RageVector3(0,0,1) );
+	}	
+}	
+	
 
-
+void ActorFrame::DrawPrimitives()
+{
+	ASSERT_M( !m_bClearZBuffer, "ClearZBuffer not supported on ActorFrames" );
 
 	// Don't set Actor-defined render states because we won't be drawing 
 	// any geometry that belongs to this object.
@@ -215,9 +217,11 @@ void ActorFrame::DrawPrimitives()
 		for( unsigned i=0; i<m_SubActors.size(); i++ )
 			m_SubActors[i]->Draw();
 	}
+}
 
 
-
+void ActorFrame::EndDraw()
+{
 	if( m_bOverrideLighting )
 	{
 		// TODO: pop state instead of turning lighting off
@@ -229,6 +233,7 @@ void ActorFrame::DrawPrimitives()
 	{
 		DISPLAY->CameraPopMatrix();
 	}
+	Actor::EndDraw();
 }
 
 void ActorFrame::PlayCommandOnChildren( const RString &sCommandName )
