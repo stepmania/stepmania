@@ -2216,7 +2216,8 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 				GameButtonType gbt = INPUTMAPPER->GetInputScheme()->m_GameButtonInfo[input.GameI.button].m_gbt;
 				switch( gbt )
 				{
-				DEFAULT_FAIL( gbt );
+				case GameButtonType_INVALID:
+					break;
 				case GameButtonType_Step:
 					pi.m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
 					break;

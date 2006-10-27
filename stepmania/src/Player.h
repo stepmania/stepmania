@@ -115,8 +115,10 @@ public:
 	void CrossedMineRow( int iNoteRow, const RageTimer &now );
 	bool IsOniDead() const;
 	void Fret( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease );
-	void Strum( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease );
-	void Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease );
+	enum ButtonType { ButtonType_Step, ButtonType_Strum };
+	void StepOrStrum( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease, ButtonType gbt );
+	void Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease )	{ StepOrStrum(col, row, tm, bHeld, bRelease, ButtonType_Step); }
+	void Strum( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease )	{ StepOrStrum(col, row, tm, bHeld, bRelease, ButtonType_Strum); }
 	void RandomizeNotes( int iNoteRow );
 	void FadeToFail();
 	void CacheAllUsedNoteSkins();

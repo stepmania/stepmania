@@ -985,7 +985,7 @@ void Player::Fret( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 	m_vbFretIsDown[ col ] = !bRelease;
 }
 
-void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease )
+void Player::StepOrStrum( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease, Player::ButtonType pbt )
 {
 	if( IsOniDead() )
 		return;
@@ -995,7 +995,7 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 	const float fSongBeat = GAMESTATE->m_pCurSong ? GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds ) : GAMESTATE->m_fSongBeat;
 	const int iSongRow = row == -1 ? BeatToNoteRow( fSongBeat ) : row;
 	
-	if( !bRelease )
+	if( col != -1 && !bRelease )
 	{
 		// Update roll life
 		// Let's not check the whole array every time.
@@ -1111,17 +1111,30 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 	 * Either option would fundamentally change the grading of two quick notes "jack hammers." Hmm.
 	 */
 	const int iStepSearchRows = BeatToNoteRow( StepSearchDistance * GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate );
-	int iRowOfOverlappingNote = row == -1 ? GetClosestNote( col, BeatToNoteRow(fSongBeat), iStepSearchRows, iStepSearchRows, false ) : row;
+	int iRowOfOverlappingNoteOrRow = row;
+	if( row == -1 )
+	{
+		switch( pbt )
+		{
+		DEFAULT_FAIL(pbt);
+		case ButtonType_Strum:
+			iRowOfOverlappingNoteOrRow = GetClosestNonEmptyRow( BeatToNoteRow(fSongBeat), iStepSearchRows, iStepSearchRows, false );
+			break;
+		case ButtonType_Step:
+			iRowOfOverlappingNoteOrRow = GetClosestNote( col, BeatToNoteRow(fSongBeat), iStepSearchRows, iStepSearchRows, false );
+			break;
+		}
+	}
 	
 	// calculate TapNoteScore
 	TapNoteScore score = TNS_None;
 
-	if( iRowOfOverlappingNote != -1 )
+	if( iRowOfOverlappingNoteOrRow != -1 )
 	{
 		// compute the score for this hit
 		float fNoteOffset = 0.0f;
 		// we need this later if we are autosyncing
-		const float fStepBeat = NoteRowToBeat( iRowOfOverlappingNote );
+		const float fStepBeat = NoteRowToBeat( iRowOfOverlappingNoteOrRow );
 		const float fStepSeconds = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat(fStepBeat);
 
 		if( row == -1 )
@@ -1145,15 +1158,25 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 
 		const float fSecondsFromExact = fabsf( fNoteOffset );
 
-		NoteData::iterator iter = m_NoteData.FindTapNote( col, iRowOfOverlappingNote );
-		
-		DEBUG_ASSERT( iter!= m_NoteData.end(col) );
-		TapNote &tn = iter->second;
+		TapNote tnDummy = TAP_ORIGINAL_TAP;
+		TapNote *pTN = NULL;
+		switch( pbt )
+		{
+		DEFAULT_FAIL(pbt);
+		case ButtonType_Strum:
+			pTN = &tnDummy;
+			break;
+		case ButtonType_Step:
+			NoteData::iterator iter = m_NoteData.FindTapNote( col, iRowOfOverlappingNoteOrRow );
+			DEBUG_ASSERT( iter!= m_NoteData.end(col) );
+			pTN = &iter->second;
+			break;
+		}
 
 		switch( m_pPlayerState->m_PlayerController )
 		{
 		case PC_HUMAN:
-			switch( tn.type )
+			switch( pTN->type )
 			{
 			case TapNote::mine:
 				// Stepped too close to mine?
@@ -1162,12 +1185,12 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 				break;
 
 			case TapNote::attack:
-				if( !bRelease && fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_Attack) && !tn.result.bHidden )
+				if( !bRelease && fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_Attack) && !pTN->result.bHidden )
 					score = TNS_W2; /* sentinel */
 				break;
 
 			default:
-				if( (tn.type == TapNote::lift) == bRelease )
+				if( (pTN->type == TapNote::lift) == bRelease )
 				{
 					if(	 fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_W1) )	score = TNS_W1;
 					else if( fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_W2) )	score = TNS_W2;
@@ -1197,20 +1220,20 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 
 			// TRICKY:  We're asking the AI to judge mines.  consider TNS_W4 and below
 			// as "mine was hit" and everything else as "mine was avoided"
-			if( tn.type == TapNote::mine )
+			if( pTN->type == TapNote::mine )
 			{
 				// The CPU hits a lot of mines.  Only consider hitting the 
 				// first mine for a row.  We know we're the first mine if 
 				// there are are no mines to the left of us.
 				for( int t=0; t<col; t++ )
 				{
-					if( m_NoteData.GetTapNote(t,iRowOfOverlappingNote).type == TapNote::mine )	// there's a mine to the left of us
+					if( m_NoteData.GetTapNote(t,iRowOfOverlappingNoteOrRow).type == TapNote::mine )	// there's a mine to the left of us
 						return;	// avoid
 				}
 
 				// The CPU hits a lot of mines.  Make it less likely to hit 
 				// mines that don't have a tap note on the same row.
-				bool bTapsOnRow = m_NoteData.IsThereATapOrHoldHeadAtRow( iRowOfOverlappingNote );
+				bool bTapsOnRow = m_NoteData.IsThereATapOrHoldHeadAtRow( iRowOfOverlappingNoteOrRow );
 				TapNoteScore get_to_avoid = bTapsOnRow ? TNS_W3 : TNS_W4;
 
 				if( score >= get_to_avoid )
@@ -1219,7 +1242,7 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 					score = TNS_HitMine;
 			}
 
-			if( tn.type == TapNote::attack && score > TNS_W4 )
+			if( pTN->type == TapNote::attack && score > TNS_W4 )
 				score = TNS_W2; /* sentinel */
 
 			/* AI will generate misses here.  Don't handle a miss like a regular note because
@@ -1241,7 +1264,29 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 			break;
 		}
 
-		if( tn.type == TapNote::attack && score == TNS_W2 )
+		
+		switch( pbt )
+		{
+		DEFAULT_FAIL(pbt);
+		case ButtonType_Strum:
+			{
+				bool bNoteRowMatchesFrets = true;
+				for( int i=0; i<GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; i++ )
+				{
+					const TapNote &tn = m_NoteData.GetTapNote( i, iRowOfOverlappingNoteOrRow );
+					bool bNoteMatchesFret = m_vbFretIsDown[i] == (tn.type != TapNote::empty);
+					bNoteRowMatchesFrets &= bNoteMatchesFret; 
+				}
+				if( !bNoteRowMatchesFrets )
+					score = TNS_HitMine;
+			}
+			break;
+		case ButtonType_Step:
+			break;
+		}
+
+
+		if( pTN->type == TapNote::attack && score == TNS_W2 )
 		{
 			score = TNS_None;	// don't score this as anything
 
@@ -1251,8 +1296,8 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 			Attack attack(
 				ATTACK_LEVEL_1,
 				-1,	// now
-				tn.fAttackDurationSeconds,
-				tn.sAttackModifiers,
+				pTN->fAttackDurationSeconds,
+				pTN->sAttackModifiers,
 				true,
 				false
 				);
@@ -1265,9 +1310,9 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 			// remove all TapAttacks on this row
 			for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
 			{
-				const TapNote &tn = m_NoteData.GetTapNote( t, iRowOfOverlappingNote );
+				const TapNote &tn = m_NoteData.GetTapNote( t, iRowOfOverlappingNoteOrRow );
 				if( tn.type == TapNote::attack )
-					HideNote( t, iRowOfOverlappingNote );
+					HideNote( t, iRowOfOverlappingNoteOrRow );
 			}
 		}
 
@@ -1279,16 +1324,36 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 		if( score == TNS_W1 && !GAMESTATE->ShowW1() )
 			score = TNS_W2;
 
-		tn.result.tns = score;
 
 		if( score != TNS_None )
-			tn.result.fTapNoteOffset = -fNoteOffset;
+		{
+			switch( pbt )
+			{
+			DEFAULT_FAIL(pbt);
+			case ButtonType_Strum:
+				for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
+				{
+					TapNote tn = m_NoteData.GetTapNote( t, iRowOfOverlappingNoteOrRow );
+					if( tn.type != TapNote::empty )
+					{
+						tn.result.tns = score;
+						tn.result.fTapNoteOffset = -fNoteOffset;
+						m_NoteData.SetTapNote( t, iRowOfOverlappingNoteOrRow, tn );
+					}
+				}
+				break;
+			case ButtonType_Step:
+				pTN->result.tns = score;
+				pTN->result.fTapNoteOffset = -fNoteOffset;
+				break;
+			}
+		}
 
-		PlayerNumber pn = tn.pn == PLAYER_INVALID ? m_pPlayerState->m_PlayerNumber : tn.pn;
+		PlayerNumber pn = pTN->pn == PLAYER_INVALID ? m_pPlayerState->m_PlayerNumber : pTN->pn;
 		m_LastTapNoteScore = score;
 		if( GAMESTATE->GetCurrentGame()->m_bCountNotesSeparately )
 		{
-			if( tn.type != TapNote::mine )
+			if( pTN->type != TapNote::mine )
 			{
 				const bool bBlind = (m_pPlayerState->m_PlayerOptions.GetCurrent().m_fBlind != 0);
 				// XXX This is the wrong combo for shared players. STATSMAN->m_CurStageStats.m_Player[pn] might work but could be wrong.
@@ -1296,12 +1361,12 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 				if( m_pNoteField )
 					m_pNoteField->DidTapNote( col, score, bBright );
 				if( score >= TNS_W3 || bBlind )
-					HideNote( col, iRowOfOverlappingNote );
+					HideNote( col, iRowOfOverlappingNoteOrRow );
 			}
 		}
-		else if( NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iRowOfOverlappingNote, pn) )
+		else if( NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iRowOfOverlappingNoteOrRow, pn) )
 		{
-			FlashGhostRow( iRowOfOverlappingNote, pn );
+			FlashGhostRow( iRowOfOverlappingNoteOrRow, pn );
 		}
 	}
 
@@ -1315,28 +1380,52 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 		 * even that doesn't seem quite right since it would then play the same (new) keysound twice which would
 		 * sound wrong even though the notes were judged as being correct, above. Fixing the above problem would
 		 * fix this one as well. */
-		if( iRowOfOverlappingNote == -1 )
-			iRowOfOverlappingNote = GetClosestNote( col, BeatToNoteRow(fSongBeat),
+		if( iRowOfOverlappingNoteOrRow == -1 )
+			iRowOfOverlappingNoteOrRow = GetClosestNote( col, BeatToNoteRow(fSongBeat),
 								iStepSearchRows, MAX_NOTE_ROW, true );
-		if( iRowOfOverlappingNote != -1 )
+		if( iRowOfOverlappingNoteOrRow != -1 )
 		{
-			const TapNote &tn = m_NoteData.GetTapNote( col, iRowOfOverlappingNote );
-			if( tn.iKeysoundIndex >= 0 && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
-				m_vKeysounds[tn.iKeysoundIndex].Play();
+			switch( pbt )
+			{
+			DEFAULT_FAIL(pbt);
+			case ButtonType_Strum:
+				for( int i=0; i<m_NoteData.GetNumTracks(); i++ )
+				{
+					const TapNote &tn = m_NoteData.GetTapNote( i, iRowOfOverlappingNoteOrRow );
+					if( tn.iKeysoundIndex >= 0 && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
+						m_vKeysounds[tn.iKeysoundIndex].Play();
+				}
+				break;
+			case ButtonType_Step:
+				const TapNote &tn = m_NoteData.GetTapNote( col, iRowOfOverlappingNoteOrRow );
+				if( tn.iKeysoundIndex >= 0 && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
+					m_vKeysounds[tn.iKeysoundIndex].Play();
+				break;
+			}
 		}
 	}
 	// XXX:
 	if( !bRelease )
 	{
 		if( m_pNoteField )
-			m_pNoteField->Step( col, score );
+		{
+			switch( pbt )
+			{
+			DEFAULT_FAIL(pbt);
+			case ButtonType_Strum:
+				for( int i=0; i<m_NoteData.GetNumTracks(); i++ )
+				{
+					if( m_vbFretIsDown[i] )
+						m_pNoteField->Step( i, score );
+				}
+				break;
+			case ButtonType_Step:
+				m_pNoteField->Step( col, score );
+				break;
+			}
+		}
 		MESSAGEMAN->Broadcast( m_sMessageToSendOnStep );
 	}
-}
-
-void Player::Strum( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease )
-{
-
 }
 
 static bool Unjudged( const TapNote &tn )
