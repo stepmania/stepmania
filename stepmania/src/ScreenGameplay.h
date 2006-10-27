@@ -124,6 +124,7 @@ protected:
 	virtual bool UseSongBackgroundAndForeground() const { return true; }
 
 	ThemeMetric<RString> PLAYER_TYPE;
+	ThemeMetric<apActorCommands> PLAYER_INIT_COMMAND;
 	LocalizedString GIVE_UP_START_TEXT;
 	LocalizedString GIVE_UP_BACK_TEXT;
 	LocalizedString GIVE_UP_ABORTED_TEXT;

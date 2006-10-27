@@ -311,6 +311,10 @@ void Player::Init(
 	m_fNoteFieldHeight = GRAY_ARROWS_Y_REVERSE-GRAY_ARROWS_Y_STANDARD;
 	if( m_pNoteField )
 		m_pNoteField->Init( m_pPlayerState, m_fNoteFieldHeight );
+
+	m_vbFretIsDown.resize( GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
+	FOREACH( bool, m_vbFretIsDown, b )
+		*b = false;
 }
 
 void Player::Load()
@@ -918,14 +922,74 @@ int Player::GetClosestNote( int col, int iNoteRow, int iMaxRowsAhead, int iMaxRo
 		return iNextIndex;
 }
 
-void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease )
+int Player::GetClosestNonEmptyRowDirectional( int iStartRow, int iEndRow, bool bAllowGraded, bool bForward ) const
+{
+	if( bForward )
+	{
+		NoteData::all_tracks_iterator iter = m_NoteData.GetTapNoteRangeAllTracks( iStartRow, iEndRow );
+
+		while( !iter.IsAtEnd() )
+		{
+			//NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iRowOfClosestNonEmptyRow, pn) )
+			return iter.Row();
+		}
+	}
+	else
+	{
+		NoteData::all_tracks_reverse_iterator iter = m_NoteData.GetTapNoteRangeAllTracksReverse( iStartRow, iEndRow );
+
+		while( !iter.IsAtEnd() )
+		{
+			//NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iRowOfClosestNonEmptyRow, pn) )
+			return iter.Row();
+		}
+	}
+
+	return -1;
+}
+
+/* Find the closest note to fBeat. */
+int Player::GetClosestNonEmptyRow( int iNoteRow, int iMaxRowsAhead, int iMaxRowsBehind, bool bAllowGraded ) const
+{
+	// Start at iIndexStartLookingAt and search outward.
+	int iNextRow = GetClosestNonEmptyRowDirectional( iNoteRow, iNoteRow+iMaxRowsAhead, bAllowGraded, true );
+	int iPrevRow = GetClosestNonEmptyRowDirectional( iNoteRow-iMaxRowsBehind, iNoteRow, bAllowGraded, false );
+
+	if( iNextRow == -1 && iPrevRow == -1 )
+		return -1;
+	if( iNextRow == -1 )
+		return iPrevRow;
+	if( iPrevRow == -1 )
+		return iNextRow;
+
+	/* Figure out which row is closer. */
+	if( abs(iNoteRow-iNextRow) > abs(iNoteRow-iPrevRow) )
+		return iPrevRow;
+	else
+		return iNextRow;
+}
+
+bool Player::IsOniDead() const
 {
 	// If we're playing on oni and we've died, do nothing.
-	if( GAMESTATE->m_SongOptions.GetCurrent().m_LifeType == SongOptions::LIFE_BATTERY && m_pPlayerStageStats  && m_pPlayerStageStats->bFailed )
+	return GAMESTATE->m_SongOptions.GetCurrent().m_LifeType == SongOptions::LIFE_BATTERY && m_pPlayerStageStats  && m_pPlayerStageStats->bFailed;
+}
+
+void Player::Fret( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease )
+{
+	if( IsOniDead() )
 		return;
 	
 	DEBUG_ASSERT_M( col >= 0  &&  col <= m_NoteData.GetNumTracks(), ssprintf("%i, %i", col, m_NoteData.GetNumTracks()) );
 
+	m_vbFretIsDown[ col ] = !bRelease;
+}
+
+void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease )
+{
+	if( IsOniDead() )
+		return;
+	
 
 	const float fPositionSeconds = GAMESTATE->m_fMusicSeconds - tm.Ago();
 	const float fSongBeat = GAMESTATE->m_pCurSong ? GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds ) : GAMESTATE->m_fSongBeat;
@@ -1047,17 +1111,17 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 	 * Either option would fundamentally change the grading of two quick notes "jack hammers." Hmm.
 	 */
 	const int iStepSearchRows = BeatToNoteRow( StepSearchDistance * GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate );
-	int iIndexOverlappingNote = row == -1 ? GetClosestNote( col, BeatToNoteRow(fSongBeat), iStepSearchRows, iStepSearchRows, false ) : row;
+	int iRowOfOverlappingNote = row == -1 ? GetClosestNote( col, BeatToNoteRow(fSongBeat), iStepSearchRows, iStepSearchRows, false ) : row;
 	
 	// calculate TapNoteScore
 	TapNoteScore score = TNS_None;
 
-	if( iIndexOverlappingNote != -1 )
+	if( iRowOfOverlappingNote != -1 )
 	{
 		// compute the score for this hit
 		float fNoteOffset = 0.0f;
 		// we need this later if we are autosyncing
-		const float fStepBeat = NoteRowToBeat( iIndexOverlappingNote );
+		const float fStepBeat = NoteRowToBeat( iRowOfOverlappingNote );
 		const float fStepSeconds = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat(fStepBeat);
 
 		if( row == -1 )
@@ -1081,7 +1145,7 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 
 		const float fSecondsFromExact = fabsf( fNoteOffset );
 
-		NoteData::iterator iter = m_NoteData.FindTapNote( col, iIndexOverlappingNote );
+		NoteData::iterator iter = m_NoteData.FindTapNote( col, iRowOfOverlappingNote );
 		
 		DEBUG_ASSERT( iter!= m_NoteData.end(col) );
 		TapNote &tn = iter->second;
@@ -1140,13 +1204,13 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 				// there are are no mines to the left of us.
 				for( int t=0; t<col; t++ )
 				{
-					if( m_NoteData.GetTapNote(t,iIndexOverlappingNote).type == TapNote::mine )	// there's a mine to the left of us
+					if( m_NoteData.GetTapNote(t,iRowOfOverlappingNote).type == TapNote::mine )	// there's a mine to the left of us
 						return;	// avoid
 				}
 
 				// The CPU hits a lot of mines.  Make it less likely to hit 
 				// mines that don't have a tap note on the same row.
-				bool bTapsOnRow = m_NoteData.IsThereATapOrHoldHeadAtRow( iIndexOverlappingNote );
+				bool bTapsOnRow = m_NoteData.IsThereATapOrHoldHeadAtRow( iRowOfOverlappingNote );
 				TapNoteScore get_to_avoid = bTapsOnRow ? TNS_W3 : TNS_W4;
 
 				if( score >= get_to_avoid )
@@ -1201,9 +1265,9 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 			// remove all TapAttacks on this row
 			for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
 			{
-				const TapNote &tn = m_NoteData.GetTapNote( t, iIndexOverlappingNote );
+				const TapNote &tn = m_NoteData.GetTapNote( t, iRowOfOverlappingNote );
 				if( tn.type == TapNote::attack )
-					HideNote( t, iIndexOverlappingNote );
+					HideNote( t, iRowOfOverlappingNote );
 			}
 		}
 
@@ -1232,12 +1296,12 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 				if( m_pNoteField )
 					m_pNoteField->DidTapNote( col, score, bBright );
 				if( score >= TNS_W3 || bBlind )
-					HideNote( col, iIndexOverlappingNote );
+					HideNote( col, iRowOfOverlappingNote );
 			}
 		}
-		else if( NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iIndexOverlappingNote, pn) )
+		else if( NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iRowOfOverlappingNote, pn) )
 		{
-			FlashGhostRow( iIndexOverlappingNote, pn );
+			FlashGhostRow( iRowOfOverlappingNote, pn );
 		}
 	}
 
@@ -1245,18 +1309,18 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 	{
 		/* Search for keyed sounds separately.  If we can't find a nearby note, search
 		 * backwards indefinitely, and ignore grading. */
-		/* XXX: This isn't quite right. As per the above XXX for iIndexOverlappingNote, if iIndexOverlappingNote
+		/* XXX: This isn't quite right. As per the above XXX for iRowOfOverlappingNote, if iRowOfOverlappingNote
 		 * is set to a previous note, the keysound could have changed and this would cause the wrong one to play,
 		 * in essence playing two sounds in the opposite order. Maybe this should always perform the search. Still,
 		 * even that doesn't seem quite right since it would then play the same (new) keysound twice which would
 		 * sound wrong even though the notes were judged as being correct, above. Fixing the above problem would
 		 * fix this one as well. */
-		if( iIndexOverlappingNote == -1 )
-			iIndexOverlappingNote = GetClosestNote( col, BeatToNoteRow(fSongBeat),
+		if( iRowOfOverlappingNote == -1 )
+			iRowOfOverlappingNote = GetClosestNote( col, BeatToNoteRow(fSongBeat),
 								iStepSearchRows, MAX_NOTE_ROW, true );
-		if( iIndexOverlappingNote != -1 )
+		if( iRowOfOverlappingNote != -1 )
 		{
-			const TapNote &tn = m_NoteData.GetTapNote( col, iIndexOverlappingNote );
+			const TapNote &tn = m_NoteData.GetTapNote( col, iRowOfOverlappingNote );
 			if( tn.iKeysoundIndex >= 0 && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
 				m_vKeysounds[tn.iKeysoundIndex].Play();
 		}
@@ -1268,6 +1332,11 @@ void Player::Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 			m_pNoteField->Step( col, score );
 		MESSAGEMAN->Broadcast( m_sMessageToSendOnStep );
 	}
+}
+
+void Player::Strum( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease )
+{
+
 }
 
 static bool Unjudged( const TapNote &tn )

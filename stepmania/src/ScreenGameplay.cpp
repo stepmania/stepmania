@@ -329,6 +329,7 @@ ScreenGameplay::ScreenGameplay()
 void ScreenGameplay::Init()
 {
 	PLAYER_TYPE.Load(			m_sName, "PlayerType" );
+	PLAYER_INIT_COMMAND.Load(		m_sName, "PlayerInitCommand" );
 	GIVE_UP_START_TEXT.Load(		m_sName, "GiveUpStartText" );
 	GIVE_UP_BACK_TEXT.Load(			m_sName, "GiveUpBackText" );
 	GIVE_UP_ABORTED_TEXT.Load(		m_sName, "GiveUpAbortedText" );
@@ -460,7 +461,8 @@ void ScreenGameplay::Init()
 		if( Center1Player() )
 			fPlayerX = SCREEN_CENTER_X;
 
-		pi->m_pPlayer->SetXY( fPlayerX, SCREEN_CENTER_Y );
+		pi->m_pPlayer->SetX( fPlayerX );
+		pi->m_pPlayer->RunCommands( PLAYER_INIT_COMMAND );
 		this->AddChild( pi->m_pPlayer );
 	}
 	
@@ -2139,7 +2141,13 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 
 		/* Only handle MENU_BUTTON_BACK as a regular BACK button if BACK_GIVES_UP is
 		 * disabled. */
-		if( input.MenuI == MENU_BUTTON_BACK && !BACK_GIVES_UP )
+		bool bHoldingBack = false;
+		if( GAMESTATE->GetCurrentStyle()->GameInputToColumn(input.GameI) == Column_Invalid )
+		{
+			bHoldingBack |= input.MenuI == MENU_BUTTON_BACK && !BACK_GIVES_UP;
+		}
+
+		if( bHoldingBack )
 		{
 			if( ((!PREFSMAN->m_bDelayedBack && input.type==IET_FIRST_PRESS) ||
 				(input.DeviceI.device==DEVICE_KEYBOARD && input.type==IET_REPEAT) ||
@@ -2171,10 +2179,19 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 	bool bRelease = input.type == IET_RELEASE;
 	const int iCol = GAMESTATE->GetCurrentStyle()->GameInputToColumn( input.GameI );
 
+	// Don't pass on any inputs to Player that aren't a press or a release.
+	switch( input.type )
+	{
+	case IET_FIRST_PRESS:
+	case IET_RELEASE:
+		break;
+	default:
+		return;
+	}
+
 	if( GAMESTATE->m_bMultiplayer )
 	{
 		if( input.mp != MultiPlayer_Invalid  &&  
-			input.type==IET_FIRST_PRESS &&
 			iCol != Column_Invalid && 
 			GAMESTATE->IsMultiPlayerEnabled(input.mp) )
 		{
@@ -2186,16 +2203,30 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 		//
 		// handle a step or battle item activate
 		//
-		if( input.type==IET_FIRST_PRESS && 
-			iCol != Column_Invalid &&
-			GAMESTATE->IsHumanPlayer( input.pn ) )
+		if( GAMESTATE->IsHumanPlayer( input.pn ) )
 		{
 			AbortGiveUp( true );
 			
 			if( PREFSMAN->m_AutoPlay == PC_HUMAN )
 			{
 				PlayerInfo& pi = GetPlayerInfoForInput( input );
-				pi.m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
+				
+				ASSERT( input.GameI.IsValid() );
+
+				GameButtonType gbt = INPUTMAPPER->GetInputScheme()->m_GameButtonInfo[input.GameI.button].m_gbt;
+				switch( gbt )
+				{
+				DEFAULT_FAIL( gbt );
+				case GameButtonType_Step:
+					pi.m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
+					break;
+				case GameButtonType_Fret:
+					pi.m_pPlayer->Fret( iCol, -1, input.DeviceI.ts, false, bRelease );
+					break;
+				case GameButtonType_Strum:
+					pi.m_pPlayer->Strum( iCol, -1, input.DeviceI.ts, false, bRelease );
+					break;
+				}
 			}
 		}
 	}

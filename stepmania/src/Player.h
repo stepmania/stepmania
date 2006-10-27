@@ -113,6 +113,9 @@ public:
 	void Load();
 	void CrossedRow( int iNoteRow, const RageTimer &now );
 	void CrossedMineRow( int iNoteRow, const RageTimer &now );
+	bool IsOniDead() const;
+	void Fret( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease );
+	void Strum( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease );
 	void Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease );
 	void RandomizeNotes( int iNoteRow );
 	void FadeToFail();
@@ -138,6 +141,8 @@ protected:
 
 	int GetClosestNoteDirectional( int col, int iStartRow, int iMaxRowsAhead, bool bAllowGraded, bool bForward ) const;
 	int GetClosestNote( int col, int iNoteRow, int iMaxRowsAhead, int iMaxRowsBehind, bool bAllowGraded ) const;
+	int GetClosestNonEmptyRowDirectional( int iStartRow, int iMaxRowsAhead, bool bAllowGraded, bool bForward ) const;
+	int GetClosestNonEmptyRow( int iNoteRow, int iMaxRowsAhead, int iMaxRowsBehind, bool bAllowGraded ) const;
 
 	bool IsPlayingBeginner() const;
 	inline void HideNote( int col, int row )
@@ -185,6 +190,8 @@ protected:
 	RageSound		m_soundMine;
 	RageSound		m_soundAttackLaunch;
 	RageSound		m_soundAttackEnding;
+
+	vector<bool>	m_vbFretIsDown;
 
 	vector<RageSound>	m_vKeysounds;
 
