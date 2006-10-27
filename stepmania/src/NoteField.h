@@ -42,7 +42,7 @@ public:
 
 	const PlayerState *GetPlayerState() const { return m_pPlayerState; }
 
-	int				m_iBeginMarker, m_iEndMarker;	// only used with MODE_EDIT
+	int	m_iBeginMarker, m_iEndMarker;	// only used with MODE_EDIT
 
 protected:
 	void CacheNoteSkin( const RString &sNoteSkin );
@@ -50,6 +50,7 @@ protected:
 
 	bool IsOnScreen( float fBeat, int iCol, int iFirstPixelToDraw, int iLastPixelToDraw ) const;
 
+	void DrawBoard( int iFirstPixelToDraw, int iLastPixelToDraw );
 	void DrawBeatBar( const float fBeat );
 	void DrawMarkerBar( int fBeat );
 	void DrawAreaHighlight( int iStartBeat, int iEndBeat );
@@ -61,12 +62,12 @@ protected:
 
 	const NoteData *m_pNoteData;
 
-	float				m_fPercentFadeToFail;	// -1 if not fading to fail
+	float			m_fPercentFadeToFail;	// -1 if not fading to fail
 
-	const PlayerState*		m_pPlayerState;
-	int				m_iStartDrawingPixel;	// this should be a negative number
-	int				m_iEndDrawingPixel;	// this should be a positive number
-	float				m_fYReverseOffsetPixels;
+	const PlayerState*	m_pPlayerState;
+	int			m_iStartDrawingPixel;	// this should be a negative number
+	int			m_iEndDrawingPixel;	// this should be a positive number
+	float			m_fYReverseOffsetPixels;
 
 	// color arrows
 	struct NoteDisplayCols
@@ -83,11 +84,12 @@ protected:
 	NoteDisplayCols			*m_pCurDisplay;
 	NoteDisplayCols			*m_pDisplays[NUM_PlayerNumber];
 
-	// used in MODE_EDIT
-	Sprite				m_sprBars;	// 4 frames: Measure, 4th, 8th, 16th
-	BitmapText			m_textMeasureNumber;
-	Quad				m_rectMarkerBar;
-	Quad				m_rectAreaHighlight;
+	// decorations, mostly used in MODE_EDIT
+	Sprite		m_sprBoard;
+	Sprite		m_sprBeatBars;	// 4 frames: Measure, 4th, 8th, 16th
+	BitmapText	m_textMeasureNumber;
+	Quad		m_rectMarkerBar;
+	Quad		m_rectAreaHighlight;
 };
 
 #endif

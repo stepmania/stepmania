@@ -21,6 +21,9 @@
 #include "Course.h"
 #include "NoteData.h"
 
+static ThemeMetric<bool> SHOW_BOARD( "NoteField", "ShowBoard" );
+static ThemeMetric<bool> SHOW_BEAT_BARS( "NoteField", "ShowBeatBars" );
+
 NoteField::NoteField()
 {	
 	m_pNoteData = NULL;
@@ -33,8 +36,11 @@ NoteField::NoteField()
 
 	m_rectMarkerBar.SetEffectDiffuseShift( 2, RageColor(1,1,1,0.5f), RageColor(0.5f,0.5f,0.5f,0.5f) );
 
-	m_sprBars.Load( THEME->GetPathG("NoteField","bars") );
-	m_sprBars.StopAnimating();
+	m_sprBoard.Load( THEME->GetPathG("NoteField","board") );
+	m_sprBoard.StopAnimating();
+
+	m_sprBeatBars.Load( THEME->GetPathG("NoteField","bars") );
+	m_sprBeatBars.StopAnimating();
 
 	m_iBeginMarker = m_iEndMarker = -1;
 
@@ -246,15 +252,15 @@ void NoteField::DrawBeatBar( const float fBeat )
 	}
 
 	float fWidth = GetWidth();
-	float fFrameWidth = m_sprBars.GetUnzoomedWidth();
+	float fFrameWidth = m_sprBeatBars.GetUnzoomedWidth();
 
-	m_sprBars.SetX( 0 );
-	m_sprBars.SetY( fYPos );
-	m_sprBars.SetDiffuse( RageColor(1,1,1,fAlpha) );
-	m_sprBars.SetState( iState );
-	m_sprBars.SetCustomTextureRect( RectF(0,SCALE(iState,0.f,4.f,0.f,1.f), fWidth/fFrameWidth, SCALE(iState+1,0.f,4.f,0.f,1.f)) );
-	m_sprBars.SetZoomX( fWidth/m_sprBars.GetUnzoomedWidth() );
-	m_sprBars.Draw();
+	m_sprBeatBars.SetX( 0 );
+	m_sprBeatBars.SetY( fYPos );
+	m_sprBeatBars.SetDiffuse( RageColor(1,1,1,fAlpha) );
+	m_sprBeatBars.SetState( iState );
+	m_sprBeatBars.SetCustomTextureRect( RectF(0,SCALE(iState,0.f,4.f,0.f,1.f), fWidth/fFrameWidth, SCALE(iState+1,0.f,4.f,0.f,1.f)) );
+	m_sprBeatBars.SetZoomX( fWidth/m_sprBeatBars.GetUnzoomedWidth() );
+	m_sprBeatBars.Draw();
 
 
 	if( bIsMeasure )
@@ -265,6 +271,48 @@ void NoteField::DrawBeatBar( const float fBeat )
 		m_textMeasureNumber.SetText( ssprintf("%d", iMeasureNoDisplay) );
 		m_textMeasureNumber.SetXY( -fWidth/2, fYPos );
 		m_textMeasureNumber.Draw();
+	}
+}
+
+void NoteField::DrawBoard( int iFirstPixelToDraw, int iLastPixelToDraw )
+{
+	const float fYOffsetAt0		= ArrowEffects::GetYOffset( m_pPlayerState, 0, GAMESTATE->m_fSongBeat );
+	const float fYOffsetAtNeg1	= ArrowEffects::GetYOffset( m_pPlayerState, 0, GAMESTATE->m_fSongBeat-1 );
+	const float fYPosAt0		= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffsetAt0, m_fYReverseOffsetPixels );
+	const float fYPosAtNeg1		= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffsetAtNeg1, m_fYReverseOffsetPixels );
+	const float fBeatSpacingPixels = fYPosAtNeg1 - fYPosAt0;
+
+	float fBeat = GAMESTATE->m_fSongBeat;
+	float fPixels = fBeat * fBeatSpacingPixels;
+	
+	// Draw the board centered on fYPosAt0 so that the board doesn't slide as the draw distance changes with modifiers.
+	
+	m_sprBoard.SetY( fYPosAt0 );
+	RectF rect = *m_sprBoard.GetCurrentTextureCoordRect();
+	const float fBoardGraphicHeightPixels = m_sprBoard.GetUnzoomedHeight();
+	float fTexCoordOffset = fPixels / fBoardGraphicHeightPixels;
+	{
+		// top half
+		const float fHeight = iLastPixelToDraw;
+		m_sprBoard.ZoomToHeight( fHeight );
+		wrap( fPixels, fHeight );
+
+		rect.top = -fTexCoordOffset-(fHeight/fBoardGraphicHeightPixels);
+		rect.bottom = -fTexCoordOffset;
+		m_sprBoard.SetCustomTextureRect( rect );
+		m_sprBoard.SetVertAlign( VertAlign_Bottom );
+		m_sprBoard.Draw();
+	}
+	{
+		const float fHeight = -iFirstPixelToDraw;
+		m_sprBoard.ZoomToHeight( fHeight );
+		wrap( fPixels, fHeight );
+
+		rect.top = -fTexCoordOffset;
+		rect.bottom = -fTexCoordOffset+(fHeight/fBoardGraphicHeightPixels);
+		m_sprBoard.SetCustomTextureRect( rect );
+		m_sprBoard.SetVertAlign( VertAlign_Top );
+		m_sprBoard.Draw();
 	}
 }
 
@@ -453,7 +501,6 @@ void NoteField::DrawPrimitives()
 	ArrowEffects::Update();
 
 	NoteDisplayCols *cur = m_pCurDisplay;
-	cur->m_ReceptorArrowRow.Draw();
 
 	const PlayerOptions &current_po = m_pPlayerState->m_PlayerOptions.GetCurrent();
 
@@ -491,21 +538,37 @@ void NoteField::DrawPrimitives()
 
 #define IS_ON_SCREEN( fBeat )  IsOnScreen( fBeat, 0, iFirstPixelToDraw, iLastPixelToDraw )
 
+	//
+	// Draw board
+	//
+	if( SHOW_BOARD )
+	{
+		DrawBoard( iFirstPixelToDraw, iLastPixelToDraw );
+	}
+
+	//
+	// Draw Receptors
+	//
+	{
+		cur->m_ReceptorArrowRow.Draw();
+	}
+
+	//
+	// Draw beat bars
+	//
+	if( GAMESTATE->IsEditing() || SHOW_BEAT_BARS )
+	{
+		float fStartDrawingMeasureBars = max( 0, Quantize(fFirstBeatToDraw-0.25f,0.25f) );
+		for( float f=fStartDrawingMeasureBars; f<fLastBeatToDraw; f+=0.25f )
+		{
+			if( IS_ON_SCREEN(f) )
+				DrawBeatBar( f );
+		}
+	}
+
 	if( GAMESTATE->IsEditing() )
 	{
 		ASSERT(GAMESTATE->m_pCurSong);
-
-		//
-		// Draw beat bars
-		//
-		{
-			float fStartDrawingMeasureBars = max( 0, Quantize(fFirstBeatToDraw-0.25f,0.25f) );
-			for( float f=fStartDrawingMeasureBars; f<fLastBeatToDraw; f+=0.25f )
-			{
-				if( IS_ON_SCREEN(f) )
-					DrawBeatBar( f );
-			}
-		}
 
 		//
 		// BPM text
