@@ -13,19 +13,19 @@ class RageSoundReader_Resample_Good: public RageSoundReader_Resample
 {
 public:
 	/* We own source. */
-	void Open(SoundReader *source);
+	void Open( SoundReader *pSource );
 	int GetLength() const;
 	int GetLength_Fast() const;
-	int SetPosition_Accurate(int ms);
-	int SetPosition_Fast(int ms);
-	int Read(char *buf, unsigned len);
+	int SetPosition_Accurate( int iMS );
+	int SetPosition_Fast( int iMS );
+	int Read( char *pBuf, unsigned iLen );
 	RageSoundReader_Resample_Good();
 	virtual ~RageSoundReader_Resample_Good();
 	RageSoundReader_Resample_Good *Copy() const;
 
 	/* Change the actual sample rate of a sound. */
-	void SetSampleRate( int hz );
-	void SetHighQuality( bool hq ) { }
+	void SetSampleRate( int iHZ );
+	void SetHighQuality( bool bHQ ) { }
 
 	int GetSampleRate() const { return m_iSampleRate; }
 	unsigned GetNumChannels() const { return m_pSource->GetNumChannels(); }
@@ -35,7 +35,7 @@ private:
 	void Reset();
 	void ReopenResampler();
 
-	vector<RageSoundResampler_Polyphase *> resamplers; /* one per channel */
+	vector<RageSoundResampler_Polyphase *> m_apResamplers; /* one per channel */
 
 	SoundReader *m_pSource;
 	int m_iSampleRate;

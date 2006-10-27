@@ -503,20 +503,20 @@ RageSoundReader_Resample_Good::RageSoundReader_Resample_Good()
 void RageSoundReader_Resample_Good::Reset()
 {
 	for( size_t iChannel = 0; iChannel < m_pSource->GetNumChannels(); ++iChannel )
-		resamplers[iChannel]->Reset();
+		m_apResamplers[iChannel]->Reset();
 }
 
 
 /* Call this if the sample factor changes. */
 void RageSoundReader_Resample_Good::ReopenResampler()
 {
-	for( size_t iChannel = 0; iChannel < resamplers.size(); ++iChannel )
-		delete resamplers[iChannel];
-	resamplers.clear();
+	for( size_t iChannel = 0; iChannel < m_apResamplers.size(); ++iChannel )
+		delete m_apResamplers[iChannel];
+	m_apResamplers.clear();
 	for( size_t iChannel = 0; iChannel < m_pSource->GetNumChannels(); ++iChannel )
 	{
 		RageSoundResampler_Polyphase *p = new RageSoundResampler_Polyphase( m_pSource->GetSampleRate(), m_iSampleRate );
-		resamplers.push_back( p );
+		m_apResamplers.push_back( p );
 	}
 }
 
@@ -529,8 +529,8 @@ void RageSoundReader_Resample_Good::Open( SoundReader *pSource )
 
 RageSoundReader_Resample_Good::~RageSoundReader_Resample_Good()
 {
-	for( size_t iChannel = 0; iChannel < resamplers.size(); ++iChannel )
-		delete resamplers[iChannel];
+	for( size_t iChannel = 0; iChannel < m_apResamplers.size(); ++iChannel )
+		delete m_apResamplers[iChannel];
 	delete m_pSource;
 }
 
@@ -550,30 +550,30 @@ int RageSoundReader_Resample_Good::GetLength_Fast() const
 	return m_pSource->GetLength_Fast();
 }
 
-int RageSoundReader_Resample_Good::SetPosition_Accurate(int ms)
+int RageSoundReader_Resample_Good::SetPosition_Accurate( int iMS )
 {
 	Reset();
-	return m_pSource->SetPosition_Accurate(ms);
+	return m_pSource->SetPosition_Accurate( iMS );
 }
 
-int RageSoundReader_Resample_Good::SetPosition_Fast(int ms)
+int RageSoundReader_Resample_Good::SetPosition_Fast( int iMS )
 {
 	Reset();
-	return m_pSource->SetPosition_Fast(ms);
+	return m_pSource->SetPosition_Fast( iMS );
 }
 
-int RageSoundReader_Resample_Good::Read( char *bufp, unsigned len )
+int RageSoundReader_Resample_Good::Read( char *pBuf_, unsigned iLen )
 {
-	int iChannels = resamplers.size();
+	int iChannels = m_apResamplers.size();
 	int iBytesPerFrame = sizeof(int16_t) * iChannels;
 
-	int iFrames = len / iBytesPerFrame; /* bytes -> frames */
-	int16_t *pBuf = (int16_t *) bufp;
+	int iFrames = iLen / iBytesPerFrame; /* bytes -> frames */
+	int16_t *pBuf = (int16_t *) pBuf_;
 
 	int iFramesRead = 0;
 
 	{
-		int iFramesNeeded = resamplers[0]->NumInputsForOutputSamples(iFrames);
+		int iFramesNeeded = m_apResamplers[0]->NumInputsForOutputSamples(iFrames);
 		int iBytesNeeded = iFramesNeeded * sizeof(int16_t) * iChannels;
 		int16_t *pTmpBuf = (int16_t *) alloca( iBytesNeeded );
 		ASSERT( pTmpBuf );
@@ -602,7 +602,7 @@ int RageSoundReader_Resample_Good::Read( char *bufp, unsigned len )
 					*(pBufOut++) = (float) pBufIn[i];
 			}
 
-			int iGotFrames = resamplers[iChannel]->Run( pFloatBuf, iFramesIn, pFloatOut, iFrames );
+			int iGotFrames = m_apResamplers[iChannel]->Run( pFloatBuf, iFramesIn, pFloatOut, iFrames );
 			ASSERT( iGotFrames <= iFrames );
 
 			int16_t *pBufOut = pBuf + iChannel;
@@ -624,8 +624,8 @@ RageSoundReader_Resample_Good *RageSoundReader_Resample_Good::Copy() const
 	SoundReader *pSource = m_pSource->Copy();
 	RageSoundReader_Resample_Good *ret = new RageSoundReader_Resample_Good;
 
-	for( size_t i = 0; i < resamplers.size(); ++i )
-		ret->resamplers.push_back( new RageSoundResampler_Polyphase(*resamplers[i]) );
+	for( size_t i = 0; i < m_apResamplers.size(); ++i )
+		ret->m_apResamplers.push_back( new RageSoundResampler_Polyphase(*m_apResamplers[i]) );
 	ret->m_pSource = pSource;
 	ret->m_iSampleRate = m_iSampleRate;
 

@@ -812,13 +812,13 @@ bool RageSound::SetPositionFrames( int iFrames )
 		 * at 0.5x, and we're seeking to the 10th frame, we would have actually
 		 * played 20 frames, and it's the number of real speaker frames that
 		 * "m_iDecodePosition" represents. */
-	    const int iScaledFrames = int( iFrames / GetPlaybackRate() );
+		const int iScaledFrames = int( iFrames / GetPlaybackRate() );
 
-	    /* If we're already there, don't do anything. */
-	    if( m_iDecodePosition == iScaledFrames )
-		    return true;
+		/* If we're already there, don't do anything. */
+		if( m_iDecodePosition == iScaledFrames )
+			return true;
 
-	    m_iStoppedPosition = m_iDecodePosition = iScaledFrames;
+		m_iStoppedPosition = m_iDecodePosition = iScaledFrames;
 	}
 
 	/* The position we're going to seek the input stream to.  We have
