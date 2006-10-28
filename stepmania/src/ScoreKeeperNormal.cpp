@@ -207,12 +207,17 @@ static int GetScore(int p, int Z, int S, int n)
 	 * changes the scoring rules slightly.
 	 */
 
-#if 0
-	/* This is the actual method described below. */
-	return p * (Z / S) * n;
-#elif 1
-	/* This doesn't round down Z/S. */
-	return int(int64_t(p) * n * Z / S);
+#if 1
+	if ( GAMESTATE->IsCourseMode() )
+	{
+		/* This doesn't round down Z/S, but will work for courses. */
+		return int(int64_t(p) * n * Z / S);
+	}
+	else
+	{
+		/* This is the actual method described in the comment block above. */
+		return p * (Z / S) * n;
+	}
 #else
 	/* This also doesn't round down Z/S. Use this if you don't have 64-bit ints. */
 	return int(p * n * (float(Z) / S));
