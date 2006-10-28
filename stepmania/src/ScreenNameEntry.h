@@ -41,7 +41,7 @@ private:
 		static RString	g_sNameChars;
 	};
 	
-	static const int ABS_MAX_RANKING_NAME_LENGTH = 10;
+	enum { ABS_MAX_RANKING_NAME_LENGTH = 10 };
 	bool AnyStillEntering() const;
 
 	ReceptorArrowRow	m_ReceptorArrowRow[NUM_PLAYERS];
