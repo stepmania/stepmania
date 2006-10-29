@@ -523,17 +523,6 @@ bool LuaHelpers::RunExpression( Lua *L, const RString &sExpression, const RStrin
 	return true;
 }
 
-void LuaHelpers::RunExpressionS( const RString &str, RString &sOut )
-{
-	Lua *L = LUA->Get();
-
-	RunExpression( L, str );
-
-	LuaHelpers::Pop( L, sOut );
-
-	LUA->Release( L );
-}
-
 void LuaHelpers::ParseCommandList( Lua *L, const RString &sCommands, const RString &sName )
 {
 	RString sLuaFunction;

@@ -72,9 +72,6 @@ namespace LuaHelpers
 	/* Read the table at the top of the stack back into a vector. */
 	void ReadArrayFromTableB( Lua *L, vector<bool> &aOut );
 
-	/* Run an expression in the global environment, returning the given type. */
-	void RunExpressionS( const RString &str, RString &sOut );
-
 	void ParseCommandList( lua_State *L, const RString &sCommands, const RString &sName );
 
 	XNode *GetLuaInformation();
