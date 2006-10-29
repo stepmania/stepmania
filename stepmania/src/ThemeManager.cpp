@@ -957,7 +957,10 @@ void ThemeManager::PushMetric( Lua *L, const RString &sClassName, const RString 
 	}
 	else
 	{
-		LuaHelpers::PrepareExpression( sValue );
+		// Remove unary +, eg. "+50"; Lua doesn't support that.
+		if( sValue.size() >= 1 && sValue[0] == '+' )
+			sValue.erase( 0, 1 );
+
 		LuaHelpers::RunExpression( L, sValue, sName );
 	}
 }

@@ -61,9 +61,6 @@ namespace LuaHelpers
 
 	bool RunScriptFile( const RString &sFile );
 
-	/* Strip "//" comments and "+". */
-	void PrepareExpression( RString &sInOut );
-
 	/* Create a Lua array (a table with indices starting at 1) of the given vector,
 	 * and push it on the stack. */
 	void CreateTableFromArrayB( Lua *L, const vector<bool> &aIn );

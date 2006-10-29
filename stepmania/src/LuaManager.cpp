@@ -456,13 +456,6 @@ XNode *LuaHelpers::GetLuaInformation()
 }
 	
 
-void LuaHelpers::PrepareExpression( RString &sInOut )
-{
-	// Remove unary +, eg. "+50"; Lua doesn't support that.
-	if( sInOut.size() >= 1 && sInOut[0] == '+' )
-		sInOut.erase( 0, 1 );
-}
-
 bool LuaHelpers::RunScriptFile( const RString &sFile )
 {
 	RString sScript;
