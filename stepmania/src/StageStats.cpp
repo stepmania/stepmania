@@ -27,6 +27,7 @@ StageStats::StageStats()
 	bUsedAutoplay = false;
 	fGameplaySeconds = 0;
 	fStepsSeconds = 0;
+	fMusicRate = 1;
 }
 
 void StageStats::Init()
@@ -129,7 +130,7 @@ float StageStats::GetTotalPossibleStepsSeconds() const
 	float fSecs = 0;
 	FOREACH_CONST( Song*, vpPossibleSongs, s )
 		fSecs += (*s)->GetStepsSeconds();
-	return fSecs;
+	return fSecs / fMusicRate;
 }
 
 void StageStats::CommitScores( bool bSummary )

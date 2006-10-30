@@ -40,9 +40,10 @@ public:
 	// They should be made more accurate.
 	float	fGameplaySeconds;		// how many seconds before gameplay ended.  Updated by Gameplay, not scaled by music rate.
 	float	fStepsSeconds;		// this is <= fGameplaySeconds unless the song has steps past the end
+	float	fMusicRate;
 
 	// Total number of seconds between first beat and last beat for every song.
-	float GetTotalPossibleStepsSeconds() const;	// TODO: Scale this by the music rate
+	float GetTotalPossibleStepsSeconds() const;
 
 	PlayerStageStats m_player[NUM_PLAYERS];
 	PlayerStageStats m_multiPlayer[NUM_MultiPlayer];

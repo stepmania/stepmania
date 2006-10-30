@@ -506,7 +506,7 @@ void GameState::BeginStage()
 			m_pPlayerState[p]->m_PlayerOptions.Assign( ModsLevel_Stage, m_pPlayerState[p]->m_PlayerOptions.GetPreferred() );
 		m_SongOptions.Assign( ModsLevel_Stage, m_SongOptions.GetPreferred() );
 	}
-
+	STATSMAN->m_CurStageStats.fMusicRate = m_SongOptions.GetSong().m_fMusicRate;
 	m_iNumStagesOfThisSong = GetNumStagesForCurrentSong();
 	ASSERT( m_iNumStagesOfThisSong != -1 );
 }
