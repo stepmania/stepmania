@@ -55,6 +55,7 @@ struct NoteMetricCache_t
 	bool m_bHoldHeadUseLighting;
 	bool m_bHoldTailUseLighting;
 	bool m_bFlipHeadAndTailWhenReverse;
+	bool m_bHoldActiveIsAddLayer;
 
 	void Load( const RString &sButton );
 } *NoteMetricCache;
@@ -82,6 +83,7 @@ void NoteMetricCache_t::Load( const RString &sButton )
 	m_bHoldHeadUseLighting =		NOTESKIN->GetMetricB(sButton,"HoldHeadUseLighting");
 	m_bHoldTailUseLighting =		NOTESKIN->GetMetricB(sButton,"HoldTailUseLighting");
 	m_bFlipHeadAndTailWhenReverse =		NOTESKIN->GetMetricB(sButton,"FlipHeadAndTailWhenReverse");
+	m_bHoldActiveIsAddLayer =		NOTESKIN->GetMetricB(sButton,"HoldActiveIsAddLayer");
 }
 
 
@@ -391,16 +393,20 @@ void NoteDisplay::DrawHoldTopCap( const TapNote& tn, int iCol, int iRow, bool bI
 	//
 	StripBuffer queue;
 
-	Sprite *pSprTopCap = GetHoldSprite( m_HoldTopCap, NotePart_HoldTopCap, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
-
-	pSprTopCap->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
+	vector<Sprite*> vpSpr;
+	Sprite *pSprTopCap = GetHoldSprite( m_HoldTopCap, NotePart_HoldTopCap, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld && !cache->m_bHoldActiveIsAddLayer );
+	vpSpr.push_back( pSprTopCap );
+	if( bIsBeingHeld && cache->m_bHoldActiveIsAddLayer )
+	{
+		Sprite *pSpr = GetHoldSprite( m_HoldTopCap, NotePart_HoldTopCap, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, true );
+		ASSERT( pSpr->GetUnzoomedWidth() == pSprTopCap->GetUnzoomedWidth() );
+		ASSERT( pSpr->GetUnzoomedHeight() == pSprTopCap->GetUnzoomedHeight() );
+		vpSpr.push_back( pSpr );
+	}
 
 	// draw manually in small segments
-	RageTexture* pTexture = pSprTopCap->GetTexture();
 	const RectF *pRect = pSprTopCap->GetCurrentTextureCoordRect();
 	DISPLAY->ClearAllTextures();
-	DISPLAY->SetTexture( TextureUnit_1, pTexture->GetTexHandle() );
-	DISPLAY->SetBlendMode( BLEND_NORMAL );
 	DISPLAY->SetCullMode( CULL_NONE );
 	DISPLAY->SetTextureWrapping(false);
 
@@ -461,14 +467,31 @@ void NoteDisplay::DrawHoldTopCap( const TapNote& tn, int iCol, int iRow, bool bI
 			/* The queue is full.  Render it, clear the buffer, and move back a step to
 			 * start off the quad strip again. */
 			if( !bAllAreTransparent )
-				queue.Draw();
+			{
+				FOREACH( Sprite*, vpSpr, spr )
+				{
+					RageTexture* pTexture = (*spr)->GetTexture();
+					DISPLAY->SetTexture( TextureUnit_1, pTexture->GetTexHandle() );
+					DISPLAY->SetBlendMode( spr == vpSpr.begin() ? BLEND_NORMAL : BLEND_ADD );
+					queue.Draw();
+				}
+			}
 			queue.Init();
 			bAllAreTransparent = true;
 			fY -= fYStep;
 		}
 	}
+
 	if( !bAllAreTransparent )
-		queue.Draw();
+	{
+		FOREACH( Sprite*, vpSpr, spr )
+		{
+			RageTexture* pTexture = (*spr)->GetTexture();
+			DISPLAY->SetTexture( TextureUnit_1, pTexture->GetTexHandle() );
+			DISPLAY->SetBlendMode( spr == vpSpr.begin() ? BLEND_NORMAL : BLEND_ADD );
+			queue.Draw();
+		}
+	}
 }
 
 
@@ -480,16 +503,21 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, int iRow, bool bIsB
 	//
 	StripBuffer queue;
 
-	Sprite *pSprBody = GetHoldSprite( m_HoldBody, NotePart_HoldBody, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
+	vector<Sprite*> vpSpr;
+	Sprite *pSprBody = GetHoldSprite( m_HoldBody, NotePart_HoldBody, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld && !cache->m_bHoldActiveIsAddLayer );
+	vpSpr.push_back( pSprBody );
+	if( bIsBeingHeld && cache->m_bHoldActiveIsAddLayer )
+	{
+		Sprite *pSpr = GetHoldSprite( m_HoldBody, NotePart_HoldBody, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, true );
+		ASSERT( pSpr->GetUnzoomedWidth() == pSprBody->GetUnzoomedWidth() );
+		ASSERT( pSpr->GetUnzoomedHeight() == pSprBody->GetUnzoomedHeight() );
+		vpSpr.push_back( pSpr );
+	}
 
-	pSprBody->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 
 	// draw manually in small segments
-	RageTexture* pTexture = pSprBody->GetTexture();
 	const RectF *pRect = pSprBody->GetCurrentTextureCoordRect();
 	DISPLAY->ClearAllTextures();
-	DISPLAY->SetTexture( TextureUnit_1, pTexture->GetTexHandle() );
-	DISPLAY->SetBlendMode( BLEND_NORMAL );
 	DISPLAY->SetCullMode( CULL_NONE );
 	DISPLAY->SetTextureWrapping( true );
 
@@ -560,7 +588,15 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, int iRow, bool bIsB
 			/* The queue is full.  Render it, clear the buffer, and move back a step to
 			 * start off the quad strip again. */
 			if( !bAllAreTransparent )
-				queue.Draw();
+			{
+				FOREACH( Sprite*, vpSpr, spr )
+				{
+					RageTexture* pTexture = (*spr)->GetTexture();
+					DISPLAY->SetTexture( TextureUnit_1, pTexture->GetTexHandle() );
+					DISPLAY->SetBlendMode( spr == vpSpr.begin() ? BLEND_NORMAL : BLEND_ADD );
+					queue.Draw();
+				}
+			}
 			queue.Init();
 			bAllAreTransparent = true;
 			fY -= fYStep;
@@ -568,7 +604,15 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, int iRow, bool bIsB
 	}
 
 	if( !bAllAreTransparent )
-		queue.Draw();
+	{
+		FOREACH( Sprite*, vpSpr, spr )
+		{
+			RageTexture* pTexture = (*spr)->GetTexture();
+			DISPLAY->SetTexture( TextureUnit_1, pTexture->GetTexHandle() );
+			DISPLAY->SetBlendMode( spr == vpSpr.begin() ? BLEND_NORMAL : BLEND_ADD );
+			queue.Draw();
+		}
+	}
 }
 
 void NoteDisplay::DrawHoldBottomCap( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, float fYHead, float fYTail, int	fYStep, float fPercentFadeToFail, float fColorScale, bool bGlow, float fYStartOffset, float fYEndOffset )
@@ -578,16 +622,20 @@ void NoteDisplay::DrawHoldBottomCap( const TapNote& tn, int iCol, int iRow, bool
 	//
 	StripBuffer queue;
 
-	Sprite* pBottomCap = GetHoldSprite( m_HoldBottomCap, NotePart_HoldBottomCap, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
-
-	pBottomCap->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
+	vector<Sprite*> vpSpr;
+	Sprite* pBottomCap = GetHoldSprite( m_HoldBottomCap, NotePart_HoldBottomCap, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld && !cache->m_bHoldActiveIsAddLayer );
+	vpSpr.push_back( pBottomCap );
+	if( bIsBeingHeld && cache->m_bHoldActiveIsAddLayer )
+	{
+		Sprite *pSpr = GetHoldSprite( m_HoldBody, NotePart_HoldBody, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, true );
+		ASSERT( pSpr->GetUnzoomedWidth() == pBottomCap->GetUnzoomedWidth() );
+		ASSERT( pSpr->GetUnzoomedHeight() == pBottomCap->GetUnzoomedHeight() );
+		vpSpr.push_back( pSpr );
+	}
 
 	// draw manually in small segments
-	RageTexture* pTexture = pBottomCap->GetTexture();
 	const RectF *pRect = pBottomCap->GetCurrentTextureCoordRect();
 	DISPLAY->ClearAllTextures();
-	DISPLAY->SetTexture( TextureUnit_1, pTexture->GetTexHandle() );
-	DISPLAY->SetBlendMode( BLEND_NORMAL );
 	DISPLAY->SetCullMode( CULL_NONE );
 	DISPLAY->SetTextureWrapping(false);
 
@@ -645,14 +693,31 @@ void NoteDisplay::DrawHoldBottomCap( const TapNote& tn, int iCol, int iRow, bool
 			/* The queue is full.  Render it, clear the buffer, and move back a step to
 			 * start off the quad strip again. */
 			if( !bAllAreTransparent )
-				queue.Draw();
+			{
+				FOREACH( Sprite*, vpSpr, spr )
+				{
+					RageTexture* pTexture = (*spr)->GetTexture();
+					DISPLAY->SetTexture( TextureUnit_1, pTexture->GetTexHandle() );
+					DISPLAY->SetBlendMode( spr == vpSpr.begin() ? BLEND_NORMAL : BLEND_ADD );
+					queue.Draw();
+				}
+			}
 			queue.Init();
 			bAllAreTransparent = true;
 			fY -= fYStep;
 		}
 	}
+
 	if( !bAllAreTransparent )
-		queue.Draw();
+	{
+		FOREACH( Sprite*, vpSpr, spr )
+		{
+			RageTexture* pTexture = (*spr)->GetTexture();
+			DISPLAY->SetTexture( TextureUnit_1, pTexture->GetTexHandle() );
+			DISPLAY->SetBlendMode( spr == vpSpr.begin() ? BLEND_NORMAL : BLEND_ADD );
+			queue.Draw();
+		}
+	}
 }
 
 void NoteDisplay::DrawHoldTail( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, float fYTail, float fPercentFadeToFail, float fColorScale, bool bGlow, float fYStartOffset, float fYEndOffset )
