@@ -583,7 +583,14 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 		out.m_sSubTitleTranslit = m_sTempSubTitle;
 	}
 	else
-		out.m_sSubTitle = m_sTempSubTitle;
+	{
+		GetMainAndSubTitlesFromFullTitle( m_sTempSMTitle, RString(), m_sTempSubTitleOnSameLine );
+		ConvertString( m_sTempSubTitleOnSameLine, "utf-8,english" );
+		if ( 0!=stricmp(m_sTempSubTitleOnSameLine, "") )
+			out.m_sSubTitle = "";
+		else
+			out.m_sSubTitle = m_sTempSubTitle;
+	}
 
 	if ( m_sTempSMArtist != "" )
 	{
@@ -591,7 +598,7 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 		out.m_sArtistTranslit = m_sTempArtist;
 	}
 	else
-		out.m_sArtist = m_sTempArtist;
+		out.m_sArtist = m_sTempArtist;	
 
 	return true;
 }

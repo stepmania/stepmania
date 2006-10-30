@@ -36,6 +36,8 @@ private:
 	RString m_sTempTitle;
 	RString m_sTempSubTitle;
 	RString m_sTempArtist;
+	RString m_sTempSubTitleOnSameLine;
+
 };
 
 #endif
