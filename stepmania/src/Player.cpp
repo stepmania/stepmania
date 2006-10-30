@@ -930,7 +930,11 @@ int Player::GetClosestNonEmptyRowDirectional( int iStartRow, int iEndRow, bool b
 
 		while( !iter.IsAtEnd() )
 		{
-			//NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iRowOfClosestNonEmptyRow, pn) )
+			if( NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iter.Row(), m_pPlayerState->m_PlayerNumber) )
+			{
+				iter++;
+				continue;
+			}
 			return iter.Row();
 		}
 	}
@@ -940,7 +944,11 @@ int Player::GetClosestNonEmptyRowDirectional( int iStartRow, int iEndRow, bool b
 
 		while( !iter.IsAtEnd() )
 		{
-			//NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iRowOfClosestNonEmptyRow, pn) )
+			if( NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iter.Row(), m_pPlayerState->m_PlayerNumber) )
+			{
+				iter++;
+				continue;
+			}
 			return iter.Row();
 		}
 	}
@@ -1278,7 +1286,7 @@ void Player::StepOrStrum( int col, int row, const RageTimer &tm, bool bHeld, boo
 					bNoteRowMatchesFrets &= bNoteMatchesFret; 
 				}
 				if( !bNoteRowMatchesFrets )
-					score = TNS_HitMine;
+					score = TNS_None;
 			}
 			break;
 		case ButtonType_Step:
