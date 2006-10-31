@@ -18,7 +18,7 @@ bool NotesLoader::Loadable( const RString &sPath )
 
 void NotesLoader::GetMainAndSubTitlesFromFullTitle( const RString &sFullTitle, RString &sMainTitleOut, RString &sSubTitleOut )
 {
-	const RString sLeftSeps[]  = { " -", " ~", " (", " [", "\t" };
+	const RString sLeftSeps[]  = { "\t", " -", " ~", " (", " [" };
 
 	for( unsigned i=0; i<ARRAYLEN(sLeftSeps); i++ )
 	{
