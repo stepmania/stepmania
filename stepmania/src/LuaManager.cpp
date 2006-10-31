@@ -19,8 +19,11 @@
 LuaManager *LUA = NULL;
 struct Impl
 {
+	Impl(): g_pLock("Lua") {}
 	vector<lua_State *> g_FreeStateList;
 	map<lua_State *, bool> g_ActiveStates;
+
+	RageMutex g_pLock;
 };
 static Impl *pImpl = NULL;
 static LuaFunctionList *g_LuaFunctions = NULL;
@@ -165,8 +168,6 @@ LuaManager::LuaManager()
 	pImpl = new Impl;
 	LUA = this;	// so that LUA is available when we call the Register functions
 
-	m_pLock = new RageMutex( "Lua" );
-
 	lua_State *L = lua_open();
 	ASSERT( L );
 
@@ -190,16 +191,15 @@ LuaManager::LuaManager()
 LuaManager::~LuaManager()
 {
 	lua_close( m_pLuaMain );
-	delete m_pLock;
 	SAFE_DELETE( pImpl );
 }
 
 Lua *LuaManager::Get()
 {
 	bool bLocked = false;
-	if( !m_pLock->IsLockedByThisThread() )
+	if( !pImpl->g_pLock.IsLockedByThisThread() )
 	{
-		m_pLock->Lock();
+		pImpl->g_pLock.Lock();
 		bLocked = true;
 	}
 
@@ -234,12 +234,12 @@ void LuaManager::Release( Lua *&p )
 	pImpl->g_ActiveStates.erase( p );
 
 	if( bDoUnlock )
-		m_pLock->Unlock();
+		pImpl->g_pLock.Unlock();
 	p = NULL;
 }
 
 /*
- * Low-level access to Lua is always serialized through m_pLock; we never run the Lua
+ * Low-level access to Lua is always serialized through pImpl->g_pLock; we never run the Lua
  * core simultaneously from multiple threads.  However, when a thread has an acquired
  * lua_State, it can release Lua for use by other threads.  This allows Lua bindings
  * to process long-running actions, without blocking all other threads from using Lua
@@ -266,14 +266,14 @@ void LuaManager::Release( Lua *&p )
  */
 void LuaManager::YieldLua()
 {
-	ASSERT( m_pLock->IsLockedByThisThread() );
+	ASSERT( pImpl->g_pLock.IsLockedByThisThread() );
 
-	m_pLock->Unlock();
+	pImpl->g_pLock.Unlock();
 }
 
 void LuaManager::UnyieldLua()
 {
-	m_pLock->Lock();
+	pImpl->g_pLock.Lock();
 }
 
 void LuaManager::RegisterTypes()

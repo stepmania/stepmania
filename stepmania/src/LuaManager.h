@@ -43,8 +43,6 @@ public:
 
 private:
 	lua_State *m_pLuaMain;
-
-	RageMutex *m_pLock;
 };
 
 
