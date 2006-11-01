@@ -1,7 +1,6 @@
 #include "global.h"
 #include "NotesLoaderSM.h"
 #include "GameManager.h"
-#include "RageException.h"
 #include "MsdFile.h"
 #include "RageLog.h"
 #include "RageUtil.h"

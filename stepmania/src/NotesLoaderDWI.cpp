@@ -1,8 +1,6 @@
 #include "global.h"
 #include "NotesLoaderDWI.h"
-#include "NotesLoader.h"
 #include "RageLog.h"
-#include "RageException.h"
 #include "MsdFile.h"
 #include "RageUtil.h"
 #include "RageUtil_CharConversions.h"

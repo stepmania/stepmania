@@ -1,9 +1,5 @@
 #include "global.h"
 #include "NotesLoader.h"
-#include "NoteTypes.h"
-#include "GameManager.h"
-#include "RageUtil.h"
-
 #include "NotesLoaderSM.h"
 #include "NotesLoaderDWI.h"
 #include "NotesLoaderBMS.h"
