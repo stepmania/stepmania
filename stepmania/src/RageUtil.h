@@ -161,8 +161,6 @@ ConvertValueHelper<TO, FROM> ConvertValue( FROM *pValue )
  * that the memory location is being added to, but the value is stored in a register,
  * and breaking aliasing rules means the compiler doesn't know that the register
  * value is invalid.)
- *
- * Always do these conversions through a union.
  */
 template<typename T>
 static inline void enum_add( T &val, int iAmt )
