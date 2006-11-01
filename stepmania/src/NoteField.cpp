@@ -5,7 +5,6 @@
 #include "ArrowEffects.h"
 #include "GameManager.h"
 #include "GameState.h"
-#include "RageException.h"
 #include "RageTimer.h"
 #include "RageLog.h"
 #include "RageMath.h"

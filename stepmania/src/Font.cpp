@@ -5,7 +5,6 @@
 #include "RageTextureManager.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "RageException.h"
 #include "FontManager.h"
 #include "ThemeManager.h"
 #include "FontCharmaps.h"

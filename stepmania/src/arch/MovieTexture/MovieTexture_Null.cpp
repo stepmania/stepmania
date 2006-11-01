@@ -3,7 +3,6 @@
 #include "RageTextureManager.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "RageException.h"
 #include "MovieTexture_Null.h"
 #include "RageSurface.h"
 

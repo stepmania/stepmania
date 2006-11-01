@@ -2,7 +2,6 @@
 #include "NoteSkinManager.h"
 #include "RageFileManager.h"
 #include "RageLog.h"
-#include "RageException.h"
 #include "GameState.h"
 #include "Game.h"
 #include "Style.h"

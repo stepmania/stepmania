@@ -8,7 +8,6 @@ using namespace RageDisplay_OGL_Helpers;
 #include "RageSurfaceUtils.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "RageException.h"
 #include "RageTextureManager.h"
 #include "RageMath.h"
 #include "RageTypes.h"

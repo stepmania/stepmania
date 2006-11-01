@@ -2,7 +2,6 @@
 #include "ThemeManager.h"
 #include "RageFileManager.h"
 #include "RageLog.h"
-#include "RageException.h"
 #include "RageTimer.h"
 #include "RageUtil.h"
 #include "IniFile.h"

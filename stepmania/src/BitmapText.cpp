@@ -3,7 +3,6 @@
 #include "XmlFile.h"
 #include "FontManager.h"
 #include "RageLog.h"
-#include "RageException.h"
 #include "RageTimer.h"
 #include "RageDisplay.h"
 #include "ThemeManager.h"

@@ -10,7 +10,6 @@
 
 #include "global.h"
 #include "RageSoundManager.h"
-#include "RageException.h"
 #include "RageUtil.h"
 #include "RageSound.h"
 #include "RageLog.h"

@@ -1,7 +1,6 @@
 #include "global.h"
 
 #include "ScreenOptionsMaster.h"
-#include "RageException.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "ThemeManager.h"

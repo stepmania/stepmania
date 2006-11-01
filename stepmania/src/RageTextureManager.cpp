@@ -24,7 +24,6 @@
 #include "arch/MovieTexture/MovieTexture.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "RageException.h"
 #include "RageDisplay.h"
 #include "Foreach.h"
 

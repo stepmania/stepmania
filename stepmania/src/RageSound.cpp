@@ -25,7 +25,6 @@
 #include "RageSoundManager.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "RageException.h"
 #include "PrefsManager.h"
 #include "arch/ArchHooks/ArchHooks.h"
 #include "RageSoundUtil.h"

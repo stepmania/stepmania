@@ -1,7 +1,6 @@
 #include "global.h"
 #include "LifeMeterBar.h"
 #include "PrefsManager.h"
-#include "RageException.h"
 #include "RageTimer.h"
 #include "GameState.h"
 #include "RageMath.h"

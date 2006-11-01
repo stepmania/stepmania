@@ -7,7 +7,6 @@
 #include "RageLog.h"
 #include "AnnouncerManager.h"
 #include "GameState.h"
-#include "RageException.h"
 #include "RageTimer.h"
 #include "ThemeManager.h"
 #include "MenuTimer.h"

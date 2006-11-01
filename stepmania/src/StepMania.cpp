@@ -11,7 +11,6 @@
 #include "GameSoundManager.h"
 #include "RageInput.h"
 #include "RageTimer.h"
-#include "RageException.h"
 #include "RageMath.h"
 #include "RageDisplay.h"
 #include "RageThreads.h"

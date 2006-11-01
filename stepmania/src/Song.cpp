@@ -6,7 +6,6 @@
 #include "NoteData.h"
 #include "RageSoundReader_FileReader.h"
 #include "RageSurface_Load.h"
-#include "RageException.h"
 #include "SongCacheIndex.h"
 #include "GameManager.h"
 #include "PrefsManager.h"

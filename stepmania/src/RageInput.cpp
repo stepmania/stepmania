@@ -1,7 +1,6 @@
 #include "global.h"
 #include "RageInput.h"
 #include "RageLog.h"
-#include "RageException.h"
 #include "arch/InputHandler/InputHandler.h"
 #include "arch/arch.h"
 #include "arch/arch_default.h"

@@ -4,7 +4,6 @@
 #include "GameConstantsAndTypes.h"
 #include "RageLog.h"
 #include "GameManager.h"
-#include "RageException.h"
 #include "RageFile.h"
 #include "SongUtil.h"
 #include "StepsUtil.h"

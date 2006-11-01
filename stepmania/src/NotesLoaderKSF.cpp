@@ -1,6 +1,5 @@
 #include "global.h"
 #include "NotesLoaderKSF.h"
-#include "RageException.h"
 #include "RageUtil_CharConversions.h"
 #include "MsdFile.h"
 #include "RageLog.h"

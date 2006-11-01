@@ -5,7 +5,6 @@
 #include "RageTextureManager.h"
 #include "XmlFile.h"
 #include "RageLog.h"
-#include "RageException.h"
 #include "RageDisplay.h"
 #include "RageTexture.h"
 #include "RageUtil.h"

@@ -3,7 +3,6 @@
 #include "Steps.h"
 #include "GameConstantsAndTypes.h"
 #include "GameManager.h"
-#include "RageException.h"
 #include "RageTimer.h"
 #include "NoteDisplay.h"
 #include "song.h"

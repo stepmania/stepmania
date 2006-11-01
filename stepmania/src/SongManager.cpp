@@ -7,7 +7,6 @@
 
 #include "GameState.h"
 #include "PrefsManager.h"
-#include "RageException.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
 #include "Course.h"
 

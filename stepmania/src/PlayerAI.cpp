@@ -2,7 +2,6 @@
 #include "PlayerAI.h"
 #include "RageUtil.h"
 #include "IniFile.h"
-#include "RageException.h"
 #include "GameState.h"
 #include "PlayerState.h"
 
