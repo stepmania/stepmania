@@ -165,14 +165,13 @@ ConvertValueHelper<TO, FROM> ConvertValue( FROM *pValue )
 template<typename T>
 static inline void enum_add( T &val, int iAmt )
 {
-	*ConvertValue<int>(&val) += iAmt;
+	val = static_cast<T>( val + iAmt );
 }
 
 template<typename T>
 static inline T enum_add2( T val, int iAmt )
 {
-	enum_add( val, iAmt );
-	return val;
+	return static_cast<T>( val + iAmt );
 }
 
 
