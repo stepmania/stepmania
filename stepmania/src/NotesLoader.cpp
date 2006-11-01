@@ -9,13 +9,6 @@
 #include "NotesLoaderBMS.h"
 #include "NotesLoaderKSF.h"
 
-bool NotesLoader::Loadable( const RString &sPath )
-{
-	vector<RString> list;
-	GetApplicableFiles( sPath, list );
-	return !list.empty();
-}
-
 void NotesLoader::GetMainAndSubTitlesFromFullTitle( const RString &sFullTitle, RString &sMainTitleOut, RString &sSubTitleOut )
 {
 	const RString sLeftSeps[]  = { "\t", " -", " ~", " (", " [" };
@@ -35,26 +28,14 @@ void NotesLoader::GetMainAndSubTitlesFromFullTitle( const RString &sFullTitle, R
 
 NotesLoader *NotesLoader::MakeLoader( const RString &sDir )
 {
-	NotesLoader *ret;
+	vector<RString> list;
 	
-	/* Actually, none of these have any persistant data, so we 
-	* could optimize this, but since they don't have any data,
-	* there's no real point ... */
-	ret = new SMLoader;
-	if(ret->Loadable( sDir )) return ret;
-	delete ret;
-	
-	ret = new DWILoader;
-	if(ret->Loadable( sDir )) return ret;
-	delete ret;
-	
-	ret = new BMSLoader;
-	if(ret->Loadable( sDir )) return ret;
-	delete ret;
-	
-	ret = new KSFLoader;
-	if(ret->Loadable( sDir )) return ret;
-	delete ret;
+#define CHECK_LOADER(x) x::GetApplicableFiles( sDir, list ); if( list.size() ) return new x
+	CHECK_LOADER( SMLoader  );
+	CHECK_LOADER( DWILoader );
+	CHECK_LOADER( BMSLoader );
+	CHECK_LOADER( KSFLoader );
+#undef CHECK_LOADER
 	
 	return NULL;
 }

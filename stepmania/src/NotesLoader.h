@@ -10,8 +10,6 @@ class Song;
 class NotesLoader
 {
 protected:
-	virtual void GetApplicableFiles( const RString &sPath, vector<RString> &out )=0;
-
 	set<RString> BlacklistedImages;
 
 public:
@@ -20,7 +18,6 @@ public:
 	static void GetMainAndSubTitlesFromFullTitle( const RString &sFullTitle, RString &sMainTitleOut, RString &sSubTitleOut );
 	virtual bool LoadFromDir( const RString &sPath, Song &out ) = 0;
 	virtual void TidyUpData( Song &song, bool cache ) { }
-	bool Loadable( const RString &sPath );
 
 	static NotesLoader *MakeLoader( const RString& sDir );
 };

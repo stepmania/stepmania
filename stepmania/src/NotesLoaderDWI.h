@@ -26,7 +26,7 @@ class DWILoader: public NotesLoader
 	RString m_sLoadingFile;
 
 public:
-	void GetApplicableFiles( const RString &sPath, vector<RString> &out );
+	static void GetApplicableFiles( const RString &sPath, vector<RString> &out );
 	bool LoadFromDir( const RString &sPath, Song &out );
 };
 
