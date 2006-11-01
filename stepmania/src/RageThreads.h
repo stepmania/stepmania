@@ -11,8 +11,8 @@ public:
 	RageThread();
 	~RageThread();
 
-	void SetName( const RString &n ) { name = n; }
-	RString GetName() const { return name; }
+	void SetName( const RString &n ) { m_sName = n; }
+	RString GetName() const { return m_sName; }
 	void Create( int (*fn)(void *), void *data );
 
 	/* For crash handlers: kill or suspend all threads (except for
@@ -41,7 +41,7 @@ public:
 
 private:
 	ThreadSlot *m_pSlot;
-	RString name;
+	RString m_sName;
 
 	static bool s_bSystemSupportsTLS;
 	static bool s_bIsShowingDialog;

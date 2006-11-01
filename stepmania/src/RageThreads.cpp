@@ -214,6 +214,7 @@ static ThreadSlot *GetUnknownThreadSlot()
 RageThread::RageThread()
 {
 	m_pSlot = NULL;
+	m_sName = "unnamed";
 }
 
 RageThread::~RageThread()
@@ -244,22 +245,11 @@ void RageThread::Create( int (*fn)(void *), void *data )
 	int slotno = FindEmptyThreadSlot();
 	m_pSlot = &g_ThreadSlots[slotno];
 	
-	if( name == "" )
-	{
-		if( LOG )
-			LOG->Warn( "Created a thread without naming it first." );
-
-		/* If you don't name it, I will: */
-		strcpy( m_pSlot->m_szName, "Joe" );
-	}
-	else
-	{
-		strcpy( m_pSlot->m_szName, name.c_str() );
-	}
+	strcpy( m_pSlot->m_szName, m_sName.c_str() );
 
 	if( LOG )
-		LOG->Trace( "Starting thread: %s", name.c_str() );
-	sprintf( m_pSlot->m_szThreadFormattedOutput, "Thread: %s", name.c_str() );
+		LOG->Trace( "Starting thread: %s", m_sName.c_str() );
+	sprintf( m_pSlot->m_szThreadFormattedOutput, "Thread: %s", m_sName.c_str() );
 
 	/* Start a thread using our own startup function.  We pass the id to fill in,
 	 * to make sure it's set before the thread actually starts.  (Otherwise, early
