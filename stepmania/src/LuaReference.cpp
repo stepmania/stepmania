@@ -1,10 +1,6 @@
 #include "global.h"
 #include "LuaReference.h"
 #include "LuaManager.h"
-#include "LuaBinding.h"
-#include "Foreach.h"
-#include "RageLog.h"
-#include "RageUtil_AutoPtr.h"
 
 REGISTER_CLASS_TRAITS( LuaReference, new LuaReference(*pCopy) )
 
