@@ -7,6 +7,7 @@
 #include "XmlFile.h"
 #include "XmlFileUtil.h"
 #include "Course.h"
+#include "Foreach.h"
 
 static const char *WorkoutProgramNames[] = {
 	"FatBurn",

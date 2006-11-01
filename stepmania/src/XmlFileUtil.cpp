@@ -6,6 +6,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "arch/Dialog/Dialog.h"
+#include "Foreach.h"
 
 bool XmlFileUtil::LoadFromFileShowErrors( XNode &xml, RageFileBasic &f )
 {

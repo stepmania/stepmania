@@ -2,6 +2,7 @@
 #include "LuaBinding.h"
 #include "LuaReference.h"
 #include "RageUtil.h"
+#include "Foreach.h"
 
 #include "SubscriptionManager.h"
 static SubscriptionManager<LuaBinding> m_Subscribers;

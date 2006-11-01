@@ -6,7 +6,7 @@
 #include "global.h"
 #include "RageInputDevice.h"
 #include "RageUtil.h"
-#include "EnumHelper.h"
+#include "Foreach.h"
 
 static map<DeviceButton,RString> g_mapNamesToString;
 static map<RString,DeviceButton> g_mapStringToNames;

@@ -2,6 +2,7 @@
 #include "PlayerState.h"
 #include "GameState.h"
 #include "RageLog.h"
+#include "Foreach.h"
 
 PlayerState::PlayerState()
 {

@@ -1,6 +1,7 @@
 #include "global.h"
 #include "JoystickDevice.h"
 #include "RageUtil.h"
+#include "Foreach.h"
 
 using namespace std;
 using __gnu_cxx::hash_map;

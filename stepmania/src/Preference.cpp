@@ -5,6 +5,7 @@
 #include "LuaManager.h"
 #include "MessageManager.h"
 #include "SubscriptionManager.h"
+#include "Foreach.h"
 
 static SubscriptionManager<IPreference> m_Subscribers;
 

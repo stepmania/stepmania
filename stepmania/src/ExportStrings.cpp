@@ -8,6 +8,7 @@
 #include "LuaManager.h"
 #include "ProductInfo.h"
 #include "DateTime.h"
+#include "Foreach.h"
 
 const RString INSTALLER_LANGUAGES_DIR = "Themes/_Installer/Languages/";
 

@@ -10,6 +10,7 @@
 #include "Workout.h"
 #include "WorkoutManager.h"
 #include "StatsManager.h"
+#include "Foreach.h"
 
 const int MAX_METERS_TO_SHOW = Workout::GetEstimatedNumSongsFromSeconds( 90 * 60 );
 

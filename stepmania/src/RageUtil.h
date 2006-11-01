@@ -5,7 +5,6 @@
 
 #include <map>
 #include <vector>
-#include "Foreach.h"
 class RageFileDriver;
 
 #define SAFE_DELETE(p)       do { delete (p);     (p)=NULL; } while( false )
