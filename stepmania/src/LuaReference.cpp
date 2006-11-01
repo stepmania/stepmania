@@ -17,7 +17,9 @@ LuaReference::~LuaReference()
 LuaReference::LuaReference( const LuaReference &cpy )
 {
 	if( cpy.m_iReference == LUA_NOREF )
+	{
 		m_iReference = LUA_NOREF;
+	}
 	else
 	{
 		/* Make a new reference. */
