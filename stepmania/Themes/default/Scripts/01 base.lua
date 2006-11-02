@@ -42,6 +42,8 @@ function ivalues(t)
 	end
 end
 
+Var = lua.GetThreadVariable
+
 -- (c) 2006 Glenn Maynard
 -- All rights reserved.
 --
