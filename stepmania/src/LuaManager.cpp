@@ -306,7 +306,7 @@ LuaThreadVariable::LuaThreadVariable( const RString &sName, const RString &sValu
 	LUA->Release( L );
 }
 
-LuaThreadVariable::LuaThreadVariable( const RString &sName, LuaReference &Value )
+LuaThreadVariable::LuaThreadVariable( const RString &sName, const LuaReference &Value )
 {
 	m_sName = sName;
 	m_pOldValue = new LuaReference;

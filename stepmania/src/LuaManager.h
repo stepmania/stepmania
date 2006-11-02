@@ -126,7 +126,7 @@ class LuaThreadVariable
 {
 public:
 	LuaThreadVariable( const RString &sName, const RString &sValue );
-	LuaThreadVariable( const RString &sName, LuaReference &Value );
+	LuaThreadVariable( const RString &sName, const LuaReference &Value );
 	~LuaThreadVariable();
 	static void GetThreadVariable( lua_State *L );
 
