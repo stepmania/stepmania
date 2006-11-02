@@ -17,11 +17,7 @@
 
 void Screen::InitScreen( Screen *pScreen )
 {
-	/* Set the name of the loading screen. */
-	LUA->SetGlobal( "LoadingScreen", pScreen->GetName() );
-
 	pScreen->Init();
-	LUA->UnsetGlobal( "LoadingScreen" );
 }
 
 Screen::~Screen()
