@@ -932,7 +932,7 @@ int Player::GetClosestNonEmptyRowDirectional( int iStartRow, int iEndRow, bool b
 		{
 			if( NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iter.Row(), m_pPlayerState->m_PlayerNumber) )
 			{
-				iter++;
+				++iter;
 				continue;
 			}
 			return iter.Row();
@@ -946,7 +946,7 @@ int Player::GetClosestNonEmptyRowDirectional( int iStartRow, int iEndRow, bool b
 		{
 			if( NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iter.Row(), m_pPlayerState->m_PlayerNumber) )
 			{
-				iter++;
+				++iter;
 				continue;
 			}
 			return iter.Row();
