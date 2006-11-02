@@ -6,6 +6,7 @@ typedef lua_State Lua;
 typedef void (*RegisterWithLuaFn)(lua_State*);
 class RageMutex;
 class XNode;
+class LuaReference;
 
 extern "C"
 {
@@ -120,6 +121,26 @@ namespace LuaHelpers
 	int TypeError( Lua *L, int narg, const char *tname );
 	inline int AbsIndex( Lua *L, int i ) { if( i > 0 || i <= LUA_REGISTRYINDEX ) return i; return lua_gettop( L ) + i + 1; }
 }
+
+class LuaThreadVariable
+{
+public:
+	LuaThreadVariable( const RString &sName, const RString &sValue );
+	LuaThreadVariable( const RString &sName, LuaReference &Value );
+	~LuaThreadVariable();
+	static void GetThreadVariable( lua_State *L );
+
+private:
+	LuaThreadVariable( const LuaThreadVariable &cpy ); // not defined
+
+	void SetFromStack( lua_State *L );
+	int AdjustCount( lua_State *L, int iAdd );
+	static bool PushThreadTable( lua_State *L, bool bCreate );
+	static RString GetCurrentThreadIDString();
+
+	RString m_sName;
+	LuaReference *m_pOldValue;
+};
 
 /* Iterate over all elements in the table. For safety reasons, the key is pushed onto
  * the stack and can be read (safely) as a string and popped or altered in any way.

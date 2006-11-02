@@ -295,6 +295,147 @@ void LuaManager::RegisterTypes()
 	LUA->Release( L );
 }
 
+LuaThreadVariable::LuaThreadVariable( const RString &sName, const RString &sValue )
+{
+	m_sName = sName;
+	m_pOldValue = new LuaReference;
+
+	Lua *L = LUA->Get();
+	LuaHelpers::Push( L, sValue );
+	SetFromStack( L );
+	LUA->Release( L );
+}
+
+LuaThreadVariable::LuaThreadVariable( const RString &sName, LuaReference &Value )
+{
+	m_sName = sName;
+	m_pOldValue = new LuaReference;
+
+	Lua *L = LUA->Get();
+	Value.PushSelf( L );
+	SetFromStack( L );
+	LUA->Release( L );
+}
+
+RString LuaThreadVariable::GetCurrentThreadIDString()
+{
+	uint64_t iID = RageThread::GetCurrentThreadID();
+	return ssprintf( "%08x%08x", uint32_t(iID >> 32), uint32_t(iID) );
+}
+
+bool LuaThreadVariable::PushThreadTable( lua_State *L, bool bCreate )
+{
+	lua_getfield( L, LUA_REGISTRYINDEX, "LuaThreadVariableTable" );
+	if( lua_isnil(L, -1) )
+	{
+		lua_pop( L, 1 );
+		if( !bCreate )
+			return false;
+		lua_newtable( L );
+
+		lua_pushvalue( L, -1 );
+		lua_setfield( L, LUA_REGISTRYINDEX, "LuaThreadVariableTable" );
+	}
+
+	RString sThreadIDString = GetCurrentThreadIDString();
+	LuaHelpers::Push( L, sThreadIDString );
+	lua_gettable( L, -2 );
+	if( lua_isnil(L, -1) )
+	{
+		lua_pop( L, 1 );
+		if( !bCreate )
+		{
+			lua_pop( L, 1 );
+			return false;
+		}
+		lua_newtable( L );
+
+		lua_pushinteger( L, 0 );
+		lua_rawseti( L, -2, 0 );
+
+		LuaHelpers::Push( L, sThreadIDString );
+		lua_pushvalue( L, -2 );
+		lua_settable( L, -4 );
+	}
+
+	lua_remove( L, -2 );
+	return true;
+}
+
+void LuaThreadVariable::GetThreadVariable( lua_State *L )
+{
+	if( !PushThreadTable(L, false) )
+	{
+		lua_pop( L, 1 );
+		lua_pushnil( L );
+		return;
+	}
+
+	lua_pushvalue( L, -2 );
+	lua_gettable( L, -2 );
+	lua_remove( L, -2 );
+	lua_remove( L, -2 );
+}
+
+int LuaThreadVariable::AdjustCount( lua_State *L, int iAdd )
+{
+	ASSERT( lua_istable(L, -1) );
+
+	lua_rawgeti( L, -1, 0 );
+	ASSERT( lua_isnumber(L, -1) );
+
+	int iCount = lua_tointeger( L, -1 );
+	lua_pop( L, 1 );
+
+	iCount += iAdd;
+	lua_pushinteger( L, iCount );
+	lua_rawseti( L, -2, 0 );
+
+	return iCount;
+}
+
+void LuaThreadVariable::SetFromStack( lua_State *L )
+{
+	ASSERT( !m_pOldValue->IsSet() ); // don't call twice
+
+	PushThreadTable( L, true );
+
+	lua_getfield( L, -1, m_sName );
+	m_pOldValue->SetFromStack( L );
+
+	lua_pushvalue( L, -2 );
+	lua_setfield( L, -2, m_sName );
+
+	AdjustCount( L, +1 );
+
+	lua_pop( L, 2 );
+}
+
+LuaThreadVariable::~LuaThreadVariable()
+{
+	Lua *L = LUA->Get();
+
+	PushThreadTable( L, true );
+	m_pOldValue->PushSelf( L );
+	lua_setfield( L, -2, m_sName );
+
+	if( AdjustCount( L, -1 ) == 0 )
+	{
+		// if empty, delete the table
+		lua_getfield( L, LUA_REGISTRYINDEX, "LuaThreadVariableTable" );
+		ASSERT( lua_istable(L, -1) );
+
+		LuaHelpers::Push( L, GetCurrentThreadIDString() );
+		lua_pushnil( L );
+		lua_settable( L, -3 );
+		lua_pop( L, 1 );
+	}
+	lua_pop( L, 1 );
+
+	LUA->Release( L );
+
+	delete m_pOldValue;
+}
 
 namespace
 {
@@ -712,9 +853,18 @@ namespace
 		}
 	}
 
+	static int GetThreadVariable( lua_State *L )
+	{
+		luaL_checkstring( L, 1 );
+		lua_pushvalue( L, 1 );
+		LuaThreadVariable::GetThreadVariable( L );
+		return 1;
+	}
+	
 	const luaL_Reg luaTable[] =
 	{
 		LIST_METHOD( ReadFile ),
+		LIST_METHOD( GetThreadVariable ),
 		{ NULL, NULL }
 	};
 }
