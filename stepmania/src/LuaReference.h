@@ -44,6 +44,18 @@ public:
 
 	RString Serialize() const;
 
+	template<typename T>
+	static LuaReference Create( const T &val )
+	{
+		Lua *L = LUA->Get();
+		LuaReference ref;
+		LuaHelpers::Push( L, val );
+		ref.SetFromStack( L );
+		LUA->Release( L );
+
+		return ref;
+	}
+
 private:
 	void Unregister();
 	int m_iReference;

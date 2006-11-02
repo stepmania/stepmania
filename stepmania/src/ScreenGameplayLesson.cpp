@@ -39,12 +39,9 @@ void ScreenGameplayLesson::Init()
 		int i = s - vs.begin();
 		AutoActor &aa = m_vPages[i];
 
-
-		LUA->SetGlobal( "PageIndex", i );
-		LUA->SetGlobal( "NumPages", (int)vs.size() );
+		LuaThreadVariable iIndex( "PageIndex", LuaReference::Create(i) );
+		LuaThreadVariable iPages( "NumPages", LuaReference::Create( (int)vs.size() ) );
 		aa.Load( *s );
-		LUA->UnsetGlobal( "PageIndex" );
-		LUA->UnsetGlobal( "NumPages" );
 
 
 		aa->SetDrawOrder( DRAW_ORDER_OVERLAY+1 );
