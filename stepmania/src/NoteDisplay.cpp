@@ -154,25 +154,8 @@ static NoteResource *MakeNoteResource( const RString &sButton, const RString &sE
 	return pRet;
 }
 
-static NoteResource *FindNoteResource( const Actor *pActor )
+static void DeleteNoteResource( NoteResource *pRes )
 {
-	map<NoteSkinAndPath, NoteResource *>::iterator it;
-	for( it = g_NoteResource.begin(); it != g_NoteResource.end(); ++it )
-	{
-		NoteResource *pRes = it->second;
-		if( pRes->m_pActor == pActor )
-			return pRes;
-	}
-
-	return NULL;
-}
-
-static void DeleteNoteResource( const Actor *pActor )
-{
-	if( pActor == NULL )
-		return;
-
-	NoteResource *pRes = FindNoteResource( pActor );
 	ASSERT( pRes != NULL );
 
 	ASSERT_M( pRes->m_iRefCount > 0, ssprintf("%i", pRes->m_iRefCount) );
@@ -182,20 +165,6 @@ static void DeleteNoteResource( const Actor *pActor )
 
 	g_NoteResource.erase( pRes->m_nsap );
 	delete pRes;
-}
-
-Actor *MakeRefcountedActor( const RString &sButton, const RString &sElement )
-{
-	NoteResource *pRes = MakeNoteResource( sButton, sElement, false );
-	return pRes->m_pActor;
-}
-
-Sprite *MakeRefcountedSprite( const RString &sButton, const RString &sElement )
-{
-	NoteResource *pRes = MakeNoteResource( sButton, sElement, true );
-	Sprite *pSprite = dynamic_cast<Sprite *>( pRes->m_pActor );
-	ASSERT( pSprite != NULL );
-	return pSprite;
 }
 
 NoteColorActor::NoteColorActor()
@@ -211,9 +180,14 @@ NoteColorActor::~NoteColorActor()
 
 void NoteColorActor::Load( const RString &sButton, const RString &sElement )
 {
-	m_p = MakeRefcountedActor( sButton, sElement );
+	m_p = MakeNoteResource( sButton, sElement, false );
 }
 
+
+Actor *NoteColorActor::Get()
+{
+	return m_p->m_pActor;
+}
 
 NoteColorSprite::NoteColorSprite()
 {
@@ -228,9 +202,13 @@ NoteColorSprite::~NoteColorSprite()
 
 void NoteColorSprite::Load( const RString &sButton, const RString &sElement )
 {
-	m_p = MakeRefcountedSprite( sButton, sElement );
+	m_p = MakeNoteResource( sButton, sElement, true );
 }
 
+Sprite *NoteColorSprite::Get()
+{
+	return dynamic_cast<Sprite *>( m_p->m_pActor );
+}
 
 static const char *HoldTypeNames[] = {
 	"hold",

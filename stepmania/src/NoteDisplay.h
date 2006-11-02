@@ -25,14 +25,16 @@ enum NotePart
 	NUM_NotePart
 };
 
+struct NoteResource;
+
 struct NoteColorActor
 {
 	NoteColorActor();
 	~NoteColorActor();
 	void Load( const RString &sButton, const RString &sElement );
-	Actor *Get() { return m_p; }
+	Actor *Get();
 private:
-	Actor *m_p;
+	NoteResource *m_p;
 };
 
 struct NoteColorSprite
@@ -40,9 +42,9 @@ struct NoteColorSprite
 	NoteColorSprite();
 	~NoteColorSprite();
 	void Load( const RString &sButton, const RString &sElement );
-	Sprite *Get() { return m_p; }
+	Sprite *Get();
 private:
-	Sprite *m_p;
+	NoteResource *m_p;
 };
 
 enum HoldType 
