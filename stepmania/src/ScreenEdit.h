@@ -179,6 +179,9 @@ public:
 	void InputPlay( const InputEventPlus &input, EditButton EditB );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
+	void SetDirty( bool bDirty )	{ m_bDirty = bDirty; }
+	bool IsDirty() const		{ return m_bDirty; }
+
 protected:
 	virtual ScreenType GetScreenType() const { return m_EditState==STATE_PLAYING ? gameplay : ScreenWithMenuElements::GetScreenType(); }
 
@@ -229,8 +232,10 @@ protected:
 	int			m_iShiftAnchor;
 
 	NoteData		m_Clipboard;
-	bool			m_bHasUndo;
+	bool    		m_bHasUndo;
 	NoteData		m_Undo;
+
+	bool			m_bDirty;
 
 	RageSound		m_soundAddNote;
 	RageSound		m_soundRemoveNote;

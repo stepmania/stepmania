@@ -717,6 +717,8 @@ void ScreenEdit::Init()
 	m_bHasUndo = false;
 	m_Undo.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
 
+	m_bDirty = false;
+
 
 	m_Player->Init( "Player", GAMESTATE->m_pPlayerState[PLAYER_1], NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
 	m_Player->CacheAllUsedNoteSkins();
@@ -1177,6 +1179,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			if( m_NoteDataEdit.IsHoldNoteAtRow( iCol, iSongIndex, &iHeadRow ) )
 			{
 				m_soundRemoveNote.Play();
+				SetDirty( true );
 				SaveUndo();
 				m_NoteDataEdit.SetTapNote( iCol, iHeadRow, TAP_EMPTY );
 				// Don't CheckNumberOfNotesAndUndo.  We don't want to revert any change that removes notes.
@@ -1184,6 +1187,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			else if( m_NoteDataEdit.GetTapNote(iCol, iSongIndex).type != TapNote::empty )
 			{
 				m_soundRemoveNote.Play();
+				SetDirty( true );
 				SaveUndo();
 				m_NoteDataEdit.SetTapNote( iCol, iSongIndex, TAP_EMPTY );
 				// Don't CheckNumberOfNotesAndUndo.  We don't want to revert any change that removes notes.
@@ -1191,6 +1195,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			else if( EditIsBeingPressed(EDIT_BUTTON_LAY_MINE_OR_ROLL) )
 			{
 				m_soundAddNote.Play();
+				SetDirty( true );
 				SaveUndo();
 				TapNote tn = TAP_ORIGINAL_MINE;
 				tn.pn = m_InputPlayerNumber;
@@ -1205,6 +1210,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			else if( EditIsBeingPressed(EDIT_BUTTON_LAY_LIFT) )
 			{
 				m_soundAddNote.Play();
+				SetDirty( true );
 				SaveUndo();
 				TapNote tn = TAP_ORIGINAL_LIFT;
 				tn.pn = m_InputPlayerNumber;
@@ -1214,6 +1220,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			else
 			{
 				m_soundAddNote.Play();
+				SetDirty( true );
 				SaveUndo();
 				TapNote tn = TAP_ORIGINAL_TAP;
 				tn.pn = m_InputPlayerNumber;
@@ -1471,6 +1478,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			float fNewBPM = fBPM + fDelta;
 			m_pSong->SetBPMAtBeat( GAMESTATE->m_fSongBeat, fNewBPM );
 			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
+			SetDirty( true );
 		}
 		break;
 	case EDIT_BUTTON_STOP_UP:
@@ -1515,6 +1523,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 													  m_pSong->m_Timing.m_StopSegments.begin()+i+1);
 			}
 			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
+			SetDirty( true );
 		}
 		break;
 	case EDIT_BUTTON_OFFSET_UP:
@@ -1540,6 +1549,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			}
 			m_pSong->m_Timing.m_fBeat0OffsetInSeconds += fDelta;
 			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
+			SetDirty( true );
 		}
 		break;
 	case EDIT_BUTTON_SAMPLE_START_UP:
@@ -1576,6 +1586,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 				m_pSong->m_fMusicSampleStartSeconds = max(m_pSong->m_fMusicSampleStartSeconds,0);
 			}
 			(fDelta>0 ? m_soundValueIncrease : m_soundValueDecrease).Play();
+			SetDirty( true );
 		}
 		break;
 	case EDIT_BUTTON_PLAY_SAMPLE_MUSIC:
@@ -2128,6 +2139,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 			break;
 
 		case STATE_RECORDING:
+			SetDirty( true );
 			SaveUndo();
 
 			// delete old TapNotes in the range
@@ -2390,16 +2402,19 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		float fBPM = StringToFloat( ScreenTextEntry::s_sLastAnswer );
 		if( fBPM > 0 )
 			m_pSong->SetBPMAtBeat( GAMESTATE->m_fSongBeat, fBPM );
+		SetDirty( true );
 	}
 	else if( SM == SM_BackFromStopChange )
 	{
 		float fStop = StringToFloat( ScreenTextEntry::s_sLastAnswer );
 		if( fStop >= 0 )
 			m_pSong->m_Timing.SetStopAtBeat( GAMESTATE->m_fSongBeat, fStop );
+		SetDirty( true );
 	}
 	else if( SM == SM_BackFromBGChange )
 	{
 		HandleBGChangeChoice( (BGChangeChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
+		SetDirty( true );
 	}
 	else if( SM == SM_BackFromCourseModeMenu )
 	{
@@ -2454,6 +2469,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			g_fLastInsertAttackDurationSeconds, 
 			-1 );
 		tn.pn = m_InputPlayerNumber;
+		SetDirty( true );
 		SaveUndo();
 		m_NoteDataEdit.SetTapNote( g_iLastInsertTapAttackTrack, row, tn );
 		CheckNumberOfNotesAndUndo();
@@ -2520,6 +2536,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			SaveUndo();
 			CopyFromLastSave();
 			m_pSteps->GetNoteData( m_NoteDataEdit );
+			SetDirty( false );
 		}
 	}
 	else if( SM == SM_DoRevertFromDisk )
@@ -2529,6 +2546,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			SaveUndo();
 			RevertFromDisk();
 			m_pSteps->GetNoteData( m_NoteDataEdit );
+			SetDirty( false );
 		}
 	}
 	else if( SM == SM_DoSaveAndExit ) // just asked "save before exiting? yes, no, cancel"
@@ -2553,6 +2571,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		LOG->Trace( "Save successful." );
 		m_pSteps->SetSavedToDisk( true );
 		CopyToLastSave();
+		SetDirty( false );
 
 		if( m_CurrentAction == save_on_exit )
 			ScreenPrompt::Prompt( SM_DoExit, SAVE_SUCCESSFUL );
@@ -2890,7 +2909,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 			DEFAULT_FAIL( EDIT_MODE.GetValue() );
 			case EditMode_Full:
 			case EditMode_Home:
-				if( m_bHasUndo )
+				if( IsDirty() )
 					ScreenPrompt::Prompt( SM_DoSaveAndExit, SAVE_CHANGES_BEFORE_EXITING, PROMPT_YES_NO_CANCEL, ANSWER_CANCEL );
 				else
 					SCREENMAN->SendMessageToTopScreen( SM_DoExit );
@@ -2934,6 +2953,9 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 			bSaveUndo = true;
 			break;
 	}
+
+	if( bSaveUndo )
+		SetDirty( true );
 
 	// We call HandleAreaMenuChoice recursively.  Only the outermost HandleAreaMenuChoice
 	// should allow Undo so that the inner calls don't also save Undo and mess up the outermost
@@ -3424,6 +3446,8 @@ void ScreenEdit::RevertFromDisk()
 	m_songLastSave = *GAMESTATE->m_pCurSong;
 	if( GAMESTATE->m_pCurSteps[PLAYER_1] )
 		m_stepsLastSave = *GAMESTATE->m_pCurSteps[PLAYER_1];
+
+	SetDirty(false);
 }
 
 void ScreenEdit::SaveUndo()
