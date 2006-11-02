@@ -34,11 +34,11 @@
  */
 
 #include "global.h"
+#include "song.h"
 #include "AdjustSync.h"
 #include "GameState.h"
-#include "song.h"
-#include "PrefsManager.h"
 #include "LocalizedString.h"
+#include "PrefsManager.h"
 #include "ScreenManager.h"
 
 TimingData *AdjustSync::s_pTimingDataOriginal = NULL;
@@ -50,7 +50,6 @@ vector< pair<float, float> > AdjustSync::s_vAutosyncTempoData;
 float AdjustSync::s_fAverageError = 0.0f;
 const float AdjustSync::ERROR_TOO_HIGH = 0.025f;
 int AdjustSync::s_iStepsFiltered = 0;
-
 
 void AdjustSync::ResetOriginalSyncData()
 {
@@ -87,8 +86,17 @@ void AdjustSync::SaveSyncChanges()
 {
 	if( GAMESTATE->IsCourseMode() )
 		return;
-	if( GAMESTATE->m_pCurSong  &&  *s_pTimingDataOriginal != GAMESTATE->m_pCurSong->m_Timing )
-		GAMESTATE->m_pCurSong->Save();
+	if( GAMESTATE->m_pCurSong && *s_pTimingDataOriginal != GAMESTATE->m_pCurSong->m_Timing )
+	{
+		if( GAMESTATE->IsEditing() )
+		{
+			MESSAGEMAN->Broadcast( Message_SongChanged );
+		}
+		else
+		{
+			GAMESTATE->m_pCurSong->Save();
+		}
+	}
 	if( s_fGlobalOffsetSecondsOriginal != PREFSMAN->m_fGlobalOffsetSeconds )
 		PREFSMAN->SavePrefsToDisk();
 	ResetOriginalSyncData();

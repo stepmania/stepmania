@@ -127,6 +127,7 @@ enum Message
 	Message_ShowHoldJudgmentMuliPlayerP30,
 	Message_ShowHoldJudgmentMuliPlayerP31,
 	Message_ShowHoldJudgmentMuliPlayerP32,
+	Message_SongChanged,
 	NUM_Message,	// leave this at the end
 	Message_Invalid
 };

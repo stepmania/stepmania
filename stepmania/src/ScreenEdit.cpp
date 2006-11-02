@@ -763,6 +763,8 @@ void ScreenEdit::Init()
 
 	this->HandleScreenMessage( SM_UpdateTextInfo );
 	m_bTextInfoNeedsUpdate = true;
+
+	SubscribeToMessage( Message_SongChanged );
 }
 
 ScreenEdit::~ScreenEdit()
@@ -2363,6 +2365,15 @@ void ScreenEdit::ScrollTo( float fDestinationBeat )
 	}
 
 	m_soundChangeLine.Play();
+}
+
+void ScreenEdit::HandleMessage( const RString &sMessage )
+{
+	if( sMessage == MessageToString( Message_SongChanged ) )
+	{
+		SetDirty( true );
+	}
+	Screen::HandleMessage( sMessage );
 }
 
 static LocalizedString SAVE_SUCCESSFUL				( "ScreenEdit", "Save successful." );

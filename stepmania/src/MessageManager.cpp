@@ -132,6 +132,7 @@ static const char *MessageNames[] = {
 	"ShowHoldJudgmentMuliPlayerP30",
 	"ShowHoldJudgmentMuliPlayerP31",
 	"ShowHoldJudgmentMuliPlayerP32",
+	"MessageSongChanged",
 };
 XToString( Message );
 

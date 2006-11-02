@@ -177,6 +177,7 @@ public:
 	void InputRecord( const InputEventPlus &input, EditButton EditB );
 	void InputRecordPaused( const InputEventPlus &input, EditButton EditB );
 	void InputPlay( const InputEventPlus &input, EditButton EditB );
+	virtual void HandleMessage( const RString& sMessage );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 	void SetDirty( bool bDirty )	{ m_bDirty = bDirty; }
