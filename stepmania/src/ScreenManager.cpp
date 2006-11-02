@@ -124,9 +124,10 @@ namespace ScreenManagerUtil
 		g_ScreenStack.push_back( ls );
 
 		/* Set the name of the loading screen. */
-		LUA->SetGlobal( "LoadingScreen", ls.m_pScreen->GetName() );
-		ls.m_pScreen->BeginScreen();
-		LUA->UnsetGlobal( "LoadingScreen" );
+		{
+			LuaThreadVariable var( "LoadingScreen", ls.m_pScreen->GetName() );
+			ls.m_pScreen->BeginScreen();
+		}
 
 		SCREENMAN->RefreshCreditsMessages();
 

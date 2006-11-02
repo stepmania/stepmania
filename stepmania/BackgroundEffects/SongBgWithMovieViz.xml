@@ -1,12 +1,12 @@
 <ActorFrame><children>
 	<Layer
 		Type="@Sprite"
-		InitCommand="%function(self) self:LoadBackground( GAMESTATE:GetCurrentSong():GetBackgroundPath() ) self.Color = Color1 end"
+		InitCommand="%function(self) self:LoadBackground( GAMESTATE:GetCurrentSong():GetBackgroundPath() ) self.Color = Var 'Color1' end"
 		OnCommand="x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;ZoomToWidth,SCREEN_WIDTH;ZoomToHeight,SCREEN_HEIGHT;diffuse,color(self.Color)"
 	/>
 	<Layer
-		File="File1"
-		InitCommand="%function(self) self:pause(); self.Color = Color2; end"
+		File="Var 'File1'"
+		InitCommand="%function(self) self:pause(); self.Color = Var 'Color2'; end"
 		OnCommand="blend,add;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;ZoomToWidth,SCREEN_WIDTH;ZoomToHeight,SCREEN_HEIGHT;diffuse,color(self.Color)"
 		GainFocusCommand="Play"
 		LoseFocusCommand="Pause"

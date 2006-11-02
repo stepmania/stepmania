@@ -295,12 +295,13 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 
 	vector<RString> vsResolved;
 	vsResolved.resize( vsToResolve.size() );
+	vector<LuaThreadVariable *> vsResolvedRef;
+	vsResolvedRef.resize( vsToResolve.size() );
+
 	for( unsigned i=0; i<vsToResolve.size(); i++ )
 	{
 		const RString &sToResolve = vsToResolve[i];
 	
-		LUA->UnsetGlobal( ssprintf("File%d",i+1) );	// clear
-		
 		if( sToResolve.empty() )
 		{
 			if( i == 0 )
@@ -341,7 +342,7 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 		
 		ASSERT( !sResolved.empty() );
 
-		LUA->SetGlobal( ssprintf("File%d",i+1), sResolved );
+		vsResolvedRef[i] = new LuaThreadVariable( ssprintf("File%d",i+1), sResolved );
 	}
 
 	RString sEffect = bd.m_sEffect;
@@ -369,8 +370,8 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 
 
 	// Set Lua color globals
-	LUA->SetGlobal( "Color1", bd.m_sColor1.empty() ? RString("1,1,1,1") : bd.m_sColor1 );
-	LUA->SetGlobal( "Color2", bd.m_sColor2.empty() ? RString("1,1,1,1") : bd.m_sColor2 );
+	LuaThreadVariable sColor1( "Color1", bd.m_sColor1.empty() ? RString("1,1,1,1") : bd.m_sColor1 );
+	LuaThreadVariable sColor2( "Color2", bd.m_sColor2.empty() ? RString("1,1,1,1") : bd.m_sColor2 );
 
 
 	// Resolve the effect file.
@@ -403,10 +404,8 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 	ASSERT( pActor );
 	m_BGAnimations[bd] = pActor;
 
-	for( unsigned i=0; i<vsResolved.size(); i++ )
-		LUA->UnsetGlobal( ssprintf("File%d",i+1) );
-	LUA->UnsetGlobal( "Color1" );
-	LUA->UnsetGlobal( "Color2" );
+	for( unsigned i=0; i<vsResolvedRef.size(); i++ )
+		delete vsResolvedRef[i];
 
 	return true;
 }
@@ -805,16 +804,9 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 
 		m_pCurrentBGA->SetUpdateRate( change.m_fRate );
 
-		// Set Lua color globals before calling Init and On
-		LUA->SetGlobal( "Color1", change.m_def.m_sColor1.empty() ? RString("1,1,1,1") : change.m_def.m_sColor1 );
-		LUA->SetGlobal( "Color2", change.m_def.m_sColor2.empty() ? RString("1,1,1,1") : change.m_def.m_sColor2 );
-		
 		m_pCurrentBGA->InitState();
 		m_pCurrentBGA->PlayCommand( "On" );
 		m_pCurrentBGA->PlayCommand( "GainFocus" );
-
-		LUA->UnsetGlobal( "Color1" );
-		LUA->UnsetGlobal( "Color2" );
 
 		/* How much time of this BGA have we skipped?  (This happens with SetSeconds.) */
 		const float fStartSecond = pSong->m_Timing.GetElapsedTimeFromBeat( change.m_fStartBeat );
