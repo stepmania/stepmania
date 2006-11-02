@@ -495,11 +495,6 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, int iRow, bool bIsB
 
 	// draw manually in small segments
 	const RectF *pRect = pSprBody->GetCurrentTextureCoordRect();
-	DISPLAY->ClearAllTextures();
-	DISPLAY->SetCullMode( CULL_NONE );
-	DISPLAY->SetTextureWrapping( true );
-
-
 	const float fFrameWidth  = pSprBody->GetZoomedWidth();
 	const float fFrameHeight = pSprBody->GetZoomedHeight();
 	const float fYBodyTop = fYHead + cache->m_iStartDrawingHoldBodyOffsetFromHead;
@@ -544,7 +539,7 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, int iRow, bool bIsB
 		const float fXRight		= fX + fFrameWidth/2;
 		const float fDistFromBodyBottom	= fYBodyBottom - fY;
 		const float fDistFromBodyTop	= fY - fYBodyTop;
-		float fTexCoordTop		= SCALE( bAnchorToBottom ? fDistFromBodyTop : fDistFromBodyBottom,    0, fFrameHeight, pRect->bottom, pRect->top );
+		float fTexCoordTop		= SCALE( bAnchorToBottom ? fDistFromBodyTop : fDistFromBodyBottom, 0, fFrameHeight, pRect->bottom, pRect->top );
 		/* For very large hold notes, shift the texture coordinates to be near 0, so we
 		 * don't send very large values to the renderer. */
 		if( fY == fDrawYBodyTop ) // first
@@ -558,8 +553,8 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, int iRow, bool bIsB
 		if( fAlpha > 0 )
 			bAllAreTransparent = false;
 
-		queue.v[0].p = RageVector3(fXLeft,  fY, fZ);	queue.v[0].c = color; queue.v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
-		queue.v[1].p = RageVector3(fXRight, fY, fZ);	queue.v[1].c = color; queue.v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
+		queue.v[0].p = RageVector3(fXLeft,  fY, fZ); queue.v[0].c = color; queue.v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
+		queue.v[1].p = RageVector3(fXRight, fY, fZ); queue.v[1].c = color; queue.v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
 		queue.v+=2;
 		if( queue.Free() < 2 )
 		{
@@ -570,8 +565,11 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, int iRow, bool bIsB
 				FOREACH( Sprite*, vpSpr, spr )
 				{
 					RageTexture* pTexture = (*spr)->GetTexture();
+					DISPLAY->ClearAllTextures();
 					DISPLAY->SetTexture( TextureUnit_1, pTexture->GetTexHandle() );
 					DISPLAY->SetBlendMode( spr == vpSpr.begin() ? BLEND_NORMAL : BLEND_ADD );
+					DISPLAY->SetCullMode( CULL_NONE );
+					DISPLAY->SetTextureWrapping( true );
 					queue.Draw();
 				}
 			}
@@ -586,8 +584,11 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, int iRow, bool bIsB
 		FOREACH( Sprite*, vpSpr, spr )
 		{
 			RageTexture* pTexture = (*spr)->GetTexture();
+			DISPLAY->ClearAllTextures();
 			DISPLAY->SetTexture( TextureUnit_1, pTexture->GetTexHandle() );
 			DISPLAY->SetBlendMode( spr == vpSpr.begin() ? BLEND_NORMAL : BLEND_ADD );
+			DISPLAY->SetCullMode( CULL_NONE );
+			DISPLAY->SetTextureWrapping( true );
 			queue.Draw();
 		}
 	}
