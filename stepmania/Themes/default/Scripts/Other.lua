@@ -50,12 +50,12 @@ end
 -- Get a metric from the currently-loading screen.  This is only valid while loading
 -- an actor, such as from File or InitCommand attributes; not from commands.
 function ScreenMetric( sName )
-	local sClass = LoadingScreen;
+	local sClass = Var "LoadingScreen";
 	return THEME:GetMetric( sClass, sName )
 end
 
 function ScreenString( sName )
-	local sClass = LoadingScreen;
+	local sClass = Var "LoadingScreen";
         return THEME:GetString( sClass, sName )
 end
 

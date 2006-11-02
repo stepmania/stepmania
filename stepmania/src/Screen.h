@@ -16,7 +16,7 @@ void RegisterScreenClass( const RString& sClassName, CreateScreenFn pfn );
 
 // Each Screen class should have a REGISTER_SCREEN_CLASS in its CPP file.
 #define REGISTER_SCREEN_CLASS( className ) \
-	static Screen* Create##className( const RString &sName ) { Screen *pRet = new className; pRet->SetName( sName ); Screen::InitScreen( pRet ); return pRet; } \
+	static Screen* Create##className( const RString &sName ) { LuaThreadVariable var( "LoadingScreen", sName ); Screen *pRet = new className; pRet->SetName( sName ); Screen::InitScreen( pRet ); return pRet; } \
 	struct Register##className { \
 		Register##className() { RegisterScreenClass( #className,Create##className); } \
 	}; \
