@@ -87,26 +87,18 @@ public:
 private:
 	void SetActiveFrame( float fNoteBeat, Actor &actorToSet, float fAnimationLengthInBeats, bool bVivid );
 	Actor *GetTapActor( NoteColorActor &nca, NotePart part, float fNoteBeat );
-	Actor *GetHoldActor( NoteColorActor nca[NUM_HoldType][NUM_ActiveType], NotePart part, 
-	                     float fNoteBeat, bool bIsRoll, bool bIsBeingHeld );
-	Sprite *GetHoldSprite( NoteColorSprite ncs[NUM_HoldType][NUM_ActiveType], NotePart part, 
-	                       float fNoteBeat, bool bIsRoll, bool bIsBeingHeld );
+	Actor *GetHoldActor( NoteColorActor nca[NUM_HoldType][NUM_ActiveType], NotePart part, float fNoteBeat, bool bIsRoll, bool bIsBeingHeld );
+	Sprite *GetHoldSprite( NoteColorSprite ncs[NUM_HoldType][NUM_ActiveType], NotePart part, float fNoteBeat, bool bIsRoll, bool bIsBeingHeld );
 
-	void DrawHoldBottomCap( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, 
-	                        float fYHead, float fYTail, int fYStep, 
-	                        float fPercentFadeToFail, float fColorScale, bool bGlow, 
-				float fYStartOffset, float fYEndOffset );
-	void DrawHoldTopCap( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, 
-	                     float fYHead, float fYTail, int fYStep, float fPercentFadeToFail, 
-			     float fColorScale, bool bGlow, float fYStartOffset, float fYEndOffset );
-	void DrawHoldBody( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, 
-	                   float fYHead, float fYTail, int fYStep, float fPercentFadeToFail, 
+	void DrawHoldBottomCap( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, 
+	                        float fPercentFadeToFail, float fColorScale, bool bGlow, float fYStartOffset, float fYEndOffset );
+	void DrawHoldTopCap( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, float fYHead, float fYTail, int fYStep,
+			     float fPercentFadeToFail, float fColorScale, bool bGlow, float fYStartOffset, float fYEndOffset );
+	void DrawHoldBody( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, float fPercentFadeToFail, 
 			   float fColorScale, bool bGlow, float fYStartOffset, float fYEndOffset );
-	void DrawHoldTail( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, 
-	                   float fYTail, float fPercentFadeToFail, float fColorScale, 
+	void DrawHoldTail( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, float fYTail, float fPercentFadeToFail, float fColorScale, 
 			   bool bGlow, float fYStartOffset, float fYEndOffset );
-	void DrawHoldHead( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, 
-	                   float fYHead, float fPercentFadeToFail, float fColorScale, 
+	void DrawHoldHead( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, float fYHead, float fPercentFadeToFail, float fColorScale, 
 			   bool bGlow, float fYStartOffset, float fYEndOffset );
 
 	const PlayerState	*m_pPlayerState;	// to look up PlayerOptions
