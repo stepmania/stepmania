@@ -122,6 +122,8 @@ static LocalizedString AUTOSYNC_MACHINE			( "AdjustSync", "Autosync Machine" );
 static LocalizedString AUTOSYNC_TEMPO			( "AdjustSync", "Autosync Tempo" );
 void AdjustSync::HandleAutosync( float fNoteOffBySeconds, float fStepTime )
 {
+	if( GAMESTATE->IsCourseMode() )
+		return;
 	switch( GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType ) {
 	case SongOptions::AUTOSYNC_OFF:
 		return;
@@ -150,6 +152,8 @@ void AdjustSync::HandleAutosync( float fNoteOffBySeconds, float fStepTime )
 
 void AdjustSync::HandleSongEnd()
 {
+	if( GAMESTATE->IsCourseMode() )
+		return;
 	if( GAMESTATE->m_SongOptions.GetCurrent().m_AutosyncType == SongOptions::AUTOSYNC_TEMPO )
 	{
 		AutosyncTempo();
@@ -160,7 +164,6 @@ void AdjustSync::HandleSongEnd()
 
 void AdjustSync::AutosyncOffset()
 {
-
 	const float mean = calc_mean( s_fAutosyncOffset, s_fAutosyncOffset+OFFSET_SAMPLE_COUNT );
 	const float stddev = calc_stddev( s_fAutosyncOffset, s_fAutosyncOffset+OFFSET_SAMPLE_COUNT );
 
@@ -208,7 +211,10 @@ void AdjustSync::AutosyncTempo()
 	float fIntercept = 0.0f;
 	if( !CalcLeastSquares( s_vAutosyncTempoData,
 	                       &fSlope, &fIntercept, &s_fAverageError ) )
+	{
+		s_vAutosyncTempoData.clear();
 		return;
+	}
 
 	if( s_fAverageError < ERROR_TOO_HIGH )
 	{
