@@ -113,6 +113,11 @@ inline void RemoveIf( Container& c, Predicate p )
 {
 	c.erase( remove_if(c.begin(), c.end(), p), c.end() );
 }
+template<typename Container, typename Value>
+inline void RemoveIfEqual( Container &c, const Value &v )
+{
+	c.erase( remove(c.begin(), c.end(), v), c.end() );
+}
 
 /* Helper for ConvertValue(). */
 template<typename TO, typename FROM>
