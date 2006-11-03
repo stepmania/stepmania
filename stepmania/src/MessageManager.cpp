@@ -223,9 +223,7 @@ void IMessageSubscriber::ClearMessages( const RString sMessage )
 		return;
 	}
 
-	for( int i=m_aMessages.size()-1; i>=0; i-- )
-		if( m_aMessages[i] == sMessage )
-			m_aMessages.erase( m_aMessages.begin()+i ); 
+	RemoveIfEqual( m_aMessages, sMessage );
 }
 
 void IMessageSubscriber::HandleMessageInternal( const RString& sMessage )
