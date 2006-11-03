@@ -493,6 +493,8 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, int iRow, bool bIsB
 	}
 
 
+	DISPLAY->ClearAllTextures();
+
 	// draw manually in small segments
 	const RectF *pRect = pSprBody->GetCurrentTextureCoordRect();
 	const float fFrameWidth  = pSprBody->GetZoomedWidth();
