@@ -373,12 +373,14 @@ void NoteDisplay::DrawHoldTopCap( const TapNote& tn, int iCol, int iRow, bool bI
 
 	vector<Sprite*> vpSpr;
 	Sprite *pSprTopCap = GetHoldSprite( m_HoldTopCap, NotePart_HoldTopCap, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld && !cache->m_bHoldActiveIsAddLayer );
+	pSprTopCap->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 	vpSpr.push_back( pSprTopCap );
 	if( bIsBeingHeld && cache->m_bHoldActiveIsAddLayer )
 	{
 		Sprite *pSpr = GetHoldSprite( m_HoldTopCap, NotePart_HoldTopCap, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, true );
 		ASSERT( pSpr->GetUnzoomedWidth() == pSprTopCap->GetUnzoomedWidth() );
 		ASSERT( pSpr->GetUnzoomedHeight() == pSprTopCap->GetUnzoomedHeight() );
+		pSpr->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 		vpSpr.push_back( pSpr );
 	}
 
@@ -483,12 +485,14 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, int iRow, bool bIsB
 
 	vector<Sprite*> vpSpr;
 	Sprite *pSprBody = GetHoldSprite( m_HoldBody, NotePart_HoldBody, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld && !cache->m_bHoldActiveIsAddLayer );
+	pSprBody->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 	vpSpr.push_back( pSprBody );
 	if( bIsBeingHeld && cache->m_bHoldActiveIsAddLayer )
 	{
 		Sprite *pSpr = GetHoldSprite( m_HoldBody, NotePart_HoldBody, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, true );
 		ASSERT( pSpr->GetUnzoomedWidth() == pSprBody->GetUnzoomedWidth() );
 		ASSERT( pSpr->GetUnzoomedHeight() == pSprBody->GetUnzoomedHeight() );
+		pSpr->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 		vpSpr.push_back( pSpr );
 	}
 
@@ -567,7 +571,6 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, int iRow, bool bIsB
 				FOREACH( Sprite*, vpSpr, spr )
 				{
 					RageTexture* pTexture = (*spr)->GetTexture();
-					DISPLAY->ClearAllTextures();
 					DISPLAY->SetTexture( TextureUnit_1, pTexture->GetTexHandle() );
 					DISPLAY->SetBlendMode( spr == vpSpr.begin() ? BLEND_NORMAL : BLEND_ADD );
 					DISPLAY->SetCullMode( CULL_NONE );
@@ -586,7 +589,6 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, int iRow, bool bIsB
 		FOREACH( Sprite*, vpSpr, spr )
 		{
 			RageTexture* pTexture = (*spr)->GetTexture();
-			DISPLAY->ClearAllTextures();
 			DISPLAY->SetTexture( TextureUnit_1, pTexture->GetTexHandle() );
 			DISPLAY->SetBlendMode( spr == vpSpr.begin() ? BLEND_NORMAL : BLEND_ADD );
 			DISPLAY->SetCullMode( CULL_NONE );
@@ -605,12 +607,14 @@ void NoteDisplay::DrawHoldBottomCap( const TapNote& tn, int iCol, int iRow, bool
 
 	vector<Sprite*> vpSpr;
 	Sprite* pBottomCap = GetHoldSprite( m_HoldBottomCap, NotePart_HoldBottomCap, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld && !cache->m_bHoldActiveIsAddLayer );
+	pBottomCap->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 	vpSpr.push_back( pBottomCap );
 	if( bIsBeingHeld && cache->m_bHoldActiveIsAddLayer )
 	{
 		Sprite *pSpr = GetHoldSprite( m_HoldBody, NotePart_HoldBody, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, true );
 		ASSERT( pSpr->GetUnzoomedWidth() == pBottomCap->GetUnzoomedWidth() );
 		ASSERT( pSpr->GetUnzoomedHeight() == pBottomCap->GetUnzoomedHeight() );
+		pSpr->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 		vpSpr.push_back( pSpr );
 	}
 
