@@ -1,6 +1,5 @@
 #include "global.h"
 #include "LuaReference.h"
-#include "LuaManager.h"
 
 REGISTER_CLASS_TRAITS( LuaReference, new LuaReference(*pCopy) )
 
@@ -137,8 +136,7 @@ RString LuaReference::Serialize() const
 {
 	/* Call Serialize(t), where t is our referenced object. */
 	Lua *L = LUA->Get();
-	lua_pushstring( L, "Serialize" );
-	lua_gettable( L, LUA_GLOBALSINDEX );
+	lua_getglobal( L, "Serialize" );
 
 	ASSERT_M( !lua_isnil(L, -1), "Serialize() missing" );
 	ASSERT_M( lua_isfunction(L, -1), "Serialize() not a function" );
