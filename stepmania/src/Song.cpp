@@ -775,8 +775,7 @@ void Song::SaveToDWIFile()
 	if( IsAFile(sPath) )
 		FileCopy( sPath, sPath + ".old" );
 
-	NotesWriterDWI wr;
-	wr.Write(sPath, *this);
+	NotesWriterDWI::Write(sPath, *this);
 }
 
 

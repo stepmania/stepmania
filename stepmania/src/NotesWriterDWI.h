@@ -3,22 +3,9 @@
 #ifndef NOTES_WRITER_DWI_H
 #define NOTES_WRITER_DWI_H
 
-#include "NoteTypes.h"
-
-class RageFile;
 class Song;
-class Steps;
-class NotesWriterDWI
+namespace NotesWriterDWI
 {
-	RString NotesToDWIString( TapNote cNoteCol1, TapNote cNoteCol2, TapNote cNoteCol3, TapNote cNoteCol4, TapNote cNoteCol5, TapNote cNoteCol6 );
-	RString NotesToDWIString( TapNote cNoteCol1, TapNote cNoteCol2, TapNote cNoteCol3, TapNote cNoteCol4 );
-	void WriteDWINotesField( RageFile &f, const Steps &out, int start );
-	bool WriteDWINotesTag( RageFile &f, const Steps &out );
-	RString NotesToDWIString( const TapNote cNoteCols[6] );
-	RString OptimizeDWIString( RString holds, RString taps );
-	char OptimizeDWIPair( char c1, char c2 );
-
-public:
 	bool Write( RString sPath, const Song &out );
 };
 

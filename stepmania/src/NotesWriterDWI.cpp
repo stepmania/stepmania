@@ -11,8 +11,10 @@
 #include "song.h"
 #include "Steps.h"
 
+static RString OptimizeDWIString( RString holds, RString taps );
+
 /* Output is an angle bracket expression without angle brackets, eg. "468". */
-RString NotesWriterDWI::NotesToDWIString( const TapNote tnCols[6] )
+static RString NotesToDWIString( const TapNote tnCols[6] )
 {
 	const char dirs[] = { '4', 'C', '2', '8', 'D', '6' };
 	RString taps, holds, ret;
@@ -84,7 +86,7 @@ RString NotesWriterDWI::NotesToDWIString( const TapNote tnCols[6] )
 	return '0';*/
 }
 
-RString NotesWriterDWI::NotesToDWIString( TapNote tnCol1, TapNote tnCol2, TapNote tnCol3, TapNote tnCol4, TapNote tnCol5, TapNote tnCol6 )
+static RString NotesToDWIString( TapNote tnCol1, TapNote tnCol2, TapNote tnCol3, TapNote tnCol4, TapNote tnCol5, TapNote tnCol6 )
 {
 	TapNote tnCols[6];
 	tnCols[0] = tnCol1;
@@ -96,12 +98,12 @@ RString NotesWriterDWI::NotesToDWIString( TapNote tnCol1, TapNote tnCol2, TapNot
 	return NotesToDWIString( tnCols );
 }
 
-RString NotesWriterDWI::NotesToDWIString( TapNote tnCol1, TapNote tnCol2, TapNote tnCol3, TapNote tnCol4 )
+static RString NotesToDWIString( TapNote tnCol1, TapNote tnCol2, TapNote tnCol3, TapNote tnCol4 )
 {
 	return NotesToDWIString( tnCol1, TAP_EMPTY, tnCol2, tnCol3, TAP_EMPTY, tnCol4 );
 }
 
-char NotesWriterDWI::OptimizeDWIPair( char c1, char c2 )
+static char OptimizeDWIPair( char c1, char c2 )
 {
 	typedef pair<char,char> cpair;
 	static map< cpair, char > joins;
@@ -136,7 +138,7 @@ char NotesWriterDWI::OptimizeDWIPair( char c1, char c2 )
 	return it->second;
 }
 
-RString NotesWriterDWI::OptimizeDWIString( RString holds, RString taps )
+RString OptimizeDWIString( RString holds, RString taps )
 {
 	/* First, sort the holds and taps in ASCII order.  This puts 2468 first.
 	 * This way 1379 combinations will always be found first, so we'll always
@@ -189,7 +191,7 @@ RString NotesWriterDWI::OptimizeDWIString( RString holds, RString taps )
 		return ssprintf( "<%s>", ret.c_str() );
 }
 
-void NotesWriterDWI::WriteDWINotesField( RageFile &f, const Steps &out, int start )
+static void WriteDWINotesField( RageFile &f, const Steps &out, int start )
 {
 	NoteData notedata;
 	out.GetNoteData( notedata );
@@ -311,7 +313,7 @@ void NotesWriterDWI::WriteDWINotesField( RageFile &f, const Steps &out, int star
 	}
 }
 
-bool NotesWriterDWI::WriteDWINotesTag( RageFile &f, const Steps &out )
+static bool WriteDWINotesTag( RageFile &f, const Steps &out )
 {
 	if( out.GetDifficulty() == DIFFICULTY_EDIT )
 		return false;	// not supported by DWI
