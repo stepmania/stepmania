@@ -124,7 +124,7 @@ bool DWILoader::LoadFromDWITokens(
 
 	out.m_StepsType = StepsType_Invalid;
 
-	if(		 sMode == "SINGLE" )	out.m_StepsType = STEPS_TYPE_DANCE_SINGLE;
+	if( sMode == "SINGLE" )			out.m_StepsType = STEPS_TYPE_DANCE_SINGLE;
 	else if( sMode == "DOUBLE" )		out.m_StepsType = STEPS_TYPE_DANCE_DOUBLE;
 	else if( sMode == "COUPLE" )		out.m_StepsType = STEPS_TYPE_DANCE_COUPLE;
 	else if( sMode == "SOLO" )		out.m_StepsType = STEPS_TYPE_DANCE_SOLO;
@@ -325,6 +325,8 @@ bool DWILoader::LoadFromDWITokens(
 	out.SetNoteData( newNoteData );
 
 	out.TidyUpData();
+
+	out.SetSavedToDisk( true );	// we're loading from disk, so this is by definintion already saved
 
 	return true;
 }

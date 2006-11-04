@@ -279,6 +279,8 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 
 	out.TidyUpData();
 
+	out.SetSavedToDisk( true );	// we're loading from disk, so this is by definintion already saved
+
 	return true;
 }
 

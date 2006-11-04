@@ -541,6 +541,8 @@ bool BMSLoader::LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNa
 
 	out.TidyUpData();
 
+	out.SetSavedToDisk( true );	// we're loading from disk, so this is by definintion already saved
+
 	return true;
 }
 
