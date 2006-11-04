@@ -8,9 +8,6 @@ class Steps;
 class RageFile;
 class NotesWriterSM
 {
-	void WriteGlobalTags( RageFile &f, const Song &out );
-	static RString GetSMNotesTag( const Song &song, const Steps &in, bool bSavingCache );
-
 public:
 	bool Write( RString sPath, const Song &out, bool bSavingCache );
 	static void GetEditFileContents( const Song *pSong, const Steps *pSteps, RString &sOut );

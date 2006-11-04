@@ -36,7 +36,7 @@ static RString BackgroundChangeToString( const BackgroundChange &bgc )
 	return s;
 }
 
-void NotesWriterSM::WriteGlobalTags( RageFile &f, const Song &out )
+static void WriteGlobalTags( RageFile &f, const Song &out )
 {
 	f.PutLine( ssprintf( "#TITLE:%s;", out.m_sMainTitle.c_str() ) );
 	f.PutLine( ssprintf( "#SUBTITLE:%s;", out.m_sSubTitle.c_str() ) );
@@ -159,7 +159,7 @@ static RString JoinLineList( vector<RString> &lines )
 	return join( "\r\n", lines.begin()+j, lines.end() );
 }
 
-RString NotesWriterSM::GetSMNotesTag( const Song &song, const Steps &in, bool bSavingCache )
+static RString GetSMNotesTag( const Song &song, const Steps &in, bool bSavingCache )
 {
 	vector<RString> lines;
 
