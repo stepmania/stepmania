@@ -754,8 +754,7 @@ void Song::SaveToSMFile( RString sPath, bool bSavingCache )
 	if( !bSavingCache && IsAFile(sPath) )
 		FileCopy( sPath, sPath + ".old" );
 
-	NotesWriterSM wr;
-	wr.Write( sPath, *this, bSavingCache );
+	NotesWriterSM::Write( sPath, *this, bSavingCache );
 }
 
 void Song::SaveToCacheFile()

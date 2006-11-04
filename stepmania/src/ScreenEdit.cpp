@@ -2823,11 +2823,10 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 					{
 						ASSERT( m_pSteps->IsAnEdit() );
 
-						NotesWriterSM w;
 						RString sError;
 						
 						m_pSteps->CalculateRadarValues( m_pSong->m_fMusicLengthSeconds );
-						if( !w.WriteEditFileToMachine(m_pSong, m_pSteps, sError) )
+						if( !NotesWriterSM::WriteEditFileToMachine(m_pSong, m_pSteps, sError) )
 						{
 							ScreenPrompt::Prompt( SM_None, sError );
 							break;

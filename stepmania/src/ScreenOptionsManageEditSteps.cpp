@@ -156,8 +156,7 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 			pSteps->SetDescription( ScreenTextEntry::s_sLastAnswer );
 
 			RString sError;
-			NotesWriterSM sm;
-			if( !sm.WriteEditFileToMachine(pSong,pSteps,sError) )
+			if( !NotesWriterSM::WriteEditFileToMachine(pSong,pSteps,sError) )
 			{
 				ScreenPrompt::Prompt( SM_None, sError );
 				return;
