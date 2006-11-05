@@ -117,7 +117,7 @@ DancingCharacters::DancingCharacters()
 			m_pCharacter[p]->SetX( MODEL_X_TWO_PLAYERS[p] );
 		else
 			m_pCharacter[p]->SetX( MODEL_X_ONE_PLAYER );
-
+	
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_BATTLE:
@@ -131,6 +131,8 @@ DancingCharacters::DancingCharacters()
 		m_pCharacter[p]->LoadMilkshapeAsciiBones( "warmup", pChar->GetWarmUpAnimationPath() );
 		m_pCharacter[p]->LoadMilkshapeAsciiBones( "dance", pChar->GetDanceAnimationPath() );
 		m_pCharacter[p]->SetCullMode( CULL_NONE );	// many of the models floating around have the vertex order flipped
+
+		m_pCharacter[p]->RunCommands( pChar->m_cmdInit );
 	}
 }
 

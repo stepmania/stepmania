@@ -3,6 +3,7 @@
 #include "IniFile.h"
 #include "RageUtil.h"
 #include "RageTextureID.h"
+#include "ActorUtil.h"
 
 Character::Character()
 {
@@ -58,8 +59,13 @@ bool Character::Load( RString sCharDir )
 			ini.GetValue( "Character", ssprintf("Level%dAttack%d",i+1,j+1), m_sAttacks[i][j] );
 	}
 
-	// get display name (if any)
+	// get optional display name
 	ini.GetValue( "Character", "DisplayName", m_sDisplayName );
+	
+	// get optional InitCommand
+	RString s;
+	ini.GetValue( "Character", "InitCommand", s );
+	m_cmdInit = ActorUtil::ParseActorCommands( s );
 
 	return true;
 }

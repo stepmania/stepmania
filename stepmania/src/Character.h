@@ -54,6 +54,8 @@ private:
 
 public:
 
+	apActorCommands m_cmdInit;
+
 	// All the stuff below will be filled in if this character is playable in Rave mode
 	bool	m_bUsableInRave;	
 
