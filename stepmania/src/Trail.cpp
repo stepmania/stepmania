@@ -192,7 +192,7 @@ class LunaTrail: public Luna<Trail>
 {
 public:
 	static int GetDifficulty( T* p, lua_State *L )		{ LuaHelpers::Push(L, p->m_CourseDifficulty ); return 1; }
-	static int GetStepsType( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_StepsType ); return 1; }
+	static int GetStepsType( T* p, lua_State *L )	{ LuaHelpers::Push(L, p->m_StepsType ); return 1; }
 	static int GetRadarValues( T* p, lua_State *L )
 	{
 		RadarValues &rv = const_cast<RadarValues &>(p->GetRadarValues());
