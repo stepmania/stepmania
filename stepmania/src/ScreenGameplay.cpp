@@ -90,7 +90,6 @@ AutoScreenMessage( SM_BattleTrickLevel3 );
 static Preference<bool> g_bCenter1Player( "Center1Player", false );
 static Preference<bool> g_bShowLyrics( "ShowLyrics", true );
 static Preference<float> g_fNetStartOffset( "NetworkStartOffset", -3.0 );
-static Preference<bool> g_bTwoPlayerRecovery( "TwoPlayerRecovery", true );
 static Preference<bool> g_bEasterEggs( "EasterEggs", true );
 
 
@@ -1614,11 +1613,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 			if( pi->GetPlayerStageStats()->bFailed )
 				continue; /* failed and is already dead */
 		
-			/* If recovery is enabled, only set fail if both are failing.
-			* There's no way to recover mid-song in battery mode. */
-			if( lt != SongOptions::LIFE_BATTERY && g_bTwoPlayerRecovery && !AllAreFailing() )
-				continue;
-
 			LOG->Trace("Player %d failed", (int)pn);
 			pi->GetPlayerStageStats()->bFailed = true;	// fail
 
@@ -2332,7 +2326,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				pi->GetPlayerStageStats()->bFailed = true;
 			}
 
-			/* Mark failure.  This hasn't been done yet if g_bTwoPlayerRecovery is set. */
+			/* Mark failure. */
 			if( GAMESTATE->GetPlayerFailType(pi->GetPlayerState()) != SongOptions::FAIL_OFF &&
 				(pi->m_pLifeMeter && pi->m_pLifeMeter->IsFailing()) )
 				pi->GetPlayerStageStats()->bFailed = true;
