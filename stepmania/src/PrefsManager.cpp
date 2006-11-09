@@ -296,9 +296,7 @@ PrefsManager::PrefsManager() :
 	m_fLifeDifficultyScale	( "LifeDifficultyScale",	1.0f ),
 
 
-	m_iRegenComboAfterFail		( "RegenComboAfterFail",	10 ),
 	m_iRegenComboAfterMiss		( "RegenComboAfterMiss",	5 ),
-	m_iMaxRegenComboAfterFail	( "MaxRegenComboAfterFail",	10 ),
 	m_iMaxRegenComboAfterMiss	( "MaxRegenComboAfterMiss",	10 ),
 	m_bMercifulDrain		( "MercifulDrain",		true ),	// negative life deltas are scaled by the players life percentage
 	m_bMinimum1FullSongInCourses	( "Minimum1FullSongInCourses",	false ),	// FEoS for 1st song, FailImmediate thereafter

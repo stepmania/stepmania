@@ -253,16 +253,6 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 			fDeltaLife /= m_fLifeDifficulty;
 		break;
 	}
-
-	// check if this step would empty the bar
-	if( m_fLifePercentage + fDeltaLife <= 0  &&  m_fLifePercentage > 0 )
-	{
-		/* Increase by m_iRegenComboAfterFail; never push it beyond m_iMaxRegenComboAfterFail
-		 * but don't reduce it if it's already past. */
-		int iNewComboToRegainLife = m_iComboToRegainLife + PREFSMAN->m_iRegenComboAfterFail;
-		iNewComboToRegainLife = min( (int)PREFSMAN->m_iMaxRegenComboAfterFail, iNewComboToRegainLife );
-		m_iComboToRegainLife = max( m_iComboToRegainLife, iNewComboToRegainLife );
-	}
 	
 	m_fLifePercentage += fDeltaLife;
 	CLAMP( m_fLifePercentage, 0, 1 );
