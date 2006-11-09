@@ -73,7 +73,7 @@ void ScoreDisplayLifeTime::Update( float fDelta )
 
 void ScoreDisplayLifeTime::OnLoadSong()
 {
-	if( STATSMAN->m_CurStageStats.m_player[m_pPlayerState->m_PlayerNumber].bFailedEarlier )
+	if( STATSMAN->m_CurStageStats.m_player[m_pPlayerState->m_PlayerNumber].bFailed )
 		return;
 
 	Course* pCourse = GAMESTATE->m_pCurCourse;
@@ -85,7 +85,7 @@ void ScoreDisplayLifeTime::OnLoadSong()
 
 void ScoreDisplayLifeTime::OnJudgment( TapNoteScore tns )
 {
-	if( STATSMAN->m_CurStageStats.m_player[m_pPlayerState->m_PlayerNumber].bFailedEarlier )
+	if( STATSMAN->m_CurStageStats.m_player[m_pPlayerState->m_PlayerNumber].bFailed )
 		return;
 
 	float fMeterChange = 0;
@@ -106,7 +106,7 @@ void ScoreDisplayLifeTime::OnJudgment( TapNoteScore tns )
 
 void ScoreDisplayLifeTime::OnJudgment( HoldNoteScore hns, TapNoteScore tns )
 {
-	if( STATSMAN->m_CurStageStats.m_player[m_pPlayerState->m_PlayerNumber].bFailedEarlier )
+	if( STATSMAN->m_CurStageStats.m_player[m_pPlayerState->m_PlayerNumber].bFailed )
 		return;
 
 	float fMeterChange = 0;

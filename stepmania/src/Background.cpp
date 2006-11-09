@@ -926,7 +926,7 @@ bool BackgroundImpl::IsDangerAllVisible()
 
 	/* Don't show it if everyone is already failing: it's already too late and it's
 	 * annoying for it to show for the entire duration of a song. */
-	if( STATSMAN->m_CurStageStats.AllFailedEarlier() )
+	if( STATSMAN->m_CurStageStats.AllFailed() )
 		return false;
 
 	if( !GAMESTATE->AllAreInDangerOrWorse() )

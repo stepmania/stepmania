@@ -281,7 +281,7 @@ void ScoreKeeperNormal::AddScore( TapNoteScore score )
 	const int Z = m_iMaxPossiblePoints/10;
 
 	// Don't use a multiplier if the player has failed
-	if( m_pPlayerStageStats->bFailedEarlier )
+	if( m_pPlayerStageStats->bFailed )
 	{
 		iScore += p;
 		// make score evenly divisible by 5
@@ -305,7 +305,7 @@ void ScoreKeeperNormal::AddScore( TapNoteScore score )
 
 	if ( m_iTapNotesHit == m_iNumTapsAndHolds && score >= TNS_W2 )
 	{
-		if (!m_pPlayerStageStats->bFailedEarlier)
+		if( !m_pPlayerStageStats->bFailed )
 			iScore += m_iPointBonus;
 		if ( m_bIsLastSongInCourse )
 		{
