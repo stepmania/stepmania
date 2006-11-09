@@ -1628,7 +1628,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			}
 			if( bAllowOniDie && ft == SongOptions::FAIL_IMMEDIATE )
 			{
-				if( !STATSMAN->m_CurStageStats.AllFailedEarlier() )	// if not the last one to fail
+				if( !STATSMAN->m_CurStageStats.AllFailed() )	// if not the last one to fail
 				{
 					// kill them!
 					SOUND->PlayOnceFromDir( THEME->GetPathS(m_sName,"oni die") );
