@@ -2459,8 +2459,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 					pi->m_pSecondaryScoreDisplay->OnSongEnded();	
 			}
 		}
-		if( m_pCombinedLifeMeter )
-			m_pCombinedLifeMeter->OnSongEnded();	
 
 		GAMESTATE->m_bLoadingNextSong = true;
 		MESSAGEMAN->Broadcast( "BeforeLoadingNextCourseSong" );

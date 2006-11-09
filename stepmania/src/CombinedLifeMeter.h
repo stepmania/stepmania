@@ -13,7 +13,6 @@ public:
 	virtual ~CombinedLifeMeter() {};
 	
 	virtual void OnLoadSong() {};
-	virtual void OnSongEnded() {};
 	/* Change life after receiving a tap note grade.  This *is* called for
 	 * the head of hold notes. */
 	virtual void ChangeLife( PlayerNumber pn, TapNoteScore tns ) = 0;
