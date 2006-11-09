@@ -23,7 +23,6 @@ public:
 	virtual void ChangeLife( float fDeltaLifePercent );
 	virtual void AfterLifeChanged();
 	virtual bool IsInDanger() const;
-	virtual bool IsPastPassmark() const;
 	virtual bool IsHot() const;
 	virtual bool IsFailing() const;
 	virtual float GetLife() const { return m_fLifePercentage; }

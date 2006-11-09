@@ -264,14 +264,6 @@ void LifeMeterBar::AfterLifeChanged()
 	m_pStream->SetPercent( m_fLifePercentage );
 }
 
-bool LifeMeterBar::IsPastPassmark() const
-{
-	if( m_pPlayerState->m_PlayerOptions.GetSong().m_fPassmark > 0 )
-		return m_fLifePercentage >= m_pPlayerState->m_PlayerOptions.GetSong().m_fPassmark;
-	else
-		return false;
-}
-
 bool LifeMeterBar::IsHot() const
 { 
 	return m_fLifePercentage >= 1; 
@@ -292,7 +284,7 @@ void LifeMeterBar::Update( float fDeltaTime )
 {
 	LifeMeter::Update( fDeltaTime );
 	
-	m_fPassingAlpha += IsPastPassmark() ? +fDeltaTime*2 : -fDeltaTime*2;
+	m_fPassingAlpha += !IsFailing() ? +fDeltaTime*2 : -fDeltaTime*2;
 	CLAMP( m_fPassingAlpha, 0, 1 );
 
 	m_fHotAlpha  += IsHot() ? + fDeltaTime*2 : -fDeltaTime*2;
