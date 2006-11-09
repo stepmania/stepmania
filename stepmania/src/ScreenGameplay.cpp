@@ -1725,7 +1725,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 					break;
 				}
 
-				if( state == AS2D_GREAT && pi->m_pLifeMeter && pi->m_pLifeMeter->GetLife() == 1.0f ) // full life
+				if( state == AS2D_GREAT && pi->GetPlayerState()->m_HealthState == PlayerState::HOT )
 					state = AS2D_FEVER;
 
 				pCharacter->Change2DAnimState( pi->m_pn, state );
