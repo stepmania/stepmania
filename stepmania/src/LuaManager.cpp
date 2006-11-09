@@ -174,12 +174,11 @@ LuaManager::LuaManager()
 	lua_atpanic( L, LuaPanic );
 	m_pLuaMain = L;
 
-	luaopen_base( L );
-	luaopen_math( L );
-	luaopen_string( L );
-	luaopen_table( L );
-	luaopen_debug( L );
-	lua_settop(L, 0); // luaopen_* pushes stuff onto the stack that we don't need
+	lua_pushcfunction( L, luaopen_base ); lua_call( L, 0, 0 );
+	lua_pushcfunction( L, luaopen_math ); lua_call( L, 0, 0 );
+	lua_pushcfunction( L, luaopen_string ); lua_call( L, 0, 0 );
+	lua_pushcfunction( L, luaopen_table ); lua_call( L, 0, 0 );
+	lua_pushcfunction( L, luaopen_debug ); lua_call( L, 0, 0 );
 
 	/* Store the thread pool in a table on the stack, in the main thread. */
 #define THREAD_POOL 1
