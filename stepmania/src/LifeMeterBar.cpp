@@ -325,11 +325,6 @@ void LifeMeterBar::Update( float fDeltaTime )
 }
 
 
-void LifeMeterBar::DrawPrimitives()
-{
-	ActorFrame::DrawPrimitives();
-}
-
 void LifeMeterBar::UpdateNonstopLifebar()
 {
 	int iCleared, iTotal, iProgressiveLifebarDifficulty;
@@ -365,16 +360,6 @@ void LifeMeterBar::UpdateNonstopLifebar()
 		m_fLifeDifficulty = 1.0f;
 		return;
 	}
-
-	// should be checked before calling function, but in case
-	// it isn't, do so here
-	/* No, wait: if we're playing nonstop, event mode just means that we can play another
-	 * nonstop course later, so it shouldn't affect life difficulty. */
-/*	if (GAMESTATE->GetEventMode())
-	{
-		m_fLifeDifficulty = m_fBaseLifeDifficulty;
-		return;
-	} */
 
 	if( iTotal > 1 )
 		m_fLifeDifficulty = m_fBaseLifeDifficulty - 0.2f * (int)(iProgressiveLifebarDifficulty * iCleared / (iTotal - 1));
@@ -414,20 +399,20 @@ void LifeMeterBar::UpdateNonstopLifebar()
 	// about 20% of your lifebar); at 0.2 it would be 40%, which
 	// is too harsh at one difficulty level higher.  Override.
 
-	int m_iLifeDifficulty = int( (1.8f - m_fLifeDifficulty)/0.2f );
+	int iLifeDifficulty = int( (1.8f - m_fLifeDifficulty)/0.2f );
 	
 	// first eight values don't matter
-	float DifficultyValues[16] = {0,0,0,0,0,0,0,0, 
+	float fDifficultyValues[16] = {0,0,0,0,0,0,0,0, 
 		0.3f, 0.25f, 0.2f, 0.16f, 0.14f, 0.12f, 0.10f, 0.08f};
 
-	if( m_iLifeDifficulty >= 16 )
+	if( iLifeDifficulty >= 16 )
 	{
 		// judge 16 or higher
 		m_fLifeDifficulty = 0.04f;
 		return;
 	}
 
-	m_fLifeDifficulty = DifficultyValues[m_iLifeDifficulty];
+	m_fLifeDifficulty = fDifficultyValues[iLifeDifficulty];
 	return;
 }
 
