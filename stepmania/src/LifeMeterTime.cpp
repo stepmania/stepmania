@@ -8,6 +8,7 @@
 #include "StreamDisplay.h"
 #include "GameState.h"
 #include "StatsManager.h"
+#include "PlayerState.h"
 
 const float FULL_LIFE_SECONDS = 1.5f*60;
 
@@ -126,7 +127,7 @@ void LifeMeterTime::ChangeLife( HoldNoteScore hns, TapNoteScore tns )
 
 bool LifeMeterTime::IsInDanger() const
 {
-	return false;
+	return m_pStream->GetTrailingLifePercent() < DANGER_THRESHOLD;
 }
 
 bool LifeMeterTime::IsHot() const
@@ -153,7 +154,7 @@ void LifeMeterTime::Update( float fDeltaTime )
 	m_pStream->SetPassingAlpha( 0 );
 	m_pStream->SetHotAlpha( 0 );
 
-	if( m_pStream->GetTrailingLifePercent() < DANGER_THRESHOLD && !GAMESTATE->IsPlayerDead(m_pPlayerState) )
+	if( m_pPlayerState->m_HealthState == PlayerState::DANGER )
 		m_quadDangerGlow.SetDiffuseAlpha( 1 );
 	else
 		m_quadDangerGlow.SetDiffuseAlpha( 0 );
