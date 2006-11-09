@@ -1604,7 +1604,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			SongOptions::FailType ft = GAMESTATE->GetPlayerFailType( pi->GetPlayerState() );
 			SongOptions::LifeType lt = GAMESTATE->m_SongOptions.GetCurrent().m_LifeType;
 
-			if( ft == SongOptions::FAIL_OFF )
+			if( ft == SongOptions::FAIL_OFF || ft == SongOptions::FAIL_AT_END )
 				continue;
 			
 			// check for individual fail
@@ -1649,7 +1649,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 				if( pi->m_pLifeMeter && !pi->m_pLifeMeter->IsFailing() )
 					bAllFailed = false;
 				break;
-			case SongOptions::FAIL_END_OF_SONG:
+			case SongOptions::FAIL_IMMEDIATE_CONTINUE:
+			case SongOptions::FAIL_AT_END:
 				bAllFailed = false;	// wait until the end of the song to fail.
 				break;
 			case SongOptions::FAIL_OFF:

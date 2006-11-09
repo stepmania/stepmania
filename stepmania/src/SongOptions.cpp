@@ -61,6 +61,7 @@ void SongOptions::GetMods( vector<RString> &AddTo ) const
 	{
 	case FAIL_IMMEDIATE:						break;
 	case FAIL_IMMEDIATE_CONTINUE:	AddTo.push_back("FailImmediateContinue");	break;
+	case FAIL_AT_END:	AddTo.push_back("FailAtEnd");	break;
 	case FAIL_OFF:		AddTo.push_back("FailOff");		break;
 	default:		ASSERT(0);
 	}
@@ -154,6 +155,7 @@ void SongOptions::FromString( const RString &sOptions )
 			 sBit == "failimmediate" )	m_FailType = FAIL_IMMEDIATE;
 		else if( sBit == "failendofsong" ||
 			sBit == "failimmediatecontinue" ) m_FailType = FAIL_IMMEDIATE_CONTINUE;
+		else if( sBit == "failatend" )		m_FailType = FAIL_AT_END;
 		else if( sBit == "failoff" )		m_FailType = FAIL_OFF;
 		
 		else if( sBit == "faildefault" )

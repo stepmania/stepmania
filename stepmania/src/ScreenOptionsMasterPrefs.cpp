@@ -451,7 +451,8 @@ static void DefaultFailType( int &sel, bool ToSel, const ConfOption *pConfOption
 		{
 		case 0:	so.m_FailType = SongOptions::FAIL_IMMEDIATE;	break;
 		case 1:	so.m_FailType = SongOptions::FAIL_IMMEDIATE_CONTINUE;	break;
-		case 2:	so.m_FailType = SongOptions::FAIL_OFF;		break;
+		case 2:	so.m_FailType = SongOptions::FAIL_AT_END;	break;
+		case 3:	so.m_FailType = SongOptions::FAIL_OFF;		break;
 		default:
 			ASSERT(0);
 		}
@@ -652,7 +653,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "ProgressiveLifebar",		MovePref,		"Off","|1","|2","|3","|4","|5","|6","|7","|8") );
 	ADD( ConfOption( "ProgressiveStageLifebar",	MovePref,		"Off","|1","|2","|3","|4","|5","|6","|7","|8","Insanity") );
 	ADD( ConfOption( "ProgressiveNonstopLifebar",	MovePref,		"Off","|1","|2","|3","|4","|5","|6","|7","|8","Insanity") );
-	ADD( ConfOption( "DefaultFailType",		DefaultFailType,	"Immediate","End of Song","Off" ) );	
+	ADD( ConfOption( "DefaultFailType",		DefaultFailType,	"Immediate","Delayed","End of Song","Off" ) );	
 	ADD( ConfOption( "CoinsPerCredit",		CoinsPerCredit,		"|1","|2","|3","|4","|5","|6","|7","|8","|9","|10","|11","|12","|13","|14","|15","|16" ) );
 	ADD( ConfOption( "Premium",			PremiumM,		"Off","Double for 1 Credit","Joint Premium" ) );
 	ADD( ConfOption( "ShowSongOptions",		ShowSongOptions,	"Hide","Show","Ask" ) );
