@@ -139,7 +139,6 @@ public:
 
 	// Whoever added these: Please add a comment saying what they do. -Chris
 	Preference<int>		m_iRegenComboAfterMiss;
-	Preference<int>		m_iMaxRegenComboAfterMiss;
 	Preference<bool>	m_bMercifulDrain;	// negative life deltas are scaled by the players life percentage
 	Preference<bool>	m_bMinimum1FullSongInCourses;	// FEoS for 1st song, FailImmediate thereafter
 	Preference<bool>	m_bFailOffInBeginner;
