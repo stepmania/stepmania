@@ -1789,7 +1789,7 @@ void Player::HandleTapRowScore( unsigned row )
 	 * the beat we're registering is in the past, but the life is changing now.
 	 *
 	 * We need to include time from previous songs in a course, so we can't use
-	 * GAMESTATE->m_fMusicSeconds.  Use fGameplaySeconds instead.
+	 * GAMESTATE->m_fMusicSeconds.  Use fStepsSeconds instead.
 	 */
 	if( m_pPlayerStageStats )
 		m_pPlayerStageStats->UpdateComboList( STATSMAN->m_CurStageStats.fStepsSeconds, false );
