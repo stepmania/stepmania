@@ -851,7 +851,7 @@ void BackgroundImpl::Update( float fDeltaTime )
 
 	FOREACH_PlayerNumber( p )
 	{
-		if( g_bShowDanger && GAMESTATE->IsPlayerInDanger(GAMESTATE->m_pPlayerState[p]) )
+		if( g_bShowDanger && GAMESTATE->m_pPlayerState[p]->m_HealthState == PlayerState::DANGER )
 			m_DangerPlayer[p]->Update( fDeltaTime );
 			
 		if( GAMESTATE->IsPlayerDead(GAMESTATE->m_pPlayerState[p]) )
@@ -912,7 +912,7 @@ void BackgroundImpl::DrawPrimitives()
 
 		FOREACH_PlayerNumber( p )
 		{
-			if( g_bShowDanger && GAMESTATE->IsPlayerInDanger(GAMESTATE->m_pPlayerState[p]) )
+			if( g_bShowDanger && GAMESTATE->m_pPlayerState[p]->m_HealthState == PlayerState::DANGER )
 				m_DangerPlayer[p]->Draw();
 			if( GAMESTATE->IsPlayerDead(GAMESTATE->m_pPlayerState[p]) )
 				m_DeadPlayer[p]->Draw();
