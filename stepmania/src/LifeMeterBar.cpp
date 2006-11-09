@@ -1,6 +1,7 @@
 #include "global.h"
 #include "LifeMeterBar.h"
 #include "PrefsManager.h"
+#include "RageLog.h"
 #include "RageTimer.h"
 #include "GameState.h"
 #include "RageMath.h"
@@ -13,7 +14,7 @@
 #include "ActorUtil.h"
 #include "StreamDisplay.h"
 #include "Steps.h"
-
+#include "Course.h"
 
 static void LifePercentChangeInit( size_t /*ScoreEvent*/ i, RString &sNameOut, float &defaultValueOut )
 {
@@ -328,11 +329,10 @@ void LifeMeterBar::DrawPrimitives()
 {
 	ActorFrame::DrawPrimitives();
 }
-#include "RageLog.h"
-#include "Course.h"
+
 void LifeMeterBar::UpdateNonstopLifebar()
 {
-	int cleared, total, ProgressiveLifebarDifficulty;
+	int iCleared, iTotal, iProgressiveLifebarDifficulty;
 
 	switch( GAMESTATE->m_PlayMode )
 	{
@@ -340,21 +340,21 @@ void LifeMeterBar::UpdateNonstopLifebar()
 		if( GAMESTATE->IsEventMode() || GAMESTATE->m_bDemonstrationOrJukebox )
 			return;
 
-		cleared = GAMESTATE->GetStageIndex();
-		total = PREFSMAN->m_iSongsPerPlay;
-		ProgressiveLifebarDifficulty = PREFSMAN->m_iProgressiveStageLifebar;
+		iCleared = GAMESTATE->GetStageIndex();
+		iTotal = PREFSMAN->m_iSongsPerPlay;
+		iProgressiveLifebarDifficulty = PREFSMAN->m_iProgressiveStageLifebar;
 		break;
 	case PLAY_MODE_NONSTOP:
-		cleared = GAMESTATE->GetCourseSongIndex();
-		total = GAMESTATE->m_pCurCourse->GetEstimatedNumStages();
-		ProgressiveLifebarDifficulty = PREFSMAN->m_iProgressiveNonstopLifebar;
+		iCleared = GAMESTATE->GetCourseSongIndex();
+		iTotal = GAMESTATE->m_pCurCourse->GetEstimatedNumStages();
+		iProgressiveLifebarDifficulty = PREFSMAN->m_iProgressiveNonstopLifebar;
 		break;
 	default:
 		return;
 	}
 
-//	if (cleared > total) cleared = total; // clear/total <= 1
-//	if (total == 0) total = 1;  // no division by 0
+//	if (iCleared > iTotal) iCleared = iTotal; // clear/iTotal <= 1
+//	if (iTotal == 0) iTotal = 1;  // no division by 0
 
 	if( GAMESTATE->IsAnExtraStage() )
 	{   // extra stage is its own thing, should not be progressive
@@ -376,10 +376,10 @@ void LifeMeterBar::UpdateNonstopLifebar()
 		return;
 	} */
 
-	if( total > 1 )
-		m_fLifeDifficulty = m_fBaseLifeDifficulty - 0.2f * (int)(ProgressiveLifebarDifficulty * cleared / (total - 1));
+	if( iTotal > 1 )
+		m_fLifeDifficulty = m_fBaseLifeDifficulty - 0.2f * (int)(iProgressiveLifebarDifficulty * iCleared / (iTotal - 1));
 	else
-		m_fLifeDifficulty = m_fBaseLifeDifficulty - 0.2f * ProgressiveLifebarDifficulty;
+		m_fLifeDifficulty = m_fBaseLifeDifficulty - 0.2f * iProgressiveLifebarDifficulty;
 
 	if( m_fLifeDifficulty >= 0.4f )
 		return;
