@@ -1830,8 +1830,6 @@ void Player::HandleTapRowScore( unsigned row )
 	if( m_pCombinedLifeMeter )
 	{
 		m_pCombinedLifeMeter->ChangeLife( pn, scoreOfLastTap );
-		// TODO: Remove use of PlayerNumber.
-		m_pCombinedLifeMeter->OnDancePointsChange( pn );    // update oni life meter
 	}
 }
 
@@ -1880,7 +1878,6 @@ void Player::HandleHoldScore( const TapNote &tn )
 	if( m_pCombinedLifeMeter ) 
 	{
 		m_pCombinedLifeMeter->ChangeLife( pn, holdScore, tapScore );
-		m_pCombinedLifeMeter->OnDancePointsChange( pn );
 	}
 }
 
