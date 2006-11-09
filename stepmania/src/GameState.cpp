@@ -1738,16 +1738,6 @@ Premium	GameState::GetPremium() const
 		return PREFSMAN->m_Premium; 
 }
 
-bool GameState::IsPlayerInDanger( const PlayerState *pPlayerState ) const
-{
-	return pPlayerState->m_HealthState == PlayerState::DANGER;
-}
-
-bool GameState::IsPlayerDead( const PlayerState *pPlayerState ) const
-{
-	return pPlayerState->m_HealthState == PlayerState::DEAD;
-}
-
 float GameState::GetGoalPercentComplete( PlayerNumber pn )
 {
 	const Profile *pProfile = PROFILEMAN->GetProfile(pn);

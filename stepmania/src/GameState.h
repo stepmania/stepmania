@@ -176,8 +176,6 @@ public:
 	void UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp = RageZeroTimer );
 	float GetSongPercent( float beat ) const;
 
-	bool IsPlayerInDanger( const PlayerState *pPlayerState ) const;
-	bool IsPlayerDead( const PlayerState *pPlayerState ) const;
 	bool AllAreInDangerOrWorse() const;
 	bool AllHumanHaveComboOf30OrMoreMisses() const;
 	bool OneIsHot() const;
