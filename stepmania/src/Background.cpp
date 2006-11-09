@@ -121,8 +121,6 @@ protected:
 	AutoActor		m_DangerPlayer[NUM_PLAYERS];
 	AutoActor		m_DangerAll;
 
-	AutoActor		m_DeadPlayer[NUM_PLAYERS];
-	
 	// cover up the edge of animations that might hang outside of the background rectangle
 	Quad m_quadBorderLeft, m_quadBorderTop, m_quadBorderRight, m_quadBorderBottom;
 
@@ -200,8 +198,6 @@ void BackgroundImpl::Init()
 	m_DangerAll.Load( THEME->GetPathB("ScreenGameplay","danger all") );
 	FOREACH_PlayerNumber( p )
 		m_DangerPlayer[p].Load( THEME->GetPathB("ScreenGameplay",ssprintf("danger p%d",p+1)) );
-	FOREACH_PlayerNumber( p )
-		m_DeadPlayer[p].Load( THEME->GetPathB("ScreenGameplay",ssprintf("dead p%d",p+1)) );
 
 	bool bOneOrMoreChars = false;
 	bool bShowingBeginnerHelper = false;
@@ -689,12 +685,6 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 		m_DangerPlayer[p]->SetZoomY( fYZoom );
 		m_DangerPlayer[p]->FinishTweening();
 		m_DangerPlayer[p]->PlayCommand( "On" );
-	
-		m_DeadPlayer[p]->SetXY( (float)LEFT_EDGE, (float)TOP_EDGE );
-		m_DeadPlayer[p]->SetZoomX( fXZoom );
-		m_DeadPlayer[p]->SetZoomY( fYZoom );	
-		m_DeadPlayer[p]->FinishTweening();
-		m_DeadPlayer[p]->PlayCommand( "On" );
 	}
 
 	TEXTUREMAN->EnableOddDimensionWarning();
@@ -853,9 +843,6 @@ void BackgroundImpl::Update( float fDeltaTime )
 	{
 		if( g_bShowDanger && GAMESTATE->m_pPlayerState[p]->m_HealthState == PlayerState::DANGER )
 			m_DangerPlayer[p]->Update( fDeltaTime );
-			
-		if( GAMESTATE->IsPlayerDead(GAMESTATE->m_pPlayerState[p]) )
-			m_DeadPlayer[p]->Update( fDeltaTime );
 	}
 
 	if( m_pDancingCharacters )
@@ -914,8 +901,6 @@ void BackgroundImpl::DrawPrimitives()
 		{
 			if( g_bShowDanger && GAMESTATE->m_pPlayerState[p]->m_HealthState == PlayerState::DANGER )
 				m_DangerPlayer[p]->Draw();
-			if( GAMESTATE->IsPlayerDead(GAMESTATE->m_pPlayerState[p]) )
-				m_DeadPlayer[p]->Draw();
 		}
 	}
 
