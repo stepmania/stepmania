@@ -241,7 +241,7 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 
 	/* If we've already failed, there's no point in letting them fill up the bar again.  */
 	if( m_pPlayerStageStats->bFailed )
-		fDeltaLife = 0;
+		return;
 
 	switch( GAMESTATE->m_SongOptions.GetSong().m_DrainType )
 	{
