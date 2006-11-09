@@ -1740,15 +1740,11 @@ Premium	GameState::GetPremium() const
 
 bool GameState::IsPlayerInDanger( const PlayerState *pPlayerState ) const
 {
-	if( GetPlayerFailType(pPlayerState) == SongOptions::FAIL_OFF )
-		return false;
 	return pPlayerState->m_HealthState == PlayerState::DANGER;
 }
 
 bool GameState::IsPlayerDead( const PlayerState *pPlayerState ) const
 {
-	if( GetPlayerFailType(pPlayerState) == SongOptions::FAIL_OFF )
-		return false;
 	return pPlayerState->m_HealthState == PlayerState::DEAD;
 }
 

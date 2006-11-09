@@ -1572,7 +1572,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 	//
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
-		if( pi->m_pLifeMeter && pi->m_pLifeMeter->IsFailing() )
+		if( GAMESTATE->GetPlayerFailType(pi->GetPlayerState()) != SongOptions::FAIL_OFF &&
+			pi->m_pLifeMeter && pi->m_pLifeMeter->IsFailing() )
 		{
 			pi->GetPlayerState()->m_HealthState = PlayerState::DEAD;
 		}
@@ -1580,7 +1581,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 		{
 			pi->GetPlayerState()->m_HealthState = PlayerState::HOT;
 		}
-		else if( pi->m_pLifeMeter && pi->m_pLifeMeter->IsInDanger() )
+		else if( GAMESTATE->GetPlayerFailType(pi->GetPlayerState()) != SongOptions::FAIL_OFF &&
+			pi->m_pLifeMeter && pi->m_pLifeMeter->IsInDanger() )
 		{
 			pi->GetPlayerState()->m_HealthState = PlayerState::DANGER;
 		}
