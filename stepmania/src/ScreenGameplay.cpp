@@ -1570,15 +1570,11 @@ void ScreenGameplay::Update( float fDeltaTime )
 		{
 			pi->GetPlayerState()->m_HealthState = PlayerState::DEAD;
 		}
-		else if(
-			(pi->m_pLifeMeter && pi->m_pLifeMeter->IsHot()) || 
-			(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsHot(pn)) )
+		else if( pi->m_pLifeMeter && pi->m_pLifeMeter->IsHot() )
 		{
 			pi->GetPlayerState()->m_HealthState = PlayerState::HOT;
 		}
-		else if( 
-			(pi->m_pLifeMeter && pi->m_pLifeMeter->IsInDanger()) || 
-			(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsInDanger(pn)) )
+		else if( pi->m_pLifeMeter && pi->m_pLifeMeter->IsInDanger() )
 		{
 			pi->GetPlayerState()->m_HealthState = PlayerState::DANGER;
 		}
@@ -2333,8 +2329,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 			/* Mark failure.  This hasn't been done yet if g_bTwoPlayerRecovery is set. */
 			if( GAMESTATE->GetPlayerFailType(pi->GetPlayerState()) != SongOptions::FAIL_OFF &&
-				(pi->m_pLifeMeter && pi->m_pLifeMeter->IsFailing()) || 
-				(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsFailing(pi->GetStepsAndTrailIndex())) )
+				(pi->m_pLifeMeter && pi->m_pLifeMeter->IsFailing()) )
 				pi->GetPlayerStageStats()->bFailed = true;
 
 			if( !pi->GetPlayerStageStats()->bFailed )

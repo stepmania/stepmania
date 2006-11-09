@@ -15,8 +15,6 @@ public:
 
 	virtual void ChangeLife( PlayerNumber pn, TapNoteScore score );
 	virtual void ChangeLife( PlayerNumber pn, HoldNoteScore score, TapNoteScore tscore );
-	virtual bool IsInDanger( PlayerNumber pn ) { return false; };
-	virtual bool IsHot( PlayerNumber pn ) { return false; };
 	virtual bool IsFailing( PlayerNumber pn ) { return false; };
 
 protected:
