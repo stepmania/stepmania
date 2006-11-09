@@ -156,7 +156,7 @@ ScreenEvaluation::ScreenEvaluation()
 			STATSMAN->m_CurStageStats.m_player[p].UpdateComboList( 1.00f * fSeconds, false );
 			if( RandomInt(5) == 0 )
 			{
-				STATSMAN->m_CurStageStats.m_player[p].bFailedEarlier = true;
+				STATSMAN->m_CurStageStats.m_player[p].bFailed = true;
 			}
 			STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W1] = RandomInt( 3 );
 			STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W2] = RandomInt( 3 );
