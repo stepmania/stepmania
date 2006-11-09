@@ -2383,7 +2383,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				/* XXX: In battle modes, switch( GAMESTATE->GetStageResult(p) ). */
 				if( pi->GetPlayerStageStats()->bFailed )
 					pDancers->Change2DAnimState( pi->m_pn, AS2D_FAIL ); // fail anim
-				else if( pi->m_pLifeMeter && pi->m_pLifeMeter->GetLife() == 1.0f ) // full life
+				else if( pi->m_pLifeMeter && pi->GetPlayerState()->m_HealthState == PlayerState::HOT )
 					pDancers->Change2DAnimState( pi->m_pn, AS2D_WINFEVER ); // full life pass anim
 				else
 					pDancers->Change2DAnimState( pi->m_pn, AS2D_WIN ); // pass anim
