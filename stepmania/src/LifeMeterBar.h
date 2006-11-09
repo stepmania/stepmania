@@ -30,7 +30,7 @@ public:
 	virtual bool IsFailing() const;
 	virtual float GetLife() const { return m_fLifePercentage; }
 
-	void UpdateNonstopLifebar(int cleared, int total, int ProgressiveLifebarDifficulty);
+	void UpdateNonstopLifebar();
 	void FillForHowToPlay(int NumT2s, int NumMisses);
 	// this function is solely for HowToPlay
 

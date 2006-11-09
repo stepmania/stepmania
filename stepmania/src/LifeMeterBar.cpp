@@ -329,8 +329,30 @@ void LifeMeterBar::DrawPrimitives()
 	ActorFrame::DrawPrimitives();
 }
 #include "RageLog.h"
-void LifeMeterBar::UpdateNonstopLifebar( const int cleared, const int total, int ProgressiveLifebarDifficulty )
+#include "Course.h"
+void LifeMeterBar::UpdateNonstopLifebar()
 {
+	int cleared, total, ProgressiveLifebarDifficulty;
+
+	switch( GAMESTATE->m_PlayMode )
+	{
+	case PLAY_MODE_REGULAR:
+		if( GAMESTATE->IsEventMode() || GAMESTATE->m_bDemonstrationOrJukebox )
+			return;
+
+		cleared = GAMESTATE->GetStageIndex();
+		total = PREFSMAN->m_iSongsPerPlay;
+		ProgressiveLifebarDifficulty = PREFSMAN->m_iProgressiveStageLifebar;
+		break;
+	case PLAY_MODE_NONSTOP:
+		cleared = GAMESTATE->GetCourseSongIndex();
+		total = GAMESTATE->m_pCurCourse->GetEstimatedNumStages();
+		ProgressiveLifebarDifficulty = PREFSMAN->m_iProgressiveNonstopLifebar;
+		break;
+	default:
+		return;
+	}
+
 //	if (cleared > total) cleared = total; // clear/total <= 1
 //	if (total == 0) total = 1;  // no division by 0
 

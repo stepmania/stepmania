@@ -1086,25 +1086,8 @@ void ScreenGameplay::LoadNextSong()
 		if( GAMESTATE->m_SongOptions.GetCurrent().m_LifeType==SongOptions::LIFE_BATTERY && pi->GetPlayerStageStats()->bFailed )	// already failed
 			pi->ShowOniGameOver();
 
-		if( GAMESTATE->m_SongOptions.GetCurrent().m_LifeType==SongOptions::LIFE_BAR && 
-			GAMESTATE->m_PlayMode == PLAY_MODE_REGULAR && 
-			!GAMESTATE->IsEventMode() && 
-			!GAMESTATE->m_bDemonstrationOrJukebox )
-		{
-			if( pi->m_pLifeMeter )
-				pi->m_pLifeMeter->UpdateNonstopLifebar(
-					GAMESTATE->GetStageIndex(), 
-					PREFSMAN->m_iSongsPerPlay, 
-					PREFSMAN->m_iProgressiveStageLifebar);
-		}
-		if( GAMESTATE->m_SongOptions.GetCurrent().m_LifeType==SongOptions::LIFE_BAR && GAMESTATE->m_PlayMode == PLAY_MODE_NONSTOP )
-		{
-			if( pi->m_pLifeMeter )
-				pi->m_pLifeMeter->UpdateNonstopLifebar(
-					GAMESTATE->GetCourseSongIndex(), 
-					GAMESTATE->m_pCurCourse->GetEstimatedNumStages(),
-					PREFSMAN->m_iProgressiveNonstopLifebar);
-		}
+		if( GAMESTATE->m_SongOptions.GetCurrent().m_LifeType==SongOptions::LIFE_BAR && pi->m_pLifeMeter )
+			pi->m_pLifeMeter->UpdateNonstopLifebar();
 
 		if( pi->m_pDifficultyIcon )
 			pi->m_pDifficultyIcon->SetFromSteps( pi->GetStepsAndTrailIndex(), pSteps );
