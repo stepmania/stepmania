@@ -2340,7 +2340,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			if( !pi->GetPlayerStageStats()->bFailed )
 				pi->GetPlayerStageStats()->iSongsPassed++;
 
-			// set a life record at the point of failue
+			// set a life record at the point of failure
 			if( pi->GetPlayerStageStats()->bFailed )
 				pi->GetPlayerStageStats()->SetLifeRecordAt( 0, STATSMAN->m_CurStageStats.fGameplaySeconds );
 		}
