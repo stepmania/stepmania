@@ -1742,8 +1742,6 @@ bool GameState::IsPlayerInDanger( const PlayerState *pPlayerState ) const
 {
 	if( GetPlayerFailType(pPlayerState) == SongOptions::FAIL_OFF )
 		return false;
-	if( !PREFSMAN->m_bShowDanger )
-		return false;
 	return pPlayerState->m_HealthState == PlayerState::DANGER;
 }
 
