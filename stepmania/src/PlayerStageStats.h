@@ -35,9 +35,6 @@ public:
 	 * this is only set if both players were failing at the same time. */
 	bool		bFailed;
 
-	/* This indicates whether the player bottomed out his bar/ran out of lives at some
-	 * point during the song.  It's set in all fail modes. */
-	bool		bFailedEarlier;
 	int		iPossibleDancePoints;
 	int		iCurPossibleDancePoints;
 	int		iActualDancePoints;

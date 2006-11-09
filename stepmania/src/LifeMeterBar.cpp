@@ -254,7 +254,7 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 		break;
 	}
 
-	// check if this step would cause a fail
+	// check if this step would empty the bar
 	if( m_fLifePercentage + fDeltaLife <= 0  &&  m_fLifePercentage > 0 )
 	{
 		/* Increase by m_iRegenComboAfterFail; never push it beyond m_iMaxRegenComboAfterFail
@@ -267,9 +267,6 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 	m_fLifePercentage += fDeltaLife;
 	CLAMP( m_fLifePercentage, 0, 1 );
 	AfterLifeChanged();
-
-	if( m_fLifePercentage <= 0 )
-		m_pPlayerStageStats->bFailedEarlier = true;
 }
 
 void LifeMeterBar::AfterLifeChanged()
@@ -297,7 +294,7 @@ bool LifeMeterBar::IsInDanger() const
 
 bool LifeMeterBar::IsFailing() const
 { 
-	return m_fLifePercentage <= 0; 
+	return m_fLifePercentage <= m_pPlayerState->m_PlayerOptions.GetCurrent().m_fPassmark;
 }
 
 

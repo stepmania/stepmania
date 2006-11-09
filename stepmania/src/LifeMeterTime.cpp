@@ -71,7 +71,7 @@ void LifeMeterTime::Load( const PlayerState *pPlayerState, PlayerStageStats *pPl
 
 void LifeMeterTime::OnLoadSong()
 {
-	if( m_pPlayerStageStats->bFailedEarlier )
+	if( GetLifeSeconds() <= 0 )
 		return;
 
 	Course* pCourse = GAMESTATE->m_pCurCourse;
@@ -84,7 +84,7 @@ void LifeMeterTime::OnLoadSong()
 
 void LifeMeterTime::ChangeLife( TapNoteScore tns )
 {
-	if( m_pPlayerStageStats->bFailedEarlier )
+	if( GetLifeSeconds() <= 0 )
 		return;
 
 	float fMeterChange = 0;
@@ -101,14 +101,11 @@ void LifeMeterTime::ChangeLife( TapNoteScore tns )
 	}
 
 	m_fLifeTotalLostSeconds -= fMeterChange;
-
-	if( GetLifeSeconds() <= 0 )
-		m_pPlayerStageStats->bFailedEarlier = true;
 }
 
 void LifeMeterTime::ChangeLife( HoldNoteScore hns, TapNoteScore tns )
 {
-	if( m_pPlayerStageStats->bFailedEarlier )
+	if( GetLifeSeconds() <= 0 )
 		return;
 
 	float fMeterChange = 0;
@@ -120,9 +117,6 @@ void LifeMeterTime::ChangeLife( HoldNoteScore hns, TapNoteScore tns )
 	}
 
 	m_fLifeTotalLostSeconds -= fMeterChange;
-
-	if( GetLifeSeconds() <= 0 )
-		m_pPlayerStageStats->bFailedEarlier = true;
 }
 
 bool LifeMeterTime::IsInDanger() const
@@ -137,7 +131,7 @@ bool LifeMeterTime::IsHot() const
 
 bool LifeMeterTime::IsFailing() const
 {
-	return m_pPlayerStageStats->bFailedEarlier;
+	return GetLifeSeconds() <= 0;
 }
 
 void LifeMeterTime::Update( float fDeltaTime )

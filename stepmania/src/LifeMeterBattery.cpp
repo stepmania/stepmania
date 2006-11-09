@@ -64,7 +64,7 @@ void LifeMeterBattery::Load( const PlayerState *pPlayerState, PlayerStageStats *
 
 void LifeMeterBattery::OnSongEnded()
 {
-	if( m_pPlayerStageStats->bFailed || m_pPlayerStageStats->bFailedEarlier )
+	if( m_pPlayerStageStats->bFailed || m_iLivesLeft == 0 )
 		return;
 
 	if( m_iLivesLeft < GAMESTATE->m_SongOptions.GetSong().m_iBatteryLives )
@@ -89,7 +89,7 @@ void LifeMeterBattery::OnSongEnded()
 
 void LifeMeterBattery::ChangeLife( TapNoteScore score )
 {
-	if( m_pPlayerStageStats->bFailedEarlier )
+	if( m_iLivesLeft == 0 )
 		return;
 
 	switch( score )
@@ -116,8 +116,6 @@ void LifeMeterBattery::ChangeLife( TapNoteScore score )
 	default:
 		ASSERT(0);
 	}
-	if( m_iLivesLeft == 0 )
-		m_pPlayerStageStats->bFailedEarlier = true;
 }
 
 void LifeMeterBattery::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
@@ -150,7 +148,7 @@ bool LifeMeterBattery::IsHot() const
 
 bool LifeMeterBattery::IsFailing() const
 {
-	return m_pPlayerStageStats->bFailedEarlier;
+	return m_iLivesLeft == 0;
 }
 
 float LifeMeterBattery::GetLife() const

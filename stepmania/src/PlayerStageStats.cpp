@@ -24,7 +24,6 @@ void PlayerStageStats::Init()
 	vpPossibleSteps.clear();
 	fAliveSeconds = 0;
 	bFailed = false;
-	bFailedEarlier = false;
 	iPossibleDancePoints = iCurPossibleDancePoints = iActualDancePoints = 0;
 	iPossibleGradePoints = 0;
 	iCurCombo = iMaxCombo = iCurMissCombo = iScore = iBonus = iMaxScore = iCurMaxScore = 0;
@@ -58,7 +57,6 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 		vpPossibleSteps.push_back( *s );
 	fAliveSeconds += other.fAliveSeconds;
 	bFailed |= other.bFailed;
-	bFailedEarlier |= other.bFailedEarlier;
 	iPossibleDancePoints += other.iPossibleDancePoints;
 	iActualDancePoints += other.iActualDancePoints;
 	iCurPossibleDancePoints += other.iCurPossibleDancePoints;
