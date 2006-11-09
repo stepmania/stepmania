@@ -179,7 +179,6 @@ public:
 	bool IsPlayerInDanger( const PlayerState *pPlayerState ) const;
 	bool IsPlayerDead( const PlayerState *pPlayerState ) const;
 	bool AllAreInDangerOrWorse() const;
-	bool AllAreDead() const;
 	bool AllHumanHaveComboOf30OrMoreMisses() const;
 	bool OneIsHot() const;
 

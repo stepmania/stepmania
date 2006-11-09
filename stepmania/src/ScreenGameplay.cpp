@@ -1513,6 +1513,16 @@ void ScreenGameplay::BeginScreen()
 	}
 }
 
+bool ScreenGameplay::AllAreFailing()
+{
+	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
+	{
+		if( pi->m_pLifeMeter && !pi->m_pLifeMeter->IsFailing() )
+			return false;
+	}
+	return true;
+}
+
 void ScreenGameplay::Update( float fDeltaTime )
 {
 	if( GAMESTATE->m_pCurSong == NULL  )
@@ -1562,8 +1572,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 	//
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
-		PlayerNumber pn = pi->GetStepsAndTrailIndex();
-
 		if( pi->m_pLifeMeter && pi->m_pLifeMeter->IsFailing() )
 		{
 			pi->GetPlayerState()->m_HealthState = PlayerState::DEAD;
@@ -1606,8 +1614,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		
 			/* If recovery is enabled, only set fail if both are failing.
 			* There's no way to recover mid-song in battery mode. */
-			if( lt != SongOptions::LIFE_BATTERY &&
-				g_bTwoPlayerRecovery && !GAMESTATE->AllAreDead() )
+			if( lt != SongOptions::LIFE_BATTERY && g_bTwoPlayerRecovery && !AllAreFailing() )
 				continue;
 
 			LOG->Trace("Player %d failed", (int)pn);
@@ -1643,7 +1650,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			switch( ft )
 			{
 			case SongOptions::FAIL_IMMEDIATE:
-				if( pi->GetPlayerState()->m_HealthState < PlayerState::DEAD )
+				if( pi->m_pLifeMeter && !pi->m_pLifeMeter->IsFailing() )
 					bAllFailed = false;
 				break;
 			case SongOptions::FAIL_END_OF_SONG:

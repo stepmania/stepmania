@@ -1556,14 +1556,6 @@ bool GameState::AllAreInDangerOrWorse() const
 	return true;
 }
 
-bool GameState::AllAreDead() const
-{
-	FOREACH_EnabledPlayer( p )
-		if( m_pPlayerState[p]->m_HealthState < PlayerState::DEAD )
-			return false;
-	return true;
-}
-
 bool GameState::AllHumanHaveComboOf30OrMoreMisses() const
 {
 	FOREACH_HumanPlayer( p )

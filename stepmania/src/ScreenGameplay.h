@@ -156,6 +156,7 @@ protected:
 	virtual void SaveStats();
 	void StageFinished( bool bBackedOut );
 	void SaveReplay();
+	bool AllAreFailing();
 
 	virtual void InitSongQueues();
 
