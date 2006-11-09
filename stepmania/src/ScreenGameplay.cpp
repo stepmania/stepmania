@@ -2317,16 +2317,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 		{
-			/* If either player's passmark is enabled, check it. */
-			if( pi->GetPlayerState()->m_PlayerOptions.GetCurrent().m_fPassmark > 0 &&
-				pi->m_pLifeMeter &&
-				pi->m_pLifeMeter->GetLife() < pi->GetPlayerState()->m_PlayerOptions.GetCurrent().m_fPassmark )
-			{
-				LOG->Trace("Player %i failed: life %f is under %f",
-					pi->GetPlayerStateAndStageStatsIndex()+1, pi->m_pLifeMeter->GetLife(), pi->GetPlayerState()->m_PlayerOptions.GetCurrent().m_fPassmark );
-				pi->GetPlayerStageStats()->bFailed = true;
-			}
-
 			/* Mark failure. */
 			if( GAMESTATE->GetPlayerFailType(pi->GetPlayerState()) != SongOptions::FAIL_OFF &&
 				(pi->m_pLifeMeter && pi->m_pLifeMeter->IsFailing()) )

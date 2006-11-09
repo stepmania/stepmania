@@ -284,7 +284,7 @@ bool LifeMeterBar::IsInDanger() const
 
 bool LifeMeterBar::IsFailing() const
 { 
-	return m_fLifePercentage <= 0;
+	return m_fLifePercentage <= m_pPlayerState->m_PlayerOptions.GetCurrent().m_fPassmark;
 }
 
 
