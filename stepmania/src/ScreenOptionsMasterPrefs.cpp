@@ -653,7 +653,6 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "ProgressiveStageLifebar",	MovePref,		"Off","|1","|2","|3","|4","|5","|6","|7","|8","Insanity") );
 	ADD( ConfOption( "ProgressiveNonstopLifebar",	MovePref,		"Off","|1","|2","|3","|4","|5","|6","|7","|8","Insanity") );
 	ADD( ConfOption( "DefaultFailType",		DefaultFailType,	"Immediate","End of Song","Off" ) );	
-	ADD( ConfOption( "DefaultFailTypeNoOff",	DefaultFailType,	"Immediate","End of Song" ) );	
 	ADD( ConfOption( "CoinsPerCredit",		CoinsPerCredit,		"|1","|2","|3","|4","|5","|6","|7","|8","|9","|10","|11","|12","|13","|14","|15","|16" ) );
 	ADD( ConfOption( "Premium",			PremiumM,		"Off","Double for 1 Credit","Joint Premium" ) );
 	ADD( ConfOption( "ShowSongOptions",		ShowSongOptions,	"Hide","Show","Ask" ) );
