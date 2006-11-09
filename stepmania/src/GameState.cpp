@@ -1199,7 +1199,7 @@ SongOptions::FailType GameState::GetPlayerFailType( const PlayerState *pPlayerSt
 	if( IsCourseMode() )
 	{
 		if( PREFSMAN->m_bMinimum1FullSongInCourses && GetCourseSongIndex()==0 )
-			ft = max( ft, SongOptions::FAIL_END_OF_SONG );	// take the least harsh of the two FailTypes
+			ft = max( ft, SongOptions::FAIL_IMMEDIATE_CONTINUE );	// take the least harsh of the two FailTypes
 	}
 	else
 	{
@@ -1209,9 +1209,9 @@ SongOptions::FailType GameState::GetPlayerFailType( const PlayerState *pPlayerSt
 
 		bool bFirstStage = !IsEventMode() && m_iCurrentStageIndex == 0;
 
-		/* Easy and beginner are never harder than FAIL_END_OF_SONG. */
+		/* Easy and beginner are never harder than FAIL_IMMEDIATE_CONTINUE. */
 		if( dc <= DIFFICULTY_EASY )
-			setmax( ft, SongOptions::FAIL_END_OF_SONG );
+			setmax( ft, SongOptions::FAIL_IMMEDIATE_CONTINUE );
 
 		if( dc <= DIFFICULTY_EASY && bFirstStage && PREFSMAN->m_bFailOffForFirstStageEasy )
 			setmax( ft, SongOptions::FAIL_OFF );
