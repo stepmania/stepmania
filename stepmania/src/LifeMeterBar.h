@@ -29,7 +29,6 @@ public:
 	virtual bool IsHot() const;
 	virtual bool IsFailing() const;
 	virtual float GetLife() const { return m_fLifePercentage; }
-	virtual void ForceFail();
 
 	void UpdateNonstopLifebar(int cleared, int total, int ProgressiveLifebarDifficulty);
 	void FillForHowToPlay(int NumT2s, int NumMisses);

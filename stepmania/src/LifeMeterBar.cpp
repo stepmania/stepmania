@@ -421,13 +421,6 @@ void LifeMeterBar::FillForHowToPlay( int NumW2s, int NumMisses )
 	AfterLifeChanged();
 }
 
-void LifeMeterBar::ForceFail()
-{
-	m_fLifePercentage = 0;
-	AfterLifeChanged();
-}
-
-
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.

@@ -31,7 +31,6 @@ public:
 	virtual bool IsFailing() const;
 	virtual float GetLife() const;
 	virtual void UpdateNonstopLifebar(int cleared, int total, int ProgressiveLifebarDifficulty) { };
-	virtual void ForceFail();
 
 private:
 	float GetLifeSeconds() const;

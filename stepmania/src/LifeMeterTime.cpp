@@ -171,11 +171,6 @@ float LifeMeterTime::GetLife() const
 	return fPercent;
 }
 
-void LifeMeterTime::ForceFail()
-{
-	m_fLifeTotalLostSeconds = m_fLifeTotalGainedSeconds + 100;
-}
-
 float LifeMeterTime::GetLifeSeconds() const
 {
 	float fSecs = m_fLifeTotalGainedSeconds - (m_fLifeTotalLostSeconds + STATSMAN->m_CurStageStats.fStepsSeconds);
