@@ -117,14 +117,6 @@ bool StageStats::AllFailed() const
 	return true;
 }
 
-bool StageStats::AllFailedEarlier() const
-{
-	FOREACH_EnabledPlayer( p )
-		if( !m_player[p].bFailedEarlier )
-			return false;
-	return true;
-}
-
 float StageStats::GetTotalPossibleStepsSeconds() const
 {
 	float fSecs = 0;

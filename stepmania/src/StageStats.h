@@ -23,7 +23,6 @@ public:
 
 	bool OnePassed() const;
 	bool AllFailed() const;
-	bool AllFailedEarlier() const;
 
 	int		GetAverageMeter( PlayerNumber pn ) const;
 
