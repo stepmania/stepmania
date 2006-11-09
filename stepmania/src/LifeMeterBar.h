@@ -42,7 +42,6 @@ private:
 
 	float			m_fPassingAlpha;
 	float			m_fHotAlpha;
-	bool			m_bFailedEarlier;		// set this to true when life dips below 0
 
 	float			m_fBaseLifeDifficulty;
 	float			m_fLifeDifficulty;		// essentially same as pref

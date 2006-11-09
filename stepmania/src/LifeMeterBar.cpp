@@ -63,7 +63,6 @@ LifeMeterBar::LifeMeterBar()
 
 	m_fPassingAlpha = 0;
 	m_fHotAlpha = 0;
-	m_bFailedEarlier = false;
 
 	m_fBaseLifeDifficulty = PREFSMAN->m_fLifeDifficultyScale;
 	m_fLifeDifficulty = m_fBaseLifeDifficulty;
