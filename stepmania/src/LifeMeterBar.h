@@ -35,24 +35,24 @@ public:
 	// this function is solely for HowToPlay
 
 private:
-	AutoActor			m_sprBackground;
-	Quad				m_quadDangerGlow;
+	AutoActor		m_sprBackground;
+	Quad			m_quadDangerGlow;
 	StreamDisplay*		m_pStream;
-	AutoActor			m_sprFrame;
+	AutoActor		m_sprFrame;
 
-	float		m_fLifePercentage;
+	float			m_fLifePercentage;
 
-	float		m_fPassingAlpha;
-	float		m_fHotAlpha;
-	bool		m_bFailedEarlier;		// set this to true when life dips below 0
+	float			m_fPassingAlpha;
+	float			m_fHotAlpha;
+	bool			m_bFailedEarlier;		// set this to true when life dips below 0
 
-	float		m_fBaseLifeDifficulty;
-	float		m_fLifeDifficulty;		// essentially same as pref
+	float			m_fBaseLifeDifficulty;
+	float			m_fLifeDifficulty;		// essentially same as pref
 
-	int			m_iProgressiveLifebar;	// cached from prefs
+	int			m_iProgressiveLifebar;		// cached from prefs
 	int			m_iMissCombo;			// current number of progressive W5/miss
 
-	int			m_iComboToRegainLife;	// combo needed before lifebar starts filling up after fail
+	int			m_iComboToRegainLife;		// combo needed before lifebar starts filling up after fail
 };
 
 #endif
