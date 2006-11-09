@@ -90,7 +90,7 @@ void AdjustSync::SaveSyncChanges()
 	{
 		if( GAMESTATE->IsEditing() )
 		{
-			MESSAGEMAN->Broadcast( Message_SongChanged );
+			MESSAGEMAN->Broadcast( Message_SongModified );
 		}
 		else
 		{

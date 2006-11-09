@@ -764,7 +764,7 @@ void ScreenEdit::Init()
 	this->HandleScreenMessage( SM_UpdateTextInfo );
 	m_bTextInfoNeedsUpdate = true;
 
-	SubscribeToMessage( Message_SongChanged );
+	SubscribeToMessage( Message_SongModified );
 }
 
 ScreenEdit::~ScreenEdit()
@@ -2369,7 +2369,7 @@ void ScreenEdit::ScrollTo( float fDestinationBeat )
 
 void ScreenEdit::HandleMessage( const RString &sMessage )
 {
-	if( sMessage == MessageToString( Message_SongChanged ) )
+	if( sMessage == MessageToString(Message_SongModified) )
 	{
 		SetDirty( true );
 	}
