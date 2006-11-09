@@ -1439,9 +1439,6 @@ void ScreenGameplay::PlayAnnouncer( RString type, float fSeconds )
 	m_fTimeSinceLastDancingComment = 0;
 
 	SOUND->PlayOnceFromAnnouncer( type );
-
-	if( m_pCombinedLifeMeter )
-		m_pCombinedLifeMeter->OnTaunt();
 }
 
 void ScreenGameplay::UpdateSongPosition( float fDeltaTime )
