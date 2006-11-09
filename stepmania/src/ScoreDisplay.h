@@ -15,7 +15,6 @@ public:
 
 	virtual void SetScore( int iNewScore ) {}
 	virtual void OnLoadSong() {};
-	virtual void OnSongEnded() {};
 	/* Notification of a tap note judgment.  This *is* called for
 	 * the head of hold notes. */
 	virtual void OnJudgment( TapNoteScore score ) {};

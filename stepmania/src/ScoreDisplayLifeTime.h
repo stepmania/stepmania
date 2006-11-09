@@ -17,7 +17,6 @@ public:
 	virtual void Update( float fDelta );
 
 	virtual void OnLoadSong();
-	virtual void OnSongEnded();
 	virtual void OnJudgment( TapNoteScore score );
 	virtual void OnJudgment( HoldNoteScore score, TapNoteScore tscore );
 

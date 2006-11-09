@@ -83,10 +83,6 @@ void ScoreDisplayLifeTime::OnLoadSong()
 	PlayGainLoss( GAIN_LIFE_COMMAND_NAME, pEntry->fGainSeconds );
 }
 
-void ScoreDisplayLifeTime::OnSongEnded()
-{
-}
-
 void ScoreDisplayLifeTime::OnJudgment( TapNoteScore tns )
 {
 	if( STATSMAN->m_CurStageStats.m_player[m_pPlayerState->m_PlayerNumber].bFailedEarlier )

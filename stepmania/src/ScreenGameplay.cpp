@@ -2453,10 +2453,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			{
 				if( pi->m_pLifeMeter )
 					pi->m_pLifeMeter->OnSongEnded();	
-				if( pi->m_pPrimaryScoreDisplay )
-					pi->m_pPrimaryScoreDisplay->OnSongEnded();	
-				if( pi->m_pSecondaryScoreDisplay )
-					pi->m_pSecondaryScoreDisplay->OnSongEnded();	
 			}
 		}
 
