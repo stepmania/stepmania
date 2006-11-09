@@ -2449,11 +2449,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		// give a little life back between stages
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 		{
-			if( !pi->GetPlayerStageStats()->bFailed )
-			{
-				if( pi->m_pLifeMeter )
-					pi->m_pLifeMeter->OnSongEnded();	
-			}
+			if( pi->m_pLifeMeter )
+				pi->m_pLifeMeter->OnSongEnded();	
 		}
 
 		GAMESTATE->m_bLoadingNextSong = true;

@@ -64,7 +64,7 @@ void LifeMeterBattery::Load( const PlayerState *pPlayerState, PlayerStageStats *
 
 void LifeMeterBattery::OnSongEnded()
 {
-	if( m_pPlayerStageStats->bFailedEarlier )
+	if( m_pPlayerStageStats->bFailed || m_pPlayerStageStats->bFailedEarlier )
 		return;
 
 	if( m_iLivesLeft < GAMESTATE->m_SongOptions.GetSong().m_iBatteryLives )
