@@ -124,11 +124,6 @@ void LifeMeterTime::ChangeLife( HoldNoteScore hns, TapNoteScore tns )
 		m_pPlayerStageStats->bFailedEarlier = true;
 }
 
-void LifeMeterTime::OnDancePointsChange()
-{
-}
-
-
 bool LifeMeterTime::IsInDanger() const
 {
 	return false;

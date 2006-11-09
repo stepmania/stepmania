@@ -138,11 +138,6 @@ void LifeMeterBattery::ChangeLife( float fDeltaLifePercent )
 {
 }
 
-void LifeMeterBattery::OnDancePointsChange()
-{
-}
-
-
 bool LifeMeterBattery::IsInDanger() const
 {
 	return false;

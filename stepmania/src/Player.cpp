@@ -1823,14 +1823,9 @@ void Player::HandleTapRowScore( unsigned row )
 	}
 
 	if( m_pLifeMeter )
-	{
 		m_pLifeMeter->ChangeLife( scoreOfLastTap );
-		m_pLifeMeter->OnDancePointsChange();    // update oni life meter
-	}
 	if( m_pCombinedLifeMeter )
-	{
 		m_pCombinedLifeMeter->ChangeLife( pn, scoreOfLastTap );
-	}
 }
 
 
@@ -1871,14 +1866,9 @@ void Player::HandleHoldScore( const TapNote &tn )
 	}
 
 	if( m_pLifeMeter ) 
-	{
 		m_pLifeMeter->ChangeLife( holdScore, tapScore );
-		m_pLifeMeter->OnDancePointsChange();
-	}
 	if( m_pCombinedLifeMeter ) 
-	{
 		m_pCombinedLifeMeter->ChangeLife( pn, holdScore, tapScore );
-	}
 }
 
 float Player::GetMaxStepDistanceSeconds()
