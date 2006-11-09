@@ -1564,9 +1564,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 	{
 		PlayerNumber pn = pi->GetStepsAndTrailIndex();
 
-		if(
-			(pi->m_pLifeMeter && pi->m_pLifeMeter->IsFailing()) || 
-			(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsFailing(pn)) )
+		if( pi->m_pLifeMeter && pi->m_pLifeMeter->IsFailing() )
 		{
 			pi->GetPlayerState()->m_HealthState = PlayerState::DEAD;
 		}
@@ -1602,8 +1600,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 			
 			// check for individual fail
 			if( pi->m_pLifeMeter == NULL || !pi->m_pLifeMeter->IsFailing() )
-				continue; /* isn't failing */
-			if( m_pCombinedLifeMeter && !m_pCombinedLifeMeter->IsFailing(pn) )
 				continue; /* isn't failing */
 			if( pi->GetPlayerStageStats()->bFailed )
 				continue; /* failed and is already dead */
