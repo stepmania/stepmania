@@ -33,6 +33,8 @@ static ThemeMetric<bool> BLINK_DANGER_ALL				("Background","BlinkDangerAll");
 static ThemeMetric<bool> DANGER_ALL_IS_OPAQUE			("Background","DangerAllIsOpaque");
 static ThemeMetric<float> CLAMP_OUTPUT_PERCENT			("Background","ClampOutputPercent");
 
+static Preference<bool>	g_bShowDanger( "ShowDanger", true );
+
 // Width of the region separating the left and right brightness areas:
 static float g_fBackgroundCenterWidth = 40;
 
@@ -849,7 +851,7 @@ void BackgroundImpl::Update( float fDeltaTime )
 
 	FOREACH_PlayerNumber( p )
 	{
-		if( PREFSMAN->m_bShowDanger && GAMESTATE->IsPlayerInDanger(GAMESTATE->m_pPlayerState[p]) )
+		if( g_bShowDanger && GAMESTATE->IsPlayerInDanger(GAMESTATE->m_pPlayerState[p]) )
 			m_DangerPlayer[p]->Update( fDeltaTime );
 			
 		if( GAMESTATE->IsPlayerDead(GAMESTATE->m_pPlayerState[p]) )
@@ -910,7 +912,7 @@ void BackgroundImpl::DrawPrimitives()
 
 		FOREACH_PlayerNumber( p )
 		{
-			if( PREFSMAN->m_bShowDanger && GAMESTATE->IsPlayerInDanger(GAMESTATE->m_pPlayerState[p]) )
+			if( g_bShowDanger && GAMESTATE->IsPlayerInDanger(GAMESTATE->m_pPlayerState[p]) )
 				m_DangerPlayer[p]->Draw();
 			if( GAMESTATE->IsPlayerDead(GAMESTATE->m_pPlayerState[p]) )
 				m_DeadPlayer[p]->Draw();
@@ -934,7 +936,7 @@ bool BackgroundImpl::IsDangerAllVisible()
 	FOREACH_PlayerNumber( p )
 		if( GAMESTATE->GetPlayerFailType(GAMESTATE->m_pPlayerState[p]) == SongOptions::FAIL_OFF )
 			return false;
-	if( !PREFSMAN->m_bShowDanger )
+	if( !g_bShowDanger )
 		return false;
 
 	/* Don't show it if everyone is already failing: it's already too late and it's

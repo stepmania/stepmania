@@ -288,7 +288,6 @@ PrefsManager::PrefsManager() :
 
 	m_bOnlyDedicatedMenuButtons	( "OnlyDedicatedMenuButtons",	false ),
 	m_bMenuTimer		( "MenuTimer",			true ),
-	m_bShowDanger		( "ShowDanger",			true ),
 
 	m_fTimingWindowScale	( "TimingWindowScale",		1.0f ),
 	m_fTimingWindowAdd	( "TimingWindowAdd",		0 ),
