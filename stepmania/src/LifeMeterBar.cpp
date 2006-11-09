@@ -44,9 +44,6 @@ static ThemeMetric<int>   NUM_STRIPS		("LifeMeterBar","NumStrips");
 static ThemeMetric<float> INITIAL_VALUE		("LifeMeterBar","InitialValue");
 static ThemeMetric<TapNoteScore>   MIN_STAY_ALIVE	("LifeMeterBar","MinStayAlive");
 
-const float FAIL_THRESHOLD = 0;
-
-
 LifeMeterBar::LifeMeterBar()
 {
 	switch( GAMESTATE->m_SongOptions.GetStage().m_DrainType )
@@ -259,7 +256,7 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 	}
 
 	// check if this step would cause a fail
-	if( m_fLifePercentage + fDeltaLife <= FAIL_THRESHOLD  &&  m_fLifePercentage > FAIL_THRESHOLD )
+	if( m_fLifePercentage + fDeltaLife <= 0  &&  m_fLifePercentage > 0 )
 	{
 		/* Increase by m_iRegenComboAfterFail; never push it beyond m_iMaxRegenComboAfterFail
 		 * but don't reduce it if it's already past. */
@@ -272,7 +269,7 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 	CLAMP( m_fLifePercentage, 0, 1 );
 	AfterLifeChanged();
 
-	if( m_fLifePercentage <= FAIL_THRESHOLD )
+	if( m_fLifePercentage <= 0 )
 		m_pPlayerStageStats->bFailedEarlier = true;
 }
 
