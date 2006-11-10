@@ -1144,7 +1144,7 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, RString sPreferredG
 	}
 
 	pSongOut = pTrail->m_vEntries[0].pSong;
-	pStepsOut = pTrail->m_vEntries[0].pSteps;
+	pStepsOut = pTrail->m_vEntries[0].GetSteps();
 	return true;
 }
 

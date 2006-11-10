@@ -30,6 +30,16 @@ bool TrailEntry::operator== ( const TrailEntry &rhs ) const
 		EQUAL(dc);
 }
 
+Steps *TrailEntry::GetSteps() const
+{
+	return pSteps;
+}
+
+void TrailEntry::SetSteps(Steps *steps)
+{
+	pSteps = steps;
+}
+
 bool TrailEntry::ContainsTransformOrTurn() const
 {
 	PlayerOptions po;
@@ -68,7 +78,7 @@ const RadarValues &Trail::GetRadarValues() const
 
 		FOREACH_CONST( TrailEntry, m_vEntries, e )
 		{
-			const Steps *pSteps = e->pSteps;
+			const Steps *pSteps = e->GetSteps();
 			ASSERT( pSteps );
 			/* Hack: don't calculate for autogen entries; it makes writing Catalog.xml
 			 * take way too long.  (Tournamix 4 Sample.crs takes me ~10s.) */
@@ -120,7 +130,7 @@ int Trail::GetTotalMeter() const
 	int iTotalMeter = 0;
 	FOREACH_CONST( TrailEntry, m_vEntries, e )
 	{
-		iTotalMeter += e->pSteps->GetMeter();
+		iTotalMeter += e->GetSteps()->GetMeter();
 	}
 
 	return iTotalMeter;

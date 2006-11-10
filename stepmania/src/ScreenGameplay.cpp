@@ -850,8 +850,8 @@ void ScreenGameplay::InitSongQueues()
 			pi->m_asModifiersQueue.clear();
 			FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
 			{
-				ASSERT( e->pSteps );
-				pi->m_vpStepsQueue.push_back( e->pSteps );
+				ASSERT( e->GetSteps() );
+				pi->m_vpStepsQueue.push_back( e->GetSteps() );
 				AttackArray a;
 				e->GetAttackArray( a );
 				pi->m_asModifiersQueue.push_back( a );

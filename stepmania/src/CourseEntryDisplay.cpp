@@ -173,7 +173,7 @@ void CourseEntryDisplay::SetFromGameState( int iCourseEntryIndex )
 			const TrailEntry *te = tes[pn];
 			if( te == NULL )
 				continue;
-			SetDifficulty( pn, ssprintf("%d", te->pSteps->GetMeter()), te->pSteps->GetDifficulty() );
+			SetDifficulty( pn, ssprintf("%d", te->GetSteps()->GetMeter()), te->GetSteps()->GetDifficulty() );
 		}
 
 		m_TextBanner.LoadFromSong( te->pSong );

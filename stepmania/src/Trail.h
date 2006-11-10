@@ -13,6 +13,7 @@ struct lua_State;
 
 struct TrailEntry
 {
+public:
 	TrailEntry(): 
 		pSong(NULL), 
 		pSteps(NULL),
@@ -22,7 +23,10 @@ struct TrailEntry
 		dc(Difficulty_Invalid)
 	{
 	}
-	void GetAttackArray( AttackArray &out ) const;
+	void		GetAttackArray( AttackArray &out ) const;
+	Steps*		GetSteps() const;
+	void		SetSteps(Steps *steps);
+	bool		ContainsTransformOrTurn() const;
 
 	Song*		pSong;
 	Steps*		pSteps;
@@ -37,7 +41,6 @@ struct TrailEntry
 	Difficulty	dc;
 	bool operator== ( const TrailEntry &rhs ) const;
 	bool operator!= ( const TrailEntry &rhs ) const { return !(*this==rhs); }
-	bool ContainsTransformOrTurn() const;
 };
 
 class Trail
