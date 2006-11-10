@@ -58,7 +58,15 @@ public:
 	void Reset();
 	void DetachSteps();
 
-	bool LoadFromSongDir( RString sDir );
+	// WARNING: Do not use this DeepCopy in any situation with existing Steps*.  Those pointers
+	// will all point to garbage memory after this call.  The way to fix that is to change the
+	// pointers to StepsIDs or in some other way avoid keeping the Steps* pointers from before
+	// the call to DeepCopy.
+	void DeepCopy(const Song &song);
+
+	// LoadFromSongDir assumes the song is uninitialized.  Call ReloadFromSongDir if that is not true.
+	bool LoadFromSongDir( RString sDir, bool bIgnoreCache );
+	bool ReloadFromSongDir( RString sDir );
 
 	void TidyUpData();	// call after loading to clean up invalid data
 	void ReCalculateRadarValuesAndLastBeat();	// called by TidyUpData, and after saving
@@ -152,9 +160,8 @@ public:
 
 	typedef vector<BackgroundChange> 	VBackgroundChange;
 private:
-	// AutoPtr instead of raw pointer so that the auto gen'd copy constructor works correctly.
-	AutoPtrCopyOnWrite<VBackgroundChange>	m_BackgroundChanges[NUM_BackgroundLayer];	// these must be sorted before gameplay
-	AutoPtrCopyOnWrite<VBackgroundChange>	m_ForegroundChanges;	// this must be sorted before gameplay
+	VBackgroundChange *			m_BackgroundChanges[NUM_BackgroundLayer];	// these must be sorted before gameplay
+	VBackgroundChange *			m_ForegroundChanges;	// this must be sorted before gameplay
 public:
 	const vector<BackgroundChange>	&GetBackgroundChanges( BackgroundLayer bl ) const;
 	vector<BackgroundChange>	&GetBackgroundChanges( BackgroundLayer bl );
@@ -216,6 +223,9 @@ public:
 	void PushSelf( lua_State *L );
 
 private:
+	// DISALLOW operator= and Steps(Steps&)
+	Song(const Song&);
+	void operator=(const Song&);
 
 	vector<Steps*> m_vpSteps;
 	vector<Steps*> m_vpStepsByType[NUM_StepsType];

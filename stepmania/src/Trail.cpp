@@ -32,6 +32,11 @@ bool TrailEntry::operator== ( const TrailEntry &rhs ) const
 
 Steps *TrailEntry::GetSteps() const
 {
+	// TODO:  There are a few bugs with the way we do trails right now.
+	//   - If a steps (or an entire song) is deleted, possibly through the editor,
+	//     this section will fail.
+	//   - If the editor changes a stepchart's stats, that should also be reflected
+	//     in the trail.
 	return m_StepsID.ToSteps( pSong, false );
 }
 

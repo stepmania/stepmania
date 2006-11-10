@@ -850,6 +850,11 @@ void ScreenGameplay::InitSongQueues()
 			pi->m_asModifiersQueue.clear();
 			FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
 			{
+				// Here we assume there are never any NULL Steps in any Trails.  
+				// This assumption can fail if we delete a Steps from a 
+				// Song or revert a Song where the stepchart was deleted
+				// ouside the editor.  In those cases: goodbye cruel world.
+				// TODO: fix that somehow
 				ASSERT( e->GetSteps() );
 				pi->m_vpStepsQueue.push_back( e->GetSteps() );
 				AttackArray a;

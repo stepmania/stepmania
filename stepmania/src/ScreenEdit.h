@@ -253,9 +253,8 @@ protected:
 	void CopyFromLastSave();
 	void RevertFromDisk();
 
-	Song m_songLastSave;
-	Steps m_stepsLastSave;
-
+	Song m_SongLastSave;
+	
 
 // for MODE_RECORD
 

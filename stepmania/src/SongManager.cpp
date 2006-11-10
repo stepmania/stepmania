@@ -235,7 +235,7 @@ void SongManager::LoadStepManiaSongDir( RString sDir, LoadingWindow *ld )
 				ld->Paint();
 			}
 			Song* pNewSong = new Song;
-			if( !pNewSong->LoadFromSongDir( sSongDirName ) )
+			if( !pNewSong->LoadFromSongDir( sSongDirName, false ) ) // don't ignore cache
 			{
 				/* The song failed to load. */
 				delete pNewSong;
@@ -277,7 +277,7 @@ void SongManager::LoadGroupSymLinks(RString sDir, RString sGroupFolder)
 		RString	sSymDestination = msdF.GetParam(0,1);	// Should only be 1 vale&param...period.
 		
 		Song* pNewSong = new Song;
-		if( !pNewSong->LoadFromSongDir( sSymDestination ) )
+		if( !pNewSong->LoadFromSongDir( sSymDestination, false ) ) // don't ignore cache
 		{
 			delete pNewSong; // The song failed to load.
 		}
@@ -993,7 +993,7 @@ void SongManager::RevertFromDisk( Song *pSong, bool bAllowNotesLoss )
 	pSong->Reset();
 	const bool OldVal = PREFSMAN->m_bFastLoad;
 	PREFSMAN->m_bFastLoad.Set( false );
-	pSong->LoadFromSongDir( dir );	
+	pSong->LoadFromSongDir( dir, true ); // when reverting, ignore cache
 	/* XXX: reload edits? */
 	PREFSMAN->m_bFastLoad.Set( OldVal );
 

@@ -90,6 +90,8 @@ public:
 	static void ClearCache();
 	
 	StepsType GetStepsType() const { return st; }
+	Difficulty GetDifficulty() const { return dc; }
+	RString GetDescription() const { return sDescription; }
 
 	bool operator==( const StepsID &other ) const
 	{
