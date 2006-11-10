@@ -4,8 +4,9 @@
 #define TRAIL_H
 
 #include "Attack.h"
-#include "RadarValues.h"
 #include "Difficulty.h"
+#include "RadarValues.h"
+#include "StepsUtil.h"
 
 class Song;
 class Steps;
@@ -16,7 +17,6 @@ struct TrailEntry
 public:
 	TrailEntry(): 
 		pSong(NULL), 
-		pSteps(NULL),
 		bSecret(false),
 		iLowMeter(-1),
 		iHighMeter(-1),
@@ -29,7 +29,7 @@ public:
 	bool		ContainsTransformOrTurn() const;
 
 	Song*		pSong;
-	Steps*		pSteps;
+	StepsID		m_StepsID;
 	RString		Modifiers;
 	AttackArray	Attacks;
 	bool		bSecret;	// show "???"

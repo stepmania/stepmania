@@ -21,7 +21,7 @@ bool TrailEntry::operator== ( const TrailEntry &rhs ) const
 #define EQUAL(a) (a==rhs.a)
 	return 
 		EQUAL(pSong) &&
-		EQUAL(pSteps) &&
+		EQUAL(m_StepsID) &&
 		EQUAL(Modifiers) &&
 		EQUAL(Attacks) &&
 		EQUAL(bSecret) &&
@@ -32,12 +32,12 @@ bool TrailEntry::operator== ( const TrailEntry &rhs ) const
 
 Steps *TrailEntry::GetSteps() const
 {
-	return pSteps;
+	return m_StepsID.ToSteps( pSong, false );
 }
 
 void TrailEntry::SetSteps(Steps *steps)
 {
-	pSteps = steps;
+	m_StepsID.FromSteps( steps );
 }
 
 bool TrailEntry::ContainsTransformOrTurn() const
