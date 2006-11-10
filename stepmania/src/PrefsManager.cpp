@@ -369,9 +369,9 @@ PrefsManager::PrefsManager() :
 	m_bPreferredSortUsesGroups	( "PreferredSortUsesGroups",		true ),
 
 	m_fPadStickSeconds		( "PadStickSeconds",			0 ),
-	m_bForceMipMaps			( "ForceMipMaps",			0 ),
-	m_bTrilinearFiltering		( "TrilinearFiltering",			0 ),
-	m_bAnisotropicFiltering		( "AnisotropicFiltering",		0 ),
+	m_bForceMipMaps			( "ForceMipMaps",			false ),
+	m_bTrilinearFiltering		( "TrilinearFiltering",			false ),
+	m_bAnisotropicFiltering		( "AnisotropicFiltering",		false ),
 
 	m_bSignProfileData		( "SignProfileData",			false ),
 	m_CourseSortOrder		( "CourseSortOrder",			COURSE_SORT_SONGS ),
