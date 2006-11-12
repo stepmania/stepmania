@@ -65,14 +65,7 @@ void Steps::SetNoteData( const NoteData& noteDataNew )
 {
 	ASSERT( noteDataNew.GetNumTracks() == GameManager::StepsTypeToNumTracks(m_StepsType) );
 
-	if( parent )
-	{
-		copy( parent->m_CachedRadarValues, parent->m_CachedRadarValues + NUM_PLAYERS, m_CachedRadarValues );
-		m_sDescription	= parent->m_sDescription;
-		m_Difficulty	= parent->m_Difficulty;
-		m_iMeter	= parent->m_iMeter;
-		parent		= NULL;
-	}
+	DeAutogen( false );
 
 	*m_pNoteData = noteDataNew;
 	m_bNoteDataIsFilled = true;
@@ -315,12 +308,13 @@ void Steps::Compress() const
 
 /* Copy our parent's data.  This is done when we're being changed from autogen
  * to normal. (needed?) */
-void Steps::DeAutogen()
+void Steps::DeAutogen( bool bCopyNoteData )
 {
 	if( !parent )
 		return; /* OK */
 
-	Decompress();	// fills in m_pNoteData with sliding window transform
+	if( bCopyNoteData )
+		Decompress();	// fills in m_pNoteData with sliding window transform
 
 	m_sDescription		= Real()->m_sDescription;
 	m_Difficulty		= Real()->m_Difficulty;
@@ -329,7 +323,8 @@ void Steps::DeAutogen()
 
 	parent = NULL;
 
-	Compress();
+	if( bCopyNoteData )
+		Compress();
 }
 
 void Steps::AutogenFrom( const Steps *parent_, StepsType ntTo )
