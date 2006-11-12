@@ -349,7 +349,7 @@ bool Course::GetTrailSorted( StepsType st, CourseDifficulty cd, Trail &trail ) c
 		{
 			SortTrailEntry ste;
 			ste.entry = trail.m_vEntries[i];
-			ste.SortMeter = SortTrail.m_vEntries[i].GetSteps()->GetMeter();
+			ste.SortMeter = SortTrail.m_vEntries[i].pSteps->GetMeter();
 			entries.push_back( ste );
 		}
 
@@ -567,7 +567,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 
 		TrailEntry te;
 		te.pSong = resolved.pSong;
-		te.SetSteps(resolved.pSteps);
+		te.pSteps = resolved.pSteps;
 		te.Modifiers = e->sModifiers;
 		te.Attacks = e->attacks;
 		te.bSecret = e->bSecret;

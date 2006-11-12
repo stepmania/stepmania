@@ -42,8 +42,9 @@ static Preference<float>	g_fMarathonVerSongSeconds( "MarathonVerSongSeconds",	60
 Song::Song()
 {
 	FOREACH_BackgroundLayer( i )
-		m_BackgroundChanges[i] = new VBackgroundChange;
-	m_ForegroundChanges = new VBackgroundChange;	
+		m_BackgroundChanges[i] = AutoPtrCopyOnWrite<VBackgroundChange>(new VBackgroundChange);
+	m_ForegroundChanges = AutoPtrCopyOnWrite<VBackgroundChange>(new VBackgroundChange);
+	
 
 	m_LoadedFromProfile = ProfileSlot_Invalid;
 	m_fMusicSampleStartSeconds = -1;
@@ -67,96 +68,34 @@ Song::~Song()
 		SAFE_DELETE( *s );
 	m_vpSteps.clear();
 	
-	FOREACH_BackgroundLayer( i )
-		SAFE_DELETE( m_BackgroundChanges[i] );
-	SAFE_DELETE( m_ForegroundChanges );
-
 	// It's the responsibility of the owner of this Song to make sure
 	// that all pointers to this Song and its Steps are invalidated.
 }
 
-// Reset to an empty song.
+void Song::DetachSteps()
+{
+	m_vpSteps.clear();
+	FOREACH_StepsType( st )
+		m_vpStepsByType[st].clear();
+}
+
+/* Reset to an empty song. */
 void Song::Reset()
 {
+	FOREACH( Steps*, m_vpSteps, s )
+		SAFE_DELETE( *s );
+	m_vpSteps.clear();
+	FOREACH_StepsType( st )
+		m_vpStepsByType[st].clear();
+
 	Song empty;
-	this->DeepCopy(empty);
+	*this = empty;
+
 	// It's the responsibility of the owner of this Song to make sure
 	// that all pointers to this Song and its Steps are invalidated.
 }
 
-void Song::DeepCopy(const Song &song)
-{
-	m_sSongFileName = song.m_sSongFileName;
-	m_sGroupName = song.m_sGroupName;
 
-	m_LoadedFromProfile = song.m_LoadedFromProfile;
-	m_bIsSymLink = song.m_bIsSymLink;
-
-	m_sMainTitle = song.m_sMainTitle;
-	m_sSubTitle = song.m_sSubTitle;
-	m_sArtist = song.m_sArtist;
-	m_sMainTitleTranslit = song.m_sMainTitleTranslit;
-	m_sSubTitleTranslit = song.m_sSubTitleTranslit;
-	m_sArtistTranslit = song.m_sArtistTranslit;
-
-	m_sGenre = song.m_sGenre;
-	m_sCredit = song.m_sCredit;
-	m_sMusicFile = song.m_sMusicFile;
-
-	m_fMusicLengthSeconds = song.m_fMusicLengthSeconds;
-	m_fFirstBeat = song.m_fFirstBeat;
-	m_fLastBeat = song.m_fLastBeat;
-	m_fSpecifiedLastBeat = song.m_fSpecifiedLastBeat;
-	m_fMusicSampleStartSeconds = song.m_fMusicSampleStartSeconds;
-	m_fMusicSampleLengthSeconds = song.m_fMusicSampleLengthSeconds;
-	m_DisplayBPMType = song.m_DisplayBPMType;
-	m_fSpecifiedBPMMin = song.m_fSpecifiedBPMMin;
-	m_fSpecifiedBPMMax = song.m_fSpecifiedBPMMax;
-
-	m_sBannerFile = song.m_sBannerFile;
-	m_sLyricsFile = song.m_sLyricsFile;
-	m_sBackgroundFile = song.m_sBackgroundFile;
-	m_sCDTitleFile = song.m_sCDTitleFile;
-	m_bHasMusic = song.m_bHasMusic;
-	m_bHasBanner = song.m_bHasBanner;
-
-	m_Timing = song.m_Timing;
-	
-	FOREACH_BackgroundLayer( i )
-		*(m_BackgroundChanges[i]) = *(song.m_BackgroundChanges[i]);
-	*m_ForegroundChanges = *song.m_ForegroundChanges;
-	
-	m_LyricSegments = song.m_LyricSegments;
-
-	m_vsKeysoundFile = song.m_vsKeysoundFile;
-
-	// First, get rid of all the old steps ...
- 	FOREACH( Steps*, m_vpSteps, s )
- 		SAFE_DELETE( *s );
- 	m_vpSteps.clear();
-	FOREACH_StepsType( i )
-		m_vpStepsByType[i].clear();
- 
-	// ... then create duplicates of the new steps, correctly arranging them in the m_vpStepsByType array
-	m_vpSteps.clear();
-	for( vector<Steps*>::const_iterator it = song.m_vpSteps.begin(); it != song.m_vpSteps.end(); ++it )
-	{
-		Steps *steps = new Steps( **it );
-		m_vpSteps.push_back( steps );
-		m_vpStepsByType[steps->m_StepsType].push_back( steps );
-	}
-
-	// TODO: This is horribly ugly.  A much better solution is to make the Song class in charge of its
-	// own Steps cache.  StepsID::ToSteps can simply reference the Song cache then.
-	StepsID::ClearCache();
-	// TODO: we have also ruined the pointers for GAMESTATE->m_pCurSteps, STATSMAN->m_CurStageStats.m_player[].vpPlayedSteps,
-	// STATSMAN->m_vPlayedStageStats->m_player[].vpPlayedSteps, and GAMESTATE->m_pEditSourceSteps.  Probably we've also
-	// ruined other pointers aside from those.  In general, we need to use StepsIDs everywhere instead of Step*s.
-	// FOR NOW this is not a problem, as the only place this copy is used is in the editor.  The editor does not need any of
-	// the various GAMESTATE or STATSMAN pointers except for m_pCurSteps, which it already takes care of on its own.  
-	// However, we have to fix this if we are going to use DeepCopy anywhere else.
- }
- 
 void Song::AddBackgroundChange( BackgroundLayer iLayer, BackgroundChange seg )
 {
 	// Delete old background change at this start beat, if any.
@@ -234,7 +173,7 @@ static set<RString> BlacklistedImages;
  *
  * If true, check the directory hash and reload the song from scratch if it's changed.
  */
-bool Song::LoadFromSongDir( RString sDir, bool bIgnoreCache )
+bool Song::LoadFromSongDir( RString sDir )
 {
 //	LOG->Trace( "Song::LoadFromSongDir(%s)", sDir.c_str() );
 	ASSERT( sDir != "" );
@@ -257,7 +196,7 @@ bool Song::LoadFromSongDir( RString sDir, bool bIgnoreCache )
 	// First look in the cache for this song (without loading NoteData)
 	//
 	unsigned uCacheHash = SONGINDEX->GetCacheHash(m_sSongDir);
-	bool bUseCache = !bIgnoreCache;
+	bool bUseCache = true;
 	if( !DoesFileExist(GetCacheFilePath()) )
 		bUseCache = false;
 	if( !PREFSMAN->m_bFastLoad && GetHashForDirectory(m_sSongDir) != uCacheHash )
@@ -342,14 +281,6 @@ bool Song::LoadFromSongDir( RString sDir, bool bIgnoreCache )
 	}
 
 	return true;	// do load this song
-}
-
-bool Song::ReloadFromSongDir( RString sDir )
-{
-	// If we are loading from the song dir a second time around, the song is filled
-	// with all sorts of data we no longer want.  Get rid of it.
-	Reset();
-	return LoadFromSongDir( sDir, true );
 }
 
 static void GetImageDirListing( RString sPath, vector<RString> &AddTo, bool bReturnPathToo=false )
@@ -812,12 +743,6 @@ void Song::Save()
 		else
 			FILEMAN->Remove( sOldPath );
 	}
-
-	// Now we need to mark all of the stepcharts as "saved to disk".
-	FOREACH( Steps*, m_vpSteps, steps )
-	{
-		(*steps)->SetSavedToDisk( true );
-	}
 }
 
 
@@ -1038,7 +963,7 @@ const vector<BackgroundChange> &Song::GetBackgroundChanges( BackgroundLayer bl )
 }
 vector<BackgroundChange> &Song::GetBackgroundChanges( BackgroundLayer bl )
 {
-	return *(m_BackgroundChanges[bl]);
+	return *(m_BackgroundChanges[bl].Get());
 }
 
 const vector<BackgroundChange> &Song::GetForegroundChanges() const
@@ -1047,7 +972,7 @@ const vector<BackgroundChange> &Song::GetForegroundChanges() const
 }
 vector<BackgroundChange> &Song::GetForegroundChanges()
 {
-	return *m_ForegroundChanges;
+	return *m_ForegroundChanges.Get();
 }
 
 
@@ -1157,6 +1082,7 @@ void Song::DeleteSteps( const Steps* pSteps, bool bReAutoGen )
 
 	if( bReAutoGen )
 		RemoveAutoGenNotes();
+
 
 	vector<Steps*> &vpSteps = m_vpStepsByType[pSteps->m_StepsType];
 	for( int j=vpSteps.size()-1; j>=0; j-- )

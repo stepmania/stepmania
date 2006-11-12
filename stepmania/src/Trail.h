@@ -4,9 +4,8 @@
 #define TRAIL_H
 
 #include "Attack.h"
-#include "Difficulty.h"
 #include "RadarValues.h"
-#include "StepsUtil.h"
+#include "Difficulty.h"
 
 class Song;
 class Steps;
@@ -14,22 +13,19 @@ struct lua_State;
 
 struct TrailEntry
 {
-public:
 	TrailEntry(): 
 		pSong(NULL), 
+		pSteps(NULL),
 		bSecret(false),
 		iLowMeter(-1),
 		iHighMeter(-1),
 		dc(Difficulty_Invalid)
 	{
 	}
-	void		GetAttackArray( AttackArray &out ) const;
-	Steps*		GetSteps() const;
-	void		SetSteps(Steps *steps);
-	bool		ContainsTransformOrTurn() const;
+	void GetAttackArray( AttackArray &out ) const;
 
 	Song*		pSong;
-	StepsID		m_StepsID;
+	Steps*		pSteps;
 	RString		Modifiers;
 	AttackArray	Attacks;
 	bool		bSecret;	// show "???"
@@ -41,6 +37,7 @@ public:
 	Difficulty	dc;
 	bool operator== ( const TrailEntry &rhs ) const;
 	bool operator!= ( const TrailEntry &rhs ) const { return !(*this==rhs); }
+	bool ContainsTransformOrTurn() const;
 };
 
 class Trail

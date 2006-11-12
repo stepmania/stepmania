@@ -769,6 +769,9 @@ void ScreenEdit::Init()
 
 ScreenEdit::~ScreenEdit()
 {
+	// UGLY: Don't delete the Song's steps.
+	m_songLastSave.DetachSteps();
+
 	LOG->Trace( "ScreenEdit::~ScreenEdit()" );
 	m_soundMusic.StopPlaying();
 }
@@ -2577,6 +2580,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM == SM_SaveSuccessful )
 	{
 		LOG->Trace( "Save successful." );
+		m_pSteps->SetSavedToDisk( true );
 		CopyToLastSave();
 		SetDirty( false );
 
@@ -2598,24 +2602,17 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		// IMPORTANT: CopyFromLastSave before deleting the Steps below
 		CopyFromLastSave();
 
-		// We have to scroll through the entire Steps array because the user
-		// may have changed to a different stepchart after starting the edit.
-		vector<Steps*> vStepsToDelete;
-		for( vector<Steps*>::const_iterator it = GAMESTATE->m_pCurSong->GetAllSteps().begin();
-			it != GAMESTATE->m_pCurSong->GetAllSteps().end(); ++it )
+		// If these steps have never been saved, then we should delete them.
+		// If the user created them in the edit menu and never bothered
+		// to save them, then they aren't wanted.
+		Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
+		if( !pSteps->GetSavedToDisk() )
 		{
-			Steps *pSteps = *it;
-			if( !pSteps->GetSavedToDisk() && !pSteps->IsAutogen() )
-			{
-				vStepsToDelete.push_back( pSteps );
-				if( pSteps == GAMESTATE->m_pCurSteps[PLAYER_1] )
-					GAMESTATE->m_pCurSteps[PLAYER_1].Set( NULL );
-				if( pSteps == m_pSteps )
-					m_pSteps = NULL;
-			}
- 		}
-		FOREACH( Steps*, vStepsToDelete, pSteps )
-			GAMESTATE->m_pCurSong->DeleteSteps( *pSteps );
+			Song* pSong = GAMESTATE->m_pCurSong;
+			pSong->DeleteSteps( pSteps );
+			m_pSteps = NULL;
+			GAMESTATE->m_pCurSteps[PLAYER_1].Set( NULL );
+		}
 
 		m_Out.StartTransitioning( SM_GoToNextScreen );
 	}
@@ -3432,23 +3429,16 @@ void ScreenEdit::SetupCourseAttacks()
 
 void ScreenEdit::CopyToLastSave()
 {
-	m_SongLastSave.DeepCopy( *GAMESTATE->m_pCurSong );
+	m_songLastSave = *GAMESTATE->m_pCurSong;
+	if( GAMESTATE->m_pCurSteps[PLAYER_1] )
+		m_stepsLastSave = *GAMESTATE->m_pCurSteps[PLAYER_1];
 }
 
 void ScreenEdit::CopyFromLastSave()
 {
-	// We have to make sure the new m_pCurSteps pointer points to the correct Steps 
-	// object.  The Song copy destroys all of the old pointers.
-	StepsID id;
- 	if( GAMESTATE->m_pCurSteps[PLAYER_1] )
-		id.FromSteps( GAMESTATE->m_pCurSteps[PLAYER_1] );
-
-	GAMESTATE->m_pCurSong->DeepCopy( m_SongLastSave );
-
-	if( id.IsValid() ) {
-		GAMESTATE->m_pCurSteps[PLAYER_1].Set( id.ToSteps( GAMESTATE->m_pCurSong, false ) );
-		m_pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
-	}
+	*GAMESTATE->m_pCurSong = m_songLastSave;
+	if( GAMESTATE->m_pCurSteps[PLAYER_1] )
+		*GAMESTATE->m_pCurSteps[PLAYER_1] = m_stepsLastSave;
 }
 
 void ScreenEdit::RevertFromDisk()
@@ -3458,25 +3448,14 @@ void ScreenEdit::RevertFromDisk()
 		id.FromSteps( GAMESTATE->m_pCurSteps[PLAYER_1] );
 
 	RString sSongDir = GAMESTATE->m_pCurSong->GetSongDir();
-	GAMESTATE->m_pCurSong->ReloadFromSongDir( sSongDir );
+	GAMESTATE->m_pCurSong->LoadFromSongDir( sSongDir );
 
 	if( id.IsValid() )
-	{
-		Steps *pChosenSteps = id.ToSteps( GAMESTATE->m_pCurSong, true );
-		if( pChosenSteps == NULL )
-		{
-			// This can happen in a couple ways.  For example, the user might be editting a new
-			// stepchart and revert from disk.
-			pChosenSteps = new Steps();
-			pChosenSteps->CreateBlank( id.GetStepsType() );
-			pChosenSteps->SetDifficultyAndDescription( id.GetDifficulty(), id.GetDescription() );
-			GAMESTATE->m_pCurSong->AddSteps( pChosenSteps );
-		}
-		GAMESTATE->m_pCurSteps[PLAYER_1].Set( pChosenSteps );
-		m_pSteps = pChosenSteps;
-	}
+		GAMESTATE->m_pCurSteps[PLAYER_1].Set( id.ToSteps( GAMESTATE->m_pCurSong, false ) );
 
-	CopyToLastSave();
+	m_songLastSave = *GAMESTATE->m_pCurSong;
+	if( GAMESTATE->m_pCurSteps[PLAYER_1] )
+		m_stepsLastSave = *GAMESTATE->m_pCurSteps[PLAYER_1];
 
 	SetDirty(false);
 }

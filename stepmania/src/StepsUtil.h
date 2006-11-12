@@ -69,7 +69,6 @@ namespace StepsUtil
 
 class StepsID
 {
-private:
 	StepsType st;
 	Difficulty dc;
 	RString sDescription;
@@ -90,15 +89,6 @@ public:
 	static void ClearCache();
 	
 	StepsType GetStepsType() const { return st; }
-	Difficulty GetDifficulty() const { return dc; }
-	RString GetDescription() const { return sDescription; }
-
-	bool operator==( const StepsID &other ) const
-	{
-#define X(x) (x == other.x)
-		return X(st) && X(dc) && X(sDescription) && X(uHash);
-#undef X
-	}
 };
 
 #endif

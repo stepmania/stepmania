@@ -21,28 +21,13 @@ bool TrailEntry::operator== ( const TrailEntry &rhs ) const
 #define EQUAL(a) (a==rhs.a)
 	return 
 		EQUAL(pSong) &&
-		EQUAL(m_StepsID) &&
+		EQUAL(pSteps) &&
 		EQUAL(Modifiers) &&
 		EQUAL(Attacks) &&
 		EQUAL(bSecret) &&
 		EQUAL(iLowMeter) &&
 		EQUAL(iHighMeter) &&
 		EQUAL(dc);
-}
-
-Steps *TrailEntry::GetSteps() const
-{
-	// TODO:  There are a few bugs with the way we do trails right now.
-	//   - If a steps (or an entire song) is deleted, possibly through the editor,
-	//     this section will fail.
-	//   - If the editor changes a stepchart's stats, that should also be reflected
-	//     in the trail.
-	return m_StepsID.ToSteps( pSong, false );
-}
-
-void TrailEntry::SetSteps(Steps *steps)
-{
-	m_StepsID.FromSteps( steps );
 }
 
 bool TrailEntry::ContainsTransformOrTurn() const
@@ -83,7 +68,7 @@ const RadarValues &Trail::GetRadarValues() const
 
 		FOREACH_CONST( TrailEntry, m_vEntries, e )
 		{
-			const Steps *pSteps = e->GetSteps();
+			const Steps *pSteps = e->pSteps;
 			ASSERT( pSteps );
 			/* Hack: don't calculate for autogen entries; it makes writing Catalog.xml
 			 * take way too long.  (Tournamix 4 Sample.crs takes me ~10s.) */
@@ -135,7 +120,7 @@ int Trail::GetTotalMeter() const
 	int iTotalMeter = 0;
 	FOREACH_CONST( TrailEntry, m_vEntries, e )
 	{
-		iTotalMeter += e->GetSteps()->GetMeter();
+		iTotalMeter += e->pSteps->GetMeter();
 	}
 
 	return iTotalMeter;
