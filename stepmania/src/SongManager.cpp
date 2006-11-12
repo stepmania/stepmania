@@ -959,68 +959,6 @@ void CONVERT_STEPS_POINTER( BroadcastOnChangePtr<Steps> &pSteps, const map<Steps
 	if( it != mapOldStepsToStepsID.end() )
 		pSteps.Set( it->second.ToSteps(pSong, bAllowNotesLoss) );
 }
-void SongManager::RevertFromDisk( Song *pSong, bool bAllowNotesLoss )
-{
-	/* Reverting from disk is brittle, and touches a lot of tricky and rarely-
-	 * used code paths.  If it's ever used during a game, log it. */
-	LOG->MapLog( "RevertFromDisk", "Reverted \"%s\" from disk", pSong->GetTranslitMainTitle().c_str() );
-
-	// Ugly:  When we re-load the song, the Steps* will change.
-	// Fix GAMESTATE->m_CurSteps, STATSMAN->m_CurStageStats, STATSMAN->m_vPlayedStageStats[] after reloading.
-	/* XXX: This is very brittle.  However, we must know about all globals uses of Steps*,
-	 * so we can check to make sure we didn't lose any steps which are referenced ... */
-
-
-	//
-	// Save list of all old Steps pointers for the song
-	//
-	map<Steps*,StepsID> mapOldStepsToStepsID;
-	FOREACH_CONST( Steps*, pSong->GetAllSteps(), pSteps )
-	{
-		StepsID id;
-		id.FromSteps( *pSteps );
-		mapOldStepsToStepsID[*pSteps] = id;
-	}
-
-
-	//
-	// Reload the song
-	//
-	const RString dir = pSong->GetSongDir();
-	FILEMAN->FlushDirCache( dir );
-
-	/* Erase existing data and reload. */
-	pSong->Reset();
-	const bool OldVal = PREFSMAN->m_bFastLoad;
-	PREFSMAN->m_bFastLoad.Set( false );
-	pSong->LoadFromSongDir( dir );	
-	/* XXX: reload edits? */
-	PREFSMAN->m_bFastLoad.Set( OldVal );
-
-
-	/* Courses cache Steps pointers.  On the off chance that this isn't the last
-	 * thing this screen does, clear that cache. */
-	/* TODO: Don't make Song depend on SongManager.  This is breaking 
-	 * encapsulation and placing confusing limitation on what can be done in 
-	 * SONGMAN->Invalidate(). -Chris */
-	this->Invalidate( pSong );
-	StepsID::ClearCache();
-
-
-	FOREACH_PlayerNumber( p )
-	{
-		CONVERT_STEPS_POINTER( GAMESTATE->m_pCurSteps[p], mapOldStepsToStepsID, pSong, bAllowNotesLoss );
-
-		FOREACH( Steps*, STATSMAN->m_CurStageStats.m_player[p].vpPlayedSteps, pSteps )
-			CONVERT_STEPS_POINTER( *pSteps, mapOldStepsToStepsID, pSong, bAllowNotesLoss );
-
-		FOREACH( StageStats, STATSMAN->m_vPlayedStageStats, ss )
-			FOREACH( Steps*, ss->m_player[p].vpPlayedSteps, pSteps )
-				CONVERT_STEPS_POINTER( *pSteps, mapOldStepsToStepsID, pSong, bAllowNotesLoss );
-	}
-
-	CONVERT_STEPS_POINTER( GAMESTATE->m_pEditSourceSteps, mapOldStepsToStepsID, pSong, bAllowNotesLoss );
-}
 
 void SongManager::RegenerateNonFixedCourses()
 {

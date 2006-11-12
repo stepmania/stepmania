@@ -34,7 +34,6 @@ public:
 	void Cleanup();
 
 	void Invalidate( Song *pStaleSong );
-	void RevertFromDisk( Song *pSong, bool bAllowNotesLoss=false );
 
 	void RegenerateNonFixedCourses();
 	void SetPreferences();
