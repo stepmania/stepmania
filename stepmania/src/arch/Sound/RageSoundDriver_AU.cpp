@@ -3,6 +3,7 @@
 #include "RageLog.h"
 #include "PrefsManager.h"
 #include "archutils/Darwin/DarwinThreadHelpers.h"
+#include "Foreach.h"
 #include <CoreServices/CoreServices.h>
 
 static const UInt32 kFramesPerPacket = 1;
@@ -13,8 +14,8 @@ static const UInt32 kBytesPerFrame = kBytesPerPacket;
 static const UInt32 kFormatFlags = kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsSignedInteger;
 
 
-RageSound_AU::RageSound_AU() : m_OutputUnit(NULL), m_OutputDevice(NULL), m_iSampleRate(0),
-	m_fLatency(0.0), m_iLastSampleTime(0), m_iOffset(0), m_pIOThread(NULL)
+RageSound_AU::RageSound_AU() : m_OutputUnit(NULL), m_OutputDevice(NULL), m_iSampleRate(0), m_fLatency(0.0f),
+	m_iLastSampleTime(0), m_iOffset(0), m_bDone(false), m_pIOThread(NULL), m_Semaphore("Sound shutdown")
 {
 }
 
@@ -40,7 +41,6 @@ static inline RString FourCCToString( uint32_t num )
 }
 #define WERROR(str, num, extra...) str ": '%s' (%lu).", ## extra, FourCCToString(num).c_str(), (num)
 #define ERROR(str, num, extra...) (ssprintf(WERROR(str, (num), ## extra)))
-
 
 RString RageSound_AU::Init()
 {
@@ -158,7 +158,7 @@ RString RageSound_AU::Init()
 	size = sizeof(latency);
 	error = AudioUnitGetProperty( m_OutputUnit,
 				      kAudioUnitProperty_Latency,
-				      kAudioUnitScope_Output,
+				      kAudioUnitScope_Global,
 				      0,
 				      &latency,
 				      &size );
@@ -166,6 +166,26 @@ RString RageSound_AU::Init()
 		LOG->Warn( WERROR("Could not get latency", error) );
 	LOG->Info( "Latency: %lf", latency );
 	m_fLatency = latency;
+	
+	// Add property listeners.
+	for( AudioUnitPropertyID prop = kAudioUnitProperty_ClassInfo; prop <= kAudioUnitProperty_PresentPreset; ++prop )
+		AddAUPropertyListener( prop );
+	for( AudioUnitPropertyID prop = kAudioOutputUnitProperty_CurrentDevice; prop <= kAudioOutputUnitProperty_HasIO; ++prop )
+		AddAUPropertyListener( prop );
+#define ADD(x) AddADPropertyListener( kAudioDeviceProperty ## x )
+#ifdef DEBUG
+	AddADPropertyListener( kAudioPropertyWildcardPropertyID );
+#else
+	ADD( DeviceIsAlive );
+	ADD( DeviceHasChanged );
+	ADD( DeviceIsRunning );
+	ADD( DeviceIsRunningSomewhere );
+	AddADPropertyListener( kAudioDeviceProcessorOverload );
+	ADD( Streams );
+	ADD( StreamConfiguration );
+	ADD( StreamFormat );
+#endif
+#undef ADD
 	
 	StartDecodeThread();
 	error = AudioOutputUnitStart( m_OutputUnit );
@@ -176,9 +196,8 @@ RString RageSound_AU::Init()
 
 RageSound_AU::~RageSound_AU()
 {
-	AudioOutputUnitStop( m_OutputUnit );
-	AudioUnitUninitialize( m_OutputUnit );
-	CloseComponent( m_OutputUnit );
+	ShutDown();
+	delete m_pIOThread;
 }
 
 int64_t RageSound_AU::GetPosition( const RageSoundBase *sound ) const
@@ -186,6 +205,8 @@ int64_t RageSound_AU::GetPosition( const RageSoundBase *sound ) const
 	AudioTimeStamp time;
 	OSStatus error;
 	
+	if( m_OutputDevice == NULL )
+		return m_iLastSampleTime;
 	if( (error = AudioDeviceGetCurrentTime(m_OutputDevice, &time)) )
 	{
 		if( error != kAudioHardwareNotRunningError )
@@ -203,6 +224,47 @@ void RageSound_AU::SetupDecodingThread()
 	SetThreadPrecedence( 0.75f );
 }
 
+void RageSound_AU::ShutDown()
+{
+	if( !m_OutputUnit )
+		return;
+	FOREACH_CONST( AudioUnitPropertyID, m_vAUProperties, prop )
+		AudioUnitRemovePropertyListener( m_OutputUnit, *prop, PropertyChanged );
+	FOREACH_CONST( AudioDevicePropertyID, m_vADProperties, prop )
+		AudioDeviceRemovePropertyListener( m_OutputDevice, 0, false, *prop, DevicePropertyChanged );
+	m_bDone = true;
+	m_Semaphore.Wait();
+	m_vADProperties.clear();
+	m_vAUProperties.clear();
+	AudioUnitUninitialize( m_OutputUnit );
+	CloseComponent( m_OutputUnit );
+	m_OutputUnit = NULL;
+	m_OutputDevice = NULL;
+	m_iSampleRate = 0;
+}
+
+void RageSound_AU::AddAUPropertyListener( AudioUnitPropertyID prop )
+{
+	ComponentResult result = AudioUnitAddPropertyListener( m_OutputUnit, prop, PropertyChanged, this );
+
+	if( result )
+		LOG->Warn( "Failed to add property listener for property %d.", int(prop) );
+	else
+		m_vAUProperties.push_back( prop );
+}
+
+void RageSound_AU::AddADPropertyListener( AudioDevicePropertyID prop )
+{
+	OSStatus error = AudioDeviceAddPropertyListener( m_OutputDevice, kAudioPropertyWildcardChannel, false,
+							 prop, DevicePropertyChanged, this );
+	
+	if( error )
+		LOG->Warn( WERROR("Failed to add device property listener for property %s",
+				  error, FourCCToString(prop).c_str()) );
+	else
+		m_vADProperties.push_back( prop );
+}
+
 OSStatus RageSound_AU::Render( void *inRefCon,
 			       AudioUnitRenderActionFlags *ioActionFlags,
 			       const AudioTimeStamp *inTimeStamp,
@@ -211,21 +273,135 @@ OSStatus RageSound_AU::Render( void *inRefCon,
 			       AudioBufferList *ioData )
 {
 	RageSound_AU *This = (RageSound_AU *)inRefCon;
-	AudioTimeStamp time;
-	
-	time.mFlags = inTimeStamp->mFlags & ~kAudioTimeStampHostTimeValid;
-	
-	AudioDeviceTranslateTime( This->m_OutputDevice, inTimeStamp, &time );
-	//ASSERT( time.mFlags & kAudioTimeStampHostTimeValid );
-	
+
 	if( unlikely(This->m_pIOThread == NULL) )
 		This->m_pIOThread = new RageThreadRegister( "HAL I/O thread" );
 	AudioBuffer &buf = ioData->mBuffers[0];
-	//int64_t decodePos = int64_t( time.mSampleTime ) + This->m_iOffset;
 	int64_t decodePos = int64_t( inTimeStamp->mSampleTime ) + This->m_iOffset;
 	
 	This->Mix( (int16_t *)buf.mData, inNumberFrames, decodePos, This->GetPosition(NULL) );
+	if( unlikely(This->m_bDone) )
+	{
+		AudioOutputUnitStop( This->m_OutputUnit );
+		This->m_Semaphore.Post();
+	}	
 	return noErr;
+}
+
+void RageSound_AU::PropertyChanged( void *inRefCon,
+				    AudioUnit au,
+				    AudioUnitPropertyID inID,
+				    AudioUnitScope inScope,
+				    AudioUnitElement inElement )
+{
+	RageSound_AU *This = (RageSound_AU *)inRefCon;
+	OSStatus error;
+	UInt32 running;
+	UInt32 size = sizeof( running );
+	AudioTimeStamp time;
+
+	ASSERT( au == This->m_OutputUnit );
+	
+	switch( inID )
+	{
+	case kAudioOutputUnitProperty_CurrentDevice:
+	{
+		LOG->Info( "Audio device changed!" );
+		This->ShutDown();
+		RString result = This->Init();
+		ASSERT_M( result.empty(), result );
+		return;
+	}
+	case kAudioOutputUnitProperty_IsRunning:
+		if( (error = AudioUnitGetProperty(au, inID, inScope, inElement, &running, &size)) )
+			FAIL_M( ERROR("Couldn't get running property", error) );
+		LOG->Trace( "Audio device %s running.", running ? "started" : "stopped" );
+		if( !running )
+			return;
+		// Fall through.
+	case kAudioUnitProperty_StreamFormat:
+		if( inScope != kAudioUnitScope_Output )
+			return;
+		if( (error = AudioDeviceGetCurrentTime(This->m_OutputDevice, &time)) )
+		{
+			if( error != kAudioHardwareNotRunningError )
+				FAIL_M( ERROR("Couldn't get the current time", error) );
+			LOG->Trace( "Old offset %lld, last sample time %lld.",
+				    This->m_iOffset, This->m_iLastSampleTime );
+			This->m_iOffset = This->m_iLastSampleTime;
+		}
+		else
+		{
+			LOG->Trace( "Old offset %lld, last sample time %lld, current sample time %lld, new offset %lld.",
+				    This->m_iOffset, This->m_iLastSampleTime, int64_t(time.mSampleTime), This->m_iLastSampleTime - int64_t(time.mSampleTime) );
+			This->m_iOffset = This->m_iLastSampleTime - int64_t( time.mSampleTime );
+		}
+		//return;
+	}
+	
+	const char *scope;
+	switch( inScope )
+	{
+	case kAudioUnitScope_Global:	scope = "global";	break;
+	case kAudioUnitScope_Input:	scope = "input";	break;
+	case kAudioUnitScope_Output:	scope = "output";	break;
+	case kAudioUnitScope_Group:	scope = "group";	break;
+	case kAudioUnitScope_Part:	scope = "part";		break;
+	DEFAULT_FAIL( int(inScope) );
+	}	
+	
+	LOG->Trace( "PropertyChanged: id = %d, scope = %s, element %d.", int(inID), scope, int(inElement) );
+}
+
+OSStatus RageSound_AU::DevicePropertyChanged( AudioDeviceID inDevice,
+					      UInt32 inChannel,
+					      Boolean isInput,
+					      AudioDevicePropertyID inID,
+					      void *inRefCon )
+{
+	RageSound_AU *This = (RageSound_AU *)inRefCon;
+	UInt32 value;
+	UInt32 size = sizeof(value);
+	bool somewhere = true;
+	OSStatus error;
+	
+	switch( inID )
+	{
+	case kAudioDevicePropertyDeviceIsAlive:
+		LOG->Warn( "Audio device died." );
+		This->m_OutputDevice = NULL; // The AudioDeviceID is now invalid.
+		This->m_vADProperties.clear();
+		break;
+	case kAudioDevicePropertyDeviceHasChanged:
+		// Hopefully this will be handled sanely by the AudioUnit.
+		LOG->Trace( "Audio device has changed in some way." );
+		break;
+	case kAudioDevicePropertyDeviceIsRunning:
+		somewhere = false;
+		// fall through.
+	case kAudioDevicePropertyDeviceIsRunningSomewhere:
+		if( (error = AudioDeviceGetProperty(inDevice, inChannel, isInput, inID, &size, &value)) )
+			FAIL_M( ERROR("AudioDeviceGetProperty('%s') failed", error, FourCCToString(inID).c_str()) );
+		LOG->Trace( "Audio device has %s running%s.", value ? "started" : "stopped", somewhere ? " somewhere" : "" );
+		break;
+	case kAudioDeviceProcessorOverload:
+		LOG->Trace( "Audio overload." ); // This is being called on the real time thread. hmm.
+		return 0; // Do nothing else.
+	case kAudioDevicePropertyStreams:
+		// Hopefully this will be handled sanely by the AudioUnit.
+		LOG->Trace( "Audio device's streams have changed." );
+		break;
+	case kAudioDevicePropertyStreamConfiguration:
+		// Hopefully this will be handled sanely by the AudioUnit.
+		LOG->Trace( "Audio device's stream configuration has changed." );
+		break;
+	case kAudioDevicePropertyStreamFormat:
+		// Hopefully this will be handled sanely by the AudioUnit.
+		LOG->Trace( "Audio device's stream format has changed." );
+		break;
+	}
+	LOG->Trace( "Audio device property '%s' changed.", FourCCToString(inID).c_str() );
+	return 0;
 }
 
 

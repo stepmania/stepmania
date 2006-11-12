@@ -19,19 +19,36 @@ protected:
 	void SetupDecodingThread();
 	
 private:
+	void ShutDown();
+	void AddAUPropertyListener( AudioUnitPropertyID prop );
+	void AddADPropertyListener( AudioDevicePropertyID prop );
 	static OSStatus Render( void *inRefCon,
 				AudioUnitRenderActionFlags *ioActionFlags,
 				const AudioTimeStamp *inTimeStamp,
 				UInt32 inBusNumber,
 				UInt32 inNumberFrames,
 				AudioBufferList *ioData );
+	static void PropertyChanged( void *inRefCon,
+				     AudioUnit au,
+				     AudioUnitPropertyID inID,
+				     AudioUnitScope inScope,
+				     AudioUnitElement inElement );
+	static OSStatus DevicePropertyChanged( AudioDeviceID inDevice,
+					       UInt32 inChannel,
+					       Boolean isInput,
+					       AudioDevicePropertyID inID,
+					       void *inRefCon );
 	AudioUnit m_OutputUnit;
 	AudioDeviceID m_OutputDevice;
 	int m_iSampleRate;
 	float m_fLatency;
 	mutable int64_t m_iLastSampleTime;
 	int64_t m_iOffset;
+	vector<AudioUnitPropertyID> m_vAUProperties;
+	vector<AudioDevicePropertyID> m_vADProperties;
+	bool m_bDone;
 	RageThreadRegister *m_pIOThread;
+	RageSemaphore m_Semaphore;
 };
 
 #define USE_RAGE_SOUND_AU
