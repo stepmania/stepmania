@@ -770,7 +770,7 @@ void ScreenEdit::Init()
 ScreenEdit::~ScreenEdit()
 {
 	// UGLY: Don't delete the Song's steps.
-	m_songLastSave.DetachSteps();
+	m_SongLastSave.DetachSteps();
 
 	LOG->Trace( "ScreenEdit::~ScreenEdit()" );
 	m_soundMusic.StopPlaying();
@@ -1442,7 +1442,6 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );
 			m_pSteps = pSteps;
 			pSteps->GetNoteData( m_NoteDataEdit );
-			CopyToLastSave();
 
 			RString s = ssprintf(
 				SWITCHED_TO.GetValue() + " %s %s '%s' (%d of %d)",
@@ -3430,16 +3429,31 @@ void ScreenEdit::SetupCourseAttacks()
 
 void ScreenEdit::CopyToLastSave()
 {
-	m_songLastSave = *GAMESTATE->m_pCurSong;
-	if( GAMESTATE->m_pCurSteps[PLAYER_1] )
-		m_stepsLastSave = *GAMESTATE->m_pCurSteps[PLAYER_1];
+	ASSERT( GAMESTATE->m_pCurSong );
+	ASSERT( GAMESTATE->m_pCurSteps[PLAYER_1] );
+	m_SongLastSave = *GAMESTATE->m_pCurSong;
+	m_mStepsLastSave.clear();
+	const vector<Steps*> &vSteps = GAMESTATE->m_pCurSong->GetStepsByStepsType( GAMESTATE->m_pCurSteps[PLAYER_1]->m_StepsType );
+	for( vector<Steps*>::const_iterator it = vSteps.begin(); it != vSteps.end(); ++it )
+	{
+		m_mStepsLastSave[(*it)->GetDifficulty()] = **it;
+	}
 }
 
 void ScreenEdit::CopyFromLastSave()
 {
-	*GAMESTATE->m_pCurSong = m_songLastSave;
-	if( GAMESTATE->m_pCurSteps[PLAYER_1] )
-		*GAMESTATE->m_pCurSteps[PLAYER_1] = m_stepsLastSave;
+	// We are assuming two things here:
+	// 1) No steps can be created by ScreenEdit
+	// 2) No steps can be deleted by ScreenEdit (except possibly when we exit)
+	*GAMESTATE->m_pCurSong = m_SongLastSave;
+	const vector<Steps*> &vSteps = GAMESTATE->m_pCurSong->GetStepsByStepsType( GAMESTATE->m_pCurSteps[PLAYER_1]->m_StepsType );
+	ASSERT( vSteps.size() == m_mStepsLastSave.size() );
+	for( vector<Steps*>::const_iterator it = vSteps.begin(); it != vSteps.end(); ++it )
+	{
+		map< Difficulty, Steps >::const_iterator itOldSteps = m_mStepsLastSave.find( (*it)->GetDifficulty() );
+		ASSERT( itOldSteps != m_mStepsLastSave.end() );
+		**it = itOldSteps->second;
+	}
 }
 
 void ScreenEdit::RevertFromDisk()
@@ -3457,9 +3471,7 @@ void ScreenEdit::RevertFromDisk()
 	if( id.IsValid() )
 		GAMESTATE->m_pCurSteps[PLAYER_1].Set( id.ToSteps( GAMESTATE->m_pCurSong, false ) );
 
-	m_songLastSave = *GAMESTATE->m_pCurSong;
-	if( GAMESTATE->m_pCurSteps[PLAYER_1] )
-		m_stepsLastSave = *GAMESTATE->m_pCurSteps[PLAYER_1];
+	CopyToLastSave();
 
 	SetDirty(false);
 }

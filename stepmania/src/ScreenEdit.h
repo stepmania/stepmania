@@ -17,6 +17,8 @@
 #include "PlayerState.h"
 #include "MenuInput.h"
 
+#include <map>
+
 const int NUM_EDIT_BUTTON_COLUMNS = 10;
 struct MenuDef;
 
@@ -253,8 +255,8 @@ protected:
 	void CopyFromLastSave();
 	void RevertFromDisk();
 
-	Song m_songLastSave;
-	Steps m_stepsLastSave;
+	Song m_SongLastSave;
+	map< Difficulty, Steps > m_mStepsLastSave;
 
 
 // for MODE_RECORD
