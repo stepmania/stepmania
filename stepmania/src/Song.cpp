@@ -1077,6 +1077,8 @@ void Song::AddSteps( Steps* pSteps )
 
 void Song::DeleteSteps( const Steps* pSteps, bool bReAutoGen )
 {
+	ASSERT( !pSteps->IsAutogen() );
+
 	// Avoid any stale Note::parent pointers by removing all AutoGen'd Steps,
 	// then adding them again.
 
