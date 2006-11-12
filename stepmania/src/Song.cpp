@@ -283,6 +283,70 @@ bool Song::LoadFromSongDir( RString sDir )
 	return true;	// do load this song
 }
 
+bool Song::ReloadFromSongDir( RString sDir )
+{
+	RemoveAutoGenNotes();
+	vector<Steps*> vOldSteps = m_vpSteps;
+
+	Song copy;
+	if( !copy.LoadFromSongDir( sDir ) )
+		return false;
+	copy.RemoveAutoGenNotes();
+	*this = copy;
+
+	// First we assemble a map to let us easily find the new steps
+	map<StepsID, Steps*> mNewSteps;
+	for( vector<Steps*>::const_iterator it = m_vpSteps.begin(); it != m_vpSteps.end(); ++it )
+	{
+		StepsID id;
+		id.FromSteps( *it );
+		mNewSteps[id] = *it;
+	}
+
+	// Now we wipe out the new pointers, which were shallow copied and not deep copied...
+	m_vpSteps.clear();
+	FOREACH_StepsType( i )
+		m_vpStepsByType[i].clear();
+
+	// Then we copy as many Steps as possible on top of the old pointers.
+	// The only pointers that change are pointers to Steps that are not in the
+	// reverted file, which we delete, and pointers to Steps that are in the
+	// reverted file but not the original *this, which we create new copies of.
+	// We have to go through these hoops because many places assume the Steps
+	// pointers don't change - even though there are other ways they can change,
+	// such as deleting a Steps via the editor.
+	for( vector<Steps*>::const_iterator itOld = vOldSteps.begin(); itOld != vOldSteps.end(); ++itOld )
+	{
+		StepsID id;
+		id.FromSteps( *itOld );
+		map<StepsID, Steps*>::iterator itNew = mNewSteps.find( id );
+		if( itNew == mNewSteps.end() )
+		{
+			// This stepchart didn't exist in the file we reverted from
+			delete *itOld;
+			// TODO: We should move the cache from StepsUtil to Song
+			StepsID::ClearCache();
+		}
+		else
+		{
+			Steps *OldSteps = *itOld;
+			*OldSteps = *(itNew->second);
+			AddSteps( OldSteps );
+			mNewSteps.erase( itNew );
+		}
+	}
+	// The leftovers in the map are steps that didn't exist before we reverted
+	for( map<StepsID, Steps*>::const_iterator it = mNewSteps.begin(); it != mNewSteps.end(); ++it )
+	{
+		Steps *NewSteps = new Steps();
+		*NewSteps = *(it->second);
+		AddSteps( NewSteps );
+	}
+
+	AddAutoGenNotes();
+	return true;
+}
+
 static void GetImageDirListing( RString sPath, vector<RString> &AddTo, bool bReturnPathToo=false )
 {
 	GetDirListing( sPath + ".png", AddTo, false, bReturnPathToo ); 
@@ -1091,7 +1155,7 @@ void Song::DeleteSteps( const Steps* pSteps, bool bReAutoGen )
 	{
 		if( vpSteps[j] == pSteps )
 		{
-//			delete vpSteps[j]; // delete below
+			//delete vpSteps[j]; // delete below
 			vpSteps.erase( vpSteps.begin()+j );
 			break;
 		}
@@ -1103,6 +1167,8 @@ void Song::DeleteSteps( const Steps* pSteps, bool bReAutoGen )
 		{
 			delete m_vpSteps[j];
 			m_vpSteps.erase( m_vpSteps.begin()+j );
+			// TODO: We should move the cache from StepsUtil to Song
+			StepsID::ClearCache();
 			break;
 		}
 	}

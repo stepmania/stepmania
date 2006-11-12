@@ -89,6 +89,7 @@ public:
 	static void ClearCache();
 	
 	StepsType GetStepsType() const { return st; }
+	Difficulty GetDifficulty() const { return dc; }
 };
 
 #endif

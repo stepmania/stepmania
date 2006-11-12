@@ -3458,21 +3458,29 @@ void ScreenEdit::CopyFromLastSave()
 
 void ScreenEdit::RevertFromDisk()
 {
+	ASSERT( GAMESTATE->m_pCurSteps[PLAYER_1] );
 	StepsID id;
-	if( GAMESTATE->m_pCurSteps[PLAYER_1] )
-		id.FromSteps( GAMESTATE->m_pCurSteps[PLAYER_1] );
+	id.FromSteps( GAMESTATE->m_pCurSteps[PLAYER_1] );
+	ASSERT( id.IsValid() );
 
-	RString sSongDir = GAMESTATE->m_pCurSong->GetSongDir();
-	Song s;
-	s.LoadFromSongDir( sSongDir );
-	*GAMESTATE->m_pCurSong = s;
-	s.DetachSteps();
+	GAMESTATE->m_pCurSong->ReloadFromSongDir( GAMESTATE->m_pCurSong->GetSongDir() );
 
-	if( id.IsValid() )
-		GAMESTATE->m_pCurSteps[PLAYER_1].Set( id.ToSteps( GAMESTATE->m_pCurSong, false ) );
+	Steps *pNewSteps = id.ToSteps( GAMESTATE->m_pCurSong, true );
+	if( !pNewSteps )
+	{
+		// If the Steps we were currently editing vanished when we did the revert,
+		// put a blank Steps in its place.  Note that this does not have to be the
+		// work of someone maliciously changing the simfile; it could happen to 
+		// someone editing a new stepchart and reverting from disk, for example.
+		pNewSteps = new Steps();
+		pNewSteps->CreateBlank( id.GetStepsType() );
+		pNewSteps->SetDifficulty( id.GetDifficulty() );
+		GAMESTATE->m_pCurSong->AddSteps( pNewSteps );
+	}
+	GAMESTATE->m_pCurSteps[PLAYER_1].Set( pNewSteps );
+	m_pSteps = pNewSteps;
 
 	CopyToLastSave();
-
 	SetDirty(false);
 }
 

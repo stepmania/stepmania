@@ -58,7 +58,10 @@ public:
 	void Reset();
 	void DetachSteps();
 
+	// This one assumes the song is currently empty
 	bool LoadFromSongDir( RString sDir );
+	// This one takes the effort to reuse Steps pointers as best as it can
+	bool ReloadFromSongDir( RString sDir );
 
 	void TidyUpData();	// call after loading to clean up invalid data
 	void ReCalculateRadarValuesAndLastBeat();	// called by TidyUpData, and after saving
