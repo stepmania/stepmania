@@ -42,8 +42,8 @@ public:
 
 	void SetFilename( RString fn )			{ m_sFilename = fn; }
 	RString GetFilename() const			{ return m_sFilename; }
-	void SetSavedToDisk( bool b )			{ m_bSavedToDisk = b; }
-	bool GetSavedToDisk() const			{ return m_bSavedToDisk; }
+	void SetSavedToDisk( bool b )			{ DeAutogen(); m_bSavedToDisk = b; }
+	bool GetSavedToDisk() const			{ return Real()->m_bSavedToDisk; }
 	void SetDifficulty( Difficulty dc )		{ SetDifficultyAndDescription( dc, GetDescription() ); }
 	void SetDescription( RString sDescription ) 	{ SetDifficultyAndDescription( this->GetDifficulty(), sDescription ); }
 	void SetDifficultyAndDescription( Difficulty dc, RString sDescription );
