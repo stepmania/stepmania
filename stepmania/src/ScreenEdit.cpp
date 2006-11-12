@@ -1442,6 +1442,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );
 			m_pSteps = pSteps;
 			pSteps->GetNoteData( m_NoteDataEdit );
+			CopyToLastSave();
 
 			RString s = ssprintf(
 				SWITCHED_TO.GetValue() + " %s %s '%s' (%d of %d)",
