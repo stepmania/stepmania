@@ -12,7 +12,7 @@
 MessageManager*	MESSAGEMAN = NULL;	// global and accessable from anywhere in our program
 
 
-static const char *MessageNames[] = {
+static const char *MessageIDNames[] = {
 	"CurrentGameChanged",
 	"CurrentStyleChanged",
 	"PlayModeChanged",
@@ -134,7 +134,7 @@ static const char *MessageNames[] = {
 	"ShowHoldJudgmentMuliPlayerP32",
 	"SongModified",
 };
-XToString( Message );
+XToString( MessageID );
 
 static RageMutex g_Mutex( "MessageManager" );
 
@@ -171,7 +171,7 @@ void MessageManager::Subscribe( IMessageSubscriber* pSubscriber, const RString& 
 	subs.insert( pSubscriber );
 }
 
-void MessageManager::Subscribe( IMessageSubscriber* pSubscriber, Message m )
+void MessageManager::Subscribe( IMessageSubscriber* pSubscriber, MessageID m )
 {
 	Subscribe( pSubscriber, MessageToString(m) );
 }
@@ -186,7 +186,7 @@ void MessageManager::Unsubscribe( IMessageSubscriber* pSubscriber, const RString
 	subs.erase( iter );
 }
 
-void MessageManager::Unsubscribe( IMessageSubscriber* pSubscriber, Message m )
+void MessageManager::Unsubscribe( IMessageSubscriber* pSubscriber, MessageID m )
 {
 	Unsubscribe( pSubscriber, MessageToString(m) );
 }
@@ -208,7 +208,7 @@ void MessageManager::Broadcast( const RString& sMessage ) const
 	}
 }
 
-void MessageManager::Broadcast( Message m ) const
+void MessageManager::Broadcast( MessageID m ) const
 {
 	Broadcast( MessageToString(m) );
 }
@@ -274,7 +274,7 @@ void MessageSubscriber::SubscribeToMessage( const RString &sMessageName )
 	m_vsSubscribedTo.push_back( sMessageName );
 }
 
-void MessageSubscriber::SubscribeToMessage( Message message )
+void MessageSubscriber::SubscribeToMessage( MessageID message )
 {
 	MESSAGEMAN->Subscribe( this, message );
 	m_vsSubscribedTo.push_back( MessageToString(message) );

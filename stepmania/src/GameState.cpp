@@ -297,7 +297,7 @@ void GameState::Reset()
 void GameState::JoinPlayer( PlayerNumber pn )
 {
 	m_bSideIsJoined[pn] = true;
-	MESSAGEMAN->Broadcast( (Message)(Message_SideJoinedP1+pn) );
+	MESSAGEMAN->Broadcast( (MessageID)(Message_SideJoinedP1+pn) );
 
 	if( m_MasterPlayerNumber == PLAYER_INVALID )
 		m_MasterPlayerNumber = pn;
@@ -599,7 +599,7 @@ void GameState::Update( float fDelta )
 		if( !m_bGoalComplete[p] && IsGoalComplete(p) )
 		{
 			m_bGoalComplete[p] = true;
-			MESSAGEMAN->Broadcast( (Message)(Message_GoalCompleteP1+p) );
+			MESSAGEMAN->Broadcast( (MessageID)(Message_GoalCompleteP1+p) );
 		}
 	}
 }
@@ -1839,7 +1839,7 @@ public:
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
 		if( lua_isnil(L,2) )	{ p->m_pCurSteps[pn].Set( NULL ); }
 		else					{ Steps *pS = Luna<Steps>::check(L,2); p->m_pCurSteps[pn].Set( pS ); }
-		MESSAGEMAN->Broadcast( (Message)(Message_CurrentStepsP1Changed+pn) );
+		MESSAGEMAN->Broadcast( (MessageID)(Message_CurrentStepsP1Changed+pn) );
 		return 0;
 	}
 	static int GetCurrentCourse( T* p, lua_State *L )		{ if(p->m_pCurCourse) p->m_pCurCourse->PushSelf(L); else lua_pushnil(L); return 1; }
@@ -1862,7 +1862,7 @@ public:
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
 		if( lua_isnil(L,2) )	{ p->m_pCurTrail[pn].Set( NULL ); }
 		else					{ Trail *pS = Luna<Trail>::check(L,2); p->m_pCurTrail[pn].Set( pS ); }
-		MESSAGEMAN->Broadcast( (Message)(Message_CurrentTrailP1Changed+pn) );
+		MESSAGEMAN->Broadcast( (MessageID)(Message_CurrentTrailP1Changed+pn) );
 		return 0;
 	}
 	static int GetPreferredSong( T* p, lua_State *L )		{ if(p->m_pPreferredSong) p->m_pPreferredSong->PushSelf(L); else lua_pushnil(L); return 1; }

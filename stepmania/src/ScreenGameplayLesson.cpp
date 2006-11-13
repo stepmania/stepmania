@@ -116,7 +116,7 @@ void ScreenGameplayLesson::HandleScreenMessage( const ScreenMessage SM )
 				ResetAndRestartCurrentSong();
 
 				m_Try = (Try)(m_Try+1);
-				MESSAGEMAN->Broadcast( (Message)(Message_LessonTry1+m_Try) );
+				MESSAGEMAN->Broadcast( (MessageID)(Message_LessonTry1+m_Try) );
 			}
 			else
 			{
@@ -165,7 +165,7 @@ void ScreenGameplayLesson::ChangeLessonPage( int iDir )
 
 		ResetAndRestartCurrentSong();
 
-		MESSAGEMAN->Broadcast( (Message)(Message_LessonTry1+m_Try) );
+		MESSAGEMAN->Broadcast( (MessageID)(Message_LessonTry1+m_Try) );
 
 		// Change back to the current autoplay setting (in most cases, human controlled).
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )

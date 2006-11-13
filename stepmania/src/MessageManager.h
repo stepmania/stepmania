@@ -6,7 +6,7 @@
 #include "LuaManager.h"
 struct lua_State;
 
-enum Message
+enum MessageID
 {
 	Message_CurrentGameChanged,
 	Message_CurrentStyleChanged,
@@ -128,11 +128,11 @@ enum Message
 	Message_ShowHoldJudgmentMuliPlayerP31,
 	Message_ShowHoldJudgmentMuliPlayerP32,
 	Message_SongModified,
-	NUM_Message,	// leave this at the end
-	Message_Invalid
+	NUM_MessageID,	// leave this at the end
+	MessageID_Invalid
 };
-const RString& MessageToString( Message m );
-
+const RString& MessageIDToString( MessageID m );
+#define MessageToString MessageIDToString
 
 class IMessageSubscriber
 {
@@ -158,7 +158,7 @@ public:
 	//
 	// Messages
 	//
-	void SubscribeToMessage( Message message ); // will automatically unsubscribe
+	void SubscribeToMessage( MessageID message ); // will automatically unsubscribe
 	void SubscribeToMessage( const RString &sMessageName ); // will automatically unsubscribe
 
 	void UnsubscribeAll();
@@ -175,11 +175,11 @@ public:
 	~MessageManager();
 
 	void Subscribe( IMessageSubscriber* pSubscriber, const RString& sMessage );
-	void Subscribe( IMessageSubscriber* pSubscriber, Message m );
+	void Subscribe( IMessageSubscriber* pSubscriber, MessageID m );
 	void Unsubscribe( IMessageSubscriber* pSubscriber, const RString& sMessage );
-	void Unsubscribe( IMessageSubscriber* pSubscriber, Message m );
+	void Unsubscribe( IMessageSubscriber* pSubscriber, MessageID m );
 	void Broadcast( const RString& sMessage ) const;
-	void Broadcast( Message m ) const;
+	void Broadcast( MessageID m ) const;
 
 	// Lua
 	void PushSelf( lua_State *L );
@@ -191,11 +191,11 @@ template<class T>
 class BroadcastOnChange
 {
 private:
-	Message mSendWhenChanged;
+	MessageID mSendWhenChanged;
 	T val;
 
 public:
-	explicit BroadcastOnChange( Message m ) { mSendWhenChanged = m; }
+	explicit BroadcastOnChange( MessageID m ) { mSendWhenChanged = m; }
 	const T Get() const { return val; }
 	void Set( T t ) { val = t; MESSAGEMAN->Broadcast( MessageToString(mSendWhenChanged) ); }
 	operator T () const { return val; }
@@ -212,10 +212,10 @@ private:
 	typedef BroadcastOnChange<T> MyType;
 	vector<MyType> val;
 public:
-	explicit BroadcastOnChange1D( Message m )
+	explicit BroadcastOnChange1D( MessageID m )
 	{
 		for( unsigned i=0; i<N; i++ )
-			val.push_back( BroadcastOnChange<T>((Message)(m+i)) );
+			val.push_back( BroadcastOnChange<T>((MessageID)(m+i)) );
 	}
 	const BroadcastOnChange<T>& operator[]( unsigned i ) const { return val[i]; }
 	BroadcastOnChange<T>& operator[]( unsigned i ) { return val[i]; }
@@ -225,10 +225,10 @@ template<class T>
 class BroadcastOnChangePtr
 {
 private:
-	Message mSendWhenChanged;
+	MessageID mSendWhenChanged;
 	T *val;
 public:
-	explicit BroadcastOnChangePtr( Message m ) { mSendWhenChanged = m; val = NULL; }
+	explicit BroadcastOnChangePtr( MessageID m ) { mSendWhenChanged = m; val = NULL; }
 	T* Get() const { return val; }
 	void Set( T* t ) { val = t; if(MESSAGEMAN) MESSAGEMAN->Broadcast( MessageToString(mSendWhenChanged) ); }
 	/* This is only intended to be used for setting temporary values; always
@@ -246,10 +246,10 @@ private:
 	typedef BroadcastOnChangePtr<T> MyType;
 	vector<MyType> val;
 public:
-	explicit BroadcastOnChangePtr1D( Message m )
+	explicit BroadcastOnChangePtr1D( MessageID m )
 	{
 		for( unsigned i=0; i<N; i++ )
-			val.push_back( BroadcastOnChangePtr<T>((Message)(m+i)) );
+			val.push_back( BroadcastOnChangePtr<T>((MessageID)(m+i)) );
 	}
 	const BroadcastOnChangePtr<T>& operator[]( unsigned i ) const { return val[i]; }
 	BroadcastOnChangePtr<T>& operator[]( unsigned i ) { return val[i]; }

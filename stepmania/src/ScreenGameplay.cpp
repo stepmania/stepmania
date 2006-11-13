@@ -2011,7 +2011,7 @@ void ScreenGameplay::SendCrossedMessages()
 				}
 
 				if( iNumTracksWithTapOrHoldHead > 0 )
-					MESSAGEMAN->Broadcast( (Message)(Message_NoteCrossed + i) );
+					MESSAGEMAN->Broadcast( (MessageID)(Message_NoteCrossed + i) );
 				if( i == 0  &&  iNumTracksWithTapOrHoldHead >= 2 )
 				{
 					RString sMessageName = "NoteCrossedJump";
