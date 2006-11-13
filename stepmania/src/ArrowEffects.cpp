@@ -514,19 +514,19 @@ float ArrowGetPercentVisible( const PlayerState* pPlayerState, int iCol, float f
 
 float ArrowEffects::GetAlpha( const PlayerState* pPlayerState, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
 {
+	/* Get the YPos without reverse (that is, factor in EFFECT_TIPSY). */
+	float fYPosWithoutReverse = ArrowEffects::GetYPos( pPlayerState, iCol, fYOffset, fYReverseOffsetPixels, false );
+
 	float fPercentVisible = ArrowGetPercentVisible(pPlayerState,iCol,fYOffset,fYReverseOffsetPixels);
 
 	if( fPercentFadeToFail != -1 )
 		fPercentVisible = 1 - fPercentFadeToFail;
 
 
-	/* Get the YPos without reverse (that is, factor in EFFECT_TIPSY). */
-	float fYPos = ArrowEffects::GetYPos( pPlayerState, iCol, fYOffset, fYReverseOffsetPixels, false );
-
 	float fFullAlphaY = fDrawDistanceBeforeTargetsPixels*(1-fFadeInPercentOfDrawFar);
-	if( fYPos > fFullAlphaY )
+	if( fYPosWithoutReverse > fFullAlphaY )
 	{
-		float f = SCALE( fYPos, fFullAlphaY, fDrawDistanceBeforeTargetsPixels, 1.0f, 0.0f );
+		float f = SCALE( fYPosWithoutReverse, fFullAlphaY, fDrawDistanceBeforeTargetsPixels, 1.0f, 0.0f );
 		return f;
 	}
 
