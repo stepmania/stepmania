@@ -863,7 +863,7 @@ void SongManager::Cleanup()
  * are removed or changed.  This doesn't touch GAMESTATE and StageStats
  * pointers.  Currently, the only time Steps are altered independantly of the
  * Courses and Songs is in Edit Mode, which updates the other pointers it needs. */
-void SongManager::Invalidate( Song *pStaleSong )
+void SongManager::Invalidate( const Song *pStaleSong )
 {
 	FOREACH( Course*, this->m_pCourses, pCourse )
 	{

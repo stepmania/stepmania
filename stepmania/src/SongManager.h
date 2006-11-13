@@ -33,7 +33,7 @@ public:
 	void FreeSongs();
 	void Cleanup();
 
-	void Invalidate( Song *pStaleSong );
+	void Invalidate( const Song *pStaleSong );
 
 	void RegenerateNonFixedCourses();
 	void SetPreferences();

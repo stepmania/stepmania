@@ -70,7 +70,7 @@ public:
 	float GetLengthSeconds() const;
 	void GetDisplayBpms( DisplayBpms &AddTo ) const;
 	bool IsSecret() const;
-	bool ContainsSong( Song* pSong ) const;
+	bool ContainsSong( const Song *pSong ) const;
 
 	// Lua
 	void PushSelf( lua_State *L );

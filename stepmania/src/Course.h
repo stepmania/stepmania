@@ -149,7 +149,7 @@ public:
 	void RegenerateNonFixedTrails() const;
 
 	/* Call when a Song or its Steps are deleted/changed. */
-	void Invalidate( Song *pStaleSong );
+	void Invalidate( const Song *pStaleSong );
 
 	void GetAllCachedTrails( vector<Trail *> &out );
 	RString GetCacheFilePath() const;

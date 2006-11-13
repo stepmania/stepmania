@@ -175,7 +175,7 @@ bool Trail::IsSecret() const
 	return false;
 }
 
-bool Trail::ContainsSong( Song* pSong ) const
+bool Trail::ContainsSong( const Song *pSong ) const
 {
 	FOREACH_CONST( TrailEntry, m_vEntries, e )
 	{

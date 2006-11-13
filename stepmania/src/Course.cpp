@@ -676,7 +676,7 @@ bool Course::AllSongsAreFixed() const
 	return true;
 }
 
-void Course::Invalidate( Song *pStaleSong )
+void Course::Invalidate( const Song *pStaleSong )
 {
 	FOREACH_CONST( CourseEntry, m_vEntries, e )
 	{
