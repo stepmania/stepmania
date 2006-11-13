@@ -77,13 +77,13 @@ void HoldJudgment::LoadFromMultiPlayer( MultiPlayer mp )
 	this->SubscribeToMessage( enum_add2(Message_ShowHoldJudgmentMuliPlayerP1,m_mpToTrack) );
 }
 
-void HoldJudgment::HandleMessage( const RString &sMessage )
+void HoldJudgment::HandleMessage( const Message &msg )
 {
 	ASSERT( m_mpToTrack != MultiPlayer_Invalid );
-	if( sMessage == MessageToString( enum_add2(Message_ShowHoldJudgmentMuliPlayerP1,m_mpToTrack) ) )
+	if( msg == enum_add2(Message_ShowHoldJudgmentMuliPlayerP1,m_mpToTrack) )
 		SetHoldJudgment( STATSMAN->m_CurStageStats.m_multiPlayer[m_mpToTrack].hnsLast );
 
-	ActorFrame::HandleMessage( sMessage );
+	ActorFrame::HandleMessage( msg );
 }
 
 // lua start

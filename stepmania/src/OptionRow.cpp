@@ -874,7 +874,7 @@ void OptionRow::Reload()
 	//}
 }
 
-void OptionRow::HandleMessage( const RString& sMessage )
+void OptionRow::HandleMessage( const Message &msg )
 {
 	Reload();
 }

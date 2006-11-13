@@ -19,7 +19,7 @@ protected:
 	virtual void AfterChangeRow( PlayerNumber pn );
 	virtual void AfterChangeValueInRow( int iRow, PlayerNumber pn );
 	virtual void ProcessMenuStart( const InputEventPlus &input );
-	virtual void HandleMessage( const RString& sMessage );
+	virtual void HandleMessage( const Message &msg );
 
 	int GetCourseEntryIndexWithFocus() const;
 

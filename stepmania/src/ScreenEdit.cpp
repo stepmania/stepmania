@@ -2367,13 +2367,13 @@ void ScreenEdit::ScrollTo( float fDestinationBeat )
 	m_soundChangeLine.Play();
 }
 
-void ScreenEdit::HandleMessage( const RString &sMessage )
+void ScreenEdit::HandleMessage( const Message &msg )
 {
-	if( sMessage == MessageToString(Message_SongModified) )
+	if( msg == Message_SongModified )
 	{
 		SetDirty( true );
 	}
-	Screen::HandleMessage( sMessage );
+	Screen::HandleMessage( msg );
 }
 
 static LocalizedString SAVE_SUCCESSFUL				( "ScreenEdit", "Save successful." );

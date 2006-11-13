@@ -14,7 +14,7 @@ class ScreenSystemLayer : public Screen
 {
 public:
 	virtual void Init();
-	void HandleMessage( const RString &sCommandName );
+	void HandleMessage( const Message &msg );
 
 	void ReloadCreditsText();
 	void Update( float fDeltaTime );

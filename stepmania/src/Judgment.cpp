@@ -105,12 +105,12 @@ void Judgment::LoadFromMultiPlayer( MultiPlayer mp )
 	this->SubscribeToMessage( enum_add2(Message_ShowJudgmentMuliPlayerP1,m_mpToTrack) );
 }
 
-void Judgment::HandleMessage( const RString &sMessage )
+void Judgment::HandleMessage( const Message &msg )
 {
-	if( m_mpToTrack != MultiPlayer_Invalid  &&  sMessage == MessageToString( enum_add2(Message_ShowJudgmentMuliPlayerP1,m_mpToTrack) ) )
+	if( m_mpToTrack != MultiPlayer_Invalid  &&  msg == enum_add2(Message_ShowJudgmentMuliPlayerP1,m_mpToTrack) )
 		SetJudgment( STATSMAN->m_CurStageStats.m_multiPlayer[m_mpToTrack].tnsLast, false );	// FIXME: save and pass early bool?
 
-	ActorFrame::HandleMessage( sMessage );
+	ActorFrame::HandleMessage( msg );
 }
 
 

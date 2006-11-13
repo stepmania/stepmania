@@ -19,7 +19,7 @@ public:
 	void LoadFromNode( const XNode* pNode );
 	void Reset();
 	void SetJudgment( TapNoteScore score, bool bEarly );
-	void HandleMessage( const RString &sMessage );
+	void HandleMessage( const Message &msg );
 
 	//
 	// Lua

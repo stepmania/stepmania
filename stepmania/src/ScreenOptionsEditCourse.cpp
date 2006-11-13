@@ -335,9 +335,9 @@ void ScreenOptionsEditCourse::ProcessMenuStart( const InputEventPlus &input )
 
 }
 
-void ScreenOptionsEditCourse::HandleMessage( const RString& sMessage )
+void ScreenOptionsEditCourse::HandleMessage( const Message &msg )
 {
-	if( sMessage == "EditCourseDifficultyChanged" )
+	if( msg == "EditCourseDifficultyChanged" )
 	{
 		const vector<PlayerNumber> vpns( 1, GAMESTATE->m_MasterPlayerNumber );
 		OptionRow &row = *m_pRows[EditCourseRow_Meter];
@@ -345,7 +345,7 @@ void ScreenOptionsEditCourse::HandleMessage( const RString& sMessage )
 		ImportOptions( EditCourseRow_Meter, vpns );
 		row.AfterImportOptions( GAMESTATE->m_MasterPlayerNumber );
 	}
-	ScreenOptionsEditCourseSubMenu::HandleMessage( sMessage );
+	ScreenOptionsEditCourseSubMenu::HandleMessage( msg );
 }
 
 int ScreenOptionsEditCourse::GetCourseEntryIndexWithFocus() const

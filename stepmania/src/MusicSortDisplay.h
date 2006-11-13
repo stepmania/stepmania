@@ -12,7 +12,7 @@ public:
 	MusicSortDisplay();
 	virtual MusicSortDisplay *Copy() const;
 	void Set( SortOrder so );
-	virtual void HandleMessage( const RString& sMessage );
+	virtual void HandleMessage( const Message &msg );
 
 protected:
 

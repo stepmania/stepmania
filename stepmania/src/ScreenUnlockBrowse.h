@@ -13,7 +13,7 @@ public:
 
 	virtual void TweenOnScreen();
 	virtual void TweenOffScreen();
-	virtual void HandleMessage( const RString& sMessage );
+	virtual void HandleMessage( const Message &msg );
 
 protected:
 	FadingBanner m_banner;

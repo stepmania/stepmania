@@ -365,7 +365,7 @@ public:
 	//
 	// Messages
 	//
-	virtual void HandleMessage( const RString& sMessage );
+	virtual void HandleMessage( const Message &msg );
 
 	//
 	// Animation

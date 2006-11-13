@@ -22,7 +22,7 @@ public:
 	virtual void TweenOffScreen();
 
 private:
-	virtual void HandleMessage( const RString& sMessage );
+	virtual void HandleMessage( const Message &msg );
 
 	Actor *GetActorWithFocus();
 	void BeforeChangeFocus();

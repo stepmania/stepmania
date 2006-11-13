@@ -19,7 +19,7 @@ public:
 	virtual void DrawPrimitives();
 	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
-	virtual void HandleMessage( const RString &sMessage );
+	virtual void HandleMessage( const Message &msg );
 	
 	virtual void MenuBack( const InputEventPlus &input );
 

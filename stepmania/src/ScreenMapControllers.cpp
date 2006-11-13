@@ -468,14 +468,14 @@ void ScreenMapControllers::Refresh()
 	m_LineScroller.SetDestinationItem( (float) m_iCurButton );
 }
 
-void ScreenMapControllers::HandleMessage( const RString& sMessage )
+void ScreenMapControllers::HandleMessage( const Message &msg )
 {
-	if( sMessage == MessageToString(Message_AutoJoyMappingApplied) )
+	if( msg == Message_AutoJoyMappingApplied )
 	{
 		Refresh();
 	}
 
-	ScreenWithMenuElements::HandleMessage( sMessage );
+	ScreenWithMenuElements::HandleMessage( msg );
 }
 
 

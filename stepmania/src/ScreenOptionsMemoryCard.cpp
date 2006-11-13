@@ -129,9 +129,9 @@ void ScreenOptionsMemoryCard::AfterChangeRow( PlayerNumber pn )
 	}
 }
 
-void ScreenOptionsMemoryCard::HandleMessage( const RString& sMessage )
+void ScreenOptionsMemoryCard::HandleMessage( const Message &msg )
 {
-	if( sMessage == MessageToString(Message_StorageDevicesChanged) )
+	if( msg == Message_StorageDevicesChanged )
 	{
 		if( !m_Out.IsTransitioning() )
 		{

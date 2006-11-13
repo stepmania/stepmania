@@ -16,7 +16,7 @@ public:
 
 	void SetHoldJudgment( HoldNoteScore hns );
 	void LoadFromMultiPlayer( MultiPlayer mp );
-	void HandleMessage( const RString &sMessage );
+	void HandleMessage( const Message &msg );
 
 	//
 	// Lua

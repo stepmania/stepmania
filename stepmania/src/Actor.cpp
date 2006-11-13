@@ -1215,9 +1215,9 @@ void Actor::SetParent( Actor *pParent )
 	LUA->Release( L );
 }
 
-void Actor::HandleMessage( const RString& sMessage )
+void Actor::HandleMessage( const Message &msg )
 {
-	PlayCommand( sMessage );
+	PlayCommand( msg.GetName() );
 }
 
 Actor::TweenInfo::TweenInfo()

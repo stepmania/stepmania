@@ -175,20 +175,20 @@ RString ScreenSystemLayer::GetCreditsMessage( PlayerNumber pn ) const
 	}
 }
 
-void ScreenSystemLayer::HandleMessage( const RString &sMessage )
+void ScreenSystemLayer::HandleMessage( const Message &msg )
 {
 	bool bJoinedMessage = false;
 	FOREACH_PlayerNumber( pn )
-		if( MessageToString(enum_add2(Message_SideJoinedP1, pn)) == sMessage )
+		if( msg == enum_add2(Message_SideJoinedP1, pn) )
 			bJoinedMessage = true;
 
-	if( sMessage == "RefreshCreditText" || sMessage == "CoinInserted" || bJoinedMessage )
+	if( msg == "RefreshCreditText" || msg == "CoinInserted" || bJoinedMessage )
 	{
 		// update joined
 		FOREACH_PlayerNumber( pn )
 			m_textCredits[pn].SetText( GetCreditsMessage(pn) );
 	}
-	else if( sMessage == "SystemMessage" )
+	else if( msg == "SystemMessage" )
 	{
 		m_sprMessageFrame->SetHidden( false );
 		m_sprMessageFrame->PlayCommand( "On" );
@@ -199,7 +199,7 @@ void ScreenSystemLayer::HandleMessage( const RString &sMessage )
 		m_textMessage.PlayCommand( "On" );
 		m_textMessage.PlayCommand( "Off" );
 	}
-	else if( sMessage == "SystemMessageNoAnimate" )
+	else if( msg == "SystemMessageNoAnimate" )
 	{
 		m_sprMessageFrame->SetHidden( false );
 		m_sprMessageFrame->PlayCommand( "On" );
@@ -212,13 +212,13 @@ void ScreenSystemLayer::HandleMessage( const RString &sMessage )
 		m_textMessage.FinishTweening();
 		m_textMessage.PlayCommand( "Off" );
 	}
-	else if( sMessage == "HideSystemMessage" )
+	else if( msg == "HideSystemMessage" )
 	{
 		m_sprMessageFrame->SetHidden( true );
 
 		m_textMessage.SetHidden( true );
 	}
-	Screen::HandleMessage( sMessage );
+	Screen::HandleMessage( msg );
 }
 
 void ScreenSystemLayer::Update( float fDeltaTime )

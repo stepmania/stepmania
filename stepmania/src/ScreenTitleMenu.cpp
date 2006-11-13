@@ -89,9 +89,9 @@ void ScreenTitleMenu::Input( const InputEventPlus &input )
 	ScreenSelectMaster::Input( input );
 }
 
-void ScreenTitleMenu::HandleMessage( const RString& sMessage )
+void ScreenTitleMenu::HandleMessage( const Message &msg )
 {
-	if( sMessage == PREFSMAN->m_CoinMode.GetName()+"Changed" )
+	if( msg == PREFSMAN->m_CoinMode.GetName()+"Changed" )
 	{
 		/* If the CoinMode was changed, we need to reload this screen
 		 * so that the right m_aGameCommands will show */

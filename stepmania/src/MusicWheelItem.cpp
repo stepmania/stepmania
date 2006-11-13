@@ -301,17 +301,17 @@ void MusicWheelItem::RefreshGrades()
 	}
 }
 
-void MusicWheelItem::HandleMessage( const RString& sMessage )
+void MusicWheelItem::HandleMessage( const Message &msg )
 {
-	if( sMessage == MessageToString(Message_CurrentStepsP1Changed) ||
-		sMessage == MessageToString(Message_CurrentStepsP2Changed) ||
-		sMessage == MessageToString(Message_CurrentTrailP1Changed) ||
-		sMessage == MessageToString(Message_CurrentTrailP2Changed) ||
-		sMessage == MessageToString(Message_PreferredDifficultyP1Changed) ||
-		sMessage == MessageToString(Message_PreferredDifficultyP2Changed) )
+	if( msg == Message_CurrentStepsP1Changed ||
+		msg == Message_CurrentStepsP2Changed ||
+		msg == Message_CurrentTrailP1Changed ||
+		msg == Message_CurrentTrailP2Changed ||
+		msg == Message_PreferredDifficultyP1Changed ||
+		msg == Message_PreferredDifficultyP2Changed )
 		RefreshGrades();
 
-	Actor::HandleMessage( sMessage );
+	Actor::HandleMessage( msg );
 }
 
 /*

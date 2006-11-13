@@ -43,7 +43,7 @@ void ScreenUnlockBrowse::BeginScreen()
 {
 	ScreenSelectMaster::BeginScreen();
 
-	HandleMessage( MessageToString(Message_MenuSelectionChanged) );
+	HandleMessage( Message(MessageToString(Message_MenuSelectionChanged)) );
 }
 
 void ScreenUnlockBrowse::MenuStart( const InputEventPlus &input )
@@ -64,9 +64,9 @@ void ScreenUnlockBrowse::TweenOffScreen()
 	ScreenSelectMaster::TweenOffScreen();
 }
 
-void ScreenUnlockBrowse::HandleMessage( const RString& sMessage )
+void ScreenUnlockBrowse::HandleMessage( const Message &msg )
 {
-	if( sMessage == MessageToString(Message_MenuSelectionChanged) )
+	if( msg == Message_MenuSelectionChanged )
 	{
 		int iSelection = this->GetSelectionIndex(PLAYER_1);
 		const UnlockEntry &ue = UNLOCKMAN->m_UnlockEntries[ iSelection ];
@@ -76,7 +76,7 @@ void ScreenUnlockBrowse::HandleMessage( const RString& sMessage )
 			m_banner.LoadBannerFromUnlockEntry( &ue );
 	}
 
-	ScreenSelectMaster::HandleMessage( sMessage );
+	ScreenSelectMaster::HandleMessage( msg );
 }
 
 /*

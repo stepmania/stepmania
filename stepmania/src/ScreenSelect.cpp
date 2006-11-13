@@ -249,11 +249,11 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 	Screen::HandleScreenMessage( SM );
 }
 
-void ScreenSelect::HandleMessage( const RString &sMessage )
+void ScreenSelect::HandleMessage( const Message &msg )
 {
 	this->UpdateSelectableChoices();
 
-	Screen::HandleMessage( sMessage );
+	Screen::HandleMessage( msg );
 }
 
 void ScreenSelect::MenuBack( const InputEventPlus &input )
