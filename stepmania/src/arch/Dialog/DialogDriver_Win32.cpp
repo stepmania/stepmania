@@ -11,6 +11,7 @@
 #include "archutils/win32/ErrorStrings.h"
 #include "archutils/win32/GotoURL.h"
 #include "archutils/win32/RestartProgram.h"
+#include "archutils/Win32/SpecialDirs.h"
 #if !defined(SMPACKAGE)
 #include "archutils/win32/WindowsResources.h"
 #include "archutils/win32/GraphicsWindow.h"
@@ -134,9 +135,11 @@ static BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 				STARTUPINFO	si;
 				ZeroMemory( &si, sizeof(si) );
 
+				RString sMyDocumentsDir = SpecialDirs::GetMyDocumentsDir();
+				RString sCommand = "notepad \"" + sMyDocumentsDir + PRODUCT_ID + "/Logs/log.txt\"";
 				CreateProcess(
 					NULL,		// pointer to name of executable module
-					"notepad.exe log.txt",		// pointer to command line string
+					sCommand.GetBuffer(),	// pointer to command line string
 					NULL,  // process security attributes
 					NULL,   // thread security attributes
 					false,  // handle inheritance flag
