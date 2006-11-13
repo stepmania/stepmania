@@ -99,25 +99,7 @@ class Course
 public:
 	Course();
 
-	bool		m_bIsAutogen;		// was this created by AutoGen?
-	RString		m_sPath;
-
-	RString		m_sMainTitle, m_sMainTitleTranslit;
-	RString		m_sSubTitle, m_sSubTitleTranslit;
-
 	bool HasBanner() const;
-
-	RString		m_sBannerPath;
-	RString		m_sCDTitlePath;
-	RString		m_sGroupName;
-
-	bool		m_bRepeat;	// repeat after last song?  "Endless"
-	bool		m_bShuffle;	// play the songs in a random order
-	int		m_iLives;	// -1 means use bar life meter
-	int		m_iCustomMeter[NUM_Difficulty];	// -1 = no meter specified
-	bool		m_bSortByMeter;
-
-	vector<CourseEntry> m_vEntries;
 
 	/* If PREFSMAN->m_bShowNative is off, these are the same as GetTranslit* below.
 	 * Otherwise, they return the main titles. */
@@ -159,9 +141,6 @@ public:
 	void RevertFromDisk();
 	void Init();
 
-	// sorting values
-	int	m_SortOrder_TotalDifficulty;
-	int	m_SortOrder_Ranking;
 	bool	IsRanking() const;
 
 	void UpdateCourseStats( StepsType st );
@@ -191,6 +170,30 @@ public:
 	bool GetTrailSorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;
 
 	bool IsAnEdit() const { return m_LoadedFromProfile != ProfileSlot_Invalid; }
+
+
+	bool		m_bIsAutogen;		// was this created by AutoGen?
+	RString		m_sPath;
+
+	RString		m_sMainTitle, m_sMainTitleTranslit;
+	RString		m_sSubTitle, m_sSubTitleTranslit;
+
+	RString		m_sBannerPath;
+	RString		m_sCDTitlePath;
+	RString		m_sGroupName;
+
+	bool		m_bRepeat;	// repeat after last song?  "Endless"
+	bool		m_bShuffle;	// play the songs in a random order
+	int		m_iLives;	// -1 means use bar life meter
+	int		m_iCustomMeter[NUM_Difficulty];	// -1 = no meter specified
+	bool		m_bSortByMeter;
+
+	vector<CourseEntry> m_vEntries;
+
+	// sorting values
+	int	m_SortOrder_TotalDifficulty;
+	int	m_SortOrder_Ranking;
+
 	ProfileSlot		m_LoadedFromProfile;	// ProfileSlot_Invalid if wasn't loaded from a profile
 
 	typedef pair<StepsType,Difficulty> CacheEntry;
