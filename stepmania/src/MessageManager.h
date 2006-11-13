@@ -144,7 +144,6 @@ struct Message
 
 	void PushParamTable( lua_State *L );
 	const LuaReference &GetParamTable() const;
-	void PushParam( lua_State *L, RString sName );
 
 	void SetParamFromStack( lua_State *L, const RString &sName );
 

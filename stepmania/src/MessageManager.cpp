@@ -162,10 +162,6 @@ const LuaReference &Message::GetParamTable() const
 	return *m_pParams;
 }
 
-void Message::PushParam( lua_State *L, RString sName )
-{
-}
-
 void Message::SetParamFromStack( lua_State *L, const RString &sName )
 {
 	m_pParams->Set( L, sName );
