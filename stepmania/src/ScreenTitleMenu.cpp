@@ -97,6 +97,8 @@ void ScreenTitleMenu::HandleMessage( const Message &msg )
 		 * so that the right m_aGameCommands will show */
 		SCREENMAN->SetNewScreen( COIN_MODE_CHANGE_SCREEN );
 	}
+
+	ScreenSelectMaster::HandleMessage( msg );
 }
 
 
