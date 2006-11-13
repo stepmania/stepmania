@@ -22,6 +22,7 @@
 
 static ThemeMetric<bool> SHOW_BOARD( "NoteField", "ShowBoard" );
 static ThemeMetric<bool> SHOW_BEAT_BARS( "NoteField", "ShowBeatBars" );
+static ThemeMetric<float> FADE_IN_PERCENT( "NoteField", "FadeInPercent" );
 
 NoteField::NoteField()
 {	
@@ -73,6 +74,7 @@ void NoteField::CacheNoteSkin( const RString &sNoteSkin_ )
 		
 	LOG->Trace("NoteField::CacheNoteSkin: cache %s", sNoteSkin.c_str() );
 	NoteDisplayCols *nd = new NoteDisplayCols( GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
+
 	for( int c=0; c<GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; c++ ) 
 		nd->display[c].Load( c, m_pPlayerState, m_fYReverseOffsetPixels );
 	nd->m_ReceptorArrowRow.Load( m_pPlayerState, m_fYReverseOffsetPixels );
@@ -143,6 +145,7 @@ void NoteField::Load(
 	m_pNoteData = pNoteData;
 	m_iStartDrawingPixel = iFirstPixelToDraw;
 	m_iEndDrawingPixel = iLastPixelToDraw;
+	ASSERT( m_iEndDrawingPixel >= m_iStartDrawingPixel );
 
 	m_fPercentFadeToFail = -1;
 
@@ -780,7 +783,8 @@ void NoteField::DrawPrimitives()
 					bIsInSelectionRange = (m_iBeginMarker <= iStartRow && iEndRow < m_iEndMarker);
 				
 				NoteDisplayCols *displayCols = tn.pn == PLAYER_INVALID ? m_pCurDisplay : m_pDisplays[tn.pn];
-				displayCols->display[c].DrawHold( tn, c, iStartRow, bIsHoldingNote, bIsActive, Result, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, false, m_fYReverseOffsetPixels, (float) iFirstPixelToDraw, (float) iLastPixelToDraw );
+				displayCols->display[c].DrawHold( tn, c, iStartRow, bIsHoldingNote, bIsActive, Result, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 
+					false, m_fYReverseOffsetPixels, (float) iFirstPixelToDraw, (float) iLastPixelToDraw, iLastPixelToDraw, FADE_IN_PERCENT );
 			}
 
 		}
@@ -848,11 +852,11 @@ void NoteField::DrawPrimitives()
 				Sprite sprite;
 				sprite.Load( THEME->GetPathG("NoteField","attack "+tn.sAttackModifiers) );
 				float fBeat = NoteRowToBeat(i);
-				displayCols->display[c].DrawActor( &sprite, c, fBeat, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels, false, NotePart_Tap );
+				displayCols->display[c].DrawActor( &sprite, c, fBeat, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels, false, NotePart_Tap, iLastPixelToDraw, FADE_IN_PERCENT );
 			}
 			else
 			{
-				displayCols->display[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bIsAddition, bIsMine, bIsLift, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels );
+				displayCols->display[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bIsAddition, bIsMine, bIsLift, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels, iLastPixelToDraw, FADE_IN_PERCENT );
 			}
 		}
 	}
