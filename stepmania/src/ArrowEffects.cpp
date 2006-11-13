@@ -467,11 +467,8 @@ static float GetSuddenStartLine( const PlayerState* pPlayerState )
 }
 
 // used by ArrowGetAlpha and ArrowGetGlow below
-float ArrowGetPercentVisible( const PlayerState* pPlayerState, int iCol, float fYOffset, float fYReverseOffsetPixels )
+float ArrowGetPercentVisible( const PlayerState* pPlayerState, float fYPosWithoutReverse )
 {
-	/* Get the YPos without reverse (that is, factor in EFFECT_TIPSY). */
-	float fYPosWithoutReverse = ArrowEffects::GetYPos( pPlayerState, iCol, fYOffset, fYReverseOffsetPixels, false );
-
 	const float fDistFromCenterLine = fYPosWithoutReverse - GetCenterLine( pPlayerState );
 
 	if( fYPosWithoutReverse < 0 )	// past Gray Arrows
@@ -517,7 +514,7 @@ float ArrowEffects::GetAlpha( const PlayerState* pPlayerState, int iCol, float f
 	/* Get the YPos without reverse (that is, factor in EFFECT_TIPSY). */
 	float fYPosWithoutReverse = ArrowEffects::GetYPos( pPlayerState, iCol, fYOffset, fYReverseOffsetPixels, false );
 
-	float fPercentVisible = ArrowGetPercentVisible(pPlayerState,iCol,fYOffset,fYReverseOffsetPixels);
+	float fPercentVisible = ArrowGetPercentVisible( pPlayerState, fYPosWithoutReverse );
 
 	if( fPercentFadeToFail != -1 )
 		fPercentVisible = 1 - fPercentFadeToFail;
@@ -536,7 +533,10 @@ float ArrowEffects::GetAlpha( const PlayerState* pPlayerState, int iCol, float f
 
 float ArrowEffects::GetGlow( const PlayerState* pPlayerState, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
 {
-	float fPercentVisible = ArrowGetPercentVisible(pPlayerState,iCol,fYOffset,fYReverseOffsetPixels);
+	/* Get the YPos without reverse (that is, factor in EFFECT_TIPSY). */
+	float fYPosWithoutReverse = ArrowEffects::GetYPos( pPlayerState, iCol, fYOffset, fYReverseOffsetPixels, false );
+
+	float fPercentVisible = ArrowGetPercentVisible( pPlayerState, fYPosWithoutReverse );
 
 	if( fPercentFadeToFail != -1 )
 		fPercentVisible = 1 - fPercentFadeToFail;
