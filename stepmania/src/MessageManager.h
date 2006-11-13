@@ -5,6 +5,7 @@
 
 #include "LuaManager.h"
 struct lua_State;
+class LuaTable;
 
 enum MessageID
 {
@@ -134,18 +135,32 @@ enum MessageID
 const RString& MessageIDToString( MessageID m );
 #define MessageToString MessageIDToString
 
+struct Message
+{
+	explicit Message( const RString &s );
+	~Message();
+	RString GetName() const { return m_sName; }
+
+	void PushParamTable( lua_State *L );
+	void PushParam( lua_State *L, RString sName );
+
+	bool operator==( const RString &s ) const { return m_sName == s; }
+	bool operator==( MessageID id ) const { return MessageIDToString(id) == m_sName; }
+
+private:
+	RString m_sName;
+	LuaTable *m_pParams;
+};
+
 class IMessageSubscriber
 {
 public:
 	virtual ~IMessageSubscriber() { }
-	virtual void HandleMessage( const RString& sMessage ) = 0;
+	virtual void HandleMessage( const Message &msg ) = 0;
 	virtual void ProcessMessages( float fDeltaTime );
 	void ClearMessages( const RString sMessage = "" );
 
 private:
-	void HandleMessageInternal( const RString& sMessage );
-	vector<RString> m_aMessages;
-
 	friend class MessageManager;
 };
 

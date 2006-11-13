@@ -141,6 +141,27 @@ static RageMutex g_Mutex( "MessageManager" );
 typedef set<IMessageSubscriber*> SubscribersSet;
 static map<RString,SubscribersSet> g_MessageToSubscribers;
 
+Message::Message( const RString &s )
+{
+	m_sName = s;
+	m_pParams = new LuaTable;
+}
+
+Message::~Message()
+{
+	delete m_pParams;
+}
+
+void Message::PushParamTable( lua_State *L )
+{
+	m_pParams->PushSelf( L );
+
+}
+
+void Message::PushParam( lua_State *L, RString sName )
+{
+}
+
 MessageManager::MessageManager()
 {
 	// Register with Lua.
@@ -204,7 +225,7 @@ void MessageManager::Broadcast( const RString& sMessage ) const
 	FOREACHS_CONST( IMessageSubscriber*, iter->second, p )
 	{
 		IMessageSubscriber *pSub = *p;
-		pSub->HandleMessageInternal( sMessage );
+		pSub->HandleMessage( Message(sMessage) );
 	}
 }
 
@@ -215,50 +236,10 @@ void MessageManager::Broadcast( MessageID m ) const
 
 void IMessageSubscriber::ClearMessages( const RString sMessage )
 {
-	LockMut(g_Mutex);
-
-	if( sMessage.empty() )
-	{
-		m_aMessages.clear();
-		return;
-	}
-
-	RemoveIfEqual( m_aMessages, sMessage );
-}
-
-void IMessageSubscriber::HandleMessageInternal( const RString& sMessage )
-{
-	g_Mutex.Lock();
-	m_aMessages.push_back( sMessage );
-	g_Mutex.Unlock();
 }
 
 void IMessageSubscriber::ProcessMessages( float fDeltaTime )
 {
-	/* Important optimization for the vast majority of cases: don't lock the
-	 * mutex if we have no messages. */
-	if( m_aMessages.empty() )
-		return;
-
-	g_Mutex.Lock();
-	for( unsigned i = 0; i < m_aMessages.size(); ++i )
-	{
-		/* Remove the message from the list. */
-		const RString sMessage = m_aMessages[i];
-		m_aMessages.erase( m_aMessages.begin()+i );
-		--i;
-
-		unsigned iSize = m_aMessages.size();
-
-		g_Mutex.Unlock();
-		HandleMessage( sMessage );
-		g_Mutex.Lock();
-
-		/* If the size changed, start over. */
-		if( iSize != m_aMessages.size() )
-			i = 0;
-	}
-	g_Mutex.Unlock();
 }
 
 MessageSubscriber::MessageSubscriber( const MessageSubscriber &cpy ):
