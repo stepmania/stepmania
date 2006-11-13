@@ -22,7 +22,7 @@
 
 static ThemeMetric<bool> SHOW_BOARD( "NoteField", "ShowBoard" );
 static ThemeMetric<bool> SHOW_BEAT_BARS( "NoteField", "ShowBeatBars" );
-static ThemeMetric<float> FADE_IN_PERCENT( "NoteField", "FadeInPercent" );
+static ThemeMetric<float> FADE_BEFORE_TARGETS_PERCENT( "NoteField", "FadeBeforeTargetsPercent" );
 
 NoteField::NoteField()
 {	
@@ -138,14 +138,14 @@ void NoteField::Init( const PlayerState* pPlayerState, float fYReverseOffsetPixe
 
 void NoteField::Load( 
 	const NoteData *pNoteData,
-	int iFirstPixelToDraw, 
-	int iLastPixelToDraw )
+	int iDrawDistanceAfterTargetsPixels, 
+	int iDrawDistanceBeforeTargetsPixels )
 {
 	ASSERT( pNoteData );
 	m_pNoteData = pNoteData;
-	m_iStartDrawingPixel = iFirstPixelToDraw;
-	m_iEndDrawingPixel = iLastPixelToDraw;
-	ASSERT( m_iEndDrawingPixel >= m_iStartDrawingPixel );
+	m_iDrawDistanceAfterTargetsPixels = iDrawDistanceAfterTargetsPixels;
+	m_iDrawDistanceBeforeTargetsPixels = iDrawDistanceBeforeTargetsPixels;
+	ASSERT( m_iDrawDistanceBeforeTargetsPixels >= m_iDrawDistanceAfterTargetsPixels );
 
 	m_fPercentFadeToFail = -1;
 
@@ -276,7 +276,7 @@ void NoteField::DrawBeatBar( const float fBeat )
 	}
 }
 
-void NoteField::DrawBoard( int iFirstPixelToDraw, int iLastPixelToDraw )
+void NoteField::DrawBoard( int iDrawDistanceAfterTargetsPixels, int iDrawDistanceBeforeTargetsPixels )
 {
 	const float fYOffsetAt0		= ArrowEffects::GetYOffset( m_pPlayerState, 0, GAMESTATE->m_fSongBeat );
 	const float fYOffsetAtNeg1	= ArrowEffects::GetYOffset( m_pPlayerState, 0, GAMESTATE->m_fSongBeat-1 );
@@ -295,7 +295,7 @@ void NoteField::DrawBoard( int iFirstPixelToDraw, int iLastPixelToDraw )
 	float fTexCoordOffset = fPixels / fBoardGraphicHeightPixels;
 	{
 		// top half
-		const float fHeight = iLastPixelToDraw;
+		const float fHeight = iDrawDistanceBeforeTargetsPixels;
 		m_sprBoard.ZoomToHeight( fHeight );
 		wrap( fPixels, fHeight );
 
@@ -307,7 +307,7 @@ void NoteField::DrawBoard( int iFirstPixelToDraw, int iLastPixelToDraw )
 		m_sprBoard.Draw();
 	}
 	{
-		const float fHeight = -iFirstPixelToDraw;
+		const float fHeight = -iDrawDistanceAfterTargetsPixels;
 		m_sprBoard.ZoomToHeight( fHeight );
 		wrap( fPixels, fHeight );
 
@@ -335,10 +335,10 @@ void NoteField::DrawAreaHighlight( int iStartBeat, int iEndBeat )
 {
 	float fStartBeat = NoteRowToBeat( iStartBeat );
 	float fEndBeat = NoteRowToBeat( iEndBeat );
-	float fYStartOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fStartBeat );
-	float fYStartPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYStartOffset, m_fYReverseOffsetPixels );
-	float fYEndOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fEndBeat );
-	float fYEndPos		= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYEndOffset, m_fYReverseOffsetPixels );
+	float fDrawDistanceAfterTargetsPixels	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fStartBeat );
+	float fYStartPos	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fDrawDistanceAfterTargetsPixels, m_fYReverseOffsetPixels );
+	float fDrawDistanceBeforeTargetsPixels	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fEndBeat );
+	float fYEndPos		= ArrowEffects::GetYPos(    m_pPlayerState, 0, fDrawDistanceBeforeTargetsPixels, m_fYReverseOffsetPixels );
 
 	// The caller should have clamped these to reasonable values
 	ASSERT( fYStartPos > -1000 );
@@ -413,7 +413,7 @@ void NoteField::DrawBGChangeText( const float fBeat, const RString sNewBGName )
 
 // CPU OPTIMIZATION OPPORTUNITY:
 // change this probing to binary search
-float FindFirstDisplayedBeat( const PlayerState* pPlayerState, int iFirstPixelToDraw )
+float FindFirstDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistanceAfterTargetsPixels )
 {
 	float fFirstBeatToDraw = GAMESTATE->m_fSongBeat-4;	// Adjust to balance off performance and showing enough notes.
 
@@ -435,7 +435,7 @@ float FindFirstDisplayedBeat( const PlayerState* pPlayerState, int iFirstPixelTo
 
 		if( bBoomerang && bIsPastPeakYOffset )
 			break;	// stop probing
-		else if( fYOffset < iFirstPixelToDraw )	// off screen
+		else if( fYOffset < iDrawDistanceAfterTargetsPixels )	// off screen
 			fFirstBeatToDraw += 0.1f;	// move toward fSongBeat
 		else	// on screen
 			break;	// stop probing
@@ -444,7 +444,7 @@ float FindFirstDisplayedBeat( const PlayerState* pPlayerState, int iFirstPixelTo
 	return fFirstBeatToDraw;
 }
 
-float FindLastDisplayedBeat( const PlayerState* pPlayerState, int iLastPixelToDraw )
+float FindLastDisplayedBeat( const PlayerState* pPlayerState, int iDrawDistanceBeforeTargetsPixels )
 {
 	//
 	// Probe for last note to draw.
@@ -470,7 +470,7 @@ float FindLastDisplayedBeat( const PlayerState* pPlayerState, int iLastPixelToDr
 
 		if( bBoomerang && !bIsPastPeakYOffset )
 			fLastBeatToDraw += fSearchDistance;
-		else if( fYOffset > iLastPixelToDraw )	// off screen
+		else if( fYOffset > iDrawDistanceBeforeTargetsPixels )	// off screen
 			fLastBeatToDraw -= fSearchDistance;
 		else	// on screen
 			fLastBeatToDraw += fSearchDistance;
@@ -481,15 +481,15 @@ float FindLastDisplayedBeat( const PlayerState* pPlayerState, int iLastPixelToDr
 	return fLastBeatToDraw;
 }
 
-bool NoteField::IsOnScreen( float fBeat, int iCol, int iFirstPixelToDraw, int iLastPixelToDraw ) const
+bool NoteField::IsOnScreen( float fBeat, int iCol, int iDrawDistanceAfterTargetsPixels, int iDrawDistanceBeforeTargetsPixels ) const
 {
 	// TRICKY: If boomerang is on, then ones in the range 
 	// [iFirstIndexToDraw,iLastIndexToDraw] aren't necessarily visible.
 	// Test to see if this beat is visible before drawing.
 	float fYOffset = ArrowEffects::GetYOffset( m_pPlayerState, iCol, fBeat );
-	if( fYOffset > iLastPixelToDraw )	// off screen
+	if( fYOffset > iDrawDistanceBeforeTargetsPixels )	// off screen
 		return false;
-	if( fYOffset < iFirstPixelToDraw )	// off screen
+	if( fYOffset < iDrawDistanceAfterTargetsPixels )	// off screen
 		return false;
 
 	return true;
@@ -511,26 +511,26 @@ void NoteField::DrawPrimitives()
 	//
 	// Adjust draw range depending on some effects
 	//
-	int iFirstPixelToDraw = m_iStartDrawingPixel;
+	int iDrawDistanceAfterTargetsPixels = m_iDrawDistanceAfterTargetsPixels;
 	// HACK: if boomerang and centered are on, then we want to draw much 
 	// earlier to that the notes don't pop on screen.
 	float fCenteredTimesBoomerang = 
 		current_po.m_fScrolls[PlayerOptions::SCROLL_CENTERED] * 
 		current_po.m_fAccels[PlayerOptions::ACCEL_BOOMERANG];
-	iFirstPixelToDraw += int(SCALE( fCenteredTimesBoomerang, 0.f, 1.f, 0.f, -SCREEN_HEIGHT/2 ));
-	int iLastPixelToDraw = m_iEndDrawingPixel;
+	iDrawDistanceAfterTargetsPixels += int(SCALE( fCenteredTimesBoomerang, 0.f, 1.f, 0.f, -SCREEN_HEIGHT/2 ));
+	int iDrawDistanceBeforeTargetsPixels = m_iDrawDistanceBeforeTargetsPixels;
 	
 	float fDrawScale = 1;
 	fDrawScale *= 1 + 0.5f * fabsf( current_po.m_fPerspectiveTilt );
 	fDrawScale *= 1 + fabsf( current_po.m_fEffects[PlayerOptions::EFFECT_TINY] );
 	
-	iFirstPixelToDraw = (int)(iFirstPixelToDraw * fDrawScale);
-	iLastPixelToDraw = (int)(iLastPixelToDraw * fDrawScale);
+	iDrawDistanceAfterTargetsPixels = (int)(iDrawDistanceAfterTargetsPixels * fDrawScale);
+	iDrawDistanceBeforeTargetsPixels = (int)(iDrawDistanceBeforeTargetsPixels * fDrawScale);
 
 
 	// Probe for first and last notes on the screen
-	float fFirstBeatToDraw = FindFirstDisplayedBeat( m_pPlayerState, iFirstPixelToDraw );
-	float fLastBeatToDraw = FindLastDisplayedBeat( m_pPlayerState, iLastPixelToDraw );
+	float fFirstBeatToDraw = FindFirstDisplayedBeat( m_pPlayerState, iDrawDistanceAfterTargetsPixels );
+	float fLastBeatToDraw = FindLastDisplayedBeat( m_pPlayerState, iDrawDistanceBeforeTargetsPixels );
 
 	m_pPlayerState->m_fLastDrawnBeat = fLastBeatToDraw;
 
@@ -540,14 +540,14 @@ void NoteField::DrawPrimitives()
 //	LOG->Trace( "start = %f.1, end = %f.1", fFirstBeatToDraw-fSongBeat, fLastBeatToDraw-fSongBeat );
 //	LOG->Trace( "Drawing elements %d through %d", iFirstIndexToDraw, iLastIndexToDraw );
 
-#define IS_ON_SCREEN( fBeat )  IsOnScreen( fBeat, 0, iFirstPixelToDraw, iLastPixelToDraw )
+#define IS_ON_SCREEN( fBeat )  IsOnScreen( fBeat, 0, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels )
 
 	//
 	// Draw board
 	//
 	if( SHOW_BOARD )
 	{
-		DrawBoard( iFirstPixelToDraw, iLastPixelToDraw );
+		DrawBoard( iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels );
 	}
 
 	//
@@ -761,9 +761,9 @@ void NoteField::DrawPrimitives()
 				float fStartYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, c, NoteRowToBeat(iStartRow), fThrowAway, bStartIsPastPeak );
 				float fEndYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, c, NoteRowToBeat(iEndRow), fThrowAway, bEndIsPastPeak );
 
-				bool bTailIsOnVisible = iFirstPixelToDraw <= fEndYOffset && fEndYOffset <= iLastPixelToDraw;
-				bool bHeadIsVisible = iFirstPixelToDraw <= fStartYOffset  && fStartYOffset <= iLastPixelToDraw;
-				bool bStraddlingVisible = fStartYOffset <= iFirstPixelToDraw && iLastPixelToDraw <= fEndYOffset;
+				bool bTailIsOnVisible = iDrawDistanceAfterTargetsPixels <= fEndYOffset && fEndYOffset <= iDrawDistanceBeforeTargetsPixels;
+				bool bHeadIsVisible = iDrawDistanceAfterTargetsPixels <= fStartYOffset  && fStartYOffset <= iDrawDistanceBeforeTargetsPixels;
+				bool bStraddlingVisible = fStartYOffset <= iDrawDistanceAfterTargetsPixels && iDrawDistanceBeforeTargetsPixels <= fEndYOffset;
 				bool bStaddlingPeak = bStartIsPastPeak && !bEndIsPastPeak;
 				if( !(bTailIsOnVisible || bHeadIsVisible || bStraddlingVisible || bStaddlingPeak) )
 				{
@@ -784,7 +784,7 @@ void NoteField::DrawPrimitives()
 				
 				NoteDisplayCols *displayCols = tn.pn == PLAYER_INVALID ? m_pCurDisplay : m_pDisplays[tn.pn];
 				displayCols->display[c].DrawHold( tn, c, iStartRow, bIsHoldingNote, bIsActive, Result, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 
-					false, m_fYReverseOffsetPixels, (float) iFirstPixelToDraw, (float) iLastPixelToDraw, iLastPixelToDraw, FADE_IN_PERCENT );
+					false, m_fYReverseOffsetPixels, (float) iDrawDistanceAfterTargetsPixels, (float) iDrawDistanceBeforeTargetsPixels, iDrawDistanceBeforeTargetsPixels, FADE_BEFORE_TARGETS_PERCENT );
 			}
 
 		}
@@ -817,7 +817,7 @@ void NoteField::DrawPrimitives()
 			// TRICKY: If boomerang is on, then all notes in the range 
 			// [iFirstIndexToDraw,iLastIndexToDraw] aren't necessarily visible.
 			// Test every note to make sure it's on screen before drawing
-			if( !IsOnScreen( NoteRowToBeat(i), c, iFirstPixelToDraw, iLastPixelToDraw ) )
+			if( !IsOnScreen( NoteRowToBeat(i), c, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels ) )
 				continue;	// skip
 
 			ASSERT_M( NoteRowToBeat(i) > -2000, ssprintf("%i %i %i, %f %f", i, iLastIndexToDraw, iFirstIndexToDraw, GAMESTATE->m_fSongBeat, GAMESTATE->m_fMusicSeconds) );
@@ -852,11 +852,11 @@ void NoteField::DrawPrimitives()
 				Sprite sprite;
 				sprite.Load( THEME->GetPathG("NoteField","attack "+tn.sAttackModifiers) );
 				float fBeat = NoteRowToBeat(i);
-				displayCols->display[c].DrawActor( &sprite, c, fBeat, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels, false, NotePart_Tap, iLastPixelToDraw, FADE_IN_PERCENT );
+				displayCols->display[c].DrawActor( &sprite, c, fBeat, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels, false, NotePart_Tap, iDrawDistanceBeforeTargetsPixels, FADE_BEFORE_TARGETS_PERCENT );
 			}
 			else
 			{
-				displayCols->display[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bIsAddition, bIsMine, bIsLift, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels, iLastPixelToDraw, FADE_IN_PERCENT );
+				displayCols->display[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bIsAddition, bIsMine, bIsLift, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels, iDrawDistanceBeforeTargetsPixels, FADE_BEFORE_TARGETS_PERCENT );
 			}
 		}
 	}

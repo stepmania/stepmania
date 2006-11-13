@@ -26,8 +26,8 @@ public:
 	virtual void Init( const PlayerState* pPlayerState, float fYReverseOffsetPixels );
 	virtual void Load( 
 		const NoteData* pNoteData, 
-		int iStartDrawingPixel, 
-		int iEndDrawingPixel );
+		int iDrawDistanceAfterTargetsPixels, 
+		int iDrawDistanceBeforeTargetsPixels );
 	virtual void Unload();
 
 	// This is done automatically by Init(), but can be re-called explicitly if the
@@ -48,9 +48,9 @@ protected:
 	void CacheNoteSkin( const RString &sNoteSkin );
 	void UncacheNoteSkin( const RString &sNoteSkin );
 
-	bool IsOnScreen( float fBeat, int iCol, int iFirstPixelToDraw, int iLastPixelToDraw ) const;
+	bool IsOnScreen( float fBeat, int iCol, int iDrawDistanceAfterTargetsPixels, int iDrawDistanceBeforeTargetsPixels ) const;
 
-	void DrawBoard( int iFirstPixelToDraw, int iLastPixelToDraw );
+	void DrawBoard( int iDrawDistanceAfterTargetsPixels, int iDrawDistanceBeforeTargetsPixels );
 	void DrawBeatBar( const float fBeat );
 	void DrawMarkerBar( int fBeat );
 	void DrawAreaHighlight( int iStartBeat, int iEndBeat );
@@ -65,8 +65,8 @@ protected:
 	float			m_fPercentFadeToFail;	// -1 if not fading to fail
 
 	const PlayerState*	m_pPlayerState;
-	int			m_iStartDrawingPixel;	// this should be a negative number
-	int			m_iEndDrawingPixel;	// this should be a positive number
+	int			m_iDrawDistanceAfterTargetsPixels;	// this should be a negative number
+	int			m_iDrawDistanceBeforeTargetsPixels;	// this should be a positive number
 	float			m_fYReverseOffsetPixels;
 
 	// color arrows

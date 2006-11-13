@@ -48,12 +48,12 @@ public:
 
 	//	fAlpha is the transparency of the arrow.  It depends on fYPos and the 
 	//	AppearanceType.
-	static float GetAlpha( const PlayerState* pPlayerState, int iCol, float fYPos, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawFarY, float fFadeInPercentOfDrawFar );
+	static float GetAlpha( const PlayerState* pPlayerState, int iCol, float fYPos, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar );
 
 
 	//	fAlpha is the transparency of the arrow.  It depends on fYPos and the 
 	//	AppearanceType.
-	static float GetGlow( const PlayerState* pPlayerState, int iCol, float fYPos, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawFarY, float fFadeInPercentOfDrawFar );
+	static float GetGlow( const PlayerState* pPlayerState, int iCol, float fYPos, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar );
 
 
 	//	Depends on fYOffset.

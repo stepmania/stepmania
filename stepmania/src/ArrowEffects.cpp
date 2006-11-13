@@ -512,7 +512,7 @@ float ArrowGetPercentVisible( const PlayerState* pPlayerState, int iCol, float f
 	return clamp( 1+fVisibleAdjust, 0, 1 );
 }
 
-float ArrowEffects::GetAlpha( const PlayerState* pPlayerState, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawFarY, float fFadeInPercentOfDrawFar )
+float ArrowEffects::GetAlpha( const PlayerState* pPlayerState, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
 {
 	float fPercentVisible = ArrowGetPercentVisible(pPlayerState,iCol,fYOffset,fYReverseOffsetPixels);
 
@@ -523,10 +523,10 @@ float ArrowEffects::GetAlpha( const PlayerState* pPlayerState, int iCol, float f
 	/* Get the YPos without reverse (that is, factor in EFFECT_TIPSY). */
 	float fYPos = ArrowEffects::GetYPos( pPlayerState, iCol, fYOffset, fYReverseOffsetPixels, false );
 
-	float fFullAlphaY = fDrawFarY*(1-fFadeInPercentOfDrawFar);
+	float fFullAlphaY = fDrawDistanceBeforeTargetsPixels*(1-fFadeInPercentOfDrawFar);
 	if( fYPos > fFullAlphaY )
 	{
-		float f = SCALE( fYPos, fFullAlphaY, fDrawFarY, 1.0f, 0.0f );
+		float f = SCALE( fYPos, fFullAlphaY, fDrawDistanceBeforeTargetsPixels, 1.0f, 0.0f );
 		return f;
 	}
 
@@ -534,7 +534,7 @@ float ArrowEffects::GetAlpha( const PlayerState* pPlayerState, int iCol, float f
 	return (fPercentVisible>0.5f) ? 1.0f : 0.0f;
 }
 
-float ArrowEffects::GetGlow( const PlayerState* pPlayerState, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawFarY, float fFadeInPercentOfDrawFar )
+float ArrowEffects::GetGlow( const PlayerState* pPlayerState, int iCol, float fYOffset, float fPercentFadeToFail, float fYReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
 {
 	float fPercentVisible = ArrowGetPercentVisible(pPlayerState,iCol,fYOffset,fYReverseOffsetPixels);
 

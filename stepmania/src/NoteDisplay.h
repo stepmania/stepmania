@@ -79,12 +79,12 @@ public:
 	static void Update( float fDeltaTime );
 
 	void DrawActor( Actor* pActor, int iCol, float fBeat, float fPercentFadeToFail, float fLife, 
-		float fReverseOffsetPixels, bool bUseLighting, NotePart part, float fDrawFarY, float fFadeInPercentOfDrawFar );
+		float fReverseOffsetPixels, bool bUseLighting, NotePart part, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar );
 	void DrawTap( int iCol, float fBeat, bool bOnSameRowAsHoldStart, bool bIsAddition, bool bIsMine, bool bIsLift, 
-		float fPercentFadeToFail, float fLife, float fReverseOffsetPixels, float fDrawFarY, float fFadeInPercentOfDrawFar );
+		float fPercentFadeToFail, float fLife, float fReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar );
 	void DrawHold( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, bool bIsActive, const HoldNoteResult &Result, 
-		float fPercentFadeToFail, bool bDrawGlowOnly, float fReverseOffsetPixels, float fYStartOffset, float fYEndOffset, 
-		float fDrawFarY, float fFadeInPercentOfDrawFar );
+		float fPercentFadeToFail, bool bDrawGlowOnly, float fReverseOffsetPixels, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, 
+		float fDrawDistanceBeforeTargetsPixels2, float fFadeInPercentOfDrawFar );
 	
 	bool DrawHoldHeadForTapsOnSameRow() const;
 
@@ -96,17 +96,17 @@ private:
 
 	void DrawHoldBottomCap( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, 
 	                        float fPercentFadeToFail, float fColorScale, 
-				bool bGlow, float fYStartOffset, float fYEndOffset, float fDrawFarY, float fFadeInPercentOfDrawFar );
+				bool bGlow, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fDrawDistanceBeforeTargetsPixels2, float fFadeInPercentOfDrawFar );
 	void DrawHoldTopCap( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, float fYHead, float fYTail, int fYStep,
 			     float fPercentFadeToFail, float fColorScale, 
-			     bool bGlow, float fYStartOffset, float fYEndOffset, float fDrawFarY, float fFadeInPercentOfDrawFar );
+			     bool bGlow, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fDrawDistanceBeforeTargetsPixels2, float fFadeInPercentOfDrawFar );
 	void DrawHoldBody( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, float fPercentFadeToFail, 
 			   float fColorScale, 
-			   bool bGlow, float fYStartOffset, float fYEndOffset, float fDrawFarY, float fFadeInPercentOfDrawFar );
+			   bool bGlow, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fDrawDistanceBeforeTargetsPixels2, float fFadeInPercentOfDrawFar );
 	void DrawHoldTail( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, float fYTail, float fPercentFadeToFail, float fColorScale, 
-			   bool bGlow, float fYStartOffset, float fYEndOffset, float fDrawFarY, float fFadeInPercentOfDrawFar );
+			   bool bGlow, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fDrawDistanceBeforeTargetsPixels2, float fFadeInPercentOfDrawFar );
 	void DrawHoldHead( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, float fYHead, float fPercentFadeToFail, float fColorScale, 
-			   bool bGlow, float fYStartOffset, float fYEndOffset, float fDrawFarY, float fFadeInPercentOfDrawFar );
+			   bool bGlow, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fDrawDistanceBeforeTargetsPixels2, float fFadeInPercentOfDrawFar );
 
 	const PlayerState	*m_pPlayerState;	// to look up PlayerOptions
 	NoteMetricCache_t	*cache;

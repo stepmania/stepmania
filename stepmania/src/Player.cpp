@@ -143,8 +143,8 @@ void Player::Init(
 	BRIGHT_GHOST_COMBO_THRESHOLD.Load(	sType, "BrightGhostComboThreshold" );
 	TAP_JUDGMENTS_UNDER_FIELD.Load(		sType, "TapJudgmentsUnderField" );
 	HOLD_JUDGMENTS_UNDER_FIELD.Load(	sType, "HoldJudgmentsUnderField" );
-	START_DRAWING_AT_PIXELS.Load(		sType, "StartDrawingAtPixels" );
-	STOP_DRAWING_AT_PIXELS.Load(		sType, "StopDrawingAtPixels" );
+	DRAW_DISTANCE_AFTER_TARGET_PIXELS.Load(		sType, "DrawDistanceAfterTargetsPixels" );
+	DRAW_DISTANCE_BEFORE_TARGET_PIXELS.Load(	sType, "DrawDistanceBeforeTargetsPixels" );
 
 	if( m_pJudgment )
 	{
@@ -389,15 +389,15 @@ void Player::Load()
 		break;
 	}
 
-	int iStartDrawingAtPixels = GAMESTATE->IsEditing() ? -100 : START_DRAWING_AT_PIXELS;
-	int iStopDrawingAtPixels = GAMESTATE->IsEditing() ? 400 : STOP_DRAWING_AT_PIXELS;
+	int iDrawDistanceAfterTargetsPixels = GAMESTATE->IsEditing() ? -100 : DRAW_DISTANCE_AFTER_TARGET_PIXELS;
+	int iDrawDistanceBeforeTargetsPixels = GAMESTATE->IsEditing() ? 400 : DRAW_DISTANCE_BEFORE_TARGET_PIXELS;
 
 	float fNoteFieldMiddle = (GRAY_ARROWS_Y_STANDARD+GRAY_ARROWS_Y_REVERSE)/2;
 	
 	if( m_pNoteField && !bOniDead )
 	{
 		m_pNoteField->SetY( fNoteFieldMiddle );
-		m_pNoteField->Load( &m_NoteData, iStartDrawingAtPixels, iStopDrawingAtPixels );
+		m_pNoteField->Load( &m_NoteData, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels );
 	}
 
 	const bool bReverse = m_pPlayerState->m_PlayerOptions.GetStage().GetReversePercentForColumn( 0 ) == 1;
