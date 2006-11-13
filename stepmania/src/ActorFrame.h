@@ -35,11 +35,11 @@ public:
 	// Commands
 	//
 	virtual void PushSelf( lua_State *L );
-	void PlayCommandOnChildren( const RString &sCommandName );
-	void PlayCommandOnLeaves( const RString &sCommandName );
-	virtual void RunCommandsOnChildren( const LuaReference& cmds ); /* but not on self */
-	void RunCommandsOnChildren( const apActorCommands& cmds ) { this->RunCommandsOnChildren( *cmds ); }	// convenience
-	virtual void RunCommandsOnLeaves( const LuaReference& cmds ); /* but not on self */
+	void PlayCommandOnChildren( const RString &sCommandName, const LuaReference *pParamTable = NULL );
+	void PlayCommandOnLeaves( const RString &sCommandName, const LuaReference *pParamTable = NULL );
+	virtual void RunCommandsOnChildren( const LuaReference& cmds, const LuaReference *pParamTable = NULL ); /* but not on self */
+	void RunCommandsOnChildren( const apActorCommands& cmds, const LuaReference *pParamTable = NULL ) { this->RunCommandsOnChildren( *cmds, pParamTable ); }	// convenience
+	virtual void RunCommandsOnLeaves( const LuaReference& cmds, const LuaReference *pParamTable = NULL ); /* but not on self */
 
 	virtual void UpdateInternal( float fDeltaTime );
 	virtual void ProcessMessages( float fDeltaTime );
@@ -65,9 +65,9 @@ public:
 	/* Amount of time until all tweens (and all children's tweens) have stopped: */
 	virtual float GetTweenTimeLeft() const;
 
-	virtual void PlayCommand( const RString &sCommandName );
-	virtual void RunCommands( const LuaReference& cmds );
-	void RunCommands( const apActorCommands& cmds ) { this->RunCommands( *cmds ); }	// convenience
+	virtual void PlayCommand( const RString &sCommandName, const LuaReference *pParamTable = NULL );
+	virtual void RunCommands( const LuaReference& cmds, const LuaReference *pParamTable = NULL );
+	void RunCommands( const apActorCommands& cmds, const LuaReference *pParamTable = NULL ) { this->RunCommands( *cmds, pParamTable ); }	// convenience
 
 protected:
 	void LoadChildrenFromNode( const XNode* pNode );

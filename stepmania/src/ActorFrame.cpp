@@ -236,30 +236,30 @@ void ActorFrame::EndDraw()
 	Actor::EndDraw();
 }
 
-void ActorFrame::PlayCommandOnChildren( const RString &sCommandName )
+void ActorFrame::PlayCommandOnChildren( const RString &sCommandName, const LuaReference *pParamTable )
 {
 	const apActorCommands *pCmd = GetCommand( sCommandName );
 	if( pCmd != NULL )
-		RunCommandsOnChildren( *pCmd );
+		RunCommandsOnChildren( *pCmd, pParamTable );
 }
 
-void ActorFrame::PlayCommandOnLeaves( const RString &sCommandName )
+void ActorFrame::PlayCommandOnLeaves( const RString &sCommandName, const LuaReference *pParamTable )
 {
 	const apActorCommands *pCmd = GetCommand( sCommandName );
 	if( pCmd != NULL )
-		RunCommandsOnLeaves( **pCmd );
+		RunCommandsOnLeaves( **pCmd, pParamTable );
 }
 
-void ActorFrame::RunCommandsOnChildren( const LuaReference& cmds )
+void ActorFrame::RunCommandsOnChildren( const LuaReference& cmds, const LuaReference *pParamTable )
 {
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->RunCommands( cmds );
+		m_SubActors[i]->RunCommands( cmds, pParamTable );
 }
 
-void ActorFrame::RunCommandsOnLeaves( const LuaReference& cmds )
+void ActorFrame::RunCommandsOnLeaves( const LuaReference& cmds, const LuaReference *pParamTable )
 {
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->RunCommandsOnLeaves( cmds );
+		m_SubActors[i]->RunCommandsOnLeaves( cmds, pParamTable );
 }
 
 void ActorFrame::UpdateInternal( float fDeltaTime )
@@ -351,12 +351,12 @@ void ActorFrame::DeleteAllChildren()
 	m_SubActors.clear();
 }
 
-void ActorFrame::RunCommands( const LuaReference& cmds )
+void ActorFrame::RunCommands( const LuaReference& cmds, const LuaReference *pParamTable )
 {
 	if( m_bPropagateCommands )
-		RunCommandsOnChildren( cmds );
+		RunCommandsOnChildren( cmds, pParamTable );
 	else
-		Actor::RunCommands( cmds );
+		Actor::RunCommands( cmds, pParamTable );
 }
 
 void ActorFrame::SetPropagateCommands( bool b )
@@ -364,9 +364,9 @@ void ActorFrame::SetPropagateCommands( bool b )
 	m_bPropagateCommands = b;
 }
 
-void ActorFrame::PlayCommand( const RString &sCommandName )
+void ActorFrame::PlayCommand( const RString &sCommandName, const LuaReference *pParamTable )
 {
-	Actor::PlayCommand( sCommandName );
+	Actor::PlayCommand( sCommandName, pParamTable );
 
 	// HACK: Don't propogate Init.  It gets called once for every Actor when the 
 	// Actor is loaded, and we don't want to call it again.
@@ -376,7 +376,7 @@ void ActorFrame::PlayCommand( const RString &sCommandName )
 	for( unsigned i=0; i<m_SubActors.size(); i++ ) 
 	{
 		Actor* pActor = m_SubActors[i];
-		pActor->PlayCommand( sCommandName );
+		pActor->PlayCommand( sCommandName, pParamTable );
 	}
 }
 

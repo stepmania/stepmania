@@ -155,11 +155,20 @@ Message::~Message()
 void Message::PushParamTable( lua_State *L )
 {
 	m_pParams->PushSelf( L );
+}
 
+const LuaReference &Message::GetParamTable() const
+{
+	return *m_pParams;
 }
 
 void Message::PushParam( lua_State *L, RString sName )
 {
+}
+
+void Message::SetParamFromStack( lua_State *L, const RString &sName )
+{
+	m_pParams->Set( L, sName );
 }
 
 MessageManager::MessageManager()
@@ -212,21 +221,25 @@ void MessageManager::Unsubscribe( IMessageSubscriber* pSubscriber, MessageID m )
 	Unsubscribe( pSubscriber, MessageToString(m) );
 }
 
-void MessageManager::Broadcast( const RString& sMessage ) const
+void MessageManager::Broadcast( const Message &msg ) const
 {
-	ASSERT( !sMessage.empty() );
-
 	LockMut(g_Mutex);
 
-	map<RString,SubscribersSet>::const_iterator iter = g_MessageToSubscribers.find( sMessage );
+	map<RString,SubscribersSet>::const_iterator iter = g_MessageToSubscribers.find( msg.GetName() );
 	if( iter == g_MessageToSubscribers.end() )
 		return;
 
 	FOREACHS_CONST( IMessageSubscriber*, iter->second, p )
 	{
 		IMessageSubscriber *pSub = *p;
-		pSub->HandleMessage( Message(sMessage) );
+		pSub->HandleMessage( msg );
 	}
+}
+
+void MessageManager::Broadcast( const RString& sMessage ) const
+{
+	ASSERT( !sMessage.empty() );
+	Broadcast( Message(sMessage) );
 }
 
 void MessageManager::Broadcast( MessageID m ) const

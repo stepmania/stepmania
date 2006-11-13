@@ -356,11 +356,11 @@ public:
 	void AddCommand( const RString &sCmdName, apActorCommands apac );
 	bool HasCommand( const RString &sCmdName );
 	const apActorCommands *GetCommand( const RString &sCommandName ) const;
-	virtual void PlayCommand( const RString &sCommandName );
-	virtual void RunCommands( const LuaReference& cmds );
-	void RunCommands( const apActorCommands& cmds ) { this->RunCommands( *cmds ); }	// convenience
+	virtual void PlayCommand( const RString &sCommandName, const LuaReference *pParamTable = NULL );
+	virtual void RunCommands( const LuaReference& cmds, const LuaReference *pParamTable = NULL );
+	void RunCommands( const apActorCommands& cmds, const LuaReference *pParamTable = NULL ) { this->RunCommands( *cmds, pParamTable ); }	// convenience
 	// If we're a leaf, then execute this command.
-	virtual void RunCommandsOnLeaves( const LuaReference& cmds ) { RunCommands(cmds); }
+	virtual void RunCommandsOnLeaves( const LuaReference& cmds, const LuaReference *pParamTable = NULL ) { RunCommands(cmds, pParamTable); }
 
 	//
 	// Messages

@@ -1003,7 +1003,7 @@ void Actor::AddRotationR( float rot )
 	RageQuatMultiply( &DestTweenState().quat, DestTweenState().quat, RageQuatFromR(rot) );
 }
 
-void Actor::RunCommands( const LuaReference& cmds )
+void Actor::RunCommands( const LuaReference& cmds, const LuaReference *pParamTable )
 {
 	Lua *L = LUA->Get();
 
@@ -1014,8 +1014,14 @@ void Actor::RunCommands( const LuaReference& cmds )
 	// 1st parameter
 	this->PushSelf( L );
 	
-	// call function with 1 argument and 0 results
-	lua_call( L, 1, 0 ); 
+	// 2nd parameter
+	if( pParamTable == NULL )
+		lua_pushnil( L );
+	else
+		pParamTable->PushSelf( L );
+
+	// call function with 2 arguments and 0 results
+	lua_call( L, 2, 0 ); 
 
 	LUA->Release(L);
 }
@@ -1184,11 +1190,11 @@ const apActorCommands *Actor::GetCommand( const RString &sCommandName ) const
 	return &it->second;
 }
 
-void Actor::PlayCommand( const RString &sCommandName )
+void Actor::PlayCommand( const RString &sCommandName, const LuaReference *pParamTable )
 {
 	const apActorCommands *pCmd = GetCommand( sCommandName );
 	if( pCmd != NULL )
-		RunCommands( *pCmd );
+		RunCommands( *pCmd, pParamTable );
 }
 
 void Actor::PushContext( lua_State *L )
@@ -1217,7 +1223,7 @@ void Actor::SetParent( Actor *pParent )
 
 void Actor::HandleMessage( const Message &msg )
 {
-	PlayCommand( msg.GetName() );
+	PlayCommand( msg.GetName(), &msg.GetParamTable() );
 }
 
 Actor::TweenInfo::TweenInfo()

@@ -6,6 +6,7 @@
 #include "LuaManager.h"
 struct lua_State;
 class LuaTable;
+class LuaReference;
 
 enum MessageID
 {
@@ -142,7 +143,19 @@ struct Message
 	RString GetName() const { return m_sName; }
 
 	void PushParamTable( lua_State *L );
+	const LuaReference &GetParamTable() const;
 	void PushParam( lua_State *L, RString sName );
+
+	void SetParamFromStack( lua_State *L, const RString &sName );
+
+	template<typename T>
+	void SetParam( const RString &sName, const T &val )
+	{
+		Lua *L = LUA->Get();
+		LuaHelpers::Push( L, val );
+		SetParamFromStack( L, sName );
+		LUA->Release( L );
+	}
 
 	bool operator==( const RString &s ) const { return m_sName == s; }
 	bool operator==( MessageID id ) const { return MessageIDToString(id) == m_sName; }
@@ -193,6 +206,7 @@ public:
 	void Subscribe( IMessageSubscriber* pSubscriber, MessageID m );
 	void Unsubscribe( IMessageSubscriber* pSubscriber, const RString& sMessage );
 	void Unsubscribe( IMessageSubscriber* pSubscriber, MessageID m );
+	void Broadcast( const Message &msg ) const;
 	void Broadcast( const RString& sMessage ) const;
 	void Broadcast( MessageID m ) const;
 
