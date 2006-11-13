@@ -34,9 +34,6 @@
  * (added to by GroupScreen), the screen group is reset: all prepared screens are
  * unloaded and the persistance list is cleared.
  *
- * (For persistance, concurrently preparing a screen is logically equivalent
- * to SetNewScreen, since it's going to be set after it finishes loading.)
- *
  * Note that not all screens yet support reuse in this way; proper use of BeginScreen
  * is required.  This will misbehave if a screen pushes another screen that's already
  * in use lower on the stack, but that's not useful; it would allow infinite screen
@@ -74,11 +71,9 @@
 #include "ScreenDimensions.h"
 #include "Foreach.h"
 #include "ActorUtil.h"
-#include "GameLoop.h"
 
 ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our program
 
-static Preference<bool> g_bConcurrentLoading( "ConcurrentLoading", false );
 static Preference<bool> g_bDelayedScreenLoad( "DelayedScreenLoad", false );
 
 // Screen registration
@@ -331,8 +326,6 @@ bool ScreenManager::IsStackedScreen( const Screen *pScreen ) const
 	return false;
 }
 
-static bool g_bIsConcurrentlyLoading = false;
-
 /* Pop the top screen off the stack, sending SM_LoseFocus messages and
  * returning the message the popped screen wants sent to the new top
  * screen.  Does not send SM_GainFocus. */
@@ -447,20 +440,10 @@ void ScreenManager::Update( float fDeltaTime )
 	/* If we're currently inside a background screen load, and m_sDelayedScreen
 	 * is set, then the screen called SetNewScreen before we finished preparing.
 	 * Postpone it until we're finished loading. */
-	if( !IsConcurrentlyLoading() && m_sDelayedScreen.size() != 0 )
+	if( m_sDelayedScreen.size() != 0 )
 	{
 		LoadDelayedScreen();
 	}
-
-	if( !m_sDelayedConcurrentPrepare.empty() )
-	{
-		RunConcurrentlyPrepareScreen();
-	}
-}
-
-bool ScreenManager::IsConcurrentlyLoading() const
-{
-	return g_bIsConcurrentlyLoading;
 }
 
 void ScreenManager::Draw()
@@ -594,54 +577,6 @@ void ScreenManager::GroupScreen( const RString &sScreenName )
 void ScreenManager::PersistantScreen( const RString &sScreenName )
 {
 	g_setPersistantScreens.insert( sScreenName );
-}
-
-bool ScreenManager::ConcurrentlyPrepareScreen( const RString &sScreenName, ScreenMessage SM )
-{
-	ASSERT_M( m_sDelayedConcurrentPrepare == "", m_sDelayedConcurrentPrepare );
-
-	if( !g_bConcurrentLoading || !DISPLAY->SupportsThreadedRendering() )
-		return false;
-
-	LOG->Trace( "ConcurrentlyPrepareScreen(%s)", sScreenName.c_str() );
-	ASSERT( !IsConcurrentlyLoading() );
-
-	m_sDelayedConcurrentPrepare = sScreenName;
-	m_OnDonePreparingScreen = SM;
-	return true;
-}
-
-void ScreenManager::RunConcurrentlyPrepareScreen()
-{
-	/* Don't call BackgroundPrepareScreen() from within another background load. */
-	ASSERT( !IsConcurrentlyLoading() );
-
-	RString sScreenName = m_sDelayedConcurrentPrepare;
-	m_sDelayedConcurrentPrepare = "";
-
-	ScreenMessage SM = m_OnDonePreparingScreen;
-	m_OnDonePreparingScreen = SM_None;
-
-	/* If the screen is already prepared, we're all set. */
-	if( !ScreenIsPrepped(sScreenName) )
-	{
-		g_bIsConcurrentlyLoading = true;
-		GameLoop::StartConcurrentRendering();
-
-		if( g_setGroupedScreens.find(sScreenName) == g_setGroupedScreens.end() )
-			DeletePreparedScreens();
-		
-		PrepareScreen( sScreenName );
-		
-		GameLoop::FinishConcurrentRendering();
-		g_bIsConcurrentlyLoading = false;
-
-		LOG->Trace( "Concurrent prepare of %s finished", sScreenName.c_str() );
-	}
-
-	/* We're done.  Send the message.  The screen is allowed to start
-	 * another concurrent prepare from this message. */
-	SendMessageToTopScreen( SM );
 }
 
 void ScreenManager::SetNewScreen( const RString &sScreenName )
@@ -866,17 +801,14 @@ void ScreenManager::RefreshCreditsMessages()
 
 void ScreenManager::ZeroNextUpdate()
 {
-	if( !IsConcurrentlyLoading() )
-	{
-		LOG->Trace("ScreenManager::ZeroNextUpdate");
-		m_bZeroNextUpdate = true;
+	LOG->Trace("ScreenManager::ZeroNextUpdate");
+	m_bZeroNextUpdate = true;
 
-		/* Loading probably took a little while.  Let's reset stats.  This prevents us
-		 * from displaying an unnaturally low FPS value, and the next FPS value we
-		 * display will be accurate, which makes skips in the initial tween-ins more
-		 * apparent. */
-		DISPLAY->ResetStats();
-	}
+	/* Loading probably took a little while.  Let's reset stats.  This prevents us
+	 * from displaying an unnaturally low FPS value, and the next FPS value we
+	 * display will be accurate, which makes skips in the initial tween-ins more
+	 * apparent. */
+	DISPLAY->ResetStats();
 }
 
 void ScreenManager::PlayInvalidSound()
@@ -940,7 +872,6 @@ public:
 		return 1;
 	}
 	static int SystemMessage( T* p, lua_State *L )		{ p->SystemMessage( SArg(1) ); return 0; }
-	static int ConcurrentlyPrepareScreen( T* p, lua_State *L )	{ p->ConcurrentlyPrepareScreen( SArg(1) ); return 0; }
 	static int ScreenIsPrepped( T* p, lua_State *L )	{ lua_pushboolean( L, ScreenManagerUtil::ScreenIsPrepped( SArg(1) ) ); return 1; }
 
 	LunaScreenManager()
@@ -948,7 +879,6 @@ public:
 		ADD_METHOD( SetNewScreen );
 		ADD_METHOD( GetTopScreen );
 		ADD_METHOD( SystemMessage );
-		ADD_METHOD( ConcurrentlyPrepareScreen );
 		ADD_METHOD( ScreenIsPrepped );
 	}
 };

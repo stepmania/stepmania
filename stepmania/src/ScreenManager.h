@@ -30,8 +30,6 @@ public:
 	void PrepareScreen( const RString &sScreenName );	// creates and caches screen so that the next call to SetNewScreen for the prep'd screen will be very quick.
 	void GroupScreen( const RString &sScreenName );
 	void PersistantScreen( const RString &sScreenName );
-	bool ConcurrentlyPrepareScreen( const RString &sScreenName, ScreenMessage send_when_done = SM_None );
-	bool IsConcurrentlyLoading() const;
 	void PopTopScreen( ScreenMessage SM );
 	void PopAllScreens();
 	Screen *GetTopScreen();
@@ -81,7 +79,6 @@ private:
 	void LoadDelayedScreen();
 	bool ActivatePreparedScreenAndBackground( const RString &sScreenName );
 	ScreenMessage PopTopScreenInternal( bool bSendLoseFocus = true );
-	void RunConcurrentlyPrepareScreen();
 
 	// Keep these sounds always loaded, because they could be 
 	// played at any time.  We want to eliminate SOUND->PlayOnce

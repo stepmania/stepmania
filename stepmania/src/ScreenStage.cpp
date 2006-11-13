@@ -65,7 +65,7 @@ void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_BeginFadingOut )
 	{
-		if( SCREENMAN->IsConcurrentlyLoading() || m_sprOverlay->GetTweenTimeLeft() )
+		if( m_sprOverlay->GetTweenTimeLeft() )
 			return;
 
 		/* Clear any other SM_BeginFadingOut messages. */
@@ -84,16 +84,8 @@ void ScreenStage::Update( float fDeltaTime )
 {
 	if( this->IsFirstUpdate() )
 	{
-		if( SCREENMAN->ConcurrentlyPrepareScreen(GetNextScreen(), SM_BeginFadingOut) )
-		{
-			/* Continue when both the screen finishes loading and the tween finishes. */
-			this->PostScreenMessage( SM_BeginFadingOut, m_sprOverlay->GetTweenTimeLeft() );
-		}
-		else
-		{
-			/* Prep the new screen once m_In is complete. */ 	 
-			this->PostScreenMessage( SM_PrepScreen, m_sprOverlay->GetTweenTimeLeft() );
-		}
+		/* Prep the new screen once m_In is complete. */ 	 
+		this->PostScreenMessage( SM_PrepScreen, m_sprOverlay->GetTweenTimeLeft() );
 	}
 
 	Screen::Update( fDeltaTime );

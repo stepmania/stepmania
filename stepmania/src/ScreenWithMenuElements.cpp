@@ -329,8 +329,6 @@ void ScreenWithMenuElementsSimple::MenuStart( const InputEventPlus &input )
 		return;
 
 	StartTransitioningScreen( SM_GoToNextScreen );
-
-	SCREENMAN->ConcurrentlyPrepareScreen( GetNextScreen() );
 }
 
 void ScreenWithMenuElementsSimple::MenuBack( const InputEventPlus &input )
@@ -341,8 +339,6 @@ void ScreenWithMenuElementsSimple::MenuBack( const InputEventPlus &input )
 		return;
 
 	Cancel( SM_GoToPrevScreen );
-
-	SCREENMAN->ConcurrentlyPrepareScreen( GetNextScreen() );
 }
 
 // lua start

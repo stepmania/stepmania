@@ -237,8 +237,6 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 
 		if( !IsTransitioning() )
 			StartTransitioningScreen( SM_GoToNextScreen );
-
-		SCREENMAN->ConcurrentlyPrepareScreen( GetNextScreen() );
 	}
 	else if( SM == SM_GoToNextScreen )
 	{
