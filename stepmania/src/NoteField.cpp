@@ -300,6 +300,7 @@ void NoteField::DrawBoard( int iFirstPixelToDraw, int iLastPixelToDraw )
 		rect.bottom = -fTexCoordOffset;
 		m_sprBoard.SetCustomTextureRect( rect );
 		m_sprBoard.SetVertAlign( VertAlign_Bottom );
+		m_sprBoard.SetFadeTop( 0.2f );
 		m_sprBoard.Draw();
 	}
 	{
@@ -311,6 +312,7 @@ void NoteField::DrawBoard( int iFirstPixelToDraw, int iLastPixelToDraw )
 		rect.bottom = -fTexCoordOffset+(fHeight/fBoardGraphicHeightPixels);
 		m_sprBoard.SetCustomTextureRect( rect );
 		m_sprBoard.SetVertAlign( VertAlign_Top );
+		m_sprBoard.SetFadeTop( 0 );
 		m_sprBoard.Draw();
 	}
 }
