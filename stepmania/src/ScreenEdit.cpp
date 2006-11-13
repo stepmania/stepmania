@@ -2583,6 +2583,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		m_pSteps->SetSavedToDisk( true );
 		CopyToLastSave();
 		SetDirty( false );
+		SONGMAN->Invalidate( GAMESTATE->m_pCurSong );
 
 		if( m_CurrentAction == save_on_exit )
 			ScreenPrompt::Prompt( SM_DoExit, SAVE_SUCCESSFUL );
@@ -2605,6 +2606,8 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		// If these steps have never been saved, then we should delete them.
 		// If the user created them in the edit menu and never bothered
 		// to save them, then they aren't wanted.
+		// FIXME: This logic fails if the user starts a new steps, changes to 
+		// a different stepchart, and then exits without saving
 		Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 		if( !pSteps->GetSavedToDisk() )
 		{
@@ -3481,7 +3484,8 @@ void ScreenEdit::RevertFromDisk()
 	m_pSteps = pNewSteps;
 
 	CopyToLastSave();
-	SetDirty(false);
+	SetDirty( false );
+	SONGMAN->Invalidate( GAMESTATE->m_pCurSong );
 }
 
 void ScreenEdit::SaveUndo()

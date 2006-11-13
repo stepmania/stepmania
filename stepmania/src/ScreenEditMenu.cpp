@@ -74,6 +74,7 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 		Steps* pStepsToDelete = GAMESTATE->m_pCurSteps[PLAYER_1];
 		bool bSaveSong = !pStepsToDelete->WasLoadedFromProfile();
 		pSong->DeleteSteps( pStepsToDelete );
+		SONGMAN->Invalidate( pSong );
 
 		/* Only save to the main .SM file if the steps we're deleting were loaded
 		 * from it. */

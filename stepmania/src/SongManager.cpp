@@ -859,105 +859,20 @@ void SongManager::Cleanup()
 	}
 }
 
-/* Flush all Song*, Steps* and Course* caches.  This is called on reload, and when
- * any of those are removed or changed.  This doesn't touch GAMESTATE and StageStats
- * pointers, which are updated explicitly in Song::RevertFromDisk. */
+/* Flush all Song*, Steps* and Course* caches.  This is when a Song or its Steps
+ * are removed or changed.  This doesn't touch GAMESTATE and StageStats
+ * pointers.  Currently, the only time Steps are altered independantly of the
+ * Courses and Songs is in Edit Mode, which updates the other pointers it needs. */
 void SongManager::Invalidate( Song *pStaleSong )
 {
-	//
-	// Save list of all old Course and Trail pointers
-	//
-	map<Course*,CourseID> mapOldCourseToCourseID;
-	typedef pair<TrailID,Course*> TrailIDAndCourse;
-	map<Trail*,TrailIDAndCourse> mapOldTrailToTrailIDAndCourse;
-	FOREACH_CONST( Course*, this->m_pCourses, pCourse )
+	FOREACH( Course*, this->m_pCourses, pCourse )
 	{
-		CourseID id;
-		id.FromCourse( *pCourse );
-		mapOldCourseToCourseID[*pCourse] = id;
-		vector<Trail *> Trails;
-		(*pCourse)->GetAllCachedTrails( Trails );
-		FOREACH_CONST( Trail*, Trails, pTrail )
-		{
-			TrailID id;
-			id.FromTrail( *pTrail );
-			mapOldTrailToTrailIDAndCourse[*pTrail] = TrailIDAndCourse(id, *pCourse);
-		}
+		(*pCourse)->Invalidate( pStaleSong );
 	}
 
-	// It's a real pain to selectively invalidate only those Courses with 
-	// dependencies on the stale Song.  So, instead, just reload all Courses.
-	// It doesn't take very long.
-	FreeCourses();
-	InitCoursesFromDisk( NULL );
-	InitAutogenCourses();
-
-	// invalidate cache
-	StepsID::ClearCache();
-
-#define CONVERT_COURSE_POINTER( pCourse ) do { \
-	CourseID id = mapOldCourseToCourseID[pCourse]; /* this will always succeed */ \
-	pCourse = id.ToCourse(); \
-} while(false)
-
-	/* Ugly: We need the course pointer to restore a trail pointer, and both have
-	 * been invalidated.  We need to go through our mapping, and update the course
-	 * pointers, so we can use that to update trail pointers.  */
-	{
-		map<Trail*,TrailIDAndCourse>::iterator it;
-		for( it = mapOldTrailToTrailIDAndCourse.begin(); it != mapOldTrailToTrailIDAndCourse.end(); ++it )
-		{
-			TrailIDAndCourse &tidc = it->second;
-			CONVERT_COURSE_POINTER( tidc.second );
-		}
-	}
-
-	{
-		CourseID id = mapOldCourseToCourseID[GAMESTATE->m_pCurCourse]; /* this will always succeed */
-		GAMESTATE->m_pCurCourse.Set( id.ToCourse() );
-	}
-	CONVERT_COURSE_POINTER( GAMESTATE->m_pPreferredCourse );
-
-#define CONVERT_TRAIL_POINTER( pTrail ) do { \
-	if( pTrail != NULL ) { \
-		map<Trail*,TrailIDAndCourse>::iterator it; \
-		it = mapOldTrailToTrailIDAndCourse.find(pTrail); \
-		ASSERT_M( it != mapOldTrailToTrailIDAndCourse.end(), ssprintf("%p", pTrail.Get()) ); \
-		const TrailIDAndCourse &tidc = it->second; \
-		const TrailID &id = tidc.first; \
-		const Course *pCourse = tidc.second; \
-		pTrail.Set( id.ToTrail( pCourse, true ) ); \
-	} \
-} while(false)
-
-	FOREACH_PlayerNumber( pn )
-	{
-		CONVERT_TRAIL_POINTER( GAMESTATE->m_pCurTrail[pn] );
-	}
-}
-
-/* If bAllowNotesLoss is true, any global notes pointers which no longer exist
- * (or exist but couldn't be matched) will be set to NULL.  This is used when
- * reverting out of the editor.  If false, this is unexpected and will assert.
- * This is used when reverting out of gameplay, in which case we may have StageStats,
- * etc. which may cause hard-to-trace crashes down the line if we set them to NULL. */
-void CONVERT_STEPS_POINTER( Steps *&pSteps, const map<Steps*,StepsID> &mapOldStepsToStepsID, const Song *pSong, bool bAllowNotesLoss )
-{
-	if( pSteps == NULL )
-		return;
-
-	map<Steps*,StepsID>::const_iterator it = mapOldStepsToStepsID.find(pSteps);
-	if( it != mapOldStepsToStepsID.end() )
-		pSteps = it->second.ToSteps(pSong, bAllowNotesLoss);
-}
-void CONVERT_STEPS_POINTER( BroadcastOnChangePtr<Steps> &pSteps, const map<Steps*,StepsID> &mapOldStepsToStepsID, const Song *pSong, bool bAllowNotesLoss )
-{
-	if( pSteps == NULL )
-		return;
-
-	map<Steps*,StepsID>::const_iterator it = mapOldStepsToStepsID.find(pSteps);
-	if( it != mapOldStepsToStepsID.end() )
-		pSteps.Set( it->second.ToSteps(pSong, bAllowNotesLoss) );
+	UpdatePopular();
+	UpdateShuffled();
+	RefreshCourseGroupInfo();
 }
 
 void SongManager::RegenerateNonFixedCourses()

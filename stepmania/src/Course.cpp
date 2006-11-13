@@ -192,24 +192,33 @@ RString Course::GetCacheFilePath() const
 void Course::Init()
 {
 	m_bIsAutogen = false;
-	m_bRepeat = false;
-	m_bShuffle = false;
-	m_iLives = -1;
-	m_bSortByMeter = false;
-	m_vEntries.clear();
-	FOREACH_Difficulty(dc)
-		m_iCustomMeter[dc] = -1;
-	m_vEntries.clear();
 	m_sPath = "";
-	m_sGroupName = "";
+
 	m_sMainTitle = "";
 	m_sMainTitleTranslit = "";
 	m_sSubTitle = "";
 	m_sSubTitleTranslit = "";
+
 	m_sBannerPath = "";
 	m_sCDTitlePath = "";
+	m_sGroupName = "";
+
+	m_bRepeat = false;
+	m_bShuffle = false;
+	m_iLives = -1;
+	FOREACH_Difficulty(dc)
+		m_iCustomMeter[dc] = -1;
+	m_bSortByMeter = false;
+
+	m_vEntries.clear();
+
+	m_SortOrder_TotalDifficulty = 0;
+	m_SortOrder_Ranking = 0;
+
 	m_LoadedFromProfile = ProfileSlot_Invalid;
+	m_TrailCache.clear();
 	m_iTrailCacheSeed = 0;
+	m_RadarCache.clear();
 }
 
 bool Course::IsPlayableIn( StepsType st ) const
