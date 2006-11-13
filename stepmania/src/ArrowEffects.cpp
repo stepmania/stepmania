@@ -470,11 +470,11 @@ static float GetSuddenStartLine( const PlayerState* pPlayerState )
 float ArrowGetPercentVisible( const PlayerState* pPlayerState, int iCol, float fYOffset, float fYReverseOffsetPixels )
 {
 	/* Get the YPos without reverse (that is, factor in EFFECT_TIPSY). */
-	float fYPos = ArrowEffects::GetYPos( pPlayerState, iCol, fYOffset, fYReverseOffsetPixels, false );
+	float fYPosWithoutReverse = ArrowEffects::GetYPos( pPlayerState, iCol, fYOffset, fYReverseOffsetPixels, false );
 
-	const float fDistFromCenterLine = fYPos - GetCenterLine( pPlayerState );
+	const float fDistFromCenterLine = fYPosWithoutReverse - GetCenterLine( pPlayerState );
 
-	if( fYPos < 0 )	// past Gray Arrows
+	if( fYPosWithoutReverse < 0 )	// past Gray Arrows
 		return 1;	// totally visible
 
 	const float* fAppearances = pPlayerState->m_PlayerOptions.GetCurrent().m_fAppearances;
@@ -483,13 +483,13 @@ float ArrowGetPercentVisible( const PlayerState* pPlayerState, int iCol, float f
 
 	if( fAppearances[PlayerOptions::APPEARANCE_HIDDEN] != 0 )
 	{
-		float fHiddenVisibleAdjust = SCALE( fYPos, GetHiddenStartLine(pPlayerState), GetHiddenEndLine(pPlayerState), 0, -1 );
+		float fHiddenVisibleAdjust = SCALE( fYPosWithoutReverse, GetHiddenStartLine(pPlayerState), GetHiddenEndLine(pPlayerState), 0, -1 );
 		CLAMP( fHiddenVisibleAdjust, -1, 0 );
 		fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_HIDDEN] * fHiddenVisibleAdjust;
 	}
 	if( fAppearances[PlayerOptions::APPEARANCE_SUDDEN] != 0 )
 	{
-		float fSuddenVisibleAdjust = SCALE( fYPos, GetSuddenStartLine(pPlayerState), GetSuddenEndLine(pPlayerState), -1, 0 );
+		float fSuddenVisibleAdjust = SCALE( fYPosWithoutReverse, GetSuddenStartLine(pPlayerState), GetSuddenEndLine(pPlayerState), -1, 0 );
 		CLAMP( fSuddenVisibleAdjust, -1, 0 );
 		fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_SUDDEN] * fSuddenVisibleAdjust;
 	}
