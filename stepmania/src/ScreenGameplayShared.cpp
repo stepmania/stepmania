@@ -53,10 +53,10 @@ void ScreenGameplayShared::SaveStats()
 		PlayerStageStats &pss = *pi.GetPlayerStageStats();
 		
 		NoteDataUtil::CalculateRadarValues( nd, fMusicLen, rv );
-		pss.radarPossible += rv;
+		pss.m_radarPossible += rv;
 		
 		NoteDataWithScoring::GetActualRadarValues( nd, pss, fMusicLen, rv );
-		pss.radarActual += rv;
+		pss.m_radarActual += rv;
 	}
 }
 
