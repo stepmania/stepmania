@@ -350,13 +350,11 @@ void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 	}
 }
 
-void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow, bool &bComboStopped, bool &bMissComboStopped )
+void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 {
 	TapNoteScore scoreOfLastTap;
 	int iNumTapsInRow;
 	
-	bComboStopped = false;
-	bMissComboStopped = false;
 	GetScoreOfLastTapInRow( nd, iRow, scoreOfLastTap, iNumTapsInRow );
 	
 	if( iNumTapsInRow <= 0 )
@@ -378,14 +376,12 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow, bool &b
 	const int iComboCountIfHit = m_bComboIsPerRow? 1: iNumTapsInRow;
 	if( scoreOfLastTap >= m_MinScoreToMaintainCombo )
 	{
-		bMissComboStopped = true;
 		m_pPlayerStageStats->m_iCurMissCombo = 0;
 		if( scoreOfLastTap >= m_MinScoreToContinueCombo )
 			m_pPlayerStageStats->m_iCurCombo += iComboCountIfHit;
 	}
 	else
 	{
-		bComboStopped = true;
 		m_pPlayerStageStats->m_iCurCombo = 0;
 		if( scoreOfLastTap == TNS_Miss )
 			++m_pPlayerStageStats->m_iCurMissCombo;

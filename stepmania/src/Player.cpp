@@ -1734,18 +1734,15 @@ void Player::HandleTapRowScore( unsigned row )
 			m_pSecondaryScoreKeeper->HandleTapScore( tn );
 	}		
 
-	bool bComboStopped = false;
-	bool bMissComboStopped = false;
-
 	const int iCurCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
 	const int iCurMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
 
 	if( m_pPrimaryScoreKeeper != NULL )
-		m_pPrimaryScoreKeeper->HandleTapRowScore( m_NoteData, row, bComboStopped, bMissComboStopped );
+		m_pPrimaryScoreKeeper->HandleTapRowScore( m_NoteData, row );
 	if( iOldCombo > 50 && iCurCombo < 50 )
 		SCREENMAN->PostMessageToTopScreen( SM_ComboStopped, 0 );
 	if( m_pSecondaryScoreKeeper != NULL )
-		m_pSecondaryScoreKeeper->HandleTapRowScore( m_NoteData, row, bComboStopped, bMissComboStopped );
+		m_pSecondaryScoreKeeper->HandleTapRowScore( m_NoteData, row );
 
 	if( m_pPlayerStageStats && m_pCombo )
 	{

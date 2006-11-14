@@ -13,7 +13,7 @@ public:
 	ScoreKeeperRave( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats );
 	void OnNextSong( int iSongInCourseIndex, const Steps *pSteps, const NoteData *pNoteData ) { }
 	void HandleTapScore( const TapNote &tn );
-	void HandleTapRowScore( const NoteData &nd, int iRow, bool &bComboStopped, bool &bMissComboStopped );
+	void HandleTapRowScore( const NoteData &nd, int iRow );
 	void HandleHoldScore( const TapNote &tn );
 
 protected:
