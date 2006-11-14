@@ -1739,8 +1739,6 @@ void Player::HandleTapRowScore( unsigned row )
 
 	if( m_pPrimaryScoreKeeper != NULL )
 		m_pPrimaryScoreKeeper->HandleTapRowScore( m_NoteData, row, bComboStopped, bMissComboStopped );
-	if( bMissComboStopped )
-		SCREENMAN->PostMessageToTopScreen( SM_MissComboAborted, 0 );
 	if( bComboStopped && iOldCombo > 50 )
 		SCREENMAN->PostMessageToTopScreen( SM_ComboStopped, 0 );
 	if( m_pSecondaryScoreKeeper != NULL )

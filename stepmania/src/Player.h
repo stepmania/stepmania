@@ -35,7 +35,6 @@ AutoScreenMessage( SM_900Combo );
 AutoScreenMessage( SM_1000Combo );
 AutoScreenMessage( SM_ComboStopped );
 AutoScreenMessage( SM_ComboContinuing );
-AutoScreenMessage( SM_MissComboAborted );
 
 // Helper class to ensure that each row is only judged once without taking too much memory.
 class JudgedRows
