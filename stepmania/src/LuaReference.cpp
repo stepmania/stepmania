@@ -193,6 +193,14 @@ void LuaTable::Set( Lua *L, const RString &sKey )
 	lua_settop( L, iTop-1 ); // remove all of the above
 }
 
+namespace LuaHelpers
+{
+	template<> void Push<LuaReference>( lua_State *L, const LuaReference &Object ) 
+	{
+		Object.PushSelf( L );
+	}
+}
+
 /*
  * (c) 2005 Glenn Maynard, Chris Danford
  * All rights reserved.
