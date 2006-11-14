@@ -155,7 +155,7 @@ public:
 	void T::PushSelf( lua_State *L ) { Luna<B>::PushObject( L, Luna<T>::m_sClassName, this ); } \
 	static Luna##T registera##T; \
 	/* Call PushSelf, so we always call the derived Luna<T>::Push. */ \
-	namespace LuaHelpers { template<> void Push<T*>( lua_State *L, T *const &pObject ) { pObject->PushSelf( L ); } }
+	namespace LuaHelpers { template<> void Push<T*>( lua_State *L, T *const &pObject ) { if( pObject == NULL ) lua_pushnil(L); else pObject->PushSelf( L ); } }
 
 #define DEFINE_METHOD( method_name, expr ) \
 	static int method_name( T* p, lua_State *L ) { LuaHelpers::Push( L, p->expr ); return 1; }
