@@ -1716,6 +1716,7 @@ void Player::HandleTapRowScore( unsigned row )
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 	TapNoteScore scoreOfLastTap = NoteDataWithScoring::LastTapNoteWithResult(m_NoteData, row, pn).result.tns;
 	const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
+	const int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
 
 	if( scoreOfLastTap == TNS_Miss )
 		m_LastTapNoteScore = TNS_Miss;
@@ -1743,6 +1744,15 @@ void Player::HandleTapRowScore( unsigned row )
 		SCREENMAN->PostMessageToTopScreen( SM_ComboStopped, 0 );
 	if( m_pSecondaryScoreKeeper != NULL )
 		m_pSecondaryScoreKeeper->HandleTapRowScore( m_NoteData, row );
+
+	{
+		Message msg( "ComboChanged" );
+		msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
+		msg.SetParam( "OldCombo", iOldCombo );
+		msg.SetParam( "OldMissCombo", iOldMissCombo );
+		msg.SetParam( "PlayerStageStats", LuaReference::CreateFromPush(*m_pPlayerStageStats) );
+		MESSAGEMAN->Broadcast( msg );
+	}
 
 	if( m_pPlayerStageStats && m_pCombo )
 	{
