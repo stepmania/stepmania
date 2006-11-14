@@ -16,6 +16,27 @@ LifeMeter *LifeMeter::MakeLifeMeter( SongOptions::LifeType t )
 	}
 }
 
+// lua start
+#include "LuaBinding.h"
+
+class LunaLifeMeter: public Luna<LifeMeter>
+{
+public:
+	static int GetLife( T* p, lua_State *L )
+	{
+		LuaHelpers::Push( L, p->GetLife() );
+		return 1;
+	}
+
+	LunaLifeMeter()
+	{
+  		ADD_METHOD( GetLife );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( LifeMeter, ActorFrame )
+// lua end
+
 /*
  * (c) 2005 Glenn Maynard
  * All rights reserved.

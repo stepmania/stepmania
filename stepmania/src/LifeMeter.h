@@ -36,6 +36,11 @@ public:
 
 	static LifeMeter *MakeLifeMeter( SongOptions::LifeType t );
 
+	//
+	// Lua
+	//
+	virtual void PushSelf( lua_State *L );
+
 protected:
 	const PlayerState *m_pPlayerState;
 	PlayerStageStats *m_pPlayerStageStats;
