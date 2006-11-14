@@ -44,6 +44,7 @@ public:
 	int		m_iCurCombo;
 	int		m_iMaxCombo;
 	int		m_iCurMissCombo;
+	int		m_iCurScoreMultiplier;
 	int		m_iScore;
 	int		m_iCurMaxScore;
 	int		m_iMaxScore;

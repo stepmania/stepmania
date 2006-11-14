@@ -31,6 +31,7 @@ void PlayerStageStats::Init()
 	m_iCurCombo = 0;
 	m_iMaxCombo = 0;
 	m_iCurMissCombo = 0;
+	m_iCurScoreMultiplier = 1;
 	m_iScore = 0;
 	m_iBonus = 0;
 	m_iMaxScore = 0;
@@ -619,6 +620,8 @@ public:
 	DEFINE_METHOD( GetCaloriesBurned,		m_fCaloriesBurned )
 	DEFINE_METHOD( GetLifeRemainingSeconds,		m_fLifeRemainingSeconds )
 	DEFINE_METHOD( GetSurvivalSeconds,		GetSurvivalSeconds() )
+	DEFINE_METHOD( GetCurrentCombo,			m_iCurCombo )
+	DEFINE_METHOD( GetCurrentScoreMultiplier,	m_iCurScoreMultiplier )
 	DEFINE_METHOD( FullCombo,			FullCombo() )
 	DEFINE_METHOD( MaxCombo,			GetMaxCombo().m_cnt )
 	DEFINE_METHOD( GetGrade,			GetGrade() )
@@ -634,6 +637,8 @@ public:
 		ADD_METHOD( GetCaloriesBurned );
 		ADD_METHOD( GetLifeRemainingSeconds );
 		ADD_METHOD( GetSurvivalSeconds );
+		ADD_METHOD( GetCurrentCombo );
+		ADD_METHOD( GetCurrentScoreMultiplier );
 		ADD_METHOD( FullCombo );
 		ADD_METHOD( MaxCombo );
 		ADD_METHOD( GetGrade );
