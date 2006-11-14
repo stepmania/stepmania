@@ -46,6 +46,8 @@ static ThemeMetric<TapNoteScore>   MIN_STAY_ALIVE	("LifeMeterBar","MinStayAlive"
 
 LifeMeterBar::LifeMeterBar()
 {
+	m_pPlayerState = NULL;
+
 	switch( GAMESTATE->m_SongOptions.GetStage().m_DrainType )
 	{
 	case SongOptions::DRAIN_NORMAL:
@@ -258,6 +260,13 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 void LifeMeterBar::AfterLifeChanged()
 {
 	m_pStream->SetPercent( m_fLifePercentage );
+	if( m_pPlayerState )
+	{
+		Message msg( "LifeChanged" );
+		msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
+		msg.SetParam( "LifeMeter", LuaReference::CreateFromPush(*this) );
+		MESSAGEMAN->Broadcast( msg );
+	}
 }
 
 bool LifeMeterBar::IsHot() const
