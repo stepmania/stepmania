@@ -65,7 +65,7 @@ void ScoreDisplayLifeTime::Update( float fDelta )
 {
 	ScoreDisplay::Update( fDelta );
 
-	float fSecs = m_pPlayerStageStats->fLifeRemainingSeconds;
+	float fSecs = m_pPlayerStageStats->m_fLifeRemainingSeconds;
 
 	RString s = SecondsToMSSMsMs(fSecs);
 	m_textTimeRemaining.SetText( s );
@@ -73,7 +73,7 @@ void ScoreDisplayLifeTime::Update( float fDelta )
 
 void ScoreDisplayLifeTime::OnLoadSong()
 {
-	if( STATSMAN->m_CurStageStats.m_player[m_pPlayerState->m_PlayerNumber].bFailed )
+	if( STATSMAN->m_CurStageStats.m_player[m_pPlayerState->m_PlayerNumber].m_bFailed )
 		return;
 
 	Course* pCourse = GAMESTATE->m_pCurCourse;
@@ -85,7 +85,7 @@ void ScoreDisplayLifeTime::OnLoadSong()
 
 void ScoreDisplayLifeTime::OnJudgment( TapNoteScore tns )
 {
-	if( STATSMAN->m_CurStageStats.m_player[m_pPlayerState->m_PlayerNumber].bFailed )
+	if( STATSMAN->m_CurStageStats.m_player[m_pPlayerState->m_PlayerNumber].m_bFailed )
 		return;
 
 	float fMeterChange = 0;
@@ -106,7 +106,7 @@ void ScoreDisplayLifeTime::OnJudgment( TapNoteScore tns )
 
 void ScoreDisplayLifeTime::OnJudgment( HoldNoteScore hns, TapNoteScore tns )
 {
-	if( STATSMAN->m_CurStageStats.m_player[m_pPlayerState->m_PlayerNumber].bFailed )
+	if( STATSMAN->m_CurStageStats.m_player[m_pPlayerState->m_PlayerNumber].m_bFailed )
 		return;
 
 	float fMeterChange = 0;

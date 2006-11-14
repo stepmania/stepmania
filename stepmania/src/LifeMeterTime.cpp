@@ -139,7 +139,7 @@ void LifeMeterTime::Update( float fDeltaTime )
 	// update current stage stats so ScoreDisplayLifeTime can show the right thing
 	float fSecs = GetLifeSeconds();
 	fSecs = max( 0, fSecs );
-	m_pPlayerStageStats->fLifeRemainingSeconds = fSecs;
+	m_pPlayerStageStats->m_fLifeRemainingSeconds = fSecs;
 	
 	LifeMeter::Update( fDeltaTime );
 
@@ -163,7 +163,7 @@ float LifeMeterTime::GetLife() const
 
 float LifeMeterTime::GetLifeSeconds() const
 {
-	float fSecs = m_fLifeTotalGainedSeconds - (m_fLifeTotalLostSeconds + STATSMAN->m_CurStageStats.fStepsSeconds);
+	float fSecs = m_fLifeTotalGainedSeconds - (m_fLifeTotalLostSeconds + STATSMAN->m_CurStageStats.m_fStepsSeconds);
 	return fSecs;
 }
 

@@ -211,9 +211,9 @@ void GraphDisplay::LoadFromStageStats( const StageStats &ss, const PlayerStageSt
 	// Show song boundaries
 	//
 	float fSec = 0;
-	FOREACH_CONST( Song*, ss.vpPossibleSongs, song )
+	FOREACH_CONST( Song*, ss.m_vpPossibleSongs, song )
 	{
-		if( song == ss.vpPossibleSongs.end()-1 )
+		if( song == ss.m_vpPossibleSongs.end()-1 )
 			continue;
 		fSec += (*song)->GetStepsSeconds();
 
@@ -226,7 +226,7 @@ void GraphDisplay::LoadFromStageStats( const StageStats &ss, const PlayerStageSt
 
 	UpdateVerts();
 
-	if( !pss.bFailed )
+	if( !pss.m_bFailed )
 	{
 		//
 		// Search for the min life record to show "Just Barely!"

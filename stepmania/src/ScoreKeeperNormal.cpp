@@ -82,8 +82,8 @@ void ScoreKeeperNormal::Load(
 		iTotalPossibleGradePoints += this->GetPossibleGradePoints( rvPre, rvPost );
 	}
 
-	m_pPlayerStageStats->iPossibleDancePoints = iTotalPossibleDancePoints;
-	m_pPlayerStageStats->iPossibleGradePoints = iTotalPossibleGradePoints;
+	m_pPlayerStageStats->m_iPossibleDancePoints = iTotalPossibleDancePoints;
+	m_pPlayerStageStats->m_iPossibleGradePoints = iTotalPossibleGradePoints;
 
 	m_iScoreRemainder = 0;
 	m_iCurToastyCombo = 0; 
@@ -183,7 +183,7 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 	m_iNumTapsAndHolds = pNoteData->GetNumRowsWithTapOrHoldHead() + pNoteData->GetNumHoldNotes();
 
 	m_iPointBonus = m_iMaxPossiblePoints;
-	m_pPlayerStageStats->iMaxScore = m_iMaxScoreSoFar;
+	m_pPlayerStageStats->m_iMaxScore = m_iMaxScoreSoFar;
 
 	/* MercifulBeginner shouldn't clamp weights in course mode, even if a beginner song
 	 * is in a course, since that makes PlayerStageStats::GetGrade hard. */
@@ -222,8 +222,8 @@ static int GetScore(int p, int Z, int S, int n)
 
 void ScoreKeeperNormal::AddScore( TapNoteScore score )
 {
-	int &iScore = m_pPlayerStageStats->iScore;
-	int &iCurMaxScore = m_pPlayerStageStats->iCurMaxScore;
+	int &iScore = m_pPlayerStageStats->m_iScore;
+	int &iCurMaxScore = m_pPlayerStageStats->m_iCurMaxScore;
 /*
   Regular scoring:
 
@@ -281,7 +281,7 @@ void ScoreKeeperNormal::AddScore( TapNoteScore score )
 	const int Z = m_iMaxPossiblePoints/10;
 
 	// Don't use a multiplier if the player has failed
-	if( m_pPlayerStageStats->bFailed )
+	if( m_pPlayerStageStats->m_bFailed )
 	{
 		iScore += p;
 		// make score evenly divisible by 5
@@ -294,8 +294,8 @@ void ScoreKeeperNormal::AddScore( TapNoteScore score )
 	else
 	{
 		iScore += GetScore(p, Z, sum, m_iTapNotesHit);
-		const int &iCurrentCombo = m_pPlayerStageStats->iCurCombo;
-		m_pPlayerStageStats->iBonus += m_ComboBonusFactor[score] * iCurrentCombo;
+		const int &iCurrentCombo = m_pPlayerStageStats->m_iCurCombo;
+		m_pPlayerStageStats->m_iBonus += m_ComboBonusFactor[score] * iCurrentCombo;
 	}
 
 	/* Subtract the maximum this step could have been worth from the bonus. */
@@ -305,7 +305,7 @@ void ScoreKeeperNormal::AddScore( TapNoteScore score )
 
 	if ( m_iTapNotesHit == m_iNumTapsAndHolds && score >= TNS_W2 )
 	{
-		if( !m_pPlayerStageStats->bFailed )
+		if( !m_pPlayerStageStats->m_bFailed )
 			iScore += m_iPointBonus;
 		if ( m_bIsLastSongInCourse )
 		{
@@ -338,14 +338,14 @@ void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 		TapNoteScore score = tn.result.tns;
 		if( score == TNS_HitMine )
 		{
-			if( !m_pPlayerStageStats->bFailed )
-				m_pPlayerStageStats->iActualDancePoints += TapNoteScoreToDancePoints( TNS_HitMine );
-			m_pPlayerStageStats->iTapNoteScores[TNS_HitMine] += 1;
+			if( !m_pPlayerStageStats->m_bFailed )
+				m_pPlayerStageStats->m_iActualDancePoints += TapNoteScoreToDancePoints( TNS_HitMine );
+			m_pPlayerStageStats->m_iTapNoteScores[TNS_HitMine] += 1;
 		}
 
 		NSMAN->ReportScore( m_pPlayerState->m_PlayerNumber, score,
-				    m_pPlayerStageStats->iScore,
-				    m_pPlayerStageStats->iCurCombo,
+				    m_pPlayerStageStats->m_iScore,
+				    m_pPlayerStageStats->m_iCurCombo,
 				    tn.result.fTapNoteOffset );
 	}
 }
@@ -363,14 +363,14 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow, bool &b
 		return;
 
 	// Update dance points.
-	if( !m_pPlayerStageStats->bFailed )
-		m_pPlayerStageStats->iActualDancePoints += TapNoteScoreToDancePoints( scoreOfLastTap );
+	if( !m_pPlayerStageStats->m_bFailed )
+		m_pPlayerStageStats->m_iActualDancePoints += TapNoteScoreToDancePoints( scoreOfLastTap );
 
 	// update judged row totals
-	m_pPlayerStageStats->iTapNoteScores[scoreOfLastTap] += 1;
+	m_pPlayerStageStats->m_iTapNoteScores[scoreOfLastTap] += 1;
 
 	// increment the current total possible dance score
-	m_pPlayerStageStats->iCurPossibleDancePoints += TapNoteScoreToDancePoints( TNS_W1 );
+	m_pPlayerStageStats->m_iCurPossibleDancePoints += TapNoteScoreToDancePoints( TNS_W1 );
 
 	//
 	// Regular combo
@@ -379,16 +379,16 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow, bool &b
 	if( scoreOfLastTap >= m_MinScoreToMaintainCombo )
 	{
 		bMissComboStopped = true;
-		m_pPlayerStageStats->iCurMissCombo = 0;
+		m_pPlayerStageStats->m_iCurMissCombo = 0;
 		if( scoreOfLastTap >= m_MinScoreToContinueCombo )
-			m_pPlayerStageStats->iCurCombo += iComboCountIfHit;
+			m_pPlayerStageStats->m_iCurCombo += iComboCountIfHit;
 	}
 	else if( scoreOfLastTap < m_MinScoreToMaintainCombo )
 	{
 		bComboStopped = true;
-		m_pPlayerStageStats->iCurCombo = 0;
+		m_pPlayerStageStats->m_iCurCombo = 0;
 		if( scoreOfLastTap == TNS_Miss )
-			++m_pPlayerStageStats->iCurMissCombo;
+			++m_pPlayerStageStats->m_iCurMissCombo;
 	}
 
 	AddScore( scoreOfLastTap );		// only score once per row
@@ -433,8 +433,8 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow, bool &b
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 	float offset = NoteDataWithScoring::LastTapNoteWithResult( nd, iRow, pn ).result.fTapNoteOffset;
 	NSMAN->ReportScore( pn, scoreOfLastTap,
-			m_pPlayerStageStats->iScore,
-			m_pPlayerStageStats->iCurCombo, offset );
+			m_pPlayerStageStats->m_iScore,
+			m_pPlayerStageStats->m_iCurCombo, offset );
 }
 
 
@@ -443,14 +443,14 @@ void ScoreKeeperNormal::HandleHoldScore( const TapNote &tn )
 	HoldNoteScore holdScore = tn.HoldResult.hns;
 
 	// update dance points totals
-	if( !m_pPlayerStageStats->bFailed )
-		m_pPlayerStageStats->iActualDancePoints += HoldNoteScoreToDancePoints( holdScore );
-	m_pPlayerStageStats->iCurPossibleDancePoints += HoldNoteScoreToDancePoints( HNS_Held );
-	m_pPlayerStageStats->iHoldNoteScores[holdScore] ++;
+	if( !m_pPlayerStageStats->m_bFailed )
+		m_pPlayerStageStats->m_iActualDancePoints += HoldNoteScoreToDancePoints( holdScore );
+	m_pPlayerStageStats->m_iCurPossibleDancePoints += HoldNoteScoreToDancePoints( HNS_Held );
+	m_pPlayerStageStats->m_iHoldNoteScores[holdScore] ++;
 
 	// increment the current total possible dance score
 
-	m_pPlayerStageStats->iCurPossibleDancePoints += HoldNoteScoreToDancePoints( HNS_Held );
+	m_pPlayerStageStats->m_iCurPossibleDancePoints += HoldNoteScoreToDancePoints( HNS_Held );
 
 	if( holdScore == HNS_Held )
 		AddScore( TNS_W1 );
@@ -462,8 +462,8 @@ void ScoreKeeperNormal::HandleHoldScore( const TapNote &tn )
 	NSMAN->ReportScore(
 		pn, 
 		holdScore+TNS_W1, 
-		m_pPlayerStageStats->iScore,
-		m_pPlayerStageStats->iCurCombo,
+		m_pPlayerStageStats->m_iScore,
+		m_pPlayerStageStats->m_iCurCombo,
 		tn.result.fTapNoteOffset );
 }
 

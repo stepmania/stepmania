@@ -37,8 +37,8 @@ ScreenEnding::ScreenEnding() : ScreenAttract( false/*dont reset GAMESTATE*/ )
 		GAMESTATE->m_pCurCourse.Set( SONGMAN->GetRandomCourse() );
 		GAMESTATE->m_pCurSteps[PLAYER_1].Set( GAMESTATE->m_pCurSong->GetAllSteps()[0] );
 		GAMESTATE->m_pCurSteps[PLAYER_2].Set( GAMESTATE->m_pCurSong->GetAllSteps()[0] );
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].vpPlayedSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].vpPlayedSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_2] );
+		STATSMAN->m_CurStageStats.m_player[PLAYER_1].m_vpPlayedSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
+		STATSMAN->m_CurStageStats.m_player[PLAYER_2].m_vpPlayedSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_2] );
 		PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions, ModsLevel_Stage, m_fScrollSpeed, 2.0f );
 		PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[PLAYER_2]->m_PlayerOptions, ModsLevel_Stage, m_fScrollSpeed, 2.0f );
 		GAMESTATE->m_iCurrentStageIndex = 0;
@@ -52,25 +52,25 @@ ScreenEnding::ScreenEnding() : ScreenAttract( false/*dont reset GAMESTATE*/ )
 			STATSMAN->m_CurStageStats.m_player[PLAYER_2].SetLifeRecordAt( 1-fP1, f );
 		}
 	
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iActualDancePoints = RandomInt( 3 );
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iPossibleDancePoints = 2;
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].iActualDancePoints = RandomInt( 2 );
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].iPossibleDancePoints = 1;
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iCurCombo = 0;
+		STATSMAN->m_CurStageStats.m_player[PLAYER_1].m_iActualDancePoints = RandomInt( 3 );
+		STATSMAN->m_CurStageStats.m_player[PLAYER_1].m_iPossibleDancePoints = 2;
+		STATSMAN->m_CurStageStats.m_player[PLAYER_2].m_iActualDancePoints = RandomInt( 2 );
+		STATSMAN->m_CurStageStats.m_player[PLAYER_2].m_iPossibleDancePoints = 1;
+		STATSMAN->m_CurStageStats.m_player[PLAYER_1].m_iCurCombo = 0;
 		STATSMAN->m_CurStageStats.m_player[PLAYER_1].UpdateComboList( 0, false );
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iCurCombo = 1;
+		STATSMAN->m_CurStageStats.m_player[PLAYER_1].m_iCurCombo = 1;
 		STATSMAN->m_CurStageStats.m_player[PLAYER_1].UpdateComboList( 1, false );
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iCurCombo = 50;
+		STATSMAN->m_CurStageStats.m_player[PLAYER_1].m_iCurCombo = 50;
 		STATSMAN->m_CurStageStats.m_player[PLAYER_1].UpdateComboList( 25, false );
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iCurCombo = 250;
+		STATSMAN->m_CurStageStats.m_player[PLAYER_1].m_iCurCombo = 250;
 		STATSMAN->m_CurStageStats.m_player[PLAYER_1].UpdateComboList( 100, false );
 
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iTapNoteScores[TNS_W1] = RandomInt( 2 );
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iTapNoteScores[TNS_W2] = RandomInt( 2 );
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iTapNoteScores[TNS_W3] = RandomInt( 2 );
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].iTapNoteScores[TNS_W1] = RandomInt( 2 );
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].iTapNoteScores[TNS_W2] = RandomInt( 2 );
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].iTapNoteScores[TNS_W3] = RandomInt( 2 );
+		STATSMAN->m_CurStageStats.m_player[PLAYER_1].m_iTapNoteScores[TNS_W1] = RandomInt( 2 );
+		STATSMAN->m_CurStageStats.m_player[PLAYER_1].m_iTapNoteScores[TNS_W2] = RandomInt( 2 );
+		STATSMAN->m_CurStageStats.m_player[PLAYER_1].m_iTapNoteScores[TNS_W3] = RandomInt( 2 );
+		STATSMAN->m_CurStageStats.m_player[PLAYER_2].m_iTapNoteScores[TNS_W1] = RandomInt( 2 );
+		STATSMAN->m_CurStageStats.m_player[PLAYER_2].m_iTapNoteScores[TNS_W2] = RandomInt( 2 );
+		STATSMAN->m_CurStageStats.m_player[PLAYER_2].m_iTapNoteScores[TNS_W3] = RandomInt( 2 );
 
 		STATSMAN->m_vPlayedStageStats.clear();
 	}

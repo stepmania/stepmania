@@ -26,20 +26,20 @@ public:
 
 	int		GetAverageMeter( PlayerNumber pn ) const;
 
-	PlayMode	playMode;
-	const Style*	pStyle;
-	vector<Song*>	vpPlayedSongs;
-	vector<Song*>	vpPossibleSongs;
-	enum { Stage_Invalid, STAGE_NORMAL, STAGE_EXTRA, STAGE_EXTRA2 } StageType;
+	PlayMode	m_playMode;
+	const Style*	m_pStyle;
+	vector<Song*>	m_vpPlayedSongs;
+	vector<Song*>	m_vpPossibleSongs;
+	enum { Stage_Invalid, STAGE_NORMAL, STAGE_EXTRA, STAGE_EXTRA2 } m_StageType;
 
-	bool	bGaveUp;	// exited gameplay by giving up
-	bool	bUsedAutoplay;	// used autoplay at any point during gameplay
+	bool	m_bGaveUp;	// exited gameplay by giving up
+	bool	m_bUsedAutoplay;	// used autoplay at any point during gameplay
 
 	// TODO: These are updated in ScreenGameplay::Update based on fDelta.  
 	// They should be made more accurate.
-	float	fGameplaySeconds;		// how many seconds before gameplay ended.  Updated by Gameplay, not scaled by music rate.
-	float	fStepsSeconds;		// this is <= fGameplaySeconds unless the song has steps past the end
-	float	fMusicRate;
+	float	m_fGameplaySeconds;		// how many seconds before gameplay ended.  Updated by Gameplay, not scaled by music rate.
+	float	m_fStepsSeconds;		// this is <= fGameplaySeconds unless the song has steps past the end
+	float	m_fMusicRate;
 
 	// Total number of seconds between first beat and last beat for every song.
 	float GetTotalPossibleStepsSeconds() const;

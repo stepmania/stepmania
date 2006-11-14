@@ -43,7 +43,7 @@ void WorkoutGraph::LoadFromNode( const XNode* pNode )
 
 void WorkoutGraph::SetFromGameState()
 {
-	SetFromGameStateInternal( STATSMAN->m_CurStageStats.vpPlayedSongs.size() );
+	SetFromGameStateInternal( STATSMAN->m_CurStageStats.m_vpPlayedSongs.size() );
 }
 
 void WorkoutGraph::SetFromGameStateInternal( int iNumSongsToShowForCurrentStage )
@@ -56,7 +56,7 @@ void WorkoutGraph::SetFromGameStateInternal( int iNumSongsToShowForCurrentStage 
 	m_vpBars.clear();
 
 	int iTotalSongsPlayed = 
-		STATSMAN->GetAccumPlayedStageStats().vpPlayedSongs.size() + 
+		STATSMAN->GetAccumPlayedStageStats().m_vpPlayedSongs.size() + 
 		iNumSongsToShowForCurrentStage;
 	int iWorkoutEstimatedSongs = WORKOUTMAN->m_pCurWorkout->GetEstimatedNumSongs();
 	int iNumSongsToShow = max( iTotalSongsPlayed, iWorkoutEstimatedSongs );

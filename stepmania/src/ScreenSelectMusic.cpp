@@ -652,7 +652,7 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 		if( GAMESTATE->IsEventMode() )
 			i = max( 0, int(STATSMAN->m_vPlayedStageStats.size())-5 );
 		for( ; i < (int)STATSMAN->m_vPlayedStageStats.size(); ++i )
-			if( STATSMAN->m_vPlayedStageStats[i].vpPlayedSongs.back() == m_MusicWheel.GetSelectedSong() )
+			if( STATSMAN->m_vPlayedStageStats[i].m_vpPlayedSongs.back() == m_MusicWheel.GetSelectedSong() )
 				bIsRepeat = true;
 
 		/* Don't complain about repeats if the user didn't get to pick. */

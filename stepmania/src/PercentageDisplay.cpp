@@ -113,8 +113,8 @@ void PercentageDisplay::Update( float fDeltaTime )
 
 void PercentageDisplay::Refresh()
 {
-	const int iActualDancePoints = m_pPlayerStageStats->iActualDancePoints;
-	const int iCurPossibleDancePoints = m_pPlayerStageStats->iCurPossibleDancePoints;
+	const int iActualDancePoints = m_pPlayerStageStats->m_iActualDancePoints;
+	const int iCurPossibleDancePoints = m_pPlayerStageStats->m_iCurPossibleDancePoints;
 
 	if( iActualDancePoints == m_Last && iCurPossibleDancePoints == m_LastMax )
 		return;

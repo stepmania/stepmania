@@ -93,10 +93,10 @@ void Inventory::Update( float fDelta )
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
 	// check to see if they deserve a new item
-	if( STATSMAN->m_CurStageStats.m_player[pn].iCurCombo != m_iLastSeenCombo )
+	if( STATSMAN->m_CurStageStats.m_player[pn].m_iCurCombo != m_iLastSeenCombo )
 	{
 		int iOldCombo = m_iLastSeenCombo;
-		m_iLastSeenCombo = STATSMAN->m_CurStageStats.m_player[pn].iCurCombo;
+		m_iLastSeenCombo = STATSMAN->m_CurStageStats.m_player[pn].m_iCurCombo;
 		int iNewCombo = m_iLastSeenCombo;
 		
 #define CROSSED(i) (iOldCombo<i)&&(iNewCombo>=i)

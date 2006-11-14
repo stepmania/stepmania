@@ -506,7 +506,7 @@ void GameState::BeginStage()
 			m_pPlayerState[p]->m_PlayerOptions.Assign( ModsLevel_Stage, m_pPlayerState[p]->m_PlayerOptions.GetPreferred() );
 		m_SongOptions.Assign( ModsLevel_Stage, m_SongOptions.GetPreferred() );
 	}
-	STATSMAN->m_CurStageStats.fMusicRate = m_SongOptions.GetSong().m_fMusicRate;
+	STATSMAN->m_CurStageStats.m_fMusicRate = m_SongOptions.GetSong().m_fMusicRate;
 	m_iNumStagesOfThisSong = GetNumStagesForCurrentSong();
 	ASSERT( m_iNumStagesOfThisSong != -1 );
 }
@@ -634,14 +634,14 @@ void GameState::ResetStageStatistics()
 			FOREACH_PlayerNumber( p )
 			{
 				Profile* pProfile = PROFILEMAN->GetProfile(p);
-				STATSMAN->m_CurStageStats.m_player[p].iCurCombo = pProfile->m_iCurrentCombo;
+				STATSMAN->m_CurStageStats.m_player[p].m_iCurCombo = pProfile->m_iCurrentCombo;
 			}
 		}
 		else	// GetStageIndex() > 0
 		{
 			FOREACH_PlayerNumber( p )
 			{
-				STATSMAN->m_CurStageStats.m_player[p].iCurCombo = OldStats.m_player[p].iCurCombo;
+				STATSMAN->m_CurStageStats.m_player[p].m_iCurCombo = OldStats.m_player[p].m_iCurCombo;
 			}
 		}
 	}
@@ -787,7 +787,7 @@ int GameState::GetCourseSongIndex() const
 	int iSongIndex = 0;
 	/* iSongsPlayed includes the current song, so it's 1-based; subtract one. */
 	FOREACH_EnabledPlayer( pn )
-		iSongIndex = max( iSongIndex, STATSMAN->m_CurStageStats.m_player[pn].iSongsPlayed-1 );
+		iSongIndex = max( iSongIndex, STATSMAN->m_CurStageStats.m_player[pn].m_iSongsPlayed-1 );
 	return iSongIndex;
 }
 
@@ -1026,7 +1026,7 @@ bool GameState::HasEarnedExtraStage() const
 		ASSERT(pSong);
 
 		const StageStats &stats = STATSMAN->m_CurStageStats;
-		return stats.vpPlayedSongs.size() && stats.vpPlayedSongs.back() == pSong;
+		return stats.m_vpPlayedSongs.size() && stats.m_vpPlayedSongs.back() == pSong;
 	}
 
 	return true;
@@ -1063,11 +1063,11 @@ StageResult GameState::GetStageResult( PlayerNumber pn ) const
 			continue;
 
 		/* If anyone did just as well, at best it's a draw. */
-		if( STATSMAN->m_CurStageStats.m_player[p].iActualDancePoints == STATSMAN->m_CurStageStats.m_player[pn].iActualDancePoints )
+		if( STATSMAN->m_CurStageStats.m_player[p].m_iActualDancePoints == STATSMAN->m_CurStageStats.m_player[pn].m_iActualDancePoints )
 			win = RESULT_DRAW;
 
 		/* If anyone did better, we lost. */
-		if( STATSMAN->m_CurStageStats.m_player[p].iActualDancePoints > STATSMAN->m_CurStageStats.m_player[pn].iActualDancePoints )
+		if( STATSMAN->m_CurStageStats.m_player[p].m_iActualDancePoints > STATSMAN->m_CurStageStats.m_player[pn].m_iActualDancePoints )
 			return RESULT_LOSE;
 	}
 	return win;
@@ -1124,11 +1124,11 @@ bool GameState::IsDisqualified( PlayerNumber pn )
 	if( !IsHumanPlayer(pn) )
 		return false;
 
-	if( STATSMAN->m_CurStageStats.bGaveUp )
+	if( STATSMAN->m_CurStageStats.m_bGaveUp )
 		return true;
 
 #ifndef DEBUG
-	if( STATSMAN->m_CurStageStats.bUsedAutoplay )
+	if( STATSMAN->m_CurStageStats.m_bUsedAutoplay )
 		return true;
 #endif //DEBUG
 
@@ -1270,9 +1270,9 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 			{
 				CHECKPOINT_M( ssprintf("%u/%i", i, (int)STATSMAN->m_vPlayedStageStats.size() ) );
 				SongAndSteps sas;
-				sas.pSong = STATSMAN->m_vPlayedStageStats[i].vpPlayedSongs[0];
+				sas.pSong = STATSMAN->m_vPlayedStageStats[i].m_vpPlayedSongs[0];
 				ASSERT( sas.pSong );
-				sas.pSteps = STATSMAN->m_vPlayedStageStats[i].m_player[pn].vpPlayedSteps[0];
+				sas.pSteps = STATSMAN->m_vPlayedStageStats[i].m_player[pn].m_vpPlayedSteps[0];
 				ASSERT( sas.pSteps );
 				vSongAndSteps.push_back( sas );
 			}
@@ -1559,7 +1559,7 @@ bool GameState::AllAreInDangerOrWorse() const
 bool GameState::AllHumanHaveComboOf30OrMoreMisses() const
 {
 	FOREACH_HumanPlayer( p )
-		if( STATSMAN->m_CurStageStats.m_player[p].iCurMissCombo < 30 )
+		if( STATSMAN->m_CurStageStats.m_player[p].m_iCurMissCombo < 30 )
 			return false;
 	return true;
 }
@@ -1751,11 +1751,11 @@ float GameState::GetGoalPercentComplete( PlayerNumber pn )
 	switch( pProfile->m_GoalType )
 	{
 	case GoalType_Calories:
-		fActual = pssAccum.fCaloriesBurned + pssCurrent.fCaloriesBurned;
+		fActual = pssAccum.m_fCaloriesBurned + pssCurrent.m_fCaloriesBurned;
 		fGoal = (float)pProfile->m_iGoalCalories;
 		break;
 	case GoalType_Time:
-		fActual = ssAccum.fGameplaySeconds + ssCurrent.fGameplaySeconds;
+		fActual = ssAccum.m_fGameplaySeconds + ssCurrent.m_fGameplaySeconds;
 		fGoal = (float)pProfile->m_iGoalSeconds;
 		break;
 	case GoalType_None:

@@ -207,7 +207,7 @@ float GetActualVoltageRadarValue( const NoteData &in, float fSongSeconds, const 
 	 * keeper.  Instead, let's use the length of the longest recorded combo.  This is
 	 * only subtly different: it's the percent of the song the longest combo took to get. */
 	const PlayerStageStats::Combo_t MaxCombo = pss.GetMaxCombo();
-	float fComboPercent = SCALE( MaxCombo.fSizeSeconds, 0, pss.fLastSecond-pss.fFirstSecond, 0.0f, 1.0f );
+	float fComboPercent = SCALE( MaxCombo.m_fSizeSeconds, 0, pss.m_fLastSecond-pss.m_fFirstSecond, 0.0f, 1.0f );
 	return clamp( fComboPercent, 0.0f, 1.0f );
 }
 
@@ -226,11 +226,11 @@ float GetActualAirRadarValue( const NoteData &in, float fSongSeconds )
 /* Return the ratio of actual to possible dance points. */
 float GetActualChaosRadarValue( const NoteData &in, float fSongSeconds, const PlayerStageStats &pss )
 {
-	const int iPossibleDP = pss.iPossibleDancePoints;
+	const int iPossibleDP = pss.m_iPossibleDancePoints;
 	if ( iPossibleDP == 0 )
 		return 1;
 
-	const int ActualDP = pss.iActualDancePoints;
+	const int ActualDP = pss.m_iActualDancePoints;
 	return clamp( float(ActualDP)/iPossibleDP, 0.0f, 1.0f );
 }
 

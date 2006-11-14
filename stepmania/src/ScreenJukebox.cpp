@@ -213,7 +213,7 @@ void ScreenJukebox::Init()
 	FOREACH_EnabledPlayer( p )
 	{
 		/* Reset the combo, in case ComboContinuesBetweenSongs is enabled. */
-		STATSMAN->m_CurStageStats.m_player[p].iCurCombo = 0;
+		STATSMAN->m_CurStageStats.m_player[p].m_iCurCombo = 0;
 
 		if( GAMESTATE->m_bJukeboxUsesModifiers )
 		{

@@ -334,7 +334,7 @@ void Player::Load()
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
 	bool bOniDead = GAMESTATE->m_SongOptions.GetStage().m_LifeType == SongOptions::LIFE_BATTERY  &&  
-		(m_pPlayerStageStats == NULL || m_pPlayerStageStats->bFailed);
+		(m_pPlayerStageStats == NULL || m_pPlayerStageStats->m_bFailed);
 
 	/* The editor reuses Players ... so we really need to make sure everything
 	 * is reset and not tweening.  Perhaps ActorFrame should recurse to subactors;
@@ -345,7 +345,7 @@ void Player::Load()
 	if( m_pPlayerStageStats )
 	{
 		if( m_pCombo ) 
-			m_pCombo->SetCombo( m_pPlayerStageStats->iCurCombo, m_pPlayerStageStats->iCurMissCombo );	// combo can persist between songs and games
+			m_pCombo->SetCombo( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );	// combo can persist between songs and games
 	}
 	if( m_pAttackDisplay )
 		m_pAttackDisplay->Init( m_pPlayerState );
@@ -576,7 +576,7 @@ void Player::Update( float fDeltaTime )
 
 			Step( iTrack, iSongRow, now, false, false );
 			if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
-				STATSMAN->m_CurStageStats.bUsedAutoplay = true;
+				STATSMAN->m_CurStageStats.m_bUsedAutoplay = true;
 		}
 	}
 
@@ -619,7 +619,7 @@ void Player::Update( float fDeltaTime )
 				// TODO: Make the CPU miss sometimes.
 				bIsHoldingButton = true;
 				if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
-					STATSMAN->m_CurStageStats.bUsedAutoplay = true;
+					STATSMAN->m_CurStageStats.m_bUsedAutoplay = true;
 			}
 			else
 			{
@@ -684,7 +684,7 @@ void Player::Update( float fDeltaTime )
 			{
 				fLife = 1;
 				hns = HNS_Held;
-				bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
+				bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
 				if( m_pNoteField )
 					m_pNoteField->DidHoldNote( iTrack, HNS_Held, bBright );	// bright ghost flash
 			}
@@ -698,7 +698,7 @@ void Player::Update( float fDeltaTime )
 				HandleHoldScore( tn );
 				
 				if( m_pPlayerStageStats != NULL )
-					m_pPlayerStageStats->hnsLast = hns;
+					m_pPlayerStageStats->m_hnsLast = hns;
 				if( m_pPlayerState->m_mp != MultiPlayer_Invalid )
 					MESSAGEMAN->Broadcast( enum_add2(Message_ShowHoldJudgmentMuliPlayerP1,m_pPlayerState->m_mp) );
 
@@ -980,7 +980,7 @@ int Player::GetClosestNonEmptyRow( int iNoteRow, int iMaxRowsAhead, int iMaxRows
 bool Player::IsOniDead() const
 {
 	// If we're playing on oni and we've died, do nothing.
-	return GAMESTATE->m_SongOptions.GetCurrent().m_LifeType == SongOptions::LIFE_BATTERY && m_pPlayerStageStats  && m_pPlayerStageStats->bFailed;
+	return GAMESTATE->m_SongOptions.GetCurrent().m_LifeType == SongOptions::LIFE_BATTERY && m_pPlayerStageStats  && m_pPlayerStageStats->m_bFailed;
 }
 
 void Player::Fret( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease )
@@ -1050,7 +1050,7 @@ void Player::StepOrStrum( int col, int row, const RageTimer &tm, bool bHeld, boo
 						// Increase life
 						tn.HoldResult.fLife = 1;
 
-						bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
+						bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
 						if( m_pNoteField )
 							m_pNoteField->DidHoldNote( col, HNS_Held, bBright );
 					}
@@ -1100,7 +1100,7 @@ void Player::StepOrStrum( int col, int row, const RageTimer &tm, bool bHeld, boo
 				break;
 			}
 
-			m_pPlayerStageStats->fCaloriesBurned += fCals;
+			m_pPlayerStageStats->m_fCaloriesBurned += fCals;
 		}
 	}
 
@@ -1365,7 +1365,7 @@ void Player::StepOrStrum( int col, int row, const RageTimer &tm, bool bHeld, boo
 			{
 				const bool bBlind = (m_pPlayerState->m_PlayerOptions.GetCurrent().m_fBlind != 0);
 				// XXX This is the wrong combo for shared players. STATSMAN->m_CurStageStats.m_Player[pn] might work but could be wrong.
-				const bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->iCurCombo > int(BRIGHT_GHOST_COMBO_THRESHOLD) || bBlind;			
+				const bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo > int(BRIGHT_GHOST_COMBO_THRESHOLD) || bBlind;			
 				if( m_pNoteField )
 					m_pNoteField->DidTapNote( col, score, bBright );
 				if( score >= TNS_W3 || bBlind )
@@ -1603,7 +1603,7 @@ void Player::FlashGhostRow( int iRow, PlayerNumber pn )
 	TapNoteScore lastTNS = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, iRow, pn ).result.tns;
 	const bool bBlind = (m_pPlayerState->m_PlayerOptions.GetCurrent().m_fBlind != 0);
 	// XXX This is the wrong combo for shared players. STATSMAN->m_CurStageStats.m_Player[pn] might work but could be wrong.
-	const bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->iCurCombo > int(BRIGHT_GHOST_COMBO_THRESHOLD) || bBlind;
+	const bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo > int(BRIGHT_GHOST_COMBO_THRESHOLD) || bBlind;
 		
 	for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
 	{
@@ -1636,7 +1636,7 @@ void Player::CrossedRow( int iNoteRow, const RageTimer &now )
 			{
 				Step( t, iNoteRow, now, false, false );
 				if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
-					STATSMAN->m_CurStageStats.bUsedAutoplay = true;
+					STATSMAN->m_CurStageStats.m_bUsedAutoplay = true;
 			}
 		}
 	}
@@ -1715,7 +1715,7 @@ void Player::HandleTapRowScore( unsigned row )
 
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 	TapNoteScore scoreOfLastTap = NoteDataWithScoring::LastTapNoteWithResult(m_NoteData, row, pn).result.tns;
-	const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->iCurCombo : 0;
+	const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
 
 	if( scoreOfLastTap == TNS_Miss )
 		m_LastTapNoteScore = TNS_Miss;
@@ -1746,8 +1746,8 @@ void Player::HandleTapRowScore( unsigned row )
 	if( m_pSecondaryScoreKeeper != NULL )
 		m_pSecondaryScoreKeeper->HandleTapRowScore( m_NoteData, row, bComboStopped, bMissComboStopped );
 
-	const int iCurCombo = m_pPlayerStageStats ? m_pPlayerStageStats->iCurCombo : 0;
-	const int iCurMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->iCurMissCombo : 0;
+	const int iCurCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
+	const int iCurMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
 
 	if( m_pPlayerStageStats && m_pCombo )
 	{
@@ -1781,7 +1781,7 @@ void Player::HandleTapRowScore( unsigned row )
 
 	// new max combo
 	if( m_pPlayerStageStats )
-		m_pPlayerStageStats->iMaxCombo = max(m_pPlayerStageStats->iMaxCombo, iCurCombo);
+		m_pPlayerStageStats->m_iMaxCombo = max(m_pPlayerStageStats->m_iMaxCombo, iCurCombo);
 
 	/*
 	 * Use the real current beat, not the beat we've been passed.  That's because we
@@ -1792,7 +1792,7 @@ void Player::HandleTapRowScore( unsigned row )
 	 * GAMESTATE->m_fMusicSeconds.  Use fStepsSeconds instead.
 	 */
 	if( m_pPlayerStageStats )
-		m_pPlayerStageStats->UpdateComboList( STATSMAN->m_CurStageStats.fStepsSeconds, false );
+		m_pPlayerStageStats->UpdateComboList( STATSMAN->m_CurStageStats.m_fStepsSeconds, false );
 
 	float life = -1;
 	if( m_pLifeMeter )
@@ -1807,18 +1807,18 @@ void Player::HandleTapRowScore( unsigned row )
 	}
 	if( life != -1 )
 		if( m_pPlayerStageStats )
-			m_pPlayerStageStats->SetLifeRecordAt( life, STATSMAN->m_CurStageStats.fStepsSeconds );
+			m_pPlayerStageStats->SetLifeRecordAt( life, STATSMAN->m_CurStageStats.m_fStepsSeconds );
 
 	if( m_pScoreDisplay )
 	{
 		if( m_pPlayerStageStats )
-			m_pScoreDisplay->SetScore( m_pPlayerStageStats->iScore );
+			m_pScoreDisplay->SetScore( m_pPlayerStageStats->m_iScore );
 		m_pScoreDisplay->OnJudgment( scoreOfLastTap );
 	}
 	if( m_pSecondaryScoreDisplay )
 	{
 		if( m_pPlayerStageStats )
-			m_pSecondaryScoreDisplay->SetScore( m_pPlayerStageStats->iScore );
+			m_pSecondaryScoreDisplay->SetScore( m_pPlayerStageStats->m_iScore );
 		m_pSecondaryScoreDisplay->OnJudgment( scoreOfLastTap );
 	}
 
@@ -1855,13 +1855,13 @@ void Player::HandleHoldScore( const TapNote &tn )
 	if( m_pScoreDisplay )
 	{
 		if( m_pPlayerStageStats ) 
-			m_pScoreDisplay->SetScore( m_pPlayerStageStats->iScore );
+			m_pScoreDisplay->SetScore( m_pPlayerStageStats->m_iScore );
 		m_pScoreDisplay->OnJudgment( holdScore, tapScore );
 	}
 	if( m_pSecondaryScoreDisplay )
 	{
 		if( m_pPlayerStageStats ) 
-			m_pSecondaryScoreDisplay->SetScore( m_pPlayerStageStats->iScore );
+			m_pSecondaryScoreDisplay->SetScore( m_pPlayerStageStats->m_iScore );
 		m_pSecondaryScoreDisplay->OnJudgment( holdScore, tapScore );
 	}
 
@@ -1894,9 +1894,9 @@ void Player::CacheAllUsedNoteSkins()
 
 bool Player::IsPlayingBeginner() const
 {
-	if( m_pPlayerStageStats != NULL && !m_pPlayerStageStats->vpPossibleSteps.empty() )
+	if( m_pPlayerStageStats != NULL && !m_pPlayerStageStats->m_vpPossibleSteps.empty() )
 	{
-		Steps *pSteps = m_pPlayerStageStats->vpPossibleSteps[0];
+		Steps *pSteps = m_pPlayerStageStats->m_vpPossibleSteps[0];
 		return pSteps->GetDifficulty() == DIFFICULTY_BEGINNER;
 	}
 
@@ -1912,7 +1912,7 @@ bool Player::IsPlayingBeginner() const
 void Player::SetJudgment( TapNoteScore tns, bool bEarly )
 {
 	if( m_pPlayerStageStats )
-		m_pPlayerStageStats->tnsLast = tns;
+		m_pPlayerStageStats->m_tnsLast = tns;
 	if( m_pPlayerState->m_mp != MultiPlayer_Invalid )
 		MESSAGEMAN->Broadcast( enum_add2(Message_ShowJudgmentMuliPlayerP1,m_pPlayerState->m_mp) );
 

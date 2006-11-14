@@ -18,16 +18,16 @@
 
 StageStats::StageStats()
 {
-	playMode = PlayMode_Invalid;
-	pStyle = NULL;
-	vpPlayedSongs.clear();
-	vpPossibleSongs.clear();
-	StageType = Stage_Invalid;
-	bGaveUp = false;
-	bUsedAutoplay = false;
-	fGameplaySeconds = 0;
-	fStepsSeconds = 0;
-	fMusicRate = 1;
+	m_playMode = PlayMode_Invalid;
+	m_pStyle = NULL;
+	m_vpPlayedSongs.clear();
+	m_vpPossibleSongs.clear();
+	m_StageType = Stage_Invalid;
+	m_bGaveUp = false;
+	m_bUsedAutoplay = false;
+	m_fGameplaySeconds = 0;
+	m_fStepsSeconds = 0;
+	m_fMusicRate = 1;
 }
 
 void StageStats::Init()
@@ -37,32 +37,32 @@ void StageStats::Init()
 
 void StageStats::AssertValid( PlayerNumber pn ) const
 {
-	ASSERT( vpPlayedSongs.size() != 0 );
-	ASSERT( vpPossibleSongs.size() != 0 );
-	if( vpPlayedSongs[0] )
-		CHECKPOINT_M( vpPlayedSongs[0]->GetTranslitFullTitle() );
-	ASSERT( m_player[pn].vpPlayedSteps.size() != 0 );
-	ASSERT( m_player[pn].vpPlayedSteps[0] );
-	ASSERT_M( playMode < NUM_PlayMode, ssprintf("playmode %i", playMode) );
-	ASSERT( pStyle != NULL );
-	ASSERT_M( m_player[pn].vpPlayedSteps[0]->GetDifficulty() < NUM_Difficulty, ssprintf("difficulty %i", m_player[pn].vpPlayedSteps[0]->GetDifficulty()) );
-	ASSERT( vpPlayedSongs.size() == m_player[pn].vpPlayedSteps.size() );
-	ASSERT( vpPossibleSongs.size() == m_player[pn].vpPossibleSteps.size() );
+	ASSERT( m_vpPlayedSongs.size() != 0 );
+	ASSERT( m_vpPossibleSongs.size() != 0 );
+	if( m_vpPlayedSongs[0] )
+		CHECKPOINT_M( m_vpPlayedSongs[0]->GetTranslitFullTitle() );
+	ASSERT( m_player[pn].m_vpPlayedSteps.size() != 0 );
+	ASSERT( m_player[pn].m_vpPlayedSteps[0] );
+	ASSERT_M( m_playMode < NUM_PlayMode, ssprintf("playmode %i", m_playMode) );
+	ASSERT( m_pStyle != NULL );
+	ASSERT_M( m_player[pn].m_vpPlayedSteps[0]->GetDifficulty() < NUM_Difficulty, ssprintf("difficulty %i", m_player[pn].m_vpPlayedSteps[0]->GetDifficulty()) );
+	ASSERT( m_vpPlayedSongs.size() == m_player[pn].m_vpPlayedSteps.size() );
+	ASSERT( m_vpPossibleSongs.size() == m_player[pn].m_vpPossibleSteps.size() );
 }
 
 void StageStats::AssertValid( MultiPlayer pn ) const
 {
-	ASSERT( vpPlayedSongs.size() != 0 );
-	ASSERT( vpPossibleSongs.size() != 0 );
-	if( vpPlayedSongs[0] )
-		CHECKPOINT_M( vpPlayedSongs[0]->GetTranslitFullTitle() );
-	ASSERT( m_multiPlayer[pn].vpPlayedSteps.size() != 0 );
-	ASSERT( m_multiPlayer[pn].vpPlayedSteps[0] );
-	ASSERT_M( playMode < NUM_PlayMode, ssprintf("playmode %i", playMode) );
-	ASSERT( pStyle != NULL );
-	ASSERT_M( m_player[pn].vpPlayedSteps[0]->GetDifficulty() < NUM_Difficulty, ssprintf("difficulty %i", m_player[pn].vpPlayedSteps[0]->GetDifficulty()) );
-	ASSERT( vpPlayedSongs.size() == m_player[pn].vpPlayedSteps.size() );
-	ASSERT( vpPossibleSongs.size() == m_player[pn].vpPossibleSteps.size() );
+	ASSERT( m_vpPlayedSongs.size() != 0 );
+	ASSERT( m_vpPossibleSongs.size() != 0 );
+	if( m_vpPlayedSongs[0] )
+		CHECKPOINT_M( m_vpPlayedSongs[0]->GetTranslitFullTitle() );
+	ASSERT( m_multiPlayer[pn].m_vpPlayedSteps.size() != 0 );
+	ASSERT( m_multiPlayer[pn].m_vpPlayedSteps[0] );
+	ASSERT_M( m_playMode < NUM_PlayMode, ssprintf("playmode %i", m_playMode) );
+	ASSERT( m_pStyle != NULL );
+	ASSERT_M( m_player[pn].m_vpPlayedSteps[0]->GetDifficulty() < NUM_Difficulty, ssprintf("difficulty %i", m_player[pn].m_vpPlayedSteps[0]->GetDifficulty()) );
+	ASSERT( m_vpPlayedSongs.size() == m_player[pn].m_vpPlayedSteps.size() );
+	ASSERT( m_vpPossibleSongs.size() == m_player[pn].m_vpPossibleSteps.size() );
 }
 
 
@@ -74,28 +74,28 @@ int StageStats::GetAverageMeter( PlayerNumber pn ) const
 	
 	int iTotalMeter = 0;
 
-	for( unsigned i=0; i<vpPlayedSongs.size(); i++ )
+	for( unsigned i=0; i<m_vpPlayedSongs.size(); i++ )
 	{
-		const Steps* pSteps = m_player[pn].vpPlayedSteps[i];
+		const Steps* pSteps = m_player[pn].m_vpPlayedSteps[i];
 		iTotalMeter += pSteps->GetMeter();
 	}
-	return iTotalMeter / vpPlayedSongs.size();	// round down
+	return iTotalMeter / m_vpPlayedSongs.size();	// round down
 }
 
 void StageStats::AddStats( const StageStats& other )
 {
-	ASSERT( !other.vpPlayedSongs.empty() );
-	FOREACH_CONST( Song*, other.vpPlayedSongs, s )
-		vpPlayedSongs.push_back( *s );
-	FOREACH_CONST( Song*, other.vpPossibleSongs, s )
-		vpPossibleSongs.push_back( *s );
-	StageType = Stage_Invalid; // meaningless
+	ASSERT( !other.m_vpPlayedSongs.empty() );
+	FOREACH_CONST( Song*, other.m_vpPlayedSongs, s )
+		m_vpPlayedSongs.push_back( *s );
+	FOREACH_CONST( Song*, other.m_vpPossibleSongs, s )
+		m_vpPossibleSongs.push_back( *s );
+	m_StageType = Stage_Invalid; // meaningless
 
-	bGaveUp |= other.bGaveUp;
-	bUsedAutoplay |= other.bUsedAutoplay;
+	m_bGaveUp |= other.m_bGaveUp;
+	m_bUsedAutoplay |= other.m_bUsedAutoplay;
 	
-	fGameplaySeconds += other.fGameplaySeconds;
-	fStepsSeconds += other.fStepsSeconds;
+	m_fGameplaySeconds += other.m_fGameplaySeconds;
+	m_fStepsSeconds += other.m_fStepsSeconds;
 
 	FOREACH_EnabledPlayer( p )
 		m_player[p].AddStats( other.m_player[p] );
@@ -104,7 +104,7 @@ void StageStats::AddStats( const StageStats& other )
 bool StageStats::OnePassed() const
 {
 	FOREACH_EnabledPlayer( p )
-		if( !m_player[p].bFailed )
+		if( !m_player[p].m_bFailed )
 			return true;
 	return false;
 }
@@ -112,7 +112,7 @@ bool StageStats::OnePassed() const
 bool StageStats::AllFailed() const
 {
 	FOREACH_EnabledPlayer( p )
-		if( !m_player[p].bFailed )
+		if( !m_player[p].m_bFailed )
 			return false;
 	return true;
 }
@@ -120,9 +120,9 @@ bool StageStats::AllFailed() const
 float StageStats::GetTotalPossibleStepsSeconds() const
 {
 	float fSecs = 0;
-	FOREACH_CONST( Song*, vpPossibleSongs, s )
+	FOREACH_CONST( Song*, m_vpPossibleSongs, s )
 		fSecs += (*s)->GetStepsSeconds();
-	return fSecs / fMusicRate;
+	return fSecs / m_fMusicRate;
 }
 
 void StageStats::CommitScores( bool bSummary )
@@ -162,20 +162,20 @@ void StageStats::CommitScores( bool bSummary )
 		HighScore &hs = m_player[p].m_HighScore;
 		hs.SetName( RANKING_TO_FILL_IN_MARKER[p] );
 		hs.SetGrade( m_player[p].GetGrade() );
-		hs.SetScore( m_player[p].iScore );
+		hs.SetScore( m_player[p].m_iScore );
 		hs.SetPercentDP( m_player[p].GetPercentDancePoints() );
-		hs.SetSurviveSeconds( m_player[p].fAliveSeconds );
+		hs.SetSurviveSeconds( m_player[p].m_fAliveSeconds );
 		hs.SetModifiers( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetStage().GetString() );
 		hs.SetDateTime( DateTime::GetNowDateTime() );
 		hs.SetPlayerGuid( PROFILEMAN->IsPersistentProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : RString("") );
 		hs.SetMachineGuid( PROFILEMAN->GetMachineProfile()->m_sGuid );
 		hs.SetProductID( PREFSMAN->m_iProductID );
 		FOREACH_TapNoteScore( tns )
-			hs.SetTapNoteScore( tns, m_player[p].iTapNoteScores[tns] );
+			hs.SetTapNoteScore( tns, m_player[p].m_iTapNoteScores[tns] );
 		FOREACH_HoldNoteScore( hns )
-			hs.SetHoldNoteScore( hns, m_player[p].iHoldNoteScores[hns] );
-		hs.SetRadarValues( m_player[p].radarActual );
-		hs.SetLifeRemainingSeconds( m_player[p].fLifeRemainingSeconds );
+			hs.SetHoldNoteScore( hns, m_player[p].m_iHoldNoteScores[hns] );
+		hs.SetRadarValues( m_player[p].m_radarActual );
+		hs.SetLifeRemainingSeconds( m_player[p].m_fLifeRemainingSeconds );
 	}
 
 	FOREACH_HumanPlayer( p )
@@ -189,7 +189,7 @@ void StageStats::CommitScores( bool bSummary )
 		if( bSummary )
 		{
 			// don't save scores if any stage was failed
-			if( m_player[p].bFailed ) 
+			if( m_player[p].m_bFailed ) 
 				continue;
 
 			int iAverageMeter = GetAverageMeter(p);
@@ -211,7 +211,7 @@ void StageStats::CommitScores( bool bSummary )
 		else
 		{
 			// don't save scores for a failed song
-			if( m_player[p].bFailed )
+			if( m_player[p].m_bFailed )
 				continue;
 
 			ASSERT( pSteps );
@@ -272,7 +272,7 @@ class LunaStageStats: public Luna<StageStats>
 public:
 	static int GetPlayerStageStats( T* p, lua_State *L )		{ p->m_player[Enum::Check<PlayerNumber>(L, 1)].PushSelf(L); return 1; }
 	static int GetMultiPlayerStageStats( T* p, lua_State *L )	{ p->m_multiPlayer[Enum::Check<MultiPlayer>(L, 1)].PushSelf(L); return 1; }
-	static int GetGameplaySeconds( T* p, lua_State *L )		{ lua_pushnumber(L, p->fGameplaySeconds); return 1; }
+	static int GetGameplaySeconds( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_fGameplaySeconds); return 1; }
 	static int OnePassed( T* p, lua_State *L )			{ lua_pushboolean(L, p->OnePassed()); return 1; }
 	static int AllFailed( T* p, lua_State *L )			{ lua_pushboolean(L, p->AllFailed()); return 1; }
 

@@ -45,8 +45,8 @@ void ScoreDisplayNormal::SetScore( int iNewScore )
 	// score for subtracrive is MaxScore - score).
 
 	
-	int iMaxScore = STATSMAN->m_CurStageStats.m_player[pn].iMaxScore;
-	int iCurMaxScore = STATSMAN->m_CurStageStats.m_player[pn].iCurMaxScore;
+	int iMaxScore = STATSMAN->m_CurStageStats.m_player[pn].m_iMaxScore;
+	int iCurMaxScore = STATSMAN->m_CurStageStats.m_player[pn].m_iCurMaxScore;
 
 	switch( m_pPlayerState->m_PlayerOptions.GetCurrent().m_ScoreDisplay )
 	{

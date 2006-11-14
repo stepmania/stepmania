@@ -26,42 +26,42 @@ public:
 	int GetLessonScoreNeeded() const;
 	void ResetScoreForLesson();
 
-	vector<Steps*>  vpPlayedSteps;
-	vector<Steps*>  vpPossibleSteps;
-	float		fAliveSeconds; // how far into the music did they last before failing?  Updated by Gameplay, scaled by music rate.
+	vector<Steps*>  m_vpPlayedSteps;
+	vector<Steps*>  m_vpPossibleSteps;
+	float		m_fAliveSeconds; // how far into the music did they last before failing?  Updated by Gameplay, scaled by music rate.
 
 	/* Set if the player actually failed at any point during the song.  This is always
 	 * false in FAIL_OFF.  If recovery is enabled and two players are playing,
 	 * this is only set if both players were failing at the same time. */
-	bool		bFailed;
+	bool		m_bFailed;
 
-	int		iPossibleDancePoints;
-	int		iCurPossibleDancePoints;
-	int		iActualDancePoints;
-	int		iPossibleGradePoints;
-	int		iTapNoteScores[NUM_TapNoteScore];
-	int		iHoldNoteScores[NUM_HoldNoteScore];
-	int		iCurCombo;
-	int		iMaxCombo;
-	int		iCurMissCombo;
-	int		iScore;
-	int		iCurMaxScore;
-	int		iMaxScore;
-	int		iBonus;  // bonus to be added on screeneval
-	RadarValues	radarPossible;	// filled in by ScreenGameplay on start of notes
-	RadarValues	radarActual;
+	int		m_iPossibleDancePoints;
+	int		m_iCurPossibleDancePoints;
+	int		m_iActualDancePoints;
+	int		m_iPossibleGradePoints;
+	int		m_iTapNoteScores[NUM_TapNoteScore];
+	int		m_iHoldNoteScores[NUM_HoldNoteScore];
+	int		m_iCurCombo;
+	int		m_iMaxCombo;
+	int		m_iCurMissCombo;
+	int		m_iScore;
+	int		m_iCurMaxScore;
+	int		m_iMaxScore;
+	int		m_iBonus;  // bonus to be added on screeneval
+	RadarValues	m_radarPossible;	// filled in by ScreenGameplay on start of notes
+	RadarValues	m_radarActual;
 	/* The number of songs played and passed, respectively. */
-	int		iSongsPassed;
-	int		iSongsPlayed;
-	float		fLifeRemainingSeconds;	// used in survival
+	int		m_iSongsPassed;
+	int		m_iSongsPlayed;
+	float		m_fLifeRemainingSeconds;	// used in survival
 
 	// workout
-	float		fCaloriesBurned;
+	float		m_fCaloriesBurned;
 
-	TapNoteScore	tnsLast;
-	HoldNoteScore	hnsLast;
+	TapNoteScore	m_tnsLast;
+	HoldNoteScore	m_hnsLast;
 
-	map<float,float> fLifeRecord;
+	map<float,float> m_fLifeRecord;
 	void	SetLifeRecordAt( float fLife, float fStepsSecond );
 	void	GetLifeRecord( float *fLifeOut, int iNumSamples, float fStepsEndSecond ) const;
 	float	GetLifeRecordAt( float fStepsSecond ) const;
@@ -71,24 +71,24 @@ public:
 	{
 		/* Start and size of this combo, in the same scale as the combo list mapping and
 		 * the life record. */
-		float fStartSecond, fSizeSeconds;
+		float m_fStartSecond, m_fSizeSeconds;
 
 		/* Combo size, in steps. */
-		int cnt;
+		int m_cnt;
 
 		/* Size of the combo that didn't come from this stage (rollover from the last song). 
 		 * (This is a subset of cnt.) */
-		int rollover;
+		int m_rollover;
 
 		/* Get the size of the combo that came from this song. */
-		int GetStageCnt() const { return cnt - rollover; }
+		int GetStageCnt() const { return m_cnt - m_rollover; }
 
-		Combo_t(): fStartSecond(0), fSizeSeconds(0), cnt(0), rollover(0) { }
-		bool IsZero() const { return fStartSecond < 0; }
+		Combo_t(): m_fStartSecond(0), m_fSizeSeconds(0), m_cnt(0), m_rollover(0) { }
+		bool IsZero() const { return m_fStartSecond < 0; }
 	};
-	vector<Combo_t> ComboList;
-	float		fFirstSecond;
-	float		fLastSecond;
+	vector<Combo_t> m_ComboList;
+	float		m_fFirstSecond;
+	float		m_fLastSecond;
 
 	int	GetComboAtStartOfStage() const;
 	bool	FullComboOfScore( TapNoteScore tnsAllGreaterOrEqual ) const;
@@ -100,7 +100,7 @@ public:
 	void	UpdateComboList( float fSecond, bool rollover );
 	Combo_t GetMaxCombo() const;
 
-	float GetSurvivalSeconds() const { return fAliveSeconds + fLifeRemainingSeconds; }
+	float GetSurvivalSeconds() const { return m_fAliveSeconds + m_fLifeRemainingSeconds; }
 
 	// Final results:
 	void CalcAwards( PlayerNumber p, bool bGaveUp, bool bUsedAutoplay );

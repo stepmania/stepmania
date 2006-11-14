@@ -92,13 +92,13 @@ ScreenEvaluation::ScreenEvaluation()
 
 		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 		GAMESTATE->SetCurrentStyle( GAMEMAN->GameAndStringToStyle(GAMEMAN->GetDefaultGame(),"versus") );
-		STATSMAN->m_CurStageStats.playMode = GAMESTATE->m_PlayMode;
-		STATSMAN->m_CurStageStats.pStyle = GAMESTATE->GetCurrentStyle();
-		STATSMAN->m_CurStageStats.StageType = StageStats::STAGE_NORMAL;
+		STATSMAN->m_CurStageStats.m_playMode = GAMESTATE->m_PlayMode;
+		STATSMAN->m_CurStageStats.m_pStyle = GAMESTATE->GetCurrentStyle();
+		STATSMAN->m_CurStageStats.m_StageType = StageStats::STAGE_NORMAL;
 		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 		GAMESTATE->m_pCurSong.Set( SONGMAN->GetRandomSong() );
-		STATSMAN->m_CurStageStats.vpPlayedSongs.push_back( GAMESTATE->m_pCurSong );
-		STATSMAN->m_CurStageStats.vpPossibleSongs.push_back( GAMESTATE->m_pCurSong );
+		STATSMAN->m_CurStageStats.m_vpPlayedSongs.push_back( GAMESTATE->m_pCurSong );
+		STATSMAN->m_CurStageStats.m_vpPossibleSongs.push_back( GAMESTATE->m_pCurSong );
 		GAMESTATE->m_pCurCourse.Set( SONGMAN->GetRandomCourse() );
 		GAMESTATE->m_iCurrentStageIndex = 0;
 		
@@ -113,8 +113,8 @@ ScreenEvaluation::ScreenEvaluation()
 			GAMESTATE->m_pCurCourse->GetAllTrails( apTrails );
 			if( apTrails.size() )
 				GAMESTATE->m_pCurTrail[p].Set( apTrails[0] );
-			STATSMAN->m_CurStageStats.m_player[p].vpPlayedSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
-			STATSMAN->m_CurStageStats.m_player[p].vpPossibleSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
+			STATSMAN->m_CurStageStats.m_player[p].m_vpPlayedSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
+			STATSMAN->m_CurStageStats.m_player[p].m_vpPossibleSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
 			
 			
 			PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions, ModsLevel_Stage, m_fScrollSpeed, 2.0f );
@@ -131,38 +131,38 @@ ScreenEvaluation::ScreenEvaluation()
 		FOREACH_PlayerNumber( p )
 		{
 			float fSeconds = GAMESTATE->m_pCurSong->GetStepsSeconds();
-			STATSMAN->m_CurStageStats.m_player[p].iActualDancePoints = RandomInt( 3 );
-			STATSMAN->m_CurStageStats.m_player[p].iPossibleDancePoints = 2;
+			STATSMAN->m_CurStageStats.m_player[p].m_iActualDancePoints = RandomInt( 3 );
+			STATSMAN->m_CurStageStats.m_player[p].m_iPossibleDancePoints = 2;
 			if( RandomInt(2) )
-				STATSMAN->m_CurStageStats.m_player[p].iCurCombo = 11000;
+				STATSMAN->m_CurStageStats.m_player[p].m_iCurCombo = 11000;
 			else
-				STATSMAN->m_CurStageStats.m_player[p].iCurCombo = 0;
+				STATSMAN->m_CurStageStats.m_player[p].m_iCurCombo = 0;
 			STATSMAN->m_CurStageStats.m_player[p].UpdateComboList( 0, true );
 
-			STATSMAN->m_CurStageStats.m_player[p].iCurCombo += 50;
+			STATSMAN->m_CurStageStats.m_player[p].m_iCurCombo += 50;
 			STATSMAN->m_CurStageStats.m_player[p].UpdateComboList( 0.10f * fSeconds, false );
 
-			STATSMAN->m_CurStageStats.m_player[p].iCurCombo = 0;
+			STATSMAN->m_CurStageStats.m_player[p].m_iCurCombo = 0;
 			STATSMAN->m_CurStageStats.m_player[p].UpdateComboList( 0.15f * fSeconds, false );
-			STATSMAN->m_CurStageStats.m_player[p].iCurCombo = 1;
+			STATSMAN->m_CurStageStats.m_player[p].m_iCurCombo = 1;
 			STATSMAN->m_CurStageStats.m_player[p].UpdateComboList( 0.25f * fSeconds, false );
-			STATSMAN->m_CurStageStats.m_player[p].iCurCombo = 50;
+			STATSMAN->m_CurStageStats.m_player[p].m_iCurCombo = 50;
 			STATSMAN->m_CurStageStats.m_player[p].UpdateComboList( 0.35f * fSeconds, false );
-			STATSMAN->m_CurStageStats.m_player[p].iCurCombo = 0;
+			STATSMAN->m_CurStageStats.m_player[p].m_iCurCombo = 0;
 			STATSMAN->m_CurStageStats.m_player[p].UpdateComboList( 0.45f * fSeconds, false );
-			STATSMAN->m_CurStageStats.m_player[p].iCurCombo = 1;
+			STATSMAN->m_CurStageStats.m_player[p].m_iCurCombo = 1;
 			STATSMAN->m_CurStageStats.m_player[p].UpdateComboList( 0.50f * fSeconds, false );
-			STATSMAN->m_CurStageStats.m_player[p].iCurCombo = 100;
+			STATSMAN->m_CurStageStats.m_player[p].m_iCurCombo = 100;
 			STATSMAN->m_CurStageStats.m_player[p].UpdateComboList( 1.00f * fSeconds, false );
 			if( RandomInt(5) == 0 )
 			{
-				STATSMAN->m_CurStageStats.m_player[p].bFailed = true;
+				STATSMAN->m_CurStageStats.m_player[p].m_bFailed = true;
 			}
-			STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W1] = RandomInt( 3 );
-			STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W2] = RandomInt( 3 );
-			STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W3] = RandomInt( 3 );
-			STATSMAN->m_CurStageStats.m_player[p].iPossibleGradePoints = 4*ScoreKeeperNormal::TapNoteScoreToGradePoints(TNS_W1, false);
-			STATSMAN->m_CurStageStats.m_player[p].fLifeRemainingSeconds = randomf( 90, 580 );
+			STATSMAN->m_CurStageStats.m_player[p].m_iTapNoteScores[TNS_W1] = RandomInt( 3 );
+			STATSMAN->m_CurStageStats.m_player[p].m_iTapNoteScores[TNS_W2] = RandomInt( 3 );
+			STATSMAN->m_CurStageStats.m_player[p].m_iTapNoteScores[TNS_W3] = RandomInt( 3 );
+			STATSMAN->m_CurStageStats.m_player[p].m_iPossibleGradePoints = 4*ScoreKeeperNormal::TapNoteScoreToGradePoints(TNS_W1, false);
+			STATSMAN->m_CurStageStats.m_player[p].m_fLifeRemainingSeconds = randomf( 90, 580 );
 		}
 
 		STATSMAN->m_vPlayedStageStats.clear();
@@ -217,8 +217,8 @@ void ScreenEvaluation::Init()
 			Grade g = STATSMAN->m_CurStageStats.m_player[p].GetGrade();
 			if( g < (int) ARRAYLEN(ScoreBonuses) )
 			{
-				STATSMAN->m_CurStageStats.m_player[p].iBonus += ScoreBonuses[(int)g];
-				STATSMAN->m_CurStageStats.m_player[p].iBonus += ScoreBonuses[(int)g];
+				STATSMAN->m_CurStageStats.m_player[p].m_iBonus += ScoreBonuses[(int)g];
+				STATSMAN->m_CurStageStats.m_player[p].m_iBonus += ScoreBonuses[(int)g];
 			}
 		}
 	}
@@ -230,7 +230,7 @@ void ScreenEvaluation::Init()
 	STATSMAN->m_CurStageStats.CommitScores( SUMMARY );
 
 	FOREACH_HumanPlayer( p )
-		STATSMAN->m_CurStageStats.m_player[p].CalcAwards( p, STATSMAN->m_CurStageStats.bGaveUp, STATSMAN->m_CurStageStats.bUsedAutoplay );
+		STATSMAN->m_CurStageStats.m_player[p].CalcAwards( p, STATSMAN->m_CurStageStats.m_bGaveUp, STATSMAN->m_CurStageStats.m_bUsedAutoplay );
 
 	// Run this here, so STATSMAN->m_CurStageStats is available to overlays.
 	ScreenWithMenuElements::Init();
@@ -267,9 +267,9 @@ void ScreenEvaluation::Init()
 	{
 		if( SUMMARY )
 		{
-			for( unsigned i=0; i<STATSMAN->m_CurStageStats.vpPlayedSongs.size(); i++ )
+			for( unsigned i=0; i<STATSMAN->m_CurStageStats.m_vpPlayedSongs.size(); i++ )
 			{
-				Song *pSong = STATSMAN->m_CurStageStats.vpPlayedSongs[i];
+				Song *pSong = STATSMAN->m_CurStageStats.m_vpPlayedSongs[i];
 
 				m_SmallBanner[i].LoadFromSong( pSong );
 				m_SmallBanner[i].ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
@@ -404,7 +404,7 @@ void ScreenEvaluation::Init()
 			for( int r=0; r<NUM_SHOWN_RADAR_CATEGORIES; r++ )	// foreach line
 			{
 				m_sprPossibleBar[p][r].Load( THEME->GetPathG(m_sName,ssprintf("bar possible p%d",p+1)) );
-				m_sprPossibleBar[p][r].SetWidth( m_sprPossibleBar[p][r].GetUnzoomedWidth() * STATSMAN->m_CurStageStats.m_player[p].radarPossible[r] );
+				m_sprPossibleBar[p][r].SetWidth( m_sprPossibleBar[p][r].GetUnzoomedWidth() * STATSMAN->m_CurStageStats.m_player[p].m_radarPossible[r] );
 				m_sprPossibleBar[p][r].SetName( ssprintf("BarPossible%dP%d",r+1,p+1) );
 				ActorUtil::LoadAllCommands( m_sprPossibleBar[p][r], m_sName );
 				SET_XY( m_sprPossibleBar[p][r] );
@@ -412,7 +412,7 @@ void ScreenEvaluation::Init()
 
 				m_sprActualBar[p][r].Load( THEME->GetPathG(m_sName,ssprintf("bar actual p%d",p+1)) );
 				// should be out of the possible bar, not actual (whatever value that is at)
-				m_sprActualBar[p][r].SetWidth( m_sprPossibleBar[p][r].GetUnzoomedWidth() * STATSMAN->m_CurStageStats.m_player[p].radarActual[r] );
+				m_sprActualBar[p][r].SetWidth( m_sprPossibleBar[p][r].GetUnzoomedWidth() * STATSMAN->m_CurStageStats.m_player[p].m_radarActual[r] );
 				
 				float value = (float)100 * m_sprActualBar[p][r].GetUnzoomedWidth() / m_sprPossibleBar[p][r].GetUnzoomedWidth();
 				LOG->Trace("Radar bar %d of 5 - %f percent", r,  value);
@@ -422,7 +422,7 @@ void ScreenEvaluation::Init()
 				SET_XY( m_sprActualBar[p][r] );
 				
 				// .99999 is fairly close to 1.00, so we use that 
-				if( STATSMAN->m_CurStageStats.m_player[p].radarActual[r] > 0.99999f )
+				if( STATSMAN->m_CurStageStats.m_player[p].m_radarActual[r] > 0.99999f )
 					m_sprActualBar[p][r].RunCommands( BAR_ACTUAL_MAX_COMMAND );
 				this->AddChild( &m_sprActualBar[p][r] );
 			}
@@ -446,7 +446,7 @@ void ScreenEvaluation::Init()
 			m_textSurvivedNumber[p].SetShadowLength( 0 );
 			// curewater: edited the "# stages cleared" text so it deducts one if you failed.
 			// Should be accurate, but I'm not sure if its "standard" that (bool)true = 1.  (assumption)
-			m_textSurvivedNumber[p].SetText( ssprintf("%02d", STATSMAN->m_CurStageStats.m_player[p].iSongsPassed) );
+			m_textSurvivedNumber[p].SetText( ssprintf("%02d", STATSMAN->m_CurStageStats.m_player[p].m_iSongsPassed) );
 			m_textSurvivedNumber[p].SetName( ssprintf("SurvivedNumberP%d",p+1) );
 			ActorUtil::LoadAllCommands( m_textSurvivedNumber[p], m_sName );
 			SET_XY( m_textSurvivedNumber[p] );
@@ -512,14 +512,14 @@ void ScreenEvaluation::Init()
 				int iValue;
 				switch( l )
 				{
-				case JudgeLine_W1:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W1];		break;
-				case JudgeLine_W2:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W2];		break;
-				case JudgeLine_W3:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W3];		break;
-				case JudgeLine_W4:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W4];		break;
-				case JudgeLine_W5:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W5];		break;
-				case JudgeLine_Miss:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Miss];	break;
-				case JudgeLine_Held:		iValue = STATSMAN->m_CurStageStats.m_player[p].iHoldNoteScores[HNS_Held];	break;
-				case JudgeLine_MaxCombo:	iValue = STATSMAN->m_CurStageStats.m_player[p].GetMaxCombo().cnt;		break;
+				case JudgeLine_W1:		iValue = STATSMAN->m_CurStageStats.m_player[p].m_iTapNoteScores[TNS_W1];	break;
+				case JudgeLine_W2:		iValue = STATSMAN->m_CurStageStats.m_player[p].m_iTapNoteScores[TNS_W2];	break;
+				case JudgeLine_W3:		iValue = STATSMAN->m_CurStageStats.m_player[p].m_iTapNoteScores[TNS_W3];	break;
+				case JudgeLine_W4:		iValue = STATSMAN->m_CurStageStats.m_player[p].m_iTapNoteScores[TNS_W4];	break;
+				case JudgeLine_W5:		iValue = STATSMAN->m_CurStageStats.m_player[p].m_iTapNoteScores[TNS_W5];	break;
+				case JudgeLine_Miss:		iValue = STATSMAN->m_CurStageStats.m_player[p].m_iTapNoteScores[TNS_Miss];	break;
+				case JudgeLine_Held:		iValue = STATSMAN->m_CurStageStats.m_player[p].m_iHoldNoteScores[HNS_Held];	break;
+				case JudgeLine_MaxCombo:	iValue = STATSMAN->m_CurStageStats.m_player[p].GetMaxCombo().m_cnt;		break;
 				DEFAULT_FAIL( l );
 				}
 
@@ -559,8 +559,8 @@ void ScreenEvaluation::Init()
 				RadarCategory_Jumps, RadarCategory_Holds, RadarCategory_Mines, RadarCategory_Hands, RadarCategory_Rolls
 			};
 			const int ind = indeces[l];
-			const int iActual = (int) roundf(STATSMAN->m_CurStageStats.m_player[p].radarActual[ind]);
-			const int iPossible = (int) roundf(STATSMAN->m_CurStageStats.m_player[p].radarPossible[ind]);
+			const int iActual = (int) roundf(STATSMAN->m_CurStageStats.m_player[p].m_radarActual[ind]);
+			const int iPossible = (int) roundf(STATSMAN->m_CurStageStats.m_player[p].m_radarPossible[ind]);
 
 			m_textStatsText[l][p].SetText( ssprintf("%3d/%3d",iActual,iPossible) );
 		}
@@ -585,7 +585,7 @@ void ScreenEvaluation::Init()
 			m_textScore[p].SetName( ssprintf("ScoreNumberP%d",p+1) );
 			ActorUtil::LoadAllCommands( m_textScore[p], m_sName );
 			SET_XY( m_textScore[p] );
-			m_textScore[p].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS, STATSMAN->m_CurStageStats.m_player[p].iScore) );
+			m_textScore[p].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS, STATSMAN->m_CurStageStats.m_player[p].m_iScore) );
 			this->AddChild( &m_textScore[p] );
 		}
 	}
@@ -602,7 +602,7 @@ void ScreenEvaluation::Init()
 		{
 			int iTotalScore=0;
 			for( unsigned i=0; i<STATSMAN->m_vPlayedStageStats.size(); i++ )
-				iTotalScore += STATSMAN->m_vPlayedStageStats[i].m_player[p].iScore;
+				iTotalScore += STATSMAN->m_vPlayedStageStats[i].m_player[p].m_iScore;
 
 			//iTotalScore += STATSMAN->m_CurStageStats.m_player[p].iScore;
 
@@ -637,7 +637,7 @@ void ScreenEvaluation::Init()
 			m_textTime[p].SetName( ssprintf("TimeNumberP%d",p+1) );
 			ActorUtil::LoadAllCommands( m_textTime[p], m_sName );
 			SET_XY( m_textTime[p] );
-			m_textTime[p].SetText( SecondsToMMSSMsMs(STATSMAN->m_CurStageStats.m_player[p].fAliveSeconds) );
+			m_textTime[p].SetText( SecondsToMMSSMsMs(STATSMAN->m_CurStageStats.m_player[p].m_fAliveSeconds) );
 			this->AddChild( &m_textTime[p] );
 		}
 	}
@@ -794,21 +794,21 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 	{
 		FOREACH_EnabledPlayer( p ) 
 		{
-			if( STATSMAN->m_CurStageStats.m_player[p].iBonus == 0 )
+			if( STATSMAN->m_CurStageStats.m_player[p].m_iBonus == 0 )
 				continue;
 
 			if( GAMESTATE->IsCourseMode() )
 				continue;
 
-			int increment = STATSMAN->m_CurStageStats.m_player[p].iBonus/10;
+			int increment = STATSMAN->m_CurStageStats.m_player[p].m_iBonus/10;
 			if( increment < 1 )
-				increment = min( 1024, STATSMAN->m_CurStageStats.m_player[p].iBonus );
+				increment = min( 1024, STATSMAN->m_CurStageStats.m_player[p].m_iBonus );
 
-			STATSMAN->m_CurStageStats.m_player[p].iBonus -= increment;
-			STATSMAN->m_CurStageStats.m_player[p].iScore += increment;
+			STATSMAN->m_CurStageStats.m_player[p].m_iBonus -= increment;
+			STATSMAN->m_CurStageStats.m_player[p].m_iScore += increment;
 
 			if( SHOW_SCORE_AREA )
-				m_textScore[p].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS, STATSMAN->m_CurStageStats.m_player[p].iScore) );
+				m_textScore[p].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS, STATSMAN->m_CurStageStats.m_player[p].m_iScore) );
 		}
 	}
 

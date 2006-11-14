@@ -45,14 +45,14 @@ static StageStats AccumPlayedStageStats( const vector<StageStats>& vss )
 
 	if( !vss.empty() )
 	{
-		ssreturn.pStyle = vss[0].pStyle;
-		ssreturn.playMode = vss[0].playMode;
+		ssreturn.m_pStyle = vss[0].m_pStyle;
+		ssreturn.m_playMode = vss[0].m_playMode;
 	}
 
 	FOREACH_CONST( StageStats, vss, ss )
 		ssreturn.AddStats( *ss );
 
-	unsigned uNumSongs = ssreturn.vpPlayedSongs.size();
+	unsigned uNumSongs = ssreturn.m_vpPlayedSongs.size();
 
 	if( uNumSongs == 0 )
 		return ssreturn;	// don't divide by 0 below
@@ -65,16 +65,16 @@ static StageStats AccumPlayedStageStats( const vector<StageStats>& vss )
 	{
 		for( int r = 0; r < RadarCategory_TapsAndHolds; r++)
 		{
-			ssreturn.m_player[p].radarPossible[r] /= uNumSongs;
-			ssreturn.m_player[p].radarActual[r] /= uNumSongs;
+			ssreturn.m_player[p].m_radarPossible[r] /= uNumSongs;
+			ssreturn.m_player[p].m_radarActual[r] /= uNumSongs;
 		}
 	}
 	FOREACH_EnabledMultiPlayer( p )
 	{
 		for( int r = 0; r < RadarCategory_TapsAndHolds; r++)
 		{
-			ssreturn.m_multiPlayer[p].radarPossible[r] /= uNumSongs;
-			ssreturn.m_multiPlayer[p].radarActual[r] /= uNumSongs;
+			ssreturn.m_multiPlayer[p].m_radarPossible[r] /= uNumSongs;
+			ssreturn.m_multiPlayer[p].m_radarActual[r] /= uNumSongs;
 		}
 	}
 	return ssreturn;
@@ -95,7 +95,7 @@ void StatsManager::GetFinalEvalStageStats( StageStats& statsOut ) const
 		if( !ss.OnePassed() )
 			continue;
 
-		if( ss.StageType == StageStats::STAGE_NORMAL )
+		if( ss.m_StageType == StageStats::STAGE_NORMAL )
 		{
 			if( PassedRegularSongsLeft == 0 )
 				break;
@@ -122,14 +122,14 @@ void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNum
 	CHECKPOINT;
 
 	StyleID sID;
-	sID.FromStyle( ss.pStyle );
+	sID.FromStyle( ss.m_pStyle );
 
-	ASSERT( ss.vpPlayedSongs.size() == ss.m_player[pn].vpPlayedSteps.size() );
-	for( unsigned i=0; i<ss.vpPlayedSongs.size(); i++ )
+	ASSERT( ss.m_vpPlayedSongs.size() == ss.m_player[pn].m_vpPlayedSteps.size() );
+	for( unsigned i=0; i<ss.m_vpPlayedSongs.size(); i++ )
 	{
-		Steps *pSteps = ss.m_player[pn].vpPlayedSteps[i];
+		Steps *pSteps = ss.m_player[pn].m_vpPlayedSteps[i];
 
-		pProfile->m_iNumSongsPlayedByPlayMode[ss.playMode]++;
+		pProfile->m_iNumSongsPlayedByPlayMode[ss.m_playMode]++;
 		pProfile->m_iNumSongsPlayedByStyle[sID] ++;
 		pProfile->m_iNumSongsPlayedByDifficulty[pSteps->GetDifficulty()] ++;
 
@@ -137,11 +137,11 @@ void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNum
 		pProfile->m_iNumSongsPlayedByMeter[iMeter] ++;
 	}
 	
-	pProfile->m_iTotalDancePoints += ss.m_player[pn].iActualDancePoints;
+	pProfile->m_iTotalDancePoints += ss.m_player[pn].m_iActualDancePoints;
 
-	if( ss.StageType == StageStats::STAGE_EXTRA || ss.StageType == StageStats::STAGE_EXTRA2 )
+	if( ss.m_StageType == StageStats::STAGE_EXTRA || ss.m_StageType == StageStats::STAGE_EXTRA2 )
 	{
-		if( ss.m_player[pn].bFailed )
+		if( ss.m_player[pn].m_bFailed )
 			++pProfile->m_iNumExtraStagesFailed;
 		else
 			++pProfile->m_iNumExtraStagesPassed;
@@ -149,9 +149,9 @@ void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNum
 
 	// If you fail in a course, you passed all but the final song.
 	// FIXME: Not true.  If playing with 2 players, one player could have failed earlier.
-	if( !ss.m_player[pn].bFailed )
+	if( !ss.m_player[pn].m_bFailed )
 	{
-		pProfile->m_iNumStagesPassedByPlayMode[ss.playMode] ++;
+		pProfile->m_iNumStagesPassedByPlayMode[ss.m_playMode] ++;
 		pProfile->m_iNumStagesPassedByGrade[ss.m_player[pn].GetGrade()] ++;
 	}
 }
@@ -166,24 +166,24 @@ void StatsManager::CommitStatsToProfiles()
 	//
 	FOREACH_HumanPlayer( pn )
 	{
-		int iNumTapsAndHolds	= (int) m_CurStageStats.m_player[pn].radarActual[RadarCategory_TapsAndHolds];
-		int iNumJumps		= (int) m_CurStageStats.m_player[pn].radarActual[RadarCategory_Jumps];
-		int iNumHolds		= (int) m_CurStageStats.m_player[pn].radarActual[RadarCategory_Holds];
-		int iNumRolls		= (int) m_CurStageStats.m_player[pn].radarActual[RadarCategory_Rolls];
-		int iNumMines		= (int) m_CurStageStats.m_player[pn].radarActual[RadarCategory_Mines];
-		int iNumHands		= (int) m_CurStageStats.m_player[pn].radarActual[RadarCategory_Hands];
-		float fCaloriesBurned	= m_CurStageStats.m_player[pn].fCaloriesBurned;
+		int iNumTapsAndHolds	= (int) m_CurStageStats.m_player[pn].m_radarActual[RadarCategory_TapsAndHolds];
+		int iNumJumps		= (int) m_CurStageStats.m_player[pn].m_radarActual[RadarCategory_Jumps];
+		int iNumHolds		= (int) m_CurStageStats.m_player[pn].m_radarActual[RadarCategory_Holds];
+		int iNumRolls		= (int) m_CurStageStats.m_player[pn].m_radarActual[RadarCategory_Rolls];
+		int iNumMines		= (int) m_CurStageStats.m_player[pn].m_radarActual[RadarCategory_Mines];
+		int iNumHands		= (int) m_CurStageStats.m_player[pn].m_radarActual[RadarCategory_Hands];
+		float fCaloriesBurned	= m_CurStageStats.m_player[pn].m_fCaloriesBurned;
 		PROFILEMAN->AddStepTotals( pn, iNumTapsAndHolds, iNumJumps, iNumHolds, iNumRolls, iNumMines, iNumHands, fCaloriesBurned );
 	}
 
 	// Update profile stats
 	Profile* pMachineProfile = PROFILEMAN->GetMachineProfile();
 
-	int iGameplaySeconds = (int)truncf(m_CurStageStats.fGameplaySeconds);
+	int iGameplaySeconds = (int)truncf(m_CurStageStats.m_fGameplaySeconds);
 
 	pMachineProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
 	pMachineProfile->m_iCurrentCombo = 0;
-	pMachineProfile->m_iNumTotalSongsPlayed += m_CurStageStats.vpPlayedSongs.size();
+	pMachineProfile->m_iNumTotalSongsPlayed += m_CurStageStats.m_vpPlayedSongs.size();
 
 	CHECKPOINT;
 	FOREACH_HumanPlayer( pn )
@@ -196,9 +196,9 @@ void StatsManager::CommitStatsToProfiles()
 			pPlayerProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
 			pPlayerProfile->m_iCurrentCombo = 
 				PREFSMAN->m_bComboContinuesBetweenSongs ? 
-				m_CurStageStats.m_player[pn].iCurCombo : 
+				m_CurStageStats.m_player[pn].m_iCurCombo : 
 				0;
-			pPlayerProfile->m_iNumTotalSongsPlayed += m_CurStageStats.vpPlayedSongs.size();
+			pPlayerProfile->m_iNumTotalSongsPlayed += m_CurStageStats.m_vpPlayedSongs.size();
 		}
 
 		AddPlayerStatsToProfile( pMachineProfile, m_CurStageStats, pn );
@@ -265,7 +265,7 @@ public:
 			bool bPlayerFailedOneStage = false;
 			FOREACH_CONST( StageStats, STATSMAN->m_vPlayedStageStats, ss )
 			{
-				if( ss->m_player[p].bFailed )
+				if( ss->m_player[p].m_bFailed )
 				{
 					bPlayerFailedOneStage = true;
 					break;

@@ -81,7 +81,7 @@ void HoldJudgment::HandleMessage( const Message &msg )
 {
 	ASSERT( m_mpToTrack != MultiPlayer_Invalid );
 	if( msg == enum_add2(Message_ShowHoldJudgmentMuliPlayerP1,m_mpToTrack) )
-		SetHoldJudgment( STATSMAN->m_CurStageStats.m_multiPlayer[m_mpToTrack].hnsLast );
+		SetHoldJudgment( STATSMAN->m_CurStageStats.m_multiPlayer[m_mpToTrack].m_hnsLast );
 
 	ActorFrame::HandleMessage( msg );
 }
