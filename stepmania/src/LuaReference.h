@@ -57,6 +57,18 @@ public:
 		return ref;
 	}
 
+	template<class T>
+	static LuaReference CreateFromPush( T &obj )
+	{
+		Lua *L = LUA->Get();
+		LuaReference ref;
+		obj.PushSelf( L );
+		ref.SetFromStack( L );
+		LUA->Release( L );
+
+		return ref;
+	}
+
 private:
 	void Unregister();
 	int m_iReference;
