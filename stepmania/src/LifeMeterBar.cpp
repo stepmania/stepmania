@@ -110,8 +110,6 @@ LifeMeterBar::LifeMeterBar()
 	m_sprFrame.Load( THEME->GetPathG(sType,sExtra+"frame") );
 	m_sprFrame->SetName( "Frame" );
 	this->AddChild( m_sprFrame );
-
-	AfterLifeChanged();
 }
 
 LifeMeterBar::~LifeMeterBar()
@@ -136,6 +134,8 @@ void LifeMeterBar::Load( const PlayerState *pPlayerState, PlayerStageStats *pPla
 		m_fBaseLifeDifficulty = 5.0f;
 		m_fLifeDifficulty = m_fBaseLifeDifficulty;
 	}
+
+	AfterLifeChanged();
 }
 
 void LifeMeterBar::ChangeLife( TapNoteScore score )
@@ -260,13 +260,11 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 void LifeMeterBar::AfterLifeChanged()
 {
 	m_pStream->SetPercent( m_fLifePercentage );
-	if( m_pPlayerState )
-	{
-		Message msg( "LifeChanged" );
-		msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
-		msg.SetParam( "LifeMeter", LuaReference::CreateFromPush(*this) );
-		MESSAGEMAN->Broadcast( msg );
-	}
+
+	Message msg( "LifeChanged" );
+	msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
+	msg.SetParam( "LifeMeter", LuaReference::CreateFromPush(*this) );
+	MESSAGEMAN->Broadcast( msg );
 }
 
 bool LifeMeterBar::IsHot() const
