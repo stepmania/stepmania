@@ -286,6 +286,13 @@ class LunaMessageManager: public Luna<MessageManager>
 public:
 	static int Broadcast( T* p, lua_State *L )
 	{
+		if( !lua_istable(L, 2) && !lua_isnoneornil(L, 2) )
+			luaL_typerror( L, 2, "table or nil" );
+
+		LuaReference ParamTable;
+		lua_pushvalue( L, 2 );
+		ParamTable.SetFromStack( L );
+
 		p->Broadcast( SArg(1) );
 		return 0;
 	}

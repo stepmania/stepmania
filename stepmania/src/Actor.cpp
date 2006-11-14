@@ -1381,7 +1381,18 @@ public:
 	static int hidden( T* p, lua_State *L )			{ p->SetHidden(BIArg(1)); return 0; }
 	static int hibernate( T* p, lua_State *L )		{ p->SetHibernate(FArg(1)); return 0; }
 	static int draworder( T* p, lua_State *L )		{ p->SetDrawOrder(IArg(1)); return 0; }
-	static int playcommand( T* p, lua_State *L )		{ p->PlayCommand(SArg(1)); return 0; }
+	static int playcommand( T* p, lua_State *L )
+	{
+		if( !lua_istable(L, 2) && !lua_isnoneornil(L, 2) )
+			luaL_typerror( L, 2, "table or nil" );
+
+		LuaReference ParamTable;
+		lua_pushvalue( L, 2 );
+		ParamTable.SetFromStack( L );
+
+		p->PlayCommand( SArg(1), &ParamTable );
+		return 0;
+	}
 	static int queuecommand( T* p, lua_State *L )		{ p->QueueCommand(SArg(1)); return 0; }
 	static int queuemessage( T* p, lua_State *L )		{ p->QueueMessage(SArg(1)); return 0; }
 	static int addcommand( T* p, lua_State *L )
