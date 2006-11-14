@@ -199,7 +199,7 @@ void MessageManager::Subscribe( IMessageSubscriber* pSubscriber, const RString& 
 
 void MessageManager::Subscribe( IMessageSubscriber* pSubscriber, MessageID m )
 {
-	Subscribe( pSubscriber, MessageToString(m) );
+	Subscribe( pSubscriber, MessageIDToString(m) );
 }
 
 void MessageManager::Unsubscribe( IMessageSubscriber* pSubscriber, const RString& sMessage )
@@ -214,7 +214,7 @@ void MessageManager::Unsubscribe( IMessageSubscriber* pSubscriber, const RString
 
 void MessageManager::Unsubscribe( IMessageSubscriber* pSubscriber, MessageID m )
 {
-	Unsubscribe( pSubscriber, MessageToString(m) );
+	Unsubscribe( pSubscriber, MessageIDToString(m) );
 }
 
 void MessageManager::Broadcast( const Message &msg ) const
@@ -240,7 +240,7 @@ void MessageManager::Broadcast( const RString& sMessage ) const
 
 void MessageManager::Broadcast( MessageID m ) const
 {
-	Broadcast( MessageToString(m) );
+	Broadcast( MessageIDToString(m) );
 }
 
 void IMessageSubscriber::ClearMessages( const RString sMessage )
@@ -267,7 +267,7 @@ void MessageSubscriber::SubscribeToMessage( const RString &sMessageName )
 void MessageSubscriber::SubscribeToMessage( MessageID message )
 {
 	MESSAGEMAN->Subscribe( this, message );
-	m_vsSubscribedTo.push_back( MessageToString(message) );
+	m_vsSubscribedTo.push_back( MessageIDToString(message) );
 }
 
 void MessageSubscriber::UnsubscribeAll()

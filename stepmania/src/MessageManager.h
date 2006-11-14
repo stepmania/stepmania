@@ -134,7 +134,6 @@ enum MessageID
 	MessageID_Invalid
 };
 const RString& MessageIDToString( MessageID m );
-#define MessageToString MessageIDToString
 
 struct Message
 {
@@ -225,7 +224,7 @@ private:
 public:
 	explicit BroadcastOnChange( MessageID m ) { mSendWhenChanged = m; }
 	const T Get() const { return val; }
-	void Set( T t ) { val = t; MESSAGEMAN->Broadcast( MessageToString(mSendWhenChanged) ); }
+	void Set( T t ) { val = t; MESSAGEMAN->Broadcast( MessageIDToString(mSendWhenChanged) ); }
 	operator T () const { return val; }
 	bool operator == ( const T &other ) const { return val == other; }
 	bool operator != ( const T &other ) const { return val != other; }
@@ -258,7 +257,7 @@ private:
 public:
 	explicit BroadcastOnChangePtr( MessageID m ) { mSendWhenChanged = m; val = NULL; }
 	T* Get() const { return val; }
-	void Set( T* t ) { val = t; if(MESSAGEMAN) MESSAGEMAN->Broadcast( MessageToString(mSendWhenChanged) ); }
+	void Set( T* t ) { val = t; if(MESSAGEMAN) MESSAGEMAN->Broadcast( MessageIDToString(mSendWhenChanged) ); }
 	/* This is only intended to be used for setting temporary values; always
 	 * restore the original value when finished, so listeners don't get confused
 	 * due to missing a message. */

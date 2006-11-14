@@ -453,13 +453,13 @@ public:
 			m_ppStepsToFill = &GAMESTATE->m_pCurSteps[0];
 			m_pDifficultyToFill = &GAMESTATE->m_PreferredDifficulty[0];
 			m_pst = &GAMESTATE->m_stEdit;
-			m_vsReloadRowMessages.push_back( MessageToString(Message_EditStepsTypeChanged) );
+			m_vsReloadRowMessages.push_back( MessageIDToString(Message_EditStepsTypeChanged) );
 		}
 		else if( sParam == "EditSourceSteps" )
 		{
 			m_ppStepsToFill = &GAMESTATE->m_pEditSourceSteps;
 			m_pst = &GAMESTATE->m_stEditSource;
-			m_vsReloadRowMessages.push_back( MessageToString(Message_EditSourceStepsTypeChanged) );
+			m_vsReloadRowMessages.push_back( MessageIDToString(Message_EditSourceStepsTypeChanged) );
 			if( GAMESTATE->m_pCurSteps[0].Get() != NULL )
 				m_Def.m_vEnabledForPlayers.clear();	// hide row
 		}
@@ -473,7 +473,7 @@ public:
 		m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 		m_Def.m_bExportOnChange = true;
 		m_Def.m_bAllowThemeItems = false;	// we theme the text ourself
-		m_vsReloadRowMessages.push_back( MessageToString(Message_CurrentSongChanged) );
+		m_vsReloadRowMessages.push_back( MessageIDToString(Message_CurrentSongChanged) );
 
 		m_vDifficulties.clear();
 		m_vSteps.clear();
@@ -1134,8 +1134,8 @@ public:
 		else if( sParam == "EditSourceStepsType" )
 		{
 			m_pstToFill = &GAMESTATE->m_stEditSource;
-			m_vsReloadRowMessages.push_back( MessageToString(Message_CurrentStepsP1Changed) );
-			m_vsReloadRowMessages.push_back( MessageToString(Message_EditStepsTypeChanged) );
+			m_vsReloadRowMessages.push_back( MessageIDToString(Message_CurrentStepsP1Changed) );
+			m_vsReloadRowMessages.push_back( MessageIDToString(Message_EditStepsTypeChanged) );
 			if( GAMESTATE->m_pCurSteps[0].Get() != NULL )
 				m_Def.m_vEnabledForPlayers.clear();	// hide row
 		}

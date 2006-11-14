@@ -43,7 +43,7 @@ void ScreenUnlockBrowse::BeginScreen()
 {
 	ScreenSelectMaster::BeginScreen();
 
-	HandleMessage( Message(MessageToString(Message_MenuSelectionChanged)) );
+	HandleMessage( Message(MessageIDToString(Message_MenuSelectionChanged)) );
 }
 
 void ScreenUnlockBrowse::MenuStart( const InputEventPlus &input )
