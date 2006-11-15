@@ -32,7 +32,9 @@ class ScoreKeeperNormal: public ScoreKeeper
 
 	vector<Steps*>	m_apSteps;
 
-	void AddScore( TapNoteScore score );
+	virtual void AddTapScore( TapNoteScore tns );
+	virtual void AddHoldScore( HoldNoteScore hns );
+	virtual void AddTapRowScore( TapNoteScore tns );
 
 	/* Configuration: */
 	/* Score after each tap will be rounded to the nearest m_iRoundTo; 1 to do nothing. */

@@ -220,7 +220,19 @@ static int GetScore(int p, int Z, int S, int n)
 
 }
 
-void ScoreKeeperNormal::AddScore( TapNoteScore score )
+void ScoreKeeperNormal::AddTapScore( TapNoteScore tns )
+{
+}
+
+void ScoreKeeperNormal::AddHoldScore( HoldNoteScore hns )
+{
+	if( hns == HNS_Held )
+		AddTapRowScore( TNS_W1 );
+	else if ( hns == HNS_LetGo )
+		AddTapRowScore( TNS_W4 ); // required for subtractive score display to work properly
+}
+
+void ScoreKeeperNormal::AddTapRowScore( TapNoteScore score )
 {
 	int &iScore = m_pPlayerStageStats->m_iScore;
 	int &iCurMaxScore = m_pPlayerStageStats->m_iCurMaxScore;
@@ -333,21 +345,27 @@ void ScoreKeeperNormal::AddScore( TapNoteScore score )
 
 void ScoreKeeperNormal::HandleTapScore( const TapNote &tn )
 {
+	TapNoteScore tns = tn.result.tns;
+
 	if( tn.type == TapNote::mine )
 	{
-		TapNoteScore score = tn.result.tns;
-		if( score == TNS_HitMine )
+		if( tns == TNS_HitMine )
 		{
 			if( !m_pPlayerStageStats->m_bFailed )
 				m_pPlayerStageStats->m_iActualDancePoints += TapNoteScoreToDancePoints( TNS_HitMine );
 			m_pPlayerStageStats->m_iTapNoteScores[TNS_HitMine] += 1;
 		}
 
-		NSMAN->ReportScore( m_pPlayerState->m_PlayerNumber, score,
-				    m_pPlayerStageStats->m_iScore,
-				    m_pPlayerStageStats->m_iCurCombo,
-				    tn.result.fTapNoteOffset );
+		NSMAN->ReportScore( 
+			m_pPlayerState->m_PlayerNumber, 
+			tns,
+			m_pPlayerStageStats->m_iScore,
+			m_pPlayerStageStats->m_iCurCombo,
+			tn.result.fTapNoteOffset 
+		);
 	}
+
+	AddTapScore( tns );
 }
 
 void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
@@ -378,7 +396,11 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 	{
 		m_pPlayerStageStats->m_iCurMissCombo = 0;
 		if( scoreOfLastTap >= m_MinScoreToContinueCombo )
+		{
 			m_pPlayerStageStats->m_iCurCombo += iComboCountIfHit;
+			if( m_pPlayerState->m_PlayerNumber != PLAYER_INVALID )
+				MESSAGEMAN->Broadcast( enum_add2(Message_CurrentComboChangedP1,m_pPlayerState->m_PlayerNumber) );
+		}
 	}
 	else
 	{
@@ -387,7 +409,7 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 			++m_pPlayerStageStats->m_iCurMissCombo;
 	}
 
-	AddScore( scoreOfLastTap );		// only score once per row
+	AddTapRowScore( scoreOfLastTap );		// only score once per row
 
 	//
 	// handle combo logic
@@ -448,10 +470,7 @@ void ScoreKeeperNormal::HandleHoldScore( const TapNote &tn )
 
 	m_pPlayerStageStats->m_iCurPossibleDancePoints += HoldNoteScoreToDancePoints( HNS_Held );
 
-	if( holdScore == HNS_Held )
-		AddScore( TNS_W1 );
-	else if ( holdScore == HNS_LetGo )
-		AddScore( TNS_W4 ); // required for subtractive score display to work properly
+	AddHoldScore( holdScore );
 
 	// TODO: Remove indexing with PlayerNumber
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
