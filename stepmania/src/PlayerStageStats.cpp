@@ -622,6 +622,7 @@ public:
 	DEFINE_METHOD( GetSurvivalSeconds,		GetSurvivalSeconds() )
 	DEFINE_METHOD( GetCurrentCombo,			m_iCurCombo )
 	DEFINE_METHOD( GetCurrentScoreMultiplier,	m_iCurScoreMultiplier )
+	DEFINE_METHOD( GetScore,			m_iScore )
 	DEFINE_METHOD( FullCombo,			FullCombo() )
 	DEFINE_METHOD( MaxCombo,			GetMaxCombo().m_cnt )
 	DEFINE_METHOD( GetGrade,			GetGrade() )
@@ -639,6 +640,7 @@ public:
 		ADD_METHOD( GetSurvivalSeconds );
 		ADD_METHOD( GetCurrentCombo );
 		ADD_METHOD( GetCurrentScoreMultiplier );
+		ADD_METHOD( GetScore );
 		ADD_METHOD( FullCombo );
 		ADD_METHOD( MaxCombo );
 		ADD_METHOD( GetGrade );
