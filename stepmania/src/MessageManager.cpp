@@ -133,6 +133,18 @@ static const char *MessageIDNames[] = {
 	"ShowHoldJudgmentMuliPlayerP31",
 	"ShowHoldJudgmentMuliPlayerP32",
 	"SongModified",
+	"ScoreMultiplierChangedP1",
+	"ScoreMultiplierChangedP2",
+	"StarPowerChangedP1",
+	"StarPowerChangedP2",
+	"CurrentComboChangedP1",
+	"CurrentComboChangedP2",
+	"StarMeterChangedP1",
+	"StarMeterChangedP2",
+	"LifeMeterChangedP1",
+	"LifeMeterChangedP2",
+	"ScoreChangedP1",
+	"ScoreChangedP2",
 };
 XToString( MessageID );
 

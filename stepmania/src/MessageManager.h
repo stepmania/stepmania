@@ -130,6 +130,18 @@ enum MessageID
 	Message_ShowHoldJudgmentMuliPlayerP31,
 	Message_ShowHoldJudgmentMuliPlayerP32,
 	Message_SongModified,
+	Message_ScoreMultiplierChangedP1,
+	Message_ScoreMultiplierChangedP2,
+	Message_StarPowerChangedP1,
+	Message_StarPowerChangedP2,
+	Message_CurrentComboChangedP1,
+	Message_CurrentComboChangedP2,
+	Message_StarMeterChangedP1,
+	Message_StarMeterChangedP2,
+	Message_LifeMeterChangedP1,
+	Message_LifeMeterChangedP2,
+	Message_ScoreChangedP1,
+	Message_ScoreChangedP2,
 	NUM_MessageID,	// leave this at the end
 	MessageID_Invalid
 };
