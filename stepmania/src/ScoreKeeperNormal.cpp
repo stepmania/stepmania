@@ -227,12 +227,17 @@ void ScoreKeeperNormal::AddTapScore( TapNoteScore tns )
 void ScoreKeeperNormal::AddHoldScore( HoldNoteScore hns )
 {
 	if( hns == HNS_Held )
-		AddTapRowScore( TNS_W1 );
+		AddScoreInternal( TNS_W1 );
 	else if ( hns == HNS_LetGo )
-		AddTapRowScore( TNS_W4 ); // required for subtractive score display to work properly
+		AddScoreInternal( TNS_W4 ); // required for subtractive score display to work properly
 }
 
-void ScoreKeeperNormal::AddTapRowScore( TapNoteScore score )
+void ScoreKeeperNormal::AddTapRowScore( TapNoteScore score, const NoteData &nd, int iRow )
+{
+	AddScoreInternal( score );
+}
+
+void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
 {
 	int &iScore = m_pPlayerStageStats->m_iScore;
 	int &iCurMaxScore = m_pPlayerStageStats->m_iCurMaxScore;
@@ -387,6 +392,7 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 
 	// increment the current total possible dance score
 	m_pPlayerStageStats->m_iCurPossibleDancePoints += TapNoteScoreToDancePoints( TNS_W1 );
+	
 
 	//
 	// Regular combo
@@ -396,11 +402,7 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 	{
 		m_pPlayerStageStats->m_iCurMissCombo = 0;
 		if( scoreOfLastTap >= m_MinScoreToContinueCombo )
-		{
 			m_pPlayerStageStats->m_iCurCombo += iComboCountIfHit;
-			if( m_pPlayerState->m_PlayerNumber != PLAYER_INVALID )
-				MESSAGEMAN->Broadcast( enum_add2(Message_CurrentComboChangedP1,m_pPlayerState->m_PlayerNumber) );
-		}
 	}
 	else
 	{
@@ -409,7 +411,10 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 			++m_pPlayerStageStats->m_iCurMissCombo;
 	}
 
-	AddTapRowScore( scoreOfLastTap );		// only score once per row
+	if( m_pPlayerState->m_PlayerNumber != PLAYER_INVALID )
+		MESSAGEMAN->Broadcast( enum_add2(Message_CurrentComboChangedP1,m_pPlayerState->m_PlayerNumber) );
+
+	AddTapRowScore( scoreOfLastTap, nd, iRow );		// only score once per row
 
 	//
 	// handle combo logic
@@ -446,7 +451,7 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 		break;
 	}
 
-	
+
 	// TODO: Remove indexing with PlayerNumber
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 	float offset = NoteDataWithScoring::LastTapNoteWithResult( nd, iRow, pn ).result.fTapNoteOffset;

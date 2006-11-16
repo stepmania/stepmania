@@ -15,6 +15,8 @@ AutoScreenMessage( SM_PlayToasty );
 
 class ScoreKeeperNormal: public ScoreKeeper
 {
+	void AddScoreInternal( TapNoteScore score );
+
 	int		m_iScoreRemainder;
 	int		m_iMaxPossiblePoints;
 	int		m_iTapNotesHit;	// number of notes judged so far, needed by scoring
@@ -34,7 +36,7 @@ class ScoreKeeperNormal: public ScoreKeeper
 
 	virtual void AddTapScore( TapNoteScore tns );
 	virtual void AddHoldScore( HoldNoteScore hns );
-	virtual void AddTapRowScore( TapNoteScore tns );
+	virtual void AddTapRowScore( TapNoteScore tns, const NoteData &nd, int iRow );
 
 	/* Configuration: */
 	/* Score after each tap will be rounded to the nearest m_iRoundTo; 1 to do nothing. */

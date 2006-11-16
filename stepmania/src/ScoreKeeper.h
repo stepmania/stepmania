@@ -51,6 +51,7 @@ public:
 	/* Note that pNoteData will include any transformations due to modifiers. */
 	virtual void OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData ) = 0;	// before a song plays (called multiple times if course)
 
+	// HandleTap* is called before HandleTapRow*
 	virtual void HandleTapScore( const TapNote &tn ) = 0;
 	virtual void HandleTapRowScore( const NoteData &nd, int iRow ) = 0;
 	virtual void HandleHoldScore( const TapNote &tn ) = 0;

@@ -12,7 +12,7 @@ public:
 	ScoreKeeperGuitar( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats );
 	virtual void AddTapScore( TapNoteScore score );
 	void AddHoldScore( HoldNoteScore hns );
-	virtual void AddTapRowScore( TapNoteScore score );
+	virtual void AddTapRowScore( TapNoteScore score, const NoteData &nd, int iRow );
 };
 
 #endif

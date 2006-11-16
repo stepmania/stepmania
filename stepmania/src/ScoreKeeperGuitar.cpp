@@ -11,6 +11,18 @@ ScoreKeeperGuitar::ScoreKeeperGuitar( PlayerState *pPlayerState, PlayerStageStat
 
 void ScoreKeeperGuitar::AddTapScore( TapNoteScore tns )
 {
+}
+
+void ScoreKeeperGuitar::AddHoldScore( HoldNoteScore hns )
+{
+	if( hns == HNS_Held )
+		AddTapScore( TNS_W1 );
+	else if ( hns == HNS_LetGo )
+		AddTapScore( TNS_W4 ); // required for subtractive score display to work properly
+}
+
+void ScoreKeeperGuitar::AddTapRowScore( TapNoteScore tns, const NoteData &nd, int iRow )
+{
 	// calculate score multiplier
 	int iNewCurScoreMultiplier = m_pPlayerStageStats->m_iCurScoreMultiplier;
 	iNewCurScoreMultiplier = 1 + (m_pPlayerStageStats->m_iCurCombo / 10);
@@ -25,22 +37,16 @@ void ScoreKeeperGuitar::AddTapScore( TapNoteScore tns )
 
 	if( tns != TNS_Miss )
 	{
-		iScore += 50 * iNewCurScoreMultiplier;
+		TapNoteScore scoreOfLastTap;
+		int iNumTapsInRow;
+		
+		GetScoreOfLastTapInRow( nd, iRow, scoreOfLastTap, iNumTapsInRow );
+		
+		ASSERT( iNumTapsInRow > 0 );
+
+		iScore += 50 * iNumTapsInRow * iNewCurScoreMultiplier;
 		MESSAGEMAN->Broadcast( Message_ScoreChangedP1 );
 	}
-}
-
-void ScoreKeeperGuitar::AddHoldScore( HoldNoteScore hns )
-{
-	if( hns == HNS_Held )
-		AddTapScore( TNS_W1 );
-	else if ( hns == HNS_LetGo )
-		AddTapScore( TNS_W4 ); // required for subtractive score display to work properly
-}
-
-void ScoreKeeperGuitar::AddTapRowScore( TapNoteScore score )
-{
-
 }
 
 /*
