@@ -30,6 +30,19 @@ void ScoreKeeper::GetScoreOfLastTapInRow( const NoteData &nd, int iRow,
 	iNumTapsInRowOut = iNum;
 }
 
+#include "ScoreKeeperNormal.h"
+#include "ScoreKeeperGuitar.h"
+
+ScoreKeeper* ScoreKeeper::MakeScoreKeeper( RString sClassName, PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats )
+{
+	if( sClassName == "ScoreKeeperNormal" )
+		return new ScoreKeeperNormal( pPlayerState, pPlayerStageStats );
+	else if( sClassName == "ScoreKeeperGuitar" )
+		return new ScoreKeeperGuitar( pPlayerState, pPlayerStageStats );
+	FAIL_M( sClassName );
+}
+
+
 /*
  * (c) 2006 Steve Checkoway
  * All rights reserved.
