@@ -323,6 +323,8 @@ void PlayerStageStats::SetLifeRecordAt( float fLife, float fStepsSecond )
 	// fSecond will always be greater than any value already in the map.
 	m_fLifeRecord[fStepsSecond] = fLife;
 
+	MESSAGEMAN->Broadcast( Message_LifeMeterChangedP1 );
+
 	//
 	// Memory optimization:
 	// If we have three consecutive records A, B, and C all with the same fLife,
@@ -345,8 +347,6 @@ void PlayerStageStats::SetLifeRecordAt( float fLife, float fStepsSecond )
 
 	if( A->second == B->second && B->second == C->second )
 		m_fLifeRecord.erase(B);
-
-	MESSAGEMAN->Broadcast( Message_LifeMeterChangedP1 );
 }
 
 float PlayerStageStats::GetLifeRecordAt( float fStepsSecond ) const
