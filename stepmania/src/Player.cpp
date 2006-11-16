@@ -441,6 +441,19 @@ void Player::Load()
 			sound.Load( sKeysoundFilePath, true );
 		 sound.SetParams( p );
 	}
+
+	SendComboMessage( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
+}
+
+void Player::SendComboMessage( int iOldCombo, int iOldMissCombo )
+{
+	Message msg( "ComboChanged" );
+	msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
+	msg.SetParam( "OldCombo", iOldCombo );
+	msg.SetParam( "OldMissCombo", iOldMissCombo );
+	msg.SetParam( "PlayerState", LuaReference::CreateFromPush(*m_pPlayerState) );
+	msg.SetParam( "PlayerStageStats", LuaReference::CreateFromPush(*m_pPlayerStageStats) );
+	MESSAGEMAN->Broadcast( msg );
 }
 
 void Player::Update( float fDeltaTime )
@@ -1745,14 +1758,7 @@ void Player::HandleTapRowScore( unsigned row )
 	if( m_pSecondaryScoreKeeper != NULL )
 		m_pSecondaryScoreKeeper->HandleTapRowScore( m_NoteData, row );
 
-	{
-		Message msg( "ComboChanged" );
-		msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
-		msg.SetParam( "OldCombo", iOldCombo );
-		msg.SetParam( "OldMissCombo", iOldMissCombo );
-		msg.SetParam( "PlayerStageStats", LuaReference::CreateFromPush(*m_pPlayerStageStats) );
-		MESSAGEMAN->Broadcast( msg );
-	}
+	SendComboMessage( iOldCombo, iOldMissCombo );
 
 	if( m_pPlayerStageStats && m_pCombo )
 	{
