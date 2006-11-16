@@ -345,6 +345,8 @@ void PlayerStageStats::SetLifeRecordAt( float fLife, float fStepsSecond )
 
 	if( A->second == B->second && B->second == C->second )
 		m_fLifeRecord.erase(B);
+
+	MESSAGEMAN->Broadcast( Message_LifeMeterChangedP1 );
 }
 
 float PlayerStageStats::GetLifeRecordAt( float fStepsSecond ) const
@@ -394,6 +396,15 @@ void PlayerStageStats::GetLifeRecord( float *fLifeOut, int iNumSamples, float fS
 		float from = SCALE( i, 0, (float)iNumSamples, 0.0f, fStepsEndSecond );
 		fLifeOut[i] = GetLifeRecordLerpAt( from );
 	}
+}
+
+float PlayerStageStats::GetCurrentLife() const
+{
+	if( m_fLifeRecord.empty() )
+		return 0;
+	map<float,float>::const_iterator iter = m_fLifeRecord.end();
+	--iter; 
+	return iter->second;
 }
 
 /* If bRollover is true, we're being called before gameplay begins, so we can record
@@ -625,6 +636,7 @@ public:
 	DEFINE_METHOD( GetScore,			m_iScore )
 	DEFINE_METHOD( FullCombo,			FullCombo() )
 	DEFINE_METHOD( MaxCombo,			GetMaxCombo().m_cnt )
+	DEFINE_METHOD( GetCurrentLife,			GetCurrentLife() )
 	DEFINE_METHOD( GetGrade,			GetGrade() )
 	DEFINE_METHOD( GetLessonScoreActual,		GetLessonScoreActual() )
 	DEFINE_METHOD( GetLessonScoreNeeded,		GetLessonScoreNeeded() )
@@ -643,6 +655,7 @@ public:
 		ADD_METHOD( GetScore );
 		ADD_METHOD( FullCombo );
 		ADD_METHOD( MaxCombo );
+		ADD_METHOD( GetCurrentLife );
 		ADD_METHOD( GetGrade );
 		ADD_METHOD( GetLessonScoreActual );
 		ADD_METHOD( GetLessonScoreNeeded );
