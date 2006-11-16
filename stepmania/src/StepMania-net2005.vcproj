@@ -1467,6 +1467,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ScoreKeeperGuitar.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ScoreKeeperGuitar.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ScoreKeeperNormal.cpp"
 				>
 			</File>
