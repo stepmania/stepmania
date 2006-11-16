@@ -254,6 +254,15 @@ void Player::Init(
 	m_pPrimaryScoreKeeper = pPrimaryScoreKeeper;
 	m_pSecondaryScoreKeeper = pSecondaryScoreKeeper;
 
+	
+	// set initial life
+	if( m_pLifeMeter )
+	{
+		float fLife = m_pLifeMeter->GetLife();
+		m_pPlayerStageStats->SetLifeRecordAt( fLife, STATSMAN->m_CurStageStats.m_fStepsSeconds );
+	}
+
+
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
