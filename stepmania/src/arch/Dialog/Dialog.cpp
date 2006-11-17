@@ -8,6 +8,7 @@
 #include "RageLog.h"
 #include "arch/arch.h"
 #include "RageThreads.h"
+#include "arch/arch_default.h"
 
 #if !defined(SMPACKAGE)
 static Preference<RString> g_sIgnoredDialogs( "IgnoredDialogs", "" );

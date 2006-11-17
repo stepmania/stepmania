@@ -24,7 +24,7 @@ void ArchHooks::SetToggleWindowed()
 	g_bToggleWindowed = true;
 }
 
-#include "Selector_ArchHooks.h"
+#include "arch/arch_default.h"
 ArchHooks *MakeArchHooks()
 {
 	return new ARCH_HOOKS;
