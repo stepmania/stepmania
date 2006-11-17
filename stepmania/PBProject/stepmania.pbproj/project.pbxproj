@@ -1596,6 +1596,10 @@
 		AAB691F505704FA50078BED4 /* LightsDriver_SystemMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB691F305704FA50078BED4 /* LightsDriver_SystemMessage.h */; };
 		AAB6B477085761B700CEE7BA /* ScreenSplash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB6B475085761B700CEE7BA /* ScreenSplash.cpp */; };
 		AAB6B478085761B700CEE7BA /* ScreenSplash.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB6B476085761B700CEE7BA /* ScreenSplash.h */; };
+		AAB779FB0B0D9CB200B74314 /* ScoreKeeperGuitar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB779F90B0D9CB200B74314 /* ScoreKeeperGuitar.cpp */; };
+		AAB779FC0B0D9CB200B74314 /* ScoreKeeperGuitar.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB779FA0B0D9CB200B74314 /* ScoreKeeperGuitar.h */; };
+		AAB779FD0B0D9CB200B74314 /* ScoreKeeperGuitar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB779F90B0D9CB200B74314 /* ScoreKeeperGuitar.cpp */; };
+		AAB779FE0B0D9CB200B74314 /* ScoreKeeperGuitar.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB779FA0B0D9CB200B74314 /* ScoreKeeperGuitar.h */; };
 		AAB9C8AF06EAF64400AD97CD /* RageSurfaceUtils_Palettize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB9C8AB06EAF64400AD97CD /* RageSurfaceUtils_Palettize.cpp */; };
 		AAB9C8B006EAF64400AD97CD /* RageSurfaceUtils_Palettize.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB9C8AC06EAF64400AD97CD /* RageSurfaceUtils_Palettize.h */; };
 		AAB9C8B106EAF64400AD97CD /* RageSurfaceUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB9C8AD06EAF64400AD97CD /* RageSurfaceUtils.cpp */; };
@@ -2606,6 +2610,8 @@
 		AAB691F305704FA50078BED4 /* LightsDriver_SystemMessage.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = LightsDriver_SystemMessage.h; sourceTree = "<group>"; };
 		AAB6B475085761B700CEE7BA /* ScreenSplash.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenSplash.cpp; path = ../src/ScreenSplash.cpp; sourceTree = "<group>"; };
 		AAB6B476085761B700CEE7BA /* ScreenSplash.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenSplash.h; path = ../src/ScreenSplash.h; sourceTree = "<group>"; };
+		AAB779F90B0D9CB200B74314 /* ScoreKeeperGuitar.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScoreKeeperGuitar.cpp; path = ../src/ScoreKeeperGuitar.cpp; sourceTree = "<group>"; };
+		AAB779FA0B0D9CB200B74314 /* ScoreKeeperGuitar.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ScoreKeeperGuitar.h; path = ../src/ScoreKeeperGuitar.h; sourceTree = "<group>"; };
 		AAB895E504A9057100D02EE9 /* smicon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = smicon.icns; sourceTree = "<group>"; };
 		AAB9C8AB06EAF64400AD97CD /* RageSurfaceUtils_Palettize.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageSurfaceUtils_Palettize.cpp; path = ../src/RageSurfaceUtils_Palettize.cpp; sourceTree = "<group>"; };
 		AAB9C8AC06EAF64400AD97CD /* RageSurfaceUtils_Palettize.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageSurfaceUtils_Palettize.h; path = ../src/RageSurfaceUtils_Palettize.h; sourceTree = "<group>"; };
@@ -3724,6 +3730,8 @@
 				AA6E01E7047720A3005F316C /* RandomSample.h */,
 				AAE2D6D30A67481E00071546 /* ScoreKeeper.cpp */,
 				AA6EFF3004770F63005F316C /* ScoreKeeper.h */,
+				AAB779F90B0D9CB200B74314 /* ScoreKeeperGuitar.cpp */,
+				AAB779FA0B0D9CB200B74314 /* ScoreKeeperGuitar.h */,
 				AAF34ADC0900AEBD0006EDB7 /* ScoreKeeperNormal.cpp */,
 				AAF34ADD0900AEBD0006EDB7 /* ScoreKeeperNormal.h */,
 				AAE443F304B0FEB700D02EE9 /* ScoreKeeperRave.cpp */,
@@ -4668,6 +4676,7 @@
 				AAE7803F0AC76A1200AEFC64 /* Workout.h in Headers */,
 				AAE780410AC76A1200AEFC64 /* WorkoutGraph.h in Headers */,
 				AA6999640ACE1CBB000237F9 /* ControllerStateDisplay.h in Headers */,
+				AAB779FC0B0D9CB200B74314 /* ScoreKeeperGuitar.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5122,6 +5131,7 @@
 				AAE780430AC76A1200AEFC64 /* Workout.h in Headers */,
 				AAE780450AC76A1200AEFC64 /* WorkoutGraph.h in Headers */,
 				AA6999620ACE1CBB000237F9 /* ControllerStateDisplay.h in Headers */,
+				AAB779FE0B0D9CB200B74314 /* ScoreKeeperGuitar.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5810,6 +5820,7 @@
 				AAE780400AC76A1200AEFC64 /* WorkoutGraph.cpp in Sources */,
 				AAFAFC900AC8DB9F00427A6E /* EnumHelper.cpp in Sources */,
 				AA6999630ACE1CBB000237F9 /* ControllerStateDisplay.cpp in Sources */,
+				AAB779FB0B0D9CB200B74314 /* ScoreKeeperGuitar.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6227,6 +6238,7 @@
 				AAE780440AC76A1200AEFC64 /* WorkoutGraph.cpp in Sources */,
 				AAFAFC8F0AC8DB9F00427A6E /* EnumHelper.cpp in Sources */,
 				AA6999610ACE1CBB000237F9 /* ControllerStateDisplay.cpp in Sources */,
+				AAB779FD0B0D9CB200B74314 /* ScoreKeeperGuitar.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
