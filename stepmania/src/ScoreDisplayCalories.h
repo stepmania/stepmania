@@ -18,7 +18,7 @@ public:
 	void LoadFromNode( const XNode* pNode );
 	virtual ScoreDisplayCalories *Copy() const;
 
-	void PlayCommand( const RString &sCommandName );
+	void PlayCommand( const RString &sCommandName, const LuaReference *pParamTable = NULL );
 
 	void UpdateNumber();
 
