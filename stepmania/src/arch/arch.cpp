@@ -7,7 +7,6 @@
 #include "RageUtil.h"
 #include "PrefsManager.h"
 #include "arch.h"
-#include "arch_platform.h"
 #include "Foreach.h"
 #include "LocalizedString.h"
 #include "arch_default.h"

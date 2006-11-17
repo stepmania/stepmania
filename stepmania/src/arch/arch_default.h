@@ -3,76 +3,76 @@
 
 /* Define the default driver sets. */
 #if defined(_WINDOWS)
-#include "ArchHooks_Win32.h"
-#include "DialogDriver_Win32.h"
-#include "InputHandler_DirectInput.h"
-#include "InputHandler_Win32_Pump.h"
-#include "InputHandler_Win32_Para.h"
-#include "InputHandler_Win32_MIDI.h"
-#include "LightsDriver_Win32Parallel.h"
-#include "LoadingWindow_Win32.h"
-#include "LowLevelWindow_Win32.h"
-#include "MemoryCardDriverThreaded_Windows.h"
-#include "MovieTexture_DShow.h"
-#include "RageSoundDriver_DSound.h"
-#include "RageSoundDriver_DSound_Software.h"
-#include "RageSoundDriver_WaveOut.h"
+#include "ArchHooks/ArchHooks_Win32.h"
+#include "Dialog/DialogDriver_Win32.h"
+#include "InputHandler/InputHandler_DirectInput.h"
+#include "InputHandler/InputHandler_Win32_Pump.h"
+#include "InputHandler/InputHandler_Win32_Para.h"
+#include "InputHandler/InputHandler_Win32_MIDI.h"
+#include "Lights/LightsDriver_Win32Parallel.h"
+#include "LoadingWindow/LoadingWindow_Win32.h"
+#include "LowLevelWindow/LowLevelWindow_Win32.h"
+#include "MemoryCard/MemoryCardDriverThreaded_Windows.h"
+#include "MovieTexture/MovieTexture_DShow.h"
+#include "Sound/RageSoundDriver_DSound.h"
+#include "Sound/RageSoundDriver_DSound_Software.h"
+#include "Sound/RageSoundDriver_WaveOut.h"
 #define DEFAULT_INPUT_DRIVER_LIST "DirectInput,Pump,Para"
 #define DEFAULT_MOVIE_DRIVER_LIST "Theora,FFMpeg,DShow,Null"
 #define DEFAULT_SOUND_DRIVER_LIST "DirectSound,DirectSound-sw,WaveOut,Null"
 
 
 #elif defined(MACOSX)
-#include "ArchHooks_darwin.h"
-#include "DialogDriver_Cocoa.h"
-#include "InputHandler_Carbon.h"
-#include "LoadingWindow_Cocoa.h"
-#include "LowLevelWindow_Cocoa.h"
-#include "MemoryCardDriverThreaded_OSX.h"
-#include "RageSoundDriver_CA.h"
-#include "RageSoundDriver_AU.h"
+#include "ArchHooks/ArchHooks_darwin.h"
+#include "Dialog/DialogDriver_Cocoa.h"
+#include "InputHandler/InputHandler_Carbon.h"
+#include "LoadingWindow/LoadingWindow_Cocoa.h"
+#include "LowLevelWindow/LowLevelWindow_Cocoa.h"
+#include "MemoryCard/MemoryCardDriverThreaded_OSX.h"
+#include "Sound/RageSoundDriver_CA.h"
+#include "Sound/RageSoundDriver_AU.h"
 #define DEFAULT_INPUT_DRIVER_LIST "Carbon"
 #define DEFAULT_MOVIE_DRIVER_LIST "Theora,FFMpeg,Null"
 #define DEFAULT_SOUND_DRIVER_LIST "AudioUnit,CoreAudio,Null"
 
 
 #elif defined(_XBOX)
-#include "ArchHooks_Xbox.h"
-#include "InputHandler_Xbox.h"
-#include "LoadingWindow_Xbox.h"
-#include "LowLevelWindow_Win32.h"
-#include "MemoryCardDriverThreaded_Windows.h"
-#include "RageSoundDriver_DSound.h"
-#include "RageSoundDriver_DSound_Software.h"
+#include "ArchHooks/ArchHooks_Xbox.h"
+#include "InputHandler/InputHandler_Xbox.h"
+#include "LoadingWindow/LoadingWindow_Xbox.h"
+#include "LowLevelWindow/LowLevelWindow_Win32.h"
+#include "MemoryCard/MemoryCardDriverThreaded_Windows.h"
+#include "Sound/RageSoundDriver_DSound.h"
+#include "Sound/RageSoundDriver_DSound_Software.h"
 #define DEFAULT_INPUT_DRIVER_LIST "Xbox"
 #define DEFAULT_MOVIE_DRIVER_LIST "Theora,FFMpeg,DShow,Null"
 #define DEFAULT_SOUND_DRIVER_LIST "DirectSound,DirectSound-sw,Null"
 
 
 #elif defined(UNIX)
-#include "ArchHooks_Unix.h"
-#include "LowLevelWindow_X11.h"
+#include "ArchHooks/ArchHooks_Unix.h"
+#include "LowLevelWindow/LowLevelWindow_X11.h"
 
 #if defined(LINUX)
-#include "InputHandler_Linux_Joystick.h"
-#include "LightsDriver_LinuxWeedTech.h"
-#include "MemoryCardDriverThreaded_Linux.h"
+#include "InputHandler/InputHandler_Linux_Joystick.h"
+#include "Lights/LightsDriver_LinuxWeedTech.h"
+#include "MemoryCard/MemoryCardDriverThreaded_Linux.h"
 
 #ifndef __PPC__
-#include "LightsDriver_LinuxParallel.h"
+#include "Lights/LightsDriver_LinuxParallel.h"
 #endif
 #endif
 
-#include "InputHandler_X11.h"
+#include "InputHandler/InputHandler_X11.h"
 #if defined(HAVE_GTK)
-#include "LoadingWindow_Gtk.h"
+#include "LoadingWindow/LoadingWindow_Gtk.h"
 #endif
 #ifdef HAVE_ALSA
-#include "RageSoundDriver_ALSA9.h"
-#include "RageSoundDriver_ALSA9_Software.h"
+#include "Sound/RageSoundDriver_ALSA9.h"
+#include "Sound/RageSoundDriver_ALSA9_Software.h"
 #endif
 #ifdef HAVE_OSS
-#include "RageSoundDriver_OSS.h"
+#include "Sound/RageSoundDriver_OSS.h"
 #endif
 #if defined(LINUX)
 #define DEFAULT_INPUT_DRIVER_LIST "X11,Joystick"
@@ -87,20 +87,20 @@
 
 
 #ifdef HAVE_THEORA
-#include "MovieTexture_Theora.h"
+#include "MovieTexture/MovieTexture_Theora.h"
 #endif
 #ifdef HAVE_FFMPEG
-#include "MovieTexture_FFMpeg.h"
+#include "MovieTexture/MovieTexture_FFMpeg.h"
 #endif
 
 /* All use these. */
-#include "DialogDriver.h"
-#include "InputHandler_MonkeyKeyboard.h"
-#include "LightsDriver_SystemMessage.h"
-#include "LightsDriver_Null.h"
-#include "LoadingWindow_Null.h"
-#include "MovieTexture_Null.h"
-#include "RageSoundDriver_Null.h"
+#include "Dialog/DialogDriver.h"
+#include "InputHandler/InputHandler_MonkeyKeyboard.h"
+#include "Lights/LightsDriver_SystemMessage.h"
+#include "Lights/LightsDriver_Null.h"
+#include "LoadingWindow/LoadingWindow_Null.h"
+#include "MovieTexture/MovieTexture_Null.h"
+#include "Sound/RageSoundDriver_Null.h"
 #include "MemoryCard/MemoryCardDriver_Null.h"
 
 #endif
