@@ -3,7 +3,6 @@
 #include "RageLog.h"
 #include "arch/InputHandler/InputHandler.h"
 #include "arch/arch.h"
-#include "arch/arch_default.h"
 #include "Foreach.h"
 #include "Preference.h"
 #include "LuaManager.h"
@@ -25,10 +24,6 @@ RageInput::RageInput()
 		LUA->Release( L );
 	}
 
-	m_sDriverList = g_sInputDrivers;
-	if( m_sDriverList.empty() )
-		m_sDriverList = DEFAULT_INPUT_DRIVER_LIST;
-
 	LoadDrivers();
 }
 
@@ -49,7 +44,7 @@ void RageInput::LoadDrivers()
 	m_pDevices.clear();
 
 	/* Init optional devices. */
-	MakeInputHandlers( m_sDriverList, m_pDevices );
+	MakeInputHandlers( g_sInputDrivers, m_pDevices );
 
 	/* If no input devices are loaded, the user won't be able to input anything. */
 	if( m_pDevices.size() == 0 )

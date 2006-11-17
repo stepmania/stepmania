@@ -31,7 +31,6 @@ public:
 
 private:
 	vector<InputHandler *> m_pDevices;
-	RString m_sDriverList;
 };
 
 extern RageInput*			INPUTMAN;	// global and accessable from anywhere in our program

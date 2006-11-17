@@ -10,12 +10,12 @@
 #include "arch_platform.h"
 #include "Foreach.h"
 #include "LocalizedString.h"
-#include "arch/arch_default.h"
+#include "arch_default.h"
 
-#include "InputHandler/Selector_InputHandler.h"
 static LocalizedString INPUT_HANDLERS_EMPTY( "Arch", "Input Handlers cannot be empty." );
-void MakeInputHandlers( const RString &drivers, vector<InputHandler *> &Add )
+void MakeInputHandlers( const RString &drivers_, vector<InputHandler *> &Add )
 {
+	const RString drivers = drivers_.empty()? RString(DEFAULT_INPUT_DRIVER_LIST):drivers_;
 	vector<RString> DriversToTry;
 	split( drivers, ",", DriversToTry, true );
 
@@ -67,7 +67,6 @@ void MakeInputHandlers( const RString &drivers, vector<InputHandler *> &Add )
 
 }
 
-#include "Lights/Selector_LightsDriver.h"
 void MakeLightsDrivers( const RString &driver, vector<LightsDriver *> &Add )
 {
 	LOG->Trace( "Initializing lights driver: %s", driver.c_str() );
@@ -92,7 +91,6 @@ void MakeLightsDrivers( const RString &driver, vector<LightsDriver *> &Add )
 	Add.push_back( new LightsDriver_SystemMessage );
 }
 
-#include "LoadingWindow/Selector_LoadingWindow.h"
 LoadingWindow *MakeLoadingWindow()
 {
 	if( !PREFSMAN->m_bShowLoadingWindow )
@@ -149,15 +147,12 @@ LoadingWindow *MakeLoadingWindow()
 }
 
 #if defined(SUPPORT_OPENGL)
-#include "LowLevelWindow/Selector_LowLevelWindow.h"
 LowLevelWindow *MakeLowLevelWindow()
 {
 	return new ARCH_LOW_LEVEL_WINDOW;
 }
 #endif
 
-#include "MemoryCard/MemoryCardDriver_Null.h"
-#include "MemoryCard/Selector_MemoryCardDriver.h"
 MemoryCardDriver *MakeMemoryCardDriver()
 {
 	MemoryCardDriver *ret = NULL;
@@ -173,7 +168,6 @@ MemoryCardDriver *MakeMemoryCardDriver()
 }
 
 static Preference<RString> g_sMovieDrivers( "MovieDrivers", "" ); // "" == default
-#include "MovieTexture/Selector_MovieTexture.h"
 static void DumpAVIDebugInfo( const RString& fn );
 /* Try drivers in order of preference until we find one that works. */
 static LocalizedString MOVIE_DRIVERS_EMPTY		( "Arch", "Movie Drivers cannot be empty." );
@@ -232,7 +226,6 @@ RageMovieTexture *MakeRageMovieTexture( RageTextureID ID )
 	return ret;
 }
 
-#include "Sound/Selector_RageSoundDriver.h"
 static LocalizedString SOUND_DRIVERS_CANNOT_EMPTY( "Arch", "Sound Drivers cannot be empty." );
 RageSoundDriver *MakeRageSoundDriver( const RString &drivers )
 {
