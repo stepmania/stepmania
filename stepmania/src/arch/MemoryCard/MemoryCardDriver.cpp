@@ -5,8 +5,6 @@
 #include "Foreach.h"
 #include "ProfileManager.h"
 
-#include "Selector_MemoryCardDriver.h"
-
 static const RString TEMP_MOUNT_POINT = "/@mctemptimeout/";
 
 bool UsbStorageDevice::operator==(const UsbStorageDevice& other) const
