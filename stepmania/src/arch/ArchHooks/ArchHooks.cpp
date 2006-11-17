@@ -24,12 +24,6 @@ void ArchHooks::SetToggleWindowed()
 	g_bToggleWindowed = true;
 }
 
-#include "arch/arch_default.h"
-ArchHooks *MakeArchHooks()
-{
-	return new ARCH_HOOKS;
-}
-
 void ArchHooks::SetHasFocus( bool bHasFocus )
 {
 	if( bHasFocus == m_bHasFocus )

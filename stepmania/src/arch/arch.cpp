@@ -11,6 +11,51 @@
 #include "LocalizedString.h"
 #include "arch_default.h"
 
+ArchHooks *MakeArchHooks()
+{
+	return new ARCH_HOOKS;
+}
+
+DialogDriver *MakeDialogDriver()
+{
+	RString sDrivers = "win32,cocoa,null";
+	vector<RString> asDriversToTry;
+	split( sDrivers, ",", asDriversToTry, true );
+	
+	ASSERT( asDriversToTry.size() != 0 );
+	
+	RString sDriver;
+	DialogDriver *pRet = NULL;
+	
+	for( unsigned i = 0; pRet == NULL && i < asDriversToTry.size(); ++i )
+	{
+		sDriver = asDriversToTry[i];
+		
+#ifdef USE_DIALOG_DRIVER_COCOA
+		if( !asDriversToTry[i].CompareNoCase("Cocoa") )	pRet = new DialogDriver_Cocoa;
+#endif
+#ifdef USE_DIALOG_DRIVER_NULL
+		if( !asDriversToTry[i].CompareNoCase("Null") )	pRet = new DialogDriver_Null;
+#endif
+#ifdef USE_DIALOG_DRIVER_WIN32
+		if( !asDriversToTry[i].CompareNoCase("Win32") )	pRet = new DialogDriver_Win32;
+#endif
+		
+		if( pRet == NULL )
+			continue;
+		
+		RString sError = pRet->Init();
+		if( sError != "" )
+		{
+			if( LOG )
+				LOG->Info( "Couldn't load driver %s: %s", asDriversToTry[i].c_str(), sError.c_str() );
+			SAFE_DELETE( pRet );
+		}
+	}
+	
+	return pRet;
+}
+
 static LocalizedString INPUT_HANDLERS_EMPTY( "Arch", "Input Handlers cannot be empty." );
 void MakeInputHandlers( const RString &drivers_, vector<InputHandler *> &Add )
 {
