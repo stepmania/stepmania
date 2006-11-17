@@ -97,8 +97,6 @@ RString RageSound_AU::Init()
 	if( streamFormat.mSampleRate <= 0 )
 		streamFormat.mSampleRate = 44100.0;
 	m_iSampleRate = int( streamFormat.mSampleRate );
-	
-	// XXX Try to set the hardware sample rate.
 
 	error = AudioUnitSetProperty( m_OutputUnit,
 				      kAudioUnitProperty_StreamFormat,
@@ -119,31 +117,49 @@ RString RageSound_AU::Init()
 	if( error != noErr )
 		LOG->Warn( WERROR("Failed to set the maximum render quality", error) );
 	
+	// Try to set the hardware sample rate.
+	{
+		AudioDeviceID OutputDevice;
+		UInt32 size = sizeof( AudioDeviceID );
+		
+		if( (error = AudioUnitGetProperty(m_OutputUnit, kAudioOutputUnitProperty_CurrentDevice,
+						  kAudioUnitScope_Global, 0, &OutputDevice, &size)) )
+		{
+			LOG->Warn( WERROR("No output device", error) );
+		}
+		else if( (error = AudioDeviceSetProperty(OutputDevice, NULL, 0, false, kAudioDevicePropertyNominalSampleRate,
+							 sizeof(Float64), &streamFormat.mSampleRate)) )
+		{
+			LOG->Warn( WERROR("Couldn't set the device's sample rate", error) );
+		}
+	}
+
+	
 	// Initialize the AU.
-	error = AudioUnitInitialize( m_OutputUnit );
-	if( error != noErr )
+	if( (error = AudioUnitInitialize(m_OutputUnit)) )
 		return ERROR( "Could not initialize the AudioUnit", error );
 	
 	StartDecodeThread();
 	
 	// Get the HAL's runloop and attach an observer.
-	CFRunLoopObserverRef observerRef;
-	CFRunLoopRef runLoopRef;
-	CFRunLoopObserverContext context = { 0, this, NULL, NULL, NULL };
-	UInt32 size = sizeof( CFRunLoopRef );
+	{
+		CFRunLoopObserverRef observerRef;
+		CFRunLoopRef runLoopRef;
+		CFRunLoopObserverContext context = { 0, this, NULL, NULL, NULL };
+		UInt32 size = sizeof( CFRunLoopRef );
 
-	if( (error = AudioHardwareGetProperty(kAudioHardwarePropertyRunLoop, &size, &runLoopRef)) )
-		return ERROR( "Couldn't get the HAL's run loop", error);
+		if( (error = AudioHardwareGetProperty(kAudioHardwarePropertyRunLoop, &size, &runLoopRef)) )
+			return ERROR( "Couldn't get the HAL's run loop", error);
 		
-	observerRef = CFRunLoopObserverCreate( kCFAllocatorDefault, kCFRunLoopAllActivities, false, 0, NameHALThread, &context );
-	CFRunLoopAddObserver( runLoopRef, observerRef, kCFRunLoopDefaultMode );
-	CFRunLoopWakeUp( runLoopRef );
-	m_Semaphore.Wait();
-	CFRunLoopObserverInvalidate( observerRef );
-	CFRelease( observerRef );
+		observerRef = CFRunLoopObserverCreate( kCFAllocatorDefault, kCFRunLoopAllActivities, false, 0, NameHALThread, &context );
+		CFRunLoopAddObserver( runLoopRef, observerRef, kCFRunLoopDefaultMode );
+		CFRunLoopWakeUp( runLoopRef );
+		m_Semaphore.Wait();
+		CFRunLoopObserverInvalidate( observerRef );
+		CFRelease( observerRef );
+	}
 
-	error = AudioOutputUnitStart( m_OutputUnit );
-	if( error != noErr )
+	if( (error = AudioOutputUnitStart(m_OutputUnit)) )
 		return ERROR( "Could not start the AudioUnit", error );
 	m_bStarted = true;
 	return RString();
