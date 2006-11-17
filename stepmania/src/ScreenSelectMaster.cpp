@@ -850,7 +850,9 @@ void ScreenSelectMaster::TweenOnScreen()
 
 void ScreenSelectMaster::TweenOffScreen()
 {
-	ScreenSelect::TweenOffScreen();
+	this->PlayCommand( "Off" );
+
+	// ScreenSelect::TweenOffScreen();
 
 	vector<PlayerNumber> vpns;
 	if( SHARED_SELECTION )
@@ -861,13 +863,6 @@ void ScreenSelectMaster::TweenOffScreen()
 	{
 		FOREACH_HumanPlayer( p )
 			vpns.push_back( p );
-	}
-
-
-	if( SHOW_CURSOR )
-	{
-		FOREACH( PlayerNumber, vpns, p )
-			OFF_COMMAND( m_sprCursor[*p] );
 	}
 
 	for( unsigned c=0; c<m_aGameCommands.size(); c++ )
@@ -883,14 +878,7 @@ void ScreenSelectMaster::TweenOffScreen()
 		}
 
 		if( SHOW_ICON )
-		{
-			if( USE_ICON_METRICS )
-				OFF_COMMAND( m_vsprIcon[c] );
-			else
-				m_vsprIcon[c]->PlayCommand( "Off" );
-
 			m_vsprIcon[c]->PlayCommand( bSelectedByEitherPlayer? "OffFocused":"OffUnfocused" );
-		}
 
 		if( SHOW_SCROLLER )
 		{
@@ -898,15 +886,6 @@ void ScreenSelectMaster::TweenOffScreen()
 				m_vsprScroll[*p][c]->PlayCommand( bSelectedByEitherPlayer? "OffFocused":"OffUnfocused" );
 		}
 	}
-
-	if( SHOW_SCROLLER )
-	{
-		FOREACH( PlayerNumber, vpns, p )
-			OFF_COMMAND( m_Scroller[*p] );
-	}
-
-	OFF_COMMAND( m_sprExplanation[GetCurrentPage()] );
-	OFF_COMMAND( m_sprMore[GetCurrentPage()] );
 }
 
 
