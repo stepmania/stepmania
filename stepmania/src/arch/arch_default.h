@@ -24,8 +24,7 @@
 #define DEFAULT_MOVIE_DRIVER_LIST "Theora,FFMpeg,DShow,Null"
 
 /* RageSoundDrivers */
-#define DEFAULT_SOUND_DRIVER_LIST "ALSA,DirectSound,ALSA-sw,DirectSound-sw,CoreAudio,OSS,WaveOut,Null"
-
+#define DEFAULT_SOUND_DRIVER_LIST "ALSA,DirectSound,ALSA-sw,DirectSound-sw,AudioUnit,CoreAudio,OSS,WaveOut,Null"
 #endif
 
 /*
