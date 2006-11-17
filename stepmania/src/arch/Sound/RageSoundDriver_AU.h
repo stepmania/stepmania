@@ -11,7 +11,7 @@ public:
 	RageSound_AU();
 	RString Init();
 	~RageSound_AU();
-	float GetPlayLatency() const { return m_fLatency; }
+	float GetPlayLatency() const;
 	int GetSampleRate( int rate ) const { return m_iSampleRate; }
 	int64_t GetPosition( const RageSoundBase *sound ) const;
 	
@@ -19,35 +19,20 @@ protected:
 	void SetupDecodingThread();
 	
 private:
-	void ShutDown();
-	void AddAUPropertyListener( AudioUnitPropertyID prop );
-	void AddADPropertyListener( AudioDevicePropertyID prop );
 	static OSStatus Render( void *inRefCon,
 				AudioUnitRenderActionFlags *ioActionFlags,
 				const AudioTimeStamp *inTimeStamp,
 				UInt32 inBusNumber,
 				UInt32 inNumberFrames,
 				AudioBufferList *ioData );
-	static void PropertyChanged( void *inRefCon,
-				     AudioUnit au,
-				     AudioUnitPropertyID inID,
-				     AudioUnitScope inScope,
-				     AudioUnitElement inElement );
-	static OSStatus DevicePropertyChanged( AudioDeviceID inDevice,
-					       UInt32 inChannel,
-					       Boolean isInput,
-					       AudioDevicePropertyID inID,
-					       void *inRefCon );
+	static void NameHALThread( CFRunLoopObserverRef, CFRunLoopActivity activity, void *inRefCon );
+
 	AudioUnit m_OutputUnit;
-	AudioDeviceID m_OutputDevice;
 	int m_iSampleRate;
-	float m_fLatency;
-	mutable int64_t m_iLastSampleTime;
-	int64_t m_iOffset;
-	vector<AudioUnitPropertyID> m_vAUProperties;
-	vector<AudioDevicePropertyID> m_vADProperties;
 	bool m_bDone;
+	bool m_bStarted;
 	RageThreadRegister *m_pIOThread;
+	RageThreadRegister *m_pNotificationThread;
 	RageSemaphore m_Semaphore;
 };
 
