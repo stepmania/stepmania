@@ -1,9 +1,7 @@
 #include "RageSoundDriver_AU.h"
-#include "RageUtil.h"
 #include "RageLog.h"
 #include "PrefsManager.h"
 #include "archutils/Darwin/DarwinThreadHelpers.h"
-#include "Foreach.h"
 #include <CoreServices/CoreServices.h>
 
 static const UInt32 kFramesPerPacket = 1;
