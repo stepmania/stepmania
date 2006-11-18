@@ -1422,6 +1422,8 @@
 		AA5D166F0A798C0E00F17E86 /* ActorFrameTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = AA5D166B0A798C0E00F17E86 /* ActorFrameTexture.h */; };
 		AA608EC00B0F85E400B39AC4 /* DialogDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA608EBF0B0F85E400B39AC4 /* DialogDriver.cpp */; };
 		AA608EC10B0F85E400B39AC4 /* DialogDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA608EBF0B0F85E400B39AC4 /* DialogDriver.cpp */; };
+		AA608FAD0B0F9A4E00B39AC4 /* RageSoundDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA608FAC0B0F9A4E00B39AC4 /* RageSoundDriver.cpp */; };
+		AA608FAE0B0F9A4E00B39AC4 /* RageSoundDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA608FAC0B0F9A4E00B39AC4 /* RageSoundDriver.cpp */; };
 		AA60E0C1067992D7008ADC41 /* Threads.h in Headers */ = {isa = PBXBuildFile; fileRef = AA60E0BC067992D7008ADC41 /* Threads.h */; };
 		AA60E0C2067992D7008ADC41 /* Threads_Pthreads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA60E0BD067992D7008ADC41 /* Threads_Pthreads.cpp */; };
 		AA60E0C3067992D7008ADC41 /* Threads_Pthreads.h in Headers */ = {isa = PBXBuildFile; fileRef = AA60E0BE067992D7008ADC41 /* Threads_Pthreads.h */; };
@@ -2093,6 +2095,7 @@
 		AA5D166A0A798C0E00F17E86 /* ActorFrameTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ActorFrameTexture.cpp; path = ../src/ActorFrameTexture.cpp; sourceTree = "<group>"; };
 		AA5D166B0A798C0E00F17E86 /* ActorFrameTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActorFrameTexture.h; path = ../src/ActorFrameTexture.h; sourceTree = "<group>"; };
 		AA608EBF0B0F85E400B39AC4 /* DialogDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DialogDriver.cpp; sourceTree = "<group>"; };
+		AA608FAC0B0F9A4E00B39AC4 /* RageSoundDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RageSoundDriver.cpp; sourceTree = "<group>"; };
 		AA60E0BC067992D7008ADC41 /* Threads.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = Threads.h; sourceTree = "<group>"; };
 		AA60E0BD067992D7008ADC41 /* Threads_Pthreads.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = Threads_Pthreads.cpp; sourceTree = "<group>"; };
 		AA60E0BE067992D7008ADC41 /* Threads_Pthreads.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = Threads_Pthreads.h; sourceTree = "<group>"; };
@@ -3371,6 +3374,7 @@
 				AA1CD942060AE571003702C4 /* RageSoundDriver_Generic_Software.h */,
 				AA6E012E047712BE005F316C /* RageSoundDriver_Null.cpp */,
 				AA6E012F047712BE005F316C /* RageSoundDriver_Null.h */,
+				AA608FAC0B0F9A4E00B39AC4 /* RageSoundDriver.cpp */,
 			);
 			path = Sound;
 			sourceTree = "<group>";
@@ -5766,6 +5770,7 @@
 				AA6999630ACE1CBB000237F9 /* ControllerStateDisplay.cpp in Sources */,
 				AAB779FB0B0D9CB200B74314 /* ScoreKeeperGuitar.cpp in Sources */,
 				AA608EC00B0F85E400B39AC4 /* DialogDriver.cpp in Sources */,
+				AA608FAD0B0F9A4E00B39AC4 /* RageSoundDriver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6185,6 +6190,7 @@
 				AA6999610ACE1CBB000237F9 /* ControllerStateDisplay.cpp in Sources */,
 				AAB779FD0B0D9CB200B74314 /* ScoreKeeperGuitar.cpp in Sources */,
 				AA608EC10B0F85E400B39AC4 /* DialogDriver.cpp in Sources */,
+				AA608FAE0B0F9A4E00B39AC4 /* RageSoundDriver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
