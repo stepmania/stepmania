@@ -17,7 +17,6 @@ public:
 private:
 	bool m_bFoundDevice;
 };
-#define USE_INPUT_HANDLER_WIN32_MIDI
 
 #endif
 

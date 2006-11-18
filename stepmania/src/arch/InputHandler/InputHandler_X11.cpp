@@ -8,6 +8,8 @@
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 
+REGISTER_INPUT_HANDLER_CLASS( X11 );
+
 static DeviceButton XSymToDeviceButton( int key )
 {
 #define KEY_INV DeviceButton_Invalid

@@ -23,7 +23,6 @@ private:
 	void InputThreadMain();
 	void HandleInput( int devno, int event );
 };
-#define USE_INPUT_HANDLER_WIN32_PUMP
 
 #endif
 

@@ -13,6 +13,8 @@
 
 #include <set>
 
+REGISTER_INPUT_HANDLER_CLASS2( Joystick, InputHandler_Linux_Joystick );
+
 static const char *Paths[InputHandler_Linux_Joystick::NUM_JOYSTICKS] =
 {
 	"/dev/js0",

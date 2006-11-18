@@ -22,6 +22,8 @@
 int __stdcall AfxMessageBox(LPCTSTR lpszText, UINT nType, UINT nIDHelp);
 #endif
 
+REGISTER_DIALOG_DRIVER_CLASS( Win32 );
+
 static bool g_bHush;
 static RString g_sMessage;
 static bool g_bAllowHush;

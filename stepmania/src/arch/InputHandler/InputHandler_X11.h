@@ -13,7 +13,6 @@ public:
 	void Update();
 	void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut );
 };
-#define USE_INPUT_HANDLER_X11
 
 #endif
 

@@ -11,7 +11,6 @@ public:
 	InputHandler_Win32_Para();
 	void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut );
 };
-#define USE_INPUT_HANDLER_WIN32_PARA
 
 #endif
 

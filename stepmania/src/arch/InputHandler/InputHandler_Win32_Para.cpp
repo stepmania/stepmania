@@ -13,6 +13,8 @@ extern "C" {
 #include "archutils/Win32/ddk/hidsdi.h"
 }
 
+REGISTER_INPUT_HANDLER_CLASS( Para, InputHandler_Win32_Para );
+
 static void InitHack( HANDLE h )
 {
 	UCHAR hack[] = {0, 1};

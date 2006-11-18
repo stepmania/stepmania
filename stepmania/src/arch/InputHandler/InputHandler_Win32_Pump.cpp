@@ -8,6 +8,8 @@
 #include "archutils/Win32/ErrorStrings.h"
 #include "archutils/Win32/USB.h"
 
+REGISTER_INPUT_HANDLER_CLASS2( Pump, InputHandler_Win32_Pump );
+
 InputHandler_Win32_Pump::InputHandler_Win32_Pump()
 {
 	m_bShutdown = false;

@@ -22,7 +22,6 @@ private:
 	RageThread m_InputThread;
 	bool m_bShutdown;
 };
-#define USE_INPUT_HANDLER_LINUX_JOYSTICK
 
 #endif
 

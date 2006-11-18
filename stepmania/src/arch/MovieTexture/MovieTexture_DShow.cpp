@@ -29,6 +29,8 @@
 #pragma comment(lib, "vfw32.lib")
 #endif
 
+REGISTER_MOVIE_TEXTURE_CLASS( DShow );
+
 static RString FourCCToString( int fcc )
 {
 	char c[4];

@@ -34,7 +34,6 @@ private:
 	void StartThread();
 	void ShutdownThread();
 };
-#define USE_INPUT_HANDLER_DIRECTINPUT
 
 #endif
 
