@@ -5,6 +5,7 @@
 
 #include "LoadingWindow.h"
 #include "RageFile.h"
+#include "RageUtil.h"
 
 extern "C"
 {

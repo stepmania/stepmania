@@ -36,7 +36,6 @@ private:
 	RageSemaphore m_Semaphore;
 };
 
-#define USE_RAGE_SOUND_AU
 #endif
 /*
  * (c) 2004-2006 Steve Checkoway

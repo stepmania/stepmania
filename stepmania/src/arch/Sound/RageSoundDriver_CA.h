@@ -51,7 +51,6 @@ private:
 	static OSStatus JackChanged( AudioDeviceID inDevice, UInt32 inChannel, Boolean isInput,
 				     AudioDevicePropertyID inPropertyID, void *inData );
 };
-#define USE_RAGE_SOUND_CA
 
 #endif
 

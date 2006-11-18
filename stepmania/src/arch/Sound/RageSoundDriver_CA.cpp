@@ -6,6 +6,8 @@
 #include "PrefsManager.h"
 #include "archutils/Darwin/DarwinThreadHelpers.h"
 
+REGISTER_SOUND_DRIVER_CLASS2( CoreAudio, CA );
+
 static const UInt8 kAudioDeviceSectionInput    = 0x01;
 static const UInt8 kAudioDeviceSectionOutput   = 0x00;
 static const UInt8 kAudioDeviceSectionGlobal   = 0x00;

@@ -1,6 +1,8 @@
 #ifndef RAGE_SOUND_DRIVER
 #define RAGE_SOUND_DRIVER
 
+#include "RageUtil.h"
+
 class RageSoundBase;
 class RageSoundDriver
 {
@@ -47,6 +49,19 @@ public:
 
 	virtual ~RageSoundDriver() { }
 };
+
+typedef RageSoundDriver *(*CreateSoundDriverFn)();
+struct RegisterSoundDriver
+{
+	static map<istring, CreateSoundDriverFn> *g_pRegistrees;
+	RegisterSoundDriver( const istring &sName, CreateSoundDriverFn pfn );
+};
+// Can't use Create##name because many of these have -sw suffixes.
+#define REGISTER_SOUND_DRIVER_CLASS2( name, x ) \
+	static RageSoundDriver *Create##x() { return new RageSound_##x; } \
+	static RegisterSoundDriver register_##x( #name, Create##x )
+#define REGISTER_SOUND_DRIVER_CLASS( name ) REGISTER_SOUND_DRIVER_CLASS2( name, name )
+
 
 /*
  * (c) 2002-2004 Glenn Maynard

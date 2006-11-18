@@ -4,6 +4,8 @@
 #include "RageUtil.h"
 #include "PrefsManager.h"
 
+REGISTER_SOUND_DRIVER_CLASS( Null );
+
 const int channels = 2;
 
 void RageSound_Null::Update()

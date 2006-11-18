@@ -8,9 +8,6 @@
 #include "LoadingWindow/LoadingWindow_Win32.h"
 #include "LowLevelWindow/LowLevelWindow_Win32.h"
 #include "MemoryCard/MemoryCardDriverThreaded_Windows.h"
-#include "Sound/RageSoundDriver_DSound.h"
-#include "Sound/RageSoundDriver_DSound_Software.h"
-#include "Sound/RageSoundDriver_WaveOut.h"
 #define DEFAULT_INPUT_DRIVER_LIST "DirectInput,Pump,Para"
 #define DEFAULT_MOVIE_DRIVER_LIST "Theora,FFMpeg,DShow,Null"
 #define DEFAULT_SOUND_DRIVER_LIST "DirectSound,DirectSound-sw,WaveOut,Null"
@@ -21,8 +18,6 @@
 #include "LoadingWindow/LoadingWindow_Cocoa.h"
 #include "LowLevelWindow/LowLevelWindow_Cocoa.h"
 #include "MemoryCard/MemoryCardDriverThreaded_OSX.h"
-#include "Sound/RageSoundDriver_CA.h"
-#include "Sound/RageSoundDriver_AU.h"
 #define DEFAULT_INPUT_DRIVER_LIST "Carbon"
 #define DEFAULT_MOVIE_DRIVER_LIST "Theora,FFMpeg,Null"
 #define DEFAULT_SOUND_DRIVER_LIST "AudioUnit,CoreAudio,Null"
@@ -33,8 +28,6 @@
 #include "LoadingWindow/LoadingWindow_Xbox.h"
 #include "LowLevelWindow/LowLevelWindow_Win32.h"
 #include "MemoryCard/MemoryCardDriverThreaded_Windows.h"
-#include "Sound/RageSoundDriver_DSound.h"
-#include "Sound/RageSoundDriver_DSound_Software.h"
 #define DEFAULT_INPUT_DRIVER_LIST "Xbox"
 #define DEFAULT_MOVIE_DRIVER_LIST "Theora,FFMpeg,DShow,Null"
 #define DEFAULT_SOUND_DRIVER_LIST "DirectSound,DirectSound-sw,Null"
@@ -56,13 +49,6 @@
 #if defined(HAVE_GTK)
 #include "LoadingWindow/LoadingWindow_Gtk.h"
 #endif
-#ifdef HAVE_ALSA
-#include "Sound/RageSoundDriver_ALSA9.h"
-#include "Sound/RageSoundDriver_ALSA9_Software.h"
-#endif
-#ifdef HAVE_OSS
-#include "Sound/RageSoundDriver_OSS.h"
-#endif
 #if defined(LINUX)
 #define DEFAULT_INPUT_DRIVER_LIST "X11,Joystick"
 #else
@@ -78,7 +64,6 @@
 #include "Lights/LightsDriver_SystemMessage.h"
 #include "Lights/LightsDriver_Null.h"
 #include "LoadingWindow/LoadingWindow_Null.h"
-#include "Sound/RageSoundDriver_Null.h"
 #include "MemoryCard/MemoryCardDriver_Null.h"
 
 #endif
