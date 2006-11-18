@@ -244,9 +244,9 @@ int RageSoundManager::GetDriverSampleRate( int iRate ) const
 	return m_pDriver->GetSampleRate( iRate );
 }
 
-/* The return value of PlaySound and PlayCopyOfSound is only valid in the main
+/* The return value of PlayTheSound and PlayCopyOfSound is only valid in the main
  * thread, until the next call to Update().  After that, it may be deleted. */
-RageSound *RageSoundManager::PlaySound( RageSound &snd, const RageSoundParams *params )
+RageSound *RageSoundManager::PlayTheSound( RageSound &snd, const RageSoundParams *params )
 {
 	if( snd.IsPlaying() )
 		return PlayCopyOfSound( snd, params );
