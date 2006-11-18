@@ -1753,10 +1753,6 @@
 					RelativePath="arch\arch_default.h"
 					>
 				</File>
-				<File
-					RelativePath="arch\arch_platform.h"
-					>
-				</File>
 				<Filter
 					Name="LoadingWindow"
 					>
@@ -1974,10 +1970,6 @@
 					</File>
 					<File
 						RelativePath=".\arch\MovieTexture\MovieTexture_Theora.h"
-						>
-					</File>
-					<File
-						RelativePath=".\arch\MovieTexture\Selector_MovieTexture.h"
 						>
 					</File>
 				</Filter>
