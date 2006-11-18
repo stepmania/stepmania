@@ -14,7 +14,7 @@
 
 #include "InputHandler_DirectInputHelper.h"
 
-REGISTER_INPUT_HANDLER_CLASS( DirectInput );
+REGISTER_INPUT_HANDLER_CLASS2( DirectInput, DInput );
 
 static vector<DIDevice> Devices;
 
