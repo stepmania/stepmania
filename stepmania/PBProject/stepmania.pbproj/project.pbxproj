@@ -3365,6 +3365,7 @@
 		AA6E012D04771299005F316C /* Sound */ = {
 			isa = PBXGroup;
 			children = (
+				AA608FAC0B0F9A4E00B39AC4 /* RageSoundDriver.cpp */,
 				AABE37030497CF85005F316C /* RageSoundDriver.h */,
 				AA8CF5160A4518BE0005F1B4 /* RageSoundDriver_AU.cpp */,
 				AA8CF5150A4518BE0005F1B4 /* RageSoundDriver_AU.h */,
@@ -3374,7 +3375,6 @@
 				AA1CD942060AE571003702C4 /* RageSoundDriver_Generic_Software.h */,
 				AA6E012E047712BE005F316C /* RageSoundDriver_Null.cpp */,
 				AA6E012F047712BE005F316C /* RageSoundDriver_Null.h */,
-				AA608FAC0B0F9A4E00B39AC4 /* RageSoundDriver.cpp */,
 			);
 			path = Sound;
 			sourceTree = "<group>";
