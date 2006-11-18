@@ -29,7 +29,6 @@ private:
 	bool loop;
 	unsigned texHandle;
 };
-#define USE_MOVIE_TEXTURE_NULL
 
 #endif
 

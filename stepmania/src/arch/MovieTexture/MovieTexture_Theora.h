@@ -10,7 +10,6 @@ class MovieTexture_Theora: public MovieTexture_Generic
 public:
 	MovieTexture_Theora( RageTextureID ID );
 };
-#define USE_MOVIE_TEXTURE_THEORA
 
 #endif
 

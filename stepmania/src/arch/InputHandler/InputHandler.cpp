@@ -4,6 +4,9 @@
 #include "InputHandler.h"
 #include "RageLog.h"
 #include "LocalizedString.h"
+#include "arch/arch_default.h"
+#include "InputHandler_MonkeyKeyboard.h"
+#include "Foreach.h"
 
 void InputHandler::UpdateTimer()
 {
@@ -158,6 +161,45 @@ RString InputHandler::GetLocalizedInputString( const DeviceInput &di )
 		return DeviceButtonToString( di.button );
 	}
 }
+
+map<istring, CreateInputHandlerFn> *RegisterInputHandler::g_pRegistrees;
+RegisterInputHandler::RegisterInputHandler( const istring &sName, CreateInputHandlerFn pfn )
+{
+	if( g_pRegistrees == NULL )
+		g_pRegistrees = new map<istring, CreateInputHandlerFn>;
+	
+	ASSERT( g_pRegistrees->find(sName) == g_pRegistrees->end() );
+	(*g_pRegistrees)[sName] = pfn;
+}
+
+static LocalizedString INPUT_HANDLERS_EMPTY( "Arch", "Input Handlers cannot be empty." );
+void MakeInputHandlers( const RString &drivers_, vector<InputHandler *> &Add )
+{
+	const RString drivers = drivers_.empty()? RString(DEFAULT_INPUT_DRIVER_LIST):drivers_;
+	vector<RString> DriversToTry;
+	split( drivers, ",", DriversToTry, true );
+	
+	if( DriversToTry.empty() )
+		RageException::Throw( "%s", INPUT_HANDLERS_EMPTY.GetValue().c_str() );
+	
+	FOREACH_CONST( RString, DriversToTry, s )
+	{
+		map<istring, CreateInputHandlerFn>::const_iterator iter = RegisterInputHandler::g_pRegistrees->find( istring(*s) );
+		
+		if( iter == RegisterInputHandler::g_pRegistrees->end() )
+		{
+			LOG->Trace( "Unknown Input Handler name: %s", s->c_str() );
+			continue;
+		}
+		InputHandler *ret = (iter->second)();
+		DEBUG_ASSERT( ret );
+		Add.push_back( ret );
+	}
+	// Always add
+	Add.push_back( new InputHandler_MonkeyKeyboard );
+	
+}
+
 
 /*
  * (c) 2003-2004 Glenn Maynard

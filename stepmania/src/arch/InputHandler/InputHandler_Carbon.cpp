@@ -13,6 +13,8 @@
 #include "archutils/Darwin/PumpDevice.h"
 #include <IOKit/IOMessage.h>
 
+REGISTER_INPUT_HANDLER_CLASS( Carbon );
+
 void InputHandler_Carbon::QueueCallBack( void *target, int result, void *refcon, void *sender )
 {
 	// The result seems useless as you can't actually return anything...

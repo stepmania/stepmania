@@ -6,6 +6,8 @@
 #include "InputFilter.h"
 #include <Carbon/Carbon.h>
 
+REGISTER_DIALOG_DRIVER_CLASS( Cocoa );
+
 static CFOptionFlags ShowAlert( CFOptionFlags flags, const RString& sMessage, CFStringRef OK,
 				CFStringRef alt = NULL, CFStringRef other = NULL)
 {

@@ -11,105 +11,6 @@
 #include "LocalizedString.h"
 #include "arch_default.h"
 
-ArchHooks *MakeArchHooks()
-{
-	return new ARCH_HOOKS;
-}
-
-DialogDriver *MakeDialogDriver()
-{
-	RString sDrivers = "win32,cocoa,null";
-	vector<RString> asDriversToTry;
-	split( sDrivers, ",", asDriversToTry, true );
-	
-	ASSERT( asDriversToTry.size() != 0 );
-	
-	RString sDriver;
-	DialogDriver *pRet = NULL;
-	
-	for( unsigned i = 0; pRet == NULL && i < asDriversToTry.size(); ++i )
-	{
-		sDriver = asDriversToTry[i];
-		
-#ifdef USE_DIALOG_DRIVER_COCOA
-		if( !asDriversToTry[i].CompareNoCase("Cocoa") )	pRet = new DialogDriver_Cocoa;
-#endif
-#ifdef USE_DIALOG_DRIVER_NULL
-		if( !asDriversToTry[i].CompareNoCase("Null") )	pRet = new DialogDriver_Null;
-#endif
-#ifdef USE_DIALOG_DRIVER_WIN32
-		if( !asDriversToTry[i].CompareNoCase("Win32") )	pRet = new DialogDriver_Win32;
-#endif
-		
-		if( pRet == NULL )
-			continue;
-		
-		RString sError = pRet->Init();
-		if( sError != "" )
-		{
-			if( LOG )
-				LOG->Info( "Couldn't load driver %s: %s", asDriversToTry[i].c_str(), sError.c_str() );
-			SAFE_DELETE( pRet );
-		}
-	}
-	
-	return pRet;
-}
-
-static LocalizedString INPUT_HANDLERS_EMPTY( "Arch", "Input Handlers cannot be empty." );
-void MakeInputHandlers( const RString &drivers_, vector<InputHandler *> &Add )
-{
-	const RString drivers = drivers_.empty()? RString(DEFAULT_INPUT_DRIVER_LIST):drivers_;
-	vector<RString> DriversToTry;
-	split( drivers, ",", DriversToTry, true );
-
-	if( DriversToTry.empty() )
-		RageException::Throw( "%s", INPUT_HANDLERS_EMPTY.GetValue().c_str() );
-
-	RString Driver;
-
-	FOREACH_CONST( RString, DriversToTry, s )
-	{
-		InputHandler *ret = NULL;
-
-#ifdef USE_INPUT_HANDLER_DIRECTINPUT
-		if( !s->CompareNoCase("DirectInput") )	ret = new InputHandler_DInput;
-#endif
-#ifdef USE_INPUT_HANDLER_LINUX_JOYSTICK
-		if( !s->CompareNoCase("Joystick") )	ret = new InputHandler_Linux_Joystick;
-#endif
-#ifdef USE_INPUT_HANDLER_LINUX_TTY
-		if( !s->CompareNoCase("tty") )		ret = new InputHandler_Linux_tty;
-#endif
-#ifdef USE_INPUT_HANDLER_WIN32_PARA
-		if( !s->CompareNoCase("Para") )		ret = new InputHandler_Win32_Para;
-#endif
-#ifdef USE_INPUT_HANDLER_WIN32_PUMP
-		if( !s->CompareNoCase("Pump") )		ret = new InputHandler_Win32_Pump;
-#endif
-#ifdef USE_INPUT_HANDLER_WIN32_MIDI
-		if( !s->CompareNoCase("MIDI") )		ret = new InputHandler_Win32_MIDI;
-#endif
-#ifdef USE_INPUT_HANDLER_X11
-		if( !s->CompareNoCase("X11") )		ret = new InputHandler_X11;
-#endif
-#ifdef USE_INPUT_HANDLER_XBOX
-		if( !s->CompareNoCase("Xbox") )		ret = new InputHandler_Xbox;
-#endif
-#ifdef USE_INPUT_HANDLER_CARBON
-		if( !s->CompareNoCase("Carbon") )	ret = new InputHandler_Carbon;
-#endif
-
-		if( ret == NULL )
-			LOG->Trace( "Unknown Input Handler name: %s", s->c_str() );
-		else
-			Add.push_back( ret );
-	}
-
-	// Always add
-	Add.push_back( new InputHandler_MonkeyKeyboard );
-
-}
 
 void MakeLightsDrivers( const RString &driver, vector<LightsDriver *> &Add )
 {
@@ -211,65 +112,6 @@ MemoryCardDriver *MakeMemoryCardDriver()
 	return ret;
 }
 
-static Preference<RString> g_sMovieDrivers( "MovieDrivers", "" ); // "" == default
-static void DumpAVIDebugInfo( const RString& fn );
-/* Try drivers in order of preference until we find one that works. */
-static LocalizedString MOVIE_DRIVERS_EMPTY		( "Arch", "Movie Drivers cannot be empty." );
-static LocalizedString COULDNT_CREATE_MOVIE_DRIVER	( "Arch", "Couldn't create a movie driver." );
-RageMovieTexture *MakeRageMovieTexture( RageTextureID ID )
-{
-	DumpAVIDebugInfo( ID.filename );
-
-	RString sDrivers = g_sMovieDrivers;
-	if( sDrivers.empty() )
-		sDrivers = DEFAULT_MOVIE_DRIVER_LIST;
-
-	vector<RString> DriversToTry;
-	split( sDrivers, ",", DriversToTry, true );
-	
-	if( DriversToTry.empty() )
-		RageException::Throw( "%s", MOVIE_DRIVERS_EMPTY.GetValue().c_str() );
-
-	RString Driver;
-	RageMovieTexture *ret = NULL;
-
-	for( unsigned i=0; ret==NULL && i<DriversToTry.size(); ++i )
-	{
-		Driver = DriversToTry[i];
-		LOG->Trace( "Initializing driver: %s", Driver.c_str() );
-#ifdef USE_MOVIE_TEXTURE_THEORA
-		if( !Driver.CompareNoCase("Theora") ) ret = new MovieTexture_Theora(ID);
-#endif
-#ifdef USE_MOVIE_TEXTURE_DSHOW
-		if( !Driver.CompareNoCase("DShow") ) ret = new MovieTexture_DShow(ID);
-#endif
-#ifdef USE_MOVIE_TEXTURE_FFMPEG
-		if( !Driver.CompareNoCase("FFMpeg") ) ret = new MovieTexture_FFMpeg(ID);
-#endif
-#ifdef USE_MOVIE_TEXTURE_NULL
-		if( !Driver.CompareNoCase("Null") ) ret = new MovieTexture_Null(ID);
-#endif
-		if( ret == NULL )
-		{
-			LOG->Trace( "Unknown movie driver name: %s", Driver.c_str() );
-			continue;
-		}
-
-		RString sError = ret->Init();
-		if( sError != "" )
-		{
-			LOG->Info( "Couldn't load driver %s: %s", Driver.c_str(), sError.c_str() );
-			SAFE_DELETE( ret );
-		}
-	}
-	if ( !ret )
-		RageException::Throw( "%s", COULDNT_CREATE_MOVIE_DRIVER.GetValue().c_str() );
-
-	LOG->Trace( "Created movie texture \"%s\" with driver \"%s\"",
-		    ID.filename.c_str(), Driver.c_str() );
-	return ret;
-}
-
 static LocalizedString SOUND_DRIVERS_CANNOT_EMPTY( "Arch", "Sound Drivers cannot be empty." );
 RageSoundDriver *MakeRageSoundDriver( const RString &drivers )
 {
@@ -333,16 +175,6 @@ RageSoundDriver *MakeRageSoundDriver( const RString &drivers )
 		LOG->Info( "Sound driver: %s", Driver.c_str() );
 	
 	return ret;
-}
-
-// Helper for MakeRageMovieTexture()
-static void DumpAVIDebugInfo( const RString& fn )
-{
-	RString type, handler;
-	if( !RageMovieTexture::GetFourCC( fn, handler, type ) )
-		return;
-
-	LOG->Trace( "Movie %s has handler '%s', type '%s'", fn.c_str(), handler.c_str(), type.c_str() );
 }
 
 /*

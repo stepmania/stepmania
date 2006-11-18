@@ -5,6 +5,9 @@
 #include "MovieTexture_Null.h"
 #include "PrefsManager.h"
 #include "RageFile.h"
+#include "LocalizedString.h"
+#include "Foreach.h"
+#include "arch_default.h"
 
 void ForceToAscii( RString &str )
 {
@@ -53,6 +56,76 @@ bool RageMovieTexture::GetFourCC( RString fn, RString &handler, RString &type )
 	return true;
 #undef HANDLE_ERROR
 }
+
+map<istring, CreateMovieTextureFn> *RegisterMovieTexture::g_pRegistrees = NULL;
+RegisterMovieTexture::RegisterMovieTexture( const istring &sName, CreateMovieTextureFn pfn )
+{
+	if( g_pRegistrees == NULL )
+		g_pRegistrees = new map<istring, CreateMovieTextureFn>;
+	
+	ASSERT( g_pRegistrees->find(sName) == g_pRegistrees->end() );
+	(*g_pRegistrees)[sName] = pfn;
+}
+
+// Helper for MakeRageMovieTexture()
+static void DumpAVIDebugInfo( const RString& fn )
+{
+	RString type, handler;
+	if( !RageMovieTexture::GetFourCC( fn, handler, type ) )
+		return;
+	
+	LOG->Trace( "Movie %s has handler '%s', type '%s'", fn.c_str(), handler.c_str(), type.c_str() );
+}
+
+static Preference<RString> g_sMovieDrivers( "MovieDrivers", "" ); // "" == default
+/* Try drivers in order of preference until we find one that works. */
+static LocalizedString MOVIE_DRIVERS_EMPTY		( "Arch", "Movie Drivers cannot be empty." );
+static LocalizedString COULDNT_CREATE_MOVIE_DRIVER	( "Arch", "Couldn't create a movie driver." );
+RageMovieTexture *MakeRageMovieTexture( RageTextureID ID )
+{
+	DumpAVIDebugInfo( ID.filename );
+	
+	RString sDrivers = g_sMovieDrivers;
+	if( sDrivers.empty() )
+		sDrivers = DEFAULT_MOVIE_DRIVER_LIST;
+	
+	vector<RString> DriversToTry;
+	split( sDrivers, ",", DriversToTry, true );
+	
+	if( DriversToTry.empty() )
+		RageException::Throw( "%s", MOVIE_DRIVERS_EMPTY.GetValue().c_str() );
+	
+	RageMovieTexture *ret = NULL;
+	
+	FOREACH_CONST( RString, DriversToTry, Driver )
+	{
+		LOG->Trace( "Initializing driver: %s", Driver->c_str() );
+		map<istring, CreateMovieTextureFn>::const_iterator iter = RegisterMovieTexture::g_pRegistrees->find( istring(*Driver) );
+		
+		if( iter == RegisterMovieTexture::g_pRegistrees->end() )
+		{
+			LOG->Trace( "Unknown movie driver name: %s", Driver->c_str() );
+			continue;
+		}
+		ret = (iter->second)( ID );
+		DEBUG_ASSERT( ret );
+		const RString sError = ret->Init();
+		if( sError != "" )
+		{
+			LOG->Info( "Couldn't load driver %s: %s", Driver->c_str(), sError.c_str() );
+			SAFE_DELETE( ret );
+			continue;
+		}
+		LOG->Trace( "Created movie texture \"%s\" with driver \"%s\"",
+			    ID.filename.c_str(), Driver->c_str() );
+		break;
+	}
+	if ( !ret )
+		RageException::Throw( "%s", COULDNT_CREATE_MOVIE_DRIVER.GetValue().c_str() );
+	
+	return ret;
+}
+
 
 /*
  * (c) 2003-2004 Glenn Maynard

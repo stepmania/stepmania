@@ -2,6 +2,7 @@
 #include "ArchHooks.h"
 #include "RageLog.h"
 #include "RageThreads.h"
+#include "arch/arch_default.h"
 
 bool ArchHooks::g_bQuitting = false;
 bool ArchHooks::g_bToggleWindowed = false;
@@ -48,6 +49,12 @@ bool ArchHooks::GoToURL( RString sUrl )
 {
 	return false;
 }
+
+ArchHooks *MakeArchHooks()
+{
+	return new ARCH_HOOKS;
+}
+
 
 /*
  * (c) 2003-2004 Glenn Maynard, Chris Danford

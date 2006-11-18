@@ -2,6 +2,7 @@
 #define MOVIE_TEXTURE_H
 
 #include "RageTexture.h"
+#include <map>
 
 class RageMovieTexture : public RageTexture
 {
@@ -21,6 +22,16 @@ public:
 
 	static bool GetFourCC( RString fn, RString &handler, RString &type );
 };
+
+typedef RageMovieTexture *(*CreateMovieTextureFn)( RageTextureID );
+struct RegisterMovieTexture
+{
+	static map<istring, CreateMovieTextureFn> *g_pRegistrees;
+	RegisterMovieTexture( const istring &sName, CreateMovieTextureFn );
+};
+#define REGISTER_MOVIE_TEXTURE_CLASS( name ) \
+	static RageMovieTexture *Create##name( RageTextureID ID ) { return new MovieTexture_##name( ID ); } \
+	static RegisterMovieTexture register_##className( #name, Create##name )
 
 #endif
 

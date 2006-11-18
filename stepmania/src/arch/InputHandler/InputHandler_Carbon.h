@@ -39,7 +39,6 @@ public:
 	static void QueueCallBack( void *target, int result, void *refcon, void *sender );
 	
 };
-#define USE_INPUT_HANDLER_CARBON
 
 #endif
 

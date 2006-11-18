@@ -68,6 +68,18 @@ private:
 	int m_iInputsSinceUpdate;
 };
 
+typedef InputHandler *(*CreateInputHandlerFn)();
+struct RegisterInputHandler
+{
+	static map<istring, CreateInputHandlerFn> *g_pRegistrees;
+	RegisterInputHandler( const istring &sName, CreateInputHandlerFn pfn );
+};
+#define REGISTER_INPUT_HANDLER_CLASS2( name, x ) \
+	static InputHandler *Create##name() { return new x; } \
+	static RegisterInputHandler register_##className( #name, Create##name )
+#define REGISTER_INPUT_HANDLER_CLASS( name ) REGISTER_INPUT_HANDLER_CLASS2( name, InputHandler_##name )
+
+
 #endif
 
 /*

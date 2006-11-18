@@ -6,6 +6,7 @@
 #include "MovieTexture_Null.h"
 #include "RageSurface.h"
 
+REGISTER_MOVIE_TEXTURE_CLASS( Null );
 MovieTexture_Null::MovieTexture_Null(RageTextureID ID) : RageMovieTexture(ID)
 {
 	LOG->Trace("MovieTexture_Null::MovieTexture_Null(ID)");

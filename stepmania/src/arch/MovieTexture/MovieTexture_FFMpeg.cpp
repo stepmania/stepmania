@@ -9,6 +9,8 @@
 
 #include <cerrno>
 
+REGISTER_MOVIE_TEXTURE_CLASS( FFMpeg );
+
 namespace avcodec
 {
 #include <ffmpeg/avformat.h>

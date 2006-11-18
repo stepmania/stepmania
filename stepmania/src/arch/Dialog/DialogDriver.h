@@ -2,6 +2,7 @@
 #define DIALOG_BOX_DRIVER_H
 
 #include "Dialog.h"
+#include "RageUtil.h"
 
 class DialogDriver
 {
@@ -14,9 +15,18 @@ public:
 	virtual RString Init() { return RString(); }
 	virtual ~DialogDriver() { }
 };
+class DialogDriver_Null : public DialogDriver { };
 
-class DialogDriver_Null: public DialogDriver { };
-#define USE_DIALOG_DRIVER_NULL
+typedef DialogDriver *(*CreateDialogDriverFn)();
+struct RegisterDialogDriver
+{
+	static map<istring, CreateDialogDriverFn> *g_pRegistrees;
+	RegisterDialogDriver( const istring &sName, CreateDialogDriverFn pfn );
+};
+#define REGISTER_DIALOG_DRIVER_CLASS( name ) \
+	static DialogDriver *Create##name() { return new DialogDriver_##name; } \
+	static RegisterDialogDriver register_##className( #name, Create##name )
+
 
 #endif
 

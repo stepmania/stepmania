@@ -18,7 +18,7 @@ namespace Dialog
 
 	/* for DialogDrivers */
 	void IgnoreMessage( RString sID );
-};
+}
 
 #endif
 

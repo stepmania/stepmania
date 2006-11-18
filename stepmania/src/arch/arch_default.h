@@ -4,16 +4,10 @@
 /* Define the default driver sets. */
 #if defined(_WINDOWS)
 #include "ArchHooks/ArchHooks_Win32.h"
-#include "Dialog/DialogDriver_Win32.h"
-#include "InputHandler/InputHandler_DirectInput.h"
-#include "InputHandler/InputHandler_Win32_Pump.h"
-#include "InputHandler/InputHandler_Win32_Para.h"
-#include "InputHandler/InputHandler_Win32_MIDI.h"
 #include "Lights/LightsDriver_Win32Parallel.h"
 #include "LoadingWindow/LoadingWindow_Win32.h"
 #include "LowLevelWindow/LowLevelWindow_Win32.h"
 #include "MemoryCard/MemoryCardDriverThreaded_Windows.h"
-#include "MovieTexture/MovieTexture_DShow.h"
 #include "Sound/RageSoundDriver_DSound.h"
 #include "Sound/RageSoundDriver_DSound_Software.h"
 #include "Sound/RageSoundDriver_WaveOut.h"
@@ -24,8 +18,6 @@
 
 #elif defined(MACOSX)
 #include "ArchHooks/ArchHooks_darwin.h"
-#include "Dialog/DialogDriver_Cocoa.h"
-#include "InputHandler/InputHandler_Carbon.h"
 #include "LoadingWindow/LoadingWindow_Cocoa.h"
 #include "LowLevelWindow/LowLevelWindow_Cocoa.h"
 #include "MemoryCard/MemoryCardDriverThreaded_OSX.h"
@@ -38,7 +30,6 @@
 
 #elif defined(_XBOX)
 #include "ArchHooks/ArchHooks_Xbox.h"
-#include "InputHandler/InputHandler_Xbox.h"
 #include "LoadingWindow/LoadingWindow_Xbox.h"
 #include "LowLevelWindow/LowLevelWindow_Win32.h"
 #include "MemoryCard/MemoryCardDriverThreaded_Windows.h"
@@ -54,7 +45,6 @@
 #include "LowLevelWindow/LowLevelWindow_X11.h"
 
 #if defined(LINUX)
-#include "InputHandler/InputHandler_Linux_Joystick.h"
 #include "Lights/LightsDriver_LinuxWeedTech.h"
 #include "MemoryCard/MemoryCardDriverThreaded_Linux.h"
 
@@ -63,7 +53,6 @@
 #endif
 #endif
 
-#include "InputHandler/InputHandler_X11.h"
 #if defined(HAVE_GTK)
 #include "LoadingWindow/LoadingWindow_Gtk.h"
 #endif
@@ -85,21 +74,10 @@
 #error Which arch?
 #endif
 
-
-#ifdef HAVE_THEORA
-#include "MovieTexture/MovieTexture_Theora.h"
-#endif
-#ifdef HAVE_FFMPEG
-#include "MovieTexture/MovieTexture_FFMpeg.h"
-#endif
-
 /* All use these. */
-#include "Dialog/DialogDriver.h"
-#include "InputHandler/InputHandler_MonkeyKeyboard.h"
 #include "Lights/LightsDriver_SystemMessage.h"
 #include "Lights/LightsDriver_Null.h"
 #include "LoadingWindow/LoadingWindow_Null.h"
-#include "MovieTexture/MovieTexture_Null.h"
 #include "Sound/RageSoundDriver_Null.h"
 #include "MemoryCard/MemoryCardDriver_Null.h"
 

@@ -7,6 +7,8 @@
 #include "RageUtil.h"
 #include "MovieTexture_FFMpeg.h" /* for AVCodecCreateCompatibleSurface */
 
+REGISTER_MOVIE_TEXTURE_CLASS( Theora );
+
 namespace avcodec
 {
 #include <ffmpeg/avcodec.h> /* for avcodec::img_convert */
