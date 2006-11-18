@@ -1420,6 +1420,8 @@
 		AA5D166D0A798C0E00F17E86 /* ActorFrameTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = AA5D166B0A798C0E00F17E86 /* ActorFrameTexture.h */; };
 		AA5D166E0A798C0E00F17E86 /* ActorFrameTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA5D166A0A798C0E00F17E86 /* ActorFrameTexture.cpp */; };
 		AA5D166F0A798C0E00F17E86 /* ActorFrameTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = AA5D166B0A798C0E00F17E86 /* ActorFrameTexture.h */; };
+		AA608EC00B0F85E400B39AC4 /* DialogDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA608EBF0B0F85E400B39AC4 /* DialogDriver.cpp */; };
+		AA608EC10B0F85E400B39AC4 /* DialogDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA608EBF0B0F85E400B39AC4 /* DialogDriver.cpp */; };
 		AA60E0C1067992D7008ADC41 /* Threads.h in Headers */ = {isa = PBXBuildFile; fileRef = AA60E0BC067992D7008ADC41 /* Threads.h */; };
 		AA60E0C2067992D7008ADC41 /* Threads_Pthreads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA60E0BD067992D7008ADC41 /* Threads_Pthreads.cpp */; };
 		AA60E0C3067992D7008ADC41 /* Threads_Pthreads.h in Headers */ = {isa = PBXBuildFile; fileRef = AA60E0BE067992D7008ADC41 /* Threads_Pthreads.h */; };
@@ -2090,6 +2092,7 @@
 		AA5D16560A79805C00F17E86 /* RageTextureRenderTarget.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = RageTextureRenderTarget.h; path = ../src/RageTextureRenderTarget.h; sourceTree = "<group>"; };
 		AA5D166A0A798C0E00F17E86 /* ActorFrameTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ActorFrameTexture.cpp; path = ../src/ActorFrameTexture.cpp; sourceTree = "<group>"; };
 		AA5D166B0A798C0E00F17E86 /* ActorFrameTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActorFrameTexture.h; path = ../src/ActorFrameTexture.h; sourceTree = "<group>"; };
+		AA608EBF0B0F85E400B39AC4 /* DialogDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DialogDriver.cpp; sourceTree = "<group>"; };
 		AA60E0BC067992D7008ADC41 /* Threads.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = Threads.h; sourceTree = "<group>"; };
 		AA60E0BD067992D7008ADC41 /* Threads_Pthreads.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = Threads_Pthreads.cpp; sourceTree = "<group>"; };
 		AA60E0BE067992D7008ADC41 /* Threads_Pthreads.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = Threads_Pthreads.h; sourceTree = "<group>"; };
@@ -4045,6 +4048,7 @@
 			children = (
 				AAD675EF06795175006002B0 /* Dialog.cpp */,
 				AAD675F006795175006002B0 /* Dialog.h */,
+				AA608EBF0B0F85E400B39AC4 /* DialogDriver.cpp */,
 				AAD675F106795175006002B0 /* DialogDriver.h */,
 				AAD675F206795175006002B0 /* DialogDriver_Cocoa.cpp */,
 				AAD675F306795175006002B0 /* DialogDriver_Cocoa.h */,
@@ -5761,6 +5765,7 @@
 				AAFAFC900AC8DB9F00427A6E /* EnumHelper.cpp in Sources */,
 				AA6999630ACE1CBB000237F9 /* ControllerStateDisplay.cpp in Sources */,
 				AAB779FB0B0D9CB200B74314 /* ScoreKeeperGuitar.cpp in Sources */,
+				AA608EC00B0F85E400B39AC4 /* DialogDriver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6179,6 +6184,7 @@
 				AAFAFC8F0AC8DB9F00427A6E /* EnumHelper.cpp in Sources */,
 				AA6999610ACE1CBB000237F9 /* ControllerStateDisplay.cpp in Sources */,
 				AAB779FD0B0D9CB200B74314 /* ScoreKeeperGuitar.cpp in Sources */,
+				AA608EC10B0F85E400B39AC4 /* DialogDriver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
