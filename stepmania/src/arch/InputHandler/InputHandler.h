@@ -75,9 +75,9 @@ struct RegisterInputHandler
 	RegisterInputHandler( const istring &sName, CreateInputHandlerFn pfn );
 };
 #define REGISTER_INPUT_HANDLER_CLASS2( name, x ) \
-	static InputHandler *Create##name() { return new x; } \
+	static InputHandler *Create##name() { return new InputHandler_##x; } \
 	static RegisterInputHandler register_##className( #name, Create##name )
-#define REGISTER_INPUT_HANDLER_CLASS( name ) REGISTER_INPUT_HANDLER_CLASS2( name, InputHandler_##name )
+#define REGISTER_INPUT_HANDLER_CLASS( name ) REGISTER_INPUT_HANDLER_CLASS2( name, name )
 
 
 #endif

@@ -22,7 +22,7 @@
 #include <linux/keyboard.h>
 #include <termios.h>
 
-REGISTER_INPUT_HANDLER_CLASS2( tty, InputHandler_Linux_tty );
+REGISTER_INPUT_HANDLER_CLASS2( tty, Linux_tty );
 
 /* Map from keys (ignoring shifts) to SDLK values. */
 static int keys[NR_KEYS];
