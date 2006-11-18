@@ -76,7 +76,7 @@ struct RegisterInputHandler
 };
 #define REGISTER_INPUT_HANDLER_CLASS2( name, x ) \
 	static InputHandler *Create##name() { return new InputHandler_##x; } \
-	static RegisterInputHandler register_##className( #name, Create##name )
+	static RegisterInputHandler register_##name( #name, Create##name )
 #define REGISTER_INPUT_HANDLER_CLASS( name ) REGISTER_INPUT_HANDLER_CLASS2( name, name )
 
 
