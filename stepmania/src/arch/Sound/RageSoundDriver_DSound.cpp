@@ -14,6 +14,8 @@
 #include "RageLog.h"
 #include "archutils/Win32/ErrorStrings.h"
 
+REGISTER_SOUND_DRIVER_CLASS2( DirectSound, DSound );
+
 const int channels = 2;
 const int bytes_per_frame = 2 * channels; /* 16-bit */
 const int samplerate = 44100;

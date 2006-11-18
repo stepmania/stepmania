@@ -14,6 +14,8 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 
+REGISTER_SOUND_DRIVER_CLASS2( ALSA-sw, ALSA9_Software );
+
 static const int channels = 2;
 static const int samples_per_frame = channels;
 static const int bytes_per_frame = sizeof(int16_t) * samples_per_frame;

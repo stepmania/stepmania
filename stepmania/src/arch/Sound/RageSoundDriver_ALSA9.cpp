@@ -8,6 +8,8 @@
 #include "RageUtil.h"
 #include "ALSA9Dynamic.h"
 
+REGISTER_SOUND_DRIVER_CLASS( ALSA9 );
+
 const int channels = 2;
 const int samplerate = 44100;
 

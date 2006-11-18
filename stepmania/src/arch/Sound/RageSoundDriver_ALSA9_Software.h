@@ -31,7 +31,6 @@ private:
 	Alsa9Buf *m_pPCM;
 	RageThread m_MixingThread;
 };
-#define USE_RAGE_SOUND_ALSA9_SOFTWARE
 
 #endif
 

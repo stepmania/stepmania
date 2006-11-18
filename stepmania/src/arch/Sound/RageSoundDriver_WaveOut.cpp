@@ -13,6 +13,8 @@
 #include "PrefsManager.h"
 #include "archutils/Win32/ErrorStrings.h"
 
+REGISTER_SOUND_DRIVER_CLASS( WaveOut );
+
 const int channels = 2;
 const int bytes_per_frame = channels*2;		/* 16-bit */
 const int buffersize_frames = 1024*8;	/* in frames */

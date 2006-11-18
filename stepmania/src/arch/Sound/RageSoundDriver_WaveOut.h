@@ -31,7 +31,6 @@ private:
 	bool m_bShutdown;
 	int m_iLastCursorPos;
 };
-#define USE_RAGE_SOUND_WAVE_OUT
 
 #endif
 

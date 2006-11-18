@@ -71,7 +71,6 @@ private:
 
 	void GetData();
 };
-#define USE_RAGE_SOUND_ALSA9
 
 #endif
 

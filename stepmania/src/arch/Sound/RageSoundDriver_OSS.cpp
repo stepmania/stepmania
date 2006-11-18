@@ -14,6 +14,8 @@
 #include <sys/soundcard.h>
 #include <sys/select.h>
 
+REGISTER_SOUND_DRIVER_CLASS( OSS );
+
 /* samples */
 const int channels = 2;
 const int bytes_per_frame = channels*2;		/* 16-bit */

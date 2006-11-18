@@ -8,6 +8,8 @@
 #include "PrefsManager.h"
 #include "archutils/Win32/ErrorStrings.h"
 
+REGISTER_SOUND_DRIVER_CLASS2( DirectSound-sw, DSound_Software );
+
 static const int channels = 2;
 static const int bytes_per_frame = channels*2; /* 16-bit */
 static const int safe_writeahead = 1024*4; /* in frames */

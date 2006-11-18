@@ -30,7 +30,6 @@ private:
 	void MixerThread();
 	RageThread m_MixingThread;
 };
-#define USE_RAGE_SOUND_DSOUND_SOFTWARE
 
 #endif
 
