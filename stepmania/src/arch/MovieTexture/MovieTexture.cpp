@@ -7,7 +7,7 @@
 #include "RageFile.h"
 #include "LocalizedString.h"
 #include "Foreach.h"
-#include "arch_default.h"
+#include "arch/arch_default.h"
 
 void ForceToAscii( RString &str )
 {
