@@ -155,9 +155,9 @@ for( const int UNIQUE_NAME(tab) = LuaHelpers::AbsIndex(L,index), \
      lua_settop(L,UNIQUE_NAME(top)) )
 
 
+struct RegisterLuaFunction { RegisterLuaFunction( RegisterWithLuaFn pfn ) { LuaManager::Register( pfn ); } };
 #define REGISTER_WITH_LUA_FUNCTION( Fn ) \
-	class Register##Fn { public: Register##Fn() { LuaManager::Register( Fn ); } }; \
-	static Register##Fn register##Fn;
+	static RegisterLuaFunction register##Fn( Fn );
 
 inline bool MyLua_checkboolean (lua_State *L, int numArg)
 {
