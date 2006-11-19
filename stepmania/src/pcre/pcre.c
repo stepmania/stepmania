@@ -365,11 +365,6 @@ extern "C"
 	int   (*pcre_callout)(pcre_callout_block *) = NULL;
 }
 #else
-void *(*pcre_malloc)(size_t) = malloc;
-void  (*pcre_free)(void *) = free;
-void *(*pcre_stack_malloc)(size_t) = malloc;
-void  (*pcre_stack_free)(void *) = free;
-int   (*pcre_callout)(pcre_callout_block *) = NULL;
 #endif
 #endif
 
@@ -5898,6 +5893,7 @@ for (;;)
     function is able to force a failure. */
 
     case OP_CALLOUT:
+#if 0
     if (pcre_callout != NULL)
       {
       pcre_callout_block cb;
@@ -5914,6 +5910,7 @@ for (;;)
       if ((rrc = (*pcre_callout)(&cb)) > 0) RRETURN(MATCH_NOMATCH);
       if (rrc < 0) RRETURN(rrc);
       }
+#endif
     ecode += 2;
     break;
 

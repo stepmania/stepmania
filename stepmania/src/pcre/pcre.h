@@ -146,11 +146,11 @@ it is null on other OS. For Virtual Pascal, these have to be different again.
 */
 
 #ifndef VPCOMPAT
-PCRE_DATA_SCOPE void *(*pcre_malloc)(size_t);
-PCRE_DATA_SCOPE void  (*pcre_free)(void *);
-PCRE_DATA_SCOPE void *(*pcre_stack_malloc)(size_t);
-PCRE_DATA_SCOPE void  (*pcre_stack_free)(void *);
-PCRE_DATA_SCOPE int   (*pcre_callout)(pcre_callout_block *);
+#define pcre_malloc malloc
+#define pcre_free free
+#define pcre_stack_malloc malloc
+#define pcre_stack_free free
+#define pcre_callout NULL
 #else   /* VPCOMPAT */
 extern void *pcre_malloc(size_t);
 extern void  pcre_free(void *);
