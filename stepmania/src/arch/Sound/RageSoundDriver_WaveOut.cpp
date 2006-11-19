@@ -29,10 +29,10 @@ static RString wo_ssprintf( MMRESULT err, const char *szFmt, ...)
 	char szBuf[MAXERRORLENGTH];
 	waveOutGetErrorText( err, szBuf, MAXERRORLENGTH );
 
-    va_list	va;
-    va_start( va, szFmt );
-    RString s = vssprintf( szFmt, va );
-    va_end( va );
+	va_list va;
+	va_start( va, szFmt );
+	RString s = vssprintf( szFmt, va );
+	va_end( va );
 
 	return s += ssprintf( "(%s)", szBuf );
 }
@@ -113,7 +113,7 @@ RString RageSound_WaveOut::Init()
 {
 	WAVEFORMATEX fmt;
 	fmt.wFormatTag = WAVE_FORMAT_PCM;
-    fmt.nChannels = channels;
+	fmt.nChannels = channels;
 	fmt.cbSize = 0;
 	m_iSampleRate = PREFSMAN->m_iSoundPreferredSampleRate;
 	fmt.nSamplesPerSec = m_iSampleRate;
