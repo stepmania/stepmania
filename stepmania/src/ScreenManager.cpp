@@ -207,7 +207,7 @@ namespace ScreenManagerUtil
 };
 using namespace ScreenManagerUtil;
 
-void RegisterScreenClass( const RString& sClassName, CreateScreenFn pfn )
+RegisterScreenClass::RegisterScreenClass( const RString& sClassName, CreateScreenFn pfn )
 {
 	if( g_pmapRegistrees == NULL )
 		g_pmapRegistrees = new map<RString,CreateScreenFn>;

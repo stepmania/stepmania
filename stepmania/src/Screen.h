@@ -12,15 +12,11 @@
 class InputEventPlus;
 class Screen;
 typedef Screen* (*CreateScreenFn)(const RString& sClassName);
-void RegisterScreenClass( const RString& sClassName, CreateScreenFn pfn );
-
 // Each Screen class should have a REGISTER_SCREEN_CLASS in its CPP file.
+struct RegisterScreenClass { RegisterScreenClass( const RString &sClassName, CreateScreenFn pfn ); };
 #define REGISTER_SCREEN_CLASS( className ) \
 	static Screen* Create##className( const RString &sName ) { LuaThreadVariable var( "LoadingScreen", sName ); Screen *pRet = new className; pRet->SetName( sName ); Screen::InitScreen( pRet ); return pRet; } \
-	struct Register##className { \
-		Register##className() { RegisterScreenClass( #className,Create##className); } \
-	}; \
-	static Register##className register_##className;
+	static RegisterScreenClass register_##className( #className, Create##className )
 
 enum ScreenType
 {
