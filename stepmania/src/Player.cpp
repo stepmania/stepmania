@@ -256,7 +256,7 @@ void Player::Init(
 
 	
 	// set initial life
-	if( m_pLifeMeter )
+	if( m_pLifeMeter && m_pPlayerStageStats )
 	{
 		float fLife = m_pLifeMeter->GetLife();
 		m_pPlayerStageStats->SetLifeRecordAt( fLife, STATSMAN->m_CurStageStats.m_fStepsSeconds );
@@ -451,7 +451,8 @@ void Player::Load()
 		 sound.SetParams( p );
 	}
 
-	SendComboMessage( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
+	if( m_pPlayerStageStats )
+		SendComboMessage( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
 }
 
 void Player::SendComboMessage( int iOldCombo, int iOldMissCombo )
