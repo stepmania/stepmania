@@ -647,7 +647,7 @@ RageSound *RageSound::Play( const RageSoundParams *pParams )
 		return NULL;
 	}
 
-	return SOUNDMAN->PlayTheSound( *this, pParams );
+	return SOUNDMAN->PlaySound( *this, pParams );
 }
 
 void RageSound::Stop()
