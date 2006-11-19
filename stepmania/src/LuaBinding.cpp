@@ -219,7 +219,7 @@ bool LuaBinding::Equal( lua_State *L )
 
 /*
  * Get a userdata, and check that it's either szType or a type
- * derived from szType, by walking the __index chain.
+ * derived from szType, by checking the heirarchy table.
  */
 bool LuaBinding::CheckLuaObjectType( lua_State *L, int iArg, const char *szType )
 {
