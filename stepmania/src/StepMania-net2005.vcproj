@@ -1781,6 +1781,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\arch\Sound\RageSoundDriver.cpp"
+						>
+					</File>
+					<File
 						RelativePath="arch\Sound\RageSoundDriver.h"
 						>
 					</File>
@@ -2022,6 +2026,10 @@
 					</File>
 					<File
 						RelativePath="arch\Dialog\Dialog.h"
+						>
+					</File>
+					<File
+						RelativePath=".\arch\Dialog\DialogDriver.cpp"
 						>
 					</File>
 					<File
