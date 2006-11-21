@@ -27,7 +27,7 @@ GameSoundManager *SOUND = NULL;
  * this, wait before starting a sound until the fractional portion of the beat will be
  * the same.
  *
- * If PlayMusic(length_sec) is set, peek at the beat, and extend the length so we'll be
+ * If PlayMusic(fLengthSeconds) is set, peek at the beat, and extend the length so we'll be
  * on the same fractional beat when we loop.
  */
 
@@ -80,12 +80,12 @@ vector<RString> g_SoundsToPlayOnceFromAnnouncer;
 
 struct MusicToPlay
 {
-	RString file, timing_file;
+	RString m_sFile, timing_file;
 	bool HasTiming;
 	TimingData timing_data;
 	NoteData lights_data;
-	bool force_loop;
-	float start_sec, length_sec, fade_len;
+	bool bForceLoop;
+	float fStartSecond, fLengthSeconds, fFadeLengthSeconds;
 	bool align_beat;
 	MusicToPlay()
 	{
@@ -97,13 +97,13 @@ vector<MusicToPlay> g_MusicsToPlay;
 static void StartMusic( MusicToPlay &ToPlay )
 {
 	LockMutex L( *g_Mutex );
-	if( g_Playing->m_Music->IsPlaying() && !g_Playing->m_Music->GetLoadedFilePath().CompareNoCase(ToPlay.file) )
+	if( g_Playing->m_Music->IsPlaying() && !g_Playing->m_Music->GetLoadedFilePath().CompareNoCase(ToPlay.m_sFile) )
 		return;
 
 	/* We're changing or stopping the music.  If we were dimming, reset. */
 	g_FadeState = FADE_NONE;
 
-	if( ToPlay.file.empty() )
+	if( ToPlay.m_sFile.empty() )
 	{
 		/* StopPlaying() can take a while, so don't hold the lock while we stop the sound.
 		 * Be sure to leave the rest of g_Playing in place. */
@@ -124,7 +124,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 	{
 		g_Mutex->Unlock();
 		RageSound *pSound = new RageSound;
-		pSound->Load( ToPlay.file, false );
+		pSound->Load( ToPlay.m_sFile, false );
 		g_Mutex->Lock();
 
 		NewMusic = new MusicPlaying( pSound );
@@ -156,13 +156,13 @@ static void StartMusic( MusicToPlay &ToPlay )
 		NewMusic->m_Lights = ToPlay.lights_data;
 	}
 
-	if( ToPlay.align_beat && ToPlay.HasTiming && ToPlay.force_loop && ToPlay.length_sec != -1 )
+	if( ToPlay.align_beat && ToPlay.HasTiming && ToPlay.bForceLoop && ToPlay.fLengthSeconds != -1 )
 	{
 		/* Extend the loop period so it always starts and ends on the same fractional
 		 * beat.  That is, if it starts on beat 1.5, and ends on beat 10.2, extend it
 		 * to end on beat 10.5.  This way, effects always loop cleanly. */
-		float fStartBeat = NewMusic->m_NewTiming.GetBeatFromElapsedTimeNoOffset( ToPlay.start_sec );
-		float fEndSec = ToPlay.start_sec + ToPlay.length_sec;
+		float fStartBeat = NewMusic->m_NewTiming.GetBeatFromElapsedTimeNoOffset( ToPlay.fStartSecond );
+		float fEndSec = ToPlay.fStartSecond + ToPlay.fLengthSeconds;
 		float fEndBeat = NewMusic->m_NewTiming.GetBeatFromElapsedTimeNoOffset( fEndSec );
 		
 		const float fStartBeatFraction = fmodfp( fStartBeat, 1 );
@@ -175,11 +175,11 @@ static void StartMusic( MusicToPlay &ToPlay )
 		fEndBeat += fBeatDifference;
 
 		const float fRealEndSec = NewMusic->m_NewTiming.GetElapsedTimeFromBeatNoOffset( fEndBeat );
-		const float fNewLengthSec = fRealEndSec - ToPlay.start_sec;
+		const float fNewLengthSec = fRealEndSec - ToPlay.fStartSecond;
 
-		/* Extend the fade_len, so the added time is faded out. */
-		ToPlay.fade_len += fNewLengthSec - ToPlay.length_sec;
-		ToPlay.length_sec = fNewLengthSec;
+		/* Extend fFadeLengthSeconds, so the added time is faded out. */
+		ToPlay.fFadeLengthSeconds += fNewLengthSec - ToPlay.fLengthSeconds;
+		ToPlay.fLengthSeconds = fNewLengthSec;
 	}
 
 	bool StartImmediately = false;
@@ -213,7 +213,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 		const float fCurBeat = g_Playing->m_Timing.GetBeatFromElapsedTimeNoOffset( fCurSecond );
 
 		/* The beat that the new sound will start on. */
-		const float fStartBeat = NewMusic->m_NewTiming.GetBeatFromElapsedTimeNoOffset( ToPlay.start_sec );
+		const float fStartBeat = NewMusic->m_NewTiming.GetBeatFromElapsedTimeNoOffset( ToPlay.fStartSecond );
 		const float fStartBeatFraction = fmodfp( fStartBeat, 1 );
 
 		float fCurBeatToStartOn = truncf(fCurBeat) + fStartBeatFraction;
@@ -234,14 +234,14 @@ static void StartMusic( MusicToPlay &ToPlay )
 		if( ToPlay.HasTiming )
 			NewMusic->m_NewTiming = ToPlay.timing_data;
 		NewMusic->m_bTimingDelayed = true;
-//		NewMusic->m_Music->Load( ToPlay.file, false );
+//		NewMusic->m_Music->Load( ToPlay.m_sFile, false );
 
 		RageSoundParams p;
-		p.m_StartSecond = ToPlay.start_sec;
-		p.m_LengthSeconds = ToPlay.length_sec;
-		p.m_FadeLength = ToPlay.fade_len;
+		p.m_StartSecond = ToPlay.fStartSecond;
+		p.m_LengthSeconds = ToPlay.fLengthSeconds;
+		p.m_FadeLength = ToPlay.fFadeLengthSeconds;
 		p.m_StartTime = when;
-		if( ToPlay.force_loop )
+		if( ToPlay.bForceLoop )
 			p.StopMode = RageSoundParams::M_LOOP;
 		NewMusic->m_Music->SetParams( p );
 
@@ -636,19 +636,19 @@ RString GameSoundManager::GetMusicPath() const
 }
 
 void GameSoundManager::PlayMusic( 
-	const RString &file, 
+	const RString &sFile, 
 	const TimingData *pTiming, 
-	bool force_loop, 
-	float start_sec, 
-	float length_sec, 
-	float fade_len, 
-	bool align_beat )
+	bool bForceLoop,
+	float fStartSecond, 
+	float fLengthSeconds, 
+	float sFadeLengthSeconds, 
+	bool bAlignBeat )
 {
 	//	LOG->Trace("play '%s' (current '%s')", file.c_str(), g_Playing->m_Music->GetLoadedFilePath().c_str());
 
 	MusicToPlay ToPlay;
 
-	ToPlay.file = file;
+	ToPlay.m_sFile = sFile;
 	if( pTiming )
 	{
 		ToPlay.HasTiming = true;
@@ -657,14 +657,14 @@ void GameSoundManager::PlayMusic(
 	else
 	{
 		/* If no timing file was specified, look for one in the same place as the music file. */
-		ToPlay.timing_file = SetExtension( file, "sm" );
+		ToPlay.timing_file = SetExtension( sFile, "sm" );
 	}
 
-	ToPlay.force_loop = force_loop;
-	ToPlay.start_sec = start_sec;
-	ToPlay.length_sec = length_sec;
-	ToPlay.fade_len = fade_len;
-	ToPlay.align_beat = align_beat;
+	ToPlay.bForceLoop = bForceLoop;
+	ToPlay.fStartSecond = fStartSecond;
+	ToPlay.fLengthSeconds = fLengthSeconds;
+	ToPlay.fFadeLengthSeconds = sFadeLengthSeconds;
+	ToPlay.align_beat = bAlignBeat;
 
 	/* Add the MusicToPlay to the g_MusicsToPlay queue. */
 	g_Mutex->Lock();
