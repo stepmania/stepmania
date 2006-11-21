@@ -566,8 +566,7 @@ void GameSoundManager::Update( float fDeltaTime )
 	{
 		static int iBeatLastCrossed = 0;
 
-		float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
-		float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
+		float fSongBeat = GAMESTATE->m_fSongBeat;
 
 		int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
 		iRowNow = max( 0, iRowNow );
