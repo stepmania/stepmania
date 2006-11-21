@@ -7,7 +7,6 @@
 
 #include "global.h"
 #include "ScreenSandbox.h"
-#include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
 #include "RageDisplay.h"
 #include "RageLog.h"

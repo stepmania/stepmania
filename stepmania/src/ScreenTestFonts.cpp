@@ -3,7 +3,6 @@
 #include "FontManager.h"
 #include "RageTextureManager.h"
 #include "ScreenTextEntry.h"
-#include "GameConstantsAndTypes.h"
 #include "ScreenDimensions.h"
 #include "InputEventPlus.h"
 #include "RageUtil.h"

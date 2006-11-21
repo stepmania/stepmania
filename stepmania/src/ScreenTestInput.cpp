@@ -5,7 +5,6 @@
 #include "InputMapper.h"
 #include "GameState.h"
 #include "ThemeManager.h"
-#include "Game.h"
 #include "ScreenDimensions.h"
 #include "GameManager.h"
 #include "PrefsManager.h"

@@ -2,7 +2,6 @@
 #include "ScreenPrompt.h"
 #include "ScreenManager.h"
 #include "GameSoundManager.h"
-#include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
 #include "ScreenDimensions.h"
 #include "ActorUtil.h"

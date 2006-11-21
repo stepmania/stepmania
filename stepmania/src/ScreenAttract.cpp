@@ -6,7 +6,6 @@
 #include "PrefsManager.h"
 #include "RageLog.h"
 #include "GameState.h"
-#include "GameManager.h"
 #include "InputMapper.h"
 #include "ThemeManager.h"
 #include "GameSoundManager.h"
