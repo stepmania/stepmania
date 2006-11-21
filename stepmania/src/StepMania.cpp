@@ -236,7 +236,7 @@ void StepMania::ResetPreferences()
  * these may still be NULL. */
 void ShutdownGame()
 {
-	/* First, tell SOUND that we're shutting down.  This signals sound drivers to
+	/* First, tell SOUNDMAN that we're shutting down.  This signals sound drivers to
 	 * stop sounds, which we want to do before any threads that may have started sounds
 	 * are closed; this prevents annoying DirectSound glitches and delays. */
 	if( SOUNDMAN )
@@ -797,7 +797,7 @@ void StepMania::ChangeCurrentGame( const Game* g )
 
 	ReadGamePrefsFromDisk();
 
-	/* Load keymaps for the new game. */
+	/* Set the input scheme for the new game, and load keymaps. */
 	if( INPUTMAPPER )
 	{
 		INPUTMAPPER->SetInputScheme( &g->m_InputScheme );
