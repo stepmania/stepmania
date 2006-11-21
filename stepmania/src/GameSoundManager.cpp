@@ -80,10 +80,10 @@ vector<RString> g_SoundsToPlayOnceFromAnnouncer;
 
 struct MusicToPlay
 {
-	RString m_sFile, timing_file;
+	RString m_sFile, m_sTimingFile;
 	bool HasTiming;
-	TimingData timing_data;
-	NoteData lights_data;
+	TimingData m_TimingData;
+	NoteData m_LightsData;
 	bool bForceLoop;
 	float fStartSecond, fLengthSeconds, fFadeLengthSeconds;
 	bool bAlignBeat;
@@ -134,26 +134,26 @@ static void StartMusic( MusicToPlay &ToPlay )
 	NewMusic->m_Lights = g_Playing->m_Lights;
 
 	/* See if we can find timing data, if it's not already loaded. */
-	if( !ToPlay.HasTiming && IsAFile(ToPlay.timing_file) )
+	if( !ToPlay.HasTiming && IsAFile(ToPlay.m_sTimingFile) )
 	{
-		LOG->Trace("Found '%s'", ToPlay.timing_file.c_str());
+		LOG->Trace( "Found '%s'", ToPlay.m_sTimingFile.c_str() );
 		Song song;
 		SMLoader sml;
-		if( sml.LoadFromSMFile( ToPlay.timing_file, song ) )
+		if( sml.LoadFromSMFile( ToPlay.m_sTimingFile, song ) )
 		{
 			ToPlay.HasTiming = true;
-			ToPlay.timing_data = song.m_Timing;
+			ToPlay.m_TimingData = song.m_Timing;
 			// get cabinet lights if any
 			Steps *pStepsCabinetLights = SongUtil::GetOneSteps( &song, STEPS_TYPE_LIGHTS_CABINET );
 			if( pStepsCabinetLights )
-				pStepsCabinetLights->GetNoteData( ToPlay.lights_data );
+				pStepsCabinetLights->GetNoteData( ToPlay.m_LightsData );
 		}
 	}
 
 	if( ToPlay.HasTiming )
 	{
-		NewMusic->m_NewTiming = ToPlay.timing_data;
-		NewMusic->m_Lights = ToPlay.lights_data;
+		NewMusic->m_NewTiming = ToPlay.m_TimingData;
+		NewMusic->m_Lights = ToPlay.m_LightsData;
 	}
 
 	if( ToPlay.bAlignBeat && ToPlay.HasTiming && ToPlay.bForceLoop && ToPlay.fLengthSeconds != -1 )
@@ -232,7 +232,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 	{
 		NewMusic->m_bHasTiming = ToPlay.HasTiming;
 		if( ToPlay.HasTiming )
-			NewMusic->m_NewTiming = ToPlay.timing_data;
+			NewMusic->m_NewTiming = ToPlay.m_TimingData;
 		NewMusic->m_bTimingDelayed = true;
 //		NewMusic->m_Music->Load( ToPlay.m_sFile, false );
 
@@ -644,12 +644,12 @@ void GameSoundManager::PlayMusic(
 	if( pTiming )
 	{
 		ToPlay.HasTiming = true;
-		ToPlay.timing_data = *pTiming;
+		ToPlay.m_TimingData = *pTiming;
 	}
 	else
 	{
 		/* If no timing file was specified, look for one in the same place as the music file. */
-		ToPlay.timing_file = SetExtension( sFile, "sm" );
+		ToPlay.m_sTimingFile = SetExtension( sFile, "sm" );
 	}
 
 	ToPlay.bForceLoop = bForceLoop;
