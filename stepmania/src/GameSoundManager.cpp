@@ -468,8 +468,8 @@ void GameSoundManager::Update( float fDeltaTime )
 
 	{
 		/* Duration of the fade-in and fade-out: */
-		static float fFadeInSpeed = 1.5f;
-		static float fFadeOutSpeed = 0.3f;
+		const float fFadeInSpeed = 1.5f;
+		const float fFadeOutSpeed = 0.3f;
 		float fVolume = g_Playing->m_Music->GetParams().m_Volume;
 		switch( g_FadeState )
 		{
