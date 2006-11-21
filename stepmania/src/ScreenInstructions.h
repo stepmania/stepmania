@@ -6,8 +6,6 @@
 class ScreenInstructions : public ScreenWithMenuElements
 {
 public:
-	virtual void Init();
-
 	virtual void Input( const InputEventPlus &input );
 
 	virtual void MenuBack( const InputEventPlus &input );

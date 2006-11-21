@@ -123,8 +123,6 @@ void ScreenSelectDifficulty::Init()
 	m_fLockInputTime = LOCK_INPUT_SECONDS;
 	
 	this->UpdateSelectableChoices();
-
-	this->SortByDrawOrder();
 }
 
 void ScreenSelectDifficulty::BeginScreen()

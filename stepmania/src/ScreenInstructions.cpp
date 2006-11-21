@@ -4,13 +4,6 @@
 
 REGISTER_SCREEN_CLASS( ScreenInstructions );
 
-void ScreenInstructions::Init()
-{
-	ScreenWithMenuElements::Init();
-
-	this->SortByDrawOrder();
-}
-
 void ScreenInstructions::Input( const InputEventPlus &input )
 {
 	if( IsTransitioning() )

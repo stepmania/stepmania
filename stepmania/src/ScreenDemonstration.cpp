@@ -62,9 +62,6 @@ void ScreenDemonstration::Init()
 		return;
 	}
 
-
-	this->SortByDrawOrder();
-
 	ClearMessageQueue();	// remove all of the messages set in ScreenGameplay that drive "ready", "go", etc.
 
 	GAMESTATE->m_bGameplayLeadIn.Set( false );

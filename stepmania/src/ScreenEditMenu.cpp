@@ -54,8 +54,6 @@ void ScreenEditMenu::Init()
 	SET_XY_AND_ON_COMMAND( m_textNumStepsLoadedFromProfile );
 	RefreshNumStepsLoadedFromProfile();
 	this->AddChild( &m_textNumStepsLoadedFromProfile );
-
-	this->SortByDrawOrder();
 }
 
 

@@ -37,8 +37,6 @@ void ScreenBookkeeping::Init()
 	}
 
 	ChangeView( (View)0 );
-
-	this->SortByDrawOrder();
 }
 
 ScreenBookkeeping::~ScreenBookkeeping()

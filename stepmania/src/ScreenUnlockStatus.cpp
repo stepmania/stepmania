@@ -309,8 +309,6 @@ void ScreenUnlockStatus::Init()
 	this->ClearMessageQueue( SM_BeginFadingOut );	// ignore ScreenAttract's SecsToShow
 
 	this->PostScreenMessage( SM_BeginFadingOut, TIME_TO_DISPLAY );
-
-	this->SortByDrawOrder();
 }
 
 ScreenUnlockStatus::~ScreenUnlockStatus()

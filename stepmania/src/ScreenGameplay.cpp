@@ -802,8 +802,6 @@ void ScreenGameplay::Init()
 	 * positioned before we TweenOnScreen. */
 	LoadNextSong();
 
-	this->SortByDrawOrder();
-
 	m_GiveUpTimer.SetZero();
 }
 

@@ -48,16 +48,12 @@ void ScreenGameplayLesson::Init()
 		this->AddChild( aa );
 	}
 
-	this->SortByDrawOrder();
-
 	FOREACH( AutoActor, m_vPages, aa )
 	{
 		bool bIsFirst = aa == m_vPages.begin();
 		(*aa)->PlayCommand( bIsFirst ? "Show" : "Hide" );
 		(*aa)->PlayCommand( "On" );
 	}
-
-	this->SortByDrawOrder();
 
 	// Reset stage number (not relevant in lessons)
 	GAMESTATE->m_iCurrentStageIndex = 0;

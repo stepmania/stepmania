@@ -147,8 +147,6 @@ void ScreenSelectCharacter::Init()
 		for( unsigned i=0; i<MAX_CHAR_ICONS_TO_SHOW; i++ )
 			m_sprIcons[p][i].RunCommands( ICONS_ON_COMMAND(p) );
 	}
-
-	this->SortByDrawOrder();
 }
 
 

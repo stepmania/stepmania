@@ -37,8 +37,6 @@ void ScreenTitleMenu::Init()
 {
 	ScreenSelectMaster::Init();
 
-	this->SortByDrawOrder();
-
 	SOUND->PlayOnceFromAnnouncer( "title menu game name" );
 }
 

@@ -57,8 +57,6 @@ void ScreenPlayerOptions::Init()
 
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("player options intro") );
 
-	this->SortByDrawOrder();
-
 	FOREACH_PlayerNumber( p )
 		m_bRowCausesDisqualified[p].resize( m_pRows.size(), false );
 }

@@ -129,7 +129,6 @@ void ScreenSelectStyle::Init()
 	SET_XY( m_sprPremium );
 
 	// let AfterChange tween Picture and Info
-	this->SortByDrawOrder();
 }
 
 void ScreenSelectStyle::BeginScreen()

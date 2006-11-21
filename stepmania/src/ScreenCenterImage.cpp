@@ -32,8 +32,6 @@ void ScreenCenterImage::Init()
 	m_textInstructions.SetDiffuse( RageColor(0,1,0,0) );
 	m_textInstructions.SetZoom( 0.8f );
 	this->AddChild( &m_textInstructions );
-
-	this->SortByDrawOrder();
 }
 
 

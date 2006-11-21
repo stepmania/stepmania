@@ -730,8 +730,6 @@ void ScreenEvaluation::Init()
 		break;
 	}
 
-	this->SortByDrawOrder();
-
 	this->PostScreenMessage( SM_AddBonus, 1.5f );
 }
 

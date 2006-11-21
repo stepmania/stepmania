@@ -314,9 +314,6 @@ void ScreenNameEntry::Init()
 		this->AddChild( &m_textCategory[p] );
 	}
 
-
-	this->SortByDrawOrder();
-
 	m_soundStep.Load( THEME->GetPathS(m_sName,"step") );
 	m_fFakeBeat = 0;
 }

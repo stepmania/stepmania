@@ -34,8 +34,6 @@ void ScreenUnlockBrowse::Init()
 	m_banner.SetName( "Banner" );
 	this->AddChild( &m_banner );
 
-	this->SortByDrawOrder();
-
 	this->SubscribeToMessage( Message_MenuSelectionChanged );
 }
 

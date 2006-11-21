@@ -24,8 +24,6 @@ void ScreenTestLights::Init()
 	m_textInputs.SetText( "" );
 	SET_XY_AND_ON_COMMAND( m_textInputs );
 	this->AddChild( &m_textInputs );
-
-	this->SortByDrawOrder();
 }
 
 

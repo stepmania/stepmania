@@ -122,8 +122,6 @@ void ScreenSelectGroup::Init()
 
 	AfterChange();
 	m_GroupList.SetSelection(0);
-
-	this->SortByDrawOrder();
 }
 
 

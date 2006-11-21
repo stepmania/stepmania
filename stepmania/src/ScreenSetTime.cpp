@@ -76,8 +76,6 @@ void ScreenSetTime::Init()
 	m_TimeOffset = 0;
 	m_Selection = (SetTimeSelection)0;
 	ChangeSelection( 0 );
-
-	this->SortByDrawOrder();
 }
 
 void ScreenSetTime::Update( float fDelta )

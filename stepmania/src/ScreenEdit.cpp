@@ -745,9 +745,6 @@ void ScreenEdit::Init()
 	SET_XY_AND_ON_COMMAND( m_textPlayRecordHelp );
 	this->AddChild( &m_textPlayRecordHelp );
 
-	this->SortByDrawOrder();
-
-
 	m_soundAddNote.Load(		THEME->GetPathS("ScreenEdit","AddNote"), true );
 	m_soundRemoveNote.Load(		THEME->GetPathS("ScreenEdit","RemoveNote"), true );
 	m_soundChangeLine.Load(		THEME->GetPathS("ScreenEdit","line"), true );
