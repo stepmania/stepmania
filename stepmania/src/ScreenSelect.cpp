@@ -142,12 +142,7 @@ void ScreenSelect::Input( const InputEventPlus &input )
 	if( input.MenuI == MENU_BUTTON_COIN && input.type == IET_FIRST_PRESS )
 		this->UpdateSelectableChoices();
 
-	// HACK: Don't process JoinInput on the TitleMenu.  Otherwise, if the user presses start
-	// on a choice that doesn't move to a new screen, the player will be joined and the
-	// user will still be on the title menu.
-	bool bAllowJoinInput = !ALLOW_DISABLED_PLAYER_INPUT;
-
-	if( bAllowJoinInput && input.MenuI == MENU_BUTTON_START && Screen::JoinInput(input.pn) )
+	if( input.MenuI == MENU_BUTTON_START && Screen::JoinInput(input.pn) )
 	{
 		if( input.type == IET_FIRST_PRESS )
 			this->UpdateSelectableChoices();
