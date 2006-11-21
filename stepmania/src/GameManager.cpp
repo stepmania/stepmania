@@ -152,11 +152,11 @@ static Game g_Games[NUM_GAMES] =
 				DANCE_BUTTON_RIGHT,		// MENU_BUTTON_RIGHT
 				DANCE_BUTTON_UP,		// MENU_BUTTON_UP
 				DANCE_BUTTON_DOWN,		// MENU_BUTTON_DOWN
-				DANCE_BUTTON_START,		// MENU_BUTTON_START
-				DANCE_BUTTON_SELECT,		// MENU_BUTTON_SELECT
-				DANCE_BUTTON_BACK,		// MENU_BUTTON_BACK
-				DANCE_BUTTON_COIN,		// MENU_BUTTON_COIN
-				DANCE_BUTTON_OPERATOR,		// MENU_BUTTON_OPERATOR
+				GameButton_Invalid,		// MENU_BUTTON_START
+				GameButton_Invalid,		// MENU_BUTTON_SELECT
+				GameButton_Invalid,		// MENU_BUTTON_BACK
+				GameButton_Invalid,		// MENU_BUTTON_COIN
+				GameButton_Invalid,		// MENU_BUTTON_OPERATOR
 			},
 		},
 		TNS_W1,	// m_mapW1To
@@ -204,10 +204,10 @@ static Game g_Games[NUM_GAMES] =
 				PUMP_BUTTON_UPLEFT,		// MENU_BUTTON_UP
 				PUMP_BUTTON_UPRIGHT,		// MENU_BUTTON_DOWN
 				PUMP_BUTTON_CENTER,		// MENU_BUTTON_START
-				PUMP_BUTTON_SELECT,		// MENU_BUTTON_SELECT
-				PUMP_BUTTON_BACK,		// MENU_BUTTON_BACK
-				PUMP_BUTTON_COIN,		// MENU_BUTTON_COIN
-				PUMP_BUTTON_OPERATOR,		// MENU_BUTTON_OPERATOR
+				GameButton_Invalid,		// MENU_BUTTON_SELECT
+				GameButton_Invalid,		// MENU_BUTTON_BACK
+				GameButton_Invalid,		// MENU_BUTTON_COIN
+				GameButton_Invalid,		// MENU_BUTTON_OPERATOR
 			},
 		},
 		TNS_W1,	// m_mapW1To
@@ -257,10 +257,10 @@ static Game g_Games[NUM_GAMES] =
 				EZ2_BUTTON_FOOTUPLEFT,		// MENU_BUTTON_UP
 				EZ2_BUTTON_FOOTUPRIGHT,		// MENU_BUTTON_DOWN
 				EZ2_BUTTON_FOOTDOWN,		// MENU_BUTTON_START
-				EZ2_BUTTON_SELECT,		// MENU_BUTTON_SELECT
-				EZ2_BUTTON_BACK,		// MENU_BUTTON_BACK
-				EZ2_BUTTON_COIN,		// MENU_BUTTON_COIN
-				EZ2_BUTTON_OPERATOR,		// MENU_BUTTON_OPERATOR
+				GameButton_Invalid,		// MENU_BUTTON_SELECT
+				GameButton_Invalid,		// MENU_BUTTON_BACK
+				GameButton_Invalid,		// MENU_BUTTON_COIN
+				GameButton_Invalid,		// MENU_BUTTON_OPERATOR
 			},
 		},
 		TNS_W2,		// m_mapW1To
@@ -307,11 +307,11 @@ static Game g_Games[NUM_GAMES] =
 				PARA_BUTTON_RIGHT,		// MENU_BUTTON_RIGHT
 				PARA_BUTTON_UPRIGHT,		// MENU_BUTTON_UP
 				PARA_BUTTON_UPLEFT,		// MENU_BUTTON_DOWN
-				PARA_BUTTON_START,		// MENU_BUTTON_START
-				PARA_BUTTON_SELECT,		// MENU_BUTTON_SELECT
-				PARA_BUTTON_BACK,		// MENU_BUTTON_BACK
-				PARA_BUTTON_COIN,		// MENU_BUTTON_COIN
-				PARA_BUTTON_OPERATOR,		// MENU_BUTTON_OPERATOR
+				GameButton_Invalid,		// MENU_BUTTON_START
+				GameButton_Invalid,		// MENU_BUTTON_SELECT
+				GameButton_Invalid,		// MENU_BUTTON_BACK
+				GameButton_Invalid,		// MENU_BUTTON_COIN
+				GameButton_Invalid,		// MENU_BUTTON_OPERATOR
 			},
 		},
 		TNS_W1,	// m_mapW1To
@@ -361,11 +361,11 @@ static Game g_Games[NUM_GAMES] =
 				DS3DDX_BUTTON_HANDRIGHT,	// MENU_BUTTON_RIGHT
 				DS3DDX_BUTTON_HANDUP,		// MENU_BUTTON_UP
 				DS3DDX_BUTTON_HANDDOWN,		// MENU_BUTTON_DOWN
-				DS3DDX_BUTTON_START,		// MENU_BUTTON_START
-				DS3DDX_BUTTON_SELECT,		// MENU_BUTTON_SELECT
-				DS3DDX_BUTTON_BACK,		// MENU_BUTTON_BACK
-				DS3DDX_BUTTON_COIN,		// MENU_BUTTON_COIN
-				DS3DDX_BUTTON_OPERATOR,		// MENU_BUTTON_OPERATOR
+				GameButton_Invalid,		// MENU_BUTTON_START
+				GameButton_Invalid,		// MENU_BUTTON_SELECT
+				GameButton_Invalid,		// MENU_BUTTON_BACK
+				GameButton_Invalid,		// MENU_BUTTON_COIN
+				GameButton_Invalid,		// MENU_BUTTON_OPERATOR
 			},
 		},
 		TNS_W1,	// m_mapW1To
@@ -416,11 +416,11 @@ static Game g_Games[NUM_GAMES] =
 				BEAT_BUTTON_KEY3,		// MENU_BUTTON_RIGHT
 				BEAT_BUTTON_SCRATCHUP,		// MENU_BUTTON_UP
 				BEAT_BUTTON_SCRATCHDOWN,	// MENU_BUTTON_DOWN
-				BEAT_BUTTON_START,		// MENU_BUTTON_START
-				BEAT_BUTTON_SELECT,		// MENU_BUTTON_SELECT
-				BEAT_BUTTON_BACK,		// MENU_BUTTON_BACK
-				BEAT_BUTTON_COIN,		// MENU_BUTTON_COIN
-				BEAT_BUTTON_OPERATOR,		// MENU_BUTTON_OPERATOR
+				GameButton_Invalid,		// MENU_BUTTON_START
+				GameButton_Invalid,		// MENU_BUTTON_SELECT
+				GameButton_Invalid,		// MENU_BUTTON_BACK
+				GameButton_Invalid,		// MENU_BUTTON_COIN
+				GameButton_Invalid,		// MENU_BUTTON_OPERATOR
 			},
 		},
 		TNS_W1,	// m_mapW1To
@@ -466,11 +466,11 @@ static Game g_Games[NUM_GAMES] =
 				MANIAX_BUTTON_HANDUPRIGHT,	// MENU_BUTTON_RIGHT
 				MANIAX_BUTTON_HANDLRRIGHT,	// MENU_BUTTON_UP
 				MANIAX_BUTTON_HANDLRLEFT,	// MENU_BUTTON_DOWN
-				MANIAX_BUTTON_START,		// MENU_BUTTON_START
-				MANIAX_BUTTON_SELECT,		// MENU_BUTTON_SELECT
-				MANIAX_BUTTON_BACK,		// MENU_BUTTON_BACK
-				MANIAX_BUTTON_COIN,		// MENU_BUTTON_COIN
-				MANIAX_BUTTON_OPERATOR,		// MENU_BUTTON_OPERATOR
+				GameButton_Invalid,		// MENU_BUTTON_START
+				GameButton_Invalid,		// MENU_BUTTON_SELECT
+				GameButton_Invalid,		// MENU_BUTTON_BACK
+				GameButton_Invalid,		// MENU_BUTTON_COIN
+				GameButton_Invalid,		// MENU_BUTTON_OPERATOR
 			},
 		},
 		TNS_W1,	// m_mapW1To
@@ -521,11 +521,11 @@ static Game g_Games[NUM_GAMES] =
 				TECHNO_BUTTON_RIGHT,		// MENU_BUTTON_RIGHT
 				TECHNO_BUTTON_UP,		// MENU_BUTTON_UP
 				TECHNO_BUTTON_DOWN,		// MENU_BUTTON_DOWN
-				TECHNO_BUTTON_START,		// MENU_BUTTON_START
-				TECHNO_BUTTON_SELECT,		// MENU_BUTTON_SELECT
-				TECHNO_BUTTON_BACK,		// MENU_BUTTON_BACK
-				TECHNO_BUTTON_COIN,		// MENU_BUTTON_COIN
-				TECHNO_BUTTON_OPERATOR,		// MENU_BUTTON_OPERATOR
+				GameButton_Invalid,		// MENU_BUTTON_START
+				GameButton_Invalid,		// MENU_BUTTON_SELECT
+				GameButton_Invalid,		// MENU_BUTTON_BACK
+				GameButton_Invalid,		// MENU_BUTTON_COIN
+				GameButton_Invalid,		// MENU_BUTTON_OPERATOR
 			},
 		},
 		TNS_W1,	// m_mapW1To
@@ -577,10 +577,10 @@ static Game g_Games[NUM_GAMES] =
 				POPN_BUTTON_LEFT_YELLOW,	// MENU_BUTTON_UP
 				POPN_BUTTON_RIGHT_YELLOW,	// MENU_BUTTON_DOWN
 				POPN_BUTTON_RED,		// MENU_BUTTON_START
-				POPN_BUTTON_SELECT,		// MENU_BUTTON_SELECT
-				POPN_BUTTON_BACK,		// MENU_BUTTON_START
-				POPN_BUTTON_COIN,		// MENU_BUTTON_COIN
-				POPN_BUTTON_OPERATOR,		// MENU_BUTTON_OPERATOR
+				GameButton_Invalid,		// MENU_BUTTON_SELECT
+				GameButton_Invalid,		// MENU_BUTTON_START
+				GameButton_Invalid,		// MENU_BUTTON_COIN
+				GameButton_Invalid,		// MENU_BUTTON_OPERATOR
 			},
 		},
 		TNS_W2,		// m_mapW1To
@@ -630,11 +630,11 @@ static Game g_Games[NUM_GAMES] =
 				LIGHTS_BUTTON_MARQUEE_UP_RIGHT,	// MENU_BUTTON_RIGHT
 				LIGHTS_BUTTON_MARQUEE_LR_LEFT,	// MENU_BUTTON_UP
 				LIGHTS_BUTTON_MARQUEE_LR_RIGHT,	// MENU_BUTTON_DOWN
-				LIGHTS_BUTTON_START,		// MENU_BUTTON_START
-				LIGHTS_BUTTON_SELECT,		// MENU_BUTTON_SELECT
-				LIGHTS_BUTTON_BACK,		// MENU_BUTTON_BACK
-				LIGHTS_BUTTON_COIN,		// MENU_BUTTON_COIN
-				LIGHTS_BUTTON_OPERATOR,		// MENU_BUTTON_OPERATOR
+				GameButton_Invalid,		// MENU_BUTTON_START
+				GameButton_Invalid,		// MENU_BUTTON_SELECT
+				GameButton_Invalid,		// MENU_BUTTON_BACK
+				GameButton_Invalid,		// MENU_BUTTON_COIN
+				GameButton_Invalid,		// MENU_BUTTON_OPERATOR
 			},
 		},
 		TNS_W1,	// m_mapW1To
@@ -2493,39 +2493,9 @@ const Style* GameManager::GameAndStringToStyle( const Game *game, RString sStyle
 
 MenuButton GameManager::GetMenuButtonSecondaryFunction( const Game *pGame, GameButton gb ) const
 {
-	/*
-	 * Each GameButton can be used in gameplay (if any gameplay style maps to
-	 * it) and/or map to a menu button (if m_DedicatedMenuButton or m_SecondaryMenuButton
-	 * map to it).
-	 *
-	 * If a button is only used in gameplay or is only used in menus, return RString(); the 
-	 * primary description is sufficient.
-	 *
-	 * If a button is used in both gameplay and menus, return szSecondaryNames[] for
-	 * the MenuButton.
-	 */
-	vector<const Style*> aStyles;
-	this->GetStylesForGame( pGame, aStyles );
-	bool bUsedInGameplay = false;
-	for( unsigned i = 0; i < aStyles.size(); ++i )
-	{
-		const Style *pStyle = aStyles[i];
-		FOREACH_GameController(gc)
-		{
-			int iCol = pStyle->GameInputToColumn( GameInput(gc,gb) );
-			if( iCol != Column_Invalid )
-				bUsedInGameplay = true;
-		}
-	}
-
-
 	FOREACH_MenuButton(m)
-	{
-		if( !bUsedInGameplay && pGame->m_InputScheme.m_DedicatedMenuButton[m] == gb )
-			return MenuButton_Invalid;
-		else if( bUsedInGameplay && pGame->m_InputScheme.m_SecondaryMenuButton[m] == gb )
+		if( pGame->m_InputScheme.m_SecondaryMenuButton[m] == gb )
 			return m;
-	}
 
 	return MenuButton_Invalid; // only used in gameplay
 }
