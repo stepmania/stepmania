@@ -142,7 +142,7 @@ void ScreenSelect::Input( const InputEventPlus &input )
 	if( input.MenuI == MENU_BUTTON_COIN && input.type == IET_FIRST_PRESS )
 		this->UpdateSelectableChoices();
 
-	if( input.MenuI == MENU_BUTTON_START && Screen::JoinInput(input.pn) )
+	if( input.MenuI == MENU_BUTTON_START && JoinInput(input.pn) )
 	{
 		if( input.type == IET_FIRST_PRESS )
 			this->UpdateSelectableChoices();
@@ -166,7 +166,7 @@ void ScreenSelect::Input( const InputEventPlus &input )
 		LOG->Trace("entered code for index %d", i);
 		m_aCodeChoices[i].Apply( input.pn );
 	}
-	Screen::Input( input );	// default input handler
+	ScreenWithMenuElements::Input( input );	// default input handler
 }
 
 void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
@@ -238,14 +238,14 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 			GAMESTATE->PlayersFinalized();
 	}
 
-	Screen::HandleScreenMessage( SM );
+	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
 void ScreenSelect::HandleMessage( const Message &msg )
 {
 	this->UpdateSelectableChoices();
 
-	Screen::HandleMessage( msg );
+	ScreenWithMenuElements::HandleMessage( msg );
 }
 
 void ScreenSelect::MenuBack( const InputEventPlus &input )
