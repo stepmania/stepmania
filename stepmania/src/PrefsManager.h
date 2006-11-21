@@ -139,15 +139,6 @@ public:
 	Preference<bool>	m_bFailOffInBeginner;
 	Preference<bool>	m_bFailOffForFirstStageEasy;
 	Preference<bool>	m_bMercifulBeginner;	// don't subtract from percent score or grade DP, larger W5 window
-
-	// percent score (the number that is shown on the screen and saved to memory card)
-	Preference1D<int>		m_iPercentScoreWeight;
-
-	// grades are calculated based on a percentage, but might have different weights than the percent score
-	Preference1D<int>		m_iGradeWeight;
-
-	// super meter used in rave
-	Preference1D<float>	m_fSuperMeterPercentChange;
 	Preference<bool>	m_bMercifulSuperMeter;	// negative super deltas are scaled by the players life percentage
 
 	Preference<PlayerController> m_AutoPlay;

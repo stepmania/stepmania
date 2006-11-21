@@ -135,60 +135,6 @@ bool g_bAutoRestart = false;
 # define TRUE_IF_DEBUG false
 #endif
 
-void PercentScoreWeightInit( size_t /*ScoreEvent*/ i, RString &sNameOut, int &defaultValueOut )
-{
-	sNameOut = "PercentScoreWeight" + ScoreEventToString( (ScoreEvent)i );
-	switch( i )
-	{
-	default:		ASSERT(0);
-	case SE_W1:		defaultValueOut = 3;	break;
-	case SE_W2:		defaultValueOut = 2;	break;
-	case SE_W3:		defaultValueOut = 1;	break;
-	case SE_W4:		defaultValueOut = 0;	break;
-	case SE_W5:		defaultValueOut = 0;	break;
-	case SE_Miss:		defaultValueOut = 0;	break;
-	case SE_HitMine:	defaultValueOut = -2;	break;
-	case SE_Held:		defaultValueOut = 3;	break;
-	case SE_LetGo:		defaultValueOut = 0;	break;
-	}
-}
-
-void GradeWeightInit( size_t /*ScoreEvent*/ i, RString &sNameOut, int &defaultValueOut )
-{
-	sNameOut = "GradeWeight" + ScoreEventToString( (ScoreEvent)i );
-	switch( i )
-	{
-	default:		ASSERT(0);
-	case SE_W1:		defaultValueOut = 2;	break;
-	case SE_W2:		defaultValueOut = 2;	break;
-	case SE_W3:		defaultValueOut = 1;	break;
-	case SE_W4:		defaultValueOut = 0;	break;
-	case SE_W5:		defaultValueOut = -4;	break;
-	case SE_Miss:		defaultValueOut = -8;	break;
-	case SE_HitMine:	defaultValueOut = -8;	break;
-	case SE_Held:		defaultValueOut = 6;	break;
-	case SE_LetGo:		defaultValueOut = 0;	break;
-	}
-}
-
-void SuperMeterPercentChangeInit( size_t /*ScoreEvent*/ i, RString &sNameOut, float &defaultValueOut )
-{
-	sNameOut = "SuperMeterPercentChange" + ScoreEventToString( (ScoreEvent)i );
-	switch( i )
-	{
-	default:		ASSERT(0);
-	case SE_W1:		defaultValueOut = +0.05f;	break;
-	case SE_W2:		defaultValueOut = +0.04f;	break;
-	case SE_W3:		defaultValueOut = +0.02f;	break;
-	case SE_W4:		defaultValueOut = +0.00f;	break;
-	case SE_W5:		defaultValueOut = -0.00f;	break;
-	case SE_Miss:		defaultValueOut = -0.20f;	break;
-	case SE_HitMine:	defaultValueOut = -0.40f;	break;
-	case SE_Held:		defaultValueOut = +0.04f;	break;
-	case SE_LetGo:		defaultValueOut = -0.20f;	break;
-	}
-}
-
 void ValidateDisplayAspectRatio( float &val )
 {
 	if( val < 0 )
@@ -247,12 +193,6 @@ PrefsManager::PrefsManager() :
 	m_bFailOffInBeginner		( "FailOffInBeginner",		false ),
 	m_bFailOffForFirstStageEasy	( "FailOffForFirstStageEasy",	false ),
 	m_bMercifulBeginner		( "MercifulBeginner",		false ),
-
-	m_iPercentScoreWeight		( PercentScoreWeightInit,	NUM_ScoreEvent ),
-	
-	m_iGradeWeight			( GradeWeightInit,		NUM_ScoreEvent ),
-
-	m_fSuperMeterPercentChange	( SuperMeterPercentChangeInit,	NUM_ScoreEvent ),
 	m_bMercifulSuperMeter		( "MercifulSuperMeter",		true ),
 	
 	m_AutoPlay			( "AutoPlay",			PC_HUMAN ),

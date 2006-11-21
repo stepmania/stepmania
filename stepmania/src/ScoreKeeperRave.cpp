@@ -13,6 +13,27 @@
 ThemeMetric<float> ATTACK_DURATION_SECONDS	("ScoreKeeperRave","AttackDurationSeconds");
 
 
+
+static void SuperMeterPercentChangeInit( size_t /*ScoreEvent*/ i, RString &sNameOut, float &defaultValueOut )
+{
+	sNameOut = "SuperMeterPercentChange" + ScoreEventToString( (ScoreEvent)i );
+	switch( i )
+	{
+	default:		ASSERT(0);
+	case SE_W1:		defaultValueOut = +0.05f;	break;
+	case SE_W2:		defaultValueOut = +0.04f;	break;
+	case SE_W3:		defaultValueOut = +0.02f;	break;
+	case SE_W4:		defaultValueOut = +0.00f;	break;
+	case SE_W5:		defaultValueOut = -0.00f;	break;
+	case SE_Miss:		defaultValueOut = -0.20f;	break;
+	case SE_HitMine:	defaultValueOut = -0.40f;	break;
+	case SE_Held:		defaultValueOut = +0.04f;	break;
+	case SE_LetGo:		defaultValueOut = -0.20f;	break;
+	}
+}
+
+static Preference1D<float> g_fSuperMeterPercentChange( SuperMeterPercentChangeInit, NUM_ScoreEvent );
+
 ScoreKeeperRave::ScoreKeeperRave( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats ) : 
 	ScoreKeeper(pPlayerState, pPlayerStageStats)
 {
@@ -24,7 +45,7 @@ void ScoreKeeperRave::HandleTapScore( const TapNote &tn )
 	float fPercentToMove = 0;
 
 	if( score == TNS_HitMine )
-		fPercentToMove = PREFSMAN->m_fSuperMeterPercentChange[SE_HitMine];
+		fPercentToMove = g_fSuperMeterPercentChange[SE_HitMine];
 
 	AddSuperMeterDelta( fPercentToMove );
 }
@@ -43,12 +64,12 @@ void ScoreKeeperRave::HandleTapRowScore( const NoteData &nd, int iRow )
 	switch( scoreOfLastTap )
 	{
 	DEFAULT_FAIL( scoreOfLastTap );
-	case TNS_W1:	fPercentToMove = PREFSMAN->m_fSuperMeterPercentChange[SE_W1];	break;
-	case TNS_W2:	fPercentToMove = PREFSMAN->m_fSuperMeterPercentChange[SE_W2];	break;
-	case TNS_W3:	fPercentToMove = PREFSMAN->m_fSuperMeterPercentChange[SE_W3];	break;
-	case TNS_W4:	fPercentToMove = PREFSMAN->m_fSuperMeterPercentChange[SE_W4];	break;
-	case TNS_W5:	fPercentToMove = PREFSMAN->m_fSuperMeterPercentChange[SE_W5];	break;
-	case TNS_Miss:	fPercentToMove = PREFSMAN->m_fSuperMeterPercentChange[SE_Miss];	break;
+	case TNS_W1:	fPercentToMove = g_fSuperMeterPercentChange[SE_W1];	break;
+	case TNS_W2:	fPercentToMove = g_fSuperMeterPercentChange[SE_W2];	break;
+	case TNS_W3:	fPercentToMove = g_fSuperMeterPercentChange[SE_W3];	break;
+	case TNS_W4:	fPercentToMove = g_fSuperMeterPercentChange[SE_W4];	break;
+	case TNS_W5:	fPercentToMove = g_fSuperMeterPercentChange[SE_W5];	break;
+	case TNS_Miss:	fPercentToMove = g_fSuperMeterPercentChange[SE_Miss];	break;
 	}
 	AddSuperMeterDelta( fPercentToMove );
 }
@@ -59,7 +80,7 @@ void ScoreKeeperRave::HandleHoldScore( const TapNote &tn )
 	float fPercentToMove = 0;
 	switch( tapScore )
 	{
-	case TNS_HitMine:	fPercentToMove = PREFSMAN->m_fSuperMeterPercentChange[SE_HitMine];	break;
+	case TNS_HitMine:	fPercentToMove = g_fSuperMeterPercentChange[SE_HitMine];	break;
 	}
 	AddSuperMeterDelta( fPercentToMove );
 }
