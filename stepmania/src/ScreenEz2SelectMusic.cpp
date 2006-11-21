@@ -309,7 +309,7 @@ void ScreenEz2SelectMusic::Input( const InputEventPlus &input )
 		m_soundButtonPress.Play();
 	}
 	LastInputTime = RageTimer::GetTimeSinceStartFast();
-	Screen::Input( input );
+	ScreenWithMenuElements::Input( input );
 }
 
 void ScreenEz2SelectMusic::UpdateOptions(PlayerNumber pn, int nosound)
@@ -370,7 +370,7 @@ void ScreenEz2SelectMusic::UpdateOptions(PlayerNumber pn, int nosound)
 
 void ScreenEz2SelectMusic::HandleScreenMessage( const ScreenMessage SM )
 {
-	Screen::HandleScreenMessage( SM );
+	ScreenWithMenuElements::HandleScreenMessage( SM );
 
 	if( SM == SM_GoToNextScreen )
 	{
@@ -507,7 +507,7 @@ void ScreenEz2SelectMusic::Update( float fDeltaTime )
 		StartTransitioningScreen( SM_GoToNextScreen );
 	}
 
-	Screen::Update( fDeltaTime );
+	ScreenWithMenuElements::Update( fDeltaTime );
 }
 
 void ScreenEz2SelectMusic::EasierDifficulty( PlayerNumber pn )

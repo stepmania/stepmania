@@ -87,7 +87,7 @@ Desc: Animates the 1p/2p selection
 ************************************/
 void ScreenEz2SelectPlayer::Update( float fDeltaTime )
 {
-	Screen::Update( fDeltaTime );
+	ScreenWithMenuElements::Update( fDeltaTime );
 }
 
 /************************************
@@ -101,7 +101,7 @@ void ScreenEz2SelectPlayer::Input( const InputEventPlus &input )
 	if( IsTransitioning() )
 		return;
 
-	Screen::Input( input );	// default input handler
+	ScreenWithMenuElements::Input( input );	// default input handler
 }
 
 /************************************
@@ -111,7 +111,7 @@ Desc: Handles Screen Messages and changes
 ************************************/
 void ScreenEz2SelectPlayer::HandleScreenMessage( const ScreenMessage SM )
 {
-	Screen::HandleScreenMessage( SM );
+	ScreenWithMenuElements::HandleScreenMessage( SM );
 
 	if( SM == SM_MenuTimer )
 	{

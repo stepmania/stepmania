@@ -164,7 +164,7 @@ void ScreenSelectCharacter::Input( const InputEventPlus &input )
 	if( IsTransitioning() )
 		return;
 
-	Screen::Input( input );	// default input handler
+	ScreenWithMenuElements::Input( input );	// default input handler
 }
 
 void ScreenSelectCharacter::HandleScreenMessage( const ScreenMessage SM )
@@ -181,7 +181,7 @@ void ScreenSelectCharacter::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else
 	{
-		Screen::HandleScreenMessage( SM );
+		ScreenWithMenuElements::HandleScreenMessage( SM );
 	}
 }
 

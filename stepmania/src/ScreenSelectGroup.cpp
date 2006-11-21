@@ -132,7 +132,7 @@ void ScreenSelectGroup::Input( const InputEventPlus &input )
 	if( IsTransitioning() )
 		return;
 
-	Screen::Input( input );	// default input handler
+	ScreenWithMenuElements::Input( input );	// default input handler
 }
 
 void ScreenSelectGroup::HandleScreenMessage( const ScreenMessage SM )
@@ -142,7 +142,7 @@ void ScreenSelectGroup::HandleScreenMessage( const ScreenMessage SM )
 		StartTransitioningScreen( SM_GoToNextScreen );
 		return;
 	}
-	Screen::HandleScreenMessage( SM );
+	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
 void ScreenSelectGroup::AfterChange()
