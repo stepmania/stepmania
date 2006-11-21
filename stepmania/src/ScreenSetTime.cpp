@@ -3,7 +3,6 @@
 #include "ScreenManager.h"
 #include "RageLog.h"
 #include "InputMapper.h"
-#include "GameState.h"
 #include "GameSoundManager.h"
 #include "ThemeManager.h"
 #include "DateTime.h"
@@ -44,9 +43,6 @@ void ScreenSetTime::Init()
 	ScreenWithMenuElements::Init();
 
 	m_Selection = hour;
-
-	FOREACH_PlayerNumber( pn )
-		GAMESTATE->JoinPlayer( pn );
 
 	FOREACH_SetTimeSelection( s )
 	{
