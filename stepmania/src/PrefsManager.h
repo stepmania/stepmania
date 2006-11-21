@@ -158,7 +158,6 @@ public:
 	// These options have weird interactions depending on m_bEventMode, 
 	// so wrap them in GameState.
 	Preference<CoinMode>	m_CoinMode;
-	Preference<Premium>	m_Premium;
 
 	Preference<bool>	m_bDelayedCreditsReconcile;
 	Preference<bool>	m_bPickExtraStage;

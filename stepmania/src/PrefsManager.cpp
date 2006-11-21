@@ -196,7 +196,6 @@ PrefsManager::PrefsManager() :
 	m_iSongsPerPlay			( "SongsPerPlay",		3, ValidateSongsPerPlay ),
 
 	m_CoinMode			( "CoinMode",			COIN_MODE_HOME ),
-	m_Premium			( "Premium",			PREMIUM_NONE ),
 	m_bDelayedCreditsReconcile	( "DelayedCreditsReconcile",	false ),
 	m_bPickExtraStage		( "PickExtraStage",		false ),
 

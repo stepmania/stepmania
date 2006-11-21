@@ -97,6 +97,7 @@ static const ThemeMetric<Grade> GRADE_TIER_FOR_EXTRA_2 ("GameState","GradeTierFo
 
 static DynamicThemeMetric<bool> ARE_STAGE_MODS_FORCED( "GameState","AreStageModsForced" );
 
+static Preference<Premium> g_Premium( "Premium", PREMIUM_NONE );
 
 GameState::GameState() :
 	m_pCurGame(			Message_CurrentGameChanged ),
@@ -1770,7 +1771,7 @@ Premium	GameState::GetPremium() const
 	if( IsEventMode() ) 
 		return PREMIUM_NONE; 
 	else 
-		return PREFSMAN->m_Premium; 
+		return g_Premium; 
 }
 
 float GameState::GetGoalPercentComplete( PlayerNumber pn )
