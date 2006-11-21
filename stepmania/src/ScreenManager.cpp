@@ -71,7 +71,6 @@
 #include "ScreenDimensions.h"
 #include "Foreach.h"
 #include "ActorUtil.h"
-#include "GameState.h" // XXX: bad dep
 
 ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -784,20 +783,6 @@ void ScreenManager::HideSystemMessage()
 void ScreenManager::RefreshCreditsMessages()
 {
 	MESSAGEMAN->Broadcast( "RefreshCreditText" );
-
-	/* This is called when GAMESTATE->m_bSideIsJoined changes. */
-	RString joined;
-	FOREACH_HumanPlayer( pn )
-	{
-		if( joined != "" )
-			joined += ", ";
-		joined += ssprintf( "P%i", pn+1 );
-	}
-
-	if( joined == "" )
-		joined = "none";
-
-	LOG->MapLog( "JOINED", "Players joined: %s", joined.c_str() );
 }
 
 void ScreenManager::ZeroNextUpdate()

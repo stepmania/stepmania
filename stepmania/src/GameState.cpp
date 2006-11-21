@@ -45,6 +45,38 @@ GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our progr
 
 #define NAME_BLACKLIST_FILE "/Data/NamesBlacklist.txt"
 
+class GameStateMessageHandler: public MessageSubscriber
+{
+	void HandleMessage( const Message &msg )
+	{
+		if( msg.GetName() == "RefreshCreditText" )
+		{
+			RString sJoined;
+			FOREACH_HumanPlayer( pn )
+			{
+				if( sJoined != "" )
+					sJoined += ", ";
+				sJoined += ssprintf( "P%i", pn+1 );
+			}
+
+			if( sJoined == "" )
+				sJoined = "none";
+
+			LOG->MapLog( "JOINED", "Players joined: %s", sJoined.c_str() );
+		}
+	}
+};
+
+struct GameStateImpl
+{
+	GameStateMessageHandler m_Subscriber;
+	GameStateImpl::GameStateImpl()
+	{
+		m_Subscriber.SubscribeToMessage( "RefreshCreditText" );
+	}
+};
+static GameStateImpl *g_pImpl = NULL;
+
 ThemeMetric<bool> USE_NAME_BLACKLIST("GameState","UseNameBlacklist");
 
 ThemeMetric<RString> DEFAULT_SORT	("GameState","DefaultSort");
@@ -87,6 +119,8 @@ GameState::GameState() :
 	m_iEditCourseEntryIndex(	Message_EditCourseEntryIndexChanged ),
 	m_sEditLocalProfileID(		Message_EditLocalProfileIDChanged )
 {
+	g_pImpl = new GameStateImpl;
+
 	SetCurrentStyle( NULL );
 
 	m_pCurGame.Set( NULL );
@@ -140,6 +174,7 @@ GameState::~GameState()
 		SAFE_DELETE( m_pMultiPlayerState[p] );
 
 	SAFE_DELETE( m_Environment );
+	SAFE_DELETE( g_pImpl );
 }
 
 void GameState::ApplyGameCommand( const RString &sCommand, PlayerNumber pn )
