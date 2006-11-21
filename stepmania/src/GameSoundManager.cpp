@@ -591,17 +591,10 @@ void GameSoundManager::Update( float fDeltaTime )
 	NoteData &lights = g_Playing->m_Lights;
 	if( lights.GetNumTracks() > 0 )	// lights data was loaded
 	{
-		bool bCrossedABeat = false;
-		
 		const float fSongBeat = GAMESTATE->m_fLightSongBeat;
 		const int iSongRow = BeatToNoteRowNotRounded( fSongBeat );
 
 		static int iRowLastCrossed = 0;
-
-		float fBeatLast = roundf(NoteRowToBeat(iRowLastCrossed));
-		float fBeatNow = roundf(NoteRowToBeat(iSongRow));
-
-		bCrossedABeat = fBeatLast != fBeatNow;
 
 		FOREACH_CabinetLight( cl )
 		{	
