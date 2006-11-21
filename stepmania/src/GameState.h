@@ -42,6 +42,7 @@ public:
 	void ApplyGameCommand( const RString &sCommand, PlayerNumber pn=PLAYER_INVALID );
 	void BeginGame();	// called when first player joins
 	void JoinPlayer( PlayerNumber pn );
+	bool JoinInput( PlayerNumber pn );
 	void PlayersFinalized();	// called after a style is chosen, which means the number of players is finalized
 	void EndGame();	// called on ScreenGameOver, ScreenMusicScroll, ScreenCredits
 	void SaveCurrentSettingsToProfile( PlayerNumber pn ); // called at the beginning of each stage

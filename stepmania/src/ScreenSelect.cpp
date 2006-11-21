@@ -142,7 +142,7 @@ void ScreenSelect::Input( const InputEventPlus &input )
 	if( input.MenuI == MENU_BUTTON_COIN && input.type == IET_FIRST_PRESS )
 		this->UpdateSelectableChoices();
 
-	if( input.MenuI == MENU_BUTTON_START && input.type == IET_FIRST_PRESS && JoinInput(input.pn) )
+	if( input.MenuI == MENU_BUTTON_START && input.type == IET_FIRST_PRESS && GAMESTATE->JoinInput(input.pn) )
 	{
 		// HACK: Only play start sound for the 2nd player who joins.  The 
 		// start sound for the 1st player will be played by ScreenTitleMenu 

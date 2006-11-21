@@ -344,6 +344,29 @@ void GameState::JoinPlayer( PlayerNumber pn )
 		BeginGame();
 }
 
+/* Handle an input that can join a player.  Return true if the player joined. */
+bool GameState::JoinInput( PlayerNumber pn )
+{
+	if( !PlayersCanJoin() )
+		return false;
+
+	/* If this side is already in, don't re-join. */
+	if( m_bSideIsJoined[pn] )
+		return false;
+
+	/* subtract coins */
+	int iCoinsNeededToJoin = GetCoinsNeededToJoin();
+
+	if( m_iCoins < iCoinsNeededToJoin )
+		return false;	// not enough coins
+
+	m_iCoins -= iCoinsNeededToJoin;
+
+	JoinPlayer( pn );
+
+	return true;
+}
+
 int GameState::GetCoinsNeededToJoin() const
 {
 	int iCoinsToCharge = 0;
