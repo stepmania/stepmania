@@ -9,6 +9,7 @@
 #include "GameState.h"
 #include "StatsManager.h"
 #include "PlayerState.h"
+#include "MessageManager.h"
 
 const float FULL_LIFE_SECONDS = 1.5f*60;
 
@@ -76,9 +77,14 @@ void LifeMeterTime::OnLoadSong()
 
 	Course* pCourse = GAMESTATE->m_pCurCourse;
 	ASSERT( pCourse );
+
+	float fOldLife = m_fLifeTotalLostSeconds;
+
 	m_fLifeTotalGainedSeconds += pCourse->m_vEntries[GAMESTATE->GetCourseSongIndex()].fGainSeconds;
 
 	m_soundGainLife.Play();
+
+	SendLifeChangedMessage( fOldLife, TapNoteScore_Invalid, HoldNoteScore_Invalid );
 }
 
 
@@ -100,7 +106,11 @@ void LifeMeterTime::ChangeLife( TapNoteScore tns )
 	case TNS_HitMine:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_HitMine];	break;
 	}
 
+	float fOldLife = m_fLifeTotalLostSeconds;
+
 	m_fLifeTotalLostSeconds -= fMeterChange;
+
+	SendLifeChangedMessage( fOldLife, tns, HoldNoteScore_Invalid );
 }
 
 void LifeMeterTime::ChangeLife( HoldNoteScore hns, TapNoteScore tns )
@@ -116,7 +126,22 @@ void LifeMeterTime::ChangeLife( HoldNoteScore hns, TapNoteScore tns )
 	case HNS_LetGo:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_LetGo];	break;
 	}
 
+	float fOldLife = m_fLifeTotalLostSeconds;
+
 	m_fLifeTotalLostSeconds -= fMeterChange;
+
+	SendLifeChangedMessage( fOldLife, tns, hns );
+}
+
+void LifeMeterTime::SendLifeChangedMessage( float fOldLife, TapNoteScore tns, HoldNoteScore hns )
+{
+	Message msg( "LifeChanged" );
+	msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
+	msg.SetParam( "TapNoteScore", LuaReference::Create(tns) );
+	msg.SetParam( "HoldNoteScore", LuaReference::Create(hns) );
+	msg.SetParam( "OldLife", fOldLife );
+	msg.SetParam( "LifeMeter", LuaReference::CreateFromPush(*this) );
+	MESSAGEMAN->Broadcast( msg );
 }
 
 bool LifeMeterTime::IsInDanger() const

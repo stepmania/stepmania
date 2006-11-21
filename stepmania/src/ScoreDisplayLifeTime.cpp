@@ -3,15 +3,11 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "PrefsManager.h"
-#include "GameState.h"
 #include "ThemeManager.h"
 #include "PlayerState.h"
-#include "StatsManager.h"
+#include "PlayerStageStats.h"
 #include "CommonMetrics.h"
 #include "ActorUtil.h"
-#include "Course.h"
-
-static const RString GAIN_LIFE_COMMAND_NAME = "GainLife";
 
 ScoreDisplayLifeTime::ScoreDisplayLifeTime()
 {
@@ -55,10 +51,6 @@ void ScoreDisplayLifeTime::Init( const PlayerState* pPlayerState, const PlayerSt
 		if( !m_textDeltaSeconds.HasCommand( sCommand ) )
 			ActorUtil::LoadCommand( m_textDeltaSeconds, sType, sCommand );
 	}
-	{
-		if( !m_textDeltaSeconds.HasCommand( GAIN_LIFE_COMMAND_NAME ) )
-			ActorUtil::LoadCommand( m_textDeltaSeconds, sType, GAIN_LIFE_COMMAND_NAME );
-	}
 }
 
 void ScoreDisplayLifeTime::Update( float fDelta )
@@ -73,63 +65,15 @@ void ScoreDisplayLifeTime::Update( float fDelta )
 
 void ScoreDisplayLifeTime::OnLoadSong()
 {
-	if( STATSMAN->m_CurStageStats.m_player[m_pPlayerState->m_PlayerNumber].m_bFailed )
-		return;
-
-	Course* pCourse = GAMESTATE->m_pCurCourse;
-	ASSERT( pCourse );
-	const CourseEntry *pEntry = &pCourse->m_vEntries[GAMESTATE->GetCourseSongIndex()];
-
-	PlayGainLoss( GAIN_LIFE_COMMAND_NAME, pEntry->fGainSeconds );
 }
 
 void ScoreDisplayLifeTime::OnJudgment( TapNoteScore tns )
 {
-	if( STATSMAN->m_CurStageStats.m_player[m_pPlayerState->m_PlayerNumber].m_bFailed )
-		return;
-
-	float fMeterChange = 0;
-	switch( tns )
-	{
-	case TNS_W1:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_W1];		break;
-	case TNS_W2:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_W2];		break;
-	case TNS_W3:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_W3];		break;
-	case TNS_W4:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_W4];		break;
-	case TNS_W5:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_W5];		break;
-	case TNS_Miss:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_Miss];	break;
-	case TNS_HitMine:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_HitMine];	break;
-	default:	ASSERT(0);
-	}
-
-	PlayGainLoss( TapNoteScoreToString(tns), fMeterChange );
 }
 
 void ScoreDisplayLifeTime::OnJudgment( HoldNoteScore hns, TapNoteScore tns )
 {
-	if( STATSMAN->m_CurStageStats.m_player[m_pPlayerState->m_PlayerNumber].m_bFailed )
-		return;
-
-	float fMeterChange = 0;
-	switch( hns )
-	{
-	case HNS_Held:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_Held];	break;
-	case HNS_LetGo:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_LetGo];	break;
-	default:	ASSERT(0);
-	}
-
-	PlayGainLoss( HoldNoteScoreToString(hns), fMeterChange );
 }
-
-void ScoreDisplayLifeTime::PlayGainLoss( const RString &sCommand, float fDeltaLifeSecs )
-{
-	if( fDeltaLifeSecs == 0 )
-		return;	// don't animate if no change
-	RString s = ssprintf( "%+1.1fs", fDeltaLifeSecs);
-	m_textDeltaSeconds.SetText( s );
-	m_textDeltaSeconds.FinishTweening();
-	m_textDeltaSeconds.PlayCommand( sCommand );
-}
-
 
 /*
  * (c) 2001-2004 Chris Danford
