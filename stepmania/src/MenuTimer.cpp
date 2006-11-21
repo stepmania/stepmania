@@ -2,7 +2,6 @@
 #include "MenuTimer.h"
 #include "RageUtil.h"
 #include "ScreenManager.h"
-#include "AnnouncerManager.h"
 #include "ThemeManager.h"
 #include "Font.h"
 #include "GameSoundManager.h"
@@ -80,7 +79,7 @@ void MenuTimer::Update( float fDeltaTime )
 		return;
 
 	if( fOldSecondsLeft > 5.5  &&  fNewSecondsLeft < 5.5 )	// transition to below 5.5
-		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("hurry up") );
+		SOUND->PlayOnceFromAnnouncer( "hurry up" );
 
 
 	int iCrossed = (int)floorf(fOldSecondsLeft);

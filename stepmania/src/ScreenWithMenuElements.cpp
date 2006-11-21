@@ -9,7 +9,6 @@
 #include "PrefsManager.h"
 #include "ScreenManager.h"
 #include "GameSoundManager.h"
-#include "AnnouncerManager.h"
 #include "MemoryCardDisplay.h"
 
 #define TIMER_STEALTH				THEME->GetMetricB(m_sName,"TimerStealth")
@@ -150,7 +149,7 @@ void ScreenWithMenuElements::BeginScreen()
 	this->SortByDrawOrder();
 	m_In.StartTransitioning( SM_DoneFadingIn );
 
-	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sName+" intro") );
+	SOUND->PlayOnceFromAnnouncer( m_sName+" intro" );
 	StartPlayingMusic();
 
 	/* Evaluate FirstUpdateCommand. */
