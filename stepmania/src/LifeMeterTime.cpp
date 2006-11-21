@@ -4,7 +4,7 @@
 #include "Steps.h"
 #include "ActorUtil.h"
 #include "Course.h"
-#include "PrefsManager.h"
+#include "Preference.h"
 #include "StreamDisplay.h"
 #include "GameState.h"
 #include "StatsManager.h"
@@ -19,6 +19,27 @@ static ThemeMetric<float> DANGER_THRESHOLD	("LifeMeterTime","DangerThreshold");
 static ThemeMetric<int> NUM_CHAMBERS		("LifeMeterTime","NumChambers");
 static ThemeMetric<int> NUM_STRIPS			("LifeMeterTime","NumStrips");
 static ThemeMetric<float> INITIAL_VALUE		("LifeMeterTime","InitialValue");
+
+static void TimeMeterSecondsChangeInit( size_t /*ScoreEvent*/ i, RString &sNameOut, float &defaultValueOut )
+{
+	sNameOut = "TimeMeterSecondsChange" + ScoreEventToString( (ScoreEvent)i );
+	switch( i )
+	{
+	default:		ASSERT(0);
+	case SE_W1:		defaultValueOut = +0.1f;	break;
+	case SE_W2:		defaultValueOut = +0.0f;	break;
+	case SE_W3:		defaultValueOut = -0.5f;	break;
+	case SE_W4:		defaultValueOut = -1.0f;	break;
+	case SE_W5:		defaultValueOut = -2.0f;	break;
+	case SE_Miss:		defaultValueOut = -4.0f;	break;
+	case SE_HitMine:	defaultValueOut = -2.0f;	break;
+	case SE_Held:		defaultValueOut = -0.0f;	break;
+	case SE_LetGo:		defaultValueOut = -4.0f;	break;
+	}
+}
+
+static Preference1D<float>	g_fTimeMeterSecondsChange( TimeMeterSecondsChangeInit, NUM_ScoreEvent );
+
 
 LifeMeterTime::LifeMeterTime()
 {
@@ -97,13 +118,13 @@ void LifeMeterTime::ChangeLife( TapNoteScore tns )
 	switch( tns )
 	{
 	default:	ASSERT(0);
-	case TNS_W1:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_W1];	break;
-	case TNS_W2:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_W2];	break;
-	case TNS_W3:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_W3];	break;
-	case TNS_W4:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_W4];	break;
-	case TNS_W5:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_W5];	break;
-	case TNS_Miss:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_Miss];	break;
-	case TNS_HitMine:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_HitMine];	break;
+	case TNS_W1:		fMeterChange = g_fTimeMeterSecondsChange[SE_W1];	break;
+	case TNS_W2:		fMeterChange = g_fTimeMeterSecondsChange[SE_W2];	break;
+	case TNS_W3:		fMeterChange = g_fTimeMeterSecondsChange[SE_W3];	break;
+	case TNS_W4:		fMeterChange = g_fTimeMeterSecondsChange[SE_W4];	break;
+	case TNS_W5:		fMeterChange = g_fTimeMeterSecondsChange[SE_W5];	break;
+	case TNS_Miss:		fMeterChange = g_fTimeMeterSecondsChange[SE_Miss];	break;
+	case TNS_HitMine:	fMeterChange = g_fTimeMeterSecondsChange[SE_HitMine];	break;
 	}
 
 	float fOldLife = m_fLifeTotalLostSeconds;
@@ -122,8 +143,8 @@ void LifeMeterTime::ChangeLife( HoldNoteScore hns, TapNoteScore tns )
 	switch( hns )
 	{
 	default:	ASSERT(0);
-	case HNS_Held:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_Held];	break;
-	case HNS_LetGo:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_LetGo];	break;
+	case HNS_Held:	fMeterChange = g_fTimeMeterSecondsChange[SE_Held];	break;
+	case HNS_LetGo:	fMeterChange = g_fTimeMeterSecondsChange[SE_LetGo];	break;
 	}
 
 	float fOldLife = m_fLifeTotalLostSeconds;

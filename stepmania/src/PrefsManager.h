@@ -150,9 +150,6 @@ public:
 	Preference1D<float>	m_fSuperMeterPercentChange;
 	Preference<bool>	m_bMercifulSuperMeter;	// negative super deltas are scaled by the players life percentage
 
-	// time meter used in survival
-	Preference1D<float>	m_fTimeMeterSecondsChange;
-
 	Preference<PlayerController> m_AutoPlay;
 	Preference<bool>	m_bDelayedBack;
 	Preference<bool>	m_bShowInstructions;

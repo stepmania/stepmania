@@ -189,25 +189,6 @@ void SuperMeterPercentChangeInit( size_t /*ScoreEvent*/ i, RString &sNameOut, fl
 	}
 }
 
-void TimeMeterSecondsChangeInit( size_t /*ScoreEvent*/ i, RString &sNameOut, float &defaultValueOut )
-{
-	sNameOut = "TimeMeterSecondsChange" + ScoreEventToString( (ScoreEvent)i );
-	switch( i )
-	{
-	default:		ASSERT(0);
-	case SE_W1:		defaultValueOut = +0.1f;	break;
-	case SE_W2:		defaultValueOut = +0.0f;	break;
-	case SE_W3:		defaultValueOut = -0.5f;	break;
-	case SE_W4:		defaultValueOut = -1.0f;	break;
-	case SE_W5:		defaultValueOut = -2.0f;	break;
-	case SE_Miss:		defaultValueOut = -4.0f;	break;
-	case SE_HitMine:	defaultValueOut = -2.0f;	break;
-	case SE_Held:		defaultValueOut = -0.0f;	break;
-	case SE_LetGo:		defaultValueOut = -4.0f;	break;
-	}
-}
-
-
 void ValidateDisplayAspectRatio( float &val )
 {
 	if( val < 0 )
@@ -274,8 +255,6 @@ PrefsManager::PrefsManager() :
 	m_fSuperMeterPercentChange	( SuperMeterPercentChangeInit,	NUM_ScoreEvent ),
 	m_bMercifulSuperMeter		( "MercifulSuperMeter",		true ),
 	
-	m_fTimeMeterSecondsChange	( TimeMeterSecondsChangeInit,	NUM_ScoreEvent ),
-
 	m_AutoPlay			( "AutoPlay",			PC_HUMAN ),
 	m_bDelayedBack			( "DelayedBack",		true ),
 	m_bShowInstructions		( "ShowInstructions",		true ),
