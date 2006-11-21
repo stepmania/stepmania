@@ -4,6 +4,7 @@
 #define GAMEDEF_H
 
 #include "InputMapper.h"
+#include "GameConstantsAndTypes.h"
 
 struct lua_State;
 
