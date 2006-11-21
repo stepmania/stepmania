@@ -3,10 +3,8 @@
 #include "ScreenManager.h"
 #include "RageLog.h"
 #include "InputMapper.h"
-#include "GameState.h"
 #include "ThemeManager.h"
 #include "ScreenDimensions.h"
-#include "GameManager.h"
 #include "PrefsManager.h"
 #include "RageInput.h"
 #include "InputEventPlus.h"
@@ -61,7 +59,7 @@ class InputList: public BitmapText
 
 				if( !PREFSMAN->m_bOnlyDedicatedMenuButtons )
 				{
-					MenuButton mb = GAMEMAN->GetMenuButtonSecondaryFunction( GAMESTATE->GetCurrentGame(), gi.button );
+					MenuButton mb = INPUTMAPPER->GetInputScheme()->GetMenuButtonSecondaryFunction( gi.button );
 					if( mb != MenuButton_Invalid )
 						sTemp += ssprintf( " - (%s %s)", MenuButtonToLocalizedString(mb).c_str(), SECONDARY.GetValue().c_str() );
 				}

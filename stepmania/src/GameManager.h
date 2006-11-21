@@ -37,7 +37,6 @@ public:
 	static const Game* StringToGameType( RString sGameType );
 	const Style* GameAndStringToStyle( const Game* pGame, RString sStyle );
 	static RString StyleToLocalizedString( const Style* s );
-	MenuButton GetMenuButtonSecondaryFunction( const Game *pGame, GameButton gb ) const;
 
 	// Lua
 	void PushSelf( lua_State *L );

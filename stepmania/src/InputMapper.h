@@ -31,6 +31,7 @@ public:
 	GameButton ButtonNameToIndex( const RString &sButtonName ) const;
 	MenuButton GameInputToMenuButton( GameInput GameI ) const;
 	void MenuButtonToGameInputs( MenuButton MenuI, PlayerNumber pn, GameInput GameIout[4] ) const;
+	MenuButton GetMenuButtonSecondaryFunction( GameButton gb ) const;
 };
 #define FOREACH_GameButtonInScheme( s, var )	for( GameButton var=(GameButton)0; var<s->m_iButtonsPerController; enum_add<GameButton>( var, +1 ) )
 

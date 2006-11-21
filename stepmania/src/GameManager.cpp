@@ -2490,17 +2490,6 @@ const Style* GameManager::GameAndStringToStyle( const Game *game, RString sStyle
 	return NULL;
 }
 
-
-MenuButton GameManager::GetMenuButtonSecondaryFunction( const Game *pGame, GameButton gb ) const
-{
-	FOREACH_MenuButton(m)
-		if( pGame->m_InputScheme.m_SecondaryMenuButton[m] == gb )
-			return m;
-
-	return MenuButton_Invalid; // only used in gameplay
-}
-
-
 // lua start
 #include "LuaBinding.h"
 

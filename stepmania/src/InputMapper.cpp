@@ -977,6 +977,15 @@ void InputScheme::MenuButtonToGameInputs( MenuButton MenuI, PlayerNumber pn, Gam
 	}
 }
 
+MenuButton InputScheme::GetMenuButtonSecondaryFunction( GameButton gb ) const
+{
+	FOREACH_MenuButton(mb)
+		if( m_SecondaryMenuButton[mb] == gb )
+			return mb;
+
+	return MenuButton_Invalid;
+}
+
 /*
  * (c) 2001-2003 Chris Danford
  * All rights reserved.

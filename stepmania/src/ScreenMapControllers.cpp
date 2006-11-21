@@ -4,8 +4,6 @@
 #include "RageLog.h"
 #include "RageInput.h"
 #include "InputMapper.h"
-#include "GameManager.h"
-#include "GameState.h"
 #include "ThemeManager.h"
 #include "ScreenDimensions.h"
 #include "InputEventPlus.h"
@@ -104,7 +102,7 @@ void ScreenMapControllers::Init()
 			BitmapText *pSecondary = new BitmapText;
 			pSecondary->SetName( "Secondary" );
 			pSecondary->LoadFromFont( THEME->GetPathF("Common","title") );
-			MenuButton mb = GAMEMAN->GetMenuButtonSecondaryFunction( GAMESTATE->GetCurrentGame(), pKey->m_GameButton );
+			MenuButton mb = INPUTMAPPER->GetInputScheme()->GetMenuButtonSecondaryFunction( pKey->m_GameButton );
 			RString sText;
 			if( mb != MenuButton_Invalid )
 				sText = MenuButtonToLocalizedString( mb );
