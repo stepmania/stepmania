@@ -3,7 +3,6 @@
 #include "ScreenManager.h"
 #include "RageLog.h"
 #include "InputMapper.h"
-#include "GameSoundManager.h"
 #include "ThemeManager.h"
 #include "DateTime.h"
 #include "EnumHelper.h"
@@ -69,6 +68,9 @@ void ScreenSetTime::Init()
 		value.SetDiffuse( RageColor(1,1,1,1) );
 	}
 
+	m_soundChangeSelection.Load( THEME->GetPathS("ScreenSetTime","ChangeSelection") );
+	m_soundChangeValue.Load( THEME->GetPathS("ScreenSetTime","ChangeValue") );
+
 	m_TimeOffset = 0;
 	m_Selection = (SetTimeSelection)0;
 	ChangeSelection( 0 );
@@ -133,7 +135,7 @@ void ScreenSetTime::ChangeValue( int iDirection )
 
 	m_TimeOffset = iAdjusted - iNow;
 
-	SOUND->PlayOnce( THEME->GetPathS("ScreenSetTime","ChangeValue") );
+	m_soundChangeValue.Play();
 }
 
 void ScreenSetTime::ChangeSelection( int iDirection )
@@ -152,7 +154,7 @@ void ScreenSetTime::ChangeSelection( int iDirection )
 		RageColor(1,1,1,1) );
 
 	if( iDirection != 0 )
-		SOUND->PlayOnce( THEME->GetPathS("ScreenSetTime","ChangeSelection") );
+		m_soundChangeSelection.Play();
 }
 
 void ScreenSetTime::MenuUp( const InputEventPlus &input )
@@ -209,7 +211,7 @@ void ScreenSetTime::MenuStart( const InputEventPlus &input )
 			value.SetDiffuse( RageColor(1,1,1,0) );
 		}
 
-		SOUND->PlayOnce( THEME->GetPathS("Common","start") );
+		SCREENMAN->PlayStartSound();
 		StartTransitioningScreen( SM_GoToNextScreen );
 	}
 	else

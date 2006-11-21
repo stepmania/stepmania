@@ -3,6 +3,7 @@
 
 #include "ScreenWithMenuElements.h"
 #include "BitmapText.h"
+#include "RageSound.h"
 
 enum SetTimeSelection
 { 
@@ -38,6 +39,8 @@ private:
 	void ChangeSelection( int iDirection );
 	void ChangeValue( int iDirection );
 
+	RageSound	m_soundChangeValue;
+	RageSound	m_soundChangeSelection;
 	BitmapText	m_textTitle[NUM_SetTimeSelection];
 	BitmapText	m_textValue[NUM_SetTimeSelection];
 	BitmapText	m_textDayOfWeek;
