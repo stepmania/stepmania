@@ -100,8 +100,8 @@ static void MoveMap( int &sel, IPreference &opt, bool ToSel, const T *mapping, u
 template <class T>
 static void MoveMap( int &sel, const ConfOption *pConfOption, bool ToSel, const T *mapping, unsigned cnt )
 {
-	IPreference *pPref = IPreference::GetPreferenceByName( pConfOption->name );
-	ASSERT_M( pPref != NULL, pConfOption->name );
+	IPreference *pPref = IPreference::GetPreferenceByName( pConfOption->m_sPrefName );
+	ASSERT_M( pPref != NULL, pConfOption->m_sPrefName );
 
 	MoveMap( sel, *pPref, ToSel, mapping, cnt );
 }
@@ -109,8 +109,8 @@ static void MoveMap( int &sel, const ConfOption *pConfOption, bool ToSel, const 
 /* "iSel" is the selection in the menu. */
 static void MovePref( int &iSel, bool bToSel, const ConfOption *pConfOption )
 {
-	IPreference *pPref = IPreference::GetPreferenceByName( pConfOption->name );
-	ASSERT_M( pPref != NULL, pConfOption->name );
+	IPreference *pPref = IPreference::GetPreferenceByName( pConfOption->m_sPrefName );
+	ASSERT_M( pPref != NULL, pConfOption->m_sPrefName );
 
 	if( bToSel )
 	{
@@ -247,8 +247,7 @@ static void Theme( int &sel, bool ToSel, const ConfOption *pConfOption )
 	else
 	{
 		const RString sNewTheme = vsThemeNames[sel];
-		if( PREFSMAN->m_sTheme.Get() != sNewTheme )
-			PREFSMAN->m_sTheme.Set( sNewTheme ); // OPT_APPLY_THEME will load the theme
+		PREFSMAN->m_sTheme.Set( sNewTheme ); // OPT_APPLY_THEME will load the theme
 	}
 }
 
@@ -328,7 +327,7 @@ static void BGBrightnessNoZero( int &sel, bool ToSel, const ConfOption *pConfOpt
 static void BGBrightnessOrStatic( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const float mapping[] = { 0.5f,0.25f,0.5f,0.75f };
-	MoveMap( sel, PREFSMAN->m_fBGBrightness, ToSel, mapping, ARRAYLEN(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 
 	if( ToSel && !PREFSMAN->m_bSongBackgrounds )
 		sel = 0;
@@ -365,7 +364,7 @@ static void CoinModeM( int &sel, bool ToSel, const ConfOption *pConfOption )
 static void CoinModeNoHome( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const CoinMode mapping[] = { COIN_MODE_PAY, COIN_MODE_FREE };
-	MoveMap( sel, PREFSMAN->m_CoinMode, ToSel, mapping, ARRAYLEN(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
 static void CoinsPerCredit( int &sel, bool ToSel, const ConfOption *pConfOption )
@@ -389,7 +388,7 @@ static void SongsPerPlay( int &sel, bool ToSel, const ConfOption *pConfOption )
 static void SongsPerPlayOrEventMode( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 1,2,3,4,5,6 };
-	MoveMap( sel, PREFSMAN->m_iSongsPerPlay, ToSel, mapping, ARRAYLEN(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 
 	if( ToSel && PREFSMAN->m_bEventMode )
 		sel = 5;
@@ -408,7 +407,7 @@ static void TimingWindowScale( int &sel, bool ToSel, const ConfOption *pConfOpti
 static void LifeDifficulty( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const float mapping[] = { 1.60f,1.40f,1.20f,1.00f,0.80f,0.60f,0.40f };
-	MoveMap( sel, PREFSMAN->m_fLifeDifficultyScale, ToSel, mapping, ARRAYLEN(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
 static int GetLifeDifficulty()
@@ -545,20 +544,14 @@ static void DisplayAspectRatio( int &sel, bool ToSel, const ConfOption *pConfOpt
  * or 16:10. */
 static void WideScreen16_10( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	IPreference *pPref = IPreference::GetPreferenceByName( "DisplayAspectRatio" );
-	ASSERT_M( pPref != NULL, pConfOption->name );
-
 	const float mapping[] = { 4/3.0f, 16/10.0f };
-	MoveMap( sel, *pPref, ToSel, mapping, ARRAYLEN(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
 static void WideScreen16_9( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	IPreference *pPref = IPreference::GetPreferenceByName( "DisplayAspectRatio" );
-	ASSERT_M( pPref != NULL, pConfOption->name );
-
 	const float mapping[] = { 4/3.0f, 16/9.0f };
-	MoveMap( sel, *pPref, ToSel, mapping, ARRAYLEN(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
 /* Sound options */
@@ -617,7 +610,10 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "RandomBackgroundMode",	MovePref,		"Off","Animations","Random Movies" ) );
 	ADD( ConfOption( "BGBrightness",		BGBrightness,		"|0%","|10%","|20%","|30%","|40%","|50%","|60%","|70%","|80%","|90%","|100%" ) );
 	ADD( ConfOption( "BGBrightnessNoZero",		BGBrightnessNoZero,	"|10%","|20%","|30%","|40%","|50%","|60%","|70%","|80%","|90%","|100%" ) );
+	g_ConfOptions.back().m_sPrefName = "BGBrightness";
 	ADD( ConfOption( "BGBrightnessOrStatic",	BGBrightnessOrStatic,	"Disabled","25% Bright","50% Bright","75% Bright" ) );
+	g_ConfOptions.back().m_sPrefName = "BGBrightness";
+
 	ADD( ConfOption( "ShowDanger",			MovePref,		"Hide","Show" ) );
 	ADD( ConfOption( "ShowDancingCharacters",	MovePref,		"Default to Off","Default to Random","Select" ) );
 	ADD( ConfOption( "ShowBeginnerHelper",		MovePref,		"Off","On" ) );
@@ -644,12 +640,17 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "MenuTimer",			MovePref,		"Off","On" ) );
 	ADD( ConfOption( "CoinMode",			CoinModeM,		"Home","Pay","Free Play" ) );
 	ADD( ConfOption( "CoinModeNoHome",		CoinModeNoHome,		"Pay","Free Play" ) );
+	g_ConfOptions.back().m_sPrefName = "CoinMode";
+
 	ADD( ConfOption( "SongsPerPlay",		SongsPerPlay,		"|1","|2","|3","|4","|5" ) );
 	ADD( ConfOption( "SongsPerPlayOrEvent",		SongsPerPlayOrEventMode,"|1","|2","|3","|4","|5","Event" ) );
+	g_ConfOptions.back().m_sPrefName = "SongsPerPlay";
+
 	ADD( ConfOption( "EventMode",			MovePref,		"Off","On" ) );
 	ADD( ConfOption( "ScoringType",			MovePref,		"New","Old" ) );
 	ADD( ConfOption( "TimingWindowScale",		TimingWindowScale,	"|1","|2","|3","|4","|5","|6","|7","|8","Justice" ) );
 	ADD( ConfOption( "LifeDifficulty",		LifeDifficulty,		"|1","|2","|3","|4","|5","|6","|7" ) );
+	g_ConfOptions.back().m_sPrefName = "LifeDifficultyScale";
 	ADD( ConfOption( "ProgressiveLifebar",		MovePref,		"Off","|1","|2","|3","|4","|5","|6","|7","|8") );
 	ADD( ConfOption( "ProgressiveStageLifebar",	MovePref,		"Off","|1","|2","|3","|4","|5","|6","|7","|8","Insanity") );
 	ADD( ConfOption( "ProgressiveNonstopLifebar",	MovePref,		"Off","|1","|2","|3","|4","|5","|6","|7","|8","Insanity") );
@@ -667,8 +668,10 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "DisplayAspectRatio",		DisplayAspectRatio,	"|3:4","|1:1","|4:3","|16:10","|16:9","|8:3" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_ASPECT_RATIO;
 	ADD( ConfOption( "WideScreen16_10",		WideScreen16_10,	"Off", "On" ) );
+	g_ConfOptions.back().m_sPrefName = "DisplayAspectRatio";
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_ASPECT_RATIO;
 	ADD( ConfOption( "WideScreen16_9",		WideScreen16_9,		"Off", "On" ) );
+	g_ConfOptions.back().m_sPrefName = "DisplayAspectRatio";
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_ASPECT_RATIO;
 	ADD( ConfOption( "DisplayColorDepth",		DisplayColorDepth,	"16bit","32bit" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
@@ -690,7 +693,6 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "ShowBanners",			MovePref,		"Off","On" ) );
 
 	/* Sound options */
-	ADD( ConfOption( "SoundResampleQuality",	MovePref,		"Fast","Normal","High Quality" ) );
 	ADD( ConfOption( "AttractSoundFrequency",	MovePref,		"Never","Always","2 Times","3 Times","4 Times","5 Times" ) );
 	ADD( ConfOption( "SoundVolume",			SoundVolume,		"Silent","|10%","|20%","|30%","|40%","|50%","|60%","|70%","|80%","|90%","|100%" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_SOUND;

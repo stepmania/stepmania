@@ -16,6 +16,10 @@ struct ConfOption
 
 	/* Name of this option. */
 	RString name;
+
+	/* Name of the preference this option affects. */
+	RString m_sPrefName;
+
 	typedef void (*MoveData_t)( int &sel, bool ToSel, const ConfOption *pConfOption );
 	MoveData_t MoveData;
 	int m_iEffects;
@@ -37,6 +41,7 @@ struct ConfOption
 		const char *c0=NULL, const char *c1=NULL, const char *c2=NULL, const char *c3=NULL, const char *c4=NULL, const char *c5=NULL, const char *c6=NULL, const char *c7=NULL, const char *c8=NULL, const char *c9=NULL, const char *c10=NULL, const char *c11=NULL, const char *c12=NULL, const char *c13=NULL, const char *c14=NULL, const char *c15=NULL, const char *c16=NULL, const char *c17=NULL, const char *c18=NULL, const char *c19=NULL )
 	{
 		name = n;
+		m_sPrefName = name; // copy from name (not n), to allow refcounting
 		MoveData = m;
 		MakeOptionsListCB = NULL;
 		m_iEffects = 0;
