@@ -575,7 +575,9 @@ void GameSoundManager::Update( float fDeltaTime )
 
 		for( int iBeat = iBeatNow+1; iBeat<=iRowNow; ++iBeat )
 		{
-			MESSAGEMAN->Broadcast( ssprintf("CrossedBeat%d", iBeat) );
+			Message msg("CrossedBeat");
+			msg.SetParam( "Beat", iBeat );
+			MESSAGEMAN->Broadcast( msg );
 		}
 
 		iBeatLastCrossed = iBeatNow;
