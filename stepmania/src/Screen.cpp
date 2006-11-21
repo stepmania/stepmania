@@ -1,6 +1,5 @@
 #include "global.h"
 #include "Screen.h"
-#include "GameState.h"
 #include "PrefsManager.h"
 #include "RageSound.h"
 #include "RageLog.h"
@@ -189,16 +188,7 @@ void Screen::Input( const InputEventPlus &input )
 
 void Screen::HandleScreenMessage( const ScreenMessage SM )
 {
-	if( SM == SM_MenuTimer )
-	{
-		FOREACH_HumanPlayer(p)
-		{
-			InputEventPlus iep;
-			iep.pn = p;
-			MenuStart( iep );
-		}
-	}
-	else if( SM == SM_GoToNextScreen || SM == SM_GoToPrevScreen )
+	if( SM == SM_GoToNextScreen || SM == SM_GoToPrevScreen )
 	{
 		if( SCREENMAN->IsStackedScreen(this) )
 			SCREENMAN->PopTopScreen( m_smSendOnPop );

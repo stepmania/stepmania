@@ -20,6 +20,7 @@ public:
 	virtual void BeginScreen();
 	virtual ~ScreenWithMenuElements();
 
+	virtual void HandleScreenMessage( const ScreenMessage SM );
 	void Update( float fDeltaTime );
 	void StartTransitioningScreen( ScreenMessage smSendWhenDone );
 	virtual void Cancel( ScreenMessage smSendWhenDone );

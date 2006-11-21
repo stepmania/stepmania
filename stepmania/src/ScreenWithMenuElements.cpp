@@ -10,6 +10,7 @@
 #include "ScreenManager.h"
 #include "GameSoundManager.h"
 #include "MemoryCardDisplay.h"
+#include "InputEventPlus.h"
 
 #define TIMER_STEALTH				THEME->GetMetricB(m_sName,"TimerStealth")
 #define STYLE_ICON				THEME->GetMetricB(m_sName,"StyleIcon")
@@ -154,6 +155,21 @@ void ScreenWithMenuElements::BeginScreen()
 
 	/* Evaluate FirstUpdateCommand. */
 	this->PlayCommand( "FirstUpdate" );
+}
+
+void ScreenWithMenuElements::HandleScreenMessage( const ScreenMessage SM )
+{
+	if( SM == SM_MenuTimer )
+	{
+		FOREACH_HumanPlayer(p)
+		{
+			InputEventPlus iep;
+			iep.pn = p;
+			MenuStart( iep );
+		}
+	}
+
+	Screen::HandleScreenMessage( SM );
 }
 
 void ScreenWithMenuElements::TweenOnScreen()
