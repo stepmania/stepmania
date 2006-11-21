@@ -963,12 +963,16 @@ void InputScheme::MenuButtonToGameInputs( MenuButton MenuI, PlayerNumber pn, Gam
 	GameButton button[2] = { m_DedicatedMenuButton[MenuI], m_SecondaryMenuButton[MenuI] };
 	int iNumButtonsUsing = PREFSMAN->m_bOnlyDedicatedMenuButtons ? 1 : 2;
 
+	int iOut = 0;
 	for( size_t i=0; i<controller.size(); i++ )
 	{
 		for( int j=0; j<iNumButtonsUsing; j++ )
 		{
-			GameIout[i*2+j].controller = controller[i];
-			GameIout[i*2+j].button = button[j];
+			if( button[j] == GameButton_Invalid )
+				continue;
+			GameIout[iOut].controller = controller[i];
+			GameIout[iOut].button = button[j];
+			++iOut;
 		}
 	}
 }
