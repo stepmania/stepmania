@@ -142,10 +142,9 @@ void ScreenSelect::Input( const InputEventPlus &input )
 	if( input.MenuI == MENU_BUTTON_COIN && input.type == IET_FIRST_PRESS )
 		this->UpdateSelectableChoices();
 
-	if( input.MenuI == MENU_BUTTON_START && JoinInput(input.pn) )
+	if( input.type == IET_FIRST_PRESS && input.MenuI == MENU_BUTTON_START && JoinInput(input.pn) )
 	{
-		if( input.type == IET_FIRST_PRESS )
-			this->UpdateSelectableChoices();
+		this->UpdateSelectableChoices();
 	
 		if( !ALLOW_DISABLED_PLAYER_INPUT )
 			return;	// don't let the screen handle the MENU_START press
