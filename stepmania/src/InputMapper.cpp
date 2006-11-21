@@ -55,13 +55,13 @@ void InputMapper::AddDefaultMappingsForCurrentGameIfUnmapped()
 
 	FOREACH_GameController( c )
 	{
-		for( int b=0; b<m_pInputScheme->m_iButtonsPerController; b++ )
+		FOREACH_GameButtonInScheme( m_pInputScheme, b )
 		{
 			DeviceButton key = m_pInputScheme->m_GameButtonInfo[b].m_iDefaultKeyboardKey[c];
 			if( key == NO_DEFAULT_KEY )
 				continue;
 			DeviceInput DeviceI( DEVICE_KEYBOARD, key );
-			GameInput GameI( c, (GameButton)b );
+			GameInput GameI( c, b );
 			if( !IsMapped(DeviceI) )	// if this key isn't already being used by another user-made mapping
 				SetInputMap( DeviceI, GameI, 2 );   
 		}
@@ -600,9 +600,9 @@ void InputMapper::SaveMappingsToDisk()
 	// iterate over our input map and write all mappings to the ini file
 	FOREACH_GameController( i )
 	{
-		for( int j=0; j<m_pInputScheme->m_iButtonsPerController; j++ )
+		FOREACH_GameButtonInScheme( m_pInputScheme, j )
 		{
-			GameInput GameI( i, (GameButton)j );
+			GameInput GameI( i, j );
 			RString sNameString = GameI.ToString( m_pInputScheme );
 			
 			vector<RString> asValues;

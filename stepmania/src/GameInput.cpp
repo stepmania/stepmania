@@ -26,10 +26,10 @@ RString GameButtonToLocalizedString( const InputScheme* pInputs, GameButton i )
 
 GameButton StringToGameButton( const InputScheme* pInputs, const RString& s )
 {
-	for( int i=0; i<pInputs->m_iButtonsPerController; i++ )
+	FOREACH_GameButtonInScheme( pInputs, i )
 	{
-		if( s == GameButtonToString(pInputs,(GameButton)i) )
-			return (GameButton)i;
+		if( s == GameButtonToString(pInputs, i) )
+			return i;
 	}
 	return GameButton_Invalid;
 }

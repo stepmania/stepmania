@@ -32,6 +32,7 @@ public:
 	MenuButton GameInputToMenuButton( GameInput GameI ) const;
 	void MenuButtonToGameInputs( MenuButton MenuI, PlayerNumber pn, GameInput GameIout[4] ) const;
 };
+#define FOREACH_GameButtonInScheme( s, var )	for( GameButton var=(GameButton)0; var<s->m_iButtonsPerController; enum_add<GameButton>( var, +1 ) )
 
 class InputMapper
 {

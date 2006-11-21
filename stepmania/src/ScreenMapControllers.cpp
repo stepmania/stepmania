@@ -46,10 +46,10 @@ void ScreenMapControllers::Init()
 	if( sButtons.empty() )
 	{
 		/* Map all buttons for this game. */
-		for( int b=0; b<INPUTMAPPER->GetInputScheme()->m_iButtonsPerController; b++ )
+		FOREACH_GameButtonInScheme( INPUTMAPPER->GetInputScheme(), gb )
 		{
 			KeyToMap k;
-			k.m_GameButton = (GameButton) b;
+			k.m_GameButton = gb;
 			m_KeysToMap.push_back( k );
 		}
 	}
