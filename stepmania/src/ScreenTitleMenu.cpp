@@ -14,7 +14,6 @@
 #include "Game.h"
 #include "InputMapper.h"
 #include "ProfileManager.h"
-#include "CharacterManager.h"
 #include "InputEventPlus.h"
 #include "LocalizedString.h"
 #include "GameLoop.h"
@@ -44,16 +43,12 @@ void ScreenTitleMenu::Init()
 
 	this->SortByDrawOrder();
 
-	CHARMAN->DemandGraphics();
-
 	SOUND->PlayOnceFromAnnouncer( "title menu game name" );
 }
 
 ScreenTitleMenu::~ScreenTitleMenu()
 {
 	LOG->Trace( "ScreenTitleMenu::~ScreenTitleMenu()" );
-	
-	CHARMAN->UndemandGraphics();
 }
 
 static LocalizedString THEME_		("ScreenTitleMenu","Theme");
