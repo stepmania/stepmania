@@ -126,6 +126,7 @@ public:
 	void SetPaused( bool bPaused ) { m_bPaused = bPaused; }
 
 	static float GetMaxStepDistanceSeconds();
+	static float GetWindowSeconds( TimingWindow tw );
 	const NoteData &GetNoteData() const { return m_NoteData; }
 	bool HasNoteField() const { return m_pNoteField != NULL; }
 

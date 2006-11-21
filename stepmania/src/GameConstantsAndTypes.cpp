@@ -199,6 +199,18 @@ HoldNoteScore StringToHoldNoteScore( const RString &s )
 }
 XToLocalizedString( HoldNoteScore );
 
+static const char *TimingWindowNames[] = {
+	"W1",
+	"W2",
+	"W3",
+	"W4",
+	"W5",
+	"Mine",
+	"Attack",
+	"Hold",
+	"Roll",
+};
+XToString( TimingWindow );
 
 static const char *MemoryCardStateNames[] = {
 	"ready",

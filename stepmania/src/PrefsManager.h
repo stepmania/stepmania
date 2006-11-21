@@ -130,11 +130,6 @@ public:
 	Preference<bool>	m_bOnlyDedicatedMenuButtons;
 	Preference<bool>	m_bMenuTimer;
 
-	Preference<float>	m_fTimingWindowScale;
-	Preference<float>	m_fTimingWindowAdd;		// this is useful for compensating for changes in sampling rate between devices
-	
-	Preference1D<float>	m_fTimingWindowSeconds;
-
 	Preference<float>	m_fLifeDifficultyScale;
 
 	// Whoever added these: Please add a comment saying what they do. -Chris

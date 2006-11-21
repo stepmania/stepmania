@@ -18,20 +18,6 @@
 
 PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our program
 
-static const char *TimingWindowNames[] = {
-	"W1",
-	"W2",
-	"W3",
-	"W4",
-	"W5",
-	"Mine",
-	"Attack",
-	"Hold",
-	"Roll",
-};
-XToString( TimingWindow );
-
-
 static const char *ScoreEventNames[] = {
 	"W1",
 	"W2",
@@ -148,24 +134,6 @@ bool g_bAutoRestart = false;
 #else
 # define TRUE_IF_DEBUG false
 #endif
-
-void TimingWindowSecondsInit( size_t /*TimingWindow*/ i, RString &sNameOut, float &defaultValueOut )
-{
-	sNameOut = "TimingWindowSeconds" + TimingWindowToString( (TimingWindow)i );
-	switch( i )
-	{
-	default:	ASSERT(0);
-	case TW_W1:	defaultValueOut = 0.0225f;	break;
-	case TW_W2:	defaultValueOut = 0.045f;	break;
-	case TW_W3:	defaultValueOut = 0.090f;	break;
-	case TW_W4:	defaultValueOut = 0.135f;	break;
-	case TW_W5:	defaultValueOut = 0.180f;	break;
-	case TW_Mine:	defaultValueOut = 0.090f;	break;	// same as great
-	case TW_Hold:	defaultValueOut = 0.250f;	break;	// allow enough time to take foot off and put back on
-	case TW_Roll:	defaultValueOut = 0.350f;	break;
-	case TW_Attack:	defaultValueOut = 0.135f;	break;
-	}
-}
 
 void PercentScoreWeightInit( size_t /*ScoreEvent*/ i, RString &sNameOut, int &defaultValueOut )
 {
@@ -288,10 +256,6 @@ PrefsManager::PrefsManager() :
 
 	m_bOnlyDedicatedMenuButtons	( "OnlyDedicatedMenuButtons",	false ),
 	m_bMenuTimer		( "MenuTimer",			true ),
-
-	m_fTimingWindowScale	( "TimingWindowScale",		1.0f ),
-	m_fTimingWindowAdd	( "TimingWindowAdd",		0 ),
-	m_fTimingWindowSeconds	( TimingWindowSecondsInit,	NUM_TimingWindow ),
 
 	m_fLifeDifficultyScale	( "LifeDifficultyScale",	1.0f ),
 
