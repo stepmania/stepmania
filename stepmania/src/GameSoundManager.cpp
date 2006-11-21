@@ -648,7 +648,7 @@ void GameSoundManager::PlayMusic(
 	}
 	else
 	{
-		/* If no timing file was specified, look for one in the same place as the music file. */
+		/* If no timing data was provided, look for it in the same place as the music file. */
 		ToPlay.m_sTimingFile = SetExtension( sFile, "sm" );
 	}
 
