@@ -10,7 +10,6 @@ class ScreenTitleMenu : public ScreenSelectMaster
 public:
 	ScreenTitleMenu();
 	virtual void Init();
-	virtual ~ScreenTitleMenu();
 
 	virtual void Input( const InputEventPlus &input );
 
