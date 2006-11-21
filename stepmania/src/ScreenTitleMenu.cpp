@@ -37,8 +37,6 @@ void ScreenTitleMenu::Init()
 {
 	ScreenSelectMaster::Init();
 
-	m_soundSelectPressed.Load( THEME->GetPathS(m_sName,"select down"), true );
-
 	this->SortByDrawOrder();
 
 	SOUND->PlayOnceFromAnnouncer( "title menu game name" );

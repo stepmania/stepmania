@@ -15,9 +15,6 @@ public:
 	virtual void Input( const InputEventPlus &input );
 
 	virtual void HandleMessage( const Message &msg );
-
-protected:
-	RageSound			m_soundSelectPressed;
 };
 
 #endif
