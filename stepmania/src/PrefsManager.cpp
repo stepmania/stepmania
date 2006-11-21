@@ -18,20 +18,6 @@
 
 PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our program
 
-static const char *ScoreEventNames[] = {
-	"W1",
-	"W2",
-	"W3",
-	"W4",
-	"W5",
-	"Miss",
-	"HitMine",
-	"Held",
-	"LetGo",
-};
-XToString( ScoreEvent );
-
-
 static const char *MusicWheelUsesSectionsNames[] = {
 	"Never",
 	"Always",

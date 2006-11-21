@@ -212,6 +212,19 @@ static const char *TimingWindowNames[] = {
 };
 XToString( TimingWindow );
 
+static const char *ScoreEventNames[] = {
+	"W1",
+	"W2",
+	"W3",
+	"W4",
+	"W5",
+	"Miss",
+	"HitMine",
+	"Held",
+	"LetGo",
+};
+XToString( ScoreEvent );
+
 static const char *MemoryCardStateNames[] = {
 	"ready",
 	"checking",
