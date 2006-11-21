@@ -1027,13 +1027,13 @@ public:
 class OptionRowHandlerConfig : public OptionRowHandler
 {
 public:
-	const ConfOption *opt;
+	const ConfOption *m_pOpt;
 
 	OptionRowHandlerConfig() { Init(); }
 	void Init()
 	{
 		OptionRowHandler::Init();
-		opt = NULL;
+		m_pOpt = NULL;
 	}
 	virtual void LoadInternal( const Commands &cmds )
 	{
@@ -1058,12 +1058,12 @@ public:
 
    		pConfOption->UpdateAvailableOptions();
 
-		opt = pConfOption;
-		opt->MakeOptionsList( m_Def.m_vsChoices );
+		m_pOpt = pConfOption;
+		m_pOpt->MakeOptionsList( m_Def.m_vsChoices );
 
-		m_Def.m_bAllowThemeItems = opt->m_bAllowThemeItems;
+		m_Def.m_bAllowThemeItems = m_pOpt->m_bAllowThemeItems;
 
-		m_Def.m_sName = opt->name;
+		m_Def.m_sName = m_pOpt->name;
 	}
 	virtual void ImportOption( const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
@@ -1072,7 +1072,7 @@ public:
 			PlayerNumber p = *pn;
 			vector<bool> &vbSelOut = vbSelectedOut[p];
 
-			int iSelection = opt->Get();
+			int iSelection = m_pOpt->Get();
 			OptionRowHandlerUtil::SelectExactlyOne( iSelection, vbSelOut );
 		}
 	}
@@ -1085,23 +1085,23 @@ public:
 			PlayerNumber p = *pn;
 			const vector<bool> &vbSel = vbSelected[p];
 
-			int sel = OptionRowHandlerUtil::GetOneSelection(vbSel);
+			int iSel = OptionRowHandlerUtil::GetOneSelection(vbSel);
 
 			/* Get the original choice. */
-			int Original = opt->Get();
+			int iOriginal = m_pOpt->Get();
 
 			/* Apply. */
-			opt->Put( sel );
+			m_pOpt->Put( iSel );
 
 			/* Get the new choice. */
-			int New = opt->Get();
+			int iNew = m_pOpt->Get();
 
 			/* If it didn't change, don't return any side-effects. */
-			if( Original != New )
+			if( iOriginal != iNew )
 				bChanged = true;
 		}
 
-		return bChanged ? opt->GetEffects() : 0;
+		return bChanged ? m_pOpt->GetEffects() : 0;
 	}
 };
 
