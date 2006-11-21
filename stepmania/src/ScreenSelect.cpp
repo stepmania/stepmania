@@ -142,7 +142,7 @@ void ScreenSelect::Input( const InputEventPlus &input )
 	if( input.MenuI == MENU_BUTTON_COIN && input.type == IET_FIRST_PRESS )
 		this->UpdateSelectableChoices();
 
-	if( input.type == IET_FIRST_PRESS && input.MenuI == MENU_BUTTON_START && JoinInput(input.pn) )
+	if( input.MenuI == MENU_BUTTON_START && input.type == IET_FIRST_PRESS && JoinInput(input.pn) )
 	{
 		this->UpdateSelectableChoices();
 	
