@@ -236,7 +236,7 @@ void ScreenWithMenuElements::ResetTimer()
 	if( m_MenuTimer == NULL )
 		return;
 
-	if( TIMER_SECONDS > 0.0f  &&  (PREFSMAN->m_bMenuTimer || FORCE_TIMER)  &&  !GAMESTATE->IsEditing() )
+	if( TIMER_SECONDS > 0.0f && (PREFSMAN->m_bMenuTimer || FORCE_TIMER) )
 	{
 		m_MenuTimer->SetSeconds( TIMER_SECONDS );
 		m_MenuTimer->Start();
