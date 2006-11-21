@@ -194,11 +194,8 @@ PrefsManager::PrefsManager() :
 	m_bEventMode			( "EventMode",			false ),
 	m_iCoinsPerCredit		( "CoinsPerCredit",		1 ),
 	m_iSongsPerPlay			( "SongsPerPlay",		3, ValidateSongsPerPlay ),
-
-	m_CoinMode			( "CoinMode",			COIN_MODE_HOME ),
 	m_bDelayedCreditsReconcile	( "DelayedCreditsReconcile",	false ),
 	m_bPickExtraStage		( "PickExtraStage",		false ),
-
 	m_bComboContinuesBetweenSongs	( "ComboContinuesBetweenSongs",	false ),
 	m_ShowSongOptions		( "ShowSongOptions",		Maybe_YES ),
 	m_bDancePointsForOni		( "DancePointsForOni",		false ),

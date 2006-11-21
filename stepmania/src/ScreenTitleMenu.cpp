@@ -2,7 +2,7 @@
 #include "ScreenTitleMenu.h"
 #include "ScreenManager.h"
 #include "RageUtil.h"
-#include "PrefsManager.h"
+#include "GamePreferences.h"
 #include "RageLog.h"
 #include "AnnouncerManager.h"
 #include "GameState.h"
@@ -30,7 +30,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 	// TRICKY: Do this after GameState::Reset.
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_JOINING );
 
-	this->SubscribeToMessage( PREFSMAN->m_CoinMode.GetName()+"Changed" );
+	this->SubscribeToMessage( GamePreferences::m_CoinMode.GetName()+"Changed" );
 }
 
 void ScreenTitleMenu::Init()
@@ -75,7 +75,7 @@ void ScreenTitleMenu::Input( const InputEventPlus &input )
 
 void ScreenTitleMenu::HandleMessage( const Message &msg )
 {
-	if( msg == PREFSMAN->m_CoinMode.GetName()+"Changed" )
+	if( msg == GamePreferences::m_CoinMode.GetName()+"Changed" )
 	{
 		/* If the CoinMode was changed, we need to reload this screen
 		 * so that the right m_aGameCommands will show */

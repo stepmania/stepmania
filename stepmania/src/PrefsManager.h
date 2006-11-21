@@ -154,11 +154,6 @@ public:
 	Preference<bool>	m_bEventMode;
 	Preference<int>		m_iCoinsPerCredit;
 	Preference<int>		m_iSongsPerPlay;
-
-	// These options have weird interactions depending on m_bEventMode, 
-	// so wrap them in GameState.
-	Preference<CoinMode>	m_CoinMode;
-
 	Preference<bool>	m_bDelayedCreditsReconcile;
 	Preference<bool>	m_bPickExtraStage;
 	Preference<bool>	m_bComboContinuesBetweenSongs;

@@ -3,6 +3,7 @@
 #include "ScreenDimensions.h"
 #include "ScreenManager.h"
 #include "PrefsManager.h"
+#include "GamePreferences.h"
 #include "RageLog.h"
 #include "GameState.h"
 #include "PlayerState.h"
@@ -524,13 +525,13 @@ class DebugLineAutosync : public IDebugLine
 class DebugLineCoinMode : public IDebugLine
 {
 	virtual RString GetDescription() { return COIN_MODE.GetValue(); }
-	virtual RString GetValue() { return CoinModeToString(PREFSMAN->m_CoinMode); }
+	virtual RString GetValue() { return CoinModeToString(GamePreferences::m_CoinMode); }
 	virtual bool IsEnabled() { return true; }
 	virtual void Do( RString &sMessageOut )
 	{
-		int cm = PREFSMAN->m_CoinMode+1;
+		int cm = GamePreferences::m_CoinMode+1;
 		wrap( cm, NUM_CoinMode );
-		PREFSMAN->m_CoinMode.Set( CoinMode(cm) );
+		GamePreferences::m_CoinMode.Set( CoinMode(cm) );
 		SCREENMAN->RefreshCreditsMessages();
 		IDebugLine::Do( sMessageOut );
 	}

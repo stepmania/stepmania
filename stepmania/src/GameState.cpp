@@ -2,6 +2,7 @@
 #include "GameState.h"
 #include "GameManager.h"
 #include "PrefsManager.h"
+#include "GamePreferences.h"
 #include "song.h"
 #include "Course.h"
 #include "RageLog.h"
@@ -1760,10 +1761,10 @@ bool GameState::IsEventMode() const
 
 CoinMode GameState::GetCoinMode() const
 {
-	if( IsEventMode() && PREFSMAN->m_CoinMode == COIN_MODE_PAY )
+	if( IsEventMode() && GamePreferences::m_CoinMode == COIN_MODE_PAY )
 		return COIN_MODE_FREE; 
 	else 
-		return PREFSMAN->m_CoinMode; 
+		return GamePreferences::m_CoinMode;
 }
 
 Premium	GameState::GetPremium() const
