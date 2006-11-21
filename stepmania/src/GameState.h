@@ -296,6 +296,19 @@ public:
 	void PushSelf( lua_State *L );
 };
 
+PlayerNumber GetNextHumanPlayer( PlayerNumber pn );
+PlayerNumber GetNextEnabledPlayer( PlayerNumber pn );
+PlayerNumber GetNextCpuPlayer( PlayerNumber pn );
+PlayerNumber GetNextPotentialCpuPlayer( PlayerNumber pn );
+
+#define FOREACH_HumanPlayer( pn ) for( PlayerNumber pn=GetNextHumanPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID; pn=GetNextHumanPlayer(pn) )
+#define FOREACH_EnabledPlayer( pn ) for( PlayerNumber pn=GetNextEnabledPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID; pn=GetNextEnabledPlayer(pn) )
+#define FOREACH_CpuPlayer( pn ) for( PlayerNumber pn=GetNextCpuPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID; pn=GetNextCpuPlayer(pn) )
+#define FOREACH_PotentialCpuPlayer( pn ) for( PlayerNumber pn=GetNextPotentialCpuPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID; pn=GetNextPotentialCpuPlayer(pn) )
+
+
+MultiPlayer GetNextEnabledMultiPlayer( MultiPlayer mp );
+#define FOREACH_EnabledMultiPlayer( mp ) for( MultiPlayer mp=GetNextEnabledMultiPlayer((MultiPlayer)-1); mp!=MultiPlayer_Invalid; mp=GetNextEnabledMultiPlayer(mp) )
 
 extern GameState*	GAMESTATE;	// global and accessable from anywhere in our program
 

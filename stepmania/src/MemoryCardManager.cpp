@@ -702,28 +702,14 @@ void MemoryCardManager::UnPauseMountingThread()
 	RageFileDriverTimeout::SetTimeout( -1 );
 }
 
-bool IsAnyPlayerUsingMemoryCard()
-{
-	FOREACH_HumanPlayer( pn )
-	{
-		if( MEMCARDMAN->GetCardState(pn) == MemoryCardState_Ready )
-			return true;
-	}
-	return false;
-}
-
-
 // lua start
 #include "LuaBinding.h"
 
 class LunaMemoryCardManager: public Luna<MemoryCardManager>
 {
 public:
-	static int IsAnyPlayerUsingMemoryCard( T* p, lua_State *L )	{ lua_pushboolean(L, ::IsAnyPlayerUsingMemoryCard() ); return 1; }
-
 	LunaMemoryCardManager()
 	{
-		ADD_METHOD( IsAnyPlayerUsingMemoryCard );
 	}
 };
 

@@ -71,6 +71,7 @@
 #include "ScreenDimensions.h"
 #include "Foreach.h"
 #include "ActorUtil.h"
+#include "GameState.h" // XXX: bad dep
 
 ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our program
 
