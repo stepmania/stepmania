@@ -269,9 +269,6 @@ enum PlayerController
 };
 const RString& PlayerControllerToString( PlayerController pc );
 
-const int MIN_SKILL = 0;
-const int MAX_SKILL = 10;
-
 
 enum StageResult
 {
