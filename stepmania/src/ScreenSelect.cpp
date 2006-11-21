@@ -130,11 +130,6 @@ void ScreenSelect::Update( float fDelta )
 	ScreenWithMenuElements::Update( fDelta );
 }
 
-void ScreenSelect::DrawPrimitives()
-{
-	Screen::DrawPrimitives();
-}
-
 void ScreenSelect::Input( const InputEventPlus &input )
 {
 //	LOG->Trace( "ScreenSelect::Input()" );

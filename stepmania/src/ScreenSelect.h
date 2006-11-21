@@ -16,7 +16,6 @@ public:
 	virtual ~ScreenSelect();
 
 	virtual void Update( float fDelta );
-	virtual void DrawPrimitives();
 	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	virtual void HandleMessage( const Message &msg );
