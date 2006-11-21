@@ -4,6 +4,7 @@
 // This options has weird interactions depending on m_bEventMode;
 // use GameState::GetCoinMode().
 Preference<CoinMode> GamePreferences::m_CoinMode( "CoinMode", COIN_MODE_HOME );
+Preference<PlayerController> GamePreferences::m_AutoPlay( "AutoPlay", PC_HUMAN );
 
 
 /*

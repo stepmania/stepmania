@@ -450,7 +450,7 @@ class DebugLineAutoplay : public IDebugLine
 	virtual RString GetDescription() { return AUTO_PLAY.GetValue(); }
 	virtual RString GetValue()
 	{
-		switch( PREFSMAN->m_AutoPlay )
+		switch( GamePreferences::m_AutoPlay )
 		{
 		case PC_HUMAN:		return OFF.GetValue();	break;
 		case PC_AUTOPLAY:	return ON.GetValue();	break;
@@ -459,7 +459,7 @@ class DebugLineAutoplay : public IDebugLine
 		}
 	}
 	virtual Type GetType() const { return IDebugLine::gameplay_only; }
-	virtual bool IsEnabled() { return PREFSMAN->m_AutoPlay.Get() != PC_HUMAN; }
+	virtual bool IsEnabled() { return GamePreferences::m_AutoPlay.Get() != PC_HUMAN; }
 	virtual void Do( RString &sMessageOut )
 	{
 		ASSERT( GAMESTATE->m_MasterPlayerNumber != PLAYER_INVALID );
@@ -469,11 +469,11 @@ class DebugLineAutoplay : public IDebugLine
 			pc = (pc==PC_CPU) ? PC_HUMAN : PC_CPU;
 		else
 			pc = (pc==PC_AUTOPLAY) ? PC_HUMAN : PC_AUTOPLAY;
-		PREFSMAN->m_AutoPlay.Set( pc );
+		GamePreferences::m_AutoPlay.Set( pc );
 		FOREACH_HumanPlayer(p)
-			GAMESTATE->m_pPlayerState[p]->m_PlayerController = PREFSMAN->m_AutoPlay;
+			GAMESTATE->m_pPlayerState[p]->m_PlayerController = GamePreferences::m_AutoPlay;
 		FOREACH_MultiPlayer(p)
-			GAMESTATE->m_pMultiPlayerState[p]->m_PlayerController = PREFSMAN->m_AutoPlay;
+			GAMESTATE->m_pMultiPlayerState[p]->m_PlayerController = GamePreferences::m_AutoPlay;
 		IDebugLine::Do( sMessageOut );
 	}
 };

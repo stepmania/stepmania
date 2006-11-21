@@ -2,7 +2,7 @@
 #include "ScreenGameplayLesson.h"
 #include "RageLog.h"
 #include "GameState.h"
-#include "PrefsManager.h"
+#include "GamePreferences.h"
 #include "StatsManager.h"
 #include "song.h"
 
@@ -165,7 +165,7 @@ void ScreenGameplayLesson::ChangeLessonPage( int iDir )
 
 		// Change back to the current autoplay setting (in most cases, human controlled).
 		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
-			pi->GetPlayerState()->m_PlayerController = PREFSMAN->m_AutoPlay;
+			pi->GetPlayerState()->m_PlayerController = GamePreferences::m_AutoPlay;
 	}
 	else
 	{

@@ -4,6 +4,7 @@
 #include "GameState.h"
 #include "GameManager.h"
 #include "PrefsManager.h"
+#include "GamePreferences.h"
 #include "AdjustSync.h"
 #include "ScreenDimensions.h"
 #include "InputEventPlus.h"
@@ -28,7 +29,7 @@ void ScreenGameplaySyncMachine::Init()
 	ASSERT( pSteps );
 	GAMESTATE->m_pCurSteps[0].Set( pSteps );
 
-	PREFSMAN->m_AutoPlay.Set( PC_HUMAN );
+	GamePreferences::m_AutoPlay.Set( PC_HUMAN );
 
 	ScreenGameplayNormal::Init();
 

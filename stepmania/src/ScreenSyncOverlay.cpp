@@ -5,6 +5,7 @@
 #include "GameState.h"
 #include "song.h"
 #include "PrefsManager.h"
+#include "GamePreferences.h"
 #include "InputEventPlus.h"
 #include "LocalizedString.h"
 #include "AdjustSync.h"
@@ -90,7 +91,7 @@ void ScreenSyncOverlay::UpdateText()
 
 	if( g_bShowAutoPlayStatus )
 	{
-		switch( PREFSMAN->m_AutoPlay )
+		switch( GamePreferences::m_AutoPlay )
 		{
 		case PC_HUMAN:						break;
 		case PC_AUTOPLAY:	vs.push_back(AUTO_PLAY);	break;

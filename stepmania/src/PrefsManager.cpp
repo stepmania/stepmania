@@ -180,8 +180,6 @@ PrefsManager::PrefsManager() :
 	m_bFailOffForFirstStageEasy	( "FailOffForFirstStageEasy",	false ),
 	m_bMercifulBeginner		( "MercifulBeginner",		false ),
 	m_bMercifulSuperMeter		( "MercifulSuperMeter",		true ),
-	
-	m_AutoPlay			( "AutoPlay",			PC_HUMAN ),
 	m_bDelayedBack			( "DelayedBack",		true ),
 	m_bShowInstructions		( "ShowInstructions",		true ),
 	m_bShowSelectGroup		( "ShowSelectGroup",		false ),

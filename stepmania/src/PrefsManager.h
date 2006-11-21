@@ -140,8 +140,6 @@ public:
 	Preference<bool>	m_bFailOffForFirstStageEasy;
 	Preference<bool>	m_bMercifulBeginner;	// don't subtract from percent score or grade DP, larger W5 window
 	Preference<bool>	m_bMercifulSuperMeter;	// negative super deltas are scaled by the players life percentage
-
-	Preference<PlayerController> m_AutoPlay;
 	Preference<bool>	m_bDelayedBack;
 	Preference<bool>	m_bShowInstructions;
 	Preference<bool>	m_bShowSelectGroup;

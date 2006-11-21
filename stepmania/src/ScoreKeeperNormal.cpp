@@ -2,6 +2,7 @@
 #include "ScoreKeeperNormal.h"
 #include "GameState.h"
 #include "PrefsManager.h"
+#include "GamePreferences.h"
 #include "Steps.h"
 #include "ScreenManager.h"
 #include "GameState.h"
@@ -460,7 +461,7 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 	// handle combo logic
 	//
 #ifndef DEBUG
-	if( PREFSMAN->m_AutoPlay != PC_HUMAN && !GAMESTATE->m_bDemonstrationOrJukebox )	// cheaters never prosper
+	if( GamePreferences::m_AutoPlay != PC_HUMAN && !GAMESTATE->m_bDemonstrationOrJukebox )	// cheaters never prosper
 	{
 		m_iCurToastyCombo = 0;
 		return;

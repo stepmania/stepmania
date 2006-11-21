@@ -4,6 +4,7 @@
 #include "ScreenManager.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
+#include "GamePreferences.h"
 #include "GameManager.h"
 #include "RageFileManager.h"
 #include "Steps.h"
@@ -1122,7 +1123,7 @@ void ScreenGameplay::LoadNextSong()
 			}
 			else
 			{
-				pi->GetPlayerState()->m_PlayerController = PREFSMAN->m_AutoPlay;
+				pi->GetPlayerState()->m_PlayerController = GamePreferences::m_AutoPlay;
 			}
 		} 
 	}
@@ -2182,7 +2183,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 		{
 			AbortGiveUp( true );
 			
-			if( PREFSMAN->m_AutoPlay == PC_HUMAN )
+			if( GamePreferences::m_AutoPlay == PC_HUMAN )
 			{
 				PlayerInfo& pi = GetPlayerInfoForInput( input );
 				

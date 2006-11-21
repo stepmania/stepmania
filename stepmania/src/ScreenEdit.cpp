@@ -1,6 +1,7 @@
 #include "global.h"
 #include "ScreenEdit.h"
 #include "PrefsManager.h"
+#include "GamePreferences.h"
 #include "SongManager.h"
 #include "ScreenManager.h"
 #include "ScreenSaveSync.h"
@@ -2035,9 +2036,9 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 			break;
 		case EDIT_BUTTON_TOGGLE_AUTOPLAY:
 		{
-			PREFSMAN->m_AutoPlay.Set( PREFSMAN->m_AutoPlay!=PC_HUMAN ? PC_HUMAN:PC_AUTOPLAY );
+			GamePreferences::m_AutoPlay.Set( GamePreferences::m_AutoPlay!=PC_HUMAN ? PC_HUMAN:PC_AUTOPLAY );
 			FOREACH_HumanPlayer( p )
-				GAMESTATE->m_pPlayerState[p]->m_PlayerController = PREFSMAN->m_AutoPlay;
+				GAMESTATE->m_pPlayerState[p]->m_PlayerController = GamePreferences::m_AutoPlay;
 		}
 			break;
 		case EDIT_BUTTON_OFFSET_UP:
@@ -2075,7 +2076,7 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 	
 	const int iCol = GAMESTATE->GetCurrentStyle()->GameInputToColumn( input.GameI );
 
-	if( PREFSMAN->m_AutoPlay != PC_HUMAN || iCol == -1 )
+	if( GamePreferences::m_AutoPlay != PC_HUMAN || iCol == -1 )
 		return;
 	
 	switch( input.pn )
@@ -2224,7 +2225,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 		SetupCourseAttacks();
 		
 		m_Player.Load( m_NoteDataEdit );
-		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PREFSMAN->m_AutoPlay;
+		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = GamePreferences::m_AutoPlay;
 
 		if( g_bEditorShowBGChangesPlay )
 		{
