@@ -86,7 +86,7 @@ struct MusicToPlay
 	NoteData lights_data;
 	bool bForceLoop;
 	float fStartSecond, fLengthSeconds, fFadeLengthSeconds;
-	bool align_beat;
+	bool bAlignBeat;
 	MusicToPlay()
 	{
 		HasTiming = false;
@@ -156,7 +156,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 		NewMusic->m_Lights = ToPlay.lights_data;
 	}
 
-	if( ToPlay.align_beat && ToPlay.HasTiming && ToPlay.bForceLoop && ToPlay.fLengthSeconds != -1 )
+	if( ToPlay.bAlignBeat && ToPlay.HasTiming && ToPlay.bForceLoop && ToPlay.fLengthSeconds != -1 )
 	{
 		/* Extend the loop period so it always starts and ends on the same fractional
 		 * beat.  That is, if it starts on beat 1.5, and ends on beat 10.2, extend it
@@ -199,7 +199,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 	 * start now. */
 	if( !g_Playing->m_bHasTiming && !g_UpdatingTimer )
 		StartImmediately = true;
-	if( !ToPlay.align_beat )
+	if( !ToPlay.bAlignBeat )
 		StartImmediately = true;
 
 	RageTimer when; /* zero */
@@ -664,7 +664,7 @@ void GameSoundManager::PlayMusic(
 	ToPlay.fStartSecond = fStartSecond;
 	ToPlay.fLengthSeconds = fLengthSeconds;
 	ToPlay.fFadeLengthSeconds = sFadeLengthSeconds;
-	ToPlay.align_beat = bAlignBeat;
+	ToPlay.bAlignBeat = bAlignBeat;
 
 	/* Add the MusicToPlay to the g_MusicsToPlay queue. */
 	g_Mutex->Lock();
