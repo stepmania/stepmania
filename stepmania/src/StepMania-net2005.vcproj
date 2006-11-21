@@ -1199,6 +1199,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GamePreferences.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\GamePreferences.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Grade.cpp"
 				>
 			</File>
