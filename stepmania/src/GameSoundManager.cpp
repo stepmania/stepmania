@@ -564,7 +564,7 @@ void GameSoundManager::Update( float fDeltaTime )
 	//
 	if( GAMESTATE->m_pCurSong )
 	{
-		static int iRowLastCrossed = 0;
+		static int iBeatLastCrossed = 0;
 
 		float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
 		float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
@@ -572,16 +572,14 @@ void GameSoundManager::Update( float fDeltaTime )
 		int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
 		iRowNow = max( 0, iRowNow );
 
-		for( int r=iRowLastCrossed+1; r<=iRowNow; r++ )
+		int iBeatNow = iRowNow / ROWS_PER_BEAT;
+
+		for( int iBeat = iBeatNow+1; iBeat<=iRowNow; ++iBeat )
 		{
-			if( GetNoteType( r ) == NOTE_TYPE_4TH )
-			{
-				int iBeat = (int) NoteRowToBeat( r );
-				MESSAGEMAN->Broadcast( ssprintf("CrossedBeat%d", iBeat) );
-			}
+			MESSAGEMAN->Broadcast( ssprintf("CrossedBeat%d", iBeat) );
 		}
 
-		iRowLastCrossed = iRowNow;
+		iBeatLastCrossed = iBeatNow;
 	}
 
 
