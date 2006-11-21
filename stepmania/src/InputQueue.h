@@ -3,7 +3,6 @@
 #ifndef INPUT_QUEUE_H
 #define INPUT_QUEUE_H
 
-#include "GameConstantsAndTypes.h"
 #include "GameInput.h"
 
 const unsigned MAX_INPUT_QUEUE_LENGTH = 16;

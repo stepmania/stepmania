@@ -3,7 +3,6 @@
 #include "RageDisplay.h"
 #include "RageUtil.h"
 #include "RageMath.h"
-#include "GameConstantsAndTypes.h"
 #include "RageLog.h"
 #include "arch/Dialog/Dialog.h"
 #include "Foreach.h"

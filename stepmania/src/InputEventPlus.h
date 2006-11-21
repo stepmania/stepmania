@@ -6,6 +6,7 @@
 #include "InputFilter.h"
 #include "GameInput.h"
 #include "MenuInput.h"
+#include "PlayerNumber.h"
 
 class InputEventPlus
 {

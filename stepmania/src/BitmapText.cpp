@@ -6,7 +6,6 @@
 #include "RageTimer.h"
 #include "RageDisplay.h"
 #include "ThemeManager.h"
-#include "GameConstantsAndTypes.h"
 #include "Font.h"
 #include "ActorUtil.h"
 #include "LuaBinding.h"

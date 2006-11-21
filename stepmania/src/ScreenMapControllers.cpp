@@ -1,6 +1,5 @@
 #include "global.h"
 #include "ScreenMapControllers.h"
-#include "GameConstantsAndTypes.h"
 #include "ScreenManager.h"
 #include "RageLog.h"
 #include "RageInput.h"

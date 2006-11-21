@@ -1,7 +1,6 @@
 #include "global.h"
 #include "ScreenAttract.h"
 #include "ScreenManager.h"
-#include "GameConstantsAndTypes.h"
 #include "RageUtil.h"
 #include "StepMania.h"
 #include "PrefsManager.h"
