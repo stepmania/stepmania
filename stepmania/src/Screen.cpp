@@ -237,12 +237,6 @@ bool Screen::JoinInput( PlayerNumber pn )
 
 	GAMESTATE->m_iCoins -= iCoinsNeededToJoin;
 
-	// HACK: Only play start sound for the 2nd player who joins.  The 
-	// start sound for the 1st player will be played by ScreenTitleMenu 
-	// when the player makes a selection on the screen.
-	if( GAMESTATE->GetNumSidesJoined() > 0 )
-		SCREENMAN->PlayStartSound();
-
 	GAMESTATE->JoinPlayer( pn );
 
 	return true;

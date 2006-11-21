@@ -144,6 +144,12 @@ void ScreenSelect::Input( const InputEventPlus &input )
 
 	if( input.MenuI == MENU_BUTTON_START && input.type == IET_FIRST_PRESS && JoinInput(input.pn) )
 	{
+		// HACK: Only play start sound for the 2nd player who joins.  The 
+		// start sound for the 1st player will be played by ScreenTitleMenu 
+		// when the player makes a selection on the screen.
+		if( GAMESTATE->GetNumSidesJoined() > 1 )
+			SCREENMAN->PlayStartSound();
+
 		this->UpdateSelectableChoices();
 	
 		if( !ALLOW_DISABLED_PLAYER_INPUT )
