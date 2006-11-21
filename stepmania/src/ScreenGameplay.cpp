@@ -2081,11 +2081,10 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 		!m_Cancel.IsTransitioning() )
 	{
 		/*
-		 * Allow bailing out by holding the START button of all active players.  This
-		 * gives a way to "give up" when a back button isn't available.  Doing this is
-		 * treated as failing the song, unlike BACK, since it's always available.
+		 * Allow bailing out by holding any START button.  This gives a way to "give up"
+		 * when a back button isn't available.
 		 *
-		 * However, if this is also a style button, don't do this. (pump center = start)
+		 * If this is also a style button, don't do this; pump center is start.
 		 */
 		bool bHoldingGiveUp = false;
 		if( GAMESTATE->GetCurrentStyle()->GameInputToColumn(input.GameI) == Column_Invalid )
