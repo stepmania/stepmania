@@ -14,8 +14,7 @@ struct ConfOption
 {
 	static ConfOption *Find( RString name );
 
-	/* Name of this option.  It's helpful to delimit this with newlines, as it'll
-	 * be the default display title. */
+	/* Name of this option. */
 	RString name;
 	typedef void (*MoveData_t)( int &sel, bool ToSel, const ConfOption *pConfOption );
 	MoveData_t MoveData;
