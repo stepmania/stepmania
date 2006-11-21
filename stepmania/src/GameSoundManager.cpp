@@ -705,7 +705,7 @@ void GameSoundManager::PlayOnceFromDir( RString sPath )
 
 void GameSoundManager::PlayOnceFromAnnouncer( RString sPath )
 {
-	/* Add the path to the g_SoundsToPlayOnceFromDir queue. */
+	/* Add the path to the g_SoundsToPlayOnceFromAnnouncer queue. */
 	g_Mutex->Lock();
 	g_SoundsToPlayOnceFromAnnouncer.push_back( sPath );
 	g_Mutex->Broadcast();
