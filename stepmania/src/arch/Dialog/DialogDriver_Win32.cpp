@@ -2,7 +2,7 @@
 #include "DialogDriver_Win32.h"
 #include "RageUtil.h"
 #if !defined(SMPACKAGE)
-#include "CommonMetrics.h"
+#include "LocalizedString.h"
 #endif
 #include "ThemeManager.h"
 #include "ProductInfo.h"
@@ -90,9 +90,10 @@ static HWND GetHwnd()
 #endif
 
 #if !defined(SMPACKAGE)
+static LocalizedString ERROR_WINDOW_TITLE("Dialog-Prompt", "Error");
 static RString GetWindowTitle()
 {
-	RString s = CommonMetrics::WINDOW_TITLE.GetValue();
+	RString s = ERROR_WINDOW_TITLE.GetValue();
 	return s;
 }
 #endif
