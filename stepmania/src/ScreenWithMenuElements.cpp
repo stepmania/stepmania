@@ -57,7 +57,7 @@ void ScreenWithMenuElements::Init()
 		this->AddChild( &m_sprStyleIcon );
 	}
 	
-	if( SHOW_STAGE && GAMESTATE->GetCurrentStyle() )
+	if( SHOW_STAGE )
 	{
 		m_sprStage.Load( THEME->GetPathG(m_sName,"stage") );
 		m_sprStage->SetName( "Stage" );
