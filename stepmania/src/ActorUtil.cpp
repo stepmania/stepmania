@@ -103,6 +103,23 @@ retry:
 		sPath = asPaths[0];
 	}
 
+	if( ft == RageFileManager::TYPE_DIR )
+	{
+		RString sXMLPath = sPath + "/default.xml";
+		if( DoesFileExist(sXMLPath) )
+		{
+			sPath = sXMLPath;
+			return true;
+		}
+
+		RString sLuaPath = sPath + "/default.lua";
+		if( DoesFileExist(sLuaPath) )
+		{
+			sPath = sLuaPath;
+			return true;
+		}
+	}
+
 	sPath = DerefRedir( sPath );
 	return true;
 }
@@ -355,26 +372,6 @@ Actor* ActorUtil::MakeActor( const RString &sPath_, Actor *pParentActor, const X
 	FileType ft = GetFileType( sPath );
 	if( ft == FT_Directory && sPath.Right(1) != "/" )
 		sPath += '/';
-
-	if( ft == FT_Directory )
-	{
-		RString sXMLPath = sPath + "default.xml";
-		if( DoesFileExist(sXMLPath) )
-		{
-			sPath = sXMLPath;
-			ft = FT_Xml;
-		}
-	}
-
-	if( ft == FT_Directory )
-	{
-		RString sLuaPath = sPath + "default.lua";
-		if( DoesFileExist(sLuaPath) )
-		{
-			sPath = sLuaPath;
-			ft = FT_Lua;
-		}
-	}
 
 	switch( ft )
 	{

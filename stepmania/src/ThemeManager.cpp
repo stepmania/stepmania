@@ -593,6 +593,20 @@ try_element_again:
 					if( bDirIsEmpty )
 						continue;
 #endif
+
+					RString sXMLPath = asPaths[p] + "/default.xml";
+					if( DoesFileExist(sXMLPath) )
+					{
+						asElementPaths.push_back( sXMLPath );
+						break;
+					}
+
+					RString sLuaPath = asPaths[p] + "/default.lua";
+					if( DoesFileExist(sLuaPath) )
+					{
+						asElementPaths.push_back( sLuaPath );
+						break;
+					}
 				}
 
 				if( ext == asset_masks[i] || !strcmp(asset_masks[i], "*") )
