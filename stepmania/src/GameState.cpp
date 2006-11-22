@@ -2118,7 +2118,7 @@ public:
 	static int GetCurrentStyle( T* p, lua_State *L )
 	{
 		Style *pStyle = const_cast<Style *> (p->GetCurrentStyle());
-		pStyle->PushSelf( L );
+		LuaHelpers::Push( L, pStyle );
 		return 1;
 	}
 	static int IsAnyHumanPlayerUsingMemoryCard( T* p, lua_State *L )
