@@ -150,21 +150,21 @@ void Player::Init(
 	ScoreKeeper* pPrimaryScoreKeeper, 
 	ScoreKeeper* pSecondaryScoreKeeper )
 {
-	GRAY_ARROWS_Y_STANDARD.Load(		sType, "ReceptorArrowsYStandard" );
-	GRAY_ARROWS_Y_REVERSE.Load(		sType, "ReceptorArrowsYReverse" );
-	COMBO_X.Load(				sType, COMBO_X_NAME, NUM_PLAYERS, 2 );
-	COMBO_Y.Load(				sType, "ComboY" );
-	COMBO_Y_REVERSE.Load(			sType, "ComboYReverse" );
-	COMBO_CENTERED_ADDY.Load(		sType, "ComboCenteredAddY" );
-	COMBO_CENTERED_ADDY_REVERSE.Load(	sType, "ComboCenteredAddYReverse" );
-	ATTACK_DISPLAY_X.Load(			sType, ATTACK_DISPLAY_X_NAME, NUM_PLAYERS, 2 );
-	ATTACK_DISPLAY_Y.Load(			sType, "AttackDisplayY" );
-	ATTACK_DISPLAY_Y_REVERSE.Load(		sType, "AttackDisplayYReverse" );
-	HOLD_JUDGMENT_Y_STANDARD.Load(		sType, "HoldJudgmentYStandard" );
-	HOLD_JUDGMENT_Y_REVERSE.Load(		sType, "HoldJudgmentYReverse" );
-	BRIGHT_GHOST_COMBO_THRESHOLD.Load(	sType, "BrightGhostComboThreshold" );
-	TAP_JUDGMENTS_UNDER_FIELD.Load(		sType, "TapJudgmentsUnderField" );
-	HOLD_JUDGMENTS_UNDER_FIELD.Load(	sType, "HoldJudgmentsUnderField" );
+	GRAY_ARROWS_Y_STANDARD.Load(			sType, "ReceptorArrowsYStandard" );
+	GRAY_ARROWS_Y_REVERSE.Load(			sType, "ReceptorArrowsYReverse" );
+	COMBO_X.Load(					sType, COMBO_X_NAME, NUM_PLAYERS, 2 );
+	COMBO_Y.Load(					sType, "ComboY" );
+	COMBO_Y_REVERSE.Load(				sType, "ComboYReverse" );
+	COMBO_CENTERED_ADDY.Load(			sType, "ComboCenteredAddY" );
+	COMBO_CENTERED_ADDY_REVERSE.Load(		sType, "ComboCenteredAddYReverse" );
+	ATTACK_DISPLAY_X.Load(				sType, ATTACK_DISPLAY_X_NAME, NUM_PLAYERS, 2 );
+	ATTACK_DISPLAY_Y.Load(				sType, "AttackDisplayY" );
+	ATTACK_DISPLAY_Y_REVERSE.Load(			sType, "AttackDisplayYReverse" );
+	HOLD_JUDGMENT_Y_STANDARD.Load(			sType, "HoldJudgmentYStandard" );
+	HOLD_JUDGMENT_Y_REVERSE.Load(			sType, "HoldJudgmentYReverse" );
+	BRIGHT_GHOST_COMBO_THRESHOLD.Load(		sType, "BrightGhostComboThreshold" );
+	TAP_JUDGMENTS_UNDER_FIELD.Load(			sType, "TapJudgmentsUnderField" );
+	HOLD_JUDGMENTS_UNDER_FIELD.Load(		sType, "HoldJudgmentsUnderField" );
 	DRAW_DISTANCE_AFTER_TARGET_PIXELS.Load(		sType, "DrawDistanceAfterTargetsPixels" );
 	DRAW_DISTANCE_BEFORE_TARGET_PIXELS.Load(	sType, "DrawDistanceBeforeTargetsPixels" );
 
