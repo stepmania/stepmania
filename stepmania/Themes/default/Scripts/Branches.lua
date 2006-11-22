@@ -65,8 +65,8 @@ function ScreenPlayerOptionsNext()
 end
 
 function GetGameplayScreen()
-	local st = GAMESTATE:GetCurrentStyleType()
-	if st == "TwoPlayersSharedSides" then return "ScreenGameplayShared" end
+	local st = GAMESTATE:GetCurrentStyle():GetStyleType()
+	if st == "StyleType_TwoPlayersSharedSides" then return "ScreenGameplayShared" end
 	return "ScreenGameplay"
 end
 
