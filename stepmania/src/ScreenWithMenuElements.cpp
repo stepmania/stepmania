@@ -5,7 +5,6 @@
 #include "RageLog.h"
 #include "ThemeManager.h"
 #include "GameState.h"
-#include "Style.h"
 #include "PrefsManager.h"
 #include "ScreenManager.h"
 #include "GameSoundManager.h"
