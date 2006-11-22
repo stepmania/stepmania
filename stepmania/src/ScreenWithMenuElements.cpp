@@ -13,7 +13,6 @@
 #include "InputEventPlus.h"
 
 #define TIMER_STEALTH				THEME->GetMetricB(m_sName,"TimerStealth")
-#define STYLE_ICON				THEME->GetMetricB(m_sName,"StyleIcon")
 #define SHOW_STAGE				THEME->GetMetricB(m_sName,"ShowStage")
 #define MEMORY_CARD_ICONS			THEME->GetMetricB(m_sName,"MemoryCardIcons")
 #define FORCE_TIMER				THEME->GetMetricB(m_sName,"ForceTimer")
@@ -47,16 +46,6 @@ void ScreenWithMenuElements::Init()
 	SET_XY( m_autoHeader );
 	this->AddChild( m_autoHeader );
 
-	if( STYLE_ICON && GAMESTATE->GetCurrentStyle() )
-	{
-		m_sprStyleIcon.SetName( "StyleIcon" );
-		m_sprStyleIcon.Load( THEME->GetPathG("MenuElements",RString("icon ")+GAMESTATE->GetCurrentStyle()->m_szName) );
-		m_sprStyleIcon.StopAnimating();
-		m_sprStyleIcon.SetState( GAMESTATE->m_MasterPlayerNumber );
-		SET_XY( m_sprStyleIcon );
-		this->AddChild( &m_sprStyleIcon );
-	}
-	
 	if( SHOW_STAGE )
 	{
 		m_sprStage.Load( THEME->GetPathG(m_sName,"stage") );
@@ -176,9 +165,6 @@ void ScreenWithMenuElements::TweenOnScreen()
 {
 	ON_COMMAND( m_autoHeader );
 
-	if( STYLE_ICON && !m_sprStyleIcon.GetName().empty() )
-		ON_COMMAND( m_sprStyleIcon );
-
 	if( SHOW_STAGE && !m_sprStage->GetName().empty() )
 		ON_COMMAND( m_sprStage );
 
@@ -284,7 +270,6 @@ void ScreenWithMenuElements::TweenOffScreen()
 	}
 
 	OFF_COMMAND( m_autoHeader );
-	OFF_COMMAND( m_sprStyleIcon );
 	OFF_COMMAND( m_sprStage );
 	FOREACH_PlayerNumber( p )
 		if( m_MemoryCardDisplay[p] )

@@ -2,10 +2,8 @@
 #define ScreenWithMenuElements_H
 
 #include "Screen.h"
-#include "Sprite.h"
 #include "Transition.h"
 #include "ActorUtil.h"
-//#include "RageSound.h"
 #include "ThemeMetric.h"
 
 class MenuTimer;
@@ -49,7 +47,6 @@ protected:
 
 	AutoActor			m_sprUnderlay;
 	AutoActor			m_autoHeader;
-	Sprite				m_sprStyleIcon;
 	AutoActor			m_sprStage;
 	MemoryCardDisplay		*m_MemoryCardDisplay[NUM_PLAYERS];
 	MenuTimer			*m_MenuTimer;
