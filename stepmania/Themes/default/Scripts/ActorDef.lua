@@ -23,6 +23,7 @@ local function MergeTables( left, right )
 
 		ret[key] = val;
 	end
+	setmetatable( ret, getmetatable(left) );
 	return ret
 end
 
