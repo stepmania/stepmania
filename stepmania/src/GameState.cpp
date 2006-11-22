@@ -2094,11 +2094,6 @@ public:
 
 		return vpStepsToShow.size()*2;
 	}
-	static int GetCurrentStyleType( T* p, lua_State *L )
-	{
-		lua_pushstring( L, StyleTypeToString(p->GetCurrentStyle()->m_StyleType) );
-		return 1;
-	}
 	
 	static int SetPreferredSongGroup( T* p, lua_State *L ) { p->m_sPreferredSongGroup.Set( SArg(1) ); return 0; }
 	DEFINE_METHOD( GetPreferredSongGroup, m_sPreferredSongGroup.Get() );
@@ -2203,7 +2198,6 @@ public:
 		ADD_METHOD( GetEditLocalProfileID );
 		ADD_METHOD( GetEditLocalProfile );
 		ADD_METHOD( GetCurrentStepsCredits );
-		ADD_METHOD( GetCurrentStyleType );
 		ADD_METHOD( SetPreferredSongGroup );
 		ADD_METHOD( GetPreferredSongGroup );
 		ADD_METHOD( GetHumanPlayers );
