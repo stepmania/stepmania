@@ -6,6 +6,7 @@
 #include "ezsockets.h"
 #include "RageFileManager.h"
 #include "RageFile.h"
+#include "Sprite.h"
 
 #if !defined(WITHOUT_NETWORKING)
 
