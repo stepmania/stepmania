@@ -91,7 +91,7 @@ void ScreenSyncOverlay::UpdateText()
 
 	if( g_bShowAutoPlayStatus )
 	{
-		switch( GamePreferences::m_AutoPlay )
+		switch( GamePreferences::m_AutoPlay.Get() )
 		{
 		case PC_HUMAN:						break;
 		case PC_AUTOPLAY:	vs.push_back(AUTO_PLAY);	break;

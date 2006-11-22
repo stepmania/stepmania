@@ -450,7 +450,7 @@ class DebugLineAutoplay : public IDebugLine
 	virtual RString GetDescription() { return AUTO_PLAY.GetValue(); }
 	virtual RString GetValue()
 	{
-		switch( GamePreferences::m_AutoPlay )
+		switch( GamePreferences::m_AutoPlay.Get() )
 		{
 		case PC_HUMAN:		return OFF.GetValue();	break;
 		case PC_AUTOPLAY:	return ON.GetValue();	break;
