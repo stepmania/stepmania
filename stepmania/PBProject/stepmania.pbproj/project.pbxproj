@@ -1424,6 +1424,10 @@
 		AA608EC10B0F85E400B39AC4 /* DialogDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA608EBF0B0F85E400B39AC4 /* DialogDriver.cpp */; };
 		AA608FAD0B0F9A4E00B39AC4 /* RageSoundDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA608FAC0B0F9A4E00B39AC4 /* RageSoundDriver.cpp */; };
 		AA608FAE0B0F9A4E00B39AC4 /* RageSoundDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA608FAC0B0F9A4E00B39AC4 /* RageSoundDriver.cpp */; };
+		AA6090E60B141D1C00B39AC4 /* GamePreferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6090E40B141D1C00B39AC4 /* GamePreferences.cpp */; };
+		AA6090E70B141D1C00B39AC4 /* GamePreferences.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6090E50B141D1C00B39AC4 /* GamePreferences.h */; };
+		AA6090E80B141D1C00B39AC4 /* GamePreferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6090E40B141D1C00B39AC4 /* GamePreferences.cpp */; };
+		AA6090E90B141D1C00B39AC4 /* GamePreferences.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6090E50B141D1C00B39AC4 /* GamePreferences.h */; };
 		AA60E0C1067992D7008ADC41 /* Threads.h in Headers */ = {isa = PBXBuildFile; fileRef = AA60E0BC067992D7008ADC41 /* Threads.h */; };
 		AA60E0C2067992D7008ADC41 /* Threads_Pthreads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA60E0BD067992D7008ADC41 /* Threads_Pthreads.cpp */; };
 		AA60E0C3067992D7008ADC41 /* Threads_Pthreads.h in Headers */ = {isa = PBXBuildFile; fileRef = AA60E0BE067992D7008ADC41 /* Threads_Pthreads.h */; };
@@ -2096,6 +2100,8 @@
 		AA5D166B0A798C0E00F17E86 /* ActorFrameTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActorFrameTexture.h; path = ../src/ActorFrameTexture.h; sourceTree = "<group>"; };
 		AA608EBF0B0F85E400B39AC4 /* DialogDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DialogDriver.cpp; sourceTree = "<group>"; };
 		AA608FAC0B0F9A4E00B39AC4 /* RageSoundDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RageSoundDriver.cpp; sourceTree = "<group>"; };
+		AA6090E40B141D1C00B39AC4 /* GamePreferences.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = GamePreferences.cpp; path = ../src/GamePreferences.cpp; sourceTree = "<group>"; };
+		AA6090E50B141D1C00B39AC4 /* GamePreferences.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = GamePreferences.h; path = ../src/GamePreferences.h; sourceTree = "<group>"; };
 		AA60E0BC067992D7008ADC41 /* Threads.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = Threads.h; sourceTree = "<group>"; };
 		AA60E0BD067992D7008ADC41 /* Threads_Pthreads.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = Threads_Pthreads.cpp; sourceTree = "<group>"; };
 		AA60E0BE067992D7008ADC41 /* Threads_Pthreads.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = Threads_Pthreads.h; sourceTree = "<group>"; };
@@ -3641,6 +3647,8 @@
 				AA6EFDDA04770C79005F316C /* GameConstantsAndTypes.h */,
 				AA6EFDDD04770C79005F316C /* GameInput.cpp */,
 				AA6EFDDE04770C79005F316C /* GameInput.h */,
+				AA6090E40B141D1C00B39AC4 /* GamePreferences.cpp */,
+				AA6090E50B141D1C00B39AC4 /* GamePreferences.h */,
 				AA6EFDDF04770C79005F316C /* Grade.cpp */,
 				AA6EFDE004770C79005F316C /* Grade.h */,
 				AABBD80605D8E9FC00B44FC2 /* HighScore.cpp */,
@@ -4635,6 +4643,7 @@
 				AAE780410AC76A1200AEFC64 /* WorkoutGraph.h in Headers */,
 				AA6999640ACE1CBB000237F9 /* ControllerStateDisplay.h in Headers */,
 				AAB779FC0B0D9CB200B74314 /* ScoreKeeperGuitar.h in Headers */,
+				AA6090E70B141D1C00B39AC4 /* GamePreferences.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5080,6 +5089,7 @@
 				AAE780450AC76A1200AEFC64 /* WorkoutGraph.h in Headers */,
 				AA6999620ACE1CBB000237F9 /* ControllerStateDisplay.h in Headers */,
 				AAB779FE0B0D9CB200B74314 /* ScoreKeeperGuitar.h in Headers */,
+				AA6090E90B141D1C00B39AC4 /* GamePreferences.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5771,6 +5781,7 @@
 				AAB779FB0B0D9CB200B74314 /* ScoreKeeperGuitar.cpp in Sources */,
 				AA608EC00B0F85E400B39AC4 /* DialogDriver.cpp in Sources */,
 				AA608FAD0B0F9A4E00B39AC4 /* RageSoundDriver.cpp in Sources */,
+				AA6090E60B141D1C00B39AC4 /* GamePreferences.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6191,6 +6202,7 @@
 				AAB779FD0B0D9CB200B74314 /* ScoreKeeperGuitar.cpp in Sources */,
 				AA608EC10B0F85E400B39AC4 /* DialogDriver.cpp in Sources */,
 				AA608FAE0B0F9A4E00B39AC4 /* RageSoundDriver.cpp in Sources */,
+				AA6090E80B141D1C00B39AC4 /* GamePreferences.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
