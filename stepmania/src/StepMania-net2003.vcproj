@@ -209,6 +209,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
+				AdditionalDependencies="libjpeg/jpeg.lib libpng/lib/libpng.lib"
 				OutputFile="../Program/StepMania-fastdebug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
@@ -897,6 +898,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="GameInput.h">
 			</File>
 			<File
+				RelativePath=".\GamePreferences.cpp">
+			</File>
+			<File
+				RelativePath=".\GamePreferences.h">
+			</File>
+			<File
 				RelativePath=".\Grade.cpp">
 			</File>
 			<File
@@ -1335,6 +1342,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 						RelativePath="arch\Sound\DSoundHelpers.h">
 					</File>
 					<File
+						RelativePath=".\arch\Sound\RageSoundDriver.cpp">
+					</File>
+					<File
 						RelativePath="arch\Sound\RageSoundDriver.h">
 					</File>
 					<File
@@ -1544,6 +1554,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					</File>
 					<File
 						RelativePath="arch\Dialog\Dialog.h">
+					</File>
+					<File
+						RelativePath=".\arch\Dialog\DialogDriver.cpp">
 					</File>
 					<File
 						RelativePath="arch\Dialog\DialogDriver.h">
