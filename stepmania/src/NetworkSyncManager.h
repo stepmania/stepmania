@@ -149,7 +149,6 @@ public:
 
 	PacketFunctions	m_SMOnlinePacket;
 
-	bool isLanServer;	//Must be public for ScreenNetworkOptions
 	StepManiaLanServer *LANserver;
 
 	int GetSMOnlineSalt();

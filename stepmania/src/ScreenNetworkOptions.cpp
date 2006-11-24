@@ -16,32 +16,19 @@
 
 static LocalizedString CLIENT_CONNECT		( "ScreenNetworkOptions", "Connect" );
 static LocalizedString CLIENT_DISCONNECT	( "ScreenNetworkOptions", "Disconnect" );
-static LocalizedString SERVER_START		( "ScreenNetworkOptions", "Start" );
-static LocalizedString SERVER_STOP		( "ScreenNetworkOptions", "Stop" );
 static LocalizedString SCORE_ON			( "ScreenNetworkOptions", "ScoreOn" );
 static LocalizedString SCORE_OFF		( "ScreenNetworkOptions", "ScoreOff" );
-static LocalizedString SERVER_STARTED		( "ScreenNetworkOptions", "Server started." );
-static LocalizedString SERVER_FAILED		( "ScreenNetworkOptions", "Server failed: %s Code:%d" );
 
 static LocalizedString DISCONNECTED		( "ScreenNetworkOptions", "Disconnected from server." );
-static LocalizedString SERVER_STOPPED		( "ScreenNetworkOptions", "Server stopped." );
 static LocalizedString ENTER_NETWORK_ADDRESS	( "ScreenNetworkOptions", "Enter a network address." );
 static LocalizedString CONNECT_TO_YOURSELF	( "ScreenNetworkOptions", "Use 127.0.0.1 to connect to yourself." );
-static LocalizedString ENTER_A_SERVER_NAME	( "ScreenNetworkOptions", "Enter a server name." );
 
 enum
 {
 	PO_CONNECTION,
-	PO_SERVER,
 	PO_SCOREBOARD,
 	PO_SERVERS,
 	NUM_NETWORK_OPTIONS_LINES
-};
-
-enum
-{
-	NO_STOP_SERVER=0,
-	NO_START_SERVER
 };
 
 enum
@@ -51,7 +38,6 @@ enum
 };
 
 AutoScreenMessage( SM_DoneConnecting )
-AutoScreenMessage( SM_ServerNameEnter )
 
 Preference<RString> g_sLastServer( "LastConnectedServer",	"" );
 
@@ -71,15 +57,6 @@ void ScreenNetworkOptions::Init()
 			pHand->m_Def.m_vsChoices.push_back(CLIENT_DISCONNECT);
 		else
 			pHand->m_Def.m_vsChoices.push_back(CLIENT_CONNECT);
-	}
-	{
-		OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
-		vHands.push_back( pHand );
-		pHand->m_Def.m_bAllowThemeItems = false;
-		pHand->m_Def.m_bOneChoiceForAllPlayers = true;
-		pHand->m_Def.m_sName = "Server";
-		pHand->m_Def.m_vsChoices.push_back(SERVER_STOP);
-		pHand->m_Def.m_vsChoices.push_back(SERVER_START);
 	}
 	{
 		OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
@@ -123,24 +100,6 @@ void ScreenNetworkOptions::HandleScreenMessage( const ScreenMessage SM )
 			g_sLastServer.Set( ScreenTextEntry::s_sLastAnswer );
 		}
 	}
-	else if( SM == SM_ServerNameEnter )
-	{
-		if( !ScreenTextEntry::s_bCancelledLast )
-		{
-			if ( NSMAN->LANserver == NULL)
-				NSMAN->LANserver = new StepManiaLanServer;
-			NSMAN->LANserver->servername = ScreenTextEntry::s_sLastAnswer;
-			if (NSMAN->LANserver->ServerStart())
-			{
-				NSMAN->isLanServer = true;
-				SCREENMAN->SystemMessage( SERVER_STARTED );
-			}
-			else
-			{
-				SCREENMAN->SystemMessage( ssprintf(SERVER_FAILED.GetValue(),NSMAN->LANserver->lastError.c_str(),NSMAN->LANserver->lastErrorCode) );
-			}
-		}
-	}
 
 	ScreenOptions::HandleScreenMessage( SM );
 }
@@ -159,23 +118,6 @@ void ScreenNetworkOptions::MenuStart( const InputEventPlus &input )
 			NSMAN->CloseConnection();
 			SCREENMAN->SystemMessage( DISCONNECTED );
 			UpdateConnectStatus( );
-		}
-		break;
-	case PO_SERVER:
-		switch( m_pRows[GetCurrentRow()]->GetOneSharedSelection() )
-		{
-		case NO_START_SERVER:
-			if (!NSMAN->isLanServer)
-			{
-				ScreenTextEntry::TextEntry( SM_ServerNameEnter, ENTER_A_SERVER_NAME, "", 128);
-			}
-			break;
-		case NO_STOP_SERVER:
-			if ( NSMAN->LANserver != NULL )
-				NSMAN->LANserver->ServerStop();
-			SCREENMAN->SystemMessage( SERVER_STOPPED );
-			NSMAN->isLanServer = false;
-			break;
 		}
 		break;
 	case PO_SCOREBOARD:
