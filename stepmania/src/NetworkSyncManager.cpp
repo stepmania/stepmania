@@ -652,25 +652,7 @@ void NetworkSyncManager::ProcessInput()
 				case NSSB_GRADE:
 					ColumnData = "Grade\n";
 					for (int i=0;i<NumberPlayers;i++)
-						switch (m_packet.Read1())
-						{
-						case 0:
-							ColumnData+="AAAA\n"; break;
-						case 1:
-							ColumnData+="AAA\n"; break;
-						case 2:
-							ColumnData+="AA\n"; break;
-						case 3:
-							ColumnData+="A\n"; break;
-						case 4:
-							ColumnData+="B\n"; break;
-						case 5:
-							ColumnData+="C\n"; break;
-						case 6:
-							ColumnData+="D\n"; break;
-						case 7: 
-							ColumnData+="E\n";	break;	//Is there a better way?
-						}
+						ColumnData += GradeToLocalizedString( Grade(m_packet.Read1()) );
 					break;
 				}
 				m_Scoreboard[ColumnNumber] = ColumnData;
@@ -947,7 +929,7 @@ LuaFunction( ConnectToServer, 				ConnectToServer( ( RString(SArg(1)).length()==
 
 static bool ReportStyle() { NSMAN->ReportStyle(); return true; }
 
-LuaFunction( IsSMOnlineLoggedIn,		NSMAN->isSMOLoggedIn[IArg(1)] )
+LuaFunction( IsSMOnlineLoggedIn,		NSMAN->isSMOLoggedIn[Enum::Check<PlayerNumber>(L, 1)] )
 LuaFunction( IsNetConnected,			NSMAN->useSMserver )
 LuaFunction( IsNetSMOnline,			NSMAN->isSMOnline )
 LuaFunction( ReportStyle,			ReportStyle() )
