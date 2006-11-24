@@ -37,7 +37,7 @@ function SongSelectionScreen()
 end
 
 function NextNetworkScreen()
-	if IsNetSMOnline() then return "ScreenCaution" end
+	if IsNetConnected() then return "ScreenCaution" end
 	return "ScreenTitleMenu"
 end
 
