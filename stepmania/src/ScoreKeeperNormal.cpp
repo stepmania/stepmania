@@ -221,7 +221,8 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 	ASSERT( m_iMaxPossiblePoints >= 0 );
 	m_iMaxScoreSoFar += m_iMaxPossiblePoints;
 
-	m_iNumTapsAndHolds = pNoteData->GetNumRowsWithTapOrHoldHead() + pNoteData->GetNumHoldNotes();
+	m_iNumTapsAndHolds = pNoteData->GetNumRowsWithTapOrHoldHead() + pNoteData->GetNumHoldNotes()
+		+ pNoteData->GetNumRolls();
 
 	m_iPointBonus = m_iMaxPossiblePoints;
 	m_pPlayerStageStats->m_iMaxScore = m_iMaxScoreSoFar;
