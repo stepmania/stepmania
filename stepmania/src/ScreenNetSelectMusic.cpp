@@ -114,7 +114,7 @@ void ScreenNetSelectMusic::Input( const InputEventPlus &input )
 	if( !m_bAllowInput )
 		return;
 
-	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
+	if( IsTransitioning() )
 		return;
 
 	if ( input.type == IET_RELEASE )
