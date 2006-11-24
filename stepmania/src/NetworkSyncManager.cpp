@@ -61,16 +61,6 @@ NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
 	LANserver = NULL;	//So we know if it has been created yet
 	BroadcastReception = NULL;
 
-	if( GetCommandlineArgument( "runserver" ))
-	{
-		ld->SetText( INITIALIZING_SERVER );
-		LANserver = new StepManiaLanServer;
-		isLanServer = true;
-		GetCommandlineArgument( "runserver", &LANserver->servername );
-	}
-	else
-		isLanServer = false;
-	
 	ld->SetText( INITIALIZING_CLIENT_NETWORK );
     NetPlayerClient = new EzSockets;
 	NetPlayerClient->blocking = false;
@@ -99,12 +89,6 @@ NetworkSyncManager::~NetworkSyncManager ()
 	{
 		BroadcastReception->close();
 		SAFE_DELETE( BroadcastReception );
-	}
-
-	if( isLanServer )
-	{
-		LANserver->ServerStop();
-		delete LANserver;
 	}
 }
 
@@ -184,20 +168,11 @@ void NetworkSyncManager::PostStartUp(const RString& ServerIP)
 	
 	bool dontExit = true;
 
-	//Don't block if the server is running
-	if( isLanServer )
-		NetPlayerClient->blocking = false;
-	else
-		NetPlayerClient->blocking = true;
+	NetPlayerClient->blocking = true;
 
 	//Following packet must get through, so we block for it.
 	//If we are serving we do not block for this.
 	NetPlayerClient->SendPack((char*)m_packet.Data,m_packet.Position);
-
-	//If we are serving, do this so we properly connect
-	//to the server.
-	if( isLanServer )
-		LANserver->ServerUpdate();
 
 	m_packet.ClearPacket();
 
@@ -227,17 +202,6 @@ void NetworkSyncManager::PostStartUp(const RString& ServerIP)
 void NetworkSyncManager::StartUp()
 {
 	RString ServerIP;
-
-	if( isLanServer )
-		if (!LANserver->ServerStart())
-		{
-			//If the server happens to not start when told,
-			//Print to log and release the memory where the
-			//server was held.
-			isLanServer = false;
-			LOG->Warn("Server failed to start.");
-			delete LANserver;
-		}
 
 	if( GetCommandlineArgument( "netip", &ServerIP ) )
 		PostStartUp(ServerIP);
@@ -461,11 +425,7 @@ void NetworkSyncManager::StartRequest(short position)
 
 	bool dontExit=true;
 
-	//Don't block if we are server.
-	if (isLanServer)
-		NetPlayerClient->blocking=false;
-	else
-		NetPlayerClient->blocking=true;
+	NetPlayerClient->blocking=true;
 
 	//The following packet HAS to get through, so we turn blocking on for it as well
 	//Don't block if we are serving
@@ -475,21 +435,17 @@ void NetworkSyncManager::StartRequest(short position)
 
 	m_packet.ClearPacket();
 
-		
+	
 	while (dontExit)
 	{
-		//Keep the server going during the loop.
-		if (isLanServer)
-			LANserver->ServerUpdate();
-
 		m_packet.ClearPacket();
 		if (NetPlayerClient->ReadPack((char *)&m_packet, NETMAXBUFFERSIZE)<1)
-			if (!isLanServer)
 				dontExit=false; // Also allow exit if there is a problem on the socket
 								// Only do if we are not the server, otherwise the sync
 								// gets hosed up due to non blocking mode.
-		if (m_packet.Read1() == (NSServerOffset + NSCGSR))
-			dontExit=false;
+
+			if (m_packet.Read1() == (NSServerOffset + NSCGSR))
+				dontExit=false;
 		//Only allow passing on Start request. 
 		//Otherwise scoreboard updates and such will confuse us.
 
@@ -521,9 +477,6 @@ void NetworkSyncManager::DisplayStartupStatus()
 
 void NetworkSyncManager::Update(float fDeltaTime)
 {
-	if (isLanServer)
-		LANserver->ServerUpdate();
-
 	if (useSMserver)
 		ProcessInput();
 
@@ -652,7 +605,7 @@ void NetworkSyncManager::ProcessInput()
 				case NSSB_GRADE:
 					ColumnData = "Grade\n";
 					for (int i=0;i<NumberPlayers;i++)
-						ColumnData += GradeToLocalizedString( Grade(m_packet.Read1()) );
+						ColumnData += GradeToLocalizedString( Grade(m_packet.Read1()) ) + "\n";
 					break;
 				}
 				m_Scoreboard[ColumnNumber] = ColumnData;
