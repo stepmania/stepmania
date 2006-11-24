@@ -10,7 +10,6 @@
 #include "ScreenManager.h"
 #include "ScreenTextEntry.h"
 #include "ScreenPrompt.h"
-#include "NetworkSyncServer.h"
 #include "LocalizedString.h"
 #include "OptionRowHandler.h"
 
