@@ -168,7 +168,7 @@ PrefsManager::PrefsManager() :
 	m_bFastLoadAdditionalSongs      ( "FastLoadAdditionalSongs",    false ),
 
 	m_bOnlyDedicatedMenuButtons	( "OnlyDedicatedMenuButtons",	false ),
-	m_bMenuTimer		( "MenuTimer",			true ),
+	m_bMenuTimer		( "MenuTimer",			false ),
 
 	m_fLifeDifficultyScale	( "LifeDifficultyScale",	1.0f ),
 
