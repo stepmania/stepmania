@@ -26,7 +26,6 @@ void ScreenNetEvaluation::Init()
 	ScreenEvaluation::Init();
 
 	m_bHasStats = false;
-	m_pActivePlayer = PLAYER_1;	
 	m_iCurrentPlayer = 0;
 
 	FOREACH_PlayerNumber (pn)
@@ -58,19 +57,18 @@ void ScreenNetEvaluation::Init()
 void ScreenNetEvaluation::RedoUserTexts()
 {
 	m_iActivePlayers = NSMAN->m_ActivePlayers;
-	//If unessiary, just don't do this function.
+
+	//If unnecessary, just don't do this function.
 	if ( m_iActivePlayers == (int)m_textUsers.size() )
 		return;
+
+	for( unsigned int i=0; i < m_textUsers.size(); ++i )
+		this->RemoveChild( &m_textUsers[i] );
 
 	float cx = THEME->GetMetricF("ScreenNetEvaluation",ssprintf("User%dX",m_iShowSide));
 	float cy = THEME->GetMetricF("ScreenNetEvaluation",ssprintf("User%dY",m_iShowSide));
 	
 	m_iCurrentPlayer = 0;
-
-	for( int i=0; i<m_iActivePlayers; ++i )
-		if (i < m_textUsers.size())
-			this->RemoveChild( &m_textUsers[i] );
-
 	m_textUsers.resize(m_iActivePlayers);
 
 	for( int i=0; i<m_iActivePlayers; ++i )
@@ -93,10 +91,9 @@ void ScreenNetEvaluation::MenuLeft( const InputEventPlus &input )
 
 void ScreenNetEvaluation::MenuUp( const InputEventPlus &input )
 {
-	if ( m_iActivePlayers == 0 )
+	if ( (m_iActivePlayers == 0) || !m_bHasStats )
 		return;
-	if (!m_bHasStats)
-		return;
+
 	COMMAND( m_textUsers[m_iCurrentPlayer], "DeSel" );
 	m_iCurrentPlayer = (m_iCurrentPlayer + m_iActivePlayers - 1) % m_iActivePlayers;
 	COMMAND( m_textUsers[m_iCurrentPlayer], "Sel" );
@@ -110,10 +107,9 @@ void ScreenNetEvaluation::MenuRight( const InputEventPlus &input )
 
 void ScreenNetEvaluation::MenuDown( const InputEventPlus &input )
 {
-	if ( m_iActivePlayers == 0 )
+	if ( (m_iActivePlayers == 0) || !m_bHasStats )
 		return;
-	if ( !m_bHasStats )
-		return;
+
 	COMMAND( m_textUsers[m_iCurrentPlayer], "DeSel" );
 	m_iCurrentPlayer = (m_iCurrentPlayer + 1) % m_iActivePlayers;
 	COMMAND( m_textUsers[m_iCurrentPlayer], "Sel" );
@@ -122,17 +118,11 @@ void ScreenNetEvaluation::MenuDown( const InputEventPlus &input )
 
 void ScreenNetEvaluation::HandleScreenMessage( const ScreenMessage SM )
 {
-	if( SM == SM_GotEval )
+	if( SM == SM_GotEval)
 	{
 		m_bHasStats = true;
 
 		LOG->Trace("SMNETDebug:%d,%d",m_iActivePlayers,NSMAN->m_ActivePlayers);
-
-		//XXX: This does remove functionalty, but until
-		// the cause for the strange snowball ScreenManager 
-		// crash can be found... this is the only way.
-		if ( m_iActivePlayers != NSMAN->m_ActivePlayers )
-			return;
 
 		RedoUserTexts();
 
