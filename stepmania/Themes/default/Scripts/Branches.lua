@@ -36,6 +36,11 @@ function SongSelectionScreen()
 	return "ScreenSelectMusic"
 end
 
+function NextNetworkScreen()
+	if IsNetSMOnline() then return "ScreenCaution" end
+	return "ScreenTitleMenu"
+end
+
 function SMOnlineScreen()
 	if not IsSMOnlineLoggedIn(PLAYER_1) and GAMESTATE:IsPlayerEnabled(PLAYER_1) then return "ScreenSMOnlineLogin" end
 	if not IsSMOnlineLoggedIn(PLAYER_2) and GAMESTATE:IsPlayerEnabled(PLAYER_2) then return "ScreenSMOnlineLogin" end
