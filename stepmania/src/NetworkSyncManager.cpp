@@ -53,7 +53,6 @@ int NetworkSyncManager::GetSMOnlineSalt()
 	return m_iSalt;
 }
 
-static LocalizedString INITIALIZING_SERVER			( "NetworkSyncManager", "Initializing server..." );
 static LocalizedString INITIALIZING_CLIENT_NETWORK	( "NetworkSyncManager", "Initializing Client Network..." );
 NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
 {
