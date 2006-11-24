@@ -68,7 +68,8 @@ void ScreenNetEvaluation::RedoUserTexts()
 	m_iCurrentPlayer = 0;
 
 	for( int i=0; i<m_iActivePlayers; ++i )
-		this->RemoveChild( &m_textUsers[i] );
+		if (i < m_textUsers.size())
+			this->RemoveChild( &m_textUsers[i] );
 
 	m_textUsers.resize(m_iActivePlayers);
 
