@@ -96,11 +96,13 @@ RString Style::ColToButtonName( int iCol ) const
 class LunaStyle: public Luna<Style>
 {
 public:
+	static int GetName( T* p, lua_State *L )		{ LuaHelpers::Push( L, (RString) p->m_szName ); return 1; }
 	DEFINE_METHOD( GetStyleType,		m_StyleType )
 	DEFINE_METHOD( GetStepsType,		m_StepsType )
 
 	LunaStyle()
 	{
+		ADD_METHOD( GetName );
 		ADD_METHOD( GetStyleType );
 		ADD_METHOD( GetStepsType );
 	}
