@@ -9,9 +9,6 @@
  * refcounted.  Without this, Copy() is very slow. */
 class rc_string
 {
-	mutable string *buf;
-	mutable int *cnt;
-
 public:
 	rc_string();
 	rc_string(const rc_string &rhs);
@@ -19,32 +16,25 @@ public:
 	string &get_owned();
 	const string &get() const;
 	int GetReferenceCount() const { return *cnt; }
+
+private:
+	mutable string *buf;
+	mutable int *cnt;
 };
 
 class RageSoundReader_Preload: public SoundReader
 {
-	rc_string buf;
-
-	/* Bytes: */
-	int position;
-
-	int total_samples() const;
-
-	int samplerate;
-	unsigned channels;
-	float OffsetFix;
-
 public:
 	/* Return true if the sound has been preloaded, in which case source will
 	 * be deleted.  Otherwise, return false. */
-	bool Open(SoundReader *source);
+	bool Open( SoundReader *pSource );
 	int GetLength() const;
 	int GetLength_Fast() const;
-	int SetPosition_Accurate(int ms);
-	int SetPosition_Fast(int ms);
-	int Read(char *buf, unsigned len);
-	int GetSampleRate() const { return samplerate; }
-	unsigned GetNumChannels() const { return channels; }
+	int SetPosition_Accurate( int iMS );
+	int SetPosition_Fast( int iMS );
+	int Read( char *pBuffer, unsigned iLength );
+	int GetSampleRate() const { return m_iSampleRate; }
+	unsigned GetNumChannels() const { return m_iChannels; }
 	bool IsStreamingFromDisk() const { return false; }
 
 	/* Return the total number of copies of this sound.  (If 1 is returned,
@@ -56,6 +46,18 @@ public:
 
 	/* Attempt to preload a sound.  pSound must be rewound. */
 	static bool PreloadSound( SoundReader *&pSound );
+
+private:
+	rc_string m_Buffer;
+
+	/* Bytes: */
+	int m_iPosition;
+
+	int GetTotalSamples() const;
+
+	int m_iSampleRate;
+	unsigned m_iChannels;
+	float OffsetFix;
 };
 
 #endif

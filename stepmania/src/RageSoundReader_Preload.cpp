@@ -4,7 +4,7 @@
 #include "global.h"
 #include "RageSoundReader_Preload.h"
 
-#define samplesize (2 * channels) /* 16-bit */
+#define samplesize (2 * m_iChannels) /* 16-bit */
 
 /* If a sound is smaller than this, we'll load it entirely into memory. */
 const unsigned max_prebuf_size = 1024*256;
@@ -24,57 +24,60 @@ bool RageSoundReader_Preload::PreloadSound( SoundReader *&pSound )
 	return true;
 }
 
-int RageSoundReader_Preload::total_samples() const
+int RageSoundReader_Preload::GetTotalSamples() const
 {
-	return buf.get().size() / samplesize;
+	return m_Buffer.get().size() / samplesize;
 }
 
-bool RageSoundReader_Preload::Open(SoundReader *source)
+bool RageSoundReader_Preload::Open( SoundReader *pSource )
 {
-	ASSERT(source);
-	samplerate = source->GetSampleRate();
-	channels = source->GetNumChannels();
+	ASSERT( pSource );
+	m_iSampleRate = pSource->GetSampleRate();
+	m_iChannels = pSource->GetNumChannels();
 	
 	/* Check the length, and see if we think it'll fit in the buffer. */
-	int len = source->GetLength_Fast();
-	if(len != -1)
+	int iLen = pSource->GetLength_Fast();
+	if( iLen != -1 )
 	{
-		float secs = len / 1000.f;
+		float fSecs = iLen / 1000.f;
 
-		unsigned pcmsize = unsigned(secs * samplerate * samplesize); /* seconds -> bytes */
-		if(pcmsize > max_prebuf_size)
+		unsigned iPCMSize = unsigned( fSecs * m_iSampleRate * samplesize ); /* seconds -> bytes */
+		if( iPCMSize > max_prebuf_size )
 			return false; /* Don't bother trying to preload it. */
 
-		buf.get_owned().reserve(pcmsize);
+		m_Buffer.get_owned().reserve( iPCMSize );
 	}
 
-	while(1) {
+	while(1)
+	{
 		char buffer[1024];
-		int cnt = source->Read(buffer, sizeof(buffer));
+		int iCnt = pSource->Read(buffer, sizeof(buffer));
 
-		if(cnt < 0) {
+		if( iCnt < 0 )
+		{
 			/* XXX untested */
-			SetError(source->GetError());
+			SetError(pSource->GetError());
 			return false;
 		}
 
-		if(!cnt) break; /* eof */
+		if( !iCnt )
+			break; /* eof */
 
 		/* Add the buffer. */
-		buf.get_owned().append(buffer, buffer+cnt);
+		m_Buffer.get_owned().append( buffer, buffer+iCnt );
 
-		if(buf.get_owned().size() > max_prebuf_size)
+		if( m_Buffer.get_owned().size() > max_prebuf_size )
 			return false; /* too big */
 	}
 
-	position = 0;
-	delete source;
+	m_iPosition = 0;
+	delete pSource;
 	return true;
 }
 
 int RageSoundReader_Preload::GetLength() const
 {
-	return int(float(total_samples()) * 1000.f / samplerate);
+	return int(float(GetTotalSamples()) * 1000.f / m_iSampleRate);
 }
 
 int RageSoundReader_Preload::GetLength_Fast() const
@@ -84,32 +87,32 @@ int RageSoundReader_Preload::GetLength_Fast() const
 
 int RageSoundReader_Preload::SetPosition_Accurate(int ms)  
 {
-	const int sample = int((ms / 1000.0f) * samplerate);
-	position = sample * samplesize;
+	const int sample = int((ms / 1000.0f) * m_iSampleRate);
+	m_iPosition = sample * samplesize;
 
-	if(position >= int(buf.get().size()))
+	if( m_iPosition >= int(m_Buffer.get().size()) )
 	{
-		position = buf.get().size();
+		m_iPosition = m_Buffer.get().size();
 		return 0;
 	}
 
-	return position;
+	return m_iPosition;
 }
 
-int RageSoundReader_Preload::SetPosition_Fast(int ms)
+int RageSoundReader_Preload::SetPosition_Fast( int iMS )
 {
-	return SetPosition_Accurate(ms); 
+	return SetPosition_Accurate( iMS );
 }
 
-int RageSoundReader_Preload::Read(char *buffer, unsigned len)
+int RageSoundReader_Preload::Read( char *pBuffer, unsigned iLen )
 {
-	const unsigned bytes_avail = buf.get().size() - position;
+	const unsigned bytes_avail = m_Buffer.get().size() - m_iPosition;
 
-	len = min(len, bytes_avail);
-	memcpy(buffer, buf.get().data()+position, len);
-	position += len;
+	iLen = min( iLen, bytes_avail );
+	memcpy( pBuffer, m_Buffer.get().data()+m_iPosition, iLen );
+	m_iPosition += iLen;
 	
-	return len;
+	return iLen;
 }
 
 RageSoundReader_Preload *RageSoundReader_Preload::Copy() const
@@ -119,7 +122,7 @@ RageSoundReader_Preload *RageSoundReader_Preload::Copy() const
 
 int RageSoundReader_Preload::GetReferenceCount() const
 {
-	return buf.GetReferenceCount();
+	return m_Buffer.GetReferenceCount();
 }
 
 rc_string::rc_string()
