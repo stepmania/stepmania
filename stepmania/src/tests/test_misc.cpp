@@ -45,6 +45,7 @@ void test_handle_args( int argc, char *argv[] )
 void test_init()
 {
 	HOOKS = MakeArchHooks();
+	HOOKS->Init();
 
 	FILEMAN = new RageFileManager( argv0 );
 	FILEMAN->Mount( g_Driver, g_Root, "/" );
