@@ -57,7 +57,6 @@ private:
 
 	int m_iSampleRate;
 	unsigned m_iChannels;
-	float OffsetFix;
 };
 
 #endif
