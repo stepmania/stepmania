@@ -34,7 +34,7 @@ void ReadData( SoundReader *snd,
 		}
 	}
 		
-	ASSERT( got == bytes );
+	ASSERT_M( got == bytes, ssprintf("%i, %i", got, bytes) );
 }
 	       
 void find( const char *haystack, int hs, const char *needle, int ns )
@@ -119,7 +119,8 @@ void compare_buffers( const int16_t *expect, const int16_t *got, int frames,
 
 bool compare_buffers( const int16_t *expect, const int16_t *got, int frames, int channels )
 {
-	/* Compare each channel separately.  Try to figure out if
+	/*
+	 * Compare each channel separately.  Try to figure out if
 	 * the data is exactly the same, 
 	 * 
 	 * 2: either the source or dest data starts out around 0 and converges quickly
@@ -135,7 +136,7 @@ bool compare_buffers( const int16_t *expect, const int16_t *got, int frames, int
 	 *
 	 * Determine if data is identical, but offset.
 	 * 
-	 * */
+	 */
 
 	
 
