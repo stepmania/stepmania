@@ -331,7 +331,6 @@ static const char *StyleTypeNames[] = {
 XToString( StyleType );
 StringToX( StyleType );
 LuaXType( StyleType );
-LuaFunction( StyleTypeToString,		StyleTypeToString( Enum::Check<StyleType>(L, 1)));
 
 static const char *GoalTypeNames[] = {
 	"Calories",
