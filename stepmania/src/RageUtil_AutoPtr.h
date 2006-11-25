@@ -82,6 +82,8 @@ public:
 		return m_pPtr;
 	}
 
+	int GetReferenceCount() const { return *m_iRefCount; }
+
 	const T &operator *() const { return *m_pPtr; }
 	const T *operator ->() const { return m_pPtr; }
 
