@@ -454,13 +454,16 @@ all_test_SOURCES = \
 		$(ArchUtils) \
 		$(PCRE) \
 		$(RageFile) \
+		$(Lua) \
 		$(ArchHooks) \
 		$(Threads) \
 		$(Dialog) \
 		tests/test_misc.cpp tests/test_misc.h \
 		IniFile.cpp IniFile.h \
 		XmlFile.cpp XmlFile.h \
+		Command.cpp Command.h \
 		DateTime.cpp DateTime.h \
+		EnumHelper.cpp EnumHelper.h \
 		PrefsManager.cpp PrefsManager.h \
 		Preference.cpp Preference.h \
 		LocalizedString.cpp LocalizedString.h \
@@ -488,7 +491,6 @@ test_audio_readers_SOURCES = \
 		RageSoundReader_FileReader.cpp RageSoundReader_FileReader.h \
 		RageSoundReader_Preload.cpp RageSoundReader_Preload.h \
 		RageSoundReader_Resample.cpp  RageSoundReader_Resample.h \
-		RageSoundReader_Resample_Fast.cpp RageSoundReader_Resample_Fast.h \
 		RageSoundReader_Resample_Good.cpp RageSoundReader_Resample_Good.h \
 		RageSoundReader_Chain.cpp RageSoundReader_Chain.h
 
