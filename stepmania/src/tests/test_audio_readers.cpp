@@ -446,22 +446,6 @@ bool RunTests( SoundReader *snd, const TestFile &tf )
 		return false;
 	}
 
-	/* Seek to 1ms and make sure it gives us the correct data. */
-	snd->SetPosition_Accurate( 1 );
-	if( !test_read( snd, data + one_second * 1/1000, one_second * 1/1000 ) )
-	{
-		LOG->Warn("Fail: SetPosition_Accurate(1) didn't work");
-		return false;
-	}
-
-	/* Seek to 500ms and make sure it gives us the correct data. */
-	snd->SetPosition_Accurate( 500 );
-	if( !test_read( snd, data+one_second * 500/1000, one_second * 500/1000 ) )
-	{
-		LOG->Warn("Fail: seek(500) didn't work");
-		return false;
-	}
-
 	/* Make sure seeking past end of file returns 0. */
 	int ret2 = snd->SetPosition_Fast( 10000000 );
 	if( ret2 != 0 )
@@ -490,6 +474,16 @@ bool RunTests( SoundReader *snd, const TestFile &tf )
 		return false;
 	}
 	
+	/* Seek to 1ms and make sure it gives us the correct data. */
+	snd->SetPosition_Accurate( 1 );
+	if( !test_read( snd, data + one_second * 1/1000, one_second * 1/1000 ) )
+		LOG->Warn("Fail: SetPosition_Accurate(1) didn't work");
+
+	/* Seek to 500ms and make sure it gives us the correct data. */
+	snd->SetPosition_Accurate( 500 );
+	if( !test_read( snd, data+one_second * 500/1000, one_second * 500/1000 ) )
+		LOG->Warn("Fail: seek(500) didn't work");
+
 	return true;
 }
 
