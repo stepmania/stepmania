@@ -24,9 +24,14 @@ bool RageSoundReader_Preload::PreloadSound( SoundReader *&pSound )
 	return true;
 }
 
+RageSoundReader_Preload::RageSoundReader_Preload():
+	m_Buffer( new RString )
+{
+}
+
 int RageSoundReader_Preload::GetTotalSamples() const
 {
-	return m_Buffer.get().size() / samplesize;
+	return m_Buffer->size() / samplesize;
 }
 
 bool RageSoundReader_Preload::Open( SoundReader *pSource )
@@ -45,7 +50,7 @@ bool RageSoundReader_Preload::Open( SoundReader *pSource )
 		if( iPCMSize > max_prebuf_size )
 			return false; /* Don't bother trying to preload it. */
 
-		m_Buffer.get_owned().reserve( iPCMSize );
+		m_Buffer.Get()->reserve( iPCMSize );
 	}
 
 	while(1)
@@ -64,9 +69,9 @@ bool RageSoundReader_Preload::Open( SoundReader *pSource )
 			break; /* eof */
 
 		/* Add the buffer. */
-		m_Buffer.get_owned().append( buffer, buffer+iCnt );
+		m_Buffer.Get()->append( buffer, buffer+iCnt );
 
-		if( m_Buffer.get_owned().size() > max_prebuf_size )
+		if( m_Buffer.Get()->size() > max_prebuf_size )
 			return false; /* too big */
 	}
 
@@ -90,9 +95,9 @@ int RageSoundReader_Preload::SetPosition_Accurate(int ms)
 	const int sample = int((ms / 1000.0f) * m_iSampleRate);
 	m_iPosition = sample * samplesize;
 
-	if( m_iPosition >= int(m_Buffer.get().size()) )
+	if( m_iPosition >= int(m_Buffer->size()) )
 	{
-		m_iPosition = m_Buffer.get().size();
+		m_iPosition = m_Buffer->size();
 		return 0;
 	}
 
@@ -106,10 +111,10 @@ int RageSoundReader_Preload::SetPosition_Fast( int iMS )
 
 int RageSoundReader_Preload::Read( char *pBuffer, unsigned iLen )
 {
-	const unsigned bytes_avail = m_Buffer.get().size() - m_iPosition;
+	const unsigned bytes_avail = m_Buffer->size() - m_iPosition;
 
 	iLen = min( iLen, bytes_avail );
-	memcpy( pBuffer, m_Buffer.get().data()+m_iPosition, iLen );
+	memcpy( pBuffer, m_Buffer->data()+m_iPosition, iLen );
 	m_iPosition += iLen;
 	
 	return iLen;
@@ -123,46 +128,6 @@ RageSoundReader_Preload *RageSoundReader_Preload::Copy() const
 int RageSoundReader_Preload::GetReferenceCount() const
 {
 	return m_Buffer.GetReferenceCount();
-}
-
-rc_string::rc_string()
-{
-	buf = new string;
-	cnt = new int(1);
-}
-
-rc_string::rc_string(const rc_string &rhs)
-{
-	buf = rhs.buf;
-	cnt = rhs.cnt;
-	(*cnt)++;
-}
-
-rc_string::~rc_string()
-{
-	(*cnt)--;
-	if(!*cnt)
-	{
-		delete buf;
-		delete cnt;
-	}
-}
-
-string &rc_string::get_owned()
-{
-	if(*cnt != 1)
-	{
-		(*cnt)--;
-		buf = new string(*buf);
-		cnt = new int(1);
-	}
-
-	return *buf;
-}
-
-const string &rc_string::get() const
-{
-	return *buf;
 }
 
 /*

@@ -4,27 +4,12 @@
 #define RAGE_SOUND_READER_PRELOAD
 
 #include "RageSoundReader.h"
-
-/* Trivial wrapper to refcount strings, since std::string is not always
- * refcounted.  Without this, Copy() is very slow. */
-class rc_string
-{
-public:
-	rc_string();
-	rc_string(const rc_string &rhs);
-	~rc_string();
-	string &get_owned();
-	const string &get() const;
-	int GetReferenceCount() const { return *cnt; }
-
-private:
-	mutable string *buf;
-	mutable int *cnt;
-};
+#include "RageUtil_AutoPtr.h"
 
 class RageSoundReader_Preload: public SoundReader
 {
 public:
+	RageSoundReader_Preload();
 	/* Return true if the sound has been preloaded, in which case source will
 	 * be deleted.  Otherwise, return false. */
 	bool Open( SoundReader *pSource );
@@ -48,7 +33,7 @@ public:
 	static bool PreloadSound( SoundReader *&pSound );
 
 private:
-	rc_string m_Buffer;
+	AutoPtrCopyOnWrite<RString> m_Buffer;
 
 	/* Bytes: */
 	int m_iPosition;
