@@ -154,8 +154,7 @@ bool test_read( SoundReader *snd, const char *expected_data, int bytes )
 {
 	bytes = (bytes/4) * 4;
 	char buf[bytes];
-	int got = snd->Read( buf, bytes );
-	ASSERT( got == bytes );
+	ReadData( snd, -1, buf, bytes );
 
 	//compare_buffers( (const int16_t *) expected_data,
 	//		 (const int16_t *) buf,
