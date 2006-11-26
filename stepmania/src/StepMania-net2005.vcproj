@@ -3131,6 +3131,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RageSoundReader.cpp"
+				>
+			</File>
+			<File
 				RelativePath="RageSoundReader.h"
 				>
 			</File>
