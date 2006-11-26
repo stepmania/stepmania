@@ -101,7 +101,7 @@ int RageSoundReader_Preload::SetPosition_Accurate(int ms)
 		return 0;
 	}
 
-	return m_iPosition;
+	return ms;
 }
 
 int RageSoundReader_Preload::SetPosition_Fast( int iMS )
