@@ -33,6 +33,22 @@ public:
 		delete[] buf;
 	}
 		
+	CircBuf( const CircBuf &cpy )
+	{
+		size = cpy.size;
+		read_pos = cpy.read_pos;
+		write_pos = cpy.write_pos;
+		if( size )
+		{
+			buf = new T[size];
+			memcpy( buf, cpy.buf, size );
+		}
+		else
+		{
+			buf = NULL;
+		}
+	}
+
 	/* Return the number of elements available to read. */
 	unsigned num_readable() const
 	{
