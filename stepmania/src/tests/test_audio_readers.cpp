@@ -333,11 +333,11 @@ bool RunTests( SoundReader *snd, const TestFile &tf )
 			return false;
 		}
 		
-		bool Failed = false;
+		bool bFailed = false;
 		if( SilentFrames != tf.SilentFrames  )
 		{
 			LOG->Trace( "Expected %i silence, got %i (%i too high)", tf.SilentFrames, SilentFrames, SilentFrames-tf.SilentFrames );
-			Failed = true;
+			bFailed = true;
 		}
 		
 		bool Identical = !memcmp( InitialData, tf.initial, sizeof(tf.initial) );
@@ -346,10 +346,10 @@ bool RunTests( SoundReader *snd, const TestFile &tf )
 			LOG->Trace("Expected data:");
 			dump( tf.initial, ARRAYLEN(tf.initial) );
 			LOG->Trace(" ");
-			Failed = true;
+			bFailed = true;
 		}
 			
-		if( Failed )
+		if( bFailed )
 		{
 			LOG->Trace("Got data:");
 			dump( InitialData, min( 16, 2*InitialDataSize ) );
@@ -365,7 +365,7 @@ bool RunTests( SoundReader *snd, const TestFile &tf )
                         dump( tf.later, ARRAYLEN(tf.later) );
 			LOG->Trace("Got half second data:");
 			dump( LaterData, 16 );
-			Failed = true;
+			bFailed = true;
 
 			/* See if we can find the half second data. */
 			int16_t *p = (int16_t *) xmemsearch( sdata, one_second, tf.later, sizeof(tf.later), LaterOffsetSamples*sizeof(int16_t) );
@@ -381,27 +381,27 @@ bool RunTests( SoundReader *snd, const TestFile &tf )
 
 		}
 
-		if( Failed )
+		if( bFailed )
 			return false;
 	}
 
 	/* Make sure we're getting non-null data. */
 	{
-		bool all_null=true;
-		bool all_42=true;
+		bool bAllNull = true;
+		bool bAll42 = true;
 
 		for( int i = 0; i < one_second; ++i )
 		{
 			if( data[i] != 0 )
-				all_null=false;
+				bAllNull=false;
 			if( data[i] != 0x42 )
-				all_42=false;
+				bAll42=false;
 
 		}
 		
-		if( all_null || all_42 )
+		if( bAllNull || bAll42 )
 		{
-			LOG->Warn( "'%s': sanity check failed (%i %i)", fn, all_null, all_42 );
+			LOG->Warn( "'%s': sanity check failed (%i %i)", fn, bAllNull, bAll42 );
 			return false;
 		}
 	}
