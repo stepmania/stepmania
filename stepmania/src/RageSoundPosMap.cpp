@@ -18,21 +18,21 @@ pos_map_queue::pos_map_queue( const pos_map_queue &cpy )
 	*this = cpy;
 }
 
-void pos_map_queue::Insert( int64_t frameno, int pos, int got_frames )
+void pos_map_queue::Insert( int64_t iFrame, int iPosition, int iGotFrames )
 {
 	if( m_Queue.size() )
 	{
 		/* Optimization: If the last entry lines up with this new entry, just merge them. */
 		pos_map_t &last = m_Queue.back();
-		if( last.m_iFrameNo+last.m_iFrames == frameno &&
-		    last.m_iPosition+last.m_iFrames == pos )
+		if( last.m_iFrameNo+last.m_iFrames == iFrame &&
+		    last.m_iPosition+last.m_iFrames == iPosition )
 		{
-			last.m_iFrames += got_frames;
+			last.m_iFrames += iGotFrames;
 			return;
 		}
 	}
 
-	m_Queue.push_back( pos_map_t(frameno, pos, got_frames) );
+	m_Queue.push_back( pos_map_t(iFrame, iPosition, iGotFrames) );
 	
 	Cleanup();
 }

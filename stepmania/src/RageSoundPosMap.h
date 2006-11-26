@@ -8,16 +8,16 @@
 struct pos_map_t
 {
 	/* Frame number from the POV of the sound driver: */
-	int64_t frameno;
+	int64_t m_iFrameNo;
 
 	/* Actual sound position within the sample: */
-	int64_t position;
+	int64_t m_iPosition;
 
 	/* The number of frames in this block: */
-	int64_t frames;
+	int64_t m_iFrames;
 
-	pos_map_t() { frameno=0; position=0; frames=0; }
-	pos_map_t( int64_t frame, int pos, int cnt ) { frameno=frame; position=pos; frames=cnt; }
+	pos_map_t() { m_iFrameNo = 0; m_iPosition = 0; m_iFrames = 0; }
+	pos_map_t( int64_t iFrame, int iPosition, int iFrames ) { m_iFrameNo = iFrame; m_iPosition = iPosition; m_iFrames = iFrames; }
 };
 
 /* This class maps one range of frames to another. */
@@ -27,11 +27,11 @@ public:
 	pos_map_queue();
 	pos_map_queue( const pos_map_queue &cpy );
 
-	/* Insert a mapping from frameno to position, containing pos got_frames. */
-	void Insert( int64_t frameno, int position, int got_frames );
+	/* Insert a mapping from iFrame to iPosition, containing pos iGotFrames. */
+	void Insert( int64_t iFrame, int iPosition, int iGotFrames );
 
-	/* Return the position for the given frameno. */
-	int64_t Search( int64_t frameno, bool *approximate ) const;
+	/* Return the position for the given iFrame. */
+	int64_t Search( int64_t iFrame, bool *bApproximate ) const;
 
 	/* Erase all mappings. */
 	void Clear();
