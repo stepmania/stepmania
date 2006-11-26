@@ -56,6 +56,7 @@ void LifeMeterBattery::Load( const PlayerState *pPlayerState, PlayerStageStats *
 	if( bPlayerEnabled )
 	{
 		m_Percent.Load( pPlayerState, pPlayerStageStats, "LifeMeterBattery Percent", true );
+		m_Percent.SetZoomX( pn==PLAYER_1 ? 1.0f : -1.0f );
 		this->AddChild( &m_Percent );
 	}
 
