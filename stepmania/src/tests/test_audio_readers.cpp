@@ -490,8 +490,6 @@ bool RunTests( SoundReader *snd, const TestFile &tf )
 		return false;
 	}
 	
-	/* Seek to a spot that lies exactly on a TOC entry, to check the
-	 * case that SetPosition_hard doesn't actually have to do anything. */
 	return true;
 }
 
