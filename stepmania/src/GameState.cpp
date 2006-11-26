@@ -71,7 +71,7 @@ class GameStateMessageHandler: public MessageSubscriber
 struct GameStateImpl
 {
 	GameStateMessageHandler m_Subscriber;
-	GameStateImpl::GameStateImpl()
+	GameStateImpl()
 	{
 		m_Subscriber.SubscribeToMessage( "RefreshCreditText" );
 	}
