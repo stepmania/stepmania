@@ -518,11 +518,13 @@ bool test_file( const TestFile &tf, int filters )
 
 	delete snd;
 
-	/* Check SetPosition_Accurate consistency:
+	/*
+	 * Check SetPosition_Accurate consistency:
 	 * 
 	 * Reopen the file from scratch, seek to 100ms, read some data, do some
 	 * operations that would result in the internal TOC being filled (seek
-	 * to the end), then re-read the data at 100ms and make sure it's the same. */
+	 * to the end), then re-read the data at 100ms and make sure it's the same.
+	 */
 	
 	snd = SoundReader_FileReader::OpenFile( fn, error );
 	snd = ApplyFilters( snd, filters );
