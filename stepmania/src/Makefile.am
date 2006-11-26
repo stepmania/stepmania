@@ -100,6 +100,7 @@ Font.cpp Font.h \
 FontCharAliases.cpp FontCharAliases.h \
 FontCharmaps.cpp FontCharmaps.h Game.cpp Game.h GameCommand.cpp GameCommand.h \
 GameConstantsAndTypes.cpp GameConstantsAndTypes.h \
+GamePreferences.cpp GamePreferences.h \
 GameInput.cpp GameInput.h Grade.cpp Grade.h \
 HighScore.cpp HighScore.h \
 InputEventPlus.h \
@@ -341,7 +342,7 @@ RageDisplay_Null.cpp RageDisplay_Null.h RageException.cpp RageException.h RageIn
 RageInputDevice.cpp RageInputDevice.h RageLog.cpp RageLog.h RageMath.cpp RageMath.h \
 RageModelGeometry.cpp RageModelGeometry.h RageSound.cpp RageSound.h RageSoundManager.cpp RageSoundManager.h \
 RageSoundUtil.cpp RageSoundUtil.h RageSoundMixBuffer.cpp RageSoundMixBuffer.h \
-RageSoundPosMap.cpp RageSoundPosMap.h RageSoundReader.h RageSoundReader_FileReader.cpp RageSoundReader_FileReader.h \
+RageSoundPosMap.cpp RageSoundPosMap.h RageSoundReader.cpp RageSoundReader.h RageSoundReader_FileReader.cpp RageSoundReader_FileReader.h \
 RageSoundReader_Preload.cpp RageSoundReader_Preload.h RageSoundReader_Resample.cpp RageSoundReader_Resample.h \
 RageSoundReader_Resample_Good.cpp RageSoundReader_Resample_Good.h \
 RageSoundReader_Chain.cpp RageSoundReader_Chain.h \
@@ -488,6 +489,7 @@ test_audio_readers_SOURCES = \
 		$(all_test_SOURCES) \
 		tests/test_audio_readers.cpp \
 		RageSoundUtil.cpp RageSoundUtil.h RageSoundMixBuffer.cpp RageSoundMixBuffer.h \
+		RageSoundReader.cpp RageSoundReader.h \
 		RageSoundReader_FileReader.cpp RageSoundReader_FileReader.h \
 		RageSoundReader_Preload.cpp RageSoundReader_Preload.h \
 		RageSoundReader_Resample.cpp  RageSoundReader_Resample.h \
