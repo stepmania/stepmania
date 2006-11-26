@@ -15,25 +15,12 @@
 void ReadData( SoundReader *snd,
 	       int ms,		/* start */
 	       char *buf,	/* out */
-	       int bytes )
+	       int frames )
 {
 	if( ms != -1 )
 		snd->SetPosition_Accurate( ms );
-	if( snd->GetNumChannels() == 1 )
-		bytes /= 2;
+	int bytes = frames*snd->GetNumChannels()*sizeof(int16_t);
 	int got = snd->Read( buf, bytes );
-	if( got != -1 && snd->GetNumChannels() == 1 )
-	{
-		int16_t *pTemp = (int16_t *) alloca( got );
-		memcpy( pTemp, buf, got );
-		for( int i = 0; i < got/2; ++i )
-		{
-			int16_t *p = (int16_t *) buf;
-			p[i*2+0] = pTemp[i];
-			p[i*2+1] = pTemp[i];
-		}
-	}
-		
 	ASSERT_M( got == bytes, ssprintf("%i, %i", got, bytes) );
 }
 	       
@@ -150,11 +137,12 @@ bool compare_buffers( const int16_t *expect, const int16_t *got, int frames, int
 
 
 
-bool test_read( SoundReader *snd, const char *expected_data, int bytes )
+bool test_read( SoundReader *snd, const char *expected_data, int frames )
 {
-	bytes = (bytes/4) * 4;
+	int bytes = frames * snd->GetNumChannels() * sizeof(int16_t);
 	char buf[bytes];
-	ReadData( snd, -1, buf, bytes );
+	int got = snd->Read( buf, bytes );
+	ASSERT( got == bytes );
 
 	//compare_buffers( (const int16_t *) expected_data,
 	//		 (const int16_t *) buf,
@@ -210,8 +198,8 @@ SoundReader *ApplyFilters( SoundReader *s, int filters )
 
 bool CheckSetPositionAccurate( SoundReader *snd )
 {
-	const int one_second=snd->GetSampleRate()*2*2;
-	char data[one_second];
+	const int one_second=snd->GetSampleRate();
+	char data[one_second*sizeof(int16_t)*snd->GetNumChannels()];
 
 	snd->SetPosition_Accurate( 100 );
 	ReadData( snd, 100, data, one_second/10 );
@@ -227,12 +215,12 @@ bool CheckSetPositionAccurate( SoundReader *snd )
 	return true;
 }
 
-int FramesOfSilence( const int16_t *data, int frames )
+int FramesOfSilence( const int16_t *data, int frames, int iChannels )
 {
 	int SilentFrames = 0;
 	while( SilentFrames < frames )
 	{
-		for( int c = 0; c < 2; ++c )
+		for( int c = 0; c < iChannels; ++c )
 			if( *data++ )
 				return SilentFrames;
 		++SilentFrames;
@@ -314,17 +302,17 @@ bool RunTests( SoundReader *snd, const TestFile &tf )
 	/* Read the first second of the file.  Do this without calling any
 	 * seek functions. */
 	const int one_second_frames = snd->GetSampleRate();
-	const int one_second=one_second_frames*sizeof(int16_t)*2;
-	int16_t sdata[one_second_frames*2];
+	const int one_second=one_second_frames*snd->GetNumChannels()*sizeof(int16_t);
+	int16_t sdata[one_second_frames*snd->GetNumChannels()];
 	char *data = (char *) sdata;
 	memset( data, 0x42, one_second );
-	ReadData( snd, -1, data, one_second );
+	ReadData( snd, -1, data, one_second_frames );
 
 	{
 		/* Find out how many frames of silence we have. */
-		int SilentFrames = FramesOfSilence( sdata, one_second_frames );
+		int SilentFrames = FramesOfSilence( sdata, one_second_frames, snd->GetNumChannels() );
 		
-		const int16_t *InitialData = sdata + SilentFrames*2;
+		const int16_t *InitialData = sdata + SilentFrames*snd->GetNumChannels();
 		const int InitialDataSize = one_second_frames - SilentFrames;
 
 		if( InitialDataSize < (int) sizeof(tf.initial) )
@@ -356,7 +344,7 @@ bool RunTests( SoundReader *snd, const TestFile &tf )
 		}
 
 		const int LaterOffsetFrames = one_second_frames/2; /* half second */
-		const int LaterOffsetSamples = LaterOffsetFrames * channels;
+		const int LaterOffsetSamples = LaterOffsetFrames * snd->GetNumChannels();
 		const int16_t *LaterData = sdata + LaterOffsetSamples;
 		Identical = !memcmp( LaterData, tf.later, sizeof(tf.later) );
 		if( !Identical )
@@ -427,7 +415,7 @@ bool RunTests( SoundReader *snd, const TestFile &tf )
 
 	/* SetPosition_Accurate(0) must always reset properly. */
 	snd->SetPosition_Accurate( 0 );
-	if( !test_read( snd, data, one_second ) )
+	if( !test_read( snd, data, one_second_frames ) )
 	{
 		LOG->Warn("Fail: SetPosition_Accurate(0) didn't work");
 		return false;
@@ -435,7 +423,7 @@ bool RunTests( SoundReader *snd, const TestFile &tf )
 
 	/* SetPosition_Fast(0) must always reset properly.   */
 	snd->SetPosition_Fast( 0 );
-	if( !test_read( snd, data, one_second ) )
+	if( !test_read( snd, data, one_second_frames ) )
 	{
 		LOG->Warn("Fail: SetPosition_Fast(0) didn't work");
 		return false;
@@ -471,12 +459,12 @@ bool RunTests( SoundReader *snd, const TestFile &tf )
 	
 	/* Seek to 1ms and make sure it gives us the correct data. */
 	snd->SetPosition_Accurate( 1 );
-	if( !test_read( snd, data + one_second * 1/1000, one_second * 1/1000 ) )
+	if( !test_read( snd, data + one_second * 1/1000, one_second_frames * 1/1000 ) )
 		LOG->Warn("Fail: SetPosition_Accurate(1) didn't work");
 
 	/* Seek to 500ms and make sure it gives us the correct data. */
 	snd->SetPosition_Accurate( 500 );
-	if( !test_read( snd, data+one_second * 500/1000, one_second * 500/1000 ) )
+	if( !test_read( snd, data+one_second * 500/1000, one_second_frames * 500/1000 ) )
 		LOG->Warn("Fail: seek(500) didn't work");
 
 	return true;
