@@ -24,15 +24,15 @@ void pos_map_queue::Insert( int64_t frameno, int pos, int got_frames )
 	{
 		/* Optimization: If the last entry lines up with this new entry, just merge them. */
 		pos_map_t &last = m_Queue.back();
-		if( last.frameno+last.frames == frameno &&
-		    last.position+last.frames == pos )
+		if( last.m_iFrameNo+last.m_iFrames == frameno &&
+		    last.m_iPosition+last.m_iFrames == pos )
 		{
-			last.frames += got_frames;
+			last.m_iFrames += got_frames;
 			return;
 		}
 	}
 
-	m_Queue.push_back( pos_map_t( frameno, pos, got_frames ) );
+	m_Queue.push_back( pos_map_t(frameno, pos, got_frames) );
 	
 	Cleanup();
 }
@@ -40,63 +40,64 @@ void pos_map_queue::Insert( int64_t frameno, int pos, int got_frames )
 void pos_map_queue::Cleanup()
 {
 	/* Determine the number of frames of data we have. */
-	int64_t total_frames = 0;
+	int64_t iTotalFrames = 0;
 	for( unsigned i = 0; i < m_Queue.size(); ++i )
-		total_frames += m_Queue[i].frames;
+		iTotalFrames += m_Queue[i].m_iFrames;
 
 	/* Remove the oldest entry so long we'll stil have enough data.  Don't delete every
 	 * frame, so we'll always have some data to extrapolate from. */
-	while( m_Queue.size() > 1 && total_frames - m_Queue.front().frames > pos_map_backlog_frames )
+	while( m_Queue.size() > 1 && iTotalFrames - m_Queue.front().m_iFrames > pos_map_backlog_frames )
 	{
-		total_frames -= m_Queue.front().frames;
+		iTotalFrames -= m_Queue.front().m_iFrames;
 		m_Queue.pop_front();
 	}
 }
 
-int64_t pos_map_queue::Search( int64_t frame, bool *approximate ) const
+int64_t pos_map_queue::Search( int64_t iFrame, bool *bApproximate ) const
 {
 	if( IsEmpty() )
 	{
-		if( approximate )
-			*approximate = true;
+		if( bApproximate )
+			*bApproximate = true;
 		return 0;
 	}
 
-	/* frame is probably in pos_map.  Search to figure out what position
+	/* iFrame is probably in pos_map.  Search to figure out what position
 	 * it maps to. */
-	int64_t closest_position = 0, closest_position_dist = INT_MAX;
-	int closest_block = 0; /* print only */
+	int64_t iClosestPosition = 0, iClosestPositionDist = INT_MAX;
+	int iClosestBlock = 0; /* print only */
 	for( unsigned i = 0; i < m_Queue.size(); ++i )
 	{
-		if( frame >= m_Queue[i].frameno &&
-			frame < m_Queue[i].frameno+m_Queue[i].frames )
+		if( iFrame >= m_Queue[i].m_iFrameNo &&
+			iFrame < m_Queue[i].m_iFrameNo+m_Queue[i].m_iFrames )
 		{
-			/* frame lies in this block; it's an exact match.  Figure
+			/* iFrame lies in this block; it's an exact match.  Figure
 			 * out the exact position. */
-			int64_t diff = m_Queue[i].position - m_Queue[i].frameno;
-			return frame + diff;
+			int64_t diff = m_Queue[i].m_iPosition - m_Queue[i].m_iFrameNo;
+			return iFrame + diff;
 		}
 
 		/* See if the current position is close to the beginning of this block. */
-		int64_t dist = llabs( m_Queue[i].frameno - frame );
-		if( dist < closest_position_dist )
+		int64_t dist = llabs( m_Queue[i].m_iFrameNo - iFrame );
+		if( dist < iClosestPositionDist )
 		{
-			closest_position_dist = dist;
-			closest_block = i;
-			closest_position = m_Queue[i].position;
+			iClosestPositionDist = dist;
+			iClosestBlock = i;
+			iClosestPosition = m_Queue[i].m_iPosition;
 		}
 
 		/* See if the current position is close to the end of this block. */
-		dist = llabs( m_Queue[i].frameno + m_Queue[i].frames - frame );
-		if( dist < closest_position_dist )
+		dist = llabs( m_Queue[i].m_iFrameNo + m_Queue[i].m_iFrames - iFrame );
+		if( dist < iClosestPositionDist )
 		{
-			closest_position_dist = dist;
-			closest_block = i;
-			closest_position = m_Queue[i].position + m_Queue[i].frames;
+			iClosestPositionDist = dist;
+			iClosestBlock = i;
+			iClosestPosition = m_Queue[i].m_iPosition + m_Queue[i].m_iFrames;
 		}
 	}
 
-	/* The frame is out of the range of data we've actually sent.
+	/*
+	 * The frame is out of the range of data we've actually sent.
 	 * Return the closest position.
 	 *
 	 * There are three cases when this happens: 
@@ -115,13 +116,13 @@ int64_t pos_map_queue::Search( int64_t frame, bool *approximate ) const
 	{
 		last.GetDeltaTime();
 		LOG->Trace( "Approximate sound time: driver frame " LI ", m_Queue frame " LI ".." LI " (dist " LI "), closest position is " LI,
-			frame, m_Queue[closest_block].frameno, m_Queue[closest_block].frameno+m_Queue[closest_block].frames,
-			closest_position_dist, closest_position );
+			iFrame, m_Queue[iClosestBlock].m_iFrameNo, m_Queue[iClosestBlock].m_iFrameNo+m_Queue[iClosestBlock].m_iFrames,
+			iClosestPositionDist, iClosestPosition );
 	}
 
-	if( approximate )
-		*approximate = true;
-	return closest_position;
+	if( bApproximate )
+		*bApproximate = true;
+	return iClosestPosition;
 }
 
 void pos_map_queue::Clear()
