@@ -365,7 +365,6 @@ bool RunTests( SoundReader *snd, const TestFile &tf )
                         dump( tf.later, ARRAYLEN(tf.later) );
 			LOG->Trace("Got half second data:");
 			dump( LaterData, 16 );
-			bFailed = true;
 
 			/* See if we can find the half second data. */
 			int16_t *p = (int16_t *) xmemsearch( sdata, one_second, tf.later, sizeof(tf.later), LaterOffsetSamples*sizeof(int16_t) );
@@ -378,11 +377,7 @@ bool RunTests( SoundReader *snd, const TestFile &tf )
 			}
 //			else
 //				dump( "foo", sdata, one_second/sizeof(int16_t) );
-
 		}
-
-		if( bFailed )
-			return false;
 	}
 
 	/* Make sure we're getting non-null data. */
