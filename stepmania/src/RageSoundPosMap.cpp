@@ -18,7 +18,7 @@ pos_map_queue::pos_map_queue( const pos_map_queue &cpy )
 	*this = cpy;
 }
 
-void pos_map_queue::Insert( int64_t iFrame, int iPosition, int iGotFrames )
+void pos_map_queue::CommitPosition( int64_t iFrame, int iPosition, int iGotFrames )
 {
 	if( m_Queue.size() )
 	{

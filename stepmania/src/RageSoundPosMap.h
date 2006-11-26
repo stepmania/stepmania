@@ -27,8 +27,8 @@ public:
 	pos_map_queue();
 	pos_map_queue( const pos_map_queue &cpy );
 
-	/* Insert a mapping from iFrame to iPosition, containing pos iGotFrames. */
-	void Insert( int64_t iFrame, int iPosition, int iGotFrames );
+	/* Insert a mapping from iHardwareFrame to iStreamFrame, containing pos iGotFrames. */
+	void CommitPosition( int64_t iHardwareFrame, int iStreamFrame, int iGotFrames );
 
 	/* Return the position for the given iFrame. */
 	int64_t Search( int64_t iFrame, bool *bApproximate ) const;
