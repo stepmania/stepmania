@@ -16,6 +16,11 @@ for( set<elemType>::iterator var = (vect).begin(); var != (vect).end(); ++var )
 #define FOREACHS_CONST( elemType, vect, var ) 	\
 for( set<elemType>::const_iterator var = (vect).begin(); var != (vect).end(); ++var )
 
+#define FOREACHL( elemType, vect, var ) 			\
+for( list<elemType>::iterator var = (vect).begin(); var != (vect).end(); ++var )
+#define FOREACHL_CONST( elemType, vect, var ) 			\
+for( list<elemType>::const_iterator var = (vect).begin(); var != (vect).end(); ++var )
+
 #define FOREACHM( keyType, valType, vect, var ) 			\
 for( map<keyType, valType>::iterator var = (vect).begin(); var != (vect).end(); ++var )
 #define FOREACHM_CONST( keyType, valType, vect, var ) 			\
