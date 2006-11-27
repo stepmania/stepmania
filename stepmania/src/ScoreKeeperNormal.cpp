@@ -450,7 +450,7 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 	{
 		m_pPlayerStageStats->m_iCurCombo = 0;
 		if( scoreOfLastTap == TNS_Miss )
-			++m_pPlayerStageStats->m_iCurMissCombo;
+			m_pPlayerStageStats->m_iCurMissCombo += iComboCountIfHit;
 	}
 
 	if( m_pPlayerState->m_PlayerNumber != PLAYER_INVALID )
