@@ -1780,15 +1780,16 @@ void Player::HandleTapRowScore( unsigned row )
 			m_pSecondaryScoreKeeper->HandleTapScore( tn );
 	}		
 
+	if( m_pPrimaryScoreKeeper != NULL )
+		m_pPrimaryScoreKeeper->HandleTapRowScore( m_NoteData, row );
+	if( m_pSecondaryScoreKeeper != NULL )
+		m_pSecondaryScoreKeeper->HandleTapRowScore( m_NoteData, row );
+
 	const int iCurCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
 	const int iCurMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
 
-	if( m_pPrimaryScoreKeeper != NULL )
-		m_pPrimaryScoreKeeper->HandleTapRowScore( m_NoteData, row );
 	if( iOldCombo > 50 && iCurCombo < 50 )
 		SCREENMAN->PostMessageToTopScreen( SM_ComboStopped, 0 );
-	if( m_pSecondaryScoreKeeper != NULL )
-		m_pSecondaryScoreKeeper->HandleTapRowScore( m_NoteData, row );
 
 	SendComboMessage( iOldCombo, iOldMissCombo );
 
