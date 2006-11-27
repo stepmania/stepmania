@@ -142,6 +142,10 @@ protected:
 
 	void SetJudgment( TapNoteScore tns, bool bEarly );
 
+	void ChangeLife( TapNoteScore tns );
+	void ChangeLife( HoldNoteScore hns, TapNoteScore tns );
+	void ChangeLifeRecord();
+
 	int GetClosestNoteDirectional( int col, int iStartRow, int iMaxRowsAhead, bool bAllowGraded, bool bForward ) const;
 	int GetClosestNote( int col, int iNoteRow, int iMaxRowsAhead, int iMaxRowsBehind, bool bAllowGraded ) const;
 	int GetClosestNonEmptyRowDirectional( int iStartRow, int iMaxRowsAhead, bool bAllowGraded, bool bForward ) const;

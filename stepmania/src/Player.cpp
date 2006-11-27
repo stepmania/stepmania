@@ -915,6 +915,48 @@ void Player::DrawHoldJudgments()
 		m_vHoldJudgment[c]->Draw();
 }
 
+
+void Player::ChangeLife( TapNoteScore tns )
+{
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+	if( m_pLifeMeter )
+		m_pLifeMeter->ChangeLife( tns );
+	if( m_pCombinedLifeMeter )
+		m_pCombinedLifeMeter->ChangeLife( pn, tns );
+
+	ChangeLifeRecord();
+}
+
+void Player::ChangeLife( HoldNoteScore hns, TapNoteScore tns )
+{
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+	if( m_pLifeMeter )
+		m_pLifeMeter->ChangeLife( hns, tns );
+	if( m_pCombinedLifeMeter )
+		m_pCombinedLifeMeter->ChangeLife( pn, hns, tns );
+
+	ChangeLifeRecord();
+}
+
+void Player::ChangeLifeRecord()
+{
+	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+	float fLife = -1;
+	if( m_pLifeMeter )
+	{
+		fLife = m_pLifeMeter->GetLife();
+	}
+	else if( m_pCombinedLifeMeter )
+	{
+		fLife = GAMESTATE->m_fTugLifePercentP1;
+		if( pn == PLAYER_2 )
+			fLife = 1.0f - fLife;
+	}
+	if( fLife != -1 )
+		if( m_pPlayerStageStats )
+			m_pPlayerStageStats->SetLifeRecordAt( fLife, STATSMAN->m_CurStageStats.m_fStepsSeconds );
+}
+
 int Player::GetClosestNoteDirectional( int col, int iStartRow, int iEndRow, bool bAllowGraded, bool bForward ) const
 {
 	NoteData::const_iterator begin, end;
@@ -1620,14 +1662,11 @@ void Player::UpdateJudgedRows()
 		else
 			m_soundMine.Play();
 		
-		if( m_pLifeMeter )
-			m_pLifeMeter->ChangeLife( tn.result.tns );
+		ChangeLife( tn.result.tns );
 		if( m_pScoreDisplay )
 			m_pScoreDisplay->OnJudgment( tn.result.tns );
 		if( m_pSecondaryScoreDisplay )
 			m_pSecondaryScoreDisplay->OnJudgment( tn.result.tns );
-		if( m_pCombinedLifeMeter )
-			m_pCombinedLifeMeter->ChangeLife( pn, tn.result.tns );
 		
 		// Make sure hit mines affect the dance points.
 		if( m_pPrimaryScoreKeeper )
@@ -1838,21 +1877,6 @@ void Player::HandleTapRowScore( unsigned row )
 	if( m_pPlayerStageStats )
 		m_pPlayerStageStats->UpdateComboList( STATSMAN->m_CurStageStats.m_fStepsSeconds, false );
 
-	float life = -1;
-	if( m_pLifeMeter )
-	{
-		life = m_pLifeMeter->GetLife();
-	}
-	else if( m_pCombinedLifeMeter )
-	{
-		life = GAMESTATE->m_fTugLifePercentP1;
-		if( pn == PLAYER_2 )
-			life = 1.0f - life;
-	}
-	if( life != -1 )
-		if( m_pPlayerStageStats )
-			m_pPlayerStageStats->SetLifeRecordAt( life, STATSMAN->m_CurStageStats.m_fStepsSeconds );
-
 	if( m_pScoreDisplay )
 	{
 		if( m_pPlayerStageStats )
@@ -1866,10 +1890,7 @@ void Player::HandleTapRowScore( unsigned row )
 		m_pSecondaryScoreDisplay->OnJudgment( scoreOfLastTap );
 	}
 
-	if( m_pLifeMeter )
-		m_pLifeMeter->ChangeLife( scoreOfLastTap );
-	if( m_pCombinedLifeMeter )
-		m_pCombinedLifeMeter->ChangeLife( pn, scoreOfLastTap );
+	ChangeLife( scoreOfLastTap );
 }
 
 
@@ -1893,9 +1914,6 @@ void Player::HandleHoldScore( const TapNote &tn )
 	if( m_pSecondaryScoreKeeper )
 		m_pSecondaryScoreKeeper->HandleHoldScore( tn );
 
-	// TODO: Remove use of PlayerNumber.
-	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-
 	if( m_pScoreDisplay )
 	{
 		if( m_pPlayerStageStats ) 
@@ -1909,10 +1927,7 @@ void Player::HandleHoldScore( const TapNote &tn )
 		m_pSecondaryScoreDisplay->OnJudgment( holdScore, tapScore );
 	}
 
-	if( m_pLifeMeter ) 
-		m_pLifeMeter->ChangeLife( holdScore, tapScore );
-	if( m_pCombinedLifeMeter ) 
-		m_pCombinedLifeMeter->ChangeLife( pn, holdScore, tapScore );
+	ChangeLife( holdScore, tapScore );
 }
 
 float Player::GetMaxStepDistanceSeconds()
