@@ -482,7 +482,7 @@ public:
 
 	RageSoundResampler_Polyphase( const RageSoundResampler_Polyphase &cpy )
 	{
-		m_pPolyphase = new PolyphaseFilter(*cpy.m_pPolyphase);
+		m_pPolyphase = cpy.m_pPolyphase; // don't copy
 		m_pState = new PolyphaseFilter::State(*cpy.m_pState);
 		m_iDownFactor = cpy.m_iDownFactor;
 	}
