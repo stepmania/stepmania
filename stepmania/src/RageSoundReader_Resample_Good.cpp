@@ -394,6 +394,43 @@ int PolyphaseFilter::NumInputsForOutputSamples( const State &State, int iOut, in
 	return iIn;
 }
 
+namespace PolyphaseFilterCache
+{
+	/* Cache filter data, and reuse it without copying.  All operations after creation
+	 * are const, so this doesn't cause thread-safety problems. */
+	typedef map<pair<int,float>, PolyphaseFilter *> FilterMap;
+	static RageMutex PolyphaseFiltersLock("PolyphaseFiltersLock");
+	static FilterMap g_mapPolyphaseFilters;
+		
+	const PolyphaseFilter *GetPolyphaseFilter( int iUpFactor, float fCutoffFrequency )
+	{
+		PolyphaseFiltersLock.Lock();
+		pair<int,float> params( make_pair(iUpFactor, fCutoffFrequency) );
+		FilterMap::const_iterator it = g_mapPolyphaseFilters.find(params);
+		if( it != g_mapPolyphaseFilters.end() )
+		{
+			/* We already have a filter for this upsampling factor and cutoff; use it. */
+			PolyphaseFilter *pPolyphase = it->second;
+			PolyphaseFiltersLock.Unlock();
+			return pPolyphase;
+		}
+		int iWinSize = L*iUpFactor;
+		float *pFIR = new float[iWinSize];
+		GenerateSincLowPassFilter( pFIR, iWinSize, fCutoffFrequency );
+		ApplyKaiserWindow( pFIR, iWinSize, 8 );
+		NormalizeVector( pFIR, iWinSize );
+		MultiplyVector( &pFIR[0], &pFIR[iWinSize], (float) iUpFactor );
+
+		PolyphaseFilter *pPolyphase = new PolyphaseFilter( iUpFactor );
+		pPolyphase->Generate( pFIR );
+		delete [] pFIR;
+
+		g_mapPolyphaseFilters[params] = pPolyphase;
+		PolyphaseFiltersLock.Unlock();
+		return pPolyphase;
+	}
+}
+
 /*
  * Interface to PolyphaseFilter, providing a simple resampling interface.  This handles
  * reuse of PolyphaseFilters.  This does not handle delay, flushing, or multiple channels.
@@ -426,37 +463,7 @@ public:
 			LOG->Trace( "cutoff frequency %f -> %f, %f", fCutoffFrequency, 1.0f / (2*iUpFactor), 1.0f / (2*m_iDownFactor) );
 		}
 
-		/* Cache filter data, and reuse it without copying.  All operations after creation
-		 * are const, so this doesn't cause thread-safety problems. */
-		typedef map<pair<int,float>, PolyphaseFilter *> FilterMap;
-		static RageMutex PolyphaseFiltersLock("PolyphaseFiltersLock");
-		static FilterMap g_mapPolyphaseFilters;
-		
-		PolyphaseFiltersLock.Lock();
-		pair<int,float> params( make_pair(iUpFactor, fCutoffFrequency) );
-		FilterMap::const_iterator it = g_mapPolyphaseFilters.find(params);
-		if( it == g_mapPolyphaseFilters.end() )
-		{
-			int iWinSize = L*iUpFactor;
-			float *pFIR = new float[iWinSize];
-			GenerateSincLowPassFilter( pFIR, iWinSize, fCutoffFrequency );
-			ApplyKaiserWindow( pFIR, iWinSize, 8 );
-			NormalizeVector( pFIR, iWinSize );
-			MultiplyVector( &pFIR[0], &pFIR[iWinSize], (float) iUpFactor );
-
-			PolyphaseFilter *pPolyphase = new PolyphaseFilter( iUpFactor );
-			pPolyphase->Generate( pFIR );
-			delete [] pFIR;
-
-			g_mapPolyphaseFilters[params] = pPolyphase;
-			m_pPolyphase = pPolyphase;
-		}
-		else
-		{
-			/* We already have a filter for this upsampling factor and cutoff; use it. */
-			m_pPolyphase = it->second;
-		}
-		PolyphaseFiltersLock.Unlock();
+		m_pPolyphase = PolyphaseFilterCache::GetPolyphaseFilter( iUpFactor, fCutoffFrequency );
 
 		m_pState = new PolyphaseFilter::State( *m_pPolyphase );
 	}
