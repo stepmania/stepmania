@@ -41,7 +41,7 @@ public:
 		if( size )
 		{
 			buf = new T[size];
-			memcpy( buf, cpy.buf, size );
+			memcpy( buf, cpy.buf, size*sizeof(T) );
 		}
 		else
 		{
