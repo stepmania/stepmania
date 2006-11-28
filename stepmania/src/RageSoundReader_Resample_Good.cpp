@@ -466,7 +466,7 @@ public:
 		m_iUpFactor = iUpFactor;
 		m_pPolyphase = NULL;
 
-		int iFilterIncrement = (iMaxDownFactor - iMinDownFactor)/10;
+		int iFilterIncrement = max( (iMaxDownFactor - iMinDownFactor)/10, 1 );
 		for( int iDownFactor = iMinDownFactor; iDownFactor <= iMaxDownFactor; iDownFactor += iFilterIncrement )
 		{
 			float fCutoffFrequency = GetCutoffFrequency( iDownFactor );
