@@ -156,6 +156,7 @@ static void DeleteCurrentSteps()
 	
 static LocalizedString MISSING_MUSIC_FILE	( "ScreenEditMenu", "This song is missing a music file and cannot be edited." );
 static LocalizedString SONG_DIR_READ_ONLY	( "ScreenEditMenu", "The song directory is read-only and cannot be edited." );
+static LocalizedString DELETED_AUTOGEN_STEPS	( "ScreenEditMenu", "These steps are produced by autogen.  You do not need to delete them." );
 static LocalizedString STEPS_WILL_BE_LOST	( "ScreenEditMenu", "These steps will be lost permanently." );
 static LocalizedString CONTINUE_WITH_DELETE	( "ScreenEditMenu", "Continue with delete?" );
 static LocalizedString BLANK			( "ScreenEditMenu", "Blank" );
@@ -216,6 +217,18 @@ void ScreenEditMenu::MenuStart( const InputEventPlus &input )
 	}
 	}
 
+	switch( action )
+	{
+	case EditMenuAction_Delete:
+		ASSERT( pSteps );
+		if( pSteps->IsAutogen() )
+		{
+			SCREENMAN->PlayInvalidSound();
+			SCREENMAN->SystemMessage( DELETED_AUTOGEN_STEPS.GetValue() );
+			return;
+		}
+	}
+
 	//
 	// Do work
 	//
@@ -226,7 +239,8 @@ void ScreenEditMenu::MenuStart( const InputEventPlus &input )
 		break;
 	case EditMenuAction_Delete:
 		ASSERT( pSteps );
-		ScreenPrompt::Prompt( SM_None, STEPS_WILL_BE_LOST.GetValue() + "\n\n" + CONTINUE_WITH_DELETE.GetValue(), PROMPT_YES_NO, ANSWER_NO );
+		ScreenPrompt::Prompt( SM_None, STEPS_WILL_BE_LOST.GetValue() + "\n\n" + CONTINUE_WITH_DELETE.GetValue(), 
+		                      PROMPT_YES_NO, ANSWER_NO );
 		break;
 	case EditMenuAction_Create:
 		ASSERT( !pSteps );
