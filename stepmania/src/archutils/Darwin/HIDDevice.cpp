@@ -55,12 +55,7 @@ bool HIDDevice::Open( io_object_t device )
 		vid = 0;
 	if( !IntValue(pidRef, pid) )
 		pid = 0;
-	
-	if( !SupportsVidPid(vid, pid) )
-	{
-		CFRelease( properties );
-		return false;
-	}
+	InitDevice( vid, pid );
 	
 	if( object && CFGetTypeID(object) == CFStringGetTypeID() )
 		m_sDescription = CFStringGetCStringPtr( CFStringRef(object), CFStringGetSystemEncoding() );

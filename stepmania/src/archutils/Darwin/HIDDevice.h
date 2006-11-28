@@ -73,9 +73,9 @@ protected:
 	virtual void Open() = 0;
 	
 	/*
-	 * Optional. Subclasses can return false if they do not support the (vid, pid) pair.
+	 * Optional. Subclasses can initialize the device, if required.
 	 */
-	virtual bool SupportsVidPid( int vid, int pid ) { return true; }
+	virtual void InitDevice( int vid, int pid ) { }
 	
 	// This adds the element with the given cookie to the queue to be notified of state changes.
 	inline void AddElementToQueue( int cookie )
