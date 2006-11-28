@@ -2,7 +2,7 @@
 #include "RageSoundReader.h"
 #include "RageUtil_AutoPtr.h"
 
-REGISTER_CLASS_TRAITS( SoundReader, pCopy->Copy() );
+REGISTER_CLASS_TRAITS( RageSoundReader, pCopy->Copy() );
 
 /*
  * Copyright (c) 2006 Glenn Maynard

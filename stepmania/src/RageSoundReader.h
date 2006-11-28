@@ -1,9 +1,10 @@
-/* SoundReader - Data source for a RageSound. */
+/* RageSoundReader - Data source for a RageSound. */
 
 #ifndef RAGE_SOUND_READER_H
 #define RAGE_SOUND_READER_H
 
-class SoundReader
+#define SoundReader RageSoundReader
+class RageSoundReader
 {
 public:
 	virtual int GetLength() const = 0; /* ms */
