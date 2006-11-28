@@ -402,7 +402,7 @@ namespace PolyphaseFilterCache
 	static RageMutex PolyphaseFiltersLock("PolyphaseFiltersLock");
 	static FilterMap g_mapPolyphaseFilters;
 		
-	const PolyphaseFilter *GetPolyphaseFilter( int iUpFactor, float fCutoffFrequency )
+	const PolyphaseFilter *MakePolyphaseFilter( int iUpFactor, float fCutoffFrequency )
 	{
 		PolyphaseFiltersLock.Lock();
 		pair<int,float> params( make_pair(iUpFactor, fCutoffFrequency) );
@@ -463,7 +463,7 @@ public:
 			LOG->Trace( "cutoff frequency %f -> %f, %f", fCutoffFrequency, 1.0f / (2*iUpFactor), 1.0f / (2*m_iDownFactor) );
 		}
 
-		m_pPolyphase = PolyphaseFilterCache::GetPolyphaseFilter( iUpFactor, fCutoffFrequency );
+		m_pPolyphase = PolyphaseFilterCache::MakePolyphaseFilter( iUpFactor, fCutoffFrequency );
 
 		m_pState = new PolyphaseFilter::State( *m_pPolyphase );
 	}
