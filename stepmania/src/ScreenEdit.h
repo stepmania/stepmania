@@ -171,6 +171,8 @@ public:
 	virtual void BeginScreen();
 	virtual void EndScreen();
 
+	static void ResetStaticState();
+
 	virtual ~ScreenEdit();
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();

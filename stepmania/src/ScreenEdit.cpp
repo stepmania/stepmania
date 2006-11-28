@@ -13,8 +13,8 @@
 #include "InputMapper.h"
 #include "RageLog.h"
 #include "ThemeManager.h"
-#include "NoteSkinManager.h"
 #include "NoteDataUtil.h"
+#include "NoteSkinManager.h"
 #include "SongUtil.h"
 #include "StepsUtil.h"
 #include "Foreach.h"
@@ -624,20 +624,13 @@ static int g_iLastInsertTapAttackTrack = -1;
 static float g_fLastInsertAttackDurationSeconds = -1;
 static float g_fLastInsertAttackPositionSeconds = -1;
 static BackgroundLayer g_CurrentBGChangeLayer = BACKGROUND_LAYER_Invalid;
+static const RString EDITOR_NOTE_SKIN = "note";
+static bool s_bChangedNoteSkin = false;
 
-static void SetDefaultEditorNoteSkin( size_t num, RString &sNameOut, RString &defaultValueOut )
+void ScreenEdit::ResetStaticState()
 {
-	sNameOut = ssprintf( "EditorNoteSkinP%d", int(num + 1) );
-	
-	switch( num )
-	{
-	case 0: defaultValueOut = "note"; return;
-	case 1: defaultValueOut = "solo"; return;
-	}
-	defaultValueOut = "note";
+	s_bChangedNoteSkin = false;
 }
-
-static Preference1D<RString> EDITOR_NOTE_SKINS( SetDefaultEditorNoteSkin, NUM_PLAYERS );
 
 REGISTER_SCREEN_CLASS( ScreenEdit );
 
@@ -683,17 +676,32 @@ void ScreenEdit::Init()
 	m_SnapDisplay.Load( PLAYER_1 );
 	m_SnapDisplay.SetZoom( 0.5f );
 	this->AddChild( &m_SnapDisplay );
-	
-	FOREACH_PlayerNumber( pn )
-	{
-		const RString &sNoteSkin = EDITOR_NOTE_SKINS[pn];
-		
-		if( NOTESKIN->DoesNoteSkinExist(sNoteSkin) )
-			PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, ModsLevel_Stage, m_sNoteSkin, sNoteSkin );
-	}
 
+	// We keep track of this bit of state so that when the user is in Edit/Sync Songs and makes a change to the NoteSkins,
+	// that change is "sticky" across multiple ScreenEdits.  That is the way the rest of the options work.
+	// TODO: It would be cleaner to do this by making it possible to set an option in metrics.ini.
+	if( !s_bChangedNoteSkin ) 
+	{
+		s_bChangedNoteSkin = true;
+		FOREACH_PlayerNumber( pn ) 
+		{
+			if( NOTESKIN->DoesNoteSkinExist( EDITOR_NOTE_SKIN ) )
+				PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, 
+				                 ModsLevel_Preferred, m_sNoteSkin, EDITOR_NOTE_SKIN );
+		}
+	}
 	m_PlayerStateEdit.m_PlayerNumber = PLAYER_1;
-	PO_GROUP_ASSIGN( m_PlayerStateEdit.m_PlayerOptions, ModsLevel_Stage, m_sNoteSkin, GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetStage().m_sNoteSkin );
+	// If we always go with the GAMESTATE NoteSkin, we will have fun effects like Vivid or Flat in the editor notefield.
+	// This is not conducive to productive editing.
+	if( NOTESKIN->DoesNoteSkinExist( EDITOR_NOTE_SKIN ) )
+	{
+		PO_GROUP_ASSIGN( m_PlayerStateEdit.m_PlayerOptions, ModsLevel_Stage, m_sNoteSkin, EDITOR_NOTE_SKIN );
+	}
+	else
+	{
+		PO_GROUP_ASSIGN( m_PlayerStateEdit.m_PlayerOptions, ModsLevel_Stage, m_sNoteSkin,
+		                 GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetStage().m_sNoteSkin );
+	}
 
 	m_pSteps->GetNoteData( m_NoteDataEdit );
 	m_NoteFieldEdit.SetXY( EDIT_X, EDIT_Y );

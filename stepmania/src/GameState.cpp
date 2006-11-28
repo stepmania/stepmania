@@ -37,6 +37,7 @@
 #include "CharacterManager.h"
 #include "Game.h"
 #include "AdjustSync.h"
+#include "ScreenEdit.h"
 
 #include <ctime>
 #include <set>
@@ -327,6 +328,8 @@ void GameState::Reset()
 	m_sEditLocalProfileID.Set( "" );
 	
 	m_bBackedOutOfFinalStage = false;
+
+	ScreenEdit::ResetStaticState();
 
 	ApplyCmdline();
 }
