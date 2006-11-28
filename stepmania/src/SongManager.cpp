@@ -799,7 +799,6 @@ void SongManager::InitAutogenCourses()
 	}
 }
 
-
 void SongManager::FreeCourses()
 {
 	for( unsigned i=0; i<m_pCourses.size(); i++ )
@@ -812,6 +811,26 @@ void SongManager::FreeCourses()
 	m_pShuffledCourses.clear();
 
 	m_mapCourseGroupToInfo.clear();
+}
+
+void SongManager::DeleteAutogenCourses()
+{
+	vector<Course*> vNewCourses;
+	for( vector<Course*>::iterator it = m_pCourses.begin(); it != m_pCourses.end(); ++it )
+	{
+		if( (*it)->m_bIsAutogen )
+		{
+			delete *it;
+		}
+		else
+		{
+			vNewCourses.push_back( *it );
+		}
+	}
+	m_pCourses.swap( vNewCourses );
+	UpdatePopular();
+	UpdateShuffled();
+	RefreshCourseGroupInfo();
 }
 
 void SongManager::AddCourse( Course *pCourse )
@@ -861,14 +880,20 @@ void SongManager::Cleanup()
 
 /* Flush all Song*, Steps* and Course* caches.  This is when a Song or its Steps
  * are removed or changed.  This doesn't touch GAMESTATE and StageStats
- * pointers.  Currently, the only time Steps are altered independantly of the
+ * pointers.  Currently, the only time Steps are altered independently of the
  * Courses and Songs is in Edit Mode, which updates the other pointers it needs. */
 void SongManager::Invalidate( const Song *pStaleSong )
 {
+	// TODO: This is unnecessarily expensive.
+	// Can we regenerate only the autogen courses that are affected?
+	DeleteAutogenCourses();
+
 	FOREACH( Course*, this->m_pCourses, pCourse )
 	{
 		(*pCourse)->Invalidate( pStaleSong );
 	}
+
+	InitAutogenCourses();
 
 	UpdatePopular();
 	UpdateShuffled();

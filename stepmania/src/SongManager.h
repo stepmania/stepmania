@@ -49,6 +49,7 @@ public:
 	void FreeCourses();
 	void AddCourse( Course *pCourse );	// transfers ownership of pCourse
 	void DeleteCourse( Course *pCourse );	// transfers ownership of pCourse
+	void DeleteAutogenCourses();		// deletes every autogen course
 	void InvalidateCachedTrails();
 
 	void InitAll( LoadingWindow *ld );	// songs, courses, groups - everything.
