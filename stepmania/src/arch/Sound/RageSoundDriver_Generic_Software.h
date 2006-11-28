@@ -72,7 +72,7 @@ private:
 	 * will deallocate memory and the sound will be changed to AVAILABLE.
 	 *
 	 * PLAYING: The sound is being decoded by the decoding thread, and played by the mixing
-	 * thread.  If the decoding thread hits EOF, the decoding thread will changed the state
+	 * thread.  If the decoding thread hits EOF, the decoding thread will change the state
 	 * to STOPPING.
 	 *
 	 * STOPPING: The sound is being played by the mixing thread.  No new data will be decoded.
