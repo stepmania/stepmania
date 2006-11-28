@@ -337,7 +337,8 @@ void ScreenOptionsEditCourse::ProcessMenuStart( const InputEventPlus &input )
 
 void ScreenOptionsEditCourse::HandleMessage( const Message &msg )
 {
-	if( msg == "EditCourseDifficultyChanged" )
+	// We subscribe to messages before we initialize the options rows for the first time
+	if( msg == Message_EditCourseDifficultyChanged && m_pRows.size() > 0 )
 	{
 		const vector<PlayerNumber> vpns( 1, GAMESTATE->m_MasterPlayerNumber );
 		OptionRow &row = *m_pRows[EditCourseRow_Meter];
