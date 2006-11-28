@@ -1,8 +1,8 @@
 #include "global.h"
 #include "PlayerState.h"
+#include "Foreach.h"
 #include "GameState.h"
 #include "RageLog.h"
-#include "Foreach.h"
 
 PlayerState::PlayerState()
 {
