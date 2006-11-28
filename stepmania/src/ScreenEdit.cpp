@@ -631,6 +631,20 @@ void ScreenEdit::ResetStaticState()
 	s_bChangedNoteSkin = false;
 }
 
+static void SetDefaultEditorNoteSkin( size_t num, RString &sNameOut, RString &defaultValueOut )
+{
+	sNameOut = ssprintf( "EditorNoteSkinP%d", int(num + 1) );
+
+	switch( num )
+	{
+	case 0: defaultValueOut = "note"; return;
+	case 1: defaultValueOut = "solo"; return;
+	}
+	defaultValueOut = "note";
+}
+
+static Preference1D<RString> EDITOR_NOTE_SKINS( SetDefaultEditorNoteSkin, NUM_PLAYERS );
+
 REGISTER_SCREEN_CLASS( ScreenEdit );
 
 void ScreenEdit::Init()
@@ -684,17 +698,18 @@ void ScreenEdit::Init()
 		s_bChangedNoteSkin = true;
 		FOREACH_PlayerNumber( pn ) 
 		{
-			if( NOTESKIN->DoesNoteSkinExist( EDITOR_NOTE_SKIN ) )
+			const RString &sNoteSkin = EDITOR_NOTE_SKINS[pn].Get();
+			if( NOTESKIN->DoesNoteSkinExist( sNoteSkin ) )
 				PO_GROUP_ASSIGN( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions, 
-				                 ModsLevel_Preferred, m_sNoteSkin, EDITOR_NOTE_SKIN );
+				                 ModsLevel_Preferred, m_sNoteSkin, sNoteSkin );
 		}
 	}
 	m_PlayerStateEdit.m_PlayerNumber = PLAYER_1;
 	// If we always go with the GAMESTATE NoteSkin, we will have fun effects like Vivid or Flat in the editor notefield.
 	// This is not conducive to productive editing.
-	if( NOTESKIN->DoesNoteSkinExist( EDITOR_NOTE_SKIN ) )
+	if( NOTESKIN->DoesNoteSkinExist( EDITOR_NOTE_SKINS[PLAYER_1].Get() ) )
 	{
-		PO_GROUP_ASSIGN( m_PlayerStateEdit.m_PlayerOptions, ModsLevel_Stage, m_sNoteSkin, EDITOR_NOTE_SKIN );
+		PO_GROUP_ASSIGN( m_PlayerStateEdit.m_PlayerOptions, ModsLevel_Stage, m_sNoteSkin, EDITOR_NOTE_SKINS[PLAYER_1].Get() );
 	}
 	else
 	{
