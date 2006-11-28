@@ -176,10 +176,10 @@ struct PolyphaseFilter
 {
 	struct State
 	{
-		State( const PolyphaseFilter &Target ):
+		State( int iUpFactor ):
 			m_fBuf( L * 2 )
 		{
-			m_iPolyIndex = Target.m_iUpFactor-1;
+			m_iPolyIndex = iUpFactor-1;
 			m_iFilled = 0;
 			m_iBufNext = 0;
 		}
@@ -447,7 +447,7 @@ public:
 
 		m_pPolyphase = PolyphaseFilterCache::MakePolyphaseFilter( iUpFactor, fCutoffFrequency );
 
-		m_pState = new PolyphaseFilter::State( *m_pPolyphase );
+		m_pState = new PolyphaseFilter::State( iUpFactor );
 	}
 
 	~RageSoundResampler_Polyphase()
@@ -463,7 +463,7 @@ public:
 	void Reset()
 	{
 		delete m_pState;
-		m_pState = new PolyphaseFilter::State( *m_pPolyphase );
+		m_pState = new PolyphaseFilter::State( m_iUpFactor );
 	}
 
 	int NumInputsForOutputSamples( int iOut ) const { return m_pPolyphase->NumInputsForOutputSamples(*m_pState, iOut, m_iDownFactor); }
