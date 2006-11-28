@@ -438,16 +438,9 @@ namespace PolyphaseFilterCache
 class RageSoundResampler_Polyphase
 {
 public:
-	RageSoundResampler_Polyphase( int iSourceRate, int iDestRate )
+	RageSoundResampler_Polyphase( int iUpFactor, int iDownFactor )
 	{
-		int iUpFactor = iDestRate;
-		m_iDownFactor = iSourceRate;
-
-		{
-			int iGCD = GCD( iUpFactor, m_iDownFactor );
-			iUpFactor /= iGCD;
-			m_iDownFactor /= iGCD;
-		}
+		m_iDownFactor = iDownFactor;
 
 		float fCutoffFrequency;
 		{
@@ -520,9 +513,18 @@ void RageSoundReader_Resample_Good::ReopenResampler()
 	for( size_t iChannel = 0; iChannel < m_apResamplers.size(); ++iChannel )
 		delete m_apResamplers[iChannel];
 	m_apResamplers.clear();
+
+	int iDownFactor = m_pSource->GetSampleRate();
+	int iUpFactor = m_iSampleRate;
+	{
+		int iGCD = GCD( iUpFactor, iDownFactor );
+		iUpFactor /= iGCD;
+		iDownFactor /= iGCD;
+	}
+
 	for( size_t iChannel = 0; iChannel < m_pSource->GetNumChannels(); ++iChannel )
 	{
-		RageSoundResampler_Polyphase *p = new RageSoundResampler_Polyphase( m_pSource->GetSampleRate(), m_iSampleRate );
+		RageSoundResampler_Polyphase *p = new RageSoundResampler_Polyphase( iUpFactor, iDownFactor );
 		m_apResamplers.push_back( p );
 	}
 }
