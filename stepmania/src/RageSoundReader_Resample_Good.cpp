@@ -443,19 +443,7 @@ public:
 		m_iUpFactor = iUpFactor;
 		m_iDownFactor = iDownFactor;
 
-		float fCutoffFrequency;
-		{
-			/*
-			 * If we're upsampling, we want the low-pass filter to cut off at the
-			 * nyquist frequency of the original sample.
-			 *
-			 * If we're downsampling, we want the low-pass filter to cut off at the
-			 * nyquist frequency of the new sample.
-			 */
-			fCutoffFrequency = 1.0f / (2*iUpFactor);
-			fCutoffFrequency = min( fCutoffFrequency, 1.0f / (2*m_iDownFactor) );
-			LOG->Trace( "cutoff frequency %f -> %f, %f", fCutoffFrequency, 1.0f / (2*iUpFactor), 1.0f / (2*m_iDownFactor) );
-		}
+		float fCutoffFrequency = GetCutoffFrequency( iDownFactor );
 
 		m_pPolyphase = PolyphaseFilterCache::MakePolyphaseFilter( iUpFactor, fCutoffFrequency );
 
@@ -490,6 +478,22 @@ public:
 	}
 
 private:
+	float GetCutoffFrequency( int iDownFactor ) const
+	{
+		/*
+		 * If we're upsampling, we want the low-pass filter to cut off at the
+		 * nyquist frequency of the original sample.
+		 *
+		 * If we're downsampling, we want the low-pass filter to cut off at the
+		 * nyquist frequency of the new sample.
+		 */
+
+		float fCutoffFrequency;
+		fCutoffFrequency = 1.0f / (2*m_iUpFactor);
+		fCutoffFrequency = min( fCutoffFrequency, 1.0f / (2*iDownFactor) );
+		return fCutoffFrequency;
+	}
+	
 	const PolyphaseFilter *m_pPolyphase;
 	PolyphaseFilter::State *m_pState;
 	int m_iUpFactor;
