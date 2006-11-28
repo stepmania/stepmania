@@ -440,6 +440,7 @@ class RageSoundResampler_Polyphase
 public:
 	RageSoundResampler_Polyphase( int iUpFactor, int iDownFactor )
 	{
+		m_iUpFactor = iUpFactor;
 		m_iDownFactor = iDownFactor;
 
 		float fCutoffFrequency;
@@ -484,12 +485,14 @@ public:
 	{
 		m_pPolyphase = cpy.m_pPolyphase; // don't copy
 		m_pState = new PolyphaseFilter::State(*cpy.m_pState);
+		m_iUpFactor = cpy.m_iUpFactor;
 		m_iDownFactor = cpy.m_iDownFactor;
 	}
 
 private:
 	const PolyphaseFilter *m_pPolyphase;
 	PolyphaseFilter::State *m_pState;
+	int m_iUpFactor;
 	int m_iDownFactor;
 };
 
