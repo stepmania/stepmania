@@ -902,7 +902,6 @@
 		AA40D30A09A08D650068C0D5 /* StyleUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = AA3A706106AA1645006F755E /* StyleUtil.h */; };
 		AA40D30B09A08D650068C0D5 /* Game.h in Headers */ = {isa = PBXBuildFile; fileRef = AA9A78AA06B5C72200B03E97 /* Game.h */; };
 		AA40D30C09A08D650068C0D5 /* ScreenNetSelectMusic.h in Headers */ = {isa = PBXBuildFile; fileRef = AA22CBA406DE909C0083BA97 /* ScreenNetSelectMusic.h */; };
-		AA40D30D09A08D650068C0D5 /* NetworkSyncServer.h in Headers */ = {isa = PBXBuildFile; fileRef = AA75DA1F06E0A1B500EF13B5 /* NetworkSyncServer.h */; };
 		AA40D30E09A08D650068C0D5 /* RageSurfaceUtils_Palettize.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB9C8AC06EAF64400AD97CD /* RageSurfaceUtils_Palettize.h */; };
 		AA40D30F09A08D650068C0D5 /* RageSurfaceUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB9C8AE06EAF64400AD97CD /* RageSurfaceUtils.h */; };
 		AA40D31009A08D650068C0D5 /* ScreenNetEvaluation.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB9C8B406EAF66C00AD97CD /* ScreenNetEvaluation.h */; };
@@ -1281,7 +1280,6 @@
 		AA40D4A509A08D650068C0D5 /* StyleUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA3A706006AA1645006F755E /* StyleUtil.cpp */; };
 		AA40D4A609A08D650068C0D5 /* Game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA9A78A906B5C72200B03E97 /* Game.cpp */; };
 		AA40D4A709A08D650068C0D5 /* ScreenNetSelectMusic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA22CBA306DE909C0083BA97 /* ScreenNetSelectMusic.cpp */; };
-		AA40D4A809A08D650068C0D5 /* NetworkSyncServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA75DA1E06E0A1B500EF13B5 /* NetworkSyncServer.cpp */; };
 		AA40D4A909A08D650068C0D5 /* RageSurfaceUtils_Palettize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB9C8AB06EAF64400AD97CD /* RageSurfaceUtils_Palettize.cpp */; };
 		AA40D4AA09A08D650068C0D5 /* RageSurfaceUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB9C8AD06EAF64400AD97CD /* RageSurfaceUtils.cpp */; };
 		AA40D4AB09A08D650068C0D5 /* ScreenNetEvaluation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB9C8B306EAF66C00AD97CD /* ScreenNetEvaluation.cpp */; };
@@ -1456,8 +1454,6 @@
 		AA729C530599B58D00779F33 /* ReceptorArrow.h in Headers */ = {isa = PBXBuildFile; fileRef = AA729C4F0599B58D00779F33 /* ReceptorArrow.h */; };
 		AA729C540599B58D00779F33 /* ReceptorArrowRow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA729C500599B58D00779F33 /* ReceptorArrowRow.cpp */; };
 		AA729C550599B58D00779F33 /* ReceptorArrowRow.h in Headers */ = {isa = PBXBuildFile; fileRef = AA729C510599B58D00779F33 /* ReceptorArrowRow.h */; };
-		AA75DA2006E0A1B500EF13B5 /* NetworkSyncServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA75DA1E06E0A1B500EF13B5 /* NetworkSyncServer.cpp */; };
-		AA75DA2106E0A1B500EF13B5 /* NetworkSyncServer.h in Headers */ = {isa = PBXBuildFile; fileRef = AA75DA1F06E0A1B500EF13B5 /* NetworkSyncServer.h */; };
 		AA77E74708B64B1400FA24CA /* CharacterManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA77E74508B64B1400FA24CA /* CharacterManager.cpp */; };
 		AA77E74808B64B1400FA24CA /* CharacterManager.h in Headers */ = {isa = PBXBuildFile; fileRef = AA77E74608B64B1400FA24CA /* CharacterManager.h */; };
 		AA77E74F08B64B5600FA24CA /* CourseLoaderCRS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA77E74B08B64B5600FA24CA /* CourseLoaderCRS.cpp */; };
@@ -1815,6 +1811,8 @@
 		AAFAB5CE08890B5200767BF7 /* GameLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFAB5CC08890B5200767BF7 /* GameLoop.h */; };
 		AAFAFC8F0AC8DB9F00427A6E /* EnumHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFAFC8E0AC8DB9F00427A6E /* EnumHelper.cpp */; };
 		AAFAFC900AC8DB9F00427A6E /* EnumHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFAFC8E0AC8DB9F00427A6E /* EnumHelper.cpp */; };
+		AAFB549E0B1BC32700FC3A81 /* RageSoundReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFB549D0B1BC32700FC3A81 /* RageSoundReader.cpp */; };
+		AAFB549F0B1BC32700FC3A81 /* RageSoundReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFB549D0B1BC32700FC3A81 /* RageSoundReader.cpp */; };
 		AAFBEED1094D7FCB000029DE /* SpecialFiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFBEECF094D7FCB000029DE /* SpecialFiles.cpp */; };
 		AAFBEED2094D7FCB000029DE /* SpecialFiles.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFBEED0094D7FCB000029DE /* SpecialFiles.h */; };
 		AAFBEEEB094D807E000029DE /* ScreenOptionsManageEditSteps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFBEEE5094D807E000029DE /* ScreenOptionsManageEditSteps.cpp */; };
@@ -2449,8 +2447,6 @@
 		AA729C4F0599B58D00779F33 /* ReceptorArrow.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ReceptorArrow.h; path = ../src/ReceptorArrow.h; sourceTree = "<group>"; };
 		AA729C500599B58D00779F33 /* ReceptorArrowRow.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ReceptorArrowRow.cpp; path = ../src/ReceptorArrowRow.cpp; sourceTree = "<group>"; };
 		AA729C510599B58D00779F33 /* ReceptorArrowRow.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ReceptorArrowRow.h; path = ../src/ReceptorArrowRow.h; sourceTree = "<group>"; };
-		AA75DA1E06E0A1B500EF13B5 /* NetworkSyncServer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = NetworkSyncServer.cpp; path = ../src/NetworkSyncServer.cpp; sourceTree = "<group>"; };
-		AA75DA1F06E0A1B500EF13B5 /* NetworkSyncServer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = NetworkSyncServer.h; path = ../src/NetworkSyncServer.h; sourceTree = "<group>"; };
 		AA76D15404D9D2D200D02EE9 /* CrashHandler.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = CrashHandler.cpp; sourceTree = "<group>"; };
 		AA76D15504D9D2D200D02EE9 /* CrashHandlerChild.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = CrashHandlerChild.cpp; sourceTree = "<group>"; };
 		AA77E74508B64B1400FA24CA /* CharacterManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = CharacterManager.cpp; path = ../src/CharacterManager.cpp; sourceTree = "<group>"; };
@@ -2853,6 +2849,7 @@
 		AAFAB5CB08890B5200767BF7 /* GameLoop.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = GameLoop.cpp; sourceTree = "<group>"; };
 		AAFAB5CC08890B5200767BF7 /* GameLoop.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = GameLoop.h; sourceTree = "<group>"; };
 		AAFAFC8E0AC8DB9F00427A6E /* EnumHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = EnumHelper.cpp; path = ../src/EnumHelper.cpp; sourceTree = "<group>"; };
+		AAFB549D0B1BC32700FC3A81 /* RageSoundReader.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RageSoundReader.cpp; path = ../src/RageSoundReader.cpp; sourceTree = "<group>"; };
 		AAFBEECF094D7FCB000029DE /* SpecialFiles.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = SpecialFiles.cpp; sourceTree = "<group>"; };
 		AAFBEED0094D7FCB000029DE /* SpecialFiles.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = SpecialFiles.h; sourceTree = "<group>"; };
 		AAFBEEE5094D807E000029DE /* ScreenOptionsManageEditSteps.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenOptionsManageEditSteps.cpp; path = ../src/ScreenOptionsManageEditSteps.cpp; sourceTree = "<group>"; };
@@ -3333,8 +3330,6 @@
 				AAF4206605D63FA700056441 /* ModelManager.h */,
 				AAE78049060814AC0034E65F /* NetworkSyncManager.cpp */,
 				AAE7804A060814AC0034E65F /* NetworkSyncManager.h */,
-				AA75DA1E06E0A1B500EF13B5 /* NetworkSyncServer.cpp */,
-				AA75DA1F06E0A1B500EF13B5 /* NetworkSyncServer.h */,
 				AA6E010B0477128A005F316C /* NoteSkinManager.cpp */,
 				AA6E010C0477128A005F316C /* NoteSkinManager.h */,
 				AA6E010D0477128A005F316C /* PrefsManager.cpp */,
@@ -3514,6 +3509,7 @@
 				AAAB2CE2072BD2FA00CD9FC9 /* RageSoundMixBuffer.h */,
 				AAD36082062BB8AE00D0CED8 /* RageSoundPosMap.cpp */,
 				AAD36083062BB8AE00D0CED8 /* RageSoundPosMap.h */,
+				AAFB549D0B1BC32700FC3A81 /* RageSoundReader.cpp */,
 				AA6EFD8604770A7C005F316C /* RageSoundReader.h */,
 				AA7ADC23072CAB7F00C50A7F /* RageSoundReader_Chain.cpp */,
 				AA7ADC24072CAB7F00C50A7F /* RageSoundReader_Chain.h */,
@@ -4524,7 +4520,6 @@
 				AA3A706306AA1645006F755E /* StyleUtil.h in Headers */,
 				AA9A78AC06B5C72200B03E97 /* Game.h in Headers */,
 				AA22CBA606DE909C0083BA97 /* ScreenNetSelectMusic.h in Headers */,
-				AA75DA2106E0A1B500EF13B5 /* NetworkSyncServer.h in Headers */,
 				AAB9C8B006EAF64400AD97CD /* RageSurfaceUtils_Palettize.h in Headers */,
 				AAB9C8B206EAF64400AD97CD /* RageSurfaceUtils.h in Headers */,
 				AAB9C8B606EAF66C00AD97CD /* ScreenNetEvaluation.h in Headers */,
@@ -4973,7 +4968,6 @@
 				AA40D30A09A08D650068C0D5 /* StyleUtil.h in Headers */,
 				AA40D30B09A08D650068C0D5 /* Game.h in Headers */,
 				AA40D30C09A08D650068C0D5 /* ScreenNetSelectMusic.h in Headers */,
-				AA40D30D09A08D650068C0D5 /* NetworkSyncServer.h in Headers */,
 				AA40D30E09A08D650068C0D5 /* RageSurfaceUtils_Palettize.h in Headers */,
 				AA40D30F09A08D650068C0D5 /* RageSurfaceUtils.h in Headers */,
 				AA40D31009A08D650068C0D5 /* ScreenNetEvaluation.h in Headers */,
@@ -5650,7 +5644,6 @@
 				AA3A706206AA1645006F755E /* StyleUtil.cpp in Sources */,
 				AA9A78AB06B5C72200B03E97 /* Game.cpp in Sources */,
 				AA22CBA506DE909C0083BA97 /* ScreenNetSelectMusic.cpp in Sources */,
-				AA75DA2006E0A1B500EF13B5 /* NetworkSyncServer.cpp in Sources */,
 				AAB9C8AF06EAF64400AD97CD /* RageSurfaceUtils_Palettize.cpp in Sources */,
 				AAB9C8B106EAF64400AD97CD /* RageSurfaceUtils.cpp in Sources */,
 				AAB9C8B506EAF66C00AD97CD /* ScreenNetEvaluation.cpp in Sources */,
@@ -5782,6 +5775,7 @@
 				AA608EC00B0F85E400B39AC4 /* DialogDriver.cpp in Sources */,
 				AA608FAD0B0F9A4E00B39AC4 /* RageSoundDriver.cpp in Sources */,
 				AA6090E60B141D1C00B39AC4 /* GamePreferences.cpp in Sources */,
+				AAFB549E0B1BC32700FC3A81 /* RageSoundReader.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6075,7 +6069,6 @@
 				AA40D4A509A08D650068C0D5 /* StyleUtil.cpp in Sources */,
 				AA40D4A609A08D650068C0D5 /* Game.cpp in Sources */,
 				AA40D4A709A08D650068C0D5 /* ScreenNetSelectMusic.cpp in Sources */,
-				AA40D4A809A08D650068C0D5 /* NetworkSyncServer.cpp in Sources */,
 				AA40D4A909A08D650068C0D5 /* RageSurfaceUtils_Palettize.cpp in Sources */,
 				AA40D4AA09A08D650068C0D5 /* RageSurfaceUtils.cpp in Sources */,
 				AA40D4AB09A08D650068C0D5 /* ScreenNetEvaluation.cpp in Sources */,
@@ -6203,6 +6196,7 @@
 				AA608EC10B0F85E400B39AC4 /* DialogDriver.cpp in Sources */,
 				AA608FAE0B0F9A4E00B39AC4 /* RageSoundDriver.cpp in Sources */,
 				AA6090E80B141D1C00B39AC4 /* GamePreferences.cpp in Sources */,
+				AAFB549F0B1BC32700FC3A81 /* RageSoundReader.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
