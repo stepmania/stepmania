@@ -39,6 +39,7 @@ private:
 
 	SoundReader *m_pSource;
 	int m_iSampleRate;
+	int m_iDownFactor;
 };
 
 #endif

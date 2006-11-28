@@ -429,6 +429,22 @@ namespace PolyphaseFilterCache
 		PolyphaseFiltersLock.Unlock();
 		return pPolyphase;
 	}
+
+	const PolyphaseFilter *FindNearestPolyphaseFilter( int iUpFactor, float fCutoffFrequency )
+	{
+		/* Find a cached filter with the same iUpFactor and a nearby cutoff frequency.
+		 * Round the cutoff down, if possible; it's better to filter out too much tha
+		 * too little. */
+		PolyphaseFiltersLock.Lock();
+		pair<int,float> params( make_pair(iUpFactor, fCutoffFrequency) );
+		FilterMap::const_iterator it = g_mapPolyphaseFilters.upper_bound( params );
+		if( it != g_mapPolyphaseFilters.begin() )
+			--it;
+		ASSERT( it->first.first == iUpFactor );
+		PolyphaseFilter *pPolyphase = it->second;
+		PolyphaseFiltersLock.Unlock();
+		return pPolyphase;
+	}
 }
 
 /*
@@ -438,14 +454,26 @@ namespace PolyphaseFilterCache
 class RageSoundResampler_Polyphase
 {
 public:
-	RageSoundResampler_Polyphase( int iUpFactor, int iDownFactor )
+	/* Note that going outside of [iMinDownFactor,iMaxDownFactor] while resampling isn't
+	 * fatal.  It'll only cause aliasing, by not having a LPF that's low enough, or cause
+	 * too much filtering, by not having a LPF that's high enough. */
+	RageSoundResampler_Polyphase( int iUpFactor, int iMinDownFactor, int iMaxDownFactor )
 	{
+		/* Cache filters between iMinDownFactor and iMaxDownFactor.  Do them in 
+		 * iFilterIncrement increments; we'll round down to the closest match
+		 * when filtering.  This will only cause the low-pass filter to be rounded;
+		 * the conversion ratio will always be exact. */
 		m_iUpFactor = iUpFactor;
-		m_iDownFactor = iDownFactor;
+		m_pPolyphase = NULL;
 
-		float fCutoffFrequency = GetCutoffFrequency( iDownFactor );
+		int iFilterIncrement = (iMaxDownFactor - iMinDownFactor)/10;
+		for( int iDownFactor = iMinDownFactor; iDownFactor <= iMaxDownFactor; iDownFactor += iFilterIncrement )
+		{
+			float fCutoffFrequency = GetCutoffFrequency( iDownFactor );
+			PolyphaseFilterCache::MakePolyphaseFilter( m_iUpFactor, fCutoffFrequency );
+		}
 
-		m_pPolyphase = PolyphaseFilterCache::MakePolyphaseFilter( iUpFactor, fCutoffFrequency );
+		SetDownFactor( iUpFactor );
 
 		m_pState = new PolyphaseFilter::State( iUpFactor );
 	}
@@ -453,6 +481,12 @@ public:
 	~RageSoundResampler_Polyphase()
 	{
 		delete m_pState;
+	}
+
+	void SetDownFactor( int iDownFactor )
+	{
+		m_iDownFactor = iDownFactor;
+		m_pPolyphase = GetFilter( m_iDownFactor );
 	}
 
 	int Run( const float *pIn, int iSamplesIn, float *pOut, int iSamplesOut ) const
@@ -493,6 +527,12 @@ private:
 		fCutoffFrequency = min( fCutoffFrequency, 1.0f / (2*iDownFactor) );
 		return fCutoffFrequency;
 	}
+
+	const PolyphaseFilter *GetFilter( int iDownFactor ) const
+	{
+		float fCutoffFrequency = GetCutoffFrequency( iDownFactor );
+		return PolyphaseFilterCache::FindNearestPolyphaseFilter( m_iUpFactor, fCutoffFrequency );
+	}
 	
 	const PolyphaseFilter *m_pPolyphase;
 	PolyphaseFilter::State *m_pState;
@@ -528,10 +568,11 @@ void RageSoundReader_Resample_Good::ReopenResampler()
 		iUpFactor /= iGCD;
 		iDownFactor /= iGCD;
 	}
+	m_iDownFactor = iDownFactor;
 
 	for( size_t iChannel = 0; iChannel < m_pSource->GetNumChannels(); ++iChannel )
 	{
-		RageSoundResampler_Polyphase *p = new RageSoundResampler_Polyphase( iUpFactor, iDownFactor );
+		RageSoundResampler_Polyphase *p = new RageSoundResampler_Polyphase( iUpFactor, iDownFactor, iDownFactor );
 		m_apResamplers.push_back( p );
 	}
 }
@@ -580,6 +621,9 @@ int RageSoundReader_Resample_Good::SetPosition_Fast( int iMS )
 
 int RageSoundReader_Resample_Good::Read( char *pBuf_, unsigned iLen )
 {
+	for( size_t iChannel = 0; iChannel < m_apResamplers.size(); ++iChannel )
+		m_apResamplers[iChannel]->SetDownFactor( m_iDownFactor );
+
 	int iChannels = m_apResamplers.size();
 	int iBytesPerFrame = sizeof(int16_t) * iChannels;
 
@@ -644,6 +688,7 @@ RageSoundReader_Resample_Good *RageSoundReader_Resample_Good::Copy() const
 		ret->m_apResamplers.push_back( new RageSoundResampler_Polyphase(*m_apResamplers[i]) );
 	ret->m_pSource = pSource;
 	ret->m_iSampleRate = m_iSampleRate;
+	ret->m_iDownFactor = m_iDownFactor;
 
 	return ret;
 }
