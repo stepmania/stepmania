@@ -1003,6 +1003,9 @@ int RageSoundReader_MP3::GetNextSourceFrame() const
 {
 	mad_timer_t now( mad->Timer );
 	mad_timer_multiply( &now, mad->Frame.header.samplerate );
+
+	int iFrame = mad->outpos / (sizeof(int16_t) * this->Channels);
+	now.seconds += iFrame;
 	return now.seconds;
 }
 
