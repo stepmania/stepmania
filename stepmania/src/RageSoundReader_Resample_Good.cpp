@@ -679,18 +679,21 @@ int RageSoundReader_Resample_Good::Read( char *pBuf_, unsigned iLen )
 	return iFramesRead * iBytesPerFrame;
 }
 
-RageSoundReader_Resample_Good *RageSoundReader_Resample_Good::Copy() const
+RageSoundReader_Resample_Good::RageSoundReader_Resample_Good( const RageSoundReader_Resample_Good &cpy ):
+	RageSoundReader(cpy)
 {
 	SoundReader *pSource = m_pSource->Copy();
-	RageSoundReader_Resample_Good *ret = new RageSoundReader_Resample_Good;
 
 	for( size_t i = 0; i < m_apResamplers.size(); ++i )
-		ret->m_apResamplers.push_back( new RageSoundResampler_Polyphase(*m_apResamplers[i]) );
-	ret->m_pSource = pSource;
-	ret->m_iSampleRate = m_iSampleRate;
-	ret->m_iDownFactor = m_iDownFactor;
+		this->m_apResamplers.push_back( new RageSoundResampler_Polyphase(*m_apResamplers[i]) );
+	this->m_pSource = pSource;
+	this->m_iSampleRate = m_iSampleRate;
+	this->m_iDownFactor = m_iDownFactor;
+}
 
-	return ret;
+RageSoundReader_Resample_Good *RageSoundReader_Resample_Good::Copy() const
+{
+	return new RageSoundReader_Resample_Good( *this );
 }
 
 /*

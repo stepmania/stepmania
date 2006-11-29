@@ -13,6 +13,7 @@ class RageSoundReader_Resample_Good: public RageSoundReader
 public:
 	/* We own source. */
 	void Open( SoundReader *pSource );
+	RageSoundReader_Resample_Good( const RageSoundReader_Resample_Good &cpy );
 	int GetLength() const;
 	int GetLength_Fast() const;
 	int SetPosition_Accurate( int iMS );
