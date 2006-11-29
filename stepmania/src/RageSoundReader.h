@@ -22,7 +22,7 @@ public:
 	 * that will be read via Read().  GetStreamToSourceRatio() returns the ratio
 	 * for extrapolating the source frames of the remainder of the block.  These
 	 * values are valid so long as no parameters are changed before the next Read(). */
-	virtual int GetNextStreamFrame() const = 0;//{ return 0; } // XXX: should be pure
+	virtual int GetNextStreamFrame() const = { return 0; } // XXX: should be pure
 	virtual float GetStreamToSourceRatio() const { return 1.0f; } // XXX: should be pure
 
 	string GetError() const { return m_sError; }
