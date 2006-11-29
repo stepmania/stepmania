@@ -3,9 +3,9 @@
 #ifndef PLAYER_OPTIONS_H
 #define PLAYER_OPTIONS_H
 
+class Course;
 class Song;
 class Steps;
-class Course;
 class Trail;
 
 #include "GameConstantsAndTypes.h"

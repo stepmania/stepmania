@@ -4,8 +4,8 @@
 #define PREFERENCE_H
 
 #include "EnumHelper.h"
-#include "RageUtil.h"
 #include "LuaManager.h"
+#include "RageUtil.h"
 class XNode;
 
 struct lua_State;

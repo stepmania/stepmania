@@ -3,34 +3,33 @@
 #ifndef GAMESTATE_H
 #define GAMESTATE_H
 
-#include "GameConstantsAndTypes.h"
-#include "SongOptions.h"
-#include "Grade.h"
 #include "Attack.h"
-#include "RageTimer.h"
 #include "Difficulty.h"
+#include "GameConstantsAndTypes.h"
+#include "Grade.h"
 #include "MessageManager.h"
-#include "SongOptions.h"
 #include "ModsGroup.h"
+#include "RageTimer.h"
+#include "SongOptions.h"
 
 #include <map>
 #include <deque>
 #include <set>
 
-class Song;
-class Steps;
-class Course;
-class Trail;
-class Game;
-class Style;
 class Character;
-class TimingData;
-class StageStats;
-class PlayerState;
+class Course;
+class Game;
 struct lua_State;
 class LuaTable;
-class Profile;
+class PlayerState;
 class PlayerOptions;
+class Profile;
+class Song;
+class Steps;
+class StageStats;
+class Style;
+class TimingData;
+class Trail;
 
 class GameState
 {

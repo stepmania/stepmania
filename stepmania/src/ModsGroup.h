@@ -1,8 +1,8 @@
 #ifndef MODS_GROUP_H
 #define MODS_GROUP_H
 
-#include "RageTimer.h"
 #include "EnumHelper.h"
+#include "RageTimer.h"
 
 enum ModsLevel
 {

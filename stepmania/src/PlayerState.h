@@ -3,12 +3,12 @@
 #ifndef PlayerState_H
 #define PlayerState_H
 
+#include "Attack.h"
+#include "ModsGroup.h"
 #include "PlayerNumber.h"
 #include "PlayerOptions.h"
-#include "Attack.h"
 #include "RageTimer.h"
 struct lua_State;
-#include "ModsGroup.h"
 
 class PlayerState
 {
