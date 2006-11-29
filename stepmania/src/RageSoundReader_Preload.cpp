@@ -114,7 +114,7 @@ int RageSoundReader_Preload::SetPosition_Fast( int iMS )
 	return SetPosition_Accurate( iMS );
 }
 
-int RageSoundReader_Preload::GetNextStreamFrame() const
+int RageSoundReader_Preload::GetNextSourceFrame() const
 {
 	return m_iPosition / samplesize;
 }

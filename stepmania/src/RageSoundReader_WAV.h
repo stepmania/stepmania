@@ -19,7 +19,7 @@ public:
 	int Read( char *buf, unsigned len );
 	int GetSampleRate() const { return m_WavData.m_iSampleRate; }
 	unsigned GetNumChannels() const { return m_WavData.m_iChannels; }
-	int GetNextStreamFrame() const;
+	int GetNextSourceFrame() const;
 	RageSoundReader_WAV();
 	~RageSoundReader_WAV();
 	RageSoundReader_WAV( const RageSoundReader_WAV & ); /* not defined; don't use */

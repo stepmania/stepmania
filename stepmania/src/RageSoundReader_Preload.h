@@ -21,7 +21,7 @@ public:
 	int GetSampleRate() const { return m_iSampleRate; }
 	unsigned GetNumChannels() const { return m_iChannels; }
 	bool IsStreamingFromDisk() const { return false; }
-	int GetNextStreamFrame() const;
+	int GetNextSourceFrame() const;
 	float GetStreamToSourceRatio() const { return m_fRate; }
 
 	/* Return the total number of copies of this sound.  (If 1 is returned,

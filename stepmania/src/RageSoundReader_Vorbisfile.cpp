@@ -255,7 +255,7 @@ int RageSoundReader_Vorbisfile::GetSampleRate() const
 	return vi->rate;
 }
 
-int RageSoundReader_Vorbisfile::GetNextStreamFrame() const
+int RageSoundReader_Vorbisfile::GetNextSourceFrame() const
 {
 	ASSERT(vf);
 

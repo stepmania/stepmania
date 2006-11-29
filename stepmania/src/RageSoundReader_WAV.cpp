@@ -46,7 +46,7 @@ struct WavReader
 	virtual int GetLength() const = 0;
 	virtual bool Init() = 0;
 	virtual int SetPosition( int iMS ) = 0;
-	virtual int GetNextStreamFrame() const = 0;
+	virtual int GetNextSourceFrame() const = 0;
 	RString GetError() const { return m_sError; }
 
 protected:
@@ -118,7 +118,7 @@ struct WavReaderPCM: public WavReader
 	}
 
 	// XXX: untested
-	int GetNextStreamFrame() const
+	int GetNextSourceFrame() const
 	{
 		int iByte = m_File.Tell() - m_WavData.m_iDataChunkPos;
 		int iFrame = iByte / (m_WavData.m_iChannels * m_WavData.m_iBitsPerSample / 8);
@@ -363,7 +363,7 @@ public:
 	}
 
 	// XXX: untested
-	int GetNextStreamFrame() const
+	int GetNextSourceFrame() const
 	{
 		int iByte = m_File.Tell() - m_WavData.m_iDataChunkPos;
 		int iBlock = iByte / m_WavData.m_iBlockAlign;
@@ -523,10 +523,10 @@ int RageSoundReader_WAV::SetPosition( int ms )
 	return m_pImpl->SetPosition( ms );
 }
 
-int RageSoundReader_WAV::GetNextStreamFrame() const
+int RageSoundReader_WAV::GetNextSourceFrame() const
 {
 	ASSERT( m_pImpl != NULL );
-	return m_pImpl->GetNextStreamFrame();
+	return m_pImpl->GetNextSourceFrame();
 }
 
 int RageSoundReader_WAV::Read( char *buf, unsigned len )

@@ -19,7 +19,7 @@ public:
 	int SetPosition_Fast(int ms);
 	int Read(char *buf, unsigned len);
 	int GetSampleRate() const { return SampleRate; }
-	int GetNextStreamFrame() const;
+	int GetNextSourceFrame() const;
 
 	RageSoundReader_MP3();
 	~RageSoundReader_MP3();
