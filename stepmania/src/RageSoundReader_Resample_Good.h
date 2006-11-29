@@ -4,12 +4,11 @@
 #define RAGE_SOUND_READER_RESAMPLE_GOOD_H
 
 #include "RageSoundReader.h"
-#include "RageSoundReader_Resample.h"
 
 class RageSoundResampler_Polyphase;
 
 /* This class changes the sampling rate of a sound. */
-class RageSoundReader_Resample_Good: public RageSoundReader_Resample
+class RageSoundReader_Resample_Good: public RageSoundReader
 {
 public:
 	/* We own source. */
