@@ -25,7 +25,7 @@ public:
 	virtual int GetNextStreamFrame() const { return 0; } // XXX: should be pure
 	virtual float GetStreamToSourceRatio() const { return 1.0f; } // XXX: should be pure
 
-	string GetError() const { return m_sError; }
+	RString GetError() const { return m_sError; }
 
 protected:
 	void SetError( RString sError ) const { m_sError = sError; }
