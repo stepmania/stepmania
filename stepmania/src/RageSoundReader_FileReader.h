@@ -24,6 +24,7 @@ public:
 	};
 	virtual OpenResult Open(RString filename) = 0;
 	virtual bool IsStreamingFromDisk() const { return true; }
+	virtual float GetStreamToSourceRatio() const { return 1.0f; }
 
 	static SoundReader *OpenFile( RString filename, RString &error );
 
