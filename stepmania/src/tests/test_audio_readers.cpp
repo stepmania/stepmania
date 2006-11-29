@@ -4,7 +4,7 @@
 #include "RageTimer.h"
 #include "RageUtil.h"
 #include "RageSoundReader_Preload.h"
-#include "RageSoundReader_Resample.h"
+#include "RageSoundReader_Resample_Good.h"
 
 #include "test_misc.h"
 #include <sys/types.h>
@@ -186,10 +186,7 @@ RageSoundReader *ApplyFilters( RageSoundReader *s, int filters )
 	
 	if( filters & FILTER_RESAMPLE_FAST )
 	{
-		RageSoundReader_Resample *r = RageSoundReader_Resample::MakeResampler( RageSoundReader_Resample::RESAMP_FAST );
-		r->Open( s );
-		r->SetSampleRate( 10000 );
-
+		RageSoundReader_Resample_Good *r = new RageSoundReader_Resample_Good( s, 10000 );
 		s = r;
 	}
 
