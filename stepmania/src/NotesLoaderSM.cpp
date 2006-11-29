@@ -1,14 +1,14 @@
 #include "global.h"
 #include "NotesLoaderSM.h"
+#include "BackgroundUtil.h"
 #include "GameManager.h"
 #include "MsdFile.h"
+#include "NoteTypes.h"
+#include "RageFileManager.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-#include "SongManager.h"
-#include "RageFileManager.h"
-#include "NoteTypes.h"
-#include "BackgroundUtil.h"
 #include "song.h"
+#include "SongManager.h"
 #include "Steps.h"
 
 const int MAX_EDIT_STEPS_SIZE_BYTES		= 30*1024;	// 30KB

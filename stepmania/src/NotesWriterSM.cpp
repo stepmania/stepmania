@@ -1,20 +1,20 @@
+#include <cerrno>
+#include <cstring>
 #include "global.h"
 #include "NotesWriterSM.h"
-#include "Steps.h"
-#include "RageUtil.h"
+#include "BackgroundUtil.h"
+#include "Foreach.h"
 #include "GameManager.h"
-#include "RageLog.h"
+#include "LocalizedString.h"
+#include "NoteTypes.h"
+#include "Profile.h"
+#include "ProfileManager.h"
 #include "RageFile.h"
 #include "RageFileManager.h"
+#include "RageLog.h"
+#include "RageUtil.h"
 #include "song.h"
-#include "NoteTypes.h"
-#include <cstring>
-#include <cerrno>
-#include "Foreach.h"
-#include "BackgroundUtil.h"
-#include "ProfileManager.h"
-#include "Profile.h"
-#include "LocalizedString.h"
+#include "Steps.h"
 
 static RString BackgroundChangeToString( const BackgroundChange &bgc )
 {

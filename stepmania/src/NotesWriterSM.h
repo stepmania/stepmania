@@ -5,7 +5,6 @@
 
 class Song;
 class Steps;
-class RageFile;
 namespace NotesWriterSM
 {
 	bool Write( RString sPath, const Song &out, bool bSavingCache );
