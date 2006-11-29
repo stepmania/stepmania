@@ -19,7 +19,6 @@ public:
 	int SetPosition_Accurate( int iMS );
 	int SetPosition_Fast( int iMS );
 	int Read( char *pBuf, unsigned iLen );
-	RageSoundReader_Resample_Good();
 	virtual ~RageSoundReader_Resample_Good();
 	RageSoundReader_Resample_Good *Copy() const;
 
