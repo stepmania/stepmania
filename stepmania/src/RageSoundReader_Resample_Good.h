@@ -12,7 +12,7 @@ class RageSoundReader_Resample_Good: public RageSoundReader
 {
 public:
 	/* We own source. */
-	void Open( SoundReader *pSource );
+	RageSoundReader_Resample_Good( RageSoundReader *pSource, int iSampleRate );
 	RageSoundReader_Resample_Good( const RageSoundReader_Resample_Good &cpy );
 	int GetLength() const;
 	int GetLength_Fast() const;
@@ -23,8 +23,6 @@ public:
 	virtual ~RageSoundReader_Resample_Good();
 	RageSoundReader_Resample_Good *Copy() const;
 
-	/* Change the actual sample rate of a sound. */
-	void SetSampleRate( int iHZ );
 	void SetHighQuality( bool bHQ ) { }
 
 	int GetSampleRate() const { return m_iSampleRate; }

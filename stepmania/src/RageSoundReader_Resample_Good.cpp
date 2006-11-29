@@ -540,10 +540,11 @@ private:
 	int m_iDownFactor;
 };
 
-RageSoundReader_Resample_Good::RageSoundReader_Resample_Good()
+RageSoundReader_Resample_Good::RageSoundReader_Resample_Good( RageSoundReader *pSource, int iSampleRate )
 {
-	m_pSource = NULL;
-	m_iSampleRate = -1;
+	m_pSource = pSource;
+	m_iSampleRate = iSampleRate;
+	ReopenResampler();
 }
 
 /* Call this if the input position is changed or reset. */
@@ -577,24 +578,11 @@ void RageSoundReader_Resample_Good::ReopenResampler()
 	}
 }
 
-void RageSoundReader_Resample_Good::Open( SoundReader *pSource )
-{
-	ASSERT(pSource);
-	m_pSource = pSource;
-}
-
-
 RageSoundReader_Resample_Good::~RageSoundReader_Resample_Good()
 {
 	for( size_t iChannel = 0; iChannel < m_apResamplers.size(); ++iChannel )
 		delete m_apResamplers[iChannel];
 	delete m_pSource;
-}
-
-void RageSoundReader_Resample_Good::SetSampleRate( int iHZ )
-{
-	m_iSampleRate = iHZ;
-	ReopenResampler();
 }
 
 int RageSoundReader_Resample_Good::GetLength() const

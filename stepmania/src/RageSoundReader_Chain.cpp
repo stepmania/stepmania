@@ -133,9 +133,7 @@ void RageSoundReader_Chain::Finish()
 		{
 			SoundReader *&pSound = it->second;
 
-			RageSoundReader_Resample_Good *pResample = new RageSoundReader_Resample_Good;
-			pResample->Open( pSound );
-			pResample->SetSampleRate( m_iPreferredSampleRate );
+			RageSoundReader_Resample_Good *pResample = new RageSoundReader_Resample_Good( pSound, m_iPreferredSampleRate );
 			pSound = pResample;
 		}
 

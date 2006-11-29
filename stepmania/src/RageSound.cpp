@@ -223,9 +223,7 @@ void RageSound::LoadSoundReader( RageSoundReader *pSound )
 	const int iNeededRate = SOUNDMAN->GetDriverSampleRate( pSound->GetSampleRate() );
 	if( iNeededRate != pSound->GetSampleRate() )
 	{
-		RageSoundReader_Resample_Good *Resample = new RageSoundReader_Resample_Good;
-		Resample->Open( pSound );
-		Resample->SetSampleRate( iNeededRate );
+		RageSoundReader_Resample_Good *Resample = new RageSoundReader_Resample_Good( pSound, iNeededRate );
 		pSound = Resample;
 	}
 
