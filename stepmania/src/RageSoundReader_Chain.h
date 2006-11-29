@@ -36,6 +36,8 @@ public:
 	int GetSampleRate() const { return m_iActualSampleRate; }
 	unsigned GetNumChannels() const { return m_iChannels; }
 	bool IsStreamingFromDisk() const;
+	int GetNextStreamFrame() const;
+	float GetStreamToSourceRatio() const;
 
 private:
 	int ReadBlock( int16_t *pBuffer, int iFrames );

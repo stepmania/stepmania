@@ -4,7 +4,7 @@
 #include "global.h"
 #include "RageSoundReader_Preload.h"
 
-#define samplesize (2 * m_iChannels) /* 16-bit */
+#define samplesize (sizeof(int16_t) * m_iChannels) /* 16-bit */
 
 /* If a sound is smaller than this, we'll load it entirely into memory. */
 const unsigned max_prebuf_size = 1024*256;
@@ -39,6 +39,7 @@ bool RageSoundReader_Preload::Open( SoundReader *pSource )
 	ASSERT( pSource );
 	m_iSampleRate = pSource->GetSampleRate();
 	m_iChannels = pSource->GetNumChannels();
+	m_fRate = pSource->GetStreamToSourceRatio();
 	
 	/* Check the length, and see if we think it'll fit in the buffer. */
 	int iLen = pSource->GetLength_Fast();
@@ -55,6 +56,10 @@ bool RageSoundReader_Preload::Open( SoundReader *pSource )
 
 	while(1)
 	{
+		/* If the rate changes, we won't preload it. */
+		if( pSource->GetStreamToSourceRatio() != m_fRate )
+			return false; /* Don't bother trying to preload it. */
+
 		char buffer[1024];
 		int iCnt = pSource->Read(buffer, sizeof(buffer));
 
@@ -107,6 +112,11 @@ int RageSoundReader_Preload::SetPosition_Accurate(int ms)
 int RageSoundReader_Preload::SetPosition_Fast( int iMS )
 {
 	return SetPosition_Accurate( iMS );
+}
+
+int RageSoundReader_Preload::GetNextStreamFrame() const
+{
+	return m_iPosition / samplesize;
 }
 
 int RageSoundReader_Preload::Read( char *pBuffer, unsigned iLen )

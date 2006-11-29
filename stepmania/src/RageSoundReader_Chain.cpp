@@ -224,6 +224,35 @@ bool RageSoundReader_Chain::IsStreamingFromDisk() const
 	return false;
 }
 
+int RageSoundReader_Chain::GetNextStreamFrame() const
+{
+	return m_iCurrentFrame;
+/*	int iPosition = m_apActiveSounds[0].pSound->GetPosition();
+	for( unsigned i = 1; i < m_apActiveSounds.size(); )
+	{
+		if( m_apActiveSounds[i].pSound->GetPosition() != iPosition )
+			LOG->Warn( "RageSoundReader_Chain: sound positions moving at different rates" );
+	}
+
+	return iPosition;
+*/
+}
+
+float RageSoundReader_Chain::GetStreamToSourceRatio() const
+{
+	if( m_apActiveSounds.empty() )
+		return 1.0f;
+
+	float iRate = m_apActiveSounds[0].pSound->GetStreamToSourceRatio();
+	for( unsigned i = 1; i < m_apActiveSounds.size(); )
+	{
+		if( m_apActiveSounds[i].pSound->GetStreamToSourceRatio() != iRate )
+			LOG->Warn( "RageSoundReader_Chain: sound rates changing differently" );
+	}
+
+	return iRate;
+}
+
 /* Find the next sound we'll need to start, if any.  m_Sounds is sorted by time. */
 unsigned RageSoundReader_Chain::GetNextSoundIndex() const
 {
