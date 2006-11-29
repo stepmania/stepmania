@@ -18,6 +18,13 @@ public:
 	virtual unsigned GetNumChannels() const { return 2; } /* 1 or 2 */
 	virtual bool IsStreamingFromDisk() const = 0;
 
+	/* GetNextStreamFrame() provides the source frame associated with the next frame
+	 * that will be read via Read().  GetStreamToSourceRatio() returns the ratio
+	 * for extrapolating the source frames of the remainder of the block.  These
+	 * values are valid so long as no parameters are changed before the next Read(). */
+	virtual int GetNextStreamFrame() const = 0;//{ return 0; } // XXX: should be pure
+	virtual float GetStreamToSourceRatio() const { return 1.0f; } // XXX: should be pure
+
 	string GetError() const { return m_sError; }
 
 protected:
