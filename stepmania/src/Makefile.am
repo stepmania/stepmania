@@ -492,7 +492,6 @@ test_audio_readers_SOURCES = \
 		RageSoundReader.cpp RageSoundReader.h \
 		RageSoundReader_FileReader.cpp RageSoundReader_FileReader.h \
 		RageSoundReader_Preload.cpp RageSoundReader_Preload.h \
-		RageSoundReader_Resample.cpp  RageSoundReader_Resample.h \
 		RageSoundReader_Resample_Good.cpp RageSoundReader_Resample_Good.h \
 		RageSoundReader_Chain.cpp RageSoundReader_Chain.h
 
