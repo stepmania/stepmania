@@ -23,8 +23,6 @@ public:
 	virtual ~RageSoundReader_Resample_Good();
 	RageSoundReader_Resample_Good *Copy() const;
 
-	void SetHighQuality( bool bHQ ) { }
-
 	int GetSampleRate() const { return m_iSampleRate; }
 	unsigned GetNumChannels() const { return m_pSource->GetNumChannels(); }
 	bool IsStreamingFromDisk() const { return m_pSource->IsStreamingFromDisk(); }
