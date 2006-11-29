@@ -12,7 +12,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-void ReadData( SoundReader *snd,
+void ReadData( RageSoundReader *snd,
 	       int ms,		/* start */
 	       char *buf,	/* out */
 	       int frames )
@@ -137,7 +137,7 @@ bool compare_buffers( const int16_t *expect, const int16_t *got, int frames, int
 
 
 
-bool test_read( SoundReader *snd, const char *expected_data, int frames )
+bool test_read( RageSoundReader *snd, const char *expected_data, int frames )
 {
 	int bytes = frames * snd->GetNumChannels() * sizeof(int16_t);
 	char buf[bytes];
@@ -158,7 +158,7 @@ bool test_read( SoundReader *snd, const char *expected_data, int frames )
 }
 
 
-bool must_be_eof( SoundReader *snd )
+bool must_be_eof( RageSoundReader *snd )
 {
 	char buf[4];
 	int got = snd->Read( buf, 4 );
@@ -170,7 +170,7 @@ const int FILTER_PRELOAD		= 1 << 0;
 const int FILTER_RESAMPLE_FAST		= 1 << 1;
 
 
-SoundReader *ApplyFilters( SoundReader *s, int filters )
+RageSoundReader *ApplyFilters( RageSoundReader *s, int filters )
 {
 	if( filters & FILTER_PRELOAD )
 	{
@@ -196,7 +196,7 @@ SoundReader *ApplyFilters( SoundReader *s, int filters )
 	return s;
 }
 
-bool CheckSetPositionAccurate( SoundReader *snd )
+bool CheckSetPositionAccurate( RageSoundReader *snd )
 {
 	const int one_second=snd->GetSampleRate();
 	char data[one_second*sizeof(int16_t)*snd->GetNumChannels()];
@@ -286,7 +286,7 @@ struct TestFile
 };
 const int channels = 2;
 
-bool RunTests( SoundReader *snd, const TestFile &tf )
+bool RunTests( RageSoundReader *snd, const TestFile &tf )
 {
 	const char *fn = tf.fn;
 	{
@@ -477,7 +477,7 @@ bool test_file( const TestFile &tf, int filters )
 			
 	LOG->Trace("Testing: %s", fn );
 	RString error;
-	SoundReader *s = SoundReader_FileReader::OpenFile( fn, error );
+	RageSoundReader *s = SoundReader_FileReader::OpenFile( fn, error );
 	s = ApplyFilters( s, filters );
 	
 	if( s == NULL )
@@ -485,8 +485,8 @@ bool test_file( const TestFile &tf, int filters )
 		LOG->Trace( "File '%s' failed to open: %s", fn, error.c_str() );
 		return false;
 	}
-	//SoundReader *snd = s;
-	SoundReader *snd = s->Copy();
+	//RageSoundReader *snd = s;
+	RageSoundReader *snd = s->Copy();
 	delete s;
 
 	bool ret = RunTests( snd, tf );
