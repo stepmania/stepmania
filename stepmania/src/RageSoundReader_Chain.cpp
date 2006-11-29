@@ -224,7 +224,7 @@ bool RageSoundReader_Chain::IsStreamingFromDisk() const
 	return false;
 }
 
-int RageSoundReader_Chain::GetNextStreamFrame() const
+int RageSoundReader_Chain::GetNextSourceFrame() const
 {
 	return m_iCurrentFrame;
 /*	int iPosition = m_apActiveSounds[0].pSound->GetPosition();
