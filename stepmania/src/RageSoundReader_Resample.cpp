@@ -1,11 +1,5 @@
 #include "global.h"
 #include "RageSoundReader_Resample.h"
-#include "RageSoundReader_Resample_Good.h"
-
-RageSoundReader_Resample *RageSoundReader_Resample::MakeResampler( ResampleQuality q )
-{
-	return new RageSoundReader_Resample_Good;
-}
 
 /*
  * Copyright (c) 2003 Glenn Maynard
