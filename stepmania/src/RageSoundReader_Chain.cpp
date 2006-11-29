@@ -1,7 +1,7 @@
 #include "global.h"
 #include "RageSoundReader_Chain.h"
 #include "RageSoundReader_FileReader.h"
-#include "RageSoundReader_Resample.h"
+#include "RageSoundReader_Resample_Good.h"
 #include "RageSoundReader_Preload.h"
 #include "RageLog.h"
 #include "RageUtil.h"
@@ -133,8 +133,7 @@ void RageSoundReader_Chain::Finish()
 		{
 			SoundReader *&pSound = it->second;
 
-			/* We're preprocessing this; let's just use high quality resampling. */
-			RageSoundReader_Resample *pResample = RageSoundReader_Resample::MakeResampler( RageSoundReader_Resample::RESAMP_HIGHQUALITY );
+			RageSoundReader_Resample *pResample = new RageSoundReader_Resample_Good;
 			pResample->Open( pSound );
 			pResample->SetSampleRate( m_iPreferredSampleRate );
 			pSound = pResample;

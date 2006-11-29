@@ -30,7 +30,7 @@
 #include "RageSoundUtil.h"
 
 #include "RageSoundReader_Preload.h"
-#include "RageSoundReader_Resample.h"
+#include "RageSoundReader_Resample_Good.h"
 #include "RageSoundReader_FileReader.h"
 
 static const int channels = 2;
@@ -223,7 +223,7 @@ void RageSound::LoadSoundReader( RageSoundReader *pSound )
 	const int iNeededRate = SOUNDMAN->GetDriverSampleRate( pSound->GetSampleRate() );
 	if( iNeededRate != pSound->GetSampleRate() )
 	{
-		RageSoundReader_Resample *Resample = RageSoundReader_Resample::MakeResampler();
+		RageSoundReader_Resample_Good *Resample = new RageSoundReader_Resample_Good;
 		Resample->Open( pSound );
 		Resample->SetSampleRate( iNeededRate );
 		pSound = Resample;
