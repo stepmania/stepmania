@@ -255,6 +255,14 @@ int RageSoundReader_Vorbisfile::GetSampleRate() const
 	return vi->rate;
 }
 
+int RageSoundReader_Vorbisfile::GetNextStreamFrame() const
+{
+	ASSERT(vf);
+
+	int iFrame = ov_pcm_tell( vf );
+	return iFrame;
+}
+
 RageSoundReader_Vorbisfile::RageSoundReader_Vorbisfile()
 {
 	vf = NULL;

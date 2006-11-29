@@ -998,6 +998,14 @@ int RageSoundReader_MP3::SetPosition_Fast( int ms )
 	return SetPosition_estimate( ms );
 }
 
+// XXX: untested
+int RageSoundReader_MP3::GetNextStreamFrame() const
+{
+	mad_timer_t now( mad->Timer );
+	mad_timer_multiply( &now, mad->Frame.header.samplerate );
+	return now.seconds;
+}
+
 int RageSoundReader_MP3::GetLengthInternal( bool fast )
 {
 	if( mad->has_xing && mad->length != -1 )

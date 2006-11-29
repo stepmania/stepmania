@@ -21,6 +21,7 @@ public:
 	int Read(char *buf, unsigned len);
 	int GetSampleRate() const;
 	unsigned GetNumChannels() const { return channels; }
+	int GetNextStreamFrame() const;
 	RageSoundReader_Vorbisfile();
 	~RageSoundReader_Vorbisfile();
 	RageSoundReader_Vorbisfile *Copy() const;
