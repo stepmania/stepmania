@@ -11,7 +11,7 @@ class RageSound;
 class RageSoundBase;
 class RageSoundDriver;
 struct RageSoundParams;
-class SoundReader;
+class RageSoundReader;
 class RageSoundReader_Preload;
 
 class RageSoundManager
@@ -50,7 +50,7 @@ public:
 	void DeleteSound( RageSound *pSound );
 	void DeleteSoundWhenFinished( RageSound *pSound );
 
-	SoundReader *GetLoadedSound( const RString &sPath );
+	RageSoundReader *GetLoadedSound( const RString &sPath );
 	void AddLoadedSound( const RString &sPath, RageSoundReader_Preload *pSound );
 
 	void PlayOnce( RString sPath );

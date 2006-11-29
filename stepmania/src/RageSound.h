@@ -9,7 +9,7 @@
 #include "RageUtil_CircularBuffer.h"
 #include "RageSoundPosMap.h"
 
-class SoundReader;
+class RageSoundReader;
 
 /* Driver interface for sounds: this is what drivers see. */
 class RageSoundBase
@@ -106,9 +106,9 @@ public:
 	 */
 	bool Load( RString sFile );
 
-	/* Load a SoundReader that you've set up yourself.  Sample rate conversion will
+	/* Load a RageSoundReader that you've set up yourself.  Sample rate conversion will
 	 * be set up only if needed.  Doesn't fail. */
-	void LoadSoundReader( SoundReader *pSound );
+	void LoadSoundReader( RageSoundReader *pSound );
 	void Unload();
 	bool IsLoaded() const;
 
@@ -142,7 +142,7 @@ public:
 private:
 	mutable RageMutex m_Mutex;
 
-	SoundReader *m_pSource;
+	RageSoundReader *m_pSource;
 	CircBuf<char> m_DataBuffer;
 	bool FillBuf( int iFrames );
 

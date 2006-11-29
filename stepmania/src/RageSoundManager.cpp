@@ -295,7 +295,7 @@ void RageSoundManager::DeleteSoundWhenFinished( RageSound *pSound )
 
 /* If the given path is loaded, return a copy; otherwise return NULL.
  * It's the caller's responsibility to delete the result. */
-SoundReader *RageSoundManager::GetLoadedSound( const RString &sPath_ )
+RageSoundReader *RageSoundManager::GetLoadedSound( const RString &sPath_ )
 {
 	LockMut(g_SoundManMutex); /* lock for access to m_mapPreloadedSounds */
 

@@ -148,7 +148,7 @@ void RageSound::Fail( RString sReason )
 	m_sError = sReason;
 }
 
-class RageSoundReader_Silence: public SoundReader
+class RageSoundReader_Silence: public RageSoundReader
 {
 public:
 	int GetLength() const { return 0; }
@@ -156,7 +156,7 @@ public:
 	int SetPosition_Accurate(int ms)  { return 0; }
 	int SetPosition_Fast(int ms) { return 0; }
 	int Read(char *buf, unsigned len) { return 0; }
-	SoundReader *Copy() const { return new RageSoundReader_Silence; }
+	RageSoundReader *Copy() const { return new RageSoundReader_Silence; }
 	int GetSampleRate() const { return 44100; }
 	bool IsStreamingFromDisk() const { return false; }
 };
@@ -175,7 +175,7 @@ bool RageSound::Load( RString sSoundFilePath, bool bPrecache )
 
 	/* If this sound is already preloaded and held by SOUNDMAN, just make a copy
 	 * of that.  Since RageSoundReader_Preload is refcounted, this is cheap. */
-	SoundReader *pSound = SOUNDMAN->GetLoadedSound( sSoundFilePath );
+	RageSoundReader *pSound = SOUNDMAN->GetLoadedSound( sSoundFilePath );
 	if( pSound == NULL )
 	{
 		RString error;
@@ -214,7 +214,7 @@ bool RageSound::Load( RString sSoundFilePath, bool bPrecache )
 	return true;
 }
 
-void RageSound::LoadSoundReader( SoundReader *pSound )
+void RageSound::LoadSoundReader( RageSoundReader *pSound )
 {
 	Unload();
 
