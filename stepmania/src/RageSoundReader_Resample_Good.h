@@ -21,6 +21,8 @@ public:
 	int Read( char *pBuf, unsigned iLen );
 	virtual ~RageSoundReader_Resample_Good();
 	RageSoundReader_Resample_Good *Copy() const;
+	int GetNextSourceFrame() const;
+	float GetStreamToSourceRatio() const;
 
 	int GetSampleRate() const { return m_iSampleRate; }
 	unsigned GetNumChannels() const { return m_pSource->GetNumChannels(); }

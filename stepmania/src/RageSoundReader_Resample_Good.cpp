@@ -502,6 +502,7 @@ public:
 
 	int NumInputsForOutputSamples( int iOut ) const { return m_pPolyphase->NumInputsForOutputSamples(*m_pState, iOut, m_iDownFactor); }
 	int GetLatency() const { return m_pPolyphase->GetLatency(); }
+	int GetFilled() const { return m_pState->m_iFilled; }
 
 	RageSoundResampler_Polyphase( const RageSoundResampler_Polyphase &cpy )
 	{
@@ -539,6 +540,22 @@ private:
 	int m_iUpFactor;
 	int m_iDownFactor;
 };
+
+int RageSoundReader_Resample_Good::GetNextSourceFrame() const
+{
+	uint64_t iPosition = m_pSource->GetNextSourceFrame();
+	iPosition -= m_apResamplers[0]->GetFilled();
+
+	iPosition *= m_iSampleRate;
+	iPosition /= m_pSource->GetSampleRate();
+	return (int) iPosition;
+}
+
+float RageSoundReader_Resample_Good::GetStreamToSourceRatio() const
+{
+	float fRatio = m_pSource->GetStreamToSourceRatio();
+	return fRatio;
+}
 
 RageSoundReader_Resample_Good::RageSoundReader_Resample_Good( RageSoundReader *pSource, int iSampleRate )
 {
