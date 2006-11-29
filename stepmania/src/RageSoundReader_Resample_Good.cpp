@@ -687,13 +687,11 @@ int RageSoundReader_Resample_Good::Read( char *pBuf_, unsigned iLen )
 RageSoundReader_Resample_Good::RageSoundReader_Resample_Good( const RageSoundReader_Resample_Good &cpy ):
 	RageSoundReader(cpy)
 {
-	SoundReader *pSource = m_pSource->Copy();
-
-	for( size_t i = 0; i < m_apResamplers.size(); ++i )
-		this->m_apResamplers.push_back( new RageSoundResampler_Polyphase(*m_apResamplers[i]) );
-	this->m_pSource = pSource;
-	this->m_iSampleRate = m_iSampleRate;
-	this->m_iDownFactor = m_iDownFactor;
+	for( size_t i = 0; i < cpy.m_apResamplers.size(); ++i )
+		this->m_apResamplers.push_back( new RageSoundResampler_Polyphase(*cpy.m_apResamplers[i]) );
+	this->m_pSource = cpy.m_pSource->Copy();
+	this->m_iSampleRate = cpy.m_iSampleRate;
+	this->m_iDownFactor = cpy.m_iDownFactor;
 }
 
 RageSoundReader_Resample_Good *RageSoundReader_Resample_Good::Copy() const
