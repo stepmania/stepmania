@@ -391,7 +391,7 @@ bool RunTests( RageSoundReader *snd, const TestFile &tf )
 	{
 		char buf[4096];
 		int got = snd->Read( buf, sizeof(buf) );
-		if( got < int(sizeof(buf)) )
+		if( got == 0 )
 			break;
 	}
 	
