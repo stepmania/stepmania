@@ -7,8 +7,6 @@
 #include "Quad.h"
 #include "PlayerNumber.h"
 #include "BackgroundUtil.h"
-#include <deque>
-#include <map>
 
 class DancingCharacters;
 class Song;
