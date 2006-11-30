@@ -626,11 +626,6 @@ static BackgroundLayer g_CurrentBGChangeLayer = BACKGROUND_LAYER_Invalid;
 static const RString EDITOR_NOTE_SKIN = "note";
 static bool s_bChangedNoteSkin = false;
 
-void ScreenEdit::ResetStaticState()
-{
-	s_bChangedNoteSkin = false;
-}
-
 static void SetDefaultEditorNoteSkin( size_t num, RString &sNameOut, RString &defaultValueOut )
 {
 	sNameOut = ssprintf( "EditorNoteSkinP%d", int(num + 1) );
@@ -693,9 +688,9 @@ void ScreenEdit::Init()
 	// We keep track of this bit of state so that when the user is in Edit/Sync Songs and makes a change to the NoteSkins,
 	// that change is "sticky" across multiple ScreenEdits.  That is the way the rest of the options work.
 	// TODO: It would be cleaner to do this by making it possible to set an option in metrics.ini.
-	if( !s_bChangedNoteSkin ) 
+	if( !GAMESTATE->m_bDidModeChangeNoteSkin ) 
 	{
-		s_bChangedNoteSkin = true;
+		GAMESTATE->m_bDidModeChangeNoteSkin = true;
 		FOREACH_PlayerNumber( pn ) 
 		{
 			const RString &sNoteSkin = EDITOR_NOTE_SKINS[pn].Get();

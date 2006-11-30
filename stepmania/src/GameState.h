@@ -205,6 +205,10 @@ public:
 
 	ModsGroup<SongOptions>	m_SongOptions;
 
+	// True if the current mode has changed the default NoteSkin, such as Edit/Sync Songs does.
+	// Note: any mode that wants to use it must set it
+	bool m_bDidModeChangeNoteSkin;
+
 	void GetDefaultPlayerOptions( PlayerOptions &po );
 	void GetDefaultSongOptions( SongOptions &so );
 	void ApplyPreferredModifiers( PlayerNumber pn, RString sModifiers );

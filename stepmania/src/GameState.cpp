@@ -27,7 +27,6 @@
 #include "RageFile.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-#include "ScreenEdit.h"
 #include "song.h"
 #include "SongManager.h"
 #include "SongUtil.h"
@@ -118,7 +117,8 @@ GameState::GameState() :
 	m_pEditSourceSteps(		Message_EditSourceStepsChanged ),
 	m_stEditSource(			Message_EditSourceStepsTypeChanged ),
 	m_iEditCourseEntryIndex(	Message_EditCourseEntryIndexChanged ),
-	m_sEditLocalProfileID(		Message_EditLocalProfileIDChanged )
+	m_sEditLocalProfileID(		Message_EditLocalProfileIDChanged ),
+	m_bDidModeChangeNoteSkin(	false )
 {
 	g_pImpl = new GameStateImpl;
 
@@ -286,24 +286,7 @@ void GameState::Reset()
 
 	STATSMAN->Reset();
 
-	SongOptions so;
-	GetDefaultSongOptions( so );
-	m_SongOptions.Assign( ModsLevel_Preferred, so );
-	
-	FOREACH_PlayerNumber(p)
-	{
-		// I can't think of a good reason to have both game-specific
-		// default mods and theme specific default mods.  We should choose 
-		// one or the other. -Chris
-		// Having default modifiers in prefs is needed for several things.
-		// The theme setting is for eg. BM being reverse by default.  (This
-		// could be done in the title menu GameCommand, but then it wouldn't
-		// affect demo, and other non-gameplay things ...) -glenn
-		
-		PlayerOptions po;
-		GetDefaultPlayerOptions( po );
-		m_pPlayerState[p]->m_PlayerOptions.Assign( ModsLevel_Preferred, po );
-	}
+	ResetOptions();
 
 	FOREACH_PlayerNumber(p)
 	{
@@ -326,8 +309,6 @@ void GameState::Reset()
 	m_sEditLocalProfileID.Set( "" );
 	
 	m_bBackedOutOfFinalStage = false;
-
-	ScreenEdit::ResetStaticState();
 
 	ApplyCmdline();
 }
@@ -1170,6 +1151,13 @@ void GameState::ApplyStageModifiers( PlayerNumber pn, RString sModifiers )
 
 void GameState::ResetOptions()
 {
+	// I can't think of a good reason to have both game-specific
+	// default mods and theme specific default mods.  We should choose 
+	// one or the other. -Chris
+	// Having default modifiers in prefs is needed for several things.
+	// The theme setting is for eg. BM being reverse by default.  (This
+	// could be done in the title menu GameCommand, but then it wouldn't
+	// affect demo, and other non-gameplay things ...) -glenn
 	FOREACH_PlayerNumber( p )
 	{
 		PlayerOptions po;
@@ -1179,6 +1167,8 @@ void GameState::ResetOptions()
 	SongOptions so;
 	GetDefaultSongOptions( so );
 	m_SongOptions.Assign( ModsLevel_Preferred, so );
+
+	m_bDidModeChangeNoteSkin = false;
 }
 
 bool GameState::IsDisqualified( PlayerNumber pn )
