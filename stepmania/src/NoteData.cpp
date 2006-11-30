@@ -466,6 +466,12 @@ int NoteData::GetNumTapNotes( int iStartIndex, int iEndIndex ) const
 	return iNumNotes;
 }
 
+int NoteData::GetNumTapNotesInRow( int iRow ) const
+{
+	// Optimization opportunity: There's no need to instantiate row iterators if we're only checking one row.
+	return GetNumTapNotes( iRow, iRow+1 );
+}
+
 int NoteData::GetNumRowsWithTap( int iStartIndex, int iEndIndex ) const
 {
 	int iNumNotes = 0;

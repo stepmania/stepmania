@@ -182,6 +182,7 @@ public:
 	float GetFirstBeat() const					{ return NoteRowToBeat( GetFirstRow() ); }
 	float GetLastBeat() const					{ return NoteRowToBeat( GetLastRow() ); }
 	int GetNumTapNotes( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
+	int GetNumTapNotesInRow( int iRow ) const;
 	int GetNumMines( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
 	int GetNumRowsWithTap( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
 	int GetNumRowsWithTapOrHoldHead( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;

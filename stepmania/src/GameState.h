@@ -159,7 +159,7 @@ public:
 	//
 	// Let a lot of classes access this info here so the don't have to keep their own copies.
 	//
-	float		m_fMusicSeconds;	// time into the current song
+	float		m_fMusicSeconds;	// time into the current song, not scaled by music rate
 	float		m_fSongBeat;
 	float		m_fSongBeatNoOffset;
 	float		m_fCurBPS;

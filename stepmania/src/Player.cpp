@@ -48,6 +48,7 @@ RString ATTACK_DISPLAY_X_NAME( size_t p, size_t both_sides )	{ return "AttackDis
 /* Distance to search for a note in Step(), in seconds. */
 static const float StepSearchDistance = 1.0f;
 static const float JUMP_WINDOW_SECONDS = 0.25f;
+static const float HOPO_CHAIN_SECONDS = 0.5f;
 
 void TimingWindowSecondsInit( size_t /*TimingWindow*/ i, RString &sNameOut, float &defaultValueOut )
 {
@@ -1078,13 +1079,77 @@ void Player::Fret( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 	DEBUG_ASSERT_M( col >= 0  &&  col <= m_NoteData.GetNumTracks(), ssprintf("%i, %i", col, m_NoteData.GetNumTracks()) );
 
 	m_vbFretIsDown[ col ] = !bRelease;
+
+	// Handle hammer-ons and pull-offs
+	const float fPositionSeconds = GAMESTATE->m_fMusicSeconds - tm.Ago();
+	int iHopoCol = -1;
+	bool bDoHopo = 
+		m_pPlayerState->m_fLastHopoNoteMusicSeconds != -1  &&
+		fPositionSeconds <= m_pPlayerState->m_fLastHopoNoteMusicSeconds + HOPO_CHAIN_SECONDS;
+	if( bDoHopo )
+	{
+		// do a Hopo if:
+		// pressed fret if no higher fret is held
+		// on next lowest pressed fret when the highest held fret is released
+		bool bHigherFretIsDown = false;
+		for( int i=col+1; i<m_NoteData.GetNumTracks(); i++ )
+		{
+			if( m_vbFretIsDown[i] )
+			{
+				bHigherFretIsDown = true;
+				break;
+			}
+		}
+		if( bHigherFretIsDown )
+			bDoHopo = false;
+	}
+
+	if( bDoHopo )
+	{
+		if( !bRelease )
+		{
+			// hammer-on
+			iHopoCol = col;
+		}
+		else
+		{
+			// pull-off
+			// find next lowest fret that is held
+			for( int i=col-1; i>=0; i-- )
+			{
+				if( m_vbFretIsDown[i] )
+				{
+					iHopoCol = i;
+					break;
+				}
+			}
+			if( iHopoCol == -1 )
+				bDoHopo = false;
+		}
+	}
+
+	if( bDoHopo )
+		Hopo( iHopoCol, row, tm, bHeld, bRelease );
 }
 
-void Player::StepOrStrum( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease, Player::ButtonType pbt )
+void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease, Player::ButtonType pbt )
 {
 	if( IsOniDead() )
 		return;
 	
+	switch( pbt )
+	{
+	DEFAULT_FAIL(pbt);
+	case ButtonType_Strum:
+		if( bRelease )
+			return;	
+		break;
+	case ButtonType_Hopo:
+		bRelease = false;
+		break;
+	case ButtonType_Step:
+		break;
+	}
 
 	const float fPositionSeconds = GAMESTATE->m_fMusicSeconds - tm.Ago();
 	const float fSongBeat = GAMESTATE->m_pCurSong ? GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds ) : GAMESTATE->m_fSongBeat;
@@ -1215,6 +1280,7 @@ void Player::StepOrStrum( int col, int row, const RageTimer &tm, bool bHeld, boo
 		case ButtonType_Strum:
 			iRowOfOverlappingNoteOrRow = GetClosestNonEmptyRow( BeatToNoteRow(fSongBeat), iStepSearchRows, iStepSearchRows, false );
 			break;
+		case ButtonType_Hopo:
 		case ButtonType_Step:
 			iRowOfOverlappingNoteOrRow = GetClosestNote( col, BeatToNoteRow(fSongBeat), iStepSearchRows, iStepSearchRows, false );
 			break;
@@ -1261,6 +1327,7 @@ void Player::StepOrStrum( int col, int row, const RageTimer &tm, bool bHeld, boo
 		case ButtonType_Strum:
 			pTN = &tnDummy;
 			break;
+		case ButtonType_Hopo:
 		case ButtonType_Step:
 			NoteData::iterator iter = m_NoteData.FindTapNote( col, iRowOfOverlappingNoteOrRow );
 			DEBUG_ASSERT( iter!= m_NoteData.end(col) );
@@ -1366,14 +1433,81 @@ void Player::StepOrStrum( int col, int row, const RageTimer &tm, bool bHeld, boo
 		case ButtonType_Strum:
 			{
 				bool bNoteRowMatchesFrets = true;
+				int iFirstNoteCol = -1;
 				for( int i=0; i<GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; i++ )
 				{
 					const TapNote &tn = m_NoteData.GetTapNote( i, iRowOfOverlappingNoteOrRow );
-					bool bNoteMatchesFret = m_vbFretIsDown[i] == (tn.type != TapNote::empty);
-					bNoteRowMatchesFrets &= bNoteMatchesFret; 
+					bool bIsNote = (tn.type != TapNote::empty);
+					if( iFirstNoteCol == -1  &&  bIsNote )
+						iFirstNoteCol = i;
+
+					// Extra notes to the left (higher up on the string) can be held without penalty.  It's necessary to hold
+					// the extra frets or pull-offs.
+					if( iFirstNoteCol == -1 )
+						continue;
+
+					bool bNoteMatchesFret = m_vbFretIsDown[i] == bIsNote;
+					if( !bNoteMatchesFret )
+					{
+						bNoteRowMatchesFrets = false;
+						break;
+					}
 				}
+				ASSERT( iFirstNoteCol != -1 );
 				if( !bNoteRowMatchesFrets )
+				{
 					score = TNS_None;
+				}
+				else
+				{
+					m_pPlayerState->m_fLastHopoNoteMusicSeconds = fStepSeconds;
+				}
+			}
+			break;
+		case ButtonType_Hopo:
+			{
+				bool bDidHopo = true;
+
+				{
+					// only can hopo on a row with one note
+					if( m_NoteData.GetNumTapNotesInRow(iRowOfOverlappingNoteOrRow) != 1 )
+					{
+						bDidHopo = false;
+						goto done_checking_hopo;
+					}
+
+					const TapNote &tn = m_NoteData.GetTapNote( col, iRowOfOverlappingNoteOrRow );
+					if( tn.type == TapNote::empty )
+					{
+						bDidHopo = false;
+						goto done_checking_hopo;
+					}
+
+					int iRowsAgoLastNote = 100000;	// TODO: find more reasonable value based on HOPO_CHAIN_SECONDS?
+					NoteData::all_tracks_reverse_iterator iter = m_NoteData.GetTapNoteRangeAllTracksReverse( iRowsAgoLastNote-iRowsAgoLastNote, iRowOfOverlappingNoteOrRow-1 );
+					ASSERT( !iter.IsAtEnd() );	// there must have been a note that started the hopo
+					if( !NoteDataWithScoring::IsRowCompletelyJudged(m_NoteData, iter.Row(), m_pPlayerState->m_PlayerNumber) )
+					{
+						bDidHopo = false;
+						goto done_checking_hopo;
+					}
+
+					const TapNoteResult &lastTNR = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, iter.Row(), m_pPlayerState->m_PlayerNumber ).result;
+					if( lastTNR.tns <= TNS_Miss )
+					{
+						bDidHopo = false;
+						goto done_checking_hopo;
+					}
+				}
+done_checking_hopo:
+				if( !bDidHopo )
+				{
+					score = TNS_None;
+				}
+				else
+				{
+					m_pPlayerState->m_fLastHopoNoteMusicSeconds = fStepSeconds;
+				}
 			}
 			break;
 		case ButtonType_Step:
@@ -1437,6 +1571,7 @@ void Player::StepOrStrum( int col, int row, const RageTimer &tm, bool bHeld, boo
 					}
 				}
 				break;
+			case ButtonType_Hopo:
 			case ButtonType_Step:
 				pTN->result.tns = score;
 				pTN->result.fTapNoteOffset = -fNoteOffset;
@@ -1465,6 +1600,13 @@ void Player::StepOrStrum( int col, int row, const RageTimer &tm, bool bHeld, boo
 		}
 	}
 
+	// check for hopo end
+	if( score <= TNS_Miss )
+	{
+		m_pPlayerState->m_fLastHopoNoteMusicSeconds = -1;
+	}
+
+
 	if( score != TNS_None )
 	{
 		/* Search for keyed sounds separately.  If we can't find a nearby note, search
@@ -1492,6 +1634,7 @@ void Player::StepOrStrum( int col, int row, const RageTimer &tm, bool bHeld, boo
 				}
 				break;
 			case ButtonType_Step:
+			case ButtonType_Hopo:
 				const TapNote &tn = m_NoteData.GetTapNote( col, iRowOfOverlappingNoteOrRow );
 				if( tn.iKeysoundIndex >= 0 && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
 					m_vKeysounds[tn.iKeysoundIndex].Play();
@@ -1515,6 +1658,7 @@ void Player::StepOrStrum( int col, int row, const RageTimer &tm, bool bHeld, boo
 				}
 				break;
 			case ButtonType_Step:
+			case ButtonType_Hopo:
 				m_pNoteField->Step( col, score );
 				break;
 			}

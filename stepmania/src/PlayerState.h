@@ -34,6 +34,9 @@ public:
 	enum HealthState { HOT, ALIVE, DANGER, DEAD };
 	HealthState		m_HealthState;
 
+	// Set to the MusicSeconds of the last note successfully strummed or hammered in a hammer chain
+	float			m_fLastHopoNoteMusicSeconds;	// if -1, then there is no current hammer chain
+
 	PlayerController	m_PlayerController;
 	
 	//
@@ -51,6 +54,7 @@ public:
 	float			m_fSecondsUntilAttacksPhasedOut;// positive means PlayerAI is still affected
 	bool			m_bAttackBeganThisUpdate;	// flag for other objects to watch (play sounds)
 	bool			m_bAttackEndedThisUpdate;	// flag for other objects to watch (play sounds)
+	
 	AttackArray		m_ActiveAttacks;
 	vector<Attack>		m_ModsToApply;
 

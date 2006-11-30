@@ -682,6 +682,10 @@ void GameState::ResetMusicStatistics()
 	m_fCurBPS = 10;
 	m_bFreeze = false;
 	Actor::SetBGMTime( 0, 0 );
+
+
+	FOREACH_PlayerNumber( p )
+		m_pPlayerState[p]->m_fLastHopoNoteMusicSeconds = -1;
 }
 
 void GameState::ResetStageStatistics()

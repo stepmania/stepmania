@@ -113,11 +113,17 @@ public:
 	void CrossedRow( int iNoteRow, const RageTimer &now );
 	void CrossedMineRow( int iNoteRow, const RageTimer &now );
 	bool IsOniDead() const;
+
+	// Called when a fret, step, or strum type button changes
 	void Fret( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease );
-	enum ButtonType { ButtonType_Step, ButtonType_Strum };
-	void StepOrStrum( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease, ButtonType gbt );
-	void Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease )	{ StepOrStrum(col, row, tm, bHeld, bRelease, ButtonType_Step); }
-	void Strum( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease )	{ StepOrStrum(col, row, tm, bHeld, bRelease, ButtonType_Strum); }
+	enum ButtonType { ButtonType_Step, ButtonType_Strum, ButtonType_Hopo };
+	void StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease, ButtonType gbt );
+	void Step( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease )	{ StepStrumHopo(col, row, tm, bHeld, bRelease, ButtonType_Step); }
+	void Strum( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease )	{ StepStrumHopo(col, row, tm, bHeld, bRelease, ButtonType_Strum); }
+	
+	// called by Fret for Hammer-ons and Pull-offs
+	void Hopo( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease )	{ StepStrumHopo(col, row, tm, bHeld, bRelease, ButtonType_Hopo); }
+	
 	void RandomizeNotes( int iNoteRow );
 	void FadeToFail();
 	void CacheAllUsedNoteSkins();
