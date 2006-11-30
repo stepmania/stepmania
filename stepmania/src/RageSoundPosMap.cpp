@@ -23,7 +23,6 @@ struct pos_map_t
 	int64_t m_iFrames;
 
 	pos_map_t() { m_iSourceFrame = 0; m_iDestFrame = 0; m_iFrames = 0; }
-	pos_map_t( int64_t iSourceFrame, int iDestFrame, int iFrames ) { m_iSourceFrame = iSourceFrame; m_iDestFrame = iDestFrame; m_iFrames = iFrames; }
 };
 
 struct pos_map_impl
@@ -69,7 +68,11 @@ void pos_map_queue::Insert( int64_t iSourceFrame, int iDestFrame, int iFrames )
 		}
 	}
 
-	m_pImpl->m_Queue.push_back( pos_map_t(iSourceFrame, iDestFrame, iFrames) );
+	m_pImpl->m_Queue.push_back( pos_map_t() );
+	pos_map_t &m = m_pImpl->m_Queue.back();
+	m.m_iSourceFrame = iSourceFrame;
+	m.m_iDestFrame = iDestFrame;
+	m.m_iFrames = iFrames;
 	
 	m_pImpl->Cleanup();
 }
