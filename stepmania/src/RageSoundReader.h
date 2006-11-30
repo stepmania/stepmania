@@ -17,6 +17,7 @@ public:
 	virtual int GetSampleRate() const = 0;
 	virtual unsigned GetNumChannels() const { return 2; } /* 1 or 2 */
 	virtual bool IsStreamingFromDisk() const = 0;
+	virtual bool SetProperty( const RString &sProperty, float fValue ) { return false; }
 
 	/* GetNextSourceFrame() provides the source frame associated with the next frame
 	 * that will be read via Read().  GetStreamToSourceRatio() returns the ratio
