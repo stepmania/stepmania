@@ -3,7 +3,6 @@
 #ifndef RAGE_SOUND_H
 #define RAGE_SOUND_H
 
-#include <deque>
 #include "RageThreads.h"
 #include "RageTimer.h"
 #include "RageUtil_CircularBuffer.h"
