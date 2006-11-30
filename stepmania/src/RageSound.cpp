@@ -346,7 +346,7 @@ int RageSound::GetData( char *pBuffer, int iFrames )
  *
  * If no data is returned (we're at the end of the stream), return false.
  */
-bool RageSound::GetDataToPlay( int16_t *pBuffer, int iFrames, int &iStreamFrame, int &iFramesStored )
+bool RageSound::GetDataToPlay( int16_t *pBuffer, int iFrames, int64_t &iStreamFrame, int &iFramesStored )
 {
 	int iNumRewindsThisCall = 0;
 
@@ -427,7 +427,8 @@ int RageSound::GetPCM( char *pBuffer, int iSize, int64_t iFrameno )
 	int iBytesStored = 0;
 	while( iBytesStored < iSize )
 	{
-		int iPosition, iGotFrames;
+		int64_t iPosition;
+		int iGotFrames;
 		bool bEof = !GetDataToPlay( (int16_t *)(pBuffer+iBytesStored), (iSize-iBytesStored)/framesize, iPosition, iGotFrames );
 
 		/* Save this frameno/position map. */

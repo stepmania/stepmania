@@ -15,7 +15,7 @@ class RageSoundBase
 public:
 	virtual ~RageSoundBase() { }
 	virtual void SoundIsFinishedPlaying() = 0;
-	virtual bool GetDataToPlay( int16_t *buffer, int size, int &pos, int &got_bytes ) = 0;
+	virtual bool GetDataToPlay( int16_t *buffer, int size, int64_t &iStreamFrame, int &got_bytes ) = 0;
 	virtual int GetPCM( char *buffer, int size, int64_t frameno ) = 0;
 	virtual int GetSampleRate() const = 0;
 	virtual RageTimer GetStartTime() const { return RageZeroTimer; }
@@ -192,7 +192,7 @@ public:
 	 * be called.  Until then, SOUNDMAN->GetPosition can still be called; the sound
 	 * is still playing. */
 	int GetPCM( char *pBuffer, int iSize, int64_t iFrameno );
-	bool GetDataToPlay( int16_t *pBuffer, int iSize, int &iPosition, int &iBytesRead );
+	bool GetDataToPlay( int16_t *pBuffer, int iSize, int64_t &iStreamFrame, int &iBytesRead );
 	void CommitPlayingPosition( int64_t iFrameno, int64_t iPosition, int iBytesRead );
 };
 
