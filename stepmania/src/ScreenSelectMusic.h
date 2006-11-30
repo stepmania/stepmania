@@ -88,6 +88,7 @@ protected:
 	bool				m_bAllowOptionsMenu, m_bAllowOptionsMenuRepeat;
 	bool				m_bSelectIsDown;
 
+	RageSound			m_soundStart;
 	RageSound			m_soundDifficultyEasier;
 	RageSound			m_soundDifficultyHarder;
 	RageSound			m_soundOptionsChange;

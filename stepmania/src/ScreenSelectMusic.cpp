@@ -146,6 +146,7 @@ void ScreenSelectMusic::Init()
 		this->AddChild( &m_textHighScore[p] );
 	}	
 
+	m_soundStart.Load( THEME->GetPathS(m_sName,"start") );
 	m_soundDifficultyEasier.Load( THEME->GetPathS(m_sName,"difficulty easier") );
 	m_soundDifficultyHarder.Load( THEME->GetPathS(m_sName,"difficulty harder") );
 	m_soundOptionsChange.Load( THEME->GetPathS(m_sName,"options") );
@@ -306,7 +307,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		}
 		
 		m_bGoToOptions = true;
-		SCREENMAN->PlayStartSound();
+		m_soundStart.Play();
 		this->PlayCommand( "ShowEnteringOptions" );
 
 		// Re-queue SM_BeginFadingOut, since ShowEnteringOptions may have
@@ -698,7 +699,7 @@ void ScreenSelectMusic::MenuStart( const InputEventPlus &input )
 
 	m_bMadeChoice = true;
 
-	SCREENMAN->PlayStartSound();
+	m_soundStart.Play();
 
 	/* If we're currently waiting on song assets, abort all except the music and
 	 * start the music, so if we make a choice quickly before background requests
