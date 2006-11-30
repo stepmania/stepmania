@@ -108,7 +108,7 @@ RageSoundReader *RageSoundReader_FileReader::OpenFile( RString filename, RString
 	/* If the extension matches a format, try that first. */
 	if( FileTypes.find(format) != FileTypes.end() )
 	{
-	    RageSoundReader_FileReader *NewSample = TryOpenFile( filename, error, format, bKeepTrying );
+		RageSoundReader_FileReader *NewSample = TryOpenFile( filename, error, format, bKeepTrying );
 		if( NewSample )
 			return NewSample;
 		FileTypes.erase( format );
@@ -116,7 +116,7 @@ RageSoundReader *RageSoundReader_FileReader::OpenFile( RString filename, RString
 
 	for( set<RString>::iterator it = FileTypes.begin(); bKeepTrying && it != FileTypes.end(); ++it )
 	{
-	    RageSoundReader_FileReader *NewSample = TryOpenFile( filename, error, *it, bKeepTrying );
+		RageSoundReader_FileReader *NewSample = TryOpenFile( filename, error, *it, bKeepTrying );
 		if( NewSample )
 		{
 			LOG->UserLog( "Sound file", filename, "is really %s.", it->c_str() );
