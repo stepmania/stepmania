@@ -194,7 +194,7 @@ bool RageSoundReader_SpeedChange::Step()
 	{
 		/* We're at EOF.  Flush the remaining data, if any. */
 		m_iUncorrelatedPos = m_Channels[0].m_iCorrelatedPos;
-		return m_iUncorrelatedPos < m_iDataBufferAvailFrames;
+		return true;
 	}
 
 	/* Starting at our preferred position (m_iUncorrelatedPos), within GetToleranceFrames(),
@@ -247,8 +247,9 @@ int RageSoundReader_SpeedChange::Read( char *buf, unsigned iLen )
 
 		if( iCursorAvail == 0 )
 		{
-			if( !Step() )
-				return 0;
+			Step();
+			if( !GetCursorAvail() )
+				return 0; // EOF
 			continue;
 		}
 
