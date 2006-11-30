@@ -48,7 +48,6 @@ struct RageSoundParams
 	/* Number of samples input and output when changing speed.  Currently,
 	 * this is either 1/1, 5/4 or 4/5. */
 	float m_fRate;
-	void SetPlaybackRate( float fRate ) { m_fRate = fRate; }
 
 	/* If enabled, file seeking will prefer accuracy over speed. */
 	bool m_bAccurateSync;
