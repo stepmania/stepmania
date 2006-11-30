@@ -204,6 +204,7 @@ struct PolyphaseFilter
 	void Generate( const float *pFIR );
 	int RunPolyphaseFilter( State &State, const float *pIn, int iSamplesIn, int iDownFactor,
 			float *pOut, int iSamplesOut ) const;
+	int ReadBuffer( State &State, float *pOut, int iSamplesOut ) const;
 	int GetLatency() const { return L/2; }
 
 	int NumInputsForOutputSamples( const State &State, int iOut, int iDownFactor ) const;
@@ -340,6 +341,24 @@ int PolyphaseFilter::RunPolyphaseFilter(
 
 	State.m_iFilled = iFilled;
 	State.m_iPolyIndex = iPolyIndex;
+
+	return pOut - pOutOrig;
+}
+
+int PolyphaseFilter::ReadBuffer( State &State, float *pOut, int iSamplesOut ) const
+{
+	float *pOutOrig = pOut;
+	
+	while( State.m_iFilled )
+	{
+		*pOut = State.m_fBuf[State.m_iBufNext];
+		++pOut;
+		--State.m_iFilled;
+
+		float fRot = State.m_fBuf[0];
+		memmove( State.m_fBuf, State.m_fBuf+1, ((L*2)-1) * sizeof(float) );
+		State.m_fBuf[L*2-1] = fRot;
+	}
 
 	return pOut - pOutOrig;
 }
@@ -494,6 +513,11 @@ public:
 		return m_pPolyphase->RunPolyphaseFilter( *m_pState, pIn, iSamplesIn, m_iDownFactor, pOut, iSamplesOut );
 	}
 
+	int FlushBuffer( float *pOut, int iSamplesOut ) const
+	{
+		return m_pPolyphase->ReadBuffer( *m_pState, pOut, iSamplesOut );
+	}
+
 	void Reset()
 	{
 		delete m_pState;
@@ -586,15 +610,11 @@ void RageSoundReader_Resample_Good::Reset()
 }
 
 
-/* Call this if the sample factor changes. */
-void RageSoundReader_Resample_Good::ReopenResampler()
+void RageSoundReader_Resample_Good::GetFactors( int &iDownFactor, int &iUpFactor ) const
 {
-	for( size_t iChannel = 0; iChannel < m_apResamplers.size(); ++iChannel )
-		delete m_apResamplers[iChannel];
-	m_apResamplers.clear();
+	iDownFactor = m_pSource->GetSampleRate();
+	iUpFactor = m_iSampleRate;
 
-	int iDownFactor = m_pSource->GetSampleRate();
-	int iUpFactor = m_iSampleRate;
 	{
 		int iGCD = GCD( iUpFactor, iDownFactor );
 		iUpFactor /= iGCD;
@@ -607,14 +627,23 @@ void RageSoundReader_Resample_Good::ReopenResampler()
 		iUpFactor *= 100;
 		iDownFactor *= 100;
 	}
+}
 
-	m_iDownFactor = iDownFactor;
+/* Call this if the sample factor changes. */
+void RageSoundReader_Resample_Good::ReopenResampler()
+{
+	for( size_t iChannel = 0; iChannel < m_apResamplers.size(); ++iChannel )
+		delete m_apResamplers[iChannel];
+	m_apResamplers.clear();
+
+	int iDownFactor, iUpFactor;
+	GetFactors( iDownFactor, iUpFactor );
 
 	for( size_t iChannel = 0; iChannel < m_pSource->GetNumChannels(); ++iChannel )
 	{
 		int iMinDownFactor = iDownFactor;
 		int iMaxDownFactor = iDownFactor;
-		if( bRateChangingEnabled )
+		if( m_fRate != -1 )
 			iMaxDownFactor *= 5;
 
 		RageSoundResampler_Polyphase *p = new RageSoundResampler_Polyphase( iUpFactor, iMinDownFactor, iMaxDownFactor );
@@ -660,6 +689,34 @@ int RageSoundReader_Resample_Good::Read( char *pBuf_, unsigned iLen )
 	int16_t *pBuf = (int16_t *) pBuf_;
 
 	int iFramesRead = 0;
+
+	/* If the ratio is 1:1, then we're effectively disabled, and we can read
+	 * directly into the buffer. */
+	int iDownFactor, iUpFactor;
+	GetFactors( iDownFactor, iUpFactor );
+
+	if( iDownFactor == iUpFactor && m_fRate == 1.0f )
+	{
+		/* Before reading directly, flush the data from the polyphase filters. */
+		if( m_apResamplers[0]->GetFilled() )
+		{
+			float *pFloatOut = (float *) alloca( iFrames * sizeof(float) );
+			for( int iChannel = 0; iChannel < iChannels; ++iChannel )
+			{
+				int iGotFrames = m_apResamplers[iChannel]->FlushBuffer( pFloatOut, iFrames );
+				ASSERT( iGotFrames <= iFrames );
+
+				for( int i = 0; i < iGotFrames; ++i )
+					pBuf[i*iChannels+iChannel] = int16_t(lrintf(clamp(pFloatOut[i], -32768, 32767)));
+				if( iChannel == 0 )
+					iFramesRead += iGotFrames;
+			}
+			
+			return iFramesRead * iBytesPerFrame;
+		}
+
+		return m_pSource->Read( pBuf_, iLen );
+	}
 
 	{
 		int iFramesNeeded = m_apResamplers[0]->NumInputsForOutputSamples(iFrames);
@@ -727,7 +784,8 @@ void RageSoundReader_Resample_Good::SetRate( float fRatio )
 	if( !bRateChangingWasEnabled )
 		ReopenResampler();
 
-	int iDownFactor = m_iDownFactor;
+	int iDownFactor, iUpFactor;
+	GetFactors( iDownFactor, iUpFactor );
 	if( m_fRate != -1 )
 		iDownFactor = lrintf( m_fRate * iDownFactor );
 
@@ -742,7 +800,6 @@ RageSoundReader_Resample_Good::RageSoundReader_Resample_Good( const RageSoundRea
 		this->m_apResamplers.push_back( new RageSoundResampler_Polyphase(*cpy.m_apResamplers[i]) );
 	this->m_pSource = cpy.m_pSource->Copy();
 	this->m_iSampleRate = cpy.m_iSampleRate;
-	this->m_iDownFactor = cpy.m_iDownFactor;
 	this->m_fRate = cpy.m_fRate;
 }
 
