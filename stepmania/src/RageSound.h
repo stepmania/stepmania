@@ -47,7 +47,6 @@ struct RageSoundParams
 
 	/* Number of samples input and output when changing speed.  Currently,
 	 * this is either 1/1, 5/4 or 4/5. */
-	float m_fRate;
 	float m_fPitch;
 	float m_fSpeed;
 

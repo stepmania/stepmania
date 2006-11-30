@@ -46,7 +46,6 @@ RageSoundParams::RageSoundParams():
 	m_FadeLength = 0;
 	m_Volume = 1.0f;
 	m_Balance = 0; // center
-	m_fRate = 1.0f;
 	m_fPitch = 1.0f;
 	m_fSpeed = 1.0f;
 	m_bAccurateSync = false;
@@ -767,7 +766,7 @@ float RageSound::GetAbsoluteVolume() const
 
 float RageSound::GetPlaybackRate() const
 {
-	return m_Param.m_fRate;
+	return m_Param.m_fSpeed;
 }
 
 RageTimer RageSound::GetStartTime() const
