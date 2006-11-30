@@ -3,7 +3,6 @@
 #ifndef RAGE_SOUND_READER_H
 #define RAGE_SOUND_READER_H
 
-#define SoundReader RageSoundReader
 class RageSoundReader
 {
 public:
@@ -12,8 +11,8 @@ public:
 	virtual int SetPosition_Accurate( int ms ) = 0;
 	virtual int SetPosition_Fast( int ms ) { return SetPosition_Accurate(ms); }
 	virtual int Read(char *buf, unsigned len) = 0;
-	virtual ~SoundReader() { }
-	virtual SoundReader *Copy() const = 0;
+	virtual ~RageSoundReader() { }
+	virtual RageSoundReader *Copy() const = 0;
 	virtual int GetSampleRate() const = 0;
 	virtual unsigned GetNumChannels() const { return 2; } /* 1 or 2 */
 	virtual bool IsStreamingFromDisk() const = 0;

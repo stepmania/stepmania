@@ -6,13 +6,13 @@
 #include "RageSoundReader.h"
 #include "RageUtil_AutoPtr.h"
 
-class RageSoundReader_Preload: public SoundReader
+class RageSoundReader_Preload: public RageSoundReader
 {
 public:
 	RageSoundReader_Preload();
 	/* Return true if the sound has been preloaded, in which case source will
 	 * be deleted.  Otherwise, return false. */
-	bool Open( SoundReader *pSource );
+	bool Open( RageSoundReader *pSource );
 	int GetLength() const;
 	int GetLength_Fast() const;
 	int SetPosition_Accurate( int iMS );
@@ -32,7 +32,7 @@ public:
 	~RageSoundReader_Preload() { }
 
 	/* Attempt to preload a sound.  pSound must be rewound. */
-	static bool PreloadSound( SoundReader *&pSound );
+	static bool PreloadSound( RageSoundReader *&pSound );
 
 private:
 	AutoPtrCopyOnWrite<RString> m_Buffer;

@@ -39,7 +39,7 @@ private:
 
 	vector<RageSoundResampler_Polyphase *> m_apResamplers; /* one per channel */
 
-	SoundReader *m_pSource;
+	RageSoundReader *m_pSource;
 	int m_iSampleRate;
 	int m_iDownFactor;
 	float m_fRate;

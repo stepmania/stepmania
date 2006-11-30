@@ -6,7 +6,7 @@
 
 static const int WINDOW_SIZE_MS = 30;
 
-RageSoundReader_SpeedChange::RageSoundReader_SpeedChange( SoundReader *pSource ):
+RageSoundReader_SpeedChange::RageSoundReader_SpeedChange( RageSoundReader *pSource ):
 	RageSoundReader_Filter( pSource )
 {
 	m_Channels.resize( pSource->GetNumChannels() );

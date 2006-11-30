@@ -9,7 +9,7 @@
 /* If a sound is smaller than this, we'll load it entirely into memory. */
 const unsigned max_prebuf_size = 1024*256;
 
-bool RageSoundReader_Preload::PreloadSound( SoundReader *&pSound )
+bool RageSoundReader_Preload::PreloadSound( RageSoundReader *&pSound )
 {
 	RageSoundReader_Preload *pPreload = new RageSoundReader_Preload;
 	if( !pPreload->Open(pSound) )
@@ -34,7 +34,7 @@ int RageSoundReader_Preload::GetTotalSamples() const
 	return m_Buffer->size() / samplesize;
 }
 
-bool RageSoundReader_Preload::Open( SoundReader *pSource )
+bool RageSoundReader_Preload::Open( RageSoundReader *pSource )
 {
 	ASSERT( pSource );
 	m_iSampleRate = pSource->GetSampleRate();

@@ -5,7 +5,7 @@
 
 #include "RageSoundReader.h"
 
-class SoundReader_FileReader: public SoundReader
+class SoundReader_FileReader: public RageSoundReader
 {
 public:
 	/*
@@ -26,7 +26,7 @@ public:
 	virtual bool IsStreamingFromDisk() const { return true; }
 	virtual float GetStreamToSourceRatio() const { return 1.0f; }
 
-	static SoundReader *OpenFile( RString filename, RString &error );
+	static RageSoundReader *OpenFile( RString filename, RString &error );
 
 private:
 	static SoundReader_FileReader *TryOpenFile( RString filename, RString &error, RString format, bool &bKeepTrying );

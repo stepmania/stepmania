@@ -8,7 +8,7 @@
 class RageSoundReader_SpeedChange: public RageSoundReader_Filter
 {
 public:
-	RageSoundReader_SpeedChange( SoundReader *pSource );
+	RageSoundReader_SpeedChange( RageSoundReader *pSource );
 
 	virtual int SetPosition_Accurate( int ms );
 	virtual int SetPosition_Fast( int ms );

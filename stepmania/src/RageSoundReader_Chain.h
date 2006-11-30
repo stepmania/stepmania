@@ -8,7 +8,7 @@
 #include <map>
 #include <set>
 
-class RageSoundReader_Chain: public SoundReader
+class RageSoundReader_Chain: public RageSoundReader
 {
 public:
 	RageSoundReader_Chain();
@@ -48,7 +48,7 @@ private:
 	int m_iActualSampleRate;
 	unsigned m_iChannels;
 
-	map<RString, SoundReader *> m_apLoadedSounds;
+	map<RString, RageSoundReader *> m_apLoadedSounds;
 
 	struct sound
 	{
@@ -66,7 +66,7 @@ private:
 	unsigned m_iNextSound;
 	struct ActiveSound
 	{
-		SoundReader *pSound;
+		RageSoundReader *pSound;
 		float fPan;
 		bool operator< ( const ActiveSound &rhs ) const { return pSound < rhs.pSound; }
 	};

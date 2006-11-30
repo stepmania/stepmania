@@ -82,7 +82,7 @@ SoundReader_FileReader *SoundReader_FileReader::TryOpenFile( RString filename, R
 	return NULL;
 }
 
-SoundReader *SoundReader_FileReader::OpenFile( RString filename, RString &error )
+RageSoundReader *SoundReader_FileReader::OpenFile( RString filename, RString &error )
 {
 	{
 		RageFile TestOpen;
