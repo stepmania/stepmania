@@ -219,7 +219,13 @@ bool RageSoundReader_SpeedChange::Step()
 
 int RageSoundReader_SpeedChange::GetCursorAvail() const
 {
-	int iCursorAvail = min( GetWindowSizeFrames(), m_iDataBufferAvailFrames-m_Channels[0].m_iCorrelatedPos ) - m_iPos;
+	int iCursorAvail = GetWindowSizeFrames() - m_iPos;
+	for( size_t i = 0; i < m_Channels.size(); ++i )
+	{
+		int iCursorAvailForChannel = (m_iDataBufferAvailFrames-m_Channels[i].m_iCorrelatedPos) - m_iPos;
+		iCursorAvail = min( iCursorAvail, iCursorAvailForChannel );
+	}
+
 	return iCursorAvail;
 }
 
