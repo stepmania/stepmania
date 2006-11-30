@@ -3,7 +3,6 @@
 #ifndef RAGE_SOUND_POS_MAP_H
 #define RAGE_SOUND_POS_MAP_H
 
-/* This class maps one range of frames to another. */
 struct pos_map_impl;
 class pos_map_queue
 {
@@ -27,7 +26,6 @@ public:
 private:
 	pos_map_impl *m_pImpl;
 };
-
 
 #endif
 
