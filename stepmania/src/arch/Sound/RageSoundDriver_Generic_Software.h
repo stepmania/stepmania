@@ -104,7 +104,7 @@ private:
 		int16_t buf[samples_per_block];
 		int16_t *p; // beginning of the unread data
 		int frames_in_buffer; // total number of frames (not samples) at p
-		int position; // position value of p
+		int64_t position; // position value of p
 		sound_block() { frames_in_buffer = position = 0; p = buf; }
 	};
 
