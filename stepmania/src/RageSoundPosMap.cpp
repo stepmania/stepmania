@@ -15,9 +15,10 @@ struct pos_map_t
 {
 	int64_t m_iSourceFrame;
 	int64_t m_iDestFrame;
-	int64_t m_iFrames;
+	int m_iFrames;
+	float m_fSourceToDestRatio;
 
-	pos_map_t() { m_iSourceFrame = 0; m_iDestFrame = 0; m_iFrames = 0; }
+	pos_map_t() { m_iSourceFrame = 0; m_iDestFrame = 0; m_iFrames = 0; m_fSourceToDestRatio = 1.0f; }
 };
 
 struct pos_map_impl
@@ -49,16 +50,43 @@ pos_map_queue &pos_map_queue::operator=( const pos_map_queue &rhs )
 	return *this;
 }
 
-void pos_map_queue::Insert( int64_t iSourceFrame, int iFrames, int64_t iDestFrame )
+void pos_map_queue::Insert( int64_t iSourceFrame, int iFrames, int64_t iDestFrame, float fSourceToDestRatio )
 {
 	if( m_pImpl->m_Queue.size() )
 	{
 		/* Optimization: If the last entry lines up with this new entry, just merge them. */
 		pos_map_t &last = m_pImpl->m_Queue.back();
-		if( last.m_iSourceFrame+last.m_iFrames == iSourceFrame &&
-		    last.m_iDestFrame+last.m_iFrames == iDestFrame )
+		if( last.m_iSourceFrame + last.m_iFrames == iSourceFrame &&
+		    last.m_fSourceToDestRatio == fSourceToDestRatio &&
+		    llabs(last.m_iDestFrame + lrintf(last.m_iFrames * last.m_fSourceToDestRatio) - iDestFrame) <= 1 )
 		{
 			last.m_iFrames += iFrames;
+
+			/* Make sure that m_Frames doesn't grow too large and overflow an int. */
+			if( !m_pImpl->m_Queue.empty() && last.m_iFrames > pos_map_backlog_frames * 2 )
+			{
+				/*
+				 * Split this entry into two smaller entries.  This will cause up to one
+				 * sample of rounding error in m_iDestFrame.  This will not accumulate;
+				 * if we split again and it becomes two frames of error, the next Insert()
+				 * will be beyond the tolerance of the above iDestFrame check, and new
+				 * data will be added to a new entry.
+				 */
+				int iDeleteFrames = last.m_iFrames - pos_map_backlog_frames;
+
+				pos_map_t next(last);
+
+				last.m_iFrames = iDeleteFrames;
+
+				next.m_iSourceFrame += iDeleteFrames;
+				next.m_iFrames -= iFrames;
+				next.m_iDestFrame += lrintf( iDeleteFrames * next.m_fSourceToDestRatio );
+
+				m_pImpl->m_Queue.push_back( next );
+			}
+
+			m_pImpl->Cleanup();
+
 			return;
 		}
 	}
@@ -68,6 +96,7 @@ void pos_map_queue::Insert( int64_t iSourceFrame, int iFrames, int64_t iDestFram
 	m.m_iSourceFrame = iSourceFrame;
 	m.m_iDestFrame = iDestFrame;
 	m.m_iFrames = iFrames;
+	m.m_fSourceToDestRatio = fSourceToDestRatio;
 	
 	m_pImpl->Cleanup();
 }
@@ -110,8 +139,9 @@ int64_t pos_map_queue::Search( int64_t iSourceFrame, bool *bApproximate ) const
 		{
 			/* iSourceFrame lies in this block; it's an exact match.  Figure
 			 * out the exact position. */
-			int64_t diff = pm.m_iDestFrame - pm.m_iSourceFrame;
-			return iSourceFrame + diff;
+			int iDiff = int(iSourceFrame - pm.m_iSourceFrame);
+			iDiff = lrintf( iDiff * pm.m_fSourceToDestRatio );
+			return pm.m_iDestFrame + iDiff;
 		}
 
 		/* See if the current position is close to the beginning of this block. */
@@ -129,7 +159,7 @@ int64_t pos_map_queue::Search( int64_t iSourceFrame, bool *bApproximate ) const
 		{
 			iClosestPositionDist = dist;
 			pClosestBlock = &pm;
-			iClosestPosition = pm.m_iDestFrame + pm.m_iFrames;
+			iClosestPosition = pm.m_iDestFrame + lrintf( pm.m_iFrames * pm.m_fSourceToDestRatio );
 		}
 	}
 
@@ -153,7 +183,7 @@ int64_t pos_map_queue::Search( int64_t iSourceFrame, bool *bApproximate ) const
 	{
 		last.GetDeltaTime();
 		LOG->Trace( "Approximate sound time: driver frame " LI ", m_pImpl->m_Queue frame " LI ".." LI " (dist " LI "), closest position is " LI,
-			iSourceFrame, pClosestBlock->m_iSourceFrame, pClosestBlock->m_iSourceFrame+pClosestBlock->m_iFrames,
+			iSourceFrame, pClosestBlock->m_iDestFrame, pClosestBlock->m_iDestFrame+pClosestBlock->m_iFrames,
 			iClosestPositionDist, iClosestPosition );
 	}
 
