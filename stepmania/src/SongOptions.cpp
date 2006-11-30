@@ -13,6 +13,8 @@ void SongOptions::Init()
 	m_bAssistTick = false;
 	m_fMusicRate = 1.0f;
 	m_SpeedfMusicRate = 1.0f;
+	m_fHaste = 0.0f;
+	m_SpeedfHaste = 1.0f;
 	m_AutosyncType = AUTOSYNC_OFF;
 	m_bSaveScore = true;
 }
@@ -28,11 +30,22 @@ void SongOptions::Approach( const SongOptions& other, float fDeltaSeconds )
 	DO_COPY( m_DrainType );
 	DO_COPY( m_iBatteryLives );
 	APPROACH( fMusicRate );
+	APPROACH( fHaste );
 	DO_COPY( m_bAssistTick );
 	DO_COPY( m_AutosyncType );
 	DO_COPY( m_bSaveScore );
 #undef APPROACH
 #undef DO_COPY
+}
+
+static void AddPart( vector<RString> &AddTo, float level, RString name )
+{
+	if( level == 0 )
+		return;
+
+	const RString LevelStr = (level == 1)? RString(""): ssprintf( "%i%% ", (int) roundf(level*100) );
+
+	AddTo.push_back( LevelStr + name );
 }
 
 void SongOptions::GetMods( vector<RString> &AddTo ) const
@@ -73,6 +86,8 @@ void SongOptions::GetMods( vector<RString> &AddTo ) const
 			s.erase( s.size()-1 );
 		AddTo.push_back( s + "xMusic" );
 	}
+
+	AddPart( AddTo, m_fHaste,	"Haste" );
 
 	switch( m_AutosyncType )
 	{
@@ -176,6 +191,7 @@ void SongOptions::FromString( const RString &sOptions )
 		else if( sBit == "bar" )		m_LifeType = LIFE_BAR;
 		else if( sBit == "battery" )		m_LifeType = LIFE_BATTERY;
 		else if( sBit == "lifetime" )		m_LifeType = LIFE_TIME;
+		else if( sBit == "haste" )		m_fHaste = on? 1.0f:0.0f;
 	}
 }
 
@@ -187,6 +203,7 @@ bool SongOptions::operator==( const SongOptions &other ) const
 	COMPARE( m_iBatteryLives );
 	COMPARE( m_FailType );
 	COMPARE( m_fMusicRate );
+	COMPARE( m_fHaste );
 	COMPARE( m_bAssistTick );
 	COMPARE( m_AutosyncType );
 	COMPARE( m_bSaveScore );

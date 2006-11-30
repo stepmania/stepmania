@@ -29,6 +29,7 @@ public:
 		FAIL_OFF };					// never fail
 	FailType m_FailType;
 	float m_fMusicRate,	m_SpeedfMusicRate;
+	float m_fHaste, m_SpeedfHaste;
 	bool m_bAssistTick;
 	enum AutosyncType { 
 		AUTOSYNC_OFF,
