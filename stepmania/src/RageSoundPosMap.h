@@ -3,29 +3,15 @@
 #ifndef RAGE_SOUND_POS_MAP_H
 #define RAGE_SOUND_POS_MAP_H
 
-#include <deque>
-
-struct pos_map_t
-{
-	/* Frame number from the POV of the sound driver: */
-	int64_t m_iFrameNo;
-
-	/* Actual sound position within the sample: */
-	int64_t m_iPosition;
-
-	/* The number of frames in this block: */
-	int64_t m_iFrames;
-
-	pos_map_t() { m_iFrameNo = 0; m_iPosition = 0; m_iFrames = 0; }
-	pos_map_t( int64_t iFrame, int iPosition, int iFrames ) { m_iFrameNo = iFrame; m_iPosition = iPosition; m_iFrames = iFrames; }
-};
-
 /* This class maps one range of frames to another. */
+struct pos_map_impl;
 class pos_map_queue
 {
 public:
 	pos_map_queue();
+	~pos_map_queue();
 	pos_map_queue( const pos_map_queue &cpy );
+	pos_map_queue &operator=( const pos_map_queue &rhs );
 
 	/* Insert a mapping from iHardwareFrame to iStreamFrame, containing pos iGotFrames. */
 	void CommitPosition( int64_t iHardwareFrame, int iStreamFrame, int iGotFrames );
@@ -39,9 +25,7 @@ public:
 	bool IsEmpty() const;
 
 private:
-	deque<pos_map_t> m_Queue;
-
-	void Cleanup();
+	pos_map_impl *m_pImpl;
 };
 
 

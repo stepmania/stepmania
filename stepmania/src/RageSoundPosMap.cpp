@@ -4,26 +4,62 @@
 #include "RageUtil.h"
 #include "RageTimer.h"
 
+#include <deque>
+
 /* The number of frames we should keep pos_map data for.  This being too high
  * is mostly harmless; the data is small. */
 const int pos_map_backlog_frames = 100000;
 
+struct pos_map_t
+{
+	/* Frame number from the POV of the sound driver: */
+	int64_t m_iFrameNo;
+
+	/* Actual sound position within the sample: */
+	int64_t m_iPosition;
+
+	/* The number of frames in this block: */
+	int64_t m_iFrames;
+
+	pos_map_t() { m_iFrameNo = 0; m_iPosition = 0; m_iFrames = 0; }
+	pos_map_t( int64_t iFrame, int iPosition, int iFrames ) { m_iFrameNo = iFrame; m_iPosition = iPosition; m_iFrames = iFrames; }
+};
+
+struct pos_map_impl
+{
+	deque<pos_map_t> m_Queue;
+	void Cleanup();
+};
+
 pos_map_queue::pos_map_queue()
 {
+	m_pImpl = new pos_map_impl;
 }
 
+pos_map_queue::~pos_map_queue()
+{
+	delete m_pImpl;
+}
 
 pos_map_queue::pos_map_queue( const pos_map_queue &cpy )
 {
 	*this = cpy;
+	m_pImpl = new pos_map_impl( *cpy.m_pImpl );
+}
+
+pos_map_queue &pos_map_queue::operator=( const pos_map_queue &rhs )
+{
+	delete m_pImpl;
+	m_pImpl = new pos_map_impl( *rhs.m_pImpl );
+	return *this;
 }
 
 void pos_map_queue::CommitPosition( int64_t iFrame, int iPosition, int iGotFrames )
 {
-	if( m_Queue.size() )
+	if( m_pImpl->m_Queue.size() )
 	{
 		/* Optimization: If the last entry lines up with this new entry, just merge them. */
-		pos_map_t &last = m_Queue.back();
+		pos_map_t &last = m_pImpl->m_Queue.back();
 		if( last.m_iFrameNo+last.m_iFrames == iFrame &&
 		    last.m_iPosition+last.m_iFrames == iPosition )
 		{
@@ -32,12 +68,12 @@ void pos_map_queue::CommitPosition( int64_t iFrame, int iPosition, int iGotFrame
 		}
 	}
 
-	m_Queue.push_back( pos_map_t(iFrame, iPosition, iGotFrames) );
+	m_pImpl->m_Queue.push_back( pos_map_t(iFrame, iPosition, iGotFrames) );
 	
-	Cleanup();
+	m_pImpl->Cleanup();
 }
 
-void pos_map_queue::Cleanup()
+void pos_map_impl::Cleanup()
 {
 	/* Determine the number of frames of data we have. */
 	int64_t iTotalFrames = 0;
@@ -66,33 +102,33 @@ int64_t pos_map_queue::Search( int64_t iFrame, bool *bApproximate ) const
 	 * it maps to. */
 	int64_t iClosestPosition = 0, iClosestPositionDist = INT_MAX;
 	int iClosestBlock = 0; /* print only */
-	for( unsigned i = 0; i < m_Queue.size(); ++i )
+	for( unsigned i = 0; i < m_pImpl->m_Queue.size(); ++i )
 	{
-		if( iFrame >= m_Queue[i].m_iFrameNo &&
-			iFrame < m_Queue[i].m_iFrameNo+m_Queue[i].m_iFrames )
+		if( iFrame >= m_pImpl->m_Queue[i].m_iFrameNo &&
+			iFrame < m_pImpl->m_Queue[i].m_iFrameNo+m_pImpl->m_Queue[i].m_iFrames )
 		{
 			/* iFrame lies in this block; it's an exact match.  Figure
 			 * out the exact position. */
-			int64_t diff = m_Queue[i].m_iPosition - m_Queue[i].m_iFrameNo;
+			int64_t diff = m_pImpl->m_Queue[i].m_iPosition - m_pImpl->m_Queue[i].m_iFrameNo;
 			return iFrame + diff;
 		}
 
 		/* See if the current position is close to the beginning of this block. */
-		int64_t dist = llabs( m_Queue[i].m_iFrameNo - iFrame );
+		int64_t dist = llabs( m_pImpl->m_Queue[i].m_iFrameNo - iFrame );
 		if( dist < iClosestPositionDist )
 		{
 			iClosestPositionDist = dist;
 			iClosestBlock = i;
-			iClosestPosition = m_Queue[i].m_iPosition;
+			iClosestPosition = m_pImpl->m_Queue[i].m_iPosition;
 		}
 
 		/* See if the current position is close to the end of this block. */
-		dist = llabs( m_Queue[i].m_iFrameNo + m_Queue[i].m_iFrames - iFrame );
+		dist = llabs( m_pImpl->m_Queue[i].m_iFrameNo + m_pImpl->m_Queue[i].m_iFrames - iFrame );
 		if( dist < iClosestPositionDist )
 		{
 			iClosestPositionDist = dist;
 			iClosestBlock = i;
-			iClosestPosition = m_Queue[i].m_iPosition + m_Queue[i].m_iFrames;
+			iClosestPosition = m_pImpl->m_Queue[i].m_iPosition + m_pImpl->m_Queue[i].m_iFrames;
 		}
 	}
 
@@ -115,8 +151,8 @@ int64_t pos_map_queue::Search( int64_t iFrame, bool *bApproximate ) const
 	if( last.PeekDeltaTime() >= 1.0f )
 	{
 		last.GetDeltaTime();
-		LOG->Trace( "Approximate sound time: driver frame " LI ", m_Queue frame " LI ".." LI " (dist " LI "), closest position is " LI,
-			iFrame, m_Queue[iClosestBlock].m_iFrameNo, m_Queue[iClosestBlock].m_iFrameNo+m_Queue[iClosestBlock].m_iFrames,
+		LOG->Trace( "Approximate sound time: driver frame " LI ", m_pImpl->m_Queue frame " LI ".." LI " (dist " LI "), closest position is " LI,
+			iFrame, m_pImpl->m_Queue[iClosestBlock].m_iFrameNo, m_pImpl->m_Queue[iClosestBlock].m_iFrameNo+m_pImpl->m_Queue[iClosestBlock].m_iFrames,
 			iClosestPositionDist, iClosestPosition );
 	}
 
@@ -127,12 +163,12 @@ int64_t pos_map_queue::Search( int64_t iFrame, bool *bApproximate ) const
 
 void pos_map_queue::Clear()
 {
-	m_Queue.clear();
+	m_pImpl->m_Queue.clear();
 }
 
 bool pos_map_queue::IsEmpty() const
 {
-	return m_Queue.empty();
+	return m_pImpl->m_Queue.empty();
 }
 
 /*
