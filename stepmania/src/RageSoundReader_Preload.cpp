@@ -99,6 +99,7 @@ int RageSoundReader_Preload::SetPosition_Accurate(int ms)
 {
 	const int sample = int((ms / 1000.0f) * m_iSampleRate);
 	m_iPosition = sample * samplesize;
+	m_iPosition = lrintf(m_iPosition / m_fRate);
 
 	if( m_iPosition >= int(m_Buffer->size()) )
 	{
