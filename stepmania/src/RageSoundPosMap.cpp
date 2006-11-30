@@ -13,13 +13,8 @@ const int pos_map_backlog_frames = 100000;
 
 struct pos_map_t
 {
-	/* Frame number from the POV of the sound driver: */
 	int64_t m_iSourceFrame;
-
-	/* Actual sound position within the sample: */
 	int64_t m_iDestFrame;
-
-	/* The number of frames in this block: */
 	int64_t m_iFrames;
 
 	pos_map_t() { m_iSourceFrame = 0; m_iDestFrame = 0; m_iFrames = 0; }
