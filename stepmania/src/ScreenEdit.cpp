@@ -2309,7 +2309,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 		LOG->Trace( "Starting playback at %f", fStartSeconds );
 
 		RageSoundParams p;
-		p.m_fRate = GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
+		p.m_fSpeed = GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
 		p.m_StartSecond = fStartSeconds;
 		p.m_bAccurateSync = true;
 		p.StopMode = RageSoundParams::M_CONTINUE;

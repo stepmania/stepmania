@@ -1325,7 +1325,7 @@ float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusi
 	
 	RageSoundParams p;
 	p.m_bAccurateSync = true;
-	p.m_fRate = GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
+	p.m_fSpeed = GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
 	p.StopMode = RageSoundParams::M_CONTINUE;
 	p.m_StartSecond = fStartSecond;
 
@@ -1483,7 +1483,7 @@ void ScreenGameplay::BeginScreen()
 
 		RageSoundParams p;
 		p.m_bAccurateSync = true;
-		p.m_fRate = 1.0f;	//Force 1.0 playback speed
+		p.m_fSpeed = 1.0f;	//Force 1.0 playback speed
 		p.StopMode = RageSoundParams::M_CONTINUE;
 		p.m_StartSecond = startOffset;
 		m_pSoundMusic->Play( &p );
