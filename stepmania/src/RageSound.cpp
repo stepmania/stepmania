@@ -29,6 +29,7 @@
 #include "arch/ArchHooks/ArchHooks.h"
 #include "RageSoundUtil.h"
 
+#include "RageSoundReader_PitchChange.h"
 #include "RageSoundReader_Preload.h"
 #include "RageSoundReader_Resample_Good.h"
 #include "RageSoundReader_FileReader.h"
@@ -46,9 +47,16 @@ RageSoundParams::RageSoundParams():
 	m_Volume = 1.0f;
 	m_Balance = 0; // center
 	m_fRate = 1.0f;
+	m_fPitch = 1.0f;
+	m_fSpeed = 1.0f;
 	m_bAccurateSync = false;
 	StopMode = M_AUTO;
 	m_bIsCriticalSound = false;
+}
+
+RageSoundLoadParams::RageSoundLoadParams()
+{
+	m_bSupportRateChanging = false;
 }
 
 RageSound::RageSound():
@@ -164,9 +172,15 @@ bool RageSound::Load( RString sSoundFilePath )
 	return Load( sSoundFilePath, false );
 }
 
-bool RageSound::Load( RString sSoundFilePath, bool bPrecache )
+bool RageSound::Load( RString sSoundFilePath, bool bPrecache, const RageSoundLoadParams *pParams )
 {
 	LOG->Trace( "RageSound::LoadSound( '%s', %d )", sSoundFilePath.c_str(), bPrecache );
+
+	if( pParams == NULL )
+	{
+		static const RageSoundLoadParams Defaults;
+		pParams = &Defaults;
+	}
 
 	/* If this sound is already preloaded and held by SOUNDMAN, just make a copy
 	 * of that.  Since RageSoundReader_Preload is refcounted, this is cheap. */
@@ -206,6 +220,12 @@ bool RageSound::Load( RString sSoundFilePath, bool bPrecache )
 		}
 	}
 
+	if( pParams->m_bSupportRateChanging )
+	{
+		RageSoundReader_PitchChange *pRate = new RageSoundReader_PitchChange( m_pSource );
+		m_pSource = pRate;
+	}
+
 	m_sFilePath = sSoundFilePath;
 
 	m_Mutex.SetName( ssprintf("RageSound (%s)", Basename(sSoundFilePath).c_str() ) );
@@ -226,8 +246,6 @@ void RageSound::LoadSoundReader( RageSoundReader *pSound )
 		RageSoundReader_Resample_Good *Resample = new RageSoundReader_Resample_Good( pSound, iNeededRate );
 		pSound = Resample;
 	}
-
-	pSound->SetProperty( "Speed", 1.5f );
 
 	m_pSource = pSound;
 }
@@ -760,6 +778,7 @@ RageTimer RageSound::GetStartTime() const
 void RageSound::SetParams( const RageSoundParams &p )
 {
 	m_Param = p;
+	ApplyParams();
 }
 
 void RageSound::ApplyParams()
@@ -767,7 +786,8 @@ void RageSound::ApplyParams()
 	if( m_pSource == NULL )
 		return;
 
-	m_pSource->SetProperty( "Speed", m_Param.m_fRate );
+	m_pSource->SetProperty( "Pitch", m_Param.m_fPitch );
+	m_pSource->SetProperty( "Speed", m_Param.m_fSpeed );
 }
 
 RageSoundParams::StopMode_t RageSound::GetStopMode() const

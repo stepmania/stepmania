@@ -48,6 +48,8 @@ struct RageSoundParams
 	/* Number of samples input and output when changing speed.  Currently,
 	 * this is either 1/1, 5/4 or 4/5. */
 	float m_fRate;
+	float m_fPitch;
+	float m_fSpeed;
 
 	/* If enabled, file seeking will prefer accuracy over speed. */
 	bool m_bAccurateSync;
@@ -70,6 +72,15 @@ struct RageSoundParams
 	} StopMode;
 
 	bool m_bIsCriticalSound;	// "is a sound that should be played even during attract"
+};
+
+struct RageSoundLoadParams
+{
+	RageSoundLoadParams();
+
+	/* If true, speed and pitch changes will be supported for this sound, at a
+	 * small memory penalty if not used. */
+	bool m_bSupportRateChanging;
 };
 
 class RageSound: public RageSoundBase
@@ -95,7 +106,7 @@ public:
 	 * they can be ignored most of the time, so we continue to work if a file
 	 * is broken or missing.
 	 */
-	bool Load( RString sFile, bool bPrecache );
+	bool Load( RString sFile, bool bPrecache, const RageSoundLoadParams *pParams = NULL );
 
 	/* 
 	 * Using this version means the "don't care" about caching.  Currently, 
