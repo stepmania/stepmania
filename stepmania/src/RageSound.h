@@ -193,7 +193,7 @@ public:
 	 * is still playing. */
 	int GetPCM( char *pBuffer, int iSize, int64_t iFrameno );
 	bool GetDataToPlay( int16_t *pBuffer, int iSize, int &iPosition, int &iBytesRead );
-	void CommitPlayingPosition( int64_t iFrameno, int iPosition, int iBytesRead );
+	void CommitPlayingPosition( int64_t iFrameno, int64_t iPosition, int iBytesRead );
 };
 
 #endif

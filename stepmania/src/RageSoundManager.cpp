@@ -183,7 +183,7 @@ int RageSoundManager::GetUniqueID()
 	return ++iID;
 }
 
-void RageSoundManager::CommitPlayingPosition( int ID, int64_t frameno, int pos, int got_frames )
+void RageSoundManager::CommitPlayingPosition( int ID, int64_t frameno, int64_t pos, int got_frames )
 {
 	/* This can be called from realtime threads; don't lock any mutexes. */
 	queued_pos_map_t p;

@@ -410,8 +410,7 @@ bool RageSound::GetDataToPlay( int16_t *pBuffer, int iFrames, int &iStreamFrame,
 }
 
 /* Indicate that a block of audio data has been written to the device. */
-// XXX: pos should be int64_t
-void RageSound::CommitPlayingPosition( int64_t frameno, int pos, int iGotFrames )
+void RageSound::CommitPlayingPosition( int64_t frameno, int64_t pos, int iGotFrames )
 {
 	m_Mutex.Lock();
 	m_HardwareToStreamMap.Insert( frameno, iGotFrames, pos );
