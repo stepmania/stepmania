@@ -3,6 +3,7 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "RageTimer.h"
+#include "Foreach.h"
 
 #include <deque>
 
@@ -101,34 +102,36 @@ int64_t pos_map_queue::Search( int64_t iSourceFrame, bool *bApproximate ) const
 	/* iSourceFrame is probably in pos_map.  Search to figure out what position
 	 * it maps to. */
 	int64_t iClosestPosition = 0, iClosestPositionDist = INT_MAX;
-	int iClosestBlock = 0; /* print only */
-	for( unsigned i = 0; i < m_pImpl->m_Queue.size(); ++i )
+	const pos_map_t *pClosestBlock = &*m_pImpl->m_Queue.begin(); /* print only */
+	FOREACHD_CONST( pos_map_t, m_pImpl->m_Queue, it )
 	{
-		if( iSourceFrame >= m_pImpl->m_Queue[i].m_iSourceFrame &&
-			iSourceFrame < m_pImpl->m_Queue[i].m_iSourceFrame+m_pImpl->m_Queue[i].m_iFrames )
+		const pos_map_t &pm = *it;
+
+		if( iSourceFrame >= pm.m_iSourceFrame &&
+			iSourceFrame < pm.m_iSourceFrame+pm.m_iFrames )
 		{
 			/* iSourceFrame lies in this block; it's an exact match.  Figure
 			 * out the exact position. */
-			int64_t diff = m_pImpl->m_Queue[i].m_iDestFrame - m_pImpl->m_Queue[i].m_iSourceFrame;
+			int64_t diff = pm.m_iDestFrame - pm.m_iSourceFrame;
 			return iSourceFrame + diff;
 		}
 
 		/* See if the current position is close to the beginning of this block. */
-		int64_t dist = llabs( m_pImpl->m_Queue[i].m_iSourceFrame - iSourceFrame );
+		int64_t dist = llabs( pm.m_iSourceFrame - iSourceFrame );
 		if( dist < iClosestPositionDist )
 		{
 			iClosestPositionDist = dist;
-			iClosestBlock = i;
-			iClosestPosition = m_pImpl->m_Queue[i].m_iDestFrame;
+			pClosestBlock = &pm;
+			iClosestPosition = pm.m_iDestFrame;
 		}
 
 		/* See if the current position is close to the end of this block. */
-		dist = llabs( m_pImpl->m_Queue[i].m_iSourceFrame + m_pImpl->m_Queue[i].m_iFrames - iSourceFrame );
+		dist = llabs( pm.m_iSourceFrame + pm.m_iFrames - iSourceFrame );
 		if( dist < iClosestPositionDist )
 		{
 			iClosestPositionDist = dist;
-			iClosestBlock = i;
-			iClosestPosition = m_pImpl->m_Queue[i].m_iDestFrame + m_pImpl->m_Queue[i].m_iFrames;
+			pClosestBlock = &pm;
+			iClosestPosition = pm.m_iDestFrame + pm.m_iFrames;
 		}
 	}
 
@@ -152,7 +155,7 @@ int64_t pos_map_queue::Search( int64_t iSourceFrame, bool *bApproximate ) const
 	{
 		last.GetDeltaTime();
 		LOG->Trace( "Approximate sound time: driver frame " LI ", m_pImpl->m_Queue frame " LI ".." LI " (dist " LI "), closest position is " LI,
-			iSourceFrame, m_pImpl->m_Queue[iClosestBlock].m_iSourceFrame, m_pImpl->m_Queue[iClosestBlock].m_iSourceFrame+m_pImpl->m_Queue[iClosestBlock].m_iFrames,
+			iSourceFrame, pClosestBlock->m_iSourceFrame, pClosestBlock->m_iSourceFrame+pClosestBlock->m_iFrames,
 			iClosestPositionDist, iClosestPosition );
 	}
 
