@@ -13,7 +13,7 @@ public:
 	pos_map_queue &operator=( const pos_map_queue &rhs );
 
 	/* Insert a mapping from iSourceFrame to iDestFrame, containing iFrames. */
-	void Insert( int64_t iSourceFrame, int iDestFrame, int iFrames );
+	void Insert( int64_t iSourceFrame, int iFrames, int iDestFrame );
 
 	/* Return the iDestFrame for the given iSourceFrame. */
 	int64_t Search( int64_t iSourceFrame, bool *bApproximate ) const;

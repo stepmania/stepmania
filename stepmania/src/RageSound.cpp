@@ -527,7 +527,7 @@ bool RageSound::GetDataToPlay( int16_t *pBuffer, int iFrames, int &iSoundFrame, 
 void RageSound::CommitPlayingPosition( int64_t frameno, int pos, int iGotFrames )
 {
 	m_Mutex.Lock();
-	m_PositionMapping.Insert( frameno, pos, iGotFrames );
+	m_PositionMapping.Insert( frameno, iGotFrames, pos );
 	m_Mutex.Unlock();
 }
 

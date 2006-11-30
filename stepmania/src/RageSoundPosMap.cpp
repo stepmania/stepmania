@@ -49,7 +49,7 @@ pos_map_queue &pos_map_queue::operator=( const pos_map_queue &rhs )
 	return *this;
 }
 
-void pos_map_queue::Insert( int64_t iSourceFrame, int iDestFrame, int iFrames )
+void pos_map_queue::Insert( int64_t iSourceFrame, int iFrames, int iDestFrame )
 {
 	if( m_pImpl->m_Queue.size() )
 	{
