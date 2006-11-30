@@ -5,7 +5,7 @@
 #include "RageTimer.h"
 #include "Foreach.h"
 
-#include <deque>
+#include <list>
 
 /* The number of frames we should keep pos_map data for.  This being too high
  * is mostly harmless; the data is small. */
@@ -27,7 +27,7 @@ struct pos_map_t
 
 struct pos_map_impl
 {
-	deque<pos_map_t> m_Queue;
+	list<pos_map_t> m_Queue;
 	void Cleanup();
 };
 
@@ -79,18 +79,18 @@ void pos_map_queue::Insert( int64_t iSourceFrame, int iDestFrame, int iFrames )
 
 void pos_map_impl::Cleanup()
 {
-	/* Determine the number of frames of data we have. */
-	int64_t iTotalFrames = 0;
-	for( unsigned i = 0; i < m_Queue.size(); ++i )
-		iTotalFrames += m_Queue[i].m_iFrames;
-
-	/* Remove the oldest entry so long we'll stil have enough data.  Don't delete every
-	 * frame, so we'll always have some data to extrapolate from. */
-	while( m_Queue.size() > 1 && iTotalFrames - m_Queue.front().m_iFrames > pos_map_backlog_frames )
+	/* Scan backwards until we have at least pos_map_backlog_frames. */
+	list<pos_map_t>::iterator it = m_Queue.end();
+	int iTotalFrames = 0;
+	while( iTotalFrames < pos_map_backlog_frames )
 	{
-		iTotalFrames -= m_Queue.front().m_iFrames;
-		m_Queue.pop_front();
+		if( it == m_Queue.begin() )
+			break;
+		--it;
+		iTotalFrames += it->m_iFrames;
 	}
+
+	m_Queue.erase( m_Queue.begin(), it );
 }
 
 int64_t pos_map_queue::Search( int64_t iSourceFrame, bool *bApproximate ) const
@@ -106,7 +106,7 @@ int64_t pos_map_queue::Search( int64_t iSourceFrame, bool *bApproximate ) const
 	 * it maps to. */
 	int64_t iClosestPosition = 0, iClosestPositionDist = INT_MAX;
 	const pos_map_t *pClosestBlock = &*m_pImpl->m_Queue.begin(); /* print only */
-	FOREACHD_CONST( pos_map_t, m_pImpl->m_Queue, it )
+	FOREACHL_CONST( pos_map_t, m_pImpl->m_Queue, it )
 	{
 		const pos_map_t &pm = *it;
 
