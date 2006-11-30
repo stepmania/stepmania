@@ -9,7 +9,6 @@
 #include "IniFile.h"
 #include "ThemeMetric.h"
 #include <map>
-#include <deque>
 
 class Game;
 
@@ -51,7 +50,7 @@ protected:
 		IniFile metrics;
 
 		// When looking for an element, search these dirs from head to tail.
-		deque<RString> vsDirSearchOrder;
+		vector<RString> vsDirSearchOrder;
 	};
 	void LoadNoteSkinData( const RString &sNoteSkinName, NoteSkinData& data_out );
 	void LoadNoteSkinDataRecursive( const RString &sNoteSkinName, NoteSkinData& data_out );

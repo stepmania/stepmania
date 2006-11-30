@@ -73,11 +73,11 @@ void NoteSkinManager::LoadNoteSkinData( const RString &sNoteSkinName, NoteSkinDa
 
 	/* Load global NoteSkin defaults */
 	data_out.metrics.ReadFile( GLOBAL_BASE_NOTESKIN_DIR+"metrics.ini" );
-	data_out.vsDirSearchOrder.push_front( GLOBAL_BASE_NOTESKIN_DIR );
+	data_out.vsDirSearchOrder.insert( data_out.vsDirSearchOrder.begin(), GLOBAL_BASE_NOTESKIN_DIR );
 
 	/* Load game NoteSkin defaults */
 	data_out.metrics.ReadFile( GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME)+"metrics.ini" );
-	data_out.vsDirSearchOrder.push_front( GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME) );
+	data_out.vsDirSearchOrder.insert( data_out.vsDirSearchOrder.begin(), GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME) );
 
 	/* Read the current NoteSkin and all of its fallbacks */
 	LoadNoteSkinDataRecursive( sNoteSkinName, data_out );
@@ -100,7 +100,7 @@ void NoteSkinManager::LoadNoteSkinDataRecursive( const RString &sNoteSkinName, N
 		LoadNoteSkinDataRecursive( sFallback, data_out );
 
 	data_out.metrics.ReadFile( sDir+"metrics.ini" );
-	data_out.vsDirSearchOrder.push_front( sDir );
+	data_out.vsDirSearchOrder.insert( data_out.vsDirSearchOrder.begin(), sDir );
 
 	depth--;
 }
@@ -220,7 +220,7 @@ try_again:
 	const NoteSkinData &data = iter->second;
 
 	RString sPath;	// fill this in below
-	FOREACHD_CONST( RString, data.vsDirSearchOrder, iter )
+	FOREACH_CONST( RString, data.vsDirSearchOrder, iter )
 	{
 		if( sButtonName.empty() )
 			sPath = GetPathFromDirAndFile( *iter, sElement );
@@ -262,7 +262,7 @@ try_again:
 		GetFileContents( sPath, sNewFileName, true );
 		RString sRealPath;
 
-		FOREACHD_CONST( RString, data.vsDirSearchOrder, iter )
+		FOREACH_CONST( RString, data.vsDirSearchOrder, iter )
 		{
 			 sRealPath = GetPathFromDirAndFile( *iter, sNewFileName );
 			 if( !sRealPath.empty() )
