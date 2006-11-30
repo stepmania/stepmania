@@ -5,7 +5,6 @@
 
 #include "RageThreads.h"
 #include "RageTimer.h"
-#include "RageUtil_CircularBuffer.h"
 #include "RageSoundPosMap.h"
 
 class RageSoundReader;
@@ -48,8 +47,8 @@ struct RageSoundParams
 
 	/* Number of samples input and output when changing speed.  Currently,
 	 * this is either 1/1, 5/4 or 4/5. */
-	int speed_input_samples, speed_output_samples;
-	void SetPlaybackRate( float fScale );
+	float m_fRate;
+	void SetPlaybackRate( float fRate ) { m_fRate = fRate; }
 
 	/* If enabled, file seeking will prefer accuracy over speed. */
 	bool m_bAccurateSync;
@@ -142,19 +141,23 @@ private:
 	mutable RageMutex m_Mutex;
 
 	RageSoundReader *m_pSource;
-	CircBuf<char> m_DataBuffer;
-	bool FillBuf( int iFrames );
 
 	/* We keep track of sound blocks we've sent out recently through GetDataToPlay. */
-	pos_map_queue m_PositionMapping;
-	
+	pos_map_queue m_HardwareToStreamMap;
+	pos_map_queue m_StreamToSourceMap;
+
 	RString m_sFilePath;
 
+	void ApplyParams();
 	RageSoundParams m_Param;
 	
 	/* Current position of the output sound, in frames.  If < 0, nothing will play
 	 * until it becomes positive. */
-	int m_iDecodePosition;
+	int64_t m_iStreamFrame;
+
+	/* When the position is outside of the source (eg. < 0), we need to track the
+	 * effective source frame ourself. */
+	int m_iSourceFrame;
 
 	/* Hack: When we stop a playing sound, we can't ask the driver the position
 	 * (we're not playing); and we can't seek back to the current playing position
@@ -162,7 +165,7 @@ private:
 	 * were at when we stopped without jumping to the last position we buffered. 
 	 * Keep track of the position after a seek or stop, so we can return a sane
 	 * position when stopped, and when playing but pos_map hasn't yet been filled. */
-	int m_iStoppedPosition;
+	int m_iStoppedSourceFrame;
 	bool m_bPlaying;
 
 	/* Keep track of the max SOUNDMAN->GetPosition result (see GetPositionSecondsInternal). */
@@ -177,12 +180,9 @@ private:
 	bool SetPositionFrames( int frames = -1 );
 	int GetData( char *pBuffer, int iSize );
 	void Fail( RString sReason );
-	int Bytes_Available() const;
 	RageSoundParams::StopMode_t GetStopMode() const; /* resolves M_AUTO */
 
 	void SoundIsFinishedPlaying(); // called by sound drivers
-
-	static void RateChange( char *pBuf, int &iCount, int iInputSpeed, int iOutputSpeed, int iChannels );
 
 public:
 	/* These functions are called only by sound drivers. */

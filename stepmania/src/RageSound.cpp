@@ -37,12 +37,6 @@ static const int channels = 2;
 static const int framesize = 2 * channels; /* 16-bit */
 #define samplerate() m_pSource->GetSampleRate()
 
-/* The most data to buffer when streaming. */
-static const int internal_buffer_size = 1024*1;
-
-/* The amount of data to read at once. */
-static const unsigned read_block_size = 1024;
-
 RageSoundParams::RageSoundParams():
 	m_StartTime( RageZeroTimer )
 {
@@ -51,7 +45,7 @@ RageSoundParams::RageSoundParams():
 	m_FadeLength = 0;
 	m_Volume = 1.0f;
 	m_Balance = 0; // center
-	speed_input_samples = speed_output_samples = 1;
+	m_fRate = 1.0f;
 	m_bAccurateSync = false;
 	StopMode = M_AUTO;
 	m_bIsCriticalSound = false;
@@ -63,11 +57,11 @@ RageSound::RageSound():
 	ASSERT( SOUNDMAN );
 
 	m_pSource = NULL;
-	m_iDecodePosition = 0;
-	m_iStoppedPosition = 0;
+	m_iStreamFrame = 0;
+	m_iSourceFrame = 0;
+	m_iStoppedSourceFrame = 0;
 	m_iMaxDriverFrame = 0;
 	m_bPlaying = false;
-	m_DataBuffer.reserve( internal_buffer_size );
 
 	m_iID = SOUNDMAN->GetUniqueID();
 
@@ -105,12 +99,12 @@ RageSound &RageSound::operator=( const RageSound &cpy )
 	LockMut(cpy.m_Mutex);
 
 	m_Param = cpy.m_Param;
-	m_iDecodePosition = cpy.m_iDecodePosition;
-	m_iStoppedPosition = cpy.m_iStoppedPosition;
+	m_iStreamFrame = cpy.m_iStreamFrame;
+	m_iSourceFrame = cpy.m_iSourceFrame;
+	m_iStoppedSourceFrame = cpy.m_iStoppedSourceFrame;
 	m_iMaxDriverFrame = 0;
 	m_bPlaying = false;
 
-	m_DataBuffer.reserve( internal_buffer_size );
 	delete m_pSource;
 	if( cpy.m_pSource )
 		m_pSource = cpy.m_pSource->Copy();
@@ -133,7 +127,6 @@ void RageSound::Unload()
 	m_pSource = NULL;
 	
 	m_sFilePath = "";
-	m_DataBuffer.clear();
 }
 
 bool RageSound::IsLoaded() const
@@ -159,6 +152,8 @@ public:
 	RageSoundReader *Copy() const { return new RageSoundReader_Silence; }
 	int GetSampleRate() const { return 44100; }
 	bool IsStreamingFromDisk() const { return false; }
+	int GetNextSourceFrame() const { return 0; }
+	float GetStreamToSourceRatio() const { return 1.0f; }
 };
 
 
@@ -205,6 +200,10 @@ bool RageSound::Load( RString sSoundFilePath, bool bPrecache )
 			/* We've preloaded the sound.  Pass it to SOUNDMAN, for reuse. */
 			SOUNDMAN->AddLoadedSound( sSoundFilePath, (RageSoundReader_Preload *) m_pSource );
 		}
+		else
+		{
+			bPrecache = false;
+		}
 	}
 
 	m_sFilePath = sSoundFilePath;
@@ -218,146 +217,19 @@ void RageSound::LoadSoundReader( RageSoundReader *pSound )
 {
 	Unload();
 
-	m_iDecodePosition = m_iStoppedPosition = 0;
+	m_iStreamFrame = m_iSourceFrame = m_iStoppedSourceFrame = 0;
 
 	const int iNeededRate = SOUNDMAN->GetDriverSampleRate( pSound->GetSampleRate() );
-	if( iNeededRate != pSound->GetSampleRate() )
+	bool bSupportRateChange = false;
+	if( iNeededRate != pSound->GetSampleRate() || bSupportRateChange )
 	{
 		RageSoundReader_Resample_Good *Resample = new RageSoundReader_Resample_Good( pSound, iNeededRate );
 		pSound = Resample;
 	}
 
+	pSound->SetProperty( "Speed", 1.5f );
+
 	m_pSource = pSound;
-}
-
-/* Return the number of bytes available in the input buffer. */
-int RageSound::Bytes_Available() const
-{
-	return m_DataBuffer.num_readable();
-}
-
-
-void RageSound::RateChange( char *pBuffer, int &iCount, int iInputSpeed, int iOutputSpeed, int iChannels )
-{
-	if( iInputSpeed == iOutputSpeed )
-		return;
-
-	/* Rate change.  Change iInputSpeed into iOutputSpeed per-channel. */
-	static char *pInbufTmp = NULL;
-	static int iInbufTmpSize = 0;
-	if( iCount > iInbufTmpSize )
-	{
-		iInbufTmpSize = iCount;
-		delete [] pInbufTmp;
-		pInbufTmp = new char[iCount];
-	}
-
-	memcpy( pInbufTmp, pBuffer, iCount );
-
-	for( int c = 0; c < iChannels; ++c )
-	{
-		const int16_t *pInput = (const int16_t *) pInbufTmp;
-		int16_t *pOutput = (int16_t *) pBuffer;
-		pInput += c;
-		pOutput += c;
-		for( unsigned n = 0; n < iCount/(iChannels * sizeof(int16_t)); n += iInputSpeed )
-		{
-
-			/* Input 4 samples, output 5; 25% slowdown with no
-			 * rounding error. */
-
-			int16_t samps[20];	// max 2x rate
-			ASSERT( size_t(iInputSpeed) <= sizeof(samps)/sizeof(*samps) );
-			int s;
-			for( s = 0; s < iInputSpeed; ++s )
-			{
-				samps[s] = *pInput;
-				pInput += iChannels;
-			}
-
-			float fPosition = 0;
-			float fIncrement = float(iInputSpeed) / iOutputSpeed;
-
-			for( s = 0; s < iOutputSpeed; ++s )
-			{
-				float frac = fPosition - floorf( fPosition );
-				int iPosition = int(fPosition);
-				int iValue = int(samps[iPosition] * (1-frac));
-				if( s+1 < iOutputSpeed )
-					iValue += int(samps[iPosition+1] * frac);
-
-				*pOutput = int16_t(iValue);
-				fPosition += fIncrement;
-				pOutput += iChannels;
-			}
-		}
-	}
-	iCount = (iCount * iOutputSpeed) / iInputSpeed;
-}
-
-/* Fill the buffer by about iFrames worth of data.  (We might go a little
- * over, and we won't overflow our buffer.)  Return true if data was read;
- * false on EOF.  Convert mono input to stereo. */
-bool RageSound::FillBuf( int iFrames )
-{
-	ASSERT( m_pSource );
-
-	bool bGotSomething = false;
-
-	while( iFrames > 0 )
-	{
-		if( read_block_size > m_DataBuffer.num_writable() )
-			break; /* full */
-
-		char inbuf[10240];
-		unsigned iReadSize = read_block_size;
-
-		if( m_Param.speed_input_samples != m_Param.speed_output_samples )
-		{
-			/* Read enough data to produce read_block_size. */
-			iReadSize = iReadSize * m_Param.speed_input_samples / m_Param.speed_output_samples;
-
-			/* Read in blocks that are a multiple of a sample, the number of
-			 * channels and the number of input samples. */
-			int iBlockSize = sizeof(int16_t) * channels * m_Param.speed_input_samples;
-			iReadSize = (iReadSize / iBlockSize) * iBlockSize;
-			ASSERT(iReadSize < sizeof(inbuf));
-		}
-
-		/* channels == 2; we want stereo.  If the input data is mono, read half as many
-		 * samples. */
-		if( m_pSource->GetNumChannels() == 1 )
-			iReadSize /= 2;
-
-		ASSERT( iReadSize < sizeof(inbuf) );
-
-		int iCount = m_pSource->Read( inbuf, iReadSize );
-		if( iCount == 0 )
-			return bGotSomething; /* EOF */
-
-		if( iCount == -1 )
-		{
-			Fail( m_pSource->GetError() );
-
-			/* Pretend we got EOF. */
-			return false;
-		}
-
-		if( m_pSource->GetNumChannels() == 1 )
-		{
-			RageSoundUtil::ConvertMonoToStereoInPlace( (int16_t *) inbuf, iCount / sizeof(int16_t) );
-			iCount *= 2;
-		}
-
-		RateChange( inbuf, iCount, m_Param.speed_input_samples, m_Param.speed_output_samples, channels );
-
-		/* Add the data to the buffer. */
-		m_DataBuffer.write( (const char *) inbuf, iCount );
-		iFrames -= iCount / framesize;
-		bGotSomething = true;
-	}
-
-	return bGotSomething;
 }
 
 /* Get a block of data from the input.  If buffer is NULL, just return the amount
@@ -368,31 +240,99 @@ int RageSound::GetData( char *pBuffer, int iFrames )
 	{
 		/* We have a length; only read up to the end. */
 		const float fLastSecond = m_Param.m_StartSecond + m_Param.m_LengthSeconds;
-		int iFramesToRead = int(fLastSecond*samplerate()) - m_iDecodePosition;
+		int iFramesToRead = int(fLastSecond*samplerate()) - m_iSourceFrame;
 
 		/* If it's negative, we're past the end, so cap it at 0. Don't read
 		 * more than size. */
 		iFrames = clamp( iFramesToRead, 0, iFrames );
 	}
 
-	int iGot;
-	if( m_iDecodePosition < 0 )
+	int iGotFrames = 0;
+	float fRate = 1.0f;
+	int iSourceFrame = m_iSourceFrame;
+	if( m_iSourceFrame < 0 )
 	{
 		/* We havn't *really* started playing yet, so just feed silence.  How
 		 * many more bytes of silence do we need? */
-		iGot = -m_iDecodePosition;
-		iGot = min( iGot, iFrames );
-		if( pBuffer )
-			memset( pBuffer, 0, iGot*framesize );
-	} else {
-		/* Feed data out of our streaming buffer. */
-		ASSERT( m_pSource );
-		iGot = min( int(m_DataBuffer.num_readable()/framesize), iFrames );
-		if( pBuffer )
-			m_DataBuffer.read( pBuffer, iGot*framesize );
+		iSourceFrame =  -m_iSourceFrame;
+		iGotFrames = -m_iSourceFrame;
+		iGotFrames = min( iGotFrames, iFrames );
+		memset( pBuffer, 0, iGotFrames*framesize );
 	}
 
-	return iGot;
+	if( iGotFrames == 0 && iFrames )
+	{
+		/* Read data from our source. */
+		ASSERT( m_pSource );
+
+		fRate = m_pSource->GetStreamToSourceRatio();
+		int iNewSourceFrame = m_pSource->GetNextSourceFrame();
+		int iReadSize = iFrames * sizeof(int16_t) * m_pSource->GetNumChannels();
+		iGotFrames = m_pSource->Read( pBuffer, iReadSize );
+		if( iGotFrames == -1 )
+		{
+			Fail( m_pSource->GetError() );
+
+			/* Pretend we got EOF. */
+			return 0;
+		}
+		iGotFrames /= sizeof(int16_t) * m_pSource->GetNumChannels();
+
+		/* If we didn't get any data, don't update iSourceFrame, so we just keep
+		 * extrapolating if we're in M_CONTINUE. */
+		if( iGotFrames != 0 )
+			iSourceFrame = iNewSourceFrame;
+
+		if( m_pSource->GetNumChannels() == 1 )
+			RageSoundUtil::ConvertMonoToStereoInPlace( (int16_t *) pBuffer, iGotFrames );
+	}
+//		LOG->Trace( "add %i, %f (%i)", iSourceFrame, fRate, iGotFrames );
+
+	/* If we didn't get any data, see if we need to pad the end of the file with
+	 * silence for m_LengthSeconds. */
+	if( iGotFrames == 0 && m_Param.m_LengthSeconds != -1 )
+	{
+		const float fLastSecond = m_Param.m_StartSecond + m_Param.m_LengthSeconds;
+		int iLastFrame = int(fLastSecond*samplerate());
+		int iFramesOfSilence = iLastFrame - m_iSourceFrame;
+		iFramesOfSilence = clamp( iFramesOfSilence, 0, iFrames );
+		if( iFramesOfSilence > 0 )
+		{
+			memset( pBuffer, 0, iFramesOfSilence * framesize );
+			iGotFrames = iFramesOfSilence;
+		}
+	}
+
+	if( iGotFrames == 0 && GetStopMode() == RageSoundParams::M_CONTINUE )
+	{
+		/* Keep playing silence past EOF. */
+		memset( pBuffer, 0, iFrames*framesize );
+		iGotFrames = iFrames;
+	}
+
+	/* We want to fade when there's m_FadeLength seconds left, but if
+	 * m_LengthFrames is -1, we don't know the length we're playing.
+	 * (m_LengthFrames is the length to play, not the length of the
+	 * source.)  If we don't know the length, don't fade. */
+	if( m_Param.m_FadeLength != 0 && m_Param.m_LengthSeconds != -1 )
+	{
+		const float fFinishFadingOutAt = m_Param.m_StartSecond + m_Param.m_LengthSeconds;
+		const float fStartFadingOutAt = fFinishFadingOutAt - m_Param.m_FadeLength;
+		const float fStartSecond = float(iSourceFrame) / samplerate();
+		const float fEndSecond = float(iSourceFrame+lrintf(iGotFrames * fRate)) / samplerate();
+		const float fStartVolume = SCALE( fStartSecond, fStartFadingOutAt, fFinishFadingOutAt, 1.0f, 0.0f );
+		const float fEndVolume = SCALE( fEndSecond, fStartFadingOutAt, fFinishFadingOutAt, 1.0f, 0.0f );
+		RageSoundUtil::Fade( (int16_t *) pBuffer, iGotFrames, fStartVolume, fEndVolume );
+	}
+
+	m_Mutex.Lock();
+	m_StreamToSourceMap.Insert( m_iStreamFrame, iGotFrames, iSourceFrame, fRate );
+	m_Mutex.Unlock();
+
+	m_iStreamFrame += iGotFrames;
+	m_iSourceFrame = iSourceFrame + lrintf(iGotFrames * fRate);
+
+	return iGotFrames;
 }
 
 /*
@@ -406,42 +346,22 @@ int RageSound::GetData( char *pBuffer, int iFrames )
  *
  * If no data is returned (we're at the end of the stream), return false.
  */
-bool RageSound::GetDataToPlay( int16_t *pBuffer, int iFrames, int &iSoundFrame, int &iFramesStored )
+bool RageSound::GetDataToPlay( int16_t *pBuffer, int iFrames, int &iStreamFrame, int &iFramesStored )
 {
 	int iNumRewindsThisCall = 0;
 
-	/* We only update m_iDecodePosition; only take a shared lock, so we don't block the main thread. */
+	/* We only update m_iStreamFrame; only take a shared lock, so we don't block the main thread. */
 //	LockMut(m_Mutex);
 
 	ASSERT_M( m_bPlaying, ssprintf("%p", this) );
 
 	iFramesStored = 0;
-	iSoundFrame = m_iDecodePosition;
+	iStreamFrame = m_iStreamFrame;
 
 	while( 1 )
 	{
-		/* If we don't have any data left buffered, fill the buffer by
-		 * up to as much as we need. */
-		if( !Bytes_Available() )
-			FillBuf( iFrames );
-
 		/* Get a block of data. */
 		int iGotFrames = GetData( (char *) pBuffer, iFrames );
-
-		/* If we didn't get any data, see if we need to pad the end of the file with
-		 * silence for m_LengthSeconds. */
-		if( !iGotFrames && m_Param.m_LengthSeconds != -1 )
-		{
-			const float fLastSecond = m_Param.m_StartSecond + m_Param.m_LengthSeconds;
-			int iLastFrame = int(fLastSecond*samplerate());
-			int iFramesOfSilence = iLastFrame - m_iDecodePosition;
-			iFramesOfSilence = clamp( iFramesOfSilence, 0, iFrames );
-			if( iFramesOfSilence > 0 )
-			{
-				memset( pBuffer, 0, iFramesOfSilence * framesize );
-				iGotFrames = iFramesOfSilence;
-			}
-		}
 
 		if( !iGotFrames )
 		{
@@ -470,25 +390,10 @@ bool RageSound::GetDataToPlay( int16_t *pBuffer, int iFrames, int &iSoundFrame, 
 
 				/* Rewind and start over.  XXX: this will take an exclusive lock */
 				SetPositionSeconds( m_Param.m_StartSecond );
-
-				/* Make sure we can get some data.  If we can't, then we'll have
-				 * nothing to send and we'll just end up coming back here. */
-				if( !Bytes_Available() )
-					FillBuf( iFrames );
-				if( GetData(NULL, iFrames) == 0 )
-				{
-					LOG->Warn( "Can't loop data in %s; no data available at start point %f",
-						GetLoadedFilePath().c_str(), m_Param.m_StartSecond );
-
-					/* Stop here. */
-					return false;
-				}
 				continue;
 
 			case RageSoundParams::M_CONTINUE:
-				/* Keep playing silence. */
-				memset( pBuffer, 0, iFrames*framesize );
-				iGotFrames = iFrames;
+				FAIL_M("M_CONTINUE");
 				break;
 
 			default:
@@ -496,38 +401,20 @@ bool RageSound::GetDataToPlay( int16_t *pBuffer, int iFrames, int &iSoundFrame, 
 			}
 		}
 
-		/* This block goes from m_iDecodePosition to m_iDecodePosition+iGotFrames. */
-
-		/* We want to fade when there's m_FadeLength seconds left, but if
-		 * m_LengthFrames is -1, we don't know the length we're playing.
-		 * (m_LengthFrames is the length to play, not the length of the
-		 * source.)  If we don't know the length, don't fade. */
-		if( m_Param.m_FadeLength != 0 && m_Param.m_LengthSeconds != -1 )
-		{
-			const float fFinishFadingOutAt = m_Param.m_StartSecond + m_Param.m_LengthSeconds;
-			const float fStartFadingOutAt = fFinishFadingOutAt - m_Param.m_FadeLength;
-			const float fStartSecond = float(m_iDecodePosition) / samplerate();
-			const float fEndSecond = float(m_iDecodePosition+iGotFrames) / samplerate();
-			const float fStartVolume = SCALE( fStartSecond, fStartFadingOutAt, fFinishFadingOutAt, 1.0f, 0.0f );
-			const float fEndVolume = SCALE( fEndSecond, fStartFadingOutAt, fFinishFadingOutAt, 1.0f, 0.0f );
-			RageSoundUtil::Fade( pBuffer, iGotFrames, fStartVolume, fEndVolume );
-		}
-
+		/* This block goes from iStreamFrame to iStreamFrame+iGotFrames. */
 		RageSoundUtil::Pan( pBuffer, iGotFrames, m_Param.m_Balance );
 
-		iSoundFrame = m_iDecodePosition;
-
 		iFramesStored = iGotFrames;
-		m_iDecodePosition += iGotFrames;
 		return true;
 	}
 }
 
 /* Indicate that a block of audio data has been written to the device. */
+// XXX: pos should be int64_t
 void RageSound::CommitPlayingPosition( int64_t frameno, int pos, int iGotFrames )
 {
 	m_Mutex.Lock();
-	m_PositionMapping.Insert( frameno, iGotFrames, pos );
+	m_HardwareToStreamMap.Insert( frameno, iGotFrames, pos );
 	m_Mutex.Unlock();
 }
 
@@ -575,6 +462,7 @@ void RageSound::StartPlaying()
 
 	if( !m_Param.m_bIsCriticalSound && SOUNDMAN->GetPlayOnlyCriticalSounds() )
 		m_Param.m_Volume = 0;
+	ApplyParams();
 
 	SOUNDMAN->StartMixing( this );
 
@@ -586,7 +474,7 @@ void RageSound::StopPlaying()
 	if( !m_bPlaying )
 		return;
 
-	m_iStoppedPosition = (int) GetPositionSecondsInternal();
+	m_iStoppedSourceFrame = (int) GetPositionSecondsInternal();
 
 	/* Tell the sound driver to stop mixing this sound. */
 	SOUNDMAN->StopMixing(this);
@@ -600,7 +488,8 @@ void RageSound::StopPlaying()
 	m_bPlaying = false;
 	
 	m_iMaxDriverFrame = 0;
-	m_PositionMapping.Clear();
+	m_HardwareToStreamMap.Clear();
+	m_StreamToSourceMap.Clear();
 
 	/* We may still have positions queued up in RageSoundManager.  We need to make sure
 	 * that we don't accept those; otherwise, if we start playing again quickly, they'll
@@ -626,12 +515,14 @@ void RageSound::SoundIsFinishedPlaying()
 		return;
 	m_Mutex.Lock();
 
-	m_iStoppedPosition = (int) GetPositionSecondsInternal();
+	m_iStoppedSourceFrame = (int) GetPositionSecondsInternal();
 
 //	LOG->Trace("set playing false for %p (SoundIsFinishedPlaying) (%s)", this, this->GetLoadedFilePath().c_str());
 	m_bPlaying = false;
 
-	m_PositionMapping.Clear();
+	m_HardwareToStreamMap.Clear();
+	m_StreamToSourceMap.Clear();
+
 //	LOG->Trace("SoundIsFinishedPlaying %p finished (%s)", this, this->GetLoadedFilePath().c_str());
 
 	m_Mutex.Unlock();
@@ -694,26 +585,26 @@ int64_t RageSound::GetPositionSecondsInternal( bool *bApproximate ) const
 
 	/* If we're not playing, just report the static position. */
 	if( !IsPlaying() )
-		return m_iStoppedPosition;
+		return m_iStoppedSourceFrame;
 
 	/* If we don't yet have any position data, GetPCM hasn't yet been called at all,
 	 * so guess what we think the real time is. */
-	if( m_PositionMapping.IsEmpty() )
+	if( m_HardwareToStreamMap.IsEmpty() || m_StreamToSourceMap.IsEmpty() )
 	{
-		// LOG->Trace( "no data yet; %i", m_iStoppedPosition );
+		// LOG->Trace( "no data yet; %i", m_iStoppedSourceFrame );
 		if( bApproximate )
 			*bApproximate = true;
-		return m_iStoppedPosition;
+		return m_iStoppedSourceFrame;
 	}
 
 	/* Get our current hardware position. */
-	int64_t iCurrentFrame = SOUNDMAN->GetPosition(this);
+	int64_t iCurrentHardwareFrame = SOUNDMAN->GetPosition(this);
 
 	/* It's sometimes possible for the hardware position to move backwards, usually
 	 * on underrun.  We can try to prevent this in each driver, but it's an obscure
 	 * error, so let's clamp the result here instead.  Be sure to reset this on stop,
 	 * since the position may reset. */
-	if( iCurrentFrame < m_iMaxDriverFrame )
+	if( iCurrentHardwareFrame < m_iMaxDriverFrame )
 	{
 		/* Clamp the output to one per second, so one underruns don't cascade due to
 		 * output spam. */
@@ -721,13 +612,21 @@ int64_t RageSound::GetPositionSecondsInternal( bool *bApproximate ) const
 		if( last.IsZero() || last.Ago() > 1.0f )
 		{
 			LOG->Trace( "Sound %s: driver returned a lesser position (%i < %i)",
-				this->GetLoadedFilePath().c_str(), (int) iCurrentFrame, (int) m_iMaxDriverFrame );
+				this->GetLoadedFilePath().c_str(), (int) iCurrentHardwareFrame, (int) m_iMaxDriverFrame );
 			last.Touch();
 		}
 	}
-	m_iMaxDriverFrame = iCurrentFrame = max( iCurrentFrame, m_iMaxDriverFrame );
+	m_iMaxDriverFrame = iCurrentHardwareFrame = max( iCurrentHardwareFrame, m_iMaxDriverFrame );
 
-	return m_PositionMapping.Search( iCurrentFrame, bApproximate );
+	bool bApprox;
+	int64_t iStreamFrame = m_HardwareToStreamMap.Search( iCurrentHardwareFrame, &bApprox );
+	if( bApproximate && bApprox )
+		*bApproximate = true;
+	int64_t iSourceFrame = m_StreamToSourceMap.Search( iStreamFrame, &bApprox );
+	if( bApproximate && bApprox )
+		*bApproximate = true;
+
+	return iSourceFrame;
 }
 
 /*
@@ -749,12 +648,12 @@ float RageSound::GetPositionSeconds( bool *bApproximate, RageTimer *pTimestamp )
 		pTimestamp->Touch();
 	}
 
-	const float fPosition = GetPositionSecondsInternal( bApproximate ) / float(samplerate());
-
+	const int64_t iPositionFrames = GetPositionSecondsInternal( bApproximate );
+	const float fPosition = iPositionFrames / float(samplerate());
 	if( pTimestamp )
 		HOOKS->ExitTimeCriticalSection();
 
-	return GetPlaybackRate() * fPosition;
+	return fPosition;
 }
 
 
@@ -802,28 +701,10 @@ bool RageSound::SetPositionFrames( int iFrames )
 		return false;
 	}
 
-	{
-		/* "m_iDecodePosition" records the number of frames we've output to the
-		 * speaker.  If the rate isn't 1.0, this will be different from the
-		 * position in the sound data itself.  For example, if we're playing
-		 * at 0.5x, and we're seeking to the 10th frame, we would have actually
-		 * played 20 frames, and it's the number of real speaker frames that
-		 * "m_iDecodePosition" represents. */
-		const int iScaledFrames = int( iFrames / GetPlaybackRate() );
-
-		/* If we're already there, don't do anything. */
-		if( m_iDecodePosition == iScaledFrames )
-			return true;
-
-		m_iStoppedPosition = m_iDecodePosition = iScaledFrames;
-	}
-
 	/* The position we're going to seek the input stream to.  We have
 	 * to do this in floating point to avoid overflow. */
 	int ms = int( float(iFrames) * 1000.f / samplerate() );
 	ms = max( ms, 0 );
-
-	m_DataBuffer.clear();
 
 	int iRet;
 	if( m_Param.m_bAccurateSync )
@@ -835,6 +716,15 @@ bool RageSound::SetPositionFrames( int iFrames )
 	{
 		Fail( m_pSource->GetError() );
 		return false; /* failed */
+	}
+
+	{
+		/* If we're already there, don't do anything. */
+		if( m_iSourceFrame == iFrames )
+			return true;
+
+		m_iSourceFrame = iFrames;
+		m_iStoppedSourceFrame = iFrames;
 	}
 
 	if( iRet == 0 && ms != 0 )
@@ -850,21 +740,6 @@ bool RageSound::SetPositionFrames( int iFrames )
 	return true;
 }
 
-void RageSoundParams::SetPlaybackRate( float fSpeed )
-{
-	if( fSpeed == 1.00f )
-	{
-		speed_input_samples = 1;
-		speed_output_samples = 1;
-	}
-	else
-	{
-		/* Approximate it to the nearest tenth. */
-		speed_input_samples = int( roundf(fSpeed * 10) );
-		speed_output_samples = 10;
-	}
-}
-
 float RageSound::GetAbsoluteVolume() const
 {
 	float f = m_Param.m_Volume;
@@ -874,7 +749,7 @@ float RageSound::GetAbsoluteVolume() const
 
 float RageSound::GetPlaybackRate() const
 {
-	return float(m_Param.speed_input_samples) / m_Param.speed_output_samples;
+	return m_Param.m_fRate;
 }
 
 RageTimer RageSound::GetStartTime() const
@@ -885,6 +760,14 @@ RageTimer RageSound::GetStartTime() const
 void RageSound::SetParams( const RageSoundParams &p )
 {
 	m_Param = p;
+}
+
+void RageSound::ApplyParams()
+{
+	if( m_pSource == NULL )
+		return;
+
+	m_pSource->SetProperty( "Speed", m_Param.m_fRate );
 }
 
 RageSoundParams::StopMode_t RageSound::GetStopMode() const
