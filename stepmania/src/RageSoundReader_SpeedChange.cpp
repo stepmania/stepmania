@@ -190,7 +190,6 @@ bool RageSoundReader_SpeedChange::Step()
 	for( size_t i = 0; i < m_Channels.size(); ++i )
 		iMaxPositionNeeded = max( iMaxPositionNeeded, m_Channels[i].m_iCorrelatedPos + GetWindowSizeFrames() );
 	FillData( iMaxPositionNeeded );
-LOG->Trace( "max %i (%i)", iMaxPositionNeeded, m_iDataBufferAvailFrames );
 	if( iMaxPositionNeeded > m_iDataBufferAvailFrames )
 	{
 		/* We're at EOF.  Flush the remaining data, if any. */
