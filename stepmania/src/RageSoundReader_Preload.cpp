@@ -116,7 +116,7 @@ int RageSoundReader_Preload::SetPosition_Fast( int iMS )
 
 int RageSoundReader_Preload::GetNextSourceFrame() const
 {
-	return m_iPosition / samplesize;
+	return lrintf(m_iPosition * m_fRate) / samplesize;
 }
 
 int RageSoundReader_Preload::Read( char *pBuffer, unsigned iLen )
