@@ -3590,12 +3590,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="NetworkSyncManager.h">
 			</File>
 			<File
-				RelativePath="NetworkSyncServer.cpp">
-			</File>
-			<File
-				RelativePath="NetworkSyncServer.h">
-			</File>
-			<File
 				RelativePath="NoteSkinManager.cpp">
 			</File>
 			<File
