@@ -649,6 +649,12 @@ void RageSoundReader_Resample_Good::ReopenResampler()
 		RageSoundResampler_Polyphase *p = new RageSoundResampler_Polyphase( iUpFactor, iMinDownFactor, iMaxDownFactor );
 		m_apResamplers.push_back( p );
 	}
+
+	if( m_fRate != -1 )
+		iDownFactor = lrintf( m_fRate * iDownFactor );
+
+	for( size_t iChannel = 0; iChannel < m_apResamplers.size(); ++iChannel )
+		m_apResamplers[iChannel]->SetDownFactor( iDownFactor );
 }
 
 RageSoundReader_Resample_Good::~RageSoundReader_Resample_Good()
