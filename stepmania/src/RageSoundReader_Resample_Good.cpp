@@ -653,13 +653,6 @@ int RageSoundReader_Resample_Good::SetPosition_Fast( int iMS )
 
 int RageSoundReader_Resample_Good::Read( char *pBuf_, unsigned iLen )
 {
-	int iDownFactor = m_iDownFactor;
-	if( m_fRate != -1 )
-		iDownFactor = lrintf( m_fRate * iDownFactor );
-
-	for( size_t iChannel = 0; iChannel < m_apResamplers.size(); ++iChannel )
-		m_apResamplers[iChannel]->SetDownFactor( iDownFactor );
-
 	int iChannels = m_apResamplers.size();
 	int iBytesPerFrame = sizeof(int16_t) * iChannels;
 
@@ -733,6 +726,13 @@ void RageSoundReader_Resample_Good::SetRate( float fRatio )
 
 	if( !bRateChangingWasEnabled )
 		ReopenResampler();
+
+	int iDownFactor = m_iDownFactor;
+	if( m_fRate != -1 )
+		iDownFactor = lrintf( m_fRate * iDownFactor );
+
+	for( size_t iChannel = 0; iChannel < m_apResamplers.size(); ++iChannel )
+		m_apResamplers[iChannel]->SetDownFactor( iDownFactor );
 }
 
 RageSoundReader_Resample_Good::RageSoundReader_Resample_Good( const RageSoundReader_Resample_Good &cpy ):
