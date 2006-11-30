@@ -21,8 +21,13 @@ public:
 	int Read( char *pBuf, unsigned iLen );
 	virtual ~RageSoundReader_Resample_Good();
 	RageSoundReader_Resample_Good *Copy() const;
+	bool SetProperty( const RString &sProperty, float fValue );
 	int GetNextSourceFrame() const;
 	float GetStreamToSourceRatio() const;
+	RageSoundReader *GetSource() { return m_pSource; }
+
+	/* Change the rate of a sound without changing the sample rate. */
+	void SetRate( float fRatio );
 
 	int GetSampleRate() const { return m_iSampleRate; }
 	unsigned GetNumChannels() const { return m_pSource->GetNumChannels(); }
@@ -37,6 +42,7 @@ private:
 	SoundReader *m_pSource;
 	int m_iSampleRate;
 	int m_iDownFactor;
+	float m_fRate;
 };
 
 #endif

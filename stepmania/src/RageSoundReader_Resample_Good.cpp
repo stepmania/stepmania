@@ -433,10 +433,10 @@ namespace PolyphaseFilterCache
 	const PolyphaseFilter *FindNearestPolyphaseFilter( int iUpFactor, float fCutoffFrequency )
 	{
 		/* Find a cached filter with the same iUpFactor and a nearby cutoff frequency.
-		 * Round the cutoff down, if possible; it's better to filter out too much tha
+		 * Round the cutoff down, if possible; it's better to filter out too much than
 		 * too little. */
 		PolyphaseFiltersLock.Lock();
-		pair<int,float> params( make_pair(iUpFactor, fCutoffFrequency) );
+		pair<int,float> params( make_pair(iUpFactor, fCutoffFrequency + 0.0001f) );
 		FilterMap::const_iterator it = g_mapPolyphaseFilters.upper_bound( params );
 		if( it != g_mapPolyphaseFilters.begin() )
 			--it;
@@ -551,9 +551,22 @@ int RageSoundReader_Resample_Good::GetNextSourceFrame() const
 	return (int) iPosition;
 }
 
+bool RageSoundReader_Resample_Good::SetProperty( const RString &sProperty, float fValue )
+{
+	if( sProperty == "Rate" )
+	{
+		SetRate( fValue );
+		return true;
+	}
+
+	return m_pSource->SetProperty( sProperty, fValue );
+}
+
 float RageSoundReader_Resample_Good::GetStreamToSourceRatio() const
 {
 	float fRatio = m_pSource->GetStreamToSourceRatio();
+	if( m_fRate != -1 )
+		fRatio *= m_fRate;
 	return fRatio;
 }
 
@@ -561,6 +574,7 @@ RageSoundReader_Resample_Good::RageSoundReader_Resample_Good( RageSoundReader *p
 {
 	m_pSource = pSource;
 	m_iSampleRate = iSampleRate;
+	m_fRate = -1;
 	ReopenResampler();
 }
 
@@ -586,11 +600,24 @@ void RageSoundReader_Resample_Good::ReopenResampler()
 		iUpFactor /= iGCD;
 		iDownFactor /= iGCD;
 	}
+
+	bool bRateChangingEnabled = m_fRate != -1;
+	if( bRateChangingEnabled )
+	{
+		iUpFactor *= 100;
+		iDownFactor *= 100;
+	}
+
 	m_iDownFactor = iDownFactor;
 
 	for( size_t iChannel = 0; iChannel < m_pSource->GetNumChannels(); ++iChannel )
 	{
-		RageSoundResampler_Polyphase *p = new RageSoundResampler_Polyphase( iUpFactor, iDownFactor, iDownFactor );
+		int iMinDownFactor = iDownFactor;
+		int iMaxDownFactor = iDownFactor;
+		if( bRateChangingEnabled )
+			iMaxDownFactor *= 5;
+
+		RageSoundResampler_Polyphase *p = new RageSoundResampler_Polyphase( iUpFactor, iMinDownFactor, iMaxDownFactor );
 		m_apResamplers.push_back( p );
 	}
 }
@@ -626,8 +653,12 @@ int RageSoundReader_Resample_Good::SetPosition_Fast( int iMS )
 
 int RageSoundReader_Resample_Good::Read( char *pBuf_, unsigned iLen )
 {
+	int iDownFactor = m_iDownFactor;
+	if( m_fRate != -1 )
+		lrintf( m_fRate * iDownFactor );
+
 	for( size_t iChannel = 0; iChannel < m_apResamplers.size(); ++iChannel )
-		m_apResamplers[iChannel]->SetDownFactor( m_iDownFactor );
+		m_apResamplers[iChannel]->SetDownFactor( iDownFactor );
 
 	int iChannels = m_apResamplers.size();
 	int iBytesPerFrame = sizeof(int16_t) * iChannels;
@@ -684,6 +715,26 @@ int RageSoundReader_Resample_Good::Read( char *pBuf_, unsigned iLen )
 	return iFramesRead * iBytesPerFrame;
 }
 
+/*
+ * A resampler is commonly used for two things: to change the sample rate of audio,
+ * in order to give an audio driver what it wants (SetSampleRate), and to change the
+ * sound of audio, changing its speed and pitch (SetRate).  These are the same
+ * operation, and we do both in the same pass; the only difference is that SetSampleRate
+ * causes GetSampleRate() to change, while SetRate() causes GetStreamToSourceRatio() to change.
+ *
+ * Changing these values will take effect immediately, with a buffering latency of L/4
+ * frames.
+ */
+void RageSoundReader_Resample_Good::SetRate( float fRatio )
+{
+	ASSERT( fRatio > 0 );
+	bool bRateChangingWasEnabled = m_fRate != -1;
+	m_fRate = fRatio;
+
+	if( !bRateChangingWasEnabled )
+		ReopenResampler();
+}
+
 RageSoundReader_Resample_Good::RageSoundReader_Resample_Good( const RageSoundReader_Resample_Good &cpy ):
 	RageSoundReader(cpy)
 {
@@ -692,6 +743,7 @@ RageSoundReader_Resample_Good::RageSoundReader_Resample_Good( const RageSoundRea
 	this->m_pSource = cpy.m_pSource->Copy();
 	this->m_iSampleRate = cpy.m_iSampleRate;
 	this->m_iDownFactor = cpy.m_iDownFactor;
+	this->m_fRate = cpy.m_fRate;
 }
 
 RageSoundReader_Resample_Good *RageSoundReader_Resample_Good::Copy() const
