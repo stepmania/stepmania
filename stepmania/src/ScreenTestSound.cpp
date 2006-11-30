@@ -49,7 +49,7 @@ void ScreenTestSound::Init()
 // s[4].s.SetLengthSeconds(1);
 	RageSoundParams p;
 	p.StopMode = RageSoundParams::M_STOP;
-	// p.SetPlaybackRate( 1.20f );
+	// p.m_fRate = 1.20f;
 	for( int i = 0; i < nsounds; ++i )
 		s[i].s.SetParams( p );
 
