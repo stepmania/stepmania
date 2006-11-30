@@ -3163,6 +3163,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RageSoundReader_PitchChange.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_PitchChange.h"
+				>
+			</File>
+			<File
 				RelativePath="RageSoundReader_Preload.cpp"
 				>
 			</File>
@@ -3176,6 +3184,14 @@
 			</File>
 			<File
 				RelativePath="RageSoundReader_Resample_Good.h"
+				>
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_SpeedChange.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_SpeedChange.h"
 				>
 			</File>
 			<File
