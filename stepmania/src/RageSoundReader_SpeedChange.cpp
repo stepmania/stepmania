@@ -314,13 +314,6 @@ int RageSoundReader_SpeedChange::GetNextSourceFrame() const
 	int iSourceFrame = RageSoundReader_Filter::GetNextSourceFrame();
 	int iPos = lrintf(m_iPos * fRatio);
 
-	LOG->Trace( "src: %i, %f, beginning of buffer %i, corr %i (%i), curr %i (%i)",
-		iSourceFrame, 
-		fRatio,
-		iSourceFrame - m_iDataBufferAvailFrames,
-		iSourceFrame - m_iDataBufferAvailFrames + m_iUncorrelatedPos, m_iUncorrelatedPos,
-		iSourceFrame - m_iDataBufferAvailFrames + m_iUncorrelatedPos + iPos, iPos );
-
 	iSourceFrame -= m_iDataBufferAvailFrames;
 	iSourceFrame += m_iUncorrelatedPos + iPos;
 	return iSourceFrame;
