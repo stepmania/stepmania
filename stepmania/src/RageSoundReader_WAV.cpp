@@ -396,7 +396,7 @@ RString ReadString( RageFile &f, int iSize, RString &sError )
 	return OPEN_FATAL_ERROR; \
 }
 
-SoundReader_FileReader::OpenResult RageSoundReader_WAV::Open( RString filename_ )
+RageSoundReader_FileReader::OpenResult RageSoundReader_WAV::Open( RString filename_ )
 {
 	m_sFilename = filename_;
 

@@ -8,7 +8,7 @@
 typedef struct OggVorbis_File OggVorbis_File;
 class RageFileBasic;
 
-class RageSoundReader_Vorbisfile: public SoundReader_FileReader
+class RageSoundReader_Vorbisfile: public RageSoundReader_FileReader
 {
 public:
 	OpenResult Open(RString filename);

@@ -16,9 +16,9 @@
 #include "RageSoundReader_Vorbisfile.h"
 #endif
 
-SoundReader_FileReader *SoundReader_FileReader::TryOpenFile( RString filename, RString &error, RString format, bool &bKeepTrying )
+RageSoundReader_FileReader *RageSoundReader_FileReader::TryOpenFile( RString filename, RString &error, RString format, bool &bKeepTrying )
 {
-	SoundReader_FileReader *Sample = NULL;
+	RageSoundReader_FileReader *Sample = NULL;
 
 #ifndef NO_WAV_SUPPORT
 	if( !format.CompareNoCase("wav") )
@@ -82,7 +82,7 @@ SoundReader_FileReader *SoundReader_FileReader::TryOpenFile( RString filename, R
 	return NULL;
 }
 
-RageSoundReader *SoundReader_FileReader::OpenFile( RString filename, RString &error )
+RageSoundReader *RageSoundReader_FileReader::OpenFile( RString filename, RString &error )
 {
 	{
 		RageFile TestOpen;
@@ -108,7 +108,7 @@ RageSoundReader *SoundReader_FileReader::OpenFile( RString filename, RString &er
 	/* If the extension matches a format, try that first. */
 	if( FileTypes.find(format) != FileTypes.end() )
 	{
-	    SoundReader_FileReader *NewSample = TryOpenFile( filename, error, format, bKeepTrying );
+	    RageSoundReader_FileReader *NewSample = TryOpenFile( filename, error, format, bKeepTrying );
 		if( NewSample )
 			return NewSample;
 		FileTypes.erase( format );
@@ -116,7 +116,7 @@ RageSoundReader *SoundReader_FileReader::OpenFile( RString filename, RString &er
 
 	for( set<RString>::iterator it = FileTypes.begin(); bKeepTrying && it != FileTypes.end(); ++it )
 	{
-	    SoundReader_FileReader *NewSample = TryOpenFile( filename, error, *it, bKeepTrying );
+	    RageSoundReader_FileReader *NewSample = TryOpenFile( filename, error, *it, bKeepTrying );
 		if( NewSample )
 		{
 			LOG->UserLog( "Sound file", filename, "is really %s.", it->c_str() );

@@ -407,7 +407,7 @@ void Song::TidyUpData()
 	if( HasMusic() )
 	{
 		RString error;
-		RageSoundReader *Sample = SoundReader_FileReader::OpenFile( GetMusicPath(), error );
+		RageSoundReader *Sample = RageSoundReader_FileReader::OpenFile( GetMusicPath(), error );
 		/* XXX: Checking if the music file exists eliminates a warning originating from BMS files
 		 * (which have no music file, per se) but it's something of a hack. */
 		if( Sample == NULL && m_sMusicFile != "" )

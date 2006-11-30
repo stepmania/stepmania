@@ -174,7 +174,7 @@ bool RageSound::Load( RString sSoundFilePath, bool bPrecache )
 	if( pSound == NULL )
 	{
 		RString error;
-		pSound = SoundReader_FileReader::OpenFile( sSoundFilePath, error );
+		pSound = RageSoundReader_FileReader::OpenFile( sSoundFilePath, error );
 		if( pSound == NULL )
 		{
 			LOG->Warn( "RageSound::Load: error opening sound \"%s\": %s",

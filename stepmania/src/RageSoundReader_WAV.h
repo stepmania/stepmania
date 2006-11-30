@@ -7,7 +7,7 @@
 #include "RageFile.h"
 
 struct WavReader;
-class RageSoundReader_WAV: public SoundReader_FileReader
+class RageSoundReader_WAV: public RageSoundReader_FileReader
 {
 public:
 	OpenResult Open( RString m_sFilename );

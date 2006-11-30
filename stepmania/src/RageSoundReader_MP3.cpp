@@ -626,7 +626,7 @@ RageSoundReader_MP3::~RageSoundReader_MP3()
 	delete mad;
 }
 
-SoundReader_FileReader::OpenResult RageSoundReader_MP3::Open( RString filename_ )
+RageSoundReader_FileReader::OpenResult RageSoundReader_MP3::Open( RString filename_ )
 {
 	filename = filename_;
 	if( !file.Open( filename ) )

@@ -5,7 +5,8 @@
 
 #include "RageSoundReader.h"
 
-class SoundReader_FileReader: public RageSoundReader
+#define SoundReader_FileReader RageSoundReader_FileReader
+class RageSoundReader_FileReader: public RageSoundReader
 {
 public:
 	/*
@@ -29,7 +30,7 @@ public:
 	static RageSoundReader *OpenFile( RString filename, RString &error );
 
 private:
-	static SoundReader_FileReader *TryOpenFile( RString filename, RString &error, RString format, bool &bKeepTrying );
+	static RageSoundReader_FileReader *TryOpenFile( RString filename, RString &error, RString format, bool &bKeepTrying );
 };
 
 #endif

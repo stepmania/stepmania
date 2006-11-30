@@ -72,7 +72,7 @@ static RString ov_ssprintf( int err, const char *fmt, ...)
 	return s + ssprintf( " (%s)", errstr.c_str() );
 }
 
-SoundReader_FileReader::OpenResult RageSoundReader_Vorbisfile::Open(RString filename_)
+RageSoundReader_FileReader::OpenResult RageSoundReader_Vorbisfile::Open(RString filename_)
 {
 	filename=filename_;
 
@@ -88,7 +88,7 @@ SoundReader_FileReader::OpenResult RageSoundReader_Vorbisfile::Open(RString file
 	return Open( f );
 }
 
-SoundReader_FileReader::OpenResult RageSoundReader_Vorbisfile::Open( RageFileBasic *f )
+RageSoundReader_FileReader::OpenResult RageSoundReader_Vorbisfile::Open( RageFileBasic *f )
 {
 	vf = new OggVorbis_File;
 	memset( vf, 0, sizeof(*vf) );

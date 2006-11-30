@@ -8,7 +8,7 @@
 
 struct madlib_t;
 
-class RageSoundReader_MP3: public SoundReader_FileReader
+class RageSoundReader_MP3: public RageSoundReader_FileReader
 {
 public:
 	OpenResult Open(RString filename);
