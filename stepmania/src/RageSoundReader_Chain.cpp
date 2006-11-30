@@ -224,6 +224,17 @@ bool RageSoundReader_Chain::IsStreamingFromDisk() const
 	return false;
 }
 
+bool RageSoundReader_Chain::SetProperty( const RString &sProperty, float fValue )
+{
+	bool bRet = false;
+	for( unsigned i = 0; i < m_apActiveSounds.size(); )
+	{
+		if( m_apActiveSounds[i].pSound->SetProperty(sProperty, fValue) )
+			bRet = true;
+	}
+	return bRet;
+}
+
 int RageSoundReader_Chain::GetNextSourceFrame() const
 {
 	return m_iCurrentFrame;
