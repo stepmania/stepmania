@@ -12,11 +12,11 @@ public:
 	pos_map_queue( const pos_map_queue &cpy );
 	pos_map_queue &operator=( const pos_map_queue &rhs );
 
-	/* Insert a mapping from iHardwareFrame to iStreamFrame, containing pos iGotFrames. */
-	void CommitPosition( int64_t iHardwareFrame, int iStreamFrame, int iGotFrames );
+	/* Insert a mapping from iSourceFrame to iDestFrame, containing iFrames. */
+	void CommitPosition( int64_t iSourceFrame, int iDestFrame, int iFrames );
 
-	/* Return the position for the given iFrame. */
-	int64_t Search( int64_t iFrame, bool *bApproximate ) const;
+	/* Return the iDestFrame for the given iSourceFrame. */
+	int64_t Search( int64_t iSourceFrame, bool *bApproximate ) const;
 
 	/* Erase all mappings. */
 	void Clear();

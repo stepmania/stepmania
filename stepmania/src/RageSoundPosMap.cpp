@@ -13,16 +13,16 @@ const int pos_map_backlog_frames = 100000;
 struct pos_map_t
 {
 	/* Frame number from the POV of the sound driver: */
-	int64_t m_iFrameNo;
+	int64_t m_iSourceFrame;
 
 	/* Actual sound position within the sample: */
-	int64_t m_iPosition;
+	int64_t m_iDestFrame;
 
 	/* The number of frames in this block: */
 	int64_t m_iFrames;
 
-	pos_map_t() { m_iFrameNo = 0; m_iPosition = 0; m_iFrames = 0; }
-	pos_map_t( int64_t iFrame, int iPosition, int iFrames ) { m_iFrameNo = iFrame; m_iPosition = iPosition; m_iFrames = iFrames; }
+	pos_map_t() { m_iSourceFrame = 0; m_iDestFrame = 0; m_iFrames = 0; }
+	pos_map_t( int64_t iSourceFrame, int iDestFrame, int iFrames ) { m_iSourceFrame = iSourceFrame; m_iDestFrame = iDestFrame; m_iFrames = iFrames; }
 };
 
 struct pos_map_impl
@@ -54,21 +54,21 @@ pos_map_queue &pos_map_queue::operator=( const pos_map_queue &rhs )
 	return *this;
 }
 
-void pos_map_queue::CommitPosition( int64_t iFrame, int iPosition, int iGotFrames )
+void pos_map_queue::CommitPosition( int64_t iSourceFrame, int iDestFrame, int iFrames )
 {
 	if( m_pImpl->m_Queue.size() )
 	{
 		/* Optimization: If the last entry lines up with this new entry, just merge them. */
 		pos_map_t &last = m_pImpl->m_Queue.back();
-		if( last.m_iFrameNo+last.m_iFrames == iFrame &&
-		    last.m_iPosition+last.m_iFrames == iPosition )
+		if( last.m_iSourceFrame+last.m_iFrames == iSourceFrame &&
+		    last.m_iDestFrame+last.m_iFrames == iDestFrame )
 		{
-			last.m_iFrames += iGotFrames;
+			last.m_iFrames += iFrames;
 			return;
 		}
 	}
 
-	m_pImpl->m_Queue.push_back( pos_map_t(iFrame, iPosition, iGotFrames) );
+	m_pImpl->m_Queue.push_back( pos_map_t(iSourceFrame, iDestFrame, iFrames) );
 	
 	m_pImpl->Cleanup();
 }
@@ -89,7 +89,7 @@ void pos_map_impl::Cleanup()
 	}
 }
 
-int64_t pos_map_queue::Search( int64_t iFrame, bool *bApproximate ) const
+int64_t pos_map_queue::Search( int64_t iSourceFrame, bool *bApproximate ) const
 {
 	if( IsEmpty() )
 	{
@@ -98,37 +98,37 @@ int64_t pos_map_queue::Search( int64_t iFrame, bool *bApproximate ) const
 		return 0;
 	}
 
-	/* iFrame is probably in pos_map.  Search to figure out what position
+	/* iSourceFrame is probably in pos_map.  Search to figure out what position
 	 * it maps to. */
 	int64_t iClosestPosition = 0, iClosestPositionDist = INT_MAX;
 	int iClosestBlock = 0; /* print only */
 	for( unsigned i = 0; i < m_pImpl->m_Queue.size(); ++i )
 	{
-		if( iFrame >= m_pImpl->m_Queue[i].m_iFrameNo &&
-			iFrame < m_pImpl->m_Queue[i].m_iFrameNo+m_pImpl->m_Queue[i].m_iFrames )
+		if( iSourceFrame >= m_pImpl->m_Queue[i].m_iSourceFrame &&
+			iSourceFrame < m_pImpl->m_Queue[i].m_iSourceFrame+m_pImpl->m_Queue[i].m_iFrames )
 		{
-			/* iFrame lies in this block; it's an exact match.  Figure
+			/* iSourceFrame lies in this block; it's an exact match.  Figure
 			 * out the exact position. */
-			int64_t diff = m_pImpl->m_Queue[i].m_iPosition - m_pImpl->m_Queue[i].m_iFrameNo;
-			return iFrame + diff;
+			int64_t diff = m_pImpl->m_Queue[i].m_iDestFrame - m_pImpl->m_Queue[i].m_iSourceFrame;
+			return iSourceFrame + diff;
 		}
 
 		/* See if the current position is close to the beginning of this block. */
-		int64_t dist = llabs( m_pImpl->m_Queue[i].m_iFrameNo - iFrame );
+		int64_t dist = llabs( m_pImpl->m_Queue[i].m_iSourceFrame - iSourceFrame );
 		if( dist < iClosestPositionDist )
 		{
 			iClosestPositionDist = dist;
 			iClosestBlock = i;
-			iClosestPosition = m_pImpl->m_Queue[i].m_iPosition;
+			iClosestPosition = m_pImpl->m_Queue[i].m_iDestFrame;
 		}
 
 		/* See if the current position is close to the end of this block. */
-		dist = llabs( m_pImpl->m_Queue[i].m_iFrameNo + m_pImpl->m_Queue[i].m_iFrames - iFrame );
+		dist = llabs( m_pImpl->m_Queue[i].m_iSourceFrame + m_pImpl->m_Queue[i].m_iFrames - iSourceFrame );
 		if( dist < iClosestPositionDist )
 		{
 			iClosestPositionDist = dist;
 			iClosestBlock = i;
-			iClosestPosition = m_pImpl->m_Queue[i].m_iPosition + m_pImpl->m_Queue[i].m_iFrames;
+			iClosestPosition = m_pImpl->m_Queue[i].m_iDestFrame + m_pImpl->m_Queue[i].m_iFrames;
 		}
 	}
 
@@ -152,7 +152,7 @@ int64_t pos_map_queue::Search( int64_t iFrame, bool *bApproximate ) const
 	{
 		last.GetDeltaTime();
 		LOG->Trace( "Approximate sound time: driver frame " LI ", m_pImpl->m_Queue frame " LI ".." LI " (dist " LI "), closest position is " LI,
-			iFrame, m_pImpl->m_Queue[iClosestBlock].m_iFrameNo, m_pImpl->m_Queue[iClosestBlock].m_iFrameNo+m_pImpl->m_Queue[iClosestBlock].m_iFrames,
+			iSourceFrame, m_pImpl->m_Queue[iClosestBlock].m_iSourceFrame, m_pImpl->m_Queue[iClosestBlock].m_iSourceFrame+m_pImpl->m_Queue[iClosestBlock].m_iFrames,
 			iClosestPositionDist, iClosestPosition );
 	}
 
