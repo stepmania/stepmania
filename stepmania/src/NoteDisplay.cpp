@@ -28,7 +28,10 @@ static const char *NotePartNames[] = {
 };
 XToString( NotePart );
 
-static const RageVector2 g_emptyVector = RageVector2( 0, 0 );
+static bool IsVectorZero( const RageVector2 &v )
+{
+	return v.x == 0  &&  v.y == 0;
+}
 
 // Don't require that NoteSkins have more than 8 colors.  Using 9 colors to display 192nd notes
 // would double the number of texture memory needed for many NoteSkin graphics versus just having
@@ -41,6 +44,7 @@ struct NoteMetricCache_t
 	bool m_bDrawHoldHeadForTapsOnSameRow;
 	float m_fAnimationLengthInBeats[NUM_NotePart];
 	bool m_bAnimationIsVivid[NUM_NotePart];
+	RageVector2 m_fTextureCoordOffset[NUM_NotePart];
 	RageVector2 m_fNoteColorTextureCoordSpacing[NUM_NotePart];
 
 	bool m_bHoldHeadIsAboveWavyParts;
@@ -68,6 +72,8 @@ void NoteMetricCache_t::Load( const RString &sButton )
 		const RString &s = NotePartToString(p);
 		m_fAnimationLengthInBeats[p] = NOTESKIN->GetMetricF(sButton,s+"AnimationLengthInBeats");
 		m_bAnimationIsVivid[p] = NOTESKIN->GetMetricB(sButton,s+"AnimationIsVivid");
+		m_fTextureCoordOffset[p].x = NOTESKIN->GetMetricF(sButton,s+"TextureCoordOffsetX");
+		m_fTextureCoordOffset[p].y = NOTESKIN->GetMetricF(sButton,s+"TextureCoordOffsetY");
 		m_fNoteColorTextureCoordSpacing[p].x = NOTESKIN->GetMetricF(sButton,s+"NoteColorTextureCoordSpacingX");
 		m_fNoteColorTextureCoordSpacing[p].y = NOTESKIN->GetMetricF(sButton,s+"NoteColorTextureCoordSpacingY");
 	}
@@ -731,12 +737,13 @@ void NoteDisplay::DrawHoldTail( const TapNote& tn, int iCol, int iRow, bool bIsB
 	pSprTail->SetXY( fX, fY );
 	pSprTail->SetZ( fZ );
 	
-	if( cache->m_fNoteColorTextureCoordSpacing[NotePart_HoldTail] != g_emptyVector )
+	NotePart part = NotePart_HoldTail;
+	if( !IsVectorZero(cache->m_fTextureCoordOffset[part]) || !IsVectorZero(cache->m_fNoteColorTextureCoordSpacing[part]) )
 	{
 		DISPLAY->TexturePushMatrix();
 		NoteType nt = GetNoteType( iRow );
 		ENUM_CLAMP( nt, (NoteType)0, MAX_DISPLAY_NOTE_TYPE );
-		DISPLAY->TextureTranslate( cache->m_fNoteColorTextureCoordSpacing[NotePart_HoldTail]*(float)nt );
+		DISPLAY->TextureTranslate( cache->m_fTextureCoordOffset[part] + cache->m_fNoteColorTextureCoordSpacing[part]*(float)nt );
 	}
 
 	if( bGlow )
@@ -769,7 +776,7 @@ void NoteDisplay::DrawHoldTail( const TapNote& tn, int iCol, int iRow, bool bIsB
 		DISPLAY->SetLighting( false );
 	}
 
-	if( cache->m_fNoteColorTextureCoordSpacing[NotePart_HoldTail] != g_emptyVector )
+	if( !IsVectorZero(cache->m_fTextureCoordOffset[part]) || !IsVectorZero(cache->m_fNoteColorTextureCoordSpacing[part]) )
 	{
 		DISPLAY->TexturePopMatrix();
 	}
@@ -801,12 +808,13 @@ void NoteDisplay::DrawHoldHead( const TapNote& tn, int iCol, int iRow, bool bIsB
 	pActor->SetXY( fX, fY );
 	pActor->SetZ( fZ );
 
-	if( cache->m_fNoteColorTextureCoordSpacing[NotePart_HoldHead] != g_emptyVector )
+	NotePart part = NotePart_HoldHead;
+	if( !IsVectorZero(cache->m_fTextureCoordOffset[part]) || !IsVectorZero(cache->m_fNoteColorTextureCoordSpacing[part]) )
 	{
 		DISPLAY->TexturePushMatrix();
 		NoteType nt = GetNoteType( iRow );
 		ENUM_CLAMP( nt, (NoteType)0, MAX_DISPLAY_NOTE_TYPE );
-		DISPLAY->TextureTranslate( cache->m_fNoteColorTextureCoordSpacing[NotePart_HoldHead]*(float)nt );
+		DISPLAY->TextureTranslate( cache->m_fTextureCoordOffset[part] + cache->m_fNoteColorTextureCoordSpacing[part]*(float)nt );
 	}
 
 	if( bGlow )
@@ -839,7 +847,7 @@ void NoteDisplay::DrawHoldHead( const TapNote& tn, int iCol, int iRow, bool bIsB
 		DISPLAY->SetLighting( false );
 	}
 
-	if( cache->m_fNoteColorTextureCoordSpacing[NotePart_HoldHead] != g_emptyVector )
+	if( !IsVectorZero(cache->m_fTextureCoordOffset[part]) || !IsVectorZero(cache->m_fNoteColorTextureCoordSpacing[part]) )
 	{
 		DISPLAY->TexturePopMatrix();
 	}
@@ -942,12 +950,12 @@ void NoteDisplay::DrawActor( Actor* pActor, int iCol, float fBeat, float fPercen
 	pActor->SetGlow( glow );
 	pActor->SetZoom( fZoom );
 
-	if( cache->m_fNoteColorTextureCoordSpacing[part] != g_emptyVector )
+	if( !IsVectorZero(cache->m_fTextureCoordOffset[part]) || !IsVectorZero(cache->m_fNoteColorTextureCoordSpacing[part]) )
 	{
 		DISPLAY->TexturePushMatrix();
 		NoteType nt = BeatToNoteType( fBeat );
 		ENUM_CLAMP( nt, (NoteType)0, MAX_DISPLAY_NOTE_TYPE );
-		DISPLAY->TextureTranslate( cache->m_fNoteColorTextureCoordSpacing[part]*(float)nt );
+		DISPLAY->TextureTranslate( cache->m_fTextureCoordOffset[part] + cache->m_fNoteColorTextureCoordSpacing[part]*(float)nt );
 	}
 
 	if( bUseLighting )
@@ -969,7 +977,7 @@ void NoteDisplay::DrawActor( Actor* pActor, int iCol, float fBeat, float fPercen
 		DISPLAY->SetLighting( false );
 	}
 
-	if( cache->m_fNoteColorTextureCoordSpacing[part] != g_emptyVector )
+	if( !IsVectorZero(cache->m_fTextureCoordOffset[part]) || !IsVectorZero(cache->m_fNoteColorTextureCoordSpacing[part]) )
 	{
 		DISPLAY->TexturePopMatrix();
 	}
@@ -997,6 +1005,7 @@ void NoteDisplay::DrawTap( int iCol, float fBeat, bool bOnSameRowAsHoldStart, bo
 	{
 		pActor = GetTapActor( m_TapAddition, NotePart_Addition, fBeat );
 		bUseLighting = cache->m_bTapAdditionUseLighting;
+		part = NotePart_Addition;
 	}
 	else if( bOnSameRowAsHoldStart  &&  cache->m_bDrawHoldHeadForTapsOnSameRow )
 	{
