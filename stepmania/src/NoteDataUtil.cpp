@@ -686,17 +686,17 @@ void NoteDataUtil::CalculateRadarValues( const NoteData &in, float fSongSeconds,
 	{
 		switch( rc )
 		{
-		case RadarCategory_Stream:				out[rc] = GetStreamRadarValue( in, fSongSeconds );	break;	
-		case RadarCategory_Voltage:				out[rc] = GetVoltageRadarValue( in, fSongSeconds );	break;
-		case RadarCategory_Air:					out[rc] = GetAirRadarValue( in, fSongSeconds );		break;
-		case RadarCategory_Freeze:				out[rc] = GetFreezeRadarValue( in, fSongSeconds );	break;
-		case RadarCategory_Chaos:				out[rc] = GetChaosRadarValue( in, fSongSeconds );	break;
+		case RadarCategory_Stream:		out[rc] = GetStreamRadarValue( in, fSongSeconds );	break;	
+		case RadarCategory_Voltage:		out[rc] = GetVoltageRadarValue( in, fSongSeconds );	break;
+		case RadarCategory_Air:			out[rc] = GetAirRadarValue( in, fSongSeconds );		break;
+		case RadarCategory_Freeze:		out[rc] = GetFreezeRadarValue( in, fSongSeconds );	break;
+		case RadarCategory_Chaos:		out[rc] = GetChaosRadarValue( in, fSongSeconds );	break;
 		case RadarCategory_TapsAndHolds:	out[rc] = (float) in.GetNumRowsWithTapOrHoldHead();	break;
-		case RadarCategory_Jumps:			out[rc] = (float) in.GetNumJumps();					break;
-		case RadarCategory_Holds:			out[rc] = (float) in.GetNumHoldNotes();				break;
-		case RadarCategory_Mines:			out[rc] = (float) in.GetNumMines();					break;
-		case RadarCategory_Hands:			out[rc] = (float) in.GetNumHands();					break;
-		case RadarCategory_Rolls:			out[rc] = (float) in.GetNumRolls();					break;
+		case RadarCategory_Jumps:		out[rc] = (float) in.GetNumJumps();			break;
+		case RadarCategory_Holds:		out[rc] = (float) in.GetNumHoldNotes();			break;
+		case RadarCategory_Mines:		out[rc] = (float) in.GetNumMines();			break;
+		case RadarCategory_Hands:		out[rc] = (float) in.GetNumHands();			break;
+		case RadarCategory_Rolls:		out[rc] = (float) in.GetNumRolls();			break;
 		default:	ASSERT(0);
 		}
 	}
@@ -2177,6 +2177,32 @@ bool NoteDataUtil::GetPrevEditorPosition( const NoteData& in, int &rowInOut )
 
 	rowInOut = iClosestPrevRow;
 	return true;
+}
+
+void NoteDataUtil::SetHopoPossibleFlags( const Song *pSong, NoteData& ndInOut )
+{
+	float fLastRowMusicSeconds = -1;
+	int iLastTapTrackOfLastRow = -1;
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS( ndInOut, r )
+	{
+		float fBeat = NoteRowToBeat( r );
+		float fSeconds = pSong->GetElapsedTimeFromBeat( fBeat );
+
+		int iLastTapTrack = ndInOut.GetLastTrackWithTapOrHoldHead( r );
+		if( iLastTapTrack != -1  &&  fSeconds <= fLastRowMusicSeconds + HOPO_CHAIN_SECONDS )
+		{
+			int iNumNotesInRow = ndInOut.GetNumTapNotesInRow( r );
+			TapNote &tn = ndInOut.FindTapNote( iLastTapTrack, r )->second;
+		
+			if( iNumNotesInRow == 1  &&  iLastTapTrack != iLastTapTrackOfLastRow )
+			{
+				tn.bHopoPossible = true;
+			}
+		}
+
+		fLastRowMusicSeconds = fSeconds;
+		iLastTapTrackOfLastRow = iLastTapTrack;
+	}
 }
 
 

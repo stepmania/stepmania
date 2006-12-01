@@ -290,6 +290,17 @@ int NoteData::GetFirstTrackWithTapOrHoldHead( int row ) const
 	return -1;
 }
 
+int NoteData::GetLastTrackWithTapOrHoldHead( int row ) const
+{
+	for( int t=GetNumTracks()-1; t>=0; t-- )
+	{
+		const TapNote &tn = GetTapNote( t, row );
+		if( tn.type == TapNote::tap || tn.type == TapNote::hold_head )
+			return t;
+	}
+	return -1;
+}
+
 void NoteData::AddHoldNote( int iTrack, int iStartRow, int iEndRow, TapNote tn )
 {
 	ASSERT( iStartRow>=0 && iEndRow>=0 );

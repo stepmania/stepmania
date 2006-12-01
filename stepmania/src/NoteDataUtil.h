@@ -116,6 +116,8 @@ namespace NoteDataUtil
 
 	bool GetNextEditorPosition( const NoteData& in, int &rowInOut );
 	bool GetPrevEditorPosition( const NoteData& in, int &rowInOut );
+
+	void SetHopoPossibleFlags( const Song *pSong, NoteData& ndInOut );
 };
 
 #endif

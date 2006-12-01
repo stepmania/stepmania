@@ -8,6 +8,8 @@
 #include <set>
 #include <iterator>
 
+static const float HOPO_CHAIN_SECONDS = 0.5f;
+
 #define FOREACH_NONEMPTY_ROW_IN_TRACK( nd, track, row ) \
 	for( int row = -1; (nd).GetNextTapNoteRowForTrack(track,row); )
 #define FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( nd, track, row, start, last ) \
@@ -164,6 +166,7 @@ public:
 	int GetNumTracksWithTapOrHoldHead( int row ) const;
 	int GetFirstTrackWithTap( int row ) const;
 	int GetFirstTrackWithTapOrHoldHead( int row ) const;
+	int GetLastTrackWithTapOrHoldHead( int row ) const;
 
 	inline bool IsThereATapAtRow( int row ) const			{ return GetFirstTrackWithTap( row ) != -1; }
 	inline bool IsThereATapOrHoldHeadAtRow( int row ) const		{ return GetFirstTrackWithTapOrHoldHead( row ) != -1; }

@@ -97,6 +97,7 @@ struct TapNote
 	Source		source;
 	TapNoteResult	result;
 	PlayerNumber	pn;
+	bool		bHopoPossible;
 	
 	// attack only
 	RString		sAttackModifiers;
@@ -113,7 +114,7 @@ struct TapNote
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
 
-	TapNote() : type(empty), subType(SubType_invalid), source(original), pn(PLAYER_INVALID),
+	TapNote() : type(empty), subType(SubType_invalid), source(original), pn(PLAYER_INVALID), bHopoPossible(false),
 		fAttackDurationSeconds(0.f), iKeysoundIndex(-1), iDuration(0)  { }
 	TapNote( 
 		Type type_,

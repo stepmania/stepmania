@@ -48,7 +48,6 @@ RString ATTACK_DISPLAY_X_NAME( size_t p, size_t both_sides )	{ return "AttackDis
 /* Distance to search for a note in Step(), in seconds. */
 static const float StepSearchDistance = 1.0f;
 static const float JUMP_WINDOW_SECONDS = 0.25f;
-static const float HOPO_CHAIN_SECONDS = 0.5f;
 
 void TimingWindowSecondsInit( size_t /*TimingWindow*/ i, RString &sNameOut, float &defaultValueOut )
 {
@@ -392,6 +391,9 @@ void Player::Load()
 	/* Apply transforms. */
 	NoteDataUtil::TransformNoteData( m_NoteData, m_pPlayerState->m_PlayerOptions.GetStage(), GAMESTATE->GetCurrentStyle()->m_StepsType );
 	
+	const Song* pSong = GAMESTATE->m_pCurSong;
+	NoteDataUtil::SetHopoPossibleFlags( pSong, m_NoteData );
+	
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_RAVE:
@@ -459,7 +461,6 @@ void Player::Load()
 	// We don't have to load separate copies to set player fade: always make a copy, and set the
 	// fade on the copy.
 	//
-	const Song* pSong = GAMESTATE->m_pCurSong;
 	RString sSongDir = pSong->GetSongDir();
 	m_vKeysounds.resize( pSong->m_vsKeysoundFile.size() );
 

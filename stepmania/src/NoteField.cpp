@@ -842,6 +842,8 @@ void NoteField::DrawPrimitives()
 				bIsInSelectionRange = m_iBeginMarker<=i && i<m_iEndMarker;
 
 			bool bIsAddition = (tn.source == TapNote::addition);
+			bool bIsHopoPossible = (tn.bHopoPossible);
+			bool bUseAdditionColoring = bIsAddition || bIsHopoPossible;
 			bool bIsMine = (tn.type == TapNote::mine);
 			bool bIsAttack = (tn.type == TapNote::attack);
 			bool bIsLift = (tn.type == TapNote::lift);
@@ -856,7 +858,7 @@ void NoteField::DrawPrimitives()
 			}
 			else
 			{
-				displayCols->display[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bIsAddition, bIsMine, bIsLift, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels, iDrawDistanceBeforeTargetsPixels, FADE_BEFORE_TARGETS_PERCENT );
+				displayCols->display[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bUseAdditionColoring, bIsMine, bIsLift, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels, iDrawDistanceBeforeTargetsPixels, FADE_BEFORE_TARGETS_PERCENT );
 			}
 		}
 	}
