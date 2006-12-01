@@ -271,7 +271,7 @@ int RageSound::GetData( char *pBuffer, int iFrames )
 	{
 		/* We havn't *really* started playing yet, so just feed silence.  How
 		 * many more bytes of silence do we need? */
-		iSourceFrame =  -m_iSourceFrame;
+		iSourceFrame = m_iSourceFrame;
 		iGotFrames = -m_iSourceFrame;
 		iGotFrames = min( iGotFrames, iFrames );
 		memset( pBuffer, 0, iGotFrames*framesize );
