@@ -623,8 +623,6 @@ static int g_iLastInsertTapAttackTrack = -1;
 static float g_fLastInsertAttackDurationSeconds = -1;
 static float g_fLastInsertAttackPositionSeconds = -1;
 static BackgroundLayer g_CurrentBGChangeLayer = BACKGROUND_LAYER_Invalid;
-static const RString EDITOR_NOTE_SKIN = "note";
-static bool s_bChangedNoteSkin = false;
 
 static void SetDefaultEditorNoteSkin( size_t num, RString &sNameOut, RString &defaultValueOut )
 {
