@@ -559,6 +559,55 @@ RString join( const RString &sDelimitor, vector<RString>::const_iterator begin, 
 	return sRet;
 }
 
+RString SmEscape( const RString &sUnescaped )
+{
+	return SmEscape( sUnescaped.c_str(), sUnescaped.size() );
+}
+
+RString SmEscape( const char *cUnescaped, int len )
+{
+	RString answer = "";
+	for( int i = 0; i < len; ++i )
+	{
+		if( cUnescaped[i] == '=' || cUnescaped[i] == '\\' || cUnescaped[i] == ':' ||
+		    cUnescaped[i] == '[' || cUnescaped[i] == ']' || cUnescaped[i] == ';' ||
+		    cUnescaped[i] == '#' || cUnescaped[i] == '\r' || cUnescaped[i] == '\n' ||
+		    cUnescaped[i] == ',' )
+		    answer += "\\";
+		answer += cUnescaped[i];
+	}
+	return answer;
+}
+
+RString DwiEscape( const RString &sUnescaped )
+{
+	return DwiEscape( sUnescaped.c_str(), sUnescaped.size() );
+}
+
+RString DwiEscape( const char *cUnescaped, int len )
+{
+	RString answer = "";
+	for( int i = 0; i < len; ++i )
+	{
+		switch( cUnescaped[i] )
+		{
+		case '=': answer += '-'; break;
+		case '\\':
+		case ':':
+		case '[':
+		case ']':
+		case ';': answer += 'I'; break;
+		case '#':
+		case '\r':
+		case '\n':
+		case ',': answer += ' '; break;
+		default: answer += cUnescaped[i];
+		}
+	}
+	return answer;
+}
+
+
 template <class S>
 static int DelimitorLength( const S &Delimitor )
 {

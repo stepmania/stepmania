@@ -18,10 +18,12 @@
 
 static RString BackgroundChangeToString( const BackgroundChange &bgc )
 {
+	// TODO: Technically we need to double-escape the filename (because it might contain '=') and then
+	// unescape the value returned by the MsdFile.
 	RString s = ssprintf( 
 		"%.3f=%s=%.3f=%d=%d=%d=%s=%s=%s=%s=%s", 
 		bgc.m_fStartBeat, 
-		bgc.m_def.m_sFile1.c_str(), 
+		SmEscape(bgc.m_def.m_sFile1).c_str(), 
 		bgc.m_fRate, 
 		bgc.m_sTransition == SBT_CrossFade,		// backward compat
 		bgc.m_def.m_sEffect == SBE_StretchRewind, 	// backward compat
@@ -29,28 +31,27 @@ static RString BackgroundChangeToString( const BackgroundChange &bgc )
 		bgc.m_def.m_sEffect.c_str(), 
 		bgc.m_def.m_sFile2.c_str(), 
 		bgc.m_sTransition.c_str(),
-		bgc.m_def.m_sColor1.c_str(),
-		bgc.m_def.m_sColor2.c_str()
+		SmEscape(bgc.m_def.m_sColor1).c_str(),
+		SmEscape(bgc.m_def.m_sColor2).c_str()
 		);
-	s.Replace( ',', '^' );	// UGLY: escape "," in colors.
 	return s;
 }
 
 static void WriteGlobalTags( RageFile &f, const Song &out )
 {
-	f.PutLine( ssprintf( "#TITLE:%s;", out.m_sMainTitle.c_str() ) );
-	f.PutLine( ssprintf( "#SUBTITLE:%s;", out.m_sSubTitle.c_str() ) );
-	f.PutLine( ssprintf( "#ARTIST:%s;", out.m_sArtist.c_str() ) );
-	f.PutLine( ssprintf( "#TITLETRANSLIT:%s;", out.m_sMainTitleTranslit.c_str() ) );
-	f.PutLine( ssprintf( "#SUBTITLETRANSLIT:%s;", out.m_sSubTitleTranslit.c_str() ) );
-	f.PutLine( ssprintf( "#ARTISTTRANSLIT:%s;", out.m_sArtistTranslit.c_str() ) );
-	f.PutLine( ssprintf( "#GENRE:%s;", out.m_sGenre.c_str() ) );
-	f.PutLine( ssprintf( "#CREDIT:%s;", out.m_sCredit.c_str() ) );
-	f.PutLine( ssprintf( "#BANNER:%s;", out.m_sBannerFile.c_str() ) );
-	f.PutLine( ssprintf( "#BACKGROUND:%s;", out.m_sBackgroundFile.c_str() ) );
-	f.PutLine( ssprintf( "#LYRICSPATH:%s;", out.m_sLyricsFile.c_str() ) );
-	f.PutLine( ssprintf( "#CDTITLE:%s;", out.m_sCDTitleFile.c_str() ) );
-	f.PutLine( ssprintf( "#MUSIC:%s;", out.m_sMusicFile.c_str() ) );
+	f.PutLine( ssprintf( "#TITLE:%s;", SmEscape(out.m_sMainTitle).c_str() ) );
+	f.PutLine( ssprintf( "#SUBTITLE:%s;", SmEscape(out.m_sSubTitle).c_str() ) );
+	f.PutLine( ssprintf( "#ARTIST:%s;", SmEscape(out.m_sArtist).c_str() ) );
+	f.PutLine( ssprintf( "#TITLETRANSLIT:%s;", SmEscape(out.m_sMainTitleTranslit).c_str() ) );
+	f.PutLine( ssprintf( "#SUBTITLETRANSLIT:%s;", SmEscape(out.m_sSubTitleTranslit).c_str() ) );
+	f.PutLine( ssprintf( "#ARTISTTRANSLIT:%s;", SmEscape(out.m_sArtistTranslit).c_str() ) );
+	f.PutLine( ssprintf( "#GENRE:%s;", SmEscape(out.m_sGenre).c_str() ) );
+	f.PutLine( ssprintf( "#CREDIT:%s;", SmEscape(out.m_sCredit).c_str() ) );
+	f.PutLine( ssprintf( "#BANNER:%s;", SmEscape(out.m_sBannerFile).c_str() ) );
+	f.PutLine( ssprintf( "#BACKGROUND:%s;", SmEscape(out.m_sBackgroundFile).c_str() ) );
+	f.PutLine( ssprintf( "#LYRICSPATH:%s;", SmEscape(out.m_sLyricsFile).c_str() ) );
+	f.PutLine( ssprintf( "#CDTITLE:%s;", SmEscape(out.m_sCDTitleFile).c_str() ) );
+	f.PutLine( ssprintf( "#MUSIC:%s;", SmEscape(out.m_sMusicFile).c_str() ) );
 	f.PutLine( ssprintf( "#OFFSET:%.3f;", out.m_Timing.m_fBeat0OffsetInSeconds ) );
 	f.PutLine( ssprintf( "#SAMPLESTART:%.3f;", out.m_fMusicSampleStartSeconds ) );
 	f.PutLine( ssprintf( "#SAMPLELENGTH:%.3f;", out.m_fMusicSampleLengthSeconds ) );
@@ -164,11 +165,12 @@ static RString GetSMNotesTag( const Song &song, const Steps &in, bool bSavingCac
 	vector<RString> lines;
 
 	lines.push_back( "" );
+	// Escape to prevent some clown from making a comment of "\r\n;"
 	lines.push_back( ssprintf("//---------------%s - %s----------------",
-		GameManager::StepsTypeToString(in.m_StepsType).c_str(), in.GetDescription().c_str()) );
+		GameManager::StepsTypeToString(in.m_StepsType).c_str(), SmEscape(in.GetDescription()).c_str()) );
 	lines.push_back( song.m_vsKeysoundFile.empty() ? "#NOTES:" : "#NOTES2:" );
 	lines.push_back( ssprintf( "     %s:", GameManager::StepsTypeToString(in.m_StepsType).c_str() ) );
-	lines.push_back( ssprintf( "     %s:", in.GetDescription().c_str() ) );
+	lines.push_back( ssprintf( "     %s:", SmEscape(in.GetDescription()).c_str() ) );
 	lines.push_back( ssprintf( "     %s:", DifficultyToString(in.GetDifficulty()).c_str() ) );
 	lines.push_back( ssprintf( "     %d:", in.GetMeter() ) );
 	

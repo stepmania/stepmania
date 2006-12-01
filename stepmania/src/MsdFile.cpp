@@ -10,19 +10,15 @@
  * #VALUE:PARAM1
  * #VALUE2:PARAM2
  * we'll recover.
- *
- * TODO: Normal text fields need some way of escaping.  We need to be able to escape
- * colons and "//".  Also, we should escape #s, so if we really want to put a # at the
- * beginning of a line, we can. 
  */
 
 #include "global.h"
 #include "MsdFile.h"
+#include "RageFile.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-#include "RageFile.h"
 
-void MsdFile::AddParam( char *buf, int len )
+void MsdFile::AddParam( const char *buf, int len )
 {
 	values.back().params.push_back( RString(buf, len) );
 }
@@ -33,22 +29,21 @@ void MsdFile::AddValue() /* (no extra charge) */
 	values.back().params.reserve( 32 );
 }
 
-void MsdFile::ReadBuf( char *buf, int len )
+void MsdFile::ReadBuf( const char *buf, int len, bool bUnescape )
 {
 	values.reserve( 64 );
 
-	int value_start = -1;
-
 	bool ReadingValue=false;
 	int i = 0;
+	char *cProcessed = new char[len];
+	int iProcessedLen = -1;
 	while( i < len )
 	{
 		if( i+1 < len && buf[i] == '/' && buf[i+1] == '/' )
 		{
-			/* //; erase with spaces until newline */
+			/* Skip a comment entirely; don't copy the comment to the value/parameter */
 			do
 			{
-				buf[i] = ' ';
 				i++;
 			} while( i < len && buf[i] != '\n' );
 
@@ -62,11 +57,14 @@ void MsdFile::ReadBuf( char *buf, int len )
 			 * missed the ;.  Back up and end the value. */
 			/* Make sure this # is the first non-whitespace character on the line. */
 			bool FirstChar = true;
-			int j;
-			for( j = i-1; j >= 0 && !strchr("\r\n", buf[j]); --j )
+			int j = iProcessedLen;
+			while( j > 0 && cProcessed[j - 1] != '\r' && cProcessed[j - 1] != '\n' )
 			{
-				if(buf[j] == ' ' || buf[j] == '\t')
+				if( cProcessed[j - 1] == ' ' || cProcessed[j - 1] == '\t' )
+				{
+					--j;
 					continue;
+				}
 
 				FirstChar = false;
 				break;
@@ -74,16 +72,20 @@ void MsdFile::ReadBuf( char *buf, int len )
 
 			if( !FirstChar )
 			{
-				/* Oops, we're not; handle this like a regular character. */
-				i++;
+				/* We're not the first char on a line.  Treat it as if it were a normal character. */
+				cProcessed[iProcessedLen++] = buf[i++];
 				continue;
 			}
 
 			/* Skip newlines and whitespace before adding the value. */
-			while( j >= 1 && strchr("\r\n", buf[j-1]) )
-				--j;
+			iProcessedLen = j;
+			while( iProcessedLen > 0 &&
+			       ( cProcessed[iProcessedLen - 1] == '\r' || cProcessed[iProcessedLen - 1] == '\n' ||
+			         cProcessed[iProcessedLen - 1] == ' ' || cProcessed[iProcessedLen - 1] == '\t' ) )
+				--iProcessedLen;
 
-			AddParam( buf+value_start, j - value_start );
+			AddParam( cProcessed, iProcessedLen );
+			iProcessedLen = 0;
 			ReadingValue=false;
 		}
 
@@ -96,36 +98,52 @@ void MsdFile::ReadBuf( char *buf, int len )
 
 		if( !ReadingValue )
 		{
-			i++;
+			if( bUnescape && buf[i] == '\\' )
+				i += 2;
+			else
+				++i;
 			continue; /* nothing else is meaningful outside of a value */
 		}
 
 		/* : and ; end the current param, if any. */
-		if( value_start != -1 && (buf[i] == ':' || buf[i] == ';') )
-			AddParam(buf+value_start, i - value_start);
+		if( iProcessedLen != -1 && (buf[i] == ':' || buf[i] == ';') )
+			AddParam( cProcessed, iProcessedLen );
 
 		/* # and : begin new params. */
 		if( buf[i] == '#' || buf[i] == ':' )
 		{
-			i++; /* skip */
-			value_start = i;
+			++i;
+			iProcessedLen = 0;
 			continue;
 		}
 
 		/* ; ends the current value. */
 		if( buf[i] == ';' )
+		{
 			ReadingValue=false;
+			++i;
+			continue;
+		}
 
-		i++;
+		/* We've gone through all the control characters.  All that is left is either an escaped character, 
+		 * ie \#, \\, \:, etc., or a regular character. */
+		if( bUnescape && i < len && buf[i] == '\\' )
+			++i;
+		if( i < len )
+		{
+			cProcessed[iProcessedLen++] = buf[i++];
+		}
 	}
 	
 	/* Add any unterminated value at the very end. */
 	if( ReadingValue )
-		AddParam( buf+value_start, i - value_start );
+		AddParam( cProcessed, iProcessedLen );
+
+	delete [] cProcessed;
 }
 
 // returns true if successful, false otherwise
-bool MsdFile::ReadFile( RString sNewPath )
+bool MsdFile::ReadFile( RString sNewPath, bool bUnescape )
 {
 	error = "";
 
@@ -148,18 +166,14 @@ bool MsdFile::ReadFile( RString sNewPath )
 		return false;
 	}
 
-	ReadBuf( (char*) FileString.c_str(), iBytesRead );
+	ReadBuf( FileString.c_str(), iBytesRead, bUnescape );
 
 	return true;
 }
 
-void MsdFile::ReadFromString( const RString &sString )
+void MsdFile::ReadFromString( const RString &sString, bool bUnescape )
 {
-	/* Be careful.  ReadBuf modifies the buffer given to it. */
-	char *pCopy = new char[sString.size()];
-	memcpy( pCopy, sString.data(), sString.size() );
-	ReadBuf( pCopy, sString.size() );
-	delete [] pCopy;
+	ReadBuf( sString.c_str(), sString.size(), bUnescape );
 }
 
 RString MsdFile::GetParam(unsigned val, unsigned par) const
@@ -171,7 +185,7 @@ RString MsdFile::GetParam(unsigned val, unsigned par) const
 }
 
 /*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
+ * (c) 2001-2006 Chris Danford, Glenn Maynard
  *
  * All rights reserved.
  * 

@@ -39,7 +39,7 @@ static CourseDifficulty CRSStringToDifficulty( const RString& s )
 bool CourseLoaderCRS::LoadFromBuffer( const RString &sPath, const RString &sBuffer, Course &out )
 {
 	MsdFile msd;
-	msd.ReadFromString( sBuffer );
+	msd.ReadFromString( sBuffer, false );  // don't unescape
 	return LoadFromMsd( sPath, msd, out, true );
 }
 
@@ -352,7 +352,7 @@ bool CourseLoaderCRS::LoadFromCRSFile( const RString &_sPath, Course &out )
 	}
 
 	MsdFile msd;
-	if( !msd.ReadFile(sPath) )
+	if( !msd.ReadFile( sPath, false ) ) // don't unescape
 	{
 		
 		LOG->UserLog( "Course file", sPath, "couldn't be opened: %s.", msd.GetError().c_str() );
@@ -389,7 +389,7 @@ bool CourseLoaderCRS::LoadEditFromFile( const RString &sEditFilePath, ProfileSlo
 	}
 
 	MsdFile msd;
-	if( !msd.ReadFile( sEditFilePath ) )
+	if( !msd.ReadFile( sEditFilePath, false ) )  // don't unescape
 	{
 		LOG->UserLog( "Edit file", sEditFilePath, "couldn't be opened: %s", msd.GetError().c_str() );
 		return false;

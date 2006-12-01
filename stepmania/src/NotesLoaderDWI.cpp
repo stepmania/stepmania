@@ -362,7 +362,7 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 	m_sLoadingFile = sPath;
 
 	MsdFile msd;
-	if( !msd.ReadFile( sPath ) )
+	if( !msd.ReadFile( sPath, false ) )  // don't unescape
 	{
 		LOG->UserLog( "Song file", sPath, "couldn't be opened: %s", msd.GetError().c_str() );
 		return false;

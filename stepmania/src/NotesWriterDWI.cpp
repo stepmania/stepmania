@@ -356,16 +356,16 @@ bool NotesWriterDWI::Write( RString sPath, const Song &out )
 	}
 
 	/* Write transliterations, if we have them, since DWI doesn't support UTF-8. */
-	f.PutLine( ssprintf("#TITLE:%s;", out.GetTranslitFullTitle().c_str()) );
-	f.PutLine( ssprintf("#ARTIST:%s;", out.GetTranslitArtist().c_str()) );
+	f.PutLine( ssprintf("#TITLE:%s;", DwiEscape(out.GetTranslitFullTitle()).c_str()) );
+	f.PutLine( ssprintf("#ARTIST:%s;", DwiEscape(out.GetTranslitArtist()).c_str()) );
 	ASSERT( out.m_Timing.m_BPMSegments[0].m_iStartIndex == 0 );
-	f.PutLine( ssprintf("#FILE:%s;", out.m_sMusicFile.c_str()) );
+	f.PutLine( ssprintf("#FILE:%s;", DwiEscape(out.m_sMusicFile).c_str()) );
 	f.PutLine( ssprintf("#BPM:%.3f;", out.m_Timing.m_BPMSegments[0].GetBPM()) );
 	f.PutLine( ssprintf("#GAP:%d;", int(-roundf( out.m_Timing.m_fBeat0OffsetInSeconds*1000 ))) );
 	f.PutLine( ssprintf("#SAMPLESTART:%.3f;", out.m_fMusicSampleStartSeconds) );
 	f.PutLine( ssprintf("#SAMPLELENGTH:%.3f;", out.m_fMusicSampleLengthSeconds) );
 	if( out.m_sCDTitleFile.size() )
-		f.PutLine( ssprintf("#CDTITLE:%s;", out.m_sCDTitleFile.c_str()) );
+		f.PutLine( ssprintf("#CDTITLE:%s;", DwiEscape(out.m_sCDTitleFile).c_str()) );
 	switch( out.m_DisplayBPMType )
 	{
 	case Song::DISPLAY_ACTUAL:
@@ -435,7 +435,7 @@ bool NotesWriterDWI::Write( RString sPath, const Song &out )
 }
 
 /*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
+ * (c) 2001-2006 Chris Danford, Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

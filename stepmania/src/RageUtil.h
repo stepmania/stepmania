@@ -406,6 +406,14 @@ void split( const wstring &sSource, const wstring &sDelimitor, int &iBegin, int 
 RString join( const RString &sDelimitor, const vector<RString>& sSource );
 RString join( const RString &sDelimitor, vector<RString>::const_iterator begin, vector<RString>::const_iterator end );
 
+// These methods escapes a string for saving in a .sm or .crs file
+RString SmEscape( const RString &sUnescaped );
+RString SmEscape( const char *cUnescaped, int len );
+
+// These methods "escape" a string for .dwi by turning = into -, ] into I, etc.  That is "lossy".
+RString DwiEscape( const RString &sUnescaped );
+RString DwiEscape( const char *cUnescaped, int len );
+
 RString GetCwd();
 
 void SetCommandlineArguments( int argc, char **argv );

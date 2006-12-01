@@ -17,8 +17,8 @@ public:
 	virtual ~MsdFile() { }
 
 	// Returns true if successful, false otherwise.
-	bool ReadFile( RString sFilePath );
-	void ReadFromString( const RString &sString );
+	bool ReadFile( RString sFilePath, bool bUnescape );
+	void ReadFromString( const RString &sString, bool bUnescape );
 
 	RString GetError() const { return error; }
 
@@ -29,8 +29,8 @@ public:
 
 
 private:
-	void ReadBuf( char *buf, int len );
-	void AddParam( char *buf, int len );
+	void ReadBuf( const char *buf, int len, bool bUnescape );
+	void AddParam( const char *buf, int len );
 	void AddValue();
 
 	vector<value_t> values;

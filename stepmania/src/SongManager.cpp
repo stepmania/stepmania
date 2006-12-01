@@ -272,7 +272,7 @@ void SongManager::LoadGroupSymLinks(RString sDir, RString sGroupFolder)
 	for( unsigned s=0; s< arraySymLinks.size(); s++ )	// for each symlink in this dir, add it in as a song.
 	{
 		MsdFile		msdF;
-		msdF.ReadFile( sDir+sGroupFolder+"/"+arraySymLinks[s].c_str() );
+		msdF.ReadFile( sDir+sGroupFolder+"/"+arraySymLinks[s].c_str(), false );  // don't unescape
 		RString	sSymDestination = msdF.GetParam(0,1);	// Should only be 1 vale&param...period.
 		
 		Song* pNewSong = new Song;

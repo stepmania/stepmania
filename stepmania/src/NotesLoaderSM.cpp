@@ -70,7 +70,7 @@ void SMLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
 bool SMLoader::LoadTimingFromFile( const RString &fn, TimingData &out )
 {
 	MsdFile msd;
-	if( !msd.ReadFile( fn ) )
+	if( !msd.ReadFile( fn, true ) )  // unescape
 	{
 		LOG->UserLog( "Song file", fn, "couldn't be loaded: %s", msd.GetError().c_str() );
 		return false;
@@ -165,11 +165,13 @@ bool LoadFromBGChangesString( BackgroundChange &change, const RString &sBGChange
 	{
 	case 11:
 		change.m_def.m_sColor2 = aBGChangeValues[10];
-		change.m_def.m_sColor2.Replace( '^', ',' );	// UGLY: unescape "," in colors
+		// .sm files made before we started escaping will still have '^' instead of ','
+		change.m_def.m_sColor2.Replace( '^', ',' );
 		// fall through
 	case 10:
 		change.m_def.m_sColor1 = aBGChangeValues[9];
-		change.m_def.m_sColor1.Replace( '^', ',' );	// UGLY: unescape "," in colors
+		// .sm files made before we started escaping will still have '^' instead of ','
+		change.m_def.m_sColor1.Replace( '^', ',' );
 		// fall through
 	case 9:
 		change.m_sTransition = aBGChangeValues[8];
@@ -225,7 +227,7 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out )
 	LOG->Trace( "Song::LoadFromSMFile(%s)", sPath.c_str() );
 
 	MsdFile msd;
-	if( !msd.ReadFile( sPath ) )
+	if( !msd.ReadFile( sPath, true ) )  // unescape
 	{
 		LOG->UserLog( "Song file", sPath, "couldn't be opened: %s", msd.GetError().c_str() );
 		return false;
@@ -462,7 +464,7 @@ bool SMLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool b
 	}
 
 	MsdFile msd;
-	if( !msd.ReadFile( sEditFilePath ) )
+	if( !msd.ReadFile( sEditFilePath, true ) )  // unescape
 	{
 		LOG->UserLog( "Edit file", sEditFilePath, "couldn't be opened: %s", msd.GetError().c_str() );
 		return false;
@@ -474,7 +476,7 @@ bool SMLoader::LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool b
 bool SMLoader::LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot )
 {
 	MsdFile msd;
-	msd.ReadFromString( sBuffer );
+	msd.ReadFromString( sBuffer, true );  // unescape
 	return LoadEditFromMsd( msd, sEditFilePath, slot, true );
 }
 

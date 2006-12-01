@@ -63,7 +63,7 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 	LOG->Trace( "Steps::LoadFromKSFFile( '%s' )", sPath.c_str() );
 
 	MsdFile msd;
-	if( !msd.ReadFile( sPath ) )
+	if( !msd.ReadFile( sPath, false ) )  // don't unescape
 	{
 		LOG->UserLog( "Song file", sPath, "couldn't be opened: %s", msd.GetError().c_str() );
 		return false;
@@ -334,7 +334,7 @@ void KSFLoader::LoadTags( const RString &str, Song &out )
 bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 {
 	MsdFile msd;
-	if( !msd.ReadFile( sPath ) )
+	if( !msd.ReadFile( sPath, false ) )  // don't unescape
 	{
 		LOG->UserLog( "Song file", sPath, "couldn't be opened: %s", msd.GetError().c_str() );
 		return false;
