@@ -1460,7 +1460,20 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 				}
 				else
 				{
+					int iLastNoteCol = -1;
+					for( int i=GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer-1; i>=0; i-- )
+					{
+						const TapNote &tn = m_NoteData.GetTapNote( i, iRowOfOverlappingNoteOrRow );
+						bool bIsNote = (tn.type != TapNote::empty);
+						if( bIsNote )
+						{
+							iLastNoteCol = i;
+							break;
+						}
+					}
+
 					m_pPlayerState->m_fLastHopoNoteMusicSeconds = fStepSeconds;
+					m_pPlayerState->m_iLastHopoNoteCol = iLastNoteCol; 
 				}
 			}
 			break;
@@ -1476,12 +1489,15 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 						goto done_checking_hopo;
 					}
 
-					const TapNote &tn = m_NoteData.GetTapNote( col, iRowOfOverlappingNoteOrRow );
-					if( tn.type == TapNote::empty )
+					// con't hopo on the same note 2x in a row
+					if( col == m_pPlayerState->m_iLastHopoNoteCol )
 					{
 						bDidHopo = false;
 						goto done_checking_hopo;
 					}
+
+					const TapNote &tn = m_NoteData.GetTapNote( col, iRowOfOverlappingNoteOrRow );
+					ASSERT( tn.type != TapNote::empty );
 
 					int iRowsAgoLastNote = 100000;	// TODO: find more reasonable value based on HOPO_CHAIN_SECONDS?
 					NoteData::all_tracks_reverse_iterator iter = m_NoteData.GetTapNoteRangeAllTracksReverse( iRowsAgoLastNote-iRowsAgoLastNote, iRowOfOverlappingNoteOrRow-1 );
@@ -1603,7 +1619,7 @@ done_checking_hopo:
 	// check for hopo end
 	if( score <= TNS_Miss )
 	{
-		m_pPlayerState->m_fLastHopoNoteMusicSeconds = -1;
+		m_pPlayerState->ClearHopoState();
 	}
 
 

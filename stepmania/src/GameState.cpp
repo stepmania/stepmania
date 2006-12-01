@@ -666,7 +666,7 @@ void GameState::ResetMusicStatistics()
 
 
 	FOREACH_PlayerNumber( p )
-		m_pPlayerState[p]->m_fLastHopoNoteMusicSeconds = -1;
+		m_pPlayerState[p]->ClearHopoState();
 }
 
 void GameState::ResetStageStatistics()

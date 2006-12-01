@@ -20,6 +20,7 @@ void PlayerState::Reset()
 	m_HealthState = ALIVE;
 
 	m_fLastHopoNoteMusicSeconds = -1;
+	m_iLastHopoNoteCol = -1;
 
 	m_PlayerController = PC_HUMAN;
 	

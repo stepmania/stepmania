@@ -34,8 +34,14 @@ public:
 	enum HealthState { HOT, ALIVE, DANGER, DEAD };
 	HealthState		m_HealthState;
 
-	// Set to the MusicSeconds of the last note successfully strummed or hammered in a hammer chain
-	float			m_fLastHopoNoteMusicSeconds;	// if -1, then there is no current hammer chain
+	float			m_fLastHopoNoteMusicSeconds;	// Set to the MusicSeconds of the last note successfully strummed or hammered in a hopochain, -1, then there is no current hopo chain
+	int			m_iLastHopoNoteCol;	// if -1, then there is no current hopo chain
+
+	void ClearHopoState()
+	{
+		m_fLastHopoNoteMusicSeconds = -1;
+		m_iLastHopoNoteCol = -1;
+	}
 
 	PlayerController	m_PlayerController;
 	
