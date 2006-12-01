@@ -185,7 +185,7 @@ bool MutexImpl_Pthreads::TryLock()
 	if( ret == EBUSY )
 		return false;
 	if( ret )
-		RageException::Throw( "pthread_mutex_lock failed: %s", strerror(errno) );
+		RageException::Throw( "pthread_mutex_trylock failed: %s", strerror(errno) );
 	return true;
 }
 
