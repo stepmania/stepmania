@@ -855,7 +855,7 @@ int RageSoundReader_MP3::SetPosition_toc( int ms, bool Xing )
 			} while( get_this_frame_byte(mad) < bytepos );
 			synth_output();
 
-			mad_timer_set( &mad->Timer, 0, percent * mad->length, 100 );
+			mad_timer_set( &mad->Timer, 0, percent * mad->length, 100000 );
 		}
 	}
 
@@ -998,15 +998,11 @@ int RageSoundReader_MP3::SetPosition_Fast( int ms )
 	return SetPosition_estimate( ms );
 }
 
-// XXX: untested
 int RageSoundReader_MP3::GetNextSourceFrame() const
 {
-	mad_timer_t now( mad->Timer );
-	mad_timer_multiply( &now, mad->Frame.header.samplerate );
-
-	int iFrame = mad->outpos / (sizeof(int16_t) * this->Channels);
-	now.seconds += iFrame;
-	return now.seconds;
+	int iFrame = mad_timer_count( mad->Timer, mad_units(mad->Frame.header.samplerate) );
+	iFrame += mad->outpos / (sizeof(int16_t) * this->Channels);
+	return iFrame;
 }
 
 int RageSoundReader_MP3::GetLengthInternal( bool fast )
