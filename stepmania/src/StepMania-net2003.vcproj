@@ -2376,6 +2376,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="RageSoundPosMap.h">
 			</File>
 			<File
+				RelativePath=".\RageSoundReader.cpp">
+			</File>
+			<File
 				RelativePath="RageSoundReader.h">
 			</File>
 			<File
@@ -2391,10 +2394,19 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="RageSoundReader_FileReader.h">
 			</File>
 			<File
+				RelativePath=".\RageSoundReader_Filter.h">
+			</File>
+			<File
 				RelativePath="RageSoundReader_MP3.cpp">
 			</File>
 			<File
 				RelativePath="RageSoundReader_MP3.h">
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_PitchChange.cpp">
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_PitchChange.h">
 			</File>
 			<File
 				RelativePath="RageSoundReader_Preload.cpp">
@@ -2403,16 +2415,16 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="RageSoundReader_Preload.h">
 			</File>
 			<File
-				RelativePath="RageSoundReader_Resample.cpp">
-			</File>
-			<File
-				RelativePath="RageSoundReader_Resample.h">
-			</File>
-			<File
 				RelativePath="RageSoundReader_Resample_Good.cpp">
 			</File>
 			<File
 				RelativePath="RageSoundReader_Resample_Good.h">
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_SpeedChange.cpp">
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_SpeedChange.h">
 			</File>
 			<File
 				RelativePath="RageSoundReader_Vorbisfile.cpp">
