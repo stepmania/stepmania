@@ -148,15 +148,6 @@ void MakeLower( wchar_t *p, size_t iLen );
 // =============================================================================
 namespace StdString
 {
-
-// -----------------------------------------------------------------------------
-// sslen: strlen/wcslen wrappers
-// -----------------------------------------------------------------------------
-template<typename CT> inline int sslen(const CT* pT)
-{
-	return 0 == pT ? 0 : std::basic_string<CT>::traits_type::length(pT);
-}
-
 // -----------------------------------------------------------------------------
 // sstolower/sstoupper -- convert characters to upper/lower case
 // -----------------------------------------------------------------------------
@@ -229,7 +220,7 @@ inline void	ssadd(std::string& sDst, PCSTR pA)
 
 	if ( pA >= sDst.c_str() && pA <= sDst.c_str()+sDst.length())
 	{
-		if ( sDst.capacity() <= sDst.size()+sslen(pA) )
+		if ( sDst.capacity() <= sDst.size()+strlen(pA) )
 			sDst.append(std::string(pA));
 		else
 			sDst.append(pA);
@@ -363,15 +354,16 @@ class CStdStr : public std::basic_string<CT>
 	// us avoid some ambiguities that otherwise arise on some platforms
 
 	typedef typename std::basic_string<CT>		MYBASE;	 // my base class
-	typedef CStdStr<CT>							MYTYPE;	 // myself
+	typedef CStdStr<CT>				MYTYPE;	 // myself
 	typedef typename MYBASE::const_pointer		PCMYSTR; // PCSTR 
-	typedef typename MYBASE::pointer			PMYSTR;	 // PSTR
-	typedef typename MYBASE::iterator			MYITER;  // my iterator type
+	typedef typename MYBASE::pointer		PMYSTR;	 // PSTR
+	typedef typename MYBASE::iterator		MYITER;  // my iterator type
 	typedef typename MYBASE::const_iterator		MYCITER; // you get the idea...
 	typedef typename MYBASE::reverse_iterator	MYRITER;
-	typedef typename MYBASE::size_type			MYSIZE;   
-	typedef typename MYBASE::value_type			MYVAL; 
+	typedef typename MYBASE::size_type		MYSIZE;   
+	typedef typename MYBASE::value_type		MYVAL; 
 	typedef typename MYBASE::allocator_type		MYALLOC;
+	typedef typename MYBASE::traits_type		MYTRAITS;
 	
 public:
 
@@ -626,7 +618,7 @@ public:
 
 	void ReleaseBuffer(int nNewLen=-1)
 	{
-		this->resize(static_cast<MYSIZE>(nNewLen > -1 ? nNewLen : sslen(this->c_str())));
+		this->resize(static_cast<MYSIZE>(nNewLen > -1 ? nNewLen : MYTRAITS::length(this->c_str())));
 	}
 
 	
@@ -673,12 +665,12 @@ public:
 	{
 		int nReplaced		= 0;
 		MYSIZE nIdx			= 0;
-		MYSIZE nOldLen		= sslen(szOld);
+		MYSIZE nOldLen		= MYTRAITS::length(szOld);
 		if ( 0 == nOldLen )
 			return 0;
 
 		static const CT ch	= CT(0);
-		MYSIZE nNewLen		= sslen(szNew);
+		MYSIZE nNewLen		= MYTRAITS::length(szNew);
 		PCMYSTR szRealNew	= szNew == 0 ? &ch : szNew;
 
 		while ( (nIdx=this->find(szOld, nIdx)) != MYBASE::npos )
