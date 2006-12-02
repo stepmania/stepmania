@@ -569,10 +569,17 @@ RString SmEscape( const char *cUnescaped, int len )
 	RString answer = "";
 	for( int i = 0; i < len; ++i )
 	{
-		if( cUnescaped[i] == '=' || cUnescaped[i] == '\\' || cUnescaped[i] == ':' ||
-		    cUnescaped[i] == '[' || cUnescaped[i] == ']' || cUnescaped[i] == ';' ||
-		    cUnescaped[i] == '#' || cUnescaped[i] == '\r' || cUnescaped[i] == '\n' ||
-		    cUnescaped[i] == ',' )
+		// Other characters we could theoretically escape:
+		// NotesWriterSM.cpp used to claim ',' should be escaped, but there was no explanation why
+		// '#' is both a control character and a valid part of a parameter.  The only way for there to be
+		//   any confusion is in a misformatted .sm file, though, so it is unnecessary to escape it.
+		if( cUnescaped[i] == '/' && i + 1 < len && cUnescaped[i + 1] == '/' )
+		{
+			answer += "\\/\\/";
+			++i; // increment here so we skip both //s
+			continue;
+		}
+		if( cUnescaped[i] == '\\' || cUnescaped[i] == ':' || cUnescaped[i] == ';' )
 		    answer += "\\";
 		answer += cUnescaped[i];
 	}
@@ -591,16 +598,12 @@ RString DwiEscape( const char *cUnescaped, int len )
 	{
 		switch( cUnescaped[i] )
 		{
-		case '=': answer += '-'; break;
+		// TODO: Which of these characters actually affect DWI?
 		case '\\':
 		case ':':
-		case '[':
-		case ']':
-		case ';': answer += 'I'; break;
-		case '#':
-		case '\r':
-		case '\n':
-		case ',': answer += ' '; break;
+		case ';': answer += '|'; break;
+		case '[': answer += '('; break;
+		case ']': answer += ')'; break;
 		default: answer += cUnescaped[i];
 		}
 	}
