@@ -96,9 +96,8 @@ void RageVec3TransformNormal( RageVector3* pOut, const RageVector3* pV, const Ra
 void RageVec4TransformCoord( RageVector4* pOut, const RageVector4* pV, const RageMatrix* pM )
 {
 #if defined(USE_VECLIB)
-	// (M^t * v)^t = v^t * M 
-	cblas_sgemv(CblasRowMajor, CblasTrans, 4, 4, 1, &pM->m00, 4, &pV->x, 1,
-				0, &pOut->x, 1);
+	// (M^t . v)^t = v^t . M 
+	cblas_sgemv( CblasRowMajor, CblasTrans, 4, 4, 1, &pM->m00, 4, &pV->x, 1, 0, &pOut->x, 1 );
 #else
 	const RageMatrix &a = *pM;
 	const RageVector4 &v = *pV;
@@ -141,8 +140,7 @@ RageMatrix RageMatrix::GetTranspose() const
 void RageMatrixMultiply( RageMatrix* pOut, const RageMatrix* pA, const RageMatrix* pB )
 {
 #if defined(USE_VECLIB)
-	cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 4, 4, 4, 1,
-				&pB->m00, 4, &pA->m00, 4, 0, &pOut->m00, 4);
+	cblas_sgemm( CblasRowMajor, CblasNoTrans, CblasNoTrans, 4, 4, 4, 1, &pB->m00, 4, &pA->m00, 4, 0, &pOut->m00, 4);
 #else
 //#if defined(_WINDOWS) || defined(_XBOX)
 //	// <30 cycles for theirs versus >100 for ours.
