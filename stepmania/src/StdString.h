@@ -156,10 +156,6 @@ template<typename CT> inline int sslen(const CT* pT)
 {
 	return 0 == pT ? 0 : std::basic_string<CT>::traits_type::length(pT);
 }
-inline int sslen(const std::string& s)
-{
-	return s.length();
-}
 
 // -----------------------------------------------------------------------------
 // sstolower/sstoupper -- convert characters to upper/lower case
