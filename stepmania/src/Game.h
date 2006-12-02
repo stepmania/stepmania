@@ -33,6 +33,7 @@ public:
 	const char	*m_szName;
 
 	bool		m_bCountNotesSeparately;	// Count multiple notes in a row as separate notes or as one note
+	bool		m_bAllowHopos;		// allow Hammer-ons and Pull-offs?  Only useful for guitar type input.
 	InputScheme	m_InputScheme;
 
 	TapNoteScore MapTapNoteScore( TapNoteScore tns ) const;

@@ -116,6 +116,7 @@ static Game g_Games[NUM_GAMES] =
 	{	// GAME_DANCE
 		"dance",				// m_szName
 		false,					// m_bCountNotesSeparately
+		false,					// m_bAllowHopos
 		{					// m_InputScheme
 			"dance",				// m_szName
 			NUM_DANCE_BUTTONS,			// m_iButtonsPerController
@@ -168,6 +169,7 @@ static Game g_Games[NUM_GAMES] =
 	{	// GAME_PUMP
 		"pump",					// m_szName
 		false,					// m_bCountNotesSeparately
+		false,					// m_bAllowHopos
 		{					// m_InputScheme
 			"pump",					// m_szName
 			NUM_PUMP_BUTTONS,			// m_iButtonsPerController
@@ -219,6 +221,7 @@ static Game g_Games[NUM_GAMES] =
 	{
 		"ez2",					// m_szName
 		false,					// m_bCountNotesSeparately
+		false,					// m_bAllowHopos
 		{					// m_InputScheme
 			"ez2",					// m_szName
 			NUM_EZ2_BUTTONS,			// m_iButtonsPerController
@@ -272,6 +275,7 @@ static Game g_Games[NUM_GAMES] =
 	{	// GAME_PARA
 		"para",					// m_szName
 		false,					// m_bCountNotesSeparately
+		false,					// m_bAllowHopos
 		{					// m_InputScheme
 			"para",					// m_szName
 			NUM_PARA_BUTTONS,			// m_iButtonsPerController
@@ -323,6 +327,7 @@ static Game g_Games[NUM_GAMES] =
 	{	// GAME_DS3DDX
 		"ds3ddx",				// m_szName
 		false,					// m_bCountNotesSeparately
+		false,					// m_bAllowHopos
 		{					// m_InputScheme
 			"ds3ddx",				// m_szName
 			NUM_DS3DDX_BUTTONS,			// m_iButtonsPerController
@@ -377,6 +382,7 @@ static Game g_Games[NUM_GAMES] =
 	{	// GAME_BEAT
 		"beat",					// m_szName
 		true,					// m_bCountNotesSeparately
+		false,					// m_bAllowHopos
 		{					// m_InputScheme
 			"beat",					// m_szName
 			NUM_BEAT_BUTTONS,			// m_iButtonsPerController
@@ -432,6 +438,7 @@ static Game g_Games[NUM_GAMES] =
 	{	// GAME_MANIAX
 		"maniax",				// m_szName
 		false,					// m_bCountNotesSeparately
+		false,					// m_bAllowHopos
 		{					// m_InputScheme
 			"maniax",				// m_szName
 			NUM_MANIAX_BUTTONS,			// m_iButtonsPerController
@@ -482,6 +489,7 @@ static Game g_Games[NUM_GAMES] =
 	{	// GAME_TECHNO
 		"techno",				// m_szName
 		false,					// m_bCountNotesSeparately
+		false,					// m_bAllowHopos
 		{					// m_InputScheme
 			"techno",				// m_szName
 			NUM_TECHNO_BUTTONS,			// m_iButtonsPerController
@@ -537,6 +545,7 @@ static Game g_Games[NUM_GAMES] =
 	{	// GAME_POPN
 		"popn",					// m_szName
 		true,					// m_bCountNotesSeparately
+		false,					// m_bAllowHopos
 		{					// m_InputScheme
 			"popn",					// m_szName
 			NUM_POPN_BUTTONS,			// m_iButtonsPerController
@@ -592,6 +601,7 @@ static Game g_Games[NUM_GAMES] =
 	{	// GAME_LIGHTS
 		"lights",				// m_szName
 		false,					// m_bCountNotesSeparately
+		false,					// m_bAllowHopos
 		{					// m_InputScheme
 			"lights",				// m_szName
 			NUM_LIGHTS_BUTTONS,			// m_iButtonsPerController

@@ -392,7 +392,8 @@ void Player::Load()
 	NoteDataUtil::TransformNoteData( m_NoteData, m_pPlayerState->m_PlayerOptions.GetStage(), GAMESTATE->GetCurrentStyle()->m_StepsType );
 	
 	const Song* pSong = GAMESTATE->m_pCurSong;
-	NoteDataUtil::SetHopoPossibleFlags( pSong, m_NoteData );
+	if( GAMESTATE->m_pCurGame->m_bAllowHopos )
+		NoteDataUtil::SetHopoPossibleFlags( pSong, m_NoteData );
 	
 	switch( GAMESTATE->m_PlayMode )
 	{
