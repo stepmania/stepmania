@@ -107,6 +107,13 @@ function LoadActor( path )
 				Texture = path
 			}
 		end
+	elseif Type == "FileType_Sound" then
+		return function()
+			return Def.Sound {
+				_Level = 1,
+				File = path
+			}
+		end
 	elseif Type == "FileType_Model" then
 		return function()
 			return Def.Model {
