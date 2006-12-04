@@ -586,6 +586,7 @@ void ActorUtil::SortByZPosition( vector<Actor*> &vActors )
 
 static const char *FileTypeNames[] = {
 	"Bitmap", 
+	"Sound", 
 	"Movie", 
 	"Directory", 
 	"Xml", 
@@ -607,6 +608,10 @@ FileType ActorUtil::GetFileType( const RString &sPath )
 		sExt=="jpg" || 
 		sExt=="gif" || 
 		sExt=="bmp" )		return FT_Bitmap;
+	else if( 
+		sExt=="ogg" ||
+		sExt=="wav" || 
+		sExt=="mp3" )		return FT_Sound;
 	else if( 
 		sExt=="avi" || 
 		sExt=="mpeg" || 

@@ -26,6 +26,7 @@ Actor *CreateActor() { return new T; }
 enum FileType
 {
 	FT_Bitmap, 
+	FT_Sound, 
 	FT_Movie, 
 	FT_Directory, 
 	FT_Xml, 
