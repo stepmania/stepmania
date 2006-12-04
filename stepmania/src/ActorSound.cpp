@@ -35,11 +35,13 @@ class LunaActorSound: public Luna<ActorSound>
 public:
 	static int load( T* p, lua_State *L )			{ p->Load(SArg(1)); return 0; }
 	static int play( T* p, lua_State *L )			{ p->Play(); return 0; }
+	static int get( T* p, lua_State *L )			{ p->PushSound( L ); return 1; }
 
 	LunaActorSound()
 	{
 		ADD_METHOD( load );
 		ADD_METHOD( play );
+		ADD_METHOD( get );
 	}
 };
 

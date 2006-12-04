@@ -15,6 +15,7 @@ public:
 	void Load( const RString &sPath );
 	void Play();
 	void LoadFromNode( const XNode* pNode );
+	void PushSound( lua_State *L ) { m_Sound.PushSelf( L ); }
 
 	//
 	// Lua
