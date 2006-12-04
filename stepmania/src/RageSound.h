@@ -8,6 +8,7 @@
 #include "RageSoundPosMap.h"
 
 class RageSoundReader;
+struct lua_State;
 
 /* Driver interface for sounds: this is what drivers see. */
 class RageSoundBase
@@ -145,6 +146,11 @@ public:
 	int GetID() const { return m_iID; }
 	void SetParams( const RageSoundParams &p );
 	const RageSoundParams &GetParams() const { return m_Param; }
+
+	//
+	// Lua
+	//
+	virtual void PushSelf( lua_State *L );
 
 private:
 	mutable RageMutex m_Mutex;

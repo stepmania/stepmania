@@ -800,6 +800,39 @@ RageSoundParams::StopMode_t RageSound::GetStopMode() const
 		return RageSoundParams::M_STOP;
 }
 
+
+// lua start
+#include "LuaBinding.h"
+
+class LunaRageSound: public Luna<RageSound>
+{
+public:
+	static int pitch( T* p, lua_State *L )
+	{
+		RageSoundParams params( p->GetParams() );
+		params.m_fPitch = FArg(1);
+		p->SetParams( params );
+		return 0;
+	}
+
+	static int speed( T* p, lua_State *L )
+	{
+		RageSoundParams params( p->GetParams() );
+		params.m_fSpeed = FArg(1);
+		p->SetParams( params );
+		return 0;
+	}
+
+	LunaRageSound()
+	{
+		ADD_METHOD( pitch );
+		ADD_METHOD( speed );
+	}
+};
+
+LUA_REGISTER_CLASS( RageSound )
+// lua end
+
 /*
  * Copyright (c) 2002-2004 Glenn Maynard
  * All rights reserved.
