@@ -29,10 +29,6 @@ static map<RString,RString> CharAliasRepl;
  * text to disk, we need to write placeholders (&doublezeta;) for them, and never
  * Unicode characters, since the codepoint is prone to change.  We can't currently
  * write &these; to SMs, due to format limitations.
- *
- * Internal use glyphs should ONLY go in the section marked "internal use", or there
- * will be hard-to-debug conflicts like the "doublezeta" vs. "back" conflict that
- * no one bothered to fix for several months.
  */
 
 /* Here's a copy-and-paste for a basic Japanese font page:
@@ -76,6 +72,8 @@ static void InitCharAliases()
 
 	/* The comments here are UTF-8; they won't show up in VC6 (use your
 	 * imagination). */
+
+#define INTERNAL 0xE000
 
 	/* Hiragana: */
 	struct alias {
@@ -289,40 +287,47 @@ static void InitCharAliases()
 		{ "sharp",	0x266F }, /* ♯ */
 
 		/* These are internal-use glyphs; they don't have real Unicode codepoints. */
-		{ "up",		0xE000 },
-		{ "down",	0xE001 },
-		{ "left",	0xE002 },
-		{ "right",	0xE003 },
-		{ "menuup",	0xE004 },
-		{ "menudown",	0xE005 },
-		{ "menuleft",	0xE006 },
-		{ "menuright",	0xE007 },
-		{ "start",	0xE008 },
-		{ "doublezeta",	0xE009 },
-		{ "planet",	0xE00A },
-		{ "back",	0xE009 },
-		{ "ok",		0xE00A },
-		{ "nextrow",	0xE00B },
-		{ "select",	0xE00C },
+		{ "up",		INTERNAL },
+		{ "down",	INTERNAL },
+		{ "left",	INTERNAL },
+		{ "right",	INTERNAL },
+		{ "menuup",	INTERNAL },
+		{ "menudown",	INTERNAL },
+		{ "menuleft",	INTERNAL },
+		{ "menuright",	INTERNAL },
+		{ "start",	INTERNAL },
+		{ "doublezeta",	INTERNAL },
+		{ "planet",	INTERNAL },
+		{ "back",	INTERNAL },
+		{ "ok",		INTERNAL },
+		{ "nextrow",	INTERNAL },
+		{ "select",	INTERNAL },
 		/* PlayStation-style controller */
-		{ "auxx",	0xE010 },
-		{ "auxtriangle",0xE011 },
-		{ "auxsquare",	0xE012 },
-		{ "auxcircle",	0xE013 },
-		{ "auxl1",	0xE014 },
-		{ "auxl2",	0xE015 },
-		{ "auxl3",	0xE016 },
-		{ "auxr1",	0xE017 },
-		{ "auxr2",	0xE018 },
-		{ "auxr3",	0xE019 },
-		{ "auxselect",	0xE01A },
-		{ "auxstart",	0xE01B },
+		{ "auxx",	INTERNAL },
+		{ "auxtriangle",INTERNAL },
+		{ "auxsquare",	INTERNAL },
+		{ "auxcircle",	INTERNAL },
+		{ "auxl1",	INTERNAL },
+		{ "auxl2",	INTERNAL },
+		{ "auxl3",	INTERNAL },
+		{ "auxr1",	INTERNAL },
+		{ "auxr2",	INTERNAL },
+		{ "auxr3",	INTERNAL },
+		{ "auxselect",	INTERNAL },
+		{ "auxstart",	INTERNAL },
 
 		{ NULL, 	0 }
 	};
 
+	int iNextInternalUseCodepoint = 0xE000;
 	for( unsigned n = 0; aliases[n].str; ++n )
-		CharAliases[aliases[n].str] = aliases[n].chr;
+	{
+		int iCodepoint = aliases[n].chr;
+		if( iCodepoint == INTERNAL )
+			iCodepoint = iNextInternalUseCodepoint++;
+
+		CharAliases[aliases[n].str] = iCodepoint;
+	}
 
 	for(aliasmap::const_iterator i = CharAliases.begin(); i != CharAliases.end(); ++i)
 	{
