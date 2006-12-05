@@ -106,7 +106,7 @@ static void MoveMap( int &sel, const ConfOption *pConfOption, bool ToSel, const 
 	MoveMap( sel, *pPref, ToSel, mapping, cnt );
 }
 
-/* "iSel" is the selection in the menu. */
+template <class T>
 static void MovePref( int &iSel, bool bToSel, const ConfOption *pConfOption )
 {
 	IPreference *pPref = IPreference::GetPreferenceByName( pConfOption->m_sPrefName );
@@ -114,13 +114,35 @@ static void MovePref( int &iSel, bool bToSel, const ConfOption *pConfOption )
 
 	if( bToSel )
 	{
-		RString sOpt = pPref->ToString();
-		FromString( sOpt, iSel );
+		// TODO: why not get the int directly from pPref?  Why are we writing it to a string and then back?
+		T t;
+		FromString( pPref->ToString(), t );
+		iSel = static_cast<int>( t );
 	}
 	else
 	{
-		RString sOpt = ToString( iSel );
-		pPref->FromString( sOpt );
+		pPref->FromString( ToString( static_cast<T>( iSel ) ) );
+	}
+}
+
+template <>
+static void MovePref<bool>( int &iSel, bool bToSel, const ConfOption *pConfOption )
+{
+	IPreference *pPref = IPreference::GetPreferenceByName( pConfOption->m_sPrefName );
+	ASSERT_M( pPref != NULL, pConfOption->m_sPrefName );
+
+	if( bToSel )
+	{
+		// TODO: why not get the int directly from pPref?  Why are we writing it to a string and then back?
+		bool b;
+		FromString( pPref->ToString(), b );
+		iSel = b ? 1 : 0;
+	}
+	else
+	{
+		// If we don't make a specific instantiation of MovePref<bool>, there is a compile warning here because of
+		// static_cast<bool>( iSel ) where iSel is an int.  What is the best way to remove that compile warning?
+		pPref->FromString( ToString<bool>( iSel ? true : false ) );
 	}
 }
 
@@ -231,6 +253,7 @@ static void DisplayResolutionChoices( vector<RString> &out )
 
 static void Theme( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
+	// TODO FIXME: The default theme is not correctly set to "default".  It is set to "".  Where do we change that?
 	vector<RString> choices;
 	pConfOption->MakeOptionsList( choices );
 
@@ -302,18 +325,12 @@ static void DefaultNoteSkin( int &sel, bool ToSel, const ConfOption *pConfOption
 	}
 }
 
-/* Appearance options */
-
-static void WheelSections( int &sel, bool ToSel, const ConfOption *pConfOption )
-{
-	const MusicWheelUsesSections mapping[] = { MusicWheelUsesSections_NEVER, MusicWheelUsesSections_ALWAYS, MusicWheelUsesSections_ABC_ONLY };
-	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
-}
-
 /* Background options */
 
 static void BGBrightness( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
+	// TODO: I hate the way the list of numbers is duplicated here and where the option is created.
+	// Try to find a way to only use the same list once.  Do that for all of these float and int lists.
 	const float mapping[] = { 0.0f,0.1f,0.2f,0.3f,0.4f,0.5f,0.6f,0.7f,0.8f,0.9f,1.0f };
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
@@ -349,33 +366,26 @@ static void MusicWheelSwitchSpeed( int &sel, bool ToSel, const ConfOption *pConf
 }
 
 /* Gameplay options */
-static void AllowW1M( int &sel, bool ToSel, const ConfOption *pConfOption )
-{
-	const AllowW1 mapping[] = { ALLOW_W1_NEVER, ALLOW_W1_COURSES_ONLY, ALLOW_W1_EVERYWHERE };
-	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
-}
-
-static void CoinModeM( int &sel, bool ToSel, const ConfOption *pConfOption )
-{
-	const CoinMode mapping[] = { COIN_MODE_HOME, COIN_MODE_PAY, COIN_MODE_FREE };
-	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
-}
-
 static void CoinModeNoHome( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const CoinMode mapping[] = { COIN_MODE_PAY, COIN_MODE_FREE };
-	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
+	// The mapping without home is easy: subtract one to compensate for the missing COIN_MODE_HOME
+	if( ToSel )
+	{
+		MovePref<CoinMode>( sel, ToSel, pConfOption );
+		if( sel > static_cast<int>(COIN_MODE_HOME) )
+			--sel;
+	}
+	else
+	{
+		if( sel >= static_cast<int>(COIN_MODE_HOME) )
+			++sel;
+		MovePref<CoinMode>( sel, ToSel, pConfOption );
+	}
 }
 
 static void CoinsPerCredit( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16 };
-	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
-}
-
-static void PremiumM( int &sel, bool ToSel, const ConfOption *pConfOption )
-{
-	const Premium mapping[] = { PREMIUM_NONE, PREMIUM_DOUBLE, PREMIUM_JOINT };
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 }
 
@@ -419,18 +429,6 @@ static int GetLifeDifficulty()
 }
 #include "LuaManager.h"
 LuaFunction( GetLifeDifficulty, GetLifeDifficulty() );
-
-static void ShowSongOptions( int &sel, bool ToSel, const ConfOption *pConfOption )
-{
-	const Maybe mapping[] = { Maybe_NO, Maybe_YES, Maybe_ASK };
-	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
-}
-
-static void GetRankingNameM( int &sel, bool ToSel, const ConfOption *pConfOption )
-{
-	const GetRankingName mapping[] = { RANKING_OFF, RANKING_ON, RANKING_LIST };
-	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
-}
 
 static void DefaultFailType( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
@@ -577,6 +575,12 @@ static void InitializeConfOptions()
 	if( !g_ConfOptions.empty() )
 		return;
 
+	// There are a couple ways of getting the current preference column or turning a new choice in the interface 
+	// into a new preference.  The easiest is when the interface choices are an exact mapping to the values the 
+	// preference can be.  In that case, the easiest thing to do is use MovePref<bool or enum>.  The next
+	// easiest case is when there is a hardcoded mapping that is not 1-1, such as CoinModeNoHome.  In that case,
+	// you need to remap the result of MovePref<enum> to the correct mapping.  Harder yet is when there is a
+	// float or a dynamic set of options, such as Language or Theme.  Those require individual attention.
 #define ADD(x) g_ConfOptions.push_back( x )
 	/* Select game */
 	ADD( ConfOption( "Game",			GameSel,		GameChoices ) );
@@ -589,56 +593,57 @@ static void InitializeConfOptions()
 
 	ADD( ConfOption( "Announcer",			Announcer,		AnnouncerChoices ) );
 	ADD( ConfOption( "DefaultNoteSkin",		DefaultNoteSkin,	DefaultNoteSkinChoices ) );
-	ADD( ConfOption( "ShowInstructions",		MovePref,		"Skip","Show") );
-	ADD( ConfOption( "ShowCaution",			MovePref,		"Skip","Show") );
-	ADD( ConfOption( "DancePointsForOni",		MovePref,		"Percent","Dance Points") );
-	ADD( ConfOption( "ShowSelectGroup",		MovePref,		"All Music","Choose") );
-	ADD( ConfOption( "MusicWheelUsesSections",	WheelSections,		"Never","Always","Title Only") );
-	ADD( ConfOption( "CourseSortOrder",		MovePref,		"Num Songs","Average Feet","Total Feet","Ranking") );
-	ADD( ConfOption( "MoveRandomToEnd",		MovePref,		"No","Yes") );
-	ADD( ConfOption( "ShowNativeLanguage",		MovePref,		"Romanization","Native Language") );
-	ADD( ConfOption( "ShowLyrics",			MovePref,		"Hide","Show") );
+	ADD( ConfOption( "ShowInstructions",		MovePref<bool>,		"Skip","Show") );
+	ADD( ConfOption( "ShowCaution",			MovePref<bool>,		"Skip","Show") );
+	ADD( ConfOption( "DancePointsForOni",		MovePref<bool>,		"Percent","Dance Points") );
+	ADD( ConfOption( "ShowSelectGroup",		MovePref<bool>,		"All Music","Choose") );
+	ADD( ConfOption( "MusicWheelUsesSections",	MovePref<MusicWheelUsesSections>, "Never","Always","Title Only") );
+	ADD( ConfOption( "CourseSortOrder",		MovePref<CourseSortOrders>, "Num Songs","Average Feet","Total Feet","Ranking") );
+	ADD( ConfOption( "MoveRandomToEnd",		MovePref<bool>,		"No","Yes") );
+	ADD( ConfOption( "ShowNativeLanguage",		MovePref<bool>,		"Romanization","Native Language") );
+	ADD( ConfOption( "ShowLyrics",			MovePref<bool>,		"Hide","Show") );
 
 	/* Misc options */
-	ADD( ConfOption( "AutogenSteps",		MovePref,		"Off","On" ) );
+	ADD( ConfOption( "AutogenSteps",		MovePref<bool>,		"Off","On" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_SONG;
 
-	ADD( ConfOption( "AutogenGroupCourses",		MovePref,		"Off","On" ) );
-	ADD( ConfOption( "FastLoad",			MovePref,		"Off","On" ) );
+	ADD( ConfOption( "AutogenGroupCourses",		MovePref<bool>,		"Off","On" ) );
+	ADD( ConfOption( "FastLoad",			MovePref<bool>,		"Off","On" ) );
 
 	/* Background options */
-	ADD( ConfOption( "RandomBackgroundMode",	MovePref,		"Off","Animations","Random Movies" ) );
+	ADD( ConfOption( "RandomBackgroundMode",	MovePref<RandomBackgroundMode>, "Off","Animations","Random Movies" ) );
 	ADD( ConfOption( "BGBrightness",		BGBrightness,		"|0%","|10%","|20%","|30%","|40%","|50%","|60%","|70%","|80%","|90%","|100%" ) );
 	ADD( ConfOption( "BGBrightnessNoZero",		BGBrightnessNoZero,	"|10%","|20%","|30%","|40%","|50%","|60%","|70%","|80%","|90%","|100%" ) );
 	g_ConfOptions.back().m_sPrefName = "BGBrightness";
 	ADD( ConfOption( "BGBrightnessOrStatic",	BGBrightnessOrStatic,	"Disabled","25% Bright","50% Bright","75% Bright" ) );
 	g_ConfOptions.back().m_sPrefName = "BGBrightness";
 
-	ADD( ConfOption( "ShowDanger",			MovePref,		"Hide","Show" ) );
-	ADD( ConfOption( "ShowDancingCharacters",	MovePref,		"Default to Off","Default to Random","Select" ) );
-	ADD( ConfOption( "ShowBeginnerHelper",		MovePref,		"Off","On" ) );
+	ADD( ConfOption( "ShowDanger",			MovePref<bool>,		"Hide","Show" ) );
+	ADD( ConfOption( "ShowDancingCharacters",	MovePref<ShowDancingCharacters>, "Default to Off","Default to Random","Select" ) );
+	ADD( ConfOption( "ShowBeginnerHelper",		MovePref<bool>,		"Off","On" ) );
 	ADD( ConfOption( "NumBackgrounds",		NumBackgrounds,		"|5","|10","|15","|20" ) );
 
 	/* Input options */
-	ADD( ConfOption( "AutoMapOnJoyChange",		MovePref,		"Off","On (recommended)" ) );
-	ADD( ConfOption( "OnlyDedicatedMenuButtons",	MovePref,		"Use Gameplay Buttons","Only Dedicated Buttons" ) );
-	ADD( ConfOption( "AutoPlay",			MovePref,		"Off","On","CPU-Controlled" ) );
-	ADD( ConfOption( "DelayedBack",			MovePref,		"Instant","Hold" ) );
-	ADD( ConfOption( "ArcadeOptionsNavigation",	MovePref,		"StepMania Style","Arcade Style" ) );
+	ADD( ConfOption( "AutoMapOnJoyChange",		MovePref<bool>,		"Off","On (recommended)" ) );
+	ADD( ConfOption( "OnlyDedicatedMenuButtons",	MovePref<bool>,		"Use Gameplay Buttons","Only Dedicated Buttons" ) );
+	ADD( ConfOption( "AutoPlay",			MovePref<PlayerController>, "Off","On","CPU-Controlled" ) );
+	ADD( ConfOption( "DelayedBack",			MovePref<bool>,		"Instant","Hold" ) );
+	ADD( ConfOption( "ArcadeOptionsNavigation",	MovePref<bool>,		"StepMania Style","Arcade Style" ) );
 	ADD( ConfOption( "MusicWheelSwitchSpeed",	MusicWheelSwitchSpeed,	"Slow","Normal","Fast","Really Fast" ) );
 
 	/* Gameplay options */
-	ADD( ConfOption( "Center1Player",		MovePref,		"Off","On" ) );
-	ADD( ConfOption( "HiddenSongs",			MovePref,		"Off","On" ) );
-	ADD( ConfOption( "EasterEggs",			MovePref,		"Off","On" ) );
-	ADD( ConfOption( "AllowW1",			AllowW1M,		"Never","Courses Only","Always" ) );
-	ADD( ConfOption( "AllowExtraStage",		MovePref,		"Off","On" ) );
-	ADD( ConfOption( "PickExtraStage",		MovePref,		"Off","On" ) );
-	ADD( ConfOption( "UseUnlockSystem",		MovePref,		"Off","On" ) );
+	ADD( ConfOption( "Center1Player",		MovePref<bool>,		"Off","On" ) );
+	ADD( ConfOption( "HiddenSongs",			MovePref<bool>,		"Off","On" ) );
+	ADD( ConfOption( "EasterEggs",			MovePref<bool>,		"Off","On" ) );
+	// W1 is Fantastic Timing
+	ADD( ConfOption( "AllowW1",			MovePref<AllowW1>,	"Never","Courses Only","Always" ) );
+	ADD( ConfOption( "AllowExtraStage",		MovePref<bool>,		"Off","On" ) );
+	ADD( ConfOption( "PickExtraStage",		MovePref<bool>,		"Off","On" ) );
+	ADD( ConfOption( "UseUnlockSystem",		MovePref<bool>,		"Off","On" ) );
 
 	/* Machine options */
-	ADD( ConfOption( "MenuTimer",			MovePref,		"Off","On" ) );
-	ADD( ConfOption( "CoinMode",			CoinModeM,		"Home","Pay","Free Play" ) );
+	ADD( ConfOption( "MenuTimer",			MovePref<bool>,		"Off","On" ) );
+	ADD( ConfOption( "CoinMode",			MovePref<CoinMode>,	"Home","Pay","Free Play" ) );
 	ADD( ConfOption( "CoinModeNoHome",		CoinModeNoHome,		"Pay","Free Play" ) );
 	g_ConfOptions.back().m_sPrefName = "CoinMode";
 
@@ -646,22 +651,22 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "SongsPerPlayOrEvent",		SongsPerPlayOrEventMode,"|1","|2","|3","|4","|5","Event" ) );
 	g_ConfOptions.back().m_sPrefName = "SongsPerPlay";
 
-	ADD( ConfOption( "EventMode",			MovePref,		"Off","On" ) );
-	ADD( ConfOption( "ScoringType",			MovePref,		"New","Old" ) );
+	ADD( ConfOption( "EventMode",			MovePref<bool>,		"Off","On" ) );
+	ADD( ConfOption( "ScoringType",			MovePref<ScoringType>,	"New","Old" ) );
 	ADD( ConfOption( "TimingWindowScale",		TimingWindowScale,	"|1","|2","|3","|4","|5","|6","|7","|8","Justice" ) );
 	ADD( ConfOption( "LifeDifficulty",		LifeDifficulty,		"|1","|2","|3","|4","|5","|6","|7" ) );
 	g_ConfOptions.back().m_sPrefName = "LifeDifficultyScale";
-	ADD( ConfOption( "ProgressiveLifebar",		MovePref,		"Off","|1","|2","|3","|4","|5","|6","|7","|8") );
-	ADD( ConfOption( "ProgressiveStageLifebar",	MovePref,		"Off","|1","|2","|3","|4","|5","|6","|7","|8","Insanity") );
-	ADD( ConfOption( "ProgressiveNonstopLifebar",	MovePref,		"Off","|1","|2","|3","|4","|5","|6","|7","|8","Insanity") );
-	ADD( ConfOption( "DefaultFailType",		DefaultFailType,	"Immediate","Delayed","End of Song","Off" ) );	
+	ADD( ConfOption( "ProgressiveLifebar",		MovePref<int>,		"Off","|1","|2","|3","|4","|5","|6","|7","|8") );
+	ADD( ConfOption( "ProgressiveStageLifebar",	MovePref<int>,		"Off","|1","|2","|3","|4","|5","|6","|7","|8","Insanity") );
+	ADD( ConfOption( "ProgressiveNonstopLifebar",	MovePref<int>,		"Off","|1","|2","|3","|4","|5","|6","|7","|8","Insanity") );
+	ADD( ConfOption( "DefaultFailType",		DefaultFailType,	"Immediate","ImmediateContinue","End of Song","Off" ) );	
 	ADD( ConfOption( "CoinsPerCredit",		CoinsPerCredit,		"|1","|2","|3","|4","|5","|6","|7","|8","|9","|10","|11","|12","|13","|14","|15","|16" ) );
-	ADD( ConfOption( "Premium",			PremiumM,		"Off","Double for 1 Credit","Joint Premium" ) );
-	ADD( ConfOption( "ShowSongOptions",		ShowSongOptions,	"Hide","Show","Ask" ) );
-	ADD( ConfOption( "GetRankingName",		GetRankingNameM,	"Off", "On", "Ranking Songs" ) );
+	ADD( ConfOption( "Premium",			MovePref<Premium>,	"Off","Double for 1 Credit","Joint Premium" ) );
+	ADD( ConfOption( "ShowSongOptions",		MovePref<Maybe>,	"Ask", "Hide","Show" ) );
+	ADD( ConfOption( "GetRankingName",		MovePref<GetRankingName>, "Off", "On", "Ranking Songs" ) );
 
 	/* Graphic options */
-	ADD( ConfOption( "Windowed",			MovePref,		"Full Screen", "Windowed" ) );
+	ADD( ConfOption( "Windowed",			MovePref<bool>,		"Full Screen", "Windowed" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
 	ADD( ConfOption( "DisplayResolution",		DisplayResolutionM, DisplayResolutionChoices ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS | OPT_APPLY_ASPECT_RATIO;
@@ -680,20 +685,20 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "TextureColorDepth",		TextureColorDepth,	"16bit","32bit" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
 	ADD( ConfOption( "MovieColorDepth",		MovieColorDepth,	"16bit","32bit" ) );
-	ADD( ConfOption( "DelayedTextureDelete",	MovePref,		"Off","On" ) );
+	ADD( ConfOption( "DelayedTextureDelete",	MovePref<bool>,		"Off","On" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
-	ADD( ConfOption( "CelShadeModels",		MovePref,		"Off","On" ) );
-	ADD( ConfOption( "SmoothLines",			MovePref,		"Off","On" ) );
+	ADD( ConfOption( "CelShadeModels",		MovePref<bool>,		"Off","On" ) );
+	ADD( ConfOption( "SmoothLines",			MovePref<bool>,		"Off","On" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
 	ADD( ConfOption( "RefreshRate",			RefreshRate,		"Default","|60","|70","|72","|75","|80","|85","|90","|100","|120","|150" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
-	ADD( ConfOption( "Vsync",			MovePref,		"No", "Yes" ) );
+	ADD( ConfOption( "Vsync",			MovePref<bool>,		"No", "Yes" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
-	ADD( ConfOption( "ShowStats",			MovePref,		"Off","On" ) );
-	ADD( ConfOption( "ShowBanners",			MovePref,		"Off","On" ) );
+	ADD( ConfOption( "ShowStats",			MovePref<bool>,		"Off","On" ) );
+	ADD( ConfOption( "ShowBanners",			MovePref<bool>,		"Off","On" ) );
 
 	/* Sound options */
-	ADD( ConfOption( "AttractSoundFrequency",	MovePref,		"Never","Always","2 Times","3 Times","4 Times","5 Times" ) );
+	ADD( ConfOption( "AttractSoundFrequency",	MovePref<AttractSoundFrequency>, "Never","Always","2 Times","3 Times","4 Times","5 Times" ) );
 	ADD( ConfOption( "SoundVolume",			SoundVolume,		"Silent","|10%","|20%","|30%","|40%","|50%","|60%","|70%","|80%","|90%","|100%" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_SOUND;
 	{
@@ -704,7 +709,7 @@ static void InitializeConfOptions()
 	}
 
 	/* Editor options */
-	ADD( ConfOption( "EditorShowBGChangesPlay",	MovePref,		"Hide","Show") );
+	ADD( ConfOption( "EditorShowBGChangesPlay",	MovePref<bool>,		"Hide","Show") );
 
 	ADD( ConfOption( "Invalid",			MoveNop,		"|Invalid option") );
 }
