@@ -30,18 +30,18 @@ struct lua_State;
 class Game
 {
 public:
-	const char	*m_szName;
+	const char *const	m_szName;
 
-	bool		m_bCountNotesSeparately;	// Count multiple notes in a row as separate notes or as one note
-	bool		m_bAllowHopos;		// allow Hammer-ons and Pull-offs?  Only useful for guitar type input.
-	InputScheme	m_InputScheme;
+	const bool		m_bCountNotesSeparately;	// Count multiple notes in a row as separate notes or as one note
+	const bool		m_bAllowHopos;		// allow Hammer-ons and Pull-offs?  Only useful for guitar type input.
+	const InputScheme	m_InputScheme;
 
 	TapNoteScore MapTapNoteScore( TapNoteScore tns ) const;
-	TapNoteScore	m_mapW1To;
-	TapNoteScore	m_mapW2To;
-	TapNoteScore	m_mapW3To;
-	TapNoteScore	m_mapW4To;
-	TapNoteScore	m_mapW5To;
+	const TapNoteScore	m_mapW1To;
+	const TapNoteScore	m_mapW2To;
+	const TapNoteScore	m_mapW3To;
+	const TapNoteScore	m_mapW4To;
+	const TapNoteScore	m_mapW5To;
 
 	//
 	// Lua
