@@ -3,9 +3,10 @@
 #ifndef PREFSMANAGER_H
 #define PREFSMANAGER_H
 
-#include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
+#include "PlayerNumber.h"
 #include "Preference.h"
+
 class IniFile;
 
 const int MAX_SONGS_PER_PLAY = 7;
@@ -92,6 +93,9 @@ protected:
 	void RestoreGamePrefs();
 	struct GamePrefs
 	{
+		// See GamePrefs::GamePrefs in PrefsManager.cpp for some default settings
+		GamePrefs();
+
 		RString	m_sAnnouncer;
 		RString m_sTheme;
 		RString	m_sDefaultModifiers;

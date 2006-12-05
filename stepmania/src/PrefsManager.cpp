@@ -1,15 +1,15 @@
 #include "global.h"
 #include "PrefsManager.h"
-#include "IniFile.h"
-#include "RageDisplay.h"
-#include "RageUtil.h"
-#include "RageFile.h"
-#include "ProductInfo.h"
 #include "Foreach.h"
+#include "IniFile.h"
+#include "LuaManager.h"
 #include "Preference.h"
+#include "ProductInfo.h"
+#include "RageDisplay.h"
+#include "RageFile.h"
+#include "RageUtil.h"
 #include "RageLog.h"
 #include "SpecialFiles.h"
-#include "LuaManager.h"
 
 //DEFAULTS_INI_PATH	= "Data/Defaults.ini";		// these can be overridden
 //PREFERENCES_INI_PATH	// overlay on Defaults.ini, contains the user's choices
@@ -136,7 +136,7 @@ PrefsManager::PrefsManager() :
 	m_sCurrentGame		( "CurrentGame",		"" ),
 
 	m_sAnnouncer		( "Announcer",			"" ),
-	m_sTheme		( "Theme",			"" ),
+	m_sTheme		( "Theme",			SpecialFiles::BASE_THEME_NAME ),
 	m_sDefaultModifiers	( "DefaultModifiers",		"" ),
 
 	m_bWindowed		( "Windowed",			TRUE_IF_DEBUG ),
@@ -322,9 +322,9 @@ void PrefsManager::StoreGamePrefs()
 
 	// save off old values
 	GamePrefs &gp = m_mapGameNameToGamePrefs[m_sCurrentGame];
-	gp.m_sAnnouncer			= m_sAnnouncer;
-	gp.m_sTheme				= m_sTheme;
-	gp.m_sDefaultModifiers	= m_sDefaultModifiers;
+	gp.m_sAnnouncer = m_sAnnouncer;
+	gp.m_sTheme = m_sTheme;
+	gp.m_sDefaultModifiers = m_sDefaultModifiers;
 }
 
 void PrefsManager::RestoreGamePrefs()
@@ -344,6 +344,8 @@ void PrefsManager::RestoreGamePrefs()
 	// give Static.ini a chance to clobber the saved game prefs
 	ReadPrefsFromFile( SpecialFiles::STATIC_INI_PATH, GetPreferencesSection(), true );
 }
+
+PrefsManager::GamePrefs::GamePrefs() : m_sAnnouncer(""), m_sTheme(SpecialFiles::BASE_THEME_NAME), m_sDefaultModifiers("") {}
 
 void PrefsManager::ReadPrefsFromDisk()
 {

@@ -253,7 +253,6 @@ static void DisplayResolutionChoices( vector<RString> &out )
 
 static void Theme( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	// TODO FIXME: The default theme is not correctly set to "default".  It is set to "".  Where do we change that?
 	vector<RString> choices;
 	pConfOption->MakeOptionsList( choices );
 
