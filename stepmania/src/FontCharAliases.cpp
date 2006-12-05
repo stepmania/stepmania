@@ -29,6 +29,10 @@ static map<RString,RString> CharAliasRepl;
  * text to disk, we need to write placeholders (&doublezeta;) for them, and never
  * Unicode characters, since the codepoint is prone to change.  We can't currently
  * write &these; to SMs, due to format limitations.
+ *
+ * Internal use glyphs should ONLY go in the section marked "internal use", or there
+ * will be hard-to-debug conflicts like the "doublezeta" vs. "back" conflict that
+ * no one bothered to fix for several months.
  */
 
 /* Here's a copy-and-paste for a basic Japanese font page:
@@ -276,41 +280,41 @@ static void InitCharAliases()
 		{ "uparrow",	0x2191 }, /* ↑ */
 		{ "rightarrow",	0x2192 }, /* → */
 		{ "downarrow",	0x2193 }, /* ↓ */
-		{ "doublezeta",	0xE009 },
-		{ "planet",		0xE00A },
 		{ "4thnote",	0x2669 }, /* ♩ */
 		{ "8thnote",	0x266A }, /* ♪ */
 		{ "b8thnote",	0x266B }, /* ♫ */
 		{ "b16thnote",	0x266C }, /* ♬ */
-		{ "flat",		0x266D }, /* ♭ */
+		{ "flat",	0x266D }, /* ♭ */
 		{ "natural",	0x266E }, /* ♮ */
-		{ "sharp",		0x266F }, /* ♯ */
+		{ "sharp",	0x266F }, /* ♯ */
 
 		/* These are internal-use glyphs; they don't have real Unicode codepoints. */
-		{ "up",			0xE000 },
-		{ "down",		0xE001 },
-		{ "left",		0xE002 },
-		{ "right",		0xE003 },
-		{ "menuup",		0xE004 },
+		{ "up",		0xE000 },
+		{ "down",	0xE001 },
+		{ "left",	0xE002 },
+		{ "right",	0xE003 },
+		{ "menuup",	0xE004 },
 		{ "menudown",	0xE005 },
 		{ "menuleft",	0xE006 },
 		{ "menuright",	0xE007 },
-		{ "start",		0xE008 },
-		{ "back",		0xE009 },
-		{ "ok",			0xE00A },
+		{ "start",	0xE008 },
+		{ "doublezeta",	0xE009 },
+		{ "planet",	0xE00A },
+		{ "back",	0xE009 },
+		{ "ok",		0xE00A },
 		{ "nextrow",	0xE00B },
-		{ "select",		0xE00C },
+		{ "select",	0xE00C },
 		/* PlayStation-style controller */
-		{ "auxx",		0xE010 },
+		{ "auxx",	0xE010 },
 		{ "auxtriangle",0xE011 },
 		{ "auxsquare",	0xE012 },
 		{ "auxcircle",	0xE013 },
-		{ "auxl1",		0xE014 },
-		{ "auxl2",		0xE015 },
-		{ "auxl3",		0xE016 },
-		{ "auxr1",		0xE017 },
-		{ "auxr2",		0xE018 },
-		{ "auxr3",		0xE019 },
+		{ "auxl1",	0xE014 },
+		{ "auxl2",	0xE015 },
+		{ "auxl3",	0xE016 },
+		{ "auxr1",	0xE017 },
+		{ "auxr2",	0xE018 },
+		{ "auxr3",	0xE019 },
 		{ "auxselect",	0xE01A },
 		{ "auxstart",	0xE01B },
 
