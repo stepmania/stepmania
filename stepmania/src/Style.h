@@ -19,22 +19,22 @@ struct lua_State;
 class Style
 {
 public:
-	const Game *const	m_pGame;			// Which Game is this Style used with?
-	const bool		m_bUsedForGameplay;		// Can be used only for gameplay?
-	const bool		m_bUsedForEdit;			// Can be used for editing?
-	const bool		m_bUsedForDemonstration;	// Can be used for demonstration?
-	const bool		m_bUsedForHowToPlay;		// Can be used for HowToPlay?
+	const Game *		m_pGame;			// Which Game is this Style used with?
+	bool			m_bUsedForGameplay;		// Can be used only for gameplay?
+	bool			m_bUsedForEdit;			// Can be used for editing?
+	bool			m_bUsedForDemonstration;	// Can be used for demonstration?
+	bool			m_bUsedForHowToPlay;		// Can be used for HowToPlay?
 	
 	/* The name of the style.  (This is currently unused.) */
-	const char *const	m_szName;
+	const char *		m_szName;
 	
 	/* Steps format used for each player.  For example, "dance versus" reads
 	 * the Steps with the tag "dance-single". */
-	const StepsType		m_StepsType;
+	StepsType		m_StepsType;
 									
-	const StyleType		m_StyleType;
+	StyleType		m_StyleType;
 	
-	const int		m_iColsPerPlayer;	// number of total tracks this style expects (e.g. 4 for versus, but 8 for double)
+	int			m_iColsPerPlayer;	// number of total tracks this style expects (e.g. 4 for versus, but 8 for double)
 	struct ColumnInfo 
 	{ 
 		int		track;			// take note data from this track
@@ -42,16 +42,16 @@ public:
 		const char	*pzName;		// name of this column, or NULL to use the name of a button mapped to it
 	};
 
-	const ColumnInfo	m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];	// maps each players' column to a track in the NoteData
+	ColumnInfo		m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];	// maps each players' column to a track in the NoteData
 
 	/* This maps from game inputs to columns.  More than one button may map to a
 	 * single column. */
 	enum { NO_MAPPING = -1, END_MAPPING = -2 };
-	const int		m_iInputColumn[NUM_GameController][NUM_GameButton]; // maps each input to a column, or GameButton_Invalid
-	const int		m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
-	const bool		m_bNeedsZoomOutWith2Players;
-	const bool		m_bCanUseBeginnerHelper;
-	const bool		m_bLockDifficulties;		// used in couple Styles
+	int			m_iInputColumn[NUM_GameController][NUM_GameButton]; // maps each input to a column, or GameButton_Invalid
+	int			m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+	bool			m_bNeedsZoomOutWith2Players;
+	bool			m_bCanUseBeginnerHelper;
+	bool			m_bLockDifficulties;		// used in couple Styles
 
 	GameInput StyleInputToGameInput( int iCol, PlayerNumber pn ) const;
 	int GameInputToColumn( const GameInput &GameI ) const;
