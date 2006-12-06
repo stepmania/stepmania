@@ -25,6 +25,19 @@ void RageSound_DSound_Software::MixerThread()
 		if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL) )
 			LOG->Warn(werr_ssprintf(GetLastError(), "Failed to set sound thread priority"));
 
+	/* Fill a buffer before we start playing, so we don't play whatever junk is
+	 * in the buffer. */
+	char *locked_buf;
+	unsigned len;
+	while( m_pPCM->get_output_buf(&locked_buf, &len, chunksize()) )
+	{
+		memset( locked_buf, 0, len );
+		m_pPCM->release_output_buf(locked_buf, len);
+	}
+
+	/* Start playing. */
+	m_pPCM->Play();
+
 	while( !m_bShutdownMixerThread )
 	{
 		char *pLockedBuf;
@@ -88,20 +101,7 @@ RString RageSound_DSound_Software::Init()
 
 	LOG->Info( "Software mixing at %i hz", m_iSampleRate );
 
-	/* Fill a buffer before we start playing, so we don't play whatever junk is
-	 * in the buffer. */
-	char *locked_buf;
-	unsigned len;
-	while( m_pPCM->get_output_buf(&locked_buf, &len, chunksize()) )
-	{
-		memset( locked_buf, 0, len );
-		m_pPCM->release_output_buf(locked_buf, len);
-	}
-
 	StartDecodeThread();
-
-	/* Start playing. */
-	m_pPCM->Play();
 
 	m_MixingThread.SetName("Mixer thread");
 	m_MixingThread.Create( MixerThread_start, this );
