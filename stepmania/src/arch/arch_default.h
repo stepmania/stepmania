@@ -10,7 +10,7 @@
 #include "MemoryCard/MemoryCardDriverThreaded_Windows.h"
 #define DEFAULT_INPUT_DRIVER_LIST "DirectInput,Pump,Para"
 #define DEFAULT_MOVIE_DRIVER_LIST "Theora,FFMpeg,DShow,Null"
-#define DEFAULT_SOUND_DRIVER_LIST "WDMKS,DirectSound,DirectSound-sw,WaveOut,Null"
+#define DEFAULT_SOUND_DRIVER_LIST "WDMKS,DirectSound-sw,WaveOut,Null"
 
 
 #elif defined(MACOSX)
@@ -55,7 +55,7 @@
 #define DEFAULT_INPUT_DRIVER_LIST "X11"
 #endif
 #define DEFAULT_MOVIE_DRIVER_LIST "Theora,FFMpeg,Null"
-#define DEFAULT_SOUND_DRIVER_LIST "ALSA,ALSA-sw,OSS,Null"
+#define DEFAULT_SOUND_DRIVER_LIST "ALSA-sw,OSS,Null"
 #else
 #error Which arch?
 #endif
