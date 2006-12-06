@@ -10,7 +10,7 @@
 #include "MemoryCard/MemoryCardDriverThreaded_Windows.h"
 #define DEFAULT_INPUT_DRIVER_LIST "DirectInput,Pump,Para"
 #define DEFAULT_MOVIE_DRIVER_LIST "Theora,FFMpeg,DShow,Null"
-#define DEFAULT_SOUND_DRIVER_LIST "DirectSound,DirectSound-sw,WaveOut,Null"
+#define DEFAULT_SOUND_DRIVER_LIST "WDMKS,DirectSound,DirectSound-sw,WaveOut,Null"
 
 
 #elif defined(MACOSX)
