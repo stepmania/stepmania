@@ -1837,11 +1837,11 @@
 						>
 					</File>
 					<File
-						RelativePath=".\arch\Sound\RageSoundDriver_Win32KernelStreaming.cpp"
+						RelativePath=".\arch\Sound\RageSoundDriver_WDMKS.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\arch\Sound\RageSoundDriver_Win32KernelStreaming.h"
+						RelativePath=".\arch\Sound\RageSoundDriver_WDMKS.h"
 						>
 					</File>
 				</Filter>
