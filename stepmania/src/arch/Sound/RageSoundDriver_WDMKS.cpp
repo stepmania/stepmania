@@ -25,10 +25,11 @@ struct WinWdmFilter;
 
 struct WinWdmPin
 {
-	WinWdmPin()
+	WinWdmPin( WinWdmFilter *pParentFilter, int iPinId )
 	{
 		m_hHandle = NULL;
-		m_pParentFilter = NULL;
+		m_pParentFilter = pParentFilter;
+		m_iPinId = iPinId;
 
 		/* Set up the default m_pPinConnect. */
 		m_pPinConnect = NULL;
@@ -52,6 +53,7 @@ struct WinWdmPin
 
 	HANDLE				m_hHandle;
 	WinWdmFilter			*m_pParentFilter;
+	int				m_iPinId;
 	KSPIN_CONNECT			*m_pPinConnect;
 	vector<KSDATARANGE_AUDIO>	m_dataRangesItem;
 };
@@ -272,23 +274,20 @@ static bool WdmGetPinPropertyMulti(
  */
 WinWdmPin *WinWdmFilter::CreatePin( unsigned long iPinId, RString &sError )
 {
-	/* Allocate the new PIN object */
-	WinWdmPin *pPin = new WinWdmPin;
-
-	pPin->m_pParentFilter = this;
-	pPin->m_pPinConnect->PinId = iPinId;
-
 	{
 		/* Get the COMMUNICATION property */
 		KSPIN_COMMUNICATION communication;
 		if( !WdmGetPinPropertySimple(m_hHandle, iPinId, &KSPROPSETID_Pin, KSPROPERTY_PIN_COMMUNICATION,
 			&communication, sizeof(KSPIN_COMMUNICATION), sError) )
-			goto error;
+		{
+			sError = "KSPROPERTY_PIN_COMMUNICATION: " + sError;
+			return NULL;
+		}
 
 		if( communication != KSPIN_COMMUNICATION_SINK && communication != KSPIN_COMMUNICATION_BOTH )
 		{
 			sError = "Not an audio output device";
-			goto error;
+			return NULL;
 		}
 	}
 
@@ -297,12 +296,15 @@ WinWdmPin *WinWdmFilter::CreatePin( unsigned long iPinId, RString &sError )
 		KSPIN_DATAFLOW dataFlow;
 		if( !WdmGetPinPropertySimple(m_hHandle, iPinId, &KSPROPSETID_Pin, KSPROPERTY_PIN_DATAFLOW,
 			&dataFlow, sizeof(KSPIN_DATAFLOW), sError) )
-			goto error;
+		{
+			sError = "KSPROPERTY_PIN_DATAFLOW: " + sError;
+			return NULL;
+		}
 
 		if( dataFlow != KSPIN_DATAFLOW_IN )
 		{
 			sError = "Not KSPIN_DATAFLOW_IN";
-			goto error;
+			return NULL;
 		}
 	}
 
@@ -310,7 +312,10 @@ WinWdmPin *WinWdmFilter::CreatePin( unsigned long iPinId, RString &sError )
 	{
 		KSMULTIPLE_ITEM *pItem = NULL;
 		if( !WdmGetPinPropertyMulti(m_hHandle, iPinId, &KSPROPSETID_Pin, KSPROPERTY_PIN_INTERFACES, &pItem, sError) )
-			goto error;
+		{
+			sError = "KSPROPERTY_PIN_INTERFACES: " + sError;
+			return NULL;
+		}
 
 		KSIDENTIFIER *identifier = (KSIDENTIFIER *) &pItem[1];
 
@@ -329,14 +334,17 @@ WinWdmPin *WinWdmFilter::CreatePin( unsigned long iPinId, RString &sError )
 		free( pItem );
 
 		if( sError != "" )
-			goto error;
+			return NULL;
 	}
 
 	/* Get the MEDIUM properties list */
 	{
 		KSMULTIPLE_ITEM *pItem = NULL;
 		if( !WdmGetPinPropertyMulti( m_hHandle, iPinId, &KSPROPSETID_Pin, KSPROPERTY_PIN_MEDIUMS, &pItem, sError) )
-			goto error;
+		{
+			sError = "KSPROPERTY_PIN_MEDIUMS: " + sError;
+			return NULL;
+		}
 
 		const KSIDENTIFIER *identifier = (KSIDENTIFIER *) &pItem[1];
 
@@ -355,13 +363,19 @@ WinWdmPin *WinWdmFilter::CreatePin( unsigned long iPinId, RString &sError )
 		free( pItem );
 
 		if( sError != "" )
-			goto error;
+			return NULL;
 	}
+
+	/* Allocate the new PIN object */
+	WinWdmPin *pPin = new WinWdmPin( this, iPinId );
 
 	/* Get DATARANGEs */
 	KSMULTIPLE_ITEM *pDataRangesItem;
 	if( !WdmGetPinPropertyMulti(m_hHandle, iPinId, &KSPROPSETID_Pin, KSPROPERTY_PIN_DATARANGES, &pDataRangesItem, sError) )
+	{
+		sError = "KSPROPERTY_PIN_DATARANGES: " + sError;
 		goto error;
+	}
 
 	KSDATARANGE *pDataRanges = (KSDATARANGE*) (pDataRangesItem + 1);
 
@@ -455,6 +469,7 @@ void WinWdmPin::SetFormat( const WAVEFORMATEX *pFormat )
 	ASSERT( m_pPinConnect != NULL );
 
 	memset( m_pPinConnect, 0, iSize );
+	m_pPinConnect->PinId				= m_iPinId;
 	m_pPinConnect->Interface.Set			= KSINTERFACESETID_Standard;
 	m_pPinConnect->Interface.Id			= KSINTERFACE_STANDARD_STREAMING;
 	m_pPinConnect->Interface.Flags			= 0;
