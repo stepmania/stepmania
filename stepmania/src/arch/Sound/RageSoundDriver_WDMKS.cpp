@@ -1,5 +1,5 @@
 #include "global.h"
-#include "RageSoundDriver_Win32KernelStreaming.h"
+#include "RageSoundDriver_WDMKS.h"
 #include "Foreach.h"
 #include "RageLog.h"
 #include "RageUtil.h"
