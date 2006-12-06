@@ -251,7 +251,7 @@ int RageSound_Generic_Software::GetDataForSound( sound &s )
 
 	sound_block *b = p[0];
 	int size = ARRAYLEN(b->buf)/channels;
-	bool eof = !s.snd->GetDataToPlay( b->buf, size, b->position, b->frames_in_buffer );
+	s.snd->GetDataToPlay( b->buf, size, b->position, b->frames_in_buffer );
 	b->p = b->buf;
 
 	s.buffer.advance_write_pointer( 1 );
@@ -259,7 +259,7 @@ int RageSound_Generic_Software::GetDataForSound( sound &s )
 //	LOG->Trace( "incr fr wr %i (state %i) (%p)",
 //		(int) b->frames_in_buffer, s.state, s.snd );
 
-	return eof? 0:size;
+	return b->frames_in_buffer;
 }
 
 
