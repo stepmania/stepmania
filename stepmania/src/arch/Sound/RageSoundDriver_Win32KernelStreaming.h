@@ -8,11 +8,11 @@
 struct WinWdmStream;
 struct WinWdmFilter;
 
-class RageSound_KernelStreaming: public RageSound_Generic_Software
+class RageSound_WDMKS: public RageSound_Generic_Software
 {
 public:
-	RageSound_KernelStreaming();
-	~RageSound_KernelStreaming();
+	RageSound_WDMKS();
+	~RageSound_WDMKS();
 	RString Init();
 
 	int64_t GetPosition( const RageSoundBase *pSound ) const;

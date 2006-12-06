@@ -1093,7 +1093,7 @@ namespace
 	}
 }
 
-void RageSound_KernelStreaming::Read( void *pData, int iFrames, int iLastCursorPos, int iCurrentFrame )
+void RageSound_WDMKS::Read( void *pData, int iFrames, int iLastCursorPos, int iCurrentFrame )
 {
 	/* If we need conversion, read into a temporary buffer.  Otherwise, read directly
 	 * into the target buffer. */
@@ -1129,7 +1129,7 @@ void RageSound_KernelStreaming::Read( void *pData, int iFrames, int iLastCursorP
 	memcpy( pData, pBuf, iFrames * m_pStream->m_iDeviceOutputChannels * m_pStream->m_iBytesPerOutputSample );
 }
 
-bool RageSound_KernelStreaming::Fill( int iPacket, RString &sError )
+bool RageSound_WDMKS::Fill( int iPacket, RString &sError )
 {
 	uint64_t iCurrentFrame = GetPosition( NULL );
 //	if( iCurrentFrame == m_iLastCursorPos )
@@ -1144,7 +1144,7 @@ bool RageSound_KernelStreaming::Fill( int iPacket, RString &sError )
 	return m_pStream->SubmitPacket( iPacket, sError );
 }
 
-void RageSound_KernelStreaming::MixerThread()
+void RageSound_WDMKS::MixerThread()
 {
 	/* I don't trust this driver with THREAD_PRIORITY_TIME_CRITICAL just yet. */
 	if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST) )
@@ -1211,21 +1211,21 @@ void RageSound_KernelStreaming::MixerThread()
 }
 
 
-REGISTER_SOUND_DRIVER_CLASS( KernelStreaming );
+REGISTER_SOUND_DRIVER_CLASS( WDMKS );
 
-int RageSound_KernelStreaming::MixerThread_start( void *p )
+int RageSound_WDMKS::MixerThread_start( void *p )
 {
-	((RageSound_KernelStreaming *) p)->MixerThread();
+	((RageSound_WDMKS *) p)->MixerThread();
 	return 0;
 }
 
-void RageSound_KernelStreaming::SetupDecodingThread()
+void RageSound_WDMKS::SetupDecodingThread()
 {
 	if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL) )
 		LOG->Warn( werr_ssprintf(GetLastError(), "Failed to set sound thread priority") );
 }
 
-int64_t RageSound_KernelStreaming::GetPosition( const RageSoundBase *pSound ) const
+int64_t RageSound_WDMKS::GetPosition( const RageSoundBase *pSound ) const
 {
 	KSAUDIO_POSITION pos;
 
@@ -1238,7 +1238,7 @@ int64_t RageSound_KernelStreaming::GetPosition( const RageSoundBase *pSound ) co
 	return pos.PlayOffset;
 }
 
-RageSound_KernelStreaming::RageSound_KernelStreaming()
+RageSound_WDMKS::RageSound_WDMKS()
 {
 	m_pStream = NULL;
 	m_pFilter = NULL;
@@ -1247,7 +1247,7 @@ RageSound_KernelStreaming::RageSound_KernelStreaming()
 	m_hSignal = CreateEvent( NULL, FALSE, FALSE, NULL ); /* abort event */
 }
 
-RString RageSound_KernelStreaming::Init()
+RString RageSound_WDMKS::Init()
 {
 	RString sError;
 	if( !PaWinWdm_Initialize(sError) )
@@ -1317,7 +1317,7 @@ RString RageSound_KernelStreaming::Init()
 	return RString();
 }
 
-RageSound_KernelStreaming::~RageSound_KernelStreaming()
+RageSound_WDMKS::~RageSound_WDMKS()
 {
 	/* Signal the mixing thread to quit. */
 	if( MixingThread.IsCreated() )
@@ -1335,12 +1335,12 @@ RageSound_KernelStreaming::~RageSound_KernelStreaming()
 	CloseHandle( m_hSignal );
 }
 
-int RageSound_KernelStreaming::GetSampleRate( int iRate ) const
+int RageSound_WDMKS::GetSampleRate( int iRate ) const
 {
 	return m_pStream->m_iSampleRate;
 }
 
-float RageSound_KernelStreaming::GetPlayLatency() const
+float RageSound_WDMKS::GetPlayLatency() const
 {
 	/* If we have a 1000-byte buffer, and we fill 500 bytes at a time, we
 	 * almost always have between 500 and 1000 bytes filled; on average, 750. */
