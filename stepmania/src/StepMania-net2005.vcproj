@@ -1836,6 +1836,14 @@
 						RelativePath="arch\Sound\RageSoundDriver_WaveOut.h"
 						>
 					</File>
+					<File
+						RelativePath=".\arch\Sound\RageSoundDriver_Win32KernelStreaming.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\arch\Sound\RageSoundDriver_Win32KernelStreaming.h"
+						>
+					</File>
 				</Filter>
 				<Filter
 					Name="ArchHooks"
@@ -3152,6 +3160,10 @@
 			</File>
 			<File
 				RelativePath="RageSoundReader_FileReader.h"
+				>
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_Filter.h"
 				>
 			</File>
 			<File
