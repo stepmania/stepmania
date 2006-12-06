@@ -2183,6 +2183,9 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 	bool bRelease = input.type == IET_RELEASE;
 	const int iCol = GAMESTATE->GetCurrentStyle()->GameInputToColumn( input.GameI );
 
+	if( iCol == Column_Invalid )
+		return;
+	
 	// Don't pass on any inputs to Player that aren't a press or a release.
 	switch( input.type )
 	{
@@ -2195,12 +2198,8 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 
 	if( GAMESTATE->m_bMultiplayer )
 	{
-		if( input.mp != MultiPlayer_Invalid  &&  
-			iCol != Column_Invalid && 
-			GAMESTATE->IsMultiPlayerEnabled(input.mp) )
-		{
+		if( input.mp != MultiPlayer_Invalid  && GAMESTATE->IsMultiPlayerEnabled(input.mp) )
 			m_vPlayerInfo[input.mp].m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
-		}
 	}
 	else
 	{	
