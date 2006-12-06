@@ -111,11 +111,14 @@ RageSound_WaveOut::RageSound_WaveOut()
 
 RString RageSound_WaveOut::Init()
 {
+	m_iSampleRate = PREFSMAN->m_iSoundPreferredSampleRate;
+	if( m_iSampleRate == 0 )
+		m_iSampleRate = 44100;
+
 	WAVEFORMATEX fmt;
 	fmt.wFormatTag = WAVE_FORMAT_PCM;
 	fmt.nChannels = channels;
 	fmt.cbSize = 0;
-	m_iSampleRate = PREFSMAN->m_iSoundPreferredSampleRate;
 	fmt.nSamplesPerSec = m_iSampleRate;
 	fmt.wBitsPerSample = 16;
 	fmt.nBlockAlign = fmt.nChannels * fmt.wBitsPerSample / 8;

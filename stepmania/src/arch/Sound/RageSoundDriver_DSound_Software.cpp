@@ -95,6 +95,8 @@ RString RageSound_DSound_Software::Init()
 	/* Create a DirectSound stream, but don't force it into hardware. */
 	m_pPCM = new DSoundBuf;
 	m_iSampleRate = PREFSMAN->m_iSoundPreferredSampleRate;
+	if( m_iSampleRate == 0 )
+		m_iSampleRate = 44100;
 	sError = m_pPCM->Init( ds, DSoundBuf::HW_DONT_CARE, channels, m_iSampleRate, 16, g_iMaxWriteahead );
 	if( sError != "" )
 		return sError;

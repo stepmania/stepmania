@@ -15,6 +15,9 @@
  * samplerate to use instead. */
 unsigned Alsa9Buf::FindSampleRate( unsigned rate )
 {
+	if( rate == 0 )
+		rate = 44100;
+
 	snd_pcm_hw_params_t *testhw;
 	dsnd_pcm_hw_params_alloca( &testhw );
 	dsnd_pcm_hw_params_any( pcm, testhw );

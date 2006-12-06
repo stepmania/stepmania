@@ -29,6 +29,8 @@ int64_t RageSound_Null::GetPosition( const RageSoundBase *snd ) const
 RageSound_Null::RageSound_Null()
 {
 	m_iSampleRate = PREFSMAN->m_iSoundPreferredSampleRate;
+	if( m_iSampleRate == 0 )
+		m_iSampleRate = 44100;
 	m_iLastCursorPos = GetPosition( NULL );
 	StartDecodeThread();
 }

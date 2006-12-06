@@ -160,6 +160,8 @@ RString RageSound_CA::Init()
 	UInt32 iFirstChannel = min( channels[0], channels[1] );
 	
 	m_iSampleRate = PREFSMAN->m_iSoundPreferredSampleRate;
+	if( m_iSampleRate == 0 )
+		m_iSampleRate = 44100;
 	Float64 nominalSampleRate = m_iSampleRate;
 	Float64 actualSampleRate;
 	

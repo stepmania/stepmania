@@ -88,6 +88,8 @@ RString RageSound_AU::Init()
 	AudioStreamBasicDescription streamFormat;
 	
 	streamFormat.mSampleRate = PREFSMAN->m_iSoundPreferredSampleRate;
+	if( streamFormat.mSampleRate == 0 )
+		streamFormat.mSampleRate = 44100;
 	streamFormat.mFormatID = kAudioFormatLinearPCM;
 	streamFormat.mFormatFlags = kFormatFlags;
 	streamFormat.mBytesPerPacket = kBytesPerPacket;

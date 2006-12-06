@@ -710,7 +710,8 @@ WinWdmPin *WinWdmFilter::InstantiateRenderPin(
 			}
 		}
 
-		aSampleRates.push_back( iPreferredSampleRate );
+		if( iPreferredSampleRate != 0 )
+			aSampleRates.push_back( iPreferredSampleRate );
 		aSampleRates.push_back( 48000 );
 		aSampleRates.push_back( 44100 );
 
@@ -720,7 +721,8 @@ WinWdmPin *WinWdmFilter::InstantiateRenderPin(
 
 		MoveToBeginning( aSampleRates, 44100 );
 		MoveToBeginning( aSampleRates, 48000 );
-		MoveToBeginning( aSampleRates, iPreferredSampleRate );
+		if( iPreferredSampleRate != 0 )
+			MoveToBeginning( aSampleRates, iPreferredSampleRate );
 	}
 
 	/* Try WAVE_FORMAT_EXTENSIBLE, then WAVE_FORMAT_PCM. */
