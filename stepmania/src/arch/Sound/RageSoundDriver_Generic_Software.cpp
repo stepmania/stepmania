@@ -169,7 +169,12 @@ void RageSound_Generic_Software::DecodeThread()
 	while( !shutdown_decode_thread )
 	{
 		/* Fill each playing sound, round-robin. */
-		usleep( 1000000*chunksize() / GetSampleRate(0) );
+		{
+			int iSampleRate = GetSampleRate(0);
+			ASSERT_M( iSampleRate > 0, ssprintf("%i", iSampleRate) );
+			int iUsecs = 1000000*chunksize() / iSampleRate;
+			usleep( iUsecs );
+		}
 
 		LockMut( m_Mutex );
 //		LOG->Trace("begin mix");
