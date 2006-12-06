@@ -375,7 +375,7 @@ bool RageSound::GetDataToPlay( int16_t *pBuffer, int iFrames, int64_t &iStreamFr
 	iFramesStored = 0;
 	iStreamFrame = m_iStreamFrame;
 
-	while( 1 )
+	while( iFrames > 0 )
 	{
 		/* Get a block of data. */
 		int iGotFrames = GetData( (char *) pBuffer, iFrames );
@@ -421,9 +421,11 @@ bool RageSound::GetDataToPlay( int16_t *pBuffer, int iFrames, int64_t &iStreamFr
 		/* This block goes from iStreamFrame to iStreamFrame+iGotFrames. */
 		RageSoundUtil::Pan( pBuffer, iGotFrames, m_Param.m_Balance );
 
-		iFramesStored = iGotFrames;
-		return true;
+		iFramesStored += iGotFrames;
+		iFrames -= iGotFrames;
+		pBuffer += iGotFrames * channels;
 	}
+	return true;
 }
 
 /* Indicate that a block of audio data has been written to the device. */
