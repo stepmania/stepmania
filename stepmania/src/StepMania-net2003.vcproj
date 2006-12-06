@@ -1379,6 +1379,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					<File
 						RelativePath="arch\Sound\RageSoundDriver_WaveOut.h">
 					</File>
+					<File
+						RelativePath="arch\Sound\RageSoundDriver_WDMKS.cpp">
+					</File>
+					<File
+						RelativePath="arch\Sound\RageSoundDriver_WDMKS.h">
+					</File>
 				</Filter>
 				<Filter
 					Name="ArchHooks"
