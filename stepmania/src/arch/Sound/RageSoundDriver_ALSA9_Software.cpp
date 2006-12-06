@@ -106,7 +106,7 @@ RString RageSound_ALSA9_Software::Init()
 	if( sError != "" )
 		return sError;
 
-	m_iSampleRate = m_pPCM->FindSampleRate( m_iSampleRate = PREFSMAN->m_iSoundPreferredSampleRate );
+	m_iSampleRate = m_pPCM->FindSampleRate( PREFSMAN->m_iSoundPreferredSampleRate );
 	m_pPCM->SetSampleRate( m_iSampleRate );
 	LOG->Info( "ALSA: Software mixing at %ihz", m_iSampleRate );
 	
