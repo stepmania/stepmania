@@ -250,7 +250,7 @@ PrefsManager::PrefsManager() :
 	m_fSoundVolume			( "SoundVolume",			1.0f ),
 	m_iSoundWriteAhead		( "SoundWriteAhead",			0 ),
 	m_iSoundDevice			( "SoundDevice",			"" ),
-	m_iSoundPreferredSampleRate	( "SoundPreferredSampleRate",		44100 ),
+	m_iSoundPreferredSampleRate	( "SoundPreferredSampleRate",		0 ),
 	m_sLightsStepsDifficulty	( "LightsStepsDifficulty",		"medium" ),
 	m_bAllowUnacceleratedRenderer	( "AllowUnacceleratedRenderer",		false ),
 	m_bThreadedInput		( "ThreadedInput",			true ),
