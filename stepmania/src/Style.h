@@ -54,6 +54,7 @@ public:
 	bool			m_bLockDifficulties;		// used in couple Styles
 
 	GameInput StyleInputToGameInput( int iCol, PlayerNumber pn ) const;
+	// Returns Column_Invalid if the input is an invalid column, such as UL corner in 4 pad mode
 	int GameInputToColumn( const GameInput &GameI ) const;
 	RString ColToButtonName( int iCol ) const;
 
