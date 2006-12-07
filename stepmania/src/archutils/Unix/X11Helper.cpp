@@ -2,9 +2,6 @@
 #include "X11Helper.h"
 #include "RageLog.h"
 
-// Number of subsystems using the X connection:
-static int g_iRefCount = 0;
-
 Display *X11Helper::Dpy = NULL;
 Window X11Helper::Win = None;
 
@@ -13,35 +10,28 @@ static int FatalCallback( Display* );
 
 bool X11Helper::OpenXConnection()
 {
-	if( g_iRefCount == 0 )
-	{
-		Dpy = XOpenDisplay(0);
-		if( Dpy == NULL )
-			return false;
+	DEBUG_ASSERT( Dpy == NULL && Win == None );
+	Dpy = XOpenDisplay(0);
+	if( Dpy == NULL )
+		return false;
 
-		XSetIOErrorHandler( FatalCallback );
-		XSetErrorHandler( ErrorCallback );
-	}
-	g_iRefCount++;
+	XSetIOErrorHandler( FatalCallback );
+	XSetErrorHandler( ErrorCallback );
 	return true;
 }
 
 void X11Helper::CloseXConnection()
 {
-	g_iRefCount--;
-
-	if( g_iRefCount == 0 )
-	{
-		// The window should have been shut down
-		DEBUG_ASSERT( Win == None );
-		XCloseDisplay( Dpy );
-		Dpy = NULL;	// For sanity's sake
-	}
+	// The window should have been shut down
+	DEBUG_ASSERT( Dpy != NULL );
+	DEBUG_ASSERT( Win == None );
+	XCloseDisplay( Dpy );
+	Dpy = NULL;
 }
 
 bool X11Helper::MakeWindow( Window &win, int screenNum, int depth, Visual *visual, int width, int height, bool overrideRedirect )
 {
-	if( g_iRefCount == 0 )
+	if( !Dpy || !Win )
 		return false;
 
 	XSetWindowAttributes winAttribs;
