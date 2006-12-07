@@ -15,6 +15,10 @@ namespace X11Helper
 	// internal session-tracking stuff (so you should call this anyway).
 	bool Go();
 
+	// Destroy the connection, if appropriate; otherwise do some important
+	// internal session-tracking stuff (so you should call it anyway).
+	void Stop();
+
 	// The current Display (connection). Initialized by the first call to
 	// Go().
 	extern Display *Dpy;
@@ -34,15 +38,11 @@ namespace X11Helper
 
 	// Unmask one X event type mask thingy (XSelectInput() arg 3) on the
 	// current window. Masked/unmasked events will carry between windows.
-	bool OpenMask(long mask);
+	void OpenMask( long mask );
 
 	// (Re)mask one X event type mask thingy (XSelectInput() arg 3) on the
 	// current window. Masked/unmasked events will carry between windows.
-	bool CloseMask(long mask);
-
-	// Destroy the connection, if appropriate; otherwise do some important
-	// internal session-tracking stuff (so you should call it anyway).
-	void Stop();
+	void CloseMask( long mask );
 };
 
 #endif

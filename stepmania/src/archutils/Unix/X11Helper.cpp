@@ -19,8 +19,8 @@ static bool g_bHaveWin = false;
 Display *X11Helper::Dpy = NULL;
 Window X11Helper::Win;
 
-int protoErrorCallback( Display*, XErrorEvent* );
-int protoFatalCallback( Display* );
+static int protoErrorCallback( Display*, XErrorEvent* );
+static int protoFatalCallback( Display* );
 
 bool X11Helper::Go()
 {
@@ -34,7 +34,6 @@ bool X11Helper::Go()
 		XSetErrorHandler( &protoErrorCallback );
 	}
 	g_iRefCount++;
-
 	return true;
 }
 
@@ -50,29 +49,28 @@ void X11Helper::Stop()
 	}
 }
 
-static bool pApplyMasks();
+static void pApplyMasks();
 
-bool X11Helper::OpenMask( long mask )
+void X11Helper::OpenMask( long mask )
 {
 	g_aiMasks.push_back(mask);
-	return pApplyMasks();
+	pApplyMasks();
 }
 
-bool X11Helper::CloseMask( long mask )
+void X11Helper::CloseMask( long mask )
 {
 	vector<long>::iterator i = find( g_aiMasks.begin(), g_aiMasks.end(), mask );
 	if( i == g_aiMasks.end() )
-		return true;
+		return;
 
 	g_aiMasks.erase( i );
-
-	return pApplyMasks();
+	pApplyMasks();
 }
 
-static bool pApplyMasks()
+static void pApplyMasks()
 {
 	if( X11Helper::Dpy == NULL || !g_bHaveWin )
-		return true;
+		return;
 
 	LOG->Trace("X11Helper: Reapplying event masks.");
 
@@ -80,10 +78,7 @@ static bool pApplyMasks()
 	for( unsigned i = 0; i < g_aiMasks.size(); ++i )
 		iMask |= g_aiMasks[i];
 
-	if( XSelectInput(X11Helper::Dpy, X11Helper::Win, iMask) == 0 )
-		return false;
-
-	return true;
+	XSelectInput( X11Helper::Dpy, X11Helper::Win, iMask );
 }
 
 bool X11Helper::MakeWindow( int screenNum, int depth, Visual *visual, int width, int height, bool overrideRedirect )
