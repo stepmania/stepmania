@@ -1069,8 +1069,8 @@ int main(int argc, char* argv[])
 
 	SONGMAN->PreloadSongImages();
 
-	/* This initializes objects that change the SDL event mask, and has other
-	 * dependencies on the SDL video subsystem, so it must be initialized after DISPLAY. */
+	/* Input managers can have dependences on the video system so
+	 * INPUTMAN must be initialized after DISPLAY. */
 	INPUTMAN	= new RageInput;
 
 	// These things depend on the TextureManager, so do them after!
