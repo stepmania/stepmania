@@ -1,17 +1,10 @@
 #include "global.h"
 #include "X11Helper.h"
-
-#include <X11/Xlib.h>
-
 #include "RageLog.h"
-#include "RageDisplay.h"
-#include "RageThreads.h"
-
-// Currently open masks:
-static vector<long> g_aiMasks;
 
 // Number of subsystems using the X connection:
 static int g_iRefCount = 0;
+static unsigned long g_iMask = 0L;
 
 Display *X11Helper::Dpy = NULL;
 Window X11Helper::Win = None;
@@ -40,106 +33,68 @@ void X11Helper::Stop()
 
 	if( g_iRefCount == 0 )
 	{
-		XCloseDisplay( Dpy );
+		// The window should have been shut down
+		DEBUG_ASSERT( Win == None );
 		Dpy = NULL;	// For sanity's sake
-		g_aiMasks.clear();
 	}
 }
 
-static void ApplyMasks();
-
-void X11Helper::OpenMask( long mask )
+void X11Helper::OpenMask( unsigned long mask )
 {
-	g_aiMasks.push_back(mask);
-	ApplyMasks();
+	g_iMask |= mask;
+	if( Dpy && Win )
+		XSelectInput( Dpy, Win, g_iMask );
 }
 
-void X11Helper::CloseMask( long mask )
+void X11Helper::CloseMask( unsigned long mask )
 {
-	vector<long>::iterator i = find( g_aiMasks.begin(), g_aiMasks.end(), mask );
-	if( i == g_aiMasks.end() )
-		return;
-
-	g_aiMasks.erase( i );
-	ApplyMasks();
+	g_iMask &= ~mask;
+	if( Dpy && Win )
+		XSelectInput( Dpy, Win, g_iMask );
 }
 
-static void ApplyMasks()
-{
-	if( X11Helper::Dpy == NULL || X11Helper::Win == None )
-		return;
-
-	LOG->Trace( "X11Helper: Reapplying event masks." );
-
-	long iMask = 0;
-	for( unsigned i = 0; i < g_aiMasks.size(); ++i )
-		iMask |= g_aiMasks[i];
-
-	XSelectInput( X11Helper::Dpy, X11Helper::Win, iMask );
-}
-
-bool X11Helper::MakeWindow( int screenNum, int depth, Visual *visual, int width, int height, bool overrideRedirect )
+bool X11Helper::MakeWindow( Window &win, int screenNum, int depth, Visual *visual, int width, int height, bool overrideRedirect )
 {
 	if( g_iRefCount == 0 )
 		return false;
 
-	if( Win )
-	{
-		XDestroyWindow( Dpy, Win );
-		Win = None;
-	}
-	Win = CreateWindow( screenNum, depth, visual, width, height, overrideRedirect );
-	return true;
-}
+	if( win )
+		XDestroyWindow( Dpy, win );
 
-Window X11Helper::CreateWindow( int screenNum, int depth, Visual *visual, int width, int height, bool overrideRedirect )
-{
-	vector<long>::iterator i;
-	
 	XSetWindowAttributes winAttribs;
 
 	winAttribs.border_pixel = 0;
-	winAttribs.event_mask = 0;
-	i = g_aiMasks.begin();
-	while( i != g_aiMasks.end() )
-	{
-		winAttribs.event_mask |= *i;
-		i++;
-	}
+	winAttribs.event_mask = g_iMask;
 
 	// XXX: Error catching/handling?
 
 	winAttribs.colormap = XCreateColormap( Dpy, RootWindow(Dpy, screenNum), visual, AllocNone );
+	unsigned long mask = CWBorderPixel | CWColormap | CWEventMask;
 
-	Window Win;
 	if( overrideRedirect )
 	{
 		winAttribs.override_redirect = True;
-		Win = XCreateWindow( Dpy, RootWindow(Dpy, screenNum), 0, 0, width,
-			height, 0, depth, InputOutput, visual,
-			CWBorderPixel | CWColormap | CWEventMask | CWOverrideRedirect, &winAttribs );
+		mask |= CWOverrideRedirect;
 	}
-	else
-	{
-		Win = XCreateWindow( Dpy, RootWindow(Dpy, screenNum), 0, 0, width,
-			height, 0, depth, InputOutput, visual,
-			CWBorderPixel | CWColormap | CWEventMask, &winAttribs );
-	}
+	win = XCreateWindow( Dpy, RootWindow(Dpy, screenNum), 0, 0, width, height, 0,
+			     depth, InputOutput, visual, mask, &winAttribs );
+	if( win == None )
+		return false;
 
 	/* Hide the mouse cursor. */
 	{
 		const char pBlank[] = { 0,0,0,0,0,0,0,0 };
-		Pixmap BlankBitmap = XCreateBitmapFromData( Dpy, Win, pBlank, 8, 8 );
+		Pixmap BlankBitmap = XCreateBitmapFromData( Dpy, win, pBlank, 8, 8 );
 
 		XColor black = { 0, 0, 0, 0, 0, 0 };
 		Cursor pBlankPointer = XCreatePixmapCursor( Dpy, BlankBitmap, BlankBitmap, &black, &black, 0, 0 );
 		XFreePixmap( Dpy, BlankBitmap );
 
-		XDefineCursor( Dpy, Win, pBlankPointer );
+		XDefineCursor( Dpy, win, pBlankPointer );
 		XFreeCursor( Dpy, pBlankPointer );
 	}
 
-	return Win;
+	return true;
 }
 
 int ErrorCallback( Display *d, XErrorEvent *err )

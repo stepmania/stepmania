@@ -3,9 +3,6 @@
 #define X11_HELPER_H
 
 #include <X11/Xlib.h>		// Window
-
-#include "RageDisplay.h"	// RageDisplay
-
 namespace X11Helper
 {
 	// All functions in here that return a bool return true on success, and
@@ -31,18 +28,16 @@ namespace X11Helper
 	// this visual type, this width (optional -- you can resize the window
 	// in your callback later), and this height (optional).
 	// Also, whether to enable override redirect on the window.
-	bool MakeWindow(int screenNum, int depth, Visual *visual,
-					int width=32, int height=32, bool overrideRedirect=false);
-
-	Window CreateWindow( int screenNum, int depth, Visual *visual, int width, int height, bool overrideRedirect );
+	bool MakeWindow( Window &win, int screenNum, int depth, Visual *visual,
+			 int width, int height, bool overrideRedirect );
 
 	// Unmask one X event type mask thingy (XSelectInput() arg 3) on the
 	// current window. Masked/unmasked events will carry between windows.
-	void OpenMask( long mask );
+	void OpenMask( unsigned long mask );
 
 	// (Re)mask one X event type mask thingy (XSelectInput() arg 3) on the
 	// current window. Masked/unmasked events will carry between windows.
-	void CloseMask( long mask );
+	void CloseMask( unsigned long mask );
 };
 
 #endif
