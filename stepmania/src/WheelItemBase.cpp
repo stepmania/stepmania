@@ -55,7 +55,7 @@ void WheelItemBase::Load( RString sType )
 	this->AddChild( &m_text );
 }
 
-void WheelItemBase::LoadFromWheelItemData( const WheelItemBaseData* pWID )
+void WheelItemBase::LoadFromWheelItemData( const WheelItemBaseData* pWID, int iIndex, bool bHasFocus )
 {
 	ASSERT( pWID != NULL );
 	

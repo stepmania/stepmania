@@ -36,7 +36,7 @@ public:
 	void DrawGrayBar( Actor& bar );
 	void SetExpanded( bool bExpanded ) { m_bExpanded = bExpanded; }
 
-	virtual void LoadFromWheelItemData( const WheelItemBaseData* pWID );
+	virtual void LoadFromWheelItemData( const WheelItemBaseData* pWID, int iIndex, bool bHasFocus );
 
 	RageColor			m_colorLocked;
 

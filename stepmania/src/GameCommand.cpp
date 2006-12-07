@@ -35,6 +35,7 @@ void GameCommand::Init()
 	m_sText = "";
 	m_bInvalid = true;
 	m_iIndex = -1;
+	m_bHasFocus = false;
 	m_MultiPlayer = MultiPlayer_Invalid;
 	m_pStyle = NULL;
 	m_pm = PlayMode_Invalid;
@@ -810,21 +811,25 @@ bool GameCommand::IsZero() const
 class LunaGameCommand: public Luna<GameCommand>
 {
 public:
-	static int GetName( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sName ); return 1; }
-	static int GetText( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sText ); return 1; }
-	static int GetIndex( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iIndex ); return 1; }
+	static int GetName( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sName ); return 1; }
+	static int GetText( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sText ); return 1; }
+	static int GetIndex( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_iIndex ); return 1; }
+	static int GetHasFocus( T* p, lua_State *L )	{ lua_pushboolean(L, p->m_bHasFocus ); return 1; }
 	static int GetMultiPlayer( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_MultiPlayer); return 1; }
 	static int GetProfileID( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sProfileID ); return 1; }
-	static int GetSong( T* p, lua_State *L )		{ if(p->m_pSong==NULL) lua_pushnil(L); else p->m_pSong->PushSelf(L); return 1; }
+	static int GetSong( T* p, lua_State *L )	{ if(p->m_pSong==NULL) lua_pushnil(L); else p->m_pSong->PushSelf(L); return 1; }
+	static int GetSongGroup( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sSongGroup ); return 1; }
 
 	LunaGameCommand()
 	{
 		ADD_METHOD( GetName );
 		ADD_METHOD( GetText );
 		ADD_METHOD( GetIndex );
+		ADD_METHOD( GetHasFocus );
 		ADD_METHOD( GetMultiPlayer );
 		ADD_METHOD( GetProfileID );
 		ADD_METHOD( GetSong );
+		ADD_METHOD( GetSongGroup );
 	}
 };
 

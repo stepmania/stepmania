@@ -151,10 +151,10 @@ bool RoomWheel::Select()
 	return false;
 }
 
-void RoomWheelItem::LoadFromWheelItemData( const WheelItemBaseData* pWID )
+void RoomWheelItem::LoadFromWheelItemData( const WheelItemBaseData* pWID, int iIndex, bool bHasFocus )
 {
 	const RoomWheelData* tmpdata = (RoomWheelData*) pWID;
-	WheelItemBase::LoadFromWheelItemData( pWID );
+	WheelItemBase::LoadFromWheelItemData( pWID, iIndex, bHasFocus );
 	m_Desc.SetText( tmpdata->m_sDesc );
 	m_Desc.SetDiffuseColor( pWID->m_color );
 	m_text.SetDiffuseColor( pWID->m_color );

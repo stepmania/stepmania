@@ -26,7 +26,7 @@ public:
 	virtual ~MusicWheelItem();
 	virtual MusicWheelItem *Copy() const { return new MusicWheelItem(*this); }
 
-	virtual void LoadFromWheelItemData( const WheelItemBaseData* pWID );
+	virtual void LoadFromWheelItemData( const WheelItemBaseData* pWID, int iIndex, bool bHasFocus );
 	virtual void HandleMessage( const Message &msg );
 	void RefreshGrades();
 

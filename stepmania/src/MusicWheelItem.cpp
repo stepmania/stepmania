@@ -147,7 +147,7 @@ MusicWheelItem::~MusicWheelItem()
 		delete m_pGradeDisplay[p];
 }
 
-void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pWIBD )
+void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pWIBD, int iIndex, bool bHasFocus )
 {
 	const WheelItemData *pWID = dynamic_cast<const WheelItemData*>( pWIBD ); // XXX: ugly cast
 	
@@ -272,6 +272,22 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pWIBD )
 		SetGrayBar( pBars[i] );
 		break;
 	}
+
+	GameCommand gc;
+	gc.m_pSong = pWID->m_pSong;
+	gc.m_sSongGroup = pWID->m_sText;
+	gc.m_bHasFocus = true;
+	gc.m_iIndex = iIndex;
+	gc.m_bHasFocus = bHasFocus;
+
+	Lua *L = LUA->Get();
+	gc.PushSelf( L );
+	lua_setglobal( L, "ThisGameCommand" );
+	LUA->Release( L );
+
+	this->PlayCommand( "Set" );
+
+	LUA->UnsetGlobal( "ThisGameCommand" );
 }
 
 void MusicWheelItem::RefreshGrades()

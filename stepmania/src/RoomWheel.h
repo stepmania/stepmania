@@ -25,7 +25,7 @@ public:
 	RoomWheelItem( const RoomWheelItem &cpy );
 
 	void Load( RString sType );
-	virtual void LoadFromWheelItemData( const WheelItemBaseData* pWID );
+	virtual void LoadFromWheelItemData( const WheelItemBaseData* pWID, int iIndex, bool bHasFocus );
 	virtual RoomWheelItem *Copy() const { return new RoomWheelItem(*this); }
 
 private:
