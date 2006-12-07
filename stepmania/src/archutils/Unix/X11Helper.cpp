@@ -13,14 +13,11 @@ static vector<long> g_aiMasks;
 // Number of subsystems using the X connection:
 static int g_iRefCount = 0;
 
-// Do we have a window?
-static bool g_bHaveWin = false;
-
 Display *X11Helper::Dpy = NULL;
-Window X11Helper::Win;
+Window X11Helper::Win = None;
 
-static int protoErrorCallback( Display*, XErrorEvent* );
-static int protoFatalCallback( Display* );
+static int ErrorCallback( Display*, XErrorEvent* );
+static int FatalCallback( Display* );
 
 bool X11Helper::Go()
 {
@@ -30,8 +27,8 @@ bool X11Helper::Go()
 		if( Dpy == NULL )
 			return false;
 
-		XSetIOErrorHandler( &protoFatalCallback );
-		XSetErrorHandler( &protoErrorCallback );
+		XSetIOErrorHandler( FatalCallback );
+		XSetErrorHandler( ErrorCallback );
 	}
 	g_iRefCount++;
 	return true;
@@ -49,12 +46,12 @@ void X11Helper::Stop()
 	}
 }
 
-static void pApplyMasks();
+static void ApplyMasks();
 
 void X11Helper::OpenMask( long mask )
 {
 	g_aiMasks.push_back(mask);
-	pApplyMasks();
+	ApplyMasks();
 }
 
 void X11Helper::CloseMask( long mask )
@@ -64,15 +61,15 @@ void X11Helper::CloseMask( long mask )
 		return;
 
 	g_aiMasks.erase( i );
-	pApplyMasks();
+	ApplyMasks();
 }
 
-static void pApplyMasks()
+static void ApplyMasks()
 {
-	if( X11Helper::Dpy == NULL || !g_bHaveWin )
+	if( X11Helper::Dpy == NULL || X11Helper::Win == None )
 		return;
 
-	LOG->Trace("X11Helper: Reapplying event masks.");
+	LOG->Trace( "X11Helper: Reapplying event masks." );
 
 	long iMask = 0;
 	for( unsigned i = 0; i < g_aiMasks.size(); ++i )
@@ -86,18 +83,12 @@ bool X11Helper::MakeWindow( int screenNum, int depth, Visual *visual, int width,
 	if( g_iRefCount == 0 )
 		return false;
 
-	if( g_bHaveWin )
+	if( Win )
 	{
 		XDestroyWindow( Dpy, Win );
-		g_bHaveWin = false;
+		Win = None;
 	}
-		// pHaveWin will stay false if an error occurs once I do error
-		// checking here...
-
 	Win = CreateWindow( screenNum, depth, visual, width, height, overrideRedirect );
-
-	g_bHaveWin = true;
-
 	return true;
 }
 
@@ -151,7 +142,7 @@ Window X11Helper::CreateWindow( int screenNum, int depth, Visual *visual, int wi
 	return Win;
 }
 
-int protoErrorCallback( Display *d, XErrorEvent *err )
+int ErrorCallback( Display *d, XErrorEvent *err )
 {
 	char errText[512];
 	XGetErrorText( d,  err->error_code, errText, 512 );
@@ -161,7 +152,7 @@ int protoErrorCallback( Display *d, XErrorEvent *err )
 	return 0; // Xlib ignores our return value
 }
 
-int protoFatalCallback( Display *d )
+int FatalCallback( Display *d )
 {
 	RageException::Throw( "Fatal I/O error communicating with X server." );
 }
