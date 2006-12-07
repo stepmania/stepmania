@@ -12,9 +12,9 @@ class RageSound_Generic_Software: public RageSoundDriver
 public:
 	virtual void Update();
 
-	void StartMixing( RageSoundBase *snd );		/* used by RageSound */
-	void StopMixing( RageSoundBase *snd );		/* used by RageSound */
-	bool PauseMixing( RageSoundBase *snd, bool bStop );
+	void StartMixing( RageSoundBase *pSound );		/* used by RageSound */
+	void StopMixing( RageSoundBase *pSound );		/* used by RageSound */
+	bool PauseMixing( RageSoundBase *pSound, bool bStop );
 
 	RageSound_Generic_Software();
 	virtual ~RageSound_Generic_Software();
@@ -37,17 +37,17 @@ protected:
 	/*
 	 * Read mixed data.
 	 *
-	 * frames: buffer to read into
-	 * nframes: number of frames (not samples) to read
+	 * pBuf: buffer to read into
+	 * iFrames: number of frames (not samples) to read
 	 * frameno: frame number at which this sound will be heard
-	 * current_frameno: frame number that is currently being heard
+	 * iCurrentFrame: frame number that is currently being heard
 	 *
-	 * current_frameno is used for handling start timing.
+	 * iCurrentFrame is used for handling start timing.
 	 *
 	 * This function only mixes data; it will not lock any mutexes or do any file access, and
 	 * is safe to call from a realtime thread.
 	 */
-	void Mix( int16_t *frames, int nframes, int64_t frameno, int64_t current_frameno );
+	void Mix( int16_t *pBuf, int iFrame, int64_t iFrameNumber, int64_t iCurrentFrame );
 
 	/* This mutex is used for serializing with the decoder thread.  Locking this mutex
 	 * can take a while. */
@@ -101,24 +101,25 @@ private:
 	 */
 	struct sound_block
 	{
-		int16_t buf[samples_per_block];
-		int16_t *p; // beginning of the unread data
-		int frames_in_buffer; // total number of frames (not samples) at p
-		int64_t position; // position value of p
-		sound_block() { frames_in_buffer = position = 0; p = buf; }
+		int16_t m_Buffer[samples_per_block];
+		int16_t *m_BufferNext; // beginning of the unread data
+		int m_FramesInBuffer; // total number of frames at m_BufferNext
+		int64_t m_iPosition; // stream frame of m_BufferNext
+		sound_block() { m_FramesInBuffer = m_iPosition = 0; m_BufferNext = m_Buffer; }
 	};
 
-	struct sound
+	struct Sound
 	{
-	    RageSoundBase *snd;
-		int sound_id;
-		RageTimer start_time;
-		float volume;
-		CircBuf<sound_block> buffer;
+		Sound();
+		void Allocate( int iFrames );
+		void Deallocate();
 
-		/* If true, this sound is in STOPPED and available for use. */
-
-		bool paused;
+		RageSoundBase *m_pSound;
+		int m_iSoundID;
+		RageTimer m_StartTime;
+		float m_fVolume;
+		CircBuf<sound_block> m_Buffer;
+		bool m_bPaused;
 
 		enum
 		{
@@ -133,23 +134,19 @@ private:
 
 			HALTING,	/* stop immediately */
 			PLAYING
-		} state;
-
-	    sound();
-		void Allocate( int frames );
-		void Deallocate();
+		} m_State;
 	};
 
 	/* List of currently playing sounds: XXX no vector */
-	sound sounds[32];
+	Sound m_Sounds[32];
 
-	bool shutdown_decode_thread;
+	bool m_bShutdownDecodeThread;
 
-	static int DecodeThread_start(void *p);
+	static int DecodeThread_start( void *p );
 	void DecodeThread();
 	RageThread m_DecodeThread;
 
-	int GetDataForSound( sound &s );
+	int GetDataForSound( Sound &s );
 };
 
 #endif
