@@ -96,14 +96,6 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 	putenv( buf );
 #endif
 
-	XSizeHints hints;
-	XEvent ev;
-	stack<XEvent> otherEvs;
-
-	hints.flags = PBaseSize;
-	hints.base_width = p.width;
-	hints.base_height = p.height;
-
 	if( g_pContext == NULL || p.bpp != CurrentParams.bpp || m_bWasWindowed != p.windowed )
 	{
 		// Different depth, or we didn't make a window before. New context.
@@ -136,9 +128,6 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		if( xvi == NULL )
 			return "No visual available for that depth.";
 
-		/* Enable StructureNotifyMask, so we receive a MapNotify for the following XMapWindow. */
-		OpenMask( StructureNotifyMask );
-
 		// I get strange behavior if I add override redirect after creating the window.
 		// So, let's recreate the window when changing that state.
 		if( !MakeWindow(Win, xvi->screen, xvi->depth, xvi->visual, p.width, p.height, !p.windowed) )
@@ -156,28 +145,20 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 
 		glXMakeCurrent( Dpy, Win, g_pContext );
 
+		XWindowAttributes winAttrib;
+		XGetWindowAttributes( Dpy, Win, &winAttrib );
+		XSelectInput( Dpy, Win, winAttrib.your_event_mask | StructureNotifyMask );
 		XMapWindow( Dpy, Win );
 
-		// HACK: Wait for the MapNotify event, without spinning and
-		// eating CPU unnecessarily, and without smothering other
-		// events. Do this by grabbing all events, remembering
-		// uninteresting events, and putting them back on the queue
-		// after MapNotify arrives.
-		while(1)
+		// XXX: Why do we need to wait for the MapNotify event?
+		while( true )
 		{
-			XNextEvent( Dpy, &ev );
-			if( ev.type == MapNotify )
+			XEvent event;
+			XMaskEvent( Dpy, StructureNotifyMask, &event );
+			if( event.type == MapNotify )
 				break;
-
-			otherEvs.push( ev );
 		}
-
-		while( !otherEvs.empty() )
-		{
-			XPutBackEvent( Dpy, &otherEvs.top() );
-			otherEvs.pop();
-		}
-		CloseMask( StructureNotifyMask );
+		XSelectInput( Dpy, Win, winAttrib.your_event_mask );
 
 	}
 	else
@@ -240,7 +221,15 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 
 	// Do this before resizing the window so that pane-style WMs (Ion,
 	// ratpoison) don't resize us back inappropriately.
-	XSetWMNormalHints( Dpy, Win, &hints );
+	{
+		XSizeHints hints;
+
+		hints.flags = PBaseSize;
+		hints.base_width = p.width;
+		hints.base_height = p.height;
+
+		XSetWMNormalHints( Dpy, Win, &hints );
+	}
 
 	// Do this even if we just created the window -- works around Ion2 not
 	// catching WM normal hints changes in mapped windows.
