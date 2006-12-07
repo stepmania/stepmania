@@ -30,31 +30,23 @@ struct WinWdmPin
 		m_hHandle = NULL;
 		m_pParentFilter = pParentFilter;
 		m_iPinId = iPinId;
-
-		/* Set up the default m_pPinConnect. */
-		m_pPinConnect = NULL;
-		WAVEFORMATEX fmt;
-		memset( &fmt, 0, sizeof(WAVEFORMATEX) );
-		SetFormat( &fmt );
 	}
 
 	~WinWdmPin()
 	{
 		Close();
-		free( m_pPinConnect );
 	}
 
-	bool Instantiate( RString &sError );
+	bool Instantiate( const WAVEFORMATEX *pFormat, RString &sError );
 	void Close();
 
 	bool SetState( KSSTATE state, RString &sError );
-	void SetFormat( const WAVEFORMATEX* format );
+	KSPIN_CONNECT *MakeFormat( const WAVEFORMATEX *pFormat ) const;
 	bool IsFormatSupported( const WAVEFORMATEX *pFormat ) const;
 
 	HANDLE				m_hHandle;
 	WinWdmFilter			*m_pParentFilter;
 	int				m_iPinId;
-	KSPIN_CONNECT			*m_pPinConnect;
 	vector<KSDATARANGE_AUDIO>	m_dataRangesItem;
 };
 
@@ -442,12 +434,21 @@ bool WinWdmPin::SetState( KSSTATE state, RString &sError )
 		&state, sizeof(state), NULL, 0, sError );
 }
 
-bool WinWdmPin::Instantiate( RString &sError )
+bool WinWdmPin::Instantiate( const WAVEFORMATEX *pFormat, RString &sError )
 {
+	if( !IsFormatSupported(pFormat) )
+	{
+		sError = "format not supported";
+		return false;
+	}
+
+
 	if( !m_pParentFilter->Use(sError) )
 		return false;
 
-	DWORD iRet = FunctionKsCreatePin( m_pParentFilter->m_hHandle, m_pPinConnect, GENERIC_WRITE | GENERIC_READ, &m_hHandle );
+	KSPIN_CONNECT *pPinConnect = MakeFormat( pFormat );
+	DWORD iRet = FunctionKsCreatePin( m_pParentFilter->m_hHandle, pPinConnect, GENERIC_WRITE | GENERIC_READ, &m_hHandle );
+	free( pPinConnect );
 	if( iRet == ERROR_SUCCESS )
 		return true;
 
@@ -457,7 +458,7 @@ bool WinWdmPin::Instantiate( RString &sError )
 	return false;
 }
 
-void WinWdmPin::SetFormat( const WAVEFORMATEX *pFormat )
+KSPIN_CONNECT *WinWdmPin::MakeFormat( const WAVEFORMATEX *pFormat ) const
 {
 	ASSERT( pFormat != NULL );
 
@@ -465,22 +466,22 @@ void WinWdmPin::SetFormat( const WAVEFORMATEX *pFormat )
 	unsigned long iDataFormatSize = sizeof(KSDATAFORMAT) + iWfexSize;
 	unsigned long iSize = sizeof(KSPIN_CONNECT) + iDataFormatSize;
 
-	m_pPinConnect = (KSPIN_CONNECT *) realloc( m_pPinConnect, iSize );
-	ASSERT( m_pPinConnect != NULL );
+	KSPIN_CONNECT *pPinConnect = (KSPIN_CONNECT *) malloc( iSize );
+	ASSERT( pPinConnect != NULL );
 
-	memset( m_pPinConnect, 0, iSize );
-	m_pPinConnect->PinId				= m_iPinId;
-	m_pPinConnect->Interface.Set			= KSINTERFACESETID_Standard;
-	m_pPinConnect->Interface.Id			= KSINTERFACE_STANDARD_STREAMING;
-	m_pPinConnect->Interface.Flags			= 0;
-	m_pPinConnect->Medium.Set			= KSMEDIUMSETID_Standard;
-	m_pPinConnect->Medium.Id			= KSMEDIUM_TYPE_ANYINSTANCE;
-	m_pPinConnect->Medium.Flags			= 0;
-	m_pPinConnect->PinToHandle			= NULL;
-	m_pPinConnect->Priority.PriorityClass		= KSPRIORITY_NORMAL;
-	m_pPinConnect->Priority.PrioritySubClass	= 1;
+	memset( pPinConnect, 0, iSize );
+	pPinConnect->PinId				= m_iPinId;
+	pPinConnect->Interface.Set			= KSINTERFACESETID_Standard;
+	pPinConnect->Interface.Id			= KSINTERFACE_STANDARD_STREAMING;
+	pPinConnect->Interface.Flags			= 0;
+	pPinConnect->Medium.Set			= KSMEDIUMSETID_Standard;
+	pPinConnect->Medium.Id			= KSMEDIUM_TYPE_ANYINSTANCE;
+	pPinConnect->Medium.Flags			= 0;
+	pPinConnect->PinToHandle			= NULL;
+	pPinConnect->Priority.PriorityClass		= KSPRIORITY_NORMAL;
+	pPinConnect->Priority.PrioritySubClass	= 1;
 
-	KSDATAFORMAT_WAVEFORMATEX *ksDataFormatWfx = (KSDATAFORMAT_WAVEFORMATEX *)(m_pPinConnect + 1);
+	KSDATAFORMAT_WAVEFORMATEX *ksDataFormatWfx = (KSDATAFORMAT_WAVEFORMATEX *)(pPinConnect + 1);
 	ksDataFormatWfx->DataFormat.Flags		= 0;
 	ksDataFormatWfx->DataFormat.Reserved		= 0;
 	ksDataFormatWfx->DataFormat.MajorFormat		= KSDATAFORMAT_TYPE_AUDIO;
@@ -490,6 +491,7 @@ void WinWdmPin::SetFormat( const WAVEFORMATEX *pFormat )
 
 	memcpy( &ksDataFormatWfx->WaveFormatEx, pFormat, iWfexSize );
 	ksDataFormatWfx->DataFormat.SampleSize = (unsigned short)(pFormat->nChannels * (pFormat->wBitsPerSample / 8));
+	return pPinConnect;
 }
 
 bool WinWdmPin::IsFormatSupported( const WAVEFORMATEX *pFormat ) const
@@ -613,14 +615,7 @@ WinWdmPin *WinWdmFilter::InstantiateRenderPin( const WAVEFORMATEX *wfex, RString
 	for( size_t i = 0; i < m_apPins.size(); ++i )
 	{
 		WinWdmPin *pPin = m_apPins[i];
-
-		if( !pPin->IsFormatSupported(wfex) )
-			continue;
-
-		pPin->SetFormat( wfex );
-
-		RString sError;
-		if( pPin->Instantiate(sError) )
+		if( pPin->Instantiate(wfex, sError) )
 		{
 			sError = "";
 			return pPin;
