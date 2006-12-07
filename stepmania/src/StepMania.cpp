@@ -1069,7 +1069,7 @@ int main(int argc, char* argv[])
 
 	SONGMAN->PreloadSongImages();
 
-	/* Input managers can have dependences on the video system so
+	/* Input handlers can have dependences on the video system so
 	 * INPUTMAN must be initialized after DISPLAY. */
 	INPUTMAN	= new RageInput;
 
