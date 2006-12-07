@@ -28,8 +28,8 @@ REGISTER_ACTOR_CLASS( BitmapText )
  */
 #define RAINBOW_COLOR(n)	THEME->GetMetricC("BitmapText",ssprintf("RainbowColor%i", n+1))
 
-const int NUM_RAINBOW_COLORS = 7;
-RageColor RAINBOW_COLORS[NUM_RAINBOW_COLORS];
+static const int NUM_RAINBOW_COLORS = 7;
+static RageColor RAINBOW_COLORS[NUM_RAINBOW_COLORS];
 
 BitmapText::BitmapText()
 {
@@ -45,6 +45,7 @@ BitmapText::BitmapText()
 	m_pFont = NULL;
 
 	m_bRainbow = false;
+	m_bJitter = false;
 
 	m_iWrapWidthPixels = -1;
 	m_fMaxWidth = 0;
@@ -77,6 +78,7 @@ BitmapText &BitmapText::operator =( const BitmapText &cpy )
 	CPY( m_fMaxWidth );
 	CPY( m_fMaxHeight );
 	CPY( m_bRainbow );
+	CPY( m_bJitter );
 	CPY( m_iVertSpacing );
 	CPY( m_aVertices );
 	CPY( m_pTextures );
@@ -559,7 +561,41 @@ void BitmapText::DrawPrimitives()
 			}
 		}
 
+		// apply jitter to verts
+		vector<RageVector3> vGlyphJitter;
+		if( m_bJitter )
+		{
+			int iSeed = (int)roundf( RageTimer::GetTimeSinceStartFast()*8 );
+			RandomGen rnd( iSeed );
+
+			for( unsigned i=0; i<m_aVertices.size(); i+=4 )
+			{
+				RageVector3 jitter( rnd()%2, rnd()%3, 0 );
+				vGlyphJitter.push_back( jitter );
+
+				m_aVertices[i+0].p += jitter;	// top left
+				m_aVertices[i+1].p += jitter;	// bottom left
+				m_aVertices[i+2].p += jitter;	// bottom right
+				m_aVertices[i+3].p += jitter;	// top right
+			}
+		}
+
 		DrawChars();
+
+		// undo jitter to verts
+		if( m_bJitter )
+		{
+			ASSERT( vGlyphJitter.size() == m_aVertices.size()/4 );
+			for( unsigned i=0; i<m_aVertices.size(); i+=4 )
+			{
+				const RageVector3 &jitter = vGlyphJitter[i/4];;
+
+				m_aVertices[i+0].p -= jitter;	// top left
+				m_aVertices[i+1].p -= jitter;	// bottom left
+				m_aVertices[i+2].p -= jitter;	// bottom right
+				m_aVertices[i+3].p -= jitter;	// top right
+			}
+		}
 	}
 
 	/* render the glow pass */
@@ -849,10 +885,10 @@ void ColorBitmapText::SetMaxLines( int iNumLines, int iDirection )
 class LunaBitmapText: public Luna<BitmapText>
 {
 public:
-	static int wrapwidthpixels( T* p, lua_State *L )		{ p->SetWrapWidthPixels( IArg(1) ); return 0; }
-	static int maxwidth( T* p, lua_State *L )			{ p->SetMaxWidth( FArg(1) ); return 0; }
-	static int maxheight( T* p, lua_State *L )			{ p->SetMaxHeight( FArg(1) ); return 0; }
-	static int vertspacing( T* p, lua_State *L )			{ p->SetVertSpacing( IArg(1) ); return 0; }
+	static int wrapwidthpixels( T* p, lua_State *L )	{ p->SetWrapWidthPixels( IArg(1) ); return 0; }
+	static int maxwidth( T* p, lua_State *L )		{ p->SetMaxWidth( FArg(1) ); return 0; }
+	static int maxheight( T* p, lua_State *L )		{ p->SetMaxHeight( FArg(1) ); return 0; }
+	static int vertspacing( T* p, lua_State *L )		{ p->SetVertSpacing( IArg(1) ); return 0; }
 	static int settext( T* p, lua_State *L )
 	{
 		RString s = SArg(1);
@@ -866,7 +902,8 @@ public:
 
 		p->SetText( s ); return 0;
 	}
-	static int GetText( T* p, lua_State *L )			{ lua_pushstring( L, p->GetText() ); return 1; }
+	static int jitter( T* p, lua_State *L )			{ p->SetJitter( BArg(1) ); return 0; }
+	static int GetText( T* p, lua_State *L )		{ lua_pushstring( L, p->GetText() ); return 1; }
 
 	LunaBitmapText()
 	{
@@ -875,6 +912,7 @@ public:
 		ADD_METHOD( maxheight );
 		ADD_METHOD( vertspacing );
 		ADD_METHOD( settext );
+		ADD_METHOD( jitter );
 		ADD_METHOD( GetText );
 	}
 };

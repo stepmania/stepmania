@@ -147,9 +147,9 @@ void ScreenNetEvaluation::HandleScreenMessage( const ScreenMessage SM )
 
 			m_textUsers[i].SetText( NSMAN->m_PlayerNames[NSMAN->m_EvalPlayerData[i].name] );
 			if ( NSMAN->m_EvalPlayerData[i].grade < Grade_Tier03 )	//Yes, hardcoded (I'd like to leave it that way)
-				m_textUsers[i].TurnRainbowOn();
+				m_textUsers[i].SetRainbow( true );
 			else
-				m_textUsers[i].TurnRainbowOff();
+				m_textUsers[i].SetRainbow( false );
 			ON_COMMAND( m_textUsers[i] );
 			LOG->Trace("SMNETCheckpoint%d",i);
 		}

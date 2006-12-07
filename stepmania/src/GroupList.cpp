@@ -78,11 +78,11 @@ void GroupList::Load( const vector<RString>& asGroupNames )
 
 		if( i == 0 )
 		{
-			label->TurnRainbowOn();
+			label->SetRainbow( true );
 		}
 		else 
 		{
-			label->TurnRainbowOff();
+			label->SetRainbow( false );
 			label->SetDiffuse( SONGMAN->GetSongGroupColor(asGroupNames[i]) );
 		}
 

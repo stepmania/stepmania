@@ -31,8 +31,8 @@ public:
 	virtual bool EarlyAbortDraw() const;
 	virtual void DrawPrimitives();
 
-	void TurnRainbowOn()	{ m_bRainbow = true; }
-	void TurnRainbowOff()	{ m_bRainbow = false; }
+	void SetRainbow( bool b )	{ m_bRainbow = b; }
+	void SetJitter( bool b )	{ m_bJitter = b; }
 
 	void SetHorizAlign( HorizAlign ha );
 	void SetVertAlign( VertAlign va );
@@ -52,14 +52,15 @@ public:
 	Font* m_pFont;
 
 protected:
-	RString				m_sText;
-	vector<wstring>			m_wTextLines;
-	vector<int>			m_iLineWidths;		// in source pixels
-	int				m_iWrapWidthPixels;	// -1 = no wrap
-	float				m_fMaxWidth;
-	float				m_fMaxHeight;
-	bool				m_bRainbow;
-	int				m_iVertSpacing;
+	RString			m_sText;
+	vector<wstring>		m_wTextLines;
+	vector<int>		m_iLineWidths;		// in source pixels
+	int			m_iWrapWidthPixels;	// -1 = no wrap
+	float			m_fMaxWidth;
+	float			m_fMaxHeight;
+	bool			m_bRainbow;
+	bool			m_bJitter;
+	int			m_iVertSpacing;
 
 	vector<RageSpriteVertex>	m_aVertices;
 	vector<RageTexture *>		m_pTextures;
