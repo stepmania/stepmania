@@ -1103,7 +1103,7 @@ namespace
 	}
 }
 
-void RageSound_WDMKS::Read( void *pData, int iFrames, int iLastCursorPos, int iCurrentFrame )
+void RageSoundDriver_WDMKS::Read( void *pData, int iFrames, int iLastCursorPos, int iCurrentFrame )
 {
 	/* If we need conversion, read into a temporary buffer.  Otherwise, read directly
 	 * into the target buffer. */
@@ -1139,7 +1139,7 @@ void RageSound_WDMKS::Read( void *pData, int iFrames, int iLastCursorPos, int iC
 	memcpy( pData, pBuf, iFrames * m_pStream->m_iDeviceOutputChannels * m_pStream->m_iBytesPerOutputSample );
 }
 
-bool RageSound_WDMKS::Fill( int iPacket, RString &sError )
+bool RageSoundDriver_WDMKS::Fill( int iPacket, RString &sError )
 {
 	uint64_t iCurrentFrame = GetPosition( NULL );
 //	if( iCurrentFrame == m_iLastCursorPos )
@@ -1154,7 +1154,7 @@ bool RageSound_WDMKS::Fill( int iPacket, RString &sError )
 	return m_pStream->SubmitPacket( iPacket, sError );
 }
 
-void RageSound_WDMKS::MixerThread()
+void RageSoundDriver_WDMKS::MixerThread()
 {
 	/* I don't trust this driver with THREAD_PRIORITY_TIME_CRITICAL just yet. */
 	if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST) )
@@ -1223,19 +1223,19 @@ void RageSound_WDMKS::MixerThread()
 
 REGISTER_SOUND_DRIVER_CLASS( WDMKS );
 
-int RageSound_WDMKS::MixerThread_start( void *p )
+int RageSoundDriver_WDMKS::MixerThread_start( void *p )
 {
-	((RageSound_WDMKS *) p)->MixerThread();
+	((RageSoundDriver_WDMKS *) p)->MixerThread();
 	return 0;
 }
 
-void RageSound_WDMKS::SetupDecodingThread()
+void RageSoundDriver_WDMKS::SetupDecodingThread()
 {
 	if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL) )
 		LOG->Warn( werr_ssprintf(GetLastError(), "Failed to set sound thread priority") );
 }
 
-int64_t RageSound_WDMKS::GetPosition( const RageSoundBase *pSound ) const
+int64_t RageSoundDriver_WDMKS::GetPosition( const RageSoundBase *pSound ) const
 {
 	KSAUDIO_POSITION pos;
 
@@ -1248,7 +1248,7 @@ int64_t RageSound_WDMKS::GetPosition( const RageSoundBase *pSound ) const
 	return pos.PlayOffset;
 }
 
-RageSound_WDMKS::RageSound_WDMKS()
+RageSoundDriver_WDMKS::RageSoundDriver_WDMKS()
 {
 	m_pStream = NULL;
 	m_pFilter = NULL;
@@ -1257,7 +1257,7 @@ RageSound_WDMKS::RageSound_WDMKS()
 	m_hSignal = CreateEvent( NULL, FALSE, FALSE, NULL ); /* abort event */
 }
 
-RString RageSound_WDMKS::Init()
+RString RageSoundDriver_WDMKS::Init()
 {
 	RString sError;
 	if( !PaWinWdm_Initialize(sError) )
@@ -1327,7 +1327,7 @@ RString RageSound_WDMKS::Init()
 	return RString();
 }
 
-RageSound_WDMKS::~RageSound_WDMKS()
+RageSoundDriver_WDMKS::~RageSoundDriver_WDMKS()
 {
 	/* Signal the mixing thread to quit. */
 	if( MixingThread.IsCreated() )
@@ -1345,12 +1345,12 @@ RageSound_WDMKS::~RageSound_WDMKS()
 	CloseHandle( m_hSignal );
 }
 
-int RageSound_WDMKS::GetSampleRate( int iRate ) const
+int RageSoundDriver_WDMKS::GetSampleRate( int iRate ) const
 {
 	return m_pStream->m_iSampleRate;
 }
 
-float RageSound_WDMKS::GetPlayLatency() const
+float RageSoundDriver_WDMKS::GetPlayLatency() const
 {
 	/* If we have a 1000-byte buffer, and we fill 500 bytes at a time, we
 	 * almost always have between 500 and 1000 bytes filled; on average, 750. */

@@ -37,13 +37,13 @@ static RString wo_ssprintf( MMRESULT err, const char *szFmt, ...)
 	return s += ssprintf( "(%s)", szBuf );
 }
 
-int RageSound_WaveOut::MixerThread_start( void *p )
+int RageSoundDriver_WaveOut::MixerThread_start( void *p )
 {
-	((RageSound_WaveOut *) p)->MixerThread();
+	((RageSoundDriver_WaveOut *) p)->MixerThread();
 	return 0;
 }
 
-void RageSound_WaveOut::MixerThread()
+void RageSoundDriver_WaveOut::MixerThread()
 {
 	if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL) )
 		LOG->Warn( werr_ssprintf(GetLastError(), "Failed to set sound thread priority") );
@@ -59,7 +59,7 @@ void RageSound_WaveOut::MixerThread()
 	waveOutReset( m_hWaveOut );
 }
 
-bool RageSound_WaveOut::GetData()
+bool RageSoundDriver_WaveOut::GetData()
 {
 	/* Look for a free buffer. */
 	int b;
@@ -82,13 +82,13 @@ bool RageSound_WaveOut::GetData()
 	return true;
 }
 
-void RageSound_WaveOut::SetupDecodingThread()
+void RageSoundDriver_WaveOut::SetupDecodingThread()
 {
 	if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL) )
 		LOG->Warn( werr_ssprintf(GetLastError(), "Failed to set sound thread priority") );
 }
 
-int64_t RageSound_WaveOut::GetPosition( const RageSoundBase *pSound ) const
+int64_t RageSoundDriver_WaveOut::GetPosition( const RageSoundBase *pSound ) const
 {
 	MMTIME tm;
 	tm.wType = TIME_SAMPLES;
@@ -99,7 +99,7 @@ int64_t RageSound_WaveOut::GetPosition( const RageSoundBase *pSound ) const
 	return tm.u.sample;
 }
 
-RageSound_WaveOut::RageSound_WaveOut()
+RageSoundDriver_WaveOut::RageSoundDriver_WaveOut()
 {
 	m_bShutdown = false;
 	m_iLastCursorPos = 0;
@@ -109,7 +109,7 @@ RageSound_WaveOut::RageSound_WaveOut()
 	m_hWaveOut = NULL;
 }
 
-RString RageSound_WaveOut::Init()
+RString RageSoundDriver_WaveOut::Init()
 {
 	m_iSampleRate = PREFSMAN->m_iSoundPreferredSampleRate;
 	if( m_iSampleRate == 0 )
@@ -152,7 +152,7 @@ RString RageSound_WaveOut::Init()
 	return RString();
 }
 
-RageSound_WaveOut::~RageSound_WaveOut()
+RageSoundDriver_WaveOut::~RageSoundDriver_WaveOut()
 {
 	/* Signal the mixing thread to quit. */
 	if( MixingThread.IsCreated() )
@@ -178,7 +178,7 @@ RageSound_WaveOut::~RageSound_WaveOut()
 	CloseHandle( m_hSoundEvent );
 }
 
-float RageSound_WaveOut::GetPlayLatency() const
+float RageSoundDriver_WaveOut::GetPlayLatency() const
 {
 	/* If we have a 1000-byte buffer, and we fill 100 bytes at a time, we
 	 * almost always have between 900 and 1000 bytes filled; on average, 950. */

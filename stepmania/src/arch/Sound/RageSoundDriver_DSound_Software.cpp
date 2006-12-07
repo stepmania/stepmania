@@ -19,7 +19,7 @@ static int g_iMaxWriteahead;
 static const int num_chunks = 8;
 static int chunksize() { return g_iMaxWriteahead / num_chunks; }
 
-void RageSound_DSound_Software::MixerThread()
+void RageSoundDriver_DSound_Software::MixerThread()
 {
 	if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL) )
 		if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL) )
@@ -60,24 +60,24 @@ void RageSound_DSound_Software::MixerThread()
 	m_pPCM->Stop();
 }
 
-int64_t RageSound_DSound_Software::GetPosition( const RageSoundBase *pSound ) const
+int64_t RageSoundDriver_DSound_Software::GetPosition( const RageSoundBase *pSound ) const
 {
 	return m_pPCM->GetPosition();
 }
 
-int RageSound_DSound_Software::MixerThread_start(void *p)
+int RageSoundDriver_DSound_Software::MixerThread_start(void *p)
 {
-	((RageSound_DSound_Software *) p)->MixerThread();
+	((RageSoundDriver_DSound_Software *) p)->MixerThread();
 	return 0;
 }
 
-RageSound_DSound_Software::RageSound_DSound_Software()
+RageSoundDriver_DSound_Software::RageSoundDriver_DSound_Software()
 {
 	m_bShutdownMixerThread = false;
 	m_pPCM = NULL;
 }
 
-RString RageSound_DSound_Software::Init()
+RString RageSoundDriver_DSound_Software::Init()
 {
 	RString sError = ds.Init();
 	if( sError != "" )
@@ -111,7 +111,7 @@ RString RageSound_DSound_Software::Init()
 	return RString();
 }
 
-RageSound_DSound_Software::~RageSound_DSound_Software()
+RageSoundDriver_DSound_Software::~RageSoundDriver_DSound_Software()
 {
 	/* Signal the mixing thread to quit. */
 	if( m_MixingThread.IsCreated() )
@@ -127,18 +127,18 @@ RageSound_DSound_Software::~RageSound_DSound_Software()
 	delete m_pPCM;
 }
 
-void RageSound_DSound_Software::SetupDecodingThread()
+void RageSoundDriver_DSound_Software::SetupDecodingThread()
 {
 	if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL) )
 		LOG->Warn( werr_ssprintf(GetLastError(), "Failed to set decoding thread priority") );
 }
 
-float RageSound_DSound_Software::GetPlayLatency() const
+float RageSoundDriver_DSound_Software::GetPlayLatency() const
 {
 	return (1.0f / m_iSampleRate) * g_iMaxWriteahead;
 }
 
-int RageSound_DSound_Software::GetSampleRate( int rate ) const
+int RageSoundDriver_DSound_Software::GetSampleRate( int rate ) const
 {
 	return m_iSampleRate;
 }

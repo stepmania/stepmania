@@ -7,11 +7,11 @@
 
 #include "ALSA9Helpers.h"
 
-class RageSound_ALSA9_Software: public RageSound_Generic_Software
+class RageSoundDriver_ALSA9_Software: public RageSound_Generic_Software
 {
 public:
-	RageSound_ALSA9_Software();
-	~RageSound_ALSA9_Software();
+	RageSoundDriver_ALSA9_Software();
+	~RageSoundDriver_ALSA9_Software();
 	RString Init();
 
 	/* virtuals: */

@@ -27,13 +27,13 @@ static const unsigned safe_writeahead = 1024*4;
 static unsigned g_iMaxWriteahead;
 const int num_chunks = 8;
 
-int RageSound_ALSA9_Software::MixerThread_start( void *p )
+int RageSoundDriver_ALSA9_Software::MixerThread_start( void *p )
 {
-	((RageSound_ALSA9_Software *) p)->MixerThread();
+	((RageSoundDriver_ALSA9_Software *) p)->MixerThread();
 	return 0;
 }
 
-void RageSound_ALSA9_Software::MixerThread()
+void RageSoundDriver_ALSA9_Software::MixerThread()
 {
 	setpriority( PRIO_PROCESS, 0, -15 );
 
@@ -47,7 +47,7 @@ void RageSound_ALSA9_Software::MixerThread()
 }
 
 /* Returns the number of frames processed */
-bool RageSound_ALSA9_Software::GetData()
+bool RageSoundDriver_ALSA9_Software::GetData()
 {
 	const int frames_to_fill = m_pPCM->GetNumFramesToFill();
 	if( frames_to_fill <= 0 )
@@ -67,24 +67,24 @@ bool RageSound_ALSA9_Software::GetData()
 }
 
 
-int64_t RageSound_ALSA9_Software::GetPosition( const RageSoundBase *pSound ) const
+int64_t RageSoundDriver_ALSA9_Software::GetPosition( const RageSoundBase *pSound ) const
 {
 	return m_pPCM->GetPosition();
 }       
 
-void RageSound_ALSA9_Software::SetupDecodingThread()
+void RageSoundDriver_ALSA9_Software::SetupDecodingThread()
 {
 	setpriority( PRIO_PROCESS, 0, -5 );
 }
 
 
-RageSound_ALSA9_Software::RageSound_ALSA9_Software()
+RageSoundDriver_ALSA9_Software::RageSoundDriver_ALSA9_Software()
 {
 	m_pPCM = NULL;
 	m_bShutdown = false;
 }
 
-RString RageSound_ALSA9_Software::Init()
+RString RageSoundDriver_ALSA9_Software::Init()
 {
 	RString sError = LoadALSA();
 	if( sError != "" )
@@ -116,13 +116,13 @@ RString RageSound_ALSA9_Software::Init()
 	
 	StartDecodeThread();
 	
-	m_MixingThread.SetName( "RageSound_ALSA9_Software" );
+	m_MixingThread.SetName( "RageSoundDriver_ALSA9_Software" );
 	m_MixingThread.Create( MixerThread_start, this );
 
 	return "";
 }
 
-RageSound_ALSA9_Software::~RageSound_ALSA9_Software()
+RageSoundDriver_ALSA9_Software::~RageSoundDriver_ALSA9_Software()
 {
 	if( m_MixingThread.IsCreated() )
 	{
@@ -138,7 +138,7 @@ RageSound_ALSA9_Software::~RageSound_ALSA9_Software()
 	UnloadALSA();
 }
 
-float RageSound_ALSA9_Software::GetPlayLatency() const
+float RageSoundDriver_ALSA9_Software::GetPlayLatency() const
 {
 	return float(g_iMaxWriteahead) / m_iSampleRate;
 }

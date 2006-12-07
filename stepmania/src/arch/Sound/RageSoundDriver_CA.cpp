@@ -47,7 +47,7 @@ static float g_fLastMixTimes[NUM_MIX_TIMES];
 static int g_iLastMixTimePos = 0;
 static int g_iNumIOProcCalls = 0;
 
-RageSound_CA::RageSound_CA() : m_fLatency(0.0f), m_Converter(NULL), m_bStarted(false), m_iSampleRate(0),
+RageSoundDriver_CA::RageSoundDriver_CA() : m_fLatency(0.0f), m_Converter(NULL), m_bStarted(false), m_iSampleRate(0),
 			       m_iLastSampleTime(0), m_iOffset(0), m_pIOThread(NULL), m_pNotificationThread(NULL)
 {
 }
@@ -75,7 +75,7 @@ static inline RString FourCCToString( uint32_t num )
 #define WERROR(str, num, extra...) str ": '%s' (%lu).", ## extra, FourCCToString(num).c_str(), (num)
 #define ERROR(str, num, extra...) (ssprintf(WERROR(str, (num), ## extra)))
 
-RString RageSound_CA::Init()
+RString RageSoundDriver_CA::Init()
 {
 	OSStatus error;
 	UInt32 size = sizeof(m_OutputDevice);
@@ -327,7 +327,7 @@ RString RageSound_CA::Init()
 	return RString();
 }
 
-RageSound_CA::~RageSound_CA()
+RageSoundDriver_CA::~RageSoundDriver_CA()
 {
 	if( m_bStarted )
 	{
@@ -343,7 +343,7 @@ RageSound_CA::~RageSound_CA()
 	AudioHardwareUnload();
 }
 
-void RageSound_CA::AddListener( AudioDevicePropertyID propertyID, AudioDevicePropertyListenerProc handler,
+void RageSoundDriver_CA::AddListener( AudioDevicePropertyID propertyID, AudioDevicePropertyListenerProc handler,
 				const char *name )
 {
 	OSStatus error;
@@ -360,7 +360,7 @@ void RageSound_CA::AddListener( AudioDevicePropertyID propertyID, AudioDevicePro
 	}
 }
 
-void RageSound_CA::RemoveListeners()
+void RageSoundDriver_CA::RemoveListeners()
 {
 	while( m_vPropertyListeners.size() )
 	{
@@ -373,7 +373,7 @@ void RageSound_CA::RemoveListeners()
 	}
 }	
 
-int64_t RageSound_CA::GetPosition( const RageSoundBase *sound ) const
+int64_t RageSoundDriver_CA::GetPosition( const RageSoundBase *sound ) const
 {
 	AudioTimeStamp time;
 	OSStatus error;
@@ -388,9 +388,9 @@ int64_t RageSound_CA::GetPosition( const RageSoundBase *sound ) const
 	return m_iLastSampleTime;
 }
 
-void RageSound_CA::NameHALThread( CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info )
+void RageSoundDriver_CA::NameHALThread( CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info )
 {
-	RageSound_CA *This = (RageSound_CA *)info;
+	RageSoundDriver_CA *This = (RageSoundDriver_CA *)info;
 	
 	This->m_pNotificationThread = new RageThreadRegister( "HAL notification thread" );
 	
@@ -399,7 +399,7 @@ void RageSound_CA::NameHALThread( CFRunLoopObserverRef observer, CFRunLoopActivi
 	CFRelease( observer );
 }
 
-OSStatus RageSound_CA::GetData( AudioDeviceID inDevice,
+OSStatus RageSoundDriver_CA::GetData( AudioDeviceID inDevice,
 				const AudioTimeStamp *inNow,
 				const AudioBufferList *inInputData,
 				const AudioTimeStamp *inInputTime,
@@ -408,7 +408,7 @@ OSStatus RageSound_CA::GetData( AudioDeviceID inDevice,
 				void *inClientData )
 {
 	RageTimer tm;
-	RageSound_CA *This = (RageSound_CA *)inClientData;
+	RageSoundDriver_CA *This = (RageSoundDriver_CA *)inClientData;
 	
 	if( unlikely(This->m_pIOThread == NULL) )
 		This->m_pIOThread = new RageThreadRegister( "HAL I/O thread" );
@@ -444,7 +444,7 @@ OSStatus RageSound_CA::GetData( AudioDeviceID inDevice,
 }
 		
 
-OSStatus RageSound_CA::OverloadListener( AudioDeviceID inDevice,
+OSStatus RageSoundDriver_CA::OverloadListener( AudioDeviceID inDevice,
 					 UInt32 inChannel,
 					 Boolean isInput,
 					 AudioDevicePropertyID inPropertyID,
@@ -465,7 +465,7 @@ OSStatus RageSound_CA::OverloadListener( AudioDeviceID inDevice,
 	return noErr;
 }
 
-OSStatus RageSound_CA::DeviceChanged( AudioDeviceID inDevice, UInt32 inChannel, Boolean isInput,
+OSStatus RageSoundDriver_CA::DeviceChanged( AudioDeviceID inDevice, UInt32 inChannel, Boolean isInput,
 				      AudioDevicePropertyID inPropertyID, void *inData )
 {
 	if( isInput )
@@ -474,12 +474,12 @@ OSStatus RageSound_CA::DeviceChanged( AudioDeviceID inDevice, UInt32 inChannel, 
 	return noErr;
 }
 
-OSStatus RageSound_CA::JackChanged( AudioDeviceID inDevice, UInt32 inChannel, Boolean isInput,
+OSStatus RageSoundDriver_CA::JackChanged( AudioDeviceID inDevice, UInt32 inChannel, Boolean isInput,
 				    AudioDevicePropertyID inPropertyID, void *inData )
 {
 	if( isInput )
 		return noErr;
-	RageSound_CA *This = (RageSound_CA *)inData;
+	RageSoundDriver_CA *This = (RageSoundDriver_CA *)inData;
 	UInt32 result;
 	UInt32 size = sizeof( result );
 	AudioTimeStamp time;
@@ -503,7 +503,7 @@ OSStatus RageSound_CA::JackChanged( AudioDeviceID inDevice, UInt32 inChannel, Bo
 }
 
 
-void RageSound_CA::SetupDecodingThread()
+void RageSoundDriver_CA::SetupDecodingThread()
 {
 	/* Increase the scheduling precedence of the decoder thread. */
 	SetThreadPrecedence( 0.75f );

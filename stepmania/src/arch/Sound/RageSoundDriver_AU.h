@@ -5,12 +5,12 @@
 #include "RageThreads.h"
 #include <AudioUnit/AudioUnit.h>
 
-class RageSound_AU : public RageSound_Generic_Software
+class RageSoundDriver_AU: public RageSound_Generic_Software
 {
 public:
-	RageSound_AU();
+	RageSoundDriver_AU();
 	RString Init();
-	~RageSound_AU();
+	~RageSoundDriver_AU();
 	float GetPlayLatency() const;
 	int GetSampleRate( int rate ) const { return m_iSampleRate; }
 	int64_t GetPosition( const RageSoundBase *sound ) const;

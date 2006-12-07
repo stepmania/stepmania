@@ -5,11 +5,11 @@
 #include "RageThreads.h"
 #include "RageSoundDriver_Generic_Software.h"
 
-class RageSound_DSound_Software: public RageSound_Generic_Software
+class RageSoundDriver_DSound_Software: public RageSound_Generic_Software
 {
 public:
-	RageSound_DSound_Software();
-	virtual ~RageSound_DSound_Software();
+	RageSoundDriver_DSound_Software();
+	virtual ~RageSoundDriver_DSound_Software();
 	RString Init();
 
 	int64_t GetPosition( const RageSoundBase *pSound ) const;

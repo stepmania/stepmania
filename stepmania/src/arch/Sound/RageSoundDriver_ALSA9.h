@@ -7,7 +7,7 @@
 
 #include "ALSA9Helpers.h"
 
-class RageSound_ALSA9: public RageSoundDriver
+class RageSoundDriver_ALSA9: public RageSoundDriver
 {
 public:
 	/* virtuals: */
@@ -19,9 +19,9 @@ public:
 
 	void Update();
 
-	RageSound_ALSA9();
+	RageSoundDriver_ALSA9();
 	RString Init();
-	~RageSound_ALSA9();
+	~RageSoundDriver_ALSA9();
 
 private:
 	/* This mutex serializes the decode thread and StopMixing. */

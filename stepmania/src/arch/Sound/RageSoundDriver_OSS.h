@@ -5,7 +5,7 @@
 #include "RageThreads.h"
 #include "RageTimer.h"
 
-class RageSound_OSS: public RageSound_Generic_Software
+class RageSoundDriver_OSS: public RageSound_Generic_Software
 {
 	int fd;
 
@@ -28,9 +28,9 @@ public:
 	float GetPlayLatency() const;
 	void SetupDecodingThread();
 
-	RageSound_OSS();
+	RageSoundDriver_OSS();
 	RString Init();
-	~RageSound_OSS();
+	~RageSoundDriver_OSS();
 };
 
 #endif

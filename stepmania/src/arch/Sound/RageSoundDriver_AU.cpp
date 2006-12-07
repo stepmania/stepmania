@@ -37,21 +37,21 @@ static inline RString FourCCToString( uint32_t num )
 	return s;
 }
 
-RageSound_AU::RageSound_AU() : m_OutputUnit(NULL), m_iSampleRate(0), m_bDone(false), m_bStarted(false),
+RageSoundDriver_AU::RageSoundDriver_AU() : m_OutputUnit(NULL), m_iSampleRate(0), m_bDone(false), m_bStarted(false),
 	m_pIOThread(NULL), m_pNotificationThread(NULL), m_Semaphore("Sound")
 {
 }
 
 
-void RageSound_AU::NameHALThread( CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *inRefCon )
+void RageSoundDriver_AU::NameHALThread( CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *inRefCon )
 {
-	RageSound_AU *This = (RageSound_AU *)inRefCon;
+	RageSoundDriver_AU *This = (RageSoundDriver_AU *)inRefCon;
 	
 	This->m_pNotificationThread = new RageThreadRegister( "HAL notification thread" );
 	This->m_Semaphore.Post();
 }
 
-RString RageSound_AU::Init()
+RString RageSoundDriver_AU::Init()
 {
 	ComponentDescription desc;
 	
@@ -169,7 +169,7 @@ RString RageSound_AU::Init()
 	return RString();
 }
 
-RageSound_AU::~RageSound_AU()
+RageSoundDriver_AU::~RageSoundDriver_AU()
 {
 	if( !m_OutputUnit )
 		return;
@@ -184,20 +184,20 @@ RageSound_AU::~RageSound_AU()
 	delete m_pNotificationThread;
 }
 
-int64_t RageSound_AU::GetPosition( const RageSoundBase *sound ) const
+int64_t RageSoundDriver_AU::GetPosition( const RageSoundBase *sound ) const
 {
 	double scale = m_iSampleRate / AudioGetHostClockFrequency();
 	return int64_t( scale * AudioGetCurrentHostTime() );
 }
 
 
-void RageSound_AU::SetupDecodingThread()
+void RageSoundDriver_AU::SetupDecodingThread()
 {
 	/* Increase the scheduling precedence of the decoder thread. */
 	SetThreadPrecedence( 0.75f );
 }
 
-float RageSound_AU::GetPlayLatency() const
+float RageSoundDriver_AU::GetPlayLatency() const
 {
 	OSStatus error;
 	UInt32 bufferSize;
@@ -278,14 +278,14 @@ float RageSound_AU::GetPlayLatency() const
 }
 	
 
-OSStatus RageSound_AU::Render( void *inRefCon,
+OSStatus RageSoundDriver_AU::Render( void *inRefCon,
 			       AudioUnitRenderActionFlags *ioActionFlags,
 			       const AudioTimeStamp *inTimeStamp,
 			       UInt32 inBusNumber,
 			       UInt32 inNumberFrames,
 			       AudioBufferList *ioData )
 {
-	RageSound_AU *This = (RageSound_AU *)inRefCon;
+	RageSoundDriver_AU *This = (RageSoundDriver_AU *)inRefCon;
 
 	if( unlikely(This->m_pIOThread == NULL) )
 		This->m_pIOThread = new RageThreadRegister( "HAL I/O thread" );

@@ -9,12 +9,12 @@
 class RageSoundBase;
 class RageThreadRegister;
 
-class RageSound_CA : public RageSound_Generic_Software
+class RageSoundDriver_CA : public RageSound_Generic_Software
 {
 public:
-	RageSound_CA();
+	RageSoundDriver_CA();
 	RString Init();
-	~RageSound_CA();
+	~RageSoundDriver_CA();
 	float GetPlayLatency() const { return m_fLatency; }
 	int GetSampleRate( int rate ) const { return m_iSampleRate; }
 	int64_t GetPosition( const RageSoundBase *sound ) const;

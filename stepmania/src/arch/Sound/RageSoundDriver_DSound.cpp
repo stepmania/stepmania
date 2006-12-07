@@ -28,13 +28,13 @@ const int buffersize = 1024*8;	/* in frames */
 const int num_chunks = 8;
 const int chunksize = buffersize / num_chunks;
 
-int RageSound_DSound::MixerThread_start(void *p)
+int RageSoundDriver_DSound::MixerThread_start(void *p)
 {
-	((RageSound_DSound *) p)->MixerThread();
+	((RageSoundDriver_DSound *) p)->MixerThread();
 	return 0;
 }
 
-void RageSound_DSound::MixerThread()
+void RageSoundDriver_DSound::MixerThread()
 {
 	if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL) )
 		LOG->Warn(werr_ssprintf(GetLastError(), "Failed to set sound thread priority"));
@@ -103,7 +103,7 @@ void RageSound_DSound::MixerThread()
 			stream_pool[i]->pcm->Stop();
 }
 
-void RageSound_DSound::Update()
+void RageSoundDriver_DSound::Update()
 {
 	/* SoundStopped might erase sounds out from under us, so make a copy
 	 * of the sound list. */
@@ -126,7 +126,7 @@ void RageSound_DSound::Update()
 
 /* If init is true, we're filling the buffer while it's stopped, so fill the
  * entire buffer.  If false, fill only one chunk.  If EOF is reached, set bEOF. */
-bool RageSound_DSound::stream::GetData( bool init, bool &bEOF )
+bool RageSoundDriver_DSound::stream::GetData( bool init, bool &bEOF )
 {
 	CHECKPOINT;
 
@@ -196,19 +196,19 @@ bool RageSound_DSound::stream::GetData( bool init, bool &bEOF )
 	return true;
 }
 
-RageSound_DSound::stream::~stream()
+RageSoundDriver_DSound::stream::~stream()
 {
 	delete pcm;
 }
 
-RageSound_DSound::RageSound_DSound():
+RageSoundDriver_DSound::RageSoundDriver_DSound():
 	m_Mutex("DSoundMutex"),
 	m_InactiveSoundMutex("InactiveSoundMutex")
 {
 	shutdown = false;
 }
 
-RString RageSound_DSound::Init()
+RString RageSoundDriver_DSound::Init()
 {
 	RString sError = ds.Init();
 	if( sError != "" )
@@ -257,7 +257,7 @@ RString RageSound_DSound::Init()
 	return RString();
 }
 
-RageSound_DSound::~RageSound_DSound()
+RageSoundDriver_DSound::~RageSoundDriver_DSound()
 {
 	/* Signal the mixing thread to quit. */
 	if( MixingThread.IsCreated() )
@@ -274,7 +274,7 @@ RageSound_DSound::~RageSound_DSound()
 		delete stream_pool[i];
 }
 
-void RageSound_DSound::StartMixing( RageSoundBase *snd )
+void RageSoundDriver_DSound::StartMixing( RageSoundBase *snd )
 {
 	/* Lock INACTIVE sounds[], and reserve a slot. */
 	m_InactiveSoundMutex.Lock();
@@ -325,7 +325,7 @@ void RageSound_DSound::StartMixing( RageSoundBase *snd )
  * call completes, snd->GetPCM (which runs in a separate thread) will
  * not be running and will not be called unless StartMixing is called
  * again. */
-void RageSound_DSound::StopMixing( RageSoundBase *snd )
+void RageSoundDriver_DSound::StopMixing( RageSoundBase *snd )
 {
 	/* Lock, to make sure the decoder thread isn't running on this sound while we do this. */
 	LockMut( m_Mutex );
@@ -349,7 +349,7 @@ void RageSound_DSound::StopMixing( RageSoundBase *snd )
 	stream_pool[i]->state = stream_pool[i]->INACTIVE;
 }
 
-bool RageSound_DSound::PauseMixing( RageSoundBase *snd, bool bStop )
+bool RageSoundDriver_DSound::PauseMixing( RageSoundBase *snd, bool bStop )
 {
 	unsigned i;
 	for( i = 0; i < stream_pool.size(); ++i )
@@ -371,7 +371,7 @@ bool RageSound_DSound::PauseMixing( RageSoundBase *snd, bool bStop )
 	return true;
 }
 
-int64_t RageSound_DSound::GetPosition( const RageSoundBase *snd ) const
+int64_t RageSoundDriver_DSound::GetPosition( const RageSoundBase *snd ) const
 {
 	unsigned i;
 	for(i = 0; i < stream_pool.size(); ++i)

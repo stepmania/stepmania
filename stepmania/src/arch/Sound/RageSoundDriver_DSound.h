@@ -9,11 +9,11 @@
 struct IDirectSound;
 struct IDirectSoundBuffer;
 
-class RageSound_DSound: public RageSoundDriver
+class RageSoundDriver_DSound: public RageSoundDriver
 {
 public:
-	RageSound_DSound();
-	~RageSound_DSound();
+	RageSoundDriver_DSound();
+	~RageSoundDriver_DSound();
 	RString Init();
 
 private:

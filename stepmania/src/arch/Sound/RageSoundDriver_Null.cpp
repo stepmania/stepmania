@@ -8,7 +8,7 @@ REGISTER_SOUND_DRIVER_CLASS( Null );
 
 const int channels = 2;
 
-void RageSound_Null::Update()
+void RageSoundDriver_Null::Update()
 {
 	/* "Play" frames. */
 	while( m_iLastCursorPos < GetPosition(NULL)+1024*4 )
@@ -21,12 +21,12 @@ void RageSound_Null::Update()
 	RageSound_Generic_Software::Update();
 }
 
-int64_t RageSound_Null::GetPosition( const RageSoundBase *snd ) const
+int64_t RageSoundDriver_Null::GetPosition( const RageSoundBase *snd ) const
 {
 	return int64_t( RageTimer::GetTimeSinceStart() * m_iSampleRate );
 }
 
-RageSound_Null::RageSound_Null()
+RageSoundDriver_Null::RageSoundDriver_Null()
 {
 	m_iSampleRate = PREFSMAN->m_iSoundPreferredSampleRate;
 	if( m_iSampleRate == 0 )
@@ -35,7 +35,7 @@ RageSound_Null::RageSound_Null()
 	StartDecodeThread();
 }
 
-int RageSound_Null::GetSampleRate( int iRate ) const
+int RageSoundDriver_Null::GetSampleRate( int iRate ) const
 {
 	return m_iSampleRate;
 }

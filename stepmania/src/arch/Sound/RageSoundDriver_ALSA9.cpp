@@ -20,13 +20,13 @@ const unsigned max_writeahead = 1024*8;
 const int num_chunks = 8;
 const int chunksize = max_writeahead / num_chunks;
 
-int RageSound_ALSA9::MixerThread_start(void *p)
+int RageSoundDriver_ALSA9::MixerThread_start(void *p)
 {
-	((RageSound_ALSA9 *) p)->MixerThread();
+	((RageSoundDriver_ALSA9 *) p)->MixerThread();
 	return 0;
 }
 
-void RageSound_ALSA9::MixerThread()
+void RageSoundDriver_ALSA9::MixerThread()
 {
 	while(!shutdown)
 	{
@@ -81,13 +81,13 @@ void RageSound_ALSA9::MixerThread()
 	}
 }
 
-RageSound_ALSA9::stream::~stream()
+RageSoundDriver_ALSA9::stream::~stream()
 {
 	delete pcm;
 }
 
 /* Returns the number of frames processed */
-bool RageSound_ALSA9::stream::GetData( bool &bEOF )
+bool RageSoundDriver_ALSA9::stream::GetData( bool &bEOF )
 {
 	bEOF = false;
 
@@ -154,7 +154,7 @@ bool RageSound_ALSA9::stream::GetData( bool &bEOF )
 }
 
 
-void RageSound_ALSA9::StartMixing(RageSoundBase *snd)
+void RageSoundDriver_ALSA9::StartMixing(RageSoundBase *snd)
 {
 	/* Lock INACTIVE sounds[], and reserve a slot. */
 	m_InactiveSoundMutex.Lock();
@@ -205,7 +205,7 @@ void RageSound_ALSA9::StartMixing(RageSoundBase *snd)
 		stream_pool[i]->state = stream_pool[i]->PLAYING;
 }
 
-void RageSound_ALSA9::Update()
+void RageSoundDriver_ALSA9::Update()
 {
 	for(unsigned i = 0; i < stream_pool.size(); ++i)
 	{
@@ -223,7 +223,7 @@ void RageSound_ALSA9::Update()
 	}
 }
 
-void RageSound_ALSA9::StopMixing(RageSoundBase *snd)
+void RageSoundDriver_ALSA9::StopMixing(RageSoundBase *snd)
 {
 	/* Lock, to make sure the decoder thread isn't running on this sound while we do this. */
 	LockMut( m_Mutex );
@@ -254,7 +254,7 @@ void RageSound_ALSA9::StopMixing(RageSoundBase *snd)
 	stream_pool[i]->snd = NULL;
 }
 
-bool RageSound_ALSA9::PauseMixing( RageSoundBase *snd, bool bStop )
+bool RageSoundDriver_ALSA9::PauseMixing( RageSoundBase *snd, bool bStop )
 {
 	unsigned i;
 	for( i = 0; i < stream_pool.size(); ++i )
@@ -276,7 +276,7 @@ bool RageSound_ALSA9::PauseMixing( RageSoundBase *snd, bool bStop )
 	return true;
 }
 
-int64_t RageSound_ALSA9::GetPosition(const RageSoundBase *snd) const
+int64_t RageSoundDriver_ALSA9::GetPosition(const RageSoundBase *snd) const
 {
 	unsigned i;
 	for( i = 0; i < stream_pool.size(); ++i )
@@ -290,7 +290,7 @@ int64_t RageSound_ALSA9::GetPosition(const RageSoundBase *snd) const
 	return stream_pool[i]->pcm->GetPosition();
 }       
 
-int RageSound_ALSA9::GetSampleRate( int rate ) const
+int RageSoundDriver_ALSA9::GetSampleRate( int rate ) const
 {
 	stream *str = stream_pool[0];
 	return str->pcm->FindSampleRate( rate );
@@ -310,14 +310,14 @@ static RString CheckMixingBlacklist()
 	return "";
 }
 
-RageSound_ALSA9::RageSound_ALSA9():
+RageSoundDriver_ALSA9::RageSoundDriver_ALSA9():
 	m_Mutex("ALSAMutex"),
 	m_InactiveSoundMutex("InactiveSoundMutex")
 {
 	shutdown = false;
 }
 
-RString RageSound_ALSA9::Init()
+RString RageSoundDriver_ALSA9::Init()
 {
 	RString sError = LoadALSA();
 	if( sError != "" )
@@ -355,13 +355,13 @@ RString RageSound_ALSA9::Init()
 
 	LOG->Info( "ALSA: Got %i hardware buffers", stream_pool.size() );
 
-	MixingThread.SetName( "RageSound_ALSA9" );
+	MixingThread.SetName( "RageSoundDriver_ALSA9" );
 	MixingThread.Create( MixerThread_start, this );
 
 	return "";
 }
 
-RageSound_ALSA9::~RageSound_ALSA9()
+RageSoundDriver_ALSA9::~RageSoundDriver_ALSA9()
 {
 	if( MixingThread.IsCreated() )
 	{
