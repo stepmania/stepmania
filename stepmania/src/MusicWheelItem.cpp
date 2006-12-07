@@ -35,19 +35,19 @@ MusicWheelItem::MusicWheelItem( RString sType ):
 	data = NULL;
 
 	m_sprSongBar.Load( THEME->GetPathG(sType,"song") );
-	this->AddChild( &m_sprSongBar );
+	this->AddChild( m_sprSongBar );
 
 	m_sprSectionBar.Load( THEME->GetPathG(sType,"section") );
-	this->AddChild( &m_sprSectionBar );
+	this->AddChild( m_sprSectionBar );
 
 	m_sprExpandedBar.Load( THEME->GetPathG(sType,"expanded") );
-	this->AddChild( &m_sprExpandedBar );
+	this->AddChild( m_sprExpandedBar );
 
 	m_sprModeBar.Load( THEME->GetPathG(sType,"mode") );
-	this->AddChild( &m_sprModeBar );
+	this->AddChild( m_sprModeBar );
 
 	m_sprSortBar.Load( THEME->GetPathG(sType,"sort") );
-	this->AddChild( &m_sprSortBar );
+	this->AddChild( m_sprSortBar );
 
 	m_WheelNotifyIcon.SetName( "Icon" );
 	ActorUtil::LoadAllCommands( m_WheelNotifyIcon, "MusicWheelItem" );
@@ -75,7 +75,7 @@ MusicWheelItem::MusicWheelItem( RString sType ):
 	m_textRoulette.LoadFromFont( THEME->GetPathF(sType,"roulette") );
 	ActorUtil::SetXY( m_textRoulette, "MusicWheelItem" );
 	m_textRoulette.SetShadowLength( 0 );
-	m_textRoulette.TurnRainbowOn();
+	m_textRoulette.SetRainbow( true );
 	m_textRoulette.PlayCommand( "On" );
 	this->AddChild( &m_textRoulette );
 
@@ -122,11 +122,11 @@ MusicWheelItem::MusicWheelItem( const MusicWheelItem &cpy ):
 {
 	data = NULL;
 
-	this->AddChild( &m_sprSongBar );
-	this->AddChild( &m_sprSectionBar );
-	this->AddChild( &m_sprExpandedBar );
-	this->AddChild( &m_sprModeBar );
-	this->AddChild( &m_sprSortBar );
+	this->AddChild( m_sprSongBar );
+	this->AddChild( m_sprSectionBar );
+	this->AddChild( m_sprExpandedBar );
+	this->AddChild( m_sprModeBar );
+	this->AddChild( m_sprSortBar );
 	this->AddChild( &m_WheelNotifyIcon );
 	this->AddChild( &m_TextBanner );
 	this->AddChild( &m_textSection );
@@ -158,11 +158,11 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pWIBD )
 	// hide all
 	m_WheelNotifyIcon.SetHidden( true );
 	m_TextBanner.SetHidden( true );
-	m_sprSongBar.SetHidden( true );
-	m_sprSectionBar.SetHidden( true );
-	m_sprExpandedBar.SetHidden( true );
-	m_sprModeBar.SetHidden( true );
-	m_sprSortBar.SetHidden( true );
+	m_sprSongBar->SetHidden( true );
+	m_sprSectionBar->SetHidden( true );
+	m_sprExpandedBar->SetHidden( true );
+	m_sprModeBar->SetHidden( true );
+	m_sprSortBar->SetHidden( true );
 	m_textSection.SetHidden( true );
 	m_textRoulette.SetHidden( true );
 	FOREACH_PlayerNumber( p )
@@ -203,7 +203,7 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pWIBD )
 
 			bt->SetText( sDisplayName, sTranslitName );
 			bt->SetDiffuse( data->m_color );
-			bt->TurnRainbowOff();
+			bt->SetRainbow( false );
 			bt->SetHidden( false );
 		}
 		break;
@@ -237,7 +237,7 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pWIBD )
 		ASSERT( 0 );	// invalid type
 	}
 
-	Actor *pBars[] = { &m_sprBar, &m_sprExpandedBar, &m_sprSectionBar, &m_sprModeBar, &m_sprSortBar, &m_sprSongBar, NULL };
+	Actor *pBars[] = { m_sprBar, m_sprExpandedBar, m_sprSectionBar, m_sprModeBar, m_sprSortBar, m_sprSongBar, NULL };
 	for( unsigned i = 0; pBars[i] != NULL; ++i )
 		pBars[i]->SetVisible( false );
 
@@ -248,19 +248,19 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pWIBD )
 	case TYPE_RANDOM:
 	case TYPE_PORTAL:
 		if( m_bExpanded )
-			m_sprExpandedBar.SetHidden( false );
+			m_sprExpandedBar->SetHidden( false );
 		else
-			m_sprSectionBar.SetHidden( false );
+			m_sprSectionBar->SetHidden( false );
 		break;
 	case TYPE_SORT:
 		if( pWID->m_pAction->m_pm != PlayMode_Invalid )
-			m_sprModeBar.SetHidden( false );
+			m_sprModeBar->SetHidden( false );
 		else
-			m_sprSortBar.SetHidden( false );
+			m_sprSortBar->SetHidden( false );
 		break;
 	case TYPE_SONG:		
 	case TYPE_COURSE:
-		m_sprSongBar.SetHidden( false );
+		m_sprSongBar->SetHidden( false );
 		break;
 	default: ASSERT(0);
 	}

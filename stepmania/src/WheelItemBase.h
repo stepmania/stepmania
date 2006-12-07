@@ -8,6 +8,7 @@
 #include "WheelNotifyIcon.h"
 #include "ThemeMetric.h"
 #include "GameConstantsAndTypes.h"
+#include "AutoActor.h"
 
 struct WheelItemBaseData;
 
@@ -45,11 +46,11 @@ protected:
 	const WheelItemBaseData* data;
 	bool m_bExpanded;	// if TYPE_SECTION, whether this section is expanded
 
-	Actor	*m_pBar;
-	Sprite	m_sprBar;
-	BitmapText m_text;
-	WheelItemType m_Type;
-	RageColor m_color;
+	Actor*		m_pBar;
+	AutoActor	m_sprBar;
+	BitmapText	m_text;
+	WheelItemType	m_Type;
+	RageColor	m_color;
 
 	ThemeMetric<float>		TEXT_X;
 	ThemeMetric<float>		TEXT_Y;

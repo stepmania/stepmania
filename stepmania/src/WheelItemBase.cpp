@@ -17,12 +17,12 @@ WheelItemBase::WheelItemBase( const WheelItemBase &cpy ):
 	m_Type( cpy.m_Type ),
 	m_color( cpy.m_color )
 {
-	if( cpy.m_pBar == const_cast<Sprite *> (&cpy.m_sprBar) )
-		m_pBar = &m_sprBar;
+	if( cpy.m_pBar == cpy.m_sprBar )
+		m_pBar = m_sprBar;
 
 	if( cpy.GetNumChildren() != 0 )
 	{
-		this->AddChild( &m_sprBar );
+		this->AddChild( m_sprBar );
 		this->AddChild( &m_text );
 	}
 }
@@ -44,9 +44,9 @@ void WheelItemBase::Load( RString sType )
 	m_colorLocked = RageColor(0,0,0,0);
 
 	m_sprBar.Load( THEME->GetPathG(sType,"bar") );
-	m_sprBar.SetXY( 0, 0 );
-	this->AddChild( &m_sprBar );
-	m_pBar = &m_sprBar;
+	m_sprBar->SetXY( 0, 0 );
+	this->AddChild( m_sprBar );
+	m_pBar = m_sprBar;
 
 	m_text.LoadFromFont( THEME->GetPathF(sType,"text") );
 	m_text.SetShadowLength( 0 );

@@ -11,6 +11,7 @@
 #include "GameConstantsAndTypes.h"
 #include "GameCommand.h"
 #include "WheelItemBase.h"
+#include "AutoActor.h"
 
 class Course;
 class Song;
@@ -32,11 +33,11 @@ public:
 	const WheelItemData *data;
 
 private:
-	Sprite			m_sprSongBar;
-	Sprite			m_sprSectionBar;
-	Sprite			m_sprExpandedBar;
-	Sprite			m_sprModeBar;
-	Sprite			m_sprSortBar;
+	AutoActor		m_sprSongBar;
+	AutoActor		m_sprSectionBar;
+	AutoActor		m_sprExpandedBar;
+	AutoActor		m_sprModeBar;
+	AutoActor		m_sprSortBar;
 	WheelNotifyIcon		m_WheelNotifyIcon;
 	TextBanner		m_TextBanner;
 	BitmapText		m_textSection;
