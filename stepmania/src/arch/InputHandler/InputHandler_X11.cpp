@@ -3,6 +3,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageDisplay.h"
+#include "InputFilter.h"
 #include "archutils/Unix/X11Helper.h"
 
 #include <X11/Xlib.h>
@@ -125,21 +126,13 @@ static DeviceButton XSymToDeviceButton( int key )
 
 InputHandler_X11::InputHandler_X11()
 {
-	XKeyboardControl state;
-	state.auto_repeat_mode = AutoRepeatModeOff;
-	XChangeKeyboardControl( X11Helper::Dpy, KBAutoRepeatMode, &state );
 	X11Helper::Go();
-	X11Helper::OpenMask( KeyPressMask );
-	X11Helper::OpenMask( KeyReleaseMask );
+	X11Helper::OpenMask( KeyPressMask | KeyReleaseMask );
 }
 
 InputHandler_X11::~InputHandler_X11()
 {
-	XKeyboardControl state;
-	state.auto_repeat_mode = AutoRepeatModeDefault;
-	XChangeKeyboardControl( X11Helper::Dpy, KBAutoRepeatMode, &state );
-	X11Helper::CloseMask( KeyPressMask );
-	X11Helper::CloseMask( KeyReleaseMask );
+	X11Helper::CloseMask( KeyPressMask | KeyReleaseMask );
 	X11Helper::Stop();
 }
 
@@ -147,27 +140,23 @@ void InputHandler_X11::Update()
 {
 	XEvent event;
 
-	if( X11Helper::Win )
+	if( !X11Helper::Win )
 	{
-		while( XCheckTypedWindowEvent(X11Helper::Dpy, X11Helper::Win, KeyPress, &event) )
-		{
-			int iKeysym = XLookupKeysym( &event.xkey, 0 );
-			DeviceButton b = XSymToDeviceButton( iKeysym );
-			LOG->Trace( "key: sym %i, key %i, state true", iKeysym, b );
-			if( b != DeviceButton_Invalid )
-				ButtonPressed( DeviceInput(DEVICE_KEYBOARD, b), true );
-		}
-
-		while( XCheckTypedWindowEvent(X11Helper::Dpy, X11Helper::Win, KeyRelease, &event) )
-		{
-			int iKeysym = XLookupKeysym( &event.xkey, 0 );
-			DeviceButton b = XSymToDeviceButton( iKeysym );
-			LOG->Trace( "key: sym %i, key %i, state false", iKeysym, b );
-			if( b != DeviceButton_Invalid )
-				ButtonPressed( DeviceInput(DEVICE_KEYBOARD, b), false );
-		}
+		InputHandler::UpdateTimer();
+		return;
 	}
 
+	while( XCheckWindowEvent(X11Helper::Dpy, X11Helper::Win, KeyPressMask | KeyReleaseMask, &event) )
+	{
+		// Why only the zero index?
+		DeviceButton db = XSymToDeviceButton( XLookupKeysym(&event.xkey, 0) );
+		if( db == DeviceButton_Invalid )
+			continue;
+		bool bPress = event.type == KeyPress;
+		const DeviceInput di( DEVICE_KEYBOARD, db );
+		if( INPUTFILTER->IsBeingPressed(di) != bPress )
+			ButtonPressed( di, bPress );
+	}
 	InputHandler::UpdateTimer();
 }
 
