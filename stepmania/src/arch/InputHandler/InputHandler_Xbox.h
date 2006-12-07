@@ -7,8 +7,6 @@
 
 #define NUM_PORTS 4
 
-REGISTER_INPUT_HANDLER_CLASS( Xbox );
-
 class InputHandler_Xbox: public InputHandler
 {
 	HANDLE joysticks[NUM_JOYSTICKS];
@@ -24,6 +22,7 @@ private:
 	void getHandles();
 };
 #define USE_INPUT_HANDLER_XBOX
+REGISTER_INPUT_HANDLER_CLASS( Xbox );
 
 #endif
 

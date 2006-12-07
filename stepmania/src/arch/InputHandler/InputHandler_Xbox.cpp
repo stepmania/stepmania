@@ -38,7 +38,7 @@ InputHandler_Xbox::InputHandler_Xbox()
 	//
 	// Init joysticks
 	//
-	XDEVICE_PREALLOC_TYPE xdpt[] = {{XDEVICE_TYPE_GAMEPAD, 4}};
+	XDEVICE_PREALLOC_TYPE xdpt[] = {{XDEVICE_TYPE_GAMEPAD, 4}, {XDEVICE_TYPE_MEMORY_UNIT, 2}};
 	XInitDevices( sizeof(xdpt) / sizeof(XDEVICE_PREALLOC_TYPE), xdpt );
 	ZeroMemory( joysticks, sizeof(joysticks) );
 
