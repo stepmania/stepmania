@@ -32,7 +32,7 @@ static PWSWAPINTERVALEXTPROC glSwapInterval = NULL;
 static LocalizedString FAILED_CONNECTION_XSERVER( "LowLevelWindow_X11", "Failed to establish a connection with the X server" );
 LowLevelWindow_X11::LowLevelWindow_X11()
 {
-	if( !Go() )
+	if( !OpenXConnection() )
 		RageException::Throw( FAILED_CONNECTION_XSERVER.GetValue() );
 
 	const int iScreen = DefaultScreen( Dpy );
@@ -79,7 +79,7 @@ LowLevelWindow_X11::~LowLevelWindow_X11()
 	Win = None;
 	XDestroyWindow( Dpy, g_AltWindow );
 	g_AltWindow = None;
-	Stop();	// Xlib cleans up the window for us
+	CloseXConnection();
 }
 
 void *LowLevelWindow_X11::GetProcAddress( RString s )

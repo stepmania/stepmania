@@ -11,7 +11,7 @@ Window X11Helper::Win = None;
 static int ErrorCallback( Display*, XErrorEvent* );
 static int FatalCallback( Display* );
 
-bool X11Helper::Go()
+bool X11Helper::OpenXConnection()
 {
 	if( g_iRefCount == 0 )
 	{
@@ -26,7 +26,7 @@ bool X11Helper::Go()
 	return true;
 }
 
-void X11Helper::Stop()
+void X11Helper::CloseXConnection()
 {
 	g_iRefCount--;
 

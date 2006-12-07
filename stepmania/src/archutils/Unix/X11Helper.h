@@ -10,14 +10,14 @@ namespace X11Helper
 
 	// Create the connection, if necessary; otherwise do some important
 	// internal session-tracking stuff (so you should call this anyway).
-	bool Go();
+	bool OpenXConnection();
 
 	// Destroy the connection, if appropriate; otherwise do some important
 	// internal session-tracking stuff (so you should call it anyway).
-	void Stop();
+	void CloseXConnection();
 
 	// The current Display (connection). Initialized by the first call to
-	// Go().
+	// OpenXConnection().
 	extern Display *Dpy;
 
 	// The Window used by LowLevelWindow_X11 as the main window.
