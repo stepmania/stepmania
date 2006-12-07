@@ -65,6 +65,16 @@ LowLevelWindow_X11::~LowLevelWindow_X11()
 		
 		XUngrabKeyboard( Dpy, CurrentTime );
 	}
+	if( g_pContext )
+	{
+		glXDestroyContext( Dpy, g_pContext );
+		g_pContext = NULL;
+	}
+	if( g_pBackgroundContext )
+	{
+		glXDestroyContext( Dpy, g_pBackgroundContext );
+		g_pBackgroundContext = NULL;
+	}
 	XDestroyWindow( Dpy, Win );
 	Win = None;
 	XDestroyWindow( Dpy, g_AltWindow );
@@ -140,6 +150,10 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		XChangeProperty( Dpy, Win, XA_WM_NAME, XA_STRING, 8, PropModeReplace,
 				reinterpret_cast<unsigned char*>(szWindowTitle), strlen(szWindowTitle) );
 
+		if( g_pContext )
+			glXDestroyContext( Dpy, g_pContext );
+		if( g_pBackgroundContext )
+			glXDestroyContext( Dpy, g_pBackgroundContext );
 		g_pContext = glXCreateContext( Dpy, xvi, NULL, True );
 		g_pBackgroundContext = glXCreateContext( Dpy, xvi, g_pContext, True );
 
