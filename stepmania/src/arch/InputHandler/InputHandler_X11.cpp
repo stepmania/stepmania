@@ -9,6 +9,8 @@
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 
+using namespace X11Helper;
+
 REGISTER_INPUT_HANDLER_CLASS( X11 );
 
 static DeviceButton XSymToDeviceButton( int key )
@@ -126,27 +128,35 @@ static DeviceButton XSymToDeviceButton( int key )
 
 InputHandler_X11::InputHandler_X11()
 {
-	X11Helper::Go();
-	X11Helper::OpenMask( KeyPressMask | KeyReleaseMask );
+	if( Dpy == NULL  || Win == None )
+		return;
+	XWindowAttributes winAttrib;
+
+	XGetWindowAttributes( Dpy, Win, &winAttrib );
+	XSelectInput( Dpy, Win, winAttrib.your_event_mask | KeyPressMask | KeyReleaseMask );
 }
 
 InputHandler_X11::~InputHandler_X11()
 {
-	X11Helper::CloseMask( KeyPressMask | KeyReleaseMask );
-	X11Helper::Stop();
+	if( Dpy == NULL || Win == None )
+		return;
+	XWindowAttributes winAttrib;
+
+	XGetWindowAttributes( Dpy, Win, &winAttrib );
+	XSelectInput( Dpy, Win, winAttrib.your_event_mask & ~(KeyPressMask|KeyReleaseMask) );
 }
 
 void InputHandler_X11::Update()
 {
 	XEvent event;
 
-	if( !X11Helper::Win )
+	if( Dpy == NULL || Win == None )
 	{
 		InputHandler::UpdateTimer();
 		return;
 	}
 
-	while( XCheckWindowEvent(X11Helper::Dpy, X11Helper::Win, KeyPressMask | KeyReleaseMask, &event) )
+	while( XCheckWindowEvent(Dpy, Win, KeyPressMask | KeyReleaseMask, &event) )
 	{
 		// Why only the zero index?
 		DeviceButton db = XSymToDeviceButton( XLookupKeysym(&event.xkey, 0) );
@@ -163,11 +173,12 @@ void InputHandler_X11::Update()
 
 void InputHandler_X11::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut )
 {
-	vDevicesOut.push_back( InputDeviceInfo(DEVICE_KEYBOARD,"Keyboard") );
+	if( Dpy && Win )
+		vDevicesOut.push_back( InputDeviceInfo(DEVICE_KEYBOARD,"Keyboard") );
 }
 
 /*
- * (c) 2005 Sean Burke, Ben Anderson
+ * (c) 2005, 2006 Sean Burke, Ben Anderson, Steve Checkoway
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
