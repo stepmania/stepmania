@@ -39,8 +39,6 @@ struct RageSoundParams
 	/* Number of seconds to spend fading out. */
 	float m_FadeLength;
 
-	void SetNoFade() { m_FadeLength = 0; }
-
 	float m_Volume;	// multiplies with SOUNDMAN->GetMixVolume()
 
 	/* Pan: -1, left; 1, right */
