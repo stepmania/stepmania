@@ -8,6 +8,7 @@
 #include "ScreenDimensions.h"
 #include "InputEventPlus.h"
 #include "LocalizedString.h"
+#include "HelpDisplay.h"
 
 static ThemeMetric<bool>	ALLOW_RESIZE("ScreenCenterImage","AllowResize");
 
