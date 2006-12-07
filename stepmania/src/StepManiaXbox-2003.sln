@@ -1,17 +1,7 @@
 Microsoft Visual Studio Solution File, Format Version 8.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StepMania", "StepManiaXbox-2003.vcproj", "{670745A6-106B-420D-A2A9-D4F89A23986E}"
 	ProjectSection(ProjectDependencies) = postProject
-		{93B36940-E3EB-4E3C-9F53-CB3322CE05C5} = {93B36940-E3EB-4E3C-9F53-CB3322CE05C5}
-		{A2476C8A-C34D-460F-9E58-6F5C616412DB} = {A2476C8A-C34D-460F-9E58-6F5C616412DB}
 		{CA22B79A-E8A9-4BFB-A297-42231F2213F2} = {CA22B79A-E8A9-4BFB-A297-42231F2213F2}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibLua", "lua-5.0\src\LibLua-2003.vcproj", "{93B36940-E3EB-4E3C-9F53-CB3322CE05C5}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibLuaLib", "lua-5.0\src\lib\LibLuaLib-2003.vcproj", "{A2476C8A-C34D-460F-9E58-6F5C616412DB}"
-	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xboxmad", "mad-0.15.1b\xboxmad\xboxmad-2003.vcproj", "{CA22B79A-E8A9-4BFB-A297-42231F2213F2}"
@@ -19,6 +9,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xboxmad", "mad-0.15.1b\xbox
 	EndProjectSection
 EndProject
 Global
+	GlobalSection(DPCodeReviewSolutionGUID) = preSolution
+		DPCodeReviewSolutionGUID = {00000000-0000-0000-0000-000000000000}
+	EndGlobalSection
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug Xbox = Debug Xbox
 		Release Xbox = Release Xbox
@@ -28,14 +21,6 @@ Global
 		{670745A6-106B-420D-A2A9-D4F89A23986E}.Debug Xbox.Build.0 = Debug|Xbox
 		{670745A6-106B-420D-A2A9-D4F89A23986E}.Release Xbox.ActiveCfg = Release|Xbox
 		{670745A6-106B-420D-A2A9-D4F89A23986E}.Release Xbox.Build.0 = Release|Xbox
-		{93B36940-E3EB-4E3C-9F53-CB3322CE05C5}.Debug Xbox.ActiveCfg = Debug|Xbox
-		{93B36940-E3EB-4E3C-9F53-CB3322CE05C5}.Debug Xbox.Build.0 = Debug|Xbox
-		{93B36940-E3EB-4E3C-9F53-CB3322CE05C5}.Release Xbox.ActiveCfg = Release|Xbox
-		{93B36940-E3EB-4E3C-9F53-CB3322CE05C5}.Release Xbox.Build.0 = Release|Xbox
-		{A2476C8A-C34D-460F-9E58-6F5C616412DB}.Debug Xbox.ActiveCfg = Release|Xbox
-		{A2476C8A-C34D-460F-9E58-6F5C616412DB}.Debug Xbox.Build.0 = Release|Xbox
-		{A2476C8A-C34D-460F-9E58-6F5C616412DB}.Release Xbox.ActiveCfg = Release|Xbox
-		{A2476C8A-C34D-460F-9E58-6F5C616412DB}.Release Xbox.Build.0 = Release|Xbox
 		{CA22B79A-E8A9-4BFB-A297-42231F2213F2}.Debug Xbox.ActiveCfg = Debug|Xbox
 		{CA22B79A-E8A9-4BFB-A297-42231F2213F2}.Debug Xbox.Build.0 = Debug|Xbox
 		{CA22B79A-E8A9-4BFB-A297-42231F2213F2}.Release Xbox.ActiveCfg = Release|Xbox

@@ -102,6 +102,7 @@ cl                                                                              
 				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.1/include&quot;;baseclasses\"
 				PreprocessorDefinitions="WIN32,_XBOX,XBOX,NDEBUG,_XDBG"
 				RuntimeLibrary="1"
+				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="global.h"
 				PrecompiledHeaderFile=".\Debug/StepMania.pch"
@@ -119,7 +120,7 @@ cl                                                                              
 				AdditionalOptions="/MACHINE:I386 /FIXED:NO /FORCE:MULTIPLE"
 				AdditionalDependencies="libpng/lib/xboxlibpng.lib xbdm.lib xapilibd.lib d3d8d.lib d3dx8d.lib xgraphicsd.lib dsoundd.lib dmusicd.lib xnetd.lib xboxkrnl.lib debug\verstub.obj"
 				OutputFile="../StepManiaXbox-debug.exe"
-				LinkIncremental="0"
+				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				IgnoreDefaultLibraryNames="libcd,libcmt"
 				GenerateDebugInformation="TRUE"
@@ -138,7 +139,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 "/>
 			<Tool
 				Name="XboxDeploymentTool"
-				ExcludedFromBuild="FALSE"
+				ExcludedFromBuild="TRUE"
 				RemotePath="xe:\StepmaniaXbox\default-dbg.xbe"
 				Progress="TRUE"/>
 			<Tool
@@ -256,6 +257,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				StringPooling="TRUE"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="TRUE"
+				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="global.h"
 				PrecompiledHeaderFile="$(IntDir)/StepMania.pch"
@@ -299,13 +301,15 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				Name="XboxImageTool"
 				FileName="../default.xbe"
 				StackSize="0x10000"
-				IncludeDebugInfo="TRUE"
+				IncludeDebugInfo="FALSE"
 				SuppressStartupBanner="TRUE"
-				TitleID=""
+				TitleID="0x33342530"
+				AltID="0x30253433"
 				XboxGameRating="5"
 				TitleInfo=""
 				TitleName="StepmaniaX"
-				TitleImage=""/>
+				TitleImage=".\archutils\Xbox\smicon.XBX"
+				SaveGameImage=".\archutils\Xbox\saveblue.XBX"/>
 		</Configuration>
 	</Configurations>
 	<References>
@@ -1150,6 +1154,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScoreKeeper.h">
 			</File>
 			<File
+				RelativePath=".\ScoreKeeperGuitar.cpp">
+			</File>
+			<File
+				RelativePath=".\ScoreKeeperGuitar.h">
+			</File>
+			<File
 				RelativePath=".\ScoreKeeperNormal.cpp">
 			</File>
 			<File
@@ -1325,9 +1335,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				<File
 					RelativePath="arch\arch_default.h">
 				</File>
-				<File
-					RelativePath="arch\arch_platform.h">
-				</File>
 				<Filter
 					Name="LoadingWindow"
 					Filter="">
@@ -1352,6 +1359,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					</File>
 					<File
 						RelativePath="arch\Sound\DSoundHelpers.h">
+					</File>
+					<File
+						RelativePath=".\arch\Sound\RageSoundDriver.cpp">
 					</File>
 					<File
 						RelativePath="arch\Sound\RageSoundDriver.h">
@@ -1475,6 +1485,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					<File
 						RelativePath="arch\MemoryCard\MemoryCardDriver_Null.h">
 					</File>
+					<File
+						RelativePath=".\arch\MemoryCard\MemoryCardDriverThreaded_Xbox.cpp">
+					</File>
+					<File
+						RelativePath=".\arch\MemoryCard\MemoryCardDriverThreaded_Xbox.h">
+					</File>
 				</Filter>
 				<Filter
 					Name="Dialog"
@@ -1484,6 +1500,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					</File>
 					<File
 						RelativePath="arch\Dialog\Dialog.h">
+					</File>
+					<File
+						RelativePath=".\arch\Dialog\DialogDriver.cpp">
 					</File>
 					<File
 						RelativePath="arch\Dialog\DialogDriver.h">
@@ -2227,6 +2246,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="RageSoundPosMap.h">
 			</File>
 			<File
+				RelativePath=".\RageSoundReader.cpp">
+			</File>
+			<File
 				RelativePath="RageSoundReader.h">
 			</File>
 			<File
@@ -2248,28 +2270,28 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="RageSoundReader_MP3.h">
 			</File>
 			<File
+				RelativePath=".\RageSoundReader_PitchChange.cpp">
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_PitchChange.h">
+			</File>
+			<File
 				RelativePath="RageSoundReader_Preload.cpp">
 			</File>
 			<File
 				RelativePath="RageSoundReader_Preload.h">
 			</File>
 			<File
-				RelativePath="RageSoundReader_Resample.cpp">
-			</File>
-			<File
-				RelativePath="RageSoundReader_Resample.h">
-			</File>
-			<File
-				RelativePath="RageSoundReader_Resample_Fast.cpp">
-			</File>
-			<File
-				RelativePath="RageSoundReader_Resample_Fast.h">
-			</File>
-			<File
 				RelativePath="RageSoundReader_Resample_Good.cpp">
 			</File>
 			<File
 				RelativePath="RageSoundReader_Resample_Good.h">
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_SpeedChange.cpp">
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_SpeedChange.h">
 			</File>
 			<File
 				RelativePath="RageSoundReader_Vorbisfile.cpp">
@@ -2642,6 +2664,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\GameManager.h">
 			</File>
 			<File
+				RelativePath=".\GamePreferences.cpp">
+			</File>
+			<File
+				RelativePath=".\GamePreferences.h">
+			</File>
+			<File
 				RelativePath="GameSoundManager.cpp">
 			</File>
 			<File
@@ -2700,12 +2728,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="NetworkSyncManager.h">
-			</File>
-			<File
-				RelativePath="NetworkSyncServer.cpp">
-			</File>
-			<File
-				RelativePath="NetworkSyncServer.h">
 			</File>
 			<File
 				RelativePath="NoteSkinManager.cpp">
@@ -3089,13 +3111,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\lua-5.1\src\ltm.h">
 			</File>
 			<File
-				RelativePath=".\lua-5.1\src\lua.c">
-			</File>
-			<File
 				RelativePath=".\lua-5.1\src\lua.h">
-			</File>
-			<File
-				RelativePath=".\lua-5.1\src\luac.c">
 			</File>
 			<File
 				RelativePath=".\lua-5.1\src\luaconf.h">
@@ -3125,12 +3141,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\lua-5.1\src\print.c">
 			</File>
 		</Filter>
-		<File
-			RelativePath="archutils\Win32\DialogCrashHeader.bmp">
-		</File>
-		<File
-			RelativePath="archutils\Win32\DialogErrorHeader.bmp">
-		</File>
 		<File
 			RelativePath="StepMania.xpm">
 		</File>
