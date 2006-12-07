@@ -25,7 +25,7 @@ using namespace RageDisplay_OGL_Helpers;
 
 static GLXContext g_pContext = NULL;
 static GLXContext g_pBackgroundContext = NULL;
-static Window g_AltWindow = 0;
+static Window g_AltWindow = None;
 static PWSWAPINTERVALEXTPROC glSwapInterval = NULL;
 
 static LocalizedString FAILED_CONNECTION_XSERVER( "LowLevelWindow_X11", "Failed to establish a connection with the X server" );
@@ -64,6 +64,10 @@ LowLevelWindow_X11::~LowLevelWindow_X11()
 		
 		XUngrabKeyboard( X11Helper::Dpy, CurrentTime );
 	}
+	XDestroyWindow( X11Helper::Dpy, X11Helper::Win );
+	X11Helper::Win = None;
+	XDestroyWindow( X11Helper::Dpy, g_AltWindow );
+	g_AltWindow = None;
 	X11Helper::Stop();	// Xlib cleans up the window for us
 }
 
@@ -77,6 +81,7 @@ void *LowLevelWindow_X11::GetProcAddress( RString s )
 
 RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut )
 {
+	using namespace X11Helper;
 #if defined(LINUX) && 0
 	/*
 	 * nVidia cards:
@@ -107,6 +112,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		int visAttribs[32];
 		int i = 0;
 		ASSERT( p.bpp == 16 || p.bpp == 32 );
+
 		if( p.bpp == 32 )
 		{
 			visAttribs[i++] = GLX_RED_SIZE;		visAttribs[i++] = 8;
@@ -126,32 +132,31 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 
 		visAttribs[i++] = None;
 
-		XVisualInfo *xvi = glXChooseVisual( X11Helper::Dpy, DefaultScreen(X11Helper::Dpy), visAttribs );
-
+		XVisualInfo *xvi = glXChooseVisual( Dpy, DefaultScreen(Dpy), visAttribs );
 		if( xvi == NULL )
 			return "No visual available for that depth.";
 
 		/* Enable StructureNotifyMask, so we receive a MapNotify for the following XMapWindow. */
-		X11Helper::OpenMask( StructureNotifyMask );
+		OpenMask( StructureNotifyMask );
 
 		// I get strange behavior if I add override redirect after creating the window.
 		// So, let's recreate the window when changing that state.
-		if( !X11Helper::MakeWindow(xvi->screen, xvi->depth, xvi->visual, p.width, p.height, !p.windowed) )
+		if( !MakeWindow(Win, xvi->screen, xvi->depth, xvi->visual, p.width, p.height, !p.windowed) )
 			return "Failed to create the window.";
 		
-		g_AltWindow = X11Helper::CreateWindow(xvi->screen, xvi->depth, xvi->visual, p.width, p.height, !p.windowed);
-		ASSERT( g_AltWindow );
+		if( !MakeWindow(g_AltWindow, xvi->screen, xvi->depth, xvi->visual, p.width, p.height, !p.windowed) )
+			FAIL_M( "Failed to create the alt window." ); // Should this be fatal?
 
 		char *szWindowTitle = const_cast<char *>( p.sWindowTitle.c_str() );
-		XChangeProperty( X11Helper::Dpy, X11Helper::Win, XA_WM_NAME, XA_STRING, 8, PropModeReplace,
+		XChangeProperty( Dpy, Win, XA_WM_NAME, XA_STRING, 8, PropModeReplace,
 				reinterpret_cast<unsigned char*>(szWindowTitle), strlen(szWindowTitle) );
 
-		g_pContext = glXCreateContext( X11Helper::Dpy, xvi, NULL, True );
-		g_pBackgroundContext = glXCreateContext( X11Helper::Dpy, xvi, g_pContext, True );
+		g_pContext = glXCreateContext( Dpy, xvi, NULL, True );
+		g_pBackgroundContext = glXCreateContext( Dpy, xvi, g_pContext, True );
 
-		glXMakeCurrent( X11Helper::Dpy, X11Helper::Win, g_pContext );
+		glXMakeCurrent( Dpy, Win, g_pContext );
 
-		XMapWindow( X11Helper::Dpy, X11Helper::Win );
+		XMapWindow( Dpy, Win );
 
 		// HACK: Wait for the MapNotify event, without spinning and
 		// eating CPU unnecessarily, and without smothering other
@@ -160,7 +165,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		// after MapNotify arrives.
 		while(1)
 		{
-			XNextEvent( X11Helper::Dpy, &ev );
+			XNextEvent( Dpy, &ev );
 			if( ev.type == MapNotify )
 				break;
 
@@ -169,11 +174,10 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 
 		while( !otherEvs.empty() )
 		{
-			XPutBackEvent( X11Helper::Dpy, &otherEvs.top() );
+			XPutBackEvent( Dpy, &otherEvs.top() );
 			otherEvs.pop();
 		}
-
-		X11Helper::CloseMask( StructureNotifyMask );
+		CloseMask( StructureNotifyMask );
 
 	}
 	else
@@ -183,13 +187,13 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		bNewDeviceOut = false;
 	}
 	
-	XRRScreenConfiguration *pScreenConfig = XRRGetScreenInfo( X11Helper::Dpy, RootWindow( X11Helper::Dpy, DefaultScreen(X11Helper::Dpy) ) );
+	XRRScreenConfiguration *pScreenConfig = XRRGetScreenInfo( Dpy, RootWindow(Dpy, DefaultScreen(Dpy)) );
 	
 	if( !p.windowed )
 	{
 		// Find a matching mode.
 		int iSizesXct;
-		XRRScreenSize *pSizesX = XRRSizes( X11Helper::Dpy, DefaultScreen( X11Helper::Dpy ), &iSizesXct );
+		XRRScreenSize *pSizesX = XRRSizes( Dpy, DefaultScreen(Dpy), &iSizesXct );
 		ASSERT_M( iSizesXct != 0, "Couldn't get resolution list from X server" );
 	
 		int iSizeMatch = -1;
@@ -205,18 +209,17 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 
 		// Set this mode.
 		// XXX: This doesn't handle if the config has changed since we queried it (see man Xrandr)
-		XRRSetScreenConfig( X11Helper::Dpy, pScreenConfig, RootWindow( X11Helper::Dpy, DefaultScreen(X11Helper::Dpy) ), iSizeMatch, 1, CurrentTime );
+		XRRSetScreenConfig( Dpy, pScreenConfig, RootWindow(Dpy, DefaultScreen(Dpy)), iSizeMatch, 1, CurrentTime );
 		
 		// Move the window to the corner that the screen focuses in on.
-		XMoveWindow( X11Helper::Dpy, X11Helper::Win, 0, 0 );
+		XMoveWindow( Dpy, Win, 0, 0 );
 		
-		XRaiseWindow( X11Helper::Dpy, X11Helper::Win );
+		XRaiseWindow( Dpy, Win );
 		
 		if( m_bWasWindowed )
 		{
 			// We want to prevent the WM from catching anything that comes from the keyboard.
-			XGrabKeyboard( X11Helper::Dpy, X11Helper::Win, True,
-				GrabModeAsync, GrabModeAsync, CurrentTime );
+			XGrabKeyboard( Dpy, Win, True, GrabModeAsync, GrabModeAsync, CurrentTime );
 			m_bWasWindowed = false;
 		}
 	}
@@ -224,10 +227,10 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 	{
 		if( !m_bWasWindowed )
 		{
-			XRRSetScreenConfig( X11Helper::Dpy, pScreenConfig, RootWindow( X11Helper::Dpy, DefaultScreen( X11Helper::Dpy ) ), 0, 1, CurrentTime );
+			XRRSetScreenConfig( Dpy, pScreenConfig, RootWindow(Dpy, DefaultScreen(Dpy)), 0, 1, CurrentTime );
 			// In windowed mode, we actually want the WM to function normally.
 			// Release any previous grab.
-			XUngrabKeyboard( X11Helper::Dpy, CurrentTime );
+			XUngrabKeyboard( Dpy, CurrentTime );
 			m_bWasWindowed = true;
 		}
 	}
@@ -237,11 +240,11 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 
 	// Do this before resizing the window so that pane-style WMs (Ion,
 	// ratpoison) don't resize us back inappropriately.
-	XSetWMNormalHints( X11Helper::Dpy, X11Helper::Win, &hints );
+	XSetWMNormalHints( Dpy, Win, &hints );
 
 	// Do this even if we just created the window -- works around Ion2 not
 	// catching WM normal hints changes in mapped windows.
-	XResizeWindow( X11Helper::Dpy, X11Helper::Win, p.width, p.height );
+	XResizeWindow( Dpy, Win, p.width, p.height );
 	if( glSwapInterval )
 		glSwapInterval( p.vsync );
 
