@@ -703,7 +703,7 @@ union luai_Cast { double l_d; long l_l; };
 #define LUA_DL_DLOPEN
 #endif
 
-#if defined(LUA_WIN)
+#if defined(LUA_WIN) && !defined(XBOX)
 #define LUA_DL_DLL
 #endif
 
