@@ -14,7 +14,7 @@ REGISTER_INPUT_HANDLER_CLASS( X11 );
 static DeviceButton XSymToDeviceButton( int key )
 {
 #define KEY_INV DeviceButton_Invalid
-	const DeviceButton ASCIIKeySyms[] =
+	static const DeviceButton ASCIIKeySyms[] =
 	{
 		KEY_INV       , KEY_INV     , KEY_INV      , KEY_INV     , KEY_INV      , /* 0 - 4 */
 		KEY_INV       , KEY_INV     , KEY_INV      , KEY_BACK    , KEY_TAB      , /* 5 - 9 */
