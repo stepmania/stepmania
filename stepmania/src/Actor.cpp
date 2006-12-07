@@ -1352,8 +1352,34 @@ public:
 	static int spin( T* p, lua_State *L )			{ p->SetEffectSpin(); return 0; }
 	static int vibrate( T* p, lua_State *L )		{ p->SetEffectVibrate(); return 0; }
 	static int stopeffect( T* p, lua_State *L )		{ p->StopEffect(); return 0; }
-	static int effectcolor1( T* p, lua_State *L )		{ p->SetEffectColor1( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
-	static int effectcolor2( T* p, lua_State *L )		{ p->SetEffectColor2( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
+	static int effectcolor1( T* p, lua_State *L )
+	{
+		if( lua_type(L,1) == LUA_TTABLE )
+		{
+			RageColor c;
+			c.FromStack( L, 1 );
+			p->SetEffectColor1( c );
+		}
+		else
+		{
+			p->SetEffectColor1( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) );
+		}
+		return 0;
+	}
+	static int effectcolor2( T* p, lua_State *L )
+	{
+		if( lua_type(L,1) == LUA_TTABLE )
+		{
+			RageColor c;
+			c.FromStack( L, 1 );
+			p->SetEffectColor2( c );
+		}
+		else
+		{
+			p->SetEffectColor2( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) );
+		}
+		return 0;
+	}
 	static int effectperiod( T* p, lua_State *L )		{ p->SetEffectPeriod(FArg(1)); return 0; }
 	static int effecttiming( T* p, lua_State *L )		{ p->SetEffectTiming(FArg(1),FArg(2),FArg(3),FArg(4)); return 0; }
 	static int effectoffset( T* p, lua_State *L )		{ p->SetEffectOffset(FArg(1)); return 0; }
