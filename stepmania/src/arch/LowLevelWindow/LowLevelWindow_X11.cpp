@@ -10,6 +10,7 @@
 
 #include "RageDisplay_OGL_Helpers.h"
 using namespace RageDisplay_OGL_Helpers;
+using namespace X11Helper;
 
 #include <stack>
 #include <math.h>	// ceil()
@@ -31,23 +32,23 @@ static PWSWAPINTERVALEXTPROC glSwapInterval = NULL;
 static LocalizedString FAILED_CONNECTION_XSERVER( "LowLevelWindow_X11", "Failed to establish a connection with the X server" );
 LowLevelWindow_X11::LowLevelWindow_X11()
 {
-	if( !X11Helper::Go() )
+	if( !Go() )
 		RageException::Throw( FAILED_CONNECTION_XSERVER.GetValue() );
 
-	const int iScreen = DefaultScreen( X11Helper::Dpy );
+	const int iScreen = DefaultScreen( Dpy );
 
-	LOG->Info( "Display: %s (screen %i)", DisplayString(X11Helper::Dpy), iScreen );
-	LOG->Info( "Direct rendering: %s", glXIsDirect( X11Helper::Dpy, glXGetCurrentContext() )? "yes":"no" );
+	LOG->Info( "Display: %s (screen %i)", DisplayString(Dpy), iScreen );
+	LOG->Info( "Direct rendering: %s", glXIsDirect( Dpy, glXGetCurrentContext() )? "yes":"no" );
 
-	int iXServerVersion = XVendorRelease( X11Helper::Dpy ); /* eg. 40201001 */
+	int iXServerVersion = XVendorRelease( Dpy ); /* eg. 40201001 */
 	int iMajor = iXServerVersion / 10000000; iXServerVersion %= 10000000;
 	int iMinor = iXServerVersion / 100000;   iXServerVersion %= 100000;
 	int iRevision = iXServerVersion / 1000;  iXServerVersion %= 1000;
 	int iPatch = iXServerVersion;
 
-	LOG->Info( "X server vendor: %s [%i.%i.%i.%i]", XServerVendor( X11Helper::Dpy ), iMajor, iMinor, iRevision, iPatch );
-	LOG->Info( "Server GLX vendor: %s [%s]", glXQueryServerString( X11Helper::Dpy, iScreen, GLX_VENDOR ), glXQueryServerString( X11Helper::Dpy, iScreen, GLX_VERSION ) );
-	LOG->Info( "Client GLX vendor: %s [%s]", glXGetClientString( X11Helper::Dpy, GLX_VENDOR ), glXGetClientString( X11Helper::Dpy, GLX_VERSION ) );
+	LOG->Info( "X server vendor: %s [%i.%i.%i.%i]", XServerVendor( Dpy ), iMajor, iMinor, iRevision, iPatch );
+	LOG->Info( "Server GLX vendor: %s [%s]", glXQueryServerString( Dpy, iScreen, GLX_VENDOR ), glXQueryServerString( Dpy, iScreen, GLX_VERSION ) );
+	LOG->Info( "Client GLX vendor: %s [%s]", glXGetClientString( Dpy, GLX_VENDOR ), glXGetClientString( Dpy, GLX_VERSION ) );
 	
 	m_bWasWindowed = true;
 	glSwapInterval = (PWSWAPINTERVALEXTPROC)GetProcAddress( "glXSwapIntervalSGI" );
@@ -58,17 +59,17 @@ LowLevelWindow_X11::~LowLevelWindow_X11()
 	// Reset the display
 	if( !m_bWasWindowed )
 	{
-		XRRScreenConfiguration *pScreenConfig = XRRGetScreenInfo( X11Helper::Dpy, RootWindow( X11Helper::Dpy, DefaultScreen( X11Helper::Dpy ) ) );
-		XRRSetScreenConfig( X11Helper::Dpy, pScreenConfig, RootWindow( X11Helper::Dpy, DefaultScreen( X11Helper::Dpy ) ), 0, 1, CurrentTime );
+		XRRScreenConfiguration *pScreenConfig = XRRGetScreenInfo( Dpy, RootWindow( Dpy, DefaultScreen( Dpy ) ) );
+		XRRSetScreenConfig( Dpy, pScreenConfig, RootWindow( Dpy, DefaultScreen( Dpy ) ), 0, 1, CurrentTime );
 		XRRFreeScreenConfigInfo( pScreenConfig );
 		
-		XUngrabKeyboard( X11Helper::Dpy, CurrentTime );
+		XUngrabKeyboard( Dpy, CurrentTime );
 	}
-	XDestroyWindow( X11Helper::Dpy, X11Helper::Win );
-	X11Helper::Win = None;
-	XDestroyWindow( X11Helper::Dpy, g_AltWindow );
+	XDestroyWindow( Dpy, Win );
+	Win = None;
+	XDestroyWindow( Dpy, g_AltWindow );
 	g_AltWindow = None;
-	X11Helper::Stop();	// Xlib cleans up the window for us
+	Stop();	// Xlib cleans up the window for us
 }
 
 void *LowLevelWindow_X11::GetProcAddress( RString s )
@@ -81,7 +82,6 @@ void *LowLevelWindow_X11::GetProcAddress( RString s )
 
 RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut )
 {
-	using namespace X11Helper;
 #if defined(LINUX) && 0
 	/*
 	 * nVidia cards:
@@ -255,7 +255,7 @@ RString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 
 bool LowLevelWindow_X11::IsSoftwareRenderer( RString &sError )
 {
-	if( glXIsDirect( X11Helper::Dpy, glXGetCurrentContext() ) )
+	if( glXIsDirect( Dpy, glXGetCurrentContext() ) )
 		return false;
 
 	sError = "Direct rendering is not available.";
@@ -264,14 +264,14 @@ bool LowLevelWindow_X11::IsSoftwareRenderer( RString &sError )
 
 void LowLevelWindow_X11::SwapBuffers()
 {
-	glXSwapBuffers( X11Helper::Dpy, X11Helper::Win );
+	glXSwapBuffers( Dpy, Win );
 
 	if( PREFSMAN->m_bDisableScreenSaver )
 	{
 		/* Disable the screensaver. */
 #if defined(HAVE_LIBXTST)
 		/* This causes flicker. */
-		// XForceScreenSaver( X11Helper::Dpy, ScreenSaverReset );
+		// XForceScreenSaver( Dpy, ScreenSaverReset );
 		
 		/*
 		 * Instead, send a null relative mouse motion, to trick X into thinking there has been
@@ -285,16 +285,16 @@ void LowLevelWindow_X11::SwapBuffers()
 		 * locked).  For some reason, it doesn't un-blank DPMS if it's already active.
 		 */
 
-		XLockDisplay( X11Helper::Dpy );
+		XLockDisplay( Dpy );
 
 		int event_base, error_base, major, minor;
-		if( XTestQueryExtension( X11Helper::Dpy, &event_base, &error_base, &major, &minor ) )
+		if( XTestQueryExtension( Dpy, &event_base, &error_base, &major, &minor ) )
 		{
-			XTestFakeRelativeMotionEvent( X11Helper::Dpy, 0, 0, 0 );
-			XSync( X11Helper::Dpy, False );
+			XTestFakeRelativeMotionEvent( Dpy, 0, 0, 0 );
+			XSync( Dpy, False );
 		}
 
-		XUnlockDisplay( X11Helper::Dpy );
+		XUnlockDisplay( Dpy );
 #endif
 	}
 }
@@ -302,7 +302,7 @@ void LowLevelWindow_X11::SwapBuffers()
 void LowLevelWindow_X11::GetDisplayResolutions( DisplayResolutions &out ) const
 {
 	int iSizesXct;
-	XRRScreenSize *pSizesX = XRRSizes( X11Helper::Dpy, DefaultScreen( X11Helper::Dpy ), &iSizesXct );
+	XRRScreenSize *pSizesX = XRRSizes( Dpy, DefaultScreen( Dpy ), &iSizesXct );
 	ASSERT_M( iSizesXct != 0, "Couldn't get resolution list from X server" );
 	
 	for( int i = 0; i < iSizesXct; ++i )
@@ -360,9 +360,9 @@ RenderTarget_X11::RenderTarget_X11( LowLevelWindow_X11 *pWind )
 RenderTarget_X11::~RenderTarget_X11()
 {
 	if( m_pPbufferContext )
-		glXDestroyContext( X11Helper::Dpy, m_pPbufferContext );
+		glXDestroyContext( Dpy, m_pPbufferContext );
 	if( m_iPbuffer )
-		glXDestroyPbuffer( X11Helper::Dpy, m_iPbuffer );
+		glXDestroyPbuffer( Dpy, m_iPbuffer );
 	if( m_iTexHandle )
 		glDeleteTextures( 1, reinterpret_cast<GLuint*>(&m_iTexHandle) );
 }
@@ -391,7 +391,7 @@ void RenderTarget_X11::Create( const RenderTargetParam &param, int &iTextureWidt
 		None
 	};
 	int iConfigs;
-	GLXFBConfig *pConfigs = glXChooseFBConfig( X11Helper::Dpy, DefaultScreen(X11Helper::Dpy), pConfigAttribs, &iConfigs );
+	GLXFBConfig *pConfigs = glXChooseFBConfig( Dpy, DefaultScreen(Dpy), pConfigAttribs, &iConfigs );
 	ASSERT( pConfigs );
 
 	const int pPbufferAttribs[] =
@@ -403,12 +403,12 @@ void RenderTarget_X11::Create( const RenderTargetParam &param, int &iTextureWidt
 
 	for( int i = 0; i < iConfigs; ++i )
 	{
-		m_iPbuffer = glXCreatePbuffer( X11Helper::Dpy, pConfigs[i], pPbufferAttribs );
+		m_iPbuffer = glXCreatePbuffer( Dpy, pConfigs[i], pPbufferAttribs );
 		if( m_iPbuffer == 0 )
 			continue;
 
-		XVisualInfo *pVisual = glXGetVisualFromFBConfig( X11Helper::Dpy, pConfigs[i] );
-		m_pPbufferContext = glXCreateContext( X11Helper::Dpy, pVisual, g_pContext, True );
+		XVisualInfo *pVisual = glXGetVisualFromFBConfig( Dpy, pConfigs[i] );
+		m_pPbufferContext = glXCreateContext( Dpy, pVisual, g_pContext, True );
 		ASSERT( m_pPbufferContext );
 		XFree( pVisual );
 		break;
@@ -445,7 +445,7 @@ void RenderTarget_X11::StartRenderingTo()
 {
 	m_pOldContext = glXGetCurrentContext();
 	m_pOldDrawable = glXGetCurrentDrawable();
-	glXMakeCurrent( X11Helper::Dpy, m_iPbuffer, m_pPbufferContext );
+	glXMakeCurrent( Dpy, m_iPbuffer, m_pPbufferContext );
 
 	glViewport( 0, 0, m_iWidth, m_iHeight );
 }
@@ -466,7 +466,7 @@ void RenderTarget_X11::FinishRenderingTo()
 
 	glBindTexture( GL_TEXTURE_2D, 0 );
 
-	glXMakeCurrent( X11Helper::Dpy, m_pOldDrawable, m_pOldContext );
+	glXMakeCurrent( Dpy, m_pOldDrawable, m_pOldContext );
 	m_pOldContext = NULL;
 	m_pOldDrawable = 0;
 
@@ -475,8 +475,8 @@ void RenderTarget_X11::FinishRenderingTo()
 bool LowLevelWindow_X11::SupportsRenderToTexture() const
 {
 	/* Server must support pbuffers: */
-	const int iScreen = DefaultScreen( X11Helper::Dpy );
-	float fVersion = strtof( glXQueryServerString(X11Helper::Dpy, iScreen, GLX_VERSION), NULL );
+	const int iScreen = DefaultScreen( Dpy );
+	float fVersion = strtof( glXQueryServerString(Dpy, iScreen, GLX_VERSION), NULL );
 	if( fVersion < 1.3f )
 		return false;
 
@@ -493,25 +493,25 @@ void LowLevelWindow_X11::BeginConcurrentRenderingMainThread()
 	/* Move the main thread, which is going to be loading textures, etc. but
 	 * not rendering, to an undisplayed window.  This results in smoother
 	 * rendering. */
-	bool b = glXMakeCurrent( X11Helper::Dpy, g_AltWindow, g_pContext );
+	bool b = glXMakeCurrent( Dpy, g_AltWindow, g_pContext );
 	ASSERT(b);
 }
 
 void LowLevelWindow_X11::EndConcurrentRenderingMainThread()
 {
-	bool b = glXMakeCurrent( X11Helper::Dpy, X11Helper::Win, g_pContext );
+	bool b = glXMakeCurrent( Dpy, Win, g_pContext );
 	ASSERT(b);
 }
 
 void LowLevelWindow_X11::BeginConcurrentRendering()
 {
-	bool b = glXMakeCurrent( X11Helper::Dpy, X11Helper::Win, g_pBackgroundContext );
+	bool b = glXMakeCurrent( Dpy, Win, g_pBackgroundContext );
 	ASSERT(b);
 }
 
 void LowLevelWindow_X11::EndConcurrentRendering()
 {
-	bool b = glXMakeCurrent( X11Helper::Dpy, None, NULL );
+	bool b = glXMakeCurrent( Dpy, None, NULL );
 	ASSERT(b);
 }
 
