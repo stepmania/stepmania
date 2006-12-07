@@ -17,4 +17,7 @@
 inline HRESULT CoInitialize( LPVOID pvReserved ) { return S_OK; }
 inline void CoUninitialize() { }
 
+extern "C" int SM_main( int argc, char *argv[] );
+#define main(x,y) SM_main(x,y)
+
 #endif

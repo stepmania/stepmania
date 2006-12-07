@@ -1,12 +1,36 @@
 #include "global.h"
 
-int main( int argc, char* argv[] );
+#undef main
 void __cdecl main()
 {
 	int argc = 1;
-	char *argv[] = {"default.xbe"};
-	int ret = main( argc, argv );
+	char def[] = "default.xbe";
+	char *argv[] = { def };
+	int ret=SM_main( argc, argv );
 }
+
+#ifndef _DEBUG
+//release xbox libs doesnt have these functions
+FILE * __cdecl _popen(const char *, const char *)
+{
+	return NULL;
+}
+
+int __cdecl _pclose(FILE *)
+{
+	return -1;
+}
+
+char *getenv(const char *)
+{
+	return NULL;
+}
+
+int __cdecl system(const char *)
+{
+	return -1;
+}
+#endif
 
 /*
  * (c) 2006 Chris
