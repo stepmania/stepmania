@@ -4,7 +4,6 @@
 
 // Number of subsystems using the X connection:
 static int g_iRefCount = 0;
-static unsigned long g_iMask = 0L;
 
 Display *X11Helper::Dpy = NULL;
 Window X11Helper::Win = None;
@@ -35,22 +34,9 @@ void X11Helper::Stop()
 	{
 		// The window should have been shut down
 		DEBUG_ASSERT( Win == None );
+		XCloseDisplay( Dpy );
 		Dpy = NULL;	// For sanity's sake
 	}
-}
-
-void X11Helper::OpenMask( unsigned long mask )
-{
-	g_iMask |= mask;
-	if( Dpy && Win )
-		XSelectInput( Dpy, Win, g_iMask );
-}
-
-void X11Helper::CloseMask( unsigned long mask )
-{
-	g_iMask &= ~mask;
-	if( Dpy && Win )
-		XSelectInput( Dpy, Win, g_iMask );
 }
 
 bool X11Helper::MakeWindow( Window &win, int screenNum, int depth, Visual *visual, int width, int height, bool overrideRedirect )
@@ -58,16 +44,19 @@ bool X11Helper::MakeWindow( Window &win, int screenNum, int depth, Visual *visua
 	if( g_iRefCount == 0 )
 		return false;
 
-	if( win )
-		XDestroyWindow( Dpy, win );
-
 	XSetWindowAttributes winAttribs;
-
 	winAttribs.border_pixel = 0;
-	winAttribs.event_mask = g_iMask;
+	winAttribs.event_mask = 0L;
 
+	if( win )
+	{
+		// Preserve the event mask.
+		XWindowAttributes attribs;
+		XGetWindowAttributes( Dpy, win, &attribs );
+		winAttribs.event_mask = attribs.your_event_mask;
+		XDestroyWindow( Dpy, win );
+	}
 	// XXX: Error catching/handling?
-
 	winAttribs.colormap = XCreateColormap( Dpy, RootWindow(Dpy, screenNum), visual, AllocNone );
 	unsigned long mask = CWBorderPixel | CWColormap | CWEventMask;
 
@@ -113,7 +102,7 @@ int FatalCallback( Display *d )
 }
 
 /*
- * (c) 2005 Ben Anderson
+ * (c) 2005, 2006 Ben Anderson, Steve Checkoway
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a

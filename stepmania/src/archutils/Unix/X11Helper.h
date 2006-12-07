@@ -20,30 +20,18 @@ namespace X11Helper
 	// Go().
 	extern Display *Dpy;
 
-	// Get the current open window. Initialized by the first call to
-	// MakeWindow().
+	// The Window used by LowLevelWindow_X11 as the main window.
 	extern Window Win;
 
-	// (Re)create the window on the screen of this number with this depth,
-	// this visual type, this width (optional -- you can resize the window
-	// in your callback later), and this height (optional).
-	// Also, whether to enable override redirect on the window.
+	// (Re)create the Window win.
 	bool MakeWindow( Window &win, int screenNum, int depth, Visual *visual,
 			 int width, int height, bool overrideRedirect );
-
-	// Unmask one X event type mask thingy (XSelectInput() arg 3) on the
-	// current window. Masked/unmasked events will carry between windows.
-	void OpenMask( unsigned long mask );
-
-	// (Re)mask one X event type mask thingy (XSelectInput() arg 3) on the
-	// current window. Masked/unmasked events will carry between windows.
-	void CloseMask( unsigned long mask );
 };
 
 #endif
 
 /*
- * (c) 2005 Ben Anderson
+ * (c) 2005, 2006 Ben Anderson, Steve Checkoway
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
