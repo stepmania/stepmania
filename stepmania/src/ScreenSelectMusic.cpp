@@ -262,7 +262,7 @@ void ScreenSelectMusic::CheckBackgroundRequests( bool bForce )
 
 void ScreenSelectMusic::Update( float fDeltaTime )
 {
-	Screen::Update( fDeltaTime );
+	ScreenWithMenuElements::Update( fDeltaTime );
 
 	CheckBackgroundRequests( false );
 }
@@ -433,7 +433,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	if( input.type == IET_FIRST_PRESS && DetectCodes(input) )
 		return;
 
-	Screen::Input( input );
+	ScreenWithMenuElements::Input( input );
 }
 
 bool ScreenSelectMusic::DetectCodes( const InputEventPlus &input )
