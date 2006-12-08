@@ -53,58 +53,59 @@ void RageSoundMixBuffer::Extend( unsigned iSamples )
 	}
 }
 
-void RageSoundMixBuffer::write( const int16_t *buf, unsigned size )
+void RageSoundMixBuffer::write( const int16_t *pBuf, unsigned iSize )
 {
-	Extend( size );
+	Extend( iSize );
 
 	/* Scale volume and add. */
-	int32_t *pBuf = m_pMixbuf+m_iOffset;
+	int32_t *pDestBuf = m_pMixbuf+m_iOffset;
 #ifdef USE_VEC
 	if( g_bVector )
 	{
-		Vector::FastSoundWrite( pBuf, buf, size, m_iVolumeFactor );
+		Vector::FastSoundWrite( pDestBuf, pBuf, iSize, m_iVolumeFactor );
 		return;
 	}
 #endif
-	for( unsigned pos = 0; pos < size; ++pos )
+	for( unsigned pos = 0; pos < iSize; ++pos )
 	{
-		*pBuf += buf[pos] * m_iVolumeFactor; ++pBuf;
+		*pDestBuf += pBuf[pos] * m_iVolumeFactor;
+		++pDestBuf;
 	}
 }
 
-void RageSoundMixBuffer::read( int16_t *buf )
+void RageSoundMixBuffer::read( int16_t *pBuf )
 {
 #ifdef USE_VEC
 	if( g_bVector )
 	{
-		Vector::FastSoundRead( buf, m_pMixbuf, m_iBufUsed );
+		Vector::FastSoundRead( pBuf, m_pMixbuf, m_iBufUsed );
 		m_iBufUsed = 0;
 		return;
 	}
 #endif
-	for( unsigned pos = 0; pos < m_iBufUsed; ++pos )
+	for( unsigned iPos = 0; iPos < m_iBufUsed; ++iPos )
 	{
-		int32_t out = (m_pMixbuf[pos]) / 256;
-		buf[pos] = (int16_t) clamp( out, -32768, 32767 );
+		int32_t iOut = (m_pMixbuf[iPos]) / 256;
+		pBuf[iPos] = (int16_t) clamp( iOut, -32768, 32767 );
 	}
 	m_iBufUsed = 0;
 }
 
-void RageSoundMixBuffer::read( float *buf )
+void RageSoundMixBuffer::read( float *pBuf )
 {
 #ifdef USE_VEC
 	if( g_bVector )
 	{
-		Vector::FastSoundRead( buf, m_pMixbuf, m_iBufUsed );
+		Vector::FastSoundRead( pBuf, m_pMixbuf, m_iBufUsed );
 		m_iBufUsed = 0;
 		return;
 	}
 #endif
-	const int Minimum = -32768 * 256;
-	const int Maximum = 32767 * 256;
+	const int iMinimum = -32768 * 256;
+	const int iMaximum = 32767 * 256;
 
 	for( unsigned pos = 0; pos < m_iBufUsed; ++pos )
-		buf[pos] = SCALE( (float)m_pMixbuf[pos], Minimum, Maximum, -1.0f, 1.0f );
+		pBuf[pos] = SCALE( (float)m_pMixbuf[pos], iMinimum, iMaximum, -1.0f, 1.0f );
 
 	m_iBufUsed = 0;
 }
