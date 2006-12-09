@@ -496,7 +496,7 @@ int RageSoundReader_MP3::do_mad_frame_decode( bool headers_only )
 
 void RageSoundReader_MP3::synth_output()
 {
-	mad->outleft = 0;
+	mad->outleft = mad->outpos = 0;
 
 	if( MAD_NCHANNELS(&mad->Frame.header) != this->Channels )
 	{
@@ -749,7 +749,6 @@ int RageSoundReader_MP3::Read( char *buf, unsigned len )
 		if( ret == -1 )
 			return -1;
 
-		mad->outpos = 0;
 		synth_output();
 	}
 
