@@ -873,13 +873,17 @@ int RageSoundReader_MP3::SetPosition_hard( int iFrame )
 	if( mad_timer_compare(mad->Timer, desired) == 0 )
 		return 0;
 
-	/* If we're already past the requested position, rewind. */
-	if(mad_timer_compare(mad->Timer, desired) > 0)
-		MADLIB_rewind();
-
 	/* We always come in here with data synthed.  Be careful not to synth the
 	 * same frame twice. */
 	bool synthed=true;
+
+	/* If we're already past the requested position, rewind. */
+	if(mad_timer_compare(mad->Timer, desired) > 0)
+	{
+		MADLIB_rewind();
+		do_mad_frame_decode();
+		synthed = false;
+	}
 
 	/* Decode frames until the current frame contains the desired offset. */
 	while(1)
