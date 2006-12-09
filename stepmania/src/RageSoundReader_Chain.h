@@ -50,15 +50,15 @@ private:
 
 	map<RString, RageSoundReader *> m_apLoadedSounds;
 
-	struct sound
+	struct Sound
 	{
 		RString sPath;
 		int iOffsetMS;
 		float fPan;
 		int GetOffsetFrame( int iSampleRate ) const { return int( int64_t(iOffsetMS) * iSampleRate / 1000 ); }
-		bool operator<( const sound &rhs ) const { return iOffsetMS < rhs.iOffsetMS; }
+		bool operator<( const Sound &rhs ) const { return iOffsetMS < rhs.iOffsetMS; }
 	};
-	vector<sound> m_Sounds;
+	vector<Sound> m_aSounds;
 	unsigned GetNextSoundIndex() const;
 
 	/* Read state: */
@@ -71,7 +71,7 @@ private:
 		bool operator< ( const ActiveSound &rhs ) const { return pSound < rhs.pSound; }
 	};
 	vector<ActiveSound> m_apActiveSounds;
-	unsigned ActivateSound( const sound &s );
+	unsigned ActivateSound( const Sound &s );
 	void ReleaseSound( unsigned n );
 };
 
