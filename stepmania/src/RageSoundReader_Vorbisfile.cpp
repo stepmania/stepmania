@@ -119,7 +119,6 @@ RageSoundReader_FileReader::OpenResult RageSoundReader_Vorbisfile::Open( RageFil
 	read_offset = (int) ov_pcm_tell(vf);
 
 	vorbis_info *vi = ov_info( vf, -1 );
-	ASSERT_M( vi->channels == 1 || vi->channels == 2, ssprintf("%i", vi->channels) );
 	channels = vi->channels;
 
 	return OPEN_OK;
