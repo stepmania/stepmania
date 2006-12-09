@@ -13,12 +13,12 @@
 #include <unistd.h>
 
 void ReadData( RageSoundReader *snd,
-	       int ms,		/* start */
+	       int iFrame,		/* start */
 	       char *buf,	/* out */
 	       int frames )
 {
-	if( ms != -1 )
-		snd->SetPosition_Accurate( ms );
+	if( iFrame != -1 )
+		snd->SetPosition_Accurate( iFrame );
 	int bytes = frames*snd->GetNumChannels()*sizeof(int16_t);
 	int got = snd->Read( buf, bytes );
 	ASSERT_M( got == bytes, ssprintf("%i, %i", got, bytes) );
@@ -198,11 +198,11 @@ bool CheckSetPositionAccurate( RageSoundReader *snd )
 	const int one_second=snd->GetSampleRate();
 	char data[one_second*sizeof(int16_t)*snd->GetNumChannels()];
 
-	snd->SetPosition_Accurate( 100 );
-	ReadData( snd, 100, data, one_second/10 );
+	int iFrame = snd->GetSampleRate() * 100 / 1000; // 100ms
+	ReadData( snd, iFrame, data, one_second/10 );
 
-	snd->SetPosition_Accurate( 10000 );
-	snd->SetPosition_Accurate( 100 );
+	snd->SetPosition_Accurate( iFrame * 100 );
+	snd->SetPosition_Accurate( iFrame );
 	if( !test_read( snd, data, one_second/10 ) )
 	{
 		LOG->Warn("Fail: rewind didn't work");
@@ -455,12 +455,14 @@ bool RunTests( RageSoundReader *snd, const TestFile &tf )
 	}
 	
 	/* Seek to 1ms and make sure it gives us the correct data. */
-	snd->SetPosition_Accurate( 1 );
+	int iFrame = snd->GetSampleRate() * 1 / 1000; // 1ms
+	snd->SetPosition_Accurate( iFrame );
 	if( !test_read( snd, data + one_second * 1/1000, one_second_frames * 1/1000 ) )
 		LOG->Warn("Fail: SetPosition_Accurate(1) didn't work");
 
 	/* Seek to 500ms and make sure it gives us the correct data. */
-	snd->SetPosition_Accurate( 500 );
+	iFrame = snd->GetSampleRate() * 500 / 1000; // 500ms
+	snd->SetPosition_Accurate( iFrame );
 	if( !test_read( snd, data+one_second * 500/1000, one_second_frames * 500/1000 ) )
 		LOG->Warn("Fail: seek(500) didn't work");
 
