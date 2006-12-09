@@ -828,8 +828,6 @@ bool RageSoundReader_MP3::MADLIB_rewind()
 /* Returns actual position on success, 0 if past EOF, -1 on error. */
 int RageSoundReader_MP3::SetPosition_toc( int iFrame, bool Xing )
 {
-	int percent;
-
 	ASSERT( !Xing || mad->has_xing );
 	ASSERT( mad->length != -1 );
 
@@ -837,7 +835,6 @@ int RageSoundReader_MP3::SetPosition_toc( int iFrame, bool Xing )
 	 * if we're using Xing. */
 	mad->timer_accurate = !Xing;
 
-	if(percent >= 0)
 	{
 		int bytepos = -1;
 		if( Xing )
@@ -845,9 +842,8 @@ int RageSoundReader_MP3::SetPosition_toc( int iFrame, bool Xing )
 			/* We can speed up the seek using the XING tag.  First, figure
 			 * out what percentage the requested position falls in. */
 			int ms = int( (iFrame * 1000LL) / SampleRate );
-			percent = ms * 100 / mad->length;
-    
-			if( percent < 100 )
+			int percent = ms * 100 / mad->length;
+    			if( percent < 100 )
 			{
 				int jump = mad->xingtag.toc[percent];
 				bytepos = mad->filesize * jump / 256;
