@@ -7,6 +7,7 @@
 
 #include <cstdio>
 #include <cerrno>
+#include <map>
 
 #if defined(_WINDOWS) || defined(_XBOX)
 #include "mad-0.15.1b/mad.h"
@@ -181,6 +182,28 @@ static void mad_timer_sub(mad_timer_t *a, mad_timer_t b)
 /* internal->decoder_private field */
 struct madlib_t
 {
+	madlib_t()
+	{
+		outpos = 0;
+		outleft = 0;
+		memset( inbuf, 0, sizeof(inbuf) );
+		memset( outbuf, 0, sizeof(outbuf) );
+		memset( &Stream, 0, sizeof(Stream) );
+		memset( &Frame, 0, sizeof(Frame) );
+		memset( &Synth, 0, sizeof(Synth) );
+		Timer = mad_timer_zero;
+		timer_accurate = false;
+		inbuf_filepos = 0;
+		filesize = 0;
+		header_bytes = 0;
+		first_frame = 0;
+		has_xing = 0;
+		memset( &xingtag, 0, sizeof(xingtag) );
+		length = 0;
+		framelength = mad_timer_zero;
+		bitrate = 0;
+	}
+
 	uint8_t inbuf[16384], outbuf[8192];
 	int outpos;
 	unsigned outleft;
@@ -195,20 +218,19 @@ struct madlib_t
 	int timer_accurate;
 
 	/*
-	 * Frame index of each percentage of the file.  This is like the
-	 * Xing TOC, except it's actual byte indices, not percentages, so
-	 * it's accurate enough for "precise" seeking.  -1 indicates we don't
-	 * yet know; we always fill this in from beginning to end, so if n
-	 * is not -1, 0..n-1 are also not -1. 
-	 *
-	 * If we're VBR and have no Xing tag, we don't know the exact length
-	 * ahead of time, so we might end up going past the length we thought
-	 * the file was.  We don't want to change length after we've set it
-	 * (that would change all of the toc entries), so allow the TOC to
-	 * go up to 200%.  (Beyond that, we'll always hard seek; perhaps this
-	 * should be larger?)
+	 * Frame index of each percentage of the file.  This is constructed
+	 * as we read the file, so we can quickly seek back later.
 	 */
-	int toc[200];
+	struct mad_timer_compare_lt
+	{
+		bool operator() ( const mad_timer_t &timer1, const mad_timer_t &timer2 ) const
+		{
+			return mad_timer_compare( timer1, timer2 ) < 0;
+		}
+	};
+		
+	typedef map<mad_timer_t, int, mad_timer_compare_lt> tocmap_t;
+	tocmap_t tocmap;
 
 	/* Position in the file of inbuf: */
 	int inbuf_filepos;
@@ -372,13 +394,21 @@ void fill_frame_index_cache( madlib_t *mad )
 	percent = ms * 100 / mad->length;
 	pos = get_this_frame_byte(mad);
 
-	/* Fill in the TOC percent.  Also, fill in all values before it
-	 * that are unknown; for example, if toc[4] is "50 -1 -1 -1", and filling
-	 * in toc[3] value with "100", toc[1] and toc[2] are also 100.  This
-	 * can probably only happen with a file with less than 100 frames, so
-	 * this isn't too important. */
-	while(percent >= 0 && percent < 200 && mad->toc[percent] == -1)
-		mad->toc[percent--] = pos;
+	/* Fill in the TOC percent. */
+	if( !mad->tocmap.empty() )
+	{
+		/* Don't add an entry if one already exists near this time. */
+		madlib_t::tocmap_t::iterator it = mad->tocmap.upper_bound( mad->Timer );
+		if( it != mad->tocmap.begin() )
+		{
+			--it;
+			int iDiffSeconds = mad->Timer.seconds - it->first.seconds;
+			if( iDiffSeconds < 5 )
+				return;
+		}
+	}
+
+	mad->tocmap[mad->Timer] = pos;
 }
 
 /* Handle first-stage decoding: extracting the MP3 frame data. */
@@ -541,8 +571,8 @@ int RageSoundReader_MP3::seek_stream_to_byte( int byte )
 
 	/* If the position is <= the position of the first audio sample, then
 	 * we're at the beginning. */
-	if( mad->toc[0] != -1 )
-		mad->first_frame = ( byte <= mad->toc[0] );
+	if( !mad->tocmap.empty() )
+		mad->first_frame = ( byte <= mad->tocmap.begin()->second );
 
 	return 1;
 }
@@ -597,7 +627,6 @@ int RageSoundReader_MP3::resync()
 RageSoundReader_MP3::RageSoundReader_MP3()
 {
 	mad = new madlib_t;
-	memset(mad, '\0', sizeof (madlib_t));
 
 	mad_stream_init( &mad->Stream );
 	mad_frame_init( &mad->Frame );
@@ -612,9 +641,6 @@ RageSoundReader_MP3::RageSoundReader_MP3()
 	mad->timer_accurate = 1;
 	mad->bitrate = -1;
 	mad->first_frame = true;
-
-	for(int i = 0; i < 200; ++i)
-		mad->toc[i] = -1;
 }
 
 RageSoundReader_MP3::~RageSoundReader_MP3()
@@ -811,16 +837,16 @@ int RageSoundReader_MP3::SetPosition_toc( int iFrame, bool Xing )
 	 * if we're using Xing. */
 	mad->timer_accurate = !Xing;
 
-	/* We can speed up the seek using the XING tag.  First, figure
-	 * out what percentage the requested position falls in. */
-	int ms = int( (iFrame * 1000LL) / SampleRate );
-	percent = ms * 100 / mad->length;
-    
 	if(percent >= 0)
 	{
 		int bytepos = -1;
 		if( Xing )
 		{
+			/* We can speed up the seek using the XING tag.  First, figure
+			 * out what percentage the requested position falls in. */
+			int ms = int( (iFrame * 1000LL) / SampleRate );
+			percent = ms * 100 / mad->length;
+    
 			if( percent < 100 )
 			{
 				int jump = mad->xingtag.toc[percent];
@@ -828,17 +854,26 @@ int RageSoundReader_MP3::SetPosition_toc( int iFrame, bool Xing )
 			}
 			else
 				bytepos = 2000000000; /* force EOF */
+
+			mad_timer_set( &mad->Timer, 0, percent * mad->length, 100000 );
 		}
-		else if( percent < 200 )
+		else
 		{
-			/* Find the last entry <= percent that we actually have an entry for;
-			 * this will get us as close as possible. */
-			while( percent >= 0 && mad->toc[percent] == -1 )
-				percent--;
-			if( percent == -1 )
+			mad_timer_t desired;
+			mad_timer_set( &desired, 0, iFrame, SampleRate );
+
+			if( mad->tocmap.empty() )
 				return iFrame; /* don't have any info */
 
-			bytepos = mad->toc[percent];
+			/* Find the last entry <= iFrame that we actually have an entry for;
+			 * this will get us as close as possible. */
+			madlib_t::tocmap_t::iterator it = mad->tocmap.upper_bound( desired );
+			if( it == mad->tocmap.begin() )
+				return iFrame; /* don't have any info */
+			--it;
+
+			mad->Timer = it->first;
+			bytepos = it->second;
 		}
 
 		if( bytepos != -1 )
@@ -854,8 +889,6 @@ int RageSoundReader_MP3::SetPosition_toc( int iFrame, bool Xing )
 					return ret; /* it set the error */
 			} while( get_this_frame_byte(mad) < bytepos );
 			synth_output();
-
-			mad_timer_set( &mad->Timer, 0, percent * mad->length, 100000 );
 		}
 	}
 
@@ -932,7 +965,10 @@ int RageSoundReader_MP3::SetPosition_hard( int iFrame )
 
 		int ret = do_mad_frame_decode();
 		if( ret <= 0 )
+		{
+			mad->outleft = mad->outpos = 0;
 			return ret; /* it set the error */
+		}
 
 		synthed = false;
 	}
