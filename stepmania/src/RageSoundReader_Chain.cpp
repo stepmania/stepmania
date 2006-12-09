@@ -309,47 +309,45 @@ int RageSoundReader_Chain::ReadBlock( int16_t *pBuffer, int iFrames )
 		return iFrames;
 	}
 
+	RageSoundMixBuffer mix;
+	/* Read iFrames from each sound. */
+	int16_t Buffer[2048];
+	iFrames = min( iFrames, 1024 );
+	int iMaxFramesRead = 0;
+	for( unsigned i = 0; i < m_apActiveSounds.size(); )
 	{
-		RageSoundMixBuffer mix;
-		/* Read iFrames from each sound. */
-		int16_t Buffer[2048];
-		iFrames = min( iFrames, 1024 );
-		int iMaxFramesRead = 0;
-		for( unsigned i = 0; i < m_apActiveSounds.size(); )
+		ActiveSound &s = m_apActiveSounds[i];
+		RageSoundReader *pSound = s.pSound;
+		int iSamples = min( iFrames * pSound->GetNumChannels(), ARRAYLEN(Buffer) );
+		int iBytesRead = pSound->Read( (char *) Buffer, iSamples*sizeof(int16_t) );
+		if( iBytesRead == -1 || iBytesRead == 0 )
 		{
-			ActiveSound &s = m_apActiveSounds[i];
-			RageSoundReader *pSound = s.pSound;
-			int iSamples = min( iFrames * pSound->GetNumChannels(), ARRAYLEN(Buffer) );
-			int iBytesRead = pSound->Read( (char *) Buffer, iSamples*sizeof(int16_t) );
-			if( iBytesRead == -1 || iBytesRead == 0 )
-			{
-				/* The sound is at EOF.  Release it. */
-				ReleaseSound( i );
-				continue;
-			}
-
-			int iSamplesRead = iBytesRead / sizeof(int16_t);
-			int iFramesRead = iSamplesRead / pSound->GetNumChannels();
-
-			iMaxFramesRead = max( iMaxFramesRead, iFramesRead );
-
-			if( m_iChannels == 2 && pSound->GetNumChannels() == 1 )
-			{
-				RageSoundUtil::ConvertMonoToStereoInPlace( Buffer, iSamplesRead );
-				iSamplesRead *= 2;
-			}
-
-			if( fabsf(s.fPan) > 0.0001f )
-				RageSoundUtil::Pan( Buffer, iFramesRead, s.fPan );
-
-			mix.write( Buffer, iSamplesRead );
-			++i;
+			/* The sound is at EOF.  Release it. */
+			ReleaseSound( i );
+			continue;
 		}
 
-		/* Read mixed frames into the output buffer. */
-		mix.read( (int16_t *) pBuffer );
-		return iMaxFramesRead;
+		int iSamplesRead = iBytesRead / sizeof(int16_t);
+		int iFramesRead = iSamplesRead / pSound->GetNumChannels();
+
+		iMaxFramesRead = max( iMaxFramesRead, iFramesRead );
+
+		if( m_iChannels == 2 && pSound->GetNumChannels() == 1 )
+		{
+			RageSoundUtil::ConvertMonoToStereoInPlace( Buffer, iSamplesRead );
+			iSamplesRead *= 2;
+		}
+
+		if( fabsf(s.fPan) > 0.0001f )
+			RageSoundUtil::Pan( Buffer, iFramesRead, s.fPan );
+
+		mix.write( Buffer, iSamplesRead );
+		++i;
 	}
+
+	/* Read mixed frames into the output buffer. */
+	mix.read( (int16_t *) pBuffer );
+	return iMaxFramesRead;
 }
 
 
