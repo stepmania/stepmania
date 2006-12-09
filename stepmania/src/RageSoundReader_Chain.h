@@ -6,7 +6,6 @@
 #include "RageSoundReader.h"
 
 #include <map>
-#include <set>
 
 class RageSoundReader_Chain: public RageSoundReader
 {
@@ -19,9 +18,12 @@ public:
 	 * use different sample rates. */
 	void SetPreferredSampleRate( int iSampleRate ) { m_iPreferredSampleRate = iSampleRate; }
 
+	int LoadSound( RString sPath );
+	int LoadSound( RageSoundReader *pSound );
+
 	/* Add the given sound to play after fOffsetSecs seconds.  Takes ownership
 	 * of pSound. */
-	bool AddSound( RString sPath, float fOffsetSecs, float fPan );
+	void AddSound( int iIndex, float fOffsetSecs, float fPan );
 
 	/* Finish adding sounds. */
 	void Finish();
@@ -48,13 +50,16 @@ private:
 	int m_iActualSampleRate;
 	unsigned m_iChannels;
 
-	map<RString, RageSoundReader *> m_apLoadedSounds;
+	map<RString, RageSoundReader *> m_apNamedSounds;
+	vector<RageSoundReader *> m_apLoadedSounds;
 
 	struct Sound
 	{
-		RString sPath;
+		int iIndex; // into m_apLoadedSounds
 		int iOffsetMS;
 		float fPan;
+		RageSoundReader *pSound; // NULL if not activated
+
 		int GetOffsetFrame( int iSampleRate ) const { return int( int64_t(iOffsetMS) * iSampleRate / 1000 ); }
 		bool operator<( const Sound &rhs ) const { return iOffsetMS < rhs.iOffsetMS; }
 	};
@@ -64,21 +69,16 @@ private:
 	/* Read state: */
 	int m_iCurrentFrame;
 	unsigned m_iNextSound;
-	struct ActiveSound
-	{
-		RageSoundReader *pSound;
-		float fPan;
-		bool operator< ( const ActiveSound &rhs ) const { return pSound < rhs.pSound; }
-	};
-	vector<ActiveSound> m_apActiveSounds;
-	unsigned ActivateSound( const Sound &s );
-	void ReleaseSound( unsigned n );
+	vector<Sound *> m_apActiveSounds;
+
+	void ActivateSound( Sound *s );
+	void ReleaseSound( Sound *s );
 };
 
 #endif
 
 /*
- * Copyright (c) 2004 Glenn Maynard
+ * Copyright (c) 2004-2006 Glenn Maynard
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a

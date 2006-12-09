@@ -38,7 +38,7 @@ void AutoKeysounds::FinishLoading()
 
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pChain->SetPreferredSampleRate( SOUNDMAN->GetDriverSampleRate(44100) );
-	pChain->AddSound( pSong->GetMusicPath(), 0, 0 );
+	pChain->AddSound( pChain->LoadSound(pSong->GetMusicPath()), 0, 0 );
 
 	//
 	// Load sounds.
@@ -116,7 +116,8 @@ void AutoKeysounds::FinishLoading()
 					float fPan = 0;
 					if( !bSoundIsGlobal )
 						fPan = (pn == PLAYER_1)? -1.0f:+1.0f;
-					pChain->AddSound( sKeysoundFilePath, fSeconds, fPan );
+					int iIndex = pChain->LoadSound( sKeysoundFilePath );
+					pChain->AddSound( iIndex, fSeconds, fPan );
 				}
 			}
 		}		
