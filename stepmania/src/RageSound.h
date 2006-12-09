@@ -144,6 +144,7 @@ public:
 	int GetID() const { return m_iID; }
 	void SetParams( const RageSoundParams &p );
 	const RageSoundParams &GetParams() const { return m_Param; }
+	bool SetProperty( const RString &sProperty, float fValue );
 
 	//
 	// Lua

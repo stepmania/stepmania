@@ -786,6 +786,11 @@ void RageSound::ApplyParams()
 	m_pSource->SetProperty( "Speed", m_Param.m_fSpeed );
 }
 
+bool RageSound::SetProperty( const RString &sProperty, float fValue )
+{
+	return m_pSource->SetProperty( sProperty, fValue );
+}
+
 RageSoundParams::StopMode_t RageSound::GetStopMode() const
 {
 	if( m_Param.StopMode != RageSoundParams::M_AUTO )
