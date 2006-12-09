@@ -3175,6 +3175,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RageSoundReader_Pan.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_Pan.h"
+				>
+			</File>
+			<File
 				RelativePath=".\RageSoundReader_PitchChange.cpp"
 				>
 			</File>
