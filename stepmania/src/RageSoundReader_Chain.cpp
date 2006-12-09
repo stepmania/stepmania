@@ -284,7 +284,10 @@ int RageSoundReader_Chain::ReadBlock( int16_t *pBuffer, int iFrames )
 		iFrames = min( iFramesToRead, iFrames );
 	}
 
-	if( iFrames > 0 && m_apActiveSounds.size() == 1 &&
+	if( iFrames == 0 )
+		return 0;
+
+	if( m_apActiveSounds.size() == 1 &&
 		m_apActiveSounds.front().fPan == 0 &&
 		m_apActiveSounds.front().pSound->GetNumChannels() == m_iChannels &&
 		m_apActiveSounds.front().pSound->GetSampleRate() == m_iActualSampleRate )
@@ -298,7 +301,14 @@ int RageSoundReader_Chain::ReadBlock( int16_t *pBuffer, int iFrames )
 		return iBytes / (sizeof(int16_t) * m_iChannels);
 	}
 
-	if( iFrames > 0 && !m_apActiveSounds.empty() )
+	if( m_apActiveSounds.empty() )
+	{
+		/* If we have more sounds ahead of us, pretend we read the entire block, since
+		 * there's silence in between.  Otherwise, we're at EOF. */
+		memset( pBuffer, 0, iFrames * m_iChannels * sizeof(int16_t) );
+		return iFrames;
+	}
+
 	{
 		RageSoundMixBuffer mix;
 		/* Read iFrames from each sound. */
@@ -340,16 +350,6 @@ int RageSoundReader_Chain::ReadBlock( int16_t *pBuffer, int iFrames )
 		mix.read( (int16_t *) pBuffer );
 		return iMaxFramesRead;
 	}
-
-	/* If we have more sounds ahead of us, pretend we read the entire block, since
-	 * there's silence in between.  Otherwise, we're at EOF. */
-	if( iFrames > 0 )
-	{
-		memset( pBuffer, 0, iFrames * m_iChannels * sizeof(int16_t) );
-		return iFrames;
-	}
-
-	return 0;
 }
 
 
