@@ -896,7 +896,14 @@ int RageSoundReader_MP3::SetPosition_hard( int iFrame )
 		if( mad_timer_compare(desired, next_frame_timer) < 0 )
 		{
 			if( !synthed )
+			{
 				synth_output();
+			}
+			else
+			{
+				mad->outleft += mad->outpos;
+				mad->outpos = 0;
+			}
 
 			/* We just synthed data starting at mad->Timer, containing the desired offset.
 			 * Skip (desired - mad->Timer) worth of frames in the output to line up. */
