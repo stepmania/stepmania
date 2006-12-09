@@ -94,7 +94,7 @@ int RageSoundReader_Chain::GetSampleRateInternal() const
 
 void RageSoundReader_Chain::Finish()
 {
-	/* Remove any sounds that don't have corresponding SoundReaders. */
+	/* Remove any sounds that don't have corresponding RageSoundReaders. */
 	for( unsigned i = 0; i < m_aSounds.size(); )
 	{
 		Sound &sound = m_aSounds[i];
