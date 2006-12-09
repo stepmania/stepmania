@@ -53,12 +53,12 @@ bool RageSoundReader_Chain::AddSound( RString sPath, float fOffsetSecs, float fP
 	it = m_apLoadedSounds.find( sPath );
 	if( it == m_apLoadedSounds.end() )
 	{
-		RString error;
-		RageSoundReader *pReader = RageSoundReader_FileReader::OpenFile( sPath, error );
+		RString sError;
+		RageSoundReader *pReader = RageSoundReader_FileReader::OpenFile( sPath, sError );
 		if( pReader == NULL )
 		{
 			LOG->Warn( "RageSoundReader_Chain: error opening sound \"%s\": %s",
-				sPath.c_str(), error.c_str() );
+				sPath.c_str(), sError.c_str() );
 			return false;
 		}
 
