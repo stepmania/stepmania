@@ -15,8 +15,8 @@ public:
 	void Close();
 	int GetLength() const { return GetLengthConst(false); }
 	int GetLength_Fast() const { return GetLengthConst(true); }
-	int SetPosition_Accurate(int ms);
-	int SetPosition_Fast(int ms);
+	int SetPosition_Accurate( int iSample );
+	int SetPosition_Fast( int iSample );
 	int Read(char *buf, unsigned len);
 	int GetSampleRate() const { return SampleRate; }
 	int GetNextSourceFrame() const;
@@ -36,9 +36,9 @@ private:
 
 
 	bool MADLIB_rewind();
-	int SetPosition_toc( int ms, bool Xing );
-	int SetPosition_hard( int ms );
-	int SetPosition_estimate( int ms );
+	int SetPosition_toc( int iSample, bool Xing );
+	int SetPosition_hard( int iSample );
+	int SetPosition_estimate( int iSample );
 
 	int fill_buffer();
 	int do_mad_frame_decode( bool headers_only=false );

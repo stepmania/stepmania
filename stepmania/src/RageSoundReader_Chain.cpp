@@ -151,30 +151,32 @@ void RageSoundReader_Chain::Finish()
 	sort( m_aSounds.begin(), m_aSounds.end() );
 }
 
-int RageSoundReader_Chain::SetPosition_Accurate( int ms )
+int RageSoundReader_Chain::SetPosition_Accurate( int iFrame )
 {
 	/* Clear m_apActiveSounds. */
 	while( !m_apActiveSounds.empty() )
 		ReleaseSound( 0 );
 
-	m_iCurrentFrame = int( int64_t(ms) * m_iActualSampleRate / 1000 );
+	m_iCurrentFrame = iFrame;
 
 	/* Run through all sounds in the chain, and activate all sounds which have data
 	 * at ms. */
 	for( unsigned i = 0; i < m_aSounds.size(); ++i )
 	{
 		Sound &sound = m_aSounds[i];
+		int iOffsetFrame = sound.GetOffsetFrame( GetSampleRate() );
+
 
 		/* If this sound is in the future, skip it. */
-		if( sound.iOffsetMS > ms )
+		if( iOffsetFrame > iFrame )
 			continue;
 
 		/* Find the RageSoundReader. */
 		int n = ActivateSound( sound );
 		RageSoundReader *pSound = m_apActiveSounds[n].pSound;
 
-		int iOffsetMS = ms - sound.iOffsetMS;
-		if( pSound->SetPosition_Accurate(iOffsetMS) == 0 )
+		int iOffsetFrames = iFrame - iOffsetFrame;
+		if( pSound->SetPosition_Accurate(iOffsetFrames) == 0 )
 		{
 			/* We're past the end of this sound. */
 			ReleaseSound( n );
@@ -189,7 +191,7 @@ int RageSoundReader_Chain::SetPosition_Accurate( int ms )
 	if( m_apActiveSounds.empty() && m_iNextSound == m_aSounds.size() )
 		return 0;
 
-	return ms;
+	return iFrame;
 }
 
 unsigned RageSoundReader_Chain::ActivateSound( const Sound &s )

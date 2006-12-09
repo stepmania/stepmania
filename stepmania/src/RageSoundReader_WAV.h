@@ -14,8 +14,8 @@ public:
 	void Close();
 	int GetLength() const;
 	int GetLength_Fast() const { return GetLength(); }
-	int SetPosition_Accurate( int ms )  { return SetPosition(ms); }
-	int SetPosition_Fast( int ms ) { return SetPosition(ms); }
+	int SetPosition_Accurate( int iFrame )  { return SetPosition(iFrame); }
+	int SetPosition_Fast( int iFrame ) { return SetPosition(iFrame); }
 	int Read( char *buf, unsigned len );
 	int GetSampleRate() const { return m_WavData.m_iSampleRate; }
 	unsigned GetNumChannels() const { return m_WavData.m_iChannels; }
@@ -38,7 +38,7 @@ private:
 
 	WavReader *m_pImpl;
 
-	int SetPosition( int ms );
+	int SetPosition( int iFrame );
 };
 
 #endif

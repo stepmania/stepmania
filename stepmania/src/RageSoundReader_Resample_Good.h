@@ -16,8 +16,8 @@ public:
 	RageSoundReader_Resample_Good( const RageSoundReader_Resample_Good &cpy );
 	int GetLength() const;
 	int GetLength_Fast() const;
-	int SetPosition_Accurate( int iMS );
-	int SetPosition_Fast( int iMS );
+	int SetPosition_Accurate( int iFrame );
+	int SetPosition_Fast( int iFrame );
 	int Read( char *pBuf, unsigned iLen );
 	virtual ~RageSoundReader_Resample_Good();
 	RageSoundReader_Resample_Good *Copy() const;

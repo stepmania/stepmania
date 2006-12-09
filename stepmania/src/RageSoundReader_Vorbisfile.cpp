@@ -142,11 +142,11 @@ int RageSoundReader_Vorbisfile::GetLength_Fast() const
 	return GetLength();
 }
 
-int RageSoundReader_Vorbisfile::SetPosition(int ms, bool accurate)
+int RageSoundReader_Vorbisfile::SetPosition( int iFrame, bool accurate )
 {
 	eof = false;
 
-	const ogg_int64_t sample = ogg_int64_t(ms) * GetSampleRate() / 1000;
+	const ogg_int64_t sample = ogg_int64_t(iFrame);
 
 	int ret = ov_pcm_seek( vf, sample );
 	if(ret < 0)
@@ -162,7 +162,7 @@ int RageSoundReader_Vorbisfile::SetPosition(int ms, bool accurate)
 	}
 	read_offset = (int) ov_pcm_tell(vf);
 
-	return ms;
+	return iFrame;
 }
 
 int RageSoundReader_Vorbisfile::Read(char *buf, unsigned len)

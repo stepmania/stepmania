@@ -95,10 +95,9 @@ int RageSoundReader_Preload::GetLength_Fast() const
 	return GetLength();
 }
 
-int RageSoundReader_Preload::SetPosition_Accurate(int ms)  
+int RageSoundReader_Preload::SetPosition_Accurate( int iFrame )
 {
-	const int sample = int((ms / 1000.0f) * m_iSampleRate);
-	m_iPosition = sample * samplesize;
+	m_iPosition = iFrame * samplesize;
 	m_iPosition = lrintf(m_iPosition / m_fRate);
 
 	if( m_iPosition >= int(m_Buffer->size()) )
@@ -107,12 +106,12 @@ int RageSoundReader_Preload::SetPosition_Accurate(int ms)
 		return 0;
 	}
 
-	return ms;
+	return iFrame;
 }
 
-int RageSoundReader_Preload::SetPosition_Fast( int iMS )
+int RageSoundReader_Preload::SetPosition_Fast( int iFrame )
 {
-	return SetPosition_Accurate( iMS );
+	return SetPosition_Accurate( iFrame );
 }
 
 int RageSoundReader_Preload::GetNextSourceFrame() const

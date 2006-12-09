@@ -28,10 +28,10 @@ public:
 
 	int GetLength() const;
 	int GetLength_Fast() const;
-	int SetPosition_Accurate( int ms );
+	int SetPosition_Accurate( int iFrame );
 	/* It rarely makes sense to set an approximate time for a chained sound, since any
 	 * error in overlap will become obvious. */
-	int SetPosition_Fast( int ms ) { return SetPosition_Accurate( ms ); }
+	int SetPosition_Fast( int iFrame ) { return SetPosition_Accurate( iFrame ); }
 	int Read( char *buf, unsigned len );
 	int GetSampleRate() const { return m_iActualSampleRate; }
 	unsigned GetNumChannels() const { return m_iChannels; }

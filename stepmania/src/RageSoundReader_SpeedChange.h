@@ -10,8 +10,8 @@ class RageSoundReader_SpeedChange: public RageSoundReader_Filter
 public:
 	RageSoundReader_SpeedChange( RageSoundReader *pSource );
 
-	virtual int SetPosition_Accurate( int ms );
-	virtual int SetPosition_Fast( int ms );
+	virtual int SetPosition_Accurate( int iFrame );
+	virtual int SetPosition_Fast( int iFrame );
 	virtual int Read( char *buf, unsigned len );
 	virtual RageSoundReader_SpeedChange *Copy() const { return new RageSoundReader_SpeedChange(*this); }
 	virtual bool SetProperty( const RString &sProperty, float fValue );

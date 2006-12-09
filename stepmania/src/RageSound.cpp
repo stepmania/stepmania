@@ -153,8 +153,8 @@ class RageSoundReader_Silence: public RageSoundReader
 public:
 	int GetLength() const { return 0; }
 	int GetLength_Fast() const { return 0; }
-	int SetPosition_Accurate(int ms)  { return 0; }
-	int SetPosition_Fast(int ms) { return 0; }
+	int SetPosition_Accurate( int iFrame )  { return 0; }
+	int SetPosition_Fast( int iFrame ) { return 0; }
 	int Read(char *buf, unsigned len) { return 0; }
 	RageSoundReader *Copy() const { return new RageSoundReader_Silence; }
 	int GetSampleRate() const { return 44100; }
@@ -720,16 +720,11 @@ bool RageSound::SetPositionFrames( int iFrames )
 		return false;
 	}
 
-	/* The position we're going to seek the input stream to.  We have
-	 * to do this in floating point to avoid overflow. */
-	int ms = int( float(iFrames) * 1000.f / samplerate() );
-	ms = max( ms, 0 );
-
 	int iRet;
 	if( m_Param.m_bAccurateSync )
-		iRet = m_pSource->SetPosition_Accurate(ms);
+		iRet = m_pSource->SetPosition_Accurate( iFrames );
 	else
-		iRet = m_pSource->SetPosition_Fast(ms);
+		iRet = m_pSource->SetPosition_Fast( iFrames );
 
 	if( iRet == -1 )
 	{
@@ -746,12 +741,12 @@ bool RageSound::SetPositionFrames( int iFrames )
 		m_iStoppedSourceFrame = iFrames;
 	}
 
-	if( iRet == 0 && ms != 0 )
+	if( iRet == 0 && iFrames != 0 )
 	{
 		/* We were told to seek somewhere, and we got 0 instead, which means
 		 * we passed EOF.  This could be a truncated file or invalid data. */
-		LOG->Warn( "SetPositionFrames: %i ms is beyond EOF in %s",
-			ms, GetLoadedFilePath().c_str() );
+		LOG->Warn( "SetPositionFrames: %i samples is beyond EOF in %s",
+			iFrames, GetLoadedFilePath().c_str() );
 
 		return false; /* failed */
 	}

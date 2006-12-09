@@ -674,16 +674,23 @@ int RageSoundReader_Resample_Good::GetLength_Fast() const
 	return m_pSource->GetLength_Fast();
 }
 
-int RageSoundReader_Resample_Good::SetPosition_Accurate( int iMS )
+/* iFrame is in the destination rate.  Seek the source in its own sample rate. */
+int RageSoundReader_Resample_Good::SetPosition_Accurate( int iFrame )
 {
 	Reset();
-	return m_pSource->SetPosition_Accurate( iMS );
+	iFrame = (int) SCALE( iFrame, 0, (int64_t) m_iSampleRate, 0, (int64_t) m_pSource->GetSampleRate() );
+	iFrame = m_pSource->SetPosition_Accurate( iFrame );
+	iFrame = (int) SCALE( iFrame, 0, (int64_t) m_pSource->GetSampleRate(), 0, (int64_t) m_iSampleRate );
+	return iFrame;
 }
 
-int RageSoundReader_Resample_Good::SetPosition_Fast( int iMS )
+int RageSoundReader_Resample_Good::SetPosition_Fast( int iFrame )
 {
 	Reset();
-	return m_pSource->SetPosition_Fast( iMS );
+	iFrame = (int) SCALE( iFrame, 0, (int64_t) m_iSampleRate, 0, (int64_t) m_pSource->GetSampleRate() );
+	iFrame = m_pSource->SetPosition_Fast( iFrame );
+	iFrame = (int) SCALE( iFrame, 0, (int64_t) m_pSource->GetSampleRate(), 0, (int64_t) m_iSampleRate );
+	return iFrame;
 }
 
 int RageSoundReader_Resample_Good::Read( char *pBuf_, unsigned iLen )

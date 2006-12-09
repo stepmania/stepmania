@@ -45,7 +45,7 @@ struct WavReader
 	virtual int Read( char *buf, unsigned len ) = 0;
 	virtual int GetLength() const = 0;
 	virtual bool Init() = 0;
-	virtual int SetPosition( int iMS ) = 0;
+	virtual int SetPosition( int iFrame ) = 0;
 	virtual int GetNextSourceFrame() const = 0;
 	RString GetError() const { return m_sError; }
 
@@ -102,11 +102,9 @@ struct WavReaderPCM: public WavReader
 		return (int) iMS;
 	}
 
-	int SetPosition( int iMS )
+	int SetPosition( int iFrame )
 	{
-		const int iBytesPerSec = m_WavData.m_iSampleRate * m_WavData.m_iChannels * m_WavData.m_iBitsPerSample / 8;
-		int iByte = (int) ((int64_t(iMS) * iBytesPerSec) / 1000);
-		iByte = Quantize( iByte, m_WavData.m_iChannels * m_WavData.m_iBitsPerSample / 8 );
+		int iByte = (int) (int64_t(iFrame) * m_WavData.m_iChannels * m_WavData.m_iBitsPerSample / 8);
 		if( iByte > m_WavData.m_iDataChunkSize )
 		{
 			m_File.Seek( m_WavData.m_iDataChunkSize+m_WavData.m_iDataChunkPos );
@@ -114,7 +112,7 @@ struct WavReaderPCM: public WavReader
 		}
 
 		m_File.Seek( iByte+m_WavData.m_iDataChunkPos );
-		return int((int64_t(iByte) * 1000) / iBytesPerSec);
+		return iFrame;
 	}
 
 	// XXX: untested
@@ -330,9 +328,8 @@ public:
 		return iMS;
 	}
 
-	int SetPosition( int iMS )
+	int SetPosition( int iFrame )
 	{
-		const int iFrame = int((int64_t(iMS) * m_WavData.m_iSampleRate) / 1000);
 		const int iBlock = iFrame / m_iFramesPerBlock;
 
 		m_iBufferUsed = m_iBufferAvail = 0;
@@ -359,7 +356,7 @@ public:
 			return 0;
 		}
 
-		return iMS;
+		return iFrame;
 	}
 
 	// XXX: untested
@@ -517,10 +514,10 @@ int RageSoundReader_WAV::GetLength() const
 	return m_pImpl->GetLength();
 }
 
-int RageSoundReader_WAV::SetPosition( int ms )
+int RageSoundReader_WAV::SetPosition( int iFrame )
 {
 	ASSERT( m_pImpl != NULL );
-	return m_pImpl->SetPosition( ms );
+	return m_pImpl->SetPosition( iFrame );
 }
 
 int RageSoundReader_WAV::GetNextSourceFrame() const
