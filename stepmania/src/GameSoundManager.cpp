@@ -717,13 +717,13 @@ float GameSoundManager::GetPlayLatency() const
 	return SOUNDMAN->GetPlayLatency();
 }
 
-void GameSoundManager::SetPlayerBalance( PlayerNumber pn, RageSoundParams &params )
+float GameSoundManager::GetPlayerBalance( PlayerNumber pn )
 {
 	/* If two players are active, play sounds on each players' side. */
 	if( GAMESTATE->GetNumPlayersEnabled() == 2 )
-		params.m_Balance = (pn == PLAYER_1)? -1.0f:1.0f;
+		return (pn == PLAYER_1)? -1.0f:1.0f;
 	else
-		params.m_Balance = 0;
+		return 0;
 }
 
 

@@ -38,7 +38,7 @@ public:
 	void HandleSongTimer( bool on=true );
 	float GetFrameTimingAdjustment( float fDeltaTime );
 
-	static void SetPlayerBalance( PlayerNumber pn, RageSoundParams &params );
+	static float GetPlayerBalance( PlayerNumber pn );
 
 	// Lua
 	void PushSelf( lua_State *L );

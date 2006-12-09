@@ -310,7 +310,7 @@ void Player::Init(
 
 
 	RageSoundParams p;
-	GameSoundManager::SetPlayerBalance( pn, p );
+	p.m_Balance = GameSoundManager::GetPlayerBalance( pn );
 
 	m_soundMine.SetParams( p );
 	m_soundAttackLaunch.SetParams( p );
@@ -466,7 +466,7 @@ void Player::Load()
 	m_vKeysounds.resize( pSong->m_vsKeysoundFile.size() );
 
 	RageSoundParams p;
-	GameSoundManager::SetPlayerBalance( pn, p );
+	p.m_Balance = GameSoundManager::GetPlayerBalance( pn );
 	for( unsigned i=0; i<m_vKeysounds.size(); i++ )
 	{
 		 RString sKeysoundFilePath = sSongDir + pSong->m_vsKeysoundFile[i];
