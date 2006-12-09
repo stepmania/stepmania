@@ -835,57 +835,55 @@ int RageSoundReader_MP3::SetPosition_toc( int iFrame, bool Xing )
 	 * if we're using Xing. */
 	mad->timer_accurate = !Xing;
 
+	int bytepos = -1;
+	if( Xing )
 	{
-		int bytepos = -1;
-		if( Xing )
+		/* We can speed up the seek using the XING tag.  First, figure
+		 * out what percentage the requested position falls in. */
+		int ms = int( (iFrame * 1000LL) / SampleRate );
+		int percent = ms * 100 / mad->length;
+		if( percent < 100 )
 		{
-			/* We can speed up the seek using the XING tag.  First, figure
-			 * out what percentage the requested position falls in. */
-			int ms = int( (iFrame * 1000LL) / SampleRate );
-			int percent = ms * 100 / mad->length;
-    			if( percent < 100 )
-			{
-				int jump = mad->xingtag.toc[percent];
-				bytepos = mad->filesize * jump / 256;
-			}
-			else
-				bytepos = 2000000000; /* force EOF */
-
-			mad_timer_set( &mad->Timer, 0, percent * mad->length, 100000 );
+			int jump = mad->xingtag.toc[percent];
+			bytepos = mad->filesize * jump / 256;
 		}
 		else
+			bytepos = 2000000000; /* force EOF */
+
+		mad_timer_set( &mad->Timer, 0, percent * mad->length, 100000 );
+	}
+	else
+	{
+		mad_timer_t desired;
+		mad_timer_set( &desired, 0, iFrame, SampleRate );
+
+		if( mad->tocmap.empty() )
+			return iFrame; /* don't have any info */
+
+		/* Find the last entry <= iFrame that we actually have an entry for;
+		 * this will get us as close as possible. */
+		madlib_t::tocmap_t::iterator it = mad->tocmap.upper_bound( desired );
+		if( it == mad->tocmap.begin() )
+			return iFrame; /* don't have any info */
+		--it;
+
+		mad->Timer = it->first;
+		bytepos = it->second;
+	}
+
+	if( bytepos != -1 )
+	{
+		/* Seek backwards up to 4k. */
+		const int seekpos = max( 0, bytepos - 1024*4 );
+		seek_stream_to_byte( seekpos );
+
+		do
 		{
-			mad_timer_t desired;
-			mad_timer_set( &desired, 0, iFrame, SampleRate );
-
-			if( mad->tocmap.empty() )
-				return iFrame; /* don't have any info */
-
-			/* Find the last entry <= iFrame that we actually have an entry for;
-			 * this will get us as close as possible. */
-			madlib_t::tocmap_t::iterator it = mad->tocmap.upper_bound( desired );
-			if( it == mad->tocmap.begin() )
-				return iFrame; /* don't have any info */
-			--it;
-
-			mad->Timer = it->first;
-			bytepos = it->second;
-		}
-
-		if( bytepos != -1 )
-		{
-			/* Seek backwards up to 4k. */
-			const int seekpos = max( 0, bytepos - 1024*4 );
-			seek_stream_to_byte( seekpos );
-
-			do
-			{
-				int ret = do_mad_frame_decode();
-				if( ret <= 0 )
-					return ret; /* it set the error */
-			} while( get_this_frame_byte(mad) < bytepos );
-			synth_output();
-		}
+			int ret = do_mad_frame_decode();
+			if( ret <= 0 )
+				return ret; /* it set the error */
+		} while( get_this_frame_byte(mad) < bytepos );
+		synth_output();
 	}
 
 	return iFrame;
