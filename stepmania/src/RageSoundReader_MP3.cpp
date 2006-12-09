@@ -856,7 +856,7 @@ int RageSoundReader_MP3::SetPosition_toc( int iFrame, bool Xing )
 			} while( get_this_frame_byte(mad) < bytepos );
 			synth_output();
 
-			mad_timer_set( &mad->Timer, 0, percent * mad->length, 100000 );
+			mad_timer_set( &mad->Timer, 0, percent * mad->length, 100 );
 		}
 	}
 
