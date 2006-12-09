@@ -229,7 +229,7 @@ bool RageSoundReader_Chain::IsStreamingFromDisk() const
 bool RageSoundReader_Chain::SetProperty( const RString &sProperty, float fValue )
 {
 	bool bRet = false;
-	for( unsigned i = 0; i < m_apActiveSounds.size(); )
+	for( unsigned i = 0; i < m_apActiveSounds.size(); ++i )
 	{
 		if( m_apActiveSounds[i].pSound->SetProperty(sProperty, fValue) )
 			bRet = true;
