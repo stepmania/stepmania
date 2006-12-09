@@ -10,7 +10,7 @@ public:
 	~RageSoundMixBuffer();
 
 	/* Mix the given buffer of samples. */
-	void write( const int16_t *buf, unsigned size );
+	void write( const int16_t *buf, unsigned size, int iSourceStride = 1, int iDestStride = 1 );
 
 	/* Extend the buffer as if write() was called with a buffer of silence. */
 	void Extend( unsigned iSamples );

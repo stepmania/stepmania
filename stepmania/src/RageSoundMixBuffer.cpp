@@ -53,23 +53,27 @@ void RageSoundMixBuffer::Extend( unsigned iSamples )
 	}
 }
 
-void RageSoundMixBuffer::write( const int16_t *pBuf, unsigned iSize )
+void RageSoundMixBuffer::write( const int16_t *pBuf, unsigned iSize, int iSourceStride, int iDestStride )
 {
-	Extend( iSize );
+	/* iSize = 3, iDestStride = 2 uses 4 frames.  Don't allocate the stride of the
+	 * last sample. */
+	Extend( iSize * iDestStride - (iDestStride-1) );
 
 	/* Scale volume and add. */
 	int32_t *pDestBuf = m_pMixbuf+m_iOffset;
 #ifdef USE_VEC
-	if( g_bVector )
+	if( g_bVector && iSourceStride == 1 && iDestStride == 1 )
 	{
 		Vector::FastSoundWrite( pDestBuf, pBuf, iSize, m_iVolumeFactor );
 		return;
 	}
 #endif
-	for( unsigned pos = 0; pos < iSize; ++pos )
+	while( iSize )
 	{
-		*pDestBuf += pBuf[pos] * m_iVolumeFactor;
-		++pDestBuf;
+		*pDestBuf += *pBuf * m_iVolumeFactor;
+		pBuf += iSourceStride;
+		pDestBuf += iDestStride;
+		--iSize;
 	}
 }
 
