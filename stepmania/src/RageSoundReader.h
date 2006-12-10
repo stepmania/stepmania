@@ -13,7 +13,7 @@ public:
 	virtual ~RageSoundReader() { }
 	virtual RageSoundReader *Copy() const = 0;
 	virtual int GetSampleRate() const = 0;
-	virtual unsigned GetNumChannels() const { return 2; } /* 1 or 2 */
+	virtual unsigned GetNumChannels() const = 0;
 	virtual bool IsStreamingFromDisk() const = 0;
 	virtual bool SetProperty( const RString &sProperty, float fValue ) { return false; }
 
