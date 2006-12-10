@@ -161,7 +161,7 @@ bool must_be_eof( RageSoundReader *snd )
 {
 	char buf[16];
 	int got = snd->Read( buf, 1 );
-	return got == 0;
+	return got == RageSoundReader::END_OF_FILE;
 }
 
 const int FILTER_NONE			= 0;
@@ -390,8 +390,9 @@ bool RunTests( RageSoundReader *snd, const TestFile &tf )
 	{
 		char buf[4096];
 		int got = snd->Read( buf, sizeof(buf) / (snd->GetNumChannels() * sizeof(int16_t)) );
-		if( got == 0 )
+		if( got == RageSoundReader::END_OF_FILE )
 			break;
+		ASSERT( got >= 0 );
 	}
 	
 	/* Now, make sure reading after an EOF returns another EOF. */
