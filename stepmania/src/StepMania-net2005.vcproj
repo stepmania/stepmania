@@ -3155,6 +3155,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RageSoundReader_ChannelSplit.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_ChannelSplit.h"
+				>
+			</File>
+			<File
 				RelativePath="RageSoundReader_FileReader.cpp"
 				>
 			</File>
