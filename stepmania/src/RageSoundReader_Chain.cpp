@@ -370,29 +370,20 @@ int RageSoundReader_Chain::ReadBlock( int16_t *pBuffer, int iFrames )
 
 int RageSoundReader_Chain::Read( char *pBuffer, int iFrames )
 {
-	int iTotalFramesRead = 0;
-
-	/* If we have no sources, and no more sounds to play, EOF. */
-	while( iFrames > 0 && (!m_apActiveSounds.empty() || m_iNextSound < m_aSounds.size()) )
+	while( m_iNextSound < m_aSounds.size() && m_iCurrentFrame == m_aSounds[m_iNextSound].GetOffsetFrame(m_iActualSampleRate) )
 	{
-		int iFramesRead = ReadBlock( (int16_t *) pBuffer, iFrames );
-		if( iFramesRead == -1 )
-			return -1;
-
-		m_iCurrentFrame += iFramesRead;
-		iFrames -= iFramesRead;
-		iTotalFramesRead += iFramesRead;
-		pBuffer += iFramesRead * sizeof(int16_t) * m_iChannels;
-
-		while( m_iNextSound < m_aSounds.size() && m_iCurrentFrame == m_aSounds[m_iNextSound].GetOffsetFrame(m_iActualSampleRate) )
-		{
-			Sound *pSound = &m_aSounds[m_iNextSound];
-			ActivateSound( pSound );
-			++m_iNextSound;
-		}
+		Sound *pSound = &m_aSounds[m_iNextSound];
+		ActivateSound( pSound );
+		++m_iNextSound;
 	}
 
-	return iTotalFramesRead;
+	int iFramesRead = ReadBlock( (int16_t *) pBuffer, iFrames );
+	if( iFramesRead == -1 )
+		return -1;
+
+	m_iCurrentFrame += iFramesRead;
+
+	return iFramesRead;
 }
 
 int RageSoundReader_Chain::GetLength() const
