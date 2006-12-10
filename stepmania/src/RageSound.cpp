@@ -721,11 +721,13 @@ bool RageSound::SetPositionFrames( int iFrames )
 		return false;
 	}
 
+	int iSeekFrames = max( iFrames, 0 );
+
 	int iRet;
 	if( m_Param.m_bAccurateSync )
-		iRet = m_pSource->SetPosition_Accurate( iFrames );
+		iRet = m_pSource->SetPosition_Accurate( iSeekFrames );
 	else
-		iRet = m_pSource->SetPosition_Fast( iFrames );
+		iRet = m_pSource->SetPosition_Fast( iSeekFrames );
 
 	if( iRet == -1 )
 	{
