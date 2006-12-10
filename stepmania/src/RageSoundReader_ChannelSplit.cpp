@@ -6,6 +6,10 @@
  *
  * The resulting readers should be read in parallel.  If their source position
  * drifts apart, the data between will be buffered to prevent seeking the source.
+ *
+ * The resulting sound has as many channels as the largest destination channel
+ * specified; multiple sounds on the same channel are mixed together; empty
+ * channels are silent.
  */
 
 #include "global.h"
