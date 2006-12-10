@@ -301,27 +301,6 @@ float RageSoundReader_Chain::GetStreamToSourceRatio() const
 	return iRate;
 }
 
-/* Find the next sound we'll need to start, if any.  m_aSounds is sorted by time. */
-unsigned RageSoundReader_Chain::GetNextSoundIndex() const
-{
-	unsigned iNextSound = 0;
-	while( iNextSound < m_aSounds.size() )
-	{
-		if( m_iCurrentFrame <= m_aSounds[iNextSound].GetOffsetFrame(m_iActualSampleRate) ||
-			m_aSounds[iNextSound].pSound == NULL )
-			break;
-		if( m_aSounds[iNextSound].pSound )
-		++iNextSound;
-	}
-
-	while( iNextSound < m_aSounds.size() &&
-		m_iCurrentFrame > m_aSounds[iNextSound].GetOffsetFrame(m_iActualSampleRate) &&
-		m_aSounds[iNextSound].pSound
-		)
-		++iNextSound;
-	return iNextSound;
-}
-
 /* As we iterate through the sound tree, we'll find that we need data from different
  * sounds; a sound may be needed by more than one other sound. */
 int RageSoundReader_Chain::ReadBlock( int16_t *pBuffer, int iFrames )

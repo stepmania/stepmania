@@ -64,7 +64,6 @@ private:
 		bool operator<( const Sound &rhs ) const { return iOffsetMS < rhs.iOffsetMS; }
 	};
 	vector<Sound> m_aSounds;
-	unsigned GetNextSoundIndex() const;
 
 	/* Read state: */
 	int m_iCurrentFrame;
