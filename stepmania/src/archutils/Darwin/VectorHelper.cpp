@@ -1,4 +1,5 @@
 #include "global.h"
+#include <inttypes.h>
 #include "VectorHelper.h"
 #include "RageUtil.h"
 #include <sys/sysctl.h>
@@ -32,9 +33,6 @@ bool Vector::CheckForVector()
  * Idea from: http://developer.apple.com/hardwaredrivers/ve/downloads/add.c */
 void Vector::FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, short volume )
 {
-	if( size == 0 )
-		return;
-	ASSERT_M( (intptr_t(dest) & 0x7) == 0, ssprintf("dest = %p", dest) );
 	if( size > 7 )
 	{
 		int index = 0;
