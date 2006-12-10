@@ -19,9 +19,8 @@ void ReadData( RageSoundReader *snd,
 {
 	if( iFrame != -1 )
 		snd->SetPosition_Accurate( iFrame );
-	int bytes = frames*snd->GetNumChannels()*sizeof(int16_t);
-	int got = snd->Read( buf, bytes );
-	ASSERT_M( got == bytes, ssprintf("%i, %i", got, bytes) );
+	int got = snd->Read( buf, frames );
+	ASSERT_M( got == frames, ssprintf("%i, %i", got, frames) );
 }
 	       
 void find( const char *haystack, int hs, const char *needle, int ns )
@@ -141,8 +140,8 @@ bool test_read( RageSoundReader *snd, const char *expected_data, int frames )
 {
 	int bytes = frames * snd->GetNumChannels() * sizeof(int16_t);
 	char buf[bytes];
-	int got = snd->Read( buf, bytes );
-	ASSERT( got == bytes );
+	int got = snd->Read( buf, frames );
+	ASSERT( got == frames );
 
 	//compare_buffers( (const int16_t *) expected_data,
 	//		 (const int16_t *) buf,
@@ -160,8 +159,8 @@ bool test_read( RageSoundReader *snd, const char *expected_data, int frames )
 
 bool must_be_eof( RageSoundReader *snd )
 {
-	char buf[4];
-	int got = snd->Read( buf, 4 );
+	char buf[16];
+	int got = snd->Read( buf, 1 );
 	return got == 0;
 }
 
@@ -390,7 +389,7 @@ bool RunTests( RageSoundReader *snd, const TestFile &tf )
 	while(1)
 	{
 		char buf[4096];
-		int got = snd->Read( buf, sizeof(buf) );
+		int got = snd->Read( buf, sizeof(buf) / (snd->GetNumChannels() * sizeof(int16_t)) );
 		if( got == 0 )
 			break;
 	}
