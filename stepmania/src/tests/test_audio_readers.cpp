@@ -450,7 +450,7 @@ bool RunTests( RageSoundReader *snd, const TestFile &tf )
 
 	if( !must_be_eof(snd) )
 	{
-		LOG->Warn("Fail: SetPosition_Fast EOF didn't EOF");
+		LOG->Warn("Fail: SetPosition_Accurate EOF didn't EOF");
 		return false;
 	}
 	
