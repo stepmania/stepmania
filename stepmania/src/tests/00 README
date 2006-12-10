@@ -9,3 +9,6 @@ files you have.
 
 This is only compiled in the Unix build environment.
 
+test_vector is for testing VectorHelper against the reference scalar
+code. It can be compiled using:
+g++ -g -I.. -DGLOBAL_H -DRAGE_UTIL_H '-DASSERT_M(x,y)=(void)(x)' ../archutils/Darwin/VectorHelper.cpp test_vector.cpp -faltivec -Wall
