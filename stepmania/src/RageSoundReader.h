@@ -18,6 +18,12 @@ public:
 	virtual bool IsStreamingFromDisk() const = 0;
 	virtual bool SetProperty( const RString &sProperty, float fValue ) { return false; }
 
+	/* Return values for Read(). */
+	enum {
+		ERROR = -1,
+		END_OF_FILE = -2
+	};
+
 	/* GetNextSourceFrame() provides the source frame associated with the next frame
 	 * that will be read via Read().  GetStreamToSourceRatio() returns the ratio
 	 * for extrapolating the source frames of the remainder of the block.  These

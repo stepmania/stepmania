@@ -765,9 +765,9 @@ int RageSoundReader_MP3::Read( char *buf, int iFrames )
 		/* Decode more from the MP3 stream. */
 		int ret = do_mad_frame_decode();
 		if( ret == 0 )
-			return iFramesWritten;
+			return END_OF_FILE;
 		if( ret == -1 )
-			return -1;
+			return ERROR;
 
 		synth_output();
 	}

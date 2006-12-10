@@ -288,18 +288,29 @@ int RageSound::GetData( char *pBuffer, int iFrames )
 
 		fRate = m_pSource->GetStreamToSourceRatio();
 		int iNewSourceFrame = m_pSource->GetNextSourceFrame();
-		iGotFrames = m_pSource->Read( pBuffer, iFrames );
-		if( iGotFrames == -1 )
+		while( iGotFrames == 0 )
 		{
-			Fail( m_pSource->GetError() );
+			iGotFrames = m_pSource->Read( pBuffer, iFrames );
+			if( iGotFrames == RageSoundReader::ERROR )
+			{
+				Fail( m_pSource->GetError() );
 
-			/* Pretend we got EOF. */
-			return 0;
+				/* Pretend we got EOF. */
+				return 0;
+			}
+
+			if( iGotFrames == RageSoundReader::END_OF_FILE )
+			{
+				iGotFrames = 0;
+				break;
+			}
+
+			ASSERT_M( iGotFrames >= 0, ssprintf("%i", iGotFrames) ); // unhandled error condition
 		}
 
 		/* If we didn't get any data, don't update iSourceFrame, so we just keep
 		 * extrapolating if we're in M_CONTINUE. */
-		if( iGotFrames != 0 )
+		if( iGotFrames == 0 )
 			iSourceFrame = iNewSourceFrame;
 
 		if( m_pSource->GetNumChannels() == 1 )

@@ -85,7 +85,7 @@ static int FindClosestMatch( const int16_t *pBuffer, int iBufferSize, const int1
 	return iBestOffset;
 }
 
-void RageSoundReader_SpeedChange::FillData( int iMaxFrames )
+int RageSoundReader_SpeedChange::FillData( int iMaxFrames )
 {
 	/* XXX: If the rate or source frame offset changes in the source, we should stop
 	 * at that point, so the changes propagate upward.  That's tricky, since we want
@@ -97,13 +97,16 @@ void RageSoundReader_SpeedChange::FillData( int iMaxFrames )
 		int iFramesToRead = iMaxFrames - m_iDataBufferAvailFrames;
 		int iBytesToRead = iFramesToRead * m_Channels.size() * sizeof(int16_t);
 		if( iBytesToRead <= 0 )
-			return;
+			return m_iDataBufferAvailFrames;
 
 		int16_t *pTempBuffer = (int16_t *) alloca( iBytesToRead );
 		int iGotFrames = m_pSource->Read( (char *) pTempBuffer, iFramesToRead );
-		// if( iGotFrames == -1 ) XXX
-		if( !iGotFrames )
-			return;
+		if( iGotFrames < 0 )
+		{
+			if( iGotFrames == END_OF_FILE && m_iDataBufferAvailFrames )
+				return m_iDataBufferAvailFrames;
+			return iGotFrames;
+		}
 
 		for( size_t i = 0; i < m_Channels.size(); ++i )
 		{
@@ -124,6 +127,7 @@ void RageSoundReader_SpeedChange::FillData( int iMaxFrames )
 
 		m_iDataBufferAvailFrames += iGotFrames;
 	}
+	return m_iDataBufferAvailFrames;
 }
 
 void RageSoundReader_SpeedChange::EraseData( int iFramesToDelete )
@@ -145,15 +149,10 @@ void RageSoundReader_SpeedChange::EraseData( int iFramesToDelete )
 	}
 }
 
-bool RageSoundReader_SpeedChange::Step()
+int RageSoundReader_SpeedChange::Step()
 {
 	if( m_iDataBufferAvailFrames == 0 )
-	{
-		FillData( GetWindowSizeFrames() );
-		if( m_iDataBufferAvailFrames == 0 )
-			return false;
-		return true;
-	}
+		return FillData( GetWindowSizeFrames() );
 
 	/* If m_iPos is non-zero, we just finished playing a previous block, so advance forward. */
 	if( m_iPos )
@@ -186,15 +185,21 @@ bool RageSoundReader_SpeedChange::Step()
 	EraseData( iToDelete );
 
 	/* Fill as much data as we might need to do the search and use the result. */
-	int iMaxPositionNeeded = m_iUncorrelatedPos + GetToleranceFrames() + GetWindowSizeFrames();
-	for( size_t i = 0; i < m_Channels.size(); ++i )
-		iMaxPositionNeeded = max( iMaxPositionNeeded, m_Channels[i].m_iCorrelatedPos + GetWindowSizeFrames() );
-	FillData( iMaxPositionNeeded );
-	if( iMaxPositionNeeded > m_iDataBufferAvailFrames )
 	{
-		/* We're at EOF.  Flush the remaining data, if any. */
-		m_iUncorrelatedPos = m_Channels[0].m_iCorrelatedPos;
-		return true;
+		int iMaxPositionNeeded = m_iUncorrelatedPos + GetToleranceFrames() + GetWindowSizeFrames();
+		for( size_t i = 0; i < m_Channels.size(); ++i )
+			iMaxPositionNeeded = max( iMaxPositionNeeded, m_Channels[i].m_iCorrelatedPos + GetWindowSizeFrames() );
+
+		int iGot = FillData( iMaxPositionNeeded );
+		if( iGot < 0 )
+			return iGot;
+
+		if( iMaxPositionNeeded > m_iDataBufferAvailFrames )
+		{
+			/* We're at EOF.  Flush the remaining data, if any. */
+			m_iUncorrelatedPos = m_Channels[0].m_iCorrelatedPos;
+			return m_iDataBufferAvailFrames;
+		}
 	}
 
 	/* Starting at our preferred position (m_iUncorrelatedPos), within GetToleranceFrames(),
@@ -214,7 +219,7 @@ bool RageSoundReader_SpeedChange::Step()
 		c.m_iCorrelatedPos = iBest + m_iUncorrelatedPos;
 		ASSERT( m_Channels[i].m_iCorrelatedPos + GetWindowSizeFrames() <= m_iDataBufferAvailFrames );
 	}
-	return true;
+	return m_iDataBufferAvailFrames;
 }
 
 int RageSoundReader_SpeedChange::GetCursorAvail() const
@@ -247,9 +252,11 @@ int RageSoundReader_SpeedChange::Read( char *buf, int iFrames )
 
 		if( iCursorAvail == 0 )
 		{
-			Step();
+			int iRet = Step();
+			if( iRet < 0 )
+				return iRet;
 			if( !GetCursorAvail() )
-				return 0; // EOF
+				return END_OF_FILE;
 			continue;
 		}
 

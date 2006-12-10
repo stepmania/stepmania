@@ -17,6 +17,12 @@ int RageSoundReader_Pan::Read( char *pBuf, int iFrames )
 		iFrames /= 2;
 
 	iFrames = m_pSource->Read( pBuf, iFrames );
+	if( iFrames < 0 )
+	{
+		this->SetError( m_pSource->GetError() );
+		return iFrames;
+	}
+
 	int iSamples = iFrames * m_pSource->GetNumChannels();
 	
 	int16_t *pSampleBuf = (int16_t *) pBuf;

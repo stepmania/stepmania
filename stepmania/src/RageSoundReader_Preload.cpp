@@ -126,6 +126,8 @@ int RageSoundReader_Preload::Read( char *pBuffer, int iFrames )
 	const int iFramesAvail = iSizeFrames - m_iPosition;
 
 	iFrames = min( iFrames, iFramesAvail );
+	if( iFrames == 0 )
+		return END_OF_FILE;
 	memcpy( pBuffer, m_Buffer->data() + (m_iPosition * samplesize), iFrames * samplesize );
 	m_iPosition += iFrames;
 	

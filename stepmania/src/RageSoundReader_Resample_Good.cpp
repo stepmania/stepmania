@@ -726,6 +726,7 @@ int RageSoundReader_Resample_Good::Read( char *pBuf_, int iFrames )
 			return iFramesRead;
 		}
 
+		// XXX: errors
 		return m_pSource->Read( pBuf_, iFrames );
 	}
 
@@ -735,10 +736,10 @@ int RageSoundReader_Resample_Good::Read( char *pBuf_, int iFrames )
 		ASSERT( pTmpBuf );
 		int iFramesIn = m_pSource->Read( (char *) pTmpBuf, iFramesNeeded );
 
-		if( iFramesIn == -1 )
+		if( iFramesIn < 0 )
 		{
 			SetError( m_pSource->GetError() );
-			return -1;
+			return iFramesIn;
 		}
 
 		const int iSamplesIn = iFramesIn * iChannels;

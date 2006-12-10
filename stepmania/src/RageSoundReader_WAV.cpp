@@ -79,6 +79,9 @@ struct WavReaderPCM: public WavReader
 			len /= 2;
 
 		const int iBytesLeftInDataChunk = m_WavData.m_iDataChunkSize - (m_File.Tell() - m_WavData.m_iDataChunkPos);
+		if( !iBytesLeftInDataChunk )
+			return RageSoundReader::END_OF_FILE;
+
 		len = min( len, iBytesLeftInDataChunk );
 		int iGot = m_File.Read( buf, len );
 		int iGotSamples = 0;
@@ -296,10 +299,15 @@ public:
 			if( m_iBufferUsed == m_iBufferAvail )
 			{
 				if( !DecodeADPCMBlock() )
-					return -1;
+					return RageSoundReader::ERROR;
 			}
 			if( m_iBufferAvail == 0 )
-				break; /* EOF */
+			{
+				if( !iGotFrames )
+					return RageSoundReader::END_OF_FILE;
+				else
+					return iGotFrames;
+			}
 
 			int iFramesToCopy = (m_iBufferAvail-m_iBufferUsed) / iBytesPerFrame;
 			iFramesToCopy = min( iFramesToCopy, (int) (iFrames-iGotFrames) );

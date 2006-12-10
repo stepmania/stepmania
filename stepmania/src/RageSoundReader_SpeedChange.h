@@ -25,9 +25,9 @@ public:
 	bool NextReadWillStep() const { return GetCursorAvail() == 0; }
 
 protected:
-	void FillData( int iMax );
+	int FillData( int iMax );
 	void EraseData( int iToDelete );
-	bool Step();
+	int Step();
 	void Reset();
 
 	/* Get the ratio last set by SetSpeedRatio. */
