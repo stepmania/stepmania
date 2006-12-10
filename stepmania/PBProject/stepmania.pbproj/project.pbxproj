@@ -1401,6 +1401,14 @@
 		AA4470BD098476F600983E82 /* KeyboardDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA4470BB098476F600983E82 /* KeyboardDevice.cpp */; };
 		AA4B4738057396D3005FB5DB /* ffmpeg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA4B4737057396D3005FB5DB /* ffmpeg.framework */; };
 		AA4B47B405739711005FB5DB /* ffmpeg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = AA4B4737057396D3005FB5DB /* ffmpeg.framework */; };
+		AA4F27B20B2C01B400ADEA79 /* RageSoundReader_ChannelSplit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA4F27AE0B2C01B400ADEA79 /* RageSoundReader_ChannelSplit.cpp */; };
+		AA4F27B30B2C01B400ADEA79 /* RageSoundReader_ChannelSplit.h in Headers */ = {isa = PBXBuildFile; fileRef = AA4F27AF0B2C01B400ADEA79 /* RageSoundReader_ChannelSplit.h */; };
+		AA4F27B40B2C01B400ADEA79 /* RageSoundReader_Pan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA4F27B00B2C01B400ADEA79 /* RageSoundReader_Pan.cpp */; };
+		AA4F27B50B2C01B400ADEA79 /* RageSoundReader_Pan.h in Headers */ = {isa = PBXBuildFile; fileRef = AA4F27B10B2C01B400ADEA79 /* RageSoundReader_Pan.h */; };
+		AA4F27B60B2C01B400ADEA79 /* RageSoundReader_ChannelSplit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA4F27AE0B2C01B400ADEA79 /* RageSoundReader_ChannelSplit.cpp */; };
+		AA4F27B70B2C01B400ADEA79 /* RageSoundReader_ChannelSplit.h in Headers */ = {isa = PBXBuildFile; fileRef = AA4F27AF0B2C01B400ADEA79 /* RageSoundReader_ChannelSplit.h */; };
+		AA4F27B80B2C01B400ADEA79 /* RageSoundReader_Pan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA4F27B00B2C01B400ADEA79 /* RageSoundReader_Pan.cpp */; };
+		AA4F27B90B2C01B400ADEA79 /* RageSoundReader_Pan.h in Headers */ = {isa = PBXBuildFile; fileRef = AA4F27B10B2C01B400ADEA79 /* RageSoundReader_Pan.h */; };
 		AA50201F05D6D7B200ACEFD0 /* Profile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA50201D05D6D7B200ACEFD0 /* Profile.cpp */; };
 		AA50202005D6D7B200ACEFD0 /* Profile.h in Headers */ = {isa = PBXBuildFile; fileRef = AA50201E05D6D7B200ACEFD0 /* Profile.h */; };
 		AA54709206F559DF008EB9B2 /* Preference.h in Headers */ = {isa = PBXBuildFile; fileRef = AA54709106F559DF008EB9B2 /* Preference.h */; };
@@ -2082,6 +2090,10 @@
 		AA4470BB098476F600983E82 /* KeyboardDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyboardDevice.cpp; sourceTree = "<group>"; };
 		AA4B4737057396D3005FB5DB /* ffmpeg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ffmpeg.framework; path = Frameworks/ffmpeg.framework; sourceTree = SOURCE_ROOT; };
 		AA4B5CC40573AD81005FB5DB /* wchar.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = wchar.cpp; sourceTree = "<group>"; };
+		AA4F27AE0B2C01B400ADEA79 /* RageSoundReader_ChannelSplit.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RageSoundReader_ChannelSplit.cpp; path = ../src/RageSoundReader_ChannelSplit.cpp; sourceTree = "<group>"; };
+		AA4F27AF0B2C01B400ADEA79 /* RageSoundReader_ChannelSplit.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = RageSoundReader_ChannelSplit.h; path = ../src/RageSoundReader_ChannelSplit.h; sourceTree = "<group>"; };
+		AA4F27B00B2C01B400ADEA79 /* RageSoundReader_Pan.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RageSoundReader_Pan.cpp; path = ../src/RageSoundReader_Pan.cpp; sourceTree = "<group>"; };
+		AA4F27B10B2C01B400ADEA79 /* RageSoundReader_Pan.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = RageSoundReader_Pan.h; path = ../src/RageSoundReader_Pan.h; sourceTree = "<group>"; };
 		AA4F38C004E2D0B700D02EE9 /* NoteDataUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = NoteDataUtil.cpp; path = ../src/NoteDataUtil.cpp; sourceTree = "<group>"; };
 		AA4F38C104E2D0B700D02EE9 /* NoteDataUtil.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = NoteDataUtil.h; path = ../src/NoteDataUtil.h; sourceTree = "<group>"; };
 		AA50201D05D6D7B200ACEFD0 /* Profile.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = Profile.cpp; path = ../src/Profile.cpp; sourceTree = "<group>"; };
@@ -3522,11 +3534,15 @@
 				AA6EFD8604770A7C005F316C /* RageSoundReader.h */,
 				AA7ADC23072CAB7F00C50A7F /* RageSoundReader_Chain.cpp */,
 				AA7ADC24072CAB7F00C50A7F /* RageSoundReader_Chain.h */,
+				AA4F27AE0B2C01B400ADEA79 /* RageSoundReader_ChannelSplit.cpp */,
+				AA4F27AF0B2C01B400ADEA79 /* RageSoundReader_ChannelSplit.h */,
 				AAFC7FF00513A67700D02EE9 /* RageSoundReader_FileReader.cpp */,
 				AADB4E7A04D4FE5D00D02EE9 /* RageSoundReader_FileReader.h */,
 				AA31D51B0B1EC6540016AB6B /* RageSoundReader_Filter.h */,
 				AAFC7FF10513A67700D02EE9 /* RageSoundReader_MP3.cpp */,
 				AAFC7FF20513A67700D02EE9 /* RageSoundReader_MP3.h */,
+				AA4F27B00B2C01B400ADEA79 /* RageSoundReader_Pan.cpp */,
+				AA4F27B10B2C01B400ADEA79 /* RageSoundReader_Pan.h */,
 				AA31D51C0B1EC6540016AB6B /* RageSoundReader_PitchChange.cpp */,
 				AA31D51D0B1EC6540016AB6B /* RageSoundReader_PitchChange.h */,
 				AA6EFD8004770A7C005F316C /* RageSoundReader_Preload.cpp */,
@@ -4653,6 +4669,8 @@
 				AA31D5200B1EC6540016AB6B /* RageSoundReader_Filter.h in Headers */,
 				AA31D5220B1EC6540016AB6B /* RageSoundReader_PitchChange.h in Headers */,
 				AA31D5240B1EC6540016AB6B /* RageSoundReader_SpeedChange.h in Headers */,
+				AA4F27B30B2C01B400ADEA79 /* RageSoundReader_ChannelSplit.h in Headers */,
+				AA4F27B50B2C01B400ADEA79 /* RageSoundReader_Pan.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5100,6 +5118,8 @@
 				AA31D5250B1EC6550016AB6B /* RageSoundReader_Filter.h in Headers */,
 				AA31D5270B1EC6550016AB6B /* RageSoundReader_PitchChange.h in Headers */,
 				AA31D5290B1EC6550016AB6B /* RageSoundReader_SpeedChange.h in Headers */,
+				AA4F27B70B2C01B400ADEA79 /* RageSoundReader_ChannelSplit.h in Headers */,
+				AA4F27B90B2C01B400ADEA79 /* RageSoundReader_Pan.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5793,6 +5813,8 @@
 				AAFB549E0B1BC32700FC3A81 /* RageSoundReader.cpp in Sources */,
 				AA31D5210B1EC6540016AB6B /* RageSoundReader_PitchChange.cpp in Sources */,
 				AA31D5230B1EC6540016AB6B /* RageSoundReader_SpeedChange.cpp in Sources */,
+				AA4F27B20B2C01B400ADEA79 /* RageSoundReader_ChannelSplit.cpp in Sources */,
+				AA4F27B40B2C01B400ADEA79 /* RageSoundReader_Pan.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6215,6 +6237,8 @@
 				AAFB549F0B1BC32700FC3A81 /* RageSoundReader.cpp in Sources */,
 				AA31D5260B1EC6550016AB6B /* RageSoundReader_PitchChange.cpp in Sources */,
 				AA31D5280B1EC6550016AB6B /* RageSoundReader_SpeedChange.cpp in Sources */,
+				AA4F27B60B2C01B400ADEA79 /* RageSoundReader_ChannelSplit.cpp in Sources */,
+				AA4F27B80B2C01B400ADEA79 /* RageSoundReader_Pan.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
