@@ -55,6 +55,9 @@ void RageSoundMixBuffer::Extend( unsigned iSamples )
 
 void RageSoundMixBuffer::write( const int16_t *pBuf, unsigned iSize, int iSourceStride, int iDestStride )
 {
+	if( iSize == 0 )
+		return;
+
 	/* iSize = 3, iDestStride = 2 uses 4 frames.  Don't allocate the stride of the
 	 * last sample. */
 	Extend( iSize * iDestStride - (iDestStride-1) );
