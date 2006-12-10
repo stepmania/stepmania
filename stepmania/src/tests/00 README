@@ -12,4 +12,4 @@ This is only compiled in the Unix build environment.
 test_vector is for testing VectorHelper against the reference scalar
 code. It can be compiled using:
 g++ -g -I.. ../archutils/Darwin/VectorHelper.cpp test_vector.cpp -faltivec
-You can replace -faltivec with -msse on intel.
+You can replace -faltivec with -msse2 on intel. Might requires -O3 to inline.

@@ -1,3 +1,4 @@
+#define _XOPEN_SOURCE 600
 #include <cstdio>
 #include <cstdlib>
 #include <cassert>
@@ -6,7 +7,7 @@
 #include <algorithm>
 #include <archutils/Darwin/VectorHelper.h>
 
-#ifndef __APPLE_CC__
+#if 0
 # error This depends on OS X and Apple's gcc.
 #endif
 #ifndef USE_VEC
@@ -15,6 +16,19 @@
 #define SCALE(x, l1, h1, l2, h2)	(((x) - (l1)) * ((h2) - (l2)) / ((h1) - (l1)) + (l2))
 
 using namespace std;
+
+// This requires that allocated memory be 16 byte aligned. Apple's new
+// (and malloc) ensures this but most others only ensure that the
+// memory is type size aligned. Hack in posix_memalign. We could also
+// override the global new, but that's even more hassle.
+#ifdef __APPLE_CC__
+# define NEW(t,s) new t[(s)]
+# define DELETE(x) delete[] x
+#else
+static void *pStupid;
+# define NEW(t,s) (posix_memalign(&pStupid, 16, s*sizeof(t)), (t *)pStupid)
+# define DELETE(x) free((x))
+#endif
 
 // The reference values.
 static void ScalarWrite( int32_t *pDestBuf, const int16_t *pSrcBuf, unsigned iSize, int iVol )
@@ -96,12 +110,9 @@ static bool TestWrite( int16_t *pSrcBuf, int32_t *pDestBuf, int32_t *pRefBuf, si
 static bool CheckAlignedWrite()
 {
 	const size_t size = 1024;
-	int16_t *pSrcBuf = new int16_t[size];
-	int32_t *pDestBuf = new int32_t[size];
-	int32_t *pRefBuf = new int32_t[size];
-	assert( (intptr_t(pSrcBuf)  & 0xF) == 0 );
-	assert( (intptr_t(pDestBuf) & 0xF) == 0 );
-	assert( (intptr_t(pRefBuf)  & 0xF) == 0 );
+	int16_t *pSrcBuf  = NEW( int16_t, size );
+	int32_t *pDestBuf = NEW( int32_t, size );
+	int32_t *pRefBuf  = NEW( int32_t, size );
 	bool ret = true;
 	size_t s;
 
@@ -113,21 +124,18 @@ static bool CheckAlignedWrite()
 	}
 	if( !ret )
 		Diagnostic( pDestBuf, pRefBuf, s );
-	delete[] pSrcBuf;
-	delete[] pDestBuf;
-	delete[] pRefBuf;
+	DELETE( pSrcBuf );
+	DELETE( pDestBuf );
+	DELETE( pRefBuf );
 	return ret;
 }
 
 static bool CheckMisalignedSrcWrite()
 {
 	const size_t size = 1024;
-	int16_t *pSrcBuf = new int16_t[size];
-	int32_t *pDestBuf = new int32_t[size];
-	int32_t *pRefBuf = new int32_t[size];
-	assert( (intptr_t(pSrcBuf)  & 0xF) == 0 );
-	assert( (intptr_t(pDestBuf) & 0xF) == 0 );
-	assert( (intptr_t(pRefBuf)  & 0xF) == 0 );
+	int16_t *pSrcBuf  = NEW( int16_t, size );
+	int32_t *pDestBuf = NEW( int32_t, size );
+	int32_t *pRefBuf  = NEW( int32_t, size );
 	bool ret = true;
 
 	for( int j = 0; j < 8 && ret; ++j )
@@ -141,21 +149,18 @@ static bool CheckMisalignedSrcWrite()
 		if( !ret )
 			Diagnostic( pDestBuf, pRefBuf, s );
 	}
-	delete[] pSrcBuf;
-	delete[] pDestBuf;
-	delete[] pRefBuf;
+	DELETE( pSrcBuf );
+	DELETE( pDestBuf );
+	DELETE( pRefBuf );
 	return ret;
 }
 
 static bool CheckMisalignedDestWrite()
 {
 	const size_t size = 1024;
-	int16_t *pSrcBuf = new int16_t[size];
-	int32_t *pDestBuf = new int32_t[size];
-	int32_t *pRefBuf = new int32_t[size];
-	assert( (intptr_t(pSrcBuf)  & 0xF) == 0 );
-	assert( (intptr_t(pDestBuf) & 0xF) == 0 );
-	assert( (intptr_t(pRefBuf)  & 0xF) == 0 );
+	int16_t *pSrcBuf  = NEW( int16_t, size );
+	int32_t *pDestBuf = NEW( int32_t, size );
+	int32_t *pRefBuf  = NEW( int32_t, size );
 	bool ret = true;
 
 	for( int j = 0; j < 4 && ret; ++j )
@@ -169,21 +174,18 @@ static bool CheckMisalignedDestWrite()
 		if( !ret )
 			Diagnostic( pDestBuf+j, pRefBuf+j, s );
 	}
-	delete[] pSrcBuf;
-	delete[] pDestBuf;
-	delete[] pRefBuf;
+	DELETE( pSrcBuf );
+	DELETE( pDestBuf );
+	DELETE( pRefBuf );
 	return ret;
 }
 
 static bool CheckMisalignedBothWrite()
 {
 	const size_t size = 1024;
-	int16_t *pSrcBuf = new int16_t[size];
-	int32_t *pDestBuf = new int32_t[size];
-	int32_t *pRefBuf = new int32_t[size];
-	assert( (intptr_t(pSrcBuf)  & 0xF) == 0 );
-	assert( (intptr_t(pDestBuf) & 0xF) == 0 );
-	assert( (intptr_t(pRefBuf)  & 0xF) == 0 );
+	int16_t *pSrcBuf  = NEW( int16_t, size );
+	int32_t *pDestBuf = NEW( int32_t, size );
+	int32_t *pRefBuf  = NEW( int32_t, size );
 	bool ret = true;
 	size_t s;
 
@@ -200,9 +202,9 @@ static bool CheckMisalignedBothWrite()
 		if( !ret )
 			Diagnostic( pDestBuf+j, pRefBuf+j, s );
 	}
-	delete[] pSrcBuf;
-	delete[] pDestBuf;
-	delete[] pRefBuf;
+	DELETE( pSrcBuf );
+	DELETE( pDestBuf );
+	DELETE( pRefBuf );
 	return ret;
 }
 
@@ -225,12 +227,9 @@ template<typename T>
 static bool CheckAlignedRead()
 {
 	const size_t size = 1024;
-	int32_t *pSrcBuf = new int32_t[size];
-	T *pDestBuf = new T[size];
-	T *pRefBuf = new T[size];
-	assert( (intptr_t(pSrcBuf)  & 0xF) == 0 );
-	assert( (intptr_t(pDestBuf) & 0xF) == 0 );
-	assert( (intptr_t(pRefBuf)  & 0xF) == 0 );
+	int32_t *pSrcBuf = NEW( int32_t, size );
+	T *pDestBuf      = NEW( T, size );
+	T *pRefBuf       = NEW( T, size );
 	RandBuffer( pSrcBuf, size );
 	Vector::FastSoundRead( pDestBuf, pSrcBuf, size );
 	ScalarRead( pRefBuf, pSrcBuf, size );
@@ -238,9 +237,9 @@ static bool CheckAlignedRead()
 
 	if( !ret )
 		Diagnostic( pDestBuf, pRefBuf, size );
-	delete[] pSrcBuf;
-	delete[] pDestBuf;
-	delete[] pRefBuf;
+	DELETE( pSrcBuf );
+	DELETE( pDestBuf );
+	DELETE( pRefBuf );
 	return ret;
 }
 
