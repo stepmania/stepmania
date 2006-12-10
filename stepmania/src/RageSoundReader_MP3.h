@@ -18,6 +18,7 @@ public:
 	int SetPosition_Accurate( int iSample );
 	int SetPosition_Fast( int iSample );
 	int Read( char *pBuf, int iFrames );
+	unsigned GetNumChannels() const { return Channels; }
 	int GetSampleRate() const { return SampleRate; }
 	int GetNextSourceFrame() const;
 

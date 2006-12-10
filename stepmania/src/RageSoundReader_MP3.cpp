@@ -743,29 +743,22 @@ static void mono_to_stereo( char *dst, const char *src, unsigned len )
 
 int RageSoundReader_MP3::Read( char *buf, int iFrames )
 {
-	uint32_t iFramesWritten = 0;
-	uint32_t bw = 0;
+	int iFramesWritten = 0;
 
-	unsigned len = iFrames * sizeof(int16_t) * GetNumChannels();
-	while( bw < len )
+	while( iFrames > 0 )
 	{
 		if( mad->outleft > 0 )
 		{
-			/* Ratio of input bytes to output bytes. */
-			const int Ratio = Channels == 1? 2:1;
+			int iFramesToCopy = min( iFrames, int(mad->outleft / (sizeof(int16_t) * GetNumChannels())) );
+			const int iBytesToCopy = iFramesToCopy * sizeof(int16_t) * GetNumChannels();
 
-			/* Input bytes to be copied: */
-			const unsigned cpysize = min( (len - bw)/Ratio, mad->outleft );
+			memcpy( buf, mad->outbuf + mad->outpos, iBytesToCopy );
 
-			if( Channels == 1 )
-				mono_to_stereo( (char *) buf + bw, (const char *) mad->outbuf + mad->outpos, cpysize );
-			else
-				memcpy( buf + bw, mad->outbuf + mad->outpos, cpysize );
-
-			bw += cpysize * Ratio;
-			iFramesWritten += (cpysize * Ratio) / (sizeof(int16_t) * GetNumChannels());
-			mad->outpos += cpysize;
-			mad->outleft -= cpysize;
+			buf += iBytesToCopy;
+			iFrames -= iFramesToCopy;
+			iFramesWritten += iFramesToCopy;
+			mad->outpos += iBytesToCopy;
+			mad->outleft -= iBytesToCopy;
 			continue;
 		}
 
