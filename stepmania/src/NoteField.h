@@ -30,6 +30,8 @@ public:
 		int iDrawDistanceBeforeTargetsPixels );
 	virtual void Unload();
 
+	virtual void HandleMessage( const Message &msg );
+
 	// This is done automatically by Init(), but can be re-called explicitly if the
 	// note skin changes.
 	void CacheAllUsedNoteSkins();
@@ -86,6 +88,10 @@ protected:
 
 	// decorations, mostly used in MODE_EDIT
 	Sprite		m_sprBoard;
+	float		m_fBoardOffsetPixels;
+	float		m_fCurrentBeatLastUpdate;	// -1 on first update
+	float		m_fYPosCurrentBeatLastUpdate;	// -1 on first update
+
 	Sprite		m_sprBeatBars;	// 4 frames: Measure, 4th, 8th, 16th
 	BitmapText	m_textMeasureNumber;
 	Quad		m_rectMarkerBar;

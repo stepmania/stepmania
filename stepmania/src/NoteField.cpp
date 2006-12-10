@@ -39,6 +39,11 @@ NoteField::NoteField()
 	m_sprBoard.Load( THEME->GetPathG("NoteField","board") );
 	m_sprBoard.StopAnimating();
 
+	m_fBoardOffsetPixels = 0;
+	m_fCurrentBeatLastUpdate = -1;
+	m_fYPosCurrentBeatLastUpdate = -1;
+	this->SubscribeToMessage( Message_CurrentSongChanged );
+
 	m_sprBeatBars.Load( THEME->GetPathG("NoteField","bars") );
 	m_sprBeatBars.StopAnimating();
 
@@ -173,6 +178,26 @@ void NoteField::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
 
+	m_sprBoard.Update( fDeltaTime );
+
+	// update m_fBoardOffsetPixels, m_fCurrentBeatLastUpdate, m_fYPosCurrentBeatLastUpdate
+	const float fCurrentBeat = GAMESTATE->m_fSongBeat;
+	if( m_fCurrentBeatLastUpdate != -1 )
+	{
+		const float fYOffsetLast	= ArrowEffects::GetYOffset( m_pPlayerState, 0, m_fCurrentBeatLastUpdate );
+		const float fYPosLast		= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffsetLast, m_fYReverseOffsetPixels );
+		const float fPixelDifference = fYPosLast - m_fYPosCurrentBeatLastUpdate;
+	
+		//LOG->Trace( "speed = %f, %f, %f, %f, %f, %f", fSpeed, fYOffsetAtCurrent, fYOffsetAtNext, fSecondsAtCurrent, fSecondsAtNext, fPixelDifference, fSecondsDifference );
+
+		m_fBoardOffsetPixels += fPixelDifference;
+		wrap( m_fBoardOffsetPixels, m_sprBoard.GetUnzoomedHeight() );
+	}
+	m_fCurrentBeatLastUpdate = fCurrentBeat;
+	const float fYOffsetCurrent	= ArrowEffects::GetYOffset( m_pPlayerState, 0, m_fCurrentBeatLastUpdate );
+	m_fYPosCurrentBeatLastUpdate	= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffsetCurrent, m_fYReverseOffsetPixels );
+
+
 	m_rectMarkerBar.Update( fDeltaTime );
 
 	NoteDisplayCols *cur = m_pCurDisplay;
@@ -278,38 +303,29 @@ void NoteField::DrawBeatBar( const float fBeat )
 
 void NoteField::DrawBoard( int iDrawDistanceAfterTargetsPixels, int iDrawDistanceBeforeTargetsPixels )
 {
-	const float fYOffsetAt0		= ArrowEffects::GetYOffset( m_pPlayerState, 0, GAMESTATE->m_fSongBeat );
-	const float fYOffsetAtNeg1	= ArrowEffects::GetYOffset( m_pPlayerState, 0, GAMESTATE->m_fSongBeat-1 );
-	const float fYPosAt0		= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffsetAt0, m_fYReverseOffsetPixels );
-	const float fYPosAtNeg1		= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffsetAtNeg1, m_fYReverseOffsetPixels );
-	const float fBeatSpacingPixels = fYPosAtNeg1 - fYPosAt0;
+	const float fYPosAt0		= ArrowEffects::GetYPos(    m_pPlayerState, 0, 0, m_fYReverseOffsetPixels );	
 
-	float fBeat = GAMESTATE->m_fSongBeat;
-	float fPixels = fBeat * fBeatSpacingPixels;
-	
 	// Draw the board centered on fYPosAt0 so that the board doesn't slide as the draw distance changes with modifiers.
 	
 	m_sprBoard.SetY( fYPosAt0 );
 	RectF rect = *m_sprBoard.GetCurrentTextureCoordRect();
 	const float fBoardGraphicHeightPixels = m_sprBoard.GetUnzoomedHeight();
-	float fTexCoordOffset = fPixels / fBoardGraphicHeightPixels;
+	float fTexCoordOffset = m_fBoardOffsetPixels / fBoardGraphicHeightPixels;
 	{
 		// top half
 		const float fHeight = iDrawDistanceBeforeTargetsPixels;
 		m_sprBoard.ZoomToHeight( fHeight );
-		wrap( fPixels, fHeight );
 
 		rect.top = -fTexCoordOffset-(fHeight/fBoardGraphicHeightPixels);
 		rect.bottom = -fTexCoordOffset;
 		m_sprBoard.SetCustomTextureRect( rect );
 		m_sprBoard.SetVertAlign( VertAlign_Bottom );
-		m_sprBoard.SetFadeTop( 0.2f );
+		m_sprBoard.SetFadeTop( FADE_BEFORE_TARGETS_PERCENT );
 		m_sprBoard.Draw();
 	}
 	{
 		const float fHeight = -iDrawDistanceAfterTargetsPixels;
 		m_sprBoard.ZoomToHeight( fHeight );
-		wrap( fPixels, fHeight );
 
 		rect.top = -fTexCoordOffset;
 		rect.bottom = -fTexCoordOffset+(fHeight/fBoardGraphicHeightPixels);
@@ -875,6 +891,18 @@ void NoteField::Step( int iCol, TapNoteScore score ) { m_pCurDisplay->m_Receptor
 void NoteField::SetPressed( int iCol ) { m_pCurDisplay->m_ReceptorArrowRow.SetPressed( iCol ); }
 void NoteField::DidTapNote( int iCol, TapNoteScore score, bool bBright ) { m_pCurDisplay->m_GhostArrowRow.DidTapNote( iCol, score, bBright ); }
 void NoteField::DidHoldNote( int iCol, HoldNoteScore score, bool bBright ) { m_pCurDisplay->m_GhostArrowRow.DidHoldNote( iCol, score, bBright ); }
+
+void NoteField::HandleMessage( const Message &msg )
+{
+	if( msg == Message_CurrentSongChanged )
+	{
+		m_fCurrentBeatLastUpdate = -1;
+		m_fYPosCurrentBeatLastUpdate = -1;
+	}
+
+	ActorFrame::HandleMessage( msg );
+}
+
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
