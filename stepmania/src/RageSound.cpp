@@ -288,7 +288,12 @@ int RageSound::GetData( char *pBuffer, int iFrames )
 
 		fRate = m_pSource->GetStreamToSourceRatio();
 		int iNewSourceFrame = m_pSource->GetNextSourceFrame();
-		while( iGotFrames == 0 )
+
+		/* m_pSource->Read() may return 0, which means "try again immediately".  As
+		 * a failsafe, only try this a finite number of times.  Use a high number,
+		 * because in principle each filter in the stack may cause this. */
+		int iTries = 100;
+		while( iGotFrames == 0 && --iTries )
 		{
 			iGotFrames = m_pSource->Read( pBuffer, iFrames );
 			if( iGotFrames == RageSoundReader::ERROR )
@@ -306,6 +311,14 @@ int RageSound::GetData( char *pBuffer, int iFrames )
 			}
 
 			ASSERT_M( iGotFrames >= 0, ssprintf("%i", iGotFrames) ); // unhandled error condition
+		}
+
+		if( iTries == 0 )
+		{
+			Fail( "Read() busy looping" );
+
+			/* Pretend we got EOF. */
+			return 0;
 		}
 
 		/* If we didn't get any data, don't update iSourceFrame, so we just keep
