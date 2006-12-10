@@ -182,7 +182,7 @@ void RageSoundReader_Chain::Finish()
 	sort( m_aSounds.begin(), m_aSounds.end() );
 }
 
-int RageSoundReader_Chain::SetPosition_Accurate( int iFrame )
+int RageSoundReader_Chain::SetPosition( int iFrame )
 {
 	/* Clear m_apActiveSounds. */
 	while( !m_apActiveSounds.empty() )
@@ -206,7 +206,7 @@ int RageSoundReader_Chain::SetPosition_Accurate( int iFrame )
 		RageSoundReader *pReader = pSound->pSound;
 
 		int iOffsetFrames = iFrame - iOffsetFrame;
-		if( iOffsetFrames > 0 && pReader->SetPosition_Accurate(iOffsetFrames) == 0 )
+		if( iOffsetFrames > 0 && pReader->SetPosition(iOffsetFrames) == 0 )
 		{
 			/* We're past the end of this sound. */
 			ReleaseSound( pSound );
