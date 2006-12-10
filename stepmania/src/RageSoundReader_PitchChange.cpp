@@ -40,9 +40,16 @@ int RageSoundReader_PitchChange::Read( char *pBuf, int iFrames )
 	 * speed changer new ratio to put a new ratio into effect, tell the resampler
 	 * to do the same.  This way, changes to the ratios will take effect in both
 	 * the resampler and speed changer as closely together as possible. */
+	float fRate = GetStreamToSourceRatio();
+
 	m_pSpeedChange->SetSpeedRatio( m_fSpeedRatio / m_fPitchRatio );
 	if( m_pSpeedChange->NextReadWillStep() )
 		m_pResample->SetRate( m_fPitchRatio );
+
+	/* We just applied a new speed, and it caused the ratio to change.  Return
+	 * no data, so the caller can see the new ratio. */
+	if( fRate != GetStreamToSourceRatio() )
+		return 0;
 
 	return RageSoundReader_Filter::Read( pBuf, iFrames );
 }
