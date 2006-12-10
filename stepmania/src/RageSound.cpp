@@ -825,10 +825,17 @@ public:
 		return 0;
 	}
 
+	static int SetProperty( T* p, lua_State *L )
+	{
+		LuaHelpers::Push( L, p->SetProperty(SArg(1), FArg(2)) );
+		return 1;
+	}
+
 	LunaRageSound()
 	{
 		ADD_METHOD( pitch );
 		ADD_METHOD( speed );
+		ADD_METHOD( SetProperty );
 	}
 };
 
