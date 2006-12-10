@@ -332,9 +332,10 @@ int RageSoundReader_Chain::Read( char *pBuffer, int iFrames )
 		 * directly from the source into the destination.  This is to optimize
 		 * the common case of having one BGM track and no autoplay sounds. */
 		iFrames = m_apActiveSounds.front()->pSound->Read( (char *) pBuffer, iFrames );
-		if( iFrames == 0 )
+		if( iFrames < 0 )
 			ReleaseSound( m_apActiveSounds.front() );
-		m_iCurrentFrame += iFrames;
+		if( iFrames > 0 )
+			m_iCurrentFrame += iFrames;
 		return iFrames;
 	}
 
@@ -358,9 +359,8 @@ int RageSoundReader_Chain::Read( char *pBuffer, int iFrames )
 		ASSERT( pSound->GetNumChannels() == m_iChannels ); // guaranteed by ActivateSound and Finish
 		int iSamples = min( iFrames * pSound->GetNumChannels(), ARRAYLEN(Buffer) );
 		int iFramesRead = pSound->Read( (char *) Buffer, iSamples/pSound->GetNumChannels() );
-		if( iFramesRead == -1 || iFramesRead == 0 )
+		if( iFramesRead < 0 )
 		{
-			/* The sound is at EOF.  Release it. */
 			ReleaseSound( m_apActiveSounds[i] );
 			continue;
 		}
@@ -374,6 +374,9 @@ int RageSoundReader_Chain::Read( char *pBuffer, int iFrames )
 	/* Read mixed frames into the output buffer. */
 	mix.read( (int16_t *) pBuffer );
 	m_iCurrentFrame += iMaxFramesRead;
+
+	if( iMaxFramesRead == 0 )
+		return END_OF_FILE;
 	return iMaxFramesRead;
 }
 
