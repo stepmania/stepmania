@@ -1,7 +1,4 @@
-#include "global.h"
-#include <inttypes.h>
 #include "VectorHelper.h"
-#include "RageUtil.h"
 #include <sys/sysctl.h>
 
 #if defined(USE_VEC)
@@ -238,9 +235,6 @@ void Vector::FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, s
  */
 void Vector::FastSoundRead( int16_t *dest, const int32_t *src, unsigned size )
 {
-	ASSERT_M( (intptr_t(dest) & 0xF) == 0, ssprintf("dest = %p", dest) );
-	ASSERT_M( (intptr_t(src) & 0xF) == 0, ssprintf("src = %p", src) );
-	
 	vSInt32 zero = (vSInt32)( 0 );
 	vUInt32 shift = (vUInt32)( 8 );
 	
@@ -360,9 +354,6 @@ void Vector::FastSoundRead( int16_t *dest, const int32_t *src, unsigned size )
  */
 void Vector::FastSoundRead( float *dest, const int32_t *src, unsigned size )
 {
-	ASSERT_M( (unsigned(dest) &0xF) == 0, ssprintf("dest = %p", dest) );
-	ASSERT_M( (unsigned(src) & 0xF) == 0, ssprintf("src = %p", src) );
-	
 	/* m = -32768; M = 32767
 	 * (x-2^8*m)(1-(-1))/(2^8*M-2^8*m)+(-1)
 	 * = ((x-2^8*m)/(2^8))*(2/(M-m))+(-1)
@@ -433,9 +424,6 @@ inline void Write( T load, int32_t *&dest, const int16_t *&src, unsigned &size, 
 
 void Vector::FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, short volume )
 {
-        if( size == 0 )
-                return;
- 	ASSERT_M( (intptr_t(dest) & 0x7) == 0, ssprintf("dest = %p", dest) );
 	while( (intptr_t(dest) & 0xF) && size )
         {
                 // Misaligned stores are slow.
@@ -455,9 +443,6 @@ void Vector::FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, s
 
 void Vector::FastSoundRead( int16_t *dest, const int32_t *src, unsigned size )
 {
-	ASSERT_M( (intptr_t(dest) & 0xF) == 0, ssprintf("dest = %p", dest) );
-	ASSERT_M( (intptr_t(src) & 0xF) == 0, ssprintf("src = %p", src) );
-	
 	// Both dest and src are aligned. Still need to watch out for register spill.
 	__m128i zero = _mm_setzero_si128();
 	while( size >= 8 )
@@ -513,9 +498,6 @@ void Vector::FastSoundRead( int16_t *dest, const int32_t *src, unsigned size )
 
 void Vector::FastSoundRead( float *dest, const int32_t *src, unsigned size )
 {
-	ASSERT_M( (unsigned(dest) &0xF) == 0, ssprintf("dest = %p", dest) );
-	ASSERT_M( (unsigned(src) & 0xF) == 0, ssprintf("src = %p", src) );
-
 	/* m = -32768; M = 32767
 	 * (x-2^8*m)(1-(-1))/(2^8*M-2^8*m)+(-1)
 	 * (x-2^8*m)/(2^7*(M-m))+(-1)

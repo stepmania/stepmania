@@ -1,6 +1,8 @@
 #ifndef VECTOR_HELPER_H
 #define VECTOR_HELPER_H
 
+#include <inttypes.h>
+
 #if ( defined(__VEC__) || (defined(__SSE__) && defined(__SSE2__)) ) && defined(__GNUC__)
 namespace Vector
 {
