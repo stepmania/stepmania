@@ -29,6 +29,7 @@
 #include "arch/ArchHooks/ArchHooks.h"
 #include "RageSoundUtil.h"
 
+#include "RageSoundReader_Pan.h"
 #include "RageSoundReader_PitchChange.h"
 #include "RageSoundReader_Preload.h"
 #include "RageSoundReader_Resample_Good.h"
@@ -45,7 +46,6 @@ RageSoundParams::RageSoundParams():
 	m_LengthSeconds = -1;
 	m_FadeLength = 0;
 	m_Volume = 1.0f;
-	m_Balance = 0; // center
 	m_fPitch = 1.0f;
 	m_fSpeed = 1.0f;
 	m_bAccurateSync = false;
@@ -56,6 +56,7 @@ RageSoundParams::RageSoundParams():
 RageSoundLoadParams::RageSoundLoadParams()
 {
 	m_bSupportRateChanging = false;
+	m_bSupportPan = false;
 }
 
 RageSound::RageSound():
@@ -224,6 +225,9 @@ bool RageSound::Load( RString sSoundFilePath, bool bPrecache, const RageSoundLoa
 		RageSoundReader_PitchChange *pRate = new RageSoundReader_PitchChange( m_pSource );
 		m_pSource = pRate;
 	}
+
+	if( pParams->m_bSupportPan )
+		m_pSource = new RageSoundReader_Pan( m_pSource );
 
 	m_sFilePath = sSoundFilePath;
 
@@ -417,9 +421,6 @@ bool RageSound::GetDataToPlay( int16_t *pBuffer, int iFrames, int64_t &iStreamFr
 				ASSERT(0);
 			}
 		}
-
-		/* This block goes from iStreamFrame to iStreamFrame+iGotFrames. */
-		RageSoundUtil::Pan( pBuffer, iGotFrames, m_Param.m_Balance );
 
 		iFramesStored += iGotFrames;
 		iFrames -= iGotFrames;

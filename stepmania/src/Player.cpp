@@ -291,7 +291,9 @@ void Player::Init(
 	m_sMessageToSendOnStep = ssprintf("StepP%d",pn+1);
 
 
-	m_soundMine.Load( THEME->GetPathS(sType,"mine"), true );
+	RageSoundLoadParams SoundParams;
+	SoundParams.m_bSupportPan = true;
+	m_soundMine.Load( THEME->GetPathS(sType,"mine"), true, &SoundParams );
 
 	/* Attacks can be launched in course modes and in battle modes.  They both come
 	 * here to play, but allow loading a different sound for different modes. */
@@ -299,22 +301,20 @@ void Player::Init(
 	{
 	case PLAY_MODE_RAVE:
 	case PLAY_MODE_BATTLE:
-		m_soundAttackLaunch.Load( THEME->GetPathS(sType,"battle attack launch"), true );
-		m_soundAttackEnding.Load( THEME->GetPathS(sType,"battle attack ending"), true );
+		m_soundAttackLaunch.Load( THEME->GetPathS(sType,"battle attack launch"), true, &SoundParams );
+		m_soundAttackEnding.Load( THEME->GetPathS(sType,"battle attack ending"), true, &SoundParams );
 		break;
 	default:
-		m_soundAttackLaunch.Load( THEME->GetPathS(sType,"course attack launch"), true );
-		m_soundAttackEnding.Load( THEME->GetPathS(sType,"course attack ending"), true );
+		m_soundAttackLaunch.Load( THEME->GetPathS(sType,"course attack launch"), true, &SoundParams );
+		m_soundAttackEnding.Load( THEME->GetPathS(sType,"course attack ending"), true, &SoundParams );
 		break;
 	}
 
 
-	RageSoundParams p;
-	p.m_Balance = GameSoundManager::GetPlayerBalance( pn );
-
-	m_soundMine.SetParams( p );
-	m_soundAttackLaunch.SetParams( p );
-	m_soundAttackEnding.SetParams( p );
+	float fBalance = GameSoundManager::GetPlayerBalance( pn );
+	m_soundMine.SetProperty( "Pan", fBalance );
+	m_soundAttackLaunch.SetProperty( "Pan", fBalance );
+	m_soundAttackEnding.SetProperty( "Pan", fBalance );
 
 	if( m_pCombo )
 	{
@@ -465,15 +465,17 @@ void Player::Load()
 	RString sSongDir = pSong->GetSongDir();
 	m_vKeysounds.resize( pSong->m_vsKeysoundFile.size() );
 
-	RageSoundParams p;
-	p.m_Balance = GameSoundManager::GetPlayerBalance( pn );
+	RageSoundLoadParams SoundParams;
+	SoundParams.m_bSupportPan = true;
+
+	float fBalance = GameSoundManager::GetPlayerBalance( pn );
 	for( unsigned i=0; i<m_vKeysounds.size(); i++ )
 	{
 		RString sKeysoundFilePath = sSongDir + pSong->m_vsKeysoundFile[i];
 		RageSound& sound = m_vKeysounds[i];
 		if( sound.GetLoadedFilePath() != sKeysoundFilePath )
-			sound.Load( sKeysoundFilePath, true );
-		sound.SetParams( p );
+			sound.Load( sKeysoundFilePath, true, &SoundParams );
+		sound.SetProperty( "Pan", fBalance );
 	}
 
 	if( m_pPlayerStageStats )

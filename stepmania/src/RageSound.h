@@ -41,9 +41,6 @@ struct RageSoundParams
 
 	float m_Volume;	// multiplies with SOUNDMAN->GetMixVolume()
 
-	/* Pan: -1, left; 1, right */
-	float m_Balance;
-
 	/* Number of samples input and output when changing speed.  Currently,
 	 * this is either 1/1, 5/4 or 4/5. */
 	float m_fPitch;
@@ -79,6 +76,9 @@ struct RageSoundLoadParams
 	/* If true, speed and pitch changes will be supported for this sound, at a
 	 * small memory penalty if not used. */
 	bool m_bSupportRateChanging;
+
+	/* If true, panning will be supported for this sound. */
+	bool m_bSupportPan;
 };
 
 class RageSound: public RageSoundBase
