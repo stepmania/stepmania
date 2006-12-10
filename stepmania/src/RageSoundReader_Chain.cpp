@@ -303,8 +303,15 @@ float RageSoundReader_Chain::GetStreamToSourceRatio() const
 
 /* As we iterate through the sound tree, we'll find that we need data from different
  * sounds; a sound may be needed by more than one other sound. */
-int RageSoundReader_Chain::ReadBlock( int16_t *pBuffer, int iFrames )
+int RageSoundReader_Chain::Read( char *pBuffer, int iFrames )
 {
+	while( m_iNextSound < m_aSounds.size() && m_iCurrentFrame == m_aSounds[m_iNextSound].GetOffsetFrame(m_iActualSampleRate) )
+	{
+		Sound *pSound = &m_aSounds[m_iNextSound];
+		ActivateSound( pSound );
+		++m_iNextSound;
+	}
+
 	/* Clamp iFrames to the beginning of the next sound we need to start. */
 	if( m_iNextSound < m_aSounds.size() )
 	{
@@ -327,6 +334,7 @@ int RageSoundReader_Chain::ReadBlock( int16_t *pBuffer, int iFrames )
 		iFrames = m_apActiveSounds.front()->pSound->Read( (char *) pBuffer, iFrames );
 		if( iFrames == 0 )
 			ReleaseSound( m_apActiveSounds.front() );
+		m_iCurrentFrame += iFrames;
 		return iFrames;
 	}
 
@@ -335,6 +343,7 @@ int RageSoundReader_Chain::ReadBlock( int16_t *pBuffer, int iFrames )
 		/* If we have more sounds ahead of us, pretend we read the entire block, since
 		 * there's silence in between.  Otherwise, we're at EOF. */
 		memset( pBuffer, 0, iFrames * m_iChannels * sizeof(int16_t) );
+		m_iCurrentFrame += iFrames;
 		return iFrames;
 	}
 
@@ -364,26 +373,8 @@ int RageSoundReader_Chain::ReadBlock( int16_t *pBuffer, int iFrames )
 
 	/* Read mixed frames into the output buffer. */
 	mix.read( (int16_t *) pBuffer );
+	m_iCurrentFrame += iMaxFramesRead;
 	return iMaxFramesRead;
-}
-
-
-int RageSoundReader_Chain::Read( char *pBuffer, int iFrames )
-{
-	while( m_iNextSound < m_aSounds.size() && m_iCurrentFrame == m_aSounds[m_iNextSound].GetOffsetFrame(m_iActualSampleRate) )
-	{
-		Sound *pSound = &m_aSounds[m_iNextSound];
-		ActivateSound( pSound );
-		++m_iNextSound;
-	}
-
-	int iFramesRead = ReadBlock( (int16_t *) pBuffer, iFrames );
-	if( iFramesRead == -1 )
-		return -1;
-
-	m_iCurrentFrame += iFramesRead;
-
-	return iFramesRead;
 }
 
 int RageSoundReader_Chain::GetLength() const

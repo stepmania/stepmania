@@ -43,7 +43,6 @@ public:
 	float GetStreamToSourceRatio() const;
 
 private:
-	int ReadBlock( int16_t *pBuffer, int iFrames );
 	int GetSampleRateInternal() const;
 
 	int m_iPreferredSampleRate;
