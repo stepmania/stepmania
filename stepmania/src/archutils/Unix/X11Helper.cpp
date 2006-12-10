@@ -31,7 +31,7 @@ void X11Helper::CloseXConnection()
 
 bool X11Helper::MakeWindow( Window &win, int screenNum, int depth, Visual *visual, int width, int height, bool overrideRedirect )
 {
-	if( !Dpy || !Win )
+	if( !Dpy )
 		return false;
 
 	XSetWindowAttributes winAttribs;
