@@ -344,7 +344,9 @@ RageModelGeometry.cpp RageModelGeometry.h RageSound.cpp RageSound.h RageSoundMan
 RageSoundUtil.cpp RageSoundUtil.h RageSoundMixBuffer.cpp RageSoundMixBuffer.h \
 RageSoundPosMap.cpp RageSoundPosMap.h RageSoundReader.cpp RageSoundReader.h RageSoundReader_FileReader.cpp RageSoundReader_FileReader.h \
 RageSoundReader_Filter.h \
+RageSoundReader_ChannelSplit.cpp RageSoundReader_ChannelSplit.h \
 RageSoundReader_PitchChange.cpp RageSoundReader_PitchChange.h \
+RageSoundReader_Pan.cpp RageSoundReader_Pan.h \
 RageSoundReader_Preload.cpp RageSoundReader_Preload.h \
 RageSoundReader_Resample_Good.cpp RageSoundReader_Resample_Good.h \
 RageSoundReader_SpeedChange.cpp RageSoundReader_SpeedChange.h \
@@ -494,6 +496,7 @@ test_audio_readers_SOURCES = \
 		RageSoundUtil.cpp RageSoundUtil.h RageSoundMixBuffer.cpp RageSoundMixBuffer.h \
 		RageSoundReader.cpp RageSoundReader.h \
 		RageSoundReader_FileReader.cpp RageSoundReader_FileReader.h \
+		RageSoundReader_Pan.cpp RageSoundReader_Pan.h \
 		RageSoundReader_Preload.cpp RageSoundReader_Preload.h \
 		RageSoundReader_Resample_Good.cpp RageSoundReader_Resample_Good.h \
 		RageSoundReader_Chain.cpp RageSoundReader_Chain.h
