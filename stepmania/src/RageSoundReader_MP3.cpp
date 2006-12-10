@@ -627,6 +627,7 @@ int RageSoundReader_MP3::resync()
 RageSoundReader_MP3::RageSoundReader_MP3()
 {
 	mad = new madlib_t;
+	m_bAccurateSync = false;
 
 	mad_stream_init( &mad->Stream );
 	mad_frame_init( &mad->Frame );
@@ -710,6 +711,7 @@ RageSoundReader_MP3 *RageSoundReader_MP3::Copy() const
 	bool b = ret->file.Open( filename );
 	ASSERT( b );
 
+	ret->m_bAccurateSync = m_bAccurateSync;
 	ret->mad->filesize = mad->filesize;
 	ret->mad->bitrate = mad->bitrate;
 	ret->SampleRate = SampleRate;
@@ -1004,33 +1006,46 @@ int RageSoundReader_MP3::SetPosition_estimate( int iFrame )
 	return iFrame;
 }
 
-int RageSoundReader_MP3::SetPosition_Accurate( int iFrame )
+int RageSoundReader_MP3::SetPosition( int iFrame )
 {
-	/* Seek using our own internal (accurate) TOC. */
-	int ret = SetPosition_toc( iFrame, false );
-	if( ret <= 0 )
-		return ret; /* it set the error */
-	
-	/* Align exactly. */
-	return SetPosition_hard( iFrame );
+	if( m_bAccurateSync )
+	{
+		/* Seek using our own internal (accurate) TOC. */
+		int ret = SetPosition_toc( iFrame, false );
+		if( ret <= 0 )
+			return ret; /* it set the error */
+		
+		/* Align exactly. */
+		return SetPosition_hard( iFrame );
+	}
+	else
+	{
+		/* Rewinding is always fast and accurate, and SetPosition_estimate is bad at 0. */
+		if( !iFrame )
+		{
+			MADLIB_rewind();
+			return 0; /* ok */
+		}
+
+		/* We can do a fast jump in VBR with Xing with more accuracy than without Xing. */
+		if( mad->has_xing )
+			return SetPosition_toc( iFrame, true );
+
+		/* Guess.  This is only remotely accurate when we're not VBR, but also
+		 * do it if we have no Xing tag. */
+		return SetPosition_estimate( iFrame );
+	}
 }
 
-int RageSoundReader_MP3::SetPosition_Fast( int iFrame )
+bool RageSoundReader_MP3::SetProperty( const RString &sProperty, float fValue )
 {
-	/* Rewinding is always fast and accurate, and SetPosition_estimate is bad at 0. */
-	if( !iFrame )
+	if( sProperty == "AccurateSync" )
 	{
-		MADLIB_rewind();
-		return 0; /* ok */
+		m_bAccurateSync = (fValue > 0.001f);
+		return true;
 	}
 
-	/* We can do a fast jump in VBR with Xing with more accuracy than without Xing. */
-	if( mad->has_xing )
-		return SetPosition_toc( iFrame, true );
-
-	/* Guess.  This is only remotely accurate when we're not VBR, but also
-	 * do it if we have no Xing tag. */
-	return SetPosition_estimate( iFrame );
+	return RageSoundReader_FileReader::SetProperty( sProperty, fValue );
 }
 
 int RageSoundReader_MP3::GetNextSourceFrame() const

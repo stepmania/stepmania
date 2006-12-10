@@ -15,7 +15,7 @@ bool RageSoundReader_Preload::PreloadSound( RageSoundReader *&pSound )
 	if( !pPreload->Open(pSound) )
 	{
 		/* Preload failed.  It read some data, so we need to rewind the reader. */
-		pSound->SetPosition_Fast( 0 );
+		pSound->SetPosition( 0 );
 		delete pPreload;
 		return false;
 	}
@@ -70,9 +70,8 @@ bool RageSoundReader_Preload::Open( RageSoundReader *pSource )
 			SetError(pSource->GetError());
 			return false;
 		}
-
-		if( !iCnt )
-			break; /* eof */
+		if( iCnt == END_OF_FILE )
+			break;
 
 		/* Add the buffer. */
 		m_Buffer.Get()->append( buffer, buffer+iCnt*iBytesPerFrame );
@@ -96,7 +95,7 @@ int RageSoundReader_Preload::GetLength_Fast() const
 	return GetLength();
 }
 
-int RageSoundReader_Preload::SetPosition_Accurate( int iFrame )
+int RageSoundReader_Preload::SetPosition( int iFrame )
 {
 	m_iPosition = iFrame;
 	m_iPosition = lrintf(m_iPosition / m_fRate);
@@ -108,11 +107,6 @@ int RageSoundReader_Preload::SetPosition_Accurate( int iFrame )
 	}
 
 	return iFrame;
-}
-
-int RageSoundReader_Preload::SetPosition_Fast( int iFrame )
-{
-	return SetPosition_Accurate( iFrame );
 }
 
 int RageSoundReader_Preload::GetNextSourceFrame() const

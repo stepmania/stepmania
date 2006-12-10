@@ -2304,8 +2304,8 @@ void ScreenEdit::TransitionEditState( EditState em )
 		RageSoundParams p;
 		p.m_fSpeed = GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
 		p.m_StartSecond = fStartSeconds;
-		p.m_bAccurateSync = true;
 		p.StopMode = RageSoundParams::M_CONTINUE;
+		m_soundMusic.SetProperty( "AccurateSync", true );
 		m_soundMusic.Play( &p );
 		break;
 	}

@@ -46,9 +46,6 @@ struct RageSoundParams
 	float m_fPitch;
 	float m_fSpeed;
 
-	/* If enabled, file seeking will prefer accuracy over speed. */
-	bool m_bAccurateSync;
-
 	/* Optional driver feature: time to actually start playing sounds.  If zero, or if not
 	 * supported, the sound will start immediately. */
 	RageTimer m_StartTime;

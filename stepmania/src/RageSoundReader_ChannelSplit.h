@@ -16,8 +16,7 @@ public:
 
 	virtual int GetLength() const;
 	virtual int GetLength_Fast() const;
-	virtual int SetPosition_Accurate( int iFrame );
-	virtual int SetPosition_Fast( int iFrame );
+	virtual int SetPosition( int iFrame );
 	virtual int Read( char *pBuf, int iFrames );
 	virtual int GetSampleRate() const;
 	virtual unsigned GetNumChannels() const;

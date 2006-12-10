@@ -675,20 +675,11 @@ int RageSoundReader_Resample_Good::GetLength_Fast() const
 }
 
 /* iFrame is in the destination rate.  Seek the source in its own sample rate. */
-int RageSoundReader_Resample_Good::SetPosition_Accurate( int iFrame )
+int RageSoundReader_Resample_Good::SetPosition( int iFrame )
 {
 	Reset();
 	iFrame = (int) SCALE( iFrame, 0, (int64_t) m_iSampleRate, 0, (int64_t) m_pSource->GetSampleRate() );
-	iFrame = m_pSource->SetPosition_Accurate( iFrame );
-	iFrame = (int) SCALE( iFrame, 0, (int64_t) m_pSource->GetSampleRate(), 0, (int64_t) m_iSampleRate );
-	return iFrame;
-}
-
-int RageSoundReader_Resample_Good::SetPosition_Fast( int iFrame )
-{
-	Reset();
-	iFrame = (int) SCALE( iFrame, 0, (int64_t) m_iSampleRate, 0, (int64_t) m_pSource->GetSampleRate() );
-	iFrame = m_pSource->SetPosition_Fast( iFrame );
+	iFrame = m_pSource->SetPosition( iFrame );
 	iFrame = (int) SCALE( iFrame, 0, (int64_t) m_pSource->GetSampleRate(), 0, (int64_t) m_iSampleRate );
 	return iFrame;
 }

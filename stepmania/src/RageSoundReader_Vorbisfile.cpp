@@ -142,7 +142,7 @@ int RageSoundReader_Vorbisfile::GetLength_Fast() const
 	return GetLength();
 }
 
-int RageSoundReader_Vorbisfile::SetPosition( int iFrame, bool accurate )
+int RageSoundReader_Vorbisfile::SetPosition( int iFrame )
 {
 	eof = false;
 

@@ -48,7 +48,6 @@ RageSoundParams::RageSoundParams():
 	m_Volume = 1.0f;
 	m_fPitch = 1.0f;
 	m_fSpeed = 1.0f;
-	m_bAccurateSync = false;
 	StopMode = M_AUTO;
 	m_bIsCriticalSound = false;
 }
@@ -154,8 +153,7 @@ class RageSoundReader_Silence: public RageSoundReader
 public:
 	int GetLength() const { return 0; }
 	int GetLength_Fast() const { return 0; }
-	int SetPosition_Accurate( int iFrame )  { return 0; }
-	int SetPosition_Fast( int iFrame ) { return 0; }
+	int SetPosition( int iFrame )  { return 0; }
 	int Read( char *buf, int iFrames ) { return 0; }
 	RageSoundReader *Copy() const { return new RageSoundReader_Silence; }
 	int GetSampleRate() const { return 44100; }
@@ -745,12 +743,7 @@ bool RageSound::SetPositionFrames( int iFrames )
 
 	int iSeekFrames = max( iFrames, 0 );
 
-	int iRet;
-	if( m_Param.m_bAccurateSync )
-		iRet = m_pSource->SetPosition_Accurate( iSeekFrames );
-	else
-		iRet = m_pSource->SetPosition_Fast( iSeekFrames );
-
+	int iRet = m_pSource->SetPosition( iSeekFrames );
 	if( iRet == -1 )
 	{
 		Fail( m_pSource->GetError() );

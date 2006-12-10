@@ -15,12 +15,12 @@ public:
 	void Close();
 	int GetLength() const { return GetLengthConst(false); }
 	int GetLength_Fast() const { return GetLengthConst(true); }
-	int SetPosition_Accurate( int iSample );
-	int SetPosition_Fast( int iSample );
+	int SetPosition( int iSample );
 	int Read( char *pBuf, int iFrames );
 	unsigned GetNumChannels() const { return Channels; }
 	int GetSampleRate() const { return SampleRate; }
 	int GetNextSourceFrame() const;
+	bool SetProperty( const RString &sProperty, float fValue );
 
 	RageSoundReader_MP3();
 	~RageSoundReader_MP3();
@@ -30,6 +30,7 @@ public:
 private:
 	int SampleRate;
 	int Channels;
+	bool m_bAccurateSync;
 
 	RString filename;
 	RageFile file;

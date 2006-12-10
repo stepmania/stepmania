@@ -289,24 +289,14 @@ int RageSoundReader_SpeedChange::Read( char *buf, int iFrames )
 /* We prefer to be able to seek precisely, so seeking to a position produces data
  * equal to what you'd get if you read data up to that point.  This filter can't do
  * that, because the exact selection of slices is dependent on the previous selection. */
-int RageSoundReader_SpeedChange::SetPosition_Accurate( int iFrame )
+int RageSoundReader_SpeedChange::SetPosition( int iFrame )
 {
 	Reset();
 	
 	int64_t iScaled = (int64_t(iFrame) * GetWindowSizeFrames()) / m_iDeltaFrames;
 	iFrame = (int) iScaled;
 
-	return RageSoundReader_Filter::SetPosition_Accurate( iFrame );
-}
-
-int RageSoundReader_SpeedChange::SetPosition_Fast( int iFrame )
-{
-	Reset();
-
-	int64_t iScaled = (int64_t(iFrame) * GetWindowSizeFrames()) / m_iDeltaFrames;
-	iFrame = (int) iScaled;
-
-	return RageSoundReader_Filter::SetPosition_Fast( iFrame );
+	return RageSoundReader_Filter::SetPosition( iFrame );
 }
 
 bool RageSoundReader_SpeedChange::SetProperty( const RString &sProperty, float fValue )

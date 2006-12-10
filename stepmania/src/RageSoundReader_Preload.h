@@ -15,8 +15,7 @@ public:
 	bool Open( RageSoundReader *pSource );
 	int GetLength() const;
 	int GetLength_Fast() const;
-	int SetPosition_Accurate( int iFrame );
-	int SetPosition_Fast( int iFrame );
+	int SetPosition( int iFrame );
 	int Read( char *pBuffer, int iLength );
 	int GetSampleRate() const { return m_iSampleRate; }
 	unsigned GetNumChannels() const { return m_iChannels; }

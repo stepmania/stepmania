@@ -62,7 +62,6 @@ public:
 
 int RageSoundReader_Split::GetLength() const { return m_pImpl->m_pSource->GetLength(); }
 int RageSoundReader_Split::GetLength_Fast() const { return m_pImpl->m_pSource->GetLength_Fast(); }
-int RageSoundReader_Split::SetPosition_Fast( int iFrame ) { return SetPosition_Accurate( iFrame ); }
 int RageSoundReader_Split::GetSampleRate() const { return m_pImpl->m_pSource->GetSampleRate(); }
 unsigned RageSoundReader_Split::GetNumChannels() const { return m_iNumOutputChannels; }
 bool RageSoundReader_Split::IsStreamingFromDisk() const { return m_pImpl->m_pSource->IsStreamingFromDisk(); }
@@ -97,7 +96,7 @@ RageSoundReader_Split::~RageSoundReader_Split()
 	RageSoundSplitterImpl::Release( m_pImpl );
 }
 
-int RageSoundReader_Split::SetPosition_Accurate( int iFrame )
+int RageSoundReader_Split::SetPosition( int iFrame )
 {
 	m_iPositionFrame = iFrame;
 	return iFrame;
@@ -174,7 +173,7 @@ int RageSoundSplitterImpl::ReadBuffer()
 
 	if( iMinFrameRequested != m_iBufferPositionFrames )
 	{
-		int iFrame = m_pSource->SetPosition_Accurate( iMinFrameRequested );
+		int iFrame = m_pSource->SetPosition( iMinFrameRequested );
 		m_iBufferPositionFrames = iFrame;
 		m_sBuffer.clear();
 	}

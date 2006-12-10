@@ -16,8 +16,7 @@ public:
 
 	int GetLength() const;
 	int GetLength_Fast() const;
-	int SetPosition_Accurate( int iFrame ) { return SetPosition( iFrame, true ); }
-	int SetPosition_Fast( int iFrame ) { return SetPosition( iFrame, false ); }
+	int SetPosition( int iFrame );
 	int Read( char *pBuf, int iFrames );
 	int GetSampleRate() const;
 	unsigned GetNumChannels() const { return channels; }
@@ -29,7 +28,6 @@ public:
 private:
 	OggVorbis_File *vf;
 	bool eof;
-	int SetPosition( int iFrame, bool accurate );
 	bool FillBuf();
 	RString filename;
 	int read_offset;

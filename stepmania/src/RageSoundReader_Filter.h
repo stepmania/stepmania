@@ -15,8 +15,7 @@ public:
 
 	virtual int GetLength() const { return m_pSource->GetLength(); }
 	virtual int GetLength_Fast() const { return m_pSource->GetLength_Fast(); }
-	virtual int SetPosition_Accurate( int iFrame ) { return m_pSource->SetPosition_Accurate( iFrame ); }
-	virtual int SetPosition_Fast( int iFrame ) { return m_pSource->SetPosition_Fast( iFrame ); }
+	virtual int SetPosition( int iFrame ) { return m_pSource->SetPosition( iFrame ); }
 	virtual int Read( char *pBuf, int iFrames ) { return m_pSource->Read( pBuf, iFrames ); }
 	virtual int GetSampleRate() const { return m_pSource->GetSampleRate(); }
 	virtual unsigned GetNumChannels() const { return m_pSource->GetNumChannels(); }
