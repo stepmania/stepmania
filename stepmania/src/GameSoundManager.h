@@ -7,7 +7,6 @@
 
 class TimingData;
 class RageSound;
-struct RageSoundParams;
 struct lua_State;
 
 class GameSoundManager
