@@ -29,20 +29,12 @@ void AutoKeysounds::Load( PlayerNumber pn, const NoteData& ndAutoKeysoundsOnly )
 	m_ndAutoKeysoundsOnly[pn] = ndAutoKeysoundsOnly;
 }
 
-void AutoKeysounds::FinishLoading()
+void AutoKeysounds::LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain )
 {
-	m_sSound.Unload();
-
-	/* Load the BGM. */
-	RageSoundReader_Chain *pChain = new RageSoundReader_Chain;
-
-	Song* pSong = GAMESTATE->m_pCurSong;
-	pChain->SetPreferredSampleRate( SOUNDMAN->GetDriverSampleRate(44100) );
-	pChain->AddSound( pChain->LoadSound(pSong->GetMusicPath()), 0, 0 );
-
 	//
 	// Load sounds.
 	//
+	Song* pSong = GAMESTATE->m_pCurSong;
 	RString sSongDir = pSong->GetSongDir();
 /*
 	m_vKeysounds.clear();
@@ -122,7 +114,21 @@ void AutoKeysounds::FinishLoading()
 			}
 		}		
 	}
+}
 
+void AutoKeysounds::FinishLoading()
+{
+	m_sSound.Unload();
+
+	/* Load the BGM. */
+	RageSoundReader_Chain *pChain = new RageSoundReader_Chain;
+
+	Song* pSong = GAMESTATE->m_pCurSong;
+	pChain->SetPreferredSampleRate( SOUNDMAN->GetDriverSampleRate(44100) );
+	pChain->AddSound( pChain->LoadSound(pSong->GetMusicPath()), 0, 0 );
+
+	LoadAutoplaySoundsInto( pChain );
+	
 	pChain->Finish();
 
 	/* Load a pitch shifter for the whole sound. */

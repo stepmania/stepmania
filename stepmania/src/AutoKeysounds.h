@@ -7,6 +7,7 @@
 #include "PlayerNumber.h"
 #include "RageSound.h"
 
+class RageSoundReader_Chain;
 class AutoKeysounds
 {
 public:
@@ -16,6 +17,8 @@ public:
 	RageSound *GetSound() { return &m_sSound; }
 
 protected:	
+	void LoadAutoplaySoundsInto( RageSoundReader_Chain *pChain );
+
 	NoteData		m_ndAutoKeysoundsOnly[NUM_PLAYERS];
 	vector<RageSound>	m_vKeysounds;
 	RageSound		m_sSound;
