@@ -741,12 +741,12 @@ static void mono_to_stereo( char *dst, const char *src, unsigned len )
 	}
 }
 
-int RageSoundReader_MP3::Read( char *buf, unsigned len )
+int RageSoundReader_MP3::Read( char *buf, int iFrames )
 {
+	uint32_t iFramesWritten = 0;
 	uint32_t bw = 0;
 
-	ASSERT( (len % (sizeof(int16_t)*2)) == 0 );
-
+	unsigned len = iFrames * sizeof(int16_t) * GetNumChannels();
 	while( bw < len )
 	{
 		if( mad->outleft > 0 )
@@ -763,6 +763,7 @@ int RageSoundReader_MP3::Read( char *buf, unsigned len )
 				memcpy( buf + bw, mad->outbuf + mad->outpos, cpysize );
 
 			bw += cpysize * Ratio;
+			iFramesWritten += (cpysize * Ratio) / (sizeof(int16_t) * GetNumChannels());
 			mad->outpos += cpysize;
 			mad->outleft -= cpysize;
 			continue;
@@ -771,14 +772,14 @@ int RageSoundReader_MP3::Read( char *buf, unsigned len )
 		/* Decode more from the MP3 stream. */
 		int ret = do_mad_frame_decode();
 		if( ret == 0 )
-			return bw;
+			return iFramesWritten;
 		if( ret == -1 )
 			return -1;
 
 		synth_output();
 	}
 
-	return bw;
+	return iFramesWritten;
 }
 
 bool RageSoundReader_MP3::MADLIB_rewind()

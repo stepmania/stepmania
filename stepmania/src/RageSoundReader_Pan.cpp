@@ -9,31 +9,28 @@ RageSoundReader_Pan::RageSoundReader_Pan( RageSoundReader *pSource ):
 }
 
 
-int RageSoundReader_Pan::Read( char *pBuf, unsigned iLen )
+int RageSoundReader_Pan::Read( char *pBuf, int iFrames )
 {
 	/* If the source is mono, it'll be converted to stereo; read half as many frames,
 	 * so we have space. */
 	if( m_pSource->GetNumChannels() == 1 )
-		iLen /= 2;
+		iFrames /= 2;
 
-	int iRet = m_pSource->Read( pBuf, iLen );
-	int iSamples = iRet / sizeof(uint16_t);
+	iFrames = m_pSource->Read( pBuf, iFrames );
+	int iSamples = iFrames * m_pSource->GetNumChannels();
 	
 	int16_t *pSampleBuf = (int16_t *) pBuf;
 	if( m_pSource->GetNumChannels() == 1 )
 	{
 		RageSoundUtil::ConvertMonoToStereoInPlace( pSampleBuf, iSamples );
-		iRet *= 2;
 		iSamples *= 2;
 	}
-
-	int iFrames = iSamples / GetNumChannels();
 
 	/* This block goes from iStreamFrame to iStreamFrame+iGotFrames. */
 	if( GetNumChannels() == 2 && m_fPan != 0.0 )
 		RageSoundUtil::Pan( pSampleBuf, iFrames, m_fPan );
 
-	return iRet;
+	return iFrames;
 }
 
 unsigned RageSoundReader_Pan::GetNumChannels() const

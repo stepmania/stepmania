@@ -165,11 +165,11 @@ int RageSoundReader_Vorbisfile::SetPosition( int iFrame, bool accurate )
 	return iFrame;
 }
 
-int RageSoundReader_Vorbisfile::Read(char *buf, unsigned len)
+int RageSoundReader_Vorbisfile::Read( char *buf, int iFrames )
 {
-	int bytes_read = 0;
+	int frames_read = 0;
 
-	while( len && !eof )
+	while( iFrames && !eof )
 	{
 		const int bytes_per_frame = sizeof(int16_t)*channels;
 
@@ -192,9 +192,10 @@ int RageSoundReader_Vorbisfile::Read(char *buf, unsigned len)
 				 * That way, corruptions in the file won't casue desyncs. */
 
 				/* In bytes: */
-				int silence = (curofs - read_offset) * bytes_per_frame;
+				int iSilentFrames = curofs - read_offset;
+				iSilentFrames = min( iSilentFrames, (int) iFrames );
+				int silence = iSilentFrames * bytes_per_frame;
 				CHECKPOINT_M( ssprintf("p %i,%i: %i frames of silence needed", curofs, read_offset, silence) );
-				silence = min( silence, (int) len );
 
 				memset( buf, 0, silence );
 				ret = silence;
@@ -205,9 +206,9 @@ int RageSoundReader_Vorbisfile::Read(char *buf, unsigned len)
 		{
 			int bstream;
 #if defined(INTEGER_VORBIS)
-			ret = ov_read( vf, buf, len, &bstream );
+			ret = ov_read( vf, buf, iFrames * bytes_per_frame, &bstream );
 #else // float vorbis decoder
-			ret = ov_read( vf, buf, len, (BYTE_ORDER == BIG_ENDIAN)?1:0, 2, 1, &bstream );
+			ret = ov_read( vf, buf, iFrames * bytes_per_frame, (BYTE_ORDER == BIG_ENDIAN)?1:0, 2, 1, &bstream );
 #endif
 			{
 				vorbis_info *vi = ov_info( vf, -1 );
@@ -234,14 +235,15 @@ int RageSoundReader_Vorbisfile::Read(char *buf, unsigned len)
 			}
 		}
 
+		int iFramesRead = ret / bytes_per_frame;
 		read_offset += ret / bytes_per_frame;
 
 		buf += ret;
-		bytes_read += ret;
-		len -= ret;
+		frames_read += iFramesRead;
+		iFrames -= iFramesRead;
 	}
 
-	return bytes_read;
+	return frames_read;
 }
 
 int RageSoundReader_Vorbisfile::GetSampleRate() const

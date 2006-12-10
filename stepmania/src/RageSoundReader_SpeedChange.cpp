@@ -94,14 +94,14 @@ void RageSoundReader_SpeedChange::FillData( int iMaxFrames )
 	 * we average out the short block. */
 	while( iMaxFrames > 0 )
 	{
-		int iSamplesToRead = (iMaxFrames - m_iDataBufferAvailFrames)*m_Channels.size();
-		int iBytesToRead = iSamplesToRead*sizeof(int16_t);
+		int iFramesToRead = iMaxFrames - m_iDataBufferAvailFrames;
+		int iBytesToRead = iFramesToRead * m_Channels.size() * sizeof(int16_t);
 		if( iBytesToRead <= 0 )
 			return;
 
 		int16_t *pTempBuffer = (int16_t *) alloca( iBytesToRead );
-		int iGotBytes = m_pSource->Read( (char *) pTempBuffer, iBytesToRead );
-		int iGotFrames = iGotBytes / (m_Channels.size()*sizeof(int16_t));
+		int iGotFrames = m_pSource->Read( (char *) pTempBuffer, iFramesToRead );
+		// if( iGotFrames == -1 ) XXX
 		if( !iGotFrames )
 			return;
 
@@ -229,7 +229,7 @@ int RageSoundReader_SpeedChange::GetCursorAvail() const
 	return iCursorAvail;
 }
 
-int RageSoundReader_SpeedChange::Read( char *buf, unsigned iLen )
+int RageSoundReader_SpeedChange::Read( char *buf, int iFrames )
 {
 	int16_t *pBuf = (int16_t *) buf;
 
@@ -242,7 +242,7 @@ int RageSoundReader_SpeedChange::Read( char *buf, unsigned iLen )
 		{
 			/* Fast path: the buffer is empty, and we're not scaling the audio.  Read directly
 			 * into the output buffer, to eliminate memory and copying overhead. */
-			return m_pSource->Read( (char *) pBuf, iLen );
+			return m_pSource->Read( (char *) pBuf, iFrames );
 		}
 
 		if( iCursorAvail == 0 )
@@ -254,11 +254,11 @@ int RageSoundReader_SpeedChange::Read( char *buf, unsigned iLen )
 		}
 
 		/* copy GetWindowSizeFrames() from iCorrelatedPos */
-		int iFramesLen = iLen / (m_Channels.size()*sizeof(int16_t));
+		int iFramesLen = iFrames;
 		int iFramesAvail = min( iCursorAvail, iFramesLen );
 
-		iLen -= iFramesAvail * sizeof(int16_t) * m_Channels.size();
-		int iBytesRead = iFramesAvail * sizeof(int16_t) * m_Channels.size();
+		iFrames -= iFramesAvail;
+		int iFramesRead = iFramesAvail;
 
 		int iWindowSizeFrames = GetWindowSizeFrames();
 		while( iFramesAvail-- )
@@ -274,8 +274,8 @@ int RageSoundReader_SpeedChange::Read( char *buf, unsigned iLen )
 			++m_iPos;
 		}
 
-		if( iBytesRead )
-			return iBytesRead;
+		if( iFramesRead )
+			return iFramesRead;
 	}
 }
 

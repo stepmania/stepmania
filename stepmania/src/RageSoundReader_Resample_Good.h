@@ -18,7 +18,7 @@ public:
 	int GetLength_Fast() const;
 	int SetPosition_Accurate( int iFrame );
 	int SetPosition_Fast( int iFrame );
-	int Read( char *pBuf, unsigned iLen );
+	int Read( char *pBuf, int iFrames );
 	virtual ~RageSoundReader_Resample_Good();
 	RageSoundReader_Resample_Good *Copy() const;
 	bool SetProperty( const RString &sProperty, float fValue );

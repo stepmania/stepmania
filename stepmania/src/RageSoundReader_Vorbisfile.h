@@ -18,7 +18,7 @@ public:
 	int GetLength_Fast() const;
 	int SetPosition_Accurate( int iFrame ) { return SetPosition( iFrame, true ); }
 	int SetPosition_Fast( int iFrame ) { return SetPosition( iFrame, false ); }
-	int Read(char *buf, unsigned len);
+	int Read( char *pBuf, int iFrames );
 	int GetSampleRate() const;
 	unsigned GetNumChannels() const { return channels; }
 	int GetNextSourceFrame() const;

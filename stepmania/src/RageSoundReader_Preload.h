@@ -17,7 +17,7 @@ public:
 	int GetLength_Fast() const;
 	int SetPosition_Accurate( int iFrame );
 	int SetPosition_Fast( int iFrame );
-	int Read( char *pBuffer, unsigned iLength );
+	int Read( char *pBuffer, int iLength );
 	int GetSampleRate() const { return m_iSampleRate; }
 	unsigned GetNumChannels() const { return m_iChannels; }
 	bool IsStreamingFromDisk() const { return false; }

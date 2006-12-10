@@ -61,7 +61,8 @@ bool RageSoundReader_Preload::Open( RageSoundReader *pSource )
 			return false; /* Don't bother trying to preload it. */
 
 		char buffer[1024];
-		int iCnt = pSource->Read(buffer, sizeof(buffer));
+		int iBytesPerFrame = m_iChannels * sizeof(int16_t);
+		int iCnt = pSource->Read( buffer, sizeof(buffer) / iBytesPerFrame );
 
 		if( iCnt < 0 )
 		{
@@ -74,7 +75,7 @@ bool RageSoundReader_Preload::Open( RageSoundReader *pSource )
 			break; /* eof */
 
 		/* Add the buffer. */
-		m_Buffer.Get()->append( buffer, buffer+iCnt );
+		m_Buffer.Get()->append( buffer, buffer+iCnt*iBytesPerFrame );
 
 		if( m_Buffer.Get()->size() > max_prebuf_size )
 			return false; /* too big */
@@ -97,12 +98,12 @@ int RageSoundReader_Preload::GetLength_Fast() const
 
 int RageSoundReader_Preload::SetPosition_Accurate( int iFrame )
 {
-	m_iPosition = iFrame * samplesize;
+	m_iPosition = iFrame;
 	m_iPosition = lrintf(m_iPosition / m_fRate);
 
-	if( m_iPosition >= int(m_Buffer->size()) )
+	if( m_iPosition >= int(m_Buffer->size() / samplesize) )
 	{
-		m_iPosition = m_Buffer->size();
+		m_iPosition = m_Buffer->size() / samplesize;
 		return 0;
 	}
 
@@ -116,18 +117,19 @@ int RageSoundReader_Preload::SetPosition_Fast( int iFrame )
 
 int RageSoundReader_Preload::GetNextSourceFrame() const
 {
-	return lrintf(m_iPosition * m_fRate) / samplesize;
+	return lrintf(m_iPosition * m_fRate);
 }
 
-int RageSoundReader_Preload::Read( char *pBuffer, unsigned iLen )
+int RageSoundReader_Preload::Read( char *pBuffer, int iFrames )
 {
-	const unsigned bytes_avail = m_Buffer->size() - m_iPosition;
+	const int iSizeFrames = m_Buffer->size() / samplesize;
+	const int iFramesAvail = iSizeFrames - m_iPosition;
 
-	iLen = min( iLen, bytes_avail );
-	memcpy( pBuffer, m_Buffer->data()+m_iPosition, iLen );
-	m_iPosition += iLen;
+	iFrames = min( iFrames, iFramesAvail );
+	memcpy( pBuffer, m_Buffer->data() + (m_iPosition * samplesize), iFrames * samplesize );
+	m_iPosition += iFrames;
 	
-	return iLen;
+	return iFrames;
 }
 
 RageSoundReader_Preload *RageSoundReader_Preload::Copy() const

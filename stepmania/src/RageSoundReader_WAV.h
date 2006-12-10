@@ -16,7 +16,7 @@ public:
 	int GetLength_Fast() const { return GetLength(); }
 	int SetPosition_Accurate( int iFrame )  { return SetPosition(iFrame); }
 	int SetPosition_Fast( int iFrame ) { return SetPosition(iFrame); }
-	int Read( char *buf, unsigned len );
+	int Read( char *pBuf, int iFrames );
 	int GetSampleRate() const { return m_WavData.m_iSampleRate; }
 	unsigned GetNumChannels() const { return m_WavData.m_iChannels; }
 	int GetNextSourceFrame() const;

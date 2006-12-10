@@ -17,7 +17,7 @@ public:
 	int GetLength_Fast() const { return GetLengthConst(true); }
 	int SetPosition_Accurate( int iSample );
 	int SetPosition_Fast( int iSample );
-	int Read(char *buf, unsigned len);
+	int Read( char *pBuf, int iFrames );
 	int GetSampleRate() const { return SampleRate; }
 	int GetNextSourceFrame() const;
 

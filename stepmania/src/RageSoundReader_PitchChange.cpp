@@ -32,7 +32,7 @@ RageSoundReader_PitchChange::RageSoundReader_PitchChange( const RageSoundReader_
 	m_fPitchRatio = cpy.m_fPitchRatio;
 }
 
-int RageSoundReader_PitchChange::Read( char *pBuf, unsigned iLen )
+int RageSoundReader_PitchChange::Read( char *pBuf, int iFrames )
 {
 	/* Changing the ratios will tell the speed changer to change ratios, but it
 	 * can't change immediately; it'll change on the next slice.  The resampler
@@ -44,7 +44,7 @@ int RageSoundReader_PitchChange::Read( char *pBuf, unsigned iLen )
 	if( m_pSpeedChange->NextReadWillStep() )
 		m_pResample->SetRate( m_fPitchRatio );
 
-	return RageSoundReader_Filter::Read( pBuf, iLen );
+	return RageSoundReader_Filter::Read( pBuf, iFrames );
 }
 
 bool RageSoundReader_PitchChange::SetProperty( const RString &sProperty, float fValue )

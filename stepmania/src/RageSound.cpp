@@ -156,7 +156,7 @@ public:
 	int GetLength_Fast() const { return 0; }
 	int SetPosition_Accurate( int iFrame )  { return 0; }
 	int SetPosition_Fast( int iFrame ) { return 0; }
-	int Read(char *buf, unsigned len) { return 0; }
+	int Read( char *buf, int iFrames ) { return 0; }
 	RageSoundReader *Copy() const { return new RageSoundReader_Silence; }
 	int GetSampleRate() const { return 44100; }
 	bool IsStreamingFromDisk() const { return false; }
@@ -288,8 +288,7 @@ int RageSound::GetData( char *pBuffer, int iFrames )
 
 		fRate = m_pSource->GetStreamToSourceRatio();
 		int iNewSourceFrame = m_pSource->GetNextSourceFrame();
-		int iReadSize = iFrames * sizeof(int16_t) * m_pSource->GetNumChannels();
-		iGotFrames = m_pSource->Read( pBuffer, iReadSize );
+		iGotFrames = m_pSource->Read( pBuffer, iFrames );
 		if( iGotFrames == -1 )
 		{
 			Fail( m_pSource->GetError() );
@@ -297,7 +296,6 @@ int RageSound::GetData( char *pBuffer, int iFrames )
 			/* Pretend we got EOF. */
 			return 0;
 		}
-		iGotFrames /= sizeof(int16_t) * m_pSource->GetNumChannels();
 
 		/* If we didn't get any data, don't update iSourceFrame, so we just keep
 		 * extrapolating if we're in M_CONTINUE. */

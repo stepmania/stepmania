@@ -42,7 +42,7 @@ struct WavReader
 	WavReader( RageFile &f, const RageSoundReader_WAV::WavData &data ):
 		m_File(f), m_WavData(data) { }
 	virtual ~WavReader() { }
-	virtual int Read( char *buf, unsigned len ) = 0;
+	virtual int Read( char *pBuf, int iFrames ) = 0;
 	virtual int GetLength() const = 0;
 	virtual bool Init() = 0;
 	virtual int SetPosition( int iFrame ) = 0;
@@ -72,27 +72,28 @@ struct WavReaderPCM: public WavReader
 		return true;
 	}
 
-	int Read( char *buf, unsigned len )
+	int Read( char *buf, int iFrames )
 	{
+		int len = iFrames * m_WavData.m_iChannels * sizeof(int16_t);
 		if( m_WavData.m_iBitsPerSample == 8 )
 			len /= 2;
 
-		const unsigned iBytesLeftInDataChunk = m_WavData.m_iDataChunkSize - (m_File.Tell() - m_WavData.m_iDataChunkPos);
+		const int iBytesLeftInDataChunk = m_WavData.m_iDataChunkSize - (m_File.Tell() - m_WavData.m_iDataChunkPos);
 		len = min( len, iBytesLeftInDataChunk );
 		int iGot = m_File.Read( buf, len );
-
+		int iGotSamples = 0;
 		switch( m_WavData.m_iBitsPerSample )
 		{
 		case 8:
 			Convert8bitTo16bit( buf, iGot );
-			iGot *= 2;
+			iGotSamples = iGot;
 			break;
 		case 16:
 			Convert16BitFromLittleEndian( (int16_t *) buf, iGot/2 );
-			iGot &= ~1;
+			iGotSamples = iGot / 2;
 			break;
 		}
-		return iGot;
+		return iGotSamples / m_WavData.m_iChannels;
 	}
 
 	int GetLength() const
@@ -286,10 +287,11 @@ public:
 		return true;
 	}
 
-	int Read( char *buf, unsigned len )
+	int Read( char *buf, int iFrames )
 	{
-		unsigned got = 0;
-		while( got < len )
+		int iBytesPerFrame = m_WavData.m_iChannels * sizeof(int16_t);
+		int iGotFrames = 0;
+		while( iGotFrames < (int) iFrames )
 		{
 			if( m_iBufferUsed == m_iBufferAvail )
 			{
@@ -299,13 +301,16 @@ public:
 			if( m_iBufferAvail == 0 )
 				break; /* EOF */
 
-			int iBytesToCopy = min( m_iBufferAvail-m_iBufferUsed, (int) (len-got) );
-			memcpy( buf+got, m_pBuffer+m_iBufferUsed, iBytesToCopy );
+			int iFramesToCopy = (m_iBufferAvail-m_iBufferUsed) / iBytesPerFrame;
+			iFramesToCopy = min( iFramesToCopy, (int) (iFrames-iGotFrames) );
+			int iBytesToCopy = iFramesToCopy * iBytesPerFrame;
+			memcpy( buf, m_pBuffer+m_iBufferUsed, iBytesToCopy );
 			m_iBufferUsed += iBytesToCopy;
-			got += iBytesToCopy;
+			iGotFrames += iFramesToCopy;
+			buf += iBytesToCopy;
 		}
 		
-		return got;
+		return iGotFrames;
 	}
 
 	int GetLength() const
@@ -526,10 +531,10 @@ int RageSoundReader_WAV::GetNextSourceFrame() const
 	return m_pImpl->GetNextSourceFrame();
 }
 
-int RageSoundReader_WAV::Read( char *buf, unsigned len )
+int RageSoundReader_WAV::Read( char *pBuf, int iFrames )
 {
 	ASSERT( m_pImpl != NULL );
-	return m_pImpl->Read( buf, len );
+	return m_pImpl->Read( pBuf, iFrames );
 }
 
 RageSoundReader_WAV::RageSoundReader_WAV()

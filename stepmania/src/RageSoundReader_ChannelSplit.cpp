@@ -107,9 +107,9 @@ bool RageSoundReader_Split::SetProperty( const RString &sProperty, float fValue 
 	return false;
 }
 
-int RageSoundReader_Split::Read( char *pBuf, unsigned iBytes )
+int RageSoundReader_Split::Read( char *pBuf, int iFrames )
 {
-	m_iRequestFrames = iBytes / (sizeof(int16_t) * m_iNumOutputChannels);
+	m_iRequestFrames = iFrames;
 	if( !m_pImpl->ReadBuffer() )
 	{
 		this->SetError( m_pImpl->m_pSource->GetError() );
@@ -126,7 +126,7 @@ int RageSoundReader_Split::Read( char *pBuf, unsigned iBytes )
 		iBytesAvailable -= iSkipBytes;
 	}
 
-	int iFramesWanted = iBytes / (sizeof(int16_t) * m_iNumOutputChannels);
+	int iFramesWanted = iFrames;
 	int iFramesAvailable = iBytesAvailable / (sizeof(int16_t) * m_pImpl->m_pSource->GetNumChannels());
 	iFramesAvailable = min( iFramesAvailable, iFramesWanted );
 
@@ -149,7 +149,7 @@ int RageSoundReader_Split::Read( char *pBuf, unsigned iBytes )
 	 * memory can be freed. */
 	m_iRequestFrames = 0;
 	m_pImpl->ReadBuffer();
-	return iFramesAvailable * (sizeof(int16_t) * m_iNumOutputChannels);
+	return iFramesAvailable;
 }
 
 bool RageSoundSplitterImpl::ReadBuffer()
@@ -186,13 +186,14 @@ bool RageSoundSplitterImpl::ReadBuffer()
 	int iBytesToRead = iFramesToRead * sizeof(int16_t) * m_pSource->GetNumChannels();
 	int iOldSizeBytes = m_sBuffer.size();
 	m_sBuffer.resize( iOldSizeBytes + iBytesToRead );
-	int iGotBytes = m_pSource->Read( &m_sBuffer[0] + iOldSizeBytes, iBytesToRead );
-	if( iGotBytes == -1 )
+	int iGotFrames = m_pSource->Read( &m_sBuffer[0] + iOldSizeBytes, iFramesToRead );
+	if( iGotFrames == -1 )
 	{
 		m_sBuffer.resize( iOldSizeBytes );
 		return false;
 	}
 
+	int iGotBytes = iGotFrames * sizeof(int16_t) * m_pSource->GetNumChannels();
 	m_sBuffer.resize( iOldSizeBytes + iGotBytes );
 	return true;
 }

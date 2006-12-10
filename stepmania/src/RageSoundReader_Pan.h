@@ -11,7 +11,7 @@ public:
 	RageSoundReader_Pan( RageSoundReader *pSource );
 	RageSoundReader_Pan *Copy() const { return new RageSoundReader_Pan(*this); }
 	virtual unsigned GetNumChannels() const;
-	virtual int Read( char *pBuf, unsigned iLen );
+	virtual int Read( char *pBuf, int iFrames );
 	virtual bool SetProperty( const RString &sProperty, float fValue );
 
 private:

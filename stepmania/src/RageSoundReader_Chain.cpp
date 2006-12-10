@@ -345,10 +345,10 @@ int RageSoundReader_Chain::ReadBlock( int16_t *pBuffer, int iFrames )
 		/* We have only one source, and it matches our target.  Don't mix; read
 		 * directly from the source into the destination.  This is to optimize
 		 * the common case of having one BGM track and no autoplay sounds. */
-		int iBytes = m_apActiveSounds.front()->pSound->Read( (char *) pBuffer, iFrames * sizeof(int16_t) * m_iChannels );
-		if( iBytes == 0 )
+		iFrames = m_apActiveSounds.front()->pSound->Read( (char *) pBuffer, iFrames );
+		if( iFrames == 0 )
 			ReleaseSound( m_apActiveSounds.front() );
-		return iBytes / (sizeof(int16_t) * m_iChannels);
+		return iFrames;
 	}
 
 	if( m_apActiveSounds.empty() )
@@ -369,20 +369,17 @@ int RageSoundReader_Chain::ReadBlock( int16_t *pBuffer, int iFrames )
 		RageSoundReader *pSound = m_apActiveSounds[i]->pSound;
 		ASSERT( pSound->GetNumChannels() == m_iChannels ); // guaranteed by ActivateSound and Finish
 		int iSamples = min( iFrames * pSound->GetNumChannels(), ARRAYLEN(Buffer) );
-		int iBytesRead = pSound->Read( (char *) Buffer, iSamples*sizeof(int16_t) );
-		if( iBytesRead == -1 || iBytesRead == 0 )
+		int iFramesRead = pSound->Read( (char *) Buffer, iSamples/pSound->GetNumChannels() );
+		if( iFramesRead == -1 || iFramesRead == 0 )
 		{
 			/* The sound is at EOF.  Release it. */
 			ReleaseSound( m_apActiveSounds[i] );
 			continue;
 		}
 
-		int iSamplesRead = iBytesRead / sizeof(int16_t);
-		int iFramesRead = iSamplesRead / pSound->GetNumChannels();
-
 		iMaxFramesRead = max( iMaxFramesRead, iFramesRead );
 
-		mix.write( Buffer, iSamplesRead );
+		mix.write( Buffer, iFramesRead * sizeof(int16_t) * pSound->GetNumChannels() );
 		++i;
 	}
 
@@ -392,20 +389,19 @@ int RageSoundReader_Chain::ReadBlock( int16_t *pBuffer, int iFrames )
 }
 
 
-int RageSoundReader_Chain::Read( char *pBuffer, unsigned iLength )
+int RageSoundReader_Chain::Read( char *pBuffer, int iFrames )
 {
-	int iNumFramesToRead = iLength / (sizeof(int16_t) * m_iChannels);
 	int iTotalFramesRead = 0;
 
 	/* If we have no sources, and no more sounds to play, EOF. */
-	while( iNumFramesToRead > 0 && (!m_apActiveSounds.empty() || m_iNextSound < m_aSounds.size()) )
+	while( iFrames > 0 && (!m_apActiveSounds.empty() || m_iNextSound < m_aSounds.size()) )
 	{
-		int iFramesRead = ReadBlock( (int16_t *) pBuffer, iNumFramesToRead );
+		int iFramesRead = ReadBlock( (int16_t *) pBuffer, iFrames );
 		if( iFramesRead == -1 )
 			return -1;
 
 		m_iCurrentFrame += iFramesRead;
-		iNumFramesToRead -= iFramesRead;
+		iFrames -= iFramesRead;
 		iTotalFramesRead += iFramesRead;
 		pBuffer += iFramesRead * sizeof(int16_t) * m_iChannels;
 
@@ -417,7 +413,7 @@ int RageSoundReader_Chain::Read( char *pBuffer, unsigned iLength )
 		}
 	}
 
-	return iTotalFramesRead * sizeof(int16_t) * m_iChannels;
+	return iTotalFramesRead;
 }
 
 int RageSoundReader_Chain::GetLength() const
