@@ -174,13 +174,16 @@ bool RageSoundSplitterImpl::ReadBuffer()
 	{
 		int iFrame = m_pSource->SetPosition_Accurate( iMinFrameRequested );
 		m_iBufferPositionFrames = iFrame;
+		m_sBuffer.clear();
 	}
 
 	int iFramesBuffered = m_sBuffer.size() / (sizeof(int16_t) * m_pSource->GetNumChannels() );
 
 	int iFramesToRead = iMaxFrameRequested - (m_iBufferPositionFrames + iFramesBuffered);
-	int iBytesToRead = iFramesToRead * sizeof(int16_t) * m_pSource->GetNumChannels();
+	if( iFramesToRead <= 0 )
+		return true; // requested data already buffered
 
+	int iBytesToRead = iFramesToRead * sizeof(int16_t) * m_pSource->GetNumChannels();
 	int iOldSizeBytes = m_sBuffer.size();
 	m_sBuffer.resize( iOldSizeBytes + iBytesToRead );
 	int iGotBytes = m_pSource->Read( &m_sBuffer[0] + iOldSizeBytes, iBytesToRead );
