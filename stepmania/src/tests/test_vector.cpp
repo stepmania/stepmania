@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cassert>
+#include <cmath>
 #include <inttypes.h>
 #include <algorithm>
 #include <archutils/Darwin/VectorHelper.h>
@@ -11,6 +12,7 @@
 #ifndef USE_VEC
 # error Enable altivec or sse.
 #endif
+#define SCALE(x, l1, h1, l2, h2)	(((x) - (l1)) * ((h2) - (l2)) / ((h1) - (l1)) + (l2))
 
 using namespace std;
 
@@ -27,6 +29,14 @@ static void ScalarRead( int16_t *pDestBuf, const int32_t *pSrcBuf, unsigned iSiz
 		pDestBuf[iPos] = max( -32768, min(pSrcBuf[iPos]/256, 32767) );
 }
 
+static void ScalarRead( float *pDestBuf, const int32_t *pSrcBuf, unsigned iSize )
+{
+	const int iMinimum = -32768 * 256;
+	const int iMaximum = 32767  * 256;
+	for( unsigned iPos = 0; iPos < iSize; ++iPos )
+		pDestBuf[iPos] = SCALE( (float)pSrcBuf[iPos], iMinimum, iMaximum, -1.0f, +1.0f );
+}
+
 template <typename T>
 static void RandBuffer( T *pBuffer, unsigned iSize )
 {
@@ -39,16 +49,35 @@ static void Diagnostic( const T *pDestBuf, const T *pRefBuf, size_t size )
 {
 	const int num = 10;
 	for( int i = 0; i < num; ++i )
-		fprintf( stderr, "%d ", pDestBuf[i] );
+		fprintf( stderr, "%x ", pDestBuf[i] );
 	puts( "" );
 	for( int i = 0; i < num; ++i )
-		fprintf( stderr, "%d ", pRefBuf[i] );
+		fprintf( stderr, "%x ", pRefBuf[i] );
 	puts( "" );
 	for( size_t i = size - num; i < size; ++i )
-		fprintf( stderr, "%d ", pDestBuf[i] );
+		fprintf( stderr, "%x ", pDestBuf[i] );
 	puts( "" );
 	for( size_t i = size - num; i < size; ++i )
-		fprintf( stderr, "%d ", pRefBuf[i] );
+		fprintf( stderr, "%x ", pRefBuf[i] );
+	puts( "" );
+}
+
+template<>
+static void Diagnostic<float>( const float *pDestBuf, const float *pRefBuf, size_t size )
+
+{
+	const int num = 10;
+	for( int i = 0; i < num; ++i )
+		fprintf( stderr, "%f ", pDestBuf[i] );
+	puts( "" );
+	for( int i = 0; i < num; ++i )
+		fprintf( stderr, "%f ", pRefBuf[i] );
+	puts( "" );
+	for( size_t i = size - num; i < size; ++i )
+		fprintf( stderr, "%f ", pDestBuf[i] );
+	puts( "" );
+	for( size_t i = size - num; i < size; ++i )
+		fprintf( stderr, "%f ", pRefBuf[i] );
 	puts( "" );
 }
 
@@ -177,19 +206,35 @@ static bool CheckMisalignedBothWrite()
 	return ret;
 }
 
+static bool cmp( const int16_t *p1, const int16_t *p2, size_t size )
+{
+	return !memcmp( p1, p2, size * 2 );
+}
+
+static bool cmp( const float *p1, const float *p2, size_t size )
+{
+	const float epsilon = 0.000001;
+	++size;
+	while( --size )
+		if( fabs(*p1++ - *p2++) >= epsilon )
+			return false;
+	return true;
+}
+
+template<typename T>
 static bool CheckAlignedRead()
 {
 	const size_t size = 1024;
 	int32_t *pSrcBuf = new int32_t[size];
-	int16_t *pDestBuf = new int16_t[size];
-	int16_t *pRefBuf = new int16_t[size];
+	T *pDestBuf = new T[size];
+	T *pRefBuf = new T[size];
 	assert( (intptr_t(pSrcBuf)  & 0xF) == 0 );
 	assert( (intptr_t(pDestBuf) & 0xF) == 0 );
 	assert( (intptr_t(pRefBuf)  & 0xF) == 0 );
 	RandBuffer( pSrcBuf, size );
 	Vector::FastSoundRead( pDestBuf, pSrcBuf, size );
 	ScalarRead( pRefBuf, pSrcBuf, size );
-	bool ret = !memcmp( pRefBuf, pDestBuf, size * 2 );
+	bool ret = cmp( pRefBuf, pDestBuf, size );
 
 	if( !ret )
 		Diagnostic( pDestBuf, pRefBuf, size );
@@ -227,9 +272,14 @@ int main()
 		fputs( "Failed misaligned source and destination write.\n", stderr );
 		return 1;
 	}
-	if( !CheckAlignedRead() )
+	if( !CheckAlignedRead<int16_t>() )
 	{
 		fputs( "Failed aligned read.\n", stderr );
+		return 1;
+	}
+	if( !CheckAlignedRead<float>() )
+	{
+		fputs( "Failed aligned float read.\n", stderr );
 		return 1;
 	}
 	puts( "Passed." );
