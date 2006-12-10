@@ -131,10 +131,12 @@ void AutoKeysounds::FinishLoading()
 	
 	pChain->Finish();
 
-	/* Load a pitch shifter for the whole sound. */
-	RageSoundReader_PitchChange *pRate = new RageSoundReader_PitchChange( pChain );
+	RageSoundReader *pReader = pChain;
 
-	m_sSound.LoadSoundReader( pRate );
+	/* Load a pitch shifter for the whole sound. */
+	pReader = new RageSoundReader_PitchChange( pReader );
+
+	m_sSound.LoadSoundReader( pReader );
 }
 
 void AutoKeysounds::Update( float fDelta )
