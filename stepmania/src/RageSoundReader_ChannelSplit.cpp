@@ -79,7 +79,8 @@ RageSoundReader_Split::RageSoundReader_Split( RageSoundSplitterImpl *pImpl )
 	m_iRequestFrames = 0;
 }
 
-RageSoundReader_Split::RageSoundReader_Split( const RageSoundReader_Split &cpy )
+RageSoundReader_Split::RageSoundReader_Split( const RageSoundReader_Split &cpy ):
+	RageSoundReader( cpy )
 {
 	m_pImpl = cpy.m_pImpl;
 	++m_pImpl->m_iRefCount;
