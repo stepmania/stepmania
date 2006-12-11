@@ -83,7 +83,7 @@ void RageSoundMixBuffer::write( const int16_t *pBuf, unsigned iSize, int iSource
 void RageSoundMixBuffer::read( int16_t *pBuf )
 {
 #ifdef USE_VEC
-	if( g_bVector && (intptr_t(pBuf) & 0xF) == 0 )
+	if( g_bVector )
 	{
 		Vector::FastSoundRead( pBuf, m_pMixbuf, m_iBufUsed );
 		m_iBufUsed = 0;
@@ -101,7 +101,7 @@ void RageSoundMixBuffer::read( int16_t *pBuf )
 void RageSoundMixBuffer::read( float *pBuf )
 {
 #ifdef USE_VEC
-	if( g_bVector && (intptr_t(pBuf) & 0xF) == 0 )
+	if( g_bVector )
 	{
 		Vector::FastSoundRead( pBuf, m_pMixbuf, m_iBufUsed );
 		m_iBufUsed = 0;
