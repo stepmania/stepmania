@@ -46,8 +46,8 @@ RString COMBO_X_NAME( size_t p, size_t both_sides )		{ return "ComboXOffset" + (
 RString ATTACK_DISPLAY_X_NAME( size_t p, size_t both_sides )	{ return "AttackDisplayXOffset" + (both_sides ? RString("BothSides") : ssprintf("OneSideP%d",int(p+1)) ); }
 
 /* Distance to search for a note in Step(), in seconds. */
+// TODO: This should be calculated based on the max size of the current judgment windows.
 static const float StepSearchDistance = 1.0f;
-static const float JUMP_WINDOW_SECONDS = 0.25f;
 
 void TimingWindowSecondsInit( size_t /*TimingWindow*/ i, RString &sNameOut, float &defaultValueOut )
 {
@@ -70,6 +70,10 @@ void TimingWindowSecondsInit( size_t /*TimingWindow*/ i, RString &sNameOut, floa
 static Preference<float> m_fTimingWindowScale	( "TimingWindowScale",		1.0f );
 static Preference<float> m_fTimingWindowAdd	( "TimingWindowAdd",		0 );
 static Preference1D<float> m_fTimingWindowSeconds( TimingWindowSecondsInit, NUM_TimingWindow );
+static Preference<float> m_fTimingWindowJump	( "TimingWindowJump",		0.25 );
+Preference<float> g_fTimingWindowHopo	( "TimingWindowHopo",		0.25 );
+
+
 
 float Player::GetWindowSeconds( TimingWindow tw )
 {
@@ -1089,7 +1093,7 @@ void Player::Fret( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 	int iHopoCol = -1;
 	bool bDoHopo = 
 		m_pPlayerState->m_fLastHopoNoteMusicSeconds != -1  &&
-		fPositionSeconds <= m_pPlayerState->m_fLastHopoNoteMusicSeconds + HOPO_CHAIN_SECONDS;
+		fPositionSeconds <= m_pPlayerState->m_fLastHopoNoteMusicSeconds + g_fTimingWindowHopo;
 	if( bDoHopo )
 	{
 		// do a Hopo:
@@ -1240,7 +1244,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 			{
 				GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( t, pn );
 				const float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI );
-				if( fSecsHeld > 0  && fSecsHeld < JUMP_WINDOW_SECONDS )
+				if( fSecsHeld > 0  && fSecsHeld < m_fTimingWindowJump )
 					iNumTracksHeld++;
 			}
 
