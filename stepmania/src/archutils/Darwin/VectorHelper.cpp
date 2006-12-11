@@ -47,7 +47,7 @@ void Vector::FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, s
 		vSInt32 load1Dest = vec_ld( 0, dest );
 		vSInt32 store = (vSInt32)(0);
 		
-		// If dest is unaligned, pull first loop iteration out.
+		// If dest is misaligned, pull first loop iteration out.
 		if( intptr_t(dest) & 0xF )
 		{
 			vSInt16 load2Src  = vec_ld( 15, src );
@@ -213,7 +213,7 @@ void Vector::FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, s
 			size -= 8;
 		}
 		
-		// Store the remainder of the vector, if it was unaligned.
+		// Store the remainder of the vector, if it was misaligned.
 		if( index < 0 )
 		{
 			store = vec_perm( store, store, storeMask );
@@ -224,7 +224,7 @@ void Vector::FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, s
 			}
 		}
 	}
-	/* If we account for both unaligned dest and src, there is really no way to
+	/* If we account for both misaligned dest and src, there is really no way to
 	 * do this in vector code so do the last at most 7 elements in scalar code. */
 	while( size-- )
 		*(dest++) += *(src++) * volume;
