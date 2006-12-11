@@ -1,5 +1,9 @@
 #include "VectorHelper.h"
 #include <sys/sysctl.h>
+#include <algorithm>
+
+using std::min;
+using std::max;
 
 #if defined(USE_VEC)
 #if defined(__VEC__)
@@ -235,8 +239,17 @@ void Vector::FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, s
  */
 void Vector::FastSoundRead( int16_t *dest, const int32_t *src, unsigned size )
 {
+	int index = 0;
 	vSInt32 zero = (vSInt32)( 0 );
 	vUInt32 shift = (vUInt32)( 8 );
+	vSInt16 store = (vSInt16)( 0 );
+	vUInt8 storeMask = vec_lvsr( 0, dest );	// Setup the store mask.
+
+	if( intptr_t(dest) & 0xF )
+	{
+		index -= intptr_t(dest) & 0xF;
+		store = vec_ld( 0, dest );
+	}
 	
 	/* This is tricky. We need to divide signed 4-byte integers by 256 and stuff
 	 * them into 2-byte integers. First, find the elements which are negative
@@ -295,13 +308,22 @@ void Vector::FastSoundRead( int16_t *dest, const int32_t *src, unsigned size )
 		seventh = vec_subs( vec_sub(seventh, temp7), temp7 );
 		eighth  = vec_subs( vec_sub(eighth,  temp8), temp8 );
 		
-		vec_st( vec_packs(first,   second),  0, dest );
-		vec_st( vec_packs(third,   fourth), 16, dest );
-		vec_st( vec_packs(fifth,   sixth),  32, dest );
-		vec_st( vec_packs(seventh, eighth), 48, dest );
+		vSInt16 result1 = vec_packs( first,   second );
+		vSInt16 result2 = vec_packs( third,   fourth );
+		vSInt16 result3 = vec_packs( fifth,   sixth  );
+		vSInt16 result4 = vec_packs( seventh, eighth );
+		store   = vec_perm( store,   result1, storeMask );
+		result1 = vec_perm( result1, result2, storeMask );
+		result2 = vec_perm( result2, result3, storeMask );
+		result3 = vec_perm( result3, result4, storeMask );
+		vec_st( store,    0, dest );
+		vec_st( result1, 16, dest );
+		vec_st( result2, 32, dest );
+		vec_st( result3, 48, dest );
 		
+		store = result4;
 		dest += 32;
-		src += 32;
+		src  += 32;
 		size -= 32;
 	}
 	// Befuddle optimizer as above.	
@@ -321,32 +343,27 @@ void Vector::FastSoundRead( int16_t *dest, const int32_t *src, unsigned size )
 		first  = vec_subs( vec_sub(first,  temp1), temp1 );
 		second = vec_subs( vec_sub(second, temp2), temp2 );
 		
-		vec_st( vec_packs(first, second), 0, dest );
+		vSInt16 result = vec_packs( first, second );
+		vec_st( vec_perm(store, result, storeMask), 0, dest );
+		
+		store = result;
 		dest += 8;
-		src += 8;
+		src  += 8;
 		size -= 8;
 	}
-	if( size )
+	store = vec_perm( store, store, storeMask );
+	int temp = index;
+	while( index < 0 )
 	{
-		// Deal with the remaining samples but be careful while storing as above.
-		vSInt32 first  = vec_ldl( 0, src );
-		vSInt32 second = size > 4 ? vec_ldl( 16, src ) : (vSInt32)( 0 );
-		vSInt32 temp1  = (vSInt32)vec_cmplt( first,  zero );
-		vSInt32 temp2  = (vSInt32)vec_cmplt( second, zero );
-		
-		first  = vec_sr( vec_abss(first),  shift );
-		second = vec_sr( vec_abss(second), shift );
-		
-		temp1 = vec_and( first,  temp1 );
-		temp2 = vec_and( second, temp2 );
-		
-		first  = vec_subs( vec_sub(first,  temp1), temp1 );
-		second = vec_subs( vec_sub(second, temp2), temp2 );
-		
-		vSInt16 result = vec_packs( first, second );
-		while( size-- )
-			vec_ste( result, 0, dest++ );
+		vec_ste( store, index, dest );
+		index += 2;
 	}
+	temp >>=1;
+	dest += temp;
+	src  += temp;
+	size -= temp;
+	while( size-- )
+		*dest++ = max( -32768, min(*src++>>8, 32767) );
 }
 
 /* for( size_t pos = 0; pos < size; ++pos )
@@ -361,31 +378,109 @@ void Vector::FastSoundRead( float *dest, const int32_t *src, unsigned size )
 	 * l1 = 2^8*m = -8388608
 	 * scale = 2*2^8/(M-m) = 0.00781261921110856794
 	 * l2 = -1 */
+	int index = 0;
 	vFloat scale = (vFloat) ( 0.00781261921110856794f );
 	vSInt32 l1 = (vSInt32) ( -8388608 );
 	vFloat l2 = (vFloat) ( -1.0f );
+	vUInt8 storeMask = vec_lvsr( 0, dest ); // Setup the store mask.
+	vFloat st = (vFloat)( 0.0f );
 	
-	while( size > 3 )
+	if( intptr_t(dest) & 0xF )
+	{
+		index -= intptr_t(dest) & 0xF;
+		st = vec_ld( 0, dest );
+	}
+	while( size >= 32 )
 	{
 		/* By far the simplest of these, we need only perform the scale
 		 * operation which amounts to subtracting l1, converting to a float,
 		 * multiplying by a constant, and adding l2. We can multiply and add
 		 * in one instruction. The 16 in vec_ctf(X,16) divides by 2^16. */ 
-		vFloat result = vec_ctf( vec_subs(vec_ldl(0, src), l1), 16 );
+		vSInt32 x1 = vec_ldl(   0, src );
+		vSInt32 x2 = vec_ldl(  16, src );
+		vSInt32 x3 = vec_ldl(  32, src );
+		vSInt32 x4 = vec_ldl(  48, src );
+		vSInt32 x5 = vec_ldl(  64, src );
+		vSInt32 x6 = vec_ldl(  80, src );
+		vSInt32 x7 = vec_ldl(  96, src );
+		vSInt32 x8 = vec_ldl( 112, src );
 		
-		vec_st( vec_madd(result, scale, l2), 0, dest );
+		x1 = vec_subs( x1, l1 );
+		x2 = vec_subs( x2, l1 );
+		x3 = vec_subs( x3, l1 );
+		x4 = vec_subs( x4, l1 );
+		x5 = vec_subs( x5, l1 );
+		x6 = vec_subs( x6, l1 );
+		x7 = vec_subs( x7, l1 );
+		x8 = vec_subs( x8, l1 );
+		
+		vFloat f1 = vec_ctf( x1, 16 );
+		vFloat f2 = vec_ctf( x2, 16 );
+		vFloat f3 = vec_ctf( x3, 16 );
+		vFloat f4 = vec_ctf( x4, 16 );
+		vFloat f5 = vec_ctf( x5, 16 );
+		vFloat f6 = vec_ctf( x6, 16 );
+		vFloat f7 = vec_ctf( x7, 16 );
+		vFloat f8 = vec_ctf( x8, 16 );
+		
+		f1 = vec_madd( f1, scale, l2 );
+		f2 = vec_madd( f2, scale, l2 );
+		f3 = vec_madd( f3, scale, l2 );
+		f4 = vec_madd( f4, scale, l2 );
+		f5 = vec_madd( f5, scale, l2 );
+		f6 = vec_madd( f6, scale, l2 );
+		f7 = vec_madd( f7, scale, l2 );
+		f8 = vec_madd( f8, scale, l2 );
+		
+		st = vec_perm( st, f1, storeMask );
+		f1 = vec_perm( f1, f2, storeMask );
+		f2 = vec_perm( f2, f3, storeMask );
+		f3 = vec_perm( f3, f4, storeMask );
+		f4 = vec_perm( f4, f5, storeMask );
+		f5 = vec_perm( f5, f6, storeMask );
+		f6 = vec_perm( f6, f7, storeMask );
+		f7 = vec_perm( f7, f8, storeMask );
+		
+		vec_st( st,   0, dest );
+		vec_st( f1,  16, dest );
+		vec_st( f2,  32, dest );
+		vec_st( f3,  48, dest );
+		vec_st( f4,  64, dest );
+		vec_st( f5,  80, dest );
+		vec_st( f6,  96, dest );
+		vec_st( f7, 112, dest );
+		st = f8;
+		
+		dest += 32;
+		src  += 32;
+		size -= 32;
+	}
+	while( size & ~0x3 )
+	{
+		vFloat result = vec_ctf( vec_subs(vec_ldl(0, src), l1), 16 );
+		result = vec_madd( result, scale, l2 );
+		
+		st = vec_perm( st, result, storeMask );
+		vec_st( st, 0, dest );
+		st = result;
+		
 		dest += 4;
 		src += 4;
 		size -= 4;
 	}
-	if( size )
+	st = vec_perm( st, st, storeMask );
+	int temp = index;
+	while( index < 0 )
 	{
-		// Deal with the remaining samples but be careful while storing as above.
-		vFloat result = vec_madd( vec_ctf(vec_subs(vec_ldl(0, src), l1), 8), scale, l2 );
-		
-		while( size-- )
-			vec_ste( result, 0, dest++ );
+		vec_ste( st, index, dest );
+		index += 2;
 	}
+	temp >>= 2;
+	dest += temp;
+	src  += temp;
+	size -= temp;
+	while( size-- )
+		*dest++ = float( *src++ + 32768*256 ) * 1.1921110856794079500e-7f - 1.0f;
 }
 #elif defined(__SSE2__)
 #include <xmmintrin.h>
