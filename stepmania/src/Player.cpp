@@ -1092,9 +1092,9 @@ void Player::Fret( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 		fPositionSeconds <= m_pPlayerState->m_fLastHopoNoteMusicSeconds + HOPO_CHAIN_SECONDS;
 	if( bDoHopo )
 	{
-		// do a Hopo if:
-		// pressed fret if no higher fret is held
-		// on next lowest pressed fret when the highest held fret is released
+		// do a Hopo:
+		//  - on pressed fret is no higher fret is held
+		//  - on next lowest held fret when the highest held fret is released
 		bool bHigherFretIsDown = false;
 		for( int i=col+1; i<m_NoteData.GetNumTracks(); i++ )
 		{
@@ -1140,7 +1140,12 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 {
 	if( IsOniDead() )
 		return;
-	
+
+	// Do everything that depends on a RageTime here and set your breakpoints somewhere after this block
+	const float fLastBeatUpdate = GAMESTATE->m_LastBeatUpdate.Ago();
+	const float fPositionSeconds = GAMESTATE->m_fMusicSeconds - tm.Ago();
+	const float fTimeSinceStep = tm.Ago();
+
 	switch( pbt )
 	{
 	DEFAULT_FAIL(pbt);
@@ -1155,7 +1160,6 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 		break;
 	}
 
-	const float fPositionSeconds = GAMESTATE->m_fMusicSeconds - tm.Ago();
 	const float fSongBeat = GAMESTATE->m_pCurSong ? GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds ) : GAMESTATE->m_fSongBeat;
 	const int iSongRow = row == -1 ? BeatToNoteRow( fSongBeat ) : row;
 	
@@ -1305,11 +1309,11 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 		if( row == -1 )
 		{
 			/* We actually stepped on the note this long ago: */
-			const float fTimeSinceStep = tm.Ago();
-
+			//fTimeSinceStep
+		
 			/* GAMESTATE->m_fMusicSeconds is the music time as of GAMESTATE->m_LastBeatUpdate. Figure
 			 * out what the music time is as of now. */
-			const float fCurrentMusicSeconds = GAMESTATE->m_fMusicSeconds + (GAMESTATE->m_LastBeatUpdate.Ago()*GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate);
+			const float fCurrentMusicSeconds = GAMESTATE->m_fMusicSeconds + (fLastBeatUpdate*GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate);
 
 			/* ... which means it happened at this point in the music: */
 			const float fMusicSeconds = fCurrentMusicSeconds - fTimeSinceStep * GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
@@ -1527,6 +1531,7 @@ done_checking_hopo:
 				else
 				{
 					m_pPlayerState->m_fLastHopoNoteMusicSeconds = fStepSeconds;
+					m_pPlayerState->m_iLastHopoNoteCol = col;
 				}
 			}
 			break;
@@ -1671,15 +1676,23 @@ done_checking_hopo:
 			{
 			DEFAULT_FAIL(pbt);
 			case ButtonType_Strum:
-				for( int i=0; i<m_NoteData.GetNumTracks(); i++ )
 				{
-					if( m_vbFretIsDown[i] )
-						m_pNoteField->Step( i, score );
+					// only pulse the shortest string fret
+					int iLastFret = -1;
+					for( int i=0; i<m_NoteData.GetNumTracks(); i++ )
+					{
+						if( m_vbFretIsDown[i] )
+							iLastFret = i;
+					}
+					if( iLastFret != -1 ) 
+						m_pNoteField->Step( iLastFret, score );
 				}
 				break;
 			case ButtonType_Step:
-			case ButtonType_Hopo:
 				m_pNoteField->Step( col, score );
+				break;
+			case ButtonType_Hopo:
+				// no animation
 				break;
 			}
 		}
