@@ -2182,11 +2182,11 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 	}
 	
 	bool bRelease = input.type == IET_RELEASE;
-	const int iCol = GAMESTATE->GetCurrentStyle()->GameInputToColumn( input.GameI );
-
-	if( iCol == Column_Invalid )
+	if( !input.GameI.IsValid() )
 		return;
 	
+	const int iCol = GAMESTATE->GetCurrentStyle()->GameInputToColumn( input.GameI );
+
 	// Don't pass on any inputs to Player that aren't a press or a release.
 	switch( input.type )
 	{
