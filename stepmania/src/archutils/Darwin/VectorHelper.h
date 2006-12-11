@@ -11,9 +11,10 @@ namespace Vector
 	// Dest and src need only natural alignment for their types.
 	void FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, short volume );
 	
-	/* For both FastSoundRead(), dest and src need to be 16 byte aligned. The audio HAL
-	 * will provide a 16-byte aligned buffer and RageSoundMixBuffer's buffer is also
-	 * 16-byte aligned since it lives on the heap. */
+	/* For both FastSoundRead(), src needs to be 16 byte aligned and (intel) performance
+	 * is better if dest is also 16 byte aligned but it need only be type aligned. The
+	 * audio HAL will provide 16 byte aligned buffers and RageSoundMixBuffer's buffer
+	 * will always be 16-byte aligned on OS X since it's on the heap. */
 	void FastSoundRead( int16_t *dest, const int32_t *src, unsigned size );
 	void FastSoundRead( float *dest, const int32_t *src, unsigned size );
 }
