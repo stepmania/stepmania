@@ -8,10 +8,10 @@ REGISTER_SOUND_DRIVER_CLASS2( AudioUnit, AU );
 
 static const UInt32 kFramesPerPacket = 1;
 static const UInt32 kChannelsPerFrame = 2;
-static const UInt32 kBitsPerChannel = 16;
+static const UInt32 kBitsPerChannel = 32;
 static const UInt32 kBytesPerPacket = kChannelsPerFrame * kBitsPerChannel / 8;
 static const UInt32 kBytesPerFrame = kBytesPerPacket;
-static const UInt32 kFormatFlags = kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsSignedInteger;
+static const UInt32 kFormatFlags = kAudioFormatFlagsNativeEndian | kAudioFormatFlagIsFloat;
 
 #define WERROR(str, num, extra...) str ": '%s' (%lu).", ## extra, FourCCToString(num).c_str(), (num)
 #define ERROR(str, num, extra...) (ssprintf(WERROR(str, (num), ## extra)))
@@ -295,7 +295,7 @@ OSStatus RageSoundDriver_AU::Render( void *inRefCon,
 	int64_t now = int64_t( scale * AudioGetCurrentHostTime() );
 	int64_t next = int64_t( scale * inTimeStamp->mHostTime );
 	
-	This->Mix( (int16_t *)buf.mData, inNumberFrames, next, now );
+	This->Mix( (float *)buf.mData, inNumberFrames, next, now );
 	if( unlikely(This->m_bDone) )
 	{
 		AudioOutputUnitStop( This->m_OutputUnit );
