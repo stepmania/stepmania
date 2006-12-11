@@ -6,6 +6,7 @@
 #include "RageTimer.h"
 #include "RageUtil_CircularBuffer.h"
 
+class RageSoundMixBuffer;
 static const int samples_per_block = 512;
 class RageSound_Generic_Software: public RageSoundDriver
 {
@@ -47,7 +48,8 @@ protected:
 	 * This function only mixes data; it will not lock any mutexes or do any file access, and
 	 * is safe to call from a realtime thread.
 	 */
-	void Mix( int16_t *pBuf, int iFrame, int64_t iFrameNumber, int64_t iCurrentFrame );
+	void Mix( int16_t *pBuf, int iFrames, int64_t iFrameNumber, int64_t iCurrentFrame );
+	void Mix( float *pBuf, int iFrames, int64_t iFrameNumber, int64_t iCurrentFrame );
 
 	/* This mutex is used for serializing with the decoder thread.  Locking this mutex
 	 * can take a while. */
@@ -144,6 +146,7 @@ private:
 
 	static int DecodeThread_start( void *p );
 	void DecodeThread();
+	RageSoundMixBuffer &MixIntoBuffer( int iFrames, int64_t iFrameNumber, int64_t iCurrentFrame );
 	RageThread m_DecodeThread;
 
 	int GetDataForSound( Sound &s );

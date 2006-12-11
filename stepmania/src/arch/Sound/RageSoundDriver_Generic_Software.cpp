@@ -51,7 +51,7 @@ int RageSound_Generic_Software::DecodeThread_start( void *p )
 static int g_iTotalAhead = 0;
 static int g_iTotalAheadCount = 0;
 
-void RageSound_Generic_Software::Mix( int16_t *pBuf, int iFrames, int64_t iFrameNumber, int64_t iCurrentFrame )
+RageSoundMixBuffer &RageSound_Generic_Software::MixIntoBuffer( int iFrames, int64_t iFrameNumber, int64_t iCurrentFrame )
 {
 	ASSERT_M( m_DecodeThread.IsCreated(), "RageSound_Generic_Software::StartDecodeThread() was never called" );
 
@@ -152,10 +152,20 @@ void RageSound_Generic_Software::Mix( int16_t *pBuf, int iFrames, int64_t iFrame
 			++underruns;
 	}
 
-	memset( pBuf, 0, iFrames*bytes_per_frame );
-	mix.read( pBuf );
+	return mix;
 }
 
+void RageSound_Generic_Software::Mix( int16_t *pBuf, int iFrames, int64_t iFrameNumber, int64_t iCurrentFrame )
+{
+	memset( pBuf, 0, iFrames*bytes_per_frame );
+	MixIntoBuffer( iFrames, iFrameNumber, iCurrentFrame ).read( pBuf );
+}
+
+void RageSound_Generic_Software::Mix( float *pBuf, int iFrames, int64_t iFrameNumber, int64_t iCurrentFrame )
+{
+	memset( pBuf, 0, iFrames*bytes_per_frame*2 );
+	MixIntoBuffer( iFrames, iFrameNumber, iCurrentFrame ).read( pBuf );
+}
 
 void RageSound_Generic_Software::DecodeThread()
 {
