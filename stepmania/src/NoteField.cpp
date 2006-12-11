@@ -178,6 +178,11 @@ void NoteField::Load(
 
 void NoteField::Update( float fDeltaTime )
 {
+	if( m_bFirstUpdate )
+	{
+		m_pCurDisplay->m_ReceptorArrowRow.PlayCommand( "On" );
+	}
+
 	ActorFrame::Update( fDeltaTime );
 
 	m_sprBoard.Update( fDeltaTime );
