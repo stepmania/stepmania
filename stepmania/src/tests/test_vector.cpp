@@ -3,7 +3,6 @@
 #include <cstdlib>
 #include <cassert>
 #include <cmath>
-#include <inttypes.h>
 #include <algorithm>
 #include <archutils/Darwin/VectorHelper.h>
 
@@ -63,16 +62,16 @@ static void Diagnostic( const T *pDestBuf, const T *pRefBuf, size_t size )
 {
 	const int num = 10;
 	for( int i = 0; i < num; ++i )
-		fprintf( stderr, "%x ", pDestBuf[i] );
+		fprintf( stderr, "%0*x ", sizeof(T)*2, pDestBuf[i] );
 	puts( "" );
 	for( int i = 0; i < num; ++i )
-		fprintf( stderr, "%x ", pRefBuf[i] );
+		fprintf( stderr, "%0*x ", sizeof(T)*2, pRefBuf[i] );
 	puts( "" );
 	for( size_t i = size - num; i < size; ++i )
-		fprintf( stderr, "%x ", pDestBuf[i] );
+		fprintf( stderr, "%0*x ", sizeof(T)*2, pDestBuf[i] );
 	puts( "" );
 	for( size_t i = size - num; i < size; ++i )
-		fprintf( stderr, "%x ", pRefBuf[i] );
+		fprintf( stderr, "%0*x ", sizeof(T)*2, pRefBuf[i] );
 	puts( "" );
 }
 
@@ -230,18 +229,60 @@ static bool CheckAlignedRead()
 	int32_t *pSrcBuf = NEW( int32_t, size );
 	T *pDestBuf      = NEW( T, size );
 	T *pRefBuf       = NEW( T, size );
-	RandBuffer( pSrcBuf, size );
-	Vector::FastSoundRead( pDestBuf, pSrcBuf, size );
-	ScalarRead( pRefBuf, pSrcBuf, size );
-	bool ret = cmp( pRefBuf, pDestBuf, size );
+	bool ret = true;
+	
+	for( int i = 0; i < 8; ++i )
+	{
+		RandBuffer( pSrcBuf, size-i );
+		Vector::FastSoundRead( pDestBuf, pSrcBuf, size-i );
+		ScalarRead( pRefBuf, pSrcBuf, size-i );
+		
+		if( !(ret = cmp(pRefBuf, pDestBuf, size-i)) )
+		{
+			fprintf( stderr, "%d: \n", i );
+			Diagnostic( pDestBuf, pRefBuf, size-i );
+			break;
+		}
+	}
 
-	if( !ret )
-		Diagnostic( pDestBuf, pRefBuf, size );
 	DELETE( pSrcBuf );
 	DELETE( pDestBuf );
 	DELETE( pRefBuf );
 	return ret;
 }
+
+template<typename T>
+static bool CheckMisalignedRead()
+{
+	const size_t size = 1024;
+	int32_t *pSrcBuf = NEW( int32_t, size );
+	T *pDestBuf      = NEW( T, size );
+	T *pRefBuf       = NEW( T, size );
+	bool ret = true;
+	
+	for( int j = 0; j < 8; ++j )
+	{
+		for( int i = 0; i < 8; ++i )
+		{
+			RandBuffer( pSrcBuf, size-i );
+			Vector::FastSoundRead( pDestBuf+j, pSrcBuf, size-i-j );
+			ScalarRead( pRefBuf+j, pSrcBuf, size-i-j );
+			
+			if( !(ret = cmp(pRefBuf+j, pDestBuf+j, size-i-j)) )
+			{
+				fprintf( stderr, "%d, %d: \n", j, i );
+				Diagnostic( pDestBuf+j, pRefBuf+j, size-i-j );
+				break;
+			}
+		}
+	}
+
+	DELETE( pSrcBuf );
+	DELETE( pDestBuf );
+	DELETE( pRefBuf );
+	return ret;
+}
+
 
 int main()
 {
@@ -279,6 +320,16 @@ int main()
 	if( !CheckAlignedRead<float>() )
 	{
 		fputs( "Failed aligned float read.\n", stderr );
+		return 1;
+	}
+	if( !CheckMisalignedRead<int16_t>() )
+	{
+		fputs( "Failed misaligned read.\n", stderr );
+		return 1;
+	}
+	if( !CheckMisalignedRead<float>() )
+	{
+		fputs( "Failed misaligned float read.\n", stderr );
 		return 1;
 	}
 	puts( "Passed." );
