@@ -23,6 +23,7 @@
 static ThemeMetric<bool> SHOW_BOARD( "NoteField", "ShowBoard" );
 static ThemeMetric<bool> SHOW_BEAT_BARS( "NoteField", "ShowBeatBars" );
 static ThemeMetric<float> FADE_BEFORE_TARGETS_PERCENT( "NoteField", "FadeBeforeTargetsPercent" );
+static ThemeMetric<apActorCommands> BOARD_ON_COMMAND( "NoteField", "BoardOnCommand" );
 
 NoteField::NoteField()
 {	
@@ -38,6 +39,7 @@ NoteField::NoteField()
 
 	m_sprBoard.Load( THEME->GetPathG("NoteField","board") );
 	m_sprBoard.StopAnimating();
+	m_sprBoard.RunCommands( BOARD_ON_COMMAND );
 
 	m_fBoardOffsetPixels = 0;
 	m_fCurrentBeatLastUpdate = -1;
@@ -182,7 +184,7 @@ void NoteField::Update( float fDeltaTime )
 
 	// update m_fBoardOffsetPixels, m_fCurrentBeatLastUpdate, m_fYPosCurrentBeatLastUpdate
 	const float fCurrentBeat = GAMESTATE->m_fSongBeat;
-	if( m_fCurrentBeatLastUpdate != -1 )
+	if( m_sprBoard.GetTweenTimeLeft() == 0  &&  m_fCurrentBeatLastUpdate != -1 )
 	{
 		const float fYOffsetLast	= ArrowEffects::GetYOffset( m_pPlayerState, 0, m_fCurrentBeatLastUpdate );
 		const float fYPosLast		= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffsetLast, m_fYReverseOffsetPixels );
@@ -307,31 +309,22 @@ void NoteField::DrawBoard( int iDrawDistanceAfterTargetsPixels, int iDrawDistanc
 
 	// Draw the board centered on fYPosAt0 so that the board doesn't slide as the draw distance changes with modifiers.
 	
-	m_sprBoard.SetY( fYPosAt0 );
 	RectF rect = *m_sprBoard.GetCurrentTextureCoordRect();
 	const float fBoardGraphicHeightPixels = m_sprBoard.GetUnzoomedHeight();
 	float fTexCoordOffset = m_fBoardOffsetPixels / fBoardGraphicHeightPixels;
 	{
 		// top half
-		const float fHeight = iDrawDistanceBeforeTargetsPixels;
-		m_sprBoard.ZoomToHeight( fHeight );
+		const float fHeight = iDrawDistanceBeforeTargetsPixels - iDrawDistanceAfterTargetsPixels;
+		const float fY = fYPosAt0 - ((iDrawDistanceBeforeTargetsPixels + iDrawDistanceAfterTargetsPixels) / 2.0f);
 
-		rect.top = -fTexCoordOffset-(fHeight/fBoardGraphicHeightPixels);
-		rect.bottom = -fTexCoordOffset;
-		m_sprBoard.SetCustomTextureRect( rect );
-		m_sprBoard.SetVertAlign( VertAlign_Bottom );
-		m_sprBoard.SetFadeTop( FADE_BEFORE_TARGETS_PERCENT );
-		m_sprBoard.Draw();
-	}
-	{
-		const float fHeight = -iDrawDistanceAfterTargetsPixels;
 		m_sprBoard.ZoomToHeight( fHeight );
+		m_sprBoard.SetY( fY );
 
-		rect.top = -fTexCoordOffset;
-		rect.bottom = -fTexCoordOffset+(fHeight/fBoardGraphicHeightPixels);
+		rect.top = -fTexCoordOffset-(iDrawDistanceBeforeTargetsPixels/fBoardGraphicHeightPixels);
+		rect.bottom = -fTexCoordOffset+(-iDrawDistanceAfterTargetsPixels/fBoardGraphicHeightPixels);
 		m_sprBoard.SetCustomTextureRect( rect );
-		m_sprBoard.SetVertAlign( VertAlign_Top );
-		m_sprBoard.SetFadeTop( 0 );
+		float fFadeTop = FADE_BEFORE_TARGETS_PERCENT * iDrawDistanceBeforeTargetsPixels / (iDrawDistanceBeforeTargetsPixels-iDrawDistanceAfterTargetsPixels);
+		m_sprBoard.SetFadeTop( fFadeTop );
 		m_sprBoard.Draw();
 	}
 }
