@@ -24,6 +24,8 @@ static ThemeMetric<bool> SHOW_BOARD( "NoteField", "ShowBoard" );
 static ThemeMetric<bool> SHOW_BEAT_BARS( "NoteField", "ShowBeatBars" );
 static ThemeMetric<float> FADE_BEFORE_TARGETS_PERCENT( "NoteField", "FadeBeforeTargetsPercent" );
 static ThemeMetric<apActorCommands> BOARD_ON_COMMAND( "NoteField", "BoardOnCommand" );
+static ThemeMetric<apActorCommands> COMBO_STOPPED_COMMAND( "NoteField", "ComboStoppedCommand" );
+static ThemeMetric<apActorCommands> BOARD_COMBO_STOPPED_COMMAND( "NoteField", "BoardComboStoppedCommand" );
 
 NoteField::NoteField()
 {	
@@ -38,8 +40,9 @@ NoteField::NoteField()
 	m_rectMarkerBar.SetEffectDiffuseShift( 2, RageColor(1,1,1,0.5f), RageColor(0.5f,0.5f,0.5f,0.5f) );
 
 	m_sprBoard.Load( THEME->GetPathG("NoteField","board") );
-	m_sprBoard.StopAnimating();
 	m_sprBoard.RunCommands( BOARD_ON_COMMAND );
+	m_sprBoard.AddCommand( "ComboStopped", BOARD_COMBO_STOPPED_COMMAND );
+	this->AddChild( &m_sprBoard );
 
 	m_fBoardOffsetPixels = 0;
 	m_fCurrentBeatLastUpdate = -1;
@@ -52,6 +55,8 @@ NoteField::NoteField()
 	m_iBeginMarker = m_iEndMarker = -1;
 
 	m_fPercentFadeToFail = -1;
+
+	this->AddCommand( "ComboStopped", COMBO_STOPPED_COMMAND );
 }
 
 NoteField::~NoteField()
@@ -185,11 +190,10 @@ void NoteField::Update( float fDeltaTime )
 
 	ActorFrame::Update( fDeltaTime );
 
-	m_sprBoard.Update( fDeltaTime );
-
 	// update m_fBoardOffsetPixels, m_fCurrentBeatLastUpdate, m_fYPosCurrentBeatLastUpdate
 	const float fCurrentBeat = GAMESTATE->m_fSongBeat;
-	if( m_sprBoard.GetTweenTimeLeft() == 0  &&  m_fCurrentBeatLastUpdate != -1 )
+	bool bTweeningOn = m_sprBoard.GetCurrentDiffuseAlpha() >= 0.98  &&  m_sprBoard.GetCurrentDiffuseAlpha() < 1.00;	// HACK
+	if( !bTweeningOn  &&  m_fCurrentBeatLastUpdate != -1 )
 	{
 		const float fYOffsetLast	= ArrowEffects::GetYOffset( m_pPlayerState, 0, m_fCurrentBeatLastUpdate );
 		const float fYPosLast		= ArrowEffects::GetYPos(    m_pPlayerState, 0, fYOffsetLast, m_fYReverseOffsetPixels );

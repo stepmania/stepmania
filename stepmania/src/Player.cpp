@@ -2009,7 +2009,13 @@ void Player::HandleTapRowScore( unsigned row )
 	const int iCurMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
 
 	if( iOldCombo > 50 && iCurCombo < 50 )
+	{
 		SCREENMAN->PostMessageToTopScreen( SM_ComboStopped, 0 );
+	}
+	if( iOldCombo > 10 && iCurCombo < 10 )
+	{
+		m_pNoteField->PlayCommand( "ComboStopped" );
+	}
 
 	SendComboMessage( iOldCombo, iOldMissCombo );
 
