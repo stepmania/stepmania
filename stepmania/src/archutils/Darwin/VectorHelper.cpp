@@ -536,14 +536,16 @@ void Vector::FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, s
                 *(dest++) += *(src++) * volume;
 }
 
-void Vector::FastSoundRead( int16_t *dest, const int32_t *src, unsigned size )
+template<typename T>
+static inline void Read( T load, int16_t *&dest, const int32_t *&src, unsigned &size ) __attribute__((always_inline));
+template<typename T>
+static inline void Read( T load, int16_t *&dest, const int32_t *&src, unsigned &size )
 {
-	// Both dest and src are aligned. Still need to watch out for register spill.
 	__m128i zero = _mm_setzero_si128();
 	while( size >= 8 )
 	{
-		__m128i data1 = _mm_load_si128(  (__m128i *)(src + 0) );
-		__m128i data2 = _mm_load_si128(  (__m128i *)(src + 4) );
+		__m128i data1 = load( (__m128i *)(src + 0) );
+		__m128i data2 = load( (__m128i *)(src + 4) );
 		__m128i mask1 = _mm_cmplt_epi32( data1, zero );
 		__m128i mask2 = _mm_cmplt_epi32( data2, zero );
 		__m128i t1    = _mm_srai_epi32(  data1, 31 );
@@ -566,8 +568,8 @@ void Vector::FastSoundRead( int16_t *dest, const int32_t *src, unsigned size )
 	}
 	if( size )
 	{
-		__m128i data1 = _mm_load_si128(  (__m128i *)(src + 0) );
-		__m128i data2 = size > 4 ? _mm_load_si128(  (__m128i *)(src + 4) ) : zero;
+		__m128i data1 = load( (__m128i *)(src + 0) );
+		__m128i data2 = size > 4 ? load( (__m128i *)(src + 4) ) : zero;
 		__m128i mask1 = _mm_cmplt_epi32( data1, zero );
 		__m128i mask2 = _mm_cmplt_epi32( data2, zero );
 		__m128i t1    = _mm_srai_epi32(  data1, 31 );
@@ -590,22 +592,42 @@ void Vector::FastSoundRead( int16_t *dest, const int32_t *src, unsigned size )
 		_mm_maskmoveu_si128( data1, data2, (char *)dest );
 	}
 }
+	
+void Vector::FastSoundRead( int16_t *dest, const int32_t *src, unsigned size )
+{
+	while( (intptr_t(dest) & 0xF) && size )
+	{
+		// Misaligned stores are very slow.
+		*dest++ = max( -32768, min(*src++>>8, 32767) );
+		--size;
+	}
+	// Specialize loads.
+	if( intptr_t(src) & 0xF )
+		Read( _mm_loadu_si128, dest, src, size );
+	else
+		Read( _mm_load_si128, dest, src, size );
+	while( size-- )
+		*dest++ = max( -32768, min(*src++>>8, 32767) );
+}
 
-void Vector::FastSoundRead( float *dest, const int32_t *src, unsigned size )
+template<typename T>
+static inline void Read( T load, float *&dest, const int32_t *&src, unsigned &size ) __attribute__((always_inline));
+template<typename T>
+static inline void Read( T load, float *&dest, const int32_t *&src, unsigned &size )
 {
 	/* m = -32768; M = 32767
-	 * (x-2^8*m)(1-(-1))/(2^8*M-2^8*m)+(-1)
-	 * (x-2^8*m)/(2^7*(M-m))+(-1)
-	 * l1 = 2^8*m = -8388608
-	 * scale = 1/(2^7*(M-m)) = 0.00000011921110856794
-	 * l2 = -1 */
+	* (x-2^8*m)(1-(-1))/(2^8*M-2^8*m)+(-1)
+	* (x-2^8*m)/(2^7*(M-m))+(-1)
+	* l1 = 2^8*m = -8388608
+	* scale = 1/(2^7*(M-m)) = 0.00000011921110856794
+	* l2 = -1 */
 	__m128 scale = _mm_set1_ps( 0.00000011921110856794f );
 	__m128i l1   = _mm_set1_epi32( -8388608 );
 	__m128 l2    = _mm_set1_ps( -1.0f );
 	
 	while( size >= 4 )
 	{
-		__m128i data = _mm_sub_epi32( _mm_load_si128((__m128i *)src), l1 );
+		__m128i data = _mm_sub_epi32( load((__m128i *)src), l1 );
 		__m128 result = _mm_cvtepi32_ps( data );
 		
 		result = _mm_add_ps( _mm_mul_ps(result, scale), l2 );
@@ -620,13 +642,30 @@ void Vector::FastSoundRead( float *dest, const int32_t *src, unsigned size )
 		__m128i storeMask = _mm_set_epi8( 0, 0, 0, 0, X(3), X(3), X(3), X(3),
 						  X(2), X(2), X(2), X(2), -1, -1, -1, -1 );
 #undef X
-		__m128i data = _mm_sub_epi32( _mm_load_si128((__m128i *)src), l1 );
+		__m128i data = _mm_sub_epi32( load((__m128i *)src), l1 );
 		__m128 result = _mm_cvtepi32_ps( data );
 		
 		result = _mm_add_ps( _mm_mul_ps(result, scale), l2 );
 		// This might not be valid.
 		_mm_maskmoveu_si128( (__m128i)result, storeMask, (char *)dest );
 	}
+}	
+
+void Vector::FastSoundRead( float *dest, const int32_t *src, unsigned size )
+{
+	while( (intptr_t(dest) & 0xF) && size )
+	{
+		// Misaligned stores are very slow.
+		*dest++ = float( *src++ + 32768*256 ) * 1.1921110856794079500e-7f - 1.0f;
+		--size;
+	}
+	// Specialize loads.
+	if( intptr_t(src) & 0xF )
+		Read( _mm_loadu_si128, dest, src, size );
+	else
+		Read( _mm_load_si128, dest, src, size );
+	while( size-- )
+		*dest++ = float( *src++ + 32768*256 ) * 1.1921110856794079500e-7f - 1.0f;;	
 }
 #else
 #error huh?
