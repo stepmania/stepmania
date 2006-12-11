@@ -137,11 +137,6 @@ int RageSoundReader_Vorbisfile::GetLength() const
 	return len; 
 }
 
-int RageSoundReader_Vorbisfile::GetLength_Fast() const
-{
-	return GetLength();
-}
-
 int RageSoundReader_Vorbisfile::SetPosition( int iFrame )
 {
 	eof = false;

@@ -15,7 +15,6 @@ public:
 	OpenResult Open( RageFileBasic *f );
 
 	int GetLength() const;
-	int GetLength_Fast() const;
 	int SetPosition( int iFrame );
 	int Read( char *pBuf, int iFrames );
 	int GetSampleRate() const;

@@ -13,7 +13,6 @@ public:
 	OpenResult Open( RString m_sFilename );
 	void Close();
 	int GetLength() const;
-	int GetLength_Fast() const { return GetLength(); }
 	int SetPosition( int iFrame );
 	int Read( char *pBuf, int iFrames );
 	int GetSampleRate() const { return m_WavData.m_iSampleRate; }
