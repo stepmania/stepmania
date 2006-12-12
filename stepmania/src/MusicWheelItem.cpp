@@ -177,46 +177,43 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pWIBD, int 
 	case TYPE_SECTION:
 	case TYPE_COURSE:
 	case TYPE_SORT:
+	{
+		RString sDisplayName, sTranslitName;
+		BitmapText *bt = NULL;
+		switch( pWID->m_Type )
 		{
-			RString sDisplayName, sTranslitName;
-			BitmapText *bt = NULL;
-			switch( pWID->m_Type )
-			{
-			case TYPE_SECTION:
-				sDisplayName = SONGMAN->ShortenGroupName(data->m_sText);
-				bt = &m_textSection;
-				break;
-			case TYPE_COURSE:
-				sDisplayName = data->m_pCourse->GetDisplayFullTitle();
-				sTranslitName = data->m_pCourse->GetTranslitFullTitle();
-				bt = &m_textCourse;
-				m_WheelNotifyIcon.SetFlags( data->m_Flags );
-				m_WheelNotifyIcon.SetHidden( false );
-				break;
-			case TYPE_SORT:
-				sDisplayName = data->m_sLabel;
-				bt = &m_textSort;
-				break;
-			default:
-				ASSERT(0);
-			}
-
-			bt->SetText( sDisplayName, sTranslitName );
-			bt->SetDiffuse( data->m_color );
-			bt->SetRainbow( false );
-			bt->SetHidden( false );
-		}
-		break;
-	case TYPE_SONG:
-		{
-			m_TextBanner.LoadFromSong( data->m_pSong );
-			m_TextBanner.SetDiffuse( data->m_color );
-			m_TextBanner.SetHidden( false );
-
+		case TYPE_SECTION:
+			sDisplayName = SONGMAN->ShortenGroupName(data->m_sText);
+			bt = &m_textSection;
+			break;
+		case TYPE_COURSE:
+			sDisplayName = data->m_pCourse->GetDisplayFullTitle();
+			sTranslitName = data->m_pCourse->GetTranslitFullTitle();
+			bt = &m_textCourse;
 			m_WheelNotifyIcon.SetFlags( data->m_Flags );
 			m_WheelNotifyIcon.SetHidden( false );
-			RefreshGrades();
+			break;
+		case TYPE_SORT:
+			sDisplayName = data->m_sLabel;
+			bt = &m_textSort;
+			break;
+		DEFAULT_FAIL( pWID->m_Type );
 		}
+
+		bt->SetText( sDisplayName, sTranslitName );
+		bt->SetDiffuse( data->m_color );
+		bt->SetRainbow( false );
+		bt->SetHidden( false );
+		break;
+	}
+	case TYPE_SONG:
+		m_TextBanner.LoadFromSong( data->m_pSong );
+		m_TextBanner.SetDiffuse( data->m_color );
+		m_TextBanner.SetHidden( false );
+
+		m_WheelNotifyIcon.SetFlags( data->m_Flags );
+		m_WheelNotifyIcon.SetHidden( false );
+		RefreshGrades();
 		break;
 	case TYPE_ROULETTE:
 		m_textRoulette.SetText( THEME->GetString("MusicWheel","Roulette") );
@@ -233,8 +230,7 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pWIBD, int 
 		m_textRoulette.SetHidden( false );
 		break;
 
-	default:
-		ASSERT( 0 );	// invalid type
+	DEFAULT_FAIL( pWID->m_Type );	// invalid type
 	}
 
 	Actor *pBars[] = { m_sprBar, m_sprExpandedBar, m_sprSectionBar, m_sprModeBar, m_sprSortBar, m_sprSongBar, NULL };
@@ -262,7 +258,7 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pWIBD, int 
 	case TYPE_COURSE:
 		m_sprSongBar->SetHidden( false );
 		break;
-	default: ASSERT(0);
+	DEFAULT_FAIL( data->m_Type );
 	}
 
 	for( unsigned i = 0; pBars[i] != NULL; ++i )
@@ -320,12 +316,14 @@ void MusicWheelItem::RefreshGrades()
 void MusicWheelItem::HandleMessage( const Message &msg )
 {
 	if( msg == Message_CurrentStepsP1Changed ||
-		msg == Message_CurrentStepsP2Changed ||
-		msg == Message_CurrentTrailP1Changed ||
-		msg == Message_CurrentTrailP2Changed ||
-		msg == Message_PreferredDifficultyP1Changed ||
-		msg == Message_PreferredDifficultyP2Changed )
+	    msg == Message_CurrentStepsP2Changed ||
+	    msg == Message_CurrentTrailP1Changed ||
+	    msg == Message_CurrentTrailP2Changed ||
+	    msg == Message_PreferredDifficultyP1Changed ||
+	    msg == Message_PreferredDifficultyP2Changed )
+	{
 		RefreshGrades();
+	}
 
 	Actor::HandleMessage( msg );
 }
