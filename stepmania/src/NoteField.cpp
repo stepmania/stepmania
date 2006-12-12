@@ -24,6 +24,10 @@ static ThemeMetric<bool> SHOW_BOARD( "NoteField", "ShowBoard" );
 static ThemeMetric<bool> SHOW_BEAT_BARS( "NoteField", "ShowBeatBars" );
 static ThemeMetric<float> FADE_BEFORE_TARGETS_PERCENT( "NoteField", "FadeBeforeTargetsPercent" );
 static ThemeMetric<apActorCommands> COMBO_STOPPED_COMMAND( "NoteField", "ComboStoppedCommand" );
+static ThemeMetric<float> BAR_MEASURE_ALPHA( "NoteField", "BarMeasureAlpha" );
+static ThemeMetric<float> BAR_4TH_ALPHA( "NoteField", "Bar4thAlpha" );
+static ThemeMetric<float> BAR_8TH_ALPHA( "NoteField", "Bar8thAlpha" );
+static ThemeMetric<float> BAR_16TH_ALPHA( "NoteField", "Bar16thAlpha" );
 
 NoteField::NoteField()
 {	
@@ -270,18 +274,20 @@ void NoteField::DrawBeatBar( const float fBeat )
 	
 	if( bIsMeasure )
 	{
-		fAlpha = 1;
+		fAlpha = BAR_MEASURE_ALPHA;
 		iState = 0;
 	}
 	else
 	{
 		float fScrollSpeed = m_pPlayerState->m_PlayerOptions.GetCurrent().m_fScrollSpeed;
+		if( m_pPlayerState->m_PlayerOptions.GetCurrent().m_fTimeSpacing > 0 )
+			fScrollSpeed = 4;
 		switch( nt )
 		{
 		default:	ASSERT(0);
-		case NOTE_TYPE_4TH:	fAlpha = 1;					iState = 1;	break;
-		case NOTE_TYPE_8TH:	fAlpha = SCALE(fScrollSpeed,1.f,2.f,0.f,1.f);	iState = 2;	break;
-		case NOTE_TYPE_16TH:	fAlpha = SCALE(fScrollSpeed,2.f,4.f,0.f,1.f);	iState = 3;	break;
+		case NOTE_TYPE_4TH:	fAlpha = BAR_4TH_ALPHA;						iState = 1;	break;
+		case NOTE_TYPE_8TH:	fAlpha = SCALE(fScrollSpeed,1.0f,2.0f,0.0f,BAR_8TH_ALPHA);	iState = 2;	break;
+		case NOTE_TYPE_16TH:	fAlpha = SCALE(fScrollSpeed,2.0f,4.0f,0.0f,BAR_16TH_ALPHA);	iState = 3;	break;
 		}
 		CLAMP( fAlpha, 0, 1 );
 	}
@@ -298,7 +304,7 @@ void NoteField::DrawBeatBar( const float fBeat )
 	m_sprBeatBars.Draw();
 
 
-	if( bIsMeasure )
+	if( GAMESTATE->IsEditing()  &&  bIsMeasure )
 	{
 		m_textMeasureNumber.SetDiffuse( RageColor(1,1,1,1) );
 		m_textMeasureNumber.SetGlow( RageColor(1,1,1,0) );
