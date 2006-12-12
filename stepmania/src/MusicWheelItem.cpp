@@ -288,10 +288,11 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pWIBD, int 
 
 void MusicWheelItem::RefreshGrades()
 {
+	if( data == NULL )
+		return; // LoadFromWheelItemData() hasn't been called yet.
 	FOREACH_HumanPlayer( p )
 	{
-		if( data->m_pSong == NULL  ||	// this isn't a song display
-			!GAMESTATE->IsHumanPlayer(p) )
+		if( data->m_pSong == NULL )
 		{
 			m_pGradeDisplay[p]->SetDiffuse( RageColor(1,1,1,0) );
 			continue;
