@@ -1635,6 +1635,22 @@ done_checking_hopo:
 		m_pPlayerState->ClearHopoState();
 	}
 
+	if( score == TNS_None )
+	{
+		switch( pbt )
+		{
+		DEFAULT_FAIL(pbt);
+		case ButtonType_Strum:
+		case ButtonType_Step:
+			{
+				Message msg( "ScoreNone" );
+				MESSAGEMAN->Broadcast( msg );
+			}
+			break;
+		case ButtonType_Hopo:
+			break;
+		}
+	}
 
 	if( score != TNS_None )
 	{
@@ -2011,10 +2027,6 @@ void Player::HandleTapRowScore( unsigned row )
 	if( iOldCombo > 50 && iCurCombo < 50 )
 	{
 		SCREENMAN->PostMessageToTopScreen( SM_ComboStopped, 0 );
-	}
-	if( iOldCombo > 10 && iCurCombo < 10 )
-	{
-		m_pNoteField->PlayCommand( "ComboStopped" );
 	}
 
 	SendComboMessage( iOldCombo, iOldMissCombo );
