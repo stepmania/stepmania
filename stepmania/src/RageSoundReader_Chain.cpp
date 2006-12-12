@@ -367,7 +367,7 @@ int RageSoundReader_Chain::Read( char *pBuffer, int iFrames )
 
 		iMaxFramesRead = max( iMaxFramesRead, iFramesRead );
 
-		mix.write( Buffer, iFramesRead * sizeof(int16_t) * pSound->GetNumChannels() );
+		mix.write( Buffer, iFramesRead * pSound->GetNumChannels() );
 		++i;
 	}
 
