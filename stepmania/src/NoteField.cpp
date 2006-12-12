@@ -23,9 +23,7 @@
 static ThemeMetric<bool> SHOW_BOARD( "NoteField", "ShowBoard" );
 static ThemeMetric<bool> SHOW_BEAT_BARS( "NoteField", "ShowBeatBars" );
 static ThemeMetric<float> FADE_BEFORE_TARGETS_PERCENT( "NoteField", "FadeBeforeTargetsPercent" );
-static ThemeMetric<apActorCommands> BOARD_ON_COMMAND( "NoteField", "BoardOnCommand" );
 static ThemeMetric<apActorCommands> COMBO_STOPPED_COMMAND( "NoteField", "ComboStoppedCommand" );
-static ThemeMetric<apActorCommands> BOARD_COMBO_STOPPED_COMMAND( "NoteField", "BoardComboStoppedCommand" );
 
 NoteField::NoteField()
 {	
@@ -40,9 +38,8 @@ NoteField::NoteField()
 	m_rectMarkerBar.SetEffectDiffuseShift( 2, RageColor(1,1,1,0.5f), RageColor(0.5f,0.5f,0.5f,0.5f) );
 
 	m_sprBoard.Load( THEME->GetPathG("NoteField","board") );
-	m_sprBoard.RunCommands( BOARD_ON_COMMAND );
-	m_sprBoard.AddCommand( "ComboStopped", BOARD_COMBO_STOPPED_COMMAND );
-	this->AddChild( &m_sprBoard );
+	m_sprBoard->PlayCommand( "On" );
+	this->AddChild( m_sprBoard );
 
 	m_fBoardOffsetPixels = 0;
 	m_fCurrentBeatLastUpdate = -1;
@@ -192,7 +189,7 @@ void NoteField::Update( float fDeltaTime )
 
 	// update m_fBoardOffsetPixels, m_fCurrentBeatLastUpdate, m_fYPosCurrentBeatLastUpdate
 	const float fCurrentBeat = GAMESTATE->m_fSongBeat;
-	bool bTweeningOn = m_sprBoard.GetCurrentDiffuseAlpha() >= 0.98  &&  m_sprBoard.GetCurrentDiffuseAlpha() < 1.00;	// HACK
+	bool bTweeningOn = m_sprBoard->GetCurrentDiffuseAlpha() >= 0.98  &&  m_sprBoard->GetCurrentDiffuseAlpha() < 1.00;	// HACK
 	if( !bTweeningOn  &&  m_fCurrentBeatLastUpdate != -1 )
 	{
 		const float fYOffsetLast	= ArrowEffects::GetYOffset( m_pPlayerState, 0, m_fCurrentBeatLastUpdate );
@@ -202,7 +199,7 @@ void NoteField::Update( float fDeltaTime )
 		//LOG->Trace( "speed = %f, %f, %f, %f, %f, %f", fSpeed, fYOffsetAtCurrent, fYOffsetAtNext, fSecondsAtCurrent, fSecondsAtNext, fPixelDifference, fSecondsDifference );
 
 		m_fBoardOffsetPixels += fPixelDifference;
-		wrap( m_fBoardOffsetPixels, m_sprBoard.GetUnzoomedHeight() );
+		wrap( m_fBoardOffsetPixels, m_sprBoard->GetUnzoomedHeight() );
 	}
 	m_fCurrentBeatLastUpdate = fCurrentBeat;
 	const float fYOffsetCurrent	= ArrowEffects::GetYOffset( m_pPlayerState, 0, m_fCurrentBeatLastUpdate );
@@ -318,23 +315,28 @@ void NoteField::DrawBoard( int iDrawDistanceAfterTargetsPixels, int iDrawDistanc
 
 	// Draw the board centered on fYPosAt0 so that the board doesn't slide as the draw distance changes with modifiers.
 	
-	RectF rect = *m_sprBoard.GetCurrentTextureCoordRect();
-	const float fBoardGraphicHeightPixels = m_sprBoard.GetUnzoomedHeight();
+	Sprite *pSprite = dynamic_cast<Sprite *>( (Actor*)m_sprBoard );
+	if( pSprite == NULL )
+		RageException::Throw( "Board must be a Sprite" );
+
+
+	RectF rect = *pSprite->GetCurrentTextureCoordRect();
+	const float fBoardGraphicHeightPixels = pSprite->GetUnzoomedHeight();
 	float fTexCoordOffset = m_fBoardOffsetPixels / fBoardGraphicHeightPixels;
 	{
 		// top half
 		const float fHeight = iDrawDistanceBeforeTargetsPixels - iDrawDistanceAfterTargetsPixels;
 		const float fY = fYPosAt0 - ((iDrawDistanceBeforeTargetsPixels + iDrawDistanceAfterTargetsPixels) / 2.0f);
 
-		m_sprBoard.ZoomToHeight( fHeight );
-		m_sprBoard.SetY( fY );
+		pSprite->ZoomToHeight( fHeight );
+		pSprite->SetY( fY );
 
 		rect.top = -fTexCoordOffset-(iDrawDistanceBeforeTargetsPixels/fBoardGraphicHeightPixels);
 		rect.bottom = -fTexCoordOffset+(-iDrawDistanceAfterTargetsPixels/fBoardGraphicHeightPixels);
-		m_sprBoard.SetCustomTextureRect( rect );
+		pSprite->SetCustomTextureRect( rect );
 		float fFadeTop = FADE_BEFORE_TARGETS_PERCENT * iDrawDistanceBeforeTargetsPixels / (iDrawDistanceBeforeTargetsPixels-iDrawDistanceAfterTargetsPixels);
-		m_sprBoard.SetFadeTop( fFadeTop );
-		m_sprBoard.Draw();
+		pSprite->SetFadeTop( fFadeTop );
+		pSprite->Draw();
 	}
 }
 

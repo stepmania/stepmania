@@ -83,11 +83,11 @@ protected:
 
 	/* All loaded note displays, mapped by their name. */
 	map<RString, NoteDisplayCols *> m_NoteDisplays;
-	NoteDisplayCols			*m_pCurDisplay;
-	NoteDisplayCols			*m_pDisplays[NUM_PlayerNumber];
+	NoteDisplayCols		*m_pCurDisplay;
+	NoteDisplayCols		*m_pDisplays[NUM_PlayerNumber];
 
 	// decorations, mostly used in MODE_EDIT
-	Sprite		m_sprBoard;
+	AutoActor	m_sprBoard;
 	float		m_fBoardOffsetPixels;
 	float		m_fCurrentBeatLastUpdate;	// -1 on first update
 	float		m_fYPosCurrentBeatLastUpdate;	// -1 on first update
