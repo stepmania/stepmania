@@ -639,7 +639,7 @@ int64_t RageSound::GetPositionSecondsInternal( bool *bApproximate ) const
 	}
 
 	/* Get our current hardware position. */
-	int64_t iCurrentHardwareFrame = SOUNDMAN->GetPosition(this);
+	int64_t iCurrentHardwareFrame = SOUNDMAN->GetPosition();
 
 	/* It's sometimes possible for the hardware position to move backwards, usually
 	 * on underrun.  We can try to prevent this in each driver, but it's an obscure

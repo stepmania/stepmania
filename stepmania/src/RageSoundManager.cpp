@@ -104,7 +104,7 @@ bool RageSoundManager::Pause( RageSoundBase *pSound, bool bPause )
 		return m_pDriver->PauseMixing( pSound, bPause );
 }
 
-int64_t RageSoundManager::GetPosition( const RageSoundBase *pSound ) const
+int64_t RageSoundManager::GetPosition() const
 {
 	if( m_pDriver == NULL )
 		return 0;
