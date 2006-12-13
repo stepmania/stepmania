@@ -458,33 +458,6 @@ void RageSound::CommitPlayingPosition( int64_t frameno, int64_t pos, int iGotFra
 	m_Mutex.Unlock();
 }
 
-/* Called by the mixer: return a block of sound data. 
- * Be careful; this is called in a separate thread. */
-int RageSound::GetPCM( char *pBuffer, int iSize, int64_t iFrameno )
-{
-	ASSERT( m_bPlaying );
-
-	/* Now actually put data from the correct buffer into the output. */
-	int iBytesStored = 0;
-	while( iBytesStored < iSize )
-	{
-		int64_t iPosition;
-		int iGotFrames;
-		bool bEof = !GetDataToPlay( (int16_t *)(pBuffer+iBytesStored), (iSize-iBytesStored)/framesize, iPosition, iGotFrames );
-
-		/* Save this frameno/position map. */
-		SOUNDMAN->CommitPlayingPosition( GetID(), iFrameno, iPosition, iGotFrames );
-
-		iBytesStored += iGotFrames * framesize;
-		iFrameno += iGotFrames;
-
-		if( bEof )
-			break;
-	}
-
-	return iBytesStored;
-}
-
 /* Start playing from the current position. */
 void RageSound::StartPlaying()
 {
