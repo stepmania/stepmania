@@ -168,8 +168,8 @@ int64_t pos_map_queue::Search( int64_t iSourceFrame, bool *bApproximate ) const
 	 * Return the closest position.
 	 *
 	 * There are three cases when this happens: 
-	 * 1. After the first GetPCM call, but before it actually gets heard.
-	 * 2. After GetPCM returns EOF and the sound has flushed, but before
+	 * 1. Before the first CommitPlayingPosition call.
+	 * 2. After GetDataToPlay returns EOF and the sound has flushed, but before
 	 *    SoundStopped has been called.
 	 * 3. Underflow; we'll be given a larger frame number than we know about.
 	 */

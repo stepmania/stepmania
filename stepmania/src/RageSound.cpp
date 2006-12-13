@@ -628,7 +628,7 @@ int64_t RageSound::GetPositionSecondsInternal( bool *bApproximate ) const
 	if( !IsPlaying() )
 		return m_iStoppedSourceFrame;
 
-	/* If we don't yet have any position data, GetPCM hasn't yet been called at all,
+	/* If we don't yet have any position data, CommitPlayingPosition hasn't yet been called at all,
 	 * so guess what we think the real time is. */
 	if( m_HardwareToStreamMap.IsEmpty() || m_StreamToSourceMap.IsEmpty() )
 	{
