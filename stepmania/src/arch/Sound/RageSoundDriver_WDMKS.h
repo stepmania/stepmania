@@ -15,7 +15,7 @@ public:
 	~RageSoundDriver_WDMKS();
 	RString Init();
 
-	int64_t GetPosition( const RageSoundBase *pSound ) const;
+	int64_t GetPosition() const;
 	float GetPlayLatency() const;
 	int GetSampleRate( int iRate ) const;
 

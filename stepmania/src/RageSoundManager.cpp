@@ -108,7 +108,7 @@ int64_t RageSoundManager::GetPosition( const RageSoundBase *pSound ) const
 {
 	if( m_pDriver == NULL )
 		return 0;
-	return m_pDriver->GetPosition( pSound );
+	return m_pDriver->GetPosition();
 }
 
 void RageSoundManager::Update()

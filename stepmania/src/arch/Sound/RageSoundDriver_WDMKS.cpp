@@ -1152,7 +1152,7 @@ void RageSoundDriver_WDMKS::Read( void *pData, int iFrames, int iLastCursorPos, 
 
 bool RageSoundDriver_WDMKS::Fill( int iPacket, RString &sError )
 {
-	uint64_t iCurrentFrame = GetPosition( NULL );
+	uint64_t iCurrentFrame = GetPosition();
 //	if( iCurrentFrame == m_iLastCursorPos )
 //		LOG->Trace( "underrun" );
 
@@ -1246,7 +1246,7 @@ void RageSoundDriver_WDMKS::SetupDecodingThread()
 		LOG->Warn( werr_ssprintf(GetLastError(), "Failed to set sound thread priority") );
 }
 
-int64_t RageSoundDriver_WDMKS::GetPosition( const RageSoundBase *pSound ) const
+int64_t RageSoundDriver_WDMKS::GetPosition() const
 {
 	KSAUDIO_POSITION pos;
 

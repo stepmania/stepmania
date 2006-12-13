@@ -73,7 +73,7 @@ bool RageSoundDriver_OSS::GetData()
 	if(!buf)
 		buf = new int16_t[chunksize / sizeof(int16_t)];
 
-	this->Mix( buf, chunksize/bytes_per_frame, last_cursor_pos, GetPosition( NULL ) );
+	this->Mix( buf, chunksize/bytes_per_frame, last_cursor_pos, GetPosition() );
 
 	int wrote = write( fd, buf, chunksize );
   	if( wrote != chunksize )
@@ -87,7 +87,7 @@ bool RageSoundDriver_OSS::GetData()
 
 /* XXX: There's a race on last_cursor_pos here: new data might be written after the
  * ioctl returns, incrementing last_cursor_pos. */
-int64_t RageSoundDriver_OSS::GetPosition(const RageSoundBase *snd) const
+int64_t RageSoundDriver_OSS::GetPosition() const
 {
 	ASSERT( fd != -1 );
 	

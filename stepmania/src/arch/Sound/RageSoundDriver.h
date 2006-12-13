@@ -30,9 +30,9 @@ public:
 	 * playing the sound, either). */
 	virtual bool PauseMixing( RageSoundBase *snd, bool bStop ) = 0;
 
-	/* Get the current position of a given buffer, in the same units and time base
-	 * as passed to RageSound::GetPCM. */
-	virtual int64_t GetPosition( const RageSoundBase *snd ) const = 0;
+	/* Get the current hardware frame position, in the same time base as passed to
+	 * RageSound::CommitPlayingPosition. */
+	virtual int64_t GetPosition() const = 0;
 
 	/* When a sound is finished playing (GetPCM returns less than requested) and
 	 * the sound has been completely flushed (so GetPosition is no longer meaningful),

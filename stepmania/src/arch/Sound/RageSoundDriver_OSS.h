@@ -24,7 +24,7 @@ public:
 	int GetSampleRate( int rate ) const { return samplerate; }
 
 	/* virtuals: */
-	int64_t GetPosition( const RageSoundBase *snd ) const;
+	int64_t GetPosition() const;
 	float GetPlayLatency() const;
 	void SetupDecodingThread();
 

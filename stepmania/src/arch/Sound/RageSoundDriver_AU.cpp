@@ -184,7 +184,7 @@ RageSoundDriver_AU::~RageSoundDriver_AU()
 	delete m_pNotificationThread;
 }
 
-int64_t RageSoundDriver_AU::GetPosition( const RageSoundBase *sound ) const
+int64_t RageSoundDriver_AU::GetPosition() const
 {
 	double scale = m_iSampleRate / AudioGetHostClockFrequency();
 	return int64_t( scale * AudioGetCurrentHostTime() );

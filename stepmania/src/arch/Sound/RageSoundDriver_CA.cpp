@@ -373,7 +373,7 @@ void RageSoundDriver_CA::RemoveListeners()
 	}
 }	
 
-int64_t RageSoundDriver_CA::GetPosition( const RageSoundBase *sound ) const
+int64_t RageSoundDriver_CA::GetPosition() const
 {
 	AudioTimeStamp time;
 	OSStatus error;

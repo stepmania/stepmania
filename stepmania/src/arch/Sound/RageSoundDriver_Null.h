@@ -7,7 +7,7 @@ class RageSoundDriver_Null: public RageSound_Generic_Software
 {
 public:
 	RageSoundDriver_Null();
-	int64_t GetPosition( const RageSoundBase *snd ) const;
+	int64_t GetPosition() const;
 	int GetSampleRate( int iRate ) const;
 	void Update();
 

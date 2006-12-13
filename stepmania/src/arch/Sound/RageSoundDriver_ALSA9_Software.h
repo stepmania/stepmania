@@ -15,7 +15,7 @@ public:
 	RString Init();
 
 	/* virtuals: */
-	int64_t GetPosition( const RageSoundBase *pSound ) const;
+	int64_t GetPosition() const;
 	float GetPlayLatency() const;
 	int GetSampleRate( int iRate ) const { return m_iSampleRate; }
 

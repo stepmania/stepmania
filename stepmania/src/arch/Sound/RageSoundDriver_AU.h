@@ -13,7 +13,7 @@ public:
 	~RageSoundDriver_AU();
 	float GetPlayLatency() const;
 	int GetSampleRate( int rate ) const { return m_iSampleRate; }
-	int64_t GetPosition( const RageSoundBase *sound ) const;
+	int64_t GetPosition() const;
 	
 protected:
 	void SetupDecodingThread();

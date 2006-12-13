@@ -60,7 +60,7 @@ void RageSoundDriver_DSound_Software::MixerThread()
 	m_pPCM->Stop();
 }
 
-int64_t RageSoundDriver_DSound_Software::GetPosition( const RageSoundBase *pSound ) const
+int64_t RageSoundDriver_DSound_Software::GetPosition() const
 {
 	return m_pPCM->GetPosition();
 }

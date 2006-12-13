@@ -67,7 +67,7 @@ bool RageSoundDriver_ALSA9_Software::GetData()
 }
 
 
-int64_t RageSoundDriver_ALSA9_Software::GetPosition( const RageSoundBase *pSound ) const
+int64_t RageSoundDriver_ALSA9_Software::GetPosition() const
 {
 	return m_pPCM->GetPosition();
 }       
