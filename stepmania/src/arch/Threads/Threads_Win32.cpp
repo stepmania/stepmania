@@ -347,8 +347,7 @@ static bool PortableSignalObjectAndWait( HANDLE hObjectToSignal, HANDLE hObjectT
 	}
 }
 
-/* Event logic from http://www.cs.wustl.edu/~schmidt/win32-cv-1.html.
- * pTimeout is not currently implemented. */
+/* Event logic from http://www.cs.wustl.edu/~schmidt/win32-cv-1.html. */
 bool EventImpl_Win32::Wait( RageTimer *pTimeout )
 {
 	EnterCriticalSection( &m_iNumWaitingLock );
