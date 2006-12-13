@@ -23,7 +23,7 @@ public:
 	virtual bool SetProperty( const RString &sProperty, float fValue ) { return m_pSource->SetProperty( sProperty, fValue ); }
 	virtual int GetNextSourceFrame() const { return m_pSource->GetNextSourceFrame(); }
 	virtual float GetStreamToSourceRatio() const { return m_pSource->GetStreamToSourceRatio(); }
-	RageSoundReader *GetSource() { return &*m_pSource; }
+	virtual RageSoundReader *GetSource() { return &*m_pSource; }
 
 protected:
 	HiddenPtr<RageSoundReader> m_pSource;

@@ -16,6 +16,7 @@ public:
 	virtual unsigned GetNumChannels() const = 0;
 	virtual bool IsStreamingFromDisk() const = 0;
 	virtual bool SetProperty( const RString &sProperty, float fValue ) { return false; }
+	virtual RageSoundReader *GetSource() { return NULL; }
 
 	/* Return values for Read(). */
 	enum {
