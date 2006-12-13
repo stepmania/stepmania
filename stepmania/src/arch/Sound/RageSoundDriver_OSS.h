@@ -21,7 +21,7 @@ class RageSoundDriver_OSS: public RageSound_Generic_Software
 	
 public:
 	bool GetData();
-	int GetSampleRate( int rate ) const { return samplerate; }
+	int GetSampleRate() const { return samplerate; }
 
 	/* virtuals: */
 	int64_t GetPosition() const;

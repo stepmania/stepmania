@@ -45,7 +45,7 @@ public:
 	 * hearing it.  (This isn't necessarily the same as the buffer latency.) */
 	virtual float GetPlayLatency() const { return 0.0f; }
 
-	virtual int GetSampleRate( int rate ) const { return 44100; }
+	virtual int GetSampleRate() const { return 44100; }
 
 	virtual ~RageSoundDriver() { }
 };

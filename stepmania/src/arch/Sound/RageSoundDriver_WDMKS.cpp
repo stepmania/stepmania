@@ -1356,7 +1356,7 @@ RageSoundDriver_WDMKS::~RageSoundDriver_WDMKS()
 	CloseHandle( m_hSignal );
 }
 
-int RageSoundDriver_WDMKS::GetSampleRate( int iRate ) const
+int RageSoundDriver_WDMKS::GetSampleRate() const
 {
 	return m_pStream->m_iSampleRate;
 }

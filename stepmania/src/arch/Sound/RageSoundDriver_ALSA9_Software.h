@@ -17,7 +17,7 @@ public:
 	/* virtuals: */
 	int64_t GetPosition() const;
 	float GetPlayLatency() const;
-	int GetSampleRate( int iRate ) const { return m_iSampleRate; }
+	int GetSampleRate() const { return m_iSampleRate; }
 
 	void SetupDecodingThread();
 

@@ -241,7 +241,7 @@ int RageSoundManager::GetDriverSampleRate( int iRate ) const
 	if( m_pDriver == NULL )
 		return 44100;
 
-	return m_pDriver->GetSampleRate( iRate );
+	return m_pDriver->GetSampleRate();
 }
 
 /* The return value of PlaySound and PlayCopyOfSound is only valid in the main

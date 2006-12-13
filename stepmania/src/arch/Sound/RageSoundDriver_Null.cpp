@@ -35,7 +35,7 @@ RageSoundDriver_Null::RageSoundDriver_Null()
 	StartDecodeThread();
 }
 
-int RageSoundDriver_Null::GetSampleRate( int iRate ) const
+int RageSoundDriver_Null::GetSampleRate() const
 {
 	return m_iSampleRate;
 }

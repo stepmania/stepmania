@@ -12,7 +12,7 @@ public:
 	RString Init();
 	~RageSoundDriver_AU();
 	float GetPlayLatency() const;
-	int GetSampleRate( int rate ) const { return m_iSampleRate; }
+	int GetSampleRate() const { return m_iSampleRate; }
 	int64_t GetPosition() const;
 	
 protected:

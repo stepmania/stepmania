@@ -14,7 +14,7 @@ public:
 
 	int64_t GetPosition() const;
 	float GetPlayLatency() const;
-	int GetSampleRate( int rate ) const;
+	int GetSampleRate() const;
 	
 protected:
 	void SetupDecodingThread();

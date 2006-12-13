@@ -16,7 +16,7 @@ public:
 	RString Init();
 	~RageSoundDriver_CA();
 	float GetPlayLatency() const { return m_fLatency; }
-	int GetSampleRate( int rate ) const { return m_iSampleRate; }
+	int GetSampleRate() const { return m_iSampleRate; }
 	int64_t GetPosition() const;
 	void SetupDecodingThread();
 

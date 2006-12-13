@@ -138,7 +138,7 @@ float RageSoundDriver_DSound_Software::GetPlayLatency() const
 	return (1.0f / m_iSampleRate) * g_iMaxWriteahead;
 }
 
-int RageSoundDriver_DSound_Software::GetSampleRate( int rate ) const
+int RageSoundDriver_DSound_Software::GetSampleRate() const
 {
 	return m_iSampleRate;
 }

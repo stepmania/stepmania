@@ -17,7 +17,7 @@ public:
 
 	int64_t GetPosition() const;
 	float GetPlayLatency() const;
-	int GetSampleRate( int iRate ) const;
+	int GetSampleRate() const;
 
 private:
 	static int MixerThread_start( void *p );

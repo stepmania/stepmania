@@ -93,7 +93,7 @@ RageSoundMixBuffer &RageSound_Generic_Software::MixIntoBuffer( int iFrames, int6
 			/* If the sound is supposed to start at a time past this buffer, insert silence. */
 			const int64_t iFramesUntilThisBuffer = iFrameNumber - iCurrentFrame;
 			const float fSecondsBeforeStart = -s.m_StartTime.Ago();
-			const int64_t iFramesBeforeStart = int64_t(fSecondsBeforeStart * GetSampleRate(0));
+			const int64_t iFramesBeforeStart = int64_t(fSecondsBeforeStart * GetSampleRate());
 			const int iSilentFramesInThisBuffer = clamp( int(iFramesBeforeStart-iFramesUntilThisBuffer), 0, iFramesLeft );
 
 			iGotFrames += iSilentFramesInThisBuffer;
@@ -180,7 +180,7 @@ void RageSound_Generic_Software::DecodeThread()
 	{
 		/* Fill each playing sound, round-robin. */
 		{
-			int iSampleRate = GetSampleRate(0);
+			int iSampleRate = GetSampleRate();
 			ASSERT_M( iSampleRate > 0, ssprintf("%i", iSampleRate) );
 			int iUsecs = 1000000*chunksize() / iSampleRate;
 			usleep( iUsecs );
