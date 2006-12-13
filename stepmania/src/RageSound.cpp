@@ -241,7 +241,7 @@ void RageSound::LoadSoundReader( RageSoundReader *pSound )
 
 	m_iStreamFrame = m_iSourceFrame = m_iStoppedSourceFrame = 0;
 
-	const int iNeededRate = SOUNDMAN->GetDriverSampleRate( pSound->GetSampleRate() );
+	const int iNeededRate = SOUNDMAN->GetDriverSampleRate();
 	bool bSupportRateChange = false;
 	if( iNeededRate != pSound->GetSampleRate() || bSupportRateChange )
 	{

@@ -43,7 +43,7 @@ public:
 	int GetUniqueID();						/* used by RageSound */
 	void CommitPlayingPosition( int ID, int64_t frameno, int64_t pos, int got_bytes );	/* used by drivers */
 	float GetPlayLatency() const;
-	int GetDriverSampleRate( int iRate ) const;
+	int GetDriverSampleRate() const;
 
 	/* When deleting a sound from any thread except the one calling Update(), this
 	 * must be used to prevent race conditions. */

@@ -122,7 +122,7 @@ void AutoKeysounds::FinishLoading()
 
 	/* Load the BGM. */
 	RageSoundReader_Chain *pChain = new RageSoundReader_Chain;
-	pChain->SetPreferredSampleRate( SOUNDMAN->GetDriverSampleRate(44100) );
+	pChain->SetPreferredSampleRate( SOUNDMAN->GetDriverSampleRate() );
 
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pChain->AddSound( pChain->LoadSound(pSong->GetMusicPath()), 0, 0 );
