@@ -1350,12 +1350,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 						RelativePath="arch\Sound\RageSoundDriver.h">
 					</File>
 					<File
-						RelativePath="arch\Sound\RageSoundDriver_DSound.cpp">
-					</File>
-					<File
-						RelativePath="arch\Sound\RageSoundDriver_DSound.h">
-					</File>
-					<File
 						RelativePath="arch\Sound\RageSoundDriver_DSound_Software.cpp">
 					</File>
 					<File

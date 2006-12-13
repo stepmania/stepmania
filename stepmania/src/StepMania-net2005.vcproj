@@ -1797,14 +1797,6 @@
 						>
 					</File>
 					<File
-						RelativePath="arch\Sound\RageSoundDriver_DSound.cpp"
-						>
-					</File>
-					<File
-						RelativePath="arch\Sound\RageSoundDriver_DSound.h"
-						>
-					</File>
-					<File
 						RelativePath="arch\Sound\RageSoundDriver_DSound_Software.cpp"
 						>
 					</File>
