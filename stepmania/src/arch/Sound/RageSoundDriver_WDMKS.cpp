@@ -988,7 +988,10 @@ bool WinWdmStream::Open( WinWdmFilter *pFilter,
 	/* If a writeahead was specified, use it. */
 	m_iFramesPerChunk = iWriteAheadFrames / m_iWriteAheadChunks;
 	if( m_iFramesPerChunk == 0 )
-		m_iFramesPerChunk = iFrameSize;
+	{
+		m_iFramesPerChunk = 512 / m_iWriteAheadChunks;
+		m_iFramesPerChunk = max( m_iFramesPerChunk, iFrameSize ); // iFrameSize may be 0
+	}
 
 	LOG->Info( "KS: chunk size: %i; allocator framing: %i (%ims)", m_iFramesPerChunk, iFrameSize, (iFrameSize * 1000) / m_iSampleRate );
 	LOG->Info( "KS: %i hz", m_iSampleRate );
