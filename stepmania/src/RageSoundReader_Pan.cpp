@@ -11,11 +11,6 @@ RageSoundReader_Pan::RageSoundReader_Pan( RageSoundReader *pSource ):
 
 int RageSoundReader_Pan::Read( char *pBuf, int iFrames )
 {
-	/* If the source is mono, it'll be converted to stereo; read half as many frames,
-	 * so we have space. */
-	if( m_pSource->GetNumChannels() == 1 )
-		iFrames /= 2;
-
 	iFrames = m_pSource->Read( pBuf, iFrames );
 	if( iFrames < 0 )
 	{
