@@ -17,6 +17,7 @@ class CircBuf
 	 *
 	 * Invariants: read_pos < size, write_pos < size. */
 	unsigned size;
+	unsigned m_iBlockSize;
 
 	/* These are volatile to prevent reads and writes to them from being optimized. */
 	volatile unsigned read_pos, write_pos;
@@ -33,11 +34,28 @@ public:
 		delete[] buf;
 	}
 		
+	void swap( CircBuf &rhs )
+	{
+		std::swap( size, rhs.size );
+		std::swap( m_iBlockSize, rhs.m_iBlockSize );
+		std::swap( read_pos, rhs.read_pos );
+		std::swap( write_pos, rhs.write_pos );
+		std::swap( buf, rhs.buf );
+	}
+
+	CircBuf &operator=( const CircBuf &rhs )
+	{
+		CircBuf c( rhs );
+		this->swap( c );
+		return *this;
+	}
+
 	CircBuf( const CircBuf &cpy )
 	{
 		size = cpy.size;
 		read_pos = cpy.read_pos;
 		write_pos = cpy.write_pos;
+		m_iBlockSize = cpy.m_iBlockSize;
 		if( size )
 		{
 			buf = new T[size];
@@ -83,14 +101,17 @@ public:
 			/* The buffer looks like "eeeeeeeeeeee" (e = empty, D = data). */
 			ret = size;
 
-		/* Subtract one, to account for the element that we never fill. */
-		return ret - 1;
+		/* Subtract the blocksize, to account for the element that we never fill
+		 * while keeping the entries aligned to m_iBlockSize. */
+		return ret - m_iBlockSize;
 	}
 
 	unsigned capacity() const { return size; }
 
-	void reserve( unsigned n )
+	void reserve( unsigned n, int iBlockSize = 1 )
 	{
+		m_iBlockSize = iBlockSize;
+
 		clear();
 		delete[] buf;
 		buf = NULL;
@@ -100,8 +121,10 @@ public:
 		 * since that would be ambiguous with an empty buffer. */
 		if( n != 0 )
 		{
-			buf = new T[n+1];
 			size = n+1;
+			size = ((size + iBlockSize - 1) / iBlockSize) * iBlockSize; // round up
+
+			buf = new T[size];
 		}
 		else
 			size = 0;
@@ -148,11 +171,12 @@ public:
 			pSizes[1] = 0;
 		}
 
-		/* Subtract one, to account for the element that we never fill. */
+		/* Subtract the blocksize, to account for the element that we never fill
+		 * while keeping the entries aligned to m_iBlockSize. */
 		if( pSizes[1] )
-			--pSizes[1];
+			pSizes[1] -= m_iBlockSize;
 		else
-			--pSizes[0];
+			pSizes[0] -= m_iBlockSize;
 	}
 
 	void get_read_pointers( T *pPointers[2], unsigned pSizes[2] )
