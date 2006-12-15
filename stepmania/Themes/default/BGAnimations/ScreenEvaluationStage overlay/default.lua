@@ -8,10 +8,10 @@ p2y = p2y + 75
 Trace( "(x,y) = (" .. p1x .. "," .. p1y .. ")" )
 return Def.ActorFrame {
 	children = {
-		LoadActor("life graph")(PLAYER_1) .. {
+		LoadActor("life graph", PLAYER_1) .. {
 			InitCommand = cmd(x,p1x;y,p1y),
 		},
-		LoadActor("life graph")(PLAYER_2) .. {
+		LoadActor("life graph", PLAYER_2) .. {
 			InitCommand = cmd(x,p2x;y,p2y),
 		},
 	}

@@ -8,7 +8,7 @@ children = {
 			local Stats = STATSMAN:GetCurStageStats();
 			self:LoadFromStats( Stats, Stats:GetPlayerStageStats(Player) )
 		end,
-		Texture = LoadActor("LifeGraph p1")() .. {
+		Texture = LoadActor("LifeGraph p1") .. {
 			InitCommand=cmd(ztest,1;diffusealpha,0),
 			OnCommand=cmd(linear,0.5;diffusealpha,1),
 			OffCommand=cmd(linear,0.5;diffusealpha,0),
