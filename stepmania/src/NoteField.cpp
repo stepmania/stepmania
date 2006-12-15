@@ -797,6 +797,9 @@ void NoteField::DrawPrimitives()
 					continue;	// skip
 				}
 
+				bool bIsAddition = (tn.source == TapNote::addition);
+				bool bIsHopoPossible = (tn.bHopoPossible);
+				bool bUseAdditionColoring = bIsAddition || bIsHopoPossible;
 				const bool bIsActive = tn.HoldResult.bActive;
 				const bool bIsHoldingNote = tn.HoldResult.bHeld;
 				if( bIsActive )
@@ -809,7 +812,7 @@ void NoteField::DrawPrimitives()
 					bIsInSelectionRange = (m_iBeginMarker <= iStartRow && iEndRow < m_iEndMarker);
 				
 				NoteDisplayCols *displayCols = tn.pn == PLAYER_INVALID ? m_pCurDisplay : m_pDisplays[tn.pn];
-				displayCols->display[c].DrawHold( tn, c, iStartRow, bIsHoldingNote, bIsActive, Result, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 
+				displayCols->display[c].DrawHold( tn, c, iStartRow, bIsHoldingNote, bIsActive, Result, bUseAdditionColoring, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 
 					false, m_fYReverseOffsetPixels, (float) iDrawDistanceAfterTargetsPixels, (float) iDrawDistanceBeforeTargetsPixels, iDrawDistanceBeforeTargetsPixels, FADE_BEFORE_TARGETS_PERCENT );
 			}
 
@@ -880,7 +883,7 @@ void NoteField::DrawPrimitives()
 				Sprite sprite;
 				sprite.Load( THEME->GetPathG("NoteField","attack "+tn.sAttackModifiers) );
 				float fBeat = NoteRowToBeat(i);
-				displayCols->display[c].DrawActor( &sprite, c, fBeat, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels, false, NotePart_Tap, iDrawDistanceBeforeTargetsPixels, FADE_BEFORE_TARGETS_PERCENT );
+				displayCols->display[c].DrawActor( &sprite, c, fBeat, bUseAdditionColoring, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels, false, NotePart_Tap, iDrawDistanceBeforeTargetsPixels, FADE_BEFORE_TARGETS_PERCENT );
 			}
 			else
 			{
