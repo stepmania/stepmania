@@ -83,10 +83,12 @@ local function ResolvePath( path, level )
 end
 
 -- Load an actor template.
-function LoadActor( path )
-	local ResolvedPath = ResolvePath( path, 2 );
+function LoadActorFunc( path, level )
+	level = level or 1
+
+	local ResolvedPath = ResolvePath( path, level+1 );
 	if not ResolvedPath then
-		error( path .. ": not found", 2 );
+		error( path .. ": not found", level+1 );
 	end
 	path = ResolvedPath
 
@@ -103,21 +105,21 @@ function LoadActor( path )
 	if Type == "FileType_Bitmap" or Type == "FileType_Movie" then
 		return function()
 			return Def.Sprite {
-				_Level = 1,
+				_Level = level+1,
 				Texture = path
 			}
 		end
 	elseif Type == "FileType_Sound" then
 		return function()
 			return Def.Sound {
-				_Level = 1,
+				_Level = level+1,
 				File = path
 			}
 		end
 	elseif Type == "FileType_Model" then
 		return function()
 			return Def.Model {
-				_Level = 1,
+				_Level = level+1,
 				Meshes = path,
 				Materials = path,
 				Bones = path
@@ -126,13 +128,20 @@ function LoadActor( path )
 	elseif Type == "FileType_Directory" then
 		return function()
 			return Def.BGAnimation {
-				_Level = 1,
+				_Level = level+1,
 				AniDir = path,
 			}
 		end
 	end
 
-	error( path .. ": unknown file type (" .. tostring(Type) .. ")", 2 );
+	error( path .. ": unknown file type (" .. tostring(Type) .. ")", level+1 );
+end
+
+-- Load and create an actor template.
+function LoadActor( path, ... )
+	local t = LoadActorFunc( path, 2 );
+	assert(t);
+	return t(...);
 end
 
 -- (c) 2006 Glenn Maynard
