@@ -148,25 +148,44 @@ InputHandler_X11::~InputHandler_X11()
 
 void InputHandler_X11::Update()
 {
-	XEvent event;
-
 	if( Dpy == NULL || Win == None )
 	{
 		InputHandler::UpdateTimer();
 		return;
 	}
 
+	XEvent event, lastEvent;
+	DeviceButton lastDB = DeviceButton_Invalid;
+	lastEvent.type = 0;
+
 	while( XCheckWindowEvent(Dpy, Win, KeyPressMask | KeyReleaseMask, &event) )
 	{
+		const bool bPress = event.type == KeyPress;
+		if( lastEvent.type != 0 )
+		{
+			if( bPress && event.xkey.time == lastEvent.xkey.time &&
+			    event.xkey.keycode == lastEvent.xkey.keycode )
+			{
+				// This is a repeat event so ignore it.
+				lastEvent.type = 0;
+				continue;
+			}
+			// This is a new event so the last release was not a repeat.
+			ButtonPressed( DeviceInput(DEVICE_KEYBOARD, lastDB), false );
+			lastEvent.type = 0;
+		}
 		// Why only the zero index?
-		DeviceButton db = XSymToDeviceButton( XLookupKeysym(&event.xkey, 0) );
-		if( db == DeviceButton_Invalid )
+		lastDB = XSymToDeviceButton( XLookupKeysym(&event.xkey, 0) );
+		if( lastDB == DeviceButton_Invalid )
 			continue;
-		bool bPress = event.type == KeyPress;
-		const DeviceInput di( DEVICE_KEYBOARD, db );
-		if( INPUTFILTER->IsBeingPressed(di) != bPress )
-			ButtonPressed( di, bPress );
+		if( bPress )
+			ButtonPressed( DeviceInput(DEVICE_KEYBOARD, lastDB), true );
+		else
+			lastEvent = event;
 	}
+	// Handle any last releases.
+	if( lastEvent.type != 0 )
+		ButtonPressed( DeviceInput(DEVICE_KEYBOARD, lastDB), false );
 	InputHandler::UpdateTimer();
 }
 
