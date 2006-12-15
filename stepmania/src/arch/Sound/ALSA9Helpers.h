@@ -29,11 +29,9 @@ public:
 	static void GetSoundCardDebugInfo();
 	static RString GetHardwareID( RString name="" );
 		
-	enum hw { HW_HARDWARE, HW_SOFTWARE, HW_DONT_CARE };
-
 	/* Call SetSampleRate before you use the sample. */
 	Alsa9Buf();
-	RString Init( hw hardware, int channels );
+	RString Init( int channels );
 	~Alsa9Buf();
 	
 	int GetNumFramesToFill();

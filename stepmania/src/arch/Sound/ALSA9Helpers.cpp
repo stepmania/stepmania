@@ -246,7 +246,7 @@ Alsa9Buf::Alsa9Buf()
 	pcm = NULL;
 }
 
-RString Alsa9Buf::Init( hw hardware, int channels_ )
+RString Alsa9Buf::Init( int channels_ )
 {
 	channels = channels_;
 

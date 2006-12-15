@@ -102,7 +102,7 @@ RString RageSoundDriver_ALSA9_Software::Init()
 		g_iMaxWriteahead = PREFSMAN->m_iSoundWriteAhead;
 
 	m_pPCM = new Alsa9Buf();
-	sError = m_pPCM->Init( Alsa9Buf::HW_DONT_CARE, channels );
+	sError = m_pPCM->Init( channels );
 	if( sError != "" )
 		return sError;
 
