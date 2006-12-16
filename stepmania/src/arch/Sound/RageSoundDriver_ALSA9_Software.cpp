@@ -102,17 +102,14 @@ RString RageSoundDriver_ALSA9_Software::Init()
 		g_iMaxWriteahead = PREFSMAN->m_iSoundWriteAhead;
 
 	m_pPCM = new Alsa9Buf();
-	sError = m_pPCM->Init( channels );
+	sError = m_pPCM->Init( channels,
+			g_iMaxWriteahead,
+			g_iMaxWriteahead / num_chunks,
+			PREFSMAN->m_iSoundPreferredSampleRate );
 	if( sError != "" )
 		return sError;
 
-	m_iSampleRate = m_pPCM->FindSampleRate( PREFSMAN->m_iSoundPreferredSampleRate );
-	m_pPCM->SetSampleRate( m_iSampleRate );
-	LOG->Info( "ALSA: Software mixing at %ihz", m_iSampleRate );
-	
-	m_pPCM->SetWriteahead( g_iMaxWriteahead );
-	m_pPCM->SetChunksize( g_iMaxWriteahead / num_chunks );
-	m_pPCM->LogParams();
+	m_iSampleRate = m_pPCM->GetSampleRate();
 	
 	StartDecodeThread();
 	

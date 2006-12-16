@@ -8,10 +8,10 @@
 class Alsa9Buf
 {
 private:
-	int channels, samplerate, samplebits;
+	int channels, samplebits;
+	unsigned samplerate;
 	int buffersize;
 	int64_t last_cursor_pos;
-	bool samplerate_set_explicitly;
 
 	snd_pcm_uframes_t preferred_writeahead, preferred_chunksize;
 	snd_pcm_uframes_t writeahead, chunksize;
@@ -29,26 +29,22 @@ public:
 	static void GetSoundCardDebugInfo();
 	static RString GetHardwareID( RString name="" );
 		
-	/* Call SetSampleRate before you use the sample. */
 	Alsa9Buf();
-	RString Init( int channels );
+	RString Init( int channels,
+			int iWriteahead,
+			int iChunkSize,
+			int iSampleRate );
 	~Alsa9Buf();
 	
 	int GetNumFramesToFill();
 	bool WaitUntilFramesCanBeFilled( int timeout_ms );
 	void Write( const int16_t *buffer, int frames );
-	unsigned FindSampleRate( unsigned rate );
 	
 	void Play();
 	void Stop();
 	void SetVolume(float vol);
-	void SetSampleRate(int hz);
 	int GetSampleRate() const { return samplerate; }
 
-	void SetWriteahead( snd_pcm_sframes_t frames );
-	void SetChunksize( snd_pcm_sframes_t frames );
-	void LogParams();
-	
 	int64_t GetPosition() const;
 	int64_t GetPlayPos() const { return last_cursor_pos; }
 };

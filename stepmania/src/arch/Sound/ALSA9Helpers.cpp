@@ -11,24 +11,6 @@
 #define ALSA_ASSERT(x) \
         if (err < 0) { LOG->Warn("ALSA: %s: %s", x, dsnd_strerror(err)); }
 
-/* If the given sample rate can be used, return it.  Otherwise, return the
- * samplerate to use instead. */
-unsigned Alsa9Buf::FindSampleRate( unsigned rate )
-{
-	if( rate == 0 )
-		rate = 44100;
-
-	snd_pcm_hw_params_t *testhw;
-	dsnd_pcm_hw_params_alloca( &testhw );
-	dsnd_pcm_hw_params_any( pcm, testhw );
-
-	int err = dsnd_pcm_hw_params_set_rate_near(pcm, testhw, &rate, 0);
-	if( err >= 0 )
-		return rate;
-
-	return 0;
-}
-
 bool Alsa9Buf::SetHWParams()
 {
 	int err;
@@ -64,12 +46,8 @@ bool Alsa9Buf::SetHWParams()
 	ALSA_CHECK("dsnd_pcm_hw_params_set_channels");
 
 	/* Set the sample rate. */
-	unsigned int rate = samplerate;
-	err = dsnd_pcm_hw_params_set_rate_near(pcm, hwparams, &rate, 0);
+	err = dsnd_pcm_hw_params_set_rate_near(pcm, hwparams, &samplerate, 0);
 	ALSA_CHECK("dsnd_pcm_hw_params_set_rate_near");
-
-	if( samplerate_set_explicitly && (int) rate != samplerate )
-		LOG->Warn("Alsa9Buf::SetHWParams: Couldn't get %ihz (got %ihz instead)", samplerate, rate);
 
 	/* Set the buffersize to the writeahead, and then copy back the actual value
 	 * we got. */
@@ -90,14 +68,6 @@ bool Alsa9Buf::SetHWParams()
 	ALSA_CHECK("dsnd_pcm_hw_params");
 
 	return true;
-}
-
-void Alsa9Buf::LogParams()
-{
-	if( preferred_writeahead != writeahead )
-		LOG->Info( "ALSA: writeahead adjusted from %u to %u", (unsigned) preferred_writeahead, (unsigned) writeahead );
-	if( preferred_chunksize != chunksize )
-		LOG->Info( "ALSA: chunksize adjusted from %u to %u", (unsigned) preferred_chunksize, (unsigned) chunksize );
 }
 
 bool Alsa9Buf::SetSWParams()
@@ -240,16 +210,24 @@ Alsa9Buf::Alsa9Buf()
 	samplerate = 44100;
 	samplebits = 16;
 	last_cursor_pos = 0;
-	samplerate_set_explicitly = false;
 	preferred_writeahead = 8192;
 	preferred_chunksize = 1024;
 	pcm = NULL;
 }
 
-RString Alsa9Buf::Init( int channels_ )
+RString Alsa9Buf::Init( int channels_,
+		int iWriteahead,
+		int iChunkSize,
+		int iSampleRate )
 {
 	channels = channels_;
-
+	preferred_writeahead = iWriteahead;
+	preferred_chunksize = iChunkSize;
+	if( iSampleRate == 0 )
+		samplerate = 44100;
+	else
+		samplerate = iSampleRate;
+	
 	GetSoundCardDebugInfo();
 		
 	InitializeErrorHandler();
@@ -267,6 +245,13 @@ RString Alsa9Buf::Init( int channels_ )
 	}
 
 	SetSWParams();
+
+	LOG->Info( "ALSA: Mixing at %ihz", samplerate );
+
+	if( preferred_writeahead != writeahead )
+		LOG->Info( "ALSA: writeahead adjusted from %u to %u", (unsigned) preferred_writeahead, (unsigned) writeahead );
+	if( preferred_chunksize != chunksize )
+		LOG->Info( "ALSA: chunksize adjusted from %u to %u", (unsigned) preferred_chunksize, (unsigned) chunksize );
 
 	return "";
 }
@@ -419,32 +404,6 @@ void Alsa9Buf::Stop()
 	last_cursor_pos = 0;
 }
 
-void Alsa9Buf::SetSampleRate(int hz)
-{
-	samplerate = hz;
-	samplerate_set_explicitly = true;
-
-	if( !SetHWParams() )
-	{
-		/*
-		 * If this fails, we're no longer set up; if we call SW param calls,
-		 * ALSA will assert out on us (instead of gracefully returning an error).
-		 *
-		 * If we fail here, it means we set up the initial stream, but can't
-		 * configure it to the sample rate we want.  This happened on a CS46xx
-		 * with an old ALSA version, at least: snd_pcm_hw_params failed
-		 * with ENOMEM.  It set up only 10 44.1khz streams; it may have been
-		 * trying to increase one to 48khz and, for some reason, that needed
-		 * more card memory.  (I've tried to work around that by setting up
-		 * streams as 48khz to begin with, so we set it up as the maximum
-		 * to begin with.)
-		 */
-		FAIL_M( ssprintf("SetHWParams(%i) failed", hz) );
-	}
-
-	SetSWParams();
-}
-
 RString Alsa9Buf::GetHardwareID( RString name )
 {
 	InitializeErrorHandler();
@@ -470,20 +429,6 @@ RString Alsa9Buf::GetHardwareID( RString name )
 	return ret;
 }
 
-void Alsa9Buf::SetWriteahead( snd_pcm_sframes_t frames )
-{
-	preferred_writeahead = frames;
-	SetHWParams();
-	SetSWParams();
-}
-
-void Alsa9Buf::SetChunksize( snd_pcm_sframes_t frames )
-{
-	preferred_chunksize = frames;
-
-	SetHWParams();
-	SetSWParams();
-}
 
 /*
  * (c) 2002-2004 Glenn Maynard, Aaron VonderHaar
