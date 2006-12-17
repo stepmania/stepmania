@@ -10,7 +10,6 @@
 #include <fcntl.h>
 
 #include "arch/ArchHooks/ArchHooks.h"
-#include "arch/Arch.h"
 #include "archutils/Win32/WindowsResources.h"
 #include "archutils/Win32/DialogUtil.h"
 #include "archutils/Win32/ErrorStrings.h"
