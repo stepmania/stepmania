@@ -21,8 +21,9 @@
  * We don't need this now; I'll write it if it becomes needed.)
  */
 #include "RageInputDevice.h"	// for InputDevice
+#include "arch/RageDriver.h"
 
-class InputHandler
+class InputHandler: public RageDriver
 {
 public:
 	InputHandler() { m_iInputsSinceUpdate = 0; }
@@ -68,14 +69,12 @@ private:
 	int m_iInputsSinceUpdate;
 };
 
-typedef InputHandler *(*CreateInputHandlerFn)();
 struct RegisterInputHandler
 {
-	static map<istring, CreateInputHandlerFn> *g_pRegistrees;
-	RegisterInputHandler( const istring &sName, CreateInputHandlerFn pfn );
+	RegisterInputHandler( const istring &sName, CreateRageDriverFn pfn );
 };
 #define REGISTER_INPUT_HANDLER_CLASS2( name, x ) \
-	static RegisterInputHandler register_##name( #name, CreateClass<InputHandler_##x, InputHandler> )
+	static RegisterInputHandler register_##name( #name, CreateClass<InputHandler_##x, RageDriver> )
 #define REGISTER_INPUT_HANDLER_CLASS( name ) REGISTER_INPUT_HANDLER_CLASS2( name, name )
 
 
