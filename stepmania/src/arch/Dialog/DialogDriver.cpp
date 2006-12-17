@@ -15,7 +15,7 @@ RegisterDialogDriver::RegisterDialogDriver( const istring &sName, CreateDialogDr
 
 REGISTER_DIALOG_DRIVER_CLASS( Null );
 
-DialogDriver *MakeDialogDriver()
+DialogDriver *DialogDriver::Create()
 {
 	RString sDrivers = "win32,cocoa,null";
 	vector<RString> asDriversToTry;

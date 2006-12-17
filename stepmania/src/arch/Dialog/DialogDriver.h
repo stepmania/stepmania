@@ -7,6 +7,8 @@
 class DialogDriver
 {
 public:
+	static DialogDriver *Create();
+
 	virtual void Error( RString sMessage, RString sID ) { printf("Error: %s\n", sMessage.c_str()); }
 	virtual void OK( RString sMessage, RString sID ) {}
 	virtual Dialog::Result AbortRetryIgnore( RString sMessage, RString sID ) { return Dialog::ignore; } 

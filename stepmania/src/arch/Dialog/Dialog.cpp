@@ -6,7 +6,6 @@
 #endif
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "arch/arch.h"
 #include "RageThreads.h"
 
 #if !defined(SMPACKAGE)
@@ -27,7 +26,7 @@ void Dialog::Init()
 	if( g_pImpl != NULL )
 		return;
 
-	g_pImpl = MakeDialogDriver();
+	g_pImpl = DialogDriver::Create();
 
 	/* DialogDriver_Null should have worked, at least. */
 	ASSERT( g_pImpl != NULL );
