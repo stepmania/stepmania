@@ -50,7 +50,7 @@ RageSoundDriver *MakeRageSoundDriver( const RString &drivers )
 }
 
 /*
- * (c) 2002-2006 Gleen Maynard, Steve Checkoway
+ * (c) 2002-2006 Glenn Maynard, Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
