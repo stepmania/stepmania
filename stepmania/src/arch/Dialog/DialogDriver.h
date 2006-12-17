@@ -24,8 +24,7 @@ struct RegisterDialogDriver
 	RegisterDialogDriver( const istring &sName, CreateDialogDriverFn pfn );
 };
 #define REGISTER_DIALOG_DRIVER_CLASS( name ) \
-	static DialogDriver *Create##name() { return new DialogDriver_##name; } \
-	static RegisterDialogDriver register_##name( #name, Create##name )
+	static RegisterDialogDriver register_##name( #name, CreateClass<DialogDriver_##name, DialogDriver> )
 
 
 #endif

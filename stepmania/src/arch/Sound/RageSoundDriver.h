@@ -58,8 +58,7 @@ struct RegisterSoundDriver
 };
 // Can't use Create##name because many of these have -sw suffixes.
 #define REGISTER_SOUND_DRIVER_CLASS2( name, x ) \
-	static RageSoundDriver *Create##x() { return new RageSoundDriver_##x; } \
-	static RegisterSoundDriver register_##x( #name, Create##x )
+	static RegisterSoundDriver register_##x( #name, CreateClass<RageSoundDriver_##x, RageSoundDriver> )
 #define REGISTER_SOUND_DRIVER_CLASS( name ) REGISTER_SOUND_DRIVER_CLASS2( name, name )
 
 
