@@ -22,6 +22,8 @@ void InputHandler::ButtonPressed( DeviceInput di, bool Down )
 		++m_iInputsSinceUpdate;
 	}
 
+	di.character = DeviceButtonToChar( di.button, true );
+
 	INPUTFILTER->ButtonPressed( di, Down );
 
 	if( m_iInputsSinceUpdate >= 1000 )
@@ -191,9 +193,9 @@ void MakeInputHandlers( const RString &drivers_, vector<InputHandler *> &Add )
 		DEBUG_ASSERT( ret );
 		Add.push_back( ret );
 	}
+
 	// Always add
 	Add.push_back( new InputHandler_MonkeyKeyboard );
-	
 }
 
 
