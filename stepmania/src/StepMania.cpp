@@ -31,9 +31,12 @@
 #include "Game.h"
 #include "RageSurface.h"
 #include "RageSurface_Load.h"
-#include "arch/arch.h"
 #include "CatalogXml.h"
 #include "ExportStrings.h"
+
+#if !defined(SUPPORT_OPENGL) && !defined(SUPPORT_D3D)
+#define SUPPORT_OPENGL
+#endif
 
 //
 // StepMania global classes
