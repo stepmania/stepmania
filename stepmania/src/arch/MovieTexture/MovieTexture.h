@@ -2,6 +2,7 @@
 #define MOVIE_TEXTURE_H
 
 #include "RageTexture.h"
+#include "arch/RageDriver.h"
 #include <map>
 
 class RageMovieTexture : public RageTexture
@@ -9,7 +10,6 @@ class RageMovieTexture : public RageTexture
 public:
 	RageMovieTexture( RageTextureID ID ): RageTexture(ID) { }
 	virtual ~RageMovieTexture() { }
-	virtual RString Init() { return RString(); }
 	virtual void Update( float fDeltaTime ) { }
 
 	virtual void Reload() = 0;
@@ -23,15 +23,19 @@ public:
 	static bool GetFourCC( RString fn, RString &handler, RString &type );
 };
 
-typedef RageMovieTexture *(*CreateMovieTextureFn)( RageTextureID );
-struct RegisterMovieTexture
+class RageMovieTextureDriver: public RageDriver
 {
-	static map<istring, CreateMovieTextureFn> *g_pRegistrees;
-	RegisterMovieTexture( const istring &sName, CreateMovieTextureFn );
+public:
+	virtual ~RageMovieTextureDriver() { }
+	virtual RageMovieTexture *Create( RageTextureID ID, RString &sError ) = 0;
+};
+
+struct RegisterMovieTextureDriver
+{
+	RegisterMovieTextureDriver( const istring &sName, CreateRageDriverFn );
 };
 #define REGISTER_MOVIE_TEXTURE_CLASS( name ) \
-	static RageMovieTexture *Create##name( RageTextureID ID ) { return new MovieTexture_##name( ID ); } \
-	static RegisterMovieTexture register_##className( #name, Create##name )
+	static RegisterMovieTextureDriver register_##name( #name, CreateClass<RageMovieTextureDriver_##name, RageDriver> )
 
 #endif
 

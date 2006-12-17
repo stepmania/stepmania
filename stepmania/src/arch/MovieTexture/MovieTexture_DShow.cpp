@@ -29,6 +29,15 @@
 #pragma comment(lib, "vfw32.lib")
 #endif
 
+RageMovieTexture *RageMovieTextureDriver_DShow::Create( RageTextureID ID, RString &sError )
+{
+	MovieTexture_DShow *pRet = new MovieTexture_DShow( ID );
+	sError = pRet->Init();
+	if( !sError.empty() )
+		SAFE_DELETE( pRet );
+	return pRet;
+}
+
 REGISTER_MOVIE_TEXTURE_CLASS( DShow );
 
 static RString FourCCToString( int fcc )

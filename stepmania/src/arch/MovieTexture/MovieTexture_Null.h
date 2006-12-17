@@ -10,24 +10,11 @@
  */
 
 #include "MovieTexture.h"
-#include "RageTexture.h"
 
-class MovieTexture_Null : public RageMovieTexture {
+class RageMovieTextureDriver_Null: public RageMovieTextureDriver
+{
 public:
-	MovieTexture_Null(RageTextureID ID);
-	virtual ~MovieTexture_Null();
-	void Invalidate() { texHandle = 0; }
-	unsigned GetTexHandle() const { return texHandle; }
-	void Update(float delta) { }
-	void Reload() { }
-	void SetPosition(float seconds) { }
-	void SetPlaybackRate(float rate) { }
-	void SetLooping(bool looping=true) { loop = looping; }
-
-private:
-	bool playing;
-	bool loop;
-	unsigned texHandle;
+	virtual RageMovieTexture *Create( RageTextureID ID, RString &sError );
 };
 
 #endif

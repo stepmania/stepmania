@@ -71,6 +71,12 @@ private:
 	bool					m_bPlaying;
 };
 
+class RageMovieTextureDriver_DShow: public RageMovieTextureDriver
+{
+public:
+	virtual RageMovieTexture *Create( RageTextureID ID, RString &sError );
+};
+
 #endif
 
 /*

@@ -6,7 +6,24 @@
 #include "MovieTexture_Null.h"
 #include "RageSurface.h"
 
-REGISTER_MOVIE_TEXTURE_CLASS( Null );
+class MovieTexture_Null : public RageMovieTexture {
+public:
+	MovieTexture_Null(RageTextureID ID);
+	virtual ~MovieTexture_Null();
+	void Invalidate() { texHandle = 0; }
+	unsigned GetTexHandle() const { return texHandle; }
+	void Update(float delta) { }
+	void Reload() { }
+	void SetPosition(float seconds) { }
+	void SetPlaybackRate(float rate) { }
+	void SetLooping(bool looping=true) { loop = looping; }
+
+private:
+	bool playing;
+	bool loop;
+	unsigned texHandle;
+};
+
 MovieTexture_Null::MovieTexture_Null(RageTextureID ID) : RageMovieTexture(ID)
 {
 	LOG->Trace("MovieTexture_Null::MovieTexture_Null(ID)");
@@ -45,6 +62,13 @@ MovieTexture_Null::MovieTexture_Null(RageTextureID ID) : RageMovieTexture(ID)
 MovieTexture_Null::~MovieTexture_Null()
 {
 	DISPLAY->DeleteTexture( texHandle );
+}
+
+REGISTER_MOVIE_TEXTURE_CLASS( Null );
+
+RageMovieTexture *RageMovieTextureDriver_Null::Create( RageTextureID ID, RString &sError )
+{
+	return new MovieTexture_Null( ID );
 }
 
 /*

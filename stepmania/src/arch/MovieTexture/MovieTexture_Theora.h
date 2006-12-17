@@ -5,10 +5,10 @@
 
 #include "MovieTexture_Generic.h"
 
-class MovieTexture_Theora: public MovieTexture_Generic
+class RageMovieTextureDriver_Theora: public RageMovieTextureDriver
 {
 public:
-	MovieTexture_Theora( RageTextureID ID );
+	virtual RageMovieTexture *Create( RageTextureID ID, RString &sError );
 };
 
 #endif

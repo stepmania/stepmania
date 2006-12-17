@@ -9,8 +9,6 @@
 
 #include <cerrno>
 
-REGISTER_MOVIE_TEXTURE_CLASS( FFMpeg );
-
 namespace avcodec
 {
 #include <ffmpeg/avformat.h>
@@ -128,6 +126,15 @@ static int FindCompatibleAVFormat( bool bHighColor )
 
 	return -1;
 }
+
+class MovieTexture_FFMpeg: public MovieTexture_Generic
+{
+public:
+	MovieTexture_FFMpeg( RageTextureID ID );
+
+	static void RegisterProtocols();
+	static RageSurface *AVCodecCreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor, int &iAVTexfmt );
+};
 
 RageSurface *MovieTexture_FFMpeg::AVCodecCreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor, int &iAVTexfmt )
 {
@@ -598,6 +605,17 @@ MovieTexture_FFMpeg::MovieTexture_FFMpeg( RageTextureID ID ):
 	MovieTexture_Generic( ID, new MovieDecoder_FFMpeg )
 {
 }
+
+RageMovieTexture *RageMovieTextureDriver_FFMpeg::Create( RageTextureID ID, RString &sError )
+{
+	MovieTexture_FFMpeg *pRet = new MovieTexture_FFMpeg( ID );
+	sError = pRet->Init();
+	if( !sError.empty() )
+		SAFE_DELETE( pRet );
+	return pRet;
+}
+
+REGISTER_MOVIE_TEXTURE_CLASS( FFMpeg );
 
 /*
  * (c) 2003-2005 Glenn Maynard

@@ -5,13 +5,10 @@
 
 #include "MovieTexture_Generic.h"
 
-class MovieTexture_FFMpeg: public MovieTexture_Generic
+class RageMovieTextureDriver_FFMpeg: public RageMovieTextureDriver
 {
 public:
-	MovieTexture_FFMpeg( RageTextureID ID );
-
-	static void RegisterProtocols();
-	static RageSurface *AVCodecCreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor, int &iAVTexfmt );
+	virtual RageMovieTexture *Create( RageTextureID ID, RString &sError );
 };
 
 #endif

@@ -7,8 +7,6 @@
 #include "RageUtil.h"
 #include "MovieTexture_FFMpeg.h" /* for AVCodecCreateCompatibleSurface */
 
-REGISTER_MOVIE_TEXTURE_CLASS( Theora );
-
 namespace avcodec
 {
 #include <ffmpeg/avcodec.h> /* for avcodec::img_convert */
@@ -699,10 +697,27 @@ void MovieDecoder_Theora::Close()
 }
 #endif
 
+class MovieTexture_Theora: public MovieTexture_Generic
+{
+public:
+	MovieTexture_Theora( RageTextureID ID );
+};
+
 MovieTexture_Theora::MovieTexture_Theora( RageTextureID ID ):
 	MovieTexture_Generic( ID, new MovieDecoder_Theora )
 {
 }
+
+RageMovieTexture *RageMovieTextureDriver_Theora::Create( RageTextureID ID, RString &sError )
+{
+	MovieTexture_Theora *pRet = new MovieTexture_Theora( ID );
+	sError = pRet->Init();
+	if( !sError.empty() )
+		SAFE_DELETE( pRet );
+	return pRet;
+}
+
+REGISTER_MOVIE_TEXTURE_CLASS( Theora );
 
 /*
  * (c) 2005 Glenn Maynard

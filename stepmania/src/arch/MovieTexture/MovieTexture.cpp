@@ -57,14 +57,10 @@ bool RageMovieTexture::GetFourCC( RString fn, RString &handler, RString &type )
 #undef HANDLE_ERROR
 }
 
-map<istring, CreateMovieTextureFn> *RegisterMovieTexture::g_pRegistrees = NULL;
-RegisterMovieTexture::RegisterMovieTexture( const istring &sName, CreateMovieTextureFn pfn )
+static DriverList g_pRegistrees;
+RegisterMovieTextureDriver::RegisterMovieTextureDriver( const istring &sName, CreateRageDriverFn pfn )
 {
-	if( g_pRegistrees == NULL )
-		g_pRegistrees = new map<istring, CreateMovieTextureFn>;
-	
-	ASSERT( g_pRegistrees->find(sName) == g_pRegistrees->end() );
-	(*g_pRegistrees)[sName] = pfn;
+	g_pRegistrees.Add( sName, pfn );
 }
 
 // Helper for MakeRageMovieTexture()
@@ -100,17 +96,22 @@ RageMovieTexture *MakeRageMovieTexture( RageTextureID ID )
 	FOREACH_CONST( RString, DriversToTry, Driver )
 	{
 		LOG->Trace( "Initializing driver: %s", Driver->c_str() );
-		map<istring, CreateMovieTextureFn>::const_iterator iter = RegisterMovieTexture::g_pRegistrees->find( istring(*Driver) );
+		RageDriver *pDriverBase = g_pRegistrees.Create( *Driver );
 		
-		if( iter == RegisterMovieTexture::g_pRegistrees->end() )
+		if( pDriverBase == NULL )
 		{
 			LOG->Trace( "Unknown movie driver name: %s", Driver->c_str() );
 			continue;
 		}
-		ret = (iter->second)( ID );
-		DEBUG_ASSERT( ret );
-		const RString sError = ret->Init();
-		if( sError != "" )
+		
+		RageMovieTextureDriver *pDriver = dynamic_cast<RageMovieTextureDriver *>( pDriverBase );
+		ASSERT( pDriver );
+
+		RString sError;
+		ret = pDriver->Create( ID, sError );
+		delete pDriver;
+
+		if( ret == NULL )
 		{
 			LOG->Info( "Couldn't load driver %s: %s", Driver->c_str(), sError.c_str() );
 			SAFE_DELETE( ret );
