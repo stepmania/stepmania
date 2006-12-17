@@ -1750,10 +1750,6 @@
 				Name="arch"
 				>
 				<File
-					RelativePath="arch\arch.cpp"
-					>
-				</File>
-				<File
 					RelativePath="arch\arch.h"
 					>
 				</File>
@@ -1764,6 +1760,10 @@
 				<Filter
 					Name="LoadingWindow"
 					>
+					<File
+						RelativePath=".\arch\LoadingWindow\LoadingWindow.cpp"
+						>
+					</File>
 					<File
 						RelativePath="arch\LoadingWindow\LoadingWindow.h"
 						>
@@ -1989,6 +1989,10 @@
 					Name="LowLevelWindow"
 					>
 					<File
+						RelativePath=".\arch\LowLevelWindow\LowLevelWindow.cpp"
+						>
+					</File>
+					<File
 						RelativePath="arch\LowLevelWindow\LowLevelWindow.h"
 						>
 					</File>
@@ -2072,6 +2076,10 @@
 				<Filter
 					Name="Lights"
 					>
+					<File
+						RelativePath=".\arch\Lights\LightsDriver.cpp"
+						>
+					</File>
 					<File
 						RelativePath="arch\Lights\LightsDriver.h"
 						>

@@ -151,7 +151,8 @@ GameLoop.cpp GameLoop.h \
 global.cpp global.h \
 SpecialFiles.cpp SpecialFiles.h
 
-LoadingWindow = arch/LoadingWindow/LoadingWindow.h \
+LoadingWindow = arch/LoadingWindow/LoadingWindow.cpp \
+		arch/LoadingWindow/LoadingWindow.h \
 		arch/LoadingWindow/LoadingWindow_Null.h
 
 if HAVE_GTK
@@ -195,12 +196,12 @@ if HAVE_FFMPEG
 MovieTexture += arch/MovieTexture/MovieTexture_FFMpeg.cpp arch/MovieTexture/MovieTexture_FFMpeg.h
 endif
 
-Lights = arch/Lights/LightsDriver.h \
+Lights = arch/Lights/LightsDriver.cpp arch/Lights/LightsDriver.h \
 		arch/Lights/LightsDriver_Export.cpp arch/Lights/LightsDriver_Export.h \
 		arch/Lights/LightsDriver_SystemMessage.cpp arch/Lights/LightsDriver_SystemMessage.h
 
 MemoryCard = arch/MemoryCard/MemoryCardDriver.cpp arch/MemoryCard/MemoryCardDriver.h
-LowLevelWindow = arch/LowLevelWindow/LowLevelWindow.h
+LowLevelWindow = arch/LowLevelWindow/LowLevelWindow.cpp arch/LowLevelWindow/LowLevelWindow.h
 
 ArchUtils =
 
