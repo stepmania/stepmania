@@ -2,7 +2,7 @@
 #include "LowLevelWindow.h"
 #include "arch/arch_default.h"
 
-LowLevelWindow *MakeLowLevelWindow()
+LowLevelWindow *LowLevelWindow::Create()
 {
 	return new ARCH_LOW_LEVEL_WINDOW;
 }

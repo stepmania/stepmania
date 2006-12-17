@@ -4,7 +4,7 @@
 #include "RageLog.h"
 #include "arch/arch_default.h"
 
-LoadingWindow *MakeLoadingWindow()
+LoadingWindow *LoadingWindow::Create()
 {
 	if( !PREFSMAN->m_bShowLoadingWindow )
 		return new LoadingWindow_Null;

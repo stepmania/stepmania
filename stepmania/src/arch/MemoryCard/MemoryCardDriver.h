@@ -75,6 +75,8 @@ struct UsbStorageDevice
 class MemoryCardDriver
 {
 public:
+	static MemoryCardDriver *Create();
+
 	MemoryCardDriver() {}
 	virtual ~MemoryCardDriver() {}
 

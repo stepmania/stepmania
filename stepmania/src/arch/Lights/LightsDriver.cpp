@@ -3,7 +3,7 @@
 #include "RageLog.h"
 #include "arch/arch_default.h"
 
-void MakeLightsDrivers( const RString &driver, vector<LightsDriver *> &Add )
+void LightsDriver::Create( const RString &driver, vector<LightsDriver *> &Add )
 {
 	LOG->Trace( "Initializing lights driver: %s", driver.c_str() );
 

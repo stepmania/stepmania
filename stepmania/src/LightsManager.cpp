@@ -15,8 +15,6 @@
 #include "CommonMetrics.h"
 #include "Style.h"
 
-#include "arch/arch.h"
-
 const RString DEFAULT_LIGHTS_DRIVER = "Null";
 static Preference<RString> g_sLightsDriver( "LightsDriver", "" ); // "" == DEFAULT_LIGHTS_DRIVER
 Preference<float>	g_fLightsFalloffSeconds( "LightsFalloffSeconds", 0.1f );
@@ -90,7 +88,7 @@ LightsManager::LightsManager()
 	RString sDriver = g_sLightsDriver.Get();
 	if( sDriver.empty() )
 		sDriver = DEFAULT_LIGHTS_DRIVER;
-	MakeLightsDrivers( sDriver, m_vpDrivers );
+	LightsDriver::Create( sDriver, m_vpDrivers );
 	m_fTestAutoCycleCurrentIndex = 0;
 	m_clTestManualCycleCurrent = CabinetLight_Invalid;
 	m_iControllerTestManualCycleCurrent = -1;

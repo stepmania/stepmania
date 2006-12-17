@@ -7,6 +7,8 @@ struct RageSurface;
 class LoadingWindow
 {
 public:
+	static LoadingWindow *Create();
+
 	virtual RString Init() { return RString(); }
 	virtual ~LoadingWindow() { }
 

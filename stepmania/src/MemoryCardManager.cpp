@@ -10,7 +10,6 @@
 #include "MessageManager.h"
 #include "Foreach.h"
 #include "RageUtil_WorkerThread.h"
-#include "arch/arch.h"
 #include "arch/MemoryCard/MemoryCardDriver_Null.h"
 #include "LuaManager.h"
 
@@ -141,7 +140,7 @@ ThreadedMemoryCardWorker::ThreadedMemoryCardWorker():
 	UsbStorageDevicesMutex("UsbStorageDevicesMutex")
 {
 	if( g_bMemoryCards )
-		m_pDriver = MakeMemoryCardDriver();
+		m_pDriver = MemoryCardDriver::Create();
 	else
 		m_pDriver = new MemoryCardDriver_Null;
 

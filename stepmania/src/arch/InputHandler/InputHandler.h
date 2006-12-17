@@ -26,6 +26,8 @@
 class InputHandler: public RageDriver
 {
 public:
+	static void Create( const RString &sDrivers, vector<InputHandler *> &apAdd );
+
 	InputHandler() { m_iInputsSinceUpdate = 0; }
 	virtual ~InputHandler() { }
 	virtual void Update() { }

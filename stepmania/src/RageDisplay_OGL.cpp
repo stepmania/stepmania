@@ -19,8 +19,6 @@ using namespace RageDisplay_OGL_Helpers;
 
 #include "arch/LowLevelWindow/LowLevelWindow.h"
 
-#include "arch/arch.h"
-
 #include <set>
 #include <sstream>
 
@@ -347,7 +345,7 @@ static LocalizedString OBTAIN_AN_UPDATED_VIDEO_DRIVER ( "RageDisplay_OGL", "Obta
 static LocalizedString GLDIRECT_IS_NOT_COMPATIBLE ( "RageDisplay_OGL", "GLDirect was detected.  GLDirect is not compatible with this game and should be disabled." );
 RString RageDisplay_OGL::Init( const VideoModeParams &p, bool bAllowUnacceleratedRenderer )
 {
-	g_pWind = MakeLowLevelWindow();
+	g_pWind = LowLevelWindow::Create();
 
 	bool bIgnore = false;
 	RString sError = SetVideoMode( p, bIgnore );

@@ -14,6 +14,8 @@ struct RenderTargetParam;
 class LowLevelWindow
 {
 public:
+	static LowLevelWindow *Create();
+
 	virtual ~LowLevelWindow() { }
 
 	virtual void *GetProcAddress( RString s ) = 0;

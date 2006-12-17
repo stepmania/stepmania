@@ -10,6 +10,8 @@ struct LightsState;
 class LightsDriver
 {
 public:
+	static void Create( const RString &sDriver, vector<LightsDriver *> &apAdd );
+
 	LightsDriver() {};
 	virtual ~LightsDriver() {};
 	
