@@ -1,47 +1,28 @@
-#include "global.h"
-#include "RageSoundDriver.h"
-#include "RageLog.h"
+#ifndef RAGE_DRIVER_H
+#define RAGE_DRIVER_H
+
 #include "RageUtil.h"
-#include "Foreach.h"
 
-static DriverList g_pRegistrees;
-
-RegisterSoundDriver::RegisterSoundDriver( const istring &sName, CreateRageDriverFn pfn )
+class RageDriver
 {
-	g_pRegistrees.Add( sName, pfn );
-}
+public:
+	virtual ~RageDriver() { }
+};
 
-RageSoundDriver *MakeRageSoundDriver( const RString &drivers )
+typedef RageDriver *(*CreateRageDriverFn)();
+
+/* This is created and accessed during C++ static initialization; it must be a POD. */
+struct DriverList
 {
-	vector<RString> DriversToTry;
-	split( drivers, ",", DriversToTry, true );
-	
-	FOREACH_CONST( RString, DriversToTry, Driver )
-	{
-		RageDriver *pDriver = g_pRegistrees.Create( *Driver );
-		if( pDriver == NULL )
-		{
-			LOG->Trace( "Unknown sound driver: %s", Driver->c_str() );
-			continue;
-		}
+	void Add( const istring &sName, CreateRageDriverFn pfn );
+	RageDriver *Create( const RString &sDriverName );
+	map<istring, CreateRageDriverFn> *m_pRegistrees;
+};
 
-		RageSoundDriver *pRet = dynamic_cast<RageSoundDriver *>( pDriver );
-		ASSERT( pRet != NULL );
-
-		const RString sError = pRet->Init();
-		if( sError.empty() )
-		{
-			LOG->Info( "Sound driver: %s", Driver->c_str() );
-			return pRet;
-		}
-		LOG->Info( "Couldn't load driver %s: %s", Driver->c_str(), sError.c_str() );
-		SAFE_DELETE( pRet );
-	}
-	return NULL;
-}
+#endif
 
 /*
- * (c) 2002-2006 Glenn Maynard, Steve Checkoway
+ * (c) 2006 Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

@@ -2,9 +2,10 @@
 #define RAGE_SOUND_DRIVER
 
 #include "RageUtil.h"
+#include "arch/RageDriver.h"
 
 class RageSoundBase;
-class RageSoundDriver
+class RageSoundDriver: public RageDriver
 {
 public:
 	friend class RageSoundManager;
@@ -50,15 +51,13 @@ public:
 	virtual ~RageSoundDriver() { }
 };
 
-typedef RageSoundDriver *(*CreateSoundDriverFn)();
 struct RegisterSoundDriver
 {
-	static map<istring, CreateSoundDriverFn> *g_pRegistrees;
-	RegisterSoundDriver( const istring &sName, CreateSoundDriverFn pfn );
+	RegisterSoundDriver( const istring &sName, CreateRageDriverFn pfn );
 };
 // Can't use Create##name because many of these have -sw suffixes.
 #define REGISTER_SOUND_DRIVER_CLASS2( name, x ) \
-	static RegisterSoundDriver register_##x( #name, CreateClass<RageSoundDriver_##x, RageSoundDriver> )
+	static RegisterSoundDriver register_##x( #name, CreateClass<RageSoundDriver_##x, RageDriver> )
 #define REGISTER_SOUND_DRIVER_CLASS( name ) REGISTER_SOUND_DRIVER_CLASS2( name, name )
 
 
