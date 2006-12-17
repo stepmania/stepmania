@@ -15,20 +15,20 @@ public:
 	/* A RageSound calls this to request to be played.
 	 * XXX: define what we should do when it can't be played (eg. out of
 	 * channels) */
-	virtual void StartMixing( RageSoundBase *snd ) = 0;
+	virtual void StartMixing( RageSoundBase *pSound ) = 0;
 
 	/* A RageSound calls this to request it not be played.  When this function
 	 * returns, snd is no longer valid; ensure no running threads are still
 	 * accessing it before returning.  This must handle gracefully the case where 
 	 * snd was not actually being played, though it may print a warning. */
-	virtual void StopMixing( RageSoundBase *snd ) = 0;
+	virtual void StopMixing( RageSoundBase *pSound ) = 0;
 
 	/* Pause or unpause the given sound.  If the sound was stopped (not paused),
 	 * return false and do nothing; otherwise return true and pause or unpause
 	 * the sound.  Unlike StopMixing, pausing and unpause a sound will not lose
 	 * any buffered sound (but will not release any resources associated with
 	 * playing the sound, either). */
-	virtual bool PauseMixing( RageSoundBase *snd, bool bStop ) = 0;
+	virtual bool PauseMixing( RageSoundBase *pSound, bool bStop ) = 0;
 
 	/* Get the current hardware frame position, in the same time base as passed to
 	 * RageSound::CommitPlayingPosition. */
