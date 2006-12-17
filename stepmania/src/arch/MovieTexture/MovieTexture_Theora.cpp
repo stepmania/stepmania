@@ -267,7 +267,7 @@ int MovieDecoder_Theora::GetFrame( RageSurface *pOut, float fTargetTime )
 
 RageSurface *MovieDecoder_Theora::CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor )
 {
-	return MovieTexture_FFMpeg::AVCodecCreateCompatibleSurface( iTextureWidth, iTextureHeight, bPreferHighColor, *ConvertValue<int>(&m_OutputPixFmt) );
+	return RageMovieTextureDriver_FFMpeg::AVCodecCreateCompatibleSurface( iTextureWidth, iTextureHeight, bPreferHighColor, *ConvertValue<int>(&m_OutputPixFmt) );
 }
 
 void MovieDecoder_Theora::ConvertToSurface( RageSurface *pSurface ) const

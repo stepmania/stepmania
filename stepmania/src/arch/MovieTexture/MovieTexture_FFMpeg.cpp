@@ -136,7 +136,7 @@ public:
 	static RageSurface *AVCodecCreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor, int &iAVTexfmt );
 };
 
-RageSurface *MovieTexture_FFMpeg::AVCodecCreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor, int &iAVTexfmt )
+RageSurface *RageMovieTextureDriver_FFMpeg::AVCodecCreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor, int &iAVTexfmt )
 {
 	FixLilEndian();
 
@@ -598,7 +598,7 @@ void MovieDecoder_FFMpeg::Close()
 
 RageSurface *MovieDecoder_FFMpeg::CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor )
 {
-	return MovieTexture_FFMpeg::AVCodecCreateCompatibleSurface( iTextureWidth, iTextureHeight, bPreferHighColor, *ConvertValue<int>(&m_AVTexfmt) );
+	return RageMovieTextureDriver_FFMpeg::AVCodecCreateCompatibleSurface( iTextureWidth, iTextureHeight, bPreferHighColor, *ConvertValue<int>(&m_AVTexfmt) );
 }
 
 MovieTexture_FFMpeg::MovieTexture_FFMpeg( RageTextureID ID ):

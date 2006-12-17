@@ -4,11 +4,13 @@
 #define RAGE_MOVIE_TEXTURE_FFMPEG_H
 
 #include "MovieTexture_Generic.h"
+struct RageSurface;
 
 class RageMovieTextureDriver_FFMpeg: public RageMovieTextureDriver
 {
 public:
 	virtual RageMovieTexture *Create( RageTextureID ID, RString &sError );
+	static RageSurface *AVCodecCreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor, int &iAVTexfmt );
 };
 
 #endif
