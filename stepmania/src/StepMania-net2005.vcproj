@@ -1757,6 +1757,14 @@
 					RelativePath="arch\arch_default.h"
 					>
 				</File>
+				<File
+					RelativePath=".\arch\RageDriver.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\arch\RageDriver.h"
+					>
+				</File>
 				<Filter
 					Name="LoadingWindow"
 					>
