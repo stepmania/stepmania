@@ -12,33 +12,6 @@
 #include "arch_default.h"
 
 
-void MakeLightsDrivers( const RString &driver, vector<LightsDriver *> &Add )
-{
-	LOG->Trace( "Initializing lights driver: %s", driver.c_str() );
-
-	LightsDriver *ret = NULL;
-
-#ifdef USE_LIGHTS_DRIVER_LINUX_PARALLEL
-	if( !driver.CompareNoCase("LinuxParallel") )	ret = new LightsDriver_LinuxParallel;
-#endif
-#ifdef USE_LIGHTS_DRIVER_LINUX_WEEDTECH
-	if( !driver.CompareNoCase("WeedTech") )		ret = new LightsDriver_LinuxWeedTech;
-#endif
-#ifdef USE_LIGHTS_DRIVER_WIN32_PARALLEL
-	if( !driver.CompareNoCase("Parallel") )		ret = new LightsDriver_Win32Parallel;
-#endif
-#ifdef USE_LIGHTS_DRIVER_EXPORT
-	if( !driver.CompareNoCase("Export") )		ret = new LightsDriver_Export;
-#endif
-
-	if( ret == NULL && driver.CompareNoCase("Null") )
-		LOG->Trace( "Unknown lights driver name: %s", driver.c_str() );
-	else if( ret != NULL )
-		Add.push_back( ret );
-
-	Add.push_back( new LightsDriver_SystemMessage );
-}
-
 LoadingWindow *MakeLoadingWindow()
 {
 	if( !PREFSMAN->m_bShowLoadingWindow )
@@ -93,13 +66,6 @@ LoadingWindow *MakeLoadingWindow()
 	
 	return ret;
 }
-
-#if defined(SUPPORT_OPENGL)
-LowLevelWindow *MakeLowLevelWindow()
-{
-	return new ARCH_LOW_LEVEL_WINDOW;
-}
-#endif
 
 MemoryCardDriver *MakeMemoryCardDriver()
 {
