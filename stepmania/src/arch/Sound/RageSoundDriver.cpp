@@ -2,7 +2,6 @@
 #include "RageSoundDriver.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-#include "LocalizedString.h"
 #include "Foreach.h"
 
 map<istring, CreateSoundDriverFn> *RegisterSoundDriver::g_pRegistrees;
@@ -15,14 +14,10 @@ RegisterSoundDriver::RegisterSoundDriver( const istring &sName, CreateSoundDrive
 	(*g_pRegistrees)[sName] = pfn;
 }
 
-static LocalizedString SOUND_DRIVERS_CANNOT_EMPTY( "Arch", "Sound Drivers cannot be empty." );
 RageSoundDriver *MakeRageSoundDriver( const RString &drivers )
 {
 	vector<RString> DriversToTry;
 	split( drivers, ",", DriversToTry, true );
-	
-	if( DriversToTry.empty() )
-		RageException::Throw( "%s", SOUND_DRIVERS_CANNOT_EMPTY.GetValue().c_str() );
 	
 	FOREACH_CONST( RString, DriversToTry, Driver )
 	{
