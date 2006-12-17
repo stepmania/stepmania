@@ -12,61 +12,6 @@
 #include "arch_default.h"
 
 
-LoadingWindow *MakeLoadingWindow()
-{
-	if( !PREFSMAN->m_bShowLoadingWindow )
-		return new LoadingWindow_Null;
-#if defined(LINUX) && !defined(HAVE_GTK)
-	return new LoadingWindow_Null;
-#endif
-	/* Don't load NULL by default. */
-	const RString drivers = "xbox,win32,cocoa,gtk";
-	vector<RString> DriversToTry;
-	split( drivers, ",", DriversToTry, true );
-
-	ASSERT( DriversToTry.size() != 0 );
-
-	RString Driver;
-	LoadingWindow *ret = NULL;
-
-	for( unsigned i = 0; ret == NULL && i < DriversToTry.size(); ++i )
-	{
-		Driver = DriversToTry[i];
-
-#ifdef USE_LOADING_WINDOW_COCOA
-		if( !DriversToTry[i].CompareNoCase("Cocoa") )	ret = new LoadingWindow_Cocoa;
-#endif
-#ifdef USE_LOADING_WINDOW_GTK
-		if( !DriversToTry[i].CompareNoCase("Gtk") )	ret = new LoadingWindow_Gtk;
-#endif
-#ifdef USE_LOADING_WINDOW_NULL
-		if( !DriversToTry[i].CompareNoCase("Null") )	ret = new LoadingWindow_Null;
-#endif
-#ifdef USE_LOADING_WINDOW_WIN32
-		if( !DriversToTry[i].CompareNoCase("Win32") )	ret = new LoadingWindow_Win32;
-#endif
-#ifdef USE_LOADING_WINDOW_XBOX
-		if( !DriversToTry[i].CompareNoCase("Xbox") )	ret = new LoadingWindow_Xbox;
-#endif
-
-			
-		if( ret == NULL )
-			continue;
-
-		RString sError = ret->Init();
-		if( sError != "" )
-		{
-			LOG->Info( "Couldn't load driver %s: %s", DriversToTry[i].c_str(), sError.c_str() );
-			SAFE_DELETE( ret );
-		}
-	}
-	
-	if(ret)
-		LOG->Info( "Loading window: %s", Driver.c_str() );
-	
-	return ret;
-}
-
 MemoryCardDriver *MakeMemoryCardDriver()
 {
 	MemoryCardDriver *ret = NULL;
