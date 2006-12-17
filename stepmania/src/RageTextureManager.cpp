@@ -27,8 +27,6 @@
 #include "RageDisplay.h"
 #include "Foreach.h"
 
-#include "arch/arch.h"
-
 RageTextureManager*		TEXTUREMAN		= NULL;
 
 RageTextureManager::RageTextureManager()
@@ -115,7 +113,7 @@ RageTexture* RageTextureManager::LoadTextureInternal( RageTextureID ID )
 
 	RageTexture* pTexture;
 	if( sExt == "avi" || sExt == "mpg" || sExt == "mpeg" )
-		pTexture = MakeRageMovieTexture( ID );
+		pTexture = RageMovieTexture::Create( ID );
 	else
 		pTexture = new RageBitmapTexture( ID );
 
