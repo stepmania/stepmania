@@ -61,6 +61,7 @@
 #endif
 
 /* All use these. */
+#include "Lights/LightsDriver_Export.h"
 #include "Lights/LightsDriver_SystemMessage.h"
 #include "Lights/LightsDriver_Null.h"
 #include "LoadingWindow/LoadingWindow_Null.h"

@@ -27,6 +27,9 @@ void MakeLightsDrivers( const RString &driver, vector<LightsDriver *> &Add )
 #ifdef USE_LIGHTS_DRIVER_WIN32_PARALLEL
 	if( !driver.CompareNoCase("Parallel") )		ret = new LightsDriver_Win32Parallel;
 #endif
+#ifdef USE_LIGHTS_DRIVER_EXPORT
+	if( !driver.CompareNoCase("Export") )		ret = new LightsDriver_Export;
+#endif
 
 	if( ret == NULL && driver.CompareNoCase("Null") )
 		LOG->Trace( "Unknown lights driver name: %s", driver.c_str() );
