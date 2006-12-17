@@ -103,6 +103,9 @@ void CircularShift( vector<T> &v, int dist )
 	}
 }
 
+template<typename Type, typename Ret>
+static Ret *CreateClass() { return new Type; }
+
 /*
  * Helper function to remove all objects from an STL container for which the
  * Predicate pred is true. If you want to remove all objects for which the predicate
