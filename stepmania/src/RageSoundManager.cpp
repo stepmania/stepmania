@@ -21,7 +21,6 @@
 
 #include "arch/Sound/RageSoundDriver.h"
 
-#include "arch/arch.h"
 #include "arch/arch_default.h"
 
 /*
@@ -52,7 +51,7 @@ void RageSoundManager::Init()
 	if( sDrivers.empty() )
 		sDrivers = DEFAULT_SOUND_DRIVER_LIST;
 
-	m_pDriver = MakeRageSoundDriver( sDrivers );
+	m_pDriver = RageSoundDriver::Create( sDrivers );
 	if( m_pDriver == NULL )
 		RageException::Throw( "%s", COULDNT_FIND_SOUND_DRIVER.GetValue().c_str() );
 }

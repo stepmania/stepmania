@@ -11,7 +11,7 @@ RegisterSoundDriver::RegisterSoundDriver( const istring &sName, CreateRageDriver
 	g_pRegistrees.Add( sName, pfn );
 }
 
-RageSoundDriver *MakeRageSoundDriver( const RString &drivers )
+RageSoundDriver *RageSoundDriver::Create( const RString &drivers )
 {
 	vector<RString> DriversToTry;
 	split( drivers, ",", DriversToTry, true );

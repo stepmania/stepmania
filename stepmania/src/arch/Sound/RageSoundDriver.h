@@ -8,6 +8,8 @@ class RageSoundBase;
 class RageSoundDriver: public RageDriver
 {
 public:
+	static RageSoundDriver *Create( const RString &sDrivers );
+
 	friend class RageSoundManager;
 
 	/* Initialize.  On failure, an error message is returned. */

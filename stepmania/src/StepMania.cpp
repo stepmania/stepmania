@@ -896,7 +896,7 @@ int main(int argc, char* argv[])
 	SetCommandlineArguments( argc, argv );
 
 	/* Set up arch hooks first.  This may set up crash handling. */
-	HOOKS = MakeArchHooks();
+	HOOKS = ArchHooks::Create();
 	HOOKS->Init();
 #if !defined(DEBUG)
 	/* Tricky: for other exceptions, we want a backtrace.  To do this in Windows,

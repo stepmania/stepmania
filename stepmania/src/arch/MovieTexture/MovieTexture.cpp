@@ -77,7 +77,7 @@ static Preference<RString> g_sMovieDrivers( "MovieDrivers", "" ); // "" == defau
 /* Try drivers in order of preference until we find one that works. */
 static LocalizedString MOVIE_DRIVERS_EMPTY		( "Arch", "Movie Drivers cannot be empty." );
 static LocalizedString COULDNT_CREATE_MOVIE_DRIVER	( "Arch", "Couldn't create a movie driver." );
-RageMovieTexture *MakeRageMovieTexture( RageTextureID ID )
+RageMovieTexture *RageMovieTexture::Create( RageTextureID ID )
 {
 	DumpAVIDebugInfo( ID.filename );
 	

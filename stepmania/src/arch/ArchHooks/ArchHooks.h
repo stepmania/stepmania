@@ -4,6 +4,8 @@
 class ArchHooks
 {
 public:
+	static ArchHooks *Create();
+
 	ArchHooks(): m_bHasFocus(true), m_bFocusChanged(false) { }
 	virtual ~ArchHooks() { }
 	virtual void Init() { }
