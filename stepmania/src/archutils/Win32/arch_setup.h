@@ -7,6 +7,9 @@
 #define HAVE_CRYPTOPP
 #endif
 
+#define SUPPORT_OPENGL
+#define SUPPORT_D3D
+
 #if defined(__MINGW32__)
 #define _WINDOWS // This isn't defined under MinGW
 #define NEED_CSTDLIB_WORKAROUND // Needed for llabs() in MinGW

@@ -13,6 +13,8 @@
 // Xbox base path
 #define SYS_BASE_PATH "D:\\"
 
+#define SUPPORT_D3D
+
 /* Stubs: */
 inline HRESULT CoInitialize( LPVOID pvReserved ) { return S_OK; }
 inline void CoUninitialize() { }
