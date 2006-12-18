@@ -162,11 +162,7 @@ RString InputHandler::GetLocalizedInputString( const DeviceInput &di )
 	}
 }
 
-static DriverList g_pRegistrees;
-RegisterInputHandler::RegisterInputHandler( const istring &sName, CreateRageDriverFn pfn )
-{
-	g_pRegistrees.Add( sName, pfn );
-}
+DriverList InputHandler::m_pDriverList;
 
 static LocalizedString INPUT_HANDLERS_EMPTY( "Arch", "Input Handlers cannot be empty." );
 void InputHandler::Create( const RString &drivers_, vector<InputHandler *> &Add )
@@ -180,7 +176,7 @@ void InputHandler::Create( const RString &drivers_, vector<InputHandler *> &Add 
 	
 	FOREACH_CONST( RString, DriversToTry, s )
 	{
-		RageDriver *pDriver = g_pRegistrees.Create( *s );
+		RageDriver *pDriver = InputHandler::m_pDriverList.Create( *s );
 		if( pDriver == NULL )
 		{
 			LOG->Trace( "Unknown Input Handler name: %s", s->c_str() );

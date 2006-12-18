@@ -9,6 +9,7 @@ class RageSoundDriver: public RageDriver
 {
 public:
 	static RageSoundDriver *Create( const RString &sDrivers );
+	static DriverList m_pDriverList;
 
 	friend class RageSoundManager;
 
@@ -53,13 +54,9 @@ public:
 	virtual ~RageSoundDriver() { }
 };
 
-struct RegisterSoundDriver
-{
-	RegisterSoundDriver( const istring &sName, CreateRageDriverFn pfn );
-};
 // Can't use Create##name because many of these have -sw suffixes.
 #define REGISTER_SOUND_DRIVER_CLASS2( name, x ) \
-	static RegisterSoundDriver register_##x( #name, CreateClass<RageSoundDriver_##x, RageDriver> )
+	static RegisterRageDriver register_##x( &RageSoundDriver::m_pDriverList, #name, CreateClass<RageSoundDriver_##x, RageDriver> )
 #define REGISTER_SOUND_DRIVER_CLASS( name ) REGISTER_SOUND_DRIVER_CLASS2( name, name )
 
 

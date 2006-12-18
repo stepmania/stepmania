@@ -30,14 +30,11 @@ class RageMovieTextureDriver: public RageDriver
 public:
 	virtual ~RageMovieTextureDriver() { }
 	virtual RageMovieTexture *Create( RageTextureID ID, RString &sError ) = 0;
+	static DriverList m_pDriverList;
 };
 
-struct RegisterMovieTextureDriver
-{
-	RegisterMovieTextureDriver( const istring &sName, CreateRageDriverFn );
-};
 #define REGISTER_MOVIE_TEXTURE_CLASS( name ) \
-	static RegisterMovieTextureDriver register_##name( #name, CreateClass<RageMovieTextureDriver_##name, RageDriver> )
+	static RegisterRageDriver register_##name( &RageMovieTextureDriver::m_pDriverList, #name, CreateClass<RageMovieTextureDriver_##name, RageDriver> )
 
 #endif
 

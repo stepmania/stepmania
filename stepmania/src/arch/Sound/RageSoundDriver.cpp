@@ -4,12 +4,7 @@
 #include "RageUtil.h"
 #include "Foreach.h"
 
-static DriverList g_pRegistrees;
-
-RegisterSoundDriver::RegisterSoundDriver( const istring &sName, CreateRageDriverFn pfn )
-{
-	g_pRegistrees.Add( sName, pfn );
-}
+DriverList RageSoundDriver::m_pDriverList;
 
 RageSoundDriver *RageSoundDriver::Create( const RString &drivers )
 {
@@ -18,7 +13,7 @@ RageSoundDriver *RageSoundDriver::Create( const RString &drivers )
 	
 	FOREACH_CONST( RString, DriversToTry, Driver )
 	{
-		RageDriver *pDriver = g_pRegistrees.Create( *Driver );
+		RageDriver *pDriver = m_pDriverList.Create( *Driver );
 		if( pDriver == NULL )
 		{
 			LOG->Trace( "Unknown sound driver: %s", Driver->c_str() );
