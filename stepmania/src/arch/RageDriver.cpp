@@ -21,6 +21,11 @@ RageDriver *DriverList::Create( const RString &sDriverName )
 	return (iter->second)();
 }
 
+RegisterRageDriver::RegisterRageDriver( DriverList *pDriverList, const istring &sName, CreateRageDriverFn pfn )
+{
+	pDriverList->Add( sName, pfn );
+}
+
 /*
  * (c) 2006 Glenn Maynard
  * All rights reserved.

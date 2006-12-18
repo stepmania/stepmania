@@ -19,6 +19,11 @@ struct DriverList
 	map<istring, CreateRageDriverFn> *m_pRegistrees;
 };
 
+struct RegisterRageDriver
+{
+	RegisterRageDriver( DriverList *pDriverList, const istring &sName, CreateRageDriverFn pfn );
+};
+
 #endif
 
 /*
