@@ -22,8 +22,6 @@ void InputHandler::ButtonPressed( DeviceInput di, bool Down )
 		++m_iInputsSinceUpdate;
 	}
 
-	di.character = DeviceButtonToChar( di.button, true );
-
 	INPUTFILTER->ButtonPressed( di, Down );
 
 	if( m_iInputsSinceUpdate >= 1000 )
