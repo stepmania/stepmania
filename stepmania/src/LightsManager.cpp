@@ -15,7 +15,7 @@
 #include "CommonMetrics.h"
 #include "Style.h"
 
-const RString DEFAULT_LIGHTS_DRIVER = "SystemMessage";
+const RString DEFAULT_LIGHTS_DRIVER = "SystemMessage,Export";
 static Preference<RString> g_sLightsDriver( "LightsDriver", "" ); // "" == DEFAULT_LIGHTS_DRIVER
 Preference<float>	g_fLightsFalloffSeconds( "LightsFalloffSeconds", 0.1f );
 Preference<float>	g_fLightsAheadSeconds( "LightsAheadSeconds", 0.05f );
