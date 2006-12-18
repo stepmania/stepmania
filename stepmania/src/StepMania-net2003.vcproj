@@ -1531,9 +1531,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 							RelativePath=".\arch\Lights\LightsDriver_Export.h">
 						</File>
 						<File
-							RelativePath="arch\Lights\LightsDriver_Null.h">
-						</File>
-						<File
 							RelativePath="arch\Lights\LightsDriver_SystemMessage.cpp">
 						</File>
 						<File

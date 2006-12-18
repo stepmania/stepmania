@@ -2093,10 +2093,6 @@
 						>
 					</File>
 					<File
-						RelativePath="arch\Lights\LightsDriver_Null.h"
-						>
-					</File>
-					<File
 						RelativePath="arch\Lights\LightsDriver_SystemMessage.cpp"
 						>
 					</File>
