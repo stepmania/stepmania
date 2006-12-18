@@ -4,7 +4,6 @@
 /* Define the default driver sets. */
 #if defined(_WINDOWS)
 #include "ArchHooks/ArchHooks_Win32.h"
-#include "Lights/LightsDriver_Win32Parallel.h"
 #include "LoadingWindow/LoadingWindow_Win32.h"
 #include "LowLevelWindow/LowLevelWindow_Win32.h"
 #include "MemoryCard/MemoryCardDriverThreaded_Windows.h"
@@ -38,12 +37,7 @@
 #include "LowLevelWindow/LowLevelWindow_X11.h"
 
 #if defined(LINUX)
-#include "Lights/LightsDriver_LinuxWeedTech.h"
 #include "MemoryCard/MemoryCardDriverThreaded_Linux.h"
-
-#ifndef __PPC__
-#include "Lights/LightsDriver_LinuxParallel.h"
-#endif
 #endif
 
 #if defined(HAVE_GTK)
@@ -61,9 +55,6 @@
 #endif
 
 /* All use these. */
-#include "Lights/LightsDriver_Export.h"
-#include "Lights/LightsDriver_SystemMessage.h"
-#include "Lights/LightsDriver_Null.h"
 #include "LoadingWindow/LoadingWindow_Null.h"
 #include "MemoryCard/MemoryCardDriver_Null.h"
 

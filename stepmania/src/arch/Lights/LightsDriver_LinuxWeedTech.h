@@ -16,7 +16,6 @@ public:
 	
 	virtual void Set( const LightsState *ls );
 };
-#define USE_LIGHTS_DRIVER_LINUX_WEEDTECH
 
 #endif
 

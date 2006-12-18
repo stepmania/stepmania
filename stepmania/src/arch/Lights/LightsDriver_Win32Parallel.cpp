@@ -3,6 +3,7 @@
 #include "windows.h"
 #include "RageUtil.h"
 
+REGISTER_SOUND_DRIVER_CLASS(Win32Parallel);
 
 HINSTANCE hDLL = NULL;
 

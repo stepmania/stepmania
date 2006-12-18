@@ -4,6 +4,7 @@
 #include "InputMapper.h"
 #include "PrefsManager.h"
 
+REGISTER_SOUND_DRIVER_CLASS(SystemMessage);
 
 LightsDriver_SystemMessage::LightsDriver_SystemMessage()
 {

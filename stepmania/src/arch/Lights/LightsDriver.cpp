@@ -1,33 +1,33 @@
 #include "global.h"
 #include "LightsDriver.h"
 #include "RageLog.h"
+#include "Foreach.h"
 #include "arch/arch_default.h"
 
-void LightsDriver::Create( const RString &driver, vector<LightsDriver *> &Add )
+DriverList LightsDriver::m_pDriverList;
+
+void LightsDriver::Create( const RString &sDrivers, vector<LightsDriver *> &Add )
 {
-	LOG->Trace( "Initializing lights driver: %s", driver.c_str() );
+	LOG->Trace( "Initializing lights drivers: %s", sDrivers.c_str() );
 
-	LightsDriver *ret = NULL;
+	vector<RString> asDriversToTry;
+	split( sDrivers, ",", asDriversToTry, true );
+	
+	FOREACH_CONST( RString, asDriversToTry, Driver )
+	{
+		RageDriver *pRet = m_pDriverList.Create( *Driver );
+		if( pRet == NULL )
+		{
+			LOG->Trace( "Unknown lights driver: %s", Driver->c_str() );
+			continue;
+		}
 
-#ifdef USE_LIGHTS_DRIVER_LINUX_PARALLEL
-	if( !driver.CompareNoCase("LinuxParallel") )	ret = new LightsDriver_LinuxParallel;
-#endif
-#ifdef USE_LIGHTS_DRIVER_LINUX_WEEDTECH
-	if( !driver.CompareNoCase("WeedTech") )		ret = new LightsDriver_LinuxWeedTech;
-#endif
-#ifdef USE_LIGHTS_DRIVER_WIN32_PARALLEL
-	if( !driver.CompareNoCase("Parallel") )		ret = new LightsDriver_Win32Parallel;
-#endif
-#ifdef USE_LIGHTS_DRIVER_EXPORT
-	if( !driver.CompareNoCase("Export") )		ret = new LightsDriver_Export;
-#endif
+		LightsDriver *pDriver = dynamic_cast<LightsDriver *>( pRet );
+		ASSERT( pDriver != NULL );
 
-	if( ret == NULL && driver.CompareNoCase("Null") )
-		LOG->Trace( "Unknown lights driver name: %s", driver.c_str() );
-	else if( ret != NULL )
-		Add.push_back( ret );
-
-	Add.push_back( new LightsDriver_SystemMessage );
+		LOG->Info( "Lights driver: %s", Driver->c_str() );
+		Add.push_back( pDriver );
+	}
 }
 
 /*

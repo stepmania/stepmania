@@ -19,7 +19,6 @@ private:
 	static RageMutex m_Lock;
 	static LightsState m_State;
 };
-#define USE_LIGHTS_DRIVER_EXPORT
 
 #endif
 

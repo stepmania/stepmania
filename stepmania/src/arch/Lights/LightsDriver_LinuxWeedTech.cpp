@@ -9,6 +9,8 @@
 #include "LightsDriver_LinuxWeedTech.h"
 #include "RageLog.h"
 
+REGISTER_SOUND_DRIVER_CLASS(LinuxWeedTech);
+
 // Begin serial driver //
 static int fd = -1;
 static LightsState	CurLights;

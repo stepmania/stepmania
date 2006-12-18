@@ -4,19 +4,25 @@
 #define LightsDriver_H
 
 #include "LightsManager.h"
+#include "arch/RageDriver.h"
 
 struct LightsState;
 
-class LightsDriver
+class LightsDriver: public RageDriver
 {
 public:
 	static void Create( const RString &sDriver, vector<LightsDriver *> &apAdd );
+	static DriverList m_pDriverList;
 
 	LightsDriver() {};
 	virtual ~LightsDriver() {};
 	
 	virtual void Set( const LightsState *ls ) = 0;
 };
+
+#define REGISTER_SOUND_DRIVER_CLASS2( name, x ) \
+	static RegisterRageDriver register_##x( &LightsDriver::m_pDriverList, #name, CreateClass<LightsDriver_##x, RageDriver> )
+#define REGISTER_SOUND_DRIVER_CLASS( name ) REGISTER_SOUND_DRIVER_CLASS2( name, name )
 
 #endif
 
