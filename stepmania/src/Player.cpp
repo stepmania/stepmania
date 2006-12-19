@@ -72,6 +72,7 @@ static Preference<float> m_fTimingWindowAdd	( "TimingWindowAdd",		0 );
 static Preference1D<float> m_fTimingWindowSeconds( TimingWindowSecondsInit, NUM_TimingWindow );
 static Preference<float> m_fTimingWindowJump	( "TimingWindowJump",		0.25 );
 Preference<float> g_fTimingWindowHopo		( "TimingWindowHopo",		0.25 );
+ThemeMetric<bool> PENALIZE_TAP_SCORE_NONE	( "Player", "PenalizeTapScoreNone" );
 
 
 
@@ -487,11 +488,18 @@ void Player::Load()
 	}
 
 	if( m_pPlayerStageStats )
-		SendComboMessage( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
+		SendComboMessages( m_pPlayerStageStats->m_iCurCombo, m_pPlayerStageStats->m_iCurMissCombo );
 }
 
-void Player::SendComboMessage( int iOldCombo, int iOldMissCombo )
+void Player::SendComboMessages( int iOldCombo, int iOldMissCombo )
 {
+	const int iCurCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
+	if( iOldCombo > 50 && iCurCombo < 50 )
+	{
+		SCREENMAN->PostMessageToTopScreen( SM_ComboStopped, 0 );
+	}
+
+
 	Message msg( "ComboChanged" );
 	msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
 	msg.SetParam( "OldCombo", iOldCombo );
@@ -1651,6 +1659,28 @@ done_checking_hopo:
 				Message msg( "ScoreNone" );
 				MESSAGEMAN->Broadcast( msg );
 
+				const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
+				const int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
+
+				/* The only real way to tell if a mine has been scored is if it has disappeared
+				* but this only works for hit mines so update the scores for avoided mines here. */
+				if( m_pPrimaryScoreKeeper )
+					m_pPrimaryScoreKeeper->HandleTapScoreNone();
+				if( m_pSecondaryScoreKeeper )
+					m_pSecondaryScoreKeeper->HandleTapScoreNone();
+		
+				SendComboMessages( iOldCombo, iOldMissCombo );
+
+
+				if( m_pLifeMeter )
+					m_pLifeMeter->HandleTapScoreNone();
+				// TODO: Remove use of PlayerNumber
+				PlayerNumber pn = PLAYER_INVALID;
+				if( m_pCombinedLifeMeter )
+					m_pCombinedLifeMeter->HandleTapScoreNone( pn );
+
+				if( PENALIZE_TAP_SCORE_NONE )
+					SetJudgment( TNS_Miss, false );
 			}
 			break;
 		case ButtonType_Hopo:
@@ -2030,13 +2060,7 @@ void Player::HandleTapRowScore( unsigned row )
 	const int iCurCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
 	const int iCurMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
 
-	if( iOldCombo > 50 && iCurCombo < 50 )
-	{
-		SCREENMAN->PostMessageToTopScreen( SM_ComboStopped, 0 );
-	}
-
-	SendComboMessage( iOldCombo, iOldMissCombo );
-
+	SendComboMessages( iOldCombo, iOldMissCombo );
 
 	if( m_pPlayerStageStats && m_pCombo )
 	{
