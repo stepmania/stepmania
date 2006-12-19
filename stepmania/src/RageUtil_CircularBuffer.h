@@ -83,8 +83,7 @@ public:
 			return 0;
 	}
 	
-	/* Return the number of elements writable.  Note that there must always
-	 * be one */
+	/* Return the number of writable elements. */
 	unsigned num_writable() const
 	{
 		const int rpos = read_pos;
