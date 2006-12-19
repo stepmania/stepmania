@@ -81,7 +81,7 @@ int ErrorCallback( Display *d, XErrorEvent *err )
 	char errText[512];
 	XGetErrorText( d,  err->error_code, errText, 512 );
 	LOG->Warn( "X11 Protocol error %s (%d) has occurred, caused by request %d,%d, resource ID %d",
-		errText, err->error_code, err->request_code, err->minor_code, err->resourceid );
+		errText, err->error_code, err->request_code, err->minor_code, (int) err->resourceid );
 
 	return 0; // Xlib ignores our return value
 }
