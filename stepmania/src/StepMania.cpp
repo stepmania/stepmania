@@ -1193,20 +1193,22 @@ RString StepMania::SaveScreenshot( RString sDir, bool bSaveCompressed, bool bMak
 	return sFileName;
 }
 
-void StepMania::InsertCoin( int iNum )
+void StepMania::InsertCoin( int iNum, bool bCountInBookkeeping )
 {
-	for( int i = 0; i < iNum; ++i )
+	if( bCountInBookkeeping )
+	{
 		LIGHTSMAN->PulseCoinCounter();
+		BOOKKEEPER->CoinInserted();
+	}
 	GAMESTATE->m_iCoins += iNum;
 	LOG->Trace("%i coins inserted, %i needed to play", GAMESTATE->m_iCoins, PREFSMAN->m_iCoinsPerCredit.Get() );
-	BOOKKEEPER->CoinInserted();
 	SCREENMAN->PlayCoinSound();
 	MESSAGEMAN->Broadcast( Message_CoinInserted );
 }
 
 void StepMania::InsertCredit()
 {
-	InsertCoin( PREFSMAN->m_iCoinsPerCredit );
+	InsertCoin( PREFSMAN->m_iCoinsPerCredit, false );
 }
 
 /* Returns true if the key has been handled and should be discarded, false if
