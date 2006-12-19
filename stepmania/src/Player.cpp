@@ -71,7 +71,7 @@ static Preference<float> m_fTimingWindowScale	( "TimingWindowScale",		1.0f );
 static Preference<float> m_fTimingWindowAdd	( "TimingWindowAdd",		0 );
 static Preference1D<float> m_fTimingWindowSeconds( TimingWindowSecondsInit, NUM_TimingWindow );
 static Preference<float> m_fTimingWindowJump	( "TimingWindowJump",		0.25 );
-Preference<float> g_fTimingWindowHopo	( "TimingWindowHopo",		0.25 );
+Preference<float> g_fTimingWindowHopo		( "TimingWindowHopo",		0.25 );
 
 
 
@@ -128,6 +128,7 @@ Player::Player( NoteData &nd, bool bShowNoteField, bool bShowJudgment ) : m_Note
 	if( bShowNoteField )
 	{
 		m_pNoteField = new NoteField;
+		m_pNoteField->SetName( "NoteField" );
 	}
 }
 
@@ -345,7 +346,10 @@ void Player::Init(
 
 	m_fNoteFieldHeight = GRAY_ARROWS_Y_REVERSE-GRAY_ARROWS_Y_STANDARD;
 	if( m_pNoteField )
+	{
 		m_pNoteField->Init( m_pPlayerState, m_fNoteFieldHeight );
+		ActorUtil::LoadAllCommands( *m_pNoteField, sType );
+	}
 
 	m_vbFretIsDown.resize( GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
 	FOREACH( bool, m_vbFretIsDown, b )
@@ -1421,7 +1425,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 
 			/* AI will generate misses here.  Don't handle a miss like a regular note because
 			 * we want the judgment animation to appear delayed.  Instead, return early if
-			 * AI generated a miss, and let UpdateMissedTapNotesOlderThan() detect and handle the 
+			 * AI generated a miss, and let UpdateTapNotesMissedOlderThan() detect and handle the 
 			 * misses. */
 			if( score == TNS_Miss )
 				return;
@@ -1608,6 +1612,7 @@ done_checking_hopo:
 			}
 		}
 
+		// TODO: Remove use of PlayerNumber
 		PlayerNumber pn = pTN->pn == PLAYER_INVALID ? m_pPlayerState->m_PlayerNumber : pTN->pn;
 		m_LastTapNoteScore = score;
 		if( GAMESTATE->GetCurrentGame()->m_bCountNotesSeparately )
@@ -1645,6 +1650,7 @@ done_checking_hopo:
 			{
 				Message msg( "ScoreNone" );
 				MESSAGEMAN->Broadcast( msg );
+
 			}
 			break;
 		case ButtonType_Hopo:
@@ -2030,6 +2036,7 @@ void Player::HandleTapRowScore( unsigned row )
 	}
 
 	SendComboMessage( iOldCombo, iOldMissCombo );
+
 
 	if( m_pPlayerStageStats && m_pCombo )
 	{

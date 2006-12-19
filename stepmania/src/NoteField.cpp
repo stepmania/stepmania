@@ -23,7 +23,6 @@
 static ThemeMetric<bool> SHOW_BOARD( "NoteField", "ShowBoard" );
 static ThemeMetric<bool> SHOW_BEAT_BARS( "NoteField", "ShowBeatBars" );
 static ThemeMetric<float> FADE_BEFORE_TARGETS_PERCENT( "NoteField", "FadeBeforeTargetsPercent" );
-static ThemeMetric<apActorCommands> COMBO_STOPPED_COMMAND( "NoteField", "ComboStoppedCommand" );
 static ThemeMetric<float> BAR_MEASURE_ALPHA( "NoteField", "BarMeasureAlpha" );
 static ThemeMetric<float> BAR_4TH_ALPHA( "NoteField", "Bar4thAlpha" );
 static ThemeMetric<float> BAR_8TH_ALPHA( "NoteField", "Bar8thAlpha" );
@@ -56,8 +55,6 @@ NoteField::NoteField()
 	m_iBeginMarker = m_iEndMarker = -1;
 
 	m_fPercentFadeToFail = -1;
-
-	this->AddCommand( "ComboStopped", COMBO_STOPPED_COMMAND );
 }
 
 NoteField::~NoteField()
