@@ -74,7 +74,7 @@ void ScoreKeeperNormal::Load(
 	ASSERT( apSongs.size() == asModifiers.size() );
 
 	/* True if a jump is one to combo, false if combo is purely based on tap count. */
-	m_bComboIsPerRow = THEME->GetMetricB( "Gameplay", "ComboIsPerRow" );
+	m_ComboIsPerRow.Load( "Gameplay", "ComboIsPerRow" );
 	m_MinScoreToContinueCombo.Load( "Gameplay", "MinScoreToContinueCombo" );
 	m_MinScoreToMaintainCombo.Load( "Gameplay", "MinScoreToMaintainCombo" );
 
@@ -279,6 +279,23 @@ void ScoreKeeperNormal::AddTapRowScore( TapNoteScore score, const NoteData &nd, 
 	AddScoreInternal( score );
 }
 
+extern ThemeMetric<bool> PENALIZE_TAP_SCORE_NONE;
+void ScoreKeeperNormal::HandleTapScoreNone()
+{
+	if( PENALIZE_TAP_SCORE_NONE )
+	{
+		m_pPlayerStageStats->m_iCurCombo = 0;
+
+		if( m_pPlayerState->m_PlayerNumber != PLAYER_INVALID )
+			MESSAGEMAN->Broadcast( enum_add2(Message_CurrentComboChangedP1,m_pPlayerState->m_PlayerNumber) );
+
+		AddScoreInternal( TNS_Miss );
+	}
+
+
+	// TODO: networking code
+}
+
 void ScoreKeeperNormal::AddScoreInternal( TapNoteScore score )
 {
 	int &iScore = m_pPlayerStageStats->m_iScore;
@@ -439,7 +456,7 @@ void ScoreKeeperNormal::HandleTapRowScore( const NoteData &nd, int iRow )
 	//
 	// Regular combo
 	//
-	const int iComboCountIfHit = m_bComboIsPerRow? 1: iNumTapsInRow;
+	const int iComboCountIfHit = m_ComboIsPerRow? 1: iNumTapsInRow;
 	if( scoreOfLastTap >= m_MinScoreToMaintainCombo )
 	{
 		m_pPlayerStageStats->m_iCurMissCombo = 0;

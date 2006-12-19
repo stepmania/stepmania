@@ -17,18 +17,18 @@ class ScoreKeeperNormal: public ScoreKeeper
 {
 	void AddScoreInternal( TapNoteScore score );
 
-	int		m_iScoreRemainder;
-	int		m_iMaxPossiblePoints;
-	int		m_iTapNotesHit;	// number of notes judged so far, needed by scoring
+	int	m_iScoreRemainder;
+	int	m_iMaxPossiblePoints;
+	int	m_iTapNotesHit;	// number of notes judged so far, needed by scoring
 
-	int		m_iNumTapsAndHolds;
-	int		m_iMaxScoreSoFar; // for nonstop scoring
-	int		m_iPointBonus; // the difference to award at the end
- 	int		m_iCurToastyCombo;
-	bool		m_bIsLastSongInCourse;
-	bool		m_bIsBeginner;
+	int	m_iNumTapsAndHolds;
+	int	m_iMaxScoreSoFar; // for nonstop scoring
+	int	m_iPointBonus; // the difference to award at the end
+ 	int	m_iCurToastyCombo;
+	bool	m_bIsLastSongInCourse;
+	bool	m_bIsBeginner;
 
-	bool		m_bComboIsPerRow;
+	ThemeMetric<bool>		m_ComboIsPerRow;
 	ThemeMetric<TapNoteScore>	m_MinScoreToContinueCombo;
 	ThemeMetric<TapNoteScore>	m_MinScoreToMaintainCombo;
 
@@ -37,6 +37,7 @@ class ScoreKeeperNormal: public ScoreKeeper
 	virtual void AddTapScore( TapNoteScore tns );
 	virtual void AddHoldScore( HoldNoteScore hns );
 	virtual void AddTapRowScore( TapNoteScore tns, const NoteData &nd, int iRow );
+	virtual void HandleTapScoreNone();
 
 	/* Configuration: */
 	/* Score after each tap will be rounded to the nearest m_iRoundTo; 1 to do nothing. */

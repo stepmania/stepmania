@@ -15,6 +15,7 @@ public:
 
 	virtual void ChangeLife( PlayerNumber pn, TapNoteScore score );
 	virtual void ChangeLife( PlayerNumber pn, HoldNoteScore score, TapNoteScore tscore );
+	virtual void HandleTapScoreNone( PlayerNumber pn );
 
 protected:
 	void ChangeLife( PlayerNumber pn, float fPercentToMove );

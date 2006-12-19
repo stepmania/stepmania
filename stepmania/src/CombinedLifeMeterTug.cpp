@@ -79,6 +79,11 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, TapNoteScore score )
 	ChangeLife( pn, fPercentToMove );
 }
 
+void CombinedLifeMeterTug::HandleTapScoreNone( PlayerNumber pn )
+{
+	
+}
+
 void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, HoldNoteScore score, TapNoteScore tscore )
 {
 	float fPercentToMove = 0;

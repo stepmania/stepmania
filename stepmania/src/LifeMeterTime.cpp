@@ -154,6 +154,11 @@ void LifeMeterTime::ChangeLife( HoldNoteScore hns, TapNoteScore tns )
 	SendLifeChangedMessage( fOldLife, tns, hns );
 }
 
+void LifeMeterTime::HandleTapScoreNone()
+{
+	
+}
+
 void LifeMeterTime::SendLifeChangedMessage( float fOldLife, TapNoteScore tns, HoldNoteScore hns )
 {
 	Message msg( "LifeChanged" );

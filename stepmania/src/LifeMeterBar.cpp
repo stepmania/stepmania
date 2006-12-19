@@ -134,6 +134,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	case TNS_W5:		fDeltaLife = g_fLifePercentChange.GetValue(SE_W5);	break;
 	case TNS_Miss:		fDeltaLife = g_fLifePercentChange.GetValue(SE_Miss);	break;
 	case TNS_HitMine:	fDeltaLife = g_fLifePercentChange.GetValue(SE_HitMine);	break;
+	case TNS_None:		fDeltaLife = g_fLifePercentChange.GetValue(SE_Miss);	break;
 	}
 	if( IsHot()  &&  score < TNS_W4 )
 		fDeltaLife = -0.10f;		// make it take a while to get back to "hot"
@@ -238,6 +239,13 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 	m_fLifePercentage += fDeltaLife;
 	CLAMP( m_fLifePercentage, 0, 1 );
 	AfterLifeChanged();
+}
+
+extern ThemeMetric<bool> PENALIZE_TAP_SCORE_NONE;
+void LifeMeterBar::HandleTapScoreNone()
+{
+	if( PENALIZE_TAP_SCORE_NONE )
+		ChangeLife( TNS_None );
 }
 
 void LifeMeterBar::AfterLifeChanged()

@@ -85,6 +85,16 @@ void ScoreKeeperRave::HandleHoldScore( const TapNote &tn )
 	AddSuperMeterDelta( fPercentToMove );
 }
 
+extern ThemeMetric<bool> PENALIZE_TAP_SCORE_NONE;
+void ScoreKeeperRave::HandleTapScoreNone()
+{
+	if( PENALIZE_TAP_SCORE_NONE )
+	{
+		float fPercentToMove = g_fSuperMeterPercentChange[SE_Miss];
+		AddSuperMeterDelta( fPercentToMove );
+	}
+}
+
 void ScoreKeeperRave::AddSuperMeterDelta( float fUnscaledPercentChange )
 {
 	if( PREFSMAN->m_bMercifulDrain  &&  fUnscaledPercentChange<0 )

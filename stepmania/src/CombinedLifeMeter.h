@@ -19,6 +19,7 @@ public:
 	/* Change life after receiving a hold note grade.  tscore is the score
 	 * received for the initial tap note. */
 	virtual void ChangeLife( PlayerNumber pn, HoldNoteScore hns, TapNoteScore tns ) = 0;
+	virtual void HandleTapScoreNone( PlayerNumber pn ) = 0;
 };
 
 

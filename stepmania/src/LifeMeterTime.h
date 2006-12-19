@@ -25,6 +25,7 @@ public:
 	virtual void OnLoadSong();
 	virtual void ChangeLife( TapNoteScore score );
 	virtual void ChangeLife( HoldNoteScore score, TapNoteScore tscore );
+	virtual void HandleTapScoreNone();
 	virtual bool IsInDanger() const;
 	virtual bool IsHot() const;
 	virtual bool IsFailing() const;

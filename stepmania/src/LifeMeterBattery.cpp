@@ -133,6 +133,11 @@ void LifeMeterBattery::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 	}
 }
 
+void LifeMeterBattery::HandleTapScoreNone()
+{
+	
+}
+
 void LifeMeterBattery::ChangeLife( float fDeltaLifePercent )
 {
 }

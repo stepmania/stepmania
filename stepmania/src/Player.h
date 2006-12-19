@@ -144,7 +144,7 @@ protected:
 	void HandleHoldScore( const TapNote &tn );
 	void DrawTapJudgments();
 	void DrawHoldJudgments();
-	void SendComboMessage( int iOldCombo, int iOldMissCombo );
+	void SendComboMessages( int iOldCombo, int iOldMissCombo );
 
 	void SetJudgment( TapNoteScore tns, bool bEarly );
 
