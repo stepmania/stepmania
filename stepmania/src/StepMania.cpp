@@ -1195,6 +1195,8 @@ RString StepMania::SaveScreenshot( RString sDir, bool bSaveCompressed, bool bMak
 
 void StepMania::InsertCoin( int iNum, const RageTimer *pTime )
 {
+	for( int i = 0; i < iNum; ++i )
+		LIGHTSMAN->PulseCoinCounter();
 	GAMESTATE->m_iCoins += iNum;
 	LOG->Trace("%i coins inserted, %i needed to play", GAMESTATE->m_iCoins, PREFSMAN->m_iCoinsPerCredit.Get() );
 	BOOKKEEPER->CoinInserted();

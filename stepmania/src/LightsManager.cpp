@@ -83,6 +83,8 @@ LightsManager::LightsManager()
 	ZERO( m_fSecsLeftInGameButtonBlink );
 	ZERO( m_fActorLights );
 	ZERO( m_fSecsLeftInActorLightBlink );
+	m_iQueuedCoinCounterPulses = 0;
+	m_CoinCounterTimer.SetZero();
 
 	m_LightsMode = LIGHTSMODE_JOINING;
 	RString sDriver = g_sLightsDriver.Get();
@@ -104,6 +106,7 @@ LightsManager::~LightsManager()
 // XXX: make themable
 static const float g_fLightEffectRiseSeconds = 0.075f;
 static const float g_fLightEffectFalloffSeconds = 0.35f;
+static const float g_fCoinPulseTime = 0.100f;
 
 void LightsManager::BlinkActorLight( CabinetLight cl )
 {
@@ -160,6 +163,23 @@ void LightsManager::Update( float fDeltaTime )
 	{
 		ZERO( m_LightsState.m_bCabinetLights );
 		ZERO( m_LightsState.m_bGameButtonLights );
+	}
+
+	{
+		m_LightsState.m_bCoinCounter = false;
+		if( !m_CoinCounterTimer.IsZero() )
+		{
+			float fAgo = m_CoinCounterTimer.Ago();
+			if( fAgo < g_fCoinPulseTime )
+				m_LightsState.m_bCoinCounter = true;
+			else if( fAgo >= g_fCoinPulseTime * 2 )
+				m_CoinCounterTimer.SetZero();
+		}
+		else if( m_iQueuedCoinCounterPulses )
+		{
+			m_CoinCounterTimer.Touch();
+			--m_iQueuedCoinCounterPulses;
+		}
 	}
 
 	if( m_LightsMode == LIGHTSMODE_TEST_AUTO_CYCLE )

@@ -7,6 +7,7 @@
 #include "GameInput.h"
 #include "EnumHelper.h"
 #include "Preference.h"
+#include "RageTimer.h"
 
 extern Preference<float>	g_fLightsFalloffSeconds;
 extern Preference<float>	g_fLightsAheadSeconds;
@@ -48,6 +49,9 @@ struct LightsState
 {
 	bool m_bCabinetLights[NUM_CabinetLight];
 	bool m_bGameButtonLights[NUM_GameController][NUM_GameButton];
+
+	// This isn't actually a light, but it's typically implemented in the same way.
+	bool m_bCoinCounter;
 };
 
 class LightsDriver;
@@ -64,6 +68,7 @@ public:
 	void BlinkCabinetLight( CabinetLight cl );
 	void BlinkGameButton( GameInput gi );
 	void BlinkActorLight( CabinetLight cl );
+	void PulseCoinCounter() { ++m_iQueuedCoinCounterPulses; }
 	float GetActorLightLatencySeconds() const;
 
 	void SetLightsMode( LightsMode lm );
@@ -89,6 +94,9 @@ private:
 	vector<LightsDriver*> m_vpDrivers;
 	LightsMode m_LightsMode;
 	LightsState m_LightsState;
+
+	int m_iQueuedCoinCounterPulses;
+	RageTimer m_CoinCounterTimer;
 
 	int GetTestAutoCycleCurrentIndex() { return (int)m_fTestAutoCycleCurrentIndex; }
 
