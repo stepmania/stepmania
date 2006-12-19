@@ -179,6 +179,16 @@ public:
 			pSizes[0] -= m_iBlockSize;
 	}
 
+	/* Like get_write_pointers, but only return the first range available. */
+	T *get_write_pointer( unsigned *pSizes )
+	{
+		T *pBothPointers[2];
+		unsigned iBothSizes[2];
+		get_write_pointers( pBothPointers, iBothSizes );
+		*pSizes = iBothSizes[0];
+		return pBothPointers[0];
+	}
+
 	void get_read_pointers( T *pPointers[2], unsigned pSizes[2] )
 	{
 		const int rpos = read_pos;
