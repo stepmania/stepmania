@@ -26,7 +26,6 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "PrefsManager.h"
-#include "arch/ArchHooks/ArchHooks.h"
 #include "RageSoundUtil.h"
 
 #include "RageSoundReader_Pan.h"
@@ -656,18 +655,40 @@ float RageSound::GetPositionSeconds( bool *bApproximate, RageTimer *pTimestamp )
 {
 	LockMut( m_Mutex );
 
-	if( pTimestamp )
+	if( pTimestamp == NULL )
 	{
-		HOOKS->EnterTimeCriticalSection();
+		const int64_t iPositionFrames = GetPositionSecondsInternal( bApproximate );
+		return iPositionFrames / float(samplerate());
+	}
+	
+	/*
+	 * We may have unpredictable scheduling delays between updating the timestamp
+	 * and reading the sound position.  If we're preempted while doing this and
+	 * it may have caused the timestamp to not match the returned time, retry.
+	 *
+	 * As a failsafe, only allow a few attempts.  If this has to try more than
+	 * a few times, then probably we have thread contention that's causing more
+	 * severe performance problems, anyway.
+	 */
+	int iTries = 3;
+	int64_t iPositionFrames;
+	do
+	{
 		pTimestamp->Touch();
+		iPositionFrames = GetPositionSecondsInternal( bApproximate );
+	} while( --iTries && pTimestamp->Ago() > 0.002f );
+
+	if( iTries == 0 )
+	{
+		static bool bLogged = false;
+		if( !bLogged )
+		{
+			bLogged = true;
+			LOG->Warn( "RageSound::GetPositionSeconds: too many tries" );
+		}
 	}
 
-	const int64_t iPositionFrames = GetPositionSecondsInternal( bApproximate );
-	const float fPosition = iPositionFrames / float(samplerate());
-	if( pTimestamp )
-		HOOKS->ExitTimeCriticalSection();
-
-	return fPosition;
+	return iPositionFrames / float(samplerate());
 }
 
 
