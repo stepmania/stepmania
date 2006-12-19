@@ -144,6 +144,10 @@ function LoadActor( path, ... )
 	return t(...);
 end
 
+function WrapInActorFrame( t )
+	return Def.ActorFrame { children = t }
+end
+
 -- (c) 2006 Glenn Maynard
 -- All rights reserved.
 --
