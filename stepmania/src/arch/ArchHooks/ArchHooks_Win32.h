@@ -15,10 +15,6 @@ public:
 	RString GetMachineId() const;
 	bool CheckForMultipleInstances();
 
-	int OldThreadPriority;
-	RageMutex *TimeCritMutex;
-	void EnterTimeCriticalSection();
-	void ExitTimeCriticalSection();
 	void SetTime( tm newtime );
 
 	void BoostPriority();

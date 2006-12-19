@@ -17,7 +17,6 @@ static bool g_bIsMultipleInstance = false;
 
 ArchHooks_Win32::ArchHooks_Win32()
 {
-	TimeCritMutex = NULL;
 	HOOKS = this;
 
 	/* Disable critical errors, and handle them internally.  We never want the
@@ -26,8 +25,6 @@ ArchHooks_Win32::ArchHooks_Win32()
 
 	CrashHandler::CrashHandlerHandleArgs( g_argc, g_argv );
 	SetUnhandledExceptionFilter( CrashHandler::ExceptionHandler );
-
-	TimeCritMutex = new RageMutex("TimeCritMutex");
 
 	/* Windows boosts priority on keyboard input, among other things.  Disable that for
 	 * the main thread. */
@@ -43,7 +40,6 @@ ArchHooks_Win32::ArchHooks_Win32()
 ArchHooks_Win32::~ArchHooks_Win32()
 {
 	CloseHandle( g_hInstanceMutex );
-	delete TimeCritMutex;
 }
 
 void ArchHooks_Win32::DumpDebugInfo()
@@ -117,21 +113,6 @@ bool ArchHooks_Win32::CheckForMultipleInstances()
 void ArchHooks_Win32::RestartProgram()
 {
 	Win32RestartProgram();
-}
-
-void ArchHooks_Win32::EnterTimeCriticalSection()
-{
-	TimeCritMutex->Lock();
-
-	OldThreadPriority = GetThreadPriority( GetCurrentThread() );
-	SetThreadPriority( GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL );
-}
-
-void ArchHooks_Win32::ExitTimeCriticalSection()
-{
-	SetThreadPriority( GetCurrentThread(), OldThreadPriority );
-	OldThreadPriority = 0;
-	TimeCritMutex->Unlock();
 }
 
 void ArchHooks_Win32::SetTime( tm newtime )
