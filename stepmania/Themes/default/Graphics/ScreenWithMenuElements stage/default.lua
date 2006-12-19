@@ -1,7 +1,7 @@
 local stages = { }
 for _, s in ipairs(Stage) do
 	if GAMESTATE:IsStagePossible(s) then
-		local t = LoadActor("_stage " .. s)() .. {
+		local t = LoadActor("_stage " .. s) .. {
 			InitCommand = cmd(playcommand,"Update"),
 			CurrentSongChangedMessageCommand=cmd(playcommand,"Update"),
 

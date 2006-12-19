@@ -5,7 +5,7 @@ local s = style:GetStyleType();
 local Reverse = PlayerNumber:Reverse();
 s = string.gsub(s, "StyleType_", "");
 
-local t = LoadActor("_icon " .. s)() ..  {
+local t = LoadActor("_icon " .. s) ..  {
 	InitCommand = cmd(pause;setstate,Reverse[GAMESTATE:GetMasterPlayerNumber()]);
 };
 
