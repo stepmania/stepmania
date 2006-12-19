@@ -2,7 +2,7 @@
 #define ARCH_DEFAULT_H
 
 /* Define the default driver sets. */
-#if defined(_WINDOWS)
+#if defined(WINDOWS)
 #include "ArchHooks/ArchHooks_Win32.h"
 #include "LoadingWindow/LoadingWindow_Win32.h"
 #include "LowLevelWindow/LowLevelWindow_Win32.h"
