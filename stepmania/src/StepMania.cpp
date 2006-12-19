@@ -1193,7 +1193,7 @@ RString StepMania::SaveScreenshot( RString sDir, bool bSaveCompressed, bool bMak
 	return sFileName;
 }
 
-void StepMania::InsertCoin( int iNum, const RageTimer *pTime )
+void StepMania::InsertCoin( int iNum )
 {
 	for( int i = 0; i < iNum; ++i )
 		LIGHTSMAN->PulseCoinCounter();
@@ -1241,7 +1241,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 			LOG->Trace( "Ignored coin insertion (editing)" );
 			break;
 		}
-		StepMania::InsertCoin( 1, &input.DeviceI.ts );
+		StepMania::InsertCoin();
 		return false;	// Attract need to know because they go to TitleMenu on > 1 credit
 	}
 

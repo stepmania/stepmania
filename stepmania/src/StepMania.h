@@ -17,7 +17,7 @@ namespace StepMania
 	// If successful, return filename of screenshot in sDir, else return ""
 	RString SaveScreenshot( RString sDir, bool bSaveCompressed, bool bMakeSignature, int iIndex = -1 );
 
-	void InsertCoin( int iNum = 1, const RageTimer *pTime = NULL );
+	void InsertCoin( int iNum = 1 );
 	void InsertCredit();
 
 	void GetPreferredVideoModeParams( VideoModeParams &paramsOut );
