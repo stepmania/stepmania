@@ -21,7 +21,6 @@
 #include "StatsManager.h"
 #include "SongUtil.h"
 
-static const ThemeMetric<RString>	STEPFILE		("ScreenHowToPlay","Stepfile");
 static const ThemeMetric<int>		NUM_W2S			("ScreenHowToPlay","NumW2s");
 static const ThemeMetric<int>		NUM_MISSES		("ScreenHowToPlay","NumMisses");
 static const ThemeMetric<bool>		USELIFEBAR		("ScreenHowToPlay","UseLifeMeterBar");
@@ -137,7 +136,7 @@ void ScreenHowToPlay::Init()
 	if( USEPLAYER )
 	{
 		SMLoader smfile;		
-		smfile.LoadFromSMFile( THEME->GetPathO("", STEPFILE), m_Song, false );
+		smfile.LoadFromSMFile( THEME->GetPathO(m_sName, "steps"), m_Song, false );
 		m_Song.AddAutoGenNotes();
 
 		const Style* pStyle = GAMESTATE->GetCurrentStyle();
