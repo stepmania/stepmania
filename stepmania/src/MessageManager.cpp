@@ -259,10 +259,6 @@ void IMessageSubscriber::ClearMessages( const RString sMessage )
 {
 }
 
-void IMessageSubscriber::ProcessMessages( float fDeltaTime )
-{
-}
-
 MessageSubscriber::MessageSubscriber( const MessageSubscriber &cpy ):
 	IMessageSubscriber(cpy)
 {

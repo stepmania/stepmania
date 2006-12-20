@@ -278,18 +278,6 @@ void ActorFrame::UpdateInternal( float fDeltaTime )
 	}
 }
 
-void ActorFrame::ProcessMessages( float fDeltaTime )
-{
-	Actor::ProcessMessages( fDeltaTime );
-
-	// update all sub-Actors
-	for( vector<Actor*>::iterator it=m_SubActors.begin(); it!=m_SubActors.end(); ++it )
-	{
-		Actor *pActor = *it;
-		pActor->ProcessMessages( fDeltaTime );
-	}
-}
-
 #define PropagateActorFrameCommand( cmd ) \
 	void ActorFrame::cmd()				\
 	{									\

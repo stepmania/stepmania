@@ -95,7 +95,6 @@ public:
 	~Player();
 
 	virtual void Update( float fDeltaTime );
-	virtual void ProcessMessages( float fDeltaTime );
 	virtual void DrawPrimitives();
 
 	void Init( 

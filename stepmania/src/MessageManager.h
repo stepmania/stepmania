@@ -180,7 +180,6 @@ class IMessageSubscriber
 public:
 	virtual ~IMessageSubscriber() { }
 	virtual void HandleMessage( const Message &msg ) = 0;
-	virtual void ProcessMessages( float fDeltaTime );
 	void ClearMessages( const RString sMessage = "" );
 
 private:

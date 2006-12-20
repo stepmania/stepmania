@@ -71,7 +71,6 @@ public:
 
 	virtual void LoadFromSong( const Song *pSong );
 	virtual void Unload();
-	virtual void ProcessMessages( float fDeltaTime );
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
@@ -106,7 +105,6 @@ protected:
 
 		int FindBGSegmentForBeat( float fBeat ) const;
 		void UpdateCurBGChange( const Song *pSong, float fLastMusicSeconds, float fCurrentTime, const map<RString,BackgroundTransition> &mapNameToTransition );
-		void ProcessMessages( float fDeltaTime );
 
 		map<BackgroundDef,Actor*> m_BGAnimations;
 		vector<BackgroundChange> m_aBGChanges;
@@ -822,14 +820,6 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 		m_pFadingBGA->Update( fDeltaTimeMusicRate );
 }
 
-void BackgroundImpl::Layer::ProcessMessages( float fDeltaTime )
-{
-	if( m_pCurrentBGA )
-		m_pCurrentBGA->ProcessMessages( fDeltaTime );
-	if( m_pFadingBGA )
-		m_pFadingBGA->ProcessMessages( fDeltaTime );
-}
-
 void BackgroundImpl::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
@@ -858,16 +848,6 @@ void BackgroundImpl::Update( float fDeltaTime )
 		layer.UpdateCurBGChange( m_pSong, m_fLastMusicSeconds, GAMESTATE->m_fMusicSeconds, m_mapNameToTransition );
 	}
 	m_fLastMusicSeconds = GAMESTATE->m_fMusicSeconds;
-}
-
-void BackgroundImpl::ProcessMessages( float fDeltaTime )
-{
-	ActorFrame::ProcessMessages( fDeltaTime );
-	FOREACH_BackgroundLayer( i )
-	{
-		Layer &layer = m_Layer[i];
-		layer.ProcessMessages( fDeltaTime );
-	}
 }
 
 void BackgroundImpl::DrawPrimitives()

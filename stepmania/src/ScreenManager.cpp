@@ -418,18 +418,6 @@ void ScreenManager::Update( float fDeltaTime )
 		for( unsigned i=0; i<g_OverlayScreens.size(); i++ )
 			g_OverlayScreens[i]->Update( fDeltaTime );	
 	}
-	//
-	// Handle messages after updating.
-	//
-	{
-		for( unsigned i=0; i<g_ScreenStack.size(); i++ )
-			g_ScreenStack[i].m_pScreen->ProcessMessages( fDeltaTime );
-
-		g_pSharedBGA->ProcessMessages( fDeltaTime );
-
-		for( unsigned i=0; i<g_OverlayScreens.size(); i++ )
-			g_OverlayScreens[i]->ProcessMessages( fDeltaTime );
-	}
 
 	/* The music may be started on the first update.  If we're reading from a CD,
 	 * it might not start immediately.  Make sure we start playing the sound before

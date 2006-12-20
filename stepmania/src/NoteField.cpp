@@ -232,18 +232,6 @@ void NoteField::Update( float fDeltaTime )
 		NoteDisplay::Update( fDeltaTime );
 }
 
-void NoteField::ProcessMessages( float fDeltaTime )
-{
-	ActorFrame::ProcessMessages( fDeltaTime );
-
-	/* If m_pCurDisplay is NULL, we're receiving a message before Load() was called. */
-	if( m_pCurDisplay != NULL )
-	{
-		m_pCurDisplay->m_ReceptorArrowRow.ProcessMessages( fDeltaTime );
-		m_pCurDisplay->m_GhostArrowRow.ProcessMessages( fDeltaTime );
-	}
-}
-
 float NoteField::GetWidth() const
 {
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();

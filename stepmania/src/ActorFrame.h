@@ -42,7 +42,6 @@ public:
 	virtual void RunCommandsOnLeaves( const LuaReference& cmds, const LuaReference *pParamTable = NULL ); /* but not on self */
 
 	virtual void UpdateInternal( float fDeltaTime );
-	virtual void ProcessMessages( float fDeltaTime );
 	virtual void BeginDraw();
 	virtual void DrawPrimitives();
 	virtual void EndDraw();
