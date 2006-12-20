@@ -1,7 +1,6 @@
 #include "global.h"
 #include "NetworkSyncManager.h"
 #include "LuaManager.h"
-#include "crypto/CryptMD5.h"
 #include "LocalizedString.h"
 
 NetworkSyncManager *NSMAN;
@@ -41,6 +40,7 @@ void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers 
 #include "GameManager.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
 #include "PlayerState.h"
+#include "CryptManager.h"
 
 AutoScreenMessage( SM_AddToChat )
 AutoScreenMessage( SM_ChangeSong );
@@ -830,22 +830,10 @@ RString NetworkSyncManager::MD5Hex( const RString &sInput )
 	RString HashedName;
 	RString PreHashedName;
 
-	unsigned char Output[16];
-	const unsigned char *Input = (unsigned char *)sInput.c_str();
-
-	MD5Context BASE;
-
-	memset(&BASE,0,sizeof(MD5Context));
-	memset(&Output,0,16);
-
-	MD5Init( &BASE );
-
-	MD5Update( &BASE, Input, sInput.length());
-
-	MD5Final( Output, &BASE );
+	RString sOutput = CryptManager::GetMD5ForString( sInput );
 
 	for (int i = 0; i < 16; i++)
-		PreHashedName += ssprintf( "%2X", Output[i] );
+		PreHashedName += ssprintf( "%2X", sOutput[i] );
 
 	//XXX: Yuck. Convert spaces to 0's better. (will fix soon)
 	for (int i = 0; i < 32; i++)
