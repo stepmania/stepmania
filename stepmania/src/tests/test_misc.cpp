@@ -4,7 +4,6 @@
 #include "RageFileManager.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-#include "arch/arch.h"
 #include "arch/ArchHooks/ArchHooks.h"
 
 RString g_Driver = "dir", g_Root = ".";
@@ -44,7 +43,7 @@ void test_handle_args( int argc, char *argv[] )
 
 void test_init()
 {
-	HOOKS = MakeArchHooks();
+	HOOKS = ArchHooks::Create();
 	HOOKS->Init();
 
 	FILEMAN = new RageFileManager( argv0 );
