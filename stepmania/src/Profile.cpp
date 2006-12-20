@@ -15,7 +15,6 @@
 #include "ProfileManager.h"
 #include "RageFileManager.h"
 #include "LuaManager.h"
-#include "crypto/CryptRand.h"
 #include "UnlockManager.h"
 #include "XmlFile.h"
 #include "XmlFileUtil.h"
@@ -85,13 +84,12 @@ void Profile::InitEditableData()
 
 RString Profile::MakeGuid()
 {
-	// Does the RNG need to be inited and seeded every time?
-	random_init();
-	random_add_noise( "ai8049ujr3odusj" );
-	
 	RString s;
+	s.resize( GUID_SIZE_BYTES );
+	char buf[GUID_SIZE_BYTES];
+	CryptManager::GetRandomBytes( buf, GUID_SIZE_BYTES );
 	for( unsigned i=0; i<GUID_SIZE_BYTES; i++ )
-		s += ssprintf( "%02x", random_byte() );
+		s += ssprintf( "%02x", buf[i] );
 	return s;
 }
 

@@ -6,6 +6,7 @@
 #include "PrefsManager.h"
 #include "RageFileManager.h"
 #include "crypto/CryptMD5.h"
+#include "crypto/CryptRand.h"
 
 CryptManager*	CRYPTMAN	= NULL;	// global and accessable from anywhere in our program
 
@@ -22,6 +23,13 @@ bool CryptManager::VerifyFileWithFile( RString sPath, RString sSignatureFile, RS
 bool CryptManager::VerifyFileWithFile( RString sPath, RString sSignatureFile )
 {
 	return true;
+}
+
+void CryptManager::GetRandomBytes( void *pData, int iBytes )
+{
+	uint8_t *pBuf = (uint8_t *) pData;
+	while( iBytes-- )
+		*pBuf++ = (uint8_t) RandomInt( 256 );
 }
 
 #else
@@ -230,6 +238,17 @@ RString CryptManager::GetPublicKeyFileName()
 	ASSERT( PREFSMAN->m_bSignProfileData );
 
 	return PUBLIC_KEY_PATH;
+}
+
+void CryptManager::GetRandomBytes( void *pData, int iBytes )
+{
+	// Does the RNG need to be inited and seeded every time?
+	random_init();
+	random_add_noise( "ai8049ujr3odusj" );
+	
+	uint8_t *pBuf = (uint8_t *) pData;
+	while( iBytes-- )
+		*pBuf++ = random_byte();
 }
 
 /*
