@@ -24,11 +24,6 @@ bool CryptManager::VerifyFileWithFile( RString sPath, RString sSignatureFile )
 	return true;
 }
 
-bool CryptManager::Verify( RString sPath, RString sSignature )
-{
-	return true;
-}
-
 #else
 
 // crypt headers
@@ -186,34 +181,6 @@ bool CryptManager::VerifyFileWithFile( RString sPath, RString sSignatureFile, RS
 	if( !CryptHelpers::VerifyFile(file, sSignature, sPublicKey, sError) )
 	{
 		LOG->Warn( "VerifyFile(%s) failed: %s", sPath.c_str(), sError.c_str() );
-		return false;
-	}
-
-	return true;
-}
-
-bool CryptManager::Verify( RString sPath, RString sSignature )
-{
-	ASSERT( PREFSMAN->m_bSignProfileData );
-
-	RString sPublicKeyFile = PUBLIC_KEY_PATH;
-	RString sMessageFilename = sPath;
-
-	RString sPublicKey;
-	if( !GetFileContents(sPublicKeyFile, sPublicKey) )
-		return false;
-
-	RageFile file;
-	if( !file.Open(sPath) )
-	{
-		LOG->Warn( "Verify: open(%s) failed: %s", sPath.c_str(), file.GetError().c_str() );
-		return false;
-	}
-
-	RString sError;
-	if( !CryptHelpers::VerifyFile(file, sSignature, sPublicKey, sError) )
-	{
-		LOG->Warn( "Verify(%s) failed: %s", sPath.c_str(), sError.c_str() );
 		return false;
 	}
 
