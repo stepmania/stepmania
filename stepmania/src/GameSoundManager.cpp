@@ -492,8 +492,11 @@ void GameSoundManager::Update( float fDeltaTime )
 		}
 		
 		RageSoundParams p = g_Playing->m_Music->GetParams();
-		p.m_Volume = fVolume;
-		g_Playing->m_Music->SetParams( p );
+		if( p.m_Volume != fVolume )
+		{
+			p.m_Volume = fVolume;
+			g_Playing->m_Music->SetParams( p );
+		}
 	}
 
 	if( !g_UpdatingTimer )
