@@ -206,7 +206,7 @@ int RageSoundReader_Chain::SetPosition( int iFrame )
 		RageSoundReader *pReader = pSound->pSound;
 
 		int iOffsetFrames = iFrame - iOffsetFrame;
-		if( iOffsetFrames > 0 && pReader->SetPosition(iOffsetFrames) == 0 )
+		if( pReader->SetPosition(iOffsetFrames) == 0 )
 		{
 			/* We're past the end of this sound. */
 			ReleaseSound( pSound );

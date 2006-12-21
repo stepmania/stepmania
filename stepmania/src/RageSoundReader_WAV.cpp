@@ -116,7 +116,7 @@ struct WavReaderPCM: public WavReader
 		}
 
 		m_File.Seek( iByte+m_WavData.m_iDataChunkPos );
-		return iFrame;
+		return 1;
 	}
 
 	// XXX: untested
@@ -369,7 +369,7 @@ public:
 			return 0;
 		}
 
-		return iFrame;
+		return 1;
 	}
 
 	// XXX: untested

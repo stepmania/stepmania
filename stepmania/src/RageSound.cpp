@@ -152,7 +152,7 @@ class RageSoundReader_Silence: public RageSoundReader
 public:
 	int GetLength() const { return 0; }
 	int GetLength_Fast() const { return 0; }
-	int SetPosition( int iFrame )  { return 0; }
+	int SetPosition( int iFrame )  { return 1; }
 	int Read( char *buf, int iFrames ) { return 0; }
 	RageSoundReader *Copy() const { return new RageSoundReader_Silence; }
 	int GetSampleRate() const { return 44100; }
@@ -754,10 +754,9 @@ bool RageSound::SetPositionFrames( int iFrames )
 		m_iStoppedSourceFrame = iFrames;
 	}
 
-	if( iRet == 0 && iFrames != 0 )
+	if( iRet == 0 )
 	{
-		/* We were told to seek somewhere, and we got 0 instead, which means
-		 * we passed EOF.  This could be a truncated file or invalid data. */
+		/* Seeked past EOF. */
 		LOG->Warn( "SetPositionFrames: %i samples is beyond EOF in %s",
 			iFrames, GetLoadedFilePath().c_str() );
 

@@ -157,7 +157,7 @@ int RageSoundReader_Vorbisfile::SetPosition( int iFrame )
 	}
 	read_offset = (int) ov_pcm_tell(vf);
 
-	return iFrame;
+	return 1;
 }
 
 int RageSoundReader_Vorbisfile::Read( char *buf, int iFrames )

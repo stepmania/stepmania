@@ -854,13 +854,13 @@ int RageSoundReader_MP3::SetPosition_toc( int iFrame, bool Xing )
 		mad_timer_set( &desired, 0, iFrame, SampleRate );
 
 		if( mad->tocmap.empty() )
-			return iFrame; /* don't have any info */
+			return 1; /* don't have any info */
 
 		/* Find the last entry <= iFrame that we actually have an entry for;
 		 * this will get us as close as possible. */
 		madlib_t::tocmap_t::iterator it = mad->tocmap.upper_bound( desired );
 		if( it == mad->tocmap.begin() )
-			return iFrame; /* don't have any info */
+			return 1; /* don't have any info */
 		--it;
 
 		mad->Timer = it->first;
@@ -882,7 +882,7 @@ int RageSoundReader_MP3::SetPosition_toc( int iFrame, bool Xing )
 		synth_output();
 	}
 
-	return iFrame;
+	return 1;
 }
 
 int RageSoundReader_MP3::SetPosition_hard( int iFrame )
@@ -894,7 +894,7 @@ int RageSoundReader_MP3::SetPosition_hard( int iFrame )
 
 	/* If we're already exactly at the requested position, OK. */
 	if( mad_timer_compare(mad->Timer, desired) == 0 )
-		return 0;
+		return 1;
 
 	/* We always come in here with data synthed.  Be careful not to synth the
 	 * same frame twice. */
@@ -939,7 +939,7 @@ int RageSoundReader_MP3::SetPosition_hard( int iFrame )
 			 * we're currently always using AUDIO_S16SYS. */
 			mad->outpos = samples * 2 * this->Channels;
 			mad->outleft -= samples * 2 * this->Channels;
-			return iFrame;
+			return 1;
 		}
 
 		/* Otherwise, if the desired time will be in the *next* decode, then synth
@@ -1003,7 +1003,7 @@ int RageSoundReader_MP3::SetPosition_estimate( int iFrame )
 	int ms = (get_this_frame_byte(mad) - mad->header_bytes) / (mad->bitrate / 8 / 1000);
 	mad_timer_set(&mad->Timer, 0, ms, 1000);
 
-	return iFrame;
+	return 1;
 }
 
 int RageSoundReader_MP3::SetPosition( int iFrame )
@@ -1024,7 +1024,7 @@ int RageSoundReader_MP3::SetPosition( int iFrame )
 		if( !iFrame )
 		{
 			MADLIB_rewind();
-			return 0; /* ok */
+			return 1; /* ok */
 		}
 
 		/* We can do a fast jump in VBR with Xing with more accuracy than without Xing. */
