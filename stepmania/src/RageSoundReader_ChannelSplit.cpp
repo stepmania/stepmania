@@ -1,15 +1,35 @@
 /*
- * Split the channels of a multi-sample sound into several separate sounds.
+ * Output a sound from the channels of another sound.
  *
  * This is intended for splitting a FileReader, and assumes the GetStreamToSourceRatio
  * of the source is 1.0.
  *
- * The resulting readers should be read in parallel.  If their source position
- * drifts apart, the data between will be buffered to prevent seeking the source.
+ * If multiple readers are created, they should be read in parallel.  If their source
+ * position drifts apart, the data between will be buffered to prevent seeking the source.
  *
- * The resulting sound has as many channels as the largest destination channel
+ * The resulting sounds have as many channels as the largest destination channel
  * specified; multiple sounds on the same channel are mixed together; empty
  * channels are silent.
+ *
+ * Create two mono sounds from one stereo sound, one playing the left channel and
+ * one playing the right:
+ *   RageSoundSplitter split(pSource);
+ *   RageSoundReader_Split *pLeft = split.CreateSound();
+ *   pLeft->AddSourceChannelToSound( 0, 0 );
+ *   RageSoundReader_Split *pRight = split.CreateSound();
+ *   pRight->AddSourceChannelToSound( 1, 0 );
+ *
+ * Convert a stereo sound to mono:
+ *   RageSoundSplitter split(pSource);
+ *   RageSoundReader_Split *pMono = split.CreateSound();
+ *   pMono->AddSourceChannelToSound( 0, 0 );
+ *   pMono->AddSourceChannelToSound( 1, 0 );
+ *
+ * Convert a mono sound to stereo (RageSoundReader_Pan will do this faster):
+ *   RageSoundSplitter split(pSource);
+ *   RageSoundReader_Split *pStereo = split.CreateSound();
+ *   pStereo->AddSourceChannelToSound( 0, 0 );
+ *   pStereo->AddSourceChannelToSound( 0, 1 );
  */
 
 #include "global.h"
