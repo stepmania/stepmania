@@ -18,7 +18,7 @@ void ReadData( RageSoundReader *snd,
 	       int frames )
 {
 	if( iFrame != -1 )
-		snd->SetPosition_Accurate( iFrame );
+		snd->SetPosition( iFrame );
 	int got = snd->Read( buf, frames );
 	ASSERT_M( got == frames, ssprintf("%i, %i", got, frames) );
 }
@@ -194,14 +194,16 @@ RageSoundReader *ApplyFilters( RageSoundReader *s, int filters )
 
 bool CheckSetPositionAccurate( RageSoundReader *snd )
 {
+	snd->SetProperty( "AccurateSync", true );
+
 	const int one_second=snd->GetSampleRate();
 	char data[one_second*sizeof(int16_t)*snd->GetNumChannels()];
 
 	int iFrame = snd->GetSampleRate() * 100 / 1000; // 100ms
 	ReadData( snd, iFrame, data, one_second/10 );
 
-	snd->SetPosition_Accurate( iFrame * 100 );
-	snd->SetPosition_Accurate( iFrame );
+	snd->SetPosition( iFrame * 100 );
+	snd->SetPosition( iFrame );
 	if( !test_read( snd, data, one_second/10 ) )
 	{
 		LOG->Warn("Fail: rewind didn't work");
@@ -410,61 +412,64 @@ bool RunTests( RageSoundReader *snd, const TestFile &tf )
 	
 
 
-	/* SetPosition_Accurate(0) must always reset properly. */
-	snd->SetPosition_Accurate( 0 );
+	/* SetPosition(0) must always reset properly. */
+	snd->SetProperty( "AccurateSync", true );
+	snd->SetPosition( 0 );
 	if( !test_read( snd, data, one_second_frames ) )
 	{
-		LOG->Warn("Fail: SetPosition_Accurate(0) didn't work");
+		LOG->Warn("Fail: SetPosition(0) (accurate) didn't work");
 		return false;
 	}
 
-	/* SetPosition_Fast(0) must always reset properly.   */
-	snd->SetPosition_Fast( 0 );
+	/* SetPosition(0) must always reset properly.   */
+	snd->SetProperty( "AccurateSync", false );
+	snd->SetPosition( 0 );
 	if( !test_read( snd, data, one_second_frames ) )
 	{
-		LOG->Warn("Fail: SetPosition_Fast(0) didn't work");
+		LOG->Warn("Fail: SetPosition(0) (fast) didn't work");
 		return false;
 	}
 
 	/* Make sure seeking past end of file returns 0. */
-	int ret2 = snd->SetPosition_Fast( 10000000 );
+	int ret2 = snd->SetPosition( 10000000 );
 	if( ret2 != 0 )
 	{
-		LOG->Warn( "Fail: SetPosition_Fast(1000000) returned %i instead of 0", ret2 );
+		LOG->Warn( "Fail: SetPosition(1000000) (fast) returned %i instead of 0", ret2 );
 		return false;
 	}
 
 	/* Make sure that reading after a seek past EOF returns EOF. */
 	if( !must_be_eof(snd) )
 	{
-		LOG->Warn("Fail: SetPosition_Fast EOF didn't EOF");
+		LOG->Warn("Fail: SetPosition(EOF) didn't EOF");
 		return false;
 	}
 
-	ret2 = snd->SetPosition_Accurate( 10000000 );
+	snd->SetProperty( "AccurateSync", true );
+	ret2 = snd->SetPosition( 10000000 );
 	if( ret2 != 0 )
 	{
-		LOG->Warn( "Fail: SetPosition_Accurate(1000000) returned %i instead of 0", ret2 );
+		LOG->Warn( "Fail: SetPosition(1000000) (accurate) returned %i instead of 0", ret2 );
 		return false;
 	}
 
 	if( !must_be_eof(snd) )
 	{
-		LOG->Warn("Fail: SetPosition_Accurate EOF didn't EOF");
+		LOG->Warn("Fail: SetPosition(EOF) (accurate) didn't EOF");
 		return false;
 	}
 	
 	/* Seek to 1ms and make sure it gives us the correct data. */
 	int iFrame = snd->GetSampleRate() * 1 / 1000; // 1ms
-	snd->SetPosition_Accurate( iFrame );
+	snd->SetPosition( iFrame );
 	if( !test_read( snd, data + one_second * 1/1000, one_second_frames * 1/1000 ) )
-		LOG->Warn("Fail: SetPosition_Accurate(1) didn't work");
+		LOG->Warn("Fail: SetPosition(1) (accurate) didn't work");
 
 	/* Seek to 500ms and make sure it gives us the correct data. */
 	iFrame = snd->GetSampleRate() * 500 / 1000; // 500ms
-	snd->SetPosition_Accurate( iFrame );
+	snd->SetPosition( iFrame );
 	if( !test_read( snd, data+one_second * 500/1000, one_second_frames * 500/1000 ) )
-		LOG->Warn("Fail: seek(500) didn't work");
+		LOG->Warn("Fail: seek(500) (accurate) didn't work");
 
 	return true;
 }
@@ -493,7 +498,7 @@ bool test_file( const TestFile &tf, int filters )
 	delete snd;
 
 	/*
-	 * Check SetPosition_Accurate consistency:
+	 * Check SetPosition consistency:
 	 * 
 	 * Reopen the file from scratch, seek to 100ms, read some data, do some
 	 * operations that would result in the internal TOC being filled (seek
