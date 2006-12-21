@@ -409,57 +409,45 @@ bool RunTests( RageSoundReader *snd, const TestFile &tf )
 		LOG->Warn("Fail: Reading past EOF twice didn't EOF");
 		return false;
 	}
-	
 
-
-	/* SetPosition(0) must always reset properly. */
-	snd->SetProperty( "AccurateSync", true );
-	snd->SetPosition( 0 );
-	if( !test_read( snd, data, one_second_frames ) )
+	for( int i = 0; i < 2; ++i )
 	{
-		LOG->Warn("Fail: SetPosition(0) (accurate) didn't work");
-		return false;
-	}
+		const char *szMode = i == 0? "accurate":"fast";
+		snd->SetProperty( "AccurateSync", i == 0? true:false );
+		
+		/* SetPosition(0) must always reset properly.   */
+		int iRet = snd->SetPosition(0);
+		if( iRet != 1 )
+		{
+			LOG->Warn( "Fail: SetPosition(0) (%s) returned %i, expected 1", szMode, iRet );
+			return false;
+		}
 
-	/* SetPosition(0) must always reset properly.   */
-	snd->SetProperty( "AccurateSync", false );
-	snd->SetPosition( 0 );
-	if( !test_read( snd, data, one_second_frames ) )
-	{
-		LOG->Warn("Fail: SetPosition(0) (fast) didn't work");
-		return false;
-	}
+		if( !test_read(snd, data, one_second_frames) )
+		{
+			LOG->Warn( "Fail: SetPosition(0) (%s) didn't work", szMode );
+			return false;
+		}
 
-	/* Make sure seeking past end of file returns 0. */
-	int ret2 = snd->SetPosition( 10000000 );
-	if( ret2 != 0 )
-	{
-		LOG->Warn( "Fail: SetPosition(1000000) (fast) returned %i instead of 0", ret2 );
-		return false;
-	}
+		/* Make sure seeking past end of file returns 0. */
+		int ret2 = snd->SetPosition( 10000000 );
+		if( ret2 != 0 )
+		{
+			LOG->Warn( "Fail: SetPosition(1000000) (%s) returned %i instead of 0", szMode, ret2 );
+			return false;
+		}
 
-	/* Make sure that reading after a seek past EOF returns EOF. */
-	if( !must_be_eof(snd) )
-	{
-		LOG->Warn("Fail: SetPosition(EOF) didn't EOF");
-		return false;
-	}
 
-	snd->SetProperty( "AccurateSync", true );
-	ret2 = snd->SetPosition( 10000000 );
-	if( ret2 != 0 )
-	{
-		LOG->Warn( "Fail: SetPosition(1000000) (accurate) returned %i instead of 0", ret2 );
-		return false;
-	}
-
-	if( !must_be_eof(snd) )
-	{
-		LOG->Warn("Fail: SetPosition(EOF) (accurate) didn't EOF");
-		return false;
+		/* Make sure that reading after a seek past EOF returns EOF. */
+		if( !must_be_eof(snd) )
+		{
+			LOG->Warn( "Fail: SetPosition(EOF) (%s) didn't EOF", szMode );
+			return false;
+		}
 	}
 	
 	/* Seek to 1ms and make sure it gives us the correct data. */
+	snd->SetProperty( "AccurateSync", true );
 	int iFrame = snd->GetSampleRate() * 1 / 1000; // 1ms
 	snd->SetPosition( iFrame );
 	if( !test_read( snd, data + one_second * 1/1000, one_second_frames * 1/1000 ) )
