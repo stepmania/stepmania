@@ -383,8 +383,7 @@ void RageSound_Generic_Software::StartMixing( RageSoundBase *pSound )
 		}
 	}
 
-	/* If we hit EOF already, while prebuffering, then go right to STOPPING. */
-	s.m_State = ReachedEOF? Sound::STOPPING: Sound::PLAYING;
+	s.m_State = Sound::PLAYING;
 
 //	LOG->Trace("StartMixing: (#%i) finished prebuffering(%s) (%p)", i, s.m_pSound->GetLoadedFilePath().c_str(), s.m_pSound );
 }
