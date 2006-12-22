@@ -274,11 +274,17 @@ bool RageSoundReader_Chain::SetProperty( const RString &sProperty, float fValue 
 int RageSoundReader_Chain::GetNextSourceFrame() const
 {
 	return m_iCurrentFrame;
-	// XXX: GetPosition is expected to differ by iOffsetMS
-/*	int iPosition = m_apActiveSounds[0].pSound->GetPosition();
-	for( unsigned i = 1; i < m_apActiveSounds.size(); )
+/*	if( m_apActiveSounds.empty() )
+		return m_iCurrentFrame;
+
+	int iPosition = m_apActiveSounds[0]->pSound->GetNextSourceFrame();
+	iPosition += m_apActiveSounds[0]->GetOffsetFrame( GetSampleRate() );
+
+	for( unsigned i = 1; i < m_apActiveSounds.size(); ++i )
 	{
-		if( m_apActiveSounds[i].pSound->GetPosition() != iPosition )
+		int iThisPosition = m_apActiveSounds[i]->pSound->GetNextSourceFrame();
+		iThisPosition += m_apActiveSounds[i]->GetOffsetFrame( GetSampleRate() );
+		if( iThisPosition != iPosition )
 			LOG->Warn( "RageSoundReader_Chain: sound positions moving at different rates" );
 	}
 
