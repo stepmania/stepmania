@@ -567,7 +567,7 @@ private:
 
 int RageSoundReader_Resample_Good::GetNextSourceFrame() const
 {
-	uint64_t iPosition = m_pSource->GetNextSourceFrame();
+	int64_t iPosition = m_pSource->GetNextSourceFrame();
 	iPosition -= m_apResamplers[0]->GetFilled();
 
 	iPosition *= m_iSampleRate;
