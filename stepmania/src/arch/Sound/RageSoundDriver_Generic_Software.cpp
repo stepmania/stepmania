@@ -18,14 +18,14 @@ static int chunksize() { return 512; }
 
 static int underruns = 0, logged_underruns = 0;
 
-RageSound_Generic_Software::Sound::Sound()
+RageSoundDriver::Sound::Sound()
 {
 	m_pSound = NULL;
 	m_State = AVAILABLE;
 	m_bPaused = false;
 }
 
-void RageSound_Generic_Software::Sound::Allocate( int iFrames )
+void RageSoundDriver::Sound::Allocate( int iFrames )
 {
 	/* Reserve enough blocks in the buffer to hold the buffer.  Add one, to account for
 	 * the fact that we may have a partial block due to a previous Mix() call. */
@@ -34,23 +34,23 @@ void RageSound_Generic_Software::Sound::Allocate( int iFrames )
 	m_Buffer.reserve( iBlocksToPrebuffer + 1 );
 }
 
-void RageSound_Generic_Software::Sound::Deallocate()
+void RageSoundDriver::Sound::Deallocate()
 {
 	m_Buffer.reserve( 0 );
 }
 
-int RageSound_Generic_Software::DecodeThread_start( void *p )
+int RageSoundDriver::DecodeThread_start( void *p )
 {
-	((RageSound_Generic_Software *) p)->DecodeThread();
+	((RageSoundDriver *) p)->DecodeThread();
 	return 0;
 }
 
 static int g_iTotalAhead = 0;
 static int g_iTotalAheadCount = 0;
 
-RageSoundMixBuffer &RageSound_Generic_Software::MixIntoBuffer( int iFrames, int64_t iFrameNumber, int64_t iCurrentFrame )
+RageSoundMixBuffer &RageSoundDriver::MixIntoBuffer( int iFrames, int64_t iFrameNumber, int64_t iCurrentFrame )
 {
-	ASSERT_M( m_DecodeThread.IsCreated(), "RageSound_Generic_Software::StartDecodeThread() was never called" );
+	ASSERT_M( m_DecodeThread.IsCreated(), "RageSoundDriver::StartDecodeThread() was never called" );
 
 	if( iFrameNumber - iCurrentFrame + iFrames > 0 )
 	{
@@ -152,19 +152,19 @@ RageSoundMixBuffer &RageSound_Generic_Software::MixIntoBuffer( int iFrames, int6
 	return mix;
 }
 
-void RageSound_Generic_Software::Mix( int16_t *pBuf, int iFrames, int64_t iFrameNumber, int64_t iCurrentFrame )
+void RageSoundDriver::Mix( int16_t *pBuf, int iFrames, int64_t iFrameNumber, int64_t iCurrentFrame )
 {
 	memset( pBuf, 0, iFrames*bytes_per_frame );
 	MixIntoBuffer( iFrames, iFrameNumber, iCurrentFrame ).read( pBuf );
 }
 
-void RageSound_Generic_Software::Mix( float *pBuf, int iFrames, int64_t iFrameNumber, int64_t iCurrentFrame )
+void RageSoundDriver::Mix( float *pBuf, int iFrames, int64_t iFrameNumber, int64_t iCurrentFrame )
 {
 	memset( pBuf, 0, iFrames*bytes_per_frame*2 );
 	MixIntoBuffer( iFrames, iFrameNumber, iCurrentFrame ).read( pBuf );
 }
 
-void RageSound_Generic_Software::DecodeThread()
+void RageSoundDriver::DecodeThread()
 {
 	/* SOUNDMAN will be set once RageSoundManager's ctor returns and
 	 * assigns it; we might get here before that happens, though. */
@@ -217,7 +217,7 @@ void RageSound_Generic_Software::DecodeThread()
 
 /* Buffer a block of sound data for the given sound.  Return the number of
  * frames buffered, or a RageSoundReader return code. */
-int RageSound_Generic_Software::GetDataForSound( Sound &s )
+int RageSoundDriver::GetDataForSound( Sound &s )
 {
 	sound_block *p[2];
 	unsigned psize[2];
@@ -242,7 +242,7 @@ int RageSound_Generic_Software::GetDataForSound( Sound &s )
 }
 
 
-void RageSound_Generic_Software::Update()
+void RageSoundDriver::Update()
 {
 	/* We must not lock here, since the decoder thread might hold the lock for a
 	 * while at a time.  This is threadsafe, because once a sound is in STOPPING,
@@ -294,7 +294,7 @@ void RageSound_Generic_Software::Update()
 	}
 }
 
-void RageSound_Generic_Software::StartMixing( RageSoundBase *pSound )
+void RageSoundDriver::StartMixing( RageSoundBase *pSound )
 {
 	/* Lock available m_Sounds[], and reserve a slot. */
 	m_SoundListMutex.Lock();
@@ -343,7 +343,7 @@ void RageSound_Generic_Software::StartMixing( RageSoundBase *pSound )
 //	LOG->Trace("StartMixing: (#%i) finished prebuffering(%s) (%p)", i, s.m_pSound->GetLoadedFilePath().c_str(), s.m_pSound );
 }
 
-void RageSound_Generic_Software::StopMixing( RageSoundBase *pSound )
+void RageSoundDriver::StopMixing( RageSoundBase *pSound )
 {
 	/* Lock, to make sure the decoder thread isn't running on this sound while we do this. */
 	LockMut( m_Mutex );
@@ -379,7 +379,7 @@ void RageSound_Generic_Software::StopMixing( RageSoundBase *pSound )
 }
 
 
-bool RageSound_Generic_Software::PauseMixing( RageSoundBase *pSound, bool bStop )
+bool RageSoundDriver::PauseMixing( RageSoundBase *pSound, bool bStop )
 {
 	LockMut( m_Mutex );
 
@@ -404,22 +404,22 @@ bool RageSound_Generic_Software::PauseMixing( RageSoundBase *pSound, bool bStop 
 	return true;
 }
 
-void RageSound_Generic_Software::StartDecodeThread()
+void RageSoundDriver::StartDecodeThread()
 {
 	ASSERT( !m_DecodeThread.IsCreated() );
 
 	m_DecodeThread.Create( DecodeThread_start, this );
 }
 
-void RageSound_Generic_Software::SetDecodeBufferSize( int iFrames )
+void RageSoundDriver::SetDecodeBufferSize( int iFrames )
 {
 	ASSERT( !m_DecodeThread.IsCreated() );
 
 	frames_to_buffer = iFrames;
 }
 
-RageSound_Generic_Software::RageSound_Generic_Software():
-	m_Mutex("RageSound_Generic_Software"),
+RageSoundDriver::RageSoundDriver():
+	m_Mutex("RageSoundDriver"),
 	m_SoundListMutex("SoundListMutex")
 {
 	m_bShutdownDecodeThread = false;
@@ -428,7 +428,7 @@ RageSound_Generic_Software::RageSound_Generic_Software():
 	m_DecodeThread.SetName("Decode thread");
 }
 
-RageSound_Generic_Software::~RageSound_Generic_Software()
+RageSoundDriver::~RageSoundDriver()
 {
 	/* Signal the decoding thread to quit. */
 	if( m_DecodeThread.IsCreated() )
@@ -445,7 +445,7 @@ RageSound_Generic_Software::~RageSound_Generic_Software()
 	}
 }
 
-int64_t RageSound_Generic_Software::GetHardwareFrame( RageTimer *pTimestamp ) const
+int64_t RageSoundDriver::GetHardwareFrame( RageTimer *pTimestamp ) const
 {
 	if( pTimestamp == NULL )
 		return GetPosition();
@@ -473,7 +473,7 @@ int64_t RageSound_Generic_Software::GetHardwareFrame( RageTimer *pTimestamp ) co
 		if( !bLogged )
 		{
 			bLogged = true;
-			LOG->Warn( "RageSound_Generic_Software::GetHardwareFrame: too many tries" );
+			LOG->Warn( "RageSoundDriver::GetHardwareFrame: too many tries" );
 		}
 	}
 
