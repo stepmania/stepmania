@@ -28,6 +28,7 @@
 #include "PrefsManager.h"
 #include "RageSoundUtil.h"
 
+#include "RageSoundReader_Extend.h"
 #include "RageSoundReader_Pan.h"
 #include "RageSoundReader_PitchChange.h"
 #include "RageSoundReader_Preload.h"
@@ -218,6 +219,8 @@ bool RageSound::Load( RString sSoundFilePath, bool bPrecache, const RageSoundLoa
 		}
 	}
 
+	m_pSource = new RageSoundReader_Extend( m_pSource );
+
 	if( pParams->m_bSupportRateChanging )
 	{
 		RageSoundReader_PitchChange *pRate = new RageSoundReader_PitchChange( m_pSource );
@@ -255,95 +258,34 @@ void RageSound::LoadSoundReader( RageSoundReader *pSound )
  * that would be read. */
 int RageSound::GetData( char *pBuffer, int iFrames )
 {
-	if( m_Param.m_LengthSeconds != -1 )
-	{
-		/* We have a length; only read up to the end. */
-		const float fLastSecond = m_Param.m_StartSecond + m_Param.m_LengthSeconds;
-		int iFramesToRead = int(fLastSecond*samplerate()) - m_iSourceFrame;
-
-		/* If it's negative, we're past the end, so cap it at 0. Don't read
-		 * more than size. */
-		iFrames = clamp( iFramesToRead, 0, iFrames );
-	}
-
 	int iGotFrames = 0;
 	float fRate = 1.0f;
 	int iSourceFrame = m_iSourceFrame;
-	if( m_iSourceFrame < 0 )
+
+	if( iFrames == 0 )
+		return 0;
+
+	/* Read data from our source. */
+	ASSERT( m_pSource );
+	iGotFrames = m_pSource->RetriedRead( pBuffer, iFrames, &iSourceFrame, &fRate );
+
+	if( iGotFrames == RageSoundReader::ERROR )
 	{
-		/* We havn't *really* started playing yet, so just feed silence.  How
-		 * many more bytes of silence do we need? */
-		iSourceFrame = m_iSourceFrame;
-		iGotFrames = -m_iSourceFrame;
-		iGotFrames = min( iGotFrames, iFrames );
-		memset( pBuffer, 0, iGotFrames*framesize );
+		Fail( m_pSource->GetError() );
+
+		/* Pretend we got EOF. */
+		return RageSoundReader::END_OF_FILE;
 	}
 
-	if( iGotFrames == 0 && iFrames )
-	{
-		/* Read data from our source. */
-		ASSERT( m_pSource );
+	if( iGotFrames < 0 )
+		return iGotFrames;
 
-		int iNewSourceFrame;
-		iGotFrames = m_pSource->RetriedRead( pBuffer, iFrames, &iNewSourceFrame, &fRate );
+	ASSERT_M( iGotFrames >= 0, ssprintf("%i", iGotFrames) ); // unhandled error condition
 
-		if( iGotFrames == RageSoundReader::ERROR )
-		{
-			Fail( m_pSource->GetError() );
+	if( m_pSource->GetNumChannels() == 1 )
+		RageSoundUtil::ConvertMonoToStereoInPlace( (int16_t *) pBuffer, iGotFrames );
 
-			/* Pretend we got EOF. */
-			return 0;
-		}
-
-		if( iGotFrames == RageSoundReader::END_OF_FILE )
-			iGotFrames = 0;
-
-		/* If we didn't get any data, don't update iSourceFrame, so we just keep
-		 * extrapolating if we're in M_CONTINUE. */
-		if( iGotFrames == 0 )
-			iSourceFrame = iNewSourceFrame;
-
-		if( m_pSource->GetNumChannels() == 1 )
-			RageSoundUtil::ConvertMonoToStereoInPlace( (int16_t *) pBuffer, iGotFrames );
-	}
 //		LOG->Trace( "add %i, %f (%i)", iSourceFrame, fRate, iGotFrames );
-
-	/* If we didn't get any data, see if we need to pad the end of the file with
-	 * silence for m_LengthSeconds. */
-	if( iGotFrames == 0 && m_Param.m_LengthSeconds != -1 )
-	{
-		const float fLastSecond = m_Param.m_StartSecond + m_Param.m_LengthSeconds;
-		int iLastFrame = int(fLastSecond*samplerate());
-		int iFramesOfSilence = iLastFrame - m_iSourceFrame;
-		iFramesOfSilence = clamp( iFramesOfSilence, 0, iFrames );
-		if( iFramesOfSilence > 0 )
-		{
-			memset( pBuffer, 0, iFramesOfSilence * framesize );
-			iGotFrames = iFramesOfSilence;
-		}
-	}
-
-	if( iGotFrames == 0 && GetStopMode() == RageSoundParams::M_CONTINUE )
-	{
-		/* Keep playing silence past EOF. */
-		memset( pBuffer, 0, iFrames*framesize );
-		iGotFrames = iFrames;
-	}
-
-	/* We want to fade when there's m_FadeLength seconds left, but if
-	 * m_LengthFrames is -1, we don't know the length we're playing.
-	 * (m_LengthFrames is the length to play, not the length of the
-	 * source.)  If we don't know the length, don't fade. */
-	if( m_Param.m_FadeLength != 0 && m_Param.m_LengthSeconds != -1 )
-	{
-		const float fFinishFadingOutAt = m_Param.m_StartSecond + m_Param.m_LengthSeconds;
-		const float fStartFadingOutAt = fFinishFadingOutAt - m_Param.m_FadeLength;
-		const float fStartSecond = float(iSourceFrame) / samplerate();
-		const float fEndSecond = float(iSourceFrame+lrintf(iGotFrames * fRate)) / samplerate();
-		const float fStartVolume = SCALE( fStartSecond, fStartFadingOutAt, fFinishFadingOutAt, 1.0f, 0.0f );
-		const float fEndVolume = SCALE( fEndSecond, fStartFadingOutAt, fFinishFadingOutAt, 1.0f, 0.0f );
-		RageSoundUtil::Fade( (int16_t *) pBuffer, iGotFrames, fStartVolume, fEndVolume );
-	}
 
 	m_Mutex.Lock();
 	m_StreamToSourceMap.Insert( m_iStreamFrame, iGotFrames, iSourceFrame, fRate );
@@ -382,44 +324,8 @@ int RageSound::GetDataToPlay( int16_t *pBuffer, int iFrames, int64_t &iStreamFra
 	{
 		/* Get a block of data. */
 		int iGotFrames = GetData( (char *) pBuffer, iFrames );
-
-		if( !iGotFrames )
-		{
-			/* EOF. */
-			switch( GetStopMode() )
-			{
-			case RageSoundParams::M_STOP:
-				/* Not looping.  Normally, we'll just stop here. */
-				return RageSoundReader::END_OF_FILE;
-
-			case RageSoundParams::M_LOOP:
-				/* Rewind and restart. */
-				iNumRewindsThisCall++;
-				if( iNumRewindsThisCall > 3 )
-				{
-					/* We're rewinding a bunch of times in one call.  This probably means
-					 * that the length is too short.  It might also mean that the start
-					 * position is very close to the end of the file, so we're looping
-					 * over the remainder.  If we keep doing this, we'll chew CPU rewinding,
-					 * so stop. */
-					LOG->Warn( "Sound %s is busy looping.  Sound stopped (start = %f, length = %f)",
-						GetLoadedFilePath().c_str(), m_Param.m_StartSecond, m_Param.m_LengthSeconds );
-
-					return RageSoundReader::END_OF_FILE;
-				}
-
-				/* Rewind and start over.  XXX: this will take an exclusive lock */
-				SetPositionSeconds( m_Param.m_StartSecond );
-				continue;
-
-			case RageSoundParams::M_CONTINUE:
-				FAIL_M("M_CONTINUE");
-				break;
-
-			default:
-				ASSERT(0);
-			}
-		}
+		if( iGotFrames < 0 )
+			return iGotFrames;
 
 		iFramesStored += iGotFrames;
 		iFrames -= iGotFrames;
@@ -775,6 +681,21 @@ void RageSound::ApplyParams()
 
 	m_pSource->SetProperty( "Pitch", m_Param.m_fPitch );
 	m_pSource->SetProperty( "Speed", m_Param.m_fSpeed );
+	m_pSource->SetProperty( "StartSecond", m_Param.m_StartSecond );
+	m_pSource->SetProperty( "LengthSeconds", m_Param.m_LengthSeconds );
+	m_pSource->SetProperty( "FadeSeconds", m_Param.m_FadeLength );
+	switch( GetStopMode() )
+	{
+	case RageSoundParams::M_LOOP:
+		m_pSource->SetProperty( "Loop", 1.0f );
+		break;
+	case RageSoundParams::M_STOP:
+		m_pSource->SetProperty( "Stop", 1.0f );
+		break;
+	case RageSoundParams::M_CONTINUE:
+		m_pSource->SetProperty( "Continue", 1.0f );
+		break;
+	}
 }
 
 bool RageSound::SetProperty( const RString &sProperty, float fValue )
