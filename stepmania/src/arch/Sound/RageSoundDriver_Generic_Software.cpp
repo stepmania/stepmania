@@ -195,18 +195,6 @@ void RageSound_Generic_Software::DecodeThread()
 				m_Sounds[i].m_fVolume = m_Sounds[i].m_pSound->GetAbsoluteVolume();
 		}
 
-		/*
-		 * If a buffer is low on data, keep filling until it has a reasonable amount.
-		 * However, once beyond a certain threshold, clamp the rate at which we fill
-		 * it.  For example, if the threshold is 4k frames, and we have a 32k frame
-		 * buffer, fill the buffer as fast as we can until it reaches 4k frames; but
-		 * beyond that point, only fill it at a rate relative to realtime (for example,
-		 * at 2x realtime).
-		 *
-		 * This allows a stream to have a large buffer, for higher reliability, without
-		 * causing major CPU bursts when the stream starts or underruns.  (Filling 32k
-		 * takes more CPU than filling 4k frames, and may cause a gameplay skip.)
-		 */
 		for( unsigned i = 0; i < ARRAYLEN(m_Sounds); ++i )
 		{
 			if( m_Sounds[i].m_State != Sound::PLAYING )
