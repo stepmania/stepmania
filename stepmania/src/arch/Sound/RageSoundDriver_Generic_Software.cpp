@@ -188,19 +188,11 @@ void RageSound_Generic_Software::DecodeThread()
 
 		for( unsigned i = 0; i < ARRAYLEN(m_Sounds); ++i )
 		{
-			/* The volume can change while the sound is playing; update it. */
-			/* XXX: We can't access m_pSound when in STOPPING; it doesn't exist anymore. */
-			// if( m_Sounds[i].m_State == Sound::PLAYING || m_Sounds[i].m_State == Sound::STOPPING )
-			if( m_Sounds[i].m_State == Sound::PLAYING )
-				m_Sounds[i].m_fVolume = m_Sounds[i].m_pSound->GetAbsoluteVolume();
-		}
-
-		for( unsigned i = 0; i < ARRAYLEN(m_Sounds); ++i )
-		{
 			if( m_Sounds[i].m_State != Sound::PLAYING )
 				continue;
 
 			Sound *pSound = &m_Sounds[i];
+			pSound->m_fVolume = m_Sounds[i].m_pSound->GetAbsoluteVolume();
 
 			CHECKPOINT;
 			int iFramesFilled = 0;
