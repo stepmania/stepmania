@@ -219,7 +219,7 @@ int RageSoundReader_Chain::SetPosition( int iFrame )
 	if( m_apActiveSounds.empty() && m_iNextSound == m_aSounds.size() )
 		return 0;
 
-	return iFrame;
+	return 1;
 }
 
 void RageSoundReader_Chain::ActivateSound( Sound *s )
