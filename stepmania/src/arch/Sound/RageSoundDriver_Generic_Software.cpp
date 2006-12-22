@@ -445,6 +445,41 @@ RageSound_Generic_Software::~RageSound_Generic_Software()
 	}
 }
 
+int64_t RageSound_Generic_Software::GetHardwareFrame( RageTimer *pTimestamp ) const
+{
+	if( pTimestamp == NULL )
+		return GetPosition();
+
+	/*
+	 * We may have unpredictable scheduling delays between updating the timestamp
+	 * and reading the sound position.  If we're preempted while doing this and
+	 * it may have caused the timestamp to not match the returned time, retry.
+	 *
+	 * As a failsafe, only allow a few attempts.  If this has to try more than
+	 * a few times, then probably we have thread contention that's causing more
+	 * severe performance problems, anyway.
+	 */
+	int iTries = 3;
+	int64_t iPositionFrames;
+	do
+	{
+		pTimestamp->Touch();
+		iPositionFrames = GetPosition();
+	} while( --iTries && pTimestamp->Ago() > 0.002f );
+
+	if( iTries == 0 )
+	{
+		static bool bLogged = false;
+		if( !bLogged )
+		{
+			bLogged = true;
+			LOG->Warn( "RageSound_Generic_Software::GetHardwareFrame: too many tries" );
+		}
+	}
+
+	return iPositionFrames;
+}
+
 /*
  * (c) 2002-2004 Glenn Maynard
  * All rights reserved.

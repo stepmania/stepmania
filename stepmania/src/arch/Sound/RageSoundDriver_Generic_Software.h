@@ -20,6 +20,9 @@ public:
 	RageSound_Generic_Software();
 	virtual ~RageSound_Generic_Software();
 
+	virtual int64_t GetHardwareFrame( RageTimer *pTimer ) const;
+	virtual int64_t GetPosition() const = 0;
+
 protected:
 	/* Start the decoding.  This should be called once the hardware is set up and
 	 * GetSampleRate will return the correct value. */

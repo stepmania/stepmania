@@ -13,6 +13,7 @@ class RageSoundDriver;
 struct RageSoundParams;
 class RageSoundReader;
 class RageSoundReader_Preload;
+class RageTimer;
 
 class RageSoundManager
 {
@@ -37,7 +38,7 @@ public:
 	void StartMixing( RageSoundBase *snd );	/* used by RageSound */
 	void StopMixing( RageSoundBase *snd );	/* used by RageSound */
 	bool Pause( RageSoundBase *snd, bool bPause );	/* used by RageSound */
-	int64_t GetPosition() const;	/* used by RageSound */
+	int64_t GetPosition( RageTimer *pTimer ) const;	/* used by RageSound */
 	void RegisterSound( RageSound *p );		/* used by RageSound */
 	void UnregisterSound( RageSound *p );	/* used by RageSound */
 	int GetUniqueID();						/* used by RageSound */

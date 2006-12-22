@@ -477,7 +477,7 @@ float RageSound::GetLengthSeconds()
 }
 
 /* Get the position in frames. */
-int64_t RageSound::GetPositionSecondsInternal( bool *bApproximate ) const
+int64_t RageSound::GetPositionSecondsInternal( bool *bApproximate, RageTimer *pTimer ) const
 {
 	LockMut( m_Mutex );
 
@@ -499,7 +499,7 @@ int64_t RageSound::GetPositionSecondsInternal( bool *bApproximate ) const
 	}
 
 	/* Get our current hardware position. */
-	int64_t iCurrentHardwareFrame = SOUNDMAN->GetPosition();
+	int64_t iCurrentHardwareFrame = SOUNDMAN->GetPosition( pTimer );
 
 	/* It's sometimes possible for the hardware position to move backwards, usually
 	 * on underrun.  We can try to prevent this in each driver, but it's an obscure
@@ -543,39 +543,7 @@ float RageSound::GetPositionSeconds( bool *bApproximate, RageTimer *pTimestamp )
 {
 	LockMut( m_Mutex );
 
-	if( pTimestamp == NULL )
-	{
-		const int64_t iPositionFrames = GetPositionSecondsInternal( bApproximate );
-		return iPositionFrames / float(samplerate());
-	}
-	
-	/*
-	 * We may have unpredictable scheduling delays between updating the timestamp
-	 * and reading the sound position.  If we're preempted while doing this and
-	 * it may have caused the timestamp to not match the returned time, retry.
-	 *
-	 * As a failsafe, only allow a few attempts.  If this has to try more than
-	 * a few times, then probably we have thread contention that's causing more
-	 * severe performance problems, anyway.
-	 */
-	int iTries = 3;
-	int64_t iPositionFrames;
-	do
-	{
-		pTimestamp->Touch();
-		iPositionFrames = GetPositionSecondsInternal( bApproximate );
-	} while( --iTries && pTimestamp->Ago() > 0.002f );
-
-	if( iTries == 0 )
-	{
-		static bool bLogged = false;
-		if( !bLogged )
-		{
-			bLogged = true;
-			LOG->Warn( "RageSound::GetPositionSeconds: too many tries" );
-		}
-	}
-
+	const int64_t iPositionFrames = GetPositionSecondsInternal( bApproximate, pTimestamp );
 	return iPositionFrames / float(samplerate());
 }
 

@@ -5,6 +5,7 @@
 #include "arch/RageDriver.h"
 
 class RageSoundBase;
+class RageTimer;
 class RageSoundDriver: public RageDriver
 {
 public:
@@ -36,7 +37,7 @@ public:
 
 	/* Get the current hardware frame position, in the same time base as passed to
 	 * RageSound::CommitPlayingPosition. */
-	virtual int64_t GetPosition() const = 0;
+	virtual int64_t GetHardwareFrame( RageTimer *pTimer ) const = 0;
 
 	/* When a sound is finished playing (GetDataToPlay returns 0) and the sound has
 	 * been completely flushed (so GetPosition is no longer meaningful), call
