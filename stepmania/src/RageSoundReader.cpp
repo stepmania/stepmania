@@ -5,7 +5,7 @@
 
 REGISTER_CLASS_TRAITS( RageSoundReader, pCopy->Copy() );
 
-/* Read(), handling the empty return case. */
+/* Read(), handling the STREAM_LOOPED and empty return cases. */
 int RageSoundReader::RetriedRead( char *pBuffer, int iFrames, int *iSourceFrame, float *fRate )
 {
 	if( iFrames == 0 )
@@ -23,6 +23,9 @@ int RageSoundReader::RetriedRead( char *pBuffer, int iFrames, int *iSourceFrame,
 			*iSourceFrame = this->GetNextSourceFrame();
 
 		int iGotFrames = this->Read( pBuffer, iFrames );
+
+		if( iGotFrames == RageSoundReader::STREAM_LOOPED )
+			iGotFrames = 0;
 
 		if( iGotFrames != 0 )
 			return iGotFrames;
