@@ -192,6 +192,8 @@ void RageSound_Generic_Software::DecodeThread()
 				continue;
 
 			Sound *pSound = &m_Sounds[i];
+
+			/* The volume can change while the sound is playing; update it. */
 			pSound->m_fVolume = m_Sounds[i].m_pSound->GetAbsoluteVolume();
 
 			CHECKPOINT;
