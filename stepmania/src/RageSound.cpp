@@ -623,9 +623,7 @@ bool RageSound::SetPositionFrames( int iFrames )
 		return false;
 	}
 
-	int iSeekFrames = max( iFrames, 0 );
-
-	int iRet = m_pSource->SetPosition( iSeekFrames );
+	int iRet = m_pSource->SetPosition( iFrames );
 	if( iRet == -1 )
 	{
 		Fail( m_pSource->GetError() );
