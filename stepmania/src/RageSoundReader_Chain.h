@@ -28,6 +28,9 @@ public:
 	/* Finish adding sounds. */
 	void Finish();
 
+	/* Return the number of added sounds. */
+	int GetNumSounds() const { return m_aSounds.size(); }
+	
 	int GetLength() const;
 	int GetLength_Fast() const;
 	int SetPosition( int iFrame );
