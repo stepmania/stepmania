@@ -9,6 +9,7 @@ class RageThread
 {
 public:
 	RageThread();
+	RageThread( const RageThread &cpy );
 	~RageThread();
 
 	void SetName( const RString &n ) { m_sName = n; }
@@ -140,6 +141,7 @@ public:
 	bool Wait( RageTimer *pTimeout = NULL );
 	void Signal();
 	void Broadcast();
+	bool WaitTimeoutSupported() const;
 
 private:
 	EventImpl *m_pEvent;

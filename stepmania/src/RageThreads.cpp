@@ -217,6 +217,13 @@ RageThread::RageThread()
 	m_sName = "unnamed";
 }
 
+RageThread::RageThread( const RageThread &cpy )
+{
+	/* Copying a thread does not start the copy. */
+	m_pSlot = NULL;
+	m_sName = cpy.m_sName;
+}
+
 RageThread::~RageThread()
 {
 	if( m_pSlot != NULL )
@@ -718,6 +725,11 @@ void RageEvent::Broadcast()
 	ASSERT( IsLockedByThisThread() );
 	ASSERT( m_LockCnt == 0 );
 	m_pEvent->Broadcast();
+}
+
+bool RageEvent::WaitTimeoutSupported() const
+{
+	return m_pEvent->WaitTimeoutSupported();
 }
 
 RageSemaphore::RageSemaphore( RString sName, int iInitialValue ):
