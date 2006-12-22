@@ -356,8 +356,7 @@ int RageSoundReader_Chain::Read( char *pBuffer, int iFrames )
 	{
 		RageSoundReader *pSound = m_apActiveSounds[i]->pSound;
 		ASSERT( pSound->GetNumChannels() == m_iChannels ); // guaranteed by ActivateSound and Finish
-		int iSamples = min( iFrames * pSound->GetNumChannels(), ARRAYLEN(Buffer) );
-		int iFramesRead = pSound->Read( (char *) Buffer, iSamples/pSound->GetNumChannels() );
+		int iFramesRead = pSound->Read( (char *) Buffer, iFrames );
 		if( iFramesRead < 0 )
 		{
 			ReleaseSound( m_apActiveSounds[i] );
