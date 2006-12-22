@@ -262,15 +262,17 @@ int RageSound_Generic_Software::GetDataForSound( Sound &s )
 
 	sound_block *pBlock = p[0];
 	int size = ARRAYLEN(pBlock->m_Buffer)/channels;
-	s.m_pSound->GetDataToPlay( pBlock->m_Buffer, size, pBlock->m_iPosition, pBlock->m_FramesInBuffer );
-	pBlock->m_BufferNext = pBlock->m_Buffer;
-
-	s.m_Buffer.advance_write_pointer( 1 );
+	int iRet = s.m_pSound->GetDataToPlay( pBlock->m_Buffer, size, pBlock->m_iPosition, pBlock->m_FramesInBuffer );
+	if( iRet > 0 )
+	{
+		pBlock->m_BufferNext = pBlock->m_Buffer;
+		s.m_Buffer.advance_write_pointer( 1 );
+	}
 
 //	LOG->Trace( "incr fr wr %i (state %i) (%p)",
 //		(int) pBlock->m_FramesInBuffer, s.m_State, s.m_pSound );
 
-	return pBlock->m_FramesInBuffer;
+	return iRet;
 }
 
 
