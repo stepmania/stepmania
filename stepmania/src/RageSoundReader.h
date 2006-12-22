@@ -20,8 +20,17 @@ public:
 
 	/* Return values for Read(). */
 	enum {
+		/* An error occurred; GetError() will return a description of the error. */
 		ERROR = -1,
-		END_OF_FILE = -2
+		END_OF_FILE = -2,
+
+		/* A nonblocking buffer in the filter chain has underrun, and no data is
+		 * currently available. */
+		WOULD_BLOCK = -3,
+
+		/* The source position has changed in an expected way, such as looping.
+		 * Seeking manually will not cause this. */
+		STREAM_LOOPED = -4,
 	};
 
 	/* GetNextSourceFrame() provides the source frame associated with the next frame
