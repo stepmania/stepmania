@@ -11,11 +11,7 @@
 static const int channels = 2;
 static const int bytes_per_frame = channels*2; /* 16-bit */
 
-/* When a sound has fewer than min_fill_frames buffered, buffer at maximum speed.
- * Once beyond that, fill at a limited rate. */
-static const int min_fill_frames = 1024*4;
 static int frames_to_buffer;
-static int min_streaming_buffer_size = 1024*32;
 
 /* 512 is about 10ms, which is big enough for the tolerance of most schedulers. */
 static int chunksize() { return 512; }
@@ -222,17 +218,6 @@ void RageSound_Generic_Software::DecodeThread()
 			int iFramesFilled = 0;
 			while( pSound->m_Buffer.num_writable() )
 			{
-				/* If there are more than min_fill_frames available, check for
-				 * rate clamping. */
-				if( pSound->m_Buffer.num_readable()*samples_per_block >= unsigned(min_fill_frames) )
-				{
-					/* Don't write more than two chunks worth of data in one
-					 * iteration.  Since we delay for one chunk period per loop,
-					 * this means we'll fill at no more than 4x realtime. */
-					if( iFramesFilled >= chunksize()*4 )
-						break;
-				}
-
 				int iWrote = GetDataForSound( *pSound );
 				if( iWrote == RageSoundReader::WOULD_BLOCK )
 					break;
@@ -361,30 +346,17 @@ void RageSound_Generic_Software::StartMixing( RageSoundBase *pSound )
 	/* Initialize the sound buffer. */
 	int BufferSize = frames_to_buffer;
 
-	/* If a sound is streaming from disk, use a bigger buffer, so we don't underrun
-	 * the BGM if a drive seek takes too long.  Note that in this case, we'll still
-	 * underrun any other sounds that are playing, even if they're preloaded.  This
-	 * is less of a problem, since the music position isn't based on those.  It could
-	 * be fixed by having two decoding threads; one for streaming sounds and one for
-	 * non-streaming sounds. */
-	if( s.m_pSound->IsStreamingFromDisk() )
-		BufferSize = max( BufferSize, min_streaming_buffer_size );
 	s.Allocate( BufferSize );
 
 //	LOG->Trace("StartMixing(%s) (%p)", s.m_pSound->GetLoadedFilePath().c_str(), s.m_pSound );
 
 	/* Prebuffer some frames before changing the sound to PLAYING. */
-	int iFramesFilled = 0;
-	while( iFramesFilled < min_fill_frames && iFramesFilled < BufferSize )
+	while( s.m_Buffer.num_writable() )
 	{
 //		LOG->Trace("StartMixing: (#%i) buffering %i (%i writable) (%p)", i, (int) frames_to_buffer, s.buffer.num_writable(), s.m_pSound );
 		int iWrote = GetDataForSound( s );
-		iFramesFilled += iWrote;
 		if( iWrote < 0 )
-		{
-//		LOG->Trace("StartMixing: XXX hit EOF (%p)", s.m_pSound );
 			break;
-		}
 	}
 
 	s.m_State = Sound::PLAYING;
