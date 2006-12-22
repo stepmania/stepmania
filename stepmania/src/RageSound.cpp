@@ -254,8 +254,7 @@ void RageSound::LoadSoundReader( RageSoundReader *pSound )
 	m_pSource = pSound;
 }
 
-/* Get a block of data from the input.  If buffer is NULL, just return the amount
- * that would be read. */
+/* Get a block of data from the input. */
 int RageSound::GetData( char *pBuffer, int iFrames )
 {
 	int iGotFrames = 0;
@@ -306,7 +305,10 @@ int RageSound::GetData( char *pBuffer, int iFrames )
  * need to execute without blocking other threads from calling eg. GetPositionSeconds,
  * since they may take some time to run.
  *
- * If no data is returned (we're at the end of the stream), return false.
+ * On underrun, if no data was read, returns WOULD_BLOCK.  On end of file, if no
+ * data was read, returns END_OF_FILE.  If any data is read, it is returned; these
+ * conditions are masked and will be seen on the next call.  Otherwise, the requested 
+ * number of frames will always be returned.
  */
 int RageSound::GetDataToPlay( int16_t *pBuffer, int iFrames, int64_t &iStreamFrame, int &iFramesStored )
 {
