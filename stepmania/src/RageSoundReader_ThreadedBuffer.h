@@ -62,7 +62,7 @@ private:
 
 	bool m_bEnabled;
 
-	/* If this is true, the buffering thread owns m_pReader->m_pSource, even
+	/* If this is true, the buffering thread owns m_pSource, even
 	 * if m_Event is unlocked. */
 	bool m_bFilling;
 
