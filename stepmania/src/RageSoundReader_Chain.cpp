@@ -370,7 +370,7 @@ int RageSoundReader_Chain::Read( char *pBuffer, int iFrames )
 		int iFramesRead = 0;
 		while( iFramesRead < iFrames )
 		{
-			int iGotFrames = pSound->Read( (char *) Buffer, iFrames - iFramesRead );
+			int iGotFrames = pSound->RetriedRead( (char *) Buffer, iFrames - iFramesRead );
 			if( iGotFrames < 0 )
 			{
 				iFramesRead = iGotFrames;
