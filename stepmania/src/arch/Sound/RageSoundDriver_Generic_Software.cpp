@@ -234,6 +234,8 @@ void RageSound_Generic_Software::DecodeThread()
 				}
 
 				int iWrote = GetDataForSound( *pSound );
+				if( iWrote == RageSoundReader::WOULD_BLOCK )
+					break;
 				if( iWrote == RageSoundReader::END_OF_FILE )
 				{
 					/* This sound is finishing. */
