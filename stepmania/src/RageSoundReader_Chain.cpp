@@ -351,7 +351,7 @@ int RageSoundReader_Chain::Read( char *pBuffer, int iFrames )
 	RageSoundMixBuffer mix;
 	/* Read iFrames from each sound. */
 	int16_t Buffer[2048];
-	iFrames = min( iFrames, 1024 );
+	iFrames = min( iFrames, (int) (ARRAYLEN(Buffer) / m_iChannels) );
 	int iMaxFramesRead = 0;
 	for( unsigned i = 0; i < m_apActiveSounds.size(); )
 	{
