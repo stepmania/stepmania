@@ -34,6 +34,7 @@
 #include "RageSoundReader_Preload.h"
 #include "RageSoundReader_Resample_Good.h"
 #include "RageSoundReader_FileReader.h"
+#include "RageSoundReader_ThreadedBuffer.h"
 
 static const int channels = 2;
 static const int framesize = 2 * channels; /* 16-bit */
@@ -220,6 +221,8 @@ bool RageSound::Load( RString sSoundFilePath, bool bPrecache, const RageSoundLoa
 	}
 
 	m_pSource = new RageSoundReader_Extend( m_pSource );
+	if( !bPrecache )
+		m_pSource = new RageSoundReader_ThreadedBuffer( m_pSource );
 
 	if( pParams->m_bSupportRateChanging )
 	{
