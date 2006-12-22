@@ -369,9 +369,8 @@ void RageSound_Generic_Software::StartMixing( RageSoundBase *pSound )
 //	LOG->Trace("StartMixing(%s) (%p)", s.m_pSound->GetLoadedFilePath().c_str(), s.m_pSound );
 
 	/* Prebuffer some frames before changing the sound to PLAYING. */
-	bool ReachedEOF = false;
 	int iFramesFilled = 0;
-	while( !ReachedEOF && iFramesFilled < min_fill_frames && iFramesFilled < BufferSize )
+	while( iFramesFilled < min_fill_frames && iFramesFilled < BufferSize )
 	{
 //		LOG->Trace("StartMixing: (#%i) buffering %i (%i writable) (%p)", i, (int) frames_to_buffer, s.buffer.num_writable(), s.m_pSound );
 		int iWrote = GetDataForSound( s );
@@ -379,7 +378,7 @@ void RageSound_Generic_Software::StartMixing( RageSoundBase *pSound )
 		if( !iWrote )
 		{
 //		LOG->Trace("StartMixing: XXX hit EOF (%p)", s.m_pSound );
-			ReachedEOF = true;
+			break;
 		}
 	}
 
