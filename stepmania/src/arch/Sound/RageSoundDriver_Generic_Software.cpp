@@ -197,7 +197,6 @@ void RageSound_Generic_Software::DecodeThread()
 			pSound->m_fVolume = m_Sounds[i].m_pSound->GetAbsoluteVolume();
 
 			CHECKPOINT;
-			int iFramesFilled = 0;
 			while( pSound->m_Buffer.num_writable() )
 			{
 				int iWrote = GetDataForSound( *pSound );
@@ -210,8 +209,6 @@ void RageSound_Generic_Software::DecodeThread()
 					break;
 //					LOG->Trace("mixer: (#%i) eof (%p)", i, pSound->m_pSound );
 				}
-
-				iFramesFilled += iWrote;
 			}
 		}
 //		LOG->Trace("end mix");

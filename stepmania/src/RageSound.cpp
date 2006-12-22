@@ -315,8 +315,6 @@ int RageSound::GetData( char *pBuffer, int iFrames )
  */
 int RageSound::GetDataToPlay( int16_t *pBuffer, int iFrames, int64_t &iStreamFrame, int &iFramesStored )
 {
-	int iNumRewindsThisCall = 0;
-
 	/* We only update m_iStreamFrame; only take a shared lock, so we don't block the main thread. */
 //	LockMut(m_Mutex);
 
