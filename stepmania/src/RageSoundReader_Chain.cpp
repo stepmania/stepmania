@@ -312,6 +312,9 @@ int RageSoundReader_Chain::Read( char *pBuffer, int iFrames )
 		++m_iNextSound;
 	}
 
+	if( m_iNextSound == m_aSounds.size() && m_apActiveSounds.empty() )
+		return END_OF_FILE;
+
 	/* Clamp iFrames to the beginning of the next sound we need to start. */
 	if( m_iNextSound < m_aSounds.size() )
 	{
@@ -320,9 +323,6 @@ int RageSoundReader_Chain::Read( char *pBuffer, int iFrames )
 		int iFramesToRead = iOffsetFrame - m_iCurrentFrame;
 		iFrames = min( iFramesToRead, iFrames );
 	}
-
-	if( iFrames == 0 )
-		return 0;
 
 	if( m_apActiveSounds.size() == 1 &&
 		m_apActiveSounds.front()->pSound->GetNumChannels() == m_iChannels &&
@@ -387,8 +387,6 @@ int RageSoundReader_Chain::Read( char *pBuffer, int iFrames )
 	mix.read( (int16_t *) pBuffer );
 	m_iCurrentFrame += iMaxFramesRead;
 
-	if( iMaxFramesRead == 0 )
-		return END_OF_FILE;
 	return iMaxFramesRead;
 }
 
