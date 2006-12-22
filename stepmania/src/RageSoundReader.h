@@ -32,6 +32,7 @@ public:
 	virtual float GetStreamToSourceRatio() const = 0;
 
 	RString GetError() const { return m_sError; }
+	int RetriedRead( char *pBuffer, int iFrames, int *iSourceFrame = NULL, float *fRate = NULL );
 
 protected:
 	void SetError( RString sError ) const { m_sError = sError; }
