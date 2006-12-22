@@ -119,7 +119,12 @@ RageSoundReader_Split::~RageSoundReader_Split()
 int RageSoundReader_Split::SetPosition( int iFrame )
 {
 	m_iPositionFrame = iFrame;
-	return iFrame;
+
+	/* We can't tell whether we're past EOF.  We can't ReadBuffer here, because the
+	 * other sounds using this same source probably havn't seeked yet, so seeking
+	 * to the beginning of the file would buffer between there and the position
+	 * of those sounds.  Just return success, and we'll return EOF in Read if needed. */
+	return 1;
 }
 
 bool RageSoundReader_Split::SetProperty( const RString &sProperty, float fValue )
