@@ -356,15 +356,30 @@ int RageSoundReader_Chain::Read( char *pBuffer, int iFrames )
 	{
 		RageSoundReader *pSound = m_apActiveSounds[i]->pSound;
 		ASSERT( pSound->GetNumChannels() == m_iChannels ); // guaranteed by ActivateSound and Finish
-		int iFramesRead = pSound->Read( (char *) Buffer, iFrames );
-		if( iFramesRead < 0 )
+
+		/* If we receive less than we were asked for, keep asking for more data.  Most
+		 * filters would simply return what they have in this situation, but we want
+		 * to deal transparently with separate sounds returning differently-sized partial
+		 * blocks. */
+		int iFramesRead = 0;
+		while( iFramesRead < iFrames )
 		{
-			ReleaseSound( m_apActiveSounds[i] );
-			continue;
+			int iGotFrames = pSound->Read( (char *) Buffer, iFrames - iFramesRead );
+			if( iGotFrames < 0 )
+			{
+				iFramesRead = iGotFrames;
+				continue;
+			}
+
+			mix.SetWriteOffset( iFramesRead * pSound->GetNumChannels() );
+			mix.write( Buffer, iFramesRead * pSound->GetNumChannels() );
+			iFramesRead += iGotFrames;
 		}
 
-		mix.write( Buffer, iFramesRead * pSound->GetNumChannels() );
-		++i;
+		if( iFramesRead < 0 )
+			ReleaseSound( m_apActiveSounds[i] );
+		else
+			++i;
 	}
 
 	/* Read mixed frames into the output buffer. */
