@@ -49,6 +49,7 @@ public:
 	bool Wait( RageTimer *pTimeout );
 	void Signal();
 	void Broadcast();
+	bool WaitTimeoutSupported() const { return true; }
 
 private:
 	MutexImpl_Win32 *m_pParent;

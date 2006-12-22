@@ -55,6 +55,7 @@ public:
 	bool Wait( RageTimer *pTimeout );
 	void Signal();
 	void Broadcast();
+	bool WaitTimeoutSupported() const;
 
 private:
 	MutexImpl_Pthreads *m_pParent;

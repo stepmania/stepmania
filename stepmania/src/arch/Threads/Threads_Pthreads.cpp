@@ -348,11 +348,21 @@ bool EventImpl_Pthreads::Wait( RageTimer *pTimeout )
 	int iRet = pthread_cond_timedwait( &m_Cond, &m_pParent->mutex, &abstime );
 	return iRet != ETIMEDOUT;
 }
+
+bool EventImpl_Pthreads::WaitTimeoutSupported() const
+{
+	return true;
+}
 #else
 bool EventImpl_Pthreads::Wait( RageTimer *pTimeout )
 {
 	pthread_cond_wait( &m_Cond, &m_pParent->mutex );
 	return true;
+}
+
+bool EventImpl_Pthreads::WaitTimeoutSupported() const
+{
+	return false;
 }
 #endif
 
