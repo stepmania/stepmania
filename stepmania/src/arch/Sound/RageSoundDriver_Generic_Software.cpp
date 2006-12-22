@@ -252,7 +252,7 @@ void RageSound_Generic_Software::DecodeThread()
 }
 
 /* Buffer a block of sound data for the given sound.  Return the number of
- * frames buffered.  If end of file is reached, return 0. */
+ * frames buffered, or a RageSoundReader return code. */
 int RageSound_Generic_Software::GetDataForSound( Sound &s )
 {
 	sound_block *p[2];
