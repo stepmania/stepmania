@@ -16,7 +16,7 @@ class RageSoundBase
 public:
 	virtual ~RageSoundBase() { }
 	virtual void SoundIsFinishedPlaying() = 0;
-	virtual bool GetDataToPlay( int16_t *buffer, int size, int64_t &iStreamFrame, int &got_bytes ) = 0;
+	virtual int GetDataToPlay( int16_t *buffer, int size, int64_t &iStreamFrame, int &got_bytes ) = 0;
 	virtual int GetSampleRate() const = 0;
 	virtual RageTimer GetStartTime() const { return RageZeroTimer; }
 	virtual float GetAbsoluteVolume() const = 0;
@@ -201,7 +201,7 @@ public:
 	 * signals the stream to stop; once it's flushed, SoundStopped will be called.
 	 * Until then, SOUNDMAN->GetPosition can still be called; the sound is still
 	 * playing. */
-	bool GetDataToPlay( int16_t *pBuffer, int iSize, int64_t &iStreamFrame, int &iBytesRead );
+	int GetDataToPlay( int16_t *pBuffer, int iSize, int64_t &iStreamFrame, int &iBytesRead );
 	void CommitPlayingPosition( int64_t iFrameno, int64_t iPosition, int iBytesRead );
 };
 

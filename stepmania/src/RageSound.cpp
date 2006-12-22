@@ -366,7 +366,7 @@ int RageSound::GetData( char *pBuffer, int iFrames )
  *
  * If no data is returned (we're at the end of the stream), return false.
  */
-bool RageSound::GetDataToPlay( int16_t *pBuffer, int iFrames, int64_t &iStreamFrame, int &iFramesStored )
+int RageSound::GetDataToPlay( int16_t *pBuffer, int iFrames, int64_t &iStreamFrame, int &iFramesStored )
 {
 	int iNumRewindsThisCall = 0;
 
@@ -390,7 +390,7 @@ bool RageSound::GetDataToPlay( int16_t *pBuffer, int iFrames, int64_t &iStreamFr
 			{
 			case RageSoundParams::M_STOP:
 				/* Not looping.  Normally, we'll just stop here. */
-				return false;
+				return RageSoundReader::END_OF_FILE;
 
 			case RageSoundParams::M_LOOP:
 				/* Rewind and restart. */
@@ -405,7 +405,7 @@ bool RageSound::GetDataToPlay( int16_t *pBuffer, int iFrames, int64_t &iStreamFr
 					LOG->Warn( "Sound %s is busy looping.  Sound stopped (start = %f, length = %f)",
 						GetLoadedFilePath().c_str(), m_Param.m_StartSecond, m_Param.m_LengthSeconds );
 
-					return false;
+					return RageSoundReader::END_OF_FILE;
 				}
 
 				/* Rewind and start over.  XXX: this will take an exclusive lock */
@@ -425,7 +425,7 @@ bool RageSound::GetDataToPlay( int16_t *pBuffer, int iFrames, int64_t &iStreamFr
 		iFrames -= iGotFrames;
 		pBuffer += iGotFrames * channels;
 	}
-	return true;
+	return iFramesStored;
 }
 
 /* Indicate that a block of audio data has been written to the device. */

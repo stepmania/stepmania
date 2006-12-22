@@ -6,6 +6,7 @@
 #include "RageUtil.h"
 #include "RageSoundManager.h"
 #include "RageSoundMixBuffer.h"
+#include "RageSoundReader.h"
 
 static const int channels = 2;
 static const int bytes_per_frame = channels*2; /* 16-bit */
@@ -233,7 +234,7 @@ void RageSound_Generic_Software::DecodeThread()
 				}
 
 				int iWrote = GetDataForSound( *pSound );
-				if( !iWrote )
+				if( iWrote == RageSoundReader::END_OF_FILE )
 				{
 					/* This sound is finishing. */
 					pSound->m_State = Sound::STOPPING;
@@ -375,7 +376,7 @@ void RageSound_Generic_Software::StartMixing( RageSoundBase *pSound )
 //		LOG->Trace("StartMixing: (#%i) buffering %i (%i writable) (%p)", i, (int) frames_to_buffer, s.buffer.num_writable(), s.m_pSound );
 		int iWrote = GetDataForSound( s );
 		iFramesFilled += iWrote;
-		if( !iWrote )
+		if( iWrote < 0 )
 		{
 //		LOG->Trace("StartMixing: XXX hit EOF (%p)", s.m_pSound );
 			break;
