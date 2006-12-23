@@ -560,21 +560,19 @@ bool RageSound::SetPositionFrames( int iFrames )
 	{
 		m_sError = m_pSource->GetError();
 		LOG->Warn( "SetPositionFrames: seek %s failed: %s", GetLoadedFilePath().c_str(), m_sError.c_str() );
-		return false; /* failed */
 	}
-
-	m_iStoppedSourceFrame = iFrames;
-
-	if( iRet == 0 )
+	else if( iRet == 0 )
 	{
 		/* Seeked past EOF. */
 		LOG->Warn( "SetPositionFrames: %i samples is beyond EOF in %s",
 			iFrames, GetLoadedFilePath().c_str() );
-
-		return false; /* failed */
+	}
+	else
+	{
+		m_iStoppedSourceFrame = iFrames;
 	}
 
-	return true;
+	return iRet == 1;
 }
 
 float RageSound::GetAbsoluteVolume() const
