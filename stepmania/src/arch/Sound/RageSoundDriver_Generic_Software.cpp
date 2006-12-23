@@ -359,7 +359,7 @@ void RageSoundDriver::StartMixing( RageSoundBase *pSound )
 void RageSoundDriver::StopMixing( RageSoundBase *pSound )
 {
 	/* Lock, to make sure the decoder thread isn't running on this sound while we do this. */
-	LockMut( m_Mutex );
+	m_Mutex.Lock();
 
 	/* Find the sound. */
 	unsigned i;
@@ -368,6 +368,7 @@ void RageSoundDriver::StopMixing( RageSoundBase *pSound )
 			break;
 	if( i == ARRAYLEN(m_Sounds) )
 	{
+		m_Mutex.Unlock();
 		LOG->Trace( "not stopping a sound because it's not playing" );
 		return;
 	}
@@ -375,6 +376,7 @@ void RageSoundDriver::StopMixing( RageSoundBase *pSound )
 	/* If we're already in STOPPED, there's nothing to do. */
 	if( m_Sounds[i].m_State == Sound::STOPPED )
 	{
+		m_Mutex.Unlock();
 		LOG->Trace( "not stopping a sound because it's already in STOPPED" );
 		return;
 	}
@@ -389,6 +391,10 @@ void RageSoundDriver::StopMixing( RageSoundBase *pSound )
 	 * it.  Once this call returns, the sound may no longer exist. */
 	m_Sounds[i].m_pSound = NULL;
 //	LOG->Trace("end StopMixing");
+
+	m_Mutex.Unlock();
+
+	pSound->SoundIsFinishedPlaying();
 }
 
 
