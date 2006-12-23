@@ -345,12 +345,15 @@ void RageSound::SoundIsFinishedPlaying()
 	if( !m_bPlaying )
 		return;
 
-	/* Lock the mutex after calling GetPositionSecondsInternal.  We must not make driver
-	 * calls with our mutex locked (driver mutex < sound mutex).  Nobody else will
-	 * see our sound as not playing until we set playing to false. */
-	m_iStoppedSourceFrame = (int) GetPositionSecondsInternal();
+	/* Get our current hardware position. */
+	int64_t iCurrentHardwareFrame = SOUNDMAN->GetPosition( NULL );
 
 	m_Mutex.Lock();
+
+	/* Lock the mutex after calling SOUNDMAN->GetPosition().  We must not make driver
+	 * calls with our mutex locked (driver mutex < sound mutex). */
+	if( !m_HardwareToStreamMap.IsEmpty() && !m_StreamToSourceMap.IsEmpty() )
+		m_iStoppedSourceFrame = (int) GetSourceFrameFromHardwareFrame( iCurrentHardwareFrame );
 
 //	LOG->Trace("set playing false for %p (SoundIsFinishedPlaying) (%s)", this, this->GetLoadedFilePath().c_str());
 	m_bPlaying = false;
