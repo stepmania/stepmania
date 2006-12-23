@@ -202,7 +202,7 @@ void RageSoundDriver::DecodeThread()
 				int iWrote = GetDataForSound( *pSound );
 				if( iWrote == RageSoundReader::WOULD_BLOCK )
 					break;
-				if( iWrote == RageSoundReader::END_OF_FILE )
+				if( iWrote < 0 )
 				{
 					/* This sound is finishing. */
 					pSound->m_State = Sound::STOPPING;
