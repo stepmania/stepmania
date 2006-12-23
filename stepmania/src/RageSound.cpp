@@ -69,17 +69,11 @@ RageSound::RageSound():
 	m_iStoppedSourceFrame = 0;
 	m_iMaxDriverFrame = 0;
 	m_bPlaying = false;
-
-	/* Register ourself last, once everything is initialized. */
-	SOUNDMAN->RegisterSound( this );
 }
 
 RageSound::~RageSound()
 {
 	Unload();
-
-	/* Unregister ourself. */
-	SOUNDMAN->UnregisterSound( this );
 }
 
 RageSound::RageSound( const RageSound &cpy ):
