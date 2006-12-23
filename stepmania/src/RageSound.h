@@ -20,7 +20,6 @@ public:
 	virtual int GetSampleRate() const = 0;
 	virtual RageTimer GetStartTime() const { return RageZeroTimer; }
 	virtual float GetAbsoluteVolume() const = 0;
-	virtual int GetID() const = 0;
 	virtual RString GetLoadedFilePath() const = 0;
 };
 
