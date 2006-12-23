@@ -14,7 +14,7 @@ public:
 	virtual RageSoundReader *Copy() const = 0;
 	virtual int GetSampleRate() const = 0;
 	virtual unsigned GetNumChannels() const = 0;
-	virtual bool IsStreamingFromDisk() const = 0;
+	virtual bool IsStreamingFromDisk() const { return false; }
 	virtual bool SetProperty( const RString &sProperty, float fValue ) { return false; }
 	virtual RageSoundReader *GetSource() { return NULL; }
 
