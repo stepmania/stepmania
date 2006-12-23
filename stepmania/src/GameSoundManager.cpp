@@ -244,8 +244,6 @@ static void StartMusic( MusicToPlay &ToPlay )
 		if( ToPlay.bForceLoop )
 			p.StopMode = RageSoundParams::M_LOOP;
 		NewMusic->m_Music->SetParams( p );
-
-		NewMusic->m_Music->SetPositionSeconds( p.m_StartSecond );
 		NewMusic->m_Music->StartPlaying();
 	}
 

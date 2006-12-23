@@ -308,6 +308,9 @@ void RageSound::StartPlaying()
 {
 	ASSERT( !m_bPlaying );
 
+	// Move to the start position.
+	SetPositionFrames( lrintf(m_Param.m_StartSecond * samplerate()) );
+
 	/* If m_StartTime is in the past, then we probably set a start time but took too
 	 * long loading.  We don't want that; log it, since it can be unobvious. */
 	if( !m_Param.m_StartTime.IsZero() && m_Param.m_StartTime.Ago() > 0 )

@@ -182,9 +182,6 @@ RageSound *RageSoundManager::PlaySound( RageSound &snd, const RageSoundParams *p
 	if( params )
 		snd.SetParams( *params );
 
-	// Move to the start position.
-	snd.SetPositionSeconds( snd.GetParams().m_StartSecond );
-
 	snd.StartPlaying();
 	return &snd;
 }
@@ -196,9 +193,6 @@ RageSound *RageSoundManager::PlayCopyOfSound( RageSound &snd, const RageSoundPar
 
 	if( pParams )
 		pSound->SetParams( *pParams );
-
-	// Move to the start position.
-	pSound->SetPositionSeconds( pSound->GetParams().m_StartSecond );
 
 	pSound->StartPlaying();
 
