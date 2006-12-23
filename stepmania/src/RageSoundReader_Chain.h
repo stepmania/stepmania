@@ -37,7 +37,6 @@ public:
 	int Read( char *pBuf, int iFrames );
 	int GetSampleRate() const { return m_iActualSampleRate; }
 	unsigned GetNumChannels() const { return m_iChannels; }
-	bool IsStreamingFromDisk() const;
 	bool SetProperty( const RString &sProperty, float fValue );
 	int GetNextSourceFrame() const;
 	float GetStreamToSourceRatio() const;

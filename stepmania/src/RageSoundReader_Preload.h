@@ -19,7 +19,6 @@ public:
 	int Read( char *pBuffer, int iLength );
 	int GetSampleRate() const { return m_iSampleRate; }
 	unsigned GetNumChannels() const { return m_iChannels; }
-	bool IsStreamingFromDisk() const { return false; }
 	int GetNextSourceFrame() const;
 	float GetStreamToSourceRatio() const { return m_fRate; }
 	RString GetError() const { return ""; }

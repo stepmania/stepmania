@@ -84,7 +84,6 @@ int RageSoundReader_Split::GetLength() const { return m_pImpl->m_pSource->GetLen
 int RageSoundReader_Split::GetLength_Fast() const { return m_pImpl->m_pSource->GetLength_Fast(); }
 int RageSoundReader_Split::GetSampleRate() const { return m_pImpl->m_pSource->GetSampleRate(); }
 unsigned RageSoundReader_Split::GetNumChannels() const { return m_iNumOutputChannels; }
-bool RageSoundReader_Split::IsStreamingFromDisk() const { return m_pImpl->m_pSource->IsStreamingFromDisk(); }
 int RageSoundReader_Split::GetNextSourceFrame() const { return m_iPositionFrame; }
 float RageSoundReader_Split::GetStreamToSourceRatio() const { return 1.0f; }
 

@@ -150,7 +150,6 @@ public:
 	RageSoundReader *Copy() const { return new RageSoundReader_Silence; }
 	int GetSampleRate() const { return 44100; }
 	unsigned GetNumChannels() const { return 1; }
-	bool IsStreamingFromDisk() const { return false; }
 	int GetNextSourceFrame() const { return 0; }
 	float GetStreamToSourceRatio() const { return 1.0f; }
 };

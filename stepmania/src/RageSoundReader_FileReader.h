@@ -24,7 +24,6 @@ public:
 		OPEN_FATAL_ERROR=2,
 	};
 	virtual OpenResult Open(RString filename) = 0;
-	virtual bool IsStreamingFromDisk() const { return true; }
 	virtual float GetStreamToSourceRatio() const { return 1.0f; }
 	virtual RString GetError() const { return m_sError; }
 

@@ -19,7 +19,6 @@ public:
 	virtual int Read( char *pBuf, int iFrames ) { return m_pSource->Read( pBuf, iFrames ); }
 	virtual int GetSampleRate() const { return m_pSource->GetSampleRate(); }
 	virtual unsigned GetNumChannels() const { return m_pSource->GetNumChannels(); }
-	virtual bool IsStreamingFromDisk() const { return m_pSource->IsStreamingFromDisk(); }
 	virtual bool SetProperty( const RString &sProperty, float fValue ) { return m_pSource->SetProperty( sProperty, fValue ); }
 	virtual int GetNextSourceFrame() const { return m_pSource->GetNextSourceFrame(); }
 	virtual float GetStreamToSourceRatio() const { return m_pSource->GetStreamToSourceRatio(); }

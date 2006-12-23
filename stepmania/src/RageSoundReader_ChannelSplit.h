@@ -20,7 +20,6 @@ public:
 	virtual int Read( char *pBuf, int iFrames );
 	virtual int GetSampleRate() const;
 	virtual unsigned GetNumChannels() const;
-	virtual bool IsStreamingFromDisk() const;
 	virtual bool SetProperty( const RString &sProperty, float fValue );
 	virtual int GetNextSourceFrame() const;
 	virtual float GetStreamToSourceRatio() const;

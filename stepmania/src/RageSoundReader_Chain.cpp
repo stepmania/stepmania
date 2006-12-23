@@ -250,16 +250,6 @@ void RageSoundReader_Chain::ReleaseSound( Sound *s )
 	m_apActiveSounds.erase( it );
 }
 
-bool RageSoundReader_Chain::IsStreamingFromDisk() const
-{
-	map<RString, RageSoundReader *>::const_iterator it;
-	FOREACH_CONST( RageSoundReader *, m_apLoadedSounds, it )
-		if( (*it)->IsStreamingFromDisk() )
-			return true;
-
-	return false;
-}
-
 bool RageSoundReader_Chain::SetProperty( const RString &sProperty, float fValue )
 {
 	bool bRet = false;
