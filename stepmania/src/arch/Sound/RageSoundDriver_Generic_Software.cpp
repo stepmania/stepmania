@@ -4,7 +4,6 @@
 #include "RageLog.h"
 #include "RageSound.h"
 #include "RageUtil.h"
-#include "RageSoundManager.h"
 #include "RageSoundMixBuffer.h"
 #include "RageSoundReader.h"
 
@@ -32,11 +31,13 @@ void RageSoundDriver::Sound::Allocate( int iFrames )
 	const int iFramesPerBlock = samples_per_block / channels;
 	const int iBlocksToPrebuffer = iFrames / iFramesPerBlock;
 	m_Buffer.reserve( iBlocksToPrebuffer + 1 );
+	m_PosMapQueue.reserve( 32 );
 }
 
 void RageSoundDriver::Sound::Deallocate()
 {
 	m_Buffer.reserve( 0 );
+	m_PosMapQueue.reserve( 0 );
 }
 
 int RageSoundDriver::DecodeThread_start( void *p )
@@ -131,7 +132,14 @@ RageSoundMixBuffer &RageSoundDriver::MixIntoBuffer( int iFrames, int64_t iFrameN
 			mix.SetWriteOffset( iGotFrames*channels );
 			mix.write( p[0]->m_BufferNext, frames_to_read * channels );
 
-			SOUNDMAN->CommitPlayingPosition( s.m_iSoundID, iFrameNumber+iGotFrames, p[0]->m_iPosition, frames_to_read );
+			{
+				Sound::QueuedPosMap pos;
+				pos.iStreamFrame = iFrameNumber+iGotFrames;
+				pos.iHardwareFrame = p[0]->m_iPosition;
+				pos.iFrames = frames_to_read;
+
+				s.m_PosMapQueue.write( &pos, 1 );
+			}
 
 			p[0]->m_BufferNext += frames_to_read*channels;
 			p[0]->m_FramesInBuffer -= frames_to_read;
@@ -166,11 +174,6 @@ void RageSoundDriver::Mix( float *pBuf, int iFrames, int64_t iFrameNumber, int64
 
 void RageSoundDriver::DecodeThread()
 {
-	/* SOUNDMAN will be set once RageSoundManager's ctor returns and
-	 * assigns it; we might get here before that happens, though. */
-	while( !SOUNDMAN && !m_bShutdownDecodeThread )
-		usleep( 10000 );
-
 	SetupDecodingThread();
 
 	while( !m_bShutdownDecodeThread )
@@ -249,6 +252,17 @@ void RageSoundDriver::Update()
 	 * this is the only place it'll be changed (to STOPPED). */
 	for( unsigned i = 0; i < ARRAYLEN(m_Sounds); ++i )
 	{
+		{
+			/* We don't need to lock to access m_PosMapQueue. */
+			Sound::QueuedPosMap p;
+			while( m_Sounds[i].m_PosMapQueue.read( &p, 1 ) )
+			{
+				RageSoundBase *pSound = m_Sounds[i].m_pSound;
+				if( pSound != NULL )
+					pSound->CommitPlayingPosition( p.iStreamFrame, p.iHardwareFrame, p.iFrames );
+			}
+		}
+
 		switch( m_Sounds[i].m_State )
 		{
 		case Sound::STOPPED:

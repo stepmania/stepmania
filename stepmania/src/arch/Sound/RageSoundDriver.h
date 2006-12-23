@@ -164,7 +164,17 @@ private:
 		RageTimer m_StartTime;
 		float m_fVolume;
 		CircBuf<sound_block> m_Buffer;
+
 		bool m_bPaused;
+
+		struct QueuedPosMap
+		{
+			int iFrames;
+			int64_t iStreamFrame;
+			int64_t iHardwareFrame;
+		};
+
+		CircBuf<QueuedPosMap> m_PosMapQueue;
 
 		enum
 		{
