@@ -464,10 +464,32 @@ RageSoundDriver::~RageSoundDriver()
 	}
 }
 
+int64_t RageSoundDriver::ClampHardwareFrame( int64_t iHardwareFrame ) const
+{
+	/* It's sometimes possible for the hardware position to move backwards, usually
+	 * on underrun.  We can try to prevent this in each driver, but it's an obscure
+	 * error, so let's clamp the result here instead. */
+	if( iHardwareFrame < m_iMaxHardwareFrame )
+	{
+		/* Clamp the output to one per second, so one underruns don't cascade due to
+		 * output spam. */
+		static RageTimer last(RageZeroTimer);
+		if( last.IsZero() || last.Ago() > 1.0f )
+		{
+			LOG->Trace( "RageSoundDriver: driver returned a lesser position (%i < %i)",
+				(int) iHardwareFrame, (int) m_iMaxHardwareFrame );
+			last.Touch();
+		}
+		return m_iMaxHardwareFrame;
+	}
+	m_iMaxHardwareFrame = iHardwareFrame = max( iHardwareFrame, m_iMaxHardwareFrame );
+	return iHardwareFrame;
+}
+
 int64_t RageSoundDriver::GetHardwareFrame( RageTimer *pTimestamp ) const
 {
 	if( pTimestamp == NULL )
-		return GetPosition();
+		return ClampHardwareFrame( GetPosition() );
 
 	/*
 	 * We may have unpredictable scheduling delays between updating the timestamp
@@ -496,7 +518,7 @@ int64_t RageSoundDriver::GetHardwareFrame( RageTimer *pTimestamp ) const
 		}
 	}
 
-	return iPositionFrames;
+	return ClampHardwareFrame( iPositionFrames );
 }
 
 /*

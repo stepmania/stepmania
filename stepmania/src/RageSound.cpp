@@ -67,7 +67,6 @@ RageSound::RageSound():
 	m_pSource = NULL;
 	m_iStreamFrame = 0;
 	m_iStoppedSourceFrame = 0;
-	m_iMaxDriverFrame = 0;
 	m_bPlaying = false;
 }
 
@@ -94,7 +93,6 @@ RageSound &RageSound::operator=( const RageSound &cpy )
 	m_Param = cpy.m_Param;
 	m_iStreamFrame = cpy.m_iStreamFrame;
 	m_iStoppedSourceFrame = cpy.m_iStoppedSourceFrame;
-	m_iMaxDriverFrame = 0;
 	m_bPlaying = false;
 
 	delete m_pSource;
@@ -357,7 +355,6 @@ void RageSound::SoundIsFinishedPlaying()
 //	LOG->Trace("set playing false for %p (SoundIsFinishedPlaying) (%s)", this, this->GetLoadedFilePath().c_str());
 	m_bPlaying = false;
 
-	m_iMaxDriverFrame = 0;
 	m_HardwareToStreamMap.Clear();
 	m_StreamToSourceMap.Clear();
 
@@ -437,24 +434,6 @@ int64_t RageSound::GetPositionSecondsInternal( bool *bApproximate, RageTimer *pT
 
 	/* Get our current hardware position. */
 	int64_t iCurrentHardwareFrame = SOUNDMAN->GetPosition( pTimer );
-
-	/* It's sometimes possible for the hardware position to move backwards, usually
-	 * on underrun.  We can try to prevent this in each driver, but it's an obscure
-	 * error, so let's clamp the result here instead.  Be sure to reset this on stop,
-	 * since the position may reset. */
-	if( iCurrentHardwareFrame < m_iMaxDriverFrame )
-	{
-		/* Clamp the output to one per second, so one underruns don't cascade due to
-		 * output spam. */
-		static RageTimer last(RageZeroTimer);
-		if( last.IsZero() || last.Ago() > 1.0f )
-		{
-			LOG->Trace( "Sound %s: driver returned a lesser position (%i < %i)",
-				this->GetLoadedFilePath().c_str(), (int) iCurrentHardwareFrame, (int) m_iMaxDriverFrame );
-			last.Touch();
-		}
-	}
-	m_iMaxDriverFrame = iCurrentHardwareFrame = max( iCurrentHardwareFrame, m_iMaxDriverFrame );
 
 	bool bApprox;
 	int64_t iStreamFrame = m_HardwareToStreamMap.Search( iCurrentHardwareFrame, &bApprox );

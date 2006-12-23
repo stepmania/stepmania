@@ -171,9 +171,6 @@ private:
 	int m_iStoppedSourceFrame;
 	bool m_bPlaying;
 
-	/* Keep track of the max SOUNDMAN->GetPosition result (see GetPositionSecondsInternal). */
-	mutable int64_t m_iMaxDriverFrame;
-
 	RString m_sError;
 
 	int64_t GetPositionSecondsInternal( bool *bApproximate = NULL, RageTimer *pTimer = NULL ) const;

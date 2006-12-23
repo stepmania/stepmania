@@ -194,6 +194,9 @@ private:
 	/* List of currently playing sounds: XXX no vector */
 	Sound m_Sounds[32];
 
+	int64_t ClampHardwareFrame( int64_t iHardwareFrame ) const;
+	mutable int64_t m_iMaxHardwareFrame;
+
 	bool m_bShutdownDecodeThread;
 
 	static int DecodeThread_start( void *p );
