@@ -332,9 +332,6 @@ void RageSound::StartPlaying()
 
 void RageSound::StopPlaying()
 {
-	if( !m_bPlaying )
-		return;
-
 	/* Tell the sound driver to stop mixing this sound. */
 	SOUNDMAN->StopMixing(this);
 }
