@@ -574,10 +574,6 @@ bool RageSound::SetPositionFrames( int iFrames )
 		return false;
 	}
 
-	/* If we're already there, don't do anything. */
-	if( m_iSourceFrame == iFrames )
-		return true;
-
 	int iRet = m_pSource->SetPosition( iFrames );
 	if( iRet == -1 )
 	{
