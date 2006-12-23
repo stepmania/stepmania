@@ -160,7 +160,6 @@ private:
 		void Deallocate();
 
 		RageSoundBase *m_pSound;
-		int m_iSoundID;
 		RageTimer m_StartTime;
 		float m_fVolume;
 		CircBuf<sound_block> m_Buffer;

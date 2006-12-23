@@ -332,7 +332,6 @@ void RageSoundDriver::StartMixing( RageSoundBase *pSound )
 
 	s.m_pSound = pSound;
 	s.m_StartTime = pSound->GetStartTime();
-	s.m_iSoundID = pSound->GetID();
 	s.m_fVolume = pSound->GetAbsoluteVolume();
 	s.m_Buffer.clear();
 
