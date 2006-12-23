@@ -135,7 +135,6 @@ public:
 	float GetPlaybackRate() const;
 	RageTimer GetStartTime() const;
 	float GetAbsoluteVolume() const;	// factors in SOUNDMAN->GetMixVolume()
-	int GetID() const { return m_iID; }
 	void SetParams( const RageSoundParams &p );
 	const RageSoundParams &GetParams() const { return m_Param; }
 	bool SetProperty( const RString &sProperty, float fValue );
@@ -174,9 +173,6 @@ private:
 
 	/* Keep track of the max SOUNDMAN->GetPosition result (see GetPositionSecondsInternal). */
 	mutable int64_t m_iMaxDriverFrame;
-
-	/* Unique ID number for this instance of RageSound. */
-	int m_iID;
 
 	RString m_sError;
 
