@@ -368,7 +368,7 @@ void RageSound::SoundIsFinishedPlaying()
 	if( !m_bPlaying )
 		return;
 
-	/* Lock the mutex after calling UnregisterPlayingSound.  We must not make driver
+	/* Lock the mutex after calling GetPositionSecondsInternal.  We must not make driver
 	 * calls with our mutex locked (driver mutex < sound mutex).  Nobody else will
 	 * see our sound as not playing until we set playing to false. */
 	m_iStoppedSourceFrame = (int) GetPositionSecondsInternal();
