@@ -272,17 +272,10 @@ int RageSound::GetData( char *pBuffer, int iFrames )
 	iGotFrames = m_pSource->RetriedRead( pBuffer, iFrames, &iSourceFrame, &fRate );
 
 	if( iGotFrames == RageSoundReader::ERROR )
-	{
 		Fail( m_pSource->GetError() );
-
-		/* Pretend we got EOF. */
-		return RageSoundReader::END_OF_FILE;
-	}
 
 	if( iGotFrames < 0 )
 		return iGotFrames;
-
-	ASSERT_M( iGotFrames >= 0, ssprintf("%i", iGotFrames) ); // unhandled error condition
 
 	if( m_pSource->GetNumChannels() == 1 )
 		RageSoundUtil::ConvertMonoToStereoInPlace( (int16_t *) pBuffer, iGotFrames );
