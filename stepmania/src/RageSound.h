@@ -174,6 +174,7 @@ private:
 	RString m_sError;
 
 	int64_t GetPositionSecondsInternal( bool *bApproximate = NULL, RageTimer *pTimer = NULL ) const;
+	int GetSourceFrameFromHardwareFrame( int64_t iHardwareFrame, bool *bApproximate = NULL ) const;
 
 	bool SetPositionFrames( int frames = -1 );
 	RageSoundParams::StopMode_t GetStopMode() const; /* resolves M_AUTO */

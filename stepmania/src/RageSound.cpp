@@ -410,6 +410,21 @@ float RageSound::GetLengthSeconds()
 	return iLength / 1000.f; /* ms -> secs */
 }
 
+int RageSound::GetSourceFrameFromHardwareFrame( int64_t iHardwareFrame, bool *bApproximate ) const
+{
+	if( m_HardwareToStreamMap.IsEmpty() || m_StreamToSourceMap.IsEmpty() )
+		return 0;
+
+	bool bApprox;
+	int64_t iStreamFrame = m_HardwareToStreamMap.Search( iHardwareFrame, &bApprox );
+	if( bApproximate && bApprox )
+		*bApproximate = true;
+	int64_t iSourceFrame = m_StreamToSourceMap.Search( iStreamFrame, &bApprox );
+	if( bApproximate && bApprox )
+		*bApproximate = true;
+	return (int) iSourceFrame;
+}
+
 /* Get the position in frames. */
 int64_t RageSound::GetPositionSecondsInternal( bool *bApproximate, RageTimer *pTimer ) const
 {
@@ -434,16 +449,7 @@ int64_t RageSound::GetPositionSecondsInternal( bool *bApproximate, RageTimer *pT
 
 	/* Get our current hardware position. */
 	int64_t iCurrentHardwareFrame = SOUNDMAN->GetPosition( pTimer );
-
-	bool bApprox;
-	int64_t iStreamFrame = m_HardwareToStreamMap.Search( iCurrentHardwareFrame, &bApprox );
-	if( bApproximate && bApprox )
-		*bApproximate = true;
-	int64_t iSourceFrame = m_StreamToSourceMap.Search( iStreamFrame, &bApprox );
-	if( bApproximate && bApprox )
-		*bApproximate = true;
-
-	return iSourceFrame;
+	return GetSourceFrameFromHardwareFrame( iCurrentHardwareFrame, bApproximate );
 }
 
 /*
