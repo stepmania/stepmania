@@ -374,6 +374,7 @@ void RageSound::SoundIsFinishedPlaying()
 //	LOG->Trace("set playing false for %p (SoundIsFinishedPlaying) (%s)", this, this->GetLoadedFilePath().c_str());
 	m_bPlaying = false;
 
+	m_iMaxDriverFrame = 0;
 	m_HardwareToStreamMap.Clear();
 	m_StreamToSourceMap.Clear();
 
