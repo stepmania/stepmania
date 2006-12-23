@@ -296,9 +296,6 @@ int RageSoundReader_ThreadedBuffer::FillBlock()
 
 	m_bEOF = (iGotFrames == END_OF_FILE);
 
-	if( iGotFrames < 0 && iGotFrames != END_OF_FILE )
-		SetError( m_pSource->GetError() );
-
 	return iGotFrames;
 }
 

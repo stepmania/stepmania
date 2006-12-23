@@ -113,9 +113,6 @@ int RageSoundReader_Extend::Read( char *pBuffer, int iFrames )
 		return STREAM_LOOPED;
 	}
 
-	if( iFramesRead == RageSoundReader::ERROR )
-		this->SetError( m_pSource->GetError() );
-
 	return iFramesRead;
 }
 

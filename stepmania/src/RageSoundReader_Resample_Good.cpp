@@ -713,12 +713,8 @@ int RageSoundReader_Resample_Good::Read( char *pBuf_, int iFrames )
 		int16_t *pTmpBuf = (int16_t *) alloca( iFramesNeeded * sizeof(int16_t) * iChannels );
 		ASSERT( pTmpBuf );
 		int iFramesIn = m_pSource->Read( (char *) pTmpBuf, iFramesNeeded );
-
 		if( iFramesIn < 0 )
-		{
-			SetError( m_pSource->GetError() );
 			return iFramesIn;
-		}
 
 		const int iSamplesIn = iFramesIn * iChannels;
 
