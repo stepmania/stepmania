@@ -428,33 +428,6 @@ int RageSound::GetSourceFrameFromHardwareFrame( int64_t iHardwareFrame, bool *bA
 	return (int) iSourceFrame;
 }
 
-/* Get the position in frames. */
-int64_t RageSound::GetPositionSecondsInternal( bool *bApproximate, RageTimer *pTimer ) const
-{
-	LockMut( m_Mutex );
-
-	if( bApproximate )
-		*bApproximate = false;
-
-	/* If we're not playing, just report the static position. */
-	if( !IsPlaying() )
-		return m_iStoppedSourceFrame;
-
-	/* If we don't yet have any position data, CommitPlayingPosition hasn't yet been called at all,
-	 * so guess what we think the real time is. */
-	if( m_HardwareToStreamMap.IsEmpty() || m_StreamToSourceMap.IsEmpty() )
-	{
-		// LOG->Trace( "no data yet; %i", m_iStoppedSourceFrame );
-		if( bApproximate )
-			*bApproximate = true;
-		return m_iStoppedSourceFrame;
-	}
-
-	/* Get our current hardware position. */
-	int64_t iCurrentHardwareFrame = SOUNDMAN->GetPosition( pTimer );
-	return GetSourceFrameFromHardwareFrame( iCurrentHardwareFrame, bApproximate );
-}
-
 /*
  * If non-NULL, approximate is set to true if the returned time is approximated because of
  * underrun, the sound not having started (after Play()) or finished (after EOF) yet.
@@ -463,13 +436,34 @@ int64_t RageSound::GetPositionSecondsInternal( bool *bApproximate, RageTimer *pT
  * position.  We might take a variable amount of time before grabbing the timestamp (to
  * lock SOUNDMAN); we might lose the scheduler after grabbing it, when releasing SOUNDMAN.
  */
-
 float RageSound::GetPositionSeconds( bool *bApproximate, RageTimer *pTimestamp ) const
 {
+	/* Get our current hardware position. */
+	int64_t iCurrentHardwareFrame = SOUNDMAN->GetPosition( pTimestamp );
+
+	/* Lock the mutex after calling SOUNDMAN->GetPosition().  We must not make driver
+	 * calls with our mutex locked (driver mutex < sound mutex). */
 	LockMut( m_Mutex );
 
-	const int64_t iPositionFrames = GetPositionSecondsInternal( bApproximate, pTimestamp );
-	return iPositionFrames / float(samplerate());
+	if( bApproximate )
+		*bApproximate = false;
+
+	/* If we're not playing, just report the static position. */
+	if( !IsPlaying() )
+		return m_iStoppedSourceFrame / float(samplerate());
+
+	/* If we don't yet have any position data, CommitPlayingPosition hasn't yet been called at all,
+	 * so guess what we think the real time is. */
+	if( m_HardwareToStreamMap.IsEmpty() || m_StreamToSourceMap.IsEmpty() )
+	{
+		// LOG->Trace( "no data yet; %i", m_iStoppedSourceFrame );
+		if( bApproximate )
+			*bApproximate = true;
+		return m_iStoppedSourceFrame / float(samplerate());
+	}
+
+	int iSourceFrame = GetSourceFrameFromHardwareFrame( iCurrentHardwareFrame, bApproximate );
+	return iSourceFrame / float(samplerate());
 }
 
 
