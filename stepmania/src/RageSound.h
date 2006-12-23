@@ -17,6 +17,7 @@ public:
 	virtual ~RageSoundBase() { }
 	virtual void SoundIsFinishedPlaying() = 0;
 	virtual int GetDataToPlay( int16_t *buffer, int size, int64_t &iStreamFrame, int &got_bytes ) = 0;
+	virtual void CommitPlayingPosition( int64_t iFrameno, int64_t iPosition, int iBytesRead ) = 0;
 	virtual int GetSampleRate() const = 0;
 	virtual RageTimer GetStartTime() const { return RageZeroTimer; }
 	virtual float GetAbsoluteVolume() const = 0;
