@@ -594,9 +594,9 @@ float RageSoundReader_Resample_Good::GetStreamToSourceRatio() const
 	return fRatio;
 }
 
-RageSoundReader_Resample_Good::RageSoundReader_Resample_Good( RageSoundReader *pSource, int iSampleRate )
+RageSoundReader_Resample_Good::RageSoundReader_Resample_Good( RageSoundReader *pSource, int iSampleRate ):
+	RageSoundReader_Filter( pSource )
 {
-	m_pSource = pSource;
 	m_iSampleRate = iSampleRate;
 	m_fRate = -1;
 	ReopenResampler();
@@ -661,17 +661,6 @@ RageSoundReader_Resample_Good::~RageSoundReader_Resample_Good()
 {
 	for( size_t iChannel = 0; iChannel < m_apResamplers.size(); ++iChannel )
 		delete m_apResamplers[iChannel];
-	delete m_pSource;
-}
-
-int RageSoundReader_Resample_Good::GetLength() const
-{
-	return m_pSource->GetLength();
-}
-
-int RageSoundReader_Resample_Good::GetLength_Fast() const
-{
-	return m_pSource->GetLength_Fast();
 }
 
 /* iFrame is in the destination rate.  Seek the source in its own sample rate. */
@@ -790,11 +779,10 @@ void RageSoundReader_Resample_Good::SetRate( float fRatio )
 }
 
 RageSoundReader_Resample_Good::RageSoundReader_Resample_Good( const RageSoundReader_Resample_Good &cpy ):
-	RageSoundReader(cpy)
+	RageSoundReader_Filter(cpy)
 {
 	for( size_t i = 0; i < cpy.m_apResamplers.size(); ++i )
 		this->m_apResamplers.push_back( new RageSoundResampler_Polyphase(*cpy.m_apResamplers[i]) );
-	this->m_pSource = cpy.m_pSource->Copy();
 	this->m_iSampleRate = cpy.m_iSampleRate;
 	this->m_fRate = cpy.m_fRate;
 }

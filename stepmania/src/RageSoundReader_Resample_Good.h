@@ -3,19 +3,17 @@
 #ifndef RAGE_SOUND_READER_RESAMPLE_GOOD_H
 #define RAGE_SOUND_READER_RESAMPLE_GOOD_H
 
-#include "RageSoundReader.h"
+#include "RageSoundReader_Filter.h"
 
 class RageSoundResampler_Polyphase;
 
 /* This class changes the sampling rate of a sound. */
-class RageSoundReader_Resample_Good: public RageSoundReader
+class RageSoundReader_Resample_Good: public RageSoundReader_Filter
 {
 public:
 	/* We own source. */
 	RageSoundReader_Resample_Good( RageSoundReader *pSource, int iSampleRate );
 	RageSoundReader_Resample_Good( const RageSoundReader_Resample_Good &cpy );
-	int GetLength() const;
-	int GetLength_Fast() const;
 	int SetPosition( int iFrame );
 	int Read( char *pBuf, int iFrames );
 	virtual ~RageSoundReader_Resample_Good();
@@ -23,14 +21,11 @@ public:
 	bool SetProperty( const RString &sProperty, float fValue );
 	int GetNextSourceFrame() const;
 	float GetStreamToSourceRatio() const;
-	RageSoundReader *GetSource() { return m_pSource; }
 
 	/* Change the rate of a sound without changing the sample rate. */
 	void SetRate( float fRatio );
 
 	int GetSampleRate() const { return m_iSampleRate; }
-	unsigned GetNumChannels() const { return m_pSource->GetNumChannels(); }
-	bool IsStreamingFromDisk() const { return m_pSource->IsStreamingFromDisk(); }
 
 private:
 	void Reset();
@@ -39,7 +34,6 @@ private:
 
 	vector<RageSoundResampler_Polyphase *> m_apResamplers; /* one per channel */
 
-	RageSoundReader *m_pSource;
 	int m_iSampleRate;
 	float m_fRate;
 };
