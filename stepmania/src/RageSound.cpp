@@ -255,38 +255,6 @@ void RageSound::LoadSoundReader( RageSoundReader *pSound )
 	m_pSource = pSound;
 }
 
-/* Get a block of data from the input. */
-int RageSound::GetData( char *pBuffer, int iFrames )
-{
-	if( iFrames == 0 )
-		return 0;
-
-	/* Read data from our source. */
-	ASSERT( m_pSource );
-	int iSourceFrame;
-	float fRate = 1.0f;
-	int iGotFrames = m_pSource->RetriedRead( pBuffer, iFrames, &iSourceFrame, &fRate );
-
-	if( iGotFrames == RageSoundReader::ERROR )
-		Fail( m_pSource->GetError() );
-
-	if( iGotFrames < 0 )
-		return iGotFrames;
-
-	if( m_pSource->GetNumChannels() == 1 )
-		RageSoundUtil::ConvertMonoToStereoInPlace( (int16_t *) pBuffer, iGotFrames );
-
-//		LOG->Trace( "add %i, %f (%i)", iSourceFrame, fRate, iGotFrames );
-
-	m_Mutex.Lock();
-	m_StreamToSourceMap.Insert( m_iStreamFrame, iGotFrames, iSourceFrame, fRate );
-	m_Mutex.Unlock();
-
-	m_iStreamFrame += iGotFrames;
-
-	return iGotFrames;
-}
-
 /*
  * Retrieve audio data, for mixing.  At the time of this call, the frameno at which the
  * sound will be played doesn't have to be known.  Once committed, and the frameno
@@ -307,21 +275,43 @@ int RageSound::GetDataToPlay( int16_t *pBuffer, int iFrames, int64_t &iStreamFra
 //	LockMut(m_Mutex);
 
 	ASSERT_M( m_bPlaying, ssprintf("%p", this) );
+	ASSERT( m_pSource );
 
 	iFramesStored = 0;
 	iStreamFrame = m_iStreamFrame;
 
 	while( iFrames > 0 )
 	{
-		/* Get a block of data. */
-		int iGotFrames = GetData( (char *) pBuffer, iFrames );
+		float fRate = 1.0f;
+		int iSourceFrame;
+
+		/* Read data from our source. */
+		char *pDest = (char *) pBuffer;
+		int iGotFrames = m_pSource->RetriedRead( pDest + (iFramesStored * framesize), iFrames, &iSourceFrame, &fRate );
+
+		if( iGotFrames == RageSoundReader::ERROR )
+			Fail( m_pSource->GetError() );
+
 		if( iGotFrames < 0 )
-			return iGotFrames;
+		{
+			if( !iFramesStored )
+				return iGotFrames;
+			else
+				break;
+		}
+
+		m_Mutex.Lock();
+		m_StreamToSourceMap.Insert( m_iStreamFrame, iGotFrames, iSourceFrame, fRate );
+		m_Mutex.Unlock();
+
+		m_iStreamFrame += iGotFrames;
 
 		iFramesStored += iGotFrames;
 		iFrames -= iGotFrames;
-		pBuffer += iGotFrames * channels;
 	}
+	if( m_pSource->GetNumChannels() == 1 )
+		RageSoundUtil::ConvertMonoToStereoInPlace( pBuffer, iFramesStored );
+
 	return iFramesStored;
 }
 
