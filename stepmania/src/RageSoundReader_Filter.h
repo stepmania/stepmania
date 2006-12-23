@@ -24,6 +24,7 @@ public:
 	virtual int GetNextSourceFrame() const { return m_pSource->GetNextSourceFrame(); }
 	virtual float GetStreamToSourceRatio() const { return m_pSource->GetStreamToSourceRatio(); }
 	virtual RageSoundReader *GetSource() { return &*m_pSource; }
+	virtual RString GetError() const { return m_pSource->GetError(); }
 
 protected:
 	HiddenPtr<RageSoundReader> m_pSource;
