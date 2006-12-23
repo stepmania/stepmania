@@ -40,14 +40,8 @@ public:
 	virtual int GetNextSourceFrame() const = 0;
 	virtual float GetStreamToSourceRatio() const = 0;
 
-	virtual RString GetError() const { return m_sError; }
+	virtual RString GetError() const = 0;
 	int RetriedRead( char *pBuffer, int iFrames, int *iSourceFrame = NULL, float *fRate = NULL );
-
-protected:
-	void SetError( RString sError ) const { m_sError = sError; }
-
-private:
-	mutable RString m_sError;
 };
 
 #endif

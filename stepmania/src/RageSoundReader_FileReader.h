@@ -26,11 +26,16 @@ public:
 	virtual OpenResult Open(RString filename) = 0;
 	virtual bool IsStreamingFromDisk() const { return true; }
 	virtual float GetStreamToSourceRatio() const { return 1.0f; }
+	virtual RString GetError() const { return m_sError; }
 
 	static RageSoundReader *OpenFile( RString filename, RString &error );
 
+protected:
+	void SetError( RString sError ) const { m_sError = sError; }
+
 private:
 	static RageSoundReader_FileReader *TryOpenFile( RString filename, RString &error, RString format, bool &bKeepTrying );
+	mutable RString m_sError;
 };
 
 #endif
