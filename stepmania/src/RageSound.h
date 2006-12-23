@@ -163,10 +163,6 @@ private:
 	 * until it becomes positive. */
 	int64_t m_iStreamFrame;
 
-	/* When the position is outside of the source (eg. < 0), we need to track the
-	 * effective source frame ourself. */
-	int m_iSourceFrame;
-
 	/* Hack: When we stop a playing sound, we can't ask the driver the position
 	 * (we're not playing); and we can't seek back to the current playing position
 	 * when we stop (too slow), but we want to be able to report the position we

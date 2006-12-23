@@ -66,7 +66,6 @@ RageSound::RageSound():
 
 	m_pSource = NULL;
 	m_iStreamFrame = 0;
-	m_iSourceFrame = 0;
 	m_iStoppedSourceFrame = 0;
 	m_iMaxDriverFrame = 0;
 	m_bPlaying = false;
@@ -108,7 +107,6 @@ RageSound &RageSound::operator=( const RageSound &cpy )
 
 	m_Param = cpy.m_Param;
 	m_iStreamFrame = cpy.m_iStreamFrame;
-	m_iSourceFrame = cpy.m_iSourceFrame;
 	m_iStoppedSourceFrame = cpy.m_iStoppedSourceFrame;
 	m_iMaxDriverFrame = 0;
 	m_bPlaying = false;
@@ -244,7 +242,7 @@ void RageSound::LoadSoundReader( RageSoundReader *pSound )
 {
 	Unload();
 
-	m_iStreamFrame = m_iSourceFrame = m_iStoppedSourceFrame = 0;
+	m_iStreamFrame = m_iStoppedSourceFrame = 0;
 
 	const int iNeededRate = SOUNDMAN->GetDriverSampleRate();
 	bool bSupportRateChange = false;
@@ -285,7 +283,6 @@ int RageSound::GetData( char *pBuffer, int iFrames )
 	m_Mutex.Unlock();
 
 	m_iStreamFrame += iGotFrames;
-	m_iSourceFrame = iSourceFrame + lrintf(iGotFrames * fRate);
 
 	return iGotFrames;
 }
@@ -579,7 +576,6 @@ bool RageSound::SetPositionFrames( int iFrames )
 		return false; /* failed */
 	}
 
-	m_iSourceFrame = iFrames;
 	m_iStoppedSourceFrame = iFrames;
 
 	if( iRet == 0 )
