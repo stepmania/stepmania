@@ -128,7 +128,6 @@ public:
 	float GetLengthSeconds();
 	float GetPositionSeconds( bool *approximate=NULL, RageTimer *Timestamp=NULL ) const;
 	int GetSampleRate() const;
-	bool SetPositionSeconds( float fSeconds );
 	RString GetLoadedFilePath() const { return m_sFilePath; }
 	bool IsPlaying() const { return m_bPlaying; }
 

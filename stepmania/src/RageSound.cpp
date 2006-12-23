@@ -470,17 +470,6 @@ float RageSound::GetPositionSeconds( bool *bApproximate, RageTimer *pTimestamp )
 }
 
 
-bool RageSound::SetPositionSeconds( float fSeconds )
-{
-	if( m_pSource == NULL )
-	{
-		LOG->Warn( "RageSound::SetPositionSeconds(%f): sound not loaded", fSeconds );
-		return false;
-	}
-
-	return SetPositionFrames( int(fSeconds * samplerate()) );
-}
-
 /* This is always the desired sample rate of the current driver. */
 int RageSound::GetSampleRate() const
 {
