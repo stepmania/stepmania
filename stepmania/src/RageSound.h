@@ -191,7 +191,7 @@ public:
 	 * Until then, SOUNDMAN->GetPosition can still be called; the sound is still
 	 * playing. */
 	int GetDataToPlay( int16_t *pBuffer, int iSize, int64_t &iStreamFrame, int &iBytesRead );
-	void CommitPlayingPosition( int64_t iFrameno, int64_t iPosition, int iBytesRead );
+	void CommitPlayingPosition( int64_t iHardwareFrame, int64_t iStreamFrame, int iGotFrames );
 };
 
 #endif
