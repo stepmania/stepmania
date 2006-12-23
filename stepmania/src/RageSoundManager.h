@@ -42,7 +42,6 @@ public:
 	void RegisterSound( RageSound *p );		/* used by RageSound */
 	void UnregisterSound( RageSound *p );	/* used by RageSound */
 	int GetUniqueID();						/* used by RageSound */
-	void CommitPlayingPosition( int ID, int64_t frameno, int64_t pos, int got_bytes );	/* used by drivers */
 	float GetPlayLatency() const;
 	int GetDriverSampleRate() const;
 
@@ -74,16 +73,6 @@ private:
 	/* Prefs: */
 	float m_fMixVolume;
 	bool m_bPlayOnlyCriticalSounds;
-
-	struct queued_pos_map_t
-	{
-		int ID, got_frames;
-		int64_t frameno;
-		int64_t pos;
-	};
-
-	CircBuf<queued_pos_map_t> pos_map_queue;
-	void FlushPosMapQueue();
 
 	RageSound *GetSoundByID( int ID );
 };

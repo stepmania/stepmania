@@ -39,7 +39,6 @@ RageSoundManager *SOUNDMAN = NULL;
 
 RageSoundManager::RageSoundManager()
 {
-	pos_map_queue.reserve( 1024 );
 	m_fMixVolume = 1.0f;
 	m_bPlayOnlyCriticalSounds = false;
 }
@@ -112,8 +111,6 @@ int64_t RageSoundManager::GetPosition( RageTimer *pTimer ) const
 
 void RageSoundManager::Update()
 {
-	FlushPosMapQueue();
-
 	/* Scan m_mapPreloadedSounds for sounds that are no longer loaded, and delete them. */
 	g_SoundManMutex.Lock(); /* lock for access to m_mapPreloadedSounds, owned_sounds */
 	{
@@ -182,18 +179,6 @@ int RageSoundManager::GetUniqueID()
 	return ++iID;
 }
 
-void RageSoundManager::CommitPlayingPosition( int ID, int64_t frameno, int64_t pos, int got_frames )
-{
-	/* This can be called from realtime threads; don't lock any mutexes. */
-	queued_pos_map_t p;
-	p.ID = ID;
-	p.frameno = frameno;
-	p.pos = pos;
-	p.got_frames = got_frames;
-
-	pos_map_queue.write( &p, 1 );
-}
-
 RageSound *RageSoundManager::GetSoundByID( int ID )
 {
 	LockMut( g_SoundManMutex );
@@ -204,27 +189,6 @@ RageSound *RageSoundManager::GetSoundByID( int ID )
 	if( it == all_sounds.end() )
 		return NULL;
 	return it->second;
-}
-
-/* This is only called by RageSoundManager::Update. */
-void RageSoundManager::FlushPosMapQueue()
-{
-	queued_pos_map_t p;
-
-	/* We don't need to lock to access pos_map_queue. */
-	while( pos_map_queue.read( &p, 1 ) )
-	{
-		RageSound *pSound = GetSoundByID( p.ID );
-
-		/* If we can't find the ID, the sound was probably deleted before we got here. */
-		if( pSound == NULL )
-		{
-			// LOG->Trace("ignored unknown (stale?) commit ID %i", p.ID);
-			continue;
-		}
-
-		pSound->CommitPlayingPosition( p.frameno, p.pos, p.got_frames );
-	}
 }
 
 float RageSoundManager::GetPlayLatency() const
