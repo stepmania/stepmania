@@ -156,29 +156,6 @@ void RageSoundManager::Update()
 		m_pDriver->Update();
 }
 
-/* Register the given sound, and return a unique ID. */
-void RageSoundManager::RegisterSound( RageSound *p )
-{
-	g_SoundManMutex.Lock(); /* lock for access to all_sounds */
-	all_sounds[p->GetID()] = p;
-	g_SoundManMutex.Unlock(); /* finished with all_sounds */
-}
-
-void RageSoundManager::UnregisterSound( RageSound *p )
-{
-	g_SoundManMutex.Lock(); /* lock for access to all_sounds */
-	all_sounds.erase( p->GetID() );
-	g_SoundManMutex.Unlock(); /* finished with all_sounds */
-}
-
-/* Return a unique ID. */
-int RageSoundManager::GetUniqueID()
-{
-	LockMut(g_SoundManMutex); /* serialize iID */
-	static int iID = 0;
-	return ++iID;
-}
-
 float RageSoundManager::GetPlayLatency() const
 {
 	if( m_pDriver == NULL )

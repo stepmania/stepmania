@@ -39,9 +39,6 @@ public:
 	void StopMixing( RageSoundBase *snd );	/* used by RageSound */
 	bool Pause( RageSoundBase *snd, bool bPause );	/* used by RageSound */
 	int64_t GetPosition( RageTimer *pTimer ) const;	/* used by RageSound */
-	void RegisterSound( RageSound *p );		/* used by RageSound */
-	void UnregisterSound( RageSound *p );	/* used by RageSound */
-	int GetUniqueID();						/* used by RageSound */
 	float GetPlayLatency() const;
 	int GetDriverSampleRate() const;
 
@@ -62,9 +59,6 @@ private:
 	/* Set of sounds that we've taken over (and are responsible for deleting
 	 * when they're finished playing): */
 	set<RageSound *> owned_sounds;
-
-	/* A list of all sounds that currently exist, by ID. */
-	map<int,RageSound *> all_sounds;
 
 	map<RString, RageSoundReader_Preload *> m_mapPreloadedSounds;
 
