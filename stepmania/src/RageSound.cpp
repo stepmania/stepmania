@@ -260,16 +260,14 @@ void RageSound::LoadSoundReader( RageSoundReader *pSound )
 /* Get a block of data from the input. */
 int RageSound::GetData( char *pBuffer, int iFrames )
 {
-	int iGotFrames = 0;
-	float fRate = 1.0f;
-	int iSourceFrame = m_iSourceFrame;
-
 	if( iFrames == 0 )
 		return 0;
 
 	/* Read data from our source. */
 	ASSERT( m_pSource );
-	iGotFrames = m_pSource->RetriedRead( pBuffer, iFrames, &iSourceFrame, &fRate );
+	int iSourceFrame;
+	float fRate = 1.0f;
+	int iGotFrames = m_pSource->RetriedRead( pBuffer, iFrames, &iSourceFrame, &fRate );
 
 	if( iGotFrames == RageSoundReader::ERROR )
 		Fail( m_pSource->GetError() );
