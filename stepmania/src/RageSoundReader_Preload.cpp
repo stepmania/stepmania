@@ -65,11 +65,7 @@ bool RageSoundReader_Preload::Open( RageSoundReader *pSource )
 		int iCnt = pSource->Read( buffer, sizeof(buffer) / iBytesPerFrame );
 
 		if( iCnt < 0 )
-		{
-			/* XXX untested */
-			SetError(pSource->GetError());
 			return false;
-		}
 		if( iCnt == END_OF_FILE )
 			break;
 
