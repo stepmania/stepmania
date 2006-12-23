@@ -179,18 +179,6 @@ int RageSoundManager::GetUniqueID()
 	return ++iID;
 }
 
-RageSound *RageSoundManager::GetSoundByID( int ID )
-{
-	LockMut( g_SoundManMutex );
-
-	/* Find the sound with p.ID. */
-	map<int,RageSound *>::iterator it;
-	it = all_sounds.find( ID );
-	if( it == all_sounds.end() )
-		return NULL;
-	return it->second;
-}
-
 float RageSoundManager::GetPlayLatency() const
 {
 	if( m_pDriver == NULL )

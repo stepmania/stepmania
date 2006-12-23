@@ -73,8 +73,6 @@ private:
 	/* Prefs: */
 	float m_fMixVolume;
 	bool m_bPlayOnlyCriticalSounds;
-
-	RageSound *GetSoundByID( int ID );
 };
 
 extern RageSoundManager *SOUNDMAN;
