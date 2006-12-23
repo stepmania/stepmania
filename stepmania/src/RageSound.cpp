@@ -140,13 +140,6 @@ bool RageSound::IsLoaded() const
 	return m_pSource != NULL;
 }
 
-void RageSound::Fail( RString sReason )
-{
-	LOG->Warn( "Decoding %s failed: %s", GetLoadedFilePath().c_str(), sReason.c_str() );
-
-	m_sError = sReason;
-}
-
 class RageSoundReader_Silence: public RageSoundReader
 {
 public:
@@ -290,7 +283,10 @@ int RageSound::GetDataToPlay( int16_t *pBuffer, int iFrames, int64_t &iStreamFra
 		int iGotFrames = m_pSource->RetriedRead( pDest + (iFramesStored * framesize), iFrames, &iSourceFrame, &fRate );
 
 		if( iGotFrames == RageSoundReader::ERROR )
-			Fail( m_pSource->GetError() );
+		{
+			m_sError = m_pSource->GetError();
+			LOG->Warn( "Decoding %s failed: %s", GetLoadedFilePath().c_str(), m_sError.c_str() );
+		}
 
 		if( iGotFrames < 0 )
 		{
@@ -562,7 +558,8 @@ bool RageSound::SetPositionFrames( int iFrames )
 	int iRet = m_pSource->SetPosition( iFrames );
 	if( iRet == -1 )
 	{
-		Fail( m_pSource->GetError() );
+		m_sError = m_pSource->GetError();
+		LOG->Warn( "SetPositionFrames: seek %s failed: %s", GetLoadedFilePath().c_str(), m_sError.c_str() );
 		return false; /* failed */
 	}
 

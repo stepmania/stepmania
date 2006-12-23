@@ -183,7 +183,6 @@ private:
 	int64_t GetPositionSecondsInternal( bool *bApproximate = NULL, RageTimer *pTimer = NULL ) const;
 
 	bool SetPositionFrames( int frames = -1 );
-	void Fail( RString sReason );
 	RageSoundParams::StopMode_t GetStopMode() const; /* resolves M_AUTO */
 
 	void SoundIsFinishedPlaying(); // called by sound drivers
