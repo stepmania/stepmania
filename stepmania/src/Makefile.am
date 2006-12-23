@@ -347,11 +347,13 @@ RageSoundUtil.cpp RageSoundUtil.h RageSoundMixBuffer.cpp RageSoundMixBuffer.h \
 RageSoundPosMap.cpp RageSoundPosMap.h RageSoundReader.cpp RageSoundReader.h RageSoundReader_FileReader.cpp RageSoundReader_FileReader.h \
 RageSoundReader_Filter.h \
 RageSoundReader_ChannelSplit.cpp RageSoundReader_ChannelSplit.h \
+RageSoundReader_Extend.cpp RageSoundReader_Extend.h \
 RageSoundReader_PitchChange.cpp RageSoundReader_PitchChange.h \
 RageSoundReader_Pan.cpp RageSoundReader_Pan.h \
 RageSoundReader_Preload.cpp RageSoundReader_Preload.h \
 RageSoundReader_Resample_Good.cpp RageSoundReader_Resample_Good.h \
 RageSoundReader_SpeedChange.cpp RageSoundReader_SpeedChange.h \
+RageSoundReader_ThreadedBuffer.cpp RageSoundReader_ThreadedBuffer.h \
 RageSoundReader_Chain.cpp RageSoundReader_Chain.h \
 RageSurface.cpp RageSurface.h RageSurfaceUtils.cpp RageSurfaceUtils.h \
 RageSurfaceUtils_Dither.cpp RageSurfaceUtils_Dither.h \
