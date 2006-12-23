@@ -22,7 +22,6 @@ public:
 	virtual float GetAbsoluteVolume() const = 0;
 	virtual int GetID() const = 0;
 	virtual RString GetLoadedFilePath() const = 0;
-	virtual bool IsStreamingFromDisk() const = 0;
 };
 
 /* These are parameters to play a sound.  These are normally changed before playing begins,
@@ -129,7 +128,6 @@ public:
 	float GetLengthSeconds();
 	float GetPositionSeconds( bool *approximate=NULL, RageTimer *Timestamp=NULL ) const;
 	int GetSampleRate() const;
-	bool IsStreamingFromDisk() const;
 	bool SetPositionSeconds( float fSeconds );
 	RString GetLoadedFilePath() const { return m_sFilePath; }
 	bool IsPlaying() const { return m_bPlaying; }

@@ -571,17 +571,6 @@ int RageSound::GetSampleRate() const
 	return m_pSource->GetSampleRate();
 }
 
-bool RageSound::IsStreamingFromDisk() const
-{
-	if( m_pSource == NULL )
-	{
-		LOG->Warn( "RageSound::IsStreamingFromDisk: sound not loaded" );
-		return false;
-	}
-
-	return m_pSource->IsStreamingFromDisk();
-}
-
 bool RageSound::SetPositionFrames( int iFrames )
 {
 	LockMut( m_Mutex );
