@@ -94,6 +94,7 @@ protected:
 	void Mix( int16_t *pBuf, int iFrames, int64_t iFrameNumber, int64_t iCurrentFrame );
 	void Mix( float *pBuf, int iFrames, int64_t iFrameNumber, int64_t iCurrentFrame );
 
+private:
 	/* This mutex is used for serializing with the decoder thread.  Locking this mutex
 	 * can take a while. */
 	RageMutex m_Mutex;
@@ -102,7 +103,6 @@ protected:
 	 * be accessed, and sounds may be set to available, without locking this.) */
 	RageMutex m_SoundListMutex;
 
-private:
 	/*
 	 * Thread safety and state transitions:
 	 *
