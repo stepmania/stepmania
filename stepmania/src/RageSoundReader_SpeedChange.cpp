@@ -281,8 +281,7 @@ int RageSoundReader_SpeedChange::Read( char *buf, int iFrames )
 			++m_iPos;
 		}
 
-		if( iFramesRead )
-			return iFramesRead;
+		return iFramesRead;
 	}
 }
 
