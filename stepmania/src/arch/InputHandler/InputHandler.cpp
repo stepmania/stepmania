@@ -14,7 +14,7 @@ void InputHandler::UpdateTimer()
 	m_iInputsSinceUpdate = 0;
 }
 
-void InputHandler::ButtonPressed( DeviceInput di, bool Down )
+void InputHandler::ButtonPressed( DeviceInput di )
 {
 	if( di.ts.IsZero() )
 	{
