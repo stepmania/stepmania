@@ -199,8 +199,8 @@ void InputFilter::ReportButtonChange( const DeviceInput &di, InputEventType t )
 	 * g_ButtonStates will be in DeviceInput order, so users can binary search this
 	 * list (eg. std::lower_bound).
 	 */
-	MakeButtonStateList( ie.m_ButtonState );
-	g_CurrentState = ie.m_ButtonState;
+	MakeButtonStateList( g_CurrentState );
+	ie.m_ButtonState = g_CurrentState;
 }
 
 void InputFilter::MakeButtonStateList( vector<DeviceInput> &aInputOut ) const
