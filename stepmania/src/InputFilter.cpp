@@ -125,18 +125,18 @@ void InputFilter::ButtonPressed( const DeviceInput &di, bool Down )
 
 	ButtonState &bs = GetButtonState( di );
 
+	/* Flush any delayed input, like Update() (in case Update() isn't being called). */
+	RageTimer now;
+	CheckButtonChange( bs, di, now );
+
 	if( bs.m_BeingHeld != Down )
 	{
-		/* Flush any delayed input, like Update() (in case Update() isn't being called). */
-		RageTimer now;
-		CheckButtonChange( bs, di, now );
-
 		bs.m_BeingHeld = Down;
 		bs.m_BeingHeldTime = di.ts;
-
-		/* Try to report presses immediately. */
-		CheckButtonChange( bs, di, now );
 	}
+
+	/* Try to report presses immediately. */
+	CheckButtonChange( bs, di, now );
 }
 
 void InputFilter::SetButtonComment( const DeviceInput &di, const RString &sComment )
