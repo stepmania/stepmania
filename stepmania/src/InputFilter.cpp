@@ -137,6 +137,7 @@ void InputFilter::ButtonPressed( const DeviceInput &di )
 	}
 
 	/* Try to report presses immediately. */
+	MakeButtonStateList( g_CurrentState );
 	CheckButtonChange( bs, di, now );
 }
 
@@ -158,7 +159,7 @@ void InputFilter::ResetDevice( InputDevice device )
 	{
 		const DeviceInput &di = b->first;
 		if( di.device == device )
-			ButtonPressed( DeviceInput(device, di.button, 0, now), false );
+			ButtonPressed( DeviceInput(device, di.button, false, now) );
 	}
 }
 
@@ -179,6 +180,7 @@ void InputFilter::CheckButtonChange( ButtonState &bs, DeviceInput di, const Rage
 	bs.m_LastInputTime = bs.m_BeingHeldTime;
 
 	di.ts = bs.m_BeingHeldTime;
+	MakeButtonStateList( g_CurrentState );
 	ReportButtonChange( di, bs.m_bLastReportedHeld? IET_FIRST_PRESS:IET_RELEASE );
 
 	if( !bs.m_bLastReportedHeld )
@@ -199,7 +201,6 @@ void InputFilter::ReportButtonChange( const DeviceInput &di, InputEventType t )
 	 * g_ButtonStates will be in DeviceInput order, so users can binary search this
 	 * list (eg. std::lower_bound).
 	 */
-	MakeButtonStateList( g_CurrentState );
 	ie.m_ButtonState = g_CurrentState;
 }
 
@@ -228,6 +229,8 @@ void InputFilter::Update( float fDeltaTime )
 	LockMut(*queuemutex);
 
 	DeviceInput di( InputDevice_Invalid, DeviceButton_Invalid, 1.0f, now );
+
+	MakeButtonStateList( g_CurrentState );
 
 	vector<ButtonStateMap::iterator> ButtonsToErase;
 	
