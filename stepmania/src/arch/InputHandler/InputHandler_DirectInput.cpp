@@ -277,7 +277,7 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 			for( int k = 0; k < 256; ++k )
 			{
 				const DeviceButton key = (DeviceButton) device.Inputs[k].num;
-				ButtonPressed( DeviceInput(device.dev, key), !!(keys[k] & 0x80) );
+				ButtonPressed( DeviceInput(device.dev, key, !!(keys[k] & 0x80) ) );
 			}
 		}
 		break;
@@ -299,8 +299,8 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 				{
 				case in.BUTTON:
 				{
-					DeviceInput di( dev, enum_add2(JOY_BUTTON_1, in.num), -1, tm );
-					ButtonPressed( di, !!state.rgbButtons[in.ofs - DIJOFS_BUTTON0] );
+					DeviceInput di( dev, enum_add2(JOY_BUTTON_1, in.num), !!state.rgbButtons[in.ofs - DIJOFS_BUTTON0], tm );
+					ButtonPressed( di );
 					break;
 				}
 
@@ -344,8 +344,8 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 					if( neg != DeviceButton_Invalid )
 					{
 						float l = SCALE( int(val), 0.0f, 100.0f, 0.0f, 1.0f );
-						ButtonPressed(DeviceInput(dev, neg, max(-l,0), tm), val < -50);
-						ButtonPressed(DeviceInput(dev, pos, max(+l,0), tm), val > 50);
+						ButtonPressed( DeviceInput(dev, neg, max(-l,0), tm) );
+						ButtonPressed( DeviceInput(dev, pos, max(+l,0), tm) );
 					}
 
 					break;
@@ -355,10 +355,10 @@ void InputHandler_DInput::UpdatePolled( DIDevice &device, const RageTimer &tm )
 					if( in.num == 0 )
 					{
 						const int pos = TranslatePOV( state.rgdwPOV[in.ofs - DIJOFS_POV(0)] );
-						ButtonPressed( DeviceInput(dev, JOY_HAT_UP, -1, tm), !!(pos & HAT_UP_MASK) );
-						ButtonPressed( DeviceInput(dev, JOY_HAT_DOWN, -1, tm), !!(pos & HAT_DOWN_MASK) );
-						ButtonPressed( DeviceInput(dev, JOY_HAT_LEFT, -1, tm), !!(pos & HAT_LEFT_MASK) );
-						ButtonPressed( DeviceInput(dev, JOY_HAT_RIGHT, -1, tm), !!(pos & HAT_RIGHT_MASK) );
+						ButtonPressed( DeviceInput(dev, JOY_HAT_UP, !!(pos & HAT_UP_MASK), tm) );
+						ButtonPressed( DeviceInput(dev, JOY_HAT_DOWN, !!(pos & HAT_DOWN_MASK), tm) );
+						ButtonPressed( DeviceInput(dev, JOY_HAT_LEFT, !!(pos & HAT_LEFT_MASK), tm) );
+						ButtonPressed( DeviceInput(dev, JOY_HAT_RIGHT, !!(pos & HAT_RIGHT_MASK), tm) );
 					}
 
 					break;
@@ -413,26 +413,26 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 				{
 					// "Joystick with Keyboard" hack
 				case 115:	//s
-					ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_UP, -1, tm), !!(evtbuf[i].dwData & 0x80) );
+					ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_UP, !!(evtbuf[i].dwData & 0x80), tm) );
 					break;
 				case 120:	//x
-					ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_DOWN, -1, tm), !!(evtbuf[i].dwData & 0x80) );
+					ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_DOWN, !!(evtbuf[i].dwData & 0x80), tm) );
 					break;
 				case 122:	//z
-					ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_LEFT, -1, tm), !!(evtbuf[i].dwData & 0x80) );
+					ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_LEFT, !!(evtbuf[i].dwData & 0x80), tm) );
 					break;
 				case 99:	//c
-					ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_RIGHT, -1, tm), !!(evtbuf[i].dwData & 0x80) );
+					ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_RIGHT, !!(evtbuf[i].dwData & 0x80), tm) );
 					break;
 				case 100:	//d
-					ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_BUTTON_1, -1, tm), !!(evtbuf[i].dwData & 0x80) );
+					ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_BUTTON_1, !!(evtbuf[i].dwData & 0x80), tm) );
 					break;
 				case 101:	//e
-					ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_BUTTON_2, -1, tm), !!(evtbuf[i].dwData & 0x80) );
+					ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_BUTTON_2, !!(evtbuf[i].dwData & 0x80), tm) );
 					break;
 				default:
 					*/
-					ButtonPressed( DeviceInput(dev, (DeviceButton) in.num, -1, tm), !!(evtbuf[i].dwData & 0x80)) ;
+					ButtonPressed( DeviceInput(dev, (DeviceButton) in.num, !!(evtbuf[i].dwData & 0x80), tm) );
 					/*
 					break;
 				}
@@ -440,7 +440,7 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 				break;
 
 			case in.BUTTON:
-				ButtonPressed( DeviceInput(dev, enum_add2(JOY_BUTTON_1, in.num), -1, tm), !!evtbuf[i].dwData );
+				ButtonPressed( DeviceInput(dev, enum_add2(JOY_BUTTON_1, in.num), !!evtbuf[i].dwData, tm) );
 				break;
 
 			case in.AXIS:
@@ -463,17 +463,17 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 				}
 
 				float l = SCALE( int(evtbuf[i].dwData), 0.0f, 100.0f, 0.0f, 1.0f );
-				ButtonPressed( DeviceInput(dev, up, max(-l,0), tm), int(evtbuf[i].dwData) < -50 );
-				ButtonPressed( DeviceInput(dev, down, max(+l,0), tm), int(evtbuf[i].dwData) > 50 );
+				ButtonPressed( DeviceInput(dev, up, max(-l,0), tm) );
+				ButtonPressed( DeviceInput(dev, down, max(+l,0), tm) );
 				break;
 			}
 			case in.HAT:
 			{
 				const int pos = TranslatePOV( evtbuf[i].dwData );
-				ButtonPressed( DeviceInput(dev, JOY_HAT_UP, -1, tm), !!(pos & HAT_UP_MASK) );
-				ButtonPressed( DeviceInput(dev, JOY_HAT_DOWN, -1, tm), !!(pos & HAT_DOWN_MASK) );
-				ButtonPressed( DeviceInput(dev, JOY_HAT_LEFT, -1, tm), !!(pos & HAT_LEFT_MASK) );
-				ButtonPressed( DeviceInput(dev, JOY_HAT_RIGHT, -1, tm), !!(pos & HAT_RIGHT_MASK) );
+				ButtonPressed( DeviceInput(dev, JOY_HAT_UP, !!(pos & HAT_UP_MASK), tm) );
+				ButtonPressed( DeviceInput(dev, JOY_HAT_DOWN, !!(pos & HAT_DOWN_MASK), tm) );
+				ButtonPressed( DeviceInput(dev, JOY_HAT_LEFT, !!(pos & HAT_LEFT_MASK), tm) );
+				ButtonPressed( DeviceInput(dev, JOY_HAT_RIGHT, !!(pos & HAT_RIGHT_MASK), tm) );
 			}
 			}
 		}
