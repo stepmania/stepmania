@@ -62,7 +62,7 @@ protected:
 	 * happen, you need to explicitly call di.ts.SetZero(). 
 	 *
 	 * If the timestamp is set, it'll be left alone. */
-	void ButtonPressed( DeviceInput di, bool Down );
+	void ButtonPressed( DeviceInput di, bool Down = false );
 
 	/* Call this at the end of polling input. */
 	void UpdateTimer();
