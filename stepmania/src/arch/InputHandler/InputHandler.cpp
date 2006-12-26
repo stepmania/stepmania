@@ -22,7 +22,7 @@ void InputHandler::ButtonPressed( DeviceInput di, bool Down )
 		++m_iInputsSinceUpdate;
 	}
 
-	INPUTFILTER->ButtonPressed( di, Down );
+	INPUTFILTER->ButtonPressed( di );
 
 	if( m_iInputsSinceUpdate >= 1000 )
 	{
