@@ -349,7 +349,7 @@ int PolyphaseFilter::ReadBuffer( State &State, float *pOut, int iSamplesOut ) co
 {
 	float *pOutOrig = pOut;
 	
-	while( State.m_iFilled )
+	while( State.m_iFilled && iSamplesOut-- )
 	{
 		*pOut = State.m_fBuf[State.m_iBufNext];
 		++pOut;
