@@ -62,7 +62,8 @@ void InputHandler_MonkeyKeyboard::Update()
 		if( m_diLast.IsValid() )
 		{
 			// End the previous key
-			ButtonPressed( m_diLast, false );
+			m_diLast.level = 0;
+			ButtonPressed( m_diLast );
 			m_diLast.MakeInvalid();
 		}
 		InputHandler::UpdateTimer();
@@ -76,12 +77,14 @@ void InputHandler_MonkeyKeyboard::Update()
 		if( m_diLast.IsValid() )
 		{
 			// End the previous key
-			ButtonPressed( m_diLast, false );
+			m_diLast.level = 0;
+			ButtonPressed( m_diLast );
 		}
 
 		// Choose a new key and send it.
 		m_diLast = DeviceInput( DEVICE_KEYBOARD, GetRandomKeyboardKey() );
-		ButtonPressed( m_diLast, true );
+		m_diLast.level = 1;
+		ButtonPressed( m_diLast );
 
 		m_timerPressButton.Touch();
 	}
