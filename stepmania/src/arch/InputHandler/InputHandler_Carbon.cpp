@@ -31,7 +31,7 @@ void InputHandler_Carbon::QueueCallBack( void *target, int result, void *refcon,
 	while( (result = CALL(queue, getNextEvent, &event, zeroTime, 0)) == kIOReturnSuccess )
 		dev->GetButtonPresses( vPresses, int(event.elementCookie), int(event.value), now );
 	FOREACH_CONST( DeviceInput, vPresses, i )
-		This->ButtonPressed( *i, i->level > 0.5f );
+		This->ButtonPressed( *i );
 }
 
 static void RunLoopStarted( CFRunLoopObserverRef o, CFRunLoopActivity a, void *sem )

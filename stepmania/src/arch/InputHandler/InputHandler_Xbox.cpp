@@ -109,8 +109,8 @@ void InputHandler_Xbox::Update()
 					LOG->Warn("Ignored joystick event (button too high)");
 					continue;
 				}
-				DeviceInput di(inputDevice, Button);
-				ButtonPressed(di, nowPressed != 0);
+				DeviceInput di(inputDevice, Button, nowPressed != 0);
+				ButtonPressed(di);
 				continue;
 			}
 		}
@@ -129,8 +129,8 @@ void InputHandler_Xbox::Update()
 					LOG->Warn("Ignored joystick event (button too high)");
 					continue;
 				}
-				DeviceInput di(inputDevice, Button);
-				ButtonPressed(di, nowPressed);
+				DeviceInput di(inputDevice, Button, nowPressed);
+				ButtonPressed(di);
 				continue;
 			}
 		}
@@ -149,8 +149,8 @@ void InputHandler_Xbox::Update()
 				DeviceButton neg = (DeviceButton)(JOY_LEFT + (2 * j));
 				DeviceButton pos = (DeviceButton)(JOY_RIGHT + (2 * j));
 				float l = SCALE( axes[j], 0.0f, 32768.0f, 0.0f, 1.0f );
-				ButtonPressed(DeviceInput(inputDevice, neg,max(-l,0),RageZeroTimer), axes[j] > -16000);
-				ButtonPressed(DeviceInput(inputDevice, pos,max(+l,0),RageZeroTimer), axes[j] < +16000);
+				ButtonPressed(DeviceInput(inputDevice, neg,max(-l,0),RageZeroTimer));
+				ButtonPressed(DeviceInput(inputDevice, pos,max(+l,0),RageZeroTimer));
 				continue;
 			}
 		}

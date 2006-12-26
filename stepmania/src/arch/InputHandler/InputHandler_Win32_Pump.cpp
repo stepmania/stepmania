@@ -20,7 +20,7 @@ InputHandler_Win32_Pump::InputHandler_Win32_Pump()
 	bool bFoundOnePad = false;
 	for( int i = 0; i < NUM_PUMPS; ++i )
 	{
-		if( m_pDevice[i].Open(pump_usb_vid, pump_usb_pid, sizeof(long), i, NULL) )
+		if( m_pDevice[i].Open(pump_usb_vid, pump_usb_pid, sizeof(long), i) )
 		{
 			bFoundOnePad = true;
 			LOG->Info( "Found Pump pad %i", i );
@@ -60,13 +60,13 @@ void InputHandler_Win32_Pump::HandleInput( int iDevice, int iEvent )
 
 	for( int iButton = 0; iButton < ARRAYLEN(bits); ++iButton )
 	{
-		DeviceInput di( id, enum_add2(JOY_BUTTON_1, iButton) );
+		DeviceInput di( id, enum_add2(JOY_BUTTON_1, iButton), !(iEvent & bits[iButton]) );
 		
 		/* If we're in a thread, our timestamp is accurate. */
 		if( InputThread.IsCreated() )
 			di.ts.Touch();
 
-		ButtonPressed( di, !(iEvent & bits[iButton]) );
+		ButtonPressed( di );
 	}
 }
 

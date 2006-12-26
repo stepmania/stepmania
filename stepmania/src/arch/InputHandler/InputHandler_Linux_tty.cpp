@@ -183,7 +183,7 @@ void InputHandler_Linux_tty::Update()
 			const int butno = keys[key];
 			const bool pressed = !(keybuf[i] & 0x80);
 			
-			ButtonPressed(DeviceInput(DEVICE_KEYBOARD, butno), pressed);
+			ButtonPressed( DeviceInput(DEVICE_KEYBOARD, butno, pressed) );
 		}
 	}
 

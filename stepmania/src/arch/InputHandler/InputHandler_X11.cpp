@@ -171,7 +171,7 @@ void InputHandler_X11::Update()
 				continue;
 			}
 			// This is a new event so the last release was not a repeat.
-			ButtonPressed( DeviceInput(DEVICE_KEYBOARD, lastDB), false );
+			ButtonPressed( DeviceInput(DEVICE_KEYBOARD, lastDB, 0) );
 			lastEvent.type = 0;
 		}
 		// Why only the zero index?
@@ -179,13 +179,13 @@ void InputHandler_X11::Update()
 		if( lastDB == DeviceButton_Invalid )
 			continue;
 		if( bPress )
-			ButtonPressed( DeviceInput(DEVICE_KEYBOARD, lastDB), true );
+			ButtonPressed( DeviceInput(DEVICE_KEYBOARD, lastDB, 1) );
 		else
 			lastEvent = event;
 	}
 	// Handle any last releases.
 	if( lastEvent.type != 0 )
-		ButtonPressed( DeviceInput(DEVICE_KEYBOARD, lastDB), false );
+		ButtonPressed( DeviceInput(DEVICE_KEYBOARD, lastDB, 0) );
 	InputHandler::UpdateTimer();
 }
 

@@ -12,7 +12,7 @@ public:
 
 	void GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevicesOut );
 
-	void SetDev( DeviceInput key, bool pressed ) { ButtonPressed( key, pressed ); }
+	void SetDev( DeviceInput key ) { ButtonPressed( key ); }
 
 private:
 	bool m_bFoundDevice;
