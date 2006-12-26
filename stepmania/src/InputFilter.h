@@ -35,7 +35,7 @@ struct ButtonState;
 class InputFilter
 {
 public:
-	void ButtonPressed( const DeviceInput &di, bool Down );
+	void ButtonPressed( const DeviceInput &di );
 	void SetButtonComment( const DeviceInput &di, const RString &sComment = "" );
 	void ResetDevice( InputDevice dev );
 

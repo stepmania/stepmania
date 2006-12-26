@@ -113,7 +113,7 @@ ButtonState::ButtonState():
 	m_fSecsHeld = 0;
 }
 
-void InputFilter::ButtonPressed( const DeviceInput &di, bool Down )
+void InputFilter::ButtonPressed( const DeviceInput &di )
 {
 	LockMut(*queuemutex);
 
@@ -129,6 +129,7 @@ void InputFilter::ButtonPressed( const DeviceInput &di, bool Down )
 	RageTimer now;
 	CheckButtonChange( bs, di, now );
 
+	bool Down = di.bDown;
 	if( bs.m_BeingHeld != Down )
 	{
 		bs.m_BeingHeld = Down;
