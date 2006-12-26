@@ -15,6 +15,7 @@ struct ButtonState
 	bool m_bLastReportedHeld; // last state reported by Update()
 	RString m_sComment;
 	float m_fSecsHeld;
+	DeviceInput m_DeviceInput;
 
 	// Timestamp of m_BeingHeld changing.
 	RageTimer m_BeingHeldTime;
@@ -28,6 +29,19 @@ struct ButtonState
 	RageTimer m_LastInputTime;
 };
 
+struct DeviceButtonPair
+{
+	InputDevice device;
+	DeviceButton button;
+	DeviceButtonPair( InputDevice d, DeviceButton b ): device(d), button(b){ }
+	bool operator<( const DeviceButtonPair &other ) const
+	{ 
+		if( device != other.device )
+			return device < other.device;
+		return button < other.button;
+	}
+};
+
 namespace
 {
 	/* Maintain a set of all interesting buttons: buttons which are being held
@@ -35,11 +49,15 @@ namespace
 	 * optimize InputFilter::Update, so we don't have to process every button
 	 * we know about when most of them aren't in use.  This set is protected
 	 * by queuemutex. */
-	typedef map<DeviceInput, ButtonState> ButtonStateMap;
+	typedef map<DeviceButtonPair, ButtonState> ButtonStateMap;
 	ButtonStateMap g_ButtonStates;
 	ButtonState &GetButtonState( const DeviceInput &di )
 	{
-		return g_ButtonStates[di];
+		DeviceButtonPair db(di.device, di.button);
+		ButtonState &bs = g_ButtonStates[db];
+		bs.m_DeviceInput.button = di.button;
+		bs.m_DeviceInput.device = di.device;
+		return bs;
 	}
 
 	DeviceInputList g_CurrentState;
@@ -129,6 +147,8 @@ void InputFilter::ButtonPressed( const DeviceInput &di )
 	RageTimer now;
 	CheckButtonChange( bs, di, now );
 
+	bs.m_DeviceInput = di;
+
 	bool Down = di.bDown;
 	if( bs.m_BeingHeld != Down )
 	{
@@ -155,11 +175,11 @@ void InputFilter::ResetDevice( InputDevice device )
 	RageTimer now;
 
 	const ButtonStateMap ButtonStates( g_ButtonStates );
-	FOREACHM_CONST( DeviceInput, ButtonState, ButtonStates, b )
+	FOREACHM_CONST( DeviceButtonPair, ButtonState, ButtonStates, b )
 	{
-		const DeviceInput &di = b->first;
-		if( di.device == device )
-			ButtonPressed( DeviceInput(device, di.button, false, now) );
+		const DeviceButtonPair &db = b->first;
+		if( db.device == device )
+			ButtonPressed( DeviceInput(device, db.button, 0, now) );
 	}
 }
 
@@ -210,12 +230,10 @@ void InputFilter::MakeButtonStateList( vector<DeviceInput> &aInputOut ) const
 	aInputOut.reserve( g_ButtonStates.size() );
 	for( ButtonStateMap::const_iterator it = g_ButtonStates.begin(); it != g_ButtonStates.end(); ++it )
 	{
-		const DeviceInput &di = it->first;
 		const ButtonState &bs = it->second;
-		if( !bs.m_bLastReportedHeld )
-			continue;
-		aInputOut.push_back( di );
+		aInputOut.push_back( bs.m_DeviceInput );
 		aInputOut.back().ts = bs.m_LastInputTime;
+		aInputOut.back().bDown = bs.m_bLastReportedHeld;
 	}
 }
 
@@ -235,7 +253,7 @@ void InputFilter::Update( float fDeltaTime )
 
 	vector<ButtonStateMap::iterator> ButtonsToErase;
 	
-	FOREACHM( DeviceInput, ButtonState, g_ButtonStates, b )
+	FOREACHM( DeviceButtonPair, ButtonState, g_ButtonStates, b )
 	{
 		di.device = b->first.device;
 		di.button = b->first.button;
@@ -249,7 +267,8 @@ void InputFilter::Update( float fDeltaTime )
 		{
 			// If the key isn't pressed, and hasn't been pressed for a while (so debouncing
 			// isn't interested in it), purge the entry.
-			if( now - bs.m_LastReportTime > g_fInputDebounceTime )
+			if( now - bs.m_LastReportTime > g_fInputDebounceTime &&
+				 bs.m_DeviceInput.level == 0.0f )
 				ButtonsToErase.push_back( b );
 			continue;
 		}
