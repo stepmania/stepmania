@@ -206,6 +206,7 @@ void InputFilter::ReportButtonChange( const DeviceInput &di, InputEventType t )
 
 void InputFilter::MakeButtonStateList( vector<DeviceInput> &aInputOut ) const
 {
+	aInputOut.clear();
 	aInputOut.reserve( g_ButtonStates.size() );
 	for( ButtonStateMap::const_iterator it = g_ButtonStates.begin(); it != g_ButtonStates.end(); ++it )
 	{
