@@ -305,12 +305,16 @@ public:
 	 * This should be 0 for analog axes within the dead zone. */
 	float level;
 
+	/* Whether this button is pressed.  This is level with a threshold and debouncing
+	 * applied. */
+	bool bDown;
+
 	RageTimer ts;
 
-	DeviceInput(): device(InputDevice_Invalid), button(DeviceButton_Invalid), level(0), ts(RageZeroTimer) { }
-	DeviceInput( InputDevice d, DeviceButton b, float l=0 ): device(d), button(b), level(l), ts(RageZeroTimer) { }
+	DeviceInput(): device(InputDevice_Invalid), button(DeviceButton_Invalid), level(0), bDown(false), ts(RageZeroTimer) { }
+	DeviceInput( InputDevice d, DeviceButton b, float l=0 ): device(d), button(b), level(l), bDown(l > 0.5), ts(RageZeroTimer) { }
 	DeviceInput( InputDevice d, DeviceButton b, float l, const RageTimer &t ):
-		device(d), button(b), level(l), ts(t) { }
+		device(d), button(b), level(l), bDown(level > 0.5), ts(t) { }
 
 	bool operator==( const DeviceInput &other ) const
 	{ 
