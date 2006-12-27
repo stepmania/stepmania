@@ -51,7 +51,6 @@ protected:
 
 	float m_fSpeedRatio;
 	float m_fTrailingSpeedRatio;
-	int m_iDeltaFrames;
 	float m_fErrorFrames;
 };
 

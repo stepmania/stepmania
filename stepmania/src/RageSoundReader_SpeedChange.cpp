@@ -18,7 +18,6 @@ RageSoundReader_SpeedChange::RageSoundReader_SpeedChange( RageSoundReader *pSour
 void RageSoundReader_SpeedChange::SetSpeedRatio( float fRatio )
 {
 	m_fSpeedRatio = fRatio;
-	m_iDeltaFrames = lrintf( GetWindowSizeFrames() * fRatio );
 
 	/* If we havn't read any data yet, put the new delta into effect immediately. */
 	if( m_iDataBufferAvailFrames == 0 )
