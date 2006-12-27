@@ -10,23 +10,24 @@ RageSoundReader_SpeedChange::RageSoundReader_SpeedChange( RageSoundReader *pSour
 	RageSoundReader_Filter( pSource )
 {
 	m_Channels.resize( pSource->GetNumChannels() );
-	SetSpeedRatio( 1.3f );
+	m_fSpeedRatio = m_fTrailingSpeedRatio = 1.0f;
+	SetSpeedRatio( 1.0f );
 	Reset();
 }
 
 void RageSoundReader_SpeedChange::SetSpeedRatio( float fRatio )
 {
-	fSpeed = fRatio;
+	m_fSpeedRatio = fRatio;
 	m_iDeltaFrames = lrintf( GetWindowSizeFrames() * fRatio );
 
 	/* If we havn't read any data yet, put the new delta into effect immediately. */
 	if( m_iDataBufferAvailFrames == 0 )
-		m_iTrailingDeltaFrames = m_iDeltaFrames;
+		m_fTrailingSpeedRatio = m_fSpeedRatio;
 }
 
 float RageSoundReader_SpeedChange::GetRatio() const
 {
-	return float(m_iDeltaFrames) / GetWindowSizeFrames();
+	return m_fSpeedRatio;
 }
 
 int RageSoundReader_SpeedChange::GetWindowSizeFrames() const
@@ -34,14 +35,9 @@ int RageSoundReader_SpeedChange::GetWindowSizeFrames() const
 	return (WINDOW_SIZE_MS * GetSampleRate()) / 1000;
 }
 
-float RageSoundReader_SpeedChange::GetTrailingRatio() const
-{
-	return float(m_iTrailingDeltaFrames) / GetWindowSizeFrames();
-}
-
 void RageSoundReader_SpeedChange::Reset()
 {
-	m_iTrailingDeltaFrames = m_iDeltaFrames;
+	m_fTrailingSpeedRatio = m_fSpeedRatio;
 	m_iDataBufferAvailFrames = 0;
 	for( size_t i = 0; i < m_Channels.size(); ++i )
 	{
@@ -51,6 +47,7 @@ void RageSoundReader_SpeedChange::Reset()
 	}
 	m_iUncorrelatedPos = 0;
 	m_iPos = 0;
+	m_fErrorFrames = 0;
 }
 
 static int FindClosestMatch( const int16_t *pBuffer, int iBufferSize, const int16_t *pCorrelateBuffer, int iCorrelateBufferSize, int iStride )
@@ -164,13 +161,22 @@ int RageSoundReader_SpeedChange::Step()
 			m_Channels[i].m_iCorrelatedPos += m_iPos;
 		}
 
-		/* Advance m_iUncorrelatedPos to the position we'd prefer to continue playing from. */
-		m_iUncorrelatedPos += m_iTrailingDeltaFrames;
+		/* Advance m_iUncorrelatedPos to the position we'd prefer to continue playing from.
+		 * This rounds the position, making the ratio imprecise.  Record the amount of
+		 * error introduced here.  If we want to advance by 2.3 frames, we'll advance
+		 * by 2.0 frames, and advance by 0.3 more the next time around. */
+		float fAdvanceFrames = GetWindowSizeFrames() * m_fTrailingSpeedRatio;
+		fAdvanceFrames += m_fErrorFrames;
+		int iTrailingDeltaFrames = lrintf( fAdvanceFrames );
+		m_fErrorFrames = fAdvanceFrames - iTrailingDeltaFrames;
+		m_iUncorrelatedPos += iTrailingDeltaFrames;
 
 		m_iPos = 0;
 	}
 
-	m_iTrailingDeltaFrames = m_iDeltaFrames;
+	/* Update m_fTrailingSpeedRatio.  Do this after advancing m_iUncorrelatedPos,
+	 * so changes to m_iUncorrelatedPos line up with GetNextSourceFrame. */
+	m_fTrailingSpeedRatio = m_fSpeedRatio;
 
 	/* We don't need any data before the earlier of m_iUncorrelatedPos or m_iCorrelatedPos. */
 	int iToDelete = m_iUncorrelatedPos;
@@ -242,7 +248,7 @@ int RageSoundReader_SpeedChange::Read( char *buf, int iFrames )
 		// m_iDataBufferAvailFrames-m_iCorrelatedPos < GetWindowSizeFrames when flushing
 		int iCursorAvail = GetCursorAvail();
 
-		if( iCursorAvail == 0 && m_iTrailingDeltaFrames == m_iDeltaFrames && GetWindowSizeFrames() == m_iDeltaFrames )
+		if( iCursorAvail == 0 && m_fTrailingSpeedRatio == m_fSpeedRatio && GetWindowSizeFrames() == m_iDeltaFrames )
 		{
 			/* Fast path: the buffer is empty, and we're not scaling the audio.  Read directly
 			 * into the output buffer, to eliminate memory and copying overhead. */
@@ -291,8 +297,8 @@ int RageSoundReader_SpeedChange::SetPosition( int iFrame )
 {
 	Reset();
 	
-	int64_t iScaled = (int64_t(iFrame) * GetWindowSizeFrames()) / m_iDeltaFrames;
-	iFrame = (int) iScaled;
+//	int64_t iScaled = int64_t(iFrame) / m_fSpeedRatio;
+//	iFrame = (int) iScaled;
 
 	return RageSoundReader_Filter::SetPosition( iFrame );
 }
@@ -310,7 +316,7 @@ bool RageSoundReader_SpeedChange::SetProperty( const RString &sProperty, float f
 
 int RageSoundReader_SpeedChange::GetNextSourceFrame() const
 {
-	float fRatio = GetTrailingRatio();
+	float fRatio = m_fTrailingSpeedRatio; //GetTrailingRatio();
 
 	int iSourceFrame = RageSoundReader_Filter::GetNextSourceFrame();
 	int iPos = lrintf(m_iPos * fRatio);
@@ -326,9 +332,9 @@ float RageSoundReader_SpeedChange::GetStreamToSourceRatio() const
 	 * become the real ratio on the next read.  Otherwise, we'll continue using
 	 * our old ratio for a bit longer. */
 	if( GetCursorAvail() == 0 )
-		return GetRatio() * RageSoundReader_Filter::GetStreamToSourceRatio();
+		return m_fSpeedRatio * RageSoundReader_Filter::GetStreamToSourceRatio();
 	else
-		return GetTrailingRatio() * RageSoundReader_Filter::GetStreamToSourceRatio();
+		return m_fTrailingSpeedRatio * RageSoundReader_Filter::GetStreamToSourceRatio();
 }
 
 /*

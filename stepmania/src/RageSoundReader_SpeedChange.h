@@ -32,9 +32,6 @@ protected:
 	int Step();
 	void Reset();
 
-	/* Get the ratio currently being used. */
-	float GetTrailingRatio() const;
-
 	int GetCursorAvail() const;
 
 	int GetWindowSizeFrames() const;
@@ -52,9 +49,10 @@ protected:
 	int m_iUncorrelatedPos;
 	int m_iPos;
 
-	float fSpeed;
+	float m_fSpeedRatio;
+	float m_fTrailingSpeedRatio;
 	int m_iDeltaFrames;
-	int m_iTrailingDeltaFrames;
+	float m_fErrorFrames;
 };
 
 #endif
