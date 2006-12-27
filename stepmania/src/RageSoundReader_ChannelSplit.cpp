@@ -86,6 +86,7 @@ int RageSoundReader_Split::GetSampleRate() const { return m_pImpl->m_pSource->Ge
 unsigned RageSoundReader_Split::GetNumChannels() const { return m_iNumOutputChannels; }
 int RageSoundReader_Split::GetNextSourceFrame() const { return m_iPositionFrame; }
 float RageSoundReader_Split::GetStreamToSourceRatio() const { return 1.0f; }
+RString RageSoundReader_Split::GetError() const { return m_pImpl->m_pSource->GetError(); }
 
 RageSoundReader_Split::RageSoundReader_Split( RageSoundSplitterImpl *pImpl )
 {
@@ -136,10 +137,7 @@ int RageSoundReader_Split::Read( char *pBuf, int iFrames )
 	m_iRequestFrames = iFrames;
 	int iRet = m_pImpl->ReadBuffer();
 	if( iRet < 0 )
-	{
-		this->SetError( m_pImpl->m_pSource->GetError() );
 		return iRet;
-	}
 
 	int iBytesAvailable = m_pImpl->m_sBuffer.size();
 	const char *pSrc = m_pImpl->m_sBuffer.data();
@@ -181,7 +179,7 @@ int RageSoundSplitterImpl::ReadBuffer()
 {
 	/* Discard any bytes that are no longer requested by any sound. */
 	int iMinFrameRequested = INT_MAX;
-	int iMaxFrameRequested = 0;
+	int iMaxFrameRequested = INT_MIN;
 	FOREACHS( RageSoundReader_Split *, m_apSounds, snd )
 	{
 		iMinFrameRequested = min( iMinFrameRequested, (*snd)->m_iPositionFrame );
