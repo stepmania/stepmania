@@ -23,14 +23,14 @@ public:
 	 * be updated to a new value.  Used by RageSoundReader_PitchChange. */
 	bool NextReadWillStep() const { return GetCursorAvail() == 0; }
 
+	/* Get the ratio last set by SetSpeedRatio. */
+	float GetRatio() const;
+
 protected:
 	int FillData( int iMax );
 	void EraseData( int iToDelete );
 	int Step();
 	void Reset();
-
-	/* Get the ratio last set by SetSpeedRatio. */
-	float GetRatio() const;
 
 	/* Get the ratio currently being used. */
 	float GetTrailingRatio() const;
