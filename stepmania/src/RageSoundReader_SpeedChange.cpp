@@ -243,7 +243,7 @@ int RageSoundReader_SpeedChange::Read( char *buf, int iFrames )
 		// m_iDataBufferAvailFrames-m_iCorrelatedPos < GetWindowSizeFrames when flushing
 		int iCursorAvail = GetCursorAvail();
 
-		if( iCursorAvail == 0 && m_fTrailingSpeedRatio == m_fSpeedRatio && GetWindowSizeFrames() == m_iDeltaFrames )
+		if( iCursorAvail == 0 && m_fTrailingSpeedRatio == m_fSpeedRatio && m_fSpeedRatio == 1.0f )
 		{
 			/* Fast path: the buffer is empty, and we're not scaling the audio.  Read directly
 			 * into the output buffer, to eliminate memory and copying overhead. */
