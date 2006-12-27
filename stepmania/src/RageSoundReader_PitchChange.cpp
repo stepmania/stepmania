@@ -46,30 +46,16 @@ int RageSoundReader_PitchChange::Read( char *pBuf, int iFrames )
 	if( m_pSpeedChange->NextReadWillStep() )
 	{
 		/* This is the simple way: */
-		// float fRequestedSpeedRatio = m_fSpeedRatio / m_fPitchRatio;
-		// m_pSpeedChange->SetSpeedRatio( fRequestedSpeedRatio );
 		// m_pResample->SetRate( m_fPitchRatio );
+		// m_pSpeedChange->SetSpeedRatio( m_fSpeedRatio / m_fPitchRatio );
 
-		/*
-		 * However, the speed changer has a granularity due to internal fixed-
+		/* However, the resampler has a limited granularity due to internal fixed-
 		 * point math, and the actual ratio will be slightly different than what
-		 * we tell it to use.  The actual ratio used is fActualSpeedChangeRatio.
-		 * Given
-		 *
-		 *   fRequestedSpeedRatio = m_fSpeedRatio / m_fPitchRatio
-		 *
-		 * solve for m_fPitchRatio:
-		 *
-		 *   fRequestedPitchRatio = m_fSpeedRatio / fRequestedSpeedRatio
-		 *
-		 * and compute the pitch ratio based on the actual speed ratio, rather than
-		 * the requested speed ratio.  This avoids excessive rounding error between
-		 * the ratios of m_pSpeedChange and m_pResample.
-		 */
-		m_pSpeedChange->SetSpeedRatio( m_fSpeedRatio / m_fPitchRatio );
-		float fActualSpeedRatio = m_pSpeedChange->GetRatio();
-		float fRequestedPitchRatio = m_fSpeedRatio / fActualSpeedRatio;
-		m_pResample->SetRate( fRequestedPitchRatio );
+		 * we tell it to use.  The actual ratio used is fActualPitchRatio. */
+		m_pResample->SetRate( m_fPitchRatio );
+		float fActualPitchRatio = m_pResample->GetRate();
+		float fRequestedSpeedRatio = m_fSpeedRatio / fActualPitchRatio;
+		m_pSpeedChange->SetSpeedRatio( fRequestedSpeedRatio );
 	}
 
 	/* If we just applied a new speed and it caused the ratio to change, return
