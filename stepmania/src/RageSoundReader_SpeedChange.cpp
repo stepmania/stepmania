@@ -290,10 +290,6 @@ int RageSoundReader_SpeedChange::Read( char *buf, int iFrames )
 int RageSoundReader_SpeedChange::SetPosition( int iFrame )
 {
 	Reset();
-	
-//	int64_t iScaled = int64_t(iFrame) / m_fSpeedRatio;
-//	iFrame = (int) iScaled;
-
 	return RageSoundReader_Filter::SetPosition( iFrame );
 }
 
