@@ -1,4 +1,8 @@
 /*
+ * Implements properties: 
+ *   "Speed" - cause the sound to play faster or slower
+ *   "Pitch" - raise or lower the pitch of the sound
+ *
  * Pitch changing is implemented by combining speed changing and rate changing
  * (via resampling).  The resampler needs to be changed later than the speed
  * changer; this class just controls parameters on the other two real filters.
@@ -34,19 +38,18 @@ RageSoundReader_PitchChange::RageSoundReader_PitchChange( const RageSoundReader_
 
 int RageSoundReader_PitchChange::Read( char *pBuf, int iFrames )
 {
-	/* Changing the ratios will tell the speed changer to change ratios, but it
-	 * can't change immediately; it'll change on the next slice.  The resampler
-	 * puts rate changes into effect immediately.  If this read will cause the
-	 * speed changer new ratio to put a new ratio into effect, tell the resampler
-	 * to do the same.  This way, changes to the ratios will take effect in both
-	 * the resampler and speed changer as closely together as possible. */
+	/* m_pSpeedChange->NextReadWillStep is true if speed changes will be applied
+	 * immediately on the next Read().  When this is true, apply the ratio to the
+	 * resampler and the speed changer simultaneously, so they take effect as
+	 * closely together as possible. */
 	float fRate = GetStreamToSourceRatio();
-
-	m_pSpeedChange->SetSpeedRatio( m_fSpeedRatio / m_fPitchRatio );
 	if( m_pSpeedChange->NextReadWillStep() )
+	{
+		m_pSpeedChange->SetSpeedRatio( m_fSpeedRatio / m_fPitchRatio );
 		m_pResample->SetRate( m_fPitchRatio );
+	}
 
-	/* We just applied a new speed, and it caused the ratio to change.  Return
+	/* If we just applied a new speed and it caused the ratio to change, return
 	 * no data, so the caller can see the new ratio. */
 	if( fRate != GetStreamToSourceRatio() )
 		return 0;
