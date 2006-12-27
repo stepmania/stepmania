@@ -25,11 +25,6 @@ void RageSoundReader_SpeedChange::SetSpeedRatio( float fRatio )
 		m_fTrailingSpeedRatio = m_fSpeedRatio;
 }
 
-float RageSoundReader_SpeedChange::GetRatio() const
-{
-	return m_fSpeedRatio;
-}
-
 int RageSoundReader_SpeedChange::GetWindowSizeFrames() const
 {
 	return (WINDOW_SIZE_MS * GetSampleRate()) / 1000;

@@ -24,7 +24,7 @@ public:
 	bool NextReadWillStep() const { return GetCursorAvail() == 0; }
 
 	/* Get the ratio last set by SetSpeedRatio. */
-	float GetRatio() const;
+	float GetRatio() const { return m_fSpeedRatio; }
 
 protected:
 	int FillData( int iMax );
