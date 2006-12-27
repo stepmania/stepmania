@@ -57,6 +57,17 @@ int RageSoundReader_PitchChange::Read( char *pBuf, int iFrames )
 	return RageSoundReader_Filter::Read( pBuf, iFrames );
 }
 
+float RageSoundReader_PitchChange::GetStreamToSourceRatio() const
+{
+	/* If m_fSpeedRatio is 1.0f and the underlying ratio is exactly 1.0,
+	 * the ratio should be exactly 1.  Rounding error prevents n * (1/n)
+	 * from being exact. */
+	float fRatio = m_pSource->GetStreamToSourceRatio();
+	if( m_fSpeedRatio == 1.0f && fabsf(1.0f - fRatio) < 0.001f )
+		fRatio = 1.0f;
+	return fRatio;
+}
+
 bool RageSoundReader_PitchChange::SetProperty( const RString &sProperty, float fValue )
 {
 	if( sProperty == "Rate" )

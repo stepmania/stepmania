@@ -15,6 +15,7 @@ public:
 
 	virtual int Read( char *pBuf, int iFrames );
 	virtual bool SetProperty( const RString &sProperty, float fValue );
+	virtual float GetStreamToSourceRatio() const;
 
 	void SetSpeedRatio( float fRatio ) { m_fSpeedRatio = fRatio; }
 	void SetPitchRatio( float fRatio ) { m_fPitchRatio = fRatio; }
