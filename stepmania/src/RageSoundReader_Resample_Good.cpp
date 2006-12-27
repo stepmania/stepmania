@@ -204,7 +204,6 @@ struct PolyphaseFilter
 	void Generate( const float *pFIR );
 	int RunPolyphaseFilter( State &State, const float *pIn, int iSamplesIn, int iDownFactor,
 			float *pOut, int iSamplesOut ) const;
-	int ReadBuffer( State &State, float *pOut, int iSamplesOut ) const;
 	int GetLatency() const { return L/2; }
 
 	int NumInputsForOutputSamples( const State &State, int iOut, int iDownFactor ) const;
@@ -341,24 +340,6 @@ int PolyphaseFilter::RunPolyphaseFilter(
 
 	State.m_iFilled = iFilled;
 	State.m_iPolyIndex = iPolyIndex;
-
-	return pOut - pOutOrig;
-}
-
-int PolyphaseFilter::ReadBuffer( State &State, float *pOut, int iSamplesOut ) const
-{
-	float *pOutOrig = pOut;
-	
-	while( State.m_iFilled && iSamplesOut-- )
-	{
-		*pOut = State.m_fBuf[State.m_iBufNext];
-		++pOut;
-		--State.m_iFilled;
-
-		float fRot = State.m_fBuf[0];
-		memmove( State.m_fBuf, State.m_fBuf+1, ((L*2)-1) * sizeof(float) );
-		State.m_fBuf[L*2-1] = fRot;
-	}
 
 	return pOut - pOutOrig;
 }
@@ -511,11 +492,6 @@ public:
 	int Run( const float *pIn, int iSamplesIn, float *pOut, int iSamplesOut ) const
 	{
 		return m_pPolyphase->RunPolyphaseFilter( *m_pState, pIn, iSamplesIn, m_iDownFactor, pOut, iSamplesOut );
-	}
-
-	int FlushBuffer( float *pOut, int iSamplesOut ) const
-	{
-		return m_pPolyphase->ReadBuffer( *m_pState, pOut, iSamplesOut );
 	}
 
 	void Reset()
@@ -684,29 +660,8 @@ int RageSoundReader_Resample_Good::Read( char *pBuf_, int iFrames )
 	int iDownFactor, iUpFactor;
 	GetFactors( iDownFactor, iUpFactor );
 
-	if( iDownFactor == iUpFactor && m_fRate == 1.0f )
-	{
-		/* Before reading directly, flush the data from the polyphase filters. */
-		if( m_apResamplers[0]->GetFilled() )
-		{
-			float *pFloatOut = (float *) alloca( iFrames * sizeof(float) );
-			for( int iChannel = 0; iChannel < iChannels; ++iChannel )
-			{
-				int iGotFrames = m_apResamplers[iChannel]->FlushBuffer( pFloatOut, iFrames );
-				ASSERT( iGotFrames <= iFrames );
-
-				for( int i = 0; i < iGotFrames; ++i )
-					pBuf[i*iChannels+iChannel] = int16_t(lrintf(clamp(pFloatOut[i], -32768, 32767)));
-				if( iChannel == 0 )
-					iFramesRead += iGotFrames;
-			}
-			
-			return iFramesRead;
-		}
-
-		// XXX: errors
+	if( m_apResamplers[0]->GetFilled() == 0 && iDownFactor == iUpFactor && m_fRate == 1.0f )
 		return m_pSource->Read( pBuf_, iFrames );
-	}
 
 	{
 		int iFramesNeeded = m_apResamplers[0]->NumInputsForOutputSamples(iFrames);
