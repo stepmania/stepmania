@@ -390,16 +390,19 @@ bool EventImpl_Win32::Wait( RageTimer *pTimeout )
 void EventImpl_Win32::Signal()
 {
 	EnterCriticalSection( &m_iNumWaitingLock );
-	bool bHaveWaiters = (m_iNumWaiting > 0);
+
+	if( m_iNumWaiting == 0 )
+	{
+		LeaveCriticalSection( &m_iNumWaitingLock );
+		return;
+	}
+
+	ReleaseSemaphore( m_WakeupSema, 1, 0 );
+
 	LeaveCriticalSection( &m_iNumWaitingLock );
 
-	if( bHaveWaiters )
-	{
-		ReleaseSemaphore( m_WakeupSema, 1, 0 );
-
-		/* The waiter will touch m_WaitersDone. */
-		WaitForSingleObject( m_WaitersDone, INFINITE );
-	}
+	/* The waiter will touch m_WaitersDone. */
+	WaitForSingleObject( m_WaitersDone, INFINITE );
 }
 
 void EventImpl_Win32::Broadcast()
