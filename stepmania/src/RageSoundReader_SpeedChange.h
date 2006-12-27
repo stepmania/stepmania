@@ -53,7 +53,6 @@ protected:
 	int m_iPos;
 
 	float fSpeed;
-	int nn;
 	int m_iDeltaFrames;
 	int m_iTrailingDeltaFrames;
 };

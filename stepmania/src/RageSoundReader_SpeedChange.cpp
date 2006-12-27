@@ -12,7 +12,6 @@ RageSoundReader_SpeedChange::RageSoundReader_SpeedChange( RageSoundReader *pSour
 	m_Channels.resize( pSource->GetNumChannels() );
 	SetSpeedRatio( 1.3f );
 	Reset();
-	nn = 0;
 }
 
 void RageSoundReader_SpeedChange::SetSpeedRatio( float fRatio )
