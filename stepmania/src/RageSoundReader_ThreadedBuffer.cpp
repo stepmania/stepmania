@@ -6,6 +6,13 @@
 
 /*
  * Implement threaded read-ahead buffering.
+ *
+ * If a buffer is low on data, keep filling until it has a g_iMinFillFrames.
+ * Once beyond that, fill at a rate relative to realtime.
+ *
+ * This allows a stream to have a large buffer, for higher reliability, without
+ * causing major CPU bursts when the stream starts or underruns.  Filling 32k
+ * takes more CPU than filling 4k frames, and may cause a skip.
  */
 
 /* The amount of data to read at once: */
