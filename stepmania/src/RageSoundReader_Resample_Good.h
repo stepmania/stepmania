@@ -25,6 +25,9 @@ public:
 	/* Change the rate of a sound without changing the sample rate. */
 	void SetRate( float fRatio );
 
+	/* SetRate() will be rounded.  Get the exact rate. */
+	float GetRate() const;
+
 	int GetSampleRate() const { return m_iSampleRate; }
 
 private:
