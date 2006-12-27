@@ -72,7 +72,7 @@ RageSoundReader_ThreadedBuffer::~RageSoundReader_ThreadedBuffer()
 	DisableBuffering();
 	m_Event.Lock();
 	m_bShutdownThread = true;
-	m_Event.Signal();
+	m_Event.Broadcast();
 	m_Event.Unlock();
 
 	m_Thread.Wait();
@@ -82,7 +82,7 @@ void RageSoundReader_ThreadedBuffer::EnableBuffering()
 {
 	m_Event.Lock();
 	m_bEnabled = true;
-	m_Event.Signal();
+	m_Event.Broadcast();
 	m_Event.Unlock();
 }
 
@@ -91,7 +91,7 @@ bool RageSoundReader_ThreadedBuffer::DisableBuffering()
 	m_Event.Lock();
 	bool bRet = m_bEnabled;
 	m_bEnabled = false;
-	m_Event.Signal();
+	m_Event.Broadcast();
 
 	while( m_bFilling )
 		m_Event.Wait();
@@ -204,7 +204,7 @@ void RageSoundReader_ThreadedBuffer::BufferingThread()
 
 		/* Release m_bFilling, and signal the event to wake anyone waiting for it. */
 		m_bFilling = false;
-		m_Event.Signal();
+		m_Event.Broadcast();
 
 		/* On error or end of file, stop buffering the sound. */
 		if( iRet < 0 )
