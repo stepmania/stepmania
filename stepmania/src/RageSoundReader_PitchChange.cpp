@@ -45,8 +45,31 @@ int RageSoundReader_PitchChange::Read( char *pBuf, int iFrames )
 	float fRate = GetStreamToSourceRatio();
 	if( m_pSpeedChange->NextReadWillStep() )
 	{
+		/* This is the simple way: */
+		// float fRequestedSpeedRatio = m_fSpeedRatio / m_fPitchRatio;
+		// m_pSpeedChange->SetSpeedRatio( fRequestedSpeedRatio );
+		// m_pResample->SetRate( m_fPitchRatio );
+
+		/*
+		 * However, the speed changer has a granularity due to internal fixed-
+		 * point math, and the actual ratio will be slightly different than what
+		 * we tell it to use.  The actual ratio used is fActualSpeedChangeRatio.
+		 * Given
+		 *
+		 *   fRequestedSpeedRatio = m_fSpeedRatio / m_fPitchRatio
+		 *
+		 * solve for m_fPitchRatio:
+		 *
+		 *   fRequestedPitchRatio = m_fSpeedRatio / fRequestedSpeedRatio
+		 *
+		 * and compute the pitch ratio based on the actual speed ratio, rather than
+		 * the requested speed ratio.  This avoids excessive rounding error between
+		 * the ratios of m_pSpeedChange and m_pResample.
+		 */
 		m_pSpeedChange->SetSpeedRatio( m_fSpeedRatio / m_fPitchRatio );
-		m_pResample->SetRate( m_fPitchRatio );
+		float fActualSpeedRatio = m_pSpeedChange->GetRatio();
+		float fRequestedPitchRatio = m_fSpeedRatio / fActualSpeedRatio;
+		m_pResample->SetRate( fRequestedPitchRatio );
 	}
 
 	/* If we just applied a new speed and it caused the ratio to change, return
@@ -55,17 +78,6 @@ int RageSoundReader_PitchChange::Read( char *pBuf, int iFrames )
 		return 0;
 
 	return RageSoundReader_Filter::Read( pBuf, iFrames );
-}
-
-float RageSoundReader_PitchChange::GetStreamToSourceRatio() const
-{
-	/* If m_fSpeedRatio is 1.0f and the underlying ratio is exactly 1.0,
-	 * the ratio should be exactly 1.  Rounding error prevents n * (1/n)
-	 * from being exact. */
-	float fRatio = m_pSource->GetStreamToSourceRatio();
-	if( m_fSpeedRatio == 1.0f && fabsf(1.0f - fRatio) < 0.001f )
-		fRatio = 1.0f;
-	return fRatio;
 }
 
 bool RageSoundReader_PitchChange::SetProperty( const RString &sProperty, float fValue )
