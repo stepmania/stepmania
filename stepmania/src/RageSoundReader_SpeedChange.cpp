@@ -306,7 +306,7 @@ bool RageSoundReader_SpeedChange::SetProperty( const RString &sProperty, float f
 
 int RageSoundReader_SpeedChange::GetNextSourceFrame() const
 {
-	float fRatio = m_fTrailingSpeedRatio; //GetTrailingRatio();
+	float fRatio = m_fTrailingSpeedRatio;
 
 	int iSourceFrame = RageSoundReader_Filter::GetNextSourceFrame();
 	int iPos = lrintf(m_iPos * fRatio);
