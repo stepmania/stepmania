@@ -1000,10 +1000,8 @@ float calc_stddev( const float *pStart, const float *pEnd, bool bSample )
 }
 
 bool CalcLeastSquares( const vector< pair<float, float> > &vCoordinates,
-                       float *pfSlope, float *pfIntercept, float *pfError )
+                       float &pfSlope, float &pfIntercept, float &pfError )
 {
-	ASSERT( pfSlope != NULL );
-	ASSERT( pfIntercept != NULL );
 	int iNumSamples = vCoordinates.size();
 	float fNumSamples = static_cast<float>(iNumSamples);
 	if( iNumSamples == 0 ) 
@@ -1019,17 +1017,17 @@ bool CalcLeastSquares( const vector< pair<float, float> > &vCoordinates,
 		fSumY += vCoordinates[i].second;
 	}
 	float fDenominator = fNumSamples * fSumXX - fSumX * fSumX;
-	*pfSlope = (fNumSamples * fSumXY - fSumX * fSumY) / fDenominator;
-	*pfIntercept = (fSumXX * fSumY - fSumX * fSumXY) / fDenominator;
+	pfSlope = (fNumSamples * fSumXY - fSumX * fSumY) / fDenominator;
+	pfIntercept = (fSumXX * fSumY - fSumX * fSumXY) / fDenominator;
 
-	*pfError = 0.0f;
+	pfError = 0.0f;
 	for( int i = 0; i < iNumSamples; ++i ) 
 	{
-		float fOneError = (vCoordinates[i].second - (*pfIntercept + *pfSlope * vCoordinates[i].first));
-		*pfError += fOneError * fOneError;
+		float fOneError = (vCoordinates[i].second - (pfIntercept + pfSlope * vCoordinates[i].first));
+		pfError += fOneError * fOneError;
 	}
-	*pfError /= fNumSamples;
-	*pfError = sqrtf( *pfError );
+	pfError /= fNumSamples;
+	pfError = sqrtf( pfError );
 	return true;
 }
 

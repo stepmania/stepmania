@@ -450,7 +450,7 @@ float calc_stddev( const float *pStart, const float *pEnd, bool bSample = false 
  * Returns true on success, false on failure. 
  */
 bool CalcLeastSquares( const vector< pair<float, float> > &vCoordinates,
-                       float *p_fSlope, float *p_fIntercept, float *p_fError );
+                       float &p_fSlope, float &p_fIntercept, float &p_fError );
 
 /* 
  * This method throws away any points that are more than fCutoff away from

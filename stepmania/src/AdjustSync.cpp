@@ -209,8 +209,7 @@ void AdjustSync::AutosyncTempo()
 {
 	float fSlope = 0.0f;
 	float fIntercept = 0.0f;
-	if( !CalcLeastSquares( s_vAutosyncTempoData,
-	                       &fSlope, &fIntercept, &s_fAverageError ) )
+	if( !CalcLeastSquares( s_vAutosyncTempoData, fSlope, fIntercept, s_fAverageError ) )
 	{
 		s_vAutosyncTempoData.clear();
 		return;
@@ -230,8 +229,7 @@ void AdjustSync::AutosyncTempo()
 		                       fSlope, fIntercept, ERROR_TOO_HIGH );
 		s_iStepsFiltered -= s_vAutosyncTempoData.size();
 
-		if( !CalcLeastSquares( s_vAutosyncTempoData,
-		                       &fSlope, &fIntercept, &fFilteredError ) )
+		if( !CalcLeastSquares( s_vAutosyncTempoData, fSlope, fIntercept, fFilteredError ) )
 			return;
 
 		GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds += fIntercept;
