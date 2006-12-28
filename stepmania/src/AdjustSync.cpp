@@ -40,6 +40,7 @@
 #include "LocalizedString.h"
 #include "PrefsManager.h"
 #include "ScreenManager.h"
+#include "Foreach.h"
 
 TimingData *AdjustSync::s_pTimingDataOriginal = NULL;
 float AdjustSync::s_fGlobalOffsetSecondsOriginal = 0.0f;
@@ -233,24 +234,14 @@ void AdjustSync::AutosyncTempo()
 
 		GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds += fIntercept;
 
-		vector<BPMSegment>::iterator itBPM;
-		for( itBPM = GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments.begin();
-		     itBPM != GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments.end();
-		     ++itBPM )
-		{
-			itBPM->SetBPM( 60.0f / ((60.0f / itBPM->GetBPM()) * (1.0f - fSlope)) );
-		}
+		FOREACH( BPMSegment, GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments, i )
+			i->SetBPM( 60.0f / ((60.0f / i->GetBPM()) * (1.0f - fSlope)) );
 
 		// We assume that the stops were measured as a number of beats.
 		// Therefore, if we change the bpms, we need to make a similar
 		// change to the stops.
-		vector<StopSegment>::iterator itStop;
-		for( itStop = GAMESTATE->m_pCurSong->m_Timing.m_StopSegments.begin();
-		     itStop != GAMESTATE->m_pCurSong->m_Timing.m_StopSegments.end();
-		     ++itStop )
-		{
-			itStop->m_fStopSeconds = itStop->m_fStopSeconds * ( 1.0f - fSlope );
-		}
+		FOREACH( StopSegment, GAMESTATE->m_pCurSong->m_Timing.m_StopSegments, i )
+			i->m_fStopSeconds *= 1.0f - fSlope;
 
 		SCREENMAN->SystemMessage( AUTOSYNC_CORRECTION_APPLIED.GetValue() );
 	}
