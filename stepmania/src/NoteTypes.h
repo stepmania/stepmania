@@ -73,23 +73,6 @@ struct TapNote
 	{
 		original,	// part of the original NoteData
 		addition,	// additional note added by a transform
-		removed,	// Removed taps, e.g. in Little - play keysounds here as if
-				// judged W2, but don't bother rendering or judging this
-				// step.  Also used for when we implement auto-scratch,
-				// and for if/when we do a "reduce" modifier that cancels out
-				// all but N keys on a line [useful for beat->dance autogen, too].
-		
-				/* XXX: this makes no sense. If we've replaced the hold with a tap then we
-				 * cannot have a removed hold here. Is it supposed to be that if you have
-				 * a positive duration then you just draw the tap? If so, a new source type
-				 * should be created rather than overloading removed. */
-		
-				// Removed hold body (...why?) - acts as follows:
-				// 1 - if we're using a sustained-sound gametype [Keyboardmania], and
-				//     we've already hit the start of the sound (?? we put Holds Off on?)
-				//     then this is triggered automatically to keep the sound going
-				// 2 - if we're NOT [anything else], we ignore this.
-				// Equivalent to all 4s aside from the first one.
 	};
 	
 	Type		type;
