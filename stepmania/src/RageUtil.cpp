@@ -1000,7 +1000,7 @@ float calc_stddev( const float *pStart, const float *pEnd, bool bSample )
 }
 
 bool CalcLeastSquares( const vector< pair<float, float> > &vCoordinates,
-                       float &pfSlope, float &pfIntercept, float &pfError )
+                       float &fSlope, float &fIntercept, float &fError )
 {
 	if( vCoordinates.empty() ) 
 		return false;
@@ -1013,17 +1013,17 @@ bool CalcLeastSquares( const vector< pair<float, float> > &vCoordinates,
 		fSumY += vCoordinates[i].second;
 	}
 	const float fDenominator = vCoordinates.size() * fSumXX - fSumX * fSumX;
-	pfSlope = (vCoordinates.size() * fSumXY - fSumX * fSumY) / fDenominator;
-	pfIntercept = (fSumXX * fSumY - fSumX * fSumXY) / fDenominator;
+	fSlope = (vCoordinates.size() * fSumXY - fSumX * fSumY) / fDenominator;
+	fIntercept = (fSumXX * fSumY - fSumX * fSumXY) / fDenominator;
 
-	pfError = 0.0f;
+	fError = 0.0f;
 	for( unsigned i = 0; i < vCoordinates.size(); ++i ) 
 	{
-		const float fOneError = pfIntercept + pfSlope * vCoordinates[i].first - vCoordinates[i].second;
-		pfError += fOneError * fOneError;
+		const float fOneError = fIntercept + fSlope * vCoordinates[i].first - vCoordinates[i].second;
+		fError += fOneError * fOneError;
 	}
-	pfError /= vCoordinates.size();
-	pfError = sqrtf( pfError );
+	fError /= vCoordinates.size();
+	fError = sqrtf( fError );
 	return true;
 }
 
