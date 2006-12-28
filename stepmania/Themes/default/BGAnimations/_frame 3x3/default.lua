@@ -1,4 +1,8 @@
 local File, Width, Height = ...
+assert( File );
+assert( Width );
+assert( Height );
+
 local FullFile = THEME:GetPathB('','_frame files 3x3/'..File )
 local Frame = LoadActor( FullFile )
 return WrapInActorFrame {

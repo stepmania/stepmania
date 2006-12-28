@@ -1,4 +1,7 @@
 local File, Width = ...
+assert( File );
+assert( Width );
+
 local FullFile = THEME:GetPathB('','_frame files 3x1/'..File )
 local Frame = LoadActor( FullFile )
 
