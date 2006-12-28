@@ -34,8 +34,8 @@ struct HoldNoteResult
 
 	/* 1.0 means this HoldNote has full life.
 	 * 0.0 means this HoldNote is dead
-	 * When this value hits 0.0 for the first time, m_HoldScore becomes HSS_NG.
-	 * If the life is > 0.0 when the HoldNote ends, then m_HoldScore becomes HSS_OK. */
+	 * When this value hits 0.0 for the first time, m_HoldScore becomes HNS_LetGo.
+	 * If the life is > 0.0 when the HoldNote ends, then m_HoldScore becomes HNS_Held. */
 	float		fLife;
 
 	/* Last index where fLife was greater than 0.  If the tap was missed, this will
