@@ -225,8 +225,7 @@ void AdjustSync::AutosyncTempo()
 		// be enough in most cases.
 		float fFilteredError = 0.0;
 		s_iStepsFiltered = s_vAutosyncTempoData.size();
-		FilterHighErrorPoints( &s_vAutosyncTempoData,
-		                       fSlope, fIntercept, ERROR_TOO_HIGH );
+		FilterHighErrorPoints( s_vAutosyncTempoData, fSlope, fIntercept, ERROR_TOO_HIGH );
 		s_iStepsFiltered -= s_vAutosyncTempoData.size();
 
 		if( !CalcLeastSquares( s_vAutosyncTempoData, fSlope, fIntercept, fFilteredError ) )

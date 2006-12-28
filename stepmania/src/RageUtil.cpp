@@ -1027,21 +1027,20 @@ bool CalcLeastSquares( const vector< pair<float, float> > &vCoordinates,
 	return true;
 }
 
-void FilterHighErrorPoints( vector< pair<float, float> > *vCoordinates,
+void FilterHighErrorPoints( vector< pair<float, float> > &vCoordinates,
                             float fSlope, float fIntercept, float fCutoff )
 {
 	unsigned int iOut = 0;
-	for( unsigned int iIn = 0; iIn < vCoordinates->size(); ++iIn )
+	for( unsigned int iIn = 0; iIn < vCoordinates.size(); ++iIn )
 	{
-		float fError = ((*vCoordinates)[iIn].second - 
-		                (fIntercept + fSlope * (*vCoordinates)[iIn].first));
+		const float fError = fIntercept + fSlope * vCoordinates[iIn].first - vCoordinates[iIn].second;
 		if( fabsf(fError) < fCutoff )
 		{
-			(*vCoordinates)[iOut] = (*vCoordinates)[iIn];
+			vCoordinates[iOut] = vCoordinates[iIn];
 			++iOut;
 		}
 	}
-	vCoordinates->resize(iOut);
+	vCoordinates.resize( iOut );
 }
 
 void TrimLeft( RString &sStr, const char *s )

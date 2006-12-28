@@ -456,7 +456,7 @@ bool CalcLeastSquares( const vector< pair<float, float> > &vCoordinates,
  * This method throws away any points that are more than fCutoff away from
  * the line defined by fSlope and fIntercept.
  */
-void FilterHighErrorPoints( vector< pair<float, float> > *vCoordinates,
+void FilterHighErrorPoints( vector< pair<float, float> > &vCoordinates,
                             float fSlope, float fIntercept, float fCutoff );
 
 template<class T1, class T2>
