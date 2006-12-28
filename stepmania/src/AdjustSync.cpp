@@ -233,9 +233,9 @@ void AdjustSync::AutosyncTempo()
 			return;
 
 		GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds += fIntercept;
-
+		const float fScaleBPM = 1.0f/(1.0f - fSlope);
 		FOREACH( BPMSegment, GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments, i )
-			i->SetBPM( 60.0f / ((60.0f / i->GetBPM()) * (1.0f - fSlope)) );
+			i->SetBPM( i->GetBPM() * fScaleBPM );
 
 		// We assume that the stops were measured as a number of beats.
 		// Therefore, if we change the bpms, we need to make a similar
