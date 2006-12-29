@@ -396,9 +396,9 @@ int RageFileObjDirect::SeekInternal( int iOffset )
 int RageFileObjDirect::GetFileSize() const
 {
 	const int iOldPos = lseek( m_iFD, 0, SEEK_CUR );
-	ASSERT_M( iOldPos != -1, strerror(errno) );
+	ASSERT_M( iOldPos != -1, ssprintf("\"%s\": %s", m_sPath.c_str(), strerror(errno)) );
 	const int iRet = lseek( m_iFD, 0, SEEK_END );
-	ASSERT_M( iRet != -1, strerror(errno) );
+	ASSERT_M( iRet != -1, ssprintf("\"%s\": %s", m_sPath.c_str(), strerror(errno)) );
 	lseek( m_iFD, iOldPos, SEEK_SET );
 	return iRet;
 }
