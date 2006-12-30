@@ -19,7 +19,7 @@
 #include "MemoryCard/MemoryCardDriverThreaded_OSX.h"
 #define DEFAULT_INPUT_DRIVER_LIST "Carbon"
 #define DEFAULT_MOVIE_DRIVER_LIST "Theora,FFMpeg,Null"
-#define DEFAULT_SOUND_DRIVER_LIST "AudioUnit,CoreAudio,Null"
+#define DEFAULT_SOUND_DRIVER_LIST "AudioUnit,Null"
 
 
 #elif defined(_XBOX)
