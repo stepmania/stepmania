@@ -477,8 +477,8 @@ int64_t RageSoundDriver::ClampHardwareFrame( int64_t iHardwareFrame ) const
 		static RageTimer last(RageZeroTimer);
 		if( last.IsZero() || last.Ago() > 1.0f )
 		{
-			LOG->Trace( "RageSoundDriver: driver returned a lesser position (%lld < %lld)",
-				    iHardwareFrame, m_iMaxHardwareFrame );
+			LOG->Trace( "RageSoundDriver: driver returned a lesser position (%d < %d)",
+				    (int)iHardwareFrame, (int)m_iMaxHardwareFrame );
 			last.Touch();
 		}
 		return m_iMaxHardwareFrame;
