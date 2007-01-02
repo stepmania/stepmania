@@ -76,7 +76,7 @@ using namespace std;
 namespace Checkpoints
 {
 	void SetCheckpoint( const char *file, int line, const char *message );
-};
+}
 #define CHECKPOINT (Checkpoints::SetCheckpoint(__FILE__, __LINE__, NULL))
 #define CHECKPOINT_M(m) (Checkpoints::SetCheckpoint(__FILE__, __LINE__, m))
 
@@ -206,6 +206,11 @@ float truncf( float f ) { return float( int(f) ); }
 #ifdef NEED_ROUNDF
 inline float roundf( float f ) CONST_FUNCTION;
 float roundf( float f ) { if( f < 0.0f ) return truncf( f-0.5f ); return truncf( f+0.5f ); }
+#endif
+
+#ifdef NEED_LROUNDF
+inline long int lroundf( float f ) CONST_FUNCTION;
+long int lroundf( float f ) { return (long int)roundf( f ); }
 #endif
 
 #ifdef NEED_STRTOF
