@@ -208,7 +208,7 @@ void GLExt_t::Load( LowLevelWindow *pWind )
 		else
 		{
 			const float fVersion = StringToFloat( pzVersion );
-			m_iShadingLanguageVersion = int(roundf(fVersion * 100));
+			m_iShadingLanguageVersion = lroundf( fVersion * 100 );
 			/* The version string may contain extra information beyond the version number. */
 			LOG->Info( "OpenGL shading language: %s", pzVersion );
 		}

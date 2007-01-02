@@ -100,23 +100,23 @@ void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 
 	if( !(bool)CYCLE )
 	{
-		int MinBPM = INT_MAX;
-		int MaxBPM = INT_MIN;
+		long int MinBPM = INT_MAX;
+		long int MaxBPM = INT_MIN;
 		for( unsigned i = 0; i < BPMS.size(); ++i )
 		{
-			MinBPM = min( MinBPM, (int) roundf(BPMS[i]) );
-			MaxBPM = max( MaxBPM, (int) roundf(BPMS[i]) );
+			MinBPM = min( MinBPM, lroundf(BPMS[i]) );
+			MaxBPM = max( MaxBPM, lroundf(BPMS[i]) );
 		}
 		if( MinBPM == MaxBPM )
 		{
 			if( MinBPM == -1 )
 				SetText( "..." ); // random
 			else
-				SetText( ssprintf("%i", MinBPM) );
+				SetText( ssprintf("%ld", MinBPM) );
 		}
 		else
 		{
-			SetText( ssprintf("%i%s%i", MinBPM, SEPARATOR.GetValue().c_str(), MaxBPM) );
+			SetText( ssprintf("%ld%s%ld", MinBPM, SEPARATOR.GetValue().c_str(), MaxBPM) );
 		}
 	}
 	else

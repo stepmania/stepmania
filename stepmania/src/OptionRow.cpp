@@ -704,9 +704,9 @@ void OptionRow::GetWidthXY( PlayerNumber pn, int iChoiceOnRow, int &iWidthOut, i
 {
 	const BitmapText &text = GetTextItemForRow( pn, iChoiceOnRow );
 
-	iWidthOut = int(roundf( text.GetZoomedWidth() ));
-	iXOut = int(roundf( text.GetDestX() ));
-	iYOut = int( roundf(m_Frame.GetDestY()) );
+	iWidthOut = lroundf( text.GetZoomedWidth() );
+	iXOut = lroundf( text.GetDestX() );
+	iYOut = lroundf( m_Frame.GetDestY() );
 }
 
 

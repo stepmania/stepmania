@@ -20,7 +20,7 @@ NoteType NoteDataUtil::GetSmallestNoteTypeForMeasure( const NoteData &n, int iMe
 	for( nt=(NoteType)0; nt<NUM_NoteType; nt=NoteType(nt+1) )		// for each NoteType, largest to largest
 	{
 		float fBeatSpacing = NoteTypeToBeat( nt );
-		int iRowSpacing = int(roundf( fBeatSpacing * ROWS_PER_BEAT ));
+		int iRowSpacing = lroundf( fBeatSpacing * ROWS_PER_BEAT );
 
 		bool bFoundSmallerNote = false;
 		// for each index in this measure
@@ -340,7 +340,7 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in, RString &sRet )
 			if( nt == NoteType_Invalid )
 				iRowSpacing = 1;
 			else
-				iRowSpacing = int(roundf( NoteTypeToBeat(nt) * ROWS_PER_BEAT ));
+				iRowSpacing = lroundf( NoteTypeToBeat(nt) * ROWS_PER_BEAT );
 			// (verify first)
 			// iRowSpacing = BeatToNoteRow( NoteTypeToBeat(nt) );
 			
@@ -1221,7 +1221,7 @@ void NoteDataUtil::Wide( NoteData &inout, int iStartIndex, int iEndIndex )
 			continue;	// skip
 
 		// add a note determinitsitcally
-		int iBeat = (int)roundf( NoteRowToBeat(i) );
+		int iBeat = lroundf( NoteRowToBeat(i) );
 		int iTrackOfNote = inout.GetFirstTrackWithTap(i);
 		int iTrackToAdd = iTrackOfNote + (iBeat%5)-2;	// won't be more than 2 tracks away from the existing note
 		CLAMP( iTrackToAdd, 0, inout.GetNumTracks()-1 );

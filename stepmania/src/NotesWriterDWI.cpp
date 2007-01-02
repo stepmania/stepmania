@@ -361,7 +361,7 @@ bool NotesWriterDWI::Write( RString sPath, const Song &out )
 	ASSERT( out.m_Timing.m_BPMSegments[0].m_iStartIndex == 0 );
 	f.PutLine( ssprintf("#FILE:%s;", DwiEscape(out.m_sMusicFile).c_str()) );
 	f.PutLine( ssprintf("#BPM:%.3f;", out.m_Timing.m_BPMSegments[0].GetBPM()) );
-	f.PutLine( ssprintf("#GAP:%d;", int(-roundf( out.m_Timing.m_fBeat0OffsetInSeconds*1000 ))) );
+	f.PutLine( ssprintf("#GAP:%ld;", -lroundf( out.m_Timing.m_fBeat0OffsetInSeconds*1000 )) );
 	f.PutLine( ssprintf("#SAMPLESTART:%.3f;", out.m_fMusicSampleStartSeconds) );
 	f.PutLine( ssprintf("#SAMPLELENGTH:%.3f;", out.m_fMusicSampleLengthSeconds) );
 	if( out.m_sCDTitleFile.size() )

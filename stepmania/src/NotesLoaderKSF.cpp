@@ -21,7 +21,7 @@ void KSFLoader::RemoveHoles( NoteData &out, const Song &song )
 		const int ToRow = (int) BeatToNoteRow(song.m_Timing.m_BPMSegments[seg].m_fStartBeat);
 
 		LOG->Trace("from %f (%i) to (%i)", FromBeat, FromRow, ToRow);
-//		const int ToRow = (int) roundf(FromRow * song.m_Timing.m_BPMSegments[0].m_fBPM / song.m_BPMSegments[seg].m_fBPM);
+//		const int ToRow = lroundf(FromRow * song.m_Timing.m_BPMSegments[0].m_fBPM / song.m_BPMSegments[seg].m_fBPM);
 //		const int Rows = out.GetLastRow() - FromRow + 1;
 //		int LastRow;
 //		if(seg+1 < song.m_Timing.m_BPMSegments().size())
@@ -46,7 +46,7 @@ void KSFLoader::RemoveHoles( NoteData &out, const Song &song )
 			if( tn == TAP_EMPTY )
 				continue;
 
-			const int RealRow = (int) roundf(row * OrigBPM / CurBPM);
+			const int RealRow = lroundf(row * OrigBPM / CurBPM);
 			if( RealRow == row )
 				continue;
 			LOG->Trace("from %i to %i", row, RealRow);

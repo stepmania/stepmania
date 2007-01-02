@@ -69,7 +69,7 @@ static int CalculateWorkoutProgramMeter( WorkoutProgram wp, int iAverageMeter, i
 	case WorkoutProgram_FatBurn:
 		{
 			float fMeter = SCALE( iSongInBodyIndex % 4, 0.0f, 3.0f, (float)iMinMeter, (float)iMaxMeter );
-			iMeter = (int)roundf( fMeter );
+			iMeter = lroundf( fMeter );
 		}
 		break;
 	case WorkoutProgram_FitnessTest:
@@ -92,7 +92,7 @@ static int CalculateWorkoutProgramMeter( WorkoutProgram wp, int iAverageMeter, i
 				break;
 			case 4:
 			case 5:
-				iMeter = (int) roundf( SCALE( 0.5f, 0.0f, 1.0f, (float)iMinMeter, (float)iMaxMeter ) );
+				iMeter = lroundf( SCALE( 0.5f, 0.0f, 1.0f, (float)iMinMeter, (float)iMaxMeter ) );
 				break;
 			}
 		}
@@ -107,7 +107,7 @@ static int CalculateWorkoutProgramMeter( WorkoutProgram wp, int iAverageMeter, i
 			float fMeter = SCALE( iSongInBodyIndex % 4, 0.0f, 3.0f, (float)iMinMeter, (float)iMaxMeter );
 			if( (iSongInBodyIndex % 8) >= 4 )
 				fMeter = SCALE( fMeter, (float)iMinMeter, (float)iMaxMeter, (float)iMaxMeter, (float)iMinMeter );
-			iMeter = (int)roundf( fMeter );
+			iMeter = lroundf( fMeter );
 		}
 		break;
 	case WorkoutProgram_Flat:
