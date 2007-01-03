@@ -3511,6 +3511,18 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="Quad.h">
 			</File>
 			<File
+				RelativePath=".\RageSoundReader_Extend.cpp">
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_Extend.h">
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_ThreadedBuffer.cpp">
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_ThreadedBuffer.h">
+			</File>
+			<File
 				RelativePath="RollingNumbers.cpp">
 			</File>
 			<File
