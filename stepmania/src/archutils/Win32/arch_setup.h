@@ -109,6 +109,7 @@ static inline int64_t llabs( int64_t i ) { return i >= 0? i: -i; }
 #define NEED_TRUNCF
 #define NEED_ROUNDF
 #define NEED_STRTOF
+#define NEED_LROUNDF
 #define MISSING_STDINT_H
 #endif
 
