@@ -191,7 +191,7 @@ void BitmapText::BuildChars()
 	switch( m_VertAlign )
 	{
 	case VertAlign_Top:	iY = 0;					break;
-	case VertAlign_Middle:	iY = -lroundf(m_size.y/2.0f);		break;
+	case VertAlign_Middle:	iY = -lrintf(m_size.y/2.0f);		break;
 	case VertAlign_Bottom:	iY = -(int)m_size.y;			break;
 	default:		ASSERT( false );
 	}
@@ -209,7 +209,7 @@ void BitmapText::BuildChars()
 		switch( m_HorizAlign )
 		{
 		case HorizAlign_Left:	iX = 0;					break;
-		case HorizAlign_Center:	iX = -lroundf(iLineWidth/2.0f);	break;
+		case HorizAlign_Center:	iX = -lrintf(iLineWidth/2.0f);	break;
 		case HorizAlign_Right:	iX = -iLineWidth;			break;
 		default:		ASSERT( false );
 		}
@@ -254,8 +254,8 @@ void BitmapText::DrawChars()
 		return; 
 
 	const int iNumGlyphs = m_pTextures.size();
-	int iStartGlyph = lroundf( SCALE( m_pTempState->crop.left, 0.f, 1.f, 0, (float) iNumGlyphs ) );
-	int iEndGlyph = lroundf( SCALE( m_pTempState->crop.right, 0.f, 1.f, (float) iNumGlyphs, 0 ) );
+	int iStartGlyph = lrintf( SCALE( m_pTempState->crop.left, 0.f, 1.f, 0, (float) iNumGlyphs ) );
+	int iEndGlyph = lrintf( SCALE( m_pTempState->crop.right, 0.f, 1.f, (float) iNumGlyphs, 0 ) );
 	iStartGlyph = clamp( iStartGlyph, 0, iNumGlyphs );
 	iEndGlyph = clamp( iEndGlyph, 0, iNumGlyphs );
 
@@ -565,7 +565,7 @@ void BitmapText::DrawPrimitives()
 		vector<RageVector3> vGlyphJitter;
 		if( m_bJitter )
 		{
-			int iSeed = lroundf( RageTimer::GetTimeSinceStartFast()*8 );
+			int iSeed = lrintf( RageTimer::GetTimeSinceStartFast()*8 );
 			RandomGen rnd( iSeed );
 
 			for( unsigned i=0; i<m_aVertices.size(); i+=4 )

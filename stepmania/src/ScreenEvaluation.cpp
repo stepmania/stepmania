@@ -559,8 +559,8 @@ void ScreenEvaluation::Init()
 				RadarCategory_Jumps, RadarCategory_Holds, RadarCategory_Mines, RadarCategory_Hands, RadarCategory_Rolls
 			};
 			const int ind = indeces[l];
-			const int iActual = lroundf(STATSMAN->m_CurStageStats.m_player[p].m_radarActual[ind]);
-			const int iPossible = lroundf(STATSMAN->m_CurStageStats.m_player[p].m_radarPossible[ind]);
+			const int iActual = lrintf(STATSMAN->m_CurStageStats.m_player[p].m_radarActual[ind]);
+			const int iPossible = lrintf(STATSMAN->m_CurStageStats.m_player[p].m_radarPossible[ind]);
 
 			m_textStatsText[l][p].SetText( ssprintf("%3d/%3d",iActual,iPossible) );
 		}

@@ -876,13 +876,13 @@ RageSurface *RageSurfaceUtils::PalettizeToGrayscale( const RageSurface *src_surf
 		if( Ivalues == 1 )
 			ScaledI = 255; // if only one intensity value, always fullbright
 		else
-			ScaledI = clamp( lroundf(I * (255.0f / (Ivalues-1))), 0L, 255L );
+			ScaledI = clamp( lrintf(I * (255.0f / (Ivalues-1))), 0L, 255L );
 
 		int ScaledA;
 		if( Avalues == 1 )
 			ScaledA = 255; // if only one alpha value, always opaque
 		else
-			ScaledA = clamp( lroundf(A * (255.0f / (Avalues-1))), 0L, 255L );
+			ScaledA = clamp( lrintf(A * (255.0f / (Avalues-1))), 0L, 255L );
 
 		RageSurfaceColor c;
 		c.r = uint8_t(ScaledI);

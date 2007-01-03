@@ -112,7 +112,7 @@ int Trail::GetMeter() const
 
 	float fMeter = GetTotalMeter() / (float)m_vEntries.size();
 
-	return lroundf( fMeter );
+	return lrintf( fMeter );
 }
 
 int Trail::GetTotalMeter() const

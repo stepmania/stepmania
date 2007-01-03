@@ -528,10 +528,10 @@ static void CheckReversePackedPixels()
 void SetupExtensions()
 {
 	const float fGLVersion = StringToFloat( (const char *) glGetString(GL_VERSION) );
-	g_glVersion = lroundf( fGLVersion * 10 );
+	g_glVersion = lrintf( fGLVersion * 10 );
 
 	const float fGLUVersion = StringToFloat( (const char *) gluGetString(GLU_VERSION) );
-	g_gluVersion = lroundf( fGLUVersion * 10 );
+	g_gluVersion = lrintf( fGLUVersion * 10 );
 
 	GLExt.Load( g_pWind );
 

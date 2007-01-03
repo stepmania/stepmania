@@ -208,11 +208,6 @@ inline float roundf( float f ) CONST_FUNCTION;
 float roundf( float f ) { if( f < 0.0f ) return truncf( f-0.5f ); return truncf( f+0.5f ); }
 #endif
 
-#ifdef NEED_LROUNDF
-inline long int lroundf( float f ) CONST_FUNCTION;
-long int lroundf( float f ) { return (long int)roundf( f ); }
-#endif
-
 #ifdef NEED_STRTOF
 inline float strtof( const char *s, char **se ) { return (float) strtod( s, se ); }
 #endif

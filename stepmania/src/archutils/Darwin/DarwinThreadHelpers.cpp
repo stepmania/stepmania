@@ -58,7 +58,7 @@ void SetThreadPrecedence( float prec )
 	// Real values are between 0 and 63.
 	if( CLAMP(prec, 0.0f, 1.0f) )
 		LOG->Warn( "Thread precedence clamped to %f.", prec );
-	thread_precedence_policy po = { integer_t( lroundf(prec * 63) ) };
+	thread_precedence_policy po = { integer_t( lrintf(prec * 63) ) };
 	kern_return_t ret = thread_policy_set( mach_thread_self(), THREAD_PRECEDENCE_POLICY,
 					       (thread_policy_t)&po, THREAD_PRECEDENCE_POLICY_COUNT );
 	
