@@ -265,7 +265,7 @@ struct GameInput
 		return button < other.button;
 	}
 
-	inline bool IsValid() const { return controller != GameController_Invalid; };
+	inline bool IsValid() const { return controller != GameController_Invalid && button != GameButton_Invalid; };
 	inline void MakeInvalid() { controller = GameController_Invalid; button = GameButton_Invalid; };
 
 	RString ToString( const InputScheme* pInputs ) const;
