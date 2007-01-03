@@ -2223,10 +2223,12 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 				case GameButtonType_INVALID:
 					break;
 				case GameButtonType_Step:
-					pi.m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
+					if( iCol != -1 )
+						pi.m_pPlayer->Step( iCol, -1, input.DeviceI.ts, false, bRelease );
 					break;
 				case GameButtonType_Fret:
-					pi.m_pPlayer->Fret( iCol, -1, input.DeviceI.ts, false, bRelease );
+					if( iCol != -1 )
+						pi.m_pPlayer->Fret( iCol, -1, input.DeviceI.ts, false, bRelease );
 					break;
 				case GameButtonType_Strum:
 					pi.m_pPlayer->Strum( iCol, -1, input.DeviceI.ts, false, bRelease );
