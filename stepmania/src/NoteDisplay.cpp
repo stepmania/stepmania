@@ -376,28 +376,28 @@ void NoteDisplay::DrawHoldTopCap( const TapNote& tn, int iCol, float fBeat, bool
 	StripBuffer queue;
 
 	vector<Sprite*> vpSpr;
-	Sprite *pSprTopCap = GetHoldSprite( m_HoldTopCap, NotePart_HoldTopCap, fBeat, tn.subType == TapNote::hold_head_roll, bIsBeingHeld && !cache->m_bHoldActiveIsAddLayer );
-	pSprTopCap->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
-	vpSpr.push_back( pSprTopCap );
+	Sprite *pSprite = GetHoldSprite( m_HoldTopCap, NotePart_HoldTopCap, fBeat, tn.subType == TapNote::hold_head_roll, bIsBeingHeld && !cache->m_bHoldActiveIsAddLayer );
+	pSprite->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
+	vpSpr.push_back( pSprite );
 	if( bIsBeingHeld && cache->m_bHoldActiveIsAddLayer )
 	{
 		Sprite *pSpr = GetHoldSprite( m_HoldTopCap, NotePart_HoldTopCap, fBeat, tn.subType == TapNote::hold_head_roll, true );
-		ASSERT( pSpr->GetUnzoomedWidth() == pSprTopCap->GetUnzoomedWidth() );
-		ASSERT( pSpr->GetUnzoomedHeight() == pSprTopCap->GetUnzoomedHeight() );
+		ASSERT( pSpr->GetUnzoomedWidth() == pSprite->GetUnzoomedWidth() );
+		ASSERT( pSpr->GetUnzoomedHeight() == pSprite->GetUnzoomedHeight() );
 		pSpr->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 		vpSpr.push_back( pSpr );
 	}
 
 	// draw manually in small segments
-	const RectF *pRect = pSprTopCap->GetCurrentTextureCoordRect();
+	const RectF *pRect = pSprite->GetCurrentTextureCoordRect();
 	DISPLAY->ClearAllTextures();
 	DISPLAY->SetCullMode( CULL_NONE );
 	DISPLAY->SetTextureWrapping(false);
 
-	const float fFrameWidth  = pSprTopCap->GetZoomedWidth();
-	const float fFrameHeight = pSprTopCap->GetZoomedHeight();
-	const float fYCapTop	 = fYHead+cache->m_iStartDrawingHoldBodyOffsetFromHead-fFrameHeight;
-	const float fYCapBottom  = fYHead+cache->m_iStartDrawingHoldBodyOffsetFromHead;
+	const float fFrameWidth		= pSprite->GetZoomedWidth();
+	const float fFrameHeight	= pSprite->GetZoomedHeight();
+	const float fYCapTop		= fYHead+cache->m_iStartDrawingHoldBodyOffsetFromHead-fFrameHeight;
+	const float fYCapBottom		= fYHead+cache->m_iStartDrawingHoldBodyOffsetFromHead;
 
 	bool bReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(iCol) > 0.5f;
 
@@ -477,14 +477,14 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 	StripBuffer queue;
 
 	vector<Sprite*> vpSpr;
-	Sprite *pSprBody = GetHoldSprite( m_HoldBody, NotePart_HoldBody, fBeat, tn.subType == TapNote::hold_head_roll, bIsBeingHeld && !cache->m_bHoldActiveIsAddLayer );
-	pSprBody->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
-	vpSpr.push_back( pSprBody );
+	Sprite *pSprite = GetHoldSprite( m_HoldBody, NotePart_HoldBody, fBeat, tn.subType == TapNote::hold_head_roll, bIsBeingHeld && !cache->m_bHoldActiveIsAddLayer );
+	pSprite->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
+	vpSpr.push_back( pSprite );
 	if( bIsBeingHeld && cache->m_bHoldActiveIsAddLayer )
 	{
 		Sprite *pSpr = GetHoldSprite( m_HoldBody, NotePart_HoldBody, fBeat, tn.subType == TapNote::hold_head_roll, true );
-		ASSERT( pSpr->GetUnzoomedWidth() == pSprBody->GetUnzoomedWidth() );
-		ASSERT( pSpr->GetUnzoomedHeight() == pSprBody->GetUnzoomedHeight() );
+		ASSERT( pSpr->GetUnzoomedWidth() == pSprite->GetUnzoomedWidth() );
+		ASSERT( pSpr->GetUnzoomedHeight() == pSprite->GetUnzoomedHeight() );
 		pSpr->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 		vpSpr.push_back( pSpr );
 	}
@@ -493,9 +493,9 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 	DISPLAY->ClearAllTextures();
 
 	// draw manually in small segments
-	const RectF *pRect = pSprBody->GetCurrentTextureCoordRect();
-	const float fFrameWidth  = pSprBody->GetZoomedWidth();
-	const float fFrameHeight = pSprBody->GetZoomedHeight();
+	const RectF *pRect = pSprite->GetCurrentTextureCoordRect();
+	const float fFrameWidth  = pSprite->GetZoomedWidth();
+	const float fFrameHeight = pSprite->GetZoomedHeight();
 	const float fYBodyTop = fYHead + cache->m_iStartDrawingHoldBodyOffsetFromHead;
 	const float fYBodyBottom = fYTail + cache->m_iStopDrawingHoldBodyOffsetFromTail;
 
@@ -587,26 +587,26 @@ void NoteDisplay::DrawHoldBottomCap( const TapNote& tn, int iCol, float fBeat, b
 	StripBuffer queue;
 
 	vector<Sprite*> vpSpr;
-	Sprite* pBottomCap = GetHoldSprite( m_HoldBottomCap, NotePart_HoldBottomCap, fBeat, tn.subType == TapNote::hold_head_roll, bIsBeingHeld && !cache->m_bHoldActiveIsAddLayer );
-	pBottomCap->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
-	vpSpr.push_back( pBottomCap );
+	Sprite* pSprite = GetHoldSprite( m_HoldBottomCap, NotePart_HoldBottomCap, fBeat, tn.subType == TapNote::hold_head_roll, bIsBeingHeld && !cache->m_bHoldActiveIsAddLayer );
+	pSprite->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
+	vpSpr.push_back( pSprite );
 	if( bIsBeingHeld && cache->m_bHoldActiveIsAddLayer )
 	{
 		Sprite *pSpr = GetHoldSprite( m_HoldBody, NotePart_HoldBody, fBeat, tn.subType == TapNote::hold_head_roll, true );
-		ASSERT( pSpr->GetUnzoomedWidth() == pBottomCap->GetUnzoomedWidth() );
-		ASSERT( pSpr->GetUnzoomedHeight() == pBottomCap->GetUnzoomedHeight() );
+		ASSERT( pSpr->GetUnzoomedWidth() == pSprite->GetUnzoomedWidth() );
+		ASSERT( pSpr->GetUnzoomedHeight() == pSprite->GetUnzoomedHeight() );
 		pSpr->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 		vpSpr.push_back( pSpr );
 	}
 
 	// draw manually in small segments
-	const RectF *pRect = pBottomCap->GetCurrentTextureCoordRect();
+	const RectF *pRect = pSprite->GetCurrentTextureCoordRect();
 	DISPLAY->ClearAllTextures();
 	DISPLAY->SetCullMode( CULL_NONE );
 	DISPLAY->SetTextureWrapping(false);
 
-	const float fFrameWidth		= pBottomCap->GetZoomedWidth();
-	const float fFrameHeight	= pBottomCap->GetZoomedHeight();
+	const float fFrameWidth		= pSprite->GetZoomedWidth();
+	const float fFrameHeight	= pSprite->GetZoomedHeight();
 	const float fYCapTop		= fYTail+cache->m_iStopDrawingHoldBodyOffsetFromTail;
 	const float fYCapBottom		= fYTail+cache->m_iStopDrawingHoldBodyOffsetFromTail+fFrameHeight;
 
