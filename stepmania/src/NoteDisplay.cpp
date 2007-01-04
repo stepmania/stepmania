@@ -812,10 +812,9 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeing
 	const float fYHead = bReverse ? fEndYPos : fStartYPos;		// the center of the head
 	const float fYTail = bReverse ? fStartYPos : fEndYPos;		// the center the tail
 
-//	const bool  bWavy = GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fEffects[PlayerOptions::EFFECT_DRUNK] > 0;
 	const bool WavyPartsNeedZBuffer = ArrowEffects::NeedZBuffer( m_pPlayerState );
 	/* Hack: Z effects need a finer grain step. */
-	const int	fYStep = WavyPartsNeedZBuffer? 4: 16; //bWavy ? 16 : 128;	// use small steps only if wavy
+	const int	fYStep = WavyPartsNeedZBuffer? 4: 16;		// use small steps only if wavy
 
 	const float fColorScale		= tn.HoldResult.fLife + (1-tn.HoldResult.fLife)*cache->m_fHoldLetGoGrayPercent;
 
