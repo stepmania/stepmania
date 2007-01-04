@@ -716,8 +716,6 @@ void NoteDisplay::DrawHoldHeadTail( const TapNote& tn, Actor* pActor, NotePart p
 	//
 	// Draw the head
 	//
-	pActor->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
-
 	const float fYOffset		= ArrowEffects::GetYOffsetFromYPos( m_pPlayerState, iCol, fY, m_fYReverseOffsetPixels );
 	if( fYOffset < fDrawDistanceAfterTargetsPixels || fYOffset > fDrawDistanceBeforeTargetsPixels )
 		return;
@@ -731,6 +729,7 @@ void NoteDisplay::DrawHoldHeadTail( const TapNote& tn, Actor* pActor, NotePart p
 	pActor->SetRotationZ( 0 );
 	pActor->SetXY( fX, fY );
 	pActor->SetZ( fZ );
+	pActor->SetZoom( ArrowEffects::GetZoom(m_pPlayerState) );
 
 	bool bNeedsTranslate = (bIsAddition && !IsVectorZero(cache->m_fAdditionTextureCoordOffset[part])) || !IsVectorZero(cache->m_fNoteColorTextureCoordSpacing[part]);
 	if( bNeedsTranslate )
@@ -876,7 +875,6 @@ void NoteDisplay::DrawActor( const TapNote& tn, Actor* pActor, NotePart part, in
 	const float fAlpha			= ArrowEffects::GetAlpha(	m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 	const float fGlow			= ArrowEffects::GetGlow(	m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 	const float fColorScale			= ArrowEffects::GetBrightness(	m_pPlayerState, fBeat );
-	const float fZoom			= ArrowEffects::GetZoom( m_pPlayerState );
 	RageColor diffuse = RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 	RageColor glow = RageColor(1,1,1,fGlow);
 
@@ -885,7 +883,7 @@ void NoteDisplay::DrawActor( const TapNote& tn, Actor* pActor, NotePart part, in
 	pActor->SetZ( fZPos );
 	pActor->SetDiffuse( diffuse );
 	pActor->SetGlow( glow );
-	pActor->SetZoom( fZoom );
+	pActor->SetZoom( ArrowEffects::GetZoom(m_pPlayerState) );
 
 	bool bNeedsTranslate = (bIsAddition && !IsVectorZero(cache->m_fAdditionTextureCoordOffset[part])) || !IsVectorZero(cache->m_fNoteColorTextureCoordSpacing[part]);
 	if( bNeedsTranslate )
