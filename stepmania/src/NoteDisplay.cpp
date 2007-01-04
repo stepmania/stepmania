@@ -368,7 +368,7 @@ struct StripBuffer
 };
 
 void NoteDisplay::DrawHoldTopCap( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, bool bIsAddition, float fPercentFadeToFail, float fColorScale, 
-				 bool bGlow, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fDrawDistanceBeforeTargetsPixels2, float fFadeInPercentOfDrawFar )
+				 bool bGlow, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
 {
 	//
 	// Draw the top cap (always wavy)
@@ -480,7 +480,7 @@ void NoteDisplay::DrawHoldTopCap( const TapNote& tn, int iCol, int iRow, bool bI
 
 
 void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, bool bIsAddition, float fPercentFadeToFail, float fColorScale, bool bGlow,
-							   float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fDrawDistanceBeforeTargetsPixels2, float fFadeInPercentOfDrawFar )
+							   float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
 {
 	//
 	// Draw the body (always wavy)
@@ -603,7 +603,7 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, int iRow, bool bIsB
 }
 
 void NoteDisplay::DrawHoldBottomCap( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, float fYHead, float fYTail, int	fYStep, bool bIsAddition, float fPercentFadeToFail, float fColorScale, 
-				    bool bGlow, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fDrawDistanceBeforeTargetsPixels2, float fFadeInPercentOfDrawFar )
+				    bool bGlow, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
 {
 	//
 	// Draw the bottom cap (always wavy)
@@ -711,7 +711,7 @@ void NoteDisplay::DrawHoldBottomCap( const TapNote& tn, int iCol, int iRow, bool
 }
 
 void NoteDisplay::DrawHoldTail( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, float fY, bool bIsAddition, float fPercentFadeToFail, float fColorScale, 
-			       bool bGlow, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fDrawDistanceBeforeTargetsPixels2, float fFadeInPercentOfDrawFar )
+			       bool bGlow, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
 {
 	//
 	// Draw the tail
@@ -781,7 +781,7 @@ void NoteDisplay::DrawHoldTail( const TapNote& tn, int iCol, int iRow, bool bIsB
 }
 
 void NoteDisplay::DrawHoldHead( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, float fY, bool bIsAddition, float fPercentFadeToFail, float fColorScale, 
-			       bool bGlow, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fDrawDistanceBeforeTargetsPixels2, float fFadeInPercentOfDrawFar )
+			       bool bGlow, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
 {
 	//
 	// Draw the head
@@ -898,9 +898,9 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeing
 	/* The body and caps should have no overlap, so their order doesn't matter.
 	 * Draw the head last, so it appears on top. */
 	if( !cache->m_bHoldHeadIsAboveWavyParts )
-		DrawHoldHead( tn, iCol, iRow, bIsBeingHeld, bFlipHeadAndTail ? fYTail : fYHead, bIsAddition, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+		DrawHoldHead( tn, iCol, iRow, bIsBeingHeld, bFlipHeadAndTail ? fYTail : fYHead, bIsAddition, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 	if( !cache->m_bHoldTailIsAboveWavyParts )
-		DrawHoldTail( tn, iCol, iRow, bIsBeingHeld, bFlipHeadAndTail ? fYHead : fYTail, bIsAddition, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+		DrawHoldTail( tn, iCol, iRow, bIsBeingHeld, bFlipHeadAndTail ? fYHead : fYTail, bIsAddition, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 
 	if( bDrawGlowOnly )
 		DISPLAY->SetTextureModeGlow();
@@ -910,16 +910,16 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeing
 	DISPLAY->SetZWrite( WavyPartsNeedZBuffer );
 	
 	if( !bFlipHeadAndTail )
-		DrawHoldBottomCap( tn, iCol, iRow, bIsBeingHeld, fYHead, fYTail, fYStep, bIsAddition, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
-	DrawHoldBody( tn, iCol, iRow, bIsBeingHeld, fYHead, fYTail, fYStep, bIsAddition, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+		DrawHoldBottomCap( tn, iCol, iRow, bIsBeingHeld, fYHead, fYTail, fYStep, bIsAddition, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+	DrawHoldBody( tn, iCol, iRow, bIsBeingHeld, fYHead, fYTail, fYStep, bIsAddition, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 	if( bFlipHeadAndTail )
-		DrawHoldTopCap( tn, iCol, iRow, bIsBeingHeld, fYHead, fYTail, fYStep, bIsAddition, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+		DrawHoldTopCap( tn, iCol, iRow, bIsBeingHeld, fYHead, fYTail, fYStep, bIsAddition, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 
 	/* These set the texture mode themselves. */
 	if( cache->m_bHoldTailIsAboveWavyParts )
-		DrawHoldTail( tn, iCol, iRow, bIsBeingHeld, bFlipHeadAndTail ? fYHead : fYTail, bIsAddition, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+		DrawHoldTail( tn, iCol, iRow, bIsBeingHeld, bFlipHeadAndTail ? fYHead : fYTail, bIsAddition, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 	if( cache->m_bHoldHeadIsAboveWavyParts )
-		DrawHoldHead( tn, iCol, iRow, bIsBeingHeld, bFlipHeadAndTail ? fYTail : fYHead, bIsAddition, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+		DrawHoldHead( tn, iCol, iRow, bIsBeingHeld, bFlipHeadAndTail ? fYTail : fYHead, bIsAddition, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 
 	// now, draw the glow pass
 	if( !bDrawGlowOnly )
