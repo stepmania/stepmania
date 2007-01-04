@@ -735,7 +735,7 @@ void NoteDisplay::DrawHoldHeadTail( const TapNote& tn, Actor* pActor, NotePart p
 	if( bNeedsTranslate )
 	{
 		DISPLAY->TexturePushMatrix();
-		NoteType nt = GetNoteType( fBeat );
+		NoteType nt = BeatToNoteType( fBeat );
 		ENUM_CLAMP( nt, (NoteType)0, MAX_DISPLAY_NOTE_TYPE );
 		DISPLAY->TextureTranslate( (bIsAddition ? cache->m_fAdditionTextureCoordOffset[part] : RageVector2(0,0)) + cache->m_fNoteColorTextureCoordSpacing[part]*(float)nt );
 	}
