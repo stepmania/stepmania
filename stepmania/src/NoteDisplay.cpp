@@ -731,6 +731,7 @@ void NoteDisplay::DrawHoldTail( const TapNote& tn, int iCol, int iRow, bool bIsB
 	const RageColor colorDiffuse	= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 	const RageColor colorGlow	= RageColor(1,1,1,fGlow);
 
+	pSprTail->SetRotationZ( 0 );
 	pSprTail->SetXY( fX, fY );
 	pSprTail->SetZ( fZ );
 	
