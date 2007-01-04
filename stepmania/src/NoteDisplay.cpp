@@ -592,7 +592,7 @@ void NoteDisplay::DrawHoldBottomCap( const TapNote& tn, int iCol, float fBeat, b
 	vpSpr.push_back( pSprite );
 	if( bIsBeingHeld && cache->m_bHoldActiveIsAddLayer )
 	{
-		Sprite *pSpr = GetHoldSprite( m_HoldBody, NotePart_HoldBody, fBeat, tn.subType == TapNote::hold_head_roll, true );
+		Sprite *pSpr = GetHoldSprite( m_HoldBottomCap, NotePart_HoldBottomCap, fBeat, tn.subType == TapNote::hold_head_roll, true );
 		ASSERT( pSpr->GetUnzoomedWidth() == pSprite->GetUnzoomedWidth() );
 		ASSERT( pSpr->GetUnzoomedHeight() == pSprite->GetUnzoomedHeight() );
 		pSpr->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
