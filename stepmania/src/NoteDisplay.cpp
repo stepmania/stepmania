@@ -926,7 +926,7 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeing
 		DrawHold( tn, iCol, iRow, bIsBeingHeld, bIsActive, Result, bIsAddition, fPercentFadeToFail, true, fReverseOffsetPixels, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 }
 
-void NoteDisplay::DrawActor( const TapNote& tn, Actor* pActor, int iCol, float fBeat, bool bIsAddition, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels, bool bUseLighting, NotePart part, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
+void NoteDisplay::DrawActor( const TapNote& tn, Actor* pActor, NotePart part, int iCol, float fBeat, bool bIsAddition, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels, bool bUseLighting, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
 {
 	const float fYOffset			= ArrowEffects::GetYOffset(	m_pPlayerState, iCol, fBeat );
 	const float fYPos			= ArrowEffects::GetYPos(	m_pPlayerState, iCol, fYOffset, fReverseOffsetPixels );
@@ -1020,7 +1020,7 @@ void NoteDisplay::DrawTap( const TapNote& tn, int iCol, float fBeat, bool bOnSam
 		LUA->Release( L );
 	}
 
-	DrawActor( tn, pActor, iCol, fBeat, bIsAddition, fPercentFadeToFail, fLife, fReverseOffsetPixels, bUseLighting, part, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+	DrawActor( tn, pActor, part, iCol, fBeat, bIsAddition, fPercentFadeToFail, fLife, fReverseOffsetPixels, bUseLighting, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 
 	if( tn.type == TapNote::attack )
 		pActor->PlayCommand( "UnsetAttack" );
