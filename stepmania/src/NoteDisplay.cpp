@@ -433,8 +433,8 @@ void NoteDisplay::DrawHoldTopCap( const TapNote& tn, int iCol, float fBeat, bool
 		const float fX			= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset );
 		const float fXLeft		= fX - fFrameWidth/2;
 		const float fXRight		= fX + fFrameWidth/2;
-		const float fTopDistFromHeadTop	= fY - fYCapTop;
-		const float fTexCoordTop	= SCALE( fTopDistFromHeadTop,    0, fFrameHeight, pRect->top, pRect->bottom );
+		const float fDistFromTop	= fY - fYCapTop;
+		const float fTexCoordTop	= SCALE( fDistFromTop,    0, fFrameHeight, pRect->top, pRect->bottom );
 		const float fTexCoordLeft	= pRect->left;
 		const float fTexCoordRight	= pRect->right;
 		const float fAlpha		= ArrowGetAlphaOrGlow( bGlow, m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
@@ -641,8 +641,8 @@ void NoteDisplay::DrawHoldBottomCap( const TapNote& tn, int iCol, float fBeat, b
 		const float fX			= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset );
 		const float fXLeft		= fX - fFrameWidth/2;
 		const float fXRight		= fX + fFrameWidth/2;
-		const float fTopDistFromTail	= fY - fYCapTop;
-		const float fTexCoordTop	= SCALE( fTopDistFromTail,    0, fFrameHeight, pRect->top, pRect->bottom );
+		const float fDistFromTop	= fY - fYCapTop;
+		const float fTexCoordTop	= SCALE( fDistFromTop,    0, fFrameHeight, pRect->top, pRect->bottom );
 		const float fTexCoordLeft	= pRect->left;
 		const float fTexCoordRight	= pRect->right;
 		const float fAlpha		= ArrowGetAlphaOrGlow( bGlow, m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
