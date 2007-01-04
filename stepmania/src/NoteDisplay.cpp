@@ -710,85 +710,12 @@ void NoteDisplay::DrawHoldBottomCap( const TapNote& tn, int iCol, int iRow, bool
 	}
 }
 
-void NoteDisplay::DrawHoldTail( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, float fY, bool bIsAddition, float fPercentFadeToFail, float fColorScale, 
-			       bool bGlow, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
-{
-	//
-	// Draw the tail
-	//
-	NotePart part = NotePart_HoldTail;
-	Actor *pActor = GetHoldActor( m_HoldTail, part, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
-
-	pActor->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
-
-	const float fYOffset		= ArrowEffects::GetYOffsetFromYPos( m_pPlayerState, iCol, fY, m_fYReverseOffsetPixels );
-	if( fYOffset < fDrawDistanceAfterTargetsPixels || fYOffset > fDrawDistanceBeforeTargetsPixels )
-		return;
-	const float fX			= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset );
-	const float fZ			= ArrowEffects::GetZPos( m_pPlayerState, iCol, fYOffset );
-	const float fAlpha		= ArrowEffects::GetAlpha( m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
-	const float fGlow		= ArrowEffects::GetGlow( m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
-	const RageColor colorDiffuse	= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
-	const RageColor colorGlow	= RageColor(1,1,1,fGlow);
-
-	pActor->SetRotationZ( 0 );
-	pActor->SetXY( fX, fY );
-	pActor->SetZ( fZ );
-
-	bool bNeedsTranslate = (bIsAddition && !IsVectorZero(cache->m_fAdditionTextureCoordOffset[part])) || !IsVectorZero(cache->m_fNoteColorTextureCoordSpacing[part]);
-	if( bNeedsTranslate )
-	{
-		DISPLAY->TexturePushMatrix();
-		NoteType nt = GetNoteType( iRow );
-		ENUM_CLAMP( nt, (NoteType)0, MAX_DISPLAY_NOTE_TYPE );
-		DISPLAY->TextureTranslate( (bIsAddition ? cache->m_fAdditionTextureCoordOffset[part] : RageVector2(0,0)) + cache->m_fNoteColorTextureCoordSpacing[part]*(float)nt );
-	}
-
-	if( bGlow )
-	{
-		pActor->SetDiffuse( RageColor(1,1,1,0) );
-		pActor->SetGlow( colorGlow );
-	}
-	else
-	{
-		pActor->SetDiffuse( colorDiffuse );
-		pActor->SetGlow( RageColor(0,0,0,0) );
-	}
-
-	if( cache->m_bHoldTailUseLighting )
-	{
-		DISPLAY->SetLighting( true );
-		DISPLAY->SetLightDirectional( 
-			0, 
-			RageColor(1,1,1,1), 
-			RageColor(1,1,1,1),
-			RageColor(1,1,1,1),
-			RageVector3(1, 0, +1) );
-	}
-
-	pActor->Draw();
-
-	if( cache->m_bHoldTailUseLighting )
-	{
-		DISPLAY->SetLightOff( 0 );
-		DISPLAY->SetLighting( false );
-	}
-
-	if( bNeedsTranslate )
-	{
-		DISPLAY->TexturePopMatrix();
-	}
-}
-
-void NoteDisplay::DrawHoldHead( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, float fY, bool bIsAddition, float fPercentFadeToFail, float fColorScale, 
-			       bool bGlow, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
+void NoteDisplay::DrawHoldHeadTail( const TapNote& tn, Actor* pActor, NotePart part, int iCol, int iRow, float fY, bool bIsAddition, float fPercentFadeToFail, float fColorScale, 
+			       bool bGlow, bool bUseLighting, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
 {
 	//
 	// Draw the head
 	//
-	NotePart part = NotePart_HoldHead;
-	Actor *pActor = GetHoldActor( m_HoldHead, part, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
-
 	pActor->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 
 	const float fYOffset		= ArrowEffects::GetYOffsetFromYPos( m_pPlayerState, iCol, fY, m_fYReverseOffsetPixels );
@@ -825,7 +752,7 @@ void NoteDisplay::DrawHoldHead( const TapNote& tn, int iCol, int iRow, bool bIsB
 		pActor->SetGlow( RageColor(0,0,0,0) );
 	}
 
-	if( cache->m_bHoldHeadUseLighting )
+	if( bUseLighting )
 	{
 		DISPLAY->SetLighting( true );
 		DISPLAY->SetLightDirectional( 
@@ -838,7 +765,7 @@ void NoteDisplay::DrawHoldHead( const TapNote& tn, int iCol, int iRow, bool bIsB
 
 	pActor->Draw();
 
-	if( cache->m_bHoldHeadUseLighting )
+	if( bUseLighting )
 	{
 		DISPLAY->SetLightOff( 0 );
 		DISPLAY->SetLighting( false );
@@ -898,9 +825,15 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeing
 	/* The body and caps should have no overlap, so their order doesn't matter.
 	 * Draw the head last, so it appears on top. */
 	if( !cache->m_bHoldHeadIsAboveWavyParts )
-		DrawHoldHead( tn, iCol, iRow, bIsBeingHeld, bFlipHeadAndTail ? fYTail : fYHead, bIsAddition, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+	{
+		Actor *pActor = GetHoldActor( m_HoldHead, NotePart_HoldHead, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
+		DrawHoldHeadTail( tn, pActor, NotePart_HoldHead, iCol, iRow, bFlipHeadAndTail ? fYTail : fYHead, bIsAddition, fPercentFadeToFail, fColorScale, bDrawGlowOnly, cache->m_bHoldHeadUseLighting, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+	}
 	if( !cache->m_bHoldTailIsAboveWavyParts )
-		DrawHoldTail( tn, iCol, iRow, bIsBeingHeld, bFlipHeadAndTail ? fYHead : fYTail, bIsAddition, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+	{
+		Actor *pActor = GetHoldActor( m_HoldTail, NotePart_HoldTail, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
+		DrawHoldHeadTail( tn, pActor, NotePart_HoldTail, iCol, iRow, bFlipHeadAndTail ? fYHead : fYTail, bIsAddition, fPercentFadeToFail, fColorScale, bDrawGlowOnly, cache->m_bHoldTailUseLighting, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+	}
 
 	if( bDrawGlowOnly )
 		DISPLAY->SetTextureModeGlow();
@@ -917,9 +850,15 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeing
 
 	/* These set the texture mode themselves. */
 	if( cache->m_bHoldTailIsAboveWavyParts )
-		DrawHoldTail( tn, iCol, iRow, bIsBeingHeld, bFlipHeadAndTail ? fYHead : fYTail, bIsAddition, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+	{
+		Actor *pActor = GetHoldActor( m_HoldTail, NotePart_HoldTail, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
+		DrawHoldHeadTail( tn, pActor, NotePart_HoldTail, iCol, iRow, bFlipHeadAndTail ? fYHead : fYTail, bIsAddition, fPercentFadeToFail, fColorScale, bDrawGlowOnly, cache->m_bHoldTailUseLighting, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+	}
 	if( cache->m_bHoldHeadIsAboveWavyParts )
-		DrawHoldHead( tn, iCol, iRow, bIsBeingHeld, bFlipHeadAndTail ? fYTail : fYHead, bIsAddition, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+	{
+		Actor *pActor = GetHoldActor( m_HoldHead, NotePart_HoldHead, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
+		DrawHoldHeadTail( tn, pActor, NotePart_HoldHead, iCol, iRow, bFlipHeadAndTail ? fYTail : fYHead, bIsAddition, fPercentFadeToFail, fColorScale, bDrawGlowOnly, cache->m_bHoldHeadUseLighting, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+	}
 
 	// now, draw the glow pass
 	if( !bDrawGlowOnly )
