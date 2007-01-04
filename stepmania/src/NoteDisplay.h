@@ -77,9 +77,9 @@ public:
 
 	static void Update( float fDeltaTime );
 
-	void DrawActor( Actor* pActor, int iCol, float fBeat, bool bIsAddition, float fPercentFadeToFail, float fLife, 
+	void DrawActor( const TapNote& tn, Actor* pActor, int iCol, float fBeat, bool bIsAddition, float fPercentFadeToFail, float fLife, 
 		float fReverseOffsetPixels, bool bUseLighting, NotePart part, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar );
-	void DrawTap( int iCol, float fBeat, bool bOnSameRowAsHoldStart, bool bIsAddition, bool bIsMine, bool bIsLift, 
+	void DrawTap( const TapNote& tn, int iCol, float fBeat, bool bOnSameRowAsHoldStart, bool bIsAddition,
 		float fPercentFadeToFail, float fLife, float fReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar );
 	void DrawHold( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, bool bIsActive, const HoldNoteResult &Result, 
 		bool bIsAddition, float fPercentFadeToFail, bool bDrawGlowOnly, float fReverseOffsetPixels, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, 

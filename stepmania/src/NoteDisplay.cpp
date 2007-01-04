@@ -926,7 +926,7 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeing
 		DrawHold( tn, iCol, iRow, bIsBeingHeld, bIsActive, Result, bIsAddition, fPercentFadeToFail, true, fReverseOffsetPixels, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 }
 
-void NoteDisplay::DrawActor( Actor* pActor, int iCol, float fBeat, bool bIsAddition, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels, bool bUseLighting, NotePart part, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
+void NoteDisplay::DrawActor( const TapNote& tn, Actor* pActor, int iCol, float fBeat, bool bIsAddition, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels, bool bUseLighting, NotePart part, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
 {
 	const float fYOffset			= ArrowEffects::GetYOffset(	m_pPlayerState, iCol, fBeat );
 	const float fYPos			= ArrowEffects::GetYPos(	m_pPlayerState, iCol, fYOffset, fReverseOffsetPixels );
@@ -981,19 +981,19 @@ void NoteDisplay::DrawActor( Actor* pActor, int iCol, float fBeat, bool bIsAddit
 	}
 }
 
-void NoteDisplay::DrawTap( int iCol, float fBeat, bool bOnSameRowAsHoldStart, bool bIsAddition, bool bIsMine, bool bIsLift, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
+void NoteDisplay::DrawTap( const TapNote& tn, int iCol, float fBeat, bool bOnSameRowAsHoldStart, bool bIsAddition, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
 {
 	Actor* pActor = NULL;
 	bool bUseLighting = false;
 	NotePart part = NotePart_Tap;
 	
-	if( bIsLift )
+	if( tn.type == TapNote::lift )
 	{
 		pActor = GetTapActor( m_TapLift, NotePart_Lift, fBeat );
 		bUseLighting = cache->m_bTapLiftUseLighting;
 		part = NotePart_Lift;
 	}
-	else if( bIsMine )
+	else if( tn.type == TapNote::mine )
 	{
 		pActor = GetTapActor( m_TapMine, NotePart_Mine, fBeat );
 		bUseLighting = cache->m_bTapMineUseLighting;
@@ -1010,7 +1010,7 @@ void NoteDisplay::DrawTap( int iCol, float fBeat, bool bOnSameRowAsHoldStart, bo
 		bUseLighting = cache->m_bTapNoteUseLighting;
 	}
 
-	DrawActor( pActor, iCol, fBeat, bIsAddition, fPercentFadeToFail, fLife, fReverseOffsetPixels, bUseLighting, part, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+	DrawActor( tn, pActor, iCol, fBeat, bIsAddition, fPercentFadeToFail, fLife, fReverseOffsetPixels, bUseLighting, part, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 }
 
 /*
