@@ -388,18 +388,18 @@ void NoteDisplay::DrawHoldTopCap( const TapNote& tn, int iCol, float fBeat, bool
 		vpSpr.push_back( pSpr );
 	}
 
-	// draw manually in small segments
-	const RectF *pRect = pSprite->GetCurrentTextureCoordRect();
 	DISPLAY->ClearAllTextures();
 	DISPLAY->SetCullMode( CULL_NONE );
 	DISPLAY->SetTextureWrapping(false);
 
+	// draw manually in small segments
+	const RectF *pRect = pSprite->GetCurrentTextureCoordRect();
 	const float fFrameWidth		= pSprite->GetZoomedWidth();
 	const float fFrameHeight	= pSprite->GetZoomedHeight();
 	const float fYCapTop		= fYHead+cache->m_iStartDrawingHoldBodyOffsetFromHead-fFrameHeight;
 	const float fYCapBottom		= fYHead+cache->m_iStartDrawingHoldBodyOffsetFromHead;
 
-	bool bReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(iCol) > 0.5f;
+	const bool bReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(iCol) > 0.5f;
 
 	if( bGlow )
 		fColorScale = 1;
@@ -420,7 +420,7 @@ void NoteDisplay::DrawHoldTopCap( const TapNote& tn, int iCol, float fBeat, bool
 	bool bLast = false;
 
 	float fY = fDrawYCapTop;
-	for( ; !bLast; fY+=fYStep )
+	for( ; !bLast; fY += fYStep )
 	{
 		if( fY >= fDrawYCapBottom )
 		{
@@ -443,8 +443,8 @@ void NoteDisplay::DrawHoldTopCap( const TapNote& tn, int iCol, float fBeat, bool
 		if( fAlpha > 0 )
 			bAllAreTransparent = false;
 
-		queue.v[0].p = RageVector3(fXLeft,  fY, fZ);	queue.v[0].c = color; queue.v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
-		queue.v[1].p = RageVector3(fXRight, fY, fZ);	queue.v[1].c = color; queue.v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
+		queue.v[0].p = RageVector3(fXLeft,  fY, fZ); queue.v[0].c = color; queue.v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
+		queue.v[1].p = RageVector3(fXRight, fY, fZ); queue.v[1].c = color; queue.v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
 		queue.v+=2;
 		if( queue.Free() < 2 || bLast )
 		{
@@ -489,15 +489,16 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 		vpSpr.push_back( pSpr );
 	}
 
-
 	DISPLAY->ClearAllTextures();
+	DISPLAY->SetCullMode( CULL_NONE );
+	DISPLAY->SetTextureWrapping( true );
 
 	// draw manually in small segments
 	const RectF *pRect = pSprite->GetCurrentTextureCoordRect();
-	const float fFrameWidth  = pSprite->GetZoomedWidth();
-	const float fFrameHeight = pSprite->GetZoomedHeight();
-	const float fYBodyTop = fYHead + cache->m_iStartDrawingHoldBodyOffsetFromHead;
-	const float fYBodyBottom = fYTail + cache->m_iStopDrawingHoldBodyOffsetFromTail;
+	const float fFrameWidth		= pSprite->GetZoomedWidth();
+	const float fFrameHeight	= pSprite->GetZoomedHeight();
+	const float fYBodyTop		= fYHead + cache->m_iStartDrawingHoldBodyOffsetFromHead;
+	const float fYBodyBottom	= fYTail + cache->m_iStopDrawingHoldBodyOffsetFromTail;
 
 	const bool bReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(iCol) > 0.5f;
 	bool bAnchorToBottom = bReverse && cache->m_bFlipHeadAndTailWhenReverse;
@@ -546,7 +547,7 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 		fTexCoordTop -= fVertTexCoordOffset;
 		const float fTexCoordLeft	= pRect->left;
 		const float fTexCoordRight	= pRect->right;
-		const float	fAlpha		= ArrowGetAlphaOrGlow( bGlow, m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+		const float fAlpha		= ArrowGetAlphaOrGlow( bGlow, m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 		const RageColor color		= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 
 		if( fAlpha > 0 )
@@ -566,8 +567,6 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 					RageTexture* pTexture = (*spr)->GetTexture();
 					DISPLAY->SetTexture( TextureUnit_1, pTexture->GetTexHandle() );
 					DISPLAY->SetBlendMode( spr == vpSpr.begin() ? BLEND_NORMAL : BLEND_ADD );
-					DISPLAY->SetCullMode( CULL_NONE );
-					DISPLAY->SetTextureWrapping( true );
 					queue.Draw();
 				}
 			}
@@ -599,18 +598,18 @@ void NoteDisplay::DrawHoldBottomCap( const TapNote& tn, int iCol, float fBeat, b
 		vpSpr.push_back( pSpr );
 	}
 
-	// draw manually in small segments
-	const RectF *pRect = pSprite->GetCurrentTextureCoordRect();
 	DISPLAY->ClearAllTextures();
 	DISPLAY->SetCullMode( CULL_NONE );
 	DISPLAY->SetTextureWrapping(false);
 
+	// draw manually in small segments
+	const RectF *pRect = pSprite->GetCurrentTextureCoordRect();
 	const float fFrameWidth		= pSprite->GetZoomedWidth();
 	const float fFrameHeight	= pSprite->GetZoomedHeight();
 	const float fYCapTop		= fYTail+cache->m_iStopDrawingHoldBodyOffsetFromTail;
 	const float fYCapBottom		= fYTail+cache->m_iStopDrawingHoldBodyOffsetFromTail+fFrameHeight;
 
-	bool bReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(iCol) > 0.5f;
+	const bool bReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(iCol) > 0.5f;
 
 	if( bGlow )
 		fColorScale = 1;
@@ -651,8 +650,8 @@ void NoteDisplay::DrawHoldBottomCap( const TapNote& tn, int iCol, float fBeat, b
 		if( fAlpha > 0 )
 			bAllAreTransparent = false;
 
-		queue.v[0].p = RageVector3(fXLeft,  fY, fZ);	queue.v[0].c = color; queue.v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
-		queue.v[1].p = RageVector3(fXRight, fY, fZ);	queue.v[1].c = color; queue.v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
+		queue.v[0].p = RageVector3(fXLeft,  fY, fZ); queue.v[0].c = color; queue.v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
+		queue.v[1].p = RageVector3(fXRight, fY, fZ); queue.v[1].c = color; queue.v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
 		queue.v+=2;
 		if( queue.Free() < 2 || bLast )
 		{
