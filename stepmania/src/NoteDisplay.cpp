@@ -446,7 +446,7 @@ void NoteDisplay::DrawHoldTopCap( const TapNote& tn, int iCol, float fBeat, bool
 		queue.v[0].p = RageVector3(fXLeft,  fY, fZ);	queue.v[0].c = color; queue.v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
 		queue.v[1].p = RageVector3(fXRight, fY, fZ);	queue.v[1].c = color; queue.v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
 		queue.v+=2;
-		if( queue.Free() < 2 )
+		if( queue.Free() < 2 || bLast )
 		{
 			/* The queue is full.  Render it, clear the buffer, and move back a step to
 			 * start off the quad strip again. */
@@ -463,17 +463,6 @@ void NoteDisplay::DrawHoldTopCap( const TapNote& tn, int iCol, float fBeat, bool
 			queue.Init();
 			bAllAreTransparent = true;
 			fY -= fYStep;
-		}
-	}
-
-	if( !bAllAreTransparent )
-	{
-		FOREACH( Sprite*, vpSpr, spr )
-		{
-			RageTexture* pTexture = (*spr)->GetTexture();
-			DISPLAY->SetTexture( TextureUnit_1, pTexture->GetTexHandle() );
-			DISPLAY->SetBlendMode( spr == vpSpr.begin() ? BLEND_NORMAL : BLEND_ADD );
-			queue.Draw();
 		}
 	}
 }
@@ -566,7 +555,7 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 		queue.v[0].p = RageVector3(fXLeft,  fY, fZ); queue.v[0].c = color; queue.v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
 		queue.v[1].p = RageVector3(fXRight, fY, fZ); queue.v[1].c = color; queue.v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
 		queue.v+=2;
-		if( queue.Free() < 2 )
+		if( queue.Free() < 2 || bLast )
 		{
 			/* The queue is full.  Render it, clear the buffer, and move back a step to
 			 * start off the quad strip again. */
@@ -585,19 +574,6 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 			queue.Init();
 			bAllAreTransparent = true;
 			fY -= fYStep;
-		}
-	}
-
-	if( !bAllAreTransparent )
-	{
-		FOREACH( Sprite*, vpSpr, spr )
-		{
-			RageTexture* pTexture = (*spr)->GetTexture();
-			DISPLAY->SetTexture( TextureUnit_1, pTexture->GetTexHandle() );
-			DISPLAY->SetBlendMode( spr == vpSpr.begin() ? BLEND_NORMAL : BLEND_ADD );
-			DISPLAY->SetCullMode( CULL_NONE );
-			DISPLAY->SetTextureWrapping( true );
-			queue.Draw();
 		}
 	}
 }
@@ -678,7 +654,7 @@ void NoteDisplay::DrawHoldBottomCap( const TapNote& tn, int iCol, float fBeat, b
 		queue.v[0].p = RageVector3(fXLeft,  fY, fZ);	queue.v[0].c = color; queue.v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
 		queue.v[1].p = RageVector3(fXRight, fY, fZ);	queue.v[1].c = color; queue.v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
 		queue.v+=2;
-		if( queue.Free() < 2 )
+		if( queue.Free() < 2 || bLast )
 		{
 			/* The queue is full.  Render it, clear the buffer, and move back a step to
 			 * start off the quad strip again. */
@@ -695,17 +671,6 @@ void NoteDisplay::DrawHoldBottomCap( const TapNote& tn, int iCol, float fBeat, b
 			queue.Init();
 			bAllAreTransparent = true;
 			fY -= fYStep;
-		}
-	}
-
-	if( !bAllAreTransparent )
-	{
-		FOREACH( Sprite*, vpSpr, spr )
-		{
-			RageTexture* pTexture = (*spr)->GetTexture();
-			DISPLAY->SetTexture( TextureUnit_1, pTexture->GetTexHandle() );
-			DISPLAY->SetBlendMode( spr == vpSpr.begin() ? BLEND_NORMAL : BLEND_ADD );
-			queue.Draw();
 		}
 	}
 }
