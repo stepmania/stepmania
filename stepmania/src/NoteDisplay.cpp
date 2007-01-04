@@ -1010,7 +1010,20 @@ void NoteDisplay::DrawTap( const TapNote& tn, int iCol, float fBeat, bool bOnSam
 		bUseLighting = cache->m_bTapNoteUseLighting;
 	}
 
+	if( tn.type == TapNote::attack )
+	{
+		Lua *L = LUA->Get();
+		LuaTable tab;
+		LuaHelpers::Push( L, tn.sAttackModifiers );
+		tab.Set( L, "Modifiers" );
+		pActor->PlayCommand( "SetAttack", &tab );
+		LUA->Release( L );
+	}
+
 	DrawActor( tn, pActor, iCol, fBeat, bIsAddition, fPercentFadeToFail, fLife, fReverseOffsetPixels, bUseLighting, part, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+
+	if( tn.type == TapNote::attack )
+		pActor->PlayCommand( "UnsetAttack" );
 }
 
 /*
