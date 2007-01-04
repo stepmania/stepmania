@@ -717,14 +717,14 @@ void NoteDisplay::DrawHoldTail( const TapNote& tn, int iCol, int iRow, bool bIsB
 	// Draw the tail
 	//
 	NotePart part = NotePart_HoldTail;
-	Actor* pSprTail = GetHoldActor( m_HoldTail, part, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
+	Actor *pActor = GetHoldActor( m_HoldTail, part, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
 
-	pSprTail->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
+	pActor->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 
 	const float fY			= fYTail;
 	const float fYOffset		= ArrowEffects::GetYOffsetFromYPos( m_pPlayerState, iCol, fY, m_fYReverseOffsetPixels );
 	if( fYOffset < fDrawDistanceAfterTargetsPixels || fYOffset > fDrawDistanceBeforeTargetsPixels )
-			return;
+		return;
 	const float fX			= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset );
 	const float fZ			= ArrowEffects::GetZPos( m_pPlayerState, iCol, fYOffset );
 	const float fAlpha		= ArrowEffects::GetAlpha( m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
@@ -732,11 +732,11 @@ void NoteDisplay::DrawHoldTail( const TapNote& tn, int iCol, int iRow, bool bIsB
 	const RageColor colorDiffuse	= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 	const RageColor colorGlow	= RageColor(1,1,1,fGlow);
 
-	pSprTail->SetRotationZ( 0 );
-	pSprTail->SetXY( fX, fY );
-	pSprTail->SetZ( fZ );
-	
-	bool bNeedsTranslate = (bIsAddition && !IsVectorZero(cache->m_fAdditionTextureCoordOffset[part]))  ||  !IsVectorZero(cache->m_fNoteColorTextureCoordSpacing[part]);
+	pActor->SetRotationZ( 0 );
+	pActor->SetXY( fX, fY );
+	pActor->SetZ( fZ );
+
+	bool bNeedsTranslate = (bIsAddition && !IsVectorZero(cache->m_fAdditionTextureCoordOffset[part])) || !IsVectorZero(cache->m_fNoteColorTextureCoordSpacing[part]);
 	if( bNeedsTranslate )
 	{
 		DISPLAY->TexturePushMatrix();
@@ -747,13 +747,13 @@ void NoteDisplay::DrawHoldTail( const TapNote& tn, int iCol, int iRow, bool bIsB
 
 	if( bGlow )
 	{
-		pSprTail->SetDiffuse( RageColor(1,1,1,0) );
-		pSprTail->SetGlow( colorGlow );
+		pActor->SetDiffuse( RageColor(1,1,1,0) );
+		pActor->SetGlow( colorGlow );
 	}
 	else
 	{
-		pSprTail->SetDiffuse( colorDiffuse );
-		pSprTail->SetGlow( RageColor(0,0,0,0) );
+		pActor->SetDiffuse( colorDiffuse );
+		pActor->SetGlow( RageColor(0,0,0,0) );
 	}
 
 	if( cache->m_bHoldTailUseLighting )
@@ -767,7 +767,7 @@ void NoteDisplay::DrawHoldTail( const TapNote& tn, int iCol, int iRow, bool bIsB
 			RageVector3(1, 0, +1) );
 	}
 
-	pSprTail->Draw();
+	pActor->Draw();
 
 	if( cache->m_bHoldTailUseLighting )
 	{
@@ -792,16 +792,15 @@ void NoteDisplay::DrawHoldHead( const TapNote& tn, int iCol, int iRow, bool bIsB
 
 	pActor->SetZoom( ArrowEffects::GetZoom( m_pPlayerState ) );
 
-	// draw with normal Sprite
-	const float fY		= fYHead;
-	const float fYOffset	= ArrowEffects::GetYOffsetFromYPos( m_pPlayerState, iCol, fY, m_fYReverseOffsetPixels );
+	const float fY			= fYHead;
+	const float fYOffset		= ArrowEffects::GetYOffsetFromYPos( m_pPlayerState, iCol, fY, m_fYReverseOffsetPixels );
 	if( fYOffset < fDrawDistanceAfterTargetsPixels || fYOffset > fDrawDistanceBeforeTargetsPixels )
 		return;
-	const float fX		= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset );
-	const float fZ		= ArrowEffects::GetZPos( m_pPlayerState, iCol, fYOffset );
-	const float fAlpha	= ArrowEffects::GetAlpha( m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
-	const float fGlow	= ArrowEffects::GetGlow( m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
-	const RageColor colorDiffuse= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
+	const float fX			= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset );
+	const float fZ			= ArrowEffects::GetZPos( m_pPlayerState, iCol, fYOffset );
+	const float fAlpha		= ArrowEffects::GetAlpha( m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+	const float fGlow		= ArrowEffects::GetGlow( m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+	const RageColor colorDiffuse	= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 	const RageColor colorGlow	= RageColor(1,1,1,fGlow);
 
 	pActor->SetRotationZ( 0 );
