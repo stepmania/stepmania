@@ -114,7 +114,7 @@ static inline int64_t llabs( int64_t i ) { return i >= 0? i: -i; }
 
 // MinGW provides us with this function already
 #if !defined(__MINGW32__)
-inline int lrintf( float f )
+inline long int lrintf( float f )
 {
 	int retval;
 	
