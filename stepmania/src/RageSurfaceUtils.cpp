@@ -453,7 +453,7 @@ void RageSurfaceUtils::BlitTransform( const RageSurface *src, RageSurface *dst,
 				sum += v[1][i] * (1-weight_x) * (weight_y);
 				sum += v[2][i] * (weight_x)   * (1-weight_y);
 				sum += v[3][i] * (weight_x)   * (weight_y);
-				out[i] = (uint8_t) clamp( lrintf(sum), 0, 255 );
+				out[i] = (uint8_t) clamp( lrintf(sum), 0L, 255L );
 			}
 
 			/* If the source has no alpha, set the destination to opaque. */
