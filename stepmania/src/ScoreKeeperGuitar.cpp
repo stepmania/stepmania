@@ -7,6 +7,7 @@
 ScoreKeeperGuitar::ScoreKeeperGuitar( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats ) : 
 	ScoreKeeperNormal(pPlayerState, pPlayerStageStats)
 {
+	m_fMusicSecondsHeldRemainder = 0;
 }
 
 void ScoreKeeperGuitar::AddTapScore( TapNoteScore tns )
@@ -15,10 +16,26 @@ void ScoreKeeperGuitar::AddTapScore( TapNoteScore tns )
 
 void ScoreKeeperGuitar::AddHoldScore( HoldNoteScore hns )
 {
-	if( hns == HNS_Held )
-		AddTapScore( TNS_W1 );
-	else if ( hns == HNS_LetGo )
-		AddTapScore( TNS_W4 ); // required for subtractive score display to work properly
+}
+
+void ScoreKeeperGuitar::HandleHoldActiveSeconds( float fMusicSecondsHeld )
+{
+	int &iScore = m_pPlayerStageStats->m_iScore;
+	int &iCurMaxScore = m_pPlayerStageStats->m_iCurMaxScore;
+
+	const float fPointsPerSecond = 25;
+	const float fMusicSecondsHeldPlusRemainer = m_fMusicSecondsHeldRemainder + fMusicSecondsHeld;
+	const float fPoints = fMusicSecondsHeldPlusRemainer * fPointsPerSecond;
+	const int iPoints = (int)floorf( fPoints );
+	const float fPointsRemainder = fPoints - iPoints;
+	m_fMusicSecondsHeldRemainder = (fPointsRemainder) / fPointsPerSecond;
+
+	if( iPoints != 0 ) 
+	{
+		iScore += iPoints;
+		iCurMaxScore += iPoints;
+		MESSAGEMAN->Broadcast( Message_ScoreChangedP1 );
+	}
 }
 
 void ScoreKeeperGuitar::AddTapRowScore( TapNoteScore tns, const NoteData &nd, int iRow )

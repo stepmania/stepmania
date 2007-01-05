@@ -58,6 +58,7 @@ public:
 	void HandleTapScore( const TapNote &tn );
 	void HandleTapRowScore( const NoteData &nd, int iRow );
 	void HandleHoldScore( const TapNote &tn );
+	void HandleHoldActiveSeconds( float fMusicSecondsHeld ) {};
 
 	// This must be calculated using only cached radar values so that we can 
 	// do it quickly.

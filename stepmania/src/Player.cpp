@@ -741,6 +741,16 @@ void Player::Update( float fDeltaTime )
 				}
 			}
 
+			// TODO: Cap the active time passed to the score keeper to the actual start time and end time of the hold.
+			if( tn.HoldResult.bActive ) 
+			{
+				float fSecondsActiveSinceLastUpdate = fDeltaTime * GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
+				if( m_pPrimaryScoreKeeper )
+					m_pPrimaryScoreKeeper->HandleHoldActiveSeconds( fSecondsActiveSinceLastUpdate );
+				if( m_pSecondaryScoreKeeper )
+					m_pSecondaryScoreKeeper->HandleHoldActiveSeconds( fSecondsActiveSinceLastUpdate );
+			}
+
 			/* check for LetGo.  If the head was missed completely, don't count an LetGo. */
 			if( bSteppedOnTapNote && fLife == 0 )	// the player has not pressed the button for a long time!
 				hns = HNS_LetGo;

@@ -12,7 +12,10 @@ public:
 	ScoreKeeperGuitar( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats );
 	virtual void AddTapScore( TapNoteScore score );
 	void AddHoldScore( HoldNoteScore hns );
+	void HandleHoldActiveSeconds( float fMusicSecondsHeld );
 	virtual void AddTapRowScore( TapNoteScore score, const NoteData &nd, int iRow );
+protected:
+	float m_fMusicSecondsHeldRemainder;	// seconds from a hold note that have not yet been counted toward CurScore
 };
 
 #endif

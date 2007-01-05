@@ -15,6 +15,7 @@ public:
 	void HandleTapScore( const TapNote &tn );
 	void HandleTapRowScore( const NoteData &nd, int iRow );
 	void HandleHoldScore( const TapNote &tn );
+	void HandleHoldActiveSeconds( float fMusicSecondsHeld ) {}
 	void HandleTapScoreNone();
 
 protected:

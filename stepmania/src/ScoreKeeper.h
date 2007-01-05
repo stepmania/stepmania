@@ -55,6 +55,7 @@ public:
 	virtual void HandleTapScore( const TapNote &tn ) = 0;
 	virtual void HandleTapRowScore( const NoteData &nd, int iRow ) = 0;
 	virtual void HandleHoldScore( const TapNote &tn ) = 0;
+	virtual void HandleHoldActiveSeconds( float fMusicSecondsHeld ) = 0;
 	virtual void HandleTapScoreNone() = 0;
 
 protected:
