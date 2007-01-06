@@ -539,7 +539,7 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 		const float fXRight		= fX + fFrameWidth/2;
 		const float fDistFromBodyBottom	= fYBodyBottom - fY;
 		const float fDistFromBodyTop	= fY - fYBodyTop;
-		float fTexCoordTop		= SCALE( bAnchorToBottom ? fDistFromBodyTop : fDistFromBodyBottom, 0, fFrameHeight, pRect->bottom, pRect->top );
+		float fTexCoordTop		= SCALE( bAnchorToBottom ? fDistFromBodyBottom : fDistFromBodyTop, 0, fFrameHeight, pRect->top, pRect->bottom );
 		/* For very large hold notes, shift the texture coordinates to be near 0, so we
 		 * don't send very large values to the renderer. */
 		if( fY == fDrawYBodyTop ) // first
