@@ -536,7 +536,7 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 		fYBodyTop, fYBodyBottom,
 		fYStartPos, fYEndPos,
 		true,
-		bFlipHeadAndTail );
+		!bFlipHeadAndTail );
 
 	// Draw the bottom cap
 	DrawHoldPart(
