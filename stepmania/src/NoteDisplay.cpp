@@ -461,117 +461,75 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 	}
 }
 
-void NoteDisplay::DrawHoldTopCap( const TapNote& tn, int iCol, float fBeat, bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, bool bIsAddition, float fPercentFadeToFail, float fColorScale, 
-				 bool bGlow, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
-{
-	//
-	// Draw the top cap (always wavy)
-	//
-	vector<Sprite*> vpSpr;
-	Sprite *pSprite = GetHoldSprite( m_HoldTopCap, NotePart_HoldTopCap, fBeat, tn.subType == TapNote::hold_head_roll, bIsBeingHeld && !cache->m_bHoldActiveIsAddLayer );
-	vpSpr.push_back( pSprite );
-	if( bIsBeingHeld && cache->m_bHoldActiveIsAddLayer )
-	{
-		Sprite *pSpr = GetHoldSprite( m_HoldTopCap, NotePart_HoldTopCap, fBeat, tn.subType == TapNote::hold_head_roll, true );
-		vpSpr.push_back( pSpr );
-	}
-
-	// draw manually in small segments
-	const float fFrameHeight	= pSprite->GetZoomedHeight();
-	const float fYCapTop		= fYHead+cache->m_iStartDrawingHoldBodyOffsetFromHead-fFrameHeight;
-	const float fYCapBottom		= fYHead+cache->m_iStartDrawingHoldBodyOffsetFromHead;
-
-	const bool bReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(iCol) > 0.5f;
-
-	float fYStartPos = ArrowEffects::GetYPos( m_pPlayerState, iCol, fDrawDistanceAfterTargetsPixels, m_fYReverseOffsetPixels );
-	float fYEndPos = ArrowEffects::GetYPos( m_pPlayerState, iCol, fDrawDistanceBeforeTargetsPixels, m_fYReverseOffsetPixels );
-	if( bReverse )
-		swap( fYStartPos, fYEndPos );
-
-	// don't draw any part of the tail that is before the middle of the head
-	fYEndPos = min( fYEndPos, fYTail );
-
-	DrawHoldPart(
-		vpSpr,
-		iCol, fYStep, fPercentFadeToFail, fColorScale, bGlow,
-		fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar,
-		fYCapTop, fYCapBottom,
-		fYStartPos, fYEndPos,
-		false, false );
-}
-
 void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, bool bIsAddition, float fPercentFadeToFail, float fColorScale, bool bGlow,
-							   float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
+			   float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar,
+			   bool bDrawTop, bool bDrawBottom )
 {
-	//
-	// Draw the body (always wavy)
-	//
-	vector<Sprite*> vpSpr;
-	Sprite *pSprite = GetHoldSprite( m_HoldBody, NotePart_HoldBody, fBeat, tn.subType == TapNote::hold_head_roll, bIsBeingHeld && !cache->m_bHoldActiveIsAddLayer );
-	vpSpr.push_back( pSprite );
+	vector<Sprite*> vpSprTop;
+	Sprite *pSpriteTop = GetHoldSprite( m_HoldTopCap, NotePart_HoldTopCap, fBeat, tn.subType == TapNote::hold_head_roll, bIsBeingHeld && !cache->m_bHoldActiveIsAddLayer );
+	vpSprTop.push_back( pSpriteTop );
+
+	vector<Sprite*> vpSprBody;
+	Sprite *pSpriteBody = GetHoldSprite( m_HoldBody, NotePart_HoldBody, fBeat, tn.subType == TapNote::hold_head_roll, bIsBeingHeld && !cache->m_bHoldActiveIsAddLayer );
+	vpSprBody.push_back( pSpriteBody );
+
+	vector<Sprite*> vpSprBottom;
+	Sprite *pSpriteBottom = GetHoldSprite( m_HoldBottomCap, NotePart_HoldBottomCap, fBeat, tn.subType == TapNote::hold_head_roll, bIsBeingHeld && !cache->m_bHoldActiveIsAddLayer );
+	vpSprBottom.push_back( pSpriteBottom );
+
 	if( bIsBeingHeld && cache->m_bHoldActiveIsAddLayer )
 	{
-		Sprite *pSpr = GetHoldSprite( m_HoldBody, NotePart_HoldBody, fBeat, tn.subType == TapNote::hold_head_roll, true );
-		vpSpr.push_back( pSpr );
+		Sprite *pSprTop = GetHoldSprite( m_HoldTopCap, NotePart_HoldTopCap, fBeat, tn.subType == TapNote::hold_head_roll, true );
+		vpSprTop.push_back( pSprTop );
+		Sprite *pSprBody = GetHoldSprite( m_HoldBody, NotePart_HoldBody, fBeat, tn.subType == TapNote::hold_head_roll, true );
+		vpSprBody.push_back( pSprBody );
+		Sprite *pSprBottom = GetHoldSprite( m_HoldBottomCap, NotePart_HoldBottomCap, fBeat, tn.subType == TapNote::hold_head_roll, true );
+		vpSprBottom.push_back( pSprBottom );
 	}
 
-	const float fYBodyTop		= fYHead + cache->m_iStartDrawingHoldBodyOffsetFromHead;
-	const float fYBodyBottom	= fYTail + cache->m_iStopDrawingHoldBodyOffsetFromTail;
+	const float fFrameHeightTop	= pSpriteTop->GetZoomedHeight();
+	const float fFrameHeightBottom	= pSpriteBottom->GetZoomedHeight();
+	const float fYCapTop		= fYHead+cache->m_iStartDrawingHoldBodyOffsetFromHead-fFrameHeightTop;
+	const float fYBodyTop		= fYHead+cache->m_iStartDrawingHoldBodyOffsetFromHead;
+	const float fYBodyBottom	= fYTail+cache->m_iStopDrawingHoldBodyOffsetFromTail;
+	const float fYCapBottom		= fYTail+cache->m_iStopDrawingHoldBodyOffsetFromTail+fFrameHeightBottom;
 
 	const bool bReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(iCol) > 0.5f;
-	bool bAnchorToBottom = bReverse && cache->m_bFlipHeadAndTailWhenReverse;
 
 	float fYStartPos = ArrowEffects::GetYPos( m_pPlayerState, iCol, fDrawDistanceAfterTargetsPixels, m_fYReverseOffsetPixels );
 	float fYEndPos = ArrowEffects::GetYPos( m_pPlayerState, iCol, fDrawDistanceBeforeTargetsPixels, m_fYReverseOffsetPixels );
 	if( bReverse )
 		swap( fYStartPos, fYEndPos );
 
+	// Draw the top cap
+	if( bDrawTop )
+		DrawHoldPart(
+			vpSprTop,
+			iCol, fYStep, fPercentFadeToFail, fColorScale, bGlow,
+			fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar,
+			fYCapTop, fYBodyTop,
+			fYStartPos, min(fYEndPos, fYTail),
+			false, false );
+
+	// Draw the body
 	DrawHoldPart(
-		vpSpr,
+		vpSprBody,
 		iCol, fYStep, fPercentFadeToFail, fColorScale, bGlow,
 		fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar,
 		fYBodyTop, fYBodyBottom,
 		fYStartPos, fYEndPos,
-		true, bAnchorToBottom );
-}
+		true,
+		bReverse && cache->m_bFlipHeadAndTailWhenReverse );
 
-void NoteDisplay::DrawHoldBottomCap( const TapNote& tn, int iCol, float fBeat, bool bIsBeingHeld, float fYHead, float fYTail, int	fYStep, bool bIsAddition, float fPercentFadeToFail, float fColorScale, 
-				    bool bGlow, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
-{
-	//
-	// Draw the bottom cap (always wavy)
-	//
-	vector<Sprite*> vpSpr;
-	Sprite* pSprite = GetHoldSprite( m_HoldBottomCap, NotePart_HoldBottomCap, fBeat, tn.subType == TapNote::hold_head_roll, bIsBeingHeld && !cache->m_bHoldActiveIsAddLayer );
-	vpSpr.push_back( pSprite );
-	if( bIsBeingHeld && cache->m_bHoldActiveIsAddLayer )
-	{
-		Sprite *pSpr = GetHoldSprite( m_HoldBottomCap, NotePart_HoldBottomCap, fBeat, tn.subType == TapNote::hold_head_roll, true );
-		vpSpr.push_back( pSpr );
-	}
-
-	// draw manually in small segments
-	const float fFrameHeight	= pSprite->GetZoomedHeight();
-	const float fYCapTop		= fYTail+cache->m_iStopDrawingHoldBodyOffsetFromTail;
-	const float fYCapBottom		= fYTail+cache->m_iStopDrawingHoldBodyOffsetFromTail+fFrameHeight;
-
-	const bool bReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(iCol) > 0.5f;
-
-	float fYStartPos = ArrowEffects::GetYPos( m_pPlayerState, iCol, fDrawDistanceAfterTargetsPixels, m_fYReverseOffsetPixels );
-	float fYEndPos = ArrowEffects::GetYPos( m_pPlayerState, iCol, fDrawDistanceBeforeTargetsPixels, m_fYReverseOffsetPixels );
-	if( bReverse )
-		swap( fYStartPos, fYEndPos );
-
-	// don't draw any part of the tail that is before the middle of the head
-	fYStartPos = max( fYStartPos, fYHead );
-
-	DrawHoldPart(
-		vpSpr,
-		iCol, fYStep, fPercentFadeToFail, fColorScale, bGlow,
-		fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar,
-		fYCapTop, fYCapBottom,
-		fYStartPos, fYEndPos,
-		false, false );
+	// Draw the bottom cap
+	if( bDrawBottom )
+		DrawHoldPart(
+			vpSprBottom,
+			iCol, fYStep, fPercentFadeToFail, fColorScale, bGlow,
+			fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar,
+			fYBodyBottom, fYCapBottom,
+			max(fYStartPos, fYHead), fYEndPos,
+			false, false );
 }
 
 void NoteDisplay::DrawHoldHeadTail( const TapNote& tn, Actor* pActor, NotePart part, int iCol, float fBeat, float fY, bool bIsAddition, float fPercentFadeToFail, float fColorScale, 
@@ -705,11 +663,7 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeing
 	DISPLAY->SetZTestMode( WavyPartsNeedZBuffer?ZTEST_WRITE_ON_PASS:ZTEST_OFF );
 	DISPLAY->SetZWrite( WavyPartsNeedZBuffer );
 	
-	if( !bFlipHeadAndTail )
-		DrawHoldBottomCap( tn, iCol, fBeat, bIsBeingHeld, fYHead, fYTail, fYStep, bIsAddition, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
-	DrawHoldBody( tn, iCol, fBeat, bIsBeingHeld, fYHead, fYTail, fYStep, bIsAddition, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
-	if( bFlipHeadAndTail )
-		DrawHoldTopCap( tn, iCol, fBeat, bIsBeingHeld, fYHead, fYTail, fYStep, bIsAddition, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+	DrawHoldBody( tn, iCol, fBeat, bIsBeingHeld, fYHead, fYTail, fYStep, bIsAddition, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar, bFlipHeadAndTail, !bFlipHeadAndTail );
 
 	/* These set the texture mode themselves. */
 	if( cache->m_bHoldTailIsAboveWavyParts )
