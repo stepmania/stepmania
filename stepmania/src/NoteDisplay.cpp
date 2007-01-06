@@ -427,7 +427,8 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 		 * don't send very large values to the renderer. */
 		if( fY == fYStartPos ) // first
 			fVertTexCoordOffset = floorf( fTexCoordTop );
-		fTexCoordTop -= fVertTexCoordOffset;
+		if( bWrapping )
+			fTexCoordTop -= fVertTexCoordOffset;
 		const float fTexCoordLeft	= pRect->left;
 		const float fTexCoordRight	= pRect->right;
 		const float fAlpha		= ArrowGetAlphaOrGlow( bGlow, m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
