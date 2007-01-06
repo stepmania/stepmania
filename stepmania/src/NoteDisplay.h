@@ -93,7 +93,7 @@ private:
 
 	void DrawActor( const TapNote& tn, Actor* pActor, NotePart part, int iCol, float fBeat, bool bIsAddition, float fPercentFadeToFail,
 		float fReverseOffsetPixels, bool bUseLighting, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar );
-	void DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, bool bIsAddition, float fPercentFadeToFail, 
+	void DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool bIsBeingHeld, float fYHead, float fYTail, bool bIsAddition, float fPercentFadeToFail, 
 			   float fColorScale, 
 			   bool bGlow, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar );
 	void DrawHoldHeadTail( const TapNote& tn, Actor* pActor, NotePart part, int iCol, float fBeat, float fYHead, bool bIsAddition, float fPercentFadeToFail, float fColorScale, 

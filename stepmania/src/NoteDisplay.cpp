@@ -461,7 +461,7 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 	}
 }
 
-void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, bool bIsAddition, float fPercentFadeToFail, float fColorScale, bool bGlow,
+void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool bIsBeingHeld, float fYHead, float fYTail, bool bIsAddition, float fPercentFadeToFail, float fColorScale, bool bGlow,
 			   float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
 {
 	vector<Sprite*> vpSprTop;
@@ -493,6 +493,18 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 		swap( vpSprTop, vpSprBottom );
 		swap( pSpriteTop, pSpriteBottom );
 	}
+
+	if( bGlow )
+		DISPLAY->SetTextureModeGlow();
+	else
+		DISPLAY->SetTextureModeModulate();
+
+	const bool bWavyPartsNeedZBuffer = ArrowEffects::NeedZBuffer( m_pPlayerState );
+	DISPLAY->SetZTestMode( bWavyPartsNeedZBuffer?ZTEST_WRITE_ON_PASS:ZTEST_OFF );
+	DISPLAY->SetZWrite( bWavyPartsNeedZBuffer );
+
+	/* Hack: Z effects need a finer grain step. */
+	const int fYStep = bWavyPartsNeedZBuffer? 4: 16;		// use small steps only if wavy
 
 	const float fFrameHeightTop	= pSpriteTop->GetZoomedHeight();
 	const float fFrameHeightBottom	= pSpriteBottom->GetZoomedHeight();
@@ -639,10 +651,6 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeing
 	const float fYHead = bReverse ? fEndYPos : fStartYPos;		// the center of the head
 	const float fYTail = bReverse ? fStartYPos : fEndYPos;		// the center the tail
 
-	const bool WavyPartsNeedZBuffer = ArrowEffects::NeedZBuffer( m_pPlayerState );
-	/* Hack: Z effects need a finer grain step. */
-	const int	fYStep = WavyPartsNeedZBuffer? 4: 16;		// use small steps only if wavy
-
 	const float fColorScale		= tn.HoldResult.fLife + (1-tn.HoldResult.fLife)*cache->m_fHoldLetGoGrayPercent;
 
 	bool bFlipHeadAndTail = bReverse && cache->m_bFlipHeadAndTailWhenReverse;
@@ -661,14 +669,7 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeing
 		DrawHoldHeadTail( tn, pActor, NotePart_HoldTail, iCol, fBeat, bFlipHeadAndTail ? fYHead : fYTail, bIsAddition, fPercentFadeToFail, fColorScale, bDrawGlowOnly, cache->m_bHoldTailUseLighting, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 	}
 
-	if( bDrawGlowOnly )
-		DISPLAY->SetTextureModeGlow();
-	else
-		DISPLAY->SetTextureModeModulate();
-	DISPLAY->SetZTestMode( WavyPartsNeedZBuffer?ZTEST_WRITE_ON_PASS:ZTEST_OFF );
-	DISPLAY->SetZWrite( WavyPartsNeedZBuffer );
-	
-	DrawHoldBody( tn, iCol, fBeat, bIsBeingHeld, fYHead, fYTail, fYStep, bIsAddition, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+	DrawHoldBody( tn, iCol, fBeat, bIsBeingHeld, fYHead, fYTail, bIsAddition, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 
 	/* These set the texture mode themselves. */
 	if( cache->m_bHoldTailIsAboveWavyParts )
@@ -684,7 +685,7 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeing
 
 	// now, draw the glow pass
 	if( !bDrawGlowOnly )
-		DrawHold( tn, iCol, iRow, bIsBeingHeld, bIsActive, Result, bIsAddition, fPercentFadeToFail, true, fReverseOffsetPixels, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+		DrawHold( tn, iCol, iRow, bIsBeingHeld, Result, bIsAddition, fPercentFadeToFail, true, fReverseOffsetPixels, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 }
 
 void NoteDisplay::DrawActor( const TapNote& tn, Actor* pActor, NotePart part, int iCol, float fBeat, bool bIsAddition, float fPercentFadeToFail, float fReverseOffsetPixels, bool bUseLighting, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
