@@ -136,8 +136,6 @@ int RageSoundReader_Split::Read( char *pBuf, int iFrames )
 {
 	m_iRequestFrames = iFrames;
 	int iRet = m_pImpl->ReadBuffer();
-	if( iRet < 0 )
-		return iRet;
 
 	int iBytesAvailable = m_pImpl->m_sBuffer.size();
 	const char *pSrc = m_pImpl->m_sBuffer.data();
@@ -151,6 +149,12 @@ int RageSoundReader_Split::Read( char *pBuf, int iFrames )
 
 	int iFramesWanted = iFrames;
 	int iFramesAvailable = iBytesAvailable / (sizeof(int16_t) * m_pImpl->m_pSource->GetNumChannels());
+
+	/* Report any errors from Read() if we don't have any data buffered to
+	 * return.  If we do have data, finish returning it first. */
+	if( iFramesAvailable == 0 && iRet < 0 )
+		return iRet;
+
 	iFramesAvailable = min( iFramesAvailable, iFramesWanted );
 
 	{
