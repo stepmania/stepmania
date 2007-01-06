@@ -401,14 +401,13 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 	bool bAllAreTransparent = true;
 	bool bLast = false;
 	float fVertTexCoordOffset = 0;
-	float fY = fYStartPos;
 
 	DISPLAY->ClearAllTextures();
 	DISPLAY->SetCullMode( CULL_NONE );
 	DISPLAY->SetTextureWrapping( bWrapping );
 
 	StripBuffer queue;
-	for( ; !bLast; fY += fYStep )
+	for( float fY = fYStartPos; !bLast; fY += fYStep )
 	{
 		if( fY >= fYEndPos )
 		{
