@@ -511,10 +511,6 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 
 	const float fFrameHeightTop	= pSpriteTop->GetZoomedHeight();
 	const float fFrameHeightBottom	= pSpriteBottom->GetZoomedHeight();
-	const float fYCapTop		= fYHead-fFrameHeightTop;
-	const float fYBodyTop		= fYHead;
-	const float fYBodyBottom	= fYTail;
-	const float fYCapBottom		= fYTail+fFrameHeightBottom;
 
 	float fYStartPos = ArrowEffects::GetYPos( m_pPlayerState, iCol, fDrawDistanceAfterTargetsPixels, m_fYReverseOffsetPixels );
 	float fYEndPos = ArrowEffects::GetYPos( m_pPlayerState, iCol, fDrawDistanceBeforeTargetsPixels, m_fYReverseOffsetPixels );
@@ -526,7 +522,7 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 		vpSprTop,
 		iCol, fYStep, fPercentFadeToFail, fColorScale, bGlow,
 		fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar,
-		fYCapTop, fYBodyTop,
+		fYHead-fFrameHeightTop, fYHead,
 		fYStartPos, min(fYEndPos, fYTail),
 		false,
 		bFlipHeadAndTail );
@@ -536,7 +532,7 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 		vpSprBody,
 		iCol, fYStep, fPercentFadeToFail, fColorScale, bGlow,
 		fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar,
-		fYBodyTop, fYBodyBottom,
+		fYHead, fYTail,
 		fYStartPos, fYEndPos,
 		true,
 		!bFlipHeadAndTail );
@@ -546,7 +542,7 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 		vpSprBottom,
 		iCol, fYStep, fPercentFadeToFail, fColorScale, bGlow,
 		fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar,
-		fYBodyBottom, fYCapBottom,
+		fYTail, fYTail+fFrameHeightBottom,
 		max(fYStartPos, fYHead), fYEndPos,
 		false,
 		bFlipHeadAndTail );
