@@ -546,10 +546,10 @@ void NoteDisplay::DrawHoldHeadTail( const TapNote& tn, Actor* pActor, NotePart p
 	const float fYOffset		= ArrowEffects::GetYOffsetFromYPos( m_pPlayerState, iCol, fY, m_fYReverseOffsetPixels );
 	if( fYOffset < fDrawDistanceAfterTargetsPixels || fYOffset > fDrawDistanceBeforeTargetsPixels )
 		return;
-	const float fX			= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset );
-	const float fZ			= ArrowEffects::GetZPos( m_pPlayerState, iCol, fYOffset );
-	const float fAlpha		= ArrowEffects::GetAlpha( m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
-	const float fGlow		= ArrowEffects::GetGlow( m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+	const float fX			= ArrowEffects::GetXPos(	m_pPlayerState, iCol, fYOffset );
+	const float fZ			= ArrowEffects::GetZPos(	m_pPlayerState, iCol, fYOffset );
+	const float fAlpha		= ArrowEffects::GetAlpha(	m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+	const float fGlow		= ArrowEffects::GetGlow(	m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 	const RageColor colorDiffuse	= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 	const RageColor colorGlow	= RageColor(1,1,1,fGlow);
 
@@ -689,16 +689,16 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeing
 
 void NoteDisplay::DrawActor( const TapNote& tn, Actor* pActor, NotePart part, int iCol, float fBeat, bool bIsAddition, float fPercentFadeToFail, float fReverseOffsetPixels, bool bUseLighting, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
 {
-	const float fYOffset			= ArrowEffects::GetYOffset(	m_pPlayerState, iCol, fBeat );
-	const float fY				= ArrowEffects::GetYPos(	m_pPlayerState, iCol, fYOffset, fReverseOffsetPixels );
-	const float fRotation			= ArrowEffects::GetRotation(	m_pPlayerState, fBeat );
-	const float fX				= ArrowEffects::GetXPos(	m_pPlayerState, iCol, fYOffset );
-	const float fZ				= ArrowEffects::GetZPos(	m_pPlayerState, iCol, fYOffset );
-	const float fAlpha			= ArrowEffects::GetAlpha(	m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
-	const float fGlow			= ArrowEffects::GetGlow(	m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
-	const float fColorScale			= ArrowEffects::GetBrightness(	m_pPlayerState, fBeat );
-	RageColor diffuse = RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
-	RageColor glow = RageColor(1,1,1,fGlow);
+	const float fYOffset		= ArrowEffects::GetYOffset(	m_pPlayerState, iCol, fBeat );
+	const float fY			= ArrowEffects::GetYPos(	m_pPlayerState, iCol, fYOffset, fReverseOffsetPixels );
+	const float fRotation		= ArrowEffects::GetRotation(	m_pPlayerState, fBeat );
+	const float fX			= ArrowEffects::GetXPos(	m_pPlayerState, iCol, fYOffset );
+	const float fZ			= ArrowEffects::GetZPos(	m_pPlayerState, iCol, fYOffset );
+	const float fAlpha		= ArrowEffects::GetAlpha(	m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+	const float fGlow		= ArrowEffects::GetGlow(	m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+	const float fColorScale		= ArrowEffects::GetBrightness(	m_pPlayerState, fBeat );
+	const RageColor diffuse		= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
+	const RageColor glow		= RageColor(1,1,1,fGlow);
 
 	pActor->SetRotationZ( fRotation );
 	pActor->SetXY( fX, fY );
