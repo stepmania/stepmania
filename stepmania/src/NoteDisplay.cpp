@@ -550,8 +550,8 @@ void NoteDisplay::DrawHoldHeadTail( const TapNote& tn, Actor* pActor, NotePart p
 	const float fZ			= ArrowEffects::GetZPos(	m_pPlayerState, iCol, fYOffset );
 	const float fAlpha		= ArrowEffects::GetAlpha(	m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 	const float fGlow		= ArrowEffects::GetGlow(	m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
-	const RageColor colorDiffuse	= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
-	const RageColor colorGlow	= RageColor(1,1,1,fGlow);
+	const RageColor diffuse	= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
+	const RageColor glow	= RageColor(1,1,1,fGlow);
 
 	pActor->SetRotationZ( 0 );
 	pActor->SetXY( fX, fY );
@@ -570,11 +570,11 @@ void NoteDisplay::DrawHoldHeadTail( const TapNote& tn, Actor* pActor, NotePart p
 	if( bGlow )
 	{
 		pActor->SetDiffuse( RageColor(1,1,1,0) );
-		pActor->SetGlow( colorGlow );
+		pActor->SetGlow( glow );
 	}
 	else
 	{
-		pActor->SetDiffuse( colorDiffuse );
+		pActor->SetDiffuse( diffuse );
 		pActor->SetGlow( RageColor(0,0,0,0) );
 	}
 
