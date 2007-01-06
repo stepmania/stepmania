@@ -1682,7 +1682,38 @@ done_checking_hopo:
 					m_pCombinedLifeMeter->HandleTapScoreNone( pn );
 
 				if( PENALIZE_TAP_SCORE_NONE )
+				{
 					SetJudgment( TNS_Miss, false );
+					// the ScoreKeeper will subrtract points later.
+
+					// Score all active holds to NotHeld
+					for( int iTrack=0; iTrack<m_NoteData.GetNumTracks(); ++iTrack )
+					{
+						// Since this is being called every frame, let's not check the whole array every time.
+						// Instead, only check 1 beat back.  Even 1 is overkill.
+						const int iStartCheckingAt = max( 0, iSongRow-BeatToNoteRow(1) );
+						NoteData::iterator begin, end;
+						m_NoteData.GetTapNoteRangeInclusive( iTrack, iStartCheckingAt, iSongRow+1, begin, end );
+						for( ; begin != end; ++begin )
+						{
+							TapNote &tn = begin->second;
+							if( tn.HoldResult.bActive )
+							{
+								tn.HoldResult.hns = HNS_LetGo;
+							
+								HandleHoldScore( tn );
+								
+								if( m_pPlayerStageStats != NULL )
+									m_pPlayerStageStats->m_hnsLast = tn.HoldResult.hns;
+								if( m_pPlayerState->m_mp != MultiPlayer_Invalid )
+									MESSAGEMAN->Broadcast( enum_add2(Message_ShowHoldJudgmentMuliPlayerP1,m_pPlayerState->m_mp) );
+
+								m_vHoldJudgment[iTrack]->SetHoldJudgment( tn.HoldResult.hns );
+							}
+						}
+					}
+
+				}
 			}
 			break;
 		case ButtonType_Hopo:
