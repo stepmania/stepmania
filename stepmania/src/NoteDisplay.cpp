@@ -402,7 +402,7 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 	bool bLast = false;
 	float fAddToTexCoord = 0;
 
-	if( !bAnchorToBottom )
+	if( bAnchorToBottom )
 	{
 		float fTexCoordBottom		= SCALE( fYBottom - fYTop, 0, fFrameHeight, pRect->bottom, pRect->top );
 		float fWantTexCoordBottom	= ceilf( fTexCoordBottom - 0.0001f );
@@ -435,8 +435,8 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 		const float fX			= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset );
 		const float fXLeft		= fX - fFrameWidth/2;
 		const float fXRight		= fX + fFrameWidth/2;
-		const float fDistFromBottom	= fYBottom - fY;
-		float fTexCoordTop		= SCALE( fDistFromBottom, 0, fFrameHeight, pRect->bottom, pRect->top );
+		const float fDistFromTop	= fY - fYTop;
+		float fTexCoordTop		= SCALE( fDistFromTop, 0, fFrameHeight, pRect->top, pRect->bottom );
 		fTexCoordTop += fAddToTexCoord;
 
 		const float fTexCoordLeft	= pRect->left;
