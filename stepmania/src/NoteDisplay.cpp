@@ -652,12 +652,12 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeing
 	if( !cache->m_bHoldHeadIsAboveWavyParts )
 	{
 		Actor *pActor = GetHoldActor( m_HoldHead, NotePart_HoldHead, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
-		DrawHoldHeadTail( tn, pActor, NotePart_HoldHead, iCol, fBeat, bFlipHeadAndTail ? fYTail : fYHead, bIsAddition, fReverseOffsetPixels, fPercentFadeToFail, fColorScale, cache->m_bHoldHeadUseLighting, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+		DrawHoldHeadTail( tn, pActor, NotePart_HoldHead, iCol, fBeat, bFlipHeadAndTail ? fEndYOffset : fStartYOffset, bIsAddition, fReverseOffsetPixels, fPercentFadeToFail, fColorScale, cache->m_bHoldHeadUseLighting, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 	}
 	if( !cache->m_bHoldTailIsAboveWavyParts )
 	{
 		Actor *pActor = GetHoldActor( m_HoldTail, NotePart_HoldTail, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
-		DrawHoldHeadTail( tn, pActor, NotePart_HoldTail, iCol, fBeat, bFlipHeadAndTail ? fYHead : fYTail, bIsAddition, fReverseOffsetPixels, fPercentFadeToFail, fColorScale, cache->m_bHoldTailUseLighting, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+		DrawHoldHeadTail( tn, pActor, NotePart_HoldTail, iCol, fBeat, bFlipHeadAndTail ? fStartYOffset : fEndYOffset, bIsAddition, fReverseOffsetPixels, fPercentFadeToFail, fColorScale, cache->m_bHoldTailUseLighting, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 	}
 
 	DrawHoldBody( tn, iCol, fBeat, bIsBeingHeld, fYHead, fYTail, bIsAddition, fPercentFadeToFail, fColorScale, false, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
@@ -667,12 +667,12 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeing
 	if( cache->m_bHoldTailIsAboveWavyParts )
 	{
 		Actor *pActor = GetHoldActor( m_HoldTail, NotePart_HoldTail, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
-		DrawHoldHeadTail( tn, pActor, NotePart_HoldTail, iCol, fBeat, bFlipHeadAndTail ? fYHead : fYTail, bIsAddition, fReverseOffsetPixels, fPercentFadeToFail, fColorScale, cache->m_bHoldTailUseLighting, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+		DrawHoldHeadTail( tn, pActor, NotePart_HoldTail, iCol, fBeat, bFlipHeadAndTail ? fStartYOffset : fEndYOffset, bIsAddition, fReverseOffsetPixels, fPercentFadeToFail, fColorScale, cache->m_bHoldTailUseLighting, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 	}
 	if( cache->m_bHoldHeadIsAboveWavyParts )
 	{
 		Actor *pActor = GetHoldActor( m_HoldHead, NotePart_HoldHead, NoteRowToBeat(iRow), tn.subType == TapNote::hold_head_roll, bIsBeingHeld );
-		DrawHoldHeadTail( tn, pActor, NotePart_HoldHead, iCol, fBeat, bFlipHeadAndTail ? fYTail : fYHead, bIsAddition, fReverseOffsetPixels, fPercentFadeToFail, fColorScale, cache->m_bHoldHeadUseLighting, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+		DrawHoldHeadTail( tn, pActor, NotePart_HoldHead, iCol, fBeat, bFlipHeadAndTail ? fEndYOffset : fStartYOffset, bIsAddition, fReverseOffsetPixels, fPercentFadeToFail, fColorScale, cache->m_bHoldHeadUseLighting, fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 	}
 }
 
