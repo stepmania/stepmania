@@ -402,6 +402,23 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 	bool bLast = false;
 	float fAddToTexCoord = 0;
 
+	if( !bAnchorToBottom )
+	{
+		float fTexCoordBottom		= SCALE( fYBottom - fYTop, 0, fFrameHeight, pRect->bottom, pRect->top );
+		float fWantTexCoordBottom	= ceilf( fTexCoordBottom - 0.0001f );
+		fAddToTexCoord = fWantTexCoordBottom - fTexCoordBottom;
+	}
+
+	if( bWrapping )
+	{
+		/* For very large hold notes, shift the texture coordinates to be near 0, so we
+		 * don't send very large values to the renderer. */
+		const float fDistFromBottom	= fYBottom - fYStartPos;
+		float fTexCoordTop		= SCALE( fDistFromBottom, 0, fFrameHeight, pRect->bottom, pRect->top );
+		fTexCoordTop += fAddToTexCoord;
+		fAddToTexCoord -= floorf( fTexCoordTop );
+	}
+
 	DISPLAY->ClearAllTextures();
 
 	StripBuffer queue;
@@ -419,14 +436,9 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 		const float fXLeft		= fX - fFrameWidth/2;
 		const float fXRight		= fX + fFrameWidth/2;
 		const float fDistFromBottom	= fYBottom - fY;
-		const float fDistFromTop	= fY - fYTop;
-		float fTexCoordTop		= SCALE( bAnchorToBottom ? fDistFromBottom : fDistFromTop, 0, fFrameHeight, pRect->top, pRect->bottom );
-		/* For very large hold notes, shift the texture coordinates to be near 0, so we
-		 * don't send very large values to the renderer. */
-		if( fY == fYStartPos ) // first
-			fAddToTexCoord = -floorf( fTexCoordTop );
-		if( bWrapping )
-			fTexCoordTop += fAddToTexCoord;
+		float fTexCoordTop		= SCALE( fDistFromBottom, 0, fFrameHeight, pRect->bottom, pRect->top );
+		fTexCoordTop += fAddToTexCoord;
+
 		const float fTexCoordLeft	= pRect->left;
 		const float fTexCoordRight	= pRect->right;
 		const float fAlpha		= ArrowGetAlphaOrGlow( bGlow, m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
