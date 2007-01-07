@@ -523,7 +523,7 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 		iCol, fYStep, fPercentFadeToFail, fColorScale, bGlow,
 		fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar,
 		fYHead-fFrameHeightTop, fYHead,
-		fYStartPos, min(fYEndPos, (fYHead+fYTail)/2),
+		fYStartPos, min(fYEndPos, fYTail),
 		false,
 		bFlipHeadAndTail );
 
@@ -543,7 +543,7 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 		iCol, fYStep, fPercentFadeToFail, fColorScale, bGlow,
 		fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar,
 		fYTail, fYTail+fFrameHeightBottom,
-		max(fYStartPos, (fYHead+fYTail)/2), fYEndPos,
+		max(fYStartPos, fYHead), fYEndPos,
 		false,
 		bFlipHeadAndTail );
 }
