@@ -635,11 +635,15 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeing
 	if( bStartIsPastPeak && !bEndIsPastPeak )
 		fEndYOffset	= fEndPeakYOffset;	// use the calculated PeakYOffset so that long holds don't appear to grow
 	
+	// Swap in reverse, so fStartYOffset is always the offset higher on the screen.
+	if( bReverse )
+		swap( fStartYOffset, fEndYOffset );
+
 	float fStartYPos	= ArrowEffects::GetYPos( m_pPlayerState, iCol, fStartYOffset, fReverseOffsetPixels );
 	float fEndYPos		= ArrowEffects::GetYPos( m_pPlayerState, iCol, fEndYOffset, fReverseOffsetPixels );
 
-	const float fYHead = bReverse ? fEndYPos : fStartYPos;		// the center of the head
-	const float fYTail = bReverse ? fStartYPos : fEndYPos;		// the center the tail
+	const float fYHead = fStartYPos;	// the center of the head
+	const float fYTail = fEndYPos;		// the center the tail
 
 	const float fColorScale		= tn.HoldResult.fLife + (1-tn.HoldResult.fLife)*cache->m_fHoldLetGoGrayPercent;
 
