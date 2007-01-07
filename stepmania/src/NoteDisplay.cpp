@@ -548,60 +548,6 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 		bFlipHeadAndTail );
 }
 
-void NoteDisplay::DrawHoldHeadTail( const TapNote& tn, Actor* pActor, NotePart part, int iCol, float fBeat, float fYOffset, bool bIsAddition, float fPercentFadeToFail, float fReverseOffsetPixels, float fColorScale, 
-			       bool bUseLighting, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
-{
-	if( fYOffset < fDrawDistanceAfterTargetsPixels || fYOffset > fDrawDistanceBeforeTargetsPixels )
-		return;
-	const float fY			= ArrowEffects::GetYPos(	m_pPlayerState, iCol, fYOffset, fReverseOffsetPixels );
-	const float fX			= ArrowEffects::GetXPos(	m_pPlayerState, iCol, fYOffset );
-	const float fZ			= ArrowEffects::GetZPos(	m_pPlayerState, iCol, fYOffset );
-	const float fAlpha		= ArrowEffects::GetAlpha(	m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
-	const float fGlow		= ArrowEffects::GetGlow(	m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
-	const RageColor diffuse		= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
-	const RageColor glow		= RageColor(1,1,1,fGlow);
-
-	pActor->SetRotationZ( 0 );
-	pActor->SetXY( fX, fY );
-	pActor->SetZ( fZ );
-	pActor->SetDiffuse( diffuse );
-	pActor->SetGlow( glow );
-	pActor->SetZoom( ArrowEffects::GetZoom(m_pPlayerState) );
-
-	bool bNeedsTranslate = (bIsAddition && !IsVectorZero(cache->m_fAdditionTextureCoordOffset[part])) || !IsVectorZero(cache->m_fNoteColorTextureCoordSpacing[part]);
-	if( bNeedsTranslate )
-	{
-		DISPLAY->TexturePushMatrix();
-		NoteType nt = BeatToNoteType( fBeat );
-		ENUM_CLAMP( nt, (NoteType)0, MAX_DISPLAY_NOTE_TYPE );
-		DISPLAY->TextureTranslate( (bIsAddition ? cache->m_fAdditionTextureCoordOffset[part] : RageVector2(0,0)) + cache->m_fNoteColorTextureCoordSpacing[part]*(float)nt );
-	}
-
-	if( bUseLighting )
-	{
-		DISPLAY->SetLighting( true );
-		DISPLAY->SetLightDirectional( 
-			0, 
-			RageColor(1,1,1,1), 
-			RageColor(1,1,1,1),
-			RageColor(1,1,1,1),
-			RageVector3(1, 0, +1) );
-	}
-
-	pActor->Draw();
-
-	if( bUseLighting )
-	{
-		DISPLAY->SetLightOff( 0 );
-		DISPLAY->SetLighting( false );
-	}
-
-	if( bNeedsTranslate )
-	{
-		DISPLAY->TexturePopMatrix();
-	}
-}
-
 void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeingHeld, const HoldNoteResult &Result, bool bIsAddition, float fPercentFadeToFail, 
 			   float fReverseOffsetPixels, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fDrawDistanceBeforeTargetsPixels2, float fFadeInPercentOfDrawFar )
 {

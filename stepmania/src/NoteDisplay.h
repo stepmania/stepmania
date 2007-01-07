@@ -96,8 +96,6 @@ private:
 	void DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool bIsBeingHeld, float fYHead, float fYTail, bool bIsAddition, float fPercentFadeToFail, 
 			   float fColorScale, 
 			   bool bGlow, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar );
-	void DrawHoldHeadTail( const TapNote& tn, Actor* pActor, NotePart part, int iCol, float fBeat, float fYOffset, bool bIsAddition, float fPercentFadeToFail, float fReverseOffsetPixels, float fColorScale, 
-			   bool bUseLighting, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar );
 	void DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, float fPercentFadeToFail, float fColorScale, bool bGlow,
 			   float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar,
 			   float fYTop, float fYBottom, float fYStartPos, float fYEndPos, bool bWrapping, bool bAnchorToBottom );
