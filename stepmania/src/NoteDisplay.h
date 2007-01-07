@@ -91,8 +91,8 @@ private:
 	Actor *GetHoldActor( NoteColorActor nca[NUM_HoldType][NUM_ActiveType], NotePart part, float fNoteBeat, bool bIsRoll, bool bIsBeingHeld );
 	Sprite *GetHoldSprite( NoteColorSprite ncs[NUM_HoldType][NUM_ActiveType], NotePart part, float fNoteBeat, bool bIsRoll, bool bIsBeingHeld );
 
-	void DrawActor( const TapNote& tn, Actor* pActor, NotePart part, int iCol, float fBeat, bool bIsAddition, float fPercentFadeToFail,
-		float fReverseOffsetPixels, bool bUseLighting, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar );
+	void DrawActor( const TapNote& tn, Actor* pActor, NotePart part, int iCol, float fYOffset, float fBeat, bool bIsAddition, float fPercentFadeToFail,
+			float fReverseOffsetPixels, float fColorScale, bool bUseLighting, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar );
 	void DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool bIsBeingHeld, float fYHead, float fYTail, bool bIsAddition, float fPercentFadeToFail, 
 			   float fColorScale, 
 			   bool bGlow, float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar );

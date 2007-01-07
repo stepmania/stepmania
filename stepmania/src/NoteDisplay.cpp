@@ -676,18 +676,21 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeing
 	}
 }
 
-void NoteDisplay::DrawActor( const TapNote& tn, Actor* pActor, NotePart part, int iCol, float fBeat, bool bIsAddition, float fPercentFadeToFail, float fReverseOffsetPixels, bool bUseLighting, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
+void NoteDisplay::DrawActor( const TapNote& tn, Actor* pActor, NotePart part, int iCol, float fYOffset, float fBeat, bool bIsAddition, float fPercentFadeToFail, float fReverseOffsetPixels, float fColorScale, bool bUseLighting, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar )
 {
-	const float fYOffset		= ArrowEffects::GetYOffset(	m_pPlayerState, iCol, fBeat );
 	const float fY			= ArrowEffects::GetYPos(	m_pPlayerState, iCol, fYOffset, fReverseOffsetPixels );
-	const float fRotation		= ArrowEffects::GetRotation(	m_pPlayerState, fBeat );
 	const float fX			= ArrowEffects::GetXPos(	m_pPlayerState, iCol, fYOffset );
 	const float fZ			= ArrowEffects::GetZPos(	m_pPlayerState, iCol, fYOffset );
 	const float fAlpha		= ArrowEffects::GetAlpha(	m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 	const float fGlow		= ArrowEffects::GetGlow(	m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
-	const float fColorScale		= ArrowEffects::GetBrightness(	m_pPlayerState, fBeat );
 	const RageColor diffuse		= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 	const RageColor glow		= RageColor(1,1,1,fGlow);
+	float fRotation			= 0;
+	if( tn.type != TapNote::hold_head )
+	{
+		fRotation		= ArrowEffects::GetRotation(	m_pPlayerState, fBeat );
+		fColorScale		*= ArrowEffects::GetBrightness(	m_pPlayerState, fBeat );
+	}
 
 	pActor->SetRotationZ( fRotation );
 	pActor->SetXY( fX, fY );
@@ -769,7 +772,8 @@ void NoteDisplay::DrawTap( const TapNote& tn, int iCol, float fBeat, bool bOnSam
 		LUA->Release( L );
 	}
 
-	DrawActor( tn, pActor, part, iCol, fBeat, bIsAddition, fPercentFadeToFail, fReverseOffsetPixels, bUseLighting, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
+	const float fYOffset = ArrowEffects::GetYOffset( m_pPlayerState, iCol, fBeat );
+	DrawActor( tn, pActor, part, iCol, fYOffset, fBeat, bIsAddition, fPercentFadeToFail, fReverseOffsetPixels, 1.0f, bUseLighting, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 
 	if( tn.type == TapNote::attack )
 		pActor->PlayCommand( "UnsetAttack" );
