@@ -413,8 +413,8 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 	{
 		/* For very large hold notes, shift the texture coordinates to be near 0, so we
 		 * don't send very large values to the renderer. */
-		const float fDistFromBottom	= fYBottom - fYStartPos;
-		float fTexCoordTop		= SCALE( fDistFromBottom, 0, fFrameHeight, pRect->bottom, pRect->top );
+		const float fDistFromTop	= fYStartPos - fYTop;		
+		float fTexCoordTop		= SCALE( fDistFromTop, 0, fFrameHeight, pRect->top, pRect->bottom );
 		fTexCoordTop += fAddToTexCoord;
 		fAddToTexCoord -= floorf( fTexCoordTop );
 	}
