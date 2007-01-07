@@ -400,7 +400,7 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 	// top to bottom
 	bool bAllAreTransparent = true;
 	bool bLast = false;
-	float fVertTexCoordOffset = 0;
+	float fAddToTexCoord = 0;
 
 	DISPLAY->ClearAllTextures();
 
@@ -424,9 +424,9 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 		/* For very large hold notes, shift the texture coordinates to be near 0, so we
 		 * don't send very large values to the renderer. */
 		if( fY == fYStartPos ) // first
-			fVertTexCoordOffset = floorf( fTexCoordTop );
+			fAddToTexCoord = -floorf( fTexCoordTop );
 		if( bWrapping )
-			fTexCoordTop -= fVertTexCoordOffset;
+			fTexCoordTop += fAddToTexCoord;
 		const float fTexCoordLeft	= pRect->left;
 		const float fTexCoordRight	= pRect->right;
 		const float fAlpha		= ArrowGetAlphaOrGlow( bGlow, m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
