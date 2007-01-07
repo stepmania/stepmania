@@ -859,7 +859,7 @@ void NoteField::DrawPrimitives()
 			bool bIsHopoPossible = (tn.bHopoPossible);
 			bool bUseAdditionColoring = bIsAddition || bIsHopoPossible;
 			NoteDisplayCols *displayCols = tn.pn == PLAYER_INVALID ? m_pCurDisplay : m_pDisplays[tn.pn];
-			displayCols->display[c].DrawTap( tn, c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bUseAdditionColoring, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, m_fYReverseOffsetPixels, iDrawDistanceBeforeTargetsPixels, FADE_BEFORE_TARGETS_PERCENT );
+			displayCols->display[c].DrawTap( tn, c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bUseAdditionColoring, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, m_fYReverseOffsetPixels, iDrawDistanceAfterTargetsPixels, iDrawDistanceBeforeTargetsPixels, FADE_BEFORE_TARGETS_PERCENT );
 		}
 	}
 
