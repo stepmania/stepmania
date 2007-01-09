@@ -49,7 +49,12 @@ int RageSoundReader_Extend::GetData( char *pBuffer, int iFrames )
 {
 	int iFramesToRead = iFrames;
 	if( m_iLengthFrames != -1 )
-		iFramesToRead = min( iFramesToRead, GetEndFrame() - m_iPositionFrames );
+	{
+		int iFramesLeft = GetEndFrame() - m_iPositionFrames;
+		iFramesLeft = max( 0, iFramesLeft );
+		iFramesToRead = min( iFramesToRead, iFramesLeft );
+	}
+
 	if( iFrames && !iFramesToRead )
 		return RageSoundReader::END_OF_FILE;
 
