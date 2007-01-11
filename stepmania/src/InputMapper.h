@@ -25,7 +25,6 @@ public:
 		DeviceButton	m_iDefaultKeyboardKey[NUM_GameController];	// default keyboard keys only effect the current game is this game
 	};
 	GameButtonInfo	m_GameButtonInfo[NUM_GameButton];
-	GameButton	m_DedicatedMenuButton[NUM_MenuButton];
 	GameButton	m_SecondaryMenuButton[NUM_MenuButton];
 
 	GameButton ButtonNameToIndex( const RString &sButtonName ) const;

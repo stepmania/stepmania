@@ -24,6 +24,19 @@ namespace
 
 InputMapper*	INPUTMAPPER = NULL;	// global and accessable from anywhere in our program
 
+static GameButton g_DedicatedMenuButtons[NUM_MenuButton] =
+{
+	GAME_BUTTON_MENULEFT,		// MENU_BUTTON_LEFT
+	GAME_BUTTON_MENURIGHT,		// MENU_BUTTON_RIGHT
+	GAME_BUTTON_MENUUP,		// MENU_BUTTON_UP
+	GAME_BUTTON_MENUDOWN,		// MENU_BUTTON_DOWN
+	GAME_BUTTON_START,		// MENU_BUTTON_START
+	GAME_BUTTON_SELECT,		// MENU_BUTTON_SELECT
+	GAME_BUTTON_BACK,		// MENU_BUTTON_BACK
+	GAME_BUTTON_COIN,		// MENU_BUTTON_COIN
+	GAME_BUTTON_OPERATOR		// MENU_BUTTON_OPERATOR
+};
+
 InputMapper::InputMapper()
 {
 	g_JoinControllers = PLAYER_INVALID;
@@ -927,7 +940,7 @@ GameButton InputScheme::ButtonNameToIndex( const RString &sButtonName ) const
 MenuButton InputScheme::GameInputToMenuButton( GameInput GameI ) const
 {
 	FOREACH_MenuButton(i)
-		if( m_DedicatedMenuButton[i] == GameI.button )
+		if( g_DedicatedMenuButtons[i] == GameI.button )
 			return i;
 
 	if( !PREFSMAN->m_bOnlyDedicatedMenuButtons )
@@ -960,7 +973,7 @@ void InputScheme::MenuButtonToGameInputs( MenuButton MenuI, PlayerNumber pn, Gam
 		controller.push_back( (GameController)pn );
 	}
 
-	GameButton button[2] = { m_DedicatedMenuButton[MenuI], m_SecondaryMenuButton[MenuI] };
+	GameButton button[2] = { g_DedicatedMenuButtons[MenuI], m_SecondaryMenuButton[MenuI] };
 	int iNumButtonsUsing = PREFSMAN->m_bOnlyDedicatedMenuButtons ? 1 : 2;
 
 	int iOut = 0;
