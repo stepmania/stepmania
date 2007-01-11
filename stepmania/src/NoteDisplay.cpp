@@ -600,7 +600,7 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeing
 	const float fYHead = fStartYPos;	// the center of the head
 	const float fYTail = fEndYPos;		// the center the tail
 
-	const float fColorScale		= tn.HoldResult.fLife + (1-tn.HoldResult.fLife)*cache->m_fHoldLetGoGrayPercent;
+	const float fColorScale		= SCALE( tn.HoldResult.fLife, 0.0f, 1.0f, cache->m_fHoldLetGoGrayPercent, 1.0f );
 
 	bool bFlipHeadAndTail = bReverse && cache->m_bFlipHeadAndTailWhenReverse;
 
