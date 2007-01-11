@@ -104,7 +104,6 @@ static struct
 	{ "techno-double5",	10,			ST_FLAGS_NONE },
 	{ "pnm-five",		5,			ST_FLAGS_NONE },	// called "pnm" for backward compat
 	{ "pnm-nine",		9,			ST_FLAGS_NONE },	// called "pnm" for backward compat
-	{ "guitar-five",	5,			ST_FLAGS_NONE },
 	{ "lights-cabinet",	NUM_CabinetLight,	ST_FLAGS_DONT_AUTOGEN }, // XXX disable lights autogen for now
 };
 
@@ -121,32 +120,32 @@ static Game g_Games[NUM_GAMES] =
 			"dance",				// m_szName
 			NUM_DANCE_BUTTONS,			// m_iButtonsPerController
 			{	// m_szButtonNames
+				{ "MenuLeft",	GameButtonType_INVALID,	KEY_DEL,	KEY_KP_SLASH },
+				{ "MenuRight",	GameButtonType_INVALID,	KEY_PGDN,	KEY_KP_ASTERISK },
+				{ "MenuUp",	GameButtonType_INVALID,	KEY_HOME,	KEY_KP_HYPHEN },
+				{ "MenuDown",	GameButtonType_INVALID,	KEY_END,	KEY_KP_PLUS },
+				{ "Start",	GameButtonType_INVALID,	KEY_ENTER,	KEY_KP_ENTER },
+				{ "Select",	GameButtonType_INVALID,	KEY_BACKSLASH,	KEY_KP_C0 },
+				{ "Back",	GameButtonType_INVALID,	KEY_ESC,	KEY_NUMLOCK },
+				{ "Coin",	GameButtonType_INVALID,	KEY_F1,		NO_DEFAULT_KEY },
+				{ "Operator",	GameButtonType_INVALID,	KEY_SCRLLOCK,	NO_DEFAULT_KEY },
 				{ "Left",	GameButtonType_Step,	KEY_LEFT,	KEY_KP_C4 },
 				{ "Right",	GameButtonType_Step,	KEY_RIGHT,	KEY_KP_C6 },
 				{ "Up",		GameButtonType_Step,	KEY_UP,		KEY_KP_C8 },
 				{ "Down",	GameButtonType_Step,	KEY_DOWN,	KEY_KP_C2 },
 				{ "UpLeft",	GameButtonType_Step,	NO_DEFAULT_KEY,	KEY_KP_C7 },
 				{ "UpRight",	GameButtonType_Step,	NO_DEFAULT_KEY,	KEY_KP_C9 },
-				{ "Start",	GameButtonType_INVALID,	KEY_ENTER,	KEY_KP_ENTER },
-				{ "Select",	GameButtonType_INVALID,	KEY_BACKSLASH,	KEY_KP_C0 },
-				{ "Back",	GameButtonType_INVALID,	KEY_ESC,	KEY_NUMLOCK },
-				{ "MenuLeft",	GameButtonType_INVALID,	KEY_DEL,	KEY_KP_SLASH },
-				{ "MenuRight",	GameButtonType_INVALID,	KEY_PGDN,	KEY_KP_ASTERISK },
-				{ "MenuUp",	GameButtonType_INVALID,	KEY_HOME,	KEY_KP_HYPHEN },
-				{ "MenuDown",	GameButtonType_INVALID,	KEY_END,	KEY_KP_PLUS },
-				{ "Coin",	GameButtonType_INVALID,	KEY_F1,		NO_DEFAULT_KEY },
-				{ "Operator",	GameButtonType_INVALID,	KEY_SCRLLOCK,	NO_DEFAULT_KEY },
 			},
 			{	// m_DedicatedMenuButton
-				DANCE_BUTTON_MENULEFT,		// MENU_BUTTON_LEFT
-				DANCE_BUTTON_MENURIGHT,		// MENU_BUTTON_RIGHT
-				DANCE_BUTTON_MENUUP,		// MENU_BUTTON_UP
-				DANCE_BUTTON_MENUDOWN,		// MENU_BUTTON_DOWN
-				DANCE_BUTTON_START,		// MENU_BUTTON_START
-				DANCE_BUTTON_SELECT,		// MENU_BUTTON_SELECT
-				DANCE_BUTTON_BACK,		// MENU_BUTTON_BACK
-				DANCE_BUTTON_COIN,		// MENU_BUTTON_COIN
-				DANCE_BUTTON_OPERATOR		// MENU_BUTTON_OPERATOR
+				GAME_BUTTON_MENULEFT,		// MENU_BUTTON_LEFT
+				GAME_BUTTON_MENURIGHT,		// MENU_BUTTON_RIGHT
+				GAME_BUTTON_MENUUP,		// MENU_BUTTON_UP
+				GAME_BUTTON_MENUDOWN,		// MENU_BUTTON_DOWN
+				GAME_BUTTON_START,		// MENU_BUTTON_START
+				GAME_BUTTON_SELECT,		// MENU_BUTTON_SELECT
+				GAME_BUTTON_BACK,		// MENU_BUTTON_BACK
+				GAME_BUTTON_COIN,		// MENU_BUTTON_COIN
+				GAME_BUTTON_OPERATOR		// MENU_BUTTON_OPERATOR
 			},
 			{	// m_SecondaryMenuButton
 				DANCE_BUTTON_LEFT,		// MENU_BUTTON_LEFT
@@ -174,31 +173,31 @@ static Game g_Games[NUM_GAMES] =
 			"pump",					// m_szName
 			NUM_PUMP_BUTTONS,			// m_iButtonsPerController
 			{	// m_szButtonNames
+				{ "MenuLeft",	GameButtonType_INVALID,	KEY_LEFT,	NO_DEFAULT_KEY },
+				{ "MenuRight",	GameButtonType_INVALID,	KEY_RIGHT,	NO_DEFAULT_KEY },
+				{ "MenuUp",	GameButtonType_INVALID,	KEY_UP,		NO_DEFAULT_KEY },
+				{ "MenuDown",	GameButtonType_INVALID,	KEY_DOWN,	NO_DEFAULT_KEY },
+				{ "Start",	GameButtonType_INVALID,	KEY_ENTER,	KEY_KP_ENTER },
+				{ "Select",	GameButtonType_INVALID,	KEY_BACKSLASH,	KEY_KP_C0 },
+				{ "Back",	GameButtonType_INVALID,	KEY_ESC,	KEY_NUMLOCK },
+				{ "Coin",	GameButtonType_INVALID,	KEY_F1,		NO_DEFAULT_KEY },
+				{ "Operator",	GameButtonType_INVALID,	KEY_SCRLLOCK,	NO_DEFAULT_KEY },
 				{ "UpLeft",	GameButtonType_Step,	KEY_Cq,		KEY_KP_C7 },
 				{ "UpRight",	GameButtonType_Step,	KEY_Ce,		KEY_KP_C9 },
 				{ "Center",	GameButtonType_Step,	KEY_Cs,		KEY_KP_C5 },
 				{ "DownLeft",	GameButtonType_Step,	KEY_Cz,		KEY_KP_C1 },
 				{ "DownRight",	GameButtonType_Step,	KEY_Cc,		KEY_KP_C3 },
-				{ "Start",	GameButtonType_INVALID,	KEY_ENTER,	KEY_KP_ENTER },
-				{ "Select",	GameButtonType_INVALID,	KEY_BACKSLASH,	KEY_KP_C0 },
-				{ "Back",	GameButtonType_INVALID,	KEY_ESC,	KEY_NUMLOCK },
-				{ "MenuLeft",	GameButtonType_INVALID,	KEY_LEFT,	NO_DEFAULT_KEY },
-				{ "MenuRight",	GameButtonType_INVALID,	KEY_RIGHT,	NO_DEFAULT_KEY },
-				{ "MenuUp",	GameButtonType_INVALID,	KEY_UP,		NO_DEFAULT_KEY },
-				{ "MenuDown",	GameButtonType_INVALID,	KEY_DOWN,	NO_DEFAULT_KEY },
-				{ "Coin",	GameButtonType_INVALID,	KEY_F1,		NO_DEFAULT_KEY },
-				{ "Operator",	GameButtonType_INVALID,	KEY_SCRLLOCK,	NO_DEFAULT_KEY },
 			},
 			{	// m_DedicatedMenuButton
-				PUMP_BUTTON_MENULEFT,		// MENU_BUTTON_LEFT
-				PUMP_BUTTON_MENURIGHT,		// MENU_BUTTON_RIGHT
-				PUMP_BUTTON_MENUUP,		// MENU_BUTTON_UP
-				PUMP_BUTTON_MENUDOWN,		// MENU_BUTTON_DOWN
-				PUMP_BUTTON_START,		// MENU_BUTTON_START
-				PUMP_BUTTON_SELECT,		// MENU_BUTTON_SELECT
-				PUMP_BUTTON_BACK,		// MENU_BUTTON_BACK
-				PUMP_BUTTON_COIN,		// MENU_BUTTON_COIN
-				PUMP_BUTTON_OPERATOR,		// MENU_BUTTON_OPERATOR
+				GAME_BUTTON_MENULEFT,		// MENU_BUTTON_LEFT
+				GAME_BUTTON_MENURIGHT,		// MENU_BUTTON_RIGHT
+				GAME_BUTTON_MENUUP,		// MENU_BUTTON_UP
+				GAME_BUTTON_MENUDOWN,		// MENU_BUTTON_DOWN
+				GAME_BUTTON_START,		// MENU_BUTTON_START
+				GAME_BUTTON_SELECT,		// MENU_BUTTON_SELECT
+				GAME_BUTTON_BACK,		// MENU_BUTTON_BACK
+				GAME_BUTTON_COIN,		// MENU_BUTTON_COIN
+				GAME_BUTTON_OPERATOR,		// MENU_BUTTON_OPERATOR
 			},
 			{	// m_SecondaryMenuButton
 				PUMP_BUTTON_DOWNLEFT,		// MENU_BUTTON_LEFT
@@ -226,6 +225,15 @@ static Game g_Games[NUM_GAMES] =
 			"ez2",					// m_szName
 			NUM_EZ2_BUTTONS,			// m_iButtonsPerController
 			{	// m_szButtonNames
+				{ "MenuLeft",		GameButtonType_INVALID,	KEY_LEFT,	NO_DEFAULT_KEY },
+				{ "MenuRight",		GameButtonType_INVALID,	KEY_RIGHT,	NO_DEFAULT_KEY },
+				{ "MenuUp",		GameButtonType_INVALID,	KEY_UP,		NO_DEFAULT_KEY },
+				{ "MenuDown",		GameButtonType_INVALID,	KEY_DOWN,	NO_DEFAULT_KEY },
+				{ "Start",		GameButtonType_INVALID,	KEY_ENTER,	NO_DEFAULT_KEY },
+				{ "Select",		GameButtonType_INVALID,	KEY_BACKSLASH,	NO_DEFAULT_KEY },
+				{ "Back",		GameButtonType_INVALID,	KEY_ESC,	NO_DEFAULT_KEY },
+				{ "Coin",		GameButtonType_INVALID,	KEY_F1,		NO_DEFAULT_KEY },
+				{ "Operator",		GameButtonType_INVALID,	KEY_SCRLLOCK,	NO_DEFAULT_KEY },
 				{ "FootUpLeft",		GameButtonType_Step,	KEY_Cz,		NO_DEFAULT_KEY },
 				{ "FootUpRight",	GameButtonType_Step,	KEY_Cb,		NO_DEFAULT_KEY },
 				{ "FootDown",		GameButtonType_Step,	KEY_Cc,		NO_DEFAULT_KEY },
@@ -233,26 +241,17 @@ static Game g_Games[NUM_GAMES] =
 				{ "HandUpRight",	GameButtonType_Step,	KEY_Cv,		NO_DEFAULT_KEY },
 				{ "HandLrLeft",		GameButtonType_Step,	KEY_Cs,		NO_DEFAULT_KEY },
 				{ "HandLrRight",	GameButtonType_Step,	KEY_Cf,		NO_DEFAULT_KEY },
-				{ "Start",		GameButtonType_INVALID,	KEY_ENTER,	NO_DEFAULT_KEY },
-				{ "Select",		GameButtonType_INVALID,	KEY_BACKSLASH,	NO_DEFAULT_KEY },
-				{ "Back",		GameButtonType_INVALID,	KEY_ESC,	NO_DEFAULT_KEY },
-				{ "MenuLeft",		GameButtonType_INVALID,	KEY_LEFT,	NO_DEFAULT_KEY },
-				{ "MenuRight",		GameButtonType_INVALID,	KEY_RIGHT,	NO_DEFAULT_KEY },
-				{ "MenuUp",		GameButtonType_INVALID,	KEY_UP,		NO_DEFAULT_KEY },
-				{ "MenuDown",		GameButtonType_INVALID,	KEY_DOWN,	NO_DEFAULT_KEY },
-				{ "Coin",		GameButtonType_INVALID,	KEY_F1,		NO_DEFAULT_KEY },
-				{ "Operator",		GameButtonType_INVALID,	KEY_SCRLLOCK,	NO_DEFAULT_KEY },
 			},
 			{	// m_DedicatedMenuButton
-				EZ2_BUTTON_MENULEFT,		// MENU_BUTTON_LEFT
-				EZ2_BUTTON_MENURIGHT,		// MENU_BUTTON_RIGHT
-				EZ2_BUTTON_MENUUP,		// MENU_BUTTON_UP
-				EZ2_BUTTON_MENUDOWN,		// MENU_BUTTON_DOWN
-				EZ2_BUTTON_START,		// MENU_BUTTON_START
-				EZ2_BUTTON_SELECT,		// MENU_BUTTON_SELECT
-				EZ2_BUTTON_BACK,		// MENU_BUTTON_BACK
-				EZ2_BUTTON_COIN,		// MENU_BUTTON_COIN
-				EZ2_BUTTON_OPERATOR,		// MENU_BUTTON_OPERATOR
+				GAME_BUTTON_MENULEFT,		// MENU_BUTTON_LEFT
+				GAME_BUTTON_MENURIGHT,		// MENU_BUTTON_RIGHT
+				GAME_BUTTON_MENUUP,		// MENU_BUTTON_UP
+				GAME_BUTTON_MENUDOWN,		// MENU_BUTTON_DOWN
+				GAME_BUTTON_START,		// MENU_BUTTON_START
+				GAME_BUTTON_SELECT,		// MENU_BUTTON_SELECT
+				GAME_BUTTON_BACK,		// MENU_BUTTON_BACK
+				GAME_BUTTON_COIN,		// MENU_BUTTON_COIN
+				GAME_BUTTON_OPERATOR,		// MENU_BUTTON_OPERATOR
 			},
 			{	// m_SecondaryMenuButton
 				EZ2_BUTTON_HANDUPLEFT,		// MENU_BUTTON_LEFT
@@ -280,31 +279,31 @@ static Game g_Games[NUM_GAMES] =
 			"para",					// m_szName
 			NUM_PARA_BUTTONS,			// m_iButtonsPerController
 			{	// m_szButtonNames
+				{ "MenuLeft",	GameButtonType_INVALID,	KEY_LEFT,	NO_DEFAULT_KEY },
+				{ "MenuRight",	GameButtonType_INVALID,	KEY_RIGHT,	NO_DEFAULT_KEY },
+				{ "MenuUp",	GameButtonType_INVALID,	KEY_UP,		NO_DEFAULT_KEY },
+				{ "MenuDown",	GameButtonType_INVALID,	KEY_DOWN,	NO_DEFAULT_KEY },
+				{ "Start",	GameButtonType_INVALID,	KEY_ENTER,	NO_DEFAULT_KEY },
+				{ "Select",	GameButtonType_INVALID,	KEY_BACKSLASH,	NO_DEFAULT_KEY },
+				{ "Back",	GameButtonType_INVALID,	KEY_ESC,	NO_DEFAULT_KEY },
+				{ "Coin",	GameButtonType_INVALID,	KEY_F1,		NO_DEFAULT_KEY },
+				{ "Operator",	GameButtonType_INVALID,	KEY_SCRLLOCK,	NO_DEFAULT_KEY },
 				{ "Left",	GameButtonType_Step,	KEY_Cz,		NO_DEFAULT_KEY },
 				{ "UpLeft",	GameButtonType_Step,	KEY_Cx,		NO_DEFAULT_KEY },
 				{ "Up",		GameButtonType_Step,	KEY_Cc,		NO_DEFAULT_KEY },
 				{ "UpRight",	GameButtonType_Step,	KEY_Cv,		NO_DEFAULT_KEY },
 				{ "Right",	GameButtonType_Step,	KEY_Cb,		NO_DEFAULT_KEY },
-				{ "Start",	GameButtonType_INVALID,	KEY_ENTER,	NO_DEFAULT_KEY },
-				{ "Select",	GameButtonType_INVALID,	KEY_BACKSLASH,	NO_DEFAULT_KEY },
-				{ "Back",	GameButtonType_INVALID,	KEY_ESC,	NO_DEFAULT_KEY },
-				{ "MenuLeft",	GameButtonType_INVALID,	KEY_LEFT,	NO_DEFAULT_KEY },
-				{ "MenuRight",	GameButtonType_INVALID,	KEY_RIGHT,	NO_DEFAULT_KEY },
-				{ "MenuUp",	GameButtonType_INVALID,	KEY_UP,		NO_DEFAULT_KEY },
-				{ "MenuDown",	GameButtonType_INVALID,	KEY_DOWN,	NO_DEFAULT_KEY },
-				{ "Coin",	GameButtonType_INVALID,	KEY_F1,		NO_DEFAULT_KEY },
-				{ "Operator",	GameButtonType_INVALID,	KEY_SCRLLOCK,	NO_DEFAULT_KEY },
 			},
 			{	// m_DedicatedMenuButton
-				PARA_BUTTON_MENULEFT,		// MENU_BUTTON_LEFT
-				PARA_BUTTON_MENURIGHT,		// MENU_BUTTON_RIGHT
-				PARA_BUTTON_MENUUP,		// MENU_BUTTON_UP
-				PARA_BUTTON_MENUDOWN,		// MENU_BUTTON_DOWN
-				PARA_BUTTON_START,		// MENU_BUTTON_START
-				PARA_BUTTON_SELECT,		// MENU_BUTTON_SELECT
-				PARA_BUTTON_BACK,		// MENU_BUTTON_BACK
-				PARA_BUTTON_COIN,		// MENU_BUTTON_COIN
-				PARA_BUTTON_OPERATOR,		// MENU_BUTTON_OPERATOR
+				GAME_BUTTON_MENULEFT,		// MENU_BUTTON_LEFT
+				GAME_BUTTON_MENURIGHT,		// MENU_BUTTON_RIGHT
+				GAME_BUTTON_MENUUP,		// MENU_BUTTON_UP
+				GAME_BUTTON_MENUDOWN,		// MENU_BUTTON_DOWN
+				GAME_BUTTON_START,		// MENU_BUTTON_START
+				GAME_BUTTON_SELECT,		// MENU_BUTTON_SELECT
+				GAME_BUTTON_BACK,		// MENU_BUTTON_BACK
+				GAME_BUTTON_COIN,		// MENU_BUTTON_COIN
+				GAME_BUTTON_OPERATOR,		// MENU_BUTTON_OPERATOR
 			},
 			{	// m_SecondaryMenuButton
 				PARA_BUTTON_LEFT,		// MENU_BUTTON_LEFT
@@ -332,6 +331,15 @@ static Game g_Games[NUM_GAMES] =
 			"ds3ddx",				// m_szName
 			NUM_DS3DDX_BUTTONS,			// m_iButtonsPerController
 			{	// m_szButtonNames
+				{ "MenuLeft",		GameButtonType_INVALID,	KEY_LEFT,	NO_DEFAULT_KEY },
+				{ "MenuRight",		GameButtonType_INVALID,	KEY_RIGHT,	NO_DEFAULT_KEY },
+				{ "MenuUp",		GameButtonType_INVALID,	KEY_UP,		NO_DEFAULT_KEY },
+				{ "MenuDown",		GameButtonType_INVALID,	KEY_DOWN,	NO_DEFAULT_KEY },
+				{ "Start",		GameButtonType_INVALID,	KEY_ENTER,	NO_DEFAULT_KEY },
+				{ "Select",		GameButtonType_INVALID,	KEY_BACKSLASH,	NO_DEFAULT_KEY },
+				{ "Back",		GameButtonType_INVALID,	KEY_ESC,	NO_DEFAULT_KEY },
+				{ "Coin",		GameButtonType_INVALID,	KEY_F1,		NO_DEFAULT_KEY },
+				{ "Operator",		GameButtonType_INVALID,	KEY_SCRLLOCK,	NO_DEFAULT_KEY },
 				{ "HandLeft",		GameButtonType_Step,	KEY_Ca,		NO_DEFAULT_KEY },
 				{ "FootDownLeft",	GameButtonType_Step,	KEY_Cz,		NO_DEFAULT_KEY },
 				{ "FootUpLeft",		GameButtonType_Step,	KEY_Cq,		NO_DEFAULT_KEY },
@@ -340,26 +348,17 @@ static Game g_Games[NUM_GAMES] =
 				{ "FootUpRight",	GameButtonType_Step,	KEY_Ce,		NO_DEFAULT_KEY },
 				{ "FootDownRight",	GameButtonType_Step,	KEY_Cc,		NO_DEFAULT_KEY },
 				{ "HandRight",		GameButtonType_Step,	KEY_Cd,		NO_DEFAULT_KEY },
-				{ "Start",		GameButtonType_INVALID,	KEY_ENTER,	NO_DEFAULT_KEY },
-				{ "Select",		GameButtonType_INVALID,	KEY_BACKSLASH,	NO_DEFAULT_KEY },
-				{ "Back",		GameButtonType_INVALID,	KEY_ESC,	NO_DEFAULT_KEY },
-				{ "MenuLeft",		GameButtonType_INVALID,	KEY_LEFT,	NO_DEFAULT_KEY },
-				{ "MenuRight",		GameButtonType_INVALID,	KEY_RIGHT,	NO_DEFAULT_KEY },
-				{ "MenuUp",		GameButtonType_INVALID,	KEY_UP,		NO_DEFAULT_KEY },
-				{ "MenuDown",		GameButtonType_INVALID,	KEY_DOWN,	NO_DEFAULT_KEY },
-				{ "Coin",		GameButtonType_INVALID,	KEY_F1,		NO_DEFAULT_KEY },
-				{ "Operator",		GameButtonType_INVALID,	KEY_SCRLLOCK,	NO_DEFAULT_KEY },
 			},
 			{	// m_DedicatedMenuButton
-				DS3DDX_BUTTON_MENULEFT,		// MENU_BUTTON_LEFT
-				DS3DDX_BUTTON_MENURIGHT,	// MENU_BUTTON_RIGHT
-				DS3DDX_BUTTON_MENUUP,		// MENU_BUTTON_UP
-				DS3DDX_BUTTON_MENUDOWN,		// MENU_BUTTON_DOWN
-				DS3DDX_BUTTON_START,		// MENU_BUTTON_START
-				DS3DDX_BUTTON_SELECT,		// MENU_BUTTON_SELECT
-				DS3DDX_BUTTON_BACK,		// MENU_BUTTON_BACK
-				DS3DDX_BUTTON_COIN,		// MENU_BUTTON_COIN
-				DS3DDX_BUTTON_OPERATOR,		// MENU_BUTTON_OPERATOR
+				GAME_BUTTON_MENULEFT,		// MENU_BUTTON_LEFT
+				GAME_BUTTON_MENURIGHT,	// MENU_BUTTON_RIGHT
+				GAME_BUTTON_MENUUP,		// MENU_BUTTON_UP
+				GAME_BUTTON_MENUDOWN,		// MENU_BUTTON_DOWN
+				GAME_BUTTON_START,		// MENU_BUTTON_START
+				GAME_BUTTON_SELECT,		// MENU_BUTTON_SELECT
+				GAME_BUTTON_BACK,		// MENU_BUTTON_BACK
+				GAME_BUTTON_COIN,		// MENU_BUTTON_COIN
+				GAME_BUTTON_OPERATOR,		// MENU_BUTTON_OPERATOR
 			},
 			{	// m_SecondaryMenuButton
 				DS3DDX_BUTTON_HANDLEFT,		// MENU_BUTTON_LEFT
@@ -387,6 +386,15 @@ static Game g_Games[NUM_GAMES] =
 			"beat",					// m_szName
 			NUM_BEAT_BUTTONS,			// m_iButtonsPerController
 			{	// m_szButtonNames
+				{ "MenuLeft",		GameButtonType_INVALID,	KEY_LEFT,	NO_DEFAULT_KEY },
+				{ "MenuRight",		GameButtonType_INVALID,	KEY_RIGHT,	NO_DEFAULT_KEY },
+				{ "MenuUp",		GameButtonType_INVALID,	KEY_UP,		NO_DEFAULT_KEY },
+				{ "MenuDown",		GameButtonType_INVALID,	KEY_DOWN,	NO_DEFAULT_KEY },
+				{ "Start",		GameButtonType_INVALID,	KEY_ENTER,	NO_DEFAULT_KEY },
+				{ "Select",		GameButtonType_INVALID,	KEY_BACKSLASH,	NO_DEFAULT_KEY },
+				{ "Back",		GameButtonType_INVALID,	KEY_ESC,	NO_DEFAULT_KEY },
+				{ "Coin",		GameButtonType_INVALID,	KEY_F1,		NO_DEFAULT_KEY },
+				{ "Operator",		GameButtonType_INVALID,	KEY_SCRLLOCK,	NO_DEFAULT_KEY },
 				{ "Key1",		GameButtonType_Step,	KEY_Cm,		NO_DEFAULT_KEY },
 				{ "Key2",		GameButtonType_Step,	KEY_Ck,		NO_DEFAULT_KEY },
 				{ "Key3",		GameButtonType_Step,	KEY_COMMA,	NO_DEFAULT_KEY },
@@ -396,26 +404,17 @@ static Game g_Games[NUM_GAMES] =
 				{ "Key7",		GameButtonType_Step,	KEY_SLASH,	NO_DEFAULT_KEY },
 				{ "Scratch up",		GameButtonType_Step,	KEY_LSHIFT,	NO_DEFAULT_KEY },
 				{ "Scratch down",	GameButtonType_Step,	NO_DEFAULT_KEY,	NO_DEFAULT_KEY },
-				{ "Start",		GameButtonType_INVALID,	KEY_ENTER,	NO_DEFAULT_KEY },
-				{ "Select",		GameButtonType_INVALID,	KEY_BACKSLASH,	NO_DEFAULT_KEY },
-				{ "Back",		GameButtonType_INVALID,	KEY_ESC,	NO_DEFAULT_KEY },
-				{ "MenuLeft",		GameButtonType_INVALID,	KEY_LEFT,	NO_DEFAULT_KEY },
-				{ "MenuRight",		GameButtonType_INVALID,	KEY_RIGHT,	NO_DEFAULT_KEY },
-				{ "MenuUp",		GameButtonType_INVALID,	KEY_UP,		NO_DEFAULT_KEY },
-				{ "MenuDown",		GameButtonType_INVALID,	KEY_DOWN,	NO_DEFAULT_KEY },
-				{ "Coin",		GameButtonType_INVALID,	KEY_F1,		NO_DEFAULT_KEY },
-				{ "Operator",		GameButtonType_INVALID,	KEY_SCRLLOCK,	NO_DEFAULT_KEY },
 			},
 			{	// m_DedicatedMenuButton
-				BEAT_BUTTON_MENULEFT,		// MENU_BUTTON_LEFT
-				BEAT_BUTTON_MENURIGHT,		// MENU_BUTTON_RIGHT
-				BEAT_BUTTON_MENUUP,		// MENU_BUTTON_UP
-				BEAT_BUTTON_MENUDOWN,		// MENU_BUTTON_DOWN
-				BEAT_BUTTON_START,		// MENU_BUTTON_START
-				BEAT_BUTTON_SELECT,		// MENU_BUTTON_SELECT
-				BEAT_BUTTON_BACK,		// MENU_BUTTON_BACK
-				BEAT_BUTTON_COIN,		// MENU_BUTTON_COIN
-				BEAT_BUTTON_OPERATOR,		// MENU_BUTTON_OPERATOR
+				GAME_BUTTON_MENULEFT,		// MENU_BUTTON_LEFT
+				GAME_BUTTON_MENURIGHT,		// MENU_BUTTON_RIGHT
+				GAME_BUTTON_MENUUP,		// MENU_BUTTON_UP
+				GAME_BUTTON_MENUDOWN,		// MENU_BUTTON_DOWN
+				GAME_BUTTON_START,		// MENU_BUTTON_START
+				GAME_BUTTON_SELECT,		// MENU_BUTTON_SELECT
+				GAME_BUTTON_BACK,		// MENU_BUTTON_BACK
+				GAME_BUTTON_COIN,		// MENU_BUTTON_COIN
+				GAME_BUTTON_OPERATOR,		// MENU_BUTTON_OPERATOR
 			},
 			{	// m_SecondaryMenuButton
 				BEAT_BUTTON_KEY1,		// MENU_BUTTON_LEFT
@@ -443,30 +442,30 @@ static Game g_Games[NUM_GAMES] =
 			"maniax",				// m_szName
 			NUM_MANIAX_BUTTONS,			// m_iButtonsPerController
 			{	// m_szButtonNames
-				{ "HandUpLeft",		GameButtonType_Step,	KEY_Ca,		KEY_KP_C4 },
-				{ "HandUpRight",	GameButtonType_Step,	KEY_Cs,		KEY_KP_C5 },
-				{ "HandLrLeft",		GameButtonType_Step,	KEY_Cz,		KEY_KP_C1 },
-				{ "HandLrRight",	GameButtonType_Step,	KEY_Cx,		KEY_KP_C2 },
-				{ "Start",		GameButtonType_INVALID,	KEY_ENTER,	KEY_KP_ENTER },
-				{ "Select",		GameButtonType_INVALID,	KEY_BACKSLASH,	KEY_KP_C0 },
-				{ "Back",		GameButtonType_INVALID,	KEY_ESC,	KEY_NUMLOCK },
 				{ "MenuLeft",		GameButtonType_INVALID,	KEY_LEFT,	KEY_KP_SLASH },
 				{ "MenuRight",		GameButtonType_INVALID,	KEY_RIGHT,	KEY_KP_ASTERISK },
 				{ "MenuUp",		GameButtonType_INVALID,	KEY_UP,		KEY_KP_HYPHEN },
 				{ "MenuDown",		GameButtonType_INVALID,	KEY_DOWN,	KEY_KP_PLUS },
+				{ "Start",		GameButtonType_INVALID,	KEY_ENTER,	KEY_KP_ENTER },
+				{ "Select",		GameButtonType_INVALID,	KEY_BACKSLASH,	KEY_KP_C0 },
+				{ "Back",		GameButtonType_INVALID,	KEY_ESC,	KEY_NUMLOCK },
 				{ "Coin",		GameButtonType_INVALID,	KEY_F1,		NO_DEFAULT_KEY },
 				{ "Operator",		GameButtonType_INVALID,	KEY_SCRLLOCK,	NO_DEFAULT_KEY },
+				{ "HandUpLeft",		GameButtonType_Step,	KEY_Ca,		KEY_KP_C4 },
+				{ "HandUpRight",	GameButtonType_Step,	KEY_Cs,		KEY_KP_C5 },
+				{ "HandLrLeft",		GameButtonType_Step,	KEY_Cz,		KEY_KP_C1 },
+				{ "HandLrRight",	GameButtonType_Step,	KEY_Cx,		KEY_KP_C2 },
 			},
 			{	// m_DedicatedMenuButton
-				MANIAX_BUTTON_MENULEFT,		// MENU_BUTTON_LEFT
-				MANIAX_BUTTON_MENURIGHT,	// MENU_BUTTON_RIGHT
-				MANIAX_BUTTON_MENUUP,		// MENU_BUTTON_UP
-				MANIAX_BUTTON_MENUDOWN,		// MENU_BUTTON_DOWN
-				MANIAX_BUTTON_START,		// MENU_BUTTON_START
-				MANIAX_BUTTON_SELECT,		// MENU_BUTTON_SELECT
-				MANIAX_BUTTON_BACK,		// MENU_BUTTON_BACK
-				MANIAX_BUTTON_COIN,		// MENU_BUTTON_COIN
-				MANIAX_BUTTON_OPERATOR		// MENU_BUTTON_OPERATOR
+				GAME_BUTTON_MENULEFT,		// MENU_BUTTON_LEFT
+				GAME_BUTTON_MENURIGHT,		// MENU_BUTTON_RIGHT
+				GAME_BUTTON_MENUUP,		// MENU_BUTTON_UP
+				GAME_BUTTON_MENUDOWN,		// MENU_BUTTON_DOWN
+				GAME_BUTTON_START,		// MENU_BUTTON_START
+				GAME_BUTTON_SELECT,		// MENU_BUTTON_SELECT
+				GAME_BUTTON_BACK,		// MENU_BUTTON_BACK
+				GAME_BUTTON_COIN,		// MENU_BUTTON_COIN
+				GAME_BUTTON_OPERATOR		// MENU_BUTTON_OPERATOR
 			},
 			{	// m_SecondaryMenuButton
 				MANIAX_BUTTON_HANDUPLEFT,	// MENU_BUTTON_LEFT
@@ -494,6 +493,15 @@ static Game g_Games[NUM_GAMES] =
 			"techno",				// m_szName
 			NUM_TECHNO_BUTTONS,			// m_iButtonsPerController
 			{	// m_szButtonNames
+				{ "MenuLeft",	GameButtonType_INVALID,	KEY_LEFT,	KEY_KP_SLASH },
+				{ "MenuRight",	GameButtonType_INVALID,	KEY_RIGHT,	KEY_KP_ASTERISK },
+				{ "MenuUp",	GameButtonType_INVALID,	KEY_UP,		KEY_KP_HYPHEN },
+				{ "MenuDown",	GameButtonType_INVALID,	KEY_DOWN,	KEY_KP_PLUS },
+				{ "Start",	GameButtonType_INVALID,	KEY_ENTER,	KEY_KP_ENTER },
+				{ "Select",	GameButtonType_INVALID,	KEY_BACKSLASH,	KEY_KP_C0 },
+				{ "Back",	GameButtonType_INVALID,	KEY_ESC,	KEY_NUMLOCK },
+				{ "Coin",	GameButtonType_INVALID,	KEY_F1,		NO_DEFAULT_KEY },
+				{ "Operator",	GameButtonType_INVALID,	KEY_SCRLLOCK,	NO_DEFAULT_KEY },
 				{ "Left",	GameButtonType_Step,	KEY_Ca,		KEY_KP_C4 },
 				{ "Right",	GameButtonType_Step,	KEY_Cd,		KEY_KP_C6 },
 				{ "Up",		GameButtonType_Step,	KEY_Cw,		KEY_KP_C8 },
@@ -503,26 +511,17 @@ static Game g_Games[NUM_GAMES] =
 				{ "Center",	GameButtonType_Step,	KEY_Cs,		KEY_KP_C5 },
 				{ "DownLeft",	GameButtonType_Step,	KEY_Cz,		KEY_KP_C1 },
 				{ "DownRight",	GameButtonType_Step,	KEY_Cc,		KEY_KP_C3 },
-				{ "Start",	GameButtonType_INVALID,	KEY_ENTER,	KEY_KP_ENTER },
-				{ "Select",	GameButtonType_INVALID,	KEY_BACKSLASH,	KEY_KP_C0 },
-				{ "Back",	GameButtonType_INVALID,	KEY_ESC,	KEY_NUMLOCK },
-				{ "MenuLeft",	GameButtonType_INVALID,	KEY_LEFT,	KEY_KP_SLASH },
-				{ "MenuRight",	GameButtonType_INVALID,	KEY_RIGHT,	KEY_KP_ASTERISK },
-				{ "MenuUp",	GameButtonType_INVALID,	KEY_UP,		KEY_KP_HYPHEN },
-				{ "MenuDown",	GameButtonType_INVALID,	KEY_DOWN,	KEY_KP_PLUS },
-				{ "Coin",	GameButtonType_INVALID,	KEY_F1,		NO_DEFAULT_KEY },
-				{ "Operator",	GameButtonType_INVALID,	KEY_SCRLLOCK,	NO_DEFAULT_KEY },
 			},
 			{	// m_DedicatedMenuButton
-				TECHNO_BUTTON_MENULEFT,		// MENU_BUTTON_LEFT
-				TECHNO_BUTTON_MENURIGHT,	// MENU_BUTTON_RIGHT
-				TECHNO_BUTTON_MENUUP,		// MENU_BUTTON_UP
-				TECHNO_BUTTON_MENUDOWN,		// MENU_BUTTON_DOWN
-				TECHNO_BUTTON_START,		// MENU_BUTTON_START
-				TECHNO_BUTTON_SELECT,		// MENU_BUTTON_SELECT
-				TECHNO_BUTTON_BACK,		// MENU_BUTTON_BACK
-				TECHNO_BUTTON_COIN,		// MENU_BUTTON_COIN
-				TECHNO_BUTTON_OPERATOR		// MENU_BUTTON_OPERATOR
+				GAME_BUTTON_MENULEFT,		// MENU_BUTTON_LEFT
+				GAME_BUTTON_MENURIGHT,		// MENU_BUTTON_RIGHT
+				GAME_BUTTON_MENUUP,		// MENU_BUTTON_UP
+				GAME_BUTTON_MENUDOWN,		// MENU_BUTTON_DOWN
+				GAME_BUTTON_START,		// MENU_BUTTON_START
+				GAME_BUTTON_SELECT,		// MENU_BUTTON_SELECT
+				GAME_BUTTON_BACK,		// MENU_BUTTON_BACK
+				GAME_BUTTON_COIN,		// MENU_BUTTON_COIN
+				GAME_BUTTON_OPERATOR		// MENU_BUTTON_OPERATOR
 			},
 			{	// m_SecondaryMenuButton
 				TECHNO_BUTTON_LEFT,		// MENU_BUTTON_LEFT
@@ -550,6 +549,15 @@ static Game g_Games[NUM_GAMES] =
 			"popn",					// m_szName
 			NUM_POPN_BUTTONS,			// m_iButtonsPerController
 			{	// m_szButtonNames
+				{ "MenuLeft",		GameButtonType_Step,	KEY_LEFT,	NO_DEFAULT_KEY },
+				{ "MenuRight",		GameButtonType_Step,	KEY_RIGHT,	NO_DEFAULT_KEY },
+				{ "MenuUp",		GameButtonType_Step,	KEY_UP,		NO_DEFAULT_KEY },
+				{ "MenuDown",		GameButtonType_Step,	KEY_DOWN,	NO_DEFAULT_KEY },
+				{ "Start",		GameButtonType_Step,	KEY_BACKSLASH,	NO_DEFAULT_KEY },
+				{ "Back",		GameButtonType_Step,	KEY_ENTER,	NO_DEFAULT_KEY },
+				{ "Select",		GameButtonType_Step,	KEY_ESC,	NO_DEFAULT_KEY },
+				{ "Coin",		GameButtonType_Step,	KEY_F1,		NO_DEFAULT_KEY },
+				{ "Operator",		GameButtonType_Step,	KEY_SCRLLOCK,	NO_DEFAULT_KEY },
 				{ "Left White",		GameButtonType_Step,	KEY_Cz,		NO_DEFAULT_KEY },
 				{ "Left Yellow",	GameButtonType_Step,	KEY_Cs,		NO_DEFAULT_KEY },
 				{ "Left Green",		GameButtonType_Step,	KEY_Cx,		NO_DEFAULT_KEY },
@@ -559,26 +567,17 @@ static Game g_Games[NUM_GAMES] =
 				{ "Right Green",	GameButtonType_Step,	KEY_Cv,		NO_DEFAULT_KEY },
 				{ "Right Yellow",	GameButtonType_Step,	KEY_Cg,		NO_DEFAULT_KEY },
 				{ "Right White",	GameButtonType_Step,	KEY_Cb,		NO_DEFAULT_KEY },
-				{ "Back",		GameButtonType_Step,	KEY_ENTER,	NO_DEFAULT_KEY },
-				{ "Start",		GameButtonType_Step,	KEY_BACKSLASH,	NO_DEFAULT_KEY },
-				{ "Select",		GameButtonType_Step,	KEY_ESC,	NO_DEFAULT_KEY },
-				{ "MenuLeft",		GameButtonType_Step,	KEY_LEFT,	NO_DEFAULT_KEY },
-				{ "MenuRight",		GameButtonType_Step,	KEY_RIGHT,	NO_DEFAULT_KEY },
-				{ "MenuUp",		GameButtonType_Step,	KEY_UP,		NO_DEFAULT_KEY },
-				{ "MenuDown",		GameButtonType_Step,	KEY_DOWN,	NO_DEFAULT_KEY },
-				{ "Coin",		GameButtonType_Step,	KEY_F1,		NO_DEFAULT_KEY },
-				{ "Operator",		GameButtonType_Step,	KEY_SCRLLOCK,	NO_DEFAULT_KEY },
 			},
 			{	// m_DedicatedMenuButton
-				POPN_BUTTON_MENULEFT,		// MENU_BUTTON_LEFT
-				POPN_BUTTON_MENURIGHT,		// MENU_BUTTON_RIGHT
-				POPN_BUTTON_MENUUP,		// MENU_BUTTON_UP
-				POPN_BUTTON_MENUDOWN,		// MENU_BUTTON_DOWN
-				POPN_BUTTON_START,		// MENU_BUTTON_START
-				POPN_BUTTON_SELECT,		// MENU_BUTTON_SELECT
-				POPN_BUTTON_BACK,		// MENU_BUTTON_START
-				POPN_BUTTON_COIN,		// MENU_BUTTON_COIN
-				POPN_BUTTON_OPERATOR		// MENU_BUTTON_OPERATOR
+				GAME_BUTTON_MENULEFT,		// MENU_BUTTON_LEFT
+				GAME_BUTTON_MENURIGHT,		// MENU_BUTTON_RIGHT
+				GAME_BUTTON_MENUUP,		// MENU_BUTTON_UP
+				GAME_BUTTON_MENUDOWN,		// MENU_BUTTON_DOWN
+				GAME_BUTTON_START,		// MENU_BUTTON_START
+				GAME_BUTTON_SELECT,		// MENU_BUTTON_SELECT
+				GAME_BUTTON_BACK,		// MENU_BUTTON_START
+				GAME_BUTTON_COIN,		// MENU_BUTTON_COIN
+				GAME_BUTTON_OPERATOR		// MENU_BUTTON_OPERATOR
 			},
 			{	// m_SecondaryMenuButton
 				POPN_BUTTON_LEFT_BLUE,		// MENU_BUTTON_LEFT
@@ -606,6 +605,15 @@ static Game g_Games[NUM_GAMES] =
 			"lights",				// m_szName
 			NUM_LIGHTS_BUTTONS,			// m_iButtonsPerController
 			{	// m_szButtonNames
+				{ "MenuLeft",		GameButtonType_INVALID,	KEY_DEL,	NO_DEFAULT_KEY },
+				{ "MenuRight",		GameButtonType_INVALID,	KEY_PGDN,	NO_DEFAULT_KEY },
+				{ "MenuUp",		GameButtonType_INVALID,	KEY_HOME,	NO_DEFAULT_KEY },
+				{ "MenuDown",		GameButtonType_INVALID,	KEY_END,	NO_DEFAULT_KEY },
+				{ "Start",		GameButtonType_INVALID,	KEY_ENTER,	NO_DEFAULT_KEY },
+				{ "Select",		GameButtonType_INVALID,	KEY_BACKSLASH,	NO_DEFAULT_KEY },
+				{ "Back",		GameButtonType_INVALID,	KEY_ESC,	NO_DEFAULT_KEY },
+				{ "Coin",		GameButtonType_INVALID,	KEY_F1,		NO_DEFAULT_KEY },
+				{ "Operator",		GameButtonType_INVALID,	KEY_SCRLLOCK,	NO_DEFAULT_KEY },
 				{ "MarqueeUpLeft",	GameButtonType_Step,	KEY_Cq,		NO_DEFAULT_KEY },	
 				{ "MarqueeUpRight",	GameButtonType_Step,	KEY_Cw,		NO_DEFAULT_KEY },
 				{ "MarqueeLrLeft",	GameButtonType_Step,	KEY_Ce,		NO_DEFAULT_KEY },
@@ -614,26 +622,17 @@ static Game g_Games[NUM_GAMES] =
 				{ "ButtonsRight",	GameButtonType_Step,	KEY_Cy,		NO_DEFAULT_KEY },
 				{ "BassLeft",		GameButtonType_Step,	KEY_Cu,		NO_DEFAULT_KEY },
 				{ "BassRight",		GameButtonType_Step,	KEY_Ci,		NO_DEFAULT_KEY },
-				{ "Start",		GameButtonType_INVALID,	KEY_ENTER,	NO_DEFAULT_KEY },
-				{ "Select",		GameButtonType_INVALID,	KEY_BACKSLASH,	NO_DEFAULT_KEY },
-				{ "Back",		GameButtonType_INVALID,	KEY_ESC,	NO_DEFAULT_KEY },
-				{ "MenuLeft",		GameButtonType_INVALID,	KEY_DEL,	NO_DEFAULT_KEY },
-				{ "MenuRight",		GameButtonType_INVALID,	KEY_PGDN,	NO_DEFAULT_KEY },
-				{ "MenuUp",		GameButtonType_INVALID,	KEY_HOME,	NO_DEFAULT_KEY },
-				{ "MenuDown",		GameButtonType_INVALID,	KEY_END,	NO_DEFAULT_KEY },
-				{ "Coin",		GameButtonType_INVALID,	KEY_F1,		NO_DEFAULT_KEY },
-				{ "Operator",		GameButtonType_INVALID,	KEY_SCRLLOCK,	NO_DEFAULT_KEY },
 			},
 			{	// m_DedicatedMenuButton
-				LIGHTS_BUTTON_MENULEFT,		// MENU_BUTTON_LEFT
-				LIGHTS_BUTTON_MENURIGHT,	// MENU_BUTTON_RIGHT
-				LIGHTS_BUTTON_MENUUP,		// MENU_BUTTON_UP
-				LIGHTS_BUTTON_MENUDOWN,		// MENU_BUTTON_DOWN
-				LIGHTS_BUTTON_START,		// MENU_BUTTON_START
-				LIGHTS_BUTTON_SELECT,		// MENU_BUTTON_SELECT
-				LIGHTS_BUTTON_BACK,		// MENU_BUTTON_BACK
-				LIGHTS_BUTTON_COIN,		// MENU_BUTTON_COIN
-				LIGHTS_BUTTON_OPERATOR		// MENU_BUTTON_OPERATOR
+				GAME_BUTTON_MENULEFT,		// MENU_BUTTON_LEFT
+				GAME_BUTTON_MENURIGHT,		// MENU_BUTTON_RIGHT
+				GAME_BUTTON_MENUUP,		// MENU_BUTTON_UP
+				GAME_BUTTON_MENUDOWN,		// MENU_BUTTON_DOWN
+				GAME_BUTTON_START,		// MENU_BUTTON_START
+				GAME_BUTTON_SELECT,		// MENU_BUTTON_SELECT
+				GAME_BUTTON_BACK,		// MENU_BUTTON_BACK
+				GAME_BUTTON_COIN,		// MENU_BUTTON_COIN
+				GAME_BUTTON_OPERATOR		// MENU_BUTTON_OPERATOR
 			},
 			{	// m_SecondaryMenuButton
 				LIGHTS_BUTTON_MARQUEE_UP_LEFT,	// MENU_BUTTON_LEFT

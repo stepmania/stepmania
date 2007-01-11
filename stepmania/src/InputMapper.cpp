@@ -93,8 +93,8 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 1, JOY_BUTTON_3,	DANCE_BUTTON_DOWN,	false },
 			{ 0, JOY_BUTTON_7,	DANCE_BUTTON_UPLEFT,	false },
 			{ 0, JOY_BUTTON_8,	DANCE_BUTTON_UPRIGHT,	false },
-			{ 0, JOY_BUTTON_9,	DANCE_BUTTON_BACK,	false },
-			{ 0, JOY_BUTTON_12,	DANCE_BUTTON_START,	false },
+			{ 0, JOY_BUTTON_9,	GAME_BUTTON_BACK,	false },
+			{ 0, JOY_BUTTON_12,	GAME_BUTTON_START,	false },
 			END_MARKER
 		}
 	},
@@ -113,8 +113,8 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 1, JOY_BUTTON_3,	DANCE_BUTTON_DOWN,	false },
 			{ 0, JOY_BUTTON_7,	DANCE_BUTTON_UPLEFT,	false },
 			{ 0, JOY_BUTTON_8,	DANCE_BUTTON_UPRIGHT,	false },
-			{ 0, JOY_BUTTON_9,	DANCE_BUTTON_BACK,	false },
-			{ 0, JOY_BUTTON_10,	DANCE_BUTTON_START,	false },
+			{ 0, JOY_BUTTON_9,	GAME_BUTTON_BACK,	false },
+			{ 0, JOY_BUTTON_10,	GAME_BUTTON_START,	false },
 			END_MARKER
 		}
 	},
@@ -133,8 +133,8 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 1, JOY_BUTTON_2,	DANCE_BUTTON_DOWN,	false },
 			{ 0, JOY_BUTTON_5,	DANCE_BUTTON_UPLEFT,	false },
 			{ 0, JOY_BUTTON_6,	DANCE_BUTTON_UPRIGHT,	false },
-			{ 0, JOY_BUTTON_9,	DANCE_BUTTON_BACK,	false },
-			{ 0, JOY_BUTTON_10,	DANCE_BUTTON_START,	false },
+			{ 0, JOY_BUTTON_9,	GAME_BUTTON_BACK,	false },
+			{ 0, JOY_BUTTON_10,	GAME_BUTTON_START,	false },
 			END_MARKER
 		}
 	},
@@ -153,8 +153,8 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 1, JOY_BUTTON_1,	DANCE_BUTTON_DOWN,	false },
 			{ 0, JOY_BUTTON_7,	DANCE_BUTTON_UPLEFT,	false },
 			{ 0, JOY_BUTTON_8,	DANCE_BUTTON_UPRIGHT,	false },
-			{ 0, JOY_BUTTON_9,	DANCE_BUTTON_BACK,	false },
-			{ 0, JOY_BUTTON_10,	DANCE_BUTTON_START,	false },
+			{ 0, JOY_BUTTON_9,	GAME_BUTTON_BACK,	false },
+			{ 0, JOY_BUTTON_10,	GAME_BUTTON_START,	false },
 			END_MARKER
 		}
 	},
@@ -173,8 +173,8 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 1, JOY_BUTTON_3,	DANCE_BUTTON_DOWN,	false },
 			{ 0, JOY_BUTTON_7,	DANCE_BUTTON_UPLEFT,	false },
 			{ 0, JOY_BUTTON_8,	DANCE_BUTTON_UPRIGHT,	false },
-			{ 0, JOY_BUTTON_10,	DANCE_BUTTON_BACK,	false },
-			{ 0, JOY_BUTTON_9,	DANCE_BUTTON_START,	false },
+			{ 0, JOY_BUTTON_10,	GAME_BUTTON_BACK,	false },
+			{ 0, JOY_BUTTON_9,	GAME_BUTTON_START,	false },
 			END_MARKER
 		}
 	},
@@ -195,8 +195,8 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 0, JOY_BUTTON_6,	DANCE_BUTTON_UPRIGHT,	false },
 			{ 1, JOY_BUTTON_7,	DANCE_BUTTON_UPLEFT,	false },
 			{ 1, JOY_BUTTON_8,	DANCE_BUTTON_UPRIGHT,	false },
-			{ 0, JOY_BUTTON_10,	DANCE_BUTTON_BACK,	false },
-			{ 0, JOY_BUTTON_9,	DANCE_BUTTON_START,	false },
+			{ 0, JOY_BUTTON_10,	GAME_BUTTON_BACK,	false },
+			{ 0, JOY_BUTTON_9,	GAME_BUTTON_START,	false },
 			END_MARKER
 		}
 	},
@@ -217,8 +217,8 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 0, JOY_BUTTON_6,	DANCE_BUTTON_UPRIGHT,	false },
 			{ 1, JOY_BUTTON_7,	DANCE_BUTTON_UPLEFT,	false },
 			{ 1, JOY_BUTTON_8,	DANCE_BUTTON_UPRIGHT,	false },
-			{ 0, JOY_BUTTON_9,	DANCE_BUTTON_BACK,	false },
-			{ 0, JOY_BUTTON_10,	DANCE_BUTTON_START,	false },
+			{ 0, JOY_BUTTON_9,	GAME_BUTTON_BACK,	false },
+			{ 0, JOY_BUTTON_10,	GAME_BUTTON_START,	false },
 			END_MARKER
 		}
 	},
@@ -239,8 +239,8 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 0, JOY_BUTTON_5,	DANCE_BUTTON_UPRIGHT,	false },
 			{ 1, JOY_BUTTON_8,	DANCE_BUTTON_UPLEFT,	false },
 			{ 1, JOY_BUTTON_6,	DANCE_BUTTON_UPRIGHT,	false },
-			{ 0, JOY_BUTTON_10,	DANCE_BUTTON_BACK,	false },
-			{ 0, JOY_BUTTON_9,	DANCE_BUTTON_START,	false },
+			{ 0, JOY_BUTTON_10,	GAME_BUTTON_BACK,	false },
+			{ 0, JOY_BUTTON_9,	GAME_BUTTON_START,	false },
 			END_MARKER
 		}
 	},
@@ -259,8 +259,8 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 1, JOY_BUTTON_4,	DANCE_BUTTON_UP,	false },	// Y
 			{ 0, JOY_BUTTON_7,	DANCE_BUTTON_UPLEFT,	false },	// L shoulder
 			{ 0, JOY_BUTTON_8,	DANCE_BUTTON_UPRIGHT,	false },	// R shoulder
-			{ 0, JOY_BUTTON_9,	DANCE_BUTTON_START,	false },
-			{ 0, JOY_BUTTON_10,	DANCE_BUTTON_BACK,	false },
+			{ 0, JOY_BUTTON_9,	GAME_BUTTON_START,	false },
+			{ 0, JOY_BUTTON_10,	GAME_BUTTON_BACK,	false },
 			END_MARKER
 		}
 	},
@@ -281,10 +281,10 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 1, JOY_BUTTON_3,	DANCE_BUTTON_DOWN,	false },
 			{ 0, JOY_BUTTON_7,	DANCE_BUTTON_UPLEFT,    false },
 			{ 0, JOY_BUTTON_8,	DANCE_BUTTON_UPRIGHT,   false },
-			{ 0, JOY_BUTTON_9,	DANCE_BUTTON_SELECT,	false },
-			{ 0, JOY_BUTTON_10,	DANCE_BUTTON_START,	false },
-			{ 0, JOY_BUTTON_5,	DANCE_BUTTON_BACK,	false },
-			{ 0, JOY_BUTTON_6,	DANCE_BUTTON_COIN,	false },
+			{ 0, JOY_BUTTON_9,	GAME_BUTTON_SELECT,	false },
+			{ 0, JOY_BUTTON_10,	GAME_BUTTON_START,	false },
+			{ 0, JOY_BUTTON_5,	GAME_BUTTON_BACK,	false },
+			{ 0, JOY_BUTTON_6,	GAME_BUTTON_COIN,	false },
 			// Player 2.
 			{ 0, JOY_BUTTON_32,	DANCE_BUTTON_LEFT,	true },
 			{ 0, JOY_BUTTON_30,	DANCE_BUTTON_RIGHT,	true },
@@ -296,10 +296,10 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 1, JOY_BUTTON_19,	DANCE_BUTTON_DOWN,	true },
 			{ 0, JOY_BUTTON_23,	DANCE_BUTTON_UPRIGHT,	true },
 			{ 0, JOY_BUTTON_24,	DANCE_BUTTON_UPLEFT,	true },
-			{ 0, JOY_BUTTON_25,	DANCE_BUTTON_SELECT,	true },
-			{ 0, JOY_BUTTON_26,	DANCE_BUTTON_START,	true },
-			{ 0, JOY_BUTTON_21,	DANCE_BUTTON_BACK,	true },
-			{ 0, JOY_BUTTON_22,	DANCE_BUTTON_COIN,	true },
+			{ 0, JOY_BUTTON_25,	GAME_BUTTON_SELECT,	true },
+			{ 0, JOY_BUTTON_26,	GAME_BUTTON_START,	true },
+			{ 0, JOY_BUTTON_21,	GAME_BUTTON_BACK,	true },
+			{ 0, JOY_BUTTON_22,	GAME_BUTTON_COIN,	true },
 			END_MARKER
 		}
 	},
@@ -314,8 +314,8 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 0, JOY_BUTTON_4,	DANCE_BUTTON_RIGHT,	false },
 			{ 0, JOY_BUTTON_7,	DANCE_BUTTON_UPRIGHT,	false },
 			{ 0, JOY_BUTTON_8,	DANCE_BUTTON_UPLEFT,	false },
-			{ 0, JOY_BUTTON_9,	DANCE_BUTTON_BACK,	false },
-			{ 0, JOY_BUTTON_10,	DANCE_BUTTON_START,	false },
+			{ 0, JOY_BUTTON_9,	GAME_BUTTON_BACK,	false },
+			{ 0, JOY_BUTTON_10,	GAME_BUTTON_START,	false },
 			END_MARKER
 		}
 	},
@@ -334,10 +334,10 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 1, JOY_BUTTON_3,	/* X */		DANCE_BUTTON_DOWN,	false },
 			{ 0, JOY_BUTTON_7,	/* L1 */	DANCE_BUTTON_UPLEFT,	false },
 			{ 0, JOY_BUTTON_8,	/* R1 */	DANCE_BUTTON_UPRIGHT,	false },
-			{ 0, JOY_BUTTON_10,	/* Select */	DANCE_BUTTON_BACK,	false },
-			{ 0, JOY_BUTTON_9,	/* Start */	DANCE_BUTTON_START,	false },
-			{ 0, JOY_BUTTON_5,	/* R1 */	DANCE_BUTTON_SELECT,	false },
-			{ 0, JOY_BUTTON_6,	/* R2 */	DANCE_BUTTON_COIN,	false },
+			{ 0, JOY_BUTTON_10,	/* Select */	GAME_BUTTON_BACK,	false },
+			{ 0, JOY_BUTTON_9,	/* Start */	GAME_BUTTON_START,	false },
+			{ 0, JOY_BUTTON_5,	/* R1 */	GAME_BUTTON_SELECT,	false },
+			{ 0, JOY_BUTTON_6,	/* R2 */	GAME_BUTTON_COIN,	false },
 			END_MARKER
 		}
 	},
@@ -350,12 +350,12 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 0, JOY_BUTTON_4,	/* dpad R */	DANCE_BUTTON_RIGHT,	false },
 			{ 0, JOY_BUTTON_3,	/* dpad U */	DANCE_BUTTON_UP,	false },
 			{ 0, JOY_BUTTON_2,	/* dpad D */	DANCE_BUTTON_DOWN,	false },
-			//{ 0, JOY_BUTTON_5,	/* Tri */	DANCE_BUTTON_BACK,	false },
-			//{ 0, JOY_BUTTON_6,	/* Square */	DANCE_BUTTON_BACK,	false },
-			//{ 1, JOY_BUTTON_7,	/* X */		DANCE_BUTTON_START,	false },
-			{ 0, JOY_BUTTON_8,	/* O */		DANCE_BUTTON_START,	false },
-			{ 1, JOY_BUTTON_9,	/* Start */	DANCE_BUTTON_START,	false },
-			{ 0, JOY_BUTTON_10,	/* Sel */	DANCE_BUTTON_BACK,	false },
+			//{ 0, JOY_BUTTON_5,	/* Tri */	GAME_BUTTON_BACK,	false },
+			//{ 0, JOY_BUTTON_6,	/* Square */	GAME_BUTTON_BACK,	false },
+			//{ 1, JOY_BUTTON_7,	/* X */		GAME_BUTTON_START,	false },
+			{ 0, JOY_BUTTON_8,	/* O */		GAME_BUTTON_START,	false },
+			{ 1, JOY_BUTTON_9,	/* Start */	GAME_BUTTON_START,	false },
+			{ 0, JOY_BUTTON_10,	/* Sel */	GAME_BUTTON_BACK,	false },
 			END_MARKER
 		}
 	},
@@ -368,12 +368,12 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 0, JOY_BUTTON_14,	/* dpad R */	DANCE_BUTTON_RIGHT,	false },
 			{ 0, JOY_BUTTON_13,	/* dpad U */	DANCE_BUTTON_UP,	false },
 			{ 0, JOY_BUTTON_15,	/* dpad D */	DANCE_BUTTON_DOWN,	false },
-			//{ 0, JOY_BUTTON_5,	/* Tri */	DANCE_BUTTON_BACK,	false },
-			//{ 0, JOY_BUTTON_6,	/* Square */	DANCE_BUTTON_BACK,	false },
-			//{ 1, JOY_BUTTON_7,	/* X */		DANCE_BUTTON_START,	false },
-			{ 0, JOY_BUTTON_2,	/* O */		DANCE_BUTTON_START,	false },
-			{ 1, JOY_BUTTON_10,	/* Start */	DANCE_BUTTON_START,	false },
-			{ 0, JOY_BUTTON_9,	/* Sel */	DANCE_BUTTON_BACK,	false },
+			//{ 0, JOY_BUTTON_5,	/* Tri */	GAME_BUTTON_BACK,	false },
+			//{ 0, JOY_BUTTON_6,	/* Square */	GAME_BUTTON_BACK,	false },
+			//{ 1, JOY_BUTTON_7,	/* X */		GAME_BUTTON_START,	false },
+			{ 0, JOY_BUTTON_2,	/* O */		GAME_BUTTON_START,	false },
+			{ 1, JOY_BUTTON_10,	/* Start */	GAME_BUTTON_START,	false },
+			{ 0, JOY_BUTTON_9,	/* Sel */	GAME_BUTTON_BACK,	false },
 			END_MARKER
 		}
 	},
@@ -386,12 +386,12 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 0, JOY_BUTTON_4,	/* dpad R */	DANCE_BUTTON_RIGHT,	false },
 			{ 0, JOY_BUTTON_3,	/* dpad U */	DANCE_BUTTON_UP,	false },
 			{ 0, JOY_BUTTON_2,	/* dpad D */	DANCE_BUTTON_DOWN,	false },
-			//{ 0, JOY_BUTTON_5,	/* Tri */	DANCE_BUTTON_BACK,	false },
-			//{ 0, JOY_BUTTON_6,	/* Square */	DANCE_BUTTON_BACK,	false },
-			//{ 1, JOY_BUTTON_7,	/* X */		DANCE_BUTTON_START,	false },
-			{ 0, JOY_BUTTON_8,	/* O */		DANCE_BUTTON_START,	false },
-			{ 1, JOY_BUTTON_9,	/* Start */	DANCE_BUTTON_START,	false },
-			{ 0, JOY_BUTTON_10,	/* Sel */	DANCE_BUTTON_BACK,	false },
+			//{ 0, JOY_BUTTON_5,	/* Tri */	GAME_BUTTON_BACK,	false },
+			//{ 0, JOY_BUTTON_6,	/* Square */	GAME_BUTTON_BACK,	false },
+			//{ 1, JOY_BUTTON_7,	/* X */		GAME_BUTTON_START,	false },
+			{ 0, JOY_BUTTON_8,	/* O */		GAME_BUTTON_START,	false },
+			{ 1, JOY_BUTTON_9,	/* Start */	GAME_BUTTON_START,	false },
+			{ 0, JOY_BUTTON_10,	/* Sel */	GAME_BUTTON_BACK,	false },
 			END_MARKER
 		}
 	},
@@ -405,7 +405,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 0, JOY_BUTTON_3,	PUMP_BUTTON_CENTER,	false },
 			{ 0, JOY_BUTTON_4,	PUMP_BUTTON_DOWNLEFT,	false },
 			{ 0, JOY_BUTTON_5,	PUMP_BUTTON_DOWNRIGHT,	false },
-			{ 0, JOY_BUTTON_6,	PUMP_BUTTON_BACK,	false },
+			{ 0, JOY_BUTTON_6,	GAME_BUTTON_BACK,	false },
 			{ 0, JOY_BUTTON_7,	PUMP_BUTTON_UPLEFT,	true },
 			{ 0, JOY_BUTTON_8,	PUMP_BUTTON_UPRIGHT,	true },
 			{ 0, JOY_BUTTON_9,	PUMP_BUTTON_CENTER,	true },
@@ -424,10 +424,10 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 0, JOY_BUTTON_3,	PARA_BUTTON_UP,		false },
 			{ 0, JOY_BUTTON_2,	PARA_BUTTON_UPRIGHT,	false },
 			{ 0, JOY_BUTTON_1,	PARA_BUTTON_RIGHT,	false },
-			{ 0, JOY_BUTTON_10,	PARA_BUTTON_START,	false },
-			{ 0, JOY_BUTTON_11,	PARA_BUTTON_BACK,	false },
-			{ 0, JOY_BUTTON_12,	PARA_BUTTON_MENULEFT,	false },
-			{ 0, JOY_BUTTON_9,	PARA_BUTTON_MENURIGHT,	false },
+			{ 0, JOY_BUTTON_10,	GAME_BUTTON_START,	false },
+			{ 0, JOY_BUTTON_11,	GAME_BUTTON_BACK,	false },
+			{ 0, JOY_BUTTON_12,	GAME_BUTTON_MENULEFT,	false },
+			{ 0, JOY_BUTTON_9,	GAME_BUTTON_MENURIGHT,	false },
 			END_MARKER
 		}
 	},
@@ -444,8 +444,8 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 0, JOY_BUTTON_6,	TECHNO_BUTTON_DOWNLEFT,	false },
 			{ 0, JOY_BUTTON_7,	TECHNO_BUTTON_UPRIGHT,	false },
 			{ 0, JOY_BUTTON_8,	TECHNO_BUTTON_UPLEFT,	false },
-			{ 0, JOY_BUTTON_9,	TECHNO_BUTTON_BACK,	false },
-			{ 0, JOY_BUTTON_10,	TECHNO_BUTTON_START,	false },
+			{ 0, JOY_BUTTON_9,	GAME_BUTTON_BACK,	false },
+			{ 0, JOY_BUTTON_10,	GAME_BUTTON_START,	false },
 			END_MARKER
 		}
 	},
