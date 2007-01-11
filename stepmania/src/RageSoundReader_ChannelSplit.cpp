@@ -129,7 +129,7 @@ int RageSoundReader_Split::SetPosition( int iFrame )
 
 bool RageSoundReader_Split::SetProperty( const RString &sProperty, float fValue )
 {
-	return false;
+	return m_pImpl->m_pSource->SetProperty( sProperty, fValue );
 }
 
 int RageSoundReader_Split::Read( char *pBuf, int iFrames )
