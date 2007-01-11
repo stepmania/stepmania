@@ -410,7 +410,7 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 
 	if( !bAnchorToTop )
 	{
-		float fTexCoordBottom		= SCALE( fYBottom - fYTop, 0, fFrameHeight, rect.bottom, rect.top );
+		float fTexCoordBottom		= SCALE( fYBottom - fYTop, 0, fFrameHeight, rect.top, rect.bottom );
 		float fWantTexCoordBottom	= ceilf( fTexCoordBottom - 0.0001f );
 		fAddToTexCoord = fWantTexCoordBottom - fTexCoordBottom;
 	}
