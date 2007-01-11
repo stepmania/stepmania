@@ -57,6 +57,8 @@ struct NoteMetricCache_t
 	bool m_bHoldHeadUseLighting;
 	bool m_bHoldTailUseLighting;
 	bool m_bFlipHeadAndTailWhenReverse;
+	bool m_bFlipHoldBodyWhenReverse;
+	bool m_bTopHoldAnchorWhenReverse;
 	bool m_bHoldActiveIsAddLayer;
 
 
@@ -87,6 +89,8 @@ void NoteMetricCache_t::Load( const RString &sButton )
 	m_bHoldHeadUseLighting =		NOTESKIN->GetMetricB(sButton,"HoldHeadUseLighting");
 	m_bHoldTailUseLighting =		NOTESKIN->GetMetricB(sButton,"HoldTailUseLighting");
 	m_bFlipHeadAndTailWhenReverse =		NOTESKIN->GetMetricB(sButton,"FlipHeadAndTailWhenReverse");
+	m_bFlipHoldBodyWhenReverse =		NOTESKIN->GetMetricB(sButton,"FlipHoldBodyWhenReverse");
+	m_bTopHoldAnchorWhenReverse =		NOTESKIN->GetMetricB(sButton,"TopHoldAnchorWhenReverse");
 	m_bHoldActiveIsAddLayer =		NOTESKIN->GetMetricB(sButton,"HoldActiveIsAddLayer");
 }
 
@@ -371,7 +375,7 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 				float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar,
 				float fYTop, float fYBottom,
 				float fYStartPos, float fYEndPos,
-				bool bWrapping, bool bAnchorToBottom )
+				bool bWrapping, bool bAnchorToTop, bool bFlipTextureVertically )
 {
 	ASSERT( !vpSpr.empty() );
 
@@ -384,7 +388,9 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 	}
 
 	// draw manually in small segments
-	const RectF *pRect = pSprite->GetCurrentTextureCoordRect();
+	RectF rect = *pSprite->GetCurrentTextureCoordRect();
+	if( bFlipTextureVertically )
+		swap( rect.top, rect.bottom );
 	const float fFrameWidth		= pSprite->GetZoomedWidth();
 	const float fFrameHeight	= pSprite->GetZoomedHeight();
 
@@ -402,9 +408,9 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 	bool bLast = false;
 	float fAddToTexCoord = 0;
 
-	if( bAnchorToBottom )
+	if( !bAnchorToTop )
 	{
-		float fTexCoordBottom		= SCALE( fYBottom - fYTop, 0, fFrameHeight, pRect->bottom, pRect->top );
+		float fTexCoordBottom		= SCALE( fYBottom - fYTop, 0, fFrameHeight, rect.bottom, rect.top );
 		float fWantTexCoordBottom	= ceilf( fTexCoordBottom - 0.0001f );
 		fAddToTexCoord = fWantTexCoordBottom - fTexCoordBottom;
 	}
@@ -414,7 +420,7 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 		/* For very large hold notes, shift the texture coordinates to be near 0, so we
 		 * don't send very large values to the renderer. */
 		const float fDistFromTop	= fYStartPos - fYTop;		
-		float fTexCoordTop		= SCALE( fDistFromTop, 0, fFrameHeight, pRect->top, pRect->bottom );
+		float fTexCoordTop		= SCALE( fDistFromTop, 0, fFrameHeight, rect.top, rect.bottom );
 		fTexCoordTop += fAddToTexCoord;
 		fAddToTexCoord -= floorf( fTexCoordTop );
 	}
@@ -436,11 +442,11 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 		const float fXLeft		= fX - fFrameWidth/2;
 		const float fXRight		= fX + fFrameWidth/2;
 		const float fDistFromTop	= fY - fYTop;
-		float fTexCoordTop		= SCALE( fDistFromTop, 0, fFrameHeight, pRect->top, pRect->bottom );
+		float fTexCoordTop		= SCALE( fDistFromTop, 0, fFrameHeight, rect.top, rect.bottom );
 		fTexCoordTop += fAddToTexCoord;
 
-		const float fTexCoordLeft	= pRect->left;
-		const float fTexCoordRight	= pRect->right;
+		const float fTexCoordLeft	= rect.left;
+		const float fTexCoordRight	= rect.right;
 		const float fAlpha		= ArrowGetAlphaOrGlow( bGlow, m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 		const RageColor color		= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 
@@ -499,8 +505,8 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 	}
 
 	const bool bReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(iCol) > 0.5f;
-	bool bFlipHeadAndTail = bReverse && cache->m_bFlipHeadAndTailWhenReverse;
-	if( bFlipHeadAndTail )
+	bool bFlipHoldBody = bReverse && cache->m_bFlipHoldBodyWhenReverse;
+	if( bFlipHoldBody )
 	{
 		swap( vpSprTop, vpSprBottom );
 		swap( pSpriteTop, pSpriteBottom );
@@ -529,6 +535,8 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 	if( bReverse )
 		swap( fYStartPos, fYEndPos );
 
+	bool bTopAnchor = bReverse && cache->m_bTopHoldAnchorWhenReverse;
+
 	// Draw the top cap
 	DrawHoldPart(
 		vpSprTop,
@@ -536,8 +544,7 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 		fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar,
 		fYHead-fFrameHeightTop, fYHead,
 		fYStartPos, min(fYEndPos, fYTail),
-		false,
-		bFlipHeadAndTail );
+		false, bTopAnchor, bFlipHoldBody );
 
 	// Draw the body
 	DrawHoldPart(
@@ -546,8 +553,7 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 		fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar,
 		fYHead, fYTail,
 		fYStartPos, fYEndPos,
-		true,
-		!bFlipHeadAndTail );
+		true, bTopAnchor, bFlipHoldBody );
 
 	// Draw the bottom cap
 	DrawHoldPart(
@@ -556,8 +562,7 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 		fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar,
 		fYTail, fYTail+fFrameHeightBottom,
 		max(fYStartPos, fYHead), fYEndPos,
-		false,
-		bFlipHeadAndTail );
+		false, bTopAnchor, bFlipHoldBody );
 }
 
 void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iRow, bool bIsBeingHeld, const HoldNoteResult &Result, bool bIsAddition, float fPercentFadeToFail, 
