@@ -524,8 +524,16 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 	/* Hack: Z effects need a finer grain step. */
 	const int fYStep = bWavyPartsNeedZBuffer? 4: 16;		// use small steps only if wavy
 
-	fYHead += cache->m_iStartDrawingHoldBodyOffsetFromHead;
-	fYTail += cache->m_iStopDrawingHoldBodyOffsetFromTail;
+	if( bFlipHoldBody )
+	{
+		fYHead -= cache->m_iStopDrawingHoldBodyOffsetFromTail;
+		fYTail -= cache->m_iStartDrawingHoldBodyOffsetFromHead;
+	}
+	else
+	{
+		fYHead += cache->m_iStartDrawingHoldBodyOffsetFromHead;
+		fYTail += cache->m_iStopDrawingHoldBodyOffsetFromTail;
+	}
 
 	const float fFrameHeightTop	= pSpriteTop->GetZoomedHeight();
 	const float fFrameHeightBottom	= pSpriteBottom->GetZoomedHeight();
