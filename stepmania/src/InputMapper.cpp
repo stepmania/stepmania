@@ -86,7 +86,7 @@ struct AutoJoyMapping
 	const char *szGame;
 	const char *szDriverRegex;	// reported by InputHandler
 	const char *szControllerName;	// the product name of the controller
-	struct InputMapper::Mapping maps[32];
+	InputMapper::Mapping maps[32];
 };
 #define END_MARKER	{-1, DeviceButton_Invalid, GameButton_Invalid, false },	// end marker
 const AutoJoyMapping g_AutoJoyMappings[] = 

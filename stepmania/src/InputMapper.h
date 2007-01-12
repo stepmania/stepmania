@@ -13,6 +13,25 @@ const int NUM_SHOWN_GAME_TO_DEVICE_SLOTS = 3;
 const int NUM_USER_GAME_TO_DEVICE_SLOTS = 2;
 #define NO_DEFAULT_KEY DeviceButton_Invalid
 
+struct InputMapping
+{
+	bool IsEndMarker() const { return gb == GameButton_Invalid; }
+
+	int iSlotIndex;
+	DeviceButton deviceButton;
+	GameButton gb; // GameButton_Invalid == end marker
+
+	/*
+	 * If this is true, this is an auxilliary mapping assigned to the second
+	 * player.  If two of the same device are found, and the device has secondary
+	 * entries, the later entries take precedence.  This way, if a Pump pad is
+	 * found, it'll map P1 to the primary pad and P2 to the secondary pad.
+	 * (We can't tell if a slave pad is actually there.)  Then, if a second primary
+	 * is found (DEVICE_PUMP2), 2P will be mapped to it. 
+	 */
+	bool SecondController;
+};
+
 class InputScheme
 {
 public:
@@ -78,24 +97,7 @@ public:
 	void RepeatStopKey( const GameInput &GameI );
 	void RepeatStopKey( MenuButton MenuI, PlayerNumber pn );
 
-	struct Mapping
-	{
-		bool IsEndMarker() const { return gb == GameButton_Invalid; }
-
-		int iSlotIndex;
-		DeviceButton deviceButton;
-		GameButton gb; // GameButton_Invalid == end marker
-
-		/*
-		 * If this is true, this is an auxilliary mapping assigned to the second
-		 * player.  If two of the same device are found, and the device has secondary
-		 * entries, the later entries take precedence.  This way, if a Pump pad is
-		 * found, it'll map P1 to the primary pad and P2 to the secondary pad.
-		 * (We can't tell if a slave pad is actually there.)  Then, if a second primary
-		 * is found (DEVICE_PUMP2), 2P will be mapped to it. 
-		 */
-		bool SecondController;
-	};
+	typedef InputMapping Mapping;
 
 	static InputDevice MultiPlayerToInputDevice( MultiPlayer mp );
 	static MultiPlayer InputDeviceToMultiPlayer( InputDevice id );
