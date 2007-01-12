@@ -9,6 +9,7 @@
 #include "RageInput.h"
 #include "SpecialFiles.h"
 #include "LocalizedString.h"
+#include "Foreach.h"
 
 static Preference<RString> g_sLastSeenInputDevices( "LastSeenInputDevices", "" );
 static Preference<bool> g_bAutoMapOnJoyChange( "AutoMapOnJoyChange", true );
@@ -59,28 +60,6 @@ void InputMapper::ClearAllMappings()
 	UpdateTempDItoGI();
 }
 
-void InputMapper::AddDefaultMappingsForCurrentGameIfUnmapped()
-{
-	// Clear default mappings.  Default mappings are in the third slot.
-	FOREACH_GameController( i )
-		FOREACH_GameButton(j)
-			ClearFromInputMap( GameInput(i, j), 2 );
-
-	FOREACH_GameController( c )
-	{
-		FOREACH_GameButtonInScheme( m_pInputScheme, b )
-		{
-			DeviceButton key = m_pInputScheme->m_GameButtonInfo[b].m_iDefaultKeyboardKey[c];
-			if( key == NO_DEFAULT_KEY )
-				continue;
-			DeviceInput DeviceI( DEVICE_KEYBOARD, key );
-			GameInput GameI( c, b );
-			if( !IsMapped(DeviceI) )	// if this key isn't already being used by another user-made mapping
-				SetInputMap( DeviceI, GameI, 2 );   
-		}
-	}
-}
-
 struct AutoJoyMapping
 {
 	const char *szGame;
@@ -89,6 +68,56 @@ struct AutoJoyMapping
 	InputMapper::Mapping maps[32];
 };
 #define END_MARKER	{-1, DeviceButton_Invalid, GameButton_Invalid, false },	// end marker
+const InputMapping g_DefaultKeyMappings[] = 
+{
+	{ 0, KEY_LEFT,		GAME_BUTTON_MENULEFT,	false },
+	{ 0, KEY_RIGHT,		GAME_BUTTON_MENURIGHT,	false },
+	{ 0, KEY_UP,		GAME_BUTTON_MENUUP,	false },
+	{ 0, KEY_DOWN,		GAME_BUTTON_MENUDOWN,	false },
+	{ 0, KEY_ENTER,		GAME_BUTTON_START,	false },
+	{ 0, KEY_BACKSLASH,	GAME_BUTTON_SELECT,	false },
+	{ 0, KEY_ESC,		GAME_BUTTON_BACK,	false },
+	{ 0, KEY_KP_C4,		GAME_BUTTON_MENULEFT,	true },
+	{ 0, KEY_KP_C6,		GAME_BUTTON_MENURIGHT,	true },
+	{ 0, KEY_KP_C8,		GAME_BUTTON_MENUUP,	true },
+	{ 0, KEY_KP_C2,		GAME_BUTTON_MENUDOWN,	true },
+	{ 0, KEY_KP_ENTER,	GAME_BUTTON_START,	true },
+	{ 0, KEY_KP_C0,		GAME_BUTTON_SELECT,	true },
+	{ 0, KEY_NUMLOCK,	GAME_BUTTON_BACK,	true },
+	{ 0, KEY_F1,		GAME_BUTTON_COIN,	false },
+	{ 0, KEY_SCRLLOCK,	GAME_BUTTON_OPERATOR,	false },
+	END_MARKER
+};
+
+void InputMapper::AddDefaultMappingsForCurrentGameIfUnmapped()
+{
+	// Clear default mappings.  Default mappings are in the third slot.
+	FOREACH_GameController( i )
+		FOREACH_GameButton(j)
+			ClearFromInputMap( GameInput(i, j), 2 );
+
+	vector<InputMapping> aMaps;
+	aMaps.reserve( 32 );
+
+	for( int k=0; !g_DefaultKeyMappings[k].IsEndMarker(); k++ )
+		aMaps.push_back( g_DefaultKeyMappings[k] );
+	for( int k=0; !m_pInputScheme->m_Maps[k].IsEndMarker(); k++ )
+		aMaps.push_back( m_pInputScheme->m_Maps[k] );
+
+	/* There may be duplicate GAME_BUTTON maps.  Process the list backwards,
+	 * so game-specific mappings override g_DefaultKeyMappings. */
+	std::reverse( aMaps.begin(), aMaps.end() );
+
+	FOREACH( InputMapping, aMaps, m )
+	{
+		DeviceButton key = m->deviceButton;
+		DeviceInput DeviceI( DEVICE_KEYBOARD, key );
+		GameInput GameI( m->SecondController? GAME_CONTROLLER_2:GAME_CONTROLLER_1, m->gb );
+		if( !IsMapped(DeviceI) )	// if this key isn't already being used by another user-made mapping
+			SetInputMap( DeviceI, GameI, 2 );   
+	}
+}
+
 const AutoJoyMapping g_AutoJoyMappings[] = 
 {
 	{

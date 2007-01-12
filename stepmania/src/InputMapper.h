@@ -13,6 +13,7 @@ const int NUM_SHOWN_GAME_TO_DEVICE_SLOTS = 3;
 const int NUM_USER_GAME_TO_DEVICE_SLOTS = 2;
 #define NO_DEFAULT_KEY DeviceButton_Invalid
 
+#define InputMapping_END {-1, DeviceButton_Invalid, GameButton_Invalid, false },	// end marker
 struct InputMapping
 {
 	bool IsEndMarker() const { return deviceButton == deviceButton && gb == GameButton_Invalid; }
@@ -41,10 +42,10 @@ public:
 	{
 		char m_szName[60];	// The name used by the button graphics system.  e.g. "left", "right", "middle C", "snare"
 		GameButtonType m_gbt;
-		DeviceButton	m_iDefaultKeyboardKey[NUM_GameController];	// default keyboard keys only effect the current game is this game
 	};
 	GameButtonInfo	m_GameButtonInfo[NUM_GameButton];
 	GameButton	m_SecondaryMenuButton[NUM_MenuButton];
+	const InputMapping *m_Maps;
 
 	GameButton ButtonNameToIndex( const RString &sButtonName ) const;
 	MenuButton GameInputToMenuButton( GameInput GameI ) const;
