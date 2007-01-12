@@ -80,11 +80,11 @@ public:
 
 	struct Mapping
 	{
-		bool IsEndMarker() const { return iSlotIndex==-1; }
+		bool IsEndMarker() const { return gb == GameButton_Invalid; }
 
-		int iSlotIndex;	// -1 == end marker
+		int iSlotIndex;
 		DeviceButton deviceButton;
-		GameButton gb;
+		GameButton gb; // GameButton_Invalid == end marker
 
 		/*
 		 * If this is true, this is an auxilliary mapping assigned to the second

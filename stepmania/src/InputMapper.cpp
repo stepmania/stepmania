@@ -88,7 +88,7 @@ struct AutoJoyMapping
 	const char *szControllerName;	// the product name of the controller
 	struct InputMapper::Mapping maps[32];
 };
-#define END_MARKER	{-1, DeviceButton_Invalid, -1, false },	// end marker
+#define END_MARKER	{-1, DeviceButton_Invalid, GameButton_Invalid, false },	// end marker
 const AutoJoyMapping g_AutoJoyMappings[] = 
 {
 	{
@@ -484,6 +484,8 @@ void InputMapper::Unmap( InputDevice id )
 
 void InputMapper::ApplyMapping( const Mapping *maps, GameController gc, InputDevice id )
 {
+	map<GameInput, int> MappedButtons;
+
 	for( int k=0; !maps[k].IsEndMarker(); k++ )
 	{
 		GameController map_gc = gc;
@@ -500,7 +502,9 @@ void InputMapper::ApplyMapping( const Mapping *maps, GameController gc, InputDev
 
 		DeviceInput di( id, maps[k].deviceButton );
 		GameInput gi( map_gc, maps[k].gb );
-		SetInputMap( di, gi, maps[k].iSlotIndex );
+		int iSlot = MappedButtons[gi];
+		++MappedButtons[gi];
+		SetInputMap( di, gi, iSlot );//maps[k].iSlotIndex );
 	}
 }
 
