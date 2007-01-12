@@ -34,22 +34,6 @@ enum
 	// BMS reader needs 16 tracks for beat-double7
 };
 
-enum
-{
-	GAME_DANCE,
-	GAME_PUMP,
-	GAME_EZ2,
-	GAME_PARA,
-	GAME_DS3DDX,
-	GAME_BEAT,
-	GAME_MANIAX,
-	GAME_TECHNO,
-	GAME_POPN,
-	GAME_LIGHTS,	// cabinet lights (not really a game)
-	NUM_GAMES,		// leave this at the end
-	GAME_INVALID,
-};
-
 
 const int DANCE_COL_SPACING = 64;
 const int PUMP_COL_SPACING = 50;
@@ -560,7 +544,7 @@ static const Game g_Game_Lights =
 	TNS_W5,	// m_mapW5To
 };
 
-static const Game *g_Games[NUM_GAMES] = 
+static const Game *g_Games[] = 
 {
 	&g_Game_Dance,
 	&g_Game_Pump,
@@ -2301,7 +2285,7 @@ const Style* GameManager::GetHowToPlayStyleForGame( const Game *pGame ) const
 
 void GameManager::GetEnabledGames( vector<const Game*>& aGamesOut ) const
 {
-	for( int g=0; g<NUM_GAMES; g++ )
+	for( size_t g=0; g<ARRAYSIZE(g_Games); ++g )
 	{
 		const Game *pGame = g_Games[g];
 		if( IsGameEnabled( pGame ) )
@@ -2316,7 +2300,7 @@ const Game* GameManager::GetDefaultGame() const
 
 int GameManager::GetIndexFromGame( const Game* pGame ) const
 {
-	for( int g=0; g<NUM_GAMES; g++ )
+	for( size_t g=0; g<ARRAYSIZE(g_Games); ++g )
 	{
 		if( g_Games[g] == pGame )
 			return g;
@@ -2328,7 +2312,7 @@ int GameManager::GetIndexFromGame( const Game* pGame ) const
 const Game* GameManager::GetGameFromIndex( int index ) const
 {
 	ASSERT( index >= 0 );
-	ASSERT( index < NUM_GAMES );
+	ASSERT( index < (int) ARRAYSIZE(g_Games) );
 	return g_Games[index];
 }
 
@@ -2397,7 +2381,7 @@ RString GameManager::StyleToLocalizedString( const Style* style )
 
 const Game* GameManager::StringToGameType( RString sGameType )
 {
-	for( int i=0; i<NUM_GAMES; i++ )
+	for( size_t i=0; i<ARRAYSIZE(g_Games); ++i )
 		if( !sGameType.CompareNoCase(g_Games[i]->m_szName) )
 			return g_Games[i];
 
