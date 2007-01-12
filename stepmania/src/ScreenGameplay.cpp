@@ -2217,7 +2217,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 				
 				ASSERT( input.GameI.IsValid() );
 
-				GameButtonType gbt = INPUTMAPPER->GetInputScheme()->m_GameButtonInfo[input.GameI.button].m_gbt;
+				GameButtonType gbt = GAMESTATE->m_pCurGame->GetPerButtonInfo(input.GameI.button)->m_gbt;
 				switch( gbt )
 				{
 				case GameButtonType_INVALID:
