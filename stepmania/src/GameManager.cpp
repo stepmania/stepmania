@@ -135,15 +135,12 @@ static const Game g_Game_Dance =
 			"UpRight",
 		},
 		{	// m_SecondaryMenuButton
-			DANCE_BUTTON_LEFT,		// MENU_BUTTON_LEFT
-			DANCE_BUTTON_RIGHT,		// MENU_BUTTON_RIGHT
-			DANCE_BUTTON_UP,		// MENU_BUTTON_UP
-			DANCE_BUTTON_DOWN,		// MENU_BUTTON_DOWN
-			GameButton_Invalid,		// MENU_BUTTON_START
-			GameButton_Invalid,		// MENU_BUTTON_SELECT
-			GameButton_Invalid,		// MENU_BUTTON_BACK
-			GameButton_Invalid,		// MENU_BUTTON_COIN
-			GameButton_Invalid,		// MENU_BUTTON_OPERATOR
+			MENU_BUTTON_LEFT,		// DANCE_BUTTON_LEFT
+			MENU_BUTTON_RIGHT,		// DANCE_BUTTON_RIGHT
+			MENU_BUTTON_UP,			// DANCE_BUTTON_UP
+			MENU_BUTTON_DOWN,		// DANCE_BUTTON_DOWN
+			MenuButton_Invalid,		// DANCE_BUTTON_UPLEFT
+			MenuButton_Invalid,		// DANCE_BUTTON_UPRIGHT
 		},
 		g_AutoKeyMappings_Dance
 	},
@@ -200,15 +197,11 @@ static const Game g_Game_Pump =
 			"DownRight",
 		},
 		{	// m_SecondaryMenuButton
-			PUMP_BUTTON_DOWNLEFT,		// MENU_BUTTON_LEFT
-			PUMP_BUTTON_DOWNRIGHT,		// MENU_BUTTON_RIGHT
-			PUMP_BUTTON_UPLEFT,		// MENU_BUTTON_UP
-			PUMP_BUTTON_UPRIGHT,		// MENU_BUTTON_DOWN
-			PUMP_BUTTON_CENTER,		// MENU_BUTTON_START
-			GameButton_Invalid,		// MENU_BUTTON_SELECT
-			GameButton_Invalid,		// MENU_BUTTON_BACK
-			GameButton_Invalid,		// MENU_BUTTON_COIN
-			GameButton_Invalid,		// MENU_BUTTON_OPERATOR
+			MENU_BUTTON_UP,			// PUMP_BUTTON_UPLEFT
+			MENU_BUTTON_DOWN,		// PUMP_BUTTON_UPRIGHT
+			MENU_BUTTON_START,		// PUMP_BUTTON_CENTER
+			MENU_BUTTON_LEFT,		// PUMP_BUTTON_DOWNLEFT
+			MENU_BUTTON_RIGHT,		// PUMP_BUTTON_DOWNRIGHT
 		},
 		g_AutoKeyMappings_Pump
 	},
@@ -256,15 +249,13 @@ static const Game g_Game_Ez2 =
 			"HandLrRight",
 		},
 		{	// m_SecondaryMenuButton
-			EZ2_BUTTON_HANDUPLEFT,		// MENU_BUTTON_LEFT
-			EZ2_BUTTON_HANDUPRIGHT,		// MENU_BUTTON_RIGHT
-			EZ2_BUTTON_FOOTUPLEFT,		// MENU_BUTTON_UP
-			EZ2_BUTTON_FOOTUPRIGHT,		// MENU_BUTTON_DOWN
-			EZ2_BUTTON_FOOTDOWN,		// MENU_BUTTON_START
-			GameButton_Invalid,		// MENU_BUTTON_SELECT
-			GameButton_Invalid,		// MENU_BUTTON_BACK
-			GameButton_Invalid,		// MENU_BUTTON_COIN
-			GameButton_Invalid,		// MENU_BUTTON_OPERATOR
+			MENU_BUTTON_UP,			// EZ2_BUTTON_FOOTUPLEFT
+			MENU_BUTTON_DOWN,		// EZ2_BUTTON_FOOTUPRIGHT
+			MENU_BUTTON_START,		// EZ2_BUTTON_FOOTDOWN
+			MENU_BUTTON_LEFT,		// EZ2_BUTTON_HANDUPLEFT
+			MENU_BUTTON_RIGHT,		// EZ2_BUTTON_HANDUPRIGHT
+			MenuButton_Invalid,		// EZ2_BUTTON_HANDLRLEFT
+			MenuButton_Invalid,		// EZ2_BUTTON_HANDLRRIGHT
 		},
 		g_AutoKeyMappings_Ez2
 	},
@@ -310,15 +301,11 @@ static const Game g_Game_Para =
 			"Right",
 		},
 		{	// m_SecondaryMenuButton
-			PARA_BUTTON_LEFT,		// MENU_BUTTON_LEFT
-			PARA_BUTTON_RIGHT,		// MENU_BUTTON_RIGHT
-			PARA_BUTTON_UPRIGHT,		// MENU_BUTTON_UP
-			PARA_BUTTON_UPLEFT,		// MENU_BUTTON_DOWN
-			GameButton_Invalid,		// MENU_BUTTON_START
-			GameButton_Invalid,		// MENU_BUTTON_SELECT
-			GameButton_Invalid,		// MENU_BUTTON_BACK
-			GameButton_Invalid,		// MENU_BUTTON_COIN
-			GameButton_Invalid,		// MENU_BUTTON_OPERATOR
+			MENU_BUTTON_LEFT,		// PARA_BUTTON_LEFT
+			MENU_BUTTON_DOWN,		// PARA_BUTTON_UPLEFT
+			MenuButton_Invalid,		// PARA_BUTTON_UP
+			MENU_BUTTON_UP,			// PARA_BUTTON_UPRIGHT
+			MENU_BUTTON_RIGHT,		// PARA_BUTTON_RIGHT
 		},
 		g_AutoKeyMappings_Para
 	},
@@ -368,15 +355,14 @@ static const Game g_Game_DS3DDX =
 			"HandRight",
 		},
 		{	// m_SecondaryMenuButton
-			DS3DDX_BUTTON_HANDLEFT,		// MENU_BUTTON_LEFT
-			DS3DDX_BUTTON_HANDRIGHT,	// MENU_BUTTON_RIGHT
-			DS3DDX_BUTTON_HANDUP,		// MENU_BUTTON_UP
-			DS3DDX_BUTTON_HANDDOWN,		// MENU_BUTTON_DOWN
-			GameButton_Invalid,		// MENU_BUTTON_START
-			GameButton_Invalid,		// MENU_BUTTON_SELECT
-			GameButton_Invalid,		// MENU_BUTTON_BACK
-			GameButton_Invalid,		// MENU_BUTTON_COIN
-			GameButton_Invalid,		// MENU_BUTTON_OPERATOR
+			MENU_BUTTON_LEFT,		// DS3DDX_BUTTON_HANDLEFT
+			MenuButton_Invalid,		// DS3DDX_BUTTON_FOOTDOWNLEFT
+			MenuButton_Invalid,		// DS3DDX_BUTTON_FOOTUPLEFT
+			MENU_BUTTON_UP,			// DS3DDX_BUTTON_HANDUP
+			MENU_BUTTON_DOWN,		// DS3DDX_BUTTON_HANDDOWN
+			MenuButton_Invalid,		// DS3DDX_BUTTON_FOOTUPRIGHT
+			MenuButton_Invalid,		// DS3DDX_BUTTON_FOOTDOWNRIGHT
+			MENU_BUTTON_RIGHT,		// DS3DDX_BUTTON_HANDRIGHT
 		},
 		g_AutoKeyMappings_DS3DDX
 	},
@@ -430,15 +416,15 @@ static const Game g_Game_Beat =
 			"Scratch down",
 		},
 		{	// m_SecondaryMenuButton
-			BEAT_BUTTON_KEY1,		// MENU_BUTTON_LEFT
-			BEAT_BUTTON_KEY3,		// MENU_BUTTON_RIGHT
-			BEAT_BUTTON_SCRATCHUP,		// MENU_BUTTON_UP
-			BEAT_BUTTON_SCRATCHDOWN,	// MENU_BUTTON_DOWN
-			GameButton_Invalid,		// MENU_BUTTON_START
-			GameButton_Invalid,		// MENU_BUTTON_SELECT
-			GameButton_Invalid,		// MENU_BUTTON_BACK
-			GameButton_Invalid,		// MENU_BUTTON_COIN
-			GameButton_Invalid,		// MENU_BUTTON_OPERATOR
+			MENU_BUTTON_LEFT,		// BEAT_BUTTON_KEY1
+			MenuButton_Invalid,		// BEAT_BUTTON_KEY2
+			MENU_BUTTON_RIGHT,		// BEAT_BUTTON_KEY3
+			MenuButton_Invalid,		// BEAT_BUTTON_KEY4
+			MenuButton_Invalid,		// BEAT_BUTTON_KEY5
+			MenuButton_Invalid,		// BEAT_BUTTON_KEY6
+			MenuButton_Invalid,		// BEAT_BUTTON_KEY7
+			MENU_BUTTON_UP,			// BEAT_BUTTON_SCRATCHUP
+			MENU_BUTTON_DOWN,		// BEAT_BUTTON_SCRATCHDOWN
 		},
 		g_AutoKeyMappings_Beat
 	},
@@ -488,15 +474,10 @@ static const Game g_Game_Maniax =
 			"HandLrRight",
 		},
 		{	// m_SecondaryMenuButton
-			MANIAX_BUTTON_HANDUPLEFT,	// MENU_BUTTON_LEFT
-			MANIAX_BUTTON_HANDUPRIGHT,	// MENU_BUTTON_RIGHT
-			MANIAX_BUTTON_HANDLRRIGHT,	// MENU_BUTTON_UP
-			MANIAX_BUTTON_HANDLRLEFT,	// MENU_BUTTON_DOWN
-			GameButton_Invalid,		// MENU_BUTTON_START
-			GameButton_Invalid,		// MENU_BUTTON_SELECT
-			GameButton_Invalid,		// MENU_BUTTON_BACK
-			GameButton_Invalid,		// MENU_BUTTON_COIN
-			GameButton_Invalid,		// MENU_BUTTON_OPERATOR
+			MENU_BUTTON_LEFT,		// MANIAX_BUTTON_HANDUPLEFT
+			MENU_BUTTON_RIGHT,		// MANIAX_BUTTON_HANDUPRIGHT
+			MENU_BUTTON_DOWN,		// MANIAX_BUTTON_HANDLRLEFT
+			MENU_BUTTON_UP,			// MANIAX_BUTTON_HANDLRRIGHT
 		},
 		g_AutoKeyMappings_Maniax
 	},
@@ -556,15 +537,15 @@ static const Game g_Game_Techno =
 			"DownRight",
 		},
 		{	// m_SecondaryMenuButton
-			TECHNO_BUTTON_LEFT,		// MENU_BUTTON_LEFT
-			TECHNO_BUTTON_RIGHT,		// MENU_BUTTON_RIGHT
-			TECHNO_BUTTON_UP,		// MENU_BUTTON_UP
-			TECHNO_BUTTON_DOWN,		// MENU_BUTTON_DOWN
-			GameButton_Invalid,		// MENU_BUTTON_START
-			GameButton_Invalid,		// MENU_BUTTON_SELECT
-			GameButton_Invalid,		// MENU_BUTTON_BACK
-			GameButton_Invalid,		// MENU_BUTTON_COIN
-			GameButton_Invalid,		// MENU_BUTTON_OPERATOR
+			MENU_BUTTON_LEFT,		// TECHNO_BUTTON_LEFT
+			MENU_BUTTON_RIGHT,		// TECHNO_BUTTON_RIGHT
+			MENU_BUTTON_UP,			// TECHNO_BUTTON_UP
+			MENU_BUTTON_DOWN,		// TECHNO_BUTTON_DOWN
+			MenuButton_Invalid,		// TECHNO_BUTTON_UPLEFT
+			MenuButton_Invalid,		// TECHNO_BUTTON_UPRIGHT
+			MenuButton_Invalid,		// TECHNO_BUTTON_CENTER
+			MenuButton_Invalid,		// TECHNO_BUTTON_DOWNLEFT
+			MenuButton_Invalid,		// TECHNO_BUTTON_DOWNRIGHT
 		},
 		g_AutoKeyMappings_Techno
 	},
@@ -620,15 +601,15 @@ static const Game g_Game_Popn =
 			"Right White",
 		},
 		{	// m_SecondaryMenuButton
-			POPN_BUTTON_LEFT_BLUE,		// MENU_BUTTON_LEFT
-			POPN_BUTTON_RIGHT_BLUE,		// MENU_BUTTON_RIGHT
-			POPN_BUTTON_LEFT_YELLOW,	// MENU_BUTTON_UP
-			POPN_BUTTON_RIGHT_YELLOW,	// MENU_BUTTON_DOWN
-			POPN_BUTTON_RED,		// MENU_BUTTON_START
-			GameButton_Invalid,		// MENU_BUTTON_SELECT
-			GameButton_Invalid,		// MENU_BUTTON_START
-			GameButton_Invalid,		// MENU_BUTTON_COIN
-			GameButton_Invalid,		// MENU_BUTTON_OPERATOR
+			MenuButton_Invalid,		// POPN_BUTTON_LEFT_WHITE
+			MENU_BUTTON_UP,			// POPN_BUTTON_LEFT_YELLOW
+			MenuButton_Invalid,		// POPN_BUTTON_LEFT_GREEN
+			MENU_BUTTON_LEFT,		// POPN_BUTTON_LEFT_BLUE
+			MENU_BUTTON_START,		// POPN_BUTTON_RED
+			MENU_BUTTON_RIGHT,		// POPN_BUTTON_RIGHT_BLUE
+			MenuButton_Invalid,		// POPN_BUTTON_RIGHT_GREEN
+			MENU_BUTTON_DOWN,		// POPN_BUTTON_RIGHT_YELLOW
+			MenuButton_Invalid,		// POPN_BUTTON_RIGHT_WHITE
 		},
 		g_AutoKeyMappings_Popn
 	},
@@ -682,15 +663,14 @@ static const Game g_Game_Lights =
 			"BassRight",
 		},
 		{	// m_SecondaryMenuButton
-			LIGHTS_BUTTON_MARQUEE_UP_LEFT,	// MENU_BUTTON_LEFT
-			LIGHTS_BUTTON_MARQUEE_UP_RIGHT,	// MENU_BUTTON_RIGHT
-			LIGHTS_BUTTON_MARQUEE_LR_LEFT,	// MENU_BUTTON_UP
-			LIGHTS_BUTTON_MARQUEE_LR_RIGHT,	// MENU_BUTTON_DOWN
-			GameButton_Invalid,		// MENU_BUTTON_START
-			GameButton_Invalid,		// MENU_BUTTON_SELECT
-			GameButton_Invalid,		// MENU_BUTTON_BACK
-			GameButton_Invalid,		// MENU_BUTTON_COIN
-			GameButton_Invalid,		// MENU_BUTTON_OPERATOR
+			MENU_BUTTON_LEFT,		// LIGHTS_BUTTON_MARQUEE_UP_LEFT
+			MENU_BUTTON_RIGHT,		// LIGHTS_BUTTON_MARQUEE_UP_RIGHT
+			MENU_BUTTON_UP,			// LIGHTS_BUTTON_MARQUEE_LR_LEFT
+			MENU_BUTTON_DOWN,		// LIGHTS_BUTTON_MARQUEE_LR_RIGHT
+			MenuButton_Invalid,		// LIGHTS_BUTTON_BUTTONS_LEFT
+			MenuButton_Invalid,		// LIGHTS_BUTTON_BUTTONS_RIGHT
+			MenuButton_Invalid,		// LIGHTS_BUTTON_BASS_LEFT
+			MenuButton_Invalid,		// LIGHTS_BUTTON_BASS_RIGHT
 		},
 		g_AutoKeyMappings_Lights
 	},

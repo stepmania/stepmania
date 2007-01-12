@@ -977,11 +977,7 @@ MenuButton InputScheme::GameInputToMenuButton( GameInput GameI ) const
 			return i;
 
 	if( !PREFSMAN->m_bOnlyDedicatedMenuButtons )
-	{
-		FOREACH_MenuButton(i)
-			if( m_SecondaryMenuButton[i] == GameI.button )
-				return i;
-	}
+		return GetMenuButtonSecondaryFunction( GameI.button );
 
 	return MenuButton_Invalid;	// invalid GameInput
 }
@@ -1006,7 +1002,17 @@ void InputScheme::MenuButtonToGameInputs( MenuButton MenuI, PlayerNumber pn, Gam
 		controller.push_back( (GameController)pn );
 	}
 
-	GameButton button[2] = { g_DedicatedMenuButtons[MenuI], m_SecondaryMenuButton[MenuI] };
+	GameButton SecondaryGameButton = GameButton_Invalid;
+	for( int i = GAME_BUTTON_NEXT; i < m_iButtonsPerController; ++i )
+	{
+		if( m_SecondaryMenuButton[i-GAME_BUTTON_NEXT] == MenuI )
+		{
+			SecondaryGameButton = i;
+			break;
+		}
+	}
+
+	GameButton button[2] = { g_DedicatedMenuButtons[MenuI], SecondaryGameButton };
 	int iNumButtonsUsing = PREFSMAN->m_bOnlyDedicatedMenuButtons ? 1 : 2;
 
 	int iOut = 0;
@@ -1025,11 +1031,10 @@ void InputScheme::MenuButtonToGameInputs( MenuButton MenuI, PlayerNumber pn, Gam
 
 MenuButton InputScheme::GetMenuButtonSecondaryFunction( GameButton gb ) const
 {
-	FOREACH_MenuButton(mb)
-		if( m_SecondaryMenuButton[mb] == gb )
-			return mb;
+	if( gb < GAME_BUTTON_NEXT )
+		return MenuButton_Invalid;
 
-	return MenuButton_Invalid;
+	return m_SecondaryMenuButton[gb - GAME_BUTTON_NEXT];
 }
 
 static const char *g_szCommonGameButtonNames[] =

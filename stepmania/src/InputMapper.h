@@ -44,7 +44,7 @@ public:
 	};
 	/* Data for each Game-specific GameButton.  This starts at GAME_BUTTON_NEXT. */
 	const char	*m_szGameButtonNames[NUM_GameButton];
-	GameButton	m_SecondaryMenuButton[NUM_MenuButton];
+	MenuButton	m_SecondaryMenuButton[NUM_GameButton];
 	const InputMapping *m_Maps;
 
 	GameButton ButtonNameToIndex( const RString &sButtonName ) const;
