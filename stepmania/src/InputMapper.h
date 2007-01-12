@@ -15,7 +15,7 @@ const int NUM_USER_GAME_TO_DEVICE_SLOTS = 2;
 
 struct InputMapping
 {
-	bool IsEndMarker() const { return gb == GameButton_Invalid; }
+	bool IsEndMarker() const { return deviceButton == deviceButton && gb == GameButton_Invalid; }
 
 	int iSlotIndex;
 	DeviceButton deviceButton;
