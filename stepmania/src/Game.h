@@ -35,6 +35,14 @@ public:
 	bool			m_bCountNotesSeparately;	// Count multiple notes in a row as separate notes or as one note
 	bool			m_bAllowHopos;		// allow Hammer-ons and Pull-offs?  Only useful for guitar type input.
 	InputScheme		m_InputScheme;
+	
+	struct PerButtonInfo
+	{
+		GameButtonType m_gbt;
+	};
+	/* Data for each Game-specific GameButton.  This starts at GAME_BUTTON_NEXT. */
+	PerButtonInfo		m_PerButtonInfo[NUM_GameButton];
+	const PerButtonInfo *GetPerButtonInfo( GameButton gb ) const;
 
 	TapNoteScore MapTapNoteScore( TapNoteScore tns ) const;
 	TapNoteScore		m_mapW1To;

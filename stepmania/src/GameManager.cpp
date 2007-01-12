@@ -127,21 +127,12 @@ static const Game g_Game_Dance =
 		"dance",				// m_szName
 		NUM_DANCE_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
-			{ "MenuLeft",		GameButtonType_INVALID },
-			{ "MenuRight",		GameButtonType_INVALID },
-			{ "MenuUp",		GameButtonType_INVALID },
-			{ "MenuDown",		GameButtonType_INVALID },
-			{ "Start",		GameButtonType_INVALID },
-			{ "Select",		GameButtonType_INVALID },
-			{ "Back",		GameButtonType_INVALID },
-			{ "Coin",		GameButtonType_INVALID },
-			{ "Operator",		GameButtonType_INVALID },
-			{ "Left",		GameButtonType_Step },
-			{ "Right",		GameButtonType_Step },
-			{ "Up",			GameButtonType_Step },
-			{ "Down",		GameButtonType_Step },
-			{ "UpLeft",		GameButtonType_Step },
-			{ "UpRight",		GameButtonType_Step },
+			"Left",
+			"Right",
+			"Up",
+			"Down",
+			"UpLeft",
+			"UpRight",
 		},
 		{	// m_SecondaryMenuButton
 			DANCE_BUTTON_LEFT,		// MENU_BUTTON_LEFT
@@ -155,6 +146,14 @@ static const Game g_Game_Dance =
 			GameButton_Invalid,		// MENU_BUTTON_OPERATOR
 		},
 		g_AutoKeyMappings_Dance
+	},
+	{
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
 	},
 	TNS_W1,	// m_mapW1To
 	TNS_W2,	// m_mapW2To
@@ -194,20 +193,11 @@ static const Game g_Game_Pump =
 		"pump",					// m_szName
 		NUM_PUMP_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
-			{ "MenuLeft",		GameButtonType_INVALID},
-			{ "MenuRight",		GameButtonType_INVALID },
-			{ "MenuUp",		GameButtonType_INVALID },
-			{ "MenuDown",		GameButtonType_INVALID },
-			{ "Start",		GameButtonType_INVALID },
-			{ "Select",		GameButtonType_INVALID },
-			{ "Back",		GameButtonType_INVALID },
-			{ "Coin",		GameButtonType_INVALID },
-			{ "Operator",		GameButtonType_INVALID },
-			{ "UpLeft",		GameButtonType_Step },
-			{ "UpRight",		GameButtonType_Step },
-			{ "Center",		GameButtonType_Step },
-			{ "DownLeft",		GameButtonType_Step },
-			{ "DownRight",		GameButtonType_Step },
+			"UpLeft",
+			"UpRight",
+			"Center",
+			"DownLeft",
+			"DownRight",
 		},
 		{	// m_SecondaryMenuButton
 			PUMP_BUTTON_DOWNLEFT,		// MENU_BUTTON_LEFT
@@ -221,6 +211,13 @@ static const Game g_Game_Pump =
 			GameButton_Invalid,		// MENU_BUTTON_OPERATOR
 		},
 		g_AutoKeyMappings_Pump
+	},
+	{
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
 	},
 	TNS_W1,	// m_mapW1To
 	TNS_W2,	// m_mapW2To
@@ -250,22 +247,13 @@ static const Game g_Game_Ez2 =
 		"ez2",					// m_szName
 		NUM_EZ2_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
-			{ "MenuLeft",		GameButtonType_INVALID },
-			{ "MenuRight",		GameButtonType_INVALID },
-			{ "MenuUp",		GameButtonType_INVALID },
-			{ "MenuDown",		GameButtonType_INVALID },
-			{ "Start",		GameButtonType_INVALID },
-			{ "Select",		GameButtonType_INVALID },
-			{ "Back",		GameButtonType_INVALID },
-			{ "Coin",		GameButtonType_INVALID },
-			{ "Operator",		GameButtonType_INVALID },
-			{ "FootUpLeft",		GameButtonType_Step },
-			{ "FootUpRight",	GameButtonType_Step },
-			{ "FootDown",		GameButtonType_Step },
-			{ "HandUpLeft",		GameButtonType_Step },
-			{ "HandUpRight",	GameButtonType_Step },
-			{ "HandLrLeft",		GameButtonType_Step },
-			{ "HandLrRight",	GameButtonType_Step },
+			"FootUpLeft",
+			"FootUpRight",
+			"FootDown",
+			"HandUpLeft",
+			"HandUpRight",
+			"HandLrLeft",
+			"HandLrRight",
 		},
 		{	// m_SecondaryMenuButton
 			EZ2_BUTTON_HANDUPLEFT,		// MENU_BUTTON_LEFT
@@ -279,6 +267,15 @@ static const Game g_Game_Ez2 =
 			GameButton_Invalid,		// MENU_BUTTON_OPERATOR
 		},
 		g_AutoKeyMappings_Ez2
+	},
+	{
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
 	},
 	TNS_W2,		// m_mapW1To
 	TNS_W2,		// m_mapW2To
@@ -306,20 +303,11 @@ static const Game g_Game_Para =
 		"para",					// m_szName
 		NUM_PARA_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
-			{ "MenuLeft",		GameButtonType_INVALID },
-			{ "MenuRight",		GameButtonType_INVALID },
-			{ "MenuUp",		GameButtonType_INVALID },
-			{ "MenuDown",		GameButtonType_INVALID },
-			{ "Start",		GameButtonType_INVALID },
-			{ "Select",		GameButtonType_INVALID },
-			{ "Back",		GameButtonType_INVALID },
-			{ "Coin",		GameButtonType_INVALID },
-			{ "Operator",		GameButtonType_INVALID },
-			{ "Left",		GameButtonType_Step },
-			{ "UpLeft",		GameButtonType_Step },
-			{ "Up",			GameButtonType_Step },
-			{ "UpRight",		GameButtonType_Step },
-			{ "Right",		GameButtonType_Step },
+			"Left",
+			"UpLeft",
+			"Up",
+			"UpRight",
+			"Right",
 		},
 		{	// m_SecondaryMenuButton
 			PARA_BUTTON_LEFT,		// MENU_BUTTON_LEFT
@@ -333,6 +321,13 @@ static const Game g_Game_Para =
 			GameButton_Invalid,		// MENU_BUTTON_OPERATOR
 		},
 		g_AutoKeyMappings_Para
+	},
+	{
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
 	},
 	TNS_W1,	// m_mapW1To
 	TNS_W2,	// m_mapW2To
@@ -363,23 +358,14 @@ static const Game g_Game_DS3DDX =
 		"ds3ddx",				// m_szName
 		NUM_DS3DDX_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
-			{ "MenuLeft",		GameButtonType_INVALID },
-			{ "MenuRight",		GameButtonType_INVALID },
-			{ "MenuUp",		GameButtonType_INVALID },
-			{ "MenuDown",		GameButtonType_INVALID },
-			{ "Start",		GameButtonType_INVALID },
-			{ "Select",		GameButtonType_INVALID },
-			{ "Back",		GameButtonType_INVALID },
-			{ "Coin",		GameButtonType_INVALID },
-			{ "Operator",		GameButtonType_INVALID },
-			{ "HandLeft",		GameButtonType_Step },
-			{ "FootDownLeft",	GameButtonType_Step },
-			{ "FootUpLeft",		GameButtonType_Step },
-			{ "HandUp",		GameButtonType_Step },
-			{ "HandDown",		GameButtonType_Step },
-			{ "FootUpRight",	GameButtonType_Step },
-			{ "FootDownRight",	GameButtonType_Step },
-			{ "HandRight",		GameButtonType_Step },
+			"HandLeft",
+			"FootDownLeft",
+			"FootUpLeft",
+			"HandUp",
+			"HandDown",
+			"FootUpRight",
+			"FootDownRight",
+			"HandRight",
 		},
 		{	// m_SecondaryMenuButton
 			DS3DDX_BUTTON_HANDLEFT,		// MENU_BUTTON_LEFT
@@ -393,6 +379,16 @@ static const Game g_Game_DS3DDX =
 			GameButton_Invalid,		// MENU_BUTTON_OPERATOR
 		},
 		g_AutoKeyMappings_DS3DDX
+	},
+	{
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
 	},
 	TNS_W1,	// m_mapW1To
 	TNS_W2,	// m_mapW2To
@@ -423,24 +419,15 @@ static const Game g_Game_Beat =
 		"beat",					// m_szName
 		NUM_BEAT_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
-			{ "MenuLeft",		GameButtonType_INVALID },
-			{ "MenuRight",		GameButtonType_INVALID },
-			{ "MenuUp",		GameButtonType_INVALID },
-			{ "MenuDown",		GameButtonType_INVALID },
-			{ "Start",		GameButtonType_INVALID },
-			{ "Select",		GameButtonType_INVALID },
-			{ "Back",		GameButtonType_INVALID },
-			{ "Coin",		GameButtonType_INVALID },
-			{ "Operator",		GameButtonType_INVALID },
-			{ "Key1",		GameButtonType_Step },
-			{ "Key2",		GameButtonType_Step },
-			{ "Key3",		GameButtonType_Step },
-			{ "Key4",		GameButtonType_Step },
-			{ "Key5",		GameButtonType_Step },
-			{ "Key6",		GameButtonType_Step },
-			{ "Key7",		GameButtonType_Step },
-			{ "Scratch up",		GameButtonType_Step },
-			{ "Scratch down",	GameButtonType_Step },
+			"Key1",
+			"Key2",
+			"Key3",
+			"Key4",
+			"Key5",
+			"Key6",
+			"Key7",
+			"Scratch up",
+			"Scratch down",
 		},
 		{	// m_SecondaryMenuButton
 			BEAT_BUTTON_KEY1,		// MENU_BUTTON_LEFT
@@ -454,6 +441,17 @@ static const Game g_Game_Beat =
 			GameButton_Invalid,		// MENU_BUTTON_OPERATOR
 		},
 		g_AutoKeyMappings_Beat
+	},
+	{
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
 	},
 	TNS_W1,	// m_mapW1To
 	TNS_W2,	// m_mapW2To
@@ -484,19 +482,10 @@ static const Game g_Game_Maniax =
 		"maniax",				// m_szName
 		NUM_MANIAX_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
-			{ "MenuLeft",		GameButtonType_INVALID },
-			{ "MenuRight",		GameButtonType_INVALID },
-			{ "MenuUp",		GameButtonType_INVALID },
-			{ "MenuDown",		GameButtonType_INVALID },
-			{ "Start",		GameButtonType_INVALID },
-			{ "Select",		GameButtonType_INVALID },
-			{ "Back",		GameButtonType_INVALID },
-			{ "Coin",		GameButtonType_INVALID },
-			{ "Operator",		GameButtonType_INVALID },
-			{ "HandUpLeft",		GameButtonType_Step },
-			{ "HandUpRight",	GameButtonType_Step },
-			{ "HandLrLeft",		GameButtonType_Step },
-			{ "HandLrRight",	GameButtonType_Step },
+			"HandUpLeft",
+			"HandUpRight",
+			"HandLrLeft",
+			"HandLrRight",
 		},
 		{	// m_SecondaryMenuButton
 			MANIAX_BUTTON_HANDUPLEFT,	// MENU_BUTTON_LEFT
@@ -510,6 +499,12 @@ static const Game g_Game_Maniax =
 			GameButton_Invalid,		// MENU_BUTTON_OPERATOR
 		},
 		g_AutoKeyMappings_Maniax
+	},
+	{
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
 	},
 	TNS_W1,	// m_mapW1To
 	TNS_W2,	// m_mapW2To
@@ -550,24 +545,15 @@ static const Game g_Game_Techno =
 		"techno",				// m_szName
 		NUM_TECHNO_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
-			{ "MenuLeft",		GameButtonType_INVALID },
-			{ "MenuRight",		GameButtonType_INVALID },
-			{ "MenuUp",		GameButtonType_INVALID },
-			{ "MenuDown",		GameButtonType_INVALID },
-			{ "Start",		GameButtonType_INVALID },
-			{ "Select",		GameButtonType_INVALID },
-			{ "Back",		GameButtonType_INVALID },
-			{ "Coin",		GameButtonType_INVALID },
-			{ "Operator",		GameButtonType_INVALID },
-			{ "Left",		GameButtonType_Step },
-			{ "Right",		GameButtonType_Step },
-			{ "Up",			GameButtonType_Step },
-			{ "Down",		GameButtonType_Step },
-			{ "UpLeft",		GameButtonType_Step },
-			{ "UpRight",		GameButtonType_Step },
-			{ "Center",		GameButtonType_Step },
-			{ "DownLeft",		GameButtonType_Step },
-			{ "DownRight",		GameButtonType_Step },
+			"Left",
+			"Right",
+			"Up",
+			"Down",
+			"UpLeft",
+			"UpRight",
+			"Center",
+			"DownLeft",
+			"DownRight",
 		},
 		{	// m_SecondaryMenuButton
 			TECHNO_BUTTON_LEFT,		// MENU_BUTTON_LEFT
@@ -581,6 +567,17 @@ static const Game g_Game_Techno =
 			GameButton_Invalid,		// MENU_BUTTON_OPERATOR
 		},
 		g_AutoKeyMappings_Techno
+	},
+	{
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
 	},
 	TNS_W1,	// m_mapW1To
 	TNS_W2,	// m_mapW2To
@@ -612,24 +609,15 @@ static const Game g_Game_Popn =
 		"popn",					// m_szName
 		NUM_POPN_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
-			{ "MenuLeft",		GameButtonType_Step },
-			{ "MenuRight",		GameButtonType_Step },
-			{ "MenuUp",		GameButtonType_Step },
-			{ "MenuDown",		GameButtonType_Step },
-			{ "Start",		GameButtonType_Step },
-			{ "Back",		GameButtonType_Step },
-			{ "Select",		GameButtonType_Step },
-			{ "Coin",		GameButtonType_Step },
-			{ "Operator",		GameButtonType_Step },
-			{ "Left White",		GameButtonType_Step },
-			{ "Left Yellow",	GameButtonType_Step },
-			{ "Left Green",		GameButtonType_Step },
-			{ "Left Blue",		GameButtonType_Step },
-			{ "Red",		GameButtonType_Step },
-			{ "Right Blue",		GameButtonType_Step },
-			{ "Right Green",	GameButtonType_Step },
-			{ "Right Yellow",	GameButtonType_Step },
-			{ "Right White",	GameButtonType_Step },
+			"Left White",
+			"Left Yellow",
+			"Left Green",
+			"Left Blue",
+			"Red",
+			"Right Blue",
+			"Right Green",
+			"Right Yellow",
+			"Right White",
 		},
 		{	// m_SecondaryMenuButton
 			POPN_BUTTON_LEFT_BLUE,		// MENU_BUTTON_LEFT
@@ -643,6 +631,17 @@ static const Game g_Game_Popn =
 			GameButton_Invalid,		// MENU_BUTTON_OPERATOR
 		},
 		g_AutoKeyMappings_Popn
+	},
+	{
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
 	},
 	TNS_W2,		// m_mapW1To
 	TNS_W2,		// m_mapW2To
@@ -673,23 +672,14 @@ static const Game g_Game_Lights =
 		"lights",				// m_szName
 		NUM_LIGHTS_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
-			{ "MenuLeft",		GameButtonType_INVALID },
-			{ "MenuRight",		GameButtonType_INVALID },
-			{ "MenuUp",		GameButtonType_INVALID },
-			{ "MenuDown",		GameButtonType_INVALID },
-			{ "Start",		GameButtonType_INVALID },
-			{ "Select",		GameButtonType_INVALID },
-			{ "Back",		GameButtonType_INVALID },
-			{ "Coin",		GameButtonType_INVALID },
-			{ "Operator",		GameButtonType_INVALID },
-			{ "MarqueeUpLeft",	GameButtonType_Step },
-			{ "MarqueeUpRight",	GameButtonType_Step },
-			{ "MarqueeLrLeft",	GameButtonType_Step },
-			{ "MarqueeLrRight",	GameButtonType_Step },
-			{ "ButtonsLeft",	GameButtonType_Step },
-			{ "ButtonsRight",	GameButtonType_Step },
-			{ "BassLeft",		GameButtonType_Step },
-			{ "BassRight",		GameButtonType_Step },
+			"MarqueeUpLeft",
+			"MarqueeUpRight",
+			"MarqueeLrLeft",
+			"MarqueeLrRight",
+			"ButtonsLeft",
+			"ButtonsRight",
+			"BassLeft",
+			"BassRight",
 		},
 		{	// m_SecondaryMenuButton
 			LIGHTS_BUTTON_MARQUEE_UP_LEFT,	// MENU_BUTTON_LEFT
@@ -703,6 +693,16 @@ static const Game g_Game_Lights =
 			GameButton_Invalid,		// MENU_BUTTON_OPERATOR
 		},
 		g_AutoKeyMappings_Lights
+	},
+	{
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
+		{ GameButtonType_Step },
 	},
 	TNS_W1,	// m_mapW1To
 	TNS_W2,	// m_mapW2To

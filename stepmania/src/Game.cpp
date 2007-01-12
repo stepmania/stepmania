@@ -15,6 +15,28 @@ TapNoteScore Game::MapTapNoteScore( TapNoteScore tns ) const
 	}
 }
 
+static const Game::PerButtonInfo g_CommonButtonInfo[] =
+{
+	{ GameButtonType_INVALID }, // GAME_BUTTON_MENULEFT
+	{ GameButtonType_INVALID }, // GAME_BUTTON_MENURIGHT
+	{ GameButtonType_INVALID }, // GAME_BUTTON_MENUUP
+	{ GameButtonType_INVALID }, // GAME_BUTTON_MENUDOWN
+	{ GameButtonType_INVALID }, // GAME_BUTTON_START
+	{ GameButtonType_INVALID }, // GAME_BUTTON_SELECT
+	{ GameButtonType_INVALID }, // GAME_BUTTON_BACK
+	{ GameButtonType_INVALID }, // GAME_BUTTON_COIN
+	{ GameButtonType_INVALID }, // GAME_BUTTON_OPERATOR
+};
+
+const Game::PerButtonInfo *Game::GetPerButtonInfo( GameButton gb ) const
+{
+	COMPILE_ASSERT( GAME_BUTTON_NEXT == ARRAYLEN(g_CommonButtonInfo) );
+	if( gb < GAME_BUTTON_NEXT )
+		return &g_CommonButtonInfo[gb];
+	else
+		return &m_PerButtonInfo[gb-GAME_BUTTON_NEXT];
+}
+
 // lua start
 #include "LuaBinding.h"
 

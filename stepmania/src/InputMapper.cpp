@@ -964,7 +964,7 @@ MultiPlayer InputMapper::InputDeviceToMultiPlayer( InputDevice id )
 GameButton InputScheme::ButtonNameToIndex( const RString &sButtonName ) const
 {
 	for( int i=0; i<m_iButtonsPerController; i++ ) 
-		if( stricmp(m_GameButtonInfo[i].m_szName, sButtonName) == 0 )
+		if( stricmp(GetGameButtonName(i), sButtonName) == 0 )
 			return i;
 
 	return GameButton_Invalid;
@@ -1030,6 +1030,28 @@ MenuButton InputScheme::GetMenuButtonSecondaryFunction( GameButton gb ) const
 			return mb;
 
 	return MenuButton_Invalid;
+}
+
+static const char *g_szCommonGameButtonNames[] =
+{
+	"MenuLeft",
+	"MenuRight",
+	"MenuUp",
+	"MenuDown",
+	"Start",
+	"Select",
+	"Back",
+	"Coin",
+	"Operator",
+};
+
+const char *InputScheme::GetGameButtonName( GameButton gb ) const
+{
+	COMPILE_ASSERT( GAME_BUTTON_NEXT == ARRAYLEN(g_szCommonGameButtonNames) );
+	if( gb < GAME_BUTTON_NEXT )
+		return g_szCommonGameButtonNames[gb];
+	else
+		return m_szGameButtonNames[gb-GAME_BUTTON_NEXT];
 }
 
 /*

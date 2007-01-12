@@ -41,9 +41,9 @@ public:
 	struct GameButtonInfo
 	{
 		char m_szName[60];	// The name used by the button graphics system.  e.g. "left", "right", "middle C", "snare"
-		GameButtonType m_gbt;
 	};
-	GameButtonInfo	m_GameButtonInfo[NUM_GameButton];
+	/* Data for each Game-specific GameButton.  This starts at GAME_BUTTON_NEXT. */
+	const char	*m_szGameButtonNames[NUM_GameButton];
 	GameButton	m_SecondaryMenuButton[NUM_MenuButton];
 	const InputMapping *m_Maps;
 
@@ -51,6 +51,7 @@ public:
 	MenuButton GameInputToMenuButton( GameInput GameI ) const;
 	void MenuButtonToGameInputs( MenuButton MenuI, PlayerNumber pn, GameInput GameIout[4] ) const;
 	MenuButton GetMenuButtonSecondaryFunction( GameButton gb ) const;
+	const char *GetGameButtonName( GameButton gb ) const;
 };
 #define FOREACH_GameButtonInScheme( s, var )	for( GameButton var=(GameButton)0; var<s->m_iButtonsPerController; enum_add<GameButton>( var, +1 ) )
 

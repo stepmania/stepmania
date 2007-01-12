@@ -16,7 +16,7 @@ StringToX( GameController );
 
 RString GameButtonToString( const InputScheme* pInputs, GameButton i )
 {
-	return pInputs->m_GameButtonInfo[i].m_szName;
+	return pInputs->GetGameButtonName(i);
 }
 
 RString GameButtonToLocalizedString( const InputScheme* pInputs, GameButton i )
