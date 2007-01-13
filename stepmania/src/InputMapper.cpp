@@ -827,7 +827,7 @@ PlayerNumber InputMapper::ControllerToPlayerNumber( GameController controller )
 
 MenuButton InputMapper::GameToMenu( const GameInput &GameI )
 {
-	return m_pInputScheme->GameInputToMenuButton( GameI );
+	return m_pInputScheme->GameButtonToMenuButton( GameI.button );
 }
 
 /* If set (not PLAYER_INVALID), inputs from both GameControllers will be mapped
@@ -970,16 +970,16 @@ GameButton InputScheme::ButtonNameToIndex( const RString &sButtonName ) const
 	return GameButton_Invalid;
 }
 
-MenuButton InputScheme::GameInputToMenuButton( GameInput GameI ) const
+MenuButton InputScheme::GameButtonToMenuButton( GameButton gb ) const
 {
 	FOREACH_MenuButton(i)
-		if( g_DedicatedMenuButtons[i] == GameI.button )
+		if( g_DedicatedMenuButtons[i] == gb )
 			return i;
 
 	if( !PREFSMAN->m_bOnlyDedicatedMenuButtons )
-		return GetMenuButtonSecondaryFunction( GameI.button );
+		return GetMenuButtonSecondaryFunction( gb );
 
-	return MenuButton_Invalid;	// invalid GameInput
+	return MenuButton_Invalid;	// no MenuButton for this GameButton
 }
 
 void InputScheme::MenuButtonToGameInputs( MenuButton MenuI, PlayerNumber pn, GameInput GameIout[4] ) const

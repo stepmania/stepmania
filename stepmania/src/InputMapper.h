@@ -48,7 +48,7 @@ public:
 	const InputMapping *m_Maps;
 
 	GameButton ButtonNameToIndex( const RString &sButtonName ) const;
-	MenuButton GameInputToMenuButton( GameInput GameI ) const;
+	MenuButton GameButtonToMenuButton( GameButton gb ) const;
 	void MenuButtonToGameInputs( MenuButton MenuI, PlayerNumber pn, GameInput GameIout[4] ) const;
 	MenuButton GetMenuButtonSecondaryFunction( GameButton gb ) const;
 	const GameButtonInfo *GetGameButtonInfo( GameButton gb ) const;
