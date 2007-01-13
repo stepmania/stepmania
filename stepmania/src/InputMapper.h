@@ -98,13 +98,11 @@ public:
 	void RepeatStopKey( const GameInput &GameI );
 	void RepeatStopKey( GameButton MenuI, PlayerNumber pn );
 
-	typedef InputMapping Mapping;
-
 	static InputDevice MultiPlayerToInputDevice( MultiPlayer mp );
 	static MultiPlayer InputDeviceToMultiPlayer( InputDevice id );
 
 	void Unmap( InputDevice device );
-	void ApplyMapping( const Mapping *maps, GameController gc, InputDevice device );
+	void ApplyMapping( const InputMapping *maps, GameController gc, InputDevice device );
 
 protected:
 	// all the DeviceInputs that map to a GameInput

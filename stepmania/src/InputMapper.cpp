@@ -52,7 +52,7 @@ struct AutoJoyMapping
 	const char *szGame;
 	const char *szDriverRegex;	// reported by InputHandler
 	const char *szControllerName;	// the product name of the controller
-	InputMapper::Mapping maps[32];
+	InputMapping maps[32];
 };
 #define END_MARKER	{-1, DeviceButton_Invalid, GameButton_Invalid, false },	// end marker
 const InputMapping g_DefaultKeyMappings[] = 
@@ -498,7 +498,7 @@ void InputMapper::Unmap( InputDevice id )
 	UpdateTempDItoGI();
 }
 
-void InputMapper::ApplyMapping( const Mapping *maps, GameController gc, InputDevice id )
+void InputMapper::ApplyMapping( const InputMapping *maps, GameController gc, InputDevice id )
 {
 	map<GameInput, int> MappedButtons;
 
