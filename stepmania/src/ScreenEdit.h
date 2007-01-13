@@ -152,15 +152,15 @@ struct MapEditToDI
 	}
 };
 
-// Like MapEditToDI, but maps MenuButton instead of DeviceInput.
+// Like MapEditToDI, but maps GameButton instead of DeviceInput.
 struct MapEditButtonToMenuButton
 {
-	MenuButton button[NUM_EditButton][NUM_EDIT_TO_MENU_SLOTS];
+	GameButton button[NUM_EditButton][NUM_EDIT_TO_MENU_SLOTS];
 	void Clear()
 	{
 		FOREACH_EditButton(e)
 			for( int slot = 0; slot < NUM_EDIT_TO_MENU_SLOTS; ++slot )
-				button[e][slot] = MenuButton_Invalid;
+				button[e][slot] = GameButton_Invalid;
 	}
 };
 
@@ -465,7 +465,7 @@ public:
 
 	void InitEditMappings();
 	EditButton DeviceToEdit( const DeviceInput &DeviceI ) const;
-	EditButton MenuButtonToEditButton( MenuButton MenuI ) const;
+	EditButton MenuButtonToEditButton( GameButton MenuI ) const;
 	bool EditToDevice( EditButton button, int iSlotNum, DeviceInput &DeviceI ) const;
 	bool EditPressed( EditButton button, const DeviceInput &DeviceI );
 	bool EditIsBeingPressed( EditButton button ) const;

@@ -102,7 +102,7 @@ void ScreenMapControllers::Init()
 			BitmapText *pSecondary = new BitmapText;
 			pSecondary->SetName( "Secondary" );
 			pSecondary->LoadFromFont( THEME->GetPathF("Common","title") );
-			MenuButton mb = INPUTMAPPER->GetInputScheme()->GetMenuButtonSecondaryFunction( pKey->m_GameButton );
+			GameButton mb = INPUTMAPPER->GetInputScheme()->GetMenuButtonSecondaryFunction( pKey->m_GameButton );
 			RString sText;
 			if( mb != MenuButton_Invalid )
 				sText = GameButtonToLocalizedString( INPUTMAPPER->GetInputScheme(), mb );

@@ -101,7 +101,7 @@ protected:
 	int m_iChoice[NUM_PLAYERS];
 	bool m_bChosen[NUM_PLAYERS];
 
-	MenuButton m_TrackingRepeatingInput;
+	GameButton m_TrackingRepeatingInput;
 };
 
 

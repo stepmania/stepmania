@@ -59,7 +59,7 @@ class InputList: public BitmapText
 
 				if( !PREFSMAN->m_bOnlyDedicatedMenuButtons )
 				{
-					MenuButton mb = INPUTMAPPER->GetInputScheme()->GetMenuButtonSecondaryFunction( gi.button );
+					GameButton mb = INPUTMAPPER->GetInputScheme()->GetMenuButtonSecondaryFunction( gi.button );
 					if( mb != MenuButton_Invalid )
 					{
 						RString sGameButtonString = GameButtonToLocalizedString( INPUTMAPPER->GetInputScheme(), mb );
