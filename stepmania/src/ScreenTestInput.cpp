@@ -59,8 +59,8 @@ class InputList: public BitmapText
 
 				if( !PREFSMAN->m_bOnlyDedicatedMenuButtons )
 				{
-					GameButton mb = INPUTMAPPER->GetInputScheme()->GetMenuButtonSecondaryFunction( gi.button );
-					if( mb != GameButton_Invalid )
+					GameButton mb = INPUTMAPPER->GetInputScheme()->GameButtonToMenuButton( gi.button );
+					if( mb != GameButton_Invalid && mb != gi.button )
 					{
 						RString sGameButtonString = GameButtonToLocalizedString( INPUTMAPPER->GetInputScheme(), mb );
 						sTemp += ssprintf( " - (%s %s)", sGameButtonString.c_str(), SECONDARY.GetValue().c_str() );

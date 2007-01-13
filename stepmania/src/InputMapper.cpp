@@ -956,17 +956,6 @@ GameButton InputScheme::ButtonNameToIndex( const RString &sButtonName ) const
 	return GameButton_Invalid;
 }
 
-GameButton InputScheme::GameButtonToMenuButton( GameButton gb ) const
-{
-	if( gb < GAME_BUTTON_NEXT )
-		return gb;
-
-	if( !PREFSMAN->m_bOnlyDedicatedMenuButtons )
-		return GetMenuButtonSecondaryFunction( gb );
-
-	return GameButton_Invalid;	// no GameButton for this GameButton
-}
-
 void InputScheme::MenuButtonToGameInputs( GameButton MenuI, PlayerNumber pn, vector<GameInput> &GameIout ) const
 {
 	ASSERT( MenuI != GameButton_Invalid );
@@ -994,13 +983,11 @@ void InputScheme::MenuButtonToGameButtons( GameButton MenuI, vector<GameButton> 
 	if( MenuI == GameButton_Invalid )
 		return;
 
-	aGameButtons.push_back( MenuI );
-
-	if( PREFSMAN->m_bOnlyDedicatedMenuButtons )
-		return;
-
-	for( GameButton gb=GAME_BUTTON_NEXT; gb<m_iButtonsPerController; enum_add(gb, +1) ) 
+	FOREACH_GameButton(gb)
 	{
+		if( PREFSMAN->m_bOnlyDedicatedMenuButtons && gb >= GAME_BUTTON_NEXT )
+			break;
+
 		const GameButtonInfo *pGameButtonInfo = GetGameButtonInfo( gb );
 		if( pGameButtonInfo->m_SecondaryMenuButton != MenuI )
 			continue;
@@ -1008,22 +995,26 @@ void InputScheme::MenuButtonToGameButtons( GameButton MenuI, vector<GameButton> 
 	}
 }
 
-GameButton InputScheme::GetMenuButtonSecondaryFunction( GameButton gb ) const
+GameButton InputScheme::GameButtonToMenuButton( GameButton gb ) const
 {
+	if( gb == GameButton_Invalid )
+		return GameButton_Invalid;
+	if( gb >= GAME_BUTTON_NEXT && PREFSMAN->m_bOnlyDedicatedMenuButtons )
+		return GameButton_Invalid;
 	return GetGameButtonInfo(gb)->m_SecondaryMenuButton;
 }
 
 static const InputScheme::GameButtonInfo g_CommonGameButtonInfo[] =
 {
-	{ "MenuLeft",	GameButton_Invalid },
-	{ "MenuRight",	GameButton_Invalid },
-	{ "MenuUp",	GameButton_Invalid },
-	{ "MenuDown",	GameButton_Invalid },
-	{ "Start",	GameButton_Invalid },
-	{ "Select",	GameButton_Invalid },
-	{ "Back",	GameButton_Invalid },
-	{ "Coin",	GameButton_Invalid },
-	{ "Operator",	GameButton_Invalid },
+	{ "MenuLeft",	GAME_BUTTON_MENULEFT },
+	{ "MenuRight",	GAME_BUTTON_MENURIGHT },
+	{ "MenuUp",	GAME_BUTTON_MENUUP },
+	{ "MenuDown",	GAME_BUTTON_MENUDOWN },
+	{ "Start",	GAME_BUTTON_START },
+	{ "Select",	GAME_BUTTON_SELECT },
+	{ "Back",	GAME_BUTTON_BACK },
+	{ "Coin",	GAME_BUTTON_COIN },
+	{ "Operator",	GAME_BUTTON_OPERATOR },
 };
 
 const InputScheme::GameButtonInfo *InputScheme::GetGameButtonInfo( GameButton gb ) const

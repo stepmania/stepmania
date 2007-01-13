@@ -49,7 +49,6 @@ public:
 	GameButton GameButtonToMenuButton( GameButton gb ) const;
 	void MenuButtonToGameInputs( GameButton MenuI, PlayerNumber pn, vector<GameInput> &GameIout ) const;
 	void MenuButtonToGameButtons( GameButton MenuI, vector<GameButton> &aGameButtons ) const;
-	GameButton GetMenuButtonSecondaryFunction( GameButton gb ) const;
 	const GameButtonInfo *GetGameButtonInfo( GameButton gb ) const;
 	const char *GetGameButtonName( GameButton gb ) const;
 };
