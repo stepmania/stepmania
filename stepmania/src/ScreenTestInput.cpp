@@ -48,6 +48,9 @@ class InputList: public BitmapText
 		INPUTFILTER->GetPressedButtons( DeviceInputs );
 		FOREACH( DeviceInput, DeviceInputs, di )
 		{
+			if( !di->bDown && di->level == 0.0f )
+				continue;
+
 			RString sTemp;
 			sTemp += INPUTMAN->GetDeviceSpecificInputString(*di);
 			
