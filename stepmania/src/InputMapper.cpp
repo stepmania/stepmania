@@ -828,7 +828,7 @@ void InputMapper::SetJoinControllers( PlayerNumber pn )
 }
 
 
-void InputMapper::MenuToGame( GameButton MenuI, PlayerNumber pn, GameInput GameIout[4] )
+void InputMapper::MenuToGame( GameButton MenuI, PlayerNumber pn, vector<GameInput> &GameIout )
 {
 	if( g_JoinControllers != PLAYER_INVALID )
 		pn = PLAYER_INVALID;
@@ -857,10 +857,10 @@ bool InputMapper::IsBeingPressed( const GameInput &GameI, MultiPlayer mp, const 
 
 bool InputMapper::IsBeingPressed( GameButton MenuI, PlayerNumber pn )
 {
-	GameInput GameI[4];
+	vector<GameInput> GameI;
 	MenuToGame( MenuI, pn, GameI );
-	for( int i=0; i<4; i++ )
-		if( GameI[i].IsValid()  &&  IsBeingPressed(GameI[i]) )
+	for( size_t i=0; i<GameI.size(); i++ )
+		if( IsBeingPressed(GameI[i]) )
 			return true;
 
 	return false;
@@ -879,11 +879,10 @@ void InputMapper::RepeatStopKey( const GameInput &GameI )
 
 void InputMapper::RepeatStopKey( GameButton MenuI, PlayerNumber pn )
 {
-	GameInput GameI[4];
+	vector<GameInput> GameI;
 	MenuToGame( MenuI, pn, GameI );
-	for( int i=0; i<4; i++ )
-		if( GameI[i].IsValid() )
-			RepeatStopKey( GameI[i] );
+	for( size_t i=0; i<GameI.size(); i++ )
+		RepeatStopKey( GameI[i] );
 }
 
 float InputMapper::GetSecsHeld( const GameInput &GameI, MultiPlayer mp )
@@ -908,11 +907,10 @@ float InputMapper::GetSecsHeld( GameButton MenuI, PlayerNumber pn )
 {
 	float fMaxSecsHeld = 0;
 
-	GameInput GameI[4];
+	vector<GameInput> GameI;
 	MenuToGame( MenuI, pn, GameI );
-	for( int i=0; i<4; i++ )
-		if( GameI[i].IsValid() )
-			fMaxSecsHeld = max( fMaxSecsHeld, GetSecsHeld(GameI[i]) );
+	for( size_t i=0; i<GameI.size(); i++ )
+		fMaxSecsHeld = max( fMaxSecsHeld, GetSecsHeld(GameI[i]) );
 
 	return fMaxSecsHeld;
 }
@@ -929,11 +927,10 @@ void InputMapper::ResetKeyRepeat( const GameInput &GameI )
 
 void InputMapper::ResetKeyRepeat( GameButton MenuI, PlayerNumber pn )
 {
-	GameInput GameI[4];
+	vector<GameInput> GameI;
 	MenuToGame( MenuI, pn, GameI );
-	for( int i=0; i<4; i++ )
-		if( GameI[i].IsValid() )
-			ResetKeyRepeat( GameI[i] );
+	for( size_t i=0; i<GameI.size(); i++ )
+		ResetKeyRepeat( GameI[i] );
 }
 
 InputDevice InputMapper::MultiPlayerToInputDevice( MultiPlayer mp )
@@ -970,50 +967,43 @@ GameButton InputScheme::GameButtonToMenuButton( GameButton gb ) const
 	return GameButton_Invalid;	// no GameButton for this GameButton
 }
 
-void InputScheme::MenuButtonToGameInputs( GameButton MenuI, PlayerNumber pn, GameInput GameIout[4] ) const
+void InputScheme::MenuButtonToGameInputs( GameButton MenuI, PlayerNumber pn, vector<GameInput> &GameIout ) const
 {
 	ASSERT( MenuI != GameButton_Invalid );
 
-	GameIout[0].MakeInvalid();	// initialize
-	GameIout[1].MakeInvalid();	
-	GameIout[2].MakeInvalid();	
-	GameIout[3].MakeInvalid();	
-
-	vector<GameController> controller;
-	if( pn == PLAYER_INVALID )
+	vector<GameButton> aGameButtons;
+	MenuButtonToGameButtons( MenuI, aGameButtons );
+	FOREACH( GameButton, aGameButtons, gb )
 	{
-		controller.push_back( GAME_CONTROLLER_1 );
-		controller.push_back( GAME_CONTROLLER_2 );
-	}
-	else
-	{
-		controller.push_back( (GameController)pn );
-	}
-
-	GameButton SecondaryGameButton = GameButton_Invalid;
-	for( GameButton gb=GAME_BUTTON_NEXT; gb<m_iButtonsPerController; gb=(GameButton)(gb+1) ) 
-	{
-		if( m_GameButtonInfo[gb-GAME_BUTTON_NEXT].m_SecondaryMenuButton == MenuI )
+		if( pn == PLAYER_INVALID )
 		{
-			SecondaryGameButton = gb;
-			break;
+			GameIout.push_back( GameInput(GAME_CONTROLLER_1, *gb) );
+			GameIout.push_back( GameInput(GAME_CONTROLLER_2, *gb) );
+		}
+		else
+		{
+			GameIout.push_back( GameInput((GameController)pn, *gb) );
 		}
 	}
+}
 
-	GameButton button[2] = { MenuI, SecondaryGameButton };
-	int iNumButtonsUsing = PREFSMAN->m_bOnlyDedicatedMenuButtons ? 1 : 2;
+void InputScheme::MenuButtonToGameButtons( GameButton MenuI, vector<GameButton> &aGameButtons ) const
+{
+	ASSERT( MenuI != GameButton_Invalid );
 
-	int iOut = 0;
-	for( size_t i=0; i<controller.size(); i++ )
+	if( MenuI == GameButton_Invalid )
+		return;
+
+	aGameButtons.push_back( MenuI );
+
+	if( PREFSMAN->m_bOnlyDedicatedMenuButtons )
+		return;
+
+	for( GameButton gb=GAME_BUTTON_NEXT; gb<m_iButtonsPerController; enum_add(gb, +1) ) 
 	{
-		for( int j=0; j<iNumButtonsUsing; j++ )
-		{
-			if( button[j] == GameButton_Invalid )
-				continue;
-			GameIout[iOut].controller = controller[i];
-			GameIout[iOut].button = button[j];
-			++iOut;
-		}
+		if( m_GameButtonInfo[gb-GAME_BUTTON_NEXT].m_SecondaryMenuButton != MenuI )
+			continue;
+		aGameButtons.push_back( gb );
 	}
 }
 

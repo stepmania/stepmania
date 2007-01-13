@@ -47,7 +47,8 @@ public:
 
 	GameButton ButtonNameToIndex( const RString &sButtonName ) const;
 	GameButton GameButtonToMenuButton( GameButton gb ) const;
-	void MenuButtonToGameInputs( GameButton MenuI, PlayerNumber pn, GameInput GameIout[4] ) const;
+	void MenuButtonToGameInputs( GameButton MenuI, PlayerNumber pn, vector<GameInput> &GameIout ) const;
+	void MenuButtonToGameButtons( GameButton MenuI, vector<GameButton> &aGameButtons ) const;
 	GameButton GetMenuButtonSecondaryFunction( GameButton gb ) const;
 	const GameButtonInfo *GetGameButtonInfo( GameButton gb ) const;
 	const char *GetGameButtonName( GameButton gb ) const;
@@ -83,7 +84,7 @@ public:
 	bool GameToDevice( const GameInput &GameI, int iSlotNum, DeviceInput& DeviceI );	// return true if there is a mapping from pad to device
 
 	GameButton GameButtonToMenuButton( GameButton gb );
-	void MenuToGame( GameButton MenuI, PlayerNumber pn, GameInput GameIout[4] );
+	void MenuToGame( GameButton MenuI, PlayerNumber pn, vector<GameInput> &GameIout );
 	PlayerNumber ControllerToPlayerNumber( GameController controller );
 
 	float GetSecsHeld( const GameInput &GameI, MultiPlayer mp = MultiPlayer_Invalid );
