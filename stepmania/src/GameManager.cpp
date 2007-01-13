@@ -127,20 +127,12 @@ static const Game g_Game_Dance =
 		"dance",				// m_szName
 		NUM_DANCE_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
-			"Left",
-			"Right",
-			"Up",
-			"Down",
-			"UpLeft",
-			"UpRight",
-		},
-		{	// m_SecondaryMenuButton
-			MENU_BUTTON_LEFT,		// DANCE_BUTTON_LEFT
-			MENU_BUTTON_RIGHT,		// DANCE_BUTTON_RIGHT
-			MENU_BUTTON_UP,			// DANCE_BUTTON_UP
-			MENU_BUTTON_DOWN,		// DANCE_BUTTON_DOWN
-			MenuButton_Invalid,		// DANCE_BUTTON_UPLEFT
-			MenuButton_Invalid,		// DANCE_BUTTON_UPRIGHT
+			{ "Left",		MENU_BUTTON_LEFT },
+			{ "Right",		MENU_BUTTON_RIGHT },
+			{ "Up",			MENU_BUTTON_UP },
+			{ "Down",		MENU_BUTTON_DOWN },
+			{ "UpLeft",		MenuButton_Invalid },
+			{ "UpRight",		MenuButton_Invalid },
 		},
 		g_AutoKeyMappings_Dance
 	},
@@ -190,18 +182,11 @@ static const Game g_Game_Pump =
 		"pump",					// m_szName
 		NUM_PUMP_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
-			"UpLeft",
-			"UpRight",
-			"Center",
-			"DownLeft",
-			"DownRight",
-		},
-		{	// m_SecondaryMenuButton
-			MENU_BUTTON_UP,			// PUMP_BUTTON_UPLEFT
-			MENU_BUTTON_DOWN,		// PUMP_BUTTON_UPRIGHT
-			MENU_BUTTON_START,		// PUMP_BUTTON_CENTER
-			MENU_BUTTON_LEFT,		// PUMP_BUTTON_DOWNLEFT
-			MENU_BUTTON_RIGHT,		// PUMP_BUTTON_DOWNRIGHT
+			{ "UpLeft",		MENU_BUTTON_UP },
+			{ "UpRight",		MENU_BUTTON_DOWN },
+			{ "Center",		MENU_BUTTON_START },
+			{ "DownLeft",		MENU_BUTTON_LEFT },
+			{ "DownRight",		MENU_BUTTON_RIGHT },
 		},
 		g_AutoKeyMappings_Pump
 	},
@@ -240,22 +225,13 @@ static const Game g_Game_Ez2 =
 		"ez2",					// m_szName
 		NUM_EZ2_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
-			"FootUpLeft",
-			"FootUpRight",
-			"FootDown",
-			"HandUpLeft",
-			"HandUpRight",
-			"HandLrLeft",
-			"HandLrRight",
-		},
-		{	// m_SecondaryMenuButton
-			MENU_BUTTON_UP,			// EZ2_BUTTON_FOOTUPLEFT
-			MENU_BUTTON_DOWN,		// EZ2_BUTTON_FOOTUPRIGHT
-			MENU_BUTTON_START,		// EZ2_BUTTON_FOOTDOWN
-			MENU_BUTTON_LEFT,		// EZ2_BUTTON_HANDUPLEFT
-			MENU_BUTTON_RIGHT,		// EZ2_BUTTON_HANDUPRIGHT
-			MenuButton_Invalid,		// EZ2_BUTTON_HANDLRLEFT
-			MenuButton_Invalid,		// EZ2_BUTTON_HANDLRRIGHT
+			{ "FootUpLeft",		MENU_BUTTON_UP },
+			{ "FootUpRight",	MENU_BUTTON_DOWN },
+			{ "FootDown",		MENU_BUTTON_START },
+			{ "HandUpLeft",		MENU_BUTTON_LEFT },
+			{ "HandUpRight",	MENU_BUTTON_RIGHT },
+			{ "HandLrLeft",		MenuButton_Invalid },
+			{ "HandLrRight",	MenuButton_Invalid },
 		},
 		g_AutoKeyMappings_Ez2
 	},
@@ -294,18 +270,11 @@ static const Game g_Game_Para =
 		"para",					// m_szName
 		NUM_PARA_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
-			"Left",
-			"UpLeft",
-			"Up",
-			"UpRight",
-			"Right",
-		},
-		{	// m_SecondaryMenuButton
-			MENU_BUTTON_LEFT,		// PARA_BUTTON_LEFT
-			MENU_BUTTON_DOWN,		// PARA_BUTTON_UPLEFT
-			MenuButton_Invalid,		// PARA_BUTTON_UP
-			MENU_BUTTON_UP,			// PARA_BUTTON_UPRIGHT
-			MENU_BUTTON_RIGHT,		// PARA_BUTTON_RIGHT
+			{ "Left",		MENU_BUTTON_LEFT },
+			{ "UpLeft",		MENU_BUTTON_DOWN },
+			{ "Up",			MenuButton_Invalid },
+			{ "UpRight",		MENU_BUTTON_UP },
+			{ "Right",		MENU_BUTTON_RIGHT },
 		},
 		g_AutoKeyMappings_Para
 	},
@@ -345,24 +314,14 @@ static const Game g_Game_DS3DDX =
 		"ds3ddx",				// m_szName
 		NUM_DS3DDX_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
-			"HandLeft",
-			"FootDownLeft",
-			"FootUpLeft",
-			"HandUp",
-			"HandDown",
-			"FootUpRight",
-			"FootDownRight",
-			"HandRight",
-		},
-		{	// m_SecondaryMenuButton
-			MENU_BUTTON_LEFT,		// DS3DDX_BUTTON_HANDLEFT
-			MenuButton_Invalid,		// DS3DDX_BUTTON_FOOTDOWNLEFT
-			MenuButton_Invalid,		// DS3DDX_BUTTON_FOOTUPLEFT
-			MENU_BUTTON_UP,			// DS3DDX_BUTTON_HANDUP
-			MENU_BUTTON_DOWN,		// DS3DDX_BUTTON_HANDDOWN
-			MenuButton_Invalid,		// DS3DDX_BUTTON_FOOTUPRIGHT
-			MenuButton_Invalid,		// DS3DDX_BUTTON_FOOTDOWNRIGHT
-			MENU_BUTTON_RIGHT,		// DS3DDX_BUTTON_HANDRIGHT
+			{ "HandLeft",		MENU_BUTTON_LEFT },
+			{ "FootDownLeft",	MenuButton_Invalid },
+			{ "FootUpLeft",		MenuButton_Invalid },
+			{ "HandUp",		MENU_BUTTON_UP },
+			{ "HandDown",		MENU_BUTTON_DOWN },
+			{ "FootUpRight",	MenuButton_Invalid },
+			{ "FootDownRight",	MenuButton_Invalid },
+			{ "HandRight",		MENU_BUTTON_RIGHT },
 		},
 		g_AutoKeyMappings_DS3DDX
 	},
@@ -405,26 +364,15 @@ static const Game g_Game_Beat =
 		"beat",					// m_szName
 		NUM_BEAT_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
-			"Key1",
-			"Key2",
-			"Key3",
-			"Key4",
-			"Key5",
-			"Key6",
-			"Key7",
-			"Scratch up",
-			"Scratch down",
-		},
-		{	// m_SecondaryMenuButton
-			MENU_BUTTON_LEFT,		// BEAT_BUTTON_KEY1
-			MenuButton_Invalid,		// BEAT_BUTTON_KEY2
-			MENU_BUTTON_RIGHT,		// BEAT_BUTTON_KEY3
-			MenuButton_Invalid,		// BEAT_BUTTON_KEY4
-			MenuButton_Invalid,		// BEAT_BUTTON_KEY5
-			MenuButton_Invalid,		// BEAT_BUTTON_KEY6
-			MenuButton_Invalid,		// BEAT_BUTTON_KEY7
-			MENU_BUTTON_UP,			// BEAT_BUTTON_SCRATCHUP
-			MENU_BUTTON_DOWN,		// BEAT_BUTTON_SCRATCHDOWN
+			{ "Key1",		MENU_BUTTON_LEFT },
+			{ "Key2",		MenuButton_Invalid },
+			{ "Key3",		MENU_BUTTON_RIGHT },
+			{ "Key4",		MenuButton_Invalid },
+			{ "Key5",		MenuButton_Invalid },
+			{ "Key6",		MenuButton_Invalid },
+			{ "Key7",		MenuButton_Invalid },
+			{ "Scratch up",		MENU_BUTTON_UP },
+			{ "Scratch down",	MENU_BUTTON_DOWN },
 		},
 		g_AutoKeyMappings_Beat
 	},
@@ -468,16 +416,10 @@ static const Game g_Game_Maniax =
 		"maniax",				// m_szName
 		NUM_MANIAX_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
-			"HandUpLeft",
-			"HandUpRight",
-			"HandLrLeft",
-			"HandLrRight",
-		},
-		{	// m_SecondaryMenuButton
-			MENU_BUTTON_LEFT,		// MANIAX_BUTTON_HANDUPLEFT
-			MENU_BUTTON_RIGHT,		// MANIAX_BUTTON_HANDUPRIGHT
-			MENU_BUTTON_DOWN,		// MANIAX_BUTTON_HANDLRLEFT
-			MENU_BUTTON_UP,			// MANIAX_BUTTON_HANDLRRIGHT
+			{ "HandUpLeft",		MENU_BUTTON_LEFT },
+			{ "HandUpRight",	MENU_BUTTON_RIGHT },
+			{ "HandLrLeft",		MENU_BUTTON_DOWN },
+			{ "HandLrRight",	MENU_BUTTON_UP },
 		},
 		g_AutoKeyMappings_Maniax
 	},
@@ -526,26 +468,15 @@ static const Game g_Game_Techno =
 		"techno",				// m_szName
 		NUM_TECHNO_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
-			"Left",
-			"Right",
-			"Up",
-			"Down",
-			"UpLeft",
-			"UpRight",
-			"Center",
-			"DownLeft",
-			"DownRight",
-		},
-		{	// m_SecondaryMenuButton
-			MENU_BUTTON_LEFT,		// TECHNO_BUTTON_LEFT
-			MENU_BUTTON_RIGHT,		// TECHNO_BUTTON_RIGHT
-			MENU_BUTTON_UP,			// TECHNO_BUTTON_UP
-			MENU_BUTTON_DOWN,		// TECHNO_BUTTON_DOWN
-			MenuButton_Invalid,		// TECHNO_BUTTON_UPLEFT
-			MenuButton_Invalid,		// TECHNO_BUTTON_UPRIGHT
-			MenuButton_Invalid,		// TECHNO_BUTTON_CENTER
-			MenuButton_Invalid,		// TECHNO_BUTTON_DOWNLEFT
-			MenuButton_Invalid,		// TECHNO_BUTTON_DOWNRIGHT
+			{ "Left",		MENU_BUTTON_LEFT },
+			{ "Right",		MENU_BUTTON_RIGHT },
+			{ "Up",			MENU_BUTTON_UP },
+			{ "Down",		MENU_BUTTON_DOWN },
+			{ "UpLeft",		MenuButton_Invalid },
+			{ "UpRight",		MenuButton_Invalid },
+			{ "Center",		MenuButton_Invalid },
+			{ "DownLeft",		MenuButton_Invalid },
+			{ "DownRight",		MenuButton_Invalid },
 		},
 		g_AutoKeyMappings_Techno
 	},
@@ -590,26 +521,15 @@ static const Game g_Game_Popn =
 		"popn",					// m_szName
 		NUM_POPN_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
-			"Left White",
-			"Left Yellow",
-			"Left Green",
-			"Left Blue",
-			"Red",
-			"Right Blue",
-			"Right Green",
-			"Right Yellow",
-			"Right White",
-		},
-		{	// m_SecondaryMenuButton
-			MenuButton_Invalid,		// POPN_BUTTON_LEFT_WHITE
-			MENU_BUTTON_UP,			// POPN_BUTTON_LEFT_YELLOW
-			MenuButton_Invalid,		// POPN_BUTTON_LEFT_GREEN
-			MENU_BUTTON_LEFT,		// POPN_BUTTON_LEFT_BLUE
-			MENU_BUTTON_START,		// POPN_BUTTON_RED
-			MENU_BUTTON_RIGHT,		// POPN_BUTTON_RIGHT_BLUE
-			MenuButton_Invalid,		// POPN_BUTTON_RIGHT_GREEN
-			MENU_BUTTON_DOWN,		// POPN_BUTTON_RIGHT_YELLOW
-			MenuButton_Invalid,		// POPN_BUTTON_RIGHT_WHITE
+			{ "Left White",		MenuButton_Invalid },
+			{ "Left Yellow",	MENU_BUTTON_UP },
+			{ "Left Green",		MenuButton_Invalid },
+			{ "Left Blue",		MENU_BUTTON_LEFT },
+			{ "Red",		MENU_BUTTON_START },
+			{ "Right Blue",		MENU_BUTTON_RIGHT },
+			{ "Right Green",	MenuButton_Invalid },
+			{ "Right Yellow",	MENU_BUTTON_DOWN },
+			{ "Right White",	MenuButton_Invalid },
 		},
 		g_AutoKeyMappings_Popn
 	},
@@ -653,24 +573,14 @@ static const Game g_Game_Lights =
 		"lights",				// m_szName
 		NUM_LIGHTS_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
-			"MarqueeUpLeft",
-			"MarqueeUpRight",
-			"MarqueeLrLeft",
-			"MarqueeLrRight",
-			"ButtonsLeft",
-			"ButtonsRight",
-			"BassLeft",
-			"BassRight",
-		},
-		{	// m_SecondaryMenuButton
-			MENU_BUTTON_LEFT,		// LIGHTS_BUTTON_MARQUEE_UP_LEFT
-			MENU_BUTTON_RIGHT,		// LIGHTS_BUTTON_MARQUEE_UP_RIGHT
-			MENU_BUTTON_UP,			// LIGHTS_BUTTON_MARQUEE_LR_LEFT
-			MENU_BUTTON_DOWN,		// LIGHTS_BUTTON_MARQUEE_LR_RIGHT
-			MenuButton_Invalid,		// LIGHTS_BUTTON_BUTTONS_LEFT
-			MenuButton_Invalid,		// LIGHTS_BUTTON_BUTTONS_RIGHT
-			MenuButton_Invalid,		// LIGHTS_BUTTON_BASS_LEFT
-			MenuButton_Invalid,		// LIGHTS_BUTTON_BASS_RIGHT
+			{ "MarqueeUpLeft",	MENU_BUTTON_LEFT },
+			{ "MarqueeUpRight",	MENU_BUTTON_RIGHT },
+			{ "MarqueeLrLeft",	MENU_BUTTON_UP },
+			{ "MarqueeLrRight",	MENU_BUTTON_DOWN },
+			{ "ButtonsLeft",	MenuButton_Invalid },
+			{ "ButtonsRight",	MenuButton_Invalid },
+			{ "BassLeft",		MenuButton_Invalid },
+			{ "BassRight",		MenuButton_Invalid },
 		},
 		g_AutoKeyMappings_Lights
 	},

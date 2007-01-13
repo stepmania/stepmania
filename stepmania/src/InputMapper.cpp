@@ -1005,7 +1005,7 @@ void InputScheme::MenuButtonToGameInputs( MenuButton MenuI, PlayerNumber pn, Gam
 	GameButton SecondaryGameButton = GameButton_Invalid;
 	for( int i = GAME_BUTTON_NEXT; i < m_iButtonsPerController; ++i )
 	{
-		if( m_SecondaryMenuButton[i-GAME_BUTTON_NEXT] == MenuI )
+		if( m_GameButtonInfo[i-GAME_BUTTON_NEXT].m_SecondaryMenuButton == MenuI )
 		{
 			SecondaryGameButton = i;
 			break;
@@ -1031,32 +1031,34 @@ void InputScheme::MenuButtonToGameInputs( MenuButton MenuI, PlayerNumber pn, Gam
 
 MenuButton InputScheme::GetMenuButtonSecondaryFunction( GameButton gb ) const
 {
-	if( gb < GAME_BUTTON_NEXT )
-		return MenuButton_Invalid;
-
-	return m_SecondaryMenuButton[gb - GAME_BUTTON_NEXT];
+	return GetGameButtonInfo(gb)->m_SecondaryMenuButton;
 }
 
-static const char *g_szCommonGameButtonNames[] =
+static const InputScheme::GameButtonInfo g_CommonGameButtonInfo[] =
 {
-	"MenuLeft",
-	"MenuRight",
-	"MenuUp",
-	"MenuDown",
-	"Start",
-	"Select",
-	"Back",
-	"Coin",
-	"Operator",
+	{ "MenuLeft",	MenuButton_Invalid },
+	{ "MenuRight",	MenuButton_Invalid },
+	{ "MenuUp",	MenuButton_Invalid },
+	{ "MenuDown",	MenuButton_Invalid },
+	{ "Start",	MenuButton_Invalid },
+	{ "Select",	MenuButton_Invalid },
+	{ "Back",	MenuButton_Invalid },
+	{ "Coin",	MenuButton_Invalid },
+	{ "Operator",	MenuButton_Invalid },
 };
+
+const InputScheme::GameButtonInfo *InputScheme::GetGameButtonInfo( GameButton gb ) const
+{
+	COMPILE_ASSERT( GAME_BUTTON_NEXT == ARRAYLEN(g_CommonGameButtonInfo) );
+	if( gb < GAME_BUTTON_NEXT )
+		return &g_CommonGameButtonInfo[gb];
+	else
+		return &m_GameButtonInfo[gb-GAME_BUTTON_NEXT];
+}
 
 const char *InputScheme::GetGameButtonName( GameButton gb ) const
 {
-	COMPILE_ASSERT( GAME_BUTTON_NEXT == ARRAYLEN(g_szCommonGameButtonNames) );
-	if( gb < GAME_BUTTON_NEXT )
-		return g_szCommonGameButtonNames[gb];
-	else
-		return m_szGameButtonNames[gb-GAME_BUTTON_NEXT];
+	return GetGameButtonInfo(gb)->m_szName;
 }
 
 /*
