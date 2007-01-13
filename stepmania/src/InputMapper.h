@@ -84,7 +84,7 @@ public:
 	bool DeviceToGame( const DeviceInput &DeviceI, GameInput& GameI );	// return true if there is a mapping from device to pad
 	bool GameToDevice( const GameInput &GameI, int iSlotNum, DeviceInput& DeviceI );	// return true if there is a mapping from pad to device
 
-	MenuButton GameToMenu( const GameInput &GameI );
+	MenuButton GameButtonToMenuButton( GameButton gb );
 	void MenuToGame( MenuButton MenuI, PlayerNumber pn, GameInput GameIout[4] );
 	PlayerNumber ControllerToPlayerNumber( GameController controller );
 

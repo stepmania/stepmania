@@ -1387,7 +1387,7 @@ void HandleInputEvents(float fDeltaTime)
 
 		if( input.GameI.IsValid() )
 		{
-			input.MenuI = INPUTMAPPER->GameToMenu( input.GameI );
+			input.MenuI = INPUTMAPPER->GameButtonToMenuButton( input.GameI.button );
 			input.pn = INPUTMAPPER->ControllerToPlayerNumber( input.GameI.controller );
 		}
 

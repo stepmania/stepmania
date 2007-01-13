@@ -825,9 +825,9 @@ PlayerNumber InputMapper::ControllerToPlayerNumber( GameController controller )
 		return (PlayerNumber) controller;
 }
 
-MenuButton InputMapper::GameToMenu( const GameInput &GameI )
+MenuButton InputMapper::GameButtonToMenuButton( GameButton gb )
 {
-	return m_pInputScheme->GameButtonToMenuButton( GameI.button );
+	return m_pInputScheme->GameButtonToMenuButton( gb );
 }
 
 /* If set (not PLAYER_INVALID), inputs from both GameControllers will be mapped
