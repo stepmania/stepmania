@@ -933,6 +933,31 @@ void InputMapper::ResetKeyRepeat( GameButton MenuI, PlayerNumber pn )
 		ResetKeyRepeat( GameI[i] );
 }
 
+float InputMapper::GetLevel( const GameInput &GameI )
+{
+	float fLevel = 0;
+	for( int i=0; i<NUM_GAME_TO_DEVICE_SLOTS; i++ )
+	{
+		DeviceInput DeviceI;
+
+		if( GameToDevice( GameI, i, DeviceI ) )
+			fLevel = max( fLevel, INPUTFILTER->GetLevel(DeviceI) );
+	}
+	return fLevel;
+}
+
+float InputMapper::GetLevel( GameButton MenuI, PlayerNumber pn )
+{
+	vector<GameInput> GameI;
+	MenuToGame( MenuI, pn, GameI );
+
+	float fLevel = 0;
+	for( size_t i=0; i<GameI.size(); i++ )
+		fLevel = max( fLevel, GetLevel(GameI[i]) );
+
+	return fLevel;
+}
+
 InputDevice InputMapper::MultiPlayerToInputDevice( MultiPlayer mp )
 {
 	if( mp == MultiPlayer_Invalid )

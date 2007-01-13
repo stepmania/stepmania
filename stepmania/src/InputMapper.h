@@ -98,6 +98,9 @@ public:
 	void RepeatStopKey( const GameInput &GameI );
 	void RepeatStopKey( GameButton MenuI, PlayerNumber pn );
 
+	float GetLevel( const GameInput &GameI );
+	float GetLevel( GameButton MenuI, PlayerNumber pn );
+
 	static InputDevice MultiPlayerToInputDevice( MultiPlayer mp );
 	static MultiPlayer InputDeviceToMultiPlayer( InputDevice id );
 
