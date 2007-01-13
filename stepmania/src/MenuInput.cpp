@@ -4,21 +4,6 @@
 #include "RageUtil.h"
 #include "LocalizedString.h"
 
-static const char *MenuButtonNames[] =
-{
-	"MenuLeft",
-	"MenuRight",
-	"MenuUp",
-	"MenuDown",
-	"MenuStart",
-	"MenuSelect",
-	"MenuBack",
-	"Coin",
-	"Operator"
-};
-XToString( MenuButton );
-XToLocalizedString( MenuButton );
-
 
 /*
  * (c) 2006 Chris Danford

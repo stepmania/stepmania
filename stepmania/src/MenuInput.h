@@ -3,24 +3,20 @@
 #ifndef MENU_INPUT_H
 #define MENU_INPUT_H
 
-enum MenuButton
-{
-	MENU_BUTTON_LEFT = 0,
-	MENU_BUTTON_RIGHT,
-	MENU_BUTTON_UP,
-	MENU_BUTTON_DOWN,
-	MENU_BUTTON_START,
-	MENU_BUTTON_SELECT,
-	MENU_BUTTON_BACK,
-	MENU_BUTTON_COIN,
-	MENU_BUTTON_OPERATOR,
-	NUM_MenuButton,		// leave this at the end
-	MenuButton_Invalid
-};
+#include "GameInput.h"
+typedef GameButton MenuButton;
+#define MENU_BUTTON_LEFT GAME_BUTTON_MENULEFT
+#define MENU_BUTTON_RIGHT GAME_BUTTON_MENURIGHT
+#define MENU_BUTTON_UP GAME_BUTTON_MENUUP
+#define MENU_BUTTON_DOWN GAME_BUTTON_MENUDOWN
+#define MENU_BUTTON_START GAME_BUTTON_START
+#define MENU_BUTTON_SELECT GAME_BUTTON_SELECT
+#define MENU_BUTTON_BACK GAME_BUTTON_BACK
+#define MENU_BUTTON_COIN GAME_BUTTON_COIN
+#define MENU_BUTTON_OPERATOR GAME_BUTTON_OPERATOR
+#define MenuButton_Invalid GameButton_Invalid
+#define NUM_MenuButton NUM_GameButton
 #define FOREACH_MenuButton( m ) FOREACH_ENUM( MenuButton, m )
-
-const RString &MenuButtonToString( MenuButton mb );
-const RString &MenuButtonToLocalizedString( MenuButton mb );
 
 #endif
 

@@ -25,19 +25,6 @@ namespace
 
 InputMapper*	INPUTMAPPER = NULL;	// global and accessable from anywhere in our program
 
-static GameButton g_DedicatedMenuButtons[NUM_MenuButton] =
-{
-	GAME_BUTTON_MENULEFT,		// MENU_BUTTON_LEFT
-	GAME_BUTTON_MENURIGHT,		// MENU_BUTTON_RIGHT
-	GAME_BUTTON_MENUUP,		// MENU_BUTTON_UP
-	GAME_BUTTON_MENUDOWN,		// MENU_BUTTON_DOWN
-	GAME_BUTTON_START,		// MENU_BUTTON_START
-	GAME_BUTTON_SELECT,		// MENU_BUTTON_SELECT
-	GAME_BUTTON_BACK,		// MENU_BUTTON_BACK
-	GAME_BUTTON_COIN,		// MENU_BUTTON_COIN
-	GAME_BUTTON_OPERATOR		// MENU_BUTTON_OPERATOR
-};
-
 InputMapper::InputMapper()
 {
 	g_JoinControllers = PLAYER_INVALID;
@@ -819,7 +806,9 @@ bool InputMapper::GameToDevice( const GameInput &GameI, int iSlotNum, DeviceInpu
 
 PlayerNumber InputMapper::ControllerToPlayerNumber( GameController controller )
 {
-	if( g_JoinControllers != PLAYER_INVALID )
+	if( controller == GameController_Invalid )
+		return PLAYER_INVALID;
+	else if( g_JoinControllers != PLAYER_INVALID )
 		return g_JoinControllers;
 	else
 		return (PlayerNumber) controller;
@@ -972,9 +961,8 @@ GameButton InputScheme::ButtonNameToIndex( const RString &sButtonName ) const
 
 MenuButton InputScheme::GameButtonToMenuButton( GameButton gb ) const
 {
-	FOREACH_MenuButton(i)
-		if( g_DedicatedMenuButtons[i] == gb )
-			return i;
+	if( gb < GAME_BUTTON_NEXT )
+		return gb;
 
 	if( !PREFSMAN->m_bOnlyDedicatedMenuButtons )
 		return GetMenuButtonSecondaryFunction( gb );
@@ -1012,7 +1000,7 @@ void InputScheme::MenuButtonToGameInputs( MenuButton MenuI, PlayerNumber pn, Gam
 		}
 	}
 
-	GameButton button[2] = { g_DedicatedMenuButtons[MenuI], SecondaryGameButton };
+	GameButton button[2] = { MenuI, SecondaryGameButton };
 	int iNumButtonsUsing = PREFSMAN->m_bOnlyDedicatedMenuButtons ? 1 : 2;
 
 	int iOut = 0;

@@ -105,7 +105,7 @@ void ScreenMapControllers::Init()
 			MenuButton mb = INPUTMAPPER->GetInputScheme()->GetMenuButtonSecondaryFunction( pKey->m_GameButton );
 			RString sText;
 			if( mb != MenuButton_Invalid )
-				sText = MenuButtonToLocalizedString( mb );
+				sText = GameButtonToLocalizedString( INPUTMAPPER->GetInputScheme(), mb );
 			ActorUtil::LoadAllCommands( *pSecondary, m_sName );
 			pSecondary->SetText( sText );
 			m_Line[iRow].AddChild( pSecondary );
