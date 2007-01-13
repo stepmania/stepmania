@@ -303,7 +303,6 @@
 		AA29CCF60558741A00961A51 /* ActorUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1DC47204A485E900D02EE9 /* ActorUtil.h */; };
 		AA29CCF70558741A00961A51 /* ScreenSelectMaster.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1DC47504A4861700D02EE9 /* ScreenSelectMaster.h */; };
 		AA29CCFA0558741A00961A51 /* glext.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1DCB6104A4872700D02EE9 /* glext.h */; };
-		AA29CCFB0558741A00961A51 /* MenuInput.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1DCB6304A4872700D02EE9 /* MenuInput.h */; };
 		AA29CCFE0558741A00961A51 /* CombinedLifeMeterTug.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE443EC04B0F9F600D02EE9 /* CombinedLifeMeterTug.h */; };
 		AA29CCFF0558741A00961A51 /* ScoreKeeperRave.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE443F404B0FEB700D02EE9 /* ScoreKeeperRave.h */; };
 		AA29CD000558741A00961A51 /* internal.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8B6C7B04AFD87300D02EE9 /* internal.h */; };
@@ -755,7 +754,6 @@
 		AA40D26609A08D650068C0D5 /* ActorUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1DC47204A485E900D02EE9 /* ActorUtil.h */; };
 		AA40D26709A08D650068C0D5 /* ScreenSelectMaster.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1DC47504A4861700D02EE9 /* ScreenSelectMaster.h */; };
 		AA40D26909A08D650068C0D5 /* glext.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1DCB6104A4872700D02EE9 /* glext.h */; };
-		AA40D26A09A08D650068C0D5 /* MenuInput.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1DCB6304A4872700D02EE9 /* MenuInput.h */; };
 		AA40D26B09A08D650068C0D5 /* CombinedLifeMeterTug.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE443EC04B0F9F600D02EE9 /* CombinedLifeMeterTug.h */; };
 		AA40D26C09A08D650068C0D5 /* ScoreKeeperRave.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE443F404B0FEB700D02EE9 /* ScoreKeeperRave.h */; };
 		AA40D26D09A08D650068C0D5 /* internal.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8B6C7B04AFD87300D02EE9 /* internal.h */; };
@@ -1362,7 +1360,6 @@
 		AA40D50709A08D650068C0D5 /* XmlFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC6889905D7F3C800964E6D /* XmlFile.cpp */; };
 		AA40D50809A08D650068C0D5 /* LocalizedString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AADD1CC2095C233E0088C9DF /* LocalizedString.cpp */; };
 		AA40D50909A08D650068C0D5 /* LowLevelWindow_Cocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = AAEF7D22090DD45900A1CAFC /* LowLevelWindow_Cocoa.mm */; };
-		AA40D50B09A08D650068C0D5 /* MenuInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8E4BC609787C9400765149 /* MenuInput.cpp */; };
 		AA40D50C09A08D650068C0D5 /* SMMainThread.m in Sources */ = {isa = PBXBuildFile; fileRef = AAABB2DA0979DB5B006C9F25 /* SMMainThread.m */; };
 		AA40D50D09A08D650068C0D5 /* SMMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = AABBFCD209838C3A00F077E2 /* SMMain.mm */; };
 		AA40D50E09A08D650068C0D5 /* HIDDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA44705309846B0800983E82 /* HIDDevice.cpp */; };
@@ -1525,7 +1522,6 @@
 		AA8CF5180A4518BE0005F1B4 /* RageSoundDriver_AU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8CF5160A4518BE0005F1B4 /* RageSoundDriver_AU.cpp */; };
 		AA8CF5190A4518BE0005F1B4 /* RageSoundDriver_AU.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8CF5150A4518BE0005F1B4 /* RageSoundDriver_AU.h */; };
 		AA8CF51A0A4518BE0005F1B4 /* RageSoundDriver_AU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8CF5160A4518BE0005F1B4 /* RageSoundDriver_AU.cpp */; };
-		AA8E4BC909787C9500765149 /* MenuInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8E4BC609787C9400765149 /* MenuInput.cpp */; };
 		AA8EE0760866E266002C51A7 /* LuaBinding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8EE0750866E266002C51A7 /* LuaBinding.cpp */; };
 		AA8F13710624BAB200C6A467 /* EnumHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8F136F0624BAB200C6A467 /* EnumHelper.h */; };
 		AA9091A1067ED43000C1FCFF /* RageSurface_Load_BMP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA90919F067ED43000C1FCFF /* RageSurface_Load_BMP.cpp */; };
@@ -2040,7 +2036,6 @@
 		AA1DC47404A4861700D02EE9 /* ScreenSelectMaster.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenSelectMaster.cpp; path = ../src/ScreenSelectMaster.cpp; sourceTree = "<group>"; };
 		AA1DC47504A4861700D02EE9 /* ScreenSelectMaster.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenSelectMaster.h; path = ../src/ScreenSelectMaster.h; sourceTree = "<group>"; };
 		AA1DCB6104A4872700D02EE9 /* glext.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = glext.h; path = ../src/glext.h; sourceTree = "<group>"; };
-		AA1DCB6304A4872700D02EE9 /* MenuInput.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MenuInput.h; path = ../src/MenuInput.h; sourceTree = "<group>"; };
 		AA1F9C4509AF1BF5002C15A8 /* PumpDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PumpDevice.h; sourceTree = "<group>"; };
 		AA1F9C4609AF1BF5002C15A8 /* PumpDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PumpDevice.cpp; sourceTree = "<group>"; };
 		AA21D59C0712ADE4008B825F /* ScreenDimensions.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenDimensions.cpp; path = ../src/ScreenDimensions.cpp; sourceTree = "<group>"; };
@@ -2546,7 +2541,6 @@
 		AA8CF5150A4518BE0005F1B4 /* RageSoundDriver_AU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RageSoundDriver_AU.h; sourceTree = "<group>"; };
 		AA8CF5160A4518BE0005F1B4 /* RageSoundDriver_AU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RageSoundDriver_AU.cpp; sourceTree = "<group>"; };
 		AA8DD84904A2E51400D02EE9 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
-		AA8E4BC609787C9400765149 /* MenuInput.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = MenuInput.cpp; path = ../src/MenuInput.cpp; sourceTree = "<group>"; };
 		AA8EE0750866E266002C51A7 /* LuaBinding.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = LuaBinding.cpp; path = ../src/LuaBinding.cpp; sourceTree = "<group>"; };
 		AA8F136F0624BAB200C6A467 /* EnumHelper.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = EnumHelper.h; path = ../src/EnumHelper.h; sourceTree = "<group>"; };
 		AA90919F067ED43000C1FCFF /* RageSurface_Load_BMP.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageSurface_Load_BMP.cpp; path = ../src/RageSurface_Load_BMP.cpp; sourceTree = "<group>"; };
@@ -3701,8 +3695,6 @@
 				AACFBE6208E7DBA8005087FC /* LuaExpressionTransform.h */,
 				AA6EFDE304770C79005F316C /* LyricsLoader.cpp */,
 				AA6EFDE404770C79005F316C /* LyricsLoader.h */,
-				AA8E4BC609787C9400765149 /* MenuInput.cpp */,
-				AA1DCB6304A4872700D02EE9 /* MenuInput.h */,
 				AABE830D0A9524D400001678 /* ModsGroup.cpp */,
 				AA5A51F20A8441AA006DBB92 /* ModsGroup.h */,
 				AA6EFDE504770C79005F316C /* NoteData.cpp */,
@@ -4411,7 +4403,6 @@
 				AA29CCF60558741A00961A51 /* ActorUtil.h in Headers */,
 				AA29CCF70558741A00961A51 /* ScreenSelectMaster.h in Headers */,
 				AA29CCFA0558741A00961A51 /* glext.h in Headers */,
-				AA29CCFB0558741A00961A51 /* MenuInput.h in Headers */,
 				AA29CCFE0558741A00961A51 /* CombinedLifeMeterTug.h in Headers */,
 				AA29CCFF0558741A00961A51 /* ScoreKeeperRave.h in Headers */,
 				AA29CD000558741A00961A51 /* internal.h in Headers */,
@@ -4865,7 +4856,6 @@
 				AA40D26609A08D650068C0D5 /* ActorUtil.h in Headers */,
 				AA40D26709A08D650068C0D5 /* ScreenSelectMaster.h in Headers */,
 				AA40D26909A08D650068C0D5 /* glext.h in Headers */,
-				AA40D26A09A08D650068C0D5 /* MenuInput.h in Headers */,
 				AA40D26B09A08D650068C0D5 /* CombinedLifeMeterTug.h in Headers */,
 				AA40D26C09A08D650068C0D5 /* ScoreKeeperRave.h in Headers */,
 				AA40D26D09A08D650068C0D5 /* internal.h in Headers */,
@@ -5780,7 +5770,6 @@
 				AAD5219C095513DA00073D86 /* XmlFile.cpp in Sources */,
 				AADD1CC5095C233F0088C9DF /* LocalizedString.cpp in Sources */,
 				AA32F97F096A255C00F45B24 /* LowLevelWindow_Cocoa.mm in Sources */,
-				AA8E4BC909787C9500765149 /* MenuInput.cpp in Sources */,
 				AAABB2DC0979DB5B006C9F25 /* SMMainThread.m in Sources */,
 				AABBFCD309838C3A00F077E2 /* SMMain.mm in Sources */,
 				AA44705509846B0800983E82 /* HIDDevice.cpp in Sources */,
@@ -6210,7 +6199,6 @@
 				AA40D50709A08D650068C0D5 /* XmlFile.cpp in Sources */,
 				AA40D50809A08D650068C0D5 /* LocalizedString.cpp in Sources */,
 				AA40D50909A08D650068C0D5 /* LowLevelWindow_Cocoa.mm in Sources */,
-				AA40D50B09A08D650068C0D5 /* MenuInput.cpp in Sources */,
 				AA40D50C09A08D650068C0D5 /* SMMainThread.m in Sources */,
 				AA40D50D09A08D650068C0D5 /* SMMain.mm in Sources */,
 				AA40D50E09A08D650068C0D5 /* HIDDevice.cpp in Sources */,
