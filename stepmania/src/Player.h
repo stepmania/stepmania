@@ -146,6 +146,7 @@ protected:
 	void SendComboMessages( int iOldCombo, int iOldMissCombo );
 
 	void SetJudgment( TapNoteScore tns, bool bEarly );
+	void SetHoldJudgment( HoldNoteScore hns, int iTrack );
 
 	void ChangeLife( TapNoteScore tns );
 	void ChangeLife( HoldNoteScore hns, TapNoteScore tns );

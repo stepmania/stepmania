@@ -772,13 +772,7 @@ void Player::Update( float fDeltaTime )
 			{
 				/* this note has been judged */
 				HandleHoldScore( tn );
-				
-				if( m_pPlayerStageStats != NULL )
-					m_pPlayerStageStats->m_hnsLast = hns;
-				if( m_pPlayerState->m_mp != MultiPlayer_Invalid )
-					MESSAGEMAN->Broadcast( enum_add2(Message_ShowHoldJudgmentMuliPlayerP1,m_pPlayerState->m_mp) );
-
-				m_vHoldJudgment[iTrack]->SetHoldJudgment( hns );
+				SetHoldJudgment( hns, iTrack );
 			}
 		}
 	}
@@ -2240,6 +2234,16 @@ void Player::SetJudgment( TapNoteScore tns, bool bEarly )
 
 	if( m_pJudgment )
 		m_pJudgment->SetJudgment( tns, bEarly );
+}
+
+void Player::SetHoldJudgment( HoldNoteScore hns, int iTrack )
+{
+	if( m_pPlayerStageStats != NULL )
+		m_pPlayerStageStats->m_hnsLast = hns;
+	if( m_pPlayerState->m_mp != MultiPlayer_Invalid )
+		MESSAGEMAN->Broadcast( enum_add2(Message_ShowHoldJudgmentMuliPlayerP1,m_pPlayerState->m_mp) );
+
+	m_vHoldJudgment[iTrack]->SetHoldJudgment( hns );
 }
 
 /*
