@@ -15,8 +15,7 @@ typedef GameButton MenuButton;
 #define MENU_BUTTON_COIN GAME_BUTTON_COIN
 #define MENU_BUTTON_OPERATOR GAME_BUTTON_OPERATOR
 #define MenuButton_Invalid GameButton_Invalid
-#define NUM_MenuButton NUM_GameButton
-#define FOREACH_MenuButton( m ) FOREACH_ENUM( MenuButton, m )
+#define FOREACH_MenuButton FOREACH_GameButton
 
 #endif
 
