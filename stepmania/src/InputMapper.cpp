@@ -952,9 +952,9 @@ MultiPlayer InputMapper::InputDeviceToMultiPlayer( InputDevice id )
 
 GameButton InputScheme::ButtonNameToIndex( const RString &sButtonName ) const
 {
-	for( int i=0; i<m_iButtonsPerController; i++ ) 
-		if( stricmp(GetGameButtonName(i), sButtonName) == 0 )
-			return i;
+	for( GameButton gb=(GameButton) 0; gb<m_iButtonsPerController; gb=(GameButton)(gb+1) ) 
+		if( stricmp(GetGameButtonName(gb), sButtonName) == 0 )
+			return gb;
 
 	return GameButton_Invalid;
 }
@@ -991,11 +991,11 @@ void InputScheme::MenuButtonToGameInputs( MenuButton MenuI, PlayerNumber pn, Gam
 	}
 
 	GameButton SecondaryGameButton = GameButton_Invalid;
-	for( int i = GAME_BUTTON_NEXT; i < m_iButtonsPerController; ++i )
+	for( GameButton gb=GAME_BUTTON_NEXT; gb<m_iButtonsPerController; gb=(GameButton)(gb+1) ) 
 	{
-		if( m_GameButtonInfo[i-GAME_BUTTON_NEXT].m_SecondaryMenuButton == MenuI )
+		if( m_GameButtonInfo[gb-GAME_BUTTON_NEXT].m_SecondaryMenuButton == MenuI )
 		{
-			SecondaryGameButton = i;
+			SecondaryGameButton = gb;
 			break;
 		}
 	}
