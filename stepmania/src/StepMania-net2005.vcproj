@@ -1275,14 +1275,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\MenuInput.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\MenuInput.h"
-				>
-			</File>
-			<File
 				RelativePath=".\ModsGroup.cpp"
 				>
 			</File>
