@@ -41,16 +41,16 @@ public:
 	struct GameButtonInfo
 	{
 		const char	*m_szName;	// The name used by the button graphics system.  e.g. "left", "right", "middle C", "snare"
-		MenuButton	m_SecondaryMenuButton;
+		GameButton	m_SecondaryMenuButton;
 	};
 	/* Data for each Game-specific GameButton.  This starts at GAME_BUTTON_NEXT. */
 	GameButtonInfo m_GameButtonInfo[NUM_GameButton];
 	const InputMapping *m_Maps;
 
 	GameButton ButtonNameToIndex( const RString &sButtonName ) const;
-	MenuButton GameButtonToMenuButton( GameButton gb ) const;
-	void MenuButtonToGameInputs( MenuButton MenuI, PlayerNumber pn, GameInput GameIout[4] ) const;
-	MenuButton GetMenuButtonSecondaryFunction( GameButton gb ) const;
+	GameButton GameButtonToMenuButton( GameButton gb ) const;
+	void MenuButtonToGameInputs( GameButton MenuI, PlayerNumber pn, GameInput GameIout[4] ) const;
+	GameButton GetMenuButtonSecondaryFunction( GameButton gb ) const;
 	const GameButtonInfo *GetGameButtonInfo( GameButton gb ) const;
 	const char *GetGameButtonName( GameButton gb ) const;
 };
@@ -84,21 +84,21 @@ public:
 	bool DeviceToGame( const DeviceInput &DeviceI, GameInput& GameI );	// return true if there is a mapping from device to pad
 	bool GameToDevice( const GameInput &GameI, int iSlotNum, DeviceInput& DeviceI );	// return true if there is a mapping from pad to device
 
-	MenuButton GameButtonToMenuButton( GameButton gb );
-	void MenuToGame( MenuButton MenuI, PlayerNumber pn, GameInput GameIout[4] );
+	GameButton GameButtonToMenuButton( GameButton gb );
+	void MenuToGame( GameButton MenuI, PlayerNumber pn, GameInput GameIout[4] );
 	PlayerNumber ControllerToPlayerNumber( GameController controller );
 
 	float GetSecsHeld( const GameInput &GameI, MultiPlayer mp = MultiPlayer_Invalid );
-	float GetSecsHeld( MenuButton MenuI, PlayerNumber pn );
+	float GetSecsHeld( GameButton MenuI, PlayerNumber pn );
 
 	bool IsBeingPressed( const GameInput &GameI, MultiPlayer mp = MultiPlayer_Invalid, const DeviceInputList *pButtonState = NULL );
-	bool IsBeingPressed( MenuButton MenuI, PlayerNumber pn );
+	bool IsBeingPressed( GameButton MenuI, PlayerNumber pn );
 
 	void ResetKeyRepeat( const GameInput &GameI );
-	void ResetKeyRepeat( MenuButton MenuI, PlayerNumber pn );
+	void ResetKeyRepeat( GameButton MenuI, PlayerNumber pn );
 
 	void RepeatStopKey( const GameInput &GameI );
-	void RepeatStopKey( MenuButton MenuI, PlayerNumber pn );
+	void RepeatStopKey( GameButton MenuI, PlayerNumber pn );
 
 	typedef InputMapping Mapping;
 

@@ -65,7 +65,7 @@ void ScreenSelectMaster::Init()
 
 	ScreenSelect::Init();
 
-	m_TrackingRepeatingInput = MenuButton_Invalid;
+	m_TrackingRepeatingInput = GameButton_Invalid;
 
 	vector<PlayerNumber> vpns;
 	if( SHARED_SELECTION )

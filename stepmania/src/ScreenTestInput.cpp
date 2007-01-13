@@ -60,7 +60,7 @@ class InputList: public BitmapText
 				if( !PREFSMAN->m_bOnlyDedicatedMenuButtons )
 				{
 					GameButton mb = INPUTMAPPER->GetInputScheme()->GetMenuButtonSecondaryFunction( gi.button );
-					if( mb != MenuButton_Invalid )
+					if( mb != GameButton_Invalid )
 					{
 						RString sGameButtonString = GameButtonToLocalizedString( INPUTMAPPER->GetInputScheme(), mb );
 						sTemp += ssprintf( " - (%s %s)", sGameButtonString.c_str(), SECONDARY.GetValue().c_str() );

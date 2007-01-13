@@ -814,7 +814,7 @@ PlayerNumber InputMapper::ControllerToPlayerNumber( GameController controller )
 		return (PlayerNumber) controller;
 }
 
-MenuButton InputMapper::GameButtonToMenuButton( GameButton gb )
+GameButton InputMapper::GameButtonToMenuButton( GameButton gb )
 {
 	return m_pInputScheme->GameButtonToMenuButton( gb );
 }
@@ -828,7 +828,7 @@ void InputMapper::SetJoinControllers( PlayerNumber pn )
 }
 
 
-void InputMapper::MenuToGame( MenuButton MenuI, PlayerNumber pn, GameInput GameIout[4] )
+void InputMapper::MenuToGame( GameButton MenuI, PlayerNumber pn, GameInput GameIout[4] )
 {
 	if( g_JoinControllers != PLAYER_INVALID )
 		pn = PLAYER_INVALID;
@@ -855,7 +855,7 @@ bool InputMapper::IsBeingPressed( const GameInput &GameI, MultiPlayer mp, const 
 	return false;
 }
 
-bool InputMapper::IsBeingPressed( MenuButton MenuI, PlayerNumber pn )
+bool InputMapper::IsBeingPressed( GameButton MenuI, PlayerNumber pn )
 {
 	GameInput GameI[4];
 	MenuToGame( MenuI, pn, GameI );
@@ -877,7 +877,7 @@ void InputMapper::RepeatStopKey( const GameInput &GameI )
 	}
 }
 
-void InputMapper::RepeatStopKey( MenuButton MenuI, PlayerNumber pn )
+void InputMapper::RepeatStopKey( GameButton MenuI, PlayerNumber pn )
 {
 	GameInput GameI[4];
 	MenuToGame( MenuI, pn, GameI );
@@ -904,7 +904,7 @@ float InputMapper::GetSecsHeld( const GameInput &GameI, MultiPlayer mp )
 	return fMaxSecsHeld;
 }
 
-float InputMapper::GetSecsHeld( MenuButton MenuI, PlayerNumber pn )
+float InputMapper::GetSecsHeld( GameButton MenuI, PlayerNumber pn )
 {
 	float fMaxSecsHeld = 0;
 
@@ -927,7 +927,7 @@ void InputMapper::ResetKeyRepeat( const GameInput &GameI )
 	}
 }
 
-void InputMapper::ResetKeyRepeat( MenuButton MenuI, PlayerNumber pn )
+void InputMapper::ResetKeyRepeat( GameButton MenuI, PlayerNumber pn )
 {
 	GameInput GameI[4];
 	MenuToGame( MenuI, pn, GameI );
@@ -959,7 +959,7 @@ GameButton InputScheme::ButtonNameToIndex( const RString &sButtonName ) const
 	return GameButton_Invalid;
 }
 
-MenuButton InputScheme::GameButtonToMenuButton( GameButton gb ) const
+GameButton InputScheme::GameButtonToMenuButton( GameButton gb ) const
 {
 	if( gb < GAME_BUTTON_NEXT )
 		return gb;
@@ -967,12 +967,12 @@ MenuButton InputScheme::GameButtonToMenuButton( GameButton gb ) const
 	if( !PREFSMAN->m_bOnlyDedicatedMenuButtons )
 		return GetMenuButtonSecondaryFunction( gb );
 
-	return MenuButton_Invalid;	// no MenuButton for this GameButton
+	return GameButton_Invalid;	// no GameButton for this GameButton
 }
 
-void InputScheme::MenuButtonToGameInputs( MenuButton MenuI, PlayerNumber pn, GameInput GameIout[4] ) const
+void InputScheme::MenuButtonToGameInputs( GameButton MenuI, PlayerNumber pn, GameInput GameIout[4] ) const
 {
-	ASSERT( MenuI != MenuButton_Invalid );
+	ASSERT( MenuI != GameButton_Invalid );
 
 	GameIout[0].MakeInvalid();	// initialize
 	GameIout[1].MakeInvalid();	
@@ -1017,22 +1017,22 @@ void InputScheme::MenuButtonToGameInputs( MenuButton MenuI, PlayerNumber pn, Gam
 	}
 }
 
-MenuButton InputScheme::GetMenuButtonSecondaryFunction( GameButton gb ) const
+GameButton InputScheme::GetMenuButtonSecondaryFunction( GameButton gb ) const
 {
 	return GetGameButtonInfo(gb)->m_SecondaryMenuButton;
 }
 
 static const InputScheme::GameButtonInfo g_CommonGameButtonInfo[] =
 {
-	{ "MenuLeft",	MenuButton_Invalid },
-	{ "MenuRight",	MenuButton_Invalid },
-	{ "MenuUp",	MenuButton_Invalid },
-	{ "MenuDown",	MenuButton_Invalid },
-	{ "Start",	MenuButton_Invalid },
-	{ "Select",	MenuButton_Invalid },
-	{ "Back",	MenuButton_Invalid },
-	{ "Coin",	MenuButton_Invalid },
-	{ "Operator",	MenuButton_Invalid },
+	{ "MenuLeft",	GameButton_Invalid },
+	{ "MenuRight",	GameButton_Invalid },
+	{ "MenuUp",	GameButton_Invalid },
+	{ "MenuDown",	GameButton_Invalid },
+	{ "Start",	GameButton_Invalid },
+	{ "Select",	GameButton_Invalid },
+	{ "Back",	GameButton_Invalid },
+	{ "Coin",	GameButton_Invalid },
+	{ "Operator",	GameButton_Invalid },
 };
 
 const InputScheme::GameButtonInfo *InputScheme::GetGameButtonInfo( GameButton gb ) const

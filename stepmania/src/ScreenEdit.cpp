@@ -347,7 +347,7 @@ EditButton ScreenEdit::DeviceToEdit( const DeviceInput &DeviceI ) const
 }
 
 /* Given a DeviceInput that was just depressed, return an active edit function. */
-EditButton ScreenEdit::MenuButtonToEditButton( MenuButton MenuI ) const
+EditButton ScreenEdit::MenuButtonToEditButton( GameButton MenuI ) const
 {
 	const MapEditButtonToMenuButton *pCurrentMap = GetCurrentMenuButtonMap();
 
