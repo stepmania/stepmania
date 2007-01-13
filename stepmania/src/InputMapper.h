@@ -5,13 +5,11 @@
 
 #include "RageInputDevice.h"
 #include "GameInput.h"
-#include "MenuInput.h"
 #include "PlayerNumber.h"
 
 const int NUM_GAME_TO_DEVICE_SLOTS	= 5;	// five device inputs may map to one game input
 const int NUM_SHOWN_GAME_TO_DEVICE_SLOTS = 3;
 const int NUM_USER_GAME_TO_DEVICE_SLOTS = 2;
-#define NO_DEFAULT_KEY DeviceButton_Invalid
 
 #define InputMapping_END {-1, DeviceButton_Invalid, GameButton_Invalid, false },	// end marker
 struct InputMapping

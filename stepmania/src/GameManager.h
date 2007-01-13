@@ -9,7 +9,6 @@ struct lua_State;
 
 #include "GameConstantsAndTypes.h"
 #include "GameInput.h"
-#include "MenuInput.h"
 
 class GameManager
 {

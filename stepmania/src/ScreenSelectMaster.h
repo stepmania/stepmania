@@ -6,7 +6,6 @@
 #include "RandomSample.h"
 #include "ActorUtil.h"
 #include "ActorScroller.h"
-#include "MenuInput.h"
 
 enum MenuDir
 {
