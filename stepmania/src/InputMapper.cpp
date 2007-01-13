@@ -1001,7 +1001,8 @@ void InputScheme::MenuButtonToGameButtons( GameButton MenuI, vector<GameButton> 
 
 	for( GameButton gb=GAME_BUTTON_NEXT; gb<m_iButtonsPerController; enum_add(gb, +1) ) 
 	{
-		if( m_GameButtonInfo[gb-GAME_BUTTON_NEXT].m_SecondaryMenuButton != MenuI )
+		const GameButtonInfo *pGameButtonInfo = GetGameButtonInfo( gb );
+		if( pGameButtonInfo->m_SecondaryMenuButton != MenuI )
 			continue;
 		aGameButtons.push_back( gb );
 	}
