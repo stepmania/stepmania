@@ -15,7 +15,7 @@
 #include "Steps.h"
 #include "ThemeMetric.h"
 #include "PlayerState.h"
-#include "MenuInput.h"
+#include "GameInput.h"
 
 #include <map>
 
