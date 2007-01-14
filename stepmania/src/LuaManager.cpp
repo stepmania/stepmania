@@ -26,7 +26,6 @@ struct Impl
 	RageMutex g_pLock;
 };
 static Impl *pImpl = NULL;
-static LuaFunctionList *g_LuaFunctions = NULL;
 
 #if defined(_MSC_VER) || defined (_XBOX)
 	/* "interaction between '_setjmp' and C++ object destruction is non-portable"
@@ -279,9 +278,6 @@ void LuaManager::RegisterTypes()
 {
 	Lua *L = LUA->Get();
 
-	for( const LuaFunctionList *p = g_LuaFunctions; p; p=p->next )
-		lua_register( L, p->name, p->func );
-	
 	if( g_vRegisterActorTypes )
 	{
 		for( unsigned i=0; i<g_vRegisterActorTypes->size(); i++ )
@@ -789,15 +785,6 @@ void LuaHelpers::PushValueFunc( lua_State *L, int iArgs )
 	lua_insert( L, iTop );
 	lua_pushcclosure( L, lua_pushvalues, iArgs+1 );
 }
-
-LuaFunctionList::LuaFunctionList( RString name_, lua_CFunction func_ )
-{
-	name = name_;
-	func = func_;
-	next = g_LuaFunctions;
-	g_LuaFunctions = this;
-}
-
 
 static bool Trace( const RString &sString )
 {
