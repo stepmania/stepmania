@@ -117,7 +117,7 @@ void LuaHelpers::ReadArrayFromTableB( Lua *L, vector<bool> &aOut )
 }
 
 
-static int LuaPanic( lua_State *L )
+static int GetLuaStack( lua_State *L )
 {
 	RString sErr;
 	LuaHelpers::Pop( L, sErr );
@@ -146,6 +146,18 @@ static int LuaPanic( lua_State *L )
 		sErr += ssprintf( "\n%s %s %s( %s ) %s:%d", ar.namewhat, ar.what, name,
 				  join(",", vArgs).c_str(), file, ar.currentline );
 	}		
+
+	LuaHelpers::Push( L, sErr );
+	return 1;
+}
+
+
+static int LuaPanic( lua_State *L )
+{
+	GetLuaStack( L );
+
+	RString sErr;
+	LuaHelpers::Pop( L, sErr );
 
 	RageException::Throw( "%s", sErr.c_str() );
 }
