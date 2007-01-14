@@ -133,17 +133,42 @@ static int GetLuaStack( lua_State *L )
 		const char *name;
 		vector<RString> vArgs;
 		
-		for( int i = 1; i <= ar.nups && (name = lua_getupvalue(L, -1, i)) != NULL; ++i )
+		if( !strcmp(ar.what, "C") )
 		{
-			// XXX: do we need to do local variables for lua functions instead?
-			vArgs.push_back( ssprintf("%s = %s", name, lua_tostring(L, -1)) );
-			lua_pop( L, 1 ); // pop value
+			for( int i = 1; i <= ar.nups && (name = lua_getupvalue(L, -1, i)) != NULL; ++i )
+			{
+				vArgs.push_back( ssprintf("%s = %s", name, lua_tostring(L, -1)) );
+				lua_pop( L, 1 ); // pop value
+			}
+		}
+		else
+		{
+			for( int i = 1; (name = lua_getlocal(L, &ar, i)) != NULL; ++i )
+			{
+				vArgs.push_back( ssprintf("%s = %s", name, lua_tostring(L, -1)) );
+				lua_pop( L, 1 ); // pop value
+			}
+		}
+
+		/* If the first call is this function, omit it from the trace. */
+		if( iLevel == 0 && lua_iscfunction(L, -1) && lua_tocfunction(L, 1) == GetLuaStack )
+		{
+			lua_pop( L, 1 ); // pop function
+			continue;
 		}
 		lua_pop( L, 1 ); // pop function
 		
-		name = ar.name ? ar.name : "[UNKNOWN]";
-		sErr += ssprintf( "\n%s %s %s( %s ) %s:%d", ar.namewhat, ar.what, name,
-				  join(",", vArgs).c_str(), file, ar.currentline );
+		sErr += ssprintf( "\n%s:", file );
+		if( ar.currentline != -1 )
+			sErr += ssprintf( "%i:", ar.currentline );
+
+		if( ar.name && ar.name[0] )
+			sErr += ssprintf( " %s", ar.name );
+		else if( !strcmp(ar.what, "main") || !strcmp(ar.what, "tail") || !strcmp(ar.what, "C") )
+			sErr += ssprintf( " %s", ar.what );
+		else
+			sErr += ssprintf( " unknown" );
+		sErr += ssprintf( "(%s)", join(",", vArgs).c_str() );
 	}		
 
 	LuaHelpers::Push( L, sErr );
