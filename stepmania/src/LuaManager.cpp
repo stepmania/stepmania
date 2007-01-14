@@ -628,6 +628,9 @@ bool LuaHelpers::RunScriptFile( const RString &sFile )
 
 bool LuaHelpers::RunScript( Lua *L, const RString &sScript, const RString &sName, RString &sError, int iArgs, int iReturnValues )
 {
+	lua_pushcfunction( L, GetLuaStack );
+	int iErrFunc = lua_gettop( L );
+
 	// load string
 	{
 		int ret = luaL_loadbuffer( L, sScript.data(), sScript.size(), sName );
@@ -635,6 +638,7 @@ bool LuaHelpers::RunScript( Lua *L, const RString &sScript, const RString &sName
 		{
 			LuaHelpers::Pop( L, sError );
 			lua_pop( L, iArgs );
+			lua_remove( L, iErrFunc );
 			for( int i = 0; i < iReturnValues; ++i )
 				lua_pushnil( L );
 			return false;
@@ -646,16 +650,18 @@ bool LuaHelpers::RunScript( Lua *L, const RString &sScript, const RString &sName
 
 	// evaluate
 	{
-		int ret = lua_pcall( L, iArgs, iReturnValues, 0 );
+		int ret = lua_pcall( L, iArgs, iReturnValues, iErrFunc );
 		if( ret )
 		{
 			LuaHelpers::Pop( L, sError );
+			lua_remove( L, iErrFunc );
 			for( int i = 0; i < iReturnValues; ++i )
 				lua_pushnil( L );
 			return false;
 		}
 	}
 
+	lua_remove( L, iErrFunc );
 	return true;
 }
 
