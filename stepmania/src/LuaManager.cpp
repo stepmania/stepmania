@@ -123,9 +123,8 @@ static int GetLuaStack( lua_State *L )
 	LuaHelpers::Pop( L, sErr );
 	
 	lua_Debug ar;
-	int level = 0;
 	
-	while( lua_getstack(L, level++, &ar) )
+	for( int iLevel = 0; lua_getstack(L, iLevel, &ar); ++iLevel )
 	{
 		if( !lua_getinfo(L, "nSluf", &ar) )
 			break;
