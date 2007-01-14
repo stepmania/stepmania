@@ -83,7 +83,8 @@ int LuaFunc_color( lua_State *L )
 	c.PushTable( L );
 	return 1;
 }
-static LuaFunctionList g_color( "color", LuaFunc_color ); /* register it */
+void LuaFunc_Register_color( lua_State *L ) { lua_register( L, "color", LuaFunc_color ); }
+REGISTER_WITH_LUA_FUNCTION( LuaFunc_Register_color );
 
 /*
  * Copyright (c) 2006 Glenn Maynard
