@@ -59,7 +59,7 @@ static struct
 	char *name;
 	int NumTracks;
 	uint32_t flags;
-} const StepsTypes[NUM_StepsType] = {
+} const g_StepsTypes[NUM_StepsType] = {
 	{ "dance-single",	4,			ST_FLAGS_NONE },
 	{ "dance-double",	8,			ST_FLAGS_NONE },
 	{ "dance-couple",	8,			ST_FLAGS_NONE },
@@ -88,6 +88,7 @@ static struct
 	{ "techno-double5",	10,			ST_FLAGS_NONE },
 	{ "pnm-five",		5,			ST_FLAGS_NONE },	// called "pnm" for backward compat
 	{ "pnm-nine",		9,			ST_FLAGS_NONE },	// called "pnm" for backward compat
+	{ "guitar-five",	5,			ST_FLAGS_NONE },
 	{ "lights-cabinet",	NUM_CabinetLight,	ST_FLAGS_DONT_AUTOGEN }, // XXX disable lights autogen for now
 };
 
@@ -2381,13 +2382,13 @@ bool GameManager::IsGameEnabled( const Game *pGame ) const
 int GameManager::StepsTypeToNumTracks( StepsType st )
 {
 	ASSERT_M( st < NUM_StepsType, ssprintf("%i", st) );
-	return StepsTypes[st].NumTracks;
+	return g_StepsTypes[st].NumTracks;
 }
 
 bool GameManager::CanAutoGenStepsType( StepsType st )
 {
 	ASSERT_M( st < NUM_StepsType, ssprintf("%d", st) );
-	return !(StepsTypes[st].flags & ST_FLAGS_DONT_AUTOGEN);
+	return !(g_StepsTypes[st].flags & ST_FLAGS_DONT_AUTOGEN);
 }
 
 StepsType GameManager::StringToStepsType( RString sStepsType )
@@ -2403,7 +2404,7 @@ StepsType GameManager::StringToStepsType( RString sStepsType )
 		sStepsType = "para-single";
 
 	for( int i=0; i<NUM_StepsType; i++ )
-		if( StepsTypes[i].name == sStepsType )
+		if( g_StepsTypes[i].name == sStepsType )
 			return StepsType(i);
 	
 	// invalid StepsType
@@ -2414,7 +2415,7 @@ StepsType GameManager::StringToStepsType( RString sStepsType )
 RString GameManager::StepsTypeToString( StepsType st )
 {
 	ASSERT_M( st < NUM_StepsType, ssprintf("%i", st) );
-	return StepsTypes[st].name;
+	return g_StepsTypes[st].name;
 }
 
 RString GameManager::StepsTypeToLocalizedString( StepsType st )
