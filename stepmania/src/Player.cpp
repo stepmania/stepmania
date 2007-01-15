@@ -75,7 +75,6 @@ Preference<float> g_fTimingWindowHopo		( "TimingWindowHopo",		0.25 );
 ThemeMetric<bool> PENALIZE_TAP_SCORE_NONE	( "Player", "PenalizeTapScoreNone" );
 
 
-
 float Player::GetWindowSeconds( TimingWindow tw )
 {
 	float fSecs = m_fTimingWindowSeconds[tw];
@@ -650,19 +649,18 @@ void Player::Update( float fDeltaTime )
 	//
 	// update HoldNotes logic
 	//
-	for( int iTrack=0; iTrack<m_NoteData.GetNumTracks(); ++iTrack )
 	{
-		// Since this is being called every frame, let's not check the whole array every time.
-		// Instead, only check 1 beat back.  Even 1 is overkill.
 		const int iStartCheckingAt = max( 0, iSongRow-BeatToNoteRow(1) );
-		NoteData::iterator begin, end;
-		m_NoteData.GetTapNoteRangeInclusive( iTrack, iStartCheckingAt, iSongRow+1, begin, end );
-		for( ; begin != end; ++begin )
+		vector<TrackRowTapNote> vHoldNotesToGradeTogether;
+		NoteData::all_tracks_iterator iter = m_NoteData.GetTapNoteRangeAllTracks( iStartCheckingAt, iSongRow+1, NULL, true );
+		for( ; !iter.IsAtEnd(); ++iter )
 		{
-			TapNote &tn = begin->second;
+			TapNote &tn = *iter;
 			if( tn.type != TapNote::hold_head )
 				continue;
-			int iRow = begin->first;
+
+			int iTrack = iter.Track();
+			int iRow = iter.Row();
 			int iEndRow = iRow + tn.iDuration;
 
 			// set hold flags so NoteField can do intelligent drawing
