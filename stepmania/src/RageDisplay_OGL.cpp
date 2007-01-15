@@ -1209,6 +1209,45 @@ void RageDisplay_OGL::DrawQuadStripInternal( const RageSpriteVertex v[], int iNu
 	glDrawArrays( GL_QUAD_STRIP, 0, iNumVerts );
 }
 
+void RageDisplay_OGL::DrawSymmetricQuadStripInternal( const RageSpriteVertex v[], int iNumVerts )
+{
+	int iNumPieces = (iNumVerts-3)/3;
+	int iNumTriangles = iNumPieces*4;
+	int iNumIndices = iNumTriangles*3;
+
+	// make a temporary index buffer
+	static vector<uint16_t> vIndices;
+	unsigned uOldSize = vIndices.size();
+	unsigned uNewSize = max(uOldSize,(unsigned)iNumIndices);
+	vIndices.resize( uNewSize );
+	for( uint16_t i=(uint16_t)uOldSize/12; i<(uint16_t)iNumPieces; i++ )
+	{
+		// { 1, 3, 0 } { 1, 4, 3 } { 1, 5, 4 } { 1, 2, 5 }
+		vIndices[i*12+0] = i*3+1;
+		vIndices[i*12+1] = i*3+3;
+		vIndices[i*12+2] = i*3+0;
+		vIndices[i*12+3] = i*3+1;
+		vIndices[i*12+4] = i*3+4;
+		vIndices[i*12+5] = i*3+3;
+		vIndices[i*12+6] = i*3+1;
+		vIndices[i*12+7] = i*3+5;
+		vIndices[i*12+8] = i*3+4;
+		vIndices[i*12+9] = i*3+1;
+		vIndices[i*12+10] = i*3+2;
+		vIndices[i*12+11] = i*3+5;
+	}
+
+	TurnOffHardwareVBO();
+	SendCurrentMatrices();
+
+	SetupVertices( v, iNumVerts );
+	glDrawElements( 
+		GL_TRIANGLES, 
+		iNumIndices,
+		GL_UNSIGNED_SHORT, 
+		&vIndices[0] );
+}
+
 void RageDisplay_OGL::DrawFanInternal( const RageSpriteVertex v[], int iNumVerts )
 {
 	TurnOffHardwareVBO();

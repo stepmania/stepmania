@@ -269,6 +269,7 @@ public:
 	void DrawTriangles( const RageSpriteVertex v[], int iNumVerts );
 	void DrawCompiledGeometry( const RageCompiledGeometry *p, int iMeshIndex, const vector<msMesh> &vMeshes );
 	void DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, float LineWidth );
+	void DrawSymmetricQuadStrip( const RageSpriteVertex v[], int iNumVerts );
 	void DrawCircle( const RageSpriteVertex &v, float radius );
 
 	void DrawQuad( const RageSpriteVertex v[] ) { DrawQuads(v,4); } /* alias. upper-left, upper-right, lower-left, lower-right */
@@ -296,6 +297,7 @@ protected:
 	virtual void DrawTrianglesInternal( const RageSpriteVertex v[], int iNumVerts ) = 0;
 	virtual void DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int iMeshIndex ) = 0;
 	virtual void DrawLineStripInternal( const RageSpriteVertex v[], int iNumVerts, float LineWidth );
+	virtual void DrawSymmetricQuadStripInternal( const RageSpriteVertex v[], int iNumVerts ) = 0;
 	virtual void DrawCircleInternal( const RageSpriteVertex &v, float radius );
 
 	// return RString() if mode change was successful, an error message otherwise.

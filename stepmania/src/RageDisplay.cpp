@@ -834,6 +834,27 @@ void RageDisplay::DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, floa
 	this->DrawLineStripInternal( v, iNumVerts, LineWidth );
 }
 
+/*
+ * Draw a strip of:
+ *
+ * 0..1..2
+ * . /.\ .
+ * ./ . \.
+ * 3..4..5
+ * . /.\ .
+ * ./ . \.
+ * 6..7..8
+ */
+
+void RageDisplay::DrawSymmetricQuadStrip( const RageSpriteVertex v[], int iNumVerts )
+{
+	ASSERT( iNumVerts >= 3 );
+
+	this->DrawSymmetricQuadStripInternal( v, iNumVerts );
+
+	StatsAddVerts( iNumVerts );
+}
+
 void RageDisplay::DrawCircle( const RageSpriteVertex &v, float radius )
 {
 	this->DrawCircleInternal( v, radius );

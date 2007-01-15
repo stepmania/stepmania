@@ -77,6 +77,7 @@ protected:
 	void DrawFanInternal( const RageSpriteVertex v[], int iNumVerts );
 	void DrawStripInternal( const RageSpriteVertex v[], int iNumVerts );
 	void DrawTrianglesInternal( const RageSpriteVertex v[], int iNumVerts );
+	void DrawSymmetricQuadStripInternal( const RageSpriteVertex v[], int iNumVerts );
 	void DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int iMeshIndex );
 
 	RString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut );

@@ -95,6 +95,7 @@ protected:
 	void DrawTrianglesInternal( const RageSpriteVertex v[], int iNumVerts );
 	void DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int iMeshIndex );
 	void DrawLineStripInternal( const RageSpriteVertex v[], int iNumVerts, float LineWidth );
+	void DrawSymmetricQuadStripInternal( const RageSpriteVertex v[], int iNumVerts );
 
 	RString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut );
 	RageSurface* CreateScreenshot();
