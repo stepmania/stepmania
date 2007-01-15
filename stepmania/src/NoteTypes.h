@@ -27,7 +27,7 @@ struct TapNoteResult
 
 struct HoldNoteResult
 {
-	HoldNoteResult() : hns(HNS_None), fLife(1.f), iLastHeldRow(0), bHeld(false), bActive(false) { }
+	HoldNoteResult() : hns(HNS_None), fLife(1.f), fOverlappedTime(0), iLastHeldRow(0), bHeld(false), bActive(false) { }
 	float GetLastHeldBeat() const;
 	
 	HoldNoteScore	hns;
@@ -37,6 +37,10 @@ struct HoldNoteResult
 	 * When this value hits 0.0 for the first time, m_HoldScore becomes HNS_LetGo.
 	 * If the life is > 0.0 when the HoldNote ends, then m_HoldScore becomes HNS_Held. */
 	float	fLife;
+
+	/* The number of seconds the hold note has overlapped the current beat, or 0 if it
+	 * doesn't overlap. */
+	float	fOverlappedTime;
 
 	/* Last index where fLife was greater than 0.  If the tap was missed, this will
 	 * be the first index of the hold. */

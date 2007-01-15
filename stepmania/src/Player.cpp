@@ -663,10 +663,17 @@ void Player::Update( float fDeltaTime )
 			if( tn.type != TapNote::hold_head )
 				continue;
 			int iRow = begin->first;
+			int iEndRow = iRow + tn.iDuration;
 
 			// set hold flags so NoteField can do intelligent drawing
 			tn.HoldResult.bHeld = false;
 			tn.HoldResult.bActive = false;
+
+			// If the song beat is in the range of this hold:
+			if( iRow <= iSongRow && iRow <= iEndRow )
+				tn.HoldResult.fOverlappedTime += fDeltaTime;
+			else
+				tn.HoldResult.fOverlappedTime = 0;
 
 			HoldNoteScore hns = tn.HoldResult.hns;
 			if( hns != HNS_None )	// if this HoldNote already has a result
@@ -692,8 +699,6 @@ void Player::Update( float fDeltaTime )
 				GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iTrack, pn );
 				bIsHoldingButton = INPUTMAPPER->IsBeingPressed( GameI, m_pPlayerState->m_mp );
 			}
-
-			int iEndRow = iRow + tn.iDuration;
 
 			float fLife = tn.HoldResult.fLife;
 			if( bSteppedOnTapNote && fLife != 0 )
