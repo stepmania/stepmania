@@ -81,6 +81,9 @@ class LuaTable: public LuaReference
 public:
 	LuaTable();
 
+	/* Get the key with the given name, and push it on the stack. */
+	void Get( Lua *L, const RString &sKey );
+
 	/* Set a key by the given name to a value on the stack, and pop the value
 	 * off the stack. */
 	void Set( Lua *L, const RString &sKey );

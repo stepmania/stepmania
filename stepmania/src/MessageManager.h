@@ -156,7 +156,18 @@ struct Message
 	void PushParamTable( lua_State *L );
 	const LuaReference &GetParamTable() const;
 
+	void GetParamFromStack( lua_State *L, const RString &sName ) const;
 	void SetParamFromStack( lua_State *L, const RString &sName );
+
+	template<typename T>
+	bool GetParam( const RString &sName, T &val ) const
+	{
+		Lua *L = LUA->Get();
+		GetParamFromStack( L, sName );
+		bool bRet = LuaHelpers::Pop( L, val );
+		LUA->Release( L );
+		return bRet;
+	}
 
 	template<typename T>
 	void SetParam( const RString &sName, const T &val )

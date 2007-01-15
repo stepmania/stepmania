@@ -193,6 +193,13 @@ void LuaTable::Set( Lua *L, const RString &sKey )
 	lua_settop( L, iTop-1 ); // remove all of the above
 }
 
+void LuaTable::Get( Lua *L, const RString &sKey )
+{
+	this->PushSelf( L );
+	lua_getfield( L, -1, sKey );
+	lua_remove( L, -2 ); // remove self
+}
+
 namespace LuaHelpers
 {
 	template<> void Push<LuaReference>( lua_State *L, const LuaReference &Object ) 
