@@ -86,7 +86,6 @@ public:
 	}
 };
 
-
 class Player: public ActorFrame
 {
 public:
@@ -96,6 +95,14 @@ public:
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
+
+	struct TrackRowTapNote
+	{
+		int iTrack;
+		int iRow;
+		TapNote *pTN;
+	};
+	void UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTapNote> &vTN );
 
 	void Init( 
 		const RString &sType,

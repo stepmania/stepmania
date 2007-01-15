@@ -650,8 +650,10 @@ void Player::Update( float fDeltaTime )
 	// update HoldNotes logic
 	//
 	{
+		// Check only 1 beat back for holds.  Even 1 beat is overkill.
 		const int iStartCheckingAt = max( 0, iSongRow-BeatToNoteRow(1) );
 		vector<TrackRowTapNote> vHoldNotesToGradeTogether;
+		int iRowOfLastHoldNote = -1;
 		NoteData::all_tracks_iterator iter = m_NoteData.GetTapNoteRangeAllTracks( iStartCheckingAt, iSongRow+1, NULL, true );
 		for( ; !iter.IsAtEnd(); ++iter )
 		{
@@ -661,123 +663,25 @@ void Player::Update( float fDeltaTime )
 
 			int iTrack = iter.Track();
 			int iRow = iter.Row();
-			int iEndRow = iRow + tn.iDuration;
+			TrackRowTapNote trtn = { iTrack, iRow, &tn };
 
-			// set hold flags so NoteField can do intelligent drawing
-			tn.HoldResult.bHeld = false;
-			tn.HoldResult.bActive = false;
-
-			// If the song beat is in the range of this hold:
-			if( iRow <= iSongRow && iRow <= iEndRow )
-				tn.HoldResult.fOverlappedTime += fDeltaTime;
-			else
-				tn.HoldResult.fOverlappedTime = 0;
-
-			HoldNoteScore hns = tn.HoldResult.hns;
-			if( hns != HNS_None )	// if this HoldNote already has a result
-				continue;	// we don't need to update the logic for this one
-
-			// TODO: Remove use of PlayerNumber.
-			PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-
-			// if they got a bad score or haven't stepped on the corresponding tap yet
-			const TapNoteScore tns = tn.result.tns;
-			const bool bSteppedOnTapNote = tns != TNS_None  &&  tns != TNS_Miss;	// did they step on the start of this hold?
-
-			bool bIsHoldingButton = false;
-			if( m_pPlayerState->m_PlayerController != PC_HUMAN )
+			if( iRow != iRowOfLastHoldNote  )//||  !JUDGE_HOLD_NOTES_ON_SAME_ROW_TOGETHER )
 			{
-				// TODO: Make the CPU miss sometimes.
-				bIsHoldingButton = true;
-				if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
-					STATSMAN->m_CurStageStats.m_bUsedAutoplay = true;
-			}
-			else
-			{
-				GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iTrack, pn );
-				bIsHoldingButton = INPUTMAPPER->IsBeingPressed( GameI, m_pPlayerState->m_mp );
-			}
-
-			float fLife = tn.HoldResult.fLife;
-			if( bSteppedOnTapNote && fLife != 0 )
-			{
-				/* This hold note is not judged and we stepped on its head.  Update iLastHeldRow.
-				 * Do this even if we're a little beyond the end of the hold note, to make sure
-				 * iLastHeldRow is clamped to iEndRow if the hold note is held all the way. */
-				tn.HoldResult.iLastHeldRow = min( iSongRow, iEndRow );
-			}
-
-			// If the song beat is in the range of this hold:
-			if( iRow <= iSongRow && iRow <= iEndRow )
-			{
-				switch( tn.subType )
+				if( !vHoldNotesToGradeTogether.empty() )
 				{
-				case TapNote::hold_head_hold:
-					// set hold flag so NoteField can do intelligent drawing
-					tn.HoldResult.bHeld = bIsHoldingButton && bSteppedOnTapNote;
-					tn.HoldResult.bActive = bSteppedOnTapNote;
-
-					if( bSteppedOnTapNote && bIsHoldingButton )
-					{
-						// Increase life
-						fLife = 1;
-					}
-					else
-					{
-						// Decrease life
-						fLife -= fDeltaTime/GetWindowSeconds(TW_Hold);
-						fLife = max( fLife, 0 );	// clamp
-					}
-					break;
-				case TapNote::hold_head_roll:
-					tn.HoldResult.bHeld = true;
-					tn.HoldResult.bActive = bSteppedOnTapNote;
-
-					// give positive life in Step(), not here.
-
-					// Decrease life
-					fLife -= fDeltaTime/GetWindowSeconds(TW_Roll);
-					fLife = max( fLife, 0 );	// clamp
-					break;
-				default:
-					ASSERT(0);
+					UpdateHoldNotes( iSongRow, fDeltaTime, vHoldNotesToGradeTogether );
+					vHoldNotesToGradeTogether.clear();
 				}
 			}
-
-			// TODO: Cap the active time passed to the score keeper to the actual start time and end time of the hold.
-			if( tn.HoldResult.bActive ) 
-			{
-				float fSecondsActiveSinceLastUpdate = fDeltaTime * GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
-				if( m_pPrimaryScoreKeeper )
-					m_pPrimaryScoreKeeper->HandleHoldActiveSeconds( fSecondsActiveSinceLastUpdate );
-				if( m_pSecondaryScoreKeeper )
-					m_pSecondaryScoreKeeper->HandleHoldActiveSeconds( fSecondsActiveSinceLastUpdate );
-			}
-
-			/* check for LetGo.  If the head was missed completely, don't count an LetGo. */
-			if( bSteppedOnTapNote && fLife == 0 )	// the player has not pressed the button for a long time!
-				hns = HNS_LetGo;
-
-			// check for OK
-			if( iSongRow >= iEndRow && bSteppedOnTapNote && fLife > 0 )	// if this HoldNote is in the past
-			{
-				fLife = 1;
-				hns = HNS_Held;
-				bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
-				if( m_pNoteField )
-					m_pNoteField->DidHoldNote( iTrack, HNS_Held, bBright );	// bright ghost flash
-			}
-			
-			tn.HoldResult.fLife = fLife;
-			tn.HoldResult.hns = hns;
-			
-			if( hns != HNS_None )
-			{
-				/* this note has been judged */
-				HandleHoldScore( tn );
-				SetHoldJudgment( tn.result.tns, tn.HoldResult.hns, iTrack );
-			}
+			iRowOfLastHoldNote = iRow;
+			vHoldNotesToGradeTogether.push_back( trtn );
 		}
+
+		if( !vHoldNotesToGradeTogether.empty() )
+		{
+			UpdateHoldNotes( iSongRow, fDeltaTime, vHoldNotesToGradeTogether );
+			vHoldNotesToGradeTogether.clear();
+ 		}
 	}
 	
 	{
@@ -817,6 +721,133 @@ void Player::Update( float fDeltaTime )
 
 	// process transforms that are waiting to be applied
 	ApplyWaitingTransforms();
+}
+
+/* Update every hold in TrackRowTapNote, but require that all holds in */
+void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTapNote> &vTN )
+{
+	FOREACH( TrackRowTapNote, vTN, trtn )
+	{
+		int iTrack = trtn->iTrack;
+		int iRow = trtn->iRow;
+		TapNote &tn = *trtn->pTN;
+		int iEndRow = iRow + tn.iDuration;
+
+		// set hold flags so NoteField can do intelligent drawing
+		tn.HoldResult.bHeld = false;
+		tn.HoldResult.bActive = false;
+
+		// If the song beat is in the range of this hold:
+		if( iRow <= iSongRow && iRow <= iEndRow )
+			tn.HoldResult.fOverlappedTime += fDeltaTime;
+		else
+			tn.HoldResult.fOverlappedTime = 0;
+		
+		HoldNoteScore hns = tn.HoldResult.hns;
+		if( hns != HNS_None )	// if this HoldNote already has a result
+			continue;	// we don't need to update the logic for this one
+
+		// TODO: Remove use of PlayerNumber.
+		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
+		// if they got a bad score or haven't stepped on the corresponding tap yet
+		const TapNoteScore tns = tn.result.tns;
+		const bool bSteppedOnTapNote = tns != TNS_None  &&  tns != TNS_Miss;	// did they step on the start of this hold?
+
+		bool bIsHoldingButton = false;
+		if( m_pPlayerState->m_PlayerController != PC_HUMAN )
+		{
+			// TODO: Make the CPU miss sometimes.
+			bIsHoldingButton = true;
+			if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
+				STATSMAN->m_CurStageStats.m_bUsedAutoplay = true;
+		}
+		else
+		{
+			GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( iTrack, pn );
+			bIsHoldingButton = INPUTMAPPER->IsBeingPressed( GameI, m_pPlayerState->m_mp );
+		}
+
+		float fLife = tn.HoldResult.fLife;
+		if( bSteppedOnTapNote && fLife != 0 )
+		{
+			/* This hold note is not judged and we stepped on its head.  Update iLastHeldRow.
+				* Do this even if we're a little beyond the end of the hold note, to make sure
+				* iLastHeldRow is clamped to iEndRow if the hold note is held all the way. */
+			tn.HoldResult.iLastHeldRow = min( iSongRow, iEndRow );
+		}
+
+		// If the song beat is in the range of this hold:
+		if( iRow <= iSongRow && iRow <= iEndRow )
+		{
+			switch( tn.subType )
+			{
+			case TapNote::hold_head_hold:
+				// set hold flag so NoteField can do intelligent drawing
+				tn.HoldResult.bHeld = bIsHoldingButton && bSteppedOnTapNote;
+				tn.HoldResult.bActive = bSteppedOnTapNote;
+
+				if( bSteppedOnTapNote && bIsHoldingButton )
+				{
+					// Increase life
+					fLife = 1;
+				}
+				else
+				{
+					// Decrease life
+					fLife -= fDeltaTime/GetWindowSeconds(TW_Hold);
+					fLife = max( fLife, 0 );	// clamp
+				}
+				break;
+			case TapNote::hold_head_roll:
+				tn.HoldResult.bHeld = true;
+				tn.HoldResult.bActive = bSteppedOnTapNote;
+
+				// give positive life in Step(), not here.
+
+				// Decrease life
+				fLife -= fDeltaTime/GetWindowSeconds(TW_Roll);
+				fLife = max( fLife, 0 );	// clamp
+				break;
+			default:
+				ASSERT(0);
+			}
+		}
+
+		// TODO: Cap the active time passed to the score keeper to the actual start time and end time of the hold.
+		if( tn.HoldResult.bActive ) 
+		{
+			float fSecondsActiveSinceLastUpdate = fDeltaTime * GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
+			if( m_pPrimaryScoreKeeper )
+				m_pPrimaryScoreKeeper->HandleHoldActiveSeconds( fSecondsActiveSinceLastUpdate );
+			if( m_pSecondaryScoreKeeper )
+				m_pSecondaryScoreKeeper->HandleHoldActiveSeconds( fSecondsActiveSinceLastUpdate );
+		}
+
+		/* check for LetGo.  If the head was missed completely, don't count an LetGo. */
+		if( bSteppedOnTapNote && fLife == 0 )	// the player has not pressed the button for a long time!
+			hns = HNS_LetGo;
+
+		// check for OK
+		if( iSongRow >= iEndRow && bSteppedOnTapNote && fLife > 0 )	// if this HoldNote is in the past
+		{
+			fLife = 1;
+			hns = HNS_Held;
+			bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->m_iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
+			if( m_pNoteField )
+				m_pNoteField->DidHoldNote( iTrack, HNS_Held, bBright );	// bright ghost flash
+		}
+		
+		tn.HoldResult.fLife = fLife;
+		tn.HoldResult.hns = hns;
+		
+		if( hns != HNS_None )
+		{
+			/* this note has been judged */
+			HandleHoldScore( tn );
+			SetHoldJudgment( tn.result.tns, tn.HoldResult.hns, iTrack );
+		}
+	}
 }
 
 void Player::ApplyWaitingTransforms()
