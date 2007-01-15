@@ -1696,13 +1696,7 @@ done_checking_hopo:
 								tn.HoldResult.hns = HNS_LetGo;
 							
 								HandleHoldScore( tn );
-								
-								if( m_pPlayerStageStats != NULL )
-									m_pPlayerStageStats->m_hnsLast = tn.HoldResult.hns;
-								if( m_pPlayerState->m_mp != MultiPlayer_Invalid )
-									MESSAGEMAN->Broadcast( enum_add2(Message_ShowHoldJudgmentMuliPlayerP1,m_pPlayerState->m_mp) );
-
-								m_vHoldJudgment[iTrack]->SetHoldJudgment( tn.HoldResult.hns );
+								SetHoldJudgment( tn.HoldResult.hns, iTrack );
 							}
 						}
 					}
