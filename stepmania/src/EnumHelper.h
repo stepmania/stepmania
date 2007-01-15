@@ -120,7 +120,7 @@ static void Lua##X(lua_State* L) \
 REGISTER_WITH_LUA_FUNCTION( Lua##X ); \
 template<> X EnumTraits<X>::Invalid = X##_Invalid; \
 template<> const char *EnumTraits<X>::szName = #X; \
-namespace LuaHelpers { template<> bool FromStack<X>( lua_State *L, X &Object, int iOffset ) { Object = Enum::Check<X>( L, iOffset ); return true; } } \
+namespace LuaHelpers { template<> bool FromStack<X>( lua_State *L, X &Object, int iOffset ) { Object = Enum::Check<X>( L, iOffset, true ); return Object != EnumTraits<X>::Invalid; } } \
 namespace LuaHelpers { template<> void Push<X>( lua_State *L, const X &Object ) { Enum::Push<X>( L, Object ); } }
 
 #endif
