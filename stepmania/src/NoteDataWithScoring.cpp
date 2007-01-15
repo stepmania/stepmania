@@ -39,7 +39,7 @@ int GetNumNWithScore( const NoteData &in, TapNoteScore tns, int MinTaps, int iSt
 
 int GetNumHoldNotesWithScore( const NoteData &in, TapNote::SubType subType, HoldNoteScore hns )
 {
-	ASSERT( subType != TapNote::SubType_INVALID );
+	ASSERT( subType != TapNote::SubType_Invalid );
 
 	int iNumSuccessfulHolds = 0;
 	for( int t=0; t<in.GetNumTracks(); ++t )

@@ -1952,7 +1952,7 @@ void NoteDataUtil::AddTapAttacks( NoteData &nd, Song* pSong )
 		int iTrack = iBeat % nd.GetNumTracks();	// deterministically calculates track
 		TapNote tn(
 			TapNote::attack,
-			TapNote::SubType_INVALID,
+			TapNote::SubType_Invalid,
 			TapNote::original, 
 			szAttacks[RandomInt(ARRAYLEN(szAttacks))],
 			15.0f, 

@@ -72,7 +72,7 @@ struct TapNote
 		hold_head_hold,
 		hold_head_roll,
 		NUM_SubType,
-		SubType_INVALID
+		SubType_Invalid
 	};
 	enum Source
 	{
@@ -102,7 +102,7 @@ struct TapNote
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
 
-	TapNote() : type(empty), subType(SubType_INVALID), source(original), pn(PLAYER_INVALID), bHopoPossible(false),
+	TapNote() : type(empty), subType(SubType_Invalid), source(original), pn(PLAYER_INVALID), bHopoPossible(false),
 		fAttackDurationSeconds(0.f), iKeysoundIndex(-1), iDuration(0)  { }
 	TapNote( 
 		Type type_,

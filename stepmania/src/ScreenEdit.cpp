@@ -2487,7 +2487,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		
 		TapNote tn(
 			TapNote::attack, 
-			TapNote::SubType_INVALID,
+			TapNote::SubType_Invalid,
 			TapNote::original, 
 			sMods,
 			g_fLastInsertAttackDurationSeconds, 

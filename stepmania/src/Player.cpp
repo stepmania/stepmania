@@ -750,14 +750,14 @@ void Player::UpdateHoldNotes( int iSongRow, float fDeltaTime, vector<TrackRowTap
 	int iMaxEndRow = INT_MIN;
 	int iFirstTrackWithMaxEndRow = -1;
 
-	TapNote::SubType subType = TapNote::SubType_INVALID;
+	TapNote::SubType subType = TapNote::SubType_Invalid;
 	FOREACH( TrackRowTapNote, vTN, trtn )
 	{
 		int iTrack = trtn->iTrack;
 		ASSERT( iStartRow == trtn->iRow );
 		TapNote &tn = *trtn->pTN;
 		int iEndRow = iStartRow + tn.iDuration;
-		if( subType == TapNote::SubType_INVALID )
+		if( subType == TapNote::SubType_Invalid )
 			subType = tn.subType;
 		
 		/* All holds must be of the same subType because fLife is handled 
