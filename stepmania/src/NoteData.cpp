@@ -987,7 +987,8 @@ NoteData::_all_tracks_iterator<ND, iter, TN>::_all_tracks_iterator( ND &nd, int 
 		if( m_bReverse )
 		{
 			cur = end;
-			cur--;
+			if( cur != begin )
+				cur--;
 		}
 		else
 		{
