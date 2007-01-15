@@ -1690,7 +1690,6 @@ done_checking_hopo:
 						m_NoteData.GetTapNoteRangeInclusive( iTrack, iStartCheckingAt, iSongRow+1, begin, end );
 						for( ; begin != end; ++begin )
 						{
-							int iTrack = begin->first;
 							TapNote &tn = begin->second;
 							if( tn.HoldResult.bActive )
 							{
@@ -2244,6 +2243,7 @@ void Player::SetHoldJudgment( TapNoteScore tns, HoldNoteScore hns, int iTrack )
 	if( m_pPlayerState->m_mp != MultiPlayer_Invalid )
 		MESSAGEMAN->Broadcast( enum_add2(Message_ShowHoldJudgmentMuliPlayerP1,m_pPlayerState->m_mp) );
 
+	ASSERT( iTrack < (int)m_vHoldJudgment.size() );
 	m_vHoldJudgment[iTrack]->SetHoldJudgment( hns );
 
 	Message msg("Judgment");
