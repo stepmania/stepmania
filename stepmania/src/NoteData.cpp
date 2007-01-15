@@ -921,21 +921,23 @@ void NoteData::_all_tracks_iterator<ND, iter, TN>::Find( bool bReverse )
 	m_iTrack = -1;
 	if( bReverse )
 	{
-		int iMaxRow = m_iStartRow - 1;
+		int iMaxRow = INT_MIN;
 		for( int iTrack = m_NoteData.GetNumTracks() - 1; iTrack >= 0; --iTrack )
 		{
-			iter &i( m_vIters[iTrack] );
+			iter &i( m_vCurrentIters[iTrack] );
+			const iter &begin = m_vBeginIters[iTrack];
+			const iter &end = m_vEndIters[iTrack];
 			if( m_Cond )
 			{
-				while( i != m_NoteData.end(iTrack) && i->first > iMaxRow && !m_Cond(i->second) )
+				while( i != end  &&  i->first > iMaxRow  &&  !m_Cond(i->second) )
 				{
-					if( i == m_NoteData.begin(iTrack) )
-						i = m_NoteData.end( iTrack );
+					if( i == begin )
+						i = end;
 					else
 						--i;
 				}
 			}
-			if( i != m_NoteData.end(iTrack) && i->first > iMaxRow )
+			if( i != end  &&  i->first > iMaxRow )
 			{
 				iMaxRow = i->first;
 				m_iTrack = iTrack;
@@ -944,16 +946,18 @@ void NoteData::_all_tracks_iterator<ND, iter, TN>::Find( bool bReverse )
 	}
 	else
 	{
-		int iMinRow = m_iEndRow + 1;
+
+		int iMinRow = INT_MAX;
 		for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
 		{
-			iter &i = m_vIters[iTrack];
+			iter &i = m_vCurrentIters[iTrack];
+			const iter &end = m_vEndIters[iTrack];
 			if( m_Cond )
 			{
-				while( i != m_NoteData.end(iTrack) && i->first < iMinRow && !m_Cond(i->second) )
+				while( i != end  &&  i->first < iMinRow  &&  !m_Cond(i->second) )
 					++i;
 			}
-			if( i != m_NoteData.end(iTrack) && i->first < iMinRow )
+			if( i != end  &&  i->first < iMinRow )
 			{
 				iMinRow = i->first;
 				m_iTrack = iTrack;
@@ -963,27 +967,35 @@ void NoteData::_all_tracks_iterator<ND, iter, TN>::Find( bool bReverse )
 }
 
 template<typename ND, typename iter, typename TN>
-NoteData::_all_tracks_iterator<ND, iter, TN>::_all_tracks_iterator( ND &nd, int iStartRow, int iEndRow, bool bReverse, NoteData::IteratorCond cond ) :
-	m_NoteData(nd), m_iTrack(0), m_iStartRow(iStartRow), m_iEndRow(iEndRow), m_bReverse(bReverse), m_Cond(cond)
+NoteData::_all_tracks_iterator<ND, iter, TN>::_all_tracks_iterator( ND &nd, int iStartRow, int iEndRow, bool bReverse, NoteData::IteratorCond cond, bool bInclusive ) :
+	m_NoteData(nd), m_iTrack(0), m_bReverse(bReverse), m_Cond(cond)
 {
 	ASSERT( m_NoteData.GetNumTracks() > 0 );
-	if( bReverse )
+
+	for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
 	{
-		for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
+		NoteData::iterator begin, end;
+		if( bInclusive )
+			m_NoteData.GetTapNoteRangeInclusive( iTrack, iStartRow, iEndRow, begin, end );
+		else
+			m_NoteData.GetTapNoteRange( iTrack, iStartRow, iEndRow, begin, end );
+
+		m_vBeginIters.push_back( begin );
+		m_vEndIters.push_back( end );
+
+		NoteData::iterator cur;
+		if( m_bReverse )
 		{
-			iter i = m_NoteData.upper_bound( iTrack, iEndRow );
-			
-			if( i == m_NoteData.begin(iTrack) )
-				m_vIters.push_back( m_NoteData.end(iTrack) );
-			else
-				m_vIters.push_back( --i );
+			cur = end;
+			cur--;
 		}
+		else
+		{
+			cur = begin;
+		}
+		m_vCurrentIters.push_back( cur );
 	}
-	else
-	{
-		for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
-			m_vIters.push_back( m_NoteData.lower_bound(iTrack, iStartRow) );
-	}
+
 	Find( bReverse );
 }
 
@@ -992,14 +1004,14 @@ NoteData::_all_tracks_iterator<ND, iter, TN> &NoteData::_all_tracks_iterator<ND,
 {
 	if( m_bReverse )
 	{
-		if( m_vIters[m_iTrack] == m_NoteData.begin(m_iTrack) )
-			m_vIters[m_iTrack] = m_NoteData.end( m_iTrack );
+		if( m_vCurrentIters[m_iTrack] == m_vBeginIters[m_iTrack] )
+			m_vCurrentIters[m_iTrack] = m_vEndIters[m_iTrack];
 		else
-			--m_vIters[m_iTrack];
+			--m_vCurrentIters[m_iTrack];
 	}
 	else
 	{
-		++m_vIters[m_iTrack];
+		++m_vCurrentIters[m_iTrack];
 	}
 	Find( m_bReverse );
 	return *this;
@@ -1019,14 +1031,14 @@ NoteData::_all_tracks_iterator<ND, iter, TN> &NoteData::_all_tracks_iterator<ND,
 {
 	if( m_bReverse )
 	{
-		++m_vIters[m_iTrack];
+		++m_vCurrentIters[m_iTrack];
 	}
 	else
 	{
-		if( m_vIters[m_iTrack] == m_NoteData.begin(m_iTrack) )
-			m_vIters[m_iTrack] = m_NoteData.end( m_iTrack );
+		if( m_vCurrentIters[m_iTrack] == m_vEndIters[m_iTrack] )
+			m_vCurrentIters[m_iTrack] = m_vEndIters[m_iTrack];
 		else
-			--m_vIters[m_iTrack];
+			--m_vCurrentIters[m_iTrack];
 	}
 	Find( !m_bReverse );
 	return *this;

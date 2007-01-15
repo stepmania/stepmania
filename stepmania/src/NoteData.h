@@ -49,27 +49,31 @@ public:
 	class _all_tracks_iterator
 	{
 		ND		&m_NoteData;
-		vector<iter>	m_vIters;
+		vector<iter>	m_vBeginIters;
+
+		/* There isn't a "past the beginning" iterator so this is hard to make a true bidirectional iterator. 
+		* Use the "past the end" iterator in place of the "past the beginning" iterator when in reverse. */
+		vector<iter>	m_vCurrentIters;
+		
+		vector<iter>	m_vEndIters;
 		int		m_iTrack;
-		const int	m_iStartRow;
-		const int	m_iEndRow;
 		const bool	m_bReverse;
 		IteratorCond	m_Cond;
 		
 		void Find( bool bReverse );
 	public:
-		_all_tracks_iterator( ND &nd, int iStartRow, int iEndRow, bool bReverse, IteratorCond cond );
+		_all_tracks_iterator( ND &nd, int iStartRow, int iEndRow, bool bReverse, IteratorCond cond, bool bInclusive );
 		_all_tracks_iterator &operator++();		// preincrement
 		_all_tracks_iterator operator++( int dummy );	// postincrement
 		//_all_tracks_iterator &operator--();		// predecrement
 		//_all_tracks_iterator operator--( int dummy );	// postdecrement
 		inline int Track() const		{ return m_iTrack; }
-		inline int Row() const			{ return m_vIters[m_iTrack]->first; }
+		inline int Row() const			{ return m_vCurrentIters[m_iTrack]->first; }
 		inline bool IsAtEnd() const		{ return m_iTrack == -1; }
-		inline TN &operator*()			{ DEBUG_ASSERT( !IsAtEnd() ); return m_vIters[m_iTrack]->second; }
-		inline TN *operator->()			{ DEBUG_ASSERT( !IsAtEnd() ); return &m_vIters[m_iTrack]->second; }
-		inline const TN &operator*() const	{ DEBUG_ASSERT( !IsAtEnd() ); return m_vIters[m_iTrack]->second; }
-		inline const TN *operator->() const	{ DEBUG_ASSERT( !IsAtEnd() ); return &m_vIters[m_iTrack]->second; }
+		inline TN &operator*()			{ DEBUG_ASSERT( !IsAtEnd() ); return m_vCurrentIters[m_iTrack]->second; }
+		inline TN *operator->()			{ DEBUG_ASSERT( !IsAtEnd() ); return &m_vCurrentIters[m_iTrack]->second; }
+		inline const TN &operator*() const	{ DEBUG_ASSERT( !IsAtEnd() ); return m_vCurrentIters[m_iTrack]->second; }
+		inline const TN *operator->() const	{ DEBUG_ASSERT( !IsAtEnd() ); return &m_vCurrentIters[m_iTrack]->second; }
 	};
 	typedef _all_tracks_iterator<NoteData, NoteData::iterator, TapNote> 			all_tracks_iterator;
 	typedef _all_tracks_iterator<const NoteData, NoteData::const_iterator, const TapNote>	all_tracks_const_iterator;
@@ -109,21 +113,21 @@ public:
 	/* Return an iterator range including exactly iStartRow to iEndRow. */
 	void GetTapNoteRange( int iTrack, int iStartRow, int iEndRow, const_iterator &begin, const_iterator &end ) const;
 	void GetTapNoteRange( int iTrack, int iStartRow, int iEndRow, TrackMap::iterator &begin, TrackMap::iterator &end );
-	all_tracks_iterator GetTapNoteRangeAllTracks( int iStartRow, int iEndRow, IteratorCond cond = NULL )
+	all_tracks_iterator GetTapNoteRangeAllTracks( int iStartRow, int iEndRow, IteratorCond cond = NULL, bool bInclusive = false )
 	{
-		return all_tracks_iterator( *this, iStartRow, iEndRow, false, cond );
+		return all_tracks_iterator( *this, iStartRow, iEndRow, false, cond, bInclusive );
 	}
-	all_tracks_const_iterator GetTapNoteRangeAllTracks( int iStartRow, int iEndRow, IteratorCond cond = NULL) const
+	all_tracks_const_iterator GetTapNoteRangeAllTracks( int iStartRow, int iEndRow, IteratorCond cond = NULL, bool bInclusive = false ) const
 	{
-		return all_tracks_const_iterator( *this, iStartRow, iEndRow, false, cond );
+		return all_tracks_const_iterator( *this, iStartRow, iEndRow, false, cond, bInclusive );
 	}
-	all_tracks_reverse_iterator GetTapNoteRangeAllTracksReverse( int iStartRow, int iEndRow, IteratorCond cond = NULL )
+	all_tracks_reverse_iterator GetTapNoteRangeAllTracksReverse( int iStartRow, int iEndRow, IteratorCond cond = NULL, bool bInclusive = false )
 	{
-		return all_tracks_iterator(*this, iStartRow, iEndRow, true, cond);
+		return all_tracks_iterator(*this, iStartRow, iEndRow, true, cond, bInclusive );
 	}
-	all_tracks_const_reverse_iterator GetTapNoteRangeAllTracksReverse( int iStartRow, int iEndRow, IteratorCond cond = NULL) const
+	all_tracks_const_reverse_iterator GetTapNoteRangeAllTracksReverse( int iStartRow, int iEndRow, IteratorCond cond = NULL, bool bInclusive = false ) const
 	{
-		return all_tracks_const_iterator(*this, iStartRow, iEndRow, true, cond);
+		return all_tracks_const_iterator(*this, iStartRow, iEndRow, true, cond, bInclusive );
 	}
 
 	/* Return an iterator range include iStartRow to iEndRow.  Extend the range to include
