@@ -772,7 +772,7 @@ void Player::Update( float fDeltaTime )
 			{
 				/* this note has been judged */
 				HandleHoldScore( tn );
-				SetHoldJudgment( hns, iTrack );
+				SetHoldJudgment( tn.result.tns, tn.HoldResult.hns, iTrack );
 			}
 		}
 	}
@@ -1690,13 +1690,14 @@ done_checking_hopo:
 						m_NoteData.GetTapNoteRangeInclusive( iTrack, iStartCheckingAt, iSongRow+1, begin, end );
 						for( ; begin != end; ++begin )
 						{
+							int iTrack = begin->first;
 							TapNote &tn = begin->second;
 							if( tn.HoldResult.bActive )
 							{
 								tn.HoldResult.hns = HNS_LetGo;
 							
 								HandleHoldScore( tn );
-								SetHoldJudgment( tn.HoldResult.hns, iTrack );
+								SetHoldJudgment( tn.result.tns, tn.HoldResult.hns, iTrack );
 							}
 						}
 					}
@@ -2228,9 +2229,15 @@ void Player::SetJudgment( TapNoteScore tns, bool bEarly )
 
 	if( m_pJudgment )
 		m_pJudgment->SetJudgment( tns, bEarly );
+
+	Message msg("Judgment");
+	msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
+	msg.SetParam( "TapNoteScore", tns );
+	msg.SetParam( "HoldNoteScore", HoldNoteScore_Invalid );
+	MESSAGEMAN->Broadcast( msg );
 }
 
-void Player::SetHoldJudgment( HoldNoteScore hns, int iTrack )
+void Player::SetHoldJudgment( TapNoteScore tns, HoldNoteScore hns, int iTrack )
 {
 	if( m_pPlayerStageStats != NULL )
 		m_pPlayerStageStats->m_hnsLast = hns;
@@ -2238,6 +2245,12 @@ void Player::SetHoldJudgment( HoldNoteScore hns, int iTrack )
 		MESSAGEMAN->Broadcast( enum_add2(Message_ShowHoldJudgmentMuliPlayerP1,m_pPlayerState->m_mp) );
 
 	m_vHoldJudgment[iTrack]->SetHoldJudgment( hns );
+
+	Message msg("Judgment");
+	msg.SetParam( "Player", m_pPlayerState->m_PlayerNumber );
+	msg.SetParam( "TapNoteScore", tns );
+	msg.SetParam( "HoldNoteScore", hns );
+	MESSAGEMAN->Broadcast( msg );
 }
 
 /*
