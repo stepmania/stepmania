@@ -7,7 +7,7 @@
 SampleHistory::SampleHistory()
 {
 	m_iLastHistory = 0;
-	m_iHistorySamplesPerSecond = 60.0f;
+	m_iHistorySamplesPerSecond = 60;
 	m_fHistorySeconds = 0.0f;
 	m_fToSample = 1 / m_iHistorySamplesPerSecond;
 
