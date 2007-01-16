@@ -1149,6 +1149,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="SongUtil.h">
 			</File>
 			<File
+				RelativePath=".\SoundEffectControl.cpp">
+			</File>
+			<File
+				RelativePath=".\SoundEffectControl.h">
+			</File>
+			<File
 				RelativePath="StageStats.cpp">
 			</File>
 			<File
