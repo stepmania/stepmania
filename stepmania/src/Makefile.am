@@ -119,6 +119,7 @@ PlayerAI.cpp PlayerAI.h PlayerNumber.cpp PlayerNumber.h PlayerOptions.cpp Player
 PlayerStageStats.cpp PlayerStageStats.h \
 PlayerState.cpp PlayerState.h Preference.cpp Preference.h Profile.cpp Profile.h \
 RandomSample.cpp RandomSample.h RadarValues.cpp RadarValues.h \
+SampleHistory.cpp SampleHistory.h \
 ScreenDimensions.h ScreenDimensions.cpp \
 ScoreKeeper.h ScoreKeeper.cpp \
 ScoreKeeperGuitar.cpp ScoreKeeperGuitar.h \

@@ -1459,6 +1459,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SampleHistory.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SampleHistory.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ScoreKeeper.cpp"
 				>
 			</File>
