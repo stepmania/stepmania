@@ -26,6 +26,8 @@ static const Game::PerButtonInfo g_CommonButtonInfo[] =
 	{ GameButtonType_INVALID }, // GAME_BUTTON_BACK
 	{ GameButtonType_INVALID }, // GAME_BUTTON_COIN
 	{ GameButtonType_INVALID }, // GAME_BUTTON_OPERATOR
+	{ GameButtonType_INVALID }, // GAME_BUTTON_EFFECT_UP
+	{ GameButtonType_INVALID }, // GAME_BUTTON_EFFECT_DOWN
 };
 
 const Game::PerButtonInfo *Game::GetPerButtonInfo( GameButton gb ) const

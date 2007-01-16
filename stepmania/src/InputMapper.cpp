@@ -1040,6 +1040,8 @@ static const InputScheme::GameButtonInfo g_CommonGameButtonInfo[] =
 	{ "Back",	GAME_BUTTON_BACK },
 	{ "Coin",	GAME_BUTTON_COIN },
 	{ "Operator",	GAME_BUTTON_OPERATOR },
+	{ "EffectUp",	GAME_BUTTON_EFFECT_UP },
+	{ "EffectDown",	GAME_BUTTON_EFFECT_DOWN },
 };
 
 const InputScheme::GameButtonInfo *InputScheme::GetGameButtonInfo( GameButton gb ) const
