@@ -974,7 +974,7 @@ NoteData::_all_tracks_iterator<ND, iter, TN>::_all_tracks_iterator( ND &nd, int 
 
 	for( int iTrack = 0; iTrack < m_NoteData.GetNumTracks(); ++iTrack )
 	{
-		NoteData::iterator begin, end;
+		iter begin, end;
 		if( bInclusive )
 			m_NoteData.GetTapNoteRangeInclusive( iTrack, iStartRow, iEndRow, begin, end );
 		else
@@ -983,7 +983,7 @@ NoteData::_all_tracks_iterator<ND, iter, TN>::_all_tracks_iterator( ND &nd, int 
 		m_vBeginIters.push_back( begin );
 		m_vEndIters.push_back( end );
 
-		NoteData::iterator cur;
+		iter cur;
 		if( m_bReverse )
 		{
 			cur = end;
