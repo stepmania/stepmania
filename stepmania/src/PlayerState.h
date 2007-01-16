@@ -8,6 +8,7 @@
 #include "PlayerNumber.h"
 #include "PlayerOptions.h"
 #include "RageTimer.h"
+#include "SampleHistory.h"
 struct lua_State;
 
 class PlayerState
@@ -45,6 +46,8 @@ public:
 
 	PlayerController	m_PlayerController;
 	
+	SampleHistory m_EffectHistory;
+
 	//
 	// Used in Battle and Rave
 	//
