@@ -1547,6 +1547,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SoundEffectControl.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SoundEffectControl.h"
+				>
+			</File>
+			<File
 				RelativePath="StageStats.cpp"
 				>
 			</File>
