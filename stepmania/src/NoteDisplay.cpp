@@ -561,7 +561,7 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 		fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar,
 		tn.HoldResult.fOverlappedTime,
 		fYHead-fFrameHeightTop, fYHead,
-		fYStartPos, min(fYEndPos, fYTail),
+		fYStartPos, fYEndPos,
 		false, bTopAnchor, bFlipHoldBody );
 
 	// Draw the body
