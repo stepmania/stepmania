@@ -459,12 +459,12 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 		queue.v[0].p = RageVector3(fXLeft,  fY, fZ);  queue.v[0].c = color; queue.v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
 		queue.v[1].p = RageVector3(fXCenter, fY, fZ); queue.v[1].c = color; queue.v[1].t = RageVector2(fTexCoordCenter, fTexCoordTop);
 		queue.v[2].p = RageVector3(fXRight, fY, fZ);  queue.v[2].c = color; queue.v[2].t = RageVector2(fTexCoordRight, fTexCoordTop);
-
 		queue.v+=3;
+
 		if( queue.Free() < 3 || bLast )
 		{
 			/* The queue is full.  Render it, clear the buffer, and move back a step to
-			 * start off the quad strip again. */
+			 * start off the strip again. */
 			if( !bAllAreTransparent )
 			{
 				FOREACH( Sprite*, vpSpr, spr )
