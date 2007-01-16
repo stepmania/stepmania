@@ -133,6 +133,7 @@ public:
 	
 	bool		m_bTurns[NUM_TURNS];
 	bool		m_bTransforms[NUM_TRANSFORMS];
+	bool		m_bMuteOnError;
 	ScoreDisplay m_ScoreDisplay;
 
 	RString		m_sNoteSkin;	// "" means "no change"

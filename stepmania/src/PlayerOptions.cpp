@@ -36,6 +36,7 @@ void PlayerOptions::Init()
 	m_fRandomSpeed = 0;		m_SpeedfRandomSpeed = 1.0f;
 	ZERO( m_bTurns );
 	ZERO( m_bTransforms );
+	m_bMuteOnError = false;
 	m_ScoreDisplay = SCORING_ADD;
 	m_sNoteSkin = "";
 }
@@ -177,6 +178,7 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	if( m_bTransforms[TRANSFORM_NOHANDS] )	AddTo.push_back( "NoHands" );
 	if( m_bTransforms[TRANSFORM_NOQUADS] )	AddTo.push_back( "NoQuads" );
 	if( m_bTransforms[TRANSFORM_NOSTRETCH] )AddTo.push_back( "NoStretch" );
+	if( m_bMuteOnError )			AddTo.push_back( "MuteOnError" );
 
 	if( m_fSkew==0 && m_fPerspectiveTilt==0 )		{ if( m_bSetTiltOrSkew ) AddTo.push_back( "Overhead" ); }
 	else if( m_fSkew == 0 )
@@ -355,6 +357,7 @@ void PlayerOptions::FromString( const RString &sOptions, bool bWarnOnInvalid )
 		else if( sBit == "addscore" )				m_ScoreDisplay = SCORING_ADD;
 		else if( sBit == "subtractscore" )			m_ScoreDisplay = SCORING_SUBTRACT;
 		else if( sBit == "averagescore" )			m_ScoreDisplay = SCORING_AVERAGE;
+		else if( sBit == "muteonerror" )			m_bMuteOnError = on;
 		else if( sBit == "random" )				ChooseRandomModifiers();
 		else
 		{
@@ -567,6 +570,7 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_fScrollBPM);
 	COMPARE(m_fRandomSpeed);
 	COMPARE(m_ScoreDisplay);
+	COMPARE(m_bMuteOnError);
 	COMPARE(m_fDark);
 	COMPARE(m_fBlind);
 	COMPARE(m_fCover);
@@ -700,6 +704,7 @@ RString PlayerOptions::GetSavedPrefsString() const
 	SAVE( m_bTransforms[TRANSFORM_NOQUADS] );
 	SAVE( m_bTransforms[TRANSFORM_NOSTRETCH] );
 	SAVE( m_ScoreDisplay );
+	SAVE( m_bMuteOnError );
 	SAVE( m_sNoteSkin );
 #undef SAVE
 	return po_prefs.GetString();
