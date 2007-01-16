@@ -40,6 +40,13 @@ public:
 	};
 	AutosyncType m_AutosyncType;
 	bool m_bSaveScore;
+	enum SoundEffectType {
+		SOUNDEFFECT_OFF,
+		SOUNDEFFECT_SPEED,
+		SOUNDEFFECT_PITCH,
+		NUM_SOUNDEFFECT
+	};
+	SoundEffectType m_SoundEffectType;
 
 
 	SongOptions() { Init(); };

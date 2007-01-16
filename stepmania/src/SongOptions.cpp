@@ -16,6 +16,7 @@ void SongOptions::Init()
 	m_fHaste = 0.0f;
 	m_SpeedfHaste = 1.0f;
 	m_AutosyncType = AUTOSYNC_OFF;
+	m_SoundEffectType = SOUNDEFFECT_OFF;
 	m_bSaveScore = true;
 }
 
@@ -33,6 +34,7 @@ void SongOptions::Approach( const SongOptions& other, float fDeltaSeconds )
 	APPROACH( fHaste );
 	DO_COPY( m_bAssistTick );
 	DO_COPY( m_AutosyncType );
+	DO_COPY( m_SoundEffectType );
 	DO_COPY( m_bSaveScore );
 #undef APPROACH
 #undef DO_COPY
@@ -95,6 +97,14 @@ void SongOptions::GetMods( vector<RString> &AddTo ) const
 	case AUTOSYNC_SONG:	AddTo.push_back("AutosyncSong");	break;
 	case AUTOSYNC_MACHINE:	AddTo.push_back("AutosyncMachine");	break;
 	case AUTOSYNC_TEMPO:	AddTo.push_back("AutosyncTempo");	break;
+	default:        	ASSERT(0);
+	}
+
+	switch( m_SoundEffectType )
+	{
+	case SOUNDEFFECT_OFF:	                                	break;
+	case SOUNDEFFECT_SPEED:	AddTo.push_back("EffectSpeed");		break;
+	case SOUNDEFFECT_PITCH:	AddTo.push_back("EffectPitch");		break;
 	default:        	ASSERT(0);
 	}
 }
@@ -187,6 +197,12 @@ void SongOptions::FromString( const RString &sOptions )
 			m_AutosyncType = on ? AUTOSYNC_MACHINE : AUTOSYNC_OFF; 
 		else if( sBit == "autosynctempo" )
 			m_AutosyncType = on ? AUTOSYNC_TEMPO : AUTOSYNC_OFF;
+		else if( sBit == "effect" && !on )
+			m_SoundEffectType = SOUNDEFFECT_OFF;
+		else if( sBit == "effectspeed" )
+			m_SoundEffectType = on ? SOUNDEFFECT_SPEED : SOUNDEFFECT_OFF;
+		else if( sBit == "effectpitch" )
+			m_SoundEffectType = on ? SOUNDEFFECT_PITCH : SOUNDEFFECT_OFF;
 		else if( sBit == "savescore" )		m_bSaveScore = on;
 		else if( sBit == "bar" )		m_LifeType = LIFE_BAR;
 		else if( sBit == "battery" )		m_LifeType = LIFE_BATTERY;
@@ -206,6 +222,7 @@ bool SongOptions::operator==( const SongOptions &other ) const
 	COMPARE( m_fHaste );
 	COMPARE( m_bAssistTick );
 	COMPARE( m_AutosyncType );
+	COMPARE( m_SoundEffectType );
 	COMPARE( m_bSaveScore );
 #undef COMPARE
 	return true;
