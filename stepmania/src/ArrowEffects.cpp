@@ -11,6 +11,7 @@
 #include "PlayerState.h"
 #include "GameState.h"
 #include "Style.h"
+#include "ThemeMetric.h"
 #include <float.h>
 
 const float ARROW_SPACING	= ARROW_SIZE;// + 2;
@@ -594,6 +595,38 @@ float ArrowEffects::GetZoom( const PlayerState* pPlayerState )
 		fZoom *= fMiniPercent;
 	}
 	return fZoom;
+}
+
+static ThemeMetric<float>	FRAME_WIDTH_EFFECTS_PIXELS_PER_SECOND( "ArrowEffects", "FrameWidthEffectsPixelsPerSecond" );
+static ThemeMetric<float>	FRAME_WIDTH_EFFECTS_MIN_MULTIPLIER( "ArrowEffects", "FrameWidthEffectsMinMultiplier" );
+static ThemeMetric<float>	FRAME_WIDTH_EFFECTS_MAX_MULTIPLIER( "ArrowEffects", "FrameWidthEffectsMaxMultiplier" );
+static ThemeMetric<bool>	FRAME_WIDTH_LOCK_EFFECTS_TO_OVERLAPPING( "ArrowEffects", "FrameWidthLockEffectsToOverlapping" );
+static ThemeMetric<float>	FRAME_WIDTH_LOCK_EFFECTS_TWEEN_PIXELS( "ArrowEffects", "FrameWidthLockEffectsTweenPixels" );
+
+float ArrowEffects::GetFrameWidthScale( const PlayerState* pPlayerState, float fYOffset, float fOverlappedTime )
+{
+	float fFrameWidthMultiplier = 1.0f;
+
+	float fPixelsPerSecond = FRAME_WIDTH_EFFECTS_PIXELS_PER_SECOND;
+	float fSecond = fYOffset / fPixelsPerSecond;
+	float fWidthEffect = pPlayerState->m_EffectHistory.GetSample( fSecond );
+	if( fWidthEffect != 0 && FRAME_WIDTH_LOCK_EFFECTS_TO_OVERLAPPING )
+	{
+		/* Don't display effect data that happened before this hold overlapped the top. */
+		float fFromEndOfOverlapped = fOverlappedTime - fSecond;
+		float fTrailingPixels = FRAME_WIDTH_LOCK_EFFECTS_TWEEN_PIXELS;
+		float fTrailingSeconds = fTrailingPixels / fPixelsPerSecond;
+		float fScaleEffect = SCALE( fFromEndOfOverlapped, 0.0f, fTrailingSeconds, 0.0f, 1.0f );
+		CLAMP( fScaleEffect, 0.0f, 1.0f );
+		fWidthEffect *= fScaleEffect;
+	}
+
+	if( fWidthEffect > 0 )
+		fFrameWidthMultiplier *= SCALE( fWidthEffect, 0.0f, 1.0f, 1.0f, FRAME_WIDTH_EFFECTS_MAX_MULTIPLIER );
+	else if( fWidthEffect < 0 )
+		fFrameWidthMultiplier *= SCALE( fWidthEffect, 0.0f, -1.0f, 1.0f, FRAME_WIDTH_EFFECTS_MIN_MULTIPLIER );
+
+	return fFrameWidthMultiplier;
 }
 
 /*

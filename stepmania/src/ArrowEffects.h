@@ -61,6 +61,8 @@ public:
 
 	// This is the zoom of the individual tracks, not of the whole Player.
 	static float GetZoom( const PlayerState* pPlayerState );
+
+	static float GetFrameWidthScale( const PlayerState* pPlayerState, float fYOffset, float fOverlappedTime );
 };
 
 #endif

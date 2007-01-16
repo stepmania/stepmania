@@ -373,6 +373,7 @@ struct StripBuffer
 
 void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, float fPercentFadeToFail, float fColorScale, bool bGlow,
 				float fDrawDistanceAfterTargetsPixels, float fDrawDistanceBeforeTargetsPixels, float fFadeInPercentOfDrawFar,
+				float fOverlappedTime,
 				float fYTop, float fYBottom,
 				float fYStartPos, float fYEndPos,
 				bool bWrapping, bool bAnchorToTop, bool bFlipTextureVertically )
@@ -442,10 +443,13 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 
 		const float fYOffset		= ArrowEffects::GetYOffsetFromYPos( m_pPlayerState, iCol, fY, m_fYReverseOffsetPixels );
 		const float fZ			= ArrowEffects::GetZPos( m_pPlayerState, iCol, fYOffset );
+		const float fFrameWidthScale	= ArrowEffects::GetFrameWidthScale( m_pPlayerState, fYOffset, fOverlappedTime );
+		const float fScaledFrameWidth	= fFrameWidth * fFrameWidthScale;
+
 		const float fX			= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset );
-		const float fXLeft		= fX - fFrameWidth/2;
+		const float fXLeft		= fX - fScaledFrameWidth/2;
 		const float fXCenter		= fX;
-		const float fXRight		= fX + fFrameWidth/2;
+		const float fXRight		= fX + fScaledFrameWidth/2;
 		const float fDistFromTop	= fY - fYTop;
 		float fTexCoordTop		= SCALE( fDistFromTop, 0, fFrameHeight, rect.top, rect.bottom );
 		fTexCoordTop += fAddToTexCoord;
@@ -555,6 +559,7 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 		vpSprTop,
 		iCol, fYStep, fPercentFadeToFail, fColorScale, bGlow,
 		fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar,
+		tn.HoldResult.fOverlappedTime,
 		fYHead-fFrameHeightTop, fYHead,
 		fYStartPos, min(fYEndPos, fYTail),
 		false, bTopAnchor, bFlipHoldBody );
@@ -564,6 +569,7 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 		vpSprBody,
 		iCol, fYStep, fPercentFadeToFail, fColorScale, bGlow,
 		fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar,
+		tn.HoldResult.fOverlappedTime,
 		fYHead, fYTail,
 		fYStartPos, fYEndPos,
 		true, bTopAnchor, bFlipHoldBody );
@@ -573,6 +579,7 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 		vpSprBottom,
 		iCol, fYStep, fPercentFadeToFail, fColorScale, bGlow,
 		fDrawDistanceAfterTargetsPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar,
+		tn.HoldResult.fOverlappedTime,
 		fYTail, fYTail+fFrameHeightBottom,
 		max(fYStartPos, fYHead), fYEndPos,
 		false, bTopAnchor, bFlipHoldBody );
