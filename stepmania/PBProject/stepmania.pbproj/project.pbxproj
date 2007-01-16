@@ -3640,8 +3640,6 @@
 		AA6EFDC804770AF1005F316C /* DataStructures */ = {
 			isa = PBXGroup;
 			children = (
-				AAEBF57C0B5C83F4005F3C7C /* SoundEffectControl.cpp */,
-				AAEBF57D0B5C83F4005F3C7C /* SoundEffectControl.h */,
 				AA84B7050996F8370085EECB /* AdjustSync.cpp */,
 				AA84B7060996F8370085EECB /* AdjustSync.h */,
 				AAFF5541054E736D00D02EE9 /* Attack.cpp */,
@@ -3773,6 +3771,8 @@
 				AA6EFE0804770C79005F316C /* SongOptions.h */,
 				AA5C73F90637A5F000AFB891 /* SongUtil.cpp */,
 				AA5C73FA0637A5F000AFB891 /* SongUtil.h */,
+				AAEBF57C0B5C83F4005F3C7C /* SoundEffectControl.cpp */,
+				AAEBF57D0B5C83F4005F3C7C /* SoundEffectControl.h */,
 				AA6EFE0904770C79005F316C /* StageStats.cpp */,
 				AA6EFE0A04770C79005F316C /* StageStats.h */,
 				AAF430FD04DC98BC00D02EE9 /* Steps.cpp */,
