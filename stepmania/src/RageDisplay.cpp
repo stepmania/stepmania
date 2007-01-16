@@ -850,6 +850,9 @@ void RageDisplay::DrawSymmetricQuadStrip( const RageSpriteVertex v[], int iNumVe
 {
 	ASSERT( iNumVerts >= 3 );
 
+	if( iNumVerts < 6 )
+		return;
+
 	this->DrawSymmetricQuadStripInternal( v, iNumVerts );
 
 	StatsAddVerts( iNumVerts );
