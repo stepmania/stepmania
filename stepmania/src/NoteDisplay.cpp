@@ -365,7 +365,7 @@ struct StripBuffer
 	}
 	void Draw()
 	{
-		DISPLAY->DrawQuadStrip( buf, v-buf );
+		DISPLAY->DrawSymmetricQuadStrip( buf, v-buf );
 	}
 	int Used() const { return v - buf; }
 	int Free() const { return size - Used(); }
@@ -427,6 +427,10 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 
 	DISPLAY->ClearAllTextures();
 
+	const float fTexCoordLeft	= rect.left;
+	const float fTexCoordRight	= rect.right;
+	const float fTexCoordCenter	= (fTexCoordLeft+fTexCoordRight)/2;
+
 	StripBuffer queue;
 	for( float fY = fYStartPos; !bLast; fY += fYStep )
 	{
@@ -440,23 +444,24 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 		const float fZ			= ArrowEffects::GetZPos( m_pPlayerState, iCol, fYOffset );
 		const float fX			= ArrowEffects::GetXPos( m_pPlayerState, iCol, fYOffset );
 		const float fXLeft		= fX - fFrameWidth/2;
+		const float fXCenter		= fX;
 		const float fXRight		= fX + fFrameWidth/2;
 		const float fDistFromTop	= fY - fYTop;
 		float fTexCoordTop		= SCALE( fDistFromTop, 0, fFrameHeight, rect.top, rect.bottom );
 		fTexCoordTop += fAddToTexCoord;
 
-		const float fTexCoordLeft	= rect.left;
-		const float fTexCoordRight	= rect.right;
 		const float fAlpha		= ArrowGetAlphaOrGlow( bGlow, m_pPlayerState, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels, fDrawDistanceBeforeTargetsPixels, fFadeInPercentOfDrawFar );
 		const RageColor color		= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 
 		if( fAlpha > 0 )
 			bAllAreTransparent = false;
 
-		queue.v[0].p = RageVector3(fXLeft,  fY, fZ); queue.v[0].c = color; queue.v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
-		queue.v[1].p = RageVector3(fXRight, fY, fZ); queue.v[1].c = color; queue.v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
-		queue.v+=2;
-		if( queue.Free() < 2 || bLast )
+		queue.v[0].p = RageVector3(fXLeft,  fY, fZ);  queue.v[0].c = color; queue.v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
+		queue.v[1].p = RageVector3(fXCenter, fY, fZ); queue.v[1].c = color; queue.v[1].t = RageVector2(fTexCoordCenter, fTexCoordTop);
+		queue.v[2].p = RageVector3(fXRight, fY, fZ);  queue.v[2].c = color; queue.v[2].t = RageVector2(fTexCoordRight, fTexCoordTop);
+
+		queue.v+=3;
+		if( queue.Free() < 3 || bLast )
 		{
 			/* The queue is full.  Render it, clear the buffer, and move back a step to
 			 * start off the quad strip again. */
