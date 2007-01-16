@@ -984,7 +984,7 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 			RString sType;
 			switch( GAMESTATE->m_SongOptions.GetCurrent().m_SoundEffectType )
 			{
-			case SongOptions::SOUNDEFFECT_OFF:	sType = "";				break;
+			case SongOptions::SOUNDEFFECT_OFF:	sType = "SoundEffectControl_Off";	break;
 			case SongOptions::SOUNDEFFECT_SPEED:	sType = "SoundEffectControl_Speed";	break;
 			case SongOptions::SOUNDEFFECT_PITCH:	sType = "SoundEffectControl_Pitch";	break;
 			}
