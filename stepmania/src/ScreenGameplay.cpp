@@ -980,6 +980,17 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 			m_AutoKeysounds.Load( pi->GetStepsAndTrailIndex(), nd );
 		}
 
+		{
+			RString sType;
+			switch( GAMESTATE->m_SongOptions.GetCurrent().m_SoundEffectType )
+			{
+			case SongOptions::SOUNDEFFECT_OFF:	sType = "";				break;
+			case SongOptions::SOUNDEFFECT_SPEED:	sType = "SoundEffectControl_Speed";	break;
+			case SongOptions::SOUNDEFFECT_PITCH:	sType = "SoundEffectControl_Pitch";	break;
+			}
+
+			pi->m_SoundEffectControl.Load( sType, pi->GetPlayerState(), &pi->m_NoteData );
+		}
 
 		// Put course options into effect.  Do this after Player::Load so
 		// that mods aren't double-applied.
@@ -1254,6 +1265,12 @@ void ScreenGameplay::LoadNextSong()
 	 * to compete with other loading. */
 	m_AutoKeysounds.FinishLoading();
 	m_pSoundMusic = m_AutoKeysounds.GetSound();
+
+	/* Give SoundEffectControls the new RageSoundReaders. */
+	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
+	{
+		pi->m_SoundEffectControl.SetSoundReader( m_pSoundMusic->GetSoundReader() );
+	}
 }
 
 void ScreenGameplay::LoadLights()
@@ -1587,6 +1604,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 		{
 			pi->GetPlayerState()->m_HealthState = PlayerState::ALIVE;
 		}
+		
+		pi->m_SoundEffectControl.Update( fDeltaTime );
 	}
 
 	if( GAMESTATE->m_SongOptions.GetCurrent().m_fHaste != 0.0f )

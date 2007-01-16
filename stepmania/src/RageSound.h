@@ -110,6 +110,10 @@ public:
 	/* Load a RageSoundReader that you've set up yourself.  Sample rate conversion will
 	 * be set up only if needed.  Doesn't fail. */
 	void LoadSoundReader( RageSoundReader *pSound );
+
+	/* Get the loaded RageSoundReader.  While playing, only properties can be set. */
+	RageSoundReader *GetSoundReader() { return m_pSource; }
+
 	void Unload();
 	bool IsLoaded() const;
 

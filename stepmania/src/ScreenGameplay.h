@@ -18,6 +18,7 @@
 #include "PlayerStageStats.h"
 #include "PlayerState.h"
 #include "InputEventPlus.h"
+#include "SoundEffectControl.h"
 
 class LyricsLoader;
 class ActiveAttackList;
@@ -67,6 +68,7 @@ public:
 	bool			m_bIsDummy;
 	PlayerState		m_PlayerStateDummy;
 	PlayerStageStats	m_PlayerStageStatsDummy;
+	SoundEffectControl	m_SoundEffectControl;
 
 	vector<Steps*>		m_vpStepsQueue;	// size may be >1 if playing a course
 	vector<AttackArray>	m_asModifiersQueue;// size may be >1 if playing a course
