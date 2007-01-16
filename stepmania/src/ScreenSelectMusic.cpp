@@ -69,6 +69,9 @@ void ScreenSelectMusic::Init()
 	SELECT_MENU_AVAILABLE.Load( m_sName, "SelectMenuAvailable" );
 	MODE_MENU_AVAILABLE.Load( m_sName, "ModeMenuAvailable" );
 
+	m_GameButtonPreviousSong = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"PreviousSongButton") );
+	m_GameButtonNextSong = INPUTMAPPER->GetInputScheme()->ButtonNameToIndex( THEME->GetMetric(m_sName,"NextSongButton") );
+
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 
 	/* Finish any previous stage.  It's OK to call this when we havn't played a stage yet. 
@@ -357,10 +360,8 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		return;
 	}
 
-	switch( input.MenuI )
+	if( input.MenuI == m_GameButtonNextSong  ||  input.MenuI == m_GameButtonPreviousSong )
 	{
-	case MENU_BUTTON_RIGHT:
-	case MENU_BUTTON_LEFT:
 		{
 			/* If we're rouletting, hands off. */
 			if( m_MusicWheel.IsRouletting() )
@@ -370,8 +371,8 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			bool bRightIsDown = false;
 			FOREACH_EnabledPlayer( p )
 			{
-				bLeftIsDown |= INPUTMAPPER->IsBeingPressed( MENU_BUTTON_LEFT, p );
-				bRightIsDown |= INPUTMAPPER->IsBeingPressed( MENU_BUTTON_RIGHT, p );
+				bLeftIsDown |= INPUTMAPPER->IsBeingPressed( m_GameButtonPreviousSong, p );
+				bRightIsDown |= INPUTMAPPER->IsBeingPressed( m_GameButtonNextSong, p );
 			}
 			
 			bool bBothDown = bLeftIsDown && bRightIsDown;
@@ -388,15 +389,10 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 				m_MusicWheel.Move( 0 );
 				if( input.type == IET_FIRST_PRESS )
 				{
-					switch( input.MenuI )
-					{
-					case MENU_BUTTON_LEFT:
+					if( input.MenuI == m_GameButtonPreviousSong )
 						m_MusicWheel.ChangeMusicUnlessLocked( -1 );
-						break;
-					case MENU_BUTTON_RIGHT:
+					else if( input.MenuI == m_GameButtonNextSong )
 						m_MusicWheel.ChangeMusicUnlessLocked( +1 );
-						break;
-					}
 				}
 			}
 			else if( bLeftIsDown )
@@ -422,12 +418,11 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			{
 				FOREACH_HumanPlayer( p )
 				{
-					INPUTMAPPER->ResetKeyRepeat( MENU_BUTTON_LEFT, p );
-					INPUTMAPPER->ResetKeyRepeat( MENU_BUTTON_RIGHT, p );
+					INPUTMAPPER->ResetKeyRepeat( m_GameButtonPreviousSong, p );
+					INPUTMAPPER->ResetKeyRepeat( m_GameButtonNextSong, p );
 				}
 			}
 		}
-		break;
 	}
 
 	if( input.type == IET_FIRST_PRESS && DetectCodes(input) )

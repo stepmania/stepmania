@@ -14,6 +14,7 @@
 #include "ThemeMetric.h"
 #include "RageTexturePreloader.h"
 #include "TimingData.h"
+#include "GameInput.h"
 
 class ScreenSelectMusic : public ScreenWithMenuElements
 {
@@ -66,6 +67,9 @@ protected:
 	ThemeMetric<bool> OPTIONS_MENU_AVAILABLE;
 	DynamicThemeMetric<bool> SELECT_MENU_AVAILABLE;
 	DynamicThemeMetric<bool> MODE_MENU_AVAILABLE;
+
+	GameButton m_GameButtonPreviousSong;
+	GameButton m_GameButtonNextSong;
 
 	RString m_sSectionMusicPath;
 	RString m_sSortMusicPath;
