@@ -22,6 +22,7 @@
 #include "ScoreKeeperRave.h"
 #include "LyricsLoader.h"
 #include "ActorUtil.h"
+#include "RageSoundReader.h"
 #include "RageTextureManager.h"
 #include "GameSoundManager.h"
 #include "CombinedLifeMeterTug.h"
@@ -329,6 +330,8 @@ ScreenGameplay::ScreenGameplay()
 
 void ScreenGameplay::Init()
 {
+	SubscribeToMessage( "Judgment" );
+
 	PLAYER_TYPE.Load(			m_sName, "PlayerType" );
 	PLAYER_INIT_COMMAND.Load(		m_sName, "PlayerInitCommand" );
 	GIVE_UP_START_TEXT.Load(		m_sName, "GiveUpStartText" );
@@ -2605,7 +2608,41 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
+void ScreenGameplay::HandleMessage( const Message &msg )
+{
+	if( msg == "Judgment" )
+	{
+		PlayerNumber pn;
+		msg.GetParam( "Player", pn );
 
+		FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
+		{
+			if( pi->m_pn != pn )
+				continue;
+			if( !pi->GetPlayerState()->m_PlayerOptions.GetCurrent().m_bMuteOnError )
+				continue;
+
+			RageSoundReader *pSoundReader = m_pSoundMusic->GetSoundReader();
+
+			HoldNoteScore hns;
+			msg.GetParam( "HoldNoteScore", hns );
+			TapNoteScore tns;
+			msg.GetParam( "TapNoteScore", tns );
+
+			bool bOn = false;
+			if( hns != HoldNoteScore_Invalid )
+				bOn = hns != HNS_LetGo;
+			else
+				bOn = tns != TNS_Miss;
+
+			if( pSoundReader )
+				pSoundReader->SetProperty( "Volume", bOn? 1.0f:0.0f );
+		}
+	}
+
+	ScreenWithMenuElements::HandleMessage( msg );
+}
+ 
 void ScreenGameplay::Cancel( ScreenMessage smSendWhenDone )
 {
 	m_pSoundMusic->Stop();
