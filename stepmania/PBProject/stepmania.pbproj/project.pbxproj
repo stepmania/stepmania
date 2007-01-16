@@ -1794,6 +1794,14 @@
 		AAEBC79107A4FF5600793F0E /* LuaManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAEBC78D07A4FF5600793F0E /* LuaManager.cpp */; };
 		AAEBC79207A4FF5600793F0E /* LuaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = AAEBC78E07A4FF5600793F0E /* LuaManager.h */; };
 		AAEBC79307A4FF5600793F0E /* PlayerState.h in Headers */ = {isa = PBXBuildFile; fileRef = AAEBC78F07A4FF5600793F0E /* PlayerState.h */; };
+		AAEBF5600B5C517E005F3C7C /* SampleHistory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAEBF55E0B5C517E005F3C7C /* SampleHistory.cpp */; };
+		AAEBF5610B5C517E005F3C7C /* SampleHistory.h in Headers */ = {isa = PBXBuildFile; fileRef = AAEBF55F0B5C517E005F3C7C /* SampleHistory.h */; };
+		AAEBF5620B5C517E005F3C7C /* SampleHistory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAEBF55E0B5C517E005F3C7C /* SampleHistory.cpp */; };
+		AAEBF5630B5C517E005F3C7C /* SampleHistory.h in Headers */ = {isa = PBXBuildFile; fileRef = AAEBF55F0B5C517E005F3C7C /* SampleHistory.h */; };
+		AAEBF57E0B5C83F4005F3C7C /* SoundEffectControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAEBF57C0B5C83F4005F3C7C /* SoundEffectControl.cpp */; };
+		AAEBF57F0B5C83F4005F3C7C /* SoundEffectControl.h in Headers */ = {isa = PBXBuildFile; fileRef = AAEBF57D0B5C83F4005F3C7C /* SoundEffectControl.h */; };
+		AAEBF5800B5C83F4005F3C7C /* SoundEffectControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAEBF57C0B5C83F4005F3C7C /* SoundEffectControl.cpp */; };
+		AAEBF5810B5C83F4005F3C7C /* SoundEffectControl.h in Headers */ = {isa = PBXBuildFile; fileRef = AAEBF57D0B5C83F4005F3C7C /* SoundEffectControl.h */; };
 		AAED6F2C0601C528002D2DEE /* Backtrace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAED6F280601C528002D2DEE /* Backtrace.cpp */; };
 		AAED6F2D0601C528002D2DEE /* Backtrace.h in Headers */ = {isa = PBXBuildFile; fileRef = AAED6F290601C528002D2DEE /* Backtrace.h */; };
 		AAED6F2E0601C528002D2DEE /* BacktraceNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAED6F2A0601C528002D2DEE /* BacktraceNames.cpp */; };
@@ -2830,6 +2838,10 @@
 		AAEBC78D07A4FF5600793F0E /* LuaManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = LuaManager.cpp; path = ../src/LuaManager.cpp; sourceTree = "<group>"; };
 		AAEBC78E07A4FF5600793F0E /* LuaManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = LuaManager.h; path = ../src/LuaManager.h; sourceTree = "<group>"; };
 		AAEBC78F07A4FF5600793F0E /* PlayerState.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = PlayerState.h; path = ../src/PlayerState.h; sourceTree = "<group>"; };
+		AAEBF55E0B5C517E005F3C7C /* SampleHistory.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SampleHistory.cpp; path = ../src/SampleHistory.cpp; sourceTree = "<group>"; };
+		AAEBF55F0B5C517E005F3C7C /* SampleHistory.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SampleHistory.h; path = ../src/SampleHistory.h; sourceTree = "<group>"; };
+		AAEBF57C0B5C83F4005F3C7C /* SoundEffectControl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SoundEffectControl.cpp; path = ../src/SoundEffectControl.cpp; sourceTree = "<group>"; };
+		AAEBF57D0B5C83F4005F3C7C /* SoundEffectControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SoundEffectControl.h; path = ../src/SoundEffectControl.h; sourceTree = "<group>"; };
 		AAECF8BF05265DB600D02EE9 /* ScreenExit.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenExit.cpp; path = ../src/ScreenExit.cpp; sourceTree = "<group>"; };
 		AAECF8C005265DB600D02EE9 /* ScreenExit.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenExit.h; path = ../src/ScreenExit.h; sourceTree = "<group>"; };
 		AAED6F280601C528002D2DEE /* Backtrace.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = Backtrace.cpp; sourceTree = "<group>"; };
@@ -3628,6 +3640,8 @@
 		AA6EFDC804770AF1005F316C /* DataStructures */ = {
 			isa = PBXGroup;
 			children = (
+				AAEBF57C0B5C83F4005F3C7C /* SoundEffectControl.cpp */,
+				AAEBF57D0B5C83F4005F3C7C /* SoundEffectControl.h */,
 				AA84B7050996F8370085EECB /* AdjustSync.cpp */,
 				AA84B7060996F8370085EECB /* AdjustSync.h */,
 				AAFF5541054E736D00D02EE9 /* Attack.cpp */,
@@ -3739,6 +3753,8 @@
 				AA3D790006A275E90064B980 /* RadarValues.h */,
 				AA6E01E6047720A3005F316C /* RandomSample.cpp */,
 				AA6E01E7047720A3005F316C /* RandomSample.h */,
+				AAEBF55E0B5C517E005F3C7C /* SampleHistory.cpp */,
+				AAEBF55F0B5C517E005F3C7C /* SampleHistory.h */,
 				AAE2D6D30A67481E00071546 /* ScoreKeeper.cpp */,
 				AA6EFF3004770F63005F316C /* ScoreKeeper.h */,
 				AAB779F90B0D9CB200B74314 /* ScoreKeeperGuitar.cpp */,
@@ -4678,6 +4694,8 @@
 				AA909E200B45B676002852D3 /* RageDriver.h in Headers */,
 				AA909E3E0B45B8FB002852D3 /* RageSoundReader_Extend.h in Headers */,
 				AA909E400B45B8FB002852D3 /* RageSoundReader_ThreadedBuffer.h in Headers */,
+				AAEBF5610B5C517E005F3C7C /* SampleHistory.h in Headers */,
+				AAEBF57F0B5C83F4005F3C7C /* SoundEffectControl.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5126,6 +5144,8 @@
 				AA909E220B45B676002852D3 /* RageDriver.h in Headers */,
 				AA909E420B45B8FB002852D3 /* RageSoundReader_Extend.h in Headers */,
 				AA909E440B45B8FB002852D3 /* RageSoundReader_ThreadedBuffer.h in Headers */,
+				AAEBF5630B5C517E005F3C7C /* SampleHistory.h in Headers */,
+				AAEBF5810B5C83F4005F3C7C /* SoundEffectControl.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5824,6 +5844,8 @@
 				AA909E3D0B45B8FB002852D3 /* RageSoundReader_Extend.cpp in Sources */,
 				AA909E3F0B45B8FB002852D3 /* RageSoundReader_ThreadedBuffer.cpp in Sources */,
 				AA909E490B45B93E002852D3 /* LightsDriver.cpp in Sources */,
+				AAEBF5600B5C517E005F3C7C /* SampleHistory.cpp in Sources */,
+				AAEBF57E0B5C83F4005F3C7C /* SoundEffectControl.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6251,6 +6273,8 @@
 				AA909E410B45B8FB002852D3 /* RageSoundReader_Extend.cpp in Sources */,
 				AA909E430B45B8FB002852D3 /* RageSoundReader_ThreadedBuffer.cpp in Sources */,
 				AA909E4A0B45B93E002852D3 /* LightsDriver.cpp in Sources */,
+				AAEBF5620B5C517E005F3C7C /* SampleHistory.cpp in Sources */,
+				AAEBF5800B5C83F4005F3C7C /* SoundEffectControl.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
