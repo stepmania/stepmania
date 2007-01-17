@@ -1282,6 +1282,40 @@ void Player::Fret( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 
 	if( bDoHopo )
 		Hopo( iHopoCol, row, tm, bHeld, bRelease );
+
+
+	// Check if this fret breaks all active holds.
+	if( !bRelease )
+	{
+		const float fSongBeat = GAMESTATE->m_fSongBeat;
+		const int iSongRow = BeatToNoteRow( fSongBeat );
+
+		int iMaxHoldCol = -1;
+		int iNumColsHeld = 0;
+
+		// Score all active holds to NotHeld
+		for( int iTrack=0; iTrack<m_NoteData.GetNumTracks(); ++iTrack )
+		{
+			// Since this is being called every frame, let's not check the whole array every time.
+			// Instead, only check 1 beat back.  Even 1 is overkill.
+			const int iStartCheckingAt = max( 0, iSongRow-BeatToNoteRow(1) );
+			NoteData::iterator begin, end;
+			m_NoteData.GetTapNoteRangeInclusive( iTrack, iStartCheckingAt, iSongRow+1, begin, end );
+			for( ; begin != end; ++begin )
+			{
+				TapNote &tn = begin->second;
+				if( tn.HoldResult.bActive )
+				{
+					iMaxHoldCol = iTrack;
+					iNumColsHeld++;
+				}
+			}
+		}
+
+		// Any frets to the right of an active hold will break the hold.
+		if( col > iMaxHoldCol  ||  iNumColsHeld >= 2 )
+			ScoreAllActiveHoldsLetGo();
+	}
 }
 
 
@@ -1297,7 +1331,7 @@ void Player::Strum( int col, int row, const RageTimer &tm, bool bHeld, bool bRel
 
 	m_pPlayerState->m_fLastStrumMusicSeconds = GAMESTATE->m_fMusicSeconds;
 
-	//StepStrumHopo( col, row, tm, bHeld, bRelease, ButtonType_StrumFretsChanged );
+	StepStrumHopo( col, row, tm, bHeld, bRelease, ButtonType_StrumFretsChanged );
 }
 
 void Player::DoTapScoreNone()
@@ -1337,6 +1371,11 @@ void Player::DoStrumMiss()
 	m_pPlayerState->m_fLastStrumMusicSeconds = -1;
 	DoTapScoreNone();
 
+	ScoreAllActiveHoldsLetGo();
+}
+
+void Player::ScoreAllActiveHoldsLetGo()
+{
 	if( PENALIZE_TAP_SCORE_NONE )
 	{
 		const float fSongBeat = GAMESTATE->m_fSongBeat;
@@ -1356,6 +1395,7 @@ void Player::DoStrumMiss()
 				if( tn.HoldResult.bActive )
 				{
 					tn.HoldResult.hns = HNS_LetGo;
+					tn.HoldResult.fLife = 0;
 				
 					HandleHoldScore( tn );
 					SetHoldJudgment( tn.result.tns, tn.HoldResult.hns, iTrack );

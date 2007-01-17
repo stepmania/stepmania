@@ -128,7 +128,7 @@ public:
 
 	// Called when the strum window passes without a row being hit
 	void DoStrumMiss();
-
+	void ScoreAllActiveHoldsLetGo();
 	void DoTapScoreNone();
 
 	enum ButtonType { ButtonType_Step, ButtonType_StrumFretsChanged, ButtonType_Hopo };
