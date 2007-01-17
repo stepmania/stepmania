@@ -35,6 +35,7 @@ public:
 	enum HealthState { HOT, ALIVE, DANGER, DEAD };
 	HealthState		m_HealthState;
 
+	float			m_fLastStrumMusicSeconds;	// Set to the MusicSeconds of when the a strum button was pressed.  If -1, the strum window has passed.
 	float			m_fLastHopoNoteMusicSeconds;	// Set to the MusicSeconds of the last note successfully strummed or hammered in a hopochain, -1, then there is no current hopo chain
 	int			m_iLastHopoNoteCol;	// if -1, then there is no current hopo chain
 

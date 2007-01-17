@@ -71,7 +71,8 @@ static Preference<float> m_fTimingWindowScale	( "TimingWindowScale",		1.0f );
 static Preference<float> m_fTimingWindowAdd	( "TimingWindowAdd",		0 );
 static Preference1D<float> m_fTimingWindowSeconds( TimingWindowSecondsInit, NUM_TimingWindow );
 static Preference<float> m_fTimingWindowJump	( "TimingWindowJump",		0.25 );
-Preference<float> g_fTimingWindowHopo		( "TimingWindowHopo",		0.25 );
+Preference<float> g_fTimingWindowHopo		( "TimingWindowHopo",		0.25 );		// max time between notes in a hopo chain
+Preference<float> g_fTimingWindowStrum		( "TimingWindowStrum",		0.1f );		// max time between strum and when the frets must match
 ThemeMetric<bool> PENALIZE_TAP_SCORE_NONE	( "Player", "PenalizeTapScoreNone" );
 ThemeMetric<bool> JUDGE_HOLD_NOTES_ON_SAME_ROW_TOGETHER	( "Player", "JudgeHoldNotesOnSameRowTogether" );
 
@@ -595,6 +596,15 @@ void Player::Update( float fDeltaTime )
 	if( m_bPaused )
 		return;
 	
+	//
+	// Check for a strum miss
+	//
+	if( m_pPlayerState->m_fLastStrumMusicSeconds != -1  &&
+		m_pPlayerState->m_fLastStrumMusicSeconds + g_fTimingWindowStrum < GAMESTATE->m_fMusicSeconds )
+	{
+		DoStrumMiss();
+	}
+
 	//
 	// Check for TapNote misses
 	//
@@ -1213,6 +1223,15 @@ void Player::Fret( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 
 	m_vbFretIsDown[ col ] = !bRelease;
 
+
+	// Handle changing fret during a strum
+	if( m_pPlayerState->m_fLastStrumMusicSeconds != -1 )
+	{
+		LOG->Trace( "StrumTry" );
+		StepStrumHopo( col, row, tm, bHeld, bRelease, ButtonType_StrumFretsChanged );
+	}
+
+
 	// Handle hammer-ons and pull-offs
 	const float fPositionSeconds = GAMESTATE->m_fMusicSeconds - tm.Ago();
 	int iHopoCol = -1;
@@ -1265,12 +1284,93 @@ void Player::Fret( int col, int row, const RageTimer &tm, bool bHeld, bool bRele
 		Hopo( iHopoCol, row, tm, bHeld, bRelease );
 }
 
+
+void Player::Strum( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease )
+{
+	if( bRelease )
+		return;
+
+	if( m_pPlayerState->m_fLastStrumMusicSeconds != -1 )
+	{
+		DoStrumMiss();
+	}
+
+	m_pPlayerState->m_fLastStrumMusicSeconds = GAMESTATE->m_fMusicSeconds;
+
+	//StepStrumHopo( col, row, tm, bHeld, bRelease, ButtonType_StrumFretsChanged );
+}
+
+void Player::DoTapScoreNone()
+{
+	Message msg( "ScoreNone" );
+	MESSAGEMAN->Broadcast( msg );
+
+	const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
+	const int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
+
+	/* The only real way to tell if a mine has been scored is if it has disappeared
+	* but this only works for hit mines so update the scores for avoided mines here. */
+	if( m_pPrimaryScoreKeeper )
+		m_pPrimaryScoreKeeper->HandleTapScoreNone();
+	if( m_pSecondaryScoreKeeper )
+		m_pSecondaryScoreKeeper->HandleTapScoreNone();
+
+	SendComboMessages( iOldCombo, iOldMissCombo );
+
+
+	if( m_pLifeMeter )
+		m_pLifeMeter->HandleTapScoreNone();
+	// TODO: Remove use of PlayerNumber
+	PlayerNumber pn = PLAYER_INVALID;
+	if( m_pCombinedLifeMeter )
+		m_pCombinedLifeMeter->HandleTapScoreNone( pn );
+
+	if( PENALIZE_TAP_SCORE_NONE )
+	{
+		SetJudgment( TNS_Miss, false );
+		// the ScoreKeeper will subrtract points later.
+	}
+}
+
+void Player::DoStrumMiss()
+{
+	m_pPlayerState->m_fLastStrumMusicSeconds = -1;
+	DoTapScoreNone();
+
+	if( PENALIZE_TAP_SCORE_NONE )
+	{
+		const float fSongBeat = GAMESTATE->m_fSongBeat;
+		const int iSongRow = BeatToNoteRow( fSongBeat );
+
+		// Score all active holds to NotHeld
+		for( int iTrack=0; iTrack<m_NoteData.GetNumTracks(); ++iTrack )
+		{
+			// Since this is being called every frame, let's not check the whole array every time.
+			// Instead, only check 1 beat back.  Even 1 is overkill.
+			const int iStartCheckingAt = max( 0, iSongRow-BeatToNoteRow(1) );
+			NoteData::iterator begin, end;
+			m_NoteData.GetTapNoteRangeInclusive( iTrack, iStartCheckingAt, iSongRow+1, begin, end );
+			for( ; begin != end; ++begin )
+			{
+				TapNote &tn = begin->second;
+				if( tn.HoldResult.bActive )
+				{
+					tn.HoldResult.hns = HNS_LetGo;
+				
+					HandleHoldScore( tn );
+					SetHoldJudgment( tn.result.tns, tn.HoldResult.hns, iTrack );
+				}
+			}
+		}
+	}
+}
+
 void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, bool bRelease, Player::ButtonType pbt )
 {
 	if( IsOniDead() )
 		return;
 
-	// Do everything that depends on a RageTime here and set your breakpoints somewhere after this block
+	// Do everything that depends on a RageTimer here and set your breakpoints somewhere after this block
 	const float fLastBeatUpdate = GAMESTATE->m_LastBeatUpdate.Ago();
 	const float fPositionSeconds = GAMESTATE->m_fMusicSeconds - tm.Ago();
 	const float fTimeSinceStep = tm.Ago();
@@ -1278,14 +1378,12 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 	switch( pbt )
 	{
 	DEFAULT_FAIL(pbt);
-	case ButtonType_Strum:
-		if( bRelease )
-			return;	
-		break;
-	case ButtonType_Hopo:
-		bRelease = false;
-		break;
 	case ButtonType_Step:
+		break;
+	case ButtonType_StrumFretsChanged:
+	case ButtonType_Hopo:
+		// releasing should hit regular notes, not lifts
+		bRelease = false;
 		break;
 	}
 
@@ -1357,6 +1455,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 	// Count calories for this step, unless we're being called because a button is
 	// held over a mine or being released.
 	//
+	// TODO: Move calorie counting into a ScoreKeeper?
 	if( m_pPlayerStageStats && m_pPlayerState && !bHeld && !bRelease )
 	{
 		// TODO: remove use of PlayerNumber
@@ -1414,7 +1513,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 		switch( pbt )
 		{
 		DEFAULT_FAIL(pbt);
-		case ButtonType_Strum:
+		case ButtonType_StrumFretsChanged:
 			iRowOfOverlappingNoteOrRow = GetClosestNonEmptyRow( BeatToNoteRow(fSongBeat), iStepSearchRows, iStepSearchRows, false );
 			break;
 		case ButtonType_Hopo:
@@ -1461,7 +1560,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 		switch( pbt )
 		{
 		DEFAULT_FAIL(pbt);
-		case ButtonType_Strum:
+		case ButtonType_StrumFretsChanged:
 			pTN = &tnDummy;
 			break;
 		case ButtonType_Hopo:
@@ -1567,7 +1666,7 @@ void Player::StepStrumHopo( int col, int row, const RageTimer &tm, bool bHeld, b
 		switch( pbt )
 		{
 		DEFAULT_FAIL(pbt);
-		case ButtonType_Strum:
+		case ButtonType_StrumFretsChanged:
 			{
 				bool bNoteRowMatchesFrets = true;
 				int iFirstNoteCol = -1;
@@ -1713,7 +1812,7 @@ done_checking_hopo:
 			switch( pbt )
 			{
 			DEFAULT_FAIL(pbt);
-			case ButtonType_Strum:
+			case ButtonType_StrumFretsChanged:
 				for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
 				{
 					TapNote tn = m_NoteData.GetTapNote( t, iRowOfOverlappingNoteOrRow );
@@ -1761,69 +1860,35 @@ done_checking_hopo:
 		m_pPlayerState->ClearHopoState();
 	}
 
+	// check for strum end
+	if( score != TNS_None )
+	{
+		switch( pbt )
+		{
+		DEFAULT_FAIL(pbt);
+		case ButtonType_Step:
+			break;
+		case ButtonType_StrumFretsChanged:
+			m_pPlayerState->m_fLastStrumMusicSeconds = -1;
+			break;
+		case ButtonType_Hopo:
+			break;
+		}
+	}
+
 	if( score == TNS_None )
 	{
 		switch( pbt )
 		{
 		DEFAULT_FAIL(pbt);
-		case ButtonType_Strum:
 		case ButtonType_Step:
-			{
-				Message msg( "ScoreNone" );
-				MESSAGEMAN->Broadcast( msg );
-
-				const int iOldCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurCombo : 0;
-				const int iOldMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->m_iCurMissCombo : 0;
-
-				/* The only real way to tell if a mine has been scored is if it has disappeared
-				* but this only works for hit mines so update the scores for avoided mines here. */
-				if( m_pPrimaryScoreKeeper )
-					m_pPrimaryScoreKeeper->HandleTapScoreNone();
-				if( m_pSecondaryScoreKeeper )
-					m_pSecondaryScoreKeeper->HandleTapScoreNone();
-		
-				SendComboMessages( iOldCombo, iOldMissCombo );
-
-
-				if( m_pLifeMeter )
-					m_pLifeMeter->HandleTapScoreNone();
-				// TODO: Remove use of PlayerNumber
-				PlayerNumber pn = PLAYER_INVALID;
-				if( m_pCombinedLifeMeter )
-					m_pCombinedLifeMeter->HandleTapScoreNone( pn );
-
-				if( PENALIZE_TAP_SCORE_NONE )
-				{
-					SetJudgment( TNS_Miss, false );
-					// the ScoreKeeper will subrtract points later.
-
-					// Score all active holds to NotHeld
-					for( int iTrack=0; iTrack<m_NoteData.GetNumTracks(); ++iTrack )
-					{
-						// Since this is being called every frame, let's not check the whole array every time.
-						// Instead, only check 1 beat back.  Even 1 is overkill.
-						const int iStartCheckingAt = max( 0, iSongRow-BeatToNoteRow(1) );
-						NoteData::iterator begin, end;
-						m_NoteData.GetTapNoteRangeInclusive( iTrack, iStartCheckingAt, iSongRow+1, begin, end );
-						for( ; begin != end; ++begin )
-						{
-							TapNote &tn = begin->second;
-							if( tn.HoldResult.bActive )
-							{
-								tn.HoldResult.hns = HNS_LetGo;
-							
-								HandleHoldScore( tn );
-								SetHoldJudgment( tn.result.tns, tn.HoldResult.hns, iTrack );
-							}
-						}
-					}
-
-				}
-			}
+			DoTapScoreNone();
 			break;
+		case ButtonType_StrumFretsChanged:
 		case ButtonType_Hopo:
 			break;
 		}
+
 	}
 
 	if( score != TNS_None )
@@ -1844,7 +1909,7 @@ done_checking_hopo:
 			switch( pbt )
 			{
 			DEFAULT_FAIL(pbt);
-			case ButtonType_Strum:
+			case ButtonType_StrumFretsChanged:
 				for( int i=0; i<m_NoteData.GetNumTracks(); i++ )
 				{
 					const TapNote &tn = m_NoteData.GetTapNote( i, iRowOfOverlappingNoteOrRow );
@@ -1869,7 +1934,7 @@ done_checking_hopo:
 			switch( pbt )
 			{
 			DEFAULT_FAIL(pbt);
-			case ButtonType_Strum:
+			case ButtonType_StrumFretsChanged:
 				{
 					// only pulse the shortest string fret
 					int iLastFret = -1;
