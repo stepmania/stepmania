@@ -199,15 +199,6 @@ RageSound *RageSoundManager::PlayCopyOfSound( RageSound &snd, const RageSoundPar
 	return pSound;
 }
 
-void RageSoundManager::DeleteSound( RageSound *pSound )
-{
-	/* Stop playing the sound. */
-	pSound->StopPlaying();
-
-	/* We might be in a thread, so don't delete it here. */
-	DeleteSoundWhenFinished( pSound );
-}
-
 void RageSoundManager::DeleteSoundWhenFinished( RageSound *pSound )
 {
 	g_SoundManMutex.Lock(); /* lock for access to owned_sounds */

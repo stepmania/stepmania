@@ -42,9 +42,6 @@ public:
 	float GetPlayLatency() const;
 	int GetDriverSampleRate() const;
 
-	/* When deleting a sound from any thread except the one calling Update(), this
-	 * must be used to prevent race conditions. */
-	void DeleteSound( RageSound *pSound );
 	void DeleteSoundWhenFinished( RageSound *pSound );
 
 	RageSoundReader *GetLoadedSound( const RString &sPath );
