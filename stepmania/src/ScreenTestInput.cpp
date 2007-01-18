@@ -53,6 +53,10 @@ class InputList: public BitmapText
 
 			RString sTemp;
 			sTemp += INPUTMAN->GetDeviceSpecificInputString(*di);
+			if( di->level == 1.0f )
+				sTemp += ssprintf(" - 1 " );
+			else
+				sTemp += ssprintf(" - %.3f ", di->level );
 			
 			GameInput gi;
 			if( INPUTMAPPER->DeviceToGame(*di,gi) )
