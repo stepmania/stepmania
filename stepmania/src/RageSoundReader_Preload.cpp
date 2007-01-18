@@ -102,7 +102,7 @@ int RageSoundReader_Preload::SetPosition( int iFrame )
 		return 0;
 	}
 
-	return iFrame;
+	return 1;
 }
 
 int RageSoundReader_Preload::GetNextSourceFrame() const
