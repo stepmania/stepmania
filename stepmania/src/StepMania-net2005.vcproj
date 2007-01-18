@@ -1825,10 +1825,6 @@
 						>
 					</File>
 					<File
-						RelativePath="arch\Sound\RageSoundDriver_Generic_Software.h"
-						>
-					</File>
-					<File
 						RelativePath="arch\Sound\RageSoundDriver_Null.cpp"
 						>
 					</File>

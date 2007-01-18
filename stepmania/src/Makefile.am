@@ -162,7 +162,7 @@ endif
 
 Sound = arch/Sound/RageSoundDriver.h arch/Sound/RageSoundDriver.cpp \
 	arch/Sound/RageSoundDriver_Null.cpp arch/Sound/RageSoundDriver_Null.h \
-	arch/Sound/RageSoundDriver_Generic_Software.cpp arch/Sound/RageSoundDriver_Generic_Software.h
+	arch/Sound/RageSoundDriver_Generic_Software.cpp
 
 
 if HAVE_OSS
