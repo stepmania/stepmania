@@ -108,10 +108,10 @@ RageSound &RageSound::operator=( const RageSound &cpy )
 
 void RageSound::Unload()
 {
-	LockMut(m_Mutex);
-
-	if(IsPlaying())
+	if( IsPlaying() )
 		StopPlaying();
+
+	LockMut(m_Mutex);
 
 	delete m_pSource;
 	m_pSource = NULL;
@@ -326,6 +326,9 @@ void RageSound::StartPlaying()
 		m_Param.m_Volume = 0;
 	ApplyParams();
 
+	/* Don't lock while calling SOUNDMAN driver calls. */
+	ASSERT( !m_Mutex.IsLockedByThisThread() );
+
 	SOUNDMAN->StartMixing( this );
 
 //	LOG->Trace("StartPlaying %p finished (%s)", this, this->GetLoadedFilePath().c_str());
@@ -333,6 +336,9 @@ void RageSound::StartPlaying()
 
 void RageSound::StopPlaying()
 {
+	/* Don't lock while calling SOUNDMAN driver calls. */
+	ASSERT( !m_Mutex.IsLockedByThisThread() );
+
 	/* Tell the sound driver to stop mixing this sound. */
 	SOUNDMAN->StopMixing(this);
 }
