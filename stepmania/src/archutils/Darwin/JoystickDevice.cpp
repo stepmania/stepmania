@@ -1,6 +1,5 @@
 #include "global.h"
 #include "JoystickDevice.h"
-#include "RageUtil.h"
 #include "RageLog.h"
 #include "Foreach.h"
 
