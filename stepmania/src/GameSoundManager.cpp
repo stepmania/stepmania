@@ -66,7 +66,7 @@ struct MusicPlaying
 
 	~MusicPlaying()
 	{
-		SOUNDMAN->DeleteSound( m_Music );
+		delete m_Music;
 	}
 };
 
@@ -111,10 +111,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 		g_Playing->m_Music = new RageSound;
 		L.Unlock();
 
-		/* We're not allowed to delete the sound in a separate thread, because
-		 * RageSoundManager::FlushPosMapQueue might be running.  Stop the sound,
-		 * and give it to RageSoundManager to delete. */
-		SOUNDMAN->DeleteSound( pOldSound );
+		delete pOldSound;
 		return;
 	}
 
@@ -331,7 +328,7 @@ static void StartQueuedSounds()
 			g_Playing->m_Music = new RageSound;
 			g_Mutex->Unlock();
 
-			SOUNDMAN->DeleteSound( pOldSound );
+			delete pOldSound;
 		}
 	}
 }
