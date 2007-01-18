@@ -412,10 +412,19 @@ void RageSound::Play( const RageSoundParams *pParams )
 	if( m_pSource == NULL )
 	{
 		LOG->Warn( "RageSound::Play: sound not loaded" );
-		return NULL;
+		return;
 	}
 
-	SOUNDMAN->PlaySound( *this, pParams );
+	if( IsPlaying() )
+	{
+		SOUNDMAN->PlayCopyOfSound( *this, pParams );
+		return;
+	}
+
+	if( pParams )
+		SetParams( *pParams );
+
+	StartPlaying();
 }
 
 void RageSound::Stop()

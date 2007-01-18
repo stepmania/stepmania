@@ -47,7 +47,6 @@ public:
 
 	void PlayOnce( RString sPath );
 
-	RageSound *PlaySound( RageSound &snd, const RageSoundParams *params = NULL );
 	RageSound *PlayCopyOfSound( RageSound &snd, const RageSoundParams *params = NULL );
 
 private:
