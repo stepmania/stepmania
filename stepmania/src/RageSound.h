@@ -124,6 +124,7 @@ public:
 	RString GetError() const { return m_sError; }
 
 	void Play( const RageSoundParams *params=NULL );
+	void PlayCopy( const RageSoundParams *pParams = NULL ) const;
 	void Stop();
 
 	/* Cleanly pause or unpause the sound.  If the sound wasn't already playing,

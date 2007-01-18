@@ -417,7 +417,7 @@ void RageSound::Play( const RageSoundParams *pParams )
 
 	if( IsPlaying() )
 	{
-		SOUNDMAN->PlayCopyOfSound( *this, pParams );
+		PlayCopy( pParams );
 		return;
 	}
 
@@ -425,6 +425,17 @@ void RageSound::Play( const RageSoundParams *pParams )
 		SetParams( *pParams );
 
 	StartPlaying();
+}
+
+void RageSound::PlayCopy( const RageSoundParams *pParams ) const
+{
+	RageSound *pSound = new RageSound( *this );
+
+	if( pParams )
+		pSound->SetParams( *pParams );
+
+	pSound->StartPlaying();
+	pSound->DeleteSelfWhenFinishedPlaying();
 }
 
 void RageSound::Stop()
