@@ -33,7 +33,6 @@ public:
 	void PlayOnceFromDir( RString sDir );
 	void PlayOnceFromAnnouncer( RString sFolderName );
 
-	float GetPlayLatency() const;
 	void HandleSongTimer( bool on=true );
 	float GetFrameTimingAdjustment( float fDeltaTime );
 

@@ -205,7 +205,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 		/* GetPlayLatency returns the minimum time until a sound starts.  That's
 		 * common when starting a precached sound, but our sound isn't, so it'll
 		 * probably take a little longer.  Nudge the latency up. */
-		const float fPresumedLatency = SOUND->GetPlayLatency() + 0.040f;
+		const float fPresumedLatency = SOUNDMAN->GetPlayLatency() + 0.040f;
 		const float fCurSecond = GAMESTATE->m_fMusicSeconds + fPresumedLatency;
 		const float fCurBeat = g_Playing->m_Timing.GetBeatFromElapsedTimeNoOffset( fCurSecond );
 
@@ -713,11 +713,6 @@ void GameSoundManager::PlayOnceFromAnnouncer( RString sPath )
 	g_SoundsToPlayOnceFromAnnouncer.push_back( sPath );
 	g_Mutex->Broadcast();
 	g_Mutex->Unlock();
-}
-
-float GameSoundManager::GetPlayLatency() const
-{
-	return SOUNDMAN->GetPlayLatency();
 }
 
 float GameSoundManager::GetPlayerBalance( PlayerNumber pn )
