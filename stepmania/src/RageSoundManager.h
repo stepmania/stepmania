@@ -47,8 +47,6 @@ public:
 
 	void PlayOnce( RString sPath );
 
-	RageSound *PlayCopyOfSound( RageSound &snd, const RageSoundParams *params = NULL );
-
 private:
 	map<RString, RageSoundReader_Preload *> m_mapPreloadedSounds;
 

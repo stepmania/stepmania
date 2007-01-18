@@ -144,19 +144,6 @@ int RageSoundManager::GetDriverSampleRate() const
 	return m_pDriver->GetSampleRate();
 }
 
-RageSound *RageSoundManager::PlayCopyOfSound( RageSound &snd, const RageSoundParams *pParams )
-{
-	RageSound *pSound = new RageSound( snd );
-
-	if( pParams )
-		pSound->SetParams( *pParams );
-
-	pSound->StartPlaying();
-	pSound->DeleteSelfWhenFinishedPlaying();
-
-	return pSound;
-}
-
 /* If the given path is loaded, return a copy; otherwise return NULL.
  * It's the caller's responsibility to delete the result. */
 RageSoundReader *RageSoundManager::GetLoadedSound( const RString &sPath_ )
