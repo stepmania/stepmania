@@ -407,7 +407,7 @@ void RageSound::SoundIsFinishedPlaying()
 	m_Mutex.Unlock();
 }
 
-RageSound *RageSound::Play( const RageSoundParams *pParams )
+void RageSound::Play( const RageSoundParams *pParams )
 {
 	if( m_pSource == NULL )
 	{
@@ -415,7 +415,7 @@ RageSound *RageSound::Play( const RageSoundParams *pParams )
 		return NULL;
 	}
 
-	return SOUNDMAN->PlaySound( *this, pParams );
+	SOUNDMAN->PlaySound( *this, pParams );
 }
 
 void RageSound::Stop()
