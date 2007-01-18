@@ -1,17 +1,15 @@
 #include "global.h"
 #include "RageLog.h"
-
-#include <Carbon/Carbon.h>
-
 #include "InputHandler_Carbon.h"
 #include "Foreach.h"
-#include "RageUtil.h"
 #include "PrefsManager.h"
 #include "archutils/Darwin/DarwinThreadHelpers.h"
 #include "archutils/Darwin/KeyboardDevice.h"
 #include "archutils/Darwin/JoystickDevice.h"
 #include "archutils/Darwin/PumpDevice.h"
+
 #include <IOKit/IOMessage.h>
+#include <Carbon/Carbon.h>
 
 REGISTER_INPUT_HANDLER_CLASS( Carbon );
 
