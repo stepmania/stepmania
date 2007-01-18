@@ -22,6 +22,8 @@ RageSoundReader_PitchChange::RageSoundReader_PitchChange( RageSoundReader *pSour
 	m_pSource = m_pResample;
 	m_fSpeedRatio = 1.0f;
 	m_fPitchRatio = 1.0f;
+	m_fLastSetSpeedRatio = m_fSpeedRatio;
+	m_fLastSetPitchRatio = m_fPitchRatio;
 }
 
 RageSoundReader_PitchChange::RageSoundReader_PitchChange( const RageSoundReader_PitchChange &cpy ):
@@ -34,6 +36,8 @@ RageSoundReader_PitchChange::RageSoundReader_PitchChange( const RageSoundReader_
 	m_pSpeedChange = dynamic_cast<RageSoundReader_SpeedChange *>( m_pResample->GetSource() );
 	m_fSpeedRatio = cpy.m_fSpeedRatio;
 	m_fPitchRatio = cpy.m_fPitchRatio;
+	m_fLastSetSpeedRatio = cpy.m_fLastSetSpeedRatio;
+	m_fLastSetPitchRatio = cpy.m_fLastSetPitchRatio;
 }
 
 int RageSoundReader_PitchChange::Read( char *pBuf, int iFrames )
@@ -42,9 +46,11 @@ int RageSoundReader_PitchChange::Read( char *pBuf, int iFrames )
 	 * immediately on the next Read().  When this is true, apply the ratio to the
 	 * resampler and the speed changer simultaneously, so they take effect as
 	 * closely together as possible. */
-	float fRate = GetStreamToSourceRatio();
-	if( m_pSpeedChange->NextReadWillStep() )
+	if( (m_fLastSetSpeedRatio != m_fSpeedRatio || m_fLastSetPitchRatio != m_fPitchRatio) &&
+		m_pSpeedChange->NextReadWillStep() )
 	{
+		float fRate = GetStreamToSourceRatio();
+
 		/* This is the simple way: */
 		// m_pResample->SetRate( m_fPitchRatio );
 		// m_pSpeedChange->SetSpeedRatio( m_fSpeedRatio / m_fPitchRatio );
@@ -56,12 +62,15 @@ int RageSoundReader_PitchChange::Read( char *pBuf, int iFrames )
 		float fActualPitchRatio = m_pResample->GetRate();
 		float fRequestedSpeedRatio = m_fSpeedRatio / fActualPitchRatio;
 		m_pSpeedChange->SetSpeedRatio( fRequestedSpeedRatio );
-	}
 
-	/* If we just applied a new speed and it caused the ratio to change, return
-	 * no data, so the caller can see the new ratio. */
-	if( fRate != GetStreamToSourceRatio() )
-		return 0;
+		m_fLastSetSpeedRatio = m_fSpeedRatio;
+		m_fLastSetPitchRatio = m_fPitchRatio;
+
+		/* If we just applied a new speed and it caused the ratio to change, return
+		 * no data, so the caller can see the new ratio. */
+		if( fRate != GetStreamToSourceRatio() )
+			return 0;
+	}
 
 	return RageSoundReader_Filter::Read( pBuf, iFrames );
 }

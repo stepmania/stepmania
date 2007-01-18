@@ -27,6 +27,8 @@ private:
 
 	float m_fSpeedRatio;
 	float m_fPitchRatio;
+	float m_fLastSetSpeedRatio;
+	float m_fLastSetPitchRatio;
 };
 
 #endif
