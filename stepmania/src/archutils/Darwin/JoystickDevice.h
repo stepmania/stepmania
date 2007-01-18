@@ -15,6 +15,7 @@ struct Joystick
 	int x_rot, rx_min, rx_max;
 	int y_rot, ry_min, ry_max;
 	int z_rot, rz_min, rz_max;
+	int hat, hat_min, hat_max;
 	
 	Joystick();
 };
