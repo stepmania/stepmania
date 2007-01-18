@@ -57,15 +57,6 @@ void RageSoundManager::Init()
 
 RageSoundManager::~RageSoundManager()
 {
-	g_SoundManMutex.Lock(); /* lock for access to owned_sounds */
-	set<RageSound *> sounds = owned_sounds;
-	g_SoundManMutex.Unlock(); /* finished with owned_sounds */
-
-	/* Clear any sounds that we own and havn't freed yet. */
-	set<RageSound *>::iterator j = sounds.begin();
-	while(j != sounds.end())
-		delete *(j++);
-
 	/* Don't lock while deleting the driver (the decoder thread might deadlock). */
 	delete m_pDriver;
 }
@@ -131,26 +122,7 @@ void RageSoundManager::Update()
 		}
 	}
 
-	/* Scan the owned_sounds list for sounds that are no longer playing, and delete them. */
-	set<RageSound *> ToDelete;
-	for( set<RageSound *>::iterator it = owned_sounds.begin(); it != owned_sounds.end(); ++it )
-	{
-		RageSound *pSound = *it;
-		if( pSound->IsPlaying() )
-			continue;
-
-		LOG->Trace("XXX: deleting '%s'", pSound->GetLoadedFilePath().c_str());
-
-		ToDelete.insert( pSound );
-	}
-	
-	for( set<RageSound *>::iterator it = ToDelete.begin(); it != ToDelete.end(); ++it )
-		owned_sounds.erase( *it );
-	g_SoundManMutex.Unlock(); /* finished with owned_sounds */
-
-	/* Be sure to release g_SoundManMutex before deleting sounds. */
-	for( set<RageSound *>::iterator it = ToDelete.begin(); it != ToDelete.end(); ++it )
-		delete *it;
+	g_SoundManMutex.Unlock(); /* finished with m_mapPreloadedSounds */
 
 	if( m_pDriver != NULL )
 		m_pDriver->Update();
@@ -197,13 +169,6 @@ RageSound *RageSoundManager::PlayCopyOfSound( RageSound &snd, const RageSoundPar
 	pSound->DeleteSelfWhenFinishedPlaying();
 
 	return pSound;
-}
-
-void RageSoundManager::DeleteSoundWhenFinished( RageSound *pSound )
-{
-	g_SoundManMutex.Lock(); /* lock for access to owned_sounds */
-	owned_sounds.insert( pSound );
-	g_SoundManMutex.Unlock(); /* finished with owned_sounds */
 }
 
 /* If the given path is loaded, return a copy; otherwise return NULL.

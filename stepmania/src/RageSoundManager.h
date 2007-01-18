@@ -42,8 +42,6 @@ public:
 	float GetPlayLatency() const;
 	int GetDriverSampleRate() const;
 
-	void DeleteSoundWhenFinished( RageSound *pSound );
-
 	RageSoundReader *GetLoadedSound( const RString &sPath );
 	void AddLoadedSound( const RString &sPath, RageSoundReader_Preload *pSound );
 
@@ -53,10 +51,6 @@ public:
 	RageSound *PlayCopyOfSound( RageSound &snd, const RageSoundParams *params = NULL );
 
 private:
-	/* Set of sounds that we've taken over (and are responsible for deleting
-	 * when they're finished playing): */
-	set<RageSound *> owned_sounds;
-
 	map<RString, RageSoundReader_Preload *> m_mapPreloadedSounds;
 
 	RageSoundDriver *m_pDriver;
