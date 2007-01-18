@@ -13,7 +13,7 @@ protected:
 	void AddElement( int usagePage, int usage, int cookie,
 			 const CFDictionaryRef properties ) { }
 	void Open();
-	bool SupportsVidPid( int vid, int pid ) { return vid == 0x0d2f && pid == 0x0001; }
+	bool InitDevice( int vid, int pid ) { return vid == 0x0d2f && pid == 0x0001; }
 
 public:
 	void GetButtonPresses( vector<DeviceInput>& vPresses, int cookie, int value, const RageTimer& now ) const;

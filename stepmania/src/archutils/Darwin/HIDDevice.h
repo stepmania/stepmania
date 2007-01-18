@@ -75,7 +75,7 @@ protected:
 	/*
 	 * Optional. Subclasses can initialize the device, if required.
 	 */
-	virtual void InitDevice( int vid, int pid ) { }
+	virtual bool InitDevice( int vid, int pid ) { return true; }
 	
 	// This adds the element with the given cookie to the queue to be notified of state changes.
 	inline void AddElementToQueue( int cookie )

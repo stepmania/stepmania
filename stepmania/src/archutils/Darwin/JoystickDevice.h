@@ -28,7 +28,7 @@ protected:
 	bool AddLogicalDevice( int usagePage, int usage );
 	void AddElement( int usagePage, int usage, int cookie, const CFDictionaryRef properties );
 	void Open();
-	void InitDevice( int vid, int pid );
+	bool InitDevice( int vid, int pid );
 	
 public:
 	void GetButtonPresses( vector<DeviceInput>& vPresses, int cookie, int value, const RageTimer& now ) const;
