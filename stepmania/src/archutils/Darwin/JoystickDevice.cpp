@@ -3,7 +3,6 @@
 #include "RageLog.h"
 #include "Foreach.h"
 
-using namespace std;
 using __gnu_cxx::hash_map;
 
 Joystick::Joystick() :	id( InputDevice_Invalid ),
