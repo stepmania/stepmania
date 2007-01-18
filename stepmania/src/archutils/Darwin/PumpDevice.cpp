@@ -52,7 +52,7 @@ void PumpDevice::GetButtonPresses( vector<DeviceInput>& vPresses, int cookie, in
 
 int PumpDevice::AssignIDs( InputDevice startID )
 {
-	if( startID < DEVICE_PUMP1 || startID > DEVICE_PUMP2 )
+	if( !IsPump(startID) )
 		return -1;
 	m_Id = startID;
 	return 1;

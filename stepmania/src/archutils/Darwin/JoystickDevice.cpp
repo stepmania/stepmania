@@ -252,11 +252,11 @@ void JoystickDevice::GetButtonPresses( vector<DeviceInput>& vPresses, int cookie
 
 int JoystickDevice::AssignIDs( InputDevice startID )
 {
-	if( startID < DEVICE_JOY1 || startID > DEVICE_JOY16 )
+	if( !IsJoystick(startID) )
 		return -1;
 	FOREACH( Joystick, m_vSticks, i )
 	{
-		if( startID > DEVICE_JOY16 )
+		if( !IsJoystick(startID) )
 		{
 			m_vSticks.erase( i, m_vSticks.end() );
 			break;
@@ -274,7 +274,7 @@ void JoystickDevice::GetDevicesAndDescriptions( vector<InputDeviceInfo>& vDevice
 }
 
 /*
- * (c) 2005-2006 Steve Checkoway
+ * (c) 2005-2007 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
