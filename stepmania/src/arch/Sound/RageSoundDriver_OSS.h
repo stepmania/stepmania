@@ -1,11 +1,11 @@
 #ifndef RAGE_SOUND_WAVEOUT
 #define RAGE_SOUND_WAVEOUT
 
-#include "RageSoundDriver_Generic_Software.h"
+#include "RageSoundDriver.h"
 #include "RageThreads.h"
 #include "RageTimer.h"
 
-class RageSoundDriver_OSS: public RageSound_Generic_Software
+class RageSoundDriver_OSS: public RageSoundDriver
 {
 	int fd;
 

@@ -3,11 +3,11 @@
 
 #include "RageSound.h"
 #include "RageThreads.h"
-#include "RageSoundDriver_Generic_Software.h"
+#include "RageSoundDriver.h"
 
 #include "ALSA9Helpers.h"
 
-class RageSoundDriver_ALSA9_Software: public RageSound_Generic_Software
+class RageSoundDriver_ALSA9_Software: public RageSoundDriver
 {
 public:
 	RageSoundDriver_ALSA9_Software();

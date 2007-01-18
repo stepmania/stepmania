@@ -3,9 +3,9 @@
 
 #include "DSoundHelpers.h"
 #include "RageThreads.h"
-#include "RageSoundDriver_Generic_Software.h"
+#include "RageSoundDriver.h"
 
-class RageSoundDriver_DSound_Software: public RageSound_Generic_Software
+class RageSoundDriver_DSound_Software: public RageSoundDriver
 {
 public:
 	RageSoundDriver_DSound_Software();

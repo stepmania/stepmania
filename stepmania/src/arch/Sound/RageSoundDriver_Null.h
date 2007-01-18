@@ -1,9 +1,9 @@
 #ifndef RAGE_SOUND_NULL
 #define RAGE_SOUND_NULL
 
-#include "RageSoundDriver_Generic_Software.h"
+#include "RageSoundDriver.h"
 
-class RageSoundDriver_Null: public RageSound_Generic_Software
+class RageSoundDriver_Null: public RageSoundDriver
 {
 public:
 	RageSoundDriver_Null();

@@ -1,14 +1,14 @@
 #ifndef RAGE_SOUND_WAVEOUT_H
 #define RAGE_SOUND_WAVEOUT_H
 
-#include "RageSoundDriver_Generic_Software.h"
+#include "RageSoundDriver.h"
 #include "RageThreads.h"
 #include <windows.h>
 
 struct WinWdmStream;
 struct WinWdmFilter;
 
-class RageSoundDriver_WDMKS: public RageSound_Generic_Software
+class RageSoundDriver_WDMKS: public RageSoundDriver
 {
 public:
 	RageSoundDriver_WDMKS();
