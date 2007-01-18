@@ -8,7 +8,6 @@
 #include "RageSoundReader.h"
 
 static const int channels = 2;
-static const int bytes_per_frame = channels*2; /* 16-bit */
 
 static int frames_to_buffer;
 
@@ -162,13 +161,13 @@ RageSoundMixBuffer &RageSoundDriver::MixIntoBuffer( int iFrames, int64_t iFrameN
 
 void RageSoundDriver::Mix( int16_t *pBuf, int iFrames, int64_t iFrameNumber, int64_t iCurrentFrame )
 {
-	memset( pBuf, 0, iFrames*bytes_per_frame );
+	memset( pBuf, 0, iFrames*channels*sizeof(int16_t) );
 	MixIntoBuffer( iFrames, iFrameNumber, iCurrentFrame ).read( pBuf );
 }
 
 void RageSoundDriver::Mix( float *pBuf, int iFrames, int64_t iFrameNumber, int64_t iCurrentFrame )
 {
-	memset( pBuf, 0, iFrames*bytes_per_frame*2 );
+	memset( pBuf, 0, iFrames*channels*sizeof(float) );
 	MixIntoBuffer( iFrames, iFrameNumber, iCurrentFrame ).read( pBuf );
 }
 
