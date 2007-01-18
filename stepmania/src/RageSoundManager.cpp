@@ -189,12 +189,12 @@ RageSound *RageSoundManager::PlaySound( RageSound &snd, const RageSoundParams *p
 RageSound *RageSoundManager::PlayCopyOfSound( RageSound &snd, const RageSoundParams *pParams )
 {
 	RageSound *pSound = new RageSound( snd );
-	DeleteSoundWhenFinished( pSound );
 
 	if( pParams )
 		pSound->SetParams( *pParams );
 
 	pSound->StartPlaying();
+	pSound->DeleteSelfWhenFinishedPlaying();
 
 	return pSound;
 }
@@ -250,11 +250,7 @@ void RageSoundManager::PlayOnce( RString sPath )
 	pSound->Load( sPath, false );
 
 	pSound->Play();
-
-	/* We're responsible for freeing it.  Add it to owned_sounds *after* we start
-	 * playing, so RageSoundManager::Update doesn't free it before we actually start
-	 * it. */
-	DeleteSoundWhenFinished( pSound );
+	pSound->DeleteSelfWhenFinishedPlaying();
 }
 
 void RageSoundManager::SetMixVolume( float fMixVol )
