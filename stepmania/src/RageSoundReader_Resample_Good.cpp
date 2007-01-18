@@ -660,7 +660,7 @@ int RageSoundReader_Resample_Good::Read( char *pBuf_, int iFrames )
 	int iDownFactor, iUpFactor;
 	GetFactors( iDownFactor, iUpFactor );
 
-	if( m_apResamplers[0]->GetFilled() == 0 && iDownFactor == iUpFactor && m_fRate == 1.0f )
+	if( m_apResamplers[0]->GetFilled() == 0 && iDownFactor == iUpFactor && GetRate() == 1.0f )
 		return m_pSource->Read( pBuf_, iFrames );
 
 	{
