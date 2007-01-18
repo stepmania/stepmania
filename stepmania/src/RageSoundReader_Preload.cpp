@@ -64,10 +64,10 @@ bool RageSoundReader_Preload::Open( RageSoundReader *pSource )
 		int iBytesPerFrame = m_iChannels * sizeof(int16_t);
 		int iCnt = pSource->Read( buffer, sizeof(buffer) / iBytesPerFrame );
 
-		if( iCnt < 0 )
-			return false;
 		if( iCnt == END_OF_FILE )
 			break;
+		if( iCnt < 0 )
+			return false;
 
 		/* Add the buffer. */
 		m_Buffer.Get()->append( buffer, buffer+iCnt*iBytesPerFrame );
