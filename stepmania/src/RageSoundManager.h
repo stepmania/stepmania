@@ -45,8 +45,6 @@ public:
 	RageSoundReader *GetLoadedSound( const RString &sPath );
 	void AddLoadedSound( const RString &sPath, RageSoundReader_Preload *pSound );
 
-	void PlayOnce( RString sPath );
-
 private:
 	map<RString, RageSoundReader_Preload *> m_mapPreloadedSounds;
 

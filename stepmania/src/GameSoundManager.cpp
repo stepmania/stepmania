@@ -249,6 +249,16 @@ static void StartMusic( MusicToPlay &ToPlay )
 	g_Playing = NewMusic;
 }
 
+static void DoPlayOnce( RString sPath )
+{
+	/* We want this to start quickly, so don't try to prebuffer it. */
+	RageSound *pSound = new RageSound;
+	pSound->Load( sPath, false );
+
+	pSound->Play();
+	pSound->DeleteSelfWhenFinishedPlaying();
+}
+
 static void DoPlayOnceFromDir( RString sPath )
 {
 	if( sPath == "" )
@@ -267,7 +277,7 @@ static void DoPlayOnceFromDir( RString sPath )
 		return;
 
 	int index = RandomInt( arraySoundFiles.size( ));
-	SOUNDMAN->PlayOnce( sPath + arraySoundFiles[index] );
+	DoPlayOnce(  sPath + arraySoundFiles[index]  );
 }
 
 static bool SoundWaiting()
@@ -294,7 +304,7 @@ static void StartQueuedSounds()
 
 	for( unsigned i = 0; i < aSoundsToPlayOnce.size(); ++i )
 		if( aSoundsToPlayOnce[i] != "" )
-			SOUNDMAN->PlayOnce( aSoundsToPlayOnce[i] );
+			DoPlayOnce( aSoundsToPlayOnce[i] );
 
 	for( unsigned i = 0; i < aSoundsToPlayOnceFromDir.size(); ++i )
 		DoPlayOnceFromDir( aSoundsToPlayOnceFromDir[i] );

@@ -178,19 +178,6 @@ void RageSoundManager::AddLoadedSound( const RString &sPath_, RageSoundReader_Pr
 	m_mapPreloadedSounds[sPath] = pSound->Copy();
 }
 
-
-/* Don't hold the lock when we don't have to.  We call this function from other
- * threads, to avoid stalling the gameplay thread. */
-void RageSoundManager::PlayOnce( RString sPath )
-{
-	/* We want this to start quickly, so don't try to prebuffer it. */
-	RageSound *pSound = new RageSound;
-	pSound->Load( sPath, false );
-
-	pSound->Play();
-	pSound->DeleteSelfWhenFinishedPlaying();
-}
-
 void RageSoundManager::SetMixVolume( float fMixVol )
 {
 	ASSERT_M( fMixVol >= 0 && fMixVol <= 1, ssprintf("%f",fMixVol) );
