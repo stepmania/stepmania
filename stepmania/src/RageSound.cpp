@@ -68,6 +68,7 @@ RageSound::RageSound():
 	m_iStreamFrame = 0;
 	m_iStoppedSourceFrame = 0;
 	m_bPlaying = false;
+	m_bDeleteWhenFinished = false;
 }
 
 RageSound::~RageSound()
@@ -90,10 +91,15 @@ RageSound &RageSound::operator=( const RageSound &cpy )
 {
 	LockMut(cpy.m_Mutex);
 
+	/* If m_bDeleteWhenFinished, then nobody that has a reference to the sound should
+	 * be making copies. */
+	ASSERT( !cpy.m_bDeleteWhenFinished );
+
 	m_Param = cpy.m_Param;
 	m_iStreamFrame = cpy.m_iStreamFrame;
 	m_iStoppedSourceFrame = cpy.m_iStoppedSourceFrame;
 	m_bPlaying = false;
+	m_bDeleteWhenFinished = false;
 
 	delete m_pSource;
 	if( cpy.m_pSource )
@@ -117,6 +123,24 @@ void RageSound::Unload()
 	m_pSource = NULL;
 	
 	m_sFilePath = "";
+}
+
+/* The sound will self-delete itself when it stops playing.  If the sound is not
+ * playing, the sound will be deleted immediately.  The caller loses ownership
+ * of the sound. */
+void RageSound::DeleteSelfWhenFinishedPlaying()
+{
+	m_Mutex.Lock();
+
+	if( !m_bPlaying )
+	{
+		m_Mutex.Unlock();
+		delete this;
+		return;
+	}
+
+	m_bDeleteWhenFinished = true;
+	m_Mutex.Unlock();
 }
 
 bool RageSound::IsLoaded() const
@@ -358,6 +382,14 @@ void RageSound::SoundIsFinishedPlaying()
 	int64_t iCurrentHardwareFrame = SOUNDMAN->GetPosition( NULL );
 
 	m_Mutex.Lock();
+
+	if( m_bDeleteWhenFinished )
+	{
+		m_bDeleteWhenFinished = false;
+		m_Mutex.Unlock();
+		delete this;
+		return;
+	}
 
 	/* Lock the mutex after calling SOUNDMAN->GetPosition().  We must not make driver
 	 * calls with our mutex locked (driver mutex < sound mutex). */

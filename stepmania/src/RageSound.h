@@ -116,6 +116,7 @@ public:
 
 	void Unload();
 	bool IsLoaded() const;
+	void DeleteSelfWhenFinishedPlaying();
 
 	void StartPlaying();
 	void StopPlaying();
@@ -173,6 +174,7 @@ private:
 	 * position when stopped, and when playing but pos_map hasn't yet been filled. */
 	int m_iStoppedSourceFrame;
 	bool m_bPlaying;
+	bool m_bDeleteWhenFinished;
 
 	RString m_sError;
 
