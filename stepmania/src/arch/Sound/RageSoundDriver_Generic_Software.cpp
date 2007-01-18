@@ -247,13 +247,10 @@ int RageSoundDriver::GetDataForSound( Sound &s )
 
 void RageSoundDriver::Update()
 {
-	/* We must not lock here, since the decoder thread might hold the lock for a
-	 * while at a time.  This is threadsafe, because once a sound is in STOPPING,
-	 * this is the only place it'll be changed (to STOPPED). */
+	m_Mutex.Lock();
 	for( unsigned i = 0; i < ARRAYLEN(m_Sounds); ++i )
 	{
 		{
-			/* We don't need to lock to access m_PosMapQueue. */
 			Sound::QueuedPosMap p;
 			while( m_Sounds[i].m_PosMapQueue.read( &p, 1 ) )
 			{
@@ -306,6 +303,8 @@ void RageSoundDriver::Update()
 			fNext = RageTimer::GetTimeSinceStart() + 1;
 		}
 	}
+
+	m_Mutex.Unlock();
 }
 
 void RageSoundDriver::StartMixing( RageSoundBase *pSound )
