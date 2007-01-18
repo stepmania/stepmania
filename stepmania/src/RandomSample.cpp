@@ -3,7 +3,6 @@
 #include "RageSound.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "RageSoundManager.h"
 
 
 RandomSample::RandomSample()
@@ -114,7 +113,7 @@ void RandomSample::PlayCopyOfRandom()
 	int iIndexToPlay = GetNextToPlay();
 	if( iIndexToPlay == -1 )
 		return;
-	SOUNDMAN->PlayCopyOfSound( *m_pSamples[iIndexToPlay] );
+	m_pSamples[m_iIndexLastPlayed]->Stop();
 }
 
 void RandomSample::Stop()

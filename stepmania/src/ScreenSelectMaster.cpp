@@ -11,7 +11,6 @@
 #include "RageLog.h"
 #include <set>
 #include "Foreach.h"
-#include "RageSoundManager.h"
 #include "InputEventPlus.h"
 
 static const char *MenuDirNames[] = {
@@ -733,7 +732,7 @@ void ScreenSelectMaster::MenuStart( const InputEventPlus &input )
 	
 	/* Play a copy of the sound, so it'll finish playing even if we leave the screen immediately. */
 	if( mc.m_sSoundPath.empty() )
-		SOUNDMAN->PlayCopyOfSound( m_soundStart );
+		m_soundStart.PlayCopy();
 
 	if( mc.m_sScreen.empty() )
 	{
