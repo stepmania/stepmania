@@ -113,7 +113,7 @@ void RandomSample::PlayCopyOfRandom()
 	int iIndexToPlay = GetNextToPlay();
 	if( iIndexToPlay == -1 )
 		return;
-	m_pSamples[m_iIndexLastPlayed]->Stop();
+	m_pSamples[iIndexToPlay]->PlayCopy();
 }
 
 void RandomSample::Stop()
