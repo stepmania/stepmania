@@ -105,7 +105,6 @@
 		AA1B083F0762532800835464 /* GameCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1B083A0762532800835464 /* GameCommand.h */; };
 		AA1B08400762532800835464 /* Preference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA1B083B0762532800835464 /* Preference.cpp */; };
 		AA1CD943060AE571003702C4 /* RageSoundDriver_Generic_Software.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA1CD941060AE571003702C4 /* RageSoundDriver_Generic_Software.cpp */; };
-		AA1CD944060AE571003702C4 /* RageSoundDriver_Generic_Software.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1CD942060AE571003702C4 /* RageSoundDriver_Generic_Software.h */; };
 		AA1F9C4709AF1BF5002C15A8 /* PumpDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1F9C4509AF1BF5002C15A8 /* PumpDevice.h */; };
 		AA1F9C4809AF1BF5002C15A8 /* PumpDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA1F9C4609AF1BF5002C15A8 /* PumpDevice.cpp */; };
 		AA1F9C4909AF1BF5002C15A8 /* PumpDevice.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1F9C4509AF1BF5002C15A8 /* PumpDevice.h */; };
@@ -831,7 +830,6 @@
 		AA40D2BA09A08D650068C0D5 /* ScreenSetTime.h in Headers */ = {isa = PBXBuildFile; fileRef = AA0A3DE7060513A00044E6B1 /* ScreenSetTime.h */; };
 		AA40D2BB09A08D650068C0D5 /* NetworkSyncManager.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE7804A060814AC0034E65F /* NetworkSyncManager.h */; };
 		AA40D2BD09A08D650068C0D5 /* ActiveAttackList.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE7812C0608249E0034E65F /* ActiveAttackList.h */; };
-		AA40D2BE09A08D650068C0D5 /* RageSoundDriver_Generic_Software.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1CD942060AE571003702C4 /* RageSoundDriver_Generic_Software.h */; };
 		AA40D2BF09A08D650068C0D5 /* ScreenTestLights.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF7435A06110E8D00B19AD1 /* ScreenTestLights.h */; };
 		AA40D2C009A08D650068C0D5 /* RageDisplay_Null.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF7458F061181F700B19AD1 /* RageDisplay_Null.h */; };
 		AA40D2CB09A08D650068C0D5 /* EnumHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8F136F0624BAB200C6A467 /* EnumHelper.h */; };
@@ -2039,7 +2037,6 @@
 		AA1C65A6050FD21F0073A143 /* RageSoundReader_WAV.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageSoundReader_WAV.cpp; path = ../src/RageSoundReader_WAV.cpp; sourceTree = "<group>"; };
 		AA1C65A7050FD21F0073A143 /* RageSoundReader_WAV.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = RageSoundReader_WAV.h; path = ../src/RageSoundReader_WAV.h; sourceTree = "<group>"; };
 		AA1CD941060AE571003702C4 /* RageSoundDriver_Generic_Software.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = RageSoundDriver_Generic_Software.cpp; sourceTree = "<group>"; };
-		AA1CD942060AE571003702C4 /* RageSoundDriver_Generic_Software.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = RageSoundDriver_Generic_Software.h; sourceTree = "<group>"; };
 		AA1DC47204A485E900D02EE9 /* ActorUtil.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ActorUtil.h; path = ../src/ActorUtil.h; sourceTree = "<group>"; };
 		AA1DC47404A4861700D02EE9 /* ScreenSelectMaster.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenSelectMaster.cpp; path = ../src/ScreenSelectMaster.cpp; sourceTree = "<group>"; };
 		AA1DC47504A4861700D02EE9 /* ScreenSelectMaster.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenSelectMaster.h; path = ../src/ScreenSelectMaster.h; sourceTree = "<group>"; };
@@ -2142,7 +2139,7 @@
 		AA658779098C322800CE55CC /* ScreenUnlockStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenUnlockStatus.cpp; path = ../src/ScreenUnlockStatus.cpp; sourceTree = "<group>"; };
 		AA65877A098C322800CE55CC /* ScreenUnlockStatus.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ScreenUnlockStatus.h; path = ../src/ScreenUnlockStatus.h; sourceTree = "<group>"; };
 		AA69675006840991007802A5 /* InputHandler_Carbon.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; path = InputHandler_Carbon.h; sourceTree = "<group>"; };
-		AA69675106840991007802A5 /* InputHandler_Carbon.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = InputHandler_Carbon.cpp; sourceTree = "<group>"; };
+		AA69675106840991007802A5 /* InputHandler_Carbon.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; path = InputHandler_Carbon.cpp; sourceTree = "<group>"; };
 		AA69995F0ACE1CBB000237F9 /* ControllerStateDisplay.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ControllerStateDisplay.cpp; path = ../src/ControllerStateDisplay.cpp; sourceTree = "<group>"; };
 		AA6999600ACE1CBB000237F9 /* ControllerStateDisplay.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ControllerStateDisplay.h; path = ../src/ControllerStateDisplay.h; sourceTree = "<group>"; };
 		AA6DAF0805300B3D00D02EE9 /* ScoreDisplayPercentage.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScoreDisplayPercentage.cpp; path = ../src/ScoreDisplayPercentage.cpp; sourceTree = "<group>"; };
@@ -3410,7 +3407,6 @@
 				AA8CF5160A4518BE0005F1B4 /* RageSoundDriver_AU.cpp */,
 				AA8CF5150A4518BE0005F1B4 /* RageSoundDriver_AU.h */,
 				AA1CD941060AE571003702C4 /* RageSoundDriver_Generic_Software.cpp */,
-				AA1CD942060AE571003702C4 /* RageSoundDriver_Generic_Software.h */,
 				AA6E012E047712BE005F316C /* RageSoundDriver_Null.cpp */,
 				AA6E012F047712BE005F316C /* RageSoundDriver_Null.h */,
 			);
@@ -4498,7 +4494,6 @@
 				AAE7804C060814AC0034E65F /* NetworkSyncManager.h in Headers */,
 				AAE7808806081A000034E65F /* ezsockets.h in Headers */,
 				AAE7812E0608249E0034E65F /* ActiveAttackList.h in Headers */,
-				AA1CD944060AE571003702C4 /* RageSoundDriver_Generic_Software.h in Headers */,
 				AAF7435C06110E8D00B19AD1 /* ScreenTestLights.h in Headers */,
 				AAF74591061181F700B19AD1 /* RageDisplay_Null.h in Headers */,
 				AA8F13710624BAB200C6A467 /* EnumHelper.h in Headers */,
@@ -4951,7 +4946,6 @@
 				AA40D2BA09A08D650068C0D5 /* ScreenSetTime.h in Headers */,
 				AA40D2BB09A08D650068C0D5 /* NetworkSyncManager.h in Headers */,
 				AA40D2BD09A08D650068C0D5 /* ActiveAttackList.h in Headers */,
-				AA40D2BE09A08D650068C0D5 /* RageSoundDriver_Generic_Software.h in Headers */,
 				AA40D2BF09A08D650068C0D5 /* ScreenTestLights.h in Headers */,
 				AA40D2C009A08D650068C0D5 /* RageDisplay_Null.h in Headers */,
 				AA40D2CB09A08D650068C0D5 /* EnumHelper.h in Headers */,
