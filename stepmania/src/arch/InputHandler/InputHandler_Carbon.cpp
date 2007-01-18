@@ -429,7 +429,7 @@ wchar_t InputHandler_Carbon::DeviceButtonToChar( DeviceButton button, bool bUseC
 				keymap = new_keymap;
 				state = 0;
 			}
-			// XXX: Only returns ascii. Ž will be returned as e.
+			// XXX: Only returns ascii. Ã© will be returned as e.
 			return KeyTranslate( keymap, UInt16(iMacVirtualKey)|modifiers, &state ) & 0xFF;
 		}
 	}
