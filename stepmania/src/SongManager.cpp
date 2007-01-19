@@ -1611,10 +1611,22 @@ void SongManager::FreeAllLoadedFromProfile( ProfileSlot slot )
 			apToDelete.push_back( *c );
 	}
 
-	// XXX: this will update best, etc. every time; too slow
+	/* We don't use DeleteCourse here, so we don't UpdatePopular and UpdateShuffled
+	 * repeatedly. */
 	for( unsigned i = 0; i < apToDelete.size(); ++i )
-		this->DeleteCourse( apToDelete[i] );
+	{
+		vector<Course*>::iterator iter = find( m_pCourses.begin(), m_pCourses.end(), apToDelete[i] );
+		ASSERT( iter != m_pCourses.end() );
+		m_pCourses.erase( iter );
+		delete apToDelete[i];
+	}
 
+	/* Popular and Shuffled may refer to courses that we just freed. */
+	UpdatePopular();
+	UpdateShuffled();
+	RefreshCourseGroupInfo();
+
+	/* Free profile steps. */
 	FOREACH( Song*, m_pSongs, s )
 		(*s)->FreeAllLoadedFromProfile( slot );
 
