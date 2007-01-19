@@ -18,7 +18,7 @@ void RageSoundDriver_Null::Update()
 		m_iLastCursorPos += 256;
 	}
 
-	RageSound_Generic_Software::Update();
+	RageSoundDriver::Update();
 }
 
 int64_t RageSoundDriver_Null::GetPosition() const

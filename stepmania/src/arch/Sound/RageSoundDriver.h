@@ -12,7 +12,6 @@ class RageTimer;
 class RageSoundMixBuffer;
 static const int samples_per_block = 512;
 
-#define RageSound_Generic_Software RageSoundDriver
 class RageSoundDriver: public RageDriver
 {
 public:
