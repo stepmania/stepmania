@@ -140,7 +140,7 @@ void InputHandler_Linux_Joystick::InputThread()
 			int ret = read(fds[i], &event, sizeof(event));
 			if(ret != sizeof(event))
 			{
-				LOG->Warn("Unexpected packet (size %i != %i) from joystick %i; disabled", ret, sizeof(event), i);
+				LOG->Warn("Unexpected packet (size %i != %i) from joystick %i; disabled", ret, (int)sizeof(event), i);
 				close(fds[i]);
 				fds[i] = -1;
 				continue;
@@ -163,8 +163,8 @@ void InputHandler_Linux_Joystick::InputThread()
 				DeviceButton neg = enum_add2(JOY_LEFT, 2*event.number);
 				DeviceButton pos = enum_add2(JOY_RIGHT, 2*event.number);
                                 float l = SCALE( int(event.value), 0.0f, 32767, 0.0f, 1.0f );
-				ButtonPressed(DeviceInput(id, neg, max(-l,0), now), event.value < -16000);
-				ButtonPressed(DeviceInput(id, pos, max(+l,0), now), event.value > +16000);
+				ButtonPressed( DeviceInput(id, neg, max(-l,0), now) );
+				ButtonPressed( DeviceInput(id, pos, max(+l,0), now) );
 				break;
 			}
 				
