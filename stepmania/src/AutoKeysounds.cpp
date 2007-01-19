@@ -21,6 +21,7 @@
 #include "song.h"
 #include "RageSoundReader_Chain.h"
 #include "RageSoundReader_PitchChange.h"
+#include "RageSoundReader_PostBuffering.h"
 #include "RageSoundManager.h"
 #include "RageLog.h"
 
@@ -135,6 +136,7 @@ void AutoKeysounds::FinishLoading()
 
 	/* Load a pitch shifter for the whole sound. */
 	pReader = new RageSoundReader_PitchChange( pReader );
+	pReader = new RageSoundReader_PostBuffering( pReader );
 
 	m_sSound.LoadSoundReader( pReader );
 }

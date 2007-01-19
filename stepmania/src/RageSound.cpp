@@ -31,6 +31,7 @@
 #include "RageSoundReader_Extend.h"
 #include "RageSoundReader_Pan.h"
 #include "RageSoundReader_PitchChange.h"
+#include "RageSoundReader_PostBuffering.h"
 #include "RageSoundReader_Preload.h"
 #include "RageSoundReader_Resample_Good.h"
 #include "RageSoundReader_FileReader.h"
@@ -222,6 +223,7 @@ bool RageSound::Load( RString sSoundFilePath, bool bPrecache, const RageSoundLoa
 	m_pSource = new RageSoundReader_Extend( m_pSource );
 	if( !bPrecache )
 		m_pSource = new RageSoundReader_ThreadedBuffer( m_pSource );
+	m_pSource = new RageSoundReader_PostBuffering( m_pSource );
 
 	if( pParams->m_bSupportRateChanging )
 	{
