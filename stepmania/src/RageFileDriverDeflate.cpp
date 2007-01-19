@@ -115,7 +115,7 @@ int RageFileObjInflate::ReadInternal( void *buf, size_t bytes )
 		m_pInflate->avail_out = bytes;
 
 
-		int err = inflate( m_pInflate, Z_PARTIAL_FLUSH );
+		int err = inflate( m_pInflate, Z_SYNC_FLUSH );
 		switch( err )
 		{
 		case Z_DATA_ERROR:
