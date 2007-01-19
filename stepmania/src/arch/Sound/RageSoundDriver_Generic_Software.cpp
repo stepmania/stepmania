@@ -441,6 +441,7 @@ RageSoundDriver::RageSoundDriver():
 	m_iMaxHardwareFrame(0LL)
 {
 	m_bShutdownDecodeThread = false;
+	m_iMaxHardwareFrame = 0;
 	SetDecodeBufferSize( 4096 );
 	
 	m_DecodeThread.SetName("Decode thread");
