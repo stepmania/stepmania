@@ -437,8 +437,7 @@ void RageSoundDriver::SetDecodeBufferSize( int iFrames )
 
 RageSoundDriver::RageSoundDriver():
 	m_Mutex("RageSoundDriver"),
-	m_SoundListMutex("SoundListMutex"),
-	m_iMaxHardwareFrame(0LL)
+	m_SoundListMutex("SoundListMutex")
 {
 	m_bShutdownDecodeThread = false;
 	m_iMaxHardwareFrame = 0;
