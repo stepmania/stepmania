@@ -1599,9 +1599,7 @@ int SongManager::GetNumEditsLoadedFromProfile( ProfileSlot slot ) const
 
 void SongManager::FreeAllLoadedFromProfile( ProfileSlot slot )
 {
-	FOREACH( Song*, m_pSongs, s )
-		(*s)->FreeAllLoadedFromProfile( slot );
-
+	/* Profile courses may refer to profile steps, so free profile courses first. */
 	vector<Course*> apToDelete;
 	FOREACH( Course*, m_pCourses, c )
 	{
@@ -1616,6 +1614,9 @@ void SongManager::FreeAllLoadedFromProfile( ProfileSlot slot )
 	// XXX: this will update best, etc. every time; too slow
 	for( unsigned i = 0; i < apToDelete.size(); ++i )
 		this->DeleteCourse( apToDelete[i] );
+
+	FOREACH( Song*, m_pSongs, s )
+		(*s)->FreeAllLoadedFromProfile( slot );
 
 	// After freeing some Steps pointers, the cache will be invalid.
 	StepsID::ClearCache();
