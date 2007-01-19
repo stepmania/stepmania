@@ -671,6 +671,16 @@ void RageQuadratic::GetBezier( float &fX1, float &fX2, float &fX3, float &fX4 ) 
 	fX4 = m_fD + m_fC + m_fB + m_fA;
 }
 
+/* Cubic polynomial interpolation.  SetFromCubicPoly(-1, 0, 1, 2); Evaluate(p) will
+ * interpolate between 0 and 1. */
+void RageQuadratic::SetFromCubic( float fX1, float fX2, float fX3, float fX4 )
+{
+	m_fA = -1.0f/6.0f*fX1 + +3.0f/6.0f*fX2 + -3.0f/6.0f*fX3 + 1.0f/6.0f*fX4;
+	m_fB =  3.0f/6.0f*fX1 + -6.0f/6.0f*fX2 +  3.0f/6.0f*fX3;
+	m_fC = -2.0f/6.0f*fX1 + -3.0f/6.0f*fX2 +            fX3 + -1.0f/6.0f*fX4;
+	m_fD =                             fX2;
+}
+
 float RageQuadratic::GetSlope( float fT ) const
 {
 	return 3*m_fA*fT*fT + 2*m_fB*fT + m_fC;

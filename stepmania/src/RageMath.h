@@ -57,6 +57,8 @@ public:
 	void SetFromBezier( float fC1, float fC2, float fC3, float fC4 );
 	void GetBezier( float &fC1, float &fC2, float &fC3, float &fC4 ) const;
 
+	void SetFromCubic( float fX1, float fX2, float fX3, float fX4 );
+
 	float Evaluate( float fT ) const;
 	float GetSlope( float fT ) const;
 
