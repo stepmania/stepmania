@@ -3215,6 +3215,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\RageSoundReader_PostBuffering.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_PostBuffering.h"
+				>
+			</File>
+			<File
 				RelativePath="RageSoundReader_Preload.cpp"
 				>
 			</File>

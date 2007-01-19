@@ -350,6 +350,7 @@ RageSoundReader_Filter.h \
 RageSoundReader_ChannelSplit.cpp RageSoundReader_ChannelSplit.h \
 RageSoundReader_Extend.cpp RageSoundReader_Extend.h \
 RageSoundReader_PitchChange.cpp RageSoundReader_PitchChange.h \
+RageSoundReader_PostBuffering.cpp RageSoundReader_PostBuffering.h \
 RageSoundReader_Pan.cpp RageSoundReader_Pan.h \
 RageSoundReader_Preload.cpp RageSoundReader_Preload.h \
 RageSoundReader_Resample_Good.cpp RageSoundReader_Resample_Good.h \
