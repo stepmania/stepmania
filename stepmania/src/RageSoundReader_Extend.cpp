@@ -7,6 +7,9 @@
 /*
  * Add support for negative seeks (adding a delay), extending a sound
  * beyond its end (m_LengthSeconds and M_CONTINUE), looping and fading.
+ * This filter is normally inserted before extended buffering, implementing
+ * properties that can seek the sound; this results in buffered seeks, but
+ * changes to these properties are delayed.
  */
 
 RageSoundReader_Extend::RageSoundReader_Extend( RageSoundReader *pSource ):
