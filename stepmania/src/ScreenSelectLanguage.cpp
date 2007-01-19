@@ -40,9 +40,6 @@ RString ScreenSelectLanguage::GetDefaultChoice()
 void ScreenSelectLanguage::BeginScreen()
 {
 	ScreenSelectMaster::BeginScreen();
-
-	if( !PREFSMAN->m_sLanguage.Get().empty() )
-		this->HandleScreenMessage( SM_GoToNextScreen );
 }
 
 void ScreenSelectLanguage::MenuStart( const InputEventPlus &input )
