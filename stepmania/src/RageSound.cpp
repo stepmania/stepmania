@@ -367,12 +367,7 @@ void RageSound::StopPlaying()
 	SOUNDMAN->StopMixing(this);
 }
 
-/* This is similar to StopPlaying, except it's called by sound drivers when we're done
- * playing, rather than by users to as us to stop.  (The only difference is that this
- * doesn't call SOUNDMAN->StopMixing; there's no reason to tell the sound driver to
- * stop mixing, since they're the one telling us we're done.)
- *
- * This is only called from the main thread. */
+/* This is called by sound drivers when we're done playing. */
 void RageSound::SoundIsFinishedPlaying()
 {
 	if( !m_bPlaying )
