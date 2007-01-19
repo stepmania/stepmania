@@ -3,8 +3,6 @@
 #ifndef PREFSMANAGER_H
 #define PREFSMANAGER_H
 
-#include "GameConstantsAndTypes.h"
-#include "PlayerNumber.h"
 #include "Preference.h"
 
 class IniFile;
