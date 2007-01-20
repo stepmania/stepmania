@@ -1949,6 +1949,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\RageSoundReader_PitchChange.h">
 			</File>
 			<File
+				RelativePath=".\RageSoundReader_PostBuffering.cpp">
+			</File>
+			<File
+				RelativePath=".\RageSoundReader_PostBuffering.h">
+			</File>
+			<File
 				RelativePath="RageSoundReader_Preload.cpp">
 			</File>
 			<File
