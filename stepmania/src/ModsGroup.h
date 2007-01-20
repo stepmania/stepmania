@@ -47,7 +47,7 @@ public:
 	}
 	
 	template<typename U>
-	void Assign( ModsLevel level, U T::*member, const U &val )
+	inline void Assign( ModsLevel level, U T::*member, const U &val )
 	{
 		if( level != ModsLevel_Song )
 			m_Current.*member = val;
@@ -55,10 +55,10 @@ public:
 			m_[level].*member = val;
 	}
 	
-	// XXX U T::*member doesn't work, U T::*member[] doesn't work, U (T::*member)[] doesn't work. What is V?
-	template<typename U, typename V>
-	void Assign_n( ModsLevel level, V member, size_t index, const U &val )
+	template<typename U, int n>
+	inline void Assign_n( ModsLevel level, U (T::*member)[n], size_t index, const U &val )
 	{
+		DEBUG_ASSERT( index < n );
 		if( level != ModsLevel_Song )
 			(m_Current.*member)[index] = val;
 		for( ; level < NUM_ModsLevel; enum_add(level, 1) )
