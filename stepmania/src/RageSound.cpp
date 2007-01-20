@@ -289,8 +289,7 @@ int RageSound::GetDataToPlay( int16_t *pBuffer, int iFrames, int64_t &iStreamFra
 		int iSourceFrame;
 
 		/* Read data from our source. */
-		char *pDest = (char *) pBuffer;
-		int iGotFrames = m_pSource->RetriedRead( pDest + (iFramesStored * framesize), iFrames, &iSourceFrame, &fRate );
+		int iGotFrames = m_pSource->RetriedRead( pBuffer + (iFramesStored * channels), iFrames, &iSourceFrame, &fRate );
 
 		if( iGotFrames == RageSoundReader::ERROR )
 		{
