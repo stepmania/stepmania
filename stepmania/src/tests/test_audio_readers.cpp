@@ -14,7 +14,7 @@
 
 void ReadData( RageSoundReader *snd,
 	       int iFrame,		/* start */
-	       char *buf,	/* out */
+	       int16_t *buf,	/* out */
 	       int frames )
 {
 	if( iFrame != -1 )
@@ -136,10 +136,11 @@ bool compare_buffers( const int16_t *expect, const int16_t *got, int frames, int
 
 
 
-bool test_read( RageSoundReader *snd, const char *expected_data, int frames )
+bool test_read( RageSoundReader *snd, int16_t *expected_data, int frames )
 {
-	int bytes = frames * snd->GetNumChannels() * sizeof(int16_t);
-	char buf[bytes];
+	int samples = frames * snd->GetNumChannels();
+	int bytes = samples * sizeof(int16_t);
+	int16_t buf[samples];
 	int got = snd->Read( buf, frames );
 	ASSERT( got == frames );
 
@@ -159,7 +160,7 @@ bool test_read( RageSoundReader *snd, const char *expected_data, int frames )
 
 bool must_be_eof( RageSoundReader *snd )
 {
-	char buf[16];
+	int16_t buf[16];
 	int got = snd->Read( buf, 1 );
 	return got == RageSoundReader::END_OF_FILE;
 }
@@ -197,7 +198,7 @@ bool CheckSetPositionAccurate( RageSoundReader *snd )
 	snd->SetProperty( "AccurateSync", true );
 
 	const int one_second=snd->GetSampleRate();
-	char data[one_second*sizeof(int16_t)*snd->GetNumChannels()];
+	int16_t data[one_second*snd->GetNumChannels()];
 
 	int iFrame = snd->GetSampleRate() * 100 / 1000; // 100ms
 	ReadData( snd, iFrame, data, one_second/10 );
@@ -300,11 +301,12 @@ bool RunTests( RageSoundReader *snd, const TestFile &tf )
 	/* Read the first second of the file.  Do this without calling any
 	 * seek functions. */
 	const int one_second_frames = snd->GetSampleRate();
-	const int one_second=one_second_frames*snd->GetNumChannels()*sizeof(int16_t);
+	const int one_second_samples=one_second_frames*snd->GetNumChannels();
+	const int one_second_bytes=one_second_samples*sizeof(int16_t);
 	int16_t sdata[one_second_frames*snd->GetNumChannels()];
 	char *data = (char *) sdata;
-	memset( data, 0x42, one_second );
-	ReadData( snd, -1, data, one_second_frames );
+	memset( data, 0x42, one_second_bytes );
+	ReadData( snd, -1, sdata, one_second_frames );
 
 	{
 		/* Find out how many frames of silence we have. */
@@ -353,7 +355,7 @@ bool RunTests( RageSoundReader *snd, const TestFile &tf )
 			dump( LaterData, 16 );
 
 			/* See if we can find the half second data. */
-			int16_t *p = (int16_t *) xmemsearch( sdata, one_second, tf.later, sizeof(tf.later), LaterOffsetSamples*sizeof(int16_t) );
+			int16_t *p = (int16_t *) xmemsearch( sdata, one_second_bytes, tf.later, sizeof(tf.later), LaterOffsetSamples*sizeof(int16_t) );
 			if( p )
 			{
 				int SamplesOff = p-sdata;
@@ -371,7 +373,7 @@ bool RunTests( RageSoundReader *snd, const TestFile &tf )
 		bool bAllNull = true;
 		bool bAll42 = true;
 
-		for( int i = 0; i < one_second; ++i )
+		for( int i = 0; i < one_second_bytes; ++i )
 		{
 			if( data[i] != 0 )
 				bAllNull=false;
@@ -390,8 +392,8 @@ bool RunTests( RageSoundReader *snd, const TestFile &tf )
 	/* Read to EOF, discarding the data. */
 	while(1)
 	{
-		char buf[4096];
-		int got = snd->Read( buf, sizeof(buf) / (snd->GetNumChannels() * sizeof(int16_t)) );
+		int16_t buf[4096];
+		int got = snd->Read( buf, ARRAYSIZE(buf) / snd->GetNumChannels() );
 		if( got == RageSoundReader::END_OF_FILE )
 			break;
 		ASSERT( got >= 0 );
@@ -423,7 +425,7 @@ bool RunTests( RageSoundReader *snd, const TestFile &tf )
 			return false;
 		}
 
-		if( !test_read(snd, data, one_second_frames) )
+		if( !test_read(snd, sdata, one_second_frames) )
 		{
 			LOG->Warn( "Fail: SetPosition(0) (%s) didn't work", szMode );
 			return false;
@@ -450,13 +452,13 @@ bool RunTests( RageSoundReader *snd, const TestFile &tf )
 	snd->SetProperty( "AccurateSync", true );
 	int iFrame = snd->GetSampleRate() * 1 / 1000; // 1ms
 	snd->SetPosition( iFrame );
-	if( !test_read( snd, data + one_second * 1/1000, one_second_frames * 1/1000 ) )
+	if( !test_read( snd, sdata + one_second_samples * 1/1000, one_second_frames * 1/1000 ) )
 		LOG->Warn("Fail: SetPosition(1) (accurate) didn't work");
 
 	/* Seek to 500ms and make sure it gives us the correct data. */
 	iFrame = snd->GetSampleRate() * 500 / 1000; // 500ms
 	snd->SetPosition( iFrame );
-	if( !test_read( snd, data+one_second * 500/1000, one_second_frames * 500/1000 ) )
+	if( !test_read( snd, sdata+one_second_samples * 500/1000, one_second_frames * 500/1000 ) )
 		LOG->Warn("Fail: seek(500) (accurate) didn't work");
 
 	return true;
