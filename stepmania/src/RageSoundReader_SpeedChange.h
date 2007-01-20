@@ -11,7 +11,7 @@ public:
 	RageSoundReader_SpeedChange( RageSoundReader *pSource );
 
 	virtual int SetPosition( int iFrame );
-	virtual int Read( char *pBuf, int iFrames );
+	virtual int Read( int16_t *pBuf, int iFrames );
 	virtual RageSoundReader_SpeedChange *Copy() const { return new RageSoundReader_SpeedChange(*this); }
 	virtual bool SetProperty( const RString &sProperty, float fValue );
 	virtual int GetNextSourceFrame() const;

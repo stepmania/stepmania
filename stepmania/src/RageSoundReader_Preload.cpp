@@ -3,6 +3,7 @@
 
 #include "global.h"
 #include "RageSoundReader_Preload.h"
+#include "RageUtil.h"
 
 #define samplesize (sizeof(int16_t) * m_iChannels) /* 16-bit */
 
@@ -60,9 +61,8 @@ bool RageSoundReader_Preload::Open( RageSoundReader *pSource )
 		if( pSource->GetStreamToSourceRatio() != m_fRate )
 			return false; /* Don't bother trying to preload it. */
 
-		char buffer[1024];
-		int iBytesPerFrame = m_iChannels * sizeof(int16_t);
-		int iCnt = pSource->Read( buffer, sizeof(buffer) / iBytesPerFrame );
+		int16_t buffer[1024];
+		int iCnt = pSource->Read( buffer, ARRAYSIZE(buffer) / m_iChannels );
 
 		if( iCnt == END_OF_FILE )
 			break;
@@ -70,7 +70,7 @@ bool RageSoundReader_Preload::Open( RageSoundReader *pSource )
 			return false;
 
 		/* Add the buffer. */
-		m_Buffer.Get()->append( buffer, buffer+iCnt*iBytesPerFrame );
+		m_Buffer.Get()->append( (char *) buffer, (char *) (buffer+iCnt*m_iChannels) );
 
 		if( m_Buffer.Get()->size() > max_prebuf_size )
 			return false; /* too big */
@@ -110,7 +110,7 @@ int RageSoundReader_Preload::GetNextSourceFrame() const
 	return lrintf(m_iPosition * m_fRate);
 }
 
-int RageSoundReader_Preload::Read( char *pBuffer, int iFrames )
+int RageSoundReader_Preload::Read( int16_t *pBuffer, int iFrames )
 {
 	const int iSizeFrames = m_Buffer->size() / samplesize;
 	const int iFramesAvail = iSizeFrames - m_iPosition;

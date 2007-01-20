@@ -139,16 +139,16 @@ int RageSoundReader_ThreadedBuffer::SetPosition( int iFrame )
 
 int RageSoundReader_ThreadedBuffer::GetEmptyFrames() const
 {
-	int iBytesPerFrame = sizeof(int16_t) * this->GetNumChannels();
-	if( g_iReadBlockSizeFrames * iBytesPerFrame > m_DataBuffer.num_writable() )
+	int iSamplesPerFrame = this->GetNumChannels();
+	if( g_iReadBlockSizeFrames * iSamplesPerFrame > m_DataBuffer.num_writable() )
 		return 0;
-	return m_DataBuffer.num_writable() / iBytesPerFrame;
+	return m_DataBuffer.num_writable() / iSamplesPerFrame;
 }
 
 int RageSoundReader_ThreadedBuffer::GetFilledFrames() const
 {
-	int iBytesPerFrame = sizeof(int16_t) * this->GetNumChannels();
-	return m_DataBuffer.num_readable() / iBytesPerFrame;
+	int iSamplesPerFrame = this->GetNumChannels();
+	return m_DataBuffer.num_readable() / iSamplesPerFrame;
 }
 
 int RageSoundReader_ThreadedBuffer::GetNextSourceFrame() const
@@ -267,8 +267,8 @@ int RageSoundReader_ThreadedBuffer::FillBlock()
 	if( GetEmptyFrames() == 0 )
 		return 0;
 
-	int iBytesPerFrame = sizeof(int16_t) * this->GetNumChannels();
-	ASSERT( g_iReadBlockSizeFrames * iBytesPerFrame <= m_DataBuffer.num_writable() );
+	int iSamplesPerFrame = this->GetNumChannels();
+	ASSERT( g_iReadBlockSizeFrames * iSamplesPerFrame <= m_DataBuffer.num_writable() );
 
 	int iGotFrames;
 	int iNextSourceFrame = 0;
@@ -279,9 +279,9 @@ int RageSoundReader_ThreadedBuffer::FillBlock()
 	{
 		/* We own m_pSource, even after unlocking, because m_bFilling is true. */
 		unsigned iBufSize;
-		char *pBuf = m_DataBuffer.get_write_pointer( &iBufSize );
-		ASSERT( (iBufSize % iBytesPerFrame) == 0 );
-		iGotFrames = m_pSource->RetriedRead( pBuf, min(g_iReadBlockSizeFrames, iBufSize / iBytesPerFrame), &iNextSourceFrame, &fRate );
+		int16_t *pBuf = m_DataBuffer.get_write_pointer( &iBufSize );
+		ASSERT( (iBufSize % iSamplesPerFrame) == 0 );
+		iGotFrames = m_pSource->RetriedRead( pBuf, min(g_iReadBlockSizeFrames, iBufSize / iSamplesPerFrame), &iNextSourceFrame, &fRate );
 	}
 
 	m_Event.Lock();
@@ -289,7 +289,7 @@ int RageSoundReader_ThreadedBuffer::FillBlock()
 	if( iGotFrames > 0 )
 	{
 		/* Add the data to the buffer. */
-		m_DataBuffer.advance_write_pointer( iGotFrames * iBytesPerFrame );
+		m_DataBuffer.advance_write_pointer( iGotFrames * iSamplesPerFrame );
 		if( iNextSourceFrame != m_StreamPosition.back().iPositionOfFirstFrame + m_StreamPosition.back().iFramesBuffered ||
 			fRate != m_StreamPosition.back().fRate )
 		{
@@ -306,7 +306,7 @@ int RageSoundReader_ThreadedBuffer::FillBlock()
 	return iGotFrames;
 }
 
-int RageSoundReader_ThreadedBuffer::Read( char *pBuffer, int iFrames )
+int RageSoundReader_ThreadedBuffer::Read( int16_t *pBuffer, int iFrames )
 {
 	if( !m_bEOF )
 		EnableBuffering();
@@ -333,8 +333,8 @@ int RageSoundReader_ThreadedBuffer::Read( char *pBuffer, int iFrames )
 	{
 		Mapping &pos = m_StreamPosition.front();
 		int iFramesToRead = min( iFrames, pos.iFramesBuffered );
-		int iBytesPerFrame = sizeof(int16_t) * this->GetNumChannels();
-		m_DataBuffer.read( pBuffer, iFramesToRead * iBytesPerFrame );
+		int iSamplesPerFrame = this->GetNumChannels();
+		m_DataBuffer.read( pBuffer, iFramesToRead * iSamplesPerFrame );
 		pos.iPositionOfFirstFrame += iFramesToRead;
 		pos.iFramesBuffered -= iFramesToRead;
 		iRet = iFramesToRead;

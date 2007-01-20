@@ -743,7 +743,7 @@ static void mono_to_stereo( char *dst, const char *src, unsigned len )
 	}
 }
 
-int RageSoundReader_MP3::Read( char *buf, int iFrames )
+int RageSoundReader_MP3::Read( int16_t *buf, int iFrames )
 {
 	int iFramesWritten = 0;
 
@@ -752,11 +752,12 @@ int RageSoundReader_MP3::Read( char *buf, int iFrames )
 		if( mad->outleft > 0 )
 		{
 			int iFramesToCopy = min( iFrames, int(mad->outleft / (sizeof(int16_t) * GetNumChannels())) );
-			const int iBytesToCopy = iFramesToCopy * sizeof(int16_t) * GetNumChannels();
+			const int iSamplesToCopy = iFramesToCopy * GetNumChannels();
+			const int iBytesToCopy = iSamplesToCopy * sizeof(int16_t);
 
 			memcpy( buf, mad->outbuf + mad->outpos, iBytesToCopy );
 
-			buf += iBytesToCopy;
+			buf += iSamplesToCopy;
 			iFrames -= iFramesToCopy;
 			iFramesWritten += iFramesToCopy;
 			mad->outpos += iBytesToCopy;

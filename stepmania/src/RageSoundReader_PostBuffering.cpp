@@ -15,14 +15,14 @@ RageSoundReader_PostBuffering::RageSoundReader_PostBuffering( RageSoundReader *p
 }
 
 
-int RageSoundReader_PostBuffering::Read( char *pBuf, int iFrames )
+int RageSoundReader_PostBuffering::Read( int16_t *pBuf, int iFrames )
 {
 	iFrames = m_pSource->Read( pBuf, iFrames );
 	if( iFrames < 0 )
 		return iFrames;
 
 	if( m_fVolume != 1.0f )
-		RageSoundUtil::Attenuate( (int16_t *) pBuf, iFrames * this->GetNumChannels(), m_fVolume );
+		RageSoundUtil::Attenuate( pBuf, iFrames * this->GetNumChannels(), m_fVolume );
 
 	return iFrames;
 }

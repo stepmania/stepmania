@@ -42,7 +42,7 @@ struct WavReader
 	WavReader( RageFile &f, const RageSoundReader_WAV::WavData &data ):
 		m_File(f), m_WavData(data) { }
 	virtual ~WavReader() { }
-	virtual int Read( char *pBuf, int iFrames ) = 0;
+	virtual int Read( int16_t *pBuf, int iFrames ) = 0;
 	virtual int GetLength() const = 0;
 	virtual bool Init() = 0;
 	virtual int SetPosition( int iFrame ) = 0;
@@ -72,7 +72,7 @@ struct WavReaderPCM: public WavReader
 		return true;
 	}
 
-	int Read( char *buf, int iFrames )
+	int Read( int16_t *buf, int iFrames )
 	{
 		int len = iFrames * m_WavData.m_iChannels * sizeof(int16_t);
 		if( m_WavData.m_iBitsPerSample == 8 )
@@ -92,7 +92,7 @@ struct WavReaderPCM: public WavReader
 			iGotSamples = iGot;
 			break;
 		case 16:
-			Convert16BitFromLittleEndian( (int16_t *) buf, iGot/2 );
+			Convert16BitFromLittleEndian( buf, iGot/2 );
 			iGotSamples = iGot / 2;
 			break;
 		}
@@ -290,9 +290,10 @@ public:
 		return true;
 	}
 
-	int Read( char *buf, int iFrames )
+	int Read( int16_t *buf, int iFrames )
 	{
-		int iBytesPerFrame = m_WavData.m_iChannels * sizeof(int16_t);
+		int iSamplesPerFrame = m_WavData.m_iChannels;
+		int iBytesPerFrame = iSamplesPerFrame * sizeof(int16_t);
 		int iGotFrames = 0;
 		while( iGotFrames < (int) iFrames )
 		{
@@ -311,11 +312,12 @@ public:
 
 			int iFramesToCopy = (m_iBufferAvail-m_iBufferUsed) / iBytesPerFrame;
 			iFramesToCopy = min( iFramesToCopy, (int) (iFrames-iGotFrames) );
-			int iBytesToCopy = iFramesToCopy * iBytesPerFrame;
+			int iSamplesToCopy = iFramesToCopy * iSamplesPerFrame;
+			int iBytesToCopy = iSamplesToCopy * sizeof(int16_t);
 			memcpy( buf, m_pBuffer+m_iBufferUsed, iBytesToCopy );
 			m_iBufferUsed += iBytesToCopy;
 			iGotFrames += iFramesToCopy;
-			buf += iBytesToCopy;
+			buf += iSamplesToCopy;
 		}
 		
 		return iGotFrames;
@@ -539,7 +541,7 @@ int RageSoundReader_WAV::GetNextSourceFrame() const
 	return m_pImpl->GetNextSourceFrame();
 }
 
-int RageSoundReader_WAV::Read( char *pBuf, int iFrames )
+int RageSoundReader_WAV::Read( int16_t *pBuf, int iFrames )
 {
 	ASSERT( m_pImpl != NULL );
 	return m_pImpl->Read( pBuf, iFrames );

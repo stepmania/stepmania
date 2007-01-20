@@ -34,7 +34,7 @@ public:
 	int GetLength() const;
 	int GetLength_Fast() const;
 	int SetPosition( int iFrame );
-	int Read( char *pBuf, int iFrames );
+	int Read( int16_t *pBuf, int iFrames );
 	int GetSampleRate() const { return m_iActualSampleRate; }
 	unsigned GetNumChannels() const { return m_iChannels; }
 	bool SetProperty( const RString &sProperty, float fValue );

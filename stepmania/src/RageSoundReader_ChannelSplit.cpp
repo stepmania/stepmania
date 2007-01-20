@@ -77,7 +77,7 @@ public:
 
 	/* m_sBuffer[0] corresponds to frame number m_iBufferPositionFrames. */
 	int m_iBufferPositionFrames;
-	RString m_sBuffer;
+	basic_string<int16_t> m_sBuffer;
 };
 
 int RageSoundReader_Split::GetLength() const { return m_pImpl->m_pSource->GetLength(); }
@@ -132,23 +132,23 @@ bool RageSoundReader_Split::SetProperty( const RString &sProperty, float fValue 
 	return m_pImpl->m_pSource->SetProperty( sProperty, fValue );
 }
 
-int RageSoundReader_Split::Read( char *pBuf, int iFrames )
+int RageSoundReader_Split::Read( int16_t *pBuf, int iFrames )
 {
 	m_iRequestFrames = iFrames;
 	int iRet = m_pImpl->ReadBuffer();
 
-	int iBytesAvailable = m_pImpl->m_sBuffer.size();
-	const char *pSrc = m_pImpl->m_sBuffer.data();
+	int iSamplesAvailable = m_pImpl->m_sBuffer.size();
+	const int16_t *pSrc = m_pImpl->m_sBuffer.data();
 	if( m_pImpl->m_iBufferPositionFrames < m_iPositionFrame )
 	{
 		int iSkipFrames = m_iPositionFrame - m_pImpl->m_iBufferPositionFrames;
-		int iSkipBytes = iSkipFrames * sizeof(int16_t) * m_pImpl->m_pSource->GetNumChannels();
-		pSrc += iSkipBytes;
-		iBytesAvailable -= iSkipBytes;
+		int iSkipSamples = iSkipFrames * m_pImpl->m_pSource->GetNumChannels();
+		pSrc += iSkipSamples;
+		iSamplesAvailable -= iSkipSamples;
 	}
 
 	int iFramesWanted = iFrames;
-	int iFramesAvailable = iBytesAvailable / (sizeof(int16_t) * m_pImpl->m_pSource->GetNumChannels());
+	int iFramesAvailable = iSamplesAvailable / (m_pImpl->m_pSource->GetNumChannels());
 
 	/* Report any errors from Read() if we don't have any data buffered to
 	 * return.  If we do have data, finish returning it first. */
@@ -158,16 +158,15 @@ int RageSoundReader_Split::Read( char *pBuf, int iFrames )
 	iFramesAvailable = min( iFramesAvailable, iFramesWanted );
 
 	{
-		const int16_t *pSrcSamples = (const int16_t *) pSrc;
 		RageSoundMixBuffer mix;
 		for( int i = 0; i < (int) m_aChannels.size(); ++i )
 		{
 			const ChannelMap &chan = m_aChannels[i];
 			mix.SetWriteOffset( chan.m_iToChannel );
-			mix.write( pSrcSamples + chan.m_iFromChannel, iFramesAvailable, m_pImpl->m_pSource->GetNumChannels(), m_iNumOutputChannels );
+			mix.write( pSrc + chan.m_iFromChannel, iFramesAvailable, m_pImpl->m_pSource->GetNumChannels(), m_iNumOutputChannels );
 		}
 
-		mix.read( (int16_t *) pBuf );
+		mix.read( pBuf );
 	}
 
 	m_iPositionFrame += iFramesAvailable;
@@ -194,7 +193,7 @@ int RageSoundSplitterImpl::ReadBuffer()
 	{
 		int iEraseFrames = iMinFrameRequested - m_iBufferPositionFrames;
 		iEraseFrames = min( iEraseFrames, (int) m_sBuffer.size() );
-		m_sBuffer.erase( 0, iEraseFrames * sizeof(int16_t) * m_pSource->GetNumChannels() );
+		m_sBuffer.erase( 0, iEraseFrames * m_pSource->GetNumChannels() );
 		m_iBufferPositionFrames += iEraseFrames;
 	}
 
@@ -205,24 +204,24 @@ int RageSoundSplitterImpl::ReadBuffer()
 		m_sBuffer.clear();
 	}
 
-	int iFramesBuffered = m_sBuffer.size() / (sizeof(int16_t) * m_pSource->GetNumChannels() );
+	int iFramesBuffered = m_sBuffer.size() / m_pSource->GetNumChannels();
 
 	int iFramesToRead = iMaxFrameRequested - (m_iBufferPositionFrames + iFramesBuffered);
 	if( iFramesToRead <= 0 )
 		return 1; // requested data already buffered
 
-	int iBytesToRead = iFramesToRead * sizeof(int16_t) * m_pSource->GetNumChannels();
-	int iOldSizeBytes = m_sBuffer.size();
-	m_sBuffer.resize( iOldSizeBytes + iBytesToRead );
-	int iGotFrames = m_pSource->Read( &m_sBuffer[0] + iOldSizeBytes, iFramesToRead );
+	int iSamplesToRead = iFramesToRead * m_pSource->GetNumChannels();
+	int iOldSizeSamples = m_sBuffer.size();
+	m_sBuffer.resize( iOldSizeSamples + iSamplesToRead );
+	int iGotFrames = m_pSource->Read( &m_sBuffer[0] + iOldSizeSamples, iFramesToRead );
 	if( iGotFrames < 0 )
 	{
-		m_sBuffer.resize( iOldSizeBytes );
+		m_sBuffer.resize( iOldSizeSamples );
 		return iGotFrames;
 	}
 
-	int iGotBytes = iGotFrames * sizeof(int16_t) * m_pSource->GetNumChannels();
-	m_sBuffer.resize( iOldSizeBytes + iGotBytes );
+	int iGotSamples = iGotFrames * m_pSource->GetNumChannels();
+	m_sBuffer.resize( iOldSizeSamples + iGotSamples );
 	return 1;
 }
 

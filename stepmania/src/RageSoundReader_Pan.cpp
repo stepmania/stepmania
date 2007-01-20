@@ -9,7 +9,7 @@ RageSoundReader_Pan::RageSoundReader_Pan( RageSoundReader *pSource ):
 }
 
 
-int RageSoundReader_Pan::Read( char *pBuf, int iFrames )
+int RageSoundReader_Pan::Read( int16_t *pBuf, int iFrames )
 {
 	iFrames = m_pSource->Read( pBuf, iFrames );
 	if( iFrames < 0 )
@@ -17,16 +17,15 @@ int RageSoundReader_Pan::Read( char *pBuf, int iFrames )
 
 	int iSamples = iFrames * m_pSource->GetNumChannels();
 	
-	int16_t *pSampleBuf = (int16_t *) pBuf;
 	if( m_pSource->GetNumChannels() == 1 )
 	{
-		RageSoundUtil::ConvertMonoToStereoInPlace( pSampleBuf, iSamples );
+		RageSoundUtil::ConvertMonoToStereoInPlace( pBuf, iSamples );
 		iSamples *= 2;
 	}
 
 	/* This block goes from iStreamFrame to iStreamFrame+iGotFrames. */
 	if( GetNumChannels() == 2 && m_fPan != 0.0 )
-		RageSoundUtil::Pan( pSampleBuf, iFrames, m_fPan );
+		RageSoundUtil::Pan( pBuf, iFrames, m_fPan );
 
 	return iFrames;
 }

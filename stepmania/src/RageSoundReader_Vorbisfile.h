@@ -16,7 +16,7 @@ public:
 
 	int GetLength() const;
 	int SetPosition( int iFrame );
-	int Read( char *pBuf, int iFrames );
+	int Read( int16_t *pBuf, int iFrames );
 	int GetSampleRate() const;
 	unsigned GetNumChannels() const { return channels; }
 	int GetNextSourceFrame() const;

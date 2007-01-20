@@ -40,7 +40,7 @@ RageSoundReader_PitchChange::RageSoundReader_PitchChange( const RageSoundReader_
 	m_fLastSetPitchRatio = cpy.m_fLastSetPitchRatio;
 }
 
-int RageSoundReader_PitchChange::Read( char *pBuf, int iFrames )
+int RageSoundReader_PitchChange::Read( int16_t *pBuf, int iFrames )
 {
 	/* m_pSpeedChange->NextReadWillStep is true if speed changes will be applied
 	 * immediately on the next Read().  When this is true, apply the ratio to the

@@ -160,7 +160,7 @@ int RageSoundReader_Vorbisfile::SetPosition( int iFrame )
 	return 1;
 }
 
-int RageSoundReader_Vorbisfile::Read( char *buf, int iFrames )
+int RageSoundReader_Vorbisfile::Read( int16_t *buf, int iFrames )
 {
 	int frames_read = 0;
 
@@ -201,9 +201,9 @@ int RageSoundReader_Vorbisfile::Read( char *buf, int iFrames )
 		{
 			int bstream;
 #if defined(INTEGER_VORBIS)
-			ret = ov_read( vf, buf, iFrames * bytes_per_frame, &bstream );
+			ret = ov_read( vf, (char *) buf, iFrames * bytes_per_frame, &bstream );
 #else // float vorbis decoder
-			ret = ov_read( vf, buf, iFrames * bytes_per_frame, (BYTE_ORDER == BIG_ENDIAN)?1:0, 2, 1, &bstream );
+			ret = ov_read( vf, (char *) buf, iFrames * bytes_per_frame, (BYTE_ORDER == BIG_ENDIAN)?1:0, 2, 1, &bstream );
 #endif
 			{
 				vorbis_info *vi = ov_info( vf, -1 );
@@ -233,7 +233,7 @@ int RageSoundReader_Vorbisfile::Read( char *buf, int iFrames )
 		int iFramesRead = ret / bytes_per_frame;
 		read_offset += ret / bytes_per_frame;
 
-		buf += ret;
+		buf += ret / sizeof(int16_t);
 		frames_read += iFramesRead;
 		iFrames -= iFramesRead;
 	}

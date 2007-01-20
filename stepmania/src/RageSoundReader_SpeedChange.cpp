@@ -90,7 +90,7 @@ int RageSoundReader_SpeedChange::FillData( int iMaxFrames )
 			return m_iDataBufferAvailFrames;
 
 		int16_t *pTempBuffer = (int16_t *) alloca( iBytesToRead );
-		int iGotFrames = m_pSource->Read( (char *) pTempBuffer, iFramesToRead );
+		int iGotFrames = m_pSource->Read( pTempBuffer, iFramesToRead );
 		if( iGotFrames < 0 )
 		{
 			if( iGotFrames == END_OF_FILE && m_iDataBufferAvailFrames )
@@ -233,17 +233,15 @@ int RageSoundReader_SpeedChange::GetCursorAvail() const
 	return iCursorAvail;
 }
 
-int RageSoundReader_SpeedChange::Read( char *buf, int iFrames )
+int RageSoundReader_SpeedChange::Read( int16_t *pBuf, int iFrames )
 {
-	int16_t *pBuf = (int16_t *) buf;
-
 	while( 1 )
 	{
 		if( m_iDataBufferAvailFrames == 0 && m_fTrailingSpeedRatio == m_fSpeedRatio && m_fSpeedRatio == 1.0f )
 		{
 			/* Fast path: the buffer is empty, and we're not scaling the audio.  Read directly
 			 * into the output buffer, to eliminate memory and copying overhead. */
-			return m_pSource->Read( (char *) pBuf, iFrames );
+			return m_pSource->Read( pBuf, iFrames );
 		}
 
 		int iCursorAvail = GetCursorAvail();

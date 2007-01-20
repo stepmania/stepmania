@@ -13,7 +13,7 @@ public:
 	RageSoundReader_PitchChange( RageSoundReader *pSource );
 	RageSoundReader_PitchChange( const RageSoundReader_PitchChange &cpy );
 
-	virtual int Read( char *pBuf, int iFrames );
+	virtual int Read( int16_t *pBuf, int iFrames );
 	virtual bool SetProperty( const RString &sProperty, float fValue );
 
 	void SetSpeedRatio( float fRatio ) { m_fSpeedRatio = fRatio; }

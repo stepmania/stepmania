@@ -299,7 +299,7 @@ float RageSoundReader_Chain::GetStreamToSourceRatio() const
 
 /* As we iterate through the sound tree, we'll find that we need data from different
  * sounds; a sound may be needed by more than one other sound. */
-int RageSoundReader_Chain::Read( char *pBuffer, int iFrames )
+int RageSoundReader_Chain::Read( int16_t *pBuffer, int iFrames )
 {
 	while( m_iNextSound < m_aSounds.size() && m_iCurrentFrame == m_aSounds[m_iNextSound].GetOffsetFrame(m_iActualSampleRate) )
 	{
@@ -327,7 +327,7 @@ int RageSoundReader_Chain::Read( char *pBuffer, int iFrames )
 		/* We have only one source, and it matches our target.  Don't mix; read
 		 * directly from the source into the destination.  This is to optimize
 		 * the common case of having one BGM track and no autoplay sounds. */
-		iFrames = m_apActiveSounds.front()->pSound->Read( (char *) pBuffer, iFrames );
+		iFrames = m_apActiveSounds.front()->pSound->Read( pBuffer, iFrames );
 		if( iFrames < 0 )
 			ReleaseSound( m_apActiveSounds.front() );
 		if( iFrames > 0 )
@@ -360,7 +360,7 @@ int RageSoundReader_Chain::Read( char *pBuffer, int iFrames )
 		int iFramesRead = 0;
 		while( iFramesRead < iFrames )
 		{
-			int iGotFrames = pSound->RetriedRead( (char *) Buffer, iFrames - iFramesRead );
+			int iGotFrames = pSound->RetriedRead( Buffer, iFrames - iFramesRead );
 			if( iGotFrames < 0 )
 			{
 				iFramesRead = iGotFrames;
@@ -380,7 +380,7 @@ int RageSoundReader_Chain::Read( char *pBuffer, int iFrames )
 
 	/* Read mixed frames into the output buffer. */
 	int iMaxFramesRead = mix.size() / m_iChannels;
-	mix.read( (int16_t *) pBuffer );
+	mix.read( pBuffer );
 	m_iCurrentFrame += iMaxFramesRead;
 
 	return iMaxFramesRead;

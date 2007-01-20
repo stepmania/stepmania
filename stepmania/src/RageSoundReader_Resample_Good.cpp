@@ -647,11 +647,9 @@ int RageSoundReader_Resample_Good::SetPosition( int iFrame )
 	return m_pSource->SetPosition( iFrame );
 }
 
-int RageSoundReader_Resample_Good::Read( char *pBuf_, int iFrames )
+int RageSoundReader_Resample_Good::Read( int16_t *pBuf, int iFrames )
 {
 	int iChannels = m_apResamplers.size();
-
-	int16_t *pBuf = (int16_t *) pBuf_;
 
 	int iFramesRead = 0;
 
@@ -661,13 +659,13 @@ int RageSoundReader_Resample_Good::Read( char *pBuf_, int iFrames )
 	GetFactors( iDownFactor, iUpFactor );
 
 	if( m_apResamplers[0]->GetFilled() == 0 && iDownFactor == iUpFactor && GetRate() == 1.0f )
-		return m_pSource->Read( pBuf_, iFrames );
+		return m_pSource->Read( pBuf, iFrames );
 
 	{
 		int iFramesNeeded = m_apResamplers[0]->NumInputsForOutputSamples(iFrames);
 		int16_t *pTmpBuf = (int16_t *) alloca( iFramesNeeded * sizeof(int16_t) * iChannels );
 		ASSERT( pTmpBuf );
-		int iFramesIn = m_pSource->Read( (char *) pTmpBuf, iFramesNeeded );
+		int iFramesIn = m_pSource->Read( pTmpBuf, iFramesNeeded );
 		if( iFramesIn < 0 )
 			return iFramesIn;
 
