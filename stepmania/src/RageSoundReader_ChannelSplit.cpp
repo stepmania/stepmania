@@ -77,7 +77,7 @@ public:
 
 	/* m_sBuffer[0] corresponds to frame number m_iBufferPositionFrames. */
 	int m_iBufferPositionFrames;
-	basic_string<int16_t> m_sBuffer;
+	vector<int16_t> m_sBuffer;
 };
 
 int RageSoundReader_Split::GetLength() const { return m_pImpl->m_pSource->GetLength(); }
@@ -138,7 +138,7 @@ int RageSoundReader_Split::Read( int16_t *pBuf, int iFrames )
 	int iRet = m_pImpl->ReadBuffer();
 
 	int iSamplesAvailable = m_pImpl->m_sBuffer.size();
-	const int16_t *pSrc = m_pImpl->m_sBuffer.data();
+	const int16_t *pSrc = &m_pImpl->m_sBuffer[0];
 	if( m_pImpl->m_iBufferPositionFrames < m_iPositionFrame )
 	{
 		int iSkipFrames = m_iPositionFrame - m_pImpl->m_iBufferPositionFrames;
@@ -193,7 +193,7 @@ int RageSoundSplitterImpl::ReadBuffer()
 	{
 		int iEraseFrames = iMinFrameRequested - m_iBufferPositionFrames;
 		iEraseFrames = min( iEraseFrames, (int) m_sBuffer.size() );
-		m_sBuffer.erase( 0, iEraseFrames * m_pSource->GetNumChannels() );
+		m_sBuffer.erase( m_sBuffer.begin(), m_sBuffer.begin() + iEraseFrames * m_pSource->GetNumChannels() );
 		m_iBufferPositionFrames += iEraseFrames;
 	}
 
