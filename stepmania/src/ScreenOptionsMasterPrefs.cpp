@@ -345,10 +345,11 @@ static void BGBrightnessOrStatic( int &sel, bool ToSel, const ConfOption *pConfO
 	const float mapping[] = { 0.5f,0.25f,0.5f,0.75f };
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYLEN(mapping) );
 
-	if( ToSel && !PREFSMAN->m_bSongBackgrounds )
+	IPreference *pSongBackgroundsPref = IPreference::GetPreferenceByName( "SongBackgrounds" );
+	if( ToSel && pSongBackgroundsPref->ToString() == "0" )
 		sel = 0;
 	if( !ToSel )
-		PREFSMAN->m_bSongBackgrounds.Set( sel != 0 );
+		pSongBackgroundsPref->FromString( sel? "1":"0" );
 }
 
 static void NumBackgrounds( int &sel, bool ToSel, const ConfOption *pConfOption )
