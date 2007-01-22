@@ -16,7 +16,6 @@
 #include "ThemeMetric.h"
 #include "PlayerState.h"
 #include "ActorUtil.h"
-#include <set>
 #include <float.h>
 #include "XmlFile.h"
 #include "XmlFileUtil.h"
