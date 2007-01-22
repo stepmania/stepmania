@@ -114,10 +114,6 @@ public:
 	Preference<bool>	m_bShowStats;
 	Preference<bool>	m_bShowBanners;
 
-	Preference<bool>	m_bSongBackgrounds;
-	Preference<RandomBackgroundMode>		m_RandomBackgroundMode;
-	Preference<int>		m_iNumBackgrounds;
-	Preference<float>	m_fBGBrightness;
 	Preference<bool>	m_bHiddenSongs;
 	Preference<bool>	m_bVsync;
 	Preference<bool>	m_bInterlaced;

@@ -33,6 +33,10 @@ static ThemeMetric<bool> DANGER_ALL_IS_OPAQUE			("Background","DangerAllIsOpaque
 static ThemeMetric<float> CLAMP_OUTPUT_PERCENT			("Background","ClampOutputPercent");
 
 static Preference<bool>	g_bShowDanger( "ShowDanger", true );
+static Preference<float> g_fBGBrightness( "BGBrightness", 0.7f );
+static Preference<RandomBackgroundMode> g_RandomBackgroundMode( "RandomBackgroundMode",	BGMODE_ANIMATIONS );
+static Preference<int> g_iNumBackgrounds( "NumBackgrounds", 8 );
+static Preference<bool> g_bSongBackgrounds( "SongBackgrounds", true );
 
 // Width of the region separating the left and right brightness areas:
 static float g_fBackgroundCenterWidth = 40;
@@ -407,7 +411,7 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 
 BackgroundDef BackgroundImpl::Layer::CreateRandomBGA( const Song *pSong, const RString &sEffect, deque<BackgroundDef> &RandomBGAnimations, Actor *pParent )
 {
-	if( PREFSMAN->m_RandomBackgroundMode == BGMODE_OFF )
+	if( g_RandomBackgroundMode == BGMODE_OFF )
 		return BackgroundDef();
 
 	if( RandomBGAnimations.empty() )
@@ -485,7 +489,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 	m_pSong = pSong;
 	m_StaticBackgroundDef.m_sFile1 = SONG_BACKGROUND_FILE;
 
-	if( PREFSMAN->m_fBGBrightness == 0.0f )
+	if( g_fBGBrightness == 0.0f )
 		return;
 
 	//
@@ -493,10 +497,10 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 	//
 	{
 		vector<RString> vsThrowAway, vsNames;
-		switch( PREFSMAN->m_RandomBackgroundMode )
+		switch( g_RandomBackgroundMode )
 		{
 		default:
-			ASSERT_M( 0, ssprintf("Invalid RandomBackgroundMode: %i", int(PREFSMAN->m_RandomBackgroundMode)) );
+			ASSERT_M( 0, ssprintf("Invalid RandomBackgroundMode: %i", int(g_RandomBackgroundMode)) );
 			break;
 		case BGMODE_OFF:
 			break;
@@ -511,7 +515,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 		// Pick the same random items every time the song is played.
 		RandomGen rnd( GetHashForString(pSong->GetSongDir()) );
 		random_shuffle( vsNames.begin(), vsNames.end(), rnd );
-		int iSize = min( (int)PREFSMAN->m_iNumBackgrounds, (int)vsNames.size() );
+		int iSize = min( (int)g_iNumBackgrounds, (int)vsNames.size() );
 		vsNames.resize( iSize );
 
 		FOREACH_CONST( RString, vsNames, s )
@@ -536,7 +540,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 
 
 
-	if( !PREFSMAN->m_bSongBackgrounds )
+	if( !g_bSongBackgrounds )
 	{
 		/* Backgrounds are disabled; just display the song background. */
 		BackgroundChange change;
@@ -851,7 +855,7 @@ void BackgroundImpl::Update( float fDeltaTime )
 
 void BackgroundImpl::DrawPrimitives()
 {
-	if( PREFSMAN->m_fBGBrightness == 0.0f )
+	if( g_fBGBrightness == 0.0f )
 		return;
 
 	if( IsDangerAllVisible() )
@@ -955,7 +959,7 @@ void BrightnessOverlay::SetActualBrightness()
 	float fLeftBrightness = 1-GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.GetCurrent().m_fCover;
 	float fRightBrightness = 1-GAMESTATE->m_pPlayerState[PLAYER_2]->m_PlayerOptions.GetCurrent().m_fCover;
 
-	float fBaseBGBrightness = PREFSMAN->m_fBGBrightness;
+	float fBaseBGBrightness = g_fBGBrightness;
 
 	// HACK: Always show training in full brightness
 	if( GAMESTATE->m_pCurSong && GAMESTATE->m_pCurSong->IsTutorial() )
