@@ -37,6 +37,7 @@ void MeterDisplay::LoadFromNode( const XNode* pNode )
 	if( !pNode->GetAttrValue( "StreamWidth", sExpr ) )
 		RageException::Throw( "%s: MeterDisplay: missing the \"StreamWidth\" attribute", ActorUtil::GetWhere(pNode).c_str() );
 
+	m_fStreamWidth=StringToFloat(sExpr);
 	{
 		RString sStreamPath;
 		if( !ActorUtil::GetAttrPath(pNode, "StreamPath", sStreamPath) )
