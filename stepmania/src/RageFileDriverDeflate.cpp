@@ -310,33 +310,35 @@ int RageFileObjDeflate::FlushInternal()
 
 /*
  * Parse a .gz file, check the header CRC16 if present, and return the data
- * CRC32 and a decompressor.
+ * CRC32 and a decompressor.  pFile will be deleted.
  */
-RageFileObjInflate *GunzipFile( RageFileBasic &file, RString &sError, uint32_t *iCRC32 )
+RageFileObjInflate *GunzipFile( RageFileBasic *pFile_, RString &sError, uint32_t *iCRC32 )
 {
+	auto_ptr<RageFileBasic> pFile(pFile_);
+
 	sError = "";
 
-	file.Seek(0);
-	file.EnableCRC32( true );
+	pFile->Seek(0);
+	pFile->EnableCRC32( true );
 
 	{
 		char magic[2];
-		FileReading::ReadBytes( file, magic, 2, sError );
+		FileReading::ReadBytes( *pFile, magic, 2, sError );
 		if( sError != "" )
 			return NULL;
 
 		if( magic[0] != '\x1f' || magic[1] != '\x8b' )
 		{
-			sError = "Not a gzip file";
+			sError = "Not a gzipped file";
 			return NULL;
 		}
 	}
 
-	uint8_t iCompressionMethod = FileReading::read_8( file, sError );
-	uint8_t iFlags = FileReading::read_8( file, sError );
-	FileReading::read_32_le( file, sError ); /* time */
-	FileReading::read_8( file, sError ); /* xfl */
-	FileReading::read_8( file, sError ); /* os */
+	uint8_t iCompressionMethod = FileReading::read_8( *pFile, sError );
+	uint8_t iFlags = FileReading::read_8( *pFile, sError );
+	FileReading::read_32_le( *pFile, sError ); /* time */
+	FileReading::read_8( *pFile, sError ); /* xfl */
+	FileReading::read_8( *pFile, sError ); /* os */
 	if( sError != "" )
 		return NULL;
 
@@ -362,15 +364,15 @@ RageFileObjInflate *GunzipFile( RageFileBasic &file, RString &sError, uint32_t *
 
 	if( iFlags & FEXTRA )
 	{
-		int16_t iSize = FileReading::read_16_le( file, sError );
-		FileReading::SkipBytes( file, iSize, sError );
+		int16_t iSize = FileReading::read_16_le( *pFile, sError );
+		FileReading::SkipBytes( *pFile, iSize, sError );
 	}
 
 	if( iFlags & FNAME )
-		while( sError == "" && FileReading::read_8( file, sError ) != 0 )
+		while( sError == "" && FileReading::read_8( *pFile, sError ) != 0 )
 			;
 	if( iFlags & FCOMMENT )
-		while( sError == "" && FileReading::read_8( file, sError ) != 0 )
+		while( sError == "" && FileReading::read_8( *pFile, sError ) != 0 )
 			;
 	
 	if( iFlags & FHCRC )
@@ -378,10 +380,10 @@ RageFileObjInflate *GunzipFile( RageFileBasic &file, RString &sError, uint32_t *
 		/* Get the CRC of the data read so far.  Be sure to do this before
 		 * reading iExpectedCRC16. */
 		uint32_t iActualCRC32;
-		bool bOK = file.GetCRC32( &iActualCRC32 );
+		bool bOK = pFile->GetCRC32( &iActualCRC32 );
 		ASSERT( bOK );
 	
-		uint16_t iExpectedCRC16 = FileReading::read_u16_le( file, sError );
+		uint16_t iExpectedCRC16 = FileReading::read_u16_le( *pFile, sError );
 		uint16_t iActualCRC16 = int16_t( iActualCRC32 & 0xFFFF );
 		if( sError != "" )
 			return NULL;
@@ -395,29 +397,30 @@ RageFileObjInflate *GunzipFile( RageFileBasic &file, RString &sError, uint32_t *
 
 	/* We only need CRC checking on the raw data for the header, so disable
 	 * it. */
-	file.EnableCRC32( false );
+	pFile->EnableCRC32( false );
 
 	if( sError != "" )
 		return NULL;
 
-	int iDataPos = file.Tell();
+	int iDataPos = pFile->Tell();
 
 	/* Seek to the end, and grab the uncompressed flie size and CRC. */
-	int iFooterPos = file.GetFileSize() - 8;
+	int iFooterPos = pFile->GetFileSize() - 8;
 
-	FileReading::Seek( file, iFooterPos, sError );
+	FileReading::Seek( *pFile, iFooterPos, sError );
 	
-	uint32_t iExpectedCRC32 = FileReading::read_u32_le( file, sError );
-	uint32_t iUncompressedSize = FileReading::read_u32_le( file, sError );
+	uint32_t iExpectedCRC32 = FileReading::read_u32_le( *pFile, sError );
+	uint32_t iUncompressedSize = FileReading::read_u32_le( *pFile, sError );
 	if( iCRC32 != NULL )
 		*iCRC32 = iExpectedCRC32;
 	
-	FileReading::Seek( file, iDataPos, sError );
+	FileReading::Seek( *pFile, iDataPos, sError );
 	
 	if( sError != "" )
 		return NULL;
 	
-	RageFileDriverSlice *pSliceFile = new RageFileDriverSlice( &file, iDataPos, iFooterPos-iDataPos );
+	RageFileDriverSlice *pSliceFile = new RageFileDriverSlice( pFile.release(), iDataPos, iFooterPos-iDataPos );
+	pSliceFile->DeleteFileWhenFinished();
 	RageFileObjInflate *pInflateFile = new RageFileObjInflate( pSliceFile, iUncompressedSize );
 	pInflateFile->DeleteFileWhenFinished();
 
@@ -525,8 +528,8 @@ void GzipString( const RString &sIn, RString &sOut )
 
 bool GunzipString( const RString &sIn, RString &sOut, RString &sError )
 {
-	RageFileObjMem mem;
-	mem.PutString( sIn );
+	RageFileObjMem *mem = new RageFileObjMem;
+	mem->PutString( sIn );
 
 	uint32_t iCRC32;
 	RageFileBasic *pFile = GunzipFile( mem, sError, &iCRC32 );
