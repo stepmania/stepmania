@@ -204,18 +204,21 @@ int RageFileObj::EmptyWriteBuf()
 	if( m_pWriteBuffer == NULL )
 		return 0;
 
-	/* The write buffer may not align with the actual file, if we've seeked.  Only
-	 * seek if needed. */
-	bool bSeeked = (m_iWriteBufferPos+m_iWriteBufferUsed != m_iFilePos);
-	if( bSeeked )
-		SeekInternal( m_iWriteBufferPos );
+	if( m_iWriteBufferUsed )
+	{
+		/* The write buffer may not align with the actual file, if we've seeked.  Only
+		 * seek if needed. */
+		bool bSeeked = (m_iWriteBufferPos+m_iWriteBufferUsed != m_iFilePos);
+		if( bSeeked )
+			SeekInternal( m_iWriteBufferPos );
 
-	int iRet = WriteInternal( m_pWriteBuffer, m_iWriteBufferUsed );
+		int iRet = WriteInternal( m_pWriteBuffer, m_iWriteBufferUsed );
 
-	if( bSeeked )
-		SeekInternal( m_iFilePos );
-	if( iRet == -1 )
-		return iRet;
+		if( bSeeked )
+			SeekInternal( m_iFilePos );
+		if( iRet == -1 )
+			return iRet;
+	}
 
 	m_iWriteBufferPos = m_iFilePos;
 	m_iWriteBufferUsed = 0;
@@ -228,14 +231,11 @@ int RageFileObj::Write( const void *pBuffer, size_t iBytes )
 	{
 		/* If the file position has moved away from the write buffer, or the
 		 * incoming data won't fit in the buffer, flush. */
-		if( m_iWriteBufferUsed )
+		if( m_iWriteBufferPos+m_iWriteBufferUsed != m_iFilePos || m_iWriteBufferUsed + (int)iBytes > m_iWriteBufferSize )
 		{
-			if( m_iWriteBufferPos+m_iWriteBufferUsed != m_iFilePos || m_iWriteBufferUsed + (int)iBytes > m_iWriteBufferSize )
-			{
-				int iRet = EmptyWriteBuf();
-				if( iRet == -1 )
-					return iRet;
-			}
+			int iRet = EmptyWriteBuf();
+			if( iRet == -1 )
+				return iRet;
 		}
 
 		if( m_iWriteBufferUsed + (int)iBytes <= m_iWriteBufferSize )
