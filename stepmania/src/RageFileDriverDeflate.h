@@ -66,7 +66,7 @@ private:
 	int m_iDataStartOffset;
 };
 
-RageFileBasic *GunzipFile( RageFileBasic &file, RString &sError, uint32_t *iCRC32 );
+RageFileObjInflate *GunzipFile( RageFileBasic &file, RString &sError, uint32_t *iCRC32 );
 
 /* Quick helpers: */
 void GzipString( const RString &sIn, RString &sOut );

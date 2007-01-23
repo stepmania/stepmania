@@ -312,7 +312,7 @@ int RageFileObjDeflate::FlushInternal()
  * Parse a .gz file, check the header CRC16 if present, and return the data
  * CRC32 and a decompressor.
  */
-RageFileBasic *GunzipFile( RageFileBasic &file, RString &sError, uint32_t *iCRC32 )
+RageFileObjInflate *GunzipFile( RageFileBasic &file, RString &sError, uint32_t *iCRC32 )
 {
 	sError = "";
 
