@@ -319,6 +319,12 @@ unsigned LoadInternal( XNode *pNode, const RString &xml, RString &sErrorOut, uns
 		XNode *node = new XNode;
 		
 		iOffset = LoadInternal( node, xml, sErrorOut, iOffset );
+		if( iOffset == string::npos )
+		{
+			delete node;
+			return iOffset;
+		}
+
 		if( !node->GetName().empty() )
 		{
 			DEBUG_ASSERT( node->GetName().size() );
