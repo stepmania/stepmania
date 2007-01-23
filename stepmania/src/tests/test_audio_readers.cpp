@@ -12,15 +12,15 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-void ReadData( RageSoundReader *snd,
+void ReadData( RageSoundReader *pReader,
 	       int iFrame,		/* start */
-	       int16_t *buf,	/* out */
-	       int frames )
+	       int16_t *pBuf,		/* out */
+	       int iFrames )
 {
 	if( iFrame != -1 )
-		snd->SetPosition( iFrame );
-	int got = snd->Read( buf, frames );
-	ASSERT_M( got == frames, ssprintf("%i, %i", got, frames) );
+		pReader->SetPosition( iFrame );
+	int got = pReader->Read( pBuf, iFrames );
+	ASSERT_M( got == iFrames, ssprintf("%i, %i", got, iFrames) );
 }
 	       
 void find( const char *haystack, int hs, const char *needle, int ns )
