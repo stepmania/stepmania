@@ -13,6 +13,8 @@
 #include "ThemeManager.h"
 #include "CryptManager.h"
 #include "ProfileManager.h"
+#include "RageFile.h"
+#include "RageFileDriverDeflate.h"
 #include "RageFileManager.h"
 #include "LuaManager.h"
 #include "UnlockManager.h"
@@ -28,6 +30,7 @@
 const RString STATS_XSL            = "Stats.xsl";
 const RString COMMON_XSL           = "Common.xsl";
 const RString STATS_XML            = "Stats.xml";
+const RString STATS_XML_GZ         = "Stats.xml.gz";
 const RString EDITABLE_INI         = "Editable.ini";
 const RString DONT_SHARE_SIG       = "DontShare.sig";
 const RString PUBLIC_KEY_FILE      = "public.key";
@@ -36,6 +39,7 @@ const RString EDIT_STEPS_SUBDIR    = "Edits/";
 const RString EDIT_COURSES_SUBDIR  = "EditCourses/";
 
 ThemeMetric<bool> SHOW_COIN_DATA( "Profile", "ShowCoinData" );
+static Preference<bool> g_bProfileDataCompress( "ProfileDataCompress", false );
 
 #define GUID_SIZE_BYTES 8
 
@@ -801,15 +805,44 @@ ProfileLoadResult Profile::LoadAllFromDir( RString sDir, bool bRequireSignature 
 	
 	// Check for the existance of stats.xml
 	RString fn = sDir + STATS_XML;
+	bool bCompressed = false;
 	if( !IsAFile(fn) )
-		return ProfileLoadResult_FailedNoProfile;
+	{
+		// Check for the existance of stats.xml.gz
+		fn = sDir + STATS_XML_GZ;
+		bCompressed = true;
+		if( !IsAFile(fn) )
+			return ProfileLoadResult_FailedNoProfile;
+	}
+
+	int iError;
+	auto_ptr<RageFileBasic> pFile( FILEMAN->Open(fn, RageFile::READ, iError) );
+	if( pFile.get() == NULL )
+	{
+		LOG->Trace( "Error opening %s: %s", fn.c_str(), strerror(iError) );
+		return ProfileLoadResult_FailedTampered;
+	}
+
+	if( bCompressed )
+	{
+		RString sError;
+		uint32_t iCRC32;
+		RageFileObjInflate *pInflate = GunzipFile( pFile.release(), sError, &iCRC32 );
+		if( pInflate == NULL )
+		{
+			LOG->Trace( "Error opening %s: %s", fn.c_str(), sError.c_str() );
+			return ProfileLoadResult_FailedTampered;
+		}
+
+		pFile.reset( pInflate );
+	}
 
 	//
 	// Don't unreasonably large stats.xml files.
 	//
 	if( !IsMachine() )	// only check stats coming from the player
 	{
-		int iBytes = FILEMAN->GetFileSizeInBytes( fn );
+		int iBytes = pFile->GetFileSize();
 		if( iBytes > MAX_PLAYER_STATS_XML_SIZE_BYTES )
 		{
 			LOG->Warn( "The file '%s' is unreasonably large.  It won't be loaded.", fn.c_str() );
@@ -843,7 +876,7 @@ ProfileLoadResult Profile::LoadAllFromDir( RString sDir, bool bRequireSignature 
 
 	LOG->Trace( "Loading %s", fn.c_str() );
 	XNode xml;
-	if( !XmlFileUtil::LoadFromFileShowErrors(xml, fn) )
+	if( !XmlFileUtil::LoadFromFileShowErrors(xml, *pFile.get()) )
 		return ProfileLoadResult_FailedTampered;
 	LOG->Trace( "Done." );
 
@@ -932,19 +965,47 @@ XNode *Profile::SaveStatsXmlCreateNode() const
 
 bool Profile::SaveStatsXmlToDir( RString sDir, bool bSignData ) const
 {
-	XNode *xml = SaveStatsXmlCreateNode();
-
-	// Save stats.xml
-	RString fn = sDir + STATS_XML;
-
-	bool bSaved = XmlFileUtil::SaveToFile( xml, fn, STATS_XSL, false );
-
-	SAFE_DELETE( xml );
+	LOG->Trace( "SaveStatsXmlToDir: %s", sDir.c_str() );
+	auto_ptr<XNode> xml( SaveStatsXmlCreateNode() );
 	
+	// Save stats.xml
+	RString fn = sDir + (g_bProfileDataCompress? STATS_XML_GZ:STATS_XML);
+
+	{
+		RString sError;
+		RageFile f;
+		if( !f.Open(fn, RageFile::WRITE) )
+		{
+			LOG->Warn( "Couldn't open %s for writing: %s", fn.c_str(), f.GetError().c_str() );
+			return false;
+		}
+	
+		if( g_bProfileDataCompress )
+		{
+			RageFileObjGzip gzip( &f );
+			gzip.Start();
+			if( !XmlFileUtil::SaveToFile( xml.get(), gzip, STATS_XSL, false ) )
+				return false;
+			if( gzip.Finish() == -1 )
+				return false;
+
+			/* After successfully saving STATS_XML_GZ, remove any stray STATS_XML. */
+			FILEMAN->Remove( fn = sDir + STATS_XML );
+		}
+		else
+		{
+			if( !XmlFileUtil::SaveToFile( xml.get(), f, STATS_XSL, false ) )
+				return false;
+
+			/* After successfully saving STATS_XML, remove any stray STATS_XML_GZ. */
+			FILEMAN->Remove( fn = sDir + STATS_XML_GZ );
+		}
+	}
+
 	// Update file cache, or else IsAFile in CryptManager won't see this new file.
 	FILEMAN->FlushDirCache( sDir );
 	
-	if( bSaved && bSignData )
+	if( bSignData )
 	{
 		RString sStatsXmlSigFile = fn+SIGNATURE_APPEND;
 		CryptManager::SignFileToFile(fn, sStatsXmlSigFile);
@@ -957,7 +1018,7 @@ bool Profile::SaveStatsXmlToDir( RString sDir, bool bSignData ) const
 		CryptManager::SignFileToFile(sStatsXmlSigFile, sDontShareFile);
 	}
 
-	return bSaved;
+	return true;
 }
 
 void Profile::SaveEditableDataToDir( RString sDir ) const
