@@ -664,11 +664,20 @@ class RageFileObjTimeout: public RageFileObj
 {
 public:
 	/* pFile will be freed by passing it to pWorker. */
-	RageFileObjTimeout( ThreadedFileWorker *pWorker, RageFileBasic *pFile, int iSize )
+	RageFileObjTimeout( ThreadedFileWorker *pWorker, RageFileBasic *pFile, int iSize, int iMode )
 	{
 		m_pWorker = pWorker;
 		m_pFile = pFile;
 		m_iFileSize = iSize;
+		m_iMode = iMode;
+		/* We have a lot of overhead per read and write operation, since we send
+		* commands to the worker thread.  Buffer these operations. */
+		if( iMode & RageFile::WRITE ){
+			EnableWriteBuffering();
+		}
+		if( iMode & RageFile::READ ){
+			EnableReadBuffering();
+		}		
 	}
 
 	~RageFileObjTimeout()
@@ -699,7 +708,7 @@ public:
 			return NULL;
 		}
 
-		return new RageFileObjTimeout( m_pWorker, pCopy, m_iFileSize );
+		return new RageFileObjTimeout( m_pWorker, pCopy, m_iFileSize, m_iMode );
 	}
 
 protected:
@@ -723,10 +732,6 @@ protected:
 
 	int ReadInternal( void *pBuffer, size_t iBytes )
 	{
-		/* We have a lot of overhead per read and write operation, since we send
-		 * commands to the worker thread.  Buffer these operations. */
-		EnableReadBuffering();
-
 		RString sError;
 		int iRet = m_pWorker->Read( m_pFile, pBuffer, iBytes, sError );
 
@@ -744,8 +749,6 @@ protected:
 
 	int WriteInternal( const void *pBuffer, size_t iBytes )
 	{
-		EnableWriteBuffering();
-
 		RString sError;
 		int iRet = m_pWorker->Write( m_pFile, pBuffer, iBytes, sError );
 
@@ -786,6 +789,8 @@ protected:
 
 	/* GetFileSize isn't allowed to fail, so cache the file size on load. */
 	int m_iFileSize;
+	//cache filemode
+	int m_iMode;
 };
 
 /* This FilenameDB runs PopulateFileSet in the worker thread. */
@@ -843,7 +848,7 @@ RageFileBasic *RageFileDriverTimeout::Open( const RString &sPath, int iMode, int
 		}
 	}
 
-	return new RageFileObjTimeout( m_pWorker, pChildFile, iSize );
+	return new RageFileObjTimeout( m_pWorker, pChildFile, iSize, iMode );
 }
 
 void RageFileDriverTimeout::FlushDirCache( const RString &sPath )
