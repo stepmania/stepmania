@@ -20,11 +20,11 @@
 #if _MSC_VER == 1400 // VC8 specific warnings
 #pragma warning (disable : 4996) // deprecated functions vs "ISO C++ conformant names". (stricmp vs _stricmp)
 #pragma warning (disable : 4005) // macro redefinitions (ARRAYSIZE)
-#pragma warning (disable : 4275) // non dll-interface class 'stdext::exception' used as base for dll-interface class 'std::bad_cast', bug in VC <exception> when exceptions disabled
 #endif
 
 #define snprintf _snprintf // Unsure if this goes with __MINGW32__ right now.
 
+#pragma warning (disable : 4275) // non dll-interface class 'stdext::exception' used as base for dll-interface class 'std::bad_cast', bug in VC <exception> when exceptions disabled
 #pragma warning (disable : 4201) // nonstandard extension used : nameless struct/union (Windows headers do this)
 #pragma warning (disable : 4786) // turn off broken debugger warning
 #pragma warning (disable : 4512) // assignment operator could not be generated (so?)
@@ -49,7 +49,9 @@
 #define _CRT_SECURE_NO_DEPRECATE
 #define _SCL_SECURE_NO_DEPRECATE 
 
+#if defined(_MSC_VER) && _MSC_VER >= 1400 // this is needed in VC8 but breaks VC7
 #define _HAS_EXCEPTIONS 0
+#endif
 
 /* Don't include windows.h everywhere; when we do eventually include it, use these: */
 #define WIN32_LEAN_AND_MEAN
