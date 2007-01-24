@@ -990,7 +990,7 @@ bool Profile::SaveStatsXmlToDir( RString sDir, bool bSignData ) const
 				return false;
 
 			/* After successfully saving STATS_XML_GZ, remove any stray STATS_XML. */
-			FILEMAN->Remove( fn = sDir + STATS_XML );
+			FILEMAN->Remove( sDir + STATS_XML );
 		}
 		else
 		{
@@ -998,7 +998,7 @@ bool Profile::SaveStatsXmlToDir( RString sDir, bool bSignData ) const
 				return false;
 
 			/* After successfully saving STATS_XML, remove any stray STATS_XML_GZ. */
-			FILEMAN->Remove( fn = sDir + STATS_XML_GZ );
+			FILEMAN->Remove( sDir + STATS_XML_GZ );
 		}
 	}
 
