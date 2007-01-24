@@ -901,18 +901,7 @@ int main(int argc, char* argv[])
 	/* Set up arch hooks first.  This may set up crash handling. */
 	HOOKS = ArchHooks::Create();
 	HOOKS->Init();
-#if !defined(DEBUG)
-	/* Tricky: for other exceptions, we want a backtrace.  To do this in Windows,
-	 * we need to catch the exception and force a crash.  The call stack is still
-	 * there, and gets picked up by the crash handler.  (If we don't catch it, we'll
-	 * get a generic, useless "abnormal termination" dialog.)  In Linux, if we do this
-	 * we'll only get main() on the stack, but if we don't catch the exception, it'll
-	 * just work.  So, only catch generic exceptions in Windows. */
-#if defined(_WINDOWS)
-	try { /* exception */
-#endif
 
-#endif
 	LUA		= new LuaManager;
 
 	/* Almost everything uses this to read and write files.  Load this early. */
@@ -1113,15 +1102,6 @@ int main(int argc, char* argv[])
 	PREFSMAN->SavePrefsToDisk();
 
 	ShutdownGame();
-
-#if !defined(DEBUG) && defined(_WINDOWS)
-	}
-	catch( const exception &e )
-	{
-		/* This can be things like calling std::string::reserve(-1), or out of memory. */
-		FAIL_M( e.what() );
-	}
-#endif
 	
 	return 0;
 }
