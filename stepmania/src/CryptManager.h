@@ -15,6 +15,7 @@ public:
 	static void SignFileToFile( RString sPath, RString sSignatureFile = "" );
 	static bool VerifyFileWithFile( RString sPath, RString sSignatureFile = "" );
 	static bool VerifyFileWithFile( RString sPath, RString sSignatureFile, RString sPublicKeyFile );
+	static bool Verify( RString sPath, RString sSignature, RString sPublicKey );
 
 	static void GetRandomBytes( void *pData, int iBytes );
 

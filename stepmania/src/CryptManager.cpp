@@ -5,8 +5,8 @@
 #include "RageFile.h"
 #include "PrefsManager.h"
 #include "RageFileManager.h"
-#include "crypto/CryptMD5.h"
-#include "crypto/CryptRand.h"
+
+#include "libtomcrypt/src/headers/tomcrypt.h"
 
 CryptManager*	CRYPTMAN	= NULL;	// global and accessable from anywhere in our program
 
@@ -34,14 +34,120 @@ void CryptManager::GetRandomBytes( void *pData, int iBytes )
 
 #else
 
-// crypt headers
-#include "CryptHelpers.h"
-
 static const int KEY_LENGTH = 1024;
 #define MAX_SIGNATURE_SIZE_BYTES 1024	// 1 KB
 
+
+
+
+/*
+ openssl genrsa -out testing -outform DER
+ openssl rsa -in testing -out testing2 -outform DER
+ openssl rsa -in testing -out testing2 -pubout -outform DER
+ 
+ openssl pkcs8 -inform DER -outform DER -nocrypt -in private.rsa -out private.der
+ * 
+ */
+
+
+class PRNG
+{
+public:
+	// PRNG( const struct ltc_hash_descriptor *pHashDescriptor )
+	PRNG( const struct ltc_prng_descriptor *pPRNGDescriptor )
+	{
+		m_iPRNG = register_prng( pPRNGDescriptor );
+		ASSERT( m_iPRNG >= 0 );
+
+		int iRet = rng_make_prng( 128, m_iPRNG, &m_PRNG, NULL );
+		ASSERT_M( iRet == CRYPT_OK, error_to_string(iRet) );
+	}
+
+	~PRNG()
+	{
+		if( m_iPRNG != -1 )
+			prng_descriptor[m_iPRNG].done( &m_PRNG );
+	}
+
+	void AddEntropy( const RString &sBuf )
+	{
+		int iRet = prng_descriptor[m_iPRNG].add_entropy( (const unsigned char *) sBuf.data(), sBuf.size(), &m_PRNG );
+		ASSERT_M( iRet == CRYPT_OK, error_to_string(iRet) );
+
+		iRet = prng_descriptor[m_iPRNG].ready( &m_PRNG );
+		ASSERT_M( iRet == CRYPT_OK, error_to_string(iRet) );
+	}
+
+	int m_iPRNG;
+	prng_state m_PRNG;
+};
+
+static PRNG *g_pPRNG = NULL;
+
+class RSAKey
+{
+public:
+	RSAKey()
+	{
+	}
+
+	~RSAKey()
+	{
+		rsa_free( &m_Key );
+	}
+
+	void Generate( PRNG &prng, int iKeyLenBits )
+	{
+		int iRet = rsa_make_key( &prng.m_PRNG, prng.m_iPRNG, iKeyLenBits / 8, 65537, &m_Key );
+	}
+
+	bool Load( const RString &sKey )
+	{
+		int iRet = rsa_import( (const unsigned char *) sKey.data(), sKey.size(), &m_Key );
+		if( iRet != CRYPT_OK )
+		{
+			LOG->Warn( "Error loading RSA Key: %s", error_to_string(iRet) );
+			return false;
+		}
+
+		return true;
+	}
+	
+	rsa_key m_Key;
+};
+
+bool HashFile( RageFile &f, unsigned char buf_hash[20], int iHash )
+{
+	hash_state hash;
+	int iRet = hash_descriptor[iHash].init( &hash );
+	ASSERT_M( iRet == CRYPT_OK, error_to_string(iRet) );
+
+	RString s;
+	while( !f.AtEOF() )
+	{
+		if( f.Read(s, 1024*4) == -1 )
+		{
+			LOG->Warn( "Error reading %s: %s", f.GetPath().c_str(), f.GetError().c_str() );
+			hash_descriptor[iHash].done( &hash, buf_hash );
+			return false;
+		}
+
+		iRet = hash_descriptor[iHash].process( &hash, (const unsigned char *) s.data(), s.size() );
+		ASSERT_M( iRet == CRYPT_OK, error_to_string(iRet) );
+	}
+
+	iRet = hash_descriptor[iHash].done( &hash, buf_hash );
+	ASSERT_M( iRet == CRYPT_OK, error_to_string(iRet) );
+
+	return true;
+}
+
 CryptManager::CryptManager()
 {
+	ltc_mp = ltm_desc;
+
+	g_pPRNG = new PRNG( &yarrow_desc );
+
 	//
 	// generate keys if none are available
 	//
@@ -58,7 +164,7 @@ CryptManager::CryptManager()
 
 CryptManager::~CryptManager()
 {
-
+	SAFE_DELETE( g_pPRNG );
 }
 
 static bool WriteFile( RString sFile, RString sBuf )
@@ -85,10 +191,38 @@ void CryptManager::GenerateRSAKey( unsigned int keyLength, RString privFilename,
 {
 	ASSERT( PREFSMAN->m_bSignProfileData );
 
-	RString sPubKey, sPrivKey;
+	g_pPRNG->AddEntropy( seed );
+	
+	int iRet;
 
-	if( !CryptHelpers::GenerateRSAKey(keyLength, seed, sPubKey, sPrivKey) )
+	rsa_key key;
+	iRet = rsa_make_key( &g_pPRNG->m_PRNG, g_pPRNG->m_iPRNG, keyLength / 8, 65537, &key );
+	if( iRet != CRYPT_OK )
+	{
+		LOG->Warn( "GenerateRSAKey(%i) error: %s", keyLength, error_to_string(iRet) );
 		return;
+	}
+
+	unsigned char buf[1024];
+	unsigned long iSize = sizeof(buf);
+	iRet = rsa_export( buf, &iSize, PK_PUBLIC, &key );
+	if( iRet != CRYPT_OK )
+	{
+		LOG->Warn( "Export error: %s", error_to_string(iRet) );
+		return;
+	}
+
+	RString sPubKey( (const char *) buf, iSize );
+
+	iSize = sizeof(buf);
+	iRet = rsa_export( buf, &iSize, PK_PRIVATE, &key );
+	if( iRet != CRYPT_OK )
+	{
+		LOG->Warn( "Export error: %s", error_to_string(iRet) );
+		return;
+	}
+
+	RString sPrivKey( (const char *) buf, iSize );
 
 	if( !WriteFile(pubFilename, sPubKey) )
 		return;
@@ -122,18 +256,36 @@ void CryptManager::SignFileToFile( RString sPath, RString sSignatureFile )
 	RageFile file;
 	if( !file.Open(sMessageFilename) )
 	{
-		LOG->Warn( "VerifyFileWithFile: open(%s) failed: %s", sPath.c_str(), file.GetError().c_str() );
+		LOG->Warn( "SignFileToFile: open(%s) failed: %s", sPath.c_str(), file.GetError().c_str() );
 		return;
 	}
 
-	RString sSignature;
-	RString sError;
-	if( !CryptHelpers::SignFile(file, sPrivKey, sSignature, sError) )
+	RSAKey key;
+	if( !key.Load(sPrivKey) )
+		return;
+
+	int iHash = register_hash( &sha1_desc );
+	ASSERT( iHash >= 0 );
+
+	unsigned char buf_hash[20];
+	if( !HashFile(file, buf_hash, iHash) )
+		return;
+
+	unsigned char signature[256];
+	unsigned long signature_len = sizeof(signature);
+
+	int iRet = rsa_sign_hash_ex(
+			buf_hash, sizeof(buf_hash),
+			signature, &signature_len,
+			LTC_PKCS_1_V1_5, &g_pPRNG->m_PRNG, g_pPRNG->m_iPRNG, iHash,
+			0, &key.m_Key);
+	if( iRet != CRYPT_OK )
 	{
-		LOG->Warn( "SignFileToFile failed: %s", sError.c_str() );
+		LOG->Warn( "SignFileToFile error: %s", error_to_string(iRet) );
 		return;
 	}
 
+	RString sSignature( (const char *) signature, signature_len );
 	WriteFile( sSignatureFile, sSignature );
 }
 
@@ -162,7 +314,6 @@ bool CryptManager::VerifyFileWithFile( RString sPath, RString sSignatureFile, RS
 {
 	ASSERT( PREFSMAN->m_bSignProfileData );
 
-	RString sMessageFilename = sPath;
 	if( sSignatureFile.empty() )
 		sSignatureFile = sPath + SIGNATURE_APPEND;
 
@@ -178,17 +329,44 @@ bool CryptManager::VerifyFileWithFile( RString sPath, RString sSignatureFile, RS
 	if( !GetFileContents(sSignatureFile, sSignature) )
 		return false;
 
+	return Verify( sPath, sSignature, sPublicKey );
+}
+
+bool CryptManager::Verify( RString sPath, RString sSignature, RString sPublicKey )
+{
+	ASSERT( PREFSMAN->m_bSignProfileData );
+
 	RageFile file;
 	if( !file.Open(sPath) )
 	{
-		LOG->Warn( "VerifyFileWithFile: open(%s) failed: %s", sPath.c_str(), file.GetError().c_str() );
+		LOG->Warn( "Verify: open(%s) failed: %s", sPath.c_str(), file.GetError().c_str() );
 		return false;
 	}
 
-	RString sError;
-	if( !CryptHelpers::VerifyFile(file, sSignature, sPublicKey, sError) )
+	RSAKey key;
+	if( !key.Load(sPublicKey) )
+		return false;
+
+	int iHash = register_hash( &sha1_desc );
+	ASSERT( iHash >= 0 );
+
+	unsigned char buf_hash[20];
+	HashFile( file, buf_hash, iHash );
+
+	int iMatch;
+	int iRet = rsa_verify_hash_ex( (const unsigned char *) sSignature.data(), sSignature.size(),
+			buf_hash, sizeof(buf_hash),
+			LTC_PKCS_1_EMSA, iHash, 0, &iMatch, &key.m_Key );
+
+	if( iRet != CRYPT_OK )
 	{
-		LOG->Warn( "VerifyFile(%s) failed: %s", sPath.c_str(), sError.c_str() );
+		LOG->Warn( "Verify(%s) failed: %s", sPath.c_str(), error_to_string(iRet) );
+		return false;
+	}
+
+	if( !iMatch )
+	{
+		LOG->Warn( "Verify(%s) failed: signature mismatch", sPath.c_str() );
 		return false;
 	}
 
@@ -198,37 +376,31 @@ bool CryptManager::VerifyFileWithFile( RString sPath, RString sSignatureFile, RS
 
 RString CryptManager::GetMD5ForFile( RString fn )
 {
-	struct MD5Context md5c;
-	unsigned char digest[16];
-	int iBytesRead;
-	unsigned char buffer[1024];
-
 	RageFile file;
 	if( !file.Open( fn, RageFile::READ ) )
 	{
 		LOG->Warn( "GetMD5: Failed to open file '%s'", fn.c_str() );
 		return RString();
 	}
+	int iHash = register_hash( &md5_desc );
+	ASSERT( iHash >= 0 );
 
-	MD5Init(&md5c);
-	while( !file.AtEOF() && file.GetError().empty() )
-	{
-		iBytesRead = file.Read( buffer, sizeof(buffer) );
-		MD5Update(&md5c, buffer, iBytesRead);
-	}
-	MD5Final(digest, &md5c);
+	unsigned char digest[16];
+	HashFile( file, digest, iHash );
 
 	return BinaryToHex( digest, sizeof(digest) );
 }
 
 RString CryptManager::GetMD5ForString( RString sData )
 {
-	struct MD5Context md5c;
 	unsigned char digest[16];
 
-	MD5Init(&md5c);
-	MD5Update(&md5c, reinterpret_cast<const unsigned char*>(sData.c_str()), sData.size());
-	MD5Final(digest, &md5c);
+	int iHash = register_hash( &md5_desc );
+
+	hash_state hash;
+	int iRet = hash_descriptor[iHash].init( &hash );
+	iRet = hash_descriptor[iHash].process( &hash, (const unsigned char *) sData.data(), sData.size() );
+	iRet = hash_descriptor[iHash].done( &hash, digest );
 
 	return BinaryToHex( digest, sizeof(digest) );
 }
@@ -242,17 +414,12 @@ RString CryptManager::GetPublicKeyFileName()
 
 void CryptManager::GetRandomBytes( void *pData, int iBytes )
 {
-	// Does the RNG need to be inited and seeded every time?
-	random_init();
-	random_add_noise( "ai8049ujr3odusj" );
-	
-	uint8_t *pBuf = (uint8_t *) pData;
-	while( iBytes-- )
-		*pBuf++ = random_byte();
+	int iRet = prng_descriptor[g_pPRNG->m_iPRNG].read( (unsigned char *) pData, iBytes, &g_pPRNG->m_PRNG );
+	ASSERT( iRet == iBytes );
 }
 
 /*
- * (c) 2004 Chris Danford
+ * (c) 2004-2007 Chris Danford, Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
