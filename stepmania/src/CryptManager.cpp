@@ -14,7 +14,7 @@ static const RString PRIVATE_KEY_PATH = "Data/private.rsa";
 static const RString PUBLIC_KEY_PATH = "Data/public.rsa";
 static const RString ALTERNATE_PUBLIC_KEY_DIR = "Data/keys/";
 
-#if !defined(HAVE_CRYPTOPP)
+#if defined(DISABLE_CRYPTO)
 CryptManager::CryptManager() { }
 CryptManager::~CryptManager() { }
 void CryptManager::GenerateRSAKey( unsigned int keyLength, RString privFilename, RString pubFilename, RString seed ) { }
