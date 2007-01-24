@@ -127,7 +127,7 @@ void BacktraceNames::FromAddr( const void *p )
 			return;
     }
 
-    Symbol = di.dli_sname;
+    Symbol = di.dli_sname? di.dli_sname:"";
     File = di.dli_fname;
     Offset = (char*)(p)-(char*)di.dli_saddr;
 }

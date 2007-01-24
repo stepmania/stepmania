@@ -51,7 +51,7 @@ static void output_stack_trace( FILE *out, const void **BacktracePointers )
 		bn.Demangle();
 		
 		/* Don't show the main module name. */
-		if( bn.File == g_pCrashHandlerArgv0 )
+		if( bn.File == g_pCrashHandlerArgv0 && !bn.Symbol.empty() )
 			bn.File = "";
 		
 		if( bn.Symbol == "__libc_start_main" )
