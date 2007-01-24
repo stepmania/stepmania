@@ -10,6 +10,8 @@ AM_CXXFLAGS =
 AM_CFLAGS = 
 noinst_LIBRARIES =
 
+AM_CXXFLAGS += -fno-exceptions
+
 # Relax inlining; the default of 600 takes way too long to compile and
 # generates enormous output.
 AM_CXXFLAGS += -finline-limit=300
