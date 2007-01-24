@@ -123,24 +123,35 @@ class RSAKeyWrapper
 public:
 	RSAKeyWrapper()
 	{
+		memset( &m_Key, 0, sizeof(m_Key) );
 	}
 
 	~RSAKeyWrapper()
+	{
+		Unload();
+	}
+
+	void Unload()
 	{
 		rsa_free( &m_Key );
 	}
 
 	void Generate( PRNGWrapper &prng, int iKeyLenBits )
 	{
+		Unload();
+
 		int iRet = rsa_make_key( &prng.m_PRNG, prng.m_iPRNG, iKeyLenBits / 8, 65537, &m_Key );
 		ASSERT( iRet == CRYPT_OK );
 	}
 
 	bool Load( const RString &sKey )
 	{
+		Unload();
+
 		int iRet = rsa_import( (const unsigned char *) sKey.data(), sKey.size(), &m_Key );
 		if( iRet != CRYPT_OK )
 		{
+			memset( &m_Key, 0, sizeof(m_Key) );
 			LOG->Warn( "Error loading RSA Key: %s", error_to_string(iRet) );
 			return false;
 		}
@@ -157,17 +168,28 @@ CryptManager::CryptManager()
 
 	g_pPRNG = new PRNGWrapper( &yarrow_desc );
 
+	if( !PREFSMAN->m_bSignProfileData )
+		return;
 	//
 	// generate keys if none are available
 	//
-	if( PREFSMAN->m_bSignProfileData )
+	bool bGenerate = false;
+	RSAKeyWrapper key;
+	RString sKey;
+	if( !DoesFileExist(PRIVATE_KEY_PATH) ||
+	    !GetFileContents(PRIVATE_KEY_PATH, sKey) ||
+	    !key.Load(sKey) )
+		bGenerate = true;
+	if( !DoesFileExist(PUBLIC_KEY_PATH) ||
+	    !GetFileContents(PUBLIC_KEY_PATH, sKey) ||
+	    !key.Load(sKey) )
+		bGenerate = true;
+
+	if( bGenerate )
 	{
-		if( !DoesFileExist(PRIVATE_KEY_PATH) || !DoesFileExist(PUBLIC_KEY_PATH) )
-		{
-			LOG->Warn( "Keys missing.  Generating new keys" );
-			GenerateRSAKey( KEY_LENGTH, PRIVATE_KEY_PATH, PUBLIC_KEY_PATH );
-			FlushDirCache();
-		}
+		LOG->Warn( "Keys missing or failed to load.  Generating new keys" );
+		GenerateRSAKey( KEY_LENGTH, PRIVATE_KEY_PATH, PUBLIC_KEY_PATH );
+		FlushDirCache();
 	}
 }
 
