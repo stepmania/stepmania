@@ -50,11 +50,10 @@ static const int KEY_LENGTH = 1024;
  */
 
 
-class PRNG
+class PRNGWrapper
 {
 public:
-	// PRNG( const struct ltc_hash_descriptor *pHashDescriptor )
-	PRNG( const struct ltc_prng_descriptor *pPRNGDescriptor )
+	PRNGWrapper( const struct ltc_prng_descriptor *pPRNGDescriptor )
 	{
 		m_iPRNG = register_prng( pPRNGDescriptor );
 		ASSERT( m_iPRNG >= 0 );
@@ -63,7 +62,7 @@ public:
 		ASSERT_M( iRet == CRYPT_OK, error_to_string(iRet) );
 	}
 
-	~PRNG()
+	~PRNGWrapper()
 	{
 		if( m_iPRNG != -1 )
 			prng_descriptor[m_iPRNG].done( &m_PRNG );
@@ -82,23 +81,24 @@ public:
 	prng_state m_PRNG;
 };
 
-static PRNG *g_pPRNG = NULL;
+static PRNGWrapper *g_pPRNG = NULL;
 
-class RSAKey
+class RSAKeyWrapper
 {
 public:
-	RSAKey()
+	RSAKeyWrapper()
 	{
 	}
 
-	~RSAKey()
+	~RSAKeyWrapper()
 	{
 		rsa_free( &m_Key );
 	}
 
-	void Generate( PRNG &prng, int iKeyLenBits )
+	void Generate( PRNGWrapper &prng, int iKeyLenBits )
 	{
 		int iRet = rsa_make_key( &prng.m_PRNG, prng.m_iPRNG, iKeyLenBits / 8, 65537, &m_Key );
+		ASSERT( iRet == CRYPT_OK );
 	}
 
 	bool Load( const RString &sKey )
@@ -146,7 +146,7 @@ CryptManager::CryptManager()
 {
 	ltc_mp = ltm_desc;
 
-	g_pPRNG = new PRNG( &yarrow_desc );
+	g_pPRNG = new PRNGWrapper( &yarrow_desc );
 
 	//
 	// generate keys if none are available
@@ -260,7 +260,7 @@ void CryptManager::SignFileToFile( RString sPath, RString sSignatureFile )
 		return;
 	}
 
-	RSAKey key;
+	RSAKeyWrapper key;
 	if( !key.Load(sPrivKey) )
 		return;
 
@@ -343,7 +343,7 @@ bool CryptManager::Verify( RString sPath, RString sSignature, RString sPublicKey
 		return false;
 	}
 
-	RSAKey key;
+	RSAKeyWrapper key;
 	if( !key.Load(sPublicKey) )
 		return false;
 
