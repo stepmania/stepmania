@@ -42,6 +42,7 @@
 #define LTC_NO_PK
 #define MRSA
 
+#define LTC_NO_PROTOTYPES
 
 /* macros for various libc functions you can change for embedded targets */
 #ifndef XMALLOC
