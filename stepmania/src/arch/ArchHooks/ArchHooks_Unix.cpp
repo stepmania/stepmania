@@ -65,10 +65,10 @@ static bool EmergencyShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
 #if defined(CRASH_HANDLER)
 	/* If we ran the crash handler, then die. */
 	kill( getpid(), SIGKILL );
-#else
+#endif
+
 	/* We didn't run the crash handler.  Run the default handler, so we can dump core. */
 	return false;
-#endif
 }
 	
 #if defined(HAVE_TLS)
