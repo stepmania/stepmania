@@ -194,19 +194,6 @@ void SignalHandler::OnClose( handler h )
 	handlers.push_back(h);
 }
 
-/* Revert to the default signal handler.  This is called */
-void SignalHandler::ResetSignalHandlers()
-{
-	struct sigaction sa;
-	sa.sa_flags = 0;
-	sigemptyset( &sa.sa_mask );
-
-	/* Set up the default signal handler. */
-	sa.sa_handler = SIG_DFL;
-	for(int i = 0; signals[i] != -1; ++i)
-		sigaction( signals[i], &sa, NULL );
-}
-
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
