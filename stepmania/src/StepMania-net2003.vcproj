@@ -15,7 +15,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="$(TargetDir)"
-			IntermediateDirectory="./../Debug"
+			IntermediateDirectory="$(SolutionDir)/build-$(SolutionName)/$(ProjectName)/$(ConfigurationName)"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
@@ -34,9 +34,9 @@
 				UsePrecompiledHeader="3"
 				PrecompiledHeaderThrough="global.h"
 				PrecompiledHeaderFile="$(IntDir)/StepMania.pch"
-				AssemblerListingLocation=".\../Debug/"
-				ObjectFile=".\../Debug/"
-				ProgramDataBaseFileName=".\../Debug/"
+				AssemblerListingLocation="$(IntDir)\"
+				ObjectFile="$(IntDir)\"
+				ProgramDataBaseFileName="$(IntDir)\"
 				BrowseInformation="0"
 				WarningLevel="4"
 				SuppressStartupBanner="TRUE"
@@ -93,7 +93,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="$(TargetDir)"
-			IntermediateDirectory="./../Release"
+			IntermediateDirectory="$(SolutionDir)/build-$(SolutionName)/$(ProjectName)/$(ConfigurationName)"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
@@ -121,9 +121,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				UsePrecompiledHeader="3"
 				PrecompiledHeaderThrough="global.h"
 				PrecompiledHeaderFile="$(IntDir)/StepMania.pch"
-				AssemblerListingLocation=".\../Release/"
-				ObjectFile=".\../Release/"
-				ProgramDataBaseFileName=".\../Release/"
+				AssemblerListingLocation="$(IntDir)\"
+				ObjectFile="$(IntDir)\"
+				ProgramDataBaseFileName="$(IntDir)\"
 				BrowseInformation="0"
 				WarningLevel="4"
 				SuppressStartupBanner="TRUE"
@@ -180,7 +180,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 		<Configuration
 			Name="FastDebug|Win32"
 			OutputDirectory="$(TargetDir)"
-			IntermediateDirectory=".\..\FastDebug"
+			IntermediateDirectory="$(SolutionDir)/build-$(SolutionName)/$(ProjectName)/$(ConfigurationName)"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
@@ -199,9 +199,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				UsePrecompiledHeader="3"
 				PrecompiledHeaderThrough="global.h"
 				PrecompiledHeaderFile="$(IntDir)/StepMania.pch"
-				AssemblerListingLocation=".\../FastDebug/"
-				ObjectFile=".\../FastDebug/"
-				ProgramDataBaseFileName=".\../FastDebug/"
+				AssemblerListingLocation="$(IntDir)\"
+				ObjectFile="$(IntDir)\"
+				ProgramDataBaseFileName="$(IntDir)\"
 				BrowseInformation="0"
 				WarningLevel="4"
 				SuppressStartupBanner="TRUE"
@@ -3219,203 +3219,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<File
 				RelativePath=".\WorkoutManager.h">
 			</File>
-		</Filter>
-		<Filter
-			Name="Crypto"
-			Filter="">
-			<File
-				RelativePath="crypto\CryptBn.cpp">
-			</File>
-			<File
-				RelativePath="crypto\CryptBn.h">
-			</File>
-			<File
-				RelativePath="CryptHelpers.cpp">
-			</File>
-			<File
-				RelativePath="CryptHelpers.h">
-			</File>
-			<File
-				RelativePath="crypto\CryptMD5.cpp">
-			</File>
-			<File
-				RelativePath="crypto\CryptMD5.h">
-			</File>
-			<File
-				RelativePath="crypto\CryptNoise.cpp">
-			</File>
-			<File
-				RelativePath="crypto\CryptPrime.cpp">
-			</File>
-			<File
-				RelativePath="crypto\CryptPrime.h">
-			</File>
-			<File
-				RelativePath="crypto\CryptRand.cpp">
-			</File>
-			<File
-				RelativePath="crypto\CryptRand.h">
-			</File>
-			<File
-				RelativePath="crypto\CryptRSA.cpp">
-			</File>
-			<File
-				RelativePath="crypto\CryptRSA.h">
-			</File>
-			<File
-				RelativePath="crypto\CryptSH512.cpp">
-			</File>
-			<File
-				RelativePath="crypto\CryptSH512.h">
-			</File>
-			<File
-				RelativePath="crypto\CryptSHA.cpp">
-			</File>
-			<File
-				RelativePath="crypto\CryptSHA.h">
-			</File>
-			<Filter
-				Name="crypto++"
-				Filter="">
-				<File
-					RelativePath="crypto51\algebra.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\algebra.h">
-				</File>
-				<File
-					RelativePath="crypto51\algparam.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\algparam.h">
-				</File>
-				<File
-					RelativePath="crypto51\argnames.h">
-				</File>
-				<File
-					RelativePath="crypto51\asn.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\asn.h">
-				</File>
-				<File
-					RelativePath="crypto51\config.h">
-				</File>
-				<File
-					RelativePath="crypto51\cryptlib.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\cryptlib.h">
-				</File>
-				<File
-					RelativePath="crypto51\files.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\files.h">
-				</File>
-				<File
-					RelativePath="crypto51\filters.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\filters.h">
-				</File>
-				<File
-					RelativePath="crypto51\fltrimpl.h">
-				</File>
-				<File
-					RelativePath="crypto51\integer.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\integer.h">
-				</File>
-				<File
-					RelativePath="crypto51\iterhash.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\iterhash.h">
-				</File>
-				<File
-					RelativePath="crypto51\misc.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\misc.h">
-				</File>
-				<File
-					RelativePath="crypto51\modarith.h">
-				</File>
-				<File
-					RelativePath="crypto51\mqueue.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\mqueue.h">
-				</File>
-				<File
-					RelativePath="crypto51\nbtheory.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\nbtheory.h">
-				</File>
-				<File
-					RelativePath="crypto51\oids.h">
-				</File>
-				<File
-					RelativePath="crypto51\osrng.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\osrng.h">
-				</File>
-				<File
-					RelativePath="crypto51\pch.h">
-				</File>
-				<File
-					RelativePath="crypto51\pkcspad.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\pkcspad.h">
-				</File>
-				<File
-					RelativePath="crypto51\pubkey.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\pubkey.h">
-				</File>
-				<File
-					RelativePath="crypto51\queue.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\queue.h">
-				</File>
-				<File
-					RelativePath="crypto51\rng.h">
-				</File>
-				<File
-					RelativePath="crypto51\rsa.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\rsa.h">
-				</File>
-				<File
-					RelativePath="crypto51\secblock.h">
-				</File>
-				<File
-					RelativePath="crypto51\seckey.h">
-				</File>
-				<File
-					RelativePath="crypto51\sha.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\sha.h">
-				</File>
-				<File
-					RelativePath="crypto51\simple.h">
-				</File>
-				<File
-					RelativePath="crypto51\smartptr.h">
-				</File>
-				<File
-					RelativePath="crypto51\words.h">
-				</File>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="StepMania"
