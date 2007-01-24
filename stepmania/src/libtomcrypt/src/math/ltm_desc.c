@@ -14,7 +14,7 @@
 
 #ifdef LTM_DESC
 
-#include "libtommath/tommath.h"
+#include "../../../libtommath/tommath.h"
 
 static const struct {
     int mpi_code, ltc_code;
