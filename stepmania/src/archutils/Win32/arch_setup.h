@@ -4,7 +4,6 @@
 #if !defined(XBOX)
 #define HAVE_FFMPEG
 #define HAVE_THEORA
-#define HAVE_CRYPTOPP
 #endif
 
 #define SUPPORT_OPENGL

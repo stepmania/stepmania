@@ -21,7 +21,6 @@ typedef unsigned long long UInt64;
 
 #define HAVE_VERSION_INFO
 #define HAVE_CXA_DEMANGLE
-#define HAVE_CRYPTOPP
 #define HAVE_THEORA
 #define HAVE_FFMPEG
 #define HAVE_PTHREAD_COND_TIMEDWAIT
