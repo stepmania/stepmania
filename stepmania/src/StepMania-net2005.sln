@@ -1,7 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual C++ Express 2005
+# Visual Studio 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StepMania-net2005", "StepMania-net2005.vcproj", "{AF209DBD-24BD-4356-8DFE-41751B221195}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FEDE5283-1518-4B1D-8124-5C54DB17EA57} = {FEDE5283-1518-4B1D-8124-5C54DB17EA57}
+		{F70DD0FE-A74A-42E7-B81F-E35C49FC9EB9} = {F70DD0FE-A74A-42E7-B81F-E35C49FC9EB9}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libtommath", "libtommath\libtommath-net2005.vcproj", "{FEDE5283-1518-4B1D-8124-5C54DB17EA57}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libtomcrypt", "libtomcrypt\libtomcrypt-net2005.vcproj", "{F70DD0FE-A74A-42E7-B81F-E35C49FC9EB9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,6 +24,18 @@ Global
 		{AF209DBD-24BD-4356-8DFE-41751B221195}.FastDebug|Win32.Build.0 = FastDebug|Win32
 		{AF209DBD-24BD-4356-8DFE-41751B221195}.Release|Win32.ActiveCfg = Release|Win32
 		{AF209DBD-24BD-4356-8DFE-41751B221195}.Release|Win32.Build.0 = Release|Win32
+		{FEDE5283-1518-4B1D-8124-5C54DB17EA57}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FEDE5283-1518-4B1D-8124-5C54DB17EA57}.Debug|Win32.Build.0 = Debug|Win32
+		{FEDE5283-1518-4B1D-8124-5C54DB17EA57}.FastDebug|Win32.ActiveCfg = Debug|Win32
+		{FEDE5283-1518-4B1D-8124-5C54DB17EA57}.FastDebug|Win32.Build.0 = Debug|Win32
+		{FEDE5283-1518-4B1D-8124-5C54DB17EA57}.Release|Win32.ActiveCfg = Release|Win32
+		{FEDE5283-1518-4B1D-8124-5C54DB17EA57}.Release|Win32.Build.0 = Release|Win32
+		{F70DD0FE-A74A-42E7-B81F-E35C49FC9EB9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F70DD0FE-A74A-42E7-B81F-E35C49FC9EB9}.Debug|Win32.Build.0 = Debug|Win32
+		{F70DD0FE-A74A-42E7-B81F-E35C49FC9EB9}.FastDebug|Win32.ActiveCfg = Debug|Win32
+		{F70DD0FE-A74A-42E7-B81F-E35C49FC9EB9}.FastDebug|Win32.Build.0 = Debug|Win32
+		{F70DD0FE-A74A-42E7-B81F-E35C49FC9EB9}.Release|Win32.ActiveCfg = Release|Win32
+		{F70DD0FE-A74A-42E7-B81F-E35C49FC9EB9}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
