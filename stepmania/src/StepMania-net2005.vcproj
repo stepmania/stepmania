@@ -18,7 +18,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="$(TargetDir)"
-			IntermediateDirectory="./../Debug"
+			IntermediateDirectory="$(SolutionDir)/build-net2005/$(ProjectName)/$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -122,7 +122,7 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="$(TargetDir)"
-			IntermediateDirectory="./../Release"
+			IntermediateDirectory="$(SolutionDir)/build-net2005/$(ProjectName)/$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -230,7 +230,7 @@
 		<Configuration
 			Name="FastDebug|Win32"
 			OutputDirectory="$(TargetDir)"
-			IntermediateDirectory="./../FastDebug"
+			IntermediateDirectory="$(SolutionDir)/build-net2005/$(ProjectName)/$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
