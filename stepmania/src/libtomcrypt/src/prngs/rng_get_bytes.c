@@ -99,18 +99,22 @@ static unsigned long rng_ansic(unsigned char *buf, unsigned long len,
 static unsigned long rng_win32(unsigned char *buf, unsigned long len, 
                                void (*callback)(void))
 {
-   HCRYPTPROV hProv = 0;
-   if (!CryptAcquireContext(&hProv, NULL, MS_DEF_PROV, PROV_RSA_FULL, 
-                            (CRYPT_VERIFYCONTEXT | CRYPT_MACHINE_KEYSET)) && 
-       !CryptAcquireContext (&hProv, NULL, MS_DEF_PROV, PROV_RSA_FULL, 
-                            CRYPT_VERIFYCONTEXT | CRYPT_MACHINE_KEYSET | CRYPT_NEWKEYSET))
-      return 0;
+   // work around Q258000
+   static HCRYPTPROV hProv = 0;
+   if (!hProv)
+   {
+     if (!CryptAcquireContext(&hProv, NULL, MS_DEF_PROV, PROV_RSA_FULL, 
+                              (CRYPT_VERIFYCONTEXT | CRYPT_MACHINE_KEYSET)) && 
+         !CryptAcquireContext (&hProv, NULL, MS_DEF_PROV, PROV_RSA_FULL, 
+                              CRYPT_VERIFYCONTEXT | CRYPT_MACHINE_KEYSET | CRYPT_NEWKEYSET))
+        return 0;
+   }
 
    if (CryptGenRandom(hProv, len, buf) == TRUE) {
-      CryptReleaseContext(hProv, 0);
+//      CryptReleaseContext(hProv, 0);
       return len;
    } else {
-      CryptReleaseContext(hProv, 0);
+//      CryptReleaseContext(hProv, 0);
       return 0;
    }
 }
