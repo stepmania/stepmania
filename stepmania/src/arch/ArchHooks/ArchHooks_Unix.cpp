@@ -33,30 +33,32 @@ static bool IsFatalSignal( int signal )
 	}
 }
 
-static void DoCleanShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
+static bool DoCleanShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
 {
 	if( IsFatalSignal(signal) )
-		return;
+		return false;
 
 	/* ^C. */
 	ArchHooks::SetUserQuit();
+	return true;
 }
 
 #if defined(CRASH_HANDLER)
-static void DoCrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
+static bool DoCrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
 {
         /* Don't dump a debug file if the user just hit ^C. */
 	if( !IsFatalSignal(signal) )
-		return;
+		return true;
 
 	CrashHandler::CrashSignalHandler( signal, si, uc );
+	return false;
 }
 #endif
 
-static void EmergencyShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
+static bool EmergencyShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
 {
 	if( !IsFatalSignal(signal) )
-		return;
+		return false;
 
 	DoEmergencyShutdown();
 
@@ -68,6 +70,7 @@ static void EmergencyShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
 	SignalHandler::ResetSignalHandlers();
 	raise( signal );
 #endif
+	return false;
 }
 	
 #if defined(HAVE_TLS)

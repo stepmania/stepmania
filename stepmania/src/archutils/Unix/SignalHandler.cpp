@@ -71,8 +71,23 @@ SaveSignals::~SaveSignals()
 
 static void SigHandler( int signal, siginfo_t *si, void *ucp )
 {
+	bool bMaskSignal = false;
 	for( unsigned i = 0; i < handlers.size(); ++i )
-		handlers[i]( signal, si, (const ucontext_t *)ucp );
+		bMaskSignal |= handlers[i]( signal, si, (const ucontext_t *)ucp );
+	if( !bMaskSignal )
+	{
+		struct sigaction sa;
+		sa.sa_flags = 0;
+		sigemptyset( &sa.sa_mask );
+
+		/* Set up the default signal handler. */
+		sa.sa_handler = SIG_DFL;
+
+		struct sigaction old;
+		sigaction( signal, &sa, &old );
+		raise( signal );
+		sigaction( signal, &old, NULL );
+	}
 }
 
 int find_stack_direction2( char *p )
