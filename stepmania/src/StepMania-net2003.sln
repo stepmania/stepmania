@@ -1,6 +1,16 @@
 Microsoft Visual Studio Solution File, Format Version 8.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StepMania", "StepMania-net2003.vcproj", "{670745A6-106B-420D-A2A9-D4F89A23986E}"
 	ProjectSection(ProjectDependencies) = postProject
+		{15A6313B-3206-4847-87A2-62255F0B3837} = {15A6313B-3206-4847-87A2-62255F0B3837}
+		{00C33C79-1140-47B0-838B-109A61950513} = {00C33C79-1140-47B0-838B-109A61950513}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libtommath", "libtommath\libtommath-net2003.vcproj", "{00C33C79-1140-47B0-838B-109A61950513}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libtomcrypt", "libtomcrypt\libtomcrypt-net2003.vcproj", "{15A6313B-3206-4847-87A2-62255F0B3837}"
+	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
 Global
@@ -16,6 +26,18 @@ Global
 		{670745A6-106B-420D-A2A9-D4F89A23986E}.FastDebug.Build.0 = FastDebug|Win32
 		{670745A6-106B-420D-A2A9-D4F89A23986E}.Release.ActiveCfg = Release|Win32
 		{670745A6-106B-420D-A2A9-D4F89A23986E}.Release.Build.0 = Release|Win32
+		{00C33C79-1140-47B0-838B-109A61950513}.Debug.ActiveCfg = Debug|Win32
+		{00C33C79-1140-47B0-838B-109A61950513}.Debug.Build.0 = Debug|Win32
+		{00C33C79-1140-47B0-838B-109A61950513}.FastDebug.ActiveCfg = Debug|Win32
+		{00C33C79-1140-47B0-838B-109A61950513}.FastDebug.Build.0 = Debug|Win32
+		{00C33C79-1140-47B0-838B-109A61950513}.Release.ActiveCfg = Release|Win32
+		{00C33C79-1140-47B0-838B-109A61950513}.Release.Build.0 = Release|Win32
+		{15A6313B-3206-4847-87A2-62255F0B3837}.Debug.ActiveCfg = Debug|Win32
+		{15A6313B-3206-4847-87A2-62255F0B3837}.Debug.Build.0 = Debug|Win32
+		{15A6313B-3206-4847-87A2-62255F0B3837}.FastDebug.ActiveCfg = Debug|Win32
+		{15A6313B-3206-4847-87A2-62255F0B3837}.FastDebug.Build.0 = Debug|Win32
+		{15A6313B-3206-4847-87A2-62255F0B3837}.Release.ActiveCfg = Release|Win32
+		{15A6313B-3206-4847-87A2-62255F0B3837}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		DPBuild = 5
