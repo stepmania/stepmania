@@ -14,6 +14,32 @@ static const RString PRIVATE_KEY_PATH = "Data/private.rsa";
 static const RString PUBLIC_KEY_PATH = "Data/public.rsa";
 static const RString ALTERNATE_PUBLIC_KEY_DIR = "Data/keys/";
 
+static bool HashFile( RageFile &f, unsigned char buf_hash[20], int iHash )
+{
+	hash_state hash;
+	int iRet = hash_descriptor[iHash].init( &hash );
+	ASSERT_M( iRet == CRYPT_OK, error_to_string(iRet) );
+
+	RString s;
+	while( !f.AtEOF() )
+	{
+		if( f.Read(s, 1024*4) == -1 )
+		{
+			LOG->Warn( "Error reading %s: %s", f.GetPath().c_str(), f.GetError().c_str() );
+			hash_descriptor[iHash].done( &hash, buf_hash );
+			return false;
+		}
+
+		iRet = hash_descriptor[iHash].process( &hash, (const unsigned char *) s.data(), s.size() );
+		ASSERT_M( iRet == CRYPT_OK, error_to_string(iRet) );
+	}
+
+	iRet = hash_descriptor[iHash].done( &hash, buf_hash );
+	ASSERT_M( iRet == CRYPT_OK, error_to_string(iRet) );
+
+	return true;
+}
+
 #if defined(DISABLE_CRYPTO)
 CryptManager::CryptManager() { }
 CryptManager::~CryptManager() { }
@@ -115,32 +141,6 @@ public:
 	
 	rsa_key m_Key;
 };
-
-bool HashFile( RageFile &f, unsigned char buf_hash[20], int iHash )
-{
-	hash_state hash;
-	int iRet = hash_descriptor[iHash].init( &hash );
-	ASSERT_M( iRet == CRYPT_OK, error_to_string(iRet) );
-
-	RString s;
-	while( !f.AtEOF() )
-	{
-		if( f.Read(s, 1024*4) == -1 )
-		{
-			LOG->Warn( "Error reading %s: %s", f.GetPath().c_str(), f.GetError().c_str() );
-			hash_descriptor[iHash].done( &hash, buf_hash );
-			return false;
-		}
-
-		iRet = hash_descriptor[iHash].process( &hash, (const unsigned char *) s.data(), s.size() );
-		ASSERT_M( iRet == CRYPT_OK, error_to_string(iRet) );
-	}
-
-	iRet = hash_descriptor[iHash].done( &hash, buf_hash );
-	ASSERT_M( iRet == CRYPT_OK, error_to_string(iRet) );
-
-	return true;
-}
 
 CryptManager::CryptManager()
 {
@@ -372,6 +372,12 @@ bool CryptManager::Verify( RString sPath, RString sSignature, RString sPublicKey
 
 	return true;
 }
+
+void CryptManager::GetRandomBytes( void *pData, int iBytes )
+{
+	int iRet = prng_descriptor[g_pPRNG->m_iPRNG].read( (unsigned char *) pData, iBytes, &g_pPRNG->m_PRNG );
+	ASSERT( iRet == iBytes );
+}
 #endif
 
 RString CryptManager::GetMD5ForFile( RString fn )
@@ -410,12 +416,6 @@ RString CryptManager::GetPublicKeyFileName()
 	ASSERT( PREFSMAN->m_bSignProfileData );
 
 	return PUBLIC_KEY_PATH;
-}
-
-void CryptManager::GetRandomBytes( void *pData, int iBytes )
-{
-	int iRet = prng_descriptor[g_pPRNG->m_iPRNG].read( (unsigned char *) pData, iBytes, &g_pPRNG->m_PRNG );
-	ASSERT( iRet == iBytes );
 }
 
 /*
