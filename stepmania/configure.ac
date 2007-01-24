@@ -16,6 +16,7 @@ test -z "$LDFLAGS"   && DEFAULT_LDFLAGS=yes
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_RANLIB
+AM_PROG_CC_C_O
 
 test "$DEFAULT_CFLAGS" = "yes" && CFLAGS="-Wall -W -Wno-unused -Wno-switch"
 test "$DEFAULT_CXXFLAGS" = "yes" && CXXFLAGS="-Wall -W -Wno-unused -Wno-switch"
