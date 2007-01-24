@@ -546,13 +546,12 @@ main_SOURCES = $(Screens) \
 		$(ActorsInGameplay) \
 		$(Rage) \
 		$(Actors) \
-		$(GlobalSingletons) \
-		$(crypto) \
-		$(cryptopp)
+		$(GlobalSingletons)
 
 main_LDADD = \
 		  $(AUDIO_LIBS) \
-		  $(XLIBS)
+		  $(XLIBS) \
+		  libtomcrypt.a libtommath.a
 
 stepmania_SOURCES = $(main_SOURCES)
 stepmania_LDADD = $(main_LDADD)
@@ -623,7 +622,10 @@ test_file_errors_SOURCES = \
 		tests/test_file_errors.cpp \
 		MsdFile.cpp MsdFile.h \
 		XmlFile.cpp XmlFile.h \
-		CryptManager.cpp CryptManager.h $(cryptopp) $(crypto)
+		CryptManager.cpp CryptManager.h
+
+test_file_errors_LDADD = \
+		libtomcrypt.a libtommath.a
 
 TESTS += test_timing_data
 test_timing_data_SOURCES = \
