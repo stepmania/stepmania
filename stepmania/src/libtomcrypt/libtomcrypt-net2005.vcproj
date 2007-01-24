@@ -18,7 +18,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(SolutionDir)/build-net2005/$(ProjectName)/$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)/build-$(SolutionName)/$(ProjectName)/$(ConfigurationName)"
 			ConfigurationType="4"
 			CharacterSet="1"
 			>
@@ -81,7 +81,7 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(SolutionDir)/build-net2005/$(ProjectName)/$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)/build-$(SolutionName)/$(ProjectName)/$(ConfigurationName)"
 			ConfigurationType="4"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
