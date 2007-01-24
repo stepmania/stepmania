@@ -11,7 +11,7 @@ public:
 	CryptManager();
 	~CryptManager();
 
-	static void GenerateRSAKey( unsigned int keyLength, RString privFilename, RString pubFilename, RString seed );
+	static void GenerateRSAKey( unsigned int keyLength, RString privFilename, RString pubFilename );
 	static void SignFileToFile( RString sPath, RString sSignatureFile = "" );
 	static bool VerifyFileWithFile( RString sPath, RString sSignatureFile = "" );
 	static bool VerifyFileWithFile( RString sPath, RString sSignatureFile, RString sPublicKeyFile );

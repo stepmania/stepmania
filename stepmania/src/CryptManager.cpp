@@ -43,7 +43,7 @@ static bool HashFile( RageFile &f, unsigned char buf_hash[20], int iHash )
 #if defined(DISABLE_CRYPTO)
 CryptManager::CryptManager() { }
 CryptManager::~CryptManager() { }
-void CryptManager::GenerateRSAKey( unsigned int keyLength, RString privFilename, RString pubFilename, RString seed ) { }
+void CryptManager::GenerateRSAKey( unsigned int keyLength, RString privFilename, RString pubFilename ) { }
 void CryptManager::SignFileToFile( RString sPath, RString sSignatureFile ) { }
 bool CryptManager::VerifyFileWithFile( RString sPath, RString sSignatureFile, RString sPublicKeyFile ) { return true; }
 bool CryptManager::VerifyFileWithFile( RString sPath, RString sSignatureFile )
@@ -94,13 +94,22 @@ public:
 			prng_descriptor[m_iPRNG].done( &m_PRNG );
 	}
 
-	void AddEntropy( const RString &sBuf )
+	void AddEntropy( const void *pData, int iSize )
 	{
-		int iRet = prng_descriptor[m_iPRNG].add_entropy( (const unsigned char *) sBuf.data(), sBuf.size(), &m_PRNG );
+		int iRet = prng_descriptor[m_iPRNG].add_entropy( (const unsigned char *) pData, iSize, &m_PRNG );
 		ASSERT_M( iRet == CRYPT_OK, error_to_string(iRet) );
 
 		iRet = prng_descriptor[m_iPRNG].ready( &m_PRNG );
 		ASSERT_M( iRet == CRYPT_OK, error_to_string(iRet) );
+	}
+
+	void AddRandomEntropy()
+	{
+		unsigned char buf[256];
+		int iRet = rng_get_bytes( buf, sizeof(buf), NULL );
+		ASSERT( iRet == sizeof(buf) );
+
+		AddEntropy( buf, sizeof(buf) );
 	}
 
 	int m_iPRNG;
@@ -156,7 +165,7 @@ CryptManager::CryptManager()
 		if( !DoesFileExist(PRIVATE_KEY_PATH) || !DoesFileExist(PUBLIC_KEY_PATH) )
 		{
 			LOG->Warn( "Keys missing.  Generating new keys" );
-			GenerateRSAKey( KEY_LENGTH, PRIVATE_KEY_PATH, PUBLIC_KEY_PATH, "aoksdjaksd" );
+			GenerateRSAKey( KEY_LENGTH, PRIVATE_KEY_PATH, PUBLIC_KEY_PATH );
 			FlushDirCache();
 		}
 	}
@@ -187,12 +196,10 @@ static bool WriteFile( RString sFile, RString sBuf )
 	return true;
 }
 
-void CryptManager::GenerateRSAKey( unsigned int keyLength, RString privFilename, RString pubFilename, RString seed )
+void CryptManager::GenerateRSAKey( unsigned int keyLength, RString privFilename, RString pubFilename )
 {
 	ASSERT( PREFSMAN->m_bSignProfileData );
 
-	g_pPRNG->AddEntropy( seed );
-	
 	int iRet;
 
 	rsa_key key;
