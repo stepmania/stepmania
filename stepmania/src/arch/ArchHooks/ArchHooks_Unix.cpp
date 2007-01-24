@@ -67,10 +67,8 @@ static bool EmergencyShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
 	kill( getpid(), SIGKILL );
 #else
 	/* We didn't run the crash handler.  Run the default handler, so we can dump core. */
-	SignalHandler::ResetSignalHandlers();
-	raise( signal );
-#endif
 	return false;
+#endif
 }
 	
 #if defined(HAVE_TLS)
