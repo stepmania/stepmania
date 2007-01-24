@@ -796,7 +796,6 @@
 		AA40D2CF09A08D650068C0D5 /* SongUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = AA5C73FA0637A5F000AFB891 /* SongUtil.h */; };
 		AA40D2D009A08D650068C0D5 /* StepsUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = AA5C73FC0637A5F000AFB891 /* StepsUtil.h */; };
 		AA40D2D109A08D650068C0D5 /* ScreenWithMenuElements.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA6BFEB0644AB3700AFBBC8 /* ScreenWithMenuElements.h */; };
-		AA40D2EE09A08D650068C0D5 /* CryptHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = AA082E9E0653C7E6001A3A80 /* CryptHelpers.h */; };
 		AA40D2F209A08D650068C0D5 /* RageSurface_Load_GIF.h in Headers */ = {isa = PBXBuildFile; fileRef = AABBF66D0659E78D00738526 /* RageSurface_Load_GIF.h */; };
 		AA40D2F309A08D650068C0D5 /* RageSurface_Load_JPEG.h in Headers */ = {isa = PBXBuildFile; fileRef = AABBF66F0659E78D00738526 /* RageSurface_Load_JPEG.h */; };
 		AA40D2F409A08D650068C0D5 /* RageSurface_Load_PNG.h in Headers */ = {isa = PBXBuildFile; fileRef = AABBF6710659E78D00738526 /* RageSurface_Load_PNG.h */; };
@@ -1153,7 +1152,6 @@
 		AA40D47709A08D650068C0D5 /* SongUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA5C73F90637A5F000AFB891 /* SongUtil.cpp */; };
 		AA40D47809A08D650068C0D5 /* StepsUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA5C73FB0637A5F000AFB891 /* StepsUtil.cpp */; };
 		AA40D47909A08D650068C0D5 /* ScreenWithMenuElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA6BFEA0644AB3700AFBBC8 /* ScreenWithMenuElements.cpp */; };
-		AA40D48B09A08D650068C0D5 /* CryptHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA082E9D0653C7E6001A3A80 /* CryptHelpers.cpp */; settings = {COMPILER_FLAGS = "-fexceptions"; }; };
 		AA40D49009A08D650068C0D5 /* RageSurface_Load_GIF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AABBF66C0659E78D00738526 /* RageSurface_Load_GIF.cpp */; };
 		AA40D49109A08D650068C0D5 /* RageSurface_Load_JPEG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AABBF66E0659E78D00738526 /* RageSurface_Load_JPEG.cpp */; };
 		AA40D49209A08D650068C0D5 /* RageSurface_Load_PNG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AABBF6700659E78D00738526 /* RageSurface_Load_PNG.cpp */; };
@@ -2171,8 +2169,6 @@
 		AA07A55C0843E72B00E33D21 /* ScreenSMOnlineLogin.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenSMOnlineLogin.h; path = ../src/ScreenSMOnlineLogin.h; sourceTree = "<group>"; };
 		AA07A55D0843E72B00E33D21 /* ScreenSyncOverlay.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenSyncOverlay.cpp; path = ../src/ScreenSyncOverlay.cpp; sourceTree = "<group>"; };
 		AA07A55E0843E72B00E33D21 /* ScreenSyncOverlay.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenSyncOverlay.h; path = ../src/ScreenSyncOverlay.h; sourceTree = "<group>"; };
-		AA082E9D0653C7E6001A3A80 /* CryptHelpers.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; path = CryptHelpers.cpp; sourceTree = "<group>"; };
-		AA082E9E0653C7E6001A3A80 /* CryptHelpers.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 30; path = CryptHelpers.h; sourceTree = "<group>"; };
 		AA0A3DE6060513A00044E6B1 /* ScreenSetTime.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenSetTime.cpp; path = ../src/ScreenSetTime.cpp; sourceTree = "<group>"; };
 		AA0A3DE7060513A00044E6B1 /* ScreenSetTime.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenSetTime.h; path = ../src/ScreenSetTime.h; sourceTree = "<group>"; };
 		AA0E04CE076C4CD500716D81 /* RageFileBasic.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = RageFileBasic.cpp; path = ../src/RageFileBasic.cpp; sourceTree = "<group>"; };
@@ -3521,8 +3517,6 @@
 		29B97315FDCFA39411CA2CEA /* Other Source */ = {
 			isa = PBXGroup;
 			children = (
-				AA082E9D0653C7E6001A3A80 /* CryptHelpers.cpp */,
-				AA082E9E0653C7E6001A3A80 /* CryptHelpers.h */,
 				AA70E3640663112800DAE1FD /* Foreach.h */,
 				AA5A56E40A875DA3006DBB92 /* ExportStrings.h */,
 				AA5A56E50A875DA3006DBB92 /* ExportStrings.cpp */,
@@ -5906,7 +5900,6 @@
 				AA40D2CF09A08D650068C0D5 /* SongUtil.h in Headers */,
 				AA40D2D009A08D650068C0D5 /* StepsUtil.h in Headers */,
 				AA40D2D109A08D650068C0D5 /* ScreenWithMenuElements.h in Headers */,
-				AA40D2EE09A08D650068C0D5 /* CryptHelpers.h in Headers */,
 				AA40D2F209A08D650068C0D5 /* RageSurface_Load_GIF.h in Headers */,
 				AA40D2F309A08D650068C0D5 /* RageSurface_Load_JPEG.h in Headers */,
 				AA40D2F409A08D650068C0D5 /* RageSurface_Load_PNG.h in Headers */,
@@ -7054,7 +7047,6 @@
 				AA40D47709A08D650068C0D5 /* SongUtil.cpp in Sources */,
 				AA40D47809A08D650068C0D5 /* StepsUtil.cpp in Sources */,
 				AA40D47909A08D650068C0D5 /* ScreenWithMenuElements.cpp in Sources */,
-				AA40D48B09A08D650068C0D5 /* CryptHelpers.cpp in Sources */,
 				AA40D49009A08D650068C0D5 /* RageSurface_Load_GIF.cpp in Sources */,
 				AA40D49109A08D650068C0D5 /* RageSurface_Load_JPEG.cpp in Sources */,
 				AA40D49209A08D650068C0D5 /* RageSurface_Load_PNG.cpp in Sources */,
