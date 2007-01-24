@@ -1758,10 +1758,6 @@
 				Name="arch"
 				>
 				<File
-					RelativePath="arch\arch.h"
-					>
-				</File>
-				<File
 					RelativePath="arch\arch_default.h"
 					>
 				</File>

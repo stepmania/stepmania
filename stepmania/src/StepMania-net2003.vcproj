@@ -3478,13 +3478,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				Name="arch"
 				Filter="">
 				<File
-					RelativePath="arch\arch.h">
-				</File>
-				<File
 					RelativePath="arch\arch_default.h">
-				</File>
-				<File
-					RelativePath="arch\arch_platform.h">
 				</File>
 				<File
 					RelativePath=".\arch\RageDriver.cpp">
