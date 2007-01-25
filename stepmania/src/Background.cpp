@@ -28,8 +28,6 @@ static ThemeMetric<float> TOP_EDGE				("Background","TopEdge");
 static ThemeMetric<float> RIGHT_EDGE				("Background","RightEdge");
 static ThemeMetric<float> BOTTOM_EDGE				("Background","BottomEdge");
 #define RECT_BACKGROUND RectF					(LEFT_EDGE,TOP_EDGE,RIGHT_EDGE,BOTTOM_EDGE)
-static ThemeMetric<bool> BLINK_DANGER_ALL			("Background","BlinkDangerAll");
-static ThemeMetric<bool> DANGER_ALL_IS_OPAQUE			("Background","DangerAllIsOpaque");
 static ThemeMetric<float> CLAMP_OUTPUT_PERCENT			("Background","ClampOutputPercent");
 
 static Preference<bool>	g_bShowDanger( "ShowDanger", true );
@@ -118,9 +116,9 @@ protected:
 	Layer m_Layer[NUM_BackgroundLayer];
 
 	float m_fLastMusicSeconds;
+	bool m_bDangerAllWasVisible;
 
 	AutoActor		m_DangerPlayer[NUM_PLAYERS];
-	AutoActor		m_DangerAll;
 
 	// cover up the edge of animations that might hang outside of the background rectangle
 	Quad m_quadBorderLeft, m_quadBorderTop, m_quadBorderRight, m_quadBorderBottom;
@@ -167,6 +165,7 @@ void BackgroundImpl::Init()
 	if( m_bInitted )
 		return;
 	m_bInitted = true;
+	m_bDangerAllWasVisible = false;
 	m_StaticBackgroundDef = BackgroundDef();
 	
 	// load transitions
@@ -196,7 +195,6 @@ void BackgroundImpl::Init()
 		}
 	}
 
-	m_DangerAll.Load( THEME->GetPathB("ScreenGameplay","danger all") );
 	FOREACH_PlayerNumber( p )
 		m_DangerPlayer[p].Load( THEME->GetPathB("ScreenGameplay",ssprintf("danger p%d",p+1)) );
 
@@ -675,10 +673,6 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 	// Re-sort.
 	BackgroundUtil::SortBackgroundChangesArray( mainlayer.m_aBGChanges );
 
-	m_DangerAll->SetXY( (float)LEFT_EDGE, (float)TOP_EDGE );
-	m_DangerAll->SetZoomX( fXZoom );
-	m_DangerAll->SetZoomY( fYZoom );	
-
 	FOREACH_PlayerNumber( p )
 	{
 		m_DangerPlayer[p]->SetXY( (float)LEFT_EDGE, (float)TOP_EDGE );
@@ -827,9 +821,11 @@ void BackgroundImpl::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
 
-	if( IsDangerAllVisible() )
 	{
-		m_DangerAll->Update( fDeltaTime );
+		bool bVisible = IsDangerAllVisible();
+		if( m_bDangerAllWasVisible != bVisible )
+			MESSAGEMAN->Broadcast( bVisible? "ShowDangerAll":"HideDangerAll" );
+		m_bDangerAllWasVisible = bVisible;
 	}
 
 	FOREACH_PlayerNumber( p )
@@ -841,10 +837,6 @@ void BackgroundImpl::Update( float fDeltaTime )
 	if( m_pDancingCharacters )
 		m_pDancingCharacters->Update( fDeltaTime );
 
-	/* Always update the current background, even when m_DangerAll is being displayed.
-	 * Otherwise, we'll stop updating movies during danger (which may stop them from
-	 * playing), and we won't start clips at the right time, which will throw backgrounds
-	 * off sync. */
 	FOREACH_BackgroundLayer( i )
 	{
 		Layer &layer = m_Layer[i];
@@ -863,10 +855,8 @@ void BackgroundImpl::DrawPrimitives()
 		// Since this only shows when DANGER is visible, it will flash red on it's own accord :)
 		if( m_pDancingCharacters )
 			m_pDancingCharacters->m_bDrawDangerLight = true;
-		m_DangerAll->Draw();
 	}
 	
-	if( !IsDangerAllVisible() || !(bool)DANGER_ALL_IS_OPAQUE ) 
 	{	
 		if( m_pDancingCharacters )
 			m_pDancingCharacters->m_bDrawDangerLight = false;
@@ -901,6 +891,7 @@ void BackgroundImpl::GetLoadedBackgroundChanges( vector<BackgroundChange> *pBack
 
 bool BackgroundImpl::IsDangerAllVisible()
 {
+	/* The players are never in danger in FAIL_OFF. */
 	FOREACH_PlayerNumber( p )
 		if( GAMESTATE->GetPlayerFailType(GAMESTATE->m_pPlayerState[p]) == SongOptions::FAIL_OFF )
 			return false;
@@ -912,13 +903,7 @@ bool BackgroundImpl::IsDangerAllVisible()
 	if( STATSMAN->m_CurStageStats.AllFailed() )
 		return false;
 
-	if( !GAMESTATE->AllAreInDangerOrWorse() )
-		return false;
-
-	if( BLINK_DANGER_ALL )
-		return (RageTimer::GetTimeSinceStartFast() - (int)RageTimer::GetTimeSinceStartFast()) < 0.5f;
-	else
-		return true;
+	return GAMESTATE->AllAreInDangerOrWorse();
 }
 
 BrightnessOverlay::BrightnessOverlay()
