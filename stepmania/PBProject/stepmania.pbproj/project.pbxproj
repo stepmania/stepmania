@@ -1664,6 +1664,10 @@
 		AA7C8D200B6748E400FD9940 /* libtomcrypt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA7C8B8B0B67460600FD9940 /* libtomcrypt.a */; };
 		AA7C8D430B674F4E00FD9940 /* libtommath.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA7C895F0B67444700FD9940 /* libtommath.a */; };
 		AA7C8D440B674F4F00FD9940 /* libtomcrypt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA7C8B8B0B67460600FD9940 /* libtomcrypt.a */; };
+		AA7C8DAE0B68CB2200FD9940 /* GameplayAssist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA7C8DAC0B68CB2200FD9940 /* GameplayAssist.cpp */; };
+		AA7C8DAF0B68CB2200FD9940 /* GameplayAssist.h in Headers */ = {isa = PBXBuildFile; fileRef = AA7C8DAD0B68CB2200FD9940 /* GameplayAssist.h */; };
+		AA7C8DB00B68CB2200FD9940 /* GameplayAssist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA7C8DAC0B68CB2200FD9940 /* GameplayAssist.cpp */; };
+		AA7C8DB10B68CB2200FD9940 /* GameplayAssist.h in Headers */ = {isa = PBXBuildFile; fileRef = AA7C8DAD0B68CB2200FD9940 /* GameplayAssist.h */; };
 		AA7DA2F1085760E90057F1EA /* BackgroundUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA7DA2EF085760E90057F1EA /* BackgroundUtil.cpp */; };
 		AA7DA2F2085760EA0057F1EA /* BackgroundUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = AA7DA2F0085760E90057F1EA /* BackgroundUtil.h */; };
 		AA80C75407F20D0D00C99272 /* UnlockManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA80C75207F20D0D00C99272 /* UnlockManager.cpp */; };
@@ -2944,6 +2948,8 @@
 		AA7C8C530B67467D00FD9940 /* sober128tab.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sober128tab.c; sourceTree = "<group>"; };
 		AA7C8C540B67467D00FD9940 /* sprng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sprng.c; sourceTree = "<group>"; };
 		AA7C8C550B67467D00FD9940 /* yarrow.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = yarrow.c; sourceTree = "<group>"; };
+		AA7C8DAC0B68CB2200FD9940 /* GameplayAssist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameplayAssist.cpp; path = ../src/GameplayAssist.cpp; sourceTree = "<group>"; };
+		AA7C8DAD0B68CB2200FD9940 /* GameplayAssist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameplayAssist.h; path = ../src/GameplayAssist.h; sourceTree = "<group>"; };
 		AA7DA2EF085760E90057F1EA /* BackgroundUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = BackgroundUtil.cpp; path = ../src/BackgroundUtil.cpp; sourceTree = "<group>"; };
 		AA7DA2F0085760E90057F1EA /* BackgroundUtil.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = BackgroundUtil.h; path = ../src/BackgroundUtil.h; sourceTree = "<group>"; };
 		AA80C75207F20D0D00C99272 /* UnlockManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = UnlockManager.cpp; path = ../src/UnlockManager.cpp; sourceTree = "<group>"; };
@@ -4090,6 +4096,8 @@
 				AA6EFDDA04770C79005F316C /* GameConstantsAndTypes.h */,
 				AA6EFDDD04770C79005F316C /* GameInput.cpp */,
 				AA6EFDDE04770C79005F316C /* GameInput.h */,
+				AA7C8DAC0B68CB2200FD9940 /* GameplayAssist.cpp */,
+				AA7C8DAD0B68CB2200FD9940 /* GameplayAssist.h */,
 				AA6090E40B141D1C00B39AC4 /* GamePreferences.cpp */,
 				AA6090E50B141D1C00B39AC4 /* GamePreferences.h */,
 				AA6EFDDF04770C79005F316C /* Grade.cpp */,
@@ -5636,6 +5644,7 @@
 				AAEBF5610B5C517E005F3C7C /* SampleHistory.h in Headers */,
 				AAEBF57F0B5C83F4005F3C7C /* SoundEffectControl.h in Headers */,
 				AA07008B0B61F177003B85BB /* RageSoundReader_PostBuffering.h in Headers */,
+				AA7C8DB10B68CB2200FD9940 /* GameplayAssist.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6054,6 +6063,7 @@
 				AAEBF5630B5C517E005F3C7C /* SampleHistory.h in Headers */,
 				AAEBF5810B5C83F4005F3C7C /* SoundEffectControl.h in Headers */,
 				AA07008D0B61F177003B85BB /* RageSoundReader_PostBuffering.h in Headers */,
+				AA7C8DAF0B68CB2200FD9940 /* GameplayAssist.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6803,6 +6813,7 @@
 				AAEBF5600B5C517E005F3C7C /* SampleHistory.cpp in Sources */,
 				AAEBF57E0B5C83F4005F3C7C /* SoundEffectControl.cpp in Sources */,
 				AA07008A0B61F177003B85BB /* RageSoundReader_PostBuffering.cpp in Sources */,
+				AA7C8DB00B68CB2200FD9940 /* GameplayAssist.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7211,6 +7222,7 @@
 				AAEBF5620B5C517E005F3C7C /* SampleHistory.cpp in Sources */,
 				AAEBF5800B5C83F4005F3C7C /* SoundEffectControl.cpp in Sources */,
 				AA07008C0B61F177003B85BB /* RageSoundReader_PostBuffering.cpp in Sources */,
+				AA7C8DAE0B68CB2200FD9940 /* GameplayAssist.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
