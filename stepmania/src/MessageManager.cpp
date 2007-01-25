@@ -55,7 +55,6 @@ static const char *MessageIDNames[] = {
 	"SideJoinedP1",
 	"SideJoinedP2",
 	"PlayersFinalized",
-	"AssistTickChanged",
 	"AutosyncChanged",
 	"PreferredSongGroupChanged",
 	"PreferredCourseGroupChanged",

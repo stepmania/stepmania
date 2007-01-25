@@ -52,7 +52,6 @@ enum MessageID
 	Message_SideJoinedP1,
 	Message_SideJoinedP2,
 	Message_PlayersFinalized,
-	Message_AssistTickChanged,
 	Message_AutosyncChanged,
 	Message_PreferredSongGroupChanged,
 	Message_PreferredCourseGroupChanged,
