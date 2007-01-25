@@ -56,13 +56,13 @@ public:
 	virtual ~IDebugLine() { }
 	enum Type { all_screens, gameplay_only };
 	virtual Type GetType() const { return all_screens; }
-	virtual RString GetDescription() = 0;
-	virtual RString GetValue() { return IsEnabled() ? ON.GetValue():OFF.GetValue(); }
+	virtual RString GetDisplayTitle() = 0;
+	virtual RString GetDisplayValue() { return IsEnabled() ? ON.GetValue():OFF.GetValue(); }
 	virtual bool IsEnabled() = 0;
-	virtual void Do( RString &sMessageOut )
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
-		RString s1 = GetDescription();
-		RString s2 = GetValue();
+		RString s1 = GetDisplayTitle();
+		RString s2 = GetDisplayValue();
 		if( !s2.empty() )
 			s1 += " - ";
 		sMessageOut = s1 + s2;
@@ -297,8 +297,8 @@ void ScreenDebugOverlay::UpdateText()
 		txt2.SetY( fY );
 		txt2.SetZoom( 0.7f );
 
-		RString s1 = (*p)->GetDescription();
-		RString s2 = (*p)->GetValue();
+		RString s1 = (*p)->GetDisplayTitle();
+		RString s2 = (*p)->GetDisplayValue();
 
 		bool bOn = (*p)->IsEnabled();
 
@@ -374,7 +374,7 @@ bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
 			txt1.SetZoom( fZoom );
 
 			RString sMessage;
-			(*p)->Do( sMessage );
+			(*p)->DoAndMakeSystemMessage( sMessage );
 			if( !sMessage.empty() )
 				SCREENMAN->SystemMessage( sMessage );
 
@@ -447,8 +447,8 @@ static LocalizedString SYNC_TEMPO   ( "ScreenDebugOverlay", "Tempo" );
 
 class DebugLineAutoplay : public IDebugLine
 {
-	virtual RString GetDescription() { return AUTO_PLAY.GetValue(); }
-	virtual RString GetValue()
+	virtual RString GetDisplayTitle() { return AUTO_PLAY.GetValue(); }
+	virtual RString GetDisplayValue()
 	{
 		switch( GamePreferences::m_AutoPlay.Get() )
 		{
@@ -460,7 +460,7 @@ class DebugLineAutoplay : public IDebugLine
 	}
 	virtual Type GetType() const { return IDebugLine::gameplay_only; }
 	virtual bool IsEnabled() { return GamePreferences::m_AutoPlay.Get() != PC_HUMAN; }
-	virtual void Do( RString &sMessageOut )
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		ASSERT( GAMESTATE->m_MasterPlayerNumber != PLAYER_INVALID );
 		PlayerController pc = GAMESTATE->m_pPlayerState[GAMESTATE->m_MasterPlayerNumber]->m_PlayerController;
@@ -474,15 +474,15 @@ class DebugLineAutoplay : public IDebugLine
 			GAMESTATE->m_pPlayerState[p]->m_PlayerController = GamePreferences::m_AutoPlay;
 		FOREACH_MultiPlayer(p)
 			GAMESTATE->m_pMultiPlayerState[p]->m_PlayerController = GamePreferences::m_AutoPlay;
-		IDebugLine::Do( sMessageOut );
+		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 	}
 };
 
 class DebugLineAssist : public IDebugLine
 {
-	virtual RString GetDescription() { return ASSIST.GetValue(); }
+	virtual RString GetDisplayTitle() { return ASSIST.GetValue(); }
 	virtual Type GetType() const { return gameplay_only; }
-	virtual RString GetValue() { 
+	virtual RString GetDisplayValue() { 
 		SongOptions so;
 		so.m_bAssistClap = GAMESTATE->m_SongOptions.GetSong().m_bAssistClap;
 		so.m_bAssistMetronome = GAMESTATE->m_SongOptions.GetSong().m_bAssistMetronome;
@@ -492,7 +492,7 @@ class DebugLineAssist : public IDebugLine
 			return OFF.GetValue();
 	}
 	virtual bool IsEnabled() { return GAMESTATE->m_SongOptions.GetSong().m_bAssistClap || GAMESTATE->m_SongOptions.GetSong().m_bAssistMetronome; }
-	virtual void Do( RString &sMessageOut )
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		ASSERT( GAMESTATE->m_MasterPlayerNumber != PLAYER_INVALID );
 		bool bHoldingShift = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT) );
@@ -506,14 +506,14 @@ class DebugLineAssist : public IDebugLine
 		else
 			SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Song, m_bAssistClap, b );
 
-		IDebugLine::Do( sMessageOut );
+		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 	}
 };
 
 class DebugLineAutosync : public IDebugLine
 {
-	virtual RString GetDescription() { return AUTOSYNC.GetValue(); }
-	virtual RString GetValue()
+	virtual RString GetDisplayTitle() { return AUTOSYNC.GetValue(); }
+	virtual RString GetDisplayValue()
 	{ 
 		switch( GAMESTATE->m_SongOptions.GetSong().m_AutosyncType )
 		{
@@ -526,7 +526,7 @@ class DebugLineAutosync : public IDebugLine
 	}
 	virtual Type GetType() const { return IDebugLine::gameplay_only; }
 	virtual bool IsEnabled() { return GAMESTATE->m_SongOptions.GetSong().m_AutosyncType!=SongOptions::AUTOSYNC_OFF; }
-	virtual void Do( RString &sMessageOut )
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		int as = GAMESTATE->m_SongOptions.GetSong().m_AutosyncType + 1;
 		bool bAllowSongAutosync = !GAMESTATE->IsCourseMode();
@@ -536,127 +536,127 @@ class DebugLineAutosync : public IDebugLine
 		wrap( as, SongOptions::NUM_AUTOSYNC_TYPES );
 		SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Song, m_AutosyncType, SongOptions::AutosyncType(as) );
 		MESSAGEMAN->Broadcast( Message_AutosyncChanged );
-		IDebugLine::Do( sMessageOut );
+		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 	}
 };
 
 class DebugLineCoinMode : public IDebugLine
 {
-	virtual RString GetDescription() { return COIN_MODE.GetValue(); }
-	virtual RString GetValue() { return CoinModeToString(GamePreferences::m_CoinMode); }
+	virtual RString GetDisplayTitle() { return COIN_MODE.GetValue(); }
+	virtual RString GetDisplayValue() { return CoinModeToString(GamePreferences::m_CoinMode); }
 	virtual bool IsEnabled() { return true; }
-	virtual void Do( RString &sMessageOut )
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		int cm = GamePreferences::m_CoinMode+1;
 		wrap( cm, NUM_CoinMode );
 		GamePreferences::m_CoinMode.Set( CoinMode(cm) );
 		SCREENMAN->RefreshCreditsMessages();
-		IDebugLine::Do( sMessageOut );
+		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 	}
 };
 
 class DebugLineSlow : public IDebugLine
 {
-	virtual RString GetDescription() { return SLOW.GetValue(); }
+	virtual RString GetDisplayTitle() { return SLOW.GetValue(); }
 	virtual bool IsEnabled() { return g_bIsSlow; }
-	virtual void Do( RString &sMessageOut )
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		g_bIsSlow = !g_bIsSlow;
 		SetSpeed();
-		IDebugLine::Do( sMessageOut );
+		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 	}
 };
 
 class DebugLineHalt : public IDebugLine
 {
-	virtual RString GetDescription() { return HALT.GetValue(); }
+	virtual RString GetDisplayTitle() { return HALT.GetValue(); }
 	virtual bool IsEnabled() { return g_bIsHalt; }
-	virtual void Do( RString &sMessageOut )
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		g_bIsHalt = !g_bIsHalt;
 		g_HaltTimer.Touch();
 		SetSpeed();
-		IDebugLine::Do( sMessageOut );
+		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 	}
 };
 
 class DebugLineLightsDebug : public IDebugLine
 {
-	virtual RString GetDescription() { return LIGHTS_DEBUG.GetValue(); }
+	virtual RString GetDisplayTitle() { return LIGHTS_DEBUG.GetValue(); }
 	virtual bool IsEnabled() { return PREFSMAN->m_bDebugLights.Get(); }
-	virtual void Do( RString &sMessageOut )
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		PREFSMAN->m_bDebugLights.Set( !PREFSMAN->m_bDebugLights );
-		IDebugLine::Do( sMessageOut );
+		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 	}
 };
 
 class DebugLineMonkeyInput : public IDebugLine
 {
-	virtual RString GetDescription() { return MONKEY_INPUT.GetValue(); }
+	virtual RString GetDisplayTitle() { return MONKEY_INPUT.GetValue(); }
 	virtual bool IsEnabled() { return PREFSMAN->m_bMonkeyInput.Get(); }
-	virtual void Do( RString &sMessageOut )
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		PREFSMAN->m_bMonkeyInput.Set( !PREFSMAN->m_bMonkeyInput );
-		IDebugLine::Do( sMessageOut );
+		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 	}
 };
 
 class DebugLineStats : public IDebugLine
 {
-	virtual RString GetDescription() { return RENDERING_STATS.GetValue(); }
+	virtual RString GetDisplayTitle() { return RENDERING_STATS.GetValue(); }
 	virtual bool IsEnabled() { return PREFSMAN->m_bShowStats.Get(); }
-	virtual void Do( RString &sMessageOut )
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		PREFSMAN->m_bShowStats.Set( !PREFSMAN->m_bShowStats );
-		IDebugLine::Do( sMessageOut );
+		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 	}
 };
 
 class DebugLineVsync : public IDebugLine
 {
-	virtual RString GetDescription() { return VSYNC.GetValue(); }
+	virtual RString GetDisplayTitle() { return VSYNC.GetValue(); }
 	virtual bool IsEnabled() { return PREFSMAN->m_bVsync.Get(); }
-	virtual void Do( RString &sMessageOut )
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		PREFSMAN->m_bVsync.Set( !PREFSMAN->m_bVsync );
 		StepMania::ApplyGraphicOptions();
-		IDebugLine::Do( sMessageOut );
+		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 	}
 };
 
 class DebugLineAllowMultitexture : public IDebugLine
 {
-	virtual RString GetDescription() { return MULTITEXTURE.GetValue(); }
+	virtual RString GetDisplayTitle() { return MULTITEXTURE.GetValue(); }
 	virtual bool IsEnabled() { return PREFSMAN->m_bAllowMultitexture.Get(); }
-	virtual void Do( RString &sMessageOut )
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		PREFSMAN->m_bAllowMultitexture.Set( !PREFSMAN->m_bAllowMultitexture );
-		IDebugLine::Do( sMessageOut );
+		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 	}
 };
 
 class DebugLineScreenTestMode : public IDebugLine
 {
-	virtual RString GetDescription() { return SCREEN_TEST_MODE.GetValue(); }
+	virtual RString GetDisplayTitle() { return SCREEN_TEST_MODE.GetValue(); }
 	virtual bool IsEnabled() { return PREFSMAN->m_bScreenTestMode.Get(); }
-	virtual void Do( RString &sMessageOut )
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		PREFSMAN->m_bScreenTestMode.Set( !PREFSMAN->m_bScreenTestMode );
-		IDebugLine::Do( sMessageOut );
+		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 	}
 };
 
 class DebugLineClearMachineStats : public IDebugLine
 {
-	virtual RString GetDescription() { return CLEAR_MACHINE_STATS.GetValue(); }
-	virtual RString GetValue() { return RString(); }
+	virtual RString GetDisplayTitle() { return CLEAR_MACHINE_STATS.GetValue(); }
+	virtual RString GetDisplayValue() { return RString(); }
 	virtual bool IsEnabled() { return true; }
-	virtual void Do( RString &sMessageOut )
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		GameCommand gc;
 		ClearMachineStats();
-		IDebugLine::Do( sMessageOut );
+		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 	}
 };
 
@@ -738,36 +738,36 @@ static void FillProfileStats( Profile *pProfile )
 
 class DebugLineFillMachineStats : public IDebugLine
 {
-	virtual RString GetDescription() { return FILL_MACHINE_STATS.GetValue(); }
-	virtual RString GetValue() { return RString(); }
+	virtual RString GetDisplayTitle() { return FILL_MACHINE_STATS.GetValue(); }
+	virtual RString GetDisplayValue() { return RString(); }
 	virtual bool IsEnabled() { return true; }
-	virtual void Do( RString &sMessageOut )
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		Profile* pProfile = PROFILEMAN->GetMachineProfile();
 		FillProfileStats( pProfile );
 		PROFILEMAN->SaveMachineProfile();
-		IDebugLine::Do( sMessageOut );
+		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 	}
 };
 
 class DebugLineSendNotesEnded : public IDebugLine
 {
-	virtual RString GetDescription() { return SEND_NOTES_ENDED.GetValue(); }
-	virtual RString GetValue() { return RString(); }
+	virtual RString GetDisplayTitle() { return SEND_NOTES_ENDED.GetValue(); }
+	virtual RString GetDisplayValue() { return RString(); }
 	virtual bool IsEnabled() { return true; }
-	virtual void Do( RString &sMessageOut )
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		SCREENMAN->PostMessageToTopScreen( SM_NotesEnded, 0 );
-		IDebugLine::Do( sMessageOut );
+		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 	}
 };
 
 class DebugLineReloadCurrentScreen : public IDebugLine
 {
-	virtual RString GetDescription() { return RELOAD.GetValue(); }
-	virtual RString GetValue() { return SCREENMAN && SCREENMAN->GetTopScreen()? SCREENMAN->GetTopScreen()->GetName() : RString(); }
+	virtual RString GetDisplayTitle() { return RELOAD.GetValue(); }
+	virtual RString GetDisplayValue() { return SCREENMAN && SCREENMAN->GetTopScreen()? SCREENMAN->GetTopScreen()->GetName() : RString(); }
 	virtual bool IsEnabled() { return true; }
-	virtual void Do( RString &sMessageOut )
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		RString sScreenName = SCREENMAN->GetScreen(0)->GetName();
 		SCREENMAN->PopAllScreens();
@@ -776,30 +776,30 @@ class DebugLineReloadCurrentScreen : public IDebugLine
 		StepMania::ResetGame();
 
 		SCREENMAN->SetNewScreen( sScreenName );
-		IDebugLine::Do( sMessageOut );
+		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 		sMessageOut = "";
 	}
 };
 
 class DebugLineRestartCurrentScreen : public IDebugLine
 {
-	virtual RString GetDescription() { return RESTART.GetValue(); }
-	virtual RString GetValue() { return SCREENMAN && SCREENMAN->GetTopScreen()? SCREENMAN->GetTopScreen()->GetName() : RString(); }
+	virtual RString GetDisplayTitle() { return RESTART.GetValue(); }
+	virtual RString GetDisplayValue() { return SCREENMAN && SCREENMAN->GetTopScreen()? SCREENMAN->GetTopScreen()->GetName() : RString(); }
 	virtual bool IsEnabled() { return true; }
-	virtual void Do( RString &sMessageOut )
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		SCREENMAN->GetTopScreen()->BeginScreen();
-		IDebugLine::Do( sMessageOut );
+		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 		sMessageOut = "";
 	}
 };
 
 class DebugLineReloadTheme : public IDebugLine
 {
-	virtual RString GetDescription() { return RELOAD_THEME_AND_TEXTURES.GetValue(); }
-	virtual RString GetValue() { return RString(); }
+	virtual RString GetDisplayTitle() { return RELOAD_THEME_AND_TEXTURES.GetValue(); }
+	virtual RString GetDisplayValue() { return RString(); }
 	virtual bool IsEnabled() { return true; }
-	virtual void Do( RString &sMessageOut )
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		THEME->ReloadMetrics();
 		TEXTUREMAN->ReloadAll();
@@ -807,16 +807,16 @@ class DebugLineReloadTheme : public IDebugLine
 		CodeDetector::RefreshCacheItems();
 		// HACK: Don't update text below.  Return immediately because this screen
 		// was just destroyed as part of the theme reload.
-		IDebugLine::Do( sMessageOut );
+		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 	}
 };
 
 class DebugLineWriteProfiles : public IDebugLine
 {
-	virtual RString GetDescription() { return WRITE_PROFILES.GetValue(); }
-	virtual RString GetValue() { return RString(); }
+	virtual RString GetDisplayTitle() { return WRITE_PROFILES.GetValue(); }
+	virtual RString GetDisplayValue() { return RString(); }
 	virtual bool IsEnabled() { return true; }
-	virtual void Do( RString &sMessageOut )
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		// Also save bookkeeping and profile info for debugging
 		// so we don't have to play through a whole song to get new output.
@@ -834,100 +834,100 @@ class DebugLineWriteProfiles : public IDebugLine
 			if( bWasMemoryCard )
 				MEMCARDMAN->UnmountCard( p );
 		}
-		IDebugLine::Do( sMessageOut );
+		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 	}
 };
 
 class DebugLineWritePreferences : public IDebugLine
 {
-	virtual RString GetDescription() { return WRITE_PREFERENCES.GetValue(); }
-	virtual RString GetValue() { return RString(); }
+	virtual RString GetDisplayTitle() { return WRITE_PREFERENCES.GetValue(); }
+	virtual RString GetDisplayValue() { return RString(); }
 	virtual bool IsEnabled() { return true; }
-	virtual void Do( RString &sMessageOut )
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		PREFSMAN->SavePrefsToDisk();
-		IDebugLine::Do( sMessageOut );
+		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 	}
 };
 
 class DebugLineMenuTimer : public IDebugLine
 {
-	virtual RString GetDescription() { return MENU_TIMER.GetValue(); }
-	virtual RString GetValue() { return RString(); }
+	virtual RString GetDisplayTitle() { return MENU_TIMER.GetValue(); }
+	virtual RString GetDisplayValue() { return RString(); }
 	virtual bool IsEnabled() { return PREFSMAN->m_bMenuTimer.Get(); }
-	virtual void Do( RString &sMessageOut )
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		PREFSMAN->m_bMenuTimer.Set( !PREFSMAN->m_bMenuTimer );
-		IDebugLine::Do( sMessageOut );
+		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 	}
 };
 
 class DebugLineFlushLog : public IDebugLine
 {
-	virtual RString GetDescription() { return FLUSH_LOG.GetValue(); }
-	virtual RString GetValue() { return RString(); }
+	virtual RString GetDisplayTitle() { return FLUSH_LOG.GetValue(); }
+	virtual RString GetDisplayValue() { return RString(); }
 	virtual bool IsEnabled() { return true; }
-	virtual void Do( RString &sMessageOut )
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		LOG->Flush();
-		IDebugLine::Do( sMessageOut );
+		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 	}
 };
 
 class DebugLinePullBackCamera : public IDebugLine
 {
-	virtual RString GetDescription() { return PULL_BACK_CAMERA.GetValue(); }
-	virtual RString GetValue() { return RString(); }
+	virtual RString GetDisplayTitle() { return PULL_BACK_CAMERA.GetValue(); }
+	virtual RString GetDisplayValue() { return RString(); }
 	virtual bool IsEnabled() { return g_fImageScaleDestination != 1; }
-	virtual void Do( RString &sMessageOut )
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		if( g_fImageScaleDestination == 1 )
 			g_fImageScaleDestination = 0.5f;
 		else
 			g_fImageScaleDestination = 1;
-		IDebugLine::Do( sMessageOut );
+		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 	}
 };
 
 class DebugLineVolumeUp : public IDebugLine
 {
-	virtual RString GetDescription() { return VOLUME_UP.GetValue(); }
-	virtual RString GetValue() { return ssprintf("%.0f%%",PREFSMAN->m_fSoundVolume.Get()*100); }
+	virtual RString GetDisplayTitle() { return VOLUME_UP.GetValue(); }
+	virtual RString GetDisplayValue() { return ssprintf("%.0f%%",PREFSMAN->m_fSoundVolume.Get()*100); }
 	virtual bool IsEnabled() { return true; }
-	virtual void Do( RString &sMessageOut )
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		ChangeVolume( +0.1f );
-		IDebugLine::Do( sMessageOut );
+		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 	}
 };
 
 class DebugLineVolumeDown : public IDebugLine
 {
-	virtual RString GetDescription() { return VOLUME_DOWN.GetValue(); }
-	virtual RString GetValue() { return RString(); }
+	virtual RString GetDisplayTitle() { return VOLUME_DOWN.GetValue(); }
+	virtual RString GetDisplayValue() { return RString(); }
 	virtual bool IsEnabled() { return true; }
-	virtual void Do( RString &sMessageOut )
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut )
 	{
 		ChangeVolume( -0.1f );
-		IDebugLine::Do( sMessageOut );
+		IDebugLine::DoAndMakeSystemMessage( sMessageOut );
 		sMessageOut += " - " + ssprintf("%.0f%%",PREFSMAN->m_fSoundVolume.Get()*100);
 	}
 };
 
 class DebugLineForceCrash : public IDebugLine
 {
-	virtual RString GetDescription() { return FORCE_CRASH.GetValue(); }
-	virtual RString GetValue() { return RString(); }
+	virtual RString GetDisplayTitle() { return FORCE_CRASH.GetValue(); }
+	virtual RString GetDisplayValue() { return RString(); }
 	virtual bool IsEnabled() { return false; }
-	virtual void Do( RString &sMessageOut ) { FAIL_M("DebugLineCrash"); }
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut ) { FAIL_M("DebugLineCrash"); }
 };
 
 class DebugLineUptime : public IDebugLine
 {
-	virtual RString GetDescription() { return UPTIME.GetValue(); }
-	virtual RString GetValue() { return SecondsToMMSSMsMsMs(RageTimer::GetTimeSinceStart()); }
+	virtual RString GetDisplayTitle() { return UPTIME.GetValue(); }
+	virtual RString GetDisplayValue() { return SecondsToMMSSMsMsMs(RageTimer::GetTimeSinceStart()); }
 	virtual bool IsEnabled() { return false; }
-	virtual void Do( RString &sMessageOut ) {}
+	virtual void DoAndMakeSystemMessage( RString &sMessageOut ) {}
 };
 
 /* #ifdef out the lines below if you don't want them to appear on certain
