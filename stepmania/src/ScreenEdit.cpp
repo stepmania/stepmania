@@ -282,8 +282,6 @@ void ScreenEdit::InitEditMappings()
 	
 	m_PlayMappingsDeviceInput.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
 	m_PlayMappingsMenuButton.button[EDIT_BUTTON_RETURN_TO_EDIT][1] = MENU_BUTTON_BACK;
-	m_PlayMappingsDeviceInput.button[EDIT_BUTTON_TOGGLE_ASSIST_TICK][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F4);
-	m_PlayMappingsDeviceInput.button[EDIT_BUTTON_TOGGLE_AUTOPLAY][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F8);
 
 	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_LAY_MINE_OR_ROLL][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
 	m_RecordMappingsDeviceInput.button[EDIT_BUTTON_LAY_MINE_OR_ROLL][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
@@ -1373,9 +1371,6 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 	case EDIT_BUTTON_OPEN_INPUT_HELP:
 		DoHelp();
 		break;
-	case EDIT_BUTTON_TOGGLE_ASSIST_TICK:
-		SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_bAssistClap, !GAMESTATE->m_SongOptions.GetStage().m_bAssistClap );
-		break;
 	case EDIT_BUTTON_OPEN_NEXT_STEPS:
 	case EDIT_BUTTON_OPEN_PREV_STEPS:
 		{
@@ -2014,16 +2009,6 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 			/* When exiting play mode manually, leave the cursor where it is. */
 			m_fBeatToReturnTo = GAMESTATE->m_fSongBeat;
 			TransitionEditState( STATE_EDITING );
-			break;
-		case EDIT_BUTTON_TOGGLE_ASSIST_TICK:
-			SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_bAssistClap, !GAMESTATE->m_SongOptions.GetStage().m_bAssistClap );
-			break;
-		case EDIT_BUTTON_TOGGLE_AUTOPLAY:
-		{
-			GamePreferences::m_AutoPlay.Set( GamePreferences::m_AutoPlay!=PC_HUMAN ? PC_HUMAN:PC_AUTOPLAY );
-			FOREACH_HumanPlayer( p )
-				GAMESTATE->m_pPlayerState[p]->m_PlayerController = GamePreferences::m_AutoPlay;
-		}
 			break;
 		case EDIT_BUTTON_OFFSET_UP:
 		case EDIT_BUTTON_OFFSET_DOWN:
@@ -3622,7 +3607,6 @@ static const EditHelpLine g_EditHelpLines[] =
 	EditHelpLine( "Record",						EDIT_BUTTON_RECORD_SELECTION ),
 	EditHelpLine( "Set selection",					EDIT_BUTTON_LAY_SELECT ),
 	EditHelpLine( "Drag area marker",				EDIT_BUTTON_SCROLL_SELECT ),
-	EditHelpLine( "Toggle assist tick",				EDIT_BUTTON_TOGGLE_ASSIST_TICK ),
 	EditHelpLine( "Next/prev steps of same StepsType",		EDIT_BUTTON_OPEN_NEXT_STEPS,		EDIT_BUTTON_OPEN_PREV_STEPS ),
 	EditHelpLine( "Decrease/increase BPM at cur beat",		EDIT_BUTTON_BPM_DOWN,			EDIT_BUTTON_BPM_UP ),
 	EditHelpLine( "Decrease/increase stop at cur beat",		EDIT_BUTTON_STOP_DOWN,			EDIT_BUTTON_STOP_UP ),
