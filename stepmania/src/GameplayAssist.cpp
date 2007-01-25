@@ -9,14 +9,18 @@
 
 void GameplayAssist::Init()
 {
-	m_soundAssistTick.Load(		THEME->GetPathS("ScreenEdit","assist tick"), true );
+	m_soundAssistClap.Load(			THEME->GetPathS("GameplayAssist","clap"), true );
+	m_soundAssistMetronomeMeasure.Load(	THEME->GetPathS("GameplayAssist","metronome measure"), true );
+	m_soundAssistMetronomeBeat.Load(	THEME->GetPathS("GameplayAssist","metronome beat"), true );
 }
 
 void GameplayAssist::PlayTicks( const NoteData &nd )
 {
-	if( !GAMESTATE->m_SongOptions.GetStage().m_bAssistTick )
+	bool bClap = GAMESTATE->m_SongOptions.GetCurrent().m_bAssistClap;
+	bool bMetronome = GAMESTATE->m_SongOptions.GetCurrent().m_bAssistMetronome;
+	if( !bClap  &&  !bMetronome )
 		return;
-			
+
 	/* Sound cards have a latency between when a sample is Play()ed and when the sound
 	 * will start coming out the speaker.  Compensate for this by boosting fPositionSeconds
 	 * ahead.  This is just to make sure that we request the sound early enough for it to
@@ -30,30 +34,67 @@ void GameplayAssist::PlayTicks( const NoteData &nd )
 	if( iSongRow < iRowLastCrossed )
 		iRowLastCrossed = iSongRow;
 
-	int iTickRow = -1;
-	// for each index we crossed since the last update:
-	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( nd, r, iRowLastCrossed+1, iSongRow+1 )
-		if( nd.IsThereATapOrHoldHeadAtRow( r ) )
-			iTickRow = r;
+	if( bClap )
+	{
+		int iClapRow = -1;
+		// for each index we crossed since the last update:
+		FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( nd, r, iRowLastCrossed+1, iSongRow+1 )
+			if( nd.IsThereATapOrHoldHeadAtRow( r ) )
+				iClapRow = r;
+
+		if( iClapRow != -1 )
+		{
+			const float fTickBeat = NoteRowToBeat( iClapRow );
+			const float fTickSecond = GAMESTATE->m_pCurSong->m_Timing.GetElapsedTimeFromBeatNoOffset( fTickBeat );
+			float fSecondsUntil = fTickSecond - GAMESTATE->m_fMusicSeconds;
+			fSecondsUntil /= GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate; /* 2x music rate means the time until the tick is halved */
+
+			RageSoundParams p;
+			p.m_StartTime = GAMESTATE->m_LastBeatUpdate  + (fSecondsUntil - (float)CommonMetrics::TICK_EARLY_SECONDS);
+			m_soundAssistClap.Play( &p );
+		}
+	}
+
+	if( bMetronome )
+	{
+		//iRowLastCrossed+1, iSongRow+1
+
+		int iLastCrossedBeat = iRowLastCrossed / ROWS_PER_BEAT;
+		int iCurrentBeat = iSongRow / ROWS_PER_BEAT;
+		
+		int iMetronomeRow = -1;
+		bool bIsMeasure = false;
+
+		if( iLastCrossedBeat != iCurrentBeat )
+		{
+			iMetronomeRow = iCurrentBeat * ROWS_PER_BEAT;
+			bIsMeasure = (iCurrentBeat % BEATS_PER_MEASURE) == 0;
+		}
+
+		if( iMetronomeRow != -1 )
+		{
+			const float fTickBeat = NoteRowToBeat( iMetronomeRow );
+			const float fTickSecond = GAMESTATE->m_pCurSong->m_Timing.GetElapsedTimeFromBeatNoOffset( fTickBeat );
+			float fSecondsUntil = fTickSecond - GAMESTATE->m_fMusicSeconds;
+			fSecondsUntil /= GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate; /* 2x music rate means the time until the tick is halved */
+
+			RageSoundParams p;
+			p.m_StartTime = GAMESTATE->m_LastBeatUpdate  + (fSecondsUntil - (float)CommonMetrics::TICK_EARLY_SECONDS);
+			if( bIsMeasure )
+				m_soundAssistMetronomeMeasure.Play( &p );
+			else
+				m_soundAssistMetronomeBeat.Play( &p );
+		}
+	}
 
 	iRowLastCrossed = iSongRow;
-
-	if( iTickRow != -1 )
-	{
-		const float fTickBeat = NoteRowToBeat( iTickRow );
-		const float fTickSecond = GAMESTATE->m_pCurSong->m_Timing.GetElapsedTimeFromBeatNoOffset( fTickBeat );
-		float fSecondsUntil = fTickSecond - GAMESTATE->m_fMusicSeconds;
-		fSecondsUntil /= GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate; /* 2x music rate means the time until the tick is halved */
-
-		RageSoundParams p;
-		p.m_StartTime = GAMESTATE->m_LastBeatUpdate  + (fSecondsUntil - (float)CommonMetrics::TICK_EARLY_SECONDS);
-		m_soundAssistTick.Play( &p );
-	}
 }
 
 void GameplayAssist::StopPlaying()
 {
-	m_soundAssistTick.StopPlaying();
+	m_soundAssistClap.StopPlaying();
+	m_soundAssistMetronomeMeasure.StopPlaying();
+	m_soundAssistMetronomeBeat.StopPlaying();
 }
 
 /*

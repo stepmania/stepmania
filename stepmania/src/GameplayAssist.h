@@ -14,7 +14,9 @@ public:
 	void PlayTicks( const NoteData &nd );
 	void StopPlaying();
 private:
-	RageSound	m_soundAssistTick;
+	RageSound	m_soundAssistClap;
+	RageSound	m_soundAssistMetronomeMeasure;
+	RageSound	m_soundAssistMetronomeBeat;
 
 };
 

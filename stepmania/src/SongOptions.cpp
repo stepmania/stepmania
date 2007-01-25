@@ -10,7 +10,8 @@ void SongOptions::Init()
 	m_DrainType = DRAIN_NORMAL;
 	m_iBatteryLives = 4;
 	m_FailType = FAIL_IMMEDIATE;
-	m_bAssistTick = false;
+	m_bAssistClap = false;
+	m_bAssistMetronome = false;
 	m_fMusicRate = 1.0f;
 	m_SpeedfMusicRate = 1.0f;
 	m_fHaste = 0.0f;
@@ -32,7 +33,8 @@ void SongOptions::Approach( const SongOptions& other, float fDeltaSeconds )
 	DO_COPY( m_iBatteryLives );
 	APPROACH( fMusicRate );
 	APPROACH( fHaste );
-	DO_COPY( m_bAssistTick );
+	DO_COPY( m_bAssistClap );
+	DO_COPY( m_bAssistMetronome );
 	DO_COPY( m_AutosyncType );
 	DO_COPY( m_SoundEffectType );
 	DO_COPY( m_bSaveScore );
@@ -107,13 +109,17 @@ void SongOptions::GetMods( vector<RString> &AddTo ) const
 	case SOUNDEFFECT_PITCH:	AddTo.push_back("EffectPitch");		break;
 	default:        	ASSERT(0);
 	}
+
+	if( m_bAssistClap )
+		AddTo.push_back( "Clap" );
+	if( m_bAssistMetronome )
+		AddTo.push_back( "Metronome" );
 }
 
-void SongOptions::GetLocalizedMods( vector<RString> &AddTo ) const
+void SongOptions::GetLocalizedMods( vector<RString> &v ) const
 {
-	vector<RString> vMods;
-	GetMods( vMods );
-	FOREACH( RString, vMods, s )
+	GetMods( v );
+	FOREACH( RString, v, s )
 	{
 		*s = CommonMetrics::LocalizeOptionItem( *s, true );
 	}
@@ -190,7 +196,8 @@ void SongOptions::FromString( const RString &sOptions )
 			m_FailType = so.m_FailType;
 		}
 
-		else if( sBit == "assisttick" )		m_bAssistTick = on;
+		else if( sBit == "clap" )		m_bAssistClap = on;
+		else if( sBit == "metronome" )		m_bAssistMetronome = on;
 		else if( sBit == "autosync" || sBit == "autosyncsong" )
 			m_AutosyncType = on ? AUTOSYNC_SONG : AUTOSYNC_OFF;
 		else if( sBit == "autosyncmachine" )	
@@ -220,7 +227,8 @@ bool SongOptions::operator==( const SongOptions &other ) const
 	COMPARE( m_FailType );
 	COMPARE( m_fMusicRate );
 	COMPARE( m_fHaste );
-	COMPARE( m_bAssistTick );
+	COMPARE( m_bAssistClap );
+	COMPARE( m_bAssistMetronome );
 	COMPARE( m_AutosyncType );
 	COMPARE( m_SoundEffectType );
 	COMPARE( m_bSaveScore );

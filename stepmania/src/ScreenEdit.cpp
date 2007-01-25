@@ -1374,7 +1374,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 		DoHelp();
 		break;
 	case EDIT_BUTTON_TOGGLE_ASSIST_TICK:
-		SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_bAssistTick, !GAMESTATE->m_SongOptions.GetStage().m_bAssistTick );
+		SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_bAssistClap, !GAMESTATE->m_SongOptions.GetStage().m_bAssistClap );
 		break;
 	case EDIT_BUTTON_OPEN_NEXT_STEPS:
 	case EDIT_BUTTON_OPEN_PREV_STEPS:
@@ -2016,7 +2016,7 @@ void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 			TransitionEditState( STATE_EDITING );
 			break;
 		case EDIT_BUTTON_TOGGLE_ASSIST_TICK:
-			SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_bAssistTick, !GAMESTATE->m_SongOptions.GetStage().m_bAssistTick );
+			SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Stage, m_bAssistClap, !GAMESTATE->m_SongOptions.GetStage().m_bAssistClap );
 			break;
 		case EDIT_BUTTON_TOGGLE_AUTOPLAY:
 		{

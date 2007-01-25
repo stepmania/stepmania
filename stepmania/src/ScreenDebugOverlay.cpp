@@ -413,7 +413,7 @@ void ChangeVolume( float fDelta )
 
 
 static LocalizedString AUTO_PLAY		( "ScreenDebugOverlay", "AutoPlay" );
-static LocalizedString ASSIST_TICK		( "ScreenDebugOverlay", "AssistTick" );
+static LocalizedString ASSIST			( "ScreenDebugOverlay", "Assist" );
 static LocalizedString AUTOSYNC			( "ScreenDebugOverlay", "Autosync" );
 static LocalizedString COIN_MODE		( "ScreenDebugOverlay", "CoinMode" );
 static LocalizedString HALT			( "ScreenDebugOverlay", "Halt" );
@@ -478,16 +478,34 @@ class DebugLineAutoplay : public IDebugLine
 	}
 };
 
-class DebugLineAssistTick : public IDebugLine
+class DebugLineAssist : public IDebugLine
 {
-	virtual RString GetDescription() { return ASSIST_TICK.GetValue(); }
+	virtual RString GetDescription() { return ASSIST.GetValue(); }
 	virtual Type GetType() const { return gameplay_only; }
-	virtual bool IsEnabled() { return GAMESTATE->m_SongOptions.GetSong().m_bAssistTick; }
+	virtual RString GetValue() { 
+		SongOptions so;
+		so.m_bAssistClap = GAMESTATE->m_SongOptions.GetSong().m_bAssistClap;
+		so.m_bAssistMetronome = GAMESTATE->m_SongOptions.GetSong().m_bAssistMetronome;
+		if( so.m_bAssistClap || so.m_bAssistMetronome )
+			return so.GetLocalizedString();
+		else
+			return OFF.GetValue();
+	}
+	virtual bool IsEnabled() { return GAMESTATE->m_SongOptions.GetSong().m_bAssistClap || GAMESTATE->m_SongOptions.GetSong().m_bAssistMetronome; }
 	virtual void Do( RString &sMessageOut )
 	{
-		bool bAssistTick = !GAMESTATE->m_SongOptions.GetSong().m_bAssistTick;
-		SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Song, m_bAssistTick, bAssistTick );
-		MESSAGEMAN->Broadcast( Message_AssistTickChanged );
+		ASSERT( GAMESTATE->m_MasterPlayerNumber != PLAYER_INVALID );
+		bool bHoldingShift = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT) );
+		bool b;
+		if( bHoldingShift )
+			b = !GAMESTATE->m_SongOptions.GetSong().m_bAssistMetronome;
+		else
+			b = !GAMESTATE->m_SongOptions.GetSong().m_bAssistClap;
+		if( bHoldingShift )
+			SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Song, m_bAssistMetronome, b );
+		else
+			SO_GROUP_ASSIGN( GAMESTATE->m_SongOptions, ModsLevel_Song, m_bAssistClap, b );
+
 		IDebugLine::Do( sMessageOut );
 	}
 };
@@ -918,7 +936,7 @@ class DebugLineUptime : public IDebugLine
  */
 
 DECLARE_ONE( DebugLineAutoplay );
-DECLARE_ONE( DebugLineAssistTick );
+DECLARE_ONE( DebugLineAssist );
 DECLARE_ONE( DebugLineAutosync );
 DECLARE_ONE( DebugLineCoinMode );
 DECLARE_ONE( DebugLineSlow );

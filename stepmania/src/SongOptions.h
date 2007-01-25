@@ -30,7 +30,8 @@ public:
 	FailType m_FailType;
 	float m_fMusicRate,	m_SpeedfMusicRate;
 	float m_fHaste, m_SpeedfHaste;
-	bool m_bAssistTick;
+	bool m_bAssistClap;
+	bool m_bAssistMetronome;
 	enum AutosyncType { 
 		AUTOSYNC_OFF,
 		AUTOSYNC_SONG,
