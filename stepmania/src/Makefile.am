@@ -102,6 +102,7 @@ EnumHelper.cpp EnumHelper.h \
 Font.cpp Font.h \
 FontCharAliases.cpp FontCharAliases.h \
 FontCharmaps.cpp FontCharmaps.h Game.cpp Game.h GameCommand.cpp GameCommand.h \
+GameplayAssist.cpp GameplayAssist.h \
 GameConstantsAndTypes.cpp GameConstantsAndTypes.h \
 GamePreferences.cpp GamePreferences.h \
 GameInput.cpp GameInput.h Grade.cpp Grade.h \

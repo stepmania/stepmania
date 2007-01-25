@@ -746,7 +746,7 @@ void ScreenGameplay::Init()
 		m_textDebug.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 );	// just under transitions, over the foreground
 		this->AddChild( &m_textDebug );
 
-		m_soundAssistTick.Load(	THEME->GetPathS(m_sName,"assist tick"), true );
+		m_GameplayAssist.Init();
 
 		if( GAMESTATE->IsAnExtraStage() )	// only load if we're going to use it
 		{
@@ -913,7 +913,7 @@ ScreenGameplay::~ScreenGameplay()
 	if( m_pSoundMusic )
 		m_pSoundMusic->StopPlaying();
 
-	m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
+	m_GameplayAssist.StopPlaying();
 
 	NSMAN->ReportSongOver();
 }
@@ -1399,43 +1399,9 @@ void ScreenGameplay::PauseGame( bool bPause, GameController gc )
 // play assist ticks
 void ScreenGameplay::PlayTicks()
 {
-	if( !GAMESTATE->m_SongOptions.GetCurrent().m_bAssistTick )
-		return;
-
-	/* Sound cards have a latency between when a sample is Play()ed and when the sound
-	 * will start coming out the speaker.  Compensate for this by boosting fPositionSeconds
-	 * ahead.  This is just to make sure that we request the sound early enough for it to
-	 * come out on time; the actual precise timing is handled by SetStartTime. */
-	float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
-	fPositionSeconds += SOUNDMAN->GetPlayLatency() + (float)CommonMetrics::TICK_EARLY_SECONDS + 0.250f;
-	const float fSongBeat = GAMESTATE->m_pCurSong->m_Timing.GetBeatFromElapsedTimeNoOffset( fPositionSeconds );
-
-	const int iSongRow = max( 0, BeatToNoteRowNotRounded( fSongBeat ) );
-	static int iRowLastCrossed = -1;
-	if( iSongRow < iRowLastCrossed )
-		iRowLastCrossed = -1;
-
-	int iTickRow = -1;
-	// for each index we crossed since the last update:
 	Player &player = *m_vPlayerInfo[0].m_pPlayer;
 	const NoteData &nd = player.GetNoteData();
-	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( nd, r, iRowLastCrossed+1, iSongRow+1 )
-		if( nd.IsThereATapOrHoldHeadAtRow( r ) )
-			iTickRow = r;
-
-	iRowLastCrossed = iSongRow;
-
-	if( iTickRow != -1 )
-	{
-		const float fTickBeat = NoteRowToBeat( iTickRow );
-		const float fTickSecond = GAMESTATE->m_pCurSong->m_Timing.GetElapsedTimeFromBeatNoOffset( fTickBeat );
-		float fSecondsUntil = fTickSecond - GAMESTATE->m_fMusicSeconds;
-		fSecondsUntil /= GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate; /* 2x music rate means the time until the tick is halved */
-
-		RageSoundParams p;
-		p.m_StartTime = GAMESTATE->m_LastBeatUpdate + (fSecondsUntil - (float)CommonMetrics::TICK_EARLY_SECONDS);
-		m_soundAssistTick.Play( &p );
-	}
+	m_GameplayAssist.PlayTicks( nd );
 }
 
 /* Play announcer "type" if it's been at least fSeconds since the last announcer. */
@@ -2083,7 +2049,7 @@ void ScreenGameplay::BeginBackingOutFromGameplay()
 	AbortGiveUp( false );
 	
 	m_pSoundMusic->StopPlaying();
-	m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
+	m_GameplayAssist.StopPlaying(); /* Stop any queued assist ticks. */
 
 	this->ClearMessageQueue();
 	
@@ -2570,7 +2536,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		m_DancingState = STATE_OUTRO;
 		AbortGiveUp( false );
 		m_pSoundMusic->StopPlaying();
-		m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
+		m_GameplayAssist.StopPlaying(); /* Stop any queued assist ticks. */
 		TweenOffScreen();
 		m_Failed.StartTransitioning( SM_DoNextScreen );
 

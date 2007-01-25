@@ -16,6 +16,7 @@
 #include "ThemeMetric.h"
 #include "PlayerState.h"
 #include "GameInput.h"
+#include "GameplayAssist.h"
 
 #include <map>
 
@@ -278,7 +279,7 @@ protected:
 	float			m_fBeatToReturnTo;
 
 	RageSound		m_soundMusic;
-	RageSound		m_soundAssistTick;
+	GameplayAssist		m_GameplayAssist;
 
 	ThemeMetric<EditMode> EDIT_MODE;
 

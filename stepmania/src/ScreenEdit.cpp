@@ -771,7 +771,7 @@ void ScreenEdit::Init()
 	m_soundValueDecrease.Load(	THEME->GetPathS("ScreenEdit","value decrease"), true );
 	m_soundSwitchSteps.Load(	THEME->GetPathS("ScreenEdit","switch steps") );
 	m_soundSave.Load(		THEME->GetPathS("ScreenEdit","save") );
-	m_soundAssistTick.Load(		THEME->GetPathS("ScreenEdit","assist tick"), true );
+	m_GameplayAssist.Init();
 
 	m_soundMusic.Load( m_pSong->GetMusicPath() );
 
@@ -804,42 +804,10 @@ void ScreenEdit::EndScreen()
 // play assist ticks
 void ScreenEdit::PlayTicks()
 {
-	if( !GAMESTATE->m_SongOptions.GetStage().m_bAssistTick  ||  m_EditState != STATE_PLAYING )
+	if( m_EditState != STATE_PLAYING )
 		return;
-			
-	/* Sound cards have a latency between when a sample is Play()ed and when the sound
-	 * will start coming out the speaker.  Compensate for this by boosting fPositionSeconds
-	 * ahead.  This is just to make sure that we request the sound early enough for it to
-	 * come out on time; the actual precise timing is handled by SetStartTime. */
-	float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
-	fPositionSeconds += SOUNDMAN->GetPlayLatency() + (float)CommonMetrics::TICK_EARLY_SECONDS + 0.250f;
-	const float fSongBeat = GAMESTATE->m_pCurSong->m_Timing.GetBeatFromElapsedTimeNoOffset( fPositionSeconds );
 
-	const int iSongRow = max( 0, BeatToNoteRowNotRounded( fSongBeat ) );
-	static int iRowLastCrossed = -1;
-	if( iSongRow < iRowLastCrossed )
-		iRowLastCrossed = iSongRow;
-
-	int iTickRow = -1;
-	const NoteData &nd = m_Player->GetNoteData();
-	// for each index we crossed since the last update:
-	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( nd, r, iRowLastCrossed+1, iSongRow+1 )
-		if( nd.IsThereATapOrHoldHeadAtRow( r ) )
-			iTickRow = r;
-
-	iRowLastCrossed = iSongRow;
-
-	if( iTickRow != -1 )
-	{
-		const float fTickBeat = NoteRowToBeat( iTickRow );
-		const float fTickSecond = GAMESTATE->m_pCurSong->m_Timing.GetElapsedTimeFromBeatNoOffset( fTickBeat );
-		float fSecondsUntil = fTickSecond - GAMESTATE->m_fMusicSeconds;
-		fSecondsUntil /= m_soundMusic.GetPlaybackRate(); /* 2x music rate means the time until the tick is halved */
-
-		RageSoundParams p;
-		p.m_StartTime = GAMESTATE->m_LastBeatUpdate  + (fSecondsUntil - (float)CommonMetrics::TICK_EARLY_SECONDS);
-		m_soundAssistTick.Play( &p );
-	}
+	m_GameplayAssist.PlayTicks( m_Player->GetNoteData() );
 }
 
 void ScreenEdit::PlayPreviewMusic()
@@ -2136,7 +2104,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 	/* If we're playing music, sample music or assist ticks when changing modes, stop. */
 	SOUND->StopMusic();
 	m_soundMusic.StopPlaying();
-	m_soundAssistTick.StopPlaying();
+	m_GameplayAssist.StopPlaying();
 	GAMESTATE->m_bGameplayLeadIn.Set( true );
 
 	if( bStateChanging )

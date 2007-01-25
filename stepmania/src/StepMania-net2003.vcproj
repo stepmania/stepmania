@@ -900,6 +900,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="GameInput.h">
 			</File>
 			<File
+				RelativePath=".\GameplayAssist.cpp">
+			</File>
+			<File
+				RelativePath=".\GameplayAssist.h">
+			</File>
+			<File
 				RelativePath=".\GamePreferences.cpp">
 			</File>
 			<File

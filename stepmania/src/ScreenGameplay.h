@@ -19,6 +19,7 @@
 #include "PlayerState.h"
 #include "InputEventPlus.h"
 #include "SoundEffectControl.h"
+#include "GameplayAssist.h"
 
 class LyricsLoader;
 class ActiveAttackList;
@@ -220,7 +221,7 @@ protected:
 
 	bool			m_bZeroDeltaOnNextUpdate;
 
-	RageSound		m_soundAssistTick;
+	GameplayAssist		m_GameplayAssist;
 	RageSound		*m_pSoundMusic;
 
 	BeginnerHelper		m_BeginnerHelper;
