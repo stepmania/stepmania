@@ -83,7 +83,7 @@ static int get_readable_ranges( const void **starts, const void **ends, int size
 		file_used += ret;
 
 		/* Parse lines. */
-		while( got < size )
+		while( got < size-1 )
 		{
 			char *p = (char *) memchr( file, '\n', file_used );
 			if( p == NULL )
