@@ -24,7 +24,7 @@ class RageFileDriverTest: public RageFileDriver
 public:
 	RageFileDriverTest( RString root );
 
-	RageFileObj *Open( const RString &path, int mode, RageFile &p, int &err );
+	RageFileObj *Open( const RString &path, int mode, int &err );
 	bool Remove( const RString &sPath ) { return false; }
 	bool Ready() { return true; }
 
@@ -35,7 +35,7 @@ private:
 static struct FileDriverEntry_TEST: public FileDriverEntry
 {
 	FileDriverEntry_TEST(): FileDriverEntry( "TEST" ) { }
-	RageFileDriver *Create( RString Root ) const { return new RageFileDriverTest( Root ); }
+	RageFileDriver *Create( const RString &sRoot ) const { return new RageFileDriverTest( sRoot ); }
 } const g_RegisterDriver;
 
 class TestFilenameDB: public FilenameDB
@@ -73,9 +73,10 @@ public:
 class RageFileObjTest: public RageFileObj
 {
 public:
-	RageFileObjTest( const RString &path, RageFile &p );
-	int Read(void *buffer, size_t bytes);
-	int Write(const void *buffer, size_t bytes);
+	RageFileObjTest( const RString &path );
+	RageFileObjTest( const RageFileObjTest &cpy );
+	int ReadInternal(void *buffer, size_t bytes);
+	int WriteInternal(const void *buffer, size_t bytes);
 	int Flush();
 	void Rewind() { pos = 0; }
 	int Seek( int offset )
@@ -83,9 +84,9 @@ public:
 		pos = min( offset, (int) g_TestFile.size() );
 		return pos;
 	}
-	RageFileObj *Copy( RageFile &p ) const;
+	RageFileObj *Copy() const;
 	RString GetDisplayPath() const { return path; }
-	int GetFileSize() { return g_TestFile.size(); }
+	int GetFileSize() const { return g_TestFile.size(); }
 
 private:
 	RString path; /* for Copy */
@@ -101,8 +102,14 @@ RageFileDriverTest::RageFileDriverTest( RString root_ ):
 		root += '/';
 }
 
+RageFileObjTest::RageFileObjTest( const RageFileObjTest &cpy ):
+	RageFileObj(cpy)
+{
+	path = cpy.path;
+	pos = cpy.pos;
+}
 
-RageFileObj *RageFileDriverTest::Open( const RString &path, int mode, RageFile &p, int &err )
+RageFileObj *RageFileDriverTest::Open( const RString &path, int mode, int &err )
 {
 	if( path != g_TestFilename )
 	{
@@ -110,27 +117,22 @@ RageFileObj *RageFileDriverTest::Open( const RString &path, int mode, RageFile &
 		return NULL;
 	}
 
-	return new RageFileObjTest( root + path, p );
+	return new RageFileObjTest( root + path );
 }
 
-RageFileObj *RageFileObjTest::Copy( RageFile &p ) const
+RageFileObj *RageFileObjTest::Copy() const
 {
-	RageFileObj *ret = new RageFileObjTest( path, p );
-
-	ret->Seek( parent.Tell() );
-
-	return ret;
+	return new RageFileObjTest( *this );
 }
 
 static const unsigned int BUFSIZE = 1024*64;
-RageFileObjTest::RageFileObjTest( const RString &path_, RageFile &p ):
-	RageFileObj( p )
+RageFileObjTest::RageFileObjTest( const RString &path_ )
 {
 	path = path_;
 	pos = 0;
 }
 
-int RageFileObjTest::Read( void *buf, size_t bytes )
+int RageFileObjTest::ReadInternal( void *buf, size_t bytes )
 {
 	bytes = min( bytes, g_TestFile.size()-pos );
 
@@ -151,7 +153,7 @@ int RageFileObjTest::Read( void *buf, size_t bytes )
 	return bytes;
 }
 
-int RageFileObjTest::Write( const void *buf, size_t bytes )
+int RageFileObjTest::WriteInternal( const void *buf, size_t bytes )
 {
 	if( g_BytesUntilError != -1 )
 	{
@@ -201,7 +203,7 @@ void SanityCheck()
 		g_TestFilename = "file";
 
 		RageFile test;
-		if( !test.Open("test/file", RageFile::READ ) )
+		if( !test.Open("/test/file", RageFile::READ ) )
 			Fail( "Sanity check Open() failed: %s", test.GetError().c_str() );
 
 		RString str;
@@ -220,7 +222,7 @@ void SanityCheck()
 		g_BytesUntilError = 5;
 
 		RageFile test;
-		if( !test.Open("test/file", RageFile::READ ) )
+		if( !test.Open("/test/file", RageFile::READ ) )
 			Fail( "Sanity check 2 Open() failed: %s", test.GetError().c_str() );
 
 		RString str;
@@ -245,7 +247,7 @@ void SanityCheck()
 		g_BytesUntilError = 5;
 
 		RageFile test;
-		if( !test.Open("test/file", RageFile::WRITE ) )
+		if( !test.Open("/test/file", RageFile::WRITE ) )
 			Fail( "Write error check Open() failed: %s", test.GetError().c_str() );
 
 		int wrote = test.Write( "test", 4 );
@@ -306,7 +308,7 @@ void IniTest()
 		g_BytesUntilError = 5;
 
 		IniFile test;
-		test.SetValue( "foo", "bar", "baz" );
+		test.SetValue( "foo", "bar", RString("baz") );
 		if( test.WriteFile( "test/file" ) )
 			Fail( "INI: WriteFile should have failed" );
 
@@ -327,7 +329,7 @@ void MsdTest()
 		g_BytesUntilError = -1;
 
 		MsdFile test;
-		if( !test.ReadFile( "test/file" ) )
+		if( !test.ReadFile("test/file", false) )
 			Fail( "MSD: ReadFile failed: %s", test.GetError().c_str() );
 
 		if( test.GetNumValues() != 1 )
@@ -345,7 +347,7 @@ void MsdTest()
 		g_BytesUntilError = 5;
 
 		MsdFile test;
-		if( test.ReadFile( "test/file" ) )
+		if( test.ReadFile("test/file", false) )
 			Fail( "MSD: ReadFile should have failed" );
 
 		if( test.GetError() != "Fake error" )
@@ -353,68 +355,11 @@ void MsdTest()
 	} while(false);
 }
 
-#include "XmlFile.h"
-void XmlTest()
-{
-	g_TestFilename = "file";
-
-	/* Read check. */
-	do {
-		g_TestFile = "<foo><bar></bar></foo>";
-
-		g_BytesUntilError = -1;
-
-		XNode test;
-		PARSEINFO pi;
-		if( !test.LoadFromFile( "test/file", &pi ) )
-			Fail( "XML: LoadFromFile failed: %s", pi.error_string.c_str() );
-
-		if( test.GetChild( "bar" ) == NULL )
-			Fail( "XML: couldn't find node" );
-	} while(false);
-
-	/* Read error check. */
-	do {
-		g_TestFile = "<foo><bar></bar></foo>";
-
-		g_BytesUntilError = 5;
-
-		XNode test;
-		PARSEINFO pi;
-		if( test.LoadFromFile( "test/file", &pi ) )
-			Fail( "XML: LoadFromFile should have failed" );
-		if( pi.error_string != "Fake error" )
-			Fail( "XML: LoadFromFile error check: wrong error return: got \"%s\"", pi.error_string.c_str() );
-	} while(false);
-
-	/* Write error check. */
-	do {
-		g_BytesUntilError = 5;
-
-		XNode test;
-		test.name = "foo";
-
-		XNode* pNode = new XNode;
-		pNode->name = "bar";
-
-		test.AppendChild( pNode );
-
-		PARSEINFO pi;
-				
-		if( test.SaveToFile( "test/file" ) )
-			Fail( "XML: SaveToFile should have failed" );
-
-//		if( test.GetError() != "Fake error" )
-//			Fail( "INI: ReadFile error check: wrong error return: got \"%s\"", test.GetError().c_str() );
-	} while(false);
-
-}
-
 #include "CryptManager.h"
 void CryptoTest()
 {
 	PREFSMAN = new PrefsManager; /* CRYPTMAN needs PREFSMAN */
-	PREFSMAN->m_bSignProfileData = true;
+	PREFSMAN->m_bSignProfileData.Set( true );
 
 	CRYPTMAN = new CryptManager;
 
@@ -456,13 +401,12 @@ int main( int argc, char *argv[] )
 	test_init();
 
 	/* Setup. */
-	FILEMAN->Mount( "TEST", ".", "test" );
+	FILEMAN->Mount( "TEST", ".", "/test" );
 
 	SanityCheck();
 
 	IniTest();
 	MsdTest();
-	XmlTest();
 	CryptoTest();
 
 	test_deinit();

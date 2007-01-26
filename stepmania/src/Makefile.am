@@ -606,7 +606,6 @@ test_file_errors_SOURCES = \
 		$(all_test_SOURCES) \
 		tests/test_file_errors.cpp \
 		MsdFile.cpp MsdFile.h \
-		XmlFile.cpp XmlFile.h \
 		CryptManager.cpp CryptManager.h
 
 test_file_errors_LDADD = \
