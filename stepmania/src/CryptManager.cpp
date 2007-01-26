@@ -421,7 +421,7 @@ RString CryptManager::GetMD5ForFile( RString fn )
 	unsigned char digest[16];
 	HashFile( file, digest, iHash );
 
-	return BinaryToHex( digest, sizeof(digest) );
+	return RString( (const char *) digest, sizeof(digest) );
 }
 
 RString CryptManager::GetMD5ForString( RString sData )
@@ -435,7 +435,7 @@ RString CryptManager::GetMD5ForString( RString sData )
 	iRet = hash_descriptor[iHash].process( &hash, (const unsigned char *) sData.data(), sData.size() );
 	iRet = hash_descriptor[iHash].done( &hash, digest );
 
-	return BinaryToHex( digest, sizeof(digest) );
+	return RString( (const char *) digest, sizeof(digest) );
 }
 
 RString CryptManager::GetPublicKeyFileName()

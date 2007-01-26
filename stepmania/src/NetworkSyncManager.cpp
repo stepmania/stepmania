@@ -830,7 +830,7 @@ RString NetworkSyncManager::MD5Hex( const RString &sInput )
 	RString HashedName;
 	RString PreHashedName;
 
-	RString sOutput = CryptManager::GetMD5ForString( sInput );
+	RString sOutput = BinaryToHex( CryptManager::GetMD5ForString(sInput) );
 
 	for (int i = 0; i < 16; i++)
 		PreHashedName += ssprintf( "%2X", sOutput[i] );
