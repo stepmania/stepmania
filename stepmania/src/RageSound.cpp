@@ -37,8 +37,6 @@
 #include "RageSoundReader_FileReader.h"
 #include "RageSoundReader_ThreadedBuffer.h"
 
-static const int channels = 2;
-static const int framesize = 2 * channels; /* 16-bit */
 #define samplerate() m_pSource->GetSampleRate()
 
 RageSoundParams::RageSoundParams():
@@ -289,7 +287,7 @@ int RageSound::GetDataToPlay( int16_t *pBuffer, int iFrames, int64_t &iStreamFra
 		int iSourceFrame;
 
 		/* Read data from our source. */
-		int iGotFrames = m_pSource->RetriedRead( pBuffer + (iFramesStored * channels), iFrames, &iSourceFrame, &fRate );
+		int iGotFrames = m_pSource->RetriedRead( pBuffer + (iFramesStored * m_pSource->GetNumChannels()), iFrames, &iSourceFrame, &fRate );
 
 		if( iGotFrames == RageSoundReader::ERROR )
 		{
