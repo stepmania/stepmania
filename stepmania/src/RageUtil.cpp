@@ -142,8 +142,9 @@ bool IsHexVal( const RString &s )
 	return true;
 }
 
-RString BinaryToHex( const unsigned char *string, int iNumBytes )
+RString BinaryToHex( const void *pData_, int iNumBytes )
 {
+	const unsigned char *string = (const unsigned char *) pData_;
        RString s;
        for( int i=0; i<iNumBytes; i++ )
        {
@@ -151,6 +152,11 @@ RString BinaryToHex( const unsigned char *string, int iNumBytes )
                s += ssprintf( "%02x", val );
        }
        return s;
+}
+
+RString BinaryToHex( const RString &sString )
+{
+	return BinaryToHex( sString.data(), sString.size() );
 }
 
 bool HexToBinary( const RString &s, unsigned char *stringOut )
