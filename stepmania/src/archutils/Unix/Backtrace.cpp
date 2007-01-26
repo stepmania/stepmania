@@ -63,13 +63,13 @@ static int get_readable_ranges( const void **starts, const void **ends, int size
 	if( fd == -1 )
 		return false;
 
-	/* Format:
+	/*
+	 * Format:
 	 *
 	 * 402dd000-402de000 rw-p 00010000 03:03 16815669   /lib/libnsl-2.3.1.so
 	 * or
 	 * bfffb000-c0000000 rwxp ffffc000 00:00 0
-	 *
-	 * Look for the range that includes the stack pointer. */
+	 */
 	char file[1024];
 	int file_used = 0;
 	bool eof = false;
