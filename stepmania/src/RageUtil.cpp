@@ -144,14 +144,14 @@ bool IsHexVal( const RString &s )
 
 RString BinaryToHex( const void *pData_, int iNumBytes )
 {
-	const unsigned char *string = (const unsigned char *) pData_;
-       RString s;
-       for( int i=0; i<iNumBytes; i++ )
-       {
-               unsigned val = string[i];
-               s += ssprintf( "%02x", val );
-       }
-       return s;
+	const unsigned char *pData = (const unsigned char *) pData_;
+	RString s;
+	for( int i=0; i<iNumBytes; i++ )
+	{
+		unsigned val = pData[i];
+		s += ssprintf( "%02x", val );
+	}
+	return s;
 }
 
 RString BinaryToHex( const RString &sString )
