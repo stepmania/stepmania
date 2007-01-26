@@ -220,8 +220,6 @@ static bool WriteFile( RString sFile, RString sBuf )
 
 void CryptManager::GenerateRSAKey( unsigned int keyLength, RString privFilename, RString pubFilename )
 {
-	ASSERT( PREFSMAN->m_bSignProfileData );
-
 	int iRet;
 
 	rsa_key key;
@@ -265,8 +263,6 @@ void CryptManager::GenerateRSAKey( unsigned int keyLength, RString privFilename,
 
 void CryptManager::SignFileToFile( RString sPath, RString sSignatureFile )
 {
-	ASSERT( PREFSMAN->m_bSignProfileData );
-
 	RString sPrivFilename = PRIVATE_KEY_PATH;
 	if( sSignatureFile.empty() )
 		sSignatureFile = sPath + SIGNATURE_APPEND;
@@ -328,8 +324,6 @@ bool CryptManager::Sign( RString sPath, RString &sSignatureOut, RString sPrivKey
 
 bool CryptManager::VerifyFileWithFile( RString sPath, RString sSignatureFile )
 {
-	ASSERT( PREFSMAN->m_bSignProfileData );
-
 	if( VerifyFileWithFile(sPath, sSignatureFile, PUBLIC_KEY_PATH) )
 		return true;
 
@@ -349,8 +343,6 @@ bool CryptManager::VerifyFileWithFile( RString sPath, RString sSignatureFile )
 
 bool CryptManager::VerifyFileWithFile( RString sPath, RString sSignatureFile, RString sPublicKeyFile )
 {
-	ASSERT( PREFSMAN->m_bSignProfileData );
-
 	if( sSignatureFile.empty() )
 		sSignatureFile = sPath + SIGNATURE_APPEND;
 
@@ -371,8 +363,6 @@ bool CryptManager::VerifyFileWithFile( RString sPath, RString sSignatureFile, RS
 
 bool CryptManager::Verify( RString sPath, RString sSignature, RString sPublicKey )
 {
-	ASSERT( PREFSMAN->m_bSignProfileData );
-
 	RageFile file;
 	if( !file.Open(sPath) )
 	{
@@ -450,8 +440,6 @@ RString CryptManager::GetMD5ForString( RString sData )
 
 RString CryptManager::GetPublicKeyFileName()
 {
-	ASSERT( PREFSMAN->m_bSignProfileData );
-
 	return PUBLIC_KEY_PATH;
 }
 
