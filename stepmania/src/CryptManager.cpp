@@ -268,7 +268,6 @@ void CryptManager::SignFileToFile( RString sPath, RString sSignatureFile )
 	ASSERT( PREFSMAN->m_bSignProfileData );
 
 	RString sPrivFilename = PRIVATE_KEY_PATH;
-	RString sMessageFilename = sPath;
 	if( sSignatureFile.empty() )
 		sSignatureFile = sPath + SIGNATURE_APPEND;
 
@@ -276,29 +275,38 @@ void CryptManager::SignFileToFile( RString sPath, RString sSignatureFile )
 	if( !GetFileContents(sPrivFilename, sPrivKey) )
 		return;
 
-	if( !IsAFile(sMessageFilename) )
-	{
-		LOG->Trace( "SignFileToFile: \"%s\" doesn't exist", sMessageFilename.c_str() );
+	RString sSignature;
+	if( !Sign(sPath, sSignature, sPrivKey) )
 		return;
+
+	WriteFile( sSignatureFile, sSignature );
+}
+
+bool CryptManager::Sign( RString sPath, RString &sSignatureOut, RString sPrivKey )
+{
+	if( !IsAFile(sPath) )
+	{
+		LOG->Trace( "SignFileToFile: \"%s\" doesn't exist", sPath.c_str() );
+		return false;
 	}
 
 	RageFile file;
-	if( !file.Open(sMessageFilename) )
+	if( !file.Open(sPath) )
 	{
 		LOG->Warn( "SignFileToFile: open(%s) failed: %s", sPath.c_str(), file.GetError().c_str() );
-		return;
+		return false;
 	}
 
 	RSAKeyWrapper key;
 	if( !key.Load(sPrivKey) )
-		return;
+		return false;
 
 	int iHash = register_hash( &sha1_desc );
 	ASSERT( iHash >= 0 );
 
 	unsigned char buf_hash[20];
 	if( !HashFile(file, buf_hash, iHash) )
-		return;
+		return false;
 
 	unsigned char signature[256];
 	unsigned long signature_len = sizeof(signature);
@@ -311,11 +319,11 @@ void CryptManager::SignFileToFile( RString sPath, RString sSignatureFile )
 	if( iRet != CRYPT_OK )
 	{
 		LOG->Warn( "SignFileToFile error: %s", error_to_string(iRet) );
-		return;
+		return false;
 	}
 
-	RString sSignature( (const char *) signature, signature_len );
-	WriteFile( sSignatureFile, sSignature );
+	sSignatureOut.assign( (const char *) signature, signature_len );
+	return true;
 }
 
 bool CryptManager::VerifyFileWithFile( RString sPath, RString sSignatureFile )

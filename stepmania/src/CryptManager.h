@@ -13,6 +13,7 @@ public:
 
 	static void GenerateRSAKey( unsigned int keyLength, RString privFilename, RString pubFilename );
 	static void SignFileToFile( RString sPath, RString sSignatureFile = "" );
+	static bool Sign( RString sPath, RString &sSignatureOut, RString sPrivateKey );
 	static bool VerifyFileWithFile( RString sPath, RString sSignatureFile = "" );
 	static bool VerifyFileWithFile( RString sPath, RString sSignatureFile, RString sPublicKeyFile );
 	static bool Verify( RString sPath, RString sSignature, RString sPublicKey );
