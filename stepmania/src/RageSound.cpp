@@ -153,7 +153,7 @@ public:
 	int GetLength() const { return 0; }
 	int GetLength_Fast() const { return 0; }
 	int SetPosition( int iFrame )  { return 1; }
-	int Read( int16_t *pBuf, int iFrames ) { return RageSoundReader::END_OF_FILE; }
+	int Read( float *pBuf, int iFrames ) { return RageSoundReader::END_OF_FILE; }
 	RageSoundReader *Copy() const { return new RageSoundReader_Silence; }
 	int GetSampleRate() const { return 44100; }
 	unsigned GetNumChannels() const { return 1; }
@@ -270,7 +270,7 @@ void RageSound::LoadSoundReader( RageSoundReader *pSound )
  * conditions are masked and will be seen on the next call.  Otherwise, the requested 
  * number of frames will always be returned.
  */
-int RageSound::GetDataToPlay( int16_t *pBuffer, int iFrames, int64_t &iStreamFrame, int &iFramesStored )
+int RageSound::GetDataToPlay( float *pBuffer, int iFrames, int64_t &iStreamFrame, int &iFramesStored )
 {
 	/* We only update m_iStreamFrame; only take a shared lock, so we don't block the main thread. */
 //	LockMut(m_Mutex);

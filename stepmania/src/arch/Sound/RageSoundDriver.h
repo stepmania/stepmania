@@ -145,8 +145,8 @@ private:
 	 */
 	struct sound_block
 	{
-		int16_t m_Buffer[samples_per_block];
-		int16_t *m_BufferNext; // beginning of the unread data
+		float m_Buffer[samples_per_block];
+		float *m_BufferNext; // beginning of the unread data
 		int m_FramesInBuffer; // total number of frames at m_BufferNext
 		int64_t m_iPosition; // stream frame of m_BufferNext
 		sound_block() { m_FramesInBuffer = m_iPosition = 0; m_BufferNext = m_Buffer; }
