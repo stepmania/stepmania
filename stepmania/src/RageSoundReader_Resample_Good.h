@@ -15,7 +15,7 @@ public:
 	RageSoundReader_Resample_Good( RageSoundReader *pSource, int iSampleRate );
 	RageSoundReader_Resample_Good( const RageSoundReader_Resample_Good &cpy );
 	int SetPosition( int iFrame );
-	int Read( int16_t *pBuf, int iFrames );
+	int Read( float *pBuf, int iFrames );
 	virtual ~RageSoundReader_Resample_Good();
 	RageSoundReader_Resample_Good *Copy() const;
 	bool SetProperty( const RString &sProperty, float fValue );

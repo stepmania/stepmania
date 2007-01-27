@@ -18,7 +18,7 @@ public:
 	RageSoundReader_ThreadedBuffer *Copy() const { return new RageSoundReader_ThreadedBuffer(*this); }
 
 	virtual int SetPosition( int iFrame );
-	virtual int Read( int16_t *pBuffer, int iLength );
+	virtual int Read( float *pBuffer, int iLength );
 	virtual int GetNextSourceFrame() const;
 
 	virtual int GetLength() const;
@@ -46,7 +46,7 @@ private:
 	int m_iSampleRate;
 	int m_iChannels;
 
-	CircBuf<int16_t> m_DataBuffer;
+	CircBuf<float> m_DataBuffer;
 
 	struct Mapping
 	{

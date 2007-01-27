@@ -15,7 +15,7 @@ RageSoundReader_PostBuffering::RageSoundReader_PostBuffering( RageSoundReader *p
 }
 
 
-int RageSoundReader_PostBuffering::Read( int16_t *pBuf, int iFrames )
+int RageSoundReader_PostBuffering::Read( float *pBuf, int iFrames )
 {
 	iFrames = m_pSource->Read( pBuf, iFrames );
 	if( iFrames < 0 )

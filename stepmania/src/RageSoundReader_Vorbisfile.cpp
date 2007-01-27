@@ -160,15 +160,15 @@ int RageSoundReader_Vorbisfile::SetPosition( int iFrame )
 	return 1;
 }
 
-int RageSoundReader_Vorbisfile::Read( int16_t *buf, int iFrames )
+int RageSoundReader_Vorbisfile::Read( float *buf, int iFrames )
 {
 	int frames_read = 0;
 
 	while( iFrames && !eof )
 	{
-		const int bytes_per_frame = sizeof(int16_t)*channels;
+		const int bytes_per_frame = sizeof(float)*channels;
 
-		int ret = 0;
+		int iFramesRead = 0;
 
 		{
 			int curofs = (int) ov_pcm_tell(vf);
@@ -193,18 +193,20 @@ int RageSoundReader_Vorbisfile::Read( int16_t *buf, int iFrames )
 				CHECKPOINT_M( ssprintf("p %i,%i: %i frames of silence needed", curofs, read_offset, silence) );
 
 				memset( buf, 0, silence );
-				ret = silence;
+				iFramesRead = iSilentFrames;
 			}
 		}
 
-		if( ret == 0 )
+		if( iFramesRead == 0 )
 		{
 			int bstream;
 #if defined(INTEGER_VORBIS)
-			ret = ov_read( vf, (char *) buf, iFrames * bytes_per_frame, &bstream );
+			int ret = ov_read( vf, (char *) buf, iFrames * channels * sizeof(int16_t), &bstream );
 #else // float vorbis decoder
-			ret = ov_read( vf, (char *) buf, iFrames * bytes_per_frame, (BYTE_ORDER == BIG_ENDIAN)?1:0, 2, 1, &bstream );
+			float **pcm;
+			int ret = ov_read_float( vf, &pcm, iFrames, &bstream );
 #endif
+
 			{
 				vorbis_info *vi = ov_info( vf, -1 );
 				ASSERT( vi != NULL );
@@ -228,12 +230,43 @@ int RageSoundReader_Vorbisfile::Read( int16_t *buf, int iFrames )
 				eof = true;
 				continue;
 			}
+
+#if defined(INTEGER_VORBIS)
+			if( ret > 0 )
+			{
+				int iSamplesRead = ret / sizeof(int16_t);
+				iFramesRead = iSamplesRead / channels;
+
+				/* Convert in reverse, so we can do it in-place. */
+				const int16_t *pIn = (int16_t *) buf;
+				float *pOut = (float *) buf;
+				for( int i = iSamplesRead-1; i >= 0; --i )
+					pOut[i] = pIn[i] / 32768.0f;
+			}
+#else
+			if( ret > 0 )
+			{
+				iFramesRead = ret;
+
+				int iNumChannels = channels;
+				for( int iChannel = 0; iChannel < iNumChannels; ++iChannel )
+				{
+					const float *pChannelIn = pcm[iChannel];
+					float *pChannelOut = &buf[iChannel];
+					for( int i = 0; i < iFramesRead; ++i )
+					{
+						*pChannelOut = *pChannelIn;
+						++pChannelIn;
+						pChannelOut += iNumChannels;
+					}
+				}
+			}
+#endif
 		}
 
-		int iFramesRead = ret / bytes_per_frame;
-		read_offset += ret / bytes_per_frame;
+		read_offset += iFramesRead;
 
-		buf += ret / sizeof(int16_t);
+		buf += iFramesRead * channels;
 		frames_read += iFramesRead;
 		iFrames -= iFramesRead;
 	}

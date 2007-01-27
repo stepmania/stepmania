@@ -16,7 +16,7 @@ public:
 	int GetLength() const;
 	int GetLength_Fast() const;
 	int SetPosition( int iFrame );
-	int Read( int16_t *pBuffer, int iLength );
+	int Read( float *pBuffer, int iLength );
 	int GetSampleRate() const { return m_iSampleRate; }
 	unsigned GetNumChannels() const { return m_iChannels; }
 	int GetNextSourceFrame() const;

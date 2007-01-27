@@ -10,7 +10,7 @@ class RageSoundReader_Extend: public RageSoundReader_Filter
 public:
 	RageSoundReader_Extend( RageSoundReader *pSource );
 	virtual int SetPosition( int iFrame );
-	virtual int Read( int16_t *pBuffer, int iFrames );
+	virtual int Read( float *pBuffer, int iFrames );
 	virtual int GetNextSourceFrame() const;
 	virtual bool SetProperty( const RString &sProperty, float fValue );
 
@@ -19,7 +19,7 @@ public:
 
 private:
 	int GetEndFrame() const;
-	int GetData( int16_t *pBuffer, int iFrames );
+	int GetData( float *pBuffer, int iFrames );
 
 	int m_iPositionFrames;
 	

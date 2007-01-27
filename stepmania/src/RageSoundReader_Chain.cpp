@@ -299,7 +299,7 @@ float RageSoundReader_Chain::GetStreamToSourceRatio() const
 
 /* As we iterate through the sound tree, we'll find that we need data from different
  * sounds; a sound may be needed by more than one other sound. */
-int RageSoundReader_Chain::Read( int16_t *pBuffer, int iFrames )
+int RageSoundReader_Chain::Read( float *pBuffer, int iFrames )
 {
 	while( m_iNextSound < m_aSounds.size() && m_iCurrentFrame == m_aSounds[m_iNextSound].GetOffsetFrame(m_iActualSampleRate) )
 	{
@@ -339,14 +339,14 @@ int RageSoundReader_Chain::Read( int16_t *pBuffer, int iFrames )
 	{
 		/* If we have more sounds ahead of us, pretend we read the entire block, since
 		 * there's silence in between.  Otherwise, we're at EOF. */
-		memset( pBuffer, 0, iFrames * m_iChannels * sizeof(int16_t) );
+		memset( pBuffer, 0, iFrames * m_iChannels * sizeof(float) );
 		m_iCurrentFrame += iFrames;
 		return iFrames;
 	}
 
 	RageSoundMixBuffer mix;
 	/* Read iFrames from each sound. */
-	int16_t Buffer[2048];
+	float Buffer[2048];
 	iFrames = min( iFrames, (int) (ARRAYLEN(Buffer) / m_iChannels) );
 	for( unsigned i = 0; i < m_apActiveSounds.size(); )
 	{

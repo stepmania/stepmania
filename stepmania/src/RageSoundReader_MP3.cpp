@@ -204,7 +204,8 @@ struct madlib_t
 		bitrate = 0;
 	}
 
-	uint8_t inbuf[16384], outbuf[8192];
+	uint8_t inbuf[16384];
+	float outbuf[8192];
 	int outpos;
 	unsigned outleft;
 
@@ -268,7 +269,7 @@ struct madlib_t
 
 
 
-static signed int scale(mad_fixed_t sample)
+static float scale(mad_fixed_t sample)
 {
 	/* round */
 	sample += (1L << (MAD_F_FRACBITS - 16));
@@ -279,8 +280,7 @@ static signed int scale(mad_fixed_t sample)
 	else if (sample < -MAD_F_ONE)
 		sample = -MAD_F_ONE;
 
-	/* quantize */
-	return sample >> (MAD_F_FRACBITS + 1 - 16);
+	return (double) sample / (1<<MAD_F_FRACBITS);
 }
 
 static int get_this_frame_byte( const madlib_t *mad )
@@ -542,9 +542,9 @@ void RageSoundReader_MP3::synth_output()
 	{
 		for(int chan = 0; chan < this->Channels; ++chan)
 		{
-			short Sample = (short) scale(mad->Synth.pcm.samples[chan][i]);
-			*((short *) (mad->outbuf + mad->outleft)) = Sample;
-			mad->outleft += 2;
+			float Sample = scale(mad->Synth.pcm.samples[chan][i]);
+			mad->outbuf[mad->outleft] = Sample;
+			++mad->outleft;
 		}
 	}
 }
@@ -743,7 +743,7 @@ static void mono_to_stereo( char *dst, const char *src, unsigned len )
 	}
 }
 
-int RageSoundReader_MP3::Read( int16_t *buf, int iFrames )
+int RageSoundReader_MP3::Read( float *buf, int iFrames )
 {
 	int iFramesWritten = 0;
 
@@ -751,17 +751,17 @@ int RageSoundReader_MP3::Read( int16_t *buf, int iFrames )
 	{
 		if( mad->outleft > 0 )
 		{
-			int iFramesToCopy = min( iFrames, int(mad->outleft / (sizeof(int16_t) * GetNumChannels())) );
+			int iFramesToCopy = min( iFrames, int(mad->outleft / GetNumChannels()) );
 			const int iSamplesToCopy = iFramesToCopy * GetNumChannels();
-			const int iBytesToCopy = iSamplesToCopy * sizeof(int16_t);
+			const int iBytesToCopy = iSamplesToCopy * sizeof(float);
 
 			memcpy( buf, mad->outbuf + mad->outpos, iBytesToCopy );
 
 			buf += iSamplesToCopy;
 			iFrames -= iFramesToCopy;
 			iFramesWritten += iFramesToCopy;
-			mad->outpos += iBytesToCopy;
-			mad->outleft -= iBytesToCopy;
+			mad->outpos += iSamplesToCopy;
+			mad->outleft -= iSamplesToCopy;
 			continue;
 		}
 
@@ -936,10 +936,9 @@ int RageSoundReader_MP3::SetPosition_hard( int iFrame )
 
 			int samples = mad_timer_count( skip, (mad_units) SampleRate );
 
-			/* Skip 'samples' samples; each sample is 2 * channels bytes, since
-			 * we're currently always using AUDIO_S16SYS. */
-			mad->outpos = samples * 2 * this->Channels;
-			mad->outleft -= samples * 2 * this->Channels;
+			/* Skip 'samples' samples. */
+			mad->outpos = samples * this->Channels;
+			mad->outleft -= samples * this->Channels;
 			return 1;
 		}
 
@@ -1052,7 +1051,7 @@ bool RageSoundReader_MP3::SetProperty( const RString &sProperty, float fValue )
 int RageSoundReader_MP3::GetNextSourceFrame() const
 {
 	int iFrame = mad_timer_count( mad->Timer, mad_units(mad->Frame.header.samplerate) );
-	iFrame += mad->outpos / (sizeof(int16_t) * this->Channels);
+	iFrame += mad->outpos / this->Channels;
 	return iFrame;
 }
 

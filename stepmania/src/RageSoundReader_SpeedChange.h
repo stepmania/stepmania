@@ -11,7 +11,7 @@ public:
 	RageSoundReader_SpeedChange( RageSoundReader *pSource );
 
 	virtual int SetPosition( int iFrame );
-	virtual int Read( int16_t *pBuf, int iFrames );
+	virtual int Read( float *pBuf, int iFrames );
 	virtual RageSoundReader_SpeedChange *Copy() const { return new RageSoundReader_SpeedChange(*this); }
 	virtual bool SetProperty( const RString &sProperty, float fValue );
 	virtual int GetNextSourceFrame() const;
@@ -40,7 +40,7 @@ protected:
 	int m_iDataBufferAvailFrames;
 	struct ChannelInfo
 	{
-		vector<int16_t> m_DataBuffer;
+		vector<float> m_DataBuffer;
 		int m_iCorrelatedPos;
 		int m_iLastCorrelatedPos;
 	};

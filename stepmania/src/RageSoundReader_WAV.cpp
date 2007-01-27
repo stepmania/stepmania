@@ -19,21 +19,31 @@ namespace
 {
 	/* pBuf contains iSamples 8-bit samples; convert to 16-bit.  pBuf must
 	 * have enough storage to hold the resulting data. */
-	void Convert8bitTo16bit( void *pBuf, int iSamples )
+	void Convert8bitToFloat( void *pBuf, int iSamples )
 	{
 		/* Convert in reverse, so we can do it in-place. */
 		const uint8_t *pIn = (uint8_t *) pBuf;
-		int16_t *pOut = (int16_t *) pBuf;
+		float *pOut = (float *) pBuf;
 		for( int i = iSamples-1; i >= 0; --i )
-			pOut[i] = SCALE( pIn[i], 0, 255, -32768, 32767 );
+		{
+			int iSample = pIn[i];
+			iSample -= 128; /* 0..255 -> -128..127 */
+			pOut[i] = iSample / 128.0f;
+		}
 	}
 
 	/* Flip 16-bit samples if necessary.  On little-endian systems, this will
 	 * optimize out. */
-	void Convert16BitFromLittleEndian( int16_t *pBuf, int iSamples )
+	void ConvertLittleEndian16BitToFloat( void *pBuf, int iSamples )
 	{
-		for( int i = 0; i < iSamples; ++i )
-			pBuf[i] = Swap16LE( pBuf[i] );
+		/* Convert in reverse, so we can do it in-place. */
+		const int16_t *pIn = (int16_t *) pBuf;
+		float *pOut = (float *) pBuf;
+		for( int i = iSamples-1; i >= 0; --i )
+		{
+                        int16_t iSample = Swap16LE( pIn[i] );
+			pOut[i] = iSample / 32768.0f;
+		}
 	}
 };
 
@@ -42,7 +52,7 @@ struct WavReader
 	WavReader( RageFile &f, const RageSoundReader_WAV::WavData &data ):
 		m_File(f), m_WavData(data) { }
 	virtual ~WavReader() { }
-	virtual int Read( int16_t *pBuf, int iFrames ) = 0;
+	virtual int Read( float *pBuf, int iFrames ) = 0;
 	virtual int GetLength() const = 0;
 	virtual bool Init() = 0;
 	virtual int SetPosition( int iFrame ) = 0;
@@ -72,11 +82,10 @@ struct WavReaderPCM: public WavReader
 		return true;
 	}
 
-	int Read( int16_t *buf, int iFrames )
+	int Read( float *buf, int iFrames )
 	{
-		int len = iFrames * m_WavData.m_iChannels * sizeof(int16_t);
-		if( m_WavData.m_iBitsPerSample == 8 )
-			len /= 2;
+		int len = iFrames * m_WavData.m_iChannels;
+		len *= m_WavData.m_iBitsPerSample/8;
 
 		const int iBytesLeftInDataChunk = m_WavData.m_iDataChunkSize - (m_File.Tell() - m_WavData.m_iDataChunkPos);
 		if( !iBytesLeftInDataChunk )
@@ -84,16 +93,16 @@ struct WavReaderPCM: public WavReader
 
 		len = min( len, iBytesLeftInDataChunk );
 		int iGot = m_File.Read( buf, len );
-		int iGotSamples = 0;
+
+		int iBytesPerSample = m_WavData.m_iBitsPerSample/8;
+		int iGotSamples = iGot / iBytesPerSample;
 		switch( m_WavData.m_iBitsPerSample )
 		{
 		case 8:
-			Convert8bitTo16bit( buf, iGot );
-			iGotSamples = iGot;
+			Convert8bitToFloat( buf, iGotSamples );
 			break;
 		case 16:
-			Convert16BitFromLittleEndian( buf, iGot/2 );
-			iGotSamples = iGot / 2;
+			ConvertLittleEndian16BitToFloat( buf, iGotSamples );
 			break;
 		}
 		return iGotSamples / m_WavData.m_iChannels;
@@ -133,7 +142,7 @@ struct WavReaderADPCM: public WavReader
 public:
 	vector<int16_t> m_iaCoef1, m_iaCoef2;
 	int16_t m_iFramesPerBlock;
-	int8_t *m_pBuffer;
+	float *m_pBuffer;
 	int m_iBufferAvail, m_iBufferUsed;
 	
 	WavReaderADPCM( RageFile &f, const RageSoundReader_WAV::WavData &data ):
@@ -170,7 +179,7 @@ public:
 		if( m_sError.size() != 0 )
 			return false;
 
-		m_pBuffer = new int8_t[m_iFramesPerBlock*m_WavData.m_iChannels*sizeof(int16_t)];
+		m_pBuffer = new float[m_iFramesPerBlock*m_WavData.m_iChannels];
 		m_iBufferAvail = m_iBufferUsed = 0;
 
 		m_File.Seek( m_WavData.m_iDataChunkPos );
@@ -207,7 +216,7 @@ public:
 		if( m_File.Tell() >= m_WavData.m_iDataChunkSize+m_WavData.m_iDataChunkPos || m_File.AtEOF() )
 			return true; /* past the data chunk */
 
-		int16_t *pBuffer = (int16_t *) m_pBuffer;
+		float *pBuffer = m_pBuffer;
 		int iCoef1[2], iCoef2[2];
 		for( int i = 0; i < m_WavData.m_iChannels; ++i )
 		{
@@ -239,9 +248,9 @@ public:
 		}
 
 		for( int i = 0; i < m_WavData.m_iChannels; ++i )
-			pBuffer[m_iBufferAvail++] = iSamp2[i];
+			pBuffer[m_iBufferAvail++] = iSamp2[i] / 32768.0f;
 		for( int i = 0; i < m_WavData.m_iChannels; ++i )
-			pBuffer[m_iBufferAvail++] = iSamp1[i];
+			pBuffer[m_iBufferAvail++] = iSamp1[i] / 32768.0f;
 
 		int8_t iBuf = 0, iBufSize = 0;
 
@@ -272,7 +281,7 @@ public:
 				int32_t iNewSample = iPredSample + (iDelta[c] * iErrorDelta);
 				iNewSample = clamp( iNewSample, -32768, 32767 );
 				
-				pBuffer[m_iBufferAvail++] = (int16_t) iNewSample;
+				pBuffer[m_iBufferAvail++] = iNewSample / 32768.0f;
 
 				static const int aAdaptionTable[] = {
 					768, 614, 512, 409, 307, 230, 230, 230,
@@ -290,10 +299,10 @@ public:
 		return true;
 	}
 
-	int Read( int16_t *buf, int iFrames )
+	int Read( float *buf, int iFrames )
 	{
 		int iSamplesPerFrame = m_WavData.m_iChannels;
-		int iBytesPerFrame = iSamplesPerFrame * sizeof(int16_t);
+		int iBytesPerFrame = iSamplesPerFrame * sizeof(float);
 		int iGotFrames = 0;
 		while( iGotFrames < (int) iFrames )
 		{
@@ -541,7 +550,7 @@ int RageSoundReader_WAV::GetNextSourceFrame() const
 	return m_pImpl->GetNextSourceFrame();
 }
 
-int RageSoundReader_WAV::Read( int16_t *pBuf, int iFrames )
+int RageSoundReader_WAV::Read( float *pBuf, int iFrames )
 {
 	ASSERT( m_pImpl != NULL );
 	return m_pImpl->Read( pBuf, iFrames );

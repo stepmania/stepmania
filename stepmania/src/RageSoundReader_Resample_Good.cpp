@@ -647,7 +647,7 @@ int RageSoundReader_Resample_Good::SetPosition( int iFrame )
 	return m_pSource->SetPosition( iFrame );
 }
 
-int RageSoundReader_Resample_Good::Read( int16_t *pBuf, int iFrames )
+int RageSoundReader_Resample_Good::Read( float *pBuf, int iFrames )
 {
 	int iChannels = m_apResamplers.size();
 
@@ -663,7 +663,7 @@ int RageSoundReader_Resample_Good::Read( int16_t *pBuf, int iFrames )
 
 	{
 		int iFramesNeeded = m_apResamplers[0]->NumInputsForOutputSamples(iFrames);
-		int16_t *pTmpBuf = (int16_t *) alloca( iFramesNeeded * sizeof(int16_t) * iChannels );
+		float *pTmpBuf = (float *) alloca( iFramesNeeded * sizeof(float) * iChannels );
 		ASSERT( pTmpBuf );
 		int iFramesIn = m_pSource->Read( pTmpBuf, iFramesNeeded );
 		if( iFramesIn < 0 )
@@ -676,7 +676,7 @@ int RageSoundReader_Resample_Good::Read( int16_t *pBuf, int iFrames )
 		for( int iChannel = 0; iChannel < iChannels; ++iChannel )
 		{
 			{
-				int16_t *pBufIn = pTmpBuf + iChannel;
+				float *pBufIn = pTmpBuf + iChannel;
 				float *pBufOut = pFloatBuf;
 				for( int i = 0; i < iSamplesIn; i += iChannels )
 					*(pBufOut++) = (float) pBufIn[i];
@@ -685,10 +685,10 @@ int RageSoundReader_Resample_Good::Read( int16_t *pBuf, int iFrames )
 			int iGotFrames = m_apResamplers[iChannel]->Run( pFloatBuf, iFramesIn, pFloatOut, iFrames );
 			ASSERT( iGotFrames <= iFrames );
 
-			int16_t *pBufOut = pBuf + iChannel;
+			float *pBufOut = pBuf + iChannel;
 			for( int i = 0; i < iGotFrames; ++i )
 			{
-				*pBufOut = int16_t(lrintf(clamp(pFloatOut[i], -32768, 32767)));
+				*pBufOut = pFloatOut[i];
 				pBufOut += iChannels;
 			}
 			if( iChannel == 0 )

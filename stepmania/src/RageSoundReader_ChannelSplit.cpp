@@ -77,7 +77,7 @@ public:
 
 	/* m_sBuffer[0] corresponds to frame number m_iBufferPositionFrames. */
 	int m_iBufferPositionFrames;
-	vector<int16_t> m_sBuffer;
+	vector<float> m_sBuffer;
 };
 
 int RageSoundReader_Split::GetLength() const { return m_pImpl->m_pSource->GetLength(); }
@@ -132,13 +132,13 @@ bool RageSoundReader_Split::SetProperty( const RString &sProperty, float fValue 
 	return m_pImpl->m_pSource->SetProperty( sProperty, fValue );
 }
 
-int RageSoundReader_Split::Read( int16_t *pBuf, int iFrames )
+int RageSoundReader_Split::Read( float *pBuf, int iFrames )
 {
 	m_iRequestFrames = iFrames;
 	int iRet = m_pImpl->ReadBuffer();
 
 	int iSamplesAvailable = m_pImpl->m_sBuffer.size();
-	const int16_t *pSrc = &m_pImpl->m_sBuffer[0];
+	const float *pSrc = &m_pImpl->m_sBuffer[0];
 	if( m_pImpl->m_iBufferPositionFrames < m_iPositionFrame )
 	{
 		int iSkipFrames = m_iPositionFrame - m_pImpl->m_iBufferPositionFrames;

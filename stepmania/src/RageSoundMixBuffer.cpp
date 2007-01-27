@@ -14,7 +14,6 @@ RageSoundMixBuffer::RageSoundMixBuffer()
 	m_iBufSize = m_iBufUsed = 0;
 	m_pMixbuf = NULL;
 	m_iOffset = 0;
-	SetVolume( 1.0f );
 #ifdef USE_VEC
 	g_bVector = Vector::CheckForVector();
 #endif
@@ -23,11 +22,6 @@ RageSoundMixBuffer::RageSoundMixBuffer()
 RageSoundMixBuffer::~RageSoundMixBuffer()
 {
 	free( m_pMixbuf );
-}
-
-void RageSoundMixBuffer::SetVolume( float f )
-{
-	m_iVolumeFactor = int(256*f);
 }
 
 /* write() will start mixing iOffset samples into the buffer.  Be careful; this is
@@ -42,18 +36,18 @@ void RageSoundMixBuffer::Extend( unsigned iSamples )
 	const unsigned realsize = iSamples+m_iOffset;
 	if( m_iBufSize < realsize )
 	{
-		m_pMixbuf = (int32_t *) realloc( m_pMixbuf, sizeof(int32_t) * realsize );
+		m_pMixbuf = (float *) realloc( m_pMixbuf, sizeof(float) * realsize );
 		m_iBufSize = realsize;
 	}
 
 	if( m_iBufUsed < realsize )
 	{
-		memset( m_pMixbuf + m_iBufUsed, 0, (realsize - m_iBufUsed) * sizeof(int32_t) );
+		memset( m_pMixbuf + m_iBufUsed, 0, (realsize - m_iBufUsed) * sizeof(float) );
 		m_iBufUsed = realsize;
 	}
 }
 
-void RageSoundMixBuffer::write( const int16_t *pBuf, unsigned iSize, int iSourceStride, int iDestStride )
+void RageSoundMixBuffer::write( const float *pBuf, unsigned iSize, int iSourceStride, int iDestStride )
 {
 	if( iSize == 0 )
 		return;
@@ -63,17 +57,19 @@ void RageSoundMixBuffer::write( const int16_t *pBuf, unsigned iSize, int iSource
 	Extend( iSize * iDestStride - (iDestStride-1) );
 
 	/* Scale volume and add. */
-	int32_t *pDestBuf = m_pMixbuf+m_iOffset;
-#ifdef USE_VEC
+	float *pDestBuf = m_pMixbuf+m_iOffset;
+
+/* #ifdef USE_VEC
 	if( g_bVector && iSourceStride == 1 && iDestStride == 1 )
 	{
-		Vector::FastSoundWrite( pDestBuf, pBuf, iSize, m_iVolumeFactor );
+		Vector::FastSoundWrite( pDestBuf, pBuf, iSize, 1 );
 		return;
 	}
-#endif
+#endif */
+
 	while( iSize )
 	{
-		*pDestBuf += *pBuf * m_iVolumeFactor;
+		*pDestBuf += *pBuf;
 		pBuf += iSourceStride;
 		pDestBuf += iDestStride;
 		--iSize;
@@ -92,8 +88,9 @@ void RageSoundMixBuffer::read( int16_t *pBuf )
 #endif
 	for( unsigned iPos = 0; iPos < m_iBufUsed; ++iPos )
 	{
-		int32_t iOut = (m_pMixbuf[iPos]) / 256;
-		pBuf[iPos] = (int16_t) clamp( iOut, -32768, 32767 );
+		float iOut = m_pMixbuf[iPos];
+		iOut = clamp( iOut, -1.0f, +1.0f );
+		pBuf[iPos] = lrintf(iOut * 32767);
 	}
 	m_iBufUsed = 0;
 }
@@ -108,11 +105,9 @@ void RageSoundMixBuffer::read( float *pBuf )
 		return;
 	}
 #endif
-	const int iMinimum = -32768 * 256;
-	const int iMaximum = 32767 * 256;
 
 	for( unsigned pos = 0; pos < m_iBufUsed; ++pos )
-		pBuf[pos] = SCALE( (float)m_pMixbuf[pos], iMinimum, iMaximum, -1.0f, 1.0f );
+		pBuf[pos] = m_pMixbuf[pos];
 
 	m_iBufUsed = 0;
 }

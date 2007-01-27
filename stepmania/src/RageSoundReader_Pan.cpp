@@ -9,7 +9,7 @@ RageSoundReader_Pan::RageSoundReader_Pan( RageSoundReader *pSource ):
 }
 
 
-int RageSoundReader_Pan::Read( int16_t *pBuf, int iFrames )
+int RageSoundReader_Pan::Read( float *pBuf, int iFrames )
 {
 	iFrames = m_pSource->Read( pBuf, iFrames );
 	if( iFrames < 0 )

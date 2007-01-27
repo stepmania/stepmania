@@ -5,17 +5,17 @@
 /* Some of these functions assume a channel count: */
 static const int channels = 2;
 
-void RageSoundUtil::Attenuate( int16_t *pBuf, int iSamples, float fVolume )
+void RageSoundUtil::Attenuate( float *pBuf, int iSamples, float fVolume )
 {
 	while( iSamples-- )
 	{
-		*pBuf = int16_t( (*pBuf) * fVolume );
+		*pBuf *= fVolume;
 		++pBuf;
 	}
 }
 
 /* Pan buffer left or right; fPos is -1...+1.  Buffer is assumed to be stereo. */
-void RageSoundUtil::Pan( int16_t *buffer, int frames, float fPos )
+void RageSoundUtil::Pan( float *buffer, int frames, float fPos )
 {
 	if( fPos == 0 )
 		return; /* no change */
@@ -40,15 +40,15 @@ void RageSoundUtil::Pan( int16_t *buffer, int frames, float fPos )
 	ASSERT_M( channels == 2, ssprintf("%i", channels) );
 	for( int samp = 0; samp < frames; ++samp )
 	{
-		int16_t l = int16_t(buffer[0]*fLeftFactors[0] + buffer[1]*fLeftFactors[1]);
-		int16_t r = int16_t(buffer[0]*fRightFactors[0] + buffer[1]*fRightFactors[1]);
+		float l = buffer[0]*fLeftFactors[0] + buffer[1]*fLeftFactors[1];
+		float r = buffer[0]*fRightFactors[0] + buffer[1]*fRightFactors[1];
 		buffer[0] = l;
 		buffer[1] = r;
 		buffer += 2;
 	}
 }
 
-void RageSoundUtil::Fade( int16_t *buffer, int frames, float fStartVolume, float fEndVolume  )
+void RageSoundUtil::Fade( float *buffer, int frames, float fStartVolume, float fEndVolume  )
 {
 	/* If the whole buffer is full volume, skip. */
 	if( fStartVolume > .9999f && fEndVolume > .9999f )
@@ -61,17 +61,17 @@ void RageSoundUtil::Fade( int16_t *buffer, int frames, float fStartVolume, float
 		fVolPercent = clamp( fVolPercent, 0.f, 1.f );
 		for(int i = 0; i < channels; ++i)
 		{
-			*buffer = short(*buffer * fVolPercent);
+			*buffer *= fVolPercent;
 			buffer++;
 		}
 	}
 }
 
 /* Dupe mono to stereo in-place; do it in reverse, to handle overlap. */
-void RageSoundUtil::ConvertMonoToStereoInPlace( int16_t *data, int iFrames )
+void RageSoundUtil::ConvertMonoToStereoInPlace( float *data, int iFrames )
 {
-	int16_t *input = data;
-	int16_t *output = input;
+	float *input = data;
+	float *output = input;
 	input += iFrames;
 	output += iFrames * 2;
 	while( iFrames-- )

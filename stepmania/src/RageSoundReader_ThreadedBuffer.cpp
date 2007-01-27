@@ -32,7 +32,7 @@ RageSoundReader_ThreadedBuffer::RageSoundReader_ThreadedBuffer( RageSoundReader 
 	m_iSampleRate = pSource->GetSampleRate();
 	m_iChannels = pSource->GetNumChannels();
 
-	int iFrameSize = sizeof(int16_t) * this->GetNumChannels();
+	int iFrameSize = sizeof(float) * this->GetNumChannels();
 	m_DataBuffer.reserve( g_iStreamingBufferFrames * iFrameSize, iFrameSize );
 
 	m_bEOF = false;
@@ -279,7 +279,7 @@ int RageSoundReader_ThreadedBuffer::FillBlock()
 	{
 		/* We own m_pSource, even after unlocking, because m_bFilling is true. */
 		unsigned iBufSize;
-		int16_t *pBuf = m_DataBuffer.get_write_pointer( &iBufSize );
+		float *pBuf = m_DataBuffer.get_write_pointer( &iBufSize );
 		ASSERT( (iBufSize % iSamplesPerFrame) == 0 );
 		iGotFrames = m_pSource->RetriedRead( pBuf, min(g_iReadBlockSizeFrames, iBufSize / iSamplesPerFrame), &iNextSourceFrame, &fRate );
 	}
@@ -306,7 +306,7 @@ int RageSoundReader_ThreadedBuffer::FillBlock()
 	return iGotFrames;
 }
 
-int RageSoundReader_ThreadedBuffer::Read( int16_t *pBuffer, int iFrames )
+int RageSoundReader_ThreadedBuffer::Read( float *pBuffer, int iFrames )
 {
 	if( !m_bEOF )
 		EnableBuffering();
