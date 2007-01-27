@@ -55,7 +55,7 @@ static int FindClosestMatch( const float *pBuffer, int iBufferSize, const float 
 
 	int iBufferDistanceToSearch = iBufferSize - iCorrelateBufferSize;
 	int iBestOffset = 0;
-	int fBestScore = 0;
+	float fBestScore = 0;
 	for( int i = 0; i < iBufferDistanceToSearch; i += iStride )
 	{
 		float fScore = 0;
