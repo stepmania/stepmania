@@ -160,7 +160,6 @@ private:
 
 		RageSoundBase *m_pSound;
 		RageTimer m_StartTime;
-		float m_fVolume;
 		CircBuf<sound_block> m_Buffer;
 
 		bool m_bPaused;

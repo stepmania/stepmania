@@ -194,9 +194,6 @@ void RageSoundDriver::DecodeThread()
 
 			Sound *pSound = &m_Sounds[i];
 
-			/* The volume can change while the sound is playing; update it. */
-			pSound->m_fVolume = m_Sounds[i].m_pSound->GetAbsoluteVolume();
-
 			CHECKPOINT;
 			while( pSound->m_Buffer.num_writable() )
 			{
@@ -329,7 +326,6 @@ void RageSoundDriver::StartMixing( RageSoundBase *pSound )
 
 	s.m_pSound = pSound;
 	s.m_StartTime = pSound->GetStartTime();
-	s.m_fVolume = pSound->GetAbsoluteVolume();
 	s.m_Buffer.clear();
 
 	/* Initialize the sound buffer. */
