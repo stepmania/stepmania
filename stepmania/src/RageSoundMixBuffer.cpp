@@ -97,18 +97,7 @@ void RageSoundMixBuffer::read( int16_t *pBuf )
 
 void RageSoundMixBuffer::read( float *pBuf )
 {
-/*#ifdef USE_VEC
-	if( g_bVector )
-	{
-		Vector::FastSoundRead( pBuf, m_pMixbuf, m_iBufUsed );
-		m_iBufUsed = 0;
-		return;
-	}
-#endif*/
-
-	for( unsigned pos = 0; pos < m_iBufUsed; ++pos )
-		pBuf[pos] = m_pMixbuf[pos];
-
+	memcpy( pBuf, m_pMixbuf, m_iBufUsed*sizeof(float) );
 	m_iBufUsed = 0;
 }
 
