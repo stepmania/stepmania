@@ -271,15 +271,6 @@ struct madlib_t
 
 static float scale(mad_fixed_t sample)
 {
-	/* round */
-	sample += (1L << (MAD_F_FRACBITS - 16));
-
-	/* clip */
-	if (sample >= MAD_F_ONE)
-		sample = MAD_F_ONE - 1;
-	else if (sample < -MAD_F_ONE)
-		sample = -MAD_F_ONE;
-
 	return (double) sample / (1<<MAD_F_FRACBITS);
 }
 
