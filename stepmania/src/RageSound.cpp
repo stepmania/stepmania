@@ -564,13 +564,6 @@ bool RageSound::SetPositionFrames( int iFrames )
 	return iRet == 1;
 }
 
-float RageSound::GetAbsoluteVolume() const
-{
-	float f = m_Param.m_Volume;
-	f *= SOUNDMAN->GetMixVolume();
-	return f;
-}
-
 float RageSound::GetPlaybackRate() const
 {
 	return m_Param.m_fSpeed;
@@ -597,6 +590,10 @@ void RageSound::ApplyParams()
 	m_pSource->SetProperty( "StartSecond", m_Param.m_StartSecond );
 	m_pSource->SetProperty( "LengthSeconds", m_Param.m_LengthSeconds );
 	m_pSource->SetProperty( "FadeSeconds", m_Param.m_FadeLength );
+
+	float fVolume = m_Param.m_Volume * SOUNDMAN->GetMixVolume();
+	m_pSource->SetProperty( "Volume", fVolume );
+
 	switch( GetStopMode() )
 	{
 	case RageSoundParams::M_LOOP:

@@ -20,7 +20,6 @@ public:
 	virtual void CommitPlayingPosition( int64_t iFrameno, int64_t iPosition, int iBytesRead ) = 0;
 	virtual int GetSampleRate() const = 0;
 	virtual RageTimer GetStartTime() const { return RageZeroTimer; }
-	virtual float GetAbsoluteVolume() const = 0;
 	virtual RString GetLoadedFilePath() const = 0;
 };
 
@@ -139,7 +138,6 @@ public:
 
 	float GetPlaybackRate() const;
 	RageTimer GetStartTime() const;
-	float GetAbsoluteVolume() const;	// factors in SOUNDMAN->GetMixVolume()
 	void SetParams( const RageSoundParams &p );
 	const RageSoundParams &GetParams() const { return m_Param; }
 	bool SetProperty( const RString &sProperty, float fValue );
