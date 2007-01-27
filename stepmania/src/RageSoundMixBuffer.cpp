@@ -78,14 +78,14 @@ void RageSoundMixBuffer::write( const float *pBuf, unsigned iSize, int iSourceSt
 
 void RageSoundMixBuffer::read( int16_t *pBuf )
 {
-#ifdef USE_VEC
+/* #ifdef USE_VEC
 	if( g_bVector )
 	{
 		Vector::FastSoundRead( pBuf, m_pMixbuf, m_iBufUsed );
 		m_iBufUsed = 0;
 		return;
 	}
-#endif
+#endif */
 	for( unsigned iPos = 0; iPos < m_iBufUsed; ++iPos )
 	{
 		float iOut = m_pMixbuf[iPos];
@@ -97,14 +97,14 @@ void RageSoundMixBuffer::read( int16_t *pBuf )
 
 void RageSoundMixBuffer::read( float *pBuf )
 {
-#ifdef USE_VEC
+/*#ifdef USE_VEC
 	if( g_bVector )
 	{
 		Vector::FastSoundRead( pBuf, m_pMixbuf, m_iBufUsed );
 		m_iBufUsed = 0;
 		return;
 	}
-#endif
+#endif*/
 
 	for( unsigned pos = 0; pos < m_iBufUsed; ++pos )
 		pBuf[pos] = m_pMixbuf[pos];
