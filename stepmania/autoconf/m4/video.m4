@@ -68,7 +68,7 @@ AM_CONDITIONAL(HAVE_FFMPEG, test "$have_ffmpeg" = "yes")
 
 
 
-AC_ARG_WITH(theora, AC_HELP_STRING([--without-theora], [Disable Theora support]), with_theora=$enableval, with_theora=yes)
+AC_ARG_WITH(theora, AC_HELP_STRING([--without-theora], [Disable Theora support]), with_theora=$withval, with_theora=yes)
 
 have_vorbis=no
 if test "$with_theora" = "yes"; then
