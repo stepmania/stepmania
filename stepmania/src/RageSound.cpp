@@ -522,18 +522,6 @@ float RageSound::GetPositionSeconds( bool *bApproximate, RageTimer *pTimestamp )
 }
 
 
-/* This is always the desired sample rate of the current driver. */
-int RageSound::GetSampleRate() const
-{
-	if( m_pSource == NULL )
-	{
-		LOG->Warn( "RageSound::GetSampleRate(): sound not loaded" );
-		return 44100;
-	}
-
-	return m_pSource->GetSampleRate();
-}
-
 bool RageSound::SetPositionFrames( int iFrames )
 {
 	LockMut( m_Mutex );

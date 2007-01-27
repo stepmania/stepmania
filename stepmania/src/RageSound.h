@@ -18,7 +18,6 @@ public:
 	virtual void SoundIsFinishedPlaying() = 0;
 	virtual int GetDataToPlay( float *buffer, int size, int64_t &iStreamFrame, int &got_bytes ) = 0;
 	virtual void CommitPlayingPosition( int64_t iFrameno, int64_t iPosition, int iBytesRead ) = 0;
-	virtual int GetSampleRate() const = 0;
 	virtual RageTimer GetStartTime() const { return RageZeroTimer; }
 	virtual RString GetLoadedFilePath() const = 0;
 };
@@ -132,7 +131,6 @@ public:
 
 	float GetLengthSeconds();
 	float GetPositionSeconds( bool *approximate=NULL, RageTimer *Timestamp=NULL ) const;
-	int GetSampleRate() const;
 	RString GetLoadedFilePath() const { return m_sFilePath; }
 	bool IsPlaying() const { return m_bPlaying; }
 
