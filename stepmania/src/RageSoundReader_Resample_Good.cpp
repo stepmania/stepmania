@@ -203,7 +203,7 @@ struct PolyphaseFilter
 
 	void Generate( const float *pFIR );
 	int RunPolyphaseFilter( State &State, const float *pIn, int iSamplesIn, int iDownFactor,
-			float *pOut, int iSamplesOut ) const;
+			float *pOut, int iSamplesOut, int iSampleStride ) const;
 	int GetLatency() const { return L/2; }
 
 	int NumInputsForOutputSamples( const State &State, int iOut, int iDownFactor ) const;
@@ -292,13 +292,14 @@ void PolyphaseFilter::Generate( const float *pFIR )
 int PolyphaseFilter::RunPolyphaseFilter(
 		State &State,
 		const float *pIn, int iSamplesIn, int iDownFactor,
-		float *pOut, int iSamplesOut ) const
+		float *pOut, int iSamplesOut,
+		int iSampleStride ) const
 {
 	ASSERT( iSamplesIn >= 0 );
 
 	float *pOutOrig = pOut;
-	const float *pInEnd = pIn + iSamplesIn;
-	const float *pOutEnd = pOut + iSamplesOut;
+	const float *pInEnd = pIn + iSamplesIn*iSampleStride;
+	const float *pOutEnd = pOut + iSamplesOut*iSampleStride;
 	
 	int iFilled = State.m_iFilled;
 	int iPolyIndex = State.m_iPolyIndex;
@@ -314,7 +315,7 @@ int PolyphaseFilter::RunPolyphaseFilter(
 			++State.m_iBufNext;
 			State.m_iBufNext &= L-1;
 
-			++pIn;
+			pIn += iSampleStride;
 			++iFilled;
 			continue;
 		}
@@ -328,7 +329,7 @@ int PolyphaseFilter::RunPolyphaseFilter(
 			for( int j = 0; j < L; ++j )
 				fTot += pInData[j]*pCurPoly[j];
 			*pOut = fTot;
-			++pOut;
+			pOut += iSampleStride;
 
 			iPolyIndex += iDownFactor;
 			if( iPolyIndex >= m_iUpFactor )
@@ -341,7 +342,9 @@ int PolyphaseFilter::RunPolyphaseFilter(
 	State.m_iFilled = iFilled;
 	State.m_iPolyIndex = iPolyIndex;
 
-	return pOut - pOutOrig;
+	int iRetSamples = pOut - pOutOrig;
+	int iRetFrames = iRetSamples / iSampleStride;
+	return iRetFrames;
 }
 
 /*
@@ -489,9 +492,9 @@ public:
 		m_pPolyphase = GetFilter( m_iDownFactor );
 	}
 
-	int Run( const float *pIn, int iSamplesIn, float *pOut, int iSamplesOut ) const
+	int Run( const float *pIn, int iSamplesIn, float *pOut, int iSamplesOut, int iSampleStride ) const
 	{
-		return m_pPolyphase->RunPolyphaseFilter( *m_pState, pIn, iSamplesIn, m_iDownFactor, pOut, iSamplesOut );
+		return m_pPolyphase->RunPolyphaseFilter( *m_pState, pIn, iSamplesIn, m_iDownFactor, pOut, iSamplesOut, iSampleStride );
 	}
 
 	void Reset()
@@ -669,28 +672,11 @@ int RageSoundReader_Resample_Good::Read( float *pBuf, int iFrames )
 		if( iFramesIn < 0 )
 			return iFramesIn;
 
-		const int iSamplesIn = iFramesIn * iChannels;
-
-		float *pFloatBuf = (float *) alloca( iFramesIn * sizeof(float) );
-		float *pFloatOut = (float *) alloca( iFrames * sizeof(float) );
 		for( int iChannel = 0; iChannel < iChannels; ++iChannel )
 		{
-			{
-				float *pBufIn = pTmpBuf + iChannel;
-				float *pBufOut = pFloatBuf;
-				for( int i = 0; i < iSamplesIn; i += iChannels )
-					*(pBufOut++) = (float) pBufIn[i];
-			}
-
-			int iGotFrames = m_apResamplers[iChannel]->Run( pFloatBuf, iFramesIn, pFloatOut, iFrames );
+			int iGotFrames = m_apResamplers[iChannel]->Run( pTmpBuf, iFramesIn + iChannel, pBuf + iChannel, iFrames, iChannels );
 			ASSERT( iGotFrames <= iFrames );
 
-			float *pBufOut = pBuf + iChannel;
-			for( int i = 0; i < iGotFrames; ++i )
-			{
-				*pBufOut = pFloatOut[i];
-				pBufOut += iChannels;
-			}
 			if( iChannel == 0 )
 				iFramesRead += iGotFrames;
 		}
