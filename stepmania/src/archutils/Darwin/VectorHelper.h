@@ -9,14 +9,7 @@ namespace Vector
 	bool CheckForVector();
 
 	// Dest and src need only natural alignment for their types.
-	void FastSoundWrite( int32_t *dest, const int16_t *src, unsigned size, short volume );
-	
-	/* For both FastSoundRead(), src needs to be 16 byte aligned and (intel) performance
-	 * is better if dest is also 16 byte aligned but it need only be type aligned. The
-	 * audio HAL will provide 16 byte aligned buffers and RageSoundMixBuffer's buffer
-	 * will always be 16-byte aligned on OS X since it's on the heap. */
-	void FastSoundRead( int16_t *dest, const int32_t *src, unsigned size );
-	void FastSoundRead( float *dest, const int32_t *src, unsigned size );
+	void FastSoundWrite( float *dest, const float *src, unsigned size );
 }
 #define USE_VEC
 #endif
