@@ -30,31 +30,24 @@ static void *pStupid;
 #endif
 
 // The reference values.
-static void ScalarWrite( int32_t *pDestBuf, const int16_t *pSrcBuf, unsigned iSize, int iVol )
+static void ScalarWrite( float *pDestBuf, const float *pSrcBuf, size_t iSize )
 {
 	for( unsigned iPos = 0; iPos < iSize; ++iPos )
-		pDestBuf[iPos] += int32_t(pSrcBuf[iPos]) * iVol;
+		pDestBuf[iPos] += pSrcBuf[iPos];
 }
 
+#if 0
 static void ScalarRead( int16_t *pDestBuf, const int32_t *pSrcBuf, unsigned iSize )
 {
 	for( unsigned iPos = 0; iPos < iSize; ++iPos )
 		pDestBuf[iPos] = max( -32768, min(pSrcBuf[iPos]/256, 32767) );
 }
+#endif
 
-static void ScalarRead( float *pDestBuf, const int32_t *pSrcBuf, unsigned iSize )
-{
-	const int iMinimum = -32768 * 256;
-	const int iMaximum = 32767  * 256;
-	for( unsigned iPos = 0; iPos < iSize; ++iPos )
-		pDestBuf[iPos] = SCALE( (float)pSrcBuf[iPos], iMinimum, iMaximum, -1.0f, +1.0f );
-}
-
-template <typename T>
-static void RandBuffer( T *pBuffer, unsigned iSize )
+static void RandBuffer( float *pBuffer, unsigned iSize )
 {
 	while( iSize-- )
-		*pBuffer++ = rand() % 40000;
+		*pBuffer++ = float(rand())/RAND_MAX;
 }
 
 template <typename T>
@@ -94,24 +87,22 @@ static void Diagnostic<float>( const float *pDestBuf, const float *pRefBuf, size
 	puts( "" );
 }
 
-static bool TestWrite( int16_t *pSrcBuf, int32_t *pDestBuf, int32_t *pRefBuf, size_t iSize )
+static bool TestWrite( float *pSrcBuf, float *pDestBuf, float *pRefBuf, size_t iSize )
 {
-	const int iVol = 237;
-
 	RandBuffer( pSrcBuf, iSize );
 	memset( pDestBuf, 0, iSize * 4 );
 	memset( pRefBuf, 0, iSize * 4 );
-	Vector::FastSoundWrite( pDestBuf, pSrcBuf, iSize, iVol );
-	ScalarWrite( pRefBuf, pSrcBuf, iSize, iVol );
+	Vector::FastSoundWrite( pDestBuf, pSrcBuf, iSize );
+	ScalarWrite( pRefBuf, pSrcBuf, iSize );
 	return !memcmp( pRefBuf, pDestBuf, iSize * 4 );
 }
 
 static bool CheckAlignedWrite()
 {
 	const size_t size = 1024;
-	int16_t *pSrcBuf  = NEW( int16_t, size );
-	int32_t *pDestBuf = NEW( int32_t, size );
-	int32_t *pRefBuf  = NEW( int32_t, size );
+	float *pSrcBuf  = NEW( float, size );
+	float *pDestBuf = NEW( float, size );
+	float *pRefBuf  = NEW( float, size );
 	bool ret = true;
 	size_t s;
 
@@ -132,9 +123,9 @@ static bool CheckAlignedWrite()
 static bool CheckMisalignedSrcWrite()
 {
 	const size_t size = 1024;
-	int16_t *pSrcBuf  = NEW( int16_t, size );
-	int32_t *pDestBuf = NEW( int32_t, size );
-	int32_t *pRefBuf  = NEW( int32_t, size );
+	float *pSrcBuf  = NEW( float, size );
+	float *pDestBuf = NEW( float, size );
+	float *pRefBuf  = NEW( float, size );
 	bool ret = true;
 
 	for( int j = 0; j < 8 && ret; ++j )
@@ -157,9 +148,9 @@ static bool CheckMisalignedSrcWrite()
 static bool CheckMisalignedDestWrite()
 {
 	const size_t size = 1024;
-	int16_t *pSrcBuf  = NEW( int16_t, size );
-	int32_t *pDestBuf = NEW( int32_t, size );
-	int32_t *pRefBuf  = NEW( int32_t, size );
+	float *pSrcBuf  = NEW( float, size );
+	float *pDestBuf = NEW( float, size );
+	float *pRefBuf  = NEW( float, size );
 	bool ret = true;
 
 	for( int j = 0; j < 4 && ret; ++j )
@@ -182,9 +173,9 @@ static bool CheckMisalignedDestWrite()
 static bool CheckMisalignedBothWrite()
 {
 	const size_t size = 1024;
-	int16_t *pSrcBuf  = NEW( int16_t, size );
-	int32_t *pDestBuf = NEW( int32_t, size );
-	int32_t *pRefBuf  = NEW( int32_t, size );
+	float *pSrcBuf  = NEW( float, size );
+	float *pDestBuf = NEW( float, size );
+	float *pRefBuf  = NEW( float, size );
 	bool ret = true;
 	size_t s;
 
@@ -221,7 +212,7 @@ static bool cmp( const float *p1, const float *p2, size_t size )
 			return false;
 	return true;
 }
-
+#if 0
 template<typename T>
 static bool CheckAlignedRead()
 {
@@ -282,7 +273,7 @@ static bool CheckMisalignedRead()
 	DELETE( pRefBuf );
 	return ret;
 }
-
+#endif
 
 int main()
 {
@@ -312,6 +303,7 @@ int main()
 		fputs( "Failed misaligned source and destination write.\n", stderr );
 		return 1;
 	}
+#if 0
 	if( !CheckAlignedRead<int16_t>() )
 	{
 		fputs( "Failed aligned read.\n", stderr );
@@ -332,6 +324,7 @@ int main()
 		fputs( "Failed misaligned float read.\n", stderr );
 		return 1;
 	}
+#endif
 	puts( "Passed." );
 	return 0;
 }
