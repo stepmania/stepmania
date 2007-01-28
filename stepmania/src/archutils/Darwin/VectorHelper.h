@@ -1,14 +1,10 @@
 #ifndef VECTOR_HELPER_H
 #define VECTOR_HELPER_H
 
-#include <inttypes.h>
-
 #if ( defined(__VEC__) || (defined(__SSE__) && defined(__SSE2__)) ) && defined(__GNUC__)
 namespace Vector
 {
 	bool CheckForVector();
-
-	// Dest and src need only natural alignment for their types.
 	void FastSoundWrite( float *dest, const float *src, unsigned size );
 }
 #define USE_VEC
