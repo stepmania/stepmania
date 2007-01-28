@@ -203,25 +203,6 @@ bool Vector::CheckForVector()
 	return true;
 }
 
-template<typename T>
-static inline void __attribute__((always_inline)) Write( T load, float *&dest, const float *&src, unsigned &size )
-{
-	// There are only 8 XMM registers so no 8x unrolling. Let's do 2 though.
-	while( size >= 8 )
-	{
-		__m128 data1 = load( src + 0 );
-		__m128 data2 = load( src + 4 );
-
-		data1 = _mm_add_ps( data1, *(__m128 *)(dest + 0) );
-		data2 = _mm_add_ps( data2, *(__m128 *)(dest + 4) );
-		_mm_store_ps( dest + 0, data1 );
-		_mm_store_ps( dest + 4, data2 );
-		src  += 8;
-		dest += 8;
-		size -= 8;
-	}
-}
-
 void Vector::FastSoundWrite( float *dest, const float *src, unsigned size )
 {
 	while( (intptr_t(dest) & 0xF) && size )
@@ -233,9 +214,37 @@ void Vector::FastSoundWrite( float *dest, const float *src, unsigned size )
 	
 	// Misaligned loads are slower so specialize to aligned loads when possible.
 	if( intptr_t(src) & 0xF )
-		Write( _mm_loadu_ps, dest, src, size );
+	{
+		while( size >= 8 )
+		{
+			__m128 data1 = _mm_loadu_ps( src + 0 );
+			__m128 data2 = _mm_loadu_ps( src + 4 );
+
+			data1 = _mm_add_ps( data1, *(__m128 *)(dest + 0) );
+			data2 = _mm_add_ps( data2, *(__m128 *)(dest + 4) );
+			_mm_store_ps( dest + 0, data1 );
+			_mm_store_ps( dest + 4, data2 );
+			src  += 8;
+			dest += 8;
+			size -= 8;
+		}		
+	}
 	else
-		Write( _mm_load_ps, dest, src, size );
+	{
+		while( size >= 8 )
+		{
+			__m128 data1 = _mm_load_ps( src + 0 );
+			__m128 data2 = _mm_load_ps( src + 4 );
+
+			data1 = _mm_add_ps( data1, *(__m128 *)(dest + 0) );
+			data2 = _mm_add_ps( data2, *(__m128 *)(dest + 4) );
+			_mm_store_ps( dest + 0, data1 );
+			_mm_store_ps( dest + 4, data2 );
+			src  += 8;
+			dest += 8;
+			size -= 8;
+		}
+	}
         while( size-- )
                 *(dest++) += *(src++);
 }
