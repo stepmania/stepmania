@@ -247,7 +247,7 @@ void Vector::FastSoundWrite( float *dest, const float *src, unsigned size )
 
 
 /*
- * (c) 2006 Steve Checkoway
+ * (c) 2006-2007 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
