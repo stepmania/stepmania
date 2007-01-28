@@ -5,7 +5,7 @@
 #if defined(MACOSX)
 #include "archutils/Darwin/VectorHelper.h"
 #ifdef USE_VEC
-static bool g_bVector;
+static bool g_bVector = Vector::CheckForVector();
 #endif
 #endif
 
@@ -14,9 +14,6 @@ RageSoundMixBuffer::RageSoundMixBuffer()
 	m_iBufSize = m_iBufUsed = 0;
 	m_pMixbuf = NULL;
 	m_iOffset = 0;
-#ifdef USE_VEC
-	g_bVector = Vector::CheckForVector();
-#endif
 }
 
 RageSoundMixBuffer::~RageSoundMixBuffer()
