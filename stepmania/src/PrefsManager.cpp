@@ -473,7 +473,7 @@ void PrefsManager::SavePrefsToIni( IniFile &ini )
 
 RString PrefsManager::GetPreferencesSection() const
 {
-	RString sSection = "Preferences";
+	RString sSection = "Options";
 
 	// OK if this fails
 	GetFileContents( SpecialFiles::TYPE_TXT_FILE, sSection, true );
