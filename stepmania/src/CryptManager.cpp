@@ -188,7 +188,7 @@ CryptManager::CryptManager()
 	if( bGenerate )
 	{
 		LOG->Warn( "Keys missing or failed to load.  Generating new keys" );
-		GenerateRSAKey( KEY_LENGTH, PRIVATE_KEY_PATH, PUBLIC_KEY_PATH );
+		GenerateRSAKeyToFile( KEY_LENGTH, PRIVATE_KEY_PATH, PUBLIC_KEY_PATH );
 		FlushDirCache();
 	}
 }
@@ -218,7 +218,7 @@ static bool WriteFile( RString sFile, RString sBuf )
 	return true;
 }
 
-void CryptManager::GenerateRSAKey( unsigned int keyLength, RString privFilename, RString pubFilename )
+void CryptManager::GenerateRSAKey( unsigned int keyLength, RString &sPrivKey, RString &sPubKey )
 {
 	int iRet;
 
@@ -239,7 +239,7 @@ void CryptManager::GenerateRSAKey( unsigned int keyLength, RString privFilename,
 		return;
 	}
 
-	RString sPubKey( (const char *) buf, iSize );
+	sPubKey = RString( (const char *) buf, iSize );
 
 	iSize = sizeof(buf);
 	iRet = rsa_export( buf, &iSize, PK_PRIVATE, &key );
@@ -249,7 +249,13 @@ void CryptManager::GenerateRSAKey( unsigned int keyLength, RString privFilename,
 		return;
 	}
 
-	RString sPrivKey( (const char *) buf, iSize );
+	sPrivKey = RString( (const char *) buf, iSize );
+}
+
+void CryptManager::GenerateRSAKeyToFile( unsigned int keyLength, RString privFilename, RString pubFilename )
+{
+	RString sPrivKey, sPubKey;
+	GenerateRSAKey( keyLength, sPrivKey, sPubKey );
 
 	if( !WriteFile(pubFilename, sPubKey) )
 		return;
