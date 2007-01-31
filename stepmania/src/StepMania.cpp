@@ -1036,6 +1036,8 @@ int main(int argc, char* argv[])
 	if( !GetCommandlineArgument("ExportNsisStrings") && !GetCommandlineArgument("ExportLuaInformation") )
 		SONGMAN->InitAll( pLoadingWindow );	// this takes a long time
 	CRYPTMAN	= new CryptManager;		// need to do this before ProfileMan
+	if( PREFSMAN->m_bSignProfileData )
+		CRYPTMAN->GenerateGlobalKeys();
 	MEMCARDMAN	= new MemoryCardManager;
 	CHARMAN		= new CharacterManager;
 	PROFILEMAN	= new ProfileManager;

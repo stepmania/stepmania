@@ -3,7 +3,6 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageFile.h"
-#include "PrefsManager.h"
 #include "RageFileManager.h"
 
 #include "libtomcrypt/src/headers/tomcrypt.h"
@@ -167,9 +166,10 @@ CryptManager::CryptManager()
 	ltc_mp = ltm_desc;
 
 	g_pPRNG = new PRNGWrapper( &yarrow_desc );
+}
 
-	if( !PREFSMAN->m_bSignProfileData )
-		return;
+void CryptManager::GenerateGlobalKeys()
+{
 	//
 	// generate keys if none are available
 	//
