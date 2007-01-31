@@ -1297,31 +1297,18 @@ public:
 	static int fadetop( T* p, lua_State *L )		{ p->SetFadeTop(FArg(1)); return 0; }
 	static int faderight( T* p, lua_State *L )		{ p->SetFadeRight(FArg(1)); return 0; }
 	static int fadebottom( T* p, lua_State *L )		{ p->SetFadeBottom(FArg(1)); return 0; }
-	static int diffuse( T* p, lua_State *L )
-	{
-		if( lua_type(L,1) == LUA_TTABLE )
-		{
-			RageColor c;
-			c.FromStack( L, 1 );
-			p->SetDiffuse( c );
-		}
-		else
-		{
-			p->SetDiffuse( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) );
-		}
-		return 0;
-	}
-	static int diffuseupperleft( T* p, lua_State *L )	{ p->SetDiffuseUpperLeft( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
-	static int diffuseupperright( T* p, lua_State *L )	{ p->SetDiffuseUpperRight( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
-	static int diffuselowerleft( T* p, lua_State *L )	{ p->SetDiffuseLowerLeft( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
-	static int diffuselowerright( T* p, lua_State *L )	{ p->SetDiffuseLowerRight( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
-	static int diffuseleftedge( T* p, lua_State *L )	{ p->SetDiffuseLeftEdge( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
-	static int diffuserightedge( T* p, lua_State *L )	{ p->SetDiffuseRightEdge( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
-	static int diffusetopedge( T* p, lua_State *L )		{ p->SetDiffuseTopEdge( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
-	static int diffusebottomedge( T* p, lua_State *L )	{ p->SetDiffuseBottomEdge( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
+	static int diffuse( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuse( c ); return 0; }
+	static int diffuseupperleft( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseUpperLeft( c ); return 0; }
+	static int diffuseupperright( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseUpperRight( c ); return 0; }
+	static int diffuselowerleft( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseLowerLeft( c ); return 0; }
+	static int diffuselowerright( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseLowerRight( c ); return 0; }
+	static int diffuseleftedge( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseLeftEdge( c ); return 0; }
+	static int diffuserightedge( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseRightEdge( c ); return 0; }
+	static int diffusetopedge( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseTopEdge( c ); return 0; }
+	static int diffusebottomedge( T* p, lua_State *L )	{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseBottomEdge( c ); return 0; }
 	static int diffusealpha( T* p, lua_State *L )		{ p->SetDiffuseAlpha(FArg(1)); return 0; }
-	static int diffusecolor( T* p, lua_State *L )		{ p->SetDiffuseColor( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
-	static int glow( T* p, lua_State *L )			{ p->SetGlow( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
+	static int diffusecolor( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetDiffuseColor( c ); return 0; }
+	static int glow( T* p, lua_State *L )			{ RageColor c; c.FromStackCompat( L, 1 ); p->SetGlow( c ); return 0; }
 	static int aux( T* p, lua_State *L )			{ p->SetAux( FArg(1) ); return 0; }
 	static int getaux( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetAux() ); return 1; }
 	static int rotationx( T* p, lua_State *L )		{ p->SetRotationX(FArg(1)); return 0; }
@@ -1352,34 +1339,8 @@ public:
 	static int spin( T* p, lua_State *L )			{ p->SetEffectSpin(); return 0; }
 	static int vibrate( T* p, lua_State *L )		{ p->SetEffectVibrate(); return 0; }
 	static int stopeffect( T* p, lua_State *L )		{ p->StopEffect(); return 0; }
-	static int effectcolor1( T* p, lua_State *L )
-	{
-		if( lua_type(L,1) == LUA_TTABLE )
-		{
-			RageColor c;
-			c.FromStack( L, 1 );
-			p->SetEffectColor1( c );
-		}
-		else
-		{
-			p->SetEffectColor1( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) );
-		}
-		return 0;
-	}
-	static int effectcolor2( T* p, lua_State *L )
-	{
-		if( lua_type(L,1) == LUA_TTABLE )
-		{
-			RageColor c;
-			c.FromStack( L, 1 );
-			p->SetEffectColor2( c );
-		}
-		else
-		{
-			p->SetEffectColor2( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) );
-		}
-		return 0;
-	}
+	static int effectcolor1( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetEffectColor1( c ); return 0; }
+	static int effectcolor2( T* p, lua_State *L )		{ RageColor c; c.FromStackCompat( L, 1 ); p->SetEffectColor2( c ); return 0; }
 	static int effectperiod( T* p, lua_State *L )		{ p->SetEffectPeriod(FArg(1)); return 0; }
 	static int effecttiming( T* p, lua_State *L )		{ p->SetEffectTiming(FArg(1),FArg(2),FArg(3),FArg(4)); return 0; }
 	static int effectoffset( T* p, lua_State *L )		{ p->SetEffectOffset(FArg(1)); return 0; }
