@@ -14,7 +14,7 @@ static const RString PRIVATE_KEY_PATH = "Data/private.rsa";
 static const RString PUBLIC_KEY_PATH = "Data/public.rsa";
 static const RString ALTERNATE_PUBLIC_KEY_DIR = "Data/keys/";
 
-static bool HashFile( RageFile &f, unsigned char buf_hash[20], int iHash )
+static bool HashFile( RageFileBasic &f, unsigned char buf_hash[20], int iHash )
 {
 	hash_state hash;
 	int iRet = hash_descriptor[iHash].init( &hash );
@@ -25,7 +25,7 @@ static bool HashFile( RageFile &f, unsigned char buf_hash[20], int iHash )
 	{
 		if( f.Read(s, 1024*4) == -1 )
 		{
-			LOG->Warn( "Error reading %s: %s", f.GetPath().c_str(), f.GetError().c_str() );
+			LOG->Warn( "Error reading %s: %s", f.GetDisplayPath().c_str(), f.GetError().c_str() );
 			hash_descriptor[iHash].done( &hash, buf_hash );
 			return false;
 		}
@@ -358,11 +358,6 @@ bool CryptManager::VerifyFileWithFile( RString sPath, RString sSignatureFile, RS
 	if( !GetFileContents(sSignatureFile, sSignature) )
 		return false;
 
-	return Verify( sPath, sSignature, sPublicKey );
-}
-
-bool CryptManager::Verify( RString sPath, RString sSignature, RString sPublicKey )
-{
 	RageFile file;
 	if( !file.Open(sPath) )
 	{
@@ -370,6 +365,11 @@ bool CryptManager::Verify( RString sPath, RString sSignature, RString sPublicKey
 		return false;
 	}
 
+	return Verify( file, sSignature, sPublicKey );
+}
+
+bool CryptManager::Verify( RageFileBasic &file, RString sSignature, RString sPublicKey )
+{
 	RSAKeyWrapper key;
 	if( !key.Load(sPublicKey) )
 		return false;
@@ -387,13 +387,13 @@ bool CryptManager::Verify( RString sPath, RString sSignature, RString sPublicKey
 
 	if( iRet != CRYPT_OK )
 	{
-		LOG->Warn( "Verify(%s) failed: %s", sPath.c_str(), error_to_string(iRet) );
+		LOG->Warn( "Verify(%s) failed: %s", file.GetDisplayPath().c_str(), error_to_string(iRet) );
 		return false;
 	}
 
 	if( !iMatch )
 	{
-		LOG->Warn( "Verify(%s) failed: signature mismatch", sPath.c_str() );
+		LOG->Warn( "Verify(%s) failed: signature mismatch", file.GetDisplayPath().c_str() );
 		return false;
 	}
 
