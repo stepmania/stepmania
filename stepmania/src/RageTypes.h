@@ -196,6 +196,7 @@ public:
 
 	void PushTable( lua_State *L ) const;
 	void FromStack( lua_State *L, int iPos );
+	void FromStackCompat( lua_State *L, int iPos );
 
 	float r, g, b, a;
 } SM_ALIGN(16);

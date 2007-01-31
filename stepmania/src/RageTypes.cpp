@@ -36,6 +36,21 @@ void RageColor::FromStack( lua_State *L, int iPos )
 	lua_pop( L, 5 );
 }
 
+void RageColor::FromStackCompat( lua_State *L, int iPos )
+{
+	if( lua_type(L, iPos) == LUA_TTABLE )
+	{
+		FromStack( L, iPos );
+	}
+	else
+	{
+		r = FArg(iPos+0);
+		g = FArg(iPos+1);
+		b = FArg(iPos+2);
+		a = FArg(iPos+3);
+	}
+}
+
 namespace LuaHelpers
 {
 	template<> bool FromStack<RageColor>( lua_State *L, RageColor &Object, int iOffset )
