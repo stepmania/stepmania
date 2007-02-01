@@ -2117,6 +2117,7 @@ void Player::UpdateJudgedRows()
 	NoteData::all_tracks_iterator iter = m_NoteData.GetTapNoteRangeAllTracks( m_iMineRowLastJudged+1, iEndRow+1, MinesNotHidden );
 	
 	bAllJudged = true;
+	set<RageSound *> setSounds;
 	for( ; !iter.IsAtEnd(); ++iter )
 	{
 		TapNote &tn = *iter;
@@ -2134,9 +2135,9 @@ void Player::UpdateJudgedRows()
 		if( tn.pn != PLAYER_INVALID && tn.pn != pn )
 			continue;
 		if( tn.iKeysoundIndex >= 0 && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
-			m_vKeysounds[tn.iKeysoundIndex].Play();
+			setSounds.insert( &m_vKeysounds[tn.iKeysoundIndex] );
 		else
-			m_soundMine.Play();
+			setSounds.insert( &m_soundMine );
 		
 		ChangeLife( tn.result.tns );
 		if( m_pScoreDisplay )
@@ -2154,6 +2155,14 @@ void Player::UpdateJudgedRows()
 		if( bAllJudged && iter.Row() - 1 > m_iMineRowLastJudged )
 			m_iMineRowLastJudged = iter.Row() - 1;
 	}
+
+	FOREACHS( RageSound *, setSounds, s )
+	{
+		/* Only play one copy of each mine sound at a time per player. */
+		(*s)->Stop();
+		(*s)->Play();
+	}
+
 	if( bAllJudged )
 		m_iMineRowLastJudged = iEndRow;
 }
