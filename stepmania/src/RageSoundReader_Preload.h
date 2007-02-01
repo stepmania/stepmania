@@ -35,11 +35,12 @@ public:
 
 private:
 	AutoPtrCopyOnWrite<RString> m_Buffer;
+	bool m_bBufferIs16Bit;
 
 	/* Bytes: */
 	int m_iPosition;
 
-	int GetTotalSamples() const;
+	int GetTotalFrames() const;
 
 	int m_iSampleRate;
 	unsigned m_iChannels;

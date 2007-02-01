@@ -4,11 +4,19 @@
 #include "global.h"
 #include "RageSoundReader_Preload.h"
 #include "RageUtil.h"
+#include "RageSoundUtil.h"
+#include "Preference.h"
 
-#define samplesize (sizeof(float) * m_iChannels) /* 16-bit */
+/* If true, preloaded sounds are stored in 16-bit instead of floats.  Most
+ * processing happens after preloading, and it's usually a waste to store high-
+ * resolution data for sound effects. */
+Preference<bool> g_bSoundPreload16bit( "SoundPreload16bit", true );
 
 /* If a sound is smaller than this, we'll load it entirely into memory. */
-const unsigned max_prebuf_size = 1024*256;
+Preference<int> g_iSoundPreloadMaxSamples( "SoundPreloadMaxSamples", 128*1024 );
+
+#define samplesize (m_bBufferIs16Bit? sizeof(int16_t):sizeof(float))
+#define framesize (samplesize * m_iChannels)
 
 bool RageSoundReader_Preload::PreloadSound( RageSoundReader *&pSound )
 {
@@ -28,11 +36,12 @@ bool RageSoundReader_Preload::PreloadSound( RageSoundReader *&pSound )
 RageSoundReader_Preload::RageSoundReader_Preload():
 	m_Buffer( new RString )
 {
+	m_bBufferIs16Bit = g_bSoundPreload16bit.Get();
 }
 
-int RageSoundReader_Preload::GetTotalSamples() const
+int RageSoundReader_Preload::GetTotalFrames() const
 {
-	return m_Buffer->size() / samplesize;
+	return m_Buffer->size() / framesize;
 }
 
 bool RageSoundReader_Preload::Open( RageSoundReader *pSource )
@@ -41,6 +50,8 @@ bool RageSoundReader_Preload::Open( RageSoundReader *pSource )
 	m_iSampleRate = pSource->GetSampleRate();
 	m_iChannels = pSource->GetNumChannels();
 	m_fRate = pSource->GetStreamToSourceRatio();
+
+	int iMaxSamples = g_iSoundPreloadMaxSamples.Get();
 	
 	/* Check the length, and see if we think it'll fit in the buffer. */
 	int iLen = pSource->GetLength_Fast();
@@ -48,11 +59,13 @@ bool RageSoundReader_Preload::Open( RageSoundReader *pSource )
 	{
 		float fSecs = iLen / 1000.f;
 
-		unsigned iPCMSize = unsigned( fSecs * m_iSampleRate * samplesize ); /* seconds -> bytes */
-		if( iPCMSize > max_prebuf_size )
+		int iFrames = lrintf( fSecs * m_iSampleRate ); /* seconds -> frames */
+		int iSamples = unsigned( iFrames * m_iChannels ); /* frames -> samples */
+		if( iSamples > iMaxSamples )
 			return false; /* Don't bother trying to preload it. */
 
-		m_Buffer.Get()->reserve( iPCMSize );
+		int iBytes = unsigned( iSamples * samplesize ); /* samples -> bytes */
+		m_Buffer.Get()->reserve( iBytes );
 	}
 
 	while(1)
@@ -70,9 +83,18 @@ bool RageSoundReader_Preload::Open( RageSoundReader *pSource )
 			return false;
 
 		/* Add the buffer. */
-		m_Buffer.Get()->append( (char *) buffer, (char *) (buffer+iCnt*m_iChannels) );
+		if( m_bBufferIs16Bit )
+		{
+			int16_t buffer16[1024];
+			RageSoundUtil::ConvertFloatToNativeInt16( buffer, buffer16, iCnt*m_iChannels );
+			m_Buffer.Get()->append( (char *) buffer16, (char *) (buffer16+iCnt*m_iChannels) );
+		}
+		else
+		{
+			m_Buffer.Get()->append( (char *) buffer, (char *) (buffer+iCnt*m_iChannels) );
+		}
 
-		if( m_Buffer.Get()->size() > max_prebuf_size )
+		if( m_Buffer.Get()->size() > iMaxSamples * samplesize )
 			return false; /* too big */
 	}
 
@@ -83,7 +105,7 @@ bool RageSoundReader_Preload::Open( RageSoundReader *pSource )
 
 int RageSoundReader_Preload::GetLength() const
 {
-	return int(float(GetTotalSamples()) * 1000.f / m_iSampleRate);
+	return int(float(GetTotalFrames()) * 1000.f / m_iSampleRate);
 }
 
 int RageSoundReader_Preload::GetLength_Fast() const
@@ -96,9 +118,9 @@ int RageSoundReader_Preload::SetPosition( int iFrame )
 	m_iPosition = iFrame;
 	m_iPosition = lrintf(m_iPosition / m_fRate);
 
-	if( m_iPosition >= int(m_Buffer->size() / samplesize) )
+	if( m_iPosition >= int(m_Buffer->size() / framesize) )
 	{
-		m_iPosition = m_Buffer->size() / samplesize;
+		m_iPosition = m_Buffer->size() / framesize;
 		return 0;
 	}
 
@@ -112,13 +134,21 @@ int RageSoundReader_Preload::GetNextSourceFrame() const
 
 int RageSoundReader_Preload::Read( float *pBuffer, int iFrames )
 {
-	const int iSizeFrames = m_Buffer->size() / samplesize;
+	const int iSizeFrames = m_Buffer->size() / framesize;
 	const int iFramesAvail = iSizeFrames - m_iPosition;
 
 	iFrames = min( iFrames, iFramesAvail );
 	if( iFrames == 0 )
 		return END_OF_FILE;
-	memcpy( pBuffer, m_Buffer->data() + (m_iPosition * samplesize), iFrames * samplesize );
+	if( m_bBufferIs16Bit )
+	{
+		const int16_t *pIn = (const int16_t *) (m_Buffer->data() + (m_iPosition * framesize));
+		RageSoundUtil::ConvertNativeInt16ToFloat( pIn, pBuffer, iFrames * m_iChannels );
+	}
+	else
+	{
+		memcpy( pBuffer, m_Buffer->data() + (m_iPosition * framesize), iFrames * framesize );
+	}
 	m_iPosition += iFrames;
 	
 	return iFrames;
