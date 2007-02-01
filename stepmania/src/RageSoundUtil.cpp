@@ -83,8 +83,25 @@ void RageSoundUtil::ConvertMonoToStereoInPlace( float *data, int iFrames )
 	}
 }
 
+void RageSoundUtil::ConvertNativeInt16ToFloat( const int16_t *pFrom, float *pTo, int iSamples )
+{
+	for( int i = 0; i < iSamples; ++i )
+	{
+		pTo[i] = pFrom[i] / 32768.0f;
+	}
+}
+
+void RageSoundUtil::ConvertFloatToNativeInt16( const float *pFrom, int16_t *pTo, int iSamples )
+{
+	for( int i = 0; i < iSamples; ++i )
+	{
+		int iOut = lrintf( pFrom[i] * 32768.0f );
+		pTo[i] = clamp( iOut, -32768, 32767 );
+	}
+}
+
 /*
- * Copyright (c) 2002-2004 Glenn Maynard
+ * Copyright (c) 2002-2007 Glenn Maynard
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
