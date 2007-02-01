@@ -2114,7 +2114,7 @@ void Player::UpdateJudgedRows()
 		HandleTapRowScore( iRow );
 	}
 	
-	NoteData::all_tracks_iterator iter = m_NoteData.GetTapNoteRangeAllTracks( m_iMineRowLastJudged+1, iEndRow, MinesNotHidden );
+	NoteData::all_tracks_iterator iter = m_NoteData.GetTapNoteRangeAllTracks( m_iMineRowLastJudged+1, iEndRow+1, MinesNotHidden );
 	
 	bAllJudged = true;
 	for( ; !iter.IsAtEnd(); ++iter )
