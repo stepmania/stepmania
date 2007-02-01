@@ -45,6 +45,41 @@ namespace
 			pOut[i] = iSample / 32768.0f;
 		}
 	}
+
+	void ConvertLittleEndian24BitToFloat( void *pBuf, int iSamples )
+	{
+		/* Convert in reverse, so we can do it in-place. */
+		const unsigned char *pIn = (unsigned char *) pBuf;
+		float *pOut = (float *) pBuf;
+		pIn += iSamples * 3;
+		for( int i = iSamples-1; i >= 0; --i )
+		{
+			pIn -= 3;
+
+			int32_t iSample =
+				(int(pIn[0]) << 0) |
+				(int(pIn[1]) << 8) |
+				(int(pIn[2]) << 16);
+
+			/* Sign-extend 24-bit to 32-bit: */
+			if( iSample & 0x800000 )
+				iSample |= 0xFF000000;
+
+			pOut[i] = iSample / 8388608.0f;
+		}
+	}
+
+	void ConvertLittleEndian32BitToFloat( void *pBuf, int iSamples )
+	{
+		/* Convert in reverse, so we can do it in-place. */
+		const int32_t *pIn = (int32_t *) pBuf;
+		float *pOut = (float *) pBuf;
+		for( int i = iSamples-1; i >= 0; --i )
+		{
+                        int32_t iSample = Swap32LE( pIn[i] );
+			pOut[i] = iSample / 2147483648.0f;
+		}
+	}
 };
 
 struct WavReader
@@ -72,9 +107,16 @@ struct WavReaderPCM: public WavReader
 
 	bool Init()
 	{
-		if( m_WavData.m_iBitsPerSample != 8 && m_WavData.m_iBitsPerSample != 16 )
+		if( QuantizeUp(m_WavData.m_iBitsPerSample, 8) < 8 ||
+		    QuantizeUp(m_WavData.m_iBitsPerSample, 8) > 32 )
 		{
 			m_sError = ssprintf("Unsupported sample size %i", m_WavData.m_iBitsPerSample);
+			return false;
+		}
+
+		if( m_WavData.m_iFormatTag == 3 && m_WavData.m_iBitsPerSample != 32 )
+		{
+			m_sError = ssprintf( "Unsupported float sample size %i", m_WavData.m_iBitsPerSample );
 			return false;
 		}
 
@@ -84,8 +126,9 @@ struct WavReaderPCM: public WavReader
 
 	int Read( float *buf, int iFrames )
 	{
+		int iBytesPerSample = QuantizeUp(m_WavData.m_iBitsPerSample, 8) / 8;
 		int len = iFrames * m_WavData.m_iChannels;
-		len *= m_WavData.m_iBitsPerSample/8;
+		len *= iBytesPerSample;
 
 		const int iBytesLeftInDataChunk = m_WavData.m_iDataChunkSize - (m_File.Tell() - m_WavData.m_iDataChunkPos);
 		if( !iBytesLeftInDataChunk )
@@ -94,16 +137,25 @@ struct WavReaderPCM: public WavReader
 		len = min( len, iBytesLeftInDataChunk );
 		int iGot = m_File.Read( buf, len );
 
-		int iBytesPerSample = m_WavData.m_iBitsPerSample/8;
 		int iGotSamples = iGot / iBytesPerSample;
-		switch( m_WavData.m_iBitsPerSample )
+		if( m_WavData.m_iFormatTag == 1 )
 		{
-		case 8:
-			Convert8bitToFloat( buf, iGotSamples );
-			break;
-		case 16:
-			ConvertLittleEndian16BitToFloat( buf, iGotSamples );
-			break;
+			switch( iBytesPerSample )
+			{
+			case 1:
+				Convert8bitToFloat( buf, iGotSamples );
+				break;
+			case 2:
+				ConvertLittleEndian16BitToFloat( buf, iGotSamples );
+				break;
+			case 3:
+				ConvertLittleEndian24BitToFloat( buf, iGotSamples );
+				break;
+			case 4:
+				ConvertLittleEndian32BitToFloat( buf, iGotSamples );
+				/* otherwise 3; already a float */
+				break;
+			}
 		}
 		return iGotSamples / m_WavData.m_iChannels;
 	}
@@ -440,8 +492,6 @@ RageSoundReader_FileReader::OpenResult RageSoundReader_WAV::Open( RString filena
 		return OPEN_UNKNOWN_FILE_FORMAT;
 	}
 
-	int16_t iFormatTag = 0;
-
 	bool bGotFormatChunk = false, bGotDataChunk = false;
 	while( !bGotFormatChunk || !bGotDataChunk )
 	{
@@ -463,7 +513,7 @@ RageSoundReader_FileReader::OpenResult RageSoundReader_WAV::Open( RString filena
 			if( bGotFormatChunk )
 				LOG->Warn( "File %s has more than one fmt chunk", m_File.GetPath().c_str() );
 
-			iFormatTag = FileReading::read_16_le( m_File, sError );
+			m_WavData.m_iFormatTag = FileReading::read_16_le( m_File, sError );
 			m_WavData.m_iChannels = FileReading::read_16_le( m_File, sError );
 			m_WavData.m_iSampleRate = FileReading::read_32_le( m_File, sError );
 			FileReading::read_32_le( m_File, sError ); /* BytesPerSec */
@@ -508,9 +558,10 @@ RageSoundReader_FileReader::OpenResult RageSoundReader_WAV::Open( RString filena
 		return OPEN_FATAL_ERROR;
 	}
 
-	switch( iFormatTag )
+	switch( m_WavData.m_iFormatTag )
 	{
 	case 1: // PCM
+	case 3: // FLOAT
 		m_pImpl = new WavReaderPCM( m_File, m_WavData );
 		break;
 	case 2: // ADPCM
@@ -520,7 +571,7 @@ RageSoundReader_FileReader::OpenResult RageSoundReader_WAV::Open( RString filena
 		/* Return unknown, so other decoders will be tried.  MAD can read MP3s embedded in WAVs. */
 		return OPEN_UNKNOWN_FILE_FORMAT;
 	default:
-		FATAL_ERROR( ssprintf( "Unsupported data format %i", iFormatTag) );
+		FATAL_ERROR( ssprintf( "Unsupported data format %i", m_WavData.m_iFormatTag) );
 	}
 
 	if( !m_pImpl->Init() )
