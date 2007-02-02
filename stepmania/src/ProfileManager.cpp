@@ -804,7 +804,7 @@ int ProfileManager::GetLocalProfileIndexFromID( RString sProfileID ) const
 	RString sDir = LocalProfileIDToDir( sProfileID );
 	FOREACH_CONST( DirAndProfile, g_vLocalProfile, i )
 	{
-		if( i->sDir == sProfileID )
+		if( i->sDir == sDir )
 			return i - g_vLocalProfile.begin();
 	}
 	return -1;
