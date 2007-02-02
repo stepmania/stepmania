@@ -405,7 +405,50 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 	do_backtrace( buf, size, ctx );
 }
 #elif defined(BACKTRACE_METHOD_X86_DARWIN)
-void InitializeBacktrace() { }
+#include <mach/mach.h>
+
+static vm_address_t g_StackPointer = 0;
+struct Frame
+{
+	const Frame *link;
+	const void *return_address;
+};
+
+/* Returns the starting address and the protection. Pass in mach_task_self() and the starting address. */
+static bool GetRegionInfo( mach_port_t self, const void *address, vm_address_t &startOut, vm_prot_t &protectionOut )
+{
+	struct vm_region_basic_info_64 info;
+	mach_msg_type_number_t infoCnt = VM_REGION_BASIC_INFO_COUNT_64;
+	mach_port_t unused;
+	vm_size_t size = 0;
+	startOut = vm_address_t( address );
+	kern_return_t ret = vm_region( self, &startOut, &size, VM_REGION_BASIC_INFO_64,
+				       (vm_region_info_t)&info, &infoCnt, &unused );
+	
+	if( ret != KERN_SUCCESS )
+		return false;
+	protectionOut = info.protection;
+	return true;
+}
+
+void InitializeBacktrace()
+{
+	static bool bInitialized = false;
+	
+	if( bInitialized )
+		return;
+	vm_prot_t protection;
+	if( !GetRegionInfo(mach_task_self(), __builtin_frame_address(0), g_StackPointer, protection) ||
+	    protection != (VM_PROT_READ|VM_PROT_WRITE) )
+	{
+		g_StackPointer = 0;
+	}
+	bInitialized = true;
+	// XXX: I can't test this so disable it all.
+#if 1
+	g_StackPointer = 0;
+#endif
+}
 
 void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc )
 {
@@ -414,10 +457,132 @@ void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc )
 	ctx->sp = (void *) uc->uc_mcontext->ss.esp;
 }
 
+/* The following from VirtualDub: */
+/* ptr points to a return address, and does not have to be word-aligned. */
+static bool PointsToValidCall( vm_address_t start, const void *ptr )
+{
+	const char *buf = (const char *) ptr;
+	
+	/* We're reading buf backwards, between buf[-7] and buf[-1].  Find out how
+	* far we can read. */
+	const int len = min( intptr_t(ptr)-start, 7U );
+	
+	// Permissible CALL sequences that we care about:
+	//
+	//	E8 xx xx xx xx			CALL near relative
+	//	FF (group 2)			CALL near absolute indirect
+	//
+	// Minimum sequence is 2 bytes (call eax).
+	// Maximum sequence is 7 bytes (call dword ptr [eax+disp32]).
+	
+	if (len >= 5 && buf[-5] == '\xe8')
+		return true;
+	
+	// FF 14 xx					CALL [reg32+reg32*scale]
+	if (len >= 3 && buf[-3] == '\xff' && buf[-2]=='\x14')
+		return true;
+	
+	// FF 15 xx xx xx xx		CALL disp32
+	if (len >= 6 && buf[-6] == '\xff' && buf[-5]=='\x15')
+		return true;
+	
+	// FF 00-3F(!14/15)			CALL [reg32]
+	if (len >= 2 && buf[-2] == '\xff' && (unsigned char)buf[-1] < '\x40')
+		return true;
+	
+	// FF D0-D7					CALL reg32
+	if (len >= 2 && buf[-2] == '\xff' && char(buf[-1]&0xF8) == '\xd0')
+		return true;
+	
+	// FF 50-57 xx				CALL [reg32+reg32*scale+disp8]
+	if (len >= 3 && buf[-3] == '\xff' && char(buf[-2]&0xF8) == '\x50')
+		return true;
+	
+	// FF 90-97 xx xx xx xx xx	CALL [reg32+reg32*scale+disp32]
+	if (len >= 7 && buf[-7] == '\xff' && char(buf[-6]&0xF8) == '\x90')
+		return true;
+	
+	return false;
+}
+
+
 void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 {
-	buf[0] = BACKTRACE_METHOD_NOT_AVAILABLE;
-	buf[1] = NULL;
+	InitializeBacktrace();
+	
+	if( g_StackPointer == 0 )
+	{
+		buf[0] = BACKTRACE_METHOD_NOT_AVAILABLE;
+		buf[1] = NULL;
+		return;
+	}
+	
+	BacktraceContext CurrentCtx;
+	if( ctx == NULL )
+	{
+		ctx = &CurrentCtx;
+		
+		CurrentCtx.ip = NULL;
+		CurrentCtx.bp = __builtin_frame_address(0);
+		CurrentCtx.sp = __builtin_frame_address(0);
+	}
+	
+	mach_port_t self = mach_task_self();
+	vm_address_t stackPointer;
+	vm_address_t start;
+	vm_prot_t protection;
+	
+	size_t i = 0;
+	if( i < size-1 && ctx->ip )
+		buf[i++] = ctx->ip;
+	
+	if( GetRegionInfo(self, ctx->sp, stackPointer, protection) && protection == (VM_PROT_READ|VM_PROT_WRITE) )
+	{
+		const void *p = *(const void **)ctx->sp;
+		if( GetRegionInfo(self, p, start, protection) &&
+		    (protection & (VM_PROT_READ|VM_PROT_EXECUTE)) == (VM_PROT_READ|VM_PROT_EXECUTE) &&
+		    PointsToValidCall(start, p) && i < size-1 )
+		{
+			buf[i++] = p;
+		}
+	}
+	
+	const Frame *frame = (Frame *)ctx->sp;
+	
+	while( i < size-1 )
+	{
+		// Make sure this is on the stack
+		if( !GetRegionInfo(self, frame, start, protection) || protection != (VM_PROT_READ|VM_PROT_WRITE) )
+			break;
+		if( (start != g_StackPointer && start != stackPointer) || uintptr_t(frame)-uintptr_t(start) < sizeof(Frame) )
+			break;
+		
+		// Valid frame?
+		if( frame->link <= frame || // The frame link goes up.
+		    !GetRegionInfo(self, frame->link, start, protection) || // The link is on the stack.
+		    protection != (VM_PROT_READ|VM_PROT_WRITE) ||
+		    (start != g_StackPointer && start != stackPointer) ||
+		    !GetRegionInfo(self, frame->return_address, start, protection) || // readable, executable
+		    (protection & (VM_PROT_READ|VM_PROT_EXECUTE))!=(VM_PROT_READ|VM_PROT_EXECUTE) ||
+		    !PointsToValidCall(start, frame->return_address) )// Follows a CALL.
+		{
+			    // Invalid.
+			    void *p = *(void **)frame;
+			    if( GetRegionInfo(self, p, start, protection) &&
+				(protection & (VM_PROT_READ|VM_PROT_EXECUTE))==(VM_PROT_READ|VM_PROT_EXECUTE) &&
+				PointsToValidCall(start, p) )
+			    {
+				    buf[i++] = p;
+			    }
+			    frame = (Frame *)(intptr_t(frame)+4);
+			    continue;
+		}
+		// Valid.
+		buf[i++] = frame->return_address;
+		frame = frame->link;
+	}
+		    
+	buf[i] = NULL;	
 }
 
 #elif defined(BACKTRACE_METHOD_POWERPC_DARWIN)
@@ -525,7 +690,7 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 #endif
 
 /*
- * (c) 2003-2004 Glenn Maynard
+ * (c) 2003-2007 Glenn Maynard, Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
