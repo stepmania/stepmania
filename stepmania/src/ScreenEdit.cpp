@@ -790,12 +790,16 @@ ScreenEdit::~ScreenEdit()
 
 void ScreenEdit::BeginScreen()
 {
+	ScreenWithMenuElements::BeginScreen();
+
 	/* We do this ourself. */
 	SOUND->HandleSongTimer( false );
 }
 
 void ScreenEdit::EndScreen()
 {
+	ScreenWithMenuElements::EndScreen();
+
 	SOUND->HandleSongTimer( true );
 }
 
