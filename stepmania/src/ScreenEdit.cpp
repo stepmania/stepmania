@@ -3489,6 +3489,9 @@ static LocalizedString CREATES_NOTES_PAST_END	( "ScreenEdit", "This change creat
 static LocalizedString CHANGE_REVERTED		( "ScreenEdit", "The change has been reverted." );
 void ScreenEdit::CheckNumberOfNotesAndUndo()
 {
+	if( EDIT_MODE.GetValue() != EditMode_Home )
+		return;
+
 	for( int row=0; row<=m_NoteDataEdit.GetLastRow(); row+=ROWS_PER_MEASURE )
 	{
 		int iNumNotesThisMeasure = 0;
