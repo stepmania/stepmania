@@ -105,7 +105,7 @@ void JoystickDevice::AddElement( int usagePage, int usage, int cookie, const CFD
 			break;
 		}
 		default:
-			LOG->Warn( "Unknown usagePage usage pair: (kHIDPage_GenericDesktop, %d).", usage );
+			//LOG->Warn( "Unknown usagePage usage pair: (kHIDPage_GenericDesktop, %d).", usage );
 			break;
 		}
 		break;
