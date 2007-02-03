@@ -1,5 +1,5 @@
 function Actor:lyriccommand(side)
-	self:settext( self.ctx.LyricText );
+	self:settext( Var "LyricText" );
 
 	self:stoptweening();
 	self:shadowlength(0);
@@ -8,7 +8,7 @@ function Actor:lyriccommand(side)
 	if( Zoom > 1 ) then Zoom = 1 end
 	self:zoomx( Zoom );
 
-	local Color = self.ctx.LyricColor
+	local Color = Var "LyricColor";
 	local Factor = 1
 	if side == "Back" then
 		Factor = 0.5
@@ -28,13 +28,13 @@ function Actor:lyriccommand(side)
 	self:diffusealpha(0);
 	self:linear(0.2);
 	self:diffusealpha(0.75);
-	self:linear(self.ctx.LyricDuration * 0.75);
+	self:linear( Var "LyricDuration" * 0.75);
 	if side == "Front" then
 		self:cropright(0);
 	else
 		self:cropleft(1);
 	end
-	self:sleep(self.ctx.LyricDuration * 0.25);
+	self:sleep( Var "LyricDuration" * 0.25 );
 	self:linear(0.2);
 	self:diffusealpha(0);
 end
