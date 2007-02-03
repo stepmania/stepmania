@@ -29,6 +29,7 @@
 
 #include "LyricsLoader.h"
 
+#include <time.h>
 #include <set>
 #include <float.h>
 
@@ -38,6 +39,7 @@ const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
 
 static Preference<float>	g_fLongVerSongSeconds( "LongVerSongSeconds",		60*2.5f );
 static Preference<float>	g_fMarathonVerSongSeconds( "MarathonVerSongSeconds",	60*5.f );
+static Preference<bool>		g_BackUpAllSongSaves( "BackUpAllSongSaves",		false );
 
 Song::Song()
 {
@@ -835,6 +837,27 @@ bool Song::SaveToSMFile( RString sPath, bool bSavingCache )
 
 	if( !NotesWriterSM::Write(sPath, *this, vpStepsToSave, bSavingCache) )
 		return false;
+
+	if( !bSavingCache && g_BackUpAllSongSaves.Get() )
+	{
+		RString sExt = GetExtension( sPath );
+		RString sBackupFile = SetExtension( sPath, "" );
+
+		time_t cur_time;
+		time( &cur_time );
+		struct tm now;
+		localtime_r( &cur_time, &now );
+
+		sBackupFile += ssprintf( "-%04i-%02i-%02i--%02i-%02i-%02i", 
+			1900+now.tm_year, now.tm_mon+1, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec );
+		sBackupFile = SetExtension( sBackupFile, sExt );
+		sBackupFile += ssprintf( ".old" );
+
+		if( FileCopy(sPath, sBackupFile) )
+			LOG->Trace( "Backed up %s to %s", sPath.c_str(), sBackupFile.c_str() );
+		else
+			LOG->Trace( "Failed to back up %s to %s", sPath.c_str(), sBackupFile.c_str() );
+	}
 
 	if( !bSavingCache )
 	{
