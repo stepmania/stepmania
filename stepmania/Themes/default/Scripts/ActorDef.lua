@@ -144,6 +144,12 @@ function LoadActor( path, ... )
 	return t(...);
 end
 
+function LoadActorWithParams( path, params, ... )
+	local t = LoadActorFunc( path, 2 );
+	assert(t);
+	return lua.RunWithThreadVariables( function(...) return t(...) end, params, ... );
+end
+
 function WrapInActorFrame( t )
 	return Def.ActorFrame { children = t }
 end
