@@ -245,6 +245,8 @@ bool NotesWriterSM::Write( RString sPath, const Song &out, bool bSavingCache )
 		RString sTag = GetSMNotesTag( out, *pSteps, bSavingCache );
 		f.PutLine( sTag );
 	}
+	if( !f.Flush() )
+		return false;
 
 	return true;
 }
