@@ -328,10 +328,12 @@ void LuaManager::RegisterTypes()
 
 LuaThreadVariable::LuaThreadVariable( const RString &sName, const RString &sValue )
 {
-	m_sName = sName;
+	m_Name = new LuaReference;
 	m_pOldValue = new LuaReference;
 
 	Lua *L = LUA->Get();
+	LuaHelpers::Push( L, sName );
+	m_Name->SetFromStack( L );
 	LuaHelpers::Push( L, sValue );
 	SetFromStack( L );
 	LUA->Release( L );
@@ -339,13 +341,30 @@ LuaThreadVariable::LuaThreadVariable( const RString &sName, const RString &sValu
 
 LuaThreadVariable::LuaThreadVariable( const RString &sName, const LuaReference &Value )
 {
-	m_sName = sName;
+	m_Name = new LuaReference;
 	m_pOldValue = new LuaReference;
 
 	Lua *L = LUA->Get();
+	LuaHelpers::Push( L, sName );
+	m_Name->SetFromStack( L );
+
 	Value.PushSelf( L );
 	SetFromStack( L );
 	LUA->Release( L );
+}
+
+// name and value are on the stack
+LuaThreadVariable::LuaThreadVariable( lua_State *L )
+{
+	m_Name = new LuaReference;
+	m_pOldValue = new LuaReference;
+	
+	lua_pushvalue( L, -2 );
+	m_Name->SetFromStack( L );
+
+	SetFromStack( L );
+
+	lua_pop( L, 1 );
 }
 
 RString LuaThreadVariable::GetCurrentThreadIDString()
@@ -431,11 +450,13 @@ void LuaThreadVariable::SetFromStack( lua_State *L )
 
 	PushThreadTable( L, true );
 
-	lua_getfield( L, -1, m_sName );
+	m_Name->PushSelf( L );
+	lua_gettable( L, -2 );
 	m_pOldValue->SetFromStack( L );
 
-	lua_pushvalue( L, -2 );
-	lua_setfield( L, -2, m_sName );
+	m_Name->PushSelf( L );
+	lua_pushvalue( L, -3 );
+	lua_settable( L, -3 );
 
 	AdjustCount( L, +1 );
 
@@ -447,8 +468,9 @@ LuaThreadVariable::~LuaThreadVariable()
 	Lua *L = LUA->Get();
 
 	PushThreadTable( L, true );
+	m_Name->PushSelf( L );
 	m_pOldValue->PushSelf( L );
-	lua_setfield( L, -2, m_sName );
+	lua_settable( L, -3 );
 
 	if( AdjustCount( L, -1 ) == 0 )
 	{
@@ -466,6 +488,7 @@ LuaThreadVariable::~LuaThreadVariable()
 	LUA->Release( L );
 
 	delete m_pOldValue;
+	delete m_Name;
 }
 
 namespace
@@ -881,6 +904,37 @@ namespace
 		}
 	}
 
+	/*
+	 * RunWithThreadVariables(func, { a = "x", b = "y" }, arg1, arg2, arg3 ... }
+	 * calls func(arg1, arg2, arg3) with two LuaThreadVariable set, and returns
+	 * the return values of func().
+	 */
+	static int RunWithThreadVariables( lua_State *L )
+	{
+		luaL_checktype( L, 1, LUA_TFUNCTION );
+		luaL_checktype( L, 2, LUA_TTABLE );
+
+		vector<LuaThreadVariable *> apVars;
+		FOREACH_LUATABLE( L, 2 )
+		{
+			lua_pushvalue( L, -2 );
+			LuaThreadVariable *pVar = new LuaThreadVariable( L );
+			apVars.push_back( pVar );
+		}
+
+		lua_remove( L, 2 );
+
+		/* XXX: We want to clean up apVars on errors, but if we lua_pcall, we won't
+		 * propagate the error upwards. */
+		int iArgs = lua_gettop(L) - 1;
+		lua_call( L, iArgs, LUA_MULTRET );
+		int iVals = lua_gettop(L);
+
+		FOREACH( LuaThreadVariable *, apVars, v )
+			delete *v;
+		return iVals;
+	}
+
 	static int GetThreadVariable( lua_State *L )
 	{
 		luaL_checkstring( L, 1 );
@@ -892,6 +946,7 @@ namespace
 	const luaL_Reg luaTable[] =
 	{
 		LIST_METHOD( ReadFile ),
+		LIST_METHOD( RunWithThreadVariables ),
 		LIST_METHOD( GetThreadVariable ),
 		{ NULL, NULL }
 	};

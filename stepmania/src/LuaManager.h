@@ -127,6 +127,7 @@ class LuaThreadVariable
 public:
 	LuaThreadVariable( const RString &sName, const RString &sValue );
 	LuaThreadVariable( const RString &sName, const LuaReference &Value );
+	LuaThreadVariable( lua_State *L ); // name and value are on stack
 	~LuaThreadVariable();
 	static void GetThreadVariable( lua_State *L );
 
@@ -138,7 +139,7 @@ private:
 	static bool PushThreadTable( lua_State *L, bool bCreate );
 	static RString GetCurrentThreadIDString();
 
-	RString m_sName;
+	LuaReference *m_Name;
 	LuaReference *m_pOldValue;
 };
 
