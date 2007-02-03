@@ -66,12 +66,12 @@ bool Transition::EarlyAbortDraw() const
 /* Our parent might send us OnCommand.  We do that ourself, because
  * we sometimes want to know GetLengthSeconds before StartTransitioning.
  * Make sure we don't process OnCommand twice. */
-void Transition::PlayCommand( const RString &sCommandName, const LuaReference *pParamTable )
+void Transition::HandleMessage( const Message &msg )
 {
-	if( sCommandName == "On" )
+	if( msg.GetName() == "On" )
 		return;
 
-	ActorFrame::PlayCommand( sCommandName, pParamTable );
+	ActorFrame::HandleMessage( msg );
 }
 
 void Transition::StartTransitioning( ScreenMessage send_when_done )

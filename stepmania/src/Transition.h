@@ -16,7 +16,7 @@ public:
 	void Load( RString sBGAniDir );
 
 	virtual void UpdateInternal( float fDeltaTime );
-	virtual void PlayCommand( const RString &sCommandName, const LuaReference *pParamTable = NULL );
+	virtual void HandleMessage( const Message &msg );
 
 	virtual void StartTransitioning( ScreenMessage send_when_done = SM_None );
 	virtual bool EarlyAbortDraw() const;

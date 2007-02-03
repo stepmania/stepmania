@@ -49,14 +49,14 @@ void ScoreDisplayCalories::Update( float fDelta )
 	RollingNumbers::Update( fDelta );
 }
 
-void ScoreDisplayCalories::PlayCommand( const RString &sCommandName, const LuaReference *pParamTable )
+void ScoreDisplayCalories::HandleMessage( const Message &msg )
 {
-	if( sCommandName == m_sMessageOnStep )
+	if( msg.GetName() == m_sMessageOnStep )
 	{
 		UpdateNumber();
 	}
 	
-	RollingNumbers::PlayCommand( sCommandName, pParamTable );
+	RollingNumbers::HandleMessage( msg );
 }
 
 void ScoreDisplayCalories::UpdateNumber()

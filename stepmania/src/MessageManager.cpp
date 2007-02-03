@@ -158,6 +158,17 @@ Message::Message( const RString &s )
 	m_pParams = new LuaTable;
 }
 
+Message::Message( const RString &s, const LuaReference &params )
+{
+	m_sName = s;
+	Lua *L = LUA->Get();
+	m_pParams = new LuaTable; // XXX: creates an extra table
+	params.PushSelf( L );
+	m_pParams->SetFromStack( L );
+	LUA->Release( L );
+//	m_pParams = new LuaTable( params );
+}
+
 Message::~Message()
 {
 	delete m_pParams;
@@ -166,6 +177,14 @@ Message::~Message()
 void Message::PushParamTable( lua_State *L )
 {
 	m_pParams->PushSelf( L );
+}
+
+void Message::SetParamTable( const LuaReference &params )
+{
+	Lua *L = LUA->Get();
+	params.PushSelf( L );
+	m_pParams->SetFromStack( L );
+	LUA->Release( L );
 }
 
 const LuaReference &Message::GetParamTable() const
@@ -305,7 +324,8 @@ public:
 		lua_pushvalue( L, 2 );
 		ParamTable.SetFromStack( L );
 
-		p->Broadcast( SArg(1) );
+		Message msg( SArg(1), ParamTable );
+		p->Broadcast( msg );
 		return 0;
 	}
 

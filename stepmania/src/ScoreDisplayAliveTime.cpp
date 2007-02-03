@@ -40,11 +40,11 @@ void ScoreDisplayAliveTime::Update( float fDelta )
 	BitmapText::Update( fDelta );
 }
 
-void ScoreDisplayAliveTime::PlayCommand( const RString &sCommandName, const LuaReference *pParamTable )
+void ScoreDisplayAliveTime::HandleMessage( const Message &msg )
 {
 	// TODO: Add handling of GoalComplete message
 	
-	BitmapText::PlayCommand( sCommandName, pParamTable );
+	BitmapText::HandleMessage( msg );
 }
 
 void ScoreDisplayAliveTime::UpdateNumber()

@@ -356,7 +356,7 @@ public:
 	void AddCommand( const RString &sCmdName, apActorCommands apac );
 	bool HasCommand( const RString &sCmdName );
 	const apActorCommands *GetCommand( const RString &sCommandName ) const;
-	virtual void PlayCommand( const RString &sCommandName, const LuaReference *pParamTable = NULL );
+	void PlayCommand( const RString &sCommandName ) { HandleMessage( Message(sCommandName) ); }
 	virtual void RunCommands( const LuaReference& cmds, const LuaReference *pParamTable = NULL );
 	void RunCommands( const apActorCommands& cmds, const LuaReference *pParamTable = NULL ) { this->RunCommands( *cmds, pParamTable ); }	// convenience
 	// If we're a leaf, then execute this command.

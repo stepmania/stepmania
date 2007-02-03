@@ -1189,11 +1189,11 @@ const apActorCommands *Actor::GetCommand( const RString &sCommandName ) const
 	return &it->second;
 }
 
-void Actor::PlayCommand( const RString &sCommandName, const LuaReference *pParamTable )
+void Actor::HandleMessage( const Message &msg )
 {
-	const apActorCommands *pCmd = GetCommand( sCommandName );
+	const apActorCommands *pCmd = GetCommand( msg.GetName() );
 	if( pCmd != NULL )
-		RunCommands( *pCmd, pParamTable );
+		RunCommands( *pCmd, &msg.GetParamTable() );
 }
 
 void Actor::PushContext( lua_State *L )
@@ -1218,11 +1218,6 @@ void Actor::SetParent( Actor *pParent )
 
 		lua_settop( L, iTop );
 	LUA->Release( L );
-}
-
-void Actor::HandleMessage( const Message &msg )
-{
-	PlayCommand( msg.GetName(), &msg.GetParamTable() );
 }
 
 Actor::TweenInfo::TweenInfo()
@@ -1376,7 +1371,9 @@ public:
 		lua_pushvalue( L, 2 );
 		ParamTable.SetFromStack( L );
 
-		p->PlayCommand( SArg(1), &ParamTable );
+		Message msg( SArg(1), ParamTable );
+		p->HandleMessage( msg );
+
 		return 0;
 	}
 	static int queuecommand( T* p, lua_State *L )		{ p->QueueCommand(SArg(1)); return 0; }

@@ -19,7 +19,7 @@ public:
 	void LoadFromNode( const XNode* pNode );
 	virtual ScoreDisplayAliveTime *Copy() const;
 
-	void PlayCommand( const RString &sCommandName, const LuaReference *pParamTable );
+	virtual void HandleMessage( const Message &msg );
 
 	void UpdateNumber();
 

@@ -352,19 +352,19 @@ void ActorFrame::SetPropagateCommands( bool b )
 	m_bPropagateCommands = b;
 }
 
-void ActorFrame::PlayCommand( const RString &sCommandName, const LuaReference *pParamTable )
+void ActorFrame::HandleMessage( const Message &msg )
 {
-	Actor::PlayCommand( sCommandName, pParamTable );
+	Actor::HandleMessage( msg );
 
 	// HACK: Don't propogate Init.  It gets called once for every Actor when the 
 	// Actor is loaded, and we don't want to call it again.
-	if( sCommandName == "Init" )
+	if( msg.GetName() == "Init" )
 		return;
 
 	for( unsigned i=0; i<m_SubActors.size(); i++ ) 
 	{
 		Actor* pActor = m_SubActors[i];
-		pActor->PlayCommand( sCommandName, pParamTable );
+		pActor->HandleMessage( msg );
 	}
 }
 

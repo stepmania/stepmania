@@ -64,7 +64,7 @@ public:
 	/* Amount of time until all tweens (and all children's tweens) have stopped: */
 	virtual float GetTweenTimeLeft() const;
 
-	virtual void PlayCommand( const RString &sCommandName, const LuaReference *pParamTable = NULL );
+	virtual void HandleMessage( const Message &msg );
 	virtual void RunCommands( const LuaReference& cmds, const LuaReference *pParamTable = NULL );
 	void RunCommands( const apActorCommands& cmds, const LuaReference *pParamTable = NULL ) { this->RunCommands( *cmds, pParamTable ); }	// convenience
 

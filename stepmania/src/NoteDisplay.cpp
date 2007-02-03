@@ -746,12 +746,9 @@ void NoteDisplay::DrawTap( const TapNote& tn, int iCol, float fBeat, bool bOnSam
 
 	if( tn.type == TapNote::attack )
 	{
-		Lua *L = LUA->Get();
-		LuaTable tab;
-		LuaHelpers::Push( L, tn.sAttackModifiers );
-		tab.Set( L, "Modifiers" );
-		pActor->PlayCommand( "SetAttack", &tab );
-		LUA->Release( L );
+		Message msg( "SetAttack" );
+		msg.SetParam( "Modifiers", tn.sAttackModifiers );
+		pActor->HandleMessage( msg );
 	}
 
 	const float fYOffset = ArrowEffects::GetYOffset( m_pPlayerState, iCol, fBeat );

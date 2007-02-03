@@ -149,11 +149,13 @@ const RString& MessageIDToString( MessageID m );
 struct Message
 {
 	explicit Message( const RString &s );
+	Message( const RString &s, const LuaReference &params );
 	~Message();
 	RString GetName() const { return m_sName; }
 
 	void PushParamTable( lua_State *L );
 	const LuaReference &GetParamTable() const;
+	void SetParamTable( const LuaReference &params );
 
 	void GetParamFromStack( lua_State *L, const RString &sName ) const;
 	void SetParamFromStack( lua_State *L, const RString &sName );
