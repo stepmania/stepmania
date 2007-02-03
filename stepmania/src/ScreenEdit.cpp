@@ -2551,7 +2551,6 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM == SM_SaveSuccessful )
 	{
 		LOG->Trace( "Save successful." );
-		m_pSteps->SetSavedToDisk( true );
 		CopyToLastSave();
 		SetDirty( false );
 		SONGMAN->Invalidate( GAMESTATE->m_pCurSong );
@@ -2805,6 +2804,8 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 							ScreenPrompt::Prompt( SM_None, sError );
 							break;
 						}
+
+						m_pSteps->SetSavedToDisk( true );
 
 						// HACK: clear undo, so "exit" below knows we don't need to save.
 						// This only works because important non-steps data can't be changed in

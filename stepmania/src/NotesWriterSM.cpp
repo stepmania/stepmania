@@ -195,7 +195,7 @@ static RString GetSMNotesTag( const Song &song, const Steps &in, bool bSavingCac
 	return JoinLineList( lines );
 }
 
-bool NotesWriterSM::Write( RString sPath, const Song &out, bool bSavingCache )
+bool NotesWriterSM::Write( RString sPath, const Song &out, const vector<Steps*>& vpStepsToSave, bool bSavingCache )
 {
 	/* Flush dir cache when writing steps, so the old size isn't cached. */
 	FILEMAN->FlushDirCache( Dirname(sPath) );
@@ -229,19 +229,11 @@ bool NotesWriterSM::Write( RString sPath, const Song &out, bool bSavingCache )
 	}
 
 	//
-	// Save all Steps for this file
+	// Save specified Steps to this file
 	//
-	const vector<Steps*>& vpSteps = out.GetAllSteps();
-	FOREACH_CONST( Steps*, vpSteps, s ) 
+	FOREACH_CONST( Steps*, vpStepsToSave, s ) 
 	{
 		const Steps* pSteps = *s;
-		if( pSteps->IsAutogen() )
-			continue; /* don't write autogen notes */
-
-		/* Only save steps that weren't loaded from a profile. */
-		if( pSteps->WasLoadedFromProfile() )
-			continue;
-
 		RString sTag = GetSMNotesTag( out, *pSteps, bSavingCache );
 		f.PutLine( sTag );
 	}

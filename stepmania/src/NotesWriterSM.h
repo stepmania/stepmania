@@ -7,7 +7,7 @@ class Song;
 class Steps;
 namespace NotesWriterSM
 {
-	bool Write( RString sPath, const Song &out, bool bSavingCache );
+	bool Write( RString sPath, const Song &out, const vector<Steps*>& vpStepsToSave, bool bSavingCache );
 	void GetEditFileContents( const Song *pSong, const Steps *pSteps, RString &sOut );
 	RString GetEditFileName( const Song *pSong, const Steps *pSteps );
 	bool WriteEditFileToMachine( const Song *pSong, Steps *pSteps, RString &sErrorOut );

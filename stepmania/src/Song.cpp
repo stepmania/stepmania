@@ -819,7 +819,31 @@ bool Song::SaveToSMFile( RString sPath, bool bSavingCache )
 	if( !bSavingCache && IsAFile(sPath) )
 		FileCopy( sPath, sPath + ".old" );
 
-	return NotesWriterSM::Write( sPath, *this, bSavingCache );
+	vector<Steps*> vpStepsToSave;
+	FOREACH_CONST( Steps*, m_vpSteps, s ) 
+	{
+		Steps *pSteps = *s;
+		if( pSteps->IsAutogen() )
+			continue; /* don't write autogen notes */
+
+		/* Only save steps that weren't loaded from a profile. */
+		if( pSteps->WasLoadedFromProfile() )
+			continue;
+
+		vpStepsToSave.push_back( pSteps );
+	}
+
+	if( !NotesWriterSM::Write(sPath, *this, vpStepsToSave, bSavingCache) )
+		return false;
+
+	if( !bSavingCache )
+	{
+		/* Mark these steps saved to disk. */
+		FOREACH( Steps*, vpStepsToSave, s )
+			(*s)->SetSavedToDisk( true );
+	}
+
+	return true;
 }
 
 bool Song::SaveToCacheFile()
