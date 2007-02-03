@@ -209,25 +209,6 @@ Actor::Actor( const Actor &cpy ):
 void Actor::LoadFromNode( const XNode* pNode )
 {
 	Lua *L = LUA->Get();
-	FOREACH_CONST_Child( pNode, pChild )
-	{
-		if( pChild->GetName() == "Context" )
-		{
-			RString sName;
-			if( !pChild->GetAttrValue( "Name", sName ) )
-				Dialog::OK( ssprintf("Context node in '%s' is missing the attribute \"Name\"", ActorUtil::GetWhere(pNode).c_str()), "MISSING_ATTRIBUTE" );
-
-			this->PushContext(L);
-			lua_pushstring( L, sName );
-
-			if( !pChild->PushAttrValue( L, "Value" ) )
-				Dialog::OK( ssprintf("Context node in '%s' is missing the attribute \"Value\"", ActorUtil::GetWhere(pNode).c_str()), "MISSING_ATTRIBUTE" );
-
-			lua_settable( L, -3 );
-			lua_pop( L, 1 );
-		}
-	}
-
 	FOREACH_CONST_Attr( pNode, pAttr )
 	{
 		// Load Name, if any.
