@@ -248,7 +248,8 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenSelect::HandleMessage( const Message &msg )
 {
-	this->UpdateSelectableChoices();
+	if( find(m_asSubscribedMessages.begin(), m_asSubscribedMessages.end(), msg.GetName()) != m_asSubscribedMessages.end() )
+		this->UpdateSelectableChoices();
 
 	ScreenWithMenuElements::HandleMessage( msg );
 }
