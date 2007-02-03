@@ -72,28 +72,11 @@ void LyricDisplay::Update( float fDeltaTime )
 	// Make lyrics show faster for faster song rates.
 	fShowLength /= GAMESTATE->m_SongOptions.GetCurrent().m_fMusicRate;
 
-	Lua *L = LUA->Get();
-	for( int i=0; i<2; i++ )
-	{
-		const LyricSegment &seg = GAMESTATE->m_pCurSong->m_LyricSegments[m_iCurLyricNumber];
+	const LyricSegment &seg = GAMESTATE->m_pCurSong->m_LyricSegments[m_iCurLyricNumber];
 
-		m_textLyrics[i].PushContext(L);
-
-		lua_pushstring( L, "LyricText" );
-		lua_pushstring( L, seg.m_sLyric );
-		lua_settable( L, -3 );
-
-		lua_pushstring( L, "LyricDuration" );
-		lua_pushnumber( L, fShowLength );
-		lua_settable( L, -3 );
-
-		lua_pushstring( L, "LyricColor" );
-		seg.m_Color.PushTable( L );
-		lua_settable( L, -3 );
-
-		lua_pop( L, 1 );
-	}
-	LUA->Release( L );
+	LuaThreadVariable var1( "LyricText", seg.m_sLyric );
+	LuaThreadVariable var2( "LyricDuration", LuaReference::Create(fShowLength) );
+	LuaThreadVariable var3( "LyricColor", LuaReference::Create(seg.m_Color) );
 
 	PlayCommand( "Changed" );
 
