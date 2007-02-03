@@ -784,7 +784,8 @@ void Song::Save()
 	TranslateTitles();
 
 	/* Save the new files.  These calls make backups on their own. */
-	SaveToSMFile( GetSongFilePath(), false );
+	if( !SaveToSMFile(GetSongFilePath(), false) )
+		return;
 	SaveToDWIFile();
 	SaveToCacheFile();
 
