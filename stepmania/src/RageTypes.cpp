@@ -58,6 +58,7 @@ namespace LuaHelpers
 		Object.FromStack( L, iOffset );
 		return true;
 	}
+	template<> void Push<RageColor>( lua_State *L, const RageColor &Object ) { Object.PushTable( L ); }
 }
 
 static const char *CullModeNames[] =
