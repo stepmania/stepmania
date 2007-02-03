@@ -2573,18 +2573,25 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		// IMPORTANT: CopyFromLastSave before deleting the Steps below
 		CopyFromLastSave();
 
-		// If these steps have never been saved, then we should delete them.
-		// If the user created them in the edit menu and never bothered
-		// to save them, then they aren't wanted.
-		// FIXME: This logic fails if the user starts a new steps, changes to 
-		// a different stepchart, and then exits without saving
-		Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
-		if( !pSteps->GetSavedToDisk() )
+		/* The user has been given a choice to save.  Delete all unsaved
+		 * steps before exiting the editor. */
+		Song *pSong = GAMESTATE->m_pCurSong;
+		const vector<Steps*> &apSteps = pSong->GetAllSteps();
+		vector<Steps*> apToDelete;
+		FOREACH_CONST( Steps *, apSteps, s )
 		{
-			Song* pSong = GAMESTATE->m_pCurSong;
+			if( (*s)->IsAutogen() || (*s)->GetSavedToDisk() )
+				continue;
+			apToDelete.push_back( *s );
+		}
+		FOREACH_CONST( Steps *, apToDelete, s )
+		{
+			Steps *pSteps = *s;
 			pSong->DeleteSteps( pSteps );
-			m_pSteps = NULL;
-			GAMESTATE->m_pCurSteps[PLAYER_1].Set( NULL );
+			if( m_pSteps == pSteps )
+				m_pSteps = NULL;
+			if( GAMESTATE->m_pCurSteps[PLAYER_1].Get() == pSteps )
+				GAMESTATE->m_pCurSteps[PLAYER_1].Set( NULL );
 		}
 
 		m_Out.StartTransitioning( SM_GoToNextScreen );
