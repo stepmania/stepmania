@@ -810,7 +810,7 @@ void Song::Save()
 }
 
 
-void Song::SaveToSMFile( RString sPath, bool bSavingCache )
+bool Song::SaveToSMFile( RString sPath, bool bSavingCache )
 {
 	LOG->Trace( "Song::SaveToSMFile('%s')", sPath.c_str() );
 
@@ -818,19 +818,23 @@ void Song::SaveToSMFile( RString sPath, bool bSavingCache )
 	if( !bSavingCache && IsAFile(sPath) )
 		FileCopy( sPath, sPath + ".old" );
 
-	NotesWriterSM::Write( sPath, *this, bSavingCache );
+	return NotesWriterSM::Write( sPath, *this, bSavingCache );
 }
 
-void Song::SaveToCacheFile()
+bool Song::SaveToCacheFile()
 {
 	SONGINDEX->AddCacheIndex(m_sSongDir, GetHashForDirectory(m_sSongDir));
 	const RString sPath = GetCacheFilePath();
-	SaveToSMFile( sPath, true );
+	if( !SaveToSMFile(sPath, true) )
+		return false;
+
 	FOREACH( Steps*, m_vpSteps, pSteps )
 		(*pSteps)->SetFilename( sPath );
+
+	return true;
 }
 
-void Song::SaveToDWIFile()
+bool Song::SaveToDWIFile()
 {
 	const RString sPath = SetExtension( GetSongFilePath(), "dwi" );
 	LOG->Trace( "Song::SaveToDWIFile(%s)", sPath.c_str() );
@@ -839,7 +843,7 @@ void Song::SaveToDWIFile()
 	if( IsAFile(sPath) )
 		FileCopy( sPath, sPath + ".old" );
 
-	NotesWriterDWI::Write( sPath, *this );
+	return NotesWriterDWI::Write( sPath, *this );
 }
 
 
