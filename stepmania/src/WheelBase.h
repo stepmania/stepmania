@@ -45,6 +45,10 @@ public:
 	bool IsEmpty() { return m_bEmpty; }
 	WheelItemBaseData* GetItem(unsigned int index);
 	WheelItemBaseData* LastSelected();
+	WheelItemBase *GetWheelItem( int i ) { if( i < 0 || i >= (int) m_WheelBaseItems.size() ) return NULL; return m_WheelBaseItems[i]; }
+
+	// Lua
+	void PushSelf( lua_State *L );
 
 protected:
 	void TweenOnScreenForSort();

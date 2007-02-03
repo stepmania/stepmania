@@ -502,17 +502,6 @@ void WheelBase::RebuildWheelItems( int iDist )
 			iLast = -iDist-1;
 	}
 
-	Lua *L = LUA->Get();
-	for( int i=0; i < (int) m_WheelBaseItems.size(); i++ )
-	{
-		m_WheelBaseItems[i]->PushContext(L);
-		lua_pushstring( L, "WheelIndex" );
-		lua_pushnumber( L, i );
-		lua_settable( L, -3 );
-		lua_pop( L, 1 );
-	}
-	LUA->Release( L );
-
 	for( int i=iFirst; i <= iLast; i++ )
 	{
 		int iIndex = iFirstVisibleIndex + i;
@@ -555,6 +544,33 @@ int WheelBase::FirstVisibleIndex()
 	wrap( iFirstVisibleIndex, m_CurWheelItemData.size() );
 	return iFirstVisibleIndex;
 }
+
+// lua start
+#include "LuaBinding.h"
+
+class LunaWheelBase: public Luna<WheelBase>
+{
+public:
+	static int GetWheelItem( T* p, lua_State *L )
+	{
+		int iItem = IArg(1);
+
+		WheelItemBase *pItem = p->GetWheelItem( iItem );
+		if( pItem == NULL )
+			luaL_error( L, "%i out of bounds", iItem );
+		pItem->PushSelf( L );
+
+		return 1;
+	}
+
+	LunaWheelBase()
+	{
+		ADD_METHOD( GetWheelItem );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( WheelBase, ActorFrame )
+// lua end
 
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez, Glenn Maynard, Josh Allen
