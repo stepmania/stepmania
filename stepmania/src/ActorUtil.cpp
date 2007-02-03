@@ -124,53 +124,6 @@ retry:
 	return true;
 }
 
-static void PushParamsTable( Lua *L )
-{
-	lua_pushstring( L, "P" );
-	lua_rawget( L, LUA_GLOBALSINDEX );
-	if( lua_isnil(L, -1) )
-	{
-		lua_pop( L, 1 );
-		lua_newtable( L );
-		lua_pushstring( L, "P" );
-		lua_pushvalue( L, -2 );
-		lua_rawset( L, LUA_GLOBALSINDEX );
-	}
-}
-
-/* Set an input parameter to the first value on the stack.  If pOld is non-NULL,
- * set it to the old value.  The value used on the stack will be removed. */
-void ActorUtil::SetParamFromStack( Lua *L, RString sName, LuaReference *pOld )
-{
-	int iValue = lua_gettop(L);
-
-	PushParamsTable( L );
-	int iParams = lua_gettop(L);
-
-	/* Save the old value. */
-	if( pOld != NULL )
-	{
-		lua_getfield( L, iParams, sName );
-		pOld->SetFromStack( L );
-	}
-
-	/* Set the value in the table. */
-	lua_pushvalue( L, iValue );
-	lua_setfield( L, iParams, sName );
-
-	lua_settop( L, iValue-1 );
-}
-
-/* Look up a param set with SetParamFromStack, and push it on the stack. */
-void ActorUtil::GetParam( Lua *L, const RString &sName )
-{
-	/* Search the params table. */
-	PushParamsTable( L );
-	LuaHelpers::Push( L, sName );
-	lua_rawget( L, -2 );
-	lua_remove( L, -2 );
-}
-
 Actor* ActorUtil::LoadFromNode( const XNode* pNode, Actor *pParentActor )
 {
 	ASSERT( pNode );
@@ -180,28 +133,6 @@ Actor* ActorUtil::LoadFromNode( const XNode* pNode, Actor *pParentActor )
 		if( pNode->GetAttrValue("Condition", bCond) && !bCond )
 			return NULL;
 	}
-
-	// Load Params
-	map<RString, LuaReference> setOldParams;
-	{
-		FOREACH_CONST_Child( pNode, pChild )
-		{
-			if( pChild->GetName() == "Param" )
-			{
-				RString sName;
-				if( !pChild->GetAttrValue( "Name", sName ) )
-					Dialog::OK( ssprintf("%s: Param: missing the attribute \"Name\"", ActorUtil::GetWhere(pNode).c_str()), "MISSING_ATTRIBUTE" );
-
-				Lua *L = LUA->Get();
-				if( !pChild->PushAttrValue( L, "Value" ) )
-					Dialog::OK( ssprintf("%s: Param: missing the attribute \"Value\"", ActorUtil::GetWhere(pNode).c_str()), "MISSING_ATTRIBUTE" );
-
-				SetParamFromStack( L, sName, &setOldParams[sName] );
-				LUA->Release(L);
-			}
-		}
-	}
-
 
 	// Element name is the type in XML.
 	// Type= is the name in INI.
@@ -248,17 +179,6 @@ Actor* ActorUtil::LoadFromNode( const XNode* pNode, Actor *pParentActor )
 	}
 
 all_done:
-
-	// Unload Params
-	{
-		Lua *L = LUA->Get();
-		FOREACHM( RString, LuaReference, setOldParams, old )
-		{
-			old->second.PushSelf( L );
-			SetParamFromStack( L, old->first, NULL );
-		}
-		LUA->Release(L);
-	}
 
 	return pReturn;
 }

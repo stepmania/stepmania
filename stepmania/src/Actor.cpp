@@ -211,24 +211,6 @@ void Actor::LoadFromNode( const XNode* pNode )
 	Lua *L = LUA->Get();
 	FOREACH_CONST_Child( pNode, pChild )
 	{
-		if( pChild->GetName() == "Input" )
-		{
-			/* If parameters are specified here, save their values to the actor. */
-			RString sName;
-			if( !pChild->GetAttrValue( "Name", sName ) )
-				RageException::Throw( "%s: Input: missing the attribute \"Name\"", ActorUtil::GetWhere(pNode).c_str() );
-
-			this->PushSelf( L );
-			LuaHelpers::Push( L, sName );
-			ActorUtil::GetParam( L, sName );
-
-			if( lua_isnil(L, -1) )
-				RageException::Throw( "%s: Actor requires parameter \"%s\" that is not set", ActorUtil::GetWhere(pNode).c_str(), sName.c_str() );
-
-			lua_settable( L, -3 );
-			lua_pop( L, 1 );
-		}
-
 		if( pChild->GetName() == "Context" )
 		{
 			RString sName;

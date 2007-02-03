@@ -77,9 +77,6 @@ namespace ActorUtil
 	void SortByZPosition( vector<Actor*> &vActors );
 
 	FileType GetFileType( const RString &sPath );
-
-	void SetParamFromStack( Lua *L, RString sName, LuaReference *pOld=NULL );
-	void GetParam( Lua *L, const RString &sName );
 };
 
 #define SET_XY( actor )			ActorUtil::SetXY( actor, m_sName )
