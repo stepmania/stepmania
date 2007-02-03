@@ -28,7 +28,7 @@ void SMLoader::LoadFromSMTokens(
 	TrimLeft( sStepsType ); 	TrimRight( sStepsType ); 
 	TrimLeft( sDescription );	TrimRight( sDescription ); 
 	TrimLeft( sDifficulty ); 	TrimRight( sDifficulty ); 
-
+	TrimLeft( sNoteData );		TrimRight( sNoteData ); 
 
 //	LOG->Trace( "Steps::LoadFromSMTokens()" );
 

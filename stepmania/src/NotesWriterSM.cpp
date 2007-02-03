@@ -181,9 +181,6 @@ static RString GetSMNotesTag( const Song &song, const Steps &in, bool bSavingCac
 		FOREACH_RadarCategory( rc )
 			asRadarValues.push_back( ssprintf("%.3f", rv[rc]) );
 	}
-	/* Don't append a newline here; it's added in NoteDataUtil::GetSMNoteDataString.
-	 * If we add it here, then every time we write unmodified data we'll add an extra
-	 * newline and they'll accumulate. */
 	lines.push_back( ssprintf( "     %s:", join(",",asRadarValues).c_str() ) );
 
 	RString sNoteData;
