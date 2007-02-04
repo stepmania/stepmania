@@ -11,6 +11,7 @@
 #include "PrefsManager.h"
 #include "Foreach.h"
 #include "ActorUtil.h"
+#include <map>
 
 
 NoteSkinManager*	NOTESKIN = NULL;	// global object accessable from anywhere in the program
@@ -19,6 +20,20 @@ NoteSkinManager*	NOTESKIN = NULL;	// global object accessable from anywhere in t
 const RString NOTESKINS_DIR = "NoteSkins/";
 const RString GLOBAL_BASE_NOTESKIN_DIR = NOTESKINS_DIR + "common/default/";
 static map<RString,RString> g_PathCache;
+
+struct NoteSkinData
+{
+	RString sName;	
+	IniFile metrics;
+
+	// When looking for an element, search these dirs from head to tail.
+	vector<RString> vsDirSearchOrder;
+};
+
+namespace
+{
+	static map<RString,NoteSkinData> g_mapNameToData;
+};
 
 NoteSkinManager::NoteSkinManager()
 {
@@ -39,6 +54,8 @@ NoteSkinManager::~NoteSkinManager()
 {
 	// Unregister with Lua.
 	LUA->UnsetGlobal( "NOTESKIN" );
+
+	g_mapNameToData.clear();
 }
 
 void NoteSkinManager::RefreshNoteSkinData( const Game* pGame )
@@ -56,12 +73,12 @@ void NoteSkinManager::RefreshNoteSkinData( const Game* pGame )
 
 	StripCvs( asNoteSkinNames );
 
-	m_mapNameToData.clear();
+	g_mapNameToData.clear();
 	for( unsigned j=0; j<asNoteSkinNames.size(); j++ )
 	{
 		RString sName = asNoteSkinNames[j];
 		sName.MakeLower();
-		LoadNoteSkinData( sName, m_mapNameToData[sName] );
+		LoadNoteSkinData( sName, g_mapNameToData[sName] );
 	}
 }
 
@@ -155,8 +172,8 @@ void NoteSkinManager::GetAllNoteSkinNamesForGame( const Game *pGame, vector<RStr
 	if( pGame == m_pCurGame )
 	{
 		/* Faster: */
-		for( map<RString,NoteSkinData>::const_iterator iter = m_mapNameToData.begin();
-		     iter != m_mapNameToData.end(); ++iter )
+		for( map<RString,NoteSkinData>::const_iterator iter = g_mapNameToData.begin();
+		     iter != g_mapNameToData.end(); ++iter )
 		{
 			AddTo.push_back( iter->second.sName );
 		}
@@ -174,8 +191,8 @@ RString NoteSkinManager::GetMetric( const RString &sButtonName, const RString &s
 	ASSERT( !m_sCurrentNoteSkin.empty() );
 	RString sNoteSkinName = m_sCurrentNoteSkin;
 	sNoteSkinName.MakeLower();
-	map<RString,NoteSkinData>::const_iterator it = m_mapNameToData.find(sNoteSkinName);
-	ASSERT_M( it != m_mapNameToData.end(), sNoteSkinName );	// this NoteSkin doesn't exist!
+	map<RString,NoteSkinData>::const_iterator it = g_mapNameToData.find(sNoteSkinName);
+	ASSERT_M( it != g_mapNameToData.end(), sNoteSkinName );	// this NoteSkin doesn't exist!
 	const NoteSkinData& data = it->second;
 
 	RString sReturn;
@@ -215,8 +232,8 @@ try_again:
 	if( it != g_PathCache.end() )
 		return it->second;
 
-	map<RString,NoteSkinData>::const_iterator iter = m_mapNameToData.find( m_sCurrentNoteSkin );
-	ASSERT( iter != m_mapNameToData.end() );
+	map<RString,NoteSkinData>::const_iterator iter = g_mapNameToData.find( m_sCurrentNoteSkin );
+	ASSERT( iter != g_mapNameToData.end() );
 	const NoteSkinData &data = iter->second;
 
 	RString sPath;	// fill this in below

@@ -8,9 +8,9 @@
 #include "PlayerNumber.h"
 #include "IniFile.h"
 #include "ThemeMetric.h"
-#include <map>
 
 class Game;
+struct NoteSkinData;
 
 class NoteSkinManager
 {
@@ -44,18 +44,9 @@ protected:
 	RString GetPathFromDirAndFile( const RString &sDir, const RString &sFileName );
 	void GetAllNoteSkinNamesForGame( const Game *pGame, vector<RString> &AddTo );
 
-	struct NoteSkinData
-	{
-		RString sName;	
-		IniFile metrics;
-
-		// When looking for an element, search these dirs from head to tail.
-		vector<RString> vsDirSearchOrder;
-	};
 	void LoadNoteSkinData( const RString &sNoteSkinName, NoteSkinData& data_out );
 	void LoadNoteSkinDataRecursive( const RString &sNoteSkinName, NoteSkinData& data_out );
 	RString m_sCurrentNoteSkin;
-	map<RString,NoteSkinData> m_mapNameToData;
 	const Game* m_pCurGame;
 };
 
