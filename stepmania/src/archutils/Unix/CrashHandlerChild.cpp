@@ -23,7 +23,7 @@
 #endif
 
 #if defined(HAVE_VERSION_INFO)
-extern const unsigned version_num;
+extern const unsigned long version_num;
 extern const char *version_time;
 #endif
 
@@ -203,7 +203,7 @@ static void child_process()
 	
 	fprintf( CrashDump, "%s crash report", PRODUCT_ID_VER );
 #if defined(HAVE_VERSION_INFO)
-	fprintf( CrashDump, " (build %u, %s)", version_num, version_time );
+	fprintf( CrashDump, " (build %lu, %s)", version_num, version_time );
 #endif
 	fprintf( CrashDump, "\n" );
 	fprintf( CrashDump, "--------------------------------------\n" );
