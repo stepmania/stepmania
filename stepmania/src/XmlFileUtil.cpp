@@ -733,6 +733,39 @@ XNode *XmlFileUtil::XNodeFromTable( lua_State *L )
 	return XNodeFromTableRecursive( L, "Layer", ProcessedTables );
 }
 
+/* Move nodes from pFrom into pTo which don't already exist in pTo.  For
+ * efficiency, nodes will be moved, not copied, so pFrom will be modified.
+ * On return, the contents of pFrom will be undefined and should be deleted. */
+void XmlFileUtil::MergeIniUnder( XNode *pFrom, XNode *pTo )
+{
+	/* Iterate over each section in pFrom. */
+	XNodes::iterator it = pFrom->m_childs.begin();
+	while( it != pFrom->m_childs.end() )
+	{
+		XNodes::iterator next = it;
+		++next;
+
+		/* If this node doesn't exist in pTo, just move the whole node. */
+		XNode *pChildNode = pTo->GetChild( it->first );
+		XNode *pSectionNode = it->second;
+		if( pChildNode == NULL )
+		{
+			pFrom->RemoveChild( pSectionNode, false ); // don't delete
+			pTo->AppendChild( pSectionNode );
+		}
+		else
+		{
+			FOREACHM( RString, XNodeValue *, pSectionNode->m_attrs, it2 )
+			{
+				/* Don't overwrite existing nodes. */
+				pChildNode->AppendAttrFrom( it2->first, it2->second->Copy(), false );
+			}
+		}
+
+		it = next;
+	}
+}
+
 /*
  * (c) 2001-2006 Chris Danford, Glenn Maynard
  * All rights reserved.

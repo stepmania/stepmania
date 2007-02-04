@@ -21,6 +21,8 @@ namespace XmlFileUtil
 
 	void CompileXNodeTree( XNode *pNode, const RString &sFile );
 	XNode *XNodeFromTable( lua_State *L );
+
+	void MergeIniUnder( XNode *pFrom, XNode *pTo );
 }
 
 #endif

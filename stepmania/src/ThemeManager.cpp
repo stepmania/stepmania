@@ -23,6 +23,7 @@
 #include "SpecialFiles.h"
 #include "EnumHelper.h"
 #include "PrefsManager.h"
+#include "XmlFileUtil.h"
 
 ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the program
 
@@ -258,39 +259,6 @@ bool ThemeManager::DoesLanguageExist( const RString &sLanguage )
 	return false;
 }
 
-/* Move nodes from pFrom into pTo which don't already exist in pTo.  For
- * efficiency, nodes will be moved, not copied, so pFrom will be modified.
- * On return, the contents of pFrom will be undefined and should be deleted. */
-static void MergeIniUnder( XNode *pFrom, XNode *pTo )
-{
-	/* Iterate over each section in pFrom. */
-	XNodes::iterator it = pFrom->m_childs.begin();
-	while( it != pFrom->m_childs.end() )
-	{
-		XNodes::iterator next = it;
-		++next;
-
-		/* If this node doesn't exist in pTo, just move the whole node. */
-		XNode *pChildNode = pTo->GetChild( it->first );
-		XNode *pSectionNode = it->second;
-		if( pChildNode == NULL )
-		{
-			pFrom->RemoveChild( pSectionNode, false ); // don't delete
-			pTo->AppendChild( pSectionNode );
-		}
-		else
-		{
-			FOREACHM( RString, XNodeValue *, pSectionNode->m_attrs, it2 )
-			{
-				/* Don't overwrite existing nodes. */
-				pChildNode->AppendAttrFrom( it2->first, it2->second->Copy(), false );
-			}
-		}
-
-		it = next;
-	}
-}
-
 void ThemeManager::LoadThemeMetrics( deque<Theme> &theme, const RString &sThemeName_, const RString &sLanguage_ )
 {
 	if( g_pLoadedThemeData == NULL )
@@ -343,8 +311,8 @@ void ThemeManager::LoadThemeMetrics( deque<Theme> &theme, const RString &sThemeN
 		 * need to load the derived theme first, to find out the name of the fallback
 		 * theme.  Avoid having to load IniFile twice, merging the fallback theme
 		 * into the derived theme that we've already loaded. */
-		MergeIniUnder( &iniMetrics, &g_pLoadedThemeData->iniMetrics );
-		MergeIniUnder( &iniStrings, &g_pLoadedThemeData->iniStrings );
+		XmlFileUtil::MergeIniUnder( &iniMetrics, &g_pLoadedThemeData->iniMetrics );
+		XmlFileUtil::MergeIniUnder( &iniStrings, &g_pLoadedThemeData->iniStrings );
 
 		if( sFallback.empty() )
 			break;
