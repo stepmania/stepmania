@@ -5,7 +5,6 @@
 
 #include "RageTypes.h"
 #include <set>
-#include <deque>
 #include "LuaReference.h"
 
 class IThemeMetric;
@@ -104,7 +103,7 @@ public:
 
 protected:
 	void RunLuaScripts( const RString &sMask );
-	void LoadThemeMetrics( deque<Theme> &theme, const RString &sThemeName, const RString &sLanguage_ );
+	void LoadThemeMetrics( const RString &sThemeName, const RString &sLanguage_ );
 	RString GetMetricRaw( const IniFile &ini, const RString &sClassName, const RString &sValueName );
 	bool GetMetricRawRecursive( const IniFile &ini, const RString &sClassName, const RString &sValueName, RString &sRet );
 	RString GetPathToAndFallback( ElementCategory category, const RString &sClassName, const RString &sFile );

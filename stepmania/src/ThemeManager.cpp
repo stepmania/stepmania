@@ -24,6 +24,7 @@
 #include "EnumHelper.h"
 #include "PrefsManager.h"
 #include "XmlFileUtil.h"
+#include <deque>
 
 ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the program
 
@@ -259,7 +260,7 @@ bool ThemeManager::DoesLanguageExist( const RString &sLanguage )
 	return false;
 }
 
-void ThemeManager::LoadThemeMetrics( deque<Theme> &theme, const RString &sThemeName_, const RString &sLanguage_ )
+void ThemeManager::LoadThemeMetrics( const RString &sThemeName_, const RString &sLanguage_ )
 {
 	if( g_pLoadedThemeData == NULL )
 		g_pLoadedThemeData = new LoadedThemeData;
@@ -278,7 +279,7 @@ void ThemeManager::LoadThemeMetrics( deque<Theme> &theme, const RString &sThemeN
 	bool bLoadedBase = false;
 	while(1)
 	{
-		ASSERT_M( theme.size() < 20, "Circular theme fallback references detected." );
+		ASSERT_M( g_vThemes.size() < 20, "Circular theme fallback references detected." );
 
 		g_vThemes.push_back( Theme() );
 		Theme &t = g_vThemes.back();
@@ -373,7 +374,7 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 	// Load theme metrics.  If only the language is changing, this is all
 	// we need to reload.
 	bool bThemeChanging = (sThemeName != m_sCurThemeName);
-	LoadThemeMetrics( g_vThemes, sThemeName, sLanguage );
+	LoadThemeMetrics( sThemeName, sLanguage );
 
 	// Clear the theme path cache.  This caches language-specific graphic paths, so do this
 	// even if only the language is changing.
@@ -788,7 +789,7 @@ void ThemeManager::ReloadMetrics()
 	FILEMAN->FlushDirCache( GetCurThemeDir() );
 
 	// force a reload of the metrics cache
-	LoadThemeMetrics( g_vThemes, m_sCurThemeName, m_sCurLanguage );
+	LoadThemeMetrics( m_sCurThemeName, m_sCurLanguage );
 
 #if !defined(SMPACKAGE)
 	if( SCREENMAN )
@@ -1069,7 +1070,7 @@ RString ThemeManager::GetString( const RString &sClassName, const RString &sValu
 		ini.SetValue( sClassName, sValueName, s );
 		ini.WriteFile( sFile );
 
-		LoadThemeMetrics( g_vThemes, m_sCurThemeName, m_sCurLanguage );
+		LoadThemeMetrics( m_sCurThemeName, m_sCurLanguage );
 	}
 	*/
 
