@@ -6132,11 +6132,11 @@
 /* Begin PBXLegacyTarget section */
 		AA30C60F07F5E24A0066F398 /* version */ = {
 			isa = PBXLegacyTarget;
-			buildArgumentsString = scripts/increment_version.sh;
+			buildArgumentsString = "-w scripts/increment_version.pl";
 			buildConfigurationList = AAC8450B0856A19700A9FEAB /* Build configuration list for PBXLegacyTarget "version" */;
 			buildPhases = (
 			);
-			buildToolPath = /bin/sh;
+			buildToolPath = /usr/bin/perl;
 			dependencies = (
 			);
 			name = version;
