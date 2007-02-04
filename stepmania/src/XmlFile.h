@@ -129,7 +129,7 @@ public:
 	XNode();
 	explicit XNode( const RString &sName );
 	XNode( const XNode &cpy );
-	~XNode();
+	~XNode() { Free(); }
 
 	void Clear();
 

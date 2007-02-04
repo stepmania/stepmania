@@ -35,11 +35,6 @@ XNode::XNode( const XNode &cpy ):
 		this->AppendChild( new XNode(*c) );
 }
 
-XNode::~XNode()
-{
-	Free();
-}
-
 void XNode::Clear()
 {
 	Free();
@@ -49,9 +44,9 @@ void XNode::Clear()
 void XNode::Free()
 {
 	FOREACH_Child( this, p )
-		SAFE_DELETE( p );
+		delete p;
 	FOREACH_Attr( this, pAttr )
-		SAFE_DELETE( pAttr->second );
+		delete pAttr->second;
 	m_childs.clear();
 	m_attrs.clear();
 
