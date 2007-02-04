@@ -24,7 +24,7 @@
 
 #if defined(HAVE_VERSION_INFO)
 extern const unsigned long version_num;
-extern const char *version_time;
+extern const char *const version_time;
 #endif
 
 const char *g_pCrashHandlerArgv0 = NULL;
