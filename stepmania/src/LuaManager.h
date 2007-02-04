@@ -49,9 +49,19 @@ private:
 
 namespace LuaHelpers
 {
-	/* Run a script with the given name.  The given number of return values are left on
+	/* Load the given script with the given name.  On success, the resulting
+	 * chunk will be on the stack.  On error, the error is stored in sError
+	 * and the stack is unchanged. */
+	bool LoadScript( Lua *L, const RString &sScript, const RString &sName, RString &sError );
+
+	/* Run the function with arguments at the top of the stack, with the given
+	 * number of arguments.  The specified number of return values are left on
 	 * the Lua stack.  On error, nils are left on the stack, sError is set and 
 	 * false is returned. */
+	bool RunScriptOnStack( Lua *L, RString &sError, int iArgs = 0, int iReturnValues = 0 );
+
+	/* LoadScript the given script, and RunScriptOnStack it.  iArgs arguments are
+	 * at the top of the stack. */
 	bool RunScript( Lua *L, const RString &sScript, const RString &sName, RString &sError, int iArgs = 0, int iReturnValues = 0 );
 
 	/* Run the given expression, returning a single value, and leave the return value on the

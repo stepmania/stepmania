@@ -673,43 +673,56 @@ bool LuaHelpers::RunScriptFile( const RString &sFile )
 }
 
 
-bool LuaHelpers::RunScript( Lua *L, const RString &sScript, const RString &sName, RString &sError, int iArgs, int iReturnValues )
+bool LuaHelpers::LoadScript( Lua *L, const RString &sScript, const RString &sName, RString &sError )
+{
+	// load string
+	int ret = luaL_loadbuffer( L, sScript.data(), sScript.size(), sName );
+	if( ret )
+	{
+		LuaHelpers::Pop( L, sError );
+		return false;
+	}
+
+	return true;
+}
+
+bool LuaHelpers::RunScriptOnStack( Lua *L, RString &sError, int iArgs, int iReturnValues )
 {
 	lua_pushcfunction( L, GetLuaStack );
-	int iErrFunc = lua_gettop( L );
 
-	// load string
+	// move the error function above the function and params
+	int iErrFunc = lua_gettop(L) - iArgs - 1;
+	lua_insert( L, iErrFunc );
+
+	// evaluate
+	int ret = lua_pcall( L, iArgs, iReturnValues, iErrFunc );
+	if( ret )
 	{
-		int ret = luaL_loadbuffer( L, sScript.data(), sScript.size(), sName );
-		if( ret )
-		{
-			LuaHelpers::Pop( L, sError );
-			lua_pop( L, iArgs );
-			lua_remove( L, iErrFunc );
-			for( int i = 0; i < iReturnValues; ++i )
-				lua_pushnil( L );
-			return false;
-		}
+		LuaHelpers::Pop( L, sError );
+		lua_remove( L, iErrFunc );
+		for( int i = 0; i < iReturnValues; ++i )
+			lua_pushnil( L );
+		return false;
+	}
+
+	lua_remove( L, iErrFunc );
+	return true;
+}
+
+bool LuaHelpers::RunScript( Lua *L, const RString &sScript, const RString &sName, RString &sError, int iArgs, int iReturnValues )
+{
+	if( !LoadScript(L, sScript, sName, sError) )
+	{
+		lua_pop( L, iArgs );
+		for( int i = 0; i < iReturnValues; ++i )
+			lua_pushnil( L );
+		return false;
 	}
 
 	// move the function above the params
 	lua_insert( L, lua_gettop(L) - iArgs );
 
-	// evaluate
-	{
-		int ret = lua_pcall( L, iArgs, iReturnValues, iErrFunc );
-		if( ret )
-		{
-			LuaHelpers::Pop( L, sError );
-			lua_remove( L, iErrFunc );
-			for( int i = 0; i < iReturnValues; ++i )
-				lua_pushnil( L );
-			return false;
-		}
-	}
-
-	lua_remove( L, iErrFunc );
-	return true;
+	return LuaHelpers::RunScriptOnStack( L, sError, iArgs, iReturnValues );
 }
 
 bool LuaHelpers::RunExpression( Lua *L, const RString &sExpression, const RString &sName )
