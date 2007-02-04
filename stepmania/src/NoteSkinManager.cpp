@@ -19,6 +19,7 @@ NoteSkinManager*	NOTESKIN = NULL;	// global object accessable from anywhere in t
 
 const RString NOTESKINS_DIR = "NoteSkins/";
 const RString GLOBAL_BASE_NOTESKIN_DIR = NOTESKINS_DIR + "common/default/";
+const RString GAME_BASE_NOTESKIN_NAME = "default";
 static map<RString,RString> g_PathCache;
 
 struct NoteSkinData
@@ -37,7 +38,6 @@ namespace
 
 NoteSkinManager::NoteSkinManager()
 {
-	GAME_BASE_NOTESKIN_NAME.Load( "NoteSkinManager", "GameBaseNoteSkin" );
 	m_pCurGame = NULL;
 
 	// Register with Lua.
@@ -133,7 +133,7 @@ void NoteSkinManager::GetNoteSkinNames( const Game* pGame, vector<RString> &AddT
 	GetAllNoteSkinNamesForGame( pGame, AddTo );
 
 	/* Move "default" to the front if it exists. */
-	vector<RString>::iterator iter = find( AddTo.begin(), AddTo.end(), GAME_BASE_NOTESKIN_NAME.GetValue() );
+	vector<RString>::iterator iter = find( AddTo.begin(), AddTo.end(), GAME_BASE_NOTESKIN_NAME );
 	if( iter != AddTo.end() )
 	{
 		AddTo.erase( iter );
@@ -337,13 +337,11 @@ class LunaNoteSkinManager: public Luna<NoteSkinManager>
 public:
 	static int GetPath( T* p, lua_State *L )		{ lua_pushstring(L, p->GetPath(SArg(1),SArg(2)) ); return 1; }
 	static int GetMetricA( T* p, lua_State *L )		{ p->GetMetricA(SArg(1),SArg(2))->PushSelf(L); return 1; }
-	DEFINE_METHOD( GetGameBaseNoteSkinName, GAME_BASE_NOTESKIN_NAME.GetValue() )
 
 	LunaNoteSkinManager()
 	{
 		ADD_METHOD( GetPath );
 		ADD_METHOD( GetMetricA );
-		ADD_METHOD( GetGameBaseNoteSkinName );
 	}
 };
 

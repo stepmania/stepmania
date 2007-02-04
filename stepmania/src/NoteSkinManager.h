@@ -7,7 +7,6 @@
 #include "RageTypes.h"
 #include "PlayerNumber.h"
 #include "IniFile.h"
-#include "ThemeMetric.h"
 
 class Game;
 struct NoteSkinData;
@@ -34,7 +33,6 @@ public:
 	float		GetMetricF( const RString &sButtonName, const RString &sValueName );
 	bool		GetMetricB( const RString &sButtonName, const RString &sValueName );
 	apActorCommands	GetMetricA( const RString &sButtonName, const RString &sValueName );
-	ThemeMetric<RString> GAME_BASE_NOTESKIN_NAME;
 
 	// Lua
 	void PushSelf( lua_State *L );
