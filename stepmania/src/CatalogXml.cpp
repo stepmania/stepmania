@@ -22,7 +22,6 @@
 #include "UnlockManager.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
 #include "LocalizedString.h"
-#include "RageTimer.h"
 
 #define SHOW_PLAY_MODE(pm)		THEME->GetMetricB("CatalogXml",ssprintf("ShowPlayMode%s",PlayModeToString(pm).c_str()))
 #define SHOW_STYLE(ps)			THEME->GetMetricB("CatalogXml",ssprintf("ShowStyle%s",Capitalize((ps)->m_szName).c_str()))
@@ -50,9 +49,6 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 	RString fn = CATALOG_XML_FILE;
 
 	LOG->Trace( "Writing %s ...", fn.c_str() );
-	RageTimer timer;
-	float f;
-#define TIME(x) {f = timer.Ago(); LOG->Trace( "Writing " #x " took %f seconds.", f ); timer.Touch();}
 	XNode xml( "Catalog" );
 
 	const vector<StepsType> &vStepsTypesToShow = CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue();
@@ -165,7 +161,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 		pNode->AppendChild( "NumUnlockedSteps",		iNumUnlockedSteps );
 		pNode->AppendChild( "NumUnlockedCourses",	iNumUnlockedCourses );
 	}
-	TIME(Totals)
+
 	{
 		XNode* pNode = xml.AppendChild( "Songs" );
 
@@ -219,7 +215,6 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 			}
 		}
 	}
-	TIME(Songs)
 
 	{
 		XNode* pNode = xml.AppendChild( "Courses" );
@@ -271,7 +266,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 			}
 		}
 	}
-	TIME(Courses)
+
 	{
 		XNode* pNode = xml.AppendChild( "Types" );
 
@@ -391,17 +386,16 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 			}
 		}
 	}
-	TIME(Types)
+
 	xml.AppendChild( "InternetRankingHomeUrl", INTERNET_RANKING_HOME_URL );
 	xml.AppendChild( "InternetRankingUploadUrl", INTERNET_RANKING_UPLOAD_URL );
 	xml.AppendChild( "InternetRankingViewGuidUrl", INTERNET_RANKING_VIEW_GUID_URL );
 	xml.AppendChild( "ProductTitle", PRODUCT_TITLE );
 	xml.AppendChild( "FooterText", FOOTER_TEXT );
 	xml.AppendChild( "FooterLink", FOOTER_LINK );
-	TIME(Misc)
+
 	XmlFileUtil::SaveToFile( &xml, fn, CATALOG_XSL, false );
-	TIME(to disk)
-#undef TIME
+
 	LOG->Trace( "Done." );
 }
 
