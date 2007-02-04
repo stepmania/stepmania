@@ -5,9 +5,6 @@
 #include "XmlFile.h"
 #include "ThemeManager.h"
 
-#define WRITE_COMPLEX_VALUES		THEME->GetMetricB("RadarValues","WriteComplexValues")
-#define WRITE_SIMPLE_VALUES			THEME->GetMetricB("RadarValues","WriteSimpleValues")
-
 RadarValues::RadarValues()
 {
 	MakeUnknown();
@@ -25,7 +22,7 @@ void RadarValues::Zero()
 		m_Values.f[rc] = 0;
 }
 
-XNode* RadarValues::CreateNode() const
+XNode* RadarValues::CreateNode( bool bIncludeSimpleValues, bool bIncludeComplexValues ) const
 {
 	XNode* pNode = new XNode( "RadarValues" );
 
@@ -34,12 +31,12 @@ XNode* RadarValues::CreateNode() const
 	{
 		if( rc >= RadarCategory_TapsAndHolds )
 		{
-			if( WRITE_SIMPLE_VALUES )
+			if( bIncludeSimpleValues )
 				pNode->AppendChild( RadarCategoryToString(rc),	(int)m_Values.f[rc] );
 		}
 		else
 		{
-			if( WRITE_COMPLEX_VALUES )
+			if( bIncludeComplexValues )
 				pNode->AppendChild( RadarCategoryToString(rc),	m_Values.f[rc] );
 		}
 	}

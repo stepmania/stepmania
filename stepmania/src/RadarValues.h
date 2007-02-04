@@ -59,7 +59,7 @@ struct RadarValues
 		return !operator==( other );
 	}
 
-	XNode* CreateNode() const;
+	XNode* CreateNode( bool bIncludeSimpleValues, bool bIncludeComplexValues ) const;
 	void LoadFromNode( const XNode* pNode );
 
 	RString ToString( int iMaxValues = -1 ) const; // default = all

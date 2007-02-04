@@ -22,6 +22,7 @@
 #include "UnlockManager.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
 #include "LocalizedString.h"
+#include "RageTimer.h"
 
 #define SHOW_PLAY_MODE(pm)		THEME->GetMetricB("CatalogXml",ssprintf("ShowPlayMode%s",PlayModeToString(pm).c_str()))
 #define SHOW_STYLE(ps)			THEME->GetMetricB("CatalogXml",ssprintf("ShowStyle%s",Capitalize((ps)->m_szName).c_str()))
@@ -49,11 +50,17 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 	RString fn = CATALOG_XML_FILE;
 
 	LOG->Trace( "Writing %s ...", fn.c_str() );
-
+	RageTimer timer;
+	float f;
+#define TIME(x) {f = timer.Ago(); LOG->Trace( "Writing " #x " took %f seconds.", f ); timer.Touch();}
 	XNode xml( "Catalog" );
 
 	const vector<StepsType> &vStepsTypesToShow = CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue();
-	
+	const vector<Difficulty> &vDifficultiesToShow = CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue();
+	const vector<CourseDifficulty> &vCourseDifficultiesToShow = CommonMetrics::COURSE_DIFFICULTIES_TO_SHOW.GetValue();
+	const bool bWriteSimpleValues = THEME->GetMetricB( "RadarValues", "WriteSimpleValues" );
+	const bool bWriteComplexValues = THEME->GetMetricB( "RadarValues", "WriteComplexValues" );
+
 	{
 		XNode* pNode = xml.AppendChild( "Totals" );
 		XNode* pNumSongsByGroup = pNode->AppendChild( "NumSongsByGroup" );
@@ -97,7 +104,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 						continue;	// skip: Locked song.
 					iTotalSongs++;
 					iNumSongsInGroup++;
-					FOREACH_CONST( Difficulty, CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue(), dc )
+					FOREACH_CONST( Difficulty, vDifficultiesToShow, dc )
 					{
 						Steps* pSteps = SongUtil::GetStepsByDifficulty( pSong, *st, *dc, false );	// no autogen
 						
@@ -158,14 +165,15 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 		pNode->AppendChild( "NumUnlockedSteps",		iNumUnlockedSteps );
 		pNode->AppendChild( "NumUnlockedCourses",	iNumUnlockedCourses );
 	}
-
+	TIME(Totals)
 	{
 		XNode* pNode = xml.AppendChild( "Songs" );
 
-		vector<Song*> vpSongs = SONGMAN->GetAllSongs();
+		const vector<Song*>& vpSongs = SONGMAN->GetAllSongs();
+
 		for( unsigned i=0; i<vpSongs.size(); i++ )
 		{
-			Song* pSong = vpSongs[i];
+			const Song* pSong = vpSongs[i];
 			
 			/*
 			 * Not all songs should be stored in Catalog.xml.  Tutorial songs
@@ -191,7 +199,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 
 			FOREACH_CONST( StepsType, vStepsTypesToShow, st )
 			{
-				FOREACH_CONST( Difficulty, CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue(), dc )
+				FOREACH_CONST( Difficulty, vDifficultiesToShow, dc )
 				{
 					Steps* pSteps = SongUtil::GetStepsByDifficulty( pSong, *st, *dc, false );	// no autogen
 					if( pSteps == NULL )
@@ -206,12 +214,12 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 					pSongNode->AppendChild( pStepsIDNode );
 					
 					pStepsIDNode->AppendChild( "Meter", pSteps->GetMeter() );
-					pStepsIDNode->AppendChild( pSteps->GetRadarValues(PLAYER_1).CreateNode() );
+					pStepsIDNode->AppendChild( pSteps->GetRadarValues(PLAYER_1).CreateNode(bWriteSimpleValues, bWriteComplexValues) );
 				}
 			}
 		}
 	}
-
+	TIME(Songs)
 
 	{
 		XNode* pNode = xml.AppendChild( "Courses" );
@@ -240,11 +248,10 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 			pCourseNode->AppendChild( "SubTitle", pCourse->GetDisplaySubTitle() );
 			pCourseNode->AppendChild( "HasMods", pCourse->HasMods() );
 
-			const vector<CourseDifficulty> &vDiffs = CommonMetrics::COURSE_DIFFICULTIES_TO_SHOW.GetValue();
 
 			FOREACH_CONST( StepsType, vStepsTypesToShow, st )
 			{
-				FOREACH_CONST( CourseDifficulty, vDiffs, dc )
+				FOREACH_CONST( CourseDifficulty, vCourseDifficultiesToShow, dc )
 				{
 					Trail *pTrail = pCourse->GetTrail( *st, *dc );
 					if( pTrail == NULL )
@@ -259,18 +266,18 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 					pCourseNode->AppendChild( pTrailIDNode );
 					
 					pTrailIDNode->AppendChild( "Meter", pTrail->GetMeter() );
-					pTrailIDNode->AppendChild( pTrail->GetRadarValues().CreateNode() );
+					pTrailIDNode->AppendChild( pTrail->GetRadarValues().CreateNode(bWriteSimpleValues, bWriteComplexValues) );
 				}
 			}
 		}
 	}
-
+	TIME(Courses)
 	{
 		XNode* pNode = xml.AppendChild( "Types" );
 
 		{
 			XNode* pNode2 = pNode->AppendChild( "Difficulty" );
-			FOREACH_CONST( Difficulty, CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue(), iter )
+			FOREACH_CONST( Difficulty, vDifficultiesToShow, iter )
 			{
 				XNode* pNode3 = pNode2->AppendChild( "Difficulty", DifficultyToString(*iter) );
 				pNode3->AppendAttr( "DisplayAs", DifficultyToLocalizedString(*iter) );
@@ -279,7 +286,7 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 
 		{
 			XNode* pNode2 = pNode->AppendChild( "CourseDifficulty" );
-			FOREACH_CONST( CourseDifficulty, CommonMetrics::COURSE_DIFFICULTIES_TO_SHOW.GetValue(), iter )
+			FOREACH_CONST( CourseDifficulty, vCourseDifficultiesToShow, iter )
 			{
 				XNode* pNode3 = pNode2->AppendChild( "CourseDifficulty", DifficultyToString(*iter) );
 				pNode3->AppendAttr( "DisplayAs", CourseDifficultyToLocalizedString(*iter) );
@@ -384,16 +391,17 @@ void CatalogXml::Save( LoadingWindow *loading_window )
 			}
 		}
 	}
-
+	TIME(Types)
 	xml.AppendChild( "InternetRankingHomeUrl", INTERNET_RANKING_HOME_URL );
 	xml.AppendChild( "InternetRankingUploadUrl", INTERNET_RANKING_UPLOAD_URL );
 	xml.AppendChild( "InternetRankingViewGuidUrl", INTERNET_RANKING_VIEW_GUID_URL );
 	xml.AppendChild( "ProductTitle", PRODUCT_TITLE );
 	xml.AppendChild( "FooterText", FOOTER_TEXT );
 	xml.AppendChild( "FooterLink", FOOTER_LINK );
-
+	TIME(Misc)
 	XmlFileUtil::SaveToFile( &xml, fn, CATALOG_XSL, false );
-
+	TIME(to disk)
+#undef TIME
 	LOG->Trace( "Done." );
 }
 

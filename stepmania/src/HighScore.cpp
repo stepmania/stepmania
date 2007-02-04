@@ -80,6 +80,8 @@ HighScoreImpl::HighScoreImpl()
 XNode *HighScoreImpl::CreateNode() const
 {
 	XNode *pNode = new XNode( "HighScore" );
+	const bool bWriteSimpleValues = THEME->GetMetricB( "RadarValues", "WriteSimpleValues" );
+	const bool bWriteComplexValues = THEME->GetMetricB( "RadarValues", "WriteComplexValues" );
 
 	// TRICKY:  Don't write "name to fill in" markers.
 	pNode->AppendChild( "Name", IsRankingToFillIn(sName) ? RString("") : sName );
@@ -100,7 +102,7 @@ XNode *HighScoreImpl::CreateNode() const
 	FOREACH_HoldNoteScore( hns )
 		if( hns != HNS_None )	// HACK: don't save meaningless "none" count
 			pHoldNoteScores->AppendChild( HoldNoteScoreToString(hns), iHoldNoteScores[hns] );
-	pNode->AppendChild( radarValues.CreateNode() );
+	pNode->AppendChild( radarValues.CreateNode(bWriteSimpleValues, bWriteComplexValues) );
 	pNode->AppendChild( "LifeRemainingSeconds",		fLifeRemainingSeconds );
 
 	return pNode;
