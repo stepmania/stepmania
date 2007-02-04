@@ -35,7 +35,7 @@ int main(void) {
 	if (f=fopen("verstub.cpp","w")) {
 		fprintf(f,
 			"unsigned long version_num = %ld;\n"
-			"const char *version_time = \"%s\";\n"
+			"extern const char *const version_time = \"%s\";\n"
 			,build
 			,s);
 		fclose(f);

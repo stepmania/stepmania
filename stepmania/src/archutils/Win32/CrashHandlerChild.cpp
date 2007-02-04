@@ -29,7 +29,7 @@
 #endif
 
 extern unsigned long version_num;
-extern const char *version_time;
+extern const char *const version_time;
 
 // VDI symbol lookup:
 namespace VDDebugInfo
