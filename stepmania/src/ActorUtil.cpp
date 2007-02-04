@@ -252,29 +252,55 @@ namespace
 		Lua *L = LUA->Get();
 
 		RString sError;
-		if( !LuaHelpers::RunScript(L, sScript, "@" + sFile, sError, 0, 1) )
+		if( !LuaHelpers::LoadScript(L, sScript, "@" + sFile, sError) )
 		{
-			lua_pop( L, 1 );
 			LUA->Release( L );
 			sError = ssprintf( "Lua runtime error: %s", sError.c_str() );
 			Dialog::OK( sError, "LUA_ERROR" );
 			return NULL;
 		}
 
-		if( lua_type(L, -1) != LUA_TTABLE )
-		{
-			lua_pop( L, 1 );
-			LUA->Release( L );
-			sError = ssprintf( "%s: must return a table", sFile.c_str() );
-			Dialog::OK( sError, "LUA_ERROR" );
-			return NULL;
-		}
-
-		XNode *pRet = XmlFileUtil::XNodeFromTable( L );
+		XNode *pRet = ActorUtil::LoadXNodeFromStackShowErrors( L );
 
 		LUA->Release( L );
 		return pRet;
 	}
+}
+
+XNode *ActorUtil::LoadXNodeFromStackShowErrors( Lua *L )
+{
+	LuaReference func;
+	lua_pushvalue( L, -1 );
+	func.SetFromStack( L );
+
+	RString sError;
+	if( !LuaHelpers::RunScriptOnStack(L, sError, 0, 1) )
+	{
+		lua_pop( L, 1 );
+		LUA->Release( L );
+		sError = ssprintf( "Lua runtime error: %s", sError.c_str() );
+		Dialog::OK( sError, "LUA_ERROR" );
+		return NULL;
+	}
+
+	if( lua_type(L, -1) != LUA_TTABLE )
+	{
+		lua_pop( L, 1 );
+
+		func.PushSelf( L );
+		lua_Debug debug;
+		lua_getinfo( L, ">nS", &debug );
+
+		sError = ssprintf( "%s: must return a table", debug.short_src );
+		LUA->Release( L );
+
+		Dialog::OK( sError, "LUA_ERROR" );
+		return NULL;
+	}
+
+	XNode *pRet = XmlFileUtil::XNodeFromTable( L );
+
+	return pRet;
 }
 
 /*
