@@ -11,6 +11,7 @@
 #include "Sprite.h"
 #include "NoteTypes.h"
 #include "LuaBinding.h"
+#include "Foreach.h"
 
 const RString& NoteNotePartToString( NotePart i );
 #define FOREACH_NotePart( i ) FOREACH_ENUM( NotePart, i )
