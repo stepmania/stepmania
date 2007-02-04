@@ -198,7 +198,7 @@ void PlayerOptions::GetMods( vector<RString> &AddTo, bool bForceNoteSkin ) const
 	}
 
 	// Don't display a string if using the default NoteSkin unless we force it.
-	if( bForceNoteSkin || (!m_sNoteSkin.empty() && m_sNoteSkin != NOTESKIN->GAME_BASE_NOTESKIN_NAME.GetValue()) )
+	if( bForceNoteSkin || (!m_sNoteSkin.empty() && m_sNoteSkin != CommonMetrics::DEFAULT_NOTESKIN_NAME.GetValue()) )
 	{
 		RString s = m_sNoteSkin;
 		Capitalize( s );
@@ -352,7 +352,7 @@ void PlayerOptions::FromString( const RString &sOptions, bool bWarnOnInvalid )
 		else if( sBit == "hallway" )				{ m_bSetTiltOrSkew = true; m_fSkew = 0;		m_fPerspectiveTilt = -level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
 		else if( sBit == "distant" )				{ m_bSetTiltOrSkew = true; m_fSkew = 0;		m_fPerspectiveTilt = +level;	m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
 		else if( NOTESKIN && NOTESKIN->DoesNoteSkinExist(sBit) )	m_sNoteSkin = sBit;
-		else if( sBit == "noteskin" && !on ) /* "no noteskin" */	m_sNoteSkin = NOTESKIN->GAME_BASE_NOTESKIN_NAME;
+		else if( sBit == "noteskin" && !on ) /* "no noteskin" */	m_sNoteSkin = CommonMetrics::DEFAULT_NOTESKIN_NAME;
 		else if( sBit == "randomspeed" ) 			SET_FLOAT( fRandomSpeed )
 		else if( sBit == "addscore" )				m_ScoreDisplay = SCORING_ADD;
 		else if( sBit == "subtractscore" )			m_ScoreDisplay = SCORING_SUBTRACT;

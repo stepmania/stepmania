@@ -5,6 +5,7 @@
 #include "BackgroundUtil.h"
 #include "BannerCache.h"
 #include "CatalogXml.h"
+#include "CommonMetrics.h"
 #include "Course.h"
 #include "CourseLoaderCRS.h"
 #include "CourseUtil.h"
@@ -1011,7 +1012,7 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, RString sPreferredG
 	if( pPlayerOptionsOut != NULL )
 	{
 		pPlayerOptionsOut->Init();
-		pPlayerOptionsOut->m_sNoteSkin = NOTESKIN->GAME_BASE_NOTESKIN_NAME;
+		pPlayerOptionsOut->m_sNoteSkin = CommonMetrics::DEFAULT_NOTESKIN_NAME;
 		pPlayerOptionsOut->FromString( pTrail->m_vEntries[0].Modifiers );
 	}
 	if( pSongOptionsOut != NULL )
@@ -1119,7 +1120,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, Song*& pSong
 	if( pPlayerOptionsOut != NULL )
 	{
 		pPlayerOptionsOut->Init();
-		pPlayerOptionsOut->m_sNoteSkin = NOTESKIN->GAME_BASE_NOTESKIN_NAME;
+		pPlayerOptionsOut->m_sNoteSkin = CommonMetrics::DEFAULT_NOTESKIN_NAME;
 		pPlayerOptionsOut->FromString( bExtra2 ? EXTRA_STAGE2_PLAYER_OPTIONS : EXTRA_STAGE_PLAYER_OPTIONS, true );
 	}
 

@@ -19,6 +19,7 @@ ThemeMetric1D<apActorCommands>		CommonMetrics::PLAYER_COLOR			("Common",PLAYER_C
 LocalizedString				CommonMetrics::WINDOW_TITLE			("Common","WindowTitle");
 ThemeMetric<int>			CommonMetrics::MAX_COURSE_ENTRIES_BEFORE_VARIOUS("Common","MaxCourseEntriesBeforeShowVarious");
 ThemeMetric<float>			CommonMetrics::TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
+ThemeMetric<RString>			CommonMetrics::DEFAULT_NOTESKIN_NAME		("Common","DefaultNoteSkinName");
 ThemeMetricDifficultiesToShow		CommonMetrics::DIFFICULTIES_TO_SHOW		("Common","DifficultiesToShow");
 ThemeMetricCourseDifficultiesToShow	CommonMetrics::COURSE_DIFFICULTIES_TO_SHOW	("Common","CourseDifficultiesToShow");
 ThemeMetricStepsTypesToShow		CommonMetrics::STEPS_TYPES_TO_SHOW		("Common","StepsTypesToHide");

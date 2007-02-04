@@ -58,6 +58,7 @@ namespace CommonMetrics
 	extern LocalizedString				WINDOW_TITLE;
 	extern ThemeMetric<int>				MAX_COURSE_ENTRIES_BEFORE_VARIOUS;
 	extern ThemeMetric<float>			TICK_EARLY_SECONDS;
+	extern ThemeMetric<RString>			DEFAULT_NOTESKIN_NAME;
 	extern ThemeMetricDifficultiesToShow		DIFFICULTIES_TO_SHOW;
 	extern ThemeMetricCourseDifficultiesToShow	COURSE_DIFFICULTIES_TO_SHOW;
 	extern ThemeMetricStepsTypesToShow		STEPS_TYPES_TO_SHOW;
