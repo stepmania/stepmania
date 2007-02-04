@@ -400,13 +400,6 @@ unsigned LoadInternal( XNode *pNode, const RString &xml, RString &sErrorOut, uns
 	return iOffset;
 }
 
-bool GetAttrXML( RageFileBasic &f, const RString &sName, const RString &sValue )
-{
-	RString s(sValue);
-	ReplaceEntityText( s, g_mapCharsToEntities );
-	return f.Write( sName ) != -1 && f.Write( "='" ) != -1 && f.Write( s ) && f.Write( "' " ) != -1;
-}
-
 bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int &iTabBase )
 {
 	// tab
@@ -426,9 +419,13 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 		if( f.Write(" ") == -1 )
 			return false;
 	FOREACH_CONST_Attr( pNode, p )
-		if( !GetAttrXML(f, p->first, p->second->GetValue<RString>()) )
+	{
+		RString attr( p->second->GetValue<RString>() );
+		ReplaceEntityText( attr, g_mapCharsToEntities );
+		if( f.Write( p->first ) == -1 || f.Write( "='" ) == -1 || f.Write( attr ) || f.Write( "' " ) == -1 )
 			return false;
-	
+	}
+
 	if( pNode->m_childs.empty() && pNode->m_pValue->GetValue<RString>().empty() )
 	{
 		// <TAG Attr1="Val1"/> alone tag 
