@@ -1094,7 +1094,6 @@ int main(int argc, char* argv[])
 	/* Run the main loop. */
 	
 	if( GetCommandlineArgument("ExportNsisStrings") )
-		// XXX Nullsoft Scriptable Installation System?
 		ExportStrings::Nsis();
 	else if( GetCommandlineArgument("ExportLuaInformation") )
 		ExportStrings::LuaInformation();
