@@ -402,41 +402,39 @@ unsigned LoadInternal( XNode *pNode, const RString &xml, RString &sErrorOut, uns
 
 bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int &iTabBase )
 {
+#define WRITE(x) if( f.Write(x) == -1 ) return false
 	// tab
-	if( f.Write("\r\n") == -1 )
-		return false;
+	WRITE( "\r\n" );
 	if( bWriteTabs )
 		for( int i = 0 ; i < iTabBase ; i++)
-			if( f.Write("\t") == -1 )
-				return false;
+			WRITE( "\t" );
 
 	// <TAG
-	if( f.Write("<") == -1 || f.Write(pNode->GetName()) == -1 )
-		return false;
+	WRITE( "<" );
+	WRITE( pNode->GetName() );
 
 	// <TAG Attr1="Val1" 
 	if( !pNode->m_attrs.empty() )
-		if( f.Write(" ") == -1 )
-			return false;
+		WRITE( " " );
 	FOREACH_CONST_Attr( pNode, p )
 	{
 		RString attr( p->second->GetValue<RString>() );
 		ReplaceEntityText( attr, g_mapCharsToEntities );
-		if( f.Write( p->first ) == -1 || f.Write( "='" ) == -1 || f.Write( attr ) || f.Write( "' " ) == -1 )
-			return false;
+		WRITE( p->first );
+		WRITE( "='" );
+		WRITE( attr );
+		WRITE( "' " );
 	}
 
 	if( pNode->m_childs.empty() && pNode->m_pValue->GetValue<RString>().empty() )
 	{
 		// <TAG Attr1="Val1"/> alone tag 
-		if( f.Write("/>") == -1 )
-			return false;
+		WRITE( "/>" );
 	}
 	else
 	{
 		// <TAG Attr1="Val1"> and get child
-		if( f.Write(">") == -1 )
-			return false;
+		WRITE( ">" );
 			
 		if( !pNode->m_childs.empty() )
 			iTabBase++;
@@ -450,37 +448,34 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 		{
 			if( !pNode->m_childs.empty() )
 			{
-				if( f.Write("\r\n") == -1 )
-					return false;
+				WRITE( "\r\n" );
 				if( bWriteTabs )
 					for( int i = 0 ; i < iTabBase ; i++)
-						if( f.Write("\t") == -1 )
-							return false;
+						WRITE( "\t" );
 			}
 			RString s;
 			pNode->m_pValue->GetValue( s );
 			ReplaceEntityText( s, g_mapCharsToEntities );
-			if( f.Write(s) == -1 )
-				return false;
+			WRITE( s );
 		}
 
 		// </TAG> CloseTag
 		if( !pNode->m_childs.empty() )
 		{
-			if( f.Write("\r\n") == -1 )
-				return false;
+			WRITE( "\r\n" );
 			if( bWriteTabs )
 				for( int i = 0 ; i < iTabBase-1 ; i++)
-					if( f.Write("\t") == -1 )
-						return false;
+					WRITE( "\t" );
 		}
-		if( f.Write("</") == -1 || f.Write(pNode->GetName()) == -1 || f.Write(">") == -1 )
-			return false;
+		WRITE( "</" );
+		WRITE( pNode->GetName() );
+		WRITE( ">" );
 
 		if( !pNode->m_childs.empty() )
 			iTabBase--;
 	}
 	return true;
+#undef WRITE
 }
 }
 
