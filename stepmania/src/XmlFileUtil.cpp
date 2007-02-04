@@ -404,7 +404,7 @@ bool GetAttrXML( RageFileBasic &f, const RString &sName, const RString &sValue )
 {
 	RString s(sValue);
 	ReplaceEntityText( s, g_mapCharsToEntities );
-	return f.Write(sName + "='" + s + "' ") != -1;
+	return f.Write( sName ) != -1 && f.Write( "='" ) != -1 && f.Write( s ) && f.Write( "' " ) != -1;
 }
 
 bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int &iTabBase )
@@ -418,7 +418,7 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 				return false;
 
 	// <TAG
-	if( f.Write("<" + pNode->GetName()) == -1 )
+	if( f.Write("<") == -1 || f.Write(pNode->GetName()) == -1 )
 		return false;
 
 	// <TAG Attr1="Val1" 
@@ -477,7 +477,7 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 					if( f.Write("\t") == -1 )
 						return false;
 		}
-		if( f.Write("</" + pNode->GetName() + ">") == -1 )
+		if( f.Write("</") == -1 || f.Write(pNode->GetName()) == -1 || f.Write(">") == -1 )
 			return false;
 
 		if( !pNode->m_childs.empty() )
