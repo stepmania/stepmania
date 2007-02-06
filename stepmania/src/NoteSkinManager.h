@@ -27,6 +27,8 @@ public:
 	const RString &GetCurrentNoteSkin() { return m_sCurrentNoteSkin; }
 
 	RString GetPath( const RString &sButtonName, const RString &sElement );
+	bool PushActorTemplate( Lua *L, const RString &sButton, const RString &sElement, bool bSpriteOnly );
+	Actor *LoadActor( const RString &sButton, const RString &sElement, Actor *pParent = NULL, bool bSpriteOnly = false );
 
 	RString		GetMetric( const RString &sButtonName, const RString &sValue );
 	int		GetMetricI( const RString &sButtonName, const RString &sValueName );
@@ -38,7 +40,6 @@ public:
 	void PushSelf( lua_State *L );
 
 protected:
-	RString GetNoteSkinDir( const RString &sSkinName );
 	RString GetPathFromDirAndFile( const RString &sDir, const RString &sFileName );
 	void GetAllNoteSkinNamesForGame( const Game *pGame, vector<RString> &AddTo );
 

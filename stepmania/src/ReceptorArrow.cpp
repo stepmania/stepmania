@@ -20,7 +20,7 @@ void ReceptorArrow::Load( const PlayerState* pPlayerState, int iColNo )
 	m_iColNo = iColNo;
 
 	RString sButton = GAMESTATE->GetCurrentStyle()->ColToButtonName( iColNo );
-	m_pReceptor.Load( NOTESKIN->GetPath(sButton,"receptor") );
+	m_pReceptor.Load( NOTESKIN->LoadActor(sButton, "Receptor") );
 	this->AddChild( m_pReceptor );
 
 	bool bReverse = m_pPlayerState->m_PlayerOptions.GetCurrent().GetReversePercentForColumn(m_iColNo) > 0.5f;

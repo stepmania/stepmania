@@ -260,14 +260,19 @@ namespace
 			return NULL;
 		}
 
-		XNode *pRet = ActorUtil::LoadXNodeFromStackShowErrors( L );
+		XNode *pRet = NULL;
+		if( ActorUtil::LoadTableFromStackShowErrors(L) )
+			pRet = XmlFileUtil::XNodeFromTable( L );
 
 		LUA->Release( L );
 		return pRet;
 	}
 }
 
-XNode *ActorUtil::LoadXNodeFromStackShowErrors( Lua *L )
+/* Run the function at the top of the stack, which returns an actor description
+ * table.  If the table was returned, return true and leave it on the stack.
+ * If not, display an error, return false, and leave nothing on the stack. */
+bool ActorUtil::LoadTableFromStackShowErrors( Lua *L )
 {
 	LuaReference func;
 	lua_pushvalue( L, -1 );
@@ -277,10 +282,9 @@ XNode *ActorUtil::LoadXNodeFromStackShowErrors( Lua *L )
 	if( !LuaHelpers::RunScriptOnStack(L, sError, 0, 1) )
 	{
 		lua_pop( L, 1 );
-		LUA->Release( L );
 		sError = ssprintf( "Lua runtime error: %s", sError.c_str() );
 		Dialog::OK( sError, "LUA_ERROR" );
-		return NULL;
+		return false;
 	}
 
 	if( lua_type(L, -1) != LUA_TTABLE )
@@ -292,15 +296,11 @@ XNode *ActorUtil::LoadXNodeFromStackShowErrors( Lua *L )
 		lua_getinfo( L, ">nS", &debug );
 
 		sError = ssprintf( "%s: must return a table", debug.short_src );
-		LUA->Release( L );
 
 		Dialog::OK( sError, "LUA_ERROR" );
-		return NULL;
+		return false;
 	}
-
-	XNode *pRet = XmlFileUtil::XNodeFromTable( L );
-
-	return pRet;
+	return true;
 }
 
 /*

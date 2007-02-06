@@ -71,7 +71,7 @@ namespace ActorUtil
 	RString GetSourcePath( const XNode *pNode );
 	RString GetWhere( const XNode *pNode );
 	bool GetAttrPath( const XNode *pNode, const RString &sName, RString &sOut );
-	XNode *LoadXNodeFromStackShowErrors( Lua *L );
+	bool LoadTableFromStackShowErrors( Lua *L );
 
 	bool ResolvePath( RString &sPath, const RString &sName );
 

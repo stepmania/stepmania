@@ -30,7 +30,7 @@ void GhostArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOffset
 		m_bHoldIsActive.push_back( false );
 		m_bHoldWasActive.push_back( false );
 
-		m_Ghost.push_back( ActorUtil::MakeActor( NOTESKIN->GetPath(sButton, "tap explosion"), this ) );
+		m_Ghost.push_back( NOTESKIN->LoadActor(sButton, "Explosion", this) );
 		m_Ghost[c]->SetName( "GhostArrow" );
 	}
 }

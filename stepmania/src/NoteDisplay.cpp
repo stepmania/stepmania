@@ -135,24 +135,16 @@ static map<NoteSkinAndPath, NoteResource *> g_NoteResource;
 
 static NoteResource *MakeNoteResource( const RString &sButton, const RString &sElement, bool bSpriteOnly )
 {
-	RString sElementAndType = sElement;
-	NoteSkinAndPath nsap( NOTESKIN->GetCurrentNoteSkin(), NOTESKIN->GetPath(sButton, sElementAndType) );
+	RString sElementAndType = ssprintf( "%s, %s", sButton.c_str(), sElement.c_str() );
+	NoteSkinAndPath nsap( NOTESKIN->GetCurrentNoteSkin(), sElementAndType );
 
 	map<NoteSkinAndPath, NoteResource *>::iterator it = g_NoteResource.find( nsap );
 	if( it == g_NoteResource.end() )
 	{
 		NoteResource *pRes = new NoteResource( nsap );
 
-		pRes->m_pActor = ActorUtil::MakeActor( nsap.sPath );
+		pRes->m_pActor = NOTESKIN->LoadActor( sButton, sElement, NULL, bSpriteOnly );
 		ASSERT( pRes->m_pActor );
-
-		/* Make sure pActor is a Sprite (or something derived from Sprite). */
-		if( bSpriteOnly )
-		{
-			Sprite *pSprite = dynamic_cast<Sprite *>( pRes->m_pActor );
-			if( pSprite == NULL )
-				RageException::Throw( "%s: must be a Sprite", nsap.sPath.c_str() );
-		}
 
 		g_NoteResource[nsap] = pRes;
 		it = g_NoteResource.find( nsap );
@@ -220,14 +212,14 @@ Sprite *NoteColorSprite::Get()
 }
 
 static const char *HoldTypeNames[] = {
-	"hold",
-	"roll",
+	"Hold",
+	"Roll",
 };
 XToString( HoldType );
 
 static const char *ActiveTypeNames[] = {
-	"active",
-	"inactive",
+	"Active",
+	"Inactive",
 };
 XToString( ActiveType );
 
@@ -252,19 +244,19 @@ void NoteDisplay::Load( int iColNum, const PlayerState* pPlayerState, float fYRe
 
 	cache->Load( sButton );
 
-	m_TapNote.Load(		sButton, "tap note" );
-	m_TapMine.Load(		sButton, "tap mine" );
-	m_TapLift.Load(		sButton, "tap lift" );
+	m_TapNote.Load(		sButton, "Tap Note" );
+	m_TapMine.Load(		sButton, "Tap Mine" );
+	m_TapLift.Load(		sButton, "Tap Lift" );
 	
 	FOREACH_HoldType( ht )
 	{
 		FOREACH_ActiveType( at )
 		{
-			m_HoldHead[ht][at].Load(	sButton, HoldTypeToString(ht)+" head "+ActiveTypeToString(at) );
-			m_HoldTopCap[ht][at].Load(	sButton, HoldTypeToString(ht)+" topcap "+ActiveTypeToString(at) );
-			m_HoldBody[ht][at].Load(	sButton, HoldTypeToString(ht)+" body "+ActiveTypeToString(at) );
-			m_HoldBottomCap[ht][at].Load(	sButton, HoldTypeToString(ht)+" bottomcap "+ActiveTypeToString(at) );
-			m_HoldTail[ht][at].Load(	sButton, HoldTypeToString(ht)+" tail "+ActiveTypeToString(at) );
+			m_HoldHead[ht][at].Load(	sButton, HoldTypeToString(ht)+" Head "+ActiveTypeToString(at) );
+			m_HoldTopCap[ht][at].Load(	sButton, HoldTypeToString(ht)+" Topcap "+ActiveTypeToString(at) );
+			m_HoldBody[ht][at].Load(	sButton, HoldTypeToString(ht)+" Body "+ActiveTypeToString(at) );
+			m_HoldBottomCap[ht][at].Load(	sButton, HoldTypeToString(ht)+" Bottomcap "+ActiveTypeToString(at) );
+			m_HoldTail[ht][at].Load(	sButton, HoldTypeToString(ht)+" Tail "+ActiveTypeToString(at) );
 		}
 	}
 }
