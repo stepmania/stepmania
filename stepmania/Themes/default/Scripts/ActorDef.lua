@@ -17,8 +17,15 @@ local function MergeTables( left, right )
 
 	for key, val in pairs(right) do
 		if ret[key] then
-			Warn( string.format( "%s\n\nOverriding \"%s\"",
-				 debug.traceback(), key) );
+			if type(val) == "function" and
+			   type(ret[key]) == "function" then
+				local f1 = ret[key];
+				local f2 = val
+				val = function(...) f1(...); return f2(...) end
+			else
+				Warn( string.format( "%s\n\nOverriding \"%s\"",
+					 debug.traceback(), key) );
+			end
 		end
 
 		ret[key] = val;
