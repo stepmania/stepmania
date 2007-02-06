@@ -226,47 +226,48 @@ static void FindAlphaRGB(const RageSurface *img, uint8_t &r, uint8_t &g, uint8_t
 
 /* Local helper for FixHiddenAlpha. Set the underlying RGB values of all pixels in
  * img that are completely transparent. */
-static void SetAlphaRGB(const RageSurface *img, uint8_t r, uint8_t g, uint8_t b)
+static void SetAlphaRGB(const RageSurface *pImg, uint8_t r, uint8_t g, uint8_t b)
 {
 	/* If it's a paletted surface, all we have to do is change the palette. */
-	if( img->format->BitsPerPixel == 8 )
+	if( pImg->format->BitsPerPixel == 8 )
 	{
-		for( int c = 0; c < img->format->palette->ncolors; ++c )
+		for( int c = 0; c < pImg->format->palette->ncolors; ++c )
 		{
-			if( img->format->palette->colors[c].a )
+			if( pImg->format->palette->colors[c].a )
 				continue;
-			img->format->palette->colors[c].r = r;
-			img->format->palette->colors[c].g = g;
-			img->format->palette->colors[c].b = b;
+			pImg->format->palette->colors[c].r = r;
+			pImg->format->palette->colors[c].g = g;
+			pImg->format->palette->colors[c].b = b;
 		}
 		return;
 	}
 
 
 	/* If it's RGBA and there's no alpha channel, we have nothing to do. */
-	if( img->format->BitsPerPixel > 8 && !img->format->Amask )
+	if( pImg->format->BitsPerPixel > 8 && !pImg->format->Amask )
 		return;
 
 	uint32_t trans;
-	img->format->MapRGBA( r, g, b, 0, trans );
-	for( int y = 0; y < img->h; ++y )
+	pImg->format->MapRGBA( r, g, b, 0, trans );
+	for( int y = 0; y < pImg->h; ++y )
 	{
-		uint8_t *row = img->pixels + img->pitch*y;
+		uint8_t *row = pImg->pixels + pImg->pitch*y;
 
-		for( int x = 0; x < img->w; ++x )
+		for( int x = 0; x < pImg->w; ++x )
 		{
-			uint32_t val = RageSurfaceUtils::decodepixel( row, img->format->BytesPerPixel );
-			if( val != trans && !(val&img->format->Amask) )
+			uint32_t val = RageSurfaceUtils::decodepixel( row, pImg->format->BytesPerPixel );
+			if( val != trans && !(val&pImg->format->Amask) )
 			{
-				RageSurfaceUtils::encodepixel( row, img->format->BytesPerPixel, trans );
+				RageSurfaceUtils::encodepixel( row, pImg->format->BytesPerPixel, trans );
 			}
 
-			row += img->format->BytesPerPixel;
+			row += pImg->format->BytesPerPixel;
 		}
 	}
 }
 
-/* When we scale up images (which we always do in high res), pixels
+/*
+ * When we scale up images (which we always do in high res), pixels
  * that are completely transparent can be blended with opaque pixels,
  * causing their RGB elements to show.  This is visible in many textures
  * as a pixel-wide border in the wrong color.  This is tricky to fix.
@@ -277,27 +278,26 @@ static void SetAlphaRGB(const RageSurface *img, uint8_t r, uint8_t g, uint8_t b)
  * color is easy: search through the image top-bottom-left-right,
  * find the first non-transparent pixel, and pull out its RGB.
  *
- * A few images don't.  We can only make a guess here.  What we'll do
- * is, after the above search, do the same in reverse (bottom-top-right-
- * left).  If the color we find is different, we'll just set the border
- * color to black.  
+ * A few images don't.  We can only make a guess here.  After the above
+ * search, do the same in reverse (bottom-top-right-left).  If the color
+ * we find is different, just set the border color to black.  
  */
-void RageSurfaceUtils::FixHiddenAlpha( RageSurface *img )
+void RageSurfaceUtils::FixHiddenAlpha( RageSurface *pImg )
 {
 	/* If there are no alpha bits, there's nothing to fix. */
-	if( img->format->BitsPerPixel != 8 && img->format->Amask == 0 )
+	if( pImg->format->BitsPerPixel != 8 && pImg->format->Amask == 0 )
 		return;
 
 	uint8_t r, g, b;
-	FindAlphaRGB(img, r, g, b, false);
+	FindAlphaRGB( pImg, r, g, b, false );
 
 	uint8_t cr, cg, cb; /* compare */
-	FindAlphaRGB(img, cr, cg, cb, true);
+	FindAlphaRGB( pImg, cr, cg, cb, true );
 
 	if( cr != r || cg != g || cb != b )
 		r = g = b = 0;
 
-	SetAlphaRGB(img, r, g, b);
+	SetAlphaRGB( pImg, r, g, b );
 }
 
 /* Scan the surface to see what level of alpha it uses.  This can be used to
