@@ -650,7 +650,7 @@ void Player::Update( float fDeltaTime )
 			if( tn.HoldResult.fLife >= 0.5f )
 				continue;
 
-			Step( iTrack, iSongRow, now, false, false );
+			Step( iTrack, iHeadRow, now, false, false );
 			if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY )
 				STATSMAN->m_CurStageStats.m_bUsedAutoplay = true;
 		}
