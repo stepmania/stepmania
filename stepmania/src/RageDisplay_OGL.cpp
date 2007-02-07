@@ -756,11 +756,12 @@ public:
 	
 	void Allocate( const vector<msMesh> &vMeshes )
 	{
-		m_vPosition.resize( GetTotalVertices() );
-		m_vTexture.resize( GetTotalVertices() );
-		m_vNormal.resize( GetTotalVertices() );
-		m_vTexMatrixScale.resize( GetTotalVertices() );
-		m_vTriangles.resize( GetTotalTriangles() );
+		/* Always allocate at least 1 entry, so &x[0] is valid. */
+		m_vPosition.resize( max(1u, GetTotalVertices()) );
+		m_vTexture.resize( max(1u, GetTotalVertices()) );
+		m_vNormal.resize( max(1u, GetTotalVertices()) );
+		m_vTexMatrixScale.resize( max(1u, GetTotalVertices()) );
+		m_vTriangles.resize( max(1u, GetTotalTriangles()) );
 	}
 	void Change( const vector<msMesh> &vMeshes )
 	{

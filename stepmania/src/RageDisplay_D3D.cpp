@@ -852,8 +852,8 @@ class RageCompiledGeometrySWD3D : public RageCompiledGeometry
 public:
 	void Allocate( const vector<msMesh> &vMeshes )
 	{
-		m_vVertex.resize( GetTotalVertices() );
-		m_vTriangles.resize( GetTotalTriangles() );
+		m_vVertex.resize( max(1u, GetTotalVertices()) );
+		m_vTriangles.resize( max(1u, GetTotalTriangles()) );
 	}
 	void Change( const vector<msMesh> &vMeshes )
 	{
