@@ -244,22 +244,17 @@ Section "Main Section" SecMain
 	File "Packages\Instructions.txt"
 
 	RMDir /r "$INSTDIR\NoteSkins\common\default"
-	RMDir /r "$INSTDIR\NoteSkins\dance\MAX"
 	RMDir /r "$INSTDIR\NoteSkins\dance\default"
 	RMDir /r "$INSTDIR\NoteSkins\dance\flat"
-	RMDir /r "$INSTDIR\NoteSkins\dance\note"
-	RMDir /r "$INSTDIR\NoteSkins\dance\solo"
 	SetOutPath "$INSTDIR\NoteSkins"
 	File "NoteSkins\instructions.txt"
 
 	SetOutPath "$INSTDIR\NoteSkins\common"
-	File /r /x CVS /x .svn "NoteSkins\common\default"
+	File /r /x CVS /x .svn "NoteSkins\common\Common"
 
 	SetOutPath "$INSTDIR\NoteSkins\dance"
 	File /r /x CVS /x .svn "NoteSkins\dance\default"
 	File /r /x CVS /x .svn "NoteSkins\dance\flat"
-	File /r /x CVS /x .svn "NoteSkins\dance\note"
-	File /r /x CVS /x .svn "NoteSkins\dance\solo"
 
 	SetOutPath "$INSTDIR\NoteSkins\pump"
 	File /r /x CVS /x .svn "NoteSkins\pump\Classic" ; what the heck, they're tiny
