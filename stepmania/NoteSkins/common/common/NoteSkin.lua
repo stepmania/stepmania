@@ -37,6 +37,8 @@ local function func()
 	end
 
 	local sButtonToLoad, sElementToLoad = ret.Redir(sButton, sElement);
+	assert( sButtonToLoad );
+	assert( sElementToLoad );
 
 	local sPath = NOTESKIN:GetPath( sButtonToLoad, sElementToLoad );
 
