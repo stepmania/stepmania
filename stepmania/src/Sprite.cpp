@@ -124,25 +124,82 @@ void Sprite::LoadFromNode( const XNode* pNode )
 		// overwriting the states that LoadFromTexture created.
 		// If the .sprite file doesn't define any states, leave
 		// frames and delays created during LoadFromTexture().
-		for( int i=0; true; i++ )
+		vector<State> aStates;
+
+		const XNode *pFrames = pNode->GetChild( "Frames" );
+		if( pFrames != NULL )
 		{
+			/*
+			 * All attributes are optional.  If Frame is omitted, use the previous state's
+			 * frame (or 0 if the first).
+			 * Frames = {
+			 *  { Delay=1.0f; Frame=0; { x=0, y=0 }, { x=1, y=1 } };
+			 * }
+			 */
+			int iFrameIndex = 0;
+			for( int i=0; true; i++ )
+			{
+				const XNode *pFrame = pFrames->GetChild( ssprintf("%i", i+1) ); // +1 for Lua's arrays
+				if( pFrame == NULL )
+					break;
+
+				State newState;
+				if( !pFrame->GetAttrValue("Delay", newState.fDelay) )
+					newState.fDelay = 0.1f;
+
+				pFrame->GetAttrValue( "Frame", iFrameIndex );
+				if( iFrameIndex >= m_pTexture->GetNumFrames() )
+					RageException::Throw( "%s: State #%i is frame %d, but the texture \"%s\" only has %d frames",
+						ActorUtil::GetWhere(pNode).c_str(), i, iFrameIndex, sPath.c_str(), m_pTexture->GetNumFrames() );
+				newState.rect = *m_pTexture->GetTextureCoordRect( iFrameIndex );
+
+				const XNode *pPoints[2] = { pFrame->GetChild( "1" ), pFrame->GetChild( "2" ) };
+				if( pPoints[0] != NULL && pPoints[1] != NULL )
+				{
+					RectF r = newState.rect;
+
+					float fX = 1.0f, fY = 1.0f;
+					pPoints[0]->GetAttrValue( "x", fX );
+					pPoints[0]->GetAttrValue( "y", fY );
+					newState.rect.left = SCALE( fX, 0.0f, 1.0f, r.left, r.right );
+					newState.rect.top = SCALE( fY, 0.0f, 1.0f, r.top, r.bottom );
+
+					pPoints[1]->GetAttrValue( "x", fX );
+					pPoints[1]->GetAttrValue( "y", fY );
+					newState.rect.right = SCALE( fX, 0.0f, 1.0f, r.left, r.right );
+					newState.rect.bottom = SCALE( fY, 0.0f, 1.0f, r.top, r.bottom );
+				}
+
+				aStates.push_back( newState );
+			}
+		}
+		else for( int i=0; true; i++ )
+		{
+			// deprecated
 			RString sFrameKey = ssprintf( "Frame%04d", i );
 			RString sDelayKey = ssprintf( "Delay%04d", i );
 			State newState;
 
-			if( !pNode->GetAttrValue(sFrameKey, newState.iFrameIndex) )
+			int iFrameIndex;
+			if( !pNode->GetAttrValue(sFrameKey, iFrameIndex) )
 				break;
-			if( newState.iFrameIndex >= m_pTexture->GetNumFrames() )
+			if( iFrameIndex >= m_pTexture->GetNumFrames() )
 				RageException::Throw( "%s: %s is %d, but the texture \"%s\" only has %d frames",
-					ActorUtil::GetWhere(pNode).c_str(), sFrameKey.c_str(), newState.iFrameIndex, sPath.c_str(), m_pTexture->GetNumFrames() );
+					ActorUtil::GetWhere(pNode).c_str(), sFrameKey.c_str(), iFrameIndex, sPath.c_str(), m_pTexture->GetNumFrames() );
+
+			newState.rect = *m_pTexture->GetTextureCoordRect( iFrameIndex );
 
 			if( !pNode->GetAttrValue(sDelayKey, newState.fDelay) )
 				break;
 
-			if( i == 0 )	// the ini file defines at least one frame
-				m_States.clear();	// clear before adding
+			aStates.push_back( newState );
+		}
 
-			m_States.push_back( newState );
+		if( !aStates.empty() )
+		{
+			m_States = aStates;
+			Sprite::m_size.x = aStates[0].rect.GetWidth() * m_pTexture->GetSourceFrameWidth();
+			Sprite::m_size.y = aStates[0].rect.GetHeight() * m_pTexture->GetSourceFrameHeight();
 		}
 	}
 
@@ -222,7 +279,9 @@ void Sprite::LoadFromTexture( RageTextureID ID )
 	m_States.clear();
 	for( int i=0; i<m_pTexture->GetNumFrames(); ++i )
 	{
-		State newState = { i, 0.1f };
+		State newState;
+		newState.fDelay = 0.1f;
+		newState.rect = *m_pTexture->GetTextureCoordRect( i );
 		m_States.push_back( newState );
 	}
 
@@ -723,8 +782,7 @@ const RectF *Sprite::GetCurrentTextureCoordRect() const
 {
 	ASSERT_M( m_iCurState < (int) m_States.size(), ssprintf("%d, %d", int(m_iCurState), int(m_States.size())) );
 
-	unsigned int uFrameNo = m_States[m_iCurState].iFrameIndex;
-	return m_pTexture->GetTextureCoordRect( uFrameNo );
+	return &m_States[m_iCurState].rect;
 }
 
 

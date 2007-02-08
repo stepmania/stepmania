@@ -75,7 +75,7 @@ protected:
 
 	struct State
 	{
-		int iFrameIndex;
+		RectF rect;
 		float fDelay;	// "seconds to show"
 	};
 	vector<State> m_States;
