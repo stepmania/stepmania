@@ -31,7 +31,7 @@ void MeterDisplay::Load( RString sStreamPath, float fStreamWidth, RString sTipPa
 
 void MeterDisplay::LoadFromNode( const XNode* pNode )
 {
-	LOG->Trace( "MeterDisplay::LoadFromNode(%s,node)", ActorUtil::GetWhere(pNode).c_str() );
+	LOG->Trace( "MeterDisplay::LoadFromNode(%s)", ActorUtil::GetWhere(pNode).c_str() );
 
 	if( !pNode->GetAttrValue("StreamWidth", m_fStreamWidth) )
 		RageException::Throw( "%s: MeterDisplay: missing the \"StreamWidth\" attribute", ActorUtil::GetWhere(pNode).c_str() );
@@ -64,7 +64,8 @@ void MeterDisplay::SetPercent( float fPercent )
 
 	m_sprStream->SetCropRight( 1-fPercent );
 
-	m_sprTip->SetX( SCALE(fPercent, 0.f, 1.f, -m_fStreamWidth/2, m_fStreamWidth/2) );
+	if( m_sprTip.IsLoaded() )
+		m_sprTip->SetX( SCALE(fPercent, 0.f, 1.f, -m_fStreamWidth/2, m_fStreamWidth/2) );
 }
 
 void SongMeterDisplay::Update( float fDeltaTime )
