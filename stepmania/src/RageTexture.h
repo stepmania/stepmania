@@ -42,9 +42,12 @@ public:
 	int GetImageFrameHeight() const		{return GetImageHeight()	/	GetFramesHigh();}
 
 	/* Use these to convert between the different coordinate systems: */
-	float GetSourceToImageCoordsRatio() const { return float(GetImageWidth()) / GetSourceWidth(); }
-	float GetImageToTexCoordsRatio() const { return 1.0f / GetTextureWidth(); }
-	float GetSourceToTexCoordsRatio() const { return GetSourceToImageCoordsRatio() * GetImageToTexCoordsRatio(); }
+	float GetSourceToImageCoordsRatioX() const { return float(GetImageWidth()) / GetSourceWidth(); }
+	float GetImageToTexCoordsRatioX() const { return 1.0f / GetTextureWidth(); }
+	float GetSourceToTexCoordsRatioX() const { return GetSourceToImageCoordsRatioX() * GetImageToTexCoordsRatioX(); }
+	float GetSourceToImageCoordsRatioY() const { return float(GetImageHeight()) / GetSourceHeight(); }
+	float GetImageToTexCoordsRatioY() const { return 1.0f / GetTextureHeight(); }
+	float GetSourceToTexCoordsRatioY() const { return GetSourceToImageCoordsRatioY() * GetImageToTexCoordsRatioY(); }
 
 	const RectF *GetTextureCoordRect( int frameNo ) const;
 	int   GetNumFrames() const { return m_iFramesWide*m_iFramesHigh; }

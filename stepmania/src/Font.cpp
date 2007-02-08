@@ -131,7 +131,7 @@ void FontPage::SetTextureCoords( const vector<int> &widths, int iAdvanceExtraPix
 				++g.m_fWidth;
 			}
 
-			const float fTexCoordsToChopOff = iSourcePixelsToChopOff * m_pTexture->GetSourceToTexCoordsRatio();
+			const float fTexCoordsToChopOff = iSourcePixelsToChopOff * m_pTexture->GetSourceToTexCoordsRatioX();
 
 			g.m_TexRect.left  += fTexCoordsToChopOff/2;
 			g.m_TexRect.right -= fTexCoordsToChopOff/2;
@@ -166,8 +166,8 @@ void FontPage::SetExtraPixels( int iDrawExtraPixelsLeft, int iDrawExtraPixelsRig
 		float fExtraRight = min( float(iDrawExtraPixelsRight), (iFrameWidth-fCharWidth)/2.0f );
 
 		/* Move left and expand right. */
-		m_aGlyphs[i].m_TexRect.left -= fExtraLeft * m_pTexture->GetSourceToTexCoordsRatio();
-		m_aGlyphs[i].m_TexRect.right += fExtraRight * m_pTexture->GetSourceToTexCoordsRatio();
+		m_aGlyphs[i].m_TexRect.left -= fExtraLeft * m_pTexture->GetSourceToTexCoordsRatioX();
+		m_aGlyphs[i].m_TexRect.right += fExtraRight * m_pTexture->GetSourceToTexCoordsRatioX();
 		m_aGlyphs[i].m_fHshift -= fExtraLeft;
 		m_aGlyphs[i].m_fWidth += fExtraLeft + fExtraRight;
 	}
