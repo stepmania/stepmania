@@ -2353,7 +2353,20 @@ void GameManager::GetEnabledGames( vector<const Game*>& aGamesOut ) const
 
 const Game* GameManager::GetDefaultGame() const
 {
-	return g_Games[0];
+	const Game *pDefault = NULL;
+	if( pDefault == NULL )
+	{
+		for( size_t i=0; pDefault == NULL && i < ARRAYSIZE(g_Games); ++i )
+		{
+			if( IsGameEnabled(g_Games[i]) )
+				pDefault = g_Games[i];
+		}
+
+		if( pDefault == NULL )
+			RageException::Throw( "No NoteSkins found" );
+	}
+	
+	return pDefault;
 }
 
 int GameManager::GetIndexFromGame( const Game* pGame ) const

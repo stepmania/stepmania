@@ -766,9 +766,7 @@ static void SwitchToLastPlayedGame()
 			pGame->m_szName, GAMEMAN->GetDefaultGame()->m_szName );
 	}
 
-	/* If the default isn't available, our default note skin is messed up. */
-	if( !GAMEMAN->IsGameEnabled(pGame) )
-		RageException::Throw( "Default NoteSkin for \"%s\" missing", pGame->m_szName );
+	ASSERT( GAMEMAN->IsGameEnabled(pGame) );
 
 	StepMania::ChangeCurrentGame( pGame );
 }
