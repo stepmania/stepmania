@@ -198,8 +198,8 @@ void Sprite::LoadFromNode( const XNode* pNode )
 		if( !aStates.empty() )
 		{
 			m_States = aStates;
-			Sprite::m_size.x = aStates[0].rect.GetWidth() * m_pTexture->GetSourceFrameWidth();
-			Sprite::m_size.y = aStates[0].rect.GetHeight() * m_pTexture->GetSourceFrameHeight();
+			Sprite::m_size.x = aStates[0].rect.GetWidth() / m_pTexture->GetSourceToTexCoordsRatioX();
+			Sprite::m_size.y = aStates[0].rect.GetHeight() / m_pTexture->GetSourceToTexCoordsRatioY();
 		}
 	}
 
