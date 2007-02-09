@@ -6,7 +6,6 @@
 
 StreamDisplay::StreamDisplay()
 {
-	m_fMeterWidth = 1;
 	m_iNumStrips = 1;
 	m_iNumChambers = 1;
 	m_fPercent = 0;
@@ -29,13 +28,15 @@ void StreamDisplay::Load(
 	const apActorCommands &acPassingOnCommand
 	)
 {
-	m_fMeterWidth = fMeterWidth;
+	m_size.x = fMeterWidth;
+	m_size.y = fMeterHeight;
+
 	m_iNumStrips = iNumStrips;
 	m_iNumChambers = iNumChambers;
 
 	m_quadMask.SetBlendMode( BLEND_NO_EFFECT );
 	m_quadMask.SetZWrite( true );
-	m_quadMask.ZoomToWidth( m_fMeterWidth );
+	m_quadMask.ZoomToWidth( fMeterWidth );
 	m_quadMask.ZoomToHeight( fMeterHeight );
 
 	RString sGraphicPath;
@@ -198,14 +199,15 @@ void StreamDisplay::DrawStrip( float fRightEdgePercent )
 	m_sprStreamPassing.SetHorizAlign(	align_right );
 	m_sprStreamHot.SetHorizAlign(		align_right );
 
-	m_sprStreamNormal.SetX(		-m_fMeterWidth/2 + m_fMeterWidth*fRightEdgePercent );
-	m_sprStreamPassing.SetX(	-m_fMeterWidth/2 + m_fMeterWidth*fRightEdgePercent );
-	m_sprStreamHot.SetX(		-m_fMeterWidth/2 + m_fMeterWidth*fRightEdgePercent );
+	float fMeterWidth = this->GetUnzoomedWidth();
+	m_sprStreamNormal.SetX(		-fMeterWidth/2 + fMeterWidth*fRightEdgePercent );
+	m_sprStreamPassing.SetX(	-fMeterWidth/2 + fMeterWidth*fRightEdgePercent );
+	m_sprStreamHot.SetX(		-fMeterWidth/2 + fMeterWidth*fRightEdgePercent );
 
-	const float fMeterLeftEdgePixels =  SCALE( 0.0f, 0.0f, 1.0f, -m_fMeterWidth/2, +m_fMeterWidth/2 );
-	const float fMeterRightEdgePixels = SCALE( 1.0f, 0.0f, 1.0f, -m_fMeterWidth/2, +m_fMeterWidth/2 );
+	const float fMeterLeftEdgePixels =  SCALE( 0.0f, 0.0f, 1.0f, -fMeterWidth/2, +fMeterWidth/2 );
+	const float fMeterRightEdgePixels = SCALE( 1.0f, 0.0f, 1.0f, -fMeterWidth/2, +fMeterWidth/2 );
 
-	const float fStreamRightEdgePixels = SCALE( fRightEdgePercent, 0.0f, 1.0f, -m_fMeterWidth/2, +m_fMeterWidth/2 );
+	const float fStreamRightEdgePixels = SCALE( fRightEdgePercent, 0.0f, 1.0f, -fMeterWidth/2, +fMeterWidth/2 );
 	const float fStreamLeftEdgePixels = fStreamRightEdgePixels - m_sprStreamNormal.GetZoomedWidth();
 
 	const float fLeftOverhangPixels = max( 0, fMeterLeftEdgePixels - fStreamLeftEdgePixels );
