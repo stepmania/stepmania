@@ -47,7 +47,7 @@ private:
 	float m_fPassingAlpha;
 	float m_fHotAlpha;
 
-	void GetChamberIndexAndOverslow( float fPercent, int& iChamberOut, float& fChamberOverflowPercentOut );
+	void GetChamberIndexAndOverflow( float fPercent, int& iChamberOut, float& fChamberOverflowPercentOut );
 	float GetChamberLeftPercent( int iChamber );
 	float GetChamberRightPercent( int iChamber );
 	float GetRightEdgePercent( int iChamber, float fChamberOverflowPercent );

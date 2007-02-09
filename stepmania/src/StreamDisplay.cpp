@@ -155,7 +155,7 @@ void StreamDisplay::SetHotAlpha( float fHotAlpha )
 	m_fHotAlpha = fHotAlpha;
 }
 
-void StreamDisplay::GetChamberIndexAndOverslow( float fPercent, int& iChamberOut, float& fChamberOverflowPercentOut )
+void StreamDisplay::GetChamberIndexAndOverflow( float fPercent, int& iChamberOut, float& fChamberOverflowPercentOut )
 {
 	iChamberOut = (int)(fPercent*m_iNumChambers);
 	fChamberOverflowPercentOut = fPercent*m_iNumChambers - iChamberOut;
@@ -248,7 +248,7 @@ void StreamDisplay::DrawMask( float fPercent )
 
 	int iChamber;
 	float fChamberOverflowPercent;
-	GetChamberIndexAndOverslow( fPercent, iChamber, fChamberOverflowPercent );
+	GetChamberIndexAndOverflow( fPercent, iChamber, fChamberOverflowPercent );
 	float fRightPercent = GetRightEdgePercent( iChamber, fChamberOverflowPercent );
 	float fHeightPercent = GetHeightPercent( iChamber, fChamberOverflowPercent );
 	float fChamberLeftPercent = GetChamberLeftPercent( iChamber );
