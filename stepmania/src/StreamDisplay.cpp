@@ -37,6 +37,8 @@ void StreamDisplay::Load(
 
 	m_quadMask.SetBlendMode( BLEND_NO_EFFECT );
 	m_quadMask.SetZWrite( true );
+	m_quadMask.ZoomToWidth( m_fMeterWidth );
+	m_quadMask.ZoomToHeight( m_fMeterHeight );
 
 	RString sGraphicPath;
 	RageTextureID ID;
@@ -242,38 +244,27 @@ void StreamDisplay::DrawStrip( float fRightEdgePercent, float fStripWidthInPerce
 
 void StreamDisplay::DrawMask( float fPercent )
 {
-	RectF rect;
-
 	int iChamber;
 	float fChamberOverflowPercent;
 	GetChamberIndexAndOverflow( fPercent, iChamber, fChamberOverflowPercent );
-	float fRightPercent = GetRightEdgePercent( iChamber, fChamberOverflowPercent );
+
+	// draw mask for vertical chambers
 	float fHeightPercent = GetHeightPercent( iChamber, fChamberOverflowPercent );
 	float fChamberLeftPercent = GetChamberLeftPercent( iChamber );
 	float fChamberRightPercent = GetChamberRightPercent( iChamber );
-
-	// draw mask for vertical chambers
-	rect.left	= -m_fMeterWidth/2 + fChamberLeftPercent*m_fMeterWidth-1;
-	rect.top	= -m_fMeterHeight/2;
-	rect.right	= -m_fMeterWidth/2 + fChamberRightPercent*m_fMeterWidth+1;
-	rect.bottom	= -m_fMeterHeight/2 + fHeightPercent*m_fMeterHeight;
-
-	rect.left  = min( rect.left,  + m_fMeterWidth/2 );
-	rect.right = min( rect.right, + m_fMeterWidth/2 );
-
-	m_quadMask.StretchTo( rect );
+	m_quadMask.SetCropLeft( fChamberLeftPercent );
+	m_quadMask.SetCropRight( 1-fChamberRightPercent );
+	m_quadMask.SetCropTop( 0 );
+	m_quadMask.SetCropBottom( 1-fHeightPercent );
 	m_quadMask.Draw();
 
 	// draw mask for horizontal chambers
-	rect.left	= -m_fMeterWidth/2 + fRightPercent*m_fMeterWidth; 
-	rect.top	= -m_fMeterHeight/2;
-	rect.right	= +m_fMeterWidth/2;
-	rect.bottom	= +m_fMeterHeight/2;
+	float fRightPercent = GetRightEdgePercent( iChamber, fChamberOverflowPercent );
+	m_quadMask.SetCropLeft( fRightPercent );
+	m_quadMask.SetCropRight( 0 );
+	m_quadMask.SetCropTop( 0 );
+	m_quadMask.SetCropBottom( 0 );
 
-	rect.left  = min( rect.left,  + m_fMeterWidth/2 );
-	rect.right = min( rect.right, + m_fMeterWidth/2 );
-
-	m_quadMask.StretchTo( rect );
 	m_quadMask.Draw();
 }
 
