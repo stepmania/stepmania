@@ -1380,10 +1380,20 @@ public:
 	static int HasStepsTypeAndDifficulty( T* p, lua_State *L )
 	{
 		StepsType st = Enum::Check<StepsType>(L, 1);
-
 		Difficulty dc = Enum::Check<Difficulty>( L, 2 );
-
 		lua_pushboolean( L, p->HasStepsTypeAndDifficulty(st, dc) );
+		return 1;
+	}
+	// TODO: HasStepsTypeAndDifficulty and GetOneSteps should be in a SongUtil Lua table and a method of Steps.
+	static int GetOneSteps( T* p, lua_State *L )
+	{
+		StepsType st = Enum::Check<StepsType>(L, 1);
+		Difficulty dc = Enum::Check<Difficulty>( L, 2 );
+		Steps *pSteps = SongUtil::GetOneSteps( p, st, dc );
+		if( pSteps ) 
+			pSteps->PushSelf(L);
+		else 
+			lua_pushnil(L);
 		return 1;
 	}
 
@@ -1407,6 +1417,7 @@ public:
 		ADD_METHOD( IsLong );
 		ADD_METHOD( IsMarathon );
 		ADD_METHOD( HasStepsTypeAndDifficulty );
+		ADD_METHOD( GetOneSteps );
 	}
 };
 
