@@ -6,7 +6,6 @@
 
 StreamDisplay::StreamDisplay()
 {
-	m_fMeterHeight = 1;
 	m_fMeterWidth = 1;
 	m_iNumStrips = 1;
 	m_iNumChambers = 1;
@@ -31,14 +30,13 @@ void StreamDisplay::Load(
 	)
 {
 	m_fMeterWidth = fMeterWidth;
-	m_fMeterHeight = fMeterHeight;
 	m_iNumStrips = iNumStrips;
 	m_iNumChambers = iNumChambers;
 
 	m_quadMask.SetBlendMode( BLEND_NO_EFFECT );
 	m_quadMask.SetZWrite( true );
 	m_quadMask.ZoomToWidth( m_fMeterWidth );
-	m_quadMask.ZoomToHeight( m_fMeterHeight );
+	m_quadMask.ZoomToHeight( fMeterHeight );
 
 	RString sGraphicPath;
 	RageTextureID ID;
@@ -47,16 +45,20 @@ void StreamDisplay::Load(
 	ID.filename = sNormalPath;
 	m_sprStreamNormal.Load( ID );
 	m_sprStreamNormal.SetUseZBuffer( true );
+	m_sprStreamNormal.ZoomToHeight( fMeterHeight );
+
 	m_sprStreamNormal.RunCommands( acNormalOnCommand );
 
 	ID.filename = sHotPath;
 	m_sprStreamHot.Load( ID );
 	m_sprStreamHot.SetUseZBuffer( true );
+	m_sprStreamHot.ZoomToHeight( fMeterHeight );
 	m_sprStreamHot.RunCommands( acHotOnCommand );
 	
 	ID.filename = sPassingPath;
 	m_sprStreamPassing.Load( ID );
 	m_sprStreamPassing.SetUseZBuffer( true );
+	m_sprStreamPassing.ZoomToHeight( fMeterHeight );
 	m_sprStreamPassing.RunCommands( acPassingOnCommand );
 }
 
@@ -192,10 +194,6 @@ void StreamDisplay::DrawStrip( float fRightEdgePercent, float fStripWidthInPerce
 	m_sprStreamNormal.ZoomToWidth(		m_fMeterWidth*fStripWidthInPercent );
 	m_sprStreamPassing.ZoomToWidth(		m_fMeterWidth*fStripWidthInPercent );
 	m_sprStreamHot.ZoomToWidth(			m_fMeterWidth*fStripWidthInPercent );
-
-	m_sprStreamNormal.ZoomToHeight(		m_fMeterHeight );
-	m_sprStreamPassing.ZoomToHeight(	m_fMeterHeight );
-	m_sprStreamHot.ZoomToHeight(		m_fMeterHeight );
 
 	m_sprStreamNormal.SetHorizAlign(	align_right );
 	m_sprStreamPassing.SetHorizAlign(	align_right );

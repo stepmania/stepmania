@@ -37,7 +37,6 @@ private:
 	Sprite		m_sprStreamPassing;
 	Quad		m_quadMask;
 
-	float m_fMeterHeight;
 	float m_fMeterWidth;
 	int m_iNumStrips;
 	int m_iNumChambers;
