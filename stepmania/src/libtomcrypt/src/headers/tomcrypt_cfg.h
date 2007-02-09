@@ -80,7 +80,7 @@ LTC_EXPORT int   LTC_CALL XSTRCMP(const char *s1, const char *s2);
 #endif
 
 /* detect PPC32 */
-#if !defined(__STRICT_ANSI__) && (defined(LTC_PPC32) || defined(__ppc__))
+#if !defined(__STRICT_ANSI__) && (defined(LTC_PPC32) || defined(__ppc__) || defined(__powerpc__))
 #if !defined(ENDIAN_BIG) // SM
    #define ENDIAN_BIG
 #endif
