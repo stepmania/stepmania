@@ -36,14 +36,14 @@ LuaXType( RadarCategory );
 RString StepsTypeToString( StepsType st )
 {
 	RString s = GAMEMAN->StepsTypeToString( st );
-	/* foo-bar -> StepsType_Foo_Bar */
+	/* foo-bar -> Foo_Bar */
 	s.Replace('-','_');
 	for( size_t i = 0; i < s.size(); ++i )
 	{
 		if( i == 0 || s[i-1] == '_' )
 			s[i] = toupper( s[i] );
 	}
-	return "StepsType_"+s;
+	return s;
 }
 
 LuaXType( StepsType );
