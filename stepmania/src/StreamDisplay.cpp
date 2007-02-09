@@ -44,20 +44,20 @@ void StreamDisplay::Load(
 
 	ID.filename = sNormalPath;
 	m_sprStreamNormal.Load( ID );
-	m_sprStreamNormal.SetUseZBuffer( true );
+	m_sprStreamNormal.SetZTestMode( ZTEST_WRITE_ON_PASS );
 	m_sprStreamNormal.ZoomToHeight( fMeterHeight );
 
 	m_sprStreamNormal.RunCommands( acNormalOnCommand );
 
 	ID.filename = sHotPath;
 	m_sprStreamHot.Load( ID );
-	m_sprStreamHot.SetUseZBuffer( true );
+	m_sprStreamHot.SetZTestMode( ZTEST_WRITE_ON_PASS );
 	m_sprStreamHot.ZoomToHeight( fMeterHeight );
 	m_sprStreamHot.RunCommands( acHotOnCommand );
 	
 	ID.filename = sPassingPath;
 	m_sprStreamPassing.Load( ID );
-	m_sprStreamPassing.SetUseZBuffer( true );
+	m_sprStreamPassing.SetZTestMode( ZTEST_WRITE_ON_PASS );
 	m_sprStreamPassing.ZoomToHeight( fMeterHeight );
 	m_sprStreamPassing.RunCommands( acPassingOnCommand );
 }
