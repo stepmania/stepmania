@@ -48,6 +48,7 @@ void StreamDisplay::Load(
 	ID.filename = sNormalPath;
 	m_sprStreamNormal.Load( ID );
 	m_sprStreamNormal.SetZTestMode( ZTEST_WRITE_ON_PASS );
+	m_sprStreamNormal.SetHorizAlign( align_right );
 	m_sprStreamNormal.ZoomToHeight( fMeterHeight );
 	m_sprStreamNormal.ZoomToWidth( fMeterWidth*fStripWidthInPercent );
 	m_sprStreamNormal.RunCommands( acNormalOnCommand );
@@ -55,6 +56,7 @@ void StreamDisplay::Load(
 	ID.filename = sHotPath;
 	m_sprStreamHot.Load( ID );
 	m_sprStreamHot.SetZTestMode( ZTEST_WRITE_ON_PASS );
+	m_sprStreamHot.SetHorizAlign( align_right );
 	m_sprStreamHot.ZoomToHeight( fMeterHeight );
 	m_sprStreamHot.ZoomToWidth( fMeterWidth*fStripWidthInPercent );
 	m_sprStreamHot.RunCommands( acHotOnCommand );
@@ -62,6 +64,7 @@ void StreamDisplay::Load(
 	ID.filename = sPassingPath;
 	m_sprStreamPassing.Load( ID );
 	m_sprStreamPassing.SetZTestMode( ZTEST_WRITE_ON_PASS );
+	m_sprStreamPassing.SetHorizAlign( align_right );
 	m_sprStreamPassing.ZoomToHeight( fMeterHeight );
 	m_sprStreamPassing.ZoomToWidth( fMeterWidth*fStripWidthInPercent );
 	m_sprStreamPassing.RunCommands( acPassingOnCommand );
@@ -195,10 +198,6 @@ float StreamDisplay::GetHeightPercent( int iChamber, float fChamberOverflowPerce
 
 void StreamDisplay::DrawStrip( float fRightEdgePercent )
 {
-	m_sprStreamNormal.SetHorizAlign(	align_right );
-	m_sprStreamPassing.SetHorizAlign(	align_right );
-	m_sprStreamHot.SetHorizAlign(		align_right );
-
 	float fMeterWidth = this->GetUnzoomedWidth();
 	m_sprStreamNormal.SetX(		-fMeterWidth/2 + fMeterWidth*fRightEdgePercent );
 	m_sprStreamPassing.SetX(	-fMeterWidth/2 + fMeterWidth*fRightEdgePercent );
