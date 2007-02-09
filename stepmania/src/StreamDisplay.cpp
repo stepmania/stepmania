@@ -42,23 +42,27 @@ void StreamDisplay::Load(
 	RageTextureID ID;
 	ID.bStretch = true;
 
+	float fStripWidthInPercent = 1.0f/m_iNumStrips;
+
 	ID.filename = sNormalPath;
 	m_sprStreamNormal.Load( ID );
 	m_sprStreamNormal.SetZTestMode( ZTEST_WRITE_ON_PASS );
 	m_sprStreamNormal.ZoomToHeight( fMeterHeight );
-
+	m_sprStreamNormal.ZoomToWidth( fMeterWidth*fStripWidthInPercent );
 	m_sprStreamNormal.RunCommands( acNormalOnCommand );
 
 	ID.filename = sHotPath;
 	m_sprStreamHot.Load( ID );
 	m_sprStreamHot.SetZTestMode( ZTEST_WRITE_ON_PASS );
 	m_sprStreamHot.ZoomToHeight( fMeterHeight );
+	m_sprStreamHot.ZoomToWidth( fMeterWidth*fStripWidthInPercent );
 	m_sprStreamHot.RunCommands( acHotOnCommand );
 	
 	ID.filename = sPassingPath;
 	m_sprStreamPassing.Load( ID );
 	m_sprStreamPassing.SetZTestMode( ZTEST_WRITE_ON_PASS );
 	m_sprStreamPassing.ZoomToHeight( fMeterHeight );
+	m_sprStreamPassing.ZoomToWidth( fMeterWidth*fStripWidthInPercent );
 	m_sprStreamPassing.RunCommands( acPassingOnCommand );
 }
 
@@ -103,7 +107,6 @@ void StreamDisplay::DrawPrimitives()
 	DrawMask( m_fTrailingPercent );		// this is the "right endcap" to the life
 	
 	const float fChamberWidthInPercent = 1.0f/m_iNumChambers;
-	float fStripWidthInPercent = 1.0f/m_iNumStrips;
 	float fPercentBetweenStrips = 1.0f/m_iNumStrips;
 
 	// round down so that the chamber overflows align
@@ -121,7 +124,7 @@ void StreamDisplay::DrawPrimitives()
 	for( float f=fPercentOffset+1+fPercentBetweenStrips; f>=0; f-=fPercentBetweenStrips )
 	{
 		DrawMask( f );
-		DrawStrip( f, fStripWidthInPercent );
+		DrawStrip( f );
 	}
 
 	// Don't leave the Zbuffer in a messy state for arrows and dancing characters
@@ -189,12 +192,8 @@ float StreamDisplay::GetHeightPercent( int iChamber, float fChamberOverflowPerce
 		return 0;
 }
 
-void StreamDisplay::DrawStrip( float fRightEdgePercent, float fStripWidthInPercent )
+void StreamDisplay::DrawStrip( float fRightEdgePercent )
 {
-	m_sprStreamNormal.ZoomToWidth(		m_fMeterWidth*fStripWidthInPercent );
-	m_sprStreamPassing.ZoomToWidth(		m_fMeterWidth*fStripWidthInPercent );
-	m_sprStreamHot.ZoomToWidth(			m_fMeterWidth*fStripWidthInPercent );
-
 	m_sprStreamNormal.SetHorizAlign(	align_right );
 	m_sprStreamPassing.SetHorizAlign(	align_right );
 	m_sprStreamHot.SetHorizAlign(		align_right );
