@@ -35,10 +35,8 @@ void StreamDisplay::Load(
 	m_iNumStrips = iNumStrips;
 	m_iNumChambers = iNumChambers;
 
-	m_quadMask.SetDiffuse( RageColor(0,0,0,1) );
-	m_quadMask.SetZ( 1 );
 	m_quadMask.SetBlendMode( BLEND_NO_EFFECT );
-	m_quadMask.SetUseZBuffer( true );
+	m_quadMask.SetZWrite( true );
 
 	RString sGraphicPath;
 	RageTextureID ID;
