@@ -117,6 +117,7 @@ void BackgroundUtil::GetBackgroundEffects( const RString &_sName, vector<RString
 
 	vsPathsOut.clear();
 	GetDirListing( BACKGROUND_EFFECTS_DIR+sName+".xml", vsPathsOut, false, true );
+	GetDirListing( BACKGROUND_EFFECTS_DIR+sName+".lua", vsPathsOut, false, true );
 	
 	vsNamesOut.clear();
 	FOREACH_CONST( RString, vsPathsOut, s )
@@ -133,6 +134,7 @@ void BackgroundUtil::GetBackgroundTransitions( const RString &_sName, vector<RSt
 
 	vsPathsOut.clear();
 	GetDirListing( BACKGROUND_TRANSITIONS_DIR+sName+".xml", vsPathsOut, false, true );
+	GetDirListing( BACKGROUND_TRANSITIONS_DIR+sName+".lua", vsPathsOut, false, true );
 	
 	vsNamesOut.clear();
 	FOREACH_CONST( RString, vsPathsOut, s )
