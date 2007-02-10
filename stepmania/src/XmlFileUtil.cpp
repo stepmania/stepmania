@@ -248,7 +248,9 @@ unsigned LoadInternal( XNode *pNode, const RString &xml, RString &sErrorOut, uns
 	// XML Node Tag Name Open
 	iOffset++;
 	unsigned iTagEnd = xml.find_first_of( " \t\r\n/>", iOffset );
-	SetString( xml, iOffset, iTagEnd, &pNode->m_sName );
+	RString sName;
+	SetString( xml, iOffset, iTagEnd, &sName );
+	pNode->SetName( sName );
 	iOffset = iTagEnd;
 
 	// Generate XML Attributte List
@@ -310,7 +312,7 @@ unsigned LoadInternal( XNode *pNode, const RString &xml, RString &sErrorOut, uns
 		iOffset = iEnd;
 		ReplaceEntityText( sValue, g_mapEntitiesToChars );
 
-		pNode->m_pValue->SetValue( sValue );
+		pNode->SetValue( sValue );
 	}
 
 	// generate child nodes
@@ -392,7 +394,7 @@ unsigned LoadInternal( XNode *pNode, const RString &xml, RString &sErrorOut, uns
 
 				iOffset = iEnd;
 				ReplaceEntityText( sValue, g_mapEntitiesToChars );
-				pNode->m_pValue->SetValue( sValue );
+				pNode->SetValue( sValue );
 			}
 		}
 	}
@@ -454,7 +456,7 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 						WRITE( "\t" );
 			}
 			RString s;
-			pNode->m_pValue->GetValue( s );
+			pNode->GetValue( s );
 			ReplaceEntityText( s, g_mapCharsToEntities );
 			WRITE( s );
 		}
