@@ -583,12 +583,7 @@ namespace
 		RString sExpression;
 		pValue->GetValue( sExpression );
 
-		if( EndsWith(sName, "Command") && sExpression.size() > 0 && sExpression[0] == '%' )
-		{
-			sExpression.erase( 0, 1 );
-			LuaHelpers::RunExpression( L, sExpression, sFile );
-		}
-		else if( EndsWith(sName, "Command") && (sExpression.size() == 0 || sExpression[0] != '%') )
+		if( EndsWith(sName, "Command") )
 		{
 			LuaHelpers::ParseCommandList( L, sExpression, sFile );
 		}
