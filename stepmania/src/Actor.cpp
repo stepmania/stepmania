@@ -233,7 +233,9 @@ void Actor::LoadFromNode( const XNode* pNode )
 
 	LUA->Release( L );
 
-	PlayCommand( "Init" );
+	// Don't recurse Init.  It gets called once for every Actor when the 
+	// Actor is loaded, and we don't want to call it again.
+	PlayCommandNoRecurse( Message("Init") );
 }
 
 void Actor::Draw()
@@ -1153,6 +1155,11 @@ const apActorCommands *Actor::GetCommand( const RString &sCommandName ) const
 }
 
 void Actor::HandleMessage( const Message &msg )
+{
+	PlayCommandNoRecurse( msg );
+}
+
+void Actor::PlayCommandNoRecurse( const Message &msg )
 {
 	const apActorCommands *pCmd = GetCommand( msg.GetName() );
 	if( pCmd != NULL )

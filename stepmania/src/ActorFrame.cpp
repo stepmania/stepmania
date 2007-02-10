@@ -356,11 +356,6 @@ void ActorFrame::HandleMessage( const Message &msg )
 {
 	Actor::HandleMessage( msg );
 
-	// HACK: Don't propogate Init.  It gets called once for every Actor when the 
-	// Actor is loaded, and we don't want to call it again.
-	if( msg.GetName() == "Init" )
-		return;
-
 	for( unsigned i=0; i<m_SubActors.size(); i++ ) 
 	{
 		Actor* pActor = m_SubActors[i];

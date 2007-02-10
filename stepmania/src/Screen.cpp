@@ -40,7 +40,7 @@ void Screen::Init()
 
 	ActorUtil::LoadAllCommandsFromName( *this, m_sName, "Screen" );
 
-	this->PlayCommand( "Init" );
+	PlayCommandNoRecurse( Message("Init") );
 
 	vector<RString> asList;
 	split( PREPARE_SCREENS, ",", asList );
