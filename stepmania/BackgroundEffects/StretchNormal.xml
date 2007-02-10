@@ -1,9 +1,0 @@
-<ActorFrame><children>
-	<Layer
-		File="Var 'File1'"
-		InitCommand="%function(self) self.Color = Var 'Color1'; end"
-		OnCommand="scale_or_crop_background;diffuse,color(self.Color)" 
-		GainFocusCommand="Play"
-		LoseFocusCommand="Pause"
-	/>
-</children></ActorFrame>

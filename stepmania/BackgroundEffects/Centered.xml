@@ -1,6 +1,0 @@
-<ActorFrame><children>
-	<AutoActor 
-		File="Var 'File1'"
-		OnCommand="x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y"
-	/>
-</children></ActorFrame>

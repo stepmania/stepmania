@@ -1,6 +1,0 @@
-<ActorFrame><children>
-	<AutoActor 
-		File="Var 'File1'" 
-		OnCommand="scale_or_crop_background;Pause" 
-	/>
-</children></ActorFrame>
