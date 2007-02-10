@@ -116,7 +116,6 @@ void BackgroundUtil::GetBackgroundEffects( const RString &_sName, vector<RString
 		sName = "*";
 
 	vsPathsOut.clear();
-	GetDirListing( BACKGROUND_EFFECTS_DIR+sName+".xml", vsPathsOut, false, true );
 	GetDirListing( BACKGROUND_EFFECTS_DIR+sName+".lua", vsPathsOut, false, true );
 	
 	vsNamesOut.clear();
