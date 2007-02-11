@@ -135,7 +135,8 @@ namespace
 		/* In case the previous theme overloaded class bindings, reinitialize them. */
 		LUA->RegisterTypes();
 
-		THEME->SwitchThemeAndLanguage( g_sNewTheme, THEME->GetCurLanguage(), PREFSMAN->m_bPseudoLocalize );
+		if( !THEME->SwitchThemeAndLanguage( g_sNewTheme, THEME->GetCurLanguage(), PREFSMAN->m_bPseudoLocalize ) )
+			THEME->ReloadSubscribers();
 		PREFSMAN->m_sTheme.Set( g_sNewTheme );
 
 		/* Apply the new window title, icon and aspect ratio. */

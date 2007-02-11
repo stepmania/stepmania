@@ -345,7 +345,7 @@ RString ThemeManager::GetDefaultLanguage()
 	return sLangCode;
 }
 
-void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RString &sLanguage_, bool bPseudoLocalize )
+bool ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RString &sLanguage_, bool bPseudoLocalize )
 {
 	RString sThemeName = sThemeName_;
 	RString sLanguage = sLanguage_;
@@ -367,7 +367,7 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 
 	bool bNothingChanging = sThemeName == m_sCurThemeName && sLanguage == m_sCurLanguage && m_bPseudoLocalize == bPseudoLocalize;
 	if( bNothingChanging )
-		return;
+		return false;
 
 	m_bPseudoLocalize = bPseudoLocalize;
 
@@ -397,6 +397,7 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 	LocalizedString::RegisterLocalizer( LocalizedStringImplThemeMetric::Create );
 
 	ReloadSubscribers();
+	return true;
 }
 
 void ThemeManager::ReloadSubscribers()
