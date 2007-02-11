@@ -2033,6 +2033,13 @@ public:
 	DEFINE_METHOD( GetCoinMode,			GetCoinMode() )
 	DEFINE_METHOD( GetPremium,			GetPremium() )
 	DEFINE_METHOD( GetSongOptionsString,		m_SongOptions.GetCurrent().GetString() )
+	static int GetDefaultSongOptions( T* p, lua_State *L )
+	{
+		SongOptions so;
+		p->GetDefaultSongOptions( so );
+		lua_pushstring(L, so.GetString());
+		return 1;
+	}
 	static int IsWinner( T* p, lua_State *L )
 	{
 		PlayerNumber pn = Enum::Check<PlayerNumber>(L, 1);
@@ -2197,6 +2204,7 @@ public:
 		ADD_METHOD( GetPreferredSongGroup );
 		ADD_METHOD( GetHumanPlayers );
 		ADD_METHOD( SetSongOptions );
+		ADD_METHOD( GetDefaultSongOptions );
 		ADD_METHOD( GetCurrentStyle );
 		ADD_METHOD( IsAnyHumanPlayerUsingMemoryCard );
 	}
