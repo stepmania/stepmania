@@ -293,7 +293,7 @@ unsigned LoadInternal( XNode *pNode, const RString &xml, RString &sErrorOut, uns
 
 	// open/close tag <TAG ..> ... </TAG>
 	//                        ^- current pointer
-	if( XIsEmptyString(pNode->m_pValue->GetValue<RString>()) )
+	if( XIsEmptyString(pNode->GetValue()->GetValue<RString>()) )
 	{
 		// Text Value 
 		++iOffset;
@@ -377,7 +377,7 @@ unsigned LoadInternal( XNode *pNode, const RString &xml, RString &sErrorOut, uns
 		}
 		else	// Alone child Tag Loaded
 		{
-			if( XIsEmptyString(pNode->m_pValue->GetValue<RString>()) && iOffset < xml.size() && xml[iOffset] != chXMLTagOpen )
+			if( XIsEmptyString(pNode->GetValue()->GetValue<RString>()) && iOffset < xml.size() && xml[iOffset] != chXMLTagOpen )
 			{
 				// Text Value 
 				unsigned iEnd = xml.find( chXMLTagOpen, iOffset );
@@ -428,7 +428,7 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 		WRITE( "' " );
 	}
 
-	if( pNode->m_childs.empty() && pNode->m_pValue->GetValue<RString>().empty() )
+	if( pNode->m_childs.empty() && pNode->GetValue()->GetValue<RString>().empty() )
 	{
 		// <TAG Attr1="Val1"/> alone tag 
 		WRITE( "/>" );
@@ -446,7 +446,7 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 				return false;
 		
 		// Text Value
-		if( !pNode->m_pValue->GetValue<RString>().empty() )
+		if( !pNode->GetValue()->GetValue<RString>().empty() )
 		{
 			if( !pNode->m_childs.empty() )
 			{
@@ -578,7 +578,7 @@ void XNodeLuaValue::SetValue( unsigned v ) { Lua *L = LUA->Get(); LuaHelpers::Pu
 
 namespace
 {
-	void CompileXMLNodeValue( Lua *L, const RString &sName, XNodeValue *&pValue, const RString &sFile )
+	XNodeValue *CompileXMLNodeValue( Lua *L, const RString &sName, const XNodeValue *pValue, const RString &sFile )
 	{
 		RString sExpression;
 		pValue->GetValue( sExpression );
@@ -598,9 +598,9 @@ namespace
 			LuaHelpers::RunExpression( L, sExpression, sFile );
 		}
 
-		delete pValue;
-		pValue = new XNodeLuaValue;
-		pValue->SetValueFromStack( L );
+		XNodeLuaValue *pRet = new XNodeLuaValue;
+		pRet->SetValueFromStack( L );
+		return pRet;
 	}
 }
 
@@ -617,10 +617,15 @@ void XmlFileUtil::CompileXNodeTree( XNode *pNode, const RString &sFile )
 		FOREACH_Child( pNode, pChild )
 			aToCompile.push_back( pChild );
 
-		CompileXMLNodeValue( L, pNode->GetName(), pNode->m_pValue, sFile );
+		XNodeValue *pValue = CompileXMLNodeValue( L, pNode->GetName(), pNode->GetValue(), sFile );
+		pNode->SetValueFrom( pValue );
 
 		FOREACH_Attr( pNode, pAttr )
-			CompileXMLNodeValue( L, pAttr->first, pAttr->second, sFile );
+		{
+			pValue = CompileXMLNodeValue( L, pAttr->first, pAttr->second, sFile );
+			delete pAttr->second;
+			pAttr->second = pValue;
+		}
 	}
 
 	LUA->Release( L );
