@@ -100,15 +100,13 @@ XNode* Bookkeeper::CreateNode() const
 
 		for( map<Date,int>::const_iterator it = m_mapCoinsForHour.begin(); it != m_mapCoinsForHour.end(); ++it )
 		{
-			XNode *pDay = pData->AppendChild( "Coins" );
+			int iCoins = it->second;
+			XNode *pDay = pData->AppendChild( "Coins", iCoins );
 
 			const Date &d = it->first;
 			pDay->AppendAttr( "Hour", d.m_iHour );
 			pDay->AppendAttr( "Day", d.m_iDayOfYear );
 			pDay->AppendAttr( "Year", d.m_iYear );
-			
-			int iCoins = it->second;
-			pDay->SetTextValue( iCoins );
 		}
 	}
 
