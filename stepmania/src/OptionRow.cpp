@@ -876,7 +876,16 @@ void OptionRow::Reload()
 
 void OptionRow::HandleMessage( const Message &msg )
 {
-	Reload();
+	bool bReload = false;
+	FOREACH_CONST( RString, m_pHand->m_vsReloadRowMessages, m )
+	{
+		if( *m == msg.GetName() )
+			bReload = true;
+	}
+	if( bReload )
+		Reload();
+
+	ActorFrame::HandleMessage( msg );
 }
 
 
