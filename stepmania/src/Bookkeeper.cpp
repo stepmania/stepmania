@@ -85,7 +85,7 @@ void Bookkeeper::LoadFromNode( const XNode *pNode )
 		}
 
 		int iCoins;
-		day->GetValue( iCoins );
+		day->GetTextValue( iCoins );
 
 		m_mapCoinsForHour[d] = iCoins;
 	}
@@ -108,7 +108,7 @@ XNode* Bookkeeper::CreateNode() const
 			pDay->AppendAttr( "Year", d.m_iYear );
 			
 			int iCoins = it->second;
-			pDay->SetValue( iCoins );
+			pDay->SetTextValue( iCoins );
 		}
 	}
 

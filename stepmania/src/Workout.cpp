@@ -191,7 +191,7 @@ bool Workout::LoadFromFile( RString sFile )
 			if( songGenre->GetName() == "SongGenre" )
 			{
 				RString s;
-				songGenre->GetValue( s );
+				songGenre->GetTextValue( s );
 				m_vsSongGenres.push_back( s );
 			}
 		}

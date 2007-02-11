@@ -54,10 +54,10 @@ void ExportStrings::LuaInformation()
 	pNode->AppendAttr( "xsi:schemaLocation", "http://www.stepmania.com Lua.xsd" );
 
 	XNode *pVersionNode = pNode->AppendChild( "Version" );
-	pVersionNode->SetValue( PRODUCT_ID_VER );
+	pVersionNode->SetTextValue( PRODUCT_ID_VER );
 
 	XNode *pDateNode = pNode->AppendChild( "Date" );
-	pDateNode->SetValue( DateTime::GetNowDate().GetString() );
+	pDateNode->SetTextValue( DateTime::GetNowDate().GetString() );
 
 	XmlFileUtil::SaveToFile( pNode, "Lua.xml", "Lua.xsl" );
 

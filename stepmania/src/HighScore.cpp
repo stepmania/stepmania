@@ -308,12 +308,12 @@ void HighScoreList::LoadFromNode( const XNode* pHighScoreList )
 	{
 		if( p->GetName() == "NumTimesPlayed" )
 		{
-			p->GetValue( iNumTimesPlayed );
+			p->GetTextValue( iNumTimesPlayed );
 		}
 		else if( p->GetName() == "LastPlayed" )
 		{
 			RString s;
-			p->GetValue( s );
+			p->GetTextValue( s );
 			dtLastPlayed.FromString( s );
 		}
 		else if( p->GetName() == "HighScore" )

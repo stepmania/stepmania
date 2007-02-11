@@ -92,14 +92,14 @@ public:
 	void SetName( const RString &sName ) { m_sName = sName; }
 	const RString &GetName() const { return m_sName; }
 
-	const XNodeValue *GetValue() const { return m_pValue; }
-	XNodeValue *GetValue() { return m_pValue; }
-	void SetValueFrom( XNodeValue *pValue ) { delete m_pValue; m_pValue = pValue; }
+	const XNodeValue *GetTextValue() const { return m_pValue; }
+	XNodeValue *GetTextValue() { return m_pValue; }
+	void SetTextValueFrom( XNodeValue *pValue ) { delete m_pValue; m_pValue = pValue; }
 
 	template <typename T>
-	void GetValue( T &out ) const { m_pValue->GetValue(out); }
+	void GetTextValue( T &out ) const { m_pValue->GetValue(out); }
 	template <typename T>
-	void SetValue( const T val ) { m_pValue->SetValue(val); }
+	void SetTextValue( const T val ) { m_pValue->SetValue(val); }
 
 	// in own attribute list
 	const XNodeValue *GetAttr( const RString &sAttrName ) const; 
@@ -112,12 +112,12 @@ public:
 	const XNode *GetChild( const RString &sName ) const;
 	XNode *GetChild( const RString &sName );
 	template <typename T>
-	bool GetChildValue( const RString &sName, T &out ) const { const XNode *pChild=GetChild(sName); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
+	bool GetChildValue( const RString &sName, T &out ) const { const XNode *pChild=GetChild(sName); if(pChild==NULL) return false; pChild->GetTextValue(out); return true; }
 	bool PushChildValue( lua_State *L, const RString &sName ) const;
 
 	// modify DOM
 	template <typename T>
-	XNode *AppendChild( const RString &sName, T value )	{ XNode *p=new XNode(sName); p->SetValue(value); return AppendChild(p); }
+	XNode *AppendChild( const RString &sName, T value )	{ XNode *p=new XNode(sName); p->SetTextValue(value); return AppendChild(p); }
 	XNode *AppendChild( const RString &sName )		{ XNode *p=new XNode(sName); return AppendChild(p); }
 	XNode *AppendChild( XNode *node );
 	bool RemoveChild( XNode *node, bool bDelete = true );

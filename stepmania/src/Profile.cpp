@@ -1109,7 +1109,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 			int iNumPlays = iter->second;
 
 			XNode *pStyleNode = s.CreateNode();
-			pStyleNode->SetValue( iNumPlays );
+			pStyleNode->SetTextValue( iNumPlays );
 
 			pNumSongsPlayedByStyle->AppendChild( pStyleNode );
 		}
@@ -1242,7 +1242,7 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 		{
 			FOREACH_CONST_Child( pDefaultModifiers, game_type )
 			{
-				game_type->GetValue( m_sDefaultModifiers[game_type->GetName()] );
+				game_type->GetTextValue( m_sDefaultModifiers[game_type->GetName()] );
 			}
 		}
 	}
@@ -1282,7 +1282,7 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 				if( !s.IsValid() )
 					WARN_AND_CONTINUE;
 
-				style->GetValue( m_iNumSongsPlayedByStyle[s] );
+				style->GetTextValue( m_iNumSongsPlayedByStyle[s] );
 			}
 		}
 	}
@@ -1673,7 +1673,7 @@ void Profile::LoadCalorieDataFromNode( const XNode* pCalorieData )
 
 		float fCaloriesBurned = 0;
 
-		pCaloriesBurned->GetValue(fCaloriesBurned);
+		pCaloriesBurned->GetTextValue(fCaloriesBurned);
 
 		m_mapDayToCaloriesBurned[date].fCals = fCaloriesBurned;
 	}	
