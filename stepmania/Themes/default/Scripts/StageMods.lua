@@ -1,35 +1,51 @@
-function AreStageModsForced()
+function AreStagePlayerModsForced()
 	local bExtraStage = GAMESTATE:IsAnExtraStage()
 	local bOni = GAMESTATE:GetPlayMode() == "PlayMode_Oni"
 	return bExtraStage or bOni
 end
 
+function AreStageSongModsForced()
+	local bExtraStage = GAMESTATE:IsAnExtraStage()
+	local pm = GAMESTATE:GetPlayMode()
+	local bOni = pm == "PlayMode_Oni"
+	local bBattle = pm == "PlayMode_Battle"
+	local bRave = pm == "PlayMode_Rave"
+	return bExtraStage or bOni or bBattle or bRave
+end
+
 function ScreenSelectMusic:setupmusicstagemods()
-	if not GAMESTATE:IsAnExtraStage() then return end
-	if GAMESTATE:GetPreferredSongGroup() == "---Group All---" and
-	   not PREFSMAN:GetPreference("PickExtraStage") then
-		local song = GAMESTATE:GetCurrentSong()
-		GAMESTATE:SetPreferredSongGroup( song:GetGroupName() )
-	end
+	local pm = GAMESTATE:GetPlayMode()
 
-	local bExtra2 = GAMESTATE:IsExtraStage2()
-	local style = GAMESTATE:GetCurrentStyle()
-	local song, steps, po, so = SONGMAN:GetExtraStageInfo( bExtra2, style )
-	local difficulty = steps:GetDifficulty()
-	local Reverse = PlayerNumber:Reverse()
-	
-	GAMESTATE:SetCurrentSong( song )
-	GAMESTATE:SetPreferredSong( song )
+	if pm == "PlayMode_Battle" or pm == "PlayMode_Rave" then
+		local so = GAMESTATE:GetDefaultSongOptions() .. ",failoff"
+		GAMESTATE:SetSongOptions( "ModsLevel_Stage", so )
+		MESSAGEMAN:Broadcast( "SongOptionsChanged" )
+	elseif GAMESTATE:IsAnExtraStage() then
+		if GAMESTATE:GetPreferredSongGroup() == "---Group All---" and
+		   not PREFSMAN:GetPreference("PickExtraStage") then
+			local song = GAMESTATE:GetCurrentSong()
+			GAMESTATE:SetPreferredSongGroup( song:GetGroupName() )
+		end
 
-	for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
-		GAMESTATE:SetCurrentSteps( pn, steps )
-		GAMESTATE:GetPlayerState(pn):SetPlayerOptions( "ModsLevel_Stage", po )
-		GAMESTATE:SetPreferredDifficulty( pn, difficulty )
-		MESSAGEMAN:Broadcast( "PlayerOptionsChangedP" .. (Reverse[pn]+1) )
+		local bExtra2 = GAMESTATE:IsExtraStage2()
+		local style = GAMESTATE:GetCurrentStyle()
+		local song, steps, po, so = SONGMAN:GetExtraStageInfo( bExtra2, style )
+		local difficulty = steps:GetDifficulty()
+		local Reverse = PlayerNumber:Reverse()
+
+		GAMESTATE:SetCurrentSong( song )
+		GAMESTATE:SetPreferredSong( song )
+
+		for pn in ivalues(GAMESTATE:GetHumanPlayers()) do
+			GAMESTATE:SetCurrentSteps( pn, steps )
+			GAMESTATE:GetPlayerState(pn):SetPlayerOptions( "ModsLevel_Stage", po )
+			GAMESTATE:SetPreferredDifficulty( pn, difficulty )
+			MESSAGEMAN:Broadcast( "PlayerOptionsChangedP" .. (Reverse[pn]+1) )
+		end
+
+		GAMESTATE:SetSongOptions( "ModsLevel_Stage", so )
+		MESSAGEMAN:Broadcast( "SongOptionsChanged" )
 	end
-	
-	GAMESTATE:SetSongOptions( "ModsLevel_Stage", so )
-	MESSAGEMAN:Broadcast( "SongOptionsChanged" )
 end
 
 function ScreenSelectMusic:setupcoursestagemods()
@@ -53,7 +69,7 @@ function ScreenSelectMusic:setupcoursestagemods()
 end
 
 -- 
--- (c) 2006 Steve Checkoway
+-- (c) 2006-2007 Steve Checkoway
 -- All rights reserved.
 -- 
 -- Permission is hereby granted, free of charge, to any person obtaining a
