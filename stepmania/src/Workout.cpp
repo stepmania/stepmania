@@ -189,7 +189,11 @@ bool Workout::LoadFromFile( RString sFile )
 		FOREACH_CONST_Child( songGenres, songGenre )
 		{
 			if( songGenre->GetName() == "SongGenre" )
-				m_vsSongGenres.push_back( songGenre->GetValue() );
+			{
+				RString s;
+				songGenre->GetValue( s );
+				m_vsSongGenres.push_back( s );
+			}
 		}
 	}
 	return true;

@@ -1242,7 +1242,7 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 		{
 			FOREACH_CONST_Child( pDefaultModifiers, game_type )
 			{
-				m_sDefaultModifiers[game_type->GetName()] = game_type->GetValue();
+				game_type->GetValue( m_sDefaultModifiers[game_type->GetName()] );
 			}
 		}
 	}
