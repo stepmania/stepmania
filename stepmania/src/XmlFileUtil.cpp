@@ -749,7 +749,7 @@ void XmlFileUtil::MergeIniUnder( XNode *pFrom, XNode *pTo )
 		}
 		else
 		{
-			FOREACHM( RString, XNodeValue *, pSectionNode->m_attrs, it2 )
+			FOREACH_Attr( pSectionNode, it2 )
 			{
 				/* Don't overwrite existing nodes. */
 				pChildNode->AppendAttrFrom( it2->first, it2->second->Copy(), false );
