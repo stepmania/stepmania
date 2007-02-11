@@ -91,9 +91,11 @@ public:
 
 	void SetName( const RString &sName ) { m_sName = sName; }
 	const RString &GetName() const { return m_sName; }
-	RString GetValue() const { return m_pValue->GetValue<RString>(); }
 
+	const XNodeValue *GetValue() const { return m_pValue; }
+	XNodeValue *GetValue() { return m_pValue; }
 	void SetValueFrom( XNodeValue *pValue ) { delete m_pValue; m_pValue = pValue; }
+
 	template <typename T>
 	void GetValue( T &out ) const { m_pValue->GetValue(out); }
 	template <typename T>
