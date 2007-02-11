@@ -41,8 +41,7 @@ public:
 	RString GetThemeDisplayName( const RString &sThemeName );
 	void GetLanguages( vector<RString>& AddTo );
 	bool DoesLanguageExist( const RString &sLanguage );
-	// Return false if nothing changed.
-	bool SwitchThemeAndLanguage( const RString &sThemeName, const RString &sLanguage, bool bPseudoLocalize );
+	void SwitchThemeAndLanguage( const RString &sThemeName, const RString &sLanguage, bool bPseudoLocalize, bool bForceThemeReload = false );
 	void UpdateLuaGlobals();
 	RString GetCurThemeName() const { return m_sCurThemeName; };
 	bool IsThemeLoaded() const { return !m_sCurThemeName.empty(); };

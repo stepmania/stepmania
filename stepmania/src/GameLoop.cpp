@@ -115,10 +115,12 @@ static void CheckFocus()
 /* On the next update, change themes, and load sNewScreen. */
 static RString g_sNewTheme;
 static RString g_sNewScreen;
-void GameLoop::ChangeTheme( const RString &sNewTheme, const RString &sNewScreen )
+static bool g_bForceThemeReload;
+void GameLoop::ChangeTheme( const RString &sNewTheme, const RString &sNewScreen, bool bForced )
 {
 	g_sNewTheme = sNewTheme;
 	g_sNewScreen = sNewScreen;
+	g_bForceThemeReload = bForced;
 }
 
 #include "StepMania.h" // XXX
@@ -129,14 +131,10 @@ namespace
 		SAFE_DELETE( SCREENMAN );
 		TEXTUREMAN->DoDelayedDelete();
 
-		/* Clear theme metrics, so ThemeMetric<apActorCommand>s are cleared. */
-		THEME->ClearSubscribers();
-
 		/* In case the previous theme overloaded class bindings, reinitialize them. */
 		LUA->RegisterTypes();
 
-		if( !THEME->SwitchThemeAndLanguage( g_sNewTheme, THEME->GetCurLanguage(), PREFSMAN->m_bPseudoLocalize ) )
-			THEME->ReloadSubscribers();
+		THEME->SwitchThemeAndLanguage( g_sNewTheme, THEME->GetCurLanguage(), PREFSMAN->m_bPseudoLocalize, g_bForceThemeReload );
 		PREFSMAN->m_sTheme.Set( g_sNewTheme );
 
 		/* Apply the new window title, icon and aspect ratio. */

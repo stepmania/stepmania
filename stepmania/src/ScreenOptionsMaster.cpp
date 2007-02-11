@@ -123,8 +123,11 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 			(m_iChangeMask & OPT_APPLY_GRAPHICS) ||
 			(m_iChangeMask & OPT_APPLY_ASPECT_RATIO) )
 		{
+			/* If the resolution or aspect ratio changes, always reload the theme.  Otherwise,
+			 * only reload it if it changed. */
 			RString sNewTheme = PREFSMAN->m_sTheme.Get();
-			GameLoop::ChangeTheme( sNewTheme, this->GetNextScreen() );
+			bool bForceThemeReload = !!(m_iChangeMask & OPT_APPLY_ASPECT_RATIO) || !!(m_iChangeMask & OPT_APPLY_GRAPHICS);
+			GameLoop::ChangeTheme( sNewTheme, this->GetNextScreen(), bForceThemeReload );
 			StepMania::ApplyGraphicOptions();
 		}
 
