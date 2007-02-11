@@ -93,8 +93,6 @@ public:
 	static const RString TEXT_ATTRIBUTE;
 	template <typename T>
 	void GetTextValue( T &out ) const { GetAttrValue(TEXT_ATTRIBUTE, out); }
-	template <typename T>
-	void SetTextValue( const T val ) { AppendAttr(TEXT_ATTRIBUTE, val); }
 
 	// in own attribute list
 	const XNodeValue *GetAttr( const RString &sAttrName ) const; 
@@ -112,7 +110,7 @@ public:
 
 	// modify DOM
 	template <typename T>
-	XNode *AppendChild( const RString &sName, T value )	{ XNode *p=new XNode(sName); p->SetTextValue(value); return AppendChild(p); }
+	XNode *AppendChild( const RString &sName, T value )	{ XNode *p=AppendChild(sName); p->AppendAttr(XNode::TEXT_ATTRIBUTE, value); return p; }
 	XNode *AppendChild( const RString &sName )		{ XNode *p=new XNode(sName); return AppendChild(p); }
 	XNode *AppendChild( XNode *node );
 	bool RemoveChild( XNode *node, bool bDelete = true );

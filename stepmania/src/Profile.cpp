@@ -1109,7 +1109,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 			int iNumPlays = iter->second;
 
 			XNode *pStyleNode = s.CreateNode();
-			pStyleNode->SetTextValue( iNumPlays );
+			pStyleNode->AppendAttr(XNode::TEXT_ATTRIBUTE, iNumPlays );
 
 			pNumSongsPlayedByStyle->AppendChild( pStyleNode );
 		}

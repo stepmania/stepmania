@@ -312,7 +312,7 @@ unsigned LoadInternal( XNode *pNode, const RString &xml, RString &sErrorOut, uns
 		iOffset = iEnd;
 		ReplaceEntityText( sValue, g_mapEntitiesToChars );
 
-		pNode->SetTextValue( sValue );
+		pNode->AppendAttr(XNode::TEXT_ATTRIBUTE, sValue );
 	}
 
 	// generate child nodes
@@ -394,7 +394,7 @@ unsigned LoadInternal( XNode *pNode, const RString &xml, RString &sErrorOut, uns
 
 				iOffset = iEnd;
 				ReplaceEntityText( sValue, g_mapEntitiesToChars );
-				pNode->SetTextValue( sValue );
+				pNode->AppendAttr(XNode::TEXT_ATTRIBUTE, sValue );
 			}
 		}
 	}
