@@ -254,22 +254,7 @@ Section "Main Section" SecMain
 
 	SetOutPath "$INSTDIR\NoteSkins\dance"
 	File /r /x CVS /x .svn "NoteSkins\dance\default"
-	File /r /x CVS /x .svn "NoteSkins\dance\flat"
-
-	SetOutPath "$INSTDIR\NoteSkins\pump"
-	File /r /x CVS /x .svn "NoteSkins\pump\Classic" ; what the heck, they're tiny
-	File /r /x CVS /x .svn "NoteSkins\pump\default"
-
-	SetOutPath "$INSTDIR\NoteSkins\para"
-	File /r /x CVS /x .svn "NoteSkins\para\default"
-
-	; temporarily disabled--noteskin needs updating
-	;SetOutPath "$INSTDIR\NoteSkins\ez2"
-	;File /r /x CVS /x .svn "NoteSkins\ez2\original"
-
-	;SetOutPath "$INSTDIR\NoteSkins\para"
-	;File /r /x CVS /x .svn "NoteSkins\para\original"
-
+	
 	SetOutPath "$INSTDIR"
 
 	CreateDirectory "$INSTDIR\BackgroundEffects"
