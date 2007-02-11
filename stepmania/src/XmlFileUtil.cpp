@@ -293,7 +293,7 @@ unsigned LoadInternal( XNode *pNode, const RString &xml, RString &sErrorOut, uns
 
 	// open/close tag <TAG ..> ... </TAG>
 	//                        ^- current pointer
-	if( XIsEmptyString(pNode->GetTextValue()->GetValue<RString>()) )
+	if( pNode->GetAttr(XNode::TEXT_ATTRIBUTE) == NULL )
 	{
 		// Text Value 
 		++iOffset;
@@ -377,7 +377,7 @@ unsigned LoadInternal( XNode *pNode, const RString &xml, RString &sErrorOut, uns
 		}
 		else	// Alone child Tag Loaded
 		{
-			if( XIsEmptyString(pNode->GetTextValue()->GetValue<RString>()) && iOffset < xml.size() && xml[iOffset] != chXMLTagOpen )
+			if( pNode->GetAttr(XNode::TEXT_ATTRIBUTE) == NULL && iOffset < xml.size() && xml[iOffset] != chXMLTagOpen )
 			{
 				// Text Value 
 				unsigned iEnd = xml.find( chXMLTagOpen, iOffset );
@@ -416,19 +416,20 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 	WRITE( pNode->GetName() );
 
 	// <TAG Attr1="Val1" 
-	if( !pNode->m_attrs.empty() )
-		WRITE( " " );
 	FOREACH_CONST_Attr( pNode, p )
 	{
+		if( p->first == XNode::TEXT_ATTRIBUTE )
+			continue;
 		RString attr( p->second->GetValue<RString>() );
 		ReplaceEntityText( attr, g_mapCharsToEntities );
+		WRITE( " " );
 		WRITE( p->first );
 		WRITE( "='" );
 		WRITE( attr );
-		WRITE( "' " );
+		WRITE( "'" );
 	}
 
-	if( pNode->m_childs.empty() && pNode->GetTextValue()->GetValue<RString>().empty() )
+	if( pNode->m_childs.empty() && pNode->GetAttr(XNode::TEXT_ATTRIBUTE) == NULL )
 	{
 		// <TAG Attr1="Val1"/> alone tag 
 		WRITE( "/>" );
@@ -446,7 +447,8 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 				return false;
 		
 		// Text Value
-		if( !pNode->GetTextValue()->GetValue<RString>().empty() )
+		const XNodeValue *pText = pNode->GetAttr( XNode::TEXT_ATTRIBUTE );
+		if( pText != NULL )
 		{
 			if( !pNode->m_childs.empty() )
 			{
@@ -456,7 +458,7 @@ bool GetXMLInternal( const XNode *pNode, RageFileBasic &f, bool bWriteTabs, int 
 						WRITE( "\t" );
 			}
 			RString s;
-			pNode->GetTextValue( s );
+			pText->GetValue( s );
 			ReplaceEntityText( s, g_mapCharsToEntities );
 			WRITE( s );
 		}
@@ -617,12 +619,9 @@ void XmlFileUtil::CompileXNodeTree( XNode *pNode, const RString &sFile )
 		FOREACH_Child( pNode, pChild )
 			aToCompile.push_back( pChild );
 
-		XNodeValue *pValue = CompileXMLNodeValue( L, pNode->GetName(), pNode->GetTextValue(), sFile );
-		pNode->SetTextValueFrom( pValue );
-
 		FOREACH_Attr( pNode, pAttr )
 		{
-			pValue = CompileXMLNodeValue( L, pAttr->first, pAttr->second, sFile );
+			XNodeValue *pValue = CompileXMLNodeValue( L, pAttr->first, pAttr->second, sFile );
 			delete pAttr->second;
 			pAttr->second = pValue;
 		}
@@ -642,7 +641,7 @@ namespace
 			XNodeLuaValue *pValue = new XNodeLuaValue;
 			lua_pushvalue( L, -1 );
 			pValue->SetValueFromStack( L );
-			pNode->SetTextValueFrom( pValue );
+			pNode->AppendAttrFrom( XNode::TEXT_ATTRIBUTE, pValue );
 		}
 
 		/* Iterate over the table, pulling out attributes and tables to process. */

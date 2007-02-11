@@ -80,26 +80,21 @@ typedef multimap<RString,XNode*> XNodes;
 		Var##Iter != (pNode)->m_childs.end(); \
 		++Var##Iter )
 
-// XMLNode structure
 class XNode
 {
 public:
 	RString m_sName;	// a duplicate of the m_sName in the parent's map
-	XNodeValue *m_pValue;
 	XNodes	m_childs;	// child node
 	XAttrs	m_attrs;	// attributes
 
 	void SetName( const RString &sName ) { m_sName = sName; }
 	const RString &GetName() const { return m_sName; }
 
-	const XNodeValue *GetTextValue() const { return m_pValue; }
-	XNodeValue *GetTextValue() { return m_pValue; }
-	void SetTextValueFrom( XNodeValue *pValue ) { delete m_pValue; m_pValue = pValue; }
-
+	static const RString TEXT_ATTRIBUTE;
 	template <typename T>
-	void GetTextValue( T &out ) const { m_pValue->GetValue(out); }
+	void GetTextValue( T &out ) const { GetAttrValue(TEXT_ATTRIBUTE, out); }
 	template <typename T>
-	void SetTextValue( const T val ) { m_pValue->SetValue(val); }
+	void SetTextValue( const T val ) { AppendAttr(TEXT_ATTRIBUTE, val); }
 
 	// in own attribute list
 	const XNodeValue *GetAttr( const RString &sAttrName ) const; 

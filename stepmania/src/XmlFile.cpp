@@ -14,21 +14,20 @@
 #include "Foreach.h"
 #include "LuaManager.h"
 
+const RString XNode::TEXT_ATTRIBUTE = "__TEXT__";
+
 XNode::XNode()
 {
-	m_pValue = new XNodeStringValue;
 }
 
 XNode::XNode( const RString &sName )
 {
 	m_sName = sName;
-	m_pValue = new XNodeStringValue;
 }
 
 XNode::XNode( const XNode &cpy ):
 	m_sName( cpy.m_sName )
 {
-	m_pValue = cpy.m_pValue->Copy();
 	FOREACH_CONST_Attr( &cpy, pAttr )
 		this->AppendAttrFrom( pAttr->first, pAttr->second->Copy() );
 	FOREACH_CONST_Child( &cpy, c )
@@ -38,7 +37,6 @@ XNode::XNode( const XNode &cpy ):
 void XNode::Clear()
 {
 	Free();
-	m_pValue = new XNodeStringValue;
 }
 
 void XNode::Free()
@@ -49,8 +47,6 @@ void XNode::Free()
 		delete pAttr->second;
 	m_childs.clear();
 	m_attrs.clear();
-
-	SAFE_DELETE( m_pValue );
 }
 	
 void XNodeStringValue::GetValue( RString &out ) const		{ out = m_sValue; }
@@ -119,7 +115,7 @@ bool XNode::PushChildValue( lua_State *L, const RString &sName ) const
 		lua_pushnil( L );
 		return false;
 	}
-	pChild->m_pValue->PushValue( L );
+	pChild->GetAttr(XNode::TEXT_ATTRIBUTE)->PushValue( L );
 	return true;
 }
 
