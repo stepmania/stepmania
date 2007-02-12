@@ -165,6 +165,15 @@ for( const int UNIQUE_NAME(tab) = LuaHelpers::AbsIndex(L,index), \
      lua_next(L, UNIQUE_NAME(tab)) && (lua_pushvalue(L,-2),true); \
      lua_settop(L,UNIQUE_NAME(top)) )
 
+/* Iterate over the array elements of a table. */
+#define FOREACH_LUATABLEI(L, index, i) \
+	for( int UNIQUE_NAME(tab) = LuaHelpers::AbsIndex(L,index), \
+		UNIQUE_NAME(top) = lua_gettop(L), i = 1; \
+		lua_rawgeti( L, tab, i ), \
+			lua_isnil(L, -1)? \
+			(lua_pop(L, 1), false):(true); /* if nil, pop the nil and stop traversal */ \
+		lua_settop(L,UNIQUE_NAME(top)), ++i )
+
 
 struct RegisterLuaFunction { RegisterLuaFunction( RegisterWithLuaFn pfn ) { LuaManager::Register( pfn ); } };
 #define REGISTER_WITH_LUA_FUNCTION( Fn ) \
