@@ -232,8 +232,7 @@ namespace
 		{
 			pNode = queue.back();
 			queue.pop_back();
-			FOREACH_Child( pNode, pChild )
-				queue.push_back( pChild );
+			queue.insert( queue.end(), pNode->m_childs.begin(), pNode->m_childs.end() );
 
 			/* Source file, for error messages: */
 			pNode->AppendAttr( "_Source", sFile );

@@ -98,11 +98,10 @@ XNodeValue *XNode::GetAttr( const RString &attrname )
 
 XNode *XNode::GetChild( const RString &sName )
 {
-	multimap<RString, XNode*>::iterator it = m_childs.find( sName );
-	if( it != m_childs.end() )
+	FOREACH_Child( this, it )
 	{
-		DEBUG_ASSERT( sName == it->second->m_sName );
-		return it->second;
+		if( it->GetName() == sName )
+			return it;
 	}
 	return NULL;
 }
@@ -121,11 +120,10 @@ bool XNode::PushChildValue( lua_State *L, const RString &sName ) const
 
 const XNode *XNode::GetChild( const RString &sName ) const
 {
-	multimap<RString, XNode*>::const_iterator it = m_childs.find( sName );
-	if( it != m_childs.end() )
+	FOREACH_CONST_Child( this, it )
 	{
-		DEBUG_ASSERT( sName == it->second->m_sName );
-		return it->second;
+		if( it->GetName() == sName )
+			return it;
 	}
 	return NULL;
 }
@@ -134,25 +132,20 @@ XNode *XNode::AppendChild( XNode *node )
 {
 	DEBUG_ASSERT( node->m_sName.size() );
 
-	/* Hinted insert: optimize for alphabetical inserts, for the copy ctor. */
-	m_childs.insert( m_childs.end(), pair<RString,XNode*>(node->m_sName,node) );
+	m_childs.push_back( node );
 	return node;
 }
 
 // detach node and delete object
 bool XNode::RemoveChild( XNode *node, bool bDelete )
 {
-	FOREACHMM( RString, XNode*, m_childs, p )
-	{
-		if( p->second == node )
-		{
-			if( bDelete )
-				SAFE_DELETE( p->second );
-			m_childs.erase( p );
-			return true;
-		}
-	}
-	return false;
+	XNodes::iterator it = find( m_childs.begin(), m_childs.end(), node );
+	if( it == m_childs.end() )
+		return false;
+
+	delete node;
+	m_childs.erase( it );
+	return true;
 }
 
 

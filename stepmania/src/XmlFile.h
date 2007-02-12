@@ -54,7 +54,7 @@ public:
 
 typedef map<RString,XNodeValue*> XAttrs;
 class XNode;
-typedef multimap<RString,XNode*> XNodes;
+typedef vector<XNode*> XNodes;
 
 #define FOREACH_Attr( pNode, Var ) \
 	for( XAttrs::iterator Var = (pNode)->m_attrs.begin(); \
@@ -69,22 +69,22 @@ typedef multimap<RString,XNode*> XNodes;
 #define FOREACH_Child( pNode, Var ) \
 	XNode *Var = NULL; \
 	for( XNodes::iterator Var##Iter = (pNode)->m_childs.begin(); \
-		Var = (Var##Iter != (pNode)->m_childs.end())? Var##Iter->second:NULL, \
+		Var = (Var##Iter != (pNode)->m_childs.end())? *Var##Iter:NULL, \
 		Var##Iter != (pNode)->m_childs.end(); \
 		++Var##Iter )
 
 #define FOREACH_CONST_Child( pNode, Var ) \
 	const XNode *Var = NULL; \
 	for( XNodes::const_iterator Var##Iter = (pNode)->m_childs.begin(); \
-		Var = (Var##Iter != (pNode)->m_childs.end())? Var##Iter->second:NULL, \
+		Var = (Var##Iter != (pNode)->m_childs.end())? *Var##Iter:NULL, \
 		Var##Iter != (pNode)->m_childs.end(); \
 		++Var##Iter )
 
 class XNode
 {
 public:
-	RString m_sName;	// a duplicate of the m_sName in the parent's map
-	XNodes	m_childs;	// child node
+	RString m_sName;
+	XNodes	m_childs;	// child nodes
 	XAttrs	m_attrs;	// attributes
 
 	void SetName( const RString &sName ) { m_sName = sName; }

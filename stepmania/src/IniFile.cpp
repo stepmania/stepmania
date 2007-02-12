@@ -147,9 +147,7 @@ bool IniFile::RenameKey(const RString &from, const RString &to)
 	if( pNode == NULL )
 		return false;
 
-	RemoveChild( pNode, false );
 	pNode->SetName( to );
-	AppendChild( pNode );
 
 	return true;
 }

@@ -330,7 +330,7 @@ unsigned LoadInternal( XNode *pNode, const RString &xml, RString &sErrorOut, uns
 		if( !node->GetName().empty() )
 		{
 			DEBUG_ASSERT( node->GetName().size() );
-			pNode->m_childs.insert( make_pair(node->GetName(), node) );
+			pNode->m_childs.push_back( node );
 		}
 		else
 		{
@@ -731,6 +731,10 @@ XNode *XmlFileUtil::XNodeFromTable( lua_State *L )
  * On return, the contents of pFrom will be undefined and should be deleted. */
 void XmlFileUtil::MergeIniUnder( XNode *pFrom, XNode *pTo )
 {
+	/* Batch up nodes to move, and do them all at once, to deal sanely
+	 * with the possibility of duplicate child names. */
+	vector<XNodes::iterator> aToMove;
+
 	/* Iterate over each section in pFrom. */
 	XNodes::iterator it = pFrom->m_childs.begin();
 	while( it != pFrom->m_childs.end() )
@@ -739,12 +743,11 @@ void XmlFileUtil::MergeIniUnder( XNode *pFrom, XNode *pTo )
 		++next;
 
 		/* If this node doesn't exist in pTo, just move the whole node. */
-		XNode *pChildNode = pTo->GetChild( it->first );
-		XNode *pSectionNode = it->second;
+		XNode *pSectionNode = *it;
+		XNode *pChildNode = pTo->GetChild( pSectionNode->GetName() );
 		if( pChildNode == NULL )
 		{
-			pFrom->RemoveChild( pSectionNode, false ); // don't delete
-			pTo->AppendChild( pSectionNode );
+			aToMove.push_back( it );
 		}
 		else
 		{
@@ -756,6 +759,15 @@ void XmlFileUtil::MergeIniUnder( XNode *pFrom, XNode *pTo )
 		}
 
 		it = next;
+	}
+
+	/* Iterate in reverse, since erasing iterators will invalidate the
+	 * iterators after it. */
+	for( int i = aToMove.size()-1; i >= 0; --i )
+	{
+		XNode *pNode = *aToMove[i];
+		pFrom->m_childs.erase( aToMove[i] );
+		pTo->AppendChild( pNode );
 	}
 }
 
