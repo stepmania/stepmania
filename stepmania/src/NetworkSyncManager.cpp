@@ -827,25 +827,7 @@ void PacketFunctions::ClearPacket()
 
 RString NetworkSyncManager::MD5Hex( const RString &sInput ) 
 {	
-	RString HashedName;
-	RString PreHashedName;
-
-	RString sOutput = BinaryToHex( CryptManager::GetMD5ForString(sInput) );
-
-	for (int i = 0; i < 16; i++)
-		PreHashedName += ssprintf( "%2X", sOutput[i] );
-
-	//XXX: Yuck. Convert spaces to 0's better. (will fix soon)
-	for (int i = 0; i < 32; i++)
-		if ( PreHashedName.c_str()[i] == ' ' )
-			HashedName += '0';
-		else
-			if ( PreHashedName.c_str()[i]=='\0' )
-				HashedName += ' ';
-			else
-				HashedName += PreHashedName.c_str()[i];
-
-	return HashedName;
+	return BinaryToHex( CryptManager::GetMD5ForString(sInput) ).MakeUpper();
 }
 
 void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers ) 
