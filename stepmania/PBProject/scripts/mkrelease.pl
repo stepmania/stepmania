@@ -18,13 +18,8 @@ my @filelist = qw( Announcers/instructions.txt
 		   Courses/Samples
 		   Packages/Instructions.txt
 		   NoteSkins/instructions.txt
-		   NoteSkins/common/default
+		   NoteSkins/common/common
 		   NoteSkins/dance/default
-		   NoteSkins/dance/flat
-		   NoteSkins/dance/note
-		   NoteSkins/dance/solo
-		   NoteSkins/pump/Classic
-		   NoteSkins/pump/default
 		   RandomMovies/instructions.txt
 		   Songs/Instructions.txt
 		   Themes/instructions.txt
