@@ -68,7 +68,7 @@ void BannerCache::Demand()
 	if( PREFSMAN->m_BannerCache != BNCACHE_LOW_RES_LOAD_ON_DEMAND )
 		return;
 
-	FOREACH_Child( &BannerData, p )
+	FOREACH_CONST_Child( &BannerData, p )
 	{
 		RString sBannerPath = p->GetName();
 

@@ -146,7 +146,7 @@ void TitleSubst::Load(const RString &filename, const RString &section)
 	XNode *pGroup = xml.GetChild( section );
 	if( pGroup == NULL )
 		return;
-	FOREACH_Child( pGroup, child )
+	FOREACH_CONST_Child( pGroup, child )
 	{
 		if( child->GetName() != "Translation" )
 			continue;
