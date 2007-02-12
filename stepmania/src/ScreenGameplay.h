@@ -67,7 +67,7 @@ public:
 	//
 	// Lua
 	//
-	virtual void PushSelf( lua_State *L );
+	void PushSelf( lua_State *L );
 
 	PlayerNumber		m_pn;
 	MultiPlayer		m_mp;
