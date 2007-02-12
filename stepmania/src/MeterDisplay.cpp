@@ -36,15 +36,12 @@ void MeterDisplay::LoadFromNode( const XNode* pNode )
 	if( !pNode->GetAttrValue("StreamWidth", m_fStreamWidth) )
 		RageException::Throw( "%s: MeterDisplay: missing the \"StreamWidth\" attribute", ActorUtil::GetWhere(pNode).c_str() );
 
-	{
-		RString sStreamPath;
-		if( !ActorUtil::GetAttrPath(pNode, "StreamPath", sStreamPath) )
-			RageException::Throw( "%s: MeterDisplay: missing the \"StreamPath\" attribute", ActorUtil::GetWhere(pNode).c_str() );
-
-		m_sprStream.Load( sStreamPath );
-		m_sprStream->SetZoomX( m_fStreamWidth / m_sprStream->GetUnzoomedWidth() );
-		this->AddChild( m_sprStream );
-	}
+	const XNode *pStream = pNode->GetChild( "Stream" );
+	if( pStream == NULL )
+		RageException::Throw( "%s: MeterDisplay: missing the \"Stream\" attribute", ActorUtil::GetWhere(pNode).c_str() );
+	m_sprStream.LoadActorFromNode( pStream, this );
+	m_sprStream->SetZoomX( m_fStreamWidth / m_sprStream->GetUnzoomedWidth() );
+	this->AddChild( m_sprStream );
 
 	const XNode* pChild = pNode->GetChild( "Tip" );
 	if( pChild != NULL )
