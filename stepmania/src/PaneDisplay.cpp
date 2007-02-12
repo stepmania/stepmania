@@ -75,14 +75,12 @@ void PaneDisplay::Load( const RString &sMetricsGroup, PlayerNumber pn )
 
 		m_textContents[p].LoadFromFont( THEME->GetPathF(sMetricsGroup,"text") );
 		m_textContents[p].SetName( ssprintf("%sText", g_Contents[p].name) );
-		ActorUtil::LoadAllCommands( m_textContents[p], sMetricsGroup );
-		ActorUtil::SetXYAndOnCommand( m_textContents[p], sMetricsGroup );
+		ActorUtil::SetXY( m_textContents[p], sMetricsGroup );	// SetXY loads all commands
 		m_ContentsFrame.AddChild( &m_textContents[p] );
 
 		m_Labels[p].Load( THEME->GetPathG(sMetricsGroup,RString(g_Contents[p].name)+" label") );
 		m_Labels[p]->SetName( ssprintf("%sLabel", g_Contents[p].name) );
-		ActorUtil::LoadAllCommands( *m_Labels[p], sMetricsGroup );
-		ActorUtil::SetXYAndOnCommand( m_Labels[p], sMetricsGroup );
+		ActorUtil::SetXY( m_Labels[p], sMetricsGroup );	// SetXY loads all commands
 		m_ContentsFrame.AddChild( m_Labels[p] );
 
 		ActorUtil::LoadAllCommandsFromName( m_textContents[p], sMetricsGroup, g_Contents[p].name );
