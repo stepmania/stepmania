@@ -2627,6 +2627,16 @@ Song *ScreenGameplay::GetNextCourseSong() const
 	return m_apSongsQueue[iPlaySongIndex];
 }
 
+PlayerInfo *ScreenGameplay::GetPlayerInfo( PlayerNumber pn )
+{
+	FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
+	{
+		if( pi->m_pn == pn )
+			return &*pi;
+	}
+	return NULL;
+}
+
 void ScreenGameplay::SaveReplay()
 {
 	FOREACH_HumanPlayer( pn )
@@ -2677,15 +2687,41 @@ class LunaScreenGameplay: public Luna<ScreenGameplay>
 public:
 	static int GetNextCourseSong( T* p, lua_State *L ) { p->GetNextCourseSong()->PushSelf(L); return 1; }
 	static int Center1Player( T* p, lua_State *L ) { lua_pushboolean( L, p->Center1Player() ); return 1; }
+	static int GetPlayerInfo( T* p, lua_State *L )
+	{
+		PlayerNumber pn = Enum::Check<PlayerNumber>( L, 1 );
+
+		PlayerInfo *pInfo = p->GetPlayerInfo(pn);
+		if( pInfo == NULL )
+			return 0;
+
+		pInfo->PushSelf( L );
+		return 1;
+	}
 
 	LunaScreenGameplay()
 	{
   		ADD_METHOD( GetNextCourseSong );
   		ADD_METHOD( Center1Player );
+  		ADD_METHOD( GetPlayerInfo );
 	}
 };
 
 LUA_REGISTER_DERIVED_CLASS( ScreenGameplay, ScreenWithMenuElements )
+
+
+class LunaPlayerInfo: public Luna<PlayerInfo>
+{
+public:
+	static int GetLifeMeter( T* p, lua_State *L ) { p->m_pLifeMeter->PushSelf(L); return 1; }
+
+	LunaPlayerInfo()
+	{
+  		ADD_METHOD( GetLifeMeter );
+	}
+};
+
+LUA_REGISTER_CLASS( PlayerInfo )
 // lua end
 
 /*

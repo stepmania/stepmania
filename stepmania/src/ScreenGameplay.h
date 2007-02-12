@@ -64,6 +64,11 @@ public:
 			return PlayerNumberToString( m_pn );
 	}
 
+	//
+	// Lua
+	//
+	virtual void PushSelf( lua_State *L );
+
 	PlayerNumber		m_pn;
 	MultiPlayer		m_mp;
 	bool			m_bIsDummy;
@@ -120,6 +125,7 @@ public:
 	//
 	virtual void PushSelf( lua_State *L );
 	Song *GetNextCourseSong() const;
+	PlayerInfo *GetPlayerInfo( PlayerNumber pn );
 
 protected:
 	virtual bool GenericTweenOn() const { return true; }
