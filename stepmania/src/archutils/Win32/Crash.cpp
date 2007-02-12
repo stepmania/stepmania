@@ -264,7 +264,7 @@ void RunChild()
 	}
 }
 
-long __stdcall CrashHandler::ExceptionHandler( EXCEPTION_POINTERS *pExc )
+static long MainExceptionHandler( EXCEPTION_POINTERS *pExc )
 {
 	/* Flush the log it isn't cut off at the end. */
 	/* 1. We can't do regular file access in the crash handler.
@@ -321,7 +321,7 @@ long __stdcall CrashHandler::ExceptionHandler( EXCEPTION_POINTERS *pExc )
 
 	if( !g_CrashInfo.m_CrashReason[0] )
 		GetReason( pExc->ExceptionRecord, &g_CrashInfo );
-	do_backtrace( g_CrashInfo.m_BacktracePointers, BACKTRACE_MAX_SIZE, GetCurrentProcess(),  GetCurrentThread(), pExc->ContextRecord );
+	CrashHandler::do_backtrace( g_CrashInfo.m_BacktracePointers, BACKTRACE_MAX_SIZE, GetCurrentProcess(),  GetCurrentThread(), pExc->ContextRecord );
 
 	RunChild();
 
@@ -354,6 +354,18 @@ long __stdcall CrashHandler::ExceptionHandler( EXCEPTION_POINTERS *pExc )
 	TerminateProcess( GetCurrentProcess(), 0 );
 
 	return EXCEPTION_EXECUTE_HANDLER;
+}
+
+long __stdcall CrashHandler::ExceptionHandler( EXCEPTION_POINTERS *pExc )
+{
+	/* If the stack overflowed, we have a very limited amount of stack space.  Allocate
+	 * a new stack, and run the exception handler in it, to increase the chances of success. */
+	int iSize = 1024*32;
+	char *pStack = (char *) VirtualAlloc( NULL, iSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE );
+	pStack += iSize;
+	_asm mov esp, pStack;
+
+	return MainExceptionHandler( pExc );
 }
 
 //////////////////////////////////////////////////////////////////////////////
