@@ -645,18 +645,47 @@ namespace
 		}
 
 		/* Iterate over the table, pulling out attributes and tables to process. */
-		map<RString, LuaReference> NodesToAdd;
+		vector<RString> NodeNamesToAdd;
+		vector<LuaReference> NodesToAdd;
+
+		/* Add array elements first, in array order, so iterating over the XNode keeps the
+		 * array in order. */
+		FOREACH_LUATABLEI( L, -1, i )
+		{
+			if( !lua_istable(L, -1) )
+				continue;
+			NodeNamesToAdd.push_back( ssprintf("%i", i) );
+			NodesToAdd.push_back( LuaReference() );
+			NodesToAdd.back().SetFromStack( L );
+		}
+
+		int iLen = NodeNamesToAdd.size();
 		FOREACH_LUATABLE( L, -1 )
 		{
-			RString sName;
-			LuaHelpers::Pop( L, sName );
-
 			/* If this entry is a table, add it recursively. */
-			if( lua_istable(L, -1) )
+			if( lua_istable(L, -2) )
 			{
-				NodesToAdd[sName].SetFromStack( L );
+				if( lua_isnumber(L, -1) )
+				{
+					/* If this number is an integer, and between [1,iLen], then we added
+					 * this one already above. */
+					lua_Number f = lua_tonumber( L, -1 );
+					int i;
+					lua_number2int(i, f);
+					if( i >= 1 && i <= iLen && float(i) == f )
+						continue;
+				}
+
+				RString sName;
+				LuaHelpers::Pop( L, sName );
+				NodeNamesToAdd.push_back( sName );
+				NodesToAdd.push_back( LuaReference() );
+				NodesToAdd.back().SetFromStack( L );
 				continue;
 			}
+
+			RString sName;
+			LuaHelpers::Pop( L, sName );
 
 			/* Otherwise, add an attribute. */
 			XNodeLuaValue *pValue = new XNodeLuaValue;
@@ -666,10 +695,10 @@ namespace
 		lua_pop( L, 1 );
 
 		/* Recursively process tables. */
-		FOREACHM( RString, LuaReference, NodesToAdd, t )
+		for( size_t i = 0; i < NodesToAdd.size(); ++i )
 		{
-			const RString &sNodeName = t->first;
-			LuaReference &NodeToAdd = t->second;
+			const RString &sNodeName = NodeNamesToAdd[i];
+			LuaReference &NodeToAdd = NodesToAdd[i];
 
 			/* Check if the table is on the stack. */
 			ProcessedTables.PushSelf( L );
