@@ -1854,7 +1854,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 		if( m_bShowScoreboard )
 			FOREACH_NSScoreBoardColumn(cn)
-				if( m_bShowScoreboard && NSMAN->ChangedScoreboard(cn) )
+				if( m_bShowScoreboard && NSMAN->ChangedScoreboard(cn) && GAMESTATE->GetFirstDisabledPlayer() != PLAYER_INVALID )
 					m_Scoreboard[cn].SetText( NSMAN->m_Scoreboard[cn] );
 	}
 }
