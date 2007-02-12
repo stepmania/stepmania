@@ -15,6 +15,14 @@
 static HANDLE g_hInstanceMutex;
 static bool g_bIsMultipleInstance = false;
 
+#if _MSC_VER >= 1400 // VC8
+void InvalidParameterHandler( const wchar_t *szExpression, const wchar_t *szFunction, const wchar_t *szFile,
+					  unsigned int iLine, uintptr_t pReserved )
+{
+	FAIL_M( "Invalid parameter" );
+}
+#endif
+
 ArchHooks_Win32::ArchHooks_Win32()
 {
 	HOOKS = this;
@@ -25,6 +33,10 @@ ArchHooks_Win32::ArchHooks_Win32()
 
 	CrashHandler::CrashHandlerHandleArgs( g_argc, g_argv );
 	SetUnhandledExceptionFilter( CrashHandler::ExceptionHandler );
+
+#if _MSC_VER >= 1400 // VC8
+	_set_invalid_parameter_handler( InvalidParameterHandler );
+#endif
 
 	/* Windows boosts priority on keyboard input, among other things.  Disable that for
 	 * the main thread. */
