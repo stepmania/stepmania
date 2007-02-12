@@ -2010,7 +2010,7 @@ public:
 	DEFINE_METHOD( IsDemonstration,			m_bDemonstrationOrJukebox )
 	DEFINE_METHOD( GetPlayMode,			m_PlayMode )
 	DEFINE_METHOD( GetSortOrder,			m_SortOrder )
-	DEFINE_METHOD( StageIndex,			GetStageIndex() )
+	DEFINE_METHOD( GetStageIndex,			GetStageIndex() )
 	DEFINE_METHOD( IsGoalComplete,			IsGoalComplete(Enum::Check<PlayerNumber>(L, 1)) )
 	DEFINE_METHOD( PlayerIsUsingModifier,		PlayerIsUsingModifier(Enum::Check<PlayerNumber>(L, 1), SArg(2)) )
 	DEFINE_METHOD( GetCourseSongIndex,		GetCourseSongIndex() )
@@ -2169,7 +2169,7 @@ public:
 		ADD_METHOD( IsDemonstration );
 		ADD_METHOD( GetPlayMode );
 		ADD_METHOD( GetSortOrder );
-		ADD_METHOD( StageIndex );
+		ADD_METHOD( GetStageIndex );
 		ADD_METHOD( IsGoalComplete );
 		ADD_METHOD( PlayerIsUsingModifier );
 		ADD_METHOD( GetCourseSongIndex );
