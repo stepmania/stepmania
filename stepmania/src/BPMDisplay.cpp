@@ -235,6 +235,37 @@ void BPMDisplay::SetFromGameState()
 	NoBPM();
 }
 
+class SongBPMDisplay: public BPMDisplay
+{
+public:
+	SongBPMDisplay();
+	virtual SongBPMDisplay *Copy() const;
+	virtual void Update( float fDeltaTime ); 
+
+private:
+	float m_fLastGameStateBPM;
+
+};
+
+SongBPMDisplay::SongBPMDisplay()
+{
+	m_fLastGameStateBPM = 0;
+}
+
+void SongBPMDisplay::Update( float fDeltaTime ) 
+{
+	float fGameStateBPM = GAMESTATE->m_fCurBPS * 60.0f;
+	if( m_fLastGameStateBPM != fGameStateBPM )
+	{
+		m_fLastGameStateBPM = fGameStateBPM;
+		SetConstantBpm( fGameStateBPM );
+	}
+
+	BPMDisplay::Update( fDeltaTime );
+}
+
+REGISTER_ACTOR_CLASS( SongBPMDisplay )
+
 #include "LuaBinding.h"
 class LunaBPMDisplay: public Luna<BPMDisplay>
 {

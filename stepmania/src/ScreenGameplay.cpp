@@ -719,14 +719,6 @@ void ScreenGameplay::Init()
 	if( g_bShowLyrics )
 		this->AddChild( &m_LyricDisplay );
 
-	m_BPMDisplay.SetName( "BPMDisplay" );
-	m_BPMDisplay.LoadFromFont( THEME->GetPathF("BPMDisplay","bpm") );
-	m_BPMDisplay.Load();
-	ActorUtil::LoadAllCommands( m_BPMDisplay, m_sName );
-	SET_XY( m_BPMDisplay );
-	this->AddChild( &m_BPMDisplay );
-	m_fLastBPS = 0;
-
 	if( !GAMESTATE->m_bDemonstrationOrJukebox )	// only load if we're going to use it
 	{
 		m_Ready.Load( THEME->GetPathB(m_sName,"ready") );
@@ -1829,15 +1821,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 			this->PostScreenMessage( SM_NotesEnded, 0 );
 		}
 		return;
-	}
-
-	//
-	// update bpm display
-	//
-	if( m_fLastBPS != GAMESTATE->m_fCurBPS && !m_BPMDisplay.GetHidden() )
-	{
-		m_fLastBPS = GAMESTATE->m_fCurBPS;
-		m_BPMDisplay.SetConstantBpm( GAMESTATE->m_fCurBPS * 60.0f );
 	}
 
 	PlayTicks();

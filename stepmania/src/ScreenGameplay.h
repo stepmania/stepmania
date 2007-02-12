@@ -8,7 +8,7 @@
 #include "Transition.h"
 #include "BitmapText.h"
 #include "RageSound.h"
-#include "BPMDisplay.h"
+#include "LocalizedString.h"
 #include "BeginnerHelper.h"
 #include "LyricDisplay.h"
 #include "Attack.h"
@@ -194,9 +194,6 @@ protected:
 	AutoActor		m_sprLifeFrame;
 	CombinedLifeMeter*	m_pCombinedLifeMeter;
 	Sprite			m_sprCourseSongNumber;
-
-	BPMDisplay		m_BPMDisplay;
-	float			m_fLastBPS;
 
 	Sprite			m_sprScoreFrame;
 	BitmapText		m_textSongOptions;
