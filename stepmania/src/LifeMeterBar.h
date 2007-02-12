@@ -5,6 +5,7 @@
 #include "Sprite.h"
 #include "AutoActor.h"
 #include "Quad.h"
+#include "ThemeMetric.h"
 class StreamDisplay;
 
 
@@ -33,6 +34,16 @@ public:
 	// this function is solely for HowToPlay
 
 private:
+	ThemeMetric<float> METER_WIDTH;
+	ThemeMetric<float> METER_HEIGHT;
+	ThemeMetric<float> DANGER_THRESHOLD;
+	ThemeMetric<int>   NUM_CHAMBERS;
+	ThemeMetric<int>   NUM_STRIPS;
+	ThemeMetric<float> INITIAL_VALUE;
+	ThemeMetric<TapNoteScore>   MIN_STAY_ALIVE;
+
+	ThemeMetric1D<float> m_fLifePercentChange;
+
 	AutoActor		m_sprBackground;
 	Quad			m_quadDangerGlow;
 	StreamDisplay*		m_pStream;

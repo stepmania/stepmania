@@ -17,18 +17,18 @@
 #include "Course.h"
 
 static RString LIFE_PERCENT_CHANGE_NAME( size_t i )   { return "LifePercentChange" + ScoreEventToString( (ScoreEvent)i ); }
-static ThemeMetric1D<float> g_fLifePercentChange( "LifeMeterBar", LIFE_PERCENT_CHANGE_NAME, NUM_ScoreEvent );
-
-static ThemeMetric<float> METER_WIDTH		("LifeMeterBar","MeterWidth");
-static ThemeMetric<float> METER_HEIGHT		("LifeMeterBar","MeterHeight");
-static ThemeMetric<float> DANGER_THRESHOLD	("LifeMeterBar","DangerThreshold");
-static ThemeMetric<int>   NUM_CHAMBERS		("LifeMeterBar","NumChambers");
-static ThemeMetric<int>   NUM_STRIPS		("LifeMeterBar","NumStrips");
-static ThemeMetric<float> INITIAL_VALUE		("LifeMeterBar","InitialValue");
-static ThemeMetric<TapNoteScore>   MIN_STAY_ALIVE	("LifeMeterBar","MinStayAlive");
 
 LifeMeterBar::LifeMeterBar()
 {
+	METER_WIDTH.Load	("LifeMeterBar","MeterWidth");
+	METER_HEIGHT.Load	("LifeMeterBar","MeterHeight");
+	DANGER_THRESHOLD.Load	("LifeMeterBar","DangerThreshold");
+	NUM_CHAMBERS.Load	("LifeMeterBar","NumChambers");
+	NUM_STRIPS.Load		("LifeMeterBar","NumStrips");
+	INITIAL_VALUE.Load	("LifeMeterBar","InitialValue");
+	MIN_STAY_ALIVE.Load	("LifeMeterBar","MinStayAlive");
+	m_fLifePercentChange.Load( "LifeMeterBar", LIFE_PERCENT_CHANGE_NAME, NUM_ScoreEvent );
+
 	m_pPlayerState = NULL;
 
 	switch( GAMESTATE->m_SongOptions.GetStage().m_DrainType )
@@ -127,14 +127,14 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	switch( score )
 	{
 	DEFAULT_FAIL( score );
-	case TNS_W1:		fDeltaLife = g_fLifePercentChange.GetValue(SE_W1);	break;
-	case TNS_W2:		fDeltaLife = g_fLifePercentChange.GetValue(SE_W2);	break;
-	case TNS_W3:		fDeltaLife = g_fLifePercentChange.GetValue(SE_W3);	break;
-	case TNS_W4:		fDeltaLife = g_fLifePercentChange.GetValue(SE_W4);	break;
-	case TNS_W5:		fDeltaLife = g_fLifePercentChange.GetValue(SE_W5);	break;
-	case TNS_Miss:		fDeltaLife = g_fLifePercentChange.GetValue(SE_Miss);	break;
-	case TNS_HitMine:	fDeltaLife = g_fLifePercentChange.GetValue(SE_HitMine);	break;
-	case TNS_None:		fDeltaLife = g_fLifePercentChange.GetValue(SE_Miss);	break;
+	case TNS_W1:		fDeltaLife = m_fLifePercentChange.GetValue(SE_W1);	break;
+	case TNS_W2:		fDeltaLife = m_fLifePercentChange.GetValue(SE_W2);	break;
+	case TNS_W3:		fDeltaLife = m_fLifePercentChange.GetValue(SE_W3);	break;
+	case TNS_W4:		fDeltaLife = m_fLifePercentChange.GetValue(SE_W4);	break;
+	case TNS_W5:		fDeltaLife = m_fLifePercentChange.GetValue(SE_W5);	break;
+	case TNS_Miss:		fDeltaLife = m_fLifePercentChange.GetValue(SE_Miss);	break;
+	case TNS_HitMine:	fDeltaLife = m_fLifePercentChange.GetValue(SE_HitMine);	break;
+	case TNS_None:		fDeltaLife = m_fLifePercentChange.GetValue(SE_Miss);	break;
 	}
 	if( IsHot()  &&  score < TNS_W4 )
 		fDeltaLife = -0.10f;		// make it take a while to get back to "hot"
@@ -166,8 +166,8 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 	case SongOptions::DRAIN_NORMAL:
 		switch( score )
 		{
-		case HNS_Held:	fDeltaLife = g_fLifePercentChange.GetValue(SE_Held);	break;
-		case HNS_LetGo:	fDeltaLife = g_fLifePercentChange.GetValue(SE_LetGo);	break;
+		case HNS_Held:	fDeltaLife = m_fLifePercentChange.GetValue(SE_Held);	break;
+		case HNS_LetGo:	fDeltaLife = m_fLifePercentChange.GetValue(SE_LetGo);	break;
 		default:
 			ASSERT(0);
 		}
@@ -178,7 +178,7 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 		switch( score )
 		{
 		case HNS_Held:	fDeltaLife = +0.000f;	break;
-		case HNS_LetGo:	fDeltaLife = g_fLifePercentChange.GetValue(SE_LetGo);	break;
+		case HNS_LetGo:	fDeltaLife = m_fLifePercentChange.GetValue(SE_LetGo);	break;
 		default:
 			ASSERT(0);
 		}
