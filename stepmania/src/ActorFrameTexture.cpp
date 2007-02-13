@@ -58,19 +58,19 @@ void ActorFrameTexture::DrawPrimitives()
 class LunaActorFrameTexture : public Luna<ActorFrameTexture>
 {
 public:
-	static int create( T* p, lua_State *L )				{ p->Create(); return 0; }
-	static int enabledepthbuffer( T* p, lua_State *L )		{ p->EnableDepthBuffer(BArg(1)); return 0; }
-	static int enablealphabuffer( T* p, lua_State *L )		{ p->EnableAlphaBuffer(BArg(1)); return 0; }
-	static int enablepreservetexture( T* p, lua_State *L )		{ p->EnablePreserveTexture(BArg(1)); return 0; }
-	static int settexturename( T* p, lua_State *L )			{ p->SetTextureName(SArg(1)); return 0; }
+	static int Create( T* p, lua_State *L )				{ p->Create(); return 0; }
+	static int EnableDepthBuffer( T* p, lua_State *L )		{ p->EnableDepthBuffer(BArg(1)); return 0; }
+	static int EnableAlphaBuffer( T* p, lua_State *L )		{ p->EnableAlphaBuffer(BArg(1)); return 0; }
+	static int EnablePreserveTexture( T* p, lua_State *L )		{ p->EnablePreserveTexture(BArg(1)); return 0; }
+	static int SetTextureName( T* p, lua_State *L )			{ p->SetTextureName(SArg(1)); return 0; }
 	
 	LunaActorFrameTexture()
 	{
-		ADD_METHOD( create );
-		ADD_METHOD( enabledepthbuffer );
-		ADD_METHOD( enablealphabuffer );
-		ADD_METHOD( enablepreservetexture );
-		ADD_METHOD( settexturename );
+		ADD_METHOD( Create );
+		ADD_METHOD( EnableDepthBuffer );
+		ADD_METHOD( EnableAlphaBuffer );
+		ADD_METHOD( EnablePreserveTexture );
+		ADD_METHOD( SetTextureName );
 	}
 };
 
