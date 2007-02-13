@@ -265,7 +265,7 @@ RString GetInfoLog( GLhandleARB h )
 
 GLhandleARB CompileShader( GLenum ShaderType, RString sBuffer )
 {
-	GLhandleARB VertexShader = GLExt.glCreateShaderObjectARB( GL_VERTEX_SHADER_ARB );
+	GLhandleARB VertexShader = GLExt.glCreateShaderObjectARB( ShaderType );
 	const GLcharARB *pData = sBuffer.data();
 	int iLength = sBuffer.size();
 	GLExt.glShaderSourceARB( VertexShader, 1, &pData, (GLint*)&iLength );
