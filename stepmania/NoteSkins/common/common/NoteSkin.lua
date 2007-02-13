@@ -28,12 +28,15 @@ local function func()
 		-- Return a blank element.  If SpriteOnly is set,
 		-- we need to return a sprite; otherwise just return
 		-- a dummy actor.
+		local t;
 		if Var "SpriteOnly" then
-			local t = LoadActor( "_blank" );
-			return t;
+			t = LoadActor( "_blank" );
 		else
-			return Def.Actor {};
+			t = Def.Actor {};
 		end
+		return t .. {
+			cmd(hidden,true);
+		};
 	end
 
 	local sButtonToLoad, sElementToLoad = ret.Redir(sButton, sElement);
