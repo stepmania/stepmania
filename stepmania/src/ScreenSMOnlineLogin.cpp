@@ -11,7 +11,6 @@
 #include "ScreenPrompt.h"
 #include "GameState.h"
 #include "NetworkSyncManager.h"
-#include "ScreenTextEntry.h"
 #include "Profile.h"
 #include "LocalizedString.h"
 #include "OptionRowHandler.h"
