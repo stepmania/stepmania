@@ -55,7 +55,6 @@ D3DCAPS8			g_DeviceCaps;
 D3DDISPLAYMODE			g_DesktopMode;
 D3DPRESENT_PARAMETERS		g_d3dpp;
 int				g_ModelMatrixCnt=0;
-TextureUnit			g_currentTextureUnit = TextureUnit_1;
 static bool			g_bSphereMapping[NUM_TextureUnit] = { false, false };
 
 /* Direct3D doesn't associate a palette with textures.
@@ -1118,7 +1117,6 @@ void RageDisplay_D3D::ClearAllTextures()
 {
 	FOREACH_ENUM( TextureUnit, i )
 		SetTexture( i, 0 );
-	g_currentTextureUnit = TextureUnit_1;
 }
 
 int RageDisplay_D3D::GetNumTextureUnits()
@@ -1128,8 +1126,6 @@ int RageDisplay_D3D::GetNumTextureUnits()
 
 void RageDisplay_D3D::SetTexture( TextureUnit tu, unsigned iTexture )
 {
-	g_currentTextureUnit = tu;
-
 //	g_DeviceCaps.MaxSimultaneousTextures = 1;
 	if( tu >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
 		return;
