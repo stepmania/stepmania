@@ -50,7 +50,7 @@ local children = {
 		Condition=GAMESTATE:IsDemonstration();
 		children = {
 			Def.Quad {
-				InitCommand=cmd(stretchto,SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM;diffuse,#000000;diffusealpha,1);
+				InitCommand=cmd(stretchto,SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM;diffuse,color("0,0,0,1"));
 				OnCommand=cmd(sleep,1.5;diffusealpha,0);
 			};
 		};
