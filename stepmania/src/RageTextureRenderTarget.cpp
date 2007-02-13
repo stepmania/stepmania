@@ -66,6 +66,25 @@ void RageTextureRenderTarget::FinishRenderingTo()
 	DISPLAY->SetRenderTarget( 0 );
 }
 
+// lua start
+#include "LuaBinding.h"
+
+class LunaRageTextureRenderTarget: public Luna<RageTextureRenderTarget>
+{
+public:
+	static int BeginRenderingTo( T* p, lua_State *L )	{ p->BeginRenderingTo(); return 0; }
+	static int FinishRenderingTo( T* p, lua_State *L )	{ p->FinishRenderingTo(); return 0; }
+
+	LunaRageTextureRenderTarget()
+	{
+		ADD_METHOD( BeginRenderingTo );
+		ADD_METHOD( FinishRenderingTo );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( RageTextureRenderTarget, RageTexture )
+// lua end
+
 /*
  * Copyright (c) 2001-2006 Glenn Maynard, Chris Danford
  * All rights reserved.

@@ -19,6 +19,8 @@ public:
 	void BeginRenderingTo( bool bPreserveTexture = true );
 	void FinishRenderingTo();
 
+	virtual void PushSelf( lua_State *L );
+
 private:
 	const RenderTargetParam m_Param;
 
