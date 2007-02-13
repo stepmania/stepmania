@@ -33,9 +33,7 @@ public:
 	void ClearAllTextures() { }
 	int GetNumTextureUnits() { return 1; }
 	void SetTexture( TextureUnit tu, unsigned iTexture ) { }
-	void SetTextureModeModulate() { }
-	void SetTextureModeGlow() { }
-	void SetTextureModeAdd() { }
+	void SetTextureMode( TextureMode tm ) { }
 	void SetTextureWrapping( bool b ) { }
 	int GetMaxTextureSize() const { return 2048; }
 	void SetTextureFiltering( bool b) { }

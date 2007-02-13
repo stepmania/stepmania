@@ -1411,37 +1411,38 @@ void RageDisplay_OGL::SetTexture( TextureUnit tu, unsigned iTexture )
 	}
 }
 
-void RageDisplay_OGL::SetTextureModeModulate()
+void RageDisplay_OGL::SetTextureMode( TextureMode tm )
 {
-	glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
-}
-
-void RageDisplay_OGL::SetTextureModeGlow()
-{
-	if( !GLExt.m_bARB_texture_env_combine && !GLExt.m_bEXT_texture_env_combine )
+	switch( tm )
 	{
-		/* This is changing blend state, instead of texture state, which isn't
-		 * great, but it's better than doing nothing. */
-		glBlendFunc( GL_SRC_ALPHA, GL_ONE );
-		return;
+	case TextureMode_Modulate:
+		glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
+		break;
+	case TextureMode_Add:
+		glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_ADD );
+		break;
+	case TextureMode_Glow:
+		if( !GLExt.m_bARB_texture_env_combine && !GLExt.m_bEXT_texture_env_combine )
+		{
+			/* This is changing blend state, instead of texture state, which isn't
+			 * great, but it's better than doing nothing. */
+			glBlendFunc( GL_SRC_ALPHA, GL_ONE );
+			return;
+		}
+
+		/* Source color is the diffuse color only: */
+		glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT );
+		glTexEnvi( GL_TEXTURE_ENV, GLenum(GL_COMBINE_RGB_EXT), GL_REPLACE );
+		glTexEnvi( GL_TEXTURE_ENV, GLenum(GL_SOURCE0_RGB_EXT), GL_PRIMARY_COLOR_EXT );
+
+		/* Source alpha is texture alpha * diffuse alpha: */
+		glTexEnvi( GL_TEXTURE_ENV, GLenum(GL_COMBINE_ALPHA_EXT), GL_MODULATE );
+		glTexEnvi( GL_TEXTURE_ENV, GLenum(GL_OPERAND0_ALPHA_EXT), GL_SRC_ALPHA );
+		glTexEnvi( GL_TEXTURE_ENV, GLenum(GL_SOURCE0_ALPHA_EXT), GL_PRIMARY_COLOR_EXT );
+		glTexEnvi( GL_TEXTURE_ENV, GLenum(GL_OPERAND1_ALPHA_EXT), GL_SRC_ALPHA );
+		glTexEnvi( GL_TEXTURE_ENV, GLenum(GL_SOURCE1_ALPHA_EXT), GL_TEXTURE );
+		break;
 	}
-
-	/* Source color is the diffuse color only: */
-	glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_EXT );
-	glTexEnvi( GL_TEXTURE_ENV, GLenum(GL_COMBINE_RGB_EXT), GL_REPLACE );
-	glTexEnvi( GL_TEXTURE_ENV, GLenum(GL_SOURCE0_RGB_EXT), GL_PRIMARY_COLOR_EXT );
-
-	/* Source alpha is texture alpha * diffuse alpha: */
-	glTexEnvi( GL_TEXTURE_ENV, GLenum(GL_COMBINE_ALPHA_EXT), GL_MODULATE );
-	glTexEnvi( GL_TEXTURE_ENV, GLenum(GL_OPERAND0_ALPHA_EXT), GL_SRC_ALPHA );
-	glTexEnvi( GL_TEXTURE_ENV, GLenum(GL_SOURCE0_ALPHA_EXT), GL_PRIMARY_COLOR_EXT );
-	glTexEnvi( GL_TEXTURE_ENV, GLenum(GL_OPERAND1_ALPHA_EXT), GL_SRC_ALPHA );
-	glTexEnvi( GL_TEXTURE_ENV, GLenum(GL_SOURCE1_ALPHA_EXT), GL_TEXTURE );
-}
-
-void RageDisplay_OGL::SetTextureModeAdd()
-{
-	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_ADD);
 }
 
 void RageDisplay_OGL::SetTextureFiltering( bool b )

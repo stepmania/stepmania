@@ -1155,46 +1155,42 @@ void RageDisplay_D3D::SetTexture( TextureUnit tu, unsigned iTexture )
 		SetPalette( iTexture );
 	}
 }
-void RageDisplay_D3D::SetTextureModeModulate()
+
+void RageDisplay_D3D::SetTextureMode( TextureMode tm )
 {
 	if( g_currentTextureUnit >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
 		return;
 
-	// Use D3DTA_CURRENT instead of diffuse so that multitexturing works 
-	// properly.  For stage 0, D3DTA_CURRENT is the diffuse color.
+	switch( tm )
+	{
+	case TextureMode_Modulate:
+		// Use D3DTA_CURRENT instead of diffuse so that multitexturing works 
+		// properly.  For stage 0, D3DTA_CURRENT is the diffuse color.
 
-	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLORARG2, D3DTA_CURRENT );
-	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLOROP,   D3DTOP_MODULATE );
-	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAARG2, D3DTA_CURRENT );
-	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
-}
-
-void RageDisplay_D3D::SetTextureModeGlow()
-{
-	if( g_currentTextureUnit >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
-		return;
-
-	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLORARG2, D3DTA_CURRENT );
-	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLOROP,   D3DTOP_SELECTARG2 );
-	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAARG2, D3DTA_CURRENT );
-	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
-}
-
-void RageDisplay_D3D::SetTextureModeAdd()
-{
-	if( g_currentTextureUnit >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
-		return;
-
-	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLORARG2, D3DTA_CURRENT );
-	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLOROP,   D3DTOP_ADD );
-	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAARG2, D3DTA_CURRENT );
-	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
+		g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLORARG1, D3DTA_TEXTURE );
+		g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLORARG2, D3DTA_CURRENT );
+		g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLOROP,   D3DTOP_MODULATE );
+		g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+		g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAARG2, D3DTA_CURRENT );
+		g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
+		break;
+	case TextureMode_Add:
+		g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLORARG1, D3DTA_TEXTURE );
+		g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLORARG2, D3DTA_CURRENT );
+		g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLOROP,   D3DTOP_ADD );
+		g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+		g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAARG2, D3DTA_CURRENT );
+		g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
+		break;
+	case TextureMode_Glow:
+		g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLORARG1, D3DTA_TEXTURE );
+		g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLORARG2, D3DTA_CURRENT );
+		g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLOROP,   D3DTOP_SELECTARG2 );
+		g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+		g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAARG2, D3DTA_CURRENT );
+		g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
+		break;
+	}
 }
 
 void RageDisplay_D3D::SetTextureFiltering( bool b )
