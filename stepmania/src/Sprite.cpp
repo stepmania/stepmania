@@ -103,6 +103,8 @@ void Sprite::Load( RageTextureID ID )
 {
 	if( !ID.filename.empty() ) 
 		LoadFromTexture( ID );
+
+	LoadStatesFromTexture();
 };
 
 void Sprite::LoadFromNode( const XNode* pNode )
@@ -118,6 +120,8 @@ void Sprite::LoadFromNode( const XNode* pNode )
 	{
 		// Load the texture
 		LoadFromTexture( sPath );
+		
+		LoadStatesFromTexture();
 
 
 		// Read in frames and delays from the sprite file, 
@@ -275,8 +279,25 @@ void Sprite::LoadFromTexture( RageTextureID ID )
 	Sprite::m_size.x = (float)m_pTexture->GetSourceFrameWidth();
 	Sprite::m_size.y = (float)m_pTexture->GetSourceFrameHeight();		
 
+	// apply clipping (if any)
+	if( m_fRememberedClipWidth != -1 && m_fRememberedClipHeight != -1 )
+		ScaleToClipped( m_fRememberedClipWidth, m_fRememberedClipHeight );
+}
+
+void Sprite::LoadStatesFromTexture()
+{
 	// Assume the frames of this animation play in sequential order with 0.1 second delay.
 	m_States.clear();
+
+	if( m_pTexture == NULL )
+	{
+		State newState;
+		newState.fDelay = 0.1f;
+		newState.rect = RectF( 0, 0, 1, 1 );
+		m_States.push_back( newState );
+		return;		
+	}
+	
 	for( int i=0; i<m_pTexture->GetNumFrames(); ++i )
 	{
 		State newState;
@@ -284,10 +305,6 @@ void Sprite::LoadFromTexture( RageTextureID ID )
 		newState.rect = *m_pTexture->GetTextureCoordRect( i );
 		m_States.push_back( newState );
 	}
-
-	// apply clipping (if any)
-	if( m_fRememberedClipWidth != -1 && m_fRememberedClipHeight != -1 )
-		ScaleToClipped( m_fRememberedClipWidth, m_fRememberedClipHeight );
 }
 
 void Sprite::UpdateAnimationState()

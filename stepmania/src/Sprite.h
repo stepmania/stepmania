@@ -67,6 +67,7 @@ public:
 
 protected:
 	void LoadFromTexture( RageTextureID ID );
+	void LoadStatesFromTexture();
 
 	void DrawTexture( const TweenState *state );
 
