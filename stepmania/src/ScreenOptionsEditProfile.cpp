@@ -3,7 +3,6 @@
 #include "ScreenOptionsEditProfile.h"
 #include "ScreenManager.h"
 #include "ProfileManager.h"
-#include "ScreenTextEntry.h"
 #include "ScreenPrompt.h"
 #include "RageUtil.h"
 #include "GameState.h"
