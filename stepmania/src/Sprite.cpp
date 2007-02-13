@@ -503,7 +503,7 @@ void Sprite::DrawTexture( const TweenState *state )
 		state->diffuse[2].a > 0 ||
 		state->diffuse[3].a > 0 )
 	{
-		DISPLAY->SetTextureModeModulate();
+		DISPLAY->SetTextureMode( TextureMode_Modulate );
 
 		//////////////////////
 		// render the shadow
@@ -532,7 +532,7 @@ void Sprite::DrawTexture( const TweenState *state )
 	//////////////////////
 	if( state->glow.a > 0.0001f )
 	{
-		DISPLAY->SetTextureModeGlow();
+		DISPLAY->SetTextureMode( TextureMode_Glow );
 		v[0].c = v[1].c = v[2].c = v[3].c = state->glow;
 		DISPLAY->DrawQuad( v );
 	}
