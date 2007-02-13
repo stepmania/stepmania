@@ -31,6 +31,7 @@ public:
 	static RageTextureID SongBannerTexture( RageTextureID ID );
 
 	virtual void Load( RageTextureID ID );
+	void SetTexture( RageTexture *pTexture );
 
 	void UnloadTexture();
 	RageTexture* GetTexture() { return m_pTexture; };

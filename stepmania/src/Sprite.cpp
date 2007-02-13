@@ -251,22 +251,18 @@ void Sprite::EnableAnimation( bool bEnable )
 	}
 }
 
-void Sprite::LoadFromTexture( RageTextureID ID )
+void Sprite::SetTexture( RageTexture *pTexture )
 {
-	LOG->Trace( "Sprite::LoadFromTexture( %s )", ID.filename.c_str() );
+	ASSERT( pTexture != NULL );
 
-	if( !m_pTexture || !(m_pTexture->GetID() == ID) )
+	if( m_pTexture != pTexture )
 	{
-		/* Load the texture if it's not already loaded.  We still need
-		 * to do the rest, even if it's the same texture, since we need
-		 * to reset Sprite::m_size, etc. */
 		UnloadTexture();
-		m_pTexture = TEXTUREMAN->LoadTexture( ID );
-		ASSERT( m_pTexture->GetTextureWidth() >= 0 );
-		ASSERT( m_pTexture->GetTextureHeight() >= 0 );
+		m_pTexture = pTexture;
 	}
 
-	ASSERT( m_pTexture != NULL );
+	ASSERT( m_pTexture->GetTextureWidth() >= 0 );
+	ASSERT( m_pTexture->GetTextureHeight() >= 0 );
 
 	// the size of the sprite is the size of the image before it was scaled
 	Sprite::m_size.x = (float)m_pTexture->GetSourceFrameWidth();
@@ -275,6 +271,23 @@ void Sprite::LoadFromTexture( RageTextureID ID )
 	// apply clipping (if any)
 	if( m_fRememberedClipWidth != -1 && m_fRememberedClipHeight != -1 )
 		ScaleToClipped( m_fRememberedClipWidth, m_fRememberedClipHeight );
+
+	/* Load default states if we havn't before. */
+	if( m_States.empty() )
+		LoadStatesFromTexture();
+}
+
+void Sprite::LoadFromTexture( RageTextureID ID )
+{
+	LOG->Trace( "Sprite::LoadFromTexture( %s )", ID.filename.c_str() );
+
+	RageTexture *pTexture = NULL;
+	if( m_pTexture && m_pTexture->GetID() == ID )
+		pTexture = m_pTexture;
+	else
+		pTexture = TEXTUREMAN->LoadTexture( ID );
+
+	SetTexture( pTexture );
 }
 
 void Sprite::LoadStatesFromTexture()
@@ -985,6 +998,13 @@ public:
 	static int addimagecoords( T* p, lua_State *L )		{ p->AddImageCoords( FArg(1),FArg(2) ); return 0; }
 	static int setstate( T* p, lua_State *L )		{ p->SetState( IArg(1) ); return 0; }
 	static int GetAnimationLengthSeconds( T* p, lua_State *L ) { lua_pushnumber( L, p->GetAnimationLengthSeconds() ); return 1; }
+	static int SetTexture( T* p, lua_State *L )
+	{
+		RageTexture *pTexture = Luna<RageTexture>::check(L, 1);
+		pTexture = TEXTUREMAN->CopyTexture( pTexture );
+		p->SetTexture( pTexture );
+		return 0;
+	}
 	static int GetTexture( T* p, lua_State *L )
 	{
 		RageTexture *pTexture = p->GetTexture();
@@ -1007,6 +1027,7 @@ public:
 		ADD_METHOD( addimagecoords );
 		ADD_METHOD( setstate );
 		ADD_METHOD( GetAnimationLengthSeconds );
+		ADD_METHOD( SetTexture );
 		ADD_METHOD( GetTexture );
 	}
 };
