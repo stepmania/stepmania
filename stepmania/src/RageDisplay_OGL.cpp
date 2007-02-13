@@ -382,8 +382,6 @@ RString RageDisplay_OGL::Init( const VideoModeParams &p, bool bAllowUnaccelerate
 	glGetFloatv( GL_LINE_WIDTH_RANGE, g_line_range );
 	glGetFloatv( GL_POINT_SIZE_RANGE, g_point_range );
 
-	InitScalingScript();
-
 	return RString();
 }
 
