@@ -49,6 +49,7 @@ public:
 	void SetCustomImageRect( RectF rectImageCoords );	// in image pixel space
 	void SetCustomImageCoords( float fImageCoords[8] );
 	const RectF *GetCurrentTextureCoordRect() const;
+	const RectF *GetTextureCoordRectForState( int iState ) const;
 	void StopUsingCustomCoords();
 	void GetActiveTextureCoords(float fTexCoordsOut[8]) const;
 	void StretchTexCoords( float fX, float fY );

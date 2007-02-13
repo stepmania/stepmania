@@ -133,7 +133,7 @@ void GradeDisplay::Scroll()
 
 	int iFrameNo = GetFrameIndex( m_PlayerNumber, m_Grade );
 
-	m_frectDestTexCoords = *GetTexture()->GetTextureCoordRect( iFrameNo );
+	m_frectDestTexCoords = *GetTextureCoordRectForState( iFrameNo );
 	m_frectStartTexCoords = m_frectDestTexCoords;
 	m_frectStartTexCoords.top += GRADES_TO_SCROLL * GRADE_FRAME_HEIGHT;
 	m_frectStartTexCoords.bottom += GRADES_TO_SCROLL * GRADE_FRAME_HEIGHT;

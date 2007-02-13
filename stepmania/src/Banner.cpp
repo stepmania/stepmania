@@ -52,7 +52,7 @@ void Banner::Update( float fDeltaTime )
 		m_fPercentScrolling += fDeltaTime/2;
 		m_fPercentScrolling -= (int)m_fPercentScrolling;
 
-		const RectF *pTextureRect = GetTexture()->GetTextureCoordRect(0);
+		const RectF *pTextureRect = GetCurrentTextureCoordRect();
  
 		float fTexCoords[8] = 
 		{

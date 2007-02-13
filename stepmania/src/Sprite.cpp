@@ -787,11 +787,15 @@ void Sprite::SetCustomImageCoords( float fImageCoords[8] )	// order: top left, b
 
 const RectF *Sprite::GetCurrentTextureCoordRect() const
 {
-	ASSERT_M( m_iCurState < (int) m_States.size(), ssprintf("%d, %d", int(m_iCurState), int(m_States.size())) );
-
-	return &m_States[m_iCurState].rect;
+	return GetTextureCoordRectForState( m_iCurState );
 }
 
+const RectF *Sprite::GetTextureCoordRectForState( int iState ) const
+{
+	ASSERT_M( iState < (int) m_States.size(), ssprintf("%d, %d", int(iState), int(m_States.size())) );
+
+	return &m_States[iState].rect;
+}
 
 /* If we're using custom coordinates, return them; otherwise return the coordinates
  * for the current state. */
