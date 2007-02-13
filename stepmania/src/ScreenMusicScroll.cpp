@@ -85,7 +85,7 @@ void ScreenMusicScroll::Update( float fDeltaTime )
 	{
 		const bool shown = ( m_textLines[i]->GetY() > SCREEN_TOP-20  &&
 					   m_textLines[i]->GetY() < SCREEN_BOTTOM+20 );
-		m_textLines[i]->SetHidden( !shown );
+		m_textLines[i]->SetVisible( shown );
 	}
 }	
 

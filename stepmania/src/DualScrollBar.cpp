@@ -39,8 +39,8 @@ void DualScrollBar::Load( const RString &sType )
 
 void DualScrollBar::EnablePlayer( PlayerNumber pn, bool on )
 {
-	m_sprScrollThumbUnderHalf[pn]->SetHidden( !on );
-	m_sprScrollThumbOverHalf[pn]->SetHidden( !on );
+	m_sprScrollThumbUnderHalf[pn]->SetVisible( on );
+	m_sprScrollThumbOverHalf[pn]->SetVisible( on );
 }
 
 void DualScrollBar::SetPercentage( PlayerNumber pn, float fPercent )

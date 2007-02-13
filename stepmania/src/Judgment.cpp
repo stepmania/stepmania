@@ -53,7 +53,7 @@ void Judgment::Reset()
 	m_sprJudgment.FinishTweening();
 	m_sprJudgment.SetXY( 0, 0 );
 	m_sprJudgment.StopEffect();
-	m_sprJudgment.SetHidden( true );
+	m_sprJudgment.SetVisible( false );
 }
 
 void Judgment::SetJudgment( TapNoteScore score, bool bEarly )
@@ -62,7 +62,7 @@ void Judgment::SetJudgment( TapNoteScore score, bool bEarly )
 
 	Reset();
 
-	m_sprJudgment.SetHidden( false );
+	m_sprJudgment.SetVisible( true );
 
 	int iStateMult = (m_sprJudgment.GetNumStates()==12) ? 2 : 1;
 	int iStateAdd = ( bEarly || ( iStateMult == 1 ) ) ? 0 : 1;

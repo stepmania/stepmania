@@ -49,20 +49,20 @@ void Combo::Load( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats
 	m_sprComboLabel->StopAnimating();
 	m_sprComboLabel->SetXY( LABEL_X, LABEL_Y );
 	m_sprComboLabel->RunCommands( LABEL_ON_COMMAND );
-	m_sprComboLabel->SetHidden( true );
+	m_sprComboLabel->SetVisible( false );
 	this->AddChild( m_sprComboLabel );
 
 	m_sprMissesLabel.Load( THEME->GetPathG(m_sName,"misses") );
 	m_sprMissesLabel->StopAnimating();
 	m_sprMissesLabel->SetXY( LABEL_X, LABEL_Y );
 	m_sprMissesLabel->RunCommands( LABEL_ON_COMMAND );
-	m_sprMissesLabel->SetHidden( true );
+	m_sprMissesLabel->SetVisible( false );
 	this->AddChild( m_sprMissesLabel );
 
 	m_textNumber.LoadFromFont( THEME->GetPathF(m_sName,"numbers") );
 	m_textNumber.SetXY( NUMBER_X, NUMBER_Y );
 	m_textNumber.RunCommands( NUMBER_ON_COMMAND );
-	m_textNumber.SetHidden( true );
+	m_textNumber.SetVisible( false );
 	this->AddChild( &m_textNumber );
 }
 
@@ -74,9 +74,9 @@ void Combo::SetCombo( int iCombo, int iMisses )
 
 	if( !bShowCombo )
 	{
-		m_sprComboLabel->SetHidden( true );
-		m_sprMissesLabel->SetHidden( true );
-		m_textNumber.SetHidden( true );
+		m_sprComboLabel->SetVisible( false );
+		m_sprMissesLabel->SetVisible( false );
+		m_textNumber.SetVisible( false );
 		return;
 	}
 
@@ -94,9 +94,9 @@ void Combo::SetCombo( int iCombo, int iMisses )
 	}
 	m_iLastSeenCombo = iCombo;
 
-	m_sprComboLabel->SetHidden( bComboOfMisses );
-	m_sprMissesLabel->SetHidden( !bComboOfMisses );
-	m_textNumber.SetHidden( false );
+	m_sprComboLabel->SetVisible( !bComboOfMisses );
+	m_sprMissesLabel->SetVisible( bComboOfMisses );
+	m_textNumber.SetVisible( true );
 
 	RString txt = ssprintf("%d", iNum);
 	

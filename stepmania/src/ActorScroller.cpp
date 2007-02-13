@@ -77,14 +77,14 @@ void ActorScroller::SetTransformFromHeight( float fItemHeight )
 
 void ActorScroller::EnableMask( float fWidth, float fHeight )
 {
-	m_quadMask.SetHidden( false );
+	m_quadMask.SetVisible( true );
 	m_quadMask.SetWidth( fWidth );
 	m_quadMask.SetHeight( fHeight );
 }
 
 void ActorScroller::DisableMask()
 {
-	m_quadMask.SetHidden( true );
+	m_quadMask.SetVisible( false );
 }
 
 void ActorScroller::ScrollThroughAllItems()
@@ -215,7 +215,7 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bDrawPrimitives )
 		return;
 
 	float fNumItemsToDraw = m_fNumItemsToDraw;
-	if( !m_quadMask.GetHidden() )
+	if( m_quadMask.GetVisible() )
 	{
 		// write to z buffer so that top and bottom are clipped
 		// Draw an extra item; this is the one that will be masked.

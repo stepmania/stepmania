@@ -153,8 +153,8 @@ void EditMenu::Load( const RString &sType )
 		this->AddChild( &m_textValue[r] );
 	}
 
-	m_textLabel[ROW_GROUP].SetHidden( !SHOW_GROUPS.GetValue() );
-	m_textValue[ROW_GROUP].SetHidden( !SHOW_GROUPS.GetValue() );
+	m_textLabel[ROW_GROUP].SetVisible( SHOW_GROUPS.GetValue() );
+	m_textValue[ROW_GROUP].SetVisible( SHOW_GROUPS.GetValue() );
 
 
 	/* Load low-res banners, if needed. */
@@ -501,8 +501,8 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			m_Meter.SetFromMeterAndDifficulty( 0, GetSelectedDifficulty() );
 		// fall through
 	case ROW_SOURCE_STEPS_TYPE:
-		m_textLabel[ROW_SOURCE_STEPS_TYPE].SetHidden( GetSelectedSteps() ? true : false );
-		m_textValue[ROW_SOURCE_STEPS_TYPE].SetHidden( GetSelectedSteps() ? true : false );
+		m_textLabel[ROW_SOURCE_STEPS_TYPE].SetVisible( GetSelectedSteps() ? false : true );
+		m_textValue[ROW_SOURCE_STEPS_TYPE].SetVisible( GetSelectedSteps() ? false : true );
 		m_textValue[ROW_SOURCE_STEPS_TYPE].SetText( GAMEMAN->StepsTypeToLocalizedString(GetSelectedSourceStepsType()) );
 
 		m_vpSourceSteps.clear();
@@ -530,8 +530,8 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 		// fall through
 	case ROW_SOURCE_STEPS:
 		{
-			m_textLabel[ROW_SOURCE_STEPS].SetHidden( GetSelectedSteps() ? true : false );
-			m_textValue[ROW_SOURCE_STEPS].SetHidden( GetSelectedSteps() ? true : false );
+			m_textLabel[ROW_SOURCE_STEPS].SetVisible( GetSelectedSteps() ? false : true );
+			m_textValue[ROW_SOURCE_STEPS].SetVisible( GetSelectedSteps() ? false : true );
 			{
 				RString s;
 				if( GetSelectedSourceDifficulty() == Difficulty_Invalid )
@@ -547,7 +547,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				m_SourceMeter.SetFromSteps( GetSelectedSourceSteps() );
 			else
 				m_SourceMeter.SetFromMeterAndDifficulty( 0, GetSelectedSourceDifficulty() );
-			m_SourceMeter.SetHidden( (bHideMeter || GetSelectedSteps()) );
+			m_SourceMeter.SetVisible( !(bHideMeter || GetSelectedSteps()) );
 
 			m_Actions.clear();
 			if( GetSelectedSteps() )

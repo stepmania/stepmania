@@ -20,7 +20,7 @@
 class HiddenActor: public Actor
 {
 public:
-	HiddenActor() { SetHidden(true); }
+	HiddenActor() { SetVisible(false); }
 	virtual HiddenActor *Copy() const;
 };
 REGISTER_ACTOR_CLASS_WITH_NAME( HiddenActor, Actor )
@@ -1329,7 +1329,8 @@ public:
 	static int backfacecull( T* p, lua_State *L )		{ p->SetCullMode((BIArg(1)) ? CULL_BACK : CULL_NONE); return 0; }
 	static int cullmode( T* p, lua_State *L )		{ p->SetCullMode( Enum::Check<CullMode>(L, 1)); return 0; }
 	static int visible( T* p, lua_State *L )		{ p->SetVisible(BIArg(1)); return 0; }
-	static int hidden( T* p, lua_State *L )			{ p->SetHidden(BIArg(1)); return 0; }
+	// TODO: Remove hidden and leave visible
+	static int hidden( T* p, lua_State *L )			{ p->SetVisible(!BIArg(1)); return 0; }
 	static int hibernate( T* p, lua_State *L )		{ p->SetHibernate(FArg(1)); return 0; }
 	static int draworder( T* p, lua_State *L )		{ p->SetDrawOrder(IArg(1)); return 0; }
 	static int playcommand( T* p, lua_State *L )

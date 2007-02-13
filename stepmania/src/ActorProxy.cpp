@@ -18,10 +18,10 @@ void ActorProxy::DrawPrimitives()
 {
 	if( m_pActorTarget != NULL )
 	{
-		bool bHidden = m_pActorTarget->GetHidden();
-		m_pActorTarget->SetHidden( false );
+		bool bVisible = m_pActorTarget->GetVisible();
+		m_pActorTarget->SetVisible( true );
 		m_pActorTarget->Draw();
-		m_pActorTarget->SetHidden( bHidden );
+		m_pActorTarget->SetVisible( bVisible );
 	}
 }
 

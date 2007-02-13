@@ -99,7 +99,7 @@ void ScreenEnding::Init()
 		{
 		case MemoryCardState_Removed:
 		case MemoryCardState_NoCard:
-			m_sprRemoveMemoryCard[p].SetHidden( true );
+			m_sprRemoveMemoryCard[p].SetVisible( false );
 			break;
 		}
 		ActorUtil::LoadAllCommands( m_sprRemoveMemoryCard[p], m_sName );

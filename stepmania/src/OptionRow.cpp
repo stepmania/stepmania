@@ -401,7 +401,7 @@ void OptionRow::InitText()
 		m_sprBullet->RunCommands( m_pParentType->BULLET_ON_COMMAND );
 		break;
 	case OptionRow::RowType_Exit:
-		m_sprBullet->SetHidden( true );
+		m_sprBullet->SetVisible( false );
 		break;
 	}
 
@@ -417,12 +417,12 @@ void OptionRow::AfterImportOptions( PlayerNumber pn )
 	 * players. */
 	if( m_pHand->m_Def.m_layoutType == LAYOUT_SHOW_ONE_IN_ROW &&
 		!m_pHand->m_Def.m_bOneChoiceForAllPlayers )
-		m_textItems[pn]->SetHidden( !GAMESTATE->IsHumanPlayer(pn) );
+		m_textItems[pn]->SetVisible( GAMESTATE->IsHumanPlayer(pn) );
 
 	// Hide underlines for disabled players.
 	if( !GAMESTATE->IsHumanPlayer(pn) )
 		for( unsigned c=0; c<m_Underline[pn].size(); c++ )
-			m_Underline[pn][c]->SetHidden( true );
+			m_Underline[pn][c]->SetVisible( false );
 
 	// Make all selections the same if bOneChoiceForAllPlayers
 	// Hack: we only import active players, so if only player 2 is imported,
@@ -492,10 +492,10 @@ void OptionRow::PositionUnderlines( PlayerNumber pn )
 		ASSERT( m_vbSelected[pnTakeSelectedFrom].size() == m_pHand->m_Def.m_vsChoices.size() );
 
 		bool bSelected = (iChoiceWithFocus==-1) ? false : m_vbSelected[pnTakeSelectedFrom][ iChoiceWithFocus ];
-		bool bHidden = !bSelected || !GAMESTATE->IsHumanPlayer(pn);
+		bool bVisible = bSelected && GAMESTATE->IsHumanPlayer(pn);
 
 		ul.BeginTweening( m_pParentType->TWEEN_SECONDS );
-		ul.SetHidden( bHidden );
+		ul.SetVisible( bVisible );
 		ul.SetBarWidth( iWidth );
 	}
 }

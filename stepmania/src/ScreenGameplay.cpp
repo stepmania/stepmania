@@ -1198,7 +1198,7 @@ void ScreenGameplay::LoadNextSong()
 
 	if( !PREFSMAN->m_bShowBeginnerHelper || !m_BeginnerHelper.Initialize(2) )
 	{
-		m_BeginnerHelper.SetHidden( true );
+		m_BeginnerHelper.SetVisible( false );
 
 		/* BeginnerHelper disabled, or failed to load. */
 		if( m_pSongBackground )
@@ -1220,7 +1220,7 @@ void ScreenGameplay::LoadNextSong()
 	}
 	else
 	{
-		m_BeginnerHelper.SetHidden( false );
+		m_BeginnerHelper.SetVisible( true );
 	}
 
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
@@ -1536,7 +1536,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 	if( m_bPaused )
 		return;
 
-	if( GAMESTATE->m_MasterPlayerNumber != PLAYER_INVALID && !m_MaxCombo.GetHidden() )
+	if( GAMESTATE->m_MasterPlayerNumber != PLAYER_INVALID && m_MaxCombo.GetVisible() )
 		m_MaxCombo.SetText( ssprintf("%d", STATSMAN->m_CurStageStats.m_player[GAMESTATE->m_MasterPlayerNumber].m_iMaxCombo) ); /* MAKE THIS WORK FOR BOTH PLAYERS! */
 	
 	//LOG->Trace( "m_fOffsetInBeats = %f, m_fBeatsPerSecond = %f, m_Music.GetPositionSeconds = %f", m_fOffsetInBeats, m_fBeatsPerSecond, m_Music.GetPositionSeconds() );

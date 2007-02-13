@@ -60,12 +60,12 @@ void ScreenSystemLayer::ReloadCreditsText()
 	this->AddChild( m_sprMessageFrame );
 	m_sprMessageFrame->SetName( "MessageFrame" );
 	SET_XY_AND_ON_COMMAND( m_sprMessageFrame );
-	m_sprMessageFrame->SetHidden( true );
+	m_sprMessageFrame->SetVisible( false );
 
 	m_textMessage.LoadFromFont( THEME->GetPathF(m_sName,"message") );
 	m_textMessage.SetName( "Message" );
 	SET_XY_AND_ON_COMMAND( m_textMessage );
-	m_textMessage.SetHidden( true );
+	m_textMessage.SetVisible( false );
 
 
 	FOREACH_PlayerNumber( p )
@@ -190,23 +190,23 @@ void ScreenSystemLayer::HandleMessage( const Message &msg )
 	}
 	else if( msg == "SystemMessage" )
 	{
-		m_sprMessageFrame->SetHidden( false );
+		m_sprMessageFrame->SetVisible( true );
 		m_sprMessageFrame->PlayCommand( "On" );
 		m_sprMessageFrame->PlayCommand( "Off" );
 
-		m_textMessage.SetHidden( false );
+		m_textMessage.SetVisible( true );
 		m_textMessage.SetText( SCREENMAN->GetCurrentSystemMessage() );
 		m_textMessage.PlayCommand( "On" );
 		m_textMessage.PlayCommand( "Off" );
 	}
 	else if( msg == "SystemMessageNoAnimate" )
 	{
-		m_sprMessageFrame->SetHidden( false );
+		m_sprMessageFrame->SetVisible( true );
 		m_sprMessageFrame->PlayCommand( "On" );
 		m_sprMessageFrame->FinishTweening();
 		m_sprMessageFrame->PlayCommand( "Off" );
 
-		m_textMessage.SetHidden( false );
+		m_textMessage.SetVisible( true );
 		m_textMessage.SetText( SCREENMAN->GetCurrentSystemMessage() );
 		m_textMessage.PlayCommand( "On" );
 		m_textMessage.FinishTweening();
@@ -214,9 +214,9 @@ void ScreenSystemLayer::HandleMessage( const Message &msg )
 	}
 	else if( msg == "HideSystemMessage" )
 	{
-		m_sprMessageFrame->SetHidden( true );
+		m_sprMessageFrame->SetVisible( false );
 
-		m_textMessage.SetHidden( true );
+		m_textMessage.SetVisible( false );
 	}
 	Screen::HandleMessage( msg );
 }

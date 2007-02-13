@@ -22,7 +22,7 @@ void DynamicActorScroller::LoadFromNode( const XNode *pNode )
 		RageException::Throw( "%s: DynamicActorScroller: loaded %i nodes; require exactly one", ActorUtil::GetWhere(pNode).c_str(), (int)m_SubActors.size() );
 
 	int iNumCopies = (int) m_fNumItemsToDraw;
-	if( !m_quadMask.GetHidden() )
+	if( m_quadMask.GetVisible() )
 		iNumCopies += 1;
 	for( int i = 1; i < iNumCopies; ++i )
 	{

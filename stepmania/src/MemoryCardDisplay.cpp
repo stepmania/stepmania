@@ -23,7 +23,7 @@ void MemoryCardDisplay::Load( PlayerNumber pn )
 		MemoryCardState mcs = (MemoryCardState)i;
 		RString sState = MemoryCardStateToString(mcs);
 		m_spr[i].Load( THEME->GetPathG("MemoryCardDisplay",ssprintf("%s p%d",sState.c_str(),pn+1)) );
-		m_spr[i].SetHidden( true );
+		m_spr[i].SetVisible( false );
 		this->AddChild( &m_spr[i] );
 	}
 }
@@ -47,9 +47,9 @@ void MemoryCardDisplay::Update( float fDelta )
 	if( m_LastSeenState != newMcs )
 	{
 		if( m_LastSeenState != MemoryCardState_Invalid )
-			m_spr[m_LastSeenState].SetHidden( true );
+			m_spr[m_LastSeenState].SetVisible( false );
 		m_LastSeenState = newMcs;
-		m_spr[m_LastSeenState].SetHidden( false );
+		m_spr[m_LastSeenState].SetVisible( true );
 	}
 
 	ActorFrame::Update( fDelta );

@@ -195,7 +195,7 @@ void DifficultyList::PositionItems()
 	for( int i = 0; i < MAX_METERS; ++i )
 	{
 		bool bUnused = ( i >= (int)m_Rows.size() );
-		m_Lines[i].m_Meter.SetHidden( bUnused );
+		m_Lines[i].m_Meter.SetVisible( !bUnused );
 	}
 
 	for( int m = 0; m < (int)m_Rows.size(); ++m )

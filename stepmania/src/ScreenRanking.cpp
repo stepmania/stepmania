@@ -281,7 +281,7 @@ void ScoreScroller::ConfigureActor( Actor *pActor, int iItem )
 			if( pSteps  &&  UNLOCKMAN->StepsIsLocked(pSong, pSteps) )
 				pSteps = NULL;
 			BitmapText* pTextStepsScore = &item.m_textScore[*iter];
-			pTextStepsScore->SetHidden( pSteps == NULL );
+			pTextStepsScore->SetVisible( pSteps != NULL );
 			if( pSteps == NULL )
 				continue;
 
@@ -304,7 +304,7 @@ void ScoreScroller::ConfigureActor( Actor *pActor, int iItem )
 			const Trail *pTrail = pCourse->GetTrail( m_StepsType, *cd );
 			if( UNLOCKMAN->CourseIsLocked(pCourse) )
 				pTrail = NULL;
-			pTextStepsScore->SetHidden( pTrail==NULL );
+			pTextStepsScore->SetVisible( pTrail != NULL );
 			if( pTrail == NULL )
 				continue;
 
@@ -610,14 +610,14 @@ void ScreenRankingLines::Init()
 
 		m_textPoints[l].SetName( ssprintf("Points%d",l+1) );
 		m_textPoints[l].LoadFromFont( THEME->GetPathF(m_sName,"points") );
-		m_textPoints[l].SetHidden( true );
+		m_textPoints[l].SetVisible( false );
 		m_textPoints[l].SetXY( POINTS_X(l), POINTS_Y(l) );
 		ActorUtil::LoadAllCommands( m_textPoints[l], m_sName );
 		this->AddChild( &m_textPoints[l] );
 		
 		m_textTime[l].SetName( ssprintf("Time%d",l+1) );
 		m_textTime[l].LoadFromFont( THEME->GetPathF(m_sName,"time") );
-		m_textTime[l].SetHidden( true );
+		m_textTime[l].SetVisible( false );
 		m_textTime[l].SetXY( TIME_X(l), TIME_Y(l) );
 		ActorUtil::LoadAllCommands( m_textTime[l], m_sName );
 		this->AddChild( &m_textTime[l] );
@@ -647,13 +647,13 @@ float ScreenRankingLines::SetPage( const PageToShow &pts )
 	{
 		m_textNames[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 
-		m_textScores[l].SetHidden( !bShowScores );
+		m_textScores[l].SetVisible( bShowScores );
 		m_textScores[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 		
-		m_textPoints[l].SetHidden( !bShowPoints );
+		m_textPoints[l].SetVisible( bShowPoints );
 		m_textPoints[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 		
-		m_textTime[l].SetHidden( !bShowTime );
+		m_textTime[l].SetVisible( bShowTime );
 		m_textTime[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 	}
 

@@ -276,7 +276,7 @@ void ScreenOptions::RestartOptions()
 		}
 
 		// Hide the highlight if no rows are enabled.
-		m_sprLineHighlight[p]->SetHidden( m_iCurrentRow[p] == -1 || !GAMESTATE->IsHumanPlayer(p) );
+		m_sprLineHighlight[p]->SetVisible( m_iCurrentRow[p] != -1 && GAMESTATE->IsHumanPlayer(p) );
 	}
 
 
@@ -308,7 +308,7 @@ void ScreenOptions::BeginScreen()
 	ON_COMMAND( m_framePage );
 
 	FOREACH_PlayerNumber( p )
-		m_Cursor[p].SetHidden( !GAMESTATE->IsHumanPlayer(p) );
+		m_Cursor[p].SetVisible( GAMESTATE->IsHumanPlayer(p) );
 }
 
 void ScreenOptions::TweenOnScreen()

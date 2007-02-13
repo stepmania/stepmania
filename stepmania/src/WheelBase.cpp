@@ -175,9 +175,9 @@ void WheelBase::SetPositions()
 		WheelItemBase *pDisplay = m_WheelBaseItems[i];
 		const float fOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
 		if( fabsf(fOffsetFromSelection) > NUM_WHEEL_ITEMS_TO_DRAW/2 )
-			pDisplay->SetHidden( true );
+			pDisplay->SetVisible( false );
 		else
-			pDisplay->SetHidden( false );
+			pDisplay->SetVisible( true );
 
 		SetItemPosition( *pDisplay, fOffsetFromSelection );
 	}

@@ -25,7 +25,7 @@ void ScreenPlayerOptions::Init()
 		m_sprDisqualify[p].Load( THEME->GetPathG(m_sName,"disqualify") );
 		m_sprDisqualify[p]->SetName( ssprintf("DisqualifyP%i",p+1) );
 		SET_XY( m_sprDisqualify[p] );
-		m_sprDisqualify[p]->SetHidden( true );	// unhide later if handicapping options are discovered
+		m_sprDisqualify[p]->SetVisible( false );	// unhide later if handicapping options are discovered
 		m_sprDisqualify[p]->SetDrawOrder( 2 );
 		m_framePage.AddChild( m_sprDisqualify[p] );
 	}
@@ -171,7 +171,7 @@ void ScreenPlayerOptions::UpdateDisqualified( int row, PlayerNumber pn )
 			break;
 		}
 	}
-	m_sprDisqualify[pn]->SetHidden( !bDisqualified );
+	m_sprDisqualify[pn]->SetVisible( bDisqualified );
 
 	// restore previous player options in case the user escapes back after this
 	GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.Assign( ModsLevel_Preferred, poOrig );

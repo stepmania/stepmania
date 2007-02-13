@@ -45,7 +45,7 @@ void Foreground::LoadFromSong( const Song *pSong )
 		const float fStopSecond = fStartSecond + bga.m_bga->GetTweenTimeLeft();
 		bga.m_fStopBeat = pSong->m_Timing.GetBeatFromElapsedTime( fStopSecond );
 
-		bga.m_bga->SetHidden( true );
+		bga.m_bga->SetVisible( false );
 
 		this->AddChild( bga.m_bga );
 		m_BGAnimations.push_back( bga );
@@ -77,9 +77,9 @@ void Foreground::Update( float fDeltaTime )
 		/* Update the actor even if we're about to hide it, so queued commands
 		 * are always run. */
 		float fDeltaTime;
-		if( bga.m_bga->GetHidden() )
+		if( !bga.m_bga->GetVisible() )
 		{
-			bga.m_bga->SetHidden( false );
+			bga.m_bga->SetVisible( true );
 
 			const float fStartSecond = m_pSong->m_Timing.GetElapsedTimeFromBeat( bga.m_fStartBeat );
 			fDeltaTime = GAMESTATE->m_fMusicSeconds - fStartSecond;
@@ -97,7 +97,7 @@ void Foreground::Update( float fDeltaTime )
 		if( GAMESTATE->m_fSongBeat > bga.m_fStopBeat )
 		{
 			/* Finished. */
-			bga.m_bga->SetHidden( true );
+			bga.m_bga->SetVisible( false );
 			bga.m_bFinished = true;
 			continue;
 		}

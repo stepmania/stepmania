@@ -156,19 +156,19 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pWIBD, int 
 
 
 	// hide all
-	m_WheelNotifyIcon.SetHidden( true );
-	m_TextBanner.SetHidden( true );
-	m_sprSongBar->SetHidden( true );
-	m_sprSectionBar->SetHidden( true );
-	m_sprExpandedBar->SetHidden( true );
-	m_sprModeBar->SetHidden( true );
-	m_sprSortBar->SetHidden( true );
-	m_textSection.SetHidden( true );
-	m_textRoulette.SetHidden( true );
+	m_WheelNotifyIcon.SetVisible( false );
+	m_TextBanner.SetVisible( false );
+	m_sprSongBar->SetVisible( false );
+	m_sprSectionBar->SetVisible( false );
+	m_sprExpandedBar->SetVisible( false );
+	m_sprModeBar->SetVisible( false );
+	m_sprSortBar->SetVisible( false );
+	m_textSection.SetVisible( false );
+	m_textRoulette.SetVisible( false );
 	FOREACH_PlayerNumber( p )
-		m_pGradeDisplay[p]->SetHidden( true );
-	m_textCourse.SetHidden( true );
-	m_textSort.SetHidden( true );
+		m_pGradeDisplay[p]->SetVisible( false );
+	m_textCourse.SetVisible( false );
+	m_textSort.SetVisible( false );
 
 
 	// init and unhide type specific stuff
@@ -191,7 +191,7 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pWIBD, int 
 			sTranslitName = data->m_pCourse->GetTranslitFullTitle();
 			bt = &m_textCourse;
 			m_WheelNotifyIcon.SetFlags( data->m_Flags );
-			m_WheelNotifyIcon.SetHidden( false );
+			m_WheelNotifyIcon.SetVisible( true );
 			break;
 		case TYPE_SORT:
 			sDisplayName = data->m_sLabel;
@@ -203,31 +203,31 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pWIBD, int 
 		bt->SetText( sDisplayName, sTranslitName );
 		bt->SetDiffuse( data->m_color );
 		bt->SetRainbow( false );
-		bt->SetHidden( false );
+		bt->SetVisible( true );
 		break;
 	}
 	case TYPE_SONG:
 		m_TextBanner.LoadFromSong( data->m_pSong );
 		m_TextBanner.SetDiffuse( data->m_color );
-		m_TextBanner.SetHidden( false );
+		m_TextBanner.SetVisible( true );
 
 		m_WheelNotifyIcon.SetFlags( data->m_Flags );
-		m_WheelNotifyIcon.SetHidden( false );
+		m_WheelNotifyIcon.SetVisible( true );
 		RefreshGrades();
 		break;
 	case TYPE_ROULETTE:
 		m_textRoulette.SetText( THEME->GetString("MusicWheel","Roulette") );
-		m_textRoulette.SetHidden( false );
+		m_textRoulette.SetVisible( true );
 		break;
 
 	case TYPE_RANDOM:
 		m_textRoulette.SetText( THEME->GetString("MusicWheel","Random") );
-		m_textRoulette.SetHidden( false );
+		m_textRoulette.SetVisible( true );
 		break;
 
 	case TYPE_PORTAL:
 		m_textRoulette.SetText( THEME->GetString("MusicWheel","Portal") );
-		m_textRoulette.SetHidden( false );
+		m_textRoulette.SetVisible( true );
 		break;
 
 	DEFAULT_FAIL( pWID->m_Type );	// invalid type
@@ -244,19 +244,19 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pWIBD, int 
 	case TYPE_RANDOM:
 	case TYPE_PORTAL:
 		if( m_bExpanded )
-			m_sprExpandedBar->SetHidden( false );
+			m_sprExpandedBar->SetVisible( true );
 		else
-			m_sprSectionBar->SetHidden( false );
+			m_sprSectionBar->SetVisible( true );
 		break;
 	case TYPE_SORT:
 		if( pWID->m_pAction->m_pm != PlayMode_Invalid )
-			m_sprModeBar->SetHidden( false );
+			m_sprModeBar->SetVisible( true );
 		else
-			m_sprSortBar->SetHidden( false );
+			m_sprSortBar->SetVisible( true );
 		break;
 	case TYPE_SONG:		
 	case TYPE_COURSE:
-		m_sprSongBar->SetHidden( false );
+		m_sprSongBar->SetVisible( true );
 		break;
 	DEFAULT_FAIL( data->m_Type );
 	}

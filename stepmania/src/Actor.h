@@ -318,9 +318,7 @@ public:
 	// other properties
 	//
 	bool GetVisible() const				{ return m_bVisible; }
-	bool GetHidden() const				{ return !m_bVisible; }
 	void SetVisible( bool b )			{ m_bVisible = b; }
-	void SetHidden( bool b )			{ m_bVisible = !b; }
 	void SetShadowLength( float fLength )		{ m_fShadowLength = fLength; }
 	// TODO: Implement hibernate as a tween type?
 	void SetHibernate( float fSecs )		{ m_fHibernateSecondsLeft = fSecs; }

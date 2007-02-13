@@ -159,7 +159,7 @@ void BGAnimation::LoadFromNode( const XNode* pNode )
 	{
 		Actor *pActor = new Actor;
 		pActor->SetName( "BGAnimation dummy" );
-		pActor->SetHidden( true );
+		pActor->SetVisible( false );
 		apActorCommands ap = ActorUtil::ParseActorCommands( ssprintf("sleep,%f",fLengthSeconds) );
 		pActor->AddCommand( "On", ap );
 		AddChild( pActor );

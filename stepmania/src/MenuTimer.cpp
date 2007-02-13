@@ -51,7 +51,7 @@ void MenuTimer::EnableStealth( bool bStealth )
 
 	for( int i=0; i<NUM_MENU_TIMER_TEXTS; i++ )
 	{
-		m_text[i].SetHidden( bStealth );
+		m_text[i].SetVisible( !bStealth );
 	}
 }
 

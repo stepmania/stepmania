@@ -100,9 +100,9 @@ void ComboGraph::Load( const StageStats &s, const PlayerStageStats &pss )
 	}
 
 	/* Hide the templates. */
-	m_pNormalCombo->SetHidden( true );
-	m_pMaxCombo->SetHidden( true );
-	m_pMaxComboText->SetHidden( true );
+	m_pNormalCombo->SetVisible( false );
+	m_pMaxCombo->SetVisible( false );
+	m_pMaxComboText->SetVisible( false );
 }
 
 // lua start

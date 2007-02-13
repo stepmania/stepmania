@@ -2235,22 +2235,22 @@ void ScreenEdit::TransitionEditState( EditState em )
 	m_sprOverlay->PlayCommand( EditStateToString(em) );
 	m_sprUnderlay->PlayCommand( EditStateToString(em) );
 
-	m_Background.SetHidden( !g_bEditorShowBGChangesPlay || em == STATE_EDITING );
-	m_autoHeader->SetHidden( em != STATE_EDITING );
-	m_textInputTips.SetHidden( em != STATE_EDITING );
-	m_textInfo.SetHidden( em != STATE_EDITING );
+	m_Background.SetVisible( g_bEditorShowBGChangesPlay  &&  em != STATE_EDITING );
+	m_autoHeader->SetVisible( em == STATE_EDITING );
+	m_textInputTips.SetVisible( em == STATE_EDITING );
+	m_textInfo.SetVisible( em == STATE_EDITING );
 	// Play the OnCommands again so that these will be re-hidden if the OnCommand hides them.
 	if( em == STATE_EDITING )
 	{
 		m_textInputTips.PlayCommand( "On" );
 		m_textInfo.PlayCommand( "On" );
 	}
-	m_textPlayRecordHelp.SetHidden( em == STATE_EDITING );
-	m_SnapDisplay.SetHidden( em != STATE_EDITING );
-	m_NoteFieldEdit.SetHidden( em != STATE_EDITING );
-	m_NoteFieldRecord.SetHidden( em != STATE_RECORDING && em != STATE_RECORDING_PAUSED );
-	m_Player->SetHidden( em != STATE_PLAYING );
-	m_Foreground.SetHidden( !g_bEditorShowBGChangesPlay || em == STATE_EDITING );
+	m_textPlayRecordHelp.SetVisible( em != STATE_EDITING );
+	m_SnapDisplay.SetVisible( em == STATE_EDITING );
+	m_NoteFieldEdit.SetVisible( em == STATE_EDITING );
+	m_NoteFieldRecord.SetVisible( em == STATE_RECORDING  ||  em == STATE_RECORDING_PAUSED );
+	m_Player->SetVisible( em == STATE_PLAYING );
+	m_Foreground.SetVisible( g_bEditorShowBGChangesPlay  &&  em != STATE_EDITING );
 
 	switch( em )
 	{

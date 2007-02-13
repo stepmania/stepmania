@@ -251,7 +251,7 @@ void GraphDisplay::LoadFromStageStats( const StageStats &ss, const PlayerStageSt
 		}
 		else
 		{
-			m_sprJustBarely->SetHidden( true );
+			m_sprJustBarely->SetVisible( false );
 		}
 		this->AddChild( m_sprJustBarely );
 	}
