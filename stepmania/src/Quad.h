@@ -9,6 +9,7 @@
 class Quad : public Sprite
 {
 public:
+	Quad();
 	void LoadFromNode( const XNode* pNode );
 	virtual Quad *Copy() const;
 };
