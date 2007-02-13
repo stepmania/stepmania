@@ -322,7 +322,7 @@ void Model::DrawPrimitives()
 	//////////////////////
 	if( m_pTempState->diffuse[0].a > 0 )
 	{
-		DISPLAY->SetTextureMode( TextureMode_Modulate );
+		DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Modulate );
 
 		for( unsigned i = 0; i < m_pGeometry->m_Meshes.size(); ++i )
 		{
@@ -367,7 +367,7 @@ void Model::DrawPrimitives()
 						DISPLAY->SetTexture( TextureUnit_2, mat.alpha.GetCurrentTexture() ? mat.alpha.GetCurrentTexture()->GetTexHandle() : 0 );
 						Actor::SetTextureRenderStates();	// set Actor-specified render states
 						DISPLAY->SetSphereEnvironmentMapping( mat.alpha.m_bSphereMapped );
-						DISPLAY->SetTextureMode( TextureMode_Add );
+						DISPLAY->SetTextureMode( TextureUnit_2, TextureMode_Add );
 						DISPLAY->SetTextureFiltering( true );
 					}
 					else
@@ -434,7 +434,7 @@ void Model::DrawPrimitives()
 	//////////////////////
 	if( m_pTempState->glow.a > 0.0001f )
 	{
-		DISPLAY->SetTextureMode( TextureMode_Glow );
+		DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Glow );
 
 		for( unsigned i = 0; i < m_pGeometry->m_Meshes.size(); ++i )
 		{

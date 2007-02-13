@@ -43,7 +43,7 @@ public:
 	void ClearAllTextures();
 	int GetNumTextureUnits();
 	void SetTexture( TextureUnit tu, unsigned iTexture );
-	void SetTextureMode( TextureMode tm );
+	void SetTextureMode( TextureUnit tu, TextureMode tm );
 	void SetTextureWrapping( bool b );
 	int GetMaxTextureSize() const;
 	void SetTextureFiltering( bool b);

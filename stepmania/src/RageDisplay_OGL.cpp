@@ -1358,6 +1358,18 @@ void RageDisplay_OGL::DrawLineStripInternal( const RageSpriteVertex v[], int iNu
 	glDisable( GL_POINT_SMOOTH );
 }
 
+static bool SetTextureUnit( TextureUnit tu )
+{
+	// If multitexture isn't supported, ignore all textures except for 0.
+	if( GLExt.glActiveTextureARB == NULL )
+		return false;
+
+	if( (int) tu > g_iMaxTextureUnits )
+		return false;
+	GLExt.glActiveTextureARB( enum_add2(GL_TEXTURE0_ARB, tu) );
+	return true;
+}
+
 void RageDisplay_OGL::ClearAllTextures()
 {
 	FOREACH_ENUM( TextureUnit, i )
@@ -1379,26 +1391,8 @@ int RageDisplay_OGL::GetNumTextureUnits()
 
 void RageDisplay_OGL::SetTexture( TextureUnit tu, unsigned iTexture )
 {
-	if( GLExt.glActiveTextureARB == NULL )
-	{
-		// multitexture isn't supported.  Ignore all textures except for 0.
-		if( tu != 0 )
-			return;
-	}
-	else
-	{
-		switch( tu )
-		{
-		case 0:
-			GLExt.glActiveTextureARB(GL_TEXTURE0_ARB);
-			break;
-		case 1:
-			GLExt.glActiveTextureARB(GL_TEXTURE1_ARB);
-			break;
-		default:
-			ASSERT(0);
-		}
-	}
+	if( !SetTextureUnit( tu ) )
+		return;
 
 	if( iTexture )
 	{
@@ -1411,8 +1405,11 @@ void RageDisplay_OGL::SetTexture( TextureUnit tu, unsigned iTexture )
 	}
 }
 
-void RageDisplay_OGL::SetTextureMode( TextureMode tm )
+void RageDisplay_OGL::SetTextureMode( TextureUnit tu, TextureMode tm )
 {
+	if( !SetTextureUnit( tu ) )
+		return;
+
 	switch( tm )
 	{
 	case TextureMode_Modulate:

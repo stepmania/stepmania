@@ -515,9 +515,9 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, float fBeat, bool b
 	}
 
 	if( bGlow )
-		DISPLAY->SetTextureMode( TextureMode_Glow );
+		DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Glow );
 	else
-		DISPLAY->SetTextureMode( TextureMode_Modulate );
+		DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Modulate );
 
 	const bool bWavyPartsNeedZBuffer = ArrowEffects::NeedZBuffer( m_pPlayerState );
 	DISPLAY->SetZTestMode( bWavyPartsNeedZBuffer?ZTEST_WRITE_ON_PASS:ZTEST_OFF );

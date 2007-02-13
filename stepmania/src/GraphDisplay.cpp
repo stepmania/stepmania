@@ -132,7 +132,7 @@ public:
 		// parameters have no effect.
 		Actor::SetTextureRenderStates();
 
-		DISPLAY->SetTextureMode( TextureMode_Modulate );
+		DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Modulate );
 		DISPLAY->DrawQuadStrip( m_Slices, ARRAYLEN(m_Slices) );
 	}
 

@@ -513,7 +513,7 @@ bool BitmapText::EarlyAbortDraw() const
 void BitmapText::DrawPrimitives()
 {
 	Actor::SetGlobalRenderStates();	// set Actor-specified render states
-	DISPLAY->SetTextureMode( TextureMode_Modulate );
+	DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Modulate );
 
 	/* Draw if we're not fully transparent or the zbuffer is enabled */
 	if( m_pTempState->diffuse[0].a != 0 )
@@ -601,7 +601,7 @@ void BitmapText::DrawPrimitives()
 	/* render the glow pass */
 	if( m_pTempState->glow.a > 0.0001f )
 	{
-		DISPLAY->SetTextureMode( TextureMode_Glow );
+		DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Glow );
 
 		for( unsigned i=0; i<m_aVertices.size(); i++ )
 			m_aVertices[i].c = m_pTempState->glow;
@@ -773,7 +773,7 @@ void ColorBitmapText::SimpleAddLine( const RString &sAddition, const int iWidthP
 void ColorBitmapText::DrawPrimitives( )
 {
 	Actor::SetGlobalRenderStates();	// set Actor-specified render states
-	DISPLAY->SetTextureMode( TextureMode_Modulate );
+	DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Modulate );
 
 	/* Draw if we're not fully transparent or the zbuffer is enabled */
 	if( m_pTempState->diffuse[0].a != 0 )
@@ -822,7 +822,7 @@ void ColorBitmapText::DrawPrimitives( )
 	/* render the glow pass */
 	if( m_pTempState->glow.a > 0.0001f )
 	{
-		DISPLAY->SetTextureMode( TextureMode_Glow );
+		DISPLAY->SetTextureMode( TextureUnit_1, TextureMode_Glow );
 
 		for( unsigned i=0; i<m_aVertices.size(); i++ )
 			m_aVertices[i].c = m_pTempState->glow;
