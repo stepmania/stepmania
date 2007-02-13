@@ -236,6 +236,17 @@ void ActorFrame::EndDraw()
 	Actor::EndDraw();
 }
 
+void ActorFrame::PushChildrenTable( lua_State *L )
+{
+	lua_newtable( L );
+	FOREACH( Actor*, m_SubActors, a )
+	{
+		LuaHelpers::Push( L, (*a)->GetName() );
+		(*a)->PushSelf( L );
+		lua_rawset( L, -3 );
+	}
+}
+
 void ActorFrame::PlayCommandOnChildren( const RString &sCommandName, const LuaReference *pParamTable )
 {
 	const apActorCommands *pCmd = GetCommand( sCommandName );
@@ -405,6 +416,11 @@ public:
 			lua_pushnil( L );
 		return 1;
 	}
+	static int GetChildren( T* p, lua_State *L )
+	{
+		p->PushChildrenTable( L );
+		return 1;
+	}
 	static int GetNumChildren( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumChildren() ); return 1; }
 	static int SetDrawByZPosition( T* p, lua_State *L )	{ p->SetDrawByZPosition( BArg(1) ); return 1; }
 
@@ -419,6 +435,7 @@ public:
 		ADD_METHOD( SetFOV );
 		ADD_METHOD( vanishpoint );
 		ADD_METHOD( GetChild );
+		ADD_METHOD( GetChildren );
 		ADD_METHOD( GetNumChildren );
 		ADD_METHOD( SetDrawByZPosition );
 	}

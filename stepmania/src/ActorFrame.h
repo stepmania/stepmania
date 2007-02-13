@@ -35,6 +35,7 @@ public:
 	// Commands
 	//
 	virtual void PushSelf( lua_State *L );
+	void PushChildrenTable( lua_State *L );
 	void PlayCommandOnChildren( const RString &sCommandName, const LuaReference *pParamTable = NULL );
 	void PlayCommandOnLeaves( const RString &sCommandName, const LuaReference *pParamTable = NULL );
 	virtual void RunCommandsOnChildren( const LuaReference& cmds, const LuaReference *pParamTable = NULL ); /* but not on self */
