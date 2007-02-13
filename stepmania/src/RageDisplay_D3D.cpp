@@ -1527,9 +1527,9 @@ RageMatrix RageDisplay_D3D::GetOrthoMatrix( float l, float r, float b, float t, 
 	return m;
 }
 
-void RageDisplay_D3D::SetSphereEnvironmentMapping( bool b )
+void RageDisplay_D3D::SetSphereEnvironmentMapping( TextureUnit tu, bool b )
 {
-	g_bSphereMapping[g_currentTextureUnit] = b;
+	g_bSphereMapping[tu] = b;
 }
 
 /*

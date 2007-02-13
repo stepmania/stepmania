@@ -64,7 +64,7 @@ public:
 		const RageColor &specular, 
 		const RageVector3 &dir );
 
-	void SetSphereEnvironmentMapping( bool b );
+	void SetSphereEnvironmentMapping( TextureUnit tu, bool b );
 
 	RageCompiledGeometry* CreateCompiledGeometry();
 	void DeleteCompiledGeometry( RageCompiledGeometry* p );

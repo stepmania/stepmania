@@ -2222,8 +2222,11 @@ bool RageDisplay_OGL::SupportsPerVertexMatrixScale()
 	return GLExt.glGenBuffersARB  &&  g_bTextureMatrixShader != 0;
 }
 
-void RageDisplay_OGL::SetSphereEnvironmentMapping( bool b )
+void RageDisplay_OGL::SetSphereEnvironmentMapping( TextureUnit tu, bool b )
 {
+	if( !SetTextureUnit( tu ) )
+		return;
+
 	if( b )
 	{
 		glTexGeni( GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP );

@@ -359,14 +359,14 @@ void Model::DrawPrimitives()
 					// render the diffuse texture with texture unit 1
 					DISPLAY->SetTexture( TextureUnit_1, mat.diffuse.GetCurrentTexture() ? mat.diffuse.GetCurrentTexture()->GetTexHandle() : 0 );
 					Actor::SetTextureRenderStates();	// set Actor-specified render states
-					DISPLAY->SetSphereEnvironmentMapping( mat.diffuse.m_bSphereMapped );
+					DISPLAY->SetSphereEnvironmentMapping( TextureUnit_1, mat.diffuse.m_bSphereMapped );
 					
 					// render the additive texture with texture unit 2
 					if( mat.alpha.GetCurrentTexture() )
 					{
 						DISPLAY->SetTexture( TextureUnit_2, mat.alpha.GetCurrentTexture() ? mat.alpha.GetCurrentTexture()->GetTexHandle() : 0 );
 						Actor::SetTextureRenderStates();	// set Actor-specified render states
-						DISPLAY->SetSphereEnvironmentMapping( mat.alpha.m_bSphereMapped );
+						DISPLAY->SetSphereEnvironmentMapping( TextureUnit_2, mat.alpha.m_bSphereMapped );
 						DISPLAY->SetTextureMode( TextureUnit_2, TextureMode_Add );
 						DISPLAY->SetTextureFiltering( TextureUnit_2, true );
 					}
@@ -382,16 +382,15 @@ void Model::DrawPrimitives()
 					/* go */
 					DrawMesh( i );
 
-					// Turn off Environment mapping on tex unit 0.  Is there a better way to reset?
-					DISPLAY->SetTexture( TextureUnit_1, 0 );
-					DISPLAY->SetSphereEnvironmentMapping( 0 );
+					// Turn off environment mapping on tex unit 0.
+					DISPLAY->SetSphereEnvironmentMapping( TextureUnit_1, 0 );
 				}
 				else
 				{
 					// render the diffuse texture
 					DISPLAY->SetTexture( TextureUnit_1, mat.diffuse.GetCurrentTexture() ? mat.diffuse.GetCurrentTexture()->GetTexHandle() : 0 );
 					Actor::SetTextureRenderStates();	// set Actor-specified render states
-					DISPLAY->SetSphereEnvironmentMapping( mat.diffuse.m_bSphereMapped );
+					DISPLAY->SetSphereEnvironmentMapping( TextureUnit_1, mat.diffuse.m_bSphereMapped );
 					DrawMesh( i );
 				
 					// render the additive texture
@@ -400,7 +399,7 @@ void Model::DrawPrimitives()
 						DISPLAY->SetTexture( TextureUnit_1, mat.alpha.GetCurrentTexture() ? mat.alpha.GetCurrentTexture()->GetTexHandle() : 0 );
 						Actor::SetTextureRenderStates();	// set Actor-specified render states
 
-						DISPLAY->SetSphereEnvironmentMapping( mat.alpha.m_bSphereMapped );
+						DISPLAY->SetSphereEnvironmentMapping( TextureUnit_1, mat.alpha.m_bSphereMapped );
 						// UGLY:  This overrides the Actor's BlendMode
 						DISPLAY->SetBlendMode( BLEND_ADD );
 						DISPLAY->SetTextureFiltering( TextureUnit_1, true );
@@ -420,11 +419,11 @@ void Model::DrawPrimitives()
 				static const float shininess = 1;
 				DISPLAY->SetMaterial( emissive, ambient, diffuse, specular, shininess );
 				DISPLAY->ClearAllTextures();
-				DISPLAY->SetSphereEnvironmentMapping( false );
+				DISPLAY->SetSphereEnvironmentMapping( TextureUnit_1, false );
 				DrawMesh( i );
 			}
 
-			DISPLAY->SetSphereEnvironmentMapping( false );
+			DISPLAY->SetSphereEnvironmentMapping( TextureUnit_1, false );
 			DISPLAY->SetBlendMode( BLEND_NORMAL );
 		}
 	}
