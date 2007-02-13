@@ -255,7 +255,6 @@ static void ChangeToDirOfExecutable( const RString &argv0 )
 	 * through a symlink. Assume this is the case and change to the dir of the symlink. */
 	if( Basename(RageFileManagerUtil::sDirOfExecutable) == "MacOS" )
 		CollapsePath( RageFileManagerUtil::sDirOfExecutable += "/../../.." );
-	puts( RageFileManagerUtil::sDirOfExecutable );
 	chdir( RageFileManagerUtil::sDirOfExecutable );
 #endif
 }
