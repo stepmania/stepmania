@@ -1459,29 +1459,31 @@ void RageDisplay_OGL::SetBlendMode( BlendMode mode )
 			GLExt.glBlendEquation( GL_FUNC_ADD );
 	}
 
+	int iSourceRGB, iDestRGB;
 	switch( mode )
 	{
 	case BLEND_NORMAL:
-		glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+		iSourceRGB = GL_SRC_ALPHA; iDestRGB = GL_ONE_MINUS_SRC_ALPHA;
 		break;
 	case BLEND_ADD:
-		glBlendFunc( GL_SRC_ALPHA, GL_ONE );
+		iSourceRGB = GL_SRC_ALPHA; iDestRGB = GL_ONE;
 		break;
 	case BLEND_WEIGHTED_MULTIPLY:
 		/* output = 2*(dst*src).  0.5,0.5,0.5 is identity; darker colors darken the image,
 		 * and brighter colors lighten the image. */
-		glBlendFunc( GL_DST_COLOR, GL_SRC_COLOR );
-
+		iSourceRGB = GL_DST_COLOR; iDestRGB = GL_SRC_COLOR;
 		break;
 	case BLEND_INVERT_DEST:
 		/* out = src - dst.  The source color should almost always be #FFFFFF, to make it "1 - dst". */
-		glBlendFunc( GL_ONE, GL_ONE );
+		iSourceRGB = GL_ONE; iDestRGB = GL_ONE;
 		break;
 	case BLEND_NO_EFFECT:
-		glBlendFunc( GL_ZERO, GL_ONE );
+		iSourceRGB = GL_ZERO; iDestRGB = GL_ONE;
 		break;
 	DEFAULT_FAIL( mode );
 	}
+
+	glBlendFunc( iSourceRGB, iDestRGB );
 }
 
 bool RageDisplay_OGL::IsZWriteEnabled() const
