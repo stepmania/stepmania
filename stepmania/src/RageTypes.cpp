@@ -81,6 +81,15 @@ static const char *BlendModeNames[] =
 XToString( BlendMode );
 LuaXType( BlendMode );
 
+static const char *TextureModeNames[] =
+{
+	"Modulate",
+	"Glow",
+	"Add",
+};
+XToString( TextureMode );
+LuaXType( TextureMode );
+
 
 static const char *ZTestModeNames[] =
 {
