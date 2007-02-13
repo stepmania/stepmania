@@ -802,7 +802,7 @@ void RageDisplay_D3D::SendCurrentMatrices()
 		
 		// If no texture is set for this texture unit, don't bother setting it up.
 		IDirect3DBaseTexture8* pTexture = NULL;
-		g_pd3dDevice->GetTexture( g_currentTextureUnit, &pTexture );
+		g_pd3dDevice->GetTexture( tu, &pTexture );
 		if( pTexture == NULL )
 			 continue;
 		pTexture->Release();
