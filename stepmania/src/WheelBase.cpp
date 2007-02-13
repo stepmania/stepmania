@@ -58,6 +58,7 @@ void WheelBase::Load( RString sType )
 
 	WheelItemBase *pTempl = MakeItem();
 	ActorUtil::LoadAllCommands( *pTempl, m_sName );
+	pTempl->PlayCommand( "Init" );
 	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 	{
 		WheelItemBase *pItem = pTempl->Copy();
