@@ -57,6 +57,9 @@ void RageTextureRenderTarget::BeginRenderingTo( bool bPreserveTexture )
 	// Reset the perspective to fit the new target.
 	DISPLAY->CameraPushMatrix();
 	DISPLAY->LoadMenuPerspective( 0, (float) m_iImageWidth, (float) m_iImageHeight, (float) m_iImageWidth/2, (float) m_iImageHeight/2 ); // 0 FOV = ortho
+
+	DISPLAY->PushMatrix();
+	DISPLAY->LoadIdentity();
 }
 
 void RageTextureRenderTarget::FinishRenderingTo()
@@ -64,6 +67,7 @@ void RageTextureRenderTarget::FinishRenderingTo()
 	// Restore the matrixes.
 	DISPLAY->CenteringPopMatrix();
 	DISPLAY->CameraPopMatrix();
+	DISPLAY->PopMatrix();
 
 	DISPLAY->SetRenderTarget( 0 );
 }
