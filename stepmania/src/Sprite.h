@@ -66,6 +66,9 @@ public:
 	virtual void PushSelf( lua_State *L );
 
 protected:
+	void SetDrawIfTextureNull( bool b ) { m_bDrawIfTextureNull = b; }
+
+private:
 	void LoadFromTexture( RageTextureID ID );
 	void LoadStatesFromTexture();
 

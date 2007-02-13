@@ -74,7 +74,7 @@ void GradeDisplay::Update( float fDeltaTime )
 
 int GradeDisplay::GetFrameIndex( PlayerNumber pn, Grade g )
 {
-	if( this->m_pTexture->GetID().filename.find("_blank") != string::npos )
+	if( this->GetTexture()->GetID().filename.find("_blank") != string::npos )
 		return 0;
 
 	// either 8, or 16 states
@@ -133,7 +133,7 @@ void GradeDisplay::Scroll()
 
 	int iFrameNo = GetFrameIndex( m_PlayerNumber, m_Grade );
 
-	m_frectDestTexCoords = *m_pTexture->GetTextureCoordRect( iFrameNo );
+	m_frectDestTexCoords = *GetTexture()->GetTextureCoordRect( iFrameNo );
 	m_frectStartTexCoords = m_frectDestTexCoords;
 	m_frectStartTexCoords.top += GRADES_TO_SCROLL * GRADE_FRAME_HEIGHT;
 	m_frectStartTexCoords.bottom += GRADES_TO_SCROLL * GRADE_FRAME_HEIGHT;

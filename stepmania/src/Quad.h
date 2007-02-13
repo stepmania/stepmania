@@ -11,7 +11,7 @@ class Quad : public Sprite
 public:
 	Quad()
 	{
-		m_bDrawIfTextureNull = true; 
+		SetDrawIfTextureNull( true );
 	}	
 
 	void LoadFromNode( const XNode* pNode );
