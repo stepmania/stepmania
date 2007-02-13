@@ -383,7 +383,7 @@ void Model::DrawPrimitives()
 					DrawMesh( i );
 
 					// Turn off environment mapping on tex unit 0.
-					DISPLAY->SetSphereEnvironmentMapping( TextureUnit_1, 0 );
+					DISPLAY->SetSphereEnvironmentMapping( TextureUnit_1, false );
 				}
 				else
 				{
