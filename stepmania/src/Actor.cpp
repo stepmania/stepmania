@@ -1394,6 +1394,13 @@ public:
 			pParent->PushSelf(L);
 		return 1;
 	}
+	static int Draw( T* p, lua_State *L )
+	{
+		LUA->YieldLua();
+		p->Draw();
+		LUA->UnyieldLua();
+		return 0;
+	}
 
 	LunaActor()
 	{
@@ -1527,6 +1534,8 @@ public:
 
 		ADD_METHOD( GetName );
 		ADD_METHOD( GetParent );
+
+		ADD_METHOD( Draw );
 	}
 };
 
