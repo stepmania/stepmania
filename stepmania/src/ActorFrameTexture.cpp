@@ -63,6 +63,14 @@ public:
 	static int EnableAlphaBuffer( T* p, lua_State *L )		{ p->EnableAlphaBuffer(BArg(1)); return 0; }
 	static int EnablePreserveTexture( T* p, lua_State *L )		{ p->EnablePreserveTexture(BArg(1)); return 0; }
 	static int SetTextureName( T* p, lua_State *L )			{ p->SetTextureName(SArg(1)); return 0; }
+	static int GetTexture( T* p, lua_State *L )
+	{
+		RageTexture *pTexture = p->GetTexture();
+		if( pTexture == NULL )
+			return 0;
+		pTexture->PushSelf(L);
+		return 1;
+	}
 	
 	LunaActorFrameTexture()
 	{
@@ -71,6 +79,7 @@ public:
 		ADD_METHOD( EnableAlphaBuffer );
 		ADD_METHOD( EnablePreserveTexture );
 		ADD_METHOD( SetTextureName );
+		ADD_METHOD( GetTexture );
 	}
 };
 

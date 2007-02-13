@@ -18,6 +18,7 @@ public:
 	 * GetTextureName. */
 	void SetTextureName( const RString &sName ) { m_sTextureName = sName; }
 	RString GetTextureName() const { return m_sTextureName; }
+	RageTextureRenderTarget *GetTexture() { return m_pRenderTarget; }
 
 	void EnableDepthBuffer( bool b ) { m_bDepthBuffer = b; }
 	void EnableAlphaBuffer( bool b ) { m_bAlphaBuffer = b; }
