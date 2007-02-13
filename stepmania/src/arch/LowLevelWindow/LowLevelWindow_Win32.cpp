@@ -135,6 +135,7 @@ RString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 		/* No.  Always create and show the window before changing the video mode.
 		 * Otherwise, some other window may have focus, and changing the video mode will
 		 * cause that window to be resized. */
+		bNewDeviceOut = true;
 		GraphicsWindow::CreateGraphicsWindow( p );
 	} else {
 		/* We already have a window.  Assume that it's pixel format has already been
