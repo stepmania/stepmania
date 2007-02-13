@@ -13,6 +13,8 @@
 
 #if defined(WIN32) && !defined(XBOX)
 #include <windows.h>
+#elif defined(UNIX) || defined(MACOSX)
+#include <paths.h>
 #endif
 
 RageFileManager *FILEMAN = NULL;
@@ -203,10 +205,38 @@ static RString GetDirOfExecutable( RString argv0 )
 
 	if( !bIsAbsolutePath )
 	{
+#if defined(UNIX) || defined(MACOSX)
+		if( sPath.empty() )
+		{
+			// This is in our path so look for it.
+			const char *path = getenv( "PATH" );
+			
+			if( !path )
+				path = _PATH_DEFPATH;
+			
+			vector<RString> vPath;
+			split( path, ":", vPath );
+			FOREACH( RString, vPath, i )
+			{
+				if( access(*i + "/" + argv0, X_OK|R_OK) )
+					continue;
+				sPath = *i;
+				break;
+			}
+			if( sPath.empty() )
+				sPath = GetCwd(); // What?
+			else if( sPath[0] != '/' ) // For example, if . is in $PATH.
+				sPath = GetCwd() + "/" + sPath;
+		}
+		else
+		{
+			sPath = GetCwd() + "/" + sPath;
+		}
+#else
 		sPath = GetCwd() + "/" + sPath;
 		sPath.Replace( "\\", "/" );
+#endif
 	}
-
 	return sPath;
 #endif
 }
@@ -225,6 +255,7 @@ static void ChangeToDirOfExecutable( const RString &argv0 )
 	 * through a symlink. Assume this is the case and change to the dir of the symlink. */
 	if( Basename(RageFileManagerUtil::sDirOfExecutable) == "MacOS" )
 		CollapsePath( RageFileManagerUtil::sDirOfExecutable += "/../../.." );
+	puts( RageFileManagerUtil::sDirOfExecutable );
 	chdir( RageFileManagerUtil::sDirOfExecutable );
 #endif
 }
