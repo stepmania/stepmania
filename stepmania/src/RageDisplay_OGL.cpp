@@ -1442,7 +1442,7 @@ void RageDisplay_OGL::SetTextureMode( TextureUnit tu, TextureMode tm )
 	}
 }
 
-void RageDisplay_OGL::SetTextureFiltering( bool b )
+void RageDisplay_OGL::SetTextureFiltering( TextureUnit tu, bool b )
 {
 
 }

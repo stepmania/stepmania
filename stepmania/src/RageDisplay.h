@@ -206,7 +206,7 @@ public:
 	virtual void SetTextureMode( TextureUnit tu, TextureMode tm ) = 0;
 	virtual void SetTextureWrapping( bool b ) = 0;
 	virtual int GetMaxTextureSize() const = 0;
-	virtual void SetTextureFiltering( bool b ) = 0;
+	virtual void SetTextureFiltering( TextureUnit tu, bool b ) = 0;
 
 	bool SupportsRenderToTexture() const { return false; }
 	

@@ -368,7 +368,7 @@ void Model::DrawPrimitives()
 						Actor::SetTextureRenderStates();	// set Actor-specified render states
 						DISPLAY->SetSphereEnvironmentMapping( mat.alpha.m_bSphereMapped );
 						DISPLAY->SetTextureMode( TextureUnit_2, TextureMode_Add );
-						DISPLAY->SetTextureFiltering( true );
+						DISPLAY->SetTextureFiltering( TextureUnit_2, true );
 					}
 					else
 					{
@@ -403,7 +403,7 @@ void Model::DrawPrimitives()
 						DISPLAY->SetSphereEnvironmentMapping( mat.alpha.m_bSphereMapped );
 						// UGLY:  This overrides the Actor's BlendMode
 						DISPLAY->SetBlendMode( BLEND_ADD );
-						DISPLAY->SetTextureFiltering( true );
+						DISPLAY->SetTextureFiltering( TextureUnit_1, true );
 						DrawMesh( i );
 					}
 				}

@@ -1193,13 +1193,13 @@ void RageDisplay_D3D::SetTextureMode( TextureUnit tu, TextureMode tm )
 	}
 }
 
-void RageDisplay_D3D::SetTextureFiltering( bool b )
+void RageDisplay_D3D::SetTextureFiltering( TextureUnit tu, bool b )
 {
-	if( g_currentTextureUnit >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
+	if( tu >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
 		return;
 
-	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_MINFILTER, b ? D3DTEXF_LINEAR : D3DTEXF_POINT );
-	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_MAGFILTER, b ? D3DTEXF_LINEAR : D3DTEXF_POINT );
+	g_pd3dDevice->SetTextureStageState( tu, D3DTSS_MINFILTER, b ? D3DTEXF_LINEAR : D3DTEXF_POINT );
+	g_pd3dDevice->SetTextureStageState( tu, D3DTSS_MAGFILTER, b ? D3DTEXF_LINEAR : D3DTEXF_POINT );
 }
 
 void RageDisplay_D3D::SetBlendMode( BlendMode mode )

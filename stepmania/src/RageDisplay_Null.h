@@ -36,7 +36,7 @@ public:
 	void SetTextureMode( TextureUnit tu, TextureMode tm ) { }
 	void SetTextureWrapping( bool b ) { }
 	int GetMaxTextureSize() const { return 2048; }
-	void SetTextureFiltering( bool b) { }
+	void SetTextureFiltering( TextureUnit tu, bool b ) { }
 	bool IsZWriteEnabled() const { return false; }
 	bool IsZTestEnabled() const { return false; }
 	void SetZWrite( bool b ) { }

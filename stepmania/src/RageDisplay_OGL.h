@@ -46,7 +46,7 @@ public:
 	void SetTextureMode( TextureUnit tu, TextureMode tm );
 	void SetTextureWrapping( bool b );
 	int GetMaxTextureSize() const;
-	void SetTextureFiltering( bool b);
+	void SetTextureFiltering( TextureUnit tu, bool b );
 	bool SupportsRenderToTexture() const;
 	unsigned CreateRenderTarget( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut );
 	void SetRenderTarget( unsigned iHandle, bool bPreserveTexture );
