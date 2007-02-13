@@ -125,9 +125,14 @@ void ActorScroller::LoadFromNode( const XNode *pNode )
 	if( pNode->GetAttrValue("SecondsPerItem", fSecondsPerItem) )
 		ActorScroller::SetSecondsPerItem( fSecondsPerItem );
 
-	RString sTransformFunction;
-	if( pNode->GetAttrValue("TransformFunction", sTransformFunction) )
-		ActorScroller::SetTransformFromExpression( sTransformFunction );
+	Lua *L = LUA->Get();
+	if( pNode->PushAttrValue(L, "TransformFunction") )
+	{
+		LuaReference ref;
+		ref.SetFromStack( L );
+		SetTransformFromReference( ref );
+	}
+	LUA->Release( L );
 
 	int iSubdivisions = 1;
 	if( pNode->GetAttrValue("Subdivisions", iSubdivisions) )
