@@ -538,16 +538,6 @@ void Sprite::DrawTexture( const TweenState *state )
 	}
 }
 
-/* XXX: move to RageTypes.cpp */
-RageColor scale( float x, float l1, float h1, const RageColor &a, const RageColor &b )
-{
-	return RageColor(
-		SCALE( x, l1, h1, a.r, b.r ),
-		SCALE( x, l1, h1, a.g, b.g ),
-		SCALE( x, l1, h1, a.b, b.b ),
-		SCALE( x, l1, h1, a.a, b.a ) );
-}
-
 bool Sprite::EarlyAbortDraw() const
 {
 	return m_pTexture == NULL && !m_bDrawIfTextureNull;
