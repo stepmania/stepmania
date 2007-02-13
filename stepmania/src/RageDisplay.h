@@ -194,6 +194,9 @@ public:
 		RageSurface* img, 		// must be in pixfmt
 		bool bGenerateMipMaps
 		) = 0;
+	/* Return a texture handle to the default texture, an opaque, all-white,
+	 * immutable texture.  Deleting or updating this texture has no effect. */
+	virtual unsigned CreateTextureDefault() = 0;
 	virtual void UpdateTexture( 
 		unsigned iTexHandle, 
 		RageSurface* img,

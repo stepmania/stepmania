@@ -9,11 +9,6 @@
 class Quad : public Sprite
 {
 public:
-	Quad()
-	{
-		SetDrawIfTextureNull( true );
-	}	
-
 	void LoadFromNode( const XNode* pNode );
 	virtual Quad *Copy() const;
 };

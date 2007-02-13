@@ -84,6 +84,8 @@ public:
 	void EnableOddDimensionWarning() { m_iNoWarnAboutOddDimensions--; }
 	bool GetOddDimensionWarning() const { return m_iNoWarnAboutOddDimensions == 0; }
 
+	RageTextureID GetDefaultTextureID();
+
 private:
 	void DeleteTexture( RageTexture *t );
 	enum GCType { screen_changed, delayed_delete };

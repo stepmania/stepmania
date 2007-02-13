@@ -24,6 +24,7 @@ public:
 		PixelFormat pixfmt, 
 		RageSurface* img,
 		bool bGenerateMipMaps ) { return 1; }
+	unsigned CreateTextureDefault() { return 0; }
 	void UpdateTexture( 
 		unsigned iTexHandle, 
 		RageSurface* img,

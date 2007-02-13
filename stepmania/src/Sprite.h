@@ -67,16 +67,14 @@ public:
 	virtual void PushSelf( lua_State *L );
 
 protected:
-	void SetDrawIfTextureNull( bool b ) { m_bDrawIfTextureNull = b; }
+	void LoadFromTexture( RageTextureID ID );
 
 private:
-	void LoadFromTexture( RageTextureID ID );
 	void LoadStatesFromTexture();
 
 	void DrawTexture( const TweenState *state );
 
 	RageTexture* m_pTexture;
-	bool	m_bDrawIfTextureNull;
 
 	struct State
 	{

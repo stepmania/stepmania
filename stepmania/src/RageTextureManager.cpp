@@ -89,6 +89,30 @@ void RageTextureManager::RegisterTexture( RageTextureID ID, RageTexture *pTextur
 	m_mapPathToTexture[ID] = pTexture;
 }
 
+static const RString g_sDefaultTextureName = "__blank__";
+RageTextureID RageTextureManager::GetDefaultTextureID()
+{
+	return RageTextureID( g_sDefaultTextureName );
+}
+
+class RageTexture_Default: public RageTexture
+{
+public:
+	RageTexture_Default():
+		RageTexture( RageTextureID() )
+	{
+		m_uTexHandle = DISPLAY->CreateTextureDefault();
+		m_iSourceWidth = m_iSourceHeight = 1;
+		m_iTextureWidth = m_iTextureHeight = 1;
+		m_iImageWidth = m_iImageHeight = 1;
+		CreateFrameRects();
+	}
+	unsigned GetTexHandle() const { return m_uTexHandle; }
+
+private:
+	unsigned m_uTexHandle;
+};
+
 // Load and unload textures from disk.
 RageTexture* RageTextureManager::LoadTextureInternal( RageTextureID ID )
 {
@@ -112,7 +136,9 @@ RageTexture* RageTextureManager::LoadTextureInternal( RageTextureID ID )
 	sExt.MakeLower();
 
 	RageTexture* pTexture;
-	if( sExt == "avi" || sExt == "mpg" || sExt == "mpeg" )
+	if( ID.filename == g_sDefaultTextureName )
+		pTexture = new RageTexture_Default;
+	else if( sExt == "avi" || sExt == "mpg" || sExt == "mpeg" )
 		pTexture = RageMovieTexture::Create( ID );
 	else
 		pTexture = new RageBitmapTexture( ID );

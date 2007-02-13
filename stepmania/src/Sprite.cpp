@@ -20,7 +20,6 @@ REGISTER_ACTOR_CLASS( Sprite )
 Sprite::Sprite()
 {
 	m_pTexture = NULL;
-	m_bDrawIfTextureNull = false;
 	m_iCurState = 0;
 	m_fSecsIntoState = 0.0f;
 	m_bUsingCustomTexCoords = false;
@@ -43,7 +42,6 @@ Sprite::Sprite( const Sprite &cpy ):
 	Actor( cpy )
 {
 #define CPY(a) a = cpy.a
-	CPY( m_bDrawIfTextureNull );
 	CPY( m_States );
 	CPY( m_iCurState );
 	CPY( m_fSecsIntoState );
@@ -557,7 +555,7 @@ void Sprite::DrawTexture( const TweenState *state )
 
 bool Sprite::EarlyAbortDraw() const
 {
-	return m_pTexture == NULL && !m_bDrawIfTextureNull;
+	return m_pTexture == NULL;
 }
 
 void Sprite::DrawPrimitives()

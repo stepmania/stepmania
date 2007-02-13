@@ -1,12 +1,15 @@
 #include "global.h"
 #include "Quad.h"
 #include "ActorUtil.h"
+#include "RageTextureManager.h"
 
 REGISTER_ACTOR_CLASS( Quad )
 
 
 void Quad::LoadFromNode( const XNode* pNode )
 {
+	Load( TEXTUREMAN->GetDefaultTextureID() );
+
 	// HACK: Bypass Sprite's texture loading.  Sprite should really derive from Quad.
 	Actor::LoadFromNode( pNode );
 }
