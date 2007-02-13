@@ -1533,8 +1533,13 @@ void RageDisplay_OGL::SetZTestMode( ZTestMode mode )
 	}
 }
 
-void RageDisplay_OGL::SetTextureWrapping( bool b )
+void RageDisplay_OGL::SetTextureWrapping( TextureUnit tu, bool b )
 {
+	/* This should be per-texture-unit state, but it's per-texture state in OpenGl,
+	 * so we'll behave incorrectly if the same texture is used in more than one texture
+	 * unit simultaneously with different wrapping. */
+	SetTextureUnit( tu );
+	
 	GLenum mode = b ? GL_REPEAT : GL_CLAMP_TO_EDGE;
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode );
@@ -1785,6 +1790,8 @@ unsigned RageDisplay_OGL::CreateTexture(
 		}
 	}
 
+	SetTextureUnit( TextureUnit_1 );
+
 	// allocate OpenGL texture resource
 	unsigned int iTexHandle;
 	glGenTextures( 1, reinterpret_cast<GLuint*>(&iTexHandle) );
@@ -1814,7 +1821,7 @@ unsigned RageDisplay_OGL::CreateTexture(
 		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, fLargestSupportedAnisotropy );
 	}
 
-	SetTextureWrapping( false );
+	SetTextureWrapping( TextureUnit_1, false );
 
 	glPixelStorei( GL_UNPACK_ROW_LENGTH, pImg->pitch / pImg->format->BytesPerPixel );
 

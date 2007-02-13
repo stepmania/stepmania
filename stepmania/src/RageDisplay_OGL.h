@@ -44,7 +44,7 @@ public:
 	int GetNumTextureUnits();
 	void SetTexture( TextureUnit tu, unsigned iTexture );
 	void SetTextureMode( TextureUnit tu, TextureMode tm );
-	void SetTextureWrapping( bool b );
+	void SetTextureWrapping( TextureUnit tu, bool b );
 	int GetMaxTextureSize() const;
 	void SetTextureFiltering( TextureUnit tu, bool b );
 	bool SupportsRenderToTexture() const;

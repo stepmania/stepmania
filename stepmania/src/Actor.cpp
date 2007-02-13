@@ -517,7 +517,7 @@ void Actor::SetGlobalRenderStates()
 
 void Actor::SetTextureRenderStates()
 {
-	DISPLAY->SetTextureWrapping( m_bTextureWrapping );
+	DISPLAY->SetTextureWrapping( TextureUnit_1, m_bTextureWrapping );
 }
 
 void Actor::EndDraw()

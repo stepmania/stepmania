@@ -204,7 +204,7 @@ public:
 	virtual int GetNumTextureUnits() = 0;
 	virtual void SetTexture( TextureUnit tu, unsigned iTexture ) = 0;
 	virtual void SetTextureMode( TextureUnit tu, TextureMode tm ) = 0;
-	virtual void SetTextureWrapping( bool b ) = 0;
+	virtual void SetTextureWrapping( TextureUnit tu, bool b ) = 0;
 	virtual int GetMaxTextureSize() const = 0;
 	virtual void SetTextureFiltering( TextureUnit tu, bool b ) = 0;
 

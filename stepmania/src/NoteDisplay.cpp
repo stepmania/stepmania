@@ -470,7 +470,7 @@ void NoteDisplay::DrawHoldPart( vector<Sprite*> &vpSpr, int iCol, int fYStep, fl
 					DISPLAY->SetTexture( TextureUnit_1, pTexture->GetTexHandle() );
 					DISPLAY->SetBlendMode( spr == vpSpr.begin() ? BLEND_NORMAL : BLEND_ADD );
 					DISPLAY->SetCullMode( CULL_NONE );
-					DISPLAY->SetTextureWrapping( bWrapping );
+					DISPLAY->SetTextureWrapping( TextureUnit_1, bWrapping );
 					queue.Draw();
 				}
 			}

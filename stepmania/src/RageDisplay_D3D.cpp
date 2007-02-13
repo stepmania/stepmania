@@ -1272,14 +1272,14 @@ void RageDisplay_D3D::ClearZBuffer()
 	g_pd3dDevice->Clear( 0, NULL, D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0,0,0), 1.0f, 0x00000000 );
 }
 
-void RageDisplay_D3D::SetTextureWrapping( bool b )
+void RageDisplay_D3D::SetTextureWrapping( TextureUnit tu, bool b )
 {
-	if( g_currentTextureUnit >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
+	if( tu >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
 		return;
 
 	int mode = b ? D3DTADDRESS_WRAP : D3DTADDRESS_CLAMP;
-	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ADDRESSU, mode );
-	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ADDRESSV, mode );
+	g_pd3dDevice->SetTextureStageState( tu, D3DTSS_ADDRESSU, mode );
+	g_pd3dDevice->SetTextureStageState( tu, D3DTSS_ADDRESSV, mode );
 }
 
 void RageDisplay_D3D::SetMaterial( 
