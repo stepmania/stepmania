@@ -867,7 +867,7 @@ RString ThemeManager::GetMetricRaw( const IniFile &ini, const RString &sClassNam
 				ReloadMetrics();
 				continue;
 			case Dialog::ignore:
-				LOG->UserLog( "Theme metric", sClassName + " : " + sValueName,
+				LOG->UserLog( "Theme metric", sClassName + "::" + sValueName,
 					      "could not be found in \"%s\" or \"%s\".",
 					      sCurMetricPath.c_str(), sDefaultMetricPath.c_str() );
 				return RString();
