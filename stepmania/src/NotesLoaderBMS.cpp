@@ -860,7 +860,7 @@ void BMSLoader::ReadTimeSigs( const NameToData_t &mapNameToData, MeasureToTimeSi
  * Evaluate each time signature, and guess which time signatures should be converted
  * to BPM changes.  This isn't perfect, but errors aren't fatal.
  */
-void BMSLoader::SetTimeSigAdjustments( const MeasureToTimeSig_t &sigs, Song &pOut )
+void BMSLoader::SetTimeSigAdjustments( const MeasureToTimeSig_t &sigs, Song &out )
 {
 	return;
 	m_TimeSigAdjustments.clear();
@@ -917,7 +917,7 @@ void BMSLoader::SetTimeSigAdjustments( const MeasureToTimeSig_t &sigs, Song &pOu
 		m_TimeSigAdjustments[iMeasure] = 1.0f / fFactor;
 		int iAdjustmentStartRow = GetMeasureStartRow( sigs, iMeasure );
 		int iAdjustmentEndRow = GetMeasureStartRow( sigs, iMeasure+1 );
-		pOut.m_Timing.MultiplyBPMInBeatRange( iAdjustmentStartRow, iAdjustmentEndRow, 1.0f / fFactor );
+		out.m_Timing.MultiplyBPMInBeatRange( iAdjustmentStartRow, iAdjustmentEndRow, 1.0f / fFactor );
 	}
 }
 
