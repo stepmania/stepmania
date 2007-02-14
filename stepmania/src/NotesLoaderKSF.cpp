@@ -452,7 +452,7 @@ static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant
 		bool bBPMStopNeeded = false;
 		bool bTickChangeNeeded = false;
 
-		for (unsigned i=0; i < vNoteRows.size(); i++)
+		for( unsigned i=0; i < vNoteRows.size(); ++i )
 		{
 			RString& NoteRowString = vNoteRows[i];
 			StripCrnl( NoteRowString );

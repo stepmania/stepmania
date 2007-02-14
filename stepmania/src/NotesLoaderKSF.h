@@ -6,8 +6,6 @@
 #include "NotesLoader.h"
 
 class Song;
-class Steps;
-class NoteData;
 
 class KSFLoader: public NotesLoader
 {
