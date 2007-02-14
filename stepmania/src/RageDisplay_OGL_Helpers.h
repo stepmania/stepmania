@@ -98,9 +98,12 @@ struct GLExt_t
 	PFNGLENABLEVERTEXATTRIBARRAYARBPROC glEnableVertexAttribArrayARB;
 	PFNGLDISABLEVERTEXATTRIBARRAYARBPROC glDisableVertexAttribArrayARB;
 	PFNGLVERTEXATTRIBPOINTERARBPROC glVertexAttribPointerARB;
+	PFNGLGETUNIFORMLOCATIONARBPROC glGetUniformLocationARB;
+	PFNGLUNIFORM1IARBPROC glUniform1iARB;
 
-	// GL_ARB_vertex_shader:
+	// GL_ARB_vertex_shader and GL_ARB_fragment_shader:
 	bool m_bGL_ARB_vertex_shader;
+	bool m_bGL_ARB_fragment_shader;
 	PFNGLBINDATTRIBLOCATIONARBPROC glBindAttribLocationARB;
 
 	bool m_bGL_ARB_shading_language_100;

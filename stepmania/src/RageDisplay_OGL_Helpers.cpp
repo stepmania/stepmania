@@ -180,6 +180,8 @@ void GLExt_t::Load( LowLevelWindow *pWind )
 			F( glEnableVertexAttribArrayARB ),
 			F( glDisableVertexAttribArrayARB ),
 			F( glVertexAttribPointerARB ),
+			F( glGetUniformLocationARB ),
+			F( glUniform1iARB ),
 			{ NULL, NULL }
 		};
 
@@ -188,6 +190,7 @@ void GLExt_t::Load( LowLevelWindow *pWind )
 	}
 
 	m_bGL_ARB_vertex_shader = m_bGL_ARB_shader_objects && HasExtension("GL_ARB_vertex_shader");
+	m_bGL_ARB_fragment_shader = m_bGL_ARB_shader_objects && HasExtension("GL_ARB_fragment_shader");
 	if( m_bGL_ARB_vertex_shader )
 	{
 		func_t funcs[] =
