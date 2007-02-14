@@ -992,6 +992,7 @@ public:
 	/* Commands that go in the tweening queue: 
 	 * Commands that take effect immediately (ignoring the tweening queue): */
 	static int customtexturerect( T* p, lua_State *L )	{ p->SetCustomTextureRect( RectF(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
+	static int SetCustomImageRect( T* p, lua_State *L )	{ p->SetCustomImageRect( RectF(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
 	static int texcoordvelocity( T* p, lua_State *L )	{ p->SetTexCoordVelocity( FArg(1),FArg(2) ); return 0; }
 	static int scaletoclipped( T* p, lua_State *L )		{ p->ScaleToClipped( FArg(1),FArg(2) ); return 0; }
 	static int stretchtexcoords( T* p, lua_State *L )	{ p->StretchTexCoords( FArg(1),FArg(2) ); return 0; }
@@ -1021,6 +1022,7 @@ public:
 		ADD_METHOD( LoadBanner );
 		ADD_METHOD( LoadBackground );
 		ADD_METHOD( customtexturerect );
+		ADD_METHOD( SetCustomImageRect );
 		ADD_METHOD( texcoordvelocity );
 		ADD_METHOD( scaletoclipped );
 		ADD_METHOD( stretchtexcoords );
