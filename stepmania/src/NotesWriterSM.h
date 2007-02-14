@@ -11,7 +11,7 @@ namespace NotesWriterSM
 	void GetEditFileContents( const Song *pSong, const Steps *pSteps, RString &sOut );
 	RString GetEditFileName( const Song *pSong, const Steps *pSteps );
 	bool WriteEditFileToMachine( const Song *pSong, Steps *pSteps, RString &sErrorOut );
-};
+}
 
 #endif
 

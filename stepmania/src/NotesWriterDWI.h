@@ -7,7 +7,7 @@ class Song;
 namespace NotesWriterDWI
 {
 	bool Write( RString sPath, const Song &out );
-};
+}
 
 #endif
 
