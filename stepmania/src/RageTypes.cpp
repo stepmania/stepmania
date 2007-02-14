@@ -91,6 +91,15 @@ XToString( TextureMode );
 LuaXType( TextureMode );
 
 
+static const char *EffectModeNames[] =
+{
+	/* Normal blending.  All supported texture modes have their standard effects. */
+	"Normal",
+};
+XToString( EffectMode );
+LuaXType( EffectMode );
+
+
 static const char *ZTestModeNames[] =
 {
 	"Off",

@@ -210,6 +210,8 @@ public:
 	virtual void SetTextureWrapping( TextureUnit tu, bool b ) = 0;
 	virtual int GetMaxTextureSize() const = 0;
 	virtual void SetTextureFiltering( TextureUnit tu, bool b ) = 0;
+	virtual void SetEffectMode( EffectMode effect ) { }
+	virtual bool IsEffectModeSupported( EffectMode effect ) { return effect == EffectMode_Normal; }
 
 	bool SupportsRenderToTexture() const { return false; }
 	

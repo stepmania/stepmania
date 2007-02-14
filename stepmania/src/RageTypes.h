@@ -34,6 +34,14 @@ enum TextureMode
 };
 LuaDeclareType( TextureMode );
 
+enum EffectMode
+{
+	EffectMode_Normal,
+	NUM_EffectMode,
+	EffectMode_Invalid
+};
+LuaDeclareType( EffectMode );
+
 enum CullMode
 {
 	CULL_BACK,
