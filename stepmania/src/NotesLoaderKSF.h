@@ -22,12 +22,8 @@ public:
 
 private:
 	bool m_bKIUCompliant;
-	bool m_bDMRequired;
-	bool m_bBPMChangeNeeded;
-	bool m_bBPMStopNeeded;
 	bool m_bTickChangeNeeded;
 	int m_iTickCount;
-	float m_fCurBeat;
 	vector<RString> m_vNoteRows;
 
 };

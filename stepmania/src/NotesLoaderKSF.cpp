@@ -165,7 +165,7 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 
 	m_bTickChangeNeeded = false;
 	int newTick = -1;
-	m_fCurBeat = 0.0f;
+	float fCurBeat = 0.0f;
 	float prevBeat = 0.0f; // Used for hold tails.
 	for( unsigned r=0; r<m_vNoteRows.size(); r++ )
 	{
@@ -237,7 +237,7 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 			{
 				/* Remember when each hold starts; ignore the middle. */
 				if( iHoldStartRow[t] == -1 )
-					iHoldStartRow[t] = BeatToNoteRow(m_fCurBeat);					
+					iHoldStartRow[t] = BeatToNoteRow(fCurBeat);					
 				continue;
 			}
 
@@ -265,10 +265,10 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 				return false;
 			}
 
-			notedata.SetTapNote(t, BeatToNoteRow(m_fCurBeat), tap);
+			notedata.SetTapNote(t, BeatToNoteRow(fCurBeat), tap);
 		}
-		prevBeat = m_fCurBeat;
-		m_fCurBeat = prevBeat + 1.0f / m_iTickCount;		
+		prevBeat = fCurBeat;
+		fCurBeat = prevBeat + 1.0f / m_iTickCount;		
 	}
 
 	/* We need to remove holes where the BPM increases. */
@@ -451,9 +451,12 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 	else
 	{
 		int tickToChange = m_iTickCount;
-		m_fCurBeat = 0.0f;
+		float fCurBeat = 0.0f;
 		float speedToChange = 0.0f, timeToStop = 0.0f;
-		m_bDMRequired = m_bBPMChangeNeeded = m_bBPMStopNeeded = m_bTickChangeNeeded = false;
+		bool bDMRequired = false;
+		bool bBPMChangeNeeded = false;
+		bool bBPMStopNeeded = false;
+		m_bTickChangeNeeded = false;
 
 		for (unsigned i=0; i < m_vNoteRows.size(); i++)
 		{
@@ -465,7 +468,7 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 			
 			if( NoteRowString == "2222222222222" ) // Row of 2s = end.  Confirm KIUCompliency here.
 			{
-				if (!m_bDMRequired)
+				if (!bDMRequired)
 					m_bKIUCompliant = true;
 				break;
 			}
@@ -476,7 +479,7 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 				if (BeginsWith(NoteRowString, "|T") || 
 					BeginsWith(NoteRowString, "|B") || BeginsWith(NoteRowString, "|D") )
 				{
-					m_bDMRequired = true;
+					bDMRequired = true;
 					RString temp = NoteRowString.substr(2,NoteRowString.size()-3);
 					float numTemp = StringToFloat(temp);
 					if (BeginsWith(NoteRowString, "|T")) 
@@ -487,13 +490,13 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 					}
 					else if (BeginsWith(NoteRowString, "|B")) 
 					{
-						m_bBPMChangeNeeded = true;
+						bBPMChangeNeeded = true;
 						speedToChange = numTemp;
 						continue;
 					}
 					else
 					{
-						m_bBPMStopNeeded = true;
+						bBPMStopNeeded = true;
 						timeToStop = numTemp / 1000.0f;
 						continue;
 					}
@@ -512,19 +515,19 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 				m_iTickCount = tickToChange;
 				m_bTickChangeNeeded = false;
 			}
-			if( m_bBPMChangeNeeded )
+			if( bBPMChangeNeeded )
 			{
-				LOG->Trace( "Adding tempo change of %f BPM at beat %f", speedToChange, m_fCurBeat );
-				out.AddBPMSegment( BPMSegment(BeatToNoteRow(m_fCurBeat), speedToChange) );
-				m_bBPMChangeNeeded = false;
+				LOG->Trace( "Adding tempo change of %f BPM at beat %f", speedToChange, fCurBeat );
+				out.AddBPMSegment( BPMSegment(BeatToNoteRow(fCurBeat), speedToChange) );
+				bBPMChangeNeeded = false;
 			}
-			if( m_bBPMStopNeeded )
+			if( bBPMStopNeeded )
 			{
-				LOG->Trace( "Adding tempo freeze of %f seconds at beat %f", timeToStop, m_fCurBeat );
-				out.AddStopSegment( StopSegment(BeatToNoteRow(m_fCurBeat),timeToStop) );
-				m_bBPMStopNeeded = false;
+				LOG->Trace( "Adding tempo freeze of %f seconds at beat %f", timeToStop, fCurBeat );
+				out.AddStopSegment( StopSegment(BeatToNoteRow(fCurBeat),timeToStop) );
+				bBPMStopNeeded = false;
 			}
-			m_fCurBeat += 1.0f / m_iTickCount;
+			fCurBeat += 1.0f / m_iTickCount;
 		}
 	}
 
