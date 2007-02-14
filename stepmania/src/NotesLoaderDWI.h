@@ -7,24 +7,10 @@
 #include "NotesLoader.h"
 
 class Song;
-class Steps;
 
 class DWILoader: public NotesLoader
 {
-	void DWIcharToNote( char c, GameController i, int &note1Out, int &note2Out );
-	void DWIcharToNoteCol( char c, GameController i, int &col1Out, int &col2Out );
-
-	bool LoadFromDWITokens( 
-		RString sMode, RString sDescription, RString sNumFeet, RString sStepData1, 
-		RString sStepData2,
-		Steps &out );
-
 	bool LoadFromDWIFile( const RString &sPath, Song &out );
-
-	static float ParseBrokenDWITimestamp(const RString &arg1, const RString &arg2, const RString &arg3);
-	static bool Is192( const RString &str, size_t pos );
-	RString m_sLoadingFile;
-
 public:
 	static void GetApplicableFiles( const RString &sPath, vector<RString> &out );
 	bool LoadFromDir( const RString &sPath, Song &out );

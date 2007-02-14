@@ -30,7 +30,7 @@ enum
 	DANCE_NOTE_PAD2_RIGHT
 };
 
-void DWILoader::DWIcharToNote( char c, GameController i, int &note1Out, int &note2Out )
+static void DWIcharToNote( char c, GameController i, int &note1Out, int &note2Out, const RString &sPath )
 {
 	switch( c )
 	{
@@ -58,7 +58,7 @@ void DWILoader::DWIcharToNote( char c, GameController i, int &note1Out, int &not
 	case 'L':	note1Out = DANCE_NOTE_PAD1_UPRIGHT;	note2Out = DANCE_NOTE_PAD1_RIGHT;	break;
 	case 'M':	note1Out = DANCE_NOTE_PAD1_UPLEFT;	note2Out = DANCE_NOTE_PAD1_UPRIGHT;	break;
 	default:	
-			LOG->UserLog( "Song file", m_sLoadingFile, "has an invalid DWI note character '%c'.", c );
+			LOG->UserLog( "Song file", sPath, "has an invalid DWI note character '%c'.", c );
 			note1Out = DANCE_NOTE_NONE;		note2Out = DANCE_NOTE_NONE;		break;
 	}
 
@@ -77,10 +77,10 @@ void DWILoader::DWIcharToNote( char c, GameController i, int &note1Out, int &not
 	}
 }
 
-void DWILoader::DWIcharToNoteCol( char c, GameController i, int &col1Out, int &col2Out )
+static void DWIcharToNoteCol( char c, GameController i, int &col1Out, int &col2Out, const RString &sPath )
 {
 	int note1, note2;
-	DWIcharToNote( c, i, note1, note2 );
+	DWIcharToNote( c, i, note1, note2, sPath );
 
 	if( note1 != DANCE_NOTE_NONE )
 		col1Out = g_mapDanceNoteToNoteDataColumn[note1];
@@ -98,7 +98,7 @@ void DWILoader::DWIcharToNoteCol( char c, GameController i, int &col1Out, int &c
  * 1/192nds.  So, we have to do a check to figure out what it really
  * means.  If it contains 0s, it's most likely 192nds; otherwise,
  * it's most likely a jump.  Search for a 0 before the next >: */
-bool DWILoader::Is192( const RString &sStepData, size_t pos )
+static bool Is192( const RString &sStepData, size_t pos )
 {
 	while( pos < sStepData.size() )
 	{
@@ -112,13 +112,14 @@ bool DWILoader::Is192( const RString &sStepData, size_t pos )
 	return false;
 }
 
-bool DWILoader::LoadFromDWITokens( 
+static bool LoadFromDWITokens( 
 	RString sMode, 
 	RString sDescription,
 	RString sNumFeet,
 	RString sStepData1, 
 	RString sStepData2,
-	Steps &out)
+	Steps &out,
+	const RString &sPath )
 {
 	CHECKPOINT_M( "DWILoader::LoadFromDWITokens()" );
 
@@ -230,7 +231,7 @@ bool DWILoader::LoadFromDWITokens(
 			{
 				if( c == '!' )
 				{
-					LOG->UserLog( "Song file", m_sLoadingFile, "has an unexpected character: '!'." );
+					LOG->UserLog( "Song file", sPath, "has an unexpected character: '!'." );
 					continue;
 				}
 
@@ -258,7 +259,7 @@ bool DWILoader::LoadFromDWITokens(
 						break;
 
 					int iCol1, iCol2;
-					DWIcharToNoteCol( c, (GameController)pad, iCol1, iCol2 );
+					DWIcharToNoteCol( c, (GameController)pad, iCol1, iCol2, sPath );
 
 					if( iCol1 != -1 )
 						newNoteData.SetTapNote(iCol1, iIndex, TAP_ORIGINAL_TAP);
@@ -270,7 +271,7 @@ bool DWILoader::LoadFromDWITokens(
 						i++;
 						const char holdChar = sStepData[i++];
 						
-						DWIcharToNoteCol( holdChar, (GameController)pad, iCol1, iCol2 );
+						DWIcharToNoteCol( holdChar, (GameController)pad, iCol1, iCol2, sPath );
 
 						if( iCol1 != -1 )
 							newNoteData.SetTapNote(iCol1, iIndex, TAP_ORIGINAL_HOLD_HEAD);
@@ -312,7 +313,7 @@ bool DWILoader::LoadFromDWITokens(
 			if( !bFound )
 			{
 				/* The hold was never closed.  */
-				LOG->UserLog( "Song file", m_sLoadingFile, "failed to close a hold note in \"%s\" on track %i", 
+				LOG->UserLog( "Song file", sPath, "failed to close a hold note in \"%s\" on track %i", 
 					      sDescription.c_str(), t );
 
 				newNoteData.SetTapNote( t, iHeadRow, TAP_EMPTY );
@@ -333,7 +334,7 @@ bool DWILoader::LoadFromDWITokens(
 
 /* This value can be in either "HH:MM:SS.sssss", "MM:SS.sssss", "SSS.sssss"
  * or milliseconds. */
-float DWILoader::ParseBrokenDWITimestamp(const RString &arg1, const RString &arg2, const RString &arg3)
+static float ParseBrokenDWITimestamp(const RString &arg1, const RString &arg2, const RString &arg3)
 {
 	if( arg1.empty() )
 		return 0;
@@ -359,7 +360,6 @@ float DWILoader::ParseBrokenDWITimestamp(const RString &arg1, const RString &arg
 bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 {
 	LOG->Trace( "Song::LoadFromDWIFile(%s)", sPath.c_str() );
-	m_sLoadingFile = sPath;
 
 	MsdFile msd;
 	if( !msd.ReadFile( sPath, false ) )  // don't unescape
@@ -386,7 +386,7 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 
 		else if( 0==stricmp(sValueName,"TITLE") )
 		{
-			GetMainAndSubTitlesFromFullTitle( sParams[1], out.m_sMainTitle, out.m_sSubTitle );
+			NotesLoader::GetMainAndSubTitlesFromFullTitle( sParams[1], out.m_sMainTitle, out.m_sSubTitle );
 
 			/* As far as I know, there's no spec on the encoding of this text. (I didn't
 			 * look very hard, though.)  I've seen at least one file in ISO-8859-1. */
@@ -480,7 +480,7 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
 				if( arrayBPMChangeValues.size() != 2 )
 				{
-					LOG->UserLog( "Song file", m_sLoadingFile, "has an invalid CHANGEBPM: '%s'.", arrayBPMChangeExpressions[b].c_str() );
+					LOG->UserLog( "Song file", sPath, "has an invalid CHANGEBPM: '%s'.", arrayBPMChangeExpressions[b].c_str() );
 					continue;
 				}
 				
@@ -493,7 +493,7 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 				}
 				else
 				{
-					LOG->UserLog( "Song file", m_sLoadingFile, "has an invalid BPM change at beat %f, BPM %f.",
+					LOG->UserLog( "Song file", sPath, "has an invalid BPM change at beat %f, BPM %f.",
 						      NoteRowToBeat(iStartIndex), fBPM );
 				}
 			}
@@ -511,7 +511,8 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 				sParams[2], 
 				sParams[3], 
 				(iNumParams==5) ? sParams[4] : RString(""),
-				*pNewNotes
+				*pNewNotes,
+				sPath
 				);
 			if( pNewNotes->m_StepsType != StepsType_Invalid )
 				out.AddSteps( pNewNotes );
