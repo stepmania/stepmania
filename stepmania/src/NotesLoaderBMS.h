@@ -7,17 +7,9 @@
 #include <map>
 
 class Song;
-class Steps;
-
-typedef multimap<RString, RString> NameToData_t;
-typedef map<int, float> MeasureToTimeSig_t;
 
 class BMSLoader: public NotesLoader
 {
-	bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameToData, Steps &out1, const MeasureToTimeSig_t &sigAdjustments );
-	void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, MeasureToTimeSig_t &sigAdjustmentsOut );
-	map<RString,int> m_mapWavIdToKeysoundIndex;
-
 public:
 	static void GetApplicableFiles( const RString &sPath, vector<RString> &out );
 	bool LoadFromDir( const RString &sDir, Song &out );

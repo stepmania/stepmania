@@ -12,6 +12,10 @@
 #include "RageUtil_CharConversions.h"
 #include "NoteTypes.h"
 
+
+typedef multimap<RString, RString> NameToData_t;
+typedef map<int, float> MeasureToTimeSig_t;
+
 /* BMS encoding:	tap-hold
  * 4&8panel:   		Player1     	Player2
  * Left			11-51		21-61
@@ -416,7 +420,8 @@ static void ReadTimeSigs( const NameToData_t &mapNameToData, MeasureToTimeSig_t 
 	}
 }
 
-bool BMSLoader::LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameToData, Steps &out, const MeasureToTimeSig_t &sigAdjustments )
+static bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameToData, Steps &out,
+			     const MeasureToTimeSig_t &sigAdjustments, const map<RString,int> &idToKeySoundIndex )
 {
 	LOG->Trace( "Steps::LoadFromBMSFile( '%s' )", sPath.c_str() );
 
@@ -468,8 +473,8 @@ bool BMSLoader::LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNa
 			if( sNoteId != "00" )
 			{
 				vTapNotes.push_back( TAP_ORIGINAL_TAP );
-				map<RString,int>::const_iterator it = m_mapWavIdToKeysoundIndex.find( sNoteId );
-				if( it != m_mapWavIdToKeysoundIndex.end() )
+				map<RString,int>::const_iterator it = idToKeySoundIndex.find( sNoteId );
+				if( it != idToKeySoundIndex.end() )
 					vTapNotes.back().iKeysoundIndex = it->second;
 			}
 			else
@@ -715,11 +720,11 @@ bool BMSLoader::LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNa
 	return true;
 }
 
-void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, MeasureToTimeSig_t &sigAdjustmentsOut )
+static void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, MeasureToTimeSig_t &sigAdjustmentsOut, map<RString,int> &idToKeySoundIndexOut )
 {
 	RString sData;
 	if( GetTagFromMap(mapNameToData, "#title", sData) )
-		GetMainAndSubTitlesFromFullTitle( sData, out.m_sMainTitle, out.m_sSubTitle );
+		NotesLoader::GetMainAndSubTitlesFromFullTitle( sData, out.m_sMainTitle, out.m_sSubTitle );
 
 	GetTagFromMap( mapNameToData, "#artist", out.m_sArtist );
 	GetTagFromMap( mapNameToData, "#backbmp", out.m_sBackgroundFile );
@@ -776,7 +781,7 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Me
 
 		sWavID.MakeUpper();		// HACK: undo the MakeLower()
 		out.m_vsKeysoundFile.push_back( sData );
-		m_mapWavIdToKeysoundIndex[ sWavID ] = out.m_vsKeysoundFile.size()-1;
+		idToKeySoundIndexOut[ sWavID ] = out.m_vsKeysoundFile.size()-1;
 		LOG->Trace( "Inserting keysound index %u '%s'", unsigned(out.m_vsKeysoundFile.size()-1), sWavID.c_str() );
 	}
 
@@ -1057,7 +1062,8 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 			iMainDataIndex = i;
 
 	MeasureToTimeSig_t sigAdjustments;
-	ReadGlobalTags( aBMSData[iMainDataIndex], out, sigAdjustments );
+	map<RString,int> idToKeysoundIndex;
+	ReadGlobalTags( aBMSData[iMainDataIndex], out, sigAdjustments, idToKeysoundIndex );
 	    
 	// Override what that global tag said about the title if we have a good substring.
 	// Prevents clobbering and catches "MySong (7keys)" / "MySong (Another) (7keys)"
@@ -1070,7 +1076,7 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 	for( unsigned i=0; i<arrayBMSFileNames.size(); i++ )
 	{
 		Steps* pNewNotes = apSteps[i];
-		const bool ok = LoadFromBMSFile( out.GetSongDir() + arrayBMSFileNames[i], aBMSData[i], *pNewNotes, sigAdjustments );
+		const bool ok = LoadFromBMSFile( out.GetSongDir() + arrayBMSFileNames[i], aBMSData[i], *pNewNotes, sigAdjustments, idToKeysoundIndex );
 		if( ok )
 			out.AddSteps( pNewNotes );
 		else
