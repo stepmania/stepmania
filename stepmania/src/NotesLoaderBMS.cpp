@@ -239,7 +239,7 @@ static bool GetCommonTagFromMapList( const vector<NameToData_t> &aBMSData, const
 }
 
 
-float BMSLoader::GetBeatsPerMeasure( const MeasureToTimeSig_t &sigs, int iMeasure )
+static float GetBeatsPerMeasure( const MeasureToTimeSig_t &sigs, int iMeasure, const MeasureToTimeSig_t &sigAdjustments )
 {
 	map<int, float>::const_iterator time_sig = sigs.find( iMeasure );
 
@@ -247,18 +247,18 @@ float BMSLoader::GetBeatsPerMeasure( const MeasureToTimeSig_t &sigs, int iMeasur
 	if( time_sig != sigs.end() )
 		fRet *= time_sig->second;
 
-	time_sig = m_TimeSigAdjustments.find( iMeasure );
-	if( time_sig != m_TimeSigAdjustments.end() )
+	time_sig = sigAdjustments.find( iMeasure );
+	if( time_sig != sigAdjustments.end() )
 		fRet *= time_sig->second;
 
 	return fRet;
 }
 
-int BMSLoader::GetMeasureStartRow( const MeasureToTimeSig_t &sigs, int iMeasureNo )
+static int GetMeasureStartRow( const MeasureToTimeSig_t &sigs, int iMeasureNo, const MeasureToTimeSig_t &sigAdjustments )
 {
 	int iRowNo = 0;
 	for( int i = 0; i < iMeasureNo; ++i )
-		iRowNo += BeatToNoteRow( GetBeatsPerMeasure(sigs, i) );
+		iRowNo += BeatToNoteRow( GetBeatsPerMeasure(sigs, i, sigAdjustments) );
 	return iRowNo;
 }
 
@@ -285,7 +285,138 @@ static void SearchForDifficulty( RString sTag, Steps *pOut )
 	LOG->Trace( "Tag \"%s\" is %s", sTag.c_str(), DifficultyToString(pOut->GetDifficulty()).c_str() );
 }
 
-bool BMSLoader::LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameToData, Steps &out )
+static bool ReadBMSFile( const RString &sPath, NameToData_t &mapNameToData )
+{
+	RageFile file;
+	if( !file.Open(sPath) )
+	{
+		LOG->UserLog( "Song file", sPath, "couldn't be opened: %s", file.GetError().c_str() );
+		return false;
+	}
+
+	while( !file.AtEOF() )
+	{
+		RString line;
+		if( file.GetLine(line) == -1 )
+		{
+			LOG->UserLog( "Song file", sPath, "had a read error: %s", file.GetError().c_str() );
+			return false;
+		}
+
+		StripCrnl( line );
+
+		// BMS value names can be separated by a space or a colon.
+		size_t iIndexOfSeparator = line.find_first_of( ": " );
+		RString value_name = line.substr( 0, iIndexOfSeparator );
+		RString value_data;
+		if( iIndexOfSeparator != line.npos )
+			value_data = line.substr( iIndexOfSeparator+1 );
+
+		value_name.MakeLower();
+		mapNameToData.insert( make_pair(value_name, value_data) );
+	}
+
+	return true;
+}
+
+enum
+{
+	BMS_TRACK_TIME_SIG = 2,
+	BMS_TRACK_BPM = 3,
+	BMS_TRACK_BPM_REF = 8,
+	BMS_TRACK_STOP = 9
+};
+
+/*
+ * Time signatures are often abused to tweak sync.  Real time signatures should
+ * cause us to adjust the row offsets so one beat remains one beat.  Fake time signatures,
+ * like 1.001 or 0.999, should be removed and converted to BPM changes.  This is much
+ * more accurate, and prevents the whole song from being shifted off of the beat, causing
+ * BeatToNoteType to be wrong.
+ *
+ * Evaluate each time signature, and guess which time signatures should be converted
+ * to BPM changes.  This isn't perfect, but errors aren't fatal.
+ */
+static void SetTimeSigAdjustments( const MeasureToTimeSig_t &sigs, Song &out, MeasureToTimeSig_t &sigAdjustmentsOut )
+{
+	return;
+	sigAdjustmentsOut.clear();
+	
+	MeasureToTimeSig_t::const_iterator it;
+	for( it = sigs.begin(); it != sigs.end(); ++it )
+	{
+		int iMeasure = it->first;
+		float fFactor = it->second;
+		
+#if 1
+		static const float ValidFactors[] =
+		{
+			0.25f,  /* 1/4 */
+			0.5f,   /* 2/4 */
+			0.75f,  /* 3/4 */
+			0.875f, /* 7/8 */
+			1.0f,
+			1.5f,   /* 6/4 */
+			1.75f   /* 7/4 */
+		};
+		
+		bool bValidTimeSignature = false;
+		for( unsigned i = 0; i < ARRAYLEN(ValidFactors); ++i )
+			if( fabsf(fFactor-ValidFactors[i]) < 0.001 )
+				bValidTimeSignature = true;
+		
+		if( bValidTimeSignature )
+			continue;
+#else
+		/* Alternate approach that I tried first: see if the ratio is sane.  However,
+		 * some songs have values like "1.4", which comes out to 7/4 and is not a valid
+		 * time signature. */
+		/* Convert the factor to a ratio, and reduce it. */
+		int iNum = lrintf( fFactor * 1000 ), iDen = 1000;
+		int iDiv = gcd( iNum, iDen );
+		iNum /= iDiv;
+		iDen /= iDiv;
+		
+		/* Real time signatures usually come down to 1/2, 3/4, 7/8, etc.  Bogus
+		 * signatures that are only there to adjust sync usually look like 99/100. */
+		if( iNum <= 8 && iDen <= 8 )
+			continue;
+#endif
+		
+		/* This time signature is bogus.  Convert it to a BPM adjustment for this
+		 * measure. */
+		LOG->Trace("Converted time signature %f in measure %i to a BPM segment.", fFactor, iMeasure );
+		
+		/* Note that this GetMeasureStartRow will automatically include any adjustments
+		 * that we've made previously in this loop; as long as we make the timing
+		 * adjustment and the BPM adjustment together, everything remains consistent.
+		 * Adjust sigAdjustmentsOut first, or fAdjustmentEndBeat will be wrong. */
+		sigAdjustmentsOut[iMeasure] = 1.0f / fFactor;
+		int iAdjustmentStartRow = GetMeasureStartRow( sigs, iMeasure, sigAdjustmentsOut );
+		int iAdjustmentEndRow = GetMeasureStartRow( sigs, iMeasure+1, sigAdjustmentsOut );
+		out.m_Timing.MultiplyBPMInBeatRange( iAdjustmentStartRow, iAdjustmentEndRow, 1.0f / fFactor );
+	}
+}
+
+static void ReadTimeSigs( const NameToData_t &mapNameToData, MeasureToTimeSig_t &out )
+{
+	NameToData_t::const_iterator it;
+	for( it = mapNameToData.lower_bound("#00000"); it != mapNameToData.end(); ++it )
+	{
+		const RString &sName = it->first;
+		if( sName.size() != 6 || sName[0] != '#' || !IsAnInt(sName.substr(1, 5)) )
+			continue;
+		
+		// this is step or offset data.  Looks like "#00705"
+		const RString &sData = it->second;
+		int iMeasureNo	= atoi( sName.substr(1, 3).c_str() );
+		int iBMSTrackNo	= atoi( sName.substr(4, 2).c_str() );
+		if( iBMSTrackNo == BMS_TRACK_TIME_SIG )
+			out[iMeasureNo] = StringToFloat( sData );
+	}
+}
+
+bool BMSLoader::LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameToData, Steps &out, const MeasureToTimeSig_t &sigAdjustments )
 {
 	LOG->Trace( "Steps::LoadFromBMSFile( '%s' )", sPath.c_str() );
 
@@ -326,8 +457,8 @@ bool BMSLoader::LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNa
 		// this is step or offset data.  Looks like "#00705"
 		int iMeasureNo = atoi( sName.substr(1,3).c_str() );
 		int iRawTrackNum = atoi( sName.substr(4,2).c_str() );
-		int iRowNo = GetMeasureStartRow( mapMeasureToTimeSig, iMeasureNo );
-		float fBeatsPerMeasure = GetBeatsPerMeasure( mapMeasureToTimeSig, iMeasureNo );
+		int iRowNo = GetMeasureStartRow( mapMeasureToTimeSig, iMeasureNo, sigAdjustments );
+		float fBeatsPerMeasure = GetBeatsPerMeasure( mapMeasureToTimeSig, iMeasureNo, sigAdjustments );
 		const RString &sNoteData = it->second;
 
 		vector<TapNote> vTapNotes;
@@ -590,49 +721,7 @@ void BMSLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
 	GetDirListing( sPath + RString("*.bme"), out );
 }
 
-static bool ReadBMSFile( const RString &sPath, NameToData_t &mapNameToData )
-{
-	RageFile file;
-	if( !file.Open(sPath) )
-	{
-		LOG->UserLog( "Song file", sPath, "couldn't be opened: %s", file.GetError().c_str() );
-		return false;
-	}
-
-	while( !file.AtEOF() )
-	{
-		RString line;
-		if( file.GetLine(line) == -1 )
-		{
-			LOG->UserLog( "Song file", sPath, "had a read error: %s", file.GetError().c_str() );
-			return false;
-		}
-
-		StripCrnl( line );
-
-		// BMS value names can be separated by a space or a colon.
-		size_t iIndexOfSeparator = line.find_first_of( ": " );
-		RString value_name = line.substr( 0, iIndexOfSeparator );
-		RString value_data;
-		if( iIndexOfSeparator != line.npos )
-			value_data = line.substr( iIndexOfSeparator+1 );
-
-		value_name.MakeLower();
-		mapNameToData.insert( make_pair(value_name, value_data) );
-	}
-
-	return true;
-}
-
-enum
-{
-	BMS_TRACK_TIME_SIG = 2,
-	BMS_TRACK_BPM = 3,
-	BMS_TRACK_BPM_REF = 8,
-	BMS_TRACK_STOP = 9
-};
-
-void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
+void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, MeasureToTimeSig_t &sigAdjustmentsOut )
 {
 	RString sData;
 	if( GetTagFromMap(mapNameToData, "#title", sData) )
@@ -709,8 +798,8 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
 		// this is step or offset data.  Looks like "#00705"
 		int iMeasureNo	= atoi( sName.substr(1, 3).c_str() );
 		int iBMSTrackNo	= atoi( sName.substr(4, 2).c_str() );
-		int iStepIndex = GetMeasureStartRow( mapMeasureToTimeSig, iMeasureNo );
-		float fBeatsPerMeasure = GetBeatsPerMeasure( mapMeasureToTimeSig, iMeasureNo );
+		int iStepIndex = GetMeasureStartRow( mapMeasureToTimeSig, iMeasureNo, sigAdjustmentsOut );
+		float fBeatsPerMeasure = GetBeatsPerMeasure( mapMeasureToTimeSig, iMeasureNo, sigAdjustmentsOut );
 		int iRowsPerMeasure = BeatToNoteRow( fBeatsPerMeasure );
 
 		RString sData = it->second;
@@ -829,96 +918,7 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
 	}
 
 	/* Now that we're done reading BPMs, factor out weird time signatures. */
-	SetTimeSigAdjustments( mapMeasureToTimeSig, out );
-}
-
-void BMSLoader::ReadTimeSigs( const NameToData_t &mapNameToData, MeasureToTimeSig_t &out )
-{
-	NameToData_t::const_iterator it;
-	for( it = mapNameToData.lower_bound("#00000"); it != mapNameToData.end(); ++it )
-	{
-		const RString &sName = it->first;
-		if( sName.size() != 6 || sName[0] != '#' || !IsAnInt(sName.substr(1, 5)) )
-			 continue;
-
-		// this is step or offset data.  Looks like "#00705"
-		const RString &sData = it->second;
-		int iMeasureNo	= atoi( sName.substr(1, 3).c_str() );
-		int iBMSTrackNo	= atoi( sName.substr(4, 2).c_str() );
-		if( iBMSTrackNo == BMS_TRACK_TIME_SIG )
-			out[iMeasureNo] = StringToFloat( sData );
-	}
-}
-
-/*
- * Time signatures are often abused to tweak sync.  Real time signatures should
- * cause us to adjust the row offsets so one beat remains one beat.  Fake time signatures,
- * like 1.001 or 0.999, should be removed and converted to BPM changes.  This is much
- * more accurate, and prevents the whole song from being shifted off of the beat, causing
- * BeatToNoteType to be wrong.
- *
- * Evaluate each time signature, and guess which time signatures should be converted
- * to BPM changes.  This isn't perfect, but errors aren't fatal.
- */
-void BMSLoader::SetTimeSigAdjustments( const MeasureToTimeSig_t &sigs, Song &out )
-{
-	return;
-	m_TimeSigAdjustments.clear();
-
-	MeasureToTimeSig_t::const_iterator it;
-	for( it = sigs.begin(); it != sigs.end(); ++it )
-	{
-		int iMeasure = it->first;
-		float fFactor = it->second;
-
-#if 1
-		static const float ValidFactors[] =
-		{
-			0.25f,  /* 1/4 */
-			0.5f,   /* 2/4 */
-			0.75f,  /* 3/4 */
-			0.875f, /* 7/8 */
-			1.0f,
-			1.5f,   /* 6/4 */
-			1.75f   /* 7/4 */
-		};
-
-		bool bValidTimeSignature = false;
-		for( unsigned i = 0; i < ARRAYLEN(ValidFactors); ++i )
-			if( fabsf(fFactor-ValidFactors[i]) < 0.001 )
-				bValidTimeSignature = true;
-
-		if( bValidTimeSignature )
-			continue;
-#else
-		/* Alternate approach that I tried first: see if the ratio is sane.  However,
-		 * some songs have values like "1.4", which comes out to 7/4 and is not a valid
-		 * time signature. */
-		/* Convert the factor to a ratio, and reduce it. */
-		int iNum = lrintf( fFactor * 1000 ), iDen = 1000;
-		int iDiv = gcd( iNum, iDen );
-		iNum /= iDiv;
-		iDen /= iDiv;
-
-		/* Real time signatures usually come down to 1/2, 3/4, 7/8, etc.  Bogus
-		 * signatures that are only there to adjust sync usually look like 99/100. */
-		if( iNum <= 8 && iDen <= 8 )
-			continue;
-#endif
-
-		/* This time signature is bogus.  Convert it to a BPM adjustment for this
-		 * measure. */
-		LOG->Trace("Converted time signature %f in measure %i to a BPM segment.", fFactor, iMeasure );
-
-		/* Note that this GetMeasureStartRow will automatically include any adjustments
-		 * that we've made previously in this loop; as long as we make the timing
-		 * adjustment and the BPM adjustment together, everything remains consistent.
-		 * Adjust m_TimeSigAdjustments first, or fAdjustmentEndBeat will be wrong. */
-		m_TimeSigAdjustments[iMeasure] = 1.0f / fFactor;
-		int iAdjustmentStartRow = GetMeasureStartRow( sigs, iMeasure );
-		int iAdjustmentEndRow = GetMeasureStartRow( sigs, iMeasure+1 );
-		out.m_Timing.MultiplyBPMInBeatRange( iAdjustmentStartRow, iAdjustmentEndRow, 1.0f / fFactor );
-	}
+	SetTimeSigAdjustments( mapMeasureToTimeSig, out, sigAdjustmentsOut );
 }
 
 static void SlideDuplicateDifficulties( Song &p )
@@ -1057,7 +1057,8 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 		if( apSteps[i]->GetDifficulty() == DIFFICULTY_MEDIUM )
 			iMainDataIndex = i;
 
-	ReadGlobalTags( aBMSData[iMainDataIndex], out );
+	MeasureToTimeSig_t sigAdjustments;
+	ReadGlobalTags( aBMSData[iMainDataIndex], out, sigAdjustments );
 	    
 	// Override what that global tag said about the title if we have a good substring.
 	// Prevents clobbering and catches "MySong (7keys)" / "MySong (Another) (7keys)"
@@ -1070,7 +1071,7 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 	for( unsigned i=0; i<arrayBMSFileNames.size(); i++ )
 	{
 		Steps* pNewNotes = apSteps[i];
-		const bool ok = LoadFromBMSFile( out.GetSongDir() + arrayBMSFileNames[i], aBMSData[i], *pNewNotes );
+		const bool ok = LoadFromBMSFile( out.GetSongDir() + arrayBMSFileNames[i], aBMSData[i], *pNewNotes, sigAdjustments );
 		if( ok )
 			out.AddSteps( pNewNotes );
 		else

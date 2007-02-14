@@ -14,15 +14,8 @@ typedef map<int, float> MeasureToTimeSig_t;
 
 class BMSLoader: public NotesLoader
 {
-	bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameToData, Steps &out1 );
-	void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out );
-
-	void ReadTimeSigs( const NameToData_t &mapNameToData, MeasureToTimeSig_t &out );
-	float GetBeatsPerMeasure( const MeasureToTimeSig_t &sigs, int iMeasure );
-	int GetMeasureStartRow( const MeasureToTimeSig_t &sigs, int iMeasureNo );
-	void SetTimeSigAdjustments( const MeasureToTimeSig_t &sigs, Song &out );
-	MeasureToTimeSig_t m_TimeSigAdjustments;
-
+	bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameToData, Steps &out1, const MeasureToTimeSig_t &sigAdjustments );
+	void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, MeasureToTimeSig_t &sigAdjustmentsOut );
 	RString m_sDir;
 	map<RString,int> m_mapWavIdToKeysoundIndex;
 
