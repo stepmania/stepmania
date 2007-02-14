@@ -344,6 +344,7 @@ enum
 static void SetTimeSigAdjustments( const MeasureToTimeSig_t &sigs, Song &out, MeasureToTimeSig_t &sigAdjustmentsOut )
 {
 	return;
+#if 0
 	sigAdjustmentsOut.clear();
 	
 	MeasureToTimeSig_t::const_iterator it;
@@ -400,6 +401,7 @@ static void SetTimeSigAdjustments( const MeasureToTimeSig_t &sigs, Song &out, Me
 		int iAdjustmentEndRow = GetMeasureStartRow( sigs, iMeasure+1, sigAdjustmentsOut );
 		out.m_Timing.MultiplyBPMInBeatRange( iAdjustmentStartRow, iAdjustmentEndRow, 1.0f / fFactor );
 	}
+#endif
 }
 
 static void ReadTimeSigs( const NameToData_t &mapNameToData, MeasureToTimeSig_t &out )
