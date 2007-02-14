@@ -829,7 +829,7 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
 	}
 
 	/* Now that we're done reading BPMs, factor out weird time signatures. */
-	SetTimeSigAdjustments( mapMeasureToTimeSig, &out );
+	SetTimeSigAdjustments( mapMeasureToTimeSig, out );
 }
 
 void BMSLoader::ReadTimeSigs( const NameToData_t &mapNameToData, MeasureToTimeSig_t &out )
@@ -860,7 +860,7 @@ void BMSLoader::ReadTimeSigs( const NameToData_t &mapNameToData, MeasureToTimeSi
  * Evaluate each time signature, and guess which time signatures should be converted
  * to BPM changes.  This isn't perfect, but errors aren't fatal.
  */
-void BMSLoader::SetTimeSigAdjustments( const MeasureToTimeSig_t &sigs, Song *pOut )
+void BMSLoader::SetTimeSigAdjustments( const MeasureToTimeSig_t &sigs, Song &pOut )
 {
 	return;
 	m_TimeSigAdjustments.clear();
@@ -917,7 +917,7 @@ void BMSLoader::SetTimeSigAdjustments( const MeasureToTimeSig_t &sigs, Song *pOu
 		m_TimeSigAdjustments[iMeasure] = 1.0f / fFactor;
 		int iAdjustmentStartRow = GetMeasureStartRow( sigs, iMeasure );
 		int iAdjustmentEndRow = GetMeasureStartRow( sigs, iMeasure+1 );
-		pOut->m_Timing.MultiplyBPMInBeatRange( iAdjustmentStartRow, iAdjustmentEndRow, 1.0f / fFactor );
+		pOut.m_Timing.MultiplyBPMInBeatRange( iAdjustmentStartRow, iAdjustmentEndRow, 1.0f / fFactor );
 	}
 }
 

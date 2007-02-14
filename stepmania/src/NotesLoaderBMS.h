@@ -20,7 +20,7 @@ class BMSLoader: public NotesLoader
 	void ReadTimeSigs( const NameToData_t &mapNameToData, MeasureToTimeSig_t &out );
 	float GetBeatsPerMeasure( const MeasureToTimeSig_t &sigs, int iMeasure );
 	int GetMeasureStartRow( const MeasureToTimeSig_t &sigs, int iMeasureNo );
-	void SetTimeSigAdjustments( const MeasureToTimeSig_t &sigs, Song *pOut );
+	void SetTimeSigAdjustments( const MeasureToTimeSig_t &sigs, Song &pOut );
 	MeasureToTimeSig_t m_TimeSigAdjustments;
 
 	RString m_sDir;
