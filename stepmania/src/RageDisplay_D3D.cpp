@@ -1377,6 +1377,9 @@ void RageDisplay_D3D::SetCullMode( CullMode mode )
 
 void RageDisplay_D3D::DeleteTexture( unsigned iTexHandle )
 {
+	if( iTexHandle == 0 )
+		return;
+
 	IDirect3DTexture8* pTex = (IDirect3DTexture8*) iTexHandle;
 	pTex->Release();
 
