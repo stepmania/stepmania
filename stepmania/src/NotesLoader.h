@@ -7,20 +7,11 @@
 
 class Song;
 
-class NotesLoader
+namespace NotesLoader
 {
-protected:
-	set<RString> BlacklistedImages;
-
-public:
-	virtual ~NotesLoader() { }
-	const set<RString> &GetBlacklistedImages() const { return BlacklistedImages; }
-	static void GetMainAndSubTitlesFromFullTitle( const RString &sFullTitle, RString &sMainTitleOut, RString &sSubTitleOut );
-	virtual bool LoadFromDir( const RString &sPath, Song &out ) = 0;
-	virtual void TidyUpData( Song &song, bool cache ) { }
-
-	static NotesLoader *MakeLoader( const RString& sDir );
-};
+	void GetMainAndSubTitlesFromFullTitle( const RString &sFullTitle, RString &sMainTitleOut, RString &sSubTitleOut );
+	bool LoadFromDir( const RString &sPath, Song &out, set<RString> &BlacklistedImages );
+}
 
 #endif
 

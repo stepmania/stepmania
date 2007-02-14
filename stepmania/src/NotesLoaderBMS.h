@@ -3,17 +3,13 @@
 #ifndef NOTES_LOADER_BMS_H
 #define NOTES_LOADER_BMS_H
 
-#include "NotesLoader.h"
-#include <map>
-
 class Song;
 
-class BMSLoader: public NotesLoader
+namespace BMSLoader
 {
-public:
-	static void GetApplicableFiles( const RString &sPath, vector<RString> &out );
+	void GetApplicableFiles( const RString &sPath, vector<RString> &out );
 	bool LoadFromDir( const RString &sDir, Song &out );
-};
+}
 
 #endif
 

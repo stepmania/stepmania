@@ -3,16 +3,13 @@
 #ifndef NOTES_LOADER_KSF_H
 #define NOTES_LOADER_KSF_H
 
-#include "NotesLoader.h"
-
 class Song;
 
-class KSFLoader: public NotesLoader
+namespace KSFLoader
 {
-public:
-	static void GetApplicableFiles( const RString &sPath, vector<RString> &out );
+	void GetApplicableFiles( const RString &sPath, vector<RString> &out );
 	bool LoadFromDir( const RString &sDir, Song &out );
-};
+}
 
 #endif
 

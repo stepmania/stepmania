@@ -22,18 +22,29 @@ void NotesLoader::GetMainAndSubTitlesFromFullTitle( const RString &sFullTitle, R
 	sSubTitleOut = ""; 
 };
 
-NotesLoader *NotesLoader::MakeLoader( const RString &sDir )
+bool NotesLoader::LoadFromDir( const RString &sPath, Song &out, set<RString> &BlacklistedImages )
 {
 	vector<RString> list;
-	
-#define CHECK_LOADER(x) x::GetApplicableFiles( sDir, list ); if( list.size() ) return new x
-	CHECK_LOADER( SMLoader  );
-	CHECK_LOADER( DWILoader );
-	CHECK_LOADER( BMSLoader );
-	CHECK_LOADER( KSFLoader );
-#undef CHECK_LOADER
-	
-	return NULL;
+
+	BlacklistedImages.clear();
+	SMLoader::GetApplicableFiles( sPath, list );
+	if( !list.empty() )
+	{
+		if( !SMLoader::LoadFromDir(sPath, out) )
+			return false;
+		SMLoader::TidyUpData( out, false );
+		return true;
+	}
+	DWILoader::GetApplicableFiles( sPath, list );
+	if( !list.empty() )
+		return DWILoader::LoadFromDir( sPath, out, BlacklistedImages );
+	BMSLoader::GetApplicableFiles( sPath, list );
+	if( !list.empty() )
+		return BMSLoader::LoadFromDir( sPath, out );
+	KSFLoader::GetApplicableFiles( sPath, list );
+	if( !list.empty() )
+		return KSFLoader::LoadFromDir( sPath, out );
+	return false;
 }
 
 

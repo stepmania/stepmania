@@ -11,7 +11,7 @@
 #include "Steps.h"
 #include "RageUtil_CharConversions.h"
 #include "NoteTypes.h"
-
+#include "NotesLoader.h"
 
 typedef multimap<RString, RString> NameToData_t;
 typedef map<int, float> MeasureToTimeSig_t;
@@ -1071,7 +1071,7 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 	// Prevents clobbering and catches "MySong (7keys)" / "MySong (Another) (7keys)"
 	// Also catches "MySong (7keys)" / "MySong (14keys)"
 	if( commonSubstring != "" )
-		GetMainAndSubTitlesFromFullTitle( commonSubstring, out.m_sMainTitle, out.m_sSubTitle );
+		NotesLoader::GetMainAndSubTitlesFromFullTitle( commonSubstring, out.m_sMainTitle, out.m_sSubTitle );
 
 	// Now that we've parsed the keysound data, load the Steps from the rest 
 	// of the .bms files.

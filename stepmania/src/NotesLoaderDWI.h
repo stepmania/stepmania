@@ -3,17 +3,15 @@
 #ifndef NOTES_LOADER_DWI_H
 #define NOTES_LOADER_DWI_H
 
-#include "GameInput.h"
-#include "NotesLoader.h"
+#include <set>
 
 class Song;
 
-class DWILoader: public NotesLoader
+namespace DWILoader
 {
-public:
-	static void GetApplicableFiles( const RString &sPath, vector<RString> &out );
-	bool LoadFromDir( const RString &sPath, Song &out );
-};
+	void GetApplicableFiles( const RString &sPath, vector<RString> &out );
+	bool LoadFromDir( const RString &sPath, Song &out, set<RString> &BlacklistedImages );
+}
 
 #endif
 

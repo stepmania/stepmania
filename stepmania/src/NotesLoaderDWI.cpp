@@ -7,9 +7,10 @@
 #include "NoteData.h"
 #include "song.h"
 #include "Steps.h"
+#include "GameInput.h"
+#include "NotesLoader.h"
 
 #include <map>
-using namespace std;
 
 static std::map<int,int> g_mapDanceNoteToNoteDataColumn;
 
@@ -363,7 +364,7 @@ void DWILoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
 	GetDirListing( sPath + RString("*.dwi"), out );
 }
 
-bool DWILoader::LoadFromDir( const RString &sPath_, Song &out )
+bool DWILoader::LoadFromDir( const RString &sPath_, Song &out, set<RString> &BlacklistedImages )
 {
 	vector<RString> aFileNames;
 	GetApplicableFiles( sPath_, aFileNames );

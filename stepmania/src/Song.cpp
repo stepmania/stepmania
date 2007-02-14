@@ -22,7 +22,7 @@
 #include "Foreach.h"
 #include "BackgroundUtil.h"
 #include "SpecialFiles.h"
-
+#include "NotesLoader.h"
 #include "NotesLoaderSM.h"
 #include "NotesWriterDWI.h"
 #include "NotesWriterSM.h"
@@ -208,8 +208,7 @@ bool Song::LoadFromSongDir( RString sDir )
 	{
 //		LOG->Trace( "Loading '%s' from cache file '%s'.", m_sSongDir.c_str(), GetCacheFilePath().c_str() );
 		SMLoader::LoadFromSMFile( GetCacheFilePath(), *this, true );
-		// XXX: This shouldn't really be a non-static member function.
-		SMLoader().TidyUpData( *this, true );
+		SMLoader::TidyUpData( *this, true );
 	}
 	else
 	{
@@ -218,24 +217,7 @@ bool Song::LoadFromSongDir( RString sDir )
 		// Let's load it from a file, then write a cache entry.
 		//
 		
-		NotesLoader *ld = NotesLoader::MakeLoader( sDir );
-		if( ld )
-		{
-			bool success = ld->LoadFromDir( sDir, *this );
-			BlacklistedImages = ld->GetBlacklistedImages();
-
-			if(!success)
-			{
-				delete ld;
-				return false;
-			}
-
-			TidyUpData();
-			ld->TidyUpData( *this, false );
-
-			delete ld;
-		}
-		else
+		if( !NotesLoader::LoadFromDir(sDir, *this, BlacklistedImages) )
 		{
 			LOG->UserLog( "Song", sDir, "has no SM, DWI, BMS, or KSF files." );
 
@@ -251,9 +233,8 @@ bool Song::LoadFromSongDir( RString sDir )
 			}
 
 			// Continue on with a blank Song so that people can make adjustments using the editor.
-			TidyUpData();
 		}
-
+		TidyUpData();
 		// save a cache file so we don't have to parse it all over again next time
 		SaveToCacheFile();
 	}

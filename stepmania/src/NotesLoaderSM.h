@@ -3,7 +3,6 @@
 #ifndef NotesLoaderSM_H
 #define NotesLoaderSM_H
 
-#include "NotesLoader.h"
 #include "GameConstantsAndTypes.h"
 
 class MsdFile;
@@ -11,21 +10,19 @@ class Song;
 class Steps;
 class TimingData;
 
-class SMLoader: public NotesLoader
+namespace SMLoader
 {
-public:
-	SMLoader() {}
-	virtual bool LoadFromDir( const RString &sPath, Song &out );
-	virtual void TidyUpData( Song &song, bool bFromCache );
+	bool LoadFromDir( const RString &sPath, Song &out );
+	void TidyUpData( Song &song, bool bFromCache );
 
-	static bool LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache = false );
-	static void GetApplicableFiles( const RString &sPath, vector<RString> &out );
-	static bool LoadTimingFromFile( const RString &fn, TimingData &out );
-	static void LoadTimingFromSMFile( const MsdFile &msd, TimingData &out );
-	static bool LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
-	static bool LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot );
-	static bool LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
-};
+	bool LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache = false );
+	void GetApplicableFiles( const RString &sPath, vector<RString> &out );
+	bool LoadTimingFromFile( const RString &fn, TimingData &out );
+	void LoadTimingFromSMFile( const MsdFile &msd, TimingData &out );
+	bool LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
+	bool LoadEditFromBuffer( const RString &sBuffer, const RString &sEditFilePath, ProfileSlot slot );
+	bool LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
+}
 
 #endif
 
