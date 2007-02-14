@@ -207,9 +207,9 @@ bool Song::LoadFromSongDir( RString sDir )
 	if( bUseCache )
 	{
 //		LOG->Trace( "Loading '%s' from cache file '%s'.", m_sSongDir.c_str(), GetCacheFilePath().c_str() );
-		SMLoader ld;
-		ld.LoadFromSMFile( GetCacheFilePath(), *this, true );
-		ld.TidyUpData( *this, true );
+		SMLoader::LoadFromSMFile( GetCacheFilePath(), *this, true );
+		// XXX: This shouldn't really be a non-static member function.
+		SMLoader().TidyUpData( *this, true );
 	}
 	else
 	{

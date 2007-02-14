@@ -135,8 +135,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 	{
 		LOG->Trace( "Found '%s'", ToPlay.m_sTimingFile.c_str() );
 		Song song;
-		SMLoader sml;
-		if( sml.LoadFromSMFile( ToPlay.m_sTimingFile, song ) )
+		if( SMLoader::LoadFromSMFile(ToPlay.m_sTimingFile, song) )
 		{
 			ToPlay.HasTiming = true;
 			ToPlay.m_TimingData = song.m_Timing;

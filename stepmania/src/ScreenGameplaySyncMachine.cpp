@@ -18,9 +18,8 @@ void ScreenGameplaySyncMachine::Init()
 	GAMESTATE->SetCurrentStyle( GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame) );
 	AdjustSync::ResetOriginalSyncData();
 	
-	SMLoader ld;
 	RString sFile = THEME->GetPathO("ScreenGameplaySyncMachine","music.sm");
-	ld.LoadFromSMFile( sFile, m_Song );
+	SMLoader::LoadFromSMFile( sFile, m_Song );
 	m_Song.SetSongDir( Dirname(sFile) );
 	m_Song.TidyUpData();
 

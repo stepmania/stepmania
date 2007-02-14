@@ -230,8 +230,7 @@ void Steps::Decompress() const
 	{
 		/* We have data on disk and not in memory.  Load it. */
 		Song s;
-		SMLoader ld;
-		if( !ld.LoadFromSMFile( m_sFilename, s, true ) )
+		if( !SMLoader::LoadFromSMFile(m_sFilename, s, true) )
 		{
 			LOG->Warn( "Couldn't load \"%s\"", m_sFilename.c_str() );
 			return;
