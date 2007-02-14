@@ -13,7 +13,7 @@
 
 const int MAX_EDIT_STEPS_SIZE_BYTES		= 30*1024;	// 30KB
 
-void SMLoader::LoadFromSMTokens( 
+static void LoadFromSMTokens( 
 	RString sStepsType, 
 	RString sDescription,
 	RString sDifficulty,
@@ -222,7 +222,7 @@ bool LoadFromBGChangesString( BackgroundChange &change, const RString &sBGChange
 	return aBGChangeValues.size() >= 2;
 }
 
-bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out )
+bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache )
 {
 	LOG->Trace( "Song::LoadFromSMFile(%s)", sPath.c_str() );
 
@@ -288,7 +288,7 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out )
 
 		else if( sValueName=="MUSICLENGTH" )
 		{
-			if(!FromCache)
+			if( !bFromCache )
 				continue;
 			out.m_fMusicLengthSeconds = StringToFloat( sParams[1] );
 		}
@@ -303,27 +303,27 @@ bool SMLoader::LoadFromSMFile( const RString &sPath, Song &out )
 		 * these, so make sure we always calculate it ourself. */
 		else if( sValueName=="FIRSTBEAT" )
 		{
-			if( FromCache )
+			if( bFromCache )
 				out.m_fFirstBeat = StringToFloat( sParams[1] );
 		}
 		else if( sValueName=="LASTBEAT" )
 		{
-			if( FromCache )
+			if( bFromCache )
 				out.m_fLastBeat = StringToFloat( sParams[1] );
 		}
 		else if( sValueName=="SONGFILENAME" )
 		{
-			if( FromCache )
+			if( bFromCache )
 				out.m_sSongFileName = sParams[1];
 		}
 		else if( sValueName=="HASMUSIC" )
 		{
-			if( FromCache )
+			if( bFromCache )
 				out.m_bHasMusic = atoi( sParams[1] ) != 0;
 		}
 		else if( sValueName=="HASBANNER" )
 		{
-			if( FromCache )
+			if( bFromCache )
 				out.m_bHasBanner = atoi( sParams[1] ) != 0;
 		}
 
@@ -563,7 +563,7 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, const RString &sEditFilePath
 	
 }
 
-void SMLoader::TidyUpData( Song &song, bool cache )
+void SMLoader::TidyUpData( Song &song, bool bFromCache )
 {
 	/*
 	 * Hack: if the song has any changes at all (so it won't use a random BGA)
@@ -596,7 +596,7 @@ void SMLoader::TidyUpData( Song &song, bool cache )
 		{
 			/* If we're loading cache, -nosongbg- should always be in there.  We must
 			 * not call IsAFile(song.GetBackgroundPath()) when loading cache. */
-			if( cache )
+			if( bFromCache )
 				break;
 
 			/* If BGChanges already exist after the last beat, don't add the background

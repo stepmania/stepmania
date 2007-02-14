@@ -13,29 +13,13 @@ class TimingData;
 
 class SMLoader: public NotesLoader
 {
-	static void LoadFromSMTokens( 
-		RString sStepsType, 
-		RString sDescription,
-		RString sDifficulty,
-		RString sMeter,
-		RString sRadarValues,
-		RString sNoteData,		
-		Steps &out);
-
-	bool FromCache;
-
 public:
-	SMLoader() { FromCache = false; }
-	bool LoadFromSMFile( const RString &sPath, Song &out );
-	bool LoadFromSMFile( const RString &sPath, Song &out, bool cache )
-	{
-		FromCache=cache;
-		return LoadFromSMFile( sPath, out );
-	}
+	SMLoader() {}
+	virtual bool LoadFromDir( const RString &sPath, Song &out );
+	virtual void TidyUpData( Song &song, bool bFromCache );
 
+	static bool LoadFromSMFile( const RString &sPath, Song &out, bool bFromCache = false );
 	static void GetApplicableFiles( const RString &sPath, vector<RString> &out );
-	bool LoadFromDir( const RString &sPath, Song &out );
-	void TidyUpData( Song &song, bool cache );
 	static bool LoadTimingFromFile( const RString &fn, TimingData &out );
 	static void LoadTimingFromSMFile( const MsdFile &msd, TimingData &out );
 	static bool LoadEditFromFile( RString sEditFilePath, ProfileSlot slot, bool bAddStepsToSong );
