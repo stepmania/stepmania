@@ -263,7 +263,7 @@ int BMSLoader::GetMeasureStartRow( const MeasureToTimeSig_t &sigs, int iMeasureN
 }
 
 
-void BMSLoader::SearchForDifficulty( RString sTag, Steps *pOut )
+static void SearchForDifficulty( RString sTag, Steps *pOut )
 {
 	sTag.MakeLower();
 

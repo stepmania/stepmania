@@ -16,7 +16,6 @@ class BMSLoader: public NotesLoader
 {
 	bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameToData, Steps &out1 );
 	void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out );
-	void SearchForDifficulty( RString sTag, Steps *pOut );
 
 	void ReadTimeSigs( const NameToData_t &mapNameToData, MeasureToTimeSig_t &out );
 	float GetBeatsPerMeasure( const MeasureToTimeSig_t &sigs, int iMeasure );
