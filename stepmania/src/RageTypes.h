@@ -37,6 +37,7 @@ LuaDeclareType( TextureMode );
 enum EffectMode
 {
 	EffectMode_Normal,
+	EffectMode_ColorBurn,
 	NUM_EffectMode,
 	EffectMode_Invalid
 };

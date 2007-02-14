@@ -341,6 +341,58 @@ void InitScalingScript()
 	GLExt.glVertexAttrib2fARB( ATTRIB_TEXTURE_MATRIX_SCALE, 1, 1 );
 }
 
+const GLcharARB *g_ColorBurnFragmentShader = " \
+uniform sampler2D Texture1; \
+uniform sampler2D Texture2; \
+void main(void) \
+{ \
+	vec4 color1 = texture2DProj( Texture1, gl_TexCoord[0] ); \
+	vec4 color2 = texture2DProj( Texture2, gl_TexCoord[0] ); \
+	\
+	/* Threshold to prevent division by zero: */ \
+	vec4 threshold = vec4(0.00001, 0.00001, 0.00001, 0.00001); \
+	vec4 color = 1-((1-color1) / max(color2, threshold)); \
+	color = (color * color1[3]) + (color2 * (1-color1[3]) ); \
+	color[3] = color2[3]; \
+	gl_FragColor = color; \
+} \
+";
+
+static GLhandleARB g_bColorBurnShader = 0;
+void InitColorBurnScript()
+{
+	g_bColorBurnShader = 0;
+
+	if( !GLExt.m_bGL_ARB_shader_objects ||
+		!GLExt.m_bGL_ARB_fragment_shader ||
+		!GLExt.m_bGL_ARB_shading_language_100 )
+		return;
+
+	GLhandleARB FragmentShader = CompileShader( GL_FRAGMENT_SHADER_ARB, g_ColorBurnFragmentShader );
+	if( FragmentShader == 0 )
+	{
+		GLExt.glDeleteObjectARB( FragmentShader );
+		return;
+	}
+	AssertNoGLError();
+
+	g_bColorBurnShader = GLExt.glCreateProgramObjectARB();
+	GLExt.glAttachObjectARB( g_bColorBurnShader, FragmentShader );
+	GLExt.glDeleteObjectARB( FragmentShader );
+
+	// Link the program.
+	GLExt.glLinkProgramARB( g_bColorBurnShader );
+	GLint bLinkStatus = false;
+	GLExt.glGetObjectParameterivARB( g_bColorBurnShader, GL_OBJECT_LINK_STATUS_ARB, &bLinkStatus );
+
+	if( !bLinkStatus )
+	{
+		LOG->Trace( "Color burn shader link failed: %s", GetInfoLog(g_bColorBurnShader).c_str() );
+		GLExt.glDeleteObjectARB( g_bColorBurnShader );
+		return;
+	}
+}
+
 static LocalizedString OBTAIN_AN_UPDATED_VIDEO_DRIVER ( "RageDisplay_OGL", "Obtain an updated driver from your video card manufacturer." );
 static LocalizedString GLDIRECT_IS_NOT_COMPATIBLE ( "RageDisplay_OGL", "GLDirect was detected.  GLDirect is not compatible with this game and should be disabled." );
 RString RageDisplay_OGL::Init( const VideoModeParams &p, bool bAllowUnacceleratedRenderer )
@@ -602,6 +654,7 @@ RString RageDisplay_OGL::TryVideoMode( const VideoModeParams &p, bool &bNewDevic
 		InvalidateAllGeometry();
 
 		InitScalingScript();
+		InitColorBurnScript();
 	}
 
 	/* Set vsync the Windows way, if we can.  (What other extensions are there
@@ -1443,6 +1496,42 @@ void RageDisplay_OGL::SetTextureMode( TextureUnit tu, TextureMode tm )
 void RageDisplay_OGL::SetTextureFiltering( TextureUnit tu, bool b )
 {
 
+}
+
+void RageDisplay_OGL::SetEffectMode( EffectMode effect )
+{
+	switch( effect )
+	{
+	case EffectMode_Normal:
+		if( GLExt.glUseProgramObjectARB != NULL )
+			GLExt.glUseProgramObjectARB( 0 );
+		break;
+	case EffectMode_ColorBurn:
+		if( !g_bColorBurnShader )
+			break; // unsupported
+
+		FlushGLErrors();
+		GLExt.glUseProgramObjectARB( g_bColorBurnShader );
+		GLint g_bColorBurnShaderTexture1 = GLExt.glGetUniformLocationARB( g_bColorBurnShader, "Texture1" );
+		GLint g_bColorBurnShaderTexture2 = GLExt.glGetUniformLocationARB( g_bColorBurnShader, "Texture2" );
+		GLExt.glUniform1iARB( g_bColorBurnShaderTexture1, 0 );
+		GLExt.glUniform1iARB( g_bColorBurnShaderTexture2, 1 );
+		AssertNoGLError();
+		break;
+	}
+}
+
+bool RageDisplay_OGL::IsEffectModeSupported( EffectMode effect )
+{
+	switch( effect )
+	{
+	case EffectMode_Normal:
+		return true;
+	case EffectMode_ColorBurn:
+		return g_bColorBurnShader != 0;
+	}
+
+	return false;
 }
 
 void RageDisplay_OGL::SetBlendMode( BlendMode mode )

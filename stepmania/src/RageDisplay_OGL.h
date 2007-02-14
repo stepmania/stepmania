@@ -48,6 +48,8 @@ public:
 	void SetTextureWrapping( TextureUnit tu, bool b );
 	int GetMaxTextureSize() const;
 	void SetTextureFiltering( TextureUnit tu, bool b );
+	void SetEffectMode( EffectMode effect );
+	bool IsEffectModeSupported( EffectMode effect );
 	bool SupportsRenderToTexture() const;
 	unsigned CreateRenderTarget( const RenderTargetParam &param, int &iTextureWidthOut, int &iTextureHeightOut );
 	void SetRenderTarget( unsigned iHandle, bool bPreserveTexture );
