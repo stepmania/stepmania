@@ -115,7 +115,7 @@ void StreamDisplay::DrawPrimitives()
 
 	// round down so that the chamber overflows align
 	if( m_iNumChambers > 10 )
-		fPercentBetweenStrips = Quantize( fPercentBetweenStrips-fChamberWidthInPercent/2, fChamberWidthInPercent );
+		fPercentBetweenStrips = QuantizeDown( fPercentBetweenStrips, fChamberWidthInPercent );
 	
 	
 	if( m_iNumChambers > 3 )
