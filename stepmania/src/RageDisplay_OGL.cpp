@@ -1664,6 +1664,9 @@ void RageDisplay_OGL::EndConcurrentRendering()
 
 void RageDisplay_OGL::DeleteTexture( unsigned iTexture )
 {
+	if( iTexture == 0 )
+		return;
+
 	if( g_mapRenderTargets.find(iTexture) != g_mapRenderTargets.end() )
 	{
 		delete g_mapRenderTargets[iTexture];
