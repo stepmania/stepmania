@@ -334,7 +334,7 @@ static bool LoadFromDWITokens(
 
 /* This value can be in either "HH:MM:SS.sssss", "MM:SS.sssss", "SSS.sssss"
  * or milliseconds. */
-static float ParseBrokenDWITimestamp(const RString &arg1, const RString &arg2, const RString &arg3)
+static float ParseBrokenDWITimestamp( const RString &arg1, const RString &arg2, const RString &arg3 )
 {
 	if( arg1.empty() )
 		return 0;
