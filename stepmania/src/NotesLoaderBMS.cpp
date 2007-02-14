@@ -201,6 +201,44 @@ static StepsType DetermineStepsType( int iPlayer, const NoteData &nd, const RStr
 	}
 }
 
+static bool GetTagFromMap( const NameToData_t &mapNameToData, const RString &sName, RString &sOut )
+{
+	NameToData_t::const_iterator it;
+	it = mapNameToData.find( sName );
+	if( it == mapNameToData.end() )
+		return false;
+	
+	sOut = it->second;
+	
+	return true;
+}
+
+/* Finds the longest common match for the given tag in all files.  If the given tag
+ * was found in at least one file, returns true; otherwise returns false. */
+static bool GetCommonTagFromMapList( const vector<NameToData_t> &aBMSData, const RString &sName, RString &sCommonTag )
+{
+	bool bFoundOne = false;
+	for( unsigned i=0; i < aBMSData.size(); i++ )
+	{
+		RString sTag;
+		if( !GetTagFromMap( aBMSData[i], sName, sTag ) )
+			continue;
+		
+		if( !bFoundOne )
+		{
+			bFoundOne = true;
+			sCommonTag = sTag;
+		}
+		else
+		{
+			sCommonTag = FindLargestInitialSubstring( sCommonTag, sTag );
+		}
+	}
+	
+	return bFoundOne;
+}
+
+
 float BMSLoader::GetBeatsPerMeasure( const MeasureToTimeSig_t &sigs, int iMeasure )
 {
 	map<int, float>::const_iterator time_sig = sigs.find( iMeasure );
@@ -552,7 +590,7 @@ void BMSLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
 	GetDirListing( sPath + RString("*.bme"), out );
 }
 
-bool BMSLoader::ReadBMSFile( const RString &sPath, NameToData_t &mapNameToData )
+static bool ReadBMSFile( const RString &sPath, NameToData_t &mapNameToData )
 {
 	RageFile file;
 	if( !file.Open(sPath) )
@@ -584,43 +622,6 @@ bool BMSLoader::ReadBMSFile( const RString &sPath, NameToData_t &mapNameToData )
 	}
 
 	return true;
-}
-
-bool BMSLoader::GetTagFromMap( const NameToData_t &mapNameToData, const RString &sName, RString &sOut )
-{
-	NameToData_t::const_iterator it;
-	it = mapNameToData.find( sName );
-	if( it == mapNameToData.end() )
-		return false;
-
-	sOut = it->second;
-	
-	return true;
-}
-
-/* Finds the longest common match for the given tag in all files.  If the given tag
- * was found in at least one file, returns true; otherwise returns false. */
-bool BMSLoader::GetCommonTagFromMapList( const vector<NameToData_t> &aBMSData, const RString &sName, RString &sCommonTag )
-{
-	bool bFoundOne = false;
-	for( unsigned i=0; i < aBMSData.size(); i++ )
-	{
-		RString sTag;
-		if( !GetTagFromMap( aBMSData[i], sName, sTag ) )
-			continue;
-
-		if( !bFoundOne )
-		{
-			bFoundOne = true;
-			sCommonTag = sTag;
-		}
-		else
-		{
-			sCommonTag = FindLargestInitialSubstring( sCommonTag, sTag );
-		}
-	}
-
-	return bFoundOne;
 }
 
 enum
@@ -920,6 +921,36 @@ void BMSLoader::SetTimeSigAdjustments( const MeasureToTimeSig_t &sigs, Song *pOu
 	}
 }
 
+static void SlideDuplicateDifficulties( Song &p )
+{
+	/* BMS files have to guess the Difficulty from the meter; this is inaccurate,
+	* and often leads to duplicates.  Slide duplicate difficulties upwards.  We
+	* only do this with BMS files, since a very common bug was having *all*
+	* difficulties slid upwards due to (for example) having two beginner steps.
+	* We do a second pass in Song::TidyUpData to eliminate any remaining duplicates
+	* after this. */
+	FOREACH_StepsType( st )
+	{
+		FOREACH_Difficulty( dc )
+		{
+			if( dc == DIFFICULTY_EDIT )
+				continue;
+			
+			vector<Steps*> vSteps;
+			SongUtil::GetSteps( &p, vSteps, st, dc );
+			
+			StepsUtil::SortNotesArrayByDifficulty( vSteps );
+			for( unsigned k=1; k<vSteps.size(); k++ )
+			{
+				Steps* pSteps = vSteps[k];
+				
+				Difficulty dc2 = min( (Difficulty)(dc+1), DIFFICULTY_CHALLENGE );
+				pSteps->SetDifficulty( dc2 );
+			}
+		}
+	}
+}
+
 bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 {
 	LOG->Trace( "Song::LoadFromBMSDir(%s)", sDir.c_str() );
@@ -1055,36 +1086,6 @@ bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 	return true;
 }
 
-
-void BMSLoader::SlideDuplicateDifficulties( Song &p )
-{
-	/* BMS files have to guess the Difficulty from the meter; this is inaccurate,
-	 * and often leads to duplicates.  Slide duplicate difficulties upwards.  We
-	 * only do this with BMS files, since a very common bug was having *all*
-	 * difficulties slid upwards due to (for example) having two beginner steps.
-	 * We do a second pass in Song::TidyUpData to eliminate any remaining duplicates
-	 * after this. */
-	FOREACH_StepsType( st )
-	{
-		FOREACH_Difficulty( dc )
-		{
-			if( dc == DIFFICULTY_EDIT )
-				continue;
-
-			vector<Steps*> vSteps;
-			SongUtil::GetSteps( &p, vSteps, st, dc );
-
-			StepsUtil::SortNotesArrayByDifficulty( vSteps );
-			for( unsigned k=1; k<vSteps.size(); k++ )
-			{
-				Steps* pSteps = vSteps[k];
-			
-				Difficulty dc2 = min( (Difficulty)(dc+1), DIFFICULTY_CHALLENGE );
-				pSteps->SetDifficulty( dc2 );
-			}
-		}
-	}
-}
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard

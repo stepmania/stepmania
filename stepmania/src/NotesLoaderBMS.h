@@ -9,19 +9,15 @@
 class Song;
 class Steps;
 
+typedef multimap<RString, RString> NameToData_t;
+typedef map<int, float> MeasureToTimeSig_t;
+
 class BMSLoader: public NotesLoader
 {
-	void SlideDuplicateDifficulties( Song &p );
-
-	typedef multimap<RString, RString> NameToData_t;
-	bool ReadBMSFile( const RString &sPath, BMSLoader::NameToData_t &mapNameToData );
 	bool LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNameToData, Steps &out1 );
 	void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out );
-	static bool GetTagFromMap( const BMSLoader::NameToData_t &mapNameToData, const RString &sName, RString &sOut );
-	static bool GetCommonTagFromMapList( const vector<NameToData_t> &aBMSData, const RString &sName, RString &out );
 	void SearchForDifficulty( RString sTag, Steps *pOut );
 
-	typedef map<int, float> MeasureToTimeSig_t;
 	void ReadTimeSigs( const NameToData_t &mapNameToData, MeasureToTimeSig_t &out );
 	float GetBeatsPerMeasure( const MeasureToTimeSig_t &sigs, int iMeasure );
 	int GetMeasureStartRow( const MeasureToTimeSig_t &sigs, int iMeasureNo );
