@@ -119,7 +119,14 @@ void GLExt_t::Load( LowLevelWindow *pWind )
 	}
 
 	if( HasExtension("GL_ARB_multitexture") )
-		glActiveTextureARB = (PFNGLACTIVETEXTUREARBPROC) pWind->GetProcAddress("glActiveTextureARB");
+	{
+		func_t funcs[] = {
+			F( glActiveTextureARB ),
+			F( glClientActiveTextureARB ),
+			{ NULL, NULL },
+		};
+		LoadAllOrNothing( funcs, pWind);
+	}
 
 	if( HasExtension("GL_EXT_blend_subtract") )
 		glBlendEquation = (PFNGLBLENDEQUATIONPROC) pWind->GetProcAddress("glBlendEquation");
