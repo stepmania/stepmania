@@ -16,7 +16,7 @@ namespace NotesLoader
 #endif
 
 /*
- * (c) 2001-2003 Chris Danford, Glenn Maynard
+ * (c) 2001-2003,2007 Chris Danford, Glenn Maynard, Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
