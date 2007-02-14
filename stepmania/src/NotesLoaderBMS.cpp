@@ -715,12 +715,6 @@ bool BMSLoader::LoadFromBMSFile( const RString &sPath, const NameToData_t &mapNa
 	return true;
 }
 
-void BMSLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
-{
-	GetDirListing( sPath + RString("*.bms"), out );
-	GetDirListing( sPath + RString("*.bme"), out );
-}
-
 void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, MeasureToTimeSig_t &sigAdjustmentsOut )
 {
 	RString sData;
@@ -743,7 +737,7 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Me
 		}
 		else
 		{
-			LOG->UserLog( "Song file", m_sDir, "has an invalid BPM change at beat %f, BPM %f.",
+			LOG->UserLog( "Song file", out.GetSongDir(), "has an invalid BPM change at beat %f, BPM %f.",
 				      NoteRowToBeat(0), fBPM );
 		}
 	}
@@ -778,7 +772,7 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Me
 			}
 		}
 		if( !IsAFile(out.GetSongDir()+sData) )
-			LOG->UserLog( "Song file", m_sDir, "references key \"%s\" that can't be found", sData.c_str() );
+			LOG->UserLog( "Song file", out.GetSongDir(), "references key \"%s\" that can't be found", sData.c_str() );
 
 		sWavID.MakeUpper();		// HACK: undo the MakeLower()
 		out.m_vsKeysoundFile.push_back( sData );
@@ -825,7 +819,7 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Me
 				}
 				else
 				{
-					LOG->UserLog( "Song file", m_sDir, "has an invalid BPM change at beat %f, BPM %d.",
+					LOG->UserLog( "Song file", out.GetSongDir(), "has an invalid BPM change at beat %f, BPM %d.",
 						      fBeat, iVal );
 				}
 				break;
@@ -846,13 +840,13 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Me
 					}
 					else
 					{
-						LOG->UserLog( "Song file", m_sDir, "has an invalid BPM change at beat %f, BPM %f",
+						LOG->UserLog( "Song file", out.GetSongDir(), "has an invalid BPM change at beat %f, BPM %f",
 							      fBeat, fBPM );
 					}
 				}
 				else
 				{
-					LOG->UserLog( "Song file", m_sDir, "has tag \"%s\" which cannot be found.", sTagToLookFor.c_str() );
+					LOG->UserLog( "Song file", out.GetSongDir(), "has tag \"%s\" which cannot be found.", sTagToLookFor.c_str() );
 				}
 				break;
 			}
@@ -873,7 +867,7 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Me
 				}
 				else
 				{
-					LOG->UserLog( "Song file", m_sDir, "has tag \"%s\" which cannot be found.", sTagToLookFor.c_str() );
+					LOG->UserLog( "Song file", out.GetSongDir(), "has tag \"%s\" which cannot be found.", sTagToLookFor.c_str() );
 				}
 				break;
 			}
@@ -903,13 +897,13 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out, Me
 				}
 				else
 				{
-					LOG->UserLog( "Song file", m_sDir, "has an invalid BPM change at beat %f, BPM %f.",
+					LOG->UserLog( "Song file", out.GetSongDir(), "has an invalid BPM change at beat %f, BPM %f.",
 						      NoteRowToBeat(iStepIndex), fBPM );
 				}
 			}
 			else
 			{
-				LOG->UserLog( "Song file", m_sDir, "has tag \"%s\" which cannot be found.", sTagToLookFor.c_str() );
+				LOG->UserLog( "Song file", out.GetSongDir(), "has tag \"%s\" which cannot be found.", sTagToLookFor.c_str() );
 			}
 
 			break;
@@ -951,13 +945,18 @@ static void SlideDuplicateDifficulties( Song &p )
 	}
 }
 
+void BMSLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
+{
+	GetDirListing( sPath + RString("*.bms"), out );
+	GetDirListing( sPath + RString("*.bme"), out );
+}
+
 bool BMSLoader::LoadFromDir( const RString &sDir, Song &out )
 {
 	LOG->Trace( "Song::LoadFromBMSDir(%s)", sDir.c_str() );
 
 	ASSERT( out.m_vsKeysoundFile.empty() );
 
-	m_sDir = sDir;
 	vector<RString> arrayBMSFileNames;
 	GetApplicableFiles( sDir, arrayBMSFileNames );
 
