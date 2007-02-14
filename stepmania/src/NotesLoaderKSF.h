@@ -11,17 +11,9 @@ class NoteData;
 
 class KSFLoader: public NotesLoader
 {
-	bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song );
-	bool LoadGlobalData( const RString &sPath, Song &out );
-	void RemoveHoles( NoteData &out, const Song &song );
-	void LoadTags( const RString &str, Song &out );
-
 public:
 	static void GetApplicableFiles( const RString &sPath, vector<RString> &out );
 	bool LoadFromDir( const RString &sDir, Song &out );
-
-private:
-	bool m_bKIUCompliant;
 };
 
 #endif

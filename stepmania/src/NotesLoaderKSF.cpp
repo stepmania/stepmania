@@ -10,7 +10,7 @@
 #include "Steps.h"
 
 #if 0
-void KSFLoader::RemoveHoles( NoteData &out, const Song &song )
+static void RemoveHoles( NoteData &out, const Song &song )
 {
 	/* Start at the second BPM segment; the first one is already aligned. */
 	for( unsigned seg = 1; seg < song.m_Timing.m_BPMSegments.size(); ++seg )
@@ -58,7 +58,7 @@ void KSFLoader::RemoveHoles( NoteData &out, const Song &song )
 }
 #endif
 
-bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song )
+static bool LoadFromKSFFile( const RString &sPath, Steps &out, const Song &song, bool bKIUCompliant )
 {
 	LOG->Trace( "Steps::LoadFromKSFFile( '%s' )", sPath.c_str() );
 
@@ -194,7 +194,7 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 
 		if( sRowString.size() != 13 )
 		{	
-			if( m_bKIUCompliant )
+			if( bKIUCompliant )
 			{
 				LOG->UserLog( "Song file", sPath, "has illegal syntax \"%s\" which can't be in KIU complient files.",
 					      sRowString.c_str() );
@@ -284,12 +284,7 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 	return true;
 }
 
-void KSFLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
-{
-	GetDirListing( sPath + RString("*.ksf"), out );
-}
-
-void KSFLoader::LoadTags( const RString &str, Song &out )
+static void LoadTags( const RString &str, Song &out )
 {
 	/* str is either a #TITLE or a directory component.  Fill in missing information.
 	 * str is either "title", "artist - title", or "artist - title - difficulty". */
@@ -331,7 +326,7 @@ void KSFLoader::LoadTags( const RString &str, Song &out )
 		out.m_sArtist = artist;
 }
 
-bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
+static bool LoadGlobalData( const RString &sPath, Song &out, bool &bKIUCompliant )
 {
 	MsdFile msd;
 	if( !msd.ReadFile( sPath, false ) )  // don't unescape
@@ -342,7 +337,7 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 
 	float SMGap1 = 0, SMGap2 = 0, BPM1 = -1, BPMPos2 = -1, BPM2 = -1, BPMPos3 = -1, BPM3 = -1;
 	int iTickCount = -1;
-	m_bKIUCompliant = false;
+	bKIUCompliant = false;
 	vector<RString> vNoteRows;
 	
 	for( unsigned i=0; i < msd.GetNumValues(); i++ )
@@ -360,22 +355,22 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 		}
 		else if( 0==stricmp(sValueName,"BPM2") )
 		{
-			m_bKIUCompliant = true;
+			bKIUCompliant = true;
 			BPM2 = StringToFloat( sParams[1] );
 		}
 		else if( 0==stricmp(sValueName,"BPM3") )
 		{
-			m_bKIUCompliant = true;
+			bKIUCompliant = true;
 			BPM3 = StringToFloat( sParams[1] );
 		}
 		else if( 0==stricmp(sValueName,"BUNKI") )
 		{
-			m_bKIUCompliant = true;
+			bKIUCompliant = true;
 			BPMPos2 = StringToFloat( sParams[1] ) / 100.0f;
 		}
 		else if( 0==stricmp(sValueName,"BUNKI2") )
 		{
-			m_bKIUCompliant = true;
+			bKIUCompliant = true;
 			BPMPos3 = StringToFloat( sParams[1] ) / 100.0f;
 		}
 		else if( 0==stricmp(sValueName,"STARTTIME") )
@@ -386,13 +381,13 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 		// This is currently required for more accurate KIU BPM changes.  
 		else if( 0==stricmp(sValueName,"STARTTIME2") )
 		{
-			m_bKIUCompliant = true;
+			bKIUCompliant = true;
 			SMGap2 = -StringToFloat( sParams[1] )/100;
 		}
 		else if ( 0==stricmp(sValueName,"STARTTIME3") )
 		{
 			// STARTTIME3 only ensures this is a KIU complient simfile.
-			m_bKIUCompliant = true;
+			bKIUCompliant = true;
 		}
 		else if ( 0==stricmp(sValueName,"TICKCOUNT") )
 		{
@@ -422,11 +417,11 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 		}
 	}
 
-	/* BPM Change checks are done here.  If m_bKIUCompliant, it's short and sweet.
+	/* BPM Change checks are done here.  If bKIUCompliant, it's short and sweet.
 	 * Otherwise, the whole file has to be processed.  Right now, this is only 
 	 * called once, for the initial file (often the Crazy steps).  Hopefully that
 	 * will end up changing soon. */
-	if( m_bKIUCompliant )
+	if( bKIUCompliant )
 	{
 		if( BPM2 > 0 && BPMPos2 > 0 )
 		{
@@ -447,7 +442,6 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 			out.AddBPMSegment( BPMSegment(BeatToNoteRow(beat), BPM3) );
 		}
 	}
-
 	else
 	{
 		int tickToChange = iTickCount;
@@ -469,7 +463,7 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 			if( NoteRowString == "2222222222222" ) // Row of 2s = end.  Confirm KIUCompliency here.
 			{
 				if (!bDMRequired)
-					m_bKIUCompliant = true;
+					bKIUCompliant = true;
 				break;
 			}
 
@@ -552,6 +546,11 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 	return true;
 }
 
+void KSFLoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
+{
+	GetDirListing( sPath + RString("*.ksf"), out );
+}
+
 bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
 {
 	LOG->Trace( "Song::LoadFromKSFDir(%s)", sDir.c_str() );
@@ -562,17 +561,18 @@ bool KSFLoader::LoadFromDir( const RString &sDir, Song &out )
 	/* We shouldn't have been called to begin with if there were no KSFs. */
 	ASSERT( arrayKSFFileNames.size() );
 
+	bool bKIUCompliant = false;
 	/* If only the first file is read, it will cause problems for other simfiles with
 	 * different BPM changes and tickcounts.  This command will probably have to be
 	 * changed in the future. */
-	if( !LoadGlobalData(out.GetSongDir() + arrayKSFFileNames[0], out) )
+	if( !LoadGlobalData(out.GetSongDir() + arrayKSFFileNames[0], out, bKIUCompliant) )
 		return false;
 
 	// load the Steps from the rest of the KSF files
 	for( unsigned i=0; i<arrayKSFFileNames.size(); i++ ) 
 	{
 		Steps* pNewNotes = new Steps;
-		if( !LoadFromKSFFile(out.GetSongDir() + arrayKSFFileNames[i], *pNewNotes, out) )
+		if( !LoadFromKSFFile(out.GetSongDir() + arrayKSFFileNames[i], *pNewNotes, out, bKIUCompliant) )
 		{
 			delete pNewNotes;
 			continue;
