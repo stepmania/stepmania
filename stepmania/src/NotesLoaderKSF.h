@@ -22,10 +22,6 @@ public:
 
 private:
 	bool m_bKIUCompliant;
-	bool m_bTickChangeNeeded;
-	int m_iTickCount;
-	vector<RString> m_vNoteRows;
-
 };
 
 #endif

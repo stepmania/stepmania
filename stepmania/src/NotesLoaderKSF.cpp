@@ -69,8 +69,8 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 		return false;
 	}
 
-	m_iTickCount = -1;	// this is the value we read for TICKCOUNT
-	m_vNoteRows.clear(); //Start from a clean slate.
+	int iTickCount = -1;	// this is the value we read for TICKCOUNT
+	vector<RString> vNoteRows;
 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
@@ -80,10 +80,10 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 		// handle the data
 		if( 0==stricmp(sValueName,"TICKCOUNT") )
 		{
-			m_iTickCount = atoi( sParams[1] );
-			if( m_iTickCount <= 0 )
+			iTickCount = atoi( sParams[1] );
+			if( iTickCount <= 0 )
 			{
-				LOG->UserLog( "Song file", sPath, "has an invalid tick count: %d.", m_iTickCount );
+				LOG->UserLog( "Song file", sPath, "has an invalid tick count: %d.", iTickCount );
 				return false;
 			}
 		}
@@ -91,7 +91,7 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 		{
 			RString theSteps = sParams[1];
 			TrimLeft( theSteps );
-			split( theSteps, "\n", m_vNoteRows, true );
+			split( theSteps, "\n", vNoteRows, true );
 		}
 		else if( 0==stricmp(sValueName,"DIFFICULTY") )
 		{
@@ -99,10 +99,10 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 		}
 	}
 
-	if( m_iTickCount == -1 )
+	if( iTickCount == -1 )
 	{
-		m_iTickCount = 2;
-		LOG->UserLog( "Song file", sPath, "doesn't have a TICKCOUNT. Defaulting to %i.", m_iTickCount );
+		iTickCount = 2;
+		LOG->UserLog( "Song file", sPath, "doesn't have a TICKCOUNT. Defaulting to %i.", iTickCount );
 	}
 
 	NoteData notedata;	// read it into here
@@ -163,13 +163,13 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 	for( t=0; t<13; t++ )
 		iHoldStartRow[t] = -1;
 
-	m_bTickChangeNeeded = false;
+	bool bTickChangeNeeded = false;
 	int newTick = -1;
 	float fCurBeat = 0.0f;
 	float prevBeat = 0.0f; // Used for hold tails.
-	for( unsigned r=0; r<m_vNoteRows.size(); r++ )
+	for( unsigned r=0; r<vNoteRows.size(); r++ )
 	{
-		RString& sRowString = m_vNoteRows[r];
+		RString& sRowString = vNoteRows[r];
 		StripCrnl( sRowString );
 		
 		if( sRowString == "" )
@@ -209,7 +209,7 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 			{
 				RString temp = sRowString.substr(2,sRowString.size()-3);
 				newTick = atoi(temp);
-				m_bTickChangeNeeded = true;
+				bTickChangeNeeded = true;
 				continue;
 			}
 			else
@@ -225,10 +225,10 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 			sRowString.erase( 0, 2 );
 
 		// Update TICKCOUNT for Direct Move files.
-		if( m_bTickChangeNeeded )
+		if( bTickChangeNeeded )
 		{
-			m_iTickCount = newTick;
-			m_bTickChangeNeeded = false;
+			iTickCount = newTick;
+			bTickChangeNeeded = false;
 		}
 		
 		for( t=0; t < notedata.GetNumTracks(); t++ )
@@ -268,7 +268,7 @@ bool KSFLoader::LoadFromKSFFile( const RString &sPath, Steps &out, const Song &s
 			notedata.SetTapNote(t, BeatToNoteRow(fCurBeat), tap);
 		}
 		prevBeat = fCurBeat;
-		fCurBeat = prevBeat + 1.0f / m_iTickCount;		
+		fCurBeat = prevBeat + 1.0f / iTickCount;		
 	}
 
 	/* We need to remove holes where the BPM increases. */
@@ -341,9 +341,9 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 	}
 
 	float SMGap1 = 0, SMGap2 = 0, BPM1 = -1, BPMPos2 = -1, BPM2 = -1, BPMPos3 = -1, BPM3 = -1;
-	m_iTickCount = -1;
+	int iTickCount = -1;
 	m_bKIUCompliant = false;
-	m_vNoteRows.clear();
+	vector<RString> vNoteRows;
 	
 	for( unsigned i=0; i < msd.GetNumValues(); i++ )
 	{
@@ -398,8 +398,8 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 		{
 			/* TICKCOUNT is will be used below if there are DM complient BPM changes and stops.
 			 * It will be called again in LoadFromKSFFile for the actual steps. */
-			m_iTickCount = atoi( sParams[1] );
-			m_iTickCount = m_iTickCount > 0 ? m_iTickCount : 2;
+			iTickCount = atoi( sParams[1] );
+			iTickCount = iTickCount > 0 ? iTickCount : 2;
 		}
 		else if ( 0==stricmp(sValueName,"STEP") )
 		{
@@ -407,7 +407,7 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 			 * the Direct Move syntax, it is best to get the rows of notes here. */
 			RString theSteps = sParams[1];
 			TrimLeft( theSteps );
-			split( theSteps, "\n", m_vNoteRows, true );
+			split( theSteps, "\n", vNoteRows, true );
 		}
 
 		else if( 0==stricmp(sValueName,"DIFFICULTY"))
@@ -450,17 +450,17 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 
 	else
 	{
-		int tickToChange = m_iTickCount;
+		int tickToChange = iTickCount;
 		float fCurBeat = 0.0f;
 		float speedToChange = 0.0f, timeToStop = 0.0f;
 		bool bDMRequired = false;
 		bool bBPMChangeNeeded = false;
 		bool bBPMStopNeeded = false;
-		m_bTickChangeNeeded = false;
+		bool bTickChangeNeeded = false;
 
-		for (unsigned i=0; i < m_vNoteRows.size(); i++)
+		for (unsigned i=0; i < vNoteRows.size(); i++)
 		{
-			RString& NoteRowString = m_vNoteRows[i];
+			RString& NoteRowString = vNoteRows[i];
 			StripCrnl( NoteRowString );
 			
 			if( NoteRowString == "" )
@@ -484,7 +484,7 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 					float numTemp = StringToFloat(temp);
 					if (BeginsWith(NoteRowString, "|T")) 
 					{
-						m_bTickChangeNeeded = true;
+						bTickChangeNeeded = true;
 						tickToChange = (int)numTemp;
 						continue;
 					}
@@ -510,10 +510,10 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 				}
 			}
 
-			if( m_bTickChangeNeeded )
+			if( bTickChangeNeeded )
 			{
-				m_iTickCount = tickToChange;
-				m_bTickChangeNeeded = false;
+				iTickCount = tickToChange;
+				bTickChangeNeeded = false;
 			}
 			if( bBPMChangeNeeded )
 			{
@@ -527,7 +527,7 @@ bool KSFLoader::LoadGlobalData( const RString &sPath, Song &out )
 				out.AddStopSegment( StopSegment(BeatToNoteRow(fCurBeat),timeToStop) );
 				bBPMStopNeeded = false;
 			}
-			fCurBeat += 1.0f / m_iTickCount;
+			fCurBeat += 1.0f / iTickCount;
 		}
 	}
 
