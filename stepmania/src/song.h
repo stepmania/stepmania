@@ -11,9 +11,6 @@
 
 class Steps;
 class Style;
-class NotesLoader;
-class LyricsLoader;
-class Profile;
 class StepsID;
 struct lua_State;
 struct BackgroundChange;
