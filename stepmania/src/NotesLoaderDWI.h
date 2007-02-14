@@ -10,7 +10,6 @@ class Song;
 
 class DWILoader: public NotesLoader
 {
-	bool LoadFromDWIFile( const RString &sPath, Song &out );
 public:
 	static void GetApplicableFiles( const RString &sPath, vector<RString> &out );
 	bool LoadFromDir( const RString &sPath, Song &out );

@@ -357,8 +357,27 @@ static float ParseBrokenDWITimestamp(const RString &arg1, const RString &arg2, c
 	return HHMMSSToSeconds( arg1+":"+arg2+":"+arg3 );
 }
 
-bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
+
+void DWILoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
 {
+	GetDirListing( sPath + RString("*.dwi"), out );
+}
+
+bool DWILoader::LoadFromDir( const RString &sPath_, Song &out )
+{
+	vector<RString> aFileNames;
+	GetApplicableFiles( sPath_, aFileNames );
+	
+	if( aFileNames.size() > 1 )
+	{
+		LOG->UserLog( "Song", sPath_, "has more than one DWI file. There should be only one!" );
+		return false;
+	}
+	
+	/* We should have exactly one; if we had none, we shouldn't have been called to begin with. */
+	ASSERT( aFileNames.size() == 1 );
+	const RString sPath = sPath_ + aFileNames[0];
+
 	LOG->Trace( "Song::LoadFromDWIFile(%s)", sPath.c_str() );
 
 	MsdFile msd;
@@ -551,29 +570,6 @@ bool DWILoader::LoadFromDWIFile( const RString &sPath, Song &out )
 	}
 
 	return true;
-}
-
-void DWILoader::GetApplicableFiles( const RString &sPath, vector<RString> &out )
-{
-	GetDirListing( sPath + RString("*.dwi"), out );
-}
-
-bool DWILoader::LoadFromDir( const RString &sPath, Song &out )
-{
-	vector<RString> aFileNames;
-	GetApplicableFiles( sPath, aFileNames );
-
-	if( aFileNames.size() > 1 )
-	{
-		LOG->UserLog( "Song", sPath, "has more than one DWI file. There should be only one!" );
-		return false;
-	}
-
-	/* We should have exactly one; if we had none, we shouldn't have been
-	 * called to begin with. */
-	ASSERT( aFileNames.size() == 1 );
-
-	return LoadFromDWIFile( sPath + aFileNames[0], out );
 }
 
 /*
