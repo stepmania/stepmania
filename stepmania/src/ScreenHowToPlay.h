@@ -3,11 +3,10 @@
 
 #include "ScreenAttract.h"
 #include "Player.h"
-#include "LifeMeterBar.h"
-#include "Character.h"
-#include "Model.h"
 #include "song.h"
 
+class LifeMeterBar;
+class Model;
 
 class ScreenHowToPlay : public ScreenAttract
 {

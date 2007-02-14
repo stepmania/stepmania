@@ -1,12 +1,7 @@
 #include "global.h"
-#include <cstdlib>
 #include "ScreenHowToPlay.h"
 #include "ThemeManager.h"
 #include "GameState.h"
-#include "Game.h"
-#include "RageLog.h"
-#include "RageDisplay.h"
-#include "SongManager.h"
 #include "Steps.h"
 #include "GameManager.h"
 #include "NotesLoaderSM.h"
@@ -15,18 +10,20 @@
 #include "ThemeMetric.h"
 #include "PlayerState.h"
 #include "Style.h"
-#include "ActorUtil.h"
 #include "PrefsManager.h"
 #include "CharacterManager.h"
 #include "StatsManager.h"
+#include "RageDisplay.h"
 #include "SongUtil.h"
+#include "Character.h"
+#include "LifeMeterBar.h"
 
-static const ThemeMetric<int>		NUM_W2S			("ScreenHowToPlay","NumW2s");
-static const ThemeMetric<int>		NUM_MISSES		("ScreenHowToPlay","NumMisses");
-static const ThemeMetric<bool>		USELIFEBAR		("ScreenHowToPlay","UseLifeMeterBar");
+static const ThemeMetric<int>		NUM_W2S		("ScreenHowToPlay","NumW2s");
+static const ThemeMetric<int>		NUM_MISSES	("ScreenHowToPlay","NumMisses");
+static const ThemeMetric<bool>		USELIFEBAR	("ScreenHowToPlay","UseLifeMeterBar");
 static const ThemeMetric<bool>		USECHARACTER	("ScreenHowToPlay","UseCharacter");
-static const ThemeMetric<bool>		USEPAD			("ScreenHowToPlay","UsePad");
-static const ThemeMetric<bool>		USEPLAYER		("ScreenHowToPlay","UseNotefield");
+static const ThemeMetric<bool>		USEPAD		("ScreenHowToPlay","UsePad");
+static const ThemeMetric<bool>		USEPLAYER	("ScreenHowToPlay","UseNotefield");
 
 enum Animation
 {
@@ -218,7 +215,7 @@ void ScreenHowToPlay::Step()
 		{
 		case ST_LEFT:	m_pmCharacter->PlayAnimation( "Step-LEFT", 1.8f ); break;
 		case ST_RIGHT:	m_pmCharacter->PlayAnimation( "Step-RIGHT", 1.8f ); break;
-		case ST_UP:		m_pmCharacter->PlayAnimation( "Step-UP", 1.8f ); break;
+		case ST_UP:	m_pmCharacter->PlayAnimation( "Step-UP", 1.8f ); break;
 		case ST_DOWN:	m_pmCharacter->PlayAnimation( "Step-DOWN", 1.8f ); break;
 		case ST_JUMPLR: m_pmCharacter->PlayAnimation( "Step-JUMPLR", 1.8f ); break;
 		case ST_JUMPUD:
@@ -238,7 +235,7 @@ void ScreenHowToPlay::Step()
 
 void ScreenHowToPlay::Update( float fDelta )
 {
-	if(GAMESTATE->m_pCurSong != NULL)
+	if( GAMESTATE->m_pCurSong != NULL )
 	{
 		GAMESTATE->UpdateSongPosition( m_fFakeSecondsIntoSong, GAMESTATE->m_pCurSong->m_Timing );
 		m_fFakeSecondsIntoSong += fDelta;
@@ -246,14 +243,14 @@ void ScreenHowToPlay::Update( float fDelta )
 		static int iLastNoteRowCounted = 0;
 		int iCurNoteRow = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat );
 
-		if(( iCurNoteRow != iLastNoteRowCounted ) &&(m_NoteData.IsThereATapAtRow( iCurNoteRow )))
+		if( iCurNoteRow != iLastNoteRowCounted &&m_NoteData.IsThereATapAtRow(iCurNoteRow) )
 		{
 			if( m_pLifeMeterBar && !m_Player )
 			{
 				if ( m_iW2s < m_iNumW2s )
-					m_pLifeMeterBar->ChangeLife(TNS_W2);
+					m_pLifeMeterBar->ChangeLife( TNS_W2 );
 				else
-					m_pLifeMeterBar->ChangeLife(TNS_Miss);
+					m_pLifeMeterBar->ChangeLife( TNS_Miss );
 			}
 			m_iW2s++;
 			iLastNoteRowCounted = iCurNoteRow;
@@ -262,7 +259,7 @@ void ScreenHowToPlay::Update( float fDelta )
 		// once we hit the number of perfects we want, we want to fail.
 		// switch the controller to HUMAN. since we aren't taking input,
 		// the steps will always be misses.
-		if(m_iW2s > m_iNumW2s)
+		if( m_iW2s > m_iNumW2s )
 			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_HUMAN;
 
 		if ( m_pmCharacter )
