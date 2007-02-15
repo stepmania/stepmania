@@ -317,7 +317,9 @@ void GameState::Reset()
 void GameState::JoinPlayer( PlayerNumber pn )
 {
 	m_bSideIsJoined[pn] = true;
-	MESSAGEMAN->Broadcast( (MessageID)(Message_SideJoinedP1+pn) );
+	Message msg( MessageIDToString(Message_PlayerJoined) );
+	msg.SetParam( "Player", pn );
+	MESSAGEMAN->Broadcast( msg );
 
 	if( m_MasterPlayerNumber == PLAYER_INVALID )
 		m_MasterPlayerNumber = pn;

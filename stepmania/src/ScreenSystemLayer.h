@@ -4,42 +4,14 @@
 #define ScreenSystemLayer_H
 
 #include "Screen.h"
-#include "BitmapText.h"
-#include "Quad.h"
-#include "ThemeMetric.h"
 #include "AutoActor.h"
-#include "LocalizedString.h"
 
 class ScreenSystemLayer : public Screen
 {
 public:
 	virtual void Init();
-	void HandleMessage( const Message &msg );
-
-	void ReloadCreditsText();
-	void Update( float fDeltaTime );
 
 private:
-	AutoActor  m_sprMessageFrame;
-	BitmapText m_textMessage;
-	BitmapText m_textCredits[NUM_PLAYERS];
-
-	RString GetCreditsMessage( PlayerNumber pn ) const;
-
-	LocalizedString CREDITS_PRESS_START;
-	LocalizedString CREDITS_INSERT_CARD;
-	LocalizedString CREDITS_CARD_TOO_LATE;
-	LocalizedString CREDITS_CARD_NO_NAME;
-	LocalizedString CREDITS_CARD_READY;
-	LocalizedString CREDITS_CARD_CHECKING;
-	LocalizedString CREDITS_CARD_REMOVED;
-	LocalizedString CREDITS_FREE_PLAY;
-	LocalizedString CREDITS_CREDITS;
-	LocalizedString CREDITS_NOT_PRESENT;
-	LocalizedString CREDITS_LOAD_FAILED;
-	LocalizedString CREDITS_LOADED_FROM_LAST_GOOD_APPEND;
-	ThemeMetric<bool> CREDITS_JOIN_ONLY;
-
 	AutoActor m_sprOverlay;
 };
 
