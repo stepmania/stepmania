@@ -107,14 +107,18 @@ void BitmapText::LoadFromNode( const XNode* pNode )
 
 	RString sFont;
 	pNode->GetAttrValue( "Font", sFont );
+	ActorUtil::GetAttrPath( pNode, "FilFont", sFont );
 	if( sFont.empty() )
-		pNode->GetAttrValue( "File", sFont );	// accept "File" for backward compatibility
+		ActorUtil::GetAttrPath( pNode, "File", sFont ); // accept "File" for backward compatibility
 
 	if( sFont == "" )
 		RageException::Throw( "%s: BitmapText: missing the Font attribute",
 				      ActorUtil::GetWhere(pNode).c_str() );
 
-	LoadFromFont( THEME->GetPathF( "", sFont ) );
+	if( sFont.Left(1) != "/" )
+		sFont = THEME->GetPathF( "", sFont );
+	LoadFromFont( sFont );
+
 	SetText( sText, sAltText );
 
 	Actor::LoadFromNode( pNode );
