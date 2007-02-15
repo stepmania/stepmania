@@ -126,11 +126,12 @@ void ActorScroller::LoadFromNode( const XNode *pNode )
 		ActorScroller::SetSecondsPerItem( fSecondsPerItem );
 
 	Lua *L = LUA->Get();
-	if( pNode->PushAttrValue(L, "TransformFunction") )
+	pNode->PushAttrValue( L, "TransformFunction" );
 	{
 		LuaReference ref;
 		ref.SetFromStack( L );
-		SetTransformFromReference( ref );
+		if( !ref.IsNil() )
+			SetTransformFromReference( ref );
 	}
 	LUA->Release( L );
 
