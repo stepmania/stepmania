@@ -76,12 +76,22 @@ public:
 	static int position( T* p, lua_State *L )		{ p->SetPosition( FArg(1) ); return 0; }
 	static int loop( T* p, lua_State *L )			{ p->SetLooping( BIArg(1) ); return 0; }
 	static int rate( T* p, lua_State *L )			{ p->SetPlaybackRate( FArg(1) ); return 0; }
+	static int GetTextureCoordRect( T* p, lua_State *L )
+	{
+		const RectF *pRect = p->GetTextureCoordRect( IArg(1) );
+		lua_pushnumber( L, pRect->left );
+		lua_pushnumber( L, pRect->top );
+		lua_pushnumber( L, pRect->right );
+		lua_pushnumber( L, pRect->bottom );
+		return 4;
+	}
 
 	LunaRageTexture()
 	{
 		ADD_METHOD( position );
 		ADD_METHOD( loop );
 		ADD_METHOD( rate );
+		ADD_METHOD( GetTextureCoordRect );
 	}
 };
 
