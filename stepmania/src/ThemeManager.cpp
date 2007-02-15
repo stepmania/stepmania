@@ -1145,6 +1145,7 @@ class LunaThemeManager: public Luna<ThemeManager>
 public:
 	static int GetMetric( T* p, lua_State *L )			{ p->PushMetric( L, SArg(1),SArg(2) ); return 1; }
 	static int GetString( T* p, lua_State *L )			{ lua_pushstring(L, p->GetString(SArg(1),SArg(2)) ); return 1; }
+	static int GetPathF( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathF(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathG( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathG(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathB( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathB(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathS( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathS(SArg(1),SArg(2)) ); return 1; }
@@ -1154,6 +1155,7 @@ public:
 	{
 		ADD_METHOD( GetMetric );
 		ADD_METHOD( GetString );
+		ADD_METHOD( GetPathF );
 		ADD_METHOD( GetPathG );
 		ADD_METHOD( GetPathB );
 		ADD_METHOD( GetPathS );
