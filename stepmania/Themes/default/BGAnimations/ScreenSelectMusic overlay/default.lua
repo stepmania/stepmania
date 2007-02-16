@@ -191,7 +191,8 @@ local children =
 		SortOrderChangedMessageCommand=cmd(playcommand,"Set");
 	};
 
-	LoadFont("BPMDisplay", "bpm") .. {
+	Def.BPMDisplay {
+		Font="BPMDisplay bpm";
 		Name="BPMDisplay";
 		InitCommand=cmd(horizalign,right;y,SCREEN_CENTER_Y-134;shadowlength,0;);
 		OnCommand=cmd(stoptweening;x,SCREEN_CENTER_X-160-SCREEN_WIDTH*0.6;bounceend,0.5;addx,SCREEN_WIDTH*0.6);
