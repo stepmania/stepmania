@@ -18,7 +18,7 @@ local t = Def.ActorFrame {
 	children = {
 		Def.BitmapText {
 			Font=THEME:GetPathF(Var "LoadingScreen","message");
-			Text="xxx";
+			Text="";
 			InitCommand=cmd(visible,false);
 OnCommand=cmd(maxwidth,750;finishtweening;horizalign,left;vertalign,top;x,SCREEN_LEFT+20;y,SCREEN_TOP+20;zoom,0.8;shadowlength,2;diffusealpha,1;addx,-SCREEN_WIDTH;linear,0.5;addx,SCREEN_WIDTH);
 OffCommand=cmd(sleep,5;linear,0.5;diffusealpha,0);
