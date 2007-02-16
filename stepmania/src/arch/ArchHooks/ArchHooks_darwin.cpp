@@ -172,7 +172,8 @@ RString ArchHooks_darwin::GetMachineId() const
 			
 			if( serial )
 			{
-				ret = CFStringGetCStringPtr( (CFStringRef)serial, kCFStringEncodingMacRoman );
+				const char *str = CFStringGetCStringPtr( (CFStringRef)serial, CFStringGetSystemEncoding() );
+				ret = str? str:"";
 				CFRelease( serial );
 			}
 			IOObjectRelease( service );
@@ -339,7 +340,9 @@ RString ArchHooks::GetPreferredLanguage()
 	    (lang = (CFStringRef)CFArrayGetValueAtIndex(languages, 0)) != NULL )
 	{
 		// MacRoman agrees with ASCII in the low-order 7 bits.
-		ret = RString( CFStringGetCStringPtr(lang, kCFStringEncodingMacRoman), 2 );
+		const char *str = CFStringGetCStringPtr( lang, kCFStringEncodingMacRoman );
+		ASSERT( str );
+		ret = RString( str, 2 );
 	}
 	
 	CFRelease( languages );

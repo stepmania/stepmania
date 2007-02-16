@@ -62,7 +62,10 @@ bool HIDDevice::Open( io_object_t device )
 	}
 	
 	if( object && CFGetTypeID(object) == CFStringGetTypeID() )
-		m_sDescription = CFStringGetCStringPtr( CFStringRef(object), CFStringGetSystemEncoding() );
+	{
+		const char *str = CFStringGetCStringPtr( CFStringRef(object), CFStringGetSystemEncoding() );
+		m_sDescription = str? str:"";
+	}
 	if( m_sDescription == "" )
 		m_sDescription = ssprintf( "%04x:%04x", vid, pid );
 	
