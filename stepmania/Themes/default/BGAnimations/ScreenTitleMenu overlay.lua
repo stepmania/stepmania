@@ -1,12 +1,9 @@
 local children = {
-	Def.BitmapText {
-		Font="Common normal";
+	LoadFont("Common", "normal") .. {
 		Text=ProductVersion();
 		OnCommand=cmd(x,SCREEN_RIGHT-20;y,SCREEN_TOP+20;horizalign,right;diffuse,0.6,0.6,0.6,1;zoom,0.5;shadowlength,2);
 	};
-	Def.BitmapText {
-		Font="Common normal";
-		Text="";
+	LoadFont("Common", "normal") .. {
 		OnCommand=cmd(x,SCREEN_LEFT+20;y,SCREEN_TOP+20;horizalign,left;diffuse,0.6,0.6,0.6,1;zoom,0.5;shadowlength,2;playcommand,"Set");
 		SetCommand=function(self)
 			local fmt = THEME:GetString( "ScreenTitleMenu", "%d songs in %d groups, %d courses in %d groups" )

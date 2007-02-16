@@ -4,8 +4,7 @@ function CreditsText( pn )
 		self:settext(str);
 	end
 
-	local text = Def.BitmapText {
-		Font=THEME:GetPathF("ScreenManager","credits");
+	local text = LoadFont("ScreenManager","credits") .. {
 		InitCommand=cmd(shadowlength,0);
 		RefreshCreditTextMessageCommand=update;
 		CoinInsertedMessageCommand=update;
@@ -16,9 +15,7 @@ end
 
 local t = Def.ActorFrame {
 	children = {
-		Def.BitmapText {
-			Font=THEME:GetPathF(Var "LoadingScreen","message");
-			Text="";
+		LoadFont(Var "LoadingScreen","message") .. {
 			InitCommand=cmd(maxwidth,750;
 			horizalign,left;vertalign,top;
 			zoom,0.8;shadowlength,2;

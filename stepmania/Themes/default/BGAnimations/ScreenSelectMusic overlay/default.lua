@@ -114,9 +114,7 @@ local children =
 		Condition=GAMESTATE:IsCourseMode() == false;
 	};
 
-	Def.BitmapText {
-		Font="Common normal";
-
+	LoadFont("Common", "normal") .. {
 		InitCommand=cmd(x,SCREEN_CENTER_X-160;y,SCREEN_CENTER_Y+94;playcommand,"Set");
 		OnCommand=cmd(zoom,0.5;shadowlength,2;diffusealpha,0;linear,0.5;diffusealpha,1);
 		OffCommand=cmd(linear,0.5;diffusealpha,0);
@@ -193,9 +191,8 @@ local children =
 		SortOrderChangedMessageCommand=cmd(playcommand,"Set");
 	};
 
-	Def.BPMDisplay {
+	LoadFont("BPMDisplay", "bpm") .. {
 		Name="BPMDisplay";
-		Font="BPMDisplay bpm";
 		InitCommand=cmd(horizalign,right;y,SCREEN_CENTER_Y-134;shadowlength,0;);
 		OnCommand=cmd(stoptweening;x,SCREEN_CENTER_X-160-SCREEN_WIDTH*0.6;bounceend,0.5;addx,SCREEN_WIDTH*0.6);
 		OffCommand=cmd(bouncebegin,0.5;addx,-SCREEN_WIDTH*0.6);
@@ -273,8 +270,7 @@ local children =
 		CurrentSongChangedMessageCommand=cmd(playcommand,"Set");
 	};
 
-	Def.BitmapText {
-		Font="_numbers2";
+	LoadFont("_numbers2") .. {
 		InitCommand=cmd(x,SCREEN_CENTER_X-262;y,SCREEN_CENTER_Y-126);
 		OnCommand=cmd(shadowlength,0;addx,-SCREEN_WIDTH;bounceend,0.5;addx,SCREEN_WIDTH);
 		OffCommand=cmd(bouncebegin,0.5;addx,-SCREEN_WIDTH);
@@ -297,9 +293,7 @@ local children =
 		OnCommand=cmd(finishtweening;x,SCREEN_CENTER_X-35-SCREEN_WIDTH*0.6;bounceend,0.5;addx,SCREEN_WIDTH*0.6);
 		OffCommand=cmd(finishtweening;bouncebegin,0.5;addx,-SCREEN_WIDTH*0.6);
 	};
-	Def.BitmapText {
-		Font="BPMDisplay";
-	
+	LoadFont("BPMDisplay", "bpm") .. {
 		SetCommand=function(self)
 			local song = GAMESTATE:GetCurrentSong()
 			local course = GAMESTATE:GetCurrentCourse()
