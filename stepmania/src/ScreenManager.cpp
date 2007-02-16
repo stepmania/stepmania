@@ -750,16 +750,20 @@ void ScreenManager::SendMessageToTopScreen( ScreenMessage SM )
 
 void ScreenManager::SystemMessage( const RString &sMessage )
 {
-	m_sSystemMessage = sMessage;
 	LOG->Trace( "%s", sMessage.c_str() );
-	MESSAGEMAN->Broadcast( "SystemMessage" );
+	Message msg( "SystemMessage" );
+	msg.SetParam( "Message", sMessage );
+	msg.SetParam( "NoAnimate", false );
+	MESSAGEMAN->Broadcast( msg );
 }
 
 void ScreenManager::SystemMessageNoAnimate( const RString &sMessage )
 {
 //	LOG->Trace( "%s", sMessage.c_str() );	// don't log because the caller is likely calling us every frame
-	m_sSystemMessage = sMessage;
-	MESSAGEMAN->Broadcast( "SystemMessageNoAnimate" );
+	Message msg( "SystemMessage" );
+	msg.SetParam( "Message", sMessage );
+	msg.SetParam( "NoAnimate", true );
+	MESSAGEMAN->Broadcast( msg );
 }
 
 void ScreenManager::HideSystemMessage()
@@ -847,7 +851,6 @@ public:
 	}
 	static int SystemMessage( T* p, lua_State *L )		{ p->SystemMessage( SArg(1) ); return 0; }
 	static int ScreenIsPrepped( T* p, lua_State *L )	{ lua_pushboolean( L, ScreenManagerUtil::ScreenIsPrepped( SArg(1) ) ); return 1; }
-	static int GetCurrentSystemMessage( T* p, lua_State *L ){ LuaHelpers::Push( L, p->GetCurrentSystemMessage() ); return 1; }
 
 	LunaScreenManager()
 	{
@@ -855,7 +858,6 @@ public:
 		ADD_METHOD( GetTopScreen );
 		ADD_METHOD( SystemMessage );
 		ADD_METHOD( ScreenIsPrepped );
-		ADD_METHOD( GetCurrentSystemMessage );
 	}
 };
 

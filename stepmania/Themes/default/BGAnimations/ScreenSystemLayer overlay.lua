@@ -23,17 +23,13 @@ local t = Def.ActorFrame {
 OnCommand=cmd(maxwidth,750;finishtweening;horizalign,left;vertalign,top;x,SCREEN_LEFT+20;y,SCREEN_TOP+20;zoom,0.8;shadowlength,2;diffusealpha,1;addx,-SCREEN_WIDTH;linear,0.5;addx,SCREEN_WIDTH);
 OffCommand=cmd(sleep,5;linear,0.5;diffusealpha,0);
 
-			SystemMessageMessageCommand = function(self)
+			SystemMessageMessageCommand = function(self, params)
 				self:visible(true);
-				self:settext( SCREENMAN:GetCurrentSystemMessage() );
+				self:settext( params.Message );
 				self:playcommand( "On" );
-				self:playcommand( "Off" );
-			end;
-			SystemMessageNoAnimateMessageCommand = function(self)
-				self:visible(true);
-				self:settext( SCREENMAN:GetCurrentSystemMessage() );
-				self:playcommand( "On" );
-				self:FinishTweening();
+				if params.NoAnimate then
+					self:finishtweening();
+				end
 				self:playcommand( "Off" );
 			end;
 			HideSystemMessageMessageCommand = cmd(visible,false);

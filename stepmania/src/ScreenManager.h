@@ -40,7 +40,6 @@ public:
 	void SystemMessage( const RString &sMessage );
 	void SystemMessageNoAnimate( const RString &sMessage );
 	void HideSystemMessage();
-	RString GetCurrentSystemMessage() const { return m_sSystemMessage; }
 
 	// Screen messages
 	void PostMessageToTopScreen( ScreenMessage SM, float fDelay );
@@ -63,8 +62,6 @@ public:
 private:
 	Screen		*m_pInputFocus; // NULL = top of m_ScreenStack
 
-	RString		m_sSystemMessage;
-	
 	// Screen loads, removals, and concurrent prepares are delayed until the next update.
 	RString		m_sDelayedScreen;
 	RString		m_sDelayedConcurrentPrepare;
