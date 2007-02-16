@@ -5,7 +5,6 @@ local p2y = THEME:GetMetric( 'ScreenEvaluationStage', 'BonusFrameP2Y' )
 p1y = p1y + 75 -- It starts 75 pixels down from the top of the Bonus frame.
 p2y = p2y + 75
 
-Trace( "(x,y) = (" .. p1x .. "," .. p1y .. ")" )
 return Def.ActorFrame {
 	children = {
 		LoadActor("life graph", PLAYER_1) .. {
