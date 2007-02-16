@@ -9,6 +9,7 @@
 #include "ThemeManager.h"
 #include "FontCharmaps.h"
 #include "FontCharAliases.h"
+#include "arch/Dialog/Dialog.h"
 
 FontPage::FontPage()
 {
@@ -336,7 +337,7 @@ void Font::GetFontPaths( const RString &sFontIniPath, vector<RString> &asTexture
 
 	for( unsigned i = 0; i < asFiles.size(); ++i )
 	{
-		if( asFiles[i].Right(4).CompareNoCase(".ini"))  
+		if( !asFiles[i].Right(4).EqualsNoCase(".ini") )
 			asTexturePathsOut.push_back( asFiles[i] );
 	}
 }
@@ -649,6 +650,7 @@ void Font::Load( const RString &sIniPath, RString sChars )
 	vector<RString> asTexturePaths;
 	GetFontPaths( sIniPath, asTexturePaths );
 
+
 	bool bCapitalsOnly = false;
 
 	/* If we have an INI, load it. */
@@ -662,9 +664,12 @@ void Font::Load( const RString &sIniPath, RString sChars )
 	}
 
 	{
-		/* If this is a top-level font (not a subfont), load the default font first. */
 		vector<RString> ImportList;
-		if( LoadStack.size() == 1 )
+
+		bool bIsTopLevelFont = LoadStack.size() == 1;
+
+		/* If this is a top-level font (not a subfont), load the default font first. */
+		if( bIsTopLevelFont )
 			ImportList.push_back("Common default");
 
 		/* Check to see if we need to import any other fonts.  Do this
@@ -673,12 +678,20 @@ void Font::Load( const RString &sIniPath, RString sChars )
 		RString imports;
 		ini.GetValue( "main", "import", imports );
 		split(imports, ",", ImportList, true);
+
+		if( bIsTopLevelFont  &&  imports.empty()  &&  asTexturePaths.empty() )
+		{
+			RString s = ssprintf( "Font \"%s\" is a top-level font with no textures or imports.", sIniPath.c_str() );
+			Dialog::OK( s );
+		}
+
 		for(unsigned i = 0; i < ImportList.size(); ++i)
 		{
 			RString path = THEME->GetPathF( "", ImportList[i], true );
 			if( path == "" )
 			{
-				LOG->Warn("Font \"%s\" imports a font \"%s\" that doesn't exist", sIniPath.c_str(), ImportList[i].c_str());
+				RString s = ssprintf( "Font \"%s\" imports a font \"%s\" that doesn't exist", sIniPath.c_str(), ImportList[i].c_str() );
+				Dialog::OK( s );
 				continue;
 			}
 
