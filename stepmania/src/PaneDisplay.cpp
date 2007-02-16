@@ -75,12 +75,14 @@ void PaneDisplay::Load( const RString &sMetricsGroup, PlayerNumber pn )
 
 		m_textContents[p].LoadFromFont( THEME->GetPathF(sMetricsGroup,"text") );
 		m_textContents[p].SetName( ssprintf("%sText", g_Contents[p].name) );
-		ActorUtil::SetXY( m_textContents[p], sMetricsGroup );	// SetXY loads all commands
+		ActorUtil::LoadAllCommands( m_textContents[p], sMetricsGroup );
+		ActorUtil::SetXY( m_textContents[p], sMetricsGroup );
 		m_ContentsFrame.AddChild( &m_textContents[p] );
 
 		m_Labels[p].Load( THEME->GetPathG(sMetricsGroup,RString(g_Contents[p].name)+" label") );
 		m_Labels[p]->SetName( ssprintf("%sLabel", g_Contents[p].name) );
-		ActorUtil::SetXY( m_Labels[p], sMetricsGroup );	// SetXY loads all commands
+		ActorUtil::LoadAllCommands( *m_Labels[p], sMetricsGroup );
+		ActorUtil::SetXY( m_Labels[p], sMetricsGroup );
 		m_ContentsFrame.AddChild( m_Labels[p] );
 
 		ActorUtil::LoadAllCommandsFromName( m_textContents[p], sMetricsGroup, g_Contents[p].name );
@@ -299,13 +301,13 @@ void PaneDisplay::SetFocus( PaneTypes NewPane )
 	{
 		if( g_Contents[i].type == m_CurPane )
 		{
-			COMMAND( m_textContents[i], "LoseFocus"  );
-			COMMAND( m_Labels[i], "LoseFocus"  );
+			m_textContents[i].PlayCommand( "LoseFocus" );
+			m_Labels[i]->PlayCommand( "LoseFocus"  );
 		}
 		else if( g_Contents[i].type == NewPane )
 		{
-			COMMAND( m_textContents[i], "GainFocus" );
-			COMMAND( m_Labels[i], "GainFocus" );
+			m_textContents[i].PlayCommand( "GainFocus" );
+			m_Labels[i]->PlayCommand( "GainFocus" );
 		}
 	}
 
