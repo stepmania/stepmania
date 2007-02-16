@@ -7,9 +7,8 @@ return Def.ActorFrame {
 
 	children =
 	{
-		Def.BitmapText {
+		LoadFont( "Common", "normal" ) .. {
 			Text=THEME:GetString("PaneDisplay", text);
-			File="Common normal";
 			OnCommand=cmd(shadowlength,0;horizalign,left;zoom,0.5);
 		};
 	};
