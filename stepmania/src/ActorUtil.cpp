@@ -478,6 +478,10 @@ void ActorUtil::LoadAndPlayCommand( Actor& actor, const RString &sType, const RS
 		!actor.GetName().empty(), 
 		ssprintf("!actor.GetName().empty() ('%s', '%s')", sType.c_str(), sCommandName.c_str()) 
 		);
+	ASSERT_M( 
+		!sType.empty(), 
+		ssprintf("!sType.empty() ('%s', '%s')", sType.c_str(), sCommandName.c_str()) 
+		);
 
 	if( !actor.HasCommand(sCommandName ) )	// this actor hasn't loaded commands yet
 		LoadAllCommands( actor, sType );
