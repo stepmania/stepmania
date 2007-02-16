@@ -19,20 +19,24 @@ local t = Def.ActorFrame {
 		Def.BitmapText {
 			Font=THEME:GetPathF(Var "LoadingScreen","message");
 			Text="";
-			InitCommand=cmd(visible,false);
-OnCommand=cmd(maxwidth,750;finishtweening;horizalign,left;vertalign,top;x,SCREEN_LEFT+20;y,SCREEN_TOP+20;zoom,0.8;shadowlength,2;diffusealpha,1;addx,-SCREEN_WIDTH;linear,0.5;addx,SCREEN_WIDTH);
-OffCommand=cmd(sleep,5;linear,0.5;diffusealpha,0);
+			InitCommand=cmd(maxwidth,750;
+			horizalign,left;vertalign,top;
+			zoom,0.8;shadowlength,2;
+			y,SCREEN_TOP+20;
+			diffusealpha,0
+			);
 
 			SystemMessageMessageCommand = function(self, params)
-				self:visible(true);
 				self:settext( params.Message );
+				local f = cmd(finishtweening;x,SCREEN_LEFT+20;diffusealpha,1;addx,-SCREEN_WIDTH;linear,0.5;addx,SCREEN_WIDTH); f(self);
 				self:playcommand( "On" );
 				if params.NoAnimate then
 					self:finishtweening();
 				end
+				f = cmd(sleep,5;linear,0.5;diffusealpha,0); f(self);
 				self:playcommand( "Off" );
 			end;
-			HideSystemMessageMessageCommand = cmd(visible,false);
+			HideSystemMessageMessageCommand = cmd(finishtweening);
 		};
 		CreditsText( PLAYER_1 ) .. {
 			InitCommand=cmd(x,SCREEN_LEFT+120;y,SCREEN_BOTTOM-6);
