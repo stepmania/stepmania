@@ -106,8 +106,7 @@ void BitmapText::LoadFromNode( const XNode* pNode )
 	ThemeManager::EvaluateString( sAltText );
 
 	RString sFont;
-	pNode->GetAttrValue( "Font", sFont );
-	ActorUtil::GetAttrPath( pNode, "FilFont", sFont );
+	ActorUtil::GetAttrPath( pNode, "Font", sFont );
 	if( sFont.empty() )
 		ActorUtil::GetAttrPath( pNode, "File", sFont ); // accept "File" for backward compatibility
 
