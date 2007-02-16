@@ -157,6 +157,16 @@ function LoadActorWithParams( path, params, ... )
 	return lua.RunWithThreadVariables( function(...) return t(...) end, params, ... );
 end
 
+function LoadFont(a, b)
+	local sSection = b and a or "";
+	local sFile = b or a;
+	local sPath = THEME:GetPathF(sSection, sFile);
+	return Def.BitmapText {
+		_Level = 2;
+		File = sPath;
+	}
+end
+
 function WrapInActorFrame( t )
 	return Def.ActorFrame { children = t }
 end
