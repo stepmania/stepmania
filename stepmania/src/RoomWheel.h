@@ -9,7 +9,7 @@
 
 struct RoomWheelData : public WheelItemBaseData
 {
-	RoomWheelData() : m_iFlags(0) { WheelItemBaseData::WheelItemBaseData(); }
+	RoomWheelData() : m_iFlags(0) { }
 	RoomWheelData( WheelItemType wit, const RString& sTitle, const RString& sDesc, RageColor color ):
 		WheelItemBaseData( wit, sTitle, color ), m_sDesc(sDesc), m_iFlags(0) { };
 
