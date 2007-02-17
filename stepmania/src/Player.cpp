@@ -42,6 +42,60 @@
 #include "LocalizedString.h"
 #include "AdjustSync.h"
 
+// Helper class to ensure that each row is only judged once without taking too much memory.
+class JudgedRows
+{
+	char	*m_pRows;
+	int 	m_iStart;
+	int	m_iOffset;
+	int	m_iLen;
+	
+	void Resize( int iMin )
+	{
+		char *p = m_pRows;
+		int newSize = max( m_iLen*2, iMin );
+		m_pRows = new char[newSize];
+		int i = 0;
+		if( p )
+		{
+			for( ; i < m_iLen; ++i )
+				m_pRows[i] = p[(i+m_iOffset)%m_iLen];
+			delete[] p;
+		}
+		m_iOffset = 0;
+		m_iLen = newSize;
+		memset( m_pRows + i, 0, newSize - i );
+	}
+public:
+	JudgedRows() : m_pRows(NULL), m_iStart(0), m_iOffset(0), m_iLen(0) { Resize( 32 ); }
+	~JudgedRows() { delete[] m_pRows; }
+	// Returns true if the row has already been judged.
+	bool JudgeRow( int iRow )
+	{
+		if( iRow < m_iStart )
+			return true;
+		if( iRow >= m_iStart+m_iLen )
+			Resize( iRow+1-m_iStart );
+		const bool ret = m_pRows[(iRow-m_iStart+m_iOffset)%m_iLen] != 0;
+		m_pRows[(iRow-m_iStart+m_iOffset)%m_iLen] = 1;
+		while( m_pRows[m_iOffset] )
+		{
+			m_pRows[m_iOffset] = 0;
+			++m_iStart;
+			if( ++m_iOffset >= m_iLen )
+				m_iOffset -= m_iLen;
+		}
+		return ret;
+	}
+	void Reset( int iStart )
+	{
+		m_iStart = iStart;
+		m_iOffset = 0;
+		memset( m_pRows, 0, m_iLen );
+	}
+};
+
+
 RString COMBO_X_NAME( size_t p, size_t both_sides )		{ return "ComboXOffset" + (both_sides ? RString("BothSides") : ssprintf("OneSideP%d",int(p+1)) ); }
 RString ATTACK_DISPLAY_X_NAME( size_t p, size_t both_sides )	{ return "AttackDisplayXOffset" + (both_sides ? RString("BothSides") : ssprintf("OneSideP%d",int(p+1)) ); }
 
@@ -132,6 +186,7 @@ Player::Player( NoteData &nd, bool bShowNoteField, bool bShowJudgment ) : m_Note
 		m_pNoteField = new NoteField;
 		m_pNoteField->SetName( "NoteField" );
 	}
+	m_pJudgedRows = new JudgedRows;
 }
 
 Player::~Player()
@@ -142,6 +197,7 @@ Player::~Player()
 	SAFE_DELETE( m_pNoteField );
 	for( unsigned i = 0; i < m_vHoldJudgment.size(); ++i )
 		SAFE_DELETE( m_vHoldJudgment[i] );
+	SAFE_DELETE( m_pJudgedRows );
 }
 
 /* Init() does the expensive stuff: load sounds and note skins.  Load() just loads a NoteData. */
@@ -369,7 +425,7 @@ void Player::Load()
 	m_iMineRowLastCrossed = iNoteRow - 1;
 	m_iRowLastJudged      = iNoteRow - 1;
 	m_iMineRowLastJudged  = iNoteRow - 1;
-	m_JudgedRows.Reset( iNoteRow );
+	m_pJudgedRows->Reset( iNoteRow );
 
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
@@ -2091,7 +2147,7 @@ void Player::UpdateJudgedRows()
 		}
 		if( bAllJudged )
 			++m_iRowLastJudged;
-		if( m_JudgedRows[iRow] )
+		if( m_pJudgedRows->JudgeRow(iRow) )
 			continue;
 		const TapNoteResult &lastTNR = NoteDataWithScoring::LastTapNoteWithResult( m_NoteData, iRow, pn ).result;
 		

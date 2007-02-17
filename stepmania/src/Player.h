@@ -12,7 +12,6 @@
 #include "AttackDisplay.h"
 #include "NoteData.h"
 #include "ScreenMessage.h"
-//#include "RageLog.h"
 
 class ScoreDisplay;
 class LifeMeter;
@@ -22,6 +21,7 @@ class Inventory;
 class RageTimer;
 class NoteField;
 class PlayerStageStats;
+class JudgedRows;
 
 AutoScreenMessage( SM_100Combo );
 AutoScreenMessage( SM_200Combo );
@@ -35,56 +35,6 @@ AutoScreenMessage( SM_900Combo );
 AutoScreenMessage( SM_1000Combo );
 AutoScreenMessage( SM_ComboStopped );
 AutoScreenMessage( SM_ComboContinuing );
-
-// Helper class to ensure that each row is only judged once without taking too much memory.
-class JudgedRows
-{
-	char	*m_pRows;
-	int 	m_iStart;
-	int	m_iOffset;
-	int	m_iLen;
-	
-	void Resize( int iMin )
-	{
-		char *p = m_pRows;
-		int newSize = max( m_iLen*2, iMin );
-		//LOG->Trace( "Old size %d, new size %d.", m_iLen, newSize );
-		m_pRows = new char[newSize];
-		int i = 0;
-		if( p )
-		{
-			for( ; i < m_iLen; ++i )
-				m_pRows[i] = p[(i+m_iOffset)%m_iLen];
-			delete[] p;
-		}
-		m_iOffset = 0;
-		m_iLen = newSize;
-		memset( m_pRows + i, 0, newSize - i );
-	}
-public:
-	JudgedRows() : m_pRows(NULL), m_iStart(0), m_iOffset(0), m_iLen(0) { Resize( 32 ); }
-	~JudgedRows() { delete[] m_pRows; }
-	bool operator[]( int iRow )
-	{
-		if( iRow < m_iStart ) return true;
-		if( iRow >= m_iStart+m_iLen ) Resize( iRow+1-m_iStart );
-		const bool ret = m_pRows[(iRow-m_iStart+m_iOffset)%m_iLen] != 0;
-		m_pRows[(iRow-m_iStart+m_iOffset)%m_iLen] = 1;
-		while( m_pRows[m_iOffset] )
-		{
-			m_pRows[m_iOffset] = 0;
-			++m_iStart;
-			if( ++m_iOffset >= m_iLen ) m_iOffset -= m_iLen;
-		}
-		return ret;
-	}
-	void Reset( int iStart )
-	{
-		m_iStart = iStart;
-		m_iOffset = 0;
-		memset( m_pRows, 0, m_iLen );
-	}
-};
 
 class Player: public ActorFrame
 {
@@ -213,7 +163,7 @@ protected:
 	int			m_iMineRowLastCrossed;
 	int			m_iRowLastJudged; // Everything up to and including this row has been judged.
 	int			m_iMineRowLastJudged;
-	JudgedRows		m_JudgedRows;
+	JudgedRows		*m_pJudgedRows;
 
 	RageSound		m_soundMine;
 	RageSound		m_soundAttackLaunch;
