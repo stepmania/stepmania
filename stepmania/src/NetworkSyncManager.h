@@ -27,8 +27,8 @@ enum NSCommand
 	NSCUUL,			//9
 	NSCSMS,			//10
 	NSCUPOpts,		//11
-	NSCSMOnline,	//12
-	NSCFormatted,	//13
+	NSCSMOnline,		//12
+	NSCFormatted,		//13
 	NSCAttack,		//14
 	NUM_NS_COMMANDS
 };
@@ -78,10 +78,10 @@ public:
 	uint32_t Read4();
 	RString ReadNT();
 
-	void Write1(uint8_t Data);
-	void Write2(uint16_t Data);
-	void Write4(uint32_t Data);
-	void WriteNT(const RString& Data);
+	void Write1( uint8_t Data );
+	void Write2( uint16_t Data );
+	void Write4( uint32_t Data );
+	void WriteNT( const RString& Data );
 
 	void ClearPacket();
 };
@@ -93,19 +93,19 @@ public:
 	~NetworkSyncManager();
 
     //If "useSMserver" then send score to server
-	void ReportScore(int playerID, int step, int score, int combo, float offset);	
+	void ReportScore( int playerID, int step, int score, int combo, float offset );	
 	void ReportSongOver();	//Report to server that song is over
 	void ReportStyle();		//Report to server the style, players, and names
-	void ReportNSSOnOff(int i);	//Report song selection screen on/off
-	void StartRequest(short position);	//Request a start.  Block until granted.
+	void ReportNSSOnOff( int i );	//Report song selection screen on/off
+	void StartRequest( short position );	//Request a start.  Block until granted.
 	RString GetServerName();
 	
 	//SMOnline stuff
 	void SendSMOnline( );
 
-	bool Connect(const RString& addy, unsigned short port); // Connect to SM Server
+	bool Connect( const RString& addy, unsigned short port ); // Connect to SM Server
 
-	void PostStartUp(const RString& ServerIP);
+	void PostStartUp( const RString& ServerIP );
 
 	void CloseConnection();
 
@@ -113,7 +113,7 @@ public:
 
 	int m_playerLife[NUM_PLAYERS];	//Life (used for sending to server)
 
-	void Update(float fDeltaTime);
+	void Update( float fDeltaTime );
 
 	bool useSMserver;
 	bool isSMOnline;
@@ -145,7 +145,7 @@ public:
 	int m_iSelectMode;
 	void SelectUserSong();
 
-	RString			m_sChatText;
+	RString m_sChatText;
 
 	PacketFunctions	m_SMOnlinePacket;
 
@@ -155,7 +155,7 @@ public:
 
 	RString MD5Hex( const RString &sInput );
 
-	void GetListOfLANServers( vector< NetServerInfo > & AllServers );
+	void GetListOfLANServers( vector<NetServerInfo>& AllServers );
 private:
 #if !defined(WITHOUT_NETWORKING)
 
@@ -169,20 +169,20 @@ private:
 	int m_combo;
     
 	int m_startupStatus;	//Used to see if attempt was successful or not.
-	int	m_iSalt;
+	int m_iSalt;
 
 	bool m_scoreboardchange[NUM_NSScoreBoardColumn];
 
 	RString m_ServerName;
  
-    EzSockets *NetPlayerClient;
+	EzSockets *NetPlayerClient;
 	EzSockets *BroadcastReception;
 
-	vector< NetServerInfo > m_vAllLANServers;
+	vector<NetServerInfo> m_vAllLANServers;
 
 	int m_ServerVersion; //ServerVersion
 
-	bool Listen(unsigned short port);
+	bool Listen( unsigned short port );
 
 	PacketFunctions m_packet;
 #endif

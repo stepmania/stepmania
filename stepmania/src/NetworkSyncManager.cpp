@@ -9,18 +9,18 @@ NetworkSyncManager *NSMAN;
 NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld ) { useSMserver=false; isSMOnline = false; }
 NetworkSyncManager::~NetworkSyncManager () { }
 void NetworkSyncManager::CloseConnection() { }
-void NetworkSyncManager::PostStartUp(const RString& ServerIP ) { }
-bool NetworkSyncManager::Connect(const RString& addy, unsigned short port) { return false; }
+void NetworkSyncManager::PostStartUp( const RString& ServerIP ) { }
+bool NetworkSyncManager::Connect( const RString& addy, unsigned short port ) { return false; }
 RString NetworkSyncManager::GetServerName() { return RString(); }
-void NetworkSyncManager::ReportNSSOnOff(int i) { }
-void NetworkSyncManager::ReportScore(int playerID, int step, int score, int combo, float offset) { }
+void NetworkSyncManager::ReportNSSOnOff( int i ) { }
+void NetworkSyncManager::ReportScore( int playerID, int step, int score, int combo, float offset ) { }
 void NetworkSyncManager::ReportSongOver() { }
 void NetworkSyncManager::ReportStyle() {}
-void NetworkSyncManager::StartRequest(short position) { }
+void NetworkSyncManager::StartRequest( short position ) { }
 void NetworkSyncManager::DisplayStartupStatus() { }
 void NetworkSyncManager::Update( float fDeltaTime ) { }
-bool NetworkSyncManager::ChangedScoreboard(int Column) { return false; }
-void NetworkSyncManager::SendChat(const RString& message) { }
+bool NetworkSyncManager::ChangedScoreboard( int Column ) { return false; }
+void NetworkSyncManager::SendChat( const RString& message ) { }
 void NetworkSyncManager::SelectUserSong() { }
 RString NetworkSyncManager::MD5Hex( const RString &sInput ) { return RString(); }
 int NetworkSyncManager::GetSMOnlineSalt() { return 0; }
@@ -60,13 +60,13 @@ NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
 	BroadcastReception = NULL;
 
 	ld->SetText( INITIALIZING_CLIENT_NETWORK );
-    NetPlayerClient = new EzSockets;
+	NetPlayerClient = new EzSockets;
 	NetPlayerClient->blocking = false;
 	m_ServerVersion = 0;
    
 	useSMserver = false;
 	isSMOnline = false;
-	FOREACH_PlayerNumber(pn)
+	FOREACH_PlayerNumber( pn )
 		isSMOLoggedIn[pn] = false;
 
 	m_startupStatus = 0;	//By default, connection not tried.
@@ -79,8 +79,8 @@ NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
 NetworkSyncManager::~NetworkSyncManager ()
 {
 	//Close Connection to server nicely.
-    if (useSMserver)
-        NetPlayerClient->close();
+	if( useSMserver )
+		NetPlayerClient->close();
 	SAFE_DELETE( NetPlayerClient );
 
 	if ( BroadcastReception ) 
@@ -92,18 +92,18 @@ NetworkSyncManager::~NetworkSyncManager ()
 
 void NetworkSyncManager::CloseConnection()
 {
-	if (!useSMserver)
-		return ;
+	if( !useSMserver )
+		return;
 	m_ServerVersion = 0;
    	useSMserver = false;
 	isSMOnline = false;
-	FOREACH_PlayerNumber(pn)
+	FOREACH_PlayerNumber( pn )
 		isSMOLoggedIn[pn] = false;
 	m_startupStatus = 0;
 	NetPlayerClient->close();
 }
 
-void NetworkSyncManager::PostStartUp(const RString& ServerIP)
+void NetworkSyncManager::PostStartUp( const RString& ServerIP )
 {
 	RString sAddress;
 	short iPort;
@@ -142,7 +142,7 @@ void NetworkSyncManager::PostStartUp(const RString& ServerIP)
 		}
 	}
 
-	FOREACH_PlayerNumber(pn)
+	FOREACH_PlayerNumber( pn )
 		isSMOLoggedIn[pn] = false;
 
 	useSMserver = true;
@@ -156,9 +156,9 @@ void NetworkSyncManager::PostStartUp(const RString& ServerIP)
 
 	m_packet.Write1( NSCHello );	//Hello Packet
 
-	m_packet.Write1(NETPROTOCOLVERSION);
+	m_packet.Write1( NETPROTOCOLVERSION );
 
-	m_packet.WriteNT(RString(PRODUCT_ID_VER)); 
+	m_packet.WriteNT( RString(PRODUCT_ID_VER) );
 
 	//Block until responce is received
 	//Move mode to blocking in order to give CPU back to the 
@@ -170,16 +170,16 @@ void NetworkSyncManager::PostStartUp(const RString& ServerIP)
 
 	//Following packet must get through, so we block for it.
 	//If we are serving we do not block for this.
-	NetPlayerClient->SendPack((char*)m_packet.Data,m_packet.Position);
+	NetPlayerClient->SendPack( (char*)m_packet.Data, m_packet.Position );
 
 	m_packet.ClearPacket();
 
-	while (dontExit)
+	while( dontExit )
 	{
 		m_packet.ClearPacket();
-		if (NetPlayerClient->ReadPack((char *)&m_packet, NETMAXBUFFERSIZE)<1)
+		if( NetPlayerClient->ReadPack((char *)&m_packet, NETMAXBUFFERSIZE)<1 )
 			dontExit=false; // Also allow exit if there is a problem on the socket
-		if (m_packet.Read1() == (NSServerOffset + NSCHello))
+		if( m_packet.Read1() == NSServerOffset + NSCHello )
 			dontExit=false;
 		//Only allow passing on handshake. 
 		//Otherwise scoreboard updates and such will confuse us.
@@ -188,12 +188,12 @@ void NetworkSyncManager::PostStartUp(const RString& ServerIP)
 	NetPlayerClient->blocking = false;
 
 	m_ServerVersion = m_packet.Read1();
-	if ( m_ServerVersion >= 128 )
+	if( m_ServerVersion >= 128 )
 		isSMOnline = true;
 
 	m_ServerName = m_packet.ReadNT();
 	m_iSalt = m_packet.Read4();
-	LOG->Info("Server Version: %d %s", m_ServerVersion, m_ServerName.c_str());
+	LOG->Info( "Server Version: %d %s", m_ServerVersion, m_ServerName.c_str() );
 }
 
 
@@ -202,8 +202,8 @@ void NetworkSyncManager::StartUp()
 	RString ServerIP;
 
 	if( GetCommandlineArgument( "netip", &ServerIP ) )
-		PostStartUp(ServerIP);
-	else if( GetCommandlineArgument( "listen" ) )
+		PostStartUp( ServerIP );
+	else if( GetCommandlineArgument("listen") )
 		PostStartUp("LISTEN");
 
 	BroadcastReception = new EzSockets;
@@ -213,12 +213,12 @@ void NetworkSyncManager::StartUp()
 }
 
 
-bool NetworkSyncManager::Connect(const RString& addy, unsigned short port)
+bool NetworkSyncManager::Connect( const RString& addy, unsigned short port )
 {
-	LOG->Info("Beginning to connect");
+	LOG->Info( "Beginning to connect" );
 
-    NetPlayerClient->create(); // Initialize Socket
-    useSMserver = NetPlayerClient->connect(addy, port);
+	NetPlayerClient->create(); // Initialize Socket
+	useSMserver = NetPlayerClient->connect( addy, port );
     
 	return useSMserver;
 }
@@ -227,16 +227,16 @@ bool NetworkSyncManager::Connect(const RString& addy, unsigned short port)
 //Listen (Wait for connection in-bound)
 //NOTE: Right now, StepMania cannot connect back to StepMania!
 
-bool NetworkSyncManager::Listen(unsigned short port)
+bool NetworkSyncManager::Listen( unsigned short port )
 {
-	LOG->Info("Beginning to Listen");
+	LOG->Info( "Beginning to Listen" );
 
-	EzSockets * EZListener = new EzSockets;
+	EzSockets *EZListener = new EzSockets;
 
 	EZListener->create();
 	NetPlayerClient->create(); // Initialize Socket
 
-	EZListener->bind(8765);
+	EZListener->bind( 8765 );
     
 	useSMserver = EZListener->listen();
 	useSMserver = EZListener->accept( *NetPlayerClient );  //Wait for someone to connect
@@ -254,7 +254,7 @@ void NetworkSyncManager::ReportNSSOnOff(int i)
 	m_packet.ClearPacket();
 	m_packet.Write1( NSCSMS );
 	m_packet.Write1( (uint8_t) i );
-	NetPlayerClient->SendPack((char*)m_packet.Data, m_packet.Position);
+	NetPlayerClient->SendPack( (char*)m_packet.Data, m_packet.Position );
 }
 
 RString NetworkSyncManager::GetServerName() 
@@ -264,61 +264,61 @@ RString NetworkSyncManager::GetServerName()
 
 void NetworkSyncManager::ReportScore(int playerID, int step, int score, int combo, float offset)
 {
-	if (!useSMserver) //Make sure that we are using the network
+	if( !useSMserver ) //Make sure that we are using the network
 		return;
 	
 	m_packet.ClearPacket();
 
 	m_packet.Write1( NSCGSU );
 	uint8_t ctr = (uint8_t) (playerID * 16 + step - ( TNS_HitMine - 1 ) );
-	m_packet.Write1(ctr);
+	m_packet.Write1( ctr );
 
 	ctr = uint8_t( STATSMAN->m_CurStageStats.m_player[playerID].GetGrade()*16 );
 
 	if ( STATSMAN->m_CurStageStats.m_player[playerID].m_bFailed )
 		ctr = uint8_t( 112 );	//Code for failed (failed constant seems not to work)
 
-	m_packet.Write1(ctr);
+	m_packet.Write1( ctr );
 
-	m_packet.Write4(score);
+	m_packet.Write4( score );
 
-	m_packet.Write2((uint16_t) combo);
+	m_packet.Write2( (uint16_t)combo );
 
-	m_packet.Write2((uint16_t) m_playerLife[playerID]);
+	m_packet.Write2( (uint16_t)m_playerLife[playerID] );
 
 	//Offset Info
 	//Note: if a 0 is sent, then disregard data.
 	//
 	//ASSUMED: No step will be more than 16 seconds off center
 	//If assumption false: read 16 seconds either direction
-	int iOffset = int((offset+16.384)*2000.0);
+	int iOffset = int( (offset+16.384)*2000.0f );
 
-	if (iOffset>65535)
+	if( iOffset>65535 )
 		iOffset=65535;
-	if (iOffset<1)
+	if( iOffset<1 )
 		iOffset=1;
 
 	//Report 0 if hold, or miss (don't forget mines should report)
-	if ((step == TNS_Miss) || (step > TNS_W1))
+	if( step == TNS_Miss || step > TNS_W1 )
 		iOffset = 0;
 
-	m_packet.Write2((uint16_t) iOffset);
+	m_packet.Write2( (uint16_t)iOffset );
 
-	NetPlayerClient->SendPack((char*)m_packet.Data, m_packet.Position); 
+	NetPlayerClient->SendPack( (char*)m_packet.Data, m_packet.Position ); 
 
 }
 	
 
 void NetworkSyncManager::ReportSongOver() 
 {
-	if (!useSMserver)	//Make sure that we are using the network
-		return ;
+	if ( !useSMserver )	//Make sure that we are using the network
+		return;
 
 	m_packet.ClearPacket();
 
 	m_packet.Write1( NSCGON );
 
-	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
+	NetPlayerClient->SendPack( (char*)&m_packet.Data, m_packet.Position ); 
 	return;
 }
 
@@ -326,22 +326,22 @@ void NetworkSyncManager::ReportStyle()
 {
 	LOG->Trace( "Sending \"Style\" to server" );
 
-	if (!useSMserver)
+	if( !useSMserver )
 		return;
 	m_packet.ClearPacket();
 	m_packet.Write1( NSCSU );
-	m_packet.Write1( (int8_t) GAMESTATE->GetNumPlayersEnabled() );
+	m_packet.Write1( (int8_t)GAMESTATE->GetNumPlayersEnabled() );
 
 	FOREACH_EnabledPlayer( pn ) 
 	{
-		m_packet.Write1((uint8_t) pn );
-		m_packet.WriteNT(GAMESTATE->GetPlayerDisplayName(pn) );
+		m_packet.Write1( (uint8_t)pn );
+		m_packet.WriteNT( GAMESTATE->GetPlayerDisplayName(pn) );
 	}
 
 	NetPlayerClient->SendPack( (char*)&m_packet.Data, m_packet.Position );
 }
 
-void NetworkSyncManager::StartRequest(short position) 
+void NetworkSyncManager::StartRequest( short position ) 
 {
 	if( !useSMserver )
 		return;
@@ -349,7 +349,7 @@ void NetworkSyncManager::StartRequest(short position)
 	if( GAMESTATE->m_bDemonstrationOrJukebox )
 		return;
 
-	LOG->Trace("Requesting Start from Server.");
+	LOG->Trace( "Requesting Start from Server." );
 
 	m_packet.ClearPacket();
 
@@ -359,57 +359,57 @@ void NetworkSyncManager::StartRequest(short position)
 
 	Steps * tSteps;
 	tSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
-	if ((tSteps!=NULL) && (GAMESTATE->IsPlayerEnabled(PLAYER_1)))
+	if( tSteps!=NULL && GAMESTATE->IsPlayerEnabled(PLAYER_1) )
 		ctr = uint8_t(ctr+tSteps->GetMeter()*16);
 
 	tSteps = GAMESTATE->m_pCurSteps[PLAYER_2];
-	if ((tSteps!=NULL) && (GAMESTATE->IsPlayerEnabled(PLAYER_2)))
-		ctr = uint8_t(ctr+tSteps->GetMeter());
+	if( tSteps!=NULL && GAMESTATE->IsPlayerEnabled(PLAYER_2) )
+		ctr = uint8_t( ctr+tSteps->GetMeter() );
 
-	m_packet.Write1(ctr);
+	m_packet.Write1( ctr );
 
 	ctr=0;
 
 	tSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
-	if ((tSteps!=NULL) && (GAMESTATE->IsPlayerEnabled(PLAYER_1)))
-		ctr = uint8_t(ctr + (int) tSteps->GetDifficulty()*16);
+	if( tSteps!=NULL && GAMESTATE->IsPlayerEnabled(PLAYER_1) )
+		ctr = uint8_t( ctr + (int)tSteps->GetDifficulty()*16 );
 
 	tSteps = GAMESTATE->m_pCurSteps[PLAYER_2];
-	if ((tSteps!=NULL) && (GAMESTATE->IsPlayerEnabled(PLAYER_2)))
-		ctr = uint8_t(ctr + (int) tSteps->GetDifficulty());
+	if( tSteps!=NULL && GAMESTATE->IsPlayerEnabled(PLAYER_2) )
+		ctr = uint8_t( ctr + (int)tSteps->GetDifficulty() );
 
-	m_packet.Write1(ctr);
+	m_packet.Write1( ctr );
 	
 	//Notify server if this is for sync or not.
-	ctr = char(position*16);
-	m_packet.Write1(ctr);
+	ctr = char( position*16 );
+	m_packet.Write1( ctr );
 
-	if (GAMESTATE->m_pCurSong != NULL)
+	if( GAMESTATE->m_pCurSong != NULL )
 	{
-		m_packet.WriteNT(GAMESTATE->m_pCurSong->m_sMainTitle);
-		m_packet.WriteNT(GAMESTATE->m_pCurSong->m_sSubTitle);
-		m_packet.WriteNT(GAMESTATE->m_pCurSong->m_sArtist);
+		m_packet.WriteNT( GAMESTATE->m_pCurSong->m_sMainTitle );
+		m_packet.WriteNT( GAMESTATE->m_pCurSong->m_sSubTitle );
+		m_packet.WriteNT( GAMESTATE->m_pCurSong->m_sArtist );
 	}
 	else
 	{
-		m_packet.WriteNT("");
-		m_packet.WriteNT("");
-		m_packet.WriteNT("");
+		m_packet.WriteNT( "" );
+		m_packet.WriteNT( "" );
+		m_packet.WriteNT( "" );
 	}
 
-	if (GAMESTATE->m_pCurCourse != NULL)
-		m_packet.WriteNT(GAMESTATE->m_pCurCourse->GetDisplayFullTitle());
+	if( GAMESTATE->m_pCurCourse != NULL )
+		m_packet.WriteNT( GAMESTATE->m_pCurCourse->GetDisplayFullTitle() );
 	else
-		m_packet.WriteNT(RString(""));
+		m_packet.WriteNT( RString() );
 
 	//Send Player (and song) Options
 	m_packet.WriteNT( GAMESTATE->m_SongOptions.GetCurrent().GetString() );
 
 	int players=0;
-	FOREACH_PlayerNumber (p)
+	FOREACH_PlayerNumber( p )
 	{
 		++players;
-		m_packet.WriteNT(GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetCurrent().GetString());
+		m_packet.WriteNT( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetCurrent().GetString() );
 	}
 	for (int i=0; i<2-players; ++i)
 		m_packet.WriteNT("");	//Write a NULL if no player
