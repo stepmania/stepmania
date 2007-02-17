@@ -536,7 +536,7 @@ int WheelBase::FirstVisibleIndex()
 {
 	// rewind to first index that will be displayed;
 	int iFirstVisibleIndex = m_iSelection;
-	if( m_iSelection > int(m_CurWheelItemData.size()-1) )
+	if( m_iSelection >= int(m_CurWheelItemData.size()) )
 		m_iSelection = 0;
 	
 	// find the first wheel item shown
