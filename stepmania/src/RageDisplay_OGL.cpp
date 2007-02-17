@@ -410,8 +410,57 @@ RString RageDisplay_OGL::Init( const VideoModeParams &p, bool bAllowUnaccelerate
 	LOG->Info( "OGL Version: %s", glGetString(GL_VERSION) );
 	LOG->Info( "OGL Max texture size: %i", GetMaxTextureSize() );
 	LOG->Info( "OGL Texture units: %i", g_iMaxTextureUnits );
-	LOG->Info( "OGL Extensions: %s", glGetString(GL_EXTENSIONS) );
 	LOG->Info( "GLU Version: %s", gluGetString(GLU_VERSION) );
+
+	/* Pretty-print the extension string: */
+	LOG->Info( "OGL Extensions:" );
+	{
+		const char *szExtensionString = (const char *) glGetString(GL_EXTENSIONS);
+		vector<RString> asExtensions;
+		split( szExtensionString, " ", asExtensions );
+		size_t iNextToPrint = 0;
+		while( iNextToPrint < asExtensions.size() )
+		{
+			size_t iLastToPrint = iNextToPrint;
+			RString sType;
+			for( size_t i = iNextToPrint; i<asExtensions.size(); ++i )
+			{
+				vector<RString> asBits;
+				split( asExtensions[i], "_", asBits );
+				RString sThisType;
+				if( asBits.size() > 2 )
+					sThisType = join( "_", asBits.begin(), asBits.begin()+2 );
+				if( i > iNextToPrint && sThisType != sType )
+					break;
+				sType = sThisType;
+				iLastToPrint = i;
+			}
+
+			if( iNextToPrint == iLastToPrint )
+			{
+				LOG->Info( "  %s", asExtensions[iNextToPrint].c_str() );
+				++iNextToPrint;
+				continue;
+			}
+
+			RString sList = ssprintf( "  %s: ", sType.c_str() );
+			while( iNextToPrint <= iLastToPrint )
+			{
+				vector<RString> asBits;
+				split( asExtensions[iNextToPrint], "_", asBits );
+				RString sShortExt = join( "_", asBits.begin()+2, asBits.end() );
+				sList += sShortExt;
+				if( iNextToPrint < iLastToPrint )
+					sList += ", ";
+				if( iNextToPrint == iLastToPrint || sList.size() + asExtensions[iNextToPrint+1].size() > 120 )
+				{
+					LOG->Info( "%s", sList.c_str() );
+					sList = "    ";
+				}
+				++iNextToPrint;
+			}
+		}
+	}
 
 	if( g_pWind->IsSoftwareRenderer(sError) )
 	{
