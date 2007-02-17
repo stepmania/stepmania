@@ -10,18 +10,17 @@
 struct RoomWheelData : public WheelItemBaseData
 {
 	RoomWheelData() : m_iFlags(0) { WheelItemBaseData::WheelItemBaseData(); }
-	RoomWheelData( WheelItemType wit, const RString& sTitle, const RString& sDesc, RageColor color )
-	 : WheelItemBaseData( wit, sTitle, color ), m_sDesc(sDesc), m_iFlags(0)
-	{};
+	RoomWheelData( WheelItemType wit, const RString& sTitle, const RString& sDesc, RageColor color ):
+		WheelItemBaseData( wit, sTitle, color ), m_sDesc(sDesc), m_iFlags(0) { };
 
-	RString			m_sDesc;
+	RString		m_sDesc;
 	unsigned int	m_iFlags;
 };
 
 class RoomWheelItem : public WheelItemBase
 {
 public:
-	RoomWheelItem(RString sType = "RoomWheelItem");
+	RoomWheelItem( RString sType = "RoomWheelItem" );
 	RoomWheelItem( const RoomWheelItem &cpy );
 
 	void Load( RString sType );
@@ -50,13 +49,13 @@ public:
 	virtual void BuildWheelItemsData( vector<WheelItemBaseData*> &arrayWheelItemDatas );
 	virtual unsigned int GetNumItems() const;
 	virtual bool Select();
-	virtual void Move(int n);
+	virtual void Move( int n );
 
-	inline RoomWheelData* GetItem(unsigned int i) { return (RoomWheelData*)WheelBase::GetItem(i + m_offset); }
-	void AddPerminateItem(RoomWheelData* itemdata);
+	inline RoomWheelData *GetItem( unsigned int i ) { return dynamic_cast<RoomWheelData*>( WheelBase::GetItem(i + m_offset) ); }
+	void AddPerminateItem( RoomWheelData *itemdata );
 	int GetCurrentIndex() const { return m_iSelection; }
 	int GetPerminateOffset() const { return m_offset; }
-	void AddItem( WheelItemBaseData* itemdata );
+	void AddItem( WheelItemBaseData *itemdata );
 	void RemoveItem( int index );
 
 private:

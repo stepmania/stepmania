@@ -11,9 +11,9 @@ AutoScreenMessage( SM_BackFromRoomName )
 AutoScreenMessage( SM_RoomInfoRetract )
 AutoScreenMessage( SM_RoomInfoDeploy )
 
-ThemeMetric<float>				DESC_X;
-ThemeMetric<float>				DESC_Y;
-ThemeMetric<float>				DESC_WIDTH;
+ThemeMetric<float>	DESC_X;
+ThemeMetric<float>	DESC_Y;
+ThemeMetric<float>	DESC_WIDTH;
 
 RoomWheel::~RoomWheel()
 {
@@ -40,8 +40,8 @@ WheelItemBase *RoomWheel::MakeItem()
 	return new RoomWheelItem;
 }
 
-RoomWheelItem::RoomWheelItem( RString sType )
-	:WheelItemBase( sType )
+RoomWheelItem::RoomWheelItem( RString sType ):
+	WheelItemBase( sType )
 {
 	Load( sType );
 }
@@ -55,10 +55,10 @@ RoomWheelItem::RoomWheelItem( const RoomWheelItem &cpy ):
 
 void RoomWheelItem::Load( RString sType )
 {
-	DESC_X				.Load(sType,"DescX");
-	DESC_Y				.Load(sType,"DescY");
-	DESC_WIDTH			.Load(sType,"DescWidth");
-	TEXT_WIDTH			.Load(sType,"TextWidth");
+	DESC_X		.Load(sType,"DescX");
+	DESC_Y		.Load(sType,"DescY");
+	DESC_WIDTH	.Load(sType,"DescWidth");
+	TEXT_WIDTH	.Load(sType,"TextWidth");
 
 	m_text.SetHorizAlign( align_left );
 	m_text.SetMaxWidth(TEXT_WIDTH);
@@ -77,18 +77,16 @@ void RoomWheelItem::Load( RString sType )
 void RoomWheel::BuildWheelItemsData( vector<WheelItemBaseData*> &arrayWheelItemDatas )
 {
 	if( arrayWheelItemDatas.empty() )
-	{
 		arrayWheelItemDatas.push_back( new RoomWheelData(TYPE_GENERIC, "- EMPTY -", "", RageColor(1,0,0,1)) );
-	}
 }
 
-void RoomWheel::AddPerminateItem(RoomWheelData* itemdata)
+void RoomWheel::AddPerminateItem( RoomWheelData *itemdata  )
 {
-	m_offset++;
+	++m_offset;
 	AddItem( itemdata );
 }
 
-void RoomWheel::AddItem( WheelItemBaseData* pItemData )
+void RoomWheel::AddItem( WheelItemBaseData *pItemData )
 {
 	m_CurWheelItemData.push_back( pItemData );
 	int iVisible = FirstVisibleIndex();
@@ -98,14 +96,12 @@ void RoomWheel::AddItem( WheelItemBaseData* pItemData )
 	{
 		m_bEmpty = false;
 		// Remove the - Empty - field when we add an object from an empty state.
-		RemoveItem(0);
+		RemoveItem( 0 );
 	}
 
 	// If the item was shown in the wheel, rebuild the wheel
 	if( 0 <= iIndex - iVisible && iIndex - iVisible < NUM_WHEEL_ITEMS )
-	{
 		RebuildWheelItems();
-	}
 }
 
 void RoomWheel::RemoveItem( int index )
@@ -123,7 +119,7 @@ void RoomWheel::RemoveItem( int index )
 		m_LastSelection = NULL;
 
 	SAFE_DELETE( *i );
-	m_CurWheelItemData.erase(i);
+	m_CurWheelItemData.erase( i );
 
 	if( m_CurWheelItemData.size() < 1 )
 	{
@@ -142,7 +138,7 @@ bool RoomWheel::Select()
 
 	if( m_iSelection > 0 )
 		return WheelBase::Select();
-	else if( m_iSelection == 0 )
+	if( m_iSelection == 0 )
 	{
 		// Since this is not actually an option outside of this wheel, NULL is a good idea.
 		m_LastSelection = NULL;
@@ -151,27 +147,29 @@ bool RoomWheel::Select()
 	return false;
 }
 
-void RoomWheelItem::LoadFromWheelItemData( const WheelItemBaseData* pWID, int iIndex, bool bHasFocus )
+void RoomWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pWID, int iIndex, bool bHasFocus )
 {
-	const RoomWheelData* tmpdata = (RoomWheelData*) pWID;
+	const RoomWheelData *tmpdata = dynamic_cast<const RoomWheelData*>( pWID );
 	WheelItemBase::LoadFromWheelItemData( pWID, iIndex, bHasFocus );
 	m_Desc.SetText( tmpdata->m_sDesc );
 	m_Desc.SetDiffuseColor( pWID->m_color );
 	m_text.SetDiffuseColor( pWID->m_color );
 }
 
-void RoomWheel::Move(int n)
+void RoomWheel::Move( int n )
 {
-	if ((n == 0) && (m_iSelection >= m_offset))
+	if( n == 0 && m_iSelection >= m_offset )
 	{
-		const RoomWheelData* data = GetItem(m_iSelection-m_offset);
-		if (data != NULL)
+		const RoomWheelData* data = GetItem( m_iSelection-m_offset );
+		if( data != NULL )
 			SCREENMAN->PostMessageToTopScreen( SM_RoomInfoDeploy, 0 );
 	}
 	else
+	{
 		SCREENMAN->PostMessageToTopScreen( SM_RoomInfoRetract, 0 );
+	}
 
-	WheelBase::Move(n);
+	WheelBase::Move( n );
 }
 
 unsigned int RoomWheel::GetNumItems() const
