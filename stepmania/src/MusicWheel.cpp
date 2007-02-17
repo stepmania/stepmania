@@ -68,7 +68,7 @@ static SortOrder ForceAppropriateSort( PlayMode pm, SortOrder so )
 	return so;
 }
 
-WheelItemBase *MusicWheel::MakeItem()
+MusicWheelItem *MusicWheel::MakeItem()
 {
 	return new MusicWheelItem;
 }

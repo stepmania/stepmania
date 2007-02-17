@@ -51,7 +51,7 @@ public:
 	void FinishChangingSorts();
 
 protected:
-	WheelItemBase *MakeItem();
+	MusicWheelItem *MakeItem();
 
 	void GetSongList( vector<Song*> &arraySongs, SortOrder so, const RString &sPreferredGroup );
 	void BuildWheelItemDatas( vector<WheelItemData *> &arrayWheelItems, SortOrder so );
