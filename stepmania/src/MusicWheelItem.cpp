@@ -75,7 +75,6 @@ MusicWheelItem::MusicWheelItem( RString sType ):
 	m_textRoulette.LoadFromFont( THEME->GetPathF(sType,"roulette") );
 	ActorUtil::SetXY( m_textRoulette, "MusicWheelItem" );
 	m_textRoulette.SetShadowLength( 0 );
-	m_textRoulette.SetRainbow( true );
 	m_textRoulette.PlayCommand( "On" );
 	this->AddChild( &m_textRoulette );
 
