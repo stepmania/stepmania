@@ -4,9 +4,8 @@
 #include "SongManager.h"
 #include "GameManager.h"
 #include "PrefsManager.h"
-#include "ScreenManager.h"	// for sending SM_PlayMusicSample
+#include "ScreenManager.h"
 #include "RageLog.h"
-#include "GameConstantsAndTypes.h"
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "song.h"
@@ -19,7 +18,6 @@
 #include "CourseUtil.h"
 #include "Foreach.h"
 #include "Style.h"
-#include "ThemeMetric.h"
 #include "PlayerState.h"
 
 static Preference<bool> g_bMoveRandomToEnd( "MoveRandomToEnd", false );

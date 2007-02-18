@@ -3,14 +3,8 @@
 #ifndef MUSIC_WHEEL_H
 #define MUSIC_WHEEL_H
 
-#include "AutoActor.h"
-#include "ActorFrame.h"
 #include "RageSound.h"
 #include "GameConstantsAndTypes.h"
-#include "ScreenMessage.h"
-#include "ScoreDisplayNormal.h"
-#include "ScrollBar.h"
-#include "RageTimer.h"
 #include "MusicWheelItem.h"
 #include "ThemeMetric.h"
 #include "WheelBase.h"
