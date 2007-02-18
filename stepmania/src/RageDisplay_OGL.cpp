@@ -284,10 +284,7 @@ GLhandleARB CompileShader( GLenum ShaderType, RString sBuffer )
 	return VertexShader;
 }
 
-enum
-{
-	ATTRIB_TEXTURE_MATRIX_SCALE = 1
-};
+int g_iAttribTextureMatrixScale;
 
 /* XXX: How should we include these?  Doing them like this is ugly.  Linking them in
  * from another file as a text symbol would be ideal, but that's completely different
@@ -323,9 +320,6 @@ void InitScalingScript()
 	GLExt.glAttachObjectARB( g_bTextureMatrixShader, VertexShader );
 	GLExt.glDeleteObjectARB( VertexShader );
 
-	// Bind attributes.
-	GLExt.glBindAttribLocationARB( g_bTextureMatrixShader, ATTRIB_TEXTURE_MATRIX_SCALE, "TextureMatrixScale" );
-
 	// Link the program.
 	GLExt.glLinkProgramARB( g_bTextureMatrixShader );
 	GLint bLinkStatus = false;
@@ -338,7 +332,17 @@ void InitScalingScript()
 		return;
 	}
 
-	GLExt.glVertexAttrib2fARB( ATTRIB_TEXTURE_MATRIX_SCALE, 1, 1 );
+	// Bind attributes.
+	g_iAttribTextureMatrixScale = GLExt.glGetAttribLocationARB( g_bTextureMatrixShader, "TextureMatrixScale" );
+	if( g_iAttribTextureMatrixScale == -1 )
+	{
+		LOG->Trace( "Scaling shader link failed: couldn't bind attribute \"TextureMatrixScale\"" );
+		GLExt.glDeleteObjectARB( g_bTextureMatrixShader );
+		g_bTextureMatrixShader = 0;
+		return;
+	}
+
+	GLExt.glVertexAttrib2fARB( g_iAttribTextureMatrixScale, 1, 1 );
 }
 
 const GLcharARB *g_ColorBurnFragmentShader = " \
@@ -1220,11 +1224,11 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 			/* If we're using texture matrix scales, set up that buffer, too, and enable the
 			 * vertex shader.  This shader doesn't support all OpenGL state, so only enable it
 			 * if we're using it. */
-			GLExt.glEnableVertexAttribArrayARB( ATTRIB_TEXTURE_MATRIX_SCALE );
+			GLExt.glEnableVertexAttribArrayARB( g_iAttribTextureMatrixScale );
 			AssertNoGLError();
 			GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureMatrixScale );
 			AssertNoGLError();
-			GLExt.glVertexAttribPointerARB( ATTRIB_TEXTURE_MATRIX_SCALE, 2, GL_FLOAT, false, 0, NULL );
+			GLExt.glVertexAttribPointerARB( g_iAttribTextureMatrixScale, 2, GL_FLOAT, false, 0, NULL );
 			AssertNoGLError();
 
 			GLExt.glUseProgramObjectARB( g_bTextureMatrixShader );
@@ -1275,7 +1279,7 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 
 	if( meshInfo.m_bNeedsTextureMatrixScale && g_bTextureMatrixShader != 0 )
 	{
-		GLExt.glDisableVertexAttribArrayARB( ATTRIB_TEXTURE_MATRIX_SCALE );
+		GLExt.glDisableVertexAttribArrayARB( g_iAttribTextureMatrixScale );
 		GLExt.glUseProgramObjectARB( 0 );
 	}
 }
