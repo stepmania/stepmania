@@ -214,6 +214,7 @@ void GLExt_t::Load( LowLevelWindow *pWind )
 		func_t funcs[] =
 		{
 			F( glBindAttribLocationARB ),
+			F( glGetAttribLocationARB ),
 			{ NULL, NULL }
 		};
 		if( !LoadAllOrNothing(funcs, pWind) )

@@ -123,6 +123,7 @@ struct GLExt_t
 	bool m_bGL_ARB_vertex_shader;
 	bool m_bGL_ARB_fragment_shader;
 	PFNGLBINDATTRIBLOCATIONARBPROC glBindAttribLocationARB;
+	PFNGLGETATTRIBLOCATIONARBPROC glGetAttribLocationARB;
 
 	bool m_bGL_ARB_shading_language_100;
 	int m_iShadingLanguageVersion; /* * 100 */
