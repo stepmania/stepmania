@@ -97,7 +97,7 @@ vector<MusicToPlay> g_MusicsToPlay;
 static void StartMusic( MusicToPlay &ToPlay )
 {
 	LockMutex L( *g_Mutex );
-	if( g_Playing->m_Music->IsPlaying() && !g_Playing->m_Music->GetLoadedFilePath().CompareNoCase(ToPlay.m_sFile) )
+	if( g_Playing->m_Music->IsPlaying() && g_Playing->m_Music->GetLoadedFilePath().EqualsNoCase(ToPlay.m_sFile) )
 		return;
 
 	/* We're changing or stopping the music.  If we were dimming, reset. */
