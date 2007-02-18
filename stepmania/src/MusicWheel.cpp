@@ -26,7 +26,7 @@ static Preference<bool> g_bMoveRandomToEnd( "MoveRandomToEnd", false );
 #define WHEEL_TEXT(s)             THEME->GetString( "MusicWheel", ssprintf("%sText",s.c_str()) );
 
 static RString SECTION_COLORS_NAME( size_t i )	{ return ssprintf("SectionColor%d",int(i+1)); }
-static RString CHOICE_NAME( RString s )			{ return ssprintf("Choice%s",s.c_str()); }
+static RString CHOICE_NAME( RString s )		{ return ssprintf("Choice%s",s.c_str()); }
 
 AutoScreenMessage( SM_SongChanged )          // TODO: Replace this with a Message and MESSAGEMAN
 AutoScreenMessage( SM_SortOrderChanging );
@@ -48,7 +48,7 @@ static SortOrder ForceAppropriateSort( PlayMode pm, SortOrder so )
 	switch( pm )
 	{
 	// in course modes, force a particular sort
-	case PLAY_MODE_ONI:		return SORT_ONI_COURSES;
+	case PLAY_MODE_ONI:	return SORT_ONI_COURSES;
 	case PLAY_MODE_NONSTOP:	return SORT_NONSTOP_COURSES;
 	case PLAY_MODE_ENDLESS:	return SORT_ENDLESS_COURSES;
 	}
@@ -226,7 +226,7 @@ bool MusicWheel::SelectSection( const RString & SectionName )
 
 bool MusicWheel::SelectSong( const Song *p )
 {
-	if(p == NULL)
+	if( p == NULL )
 		return false;
 
 	unsigned i;
@@ -254,7 +254,7 @@ bool MusicWheel::SelectSong( const Song *p )
 
 bool MusicWheel::SelectCourse( const Course *p )
 {
-	if(p == NULL)
+	if( p == NULL )
 		return false;
 
 	unsigned i;
@@ -310,7 +310,7 @@ bool MusicWheel::SelectModeMenuItem()
 	return true;
 }
 
-void MusicWheel::GetSongList(vector<Song*> &arraySongs, SortOrder so, const RString &sPreferredGroup )
+void MusicWheel::GetSongList( vector<Song*> &arraySongs, SortOrder so, const RString &sPreferredGroup )
 {
 	vector<Song*> apAllSongs;
 	switch( so )
@@ -394,7 +394,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData *> &arrayWheelItemDat
 				wid.m_pAction = HiddenPtr<GameCommand>( new GameCommand );
 				wid.m_pAction->m_sName = vsNames[i];
 				wid.m_pAction->Load( i, ParseCommands(CHOICE.GetValue(vsNames[i])) );
-				wid.m_sLabel = WHEEL_TEXT(vsNames[i]);
+				wid.m_sLabel = WHEEL_TEXT( vsNames[i] );
 
 				if( !wid.m_pAction->IsPlayable() )
 					continue;
@@ -422,7 +422,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData *> &arrayWheelItemDat
 			///////////////////////////////////
 			vector<Song*> arraySongs;
 			
-			GetSongList(arraySongs, so, GAMESTATE->m_sPreferredSongGroup );
+			GetSongList( arraySongs, so, GAMESTATE->m_sPreferredSongGroup );
 
 			bool bUseSections = true;
 
@@ -700,9 +700,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData *> &arrayWheelItemDat
 	}
 
 	if( arrayWheelItemDatas.empty() )
-	{
 		arrayWheelItemDatas.push_back( new WheelItemData(TYPE_SECTION, NULL, "- EMPTY -", NULL, RageColor(1,0,0,1)) );
-	}
 }
 
 void MusicWheel::UpdateSwitch()
