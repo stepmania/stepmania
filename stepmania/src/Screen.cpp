@@ -206,6 +206,8 @@ RString Screen::GetNextScreen() const
 
 RString Screen::GetPrevScreen() const
 {
+	if( SCREENMAN->IsStackedScreen(this) )
+		return "--Stacked Screen--";
 	return PREV_SCREEN;
 }
 
