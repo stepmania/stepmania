@@ -31,7 +31,7 @@ public:
 	virtual bool EarlyAbortDraw() const;
 	virtual void DrawPrimitives();
 
-	void SetRainbow( bool b )	{ m_bRainbow = b; }
+	void SetRainbowScroll( bool b )	{ m_bRainbowScroll = b; }
 	void SetJitter( bool b )	{ m_bJitter = b; }
 
 	void SetHorizAlign( HorizAlign ha );
@@ -58,7 +58,7 @@ protected:
 	int			m_iWrapWidthPixels;	// -1 = no wrap
 	float			m_fMaxWidth;
 	float			m_fMaxHeight;
-	bool			m_bRainbow;
+	bool			m_bRainbowScroll;
 	bool			m_bJitter;
 	int			m_iVertSpacing;
 

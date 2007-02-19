@@ -201,7 +201,7 @@ void MusicWheelItem::LoadFromWheelItemData( const WheelItemBaseData *pWIBD, int 
 
 		bt->SetText( sDisplayName, sTranslitName );
 		bt->SetDiffuse( data->m_color );
-		bt->SetRainbow( false );
+		bt->SetRainbowScroll( false );
 		bt->SetVisible( true );
 		break;
 	}

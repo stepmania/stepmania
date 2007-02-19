@@ -44,7 +44,7 @@ BitmapText::BitmapText()
 
 	m_pFont = NULL;
 
-	m_bRainbow = false;
+	m_bRainbowScroll = false;
 	m_bJitter = false;
 
 	m_iWrapWidthPixels = -1;
@@ -77,7 +77,7 @@ BitmapText &BitmapText::operator =( const BitmapText &cpy )
 	CPY( m_iWrapWidthPixels );
 	CPY( m_fMaxWidth );
 	CPY( m_fMaxHeight );
-	CPY( m_bRainbow );
+	CPY( m_bRainbowScroll );
 	CPY( m_bJitter );
 	CPY( m_iVertSpacing );
 	CPY( m_aVertices );
@@ -539,7 +539,7 @@ void BitmapText::DrawPrimitives()
 		//
 		// render the diffuse pass
 		//
-		if( m_bRainbow )
+		if( m_bRainbowScroll )
 		{
 			int color_index = int(RageTimer::GetTimeSinceStartFast() / 0.200) % NUM_RAINBOW_COLORS;
 			for( unsigned i=0; i<m_aVertices.size(); i+=4 )
@@ -903,6 +903,7 @@ public:
 
 		p->SetText( s ); return 0;
 	}
+	static int rainbowscroll( T* p, lua_State *L )		{ p->SetRainbowScroll( BArg(1) ); return 0; }
 	static int jitter( T* p, lua_State *L )			{ p->SetJitter( BArg(1) ); return 0; }
 	static int GetText( T* p, lua_State *L )		{ lua_pushstring( L, p->GetText() ); return 1; }
 
@@ -913,6 +914,7 @@ public:
 		ADD_METHOD( maxheight );
 		ADD_METHOD( vertspacing );
 		ADD_METHOD( settext );
+		ADD_METHOD( rainbowscroll );
 		ADD_METHOD( jitter );
 		ADD_METHOD( GetText );
 	}
