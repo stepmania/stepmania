@@ -4,6 +4,7 @@
 #include "RageDisplay_OGL_Helpers.h"
 using namespace RageDisplay_OGL_Helpers;
 
+#include "RageFile.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
 #include "RageUtil.h"
@@ -260,140 +261,124 @@ RString GetInfoLog( GLhandleARB h )
 	GLExt.glGetInfoLogARB( h, iLength, &iLength, pInfoLog );
 	RString sRet = pInfoLog;
 	delete [] pInfoLog;
+	TrimRight( sRet );
 	return sRet;
 }
 
-GLhandleARB CompileShader( GLenum ShaderType, RString sBuffer )
+GLhandleARB CompileShader( GLenum ShaderType, RString sFile, vector<RString> asDefines )
 {
-	GLhandleARB VertexShader = GLExt.glCreateShaderObjectARB( ShaderType );
-	const GLcharARB *pData = sBuffer.data();
-	int iLength = sBuffer.size();
-	GLExt.glShaderSourceARB( VertexShader, 1, &pData, (GLint*)&iLength );
+	RString sBuffer;
+	{
+		RageFile file;
+		if( !file.Open(sFile) )
+		{
+			LOG->Warn( "Error compiling shader %s: %s", sFile.c_str(), file.GetError().c_str() );
+			return 0;
+		}
+		
+		if( file.Read(sBuffer, file.GetFileSize()) == -1 )
+		{
+			LOG->Warn( "Error compiling shader %s: %s", sFile.c_str(), file.GetError().c_str() );
+			return 0;
+		}
+	}
 
-	GLExt.glCompileShaderARB( VertexShader );
+	LOG->Trace( "Compiling shader %s", sFile.c_str() );
+	GLhandleARB hShader = GLExt.glCreateShaderObjectARB( ShaderType );
+	vector<const GLcharARB *> apData;
+	vector<GLint> aiLength;
+	FOREACH( RString, asDefines, s )
+	{
+		*s = ssprintf( "#define %s\n", s->c_str() );
+		apData.push_back( s->data() );
+		aiLength.push_back( s->size() );
+	}
+	apData.push_back( "#line 1\n" );
+	aiLength.push_back( 8 );
+
+	apData.push_back( sBuffer.data() );
+	aiLength.push_back( sBuffer.size() );
+	GLExt.glShaderSourceARB( hShader, apData.size(), &apData[0], &aiLength[0] );
+
+	GLExt.glCompileShaderARB( hShader );
+
+	RString sInfo = GetInfoLog( hShader );
 
 	GLint bCompileStatus  = GL_FALSE;
-	GLExt.glGetObjectParameterivARB( VertexShader, GL_OBJECT_COMPILE_STATUS_ARB, &bCompileStatus );
-
+	GLExt.glGetObjectParameterivARB( hShader, GL_OBJECT_COMPILE_STATUS_ARB, &bCompileStatus );
 	if( !bCompileStatus )
 	{
-		LOG->Trace( "Compile failure: %s", GetInfoLog( VertexShader ).c_str() );
+		LOG->Warn( "Error compiling shader %s:\n%s", sFile.c_str(), sInfo.c_str() );
+		GLExt.glDeleteObjectARB( hShader );
 		return 0;
 	}
 
-	return VertexShader;
+	if( !sInfo.empty() )
+		LOG->Trace( "Messages compiling shader %s:\n%s", sFile.c_str(), sInfo.c_str() );
+
+	return hShader;
 }
 
-int g_iAttribTextureMatrixScale;
-
-/* XXX: How should we include these?  Doing them like this is ugly.  Linking them in
- * from another file as a text symbol would be ideal, but that's completely different
- * on each platform, so it'd be a maintenance nightmare.  Reading them from a file would
- * be annoying, too. */
-const GLcharARB *g_TextureMatrixScaleShader =
-" \
-attribute vec4 TextureMatrixScale; \
-void main( void ) \
-{ \
-	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex; \
-	vec4 multiplied_tex_coord = gl_TextureMatrix[0] * gl_MultiTexCoord0; \
-	gl_TexCoord[0] = (multiplied_tex_coord * TextureMatrixScale) + \
-					(gl_MultiTexCoord0 * (vec4(1)-TextureMatrixScale)); \
-	gl_FrontColor = gl_Color; \
-} \
-";
-
-void InitScalingScript()
+GLhandleARB LoadShader( GLenum ShaderType, RString sFile, vector<RString> asDefines )
 {
-	g_bTextureMatrixShader = 0;
+	if( !GLExt.m_bGL_ARB_fragment_shader && ShaderType == GL_FRAGMENT_SHADER_ARB )
+		return 0;
+	if( !GLExt.m_bGL_ARB_vertex_shader && ShaderType == GL_VERTEX_SHADER_ARB )
+		return 0;
 
-	if( !GLExt.m_bGL_ARB_shader_objects ||
-		!GLExt.m_bGL_ARB_vertex_shader ||
-		!GLExt.m_bGL_ARB_shading_language_100 )
-		return;
+	GLhandleARB hShader = CompileShader( ShaderType, sFile, asDefines );
+	if( hShader == 0 )
+		return 0;
 
-	GLhandleARB VertexShader = CompileShader( GL_VERTEX_SHADER_ARB, g_TextureMatrixScaleShader );
-	if( VertexShader == 0 )
-		return;
-
-	g_bTextureMatrixShader = GLExt.glCreateProgramObjectARB();
-	GLExt.glAttachObjectARB( g_bTextureMatrixShader, VertexShader );
-	GLExt.glDeleteObjectARB( VertexShader );
+	GLhandleARB hProgram = GLExt.glCreateProgramObjectARB();
+	GLExt.glAttachObjectARB( hProgram, hShader );
+	GLExt.glDeleteObjectARB( hShader );
 
 	// Link the program.
-	GLExt.glLinkProgramARB( g_bTextureMatrixShader );
+	GLExt.glLinkProgramARB( hProgram );
 	GLint bLinkStatus = false;
-	GLExt.glGetObjectParameterivARB( g_bTextureMatrixShader, GL_OBJECT_LINK_STATUS_ARB, &bLinkStatus );
+	GLExt.glGetObjectParameterivARB( hProgram, GL_OBJECT_LINK_STATUS_ARB, &bLinkStatus );
 
 	if( !bLinkStatus )
 	{
-		LOG->Trace( "Scaling shader link failed: %s", GetInfoLog(g_bTextureMatrixShader).c_str() );
-		GLExt.glDeleteObjectARB( g_bTextureMatrixShader );
-		return;
+		LOG->Warn( "Error linking shader %s: %s", sFile.c_str(), GetInfoLog(hProgram).c_str() );
+		GLExt.glDeleteObjectARB( hProgram );
+		return 0;
 	}
-
-	// Bind attributes.
-	g_iAttribTextureMatrixScale = GLExt.glGetAttribLocationARB( g_bTextureMatrixShader, "TextureMatrixScale" );
-	if( g_iAttribTextureMatrixScale == -1 )
-	{
-		LOG->Trace( "Scaling shader link failed: couldn't bind attribute \"TextureMatrixScale\"" );
-		GLExt.glDeleteObjectARB( g_bTextureMatrixShader );
-		g_bTextureMatrixShader = 0;
-		return;
-	}
-
-	GLExt.glVertexAttrib2fARB( g_iAttribTextureMatrixScale, 1, 1 );
+	return hProgram;
 }
 
-const GLcharARB *g_ColorBurnFragmentShader = " \
-uniform sampler2D Texture1; \
-uniform sampler2D Texture2; \
-void main(void) \
-{ \
-	vec4 color1 = texture2DProj( Texture1, gl_TexCoord[0] ); \
-	vec4 color2 = texture2DProj( Texture2, gl_TexCoord[0] ); \
-	\
-	/* Threshold to prevent division by zero: */ \
-	vec4 threshold = vec4(0.00001, 0.00001, 0.00001, 0.00001); \
-	vec4 color = 1-((1-color1) / max(color2, threshold)); \
-	color = (color * color1[3]) + (color2 * (1-color1[3]) ); \
-	color[3] = color2[3]; \
-	gl_FragColor = color; \
-} \
-";
+static int g_iAttribTextureMatrixScale;
 
 static GLhandleARB g_bColorBurnShader = 0;
-void InitColorBurnScript()
+static GLhandleARB g_bColorDodgeShader = 0;
+static GLhandleARB g_bVividLightShader = 0;
+static GLhandleARB g_hHardMixShader = 0;
+
+void InitShaders()
 {
-	g_bColorBurnShader = 0;
+	vector<RString> asDefines;
+	g_bTextureMatrixShader = LoadShader( GL_VERTEX_SHADER_ARB, "Data/Shaders/GLSL/Texture matrix scaling.vert", asDefines );
+	g_bColorBurnShader = LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Color burn.frag", asDefines );
+	g_bColorDodgeShader = LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Color dodge.frag", asDefines );
+	g_bVividLightShader = LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Vivid light.frag", asDefines );
+	g_hHardMixShader = LoadShader( GL_FRAGMENT_SHADER_ARB, "Data/Shaders/GLSL/Hard mix.frag", asDefines );
 
-	if( !GLExt.m_bGL_ARB_shader_objects ||
-		!GLExt.m_bGL_ARB_fragment_shader ||
-		!GLExt.m_bGL_ARB_shading_language_100 )
-		return;
-
-	GLhandleARB FragmentShader = CompileShader( GL_FRAGMENT_SHADER_ARB, g_ColorBurnFragmentShader );
-	if( FragmentShader == 0 )
+	// Bind attributes.
+	if( g_bTextureMatrixShader )
 	{
-		GLExt.glDeleteObjectARB( FragmentShader );
-		return;
-	}
-	AssertNoGLError();
-
-	g_bColorBurnShader = GLExt.glCreateProgramObjectARB();
-	GLExt.glAttachObjectARB( g_bColorBurnShader, FragmentShader );
-	GLExt.glDeleteObjectARB( FragmentShader );
-
-	// Link the program.
-	GLExt.glLinkProgramARB( g_bColorBurnShader );
-	GLint bLinkStatus = false;
-	GLExt.glGetObjectParameterivARB( g_bColorBurnShader, GL_OBJECT_LINK_STATUS_ARB, &bLinkStatus );
-
-	if( !bLinkStatus )
-	{
-		LOG->Trace( "Color burn shader link failed: %s", GetInfoLog(g_bColorBurnShader).c_str() );
-		GLExt.glDeleteObjectARB( g_bColorBurnShader );
-		return;
+		g_iAttribTextureMatrixScale = GLExt.glGetAttribLocationARB( g_bTextureMatrixShader, "TextureMatrixScale" );
+		if( g_iAttribTextureMatrixScale == -1 )
+		{
+			LOG->Trace( "Scaling shader link failed: couldn't bind attribute \"TextureMatrixScale\"" );
+			GLExt.glDeleteObjectARB( g_bTextureMatrixShader );
+			g_bTextureMatrixShader = 0;
+		}
+		else
+		{
+			GLExt.glVertexAttrib2fARB( g_iAttribTextureMatrixScale, 1, 1 );
+			AssertNoGLError();
+		}
 	}
 }
 
@@ -422,7 +407,6 @@ RString RageDisplay_OGL::Init( const VideoModeParams &p, bool bAllowUnaccelerate
 		const char *szExtensionString = (const char *) glGetString(GL_EXTENSIONS);
 		vector<RString> asExtensions;
 		split( szExtensionString, " ", asExtensions );
-		sort( asExtensions.begin(), asExtensions.end() );
 		size_t iNextToPrint = 0;
 		while( iNextToPrint < asExtensions.size() )
 		{
@@ -707,8 +691,7 @@ RString RageDisplay_OGL::TryVideoMode( const VideoModeParams &p, bool &bNewDevic
 		/* Recreate all vertex buffers. */
 		InvalidateAllGeometry();
 
-		InitScalingScript();
-		InitColorBurnScript();
+		InitShaders();
 	}
 
 	/* Set vsync the Windows way, if we can.  (What other extensions are there
@@ -826,6 +809,14 @@ static void SetupVertices( const RageSpriteVertex v[], int iNumVerts )
 
 	glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 	glTexCoordPointer( 2, GL_FLOAT, 0, Texture );
+
+	if( GLExt.glClientActiveTextureARB != NULL )
+	{
+		GLExt.glClientActiveTextureARB( GL_TEXTURE1_ARB ); 
+		glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+		glTexCoordPointer( 2, GL_FLOAT, 0, Texture );
+		GLExt.glClientActiveTextureARB( GL_TEXTURE0_ARB ); 
+	}
 
 	glEnableClientState( GL_NORMAL_ARRAY );
 	glNormalPointer( GL_FLOAT, 0, Normal );
@@ -1554,35 +1545,39 @@ void RageDisplay_OGL::SetTextureFiltering( TextureUnit tu, bool b )
 
 void RageDisplay_OGL::SetEffectMode( EffectMode effect )
 {
+	if( GLExt.glUseProgramObjectARB == NULL )
+		return;
+
+	GLhandleARB hShader = 0;
 	switch( effect )
 	{
-	case EffectMode_Normal:
-		if( GLExt.glUseProgramObjectARB != NULL )
-			GLExt.glUseProgramObjectARB( 0 );
-		break;
-	case EffectMode_ColorBurn:
-		if( !g_bColorBurnShader )
-			break; // unsupported
-
-		FlushGLErrors();
-		GLExt.glUseProgramObjectARB( g_bColorBurnShader );
-		GLint g_bColorBurnShaderTexture1 = GLExt.glGetUniformLocationARB( g_bColorBurnShader, "Texture1" );
-		GLint g_bColorBurnShaderTexture2 = GLExt.glGetUniformLocationARB( g_bColorBurnShader, "Texture2" );
-		GLExt.glUniform1iARB( g_bColorBurnShaderTexture1, 0 );
-		GLExt.glUniform1iARB( g_bColorBurnShaderTexture2, 1 );
-		AssertNoGLError();
-		break;
+	case EffectMode_Normal:		hShader = 0; break;
+	case EffectMode_ColorBurn:	hShader = g_bColorBurnShader; break;
+	case EffectMode_ColorDodge:	hShader = g_bColorDodgeShader; break;
+	case EffectMode_VividLight:	hShader = g_bVividLightShader; break;
+	case EffectMode_HardMix:	hShader = g_hHardMixShader; break;
 	}
+
+	FlushGLErrors();
+	GLExt.glUseProgramObjectARB( hShader );
+	if( hShader == 0 )
+		return;
+	GLint iTexture1 = GLExt.glGetUniformLocationARB( hShader, "Texture1" );
+	GLint iTexture2 = GLExt.glGetUniformLocationARB( hShader, "Texture2" );
+	GLExt.glUniform1iARB( iTexture1, 0 );
+	GLExt.glUniform1iARB( iTexture2, 1 );
+	AssertNoGLError();
 }
 
 bool RageDisplay_OGL::IsEffectModeSupported( EffectMode effect )
 {
 	switch( effect )
 	{
-	case EffectMode_Normal:
-		return true;
-	case EffectMode_ColorBurn:
-		return g_bColorBurnShader != 0;
+	case EffectMode_Normal:		return true;
+	case EffectMode_ColorBurn:	return g_bColorBurnShader != 0;
+	case EffectMode_ColorDodge:	return g_bColorDodgeShader != 0;
+	case EffectMode_VividLight:	return g_bVividLightShader != 0;
+	case EffectMode_HardMix:	return g_hHardMixShader != 0;
 	}
 
 	return false;

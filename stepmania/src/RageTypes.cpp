@@ -96,8 +96,11 @@ static const char *EffectModeNames[] =
 	/* Normal blending.  All supported texture modes have their standard effects. */
 	"Normal",
 
-	/* Color burn blending. */
+	/* Layered blending. */
 	"ColorBurn",
+	"ColorDodge",
+	"VividLight",
+	"HardMix",
 };
 XToString( EffectMode );
 LuaXType( EffectMode );

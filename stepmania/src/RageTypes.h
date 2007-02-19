@@ -38,6 +38,9 @@ enum EffectMode
 {
 	EffectMode_Normal,
 	EffectMode_ColorBurn,
+	EffectMode_ColorDodge,
+	EffectMode_VividLight,
+	EffectMode_HardMix,
 	NUM_EffectMode,
 	EffectMode_Invalid
 };
