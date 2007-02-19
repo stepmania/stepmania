@@ -118,7 +118,6 @@ void ScreenSelectMusic::Init()
 
 	// this is loaded SetSong and TweenToSong
 	m_Banner.SetName( "Banner" );
-	m_Banner.SetZTestMode( ZTEST_WRITE_ON_PASS );	// do have to pass the z test
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_Banner );
 	this->AddChild( &m_Banner );
 
