@@ -193,7 +193,7 @@ void ScreenTextEntry::Input( const InputEventPlus &input )
 	else if( input.type == IET_FIRST_PRESS )
 	{
 		wchar_t c = INPUTMAN->DeviceInputToChar(input.DeviceI,true);
-		if( c >= ' ' ) 
+		if( c >= L' ' ) 
 		{
 			TryAppendToAnswer( WStringToRString(wstring()+c) );
 
