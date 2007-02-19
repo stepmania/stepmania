@@ -202,6 +202,7 @@ conf = Configure(env, custom_tests = {
 	'CstdlibLlabsTest' : CstdlibLlabsTest })
 
 Lights = [
+	"arch/Lights/LightsDriver.cpp",
 	"arch/Lights/LightsDriver_SystemMessage.cpp",
 ]
 
@@ -210,7 +211,7 @@ if cpuTypeI == 1:
 	env.Append(CPPDEFINES=["CPU_X86"])
 	if env['PLATFORM'] == 'posix':
 		# NOPORT: Again, assuming Linux
-		env.Append(CPPDEFINES=["BACKTRACE_METHOD_X86_LINUX"])
+		env.Append(CPPDEFINES=["BACKTRACE_METHOD_X86_LINUX", "LUA_USE_LINUX"])
 		Lights += [ "arch/Lights/LightsDriver_LinuxWeedTech.cpp", "arch/Lights/LightsDriver_LinuxParallel.cpp" ]
 elif cpuTypeI == 2:
 	env.Append(CPPDEFINES=["CPU_PPC"])
@@ -326,6 +327,8 @@ DataStructures = [
 	"GameCommand.cpp",
 	"GameConstantsAndTypes.cpp",
 	"GameInput.cpp",
+	"GameplayAssist.cpp",
+	"GamePreferences.cpp",
 	"Grade.cpp", 
 	"HighScore.cpp",
 	"Inventory.cpp",
@@ -333,7 +336,6 @@ DataStructures = [
 	"LuaReference.cpp",
 	"LuaExpressionTransform.cpp",
 	"LyricsLoader.cpp",
-	"MenuInput.cpp",
 	"ModsGroup.cpp",
 	"NoteData.cpp",
 	"NoteDataUtil.cpp",
@@ -358,14 +360,17 @@ DataStructures = [
 	"RadarValues.cpp",
 	"RoomInfoDisplay.cpp",
 	"RoomWheel.cpp",
+	"SampleHistory.cpp",
 	"ScreenDimensions.cpp",
 	"ScoreKeeper.cpp",
+	"ScoreKeeperGuitar.cpp",
 	"ScoreKeeperNormal.cpp",
 	"ScoreKeeperRave.cpp",
 	"Song.cpp",
 	"SongCacheIndex.cpp",
 	"SongOptions.cpp",
 	"SongUtil.cpp",
+	"SoundEffectControl.cpp",
 	"StageStats.cpp",
 	"Steps.cpp",
 	"StepsUtil.cpp",
@@ -391,9 +396,11 @@ StepMania = [
 	"GameLoop.cpp",
 	"global.cpp",
 	"SpecialFiles.cpp",
+	"arch/RageDriver.cpp",
 ]
 
 Sound = [
+	"arch/Sound/RageSoundDriver.cpp",
 	"arch/Sound/RageSoundDriver_Null.cpp",
 	"arch/Sound/RageSoundDriver_Generic_Software.cpp",
 ]
@@ -404,6 +411,7 @@ MemoryCard = [
 
 Dialog = [
 	"arch/Dialog/Dialog.cpp",
+	"arch/Dialog/DialogDriver.cpp",
 ]
 
 RageSoundFileReaders = [
@@ -425,9 +433,14 @@ InputHandler = [
 	"arch/InputHandler/InputHandler_MonkeyKeyboard.cpp",
 ]
 
-LowLevelWindow = []
+LoadingWindow = [
+	"arch/LoadingWindow/LoadingWindow.cpp",
+]
+
+LowLevelWindow = [
+	"arch/LowLevelWindow/LowLevelWindow.cpp",
+]
 Threads = []
-LoadingWindow = []
 ArchUtils = []
 
 # # # Detection stuff here, it's easiest
@@ -514,8 +527,7 @@ if env['PLATFORM'] == 'posix':
 		env.Append(CPPDEFINES=["HAVE_ALSA"])
 		Sound += [	"arch/Sound/ALSA9Dynamic.cpp",
 					"arch/Sound/ALSA9Helpers.cpp",
-					"arch/Sound/RageSoundDriver_ALSA9_Software.cpp",
-					"arch/Sound/RageSoundDriver_ALSA9.cpp" ]
+					"arch/Sound/RageSoundDriver_ALSA9_Software.cpp" ]
 	# OSS is available on POSIX OSes besides Linux
 	if conf.CheckHeader('sys/soundcard.h'):
 		env.Append(CPPDEFINES=["HAVE_OSS"])
@@ -538,9 +550,7 @@ if conf.CheckLib('X11', 'XMapWindow') and conf.CheckLib('Xrandr', 'XRRSizes'):
 
 Arch = LoadingWindow + Sound + ArchHooks + InputHandler + MovieTexture +\
 		Lights + MemoryCard + LowLevelWindow + ArchUtils + Dialog +\
-		Threads + [
-	"arch/arch.cpp",
-]
+		Threads
 
 ActorsInGameplayAndMenus = [
 	"BGAnimation.cpp",
@@ -633,6 +643,37 @@ PCRE = [
 	"pcre/study.c",
 ]
 
+Lua = [ "lua-5.1/src/lapi.c",
+	"lua-5.1/src/lauxlib.c",
+	"lua-5.1/src/lbaselib.c",
+	"lua-5.1/src/lcode.c",
+	"lua-5.1/src/ldblib.c",
+	"lua-5.1/src/ldebug.c",
+	"lua-5.1/src/ldo.c",
+	"lua-5.1/src/ldump.c",
+	"lua-5.1/src/lfunc.c",
+	"lua-5.1/src/lgc.c",
+	"lua-5.1/src/linit.c",
+	"lua-5.1/src/liolib.c",
+	"lua-5.1/src/llex.c",
+	"lua-5.1/src/lmathlib.c",
+	"lua-5.1/src/lmem.c",
+	"lua-5.1/src/loadlib.c",
+	"lua-5.1/src/lobject.c",
+	"lua-5.1/src/lopcodes.c",
+	"lua-5.1/src/loslib.c",
+	"lua-5.1/src/lparser.c",
+	"lua-5.1/src/lstate.c",
+	"lua-5.1/src/lstring.c",
+	"lua-5.1/src/lstrlib.c",
+	"lua-5.1/src/ltable.c",
+	"lua-5.1/src/ltablib.c",
+	"lua-5.1/src/ltm.c",
+	"lua-5.1/src/lundump.c",
+	"lua-5.1/src/lvm.c",
+	"lua-5.1/src/lzio.c",
+]
+
 RageFile = [
 	"RageFileBasic.cpp",
 	"RageFile.cpp",
@@ -664,12 +705,17 @@ Rage = PCRE + RageFile + RageSoundFileReaders + [
 	"RageSoundUtil.cpp",
 	"RageSoundMixBuffer.cpp",
 	"RageSoundPosMap.cpp",
-	"RageSoundReader_FileReader.cpp",
-	"RageSoundReader_Preload.cpp",
-	"RageSoundReader_Resample.cpp",
-	"RageSoundReader_Resample_Fast.cpp",
-	"RageSoundReader_Resample_Good.cpp",
+	"RageSoundReader.cpp",
 	"RageSoundReader_Chain.cpp",
+	"RageSoundReader_Extend.cpp",
+	"RageSoundReader_FileReader.cpp",
+	"RageSoundReader_Pan.cpp",
+	"RageSoundReader_PitchChange.cpp",
+	"RageSoundReader_PostBuffering.cpp",
+	"RageSoundReader_Preload.cpp",
+	"RageSoundReader_Resample_Good.cpp",
+	"RageSoundReader_SpeedChange.cpp",
+	"RageSoundReader_ThreadedBuffer.cpp",
 	"RageSurface.cpp",
 	"RageSurfaceUtils.cpp",
 	"RageSurfaceUtils_Dither.cpp",
@@ -735,7 +781,6 @@ GlobalSingletons = [
 	"MemoryCardManager.cpp",
 	"MessageManager.cpp",
 	"NetworkSyncManager.cpp",
-	"NetworkSyncServer.cpp",
 	"NoteSkinManager.cpp",
 	"PrefsManager.cpp",
 	"ProfileManager.cpp",
@@ -785,9 +830,16 @@ cryptopp = [
 
 env = conf.Finish()
 
-env.Append(CPPFLAGS=' -g2', CPPPATH=['.']) # NOPORT debug symbols?
+# This must be after configuration stuff apparently
+SConscript(['libtommath/SConscript'])
+SConscript(['libtomcrypt/SConscript'])
+
+env.Append(LIBS=["tomcrypt", "tommath"],
+	LIBPATH=["libtommath", "libtomcrypt"],
+	CPPFLAGS=' -g2', CPPPATH=['.']) # NOPORT debug symbols?
+# env.Append(CFLAGS=env['CPPFLAGS'], CPATH=env['CPPPATH'] # For lua
 env.Program('stepmania',
 	Screens + DataStructures + FileTypes + StepMania + Arch +\
 	ActorsInGameplayAndMenus + ActorsInMenus + ActorsInGameplay + Rage +\
-	Actors + GlobalSingletons + crypto + cryptopp )
+	Actors + GlobalSingletons + crypto + cryptopp + Lua )
 
