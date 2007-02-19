@@ -477,7 +477,6 @@ void ScreenGameplay::Init()
 		{
 			pi->m_sprOniGameOver.Load( THEME->GetPathG(m_sName,"oni gameover") );
 			pi->m_sprOniGameOver->SetName( ssprintf("OniGameOver%s",pi->GetName().c_str()) );
-			ActorUtil::LoadAllCommands( *pi->m_sprOniGameOver, m_sName );
 			LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_sprOniGameOver );
 			this->AddChild( pi->m_sprOniGameOver );
 		}
@@ -499,7 +498,6 @@ void ScreenGameplay::Init()
 	//
 	m_sprLifeFrame.Load( THEME->GetPathG(m_sName,bBattery?"oni life frame":"life frame") );
 	m_sprLifeFrame->SetName( "LifeFrame" );
-	ActorUtil::LoadAllCommands( *m_sprLifeFrame, m_sName );
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_sprLifeFrame );
 	this->AddChild( m_sprLifeFrame );
 
@@ -508,7 +506,6 @@ void ScreenGameplay::Init()
 	//
 	m_sprScoreFrame.Load( THEME->GetPathG(m_sName,bBattery?"oni score frame":"score frame") );
 	m_sprScoreFrame.SetName( "ScoreFrame" );
-	ActorUtil::LoadAllCommands( m_sprScoreFrame, m_sName );
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_sprScoreFrame );
 	this->AddChild( &m_sprScoreFrame );
 
@@ -522,7 +519,6 @@ void ScreenGameplay::Init()
 	case PLAY_MODE_RAVE:
 		m_pCombinedLifeMeter = new CombinedLifeMeterTug;
 		m_pCombinedLifeMeter->SetName( "CombinedLife" );
-		ActorUtil::LoadAllCommands( *m_pCombinedLifeMeter, m_sName );
 		LOAD_ALL_COMMANDS_AND_SET_XY( *m_pCombinedLifeMeter );
 		this->AddChild( m_pCombinedLifeMeter );		
 		break;
@@ -555,7 +551,6 @@ void ScreenGameplay::Init()
 			pi->m_pLifeMeter = LifeMeter::MakeLifeMeter( GAMESTATE->m_SongOptions.GetStage().m_LifeType );
 			pi->m_pLifeMeter->Load( pi->GetPlayerState(), pi->GetPlayerStageStats() );
 			pi->m_pLifeMeter->SetName( ssprintf("Life%s",pi->GetName().c_str()) );
-			ActorUtil::LoadAllCommands( *pi->m_pLifeMeter, m_sName );
 			LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_pLifeMeter );
 			this->AddChild( pi->m_pLifeMeter );		
 		}
@@ -580,7 +575,6 @@ void ScreenGameplay::Init()
 				m_Scoreboard[col].LoadFromFont( THEME->GetPathF(m_sName,"scoreboard") );
 				m_Scoreboard[col].SetShadowLength( 0 );
 				m_Scoreboard[col].SetName( ssprintf("ScoreboardC%iP%i",col+1,pn+1) );
-				ActorUtil::LoadAllCommands( m_Scoreboard[col], m_sName );
 				LOAD_ALL_COMMANDS_AND_SET_XY( m_Scoreboard[col] );
 				m_Scoreboard[col].SetText( NSMAN->m_Scoreboard[col] );
 				m_Scoreboard[col].SetVertAlign( align_top );
@@ -592,7 +586,6 @@ void ScreenGameplay::Init()
 
 	m_MaxCombo.LoadFromFont( THEME->GetPathF(m_sName,"max combo") );
 	m_MaxCombo.SetName( "MaxCombo" );
-	ActorUtil::LoadAllCommands( m_MaxCombo, m_sName );
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_MaxCombo );
 	m_MaxCombo.SetText( ssprintf("%d", m_vPlayerInfo[0].GetPlayerStageStats()->m_iMaxCombo) ); // TODO: Make this work for both players
 	this->AddChild( &m_MaxCombo );
@@ -604,7 +597,6 @@ void ScreenGameplay::Init()
 		if( pi->m_pPrimaryScoreDisplay )
 		{
 			pi->m_pPrimaryScoreDisplay->SetName( ssprintf("Score%s",pi->GetName().c_str()) );
-			ActorUtil::LoadAllCommands( *pi->m_pPrimaryScoreDisplay, m_sName );
 			LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_pPrimaryScoreDisplay );
 			if( GAMESTATE->m_PlayMode != PLAY_MODE_RAVE || SHOW_SCORE_IN_RAVE ) /* XXX: ugly */
 				this->AddChild( pi->m_pPrimaryScoreDisplay );
@@ -615,7 +607,6 @@ void ScreenGameplay::Init()
 		if( pi->m_pSecondaryScoreDisplay )
 		{
 			pi->m_pSecondaryScoreDisplay->SetName( ssprintf("SecondaryScore%s",pi->GetName().c_str()) );
-			ActorUtil::LoadAllCommands( *pi->m_pSecondaryScoreDisplay, m_sName );
 			LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_pSecondaryScoreDisplay );
 			this->AddChild( pi->m_pSecondaryScoreDisplay );
 		}
@@ -625,7 +616,6 @@ void ScreenGameplay::Init()
 	// Add stage / SongNumber
 	//
 	m_sprCourseSongNumber.SetName( "CourseSongNumber" );
-	ActorUtil::LoadAllCommands( m_sprCourseSongNumber, m_sName );
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_sprCourseSongNumber );
 	if( GAMESTATE->IsCourseMode() )
 		this->AddChild( &m_sprCourseSongNumber );
@@ -639,7 +629,6 @@ void ScreenGameplay::Init()
 			pi->m_ptextCourseSongNumber->LoadFromFont( THEME->GetPathF(m_sName,"song num") );
 			pi->m_ptextCourseSongNumber->SetShadowLength( 0 );
 			pi->m_ptextCourseSongNumber->SetName( ssprintf("SongNumber%s",pi->GetName().c_str()) );
-			ActorUtil::LoadAllCommands( *pi->m_ptextCourseSongNumber, m_sName );
 			LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_ptextCourseSongNumber );
 			pi->m_ptextCourseSongNumber->SetText( "" );
 			pi->m_ptextCourseSongNumber->SetDiffuse( RageColor(0,0.5f,1,1) );	// light blue
@@ -650,7 +639,6 @@ void ScreenGameplay::Init()
 		pi->m_ptextStepsDescription = new BitmapText;
 		pi->m_ptextStepsDescription->LoadFromFont( THEME->GetPathF(m_sName,"StepsDescription") );
 		pi->m_ptextStepsDescription->SetName( ssprintf("StepsDescription%s",pi->GetName().c_str()) );
-		ActorUtil::LoadAllCommands( *pi->m_ptextStepsDescription, m_sName );
 		LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_ptextStepsDescription );
 		this->AddChild( pi->m_ptextStepsDescription );
 
@@ -662,7 +650,6 @@ void ScreenGameplay::Init()
 		pi->m_ptextPlayerOptions->LoadFromFont( THEME->GetPathF(m_sName,"player options") );
 		pi->m_ptextPlayerOptions->SetShadowLength( 0 );
 		pi->m_ptextPlayerOptions->SetName( ssprintf("PlayerOptions%s",pi->GetName().c_str()) );
-		ActorUtil::LoadAllCommands( *pi->m_ptextPlayerOptions, m_sName );
 		LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_ptextPlayerOptions );
 		this->AddChild( pi->m_ptextPlayerOptions );
 
@@ -696,7 +683,6 @@ void ScreenGameplay::Init()
 	m_textSongOptions.LoadFromFont( THEME->GetPathF(m_sName,"song options") );
 	m_textSongOptions.SetShadowLength( 0 );
 	m_textSongOptions.SetName( "SongOptions" );
-	ActorUtil::LoadAllCommands( m_textSongOptions, m_sName );
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_textSongOptions );
 	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetStage().GetLocalizedString() );
 	this->AddChild( &m_textSongOptions );
@@ -708,7 +694,6 @@ void ScreenGameplay::Init()
 		pi->m_pActiveAttackList->LoadFromFont( THEME->GetPathF(m_sName,"ActiveAttackList") );
 		pi->m_pActiveAttackList->Init( pi->GetPlayerState() );
 		pi->m_pActiveAttackList->SetName( ssprintf("ActiveAttackList%s",pi->GetName().c_str()) );
-		ActorUtil::LoadAllCommands( *pi->m_pActiveAttackList, m_sName );
 		LOAD_ALL_COMMANDS_AND_SET_XY( pi->m_pActiveAttackList );
 		this->AddChild( pi->m_pActiveAttackList );
 	}
@@ -733,7 +718,6 @@ void ScreenGameplay::Init()
 
 		m_textDebug.LoadFromFont( THEME->GetPathF("Common","normal") );
 		m_textDebug.SetName( "Debug" );
-		ActorUtil::LoadAllCommands( m_textDebug, m_sName );
 		LOAD_ALL_COMMANDS_AND_SET_XY( m_textDebug );
 		m_textDebug.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 );	// just under transitions, over the foreground
 		this->AddChild( &m_textDebug );
@@ -745,7 +729,6 @@ void ScreenGameplay::Init()
 			m_textSurviveTime.LoadFromFont( THEME->GetPathF(m_sName,"survive time") );
 			m_textSurviveTime.SetShadowLength( 0 );
 			m_textSurviveTime.SetName( "SurviveTime" );
-			ActorUtil::LoadAllCommands( m_textSurviveTime, m_sName );
 			LOAD_ALL_COMMANDS_AND_SET_XY( m_textSurviveTime );
 			m_textSurviveTime.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 );
 			m_textSurviveTime.SetDiffuse( RageColor(1,1,1,0) );
@@ -1087,7 +1070,7 @@ void ScreenGameplay::LoadNextSong()
 			pi->m_pActiveAttackList->Refresh();
 
 		// reset oni game over graphic
-		LOAD_ALL_COMMANDS_AND_SET_XY_AND_ON_COMMAND( pi->m_sprOniGameOver );
+		SET_XY_AND_ON_COMMAND( pi->m_sprOniGameOver );
 
 		if( GAMESTATE->m_SongOptions.GetCurrent().m_LifeType==SongOptions::LIFE_BATTERY && pi->GetPlayerStageStats()->m_bFailed )	// already failed
 			pi->ShowOniGameOver();
@@ -1166,7 +1149,6 @@ void ScreenGameplay::LoadNextSong()
 	/* XXX: We want to put the lyrics out of the way, but it's likely that one
 	 * player is in reverse and the other isn't.  What to do? */
 	m_LyricDisplay.SetName( ssprintf( "Lyrics%s", bAllReverse? "Reverse": (bAtLeastOneReverse? "OneReverse": "")) );
-	ActorUtil::LoadAllCommands( m_LyricDisplay, m_sName );
 	LOAD_ALL_COMMANDS_AND_SET_XY( m_LyricDisplay );
 
 	m_SongFinished.Reset();

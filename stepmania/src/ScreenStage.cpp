@@ -29,7 +29,7 @@ void ScreenStage::Init()
 	m_sprOverlay.Load( THEME->GetPathB(m_sName,"overlay") );
 	m_sprOverlay->SetName( "Overlay" );
 	m_sprOverlay->SetDrawOrder( DRAW_ORDER_OVERLAY );
-	ON_COMMAND( m_sprOverlay );
+	m_sprOverlay->PlayCommand("On");
 	this->AddChild( m_sprOverlay );
 
 	m_In.Load( THEME->GetPathB(m_sName,"in") );
@@ -72,7 +72,7 @@ void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
 		this->ClearMessageQueue( SM_BeginFadingOut );
 
 		m_Out.StartTransitioning();
-		OFF_COMMAND( m_sprOverlay );
+		m_sprOverlay->PlayCommand( "Off" );
 		this->PostScreenMessage( SM_GoToNextScreen, this->GetTweenTimeLeft() );
 		return;
 	}
