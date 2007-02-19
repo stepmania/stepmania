@@ -78,29 +78,29 @@ protected:
 	RString m_sCourseMusicPath;
 	RString m_sFallbackCDTitlePath;
 
-	FadingBanner			m_Banner;
-	Sprite				m_sprCDTitleFront, m_sprCDTitleBack;
-	Sprite				m_sprHighScoreFrame[NUM_PLAYERS];
-	BitmapText			m_textHighScore[NUM_PLAYERS];
-	MusicWheel			m_MusicWheel;
+	FadingBanner		m_Banner;
+	Sprite			m_sprCDTitleFront, m_sprCDTitleBack;
+	Sprite			m_sprHighScoreFrame[NUM_PLAYERS];
+	BitmapText		m_textHighScore[NUM_PLAYERS];
+	MusicWheel		m_MusicWheel;
 
-	bool				m_bMadeChoice;
-	bool				m_bGoToOptions;
-	RString				m_sSampleMusicToPlay;
-	TimingData			*m_pSampleMusicTimingData;
-	float				m_fSampleStartSeconds, m_fSampleLengthSeconds;
-	bool				m_bAllowOptionsMenu, m_bAllowOptionsMenuRepeat;
-	bool				m_bSelectIsDown;
+	bool			m_bMadeChoice;
+	bool			m_bGoToOptions;
+	RString			m_sSampleMusicToPlay;
+	TimingData		*m_pSampleMusicTimingData;
+	float			m_fSampleStartSeconds, m_fSampleLengthSeconds;
+	bool			m_bAllowOptionsMenu, m_bAllowOptionsMenuRepeat;
+	bool			m_bSelectIsDown;
 
-	RageSound			m_soundStart;
-	RageSound			m_soundDifficultyEasier;
-	RageSound			m_soundDifficultyHarder;
-	RageSound			m_soundOptionsChange;
-	RageSound			m_soundLocked;
-	RageSound			m_soundSelectPressed;
+	RageSound		m_soundStart;
+	RageSound		m_soundDifficultyEasier;
+	RageSound		m_soundDifficultyHarder;
+	RageSound		m_soundOptionsChange;
+	RageSound		m_soundLocked;
+	RageSound		m_soundSelectPressed;
 
-	BackgroundLoader		m_BackgroundLoader;
-	RageTexturePreloader		m_TexturePreload;
+	BackgroundLoader	m_BackgroundLoader;
+	RageTexturePreloader	m_TexturePreload;
 };
 
 #endif
